@@ -1,4 +1,3 @@
-import type { Handle_Mouse_State, Create_Mouse_State } from './Types';
 import type { SvelteComponent } from 'svelte';
 
 import { builds } from './Builds';
@@ -14,7 +13,7 @@ import { SvelteComponentType } from './Enumerations';
 import { signals, IDSignal } from '../signals/Signals';
 import { Rect, Size, Point } from '../geometry/Geometry';
 import { Quadrant, Orientation } from '../geometry/Angle';
-import { debug, Debug, DebugFlag } from '../common/Debug';
+import { debug, Debug, DebugFlag } from './Debug';
 import { Direction, svgPaths } from '../geometry/SVG_Paths';
 import { Paging_State, Page_States } from '../state/Page_States';
 import { Tree_Type, Graph_Type, Startup_State } from './Enumerations';
@@ -71,13 +70,12 @@ export {
 	show, files, builds, signals, wrappers,
 	ZIndex, PredicateKind, CreationOptions,
 	Rect, Size, Point, cursors, svgPaths, Direction,
-	Mouse_State, Handle_Mouse_State, Create_Mouse_State,
 	Grabs, Ancestry, Hierarchy, dbDispatch, persistLocal,
 	Arc_Map, Segment_Map, Cluster_Map, Clusters_Geometry,
 	User, Datum, Thing, Trait, Access, Predicate, Relationship,
 	Element_State, Paging_State, Page_States, Alteration_State,
 	IDLine, IDTool, IDSignal, IDControl, IDBrowser, IDPersistent,
-	Title_State, Rotation_State, Expansion_State, Startup_State,
 	ElementType, Svelte_Wrapper, SvelteComponent, SvelteComponentType,
 	ThingType, TraitType, Graph_Type, Tree_Type, Details_Type, Rebuild_Type,
+	Mouse_State, Title_State, Rotation_State, Expansion_State, Startup_State,
 };

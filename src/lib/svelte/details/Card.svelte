@@ -5,6 +5,7 @@
 	import { s_hierarchy, s_thing_color, s_thing_title } from '../../ts/state/Svelte_Stores';
 	import Identifiable from '../../ts/basis/Identifiable';
 	import Text_Editor from '../kit/Text_Editor.svelte';
+	import type { Dictionary } from '../common/Types';
 	import Button from '../mouse/Button.svelte';
 	import Color from './Color.svelte';
 	import Info from './Info.svelte';
@@ -21,13 +22,13 @@
 	let color_origin = new Point(-2, card_rect.origin.y - (show.traits ? 1 : 24));
 	let text_box_size = new Size(details_size - 4, 68);
 	let ancestry: Ancestry | null = $s_focus_ancestry;
-	let information: { [key: string]: string } = {};
-	let button_title = `show ${next_infoKind()}`;
 	let thing: Thing | null = ancestry?.thing;
 	let thingHID: number | null = thing?.idHashed;
+	let button_title = `show ${next_infoKind()}`;
+	let information: Dictionary<string> = {};
+	let color = k.thing_color_default;
 	let grabs = $s_grabbed_ancestries;
 	let card_title = thing?.title;
-	let color = k.thing_color_default;
 	let rebuilds = 0;
 	let info;
 

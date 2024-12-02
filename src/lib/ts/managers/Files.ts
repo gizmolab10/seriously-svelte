@@ -1,4 +1,4 @@
-import { debug } from '../common/Debug';
+import type { Handle_Result } from '../common/Types';
 
 export default class Files {
 	static extras = [
@@ -17,9 +17,7 @@ export default class Files {
 		'hasPersistentStorage'
 	];
 
-	upload_json_object_fromFile(fileName: string): Object {
-		return this.extract_json_object_from(new File([], fileName, {}));
-	}
+	static readonly $_WRITE_$: unique symbol;
 	
 	removeExtras(key: string, value: any) {
 		if (Files.extras.includes(key)) {
@@ -28,7 +26,7 @@ export default class Files {
 		return value;
 	}
 
-	download_json_object_toFile(object: Object, fileName: string): void {
+	persist_json_object_toFile(object: Object, fileName: string): void {
 		const content = JSON.stringify(object, this.removeExtras, 2)
 		const blob = new Blob([content], { type: 'application/json' });
 		const link = document.createElement('a');
@@ -37,25 +35,35 @@ export default class Files {
 		link.click();
 		URL.revokeObjectURL(link.href);
 	}
+
+	static readonly READ: unique symbol;
+
+	async fetch_json_object_fromFile(fileName: string, onSuccess: Handle_Result, onFailure: Handle_Result)  {
+		return await files.extract_json_object_from(new File([], fileName, {}), onSuccess, onFailure);
+	}
 		
-	extract_json_object_from(file: File): Object {
+	async extract_json_object_from(file: File, onSuccess: Handle_Result, onFailure: Handle_Result = (() => {})) {
 		const reader = new FileReader();
 		let json_object = new Object();
 		reader.onload = function (e) {
-            try {
-				const result = (e.target?.result as string) ?? '';
-				json_object = JSON.parse(result);
-				console.log(json_object);
-            } catch (error) {
-                console.error('Error parsing JSON:', error);
-            }
+			const result = (e.target?.result as string);
+			if (!result || result.length == 0) {
+				onFailure('Empty file.');
+			} else {
+				try {
+					json_object = JSON.parse(result);
+					console.log(json_object);
+					onSuccess(json_object)
+					return { success: json_object };
+				} catch (error) {
+					onFailure(`Error parsing JSON: '${result}' ${(error as Error).message}`);
+				}
+			}
 		};
 		reader.onerror = function () {
-			console.log('bad file')
-			debug.log_error('Error reading file.');
+			onFailure('Error reading file.');
 		};
 		reader.readAsText(file);
-		return json_object;
 	}
 	
 }

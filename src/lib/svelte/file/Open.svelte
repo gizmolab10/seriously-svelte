@@ -16,7 +16,7 @@
 	}
 
 	function handle_selection(event: Event) {
-		const target = (event.target as HTMLInputElement);
+		const target = event.target as HTMLInputElement;
 		const files = target?.files;
 		if (files && files.length > 0) {
 			dispatch('files_selected', files);

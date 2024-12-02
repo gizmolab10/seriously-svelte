@@ -1,4 +1,5 @@
-import { u, debug, Svelte_Wrapper, Create_Mouse_State, SvelteComponentType } from '../common/Global_Imports';
+import { u, debug, Svelte_Wrapper, SvelteComponentType } from '../common/Global_Imports';
+import { Create_Mouse_State } from '../common/Types';
 
 export class Wrappers {
 	private child_wrapperTypes_byType: {[type: string]: Array<string>} = {};

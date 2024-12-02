@@ -97,11 +97,9 @@ export default class DBDispatch {
 			s_startup_state.set(Startup_State.fetch);
 		}
 		await this.db.fetch_all();
-		await h.add_missing_removeNulls(this.db.baseID);
-		h.rootAncestry_setup();
-		h.ancestries_rebuildAll();
+		await h.setup_hierarchy_after_fetch();
 		if (this.db.isPersistent) {
-			this.set_loadTime(startTime);
+			this.set_loadTime_from(startTime);
 		}
 	}
 
@@ -116,7 +114,7 @@ export default class DBDispatch {
 		await get(s_hierarchy).conclude_fetch();
 	}
 
-	set_loadTime(startTime: number) {
+	set_loadTime_from(startTime: number) {
 		const duration = Math.trunc(((new Date().getTime()) - startTime) / 100) / 10;
 		const places = (duration == Math.trunc(duration)) ? 0 : 1;
 		const loadTime = (((new Date().getTime()) - startTime) / 1000).toFixed(places);

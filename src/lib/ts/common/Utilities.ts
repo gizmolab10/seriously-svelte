@@ -1,5 +1,6 @@
 import { s_thing_fontFamily } from '../state/Svelte_Stores';
 import { Size, Point } from '../geometry/Geometry';
+import type { Dictionary } from '../common/Types';
 import Identifiable from '../basis/Identifiable';
 import { Quadrant } from '../geometry/Angle';
 import Ancestry from '../managers/Ancestry';
@@ -10,7 +11,6 @@ import { get } from 'svelte/store';
 import { k } from './Constants';
 
 class Utilities {
-	noop() {}
 	ignore(event: Event) {}
 	concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return [...a, ...b]; }
 	quadrant_ofAngle(angle: number): Quadrant { return new Angle(angle).quadrant_ofAngle; }
@@ -115,7 +115,7 @@ class Utilities {
 	}
 
 	convertToObject(instance: any, fields: Array<string>): object {
-		const o: { [key: string]: any } = {};
+		const o: Dictionary = {};
 		for (const field of fields) {
 			if (instance.hasOwnProperty(field)) {
 				o[field] = instance[field];

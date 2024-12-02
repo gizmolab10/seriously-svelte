@@ -3,8 +3,9 @@ import { signals, ThingType, TraitType, Predicate, Ancestry, Mouse_State } from 
 import { Relationship, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
 import { s_edit_state, s_focus_ancestry, s_alteration_mode } from '../state/Svelte_Stores';
 import { s_grabbed_ancestries, s_ancestry_showing_tools } from '../state/Svelte_Stores';
+import { DBType, DatumType } from '../../ts/basis/PersistentIdentifiable';
 import PersistentIdentifiable from '../basis/PersistentIdentifiable';
-import { DBType } from '../../ts/basis/PersistentIdentifiable';
+import type { Dictionary } from '../common/Types';
 import Identifiable from '../basis/Identifiable';
 import DBInterface from '../db/DBInterface';
 import { get } from 'svelte/store';
@@ -43,15 +44,6 @@ export class Hierarchy {
 	get hasNothing(): boolean { return !this.root; }
 	get idRoot(): string | null { return this.root?.id ?? null; };
 	ancestries_rebuildAll() { this.root?.oneAncestries_rebuildForSubtree(); }
-
-	get all_data(): Object {
-		return {
-			'things' : this.things,
-			'traits' : this.traits,
-			'predicates' : this.predicates,
-			'relationships' : this.relationships,
-		}
-	}
 
 	static readonly $_INIT_$: unique symbol;
 
@@ -170,7 +162,7 @@ export class Hierarchy {
 
 	async deferredWriteAll() {
 		if (this.db.dbType == DBType.file) {
-			this.db.persist();
+			// this.db.persist();
 		} else {
 			await this.deferredWriteAllData(this.things);
 			await this.deferredWriteAllData(this.traits);
@@ -380,11 +372,11 @@ export class Hierarchy {
 
 	traits_refreshKnowns() {
 		const saved = this.traits;
-		this.traits_clearKnowns();
+		this.traits_forgetAll();
 		saved.map(r => this.trait_remember(r));
 	}
 
-	traits_clearKnowns() {
+	traits_forgetAll() {
 		this.traits_byOwnerHID = {};
 		this.traits_byType = {};
 		this.trait_byHID = {};
@@ -499,11 +491,11 @@ export class Hierarchy {
 
 	relationships_refreshKnowns() {
 		const saved = this.relationships;
-		this.relationships_clearKnowns();
+		this.relationships_forgetAll();
 		saved.map(r => this.relationship_remember(r));
 	}
 
-	relationships_clearKnowns() {
+	relationships_forgetAll() {
 		this.relationships_byPredicateHID = {};
 		this.relationships_byParentHID = {};
 		this.relationships_byChildHID = {};
@@ -678,6 +670,13 @@ export class Hierarchy {
 	}
 
 	static readonly $_ANCESTRIES_$: unique symbol;
+
+	ancestries_forgetAll() {
+		this.ancestry_byKind_andHash = {};
+		this.ancestry_byHID = {};
+		// this.rootsAncestry = null;	// TODO: assure these get set
+		// this.rootAncestry = null;
+	}
 
 	async ancestries_rebuild_traverse_persistentDelete(ancestries: Array<Ancestry>) {
 		if (get(s_focus_ancestry)) {
@@ -1003,11 +1002,16 @@ export class Hierarchy {
 		}
 	}
 
-	static readonly $_ANCILLARY_$: unique symbol;
+	static readonly $_PREDICATES_$: unique symbol;
 
 	predicate_forKind(kind: string | null): Predicate | null { return !kind ? null : this.predicate_byKind[kind]; }
 	predicates_byDirection(isBidirectional: boolean) { return this.predicate_byDirection[isBidirectional ? 1 : 0]; }
 	predicate_forID(idPredicate: string): Predicate | null { return !idPredicate ? null : this.predicate_byHID[idPredicate.hash()]; }
+
+	predicates_forgetAll() {
+		this.relationship_byHID = {};
+		this.predicates = [];
+	}
 
 	idPredicate_for(id: string): string {
 		const hid = id.split(k.generic_separator)[0].hash();			// grab first relationship's hid
@@ -1036,6 +1040,9 @@ export class Hierarchy {
 		this.predicate_remember(new Predicate(id, kind, isBidirectional, already_saved));
 	}
 
+	static readonly $_ANCILLARY_$: unique symbol;
+
+
 	access_runtimeCreate(idAccess: string, kind: string) {
 		const access = new Access(this.db.dbType, idAccess, kind);
 		this.access_byHID[idAccess.hash()] = access;
@@ -1047,12 +1054,61 @@ export class Hierarchy {
 		this.user_byHID[id.hash()] = user;
 	}
 
-	static readonly $_OTHER_$: unique symbol;
+	static readonly $_FILES_$: unique symbol;
+
+	get all_data(): Object {
+		return {
+			'things' : this.things,
+			'traits' : this.traits,
+			'type' : DatumType.hierarchy,
+			'predicates' : this.predicates,
+			'relationships' : this.relationships,
+		}
+	}
 
 	save_toFile() {
 		console.log('save_toFile');
-		files.download_json_object_toFile(this.all_data, 'root.json');		// until Ancestry does traversal, just use the root
-		// if has a grabbed use the top one, else use the focus, if focus is root, use above
+		// TODO: use ...
+		// grab			 (if not root)
+		// focus		 (if neither root nor null)
+		// this.all_data (otherwise)
+		const filename = `${this.root.title.toLowerCase()}.json`;
+		files.persist_json_object_toFile(this.all_data, filename);		// until Ancestry does traversal, just use the root
+	}
+
+	async fetch_fromFile(file: File) {
+		await files.extract_json_object_from(file, (result) => {
+			if (!!result) {
+				const dict = result as Dictionary;
+				switch (dict['type']) {
+					case DatumType.hierarchy: this.rebuild_hierarchy_with(dict); break;
+					default: break;
+				}
+				
+			}
+		});
+	}
+
+	static readonly $_OTHER_$: unique symbol;
+
+	hierarchy_forgetAll() {
+		this.things_forgetAll();
+		this.traits_forgetAll();
+		this.predicates_forgetAll();
+		this.ancestries_forgetAll();
+		this.relationships_forgetAll();
+	}
+
+	rebuild_hierarchy_with(dict: Dictionary) {
+		this.hierarchy_forgetAll();		// discard and then extract:
+		// things, predicates and relationships
+		this.setup_hierarchy_after_fetch()
+	}
+
+	async setup_hierarchy_after_fetch() {
+		await this.add_missing_removeNulls(this.db.baseID);
+		this.rootAncestry_setup();
+		this.ancestries_rebuildAll();
 	}
 
 	async conclude_fetch() {

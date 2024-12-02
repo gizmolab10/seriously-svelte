@@ -1,4 +1,4 @@
-import { k, files, Thing, Trait, ThingType, Hierarchy, Relationship } from '../common/Global_Imports';
+import { k, Thing, Trait, ThingType, Hierarchy, Relationship } from '../common/Global_Imports';
 import { DBType, DatumType } from '../basis/PersistentIdentifiable';
 import { s_hierarchy } from '../state/Svelte_Stores';
 import DBInterface from './DBInterface';
@@ -12,10 +12,8 @@ export default class DBFile implements DBInterface {
 	hasData = false;
 	loadTime = null;
 
+	persist() { get(s_hierarchy).save_toFile(); }
 	setHasData(flag: boolean) { this.hasData = flag; }
-	json_fileName_for(datum_type: string): string { return `${this.baseID}.${datum_type.toLowerCase()}.json`; }
-
-	persist() { files.download_json_object_toFile(get(s_hierarchy).all_data, 'data.json'); }
 
 	async fetch_all() {
 		const h = get(s_hierarchy);
@@ -28,26 +26,9 @@ export default class DBFile implements DBInterface {
 	}
 	
 	async fetch_documentsOf(datum_type: string) {
-		const fileName = this.json_fileName_for(datum_type);
-		const reader = new FileReader();
+		const fileName = `${this.baseID.toLowerCase()}.${datum_type.toLowerCase()}.json`;
 		const file = new File([], fileName, {});
-		let content = '';
-
-		// Define what happens when the file is read
-		reader.onload = function (e) {
-			const result = (e.target?.result as string) ?? '';
-			console.log(`${fileName} "${result}"`);
-			// content = JSON.parse(result);
-			// console.log(content);
-		};
-
-		// Define error handling
-		reader.onerror = function () {
-			content = 'Error reading file.';
-		};
-
-		// Read the file as text
-		reader.readAsText(file);
+		get(s_hierarchy).fetch_fromFile(file);
 	}
 
 	queryStrings_apply() {}

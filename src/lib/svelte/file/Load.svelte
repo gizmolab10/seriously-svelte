@@ -1,6 +1,7 @@
 <script lang='ts'>
-	import { s_id_popupView } from '../../ts/state/Svelte_Stores';
+	import { s_hierarchy, s_id_popupView } from '../../ts/state/Svelte_Stores';
 	import { files } from '../../ts/managers/Files';
+	import { get } from 'svelte/store';
 	import Open from './Open.svelte';
 
 	function handle_cancel() {
@@ -9,8 +10,7 @@
 	}
 
 	function handle_files_selected(event: CustomEvent<FileList>) {
-		const json = files.extract_json_object_from(event.detail[0]);
-		console.log('Extracted:', json);
+		get(s_hierarchy).fetch_fromFile(event.detail[0]);
 		$s_id_popupView = null;
 	}
 

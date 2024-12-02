@@ -11,6 +11,8 @@ export enum DBType {
 export enum DatumType {
 	relationships = 'Relationships',
 	predicates	  = 'Predicates',
+	hierarchy	  = 'Hierarchy',	// includes parent contains and relateds
+	progeny		  = 'Progeny',		// only child contains
 	things		  = 'Things',
 	traits		  = 'Traits',
 	access		  = 'Access',

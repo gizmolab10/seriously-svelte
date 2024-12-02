@@ -1,7 +1,8 @@
 <script lang='ts'>
 	import { k, u, ux, Rect, Size, Point, Segment_Map } from '../../ts/common/Global_Imports';
+	import type { Handle_Result } from '../../ts/common/Types';
 	import Segment from './Segment.svelte';
-	export let selection_closure = (titles) => {};
+	export let selection_closure = Handle_Result<string>;
 	export let selected: Array<string> = [];
 	export let titles: Array<string> = [];
 	export let fill = k.color_background;

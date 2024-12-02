@@ -1,6 +1,7 @@
 import { g, k, w, signals, persistLocal } from '../common/Global_Imports';
 import { IDPersistent, Tree_Type } from '../common/Global_Imports';
 import { s_show_details, s_tree_type } from './Svelte_Stores';
+import type { Dictionary } from '../common/Types';
 
 class Show_State {
 	traits		 = false;
@@ -15,7 +16,7 @@ class Show_State {
 		const visibleNames = queryStrings.get('show')?.split(k.comma) ?? [];
 		const hidden = Object.fromEntries(hiddenNames.map(s => [s, false]) ?? {});
 		const visible = Object.fromEntries(visibleNames.map(s => [s, true]) ?? {});
-		const keyedFlags: { [key: string]: boolean } = {...visible, ...hidden};
+		const keyedFlags: Dictionary<boolean> = {...visible, ...hidden};
         for (const [name, flag] of Object.entries(keyedFlags)) {
 			switch (name) {
 				case 'details':

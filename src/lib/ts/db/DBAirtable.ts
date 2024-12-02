@@ -130,7 +130,7 @@ export default class DBAirtable implements DBInterface {
 	//////////////////////////////
 
 	async traits_readAll() {
-		get(s_hierarchy).traits_clearKnowns();
+		get(s_hierarchy).traits_forgetAll();
 		try {
 			const records = await this.traits_table.select().all()
 
@@ -177,7 +177,7 @@ export default class DBAirtable implements DBInterface {
 	static readonly $_RELATIONSHIPS_$: unique symbol;
 
 	async relationships_readAll() {
-		get(s_hierarchy).relationships_clearKnowns();
+		get(s_hierarchy).relationships_forgetAll();
 		try {
 			const records = await this.relationships_table.select().all()
 
