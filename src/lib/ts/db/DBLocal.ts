@@ -6,10 +6,10 @@ import type { Dictionary } from '../common/Types';
 import DBCommon from './DBCommon';
 import { get } from 'svelte/store';
 
-export default class DBFile extends DBCommon {
+export default class DBLocal extends DBCommon {
 	baseID = k.baseID_file;
 	hierarchy!: Hierarchy;
-	dbType = DBType.file;
+	dbType = DBType.local;
 	isPersistent = true;
 	hasData = false;
 	loadTime = null;
@@ -17,23 +17,23 @@ export default class DBFile extends DBCommon {
 	setHasData(flag: boolean) { this.hasData = flag; }
 
 	async remove_all() {
-		persistLocal.write_key(IDPersistent.file, null);
+		persistLocal.write_key(IDPersistent.local, null);
 	}
 
 	async deferred_persistAll() {
 		const json_object = u.stringify_object(get(s_hierarchy).all_data);
-		persistLocal.write_key(IDPersistent.file, json_object);
+		persistLocal.write_key(IDPersistent.local, json_object);
 	}
 
 	async fetch_all() {
-		const json_object = persistLocal.read_key(IDPersistent.file);
+		const json_object = persistLocal.read_key(IDPersistent.local);
 		const h = get(s_hierarchy);
 		if (!!json_object) {
 			const object = JSON.parse(json_object);
 			h.extract_hierarchy_from(object as Dictionary);
 		}
 		h.predicate_remember_runtimeCreateUnique('contains', 'contains', false, false);
-		h.thing_remember_runtimeCreateUnique(this.baseID, 'R', 'DBFile', 'limegreen', ThingType.root);
+		h.thing_remember_runtimeCreateUnique(this.baseID, 'R', 'DBLocal', 'limegreen', ThingType.root);
 	}
 	
 	async fetch_documentsOf(datum_type: string) {
@@ -62,4 +62,4 @@ export default class DBFile extends DBCommon {
 	async crudAction_onRelationship(crudAction: string, relationship: Relationship) {};
 }
 
-export const dbFile = new DBFile();
+export const dbFile = new DBLocal();

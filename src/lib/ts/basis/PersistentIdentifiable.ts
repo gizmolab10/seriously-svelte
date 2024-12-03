@@ -4,7 +4,7 @@ export enum DBType {
 	postgres = 'postgres',
 	airtable = 'airtable',
 	firebase = 'firebase',
-	file	 = 'file',
+	local	 = 'local',
 	test	 = 'test',
 }
 

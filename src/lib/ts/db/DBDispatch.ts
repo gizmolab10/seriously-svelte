@@ -8,7 +8,7 @@ import { dbAirtable } from './DBAirtable';
 import DBCommon from './DBCommon';
 import { get } from 'svelte/store';
 import { dbTest } from './DBTest';
-import { dbFile } from './DBFile';
+import { dbFile } from './DBLocal';
 
 // each db has its own hierarchy
 // when switching to another db
