@@ -7,7 +7,7 @@ export enum CRUD {
 	delete = 'delete',
 }
 
-export default class DBInterface {
+export default class DBCommon {
 	hasData = false;
 	baseID = k.empty;
 	dbType = k.empty;
@@ -17,6 +17,7 @@ export default class DBInterface {
 
 	queryStrings_apply() {}
 	setHasData(flag: boolean): void {}
+	async remove_all(): Promise<void> {}
 	async fetch_all(): Promise<void> {}
 	async thing_persistentUpdate(thing: Thing): Promise<void> {}
 	async thing_persistentDelete(thing: Thing): Promise<void> {}
@@ -28,9 +29,9 @@ export default class DBInterface {
 	async relationship_persistentUpdate(relationship: Relationship): Promise<void> {}
 	async relationship_persistentDelete(relationship: Relationship): Promise<void> {}
 	async relationship_remember_persistentCreate(relationship: Relationship | null): Promise<void> {}
-	async crud_onThing(crud: string, thing: Thing): Promise<void> {}
-	async crud_onTrait(crud: string, trait: Trait): Promise<void> {}
-	async crud_onRelationship(crud: string, relationship: Relationship): Promise<void> {}
+	async crudAction_onThing(crudAction: string, thing: Thing): Promise<void> {}
+	async crudAction_onTrait(crudAction: string, trait: Trait): Promise<void> {}
+	async crudAction_onRelationship(crudAction: string, relationship: Relationship): Promise<void> {}
 
 	async deferred_persistAll() {
 		const h = this.hierarchy;

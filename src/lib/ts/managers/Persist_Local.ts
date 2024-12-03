@@ -27,6 +27,7 @@ export enum IDPersistent {
 	scale		   = 'scale',
 	focus		   = 'focus',
 	info		   = 'info',
+	file		   = 'file',
 	font		   = 'font',
 	db			   = 'db',
 }

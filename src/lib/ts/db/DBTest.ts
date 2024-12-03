@@ -1,10 +1,10 @@
 import { k, Thing, Trait, ThingType, Hierarchy, Predicate, Relationship } from '../common/Global_Imports';
 import { DBType } from '../basis/PersistentIdentifiable';
 import { s_hierarchy } from '../state/Svelte_Stores';
-import DBInterface from './DBInterface';
+import DBCommon from './DBCommon';
 import { get } from 'svelte/store';
 
-export default class DBTest extends DBInterface {
+export default class DBTest extends DBCommon {
 	baseID = k.baseID_test;
 	hierarchy!: Hierarchy;
 	isPersistent = false;
@@ -93,9 +93,9 @@ export default class DBTest extends DBInterface {
 	async relationship_persistentUpdate(relationship: Relationship) {}
 	async relationship_persistentDelete(relationship: Relationship) {}
 	async relationship_remember_persistentCreate(relationship: Relationship | null) {};
-	async crud_onThing(crud: string, thing: Thing) {};
-	async crud_onTrait(crud: string, trait: Trait) {};
-	async crud_onRelationship(crud: string, relationship: Relationship) {};
+	async crudAction_onThing(crudAction: string, thing: Thing) {};
+	async crudAction_onTrait(crudAction: string, trait: Trait) {};
+	async crudAction_onRelationship(crudAction: string, relationship: Relationship) {};
 }
 
 export const dbTest = new DBTest();

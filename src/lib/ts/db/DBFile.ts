@@ -1,10 +1,12 @@
-import { k, Thing, Trait, ThingType, Hierarchy, Relationship } from '../common/Global_Imports';
-import PersistentIdentifiable, { DBType, DatumType } from '../basis/PersistentIdentifiable';
+import { k, u, Thing, Trait, ThingType, Hierarchy, Relationship } from '../common/Global_Imports';
+import { persistLocal, IDPersistent } from '../common/Global_Imports';
+import { DBType } from '../basis/PersistentIdentifiable';
 import { s_hierarchy } from '../state/Svelte_Stores';
-import DBInterface from './DBInterface';
+import type { Dictionary } from '../common/Types';
+import DBCommon from './DBCommon';
 import { get } from 'svelte/store';
 
-export default class DBFile extends DBInterface {
+export default class DBFile extends DBCommon {
 	baseID = k.baseID_file;
 	hierarchy!: Hierarchy;
 	dbType = DBType.file;
@@ -13,15 +15,25 @@ export default class DBFile extends DBInterface {
 	loadTime = null;
 
 	setHasData(flag: boolean) { this.hasData = flag; }
-	async deferred_persistAll() { get(s_hierarchy).save_toFile(); }
+
+	async remove_all() {
+		persistLocal.write_key(IDPersistent.file, null);
+	}
+
+	async deferred_persistAll() {
+		const json_object = u.stringify_object(get(s_hierarchy).all_data);
+		persistLocal.write_key(IDPersistent.file, json_object);
+	}
 
 	async fetch_all() {
+		const json_object = persistLocal.read_key(IDPersistent.file);
 		const h = get(s_hierarchy);
-		for (const type of h.all_dataTypes) {
-			await this.fetch_documentsOf(type);
+		if (!!json_object) {
+			const object = JSON.parse(json_object);
+			h.extract_hierarchy_from(object as Dictionary);
 		}
 		h.predicate_remember_runtimeCreateUnique('contains', 'contains', false, false);
-		h.thing_remember_runtimeCreateUnique(this.baseID, 'R', 'JSON', 'limegreen', ThingType.root);
+		h.thing_remember_runtimeCreateUnique(this.baseID, 'R', 'DBFile', 'limegreen', ThingType.root);
 	}
 	
 	async fetch_documentsOf(datum_type: string) {
@@ -45,9 +57,9 @@ export default class DBFile extends DBInterface {
 	async relationship_persistentDelete(relationship: Relationship) {}
 	async relationship_remember_persistentCreate(relationship: Relationship | null) {}
 
-	async crud_onThing(crud: string, thing: Thing) {};
-	async crud_onTrait(crud: string, trait: Trait) {};
-	async crud_onRelationship(crud: string, relationship: Relationship) {};
+	async crudAction_onThing(crudAction: string, thing: Thing) {};
+	async crudAction_onTrait(crudAction: string, trait: Trait) {};
+	async crudAction_onRelationship(crudAction: string, relationship: Relationship) {};
 }
 
 export const dbFile = new DBFile();

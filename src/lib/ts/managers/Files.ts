@@ -1,32 +1,12 @@
 import type { Handle_Result } from '../common/Types';
+import { u } from '../common/Utilities';
 
 export default class Files {
-	static extras = [
-		'dbType',
-		'baseID',
-		'idHashed',
-		'isEditing',
-		'isGrabbed',
-		'needs_persisting_again',
-		'oneAncestry',
-		'page_states',
-		'already_persisted',
-		'selectionRange',
-		'awaitingCreation',
-		'hasPersistentStorage'
-	];
 
 	static readonly $_WRITE_$: unique symbol;
-	
-	removeExtras(key: string, value: any) {
-		if (Files.extras.includes(key)) {
-			return undefined;
-		}
-		return value;
-	}
 
 	persist_json_object_toFile(object: Object, fileName: string): void {
-		const content = JSON.stringify(object, this.removeExtras, 2)
+		const content = u.stringify_object(object);
 		const blob = new Blob([content], { type: 'application/json' });
 		const link = document.createElement('a');
 		link.href = URL.createObjectURL(blob);

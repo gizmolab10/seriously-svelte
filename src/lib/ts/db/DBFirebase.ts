@@ -7,12 +7,12 @@ import { DBType, DatumType } from '../basis/PersistentIdentifiable';
 import { s_hierarchy } from '../state/Svelte_Stores';
 import Identifiable from '../basis/Identifiable';
 import { initializeApp } from 'firebase/app';
-import DBInterface from './DBInterface';
+import DBCommon from './DBCommon';
 import { get } from 'svelte/store';
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
-export default class DBFirebase extends DBInterface {
+export default class DBFirebase extends DBCommon {
 	firebaseConfig = {
 		appId: "1:224721814373:web:0c60f394c056ef3decd78c",
 		apiKey: "AIzaSyAFy4H3Ej5zfI46fvCJpBfUxmyQco-dx9U",
@@ -49,16 +49,24 @@ export default class DBFirebase extends DBInterface {
 		this.baseID = id;
 	}
 
-	async crud_onThing(crud: string, thing: Thing) {};
-	async crud_onTrait(crud: string, trait: Trait) {};
-	async crud_onRelationship(crud: string, relationship: Relationship) {};
+	async crudAction_onThing(crudAction: string, thing: Thing) {};
+	async crudAction_onTrait(crudAction: string, trait: Trait) {};
+	async crudAction_onRelationship(crudAction: string, relationship: Relationship) {};
+
+	async remove_all() {
+		const documentRef = doc(this.firestore, this.bulksName, this.baseID);
+		await this.subcollections_persistentDeleteIn(documentRef);
+
+		try {
+			await deleteDoc(documentRef);
+		} catch (error) {
+			this.reportError(error);
+		}
+	}
 
 	static readonly $_FETCH_$: unique symbol;
 
 	async fetch_all() {
-		if (dbDispatch.eraseDB) {
-			await this.document_persistentDelete();
-		}
 		await this.recordLoginIP();
 		await this.fetch_documentsOf(DatumType.predicates);
 		await this.fetch_hierarchy_from(this.baseID);
@@ -239,17 +247,6 @@ export default class DBFirebase extends DBInterface {
 				case DatumType.things:		  get(s_hierarchy).thing_remember_runtimeCreate(baseID, id, data.title, data.color, data.type ?? data.trait, true, !data.type); break;
 				case DatumType.relationships: get(s_hierarchy).relationship_remember_runtimeCreateUnique(baseID, id, data.predicate.id, data.parent.id, data.child.id, data.order, CreationOptions.isFromPersistent); break;
 			}
-		}
-	}
-
-	async document_persistentDelete() {
-		const documentRef = doc(this.firestore, this.bulksName, this.baseID);
-		await this.subcollections_persistentDeleteIn(documentRef);
-
-		try {
-			await deleteDoc(documentRef);
-		} catch (error) {
-			this.reportError(error);
 		}
 	}
 	

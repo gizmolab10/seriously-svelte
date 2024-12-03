@@ -3,9 +3,9 @@
 	import { g, k, ux, show, Rect, Size, Point, Thing, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
 	import { s_focus_ancestry, s_grabbed_ancestries, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
 	import { s_hierarchy, s_thing_color, s_thing_title } from '../../ts/state/Svelte_Stores';
+	import type { Dictionary } from '../../ts/common/Types';
 	import Identifiable from '../../ts/basis/Identifiable';
 	import Text_Editor from '../kit/Text_Editor.svelte';
-	import type { Dictionary } from '../common/Types';
 	import Button from '../mouse/Button.svelte';
 	import Color from './Color.svelte';
 	import Info from './Info.svelte';

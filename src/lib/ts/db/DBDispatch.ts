@@ -5,7 +5,7 @@ import { IDPersistent, persistLocal } from '../common/Global_Imports';
 import { DBType } from '../basis/PersistentIdentifiable';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
-import DBInterface from './DBInterface';
+import DBCommon from './DBCommon';
 import { get } from 'svelte/store';
 import { dbTest } from './DBTest';
 import { dbFile } from './DBFile';
@@ -14,7 +14,7 @@ import { dbFile } from './DBFile';
 // when switching to another db
 // s_hierarchy is set to its hierarchy
 
-export function db_forType(dbType: string): DBInterface {
+export function db_forType(dbType: string): DBCommon {
 	switch (dbType) {
 		case DBType.firebase: return dbFirebase;
 		case DBType.airtable: return dbAirtable;
@@ -24,7 +24,7 @@ export function db_forType(dbType: string): DBInterface {
 }
 
 export default class DBDispatch {
-	db: DBInterface;
+	db: DBCommon;
 	eraseDB = false;
 
 	queryStrings_apply() {
@@ -98,6 +98,9 @@ export default class DBDispatch {
 		s_hierarchy.set(h);
 		if (this.db.isPersistent) {
 			s_startup_state.set(Startup_State.fetch);
+		}
+		if (this.eraseDB) {
+			await this.db.remove_all();	// start fresh
 		}
 		await this.db.fetch_all();
 		await h.setup_hierarchy_after_fetch();

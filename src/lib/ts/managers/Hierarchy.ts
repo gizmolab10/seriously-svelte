@@ -7,7 +7,7 @@ import { DBType, DatumType } from '../../ts/basis/PersistentIdentifiable';
 import PersistentIdentifiable from '../basis/PersistentIdentifiable';
 import type { Dictionary } from '../common/Types';
 import Identifiable from '../basis/Identifiable';
-import DBInterface from '../db/DBInterface';
+import DBCommon from '../db/DBCommon';
 import { get } from 'svelte/store';
 
 type Relationships_ByHID = { [hid: number]: Array<Relationship> }
@@ -38,7 +38,7 @@ export class Hierarchy {
 	rootsAncestry!: Ancestry;
 	rootAncestry!: Ancestry;
 	isAssembled = false;
-	db: DBInterface;
+	db: DBCommon;
 	grabs: Grabs;
 	root!: Thing;
 
@@ -48,7 +48,7 @@ export class Hierarchy {
 
 	static readonly $_INIT_$: unique symbol;
 
-	constructor(db: DBInterface) {
+	constructor(db: DBCommon) {
 		this.grabs = new Grabs();
 		this.db = db;
 		signals.handle_rebuildGraph(0, (ancestry) => {
@@ -200,11 +200,9 @@ export class Hierarchy {
 	static readonly $_THINGS_$: unique symbol;
 
 	thing_build_fromDict(dict: Dictionary) {
-		const thing = this.thing_remember_runtimeCreateUnique(dict.baseID, dict.id, dict.title, dict.color, dict.type);
-		thing.lastModifyDate = dict.lastModifyDate;
+		const thing = this.thing_remember_runtimeCreateUnique(this.db.baseID, dict.id, dict.title, dict.color, dict.type);
 		thing.needsBulkFetch = dict.needsBulkFetch;
 		thing.bulkRootID = dict.bulkRootID;
-		console.log(thing.description);
 	}
 
 	things_forgetAll() {
@@ -315,13 +313,13 @@ export class Hierarchy {
 	}
 
 	thing_remember(thing: Thing) {
-		if (!this.thing_forHID(thing.idHashed)) {
+		if (!!thing && !this.thing_forHID(thing.idHashed)) {
 			this.thing_byHID[thing.idHashed] = thing;
 			let things = this.things_byType[thing.type] ?? [];
 			things.push(thing);
 			this.things_byType[thing.type] = things;
 			this.things.push(thing);
-			if (thing.type == ThingType.root && (thing.baseID == k.empty || thing.baseID == this.db.baseID)) {
+			if (thing.isRoot && (!thing.baseID || [k.empty, this.db.baseID].includes(this.db.baseID))) {
 				this.root = thing;
 			}
 		}
@@ -404,8 +402,7 @@ export class Hierarchy {
 	}
 
 	trait_build_fromDict(dict: Dictionary) {
-		const trait = this.trait_remember_runtimeCreateUnique(dict.baseID, dict.id, dict.ownerID, dict.type, dict.text);
-		trait.lastModifyDate = dict.lastModifyDate;
+		this.trait_remember_runtimeCreateUnique(this.db.baseID, dict.id, dict.ownerID, dict.type, dict.text);
 	}
 
 	trait_forget(trait: Trait) {
@@ -646,9 +643,7 @@ export class Hierarchy {
 	} 
 
 	relationship_build_fromDict(dict: Dictionary) {
-		const relationship = this.relationship_remember_runtimeCreateUnique(dict.baseID, dict.id, dict.idPredicate, dict.idParent, dict.idChild, dict.order);
-		relationship.lastModifyDate = dict.lastModifyDate;
-		console.log(relationship.description);
+		this.relationship_remember_runtimeCreateUnique(this.db.baseID, dict.id, dict.idPredicate, dict.idParent, dict.idChild, dict.order);
 	}
 
 	relationship_remember_runtimeCreateUnique(baseID: string, idRelationship: string, idPredicate: string, idParent: string, idChild: string,
@@ -1034,16 +1029,14 @@ export class Hierarchy {
 	static readonly $_PREDICATE_$: unique symbol;
 
 	idPredicate_for(id: string): string {
-		const hid = id.split(k.generic_separator)[0].hash();			// grab first relationship's hid
+		const hid = id.split(k.generic_separator)[0].hash();		// grab first relationship's hid
 		const relationship = this.relationship_forHID(hid);			// locate corresponding relationship
 		return relationship?.idPredicate ?? '';						// grab its predicate id
 	}
 
 	predicate_build_fromDict(dict: Dictionary) {
 		const predicate = this.predicate_remember_runtimeCreateUnique(dict.id, dict.kind, dict.isBidirectional, false);
-		predicate.lastModifyDate = dict.lastModifyDate;
 		predicate.stateIndex = dict.stateIndex;		
-		console.log(predicate.description);
 	}
 
 	predicate_remember(predicate: Predicate) {

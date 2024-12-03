@@ -2,7 +2,7 @@ import { DebugFlag, Hierarchy, Relationship, CreationOptions } from '../common/G
 import { g, k, u, debug, Thing, Trait, TraitType } from '../common/Global_Imports';
 import { DBType, DatumType } from '../basis/PersistentIdentifiable';
 import { s_hierarchy } from '../state/Svelte_Stores';
-import DBInterface from './DBInterface';
+import DBCommon from './DBCommon';
 import { get } from 'svelte/store';
 import Airtable from 'airtable';
 
@@ -16,7 +16,7 @@ import Airtable from 'airtable';
 //							//
 //////////////////////////////
 
-export default class DBAirtable extends DBInterface {
+export default class DBAirtable extends DBCommon {
 	personalAccessToken = 'patGTiWbebGZTw0fh.dd17a194aea98f9e4e918d333babde7bcd39903b4179b139ac8866a5f3cfe5b6';
 	baseCatalist = new Airtable({ apiKey: this.personalAccessToken }).base('apphGUCbYIEJLvRrR');
 	basePublic = new Airtable({ apiKey: this.personalAccessToken }).base('appq1IjzmiRdlZi3H');
@@ -66,9 +66,9 @@ export default class DBAirtable extends DBInterface {
 		await this.users_readAll();
 	}
 
-	async crud_onThing(crud: string, thing: Thing) {};
-	async crud_onTrait(crud: string, trait: Trait) {};
-	async crud_onRelationship(crud: string, relationship: Relationship) {};
+	async crudAction_onThing(crudAction: string, thing: Thing) {};
+	async crudAction_onTrait(crudAction: string, trait: Trait) {};
+	async crudAction_onRelationship(crudAction: string, relationship: Relationship) {};
 
 	//////////////////////////////
 	//			THINGS			//

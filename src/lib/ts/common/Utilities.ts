@@ -271,6 +271,33 @@ class Utilities {
 		return size;
 	}
 
+	static readonly $_JSON_$: unique symbol;
+
+	stringify_object(object: Object) { return JSON.stringify(object, this.removeExtras, 2); }
+
+	static extras = [
+		'dbType',
+		'baseID',
+		'idHashed',
+		'isEditing',
+		'isGrabbed',
+		'oneAncestry',
+		'page_states',
+		'selectionRange',
+		'lastModifyDate',
+		'awaitingCreation',
+		'already_persisted',
+		'hasPersistentStorage',
+		'needs_persisting_again',
+	];
+	
+	removeExtras(key: string, value: any) {
+		if (Utilities.extras.includes(key)) {
+			return undefined;
+		}
+		return value;
+	}
+
 }
 
 export const u = new Utilities();
