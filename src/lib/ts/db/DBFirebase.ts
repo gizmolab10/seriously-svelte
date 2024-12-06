@@ -23,8 +23,6 @@ export default class DBFirebase extends DBCommon {
 		projectId: "seriously-4536d"
 	};
 
-	hasData = false;
-	loadTime = null;
 	isRemote = true;
 	baseID = 'Public';
 	addedThing!: Thing;
@@ -32,7 +30,6 @@ export default class DBFirebase extends DBCommon {
 	isPersistent = true;
 	bulksName = 'Bulks';
 	bulks!: Array<Bulk>;
-	hierarchy!: Hierarchy;
 	deferSnapshots = false;
 	dbType = DBType.firebase;
 	app = initializeApp(this.firebaseConfig);

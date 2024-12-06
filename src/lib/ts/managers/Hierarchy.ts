@@ -594,9 +594,6 @@ export class Hierarchy {
 			if (relationship.baseID != this.db.baseID) {
 				debug.log_error(`RELATIONSHIP off base: ${relationship.baseID} ${relationship.parent?.description} => ${relationship.child?.description}`);
 			}
-			if (relationship.already_persisted && relationship.id.includes('NEW')) {
-				console.log(`was saved ${relationship.id}`)
-			}
 			this.relationships.push(relationship);
 			this.relationship_byHID[relationship.idHashed] = relationship;
 			this.relationship_rememberByKnown(this.relationships_byChildHID, relationship, relationship.idChild);
@@ -854,9 +851,6 @@ export class Hierarchy {
 		if (!!parent && !child.isBulkAlias) {
 			const changingBulk = parent.isBulkAlias || child.baseID != this.db.baseID;
 			const baseID = changingBulk ? child.baseID : parent.baseID;
-			if (changingBulk) {
-				console.log('changingBulk');
-			}
 			if (!child.already_persisted) {
 				await this.db.thing_remember_persistentCreate(child);					// for everything below, need to await child.id fetched from dbDispatch
 			}
@@ -1088,7 +1082,6 @@ export class Hierarchy {
 	static readonly $_FILES_$: unique symbol;
 
 	save_toFile() {
-		console.log('save_toFile');
 		// TODO: use this.data_forAncestry from ...
 		// grab	 (if not root)
 		// focus (if neither root nor null)

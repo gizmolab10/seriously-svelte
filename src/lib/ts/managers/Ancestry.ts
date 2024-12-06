@@ -22,7 +22,6 @@ export default class Ancestry extends Identifiable {
 	constructor(dbType: string, ancestryString: string = k.empty, idPredicate: string = Predicate.idContains, isParental: boolean = true) {
 		super(ancestryString);
 		this.dbType = dbType;
-		console.log(ancestryString);
 		this.isParental = isParental;
 		this.idPredicate = idPredicate;
 	}

@@ -31,7 +31,6 @@ export default class Files {
 			} else {
 				try {
 					json_object = JSON.parse(result);
-					console.log(json_object);
 					onSuccess(json_object)
 					return { success: json_object };
 				} catch (error) {

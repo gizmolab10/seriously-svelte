@@ -5,15 +5,11 @@ import { s_hierarchy } from '../state/Svelte_Stores';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
 import DBCommon from './DBCommon';
-import { CRUD } from './DBCommon';
 
 export default class DBLocal extends DBCommon {
 	baseID = k.baseID_file;
-	hierarchy!: Hierarchy;
 	dbType = DBType.local;
 	isPersistent = true;
-	hasData = false;
-	loadTime = null;
 
 	setHasData(flag: boolean) { this.hasData = flag; }
 

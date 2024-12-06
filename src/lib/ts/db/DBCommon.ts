@@ -1,26 +1,19 @@
 import { k, Thing, Trait, Hierarchy, Relationship } from '../common/Global_Imports';
 import PersistentIdentifiable from '../basis/PersistentIdentifiable';
 
-export enum CRUD {
-	create = 'create',
-	update = 'update',
-	delete = 'delete',
-}
-
 export default class DBCommon {
-	hasData = false;
+	hierarchy: Hierarchy | null = null;
+	loadTime: string | null = null;
+	isPersistent = false;
+	isRemote = false;
 	baseID = k.empty;
 	dbType = k.empty;
-	isRemote = false;
-	isPersistent = false;
-	loadTime: string | null = null;
-	hierarchy: Hierarchy | null = null;
+	hasData = false;
 
 	queryStrings_apply() {}
 	setHasData(flag: boolean): void {}
 	async fetch_all(): Promise<void> {}
 	async remove_all(): Promise<void> {}
-	async crudAction_onObject(crudAction: string, object: Object) {};
 	async fetch_hierarchy_from(baseID: string) {}	// support for bulks in firebase
 
 	async thing_persistentUpdate(thing: Thing): Promise<void> {}

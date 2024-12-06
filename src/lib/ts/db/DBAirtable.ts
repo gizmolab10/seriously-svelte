@@ -28,12 +28,9 @@ export default class DBAirtable extends DBCommon {
 	access_table = this.base(DatumType.access);
 	users_table = this.base(DatumType.users);
 	dbType = DBType.airtable;
-	hierarchy!: Hierarchy;
 	isPersistent = true;
 	baseID = k.empty;
 	isRemote = true;
-	hasData = false;
-	loadTime = null;
 
 	relationships_errorMessage = 'Error in Relationships:';
 	setHasData(flag: boolean) { this.hasData = flag; }

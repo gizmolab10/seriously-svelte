@@ -6,11 +6,7 @@ import { get } from 'svelte/store';
 
 export default class DBTest extends DBCommon {
 	baseID = k.baseID_test;
-	hierarchy!: Hierarchy;
-	isPersistent = false;
 	dbType = DBType.test;
-	hasData = false;
-	loadTime = null;
 
 	setHasData(flag: boolean) { this.hasData = flag; }
 
