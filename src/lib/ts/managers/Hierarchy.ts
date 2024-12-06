@@ -1,10 +1,9 @@
-import { g, k, u, User, Thing, Trait, Grabs, debug, files, Access, IDTool } from '../common/Global_Imports';
-import { signals, ThingType, TraitType, Predicate, Ancestry, Mouse_State } from '../common/Global_Imports';
-import { Relationship, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
+import { g, k, u, User, Thing, Trait, Grabs, debug, files, Access, IDTool, signals } from '../common/Global_Imports';
+import { ThingType, TraitType, Predicate, Relationship, Ancestry, Mouse_State } from '../common/Global_Imports';
+import { s_expanded_ancestries, s_grabbed_ancestries, s_ancestry_showing_tools } from '../state/Svelte_Stores';
+import { persistLocal, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
 import { s_edit_state, s_focus_ancestry, s_alteration_mode } from '../state/Svelte_Stores';
-import { s_grabbed_ancestries, s_ancestry_showing_tools } from '../state/Svelte_Stores';
-import { DBType, DatumType } from '../../ts/basis/PersistentIdentifiable';
-import PersistentIdentifiable from '../basis/PersistentIdentifiable';
+import { DatumType } from '../../ts/basis/PersistentIdentifiable';
 import type { Dictionary } from '../common/Types';
 import Identifiable from '../basis/Identifiable';
 import DBCommon from '../db/DBCommon';
@@ -44,7 +43,6 @@ export class Hierarchy {
 
 	get hasNothing(): boolean { return !this.root; }
 	get idRoot(): string | null { return this.root?.id ?? null; };
-	ancestries_rebuildAll() { this.root?.oneAncestries_rebuildForSubtree(); }
 
 	static readonly $_INIT_$: unique symbol;
 
@@ -52,7 +50,7 @@ export class Hierarchy {
 		this.grabs = new Grabs();
 		this.db = db;
 		signals.handle_rebuildGraph(0, (ancestry) => {
-			ancestry.thing?.oneAncestries_rebuildForSubtree();
+			ancestry?.thing?.oneAncestries_rebuildForSubtree();
 		});
 	}
 
@@ -61,7 +59,7 @@ export class Hierarchy {
 		if (!!ancestry) {
 			this.rootAncestry = ancestry;
 			const root = ancestry.thing;
-			if (!this.root && !!root) {
+			if (!!root) {
 				this.root = root;
 			}
 		}
@@ -156,10 +154,8 @@ export class Hierarchy {
 				}
 				const duration = ((new Date().getTime()) - time).toFixed(1);
 				debug.log_key(`H  (${duration}) ${key}`);
-				setTimeout(() => {
-					(async () => {
-						await this.db.deferred_persistAll();
-					})();
+				setTimeout( async () => {
+					await this.db.deferred_persistAll();
 				}, 1);
 			}
 		}
@@ -168,6 +164,13 @@ export class Hierarchy {
 	clear_editingTools() {
 		s_alteration_mode.set(null);
 		s_ancestry_showing_tools.set(null);
+	}
+
+	static readonly $_FOCUS_$: unique symbol;
+
+	get focus(): Thing | null {
+		const ancestry = get(s_focus_ancestry);
+		return !ancestry ? this.root : ancestry.thing;
 	}
 
 	static readonly $_GRABS_$: unique symbol;
@@ -214,8 +217,8 @@ export class Hierarchy {
 	things_forAncestries(ancestries: Array<Ancestry>): Array<Thing> {
 		const things = Array<Thing>();
 		for (const ancestry of ancestries) {
-			const thing = this.thing_forAncestry(ancestry);
-			if (!!!!thing) {
+			const thing = ancestry?.thing;
+			if (!!thing) {
 				things.push(thing);
 			}
 		}
@@ -242,7 +245,6 @@ export class Hierarchy {
 
 	static readonly $_THING_$: unique symbol;
 
-	thing_forAncestry(ancestry: Ancestry | null): Thing | null { return ancestry?.thing ?? null; }
 	thing_forHID(hid: number | null): Thing | null { return !hid ? null : this.thing_byHID[hid]; }
 
 	thing_forget(thing: Thing) {
@@ -745,6 +747,14 @@ export class Hierarchy {
 		}
 	}
 
+	ancestry_remember(ancestry: Ancestry) {
+		const idHashed = ancestry.idHashed;
+		let dict = this.ancestry_byKind_andHash[ancestry.idPredicate] ?? {};
+		this.ancestry_byHID[idHashed] = ancestry;
+		dict[idHashed] = ancestry;
+		this.ancestry_byKind_andHash[ancestry.idPredicate] = dict;
+	}
+
 	async ancestry_edit_persistentCreateChildOf(parentAncestry: Ancestry | null) {
 		const thing = parentAncestry?.thing;
 		if (!!thing && !!parentAncestry) {
@@ -784,10 +794,8 @@ export class Hierarchy {
 		let dict = this.ancestry_byKind_andHash[idPredicate] ?? {};
 		let ancestry = dict[idHashed];
 		if (!ancestry) {
-			ancestry = new Ancestry(id, idPredicate);
-			this.ancestry_byHID[idHashed] = ancestry;
-			dict[idHashed] = ancestry;
-			this.ancestry_byKind_andHash[idPredicate] = dict;
+			ancestry = new Ancestry(this.db.dbType, id, idPredicate);
+			this.ancestry_remember(ancestry);
 		}
 		return ancestry;
 	}
@@ -834,7 +842,7 @@ export class Hierarchy {
 			// 		ancestry.assureIsVisible_inTree();
 			// 		break;
 			// 	}	
-			// } while (!ancestry.matchesAncestry(toolsAncestry));
+			// } while (!ancestry.ancestry_hasEqualID(toolsAncestry));
 			ancestry.grabOnly();
 			signals.signal_relayoutWidgets_fromFocus();
 			s_ancestry_showing_tools.set(ancestry);
@@ -883,7 +891,7 @@ export class Hierarchy {
 			let graph_needsRebuild = false;
 			const siblings = parentAncestry.children;
 			const length = siblings.length;
-			const thing = this.thing_forAncestry(ancestry);
+			const thing = ancestry?.thing;
 			if (!siblings || length == 0) {		// friendly for first-time users
 				this.ancestry_rebuild_runtimeBrowseRight(ancestry, true, EXTREME, up);
 			} else if (!!thing) {
@@ -989,7 +997,7 @@ export class Hierarchy {
 					if (ancestry.isExpanded) {
 						graph_needsRebuild = ancestry.collapse();
 						newGrabAncestry = this.grabs.areInvisible ? ancestry : null;
-					} else if (newGrabAncestry.isExpanded || (!!rootAncestry && !rootAncestry.matchesAncestry(newGrabAncestry))) {
+					} else if (newGrabAncestry.isExpanded || (!!rootAncestry && !rootAncestry.ancestry_hasEqualID(newGrabAncestry))) {
 						graph_needsRebuild = newGrabAncestry.collapse();
 					}
 				}
@@ -999,7 +1007,7 @@ export class Hierarchy {
 		if (!!newGrabAncestry) {
 			newGrabAncestry.grabOnly();
 			if (!RIGHT && !!newFocusAncestry) {
-				const newFocusIsGrabbed = newFocusAncestry && newFocusAncestry.matchesAncestry(newGrabAncestry);
+				const newFocusIsGrabbed = newFocusAncestry && newFocusAncestry.ancestry_hasEqualID(newGrabAncestry);
 				const canBecomeFocus = (!SHIFT || newFocusIsGrabbed) && newGrabIsNotFocus;
 				const shouldBecomeFocus = newFocusAncestry.isRoot || !newFocusAncestry.isVisible;
 				const becomeFocus = canBecomeFocus && shouldBecomeFocus;
@@ -1091,28 +1099,29 @@ export class Hierarchy {
 	}
 
 	async fetch_fromFile(file: File) {
-		await files.extract_json_object_from(file, (result) => {
-			this.extract_hierarchy_from(result as Dictionary);
+		await files.extract_json_object_fromFile(file, async (result) => {
+			await this.extract_hierarchy_from(result as Dictionary);
 		});
 	}
 
 	static readonly $_BUILD_$: unique symbol;
 
-	extract_hierarchy_from(dict: Dictionary) {
+	async extract_hierarchy_from(dict: Dictionary) {
 		switch (dict['type']) {
 			case DatumType.hierarchy: this.rebuild_hierarchy_with(dict); break;
 			default: break;
 		}
+		signals.signal_rebuildGraph_fromFocus();
+		await this.db.deferred_persistAll();
 	}
 
-	async rebuild_hierarchy_with(dict: Dictionary | null) {
+	rebuild_hierarchy_with(dict: Dictionary | null) {
 		if (!!dict) {
 			this.hierarchy_forgetAll();
 			for (const type of this.all_dataTypes) {
 				this.extractObjects_fromArray_ofType(dict[type], type);
 			}
 			this.setup_hierarchy_after_fetch();
-			await this.db.deferred_persistAll();
 		}
 	}
 
@@ -1138,11 +1147,16 @@ export class Hierarchy {
 	async setup_hierarchy_after_fetch() {
 		await this.relationships_persistentCreateMissing(this.db.baseID);
 		await this.relationships_removeHavingNullReferences();
-		this.rootAncestry_setup();
-		this.ancestries_rebuildAll();
+		this.conclude_fetch();
 	}
 
 	async conclude_fetch() {
+		s_edit_state.set(null);
+		s_ancestry_showing_tools.set(null);
+		persistLocal.restore_focus();
+		persistLocal.restore_grabbed_andExpanded(true);
+		// persistLocal.restore_page_states();
+		this.db.setHasData(true);
 		await this.db.deferred_persistAll();
 		this.isAssembled = true;
 	}

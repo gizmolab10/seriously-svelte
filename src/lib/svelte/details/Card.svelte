@@ -86,13 +86,13 @@
 		}
 	}
 
-	function handle_textChange (label: string, text: string | null) {
+	function handle_textChange(label: string, text: string | null) {
 		if (!!thing && (!!text || text == k.empty)) {
 			switch (label) {
 				case 'quest':		thing.setTraitText_forType(text, TraitType.quest);		 break;
 				case 'consequence':	thing.setTraitText_forType(text, TraitType.consequence); break;
 			}
-		} else if (!text) {
+		} else if (!text) {		// do after test for k.empty, which also is interpreted as falsey
 			(async () => {
 				await $s_hierarchy.db.deferred_persistAll();
 			})();

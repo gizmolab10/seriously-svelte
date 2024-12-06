@@ -18,10 +18,10 @@ export default class Files {
 	static readonly READ: unique symbol;
 
 	async fetch_json_object_fromFile(fileName: string, onSuccess: Handle_Result, onFailure: Handle_Result)  {
-		return await files.extract_json_object_from(new File([], fileName, {}), onSuccess, onFailure);
+		return await files.extract_json_object_fromFile(new File([], fileName, {}), onSuccess, onFailure);
 	}
 		
-	async extract_json_object_from(file: File, onSuccess: Handle_Result, onFailure: Handle_Result = (() => {})) {
+	async extract_json_object_fromFile(file: File, onSuccess: Handle_Result, onFailure: Handle_Result = (() => {})) {
 		const reader = new FileReader();
 		let json_object = new Object();
 		reader.onload = function (e) {

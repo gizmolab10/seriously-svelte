@@ -29,8 +29,9 @@ export default class DBAirtable extends DBCommon {
 	users_table = this.base(DatumType.users);
 	dbType = DBType.airtable;
 	hierarchy!: Hierarchy;
-	baseID = k.empty;
 	isPersistent = true;
+	baseID = k.empty;
+	isRemote = true;
 	hasData = false;
 	loadTime = null;
 
@@ -65,10 +66,6 @@ export default class DBAirtable extends DBCommon {
 		await this.access_readAll();
 		await this.users_readAll();
 	}
-
-	async crudAction_onThing(crudAction: string, thing: Thing) {};
-	async crudAction_onTrait(crudAction: string, trait: Trait) {};
-	async crudAction_onRelationship(crudAction: string, relationship: Relationship) {};
 
 	//////////////////////////////
 	//			THINGS			//

@@ -81,21 +81,6 @@ export default class DBTest extends DBCommon {
 			}
 		}
 	}
-
-	queryStrings_apply() {}
-	async thing_persistentUpdate(thing: Thing) {}
-	async thing_persistentDelete(thing: Thing) {}
-	async trait_persistentUpdate(trait: Trait) {}
-	async trait_persistentDelete(trait: Trait) {}
-	async fetch_hierarchy_from(baseID: string) {}
-	async trait_remember_persistentCreate(trait: Trait) {}
-	async thing_remember_persistentCreate(thing: Thing) {}
-	async relationship_persistentUpdate(relationship: Relationship) {}
-	async relationship_persistentDelete(relationship: Relationship) {}
-	async relationship_remember_persistentCreate(relationship: Relationship | null) {};
-	async crudAction_onThing(crudAction: string, thing: Thing) {};
-	async crudAction_onTrait(crudAction: string, trait: Trait) {};
-	async crudAction_onRelationship(crudAction: string, relationship: Relationship) {};
 }
 
 export const dbTest = new DBTest();

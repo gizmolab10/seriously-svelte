@@ -1,14 +1,14 @@
-import { s_db_type, s_hierarchy, s_edit_state, s_db_loadTime } from '../state/Svelte_Stores';
-import { s_startup_state, s_ancestry_showing_tools } from '../state/Svelte_Stores';
 import { g, k, signals, Hierarchy, Startup_State } from '../common/Global_Imports';
+import { s_db_type, s_hierarchy, s_db_loadTime } from '../state/Svelte_Stores';
 import { IDPersistent, persistLocal } from '../common/Global_Imports';
+import { s_startup_state } from '../state/Svelte_Stores';
 import { DBType } from '../basis/PersistentIdentifiable';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
-import DBCommon from './DBCommon';
+import { dbLocal } from './DBLocal';
 import { get } from 'svelte/store';
 import { dbTest } from './DBTest';
-import { dbFile } from './DBLocal';
+import DBCommon from './DBCommon';
 
 // each db has its own hierarchy
 // when switching to another db
@@ -19,13 +19,13 @@ export function db_forType(dbType: string): DBCommon {
 		case DBType.firebase: return dbFirebase;
 		case DBType.airtable: return dbAirtable;
 		case DBType.test:	  return dbTest;
-		default:			  return dbFile;
+		default:			  return dbLocal;
 	}
 }
 
 export default class DBDispatch {
-	db: DBCommon;
 	eraseDB = false;
+	db: DBCommon;
 
 	queryStrings_apply() {
 		const queryStrings = g.queryStrings;
@@ -43,10 +43,8 @@ export default class DBDispatch {
 		s_db_type.subscribe((type: string) => {
 			if (!!type && (!done || (type && this.db.dbType != type))) {
 				done = true;
-				setTimeout(() => {
-					(async () => {
-						await this.hierarchy_fetch_andBuild_forDBType(type);
-					})();
+				setTimeout( async () => {
+					await this.hierarchy_fetch_andBuild_forDBType(type);
 				}, 10);
 			}
 		});
@@ -57,7 +55,7 @@ export default class DBDispatch {
 
 	restore_db() {
 		let type = persistLocal.read_key(IDPersistent.db) ?? 'firebase';
-		if (type == 'local') { type = 'test'; }
+		if (type == 'file') { type = 'local'; }
 		s_db_type.set(type);
 	}
 
@@ -81,13 +79,13 @@ export default class DBDispatch {
 				s_hierarchy.set(h);
 			}
 		} else {
+			s_startup_state.set(Startup_State.fetch);
 			await this.hierarchy_fetch_andBuild();
 		}
-		setTimeout(() => {
-			(async () => {
-				await this.conclude_fetch();
-				signals.signal_rebuildGraph_fromFocus();
-			})();
+		setTimeout( async () => {
+			s_startup_state.set(Startup_State.ready);
+			await get(s_hierarchy).conclude_fetch();
+			signals.signal_rebuildGraph_fromFocus();
 		}, 1);
 	}
 
@@ -96,28 +94,15 @@ export default class DBDispatch {
 		s_db_loadTime.set(null);
 		const h = this.db.hierarchy = new Hierarchy(this.db);
 		s_hierarchy.set(h);
-		if (this.db.isPersistent) {
-			s_startup_state.set(Startup_State.fetch);
-		}
 		if (this.eraseDB) {
 			await this.db.remove_all();	// start fresh
 		}
+		h.hierarchy_forgetAll();
 		await this.db.fetch_all();
 		await h.setup_hierarchy_after_fetch();
-		if (this.db.isPersistent) {
+		if (this.db.isRemote) {
 			this.set_loadTime_from(startTime);
 		}
-	}
-
-	async conclude_fetch() {
-		s_edit_state.set(null);
-		s_startup_state.set(Startup_State.ready);
-		s_ancestry_showing_tools.set(null);
-		persistLocal.restore_grabbed_andExpanded(true);
-		// persistLocal.restore_page_states();
-		persistLocal.restore_focus();
-		this.db.setHasData(true);
-		await get(s_hierarchy).conclude_fetch();
 	}
 
 	set_loadTime_from(startTime: number) {

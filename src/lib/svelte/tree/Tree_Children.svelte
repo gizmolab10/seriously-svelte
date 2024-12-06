@@ -23,7 +23,7 @@
 			const now = new Date().getTime();
 			if (ancestry.isExpanded &&
 				((now - priorTime) > 100) &&
-				(!signal_ancestry || signal_ancestry.matchesAncestry(ancestry))) {
+				ancestry.ancestry_hasEqualID(signal_ancestry)) {
 				priorTime = now;
 				debug.log_origins(origin.x + ' before timeout');
 				layoutAll_children();
@@ -40,7 +40,7 @@
 	
 	function layoutAll_children() {
 		widgetMapRects = [];
-		if (ancestry.isExpanded) {
+		if (ancestry.isExpanded || ancestry.isRoot) {
 			debug.log_origins(origin.x + ' children layout');
 			const height = ancestry.visibleProgeny_halfHeight;
 			const childAncestries = ancestry.childAncestries;

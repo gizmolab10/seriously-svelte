@@ -72,8 +72,8 @@ class Global_State {
 				case 'data':
 					dbDispatch.eraseDB = true;
 					break;
-				case 'settings': 
-					localStorage.clear();
+				case 'settings':
+					persistLocal.reset();
 					s_expanded_ancestries.set([]);
 					s_focus_ancestry.set(this.hierarchy.rootAncestry);
 					s_grabbed_ancestries.set([this.hierarchy.rootAncestry]);

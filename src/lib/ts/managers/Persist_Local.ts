@@ -46,6 +46,18 @@ class Persist_Local {
 	delete_paging_state_for (key: string) { this.write_keyPair(this.dbKey_for(IDPersistent.page_states), key, null); }
 	keyPair_for				(key: string, sub_key: string): string { return `${key}${k.generic_separator}${sub_key}`; }
 
+	reset() {
+		const ids = Object.keys(IDPersistent)
+			.filter(key => isNaN(Number(key))) // Exclude numeric keys
+			.map(key => IDPersistent[key as keyof typeof IDPersistent]);
+		for (const id of ids) {
+			if (id != 'local') {
+				this.write_key(id, null);
+			}
+		}
+
+	}
+
 	parse(key: string | null): any | null {
 		if (!key || key == 'undefined') {
 			return null;
@@ -85,10 +97,11 @@ class Persist_Local {
 	}
 
 	ancestry_forID(aid: string): Ancestry {
+		const h = get(s_hierarchy);
 		const rids = aid.split(k.generic_separator);	// ancestor id is multiple relationship ids separated by generic_separator
 		const rid = rids.slice(-1)[0];					// grab last relationship id
-		const predicateID = get(s_hierarchy).idPredicate_for(rid);		// grab its predicate id
-		return get(s_hierarchy).ancestry_remember_createUnique(aid, predicateID);
+		const predicateID = h.idPredicate_for(rid);		// grab its predicate id
+		return h.ancestry_remember_createUnique(aid, predicateID);
 	}
 
 	ancestries_forKey(key: string): Array<Ancestry> {	// 2 keys supported so far {grabbed, expanded}
@@ -182,24 +195,25 @@ class Persist_Local {
 	}
 
 	restore_focus() {
-		get(s_hierarchy).rootAncestry_setup();
-		let ancestryToFocus = get(s_hierarchy).rootAncestry;
+		const h = get(s_hierarchy);
+		h.rootAncestry_setup();
+		let ancestryToFocus = h.rootAncestry;
 		if (!this.ignoreAncestries) {
 			const focusid = this.readDB_key(IDPersistent.focus);
 			if (!!focusid || focusid == k.empty) {
-				const focusAncestry = get(s_hierarchy).ancestry_remember_createUnique(focusid);
+				const focusAncestry = h.ancestry_remember_createUnique(focusid);
 				if (!!focusAncestry) {
 					ancestryToFocus = focusAncestry;
 				}
 			}
 		}
-		if (!get(s_hierarchy).thing_forAncestry(ancestryToFocus)) {
-			const lastGrabbedAncestry = get(s_hierarchy).grabs.ancestry_lastGrabbed?.parentAncestry;
+		if (!ancestryToFocus.thing) {
+			const lastGrabbedAncestry = h.grabs.ancestry_lastGrabbed?.parentAncestry;
 			if (lastGrabbedAncestry) {
 				ancestryToFocus = lastGrabbedAncestry;
 			}
 		}
-		ancestryToFocus.becomeFocus();
+		ancestryToFocus.becomeFocus(true);
 		s_focus_ancestry.subscribe((ancestry: Ancestry) => {
 			this.writeDB_key(IDPersistent.focus, !ancestry ? null : ancestry.id);
 		});

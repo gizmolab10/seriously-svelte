@@ -169,7 +169,7 @@
 		}
 		const hasGrabbed = $s_grabbed_ancestries.length > 0;
 		const titleState = $s_edit_state; // needs reactivity to s_edit_state
-		const titleState_isEditing = !!ancestry && !!titleState && titleState.editing && ancestry.matchesAncestry(titleState.editing);
+		const titleState_isEditing = !!ancestry && !!titleState && titleState.editing && ancestry.ancestry_hasEqualID(titleState.editing);
 		const isBulkAlias = !!thing && thing.isBulkAlias;
 		if (g.allow_TitleEditing && !isBulkAlias) {
 			if (!!ancestry && (ancestry.isStoppingEdit ?? false)) {

@@ -23,12 +23,13 @@ export default class DBFirebase extends DBCommon {
 		projectId: "seriously-4536d"
 	};
 
-	loadTime = null;
 	hasData = false;
-	isPersistent = true;
+	loadTime = null;
+	isRemote = true;
 	baseID = 'Public';
 	addedThing!: Thing;
 	addedTrait!: Trait;
+	isPersistent = true;
 	bulksName = 'Bulks';
 	bulks!: Array<Bulk>;
 	hierarchy!: Hierarchy;
@@ -48,10 +49,6 @@ export default class DBFirebase extends DBCommon {
 		persistLocal.write_key(IDPersistent.base_id, id);
 		this.baseID = id;
 	}
-
-	async crudAction_onThing(crudAction: string, thing: Thing) {};
-	async crudAction_onTrait(crudAction: string, trait: Trait) {};
-	async crudAction_onRelationship(crudAction: string, relationship: Relationship) {};
 
 	async remove_all() {
 		const documentRef = doc(this.firestore, this.bulksName, this.baseID);
@@ -591,7 +588,7 @@ export default class DBFirebase extends DBCommon {
 	}
 
 	async recordLoginIP() {
-		await this.getUserIPAddress().then((ipAddress) => {
+		await this.getUserIPAddress().then( async (ipAddress) => {
 			if (!!ipAddress && ipAddress != '69.181.235.85') {
 				const queryStrings = g.queryStrings.toString() ?? 'empty';
 				const logRef = collection(this.firestore, 'access_logs');
@@ -603,9 +600,7 @@ export default class DBFirebase extends DBCommon {
 				}
 				const jsItem = { ...item };
 				try {
-					(async () => {
-						await addDoc(logRef, jsItem);
-					})();
+					await addDoc(logRef, jsItem);
 				} catch (error) {
 					this.reportError(error);
 				}

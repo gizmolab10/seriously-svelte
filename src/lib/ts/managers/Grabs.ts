@@ -4,7 +4,7 @@ import { get } from 'svelte/store';
 
 export default class Grabs {
 	
-	get thing_lastGrabbed(): Thing | null { return get(s_hierarchy).thing_forAncestry(this.ancestry_lastGrabbed); }
+	get thing_lastGrabbed(): Thing | null { return this.ancestry_lastGrabbed?.thing || null; }
 
 	get areInvisible(): boolean {
 		const ancestries = get(s_grabbed_ancestries);

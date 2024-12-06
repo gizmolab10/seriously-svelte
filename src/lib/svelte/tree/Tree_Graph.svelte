@@ -41,12 +41,13 @@
 			top = graphRect.origin.y;
 			updateOrigins();
 		}
-		if (!focus || focus.id != $s_focus_ancestry) {
-			focus = !$s_focus_ancestry ? $s_hierarchy.root : $s_hierarchy.thing_forAncestry($s_focus_ancestry);
-			offsetX_ofFirstReveal = 3 + focus?.titleWidth / 2;
-			updateOrigins();
-			rebuilds += 1;
-		}
+	}
+	
+	$: {
+		const focus = !!$s_focus_ancestry ? $s_focus_ancestry.thing : $s_hierarchy.root;
+		offsetX_ofFirstReveal = 3 + focus?.titleWidth / 2;
+		updateOrigins();
+		rebuilds += 1;
 	}
 
 	function rectOfChildren(): Rect {
@@ -77,9 +78,9 @@
 	{#key rebuilds}
 		<div class='tree'
 			style='transform:translate({$s_user_graph_offset.x}px, {$s_user_graph_offset.y}px);'>
-			<Widget name={focusState.name} ancestry={focusState.ancestry} origin={origin_ofFirstReveal.offsetByXY(-21.5 - offsetX_ofFirstReveal, -5)}/>
+			<Widget name={focusState.name} ancestry={$s_focus_ancestry} origin={origin_ofFirstReveal.offsetByXY(-21.5 - offsetX_ofFirstReveal, -5)}/>
 			{#if $s_focus_ancestry.isExpanded}
-				<Tree_Children ancestry={focusState.ancestry} origin={origin_ofChildren}/>
+				<Tree_Children ancestry={$s_focus_ancestry} origin={origin_ofChildren}/>
 			{/if}
 		</div>
 	{/key}
