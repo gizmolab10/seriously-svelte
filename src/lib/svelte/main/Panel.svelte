@@ -31,7 +31,7 @@
 		if (event.type == 'keydown') {
 			const key = event.key;
 			if (key == undefined) {
-				alert('no key for ' + event.type);
+				alert('No key for ' + event.type);
 			} else if (!$s_edit_state && !g.isEditing_text) {	// let editor component consume the events
 				switch (key) {
 					case 'c': w.user_graph_offset_setTo(Point.zero); break;

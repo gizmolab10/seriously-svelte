@@ -1,30 +1,33 @@
-import { k, Thing, Trait, Hierarchy, Relationship } from '../common/Global_Imports';
+import { k, Thing, Trait, Hierarchy, IDPersistent, Relationship } from '../common/Global_Imports';
 import PersistentIdentifiable from '../basis/PersistentIdentifiable';
 
 export default class DBCommon {
 	hierarchy: Hierarchy | null = null;
 	loadTime: string | null = null;
+	idPersistence!: IDPersistent;
 	isPersistent = false;
 	isRemote = false;
 	baseID = k.empty;
 	dbType = k.empty;
 	hasData = false;
 
+	async fetch_all() {}
+	async remove_all() {}
 	queryStrings_apply() {}
 	setHasData(flag: boolean): void {}
-	async fetch_all(): Promise<void> {}
-	async remove_all(): Promise<void> {}
 	async fetch_hierarchy_from(baseID: string) {}	// support for bulks in firebase
 
-	async thing_persistentUpdate(thing: Thing): Promise<void> {}
-	async thing_persistentDelete(thing: Thing): Promise<void> {}
-	async trait_persistentUpdate(trait: Trait): Promise<void> {}
-	async trait_persistentDelete(trait: Trait): Promise<void> {}
-	async trait_remember_persistentCreate(trait: Trait): Promise<void> {}
-	async thing_remember_persistentCreate(thing: Thing): Promise<void> {}
-	async relationship_persistentUpdate(relationship: Relationship): Promise<void> {}
-	async relationship_persistentDelete(relationship: Relationship): Promise<void> {}
-	async relationship_remember_persistentCreate(relationship: Relationship | null): Promise<void> {}
+	async thing_persistentUpdate(thing: Thing) {}
+	async thing_persistentDelete(thing: Thing) {}
+	async thing_remember_persistentCreate(thing: Thing) {}
+
+	async trait_persistentUpdate(trait: Trait) {}
+	async trait_persistentDelete(trait: Trait) {}
+	async trait_remember_persistentCreate(trait: Trait) {}
+
+	async relationship_persistentUpdate(relationship: Relationship) {}
+	async relationship_persistentDelete(relationship: Relationship) {}
+	async relationship_remember_persistentCreate(relationship: Relationship) {}
 
 	async deferred_persistAll() {	// DBLocal overrides this
 		const h = this.hierarchy;

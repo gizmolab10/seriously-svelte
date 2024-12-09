@@ -18,6 +18,7 @@ class Utilities {
 	location_ofMouseEvent(event: MouseEvent) { return new Point(event.clientX, event.clientY); }
 	opacitize(color: string, amount: number): string { return transparentize(color, 1 - amount); }
 	getWidthOf(s: string): number { return this.getWidth_ofString_withSize(s, `${k.font_size}px`); }
+	subtract_arrayFrom(a: Array<any>, b: Array<any>): Array<any> { return b.filter(c => a.filter(d => c != d)); }
 	strip_invalid(array: Array<any>): Array<any> { return this.strip_identifiableDuplicates(this.strip_falsies(array)); }
 	sort_byOrder(array: Array<Ancestry>) { return array.sort( (a: Ancestry, b: Ancestry) => { return a.order - b.order; }); }
 	uniquely_concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return this.strip_invalid(this.concatenateArrays(a, b)); }

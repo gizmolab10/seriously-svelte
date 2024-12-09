@@ -1,8 +1,8 @@
 import { g, k, u, User, Thing, Trait, Grabs, debug, files, Access, IDTool, signals } from '../common/Global_Imports';
 import { ThingType, TraitType, Predicate, Relationship, Ancestry, Mouse_State } from '../common/Global_Imports';
-import { s_expanded_ancestries, s_grabbed_ancestries, s_ancestry_showing_tools } from '../state/Svelte_Stores';
 import { persistLocal, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
 import { s_edit_state, s_focus_ancestry, s_alteration_mode } from '../state/Svelte_Stores';
+import { s_grabbed_ancestries, s_ancestry_showing_tools } from '../state/Svelte_Stores';
 import { DatumType } from '../../ts/basis/PersistentIdentifiable';
 import type { Dictionary } from '../common/Types';
 import Identifiable from '../basis/Identifiable';
@@ -56,26 +56,14 @@ export class Hierarchy {
 
 	rootAncestry_setup() {
 		const ancestry = this.ancestry_remember_createUnique();
-		if (!!ancestry) {
-			this.rootAncestry = ancestry;
-			const root = ancestry.thing;
-			if (!!root) {
-				this.root = root;
-			}
+		if (!ancestry) {
+			alert('No root ancestry. Please, write me at sand@gizmolab.com');
 		}
-	}
-
-	get all_data(): Object {
-		let data: Dictionary = {'type' : DatumType.hierarchy};
-		for (const type of this.all_dataTypes) {
-			switch(type) {
-				case DatumType.things:		  data[type] = this.things; break;
-				case DatumType.traits:		  data[type] = this.traits; break;
-				case DatumType.predicates:	  data[type] = this.predicates; break;
-				case DatumType.relationships: data[type] = this.relationships; break;
-			}
+		this.rootAncestry = ancestry;
+		const root = ancestry.thing;
+		if (!!root) {
+			this.root = root;
 		}
-		return data;
 	}
 
 	static readonly $_EVENTS_$: unique symbol;
@@ -123,11 +111,11 @@ export class Hierarchy {
 				if (g.allow_GraphEditing) {
 					if (!!ancestryGrab && g.allow_TitleEditing) {
 						switch (key) {
+							// case k.space:	await this.ancestry_edit_persistentCreateChildOf(ancestryGrab); break;
 							case 'd':		await this.thing_edit_persistentDuplicate(ancestryGrab); break;
-							case k.space:	await this.ancestry_edit_persistentCreateChildOf(ancestryGrab); break;
 							case '-':		if (!COMMAND) { await this.thing_edit_persistentAddLine(ancestryGrab); } break;
-							case 'tab':		await this.ancestry_edit_persistentCreateChildOf(ancestryGrab.parentAncestry); break; // Title_State editor also makes this call
-							case 'enter':	ancestryGrab.startEdit(); break;
+							// case 'tab':		await this.ancestry_edit_persistentCreateChildOf(ancestryGrab.parentAncestry); break; // Title_State editor also makes this call
+							// case 'enter':	ancestryGrab.startEdit(); break;
 						}
 					}
 					switch (key) {
@@ -245,7 +233,7 @@ export class Hierarchy {
 
 	static readonly $_THING_$: unique symbol;
 
-	thing_forHID(hid: number | null): Thing | null { return !hid ? null : this.thing_byHID[hid]; }
+	thing_forHID(hid: number): Thing | null { return this.thing_byHID[hid ?? undefined]; }
 
 	thing_forget(thing: Thing) {
 		delete this.thing_byHID[thing.idHashed];
@@ -388,7 +376,7 @@ export class Hierarchy {
 
 	static readonly $_TRAIT_$: unique symbol;
 
-	trait_forHID(hid: number | null): Trait | null { return !hid ? null : this.trait_byHID[hid]; }
+	trait_forHID(hid: number): Trait | null { return this.trait_byHID[hid ?? undefined]; }
 
 	trait_runtimeCreate(baseID: string, id: string, ownerID: string, type: TraitType, text: string, already_persisted: boolean = false): Trait {
 		return new Trait(baseID, id, ownerID, type, text, already_persisted);
@@ -557,16 +545,17 @@ export class Hierarchy {
 	async relationships_removeHavingNullReferences() {
 		const array = Array<Relationship>();
 		for (const relationship of this.relationships) {
-			const thingTo = relationship.child;
-			const thingFrom = relationship.parent;
-			if (!thingTo || !thingFrom) {
+			let parent = relationship.parent;
+			const child = relationship.child;
+			if (!child || !parent) {
+				parent = relationship.parent;
 				array.push(relationship);
-				await this.db.relationship_persistentDelete(relationship);
 			}
 		}
 		while (array.length > 0) {
 			const relationship = array.pop();
 			if (!!relationship) {
+				await this.db.relationship_persistentDelete(relationship);
 				this.relationship_forget(relationship);
 			}
 		}
@@ -574,7 +563,7 @@ export class Hierarchy {
 
 	static readonly $_RELATIONSHIP_$: unique symbol;
 
-	relationship_forHID(hid: number): Relationship | null { return this.relationship_byHID[hid]; }
+	relationship_forHID(hid: number): Relationship | null { return this.relationship_byHID[hid ?? undefined]; }
 	relationships_forPredicateHID(hid: number): Array<Relationship> { return this.relationships_byPredicateHID[hid] ?? []; }
 
 	relationship_rememberByKnown(relationships: Relationships_ByHID, relationship: Relationship, id: string) {
@@ -672,7 +661,6 @@ export class Hierarchy {
 		} else {
 			relationship = new Relationship(baseID, idRelationship, idPredicate, idParent, idChild, order, creationOptions == CreationOptions.isFromPersistent);
 			await this.db.relationship_remember_persistentCreate(relationship);
-			this.relationship_remember(relationship);
 		}
 		return relationship;
 	}
@@ -719,10 +707,6 @@ export class Hierarchy {
 
 	ancestry_forHID(idHashed: number): Ancestry | null {
 		return this.ancestry_byHID[idHashed] ?? null;
-	}
-
-	data_forAncestry(ancestry: Ancestry) {
-
 	}
 
 	async ancestry_forget_persistentUpdate(ancestry: Ancestry) {
@@ -846,9 +830,9 @@ export class Hierarchy {
 		}
 	}
 
-	async ancestry_remember_persistentAddAsChild(parentAncestry: Ancestry, child: Thing, idPredicate: string = Predicate.idContains): Promise<any> {
+	async ancestry_remember_persistentAddAsChild(parentAncestry: Ancestry, child: Thing | null, idPredicate: string = Predicate.idContains): Promise<any> {
 		const parent = parentAncestry.thing;
-		if (!!parent && !child.isBulkAlias) {
+		if (!!child && !!parent && !child.isBulkAlias) {
 			const changingBulk = parent.isBulkAlias || child.baseID != this.db.baseID;
 			const baseID = changingBulk ? child.baseID : parent.baseID;
 			if (!child.already_persisted) {
@@ -1081,31 +1065,108 @@ export class Hierarchy {
 
 	static readonly $_FILES_$: unique symbol;
 
-	save_toFile() {
-		// TODO: use this.data_forAncestry from ...
-		// grab	 (if not root)
-		// focus (if neither root nor null)
-		//
-		// (otherwise) this.all_data and root.title
-		const filename = `${this.root.title.toLowerCase()}.json`;
-		files.persist_json_object_toFile(this.all_data, filename);		// until Ancestry does traversal, just use the root
-	}
-
 	async fetch_fromFile(file: File) {
 		await files.extract_json_object_fromFile(file, async (result) => {
 			await this.extract_hierarchy_from(result as Dictionary);
 		});
 	}
 
+	save_toFile() {
+		const data = this.data_toSave();
+		const filename = `${data.title.toLowerCase()}.json`;
+		files.persist_json_object_toFile(data, filename);
+	}
+
+	get user_selected_ancestry(): Ancestry {
+		const focus = get(s_focus_ancestry);
+		let grabbed = this.grabs.ancestry_lastGrabbed;
+		if (!!grabbed && !grabbed.isRoot && !grabbed.isFocus) {
+			return grabbed;
+		} else if (!!focus && !focus.isRoot) {
+			return focus;
+		} else {
+			return this.rootAncestry;
+		}
+	}
+
+	data_toSave(): Dictionary {
+		const ancestry = this.user_selected_ancestry;
+		return ancestry.isRoot ? this.all_data : this.progeny_dataFor(ancestry);
+	}
+
+	get all_data(): Dictionary {
+		const root = this.root;
+		let data: Dictionary = { 
+			'title' : root.title,
+			'hid' : root.idHashed,
+			'type' : DatumType.hierarchy};
+		for (const type of this.all_dataTypes) {
+			switch(type) {
+				case DatumType.things:		  data[type] = this.things; break;
+				case DatumType.traits:		  data[type] = this.traits; break;
+				case DatumType.predicates:	  data[type] = this.predicates; break;
+				case DatumType.relationships: data[type] = this.relationships; break;
+			}
+		}
+		return data;
+	}
+
+	progeny_dataFor(ancestry: Ancestry): Dictionary {
+		let isFirst = true;
+		const thing = ancestry.thing;
+		let data: Dictionary = {
+			'type' : DatumType.progeny,
+			'hid' : thing?.idHashed ?? k.empty,
+			'title' : thing?.title ?? k.unknown};
+		let relationships: Array<Relationship> = [];
+		let things: Array<Thing> = [];
+		let traits: Array<Trait> = [];
+		data[DatumType.predicates] = this.predicates;
+		ancestry.traverse((ancestry: Ancestry) => {
+			const thing = ancestry.thing;
+			const thingTraits = thing?.traits;
+			const relationship = ancestry.relationship;
+			if (!!thingTraits) {
+				traits = u.uniquely_concatenateArrays(traits, thingTraits);
+			}
+			if (!!thing && things.filter(r => r.id == thing.id).length == 0) {
+				things.push(thing);
+			}
+			if (!isFirst && !!relationship && relationships.filter(r => r.id == relationship.id).length == 0) {
+				relationships.push(relationship);
+			}
+			isFirst = false;
+			return false;
+		});
+		data[DatumType.relationships] = relationships;
+		data[DatumType.things] = things;
+		data[DatumType.traits] = traits;
+		return data;
+	}
+
 	static readonly $_BUILD_$: unique symbol;
 
 	async extract_hierarchy_from(dict: Dictionary) {
 		switch (dict['type']) {
+			case DatumType.progeny: await this.build_progeny_with(dict); break;
 			case DatumType.hierarchy: this.rebuild_hierarchy_with(dict); break;
 			default: break;
 		}
 		signals.signal_rebuildGraph_fromFocus();
 		await this.db.deferred_persistAll();
+	}
+
+	async build_progeny_with(dict: Dictionary | null) {
+		if (!!dict) {
+			for (const type of this.all_dataTypes) {
+				this.extractObjects_fromArray_ofType(dict[type], type);
+			}
+			const child = this.thing_forHID(dict.hid);
+			const ancestry = this.user_selected_ancestry;
+			await this.ancestry_remember_persistentAddAsChild(ancestry, child);
+			await this.relationships_persistentCreateMissing(this.db.baseID);
+			await this.relationships_removeHavingNullReferences();
+		}
 	}
 
 	rebuild_hierarchy_with(dict: Dictionary | null) {
@@ -1124,6 +1185,10 @@ export class Hierarchy {
 				case DatumType.things:		  this.thing_build_fromDict(dict); break;
 				case DatumType.traits:		  this.trait_build_fromDict(dict); break;
 				case DatumType.predicates:	  this.predicate_build_fromDict(dict); break;
+			}
+		}
+		for (const dict of array) {
+			switch(type) {
 				case DatumType.relationships: this.relationship_build_fromDict(dict); break;
 			}
 		}

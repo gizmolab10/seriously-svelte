@@ -173,9 +173,10 @@ class Persist_Local {
 	}
 
 	restore_grabbed_andExpanded(force: boolean = false) {
+		const h = get(s_hierarchy);
 		if (!this.grabs_expandeds_restored || force) {
 			this.grabs_expandeds_restored = true;
-			const grabbed = this.ancestries_forKey(this.dbKey_for(IDPersistent.grabbed));
+			const grabbed = this.ancestries_forKey(this.dbKey_for(IDPersistent.grabbed)) ?? [h.rootAncestry];
 			const expanded = this.ancestries_forKey(this.dbKey_for(IDPersistent.expanded));
 			s_grabbed_ancestries.set(grabbed);
 			debug.log_persist(`^ GRABBED ${grabbed.map(a => a.title)}`);

@@ -189,7 +189,7 @@ export default class DBAirtable extends DBCommon {
 
 	static readonly $_RELATIONSHIP_$: unique symbol;
 
-	async relationship_remember_persistentCreate(relationship: Relationship | null) {
+	async relationship_remember_persistentCreate(relationship: Relationship) {
 		if (!!relationship && !relationship.already_persisted) {
 			try {
 				const fields = await this.relationships_table.create(relationship.fields);	// insert with temporary id

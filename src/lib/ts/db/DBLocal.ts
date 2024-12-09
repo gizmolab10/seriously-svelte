@@ -1,5 +1,5 @@
-import { k, u, Thing, Trait, ThingType, Hierarchy, Relationship } from '../common/Global_Imports';
-import { persistLocal, IDPersistent } from '../common/Global_Imports';
+import { k, u, Thing, Trait, ThingType, Relationship } from '../common/Global_Imports';
+import { Hierarchy, persistLocal, IDPersistent } from '../common/Global_Imports';
 import { DBType } from '../basis/PersistentIdentifiable';
 import { s_hierarchy } from '../state/Svelte_Stores';
 import type { Dictionary } from '../common/Types';
@@ -11,6 +11,7 @@ export default class DBLocal extends DBCommon {
 	dbType = DBType.local;
 	isPersistent = true;
 
+	get h(): Hierarchy { return get(s_hierarchy); }
 	setHasData(flag: boolean) { this.hasData = flag; }
 
 	async remove_all() {
@@ -18,22 +19,25 @@ export default class DBLocal extends DBCommon {
 	}
 
 	async deferred_persistAll() {
-		const json_object = u.stringify_object(get(s_hierarchy).all_data);
+		const json_object = u.stringify_object(this.h.all_data);
 		persistLocal.write_key(IDPersistent.local, json_object);
 	}
 
 	async fetch_all() {
 		const json_object = persistLocal.read_key(IDPersistent.local);
-		const h = get(s_hierarchy);
 		if (!!json_object) {
 			const object = JSON.parse(json_object);
-			await h.extract_hierarchy_from(object as Dictionary);
+			await this.h.extract_hierarchy_from(object as Dictionary);
 		} else {
-			h.predicate_remember_runtimeCreateUnique('contains', 'contains', false, false);
-			h.predicate_remember_runtimeCreateUnique('isRelated', 'isRelated', true, false);
-			h.thing_remember_runtimeCreateUnique(this.baseID, 'R', 'DBLocal', 'limegreen', ThingType.root);
+			this.h.predicate_remember_runtimeCreateUnique('contains', 'contains', false, false);
+			this.h.predicate_remember_runtimeCreateUnique('related', 'isRelated', true, false);
+			this.h.thing_remember_runtimeCreateUnique(this.baseID, k.empty, 'DBLocal', 'limegreen', ThingType.root);
 		}
 	}
+
+	async thing_remember_persistentCreate(thing: Thing) { this.h.thing_remember(thing); }
+	async trait_remember_persistentCreate(trait: Trait) { this.h.trait_remember(trait); }
+	async relationship_remember_persistentCreate(relationship: Relationship) { this.h.relationship_remember(relationship); }
 
 }
 

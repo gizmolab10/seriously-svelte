@@ -10,9 +10,10 @@ import { get } from 'svelte/store';
 export default class Ancestry extends Identifiable {
 	_thing: Thing | null = null;
 	idPredicate: string;
-	unsubscribe: any;
 	isParental = true;
+	unsubscribe: any;
 	dbType: string;
+	isRoot = false;
 
 	// id => ancestry string 
 	//	composed of ids of each relationship
@@ -39,7 +40,6 @@ export default class Ancestry extends Identifiable {
 	get endID(): string { return this.idAt(); }
 	get id_count():number { return this.ids.length; }
 	get firstChild(): Thing { return this.children[0]; }
-	get isRoot(): boolean { return this.idHashed == 0; }
 	get hierarchy(): Hierarchy { return get(s_hierarchy); }
 	get lastChild(): Thing { return this.children.slice(-1)[0]; }
 	get order(): number { return this.relationship?.order ?? -1; }
@@ -127,7 +127,10 @@ export default class Ancestry extends Identifiable {
 		if (!!thing && !thing.oneAncestry && !!this.predicate && !this.predicate.isBidirectional) {
 			thing.oneAncestry = this;
 		}
-		return this._thing;
+		if (!!thing && thing.isRoot) {
+			this.isRoot = true;
+		}
+		return thing;
 	}
 
 	get isVisible(): boolean {
@@ -662,18 +665,18 @@ export default class Ancestry extends Identifiable {
 		}
 	}
 
-	async traverse_async(applyTo: (ancestry: Ancestry) => Promise<boolean>) {
-		if (!await applyTo(this)) {
+	async traverse_async(apply_closureTo: (ancestry: Ancestry) => Promise<boolean>) {
+		if (!await apply_closureTo(this)) {
 			for (const childAncestry of this.childAncestries) {
-				await childAncestry.traverse_async(applyTo);
+				await childAncestry.traverse_async(apply_closureTo);
 			}
 		}
 	}
 
-	traverse(applyTo: (ancestry: Ancestry) => boolean) {
-		if (!applyTo(this)) {
+	traverse(apply_closureTo: (ancestry: Ancestry) => boolean) {
+		if (!apply_closureTo(this)) {
 			for (const childAncestry of this.childAncestries) {
-				childAncestry.traverse(applyTo);
+				childAncestry.traverse(apply_closureTo);
 			}
 		}
 	}

@@ -343,9 +343,9 @@
 			<button id='delete'
 				on:blur={u.ignore}
 				on:focus={u.ignore}
+				on:click={handle_delete_event}
 				on:mouseout={() => { isHovering_byID[IDTool.delete] = false; }}
 				on:mouseover={() => { isHovering_byID[IDTool.delete] = true; }}
-				on:click={(event) => handle_delete_event(event)}
 				style='
 					left: {getC(IDTool.delete).x}px;
 					top: {getC(IDTool.delete).y}px;

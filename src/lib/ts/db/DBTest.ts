@@ -1,4 +1,4 @@
-import { k, Thing, Trait, ThingType, Hierarchy, Predicate, Relationship } from '../common/Global_Imports';
+import { k, Thing, Trait, ThingType, Predicate, Relationship } from '../common/Global_Imports';
 import { DBType } from '../basis/PersistentIdentifiable';
 import { s_hierarchy } from '../state/Svelte_Stores';
 import DBCommon from './DBCommon';
@@ -11,13 +11,13 @@ export default class DBTest extends DBCommon {
 	setHasData(flag: boolean) { this.hasData = flag; }
 
 	async fetch_all() {
-		const idTr = 'R';
 		const idTa = 'A';
 		const idTb = 'B';
 		const idTc = 'C';
 		const idTd = 'D';
 		const idTe = 'E';
 		const idTf = 'F';
+		const idTr = k.empty;
 		const idPr = 'related';
 		const idPc = 'contains';
 		const h = get(s_hierarchy);
@@ -77,6 +77,11 @@ export default class DBTest extends DBCommon {
 			}
 		}
 	}
+
+	async thing_remember_persistentCreate(thing: Thing) { get(s_hierarchy).thing_remember(thing); }
+	async trait_remember_persistentCreate(trait: Trait) { get(s_hierarchy).trait_remember(trait); }
+	async relationship_remember_persistentCreate(relationship: Relationship) { get(s_hierarchy).relationship_remember(relationship); }
+
 }
 
 export const dbTest = new DBTest();
