@@ -20,7 +20,7 @@
 	}
 
 	function update_tops() {
-		let top = 68;
+		let top = 42;
 		let index = 0;
 		let indices = $s_detail_types;
 		while (index <= Details_Type.recents) {
@@ -50,7 +50,7 @@
 			top:{$s_graphRect.origin.y}px;
 			height:{$s_graphRect.size.height}px;'>
 		<Segmented
-			name='details'
+			name='details-selector'
 			titles={titles}
 			allow_multiple={true}
 			origin={new Point(7, 7)}

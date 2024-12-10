@@ -1,7 +1,7 @@
+import { IDControl, persistLocal, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
 import { g, k, u, User, Thing, Trait, Grabs, debug, files, Access, IDTool, signals } from '../common/Global_Imports';
 import { ThingType, TraitType, Predicate, Relationship, Ancestry, Mouse_State } from '../common/Global_Imports';
-import { persistLocal, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
-import { s_edit_state, s_focus_ancestry, s_alteration_mode } from '../state/Svelte_Stores';
+import { s_edit_state, s_id_popupView, s_focus_ancestry, s_alteration_mode } from '../state/Svelte_Stores';
 import { s_grabbed_ancestries, s_ancestry_showing_tools } from '../state/Svelte_Stores';
 import { DatumType } from '../../ts/basis/PersistentIdentifiable';
 import type { Dictionary } from '../common/Types';
@@ -34,6 +34,7 @@ export class Hierarchy {
 	predicates: Array<Predicate> = [];
 	things: Array<Thing> = [];
 	traits: Array<Trait> = [];
+	replace_hierarchy = true;	// required for DBLocal
 	rootsAncestry!: Ancestry;
 	rootAncestry!: Ancestry;
 	isAssembled = false;
@@ -1065,6 +1066,11 @@ export class Hierarchy {
 
 	static readonly $_FILES_$: unique symbol;
 
+	select_file_toUpload(SHIFT: boolean) {
+		s_id_popupView.set(IDControl.open);
+		this.replace_hierarchy = true;
+	}
+
 	async fetch_fromFile(file: File) {
 		await files.extract_json_object_fromFile(file, async (result) => {
 			await this.extract_hierarchy_from(result as Dictionary);
@@ -1098,8 +1104,7 @@ export class Hierarchy {
 		const root = this.root;
 		let data: Dictionary = { 
 			'title' : root.title,
-			'hid' : root.idHashed,
-			'type' : DatumType.hierarchy};
+			'hid' : root.idHashed};
 		for (const type of this.all_dataTypes) {
 			switch(type) {
 				case DatumType.things:		  data[type] = this.things; break;
@@ -1115,7 +1120,6 @@ export class Hierarchy {
 		let isFirst = true;
 		const thing = ancestry.thing;
 		let data: Dictionary = {
-			'type' : DatumType.progeny,
 			'hid' : thing?.idHashed ?? k.empty,
 			'title' : thing?.title ?? k.unknown};
 		let relationships: Array<Relationship> = [];
@@ -1147,10 +1151,10 @@ export class Hierarchy {
 	static readonly $_BUILD_$: unique symbol;
 
 	async extract_hierarchy_from(dict: Dictionary) {
-		switch (dict['type']) {
-			case DatumType.progeny: await this.build_progeny_with(dict); break;
-			case DatumType.hierarchy: this.rebuild_hierarchy_with(dict); break;
-			default: break;
+		if (this.replace_hierarchy) {
+			this.rebuild_hierarchy_with(dict);
+		} else {
+			await this.build_progeny_with(dict);
 		}
 		signals.signal_rebuildGraph_fromFocus();
 		await this.db.deferred_persistAll();

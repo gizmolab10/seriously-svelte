@@ -32,13 +32,14 @@
 			const key = event.key;
 			if (key == undefined) {
 				alert('No key for ' + event.type);
-			} else if (!$s_edit_state && !g.isEditing_text) {	// let editor component consume the events
+			} else if (!$s_edit_state && !g.isEditing_text) {			// let title editor consume the events
+				const h = $s_hierarchy;
 				switch (key) {
+					case 'o': h.select_file_toUpload(event.shiftKey); break;
 					case 'c': w.user_graph_offset_setTo(Point.zero); break;
-					case 'o': $s_id_popupView = IDControl.open; break;
-					case 's': $s_hierarchy.save_toFile(); break;
+					case 's': h.save_toFile(); break;
 					case '?': g.showHelp(); break;
-					default:  await $s_hierarchy.handle_key_down(event); return;
+					default:  await h.handle_key_down(event); return;	// let hierarchy consume the events
 				}
 				debug.log_key(`PANEL  ${key}`);
 			}
