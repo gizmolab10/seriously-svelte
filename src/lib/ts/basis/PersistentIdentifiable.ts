@@ -22,8 +22,8 @@ export enum DatumType {
 export default class PersistentIdentifiable extends Identifiable {
 	needs_persisting_again = false;
 	hasPersistentStorage: boolean;
-	awaitingCreation: boolean;
 	already_persisted: boolean;
+	awaitingCreation: boolean;
 	lastModifyDate: Date;
 	dbType: string;
 
@@ -37,8 +37,9 @@ export default class PersistentIdentifiable extends Identifiable {
 		this.dbType = dbType;
 	}
 
-	updateModifyDate() { this.lastModifyDate = new Date(); }
 	async persist() {}
+	updateModifyDate() { this.lastModifyDate = new Date(); }
+	set_needs_persisting_again() { this.needs_persisting_again = true; }		// TODO: set global
 
     static persistent_fromJSON(json: string): PersistentIdentifiable {
         const parsed = JSON.parse(json);

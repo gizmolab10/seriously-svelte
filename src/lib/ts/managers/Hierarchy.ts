@@ -276,7 +276,7 @@ export class Hierarchy {
 		const thing = this.thing_runtimeCreate(baseID, id, title, color, type, already_persisted);
 		this.thing_remember(thing);
 		if (needs_upgrade) {
-			thing.needs_persisting_again = true;	// add type and remove trait fields
+			thing.set_needs_persisting_again();	// add type and remove trait fields
 		}
 		return thing;
 	}
@@ -424,7 +424,7 @@ export class Hierarchy {
 		} else {
 			trait.text = text;
 		}
-		trait.needs_persisting_again = true;
+		trait.set_needs_persisting_again();
 	}
 
 	static readonly $_BULKS_$: unique symbol;

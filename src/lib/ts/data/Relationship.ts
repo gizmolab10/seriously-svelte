@@ -40,7 +40,7 @@ export default class Relationship extends Datum {
 		if (Math.abs(this.order - newOrder) > 0.001) {
 			this.order = newOrder;
 			if (persist) {
-				this.needs_persisting_again = true;
+				this.set_needs_persisting_again();
 			}
 		}
 	}

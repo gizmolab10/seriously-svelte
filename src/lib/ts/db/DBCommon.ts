@@ -29,7 +29,7 @@ export default class DBCommon {
 	async relationship_persistentDelete(relationship: Relationship) {}
 	async relationship_remember_persistentCreate(relationship: Relationship) {}
 
-	async deferred_persistAll() {	// DBLocal overrides this
+	async deferred_persistAll() {	// DBLocal and DBTest override this
 		const h = this.hierarchy;
 		if (!!h) {
 			await this.deferred_persistAll_data(h.things);

@@ -8,6 +8,7 @@ export default class DBTest extends DBCommon {
 	baseID = k.baseID_test;
 	dbType = DBType.test;
 
+	async deferred_persistAll() {}
 	setHasData(flag: boolean) { this.hasData = flag; }
 
 	async fetch_all() {

@@ -35,10 +35,17 @@ export default class DBLocal extends DBCommon {
 		}
 	}
 
-	async thing_remember_persistentCreate(thing: Thing) { this.h.thing_remember(thing); }
-	async trait_remember_persistentCreate(trait: Trait) { this.h.trait_remember(trait); }
-	async relationship_remember_persistentCreate(relationship: Relationship) { this.h.relationship_remember(relationship); }
+	async thing_persistentUpdate(thing: Thing) { this.deferred_persistAll(); }
+	async thing_persistentDelete(thing: Thing) { this.deferred_persistAll(); }
+	async thing_remember_persistentCreate(thing: Thing) { this.h.thing_remember(thing); this.deferred_persistAll(); }
 
+	async trait_persistentUpdate(trait: Trait) { this.deferred_persistAll(); }
+	async trait_persistentDelete(trait: Trait) { this.deferred_persistAll(); }
+	async trait_remember_persistentCreate(trait: Trait) { this.h.trait_remember(trait); this.deferred_persistAll(); }
+
+	async relationship_persistentUpdate(relationship: Relationship) { this.deferred_persistAll(); }
+	async relationship_persistentDelete(relationship: Relationship) { this.deferred_persistAll(); }
+	async relationship_remember_persistentCreate(relationship: Relationship) { this.h.relationship_remember(relationship); this.deferred_persistAll(); }
 }
 
 export const dbLocal = new DBLocal();
