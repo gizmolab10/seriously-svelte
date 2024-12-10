@@ -159,7 +159,7 @@ export default class Ancestry extends Identifiable {
 		let idChild: string | null =  null;
 		let idParent: string | null =  null;
 		for (const relationship of this.relationships) {
-			if (!!idParent && !!idChild) {
+			if ((!!idParent || idParent == k.empty) && (!!idChild || idChild == k.empty)) {
 				if (idParent == relationship.idChild && idChild == relationship.idParent) {
 					return true;
 				}

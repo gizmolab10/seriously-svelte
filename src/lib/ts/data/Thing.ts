@@ -174,7 +174,7 @@ export default class Thing extends Datum {
 
 	relationships_for_isChildOf(idPredicate: string, isChildOf: boolean): Array<Relationship> {
 		const id = this.idBridging;				//  use idBridging in case thing is a bulk alias
-		if (!!id && ![k.empty, k.unknown].includes(id)) {
+		if ((!!id || id == k.empty) && id != k.unknown) {
 			return get(s_hierarchy).relationships_forPredicateThingIsChild(idPredicate, id, isChildOf);
 		}
 		return [];

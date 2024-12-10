@@ -10,6 +10,7 @@ class Builds {
 
 	constructor() {
 		this.notes = {
+			120 : ['December 9, 2024', 'save and read subtrees'],
 			119 : ['November 30, 2024', 'can save to a file (and fetch) entire hierarchy'],
 			118 : ['November 27, 2024', 'OFFICIAL ALPHA RELEASE'],
 			117 : ['November 19, 2024', 'new details mode segmented'],

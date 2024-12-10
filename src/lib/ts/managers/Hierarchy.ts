@@ -179,7 +179,7 @@ export class Hierarchy {
 	}
 
 	thing_child_forRelationshipHID(hid: number | null): Thing | null {
-		if (!!hid) {
+		if (!!hid || hid == 0) {
 			const relationship = this.relationship_forHID(hid);
 			if (!!relationship) {
 				return this.thing_forHID(relationship.idChild.hash());
@@ -567,7 +567,7 @@ export class Hierarchy {
 	relationships_forPredicateHID(hid: number): Array<Relationship> { return this.relationships_byPredicateHID[hid] ?? []; }
 
 	relationship_rememberByKnown(relationships: Relationships_ByHID, relationship: Relationship, id: string) {
-		if (!!id) {
+		if (!!id || id == k.empty) {
 			const hid = id.hash();
 			let array = relationships[hid] ?? [];
 			array.push(relationship);
