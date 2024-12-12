@@ -757,6 +757,14 @@ export class Hierarchy {
 		this.ancestry_byKind_andHash[ancestry.idPredicate] = dict;
 	}
 
+	get ancestry_forBreadcrumbs(): Ancestry {
+		const grab = this.grabs.ancestry_lastGrabbed;
+		if (!!grab && grab.isVisible) {
+			return grab;
+		}
+		return get(s_focus_ancestry);
+	}
+
 	async ancestry_edit_persistentCreateChildOf(parentAncestry: Ancestry | null) {
 		const thing = parentAncestry?.thing;
 		if (!!thing && !!parentAncestry) {

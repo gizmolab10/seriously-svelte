@@ -28,7 +28,7 @@
 		const h = $s_hierarchy;
 		const needsUpdate = ($s_focus_ancestry?.title ?? k.empty) + $s_graphRect + ($s_grabbed_ancestries?.length ?? 0);
 		if (!ancestry || needsUpdate || ancestors.length == 0) {
-			ancestry = h.grabs.ancestry_lastGrabbed ?? h.rootAncestry;		// assure we have a ancestry
+			ancestry = h.ancestry_forBreadcrumbs;		// assure we have a ancestry
 			if (!!ancestry) {				
 				let widths: Array<number> = [];
 				const windowWidth = w.windowSize.width;
