@@ -6,6 +6,7 @@ declare global {
 		unCamelCase(): string;
 		removeWhiteSpace(): string;
 		injectEllipsisAt(at: number): string;
+		clipWithEllipsisAt(at: number): string;
 		fontSize_relativeTo(base: number): number;
 	}
 }
@@ -59,6 +60,20 @@ Object.defineProperty(String.prototype, 'injectEllipsisAt', {
 			injected = injected.slice(0, at) + ' ... ' + injected.slice(length - at, length);
 		}
 		return injected;
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
+});
+
+Object.defineProperty(String.prototype, 'clipWithEllipsisAt', {
+	value: function(at: number = 15): string {
+		let clipped = this;
+		const length = clipped.length;
+		if (length > at) {
+			clipped = clipped.slice(0, at) + ' ...';
+		}
+		return clipped;
 	},
 	writable: false,
 	enumerable: false,

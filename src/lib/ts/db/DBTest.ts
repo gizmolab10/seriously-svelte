@@ -19,8 +19,8 @@ export default class DBTest extends DBCommon {
 		const idTe = 'E';
 		const idTf = 'F';
 		const idTr = k.empty;
-		const idPr = 'related';
-		const idPc = 'contains';
+		const idPc = Predicate.idContains;
+		const idPr = Predicate.idIsRelated;
 		const h = get(s_hierarchy);
 		h.predicate_remember_runtimeCreateUnique(idPc, 'contains', false, false);
 		h.predicate_remember_runtimeCreateUnique(idPr, 'isRelated', true, false);

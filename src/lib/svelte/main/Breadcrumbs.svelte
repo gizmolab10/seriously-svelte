@@ -33,7 +33,7 @@
 				let widths: Array<number> = [];
 				const windowWidth = w.windowSize.width;
 				let fingerprint = 0;	// encoded as one parent count per digit (base 10)
-				[ancestors, widths, lefts, fingerprint] = ancestry.layout_ancestors_within(windowWidth);
+				[ancestors, widths, lefts, fingerprint] = ancestry.layout_breadcrumbs_within(windowWidth);
 				left = lefts[0];
 				trigger = fingerprint * 10000 + rebuilds * 100 + left;		// re-render HTML when this value changes
 				debug.log_crumbs(widths)

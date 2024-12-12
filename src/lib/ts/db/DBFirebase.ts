@@ -151,7 +151,7 @@ export default class DBFirebase extends DBCommon {
 							let thing = get(s_hierarchy).thing_bulkAlias_forTitle(baseID);
 							if (!thing) {								// create a thing for each bulk
 								thing = get(s_hierarchy).thing_runtimeCreate(this.baseID, Identifiable.newID(), baseID, 'red', ThingType.bulk);
-								await get(s_hierarchy).ancestry_remember_persistentAddAsChild(rootsAncestry, thing);
+								await get(s_hierarchy).relationship_remember_persistent_addChild_toAncestry(thing, rootsAncestry);
 							} else if (thing.thing_isBulk_expanded) {
 								await get(s_hierarchy).ancestry_redraw_persistentFetchBulk_browseRight(thing);
 							}

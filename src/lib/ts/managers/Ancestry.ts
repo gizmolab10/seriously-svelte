@@ -73,8 +73,8 @@ export default class Ancestry extends Identifiable {
 	get widget_map(): Widget_MapRect | null { return get(s_clusters_geometry)?.widget_mapFor(this) ?? null; }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore_ofAncestries(s_expanded_ancestries); }
 	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
-	get childRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, false); }
-	get parentRelationships(): Array<Relationship> { return this.relationships_for_isChildOf(this.idPredicate, true); }
+	get childRelationships(): Array<Relationship> { return this.relationships_forParents(this.idPredicate, false); }
+	get parentRelationships(): Array<Relationship> { return this.relationships_forParents(this.idPredicate, true); }
 	get hasRelevantRelationships(): boolean { return this.isParental ? this.hasChildRelationships : this.hasParentRelationships; }
 	get titleWrapper(): Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.idHashed, SvelteComponentType.title); }
 
@@ -218,8 +218,8 @@ export default class Ancestry extends Identifiable {
 	relationshipAt(back: number = 1): Relationship | null { return this.hierarchy.relationship_forHID(this.idAt(back).hash()) ?? null; }
 	ancestry_hasEqualID(ancestry: Ancestry | null | undefined): boolean { return !!ancestry && this.idHashed == ancestry.idHashed && this.dbType == ancestry.dbType; }
 	
-	relationships_for_isChildOf(idPredicate: string, isChildOf: boolean) {
-		return this.thing?.relationships_for_isChildOf(idPredicate, isChildOf) ?? [];
+	relationships_forParents(idPredicate: string, forParents: boolean) {
+		return this.thing?.relationships_forParents(idPredicate, forParents) ?? [];
 	}
 
 	ancestry_isAProgenyOf(ancestry: Ancestry): boolean {
@@ -247,10 +247,10 @@ export default class Ancestry extends Identifiable {
 		return null;
 	}
 
-	childAncestries_for(idPredicate: string = Predicate.idContains): Array<Ancestry> {
+	childAncestries_for(idPredicate: string): Array<Ancestry> {
 		let ancestries: Array<Ancestry> = [];
 		const isContains = idPredicate == Predicate.idContains;
-		const childRelationships = this.relationships_for_isChildOf(idPredicate, false);
+		const childRelationships = this.relationships_forParents(idPredicate, false);
 		if (childRelationships.length > 0) {
 			for (const childRelationship of childRelationships) {					// loop through all child relationships
 				if (childRelationship.idPredicate == idPredicate) {
@@ -395,7 +395,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	things_childrenFor(idPredicate: string): Array<Thing> {
-		const relationships = this.thing?.relationships_for_isChildOf(idPredicate, true);
+		const relationships = this.thing?.relationships_forParents(idPredicate, true);
 		let children: Array<Thing> = [];
 		if (!this.isRoot && !!relationships) {
 			for (const relationship of relationships) {
@@ -408,7 +408,7 @@ export default class Ancestry extends Identifiable {
 		return children;
 	}
 
-	layout_ancestors_within(thresholdWidth: number): [Array<Thing>, Array<number>, Array<number>, number] {
+	layout_breadcrumbs_within(thresholdWidth: number): [Array<Thing>, Array<number>, Array<number>, number] {
 		const widths: Array<number> = [];
 		const things: Array<Thing> = [];
 		let parent_widths = 0;			// for triggering redraw
@@ -417,7 +417,7 @@ export default class Ancestry extends Identifiable {
 		debug.log_crumbs(`${ancestors.map(a => a.title)}`)
 		for (const thing of ancestors) {
 			if (!!thing) {
-				const width = thing.titleWidth + 29;
+				const width = u.getWidthOf(thing.breadcrumb_title) + 29;
 				if ((total + width) > thresholdWidth) {
 					break;
 				}
@@ -615,7 +615,7 @@ export default class Ancestry extends Identifiable {
 					case AlterationType.adding:
 						const toolsThing = toolsAncestry.thing;
 						if (!!toolsThing) {
-							await this.hierarchy.ancestry_remember_persistentAddAsChild(ancestry, toolsThing, idPredicate);
+							await this.hierarchy.relationship_remember_persistent_addChild_toAncestry(toolsThing, ancestry, idPredicate);
 							signals.signal_rebuildGraph_fromFocus();
 						}
 						break;

@@ -35,6 +35,7 @@ export default class Thing extends Datum {
 	get consequence():		  string | null { return get(s_hierarchy).trait_forType_ownerHID(TraitType.consequence, this.idHashed)?.text ?? null; }
 	get idBridging():				 string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get description():				 string { return this.id + ' \"' + this.title + '\"'; }
+	get breadcrumb_title():			 string { return this.title.clipWithEllipsisAt(15); }
 	get titleWidth():				 number { return u.getWidthOf(this.title); }
 	get isRoot():					boolean { return this.type == ThingType.root; }
 	get isBulkAlias():				boolean { return this.type == ThingType.bulk; }
@@ -82,8 +83,8 @@ export default class Thing extends Datum {
 		let oneAncestry: Ancestry | null = null;
 		if (this.isRoot) {			// if root, use root ancestry
 			oneAncestry = get(s_hierarchy).rootAncestry;
-		} else {					// if not, use parent.oneAncestry and append id of isChildOf relationship
-			const relationships = this.relationships_for_isChildOf(Predicate.idContains, true);
+		} else {					// if not, use parent.oneAncestry and append id of forParents relationship
+			const relationships = this.relationships_forParents(Predicate.idContains, true);
 			if (relationships && relationships.length > 0) {
 				const relationship = relationships[0];
 				const aParentAncestry = relationship.parent?.oneAncestry;
@@ -131,7 +132,7 @@ export default class Thing extends Datum {
 	parents_forID(idPredicate: string): Array<Thing> {
 		let parents: Array<Thing> = [];
 		if (!this.isRoot) {
-			const relationships = this.relationships_for_isChildOf(idPredicate, true);
+			const relationships = this.relationships_forParents(idPredicate, true);
 			for (const relationship of relationships) {
 				const thing = relationship.parent;
 				if (!!thing) {
@@ -155,10 +156,10 @@ export default class Thing extends Datum {
 	}
 
 	relationships_grandParentsFor(idPredicate: string): Array<Relationship> {
-		const relationships = this.relationships_for_isChildOf(idPredicate, true);
+		const relationships = this.relationships_forParents(idPredicate, true);
 		let grandParents: Array<Relationship> = [];
 		for (const relationship of relationships) {
-			const more = relationship.parent?.relationships_for_isChildOf(idPredicate, true);
+			const more = relationship.parent?.relationships_forParents(idPredicate, true);
 			if (more) {
 				grandParents = u.uniquely_concatenateArrays(grandParents, more);
 			}
@@ -167,15 +168,15 @@ export default class Thing extends Datum {
 	}
 
 	relationships_inBothDirections_for(idPredicate: string): Array<Relationship> {
-		const children = this.relationships_for_isChildOf(idPredicate, true);
-		const parents = this.relationships_for_isChildOf(idPredicate, false);
+		const children = this.relationships_forParents(idPredicate, false);
+		const parents = this.relationships_forParents(idPredicate, true);
 		return u.uniquely_concatenateArrays(parents, children);
 	}
 
-	relationships_for_isChildOf(idPredicate: string, isChildOf: boolean): Array<Relationship> {
+	relationships_forParents(idPredicate: string, forParents: boolean): Array<Relationship> {
 		const id = this.idBridging;				//  use idBridging in case thing is a bulk alias
 		if ((!!id || id == k.empty) && id != k.unknown) {
-			return get(s_hierarchy).relationships_forPredicateThingIsChild(idPredicate, id, isChildOf);
+			return get(s_hierarchy).relationships_forPredicateThingIsChild(idPredicate, id, forParents);
 		}
 		return [];
 	}
@@ -185,7 +186,7 @@ export default class Thing extends Datum {
 		if (predicate.isBidirectional) {
 			relationships = this.relationships_inBothDirections_for(predicate.id);
 		} else {
-			relationships = this.relationships_for_isChildOf(predicate.id, true);
+			relationships = this.relationships_forParents(predicate.id, true);
 		}
 		return relationships;
 	}

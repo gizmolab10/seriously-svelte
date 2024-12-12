@@ -35,8 +35,8 @@
 			} else if (!$s_edit_state && !g.isEditing_text) {			// let title editor consume the events
 				const h = $s_hierarchy;
 				switch (key) {
-					case 'o': h.select_file_toUpload(event.shiftKey); break;
 					case 'c': w.user_graph_offset_setTo(Point.zero); break;
+					case 'o': h.select_file_toUpload(event.ctrlKey); break;
 					case 's': h.save_toFile(); break;
 					case '?': g.showHelp(); break;
 					default:  await h.handle_key_down(event); return;	// let hierarchy consume the events

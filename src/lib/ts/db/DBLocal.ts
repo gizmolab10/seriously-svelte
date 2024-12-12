@@ -1,4 +1,4 @@
-import { k, u, Thing, Trait, ThingType, Relationship } from '../common/Global_Imports';
+import { k, u, Thing, Trait, ThingType, Predicate, Relationship } from '../common/Global_Imports';
 import { Hierarchy, persistLocal, IDPersistent } from '../common/Global_Imports';
 import { DBType } from '../basis/PersistentIdentifiable';
 import { s_hierarchy } from '../state/Svelte_Stores';
@@ -29,8 +29,8 @@ export default class DBLocal extends DBCommon {
 			const object = JSON.parse(json_object);
 			await this.h.extract_hierarchy_from(object as Dictionary);
 		} else {
-			this.h.predicate_remember_runtimeCreateUnique('contains', 'contains', false, false);
-			this.h.predicate_remember_runtimeCreateUnique('related', 'isRelated', true, false);
+			this.h.predicate_remember_runtimeCreateUnique(Predicate.idContains, 'contains', false, false);
+			this.h.predicate_remember_runtimeCreateUnique(Predicate.idIsRelated, 'isRelated', true, false);
 			this.h.thing_remember_runtimeCreateUnique(this.baseID, k.empty, 'DBLocal', 'limegreen', ThingType.root);
 		}
 	}
