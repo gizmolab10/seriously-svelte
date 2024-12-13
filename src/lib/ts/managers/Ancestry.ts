@@ -198,7 +198,7 @@ export default class Ancestry extends Identifiable {
 					const isRelated = predicate.kind == PredicateKind.isRelated;
 					const toolIsAnAncestor = isRelated ? false : thing.parentIDs.includes(toolThing.id);
 					const isParentOfTool = this.thing_isImmediateParentOf(toolsAncestry, predicate.id);
-					const isProgenyOfTool = this.ancestry_isAProgenyOf(toolsAncestry);
+					const isProgenyOfTool = this.isAProgenyOf(toolsAncestry);
 					const isDeleting = alteration.type == AlterationType.deleting;
 					const doNotAlter_forIsNotDeleting = isParentOfTool || isProgenyOfTool || toolIsAnAncestor;
 					const canAlter = isDeleting ? isParentOfTool : !doNotAlter_forIsNotDeleting;
@@ -222,7 +222,7 @@ export default class Ancestry extends Identifiable {
 		return this.thing?.relationships_forParents(idPredicate, forParents) ?? [];
 	}
 
-	ancestry_isAProgenyOf(ancestry: Ancestry): boolean {
+	isAProgenyOf(ancestry: Ancestry): boolean {
 		let isAProgeny = false;
 		ancestry.traverse((progenyAncestry: Ancestry) => {
 			if (progenyAncestry.idHashed == this.idHashed) {

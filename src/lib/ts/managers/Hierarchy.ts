@@ -759,10 +759,9 @@ export class Hierarchy {
 
 	get ancestry_forBreadcrumbs(): Ancestry {
 		const grab = this.grabs.ancestry_lastGrabbed;
-		if (!!grab && grab.isVisible) {
-			return grab;
-		}
-		return get(s_focus_ancestry);
+		const focus = get(s_focus_ancestry);
+		const grab_containsFocus = !!grab && focus.isAProgenyOf(grab)
+		return (!!grab && grab.isVisible && !grab_containsFocus) ? grab : focus;
 	}
 
 	async ancestry_edit_persistentCreateChildOf(parentAncestry: Ancestry | null) {
