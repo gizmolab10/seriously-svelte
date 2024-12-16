@@ -113,8 +113,10 @@
 
 	function update_fromAncestry() {
 		thing = ancestry?.thing;
-		if (!thing) {
-			console.log('bad ancestry or thing');
+		if (!ancestry) {
+			console.log('bad ancestry');
+		} else if (!thing) {
+			console.log(`bad thing for \"${ancestry?.id ?? 'indeed'}\"`);
 		} else {
 			const title = thing.title ?? thing.id ?? k.unknown;
 			widgetName = `widget ${title}`;

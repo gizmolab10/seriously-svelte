@@ -13,11 +13,11 @@
     "build": "vite build",
     "rollup": "rollup -c",
     "test": "jest --bail=0",
-    "preview": "vite preview",
     "serve": "parcel ./index.html",
     "swc": "swc src -d swc.package",
-    "esbuild": "node config/esbuild.config.cjs",
+    "preview": "vite preview --port 8080",
     "parcel": "parcel build ./index.html",
+    "esbuild": "node config/esbuild.config.cjs",
     "package": "rm -rf package; svelte-package -o package",
     "eesbuild": "esbuild src/lib/js/index.ts --bundle --outfile=esbuild/webseriously.bundle.js --watch"
   },

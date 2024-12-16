@@ -37,46 +37,46 @@ export default class Ancestry extends Identifiable {
 	
 	static readonly $_PROPERTIES_$: unique symbol;
 	
-	get endID(): string { return this.idAt(); }
-	get id_count():number { return this.ids.length; }
-	get firstChild(): Thing { return this.children[0]; }
-	get hierarchy(): Hierarchy { return get(s_hierarchy); }
-	get lastChild(): Thing { return this.children.slice(-1)[0]; }
-	get order(): number { return this.relationship?.order ?? -1; }
-	get parentAncestry(): Ancestry | null { return this.stripBack(); }
-	get title(): string { return this.thing?.title ?? 'missing title'; }
-	get isFocus(): boolean { return this.matchesStore(s_focus_ancestry); }
-	get ids_hashed(): Array<number> { return this.ids.map(i => i.hash()); }
-	get relationship(): Relationship | null { return this.relationshipAt(); }
-	get idBridging(): string | null { return this.thing?.idBridging ?? null; }
-	get titleRect(): Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
-	get ancestors(): Array<Thing> { return this.hierarchy.things_forAncestry(this); }
-	get toolsGrabbed(): boolean { return this.matchesStore(s_ancestry_showing_tools); }
-	get hasChildRelationships(): boolean { return this.childRelationships.length > 0; }
-	get visibleProgeny_halfHeight(): number { return this.visibleProgeny_height() / 2; }
-	get description(): string { return `${this.idPredicate} ${this.titles.join(':')}`; }
-	get hasParentRelationships(): boolean { return this.parentRelationships.length > 0; }
-	get visibleProgeny_halfSize(): Size { return this.visibleProgeny_size.dividedInHalf; }
-	get idPredicates(): Array<string> { return this.relationships.map(r => r.idPredicate); }
-	get isEditing(): boolean { return this.ancestry_hasEqualID(get(s_edit_state)?.editing); }
-	get isGrabbed(): boolean { return this.includedInStore_ofAncestries(s_grabbed_ancestries); }
-	get isInvalid(): boolean { return this.containsReciprocals || this.containsMixedPredicates; }
-	get siblingIndex(): number { return this.siblingAncestries.map(p => p.id).indexOf(this.id); }
-	get childAncestries(): Array<Ancestry> { return this.childAncestries_for(this.idPredicate); }
-	get predicate(): Predicate | null { return this.hierarchy.predicate_forID(this.idPredicate) }
-	get siblingAncestries(): Array<Ancestry> { return this.parentAncestry?.childAncestries ?? []; }
-	get showsChildRelationships(): boolean { return this.isExpanded && this.hasChildRelationships; }
-	get children(): Array<Thing> { return this.hierarchy.things_forAncestries(this.childAncestries); }
-	get hasRelationships(): boolean { return this.hasParentRelationships || this.hasChildRelationships; }
-	get isStoppingEdit(): boolean { return get(s_edit_state)?.stopping?.ancestry_hasEqualID(this) ?? false; }
-	get titles(): Array<string> { return this.ancestors?.map(t => ` \"${t ? t.title : 'null'}\"`) ?? []; }
-	get widget_map(): Widget_MapRect | null { return get(s_clusters_geometry)?.widget_mapFor(this) ?? null; }
-	get isExpanded(): boolean { return this.isRoot || this.includedInStore_ofAncestries(s_expanded_ancestries); }
-	get visibleProgeny_size(): Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
-	get childRelationships(): Array<Relationship> { return this.relationships_forParents(this.idPredicate, false); }
+	get hasChildRelationships():		   boolean { return this.childRelationships.length > 0; }
+	get hasParentRelationships():		   boolean { return this.parentRelationships.length > 0; }
+	get isFocus():						   boolean { return this.matchesStore(s_focus_ancestry); }
+	get toolsGrabbed():					   boolean { return this.matchesStore(s_ancestry_showing_tools); }
+	get showsChildRelationships():		   boolean { return this.isExpanded && this.hasChildRelationships; }
+	get isEditing():					   boolean { return this.ancestry_hasEqualID(get(s_edit_state)?.editing); }
+	get isGrabbed():					   boolean { return this.includedInStore_ofAncestries(s_grabbed_ancestries); }
+	get isInvalid():					   boolean { return this.containsReciprocals || this.containsMixedPredicates; }
+	get hasRelationships():				   boolean { return this.hasParentRelationships || this.hasChildRelationships; }
+	get isStoppingEdit():				   boolean { return get(s_edit_state)?.stopping?.ancestry_hasEqualID(this) ?? false; }
+	get isExpanded():					   boolean { return this.isRoot || this.includedInStore_ofAncestries(s_expanded_ancestries); }
+	get hasRelevantRelationships():		   boolean { return this.isParental ? this.hasChildRelationships : this.hasParentRelationships; }
+	get endID():						    string { return this.idAt(); }
+	get title():						    string { return this.thing?.title ?? 'missing title'; }
+	get description():					    string { return `${this.idPredicate} ${this.titles.join(':')}`; }
+	get id_count():						    number { return this.ids.length; }
+	get order():						    number { return this.relationship?.order ?? -1; }
+	get visibleProgeny_halfHeight():	    number { return this.visibleProgeny_height() / 2; }
+	get siblingIndex():					    number { return this.siblingAncestries.map(p => p.id).indexOf(this.id); }
+	get visibleProgeny_halfSize():			  Size { return this.visibleProgeny_size.dividedInHalf; }
+	get visibleProgeny_size():				  Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
+	get firstChild():						 Thing { return this.children[0]; }
+	get lastChild():						 Thing { return this.children.slice(-1)[0]; }
+	get hierarchy():					 Hierarchy { return get(s_hierarchy); }
+	get titleRect():				   Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
+	get idBridging():				 string | null { return this.thing?.idBridging ?? null; }
+	get parentAncestry():		   Ancestry | null { return this.stripBack(); }
+	get predicate():			  Predicate | null { return this.hierarchy.predicate_forID(this.idPredicate) }
+	get relationship():		   Relationship | null { return this.relationshipAt(); }
+	get widget_map():		 Widget_MapRect | null { return get(s_clusters_geometry)?.widget_mapFor(this) ?? null; }
+	get titleWrapper():		 Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.idHashed, SvelteComponentType.title); }
+	get ids_hashed():		   Array	  <number> { return this.ids.map(i => i.hash()); }
+	get idPredicates():		   Array	  <string> { return this.relationships.map(r => r.idPredicate); }
+	get titles():			   Array	  <string> { return this.ancestors?.map(t => ` \"${t ? t.title : 'null'}\"`) ?? []; }
+	get ancestors():		   Array	   <Thing> { return this.hierarchy.things_forAncestry(this); }
+	get children():			   Array	   <Thing> { return this.hierarchy.things_forAncestries(this.childAncestries); }
+	get childAncestries():	   Array	<Ancestry> { return this.childAncestries_for(this.idPredicate); }
+	get siblingAncestries():   Array	<Ancestry> { return this.parentAncestry?.childAncestries ?? []; }
+	get childRelationships():  Array<Relationship> { return this.relationships_forParents(this.idPredicate, false); }
 	get parentRelationships(): Array<Relationship> { return this.relationships_forParents(this.idPredicate, true); }
-	get hasRelevantRelationships(): boolean { return this.isParental ? this.hasChildRelationships : this.hasParentRelationships; }
-	get titleWrapper(): Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.idHashed, SvelteComponentType.title); }
 
 	get relationships(): Array<Relationship> {
 		const relationships = this.ids_hashed.map(hid => this.hierarchy.relationship_forHID(hid)) ?? [];
