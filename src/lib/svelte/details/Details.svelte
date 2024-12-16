@@ -2,12 +2,13 @@
 	import { g, k, u, show, Point, debug, ZIndex, Details_Type } from '../../ts/common/Global_Imports';
 	import { s_graphRect, s_db_loadTime, s_detail_types } from '../../ts/state/Svelte_Stores';
 	import Segmented from '../mouse/Segmented.svelte';
+	import Separator from '../kit/Separator.svelte';
 	import Recents from './Recents.svelte';
 	import Storage from './Storage.svelte';
 	import Tools from './Tools.svelte';
 	import Info from './Info.svelte';
 	const titles = [Details_Type[Details_Type.storage], Details_Type[Details_Type.info], Details_Type[Details_Type.tools], Details_Type[Details_Type.recents]];
-	const heights = [73, 100, 40, 0];
+	const heights = [82, 100, 40, 0];
 	let tops = [0, 0, 0, 0];
 	let rebuilds = 0;
 
@@ -56,25 +57,20 @@
 			origin={new Point(7, 7)}
 			selected={$s_detail_types}
 			selection_closure={selection_closure}/>
-		<div class='horizontal-line'
-			style='
-				top:34px;
-				height:1px;
-				position:absolute;
-				width:{k.width_details}px;
-				z-index:{ZIndex.frontmost};
-				background-color:lightgray;'>
-		</div>
 		{#if g.details_type_isVisible(Details_Type.storage)}
+			<Separator top={tops[Details_Type.storage] - 8}/>
 			<Storage top={tops[Details_Type.storage]}/>
 		{/if}
 		{#if g.details_type_isVisible(Details_Type.info)}
+			<Separator top={tops[Details_Type.info] - 8}/>
 			<Info top={tops[Details_Type.info]}/>
 		{/if}
 		{#if g.details_type_isVisible(Details_Type.tools)}
+			<Separator top={tops[Details_Type.tools] - 8}/>
 			<Tools top={tops[Details_Type.tools]}/>
 		{/if}
 		{#if g.details_type_isVisible(Details_Type.recents)}
+			<Separator top={tops[Details_Type.recents] - 8}/>
 			<Recents top={tops[Details_Type.recents]}/>
 		{/if}
 	</div>

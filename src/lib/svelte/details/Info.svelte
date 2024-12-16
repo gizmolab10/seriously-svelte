@@ -117,6 +117,9 @@
 
 {#key rebuilds}
 	{#if !!thing}
+		{#if show.thing_info && information}
+			<Table top={top - 5} dict={information}/>
+		{/if}
 		<div class='card'
 			style='
 				color:black;
@@ -170,8 +173,5 @@
 					handle_textChange={handle_textChange}/>
 			{/if}
 		</div>
-		{#if show.thing_info && information}
-			<Table top={top} dict={information}/>
-		{/if}
 	{/if}
 {/key}
