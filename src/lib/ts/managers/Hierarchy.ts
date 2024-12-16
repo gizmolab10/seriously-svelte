@@ -695,6 +695,18 @@ export class Hierarchy {
 		this.ancestry_byHID = {};
 	}
 
+	get depth(): number {
+		let maximum = 1;
+		const ancestries = Object.values(this.ancestry_byHID);
+		for (const ancestry of ancestries) {
+			const depth = ancestry.depth;
+			if (maximum < depth) {
+				maximum = depth;
+			}
+		}
+		return maximum;
+	}
+
 	async ancestries_rebuild_traverse_persistentDelete(ancestries: Array<Ancestry>) {
 		if (get(s_focus_ancestry)) {
 			for (const ancestry of ancestries) {
