@@ -123,11 +123,6 @@ class Global_State {
 	require_rebuild_forType(type: string) { this.rebuild_needed_byType[type] = true; }
 	showHelp() { this.open_tabFor(this.isServerLocal ? k.local_help_url : k.remote_help_url); }
 
-	details_type_isVisible(type: Details_Type): boolean {
-		const wanted = Details_Type[type];
-		return !wanted ? false : get(s_detail_types).includes(wanted);
-	}
-
 	readOnce_rebuild_needed_forType(type: string) : boolean {
 		const needed = this.rebuild_needed_byType[type];
 		this.rebuild_needed_byType[type] = false;

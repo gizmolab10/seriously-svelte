@@ -6,6 +6,7 @@
 	import type { Dictionary } from '../../ts/common/Types';
 	import Identifiable from '../../ts/basis/Identifiable';
 	import Text_Editor from '../kit/Text_Editor.svelte';
+	import Separator from '../kit/Separator.svelte';
 	import Button from '../mouse/Button.svelte';
 	import Table from '../kit/Table.svelte';
 	import Color from './Color.svelte';
@@ -14,21 +15,22 @@
 	const id = 'info';
 	const margin = 10;
 	const text_top = top + 52;
-	const details_size = k.width_details - 30;
-	const card_center = new Point(122, text_top - 20);
-	const card_size = new Size(details_size - 58, k.default_buttonSize + 4);
-	const card_rect = Rect.createCenterRect(card_center, card_size);
+	const info_width = k.width_details - 30;
+	const traits_width = k.width_details - (margin * 2);
+	const traits_center = new Point(122, text_top - 20);
+	const traits_size = new Size(info_width - 58, k.default_buttonSize + 4);
+	const traits_rect = Rect.createCenterRect(traits_center, traits_size);
 	const element_state = ux.element_state_for(new Identifiable(id), ElementType.info, id);
-	let color_origin = new Point(-2, card_rect.origin.y - (show.traits ? 1 : 24));
-	let text_box_size = new Size(details_size - 4, 68);
 	let ancestry: Ancestry | null = $s_focus_ancestry;
-	let thing: Thing | null = ancestry?.thing;
+	let thing: Thing | null = ancestry?.thing ?? null;
+	let text_box_size = new Size(info_width - 4, 68);
 	let thingHID: number | null = thing?.idHashed;
 	let button_title = `show ${next_infoKind()}`;
 	let information: Dictionary<string> = {};
+	let color_origin = new Point(76, 83);
 	let color = k.thing_color_default;
 	let grabs = $s_grabbed_ancestries;
-	let card_title = thing?.title;
+	let traits_title = thing?.title;
 	let rebuilds = 0;
 	let info;
 
@@ -58,9 +60,11 @@
 		const thing = ancestry?.thing;
 		if (!!thing) {
 			const dict = {
-				'relationship' : ancestry.predicate?.description ?? k.empty,
-				'direction'	   : ancestry.isParental ? 'child' : 'parent',
-				'id'		   : thing?.id.injectEllipsisAt(),
+				'relationship'	: ancestry.predicate?.description ?? k.empty,
+				'direction'		: ancestry.isParental ? 'child' : 'parent',
+				'depth'			: ancestry.depth,
+				'id'			: thing?.id.clipWithEllipsisAt(),
+				'color'			: k.empty,
 			};
 			information = Object.entries(dict)
 			rebuilds += 1;
@@ -85,7 +89,7 @@
 		}
 		thing = ancestry?.thing;
 		thingHID = thing?.idHashed;
-		card_title = thing?.title;
+		traits_title = thing?.title;
 		rebuilds += 1;
 	}
 
@@ -117,23 +121,26 @@
 
 {#key rebuilds}
 	{#if !!thing}
-		{#if show.thing_info && information}
-			<Table top={top - 5} dict={information}/>
-		{/if}
-		<div class='card'
+		<div class='info'
 			style='
 				color:black;
-				top:{top}px;
+				top:{top - 4}px;
 				left:{margin}px;
-				font-size:0.8em;
 				position:absolute;
-				text-align:center;
-				width:{k.width_details - (margin * 2)}px;'>
+				width:{traits_width}px;'>
+			{#if show.thing_info && information}
+				{#key traits_title}
+					<div style='
+						text-align:center;
+						width:{traits_width}px;'>
+						{traits_title.clipWithEllipsisAt(15)}
+					</div>
+					<Separator top=18 width={traits_width}/>
+				{/key}
+				<Table top={20} dict={information}/>
+			{/if}
 			<Color thing={thing} origin={color_origin}/>
 			{#if show.traits}
-				{#key card_title}
-					{card_title.injectEllipsisAt(15)}
-				{/key}
 				<div class='horizontal-line'
 					style='
 						top:20px;
@@ -145,11 +152,11 @@
 				{#if hasGrabs()}
 					<Button name={name}
 						zindex={ZIndex.details}
-						center={card_rect.center}
+						center={traits_rect.center}
 						closure={mouse_state_closure}
 						element_state={element_state}
-						width={card_rect.size.width}
-						height={card_rect.size.height}>
+						width={traits_rect.size.width}
+						height={traits_rect.size.height}>
 						<span style='font-family: {$s_thing_fontFamily};'>
 							{button_title}
 						</span>

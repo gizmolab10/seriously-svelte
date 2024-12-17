@@ -11,12 +11,12 @@
 	$: {
 		const h = $s_hierarchy;
 		if (!!h) {
-			const dict = {};
-			if ($s_db_loadTime && $s_db_loadTime > 0) {
-				dict['fetch took'] = `${$s_db_loadTime} second`;
+			const dict = {'things': h.things.length};
+			if ($s_db_loadTime) {
+				dict['fetch took'] = $s_db_loadTime;
+			} else {
+				dict['data'] = 'local'
 			}
-			dict['things'] = h.things.length;
-			dict['visible depth'] = h.depth;
 			information = Object.entries(dict)
 		}
 	}
@@ -39,6 +39,10 @@
 			origin={new Point(5, top)}
 			selection_closure={selection_closure}
 			titles={[DBType.local, DBType.firebase, DBType.airtable, DBType.test]}/>
-		<Table top={info_top} dict={information}/>
+		<div class='data-information'
+			style='font-size:0.8em;
+				width:{k.width_details}px;'>
+			<Table top={info_top} dict={information}/>
+		</div>
 	</div>
 {/key}

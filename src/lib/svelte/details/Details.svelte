@@ -1,14 +1,14 @@
 <script lang='ts'>
 	import { g, k, u, show, Point, debug, ZIndex, Details_Type } from '../../ts/common/Global_Imports';
-	import { s_graphRect, s_db_loadTime, s_detail_types } from '../../ts/state/Svelte_Stores';
+	import { s_graphRect, s_detail_types } from '../../ts/state/Svelte_Stores';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
 	import Recents from './Recents.svelte';
 	import Storage from './Storage.svelte';
 	import Tools from './Tools.svelte';
 	import Info from './Info.svelte';
-	const titles = [Details_Type[Details_Type.storage], Details_Type[Details_Type.info], Details_Type[Details_Type.tools], Details_Type[Details_Type.recents]];
-	const heights = [82, 100, 40, 0];
+	const titles = [Details_Type[Details_Type.storage], Details_Type[Details_Type.tools], Details_Type[Details_Type.recents], Details_Type[Details_Type.info]];
+	const heights = [70, 40, 100, 0];
 	let tops = [0, 0, 0, 0];
 	let rebuilds = 0;
 
@@ -24,7 +24,7 @@
 		let top = 42;
 		let index = 0;
 		let indices = $s_detail_types;
-		while (index <= Details_Type.recents) {
+		while (index <= Details_Type.info) {
 			tops[index] = top;
 			if (indices.includes(Details_Type[index])) {
 				top += heights[index];
@@ -51,27 +51,31 @@
 			top:{$s_graphRect.origin.y}px;
 			height:{$s_graphRect.size.height}px;'>
 		<Segmented
-			name='details-selector'
 			titles={titles}
 			allow_multiple={true}
+			name='details-selector'
 			origin={new Point(7, 7)}
 			selected={$s_detail_types}
 			selection_closure={selection_closure}/>
-		{#if g.details_type_isVisible(Details_Type.storage)}
+		{#if shows_type(Details_Type.storage)}
 			<Separator top={tops[Details_Type.storage] - 8}/>
 			<Storage top={tops[Details_Type.storage]}/>
 		{/if}
-		{#if g.details_type_isVisible(Details_Type.info)}
-			<Separator top={tops[Details_Type.info] - 8}/>
-			<Info top={tops[Details_Type.info]}/>
-		{/if}
-		{#if g.details_type_isVisible(Details_Type.tools)}
-			<Separator top={tops[Details_Type.tools] - 8}/>
-			<Tools top={tops[Details_Type.tools]}/>
-		{/if}
-		{#if g.details_type_isVisible(Details_Type.recents)}
-			<Separator top={tops[Details_Type.recents] - 8}/>
-			<Recents top={tops[Details_Type.recents]}/>
-		{/if}
+		<div class='further-details'
+			style='font-size:0.8em;
+				width:{k.width_details}px;'>
+			{#if shows_type(Details_Type.info)}
+				<Separator top={tops[Details_Type.info] - 8}/>
+				<Info top={tops[Details_Type.info]}/>
+			{/if}
+			{#if shows_type(Details_Type.tools)}
+				<Separator top={tops[Details_Type.tools] - 8}/>
+				<Tools top={tops[Details_Type.tools]}/>
+			{/if}
+			{#if shows_type(Details_Type.recents)}
+				<Separator top={tops[Details_Type.recents] - 8}/>
+				<Recents top={tops[Details_Type.recents]}/>
+			{/if}
+		</div>
 	</div>
 {/key}

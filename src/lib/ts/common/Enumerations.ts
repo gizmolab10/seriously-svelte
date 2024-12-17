@@ -34,15 +34,15 @@ export enum IDLine {
 export enum Details_Type {	// do not change the order
 	storage,
 	tools,
-	info,
 	recents,
+	info,
 }
 
 export const all_detail_types = [
 	Details_Type[Details_Type.storage],
 	Details_Type[Details_Type.tools],
-	Details_Type[Details_Type.info],
-	Details_Type[Details_Type.recents]];
+	Details_Type[Details_Type.recents],
+	Details_Type[Details_Type.info]];
 
 export enum Startup_State {
 	start = 'start',

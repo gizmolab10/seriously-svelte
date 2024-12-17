@@ -7,11 +7,11 @@
 
 <style>
 	.first {
-		border-right: 5px solid transparent;
+		border-right: 1px solid transparent;
 		text-align: right;
 		line-height:12px;
 		color:black;
-		width: 40%;
+		width: 30%;
 	}
 	.second {
 		line-height:12px;
@@ -23,7 +23,6 @@
 		style='
 			left:10px;
 			top:{top}px;
-			font-size:0.8em;
 			position:absolute;
 			z-index: {ZIndex.details};'>
 		<table style='width: {k.width_details}px; left:12px; color:black;'>

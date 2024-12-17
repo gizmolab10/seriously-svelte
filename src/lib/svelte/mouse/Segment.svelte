@@ -62,8 +62,7 @@
 			left:{segment_map.title_origin.x}px;
 			top:{segment_map.title_origin.y}px;
 			color:{title_color};
-			position:absolute;
-			font-size:0.95em;'>
+			position:absolute;'>
 		{segment_map.title}
 	</div>
 </Mouse_Responder>

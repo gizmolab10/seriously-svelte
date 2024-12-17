@@ -139,12 +139,12 @@
 <style>
 	.dragzone {
 		padding: 20px;
-		border-radius: 6px;
-		border: 2px dashed #0001;
 		display: flex;
-		justify-content: center;
+		border-radius: 6px;
 		align-items: center;
 		flex-direction: column;
+		justify-content: center;
+		border: 2px dashed #0001;
 		transition: background-color .3s ease;
 	}
 	.dragzone ul {
@@ -154,12 +154,12 @@
 	}
 	.dragzone li {
 		transition: background-color .2s ease-in-out;
-		list-style: none;
-		display: flex;
 		align-items: center;
-		cursor: pointer;
-		padding: 3px 8px;
 		border-radius: 3px;
+		list-style: none;
+		padding: 3px 8px;
+		cursor: pointer;
+		display: flex;
 	}
 	.dragzone li:hover {
 		background: #0001;

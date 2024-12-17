@@ -106,9 +106,13 @@ export default class DBDispatch {
 	}
 
 	set_loadTime_from(startTime: number) {
-		const duration = Math.trunc(((new Date().getTime()) - startTime) / 100) / 10;
-		const places = (duration == Math.trunc(duration)) ? 0 : 1;
-		const loadTime = (((new Date().getTime()) - startTime) / 1000).toFixed(places);
+		const duration = (new Date().getTime()) - startTime;
+		const adjusted = Math.trunc(duration / 100) / 10;
+		const isInteger = adjusted == Math.trunc(adjusted);
+		const places = isInteger ? 0 : 1;
+		const suffix = isInteger ? '' : 's';
+		const time = (duration / 1000).toFixed(places);
+		const loadTime = `${time} second${suffix}`
 		this.db.loadTime = loadTime;
 		s_db_loadTime.set(loadTime);
 	}

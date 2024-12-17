@@ -1,5 +1,6 @@
 <script lang='ts'>
 	import { k, ZIndex } from '../../ts/common/Global_Imports';
+	export let width = k.width_details;
 	export let top = 71;
 
 </script>
@@ -8,8 +9,8 @@
 	style='
 		height:1px;
 		top:{top}px;
+		width:{width}px;
 		position:absolute;
-		width:{k.width_details}px;
 		z-index:{ZIndex.frontmost};
 		background-color:lightgray;'>
 </div>
