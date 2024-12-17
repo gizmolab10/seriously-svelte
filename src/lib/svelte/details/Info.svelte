@@ -76,12 +76,12 @@
 		return !!grabs && (grabs.length > 1 || !$s_focus_ancestry.isGrabbed);
 	}
 
-	function next_infoKind() { return !show.thing_info; }	// just toggle (boolean)
+	function next_infoKind() { return !show.focus_info; }	// just toggle (boolean)
 
 	function update_forKind() {
 		const showing = next_infoKind() ? 'focus' : 'selection';
 		button_title = `show ${showing}`;
-		if (show.thing_info || !hasGrabs()) {
+		if (show.focus_info || !hasGrabs()) {
 			ancestry = $s_focus_ancestry;
 		} else {
 			grabs = $s_grabbed_ancestries;
@@ -97,9 +97,9 @@
 		if (mouse_state.isHover) {
 			element_state.isOut = mouse_state.isOut;
 		} else if (mouse_state.isUp) {
-			const thing_info = next_infoKind();
-			persistLocal.write_key(IDPersistent.thing_info, thing_info);
-			show.thing_info = thing_info;
+			const focus_info = next_infoKind();
+			persistLocal.write_key(IDPersistent.focus_info, focus_info);
+			show.focus_info = focus_info;
 			update_forKind();
 		}
 	}
@@ -128,7 +128,7 @@
 				left:{margin}px;
 				position:absolute;
 				width:{traits_width}px;'>
-			{#if show.thing_info && information}
+			{#if information}
 				{#key traits_title}
 					<div style='
 						text-align:center;

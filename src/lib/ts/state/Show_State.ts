@@ -5,7 +5,7 @@ import type { Dictionary } from '../common/Types';
 
 class Show_State {
 	traits		 = false;
-	thing_info	 = false;
+	focus_info	 = false;
 	arrowheads	 = false;
 	debug_cursor = false;
 	tinyDots	 = true;
@@ -30,10 +30,6 @@ class Show_State {
 					this.tinyDots = flag;
 					persistLocal.write_key(IDPersistent.tinyDots, flag);
 					break;
-				case 'info':
-					this.thing_info = flag;
-					persistLocal.write_key(IDPersistent.thing_info, flag);
-					break;
 				case 'arrowheads':
 					this.arrowheads = flag;
 					persistLocal.write_key(IDPersistent.arrowheads, flag);
@@ -47,7 +43,7 @@ class Show_State {
 		this.tinyDots = persistLocal.read_key(IDPersistent.tinyDots) ?? false;
 		s_show_details.set(persistLocal.read_key(IDPersistent.details) ?? false);
 		this.arrowheads = persistLocal.read_key(IDPersistent.arrowheads) ?? false;
-		this.thing_info = persistLocal.read_key(IDPersistent.thing_info) ?? false;
+		this.focus_info = persistLocal.read_key(IDPersistent.focus_info) ?? false;
 		s_tree_type.set(persistLocal.read_key(IDPersistent.tree_type) ?? Tree_Type.children);
 	}
 

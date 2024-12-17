@@ -13,7 +13,7 @@ export enum IDPersistent {
 	page_states    = 'page_states',
 	user_offset	   = 'user_offset',
 	graph_type	   = 'graph_type',
-	thing_info     = 'thing_info',
+	focus_info     = 'focus_info',
 	ring_angle     = 'ring_angle',
 	arrowheads	   = 'arrowheads',
 	tree_type	   = 'tree_type',
