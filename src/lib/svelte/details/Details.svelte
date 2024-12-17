@@ -58,23 +58,23 @@
 			selected={$s_detail_types}
 			selection_closure={selection_closure}/>
 		{#if shows_type(Details_Type.storage)}
-			<Separator top={tops[Details_Type.storage] - 8}/>
+			<Separator title='storage' top={tops[Details_Type.storage] - 8}/>
 			<Storage top={tops[Details_Type.storage]}/>
 		{/if}
 		<div class='further-details'
 			style='font-size:0.8em;
 				width:{k.width_details}px;'>
-			{#if shows_type(Details_Type.info)}
-				<Separator top={tops[Details_Type.info] - 8}/>
-				<Info top={tops[Details_Type.info]}/>
-			{/if}
 			{#if shows_type(Details_Type.tools)}
-				<Separator top={tops[Details_Type.tools] - 8}/>
+				<Separator title='tools' top={tops[Details_Type.tools] - 8}/>
 				<Tools top={tops[Details_Type.tools]}/>
 			{/if}
 			{#if shows_type(Details_Type.recents)}
-				<Separator top={tops[Details_Type.recents] - 8}/>
+				<Separator title='recents' top={tops[Details_Type.recents] - 8}/>
 				<Recents top={tops[Details_Type.recents]}/>
+			{/if}
+			{#if shows_type(Details_Type.info)}
+				<Separator title='info' top={tops[Details_Type.info] - 8}/>
+				<Info top={tops[Details_Type.info]}/>
 			{/if}
 		</div>
 	</div>

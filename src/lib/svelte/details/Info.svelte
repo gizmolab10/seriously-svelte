@@ -133,7 +133,7 @@
 					<div style='
 						text-align:center;
 						width:{traits_width}px;'>
-						{traits_title.clipWithEllipsisAt(15)}
+						{traits_title.clipWithEllipsisAt(30)}
 					</div>
 					<Separator top=18 width={traits_width}/>
 				{/key}
