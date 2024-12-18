@@ -19,8 +19,8 @@ import { Paging_State, Page_States } from '../state/Page_States';
 import { Tree_Type, Graph_Type, Startup_State } from './Enumerations';
 import { IDPersistent, persistLocal } from '../managers/Persist_Local';
 import { PredicateKind, AlterationType, CreationOptions } from './Enumerations';
-import { ThingType, TraitType, ElementType, Details_Type, Rebuild_Type } from './Enumerations';
 import { IDLine, IDTool, ZIndex, IDControl, IDBrowser, Ring_Zone, Oblong_Part } from './Enumerations';
+import { InfoType, ThingType, TraitType, ElementType, Details_Type, Rebuild_Type } from './Enumerations';
 
 import Clusters_Geometry from '../geometry/Clusters_Geometry';
 import Alteration_State from '../state/Alteration_State';
@@ -76,6 +76,6 @@ export {
 	Element_State, Paging_State, Page_States, Alteration_State,
 	IDLine, IDTool, IDSignal, IDControl, IDBrowser, IDPersistent,
 	ElementType, Svelte_Wrapper, SvelteComponent, SvelteComponentType,
-	ThingType, TraitType, Graph_Type, Tree_Type, Details_Type, Rebuild_Type,
 	Mouse_State, Title_State, Rotation_State, Expansion_State, Startup_State,
+	InfoType, ThingType, TraitType, Graph_Type, Tree_Type, Details_Type, Rebuild_Type,
 };

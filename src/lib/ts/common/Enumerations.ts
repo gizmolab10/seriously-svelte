@@ -13,6 +13,11 @@ export enum Graph_Type {
 	tree  = 'tree',
 }
 
+export enum InfoType {
+	selection = 'selection',
+	focus	  = 'focus',
+}
+
 export enum Tree_Type {
 	children = 'children',
 	parents	 = 'parents',

@@ -1,11 +1,12 @@
 <script lang='ts'>
-	import { signals, TraitType, persistLocal, ElementType, IDPersistent } from '../../ts/common/Global_Imports';
+	import { signals, InfoType, TraitType, persistLocal, ElementType, IDPersistent } from '../../ts/common/Global_Imports';
 	import { g, k, ux, show, Rect, Size, Point, Thing, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
 	import { s_focus_ancestry, s_grabbed_ancestries, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
 	import { s_hierarchy, s_thing_color, s_thing_title } from '../../ts/state/Svelte_Stores';
 	import type { Dictionary } from '../../ts/common/Types';
 	import Identifiable from '../../ts/basis/Identifiable';
 	import Text_Editor from '../kit/Text_Editor.svelte';
+	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
 	import Button from '../mouse/Button.svelte';
 	import Table from '../kit/Table.svelte';
@@ -14,7 +15,9 @@
 	export let top = 71;
 	const id = 'info';
 	const margin = 10;
+	const font_ratio = 0.8;
 	const text_top = top + 52;
+	const font_size = `${font_ratio}em`;
 	const info_width = k.width_details - 30;
 	const traits_width = k.width_details - (margin * 2);
 	const traits_center = new Point(122, text_top - 20);
@@ -25,12 +28,11 @@
 	let thing: Thing | null = ancestry?.thing ?? null;
 	let text_box_size = new Size(info_width - 4, 68);
 	let thingHID: number | null = thing?.idHashed;
-	let button_title = `show ${next_infoKind()}`;
 	let information: Dictionary<string> = {};
-	let color_origin = new Point(76, 83);
+	let color_origin = new Point(73, 104);
 	let color = k.thing_color_default;
 	let grabs = $s_grabbed_ancestries;
-	let traits_title = thing?.title;
+	let thing_title = thing?.title;
 	let rebuilds = 0;
 	let info;
 
@@ -57,17 +59,8 @@
 	}
 	
 	$: {
-		const thing = ancestry?.thing;
-		if (!!thing) {
-			const dict = {
-				'relationship'	: ancestry.predicate?.description ?? k.empty,
-				'direction'		: ancestry.isParental ? 'child' : 'parent',
-				'depth'			: ancestry.depth,
-				'id'			: thing?.id.clipWithEllipsisAt(),
-				'color'			: k.empty,
-			};
-			information = Object.entries(dict)
-			rebuilds += 1;
+		if (thing != ancestry?.thing) {
+			update_forAncestry();
 		}
 	}
 
@@ -76,31 +69,37 @@
 		return !!grabs && (grabs.length > 1 || !$s_focus_ancestry.isGrabbed);
 	}
 
-	function next_infoKind() { return !show.focus_info; }	// just toggle (boolean)
+	function selection_closure(types: Array<string>) {
+		const type = types[0];
+		persistLocal.write_key(IDPersistent.info_type, type);
+		show.info_type = type;
+		update_forKind();
+	}
 
 	function update_forKind() {
-		const showing = next_infoKind() ? 'focus' : 'selection';
-		button_title = `show ${showing}`;
-		if (show.focus_info || !hasGrabs()) {
+		if (show.info_type == InfoType.focus || !hasGrabs()) {
 			ancestry = $s_focus_ancestry;
 		} else {
 			grabs = $s_grabbed_ancestries;
 			ancestry = grabs[0];
 		}
-		thing = ancestry?.thing;
-		thingHID = thing?.idHashed;
-		traits_title = thing?.title;
-		rebuilds += 1;
+		update_forAncestry();
 	}
 
-	function mouse_state_closure(mouse_state) {
-		if (mouse_state.isHover) {
-			element_state.isOut = mouse_state.isOut;
-		} else if (mouse_state.isUp) {
-			const focus_info = next_infoKind();
-			persistLocal.write_key(IDPersistent.focus_info, focus_info);
-			show.focus_info = focus_info;
-			update_forKind();
+	function update_forAncestry() {
+		thing = ancestry?.thing;
+		if (!!thing) {
+			thing_title = thing.title;
+			thingHID = thing.idHashed;
+			const dict = {
+				'relationship'	: ancestry.predicate?.description ?? k.empty,
+				'direction'		: ancestry.isParental ? 'child' : 'parent',
+				'depth'			: ancestry.depth,
+				'id'			: thing.id.clipWithEllipsisAt(),
+				'color'			: k.empty,
+			};
+			information = Object.entries(dict)
+			rebuilds += 1;
 		}
 	}
 
@@ -124,20 +123,28 @@
 		<div class='info'
 			style='
 				color:black;
-				top:{top - 4}px;
+				top:{top - 2}px;
 				left:{margin}px;
 				position:absolute;
 				width:{traits_width}px;'>
-			{#if information}
-				{#key traits_title}
+			{#if information.length != 0}
+				{#key thing_title}
 					<div style='
 						text-align:center;
 						width:{traits_width}px;'>
-						{traits_title.clipWithEllipsisAt(30)}
+						{thing_title.clipWithEllipsisAt(30)}
 					</div>
 					<Separator top=18 width={traits_width}/>
 				{/key}
-				<Table top={20} dict={information}/>
+				<Segmented
+					name='info-type'
+					font_size={font_size}
+					origin={new Point(45, 25)}
+					selected={[show.info_type]}
+					height={k.row_height * font_ratio}
+					selection_closure={selection_closure}
+					titles={[InfoType.focus, InfoType.selection]}/>
+				<Table top={43} dict={information}/>
 			{/if}
 			<Color thing={thing} origin={color_origin}/>
 			{#if show.traits}
@@ -149,19 +156,6 @@
 						width:{k.width_details}px;
 						z-index:{ZIndex.frontmost};'>
 				</div>
-				{#if hasGrabs()}
-					<Button name={name}
-						zindex={ZIndex.details}
-						center={traits_rect.center}
-						closure={mouse_state_closure}
-						element_state={element_state}
-						width={traits_rect.size.width}
-						height={traits_rect.size.height}>
-						<span style='font-family: {$s_thing_fontFamily};'>
-							{button_title}
-						</span>
-					</Button>
-				{/if}
 				<Text_Editor
 					color=k.color_default
 					top={text_top}

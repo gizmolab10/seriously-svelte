@@ -30,8 +30,8 @@
 
 <style>
 	div :global(.wrapper) {
-		left: -86px;
-		top: 26px;
+		left: -83px;
+		top: 24px;
 	}
 
 	div :global(.picker-indicator) {

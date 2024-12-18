@@ -54,7 +54,7 @@
 			titles={titles}
 			allow_multiple={true}
 			name='details-selector'
-			origin={new Point(7, 7)}
+			origin={new Point(6, 7)}
 			selected={$s_detail_types}
 			selection_closure={selection_closure}/>
 		{#if shows_type(Details_Type.storage)}

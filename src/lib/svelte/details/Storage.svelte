@@ -36,7 +36,7 @@
 		<Segmented
 			name='db'
 			selected={[$s_db_type]}
-			origin={new Point(5, top)}
+			origin={new Point(4, top)}
 			selection_closure={selection_closure}
 			titles={[DBType.local, DBType.firebase, DBType.airtable, DBType.test]}/>
 		<div class='data-information'

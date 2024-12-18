@@ -22,7 +22,7 @@
 		style='
 			padding: 0px 5px;
 			left:{left}px;
-			top:{top - 5}px;
+			top:{top - 5.3}px;
 			position:absolute;
 			font-size:{font_ratio}em;
 			z-index:{ZIndex.frontmost};

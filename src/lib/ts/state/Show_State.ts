@@ -1,14 +1,14 @@
 import { g, k, w, signals, persistLocal } from '../common/Global_Imports';
-import { IDPersistent, Tree_Type } from '../common/Global_Imports';
+import { InfoType, Tree_Type, IDPersistent } from '../common/Global_Imports';
 import { s_show_details, s_tree_type } from './Svelte_Stores';
 import type { Dictionary } from '../common/Types';
 
 class Show_State {
-	traits		 = false;
-	focus_info	 = false;
-	arrowheads	 = false;
-	debug_cursor = false;
-	tinyDots	 = true;
+	info_type: InfoType	= InfoType.focus;
+	traits				= false;
+	arrowheads			= false;
+	debug_cursor		= false;
+	tinyDots			= true;
 
 	queryStrings_apply() {
 		const queryStrings = g.queryStrings;
@@ -43,7 +43,7 @@ class Show_State {
 		this.tinyDots = persistLocal.read_key(IDPersistent.tinyDots) ?? false;
 		s_show_details.set(persistLocal.read_key(IDPersistent.details) ?? false);
 		this.arrowheads = persistLocal.read_key(IDPersistent.arrowheads) ?? false;
-		this.focus_info = persistLocal.read_key(IDPersistent.focus_info) ?? false;
+		this.info_type = persistLocal.read_key(IDPersistent.info_type) ?? InfoType.focus;
 		s_tree_type.set(persistLocal.read_key(IDPersistent.tree_type) ?? Tree_Type.children);
 	}
 
