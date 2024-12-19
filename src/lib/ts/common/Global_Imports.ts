@@ -33,7 +33,7 @@ import Cluster_Map from '../geometry/Cluster_Map';
 import Segment_Map from '../geometry/Segment_Map';
 import Mouse_Timer from '../signals/Mouse_Timer';
 import Relationship from '../data/Relationship';
-import Title_State from '../state/Title_State';
+import Title_Edit_State from '../state/Title_Edit_State';
 import Mouse_State from '../state/Mouse_State';
 import Svelte_Wrapper from './Svelte_Wrapper';
 import Ancestry from '../managers/Ancestry';
@@ -76,6 +76,6 @@ export {
 	Element_State, Paging_State, Page_States, Alteration_State,
 	IDLine, IDTool, IDSignal, IDControl, IDBrowser, IDPersistent,
 	ElementType, Svelte_Wrapper, SvelteComponent, SvelteComponentType,
-	Mouse_State, Title_State, Rotation_State, Expansion_State, Startup_State,
+	Mouse_State, Title_Edit_State, Rotation_State, Expansion_State, Startup_State,
 	InfoType, ThingType, TraitType, Graph_Type, Tree_Type, Details_Type, Rebuild_Type,
 };

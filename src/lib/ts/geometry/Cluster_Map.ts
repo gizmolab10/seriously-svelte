@@ -89,7 +89,7 @@ export default class Cluster_Map {
 		return this.isParental ? isSingular ? 'parent' : 'parents' : this.toChildren ? isSingular ? 'child' : 'children' : this.kind;
 	}
 
-	static readonly $_LABEL_$: unique symbol;
+	static readonly LABEL: unique symbol;
 
 	update_label_geometry() {		// rotate text tangent to arc, at center of arc
 		const angle = this.arc_map.center_angle;
@@ -110,7 +110,7 @@ export default class Cluster_Map {
 		this.cluster_title = cluster_title;
 	}
 	
-	static readonly $_PAGING_$: unique symbol;
+	static readonly PAGING: unique symbol;
 	
 	paging_state_ofAncestry(ancestry: Ancestry): Paging_State | null {
 		return ancestry.thing?.page_states?.paging_state_for(this) ?? null;
@@ -161,7 +161,7 @@ export default class Cluster_Map {
 		}
 	}
 
-	static readonly $_ANGLES_$: unique symbol;
+	static readonly ANGLES: unique symbol;
 
 	update_arc_angles(index: number, max: number, child_angle: number) {
 		// index increases & angle decreases clockwise

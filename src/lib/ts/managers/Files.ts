@@ -3,7 +3,7 @@ import { u } from '../common/Utilities';
 
 export default class Files {
 
-	static readonly $_WRITE_$: unique symbol;
+	static readonly WRITE: unique symbol;
 
 	persist_json_object_toFile(object: Object, fileName: string): void {
 		const content = u.stringify_object(object);

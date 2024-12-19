@@ -1,8 +1,9 @@
 import { s_expanded_ancestries, s_ancestry_showing_tools, s_alteration_mode, s_clusters_geometry } from '../state/Svelte_Stores';
-import { Hierarchy, Title_State, ElementType, Paging_State, Relationship, PredicateKind } from '../common/Global_Imports';
+import { dbDispatch, Svelte_Wrapper, Widget_MapRect, AlterationType, SvelteComponentType } from '../common/Global_Imports';
+import { Hierarchy, Title_Edit_State, ElementType, Paging_State, Relationship, PredicateKind } from '../common/Global_Imports';
 import { g, k, u, Rect, Size, Thing, debug, signals, wrappers, Direction, Predicate } from '../common/Global_Imports';
-import { Svelte_Wrapper, Widget_MapRect, AlterationType, SvelteComponentType } from '../common/Global_Imports';
-import { s_hierarchy, s_focus_ancestry, s_grabbed_ancestries, s_edit_state } from '../state/Svelte_Stores';
+import { s_hierarchy, s_focus_ancestry, s_grabbed_ancestries, s_title_edit_state } from '../state/Svelte_Stores';
+import { DBType } from '../../ts/basis/PersistentIdentifiable';
 import Identifiable from '../basis/Identifiable';
 import { Writable } from 'svelte/store';
 import { get } from 'svelte/store';
@@ -35,18 +36,18 @@ export default class Ancestry extends Identifiable {
 	signal_rebuildGraph()  { signals.signal_rebuildGraph(this); }
 	signal_relayoutWidgets() { signals.signal_relayoutWidgets(this); }
 	
-	static readonly $_PROPERTIES_$: unique symbol;
+	static readonly PROPERTIES: unique symbol;
 	
 	get hasChildRelationships():		   boolean { return this.childRelationships.length > 0; }
 	get hasParentRelationships():		   boolean { return this.parentRelationships.length > 0; }
 	get isFocus():						   boolean { return this.matchesStore(s_focus_ancestry); }
 	get toolsGrabbed():					   boolean { return this.matchesStore(s_ancestry_showing_tools); }
 	get showsChildRelationships():		   boolean { return this.isExpanded && this.hasChildRelationships; }
-	get isEditing():					   boolean { return this.ancestry_hasEqualID(get(s_edit_state)?.editing); }
+	get isEditing():					   boolean { return this.ancestry_hasEqualID(get(s_title_edit_state)?.editing); }
+	get isStoppingEdit():				   boolean { return this.ancestry_hasEqualID(get(s_title_edit_state)?.stopping); }
 	get isGrabbed():					   boolean { return this.includedInStore_ofAncestries(s_grabbed_ancestries); }
 	get isInvalid():					   boolean { return this.containsReciprocals || this.containsMixedPredicates; }
 	get hasRelationships():				   boolean { return this.hasParentRelationships || this.hasChildRelationships; }
-	get isStoppingEdit():				   boolean { return get(s_edit_state)?.stopping?.ancestry_hasEqualID(this) ?? false; }
 	get isExpanded():					   boolean { return this.isRoot || this.includedInStore_ofAncestries(s_expanded_ancestries); }
 	get hasRelevantRelationships():		   boolean { return this.isParental ? this.hasChildRelationships : this.hasParentRelationships; }
 	get endID():						    string { return this.idAt(); }
@@ -77,7 +78,7 @@ export default class Ancestry extends Identifiable {
 	get siblingAncestries():   Array	<Ancestry> { return this.parentAncestry?.childAncestries ?? []; }
 	get childRelationships():  Array<Relationship> { return this.relationships_forParents(this.idPredicate, false); }
 	get parentRelationships(): Array<Relationship> { return this.relationships_forParents(this.idPredicate, true); }
-
+	
 	get relationships(): Array<Relationship> {
 		const relationships = this.ids_hashed.map(hid => this.hierarchy.relationship_forHID(hid)) ?? [];
 		return u.strip_invalid(relationships);
@@ -92,6 +93,12 @@ export default class Ancestry extends Identifiable {
  		const isVisible = this.hasRelevantRelationships || (this.thing?.isBulkAlias ?? false);
 		const isBidirectional = this.predicate?.isBidirectional ?? false;
 		return !isBidirectional && isVisible;
+	}
+
+	get isEditable(): boolean {
+		const isBulkAlias = this.thing?.isBulkAlias ?? true;	// missing thing, return not allow
+		const canEdit = !this.isRoot || dbDispatch.db.dbType == DBType.local;
+		return canEdit && g.allow_TitleEditing && !isBulkAlias;
 	}
 
 	get ids(): Array<string> {
@@ -488,7 +495,7 @@ export default class Ancestry extends Identifiable {
 		return 0;
 	}
 
-	static readonly $_MUTATION_$: unique symbol;
+	static readonly MUTATION: unique symbol;
 	
 	expand() { return this.expanded_setTo(true); }
 	collapse() { return this.expanded_setTo(false); }
@@ -535,7 +542,7 @@ export default class Ancestry extends Identifiable {
 		if (this.predicate?.isBidirectional ?? false) {
 			this.thing?.oneAncestry?.handle_singleClick_onDragDot(shiftKey);
 		} else {
-			s_edit_state?.set(null);
+			s_title_edit_state?.set(null);
 			if (!!get(s_alteration_mode)) {
 				this.ancestry_alterMaybe(this);
 			} else if (!shiftKey && g.showing_rings) {
@@ -658,10 +665,10 @@ export default class Ancestry extends Identifiable {
 	}
 
 	startEdit() {
-		if (!this.isRoot && g.allow_TitleEditing) {
+		if (this.isEditable) {
 			debug.log_edit(`EDIT ${this.title}`)
 			this.grabOnly();
-			s_edit_state.set(new Title_State(this));
+			s_title_edit_state.set(new Title_Edit_State(this));
 		}
 	}
 

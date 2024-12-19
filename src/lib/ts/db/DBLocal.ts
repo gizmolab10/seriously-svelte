@@ -31,7 +31,7 @@ export default class DBLocal extends DBCommon {
 		} else {
 			this.h.predicate_remember_runtimeCreateUnique(Predicate.idContains, 'contains', false, false);
 			this.h.predicate_remember_runtimeCreateUnique(Predicate.idIsRelated, 'isRelated', true, false);
-			this.h.thing_remember_runtimeCreateUnique(this.baseID, k.empty, 'DBLocal', 'limegreen', ThingType.root);
+			this.h.thing_remember_runtimeCreateUnique(this.baseID, k.empty, 'click here to edit this title', 'limegreen', ThingType.root);
 		}
 	}
 

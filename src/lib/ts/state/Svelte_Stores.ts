@@ -1,12 +1,12 @@
 import { Tree_Type, Hierarchy, Cluster_Map, Details_Type, Clusters_Geometry, Alteration_State } from '../common/Global_Imports';
-import { Rect, Point, Ancestry, Graph_Type, Title_State, Paging_State, Startup_State } from '../common/Global_Imports';
+import { Rect, Point, Ancestry, Graph_Type, Title_Edit_State, Paging_State, Startup_State } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
 
 export const s_clusters_geometry	  = writable<Clusters_Geometry | null>();
 export const s_alteration_mode		  = writable<Alteration_State | null>();
 export const s_detail_types			  = writable<Array<Details_Type>>();
 export const s_active_cluster_map	  = writable<Cluster_Map | null>();
-export const s_edit_state			  = writable<Title_State | null>();
+export const s_title_edit_state		  = writable<Title_Edit_State | null>();
 export const s_ancestry_showing_tools = writable<Ancestry | null>();
 export const s_expanded_ancestries	  = writable<Array<Ancestry>>();
 export const s_grabbed_ancestries	  = writable<Array<Ancestry>>();

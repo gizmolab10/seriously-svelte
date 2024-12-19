@@ -58,7 +58,7 @@ export default class DBFirebase extends DBCommon {
 		}
 	}
 
-	static readonly $_FETCH_$: unique symbol;
+	static readonly FETCH: unique symbol;
 
 	async fetch_all() {
 		await this.recordLoginIP();
@@ -114,7 +114,7 @@ export default class DBFirebase extends DBCommon {
 		}
 	}
 
-	static readonly $_BULKS_$: unique symbol;
+	static readonly BULKS: unique symbol;
 
 	bulk_for(baseID: string | null) {
 		if (!!baseID) {
@@ -165,7 +165,7 @@ export default class DBFirebase extends DBCommon {
 		}
 	}
 
-	static readonly $_REMOTE_$: unique symbol;
+	static readonly REMOTE: unique symbol;
 	
 	snapshot_deferOne(baseID: string, datum_type: DatumType, snapshot: QuerySnapshot) {
 		const deferral = new SnapshotDeferal(baseID, datum_type, snapshot);
@@ -222,7 +222,7 @@ export default class DBFirebase extends DBCommon {
 		}
 	}
 
-	static readonly $_SUBCOLLECTIONS_$: unique symbol;
+	static readonly SUBCOLLECTIONS: unique symbol;
 
 	async documents_firstTime_persistentCreate(datum_type: DatumType, baseID: string, collectionRef: CollectionReference) {
 		const docRef = doc(this.firestore, this.bulksName, baseID);
@@ -257,7 +257,7 @@ export default class DBFirebase extends DBCommon {
 		}
 	}
 
-	static readonly $_THING_$: unique symbol;
+	static readonly THING: unique symbol;
 
 	async thing_remember_persistentCreate(thing: Thing) {
 		const thingsCollection = this.bulk_for(thing.baseID)?.thingsCollection;
@@ -358,7 +358,7 @@ export default class DBFirebase extends DBCommon {
 		}
 	}
 
-	static readonly $_TRAIT_$: unique symbol;
+	static readonly TRAIT: unique symbol;
 
 	trait_extractChangesFromPersistent(trait: Trait, from: PersistentTrait) {
 		const changed = !from.isEqualTo(trait);
@@ -449,7 +449,7 @@ export default class DBFirebase extends DBCommon {
 		}
 	}
 
-	static readonly $_RELATIONSHIP_$: unique symbol;
+	static readonly RELATIONSHIP: unique symbol;
 
 	async relationship_persistentDelete(relationship: Relationship) {
 		const relationshipsCollection = this.bulk_for(relationship.baseID)?.relationshipsCollection;
@@ -551,7 +551,7 @@ export default class DBFirebase extends DBCommon {
 		}
 	}
 
-	static readonly $_VALIDATION_$: unique symbol;
+	static readonly VALIDATION: unique symbol;
 
 	static data_isValidOfKind(datum_type: DatumType, data: DocumentData) {
 		switch (datum_type) {

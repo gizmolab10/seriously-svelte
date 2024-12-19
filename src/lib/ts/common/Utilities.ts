@@ -272,7 +272,7 @@ class Utilities {
 		return size;
 	}
 
-	static readonly $_JSON_$: unique symbol;
+	static readonly JSON: unique symbol;
 
 	stringify_object(object: Object) { return JSON.stringify(object, this.removeExtras, 2); }
 

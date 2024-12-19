@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, k, u, ux, w, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
-	import { s_edit_state, s_show_details, s_device_isMobile, } from '../../ts/state/Svelte_Stores';
+	import { s_title_edit_state, s_show_details, s_device_isMobile, } from '../../ts/state/Svelte_Stores';
 	import { IDControl, Hierarchy, dbDispatch, IDPersistent } from '../../ts/common/Global_Imports';
 	import { debug, ZIndex, Ancestry, Startup_State } from '../../ts/common/Global_Imports';
 	import { s_db_type, s_graphRect, s_hierarchy } from '../../ts/state/Svelte_Stores';
@@ -32,7 +32,7 @@
 			const key = event.key;
 			if (key == undefined) {
 				alert('No key for ' + event.type);
-			} else if (!$s_edit_state && !g.isEditing_text) {			// let title editor consume the events
+			} else if (!$s_title_edit_state && !g.isEditing_text) {			// let title editor (when active) consume the events
 				const h = $s_hierarchy;
 				switch (key) {
 					case 'c': w.user_graph_offset_setTo(Point.zero); break;

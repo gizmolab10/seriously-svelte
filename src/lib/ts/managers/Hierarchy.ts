@@ -1,7 +1,7 @@
 import { IDControl, persistLocal, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
 import { g, k, u, User, Thing, Trait, Grabs, debug, files, Access, IDTool, signals } from '../common/Global_Imports';
 import { ThingType, TraitType, Predicate, Relationship, Ancestry, Mouse_State } from '../common/Global_Imports';
-import { s_edit_state, s_id_popupView, s_focus_ancestry, s_alteration_mode } from '../state/Svelte_Stores';
+import { s_title_edit_state, s_id_popupView, s_focus_ancestry, s_alteration_mode } from '../state/Svelte_Stores';
 import { s_grabbed_ancestries, s_ancestry_showing_tools } from '../state/Svelte_Stores';
 import { DatumType } from '../../ts/basis/PersistentIdentifiable';
 import type { Dictionary } from '../common/Types';
@@ -46,7 +46,7 @@ export class Hierarchy {
 	get hasNothing(): boolean { return !this.root; }
 	get idRoot(): string | null { return this.root?.id ?? null; };
 
-	static readonly $_INIT_$: unique symbol;
+	static readonly INIT: unique symbol;
 
 	constructor(db: DBCommon) {
 		this.grabs = new Grabs();
@@ -73,7 +73,7 @@ export class Hierarchy {
 		}
 	}
 
-	static readonly $_EVENTS_$: unique symbol;
+	static readonly EVENTS: unique symbol;
 
 	async handle_tool_clicked(idControl: string, mouse_state: Mouse_State) {
 		const event: MouseEvent | null = mouse_state.event as MouseEvent;
@@ -121,7 +121,7 @@ export class Hierarchy {
 							case k.space:	await this.ancestry_edit_persistentCreateChildOf(ancestryGrab); break;
 							case 'd':		await this.thing_edit_persistentDuplicate(ancestryGrab); break;
 							case '-':		if (!COMMAND) { await this.thing_edit_persistentAddLine(ancestryGrab); } break;
-							case 'tab':		await this.ancestry_edit_persistentCreateChildOf(ancestryGrab.parentAncestry); break; // Title_State editor also makes this call
+							case 'tab':		await this.ancestry_edit_persistentCreateChildOf(ancestryGrab.parentAncestry); break; // Title_Edit_State editor also makes this call
 							case 'enter':	ancestryGrab.startEdit(); break;
 						}
 					}
@@ -161,14 +161,14 @@ export class Hierarchy {
 		s_ancestry_showing_tools.set(null);
 	}
 
-	static readonly $_FOCUS_$: unique symbol;
+	static readonly FOCUS: unique symbol;
 
 	get focus(): Thing | null {
 		const ancestry = get(s_focus_ancestry);
 		return !ancestry ? this.root : ancestry.thing;
 	}
 
-	static readonly $_GRABS_$: unique symbol;
+	static readonly GRABS: unique symbol;
 
 	async latestAncestryGrabbed_rebuild_persistentMoveUp_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const ancestry = this.grabs.latestAncestryGrabbed(up);
@@ -195,7 +195,7 @@ export class Hierarchy {
 		return this.root;
 	}
 	
-	static readonly $_THINGS_$: unique symbol;
+	static readonly THINGS: unique symbol;
 
 	thing_build_fromDict(dict: Dictionary) {
 		let type = dict.type;
@@ -250,7 +250,7 @@ export class Hierarchy {
 		return u.strip_invalid(things);
 	}
 
-	static readonly $_THING_$: unique symbol;
+	static readonly THING: unique symbol;
 
 	thing_forHID(hid: number): Thing | null { return this.thing_byHID[hid ?? undefined]; }
 
@@ -373,7 +373,7 @@ export class Hierarchy {
 		}
 	}
 
-	static readonly $_TRAITS_$: unique symbol;
+	static readonly TRAITS: unique symbol;
 
 	traits_forOwnerHID(hid: number | null): Array<Trait> | null {
 		const value = !!hid ? this.traits_byOwnerHID?.[hid] : null;
@@ -393,7 +393,7 @@ export class Hierarchy {
 		this.traits = [];
 	}
 
-	static readonly $_TRAIT_$: unique symbol;
+	static readonly TRAIT: unique symbol;
 
 	trait_forHID(hid: number): Trait | null { return this.trait_byHID[hid ?? undefined]; }
 
@@ -446,7 +446,7 @@ export class Hierarchy {
 		trait.set_needs_persisting_again();
 	}
 
-	static readonly $_BULKS_$: unique symbol;
+	static readonly BULKS: unique symbol;
 
 	thing_remember_bulkRootID(baseID: string, id: string, color: string) {
 		const thing = this.thing_bulkAlias_forTitle(baseID);
@@ -501,7 +501,7 @@ export class Hierarchy {
 		return newThingAncestry;
 	}
 
-	static readonly $_RELATIONSHIPS_$: unique symbol;
+	static readonly RELATIONSHIPS: unique symbol;
 
 	relationships_refreshKnowns() {
 		const saved = this.relationships;
@@ -580,7 +580,7 @@ export class Hierarchy {
 		}
 	}
 
-	static readonly $_RELATIONSHIP_$: unique symbol;
+	static readonly RELATIONSHIP: unique symbol;
 
 	relationship_forHID(hid: number): Relationship | null { return this.relationship_byHID[hid ?? undefined]; }
 	relationships_forPredicateHID(hid: number): Array<Relationship> { return this.relationships_byPredicateHID[hid] ?? []; }
@@ -688,7 +688,7 @@ export class Hierarchy {
 		return relationship;
 	}
 
-	static readonly $_ANCESTRIES_$: unique symbol;
+	static readonly ANCESTRIES: unique symbol;
 
 	ancestries_forgetAll() {
 		this.ancestry_byKind_andHash = {};
@@ -736,7 +736,7 @@ export class Hierarchy {
 		}
 	}
 
-	static readonly $_ANCESTRY_$: unique symbol;
+	static readonly ANCESTRY: unique symbol;
 
 	ancestry_forHID(idHashed: number): Ancestry | null {
 		return this.ancestry_byHID[idHashed] ?? null;
@@ -1021,7 +1021,7 @@ export class Hierarchy {
 				}
 			}
 		}
-		s_edit_state.set(null);
+		s_title_edit_state.set(null);
 		if (!!newGrabAncestry) {
 			newGrabAncestry.grabOnly();
 			if (!RIGHT && !!newFocusAncestry) {
@@ -1041,7 +1041,7 @@ export class Hierarchy {
 		}
 	}
 
-	static readonly $_PREDICATES_$: unique symbol;
+	static readonly PREDICATES: unique symbol;
 
 	predicate_forKind(kind: string | null): Predicate | null { return !kind ? null : this.predicate_byKind[kind]; }
 	predicates_byDirection(isBidirectional: boolean) { return this.predicate_byDirection[isBidirectional ? 1 : 0]; }
@@ -1058,7 +1058,7 @@ export class Hierarchy {
 		this.predicates = [];
 	}
 
-	static readonly $_PREDICATE_$: unique symbol;
+	static readonly PREDICATE: unique symbol;
 
 	idPredicate_for(id: string): string {
 		const hid = id.split(k.generic_separator)[0].hash();		// grab first relationship's hid
@@ -1096,7 +1096,7 @@ export class Hierarchy {
 		return predicate;
 	}
 
-	static readonly $_ANCILLARY_$: unique symbol;
+	static readonly ANCILLARY: unique symbol;
 
 	access_runtimeCreate(idAccess: string, kind: string) {
 		const access = new Access(this.db.dbType, idAccess, kind);
@@ -1109,7 +1109,7 @@ export class Hierarchy {
 		this.user_byHID[id.hash()] = user;
 	}
 
-	static readonly $_FILES_$: unique symbol;
+	static readonly FILES: unique symbol;
 
 	select_file_toUpload(SHIFT: boolean) {
 		s_id_popupView.set(IDControl.open);
@@ -1196,7 +1196,7 @@ export class Hierarchy {
 		return data;
 	}
 
-	static readonly $_BUILD_$: unique symbol;
+	static readonly BUILD: unique symbol;
 
 	async extract_hierarchy_from(dict: Dictionary) {
 		if (this.replace_rootHID != null) {
@@ -1264,7 +1264,7 @@ export class Hierarchy {
 	}
 
 	async conclude_fetch() {
-		s_edit_state.set(null);
+		s_title_edit_state.set(null);
 		s_ancestry_showing_tools.set(null);
 		persistLocal.restore_focus();
 		persistLocal.restore_grabbed_andExpanded(true);
@@ -1274,7 +1274,7 @@ export class Hierarchy {
 		this.isAssembled = true;
 	}
 
-	static readonly $_OTHER_$: unique symbol;
+	static readonly OTHER: unique symbol;
 
 	toggleAlteration(wantsAlteration: AlterationType, isRelated: boolean) {
 		const isAltering = get(s_alteration_mode)?.type;

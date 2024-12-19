@@ -2,7 +2,7 @@
 	import { g, k, u, ux, Thing, Point, Angle, debug, ZIndex, signals, Graph_Type } from '../../ts/common/Global_Imports';
 	import { s_thing_fontFamily, s_grabbed_ancestries, s_ancestry_showing_tools } from '../../ts/state/Svelte_Stores';
 	import { ElementType, Element_State, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
-	import { s_edit_state, s_thing_color, s_graph_type, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
+	import { s_title_edit_state, s_thing_color, s_graph_type, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
 	import Title_Editor from './Title_Editor.svelte';
 	import Dot_Reveal from './Dot_Reveal.svelte';
 	import Dot_Drag from './Dot_Drag.svelte';
@@ -71,7 +71,7 @@
 	});
 
 	$: {
-		const _ = $s_edit_state + $s_grabbed_ancestries + $s_ancestry_showing_tools;
+		const _ = $s_title_edit_state + $s_grabbed_ancestries + $s_ancestry_showing_tools;
 		updateBorder_fromState();
 	}
 

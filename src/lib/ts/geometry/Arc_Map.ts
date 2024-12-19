@@ -31,7 +31,7 @@ export default class Arc_Map {
 		this.outside_arc_radius = radius;
 	}
 
-	static readonly $_PRIMITIVES_$: unique symbol;
+	static readonly PRIMITIVES: unique symbol;
 
 	get nadir_offset(): number { return (this.arc_straddles_nadir && !this.arc_straddles_zero) ? Angle.half : 0; }
 	get center_angle(): number { return (this.end_angle + this.start_angle) / 2 - this.nadir_offset; }
@@ -90,7 +90,7 @@ export default class Arc_Map {
 		this.arc_rect = this.computed_arc_rect;
 	}
 
-	static readonly $_SVG_PATHS_$: unique symbol;
+	static readonly SVG_PATHS: unique symbol;
 
 	get svgPathFor_arc(): string {
 		const [start, end] = this.angles;
