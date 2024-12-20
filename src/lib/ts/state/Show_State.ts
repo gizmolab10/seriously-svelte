@@ -5,10 +5,11 @@ import type { Dictionary } from '../common/Types';
 
 class Show_State {
 	info_type: InfoType	= InfoType.focus;
-	traits				= false;
-	arrowheads			= false;
 	debug_cursor		= false;
-	tinyDots			= true;
+	tree_types			= false;
+	arrowheads			= false;
+	traits				= false;
+	tiny_dots			= true;
 
 	queryStrings_apply() {
 		const queryStrings = g.queryStrings;
@@ -26,9 +27,9 @@ class Show_State {
 					this.traits = flag;
 					persistLocal.write_key(IDPersistent.traits, flag);
 					break;
-				case 'tinyDots':
-					this.tinyDots = flag;
-					persistLocal.write_key(IDPersistent.tinyDots, flag);
+				case 'tiny_dots':
+					this.tiny_dots = flag;
+					persistLocal.write_key(IDPersistent.tiny_dots, flag);
 					break;
 				case 'arrowheads':
 					this.arrowheads = flag;
@@ -40,7 +41,7 @@ class Show_State {
 
 	restore_state() {
 		this.traits = persistLocal.read_key(IDPersistent.traits) ?? false;
-		this.tinyDots = persistLocal.read_key(IDPersistent.tinyDots) ?? false;
+		this.tiny_dots = persistLocal.read_key(IDPersistent.tiny_dots) ?? false;
 		s_show_details.set(persistLocal.read_key(IDPersistent.details) ?? false);
 		this.arrowheads = persistLocal.read_key(IDPersistent.arrowheads) ?? false;
 		this.info_type = persistLocal.read_key(IDPersistent.info_type) ?? InfoType.focus;

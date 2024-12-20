@@ -9,9 +9,9 @@
 	export let ancestry;
 	const room_forDragDot = 6.5;
 	const titleTop = g.showing_rings ? 0.5 : 0;
-	let bound_title = ancestry?.thing?.title ?? k.empty;
+	let bound_title = thing()?.title ?? k.empty;
 	let padding = `0.5px 0px 0px ${room_forDragDot}px`;
-    let color = ancestry.thing?.color;
+    let color = thing()?.color ?? k.empty;
 	let titleWrapper: Svelte_Wrapper;
 	let originalTitle = k.empty;
 	let cursorStyle = k.empty;
@@ -20,16 +20,16 @@
 	let clickCount = 0;
 	let titleWidth = 0;
 	let titleLeft = 0;
-    let thing!: Thing;
 	let ghost = null;
 	let input = null;
 
 	function isHit(): boolean { return false }
 	function handle_mouse_up() { clearClicks(); }
 	var hasChanges = () => { return originalTitle != bound_title; };
+	function thing(): Thing | null { return ancestry?.thing ?? null; }
 	function handle_mouse_state(mouse_state: Mouse_State): boolean { return false; }
 
-	export const REACTIVES: unique symbol = Symbol('REACTIVES');
+	export const _____REACTIVES_____: unique symbol = Symbol('_____REACTIVES_____');
 	
 	$: {
 		const _ = $s_title_edit_state;
@@ -43,8 +43,8 @@
 	}
 
 	$: {
-		if (!!ancestry.thing && ancestry.thing.id == $s_thing_color?.split(k.generic_separator)[0]) {
-			color = thing?.color;
+		if (!!thing() && thing().id == $s_thing_color?.split(k.generic_separator)[0]) {
+			color = thing()?.color;
 		}
 	}
 
@@ -80,7 +80,7 @@
 		}
 	}
 
-	export const PRIMITIVES: unique symbol = Symbol('PRIMITIVES');
+	export const _____PRIMITIVES_____: unique symbol = Symbol('_____PRIMITIVES_____');
  
 	function title_isEditing(): boolean {
 		const te_state = $s_title_edit_state;
@@ -92,17 +92,25 @@
 		clearTimeout(mouse_click_timer);	// clear all previous timers
 	}
 
-	function startEditMaybe() {
-		if (ancestry.isEditable) {
-			ancestry?.startEdit();
-			input?.focus();
-		}
-	}
-
 	function updateInputWidth() {
 		if (!!input && !!ghost) { // ghost only exists to provide its width (in pixels)
 			titleWidth = ghost.scrollWidth - 5;
 			input.style.width = `${titleWidth}px`;	// apply its width to the input element
+		}
+	}
+
+	function applyRange() {
+		const range = thing()?.selectionRange;
+		if (!!range && !!input) {
+			input.setSelectionRange(range.start, range.end);
+		}
+	}
+
+	function extractRange() {
+		if (!!input && !!ancestry) {
+			const end = input.selectionEnd;
+			const start = input.selectionStart;
+			ancestry.selectionRange = new Seriously_Range(start, end);
 		}
 	}
 
@@ -114,11 +122,11 @@
 		return canAlter;
 	}
 
-	export const HANDLERS: unique symbol = Symbol('HANDLERS');
+	export const _____HANDLERS_____: unique symbol = Symbol('_____HANDLERS_____');
 	
 	onMount(() => {
-		if (!!ancestry?.thing) {
-			titleWidth = ancestry.thing.titleWidth + 6;
+		if (!!thing()) {
+			titleWidth = thing().titleWidth + 6;
 			titleLeft = g.showing_rings ? ancestry.isFocus ? -2 : (forward ? 14 : 4) : 10;
 		}
 		const handler = signals.handle_anySignal((IDSignal, ancestry) => { updateInputWidth(); });
@@ -138,7 +146,7 @@
 	}
 
 	function handle_doubleClick(event) {
-		debug.log_action(` double click '${thing.title}' TITLE`);
+		debug.log_action(` double click '${thing().title}' TITLE`);
 		event.preventDefault();
 		startEditMaybe();
 		clearClicks();
@@ -146,19 +154,19 @@
 
 	function handle_input(event) {
 		const title = event.target.value;
-		if (!!thing && (!!title || title == k.empty)) {
-			thing.title = bound_title = title;
+		if (!!thing() && (!!title || title == k.empty)) {
+			thing().title = bound_title = title;
 			s_thing_title.set(null);
 		}
 	};
 
 	function handle_key_down(event) {
-		if (!!thing && !!ancestry && ancestry.isEditing && canAlterTitle(event)) {
+		if (!!thing() && !!ancestry && ancestry.isEditing && canAlterTitle(event)) {
 			debug.log_key(`TITLE  ${event.key}`);
 			switch (event.key) {	
 				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); $s_hierarchy.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
-				default:	  s_thing_title.set(thing.id); break;
+				default:	  s_thing_title.set(thing().id); break;
 			}
 		}
 	}
@@ -198,6 +206,15 @@
 		}
 	}
 
+	export const _____EDIT_____: unique symbol = Symbol('_____EDIT_____');
+
+	function startEditMaybe() {
+		if (ancestry.isEditable) {
+			ancestry?.startEdit();
+			input?.focus();
+		}
+	}
+
 	function stopAndClearEditing() {
 		invokeBlurNotClearEditing();
 		if (!!ancestry && ancestry.isEditing) {				
@@ -212,30 +229,15 @@
 	}
 
 	function invokeBlurNotClearEditing() {
-		if (!!ancestry && ancestry.isEditing && thing) {
+		if (!!ancestry && ancestry.isEditing && thing()) {
 			isEditing = false;
 			extractRange();
 			input?.blur();
 			if (hasChanges()) {
-				dbDispatch.db.thing_persistentUpdate(thing);
-				originalTitle = thing?.title;		// so hasChanges will be correct
+				dbDispatch.db.thing_persistentUpdate(thing());
+				originalTitle = thing()?.title;		// so hasChanges will be correct
 				ancestry.signal_relayoutWidgets();
 			}
-		}
-	}
-
-	function extractRange() {
-		if (!!input && !!ancestry) {
-			const end = input.selectionEnd;
-			const start = input.selectionStart;
-			ancestry.selectionRange = new Seriously_Range(start, end);
-		}
-	}
-
-	function applyRange() {
-		const range = ancestry?.thing?.selectionRange;
-		if (!!range && !!input) {
-			input.setSelectionRange(range.start, range.end);
 		}
 	}
 

@@ -18,8 +18,8 @@ export enum IDPersistent {
 	tree_type	   = 'tree_type',
 	info_type      = 'info_type',
 	font_size	   = 'font_size',
+	tiny_dots	   = 'tiny_dots',
 	expanded	   = 'expanded',
-	tinyDots	   = 'tinyDots',
 	grabbed		   = 'grabbed',
 	details		   = 'details',
 	base_id		   = 'base_id',
@@ -36,7 +36,6 @@ class Persist_Local {
 	// for backwards compatibility with {focus, grabbed, expanded} which were stored as relationship ids (not as ancestry strings)
 	usesRelationships		 = localStorage[IDPersistent.relationships];
 	ignoreAncestries		 = !this.usesRelationships || this.usesRelationships == 'undefined';
-	grabs_expandeds_restored = false;
 
 	read_key				(key: string): any | null { return this.parse(localStorage[key]); }
 	write_key<T>			(key: string, value: T) { localStorage[key] = JSON.stringify(value); }
@@ -174,25 +173,24 @@ class Persist_Local {
 
 	restore_grabbed_andExpanded(force: boolean = false) {
 		const h = get(s_hierarchy);
-		if (!this.grabs_expandeds_restored || force) {
-			this.grabs_expandeds_restored = true;
-			const grabbed = this.ancestries_forKey(this.dbKey_for(IDPersistent.grabbed)) ?? [h.rootAncestry];
-			const expanded = this.ancestries_forKey(this.dbKey_for(IDPersistent.expanded));
-			s_grabbed_ancestries.set(grabbed);
-			debug.log_persist(`^ GRABBED ${grabbed.map(a => a.title)}`);
-			s_expanded_ancestries.set(expanded);
-			debug.log_persist(`^ EXPANDED ${expanded.map(a => a.title)}`);
-			setTimeout(() => {
-				s_grabbed_ancestries.subscribe((g: Array<Ancestry>) => {
-					debug.log_persist(`  GRABBED ${g.map(a => a.title)}`);
-					this.writeDB_key(IDPersistent.grabbed, !g ? null : g.map(a => a.id));		// ancestral paths
-				});
-				s_expanded_ancestries.subscribe((e: Array<Ancestry>) => {
-					debug.log_persist(`  EXPANDED ${e.map(a => a.title)}`);
-					this.writeDB_key(IDPersistent.expanded, !e ? null : e.map(a => a.id));	// ancestral paths
-				});
-			}, 100);
-		}
+		const root = [h.rootAncestry];
+		const erase = dbDispatch.eraseDB;
+		const expanded = erase ? [] : this.ancestries_forKey(this.dbKey_for(IDPersistent.expanded));
+		const grabbed = erase ? root : this.ancestries_forKey(this.dbKey_for(IDPersistent.grabbed)) ?? root;
+		s_grabbed_ancestries.set(grabbed);
+		debug.log_persist(`^ GRABBED ${grabbed.map(a => a.title)}`);
+		s_expanded_ancestries.set(expanded);
+		debug.log_persist(`^ EXPANDED ${expanded.map(a => a.title)}`);
+		setTimeout(() => {
+			s_grabbed_ancestries.subscribe((g: Array<Ancestry>) => {
+				debug.log_persist(`  GRABBED ${g.map(a => a.title)}`);
+				this.writeDB_key(IDPersistent.grabbed, !g ? null : g.map(a => a.id));		// ancestral paths
+			});
+			s_expanded_ancestries.subscribe((e: Array<Ancestry>) => {
+				debug.log_persist(`  EXPANDED ${e.map(a => a.title)}`);
+				this.writeDB_key(IDPersistent.expanded, !e ? null : e.map(a => a.id));	// ancestral paths
+			});
+		}, 100);
 	}
 
 	restore_focus() {

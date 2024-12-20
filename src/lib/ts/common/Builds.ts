@@ -10,6 +10,7 @@ class Builds {
 
 	constructor() {
 		this.notes = {
+			123 : ['December 19, 2024', 'begin work on tutorial'],
 			122 : ['December 17, 2024', 'improved details'],
 			121 : ['December 11, 2024', 'fix breadcrumb button cosmetics'],
 			120 : ['December 9, 2024', 'save and read subtrees'],

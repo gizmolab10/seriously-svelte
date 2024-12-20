@@ -105,7 +105,7 @@
 					selected={[$s_graph_type]}
 					titles={[Graph_Type.tree, Graph_Type.rings]}
 					selection_closure={(titles) => selection_closure('graph', titles)}/>
-				{#if !g.showing_rings}
+				{#if !g.showing_rings && show.tree_types}
 					{#key $s_tree_type}
 						<Segmented
 							name='tree'
