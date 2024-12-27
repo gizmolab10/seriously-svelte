@@ -12,13 +12,12 @@ export default class DBLocal extends DBCommon {
 	isPersistent = true;
 
 	get h(): Hierarchy { return get(s_hierarchy); }
-	setHasData(flag: boolean) { this.hasData = flag; }
 
 	async remove_all() {
 		persistLocal.write_key(IDPersistent.local, null);
 	}
 
-	async deferred_persistAll() {
+	async persistAll() {
 		const json_object = u.stringify_object(this.h.all_data);
 		persistLocal.write_key(IDPersistent.local, json_object);
 	}
@@ -29,23 +28,26 @@ export default class DBLocal extends DBCommon {
 			const object = JSON.parse(json_object);
 			await this.h.extract_hierarchy_from(object as Dictionary);
 		} else {
-			this.h.predicate_remember_runtimeCreateUnique(Predicate.idContains, 'contains', false, false);
-			this.h.predicate_remember_runtimeCreateUnique(Predicate.idIsRelated, 'isRelated', true, false);
-			this.h.thing_remember_runtimeCreateUnique(this.baseID, k.empty, 'click here to edit this title', 'limegreen', ThingType.root);
+			this.h.predicate_defaults_remember_runtimeCreate();
+			this.h.thing_remember_runtimeCreateUnique(this.baseID, Thing.newID(), 'click here to edit this title', 'limegreen', ThingType.root);
 		}
 	}
 
-	async thing_persistentUpdate(thing: Thing) { this.deferred_persistAll(); }
-	async thing_persistentDelete(thing: Thing) { this.deferred_persistAll(); }
-	async thing_remember_persistentCreate(thing: Thing) { this.h.thing_remember(thing); this.deferred_persistAll(); }
+	async thing_persistentUpdate(thing: Thing) { this.persistAll(); }
+	async thing_persistentDelete(thing: Thing) { this.persistAll(); }
+	async thing_remember_persistentCreate(thing: Thing) { this.h.thing_remember(thing); this.persistAll(); }
 
-	async trait_persistentUpdate(trait: Trait) { this.deferred_persistAll(); }
-	async trait_persistentDelete(trait: Trait) { this.deferred_persistAll(); }
-	async trait_remember_persistentCreate(trait: Trait) { this.h.trait_remember(trait); this.deferred_persistAll(); }
+	async trait_persistentUpdate(trait: Trait) { this.persistAll(); }
+	async trait_persistentDelete(trait: Trait) { this.persistAll(); }
+	async trait_remember_persistentCreate(trait: Trait) { this.h.trait_remember(trait); this.persistAll(); }
+	
+	async predicate_persistentUpdate(predicate: Predicate) { this.persistAll(); }
+	async predicate_persistentDelete(predicate: Predicate) { this.persistAll(); }
+	async predicate_remember_persistentCreate(predicate: Predicate) { this.h.predicate_remember(predicate); this.persistAll(); }
 
-	async relationship_persistentUpdate(relationship: Relationship) { this.deferred_persistAll(); }
-	async relationship_persistentDelete(relationship: Relationship) { this.deferred_persistAll(); }
-	async relationship_remember_persistentCreate(relationship: Relationship) { this.h.relationship_remember(relationship); this.deferred_persistAll(); }
+	async relationship_persistentUpdate(relationship: Relationship) { this.persistAll(); }
+	async relationship_persistentDelete(relationship: Relationship) { this.persistAll(); }
+	async relationship_remember_persistentCreate(relationship: Relationship) { this.h.relationship_remember(relationship); this.persistAll(); }
 }
 
 export const dbLocal = new DBLocal();

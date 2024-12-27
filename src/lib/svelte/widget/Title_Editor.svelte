@@ -57,7 +57,7 @@
 		//////////////////////////////////////////////////////
 
 		if (!!ancestry) {
-			const hasGrabbed = $s_grabbed_ancestries.length > 0;
+			const hasGrabbed = ($s_grabbed_ancestries ?? [])?.length > 0;
 			const te_state = $s_title_edit_state; // react to s_title_edit_state
 			if (ancestry.isEditable) {
 				if (!!ancestry && (ancestry.isStoppingEdit ?? false)) {

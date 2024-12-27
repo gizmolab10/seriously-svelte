@@ -1,8 +1,7 @@
 <script lang='ts'>
 	import { k, ZIndex } from '../../ts/common/Global_Imports';
 	export let top = 0;
-	export let dict;
-
+	export let array;
 </script>
 
 <style>
@@ -18,7 +17,7 @@
 	}
 </style>
 
-{#if dict}
+{#if array}
 	<div class='ancestry-info'
 		style='
 			left:10px;
@@ -26,7 +25,7 @@
 			position:absolute;
 			z-index: {ZIndex.details};'>
 		<table style='width: {k.width_details}px; left:12px; color:black;'>
-			{#each dict as [key, value]}
+			{#each array as [key, value]}
 				<tr>
 					<td class='first'>{key}:</td>
 					<td class='second'>{value}</td>

@@ -44,7 +44,7 @@ export default class DBDispatch {
 			if (!!type && (!done || (type && this.db.dbType != type))) {
 				done = true;
 				setTimeout( async () => {
-					await this.hierarchy_fetch_andBuild_forDBType(type);
+					await this.hierarchy_setup_fetch_andBuild_forDBType(type);
 				}, 10);
 			}
 		});
@@ -69,7 +69,7 @@ export default class DBDispatch {
 		return `(loading your ${type} data${from})`;
 	}
 
-	async hierarchy_fetch_andBuild_forDBType(type: string) {
+	async hierarchy_setup_fetch_andBuild_forDBType(type: string) {
 		persistLocal.write_key(IDPersistent.db, type);
 		this.db_set_accordingToType(type);
 		this.queryStrings_apply();
@@ -77,30 +77,31 @@ export default class DBDispatch {
 			const h = this.db.hierarchy;
 			if (!!h) {
 				s_hierarchy.set(h);
+				get(s_hierarchy).reset_hierarchy();
 			}
 		} else {
 			s_startup_state.set(Startup_State.fetch);
-			await this.hierarchy_fetch_andBuild();
+			await this.hierarchy_create_fetch_andBuild();
 		}
 		setTimeout( async () => {
 			s_startup_state.set(Startup_State.ready);
-			await get(s_hierarchy).conclude_fetch();
 			signals.signal_rebuildGraph_fromFocus();
 		}, 1);
 	}
 
-	async hierarchy_fetch_andBuild() {
-		const startTime = new Date().getTime();
+	async hierarchy_create_fetch_andBuild() {
 		s_db_loadTime.set(null);
-		const h = this.db.hierarchy = new Hierarchy(this.db);
+		const startTime = new Date().getTime();
+		const db = this.db;
+		const h = db.hierarchy = new Hierarchy(db);
 		s_hierarchy.set(h);
 		if (this.eraseDB) {
-			await this.db.remove_all();	// start fresh
+			await db.remove_all();	// start fresh
 		}
 		h.hierarchy_forgetAll();
-		await this.db.fetch_all();
-		await h.setup_hierarchy_after_fetch();
-		if (this.db.isRemote) {
+		await db.fetch_all();
+		await h.conclude_fetch_andPersist();
+		if (db.isRemote) {
 			this.set_loadTime_from(startTime);
 		}
 	}

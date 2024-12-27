@@ -8,7 +8,7 @@
 	import Tools from './Tools.svelte';
 	import Info from './Info.svelte';
 	const titles = [Details_Type[Details_Type.storage], Details_Type[Details_Type.tools], Details_Type[Details_Type.recents], Details_Type[Details_Type.info]];
-	const heights = [70, 40, 100, 0];
+	const heights = [63, 40, 100, 0];
 	let tops = [0, 0, 0, 0];
 	let rebuilds = 0;
 
@@ -73,7 +73,7 @@
 				<Recents top={tops[Details_Type.recents]}/>
 			{/if}
 			{#if shows_type(Details_Type.info)}
-				<Separator title='info' top={tops[Details_Type.info] - 8}/>
+				<Separator title='info' top={tops[Details_Type.info] - 7}/>
 				<Info top={tops[Details_Type.info]}/>
 			{/if}
 		</div>

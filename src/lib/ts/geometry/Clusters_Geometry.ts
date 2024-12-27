@@ -27,8 +27,8 @@ export default class Clusters_Geometry {
 	}
 
 	get cluster_maps(): Array<Cluster_Map> { return u.concatenateArrays(this.parent_cluster_maps, this.child_cluster_maps); }		// for lines and arcs
-	cluster_maps_for(children: boolean): Array<Cluster_Map> { return children ? this.child_cluster_maps : this.parent_cluster_maps; }
-	cluster_map_for(children: boolean, predicate: Predicate): Cluster_Map { return this.cluster_maps_for(children)[predicate.stateIndex]; }
+	cluster_maps_forChildren(children: boolean): Array<Cluster_Map> { return children ? this.child_cluster_maps : this.parent_cluster_maps; }
+	cluster_map_forChildren(children: boolean, predicate: Predicate): Cluster_Map { return this.cluster_maps_forChildren(children)[predicate.stateIndex]; }
 
 	widget_mapFor(ancestry: Ancestry): Widget_MapRect | null {
 		const maps = this.widget_maps.filter(m => m.widget_ancestry == ancestry);
@@ -68,7 +68,7 @@ export default class Clusters_Geometry {
 			const paging_state = get(s_focus_ancestry)?.thing?.page_states?.paging_state_forPointsOut(children, predicate);
 			const onePage = paging_state?.onePage_from(ancestries) ?? [];
 			const cluster_map = new Cluster_Map(ancestries.length, onePage, predicate, children);
-			const cluster_maps = this.cluster_maps_for(children);
+			const cluster_maps = this.cluster_maps_forChildren(children);
 			cluster_maps[predicate.stateIndex] = cluster_map;
 		}
 	}

@@ -4,7 +4,7 @@ export default class Parent_Ancestry extends Ancestry {
 	original!: Ancestry;
 
 	constructor(ancestry: Ancestry) {
-		super(ancestry.dbType, ancestry.id, ancestry.idPredicate, false);	// isParental = false
+		super(ancestry.dbType, ancestry.id, ancestry.kindPredicate, false);	// isParental = false
 		this.original = ancestry;
 	}
 

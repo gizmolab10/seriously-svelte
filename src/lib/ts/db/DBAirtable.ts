@@ -33,7 +33,6 @@ export default class DBAirtable extends DBCommon {
 	isRemote = true;
 
 	relationships_errorMessage = 'Error in Relationships:';
-	setHasData(flag: boolean) { this.hasData = flag; }
 	async fetch_hierarchy_from(baseID: string) {}
 	things_errorMessage = 'Error in Things:';
 	traits_errorMessage = 'Error in Traits:';
@@ -90,11 +89,10 @@ export default class DBAirtable extends DBCommon {
 	
 	async thing_remember_persistentCreate(thing: Thing) {
 		try {
-			const fields = await this.things_table.create(thing.fields);
-			const id = fields['id'];		// need id for update, delete and things_byHID (to get parent from relationship)
-			thing.setID(id);
-			thing.already_persisted = true;		// was saved by create, above
-			get(s_hierarchy).thing_remember(thing);
+			const dict = await this.things_table.create(thing.fields);
+			thing.already_persisted = true;		// was saved by create (the line above)
+			thing.awaitingCreation = false;
+			get(s_hierarchy).thing_remember_updateID_to(thing, dict['id']);
 		} catch (error) {
 			thing.log(DebugFlag.remote, this.things_errorMessage + error);
 		}

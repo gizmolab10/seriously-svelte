@@ -162,9 +162,9 @@ class Utilities {
 		}
 	}
 
-	async ancestries_orders_normalize_persistentMaybe(array: Array<Ancestry>, persist: boolean = true) {
+	ancestries_orders_normalize_persistentMaybe(array: Array<Ancestry>, persist: boolean = true) {
 		this.sort_byOrder(array);
-		array.forEach(async (ancestry, index) => {
+		array.forEach( (ancestry, index) => {
 			if (ancestry.order != index) {
 				const relationship = ancestry.relationship;
 				relationship?.order_setTo_persistentMaybe(index, persist);
@@ -279,17 +279,21 @@ class Utilities {
 	static extras = [
 		'dbType',
 		'baseID',
+		'isDirty',
 		'idHashed',
+		'hidChild',
+		'hidParent',
 		'isEditing',
 		'isGrabbed',
+		'bulkRootID',
 		'oneAncestry',
 		'page_states',
+		'needsBulkFetch',
 		'selectionRange',
 		'lastModifyDate',
 		'awaitingCreation',
 		'already_persisted',
 		'hasPersistentStorage',
-		'needs_persisting_again',
 	];
 	
 	removeExtras(key: string, value: any) {

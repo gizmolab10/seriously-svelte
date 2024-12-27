@@ -37,7 +37,6 @@ export default class DBFirebase extends DBCommon {
 	predicatesCollection!: CollectionReference;
 	deferredSnapshots: Array<SnapshotDeferal> = [];
 
-	setHasData(flag: boolean) { this.hasData = flag; }
 	reportError(error: any) { console.log(error); }
 
 	queryStrings_apply() {
@@ -78,10 +77,9 @@ export default class DBFirebase extends DBCommon {
 			const collectionRef = !baseID ? collection(this.firestore, datum_type) : collection(this.firestore, this.bulksName, baseID, datum_type);
 			let querySnapshot = await getDocs(collectionRef);
 			const bulk = this.bulk_for(baseID);
-
 			if (!!baseID) {
 				if (querySnapshot.empty) {
-					await this.documents_firstTime_persistentCreate(datum_type, baseID, collectionRef);
+					await this.document_defaults_ofType_persistentCreateIn(datum_type, baseID, collectionRef);
 					querySnapshot = await getDocs(collectionRef);
 				}
 				this.setup_handle_docChanges(baseID, datum_type, collectionRef);
@@ -107,7 +105,7 @@ export default class DBFirebase extends DBCommon {
 			for (const docSnapshot of docs) {
 				const id = docSnapshot.id;
 				const data = docSnapshot.data();
-				await this.document_remember_validated(datum_type, id, data, baseID ?? this.baseID);
+				await this.document_ofType_remember_validated(datum_type, id, data, baseID ?? this.baseID);
 			}
 		} catch (error) {
 			this.reportError(error);
@@ -137,23 +135,24 @@ export default class DBFirebase extends DBCommon {
 	}
 	
 	async fetch_bulkAliases() {
-		const root = get(s_hierarchy).root;
+		const h = get(s_hierarchy);
+		const root = h.root;
 		if (this.baseID == k.name_bulkAdmin && root) {
-			const rootsAncestry = await get(s_hierarchy).ancestry_roots();		// TODO: assumes all ancestries created
+			const rootsAncestry = await h.ancestry_roots();		// TODO: assumes all ancestries created
 			if (!!rootsAncestry) {
-				get(s_hierarchy).rootsAncestry = rootsAncestry;
+				h.rootsAncestry = rootsAncestry;
 				try {		// add bulk aliases to roots thing
 					const bulk = collection(this.firestore, this.bulksName);	// fetch all bulks (documents)
 					let bulkSnapshot = await getDocs(bulk);
 					for (const bulkDoc of bulkSnapshot.docs) {
 						const baseID = bulkDoc.id;
 						if (baseID != this.baseID) {
-							let thing = get(s_hierarchy).thing_bulkAlias_forTitle(baseID);
+							let thing = h.thing_bulkAlias_forTitle(baseID);
 							if (!thing) {								// create a thing for each bulk
-								thing = get(s_hierarchy).thing_runtimeCreate(this.baseID, Identifiable.newID(), baseID, 'red', ThingType.bulk);
-								await get(s_hierarchy).relationship_remember_persistent_addChild_toAncestry(thing, rootsAncestry);
+								thing = h.thing_runtimeCreate(this.baseID, Identifiable.newID(), baseID, 'red', ThingType.bulk);
+								await h.relationship_remember_persistent_addChild_toAncestry(thing, rootsAncestry);
 							} else if (thing.thing_isBulk_expanded) {
-								await get(s_hierarchy).ancestry_redraw_persistentFetchBulk_browseRight(thing);
+								await h.ancestry_redraw_persistentFetchBulk_browseRight(thing);
 							}
 						}
 					}
@@ -224,33 +223,35 @@ export default class DBFirebase extends DBCommon {
 
 	static readonly SUBCOLLECTIONS: unique symbol;
 
-	async documents_firstTime_persistentCreate(datum_type: DatumType, baseID: string, collectionRef: CollectionReference) {
-		const docRef = doc(this.firestore, this.bulksName, baseID);
-		await setDoc(docRef, { isReal: true }, { merge: true });
-		await updateDoc(docRef, { isReal: deleteField() });
-		if (datum_type == DatumType.things) {
-			await this.things_remember_firstTime_persistentCreateIn(collectionRef);
+	async document_defaults_ofType_persistentCreateIn(datum_type: DatumType, baseID: string, collectionRef: CollectionReference) {
+		if (!!baseID) {
+			const docRef = doc(this.firestore, this.bulksName, baseID);
+			await setDoc(docRef, { isReal: true }, { merge: true });
+			await updateDoc(docRef, { isReal: deleteField() });
+		}
+		switch (datum_type) {
+			case DatumType.predicates: get(s_hierarchy).predicate_defaults_remember_runtimeCreate(); break;
+			case DatumType.things: await this.root_default_remember_persistentCreateIn(collectionRef); break;
 		}
 	}
 
-	async document_remember_validated(datum_type: DatumType, id: string, data: DocumentData, baseID: string) {
+	async document_ofType_remember_validated(datum_type: DatumType, id: string, data: DocumentData, baseID: string) {
 		if (DBFirebase.data_isValidOfKind(datum_type, data)) {
+			const h = get(s_hierarchy);
 			switch (datum_type) {
-				case DatumType.predicates:	  get(s_hierarchy).predicate_remember_runtimeCreate(id, data.kind, data.isBidirectional); break;
-				case DatumType.traits:		  get(s_hierarchy).trait_remember_runtimeCreate(baseID, id, data.ownerID, data.type, data.text, true); break;
-				case DatumType.things:		  get(s_hierarchy).thing_remember_runtimeCreate(baseID, id, data.title, data.color, data.type ?? data.trait, true, !data.type); break;
-				case DatumType.relationships: get(s_hierarchy).relationship_remember_runtimeCreateUnique(baseID, id, data.predicate.id, data.parent.id, data.child.id, data.order, CreationOptions.isFromPersistent); break;
+				case DatumType.predicates:	  h.predicate_remember_runtimeCreate(id, data.kind, data.isBidirectional); break;
+				case DatumType.traits:		  h.trait_remember_runtimeCreate(baseID, id, data.ownerID, data.type, data.text, true); break;
+				case DatumType.things:		  h.thing_remember_runtimeCreate(baseID, id, data.title, data.color, data.type ?? data.trait, true, !data.type); break;
+				case DatumType.relationships: h.relationship_remember_runtimeCreateUnique(baseID, id, data.predicate.id, data.parent.id, data.child.id, data.order, CreationOptions.isFromPersistent); break;
 			}
 		}
 	}
 	
 	async subcollections_persistentDeleteIn(docRef: DocumentReference) {
 		const subcollectionNames = ['Things', 'Relationships'];
-
 		for (const subcollectionName of subcollectionNames) {
 			const subcollectionRef = collection(docRef, subcollectionName);
 			const snapshot = await getDocs(subcollectionRef);
-			
 			for (const subDoc of snapshot.docs) {
 				await deleteDoc(subDoc.ref);
 			}
@@ -268,11 +269,10 @@ export default class DBFirebase extends DBCommon {
 			this.addedThing = thing;
 			try {
 				this.deferSnapshots = true;
-				const ref = await addDoc(thingsCollection, jsThing)
+				const ref = await addDoc(thingsCollection, jsThing);
 				thing.awaitingCreation = false;
 				thing.already_persisted = true;
-				thing.setID(ref.id);			// so relationship will be correct
-				get(s_hierarchy).thing_remember(thing);
+				get(s_hierarchy).thing_remember_updateID_to(thing, ref.id);
 				this.handle_deferredSnapshots();
 				thing.log(DebugFlag.remote, 'CREATE T');
 			} catch (error) {
@@ -281,17 +281,13 @@ export default class DBFirebase extends DBCommon {
 		}
 	}
 
-	async things_remember_firstTime_persistentCreateIn(collectionRef: CollectionReference) {
+	async root_default_remember_persistentCreateIn(collectionRef: CollectionReference) {
 		const fields = ['title', 'color', 'type'];
 		const root = new Thing(this.baseID, Identifiable.newID(), this.baseID, 'coral', ThingType.root, true);
-		const thing = new Thing(this.baseID, Identifiable.newID(), 'Click this text to edit it', 'purple', ThingType.generic, true);
-		get(s_hierarchy).root = root;
-		const thingRef = await addDoc(collectionRef, u.convertToObject(thing, fields));		// N.B. these will be fetched, shortly
 		const rootRef = await addDoc(collectionRef, u.convertToObject(root, fields));		// no need to remember now
-		thing.setID(thingRef.id);
-		root.setID(rootRef.id);
 		root.log(DebugFlag.remote, 'CREATE T');
-		thing.log(DebugFlag.remote, 'CREATE T');
+		get(s_hierarchy).root = root;
+		root.setID(rootRef.id);
 	}
 
 	async thing_persistentUpdate(thing: Thing) {
@@ -334,18 +330,19 @@ export default class DBFirebase extends DBCommon {
 
 	thing_handle_docChanges(baseID: string, id: string, change: DocumentChange, data: DocumentData) {
 		const remoteThing = new PersistentThing(data);
-		let thing = get(s_hierarchy).thing_forHID(id.hash());
+		const h = get(s_hierarchy);
+		let thing = h.thing_forHID(id.hash());
 		if (!!remoteThing) {
 			switch (change.type) {
 				case 'added':
 					if (!!thing || remoteThing.isEqualTo(this.addedThing) || remoteThing.type == ThingType.root) {
 						return;			// do not invoke signal because nothing has changed
 					}
-					thing = get(s_hierarchy).thing_remember_runtimeCreate(baseID, id, remoteThing.title, remoteThing.color, remoteThing.type, true);
+					thing = h.thing_remember_runtimeCreate(baseID, id, remoteThing.title, remoteThing.color, remoteThing.type, true);
 					break;
 				case 'removed':
 					if (!!thing) {
-						get(s_hierarchy).thing_forget(thing);
+						h.thing_forget(thing);
 					}
 					break;
 				case 'modified':
@@ -408,10 +405,12 @@ export default class DBFirebase extends DBCommon {
 			try {
 				this.deferSnapshots = true;
 				const ref = await addDoc(traitsCollection, jsTrait)
+				const h = get(s_hierarchy);
 				trait.awaitingCreation = false;
 				trait.already_persisted = true;
-				trait.setID(ref.id);			// so relationship will be correct
-				get(s_hierarchy).trait_remember(trait);
+				h.trait_forget(trait);
+				trait.setID(ref.id);
+				h.trait_remember(trait);
 				this.handle_deferredSnapshots();
 				trait.log(DebugFlag.remote, 'CREATE T');
 			} catch (error) {
@@ -423,17 +422,18 @@ export default class DBFirebase extends DBCommon {
 	trait_handle_docChanges(baseID: string, id: string, change: DocumentChange, data: DocumentData) {
 		const remoteTrait = new PersistentTrait(data);
 		if (!!remoteTrait) {
-			let trait = get(s_hierarchy).trait_forHID(id.hash());
+			const h = get(s_hierarchy);
+			let trait = h.trait_forHID(id.hash());
 			switch (change.type) {
 				case 'added':
 					if (!!trait || remoteTrait.isEqualTo(this.addedTrait)) {
 						return;		// do not invoke signal because nothing has changed
 					}
-					trait = get(s_hierarchy).trait_remember_runtimeCreate(baseID, id, remoteTrait.ownerID, remoteTrait.type, remoteTrait.text, true);
+					trait = h.trait_remember_runtimeCreate(baseID, id, remoteTrait.ownerID, remoteTrait.type, remoteTrait.text, true);
 					break;
 				case 'removed':
 					if (!!trait) {
-						get(s_hierarchy).trait_forget(trait);
+						h.trait_forget(trait);
 					}
 					break;
 				case 'modified':
@@ -443,9 +443,61 @@ export default class DBFirebase extends DBCommon {
 					break;
 			}
 			setTimeout(() => { // wait in case a thing involved in this trait arrives in the data
-				get(s_hierarchy).traits_refreshKnowns();
+				h.traits_refreshKnowns();
 				signals.signal_rebuildGraph_fromFocus();
 			}, 20);
+		}
+	}
+	
+	static readonly PREDICATE: unique symbol;
+
+	async predicate_persistentUpdate(predicate: Predicate) {
+		const predicatesCollection = this.predicatesCollection;
+		if (!!predicatesCollection) {
+			try {
+				const ref = doc(predicatesCollection, predicate.id) as DocumentReference<PersistentPredicate>;
+				const remotePredicate = new PersistentPredicate(predicate);
+				const jsPredicate = { ...remotePredicate };
+				await setDoc(ref, jsPredicate);
+				predicate.log(DebugFlag.remote, 'UPDATE P');
+			} catch (error) {
+				this.reportError(error);
+			}
+		}
+	}
+
+	async predicate_persistentDelete(predicate: Predicate) {
+		const predicatesCollection = this.predicatesCollection;
+		if (!!predicatesCollection) {
+			try {
+				const ref = doc(predicatesCollection, predicate.id) as DocumentReference<PersistentPredicate>;
+				await deleteDoc(ref);
+				predicate.log(DebugFlag.remote, 'DELETE P');
+			} catch (error) {
+				this.reportError(error);
+			}
+		}
+	}
+	async predicate_remember_persistentCreate(predicate: Predicate) {
+		const predicatesCollection = this.predicatesCollection;
+		if (!!predicatesCollection) {
+			const remotePredicate = new PersistentPredicate(predicate);
+			const jsPredicate = { ...remotePredicate };
+			predicate.awaitingCreation = true;
+			try {
+				this.deferSnapshots = true;
+				const ref = await addDoc(predicatesCollection, jsPredicate);
+				const h = get(s_hierarchy);
+				predicate.awaitingCreation = false;
+				predicate.already_persisted = true;
+				h.predicate_forget(predicate);
+				predicate.setID(ref.id);
+				h.predicate_remember(predicate);
+				this.handle_deferredSnapshots();
+				predicate.log(DebugFlag.remote, 'CREATE P');
+			} catch (error) {
+				this.reportError(error);
+			}
 		}
 	}
 
@@ -480,7 +532,7 @@ export default class DBFirebase extends DBCommon {
 	}
 
 	relationship_extractChangesFromPersistent(relationship: Relationship, remote: PersistentRelationship) {
-		const changed = (relationship.idPredicate != remote.predicate.id ||
+		const changed = (relationship.kindPredicate != remote.predicate.id ||
 			relationship.idParent != remote.parent.id ||
 			relationship.idChild != remote.child.id ||
 			relationship.order != remote.order)
@@ -488,7 +540,7 @@ export default class DBFirebase extends DBCommon {
 			relationship.idChild = remote.child.id;
 			relationship.idParent = remote.parent.id;
 			relationship.already_persisted = true;
-			relationship.idPredicate = remote.predicate.id;
+			relationship.kindPredicate = remote.predicate.id;
 			relationship.order_setTo_persistentMaybe(remote.order + k.halfIncrement);
 		}
 		return changed;
@@ -502,11 +554,13 @@ export default class DBFirebase extends DBCommon {
 			relationship.awaitingCreation = true;
 			try {
 				this.deferSnapshots = true;
-				const ref = await addDoc(relationshipsCollection, jsRelationship); // works!
+				const ref = await addDoc(relationshipsCollection, jsRelationship);
+				const h = get(s_hierarchy);
 				relationship.awaitingCreation = false;
 				relationship.already_persisted = true;
+				h.relationship_forget(relationship);
 				relationship.setID(ref.id);
-				get(s_hierarchy).relationship_remember(relationship);
+				h.relationship_remember(relationship);
 				this.handle_deferredSnapshots();
 				relationship.log(DebugFlag.remote, 'CREATE R');
 			} catch (error) {
@@ -518,13 +572,14 @@ export default class DBFirebase extends DBCommon {
 	relationship_handle_docChanges(baseID: string, id: string, change: DocumentChange, data: DocumentData) {
 		const remoteRelationship = new PersistentRelationship(data);
 		if (!!remoteRelationship) {
-			let relationship = get(s_hierarchy).relationship_forHID(id.hash());
+			const h = get(s_hierarchy);
+			let relationship = h.relationship_forHID(id.hash());
 			switch (change.type) {
 				case 'added':
 					if (!!relationship) {
 						return;
 					}
-					relationship = get(s_hierarchy).relationship_remember_runtimeCreateUnique(baseID, id, remoteRelationship.predicate.id, remoteRelationship.parent.id, remoteRelationship.child.id, remoteRelationship.order, CreationOptions.isFromPersistent);
+					relationship = h.relationship_remember_runtimeCreateUnique(baseID, id, remoteRelationship.predicate.id, remoteRelationship.parent.id, remoteRelationship.child.id, remoteRelationship.order, CreationOptions.isFromPersistent);
 					break;
 				default:
 					if (!relationship) {
@@ -537,15 +592,15 @@ export default class DBFirebase extends DBCommon {
 								}
 								break;
 							case 'removed':
-								get(s_hierarchy).relationship_forget(relationship);
+								h.relationship_forget(relationship);
 								break;
 						}
 					}
 					break;
 			}
 			setTimeout(() => { // wait in case a thing involved in this relationship arrives in the data
-				get(s_hierarchy).relationships_refreshKnowns();
-				get(s_hierarchy).rootAncestry.order_normalizeRecursive_persistentMaybe(true);
+				h.relationships_refreshKnowns();
+				h.rootAncestry.order_normalizeRecursive_persistentMaybe(true);
 				signals.signal_rebuildGraph_fromFocus();
 			}, 20);
 		}
@@ -644,13 +699,11 @@ class SnapshotDeferal {
 	}
 }
 
-interface PersistentThing {
+class PersistentThing {
 	title: string;
 	color: string;
 	type: string;
-}
 
-class PersistentThing implements PersistentThing {
 	constructor(data: DocumentData) {
 		const remote = data as PersistentThing;
 		this.title	 = remote.title;
@@ -675,13 +728,11 @@ class PersistentThing implements PersistentThing {
 	}
 }
 
-interface PersistentTrait {
-	type: TraitType;
+class PersistentTrait {
 	ownerID: string;
+	type: TraitType;
 	text: string;
-}
 
-class PersistentTrait implements PersistentTrait {
 	constructor(data: DocumentData) {
 		const remote = data as PersistentTrait;
 		this.ownerID = remote.ownerID;
@@ -692,16 +743,29 @@ class PersistentTrait implements PersistentTrait {
 	isEqualTo(trait: Trait | null) {
 		return !!trait &&
 		trait.ownerID == this.ownerID &&
-		trait.type == this.type &&
-		trait.text == this.text;
+		trait.type	  == this.type &&
+		trait.text	  == this.text;
 	}
 }
 
-interface PersistentRelationship {
-	order: number;
-	child: DocumentReference<Thing, DocumentData>;
-	parent: DocumentReference<Thing, DocumentData>;
-	predicate: DocumentReference<Predicate, DocumentData>;
+class PersistentPredicate {
+	isBidirectional: boolean;
+	stateIndex: number;
+	kind: string;
+
+	constructor(data: DocumentData) {
+		const remote		 = data as PersistentPredicate;
+		this.isBidirectional = remote.isBidirectional;
+		this.stateIndex		 = remote.stateIndex;
+		this.kind			 = remote.kind;
+	}
+
+	isEqualTo(predicate: Predicate | null) {
+		return !!predicate &&
+		predicate.isBidirectional == this.isBidirectional &&
+		predicate.stateIndex	  == this.stateIndex &&
+		predicate.kind			  == this.kind;
+	}
 }
 
 interface PersistentRelationship {
@@ -723,7 +787,7 @@ class PersistentRelationship implements PersistentRelationship {
 					if (data.isValid) {
 						this.child = doc(things, data.idChild) as DocumentReference<Thing>;
 						this.parent = doc(things, data.idParent) as DocumentReference<Thing>;
-						this.predicate = doc(predicates, data.idPredicate) as DocumentReference<Predicate>;
+						this.predicate = doc(predicates, data.kindPredicate) as DocumentReference<Predicate>;
 					}
 				} else {
 					const remote = data as PersistentRelationship;
@@ -741,7 +805,7 @@ class PersistentRelationship implements PersistentRelationship {
 
 	isEqualTo(relationship: Relationship | null) {
 		return !!relationship &&
-		relationship.idPredicate == this.predicate.id &&
+		relationship.kindPredicate == this.predicate.kind &&
 		relationship.idParent == this.parent.id &&
 		relationship.idChild == this.child.id &&
 		relationship.order == this.order;

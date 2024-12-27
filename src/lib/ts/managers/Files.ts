@@ -22,26 +22,28 @@ export default class Files {
 	}
 		
 	async extract_json_object_fromFile(file: File, onSuccess: Handle_Result, onFailure: Handle_Result = (() => {})) {
-		const reader = new FileReader();
-		let json_object = new Object();
-		reader.onload = function (e) {
-			const result = (e.target?.result as string);
-			if (!result || result.length == 0) {
-				onFailure('Empty file.');
-			} else {
-				try {
-					json_object = JSON.parse(result);
-					onSuccess(json_object)
-					return { success: json_object };
-				} catch (error) {
-					onFailure(`Error parsing JSON: '${result}' ${(error as Error).message}`);
+		return new Promise((resolve, reject) => {
+			const reader = new FileReader();
+			let json_object = new Object();
+			reader.onload = function (e) {
+				const result = (e.target?.result as string);
+				if (!result || result.length == 0) {
+					onFailure('Empty file.');
+				} else {
+					try {
+						json_object = JSON.parse(result);
+						onSuccess(json_object);
+						return { success: json_object };
+					} catch (error) {
+						onFailure(`Error parsing JSON: '${result}' ${(error as Error).message}`);
+					}
 				}
-			}
-		};
-		reader.onerror = function () {
-			onFailure('Error reading file.');
-		};
-		reader.readAsText(file);
+			};
+			reader.onerror = function () {
+				onFailure('Error reading file.');
+			};
+			reader.readAsText(file);
+		});
 	}
 	
 }

@@ -28,8 +28,7 @@
 	let thing: Thing | null = ancestry?.thing ?? null;
 	let text_box_size = new Size(info_width - 4, 68);
 	let thingHID: number | null = thing?.idHashed;
-	let information: Dictionary<string> = {};
-	let color_origin = new Point(73, 104);
+	let information: Array<Dictionary> = [];
 	let color = k.thing_color_default;
 	let grabs = $s_grabbed_ancestries;
 	let thing_title = thing?.title;
@@ -81,7 +80,9 @@
 			ancestry = $s_focus_ancestry;
 		} else {
 			grabs = $s_grabbed_ancestries;
-			ancestry = grabs[0];
+			if (!!grabs && grabs.length > 0) {
+				ancestry = grabs[0];
+			}
 		}
 		update_forAncestry();
 	}
@@ -92,13 +93,16 @@
 			thing_title = thing.title;
 			thingHID = thing.idHashed;
 			const dict = {
-				'relationship'	: ancestry.predicate?.description ?? k.empty,
+				'relationship'	: ancestry.predicate?.description ?? 'none',
 				'direction'		: ancestry.isParental ? 'child' : 'parent',
+				'children'		: ancestry.children.length,
+				'parents'		: thing.parents.length,
+				'related'		: thing.relatedRelationships.length,
 				'depth'			: ancestry.depth,
-				'id'			: thing.id.clipWithEllipsisAt(),
+				'id'			: thing.id.clipWithEllipsisAt(12),
 				'color'			: k.empty,
 			};
-			information = Object.entries(dict)
+			information = Object.entries(dict);
 			rebuilds += 1;
 		}
 	}
@@ -111,7 +115,7 @@
 			}
 		} else if (!text) {		// do after test for k.empty, which also is interpreted as falsey
 			(async () => {
-				await $s_hierarchy.db.deferred_persistAll();
+				await $s_hierarchy.db.persistAll();
 			})();
 		}
 	}
@@ -123,30 +127,32 @@
 		<div class='info'
 			style='
 				color:black;
-				top:{top - 2}px;
+				top:{top}px;
 				left:{margin}px;
 				position:absolute;
 				width:{traits_width}px;'>
 			{#if information.length != 0}
-				{#key thing_title}
-					<div style='
-						text-align:center;
-						width:{traits_width}px;'>
-						{thing_title.clipWithEllipsisAt(30)}
-					</div>
-					<Separator top=18 width={traits_width}/>
-				{/key}
 				<Segmented
 					name='info-type'
 					font_size={font_size}
-					origin={new Point(45, 25)}
+					origin={new Point(45, 0)}
 					selected={[show.info_type]}
 					height={k.row_height * font_ratio}
 					selection_closure={selection_closure}
 					titles={[InfoType.focus, InfoType.selection]}/>
-				<Table top={43} dict={information}/>
+				{#key thing_title}
+					<div style='
+						top:20px;
+						position:absolute;
+						text-align:center;
+						width:{traits_width}px;'>
+						{thing_title.clipWithEllipsisAt(30)}
+					</div>
+					<Separator top=36 width={traits_width}/>
+				{/key}
+				<Table top={39} array={information}/>
 			{/if}
-			<Color thing={thing} origin={color_origin}/>
+			<Color thing={thing} origin={new Point(73, 149)}/>
 			{#if show.traits}
 				<div class='horizontal-line'
 					style='

@@ -52,7 +52,6 @@
 	p {
 		text-align: center;
 		font-size: 3em;
-		width: 100%;
 	}
 	.horizontal-line {
 		position: fixed;

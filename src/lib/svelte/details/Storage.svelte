@@ -1,23 +1,26 @@
 <script lang='ts'>
 	import { k, u, Point, ZIndex, dbDispatch, Hierarchy, IDPersistent, persistLocal } from '../../ts/common/Global_Imports';
-	import { s_db_type, s_db_loadTime, s_hierarchy } from '../../ts/state/Svelte_Stores';
+	import { s_db_type, s_db_loadTime, s_hierarchy, s_number_ofThings } from '../../ts/state/Svelte_Stores';
 	import { DBType } from '../../ts/basis/PersistentIdentifiable';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Table from '../kit/Table.svelte';
-	export let top = 34;
-	const info_top = top + 22;
-	let information: Dictionary<string> = {};
+	export let top = 28;
+	let information: Array<Dictionary> = [];
+	let rebuilds = 0;
 	
 	$: {
+		const _ = $s_number_ofThings;
 		const h = $s_hierarchy;
 		if (!!h) {
-			const dict = {'things': h.things.length};
+			const dict: Dictionary = {};
 			if ($s_db_loadTime) {
 				dict['fetch took'] = $s_db_loadTime;
 			} else {
-				dict['data'] = 'local'
+				dict['data'] = 'stored locally';
 			}
-			information = Object.entries(dict)
+			dict['things'] = h.things.length;
+			information = Object.entries(dict);
+			rebuilds += 1;
 		}
 	}
 
@@ -28,7 +31,7 @@
 
 </script>
 
-{#key $s_db_type}
+{#key $s_db_type, rebuilds}
 	<div class='storage-information'
 		style='
 			height:40px;
@@ -42,7 +45,7 @@
 		<div class='data-information'
 			style='font-size:0.8em;
 				width:{k.width_details}px;'>
-			<Table top={info_top} dict={information}/>
+			<Table top={top + 20} array={information}/>
 		</div>
 	</div>
 {/key}

@@ -95,12 +95,12 @@ class Persist_Local {
 		return values;
 	}
 
-	ancestry_forID(aid: string): Ancestry {
+	ancestry_forID(idAncestry: string): Ancestry {
 		const h = get(s_hierarchy);
-		const rids = aid.split(k.generic_separator);	// ancestor id is multiple relationship ids separated by generic_separator
-		const rid = rids.slice(-1)[0];					// grab last relationship id
-		const predicateID = h.idPredicate_for(rid);		// grab its predicate id
-		return h.ancestry_remember_createUnique(aid, predicateID);
+		const idsRelationship = idAncestry.split(k.generic_separator);				// ancestor id is multiple relationship ids separated by generic_separator
+		const idRelationship = idsRelationship.slice(-1)[0];						// grab last relationship id
+		const kindPredicate = h.kindPredicateFor_idRelationship(idRelationship);	// grab its predicate kind
+		return h.ancestry_remember_createUnique(idAncestry, kindPredicate);
 	}
 
 	ancestries_forKey(key: string): Array<Ancestry> {	// 2 keys supported so far {grabbed, expanded}
@@ -195,7 +195,7 @@ class Persist_Local {
 
 	restore_focus() {
 		const h = get(s_hierarchy);
-		h.setup_rootAncestry();
+		h.setup_root_andAncestry();
 		let ancestryToFocus = h.rootAncestry;
 		if (!this.ignoreAncestries) {
 			const focusid = this.readDB_key(IDPersistent.focus);

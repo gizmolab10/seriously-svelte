@@ -20,26 +20,24 @@ export enum DatumType {
 }
 
 export default class PersistentIdentifiable extends Identifiable {
-	needs_persisting_again = false;
 	hasPersistentStorage: boolean;
+	lastModifyDate = new Date();
 	already_persisted: boolean;
-	awaitingCreation: boolean;
-	lastModifyDate: Date;
+	awaitingCreation = false;
+	isDirty = false;
 	dbType: string;
 
 	constructor(dbType: string, id: string, already_persisted: boolean = false) {
 		super(id);
-		this.hasPersistentStorage = dbType != DBType.test;
-		this.needs_persisting_again = this.hasPersistentStorage && !already_persisted;
-		this.already_persisted = already_persisted;
-		this.lastModifyDate = new Date();
-		this.awaitingCreation = false;
 		this.dbType = dbType;
+		this.already_persisted = already_persisted;
+		this.hasPersistentStorage = dbType != DBType.test;
+		this.isDirty = this.hasPersistentStorage && !already_persisted;
 	}
 
 	async persist() {}
+	set_isDirty() { this.isDirty = true; }		// TODO: set global
 	updateModifyDate() { this.lastModifyDate = new Date(); }
-	set_needs_persisting_again() { this.needs_persisting_again = true; }		// TODO: set global
 
     static persistent_fromJSON(json: string): PersistentIdentifiable {
         const parsed = JSON.parse(json);

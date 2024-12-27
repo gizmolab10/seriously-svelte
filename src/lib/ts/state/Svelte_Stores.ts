@@ -27,6 +27,7 @@ export const s_db_type				  = writable<string>();
 export const s_thing_fontFamily		  = writable<string>();
 export const s_ring_rotation_radius	  = writable<number>();
 export const s_rotation_ring_angle	  = writable<number>();
+export const s_number_ofThings		  = writable<number>();
 export const s_mouse_up_count		  = writable<number>();
 export const s_rebuild_count		  = writable<number>();
 export const s_resize_count			  = writable<number>();

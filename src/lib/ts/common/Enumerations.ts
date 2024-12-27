@@ -4,8 +4,12 @@ export enum AlterationType {
 }
 
 export enum PredicateKind {
-	isRelated = 'isRelated',
-	contains  = 'contains',
+	appreciates = 'appreciates',
+	isRelated	= 'isRelated',
+	contains	= 'contains',
+	explains	= 'explains',
+	requires	= 'requires',
+	supports	= 'supports',
 }
 
 export enum Graph_Type {

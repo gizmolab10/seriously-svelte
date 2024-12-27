@@ -1,5 +1,3 @@
-import { k } from './Constants';
-
 class Builds {
 	notes: { [id: number]: Array<string> } = {};
 
@@ -10,6 +8,7 @@ class Builds {
 
 	constructor() {
 		this.notes = {
+			124 : ['December 27, 2024', 'use predicate kind (not id) in relationships (for moving across dbs)'],
 			123 : ['December 19, 2024', 'begin work on tutorial'],
 			122 : ['December 17, 2024', 'improved details'],
 			121 : ['December 11, 2024', 'fix breadcrumb button cosmetics'],
