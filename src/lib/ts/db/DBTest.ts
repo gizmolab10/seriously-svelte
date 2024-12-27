@@ -1,8 +1,6 @@
-import { k, Thing, Trait, ThingType, Predicate, Relationship, PredicateKind } from '../common/Global_Imports';
+import { k, Thing, Trait, ThingType, Relationship, PredicateKind } from '../common/Global_Imports';
 import { DBType } from '../basis/PersistentIdentifiable';
-import { s_hierarchy } from '../state/Svelte_Stores';
 import DBCommon from './DBCommon';
-import { get } from 'svelte/store';
 
 export default class DBTest extends DBCommon {
 	baseID = k.baseID_test;
@@ -18,7 +16,7 @@ export default class DBTest extends DBCommon {
 		const idTe = 'E';
 		const idTf = 'F';
 		const idTr = 'R';
-		const h = get(s_hierarchy);
+		const h = this.hierarchy;
 		const kindC = PredicateKind.contains;
 		const kindR = PredicateKind.isRelated;
 		h.predicate_defaults_remember_runtimeCreate();
@@ -56,7 +54,7 @@ export default class DBTest extends DBCommon {
 
 	makeMore(count: number, first: string, kindPredicate: string, idOther: string, asChild: boolean) {
 		for (let i = 0; i < count; i++) {
-			const h = get(s_hierarchy);
+			const h = this.hierarchy;
 			const code = first.charCodeAt(0) + i;
 			const idUpper = String.fromCharCode(code);
 			const type = String.fromCharCode(code + 32);
@@ -77,9 +75,9 @@ export default class DBTest extends DBCommon {
 		}
 	}
 
-	async thing_remember_persistentCreate(thing: Thing) { get(s_hierarchy).thing_remember(thing); }
-	async trait_remember_persistentCreate(trait: Trait) { get(s_hierarchy).trait_remember(trait); }
-	async relationship_remember_persistentCreate(relationship: Relationship) { get(s_hierarchy).relationship_remember(relationship); }
+	async thing_remember_persistentCreate(thing: Thing) { this.hierarchy.thing_remember(thing); }
+	async trait_remember_persistentCreate(trait: Trait) { this.hierarchy.trait_remember(trait); }
+	async relationship_remember_persistentCreate(relationship: Relationship) { this.hierarchy.relationship_remember(relationship); }
 
 }
 

@@ -77,7 +77,7 @@ export default class DBDispatch {
 			const h = this.db.hierarchy;
 			if (!!h) {
 				s_hierarchy.set(h);
-				get(s_hierarchy).reset_hierarchy();
+				h.reset_hierarchy();
 			}
 		} else {
 			s_startup_state.set(Startup_State.fetch);

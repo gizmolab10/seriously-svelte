@@ -93,13 +93,13 @@
 			thing_title = thing.title;
 			thingHID = thing.idHashed;
 			const dict = {
+				'id'			: thing.id.clipWithEllipsisAt(12),
 				'relationship'	: ancestry.predicate?.description ?? 'none',
 				'direction'		: ancestry.isParental ? 'child' : 'parent',
 				'children'		: ancestry.children.length,
 				'parents'		: thing.parents.length,
 				'related'		: thing.relatedRelationships.length,
 				'depth'			: ancestry.depth,
-				'id'			: thing.id.clipWithEllipsisAt(12),
 				'color'			: k.empty,
 			};
 			information = Object.entries(dict);

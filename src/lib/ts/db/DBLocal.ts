@@ -1,9 +1,7 @@
 import { k, u, Thing, Trait, ThingType, Predicate, Relationship } from '../common/Global_Imports';
 import { Hierarchy, persistLocal, IDPersistent } from '../common/Global_Imports';
 import { DBType } from '../basis/PersistentIdentifiable';
-import { s_hierarchy } from '../state/Svelte_Stores';
 import type { Dictionary } from '../common/Types';
-import { get } from 'svelte/store';
 import DBCommon from './DBCommon';
 
 export default class DBLocal extends DBCommon {
@@ -11,7 +9,7 @@ export default class DBLocal extends DBCommon {
 	dbType = DBType.local;
 	isPersistent = true;
 
-	get h(): Hierarchy { return get(s_hierarchy); }
+	get h(): Hierarchy { return this.hierarchy; }
 
 	async remove_all() {
 		persistLocal.write_key(IDPersistent.local, null);

@@ -1259,7 +1259,7 @@ export class Hierarchy {
 	}
 
 	async conclude_fetch_andPersist() {
-		// await this.relationships_persistentCreateMissing(this.db.baseID);
+		await this.relationships_persistentCreateMissing(this.db.baseID);
 		// await this.relationships_removeHavingNullReferences();
 		this.reset_hierarchy();
 		await this.db.persistAll();

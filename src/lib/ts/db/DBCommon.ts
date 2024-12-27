@@ -2,9 +2,9 @@ import { k, Thing, Trait, Hierarchy, Predicate, IDPersistent, Relationship } fro
 import PersistentIdentifiable from '../basis/PersistentIdentifiable';
 
 export default class DBCommon {
-	hierarchy: Hierarchy | null = null;
 	loadTime: string | null = null;
 	idPersistence!: IDPersistent;
+	hierarchy!: Hierarchy;
 	isPersistent = false;
 	baseID = k.empty;
 	dbType = k.empty;
@@ -34,12 +34,10 @@ export default class DBCommon {
 
 	async persistAll() {	// DBs that are not REMOTE override this
 		const h = this.hierarchy;
-		if (!!h) {
-			await this.persistAll_identifiables(h.things);
-			await this.persistAll_identifiables(h.traits);
-			await this.persistAll_identifiables(h.predicates);
-			await this.persistAll_identifiables(h.relationships);
-		}
+		await this.persistAll_identifiables(h.things);
+		await this.persistAll_identifiables(h.traits);
+		await this.persistAll_identifiables(h.predicates);
+		await this.persistAll_identifiables(h.relationships);
 	}
 
 	async persistAll_identifiables(identifiables: Array<PersistentIdentifiable>) {

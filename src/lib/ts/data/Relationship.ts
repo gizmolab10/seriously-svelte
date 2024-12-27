@@ -26,7 +26,7 @@ export default class Relationship extends Datum {
 	get parent(): Thing | null { return this.thing(false); }
 	get isValid(): boolean { return !!this.kindPredicate && !!this.idParent && !!this.idChild; }
 	get predicate(): Predicate | null { return get(s_hierarchy).predicate_forKind(this.kindPredicate); }
-	get fields(): Airtable.FieldSet { return { predicate: [this.kindPredicate], parent: [this.idParent], child: [this.idChild], order: this.order }; }
+	get fields(): Airtable.FieldSet { return { kindPredicate: this.kindPredicate, parent: [this.idParent], child: [this.idChild], order: this.order }; }
 
 	get verbose(): string {
 		const persisted = this.already_persisted ? 'STORED' : 'DIRTY';

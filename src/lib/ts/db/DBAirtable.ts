@@ -1,9 +1,7 @@
-import { DebugFlag, Hierarchy, Relationship, CreationOptions } from '../common/Global_Imports';
+import { DebugFlag, Relationship, CreationOptions } from '../common/Global_Imports';
 import { g, k, u, debug, Thing, Trait, TraitType } from '../common/Global_Imports';
 import { DBType, DatumType } from '../basis/PersistentIdentifiable';
-import { s_hierarchy } from '../state/Svelte_Stores';
 import DBCommon from './DBCommon';
-import { get } from 'svelte/store';
 import Airtable from 'airtable';
 
 //////////////////////////////
@@ -68,7 +66,7 @@ export default class DBAirtable extends DBCommon {
 	//////////////////////////////
 
 	async things_readAll() {
-		get(s_hierarchy).things_forgetAll(); // clear
+		this.hierarchy.things_forgetAll(); // clear
 
 		try {
 			const select = this.things_table.select();
@@ -77,7 +75,7 @@ export default class DBAirtable extends DBCommon {
 				for (const remoteThing of remoteThings) {
 					const id = remoteThing.id;
 					const fields = remoteThing.fields;
-					get(s_hierarchy).thing_remember_runtimeCreate(k.empty, id, fields.title as string, fields.color as string, (fields.type as string) ?? fields.trait as string, true, !fields.type);
+					this.hierarchy.thing_remember_runtimeCreate(k.empty, id, fields.title as string, fields.color as string, (fields.type as string) ?? fields.trait as string, true, !fields.type);
 				}
 			})
 		} catch (error) {
@@ -92,7 +90,7 @@ export default class DBAirtable extends DBCommon {
 			const dict = await this.things_table.create(thing.fields);
 			thing.already_persisted = true;		// was saved by create (the line above)
 			thing.awaitingCreation = false;
-			get(s_hierarchy).thing_remember_updateID_to(thing, dict['id']);
+			this.hierarchy.thing_remember_updateID_to(thing, dict['id']);
 		} catch (error) {
 			thing.log(DebugFlag.remote, this.things_errorMessage + error);
 		}
@@ -121,7 +119,7 @@ export default class DBAirtable extends DBCommon {
 	//////////////////////////////
 
 	async traits_readAll() {
-		get(s_hierarchy).traits_forgetAll();
+		this.hierarchy.traits_forgetAll();
 		try {
 			const records = await this.traits_table.select().all()
 
@@ -130,7 +128,7 @@ export default class DBAirtable extends DBCommon {
 				const text = record.fields.text as string;
 				const type = record.fields.type as TraitType;
 				const ownerIDs = record.fields.ownerID as (Array<string>);
-				get(s_hierarchy).trait_remember_runtimeCreateUnique(k.empty, id, ownerIDs[0], type, text, true);
+				this.hierarchy.trait_remember_runtimeCreateUnique(k.empty, id, ownerIDs[0], type, text, true);
 			}
 		} catch (error) {
 			debug.log_error(this.traits_errorMessage + error);
@@ -159,7 +157,7 @@ export default class DBAirtable extends DBCommon {
 			const id = fields['id'];	//	// need for update, delete and traits_byHID (to get parent from relationship)
 			trait.setID(id);
 			trait.already_persisted = true;
-			get(s_hierarchy).trait_remember(trait);
+			this.hierarchy.trait_remember(trait);
 		} catch (error) {
 			trait.log(DebugFlag.remote, this.traits_errorMessage + error);
 		}
@@ -168,7 +166,7 @@ export default class DBAirtable extends DBCommon {
 	static readonly RELATIONSHIPS: unique symbol;
 
 	async relationships_readAll() {
-		get(s_hierarchy).relationships_forgetAll();
+		this.hierarchy.relationships_forgetAll();
 		try {
 			const records = await this.relationships_table.select().all()
 
@@ -177,8 +175,8 @@ export default class DBAirtable extends DBCommon {
 				const order = record.fields.order as number;
 				const parents = record.fields.parent as (Array<string>);
 				const children = record.fields.child as (Array<string>);
-				const predicates = record.fields.predicate as (Array<string>);
-				get(s_hierarchy).relationship_remember_runtimeCreateUnique(k.empty, id, predicates[0], parents[0], children[0], order, CreationOptions.isFromPersistent);
+				const kindPredicate = record.fields.kindPredicate as string;
+				this.hierarchy.relationship_remember_runtimeCreateUnique(k.empty, id, kindPredicate, parents[0], children[0], order, CreationOptions.isFromPersistent);
 			}
 		} catch (error) {
 			debug.log_error(this.relationships_errorMessage + error);
@@ -194,7 +192,7 @@ export default class DBAirtable extends DBCommon {
 				const id = fields['id'];																										// grab permanent id
 				relationship.setID(id);
 				relationship.already_persisted = true;
-				get(s_hierarchy).relationships_refreshKnowns();
+				this.hierarchy.relationships_refreshKnowns();
 			} catch (error) {
 				relationship.log(DebugFlag.remote, this.relationships_errorMessage + error);
 			}
@@ -207,8 +205,8 @@ export default class DBAirtable extends DBCommon {
 
 	async relationship_persistentDelete(relationship: Relationship) {
 		try {
-			get(s_hierarchy).relationships = u.strip_invalid(get(s_hierarchy).relationships);
-			get(s_hierarchy).relationships_refreshKnowns(); // do first so UX updates quickly
+			this.hierarchy.relationships = u.strip_invalid(this.hierarchy.relationships);
+			this.hierarchy.relationships_refreshKnowns(); // do first so UX updates quickly
 			await this.relationships_table.destroy(relationship.id);
 		} catch (error) {
 			relationship.log(DebugFlag.remote, this.relationships_errorMessage + error);
@@ -226,7 +224,7 @@ export default class DBAirtable extends DBCommon {
 				const id = record.id as string; // do not yet need this
 				const kind = fields.kind as string;
 				const isBidirectional = fields.isBidirectional as boolean ?? false;
-				get(s_hierarchy).predicate_remember_runtimeCreate(id, kind, isBidirectional);
+				this.hierarchy.predicate_remember_runtimeCreate(id, kind, isBidirectional);
 			}
 
 		} catch (error) {
@@ -241,7 +239,7 @@ export default class DBAirtable extends DBCommon {
 			for (const record of records) {
 				const id = record.id as string; // do not yet need this
 				const kind = record.fields.kind as string;
-				get(s_hierarchy).access_runtimeCreate(id, kind);
+				this.hierarchy.access_runtimeCreate(id, kind);
 			}
 
 		} catch (error) {
@@ -255,7 +253,7 @@ export default class DBAirtable extends DBCommon {
 
 			for (const record of records) {
 				const id = record.id as string; // do not yet need this
-				get(s_hierarchy).user_runtimeCreate(id, record.fields.name as string, record.fields.email as string, record.fields.phone as string);
+				this.hierarchy.user_runtimeCreate(id, record.fields.name as string, record.fields.email as string, record.fields.phone as string);
 			}
 
 		} catch (error) {

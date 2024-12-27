@@ -4,11 +4,9 @@ import { QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference 
 import { onSnapshot, deleteField, getFirestore, DocumentData, DocumentChange } from 'firebase/firestore';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
 import { DBType, DatumType } from '../basis/PersistentIdentifiable';
-import { s_hierarchy } from '../state/Svelte_Stores';
 import Identifiable from '../basis/Identifiable';
 import { initializeApp } from 'firebase/app';
 import DBCommon from './DBCommon';
-import { get } from 'svelte/store';
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
@@ -135,7 +133,7 @@ export default class DBFirebase extends DBCommon {
 	}
 	
 	async fetch_bulkAliases() {
-		const h = get(s_hierarchy);
+		const h = this.hierarchy;
 		const root = h.root;
 		if (this.baseID == k.name_bulkAdmin && root) {
 			const rootsAncestry = await h.ancestry_roots();		// TODO: assumes all ancestries created
@@ -185,7 +183,7 @@ export default class DBFirebase extends DBCommon {
 
 	setup_handle_docChanges(baseID: string, datum_type: DatumType, collection: CollectionReference) {
 		onSnapshot(collection, (snapshot) => {
-			if (get(s_hierarchy).isAssembled) {		// u.ignore snapshots caused by data written to server
+			if (this.hierarchy.isAssembled) {		// u.ignore snapshots caused by data written to server
 				if (this.deferSnapshots) {
 					this.snapshot_deferOne(baseID, datum_type, snapshot);
 				} else {
@@ -230,14 +228,14 @@ export default class DBFirebase extends DBCommon {
 			await updateDoc(docRef, { isReal: deleteField() });
 		}
 		switch (datum_type) {
-			case DatumType.predicates: get(s_hierarchy).predicate_defaults_remember_runtimeCreate(); break;
+			case DatumType.predicates: this.hierarchy.predicate_defaults_remember_runtimeCreate(); break;
 			case DatumType.things: await this.root_default_remember_persistentCreateIn(collectionRef); break;
 		}
 	}
 
 	async document_ofType_remember_validated(datum_type: DatumType, id: string, data: DocumentData, baseID: string) {
 		if (DBFirebase.data_isValidOfKind(datum_type, data)) {
-			const h = get(s_hierarchy);
+			const h = this.hierarchy;
 			switch (datum_type) {
 				case DatumType.predicates:	  h.predicate_remember_runtimeCreate(id, data.kind, data.isBidirectional); break;
 				case DatumType.traits:		  h.trait_remember_runtimeCreate(baseID, id, data.ownerID, data.type, data.text, true); break;
@@ -272,7 +270,7 @@ export default class DBFirebase extends DBCommon {
 				const ref = await addDoc(thingsCollection, jsThing);
 				thing.awaitingCreation = false;
 				thing.already_persisted = true;
-				get(s_hierarchy).thing_remember_updateID_to(thing, ref.id);
+				this.hierarchy.thing_remember_updateID_to(thing, ref.id);
 				this.handle_deferredSnapshots();
 				thing.log(DebugFlag.remote, 'CREATE T');
 			} catch (error) {
@@ -286,7 +284,7 @@ export default class DBFirebase extends DBCommon {
 		const root = new Thing(this.baseID, Identifiable.newID(), this.baseID, 'coral', ThingType.root, true);
 		const rootRef = await addDoc(collectionRef, u.convertToObject(root, fields));		// no need to remember now
 		root.log(DebugFlag.remote, 'CREATE T');
-		get(s_hierarchy).root = root;
+		this.hierarchy.root = root;
 		root.setID(rootRef.id);
 	}
 
@@ -330,7 +328,7 @@ export default class DBFirebase extends DBCommon {
 
 	thing_handle_docChanges(baseID: string, id: string, change: DocumentChange, data: DocumentData) {
 		const remoteThing = new PersistentThing(data);
-		const h = get(s_hierarchy);
+		const h = this.hierarchy;
 		let thing = h.thing_forHID(id.hash());
 		if (!!remoteThing) {
 			switch (change.type) {
@@ -405,7 +403,7 @@ export default class DBFirebase extends DBCommon {
 			try {
 				this.deferSnapshots = true;
 				const ref = await addDoc(traitsCollection, jsTrait)
-				const h = get(s_hierarchy);
+				const h = this.hierarchy;
 				trait.awaitingCreation = false;
 				trait.already_persisted = true;
 				h.trait_forget(trait);
@@ -422,7 +420,7 @@ export default class DBFirebase extends DBCommon {
 	trait_handle_docChanges(baseID: string, id: string, change: DocumentChange, data: DocumentData) {
 		const remoteTrait = new PersistentTrait(data);
 		if (!!remoteTrait) {
-			const h = get(s_hierarchy);
+			const h = this.hierarchy;
 			let trait = h.trait_forHID(id.hash());
 			switch (change.type) {
 				case 'added':
@@ -487,7 +485,7 @@ export default class DBFirebase extends DBCommon {
 			try {
 				this.deferSnapshots = true;
 				const ref = await addDoc(predicatesCollection, jsPredicate);
-				const h = get(s_hierarchy);
+				const h = this.hierarchy;
 				predicate.awaitingCreation = false;
 				predicate.already_persisted = true;
 				h.predicate_forget(predicate);
@@ -555,7 +553,7 @@ export default class DBFirebase extends DBCommon {
 			try {
 				this.deferSnapshots = true;
 				const ref = await addDoc(relationshipsCollection, jsRelationship);
-				const h = get(s_hierarchy);
+				const h = this.hierarchy;
 				relationship.awaitingCreation = false;
 				relationship.already_persisted = true;
 				h.relationship_forget(relationship);
@@ -572,7 +570,7 @@ export default class DBFirebase extends DBCommon {
 	relationship_handle_docChanges(baseID: string, id: string, change: DocumentChange, data: DocumentData) {
 		const remoteRelationship = new PersistentRelationship(data);
 		if (!!remoteRelationship) {
-			const h = get(s_hierarchy);
+			const h = this.hierarchy;
 			let relationship = h.relationship_forHID(id.hash());
 			switch (change.type) {
 				case 'added':
