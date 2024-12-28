@@ -99,7 +99,7 @@ export default class DBFirebase extends DBCommon {
 			}
 
 			const docs = querySnapshot.docs;
-			debug.log_persistent('READ ' + docs.length + ' from ' + baseID + ':' + datum_type);
+			debug.log_remote('READ ' + docs.length + ' from ' + baseID + ':' + datum_type);
 			for (const docSnapshot of docs) {
 				const id = docSnapshot.id;
 				const data = docSnapshot.data();
@@ -215,7 +215,7 @@ export default class DBFirebase extends DBCommon {
 			} catch (error) {
 				this.reportError(error);
 			}
-			debug.log_persistent('HANDLE ' + baseID + ':' + datum_type + k.space + change.type);
+			debug.log_remote('HANDLE ' + baseID + ':' + datum_type + k.space + change.type);
 		}
 	}
 

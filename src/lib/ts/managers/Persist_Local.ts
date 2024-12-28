@@ -197,7 +197,7 @@ class Persist_Local {
 		const h = get(s_hierarchy);
 		h.setup_root_andAncestry();
 		let ancestryToFocus = h.rootAncestry;
-		if (!this.ignoreAncestries) {
+		if (!this.ignoreAncestries && !dbDispatch.eraseDB) {
 			const focusid = this.readDB_key(IDPersistent.focus);
 			if (!!focusid || focusid == k.empty) {
 				const focusAncestry = h.ancestry_remember_createUnique(focusid);

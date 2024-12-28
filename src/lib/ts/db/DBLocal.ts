@@ -23,12 +23,14 @@ export default class DBLocal extends DBCommon {
 	async fetch_all() {
 		const json_object = persistLocal.read_key(IDPersistent.local);
 		if (!!json_object) {
-			const object = JSON.parse(json_object);
-			await this.h.extract_hierarchy_from(object as Dictionary);
-		} else {
-			this.h.predicate_defaults_remember_runtimeCreate();
-			this.h.thing_remember_runtimeCreateUnique(this.baseID, Thing.newID(), 'click here to edit this title', 'limegreen', ThingType.root);
+			const dict = JSON.parse(json_object) as Dictionary;
+			if (!dict.hid) {
+				await this.h.extract_hierarchy_from(dict);
+				return;
+			}
 		}
+		this.h.predicate_defaults_remember_runtimeCreate();
+		this.h.thing_remember_runtimeCreateUnique(this.baseID, Thing.newID(), 'click here to edit this title', 'limegreen', ThingType.root);
 	}
 
 	async thing_persistentUpdate(thing: Thing) { this.persistAll(); }

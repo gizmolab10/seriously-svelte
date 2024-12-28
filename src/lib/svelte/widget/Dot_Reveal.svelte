@@ -82,7 +82,7 @@
 				$s_ancestry_showing_tools = null;
 				signals.signal_relayoutWidgets_fromFocus();
 			} else if (ancestry.hasChildRelationships || ancestry.thing.isBulkAlias) {
-				$s_hierarchy.ancestry_rebuild_persistentMoveRight(ancestry, ancestry.isParental != ancestry.isExpanded, false, false, false, false);
+				$s_hierarchy.ancestry_rebuild_persistentMoveRight(ancestry, ancestry.isParental != ancestry.isExpanded, false, false, false, true);
 			}
 		}
 	}

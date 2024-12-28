@@ -61,10 +61,14 @@ export class Hierarchy {
 		if (!rootAncestry) {
 			alert('No root ancestry. Please, write me at sand@gizmolab.com');
 		} else {
-			this.rootAncestry = rootAncestry;
+			const grabs = get(s_grabbed_ancestries);
 			const root = rootAncestry.thing;
+			this.rootAncestry = rootAncestry;
 			if (!!root) {
 				this.root = root;
+			}
+			if (!grabs || grabs.length == 0) {
+				rootAncestry.grab();
 			}
 		}
 	}
@@ -129,8 +133,8 @@ export class Hierarchy {
 				if (!!ancestryGrab) {
 					switch (key) {
 						case '/':			graph_needsRebuild = ancestryGrab.becomeFocus(); break;
-						case 'arrowright':	event.preventDefault(); await this.ancestry_rebuild_persistentMoveRight(ancestryGrab,  ancestryGrab.isParental, SHIFT, OPTION, EXTREME); break;
-						case 'arrowleft':	event.preventDefault(); await this.ancestry_rebuild_persistentMoveRight(ancestryGrab, !ancestryGrab.isParental, SHIFT, OPTION, EXTREME); break;
+						case 'arrowright':	event.preventDefault(); await this.ancestry_rebuild_persistentMoveRight(ancestryGrab,  ancestryGrab.isParental, SHIFT, OPTION, EXTREME, true); break;
+						case 'arrowleft':	event.preventDefault(); await this.ancestry_rebuild_persistentMoveRight(ancestryGrab, !ancestryGrab.isParental, SHIFT, OPTION, EXTREME, true); break;
 					}
 				}
 				switch (key) {
@@ -915,7 +919,7 @@ export class Hierarchy {
 		}
 	}
 
-	async ancestry_rebuild_persistentMoveRight(ancestry: Ancestry, RIGHT: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean, fromReveal: boolean = false) {
+	async ancestry_rebuild_persistentMoveRight(ancestry: Ancestry, RIGHT: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean, fromReveal: boolean) {
 		if (!OPTION) {
 			const thing = ancestry.thing;
 			if (!!thing) {
@@ -941,7 +945,7 @@ export class Hierarchy {
 			const length = siblings.length;
 			const thing = ancestry?.thing;
 			if (!siblings || length == 0) {		// friendly for first-time users
-				this.ancestry_rebuild_runtimeBrowseRight(ancestry, true, EXTREME, up);
+				this.ancestry_rebuild_runtimeBrowseRight(ancestry, true, EXTREME, up, true);
 			} else if (!!thing) {
 				const is_rings_mode = g.showing_rings;
 				const isBidirectional = ancestry.predicate?.isBidirectional ?? false;
@@ -1011,7 +1015,7 @@ export class Hierarchy {
 		}
 	}
 
-	ancestry_rebuild_runtimeBrowseRight(ancestry: Ancestry, RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, fromReveal: boolean = false) {
+	ancestry_rebuild_runtimeBrowseRight(ancestry: Ancestry, RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, fromReveal: boolean) {
 		const newFocusAncestry = ancestry.parentAncestry;
 		const childAncestry = ancestry.extend_withChild(ancestry.firstChild);
 		let newGrabAncestry: Ancestry | null = RIGHT ? childAncestry : newFocusAncestry;
@@ -1033,13 +1037,9 @@ export class Hierarchy {
 			} else {
 				if (!SHIFT) {
 					if (fromReveal) {
-						if (!ancestry.isExpanded) {
-							graph_needsRebuild = ancestry.expand();
-						}
-					} else {
-						if (newGrabIsNotFocus && newGrabAncestry && !newGrabAncestry.isExpanded) {
-							graph_needsRebuild = newGrabAncestry.expand();
-						}
+						graph_needsRebuild = ancestry.toggleExpanded();
+					} else if (newGrabIsNotFocus && newGrabAncestry && !newGrabAncestry.isExpanded) {
+						graph_needsRebuild = newGrabAncestry.expand();
 					}
 				} else if (newGrabAncestry) { 
 					if (ancestry.isExpanded) {
@@ -1266,17 +1266,6 @@ export class Hierarchy {
 		s_number_ofThings.set(this.things.length);			// signal Storage.svelte
 	}
 
-	async rebuild_hierarchy_with(dict: Dictionary) {
-		this.replace_rootID = dict.id;
-		this.hierarchy_forgetAll_exceptPredicates();		// predicates are consistent across all dbs
-		this.thing_remember(this.root);						// retain root
-		for (const type of this.fetching_dataTypes) {
-			this.build_objects_fromArray_ofType(dict[type], type);
-		}
-		this.relationships_translate_idsFromTo_forParents(dict.id, this.idRoot!, false);
-		await this.conclude_fetch_andPersist();
-	}
-
 	async extract_hierarchy_from(dict: Dictionary) {
 		if (this.replace_rootID != null) {
 			await this.rebuild_hierarchy_with(dict);
@@ -1294,6 +1283,17 @@ export class Hierarchy {
 		const ancestry = this.user_selected_ancestry;
 		await this.relationship_remember_persistent_addChild_toAncestry(child, ancestry);
 		await this.db.persistAll();
+	}
+
+	async rebuild_hierarchy_with(dict: Dictionary) {
+		this.replace_rootID = dict.id;
+		this.hierarchy_forgetAll_exceptPredicates();		// predicates are consistent across all dbs
+		this.thing_remember(this.root);						// retain root
+		for (const type of this.fetching_dataTypes) {
+			this.build_objects_fromArray_ofType(dict[type], type);
+		}
+		this.relationships_translate_idsFromTo_forParents(dict.id, this.idRoot!, false);
+		await this.conclude_fetch_andPersist();
 	}
 
 	build_objects_fromArray_ofType(array: Array<Dictionary>, type: string) {

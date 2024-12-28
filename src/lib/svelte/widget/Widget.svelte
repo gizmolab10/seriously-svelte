@@ -44,11 +44,12 @@
     let widget;
 	let thing;
 
+	update_fromAncestry();
+
 	onMount(() => {
-		update_fromAncestry();
 		layout_widget();
 		element_state = ux.element_state_forName(name);		// survives onDestroy, created by {tree, rings} children
-		debug.log_mount(`WIDGET ${thing?.description} ${ancestry?.isGrabbed}`);
+		debug.log_mount(`WIDGET ${thing?.description} ${isGrabbed}`);
 		fullUpdate();
 		const handleAny = signals.handle_anySignal((ids_signal, id) => {
 			for (const kind of ids_signal) {
@@ -112,6 +113,7 @@
 	}
 
 	function update_fromAncestry() {
+		isGrabbed = ancestry?.isGrabbed;
 		thing = ancestry?.thing;
 		if (!ancestry) {
 			console.log('bad ancestry');

@@ -48,13 +48,13 @@ export class Debug {
 	log_crumbs(message: string) { this.log_maybe(DebugFlag.crumbs, message) }
 	log_cursor(message: string) { this.log_maybe(DebugFlag.cursor, message) }
 	log_layout(message: string) { this.log_maybe(DebugFlag.layout, message) }
-	log_persistent(message: string) { this.log_maybe(DebugFlag.remote, message) }
+	log_remote(message: string) { this.log_maybe(DebugFlag.remote, message) }
 	log_origins(message: string) { this.log_maybe(DebugFlag.origins, message) }
 	log_persist(message: string) { this.log_maybe(DebugFlag.persist, message) }
 	log_rebuild(message: string) { this.log_maybe(DebugFlag.rebuild, message) }
 	log_segments(message: string) { this.log_maybe(DebugFlag.segments, message) }
-	log_maybe(option: DebugFlag, message: string) { if (this.hasOption(option)) { console.log(option.toUpperCase(), message); }}
 	log_target(target: any, key: string) { console.log(`Method \'${key}\' is called on class \'${target.constructor.name}\'`); }
+	log_maybe(option: DebugFlag, message: string) { if (this.hasOption(option)) { console.log(option.toUpperCase(), message); } }
 	get hide_rings(): boolean { return this.hasOption(DebugFlag.hide_rings); }
 	get reticule(): boolean { return this.hasOption(DebugFlag.reticule); }
 	get cursor(): boolean { return this.hasOption(DebugFlag.cursor); }

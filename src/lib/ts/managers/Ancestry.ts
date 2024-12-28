@@ -498,6 +498,7 @@ export default class Ancestry extends Identifiable {
 	expand() { return this.expanded_setTo(true); }
 	collapse() { return this.expanded_setTo(false); }
 	toggleGrab() { if (this.isGrabbed) { this.ungrab(); } else { this.grab(); } }
+	toggleExpanded() { return this.isExpanded ? this.collapse() : this.expand(); }
 
 	assureIsVisible_inClusters(): boolean {
 		return this.parentAncestry?.paging_state?.update_index_toShow(this.siblingIndex) ?? false;
@@ -555,7 +556,8 @@ export default class Ancestry extends Identifiable {
 	}
 
 	grab() {
-		s_grabbed_ancestries.update((array) => {
+		s_grabbed_ancestries.update((a) => {
+			let array = a ?? [];
 			if (!!array) {
 				const index = array.indexOf(this);
 				if (array.length == 0) {
@@ -574,7 +576,8 @@ export default class Ancestry extends Identifiable {
 
 	ungrab() {
 		const rootAncestry = this.hierarchy.rootAncestry;
-		s_grabbed_ancestries.update((array) => {
+		s_grabbed_ancestries.update((a) => {
+			let array = a ?? [];
 			if (!!array) {
 				const index = array.indexOf(this);
 				if (index != -1) {				// only splice array when item is found
@@ -642,8 +645,9 @@ export default class Ancestry extends Identifiable {
 	
 	expanded_setTo(expand: boolean) {
 		let mutated = false;
-		if (!this.isRoot) {
-			s_expanded_ancestries.update((array) => {
+		if (!this.isRoot || expand) {
+			s_expanded_ancestries.update((a) => {
+				let array = a ?? [];
 				if (!!array) {
 					const index = array.map(a => a.id).indexOf(this.id);
 					const found = index != -1;
