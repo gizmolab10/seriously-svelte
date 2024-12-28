@@ -24,7 +24,7 @@ export default class DBLocal extends DBCommon {
 		const json_object = persistLocal.read_key(IDPersistent.local);
 		if (!!json_object) {
 			const dict = JSON.parse(json_object) as Dictionary;
-			if (!dict.hid) {
+			if (!dict.hid && !dict.id) {		// replaced by idRoot. deprecated files are ignored
 				await this.h.extract_hierarchy_from(dict);
 				return;
 			}

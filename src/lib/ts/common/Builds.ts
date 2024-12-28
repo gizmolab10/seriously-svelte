@@ -1,14 +1,10 @@
 class Builds {
+	latest: string;			// initialized after notes
 	notes: { [id: number]: Array<string> } = {};
-
-	get latest() {
-		const keys = Object.keys(this.notes);
-		return keys.slice(-1)[0];
-	}
 
 	constructor() {
 		this.notes = {
-			124 : ['December 27, 2024', 'use predicate kind (not id) in relationships (for moving across dbs)'],
+			124 : ['December 27, 2024', 'files can move across dbs'],
 			123 : ['December 19, 2024', 'begin work on tutorial'],
 			122 : ['December 17, 2024', 'improved details'],
 			121 : ['December 11, 2024', 'fix breadcrumb button cosmetics'],
@@ -117,6 +113,8 @@ class Builds {
 			11 : ['August 8, 2023', 'display build number'],
 			10 : ['August 2, 2023', 'refactor Panel into Startup'],
 		}
+		// needed for builds button
+		this.latest = Object.keys(this.notes).slice(-1)[0];		// grab the keys, then grab the last of them
 	}
 
 }

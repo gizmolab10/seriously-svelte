@@ -175,7 +175,7 @@ export default class Cluster_Map {
 
 	update_fork_angle() {
 		// returns one of three angles: 1) children_angle 2) opposite+tweak 3) opposite-tweak
-		const tweak = -2 * Math.PI / 3;					// equilateral distribution
+		const tweak = 2 * Math.PI / 3;					// equilateral distribution
 		const children_angle = get(s_rotation_ring_angle);
 		const raw = this.predicate.isBidirectional ?
 			children_angle + tweak :

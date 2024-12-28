@@ -133,6 +133,7 @@ declare global {
 	interface Number {
 		roundToEven(): number;
 		angle_normalized(): number;
+		expressZero_asHyphen(): string;
 		toFixed(precision: number): string;
 		angle_normalized_aroundZero(): number;
 		degrees_of(precision: number): string;
@@ -274,6 +275,15 @@ Object.defineProperty(Number.prototype, 'isClocklyAlmost', {
 	// after normalizing to normalizeTo, is this almost target (+/- within)?
 	value: function(target: number, within: number, normalizeTo: number): boolean {
 		return this.isClocklyBetween(target - within, target + within, normalizeTo);
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
+});
+
+Object.defineProperty(Number.prototype, 'expressZero_asHyphen', {
+	value: function(): string | number {
+		return this == 0 ? '-' : this;
 	},
 	writable: false,
 	enumerable: false,

@@ -1,8 +1,8 @@
+import { g, k, u, User, Thing, Trait, Grabs, debug, files, Access, IDTool, signals, Graph_Type } from '../common/Global_Imports';
 import { ThingType, TraitType, Predicate, Relationship, Ancestry, Mouse_State, PredicateKind } from '../common/Global_Imports';
+import { s_graph_type, s_number_ofThings, s_grabbed_ancestries, s_ancestry_showing_tools } from '../state/Svelte_Stores';
 import { IDControl, persistLocal, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
-import { g, k, u, User, Thing, Trait, Grabs, debug, files, Access, IDTool, signals } from '../common/Global_Imports';
 import { s_title_edit_state, s_id_popupView, s_focus_ancestry, s_alteration_mode } from '../state/Svelte_Stores';
-import { s_number_ofThings, s_grabbed_ancestries, s_ancestry_showing_tools } from '../state/Svelte_Stores';
 import { DatumType } from '../../ts/basis/PersistentIdentifiable';
 import type { Dictionary } from '../common/Types';
 import Identifiable from '../basis/Identifiable';
@@ -358,10 +358,12 @@ export class Hierarchy {
 
 	thing_build_fromDict(dict: Dictionary) {
 		const root = this.root;
-		if (!root|| this.replace_rootID != dict.id) {	// leave root untouched
-			let type = dict.type;
+		if (!!root && this.replace_rootID == dict.id && !this.db.isRemote) {
+			root.title = dict.title;	// new title for root
+		} else {
+			let type = dict.type;		// prevent multiple roots...
 			if (!!root && !this.replace_rootID && type == ThingType.root) {
-				type = k.empty;						// prevent multiple roots
+				type = k.empty;
 			}
 			this.thing_remember_runtimeCreateUnique(this.db.baseID, dict.id, dict.title, dict.color, type);
 		}
@@ -1027,6 +1029,9 @@ export class Hierarchy {
 					newGrabAncestry = null;
 				}
 				graph_needsRebuild = ancestry.expand();
+				if (get(s_graph_type) == Graph_Type.rings) {
+					graph_needsRebuild = ancestry.becomeFocus() || graph_needsRebuild;
+				}
 			} else {
 				return;
 			}
@@ -1198,7 +1203,7 @@ export class Hierarchy {
 		const root = this.root;
 		let data: Dictionary = { 
 			'title' : root.title,
-			'id' : root.id};
+			'idRoot' : root.id};
 		for (const type of this.saving_dataTypes) {
 			switch(type) {
 				case DatumType.things:		  data[type] = this.things; break;
@@ -1267,7 +1272,14 @@ export class Hierarchy {
 	}
 
 	async extract_hierarchy_from(dict: Dictionary) {
-		if (this.replace_rootID != null) {
+		if (!!dict.hid) {			// cheapo backwards compatibility
+			dict.idRoot = dict.hid;
+		}
+		if (!!dict.id) {			// ...
+			dict.idRoot = dict.id;
+		}
+		if (this.replace_rootID != null) {			// SHIFT - O sets it
+			this.replace_rootID = dict.idRoot;
 			await this.rebuild_hierarchy_with(dict);
 		} else {
 			await this.build_andAdd_progeny_with(dict);
@@ -1286,13 +1298,12 @@ export class Hierarchy {
 	}
 
 	async rebuild_hierarchy_with(dict: Dictionary) {
-		this.replace_rootID = dict.id;
-		this.hierarchy_forgetAll_exceptPredicates();		// predicates are consistent across all dbs
-		this.thing_remember(this.root);						// retain root
+		this.hierarchy_forgetAll_exceptPredicates();		// retain predicates: same across all dbs
+		this.thing_remember(this.root);						// and retain root (note: db local replaces it's title anyway)
 		for (const type of this.fetching_dataTypes) {
 			this.build_objects_fromArray_ofType(dict[type], type);
 		}
-		this.relationships_translate_idsFromTo_forParents(dict.id, this.idRoot!, false);
+		this.relationships_translate_idsFromTo_forParents(dict.idRoot, this.idRoot!, false);
 		await this.conclude_fetch_andPersist();
 	}
 

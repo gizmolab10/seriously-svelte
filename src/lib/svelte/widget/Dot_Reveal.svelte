@@ -1,8 +1,8 @@
 <script lang='ts'>
+	import { k, u, ux, show, Size, Thing, Point, debug, ZIndex, signals, svgPaths, Graph_Type } from '../../ts/common/Global_Imports';
 	import { Direction, dbDispatch, Predicate, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
-	import { k, u, ux, show, Size, Thing, Point, debug, ZIndex, signals, svgPaths } from '../../ts/common/Global_Imports';
+	import { s_graph_type, s_expanded_ancestries, s_grabbed_ancestries } from '../../ts/state/Svelte_Stores';
 	import { s_hierarchy, s_alteration_mode, s_ancestry_showing_tools } from '../../ts/state/Svelte_Stores';
-	import { s_expanded_ancestries, s_grabbed_ancestries } from '../../ts/state/Svelte_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import { onMount } from 'svelte';
@@ -82,7 +82,8 @@
 				$s_ancestry_showing_tools = null;
 				signals.signal_relayoutWidgets_fromFocus();
 			} else if (ancestry.hasChildRelationships || ancestry.thing.isBulkAlias) {
-				$s_hierarchy.ancestry_rebuild_persistentMoveRight(ancestry, ancestry.isParental != ancestry.isExpanded, false, false, false, true);
+				const RIGHT = ancestry.isParental != ancestry.isExpanded || $s_graph_type == Graph_Type.rings;
+				$s_hierarchy.ancestry_rebuild_persistentMoveRight(ancestry, RIGHT, false, false, false, true);
 			}
 		}
 	}
