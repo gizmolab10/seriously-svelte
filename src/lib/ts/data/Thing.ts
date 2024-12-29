@@ -157,9 +157,9 @@ export default class Thing extends Datum {
 	}
 
 	relationships_inBothDirections_forKind(kindPredicate: string): Array<Relationship> {
-		const children = this.relationships_forParents_ofKind(kindPredicate, false);
-		const parents = this.relationships_forParents_ofKind(kindPredicate, true);
-		return u.uniquely_concatenateArrays(parents, children);
+		const childrenRelationships = this.relationships_forParents_ofKind(kindPredicate, false);
+		const parentsRelationships = this.relationships_forParents_ofKind(kindPredicate, true);
+		return u.uniquely_concatenateArrays(parentsRelationships, childrenRelationships);
 	}
 
 	relationships_forParents_ofKind(kindPredicate: string, forParents: boolean): Array<Relationship> {

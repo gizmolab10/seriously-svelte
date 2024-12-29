@@ -17,9 +17,10 @@ export default class Ancestry extends Identifiable {
 	isRoot = false;
 
 	// id => ancestry string 
-	//	composed of ids of each relationship
+	//   "   composed of ids of each relationship
 	// NOTE: first relationship's parent is always the root
 	//   "   kindPredicate is from the last relationship
+	//   "   children are of that kind of predicate
 
 	constructor(dbType: string, ancestryString: string = k.empty, kindPredicate: string = PredicateKind.contains, isParental: boolean = true) {
 		super(ancestryString);

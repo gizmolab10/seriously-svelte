@@ -66,7 +66,7 @@
 			if ($s_device_isMobile) {
 				origin_ofFirstReveal.x = 25;
 			}
-			const toChildren = new Point(-42.2 + k.line_stretch - (k.dot_size / 2) + offsetX_ofFirstReveal, (k.dot_size / 2) -(childrenSize.height / 2) - 4.5);
+			const toChildren = new Point(-42.2 + k.line_stretch - (k.dot_size / 2) + offsetX_ofFirstReveal, (k.dot_size / 2) -(childrenSize.height / 2) - 4);
 			origin_ofChildren = origin_ofFirstReveal.offsetBy(toChildren);
 			debug.log_origins(origin_ofChildren.x + ' updateOrigins');
 		}
