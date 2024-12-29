@@ -31,7 +31,7 @@ export default class Thing extends Datum {
 	get traits():					   Array<Trait> { return get(s_hierarchy).traits_forOwnerHID(this.idHashed) ?? []; }
 	get parentAncestries(): 		Array<Ancestry> { return this.parentAncestries_for(Predicate.contains); }
 	get fields():		  		  Airtable.FieldSet { return { title: this.title, color: this.color, type: this.type }; }
-	get relatedRelationships(): Array<Relationship> { return this.relationships_inBothDirections_forKind(PredicateKind.isRelated); }
+	get relatedRelationships(): Array<Relationship> { return this.relationships_forParents_ofKind(PredicateKind.isRelated, false); }
 	get quest():					  string | null { return get(s_hierarchy).trait_forType_ownerHID(TraitType.quest, this.idHashed)?.text ?? null; }
 	get consequence():				  string | null { return get(s_hierarchy).trait_forType_ownerHID(TraitType.consequence, this.idHashed)?.text ?? null; }
 	get idBridging():						 string { return this.isBulkAlias ? this.bulkRootID : this.id; }
