@@ -4,7 +4,7 @@ export enum AlterationType {
 }
 
 export enum Graph_Type {
-	rings = 'rings',
+	compass = 'compass',
 	tree  = 'tree',
 }
 
@@ -132,14 +132,14 @@ export enum ElementType {
 
 export enum Rebuild_Type {
 	directional = 'directional',
-	clusters	= 'clusters',		// only this enum is used (in Rings_Graph)
+	clusters	= 'clusters',		// only this enum is used (in Compass_Graph)
 	necklace	= 'necklace',
 	reveal		= 'reveal',
 	widget		= 'widget',
 	crumbs		= 'crumbs',
 	crumb		= 'crumb',
 	tools		= 'tools',
-	rings		= 'rings',
+	compass		= 'compass',
 	panel		= 'panel',
 	info		= 'info',
 	tree		= 'tree',
@@ -150,7 +150,7 @@ export enum Rebuild_Type {
 export enum ZIndex {	// DO NOT change the order
 	common,
 	paging,
-	rings,
+	compass,
 	backmost,
 	lines,
 	text,

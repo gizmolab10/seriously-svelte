@@ -92,14 +92,14 @@
 			thing_title = thing.title;
 			thingHID = thing.idHashed;
 			const dict = {
-				'depth'			: (ancestry.depth - 1).expressZero_asHyphen(),
-				'children'		: (ancestry.children.length).expressZero_asHyphen(),
-				'parents'		: (thing.parents.length).expressZero_asHyphen(),
-				'related'		: (thing.relatedRelationships.length).expressZero_asHyphen(),
-				'direction'		: ancestry.isParental ? 'child' : 'parent',
-				'relationship'	: ancestry.predicate?.description ?? 'none',
-				'id'			: thing.id.clipWithEllipsisAt(12),
-				'color'			: k.empty,
+				'depth'		: (ancestry.depth - 1).expressZero_asHyphen(),
+				'children'	: (ancestry.children.length).expressZero_asHyphen(),
+				'parents'	: (thing.parents.length).expressZero_asHyphen(),
+				'related'	: (thing.relatedRelationships.length).expressZero_asHyphen(),
+				'predicate'	: ancestry.predicate?.description ?? 'none',
+				'direction'	: ancestry.isParental ? 'child' : 'parent',
+				'id'		: thing.id.clipWithEllipsisAt(12),
+				'color'		: k.empty,
 			};
 			information = Object.entries(dict);
 			rebuilds += 1;

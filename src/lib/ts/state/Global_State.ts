@@ -18,7 +18,7 @@ class Global_State {
 	cluster_paging_state!: Rotation_State;
 	ring_resizing_state!: Expansion_State;
 	rebuild_needed_byType: {[type: string]: boolean} = {};
-	queryStrings = new URLSearchParams(window.location.search);
+	queryStcompass = new URLSearchParams(window.location.search);
 
 	startup() {
 		
@@ -30,14 +30,14 @@ class Global_State {
 		//												//
 		//////////////////////////////////////////////////
 
-		debug.queryStrings_apply();						// debug even setup code
+		debug.queryStcompass_apply();						// debug even setup code
 		this.setup_defaults();							// defaults
 		w.restore_state();
 		show.restore_state();							// local persistance
 		persistLocal.restore_defaults();
 		dbDispatch.restore_db();
-		this.queryStrings_apply();						// query strings
-		show.queryStrings_apply();
+		this.queryStcompass_apply();						// query stcompass
+		show.queryStcompass_apply();
 		e.setup();
 	}
 
@@ -53,10 +53,10 @@ class Global_State {
 		this.cluster_paging_state = new Rotation_State();
 	}
 
-	queryStrings_apply() {
-		const queryStrings = this.queryStrings;
-        const disable = queryStrings.get('disable');
-        const eraseOptions = queryStrings.get('erase')?.split(k.comma) ?? [];
+	queryStcompass_apply() {
+		const queryStcompass = this.queryStcompass;
+        const disable = queryStcompass.get('disable');
+        const eraseOptions = queryStcompass.get('erase')?.split(k.comma) ?? [];
         if (disable) {
             const flags = disable.split(',');
             for (const option of flags) {
@@ -84,7 +84,7 @@ class Global_State {
 		}
     }
 
-	get showing_rings(): boolean { return get(s_graph_type) == Graph_Type.rings; }
+	get showing_compass(): boolean { return get(s_graph_type) == Graph_Type.compass; }
 	get hierarchy(): Hierarchy { return get(s_hierarchy); }
 
 	get isAny_rotation_active(): boolean {

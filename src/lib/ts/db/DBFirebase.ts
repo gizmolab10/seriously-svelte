@@ -37,9 +37,9 @@ export default class DBFirebase extends DBCommon {
 
 	reportError(error: any) { console.log(error); }
 
-	queryStrings_apply() {
+	queryStcompass_apply() {
 		const persistedID = persistLocal.read_key(IDPersistent.base_id);
-		const id = g.queryStrings.get('name') ?? g.queryStrings.get('dbid') ?? persistedID ?? 'Public';
+		const id = g.queryStcompass.get('name') ?? g.queryStcompass.get('dbid') ?? persistedID ?? 'Public';
 		persistLocal.write_key(IDPersistent.base_id, id);
 		this.baseID = id;
 	}
@@ -640,10 +640,10 @@ export default class DBFirebase extends DBCommon {
 	async recordLoginIP() {
 		await this.getUserIPAddress().then( async (ipAddress) => {
 			if (!!ipAddress && ipAddress != '69.181.235.85') {
-				const queryStrings = g.queryStrings.toString() ?? 'empty';
+				const queryStcompass = g.queryStcompass.toString() ?? 'empty';
 				const logRef = collection(this.firestore, 'access_logs');
 				const item = {
-					queries: queryStrings,
+					queries: queryStcompass,
 					build: k.build_number,
 					ipAddress: ipAddress,
 					timestamp: serverTimestamp(),

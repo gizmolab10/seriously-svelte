@@ -24,12 +24,12 @@
 	}
 
 	function debug_closure(mouse_state) {
-		debug.log_rings(` ${mouse_state.descriptionFor('FOCUS')}`);
+		debug.log_compass(` ${mouse_state.descriptionFor('FOCUS')}`);
 	}
 
 </script>
 
-<div class='rings-focus'
+<div class='compass-focus'
 	style='
 		height:{height}px;
 		position: absolute;
@@ -40,7 +40,7 @@
 		<Mouse_Responder
 			height={height}
 			width={titleWidth}
-			name='rings-focus-border'
+			name='compass-focus-border'
 			zindex={ZIndex.backmost}
 			cursor={k.cursor_default}
 			isHit_closure={() => false}
@@ -48,7 +48,7 @@
 			center={centerOffset.offsetByX(-13)}>
 			{#key color}
 				<svg
-					class='rings-focus-svg'
+					class='compass-focus-svg'
 					style='
 						top: -2.7px;
 						left: -13px;
@@ -58,12 +58,12 @@
 					<path
 						fill='white'
 						stroke={color}
-						class='rings-focus-path'
+						class='compass-focus-path'
 						d={svgPaths.oblong(centerOffset, new Size(titleWidth - 6, k.row_height))}/>
 				</svg>
 			{/key}
 		</Mouse_Responder>
-	<div class='rings-focus-title'
+	<div class='compass-focus-title'
 		style='
 			top:3px;
 			position: absolute;'>

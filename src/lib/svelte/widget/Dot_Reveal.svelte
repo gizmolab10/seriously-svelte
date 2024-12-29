@@ -82,7 +82,7 @@
 				$s_ancestry_showing_tools = null;
 				signals.signal_relayoutWidgets_fromFocus();
 			} else if (ancestry.hasChildRelationships || ancestry.thing.isBulkAlias) {
-				const RIGHT = ancestry.isParental != ancestry.isExpanded || $s_graph_type == Graph_Type.rings;
+				const RIGHT = ancestry.isParental != ancestry.isExpanded || $s_graph_type == Graph_Type.compass;
 				$s_hierarchy.ancestry_rebuild_persistentMoveRight(ancestry, RIGHT, false, false, false, true);
 			}
 		}

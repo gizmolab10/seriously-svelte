@@ -141,7 +141,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	get isVisible(): boolean {
-		if (g.showing_rings) {
+		if (g.showing_compass) {
 			return this.parentAncestry?.paging_state?.index_isVisible(this.siblingIndex) ?? false;
 		} else {
 			const focus = get(s_focus_ancestry);
@@ -545,7 +545,7 @@ export default class Ancestry extends Identifiable {
 			s_title_edit_state?.set(null);
 			if (!!get(s_alteration_mode)) {
 				this.ancestry_alterMaybe(this);
-			} else if (!shiftKey && g.showing_rings) {
+			} else if (!shiftKey && g.showing_compass) {
 				this.becomeFocus();
 			} else if (shiftKey || this.isGrabbed) {
 				this.toggleGrab();
@@ -591,7 +591,7 @@ export default class Ancestry extends Identifiable {
 			return array;
 		});
 		let ancestries = get(s_grabbed_ancestries) ?? [];
-		if (ancestries.length == 0 && !g.showing_rings) {
+		if (ancestries.length == 0 && !g.showing_compass) {
 			rootAncestry.grabOnly();
 		} else {
 			this.toggle_editingTools(); // do not show editingTools for root

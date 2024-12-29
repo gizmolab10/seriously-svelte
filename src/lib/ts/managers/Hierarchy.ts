@@ -949,9 +949,9 @@ export class Hierarchy {
 			if (!siblings || length == 0) {		// friendly for first-time users
 				this.ancestry_rebuild_runtimeBrowseRight(ancestry, true, EXTREME, up, true);
 			} else if (!!thing) {
-				const is_rings_mode = g.showing_rings;
+				const is_compass_mode = g.showing_compass;
 				const isBidirectional = ancestry.predicate?.isBidirectional ?? false;
-				if ((!isBidirectional && ancestry.isParental) || !is_rings_mode) {
+				if ((!isBidirectional && ancestry.isParental) || !is_compass_mode) {
 					const index = siblings.indexOf(thing);
 					const newIndex = index.increment(!up, length);
 					if (!!parentAncestry && !OPTION) {
@@ -960,7 +960,7 @@ export class Hierarchy {
 							if (!grabAncestry.isVisible) {
 								if (!parentAncestry.isFocus) {
 									graph_needsRebuild = parentAncestry.becomeFocus();
-								} else if (is_rings_mode) {
+								} else if (is_compass_mode) {
 									graph_needsRebuild = grabAncestry.assureIsVisible_inClusters();	// change paging
 								} else {
 									alert('PROGRAMMING ERROR: child of focus is not visible');
@@ -1029,7 +1029,7 @@ export class Hierarchy {
 					newGrabAncestry = null;
 				}
 				graph_needsRebuild = ancestry.expand();
-				if (get(s_graph_type) == Graph_Type.rings) {
+				if (get(s_graph_type) == Graph_Type.compass) {
 					graph_needsRebuild = ancestry.becomeFocus() || graph_needsRebuild;
 				}
 			} else {

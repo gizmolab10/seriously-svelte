@@ -4,15 +4,15 @@
 	import { s_graphRect, s_show_details, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
 	import { s_user_graph_offset, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
 	import { s_clusters_geometry } from '../../ts/state/Svelte_Stores';
-	import Rings_Focus from './Rings_Focus.svelte';
+	import Compass_Focus from './Compass_Focus.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Necklace from './Necklace.svelte';
-	import Rings from './Rings.svelte';
+	import Compass from './Compass.svelte';
 	import { onMount } from 'svelte';
 	let toolsOffset = new Point(31, -173.5).offsetBy($s_user_graph_offset.negated);
 
-	// draw center title, arcs, rings and widget necklace
-	//	also selection & hover for arcs & rings
+	// draw center title, arcs, compass and widget necklace
+	//	also selection & hover for arcs & compass
 
 	// needs:
 	//	arrowheads
@@ -42,14 +42,14 @@
 </script>
 
 {#key g.readOnce_rebuild_needed_forType(Rebuild_Type.clusters), $s_focus_ancestry.hashedAncestry}
-	<div class='rings-graph'
+	<div class='compass-graph'
 		style='
 			z-index:{ZIndex.backmost};
 			width:{$s_graphRect.size.width}px;
 			height:{$s_graphRect.size.height}px;
 			transform:translate({$s_user_graph_offset.x}px, {$s_user_graph_offset.y}px);'>
-		<Rings/>
-		<Rings_Focus/>
+		<Compass/>
+		<Compass_Focus/>
 		<Necklace/>
 	</div>
 {/key}

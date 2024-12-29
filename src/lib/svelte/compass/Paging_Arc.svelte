@@ -24,7 +24,7 @@
 	// uses arc_map for svg
 	// and cluster map for geometry and text
 	//
-	// contained by rings, which is contained by rings graph
+	// contained by compass, which is contained by compass graph
 
 	debug.log_build(` P ARC (svelte)  ${cluster_map.name}`);
 	cluster_map.update_all();
@@ -71,7 +71,7 @@
 {#if !!cluster_map}
 	{#key arc_color}
 		<div class='arc' bind:this={arc} style='z-index:{ZIndex.paging};'>
-			{#if !debug.noRings}
+			{#if !debug.noCompass}
 				<Mouse_Responder
 					width={radius * 2}
 					height={radius * 2}
