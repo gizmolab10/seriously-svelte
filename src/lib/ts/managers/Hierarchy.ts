@@ -1,5 +1,5 @@
-import { g, k, u, User, Thing, Trait, Grabs, debug, files, Access, IDTool, signals, Graph_Type } from '../common/Global_Imports';
-import { ThingType, TraitType, Predicate, Relationship, Ancestry, Mouse_State, PredicateKind } from '../common/Global_Imports';
+import { g, k, u, show, User, Thing, Trait, Grabs, debug, files, Access, IDTool, signals, InfoType, Graph_Type } from '../common/Global_Imports';
+import { Ancestry, ThingType, TraitType, Predicate, Relationship, Mouse_State, PredicateKind } from '../common/Global_Imports';
 import { s_graph_type, s_number_ofThings, s_grabbed_ancestries, s_ancestry_showing_tools } from '../state/Svelte_Stores';
 import { IDControl, persistLocal, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
 import { s_title_edit_state, s_id_popupView, s_focus_ancestry, s_alteration_mode } from '../state/Svelte_Stores';
@@ -1190,9 +1190,11 @@ export class Hierarchy {
 	get user_selected_ancestry(): Ancestry {
 		const focus = get(s_focus_ancestry);
 		let grabbed = this.grabs.ancestry_lastGrabbed;
-		if (!!grabbed && !grabbed.isRoot && !grabbed.isFocus) {
+		if (!!focus && show.info_type == InfoType.focus) {
+			return focus;
+		} else if (!!grabbed) {
 			return grabbed;
-		} else if (!!focus && !focus.isRoot) {
+		} else if (!!focus) {
 			return focus;
 		} else {
 			return this.rootAncestry;
@@ -1291,7 +1293,7 @@ export class Hierarchy {
 		for (const type of this.fetching_dataTypes) {
 			this.build_objects_fromArray_ofType(dict[type], type);
 		}
-		const child = this.thing_forHID(dict.hid);
+		const child = this.thing_forHID(dict.idRoot.hash());
 		const ancestry = this.user_selected_ancestry;
 		await this.relationship_remember_persistent_addChild_toAncestry(child, ancestry);
 		await this.db.persistAll();

@@ -8,7 +8,6 @@
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
-	import Button from '../mouse/Button.svelte';
 	import Table from '../kit/Table.svelte';
 	import Color from './Color.svelte';
 	import { onMount } from 'svelte';
@@ -152,7 +151,7 @@
 				{/key}
 				<Table top={39} array={information}/>
 			{/if}
-			<Color thing={thing} origin={new Point(73, 149)}/>
+			<Color thing={thing} origin={new Point(73, 147)}/>
 			{#if show.traits}
 				<div class='horizontal-line'
 					style='

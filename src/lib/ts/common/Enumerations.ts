@@ -3,15 +3,6 @@ export enum AlterationType {
 	adding	 = 'adding',
 }
 
-export enum PredicateKind {
-	appreciates = 'appreciates',
-	isRelated	= 'isRelated',
-	contains	= 'contains',
-	explains	= 'explains',
-	requires	= 'requires',
-	supports	= 'supports',
-}
-
 export enum Graph_Type {
 	rings = 'rings',
 	tree  = 'tree',
@@ -20,6 +11,11 @@ export enum Graph_Type {
 export enum InfoType {
 	selection = 'selection',
 	focus	  = 'focus',
+}
+
+export enum IDStorage {
+	import = 'import',
+	export = 'export',
 }
 
 export enum Tree_Type {
@@ -81,10 +77,20 @@ export enum Oblong_Part {
 	full   = 'full',
 }
 
+export enum PredicateKind {
+	appreciates = 'appreciates',
+	isRelated	= 'isRelated',
+	contains	= 'contains',
+	explains	= 'explains',
+	requires	= 'requires',
+	supports	= 'supports',
+}
+
 export enum TraitType {
 	consequence = 'consequence',
 	hyperlink	= 'hyperlink',
 	generic		= 'generic',
+	money		= 'money',
 	phone		= 'phone',
 	quest		= 'quest',
 	note		= 'note',
@@ -111,9 +117,22 @@ export enum IDBrowser  {
 	orion	 = 'orion',
 }
 
+export enum ElementType {
+	control	= 'control',
+	storage	= 'storage',
+	reveal	= 'reveal',
+	widget	= 'widget',
+	crumb	= 'crumb',
+	focus	= 'focus',
+	drag	= 'drag',
+	info	= 'info',
+	none	= 'none',
+	tool	= 'tool',
+}
+
 export enum Rebuild_Type {
 	directional = 'directional',
-	clusters	= 'clusters',
+	clusters	= 'clusters',		// only this enum is used (in Rings_Graph)
 	necklace	= 'necklace',
 	reveal		= 'reveal',
 	widget		= 'widget',
@@ -126,22 +145,6 @@ export enum Rebuild_Type {
 	tree		= 'tree',
 	line		= 'line',
 	drag		= 'drag',
-}
-
-export enum ElementType {
-	generic	= 'generic',
-	control	= 'control',
-	widget	= 'widget',
-	reveal	= 'reveal',
-	focus	= 'focus',
-	crumb	= 'crumb',
-	thumb	= 'thumb',
-	info	= 'info',
-	tool	= 'tool',
-	drag	= 'drag',
-	open	= 'open',
-	none	= 'none',
-	arc		= 'arc',
 }
 
 export enum ZIndex {	// DO NOT change the order

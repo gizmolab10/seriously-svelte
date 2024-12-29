@@ -8,7 +8,7 @@
 	import Tools from './Tools.svelte';
 	import Info from './Info.svelte';
 	const titles = [Details_Type[Details_Type.storage], Details_Type[Details_Type.tools], Details_Type[Details_Type.recents], Details_Type[Details_Type.info]];
-	const heights = [63, 40, 100, 0];
+	const heights = [100, 40, 100, 0];
 	let tops = [0, 0, 0, 0];
 	let rebuilds = 0;
 

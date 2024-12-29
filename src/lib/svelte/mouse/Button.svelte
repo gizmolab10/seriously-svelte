@@ -8,15 +8,16 @@
 	import { onMount } from 'svelte';
 	export let background_color = k.color_background;
 	export let closure = Handle_Result<Mouse_State>;
+	export let border_color = k.color_default;
 	export let height = k.default_buttonSize;
 	export let width = k.default_buttonSize;
 	export let element_state: Element_State;
-	export let border_color = k.color_default;
+	export let padding = '0px 6px 1px 6px';
+	export let color = k.color_default;
 	export let position = 'absolute';
 	export let zindex = ZIndex.dots;
 	export let border_thickness = 1;
 	export let center = Point.zero;
-	export let color = k.color_default;
 	export let style = k.empty;
 	export let name = k.empty;
 	let border = k.empty;
@@ -51,19 +52,19 @@
 				width:${width}px;
 				border:${border};
 				z-index:${zindex};
+				padding:${padding};
 				height:${height}px;
 				position:${position};
-				padding:0px 6px 1px 6px;
 				border-radius:${height / 2}px;
 				cursor:${element_state.cursor};
-				font-family: {$s_thing_fontFamily};
+				font-family:${$s_thing_fontFamily};
 				background-color:${background_color};
 			`.removeWhiteSpace();
 		}
 	}
 
-	function hover_closure(mouse_state: Mouse_State) {
-		closure(mouse_state);		// so container can behave or look differently
+	function button_closure(mouse_state: Mouse_State) {
+		closure(mouse_state);		// so container can adjust behavior or appearance
 		if (mouse_state.isHover) {	// NOT the same as isHovering
 			update_currentStyle();
 		}
@@ -75,8 +76,9 @@
 	name={name}
 	width={width}
 	height={height}
+	zindex={zindex}
 	center={center}
-	mouse_state_closure={hover_closure}>
+	mouse_state_closure={button_closure}>
 	<button class='button' id={'button-for-' + name} style={currentStyle}>
 		<slot></slot>
 	</button>

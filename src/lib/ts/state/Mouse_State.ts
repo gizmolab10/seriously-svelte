@@ -33,6 +33,7 @@ export default class Mouse_State {
 	}
 
 	get isShapeHit(): boolean { return false; }
+	get isEmpty(): boolean { return !this.isHover && !this.isOut && !this.isDown && !this.isUp && !this.isDouble && !this.isLong && !this.isMove && !this.isHit; }
 	get copy(): Mouse_State { return new Mouse_State(this.event, this.element, this.isHover, this.isOut, this.isDown, this.isUp, this.isDouble, this.isLong, this.isMove, this.isHit); }
 
 	get isElementHit(): boolean {
@@ -40,7 +41,7 @@ export default class Mouse_State {
 			Rect.rect_forElement_containsEvent(this.element, this.event);
 	}
 
-	descriptionFor(name: string = ''): string {
+	get description(): string {
 		let states: Array<string> = [];
 		if (this.isHover) { states.push('hover'); }
 		if (this.isOut) { states.push('out'); }
@@ -50,9 +51,10 @@ export default class Mouse_State {
 		if (this.isLong) { states.push('long'); }
 		if (this.isMove) { states.push('move'); }
 		if (this.isHit) { states.push('hit'); }
-		return states.length == 0 ? 'empty mouse state' : `${name} states: ${states.join(', ')}`;
+		return states.length == 0 ? 'empty mouse state' : states.join(', ');
 	}
 
+	descriptionFor(name: string = ''): string { return `${name} states: ${this.description}`; }
 	static empty(event: MouseEvent | null = null) { return new Mouse_State(event, null, false, false, false, true, false, false, false); }
 	static hit(event: MouseEvent | null = null) { return new Mouse_State(event, null, false, false, false, true, false, false, false, true); }
 	static up(event: MouseEvent | null, element: HTMLElement) { return new Mouse_State(event, element, false, false, false, true, false, false, false); }

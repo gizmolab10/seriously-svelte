@@ -95,7 +95,7 @@
 	}
 
 	function handle_pointerUp(event) {
-		if (detect_mouseUp) {// && (!!mouse_timer.mouse_longClick_timer)) {
+		if (detect_mouseUp) {
 
 			// tear down timers and call closure
 
