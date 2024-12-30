@@ -11,7 +11,7 @@ export default class Clusters_Geometry {
 	child_cluster_maps: Array<Cluster_Map> = [];
 	ancestry_focus!: Ancestry;
 
-	// layout all the widgets, compass and arcs
+	// layout all the widgets, radial and arcs
 
 	constructor() {
 		debug.log_layout(`GEOMETRY (ts)  ${get(s_focus_ancestry)?.thing?.title}`);

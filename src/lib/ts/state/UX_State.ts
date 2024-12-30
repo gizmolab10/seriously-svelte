@@ -19,7 +19,7 @@ export default class UX_State {
 	//	  by their own event handling	//
 	//									//
 	//	used by: Button, Close_Button,	//
-	//	  Compass & Paging_Arc			//
+	//	  Radial & Paging_Arc			//
 	//									//
 	//////////////////////////////////////
 

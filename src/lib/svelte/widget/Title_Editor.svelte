@@ -8,7 +8,7 @@
 	export let forward = true;
 	export let ancestry;
 	const room_forDragDot = 6.5;
-	const titleTop = g.showing_compass ? 0.5 : 0;
+	const titleTop = g.showing_radial ? 0.5 : 0;
 	let bound_title = thing()?.title ?? k.empty;
 	let padding = `0.5px 0px 0px ${room_forDragDot}px`;
     let color = thing()?.color ?? k.empty;
@@ -76,7 +76,7 @@
 					isEditing = !isEditing;
 				}
 			}
-			cursorStyle = (ancestry.isEditing || ancestry.isGrabbed) ? 'cursor: text' : g.showing_compass ? 'cursor: pointer' : ancestry.isEditable ? k.empty : 'cursor: text';
+			cursorStyle = (ancestry.isEditing || ancestry.isGrabbed) ? 'cursor: text' : g.showing_radial ? 'cursor: pointer' : ancestry.isEditable ? k.empty : 'cursor: text';
 		}
 	}
 
@@ -127,7 +127,7 @@
 	onMount(() => {
 		if (!!thing()) {
 			titleWidth = thing().titleWidth + 6;
-			titleLeft = g.showing_compass ? ancestry.isFocus ? -2 : (forward ? 14 : 4) : 10;
+			titleLeft = g.showing_radial ? ancestry.isFocus ? -2 : (forward ? 14 : 4) : 10;
 		}
 		const handler = signals.handle_anySignal((IDSignal, ancestry) => { updateInputWidth(); });
 		setTimeout(() => { updateInputWidth(); }, 100);

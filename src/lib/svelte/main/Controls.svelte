@@ -103,9 +103,9 @@
 					name='graph'
 					origin={Point.x(30)}
 					selected={[$s_graph_type]}
-					titles={[Graph_Type.tree, Graph_Type.compass]}
+					titles={[Graph_Type.tree, Graph_Type.radial]}
 					selection_closure={(titles) => selection_closure('graph', titles)}/>
-				{#if !g.showing_compass && show.tree_types}
+				{#if !g.showing_radial && show.tree_types}
 					{#key $s_tree_type}
 						<Segmented
 							name='tree'

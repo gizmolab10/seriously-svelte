@@ -2,7 +2,7 @@
 	import { s_device_isMobile, s_user_graph_offset, s_ancestry_showing_tools } from '../../ts/state/Svelte_Stores';
 	import { g, k, w, Rect, Point, debug, ZIndex, signals, Graph_Type } from '../../ts/common/Global_Imports';
 	import { s_graphRect, s_graph_type, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
-	import Compass_Graph from '../compass/Compass_Graph.svelte';
+	import Radial_Graph from '../radial/Radial_Graph.svelte';
 	import Tree_Graph from '../tree/Tree_Graph.svelte';
 	import { onMount } from 'svelte';
 	let draggableRect: Rect | null = null;
@@ -58,8 +58,8 @@
 	<div class='draggable'
 		bind:this={draggable}
 		style={style}>
-		{#if $s_graph_type == Graph_Type.compass}
-			<Compass_Graph/>
+		{#if $s_graph_type == Graph_Type.radial}
+			<Radial_Graph/>
 		{:else}
 			<Tree_Graph/>
 		{/if}

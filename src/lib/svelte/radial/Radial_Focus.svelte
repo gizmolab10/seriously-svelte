@@ -24,12 +24,12 @@
 	}
 
 	function debug_closure(mouse_state) {
-		debug.log_compass(` ${mouse_state.descriptionFor('FOCUS')}`);
+		debug.log_radial(` ${mouse_state.descriptionFor('FOCUS')}`);
 	}
 
 </script>
 
-<div class='compass-focus'
+<div class='radial-focus'
 	style='
 		height:{height}px;
 		position: absolute;
@@ -40,7 +40,7 @@
 		<Mouse_Responder
 			height={height}
 			width={titleWidth}
-			name='compass-focus-border'
+			name='radial-focus-border'
 			zindex={ZIndex.backmost}
 			cursor={k.cursor_default}
 			isHit_closure={() => false}
@@ -48,7 +48,7 @@
 			center={centerOffset.offsetByX(-13)}>
 			{#key color}
 				<svg
-					class='compass-focus-svg'
+					class='radial-focus-svg'
 					style='
 						top: -2.7px;
 						left: -13px;
@@ -58,12 +58,12 @@
 					<path
 						fill='white'
 						stroke={color}
-						class='compass-focus-path'
+						class='radial-focus-path'
 						d={svgPaths.oblong(centerOffset, new Size(titleWidth - 6, k.row_height))}/>
 				</svg>
 			{/key}
 		</Mouse_Responder>
-	<div class='compass-focus-title'
+	<div class='radial-focus-title'
 		style='
 			top:3px;
 			position: absolute;'>

@@ -103,7 +103,7 @@
 		if (!!ancestry) {
 			const shows_Reveal = ancestry.showsReveal;
 			const forward = ancestry.widget_map?.points_right ?? true;
-			return g.showing_compass ? forward ? titleWidth + 23 : -6 : shows_Reveal ? titleWidth + 25 : titleWidth + 17;
+			return g.showing_radial ? forward ? titleWidth + 23 : -6 : shows_Reveal ? titleWidth + 25 : titleWidth + 17;
 		}
 		return 0;
 	}

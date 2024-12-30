@@ -35,8 +35,8 @@ export default class DBAirtable extends DBCommon {
 	things_errorMessage = 'Error in Things:';
 	traits_errorMessage = 'Error in Traits:';
 
-	queryStcompass_apply() {
-		const string = g.queryStcompass.get('name') ?? g.queryStcompass.get('dbid');
+	queryStradial_apply() {
+		const string = g.queryStradial.get('name') ?? g.queryStradial.get('dbid');
 		if (!!string) {
 			const names = string.split(k.comma);
 			if (names.length > 1) {

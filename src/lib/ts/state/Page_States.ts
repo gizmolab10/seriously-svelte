@@ -22,8 +22,8 @@ export class Paging_State {
 	}
 
 	static create_paging_state_from(description: string): Paging_State | null {
-		let stcompass = description.split(k.generic_separator);
-		const [toChildren, kind, id, ...remaining] = stcompass;
+		let stradial = description.split(k.generic_separator);
+		const [toChildren, kind, id, ...remaining] = stradial;
 		if (remaining.length > 2) {
 			const v: Array<number> = remaining.map(r => Number(r));
 			const paging_state = new Paging_State(v[0], v[1], v[2]);
@@ -45,14 +45,14 @@ export class Paging_State {
 	get sub_key(): string { return `${this.thing_id}${k.generic_separator}${this.kind}${k.generic_separator}${this.toChildren}`; }
 
 	get description(): string {
-		const stcompass = [
+		const stradial = [
 			`${this.toChildren}`,
 			`${this.kind}`,
 			`${this.thing_id}`,
 			`${this.index}`,
 			`${this.widgets_shown}`,
 			`${this.total_widgets}`];
-		return stcompass.join(k.generic_separator);
+		return stradial.join(k.generic_separator);
 	}
 
 	index_isVisible(index: number): boolean {

@@ -3,7 +3,7 @@ import { g } from '../../ts/state/Global_State';
 // query string: ?debug=reticule,tools
 
 export enum DebugFlag {
-	hide_compass = 'hide_compass',
+	hide_radial = 'hide_radial',
 	reticule   = 'reticule',	// debug ring layout geometry
 	segments   = 'segments',
 	origins    = 'origins',
@@ -24,7 +24,7 @@ export enum DebugFlag {
 	mouse	   = 'mouse',
 	hover	   = 'hover',
 	order	   = 'order',		// observe relocating
-	compass	   = 'compass',
+	radial	   = 'radial',
 	tools	   = 'tools',		// state logic of add parent tool
 	edit	   = 'edit',		// editing state machine
 	info	   = 'info',
@@ -42,7 +42,7 @@ export class Debug {
 	log_hover(message: string) { this.log_maybe(DebugFlag.hover, message) }
 	log_mount(message: string) { this.log_maybe(DebugFlag.mount, message) }
 	log_mouse(message: string) { this.log_maybe(DebugFlag.mouse, message) }
-	log_compass(message: string) { this.log_maybe(DebugFlag.compass, message) }
+	log_radial(message: string) { this.log_maybe(DebugFlag.radial, message) }
 	log_tools(message: string) { this.log_maybe(DebugFlag.tools, message) }
 	log_action(message: string) { this.log_maybe(DebugFlag.action, message) }
 	log_crumbs(message: string) { this.log_maybe(DebugFlag.crumbs, message) }
@@ -55,22 +55,22 @@ export class Debug {
 	log_segments(message: string) { this.log_maybe(DebugFlag.segments, message) }
 	log_target(target: any, key: string) { console.log(`Method \'${key}\' is called on class \'${target.constructor.name}\'`); }
 	log_maybe(option: DebugFlag, message: string) { if (this.hasOption(option)) { console.log(option.toUpperCase(), message); } }
-	get hide_compass(): boolean { return this.hasOption(DebugFlag.hide_compass); }
+	get hide_radial(): boolean { return this.hasOption(DebugFlag.hide_radial); }
 	get reticule(): boolean { return this.hasOption(DebugFlag.reticule); }
 	get cursor(): boolean { return this.hasOption(DebugFlag.cursor); }
 	get graph(): boolean { return this.hasOption(DebugFlag.graph); }
 	get lines(): boolean { return this.hasOption(DebugFlag.lines); }
-	get compass(): boolean { return this.hasOption(DebugFlag.compass); }
+	get radial(): boolean { return this.hasOption(DebugFlag.radial); }
 	get tools(): boolean { return this.hasOption(DebugFlag.tools); }
 	get info(): boolean { return this.hasOption(DebugFlag.info); }
 
-	queryStcompass_apply() {
-		const debug = g.queryStcompass.get('debug');
+	queryStradial_apply() {
+		const debug = g.queryStradial.get('debug');
 		if (debug) {
 			const flags = debug.split(',');
 			for (const option of flags) {
 				switch (option) {
-					case 'hide_compass': this.flags.push(DebugFlag.hide_compass); break;
+					case 'hide_radial': this.flags.push(DebugFlag.hide_radial); break;
 					case 'reticule': this.flags.push(DebugFlag.reticule); break;
 					case 'segments': this.flags.push(DebugFlag.segments); break;
 					case 'origins': this.flags.push(DebugFlag.origins); break;
@@ -91,7 +91,7 @@ export class Debug {
 					case 'mount': this.flags.push(DebugFlag.mount); break;
 					case 'mouse': this.flags.push(DebugFlag.mouse); break;
 					case 'order': this.flags.push(DebugFlag.order); break;
-					case 'compass': this.flags.push(DebugFlag.compass); break;
+					case 'radial': this.flags.push(DebugFlag.radial); break;
 					case 'tools': this.flags.push(DebugFlag.tools); break;
 					case 'edit': this.flags.push(DebugFlag.edit); break;
 					case 'info': this.flags.push(DebugFlag.info); break;

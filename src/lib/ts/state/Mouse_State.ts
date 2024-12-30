@@ -15,7 +15,7 @@ export default class Mouse_State {
 
 	//////////////////////////////////////////////
 	//	encapsulate relevant event properties	//
-	//	pass to buttons, widgets, compass & arcs	//
+	//	pass to buttons, widgets, radial & arcs	//
 	//	isOut is mirrored in Element_State		//
 	//////////////////////////////////////////////
 

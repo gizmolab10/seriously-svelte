@@ -27,14 +27,14 @@ export default class DBDispatch {
 	eraseDB = false;
 	db: DBCommon;
 
-	queryStcompass_apply() {
-		const queryStcompass = g.queryStcompass;
-		const type = queryStcompass.get('db');
+	queryStradial_apply() {
+		const queryStradial = g.queryStradial;
+		const type = queryStradial.get('db');
 		if (!!type) {
 			this.db_set_accordingToType(type);
 			s_db_type.set(type);
 		}
-		this.db.queryStcompass_apply();
+		this.db.queryStradial_apply();
 	}
 
 	constructor() {
@@ -72,7 +72,7 @@ export default class DBDispatch {
 	async hierarchy_setup_fetch_andBuild_forDBType(type: string) {
 		persistLocal.write_key(IDPersistent.db, type);
 		this.db_set_accordingToType(type);
-		this.queryStcompass_apply();
+		this.queryStradial_apply();
 		if (this.db.hasData) {
 			const h = this.db.hierarchy;
 			if (!!h) {

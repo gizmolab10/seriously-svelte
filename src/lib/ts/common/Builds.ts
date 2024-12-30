@@ -4,7 +4,7 @@ class Builds {
 
 	constructor() {
 		this.notes = {
-			126 : ['December 29, 2024', 'rename rings as compass'],
+			126 : ['December 29, 2024', 'rename rings as radial'],
 			125 : ['December 28, 2024', 'working import and export buttons in Storage'],
 			124 : ['December 27, 2024', 'files can move across dbs'],
 			123 : ['December 19, 2024', 'begin work on tutorial'],
@@ -69,7 +69,7 @@ class Builds {
 			64 : ['November 24, 2023', 'perfect scrolling'],
 			63 : ['November 20, 2023', 'add select notification'],
 			62 : ['November 13, 2023', 'cluster dot tweaks'],
-			61 : ['November 13, 2023', 'lots of cosmetic cleanups & added query stcompass'],
+			61 : ['November 13, 2023', 'lots of cosmetic cleanups & added query stradial'],
 			60 : ['November 12, 2023', 'massive cosmetic tweaks'],
 			59 : ['November 9, 2023', 'added ip logging'],
 			58 : ['November 3, 2023', 'begin work on reveal cluster'],
@@ -83,7 +83,7 @@ class Builds {
 			50 : ['October 10, 2023', 'eliminate details view, show focus title at top'],
 			49 : ['October 10, 2023', 'create private firebase bulks as needed'],
 			48 : ['October 9, 2023', 'private firebase bulks'],
-			47 : ['October 9, 2023', 'two netlify query stcompass'],
+			47 : ['October 9, 2023', 'two netlify query stradial'],
 			46 : ['October 8, 2023', 'perfect editing and browsing'],
 			45 : ['October 7, 2023', 'children origins are perfect'],
 			44 : ['October 5, 2023', 'scrolling works'],

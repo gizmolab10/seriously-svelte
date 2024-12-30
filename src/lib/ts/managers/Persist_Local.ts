@@ -33,7 +33,7 @@ export enum IDPersistent {
 }
 
 class Persist_Local {
-	// for backwards compatibility with {focus, grabbed, expanded} which were stored as relationship ids (not as ancestry stcompass)
+	// for backwards compatibility with {focus, grabbed, expanded} which were stored as relationship ids (not as ancestry stradial)
 	usesRelationships		 = localStorage[IDPersistent.relationships];
 	ignoreAncestries		 = !this.usesRelationships || this.usesRelationships == 'undefined';
 

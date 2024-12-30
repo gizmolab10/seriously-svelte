@@ -13,7 +13,7 @@
     export let forward = true;
     export let ancestry;
 	const hasExtraAtLeft = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
-	const rightPadding = g.showing_compass ? 0 : hasExtraAtLeft ? 22.5 : 20;
+	const rightPadding = g.showing_radial ? 0 : hasExtraAtLeft ? 22.5 : 20;
 	const revealState = ux.element_state_for(ancestry, ElementType.reveal, subtype);
 	const dragState = ux.element_state_for(ancestry, ElementType.drag, subtype);
 	const leftPadding = forward ? 1 : 14;
@@ -48,7 +48,7 @@
 
 	onMount(() => {
 		layout_widget();
-		element_state = ux.element_state_forName(name);		// survives onDestroy, created by {tree, compass} children
+		element_state = ux.element_state_forName(name);		// survives onDestroy, created by {tree, radial} children
 		debug.log_mount(`WIDGET ${thing?.description} ${isGrabbed}`);
 		fullUpdate();
 		const handleAny = signals.handle_anySignal((ids_signal, id) => {
@@ -108,7 +108,7 @@
 
 	function extraWidth() {
 		const multiplier = ancestry?.showsReveal ? 2 : 1.35;
-		const clustersAdjustment = g.showing_compass ? (forward ? 16 : 0) : -10;
+		const clustersAdjustment = g.showing_radial ? (forward ? 16 : 0) : -10;
 		return (k.dot_size * multiplier) + clustersAdjustment;
 	}
 
@@ -134,7 +134,7 @@
 			const shallShowTools = ancestry.toolsGrabbed && !ancestry.isFocus;
 			const change = (isEditing != shallEdit || isGrabbed != shallGrab || showingTools != shallShowTools);
 			if (change) {
-				const showBackground = shallGrab || g.showing_compass;
+				const showBackground = shallGrab || g.showing_radial;
 				background = showBackground ? `background-color: ${k.color_background};` : k.empty
 				showingBorder = shallEdit || shallGrab;
 				showingTools = shallShowTools;
@@ -150,7 +150,7 @@
 		const delta = showingBorder ? 0 : 0.5;
 		const leftForward = delta - dragX;
 		const titleWidth = thing?.titleWidth ?? 0;
-		const dragOffsetY = g.showing_compass ? 2.8 : 2.7;
+		const dragOffsetY = g.showing_radial ? 2.8 : 2.7;
 		const dragOffsetX = forward ? (dragX - 2) : (titleWidth + delta + 15);
 		const leftBackward = -(titleWidth + 19 + ((ancestry?.isGrabbed ?? false) ? 0 : 0));		
 		dragCenter = Point.square(k.dot_size / 2).offsetByXY(dragOffsetX, dragOffsetY);

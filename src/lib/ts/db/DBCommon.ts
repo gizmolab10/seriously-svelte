@@ -13,7 +13,7 @@ export default class DBCommon {
 
 	async fetch_all() {}
 	async remove_all() {}
-	queryStcompass_apply() {}
+	queryStradial_apply() {}
 	async fetch_hierarchy_from(baseID: string) {}	// support for bulks in firebase
 
 	async thing_persistentUpdate(thing: Thing) {}
