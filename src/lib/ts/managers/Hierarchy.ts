@@ -133,8 +133,8 @@ export class Hierarchy {
 				if (!!ancestryGrab) {
 					switch (key) {
 						case '/':			graph_needsRebuild = ancestryGrab.becomeFocus(); break;
-						case 'arrowright':	event.preventDefault(); await this.ancestry_rebuild_persistentMoveRight(ancestryGrab,  ancestryGrab.isParental, SHIFT, OPTION, EXTREME, true); break;
-						case 'arrowleft':	event.preventDefault(); await this.ancestry_rebuild_persistentMoveRight(ancestryGrab, !ancestryGrab.isParental, SHIFT, OPTION, EXTREME, true); break;
+						case 'arrowright':	event.preventDefault(); await this.ancestry_rebuild_persistentMoveRight(ancestryGrab,  ancestryGrab.isParental, SHIFT, OPTION, EXTREME, false); break;
+						case 'arrowleft':	event.preventDefault(); await this.ancestry_rebuild_persistentMoveRight(ancestryGrab, !ancestryGrab.isParental, SHIFT, OPTION, EXTREME, false); break;
 					}
 				}
 				switch (key) {
@@ -943,6 +943,7 @@ export class Hierarchy {
 		const parentAncestry = ancestry.parentAncestry;
 		if (!!parentAncestry) {
 			let graph_needsRebuild = false;
+			let graph_needsRelayout = false;
 			const siblings = parentAncestry.children;
 			const length = siblings.length;
 			const thing = ancestry?.thing;
@@ -971,6 +972,7 @@ export class Hierarchy {
 							} else {
 								grabAncestry.grabOnly();
 							}
+							graph_needsRelayout = true;
 						}
 					} else if (g.allow_GraphEditing && OPTION) {
 						graph_needsRebuild = true;
@@ -984,6 +986,8 @@ export class Hierarchy {
 				}
 				if (graph_needsRebuild) {
 					signals.signal_rebuildGraph_fromFocus();
+				} else if (graph_needsRelayout) {
+					signals.signal_relayoutWidgets_fromFocus();
 				}
 			}
 		}

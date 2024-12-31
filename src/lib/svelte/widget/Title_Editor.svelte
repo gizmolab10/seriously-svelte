@@ -183,6 +183,7 @@
 					ancestry.grabOnly();
 				}
 				$s_title_edit_state = null;
+				signals.signal_relayoutWidgets_fromFocus();
 			}
 		}
 	}

@@ -3,32 +3,33 @@ import { g } from '../../ts/state/Global_State';
 // query string: ?debug=reticule,tools
 
 export enum DebugFlag {
-	hide_radial = 'hide_radial',
-	reticule   = 'reticule',	// debug ring layout geometry
-	segments   = 'segments',
-	origins    = 'origins',
-	persist	   = 'persist',
-	rebuild    = 'rebuild',
-	action     = 'action',
-	colors	   = 'colors',		// indicate some coordinates
-	cursor	   = 'cursor',
-	crumbs     = 'crumbs',
-	layout	   = 'layout',
-	remote	   = 'remote',		// interactions with remote
-	things	   = 'things',		// enable Things.debugLog
-	build	   = 'build',
-	error	   = 'error',		// async errors
-	graph	   = 'graph',		// log size of graph area
-	lines	   = 'lines',		// alignment dots for lines and widgets
-	mount	   = 'mount',
-	mouse	   = 'mouse',
-	hover	   = 'hover',
-	order	   = 'order',		// observe relocating
-	radial	   = 'radial',
-	tools	   = 'tools',		// state logic of add parent tool
-	edit	   = 'edit',		// editing state machine
-	info	   = 'info',
-	key		   = 'key',			// keyboard input
+	hide_radial	= 'hide_radial',
+	reticule	= 'reticule',	// debug ring layout geometry
+	segments	= 'segments',
+	origins 	= 'origins',
+	persist		= 'persist',
+	rebuild 	= 'rebuild',
+	action  	= 'action',
+	colors		= 'colors',		// indicate some coordinates
+	cursor		= 'cursor',
+	crumbs  	= 'crumbs',
+	layout		= 'layout',
+	radial		= 'radial',
+	remote		= 'remote',		// interactions with remote
+	things		= 'things',		// enable Things.debugLog
+	signal		= 'signal',
+	build		= 'build',
+	error		= 'error',		// async errors
+	graph		= 'graph',		// log size of graph area
+	lines		= 'lines',		// alignment dots for lines and widgets
+	mount		= 'mount',
+	mouse		= 'mouse',
+	hover		= 'hover',
+	order		= 'order',		// observe relocating
+	tools		= 'tools',		// state logic of add parent tool
+	edit		= 'edit',		// editing state machine
+	info		= 'info',
+	key			= 'key',		// keyboard input
 }
 
 export class Debug {
@@ -42,13 +43,14 @@ export class Debug {
 	log_hover(message: string) { this.log_maybe(DebugFlag.hover, message) }
 	log_mount(message: string) { this.log_maybe(DebugFlag.mount, message) }
 	log_mouse(message: string) { this.log_maybe(DebugFlag.mouse, message) }
-	log_radial(message: string) { this.log_maybe(DebugFlag.radial, message) }
 	log_tools(message: string) { this.log_maybe(DebugFlag.tools, message) }
 	log_action(message: string) { this.log_maybe(DebugFlag.action, message) }
 	log_crumbs(message: string) { this.log_maybe(DebugFlag.crumbs, message) }
 	log_cursor(message: string) { this.log_maybe(DebugFlag.cursor, message) }
 	log_layout(message: string) { this.log_maybe(DebugFlag.layout, message) }
+	log_radial(message: string) { this.log_maybe(DebugFlag.radial, message) }
 	log_remote(message: string) { this.log_maybe(DebugFlag.remote, message) }
+	log_signal(message: string) { this.log_maybe(DebugFlag.signal, message) }
 	log_origins(message: string) { this.log_maybe(DebugFlag.origins, message) }
 	log_persist(message: string) { this.log_maybe(DebugFlag.persist, message) }
 	log_rebuild(message: string) { this.log_maybe(DebugFlag.rebuild, message) }
@@ -81,7 +83,9 @@ export class Debug {
 					case 'crumbs': this.flags.push(DebugFlag.crumbs); break;
 					case 'cursor': this.flags.push(DebugFlag.cursor); break;
 					case 'layout': this.flags.push(DebugFlag.layout); break;
+					case 'radial': this.flags.push(DebugFlag.radial); break;
 					case 'remote': this.flags.push(DebugFlag.remote); break;
+					case 'signal': this.flags.push(DebugFlag.signal); break;
 					case 'things': this.flags.push(DebugFlag.things); break;
 					case 'build': this.flags.push(DebugFlag.build); break;
 					case 'error': this.flags.push(DebugFlag.error); break;
@@ -91,7 +95,6 @@ export class Debug {
 					case 'mount': this.flags.push(DebugFlag.mount); break;
 					case 'mouse': this.flags.push(DebugFlag.mouse); break;
 					case 'order': this.flags.push(DebugFlag.order); break;
-					case 'radial': this.flags.push(DebugFlag.radial); break;
 					case 'tools': this.flags.push(DebugFlag.tools); break;
 					case 'edit': this.flags.push(DebugFlag.edit); break;
 					case 'info': this.flags.push(DebugFlag.info); break;

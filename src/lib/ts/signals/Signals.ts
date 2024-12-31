@@ -1,4 +1,5 @@
 import { s_focus_ancestry, s_rebuild_isInProgress } from '../state/Svelte_Stores';
+import { debug } from '../common/Debug';
 import { Signal } from 'typed-signals';
 import { get } from 'svelte/store';
 
@@ -51,12 +52,13 @@ export class Signals {
 
 	signal(id_signal: IDSignal, value: any = null) {
 		if (this.signal_isInFlight) {
-			console.log(`signal ${id_signal} in flight`);
+			debug.log_signal(`${id_signal} in flight`);
 		} else if (!get(s_rebuild_isInProgress) ||		// if rebuild is in progress
 			id_signal != IDSignal.relayout) {			// disable relayout
 			this.signal_isInFlight = true;
 			const highestPriority = this.highestPriorities[id_signal] ?? 0;
 			for (let priority = 0; priority <= highestPriority; priority++) {
+				debug.log_signal(`${id_signal}`);
 				this.handler.emit([id_signal], value, priority);
 			}
 			this.signal_isInFlight = false;

@@ -9,18 +9,18 @@ export default class Tree_Geometry {
 		const sizeY = sum + childHeight / 2;
 		const direction = this.getDirection(sizeY);
 		const rect = new Rect(origin, new Size(k.line_stretch, sizeY - 1));
-		const childOrigin = this.originForChildrenOf(child_ancestry, origin, rect.extent);
+		const childOrigin = this.originForChildrenOf(child_ancestry, rect);
 		const map = new Widget_MapRect(direction, rect, childOrigin, child_ancestry, parent_ancestry);
 		this.childHeight = childHeight;
 		this.widgetMapRects.push(map);
 	}
 
-	originForChildrenOf(childAncestry: Ancestry, origin: Point, extent: Point): Point {
+	originForChildrenOf(childAncestry: Ancestry, rect: Rect): Point {
 		const child = childAncestry.thing;
 		let x, y = 0;
 		if (!!child) {
-			y = extent.y - childAncestry.visibleProgeny_halfHeight;
-			x = origin.x + child.titleWidth + k.dot_size + k.line_stretch + 4.5;
+			y = rect.extent.y - childAncestry.visibleProgeny_halfHeight;
+			x = rect.origin.x + child.titleWidth + k.dot_size + k.line_stretch + 4.5;
 		}
 		return new Point(x, y);
 	}

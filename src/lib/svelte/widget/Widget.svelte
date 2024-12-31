@@ -23,7 +23,6 @@
 	let revealCenter = Point.zero;
 	let dragCenter = Point.zero;
 	let radius = k.dot_size / 2;
-	let showingBorder = false;
 	let showingTools = false;
 	let priorOrigin = origin;
 	let background = k.empty;
@@ -136,7 +135,6 @@
 			if (change) {
 				const showBackground = shallGrab || g.showing_radial;
 				background = showBackground ? `background-color: ${k.color_background};` : k.empty
-				showingBorder = shallEdit || shallGrab;
 				showingTools = shallShowTools;
 				isGrabbed = shallGrab;
 				isEditing = shallEdit;
@@ -147,19 +145,20 @@
 
 	function layout_widget() {
 		const dragX = 5.5;
-		const delta = showingBorder ? 0 : 0.5;
-		const leftForward = delta - dragX;
+		const showingBorder = isEditing || isGrabbed;
+		const deltaX = showingBorder ? 0 : 0.5;
+		const leftForward = deltaX - dragX;
 		const titleWidth = thing?.titleWidth ?? 0;
 		const dragOffsetY = g.showing_radial ? 2.8 : 2.7;
-		const dragOffsetX = forward ? (dragX - 2) : (titleWidth + delta + 15);
+		const dragOffsetX = forward ? (dragX - 2) : (titleWidth + deltaX + 15);
 		const leftBackward = -(titleWidth + 19 + ((ancestry?.isGrabbed ?? false) ? 0 : 0));		
 		dragCenter = Point.square(k.dot_size / 2).offsetByXY(dragOffsetX, dragOffsetY);
-		left = origin.x + delta + (forward ? leftForward : leftBackward);
+		left = origin.x + deltaX + (forward ? leftForward : leftBackward);
 		padding = `0px ${rightPadding}px 0px  ${leftPadding}px`;
 		width = titleWidth + extraWidth();
 		height = k.row_height - 1.5;
 		radius = k.row_height / 2;
-		top = origin.y + (showingBorder ? 0 : 1);
+		top = origin.y + ((showingBorder && !ancestry.isRoot) ? 0 : 1);
 		if (ancestry?.showsReveal) {
 			const revealY = k.dot_size - 3.5;
 			const revealX = forward ? (k.dot_size + titleWidth + 15) : 0;
@@ -179,10 +178,10 @@
 				left: {left}px;
 				width: {width}px;
 				height: {height}px;
-				position: absolute;
 				padding: {padding};
-				border-radius: {radius}px;
+				position: absolute;
 				z-index: {ZIndex.widgets};
+				border-radius: {radius}px;
 				border: {element_state.border};
 			'>
 			<Dot_Drag
