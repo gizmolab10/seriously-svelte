@@ -135,7 +135,7 @@ export default class SVG_Paths {
 		const radius = size / 3;
 		const isOdd = (count % 2) != 0;
 		const increment = Math.PI * 2 / count;
-		let offset = new Point(isOdd ? radius : 0, isOdd ? 0 : radius);2
+		let offset = new Point(isOdd ? radius : 0, isOdd ? 0 : radius);
 		while (i++ < count) {
 			path = path + this.circle_atOffset(size, 2, offset.offsetByXY(-0.7, 0.3));
 			offset = offset.rotate_by(increment);

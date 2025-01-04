@@ -79,8 +79,8 @@ export class Point {
 		const cos = Math.cos(angle);
 		const sin = Math.sin(angle);
 		return new Point(
-			  this.x * cos - this.y * sin,
-			-(this.y * cos + this.x * sin)	// reverse y for browsers
+			this.x * cos + this.y * sin,
+			this.y * cos - this.x * sin	// reverse y for browsers
 		);
 	}
 	
