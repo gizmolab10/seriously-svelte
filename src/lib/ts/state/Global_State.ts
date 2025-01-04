@@ -84,7 +84,7 @@ class Global_State {
 		}
     }
 
-	get showing_radial(): boolean { return get(s_graph_type) == Graph_Type.radial; }
+	get inRadialMode(): boolean { return get(s_graph_type) == Graph_Type.radial; }
 	get hierarchy(): Hierarchy { return get(s_hierarchy); }
 
 	get isAny_rotation_active(): boolean {

@@ -70,7 +70,7 @@
 	}
 
 	function updateSVGPaths() {
-		if (g.showing_radial) {
+		if (g.inRadialMode) {
 			svgPathFor_dragDot = svgPaths.circle_atOffset(size, size - 1);
 		} else {
 			svgPathFor_dragDot = svgPaths.oval(size, false);
@@ -94,7 +94,7 @@
 	function updateColors_forHovering(isOut) {
 		if (!g.isAny_rotation_active) {
 			isHovering = !isOut;
-			const usePointer = (!ancestry.isGrabbed || g.showing_radial) && ancestry.hasChildRelationships && !g.isAny_rotation_active;
+			const usePointer = (!ancestry.isGrabbed || g.inRadialMode) && ancestry.hasChildRelationships && !g.isAny_rotation_active;
 			const cursor = usePointer ? 'pointer' : 'normal';
 			if (!!element_state && !!thing) {
 				element_state.set_forHovering(thing.color, cursor);

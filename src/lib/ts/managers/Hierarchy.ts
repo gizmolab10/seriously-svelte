@@ -941,7 +941,7 @@ export class Hierarchy {
 			if (!siblings || length == 0) {		// friendly for first-time users
 				this.ancestry_rebuild_runtimeBrowseRight(ancestry, true, EXTREME, up, true);
 			} else if (!!thing) {
-				const is_radial_mode = g.showing_radial;
+				const is_radial_mode = g.inRadialMode;
 				const isBidirectional = ancestry.predicate?.isBidirectional ?? false;
 				if ((!isBidirectional && ancestry.isParental) || !is_radial_mode) {
 					const index = siblings.indexOf(thing);

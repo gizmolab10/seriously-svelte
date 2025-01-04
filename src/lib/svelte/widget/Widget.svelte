@@ -12,10 +12,10 @@
     export let name = k.empty;
     export let forward = true;
     export let ancestry;
-	const hasExtraAtLeft = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
-	const rightPadding = g.showing_radial ? 0 : hasExtraAtLeft ? 22.5 : 20;
+	const hasExtraForChildren = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
 	const revealState = ux.element_state_for(ancestry, ElementType.reveal, subtype);
 	const dragState = ux.element_state_for(ancestry, ElementType.drag, subtype);
+	const rightPadding = g.inRadialMode ? 0 : hasExtraForChildren ? 22.5 : 20;
 	const leftPadding = forward ? 1 : 14;
 	const priorRowHeight = k.row_height;
 	let widgetWrapper!: Svelte_Wrapper;
@@ -107,7 +107,7 @@
 
 	function extraWidth() {
 		const multiplier = ancestry?.showsReveal ? 2 : 1.35;
-		const clustersAdjustment = g.showing_radial ? (forward ? 16 : 0) : -10;
+		const clustersAdjustment = g.inRadialMode ? (forward ? 16 : 0) : -10;
 		return (k.dot_size * multiplier) + clustersAdjustment;
 	}
 
@@ -133,7 +133,7 @@
 			const shallShowTools = ancestry.toolsGrabbed && !ancestry.isFocus;
 			const change = (isEditing != shallEdit || isGrabbed != shallGrab || showingTools != shallShowTools);
 			if (change) {
-				const showBackground = shallGrab || g.showing_radial;
+				const showBackground = shallGrab || g.inRadialMode;
 				background = showBackground ? `background-color: ${k.color_background};` : k.empty
 				showingTools = shallShowTools;
 				isGrabbed = shallGrab;
@@ -146,22 +146,22 @@
 	function layout_widget() {
 		const dragX = 5.5;
 		const showingBorder = isEditing || isGrabbed;
+		const titleWidth = thing?.titleWidth ?? 0;
 		const deltaX = showingBorder ? 0 : 0.5;
 		const leftForward = deltaX - dragX;
-		const titleWidth = thing?.titleWidth ?? 0;
-		const dragOffsetY = g.showing_radial ? 2.8 : 2.7;
-		const dragOffsetX = forward ? (dragX - 2) : (titleWidth + deltaX + 15);
-		const leftBackward = -(titleWidth + 19 + ((ancestry?.isGrabbed ?? false) ? 0 : 0));		
+		const leftBackward = -(titleWidth + 25.5);
+		const dragOffsetY = g.inRadialMode ? 2.8 : 2.7;
+		const dragOffsetX = forward ? (dragX - 1.5) : (titleWidth + deltaX + 22.5);
 		dragCenter = Point.square(k.dot_size / 2).offsetByXY(dragOffsetX, dragOffsetY);
 		left = origin.x + deltaX + (forward ? leftForward : leftBackward);
-		padding = `0px ${rightPadding}px 0px  ${leftPadding}px`;
+		padding = `0px ${rightPadding}px 0px ${leftPadding}px`;
 		width = titleWidth + extraWidth();
 		height = k.row_height - 1.5;
 		radius = k.row_height / 2;
 		top = origin.y + ((showingBorder && !ancestry.isRoot) ? 0 : 1);
 		if (ancestry?.showsReveal) {
 			const revealY = k.dot_size - 3.5;
-			const revealX = forward ? (k.dot_size + titleWidth + 15) : 0;
+			const revealX = forward ? (k.dot_size + titleWidth + 20) : 9;
 			revealCenter = new Point(revealX, revealY);
 		}
 	}
