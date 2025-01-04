@@ -134,7 +134,7 @@
 			const change = (isEditing != shallEdit || isGrabbed != shallGrab || showingTools != shallShowTools);
 			if (change) {
 				const showBackground = shallGrab || g.inRadialMode;
-				background = showBackground ? `background-color: ${k.color_background};` : k.empty
+				background = showBackground ? `background-color: ${k.color_background}` : k.empty
 				showingTools = shallShowTools;
 				isGrabbed = shallGrab;
 				isEditing = shallEdit;
@@ -145,13 +145,14 @@
 
 	function layout_widget() {
 		const dragX = 5.5;
+		const showingReveal = ancestry?.showsReveal ?? false;
 		const showingBorder = isEditing || isGrabbed;
 		const titleWidth = thing?.titleWidth ?? 0;
 		const deltaX = showingBorder ? 0 : 0.5;
 		const leftForward = deltaX - dragX;
-		const leftBackward = -(titleWidth + 25.5);
+		const leftBackward = -(titleWidth + (showingReveal ? 25.5 : 15.5));
 		const dragOffsetY = g.inRadialMode ? 2.8 : 2.7;
-		const dragOffsetX = forward ? (dragX - 1.5) : (titleWidth + deltaX + 22.5);
+		const dragOffsetX = forward ? (dragX - 1.5) : (titleWidth + deltaX + (showingReveal ? 22.5 : 14));
 		dragCenter = Point.square(k.dot_size / 2).offsetByXY(dragOffsetX, dragOffsetY);
 		left = origin.x + deltaX + (forward ? leftForward : leftBackward);
 		padding = `0px ${rightPadding}px 0px ${leftPadding}px`;
@@ -159,9 +160,9 @@
 		height = k.row_height - 1.5;
 		radius = k.row_height / 2;
 		top = origin.y + ((showingBorder && !ancestry.isRoot) ? 0 : 1);
-		if (ancestry?.showsReveal) {
+		if (showingReveal) {
 			const revealY = k.dot_size - 3.5;
-			const revealX = forward ? (k.dot_size + titleWidth + 20) : 9;
+			const revealX = forward ? (k.dot_size + titleWidth + (g.inRadialMode ? 20 : 14)) : 9;
 			revealCenter = new Point(revealX, revealY);
 		}
 	}
@@ -173,7 +174,6 @@
 		<div class='widget' id='{widgetName}'
 			bind:this={widget}
 			style='
-				{background};
 				top: {top}px;
 				left: {left}px;
 				width: {width}px;
@@ -183,6 +183,7 @@
 				z-index: {ZIndex.widgets};
 				border-radius: {radius}px;
 				border: {element_state.border};
+				background-color: {isGrabbed || g.inRadialMode ? k.color_background : 'transparent'};
 			'>
 			<Dot_Drag
 				ancestry={ancestry}

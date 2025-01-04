@@ -7,11 +7,9 @@
 	export let fontSize = '1em';
 	export let forward = true;
 	export let ancestry;
-	const room_forDragDot = 6.5;
-	const titleTop = g.inRadialMode ? 0.5 : 0;
 	let bound_title = thing()?.title ?? k.empty;
-	let padding = `0.5px 0px 0px ${room_forDragDot}px`;
     let color = thing()?.color ?? k.empty;
+	let padding = `0.5px 0px 0px 0px`;
 	let titleWrapper: Svelte_Wrapper;
 	let originalTitle = k.empty;
 	let cursorStyle = k.empty;
@@ -94,7 +92,7 @@
 
 	function updateInputWidth() {
 		if (!!input && !!ghost) { // ghost only exists to provide its width (in pixels)
-			titleWidth = ghost.scrollWidth - 5;
+			titleWidth = ghost.scrollWidth + 5;
 			input.style.width = `${titleWidth}px`;	// apply its width to the input element
 		}
 	}
@@ -126,8 +124,9 @@
 	
 	onMount(() => {
 		if (!!thing()) {
-			titleWidth = thing().titleWidth + 6;
-			titleLeft = g.inRadialMode ? ancestry.isFocus ? -2 : (forward ? 15 : 11.5) : 10;
+			const showingReveal = ancestry?.showsReveal ?? false;
+			titleWidth = thing().titleWidth + (showingReveal ? 6 : 1) + 15;
+			titleLeft = g.inRadialMode ? ancestry.isFocus ? 5 : (forward ? 23 : (showingReveal ? 18.5 : 10)) : 19;
 		}
 		const handler = signals.handle_anySignal((IDSignal, ancestry) => { updateInputWidth(); });
 		setTimeout(() => { updateInputWidth(); }, 100);
@@ -279,12 +278,12 @@
 		on:mousedown={handle_longClick}
 		on:dblclick={handle_doubleClick}
 		style='
+			top: 0.3px;
 			border: none;
 			{cursorStyle};
 			outline: none;
 			color: {color};
 			white-space: pre;
-			top: {titleTop}px;
 			position: absolute;
 			padding: {padding};
 			position: absolute;
