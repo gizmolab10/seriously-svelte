@@ -32,8 +32,8 @@ function extractHTMLComponents(inputFilePath: string) {
 
     // Define output paths
     const outputDir = path.dirname(inputFilePath);
-    const stylesPath = path.join(outputDir, 'styles.css');
-    const scriptsPath = path.join(outputDir, 'scripts.js');
+    const stylesPath = path.join(outputDir, 'webseriously.css');
+    const scriptsPath = path.join(outputDir, 'webseriously.js');
     const contentPath = path.join(outputDir, 'content.html');
 
     // Write the extracted content to separate files

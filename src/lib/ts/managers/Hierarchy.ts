@@ -46,6 +46,18 @@ export class Hierarchy {
 	get hasNothing(): boolean { return !this.root; }
 	get idRoot(): string | null { return this.root!.id ?? null; };
 
+	get depth(): number {
+		let maximum = 1;
+		const ancestries = Object.values(this.ancestry_byHID);
+		for (const ancestry of ancestries) {
+			const depth = ancestry.depth;
+			if (maximum < depth) {
+				maximum = depth;
+			}
+		}
+		return maximum;
+	}
+
 	static readonly INIT: unique symbol;
 
 	constructor(db: DBCommon) {
@@ -341,7 +353,7 @@ export class Hierarchy {
 		already_persisted: boolean = false): Thing {
 		let thing: Thing | null = null;
 		if (id && type == ThingType.root && baseID != this.db.baseID) {		// other bulks have their own root & id
-			thing = this.thing_remember_bulkRootID(baseID, id, color);		// which our thing needs to adopt
+			thing = this.bulks_remember_rootID_ofThing(baseID, id, color);		// which our thing needs to adopt
 		} else {
 			thing = new Thing(baseID, id, title, color, type, already_persisted);
 			if (thing.isBulkAlias) {
@@ -389,26 +401,59 @@ export class Hierarchy {
 		}
 	}
 
-	relationships_translate_idsFromTo_forParents(idFrom: string, idTo: string, forParents: boolean) {
-		for (const predicate of this.predicates) {
-			const relationships = this.relationships_forPredicateThingIsChild(predicate.kind, idFrom, forParents);
-			for (const r of relationships) {
-				if (!forParents && r.idParent != idTo) {
-					this.relationship_forget(r);
-					r.hidParent = idTo.hash();
-					r.isDirty = true;
-					r.idParent = idTo;
-					this.relationship_remember(r);
-				}
-				if (forParents && r.idChild != idTo) {
-					this.relationship_forget(r);
-					r.hidChild = idTo.hash();
-					r.isDirty = true;
-					r.idChild = idTo;
-					this.relationship_remember(r);
+	static readonly BULKS: unique symbol;
+
+	bulks_alias_forTitle_ofThing(title: string | null) {
+		if (!!title) {
+			for (const thing of this.things_byType[ThingType.bulk]) {
+				if  (thing.title == title) {		// special case TODO: convert to a query string
+					return thing;
 				}
 			}
 		}
+		return null;
+	}
+
+	bulks_remember_rootID_ofThing(baseID: string, rootID: string, color: string) {
+		const thing = this.bulks_alias_forTitle_ofThing(baseID);
+		if (!!thing) {
+			// rootID is of the root thing from bulk fetch all
+			// i.ux., it is the root id from another baseID
+			// need a second thing lookup by this id
+			// so children relationships will work
+			this.thing_byHID[rootID.hash()] = thing;
+			thing.needsBulkFetch = true;
+			thing.bulkRootID = rootID;
+			thing.color = color;
+		}
+		return thing;
+	}
+
+	async bulks_thing_remember_recursive_persistentRelocateRight(ancestry: Ancestry, newParentAncestry: Ancestry) {
+		const newParent = newParentAncestry.thing;
+		let newThingAncestry: Ancestry | null = null;
+		const thing = ancestry.thing;
+		if (!!thing && newParent) {
+			const baseID = newParent.isBulkAlias ? newParent.title : newParent.baseID;
+			const newThing = await this.thing_remember_runtimeCopy(baseID, thing);
+			newThingAncestry = newParentAncestry.extend_withChild(newThing);
+			if (!!newThingAncestry) {
+				await this.relationship_remember_persistent_addChild_toAncestry(newThing, newParentAncestry);
+				for (const childAncestry of ancestry.childAncestries) {
+					this.bulks_thing_remember_recursive_persistentRelocateRight(childAncestry, newThingAncestry);
+				}
+				if (!newThingAncestry.isExpanded) {
+					setTimeout(() => {
+						if (!!newThingAncestry) {
+							newThingAncestry.expand();	
+							ancestry.collapse()
+						};
+					}, 2);
+				}
+				await this.ancestry_forget_persistentUpdate(ancestry);
+			}
+		}
+		return newThingAncestry;
 	}
 
 	static readonly TRAITS: unique symbol;
@@ -474,7 +519,7 @@ export class Hierarchy {
 		return trait;
 	}
 
-	setText_forType_ownerHID(text: string, type: TraitType, ownerID: string) {
+	trait_setText_forType_ownerHID(text: string, type: TraitType, ownerID: string) {
 		let trait = this.trait_forType_ownerHID(type, ownerID.hash());
 		if (!trait) {
 			trait = this.trait_remember_runtimeCreate(this.db.baseID, Identifiable.newID(), ownerID, type, text);
@@ -482,61 +527,6 @@ export class Hierarchy {
 			trait.text = text;
 		}
 		trait.set_isDirty();
-	}
-
-	static readonly BULKS: unique symbol;
-
-	thing_remember_bulkRootID(baseID: string, id: string, color: string) {
-		const thing = this.thing_bulkAlias_forTitle(baseID);
-		if (!!thing) {
-			// id is of the root thing from bulk fetch all
-			// i.ux., it is the root id from another baseID
-			// need a second thing lookup by this id
-			// so children relationships will work
-			this.thing_byHID[id.hash()] = thing;
-			thing.needsBulkFetch = true;
-			thing.bulkRootID = id;
-			thing.color = color;
-		}
-		return thing;
-	}
-
-	thing_bulkAlias_forTitle(title: string | null) {
-		if (!!title) {
-			for (const thing of this.things_byType[ThingType.bulk]) {
-				if  (thing.title == title) {		// special case TODO: convert to a query string
-					return thing;
-				}
-			}
-		}
-		return null;
-	}
-
-	async thing_remember_bulk_recursive_persistentRelocateRight(ancestry: Ancestry, newParentAncestry: Ancestry) {
-		const newParent = newParentAncestry.thing;
-		let newThingAncestry: Ancestry | null = null;
-		const thing = ancestry.thing;
-		if (!!thing && newParent) {
-			const baseID = newParent.isBulkAlias ? newParent.title : newParent.baseID;
-			const newThing = await this.thing_remember_runtimeCopy(baseID, thing);
-			newThingAncestry = newParentAncestry.extend_withChild(newThing);
-			if (!!newThingAncestry) {
-				await this.relationship_remember_persistent_addChild_toAncestry(newThing, newParentAncestry);
-				for (const childAncestry of ancestry.childAncestries) {
-					this.thing_remember_bulk_recursive_persistentRelocateRight(childAncestry, newThingAncestry);
-				}
-				if (!newThingAncestry.isExpanded) {
-					setTimeout(() => {
-						if (!!newThingAncestry) {
-							newThingAncestry.expand();	
-							ancestry.collapse()
-						};
-					}, 2);
-				}
-				await this.ancestry_forget_persistentUpdate(ancestry);
-			}
-		}
-		return newThingAncestry;
 	}
 
 	static readonly RELATIONSHIPS: unique symbol;
@@ -567,18 +557,6 @@ export class Hierarchy {
 			}
 		}
 		return array;
-	}
-
-	relationship_forPredicateKind_parent_child(kindPredicate: string, idParent: string, idChild: string): Relationship | null {
-		const matches = this.relationships_forPredicateThingIsChild(kindPredicate, idParent, false);
-		if (Array.isArray(matches)) {
-			for (const relationship of matches) {
-				if (relationship.idChild == idChild) {
-					return relationship;
-				}
-			}
-		}
-		return null;
 	}
 
 	async relationships_persistentCreateMissing(baseID: string) {
@@ -615,50 +593,31 @@ export class Hierarchy {
 		}
 	}
 
+	relationships_translate_idsFromTo_forParents(idFrom: string, idTo: string, forParents: boolean) {
+		for (const predicate of this.predicates) {
+			const relationships = this.relationships_forPredicateThingIsChild(predicate.kind, idFrom, forParents);
+			for (const r of relationships) {
+				if (!forParents && r.idParent != idTo) {
+					this.relationship_forget(r);
+					r.hidParent = idTo.hash();
+					r.isDirty = true;
+					r.idParent = idTo;
+					this.relationship_remember(r);
+				}
+				if (forParents && r.idChild != idTo) {
+					this.relationship_forget(r);
+					r.hidChild = idTo.hash();
+					r.isDirty = true;
+					r.idChild = idTo;
+					this.relationship_remember(r);
+				}
+			}
+		}
+	}
+
 	static readonly RELATIONSHIP: unique symbol;
 
 	relationship_forHID(hid: number): Relationship | null { return this.relationship_byHID[hid ?? undefined]; }
-	
-	relationship_remember(relationship: Relationship) {
-		if (!this.relationship_byHID[relationship.idHashed]) {
-			if (!this.relationships.map(r => r.id).includes(relationship.id)) {
-				this.relationships.push(relationship);
-			}
-			this.relationship_byHID[relationship.idHashed] = relationship;
-			this.relationship_rememberByKnown(relationship, relationship.idChild, this.relationships_byChildHID);
-			this.relationship_rememberByKnown(relationship, relationship.idParent, this.relationships_byParentHID);
-			
-			if (relationship.baseID != this.db.baseID) {
-				debug.log_error(`relationship crossing dbs: ${relationship.description}`);
-			}
-		}
-	}
-
-	relationship_rememberByKnown(relationship: Relationship, id: string, relationships: Relationships_ByHID) {
-		if (!!id || id == k.empty) {
-			const hid = id.hash();
-			let array = relationships[hid] ?? [];
-			if (!array.map(r => r.id).includes(relationship.id)) {
-				array.push(relationship);
-			}
-			relationships[hid] = array;
-		}
-	}
-
-	async relationship_forget_persistentDelete(ancestry: Ancestry, otherAncestry: Ancestry, kindPredicate: string) {
-		const thing = ancestry.thing;
-		const parentAncestry = ancestry.parentAncestry;
-		const relationship = this.relationship_forPredicateKind_parent_child(kindPredicate, otherAncestry.idThing, ancestry.idThing);
-		if (!!parentAncestry && !!relationship && (thing?.hasParents ?? false)) {
-			this.relationship_forget(relationship);
-			if (otherAncestry.hasChildRelationships) {
-				parentAncestry.order_normalizeRecursive_persistentMaybe(true);
-			} else {
-				otherAncestry.collapse();
-			}
-			await this.db.relationship_persistentDelete(relationship);
-		}
-	}
 
 	relationship_forget_forHID(relationships: Relationships_ByHID, hid: number, relationship: Relationship) {
 		let array = relationships[hid] ?? [];
@@ -673,7 +632,7 @@ export class Hierarchy {
 		this.relationship_forget_forHID(this.relationships_byParentHID, relationship.idParent.hash(), relationship);
 	}
 
-	relationship_whereID_isChild(idThing: string, isChild: boolean = true) {
+	relationship_whereID_isChild(idThing: string, isChild: boolean = true): Relationship | null {
 		const matches = this.relationships_forPredicateThingIsChild(PredicateKind.contains, idThing, isChild);
 		if (matches.length > 0) {
 			const relationship = matches[0];
@@ -693,8 +652,88 @@ export class Hierarchy {
 		}
 	}
 
+	relationship_remember_byKnown(relationship: Relationship, id: string, relationships: Relationships_ByHID) {
+		if (!!id || id == k.empty) {
+			const hid = id.hash();
+			let array = relationships[hid] ?? [];
+			if (!array.map(r => r.id).includes(relationship.id)) {
+				array.push(relationship);
+			}
+			relationships[hid] = array;
+		}
+	}
+
+	relationship_forPredicateKind_parent_child(kindPredicate: string, idParent: string, idChild: string): Relationship | null {
+		const matches = this.relationships_forPredicateThingIsChild(kindPredicate, idParent, false);
+		if (Array.isArray(matches)) {
+			for (const relationship of matches) {
+				if (relationship.idChild == idChild) {
+					return relationship;
+				}
+			}
+		}
+		return null;
+	}
+
+	async relationship_remember_persistentCreateUnique(baseID: string, idRelationship: string, kindPredicate: string, idParent: string, idChild: string,
+		order: number, creationOptions: CreationOptions = CreationOptions.isFromPersistent): Promise<any> {
+		let relationship = this.relationship_forPredicateKind_parent_child(kindPredicate, idParent, idChild);
+		if (!!relationship) {
+			relationship.order_setTo_persistentMaybe(order, true);
+		} else {
+			relationship = new Relationship(baseID, idRelationship, kindPredicate, idParent, idChild, order, creationOptions == CreationOptions.isFromPersistent);
+			await this.db.relationship_remember_persistentCreate(relationship);
+		}
+		return relationship;
+	}
+	
+	relationship_remember(relationship: Relationship) {
+		if (!this.relationship_byHID[relationship.idHashed]) {
+			if (!this.relationships.map(r => r.id).includes(relationship.id)) {
+				this.relationships.push(relationship);
+			}
+			this.relationship_byHID[relationship.idHashed] = relationship;
+			this.relationship_remember_byKnown(relationship, relationship.idChild, this.relationships_byChildHID);
+			this.relationship_remember_byKnown(relationship, relationship.idParent, this.relationships_byParentHID);
+			
+			if (relationship.baseID != this.db.baseID) {
+				debug.log_error(`relationship crossing dbs: ${relationship.description}`);
+			}
+		}
+	}
+
+	async relationship_remember_persistent_addChild_toAncestry(child: Thing | null, parentAncestry: Ancestry, kindPredicate: string = PredicateKind.contains): Promise<any> {
+		const parent = parentAncestry.thing;
+		if (!!child && !!parent && !child.isBulkAlias) {
+			const changingBulk = parent.isBulkAlias || child.baseID != this.db.baseID;
+			const baseID = changingBulk ? child.baseID : parent.baseID;
+			if (!child.already_persisted) {
+				await this.db.thing_remember_persistentCreate(child);					// for everything below, need to await child.id fetched from dbDispatch
+			}
+			const relationship = await this.relationship_remember_persistentCreateUnique(baseID, Identifiable.newID(), kindPredicate, parent.idBridging, child.id, 0, CreationOptions.getPersistentID);
+			const childAncestry = parentAncestry.uniquelyAppendID(relationship.id);
+			u.ancestries_orders_normalize_persistentMaybe(parentAncestry.childAncestries);		// write new order values for relationships
+			return childAncestry;
+		}
+	}
+
+	async relationship_forget_persistentDelete(ancestry: Ancestry, otherAncestry: Ancestry, kindPredicate: string) {
+		const thing = ancestry.thing;
+		const parentAncestry = ancestry.parentAncestry;
+		const relationship = this.relationship_forPredicateKind_parent_child(kindPredicate, otherAncestry.idThing, ancestry.idThing);
+		if (!!parentAncestry && !!relationship && (thing?.hasParents ?? false)) {
+			this.relationship_forget(relationship);
+			if (otherAncestry.hasChildRelationships) {
+				parentAncestry.order_normalizeRecursive_persistentMaybe(true);
+			} else {
+				otherAncestry.collapse();
+			}
+			await this.db.relationship_persistentDelete(relationship);
+		}
+	}
+
 	relationship_remember_runtimeCreateUnique(baseID: string, idRelationship: string, kindPredicate: string, idParent: string, idChild: string,
-		order: number, creationOptions: CreationOptions = CreationOptions.none) {
+		order: number, creationOptions: CreationOptions = CreationOptions.none): Relationship {
 		let reversedRelationship = this.relationship_forPredicateKind_parent_child(kindPredicate, idChild, idParent);
 		let relationship = this.relationship_forPredicateKind_parent_child(kindPredicate, idParent, idChild);
 		const isBidirectional = this.predicate_forKind(kindPredicate)?.isBidirectional ?? false;
@@ -712,35 +751,11 @@ export class Hierarchy {
 		return relationship;
 	}
 
-	async relationship_remember_persistentCreateUnique(baseID: string, idRelationship: string, kindPredicate: string, idParent: string, idChild: string,
-		order: number, creationOptions: CreationOptions = CreationOptions.isFromPersistent): Promise<any> {
-		let relationship = this.relationship_forPredicateKind_parent_child(kindPredicate, idParent, idChild);
-		if (!!relationship) {
-			relationship.order_setTo_persistentMaybe(order, true);
-		} else {
-			relationship = new Relationship(baseID, idRelationship, kindPredicate, idParent, idChild, order, creationOptions == CreationOptions.isFromPersistent);
-			await this.db.relationship_remember_persistentCreate(relationship);
-		}
-		return relationship;
-	}
-
 	static readonly ANCESTRIES: unique symbol;
 
 	ancestries_forgetAll() {
 		this.ancestry_byKind_andHash = {};
 		this.ancestry_byHID = {};
-	}
-
-	get depth(): number {
-		let maximum = 1;
-		const ancestries = Object.values(this.ancestry_byHID);
-		for (const ancestry of ancestries) {
-			const depth = ancestry.depth;
-			if (maximum < depth) {
-				maximum = depth;
-			}
-		}
-		return maximum;
 	}
 
 	async ancestries_rebuild_traverse_persistentDelete(ancestries: Array<Ancestry>) {
@@ -778,6 +793,13 @@ export class Hierarchy {
 		return this.ancestry_byHID[idHashed] ?? null;
 	}
 
+	get ancestry_forBreadcrumbs(): Ancestry {
+		const grab = this.grabs.ancestry_lastGrabbed;
+		const focus = get(s_focus_ancestry);
+		const grab_containsFocus = !!grab && focus.isAProgenyOf(grab)
+		return (!!grab && grab.isVisible && !grab_containsFocus) ? grab : focus;
+	}
+
 	async ancestry_forget_persistentUpdate(ancestry: Ancestry) {
 		const thing = ancestry.thing;
 		ancestry.childAncestries.map(c => this.ancestry_forget_persistentUpdate(c));
@@ -805,13 +827,6 @@ export class Hierarchy {
 		this.ancestry_byKind_andHash[ancestry.kindPredicate] = dict;
 	}
 
-	get ancestry_forBreadcrumbs(): Ancestry {
-		const grab = this.grabs.ancestry_lastGrabbed;
-		const focus = get(s_focus_ancestry);
-		const grab_containsFocus = !!grab && focus.isAProgenyOf(grab)
-		return (!!grab && grab.isVisible && !grab_containsFocus) ? grab : focus;
-	}
-
 	async ancestry_edit_persistentCreateChildOf(parentAncestry: Ancestry | null) {
 		const thing = parentAncestry?.thing;
 		if (!!thing && !!parentAncestry) {
@@ -819,6 +834,16 @@ export class Hierarchy {
 			child.title = 'idea';
 			parentAncestry.expand();
 			await this.ancestry_edit_persistentAddAsChild(parentAncestry, child, 0);
+		}
+	}
+
+	ancestry_relayout_toolCluster_nextParent(force: boolean = false) {
+		const toolsAncestry = get(s_ancestry_showing_tools);
+		if (!!toolsAncestry) {
+			let ancestry = toolsAncestry;
+			ancestry.grabOnly();
+			signals.signal_relayoutWidgets_fromFocus();
+			s_ancestry_showing_tools.set(ancestry);
 		}
 	}
 
@@ -835,7 +860,7 @@ export class Hierarchy {
 	}
 
 	async ancestry_remember_bulk_persistentRelocateRight(ancestry: Ancestry, newParentAncestry: Ancestry) {
-		const newThingAncestry = await this.thing_remember_bulk_recursive_persistentRelocateRight(ancestry, newParentAncestry);
+		const newThingAncestry = await this.bulks_thing_remember_recursive_persistentRelocateRight(ancestry, newParentAncestry);
 		if (!!newThingAncestry) {
 			newParentAncestry.signal_relayoutWidgets();
 			if (newParentAncestry.isExpanded) {
@@ -884,40 +909,6 @@ export class Hierarchy {
 				ancestry?.expand()
 				signals.signal_rebuildGraph_fromFocus();
 			}
-		}
-	}
-
-	ancestry_relayout_toolCluster_nextParent(force: boolean = false) {
-		const toolsAncestry = get(s_ancestry_showing_tools);
-		if (!!toolsAncestry) {
-			let ancestry = toolsAncestry;
-			// do {
-			// 	ancestry = ancestry.next_siblingAncestry;
-			// 	if (ancestry.isVisible) {
-			// 		break;
-			// 	} else if (force) {
-			// 		ancestry.assureIsVisible_inTree();
-			// 		break;
-			// 	}	
-			// } while (!ancestry.ancestry_hasEqualID(toolsAncestry));
-			ancestry.grabOnly();
-			signals.signal_relayoutWidgets_fromFocus();
-			s_ancestry_showing_tools.set(ancestry);
-		}
-	}
-
-	async relationship_remember_persistent_addChild_toAncestry(child: Thing | null, parentAncestry: Ancestry, kindPredicate: string = PredicateKind.contains): Promise<any> {
-		const parent = parentAncestry.thing;
-		if (!!child && !!parent && !child.isBulkAlias) {
-			const changingBulk = parent.isBulkAlias || child.baseID != this.db.baseID;
-			const baseID = changingBulk ? child.baseID : parent.baseID;
-			if (!child.already_persisted) {
-				await this.db.thing_remember_persistentCreate(child);					// for everything below, need to await child.id fetched from dbDispatch
-			}
-			const relationship = await this.relationship_remember_persistentCreateUnique(baseID, Identifiable.newID(), kindPredicate, parent.idBridging, child.id, 0, CreationOptions.getPersistentID);
-			const childAncestry = parentAncestry.uniquelyAppendID(relationship.id);
-			u.ancestries_orders_normalize_persistentMaybe(parentAncestry.childAncestries);		// write new order values for relationships
-			return childAncestry;
 		}
 	}
 

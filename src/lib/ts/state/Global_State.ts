@@ -18,7 +18,7 @@ class Global_State {
 	cluster_paging_state!: Rotation_State;
 	ring_resizing_state!: Expansion_State;
 	rebuild_needed_byType: {[type: string]: boolean} = {};
-	queryStradial = new URLSearchParams(window.location.search);
+	queryString = new URLSearchParams(window.location.search);
 
 	startup() {
 		
@@ -30,14 +30,14 @@ class Global_State {
 		//												//
 		//////////////////////////////////////////////////
 
-		debug.queryStradial_apply();						// debug even setup code
+		debug.queryString_apply();						// debug even setup code
 		this.setup_defaults();							// defaults
 		w.restore_state();
 		show.restore_state();							// local persistance
 		persistLocal.restore_defaults();
 		dbDispatch.restore_db();
-		this.queryStradial_apply();						// query stradial
-		show.queryStradial_apply();
+		this.queryString_apply();						// query string
+		show.queryString_apply();
 		e.setup();
 	}
 
@@ -53,10 +53,10 @@ class Global_State {
 		this.cluster_paging_state = new Rotation_State();
 	}
 
-	queryStradial_apply() {
-		const queryStradial = this.queryStradial;
-        const disable = queryStradial.get('disable');
-        const eraseOptions = queryStradial.get('erase')?.split(k.comma) ?? [];
+	queryString_apply() {
+		const queryString = this.queryString;
+        const disable = queryString.get('disable');
+        const eraseOptions = queryString.get('erase')?.split(k.comma) ?? [];
         if (disable) {
             const flags = disable.split(',');
             for (const option of flags) {

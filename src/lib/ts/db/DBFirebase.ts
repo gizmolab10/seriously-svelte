@@ -37,9 +37,9 @@ export default class DBFirebase extends DBCommon {
 
 	reportError(error: any) { console.log(error); }
 
-	queryStradial_apply() {
+	queryString_apply() {
 		const persistedID = persistLocal.read_key(IDPersistent.base_id);
-		const id = g.queryStradial.get('name') ?? g.queryStradial.get('dbid') ?? persistedID ?? 'Public';
+		const id = g.queryString.get('name') ?? g.queryString.get('dbid') ?? persistedID ?? 'Public';
 		persistLocal.write_key(IDPersistent.base_id, id);
 		this.baseID = id;
 	}
@@ -145,7 +145,7 @@ export default class DBFirebase extends DBCommon {
 					for (const bulkDoc of bulkSnapshot.docs) {
 						const baseID = bulkDoc.id;
 						if (baseID != this.baseID) {
-							let thing = h.thing_bulkAlias_forTitle(baseID);
+							let thing = h.bulks_alias_forTitle_ofThing(baseID);
 							if (!thing) {								// create a thing for each bulk
 								thing = h.thing_runtimeCreate(this.baseID, Identifiable.newID(), baseID, 'red', ThingType.bulk);
 								await h.relationship_remember_persistent_addChild_toAncestry(thing, rootsAncestry);
@@ -640,10 +640,10 @@ export default class DBFirebase extends DBCommon {
 	async recordLoginIP() {
 		await this.getUserIPAddress().then( async (ipAddress) => {
 			if (!!ipAddress && ipAddress != '69.181.235.85') {
-				const queryStradial = g.queryStradial.toString() ?? 'empty';
+				const queryString = g.queryString.toString() ?? 'empty';
 				const logRef = collection(this.firestore, 'access_logs');
 				const item = {
-					queries: queryStradial,
+					queries: queryString,
 					build: k.build_number,
 					ipAddress: ipAddress,
 					timestamp: serverTimestamp(),

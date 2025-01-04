@@ -66,8 +66,8 @@ export class Debug {
 	get tools(): boolean { return this.hasOption(DebugFlag.tools); }
 	get info(): boolean { return this.hasOption(DebugFlag.info); }
 
-	queryStradial_apply() {
-		const debug = g.queryStradial.get('debug');
+	queryString_apply() {
+		const debug = g.queryString.get('debug');
 		if (debug) {
 			const flags = debug.split(',');
 			for (const option of flags) {
