@@ -27,7 +27,7 @@ import Title_Edit_State from '../state/Title_Edit_State';
 import Alteration_State from '../state/Alteration_State';
 import Widget_MapRect from '../geometry/Widget_MapRect';
 import Expansion_State from '../state/Expansion_State';
-import Tree_Geometry from '../geometry/Tree_Geometry';
+import Children_Geometry from '../geometry/Children_Geometry';
 import Rotation_State from '../state/Rotation_State';
 import Element_State from '../state/Element_State';
 import Cluster_Map from '../geometry/Cluster_Map';
@@ -66,7 +66,7 @@ export {
 	Ring_Zone, Seriously_Range,
 	Oblong_Part, AlterationType,
 	Angle, Quadrant, Orientation,
-	Tree_Geometry, Widget_MapRect,
+	Children_Geometry, Widget_MapRect,
 	show, files, builds, signals, wrappers,
 	ZIndex, PredicateKind, CreationOptions,
 	Rect, Size, Point, cursors, svgPaths, Direction,

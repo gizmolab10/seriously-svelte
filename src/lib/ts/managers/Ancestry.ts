@@ -84,9 +84,10 @@ export default class Ancestry extends Identifiable {
 		return u.strip_invalid(relationships);
 	}
 
-	get svgAngleOf_reveal(): number {
-		const right = this.widget_map?.points_right ?? true;
-		return (right == this.hasChildRelationships) ? Direction.right : Direction.left;
+	get svgDirection_ofReveal(): number {
+		const radial_points_right = (this.widget_map?.points_right ?? true) == this.hasChildRelationships;
+		const points_right = g.inRadialMode ? radial_points_right : !this.isExpanded;
+		return points_right ? Direction.right : Direction.left;
 	}
 	
 	get showsReveal(): boolean {

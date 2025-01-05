@@ -19,6 +19,8 @@ dist
 
 # Editor directories and files
 !.vscode/extensions.json
+webseriously.js
+experimental
 .DS_Store
 *.njsproj
 .vscode
@@ -30,6 +32,3 @@ dist
 
 # Local Netlify folder
 .netlify
-
-$ source folders
-experimental

@@ -1,6 +1,6 @@
 <script lang=ts>
 	import { k, u, Rect, Size, Point, Thing, debug, IDLine } from '../../ts/common/Global_Imports';
-	import { signals, DebugFlag, Tree_Geometry } from '../../ts/common/Global_Imports';
+	import { signals, DebugFlag, Children_Geometry } from '../../ts/common/Global_Imports';
 	import { s_graphRect } from '../../ts/state/Svelte_Stores';
 	import Tree_Children from './Tree_Children.svelte';
 	import Widget from '../widget/Widget.svelte';
@@ -26,8 +26,8 @@
 				ancestry.ancestry_hasEqualID(signal_ancestry)) {
 				priorTime = now;
 				debug.log_origins(origin.x + ' before timeout');
-				layoutAll_children();
 			}
+			layoutAll_children();
 		});
 		return () => { handler.disconnect() };
 	});
@@ -47,7 +47,7 @@
 			const childrenOrigin = origin.offsetByXY(3, height + 1);
 			let sum = -ancestry.visibleProgeny_height() / 2; // start out negative and grow positive
 			for (const childAncestry of childAncestries) {
-				const tree_layout = new Tree_Geometry(sum, ancestry, childAncestry, childrenOrigin);
+				const tree_layout = new Children_Geometry(sum, ancestry, childAncestry, childrenOrigin);
 				widgetMapRects = u.concatenateArrays(widgetMapRects, tree_layout.widgetMapRects);
 				sum += tree_layout.childHeight + 1;
 			}

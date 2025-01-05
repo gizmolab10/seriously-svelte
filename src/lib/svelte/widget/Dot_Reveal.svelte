@@ -64,7 +64,7 @@
 		if (!ancestry.showsReveal || ancestry.toolsGrabbed) {
 			svgPathFor_revealDot = svgPaths.circle_atOffset(size, size - 1);
 		} else {
-			svgPathFor_revealDot = svgPaths.fat_polygon(size, ancestry.svgAngleOf_reveal);
+			svgPathFor_revealDot = svgPaths.fat_polygon(size, ancestry.svgDirection_ofReveal);
 		}
 		if (ancestry.toolsGrabbed) {
 			svgPathFor_insideReveal = svgPaths.x_cross(size, 1.5);

@@ -1,6 +1,6 @@
 import { k, Rect, Size, Point, IDLine, Ancestry, Widget_MapRect } from '../common/Global_Imports';
 
-export default class Tree_Geometry {
+export default class Children_Geometry {
 	widgetMapRects: Array<Widget_MapRect> = [];
 	childHeight = 0;
 
