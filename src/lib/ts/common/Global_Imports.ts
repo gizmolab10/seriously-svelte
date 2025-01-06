@@ -22,7 +22,7 @@ import { PredicateKind, AlterationType, CreationOptions } from './Enumerations';
 import { IDLine, IDTool, ZIndex, IDControl, IDBrowser, IDStorage } from './Enumerations';
 import { InfoType, ThingType, TraitType, ElementType, Details_Type, Rebuild_Type } from './Enumerations';
 
-import Clusters_Geometry from '../geometry/Clusters_Geometry';
+import Radial_Geometry from '../geometry/Radial_Geometry';
 import Title_Edit_State from '../state/Title_Edit_State';
 import Alteration_State from '../state/Alteration_State';
 import Widget_MapRect from '../geometry/Widget_MapRect';
@@ -71,7 +71,7 @@ export {
 	ZIndex, PredicateKind, CreationOptions,
 	Rect, Size, Point, cursors, svgPaths, Direction,
 	Grabs, Ancestry, Hierarchy, dbDispatch, persistLocal,
-	Arc_Map, Segment_Map, Cluster_Map, Clusters_Geometry,
+	Arc_Map, Segment_Map, Cluster_Map, Radial_Geometry,
 	User, Datum, Thing, Trait, Access, Predicate, Relationship,
 	Element_State, Paging_State, Page_States, Alteration_State,
 	ElementType, Svelte_Wrapper, SvelteComponent, SvelteComponentType,

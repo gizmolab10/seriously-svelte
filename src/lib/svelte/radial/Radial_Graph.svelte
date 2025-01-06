@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { signals, Ring_Zone, ElementType, Rebuild_Type, Clusters_Geometry } from '../../ts/common/Global_Imports';
+	import { signals, Ring_Zone, ElementType, Rebuild_Type, Radial_Geometry } from '../../ts/common/Global_Imports';
 	import { g, k, u, ux, Rect, Point, debug, IDTool, ZIndex } from '../../ts/common/Global_Imports';
 	import { s_graphRect, s_show_details, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
 	import { s_user_graph_offset, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
@@ -20,7 +20,7 @@
 	//	edit titles (keydown terminates edit) BROKEN
 	//	displays editing tools when asked by user
 	
-	$s_clusters_geometry = new Clusters_Geometry();
+	$s_clusters_geometry = new Radial_Geometry();
 	debug.log_tools(` CLUSTERS (svelte)`);
 
 	onMount(() => {
@@ -33,7 +33,7 @@
 	
 	$: {
 		const _ = $s_show_details;
-		$s_clusters_geometry = new Clusters_Geometry();
+		$s_clusters_geometry = new Radial_Geometry();
 		setTimeout(() => {
 			g.require_rebuild_forType(Rebuild_Type.clusters);
 		}, 100);

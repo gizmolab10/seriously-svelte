@@ -25,7 +25,7 @@ export default class DBLocal extends DBCommon {
 		if (!!json_object) {
 			const dict = JSON.parse(json_object) as Dictionary;
 			if (!dict.hid && !dict.id) {		// replaced by idRoot. deprecated files are ignored
-				await this.h.extract_hierarchy_from(dict);
+				await this.h.extractFrom(dict);
 				return;
 			}
 		}

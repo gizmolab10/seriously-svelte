@@ -77,7 +77,7 @@ export default class DBDispatch {
 			const h = this.db.hierarchy;
 			if (!!h) {
 				s_hierarchy.set(h);
-				h.reset_hierarchy();
+				h.hierarchy_reset();
 			}
 		} else {
 			s_startup_state.set(Startup_State.fetch);
@@ -100,7 +100,7 @@ export default class DBDispatch {
 		}
 		h.hierarchy_forgetAll();
 		await db.fetch_all();
-		await h.conclude_fetch_andPersist();
+		await h.hierarchy_conclude_fetch();
 		if (db.isRemote) {
 			this.set_loadTime_from(startTime);
 		}

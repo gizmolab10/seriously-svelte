@@ -10,13 +10,12 @@ export default class Predicate extends PersistentIdentifiable {
 
 	constructor(id: string, kind: string, isBidirectional: boolean, already_persisted: boolean = false) {
 		super(dbDispatch.db.dbType, id, already_persisted);
+		this.stateIndex		 = Predicate.stateIndex_forKind(kind);		// index in page states inward and outward arrays
 		this.isBidirectional = isBidirectional;
-		this.stateIndex		 = Predicate.nextIndex;		// index in page states inward and outward arrays
 		this.kind			 = kind;
-		Predicate.nextIndex += 1;
 	}
 	
-	static nextIndex = 0;
+	static nextIndex = 5;
 	get description():					  			  string { return this.kind.unCamelCase().lastWord(); }
 	log(option: DebugFlag, message: string) { debug.log_maybe(option, message + k.space + this.description); }
 	static get contains():				    Predicate | null { return this.predicate_forKind(PredicateKind.contains); }
@@ -31,6 +30,18 @@ export default class Predicate extends PersistentIdentifiable {
         const parsed = JSON.parse(json);
         return new Predicate(parsed.id, parsed.kind, parsed.isBidirectional, true);
     }
+
+	static stateIndex_forKind(kind: string): number {
+		switch (kind) {
+			case PredicateKind.contains: return 0;
+			case PredicateKind.isRelated: return 1;
+			case PredicateKind.explains: return 2;
+			case PredicateKind.requires: return 3;
+			case PredicateKind.supports: return 4;
+			case PredicateKind.appreciates: return 5;
+		}
+		return this.nextIndex += 1;
+	}
 
 	async persist() {
 		if (!this.awaitingCreation) {

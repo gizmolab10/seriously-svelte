@@ -44,8 +44,9 @@ export default class Thing extends Datum {
 	get hasMultipleParents():				boolean { return this.parentAncestries.length > 1; }
 	get hasParents():						boolean { return this.hasParents_forKind(PredicateKind.contains); }
 	get isFocus():							boolean { return (get(s_focus_ancestry).thing?.id ?? k.empty) == this.id; }
-	get hasRelated():						boolean { return this.relatedRelationships.length > 0; }
+	get isOrphaned():						boolean { return !get(s_hierarchy).relationship_whereID_isChild(this.id) && this.type != ThingType.root; }
 	get hasNoData():						boolean { return !this.title && !this.color && !this.type; }
+	get hasRelated():						boolean { return this.relatedRelationships.length > 0; }
 
     static thing_fromJSON(json: string): Thing {
         const parsed = JSON.parse(json);

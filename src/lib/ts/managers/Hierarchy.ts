@@ -255,8 +255,7 @@ export class Hierarchy {
 	thing_forHID(hid: number): Thing | null { return this.thing_byHID[hid ?? undefined]; }
 
 	thing_remember_updateID_to(thing: Thing, id: string) {
-		this.relationships_translate_idsFromTo_forParents(thing.id, id, false);
-		this.relationships_translate_idsFromTo_forParents(thing.id, id, true);
+		this.relationships_translate_idsFromTo(thing.id, id);
 		this.thing_forget(thing);
 		thing.setID(id);
 		this.thing_remember(thing);
@@ -368,7 +367,7 @@ export class Hierarchy {
 		return thing!;
 	}
 
-	thing_build_fromDict(dict: Dictionary) {
+	thing_extractFrom(dict: Dictionary) {
 		const root = this.root;
 		if (!!root && this.replace_rootID == dict.id && !this.db.isRemote) {
 			root.title = dict.title;	// new title for root
@@ -493,7 +492,7 @@ export class Hierarchy {
 		return !traits ? null : traits[0]
 	}
 
-	trait_build_fromDict(dict: Dictionary) {
+	trait_extractFrom(dict: Dictionary) {
 		this.trait_remember_runtimeCreateUnique(this.db.baseID, dict.id, dict.ownerID, dict.type, dict.text);
 	}
 
@@ -531,6 +530,11 @@ export class Hierarchy {
 
 	static readonly RELATIONSHIPS: unique symbol;
 
+	relationships_translate_idsFromTo(idFrom: string, idTo: string) {
+		this.relationships_translate_idsFromTo_forParents(idFrom, idTo, true);
+		this.relationships_translate_idsFromTo_forParents(idFrom, idTo, false);
+	}
+
 	relationships_refreshKnowns() {
 		const saved = this.relationships;
 		this.relationships_forgetAll();
@@ -544,6 +548,15 @@ export class Hierarchy {
 		this.relationships = [];
 	}
 
+	async relationships_contains_persistentCreateMissing(baseID: string) {
+		for (const thing of this.things) {
+			if (thing.isOrphaned && thing.baseID == baseID && !!this.idRoot) {			// add orphaned things to root
+				await this.relationship_remember_persistentCreateUnique(baseID, Identifiable.newID(),
+					PredicateKind.contains, this.idRoot, thing.id, 0, CreationOptions.getPersistentID);
+			}
+		}
+	}
+
 	relationships_forPredicateThingIsChild(kindPredicate: string, idThing: string, forParents: boolean): Array<Relationship> {
 		const dict = forParents ? this.relationships_byChildHID : this.relationships_byParentHID;
 		const hid = idThing.hash();
@@ -551,7 +564,7 @@ export class Hierarchy {
 		const array: Array<Relationship> = [];
 		if (Array.isArray(matches)) {
 			for (const relationship of matches) {
-				if (relationship.kindPredicate == kindPredicate) {
+				if (relationship.kindPredicate == kindPredicate && !array.includes(relationship)) {
 					array.push(relationship);
 				}
 			}
@@ -559,37 +572,17 @@ export class Hierarchy {
 		return array;
 	}
 
-	async relationships_persistentCreateMissing(baseID: string) {
-		if (!!this.idRoot){
-			for (const thing of this.things) {
-				const idThing = thing.id;
-				if (thing.type != ThingType.root && thing.baseID == baseID) {
-					let relationship = this.relationship_whereID_isChild(idThing);
-					if (!relationship) {
-						await this.relationship_remember_persistentCreateUnique(baseID, Identifiable.newID(), PredicateKind.contains,
-							this.idRoot, idThing, 0, CreationOptions.getPersistentID)
-					}
-				}
-			}
-		}
-	}
-
 	async relationships_removeHavingNullReferences() {
 		const array = Array<Relationship>();
 		for (const relationship of this.relationships) {
-			let parent = relationship.parent;
-			const child = relationship.child;
-			if (!child || !parent) {
-				parent = relationship.parent;
+			if (!relationship.child || !relationship.parent) {
 				array.push(relationship);
 			}
 		}
-		while (array.length > 0) {
-			const relationship = array.pop();
-			if (!!relationship) {
-				await this.db.relationship_persistentDelete(relationship);
-				this.relationship_forget(relationship);
-			}
+		for (const relationship of array) {
+			console.log(`has null reference ${relationship.description}`);
+			this.relationship_forget(relationship);
+			await this.db.relationship_persistentDelete(relationship);
 		}
 	}
 
@@ -641,7 +634,7 @@ export class Hierarchy {
 		return null;
 	}
 
-	relationship_build_fromDict(dict: Dictionary) {
+	relationship_extractFrom(dict: Dictionary) {
 		let idParent = dict.idParent;
 		if (!!idParent) {
 			if (idParent == dict.idChild) {
@@ -1088,11 +1081,11 @@ export class Hierarchy {
 	}
 
 	predicate_defaults_remember_runtimeCreate() {
-		this.predicate_remember_runtimeCreateUnique(Predicate.newID(), PredicateKind.explains, false, false);
 		this.predicate_remember_runtimeCreateUnique(Predicate.newID(), PredicateKind.contains, false, false);
+		this.predicate_remember_runtimeCreateUnique(Predicate.newID(), PredicateKind.isRelated, true, false);
+		this.predicate_remember_runtimeCreateUnique(Predicate.newID(), PredicateKind.explains, false, false);
 		this.predicate_remember_runtimeCreateUnique(Predicate.newID(), PredicateKind.requires, false, false);
 		this.predicate_remember_runtimeCreateUnique(Predicate.newID(), PredicateKind.supports, false, false);
-		this.predicate_remember_runtimeCreateUnique(Predicate.newID(), PredicateKind.isRelated, true, false);
 		this.predicate_remember_runtimeCreateUnique(Predicate.newID(), PredicateKind.appreciates, false, false);
 	}
 
@@ -1103,7 +1096,7 @@ export class Hierarchy {
 		return relationship?.kindPredicate ?? 'bad kind: missing relationship';			// grab its predicate kind
 	}
 
-	predicate_build_fromDict(dict: Dictionary) {
+	predicate_extractFrom(dict: Dictionary) {
 		const predicate = this.predicate_remember_runtimeCreateUnique(dict.id, dict.kind, dict.isBidirectional, false);
 		predicate.stateIndex = dict.stateIndex;		
 	}
@@ -1177,7 +1170,7 @@ export class Hierarchy {
 		await files.extract_json_object_fromFile(file, async (result) => {
 			const dict = result as Dictionary;
 			if (!!dict) {
-				await this.extract_hierarchy_from(dict);
+				await this.extractFrom(dict);
 			}
 		});
 	}
@@ -1246,82 +1239,81 @@ export class Hierarchy {
 
 	static readonly BUILD: unique symbol;
 
-	restore_hierarchy() {
+	hierarchy_reset() {
+		s_ancestry_showing_tools.set(null);
+		s_title_edit_state.set(null);
+		this.setup_root_andAncestry();
 		persistLocal.restore_focus();
 		persistLocal.restore_grabbed_andExpanded(true);
 		// persistLocal.restore_page_states();
-	}
-
-	reset_hierarchy() {
-		s_title_edit_state.set(null);
-		s_ancestry_showing_tools.set(null);
-		this.restore_hierarchy();
 		this.isAssembled = true;
 		this.db.hasData = true;
 	}
 
-	async conclude_fetch_andPersist() {
-		await this.relationships_persistentCreateMissing(this.db.baseID);
-		// await this.relationships_removeHavingNullReferences();
-		this.reset_hierarchy();
+	async hierarchy_conclude_fetch() {
+		await this.relationships_contains_persistentCreateMissing(this.db.baseID);
+		await this.relationships_removeHavingNullReferences();
+		this.hierarchy_reset();
 		await this.db.persistAll();
 		s_number_ofThings.set(this.things.length);			// signal Storage.svelte
 	}
 
-	async extract_hierarchy_from(dict: Dictionary) {
+	async extractFrom(dict: Dictionary) {
 		if (!!dict.hid) {			// cheapo backwards compatibility
 			dict.idRoot = dict.hid;
 		}
 		if (!!dict.id) {			// ...
 			dict.idRoot = dict.id;
 		}
-		if (this.replace_rootID != null) {			// SHIFT - O sets it
+		if (this.replace_rootID != null) {			// SHIFT-O sets replace_rootID to not null
 			this.replace_rootID = dict.idRoot;
-			await this.rebuild_hierarchy_with(dict);
+			await this.hierarchy_extractFrom(dict);
+			await this.hierarchy_conclude_fetch();
 		} else {
-			await this.build_andAdd_progeny_with(dict);
+			await this.progeny_extractFrom(dict);
+			await this.db.persistAll();
 		}
 		signals.signal_rebuildGraph_fromFocus();
 	}
 
-	async build_andAdd_progeny_with(dict: Dictionary) {
+	objects_allTypes_extractFrom(dict: Dictionary) {
 		for (const type of this.fetching_dataTypes) {
-			this.build_objects_fromArray_ofType(dict[type], type);
+			this.objects_extractFromArray_ofType(dict[type], type);
 		}
+	}
+
+	async hierarchy_extractFrom(dict: Dictionary) {
+		this.hierarchy_forgetAll_exceptPredicates_andRoot();		// retain predicates: same across all dbs
+		this.objects_allTypes_extractFrom(dict);
+		this.relationships_translate_idsFromTo(dict.idRoot, this.idRoot!);
+	}
+
+	async progeny_extractFrom(dict: Dictionary) {
+		this.objects_allTypes_extractFrom(dict);
 		const child = this.thing_forHID(dict.idRoot.hash());
 		const ancestry = this.user_selected_ancestry;
 		await this.relationship_remember_persistent_addChild_toAncestry(child, ancestry);
-		await this.db.persistAll();
 	}
 
-	async rebuild_hierarchy_with(dict: Dictionary) {
-		this.hierarchy_forgetAll_exceptPredicates();		// retain predicates: same across all dbs
-		this.thing_remember(this.root);						// and retain root (note: db local replaces it's title anyway)
-		for (const type of this.fetching_dataTypes) {
-			this.build_objects_fromArray_ofType(dict[type], type);
-		}
-		this.relationships_translate_idsFromTo_forParents(dict.idRoot, this.idRoot!, false);
-		await this.conclude_fetch_andPersist();
-	}
-
-	build_objects_fromArray_ofType(array: Array<Dictionary>, type: string) {
+	objects_extractFromArray_ofType(array: Array<Dictionary>, type: string) {
 		for (const dict of array) {
 			switch(type) {
-				case DatumType.things:		  this.thing_build_fromDict(dict); break;
-				case DatumType.traits:		  this.trait_build_fromDict(dict); break;
-				case DatumType.predicates:	  this.predicate_build_fromDict(dict); break;
-				case DatumType.relationships: this.relationship_build_fromDict(dict); break;
+				case DatumType.things:		  this.thing_extractFrom(dict); break;
+				case DatumType.traits:		  this.trait_extractFrom(dict); break;
+				case DatumType.predicates:	  this.predicate_extractFrom(dict); break;
+				case DatumType.relationships: this.relationship_extractFrom(dict); break;
 			}
 		}
 	}
 
 	static readonly REMEMBER: unique symbol;
 
-	hierarchy_forgetAll_exceptPredicates() {
+	hierarchy_forgetAll_exceptPredicates_andRoot() {
 		this.things_forgetAll();
 		this.traits_forgetAll();
 		this.ancestries_forgetAll();
 		this.relationships_forgetAll();
+		this.thing_remember(this.root);		// also retain root (note: db local replaces it's title)
 	}
 
 	hierarchy_forgetAll() {

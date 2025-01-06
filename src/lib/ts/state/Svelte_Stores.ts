@@ -1,8 +1,8 @@
-import { Tree_Type, Hierarchy, Cluster_Map, Details_Type, Clusters_Geometry, Alteration_State } from '../common/Global_Imports';
+import { Tree_Type, Hierarchy, Cluster_Map, Details_Type, Radial_Geometry, Alteration_State } from '../common/Global_Imports';
 import { Rect, Point, Ancestry, Graph_Type, Title_Edit_State, Paging_State, Startup_State } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
 
-export const s_clusters_geometry	  = writable<Clusters_Geometry | null>();
+export const s_clusters_geometry	  = writable<Radial_Geometry | null>();
 export const s_alteration_mode		  = writable<Alteration_State | null>();
 export const s_detail_types			  = writable<Array<Details_Type>>();
 export const s_active_cluster_map	  = writable<Cluster_Map | null>();
