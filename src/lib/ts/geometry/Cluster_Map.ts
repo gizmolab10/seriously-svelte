@@ -1,4 +1,4 @@
-import { g, k, u, ux, w, Rect, Point, Angle, debug, IDLine, Arc_Map, Quadrant } from '../common/Global_Imports';
+import { k, u, ux, w, Rect, Point, Angle, debug, IDLine, Arc_Map, Quadrant } from '../common/Global_Imports';
 import { Ancestry, Predicate, Paging_State, Widget_MapRect, Rotation_State } from '../common/Global_Imports';
 import { s_rotation_ring_angle, s_ring_rotation_radius } from '../state/Svelte_Stores';
 import { s_graphRect, s_focus_ancestry } from '../state/Svelte_Stores';
@@ -13,15 +13,15 @@ import { get } from 'svelte/store';
 //										//
 //	computes:							//
 //		positions of arc, thumb & label	//
-//		widget map rect for each child	//
 //		svg paths for arc & thumb		//
+//		map rect for each widget		//
 //		angle for fork & label			//
 //										//
 //////////////////////////////////////////
 
 export default class Cluster_Map {
-	widget_maps: Array<Widget_MapRect> = [];	// one page of widgets, will be combined into geometry.widget_maps
 	focus_ancestry: Ancestry = get(s_focus_ancestry);
+	widget_maps: Array<Widget_MapRect> = [];
 	ancestries: Array<Ancestry> = [];
 	color = k.thing_color_default;
 	arc_straddles_nadir = false;

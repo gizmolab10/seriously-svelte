@@ -104,7 +104,7 @@ export class Page_States {
 
 	get thing(): Thing | null { return get(s_hierarchy).thing_forHID(this.thing_id.hash()) ?? null; }
 	get description(): string { return this.description_for(true) + k.big_separator + this.description_for(false); }
-	paging_state_for(map: Cluster_Map): Paging_State { return this.paging_state_forPointsOut(map.toChildren, map.predicate); }
+	paging_state_for(map: Cluster_Map): Paging_State { return this.paging_state_forPointingTo(map.toChildren, map.predicate); }
 	paging_states_for(toChildren: boolean): Array<Paging_State> { return toChildren ? this.outward_paging_states : this.inward_paging_states; }
 
 	add_paging_state(paging_state: Paging_State) {
@@ -122,7 +122,7 @@ export class Page_States {
 		return result;
 	}
 
-	paging_state_forPointsOut(toChildren: boolean, predicate: Predicate): Paging_State {
+	paging_state_forPointingTo(toChildren: boolean, predicate: Predicate): Paging_State {
 		let paging_states = this.paging_states_for(toChildren);
 		const stateIndex = predicate.stateIndex;
 		let paging_state = paging_states[stateIndex]

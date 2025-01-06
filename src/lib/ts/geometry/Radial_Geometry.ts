@@ -27,8 +27,8 @@ export default class Radial_Geometry {
 	}
 
 	get cluster_maps(): Array<Cluster_Map> { return u.concatenateArrays(this.parent_cluster_maps, this.child_cluster_maps); }		// for lines and arcs
-	cluster_maps_forChildren(children: boolean): Array<Cluster_Map> { return children ? this.child_cluster_maps : this.parent_cluster_maps; }
-	cluster_map_forChildren(children: boolean, predicate: Predicate): Cluster_Map { return this.cluster_maps_forChildren(children)[predicate.stateIndex]; }
+	cluster_maps_toChildren(toChildren: boolean): Array<Cluster_Map> { return toChildren ? this.child_cluster_maps : this.parent_cluster_maps; }
+	cluster_map_toChildren(toChildren: boolean, predicate: Predicate): Cluster_Map { return this.cluster_maps_toChildren(toChildren)[predicate.stateIndex]; }
 
 	widget_mapFor(ancestry: Ancestry): Widget_MapRect | null {
 		const maps = this.widget_maps.filter(m => m.widget_ancestry == ancestry);
@@ -63,22 +63,22 @@ export default class Radial_Geometry {
 		return null;
 	}
 
-	layout_clusterFor(ancestries: Array<Ancestry>, predicate: Predicate | null, children: boolean) {
-		if (!!predicate) {
-			const paging_state = get(s_focus_ancestry)?.thing?.page_states?.paging_state_forPointsOut(children, predicate);
-			const onePage = paging_state?.onePage_from(ancestries) ?? [];
-			const cluster_map = new Cluster_Map(ancestries.length, onePage, predicate, children);
-			const cluster_maps = this.cluster_maps_forChildren(children);
-			cluster_maps[predicate.stateIndex] = cluster_map;
-		}
-	}
-
 	parent_ancestries_maybeFor(focus: Thing, predicate: Predicate): Array<Ancestry> {
-		let ancestries = focus.uniqueAncestries_for(predicate) ?? [];
+		let ancestries = focus.uniqueAncestries_for(predicate);
 		if (predicate.kind == PredicateKind.isRelated) {
 			ancestries = ancestries.map(a => new Parent_Ancestry(a));
 		}
 		return ancestries;
+	}
+
+	layout_clusterFor(ancestries: Array<Ancestry>, predicate: Predicate | null, toChildren: boolean) {
+		if (!!predicate) {
+			const paging_state = get(s_focus_ancestry)?.thing?.page_states?.paging_state_forPointingTo(toChildren, predicate);
+			const onePage = paging_state?.onePage_from(ancestries) ?? [];
+			const cluster_map = new Cluster_Map(ancestries.length, onePage, predicate, toChildren);
+			const cluster_maps = this.cluster_maps_toChildren(toChildren);
+			cluster_maps[predicate.stateIndex] = cluster_map;
+		}
 	}
 
 	layoutAll_clusters() {

@@ -201,7 +201,7 @@ export default class Thing extends Datum {
 	parentAncestries_for(predicate: Predicate | null, visited: Array<string> = []): Array<Ancestry> {
 		// the ancestry of each parent [of this thing]
 		let ancestries: Array<Ancestry> = [];
-		if (!this.isRoot && predicate) {
+		if (!!predicate) {
 			const relationships = this.parentRelationships_for(predicate);
 			for (const relationship of relationships) {
 				if (predicate.isBidirectional) {
