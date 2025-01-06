@@ -96,8 +96,7 @@
 				'children'	: (ancestry.children.length).expressZero_asHyphen(),
 				'parents'	: (thing.parents.length).expressZero_asHyphen(),
 				'related'	: (thing.relatedRelationships.length).expressZero_asHyphen(),
-				'predicate'	: ancestry.predicate?.description ?? 'none',
-				'direction'	: ancestry.isParental ? 'child' : 'parent',
+				'predicate'	: ancestry.kindPredicate.unCamelCase().lastWord(),
 				'id'		: thing.id.clipWithEllipsisAt(12),
 				'color'		: k.empty,
 			};

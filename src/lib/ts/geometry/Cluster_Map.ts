@@ -73,7 +73,6 @@ export default class Cluster_Map {
 	get paging_index_ofFocus(): number { return this.paging_state_ofFocus?.index ?? 0; }
 	get paging_rotation(): Rotation_State { return ux.rotation_state_forName(this.name); }
 	get kind(): string { return this.predicate?.kind.unCamelCase().lastWord() ?? k.empty; }
-	get isParental(): boolean { return !this.toChildren && !this.predicate?.isBidirectional; }
 	get name(): string { return `${this.focus_ancestry.title}-cluster-${this.direction_kind}`; }
 	get fork_radial(): Point { return Point.fromPolar(get(s_ring_rotation_radius), this.arc_map.fork_angle); }
 	get paging_state_ofFocus(): Paging_State | null { return this.paging_state_ofAncestry(this.focus_ancestry); }
@@ -86,7 +85,8 @@ export default class Cluster_Map {
 
 	get direction_kind(): string {
 		const isSingular = this.total_widgets == 1;
-		return this.isParental ? isSingular ? 'parent' : 'parents' : this.toChildren ? isSingular ? 'child' : 'children' : this.kind;
+		const isParental = !this.toChildren && !this.predicate?.isBidirectional;
+		return isParental ? isSingular ? 'parent' : 'parents' : this.toChildren ? isSingular ? 'child' : 'children' : this.kind;
 	}
 
 	static readonly LABEL: unique symbol;

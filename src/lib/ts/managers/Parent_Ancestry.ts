@@ -4,15 +4,14 @@ export default class Parent_Ancestry extends Ancestry {
 	original!: Ancestry;
 
 	constructor(ancestry: Ancestry) {
-		super(ancestry.dbType, ancestry.id, ancestry.kindPredicate, false);	// isParental = false
+		super(ancestry.dbType, ancestry.id, ancestry.kindPredicate, false);	// thing_isChild = false
 		this.original = ancestry;
 	}
 
-	becomeFocus(): boolean {
-		return this.original.becomeFocus()
-	}
+	get depth(): number { return this.original.depth; }
+	becomeFocus(): boolean { return this.original.becomeFocus(); }
 	
-	// with isParental = false, this fixes
+	// with thing_isChild = false, this fixes
 	// paging state & cluster map lookups,
 	// is visible & assureIsVisible_inClusters
 	// needed becomeFocus

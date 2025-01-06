@@ -145,8 +145,8 @@ export class Hierarchy {
 				if (!!ancestryGrab) {
 					switch (key) {
 						case '/':			graph_needsRebuild = ancestryGrab.becomeFocus(); break;
-						case 'arrowright':	event.preventDefault(); await this.ancestry_rebuild_persistentMoveRight(ancestryGrab,  ancestryGrab.isParental, SHIFT, OPTION, EXTREME, false); break;
-						case 'arrowleft':	event.preventDefault(); await this.ancestry_rebuild_persistentMoveRight(ancestryGrab, !ancestryGrab.isParental, SHIFT, OPTION, EXTREME, false); break;
+						case 'arrowright':	event.preventDefault(); await this.ancestry_rebuild_persistentMoveRight(ancestryGrab,  ancestryGrab.thing_isChild, SHIFT, OPTION, EXTREME, false); break;
+						case 'arrowleft':	event.preventDefault(); await this.ancestry_rebuild_persistentMoveRight(ancestryGrab, !ancestryGrab.thing_isChild, SHIFT, OPTION, EXTREME, false); break;
 					}
 				}
 				switch (key) {
@@ -936,7 +936,7 @@ export class Hierarchy {
 			} else if (!!thing) {
 				const is_radial_mode = g.inRadialMode;
 				const isBidirectional = ancestry.predicate?.isBidirectional ?? false;
-				if ((!isBidirectional && ancestry.isParental) || !is_radial_mode) {
+				if ((!isBidirectional && ancestry.thing_isChild) || !is_radial_mode) {
 					const index = siblings.indexOf(thing);
 					const newIndex = index.increment(!up, length);
 					if (!!parentAncestry && !OPTION) {

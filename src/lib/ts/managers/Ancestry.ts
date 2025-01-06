@@ -11,10 +11,9 @@ import { get } from 'svelte/store';
 export default class Ancestry extends Identifiable {
 	_thing: Thing | null = null;
 	kindPredicate: string;
-	isParental = true;
+	thing_isChild = true;
 	unsubscribe: any;
 	dbType: string;
-	isRoot = false;
 
 	// id => ancestry string 
 	//   "   composed of ids of each relationship
@@ -22,10 +21,10 @@ export default class Ancestry extends Identifiable {
 	//   "   kindPredicate is from the last relationship
 	//   "   children are of that kind of predicate
 
-	constructor(dbType: string, ancestryString: string = k.empty, kindPredicate: string = PredicateKind.contains, isParental: boolean = true) {
+	constructor(dbType: string, ancestryString: string = k.empty, kindPredicate: string = PredicateKind.contains, thing_isChild: boolean = true) {
 		super(ancestryString);
 		this.dbType = dbType;
-		this.isParental = isParental;
+		this.thing_isChild = thing_isChild;
 		this.kindPredicate = kindPredicate;
 	}
 
@@ -39,6 +38,7 @@ export default class Ancestry extends Identifiable {
 	
 	static readonly PROPERTIES: unique symbol;
 	
+	get isRoot():						   boolean { return this.thing?.isRoot ?? false; }
 	get hasChildRelationships():		   boolean { return this.childRelationships.length > 0; }
 	get hasParentRelationships():		   boolean { return this.parentRelationships.length > 0; }
 	get isFocus():						   boolean { return this.matchesStore(s_focus_ancestry); }
@@ -50,7 +50,7 @@ export default class Ancestry extends Identifiable {
 	get isInvalid():					   boolean { return this.containsReciprocals || this.containsMixedPredicates; }
 	get hasRelationships():				   boolean { return this.hasParentRelationships || this.hasChildRelationships; }
 	get isExpanded():					   boolean { return this.isRoot || this.includedInStore_ofAncestries(s_expanded_ancestries); }
-	get hasRelevantRelationships():		   boolean { return this.isParental ? this.hasChildRelationships : this.hasParentRelationships; }
+	get hasRelevantRelationships():		   boolean { return this.thing_isChild ? this.hasChildRelationships : this.hasParentRelationships; }
 	get endID():						    string { return this.idAt(); }
 	get title():						    string { return this.thing?.title ?? 'missing title'; }
 	get description():					    string { return `${this.kindPredicate} ${this.titles.join(':')}`; }
@@ -103,7 +103,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	get ids(): Array<string> {
-		if (this.isRoot) {
+		if (this.id == k.empty) {
 			return [];
 		}
 		return this.id.split(k.generic_separator);
@@ -120,7 +120,7 @@ export default class Ancestry extends Identifiable {
 		const predicate = this.predicate;
 		const geometry = get(s_clusters_geometry);
 		if (!!predicate && !!geometry) {
-			const map = geometry?.cluster_map_forChildren(this.isParental, predicate)
+			const map = geometry?.cluster_map_forChildren(this.thing_isChild, predicate)
 			return map?.paging_state_ofAncestry(this) ?? null;
 		}
 		return null;	// either geometry is not setup or predicate is bogus
@@ -134,9 +134,6 @@ export default class Ancestry extends Identifiable {
 		}
 		if (!!thing && !thing.oneAncestry && !!this.predicate && !this.predicate.isBidirectional) {
 			thing.oneAncestry = this;
-		}
-		if (!!thing && thing.isRoot) {
-			this.isRoot = true;
 		}
 		return thing;
 	}
@@ -231,13 +228,15 @@ export default class Ancestry extends Identifiable {
 
 	isAProgenyOf(ancestry: Ancestry): boolean {
 		let isAProgeny = false;
-		ancestry.traverse((progenyAncestry: Ancestry) => {
-			if (progenyAncestry.idHashed == this.idHashed) {
-				isAProgeny = true;
-				return true;	// stop traversal
-			}
-			return false;
-		})
+		if (!(ancestry.predicate?.isBidirectional ?? true)) {
+			ancestry.traverse((progenyAncestry: Ancestry) => {
+				if (progenyAncestry.idHashed == this.idHashed) {
+					isAProgeny = true;
+					return true;	// stop traversal
+				}
+				return false;
+			})
+		}
 		return isAProgeny;
 	}
 

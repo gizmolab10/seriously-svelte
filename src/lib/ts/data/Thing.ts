@@ -207,7 +207,7 @@ export default class Thing extends Datum {
 				if (predicate.isBidirectional) {
 					const child = relationship.child;
 					if (!!child && child.id != this.id) {
-						addAncestry(get(s_hierarchy).ancestry_remember_createUnique(relationship.id, predicate.id));
+						addAncestry(get(s_hierarchy).ancestry_remember_createUnique(relationship.id, predicate.kind));
 					}
 				} else {
 					const parent = relationship.parent;

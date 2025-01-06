@@ -26,11 +26,6 @@ export default class Predicate extends PersistentIdentifiable {
 	static get appreciates():			  	Predicate | null { return this.predicate_forKind(PredicateKind.appreciates); }
 	static predicate_forKind(kind: string): Predicate | null { return get(s_hierarchy).predicate_forKind(kind) ?? null; }
 
-    static predicate_fromJSON(json: string): Predicate {
-        const parsed = JSON.parse(json);
-        return new Predicate(parsed.id, parsed.kind, parsed.isBidirectional, true);
-    }
-
 	static stateIndex_forKind(kind: string): number {
 		switch (kind) {
 			case PredicateKind.contains: return 0;

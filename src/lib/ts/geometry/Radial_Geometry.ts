@@ -75,7 +75,7 @@ export default class Radial_Geometry {
 
 	parent_ancestries_maybeFor(focus: Thing, predicate: Predicate): Array<Ancestry> {
 		let ancestries = focus.uniqueAncestries_for(predicate) ?? [];
-		if (predicate.kind == PredicateKind.contains) {
+		if (predicate.kind == PredicateKind.isRelated) {
 			ancestries = ancestries.map(a => new Parent_Ancestry(a));
 		}
 		return ancestries;
