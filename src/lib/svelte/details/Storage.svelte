@@ -25,6 +25,7 @@
 			} else {
 				dict['data'] = 'stored locally';
 			}
+			dict['depth'] = h.depth;
 			dict['things'] = h.things.length;
 			dict['relationships'] = h.relationships.length;
 			information = Object.entries(dict);
@@ -80,7 +81,7 @@
 		<Button name='import'
 			width=42
 			zindex=ZIndex.frontmost
-			center={new Point(74, 120)}
+			center={new Point(74, 135)}
 			height={k.default_buttonSize - 4}
 			element_state={element_states_byID[IDStorage.import]}
 			closure={(mouse_state) => button_closure_forID(mouse_state, IDStorage.import)}>
@@ -89,7 +90,7 @@
 		<Button name='export'
 			width=42
 			zindex=ZIndex.frontmost
-			center={new Point(122, 120)}
+			center={new Point(122, 135)}
 			height={k.default_buttonSize - 4}
 			element_state={element_states_byID[IDStorage.export]}
 			closure={(mouse_state) => button_closure_forID(mouse_state, IDStorage.export)}>

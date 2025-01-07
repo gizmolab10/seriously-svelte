@@ -14,7 +14,8 @@
 	const element_state = ux.element_state_forName(name);		// survives onDestroy, created by widget
 	let size = k.dot_size;
 	let tinyDotsDiameter = size * 1.8;
-	let tinyDotsOffset = size * -0.4 + 0.01;
+	let tinyDotsDelta = size * -0.4 + 0.01;
+	let tinyDotsOffset = new Point(0.65, -0.361);
 	let childrenCount = ancestry.childRelationships.length;
 	let svgPathFor_insideReveal = svgPaths.circle_atOffset(16, 6);
 	let revealWrapper!: Svelte_Wrapper;
@@ -141,9 +142,9 @@
 							height:{size}px;
 							width:{size}px;'>
 							<SVGD3 name='inside-svg'
+								svgPath={svgPathFor_insideReveal}
 								stroke={element_state.stroke}
 								fill={element_state.stroke}
-								svgPath={svgPathFor_insideReveal}
 								height={size}
 								width={size}
 							/>
@@ -151,8 +152,8 @@
 					{/if}
 					{#if !ancestry.isExpanded && ancestry.hasChildRelationships}
 						<div class='outside-tiny-dots' style='
-							left:{tinyDotsOffset + 0.65}px;
-							top:{tinyDotsOffset - 0.28}px;
+							left:{tinyDotsDelta + tinyDotsOffset.x}px;
+							top:{tinyDotsDelta + tinyDotsOffset.y}px;
 							height:{tinyDotsDiameter}px;
 							width:{tinyDotsDiameter}px;
 							position:absolute;'>

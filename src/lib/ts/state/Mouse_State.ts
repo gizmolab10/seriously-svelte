@@ -60,7 +60,7 @@ export default class Mouse_State {
 	static up(event: MouseEvent | null, element: HTMLElement) { return new Mouse_State(event, element, false, false, false, true, false, false, false); }
 	static down(event: MouseEvent | null, element: HTMLElement) { return new Mouse_State(event, element, false, false, true, false, false, false, false); }
 	static long(event: MouseEvent | null, element: HTMLElement) { return new Mouse_State(event, element, false, false, false, false, false, true, false); }
-	static hover(event: MouseEvent | null, element: HTMLElement, isHovering: boolean) { return new Mouse_State(event, element, true, !isHovering, false, false, false, false, false); }
+	static hover(event: MouseEvent | null, element: HTMLElement, isHit: boolean) { return new Mouse_State(event, element, true, !isHit, false, false, false, false, false); }
 	static clicks(event: MouseEvent | null, element: HTMLElement, clickCount: number) { return new Mouse_State(event, element, false, false, false, false, clickCount > 1, false, false); }
 	static move(event: MouseEvent | null, element: HTMLElement, isDown: boolean, isHit: boolean) { return new Mouse_State(event, element, false, false, isDown, false, false, false, isHit); }
 

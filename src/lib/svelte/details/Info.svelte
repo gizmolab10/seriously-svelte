@@ -92,10 +92,10 @@
 			thing_title = thing.title;
 			thingHID = thing.idHashed;
 			const dict = {
-				'depth'		: (ancestry.depth - 1).expressZero_asHyphen(),
-				'children'	: (ancestry.children.length).expressZero_asHyphen(),
-				'parents'	: (thing.parents.length).expressZero_asHyphen(),
-				'related'	: (thing.relatedRelationships.length).expressZero_asHyphen(),
+				'depth'		: ancestry.depth.expressZero_asHyphen(),
+				'children'	: ancestry.children.length.expressZero_asHyphen(),
+				'parents'	: thing.parents.length.expressZero_asHyphen(),
+				'related'	: thing.relatedRelationships.length.expressZero_asHyphen(),
 				'predicate'	: ancestry.kindPredicate.unCamelCase().lastWord(),
 				'id'		: thing.id.clipWithEllipsisAt(12),
 				'color'		: k.empty,
@@ -150,7 +150,7 @@
 				{/key}
 				<Table top={39} array={information}/>
 			{/if}
-			<Color thing={thing} origin={new Point(73, 147)}/>
+			<Color thing={thing} origin={new Point(67, 132)}/>
 			{#if show.traits}
 				<div class='horizontal-line'
 					style='

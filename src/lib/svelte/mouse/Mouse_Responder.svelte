@@ -26,8 +26,8 @@
 	let mouse_doubleClick_timer;
 	let mouse_longClick_timer;
 	let mouse_isDown = false;
+	let mouse_button_div;
 	let style = k.empty;
-	let mouse_button;
 
 	//////////////////////////////////////////////////////////////
 	//															//
@@ -42,12 +42,12 @@
 
 	onMount(() => {
 		setupStyle();
-		if (!!mouse_button) {
-			mouse_button.addEventListener('pointerup', handle_pointerUp);
-			mouse_button.addEventListener('pointerdown', handle_pointerDown);
+		if (!!mouse_button_div) {
+			mouse_button_div.addEventListener('pointerup', handle_pointerUp);
+			mouse_button_div.addEventListener('pointerdown', handle_pointerDown);
 			return () => {
-				mouse_button.removeEventListener('pointerup', handle_pointerUp);
-				mouse_button.removeEventListener('pointerdown', handle_pointerDown);
+				mouse_button_div.removeEventListener('pointerup', handle_pointerUp);
+				mouse_button_div.removeEventListener('pointerdown', handle_pointerDown);
 			}
 		}
 	});
@@ -59,19 +59,19 @@
 	
 	$: {	// hover
 		const mouse_location = $s_mouse_location;
-		if (!!mouse_button && !!mouse_location) {
+		if (!!mouse_button_div && !!mouse_location) {
 			let isHit = false;
 			if (!isHit_closure) {				// is mouse inside this element's bounding rect
-				isHit = Rect.rect_forElement_containsPoint(mouse_button, mouse_location);
+				isHit = Rect.rect_forElement_containsPoint(mouse_button_div, mouse_location);
 			} else {							// if this element's hover shape is not its bounding rect
 				isHit = isHit_closure();		// use hover shape
 			}
 			if (mouse_state.isHover != isHit) {
 				mouse_state.isHover = isHit;
 				mouse_state.isOut = !isHit;		// TODO: called far too often
-				mouse_state_closure(Mouse_State.hover(null, mouse_button, isHit));	// pass a null event
+				mouse_state_closure(Mouse_State.hover(null, mouse_button_div, isHit));	// pass a null event
 			} else {
-				mouse_state_closure(Mouse_State.move(null, mouse_button, mouse_isDown, isHit));	// pass a null event
+				mouse_state_closure(Mouse_State.move(null, mouse_button_div, mouse_isDown, isHit));	// pass a null event
 			}
 		}
 	}
@@ -84,7 +84,7 @@
 	function create_state(isDown: boolean, isDouble: boolean = false, isLong: boolean = false): Mouse_State {
 		const state = mouse_state.copy;
 		state.isUp = !isDown && !isDouble && !isLong;
-		state.element = mouse_button;
+		state.element = mouse_button_div;
 		state.isDouble = isDouble;
 		state.isLong = isLong;
 		state.isHover = false;
@@ -100,7 +100,7 @@
 			// tear down timers and call closure
 
 			reset();
-			mouse_state_closure(Mouse_State.up(event, mouse_button));
+			mouse_state_closure(Mouse_State.up(event, mouse_button_div));
 			debug.log_action(` up ${mouse_responder_number} RESPONDER`);
 		}
 	}
@@ -158,7 +158,7 @@
 </script>
 
 <div class='mouse-responder' id={name}
-	bind:this={mouse_button}
+	bind:this={mouse_button_div}
 	style={style}>
 	<slot></slot>
 </div>

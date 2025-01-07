@@ -126,7 +126,7 @@
 		if (!!thing()) {
 			const showingReveal = ancestry?.showsReveal ?? false;
 			titleWidth = thing().titleWidth + (showingReveal ? 6 : 1) + 15;
-			titleLeft = g.inRadialMode ? ancestry.isFocus ? 5 : (forward ? 23 : (showingReveal ? 18.5 : 10)) : 19;
+			titleLeft = g.inRadialMode ? ancestry.isFocus ? 5 : (forward ? 21 : (showingReveal ? 18.5 : 10)) : 19;
 		}
 		const handler = signals.handle_anySignal((IDSignal, ancestry) => { updateInputWidth(); });
 		setTimeout(() => { updateInputWidth(); }, 100);

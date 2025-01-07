@@ -107,7 +107,7 @@
 
 	function extraWidth() {
 		const multiplier = ancestry?.showsReveal ? 2 : 1.35;
-		const clustersAdjustment = g.inRadialMode ? (forward ? 16 : 0) : -10;
+		const clustersAdjustment = g.inRadialMode ? (forward ? 14 : 0) : -10;
 		return (k.dot_size * multiplier) + clustersAdjustment;
 	}
 
@@ -161,8 +161,8 @@
 		radius = k.row_height / 2;
 		top = origin.y + ((showingBorder && !ancestry.isRoot) ? 0 : 1);
 		if (showingReveal) {
-			const revealY = k.dot_size - 3.5;
-			const revealX = forward ? (k.dot_size + titleWidth + (g.inRadialMode ? 20 : 14)) : 9;
+			const revealY = k.dot_size - 3.62;
+			const revealX = forward ? (k.dot_size + titleWidth + (g.inRadialMode ? 19 : 17)) : 9;
 			revealCenter = new Point(revealX, revealY);
 		}
 	}

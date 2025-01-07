@@ -54,7 +54,7 @@ export default class Ancestry extends Identifiable {
 	get endID():						    string { return this.idAt(); }
 	get title():						    string { return this.thing?.title ?? 'missing title'; }
 	get description():					    string { return `${this.kindPredicate} ${this.titles.join(':')}`; }
-	get depth():							number { return this.ids.length + 1; }
+	get depth():							number { return this.ids.length; }
 	get order():						    number { return this.relationship?.order ?? -1; }
 	get visibleProgeny_halfHeight():	    number { return this.visibleProgeny_height() / 2; }
 	get siblingIndex():					    number { return this.siblingAncestries.map(p => p.id).indexOf(this.id); }

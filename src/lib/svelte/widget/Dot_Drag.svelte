@@ -145,7 +145,7 @@
 					z-index:{ZIndex.dots};
 					background-color:transparent;'>
 				{#key redraws}
-					<div id={'drag-inner-div-for-' + name}
+					<div id={'drag-div-for-' + name}
 						style='
 							top:0px;
 							left:0px;
@@ -157,27 +157,27 @@
 						<SVGD3 name={'drag-' + name + '-svg'}
 							width={size}
 							height={size}
-							svgPath={svgPathFor_dragDot}
-							fill={element_state.fill}
 							stroke={thing?.color}
+							fill={element_state.fill}
+							svgPath={svgPathFor_dragDot}
 						/>
 						{#if show.tiny_dots}
 							{#if svgPathFor_tinyDots}
 								<SVGD3 name={'drag-inside-' + name + '-svg'}
 									width={size}
 									height={size}
-									svgPath={svgPathFor_tinyDots}
 									fill={element_state.stroke}
 									stroke={element_state.stroke}
+									svgPath={svgPathFor_tinyDots}
 								/>
 							{/if}
 							{#if svgPathFor_related}
 								<SVGD3 name={'drag-related-' + name + '-svg'}
 									width={size}
 									height={size}
-									svgPath={svgPathFor_related}
-									fill={k.color_background}
 									stroke={thing?.color}
+									fill={k.color_background}
+									svgPath={svgPathFor_related}
 								/>
 							{/if}
 						{/if}

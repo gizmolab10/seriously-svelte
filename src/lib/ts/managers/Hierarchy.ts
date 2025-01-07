@@ -47,7 +47,7 @@ export class Hierarchy {
 	get idRoot(): string | null { return this.root!.id ?? null; };
 
 	get depth(): number {
-		let maximum = 1;
+		let maximum = 0;
 		const ancestries = Object.values(this.ancestry_byHID);
 		for (const ancestry of ancestries) {
 			const depth = ancestry.depth;
@@ -55,7 +55,7 @@ export class Hierarchy {
 				maximum = depth;
 			}
 		}
-		return maximum;
+		return maximum + 1;
 	}
 
 	static readonly INIT: unique symbol;
