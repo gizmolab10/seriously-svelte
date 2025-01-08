@@ -94,9 +94,6 @@
 
 	function handle_pointerUp(event) {
 		if (detect_mouseUp) {
-
-			// tear down timers and call closure
-
 			reset();
 			mouse_state_closure(Mouse_State.up(event, mouse_button_div));
 			debug.log_action(` up ${mouse_responder_number} RESPONDER`);
@@ -105,30 +102,24 @@
 	
 	function handle_pointerDown(event) {
 		if (detect_mouseDown && mouse_state.clicks == 0) {
-
-			// call down closure
-
 			mouse_state_closure(create_state(true));
 		}
 		mouse_state.clicks += 1;
 		if (detect_doubleClick) {
-
-			// setup timer to call double-click closure
-
 			mouse_timer.setTimeout(Timer_Type.double, () => {
-				if (mouse_state.clicks == 2) {
+				if (mouse_timer.hasTimer && mouse_state.clicks == 2) {
 					reset();
 					mouse_state_closure(create_state(false, true, false));
 				}
 			});
 		}
 		if (detect_longClick) {
-
-			// setup timer to call long-click closure
-
 			mouse_timer.setTimeout(Timer_Type.long, () => {
-				reset();
-				mouse_state_closure(create_state(false, false, true));
+				if (mouse_timer.hasTimer) {
+					reset();
+					mouse_state_closure(create_state(false, false, true));
+					debug.log_action(` long ${mouse_responder_number} RESPONDER`);
+				}
 			});
 		}
 	}
