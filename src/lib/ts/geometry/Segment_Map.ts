@@ -1,4 +1,5 @@
 import { k, u, ux, Rect, Size, Point, svgPaths, Oblong_Part } from '../../ts/common/Global_Imports';
+import type { Integer } from '../common/Types';
 
 export default class Segment_Map {
 	relative_font_size = k.font_size;
@@ -20,7 +21,7 @@ export default class Segment_Map {
 	static segment_gap = 14;
 	get description(): string { return `${this.title} ${this.part} ${this.path}`; }
 
-	constructor(name: string, title: string, font_size: string, isSelected: boolean, index: number, max_index: number, left: number, height: number) {
+	constructor(name: string, title: string, font_size: string, isSelected: boolean, index: Integer, max_index: Integer, left: number, height: number) {
 		this.relative_font_size = font_size.fontSize_relativeTo(k.font_size);
 		this.width = u.getWidth_ofString_withSize(title, font_size) + this.relative_font_size - 2;
 		this.part = this.part_forIndex(index, max_index);
@@ -60,7 +61,7 @@ export default class Segment_Map {
 		this.origin = Point.x(this.left);
 	}
 
-	part_forIndex(index: number, max_index: number): Oblong_Part {
+	part_forIndex(index: Integer, max_index: Integer): Oblong_Part {
 		switch (index) {
 			case 0:			return Oblong_Part.left;
 			case max_index: return Oblong_Part.right;

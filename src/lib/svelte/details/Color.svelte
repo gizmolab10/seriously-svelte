@@ -16,13 +16,13 @@
 		}
 	});
 
-	function handleColorChange(event) {
+	async function handleColorChange(event) {
 		event.preventDefault();
 		const color = event.detail.hex;
 		if (thing.color != color) {
 			thing.color = color;
 			thing.signal_color_change();
-			thing.persist();
+			await thing.persist();
 		}
 	}
 	

@@ -12,9 +12,4 @@ export default class Datum extends PersistentIdentifiable {
 	log(option: DebugFlag, message: string) {}
 	isInDifferentBulkThan(other: Datum) { return this.baseID != other.baseID; }
 
-    static datum_fromJSON(json: string): Datum {
-        const parsed = JSON.parse(json);
-        return new Datum(parsed.dbType, parsed.baseID, parsed.id, true);
-    }
-
 }

@@ -1,4 +1,4 @@
-import { k, Rect } from '../common/Global_Imports';
+import { u, Rect } from '../common/Global_Imports';
 
 export default class Mouse_State {
 	element: HTMLElement | null;	// null means mouse responder
@@ -23,34 +23,29 @@ export default class Mouse_State {
 		this.isDouble = isDouble;
 		this.element = element;
 		this.isHover = isHover;
-		this.isMove = isMove;
-		this.isLong = isLong;
 		this.isDown = isDown;
+		this.isLong = isLong;
+		this.isMove = isMove;
 		this.event = event;
-		this.isOut = isOut;
 		this.isHit = isHit;
+		this.isOut = isOut;
 		this.isUp = isUp;
 	}
 
-	get isShapeHit(): boolean { return false; }
-	get isEmpty(): boolean { return !this.isHover && !this.isOut && !this.isDown && !this.isUp && !this.isDouble && !this.isLong && !this.isMove && !this.isHit; }
-	get copy(): Mouse_State { return new Mouse_State(this.event, this.element, this.isHover, this.isOut, this.isDown, this.isUp, this.isDouble, this.isLong, this.isMove, this.isHit); }
-
-	get isElementHit(): boolean {
-		return !!this.event && !!this.element &&
-			Rect.rect_forElement_containsEvent(this.element, this.event);
-	}
+	get isShapeHit():	boolean { return false; }
+	get isElementHit(): boolean { return !!this.event && !!this.element && Rect.rect_forElement_containsEvent(this.element, this.event); }
+	get isEmpty():		boolean { return !this.isHover && !this.isOut && !this.isDown && !this.isUp && !this.isDouble && !this.isLong && !this.isMove && !this.isHit; }
 
 	get description(): string {
 		let states: Array<string> = [];
-		if (this.isHover) { states.push('hover'); }
+		if (this.isUp) { states.push('up'); }
+		if (this.isHit) { states.push('hit'); }
 		if (this.isOut) { states.push('out'); }
 		if (this.isDown) { states.push('down'); }
-		if (this.isUp) { states.push('up'); }
-		if (this.isDouble) { states.push('double'); }
 		if (this.isLong) { states.push('long'); }
 		if (this.isMove) { states.push('move'); }
-		if (this.isHit) { states.push('hit'); }
+		if (this.isHover) { states.push('hover'); }
+		if (this.isDouble) { states.push('double'); }
 		return states.length == 0 ? 'empty mouse state' : states.join(', ');
 	}
 

@@ -1,9 +1,12 @@
 import { u, debug, Svelte_Wrapper, SvelteComponentType } from '../common/Global_Imports';
+import { s_hierarchy } from '../../ts/state/Svelte_Stores';
 import { Create_Mouse_State } from '../common/Types';
+import type { Integer } from '../common/Types';
+import { get } from 'svelte/store';
 
 export class Wrappers {
 	private child_wrapperTypes_byType: {[type: string]: Array<string>} = {};
-	private wrappers_byType_andHID: { [type: string]: { [hid: number]: Svelte_Wrapper } } = {};
+	private wrappers_byType_andHID: { [type: string]: { [hid: Integer]: Svelte_Wrapper } } = {};
 	
 	// assure delivery of events
 	// to a svelt component
@@ -11,11 +14,11 @@ export class Wrappers {
 	// than the containing component
 	// when they overlap
 
-	wrappers_byHID_forType(type: string): { [hid: number]: Svelte_Wrapper } {
+	wrappers_byHID_forType(type: string): { [hid: Integer]: Svelte_Wrapper } {
 		return this.wrappers_byType_andHID[type];
 	}
 
-	wrapper_forHID_andType(hid: number, type: string) {
+	wrapper_forHID_andType(hid: Integer, type: string) {
 		const wrappers_byHID = this.wrappers_byHID_forType(type);
 		if (!!wrappers_byHID) {
 			return wrappers_byHID[hid];
@@ -84,7 +87,7 @@ export class Wrappers {
 			for (const wrapper of wrappers) {
 				const idHashed = wrapper.idHashed;
 				const ancestry = get(s_hierarchy).ancestry_forHID(idHashed)
-				const title = ancestry?.title ?? wrapper.idHashed;
+				const title = ancestry?.title ?? idHashed;
 				debug.log_action(`hitsFor ${type} ${title}`);
 				if (wrapper.isHit(event)) {
 					const recurse = this.hitsForChildTypesOf(event, type);

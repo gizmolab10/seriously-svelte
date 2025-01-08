@@ -12,9 +12,4 @@ export default class User extends PersistentIdentifiable {
 		this.phone = phone;
 	}
 
-    static user_fromJSON(json: string): User {
-        const parsed = JSON.parse(json);
-        return new User(parsed.dbType, parsed.id, parsed.name, parsed.email, parsed.phone, true);
-    }
-
 }

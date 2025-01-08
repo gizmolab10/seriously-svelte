@@ -1,3 +1,5 @@
+// N.B., do not import these from Global Imports --> avoid dependency issues when importing Utilities class
+
 import { s_thing_fontFamily } from '../state/Svelte_Stores';
 import { Size, Point } from '../geometry/Geometry';
 import type { Dictionary } from '../common/Types';
@@ -12,24 +14,18 @@ import { k } from './Constants';
 
 class Utilities {
 	ignore(event: Event) {}
-	concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return [...a, ...b]; }
-	quadrant_ofAngle(angle: number): Quadrant { return new Angle(angle).quadrant_ofAngle; }
-	pointFor_mouseEvent(event: MouseEvent) { return new Point(event.clientX, event.clientY); }
-	location_ofMouseEvent(event: MouseEvent) { return new Point(event.clientX, event.clientY); }
-	opacitize(color: string, amount: number): string { return transparentize(color, 1 - amount); }
-	getWidthOf(s: string): number { return this.getWidth_ofString_withSize(s, `${k.font_size}px`); }
-	subtract_arrayFrom(a: Array<any>, b: Array<any>): Array<any> { return b.filter(c => a.filter(d => c != d)); }
-	strip_invalid(array: Array<any>): Array<any> { return this.strip_identifiableDuplicates(this.strip_falsies(array)); }
-	sort_byOrder(array: Array<Ancestry>) { return array.sort( (a: Ancestry, b: Ancestry) => { return a.order - b.order; }); }
+	location_ofMouseEvent(event: MouseEvent):					   Point { return new Point(event.clientX, event.clientY); }
+	getWidthOf(s: string):										  number { return this.getWidth_ofString_withSize(s, `${k.font_size}px`); }
+	opacitize(color: string, amount: number):					  string { return transparentize(color, 1 - amount); }
+	quadrant_ofAngle(angle: number):							Quadrant { return new Angle(angle).quadrant_ofAngle; }
+	concatenateArrays(a: Array<any>, b: Array<any>):		  Array<any> { return [...a, ...b]; }
+	strip_falsies(array: Array<any>):						  Array<any> { return array.filter(a => !!a); }
+	subtract_arrayFrom(a: Array<any>, b: Array<any>):		  Array<any> { return b.filter(c => a.filter(d => c != d)); }
 	uniquely_concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return this.strip_invalid(this.concatenateArrays(a, b)); }
+	strip_invalid(array: Array<any>):						  Array<any> { return this.strip_identifiableDuplicates(this.strip_falsies(array)); }
+	sort_byOrder(array: Array<Ancestry>):				 Array<Ancestry> { return array.sort( (a: Ancestry, b: Ancestry) => { return a.order - b.order; }); }
 
-	apply(startStop: (flag: boolean) => void, callback: () => void): void {
-		startStop(true);
-		callback();
-		startStop(false);
-	}
-
-	copyObject(obj: any) {
+	copyObject(obj: any): any {
 		const copiedObject = Object.create(Object.getPrototypeOf(obj));
 		Object.assign(copiedObject, obj);
 		return copiedObject;
@@ -49,7 +45,7 @@ class Utilities {
 		}
 	}
 
-	sort_byTitleTop(ancestries: Array<Ancestry>) {
+	sort_byTitleTop(ancestries: Array<Ancestry>): Array<Ancestry> {
 		return ancestries.sort( (a: Ancestry, b: Ancestry) => {
 			const aTop = a.titleRect?.origin.y;
 			const bTop = b.titleRect?.origin.y;
@@ -57,7 +53,7 @@ class Utilities {
 		});
 	}
 
-	strip_hidDuplicates(ancestries: Array<Ancestry>) {
+	strip_hidDuplicates(ancestries: Array<Ancestry>): Array<Ancestry> {
 		let ancestriesByHID: {[hash: number]: Ancestry} = {};
 		let stripped: Array<Ancestry> = [];
 		for (const ancestry of ancestries) {
@@ -68,16 +64,6 @@ class Utilities {
 			}
 		}
 		return stripped;
-	}
-
-	strip_falsies(array: Array<any>): Array<any> {
-		let truthies: Array<any> = [];
-		for (const element of array) {
-			if (!!element) {
-				truthies.push(element);
-			}
-		}
-		return truthies;
 	}
 
 	strip_identifiableDuplicates(identifiables: Array<Identifiable>): Array<Identifiable> {
@@ -93,7 +79,7 @@ class Utilities {
 		return stripped;
 	}
 
-	strip_thingDuplicates_from(ancestries: Array<Ancestry>) {
+	strip_thingDuplicates_from(ancestries: Array<Ancestry>): Array<Ancestry> {
 		let ancestriesByHID: {[hash: number]: Ancestry} = {};
 		let stripped: Array<Ancestry> = [];
 		for (const ancestry of ancestries) {
@@ -162,7 +148,7 @@ class Utilities {
 		}
 	}
 
-	ancestries_orders_normalize_persistentMaybe(array: Array<Ancestry>, persist: boolean = true) {
+	ancestries_orders_normalize_persistentMaybe(array: Array<Ancestry>, persist: boolean = true): void {
 		this.sort_byOrder(array);
 		array.forEach( (ancestry, index) => {
 			if (ancestry.order != index) {
@@ -216,92 +202,38 @@ class Utilities {
 		return hexColor;
 	}
 
-	sizeFrom_svgPath(svgPath: string): Size {
-		let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-		const commands = svgPath.match(/[a-zA-Z][^a-zA-Z]*/g) || [];
-		let x = 0, y = 0;
-		for (const command of commands) {
-			const type = command[0];
-			const args = command.slice(1).trim().split(/[\s,]+/).map(Number);
-			switch (type) {
-				case 'M':
-				case 'L': [x, y] = args; break;
-				case 'a':
-				case 'A': handleArcCommand(args); break;
-				case 'H': x = args[0]; break;
-				case 'V': y = args[0]; break;
-				case 'Z': break; // Close path, no coordinates to update
-				default: throw new Error(`Unsupported command: ${type}`);
-			}
-			minX = Math.min(minX, x);
-			minY = Math.min(minY, y);
-			maxX = Math.max(maxX, x);
-			maxY = Math.max(maxY, y);
-		}
-
-		function handleArcCommand(args: number[]) {
-			const startX = x;
-			const startY = y;
-			let [rx, ry, xAxisRotation, largeArcFlag, sweepFlag, endX, endY] = args;
-			x = endX;
-			y = endY;
-			const xAxisRotationRad = (xAxisRotation * Math.PI) / 180;					// Convert rotation to radians
-			const dx2 = (startX - endX) / 2.0;											// Compute the half distance between the current and the end point
-			const dy2 = (startY - endY) / 2.0;
-			const x1 = Math.cos(xAxisRotationRad) * dx2 + Math.sin(xAxisRotationRad) * dy2;			// Compute (x1, y1)
-			const y1 = -Math.sin(xAxisRotationRad) * dx2 + Math.cos(xAxisRotationRad) * dy2;
-			const radiiCheck = (x1 * x1) / (rx * rx) + (y1 * y1) / (ry * ry);						// Ensure radii are large enough
-			if (radiiCheck > 1) {
-				rx *= Math.sqrt(radiiCheck);
-				ry *= Math.sqrt(radiiCheck);
-			}
-			const sign = largeArcFlag === sweepFlag ? -1 : 1;							// Compute (cx1, cy1)
-			const sq = ((rx * rx) * (ry * ry) - (rx * rx) * (y1 * y1) - (ry * ry) * (x1 * x1)) / ((rx * rx) * (y1 * y1) + (ry * ry) * (x1 * x1));
-			const coef = sign * Math.sqrt(Math.max(sq, 0));
-			const cx1 = coef * ((rx * y1) / ry);
-			const cy1 = coef * -((ry * x1) / rx);
-			const cx = (startX + endX) / 2.0 + Math.cos(xAxisRotationRad) * cx1 - Math.sin(xAxisRotationRad) * cy1;
-			const cy = (startY + endY) / 2.0 + Math.sin(xAxisRotationRad) * cx1 + Math.cos(xAxisRotationRad) * cy1;
-			minX = Math.min(minX, startX, endX, cx - rx, cx + rx);						// Calculate bounding box
-			minY = Math.min(minY, startY, endY, cy - ry, cy + ry);
-			maxX = Math.max(maxX, startX, endX, cx - rx, cx + rx);
-			maxY = Math.max(maxY, startY, endY, cy - ry, cy + ry);
-		}
-
-		const size = new Size(maxX - minX, maxY - minY);
-		return size;
-	}
-
 	static readonly JSON: unique symbol;
 
-	stringify_object(object: Object) { return JSON.stringify(object, this.removeExtras, 2); }
-
-	static extras = [
-		'dbType',
-		'baseID',
-		'isDirty',
-		'idHashed',
-		'hidChild',
-		'hidParent',
-		'isEditing',
-		'isGrabbed',
-		'bulkRootID',
-		'oneAncestry',
-		'page_states',
-		'needsBulkFetch',
-		'selectionRange',
-		'lastModifyDate',
-		'awaitingCreation',
-		'already_persisted',
-		'hasPersistentStorage',
-	];
-	
-	removeExtras(key: string, value: any) {
-		if (Utilities.extras.includes(key)) {
-			return undefined;
+	stringify_object(object: Object): string {
+		const extras = [
+			'dbType',
+			'baseID',
+			'isDirty',
+			'idHashed',
+			'hidChild',
+			'hidParent',
+			'isEditing',
+			'isGrabbed',
+			'bulkRootID',
+			'oneAncestry',
+			'page_states',
+			'needsBulkFetch',
+			'selectionRange',
+			'lastModifyDate',
+			'awaitingCreation',
+			'already_persisted',
+			'hasPersistentStorage',
+		];
+		function removeExtras(key: string, value: any): any | undefined {
+			if (extras.includes(key)) {
+				return undefined;
+			}
+			return value;
 		}
-		return value;
+		return JSON.stringify(object, removeExtras, 2);
 	}
+
+	
 
 }
 

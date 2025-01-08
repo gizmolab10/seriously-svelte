@@ -23,7 +23,6 @@ export class Point {
 	get doubled():					   Point { return this.multipliedBy(2); }
 	get negatedInHalf():			   Point { return this.dividedBy(-2); }
 	get dividedInHalf():			   Point { return this.dividedBy(2); }
-	get copy():						   Point { return new Point(this.x, this.y); }
 	get swap():						   Point { return new Point(this.y, this.x); }
 	get negateY():					   Point { return new Point(this.x, -this.y); }
 	get negateX():					   Point { return new Point(-this.x, this.y); }
@@ -124,7 +123,6 @@ export class Size {
 	get verbose():					  string { return `(${this.width.toFixed(2)}, ${this.height.toFixed(2)})`; }
 	get pixelVerbose():				  string { return `${this.width.toFixed(2)}px ${this.height.toFixed(2)}px`; }
 	get asPoint():			   		   Point { return new Point(this.width, this.height); }
-	get copy():							Size { return new Size(this.width, this.height); }
 	get swap():							Size { return new Size(this.height, this.width); }
 	get negated():						Size { return this.multipliedBy(-1); }
 	get dividedInHalf():				Size { return this.dividedBy(2); }
@@ -166,7 +164,6 @@ export class Rect {
 	get centerLeft():			Point { return new Point(this.origin.x, this.center.y); };
 	get centerRight():			Point { return new Point(this.extent.x, this.center.y); };
 	get centerBottom():			Point { return new Point(this.center.x, this.extent.y); };
-	get copy():					 Rect { return new Rect(this.origin.copy, this.size.copy); }
 	get dividedInHalf():		 Rect { return new Rect(this.origin, this.size.multipliedBy(-1/2)); }
 	get atZero_forX():			 Rect { return new Rect(Point.y(this.origin.y), this.size); }
 	get atZero_forY():			 Rect { return new Rect(Point.x(this.origin.x), this.size); }
@@ -223,7 +220,7 @@ export class Rect {
 
 	static rect_forElement_containsEvent(element: HTMLElement | null, event: MouseEvent): boolean {
 		const rect = Rect.boundingRectFor(element);
-		const point = u.pointFor_mouseEvent(event);
+		const point = u.location_ofMouseEvent(event);
 		return rect?.contains(point) ?? false;
 	}
 
@@ -237,7 +234,7 @@ export class Rect {
 
 	static rect_forComponent_contains(component: SvelteComponent, event: MouseEvent): boolean {
 		const rect = Rect.rect_forComponent(component);
-		const point = u.pointFor_mouseEvent(event);
+		const point = u.location_ofMouseEvent(event);
 		if (rect.isZero) {
 			return false;
 		}

@@ -23,8 +23,6 @@
 	const mouse_state = ux.mouse_state_forName(name);	// persist across destroy/recreate
 	const mouse_timer = ux.mouse_timer_forName(name);	// persist across destroy/recreate
 	const mouse_responder_number = g.next_mouse_responder_number;
-	let mouse_doubleClick_timer;
-	let mouse_longClick_timer;
 	let mouse_isDown = false;
 	let mouse_button_div;
 	let style = k.empty;
@@ -82,7 +80,7 @@
 	}
 
 	function create_state(isDown: boolean, isDouble: boolean = false, isLong: boolean = false): Mouse_State {
-		const state = mouse_state.copy;
+		const state = u.copyObject(mouse_state);
 		state.isUp = !isDown && !isDouble && !isLong;
 		state.element = mouse_button_div;
 		state.isDouble = isDouble;

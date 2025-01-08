@@ -6,13 +6,12 @@
 	import Breadcrumb_Button from '../mouse/Breadcrumb_Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import { onMount } from 'svelte';
-	let ancestors: Array<Thing> = [];
 	let size = k.default_buttonSize;
 	let lefts: Array<string> = [];
+	let things: Array<Thing> = [];
 	let ancestry: Ancestry;
 	let rebuilds = 0;
 	let trigger = 0;
-	let left = 0;
 
 	signals.handle_rebuildGraph(0, (ancestry) => {
 		rebuilds += 1;
@@ -27,16 +26,15 @@
 	$: {
 		const h = $s_hierarchy;
 		const needsUpdate = ($s_focus_ancestry?.title ?? k.empty) + $s_graphRect + ($s_grabbed_ancestries?.length ?? 0);
-		if (!ancestry || needsUpdate || ancestors.length == 0) {
+		if (!ancestry || needsUpdate || things.length == 0) {
 			ancestry = h.ancestry_forBreadcrumbs;		// assure we have a ancestry
 			if (!!ancestry) {				
 				let widths: Array<number> = [];
 				const windowWidth = w.windowSize.width;
-				let fingerprint = 0;	// encoded as one parent count per digit (base 10)
-				[ancestors, widths, lefts, fingerprint] = ancestry.layout_breadcrumbs_within(windowWidth);
-				left = lefts[0];
-				trigger = fingerprint * 10000 + rebuilds * 100 + left;		// re-render HTML when this value changes
-				debug.log_crumbs(widths)
+				let parent_widths = 0;	// encoded as one parent count per 2 digits (base 10)
+				[things, widths, lefts, parent_widths] = ancestry.layout_breadcrumbs_within(windowWidth);
+				trigger = parent_widths * 10000 + rebuilds * 100 + lefts[0];		// re-render HTML when this value changes
+				debug.log_crumbs(`${widths} ${things.map(t => t.title)}`);
 			}
 		}
 	}
@@ -44,7 +42,7 @@
 </script>
 
 {#key trigger}
-	{#each ancestors as ancestor, index}
+	{#each things as thing, index}
 		{#if index > 0}
 			<div class='crumb-separator'
 				style='
@@ -57,11 +55,11 @@
 					width={size}
 					height={size}
 					position='absolute'
-					stroke={ancestor.color}
+					stroke={thing.color}
 					svgPath={svgPaths.dash(size, 0)}
 				/>
 			</div>
 		{/if}
-		<Breadcrumb_Button left={lefts[index]} ancestry={ancestry?.stripBack(ancestors.length - index - 1)}/>
+		<Breadcrumb_Button left={lefts[index]} ancestry={ancestry?.stripBack(things.length - index - 1)}/>
 	{/each}
 {/key}

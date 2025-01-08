@@ -2,8 +2,8 @@ import { k, u, Datum, debug, Trait, Ancestry, ThingType, Predicate, Page_States,
 import { TraitType, dbDispatch, Relationship, PredicateKind, Seriously_Range } from '../common/Global_Imports';
 import { s_hierarchy, s_thing_color, s_rebuild_count } from '../state/Svelte_Stores';
 import { s_focus_ancestry, s_expanded_ancestries } from '../state/Svelte_Stores';
+import type { Dictionary } from '../../ts/common/Types';
 import { get } from 'svelte/store';
-import Airtable from 'airtable';
 
 export default class Thing extends Datum {
 	selectionRange = new Seriously_Range(0, 0);
@@ -26,32 +26,27 @@ export default class Thing extends Datum {
 		this.type = type;
 	};
 	
-	get parentIDs():				  Array<string> { return this.parents.map(t => t.id); }
-	get parents():					   Array<Thing> { return this.parents_forKind(PredicateKind.contains); }
-	get traits():					   Array<Trait> { return get(s_hierarchy).traits_forOwnerHID(this.idHashed) ?? []; }
-	get parentAncestries(): 		Array<Ancestry> { return this.parentAncestries_for(Predicate.contains); }
-	get fields():		  		  Airtable.FieldSet { return { title: this.title, color: this.color, type: this.type }; }
-	get relatedRelationships(): Array<Relationship> { return this.relationships_forParents_ofKind(PredicateKind.isRelated, false); }
-	get quest():					  string | null { return get(s_hierarchy).trait_forType_ownerHID(TraitType.quest, this.idHashed)?.text ?? null; }
-	get consequence():				  string | null { return get(s_hierarchy).trait_forType_ownerHID(TraitType.consequence, this.idHashed)?.text ?? null; }
-	get idBridging():						 string { return this.isBulkAlias ? this.bulkRootID : this.id; }
-	get description():						 string { return this.id + ' \"' + this.title + '\"'; }
-	get breadcrumb_title():					 string { return this.title.clipWithEllipsisAt(15); }
-	get titleWidth():						 number { return u.getWidthOf(this.title); }
-	get isRoot():							boolean { return this.type == ThingType.root; }
-	get isBulkAlias():						boolean { return this.type == ThingType.bulk; }
-	get isAcrossBulk():						boolean { return this.baseID != get(s_hierarchy).db.baseID; }
-	get hasMultipleParents():				boolean { return this.parentAncestries.length > 1; }
-	get hasParents():						boolean { return this.hasParents_forKind(PredicateKind.contains); }
-	get isFocus():							boolean { return (get(s_focus_ancestry).thing?.id ?? k.empty) == this.id; }
-	get isOrphaned():						boolean { return !get(s_hierarchy).relationship_whereID_isChild(this.id) && this.type != ThingType.root; }
-	get hasNoData():						boolean { return !this.title && !this.color && !this.type; }
-	get hasRelated():						boolean { return this.relatedRelationships.length > 0; }
-
-    static thing_fromJSON(json: string): Thing {
-        const parsed = JSON.parse(json);
-        return new Thing(parsed.baseID, parsed.id, parsed.title, parsed.color, parsed.type, true);
-    }
+	get parents():				Array		 <Thing> { return this.parents_forKind(PredicateKind.contains); }
+	get traits():				Array		 <Trait> { return get(s_hierarchy).traits_forOwnerHID(this.idHashed) ?? []; }
+	get parentIDs():			Array		<string> { return this.parents.map(t => t.id); }
+	get parentAncestries(): 	Array	  <Ancestry> { return this.parentAncestries_for(Predicate.contains); }
+	get relatedRelationships(): Array <Relationship> { return this.relationships_forParents_ofKind(PredicateKind.isRelated, false); }
+	get fields():		  		Dictionary  <string> { return { title: this.title, color: this.color, type: this.type }; }
+	get quest():					   string | null { return get(s_hierarchy).trait_forType_ownerHID(TraitType.quest, this.idHashed)?.text ?? null; }
+	get consequence():				   string | null { return get(s_hierarchy).trait_forType_ownerHID(TraitType.consequence, this.idHashed)?.text ?? null; }
+	get idBridging():						  string { return this.isBulkAlias ? this.bulkRootID : this.id; }
+	get description():						  string { return this.id + ' \"' + this.title + '\"'; }
+	get breadcrumb_title():					  string { return this.title.clipWithEllipsisAt(15); }
+	get titleWidth():						  number { return u.getWidthOf(this.title); }
+	get isRoot():							 boolean { return this.type == ThingType.root; }
+	get isBulkAlias():						 boolean { return this.type == ThingType.bulk; }
+	get isAcrossBulk():						 boolean { return this.baseID != get(s_hierarchy).db.baseID; }
+	get hasMultipleParents():				 boolean { return this.parentAncestries.length > 1; }
+	get hasParents():						 boolean { return this.hasParents_forKind(PredicateKind.contains); }
+	get isFocus():							 boolean { return (get(s_focus_ancestry).thing?.id ?? k.empty) == this.id; }
+	get isOrphaned():						 boolean { return !get(s_hierarchy).relationship_whereID_isChild(this.id) && this.type != ThingType.root; }
+	get hasNoData():						 boolean { return !this.title && !this.color && !this.type; }
+	get hasRelated():						 boolean { return this.relatedRelationships.length > 0; }
 
 	get ancestries(): Array<Ancestry> {
 		return u.uniquely_concatenateArrays(
@@ -89,8 +84,8 @@ export default class Thing extends Datum {
 			const relationships = this.relationships_forParents_ofKind(PredicateKind.contains, true);
 			if (relationships && relationships.length > 0) {
 				const relationship = relationships[0];
-				const aParentAncestry = relationship.parent?.oneAncestry;
-				oneAncestry = aParentAncestry?.uniquelyAppendID(relationship.id) ?? null;
+				const parentAncestry = relationship.parent?.oneAncestry;
+				oneAncestry = parentAncestry?.uniquelyAppendID(relationship.id) ?? null;
 			}
 		}
 		return oneAncestry;
@@ -145,7 +140,7 @@ export default class Thing extends Datum {
 		return parents;
 	}
 
-	oneAncestries_rebuildForSubtree() {		// set oneAncestry for this and all its progeny
+	oneAncestries_rebuild_forSubtree() {		// set oneAncestry for this and all its progeny
 		const oneAncestry = this.oneAncestry_derived;
 		if (!!oneAncestry) {
 			const predicate = oneAncestry.predicate;
@@ -153,7 +148,7 @@ export default class Thing extends Datum {
 				get(s_hierarchy).ancestry_forget(this.oneAncestry);
 				this.oneAncestry = oneAncestry;
 			}
-			oneAncestry.children.map(c => c.oneAncestries_rebuildForSubtree());
+			oneAncestry.children.map(c => c.oneAncestries_rebuild_forSubtree());
 		}
 	}
 

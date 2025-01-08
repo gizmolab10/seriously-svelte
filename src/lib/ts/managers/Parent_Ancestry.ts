@@ -1,15 +1,15 @@
 import Ancestry from './Ancestry';
 
 export default class Parent_Ancestry extends Ancestry {
-	original!: Ancestry;
+	ancestry_inReverse!: Ancestry;
 
 	constructor(ancestry: Ancestry) {
 		super(ancestry.dbType, ancestry.id, ancestry.kindPredicate, false);	// thing_isChild = false
-		this.original = ancestry;
+		this.ancestry_inReverse = ancestry;
 	}
 
-	get depth(): number { return this.original.depth; }
-	becomeFocus(): boolean { return this.original.becomeFocus(); }
+	get depth(): number { return this.ancestry_inReverse.depth; }
+	becomeFocus(): boolean { return this.ancestry_inReverse.becomeFocus(); }
 	
 	// with thing_isChild = false, this fixes
 	// paging state & cluster map lookups,

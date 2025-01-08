@@ -1,12 +1,12 @@
+import { g, k, u, Rect, Size, Thing, debug, signals, wrappers, Direction, Predicate, Hierarchy } from '../common/Global_Imports';
 import { s_expanded_ancestries, s_ancestry_showing_tools, s_alteration_mode, s_clusters_geometry } from '../state/Svelte_Stores';
-import { dbDispatch, Svelte_Wrapper, Widget_MapRect, AlterationType, SvelteComponentType } from '../common/Global_Imports';
-import { Hierarchy, Title_Edit_State, ElementType, Paging_State, Relationship, PredicateKind } from '../common/Global_Imports';
-import { g, k, u, Rect, Size, Thing, debug, signals, wrappers, Direction, Predicate } from '../common/Global_Imports';
+import { dbDispatch, Svelte_Wrapper, Widget_MapRect, AlterationType, Title_Edit_State } from '../common/Global_Imports';
+import { ElementType, Paging_State, Relationship, PredicateKind, SvelteComponentType } from '../common/Global_Imports';
 import { s_hierarchy, s_focus_ancestry, s_grabbed_ancestries, s_title_edit_state } from '../state/Svelte_Stores';
-import { DBType } from '../../ts/basis/PersistentIdentifiable';
+import { DBType } from '../basis/PersistentIdentifiable';
 import Identifiable from '../basis/Identifiable';
-import { Writable } from 'svelte/store';
-import { get } from 'svelte/store';
+import type { Integer } from '../common/Types';
+import { get, Writable } from 'svelte/store';
 
 export default class Ancestry extends Identifiable {
 	_thing: Thing | null = null;
@@ -23,18 +23,40 @@ export default class Ancestry extends Identifiable {
 
 	constructor(dbType: string, ancestryString: string = k.empty, kindPredicate: string = PredicateKind.contains, thing_isChild: boolean = true) {
 		super(ancestryString);
-		this.dbType = dbType;
 		this.thing_isChild = thing_isChild;
 		this.kindPredicate = kindPredicate;
+		this.dbType = dbType;
 	}
 
 	destroy() {
 		this.unsubscribe();
 		this._thing = null;
 	}
+	
+	static readonly GENERAL: unique symbol;
 
 	signal_rebuildGraph()  { signals.signal_rebuildGraph(this); }
 	signal_relayoutWidgets() { signals.signal_relayoutWidgets(this); }
+
+	traverse(apply_closureTo: (ancestry: Ancestry) => boolean) {
+		if (!apply_closureTo(this)) {
+			for (const childAncestry of this.childAncestries) {
+				childAncestry.traverse(apply_closureTo);
+			}
+		}
+	}
+
+	async traverse_async(apply_closureTo: (ancestry: Ancestry) => Promise<boolean>) {
+		try {
+			if (!await apply_closureTo(this)) {
+				for (const childAncestry of this.childAncestries) {
+					await childAncestry.traverse_async(apply_closureTo);
+				}
+			}
+		} catch (error) {
+			console.error('Error during traverse_async:', error);
+		}
+	}
 	
 	static readonly PROPERTIES: unique symbol;
 	
@@ -70,14 +92,15 @@ export default class Ancestry extends Identifiable {
 	get relationship():		   Relationship | null { return this.relationshipAt(); }
 	get widget_map():		 Widget_MapRect | null { return get(s_clusters_geometry)?.widget_mapFor(this) ?? null; }
 	get titleWrapper():		 Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.idHashed, SvelteComponentType.title); }
-	get ids_hashed():		   Array	  <number> { return this.ids.map(i => i.hash()); }
+	get ids_hashed():		   Array	 <Integer> { return this.ids.map(i => i.hash()); }
+	get ids():				   Array	  <string> { return this.id.split(k.generic_separator); }
 	get titles():			   Array	  <string> { return this.ancestors?.map(t => ` \"${t ? t.title : 'null'}\"`) ?? []; }
-	get ancestors():		   Array	   <Thing> { return this.hierarchy.things_forAncestry(this); }
 	get children():			   Array	   <Thing> { return this.hierarchy.things_forAncestries(this.childAncestries); }
-	get childAncestries():	   Array	<Ancestry> { return this.childAncestries_ofKind(this.kindPredicate); }
+	get ancestors():		   Array	   <Thing> { return this.hierarchy.things_forAncestry(this); }
 	get siblingAncestries():   Array	<Ancestry> { return this.parentAncestry?.childAncestries ?? []; }
-	get childRelationships():  Array<Relationship> { return this.relationships_forParents_ofKind(this.kindPredicate, false); }
+	get childAncestries():	   Array	<Ancestry> { return this.childAncestries_ofKind(this.kindPredicate); }
 	get parentRelationships(): Array<Relationship> { return this.relationships_forParents_ofKind(this.kindPredicate, true); }
+	get childRelationships():  Array<Relationship> { return this.relationships_forParents_ofKind(this.kindPredicate, false); }
 	
 	get relationships(): Array<Relationship> {
 		const relationships = this.ids_hashed.map(hid => this.hierarchy.relationship_forHID(hid)) ?? [];
@@ -100,13 +123,6 @@ export default class Ancestry extends Identifiable {
 		const isBulkAlias = this.thing?.isBulkAlias ?? true;	// missing thing, return not allow
 		const canEdit = !this.isRoot || dbDispatch.db.dbType == DBType.local;
 		return canEdit && g.allow_TitleEditing && !isBulkAlias;
-	}
-
-	get ids(): Array<string> {
-		if (this.id == k.empty) {
-			return [];
-		}
-		return this.id.split(k.generic_separator);
 	}
 
 	get idThing(): string {
@@ -226,58 +242,6 @@ export default class Ancestry extends Identifiable {
 		return this.thing?.relationships_forParents_ofKind(kindPredicate, forParents) ?? [];
 	}
 
-	isAProgenyOf(ancestry: Ancestry): boolean {
-		let isAProgeny = false;
-		if (!(ancestry.predicate?.isBidirectional ?? true)) {
-			ancestry.traverse((progenyAncestry: Ancestry) => {
-				if (progenyAncestry.idHashed == this.idHashed) {
-					isAProgeny = true;
-					return true;	// stop traversal
-				}
-				return false;
-			})
-		}
-		return isAProgeny;
-	}
-
-	ancestry_ofNextSibling(increment: boolean): Ancestry | null {
-		const array = this.siblingAncestries;
-		const index = array.map(p => p.id).indexOf(this.id);
-		if (index != -1) {
-			let siblingIndex = index.increment(increment, array.length)
-			if (index == 0) {
-				siblingIndex = 1;
-			}
-			return array[siblingIndex];
-		}
-		return null;
-	}
-
-	childAncestries_ofKind(kindPredicate: string): Array<Ancestry> {
-		let ancestries: Array<Ancestry> = [];
-		const isContains = kindPredicate == PredicateKind.contains;
-		const childRelationships = this.relationships_forParents_ofKind(kindPredicate, false);
-		if (childRelationships.length > 0) {
-			for (const childRelationship of childRelationships) {					// loop through all child relationships
-				if (childRelationship.kindPredicate == kindPredicate) {
-					let ancestry: Ancestry | null;
-					if (isContains) {
-						ancestry = this.uniquelyAppendID(childRelationship.id); 	// add each childRelationship's id
-					} else {
-						ancestry = this.hierarchy.ancestry_remember_createUnique(childRelationship.id, kindPredicate);
-					}
-					if (!!ancestry) {
-						ancestries.push(ancestry);									// and push onto the ancestries
-					}
-				}
-			}
-			if (isContains && this.hierarchy.db.isPersistent) {														// normalize order of children only
-				u.ancestries_orders_normalize_persistentMaybe(ancestries);
-			}
-		}
-		return ancestries;
-	}
-
 	thingAt(back: number): Thing | null {			// 1 == last
 		const relationship = this.relationshipAt(back);
 		if (!!relationship && this.id != k.empty) {
@@ -293,23 +257,6 @@ export default class Ancestry extends Identifiable {
 			return parents?.map(t => t.id).includes(idThing) ?? false;
 		}
 		return false;
-	}
-
-	uniquelyAppendID(id: string): Ancestry | null {
-		let ids = this.ids;
-		ids.push(id);
-		const ancestry = this.hierarchy.ancestry_remember_createUnique(ids.join(k.generic_separator));
-		if (!!ancestry) {
-			if (ancestry.containsMixedPredicates) {
-				this.hierarchy.ancestry_forget(ancestry);
-				return null;
-			}
-			if (ancestry.containsReciprocals) {
-				this.hierarchy.ancestry_forget(ancestry);
-				return null;
-			}
-		}
-		return ancestry;
 	}
 
 	includedInAncestries(ancestries: Array<Ancestry>): boolean {
@@ -414,33 +361,31 @@ export default class Ancestry extends Identifiable {
 		return children;
 	}
 
-	layout_breadcrumbs_within(thresholdWidth: number): [Array<Thing>, Array<number>, Array<number>, number] {
-		const widths: Array<number> = [];
-		const things: Array<Thing> = [];
-		let parent_widths = 0;			// for triggering redraw
-		let total = 0;					// determine how many crumbs will fit
-		const ancestors = this.ancestors ?? [];
-		debug.log_crumbs(`${ancestors.map(a => a.title)}`)
-		for (const thing of ancestors) {
-			if (!!thing) {
-				const width = u.getWidthOf(thing.breadcrumb_title) + 29;
-				if ((total + width) > thresholdWidth) {
-					break;
+	isAProgenyOf(ancestry: Ancestry): boolean {
+		let isAProgeny = false;
+		if (!(ancestry.predicate?.isBidirectional ?? true)) {
+			ancestry.traverse((progenyAncestry: Ancestry) => {
+				if (progenyAncestry.idHashed == this.idHashed) {
+					isAProgeny = true;
+					return true;	// stop traversal
 				}
-				total += width;
-				widths.push(width);
-				things.push(thing);
-				debug.log_crumbs(`${width} ${thing.title}`)
-				parent_widths = parent_widths * 100 + width;
+				return false;
+			})
+		}
+		return isAProgeny;
+	}
+
+	ancestry_ofNextSibling(increment: boolean): Ancestry | null {
+		const array = this.siblingAncestries;
+		const index = array.map(p => p.id).indexOf(this.id);
+		if (index != -1) {
+			let siblingIndex = index.increment(increment, array.length)
+			if (index == 0) {
+				siblingIndex = 1;
 			}
+			return array[siblingIndex];
 		}
-		let sum = (thresholdWidth - total) / 2;
-		let lefts = [sum];				// determine x position of crumbs
-		for (const width of widths) {
-			sum += width;
-			lefts.push(sum);
-		}
-		return [things, widths, lefts, parent_widths];
+		return null;
 	}
 
 	incorporates(ancestry: Ancestry | null): boolean {
@@ -472,6 +417,76 @@ export default class Ancestry extends Identifiable {
 			return k.row_height;
 		}
 		return 0;
+	}
+
+	uniquelyAppendID(id: string): Ancestry | null {
+		let ids = this.ids;
+		ids.push(id);
+		const ancestry = this.hierarchy.ancestry_remember_createUnique(ids.join(k.generic_separator));
+		if (!!ancestry) {
+			if (ancestry.containsMixedPredicates) {
+				this.hierarchy.ancestry_forget(ancestry);
+				return null;
+			}
+			if (ancestry.containsReciprocals) {
+				this.hierarchy.ancestry_forget(ancestry);
+				return null;
+			}
+		}
+		return ancestry;
+	}
+
+	childAncestries_ofKind(kindPredicate: string): Array<Ancestry> {
+		let ancestries: Array<Ancestry> = [];
+		const isContains = kindPredicate == PredicateKind.contains;
+		const childRelationships = this.relationships_forParents_ofKind(kindPredicate, false);
+		if (childRelationships.length > 0) {
+			for (const childRelationship of childRelationships) {					// loop through all child relationships
+				if (childRelationship.kindPredicate == kindPredicate) {
+					let ancestry: Ancestry | null;
+					if (isContains) {
+						ancestry = this.uniquelyAppendID(childRelationship.id); 	// add each childRelationship's id
+					} else {
+						ancestry = this.hierarchy.ancestry_remember_createUnique(childRelationship.id, kindPredicate);
+					}
+					if (!!ancestry) {
+						ancestries.push(ancestry);									// and push onto the ancestries
+					}
+				}
+			}
+			if (isContains && this.hierarchy.db.isPersistent) {														// normalize order of children only
+				u.ancestries_orders_normalize_persistentMaybe(ancestries);
+			}
+		}
+		return ancestries;
+	}
+
+	layout_breadcrumbs_within(thresholdWidth: number): [Array<Thing>, Array<number>, Array<number>, number] {
+		const crumb_things: Array<Thing> = [];
+		const widths: Array<number> = [];
+		let parent_widths = 0;						// encoded as one parent count per 2 digits (base 10) ... for triggering redraw
+		let total = 0;								// determine how many crumbs will fit
+		const things = this.ancestors ?? [];
+		for (const thing of things) {
+			if (!!thing) {
+				const width = u.getWidthOf(thing.breadcrumb_title) + 29;
+				if ((total + width) > thresholdWidth) {
+					break;
+				}
+				total += width;
+				widths.push(width);
+				crumb_things.push(thing);
+				debug.log_crumbs(`${width} ${thing.title}`);
+				parent_widths = parent_widths * 100 + width;
+			}
+		}
+		let left = (thresholdWidth - total) / 2;	// position of first crumb
+		let lefts = [left];
+		for (const width of widths) {
+			left += width;							// position of next crumb
+			lefts.push(left);
+		}
+		return [crumb_things, widths, lefts, parent_widths];
 	}
 
 	visibleProgeny_width(special: boolean = false, visited: Array<number> = []): number {
@@ -672,26 +687,6 @@ export default class Ancestry extends Identifiable {
 			debug.log_edit(`EDIT ${this.title}`)
 			this.grabOnly();
 			s_title_edit_state.set(new Title_Edit_State(this));
-		}
-	}
-
-	traverse(apply_closureTo: (ancestry: Ancestry) => boolean) {
-		if (!apply_closureTo(this)) {
-			for (const childAncestry of this.childAncestries) {
-				childAncestry.traverse(apply_closureTo);
-			}
-		}
-	}
-
-	async traverse_async(apply_closureTo: (ancestry: Ancestry) => Promise<boolean>) {
-		try {
-			if (!await apply_closureTo(this)) {
-				for (const childAncestry of this.childAncestries) {
-					await childAncestry.traverse_async(apply_closureTo);
-				}
-			}
-		} catch (error) {
-			console.error('Error during traverse_async:', error);
 		}
 	}
 

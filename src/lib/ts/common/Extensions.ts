@@ -1,6 +1,8 @@
+import type { Integer } from './Types';
+
 declare global {
 	interface String {
-		hash(): number;
+		hash(): Integer;
 		lastWord(): string;
 		html_encode(): string;
 		unCamelCase(): string;
@@ -83,13 +85,13 @@ Object.defineProperty(String.prototype, 'clipWithEllipsisAt', {
 Object.defineProperty(String.prototype, 'hash', {
 	value: function() {
 		var hash = 0,
-		i, chr;
+		i, character;
 		if (this.length === 0) {
 			return hash;
 		}
 		for (i = 0; i < this.length; i++) {
-			chr = this.charCodeAt(i);
-			hash = ((hash << 5) - hash) + chr;
+			character = this.charCodeAt(i);
+			hash = ((hash << 5) - hash) + character;
 			hash |= 0; // Convert to 32bit integer
 		}
 		return hash;
@@ -131,12 +133,12 @@ Object.defineProperty(String.prototype, 'html_encode', {
 
 declare global {
 	interface Number {
-		roundToEven(): number;
+		roundToEven(): Integer;
 		angle_normalized(): number;
 		expressZero_asHyphen(): string;
-		toFixed(precision: number): string;
+		toFixed(precision: Integer): string;
 		angle_normalized_aroundZero(): number;
-		degrees_of(precision: number): string;
+		degrees_of(precision: Integer): string;
 		straddles_zero(other: number): boolean;
 		add_angle_normalized(angle: number): number;
 		normalize_between_zeroAnd(value: number): number;
@@ -240,8 +242,8 @@ Object.defineProperty(Number.prototype, 'isBetween', {
 });
 
 Object.defineProperty(Number.prototype, 'roundToEven', {
-	value: function(): number {
-		return Math.round(this / 2) * 2;
+	value: function(): Integer {
+		return (Math.round(this / 2) * 2) as Integer;
 	},
 	writable: false,
 	enumerable: false,
@@ -249,7 +251,7 @@ Object.defineProperty(Number.prototype, 'roundToEven', {
 });
 
 Object.defineProperty(Number.prototype, 'degrees_of', {
-	value: function(precision: number): string {
+	value: function(precision: Integer): string {
 		const degrees = this * 180 / Math.PI;
 		return degrees.toFixed(precision);
 	},
@@ -291,7 +293,7 @@ Object.defineProperty(Number.prototype, 'expressZero_asHyphen', {
 });
 
 Object.defineProperty(Number.prototype, 'toFixed', {
-	value: function(precision: number): string {
+	value: function(precision: Integer): string {
 		const formatter = new Intl.NumberFormat('en-US', {
 			style: 'decimal',
 			maximumFractionDigits: precision,

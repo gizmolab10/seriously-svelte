@@ -19,11 +19,6 @@ export default class Trait extends Datum {
 	get hasNoData():		boolean { return !this.ownerID && !this.type && !this.type; }
 	get fields(): Airtable.FieldSet { return { type: this.type, ownerID: [this.ownerID], text: this.text }; }
 
-    static trait_fromJSON(json: string): Trait {
-        const parsed = JSON.parse(json);
-        return new Trait(parsed.baseID, parsed.id, parsed.ownerID, parsed.type, parsed.text, true);
-    }
-
 	async persist() {
 		if (!this.awaitingCreation) {
 			this.updateModifyDate();

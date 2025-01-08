@@ -8,8 +8,4 @@ export default class Access extends PersistentIdentifiable {
 		this.kind = kind;
 	}
 
-    static access_fromJSON(json: string): Access {
-        const parsed = JSON.parse(json);
-        return new Access(parsed.dbType, parsed.id, parsed.kind, true);
-    }
 }

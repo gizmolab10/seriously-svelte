@@ -38,6 +38,7 @@ export class Debug {
 	hasOption(option: DebugFlag) { return this.flags.includes(option); }
 	log_key(message: string) { this.log_maybe(DebugFlag.key, message); }
 	log_edit(message: string) { this.log_maybe(DebugFlag.edit, message); }
+	log_info(message: string) { this.log_maybe(DebugFlag.info, message); }
 	log_build(message: string) { this.log_maybe(DebugFlag.build, message) }
 	log_error(message: string) { this.log_maybe(DebugFlag.error, message) }
 	log_hover(message: string) { this.log_maybe(DebugFlag.hover, message) }
@@ -60,9 +61,9 @@ export class Debug {
 	get hide_radial(): boolean { return this.hasOption(DebugFlag.hide_radial); }
 	get reticule(): boolean { return this.hasOption(DebugFlag.reticule); }
 	get cursor(): boolean { return this.hasOption(DebugFlag.cursor); }
+	get radial(): boolean { return this.hasOption(DebugFlag.radial); }
 	get graph(): boolean { return this.hasOption(DebugFlag.graph); }
 	get lines(): boolean { return this.hasOption(DebugFlag.lines); }
-	get radial(): boolean { return this.hasOption(DebugFlag.radial); }
 	get tools(): boolean { return this.hasOption(DebugFlag.tools); }
 	get info(): boolean { return this.hasOption(DebugFlag.info); }
 

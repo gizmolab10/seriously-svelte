@@ -1,6 +1,7 @@
 import { w, Rect, wrappers, Mouse_State, SvelteComponentType } from './Global_Imports';
 import { Handle_Mouse_State, Create_Mouse_State } from './Types';
 import Identifiable from '../basis/Identifiable';
+import type { Integer } from './Types';
 
 // Ancestry sometimes needs to access and or alter an associated svelte component
 
@@ -10,7 +11,7 @@ export default class Svelte_Wrapper extends Identifiable {
     type: SvelteComponentType;
     element: HTMLElement;
 
-    constructor(element: HTMLElement, handle_mouse_state: Handle_Mouse_State, idHashed: number, type: SvelteComponentType, parentTypes: Array<SvelteComponentType> = []) {
+    constructor(element: HTMLElement, handle_mouse_state: Handle_Mouse_State, idHashed: Integer, type: SvelteComponentType, parentTypes: Array<SvelteComponentType> = []) {
 		super();
         this.type = type;
         this.element = element;

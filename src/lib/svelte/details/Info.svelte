@@ -1,10 +1,11 @@
 <script lang='ts'>
 	import { signals, InfoType, TraitType, persistLocal, ElementType, IDPersistent } from '../../ts/common/Global_Imports';
-	import { g, k, ux, show, Rect, Size, Point, Thing, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
+	import { g, k, ux, show, Rect, Size, Point, Thing, debug, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
 	import { s_focus_ancestry, s_grabbed_ancestries, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
 	import { s_hierarchy, s_thing_color, s_thing_title } from '../../ts/state/Svelte_Stores';
 	import type { Dictionary } from '../../ts/common/Types';
 	import Identifiable from '../../ts/basis/Identifiable';
+	import type { Integer } from '../../ts/common/Types';
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
@@ -26,7 +27,7 @@
 	let ancestry: Ancestry | null = $s_focus_ancestry;
 	let thing: Thing | null = ancestry?.thing ?? null;
 	let text_box_size = new Size(info_width - 4, 68);
-	let thingHID: number | null = thing?.idHashed;
+	let thingHID: Integer | null = thing?.idHashed;
 	let information: Array<Dictionary> = [];
 	let color = k.thing_color_default;
 	let grabs = $s_grabbed_ancestries;
@@ -98,9 +99,11 @@
 				'related'	: thing.relatedRelationships.length.expressZero_asHyphen(),
 				'predicate'	: ancestry.kindPredicate.unCamelCase().lastWord(),
 				'id'		: thing.id.clipWithEllipsisAt(12),
+				'ancestry'	: ancestry.id,
 				'color'		: k.empty,
 			};
 			information = Object.entries(dict);
+			debug.log_info(information)
 			rebuilds += 1;
 		}
 	}
@@ -150,7 +153,7 @@
 				{/key}
 				<Table top={39} array={information}/>
 			{/if}
-			<Color thing={thing} origin={new Point(67, 132)}/>
+			<Color thing={thing} origin={new Point(67, 146)}/>
 			{#if show.traits}
 				<div class='horizontal-line'
 					style='

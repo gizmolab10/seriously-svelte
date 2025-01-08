@@ -1,13 +1,14 @@
 import { k, Thing, debug, DebugFlag, dbDispatch, Predicate } from '../common/Global_Imports';
 import { s_hierarchy } from '../state/Svelte_Stores';
+import type { Integer } from '../common/Types';
 import { get } from 'svelte/store';
 import Datum from '../basis/Datum';
 import Airtable from 'airtable';
 
 export default class Relationship extends Datum {
 	kindPredicate: string;
-	hidParent: number;
-	hidChild: number;
+	hidParent: Integer;
+	hidChild: Integer;
 	idParent: string;
 	idChild: string;
 	order: number; 
@@ -40,11 +41,6 @@ export default class Relationship extends Datum {
 	}
 
 	log(flag: DebugFlag, message: string) { debug.log_maybe(flag, `${message} ${this.description}`); }
-
-    static relationship_fromJSON(json: string): Relationship {
-        const parsed = JSON.parse(json);
-        return new Relationship(parsed.baseID, parsed.id, parsed.kindPredicate, parsed.idParent, parsed.idChild, parsed.order, true);
-    }
 
 	thing(child: boolean): Thing | null {
 		const id = child ? this.idChild : this.idParent;

@@ -39,11 +39,6 @@ export default class PersistentIdentifiable extends Identifiable {
 	set_isDirty() { this.isDirty = true; }		// TODO: set global
 	updateModifyDate() { this.lastModifyDate = new Date(); }
 
-    static persistent_fromJSON(json: string): PersistentIdentifiable {
-        const parsed = JSON.parse(json);
-        return new PersistentIdentifiable(parsed.dbType, parsed.id, true);
-    }
-
 	wasModifiedWithinMS(threshold: number): boolean {
 		const duration = new Date().getTime() - this.lastModifyDate.getTime();
 		const result = duration < threshold;

@@ -1,5 +1,6 @@
 import { Mouse_State } from './Global_Imports';
 
+export type Integer = number & { __brand: 'integer' };
 export type Dictionary<T = any> = { [key: string]: T };
 export type Handle_Result<T = Object, U = void> = (result: T) => U;
 export type Handle_Mouse_State = Handle_Result<Mouse_State, boolean>;
