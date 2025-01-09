@@ -12,11 +12,8 @@
     export let name = k.empty;
     export let forward = true;
     export let ancestry;
-	const hasExtraForChildren = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
 	const revealState = ux.element_state_for(ancestry, ElementType.reveal, subtype);
 	const dragState = ux.element_state_for(ancestry, ElementType.drag, subtype);
-	const rightPadding = g.inRadialMode ? 0 : hasExtraForChildren ? 22.5 : 20;
-	const leftPadding = forward ? 1 : 14;
 	const priorRowHeight = k.row_height;
 	let widgetWrapper!: Svelte_Wrapper;
 	let element_state!: Element_State;
@@ -153,6 +150,9 @@
 		const leftBackward = -(titleWidth + (showingReveal ? 25.5 : 15.5));
 		const dragOffsetY = g.inRadialMode ? 2.8 : 2.7;
 		const dragOffsetX = forward ? (dragX - 1.5) : (titleWidth + deltaX + (showingReveal ? 22.5 : 14));
+		const hasExtraForTinyDots = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
+		const rightPadding = g.inRadialMode ? 0 : (hasExtraForTinyDots ? 0.5 : 0) + 21;
+		const leftPadding = forward ? 1 : 14;
 		dragCenter = Point.square(k.dot_size / 2).offsetByXY(dragOffsetX, dragOffsetY);
 		left = origin.x + deltaX + (forward ? leftForward : leftBackward);
 		padding = `0px ${rightPadding}px 0px ${leftPadding}px`;

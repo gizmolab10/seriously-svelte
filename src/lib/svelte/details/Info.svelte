@@ -97,9 +97,9 @@
 				'children'	: ancestry.children.length.expressZero_asHyphen(),
 				'parents'	: thing.parents.length.expressZero_asHyphen(),
 				'related'	: thing.relatedRelationships.length.expressZero_asHyphen(),
-				'predicate'	: ancestry.kindPredicate.unCamelCase().lastWord(),
+				// 'predicate'	: ancestry.kindPredicate.unCamelCase().lastWord(),
 				'id'		: thing.id.clipWithEllipsisAt(12),
-				'ancestry'	: ancestry.id,
+				// 'ancestry'	: ancestry.id,
 				'color'		: k.empty,
 			};
 			information = Object.entries(dict);
@@ -153,7 +153,7 @@
 				{/key}
 				<Table top={39} array={information}/>
 			{/if}
-			<Color thing={thing} origin={new Point(67, 146)}/>
+			<Color thing={thing} origin={new Point(67, 116)}/>
 			{#if show.traits}
 				<div class='horizontal-line'
 					style='

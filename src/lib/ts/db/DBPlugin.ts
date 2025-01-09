@@ -1,30 +1,18 @@
-import { k, u, Thing, Trait, ThingType, Predicate, Relationship } from '../common/Global_Imports';
-import { Hierarchy, persistLocal, IDPersistent } from '../common/Global_Imports';
+import { k, u, Thing, Trait, Predicate, Relationship } from '../common/Global_Imports';
 import { DBType } from '../basis/PersistentIdentifiable';
-import type { Dictionary } from '../common/Types';
+import { Hierarchy } from '../common/Global_Imports';
 import DBCommon from './DBCommon';
 
-export default class DBLocal extends DBCommon {
-	baseID = k.baseID_file;
-	dbType = DBType.local;
+export default class DBPlugin extends DBCommon {
+	dbType = DBType.plugin;
 	isPersistent = true;
+	baseID = k.empty;
 
 	get h(): Hierarchy { return this.hierarchy; }
-	async remove_all() { persistLocal.write_key(IDPersistent.local, null); }
-	async persistAll() { persistLocal.write_key(IDPersistent.local, u.stringify_object(this.h.all_data)); }
 
-	async fetch_all() {
-		const json_object = persistLocal.read_key(IDPersistent.local);
-		if (!!json_object) {
-			const dict = JSON.parse(json_object) as Dictionary;
-			if (!dict.hid && !dict.id) {		// replaced by idRoot. deprecated files are ignored
-				await this.h.extractFrom(dict);
-				return;
-			}
-		}
-		this.h.predicate_defaults_remember_runtimeCreate();
-		this.h.thing_remember_runtimeCreateUnique(this.baseID, Thing.newID(), 'click here to edit this title', 'limegreen', ThingType.root);
-	}
+	async remove_all() {}
+	async persistAll() {}
+	async fetch_all() {}
 
 	async thing_persistentUpdate(thing: Thing) { this.persistAll(); }
 	async thing_persistentDelete(thing: Thing) { this.persistAll(); }
@@ -43,4 +31,4 @@ export default class DBLocal extends DBCommon {
 	async relationship_remember_persistentCreate(relationship: Relationship) { this.h.relationship_remember(relationship); this.persistAll(); }
 }
 
-export const dbLocal = new DBLocal();
+export const dbPlugin = new DBPlugin();
