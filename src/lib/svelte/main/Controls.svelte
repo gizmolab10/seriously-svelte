@@ -60,7 +60,6 @@
 			element_states_byID[idControl].isOut = mouse_state.isOut;
 		} else if (mouse_state.isUp) {
 			switch (idControl) {
-				case IDControl.open: g.showHelp(); break;
 				case IDControl.help: g.showHelp(); break;
 				case IDControl.details: $s_show_details = !$s_show_details; break;
 				case IDControl.bigger: width = w.zoomBy(k.zoom_in_ratio) - 20; break;	// mobile only

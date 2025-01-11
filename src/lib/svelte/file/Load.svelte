@@ -10,7 +10,7 @@
 	}
 
 	function handle_files_selected(event: CustomEvent<FileList>) {
-		get(s_hierarchy).fetch_fromFile(event.detail[0]);
+		$s_hierarchy.fetch_fromFile(event.detail[0]);
 		$s_id_popupView = null;
 	}
 

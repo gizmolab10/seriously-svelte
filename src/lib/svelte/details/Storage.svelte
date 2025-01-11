@@ -54,7 +54,7 @@
 		} else if (mouse_state.isUp) {
 			const h = $s_hierarchy;
 			switch (idStorage) {
-				case IDStorage.export: h.save_toFile(); break;
+				case IDStorage.export: h.persist_toFile(); break;
 				case IDStorage.import: h.select_file_toUpload(mouse_state.event.shiftKey); break;
 			}
 		}

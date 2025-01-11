@@ -31,12 +31,23 @@ export default class DBAirtable extends DBCommon {
 	isRemote = true;
 
 	relationships_errorMessage = 'Error in Relationships:';
-	async fetch_hierarchy_from(baseID: string) {}
+	async hierarchy_fetchForID(baseID: string) {}
 	things_errorMessage = 'Error in Things:';
 	traits_errorMessage = 'Error in Traits:';
 
-	queryString_apply() {
-		const string = g.queryString.get('name') ?? g.queryString.get('dbid');
+	// async remove_all() {}	// only remove json from localStorage
+
+	async fetch_all() {
+		await this.things_readAll();
+		await this.traits_readAll();
+		await this.predicates_readAll();
+		await this.relationships_readAll();
+		await this.access_readAll();
+		await this.users_readAll();
+	}
+
+	queryStrings_apply() {
+		const string = g.queryStrings.get('name') ?? g.queryStrings.get('dbid');
 		if (!!string) {
 			const names = string.split(k.comma);
 			if (names.length > 1) {
@@ -50,15 +61,6 @@ export default class DBAirtable extends DBCommon {
 				this.users_table = this.base(DatumType.users);
 			}
 		}
-	}
-
-	async fetch_all() {
-		await this.things_readAll();
-		await this.traits_readAll();
-		await this.predicates_readAll();
-		await this.relationships_readAll();
-		await this.access_readAll();
-		await this.users_readAll();
 	}
 
 	//////////////////////////////

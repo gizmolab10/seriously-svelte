@@ -3,7 +3,7 @@ import { s_hierarchy, s_tree_type, s_graph_type, s_detail_types } from '../state
 import { Tree_Type, Graph_Type, Details_Type, Paging_State } from '../common/Global_Imports';
 import { s_focus_ancestry, s_font_size, s_thing_fontFamily } from '../state/Svelte_Stores';
 import { s_rotation_ring_angle, s_ring_rotation_radius } from '../state/Svelte_Stores';
-import { k, show, debug, Ancestry, dbDispatch } from '../common/Global_Imports';
+import { g, k, show, debug, Ancestry, dbDispatch } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
 export enum IDPersistent {
@@ -174,7 +174,7 @@ class Persist_Local {
 	restore_grabbed_andExpanded(force: boolean = false) {
 		const h = get(s_hierarchy);
 		const root = [h.rootAncestry];
-		const erase = dbDispatch.eraseDB;
+		const erase = g.eraseDB;
 		const expanded = erase ? [] : this.ancestries_forKey(this.dbKey_for(IDPersistent.expanded));
 		const grabbed = erase ? root : this.ancestries_forKey(this.dbKey_for(IDPersistent.grabbed)) ?? root;
 		s_grabbed_ancestries.set(grabbed);
@@ -196,7 +196,7 @@ class Persist_Local {
 	restore_focus() {
 		const h = get(s_hierarchy);
 		let ancestryToFocus = h.rootAncestry;
-		if (!this.ignoreAncestries && !dbDispatch.eraseDB) {
+		if (!this.ignoreAncestries && !g.eraseDB) {
 			const focusid = this.readDB_key(IDPersistent.focus);
 			if (!!focusid || focusid == k.empty) {
 				const focusAncestry = h.ancestry_remember_createUnique(focusid);

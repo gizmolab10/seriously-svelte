@@ -150,7 +150,7 @@ export enum Rebuild_Type {
 export enum ZIndex {	// DO NOT change the order
 	common,
 	paging,
-	radial,
+	rings,
 	backmost,
 	lines,
 	text,

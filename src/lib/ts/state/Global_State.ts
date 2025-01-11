@@ -12,13 +12,14 @@ class Global_State {
 	allow_TitleEditing = true;
 	allow_HorizontalScrolling = true;
 
+	eraseDB = false;
 	isEditing_text = false;
 	mouse_responder_number = 0;
 	ring_rotation_state!: Rotation_State;
 	cluster_paging_state!: Rotation_State;
 	ring_resizing_state!: Expansion_State;
 	rebuild_needed_byType: {[type: string]: boolean} = {};
-	queryString = new URLSearchParams(window.location.search);
+	queryStrings = new URLSearchParams(window.location.search);
 
 	startup() {
 		
@@ -30,14 +31,14 @@ class Global_State {
 		//												//
 		//////////////////////////////////////////////////
 
-		debug.queryString_apply();						// debug even setup code
+		debug.queryStrings_apply();						// debug even setup code
 		this.setup_defaults();							// defaults
 		w.restore_state();
 		show.restore_state();							// local persistance
 		persistLocal.restore_defaults();
 		dbDispatch.restore_db();
-		this.queryString_apply();						// query string
-		show.queryString_apply();
+		this.queryStrings_apply();						// query string
+		show.queryStrings_apply();
 		e.setup();
 	}
 
@@ -53,24 +54,21 @@ class Global_State {
 		this.cluster_paging_state = new Rotation_State();
 	}
 
-	queryString_apply() {
-		const queryString = this.queryString;
-        const disable = queryString.get('disable');
-        const eraseOptions = queryString.get('erase')?.split(k.comma) ?? [];
-        if (disable) {
-            const flags = disable.split(',');
-            for (const option of flags) {
-                switch (option) {
-                    case 'editGraph': this.allow_GraphEditing = false; break;
-                    case 'editTitles': this.allow_TitleEditing = false; break;
-                    case 'horizontalScrolling': this.allow_HorizontalScrolling = false; break;
-                }
-            }
-        }
+	queryStrings_apply() {
+		const queryStrings = this.queryStrings;
+        const eraseOptions = queryStrings.get('erase')?.split(k.comma) ?? [];
+        const disableOptions = queryStrings.get('disable')?.split(k.comma) ?? [];
+		for (const option of disableOptions) {
+			switch (option) {
+				case 'editGraph':			this.allow_GraphEditing		   = false; break;
+				case 'editTitles':			this.allow_TitleEditing		   = false; break;
+				case 'horizontalScrolling': this.allow_HorizontalScrolling = false; break;
+			}
+		}
 		for (const option of eraseOptions) {
 			switch (option) {
 				case 'data':
-					dbDispatch.eraseDB = true;
+					this.eraseDB = true;
 					persistLocal.writeDB_key(IDPersistent.focus, null);
 					persistLocal.writeDB_key(IDPersistent.expanded, null); 
 					break;

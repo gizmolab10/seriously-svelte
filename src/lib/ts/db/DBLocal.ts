@@ -1,46 +1,27 @@
-import { k, u, Thing, Trait, ThingType, Predicate, Relationship } from '../common/Global_Imports';
-import { Hierarchy, persistLocal, IDPersistent } from '../common/Global_Imports';
+import { k, Thing, Trait, Predicate, Relationship } from '../common/Global_Imports';
 import { DBType } from '../basis/PersistentIdentifiable';
-import type { Dictionary } from '../common/Types';
 import DBCommon from './DBCommon';
 
 export default class DBLocal extends DBCommon {
 	baseID = k.baseID_file;
 	dbType = DBType.local;
 	isPersistent = true;
-
-	get h(): Hierarchy { return this.hierarchy; }
-	async remove_all() { persistLocal.write_key(IDPersistent.local, null); }
-	async persistAll() { persistLocal.write_key(IDPersistent.local, u.stringify_object(this.h.all_data)); }
-
-	async fetch_all() {
-		const json_object = persistLocal.read_key(IDPersistent.local);
-		if (!!json_object) {
-			const dict = JSON.parse(json_object) as Dictionary;
-			if (!dict.hid && !dict.id) {		// replaced by idRoot. deprecated files are ignored
-				await this.h.extractFrom(dict);
-				return;
-			}
-		}
-		this.h.predicate_defaults_remember_runtimeCreate();
-		this.h.thing_remember_runtimeCreateUnique(this.baseID, Thing.newID(), 'click here to edit this title', 'limegreen', ThingType.root);
-	}
-
-	async thing_persistentUpdate(thing: Thing) { this.persistAll(); }
-	async thing_persistentDelete(thing: Thing) { this.persistAll(); }
-	async thing_remember_persistentCreate(thing: Thing) { this.h.thing_remember(thing); this.persistAll(); }
-
-	async trait_persistentUpdate(trait: Trait) { this.persistAll(); }
-	async trait_persistentDelete(trait: Trait) { this.persistAll(); }
-	async trait_remember_persistentCreate(trait: Trait) { this.h.trait_remember(trait); this.persistAll(); }
 	
-	async predicate_persistentUpdate(predicate: Predicate) { this.persistAll(); }
-	async predicate_persistentDelete(predicate: Predicate) { this.persistAll(); }
-	async predicate_remember_persistentCreate(predicate: Predicate) { this.h.predicate_remember(predicate); this.persistAll(); }
+	async thing_persistentUpdate(thing: Thing) { this.persist_all(); }
+	async thing_persistentDelete(thing: Thing) { this.persist_all(); }
+	async thing_remember_persistentCreate(thing: Thing) { this.hierarchy.thing_remember(thing); this.persist_all(); }
 
-	async relationship_persistentUpdate(relationship: Relationship) { this.persistAll(); }
-	async relationship_persistentDelete(relationship: Relationship) { this.persistAll(); }
-	async relationship_remember_persistentCreate(relationship: Relationship) { this.h.relationship_remember(relationship); this.persistAll(); }
+	async trait_persistentUpdate(trait: Trait) { this.persist_all(); }
+	async trait_persistentDelete(trait: Trait) { this.persist_all(); }
+	async trait_remember_persistentCreate(trait: Trait) { this.hierarchy.trait_remember(trait); this.persist_all(); }
+	
+	async predicate_persistentUpdate(predicate: Predicate) { this.persist_all(); }
+	async predicate_persistentDelete(predicate: Predicate) { this.persist_all(); }
+	async predicate_remember_persistentCreate(predicate: Predicate) { this.hierarchy.predicate_remember(predicate); this.persist_all(); }
+
+	async relationship_persistentUpdate(relationship: Relationship) { this.persist_all(); }
+	async relationship_persistentDelete(relationship: Relationship) { this.persist_all(); }
+	async relationship_remember_persistentCreate(relationship: Relationship) { this.hierarchy.relationship_remember(relationship); this.persist_all(); }
 }
 
 export const dbLocal = new DBLocal();

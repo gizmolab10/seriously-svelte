@@ -66,7 +66,7 @@
 	}
 
 	function closure(mouse_state) {
-		if (dbDispatch.db.hasData) {
+		if (dbDispatch.db.hierarchy.hasRoot) {
 			if (mouse_state.isHover) {
 				if (mouse_state.isOut) {
 					border = `${borderStyle} ${borderColor}`;

@@ -97,9 +97,7 @@
 				'children'	: ancestry.children.length.expressZero_asHyphen(),
 				'parents'	: thing.parents.length.expressZero_asHyphen(),
 				'related'	: thing.relatedRelationships.length.expressZero_asHyphen(),
-				// 'predicate'	: ancestry.kindPredicate.unCamelCase().lastWord(),
 				'id'		: thing.id.clipWithEllipsisAt(12),
-				// 'ancestry'	: ancestry.id,
 				'color'		: k.empty,
 			};
 			information = Object.entries(dict);
@@ -116,7 +114,7 @@
 			}
 		} else if (!text) {		// do after test for k.empty, which also is interpreted as falsey
 			(async () => {
-				await $s_hierarchy.db.persistAll();
+				await $s_hierarchy.db.persist_all();
 			})();
 		}
 	}

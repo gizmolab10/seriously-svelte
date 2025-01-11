@@ -1,5 +1,5 @@
-import { g, k, u, Thing, Trait, debug, signals, DebugFlag, Hierarchy, Predicate, TraitType } from '../common/Global_Imports';
-import { ThingType, dbDispatch, persistLocal, IDPersistent, Relationship, CreationOptions } from '../common/Global_Imports';
+import { g, k, u, Thing, Trait, debug, signals, DebugFlag, Predicate, TraitType } from '../common/Global_Imports';
+import { ThingType, persistLocal, IDPersistent, Relationship, CreationOptions } from '../common/Global_Imports';
 import { QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
 import { onSnapshot, deleteField, getFirestore, DocumentData, DocumentChange } from 'firebase/firestore';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
@@ -37,9 +37,9 @@ export default class DBFirebase extends DBCommon {
 
 	reportError(error: any) { console.log(error); }
 
-	queryString_apply() {
+	queryStrings_apply() {
 		const persistedID = persistLocal.read_key(IDPersistent.base_id);
-		const id = g.queryString.get('name') ?? g.queryString.get('dbid') ?? persistedID ?? 'Public';
+		const id = g.queryStrings.get('name') ?? g.queryStrings.get('dbid') ?? persistedID ?? 'Public';
 		persistLocal.write_key(IDPersistent.base_id, id);
 		this.baseID = id;
 	}
@@ -60,11 +60,12 @@ export default class DBFirebase extends DBCommon {
 	async fetch_all() {
 		await this.recordLoginIP();
 		await this.fetch_documentsOf(DatumType.predicates);
-		await this.fetch_hierarchy_from(this.baseID);
-		await this.fetch_bulkAliases();		// TODO: assumes all ancestries created
+		await this.hierarchy_fetchForID(this.baseID);
+		await this.fetch_bulkAliases();		// TODO: assumes all ancestries are already created
+		this.setup_remote_handlers();
 	}
 
-	async fetch_hierarchy_from(baseID: string) {
+	async hierarchy_fetchForID(baseID: string) {
 		await this.fetch_documentsOf(DatumType.things, baseID);
 		await this.fetch_documentsOf(DatumType.traits, baseID);
 		await this.fetch_documentsOf(DatumType.relationships, baseID);
@@ -74,30 +75,12 @@ export default class DBFirebase extends DBCommon {
 		try {
 			const collectionRef = !baseID ? collection(this.firestore, datum_type) : collection(this.firestore, this.bulksName, baseID, datum_type);
 			let querySnapshot = await getDocs(collectionRef);
-			const bulk = this.bulk_for(baseID);
 			if (!!baseID) {
 				if (querySnapshot.empty) {
 					await this.document_defaults_ofType_persistentCreateIn(datum_type, baseID, collectionRef);
 					querySnapshot = await getDocs(collectionRef);
 				}
-				this.setup_handle_docChanges(baseID, datum_type, collectionRef);
 			}
-			
-			
-			///////////////////
-			// data IDSignal //
-			///////////////////
-
-			if (bulk) {
-				switch (datum_type) {
-					case DatumType.things:				 bulk.thingsCollection = collectionRef; break;
-					case DatumType.traits:				 bulk.traitsCollection = collectionRef; break;
-					case DatumType.relationships: bulk.relationshipsCollection = collectionRef; break;
-				}
-			} else if (datum_type == DatumType.predicates) {
-				this.predicatesCollection = collectionRef;
-			}
-
 			const docs = querySnapshot.docs;
 			debug.log_remote('READ ' + docs.length + ' from ' + baseID + ':' + datum_type);
 			for (const docSnapshot of docs) {
@@ -181,19 +164,35 @@ export default class DBFirebase extends DBCommon {
 		}
 	}
 
-	setup_handle_docChanges(baseID: string, datum_type: DatumType, collection: CollectionReference) {
-		onSnapshot(collection, (snapshot) => {
-			if (this.hierarchy.isAssembled) {		// u.ignore snapshots caused by data written to server
-				if (this.deferSnapshots) {
-					this.snapshot_deferOne(baseID, datum_type, snapshot);
-				} else {
-					snapshot.docChanges().forEach((change) => {	// convert and remember
-						this.handle_docChanges(baseID, datum_type, change);
-					});
+	setup_remote_handlers() {
+		for (const datum_type of this.hierarchy.fetching_dataTypes) {
+			if (datum_type == DatumType.predicates) {
+				this.predicatesCollection = collection(this.firestore, datum_type);
+			} else {
+				const baseID = this.baseID;
+				const bulk = this.bulk_for(baseID);
+				const collectionRef = collection(this.firestore, this.bulksName, baseID, datum_type);
+				if (!!bulk) {
+					switch (datum_type) {
+						case DatumType.things:				 bulk.thingsCollection = collectionRef; break;
+						case DatumType.traits:				 bulk.traitsCollection = collectionRef; break;
+						case DatumType.relationships: bulk.relationshipsCollection = collectionRef; break;
+					}
 				}
+				onSnapshot(collectionRef, (snapshot) => {
+					if (this.hierarchy.isAssembled) {		// u.ignore snapshots caused by data written to server
+						if (this.deferSnapshots) {
+							this.snapshot_deferOne(baseID, datum_type, snapshot);
+						} else {
+							snapshot.docChanges().forEach(async (change) => {	// convert and remember
+								await this.handle_docChanges(baseID, datum_type, change);
+							});
+						}
+					}
+				})
 			}
 		}
-	)};
+	}
 
 	async handle_docChanges(baseID: string, datum_type: DatumType, change: DocumentChange) {
 		const doc = change.doc;
@@ -201,10 +200,9 @@ export default class DBFirebase extends DBCommon {
 		if (DBFirebase.data_isValidOfKind(datum_type, data)) {
 			const id = doc.id;
 
-			///////////////////////
-			//	 data IDSignal	 //
-			//	change IDSignal  //
-			///////////////////////
+			//////////////////////////////
+			//	ignores predicate data  //
+			//////////////////////////////
 
 			try {
 				switch (datum_type) {
@@ -640,10 +638,10 @@ export default class DBFirebase extends DBCommon {
 	async recordLoginIP() {
 		await this.getUserIPAddress().then( async (ipAddress) => {
 			if (!!ipAddress && ipAddress != '69.181.235.85') {
-				const queryString = g.queryString.toString() ?? 'empty';
+				const queryStrings = g.queryStrings.toString() ?? 'empty';
 				const logRef = collection(this.firestore, 'access_logs');
 				const item = {
-					queries: queryString,
+					queries: queryStrings,
 					build: k.build_number,
 					ipAddress: ipAddress,
 					timestamp: serverTimestamp(),

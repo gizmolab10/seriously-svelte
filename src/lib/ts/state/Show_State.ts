@@ -11,10 +11,10 @@ class Show_State {
 	traits				= false;
 	tiny_dots			= true;
 
-	queryString_apply() {
-		const queryString = g.queryString;
-		const hiddenNames = queryString.get('hide')?.split(k.comma) ?? [];
-		const visibleNames = queryString.get('show')?.split(k.comma) ?? [];
+	queryStrings_apply() {
+		const queryStrings = g.queryStrings;
+		const hiddenNames = queryStrings.get('hide')?.split(k.comma) ?? [];
+		const visibleNames = queryStrings.get('show')?.split(k.comma) ?? [];
 		const hidden = Object.fromEntries(hiddenNames.map(s => [s, false]) ?? {});
 		const visible = Object.fromEntries(visibleNames.map(s => [s, true]) ?? {});
 		const keyedFlags: Dictionary<boolean> = {...visible, ...hidden};

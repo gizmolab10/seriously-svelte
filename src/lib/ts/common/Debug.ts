@@ -3,8 +3,9 @@ import { g } from '../../ts/state/Global_State';
 // query string: ?debug=reticule,tools
 
 export enum DebugFlag {
-	hide_radial	= 'hide_radial',
-	reticule	= 'reticule',	// debug ring layout geometry
+	hide_rings	= 'hide_rings',
+	fast_load	= 'fast_load',
+	reticule	= 'reticule',	// debug radial layout geometry
 	segments	= 'segments',
 	origins 	= 'origins',
 	persist		= 'persist',
@@ -58,7 +59,7 @@ export class Debug {
 	log_segments(message: string) { this.log_maybe(DebugFlag.segments, message) }
 	log_target(target: any, key: string) { console.log(`Method \'${key}\' is called on class \'${target.constructor.name}\'`); }
 	log_maybe(option: DebugFlag, message: string) { if (this.hasOption(option)) { console.log(option.toUpperCase(), message); } }
-	get hide_radial(): boolean { return this.hasOption(DebugFlag.hide_radial); }
+	get hide_rings(): boolean { return this.hasOption(DebugFlag.hide_rings); }
 	get reticule(): boolean { return this.hasOption(DebugFlag.reticule); }
 	get cursor(): boolean { return this.hasOption(DebugFlag.cursor); }
 	get radial(): boolean { return this.hasOption(DebugFlag.radial); }
@@ -67,13 +68,13 @@ export class Debug {
 	get tools(): boolean { return this.hasOption(DebugFlag.tools); }
 	get info(): boolean { return this.hasOption(DebugFlag.info); }
 
-	queryString_apply() {
-		const debug = g.queryString.get('debug');
+	queryStrings_apply() {
+		const debug = g.queryStrings.get('debug');
 		if (debug) {
 			const flags = debug.split(',');
 			for (const option of flags) {
 				switch (option) {
-					case 'hide_radial': this.flags.push(DebugFlag.hide_radial); break;
+					case 'hide_rings': this.flags.push(DebugFlag.hide_rings); break;
 					case 'reticule': this.flags.push(DebugFlag.reticule); break;
 					case 'segments': this.flags.push(DebugFlag.segments); break;
 					case 'origins': this.flags.push(DebugFlag.origins); break;

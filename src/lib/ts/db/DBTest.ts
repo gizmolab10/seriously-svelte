@@ -6,9 +6,7 @@ export default class DBTest extends DBCommon {
 	baseID = k.baseID_test;
 	dbType = DBType.test;
 
-	async persistAll() {}
-
-	async fetch_all() {
+	async fetch_all_fromLocal() {
 		const idTa = 'A';
 		const idTb = 'B';
 		const idTc = 'C';
@@ -50,7 +48,7 @@ export default class DBTest extends DBCommon {
 		this.makeMore(20, 'G', kindC, idTb, true);	// contained by B
 		this.makeMore(5, 'G', kindC, idTb, false);	// containing B
 		this.makeMore(5, 'G', kindR, idTb, false);	// related to B
-	};
+	}
 
 	makeMore(count: number, first: string, kindPredicate: string, idOther: string, asChild: boolean) {
 		for (let i = 0; i < count; i++) {

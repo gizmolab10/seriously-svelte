@@ -3,8 +3,6 @@ import { u } from '../common/Utilities';
 
 export default class Files {
 
-	static readonly WRITE: unique symbol;
-
 	persist_json_object_toFile(object: Object, fileName: string): void {
 		const content = u.stringify_object(object);
 		const blob = new Blob([content], { type: 'application/json' });
@@ -14,26 +12,20 @@ export default class Files {
 		link.click();
 		URL.revokeObjectURL(link.href);
 	}
-
-	static readonly READ: unique symbol;
-
-	async fetch_json_object_fromFile(fileName: string, onSuccess: Handle_Result, onFailure: Handle_Result)  {
-		return await files.extract_json_object_fromFile(new File([], fileName, {}), onSuccess, onFailure);
-	}
 		
 	async extract_json_object_fromFile(file: File, onSuccess: Handle_Result, onFailure: Handle_Result = (() => {})) {
 		return new Promise((resolve, reject) => {
 			const reader = new FileReader();
-			let json_object = new Object();
+			let object = new Object();
 			reader.onload = function (e) {
 				const result = (e.target?.result as string);
 				if (!result || result.length == 0) {
 					onFailure('Empty file.');
 				} else {
 					try {
-						json_object = JSON.parse(result);
-						onSuccess(json_object);
-						return { success: json_object };
+						object = JSON.parse(result);
+						onSuccess(object);
+						return { success: object };
 					} catch (error) {
 						onFailure(`Error parsing JSON: '${result}' ${(error as Error).message}`);
 					}
@@ -44,6 +36,11 @@ export default class Files {
 			};
 			reader.readAsText(file);
 		});
+	}
+
+	async fetch_json_object_fromFile(fileName: string, onSuccess: Handle_Result, onFailure: Handle_Result)  {
+		const file = new File([], fileName, {});
+		return await files.extract_json_object_fromFile(file, onSuccess, onFailure);
 	}
 	
 }
