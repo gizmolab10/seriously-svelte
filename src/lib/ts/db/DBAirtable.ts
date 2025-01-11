@@ -38,12 +38,12 @@ export default class DBAirtable extends DBCommon {
 	// async remove_all() {}	// only remove json from localStorage
 
 	async fetch_all() {
-		await this.things_readAll();
-		await this.traits_readAll();
-		await this.predicates_readAll();
-		await this.relationships_readAll();
-		await this.access_readAll();
-		await this.users_readAll();
+		await this.things_fetch_all();
+		await this.traits_fetch_all();
+		await this.predicates_fetch_all();
+		await this.relationships_fetch_all();
+		await this.access_fetch_all();
+		await this.users_fetch_all();
 	}
 
 	queryStrings_apply() {
@@ -67,8 +67,8 @@ export default class DBAirtable extends DBCommon {
 	//			THINGS			//
 	//////////////////////////////
 
-	async things_readAll() {
-		this.hierarchy.things_forgetAll(); // clear
+	async things_fetch_all() {
+		this.hierarchy.things_forget_all(); // clear
 
 		try {
 			const select = this.things_table.select();
@@ -81,7 +81,7 @@ export default class DBAirtable extends DBCommon {
 				}
 			})
 		} catch (error) {
-			debug.log_error(this.things_errorMessage + ' (things_readAll) ' + error);
+			debug.log_error(this.things_errorMessage + ' (things_fetch_all) ' + error);
 		}
 	}
 
@@ -120,8 +120,8 @@ export default class DBAirtable extends DBCommon {
 	//			TRAITS			//
 	//////////////////////////////
 
-	async traits_readAll() {
-		this.hierarchy.traits_forgetAll();
+	async traits_fetch_all() {
+		this.hierarchy.traits_forget_all();
 		try {
 			const records = await this.traits_table.select().all()
 
@@ -167,8 +167,8 @@ export default class DBAirtable extends DBCommon {
 
 	static readonly RELATIONSHIPS: unique symbol;
 
-	async relationships_readAll() {
-		this.hierarchy.relationships_forgetAll();
+	async relationships_fetch_all() {
+		this.hierarchy.relationships_forget_all();
 		try {
 			const records = await this.relationships_table.select().all()
 
@@ -217,7 +217,7 @@ export default class DBAirtable extends DBCommon {
 
 	static readonly ANCILLARY: unique symbol;
 
-	async predicates_readAll() {
+	async predicates_fetch_all() {
 		try {
 			const records = await this.predicates_table.select().all()
 
@@ -234,7 +234,7 @@ export default class DBAirtable extends DBCommon {
 		}
 	}
 
-	async access_readAll() {
+	async access_fetch_all() {
 		try {
 			const records = await this.access_table.select().all()
 
@@ -249,7 +249,7 @@ export default class DBAirtable extends DBCommon {
 		}
 	}
 
-	async users_readAll() {
+	async users_fetch_all() {
 		try {
 			const records = await this.users_table.select().all()
 

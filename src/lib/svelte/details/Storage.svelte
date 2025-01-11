@@ -2,7 +2,7 @@
 	import { k, u, ux, Point, ZIndex, dbDispatch, Hierarchy, IDStorage } from '../../ts/common/Global_Imports';
 	import { ElementType, Element_State, IDPersistent, persistLocal } from '../../ts/common/Global_Imports';
 	import { s_db_type, s_db_loadTime, s_hierarchy } from '../../ts/state/Svelte_Stores';
-	import { s_number_ofThings, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
+	import { s_storage_update_trigger, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
 	import { DBType } from '../../ts/basis/PersistentIdentifiable';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Button from '../mouse/Button.svelte';
@@ -16,7 +16,7 @@
 	setup_element_states();
 	
 	$: {
-		const _ = $s_number_ofThings;
+		const _ = $s_storage_update_trigger;
 		const h = $s_hierarchy;
 		if (!!h) {
 			const dict: Dictionary = {};
@@ -27,7 +27,7 @@
 			}
 			dict['depth'] = h.depth;
 			dict['things'] = h.things.length;
-			dict['relationships'] = h.relationships.length;
+			dict['relationships'] = h.relationships.length.expressZero_asHyphen();
 			information = Object.entries(dict);
 			rebuilds += 1;
 		}

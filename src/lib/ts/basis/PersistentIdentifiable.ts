@@ -1,4 +1,6 @@
+import { s_hierarchy } from '../state/Svelte_Stores';
 import Identifiable from './Identifiable';
+import { get } from 'svelte/store';
 
 export enum DBType {
 	postgres = 'postgres',
@@ -34,6 +36,7 @@ export default class PersistentIdentifiable extends Identifiable {
 		this.already_persisted = already_persisted;
 		this.hasPersistentStorage = dbType != DBType.test;
 		this.isDirty = this.hasPersistentStorage && !already_persisted;
+		get(s_hierarchy).update_storage_trigger();
 	}
 
 	async persist() {}

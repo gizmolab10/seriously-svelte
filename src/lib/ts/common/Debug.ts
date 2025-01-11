@@ -60,6 +60,7 @@ export class Debug {
 	log_target(target: any, key: string) { console.log(`Method \'${key}\' is called on class \'${target.constructor.name}\'`); }
 	log_maybe(option: DebugFlag, message: string) { if (this.hasOption(option)) { console.log(option.toUpperCase(), message); } }
 	get hide_rings(): boolean { return this.hasOption(DebugFlag.hide_rings); }
+	get fast_load(): boolean { return this.hasOption(DebugFlag.fast_load); }
 	get reticule(): boolean { return this.hasOption(DebugFlag.reticule); }
 	get cursor(): boolean { return this.hasOption(DebugFlag.cursor); }
 	get radial(): boolean { return this.hasOption(DebugFlag.radial); }

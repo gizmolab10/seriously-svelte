@@ -26,6 +26,7 @@ export default class Ancestry extends Identifiable {
 		this.thing_isChild = thing_isChild;
 		this.kindPredicate = kindPredicate;
 		this.dbType = dbType;
+		get(s_hierarchy).update_storage_trigger(0);
 	}
 
 	destroy() {

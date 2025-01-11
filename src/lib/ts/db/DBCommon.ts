@@ -1,5 +1,5 @@
 import { g, k, u, Trait, Thing, ThingType, Hierarchy, Predicate, Relationship } from '../common/Global_Imports';
-import { signals, Startup_State, persistLocal, IDPersistent } from '../common/Global_Imports';
+import { debug, signals, Startup_State, persistLocal, IDPersistent } from '../common/Global_Imports';
 import { s_hierarchy, s_db_loadTime, s_startup_state } from '../state/Svelte_Stores';
 import PersistentIdentifiable from '../basis/PersistentIdentifiable';
 import type { Dictionary } from '../common/Types';
@@ -92,20 +92,25 @@ export default class DBCommon {
 			g.eraseDB = false;			// only apply on launch
 			await this.remove_all();	// start fresh
 		}
-		// h.forgetAll();
-		// await this.fetch_all_fromLocal();
-		// if (!this.isRemote) {
-			// await h.cleanup();
-		// } else if (h.hasRoot ) {
-			// this.setup_remote_handlers();			// setup remote update handler
-		// } else {
-			const startTime = new Date().getTime();
-			s_db_loadTime.set(null);
-			await this.fetch_all();
-			await h.cleanup();
-			// await this.persist_all();
-			this.set_loadTime_from(startTime);
-		// }
+		h.forget_all();
+		if (debug.fast_load) {
+			await this.fetch_all_fromLocal();	// needs to set needs save && adjust ids during save
+			if (h.hasRoot) {
+				if (!this.isRemote) {
+					await h.cleanup();
+				} else {
+					this.setup_remote_handlers();
+					await this.persist_all();
+				}
+				return;
+			}
+		}
+		const startTime = new Date().getTime();
+		s_db_loadTime.set(null);
+		await this.fetch_all();
+		await h.cleanup();
+		// await this.persist_all();
+		this.set_loadTime_from(startTime);
 	}
 	
 	set_loadTime_from(startTime: number) {

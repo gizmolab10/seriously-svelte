@@ -95,25 +95,20 @@ class Persist_Local {
 		return values;
 	}
 
-	ancestry_forID(idAncestry: string): Ancestry {
-		const h = get(s_hierarchy);
-		const idsRelationship = idAncestry.split(k.generic_separator);				// ancestor id is multiple relationship ids separated by generic_separator
-		const idRelationship = idsRelationship.slice(-1)[0];						// grab last relationship id
-		const kindPredicate = h.kindPredicateFor_idRelationship(idRelationship);	// grab its predicate kind
-		return h.ancestry_remember_createUnique(idAncestry, kindPredicate);
-	}
-
 	ancestries_forKey(key: string): Array<Ancestry> {	// 2 keys supported so far {grabbed, expanded}
 		const aids = this.read_key(key);
 		const length = aids?.length ?? 0;
+		let ancestries: Array<Ancestry> = [];
 		if (!this.ignoreAncestries && length > 0) {
-			let ancestries: Array<Ancestry> = [];
+			let h = get(s_hierarchy);
 			for (const aid of aids) {
-				ancestries.push(this.ancestry_forID(aid));
+				const a = h.ancestry_valid_forID(aid);
+				if (!!a) {
+					ancestries.push(a);
+				}
 			};
-			return ancestries;
 		}
-		return [];
+		return ancestries;
 	}
 
 	reactivity_subscribe() {
