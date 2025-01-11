@@ -80,7 +80,7 @@
 
 	$: {
 		if (!!widget) {
-			widgetWrapper = new Svelte_Wrapper(widget, handle_mouse_state, ancestry.idHashed, SvelteComponentType.widget);
+			widgetWrapper = new Svelte_Wrapper(widget, handle_mouse_state, ancestry.hid, SvelteComponentType.widget);
 		}
 	}
 	

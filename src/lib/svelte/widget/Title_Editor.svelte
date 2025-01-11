@@ -36,7 +36,7 @@
 
 	$: {
 		if (!!input && !titleWrapper) {
-			titleWrapper = new Svelte_Wrapper(input, handle_mouse_state, ancestry.idHashed, SvelteComponentType.title);
+			titleWrapper = new Svelte_Wrapper(input, handle_mouse_state, ancestry.hid, SvelteComponentType.title);
 		}
 	}
 

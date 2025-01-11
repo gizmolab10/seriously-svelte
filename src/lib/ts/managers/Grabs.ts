@@ -20,7 +20,7 @@ export default class Grabs {
 		const ancestries = get(s_grabbed_ancestries) ?? [];
 		if (ancestries.length > 0) {
 			const ancestry = ancestries.slice(-1)[0];	// does not alter ancestries
-			const relationshipHID = ancestry?.relationship?.idHashed;
+			const relationshipHID = ancestry?.relationship?.hid;
 			if (!!relationshipHID && !!get(s_hierarchy).relationship_forHID(relationshipHID)) {
 				return ancestry;
 			}

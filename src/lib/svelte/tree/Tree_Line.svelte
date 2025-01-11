@@ -18,7 +18,7 @@
 
 	$: {
 		if (!!line) {
-			lineWrapper = new Svelte_Wrapper(line, handle_mouse_state, ancestry.idHashed, SvelteComponentType.line);
+			lineWrapper = new Svelte_Wrapper(line, handle_mouse_state, ancestry.hid, SvelteComponentType.line);
 		}
 	}
 

@@ -92,7 +92,7 @@ export default class Ancestry extends Identifiable {
 	get predicate():			  Predicate | null { return this.hierarchy.predicate_forKind(this.kindPredicate) }
 	get relationship():		   Relationship | null { return this.relationshipAt(); }
 	get widget_map():		 Widget_MapRect | null { return get(s_clusters_geometry)?.widget_mapFor(this) ?? null; }
-	get titleWrapper():		 Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.idHashed, SvelteComponentType.title); }
+	get titleWrapper():		 Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.hid, SvelteComponentType.title); }
 	get ids_hashed():		   Array	 <Integer> { return this.ids.map(i => i.hash()); }
 	get ids():				   Array	  <string> { return this.id.split(k.generic_separator); }
 	get titles():			   Array	  <string> { return this.ancestors?.map(t => ` \"${t ? t.title : 'null'}\"`) ?? []; }
@@ -215,7 +215,7 @@ export default class Ancestry extends Identifiable {
 			const toolThing = toolsAncestry?.thing;
 			const thing = this.thing;
 			if (!!thing && !!toolThing && !!toolsAncestry) {
-				if (thing.idHashed != toolThing.idHashed && !toolsAncestry.ancestry_hasEqualID(this)) {
+				if (thing.hid!= toolThing.hid&& !toolsAncestry.ancestry_hasEqualID(this)) {
 					const isRelated = predicate.kind == PredicateKind.isRelated;
 					const toolIsAnAncestor = isRelated ? false : thing.parentIDs.includes(toolThing.id);
 					const isParentOfTool = this.thing_isImmediateParentOf(toolsAncestry, predicate.kind);
@@ -237,7 +237,7 @@ export default class Ancestry extends Identifiable {
 	sharesAnID(ancestry: Ancestry | null): boolean { return !ancestry ? false : this.ids.some(id => ancestry.ids.includes(id)); }
 	showsClusterFor(predicate: Predicate): boolean { return this.includesPredicateKind(predicate.kind) && this.hasThings(predicate); }
 	relationshipAt(back: number = 1): Relationship | null { return this.hierarchy.relationship_forHID(this.idAt(back).hash()) ?? null; }
-	ancestry_hasEqualID(ancestry: Ancestry | null | undefined): boolean { return !!ancestry && this.idHashed == ancestry.idHashed && this.dbType == ancestry.dbType; }
+	ancestry_hasEqualID(ancestry: Ancestry | null | undefined): boolean { return !!ancestry && this.hid == ancestry.hid&& this.dbType == ancestry.dbType; }
 	
 	relationships_forParents_ofKind(kindPredicate: string, forParents: boolean) {
 		return this.thing?.relationships_forParents_ofKind(kindPredicate, forParents) ?? [];
@@ -366,7 +366,7 @@ export default class Ancestry extends Identifiable {
 		let isAProgeny = false;
 		if (!(ancestry.predicate?.isBidirectional ?? true)) {
 			ancestry.traverse((progenyAncestry: Ancestry) => {
-				if (progenyAncestry.idHashed == this.idHashed) {
+				if (progenyAncestry.hid == this.hid) {
 					isAProgeny = true;
 					return true;	// stop traversal
 				}
@@ -493,12 +493,12 @@ export default class Ancestry extends Identifiable {
 	visibleProgeny_width(special: boolean = false, visited: Array<number> = []): number {
 		const thing = this.thing;
 		if (!!thing) {
-			const idHashed = this.idHashed;
+			const hid = this.hid;
 			let width = special ? 0 : (thing.titleWidth + 6);
-			if (!visited.includes(idHashed) && this.showsChildRelationships) {
+			if (!visited.includes(hid) && this.showsChildRelationships) {
 				let progenyWidth = 0;
 				for (const childAncestry of this.childAncestries) {
-					const childProgenyWidth = childAncestry.visibleProgeny_width(false, [...visited, idHashed]);
+					const childProgenyWidth = childAncestry.visibleProgeny_width(false, [...visited, hid]);
 					if (progenyWidth < childProgenyWidth) {
 						progenyWidth = childProgenyWidth;
 					}
@@ -650,7 +650,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	order_normalizeRecursive_persistentMaybe(persist: boolean, visited: Array<number> = []) {
-		const hid = this.idHashed;
+		const hid = this.hid;
 		const childAncestries = this.childAncestries;
 		if (!visited.includes(hid) && childAncestries && childAncestries.length > 1) {
 			u.ancestries_orders_normalize_persistentMaybe(childAncestries, persist);

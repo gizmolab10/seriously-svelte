@@ -4,11 +4,11 @@ import { v4 as uuid } from 'uuid';
 import '../common/Extensions';
 
 export default class Identifiable {
-	idHashed: Integer;
+	hid: Integer;
 	id: string;
 
 	constructor(id: string = Identifiable.newID()) {
-		this.idHashed = id.hash();
+		this.hid = id.hash();
 		this.id = id;
 	}
 
@@ -16,7 +16,7 @@ export default class Identifiable {
 	isHoverInverted(type: string): boolean { return false; }
 
 	setID(id: string = Identifiable.newID()) {
-		this.idHashed = id.hash();
+		this.hid = id.hash();
 		this.id = id;
 	}
 	

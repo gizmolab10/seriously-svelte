@@ -49,7 +49,7 @@
 
 	$: {
 		if (!!dotDrag) {
-			dragWrapper = new Svelte_Wrapper(dotDrag, handle_mouse_state, ancestry.idHashed, SvelteComponentType.drag);
+			dragWrapper = new Svelte_Wrapper(dotDrag, handle_mouse_state, ancestry.hid, SvelteComponentType.drag);
 			element_state.set_forHovering(ancestry.thing?.color, 'pointer');
 		}
 	}

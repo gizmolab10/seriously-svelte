@@ -29,9 +29,9 @@ export class Wrappers {
 	wrapper_add(wrapper: Svelte_Wrapper) {
 		const array = this.wrappers_byType_andHID;
 		const dict = array[wrapper.type] ?? {};
-		const hash = wrapper.idHashed;
 		const type = wrapper.type;
-		dict[hash] = wrapper;
+		const hid = wrapper.hid;
+		dict[hid] = wrapper;
 		array[type] = dict;
 		// this.add_toHitHierarchy(wrapper);
 	}
@@ -85,9 +85,9 @@ export class Wrappers {
 		} else {
 			const wrappers = Object.values(wrappers_byHID);
 			for (const wrapper of wrappers) {
-				const idHashed = wrapper.idHashed;
-				const ancestry = get(s_hierarchy).ancestry_forHID(idHashed)
-				const title = ancestry?.title ?? idHashed;
+				const hid = wrapper.hid;
+				const ancestry = get(s_hierarchy).ancestry_forHID(hid)
+				const title = ancestry?.title ?? hid;
 				debug.log_action(`hitsFor ${type} ${title}`);
 				if (wrapper.isHit(event)) {
 					const recurse = this.hitsForChildTypesOf(event, type);

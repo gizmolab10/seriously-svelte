@@ -11,11 +11,11 @@ export default class Svelte_Wrapper extends Identifiable {
     type: SvelteComponentType;
     element: HTMLElement;
 
-    constructor(element: HTMLElement, handle_mouse_state: Handle_Mouse_State, idHashed: Integer, type: SvelteComponentType, parentTypes: Array<SvelteComponentType> = []) {
+    constructor(element: HTMLElement, handle_mouse_state: Handle_Mouse_State, hid: Integer, type: SvelteComponentType, parentTypes: Array<SvelteComponentType> = []) {
 		super();
+        this.hid = hid;
         this.type = type;
         this.element = element;
-        this.idHashed = idHashed;
         this.set_parentTypes(parentTypes);  // ABANDON
         this.handle_mouse_state = handle_mouse_state;
     	wrappers.wrapper_add(this);

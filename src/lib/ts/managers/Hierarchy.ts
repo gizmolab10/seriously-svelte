@@ -262,7 +262,7 @@ export class Hierarchy {
 
 	thing_forget(thing: Thing) {
 		const typeThings = this.things_byType[thing.type];
-		delete this.thing_byHID[thing.idHashed];
+		delete this.thing_byHID[thing.hid];
 		this.things = u.strip_invalid(this.things);
 		if (!!typeThings) {
 			this.things_byType[thing.type] = u.strip_invalid(typeThings);
@@ -341,8 +341,8 @@ export class Hierarchy {
 	}
 
 	thing_remember(thing: Thing) {
-		if (!!thing && !this.thing_forHID(thing.idHashed)) {
-			this.thing_byHID[thing.idHashed] = thing;
+		if (!!thing && !this.thing_forHID(thing.hid)) {
+			this.thing_byHID[thing.hid] = thing;
 			let things = this.things_byType[thing.type] ?? [];
 			if (!things.map(t => t.id).includes(thing.id)) {
 				things.push(thing);
@@ -391,8 +391,8 @@ export class Hierarchy {
 
 	async thing_forget_persistentDelete(thing: Thing) {
 		const relationships = u.uniquely_concatenateArrays(
-			this.relationships_byChildHID[thing.idHashed] ?? [],
-			this.relationships_byParentHID[thing.idHashed] ?? []
+			this.relationships_byChildHID[thing.hid] ?? [],
+			this.relationships_byParentHID[thing.hid] ?? []
 		)
 		this.thing_forget(thing);				// forget so onSnapshot logic will not signal children, do first so UX updates quickly
 		await this.db.thing_persistentDelete(thing);
@@ -506,7 +506,7 @@ export class Hierarchy {
 	}
 
 	trait_forget(trait: Trait) {
-		delete this.trait_byHID[trait.idHashed];
+		delete this.trait_byHID[trait.hid];
 		delete this.traits_byOwnerHID[trait.ownerID.hash()];
 		this.traits = this.traits.filter(t => t !== trait);
 		this.traits_byType[trait.type] = this.traits_byType[trait.type].filter(t => t !== trait);
@@ -514,7 +514,7 @@ export class Hierarchy {
 
 	trait_remember(trait: Trait) {
 		const hid = trait.ownerID.hash();
-		this.trait_byHID[trait.idHashed] = trait;
+		this.trait_byHID[trait.hid] = trait;
 		(this.traits_byOwnerHID[hid] = this.traits_byOwnerHID[hid] || []).push(trait);
 		(this.traits_byType[trait.type] = this.traits_byType[trait.type] || []).push(trait);
 		this.traits.push(trait);
@@ -638,7 +638,7 @@ export class Hierarchy {
 
 	relationship_forget(relationship: Relationship) {
 		u.remove<Relationship>(this.relationships, relationship);
-		delete this.relationship_byHID[relationship.idHashed];
+		delete this.relationship_byHID[relationship.hid];
 		this.relationship_forget_forHID(this.relationships_byChildHID, relationship.idChild.hash(), relationship);
 		this.relationship_forget_forHID(this.relationships_byParentHID, relationship.idParent.hash(), relationship);
 	}
@@ -699,11 +699,11 @@ export class Hierarchy {
 	}
 	
 	relationship_remember(relationship: Relationship) {
-		if (!this.relationship_byHID[relationship.idHashed]) {
+		if (!this.relationship_byHID[relationship.hid]) {
 			if (!this.relationships.map(r => r.id).includes(relationship.id)) {
 				this.relationships.push(relationship);
 			}
-			this.relationship_byHID[relationship.idHashed] = relationship;
+			this.relationship_byHID[relationship.hid] = relationship;
 			this.relationship_remember_byKnown(relationship, relationship.idChild, this.relationships_byChildHID);
 			this.relationship_remember_byKnown(relationship, relationship.idParent, this.relationships_byParentHID);
 			
@@ -800,7 +800,7 @@ export class Hierarchy {
 
 	static readonly ANCESTRY: unique symbol;
 
-	ancestry_forHID(idHashed: Integer): Ancestry | null { return this.ancestry_byHID[idHashed] ?? null; }
+	ancestry_forHID(hid: Integer): Ancestry | null { return this.ancestry_byHID[hid] ?? null; }
 
 	get ancestry_forBreadcrumbs(): Ancestry {
 		const focus = get(s_focus_ancestry);
@@ -810,9 +810,9 @@ export class Hierarchy {
 	}
 
 	ancestry_valid_forID(idAncestry: string): Ancestry | null {
-		const ids = idAncestry.split(k.generic_separator);				// ancestor id is multiple relationship ids separated by generic_separator
-		const id = ids.slice(-1)[0];									// grab last relationship id
-		const kindPredicate = this.kindPredicateFor_idRelationship(id);	// grab its predicate kind
+		const ids = idAncestry.split(k.generic_separator);					// ancestor id is multiple relationship ids separated by generic_separator
+		const id = ids.slice(-1)[0];										// grab last relationship id
+		const kindPredicate = this.kindPredicateFor_idRelationship(id);		// grab its predicate kind
 		const notValid = !this.relationships_areAllValid_forIDs(ids) || !kindPredicate;
 		return notValid ? null : this.ancestry_remember_createUnique(idAncestry, kindPredicate);
 	}
@@ -828,19 +828,19 @@ export class Hierarchy {
 
 	ancestry_forget(ancestry: Ancestry | null) {
 		if (!!ancestry) {
-			const idHashed = ancestry.idHashed;
+			const hid = ancestry.hid;
 			let dict = this.ancestry_byKind_andHash[ancestry.kindPredicate] ?? {};
-			delete this.ancestry_byHID[idHashed];
-			delete dict[idHashed];
+			delete this.ancestry_byHID[hid];
+			delete dict[hid];
 			this.ancestry_byKind_andHash[ancestry.kindPredicate] = dict;
 		}
 	}
 
 	ancestry_remember(ancestry: Ancestry) {
-		const idHashed = ancestry.idHashed;
+		const hid = ancestry.hid;
 		let dict = this.ancestry_byKind_andHash[ancestry.kindPredicate] ?? {};
-		this.ancestry_byHID[idHashed] = ancestry;
-		dict[idHashed] = ancestry;
+		this.ancestry_byHID[hid] = ancestry;
+		dict[hid] = ancestry;
 		this.ancestry_byKind_andHash[ancestry.kindPredicate] = dict;
 	}
 
@@ -889,9 +889,9 @@ export class Hierarchy {
 	}
 
 	ancestry_remember_createUnique(id: string = k.empty, kindPredicate: string = PredicateKind.contains): Ancestry {
-		const idHashed = id.hash();
+		const hid = id.hash();
 		let dict = this.ancestry_byKind_andHash[kindPredicate] ?? {};
-		let ancestry = dict[idHashed];
+		let ancestry = dict[hid];
 		if (!ancestry) {
 			ancestry = new Ancestry(this.db.dbType, id, kindPredicate);
 			this.ancestry_remember(ancestry);

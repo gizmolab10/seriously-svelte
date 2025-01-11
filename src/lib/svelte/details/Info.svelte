@@ -27,7 +27,7 @@
 	let ancestry: Ancestry | null = $s_focus_ancestry;
 	let thing: Thing | null = ancestry?.thing ?? null;
 	let text_box_size = new Size(info_width - 4, 68);
-	let thingHID: Integer | null = thing?.idHashed;
+	let thingHID: Integer | null = thing?.hid;
 	let information: Array<Dictionary> = [];
 	let color = k.thing_color_default;
 	let grabs = $s_grabbed_ancestries;
@@ -91,7 +91,7 @@
 		thing = ancestry?.thing;
 		if (!!thing) {
 			thing_title = thing.title;
-			thingHID = thing.idHashed;
+			thingHID = thing.hid;
 			const dict = {
 				'depth'		: ancestry.depth.expressZero_asHyphen(),
 				'children'	: ancestry.children.length.expressZero_asHyphen(),

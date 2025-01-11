@@ -27,13 +27,13 @@ export default class Thing extends Datum {
 	};
 	
 	get parents():				Array		 <Thing> { return this.parents_forKind(PredicateKind.contains); }
-	get traits():				Array		 <Trait> { return get(s_hierarchy).traits_forOwnerHID(this.idHashed) ?? []; }
+	get traits():				Array		 <Trait> { return get(s_hierarchy).traits_forOwnerHID(this.hid) ?? []; }
 	get parentIDs():			Array		<string> { return this.parents.map(t => t.id); }
 	get parentAncestries(): 	Array	  <Ancestry> { return this.parentAncestries_for(Predicate.contains); }
 	get relatedRelationships(): Array <Relationship> { return this.relationships_forParents_ofKind(PredicateKind.isRelated, false); }
 	get fields():		  		Dictionary  <string> { return { title: this.title, color: this.color, type: this.type }; }
-	get quest():					   string | null { return get(s_hierarchy).trait_forType_ownerHID(TraitType.quest, this.idHashed)?.text ?? null; }
-	get consequence():				   string | null { return get(s_hierarchy).trait_forType_ownerHID(TraitType.consequence, this.idHashed)?.text ?? null; }
+	get quest():					   string | null { return get(s_hierarchy).trait_forType_ownerHID(TraitType.quest, this.hid)?.text ?? null; }
+	get consequence():				   string | null { return get(s_hierarchy).trait_forType_ownerHID(TraitType.consequence, this.hid)?.text ?? null; }
 	get idBridging():						  string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get description():						  string { return this.id + ' \"' + this.title + '\"'; }
 	get breadcrumb_title():					  string { return this.title.clipWithEllipsisAt(15); }

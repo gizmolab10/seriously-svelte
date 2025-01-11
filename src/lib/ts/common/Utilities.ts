@@ -57,7 +57,7 @@ class Utilities {
 		let ancestriesByHID: {[hash: number]: Ancestry} = {};
 		let stripped: Array<Ancestry> = [];
 		for (const ancestry of ancestries) {
-			const hid = ancestry.idHashed;
+			const hid = ancestry.hid;
 			if ((!!hid || hid == 0) && (!ancestriesByHID[hid])) {
 				ancestriesByHID[hid] = ancestry;
 				stripped.push(ancestry);
@@ -70,7 +70,7 @@ class Utilities {
 		let identifiablesByHID: {[hash: number]: Identifiable} = {};
 		let stripped: Array<Identifiable> = [];
 		for (const identifiable of identifiables) {
-			const hid = identifiable.idHashed;
+			const hid = identifiable.hid;
 			if ((!!hid || hid == 0) && (!identifiablesByHID[hid])) {
 				identifiablesByHID[hid] = identifiable;
 				stripped.push(identifiable);
@@ -209,7 +209,7 @@ class Utilities {
 			'dbType',
 			'baseID',
 			'isDirty',
-			'idHashed',
+			'hid',
 			'hidChild',
 			'hidParent',
 			'isEditing',
