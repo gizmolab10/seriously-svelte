@@ -1,5 +1,5 @@
 import { k, u, Thing, Trait, Predicate, Relationship } from '../common/Global_Imports';
-import { DBType } from '../basis/PersistentIdentifiable';
+import { DBType } from '../basis/Persistent_Identifiable';
 import { Hierarchy } from '../common/Global_Imports';
 import DBCommon from './DBCommon';
 
@@ -28,7 +28,7 @@ export default class DBPlugin extends DBCommon {
 
 	async relationship_persistentUpdate(relationship: Relationship) { this.persist_all(); }
 	async relationship_persistentDelete(relationship: Relationship) { this.persist_all(); }
-	async relationship_remember_persistentCreate(relationship: Relationship) { this.h.relationship_remember(relationship); this.persist_all(); }
+	async relationship_remember_persistentCreate(relationship: Relationship) { this.h.relationship_remember_ifValid(relationship); this.persist_all(); }
 }
 
 export const dbPlugin = new DBPlugin();

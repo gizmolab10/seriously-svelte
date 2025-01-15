@@ -100,14 +100,11 @@ export default class Thing extends Datum {
 		return super.isInDifferentBulkThan(other) || (other.isBulkAlias && !this.isBulkAlias && this.baseID != other.title);
 	}
 
-	async persist() {
-		if (!this.awaitingCreation) {
-			this.updateModifyDate();
-			if (this.already_persisted) {
-				await dbDispatch.db.thing_persistentUpdate(this);
-			} else if (dbDispatch.db.isPersistent) {
-				await dbDispatch.db.thing_remember_persistentCreate(this);
-			}
+	async persistent_create_orUpdate(already_persisted: boolean) {
+		if (already_persisted) {
+			await dbDispatch.db.thing_persistentUpdate(this);
+		} else if (dbDispatch.db.isPersistent) {
+			await dbDispatch.db.thing_remember_persistentCreate(this);
 		}
 	}
 

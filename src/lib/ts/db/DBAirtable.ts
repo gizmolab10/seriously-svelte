@@ -1,6 +1,6 @@
 import { DebugFlag, Relationship, CreationOptions } from '../common/Global_Imports';
 import { g, k, u, debug, Thing, Trait, TraitType } from '../common/Global_Imports';
-import { DBType, DatumType } from '../basis/PersistentIdentifiable';
+import { DBType, DatumType } from '../basis/Persistent_Identifiable';
 import DBCommon from './DBCommon';
 import Airtable from 'airtable';
 
@@ -90,8 +90,8 @@ export default class DBAirtable extends DBCommon {
 	async thing_remember_persistentCreate(thing: Thing) {
 		try {
 			const dict = await this.things_table.create(thing.fields);
-			thing.already_persisted = true;		// was saved by create (the line above)
-			thing.awaitingCreation = false;
+			thing.state.already_persisted = true;		// was saved by create (the line above)
+			thing.state.awaitingCreation = false;
 			this.hierarchy.thing_remember_updateID_to(thing, dict['id']);
 		} catch (error) {
 			thing.log(DebugFlag.remote, this.things_errorMessage + error);
@@ -158,7 +158,7 @@ export default class DBAirtable extends DBCommon {
 			const fields = await this.traits_table.create(trait.fields);
 			const id = fields['id'];	//	// need for update, delete and traits_byHID (to get parent from relationship)
 			trait.setID(id);
-			trait.already_persisted = true;
+			trait.state.already_persisted = true;
 			this.hierarchy.trait_remember(trait);
 		} catch (error) {
 			trait.log(DebugFlag.remote, this.traits_errorMessage + error);
@@ -188,12 +188,12 @@ export default class DBAirtable extends DBCommon {
 	static readonly RELATIONSHIP: unique symbol;
 
 	async relationship_remember_persistentCreate(relationship: Relationship) {
-		if (!!relationship && !relationship.already_persisted) {
+		if (!!relationship && !relationship.state.already_persisted) {
 			try {
 				const fields = await this.relationships_table.create(relationship.fields);	// insert with temporary id
 				const id = fields['id'];																										// grab permanent id
 				relationship.setID(id);
-				relationship.already_persisted = true;
+				relationship.state.already_persisted = true;
 				this.hierarchy.relationships_refreshKnowns();
 			} catch (error) {
 				relationship.log(DebugFlag.remote, this.relationships_errorMessage + error);

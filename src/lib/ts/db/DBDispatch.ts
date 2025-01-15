@@ -1,6 +1,6 @@
 import { g, k, IDPersistent, persistLocal } from '../common/Global_Imports';
 import { s_db_type, s_db_loadTime } from '../state/Svelte_Stores';
-import { DBType } from '../basis/PersistentIdentifiable';
+import { DBType } from '../basis/Persistent_Identifiable';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import { dbLocal } from './DBLocal';

@@ -3,7 +3,7 @@
 	import { ElementType, Element_State, IDPersistent, persistLocal } from '../../ts/common/Global_Imports';
 	import { s_db_type, s_db_loadTime, s_hierarchy } from '../../ts/state/Svelte_Stores';
 	import { s_storage_update_trigger, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
-	import { DBType } from '../../ts/basis/PersistentIdentifiable';
+	import { DBType } from '../../ts/basis/Persistent_Identifiable';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Button from '../mouse/Button.svelte';
 	import Table from '../kit/Table.svelte';

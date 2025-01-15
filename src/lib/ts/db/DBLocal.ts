@@ -1,5 +1,5 @@
 import { k, Thing, Trait, Predicate, Relationship } from '../common/Global_Imports';
-import { DBType } from '../basis/PersistentIdentifiable';
+import { DBType } from '../basis/Persistent_Identifiable';
 import DBCommon from './DBCommon';
 
 export default class DBLocal extends DBCommon {
@@ -21,7 +21,7 @@ export default class DBLocal extends DBCommon {
 
 	async relationship_persistentUpdate(relationship: Relationship) { this.persist_all(); }
 	async relationship_persistentDelete(relationship: Relationship) { this.persist_all(); }
-	async relationship_remember_persistentCreate(relationship: Relationship) { this.hierarchy.relationship_remember(relationship); this.persist_all(); }
+	async relationship_remember_persistentCreate(relationship: Relationship) { this.hierarchy.relationship_remember_ifValid(relationship); this.persist_all(); }
 }
 
 export const dbLocal = new DBLocal();

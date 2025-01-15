@@ -149,13 +149,15 @@ class Utilities {
 	}
 
 	ancestries_orders_normalize_persistentMaybe(array: Array<Ancestry>, persist: boolean = true): void {
-		this.sort_byOrder(array);
-		array.forEach( (ancestry, index) => {
-			if (ancestry.order != index) {
-				const relationship = ancestry.relationship;
-				relationship?.order_setTo_persistentMaybe(index, persist);
-			}
-		});
+		if (array.length > 1) {
+			this.sort_byOrder(array);
+			array.forEach( (ancestry, index) => {
+				if (ancestry.order != index) {
+					const relationship = ancestry.relationship;
+					relationship?.order_setTo_persistentMaybe(index, persist);
+				}
+			});
+		}
 	}
 
 	getWidth_ofString_withSize(s: string, fontSize: string): number {
@@ -206,10 +208,10 @@ class Utilities {
 
 	stringify_object(object: Object): string {
 		const extras = [
+			'hid',
+			'state',
 			'dbType',
 			'baseID',
-			'isDirty',
-			'hid',
 			'hidChild',
 			'hidParent',
 			'isEditing',
@@ -219,10 +221,6 @@ class Utilities {
 			'page_states',
 			'needsBulkFetch',
 			'selectionRange',
-			'lastModifyDate',
-			'awaitingCreation',
-			'already_persisted',
-			'hasPersistentStorage',
 		];
 		function removeExtras(key: string, value: any): any | undefined {
 			if (extras.includes(key)) {

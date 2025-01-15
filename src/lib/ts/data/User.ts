@@ -1,6 +1,6 @@
-import PersistentIdentifiable from '../basis/PersistentIdentifiable';
+import Persistent_Identifiable from '../basis/Persistent_Identifiable';
 
-export default class User extends PersistentIdentifiable {
+export default class User extends Persistent_Identifiable {
 	name: string;
 	email: string;
 	phone: string;

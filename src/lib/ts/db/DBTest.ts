@@ -1,5 +1,5 @@
 import { k, Thing, Trait, ThingType, Relationship, PredicateKind } from '../common/Global_Imports';
-import { DBType } from '../basis/PersistentIdentifiable';
+import { DBType } from '../basis/Persistent_Identifiable';
 import DBCommon from './DBCommon';
 
 export default class DBTest extends DBCommon {
@@ -75,7 +75,7 @@ export default class DBTest extends DBCommon {
 
 	async thing_remember_persistentCreate(thing: Thing) { this.hierarchy.thing_remember(thing); }
 	async trait_remember_persistentCreate(trait: Trait) { this.hierarchy.trait_remember(trait); }
-	async relationship_remember_persistentCreate(relationship: Relationship) { this.hierarchy.relationship_remember(relationship); }
+	async relationship_remember_persistentCreate(relationship: Relationship) { this.hierarchy.relationship_remember_ifValid(relationship); }
 
 }
 

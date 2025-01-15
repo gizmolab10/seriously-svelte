@@ -6,7 +6,7 @@
 	import { s_db_type, s_graphRect, s_hierarchy } from '../../ts/state/Svelte_Stores';
 	import { s_id_popupView, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
 	import { s_resize_count, s_startup_state } from '../../ts/state/Svelte_Stores';
-	import { DBType } from '../../ts/basis/PersistentIdentifiable';
+	import { DBType } from '../../ts/basis/Persistent_Identifiable';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Details from '../details/Details.svelte';
 	import Breadcrumbs from './Breadcrumbs.svelte';

@@ -19,14 +19,11 @@ export default class Trait extends Datum {
 	get hasNoData():		boolean { return !this.ownerID && !this.type && !this.type; }
 	get fields(): Airtable.FieldSet { return { type: this.type, ownerID: [this.ownerID], text: this.text }; }
 
-	async persist() {
-		if (!this.awaitingCreation) {
-			this.updateModifyDate();
-			if (this.already_persisted) {
-				await dbDispatch.db.trait_persistentUpdate(this);
-			} else if (dbDispatch.db.isPersistent) {
-				await dbDispatch.db.trait_remember_persistentCreate(this);
-			}
+	async persistent_create_orUpdate(already_persisted: boolean) {
+		if (already_persisted) {
+			await dbDispatch.db.trait_persistentUpdate(this);
+		} else if (dbDispatch.db.isPersistent) {
+			await dbDispatch.db.trait_remember_persistentCreate(this);
 		}
 	}
 

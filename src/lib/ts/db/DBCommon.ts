@@ -1,7 +1,7 @@
 import { g, k, u, Trait, Thing, ThingType, Hierarchy, Predicate, Relationship } from '../common/Global_Imports';
 import { debug, signals, Startup_State, persistLocal, IDPersistent } from '../common/Global_Imports';
 import { s_hierarchy, s_db_loadTime, s_startup_state } from '../state/Svelte_Stores';
-import PersistentIdentifiable from '../basis/PersistentIdentifiable';
+import Persistent_Identifiable from '../basis/Persistent_Identifiable';
 import type { Dictionary } from '../common/Types';
 
 export default class DBCommon {
@@ -9,9 +9,9 @@ export default class DBCommon {
 	idPersistence!: IDPersistent;
 	hierarchy!: Hierarchy;
 	isPersistent = false;
+	isRemote = false;
 	baseID = k.empty;
 	dbType = k.empty;
-	isRemote = false;
 	
 	queryStrings_apply() {}
 	setup_remote_handlers() {}
@@ -38,22 +38,22 @@ export default class DBCommon {
 	async relationship_persistentDelete(relationship: Relationship) {}
 	async relationship_remember_persistentCreate(relationship: Relationship) {}
 
-	async persist_all() {
+	async persist_all(force: boolean = false) {
 		if (this.isRemote) {
 			const h = this.hierarchy;
-			await this.persist_all_identifiables(h.things);
-			await this.persist_all_identifiables(h.traits);
-			await this.persist_all_identifiables(h.predicates);
-			await this.persist_all_identifiables(h.relationships);
+			await this.persist_maybe_all_identifiables(force, h.things);
+			await this.persist_maybe_all_identifiables(force, h.traits);
+			await this.persist_maybe_all_identifiables(force, h.predicates);
+			await this.persist_maybe_all_identifiables(force, h.relationships);
 		}
 		this.persist_all_toLocal();
 	}
 
-	async persist_all_identifiables(identifiables: Array<PersistentIdentifiable>) {
+	async persist_maybe_all_identifiables(force: boolean = false, identifiables: Array<Persistent_Identifiable>) {
 		for (const identifiable of identifiables) {
-			if (identifiable.isDirty) {
-				identifiable.isDirty = false;
+			if (identifiable.state.isDirty || force) {
 				await identifiable.persist();
+				identifiable.state.isDirty = false;
 			}
 		}
 	}
@@ -62,7 +62,7 @@ export default class DBCommon {
 		const json = persistLocal.readDB_key(IDPersistent.local);
 		const h = this.hierarchy;
 		if (!!json) {
-			await h.extractFromDict(JSON.parse(json) as Dictionary);
+			await h.extract_fromDict(JSON.parse(json) as Dictionary);
 		} else if (!this.isRemote) {
 			h.predicate_defaults_remember_runtimeCreate();
 			h.thing_remember_runtimeCreateUnique(this.baseID, Thing.newID(), 'click here to edit this title', 'limegreen', ThingType.root);
@@ -75,10 +75,10 @@ export default class DBCommon {
 		this.hierarchy = h;
 		s_hierarchy.set(h);
 		if (h.hasRoot) {
-			h.reset();
+			h.restore_fromPersistLocal();
 		} else {
 			s_startup_state.set(Startup_State.fetch);
-			await this.hierarchy_create_fetch_andBuild();
+			await this.hierarchy_create_fastLoad_or_fetch_andBuild();
 		}
 		setTimeout( () => {
 			s_startup_state.set(Startup_State.ready);
@@ -86,7 +86,7 @@ export default class DBCommon {
 		}, 1);
 	}
 	
-	async hierarchy_create_fetch_andBuild() {
+	async hierarchy_create_fastLoad_or_fetch_andBuild() {
 		const h = this.hierarchy;
 		if (g.eraseDB) {
 			g.eraseDB = false;			// only apply on launch
@@ -97,7 +97,7 @@ export default class DBCommon {
 			await this.fetch_all_fromLocal();	// needs to set needs save && adjust ids during save
 			if (h.hasRoot) {
 				if (!this.isRemote) {
-					await h.cleanup();
+					await h.wrapUp_data_forUX();
 				} else {
 					this.setup_remote_handlers();
 					await this.persist_all();
@@ -108,7 +108,7 @@ export default class DBCommon {
 		const startTime = new Date().getTime();
 		s_db_loadTime.set(null);
 		await this.fetch_all();
-		await h.cleanup();
+		await h.wrapUp_data_forUX();
 		// await this.persist_all();
 		this.set_loadTime_from(startTime);
 	}

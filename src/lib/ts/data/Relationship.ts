@@ -1,4 +1,4 @@
-import { k, Thing, debug, DebugFlag, dbDispatch, Predicate } from '../common/Global_Imports';
+import { Thing, debug, DebugFlag, dbDispatch, Predicate } from '../common/Global_Imports';
 import { s_hierarchy } from '../state/Svelte_Stores';
 import type { Integer } from '../common/Types';
 import { get } from 'svelte/store';
@@ -25,12 +25,12 @@ export default class Relationship extends Datum {
 
 	get child(): Thing | null { return this.thing(true); }
 	get parent(): Thing | null { return this.thing(false); }
-	get isValid(): boolean { return !!this.kindPredicate && !!this.idParent && !!this.idChild; }
+	get isValid(): boolean { return !!this.kindPredicate && !!this.parent && !!this.child; }
 	get predicate(): Predicate | null { return get(s_hierarchy).predicate_forKind(this.kindPredicate); }
 	get fields(): Airtable.FieldSet { return { kindPredicate: this.kindPredicate, parent: [this.idParent], child: [this.idChild], order: this.order }; }
 
 	get verbose(): string {
-		const persisted = this.already_persisted ? 'STORED' : 'DIRTY';
+		const persisted = this.state.already_persisted ? 'STORED' : 'DIRTY';
 		return `BASE ${this.baseID} ${persisted} [${this.order}] ${this.id} ${this.description}`;
 	}
 
@@ -56,14 +56,11 @@ export default class Relationship extends Datum {
 		}
 	}
 
-	async persist() {
-		if (!this.awaitingCreation) {
-			this.updateModifyDate();
-			if (this.already_persisted) {
-				await dbDispatch.db.relationship_persistentUpdate(this);
-			} else if (dbDispatch.db.isPersistent) {
-				await dbDispatch.db.relationship_remember_persistentCreate(this);
-			}
+	async persistent_create_orUpdate(already_persisted: boolean) {
+		if (already_persisted) {
+			await dbDispatch.db.relationship_persistentUpdate(this);
+		} else if (dbDispatch.db.isPersistent) {
+			await dbDispatch.db.relationship_remember_persistentCreate(this);
 		}
 	}
 

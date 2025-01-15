@@ -3,7 +3,7 @@ import { s_expanded_ancestries, s_ancestry_showing_tools, s_alteration_mode, s_c
 import { dbDispatch, Svelte_Wrapper, Widget_MapRect, AlterationType, Title_Edit_State } from '../common/Global_Imports';
 import { ElementType, Paging_State, Relationship, PredicateKind, SvelteComponentType } from '../common/Global_Imports';
 import { s_hierarchy, s_focus_ancestry, s_grabbed_ancestries, s_title_edit_state } from '../state/Svelte_Stores';
-import { DBType } from '../basis/PersistentIdentifiable';
+import { DBType } from '../basis/Persistent_Identifiable';
 import Identifiable from '../basis/Identifiable';
 import type { Integer } from '../common/Types';
 import { get, Writable } from 'svelte/store';
@@ -26,7 +26,7 @@ export default class Ancestry extends Identifiable {
 		this.thing_isChild = thing_isChild;
 		this.kindPredicate = kindPredicate;
 		this.dbType = dbType;
-		get(s_hierarchy).update_storage_trigger(0);
+		get(s_hierarchy).signal_storage_redraw(0);
 	}
 
 	destroy() {
@@ -455,8 +455,8 @@ export default class Ancestry extends Identifiable {
 					}
 				}
 			}
-			if (isContains && this.hierarchy.db.isPersistent) {														// normalize order of children only
-				u.ancestries_orders_normalize_persistentMaybe(ancestries);
+			if (isContains) {
+				u.ancestries_orders_normalize_persistentMaybe(ancestries);			// normalize order of children only
 			}
 		}
 		return ancestries;

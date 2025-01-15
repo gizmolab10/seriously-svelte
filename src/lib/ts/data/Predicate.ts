@@ -1,9 +1,9 @@
 import { k, debug, DebugFlag, dbDispatch, PredicateKind } from '../common/Global_Imports';
-import PersistentIdentifiable from '../basis/PersistentIdentifiable';
-import { s_hierarchy } from '../../ts/state/Svelte_Stores';
+import Persistent_Identifiable from '../basis/Persistent_Identifiable';
+import { s_hierarchy } from '../state/Svelte_Stores';
 import { get } from 'svelte/store';
 
-export default class Predicate extends PersistentIdentifiable {
+export default class Predicate extends Persistent_Identifiable {
 	isBidirectional: boolean;
 	stateIndex: number;
 	kind: string;
@@ -38,14 +38,11 @@ export default class Predicate extends PersistentIdentifiable {
 		return this.nextIndex += 1;
 	}
 
-	async persist() {
-		if (!this.awaitingCreation) {
-			this.updateModifyDate();
-			if (this.already_persisted) {
-				await dbDispatch.db.predicate_persistentUpdate(this);
-			} else if (dbDispatch.db.isPersistent) {
-				await dbDispatch.db.predicate_remember_persistentCreate(this);
-			}
+	async persistent_create_orUpdate(already_persisted: boolean) {
+		if (already_persisted) {
+			await dbDispatch.db.predicate_persistentUpdate(this);
+		} else if (dbDispatch.db.isPersistent) {
+			await dbDispatch.db.predicate_remember_persistentCreate(this);
 		}
 	}
 
