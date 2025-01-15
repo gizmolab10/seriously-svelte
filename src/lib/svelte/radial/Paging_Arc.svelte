@@ -4,7 +4,7 @@
 	import { s_thing_fontFamily, s_ring_rotation_radius } from '../../ts/state/Svelte_Stores';
 	import { s_mouse_up_count, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import Identifiable from '../../ts/basis/Identifiable';
+	import Identifiable from '../../ts/data/basis/Identifiable';
 	import Angled_Text from '../kit/Angled_Text.svelte';
 	export let color = 'red';
 	export let cluster_map!: Cluster_Map;

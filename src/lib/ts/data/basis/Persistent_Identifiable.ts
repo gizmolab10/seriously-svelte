@@ -1,4 +1,4 @@
-import { s_hierarchy } from '../state/Svelte_Stores';
+import { s_hierarchy } from '../../state/Svelte_Stores';
 import Persistence_State from './Persistence_State';
 import Identifiable from './Identifiable';
 import { get } from 'svelte/store';
@@ -39,7 +39,7 @@ export default class Persistent_Identifiable extends Identifiable {
 	set_isDirty() { this.state.isDirty = true; }		// TODO: set global
 
 	async persist() {
-		this.state.persist_withClosure(async (already_persisted) => {
+		this.state.persist_withClosure(async (already_persisted: boolean) => {
 			await this.persistent_create_orUpdate(already_persisted);
 		});
 	}

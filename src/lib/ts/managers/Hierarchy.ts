@@ -1,12 +1,12 @@
 import { g, k, u, show, User, Thing, Trait, Grabs, debug, files, Access, IDTool, signals, InfoType, Graph_Type } from '../common/Global_Imports';
-import { Ancestry, ThingType, TraitType, Predicate, Relationship, Mouse_State, PredicateKind } from '../common/Global_Imports';
 import { s_graph_type, s_storage_update_trigger, s_grabbed_ancestries, s_ancestry_showing_tools } from '../state/Svelte_Stores';
-import { IDControl, persistLocal, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
+import { Ancestry, ThingType, TraitType, Predicate, Relationship, Mouse_State, PredicateKind } from '../common/Global_Imports';
+import { IDControl, preferences, CreationOptions, AlterationType, Alteration_State } from '../common/Global_Imports';
 import { s_title_edit_state, s_id_popupView, s_focus_ancestry, s_alteration_mode } from '../state/Svelte_Stores';
-import { DatumType } from '../../ts/basis/Persistent_Identifiable';
+import { DatumType } from '../../ts/data/basis/Persistent_Identifiable';
 import type { Integer, Dictionary } from '../common/Types';
-import Identifiable from '../basis/Identifiable';
-import DBCommon from '../db/DBCommon';
+import Identifiable from '../data/basis/Identifiable';
+import DBCommon from '../data/dbs/DBCommon';
 import { get } from 'svelte/store';
 
 type Relationships_ByHID = { [hid: Integer]: Array<Relationship> }
@@ -1289,9 +1289,9 @@ export class Hierarchy {
 		s_ancestry_showing_tools.set(null);
 		s_title_edit_state.set(null);
 		this.setup_root_andAncestry();
-		persistLocal.restore_focus();
-		persistLocal.restore_grabbed_andExpanded(true);
-		// persistLocal.restore_page_states();
+		preferences.restore_focus();
+		preferences.restore_grabbed_andExpanded(true);
+		// preferences.restore_page_states();
 		this.isAssembled = true;
 	}
 

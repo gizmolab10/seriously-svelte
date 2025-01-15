@@ -1,4 +1,4 @@
-import Ancestry from '../managers/Ancestry';
+import Ancestry from '../data/basis/runtime/Ancestry';
 
 export default class Title_Edit_State {
 	stopping: Ancestry | null = null;

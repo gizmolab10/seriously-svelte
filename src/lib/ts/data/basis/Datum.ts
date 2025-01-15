@@ -1,5 +1,5 @@
 import Persistent_Identifiable from './Persistent_Identifiable';
-import { DebugFlag } from '../common/Debug';
+import { DebugFlag } from '../../common/Debug';
 
 export default class Datum extends Persistent_Identifiable {
 	baseID: string;

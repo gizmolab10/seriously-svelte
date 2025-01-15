@@ -1,10 +1,10 @@
 <script lang='ts'>
 	import { s_graph_type, s_tree_type, s_resize_count, s_device_isMobile } from '../../ts/state/Svelte_Stores';
-	import { IDControl, persistLocal, Element_State, IDPersistent } from '../../ts/common/Global_Imports';
+	import { IDControl, preferences, Element_State, IDPreference } from '../../ts/common/Global_Imports';
 	import { s_show_details, s_id_popupView, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
 	import { g, k, u, ux, w, show, Point, ZIndex, signals } from '../../ts/common/Global_Imports';
 	import { svgPaths, Tree_Type, Graph_Type, ElementType } from '../../ts/common/Global_Imports';
-	import Identifiable from '../../ts/basis/Identifiable';
+	import Identifiable from '../../ts/data/basis/Identifiable';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Button from '../mouse/Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';

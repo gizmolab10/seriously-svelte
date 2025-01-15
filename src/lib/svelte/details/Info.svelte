@@ -1,10 +1,10 @@
 <script lang='ts'>
-	import { signals, InfoType, TraitType, persistLocal, ElementType, IDPersistent } from '../../ts/common/Global_Imports';
+	import { signals, InfoType, TraitType, preferences, ElementType, IDPreference } from '../../ts/common/Global_Imports';
 	import { g, k, ux, show, Rect, Size, Point, Thing, debug, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
 	import { s_focus_ancestry, s_grabbed_ancestries, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
 	import { s_hierarchy, s_thing_color, s_thing_title } from '../../ts/state/Svelte_Stores';
+	import Identifiable from '../../ts/data/basis/Identifiable';
 	import type { Dictionary } from '../../ts/common/Types';
-	import Identifiable from '../../ts/basis/Identifiable';
 	import type { Integer } from '../../ts/common/Types';
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
@@ -70,7 +70,7 @@
 
 	function selection_closure(types: Array<string>) {
 		const type = types[0];
-		persistLocal.write_key(IDPersistent.info_type, type);
+		preferences.write_key(IDPreference.info_type, type);
 		show.info_type = type;
 		update_forKind();
 	}

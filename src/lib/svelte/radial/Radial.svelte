@@ -6,7 +6,7 @@
 	import { s_mouse_up_count, s_active_cluster_map } from '../../ts/state/Svelte_Stores';
 	import { s_graphRect, s_scaled_mouse_location } from '../../ts/state/Svelte_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import Identifiable from '../../ts/basis/Identifiable';
+	import Identifiable from '../../ts/data/basis/Identifiable';
 	import Paging_Arc from './Paging_Arc.svelte';
 	import { onMount } from 'svelte';
 	export let zindex = ZIndex.backmost;

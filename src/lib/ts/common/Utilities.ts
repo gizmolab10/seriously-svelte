@@ -5,7 +5,7 @@ import { Size, Point } from '../geometry/Geometry';
 import type { Dictionary } from '../common/Types';
 import Identifiable from '../basis/Identifiable';
 import { Quadrant } from '../geometry/Angle';
-import Ancestry from '../managers/Ancestry';
+import Ancestry from '../data/basis/runtime/Ancestry';
 import { IDBrowser } from './Enumerations';
 import { transparentize } from 'color2k';
 import Angle from '../geometry/Angle';

@@ -1,12 +1,12 @@
-import { g, k, u, Trait, Thing, ThingType, Hierarchy, Predicate, Relationship } from '../common/Global_Imports';
-import { debug, signals, Startup_State, persistLocal, IDPersistent } from '../common/Global_Imports';
-import { s_hierarchy, s_db_loadTime, s_startup_state } from '../state/Svelte_Stores';
+import { g, k, u, Trait, Thing, ThingType, Hierarchy, Predicate, Relationship } from '../../common/Global_Imports';
+import { debug, signals, Startup_State, preferences, IDPreference } from '../../common/Global_Imports';
+import { s_hierarchy, s_db_loadTime, s_startup_state } from '../../state/Svelte_Stores';
 import Persistent_Identifiable from '../basis/Persistent_Identifiable';
-import type { Dictionary } from '../common/Types';
+import type { Dictionary } from '../../common/Types';
 
 export default class DBCommon {
 	loadTime: string | null = null;
-	idPersistence!: IDPersistent;
+	idPersistence!: IDPreference;
 	hierarchy!: Hierarchy;
 	isPersistent = false;
 	isRemote = false;
@@ -19,8 +19,8 @@ export default class DBCommon {
 	
 	async fetch_all() { this.fetch_all_fromLocal(); }
 	async remove_all() { this.remove_all_fromLocal(); }
-	remove_all_fromLocal() { if (this.isPersistent) { persistLocal.writeDB_key(IDPersistent.local, null); } }
-	persist_all_toLocal() { if (this.isPersistent) { persistLocal.writeDB_key(IDPersistent.local, u.stringify_object(this.hierarchy.all_data)); } }
+	remove_all_fromLocal() { if (this.isPersistent) { preferences.writeDB_key(IDPreference.local, null); } }
+	persist_all_toLocal() { if (this.isPersistent) { preferences.writeDB_key(IDPreference.local, u.stringify_object(this.hierarchy.all_data)); } }
 
 	async thing_persistentUpdate(thing: Thing) {}
 	async thing_persistentDelete(thing: Thing) {}
@@ -59,7 +59,7 @@ export default class DBCommon {
 	}
 
 	async fetch_all_fromLocal() {
-		const json = persistLocal.readDB_key(IDPersistent.local);
+		const json = preferences.readDB_key(IDPreference.local);
 		const h = this.hierarchy;
 		if (!!json) {
 			await h.extract_fromDict(JSON.parse(json) as Dictionary);

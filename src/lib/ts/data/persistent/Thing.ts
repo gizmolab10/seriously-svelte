@@ -1,8 +1,8 @@
-import { k, u, Datum, debug, Trait, Ancestry, ThingType, Predicate, Page_States, DebugFlag } from '../common/Global_Imports';
-import { TraitType, dbDispatch, Relationship, PredicateKind, Seriously_Range } from '../common/Global_Imports';
-import { s_hierarchy, s_thing_color, s_rebuild_count } from '../state/Svelte_Stores';
-import { s_focus_ancestry, s_expanded_ancestries } from '../state/Svelte_Stores';
-import type { Dictionary } from '../../ts/common/Types';
+import { k, u, Datum, debug, Trait, Ancestry, ThingType, Predicate, Page_States, DebugFlag } from '../../common/Global_Imports';
+import { TraitType, dbDispatch, Relationship, PredicateKind, Seriously_Range } from '../../common/Global_Imports';
+import { s_hierarchy, s_thing_color, s_rebuild_count } from '../../state/Svelte_Stores';
+import { s_focus_ancestry, s_expanded_ancestries } from '../../state/Svelte_Stores';
+import type { Dictionary } from '../../common/Types';
 import { get } from 'svelte/store';
 
 export default class Thing extends Datum {
@@ -209,7 +209,7 @@ export default class Thing extends Datum {
 						if (parentAncestries.length == 0) {
 							addAncestry(get(s_hierarchy).rootAncestry.uniquelyAppendID(endID));
 						} else {
-							parentAncestries.map(p => addAncestry(p.uniquelyAppendID(endID)));
+							parentAncestries.map((p: Ancestry) => addAncestry(p.uniquelyAppendID(endID)));
 						}
 					}
 				}

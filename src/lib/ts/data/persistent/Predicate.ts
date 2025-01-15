@@ -1,6 +1,6 @@
-import { k, debug, DebugFlag, dbDispatch, PredicateKind } from '../common/Global_Imports';
+import { k, debug, DebugFlag, dbDispatch, PredicateKind } from '../../common/Global_Imports';
 import Persistent_Identifiable from '../basis/Persistent_Identifiable';
-import { s_hierarchy } from '../state/Svelte_Stores';
+import { s_hierarchy } from '../../state/Svelte_Stores';
 import { get } from 'svelte/store';
 
 export default class Predicate extends Persistent_Identifiable {

@@ -3,7 +3,7 @@
 	import { g, k, u, ux, show, Rect, Size, Point, Thing, ZIndex, debug } from '../../ts/common/Global_Imports';
 	import { signals, IDSignal, IDControl, Ancestry, dbDispatch } from '../../ts/common/Global_Imports';
 	import { s_id_popupView, s_focus_ancestry, s_user_graph_offset } from '../../ts/state/Svelte_Stores';
-	import { Predicate, IDPersistent, ElementType, persistLocal } from '../../ts/common/Global_Imports';
+	import { Predicate, IDPreference, ElementType, preferences } from '../../ts/common/Global_Imports';
 	import Tree_Children from './Tree_Children.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import Circle from '../kit/Circle.svelte';

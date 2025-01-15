@@ -1,6 +1,6 @@
 import { s_graph_type, s_thing_color, s_startup_state, s_device_isMobile } from './Svelte_Stores';
 import { s_hierarchy, s_resize_count, s_mouse_up_count, s_rebuild_count } from './Svelte_Stores';
-import { Hierarchy, Graph_Type, persistLocal, IDPersistent } from '../common/Global_Imports';
+import { Hierarchy, Graph_Type, preferences, IDPreference } from '../common/Global_Imports';
 import { Rotation_State, Startup_State, Expansion_State } from '../common/Global_Imports';
 import { e, k, u, ux, w, show, debug, dbDispatch } from '../common/Global_Imports';
 import { s_grabbed_ancestries, s_expanded_ancestries } from './Svelte_Stores';
@@ -35,7 +35,7 @@ class Global_State {
 		this.setup_defaults();							// defaults
 		w.restore_state();
 		show.restore_state();							// local persistance
-		persistLocal.restore_defaults();
+		preferences.restore_defaults();
 		dbDispatch.restore_db();
 		this.queryStrings_apply();						// query string
 		show.queryStrings_apply();
@@ -69,11 +69,11 @@ class Global_State {
 			switch (option) {
 				case 'data':
 					this.eraseDB = true;
-					persistLocal.writeDB_key(IDPersistent.focus, null);
-					persistLocal.writeDB_key(IDPersistent.expanded, null); 
+					preferences.writeDB_key(IDPreference.focus, null);
+					preferences.writeDB_key(IDPreference.expanded, null); 
 					break;
 				case 'settings':
-					persistLocal.reset();
+					preferences.reset();
 					s_expanded_ancestries.set([]);
 					s_focus_ancestry.set(this.hierarchy.rootAncestry);
 					s_grabbed_ancestries.set([this.hierarchy.rootAncestry]);

@@ -1,5 +1,5 @@
-import { DebugFlag, Relationship, CreationOptions } from '../common/Global_Imports';
-import { g, k, u, debug, Thing, Trait, TraitType } from '../common/Global_Imports';
+import { DebugFlag, Relationship, CreationOptions } from '../../common/Global_Imports';
+import { g, k, u, debug, Thing, Trait, TraitType } from '../../common/Global_Imports';
 import { DBType, DatumType } from '../basis/Persistent_Identifiable';
 import DBCommon from './DBCommon';
 import Airtable from 'airtable';

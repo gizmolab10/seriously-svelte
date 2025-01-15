@@ -1,5 +1,5 @@
-import { k, Datum, Thing, dbDispatch, TraitType } from '../common/Global_Imports';
-import { s_hierarchy } from '../../ts/state/Svelte_Stores';
+import { k, Datum, Thing, dbDispatch, TraitType } from '../../common/Global_Imports';
+import { s_hierarchy } from '../../state/Svelte_Stores';
 import { get } from 'svelte/store';
 import Airtable from 'airtable';
 

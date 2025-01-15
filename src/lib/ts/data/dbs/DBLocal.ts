@@ -1,4 +1,4 @@
-import { k, Thing, Trait, Predicate, Relationship } from '../common/Global_Imports';
+import { k, Thing, Trait, Predicate, Relationship } from '../../common/Global_Imports';
 import { DBType } from '../basis/Persistent_Identifiable';
 import DBCommon from './DBCommon';
 

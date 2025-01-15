@@ -1,6 +1,6 @@
 import { Segment_Map, Element_State, Rotation_State } from '../common/Global_Imports';
 import { Mouse_State, Mouse_Timer, ElementType } from '../common/Global_Imports';
-import Identifiable from '../basis/Identifiable';
+import Identifiable from '../data/basis/Identifiable';
 
 export default class UX_State {
 

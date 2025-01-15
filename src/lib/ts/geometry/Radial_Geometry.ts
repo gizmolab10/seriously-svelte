@@ -2,7 +2,7 @@ import { u, Thing, debug, Ancestry, Predicate, PredicateKind } from '../common/G
 import { Cluster_Map, Paging_State, Widget_MapRect } from '../common/Global_Imports';
 import { s_focus_ancestry, s_ancestry_showing_tools } from '../state/Svelte_Stores';
 import { s_hierarchy, s_paging_state } from '../state/Svelte_Stores';
-import Parent_Ancestry from '../managers/Parent_Ancestry';
+import Parent_Ancestry from '../data/runtime/Parent_Ancestry';
 import { get } from 'svelte/store';
 
 export default class Radial_Geometry {

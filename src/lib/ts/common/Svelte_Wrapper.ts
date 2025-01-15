@@ -1,6 +1,6 @@
 import { w, Rect, wrappers, Mouse_State, SvelteComponentType } from './Global_Imports';
 import { Handle_Mouse_State, Create_Mouse_State } from './Types';
-import Identifiable from '../basis/Identifiable';
+import Identifiable from '../data/basis/Identifiable';
 import type { Integer } from './Types';
 
 // Ancestry sometimes needs to access and or alter an associated svelte component

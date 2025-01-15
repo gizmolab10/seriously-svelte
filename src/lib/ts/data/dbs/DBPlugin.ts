@@ -1,6 +1,6 @@
-import { k, u, Thing, Trait, Predicate, Relationship } from '../common/Global_Imports';
+import { k, u, Thing, Trait, Predicate, Relationship } from '../../common/Global_Imports';
 import { DBType } from '../basis/Persistent_Identifiable';
-import { Hierarchy } from '../common/Global_Imports';
+import { Hierarchy } from '../../common/Global_Imports';
 import DBCommon from './DBCommon';
 
 export default class DBPlugin extends DBCommon {

@@ -6,7 +6,7 @@ import { s_rotation_ring_angle, s_ring_rotation_radius } from '../state/Svelte_S
 import { g, k, show, debug, Ancestry, dbDispatch } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
-export enum IDPersistent {
+export enum IDPreference {
 	relationships  = 'relationships',
 	details_type   = 'details_type',
 	ring_radius	   = 'ring_radius',
@@ -32,9 +32,9 @@ export enum IDPersistent {
 	db			   = 'db',
 }
 
-class Persist_Local {
+class Preferences {
 	// for backwards compatibility with {focus, grabbed, expanded} which were stored as relationship ids (not as ancestry string)
-	usesRelationships		 = localStorage[IDPersistent.relationships];
+	usesRelationships		 = localStorage[IDPreference.relationships];
 	ignoreAncestries		 = !this.usesRelationships || this.usesRelationships == 'undefined';
 
 	read_key				(key: string): any | null { return this.parse(localStorage[key]); }
@@ -42,13 +42,13 @@ class Persist_Local {
 	writeDB_key<T>			(key: string, value: T) { this.write_key(this.dbKey_for(key), value); }
 	readDB_key				(key: string): any | null { return this.read_key(this.dbKey_for(key)); }
 	dbKey_for				(key: string): string { return this.keyPair_for(dbDispatch.db.dbType, key); }
-	delete_paging_state_for (key: string) { this.write_keyPair(this.dbKey_for(IDPersistent.page_states), key, null); }
+	delete_paging_state_for (key: string) { this.write_keyPair(this.dbKey_for(IDPreference.page_states), key, null); }
 	keyPair_for				(key: string, sub_key: string): string { return `${key}${k.generic_separator}${sub_key}`; }
 
 	reset() {
-		const ids = Object.keys(IDPersistent)
+		const ids = Object.keys(IDPreference)
 			.filter(key => isNaN(Number(key))) // Exclude numeric keys
-			.map(key => IDPersistent[key as keyof typeof IDPersistent]);
+			.map(key => IDPreference[key as keyof typeof IDPreference]);
 		for (const id of ids) {
 			if (id != 'local') {
 				this.write_key(id, null);
@@ -113,23 +113,23 @@ class Persist_Local {
 
 	reactivity_subscribe() {
 		s_ring_rotation_radius.subscribe((radius: number) => {
-			this.write_key(IDPersistent.ring_radius, radius);
+			this.write_key(IDPreference.ring_radius, radius);
 		});
 		s_tree_type.subscribe((value) => {
-			this.write_key(IDPersistent.tree_type, value);
+			this.write_key(IDPreference.tree_type, value);
 		});
 		s_graph_type.subscribe((value) => {
-			this.write_key(IDPersistent.graph_type, value);
+			this.write_key(IDPreference.graph_type, value);
 		});
 		s_detail_types.subscribe((value) => {
-			this.write_key(IDPersistent.details_type, value);
+			this.write_key(IDPreference.details_type, value);
 		});
 		s_rotation_ring_angle.subscribe((angle: number) => {
-			this.write_key(IDPersistent.ring_angle, angle);
+			this.write_key(IDPreference.ring_angle, angle);
 		});
 		s_paging_state.subscribe((paging_state: Paging_State) => {
 			if (!!paging_state) {
-				const dbKey = this.dbKey_for(IDPersistent.page_states);
+				const dbKey = this.dbKey_for(IDPreference.page_states);
 				this.write_keyPair(dbKey, paging_state.sub_key, paging_state.description);
 			}
 		})
@@ -138,21 +138,21 @@ class Persist_Local {
 
 	restore_defaults() {
 		if (this.ignoreAncestries) {
-			this.write_key(IDPersistent.relationships, true);
+			this.write_key(IDPreference.relationships, true);
 		}
-		s_font_size.set(this.read_key(IDPersistent.font_size) ?? 14);
-		s_rotation_ring_angle.set(this.read_key(IDPersistent.ring_angle) ?? 0);
-		s_graph_type.set(this.read_key(IDPersistent.graph_type) ?? Graph_Type.tree);
-		s_tree_type.set(this.read_key(IDPersistent.tree_type) ?? Tree_Type.children);
-		s_thing_fontFamily.set(this.read_key(IDPersistent.font) ?? 'Times New Roman');
-		s_detail_types.set(this.read_key(IDPersistent.details_type) ?? [Details_Type.storage]);
-		s_ring_rotation_radius.set(Math.max(this.read_key(IDPersistent.ring_radius) ?? 0, k.innermost_ring_radius));
+		s_font_size.set(this.read_key(IDPreference.font_size) ?? 14);
+		s_rotation_ring_angle.set(this.read_key(IDPreference.ring_angle) ?? 0);
+		s_graph_type.set(this.read_key(IDPreference.graph_type) ?? Graph_Type.tree);
+		s_tree_type.set(this.read_key(IDPreference.tree_type) ?? Tree_Type.children);
+		s_thing_fontFamily.set(this.read_key(IDPreference.font) ?? 'Times New Roman');
+		s_detail_types.set(this.read_key(IDPreference.details_type) ?? [Details_Type.storage]);
+		s_ring_rotation_radius.set(Math.max(this.read_key(IDPreference.ring_radius) ?? 0, k.innermost_ring_radius));
 		this.reactivity_subscribe()
 	}
 
 	// not used!!!
 	restore_page_states() {
-		const descriptions = this.read_sub_keys_forKey(this.dbKey_for(IDPersistent.page_states)) ?? k.empty;
+		const descriptions = this.read_sub_keys_forKey(this.dbKey_for(IDPreference.page_states)) ?? k.empty;
 		for (const description of descriptions) {
 			const paging_state = Paging_State.create_paging_state_from(description);
 			if (!!paging_state) {
@@ -160,7 +160,7 @@ class Persist_Local {
 				if (!!thing) {
 					thing.page_states.add_paging_state(paging_state);
 				} else {															// if no thing => delete paging state
-					persistLocal.delete_paging_state_for(paging_state.sub_key);
+					preferences.delete_paging_state_for(paging_state.sub_key);
 				}
 			}
 		}
@@ -170,8 +170,8 @@ class Persist_Local {
 		const h = get(s_hierarchy);
 		const root = [h.rootAncestry];
 		const erase = g.eraseDB;
-		const expanded = erase ? [] : this.ancestries_forKey(this.dbKey_for(IDPersistent.expanded));
-		const grabbed = erase ? root : this.ancestries_forKey(this.dbKey_for(IDPersistent.grabbed)) ?? root;
+		const expanded = erase ? [] : this.ancestries_forKey(this.dbKey_for(IDPreference.expanded));
+		const grabbed = erase ? root : this.ancestries_forKey(this.dbKey_for(IDPreference.grabbed)) ?? root;
 		s_grabbed_ancestries.set(grabbed);
 		debug.log_persist(`^ GRABBED ${grabbed.map(a => a.title)}`);
 		s_expanded_ancestries.set(expanded);
@@ -179,11 +179,11 @@ class Persist_Local {
 		setTimeout(() => {
 			s_grabbed_ancestries.subscribe((g: Array<Ancestry>) => {
 				debug.log_persist(`  GRABBED ${g.map(a => a.title)}`);
-				this.writeDB_key(IDPersistent.grabbed, !g ? null : g.map(a => a.id));		// ancestral paths
+				this.writeDB_key(IDPreference.grabbed, !g ? null : g.map(a => a.id));		// ancestral paths
 			});
 			s_expanded_ancestries.subscribe((e: Array<Ancestry>) => {
 				debug.log_persist(`  EXPANDED ${e.map(a => a.title)}`);
-				this.writeDB_key(IDPersistent.expanded, !e ? null : e.map(a => a.id));	// ancestral paths
+				this.writeDB_key(IDPreference.expanded, !e ? null : e.map(a => a.id));		// ancestral paths
 			});
 		}, 100);
 	}
@@ -192,7 +192,7 @@ class Persist_Local {
 		const h = get(s_hierarchy);
 		let ancestryToFocus = h.rootAncestry;
 		if (!this.ignoreAncestries && !g.eraseDB) {
-			const focusid = this.readDB_key(IDPersistent.focus);
+			const focusid = this.readDB_key(IDPreference.focus);
 			if (!!focusid || focusid == k.empty) {
 				const focusAncestry = h.ancestry_remember_createUnique(focusid);
 				if (!!focusAncestry) {
@@ -208,10 +208,10 @@ class Persist_Local {
 		}
 		ancestryToFocus.becomeFocus(true);
 		s_focus_ancestry.subscribe((ancestry: Ancestry) => {
-			this.writeDB_key(IDPersistent.focus, !ancestry ? null : ancestry.id);
+			this.writeDB_key(IDPreference.focus, !ancestry ? null : ancestry.id);
 		});
 	}
 
 }
 
-export const persistLocal = new Persist_Local();
+export const preferences = new Preferences();

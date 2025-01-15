@@ -1,5 +1,5 @@
-import { g, k, u, Thing, Trait, debug, signals, DebugFlag, Predicate, TraitType } from '../common/Global_Imports';
-import { ThingType, persistLocal, IDPersistent, Relationship, CreationOptions } from '../common/Global_Imports';
+import { g, k, u, Thing, Trait, debug, signals, DebugFlag, Predicate, TraitType } from '../../common/Global_Imports';
+import { ThingType, preferences, IDPreference, Relationship, CreationOptions } from '../../common/Global_Imports';
 import { QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
 import { onSnapshot, deleteField, getFirestore, DocumentData, DocumentChange } from 'firebase/firestore';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
@@ -38,9 +38,9 @@ export default class DBFirebase extends DBCommon {
 	reportError(error: any) { console.log(error); }
 
 	queryStrings_apply() {
-		const persistedID = persistLocal.read_key(IDPersistent.base_id);
+		const persistedID = preferences.read_key(IDPreference.base_id);
 		const id = g.queryStrings.get('name') ?? g.queryStrings.get('dbid') ?? persistedID ?? 'Public';
-		persistLocal.write_key(IDPersistent.base_id, id);
+		preferences.write_key(IDPreference.base_id, id);
 		this.baseID = id;
 	}
 

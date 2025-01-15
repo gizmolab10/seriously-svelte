@@ -1,6 +1,6 @@
-import { Thing, debug, DebugFlag, dbDispatch, Predicate } from '../common/Global_Imports';
-import { s_hierarchy } from '../state/Svelte_Stores';
-import type { Integer } from '../common/Types';
+import { Thing, debug, DebugFlag, dbDispatch, Predicate } from '../../common/Global_Imports';
+import { s_hierarchy } from '../../state/Svelte_Stores';
+import type { Integer } from '../../common/Types';
 import { get } from 'svelte/store';
 import Datum from '../basis/Datum';
 import Airtable from 'airtable';
