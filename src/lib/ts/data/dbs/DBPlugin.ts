@@ -5,7 +5,6 @@ import DBCommon from './DBCommon';
 
 export default class DBPlugin extends DBCommon {
 	dbType = DBType.plugin;
-	isPersistent = true;
 	baseID = k.empty;
 
 	get h(): Hierarchy { return this.hierarchy; }

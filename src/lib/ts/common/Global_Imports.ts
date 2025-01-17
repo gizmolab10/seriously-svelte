@@ -23,27 +23,27 @@ import { IDLine, IDTool, ZIndex, IDControl, IDBrowser, IDStorage } from './Enume
 import { InfoType, ThingType, TraitType, ElementType, Details_Type, Rebuild_Type } from './Enumerations';
 
 import Children_Geometry from '../geometry/Children_Geometry';
-import Relationship from '../data/persistent/Relationship';
 import Radial_Geometry from '../geometry/Radial_Geometry';
 import Title_Edit_State from '../state/Title_Edit_State';
 import Alteration_State from '../state/Alteration_State';
 import Widget_MapRect from '../geometry/Widget_MapRect';
 import Expansion_State from '../state/Expansion_State';
-import Predicate from '../data/persistent/Predicate';
+import Relationship from '../data/types/Relationship';
 import Rotation_State from '../state/Rotation_State';
 import Element_State from '../state/Element_State';
 import Cluster_Map from '../geometry/Cluster_Map';
 import Segment_Map from '../geometry/Segment_Map';
 import Mouse_Timer from '../signals/Mouse_Timer';
+import Predicate from '../data/types/Predicate';
 import Ancestry from '../data/runtime/Ancestry';
 import Mouse_State from '../state/Mouse_State';
-import Access from '../data/persistent/Access';
 import Svelte_Wrapper from './Svelte_Wrapper';
-import Thing from '../data/persistent/Thing';
-import Trait from '../data/persistent/Trait';
-import User from '../data/persistent/User';
 import Arc_Map from '../geometry/Arc_Map';
+import Access from '../data/types/Access';
 import Datum from '../data/basis/Datum';
+import Thing from '../data/types/Thing';
+import Trait from '../data/types/Trait';
+import User from '../data/types/User';
 import Angle from '../geometry/Angle';
 import Grabs from '../managers/Grabs';
 

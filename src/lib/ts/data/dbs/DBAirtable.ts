@@ -26,7 +26,6 @@ export default class DBAirtable extends DBCommon {
 	access_table = this.base(DatumType.access);
 	users_table = this.base(DatumType.users);
 	dbType = DBType.airtable;
-	isPersistent = true;
 	baseID = k.empty;
 	isRemote = true;
 

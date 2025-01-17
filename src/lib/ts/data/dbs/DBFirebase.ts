@@ -25,7 +25,6 @@ export default class DBFirebase extends DBCommon {
 	baseID = 'Public';
 	addedThing!: Thing;
 	addedTrait!: Trait;
-	isPersistent = true;
 	bulksName = 'Bulks';
 	bulks!: Array<Bulk>;
 	deferSnapshots = false;

@@ -6,9 +6,8 @@ import type { Dictionary } from '../../common/Types';
 
 export default class DBCommon {
 	loadTime: string | null = null;
-	idPersistence!: IDPreference;
 	hierarchy!: Hierarchy;
-	isPersistent = false;
+	isPersistent = true;
 	isRemote = false;
 	baseID = k.empty;
 	dbType = k.empty;

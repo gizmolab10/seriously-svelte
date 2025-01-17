@@ -5,6 +5,7 @@ import DBCommon from './DBCommon';
 export default class DBTest extends DBCommon {
 	baseID = k.baseID_test;
 	dbType = DBType.test;
+	isPersistent = false;
 
 	async fetch_all_fromLocal() {
 		const idTa = 'A';

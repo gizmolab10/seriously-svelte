@@ -1,14 +1,12 @@
-import type { Handle_Boolean } from '../common/Types';
+import type { Handle_Boolean } from '../../common/Types';
 
 export default class Persistence_State {
-	hasPersistentStorage = false;
 	lastModifyDate = new Date();
 	already_persisted = false;
 	awaitingCreation = false;
 	isDirty = false;
 
-	constructor(hasPersistentStorage: boolean = false, already_persisted: boolean = false, awaitingCreation: boolean = false, isDirty: boolean = false) {
-		this.hasPersistentStorage = hasPersistentStorage;
+	constructor(already_persisted: boolean = false, awaitingCreation: boolean = false, isDirty: boolean = false) {
 		this.already_persisted	  = already_persisted;
 		this.awaitingCreation	  = awaitingCreation;
 		this.isDirty			  = isDirty;

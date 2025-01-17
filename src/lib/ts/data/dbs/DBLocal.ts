@@ -5,7 +5,6 @@ import DBCommon from './DBCommon';
 export default class DBLocal extends DBCommon {
 	baseID = k.baseID_file;
 	dbType = DBType.local;
-	isPersistent = true;
 	
 	async thing_persistentUpdate(thing: Thing) { this.persist_all(); }
 	async thing_persistentDelete(thing: Thing) { this.persist_all(); }

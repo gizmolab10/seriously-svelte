@@ -30,8 +30,8 @@ export default class Persistent_Identifiable extends Identifiable {
 	constructor(dbType: string, id: string, already_persisted: boolean = false) {
 		super(id);
 		this.dbType = dbType;
-		const hasPersistentStorage = dbType != DBType.test;
-		this.state = new Persistence_State(hasPersistentStorage, already_persisted, false, hasPersistentStorage && !already_persisted);
+		const isDirty = dbType != DBType.test && !already_persisted;
+		this.state = new Persistence_State(already_persisted, false, isDirty);
 		get(s_hierarchy).signal_storage_redraw();
 	}
 
