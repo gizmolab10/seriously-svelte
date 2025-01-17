@@ -25,12 +25,12 @@ export enum DatumType {
 
 export default class Persistent_Identifiable extends Identifiable {
 	state!: Persistence_State;
-	dbType: string;
+	type_db: string;
 
-	constructor(dbType: string, id: string, already_persisted: boolean = false) {
+	constructor(type_db: string, id: string, already_persisted: boolean = false) {
 		super(id);
-		this.dbType = dbType;
-		const isDirty = dbType != DBType.test && !already_persisted;
+		this.type_db = type_db;
+		const isDirty = type_db != DBType.test && !already_persisted;
 		this.state = new Persistence_State(already_persisted, false, isDirty);
 		get(s_hierarchy).signal_storage_redraw();
 	}

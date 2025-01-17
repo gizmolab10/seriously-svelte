@@ -9,7 +9,7 @@ export default class Predicate extends Persistent_Identifiable {
 	kind: string;
 
 	constructor(id: string, kind: string, isBidirectional: boolean, already_persisted: boolean = false) {
-		super(dbDispatch.db.dbType, id, already_persisted);
+		super(dbDispatch.db.type_db, id, already_persisted);
 		this.stateIndex		 = Predicate.stateIndex_forKind(kind);		// index in page states inward and outward arrays
 		this.isBidirectional = isBidirectional;
 		this.kind			 = kind;

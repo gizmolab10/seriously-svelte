@@ -17,8 +17,8 @@ export default class Thing extends Datum {
 	color: string;
 	type: string;
 
-	constructor(baseID: string, id: string, title = k.title_default, color = k.thing_color_default, type = k.empty, already_persisted: boolean = false) {
-		super(dbDispatch.db.dbType, baseID, id, already_persisted);
+	constructor(idBase: string, id: string, title = k.title_default, color = k.thing_color_default, type = k.empty, already_persisted: boolean = false) {
+		super(dbDispatch.db.type_db, idBase, id, already_persisted);
 		this.selectionRange = new Seriously_Range(0, title.length);
 		this.page_states = new Page_States(this.id);
 		this.title = title;
@@ -40,7 +40,7 @@ export default class Thing extends Datum {
 	get titleWidth():						  number { return u.getWidthOf(this.title); }
 	get isRoot():							 boolean { return this.type == ThingType.root; }
 	get isBulkAlias():						 boolean { return this.type == ThingType.bulk; }
-	get isAcrossBulk():						 boolean { return this.baseID != get(s_hierarchy).db.baseID; }
+	get isAcrossBulk():						 boolean { return this.idBase != get(s_hierarchy).db.idBase; }
 	get hasMultipleParents():				 boolean { return this.parentAncestries.length > 1; }
 	get hasParents():						 boolean { return this.hasParents_forKind(PredicateKind.contains); }
 	get isFocus():							 boolean { return (get(s_focus_ancestry).thing?.id ?? k.empty) == this.id; }
@@ -97,7 +97,7 @@ export default class Thing extends Datum {
 	setTraitText_forType(text: string, type: TraitType) { get(s_hierarchy).trait_setText_forType_ownerHID(text, type, this.id); }
 
 	override isInDifferentBulkThan(other: Thing): boolean {
-		return super.isInDifferentBulkThan(other) || (other.isBulkAlias && !this.isBulkAlias && this.baseID != other.title);
+		return super.isInDifferentBulkThan(other) || (other.isBulkAlias && !this.isBulkAlias && this.idBase != other.title);
 	}
 
 	async persistent_create_orUpdate(already_persisted: boolean) {

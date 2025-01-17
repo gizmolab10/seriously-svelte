@@ -4,17 +4,24 @@ import { s_hierarchy, s_db_loadTime, s_startup_state } from '../../state/Svelte_
 import Persistent_Identifiable from '../basis/Persistent_Identifiable';
 import type { Dictionary } from '../../common/Types';
 
+export enum Persistence_Kind {
+	remote = 'remote',
+	local  = 'local',
+	none   = 'none',
+}
+
 export default class DBCommon {
+	kind_persistence!: Persistence_Kind;
 	loadTime: string | null = null;
 	hierarchy!: Hierarchy;
-	isPersistent = true;
-	isRemote = false;
-	baseID = k.empty;
-	dbType = k.empty;
+	type_db = k.empty;
+	idBase = k.empty;
 	
 	queryStrings_apply() {}
 	setup_remote_handlers() {}
-	async hierarchy_fetchForID(baseID: string) {}	// support for browsing multiple firebase bulks
+	get isRemote(): boolean { return this.kind_persistence == Persistence_Kind.remote; }
+	get isPersistent(): boolean { return this.kind_persistence != Persistence_Kind.none; }
+	async hierarchy_fetchForID(idBase: string) {}	// support for browsing multiple firebase bulks
 	
 	async fetch_all() { this.fetch_all_fromLocal(); }
 	async remove_all() { this.remove_all_fromLocal(); }
@@ -64,7 +71,7 @@ export default class DBCommon {
 			await h.extract_fromDict(JSON.parse(json) as Dictionary);
 		} else if (!this.isRemote) {
 			h.predicate_defaults_remember_runtimeCreate();
-			h.thing_remember_runtimeCreateUnique(this.baseID, Thing.newID(), 'click here to edit this title', 'limegreen', ThingType.root);
+			h.thing_remember_runtimeCreateUnique(this.idBase, Thing.newID(), 'click here to edit this title', 'limegreen', ThingType.root);
 		}
 	}
 	

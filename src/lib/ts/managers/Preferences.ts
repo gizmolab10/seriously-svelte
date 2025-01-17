@@ -41,7 +41,7 @@ class Preferences {
 	write_key<T>			(key: string, value: T) { localStorage[key] = JSON.stringify(value); }
 	writeDB_key<T>			(key: string, value: T) { this.write_key(this.dbKey_for(key), value); }
 	readDB_key				(key: string): any | null { return this.read_key(this.dbKey_for(key)); }
-	dbKey_for				(key: string): string { return this.keyPair_for(dbDispatch.db.dbType, key); }
+	dbKey_for				(key: string): string { return this.keyPair_for(dbDispatch.db.type_db, key); }
 	delete_paging_state_for (key: string) { this.write_keyPair(this.dbKey_for(IDPreference.page_states), key, null); }
 	keyPair_for				(key: string, sub_key: string): string { return `${key}${k.generic_separator}${sub_key}`; }
 

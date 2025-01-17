@@ -13,8 +13,8 @@ export default class Relationship extends Datum {
 	idChild: string;
 	order: number; 
 
-	constructor(baseID: string, id: string, kindPredicate: string, idParent: string, idChild: string, order = 0, already_persisted: boolean = false) {
-		super(dbDispatch.db.dbType, baseID, id, already_persisted);
+	constructor(idBase: string, id: string, kindPredicate: string, idParent: string, idChild: string, order = 0, already_persisted: boolean = false) {
+		super(dbDispatch.db.type_db, idBase, id, already_persisted);
 		this.kindPredicate = kindPredicate;
 		this.hidParent = idParent.hash();
 		this.hidChild = idChild.hash();
@@ -31,7 +31,7 @@ export default class Relationship extends Datum {
 
 	get verbose(): string {
 		const persisted = this.state.already_persisted ? 'STORED' : 'DIRTY';
-		return `BASE ${this.baseID} ${persisted} [${this.order}] ${this.id} ${this.description}`;
+		return `BASE ${this.idBase} ${persisted} [${this.order}] ${this.id} ${this.description}`;
 	}
 
 	get description(): string {

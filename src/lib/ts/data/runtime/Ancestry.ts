@@ -13,7 +13,7 @@ export default class Ancestry extends Identifiable {
 	kindPredicate: string;
 	thing_isChild = true;
 	unsubscribe: any;
-	dbType: string;
+	type_db: string;
 
 	// id => ancestry string 
 	//   "   composed of ids of each relationship
@@ -21,11 +21,11 @@ export default class Ancestry extends Identifiable {
 	//   "   kindPredicate is from the last relationship
 	//   "   children are of that kind of predicate
 
-	constructor(dbType: string, ancestryString: string = k.empty, kindPredicate: string = PredicateKind.contains, thing_isChild: boolean = true) {
+	constructor(type_db: string, ancestryString: string = k.empty, kindPredicate: string = PredicateKind.contains, thing_isChild: boolean = true) {
 		super(ancestryString);
 		this.thing_isChild = thing_isChild;
 		this.kindPredicate = kindPredicate;
-		this.dbType = dbType;
+		this.type_db = type_db;
 		get(s_hierarchy).signal_storage_redraw(0);
 	}
 
@@ -122,7 +122,7 @@ export default class Ancestry extends Identifiable {
 
 	get isEditable(): boolean {
 		const isBulkAlias = this.thing?.isBulkAlias ?? true;	// missing thing, return not allow
-		const canEdit = !this.isRoot || dbDispatch.db.dbType == DBType.local;
+		const canEdit = !this.isRoot || dbDispatch.db.type_db == DBType.local;
 		return canEdit && g.allow_TitleEditing && !isBulkAlias;
 	}
 
@@ -237,7 +237,7 @@ export default class Ancestry extends Identifiable {
 	sharesAnID(ancestry: Ancestry | null): boolean { return !ancestry ? false : this.ids.some(id => ancestry.ids.includes(id)); }
 	showsClusterFor(predicate: Predicate): boolean { return this.includesPredicateKind(predicate.kind) && this.hasThings(predicate); }
 	relationshipAt(back: number = 1): Relationship | null { return this.hierarchy.relationship_forHID(this.idAt(back).hash()) ?? null; }
-	ancestry_hasEqualID(ancestry: Ancestry | null | undefined): boolean { return !!ancestry && this.hid == ancestry.hid&& this.dbType == ancestry.dbType; }
+	ancestry_hasEqualID(ancestry: Ancestry | null | undefined): boolean { return !!ancestry && this.hid == ancestry.hid&& this.type_db == ancestry.type_db; }
 	
 	relationships_forParents_ofKind(kindPredicate: string, forParents: boolean) {
 		return this.thing?.relationships_forParents_ofKind(kindPredicate, forParents) ?? [];

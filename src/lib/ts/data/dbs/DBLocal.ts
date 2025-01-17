@@ -1,10 +1,12 @@
 import { k, Thing, Trait, Predicate, Relationship } from '../../common/Global_Imports';
 import { DBType } from '../basis/Persistent_Identifiable';
+import { Persistence_Kind } from './DBCommon';
 import DBCommon from './DBCommon';
 
 export default class DBLocal extends DBCommon {
-	baseID = k.baseID_file;
-	dbType = DBType.local;
+	kind_persistence = Persistence_Kind.local;
+	idBase = k.idBase_file;
+	type_db = DBType.local;
 	
 	async thing_persistentUpdate(thing: Thing) { this.persist_all(); }
 	async thing_persistentDelete(thing: Thing) { this.persist_all(); }

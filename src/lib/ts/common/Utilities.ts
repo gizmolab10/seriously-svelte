@@ -210,8 +210,8 @@ class Utilities {
 		const extras = [
 			'hid',
 			'state',
-			'dbType',
-			'baseID',
+			'type_db',
+			'idBase',
 			'hidChild',
 			'hidParent',
 			'isEditing',

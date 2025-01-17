@@ -27,14 +27,14 @@ export default class Constants {
 	color_highlighted = '#9e7daa';
     color_disabled = 'lightGray';
     thing_color_default = 'blue';
-	baseID_test = 'handcrafted';
+	idBase_test = 'handcrafted';
 	color_background = 'white';
 	cursor_default = 'default';
 	generic_separator = '::';
 	color_default = 'black';
 	small_separator = ':::';
 	big_separator = '::::';
-	baseID_file = 'data';
+	idBase_file = 'data';
 	unknown = 'unknown';
 	newLine = '\n';
 	comma = ',';

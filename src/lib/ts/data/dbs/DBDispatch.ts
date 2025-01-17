@@ -11,8 +11,8 @@ import DBCommon from './DBCommon';
 // when switching to another db
 // s_hierarchy is set to its hierarchy
 
-export function db_forType(dbType: string): DBCommon {
-	switch (dbType) {
+export function db_forType(type_db: string): DBCommon {
+	switch (type_db) {
 		case DBType.firebase: return dbFirebase;
 		case DBType.airtable: return dbAirtable;
 		case DBType.test:	  return dbTest;
@@ -37,7 +37,7 @@ export default class DBDispatch {
 		let done = false;
 		this.db = dbFirebase;
 		s_db_type.subscribe((type: string) => {
-			if (!!type && (!done || (type && this.db.dbType != type))) {
+			if (!!type && (!done || (type && this.db.type_db != type))) {
 				done = true;
 				setTimeout( async () => {
 					preferences.write_key(IDPreference.db, type);
@@ -58,10 +58,10 @@ export default class DBDispatch {
 	}
 
 	get startupExplanation(): string {
-		const type = this.db.dbType;
+		const type = this.db.type_db;
 		let from = k.empty;
 		switch (type) {
-			case DBType.firebase: from = `, from ${this.db.baseID}`; break;
+			case DBType.firebase: from = `, from ${this.db.idBase}`; break;
 			case DBType.test:	  return k.empty;
 		}
 		return `(loading your ${type} data${from})`;
@@ -75,7 +75,7 @@ export default class DBDispatch {
 	}
 
 	db_next_get(forward: boolean): DBType {
-		switch (this.db.dbType) {
+		switch (this.db.type_db) {
 			case DBType.airtable: return forward ? DBType.test	   : DBType.firebase;
 			case DBType.test:	  return forward ? DBType.firebase : DBType.airtable;
 			default:			  return forward ? DBType.airtable : DBType.test;

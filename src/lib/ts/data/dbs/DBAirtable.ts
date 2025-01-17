@@ -1,6 +1,7 @@
 import { DebugFlag, Relationship, CreationOptions } from '../../common/Global_Imports';
 import { g, k, u, debug, Thing, Trait, TraitType } from '../../common/Global_Imports';
 import { DBType, DatumType } from '../basis/Persistent_Identifiable';
+import { Persistence_Kind } from './DBCommon';
 import DBCommon from './DBCommon';
 import Airtable from 'airtable';
 
@@ -25,12 +26,12 @@ export default class DBAirtable extends DBCommon {
 	traits_table = this.base(DatumType.traits);
 	access_table = this.base(DatumType.access);
 	users_table = this.base(DatumType.users);
-	dbType = DBType.airtable;
-	baseID = k.empty;
-	isRemote = true;
+	kind_persistence = Persistence_Kind.remote;
+	type_db = DBType.airtable;
+	idBase = k.empty;
 
 	relationships_errorMessage = 'Error in Relationships:';
-	async hierarchy_fetchForID(baseID: string) {}
+	async hierarchy_fetchForID(idBase: string) {}
 	things_errorMessage = 'Error in Things:';
 	traits_errorMessage = 'Error in Traits:';
 

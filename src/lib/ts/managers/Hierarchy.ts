@@ -266,11 +266,11 @@ export class Hierarchy {
 		}
 	}
 
-	thing_remember_runtimeCreateUnique(baseID: string, id: string, title: string, color: string, type: string,
+	thing_remember_runtimeCreateUnique(idBase: string, id: string, title: string, color: string, type: string,
 		already_persisted: boolean = false): Thing {
 		let thing = this.thing_forHID(id?.hash() ?? null);
 		if (!thing) {
-			thing = this.thing_remember_runtimeCreate(baseID, id, title, color, type, already_persisted);
+			thing = this.thing_remember_runtimeCreate(idBase, id, title, color, type, already_persisted);
 		}
 		return thing;
 	}
@@ -303,14 +303,14 @@ export class Hierarchy {
 		const thing = ancestry.thing;
 		if (!!thing && parent && parentAncestry) {
 			const order = ancestry.order + (below ? k.halfIncrement : -k.halfIncrement);
-			const child = this.thing_runtimeCreate(thing.baseID, Identifiable.newID(), k.title_line, parent.color, k.empty);
+			const child = this.thing_runtimeCreate(thing.idBase, Identifiable.newID(), k.title_line, parent.color, k.empty);
 			await this.ancestry_edit_persistentAddAsChild(parentAncestry, child, order, false);
 		}
 	}
 
-	thing_remember_runtimeCreate(baseID: string, id: string, title: string, color: string, type: string,
+	thing_remember_runtimeCreate(idBase: string, id: string, title: string, color: string, type: string,
 		already_persisted: boolean = false, needs_upgrade: boolean = false): Thing {
-		const thing = this.thing_runtimeCreate(baseID, id, title, color, type, already_persisted);
+		const thing = this.thing_runtimeCreate(idBase, id, title, color, type, already_persisted);
 		this.thing_remember(thing);
 		if (needs_upgrade) {
 			thing.set_isDirty();	// add type and remove trait fields
@@ -318,8 +318,8 @@ export class Hierarchy {
 		return thing;
 	}
 
-	async thing_remember_runtimeCopy(baseID: string, parent: Thing) {
-		const newThing = new Thing(baseID, Identifiable.newID(), parent.title, parent.color, parent.type);
+	async thing_remember_runtimeCopy(idBase: string, parent: Thing) {
+		const newThing = new Thing(idBase, Identifiable.newID(), parent.title, parent.color, parent.type);
 		const prohibitedTraits: Array<string> = [ThingType.roots, ThingType.root, ThingType.bulk];
 		if (prohibitedTraits.includes(parent.type)) {
 			newThing.type = k.empty;
@@ -350,19 +350,19 @@ export class Hierarchy {
 			if (!this.things.map(t => t.id).includes(thing.id)) {
 				this.things.push(thing);
 			}
-			if (thing.isRoot && (!thing.baseID || [k.empty, this.db.baseID].includes(this.db.baseID))) {
+			if (thing.isRoot && (!thing.idBase || [k.empty, this.db.idBase].includes(this.db.idBase))) {
 				this.root = thing;
 			}
 		}
 	}
 
-	thing_runtimeCreate(baseID: string, id: string, title: string, color: string, type: string,
+	thing_runtimeCreate(idBase: string, id: string, title: string, color: string, type: string,
 		already_persisted: boolean = false): Thing {
 		let thing: Thing | null = null;
-		if (id && type == ThingType.root && baseID != this.db.baseID) {			// other bulks have their own root & id
-			thing = this.bulks_remember_rootID_ofThing(baseID, id, color);		// which our thing needs to adopt
+		if (id && type == ThingType.root && idBase != this.db.idBase) {			// other bulks have their own root & id
+			thing = this.bulks_remember_rootID_ofThing(idBase, id, color);		// which our thing needs to adopt
 		} else {
-			thing = new Thing(baseID, id, title, color, type, already_persisted);
+			thing = new Thing(idBase, id, title, color, type, already_persisted);
 			if (thing.isBulkAlias) {
 				thing.needsBulkFetch = true;
 				if (title.includes('@')) {
@@ -382,7 +382,7 @@ export class Hierarchy {
 			if (!!root && type == ThingType.root) {
 				type = k.empty;			// prevent multiple roots
 			}
-			this.thing_remember_runtimeCreateUnique(this.db.baseID, dict.id, dict.title, dict.color, type);
+			this.thing_remember_runtimeCreateUnique(this.db.idBase, dict.id, dict.title, dict.color, type);
 		} else if (!!root && !this.db.isRemote) {
 			root.title = dict.title;	// new title for root
 		}
@@ -421,11 +421,11 @@ export class Hierarchy {
 		return null;
 	}
 
-	bulks_remember_rootID_ofThing(baseID: string, rootID: string, color: string) {
-		const thing = this.bulks_alias_forTitle_ofThing(baseID);
+	bulks_remember_rootID_ofThing(idBase: string, rootID: string, color: string) {
+		const thing = this.bulks_alias_forTitle_ofThing(idBase);
 		if (!!thing) {
 			// rootID is of the root thing from bulk fetch all
-			// i.ux., it is the root id from another baseID
+			// i.ux., it is the root id from another idBase
 			// need a second thing lookup by this id
 			// so children relationships will work
 			this.thing_byHID[rootID.hash()] = thing;
@@ -441,8 +441,8 @@ export class Hierarchy {
 		let newThingAncestry: Ancestry | null = null;
 		const thing = ancestry.thing;
 		if (!!thing && newParent) {
-			const baseID = newParent.isBulkAlias ? newParent.title : newParent.baseID;
-			const newThing = await this.thing_remember_runtimeCopy(baseID, thing);
+			const idBase = newParent.isBulkAlias ? newParent.title : newParent.idBase;
+			const newThing = await this.thing_remember_runtimeCopy(idBase, thing);
 			newThingAncestry = newParentAncestry.extend_withChild(newThing);
 			if (!!newThingAncestry) {
 				await this.relationship_remember_persistent_addChild_toAncestry(newThing, newParentAncestry);
@@ -487,12 +487,12 @@ export class Hierarchy {
 
 	trait_forHID(hid: Integer): Trait | null { return this.trait_byHID[hid ?? undefined]; }
 
-	trait_runtimeCreate(baseID: string, id: string, ownerID: string, type: TraitType, text: string, already_persisted: boolean = false): Trait {
-		return new Trait(baseID, id, ownerID, type, text, already_persisted);
+	trait_runtimeCreate(idBase: string, id: string, ownerID: string, type: TraitType, text: string, already_persisted: boolean = false): Trait {
+		return new Trait(idBase, id, ownerID, type, text, already_persisted);
 	}
 
-	trait_remember_runtimeCreateUnique(baseID: string, id: string, ownerID: string, type: TraitType, text: string, already_persisted: boolean = false): Trait {
-		return this.trait_forHID(id?.hash()) ?? this.trait_remember_runtimeCreate(baseID, id, ownerID, type, text, already_persisted);
+	trait_remember_runtimeCreateUnique(idBase: string, id: string, ownerID: string, type: TraitType, text: string, already_persisted: boolean = false): Trait {
+		return this.trait_forHID(id?.hash()) ?? this.trait_remember_runtimeCreate(idBase, id, ownerID, type, text, already_persisted);
 	}
 
 	trait_forType_ownerHID(type: TraitType | null, ownerHID: Integer | null): Trait| null {
@@ -501,7 +501,7 @@ export class Hierarchy {
 	}
 
 	trait_extract_fromDict(dict: Dictionary) {
-		this.trait_remember_runtimeCreateUnique(this.db.baseID, dict.id, dict.ownerID, dict.type, dict.text);
+		this.trait_remember_runtimeCreateUnique(this.db.idBase, dict.id, dict.ownerID, dict.type, dict.text);
 	}
 
 	trait_forget(trait: Trait) {
@@ -519,9 +519,9 @@ export class Hierarchy {
 		this.traits.push(trait);
 	}
 
-	trait_remember_runtimeCreate(baseID: string, id: string, ownerID: string, type: TraitType, text: string,
+	trait_remember_runtimeCreate(idBase: string, id: string, ownerID: string, type: TraitType, text: string,
 		already_persisted: boolean = false): Trait {
-		const trait = this.trait_runtimeCreate(baseID, id, ownerID, type, text, already_persisted);
+		const trait = this.trait_runtimeCreate(idBase, id, ownerID, type, text, already_persisted);
 		this.trait_remember(trait);
 		return trait;
 	}
@@ -529,7 +529,7 @@ export class Hierarchy {
 	trait_setText_forType_ownerHID(text: string, type: TraitType, ownerID: string) {
 		let trait = this.trait_forType_ownerHID(type, ownerID.hash());
 		if (!trait) {
-			trait = this.trait_remember_runtimeCreate(this.db.baseID, Identifiable.newID(), ownerID, type, text);
+			trait = this.trait_remember_runtimeCreate(this.db.idBase, Identifiable.newID(), ownerID, type, text);
 		} else {
 			trait.text = text;
 		}
@@ -560,10 +560,10 @@ export class Hierarchy {
 		return true;
 	}
 
-	async relationships_contains_persistentCreateMissing(baseID: string) {
+	async relationships_contains_persistentCreateMissing(idBase: string) {
 		for (const thing of this.things) {
-			if (thing.isOrphaned && thing.baseID == baseID && !!this.idRoot) {			// add orphaned things to root
-				await this.relationship_remember_persistentCreateUnique(baseID, Identifiable.newID(),
+			if (thing.isOrphaned && thing.idBase == idBase && !!this.idRoot) {			// add orphaned things to root
+				await this.relationship_remember_persistentCreateUnique(idBase, Identifiable.newID(),
 					PredicateKind.contains, this.idRoot, thing.id, 0, CreationOptions.getPersistentID);
 			}
 		}
@@ -678,7 +678,7 @@ export class Hierarchy {
 			if (idParent == dict.idChild) {
 				console.log('preventing infinite recursion')
 			} else {
-				this.relationship_remember_runtimeCreateUnique(this.db.baseID, dict.id, dict.kindPredicate, idParent, dict.idChild, dict.order);
+				this.relationship_remember_runtimeCreateUnique(this.db.idBase, dict.id, dict.kindPredicate, idParent, dict.idChild, dict.order);
 			}
 		}
 	}
@@ -706,13 +706,13 @@ export class Hierarchy {
 		return null;
 	}
 
-	async relationship_remember_persistentCreateUnique(baseID: string, idRelationship: string, kindPredicate: string, idParent: string, idChild: string,
+	async relationship_remember_persistentCreateUnique(idBase: string, idRelationship: string, kindPredicate: string, idParent: string, idChild: string,
 		order: number, creationOptions: CreationOptions = CreationOptions.isFromPersistent): Promise<any> {
 		let relationship = this.relationship_forPredicateKind_parent_child(kindPredicate, idParent, idChild);
 		if (!!relationship) {
 			relationship.order_setTo_persistentMaybe(order, true);
 		} else {
-			relationship = new Relationship(baseID, idRelationship, kindPredicate, idParent, idChild, order, creationOptions == CreationOptions.isFromPersistent);
+			relationship = new Relationship(idBase, idRelationship, kindPredicate, idParent, idChild, order, creationOptions == CreationOptions.isFromPersistent);
 			await this.db.relationship_remember_persistentCreate(relationship);
 		}
 		return relationship;
@@ -727,7 +727,7 @@ export class Hierarchy {
 			this.relationship_remember_byKnown(relationship, relationship.idChild, this.relationships_byChildHID);
 			this.relationship_remember_byKnown(relationship, relationship.idParent, this.relationships_byParentHID);
 			
-			if (relationship.baseID != this.db.baseID) {
+			if (relationship.idBase != this.db.idBase) {
 				debug.log_error(`relationship crossing dbs: ${relationship.description}`);
 			}
 		}
@@ -736,12 +736,12 @@ export class Hierarchy {
 	async relationship_remember_persistent_addChild_toAncestry(child: Thing | null, parentAncestry: Ancestry, kindPredicate: string = PredicateKind.contains): Promise<any> {
 		const parent = parentAncestry.thing;
 		if (!!child && !!parent && !child.isBulkAlias) {
-			const changingBulk = parent.isBulkAlias || child.baseID != this.db.baseID;
-			const baseID = changingBulk ? child.baseID : parent.baseID;
+			const changingBulk = parent.isBulkAlias || child.idBase != this.db.idBase;
+			const idBase = changingBulk ? child.idBase : parent.idBase;
 			if (!child.state.already_persisted) {
 				await this.db.thing_remember_persistentCreate(child);					// for everything below, need to await child.id fetched from dbDispatch
 			}
-			const relationship = await this.relationship_remember_persistentCreateUnique(baseID, Identifiable.newID(), kindPredicate, parent.idBridging, child.id, 0, CreationOptions.getPersistentID);
+			const relationship = await this.relationship_remember_persistentCreateUnique(idBase, Identifiable.newID(), kindPredicate, parent.idBridging, child.id, 0, CreationOptions.getPersistentID);
 			const childAncestry = parentAncestry.uniquelyAppendID(relationship.id);
 			u.ancestries_orders_normalize_persistentMaybe(parentAncestry.childAncestries);		// write new order values for relationships
 			return childAncestry;
@@ -763,18 +763,18 @@ export class Hierarchy {
 		}
 	}
 
-	relationship_remember_runtimeCreateUnique(baseID: string, id: string, kindPredicate: string, idParent: string, idChild: string,
+	relationship_remember_runtimeCreateUnique(idBase: string, id: string, kindPredicate: string, idParent: string, idChild: string,
 		order: number, creationOptions: CreationOptions = CreationOptions.none): Relationship {
 		let reversed = this.relationship_forPredicateKind_parent_child(kindPredicate, idChild, idParent);
 		let relationship = this.relationship_forPredicateKind_parent_child(kindPredicate, idParent, idChild);
 		const isBidirectional = this.predicate_forKind(kindPredicate)?.isBidirectional ?? false;
 		const already_persisted = creationOptions == CreationOptions.isFromPersistent;
 		if (!relationship) {
-			relationship = new Relationship(baseID, id, kindPredicate, idParent, idChild, order, already_persisted);
+			relationship = new Relationship(idBase, id, kindPredicate, idParent, idChild, order, already_persisted);
 			this.relationship_remember_ifValid(relationship);
 		}
 		if (isBidirectional && !reversed) {
-			reversed = new Relationship(baseID, Identifiable.newID(), kindPredicate, idChild, idParent, order, already_persisted);
+			reversed = new Relationship(idBase, Identifiable.newID(), kindPredicate, idChild, idParent, order, already_persisted);
 			this.relationship_remember_ifValid(reversed);
 		}
 		relationship?.order_setTo_persistentMaybe(order);
@@ -867,7 +867,7 @@ export class Hierarchy {
 	async ancestry_edit_persistentCreateChildOf(parentAncestry: Ancestry | null) {
 		const thing = parentAncestry?.thing;
 		if (!!thing && !!parentAncestry) {
-			const child = await this.thing_remember_runtimeCopy(thing.baseID, thing);
+			const child = await this.thing_remember_runtimeCopy(thing.idBase, thing);
 			child.title = 'idea';
 			parentAncestry.expand();
 			await this.ancestry_edit_persistentAddAsChild(parentAncestry, child, 0);
@@ -913,7 +913,7 @@ export class Hierarchy {
 		let dict = this.ancestry_byKind_andHash[kindPredicate] ?? {};
 		let ancestry = dict[hid];
 		if (!ancestry) {
-			ancestry = new Ancestry(this.db.dbType, id, kindPredicate);
+			ancestry = new Ancestry(this.db.type_db, id, kindPredicate);
 			this.ancestry_remember(ancestry);
 		}
 		return ancestry;
@@ -928,7 +928,7 @@ export class Hierarchy {
 					return rootAncestry.extend_withChild(rootsMaybe) ?? null;
 				}
 			}
-			const roots = this.thing_runtimeCreate(this.db.baseID, Identifiable.newID(), 'roots', 'red', ThingType.roots);
+			const roots = this.thing_runtimeCreate(this.db.idBase, Identifiable.newID(), 'roots', 'red', ThingType.roots);
 			await this.relationship_remember_persistent_addChild_toAncestry(roots, rootAncestry).then((ancestry) => { rootsAncestry = ancestry; });
 		}
 		return rootsAncestry;
@@ -1183,13 +1183,13 @@ export class Hierarchy {
 	static readonly ANCILLARY: unique symbol;
 
 	access_runtimeCreate(idAccess: string, kind: string) {
-		const access = new Access(this.db.dbType, idAccess, kind);
+		const access = new Access(this.db.type_db, idAccess, kind);
 		this.access_byHID[idAccess.hash()] = access;
 		this.access_byKind[kind] = access;
 	}
 
 	user_runtimeCreate(id: string, name: string, email: string, phone: string) {
-		const user = new User(this.db.dbType, id, name, email, phone);
+		const user = new User(this.db.type_db, id, name, email, phone);
 		this.user_byHID[id.hash()] = user;
 	}
 
@@ -1296,7 +1296,7 @@ export class Hierarchy {
 	}
 
 	async wrapUp_data_forUX() {
-		// await this.relationships_contains_persistentCreateMissing(this.db.baseID);
+		// await this.relationships_contains_persistentCreateMissing(this.db.idBase);
 		// await this.relationships_removeHavingNullReferences();
 		this.restore_fromPersistLocal();
 		this.signal_storage_redraw();

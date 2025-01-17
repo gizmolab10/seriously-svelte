@@ -100,11 +100,11 @@ class Global_State {
 	}
 
 	get siteTitle(): string {
-		const dbType = dbDispatch.db.dbType;
-		const baseID = dbDispatch.db.baseID;
+		const type_db = dbDispatch.db.type_db;
+		const idBase = dbDispatch.db.idBase;
 		const host = this.isServerLocal ? 'local' : 'remote';
-		const db_name = dbType ? (dbType! + ', ') : k.empty;
-		const base_name = baseID ? (baseID! + ', ') : k.empty;
+		const db_name = type_db ? (type_db! + ', ') : k.empty;
+		const base_name = idBase ? (idBase! + ', ') : k.empty;
 		return `Seriously (${host}, ${db_name}${base_name}${u.browserType}, α)`;
 	}
 

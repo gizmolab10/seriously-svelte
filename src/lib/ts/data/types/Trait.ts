@@ -8,8 +8,8 @@ export default class Trait extends Datum {
 	ownerID: string = k.empty;
 	text: string = k.empty;
 
-	constructor(baseID: string, id: string, ownerID: string, type: TraitType, text: string = k.empty, already_persisted: boolean = false) {
-		super(dbDispatch.db.dbType, baseID, id, already_persisted);
+	constructor(idBase: string, id: string, ownerID: string, type: TraitType, text: string = k.empty, already_persisted: boolean = false) {
+		super(dbDispatch.db.type_db, idBase, id, already_persisted);
 		this.ownerID = ownerID;
 		this.type = type;
 		this.text = text;
