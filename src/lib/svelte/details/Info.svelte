@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { signals, InfoType, TraitType, preferences, ElementType, IDPreference } from '../../ts/common/Global_Imports';
+	import { signals, T_Info, T_Trait, preferences, T_Element, T_Preference } from '../../ts/common/Global_Imports';
 	import { g, k, ux, show, Rect, Size, Point, Thing, debug, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
 	import { s_focus_ancestry, s_grabbed_ancestries, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
 	import { s_hierarchy, s_thing_color, s_thing_title } from '../../ts/state/Svelte_Stores';
@@ -24,7 +24,7 @@
 	const traits_center = new Point(122, text_top - 20);
 	const traits_size = new Size(info_width - 58, k.default_buttonSize + 4);
 	const traits_rect = Rect.createCenterRect(traits_center, traits_size);
-	const element_state = ux.element_state_for(new Identifiable(id), ElementType.info, id);
+	const element_state = ux.element_state_for(new Identifiable(id), T_Element.info, id);
 	let ancestry: Ancestry | null = $s_focus_ancestry;
 	let thing: Thing | null = ancestry?.thing ?? null;
 	let text_box_size = new Size(info_width - 4, 68);
@@ -97,7 +97,7 @@
 
 	function selection_closure(types: Array<string>) {
 		const type = types[0];
-		preferences.write_key(IDPreference.info_type, type);
+		preferences.write_key(T_Preference.info_type, type);
 		show.info_type = type;
 		update_forKind();
 	}
@@ -112,7 +112,7 @@
 	}
 
 	function update_forKind() {
-		if (show.info_type == InfoType.focus || !hasGrabs()) {
+		if (show.info_type == T_Info.focus || !hasGrabs()) {
 			ancestry = $s_focus_ancestry;
 		} else {
 			grabs = $s_grabbed_ancestries;
@@ -145,8 +145,8 @@
 	function handle_textChange(label: string, text: string | null) {
 		if (!!thing && (!!text || text == k.empty)) {
 			switch (label) {
-				case 'quest':		thing.setTraitText_forType(text, TraitType.quest);		 break;
-				case 'consequence':	thing.setTraitText_forType(text, TraitType.consequence); break;
+				case 'quest':		thing.setTraitText_forType(text, T_Trait.quest);		 break;
+				case 'consequence':	thing.setTraitText_forType(text, T_Trait.consequence); break;
 			}
 		} else if (!text) {		// do after test for k.empty, which also is interpreted as falsey
 			(async () => {
@@ -174,7 +174,7 @@
 					height={k.row_height * font_ratio}
 					selection_closure={selection_closure}
 					origin={new Point(45, tops[TI.segments])}
-					titles={[InfoType.focus, InfoType.selection]}/>
+					titles={[T_Info.focus, T_Info.selection]}/>
 				{#key thing_title}
 					<Separator top={tops[TI.before_title]} left=5 title='title' width={info_width}/>
 					<div style='

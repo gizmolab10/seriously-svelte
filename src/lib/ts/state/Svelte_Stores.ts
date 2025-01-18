@@ -1,22 +1,22 @@
-import { Tree_Type, Hierarchy, Cluster_Map, Details_Type, Radial_Geometry, Alteration_State } from '../common/Global_Imports';
-import { Rect, Point, Ancestry, Graph_Type, Title_Edit_State, Paging_State, Startup_State } from '../common/Global_Imports';
+import { T_Tree, Hierarchy, Cluster_Map, T_Details, Radial_Geometry, Alteration_State } from '../common/Global_Imports';
+import { Rect, Point, Ancestry, T_Graph, Title_Edit_State, Paging_State, T_Startup } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
 
 export const s_clusters_geometry	  = writable<Radial_Geometry | null>();
 export const s_alteration_mode		  = writable<Alteration_State | null>();
-export const s_detail_types			  = writable<Array<Details_Type>>();
+export const s_detail_types			  = writable<Array<T_Details>>();
 export const s_active_cluster_map	  = writable<Cluster_Map | null>();
 export const s_title_edit_state		  = writable<Title_Edit_State | null>();
 export const s_ancestry_showing_tools = writable<Ancestry | null>();
 export const s_expanded_ancestries	  = writable<Array<Ancestry>>();
 export const s_grabbed_ancestries	  = writable<Array<Ancestry>>();
-export const s_startup_state		  = writable<Startup_State>();
+export const s_startup_state		  = writable<T_Startup>();
 export const s_thing_title			  = writable<string | null>();
 export const s_thing_color			  = writable<string | null>();
 export const s_id_popupView			  = writable<string | null>();
 export const s_paging_state			  = writable<Paging_State>();
-export const s_graph_type			  = writable<Graph_Type>();
-export const s_tree_type			  = writable<Tree_Type>();
+export const s_graph_type			  = writable<T_Graph>();
+export const s_tree_type			  = writable<T_Tree>();
 export const s_hierarchy			  = writable<Hierarchy>();
 export const s_focus_ancestry		  = writable<Ancestry>();
 export const s_rebuild_isInProgress	  = writable<boolean>();

@@ -1,4 +1,4 @@
-import { u, debug, Svelte_Wrapper, SvelteComponentType } from '../common/Global_Imports';
+import { u, debug, Svelte_Wrapper, T_SvelteComponent } from '../common/Global_Imports';
 import { s_hierarchy } from '../../ts/state/Svelte_Stores';
 import { Create_Mouse_State } from '../common/Types';
 import type { Integer } from '../common/Types';
@@ -6,7 +6,7 @@ import { get } from 'svelte/store';
 
 export class Wrappers {
 	private child_wrapperTypes_byType: {[type: string]: Array<string>} = {};
-	private wrappers_byType_andHID: { [type: string]: { [hid: Integer]: Svelte_Wrapper } } = {};
+	private wrappers_byT_andHID: { [type: string]: { [hid: Integer]: Svelte_Wrapper } } = {};
 	
 	// assure delivery of events
 	// to a svelt component
@@ -15,7 +15,7 @@ export class Wrappers {
 	// when they overlap
 
 	wrappers_byHID_forType(type: string): { [hid: Integer]: Svelte_Wrapper } {
-		return this.wrappers_byType_andHID[type];
+		return this.wrappers_byT_andHID[type];
 	}
 
 	wrapper_forHID_andType(hid: Integer, type: string) {
@@ -27,7 +27,7 @@ export class Wrappers {
 	}
 
 	wrapper_add(wrapper: Svelte_Wrapper) {
-		const array = this.wrappers_byType_andHID;
+		const array = this.wrappers_byT_andHID;
 		const dict = array[wrapper.type] ?? {};
 		const type = wrapper.type;
 		const hid = wrapper.hid;
@@ -41,7 +41,7 @@ export class Wrappers {
 	// WHY? negligible performance gain	//
 	//////////////////////////////////////
 
-	addType_toParent(type: string, parentType: string) {
+	addT_toParent(type: string, parentType: string) {
 		let childrenTypes = this.child_wrapperTypes_byType[parentType] ?? [];
 		if (!childrenTypes.includes(type)) {
 			childrenTypes.push(type);
@@ -49,17 +49,17 @@ export class Wrappers {
 		}
 	}
 
-	addType_toHitHierarchy(type: string) {
+	addT_toHitHierarchy(type: string) {
 		for (const parentType of Svelte_Wrapper.parentTypes_for(type)) {
-			this.addType_toParent(type, parentType);
-			this.addType_toHitHierarchy(parentType);	// recurse
+			this.addT_toParent(type, parentType);
+			this.addT_toHitHierarchy(parentType);	// recurse
 		}
 	}
 
 	add_toHitHierarchy(wrapper: Svelte_Wrapper) {
 		for (const parentType of wrapper.parentTypes) {
-			this.addType_toParent(wrapper.type, parentType);
-			this.addType_toHitHierarchy(parentType);
+			this.addT_toParent(wrapper.type, parentType);
+			this.addT_toHitHierarchy(parentType);
 		}
 	}
 
@@ -70,7 +70,7 @@ export class Wrappers {
 		// stop if handled
 		// else ask the next wrapper
 
-		const wrappers = this.hitsFor(event, SvelteComponentType.app)
+		const wrappers = this.hitsFor(event, T_SvelteComponent.app)
 		for (const wrapper of wrappers) {
 			if (wrapper.handle_event(event, closure)) {
 				return;

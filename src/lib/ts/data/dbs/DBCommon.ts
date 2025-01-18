@@ -1,17 +1,17 @@
-import { g, k, u, Trait, Thing, ThingType, Hierarchy, Predicate, Relationship } from '../../common/Global_Imports';
-import { debug, signals, Startup_State, preferences, IDPreference } from '../../common/Global_Imports';
+import { g, k, u, Trait, Thing, T_Thing, Hierarchy, Predicate, Relationship } from '../../common/Global_Imports';
+import { debug, signals, T_Startup, preferences, T_Preference } from '../../common/Global_Imports';
 import { s_hierarchy, s_startup_state } from '../../state/Svelte_Stores';
 import Persistent_Identifiable from '../basis/Persistent_Identifiable';
 import type { Dictionary } from '../../common/Types';
 
-export enum Persistence_Kind {
+export enum T_Persistence {
 	remote = 'remote',
 	local  = 'local',
 	none   = 'none',
 }
 
 export default class DBCommon {
-	kind_persistence!: Persistence_Kind;
+	kind_persistence!: T_Persistence;
 	loadTime: string | null = null;
 	hierarchy!: Hierarchy;
 	type_db = k.empty;
@@ -20,14 +20,14 @@ export default class DBCommon {
 	queryStrings_apply() {}
 	setup_remote_handlers() {}
 	get dict_forStorageDetails(): Dictionary { return {'fetch took' : this.loadTime} }
-	get isRemote(): boolean { return this.kind_persistence == Persistence_Kind.remote; }
-	get isPersistent(): boolean { return this.kind_persistence != Persistence_Kind.none; }
+	get isRemote(): boolean { return this.kind_persistence == T_Persistence.remote; }
+	get isPersistent(): boolean { return this.kind_persistence != T_Persistence.none; }
 	async hierarchy_fetchForID(idBase: string) {}	// support for browsing multiple firebase bulks
 	
 	async fetch_all() { this.fetch_all_fromLocal(); }
 	async remove_all() { this.remove_all_fromLocal(); }
-	remove_all_fromLocal() { if (this.isPersistent) { preferences.writeDB_key(IDPreference.local, null); } }
-	persist_all_toLocal() { if (this.isPersistent) { preferences.writeDB_key(IDPreference.local, u.stringify_object(this.hierarchy.all_data)); } }
+	remove_all_fromLocal() { if (this.isPersistent) { preferences.writeDB_key(T_Preference.local, null); } }
+	persist_all_toLocal() { if (this.isPersistent) { preferences.writeDB_key(T_Preference.local, u.stringify_object(this.hierarchy.all_data)); } }
 
 	async thing_persistentUpdate(thing: Thing) {}
 	async thing_persistentDelete(thing: Thing) {}
@@ -66,13 +66,13 @@ export default class DBCommon {
 	}
 
 	async fetch_all_fromLocal() {
-		const json = preferences.readDB_key(IDPreference.local);
+		const json = preferences.readDB_key(T_Preference.local);
 		const h = this.hierarchy;
 		if (!!json) {
 			await h.extract_fromDict(JSON.parse(json) as Dictionary);
 		} else if (!this.isRemote) {
 			h.predicate_defaults_remember_runtimeCreate();
-			h.thing_remember_runtimeCreateUnique(this.idBase, Thing.newID(), 'click here to edit this title', 'limegreen', ThingType.root);
+			h.thing_remember_runtimeCreateUnique(this.idBase, Thing.newID(), 'click here to edit this title', 'limegreen', T_Thing.root);
 		}
 	}
 	
@@ -84,11 +84,11 @@ export default class DBCommon {
 		if (h.hasRoot) {
 			h.restore_fromPersistLocal();
 		} else {
-			s_startup_state.set(Startup_State.fetch);
+			s_startup_state.set(T_Startup.fetch);
 			await this.hierarchy_create_fastLoad_or_fetch_andBuild();
 		}
 		setTimeout( () => {
-			s_startup_state.set(Startup_State.ready);
+			s_startup_state.set(T_Startup.ready);
 			signals.signal_rebuildGraph_fromFocus();
 		}, 1);
 	}

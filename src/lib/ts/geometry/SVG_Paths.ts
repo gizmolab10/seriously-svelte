@@ -1,4 +1,4 @@
-import { k, u, Size, Point, Angle, Oblong_Part } from '../common/Global_Imports';
+import { k, u, Size, Point, Angle, T_Oblong } from '../common/Global_Imports';
 import type { Integer } from '../common/Types';
 
 export enum Direction {
@@ -144,9 +144,9 @@ export default class SVG_Paths {
 		return path;
 	}
 
-	oblong(center: Point, size: Size, part: Oblong_Part = Oblong_Part.full) {
-		const bumpRight = [Oblong_Part.full, Oblong_Part.right].includes(part);
-		const bumpLeft = [Oblong_Part.full, Oblong_Part.left].includes(part);
+	oblong(center: Point, size: Size, part: T_Oblong = T_Oblong.full) {
+		const bumpRight = [T_Oblong.full, T_Oblong.right].includes(part);
+		const bumpLeft = [T_Oblong.full, T_Oblong.left].includes(part);
 		const radius = size.height / 2;
 		const half = size.width / 2;
 		const cx = center.x;
@@ -161,10 +161,10 @@ export default class SVG_Paths {
 		const BL = `${L}, ${B}`;
 		const cap = `${radius}, ${radius} 0 0 1`;
 		switch(part) {
-			case Oblong_Part.middle: return `M ${TL} L ${TR} L ${BR} L ${BL} L ${TL} Z`;
-			case Oblong_Part.right:  return `M ${TL} L ${TR} A ${cap} ${BR} L ${BL} L ${TL} Z`;
-			case Oblong_Part.left:	 return `M ${TL} L ${TR} L ${BR} L ${BL} A ${cap} ${TL} Z`;
-			case Oblong_Part.full:	 return `M ${TL} L ${TR} A ${cap} ${BR} L ${BL} A ${cap} ${TL} Z`;
+			case T_Oblong.middle: return `M ${TL} L ${TR} L ${BR} L ${BL} L ${TL} Z`;
+			case T_Oblong.right:  return `M ${TL} L ${TR} A ${cap} ${BR} L ${BL} L ${TL} Z`;
+			case T_Oblong.left:	 return `M ${TL} L ${TR} L ${BR} L ${BL} A ${cap} ${TL} Z`;
+			case T_Oblong.full:	 return `M ${TL} L ${TR} A ${cap} ${BR} L ${BL} A ${cap} ${TL} Z`;
 		}
 		
 	}

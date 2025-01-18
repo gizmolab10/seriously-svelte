@@ -1,5 +1,5 @@
 
-import { Quadrant, Orientation } from '../geometry/Angle';
+import { T_Quadrant, T_Orientation } from '../geometry/Angle';
 import type { SvelteComponent } from 'svelte';
 import { u } from '../common/Utilities';
 import Angle from '../geometry/Angle';
@@ -48,24 +48,24 @@ export class Point {
 	// in this (as in math), y increases going up and angles increase counter-clockwise
 	get angle(): number { return (Math.atan2(-this.y, this.x)); }	// in browsers, y is the opposite, so reverse it here
 
-	get quadrant_ofPoint(): Quadrant {
+	get quadrant_ofPoint(): T_Quadrant {
 		const x = this.x;
 		const y = this.y;
-		if		  (x >= 0 && y >= 0) { return Quadrant.upperRight;
-		} else if (x <  0 && y >= 0) { return Quadrant.upperLeft;
-		} else if (x <  0 && y <  0) { return Quadrant.lowerLeft;
-		} else						 { return Quadrant.lowerRight;
+		if		  (x >= 0 && y >= 0) { return T_Quadrant.upperRight;
+		} else if (x <  0 && y >= 0) { return T_Quadrant.upperLeft;
+		} else if (x <  0 && y <  0) { return T_Quadrant.lowerLeft;
+		} else						 { return T_Quadrant.lowerRight;
 		}
 	}
 
-	get orientation_ofVector(): Orientation {
+	get orientation_ofVector(): T_Orientation {
 		let quadrant = new Angle(this.angle).quadrant_ofAngle;
 		const isFirstEighth = (this.angle).normalize_between_zeroAnd(Angle.quarter) < (Math.PI / 4);
 		switch (quadrant) {
-			case Quadrant.upperRight: return isFirstEighth ? Orientation.right : Orientation.up;
-			case Quadrant.upperLeft:  return isFirstEighth ? Orientation.up	   : Orientation.left;
-			case Quadrant.lowerLeft:  return isFirstEighth ? Orientation.left  : Orientation.down;
-			case Quadrant.lowerRight: return isFirstEighth ? Orientation.down  : Orientation.right;
+			case T_Quadrant.upperRight: return isFirstEighth ? T_Orientation.right : T_Orientation.up;
+			case T_Quadrant.upperLeft:  return isFirstEighth ? T_Orientation.up	   : T_Orientation.left;
+			case T_Quadrant.lowerLeft:  return isFirstEighth ? T_Orientation.left  : T_Orientation.down;
+			case T_Quadrant.lowerRight: return isFirstEighth ? T_Orientation.down  : T_Orientation.right;
 		}
 	}
 
@@ -192,9 +192,9 @@ export class Rect {
 
 	corners_forAngle(angle: number): [Point, Point] {
 		switch (new Angle(angle).quadrant_ofAngle) {
-			case Quadrant.lowerRight: return [this.bottomLeft, this.topRight];
-			case Quadrant.upperLeft:  return [this.topRight, this.bottomLeft];
-			case Quadrant.lowerLeft:  return [this.extent, this.origin];
+			case T_Quadrant.lowerRight: return [this.bottomLeft, this.topRight];
+			case T_Quadrant.upperLeft:  return [this.topRight, this.bottomLeft];
+			case T_Quadrant.lowerLeft:  return [this.extent, this.origin];
 			default:				  return [this.origin, this.extent];
 		}
 	}

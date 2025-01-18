@@ -4,9 +4,9 @@ import { s_thing_fontFamily } from '../state/Svelte_Stores';
 import { Size, Point } from '../geometry/Geometry';
 import type { Dictionary } from '../common/Types';
 import Identifiable from '../basis/Identifiable';
-import { Quadrant } from '../geometry/Angle';
+import { T_Quadrant } from '../geometry/Angle';
 import Ancestry from '../data/basis/runtime/Ancestry';
-import { IDBrowser } from './Enumerations';
+import { T_Browser } from './Enumerations';
 import { transparentize } from 'color2k';
 import Angle from '../geometry/Angle';
 import { get } from 'svelte/store';
@@ -17,7 +17,7 @@ class Utilities {
 	location_ofMouseEvent(event: MouseEvent):					   Point { return new Point(event.clientX, event.clientY); }
 	getWidthOf(s: string):										  number { return this.getWidth_ofString_withSize(s, `${k.font_size}px`); }
 	opacitize(color: string, amount: number):					  string { return transparentize(color, 1 - amount); }
-	quadrant_ofAngle(angle: number):							Quadrant { return new Angle(angle).quadrant_ofAngle; }
+	quadrant_ofAngle(angle: number):							T_Quadrant { return new Angle(angle).quadrant_ofAngle; }
 	concatenateArrays(a: Array<any>, b: Array<any>):		  Array<any> { return [...a, ...b]; }
 	strip_falsies(array: Array<any>):						  Array<any> { return array.filter(a => !!a); }
 	subtract_arrayFrom(a: Array<any>, b: Array<any>):		  Array<any> { return b.filter(c => a.filter(d => c != d)); }
@@ -92,11 +92,11 @@ class Utilities {
 		return stripped;
 	}
 
-	basis_angle_ofQuadrant(quadrant: Quadrant): number {
+	basis_angle_ofT_Quadrant(quadrant: T_Quadrant): number {
 		switch (quadrant) {
-			case Quadrant.upperRight: return Angle.three_quarters;
-			case Quadrant.lowerLeft:  return Angle.quarter;
-			case Quadrant.upperLeft:  return Angle.half;
+			case T_Quadrant.upperRight: return Angle.three_quarters;
+			case T_Quadrant.lowerLeft:  return Angle.quarter;
+			case T_Quadrant.upperLeft:  return Angle.half;
 			default:				  return 0;
 		}
 	}
@@ -134,17 +134,17 @@ class Utilities {
 		return points;
 	}
 
-	get browserType(): IDBrowser {
+	get browserType(): T_Browser {
 		const userAgent: string = navigator.userAgent;
 		switch (true) {
 			case /msie (\d+)/i.test(userAgent) ||
-				/trident\/.*; rv:(\d+)/i.test(userAgent):	return IDBrowser.explorer;
-			case /(chrome|crios)\/(\d+)/i.test(userAgent):	return IDBrowser.chrome;
-			case /firefox\/(\d+)/i.test(userAgent):			return IDBrowser.firefox;
-			case /opr\/(\d+)/i.test(userAgent):				return IDBrowser.opera;
-			case /orion\/(\d+)/i.test(userAgent):			return IDBrowser.orion;
-			case /safari\/(\d+)/i.test(userAgent):			return IDBrowser.safari;
-			default:										return IDBrowser.unknown
+				/trident\/.*; rv:(\d+)/i.test(userAgent):	return T_Browser.explorer;
+			case /(chrome|crios)\/(\d+)/i.test(userAgent):	return T_Browser.chrome;
+			case /firefox\/(\d+)/i.test(userAgent):			return T_Browser.firefox;
+			case /opr\/(\d+)/i.test(userAgent):				return T_Browser.opera;
+			case /orion\/(\d+)/i.test(userAgent):			return T_Browser.orion;
+			case /safari\/(\d+)/i.test(userAgent):			return T_Browser.safari;
+			default:										return T_Browser.unknown
 		}
 	}
 

@@ -1,4 +1,4 @@
-import { k, Rect, Size, Point, IDLine, Ancestry, Widget_MapRect } from '../common/Global_Imports';
+import { k, Rect, Size, Point, T_Line, Ancestry, Widget_MapRect } from '../common/Global_Imports';
 
 export default class Children_Geometry {
 	widgetMapRects: Array<Widget_MapRect> = [];
@@ -27,11 +27,11 @@ export default class Children_Geometry {
 
 	getDirection(delta: number) {
 		if (delta > 1) {
-			return IDLine.down;
+			return T_Line.down;
 		} else if (delta < -1) {
-			return IDLine.up;
+			return T_Line.up;
 		} else {
-			return IDLine.flat;
+			return T_Line.flat;
 		}
 	}
 }

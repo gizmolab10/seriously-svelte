@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, u, show, Point, debug, ZIndex, Details_Type } from '../../ts/common/Global_Imports';
+	import { g, k, u, show, Point, debug, ZIndex, T_Details } from '../../ts/common/Global_Imports';
 	import { s_graphRect, s_detail_types } from '../../ts/state/Svelte_Stores';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
@@ -7,7 +7,7 @@
 	import Storage from './Storage.svelte';
 	import Tools from './Tools.svelte';
 	import Info from './Info.svelte';
-	const titles = [Details_Type[Details_Type.storage], Details_Type[Details_Type.tools], Details_Type[Details_Type.recents], Details_Type[Details_Type.info]];
+	const titles = [T_Details[T_Details.storage], T_Details[T_Details.tools], T_Details[T_Details.recents], T_Details[T_Details.info]];
 	const heights = [116, 40, 100, 0];
 	let tops = [0, 0, 0, 0];
 	let rebuilds = 0;
@@ -15,7 +15,7 @@
 	update_tops();
 
 	function selection_closure(types: Array<string>) {
-		$s_detail_types = types as Array<Details_Type>;
+		$s_detail_types = types as Array<T_Details>;
 		update_tops();
 		rebuilds += 1;
 	}
@@ -24,17 +24,17 @@
 		let top = 42;
 		let index = 0;
 		let indices = $s_detail_types;
-		while (index <= Details_Type.info) {
+		while (index <= T_Details.info) {
 			tops[index] = top;
-			if (indices.includes(Details_Type[index])) {
+			if (indices.includes(T_Details[index])) {
 				top += heights[index];
 			}
 			index += 1;
 		}
 	}
 
-	function shows_type(type: Details_Type): boolean {
-		return $s_detail_types.includes(Details_Type[type])
+	function shows_type(type: T_Details): boolean {
+		return $s_detail_types.includes(T_Details[type])
 	}
 
 </script>
@@ -57,24 +57,24 @@
 			origin={new Point(6, 7)}
 			selected={$s_detail_types}
 			selection_closure={selection_closure}/>
-		{#if shows_type(Details_Type.storage)}
-			<Separator title='storage' top={tops[Details_Type.storage] - 8}/>
-			<Storage top={tops[Details_Type.storage]}/>
+		{#if shows_type(T_Details.storage)}
+			<Separator title='storage' top={tops[T_Details.storage] - 8}/>
+			<Storage top={tops[T_Details.storage]}/>
 		{/if}
 		<div class='further-details'
 			style='font-size:0.8em;
 				width:{k.width_details}px;'>
-			{#if shows_type(Details_Type.tools)}
-				<Separator title='tools' top={tops[Details_Type.tools] - 8}/>
-				<Tools top={tops[Details_Type.tools]}/>
+			{#if shows_type(T_Details.tools)}
+				<Separator title='tools' top={tops[T_Details.tools] - 8}/>
+				<Tools top={tops[T_Details.tools]}/>
 			{/if}
-			{#if shows_type(Details_Type.recents)}
-				<Separator title='recents' top={tops[Details_Type.recents] - 8}/>
-				<Recents top={tops[Details_Type.recents]}/>
+			{#if shows_type(T_Details.recents)}
+				<Separator title='recents' top={tops[T_Details.recents] - 8}/>
+				<Recents top={tops[T_Details.recents]}/>
 			{/if}
-			{#if shows_type(Details_Type.info)}
-				<Separator title='info' top={tops[Details_Type.info] - 7}/>
-				<Info top={tops[Details_Type.info]}/>
+			{#if shows_type(T_Details.info)}
+				<Separator title='info' top={tops[T_Details.info] - 7}/>
+				<Info top={tops[T_Details.info]}/>
 			{/if}
 		</div>
 	</div>

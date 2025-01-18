@@ -1,12 +1,12 @@
 <script lang='ts'>
 	import { s_title_edit_state, s_show_details, s_device_isMobile, } from '../../ts/state/Svelte_Stores';
 	import { g, k, u, ux, w, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
-	import { debug, ZIndex, Ancestry, Startup_State } from '../../ts/common/Global_Imports';
+	import { debug, ZIndex, Ancestry, T_Startup } from '../../ts/common/Global_Imports';
 	import { s_type_db, s_graphRect, s_hierarchy } from '../../ts/state/Svelte_Stores';
-	import { IDControl, Hierarchy, dbDispatch } from '../../ts/common/Global_Imports';
+	import { T_Control, Hierarchy, dbDispatch } from '../../ts/common/Global_Imports';
 	import { s_id_popupView, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
 	import { s_resize_count, s_startup_state } from '../../ts/state/Svelte_Stores';
-	import { DBType } from '../../ts/data/basis/Persistence_State';
+	import { T_Database } from '../../ts/data/basis/Persistence_State';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Details from '../details/Details.svelte';
 	import Breadcrumbs from './Breadcrumbs.svelte';
@@ -68,14 +68,14 @@
 		pointer-events: auto;
 		{k.prevent_selection_style};'
 		on:wheel={ignore_wheel}>
-		{#if [Startup_State.start, Startup_State.fetch].includes($s_startup_state) && dbDispatch.db.isPersistent}
+		{#if [T_Startup.start, T_Startup.fetch].includes($s_startup_state) && dbDispatch.db.isPersistent}
 			<p>Welcome to Seriously</p>
-			{#if $s_startup_state == Startup_State.fetch}
+			{#if $s_startup_state == T_Startup.fetch}
 				<p>{dbDispatch.startupExplanation}</p>
 			{/if}
-		{:else if $s_startup_state == Startup_State.empty}
+		{:else if $s_startup_state == T_Startup.empty}
 			<p>Nothing is available.</p>
-		{:else if $s_startup_state == Startup_State.ready}
+		{:else if $s_startup_state == T_Startup.ready}
 			<Controls/>
 			{#if !$s_id_popupView}
 				<div class='breadcrumbs'
@@ -116,9 +116,9 @@
 					z-index: {ZIndex.backmost};
 					left: {$s_show_details ? k.width_details : 0}px;'>
 				{#key $s_id_popupView}
-					{#if $s_id_popupView == IDControl.builds}
+					{#if $s_id_popupView == T_Control.builds}
 						<BuildNotes/>
-					{:else if $s_id_popupView == IDControl.open}
+					{:else if $s_id_popupView == T_Control.open}
 						<Load/>
 					{:else if !$s_id_popupView}
 						<Graph/>

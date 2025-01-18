@@ -1,9 +1,9 @@
 import { g, k, u, Rect, Size, Thing, debug, signals, wrappers, Direction, Predicate, Hierarchy } from '../../common/Global_Imports';
 import { s_expanded_ancestries, s_ancestry_showing_tools, s_alteration_mode, s_clusters_geometry } from '../../state/Svelte_Stores';
-import { dbDispatch, Svelte_Wrapper, Widget_MapRect, AlterationType, Title_Edit_State } from '../../common/Global_Imports';
-import { ElementType, Paging_State, Relationship, PredicateKind, SvelteComponentType } from '../../common/Global_Imports';
+import { dbDispatch, Svelte_Wrapper, Widget_MapRect, T_Alteration, Title_Edit_State } from '../../common/Global_Imports';
+import { T_Element, Paging_State, Relationship, T_Predicate, T_SvelteComponent } from '../../common/Global_Imports';
 import { s_hierarchy, s_focus_ancestry, s_grabbed_ancestries, s_title_edit_state } from '../../state/Svelte_Stores';
-import { DBType } from '../basis/Persistence_State';
+import { T_Database } from '../basis/Persistence_State';
 import Identifiable from '../basis/Identifiable';
 import type { Integer } from '../../common/Types';
 import { get, Writable } from 'svelte/store';
@@ -21,7 +21,7 @@ export default class Ancestry extends Identifiable {
 	//   "   kindPredicate is from the last relationship
 	//   "   children are of that kind of predicate
 
-	constructor(type_db: string, ancestryString: string = k.empty, kindPredicate: string = PredicateKind.contains, thing_isChild: boolean = true) {
+	constructor(type_db: string, ancestryString: string = k.empty, kindPredicate: string = T_Predicate.contains, thing_isChild: boolean = true) {
 		super(ancestryString);
 		this.thing_isChild = thing_isChild;
 		this.kindPredicate = kindPredicate;
@@ -92,7 +92,7 @@ export default class Ancestry extends Identifiable {
 	get predicate():			  Predicate | null { return this.hierarchy.predicate_forKind(this.kindPredicate) }
 	get relationship():		   Relationship | null { return this.relationshipAt(); }
 	get widget_map():		 Widget_MapRect | null { return get(s_clusters_geometry)?.widget_mapFor(this) ?? null; }
-	get titleWrapper():		 Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.hid, SvelteComponentType.title); }
+	get titleWrapper():		 Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.hid, T_SvelteComponent.title); }
 	get ids_hashed():		   Array	 <Integer> { return this.ids.map(i => i.hash()); }
 	get ids():				   Array	  <string> { return this.id.split(k.generic_separator); }
 	get titles():			   Array	  <string> { return this.ancestors?.map(t => ` \"${t ? t.title : 'null'}\"`) ?? []; }
@@ -122,7 +122,7 @@ export default class Ancestry extends Identifiable {
 
 	get isEditable(): boolean {
 		const isBulkAlias = this.thing?.isBulkAlias ?? true;	// missing thing, return not allow
-		const canEdit = !this.isRoot || dbDispatch.db.type_db == DBType.local;
+		const canEdit = !this.isRoot || dbDispatch.db.type_db == T_Database.local;
 		return canEdit && g.allow_TitleEditing && !isBulkAlias;
 	}
 
@@ -216,11 +216,11 @@ export default class Ancestry extends Identifiable {
 			const thing = this.thing;
 			if (!!thing && !!toolThing && !!toolsAncestry) {
 				if (thing.hid!= toolThing.hid&& !toolsAncestry.ancestry_hasEqualID(this)) {
-					const isRelated = predicate.kind == PredicateKind.isRelated;
+					const isRelated = predicate.kind == T_Predicate.isRelated;
 					const toolIsAnAncestor = isRelated ? false : thing.parentIDs.includes(toolThing.id);
 					const isParentOfTool = this.thing_isImmediateParentOf(toolsAncestry, predicate.kind);
 					const isProgenyOfTool = this.isAProgenyOf(toolsAncestry);
-					const isDeleting = alteration.type == AlterationType.deleting;
+					const isDeleting = alteration.type == T_Alteration.deleting;
 					const doNotAlter_forIsNotDeleting = isParentOfTool || isProgenyOfTool || toolIsAnAncestor;
 					const canAlter = isDeleting ? isParentOfTool : !doNotAlter_forIsNotDeleting;
 					return canAlter
@@ -269,8 +269,8 @@ export default class Ancestry extends Identifiable {
 
 	hasThings(predicate: Predicate): boolean {
 		switch (predicate.kind) {
-			case PredicateKind.contains:  return this.thing?.hasParents_forKind(predicate.kind) ?? false;
-			case PredicateKind.isRelated: return this.hasRelationships;
+			case T_Predicate.contains:  return this.thing?.hasParents_forKind(predicate.kind) ?? false;
+			case T_Predicate.isRelated: return this.hasRelationships;
 			default:					  return false;
 		}
 	}
@@ -286,7 +286,7 @@ export default class Ancestry extends Identifiable {
 	isHoverInverted(type: string): boolean {
 		const shouldInvert = this.isGrabbed || this.isEditing;
 		switch (type) {
-			case ElementType.reveal: return this.isExpanded == shouldInvert;
+			case T_Element.reveal: return this.isExpanded == shouldInvert;
 			default: return shouldInvert;
 		}
 	}
@@ -328,7 +328,7 @@ export default class Ancestry extends Identifiable {
 	extend_withChild(child: Thing | null): Ancestry | null {
 		const idParent = this.thing?.idBridging;
 		if (!!child && !!idParent) {
-			const relationship = this.hierarchy.relationship_forPredicateKind_parent_child(PredicateKind.contains, idParent, child.id);
+			const relationship = this.hierarchy.relationship_forPredicateT_parent_child(T_Predicate.contains, idParent, child.id);
 			if (!!relationship) {
 				return this.uniquelyAppendID(relationship.id);
 			}
@@ -439,7 +439,7 @@ export default class Ancestry extends Identifiable {
 
 	childAncestries_ofKind(kindPredicate: string): Array<Ancestry> {
 		let ancestries: Array<Ancestry> = [];
-		const isContains = kindPredicate == PredicateKind.contains;
+		const isContains = kindPredicate == T_Predicate.contains;
 		const childRelationships = this.relationships_forParents_ofKind(kindPredicate, false);
 		if (childRelationships.length > 0) {
 			for (const childRelationship of childRelationships) {					// loop through all child relationships
@@ -634,10 +634,10 @@ export default class Ancestry extends Identifiable {
 			if (!!alteration && !!toolsAncestry && !!kindPredicate) {
 				this.hierarchy.clear_editingTools();
 				switch (alteration.type) {
-					case AlterationType.deleting:
+					case T_Alteration.deleting:
 						await this.hierarchy.relationship_forget_persistentDelete(toolsAncestry, ancestry, kindPredicate);
 						break;
-					case AlterationType.adding:
+					case T_Alteration.adding:
 						const toolsThing = toolsAncestry.thing;
 						if (!!toolsThing) {
 							await this.hierarchy.relationship_remember_persistent_addChild_toAncestry(toolsThing, ancestry, kindPredicate);

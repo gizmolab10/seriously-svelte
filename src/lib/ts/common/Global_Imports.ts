@@ -6,21 +6,21 @@ import { show } from '../state/Show_State';
 import { cursors } from '../maybe/Cursors';
 import { wrappers } from '../managers/Wrappers';
 import { Hierarchy } from '../managers/Hierarchy';
-import { debug, Debug, DebugFlag } from './Debug';
+import { debug, Debug, T_Debug } from './Debug';
+import { T_Timer } from '../signals/Mouse_Timer';
 import { dbDispatch } from '../data/dbs/DBDispatch';
 import { Seriously_Range } from './Seriously_Range';
-import { Timer_Type } from '../signals/Mouse_Timer';
-import { signals, IDSignal } from '../signals/Signals';
+import { signals, T_Signal } from '../signals/Signals';
 import { Rect, Size, Point } from '../geometry/Geometry';
-import { Quadrant, Orientation } from '../geometry/Angle';
+import { T_Quadrant, T_Orientation } from '../geometry/Angle';
 import { Direction, svgPaths } from '../geometry/SVG_Paths';
 import { Paging_State, Page_States } from '../state/Page_States';
-import { IDPreference, preferences } from '../managers/Preferences';
-import { Tree_Type, Graph_Type, Startup_State } from './Enumerations';
-import { Ring_Zone, Oblong_Part, SvelteComponentType } from './Enumerations';
-import { PredicateKind, AlterationType, CreationOptions } from './Enumerations';
-import { IDLine, IDTool, ZIndex, IDControl, IDBrowser, IDStorage } from './Enumerations';
-import { InfoType, ThingType, TraitType, ElementType, Details_Type, Rebuild_Type } from './Enumerations';
+import { T_Preference, preferences } from '../managers/Preferences';
+import { T_Tree, T_Graph, T_Startup } from './Enumerations';
+import { T_Ring, T_Oblong, T_SvelteComponent } from './Enumerations';
+import { T_Predicate, T_Alteration, T_Create } from './Enumerations';
+import { T_Line, T_Tool, ZIndex, T_Control, T_Browser, T_Storage } from './Enumerations';
+import { T_Info, T_Thing, T_Trait, T_Element, T_Details, T_Rebuild } from './Enumerations';
 
 import Children_Geometry from '../geometry/Children_Geometry';
 import Radial_Geometry from '../geometry/Radial_Geometry';
@@ -60,22 +60,22 @@ import interact from 'interactjs';
 
 export {
 	e, g, k, u, ux, w,
-	debug, Debug, DebugFlag,
-	Timer_Type, Mouse_Timer,
+	debug, Debug, T_Debug,
+	T_Timer, Mouse_Timer,
 	interact, transparentize,
-	Ring_Zone, Seriously_Range,
-	Oblong_Part, AlterationType,
-	Angle, Quadrant, Orientation,
+	T_Ring, Seriously_Range,
+	T_Oblong, T_Alteration,
+	Angle, T_Quadrant, T_Orientation,
 	Children_Geometry, Widget_MapRect,
 	show, files, builds, signals, wrappers,
-	ZIndex, PredicateKind, CreationOptions,
+	ZIndex, T_Predicate, T_Create,
 	Rect, Size, Point, cursors, svgPaths, Direction,
 	Grabs, Ancestry, Hierarchy, dbDispatch, preferences,
 	Arc_Map, Segment_Map, Cluster_Map, Radial_Geometry,
 	User, Datum, Thing, Trait, Access, Predicate, Relationship,
 	Element_State, Paging_State, Page_States, Alteration_State,
-	ElementType, Svelte_Wrapper, SvelteComponent, SvelteComponentType,
-	IDLine, IDTool, IDSignal, IDControl, IDBrowser, IDStorage, IDPreference,
-	Mouse_State, Title_Edit_State, Rotation_State, Expansion_State, Startup_State,
-	InfoType, ThingType, TraitType, Graph_Type, Tree_Type, Details_Type, Rebuild_Type,
+	T_Element, Svelte_Wrapper, SvelteComponent, T_SvelteComponent,
+	T_Line, T_Tool, T_Signal, T_Control, T_Browser, T_Storage, T_Preference,
+	Mouse_State, Title_Edit_State, Rotation_State, Expansion_State, T_Startup,
+	T_Info, T_Thing, T_Trait, T_Graph, T_Tree, T_Details, T_Rebuild,
 };

@@ -1,42 +1,42 @@
-export enum AlterationType {
+export enum T_Alteration {
 	deleting = 'deleting',
 	adding	 = 'adding',
 }
 
-export enum Graph_Type {
+export enum T_Graph {
 	radial = 'radial',
 	tree  = 'tree',
 }
 
-export enum InfoType {
+export enum T_Info {
 	selection = 'selection',
 	focus	  = 'focus',
 }
 
-export enum IDStorage {
+export enum T_Storage {
 	import = 'import',
 	export = 'export',
 }
 
-export enum Tree_Type {
+export enum T_Tree {
 	children = 'children',
 	parents	 = 'parents',
 	related  = 'related',
 }
 
-export enum CreationOptions {
+export enum T_Create {
 	isFromPersistent = 'isFrom',
 	getPersistentID	 = 'getID',
 	none			 = '',
 }
 
-export enum IDLine {
+export enum T_Line {
 	flat = 'flat',
 	down = 'down',
 	up	 = 'up',
 }
 
-export enum Details_Type {	// do not change the order
+export enum T_Details {	// do not change the order
 	storage,
 	tools,
 	recents,
@@ -44,40 +44,40 @@ export enum Details_Type {	// do not change the order
 }
 
 export const all_detail_types = [
-	Details_Type[Details_Type.storage],
-	Details_Type[Details_Type.tools],
-	Details_Type[Details_Type.recents],
-	Details_Type[Details_Type.info]];
+	T_Details[T_Details.storage],
+	T_Details[T_Details.tools],
+	T_Details[T_Details.recents],
+	T_Details[T_Details.info]];
 
-export enum Startup_State {
+export enum T_Startup {
 	start = 'start',
 	fetch = 'fetch',
 	empty = 'empty',
 	ready = 'ready',
 }
 
-export enum ThingType {
+export enum T_Thing {
 	generic = '',
 	roots	= '^',
 	root	= '!',
 	bulk	= '~',
 }
 
-export enum Ring_Zone {
+export enum T_Ring {
 	miss   = 'miss',
 	resize = 'resize',
 	rotate = 'rotate',
 	paging = 'paging',
 }
 
-export enum Oblong_Part {
+export enum T_Oblong {
 	middle = 'middle',
 	right  = 'right',
 	left   = 'left',
 	full   = 'full',
 }
 
-export enum PredicateKind {
+export enum T_Predicate {
 	appreciates = 'appreciates',
 	isRelated	= 'isRelated',
 	contains	= 'contains',
@@ -86,7 +86,7 @@ export enum PredicateKind {
 	supports	= 'supports',
 }
 
-export enum TraitType {
+export enum T_Trait {
 	consequence = 'consequence',
 	hyperlink	= 'hyperlink',
 	generic		= 'generic',
@@ -98,7 +98,7 @@ export enum TraitType {
 	sum			= 'sum',
 }
 
-export enum IDControl {
+export enum T_Control {
 	details	 = 'show details view',
 	builds	 = 'show build notes',
 	smaller	 = 'smaller',
@@ -107,7 +107,7 @@ export enum IDControl {
 	help	 = '?',
 }
 
-export enum IDBrowser  {
+export enum T_Browser  {
 	explorer = 'explorer',
 	unknown  = 'unknown',
 	firefox	 = 'firefox',
@@ -117,7 +117,7 @@ export enum IDBrowser  {
 	orion	 = 'orion',
 }
 
-export enum ElementType {
+export enum T_Element {
 	control	= 'control',
 	storage	= 'storage',
 	reveal	= 'reveal',
@@ -130,7 +130,7 @@ export enum ElementType {
 	tool	= 'tool',
 }
 
-export enum Rebuild_Type {
+export enum T_Rebuild {
 	directional = 'directional',
 	clusters	= 'clusters',		// only this enum is used (in Radial_Graph)
 	necklace	= 'necklace',
@@ -162,7 +162,7 @@ export enum ZIndex {	// DO NOT change the order
 	frontmost,
 }
 
-export enum IDTool {
+export enum T_Tool {
 	delete_confirm = 'delete_confirm',
 	delete_cancel  = 'delete_cancel',
 	delete_parent  = 'delete_parent',
@@ -176,7 +176,7 @@ export enum IDTool {
 	none		   = 'none',
 }
 
-export enum SvelteComponentType {
+export enum T_SvelteComponent {
 	banners	= 'banners',
 	details	= 'details',
 	rotate	= 'rotate',

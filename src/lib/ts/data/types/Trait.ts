@@ -1,14 +1,14 @@
-import { k, Datum, Thing, dbDispatch, TraitType } from '../../common/Global_Imports';
+import { k, Datum, Thing, dbDispatch, T_Trait } from '../../common/Global_Imports';
 import { s_hierarchy } from '../../state/Svelte_Stores';
 import { get } from 'svelte/store';
 import Airtable from 'airtable';
 
 export default class Trait extends Datum {
-	type: TraitType = TraitType.generic;
+	type: T_Trait = T_Trait.generic;
 	ownerID: string = k.empty;
 	text: string = k.empty;
 
-	constructor(idBase: string, id: string, ownerID: string, type: TraitType, text: string = k.empty, already_persisted: boolean = false) {
+	constructor(idBase: string, id: string, ownerID: string, type: T_Trait, text: string = k.empty, already_persisted: boolean = false) {
 		super(dbDispatch.db.type_db, idBase, id, already_persisted);
 		this.ownerID = ownerID;
 		this.type = type;

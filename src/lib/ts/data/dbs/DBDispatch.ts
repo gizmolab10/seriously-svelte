@@ -1,6 +1,6 @@
-import { g, k, IDPreference, preferences } from '../../common/Global_Imports';
+import { g, k, T_Preference, preferences } from '../../common/Global_Imports';
 import { s_type_db } from '../../state/Svelte_Stores';
-import { DBType } from '../basis/Persistence_State';
+import { T_Database } from '../basis/Persistence_State';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import { dbLocal } from './DBLocal';
@@ -13,9 +13,9 @@ import DBCommon from './DBCommon';
 
 export function db_forType(type_db: string): DBCommon {
 	switch (type_db) {
-		case DBType.firebase: return dbFirebase;
-		case DBType.airtable: return dbAirtable;
-		case DBType.test:	  return dbTest;
+		case T_Database.firebase: return dbFirebase;
+		case T_Database.airtable: return dbAirtable;
+		case T_Database.test:	  return dbTest;
 		default:			  return dbLocal;
 	}
 }
@@ -40,7 +40,7 @@ export default class DBDispatch {
 			if (!!type && (!done || (type && this.db.type_db != type))) {
 				done = true;
 				setTimeout( async () => {
-					preferences.write_key(IDPreference.db, type);
+					preferences.write_key(T_Preference.db, type);
 					this.db_set_accordingToType(type);
 					await this.db.hierarchy_setup_fetch_andBuild();
 				}, 10);
@@ -52,7 +52,7 @@ export default class DBDispatch {
 	db_change_toNext(forward: boolean) { this.db_change_toType(this.db_next_get(forward)); }
 
 	restore_db() {
-		let type = preferences.read_key(IDPreference.db) ?? 'firebase';
+		let type = preferences.read_key(T_Preference.db) ?? 'firebase';
 		if (type == 'file') { type = 'local'; }
 		s_type_db.set(type);
 	}
@@ -61,23 +61,23 @@ export default class DBDispatch {
 		const type = this.db.type_db;
 		let from = k.empty;
 		switch (type) {
-			case DBType.firebase: from = `, from ${this.db.idBase}`; break;
-			case DBType.test:	  return k.empty;
+			case T_Database.firebase: from = `, from ${this.db.idBase}`; break;
+			case T_Database.test:	  return k.empty;
 		}
 		return `(loading your ${type} data${from})`;
 	}
 
-	db_change_toType(newDBType: DBType) {
-		const db = db_forType(newDBType);
-		preferences.write_key(IDPreference.db, newDBType);
-		s_type_db.set(newDBType);		// tell components to render the [possibly previously] fetched data
+	db_change_toType(newT_Database: T_Database) {
+		const db = db_forType(newT_Database);
+		preferences.write_key(T_Preference.db, newT_Database);
+		s_type_db.set(newT_Database);		// tell components to render the [possibly previously] fetched data
 	}
 
-	db_next_get(forward: boolean): DBType {
+	db_next_get(forward: boolean): T_Database {
 		switch (this.db.type_db) {
-			case DBType.airtable: return forward ? DBType.test	   : DBType.firebase;
-			case DBType.test:	  return forward ? DBType.firebase : DBType.airtable;
-			default:			  return forward ? DBType.airtable : DBType.test;
+			case T_Database.airtable: return forward ? T_Database.test	   : T_Database.firebase;
+			case T_Database.test:	  return forward ? T_Database.firebase : T_Database.airtable;
+			default:			  return forward ? T_Database.airtable : T_Database.test;
 		}
 	}
 

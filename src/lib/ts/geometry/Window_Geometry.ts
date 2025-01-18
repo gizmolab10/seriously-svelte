@@ -1,4 +1,4 @@
-import { k, Rect, Size, Point, debug, signals, preferences, IDPreference } from '../common/Global_Imports';
+import { k, Rect, Size, Point, debug, signals, preferences, T_Preference } from '../common/Global_Imports';
 import { s_graphRect, s_user_graph_offset, s_user_graph_center } from '../state/Svelte_Stores';
 import { s_show_details, s_scaled_mouse_location } from '../state/Svelte_Stores';
 import { get } from 'svelte/store';
@@ -14,7 +14,7 @@ class Window_Geometry {
 	get mouse_angle_fromGraphCenter(): number | null { return this.mouse_vector_ofOffset_fromGraphCenter()?.angle ?? null; }
 
 	get persisted_user_offset(): Point {
-		const point = preferences.read_key(IDPreference.user_offset) ?? {x:0, y:0};
+		const point = preferences.read_key(T_Preference.user_offset) ?? {x:0, y:0};
 		return new Point(point.x, point.y);
 	}
 
@@ -25,7 +25,7 @@ class Window_Geometry {
 
 	restore_state() {
 		this.graphRect_update();	// needed for applyScale
-		this.applyScale(preferences.read_key(IDPreference.scale) ?? 1);
+		this.applyScale(preferences.read_key(T_Preference.scale) ?? 1);
 		this.renormalize_user_graph_offset();	// must be called after apply scale (which fubars offset)
 	}
 
@@ -44,7 +44,7 @@ class Window_Geometry {
 		let changed = false;
 		const current_offset = get(s_user_graph_offset);
 		if (!!current_offset && current_offset.vector_to(user_offset).magnitude > .001) {
-			preferences.write_key(IDPreference.user_offset, user_offset);
+			preferences.write_key(T_Preference.user_offset, user_offset);
 			changed = true;
 		}
 		const center_offset = get(s_graphRect).center.offsetBy(user_offset);
@@ -73,7 +73,7 @@ class Window_Geometry {
 
 	applyScale(scale: number) {
 		this.scale_factor = scale;
-		preferences.write_key(IDPreference.scale, scale);
+		preferences.write_key(T_Preference.scale, scale);
 		const zoomContainer = document.documentElement;
 		zoomContainer.style.setProperty('zoom', scale.toString());
 		zoomContainer.style.transform = `scale(var(zoom))`;

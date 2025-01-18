@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { k, u, ux, Point, Thing, IDTool, signals } from '../../ts/common/Global_Imports';
-	import { dbDispatch, ElementType, Element_State } from '../../ts/common/Global_Imports';
+	import { k, u, ux, Point, Thing, T_Tool, signals } from '../../ts/common/Global_Imports';
+	import { dbDispatch, T_Element, Element_State } from '../../ts/common/Global_Imports';
 	import { s_thing_color, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
 	import { s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
 	import Button from './Button.svelte';
@@ -9,7 +9,7 @@
     export let ancestry;
 	export let center = Point.zero;
 	const borderStyle = '1px solid';
-	const elementType = ElementType.crumb;
+	const elementType = T_Element.crumb;
 	let borderColor = k.color_background;
 	let border = `${borderStyle} ${borderColor}`;
 	let height = k.default_buttonSize;
@@ -30,7 +30,7 @@
 		name = `crumb (for ${title ?? 'unknown'})`
 		width = u.getWidthOf(title) + 15;
 		center = new Point(left + width / 2, height - 1);
-		element_state = ux.element_state_for(ancestry, elementType, IDTool.none);
+		element_state = ux.element_state_for(ancestry, elementType, T_Tool.none);
 		updateColors();
 	}
 

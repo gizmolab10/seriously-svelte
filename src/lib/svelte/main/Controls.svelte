@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { s_graph_type, s_tree_type, s_resize_count, s_device_isMobile } from '../../ts/state/Svelte_Stores';
-	import { IDControl, preferences, Element_State, IDPreference } from '../../ts/common/Global_Imports';
+	import { T_Control, preferences, Element_State, T_Preference } from '../../ts/common/Global_Imports';
 	import { s_show_details, s_id_popupView, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
 	import { g, k, u, ux, w, show, Point, ZIndex, signals } from '../../ts/common/Global_Imports';
-	import { svgPaths, Tree_Type, Graph_Type, ElementType } from '../../ts/common/Global_Imports';
+	import { svgPaths, T_Tree, T_Graph, T_Element } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/data/basis/Identifiable';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Button from '../mouse/Button.svelte';
@@ -20,11 +20,11 @@
 	let width = w.windowSize.width - 20;
 
 	const ids = [	// in order of importance on mobile
-		IDControl.details,
-		IDControl.smaller,
-		IDControl.bigger,
-		IDControl.help,
-		IDControl.builds,
+		T_Control.details,
+		T_Control.smaller,
+		T_Control.bigger,
+		T_Control.help,
+		T_Control.builds,
 	];
 
 	onMount(() => { setup_forIDs(); });
@@ -39,9 +39,9 @@
 		let total = w.windowSize.width + 50;
 		for (const id of ids) {
 			total -= u.getWidthOf(id);
-			const element_state = ux.element_state_for(new Identifiable(id), ElementType.control, id);
+			const element_state = ux.element_state_for(new Identifiable(id), T_Element.control, id);
 			element_state.set_forHovering(k.color_default, 'pointer');
-			element_state.hoverIgnore = id == IDControl.details;
+			element_state.hoverIgnore = id == T_Control.details;
 			element_states_byID[id] = element_state;
 			elementShown_byID[id] = total > 0;
 		}
@@ -49,9 +49,9 @@
 
 	function next_graph_relations() {
 		switch ($s_tree_type) {
-			case Tree_Type.parents:  return Tree_Type.related;
-			case Tree_Type.children: return Tree_Type.parents;
-			default:				 return Tree_Type.children;
+			case T_Tree.parents:  return T_Tree.related;
+			case T_Tree.children: return T_Tree.parents;
+			default:				 return T_Tree.children;
 		}
 	}
 
@@ -60,10 +60,10 @@
 			element_states_byID[idControl].isOut = mouse_state.isOut;
 		} else if (mouse_state.isUp) {
 			switch (idControl) {
-				case IDControl.help: g.showHelp(); break;
-				case IDControl.details: $s_show_details = !$s_show_details; break;
-				case IDControl.bigger: width = w.zoomBy(k.zoom_in_ratio) - 20; break;	// mobile only
-				case IDControl.smaller: width = w.zoomBy(k.zoom_out_ratio) - 20; break;	//   "     "
+				case T_Control.help: g.showHelp(); break;
+				case T_Control.details: $s_show_details = !$s_show_details; break;
+				case T_Control.bigger: width = w.zoomBy(k.zoom_in_ratio) - 20; break;	// mobile only
+				case T_Control.smaller: width = w.zoomBy(k.zoom_out_ratio) - 20; break;	//   "     "
 				default: togglePopupID(idControl); break;
 			}
 		}
@@ -72,8 +72,8 @@
 	function selection_closure(name: string, types: Array<string>) {
 		const type = types[0];	// only ever has one element
 		switch (name) {
-			case 'graph':	  $s_graph_type	  = type as Graph_Type;	  break;
-			case 'relations': $s_tree_type	  = type as Tree_Type;	  break;
+			case 'graph':	  $s_graph_type	  = type as T_Graph;	  break;
+			case 'relations': $s_tree_type	  = type as T_Tree;	  break;
 		}
 	}
 
@@ -93,8 +93,8 @@
 				border_thickness=0
 				color='transparent'
 				center={new Point(lefts[0], details_top + 3)}
-				element_state={element_states_byID[IDControl.details]}
-				closure={(mouse_state) => button_closure_forID(mouse_state, IDControl.details)}>
+				element_state={element_states_byID[T_Control.details]}
+				closure={(mouse_state) => button_closure_forID(mouse_state, T_Control.details)}>
 				<img src='settings.svg' alt='circular button' width={size_small}px height={size_small}px/>
 			</Button>
 			{#key $s_graph_type}
@@ -102,7 +102,7 @@
 					name='graph'
 					origin={Point.x(30)}
 					selected={[$s_graph_type]}
-					titles={[Graph_Type.tree, Graph_Type.radial]}
+					titles={[T_Graph.tree, T_Graph.radial]}
 					selection_closure={(titles) => selection_closure('graph', titles)}/>
 				{#if !g.inRadialMode && show.tree_types}
 					{#key $s_tree_type}
@@ -110,7 +110,7 @@
 							name='tree'
 							origin={Point.x(114)}
 							selected={[$s_tree_type]}
-							titles={[Tree_Type.children, Tree_Type.parents, Tree_Type.related]}
+							titles={[T_Tree.children, T_Tree.parents, T_Tree.related]}
 							selection_closure={(titles) => selection_closure('relations', titles)}/>
 					{/key}
 				{/if}
@@ -118,14 +118,14 @@
 		{/if}
 		{#key $s_device_isMobile}
 			{#if $s_device_isMobile}
-				{#if elementShown_byID[IDControl.smaller]}
+				{#if elementShown_byID[T_Control.smaller]}
 					<Button
 						width={size_big}
 						height={size_big}
-						name={IDControl.smaller}
+						name={T_Control.smaller}
 						center={new Point(width - 110, y_center)}
-						element_state={element_states_byID[IDControl.smaller]}
-						closure={(mouse_state) => button_closure_forID(mouse_state, IDControl.smaller)}>
+						element_state={element_states_byID[T_Control.smaller]}
+						closure={(mouse_state) => button_closure_forID(mouse_state, T_Control.smaller)}>
 						<svg
 							id='shrink-svg'>
 							<path
@@ -136,14 +136,14 @@
 						</svg>
 					</Button>
 				{/if}
-				{#if elementShown_byID[IDControl.bigger]}
+				{#if elementShown_byID[T_Control.bigger]}
 					<Button
 						width={size_big}
 						height={size_big}
-						name={IDControl.bigger}
+						name={T_Control.bigger}
 						center={new Point(width - 140, y_center)}
-						element_state={element_states_byID[IDControl.bigger]}
-						closure={(mouse_state) => button_closure_forID(mouse_state, IDControl.bigger)}>
+						element_state={element_states_byID[T_Control.bigger]}
+						closure={(mouse_state) => button_closure_forID(mouse_state, T_Control.bigger)}>
 						<svg
 							id='enlarge-svg'>
 							<path
@@ -156,25 +156,25 @@
 				{/if}
 			{/if}
 		{/key}
-		{#if elementShown_byID[IDControl.builds]}
-			<Button name={IDControl.builds}
+		{#if elementShown_byID[T_Control.builds]}
+			<Button name={T_Control.builds}
 				width=75
 				height={size_big}
 				center={new Point(width - 55, y_center)}
-				element_state={element_states_byID[IDControl.builds]}
-				closure={(mouse_state) => button_closure_forID(mouse_state, IDControl.builds)}>
+				element_state={element_states_byID[T_Control.builds]}
+				closure={(mouse_state) => button_closure_forID(mouse_state, T_Control.builds)}>
 				<span style='font-family: {$s_thing_fontFamily};'>
 					{'build ' + k.build_number}
 				</span>
 			</Button>
 		{/if}
-		{#if elementShown_byID[IDControl.help]}
-			<Button name={IDControl.help}
+		{#if elementShown_byID[T_Control.help]}
+			<Button name={T_Control.help}
 				width={size_big}
 				height={size_big}
 				center={new Point(width, y_center)}
-				element_state={element_states_byID[IDControl.help]}
-				closure={(mouse_state) => button_closure_forID(mouse_state, IDControl.help)}>
+				element_state={element_states_byID[T_Control.help]}
+				closure={(mouse_state) => button_closure_forID(mouse_state, T_Control.help)}>
 				<span
 					style='top:2px;
 						left:5.5px;

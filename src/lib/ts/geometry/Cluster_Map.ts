@@ -1,4 +1,4 @@
-import { k, u, ux, w, Rect, Point, Angle, debug, IDLine, Arc_Map, Quadrant } from '../common/Global_Imports';
+import { k, u, ux, w, Rect, Point, Angle, debug, T_Line, Arc_Map, T_Quadrant } from '../common/Global_Imports';
 import { Ancestry, Predicate, Paging_State, Widget_MapRect, Rotation_State } from '../common/Global_Imports';
 import { s_rotation_ring_angle, s_ring_rotation_radius } from '../state/Svelte_Stores';
 import { s_graphRect, s_focus_ancestry } from '../state/Svelte_Stores';
@@ -137,8 +137,8 @@ export default class Cluster_Map {
 		let end = this.arc_map.end_angle.angle_normalized();
 		let start = this.arc_map.start_angle.angle_normalized();
 		const quadrant = u.quadrant_ofAngle(end);
-		if (quadrant != Quadrant.upperRight) {
-			let delta = u.basis_angle_ofQuadrant(quadrant) + Angle.quarter;
+		if (quadrant != T_Quadrant.upperRight) {
+			let delta = u.basis_angle_ofT_Quadrant(quadrant) + Angle.quarter;
 
 			// prevent peculiar thumb-flip-to-end when mouse.y > 0
 			// HOW? angles increase counter-clockwise
@@ -199,7 +199,7 @@ export default class Cluster_Map {
 				const child_ancestry = this.ancestries[child_index];
 				const childAngle = this.angle_at_index(index);
 				const childOrigin = tweak.offsetBy(radial.rotate_by(childAngle));
-				const map = new Widget_MapRect(IDLine.flat, new Rect(), childOrigin, child_ancestry, this.focus_ancestry, childAngle);
+				const map = new Widget_MapRect(T_Line.flat, new Rect(), childOrigin, child_ancestry, this.focus_ancestry, childAngle);
 				this.widget_maps.push(map);
 				index += 1;
 			}

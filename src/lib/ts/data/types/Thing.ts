@@ -1,5 +1,5 @@
-import { k, u, Datum, debug, Trait, Ancestry, ThingType, Predicate, Page_States, DebugFlag } from '../../common/Global_Imports';
-import { TraitType, dbDispatch, Relationship, PredicateKind, Seriously_Range } from '../../common/Global_Imports';
+import { k, u, Datum, debug, Trait, Ancestry, T_Thing, Predicate, Page_States, T_Debug } from '../../common/Global_Imports';
+import { T_Trait, dbDispatch, Relationship, T_Predicate, Seriously_Range } from '../../common/Global_Imports';
 import { s_hierarchy, s_thing_color, s_rebuild_count } from '../../state/Svelte_Stores';
 import { s_focus_ancestry, s_expanded_ancestries } from '../../state/Svelte_Stores';
 import type { Dictionary } from '../../common/Types';
@@ -26,25 +26,25 @@ export default class Thing extends Datum {
 		this.type = type;
 	};
 	
-	get parents():				Array		 <Thing> { return this.parents_forKind(PredicateKind.contains); }
+	get parents():				Array		 <Thing> { return this.parents_forKind(T_Predicate.contains); }
 	get traits():				Array		 <Trait> { return get(s_hierarchy).traits_forOwnerHID(this.hid) ?? []; }
 	get parentIDs():			Array		<string> { return this.parents.map(t => t.id); }
 	get parentAncestries(): 	Array	  <Ancestry> { return this.parentAncestries_for(Predicate.contains); }
-	get relatedRelationships(): Array <Relationship> { return this.relationships_forParents_ofKind(PredicateKind.isRelated, false); }
+	get relatedRelationships(): Array <Relationship> { return this.relationships_forParents_ofKind(T_Predicate.isRelated, false); }
 	get fields():		  		Dictionary  <string> { return { title: this.title, color: this.color, type: this.type }; }
-	get quest():					   string | null { return get(s_hierarchy).trait_forType_ownerHID(TraitType.quest, this.hid)?.text ?? null; }
-	get consequence():				   string | null { return get(s_hierarchy).trait_forType_ownerHID(TraitType.consequence, this.hid)?.text ?? null; }
+	get quest():					   string | null { return get(s_hierarchy).trait_forT_ownerHID(T_Trait.quest, this.hid)?.text ?? null; }
+	get consequence():				   string | null { return get(s_hierarchy).trait_forT_ownerHID(T_Trait.consequence, this.hid)?.text ?? null; }
 	get idBridging():						  string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get description():						  string { return this.id + ' \"' + this.title + '\"'; }
 	get breadcrumb_title():					  string { return this.title.clipWithEllipsisAt(15); }
 	get titleWidth():						  number { return u.getWidthOf(this.title); }
-	get isRoot():							 boolean { return this.type == ThingType.root; }
-	get isBulkAlias():						 boolean { return this.type == ThingType.bulk; }
+	get isRoot():							 boolean { return this.type == T_Thing.root; }
+	get isBulkAlias():						 boolean { return this.type == T_Thing.bulk; }
 	get isAcrossBulk():						 boolean { return this.idBase != get(s_hierarchy).db.idBase; }
 	get hasMultipleParents():				 boolean { return this.parentAncestries.length > 1; }
-	get hasParents():						 boolean { return this.hasParents_forKind(PredicateKind.contains); }
+	get hasParents():						 boolean { return this.hasParents_forKind(T_Predicate.contains); }
 	get isFocus():							 boolean { return (get(s_focus_ancestry).thing?.id ?? k.empty) == this.id; }
-	get isOrphaned():						 boolean { return !get(s_hierarchy).relationship_whereID_isChild(this.id) && this.type != ThingType.root; }
+	get isOrphaned():						 boolean { return !get(s_hierarchy).relationship_whereID_isChild(this.id) && this.type != T_Thing.root; }
 	get hasNoData():						 boolean { return !this.title && !this.color && !this.type; }
 	get hasRelated():						 boolean { return this.relatedRelationships.length > 0; }
 
@@ -81,7 +81,7 @@ export default class Thing extends Datum {
 		if (this.isRoot) {			// if root, use root ancestry
 			oneAncestry = get(s_hierarchy).rootAncestry;
 		} else {					// if not, use parent.oneAncestry and append id of forParents relationship
-			const relationships = this.relationships_forParents_ofKind(PredicateKind.contains, true);
+			const relationships = this.relationships_forParents_ofKind(T_Predicate.contains, true);
 			if (relationships && relationships.length > 0) {
 				const relationship = relationships[0];
 				const parentAncestry = relationship.parent?.oneAncestry;
@@ -91,10 +91,10 @@ export default class Thing extends Datum {
 		return oneAncestry;
 	}
 	
-	debugLog(message: string) { this.log(DebugFlag.things, message); }
-	log(option: DebugFlag, message: string) { debug.log_maybe(option, message + k.space + this.description); }
+	debugLog(message: string) { this.log(T_Debug.things, message); }
+	log(option: T_Debug, message: string) { debug.log_maybe(option, message + k.space + this.description); }
 	hasParents_forKind(kindPredicate: string): boolean { return this.parents_forKind(kindPredicate).length > 0; }
-	setTraitText_forType(text: string, type: TraitType) { get(s_hierarchy).trait_setText_forType_ownerHID(text, type, this.id); }
+	setTraitText_forType(text: string, type: T_Trait) { get(s_hierarchy).trait_setText_forT_ownerHID(text, type, this.id); }
 
 	override isInDifferentBulkThan(other: Thing): boolean {
 		return super.isInDifferentBulkThan(other) || (other.isBulkAlias && !this.isBulkAlias && this.idBase != other.title);

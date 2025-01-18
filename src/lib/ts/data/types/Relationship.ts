@@ -1,4 +1,4 @@
-import { Thing, debug, DebugFlag, dbDispatch, Predicate } from '../../common/Global_Imports';
+import { Thing, debug, T_Debug, dbDispatch, Predicate } from '../../common/Global_Imports';
 import { s_hierarchy } from '../../state/Svelte_Stores';
 import type { Integer } from '../../common/Types';
 import { get } from 'svelte/store';
@@ -40,7 +40,7 @@ export default class Relationship extends Datum {
 		return `${parent} ${this.predicate?.kind} ${child}`;
 	}
 
-	log(flag: DebugFlag, message: string) { debug.log_maybe(flag, `${message} ${this.description}`); }
+	log(flag: T_Debug, message: string) { debug.log_maybe(flag, `${message} ${this.description}`); }
 
 	thing(child: boolean): Thing | null {
 		const id = child ? this.idChild : this.idParent;

@@ -1,10 +1,10 @@
-import { k, u, ux, Rect, Size, Point, svgPaths, Oblong_Part } from '../../ts/common/Global_Imports';
+import { k, u, ux, Rect, Size, Point, svgPaths, T_Oblong } from '../../ts/common/Global_Imports';
 import type { Integer } from '../common/Types';
 
 export default class Segment_Map {
 	relative_font_size = k.font_size;
 	title_origin = Point.x(8);
-	part = Oblong_Part.right;
+	part = T_Oblong.right;
 	font_size = '0.95em';
 	origin = Point.zero;
 	isSelected = false;
@@ -61,11 +61,11 @@ export default class Segment_Map {
 		this.origin = Point.x(this.left);
 	}
 
-	part_forIndex(index: Integer, max_index: Integer): Oblong_Part {
+	part_forIndex(index: Integer, max_index: Integer): T_Oblong {
 		switch (index) {
-			case 0:			return Oblong_Part.left;
-			case max_index: return Oblong_Part.right;
-			default:		return Oblong_Part.middle;
+			case 0:			return T_Oblong.left;
+			case max_index: return T_Oblong.right;
+			default:		return T_Oblong.middle;
 		}
 	}
 

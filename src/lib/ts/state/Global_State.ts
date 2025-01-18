@@ -1,7 +1,7 @@
 import { s_graph_type, s_thing_color, s_startup_state, s_device_isMobile } from './Svelte_Stores';
 import { s_hierarchy, s_resize_count, s_mouse_up_count, s_rebuild_count } from './Svelte_Stores';
-import { Hierarchy, Graph_Type, preferences, IDPreference } from '../common/Global_Imports';
-import { Rotation_State, Startup_State, Expansion_State } from '../common/Global_Imports';
+import { Hierarchy, T_Graph, preferences, T_Preference } from '../common/Global_Imports';
+import { Rotation_State, T_Startup, Expansion_State } from '../common/Global_Imports';
 import { e, k, u, ux, w, show, debug, dbDispatch } from '../common/Global_Imports';
 import { s_grabbed_ancestries, s_expanded_ancestries } from './Svelte_Stores';
 import { s_focus_ancestry } from './Svelte_Stores';
@@ -47,7 +47,7 @@ class Global_State {
 		s_rebuild_count.set(0);
 		s_mouse_up_count.set(0);
 		s_thing_color.set(null);
-		s_startup_state.set(Startup_State.start);
+		s_startup_state.set(T_Startup.start);
 		s_device_isMobile.set(this.device_isMobile);
 		this.ring_resizing_state = new Expansion_State();
 		this.ring_rotation_state  = new Rotation_State();
@@ -69,8 +69,8 @@ class Global_State {
 			switch (option) {
 				case 'data':
 					this.eraseDB = true;
-					preferences.writeDB_key(IDPreference.focus, null);
-					preferences.writeDB_key(IDPreference.expanded, null); 
+					preferences.writeDB_key(T_Preference.focus, null);
+					preferences.writeDB_key(T_Preference.expanded, null); 
 					break;
 				case 'settings':
 					preferences.reset();
@@ -82,7 +82,7 @@ class Global_State {
 		}
     }
 
-	get inRadialMode(): boolean { return get(s_graph_type) == Graph_Type.radial; }
+	get inRadialMode(): boolean { return get(s_graph_type) == T_Graph.radial; }
 	get hierarchy(): Hierarchy { return get(s_hierarchy); }
 
 	get isAny_rotation_active(): boolean {

@@ -1,11 +1,11 @@
 <script lang='ts'>
 	import { k, Rect, Size, Point, debug, ZIndex, signals, svgPaths } from '../../ts/common/Global_Imports';
-	import { Svelte_Wrapper, Ancestry, SvelteComponentType, IDLine } from '../../ts/common/Global_Imports';
+	import { Svelte_Wrapper, Ancestry, T_SvelteComponent, T_Line } from '../../ts/common/Global_Imports';
 	import { s_thing_color } from '../../ts/state/Svelte_Stores';
 	import Circle from '../kit/Circle.svelte';
     export let ancestry;
 	export let rect = new Rect();
-	export let curveType: string = IDLine.up;
+	export let curveType: string = T_Line.up;
 	const debugOffset = new Point(131, -0.5);
 	let lineWrapper: Svelte_Wrapper;
 	let origin = rect.origin;
@@ -18,7 +18,7 @@
 
 	$: {
 		if (!!line) {
-			lineWrapper = new Svelte_Wrapper(line, handle_mouse_state, ancestry.hid, SvelteComponentType.line);
+			lineWrapper = new Svelte_Wrapper(line, handle_mouse_state, ancestry.hid, T_SvelteComponent.line);
 		}
 	}
 
@@ -35,15 +35,15 @@
 	$: {
 		if (k.dot_size > 0) {
 			switch (curveType) {
-				case IDLine.up:
+				case T_Line.up:
 					origin = rect.origin;
 					extent = rect.extent.offsetByY(-1.5);
 					break;
-				case IDLine.down:
+				case T_Line.down:
 					origin = rect.bottomLeft.offsetByY(-0.5);
 					extent = origin.offsetBy(rect.size.asPoint).offsetByY(0.5);
 					break;
-				case IDLine.flat:
+				case T_Line.flat:
 					rect = rect.offsetByY(-1.5);
 					origin = rect.centerLeft;
 					extent = rect.centerRight;
@@ -52,10 +52,10 @@
 			}
 			const vector = origin.vector_to(extent);
 			size = vector.abs.asSize;
-			if (curveType != IDLine.flat) {
-				const flag = (curveType == IDLine.down) ? 0 : 1;
-				const originY = curveType == IDLine.down ? 0 : size.height;
-				const extentY = curveType == IDLine.up   ? 0 : size.height;
+			if (curveType != T_Line.flat) {
+				const flag = (curveType == T_Line.down) ? 0 : 1;
+				const originY = curveType == T_Line.down ? 0 : size.height;
+				const extentY = curveType == T_Line.up   ? 0 : size.height;
 				linePath = `M0 ${originY} A ${size.description} 0 0 ${flag} ${size.width} ${extentY}`;
 			}
 			const boxSize = new Size(size.width, Math.max(2, size.height));

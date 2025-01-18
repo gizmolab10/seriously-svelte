@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { Element_State, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import { Element_State, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { k, u, ux, Rect, Point, ZIndex } from '../../ts/common/Global_Imports';
 	import { s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
 	import Identifiable from '../../ts/data/basis/Identifiable';

@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, k, u, ux, w, show, Rect, Size, Point, debug, Angle, ZIndex } from '../../ts/common/Global_Imports';
-	import { Cluster_Map, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import { Cluster_Map, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { s_thing_fontFamily, s_ring_rotation_radius } from '../../ts/state/Svelte_Stores';
 	import { s_mouse_up_count, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
@@ -32,7 +32,7 @@
 
 	$: {
 		if (!!arc) {
-			arc_wrapper = new Svelte_Wrapper(arc, isHit_closure, -1, SvelteComponentType.thumb);
+			arc_wrapper = new Svelte_Wrapper(arc, isHit_closure, -1, T_SvelteComponent.thumb);
 		}
 	}
 

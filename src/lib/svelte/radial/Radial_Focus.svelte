@@ -1,10 +1,10 @@
 <script lang='ts'>
 	import { s_thing_color, s_focus_ancestry, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
-	import { g, k, ux, w, Size, Point, debug, IDTool, ZIndex, } from '../../ts/common/Global_Imports';
-	import { svgPaths, ElementType, Radial_Geometry } from '../../ts/common/Global_Imports';
+	import { g, k, ux, w, Size, Point, debug, T_Tool, ZIndex, } from '../../ts/common/Global_Imports';
+	import { svgPaths, T_Element, Radial_Geometry } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Title_Editor from '../widget/Title_Editor.svelte';
-	const element_state = ux.element_state_for($s_focus_ancestry, ElementType.focus, IDTool.none);
+	const element_state = ux.element_state_for($s_focus_ancestry, T_Element.focus, T_Tool.none);
 	const height = k.row_height + 10;
 	let centerOffset = Point.zero;
 	let focus_origin = Point.zero;

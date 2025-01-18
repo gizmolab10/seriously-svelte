@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { k, u, ux, show, Size, Thing, Point, debug, ZIndex, signals, svgPaths, Graph_Type } from '../../ts/common/Global_Imports';
-	import { Direction, dbDispatch, Predicate, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import { k, u, ux, show, Size, Thing, Point, debug, ZIndex, signals, svgPaths, T_Graph } from '../../ts/common/Global_Imports';
+	import { Direction, dbDispatch, Predicate, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { s_graph_type, s_expanded_ancestries, s_grabbed_ancestries } from '../../ts/state/Svelte_Stores';
 	import { s_hierarchy, s_alteration_mode, s_ancestry_showing_tools } from '../../ts/state/Svelte_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
@@ -34,7 +34,7 @@
 
 	$: {
 		if (!!dotReveal && !ancestry.ancestry_hasEqualID($s_ancestry_showing_tools)) {
-			revealWrapper = new Svelte_Wrapper(dotReveal, handle_mouse_state, ancestry.hid, SvelteComponentType.reveal);
+			revealWrapper = new Svelte_Wrapper(dotReveal, handle_mouse_state, ancestry.hid, T_SvelteComponent.reveal);
 			element_state.set_forHovering(ancestry.thing.color, 'pointer');
 		}
 	}
@@ -83,7 +83,7 @@
 				$s_ancestry_showing_tools = null;
 				signals.signal_relayoutWidgets_fromFocus();
 			} else if (ancestry.hasChildRelationships || ancestry.thing.isBulkAlias) {
-				const RIGHT = ancestry.thing_isChild != ancestry.isExpanded || $s_graph_type == Graph_Type.radial;
+				const RIGHT = ancestry.thing_isChild != ancestry.isExpanded || $s_graph_type == T_Graph.radial;
 				$s_hierarchy.ancestry_rebuild_persistentMoveRight(ancestry, RIGHT, false, false, false, true);
 			}
 		}

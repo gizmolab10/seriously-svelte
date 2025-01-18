@@ -3,7 +3,7 @@ import Persistence_State from './Persistence_State';
 import Identifiable from './Identifiable';
 import { get } from 'svelte/store';
 
-export enum DatumType {
+export enum T_Datum {
 	relationships = 'Relationships',
 	predicates	  = 'Predicates',
 	hierarchy	  = 'Hierarchy',	// includes parent contains and relateds

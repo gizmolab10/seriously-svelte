@@ -1,5 +1,5 @@
 import { Segment_Map, Element_State, Rotation_State } from '../common/Global_Imports';
-import { Mouse_State, Mouse_Timer, ElementType } from '../common/Global_Imports';
+import { Mouse_State, Mouse_Timer, T_Element } from '../common/Global_Imports';
 import Identifiable from '../data/basis/Identifiable';
 
 export default class UX_State {
@@ -31,7 +31,7 @@ export default class UX_State {
 	get isAny_paging_arc_active(): boolean { return this.rotation_states.filter(s => s.isActive).length > 0; }
 	get isAny_paging_arc_hovering(): boolean { return this.rotation_states.filter(s => s.isHovering).length > 0; }
 
-	name_from(identifiable: Identifiable, type: ElementType, subtype: string): string {
+	name_from(identifiable: Identifiable, type: T_Element, subtype: string): string {
 		return `${type}-${subtype}-id:${identifiable.id}`;
 	}
 
@@ -62,7 +62,7 @@ export default class UX_State {
 		return state;
 	}
 
-	element_state_for(identifiable: Identifiable | null, type: ElementType, subtype: string): Element_State {
+	element_state_for(identifiable: Identifiable | null, type: T_Element, subtype: string): Element_State {
 		const realIdentifiable = identifiable ?? new Identifiable()
 		const name = this.name_from(realIdentifiable, type, subtype);
 		let element_state = this.element_state_forName(name);

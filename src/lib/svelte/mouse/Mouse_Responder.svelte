@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, g, u, ux, Rect, Size, Point, debug, ZIndex } from '../../ts/common/Global_Imports';
-	import { Timer_Type, Mouse_Timer, Mouse_State } from '../../ts/common/Global_Imports';
+	import { T_Timer, Mouse_Timer, Mouse_State } from '../../ts/common/Global_Imports';
 	import { s_mouse_location, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
 	import type { Handle_Result } from '../../ts/common/Types';
 	import { onMount } from 'svelte';
@@ -106,7 +106,7 @@
 		}
 		mouse_state.clicks += 1;
 		if (detect_doubleClick) {
-			mouse_timer.setTimeout(Timer_Type.double, () => {
+			mouse_timer.setTimeout(T_Timer.double, () => {
 				if (mouse_timer.hasTimer && mouse_state.clicks == 2) {
 					reset();
 					mouse_state_closure(create_state(false, true, false));
@@ -114,7 +114,7 @@
 			});
 		}
 		if (detect_longClick) {
-			mouse_timer.setTimeout(Timer_Type.long, () => {
+			mouse_timer.setTimeout(T_Timer.long, () => {
 				if (mouse_timer.hasTimer) {
 					reset();
 					mouse_state_closure(create_state(false, false, true));

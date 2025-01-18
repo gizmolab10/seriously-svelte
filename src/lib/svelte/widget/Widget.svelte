@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { g, k, u, ux, Thing, Point, Angle, debug, ZIndex, signals, Graph_Type } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, Thing, Point, Angle, debug, ZIndex, signals, T_Graph } from '../../ts/common/Global_Imports';
 	import { s_thing_fontFamily, s_grabbed_ancestries, s_ancestry_showing_tools } from '../../ts/state/Svelte_Stores';
-	import { ElementType, Element_State, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import { T_Element, Element_State, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { s_title_edit_state, s_thing_color, s_graph_type, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
 	import Title_Editor from './Title_Editor.svelte';
 	import Dot_Reveal from './Dot_Reveal.svelte';
@@ -12,8 +12,8 @@
     export let name = k.empty;
     export let forward = true;
     export let ancestry;
-	const revealState = ux.element_state_for(ancestry, ElementType.reveal, subtype);
-	const dragState = ux.element_state_for(ancestry, ElementType.drag, subtype);
+	const revealState = ux.element_state_for(ancestry, T_Element.reveal, subtype);
+	const dragState = ux.element_state_for(ancestry, T_Element.drag, subtype);
 	const priorRowHeight = k.row_height;
 	let widgetWrapper!: Svelte_Wrapper;
 	let element_state!: Element_State;
@@ -80,7 +80,7 @@
 
 	$: {
 		if (!!widget) {
-			widgetWrapper = new Svelte_Wrapper(widget, handle_mouse_state, ancestry.hid, SvelteComponentType.widget);
+			widgetWrapper = new Svelte_Wrapper(widget, handle_mouse_state, ancestry.hid, T_SvelteComponent.widget);
 		}
 	}
 	

@@ -1,8 +1,8 @@
-import { DebugFlag, Relationship, CreationOptions } from '../../common/Global_Imports';
-import { g, k, u, debug, Thing, Trait, TraitType } from '../../common/Global_Imports';
-import { DatumType } from '../basis/Persistent_Identifiable';
-import { DBType } from '../basis/Persistence_State';
-import { Persistence_Kind } from './DBCommon';
+import { T_Debug, Relationship, T_Create } from '../../common/Global_Imports';
+import { g, k, u, debug, Thing, Trait, T_Trait } from '../../common/Global_Imports';
+import { T_Datum } from '../basis/Persistent_Identifiable';
+import { T_Database } from '../basis/Persistence_State';
+import { T_Persistence } from './DBCommon';
 import DBCommon from './DBCommon';
 import Airtable from 'airtable';
 
@@ -21,14 +21,14 @@ export default class DBAirtable extends DBCommon {
 	baseCatalist = new Airtable({ apiKey: this.personalAccessToken }).base('apphGUCbYIEJLvRrR');
 	basePublic = new Airtable({ apiKey: this.personalAccessToken }).base('appq1IjzmiRdlZi3H');
 	base = this.basePublic;
-	relationships_table = this.base(DatumType.relationships);
-	predicates_table = this.base(DatumType.predicates);
-	things_table = this.base(DatumType.things);
-	traits_table = this.base(DatumType.traits);
-	access_table = this.base(DatumType.access);
-	users_table = this.base(DatumType.users);
-	kind_persistence = Persistence_Kind.remote;
-	type_db = DBType.airtable;
+	relationships_table = this.base(T_Datum.relationships);
+	predicates_table = this.base(T_Datum.predicates);
+	things_table = this.base(T_Datum.things);
+	traits_table = this.base(T_Datum.traits);
+	access_table = this.base(T_Datum.access);
+	users_table = this.base(T_Datum.users);
+	kind_persistence = T_Persistence.remote;
+	type_db = T_Database.airtable;
 	idBase = k.empty;
 
 	relationships_errorMessage = 'Error in Relationships:';
@@ -55,11 +55,11 @@ export default class DBAirtable extends DBCommon {
 				const tableID = names[0]
 				this.personalAccessToken = names[1];
 				this.base = new Airtable({ apiKey: this.personalAccessToken }).base(tableID);
-				this.relationships_table = this.base(DatumType.relationships);
-				this.predicates_table = this.base(DatumType.predicates);
-				this.things_table = this.base(DatumType.things);
-				this.access_table = this.base(DatumType.access);
-				this.users_table = this.base(DatumType.users);
+				this.relationships_table = this.base(T_Datum.relationships);
+				this.predicates_table = this.base(T_Datum.predicates);
+				this.things_table = this.base(T_Datum.things);
+				this.access_table = this.base(T_Datum.access);
+				this.users_table = this.base(T_Datum.users);
 			}
 		}
 	}
@@ -95,7 +95,7 @@ export default class DBAirtable extends DBCommon {
 			thing.persistence.awaitingCreation = false;
 			this.hierarchy.thing_remember_updateID_to(thing, dict['id']);
 		} catch (error) {
-			thing.log(DebugFlag.remote, this.things_errorMessage + error);
+			thing.log(T_Debug.remote, this.things_errorMessage + error);
 		}
 	}
 
@@ -103,7 +103,7 @@ export default class DBAirtable extends DBCommon {
 		try {
 			await this.things_table.update(thing.id, thing.fields);
 		} catch (error) {
-			thing.log(DebugFlag.remote, this.things_errorMessage + error);
+			thing.log(T_Debug.remote, this.things_errorMessage + error);
 		}
 	}
 
@@ -111,7 +111,7 @@ export default class DBAirtable extends DBCommon {
 		try {
 			await this.things_table.destroy(thing.id);
 		} catch (error) {
-			thing.log(DebugFlag.remote, this.things_errorMessage + error);
+			thing.log(T_Debug.remote, this.things_errorMessage + error);
 		}
 	}
 
@@ -129,7 +129,7 @@ export default class DBAirtable extends DBCommon {
 			for (const record of records) {
 				const id = record.id as string;
 				const text = record.fields.text as string;
-				const type = record.fields.type as TraitType;
+				const type = record.fields.type as T_Trait;
 				const ownerIDs = record.fields.ownerID as (Array<string>);
 				this.hierarchy.trait_remember_runtimeCreateUnique(k.empty, id, ownerIDs[0], type, text, true);
 			}
@@ -142,7 +142,7 @@ export default class DBAirtable extends DBCommon {
 		try {
 			await this.traits_table.update(trait.id, trait.fields);
 		} catch (error) {
-			trait.log(DebugFlag.remote, this.traits_errorMessage + error);
+			trait.log(T_Debug.remote, this.traits_errorMessage + error);
 		}
 	}
 
@@ -150,7 +150,7 @@ export default class DBAirtable extends DBCommon {
 		try {
 			await this.traits_table.destroy(trait.id);
 		} catch (error) {
-			trait.log(DebugFlag.remote, this.traits_errorMessage + error);
+			trait.log(T_Debug.remote, this.traits_errorMessage + error);
 		}
 	}
 
@@ -162,7 +162,7 @@ export default class DBAirtable extends DBCommon {
 			trait.persistence.already_persisted = true;
 			this.hierarchy.trait_remember(trait);
 		} catch (error) {
-			trait.log(DebugFlag.remote, this.traits_errorMessage + error);
+			trait.log(T_Debug.remote, this.traits_errorMessage + error);
 		}
 	}
 
@@ -179,7 +179,7 @@ export default class DBAirtable extends DBCommon {
 				const parents = record.fields.parent as (Array<string>);
 				const children = record.fields.child as (Array<string>);
 				const kindPredicate = record.fields.kindPredicate as string;
-				this.hierarchy.relationship_remember_runtimeCreateUnique(k.empty, id, kindPredicate, parents[0], children[0], order, CreationOptions.isFromPersistent);
+				this.hierarchy.relationship_remember_runtimeCreateUnique(k.empty, id, kindPredicate, parents[0], children[0], order, T_Create.isFromPersistent);
 			}
 		} catch (error) {
 			debug.log_error(this.relationships_errorMessage + error);
@@ -197,7 +197,7 @@ export default class DBAirtable extends DBCommon {
 				relationship.persistence.already_persisted = true;
 				this.hierarchy.relationships_refreshKnowns();
 			} catch (error) {
-				relationship.log(DebugFlag.remote, this.relationships_errorMessage + error);
+				relationship.log(T_Debug.remote, this.relationships_errorMessage + error);
 			}
 		}
 	}
@@ -212,7 +212,7 @@ export default class DBAirtable extends DBCommon {
 			this.hierarchy.relationships_refreshKnowns(); // do first so UX updates quickly
 			await this.relationships_table.destroy(relationship.id);
 		} catch (error) {
-			relationship.log(DebugFlag.remote, this.relationships_errorMessage + error);
+			relationship.log(T_Debug.remote, this.relationships_errorMessage + error);
 		}
 	}
 

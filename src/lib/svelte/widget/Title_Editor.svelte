@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { Graph_Type, dbDispatch, Seriously_Range, Svelte_Wrapper, SvelteComponentType } from '../../ts/common/Global_Imports';
+	import { T_Graph, dbDispatch, Seriously_Range, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { s_hierarchy, s_graph_type, s_thing_color, s_thing_title, s_title_edit_state } from '../../ts/state/Svelte_Stores';
 	import { s_thing_fontFamily, s_grabbed_ancestries, s_ancestry_showing_tools } from '../../ts/state/Svelte_Stores';
 	import { g, k, u, Point, Thing, debug, Angle, ZIndex, signals } from '../../ts/common/Global_Imports';
@@ -36,7 +36,7 @@
 
 	$: {
 		if (!!input && !titleWrapper) {
-			titleWrapper = new Svelte_Wrapper(input, handle_mouse_state, ancestry.hid, SvelteComponentType.title);
+			titleWrapper = new Svelte_Wrapper(input, handle_mouse_state, ancestry.hid, T_SvelteComponent.title);
 		}
 	}
 
@@ -128,7 +128,7 @@
 			titleWidth = thing().titleWidth + (showingReveal ? 6 : 1) + 15;
 			titleLeft = g.inRadialMode ? ancestry.isFocus ? 5 : (forward ? 21 : (showingReveal ? 18.5 : 10)) : 19;
 		}
-		const handler = signals.handle_anySignal((IDSignal, ancestry) => { updateInputWidth(); });
+		const handler = signals.handle_anySignal((T_Signal, ancestry) => { updateInputWidth(); });
 		setTimeout(() => { updateInputWidth(); }, 100);
 		return () => { handler.disconnect() };
 	})

@@ -1,5 +1,5 @@
 import Persistent_Identifiable from './Persistent_Identifiable';
-import { DebugFlag } from '../../common/Debug';
+import { T_Debug } from '../../common/Debug';
 
 export default class Datum extends Persistent_Identifiable {
 	idBase: string;
@@ -9,7 +9,7 @@ export default class Datum extends Persistent_Identifiable {
 		this.idBase = idBase;
 	}
 
-	log(option: DebugFlag, message: string) {}
+	log(option: T_Debug, message: string) {}
 	isInDifferentBulkThan(other: Datum) { return this.idBase != other.idBase; }
 
 }

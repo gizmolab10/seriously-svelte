@@ -1,12 +1,12 @@
 import { k, u, Thing, Trait, Predicate, Relationship } from '../../common/Global_Imports';
-import { DBType } from '../basis/Persistence_State';
+import { T_Database } from '../basis/Persistence_State';
 import { Hierarchy } from '../../common/Global_Imports';
-import { Persistence_Kind } from './DBCommon';
+import { T_Persistence } from './DBCommon';
 import DBCommon from './DBCommon';
 
 export default class DBPlugin extends DBCommon {
-	kind_persistence = Persistence_Kind.none;
-	type_db = DBType.plugin;
+	kind_persistence = T_Persistence.none;
+	type_db = T_Database.plugin;
 	idBase = k.empty;
 
 	get h(): Hierarchy { return this.hierarchy; }

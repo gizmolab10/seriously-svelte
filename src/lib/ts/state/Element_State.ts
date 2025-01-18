@@ -1,4 +1,4 @@
-import { k, u, ux, Ancestry, ElementType } from '../common/Global_Imports';
+import { k, u, ux, Ancestry, T_Element } from '../common/Global_Imports';
 import Identifiable from '../basis/Identifiable';
 
 export default class Element_State {
@@ -8,7 +8,7 @@ export default class Element_State {
 	hoverCursor = k.cursor_default;
 	identifiable!: Identifiable;
 	hoverColor = 'transparent';
-	type = ElementType.none;
+	type = T_Element.none;
 	hoverIgnore = false;
 	isInverted = false;
 	subtype = k.empty;
@@ -26,7 +26,7 @@ export default class Element_State {
 	//												//
 	//////////////////////////////////////////////////
 
-	constructor(identifiable: Identifiable, type: ElementType, subtype: string) {
+	constructor(identifiable: Identifiable, type: T_Element, subtype: string) {
 		this.name = ux.name_from(identifiable, type, subtype);
 		this.identifiable = identifiable;
 		this.subtype = subtype;

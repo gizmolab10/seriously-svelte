@@ -1,4 +1,4 @@
-import { k, u, ux, Rect, Thing, Point, Angle, Ancestry, ElementType, Element_State } from '../common/Global_Imports'
+import { k, u, ux, Rect, Thing, Point, Angle, Ancestry, T_Element, Element_State } from '../common/Global_Imports'
 
 export default class Widget_MapRect extends Rect {
 	parent_ancestry: Ancestry | null;
@@ -14,7 +14,7 @@ export default class Widget_MapRect extends Rect {
 	constructor(curveType: string, rect: Rect, childOrigin: Point, widget_ancestry: Ancestry | null,
 		parent_ancestry: Ancestry | null, childAngle: number | null = null, subtype: string = k.empty) {
 		super(u.copyObject(rect.origin), u.copyObject(rect.size));
-		this.element_state = ux.element_state_for(widget_ancestry, ElementType.widget, subtype);
+		this.element_state = ux.element_state_for(widget_ancestry, T_Element.widget, subtype);
 		this.points_right = !childAngle ? true : new Angle(childAngle).angle_pointsRight;
 		this.child = widget_ancestry?.thing ?? null;
 		this.parent_ancestry = parent_ancestry;

@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { s_thing_color, s_graph_type, s_grabbed_ancestries, s_ancestry_showing_tools } from '../../ts/state/Svelte_Stores';
-	import { g, k, u, ux, show, Rect, Size, Point, Thing, debug, ZIndex, IDTool } from '../../ts/common/Global_Imports';
-	import { dbDispatch, Svelte_Wrapper, AlterationType, SvelteComponentType } from '../../ts/common/Global_Imports';
-	import { signals, svgPaths, Direction, Graph_Type, ElementType } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, show, Rect, Size, Point, Thing, debug, ZIndex, T_Tool } from '../../ts/common/Global_Imports';
+	import { dbDispatch, Svelte_Wrapper, T_Alteration, T_SvelteComponent } from '../../ts/common/Global_Imports';
+	import { signals, svgPaths, Direction, T_Graph, T_Element } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import { onMount } from 'svelte';
@@ -49,7 +49,7 @@
 
 	$: {
 		if (!!dotDrag) {
-			dragWrapper = new Svelte_Wrapper(dotDrag, handle_mouse_state, ancestry.hid, SvelteComponentType.drag);
+			dragWrapper = new Svelte_Wrapper(dotDrag, handle_mouse_state, ancestry.hid, T_SvelteComponent.drag);
 			element_state.set_forHovering(ancestry.thing?.color, 'pointer');
 		}
 	}

@@ -1,6 +1,6 @@
 import { k } from '../../ts/common/Global_Imports';
 
-export enum Timer_Type {
+export enum T_Timer {
 	double	= 'double',
 	long	= 'long',
 }
@@ -22,12 +22,12 @@ export default class Mouse_Timer {
 		}
 	}
 	
-	setTimeout(type: Timer_Type, callback: (args: void) => void, ms?: number) {
-		if (type == Timer_Type.long && !this.mouse_longClick_timer) {
+	setTimeout(type: T_Timer, callback: (args: void) => void, ms?: number) {
+		if (type == T_Timer.long && !this.mouse_longClick_timer) {
 			setTimeout(() => {
 				callback();
 			}, k.threshold_longClick);
-		} else if (type == Timer_Type.double && !this.mouse_doubleClick_timer) {
+		} else if (type == T_Timer.double && !this.mouse_doubleClick_timer) {
 			setTimeout(() => {
 				callback();
 			}, k.threshold_doubleClick);

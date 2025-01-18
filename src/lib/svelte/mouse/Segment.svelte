@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, Rect, Size, Point, debug, ZIndex } from '../../ts/common/Global_Imports';
-	import { svgPaths, Oblong_Part, Segment_Map } from '../../ts/common/Global_Imports';
+	import { svgPaths, T_Oblong, Segment_Map } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from './Mouse_Responder.svelte';
 	export let hit_closure = (title, shift) => {};
 	export let fill = k.color_background;

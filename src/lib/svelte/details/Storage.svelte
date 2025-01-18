@@ -1,9 +1,9 @@
 <script lang='ts'>
-	import { k, u, ux, Point, ZIndex, dbDispatch, Hierarchy, IDStorage } from '../../ts/common/Global_Imports';
-	import { ElementType, Element_State, IDPreference, preferences } from '../../ts/common/Global_Imports';
+	import { k, u, ux, Point, ZIndex, dbDispatch, Hierarchy, T_Storage } from '../../ts/common/Global_Imports';
+	import { T_Element, Element_State, T_Preference, preferences } from '../../ts/common/Global_Imports';
 	import { s_storage_update_trigger, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
 	import { s_type_db, s_hierarchy } from '../../ts/state/Svelte_Stores';
-	import { DBType } from '../../ts/data/basis/Persistence_State';
+	import { T_Database } from '../../ts/data/basis/Persistence_State';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Button from '../mouse/Button.svelte';
 	import Table from '../kit/Table.svelte';
@@ -30,14 +30,14 @@
 	}
 
 	function selection_closure(titles: Array<string>) {
-		const type = titles[0] as DBType;	// only ever contains one title
+		const type = titles[0] as T_Database;	// only ever contains one title
 		dbDispatch.db_change_toType(type);
 	}
 	
 	function setup_element_states() {
-		const ids = [IDStorage.export, IDStorage.import];
+		const ids = [T_Storage.export, T_Storage.import];
 		for (const id of ids) {
-			const element_state = ux.element_state_for(null, ElementType.storage, id);
+			const element_state = ux.element_state_for(null, T_Element.storage, id);
 			element_state.set_forHovering('black', 'pointer');
 			element_state.color_background = k.color_background;
 			element_states_byID[id] = element_state;
@@ -50,8 +50,8 @@
 		} else if (mouse_state.isUp) {
 			const h = $s_hierarchy;
 			switch (idStorage) {
-				case IDStorage.export: h.persist_toFile(); break;
-				case IDStorage.import: h.select_file_toUpload(mouse_state.event.shiftKey); break;
+				case T_Storage.export: h.persist_toFile(); break;
+				case T_Storage.import: h.select_file_toUpload(mouse_state.event.shiftKey); break;
 			}
 		}
 	}
@@ -68,7 +68,7 @@
 			selected={[$s_type_db]}
 			origin={new Point(4, top)}
 			selection_closure={selection_closure}
-			titles={[DBType.local, DBType.firebase, DBType.airtable, DBType.test]}/>
+			titles={[T_Database.local, T_Database.firebase, T_Database.airtable, T_Database.test]}/>
 		<div class='data-information'
 			style='font-size:0.8em;
 				width:{k.width_details}px;'>
@@ -79,8 +79,8 @@
 			zindex=ZIndex.frontmost
 			center={new Point(74, buttons_top)}
 			height={k.default_buttonSize - 4}
-			element_state={element_states_byID[IDStorage.import]}
-			closure={(mouse_state) => button_closure_forID(mouse_state, IDStorage.import)}>
+			element_state={element_states_byID[T_Storage.import]}
+			closure={(mouse_state) => button_closure_forID(mouse_state, T_Storage.import)}>
 			<span style={button_style}>import</span>
 		</Button>
 		<Button name='export'
@@ -88,8 +88,8 @@
 			zindex=ZIndex.frontmost
 			center={new Point(122, buttons_top)}
 			height={k.default_buttonSize - 4}
-			element_state={element_states_byID[IDStorage.export]}
-			closure={(mouse_state) => button_closure_forID(mouse_state, IDStorage.export)}>
+			element_state={element_states_byID[T_Storage.export]}
+			closure={(mouse_state) => button_closure_forID(mouse_state, T_Storage.export)}>
 			<span style={button_style}>export</span>
 		</Button>
 	</div>

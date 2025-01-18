@@ -1,13 +1,13 @@
-import { k, Thing, Trait, ThingType, Relationship, PredicateKind } from '../../common/Global_Imports';
+import { k, Thing, Trait, T_Thing, Relationship, T_Predicate } from '../../common/Global_Imports';
 import type { Dictionary } from '../../../ts/common/Types';
-import { DBType } from '../basis/Persistence_State';
-import { Persistence_Kind } from './DBCommon';
+import { T_Database } from '../basis/Persistence_State';
+import { T_Persistence } from './DBCommon';
 import DBCommon from './DBCommon';
 
 export default class DBTest extends DBCommon {
-	kind_persistence = Persistence_Kind.none;
+	kind_persistence = T_Persistence.none;
 	idBase = k.idBase_test;
-	type_db = DBType.test;
+	type_db = T_Database.test;
 	
 	get dict_forStorageDetails(): Dictionary { return {'data' : 'recreated on launch'} }
 
@@ -20,8 +20,8 @@ export default class DBTest extends DBCommon {
 		const idTf = 'F';
 		const idTr = 'R';
 		const h = this.hierarchy;
-		const kindC = PredicateKind.contains;
-		const kindR = PredicateKind.isRelated;
+		const kindC = T_Predicate.contains;
+		const kindR = T_Predicate.isRelated;
 		h.predicate_defaults_remember_runtimeCreate();
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTa, 'Active', 'red', 'a');
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTb, 'Maintain', 'blue', 'b');
@@ -29,7 +29,7 @@ export default class DBTest extends DBCommon {
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTd, 'Autonomy', 'purple', 'd');
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTe, 'Aesthetics', 'mediumvioletred', 'e');
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTf, 'Connections', 'coral', 'f');
-		h.thing_remember_runtimeCreateUnique(this.idBase, idTr, 'Life', 'limegreen', ThingType.root);
+		h.thing_remember_runtimeCreateUnique(this.idBase, idTr, 'Life', 'limegreen', T_Thing.root);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cra', kindC, idTr, idTa, 0);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Crb', kindC, idTr, idTb, 1);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Crc', kindC, idTr, idTc, 2);
@@ -73,7 +73,7 @@ export default class DBTest extends DBCommon {
 			h.relationship_remember_runtimeCreateUnique(this.idBase, idRelationahip, kindPredicate, idParent, idChild, 1);
 			if (asChild || isBidirectional) {	// needs to be child of root
 				const idParentRelationship = 'CR' + idUpper;
-				h.relationship_remember_runtimeCreateUnique(this.idBase, idParentRelationship, PredicateKind.contains, h.root.id, idThing, 1);
+				h.relationship_remember_runtimeCreateUnique(this.idBase, idParentRelationship, T_Predicate.contains, h.root.id, idThing, 1);
 			}
 		}
 	}
