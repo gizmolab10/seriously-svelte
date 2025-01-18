@@ -1,5 +1,5 @@
 import { k, u, ux, w, Rect, Point, Angle, debug, T_Line, Arc_Map, T_Quadrant } from '../common/Global_Imports';
-import { Ancestry, Predicate, Paging_State, Widget_MapRect, S_Rotation } from '../common/Global_Imports';
+import { Ancestry, Predicate, S_Paging, Widget_MapRect, S_Rotation } from '../common/Global_Imports';
 import { s_rotation_ring_angle, s_ring_rotation_radius } from '../state/S_Stores';
 import { s_graphRect, s_focus_ancestry } from '../state/S_Stores';
 import { get } from 'svelte/store';
@@ -75,7 +75,7 @@ export default class Cluster_Map {
 	get kind(): string { return this.predicate?.kind.unCamelCase().lastWord() ?? k.empty; }
 	get name(): string { return `${this.focus_ancestry.title}-cluster-${this.direction_kind}`; }
 	get fork_radial(): Point { return Point.fromPolar(get(s_ring_rotation_radius), this.arc_map.fork_angle); }
-	get paging_state_ofFocus(): Paging_State | null { return this.paging_state_ofAncestry(this.focus_ancestry); }
+	get paging_state_ofFocus(): S_Paging | null { return this.paging_state_ofAncestry(this.focus_ancestry); }
 
 	get thumb_isHit(): boolean {
 		const offset = Point.square(-get(s_ring_rotation_radius));
@@ -112,7 +112,7 @@ export default class Cluster_Map {
 	
 	static readonly PAGING: unique symbol;
 	
-	paging_state_ofAncestry(ancestry: Ancestry): Paging_State | null {
+	paging_state_ofAncestry(ancestry: Ancestry): S_Paging | null {
 		return ancestry.thing?.page_states?.paging_state_for(this) ?? null;
 	}
 	

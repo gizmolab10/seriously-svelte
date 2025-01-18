@@ -1,6 +1,6 @@
 import { s_paging_state, s_grabbed_ancestries, s_expanded_ancestries } from '../state/S_Stores';
 import { s_hierarchy, s_tree_type, s_graph_type, s_detail_types } from '../state/S_Stores';
-import { T_Tree, T_Graph, T_Details, Paging_State } from '../common/Global_Imports';
+import { T_Tree, T_Graph, T_Details, S_Paging } from '../common/Global_Imports';
 import { s_focus_ancestry, s_font_size, s_thing_fontFamily } from '../state/S_Stores';
 import { s_rotation_ring_angle, s_ring_rotation_radius } from '../state/S_Stores';
 import { g, k, show, debug, Ancestry, databases } from '../common/Global_Imports';
@@ -127,7 +127,7 @@ class Preferences {
 		s_rotation_ring_angle.subscribe((angle: number) => {
 			this.write_key(T_Preference.ring_angle, angle);
 		});
-		s_paging_state.subscribe((paging_state: Paging_State) => {
+		s_paging_state.subscribe((paging_state: S_Paging) => {
 			if (!!paging_state) {
 				const dbKey = this.dbKey_for(T_Preference.page_states);
 				this.write_keyPair(dbKey, paging_state.sub_key, paging_state.description);
@@ -154,7 +154,7 @@ class Preferences {
 	restore_page_states() {
 		const descriptions = this.read_sub_keys_forKey(this.dbKey_for(T_Preference.page_states)) ?? k.empty;
 		for (const description of descriptions) {
-			const paging_state = Paging_State.create_paging_state_from(description);
+			const paging_state = S_Paging.create_paging_state_from(description);
 			if (!!paging_state) {
 				const thing = paging_state?.thing;
 				if (!!thing) {

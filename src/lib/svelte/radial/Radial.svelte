@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, k, u, ux, w, Thing, Point, Angle, debug, ZIndex } from '../../ts/common/Global_Imports';
-	import { s_thing_color, s_focus_ancestry, s_clusters_geometry } from '../../ts/state/S_Stores';
+	import { s_thing_color, s_focus_ancestry, s_radial_geometry } from '../../ts/state/S_Stores';
 	import { s_rotation_ring_angle, s_ring_rotation_radius } from '../../ts/state/S_Stores';
 	import { signals, svgPaths, T_Ring, databases } from '../../ts/common/Global_Imports';
 	import { s_mouse_up_count, s_active_cluster_map } from '../../ts/state/S_Stores';
@@ -26,9 +26,11 @@
 	let rebuilds = 0;
 	let pagingArcs;
 
+	// paging arcs and rings
+
 	update_cursor();
 	debug.log_build(` (svelte)`);
-	$s_clusters_geometry.layoutAll_clusters();
+	$s_radial_geometry.layoutAll_clusters();
 	function handle_mouse_state(mouse_state: S_Mouse): boolean { return true; }				// only for wrappers
 	function isHit(): boolean { return w.mouse_distance_fromGraphCenter <= outer_radius; }
 
@@ -211,7 +213,7 @@
 						break;
 					case T_Ring.paging: 
 						const paging_angle = mouse_wentDown_angle.angle_normalized();
-						const map = $s_clusters_geometry.cluster_mapFor_mouseLocation;
+						const map = $s_radial_geometry.cluster_mapFor_mouseLocation;
 						if (!!map) {
 							debug.log_radial(` begin paging  ${paging_angle.degrees_of(0)}`);
 							map.paging_rotation.active_angle = paging_angle;
@@ -231,7 +233,7 @@
 
 {#key rebuilds}
 	<div class='paging-arcs' bind:this={pagingArcs} style='z-index:{ZIndex.paging};'>
-		{#each $s_clusters_geometry.cluster_maps as cluster_map}
+		{#each $s_radial_geometry.cluster_maps as cluster_map}
 			{#if !!cluster_map && (cluster_map.widgets_shown > 0)}
 				<Paging_Arc
 					color={color}

@@ -1,7 +1,7 @@
 import { g, k, u, Rect, Size, Thing, debug, signals, wrappers, Direction, Predicate, Hierarchy } from '../../common/Global_Imports';
-import { s_expanded_ancestries, s_ancestry_showing_tools, s_alteration_mode, s_clusters_geometry } from '../../state/S_Stores';
+import { s_expanded_ancestries, s_ancestry_showing_tools, s_alteration_mode, s_radial_geometry } from '../../state/S_Stores';
 import { databases, Svelte_Wrapper, Widget_MapRect, T_Alteration, S_Title_Edit } from '../../common/Global_Imports';
-import { T_Element, Paging_State, Relationship, T_Predicate, T_SvelteComponent } from '../../common/Global_Imports';
+import { T_Element, S_Paging, Relationship, T_Predicate, T_SvelteComponent } from '../../common/Global_Imports';
 import { s_hierarchy, s_focus_ancestry, s_grabbed_ancestries, s_title_edit_state } from '../../state/S_Stores';
 import { T_Database } from '../basis/Persistence_State';
 import Identifiable from '../basis/Identifiable';
@@ -91,7 +91,7 @@ export default class Ancestry extends Identifiable {
 	get parentAncestry():		   Ancestry | null { return this.stripBack(); }
 	get predicate():			  Predicate | null { return this.hierarchy.predicate_forKind(this.kindPredicate) }
 	get relationship():		   Relationship | null { return this.relationshipAt(); }
-	get widget_map():		 Widget_MapRect | null { return get(s_clusters_geometry)?.widget_mapFor(this) ?? null; }
+	get widget_map():		 Widget_MapRect | null { return get(s_radial_geometry)?.widget_mapFor(this) ?? null; }
 	get titleWrapper():		 Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.hid, T_SvelteComponent.title); }
 	get ids_hashed():		   Array	 <Integer> { return this.ids.map(i => i.hash()); }
 	get ids():				   Array	  <string> { return this.id.split(k.generic_separator); }
@@ -133,9 +133,9 @@ export default class Ancestry extends Identifiable {
 		return this.relationship?.idChild ?? k.unknown;
 	}
 
-	get paging_state(): Paging_State | null {
+	get paging_state(): S_Paging | null {
 		const predicate = this.predicate;
-		const geometry = get(s_clusters_geometry);
+		const geometry = get(s_radial_geometry);
 		if (!!predicate && !!geometry) {
 			const map = geometry?.cluster_map_toChildren(this.thing_isChild, predicate)
 			return map?.paging_state_ofAncestry(this) ?? null;

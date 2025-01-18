@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_clusters_geometry, s_ring_rotation_radius, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
+	import { s_radial_geometry, s_ring_rotation_radius, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
 	import { s_graphRect, s_paging_state, s_focus_ancestry, s_thing_color } from '../../ts/state/S_Stores';
 	import { Predicate, Widget_MapRect, Radial_Geometry } from '../../ts/common/Global_Imports';
 	import { k, u, Point, ZIndex, signals } from '../../ts/common/Global_Imports';
@@ -27,7 +27,7 @@
 		const _ = $s_ancestry_showing_tools;
 		tools_widget_map = null;
 		setTimeout(() => {
-			tools_widget_map = $s_clusters_geometry?.tools_widget_map ?? null;
+			tools_widget_map = $s_radial_geometry?.tools_widget_map ?? null;
 		}, 1);
 	}
 
@@ -48,9 +48,9 @@
 </script>
 
 {#key rebuilds}
-	{#if !!$s_clusters_geometry}
+	{#if !!$s_radial_geometry}
 		<div class='necklace-widgets' style='z-index:{ZIndex.backmost};'>
-			{#each $s_clusters_geometry.widget_maps as widget_map}
+			{#each $s_radial_geometry.widget_maps as widget_map}
 				<Widget
 					subtype={widget_map.subtype}
 					forward={widget_map.points_right}

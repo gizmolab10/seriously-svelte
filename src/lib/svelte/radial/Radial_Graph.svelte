@@ -3,7 +3,7 @@
 	import { g, k, u, ux, Rect, Point, debug, T_Tool, ZIndex } from '../../ts/common/Global_Imports';
 	import { s_graphRect, s_show_details, s_focus_ancestry } from '../../ts/state/S_Stores';
 	import { s_user_graph_offset, s_thing_fontFamily } from '../../ts/state/S_Stores';
-	import { s_clusters_geometry } from '../../ts/state/S_Stores';
+	import { s_radial_geometry } from '../../ts/state/S_Stores';
 	import Radial_Focus from './Radial_Focus.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Necklace from './Necklace.svelte';
@@ -20,12 +20,12 @@
 	//	edit titles (keydown terminates edit) BROKEN
 	//	displays editing tools when asked by user
 	
-	$s_clusters_geometry = new Radial_Geometry();
+	$s_radial_geometry = new Radial_Geometry();
 	debug.log_tools(` CLUSTERS (svelte)`);
 
 	onMount(() => {
 		const handler = signals.handle_relayoutWidgets(0, ($s_focus_ancestry) => {
-			g.require_rebuild_forType(T_Rebuild.clusters);
+			g.require_rebuild_forType(T_Rebuild.radial);
 		});
 		return () => { handler.disconnect() };
 	});
@@ -33,15 +33,15 @@
 	
 	$: {
 		const _ = $s_show_details;
-		$s_clusters_geometry = new Radial_Geometry();
+		$s_radial_geometry = new Radial_Geometry();
 		setTimeout(() => {
-			g.require_rebuild_forType(T_Rebuild.clusters);
+			g.require_rebuild_forType(T_Rebuild.radial);
 		}, 100);
 	}
 
 </script>
 
-{#key g.readOnce_rebuild_needed_forType(T_Rebuild.clusters), $s_focus_ancestry.hashedAncestry}
+{#key g.readOnce_rebuild_needed_forType(T_Rebuild.radial), $s_focus_ancestry.hashedAncestry}
 	<div class='radial-graph'
 		style='
 			z-index:{ZIndex.backmost};

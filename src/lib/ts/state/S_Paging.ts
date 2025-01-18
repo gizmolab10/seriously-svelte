@@ -2,7 +2,7 @@ import { k, Thing, Predicate, Ancestry, Cluster_Map } from '../common/Global_Imp
 import { s_hierarchy, s_paging_state, s_ring_rotation_radius } from './S_Stores';
 import { get } from 'svelte/store';
 
-export class Paging_State {
+export class S_Paging {
 
 	// a page is a subset of a too-long list of things
 	// widgets_shown == length of subset
@@ -21,12 +21,12 @@ export class Paging_State {
 		this.widgets_shown = widgets_shown;
 	}
 
-	static create_paging_state_from(description: string): Paging_State | null {
+	static create_paging_state_from(description: string): S_Paging | null {
 		let string = description.split(k.generic_separator);
 		const [toChildren, kind, id, ...remaining] = string;
 		if (remaining.length > 2) {
 			const v: Array<number> = remaining.map(r => Number(r));
-			const paging_state = new Paging_State(v[0], v[1], v[2]);
+			const paging_state = new S_Paging(v[0], v[1], v[2]);
 			paging_state.toChildren = toChildren == 'true';
 			paging_state.thing_id = id;
 			paging_state.kind = kind;
@@ -86,11 +86,11 @@ export class Paging_State {
 }
 
 export class Page_States {
-	outward_paging_states: Array<Paging_State> = [];
-	inward_paging_states: Array<Paging_State> = [];
+	outward_paging_states: Array<S_Paging> = [];
+	inward_paging_states: Array<S_Paging> = [];
 	thing_id = k.empty;
 
-	// two arrays of Paging_State (defined above)
+	// two arrays of S_Paging (defined above)
 	// 1) outward: (to) children and relateds (more kinds later?)
 	// 2) inward: (from) parents
 	// each array has one index for each predicate kind
@@ -104,10 +104,10 @@ export class Page_States {
 
 	get thing(): Thing | null { return get(s_hierarchy).thing_forHID(this.thing_id.hash()) ?? null; }
 	get description(): string { return this.description_for(true) + k.big_separator + this.description_for(false); }
-	paging_state_for(map: Cluster_Map): Paging_State { return this.paging_state_forPointingTo(map.toChildren, map.predicate); }
-	paging_states_for(toChildren: boolean): Array<Paging_State> { return toChildren ? this.outward_paging_states : this.inward_paging_states; }
+	paging_state_for(map: Cluster_Map): S_Paging { return this.paging_state_forPointingTo(map.toChildren, map.predicate); }
+	paging_states_for(toChildren: boolean): Array<S_Paging> { return toChildren ? this.outward_paging_states : this.inward_paging_states; }
 
-	add_paging_state(paging_state: Paging_State) {
+	add_paging_state(paging_state: S_Paging) {
 		const paging_states = this.paging_states_for(paging_state.toChildren);
 		paging_states[paging_state.stateIndex] = paging_state;
 	}
@@ -122,12 +122,12 @@ export class Page_States {
 		return result;
 	}
 
-	paging_state_forPointingTo(toChildren: boolean, predicate: Predicate): Paging_State {
+	paging_state_forPointingTo(toChildren: boolean, predicate: Predicate): S_Paging {
 		let paging_states = this.paging_states_for(toChildren);
 		const stateIndex = predicate.stateIndex;
 		let paging_state = paging_states[stateIndex]
 		if (!paging_state) {
-			paging_state = new Paging_State();
+			paging_state = new S_Paging();
 			paging_state.kind = predicate.kind;
 			paging_state.toChildren = toChildren;
 			paging_state.thing_id = this.thing_id;

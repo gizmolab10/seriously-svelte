@@ -1,5 +1,5 @@
 import { u, Thing, debug, Ancestry, Predicate, T_Predicate } from '../common/Global_Imports';
-import { Cluster_Map, Paging_State, Widget_MapRect } from '../common/Global_Imports';
+import { Cluster_Map, S_Paging, Widget_MapRect } from '../common/Global_Imports';
 import { s_focus_ancestry, s_ancestry_showing_tools } from '../state/S_Stores';
 import { s_hierarchy, s_paging_state } from '../state/S_Stores';
 import Parent_Ancestry from '../data/runtime/Parent_Ancestry';
@@ -16,7 +16,7 @@ export default class Radial_Geometry {
 	constructor() {
 		debug.log_layout(`GEOMETRY (ts)  ${get(s_focus_ancestry)?.thing?.title}`);
 		this.layoutAll_clusters();
-		s_paging_state.subscribe((state: Paging_State) => {
+		s_paging_state.subscribe((state: S_Paging) => {
 			this.update_forPaging_state(state);
 		});
 	}
@@ -95,7 +95,7 @@ export default class Radial_Geometry {
 		}
 	}
 
-	update_forPaging_state(paging_state: Paging_State) {
+	update_forPaging_state(paging_state: S_Paging) {
 		const ancestry = get(s_focus_ancestry);
 		if (!!paging_state && !!ancestry) {
 			if (paging_state.toChildren) {

@@ -12,15 +12,15 @@ import { databases } from '../managers/Databases';
 import { Seriously_Range } from './Seriously_Range';
 import { signals, T_Signal } from '../signals/Signals';
 import { Rect, Size, Point } from '../geometry/Geometry';
+import { S_Paging, Page_States } from '../state/S_Paging';
 import { Direction, svgPaths } from '../geometry/SVG_Paths';
 import { T_Tree, T_Graph, T_Startup } from './Enumerations';
 import { T_Quadrant, T_Orientation } from '../geometry/Angle';
-import { Paging_State, Page_States } from '../state/Page_States';
 import { T_Preference, preferences } from '../managers/Preferences';
 import { T_Ring, T_Oblong, T_SvelteComponent } from './Enumerations';
-import { T_Predicate, T_Alteration, T_Create } from './Enumerations';
-import { T_Line, T_Tool, ZIndex, T_Control, T_Browser, T_Storage } from './Enumerations';
-import { T_Info, T_Thing, T_Trait, T_Element, T_Details, T_Rebuild } from './Enumerations';
+import { ZIndex, T_Browser, T_Predicate, T_Alteration } from './Enumerations';
+import { T_Thing, T_Trait, T_Element, T_Details, T_Rebuild } from './Enumerations';
+import { T_Info, T_Line, T_Tool, T_Create, T_Control, T_Storage } from './Enumerations';
 
 import Children_Geometry from '../geometry/Children_Geometry';
 import Radial_Geometry from '../geometry/Radial_Geometry';
@@ -49,10 +49,10 @@ import Grabs from '../managers/Grabs';
 
 import './Extensions';
 import { k } from './Constants';
+import { u } from './Utilities';
 import { ux } from '../state/S_UX';
 import { g } from '../state/S_Global';
 import { e } from '../signals/Events';
-import { u } from './Utilities';
 import { w } from '../geometry/Window_Geometry';
 
 import { transparentize } from 'color2k';
@@ -69,12 +69,12 @@ export {
 	Angle, T_Quadrant, T_Orientation,
 	Children_Geometry, Widget_MapRect,
 	show, files, builds, signals, wrappers,
+	S_Element, S_Paging, Page_States, S_Alteration,
 	Rect, Size, Point, cursors, svgPaths, Direction,
 	Arc_Map, Segment_Map, Cluster_Map, Radial_Geometry,
-	S_Element, Paging_State, Page_States, S_Alteration,
 	Grabs, Ancestry, Hierarchy, databases, preferences,
+	S_Mouse, T_Startup, S_Rotation, S_Expansion, S_Title_Edit,
 	User, Datum, Thing, Trait, Access, Predicate, Relationship,
-	S_Mouse, S_Title_Edit, S_Rotation, S_Expansion, T_Startup,
 	T_Element, Svelte_Wrapper, SvelteComponent, T_SvelteComponent,
 	T_Info, T_Thing, T_Trait, T_Graph, T_Tree, T_Details, T_Rebuild,
 	T_Line, T_Tool, T_Signal, T_Control, T_Browser, T_Storage, T_Preference,
