@@ -52,7 +52,7 @@ import { k } from './Constants';
 import { ux } from '../state/S_UX';
 import { g } from '../state/S_Global';
 import { e } from '../signals/Events';
-import { u } from '../managers/Utilities';
+import { u } from './Utilities';
 import { w } from '../geometry/Window_Geometry';
 
 import { transparentize } from 'color2k';

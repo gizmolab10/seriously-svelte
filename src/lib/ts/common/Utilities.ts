@@ -2,13 +2,13 @@
 
 import { s_thing_fontFamily } from '../state/S_Stores';
 import Identifiable from '../data/basis/Identifiable';
-import { T_Browser } from '../common/Enumerations';
-import type { Dictionary } from '../common/Types';
+import { T_Browser } from './Enumerations';
+import type { Dictionary } from './Types';
 import Ancestry from '../data/runtime/Ancestry';
 import { T_Quadrant } from '../geometry/Angle';
 import { Point } from '../geometry/Geometry';
 import { transparentize } from 'color2k';
-import { k } from '../common/Constants';
+import { k } from './Constants';
 import Angle from '../geometry/Angle';
 import { get } from 'svelte/store';
 
