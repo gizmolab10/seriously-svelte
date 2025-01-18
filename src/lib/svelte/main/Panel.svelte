@@ -2,11 +2,11 @@
 	import { s_title_edit_state, s_show_details, s_device_isMobile, } from '../../ts/state/Svelte_Stores';
 	import { g, k, u, ux, w, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
 	import { debug, ZIndex, Ancestry, Startup_State } from '../../ts/common/Global_Imports';
-	import { s_db_type, s_graphRect, s_hierarchy } from '../../ts/state/Svelte_Stores';
+	import { s_type_db, s_graphRect, s_hierarchy } from '../../ts/state/Svelte_Stores';
 	import { IDControl, Hierarchy, dbDispatch } from '../../ts/common/Global_Imports';
 	import { s_id_popupView, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
 	import { s_resize_count, s_startup_state } from '../../ts/state/Svelte_Stores';
-	import { DBType } from '../../ts/data/basis/Persistent_Identifiable';
+	import { DBType } from '../../ts/data/basis/Persistence_State';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Details from '../details/Details.svelte';
 	import Breadcrumbs from './Breadcrumbs.svelte';
@@ -23,7 +23,7 @@
 	function ignore_wheel(event) { event.preventDefault(); }
 
 	$: {
-		const _ = $s_db_type + $s_startup_state + $s_id_popupView;
+		const _ = $s_type_db + $s_startup_state + $s_id_popupView;
 		rebuilds += 1;
 	}
 	

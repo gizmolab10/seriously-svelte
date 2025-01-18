@@ -1,15 +1,26 @@
 import type { Handle_Boolean } from '../../common/Types';
 
+export enum DBType {
+	postgres = 'postgres',
+	airtable = 'airtable',
+	firebase = 'firebase',
+	plugin	 = 'plugin',
+	local	 = 'local',
+	test	 = 'test',
+}
+
 export default class Persistence_State {
 	lastModifyDate = new Date();
 	already_persisted = false;
 	awaitingCreation = false;
+	type_db: string;
 	isDirty = false;
 
-	constructor(already_persisted: boolean = false, awaitingCreation: boolean = false, isDirty: boolean = false) {
-		this.already_persisted	  = already_persisted;
-		this.awaitingCreation	  = awaitingCreation;
-		this.isDirty			  = isDirty;
+	constructor(type_db: string, already_persisted: boolean = false, awaitingCreation: boolean = false) {
+		this.isDirty			= type_db != DBType.test && !already_persisted;
+		this.already_persisted	= already_persisted;
+		this.awaitingCreation	= awaitingCreation;
+		this.type_db			= type_db;
 	}
 
 	updateModifyDate() { this.lastModifyDate = new Date(); }

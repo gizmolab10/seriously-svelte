@@ -12,7 +12,7 @@
 	import Table from '../kit/Table.svelte';
 	import Color from './Color.svelte';
 	import { onMount } from 'svelte';
-	export let top = 71;
+	export let top = 0;
 	const id = 'info';
 	const margin = 10;
 	const font_ratio = 0.8;
@@ -131,27 +131,27 @@
 				position:absolute;
 				width:{traits_width}px;'>
 			{#if information.length != 0}
-				<Segmented
-					name='info-type'
-					font_size={font_size}
-					origin={new Point(45, 0)}
-					selected={[show.info_type]}
-					height={k.row_height * font_ratio}
-					selection_closure={selection_closure}
-					titles={[InfoType.focus, InfoType.selection]}/>
 				{#key thing_title}
 					<div style='
-						top:20px;
+						top:-2px;
 						position:absolute;
 						text-align:center;
 						width:{traits_width}px;'>
 						{thing_title.clipWithEllipsisAt(30)}
 					</div>
-					<Separator top=36 width={traits_width}/>
 				{/key}
-				<Table top={39} array={information}/>
+				<Separator top=16 left=5 width={info_width}/>
+				<Segmented
+					name='info-type'
+					font_size={font_size}
+					origin={new Point(41, 23)}
+					selected={[show.info_type]}
+					height={k.row_height * font_ratio}
+					selection_closure={selection_closure}
+					titles={[InfoType.focus, InfoType.selection]}/>
+				<Table top={43} array={information}/>
 			{/if}
-			<Color thing={thing} origin={new Point(67, 116)}/>
+			<Color thing={thing} origin={new Point(67, 122)}/>
 			{#if show.traits}
 				<div class='horizontal-line'
 					style='

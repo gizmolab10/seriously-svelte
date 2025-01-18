@@ -3,7 +3,7 @@ import { s_expanded_ancestries, s_ancestry_showing_tools, s_alteration_mode, s_c
 import { dbDispatch, Svelte_Wrapper, Widget_MapRect, AlterationType, Title_Edit_State } from '../../common/Global_Imports';
 import { ElementType, Paging_State, Relationship, PredicateKind, SvelteComponentType } from '../../common/Global_Imports';
 import { s_hierarchy, s_focus_ancestry, s_grabbed_ancestries, s_title_edit_state } from '../../state/Svelte_Stores';
-import { DBType } from '../basis/Persistent_Identifiable';
+import { DBType } from '../basis/Persistence_State';
 import Identifiable from '../basis/Identifiable';
 import type { Integer } from '../../common/Types';
 import { get, Writable } from 'svelte/store';

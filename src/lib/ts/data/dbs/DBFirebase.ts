@@ -3,7 +3,8 @@ import { ThingType, preferences, IDPreference, Relationship, CreationOptions } f
 import { QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
 import { onSnapshot, deleteField, getFirestore, DocumentData, DocumentChange } from 'firebase/firestore';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
-import { DBType, DatumType } from '../basis/Persistent_Identifiable';
+import { DatumType } from '../basis/Persistent_Identifiable';
+import { DBType } from '../basis/Persistence_State';
 import Identifiable from '../basis/Identifiable';
 import { Persistence_Kind } from './DBCommon';
 import { initializeApp } from 'firebase/app';
@@ -259,13 +260,13 @@ export default class DBFirebase extends DBCommon {
 		if (!!thingsCollection) {
 			const remoteThing = new PersistentThing(thing);
 			const jsThing = { ...remoteThing };
-			thing.state.awaitingCreation = true;
+			thing.persistence.awaitingCreation = true;
 			this.addedThing = thing;
 			try {
 				this.deferSnapshots = true;
 				const ref = await addDoc(thingsCollection, jsThing);
-				thing.state.awaitingCreation = false;
-				thing.state.already_persisted = true;
+				thing.persistence.awaitingCreation = false;
+				thing.persistence.already_persisted = true;
 				this.hierarchy.thing_remember_updateID_to(thing, ref.id);
 				this.handle_deferredSnapshots();
 				thing.log(DebugFlag.remote, 'CREATE T');
@@ -340,7 +341,7 @@ export default class DBFirebase extends DBCommon {
 					}
 					break;
 				case 'modified':
-					if (!thing || thing.state.wasModifiedWithinMS(800) || !this.thing_extractChangesFromPersistent(thing, remoteThing)) {
+					if (!thing || thing.persistence.wasModifiedWithinMS(800) || !this.thing_extractChangesFromPersistent(thing, remoteThing)) {
 						return;		// do not invoke signal if nothing changed
 					}
 					break;
@@ -394,14 +395,14 @@ export default class DBFirebase extends DBCommon {
 		if (!!traitsCollection) {
 			const remoteTrait = new PersistentTrait(trait);
 			const jsTrait = { ...remoteTrait };
-			trait.state.awaitingCreation = true;
+			trait.persistence.awaitingCreation = true;
 			this.addedTrait = trait;
 			try {
 				this.deferSnapshots = true;
 				const ref = await addDoc(traitsCollection, jsTrait)
 				const h = this.hierarchy;
-				trait.state.awaitingCreation = false;
-				trait.state.already_persisted = true;
+				trait.persistence.awaitingCreation = false;
+				trait.persistence.already_persisted = true;
 				h.trait_forget(trait);
 				trait.setID(ref.id);
 				h.trait_remember(trait);
@@ -431,7 +432,7 @@ export default class DBFirebase extends DBCommon {
 					}
 					break;
 				case 'modified':
-					if (!trait || trait.state.wasModifiedWithinMS(800) || !this.trait_extractChangesFromPersistent(trait, remoteTrait)) {
+					if (!trait || trait.persistence.wasModifiedWithinMS(800) || !this.trait_extractChangesFromPersistent(trait, remoteTrait)) {
 						return;		// do not invoke signal because nothing has changed
 					}
 					break;
@@ -477,13 +478,13 @@ export default class DBFirebase extends DBCommon {
 		if (!!predicatesCollection) {
 			const remotePredicate = new PersistentPredicate(predicate);
 			const jsPredicate = { ...remotePredicate };
-			predicate.state.awaitingCreation = true;
+			predicate.persistence.awaitingCreation = true;
 			try {
 				this.deferSnapshots = true;
 				const ref = await addDoc(predicatesCollection, jsPredicate);
 				const h = this.hierarchy;
-				predicate.state.awaitingCreation = false;
-				predicate.state.already_persisted = true;
+				predicate.persistence.awaitingCreation = false;
+				predicate.persistence.already_persisted = true;
 				h.predicate_forget(predicate);
 				predicate.setID(ref.id);
 				h.predicate_remember(predicate);
@@ -533,7 +534,7 @@ export default class DBFirebase extends DBCommon {
 		if (changed) {
 			relationship.idChild = remote.child.id;
 			relationship.idParent = remote.parent.id;
-			relationship.state.already_persisted = true;
+			relationship.persistence.already_persisted = true;
 			relationship.kindPredicate = remote.predicate.id;
 			relationship.order_setTo_persistentMaybe(remote.order + k.halfIncrement);
 		}
@@ -545,13 +546,13 @@ export default class DBFirebase extends DBCommon {
 		if (!!relationshipsCollection) {
 			const remoteRelationship = new PersistentRelationship(relationship);
 			const jsRelationship = { ...remoteRelationship };
-			relationship.state.awaitingCreation = true;
+			relationship.persistence.awaitingCreation = true;
 			try {
 				this.deferSnapshots = true;
 				const ref = await addDoc(relationshipsCollection, jsRelationship);
 				const h = this.hierarchy;
-				relationship.state.awaitingCreation = false;
-				relationship.state.already_persisted = true;
+				relationship.persistence.awaitingCreation = false;
+				relationship.persistence.already_persisted = true;
 				h.relationship_forget(relationship);
 				relationship.setID(ref.id);
 				h.relationship_remember(relationship);
@@ -581,7 +582,7 @@ export default class DBFirebase extends DBCommon {
 					} else {
 						switch (change.type) {
 							case 'modified':
-								if (relationship.state.wasModifiedWithinMS(800) || !this.relationship_extractChangesFromPersistent(relationship, remoteRelationship)) {
+								if (relationship.persistence.wasModifiedWithinMS(800) || !this.relationship_extractChangesFromPersistent(relationship, remoteRelationship)) {
 									return;	// already known and contains no new data, or needs to be 'tamed'
 								}
 								break;

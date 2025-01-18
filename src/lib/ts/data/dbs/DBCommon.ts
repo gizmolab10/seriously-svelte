@@ -1,6 +1,6 @@
 import { g, k, u, Trait, Thing, ThingType, Hierarchy, Predicate, Relationship } from '../../common/Global_Imports';
 import { debug, signals, Startup_State, preferences, IDPreference } from '../../common/Global_Imports';
-import { s_hierarchy, s_db_loadTime, s_startup_state } from '../../state/Svelte_Stores';
+import { s_hierarchy, s_startup_state } from '../../state/Svelte_Stores';
 import Persistent_Identifiable from '../basis/Persistent_Identifiable';
 import type { Dictionary } from '../../common/Types';
 
@@ -19,6 +19,7 @@ export default class DBCommon {
 	
 	queryStrings_apply() {}
 	setup_remote_handlers() {}
+	get dict_forStorageDetails(): Dictionary { return {'fetch took' : this.loadTime} }
 	get isRemote(): boolean { return this.kind_persistence == Persistence_Kind.remote; }
 	get isPersistent(): boolean { return this.kind_persistence != Persistence_Kind.none; }
 	async hierarchy_fetchForID(idBase: string) {}	// support for browsing multiple firebase bulks
@@ -57,9 +58,9 @@ export default class DBCommon {
 
 	async persist_maybe_all_identifiables(force: boolean = false, identifiables: Array<Persistent_Identifiable>) {
 		for (const identifiable of identifiables) {
-			if (identifiable.state.isDirty || force) {
+			if (identifiable.persistence.isDirty || force) {
 				await identifiable.persist();
-				identifiable.state.isDirty = false;
+				identifiable.persistence.isDirty = false;
 			}
 		}
 	}
@@ -112,23 +113,28 @@ export default class DBCommon {
 			}
 		}
 		const startTime = new Date().getTime();
-		s_db_loadTime.set(null);
+		this.loadTime = null;
 		await this.fetch_all();
 		await h.wrapUp_data_forUX();
 		// await this.persist_all();
 		this.set_loadTime_from(startTime);
 	}
 	
-	set_loadTime_from(startTime: number) {
-		const duration = (new Date().getTime()) - startTime;
-		const adjusted = Math.trunc(duration / 100) / 10;
-		const isInteger = adjusted == Math.trunc(adjusted);
-		const places = isInteger ? 0 : 1;
-		const suffix = isInteger ? '' : 's';
-		const time = (duration / 1000).toFixed(places);
-		const loadTime = `${time} second${suffix}`
-		this.loadTime = loadTime;
-		s_db_loadTime.set(loadTime);
+	set_loadTime_from(startTime: number | null = null) {
+		if (startTime != null) {
+			const duration = (new Date().getTime()) - startTime;
+			const adjusted = Math.trunc(duration / 100) / 10;
+			const isInteger = adjusted == Math.trunc(adjusted);
+			const places = isInteger ? 0 : 1;
+			const suffix = isInteger ? '' : 's';
+			const time = (duration / 1000).toFixed(places);
+			if (time != '0') {
+				const loadTime = `${time} second${suffix}`
+				this.loadTime = loadTime;
+				return;
+			}
+		}
+		this.loadTime = null;
 	}
 
 }

@@ -1,5 +1,6 @@
 import { k, Thing, Trait, ThingType, Relationship, PredicateKind } from '../../common/Global_Imports';
-import { DBType } from '../basis/Persistent_Identifiable';
+import type { Dictionary } from '../../../ts/common/Types';
+import { DBType } from '../basis/Persistence_State';
 import { Persistence_Kind } from './DBCommon';
 import DBCommon from './DBCommon';
 
@@ -7,6 +8,8 @@ export default class DBTest extends DBCommon {
 	kind_persistence = Persistence_Kind.none;
 	idBase = k.idBase_test;
 	type_db = DBType.test;
+	
+	get dict_forStorageDetails(): Dictionary { return {'data' : 'recreated on launch'} }
 
 	async fetch_all_fromLocal() {
 		const idTa = 'A';

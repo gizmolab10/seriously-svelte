@@ -30,7 +30,7 @@ export default class Relationship extends Datum {
 	get fields(): Airtable.FieldSet { return { kindPredicate: this.kindPredicate, parent: [this.idParent], child: [this.idChild], order: this.order }; }
 
 	get verbose(): string {
-		const persisted = this.state.already_persisted ? 'STORED' : 'DIRTY';
+		const persisted = this.persistence.already_persisted ? 'STORED' : 'DIRTY';
 		return `BASE ${this.idBase} ${persisted} [${this.order}] ${this.id} ${this.description}`;
 	}
 

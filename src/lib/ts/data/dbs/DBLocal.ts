@@ -1,12 +1,15 @@
 import { k, Thing, Trait, Predicate, Relationship } from '../../common/Global_Imports';
-import { DBType } from '../basis/Persistent_Identifiable';
+import type { Dictionary } from '../../../ts/common/Types';
+import { DBType } from '../basis/Persistence_State';
 import { Persistence_Kind } from './DBCommon';
 import DBCommon from './DBCommon';
 
 export default class DBLocal extends DBCommon {
 	kind_persistence = Persistence_Kind.local;
-	idBase = k.idBase_file;
 	type_db = DBType.local;
+	idBase = k.idBase_file;
+	
+	get dict_forStorageDetails(): Dictionary { return {'data' : 'fast and local'} }
 	
 	async thing_persistentUpdate(thing: Thing) { this.persist_all(); }
 	async thing_persistentDelete(thing: Thing) { this.persist_all(); }

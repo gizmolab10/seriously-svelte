@@ -1,13 +1,14 @@
 <script lang='ts'>
 	import { k, u, ux, Point, ZIndex, dbDispatch, Hierarchy, IDStorage } from '../../ts/common/Global_Imports';
 	import { ElementType, Element_State, IDPreference, preferences } from '../../ts/common/Global_Imports';
-	import { s_db_type, s_db_loadTime, s_hierarchy } from '../../ts/state/Svelte_Stores';
 	import { s_storage_update_trigger, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
-	import { DBType } from '../../ts/data/basis/Persistent_Identifiable';
+	import { s_type_db, s_hierarchy } from '../../ts/state/Svelte_Stores';
+	import { DBType } from '../../ts/data/basis/Persistence_State';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Button from '../mouse/Button.svelte';
 	import Table from '../kit/Table.svelte';
 	export let top = 28;
+	const buttons_top = 138;
 	const button_style = `font-family: ${$s_thing_fontFamily}; font-size:0.85em; left: 5px; top: -2px; position: absolute;`;
 	let element_states_byID: { [id: string]: Element_State } = {};
 	let information: Array<Dictionary> = [];
@@ -19,12 +20,7 @@
 		const _ = $s_storage_update_trigger;
 		const h = $s_hierarchy;
 		if (!!h) {
-			const dict: Dictionary = {};
-			if (!!$s_db_loadTime) {
-				dict['fetch took'] = $s_db_loadTime;
-			} else {
-				dict['data'] = 'stored locally';
-			}
+			const dict = h.db.dict_forStorageDetails;
 			dict['depth'] = h.depth;
 			dict['things'] = h.things.length;
 			dict['relationships'] = h.relationships.length.expressZero_asHyphen();
@@ -62,14 +58,14 @@
 
 </script>
 
-{#key $s_db_type, rebuilds}
+{#key $s_type_db, rebuilds}
 	<div class='storage-information'
 		style='
 			height:40px;
 			padding:5px;'>
 		<Segmented
 			name='db'
-			selected={[$s_db_type]}
+			selected={[$s_type_db]}
 			origin={new Point(4, top)}
 			selection_closure={selection_closure}
 			titles={[DBType.local, DBType.firebase, DBType.airtable, DBType.test]}/>
@@ -81,7 +77,7 @@
 		<Button name='import'
 			width=42
 			zindex=ZIndex.frontmost
-			center={new Point(74, 135)}
+			center={new Point(74, buttons_top)}
 			height={k.default_buttonSize - 4}
 			element_state={element_states_byID[IDStorage.import]}
 			closure={(mouse_state) => button_closure_forID(mouse_state, IDStorage.import)}>
@@ -90,7 +86,7 @@
 		<Button name='export'
 			width=42
 			zindex=ZIndex.frontmost
-			center={new Point(122, 135)}
+			center={new Point(122, buttons_top)}
 			height={k.default_buttonSize - 4}
 			element_state={element_states_byID[IDStorage.export]}
 			closure={(mouse_state) => button_closure_forID(mouse_state, IDStorage.export)}>

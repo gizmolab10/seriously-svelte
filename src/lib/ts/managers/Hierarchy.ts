@@ -738,7 +738,7 @@ export class Hierarchy {
 		if (!!child && !!parent && !child.isBulkAlias) {
 			const changingBulk = parent.isBulkAlias || child.idBase != this.db.idBase;
 			const idBase = changingBulk ? child.idBase : parent.idBase;
-			if (!child.state.already_persisted) {
+			if (!child.persistence.already_persisted) {
 				await this.db.thing_remember_persistentCreate(child);					// for everything below, need to await child.id fetched from dbDispatch
 			}
 			const relationship = await this.relationship_remember_persistentCreateUnique(idBase, Identifiable.newID(), kindPredicate, parent.idBridging, child.id, 0, CreationOptions.getPersistentID);

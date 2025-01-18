@@ -1,6 +1,6 @@
 import { g, k, IDPreference, preferences } from '../../common/Global_Imports';
-import { s_db_type, s_db_loadTime } from '../../state/Svelte_Stores';
-import { DBType } from '../basis/Persistent_Identifiable';
+import { s_type_db } from '../../state/Svelte_Stores';
+import { DBType } from '../basis/Persistence_State';
 import { dbFirebase } from './DBFirebase';
 import { dbAirtable } from './DBAirtable';
 import { dbLocal } from './DBLocal';
@@ -28,7 +28,7 @@ export default class DBDispatch {
 		const type = queryStrings.get('db');
 		if (!!type) {
 			this.db_set_accordingToType(type);
-			s_db_type.set(type);
+			s_type_db.set(type);
 		}
 		this.db.queryStrings_apply();
 	}
@@ -36,7 +36,7 @@ export default class DBDispatch {
 	constructor() {
 		let done = false;
 		this.db = dbFirebase;
-		s_db_type.subscribe((type: string) => {
+		s_type_db.subscribe((type: string) => {
 			if (!!type && (!done || (type && this.db.type_db != type))) {
 				done = true;
 				setTimeout( async () => {
@@ -54,7 +54,7 @@ export default class DBDispatch {
 	restore_db() {
 		let type = preferences.read_key(IDPreference.db) ?? 'firebase';
 		if (type == 'file') { type = 'local'; }
-		s_db_type.set(type);
+		s_type_db.set(type);
 	}
 
 	get startupExplanation(): string {
@@ -70,8 +70,7 @@ export default class DBDispatch {
 	db_change_toType(newDBType: DBType) {
 		const db = db_forType(newDBType);
 		preferences.write_key(IDPreference.db, newDBType);
-		s_db_type.set(newDBType);		// tell components to render the [possibly previously] fetched data
-		s_db_loadTime.set(db.loadTime);
+		s_type_db.set(newDBType);		// tell components to render the [possibly previously] fetched data
 	}
 
 	db_next_get(forward: boolean): DBType {
