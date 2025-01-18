@@ -1,5 +1,5 @@
-import { s_hierarchy } from '../../state/Svelte_Stores';
 import Persistence_State from './Persistence_State';
+import { s_hierarchy } from '../../state/S_Stores';
 import Identifiable from './Identifiable';
 import { get } from 'svelte/store';
 

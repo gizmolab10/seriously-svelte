@@ -1,11 +1,11 @@
 <script lang='ts'>
 	import { k, g, u, ux, Rect, Size, Point, debug, ZIndex } from '../../ts/common/Global_Imports';
-	import { T_Timer, Mouse_Timer, Mouse_State } from '../../ts/common/Global_Imports';
-	import { s_mouse_location, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
+	import { T_Timer, Mouse_Timer, S_Mouse } from '../../ts/common/Global_Imports';
+	import { s_mouse_location, s_thing_fontFamily } from '../../ts/state/S_Stores';
 	import type { Handle_Result } from '../../ts/common/Types';
 	import { onMount } from 'svelte';
 	export let isHit_closure: () => {flag: boolean} | null = null;
-	export let mouse_state_closure = Handle_Result<Mouse_State>;
+	export let mouse_state_closure = Handle_Result<S_Mouse>;
 	export let height = k.default_buttonSize;
 	export let width = k.default_buttonSize;
 	export let origin: Point | null = null;
@@ -67,9 +67,9 @@
 			if (mouse_state.isHover != isHit) {
 				mouse_state.isHover = isHit;
 				mouse_state.isOut = !isHit;		// TODO: called far too often
-				mouse_state_closure(Mouse_State.hover(null, mouse_button_div, isHit));	// pass a null event
+				mouse_state_closure(S_Mouse.hover(null, mouse_button_div, isHit));	// pass a null event
 			} else {
-				mouse_state_closure(Mouse_State.move(null, mouse_button_div, mouse_isDown, isHit));	// pass a null event
+				mouse_state_closure(S_Mouse.move(null, mouse_button_div, mouse_isDown, isHit));	// pass a null event
 			}
 		}
 	}
@@ -79,7 +79,7 @@
 		mouse_timer.reset();
 	}
 
-	function create_state(isDown: boolean, isDouble: boolean = false, isLong: boolean = false): Mouse_State {
+	function create_state(isDown: boolean, isDouble: boolean = false, isLong: boolean = false): S_Mouse {
 		const state = u.copyObject(mouse_state);
 		state.isUp = !isDown && !isDouble && !isLong;
 		state.element = mouse_button_div;
@@ -95,7 +95,7 @@
 	function handle_pointerUp(event) {
 		if (detect_mouseUp) {
 			reset();
-			mouse_state_closure(Mouse_State.up(event, mouse_button_div));
+			mouse_state_closure(S_Mouse.up(event, mouse_button_div));
 			debug.log_action(` up ${mouse_responder_number} RESPONDER`);
 		}
 	}

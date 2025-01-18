@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { s_graph_type, s_tree_type, s_resize_count, s_device_isMobile } from '../../ts/state/Svelte_Stores';
-	import { T_Control, preferences, Element_State, T_Preference } from '../../ts/common/Global_Imports';
-	import { s_show_details, s_id_popupView, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
+	import { s_graph_type, s_tree_type, s_resize_count, s_device_isMobile } from '../../ts/state/S_Stores';
+	import { T_Control, preferences, S_Element, T_Preference } from '../../ts/common/Global_Imports';
+	import { s_show_details, s_id_popupView, s_thing_fontFamily } from '../../ts/state/S_Stores';
 	import { g, k, u, ux, w, show, Point, ZIndex, signals } from '../../ts/common/Global_Imports';
 	import { svgPaths, T_Tree, T_Graph, T_Element } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/data/basis/Identifiable';
@@ -15,7 +15,7 @@
 	const size_big = size_small + 4;
 	const lefts = [10, 55, 117];
 	const resize_viewBox = `0, 0, ${size_big}, ${size_big}`;
-	let element_states_byID: { [id: string]: Element_State } = {};
+	let element_states_byID: { [id: string]: S_Element } = {};
 	let elementShown_byID: {[key: string]: boolean} = {};
 	let width = w.windowSize.width - 20;
 

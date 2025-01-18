@@ -1,8 +1,8 @@
-import Rotation_State from './Rotation_State';
+import S_Rotation from './S_Rotation';
 
 // for resizing (resize ring)
 
-export default class Expansion_State extends Rotation_State {
+export default class S_Expansion extends S_Rotation {
 	basis_radius: number | null = null;		// distance from arc radius to location of mouse DOWN
 
 	constructor() { super(0.03); }

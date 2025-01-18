@@ -1,9 +1,9 @@
-import { s_paging_state, s_grabbed_ancestries, s_expanded_ancestries } from '../state/Svelte_Stores';
-import { s_hierarchy, s_tree_type, s_graph_type, s_detail_types } from '../state/Svelte_Stores';
+import { s_paging_state, s_grabbed_ancestries, s_expanded_ancestries } from '../state/S_Stores';
+import { s_hierarchy, s_tree_type, s_graph_type, s_detail_types } from '../state/S_Stores';
 import { T_Tree, T_Graph, T_Details, Paging_State } from '../common/Global_Imports';
-import { s_focus_ancestry, s_font_size, s_thing_fontFamily } from '../state/Svelte_Stores';
-import { s_rotation_ring_angle, s_ring_rotation_radius } from '../state/Svelte_Stores';
-import { g, k, show, debug, Ancestry, dbDispatch } from '../common/Global_Imports';
+import { s_focus_ancestry, s_font_size, s_thing_fontFamily } from '../state/S_Stores';
+import { s_rotation_ring_angle, s_ring_rotation_radius } from '../state/S_Stores';
+import { g, k, show, debug, Ancestry, databases } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
 export enum T_Preference {
@@ -41,7 +41,7 @@ class Preferences {
 	write_key<T>			(key: string, value: T) { localStorage[key] = JSON.stringify(value); }
 	writeDB_key<T>			(key: string, value: T) { this.write_key(this.dbKey_for(key), value); }
 	readDB_key				(key: string): any | null { return this.read_key(this.dbKey_for(key)); }
-	dbKey_for				(key: string): string { return this.keyPair_for(dbDispatch.db.type_db, key); }
+	dbKey_for				(key: string): string { return this.keyPair_for(databases.db.type_db, key); }
 	delete_paging_state_for (key: string) { this.write_keyPair(this.dbKey_for(T_Preference.page_states), key, null); }
 	keyPair_for				(key: string, sub_key: string): string { return `${key}${k.generic_separator}${sub_key}`; }
 

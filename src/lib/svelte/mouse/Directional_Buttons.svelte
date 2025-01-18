@@ -12,7 +12,7 @@
         return [isHovering ? k.color_default : k.color_background, k.empty];
     }
 
-	function handle_mouse_state(mouse_state: Mouse_State): boolean {
+	function handle_mouse_state(mouse_state: S_Mouse): boolean {
         const target = mouse_state.element;
         if (!mouse_state.isHover && !!target && (mouse_state.isUp || mouse_state.isLong)) {
             const pointsUp = target.id == 'up';

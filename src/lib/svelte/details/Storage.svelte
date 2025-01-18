@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { k, u, ux, Point, ZIndex, dbDispatch, Hierarchy, T_Storage } from '../../ts/common/Global_Imports';
-	import { T_Element, Element_State, T_Preference, preferences } from '../../ts/common/Global_Imports';
-	import { s_storage_update_trigger, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
-	import { s_type_db, s_hierarchy } from '../../ts/state/Svelte_Stores';
+	import { k, u, ux, Point, ZIndex, databases, Hierarchy, T_Storage } from '../../ts/common/Global_Imports';
+	import { T_Element, S_Element, T_Preference, preferences } from '../../ts/common/Global_Imports';
+	import { s_storage_update_trigger, s_thing_fontFamily } from '../../ts/state/S_Stores';
+	import { s_type_db, s_hierarchy } from '../../ts/state/S_Stores';
 	import { T_Database } from '../../ts/data/basis/Persistence_State';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Button from '../mouse/Button.svelte';
@@ -10,7 +10,7 @@
 	export let top = 28;
 	const buttons_top = 138;
 	const button_style = `font-family: ${$s_thing_fontFamily}; font-size:0.85em; left: 5px; top: -2px; position: absolute;`;
-	let element_states_byID: { [id: string]: Element_State } = {};
+	let element_states_byID: { [id: string]: S_Element } = {};
 	let information: Array<Dictionary> = [];
 	let rebuilds = 0;
 
@@ -31,7 +31,7 @@
 
 	function selection_closure(titles: Array<string>) {
 		const type = titles[0] as T_Database;	// only ever contains one title
-		dbDispatch.db_change_toType(type);
+		databases.db_change_toType(type);
 	}
 	
 	function setup_element_states() {

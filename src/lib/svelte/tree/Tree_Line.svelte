@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, Rect, Size, Point, debug, ZIndex, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import { Svelte_Wrapper, Ancestry, T_SvelteComponent, T_Line } from '../../ts/common/Global_Imports';
-	import { s_thing_color } from '../../ts/state/Svelte_Stores';
+	import { s_thing_color } from '../../ts/state/S_Stores';
 	import Circle from '../kit/Circle.svelte';
     export let ancestry;
 	export let rect = new Rect();
@@ -67,7 +67,7 @@
 		return false
 	}
 
-	function handle_mouse_state(mouse_state: Mouse_State): boolean {
+	function handle_mouse_state(mouse_state: S_Mouse): boolean {
 		return false;
 	}
 

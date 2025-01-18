@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_hierarchy, s_id_popupView } from '../../ts/state/Svelte_Stores';
+	import { s_hierarchy, s_id_popupView } from '../../ts/state/S_Stores';
 	import { files } from '../../ts/managers/Files';
 	import { get } from 'svelte/store';
 	import Open from './Open.svelte';

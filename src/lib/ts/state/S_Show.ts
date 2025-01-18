@@ -1,15 +1,15 @@
-import { g, k, w, signals, preferences } from '../common/Global_Imports';
-import { T_Info, T_Tree, T_Preference } from '../common/Global_Imports';
-import { s_show_details, s_tree_type } from './Svelte_Stores';
+import { g, k, w, signals, preferences, T_Preference } from '../common/Global_Imports';
+import { s_show_details, s_tree_type } from './S_Stores';
+import { T_Info, T_Tree } from '../common/Enumerations';
 import type { Dictionary } from '../common/Types';
 
-class Show_State {
-	info_type: T_Info	= T_Info.focus;
-	debug_cursor		= false;
-	tree_types			= false;
-	arrowheads			= false;
-	traits				= false;
-	tiny_dots			= true;
+class S_Show {
+	info_type	 = T_Info.focus;
+	debug_cursor = false;
+	tree_types	 = false;
+	arrowheads	 = false;
+	traits		 = false;
+	tiny_dots	 = true;
 
 	queryStrings_apply() {
 		const queryStrings = g.queryStrings;
@@ -61,4 +61,4 @@ class Show_State {
 
 }
 
-export let show = new Show_State();
+export let show = new S_Show();

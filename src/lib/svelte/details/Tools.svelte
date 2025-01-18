@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { g, k, u, ux, w, show, Rect, Size, Point, debug, T_Tool, ZIndex } from '../../ts/common/Global_Imports';
-	import { s_graphRect, s_hierarchy, s_graph_type, s_show_details } from '../../ts/state/Svelte_Stores';
-	import { dbDispatch, T_Element, Mouse_State, Element_State } from '../../ts/common/Global_Imports';
-	import { Alteration_State, T_Alteration, Svelte_Wrapper } from '../../ts/common/Global_Imports';
-	import { s_alteration_mode, s_ancestry_showing_tools } from '../../ts/state/Svelte_Stores';
+	import { s_graphRect, s_hierarchy, s_graph_type, s_show_details } from '../../ts/state/S_Stores';
+	import { databases, T_Element, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
+	import { S_Alteration, T_Alteration, Svelte_Wrapper } from '../../ts/common/Global_Imports';
+	import { s_alteration_mode, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
 	import { svgPaths, signals, Direction, T_Graph } from '../../ts/common/Global_Imports';
 	import Transparent_Circle from '../kit/Transparent_Circle.svelte';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
@@ -18,7 +18,7 @@
 	const parentAlteringIDs = [T_Tool.add_parent, T_Tool.delete_parent];
 	const needsMultipleVisibleParents = [T_Tool.next, T_Tool.delete_parent];
 	const half_circleViewBox = `0 0 ${k.editingTools_diameter} ${k.editingTools_diameter}`;
-	let element_states_byID: { [id: string]: Element_State } = {};
+	let element_states_byID: { [id: string]: S_Element } = {};
 	let isHovering_byID: { [id: string]: boolean } = {};
 	let centers_byID: { [id: string]: Point } = {};
 	let parentSensitiveColor = k.empty;
@@ -118,7 +118,7 @@
 		return [color, k.color_background];
 	}
 
-	async function handle_mouse_data(mouse_state: Mouse_State, id: string) {
+	async function handle_mouse_data(mouse_state: S_Mouse, id: string) {
 		if (mouse_state.isHover) {
 			const element_state = element_states_byID[id];
 			const isOut = mouse_state.isOut;

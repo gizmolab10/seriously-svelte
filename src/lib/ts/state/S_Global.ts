@@ -1,13 +1,13 @@
-import { s_graph_type, s_thing_color, s_startup_state, s_device_isMobile } from './Svelte_Stores';
-import { s_hierarchy, s_resize_count, s_mouse_up_count, s_rebuild_count } from './Svelte_Stores';
+import { s_graph_type, s_thing_color, s_startup_state, s_device_isMobile } from './S_Stores';
+import { s_hierarchy, s_resize_count, s_mouse_up_count, s_rebuild_count } from './S_Stores';
 import { Hierarchy, T_Graph, preferences, T_Preference } from '../common/Global_Imports';
-import { Rotation_State, T_Startup, Expansion_State } from '../common/Global_Imports';
-import { e, k, u, ux, w, show, debug, dbDispatch } from '../common/Global_Imports';
-import { s_grabbed_ancestries, s_expanded_ancestries } from './Svelte_Stores';
-import { s_focus_ancestry } from './Svelte_Stores';
+import { S_Rotation, T_Startup, S_Expansion } from '../common/Global_Imports';
+import { e, k, u, ux, w, show, debug, databases } from '../common/Global_Imports';
+import { s_grabbed_ancestries, s_expanded_ancestries } from './S_Stores';
+import { s_focus_ancestry } from './S_Stores';
 import { get } from 'svelte/store';
 
-class Global_State {
+class S_Global {
 	allow_GraphEditing = true;
 	allow_TitleEditing = true;
 	allow_HorizontalScrolling = true;
@@ -15,9 +15,9 @@ class Global_State {
 	eraseDB = false;
 	isEditing_text = false;
 	mouse_responder_number = 0;
-	ring_rotation_state!: Rotation_State;
-	cluster_paging_state!: Rotation_State;
-	ring_resizing_state!: Expansion_State;
+	ring_rotation_state!: S_Rotation;
+	cluster_paging_state!: S_Rotation;
+	ring_resizing_state!: S_Expansion;
 	rebuild_needed_byType: {[type: string]: boolean} = {};
 	queryStrings = new URLSearchParams(window.location.search);
 
@@ -36,7 +36,7 @@ class Global_State {
 		w.restore_state();
 		show.restore_state();							// local persistance
 		preferences.restore_defaults();
-		dbDispatch.restore_db();
+		databases.restore_db();
 		this.queryStrings_apply();						// query string
 		show.queryStrings_apply();
 		e.setup();
@@ -49,9 +49,9 @@ class Global_State {
 		s_thing_color.set(null);
 		s_startup_state.set(T_Startup.start);
 		s_device_isMobile.set(this.device_isMobile);
-		this.ring_resizing_state = new Expansion_State();
-		this.ring_rotation_state  = new Rotation_State();
-		this.cluster_paging_state = new Rotation_State();
+		this.ring_resizing_state = new S_Expansion();
+		this.ring_rotation_state  = new S_Rotation();
+		this.cluster_paging_state = new S_Rotation();
 	}
 
 	queryStrings_apply() {
@@ -100,8 +100,8 @@ class Global_State {
 	}
 
 	get siteTitle(): string {
-		const type_db = dbDispatch.db.type_db;
-		const idBase = dbDispatch.db.idBase;
+		const type_db = databases.db.type_db;
+		const idBase = databases.db.idBase;
 		const host = this.isServerLocal ? 'local' : 'remote';
 		const db_name = type_db ? (type_db! + ', ') : k.empty;
 		const base_name = idBase ? (idBase! + ', ') : k.empty;
@@ -131,4 +131,4 @@ class Global_State {
 
 }
 
-export let g = new Global_State();
+export let g = new S_Global();

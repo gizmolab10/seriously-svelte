@@ -1,12 +1,12 @@
-import { T_Tree, Hierarchy, Cluster_Map, T_Details, Radial_Geometry, Alteration_State } from '../common/Global_Imports';
-import { Rect, Point, Ancestry, T_Graph, Title_Edit_State, Paging_State, T_Startup } from '../common/Global_Imports';
+import { T_Tree, Hierarchy, Cluster_Map, T_Details, Radial_Geometry, S_Alteration } from '../common/Global_Imports';
+import { Rect, Point, Ancestry, T_Graph, S_Title_Edit, Paging_State, T_Startup } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
 
 export const s_clusters_geometry	  = writable<Radial_Geometry | null>();
-export const s_alteration_mode		  = writable<Alteration_State | null>();
+export const s_alteration_mode		  = writable<S_Alteration | null>();
 export const s_detail_types			  = writable<Array<T_Details>>();
 export const s_active_cluster_map	  = writable<Cluster_Map | null>();
-export const s_title_edit_state		  = writable<Title_Edit_State | null>();
+export const s_title_edit_state		  = writable<S_Title_Edit | null>();
 export const s_ancestry_showing_tools = writable<Ancestry | null>();
 export const s_expanded_ancestries	  = writable<Array<Ancestry>>();
 export const s_grabbed_ancestries	  = writable<Array<Ancestry>>();

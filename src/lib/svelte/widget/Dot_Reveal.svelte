@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { k, u, ux, show, Size, Thing, Point, debug, ZIndex, signals, svgPaths, T_Graph } from '../../ts/common/Global_Imports';
-	import { Direction, dbDispatch, Predicate, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { s_graph_type, s_expanded_ancestries, s_grabbed_ancestries } from '../../ts/state/Svelte_Stores';
-	import { s_hierarchy, s_alteration_mode, s_ancestry_showing_tools } from '../../ts/state/Svelte_Stores';
+	import { Direction, databases, Predicate, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
+	import { s_graph_type, s_expanded_ancestries, s_grabbed_ancestries } from '../../ts/state/S_Stores';
+	import { s_hierarchy, s_alteration_mode, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import { onMount } from 'svelte';
@@ -93,7 +93,7 @@
 		return false
 	}
 
-	function handle_mouse_state(mouse_state: Mouse_State): boolean {
+	function handle_mouse_state(mouse_state: S_Mouse): boolean {
 		return false;
 	}
 

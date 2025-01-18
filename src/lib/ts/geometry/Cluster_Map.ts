@@ -1,7 +1,7 @@
 import { k, u, ux, w, Rect, Point, Angle, debug, T_Line, Arc_Map, T_Quadrant } from '../common/Global_Imports';
-import { Ancestry, Predicate, Paging_State, Widget_MapRect, Rotation_State } from '../common/Global_Imports';
-import { s_rotation_ring_angle, s_ring_rotation_radius } from '../state/Svelte_Stores';
-import { s_graphRect, s_focus_ancestry } from '../state/Svelte_Stores';
+import { Ancestry, Predicate, Paging_State, Widget_MapRect, S_Rotation } from '../common/Global_Imports';
+import { s_rotation_ring_angle, s_ring_rotation_radius } from '../state/S_Stores';
+import { s_graphRect, s_focus_ancestry } from '../state/S_Stores';
 import { get } from 'svelte/store';
 
 //////////////////////////////////////////
@@ -71,7 +71,7 @@ export default class Cluster_Map {
 	get titles(): string { return this.ancestries.map(a => a.title).join(', '); }
 	get description(): string { return `(${this.cluster_title}) ${this.titles}`; }
 	get paging_index_ofFocus(): number { return this.paging_state_ofFocus?.index ?? 0; }
-	get paging_rotation(): Rotation_State { return ux.rotation_state_forName(this.name); }
+	get paging_rotation(): S_Rotation { return ux.rotation_state_forName(this.name); }
 	get kind(): string { return this.predicate?.kind.unCamelCase().lastWord() ?? k.empty; }
 	get name(): string { return `${this.focus_ancestry.title}-cluster-${this.direction_kind}`; }
 	get fork_radial(): Point { return Point.fromPolar(get(s_ring_rotation_radius), this.arc_map.fork_angle); }

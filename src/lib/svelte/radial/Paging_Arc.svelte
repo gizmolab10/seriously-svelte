@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { g, k, u, ux, w, show, Rect, Size, Point, debug, Angle, ZIndex } from '../../ts/common/Global_Imports';
 	import { Cluster_Map, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { s_thing_fontFamily, s_ring_rotation_radius } from '../../ts/state/Svelte_Stores';
-	import { s_mouse_up_count, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
+	import { s_thing_fontFamily, s_ring_rotation_radius } from '../../ts/state/S_Stores';
+	import { s_mouse_up_count, s_focus_ancestry } from '../../ts/state/S_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/basis/Identifiable';
 	import Angled_Text from '../kit/Angled_Text.svelte';
@@ -62,7 +62,7 @@
 		}
 	}
 
-	function isHit_closure(mouse_state: Mouse_State): boolean {
+	function isHit_closure(mouse_state: S_Mouse): boolean {
 		return cluster_map.thumb_isHit;
 	}
 

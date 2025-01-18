@@ -1,7 +1,7 @@
-import { k, u, ux, Ancestry, T_Element } from '../common/Global_Imports';
-import Identifiable from '../basis/Identifiable';
+import { k, ux, Ancestry, T_Element } from '../common/Global_Imports';
+import Identifiable from '../data/basis/Identifiable';
 
-export default class Element_State {
+export default class S_Element {
 	color_background = k.color_background;
 	responder: HTMLElement | null = null;
 	defaultCursor = k.cursor_default;

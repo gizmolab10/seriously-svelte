@@ -1,7 +1,7 @@
 import { g, k, u, Trait, Thing, T_Thing, Hierarchy, Predicate, Relationship } from '../../common/Global_Imports';
 import { debug, signals, T_Startup, preferences, T_Preference } from '../../common/Global_Imports';
-import { s_hierarchy, s_startup_state } from '../../state/Svelte_Stores';
 import Persistent_Identifiable from '../basis/Persistent_Identifiable';
+import { s_hierarchy, s_startup_state } from '../../state/S_Stores';
 import type { Dictionary } from '../../common/Types';
 
 export enum T_Persistence {

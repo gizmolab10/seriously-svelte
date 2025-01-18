@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { s_clusters_geometry, s_ring_rotation_radius, s_ancestry_showing_tools } from '../../ts/state/Svelte_Stores';
-	import { s_graphRect, s_paging_state, s_focus_ancestry, s_thing_color } from '../../ts/state/Svelte_Stores';
+	import { s_clusters_geometry, s_ring_rotation_radius, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
+	import { s_graphRect, s_paging_state, s_focus_ancestry, s_thing_color } from '../../ts/state/S_Stores';
 	import { Predicate, Widget_MapRect, Radial_Geometry } from '../../ts/common/Global_Imports';
 	import { k, u, Point, ZIndex, signals } from '../../ts/common/Global_Imports';
 	import Widget from '../widget/Widget.svelte';

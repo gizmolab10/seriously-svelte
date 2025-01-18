@@ -1,11 +1,11 @@
 <script lang='ts'>
-	import { s_title_edit_state, s_show_details, s_device_isMobile, } from '../../ts/state/Svelte_Stores';
+	import { s_title_edit_state, s_show_details, s_device_isMobile, } from '../../ts/state/S_Stores';
 	import { g, k, u, ux, w, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
 	import { debug, ZIndex, Ancestry, T_Startup } from '../../ts/common/Global_Imports';
-	import { s_type_db, s_graphRect, s_hierarchy } from '../../ts/state/Svelte_Stores';
-	import { T_Control, Hierarchy, dbDispatch } from '../../ts/common/Global_Imports';
-	import { s_id_popupView, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
-	import { s_resize_count, s_startup_state } from '../../ts/state/Svelte_Stores';
+	import { s_type_db, s_graphRect, s_hierarchy } from '../../ts/state/S_Stores';
+	import { T_Control, Hierarchy, databases } from '../../ts/common/Global_Imports';
+	import { s_id_popupView, s_focus_ancestry } from '../../ts/state/S_Stores';
+	import { s_resize_count, s_startup_state } from '../../ts/state/S_Stores';
 	import { T_Database } from '../../ts/data/basis/Persistence_State';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Details from '../details/Details.svelte';
@@ -68,10 +68,10 @@
 		pointer-events: auto;
 		{k.prevent_selection_style};'
 		on:wheel={ignore_wheel}>
-		{#if [T_Startup.start, T_Startup.fetch].includes($s_startup_state) && dbDispatch.db.isPersistent}
+		{#if [T_Startup.start, T_Startup.fetch].includes($s_startup_state) && databases.db.isPersistent}
 			<p>Welcome to Seriously</p>
 			{#if $s_startup_state == T_Startup.fetch}
-				<p>{dbDispatch.startupExplanation}</p>
+				<p>{databases.startupExplanation}</p>
 			{/if}
 		{:else if $s_startup_state == T_Startup.empty}
 			<p>Nothing is available.</p>

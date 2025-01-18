@@ -1,8 +1,8 @@
 import { g, k, u, Rect, Size, Thing, debug, signals, wrappers, Direction, Predicate, Hierarchy } from '../../common/Global_Imports';
-import { s_expanded_ancestries, s_ancestry_showing_tools, s_alteration_mode, s_clusters_geometry } from '../../state/Svelte_Stores';
-import { dbDispatch, Svelte_Wrapper, Widget_MapRect, T_Alteration, Title_Edit_State } from '../../common/Global_Imports';
+import { s_expanded_ancestries, s_ancestry_showing_tools, s_alteration_mode, s_clusters_geometry } from '../../state/S_Stores';
+import { databases, Svelte_Wrapper, Widget_MapRect, T_Alteration, S_Title_Edit } from '../../common/Global_Imports';
 import { T_Element, Paging_State, Relationship, T_Predicate, T_SvelteComponent } from '../../common/Global_Imports';
-import { s_hierarchy, s_focus_ancestry, s_grabbed_ancestries, s_title_edit_state } from '../../state/Svelte_Stores';
+import { s_hierarchy, s_focus_ancestry, s_grabbed_ancestries, s_title_edit_state } from '../../state/S_Stores';
 import { T_Database } from '../basis/Persistence_State';
 import Identifiable from '../basis/Identifiable';
 import type { Integer } from '../../common/Types';
@@ -122,7 +122,7 @@ export default class Ancestry extends Identifiable {
 
 	get isEditable(): boolean {
 		const isBulkAlias = this.thing?.isBulkAlias ?? true;	// missing thing, return not allow
-		const canEdit = !this.isRoot || dbDispatch.db.type_db == T_Database.local;
+		const canEdit = !this.isRoot || databases.db.type_db == T_Database.local;
 		return canEdit && g.allow_TitleEditing && !isBulkAlias;
 	}
 
@@ -687,7 +687,7 @@ export default class Ancestry extends Identifiable {
 		if (this.isEditable) {
 			debug.log_edit(`EDIT ${this.title}`)
 			this.grabOnly();
-			s_title_edit_state.set(new Title_Edit_State(this));
+			s_title_edit_state.set(new S_Title_Edit(this));
 		}
 	}
 

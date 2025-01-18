@@ -1,11 +1,11 @@
-import { g, k, T_Preference, preferences } from '../../common/Global_Imports';
-import { s_type_db } from '../../state/Svelte_Stores';
-import { T_Database } from '../basis/Persistence_State';
-import { dbFirebase } from './DBFirebase';
-import { dbAirtable } from './DBAirtable';
-import { dbLocal } from './DBLocal';
-import { dbTest } from './DBTest';
-import DBCommon from './DBCommon';
+import { g, k, T_Preference, preferences } from '../common/Global_Imports';
+import { s_type_db } from '../state/S_Stores';
+import { T_Database } from '../data/basis/Persistence_State';
+import { dbFirebase } from '../data/dbs/DBFirebase';
+import { dbAirtable } from '../data/dbs/DBAirtable';
+import { dbLocal } from '../data/dbs/DBLocal';
+import { dbTest } from '../data/dbs/DBTest';
+import DBCommon from '../data/dbs/DBCommon';
 
 // each db has its own hierarchy
 // when switching to another db
@@ -20,7 +20,7 @@ export function db_forType(type_db: string): DBCommon {
 	}
 }
 
-export default class DBDispatch {
+export default class Databases {
 	db: DBCommon;
 
 	queryStrings_apply() {
@@ -83,4 +83,4 @@ export default class DBDispatch {
 
 }
 
-export const dbDispatch = new DBDispatch();
+export const databases = new Databases();

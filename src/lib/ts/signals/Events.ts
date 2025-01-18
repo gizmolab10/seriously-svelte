@@ -1,6 +1,6 @@
-import { s_mouse_location, s_scaled_mouse_location, s_mouse_up_count, s_alteration_mode } from '../state/Svelte_Stores';
-import { s_resize_count, s_device_isMobile, s_user_graph_offset } from '../state/Svelte_Stores';
-import { g, k, w, Point, debug, signals, Alteration_State } from '../common/Global_Imports';
+import { s_mouse_location, s_scaled_mouse_location, s_mouse_up_count, s_alteration_mode } from '../state/S_Stores';
+import { s_resize_count, s_device_isMobile, s_user_graph_offset } from '../state/S_Stores';
+import { g, k, w, Point, debug, signals, S_Alteration } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
 class Events {
@@ -8,7 +8,7 @@ class Events {
 	interval: NodeJS.Timeout | null = null;
 
 	setup() {
-		s_alteration_mode.subscribe((state: Alteration_State | null) => { this.handle_alteration_state(state); });
+		s_alteration_mode.subscribe((state: S_Alteration | null) => { this.handle_alteration_state(state); });
 		s_device_isMobile.subscribe((isMobile: boolean) => { this.subscribeTo_events(); });
 		this.subscribeTo_events();
 	}
@@ -63,7 +63,7 @@ class Events {
 		event.preventDefault();
 		event.stopPropagation();
 		s_mouse_up_count.set(get(s_mouse_up_count) + 1);
-		// this.respondTo_closure(event, Mouse_State.up);
+		// this.respondTo_closure(event, S_Mouse.up);
 	}
 
 	handle_mouse_move(event: MouseEvent) {
@@ -72,7 +72,7 @@ class Events {
 		const location = new Point(event.clientX, event.clientY);
 		s_mouse_location.set(location);
 		s_scaled_mouse_location.set(location.dividedBy(w.scale_factor));
-		// this.respondTo_closure(event, Mouse_State.move);
+		// this.respondTo_closure(event, S_Mouse.move);
 	}
 
 	handle_wheel(event: Event) {
@@ -89,7 +89,7 @@ class Events {
 		}
 	}
 
-	handle_alteration_state(state: Alteration_State | null) {
+	handle_alteration_state(state: S_Alteration | null) {
 		if (!!this.interval) {
 			clearInterval(this.interval);
 			this.interval = null;

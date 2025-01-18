@@ -1,4 +1,4 @@
-import { g } from '../../ts/state/Global_State';
+import { g } from '../state/S_Global';
 
 // query string: ?debug=reticule,tools
 

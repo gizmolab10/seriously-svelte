@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { g, k, u, ux, Thing, Point, Angle, debug, ZIndex, signals, T_Graph } from '../../ts/common/Global_Imports';
-	import { s_thing_fontFamily, s_grabbed_ancestries, s_ancestry_showing_tools } from '../../ts/state/Svelte_Stores';
-	import { T_Element, Element_State, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { s_title_edit_state, s_thing_color, s_graph_type, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
+	import { s_thing_fontFamily, s_grabbed_ancestries, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
+	import { T_Element, S_Element, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
+	import { s_title_edit_state, s_thing_color, s_graph_type, s_focus_ancestry } from '../../ts/state/S_Stores';
 	import Title_Editor from './Title_Editor.svelte';
 	import Dot_Reveal from './Dot_Reveal.svelte';
 	import Dot_Drag from './Dot_Drag.svelte';
@@ -16,7 +16,7 @@
 	const dragState = ux.element_state_for(ancestry, T_Element.drag, subtype);
 	const priorRowHeight = k.row_height;
 	let widgetWrapper!: Svelte_Wrapper;
-	let element_state!: Element_State;
+	let element_state!: S_Element;
 	let revealCenter = Point.zero;
 	let dragCenter = Point.zero;
 	let radius = k.dot_size / 2;
@@ -94,7 +94,7 @@
 	}
  
 	function isHit(): boolean { return false; }
-	function handle_mouse_state(mouse_state: Mouse_State): boolean { return false; }
+	function handle_mouse_state(mouse_state: S_Mouse): boolean { return false; }
 
 	function updateBorder_fromState() {
 		if (!!widget) {

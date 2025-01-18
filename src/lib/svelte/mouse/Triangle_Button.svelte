@@ -1,13 +1,13 @@
 <script lang='ts'>
 	import { k, u, Size, Thing, Point, ZIndex, svgPaths } from '../../ts/common/Global_Imports';
-	import { dbDispatch, Mouse_State, Element_State } from '../../ts/common/Global_Imports';
-	import { s_grabbed_ancestries } from '../../ts/state/Svelte_Stores';
+	import { databases, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
+	import { s_grabbed_ancestries } from '../../ts/state/S_Stores';
 	import type { Handle_Result } from '../../ts/common/Types';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import Button from './Button.svelte';
-	export let handle_mouse_state = Handle_Result<Mouse_State>;
+	export let handle_mouse_state = Handle_Result<S_Mouse>;
 	export let hover_closure = Handle_Result<boolean>;
-	export let element_state = Element_State.none;
+	export let element_state = S_Element.none;
 	export let extraPath = null;
 	export let name = k.empty;
 	export let strokeColor;

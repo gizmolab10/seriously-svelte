@@ -1,5 +1,5 @@
 import { k, Thing, Predicate, Ancestry, Cluster_Map } from '../common/Global_Imports';
-import { s_hierarchy, s_paging_state, s_ring_rotation_radius } from './Svelte_Stores';
+import { s_hierarchy, s_paging_state, s_ring_rotation_radius } from './S_Stores';
 import { get } from 'svelte/store';
 
 export class Paging_State {

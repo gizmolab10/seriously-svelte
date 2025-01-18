@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_hierarchy, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
+	import { s_hierarchy, s_thing_fontFamily } from '../../ts/state/S_Stores';
 	import { k, u, Size, Point, svgPaths } from '../../ts/common/Global_Imports';
 	export let accept: string = k.empty;
 	export let multiple = k.empty;		// can be set to 'multiple'

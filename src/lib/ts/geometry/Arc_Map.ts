@@ -1,5 +1,5 @@
 import { k, Rect, Point, Angle, svgPaths } from '../common/Global_Imports';
-import { s_ring_rotation_radius } from '../state/Svelte_Stores';
+import { s_ring_rotation_radius } from '../state/S_Stores';
 import { get } from 'svelte/store';
 
 // create svg paths for generic arcs

@@ -1,16 +1,16 @@
 // N.B., do not import these from Global Imports --> avoid dependency issues when importing Utilities class
 
-import { s_thing_fontFamily } from '../state/Svelte_Stores';
-import { Size, Point } from '../geometry/Geometry';
+import { s_thing_fontFamily } from '../state/S_Stores';
+import Identifiable from '../data/basis/Identifiable';
+import { T_Browser } from '../common/Enumerations';
 import type { Dictionary } from '../common/Types';
-import Identifiable from '../basis/Identifiable';
+import Ancestry from '../data/runtime/Ancestry';
 import { T_Quadrant } from '../geometry/Angle';
-import Ancestry from '../data/basis/runtime/Ancestry';
-import { T_Browser } from './Enumerations';
+import { Point } from '../geometry/Geometry';
 import { transparentize } from 'color2k';
+import { k } from '../common/Constants';
 import Angle from '../geometry/Angle';
 import { get } from 'svelte/store';
-import { k } from './Constants';
 
 class Utilities {
 	ignore(event: Event) {}

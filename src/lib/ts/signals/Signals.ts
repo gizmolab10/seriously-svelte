@@ -1,4 +1,4 @@
-import { s_focus_ancestry, s_rebuild_isInProgress } from '../state/Svelte_Stores';
+import { s_focus_ancestry, s_rebuild_isInProgress } from '../state/S_Stores';
 import { debug } from '../common/Debug';
 import { Signal } from 'typed-signals';
 import { get } from 'svelte/store';

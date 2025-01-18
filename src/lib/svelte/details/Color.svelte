@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, ux, Point, Thing, ZIndex, signals } from '../../ts/common/Global_Imports';
-	import { s_thing_color } from '../../ts/state/Svelte_Stores';
+	import { s_thing_color } from '../../ts/state/S_Stores';
 	import ColorPicker from 'svelte-awesome-color-picker';
 	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';

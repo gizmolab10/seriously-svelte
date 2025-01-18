@@ -1,6 +1,6 @@
 import { Predicate, T_Alteration } from '../common/Global_Imports';
 
-export default class Alteration_State {
+export default class S_Alteration {
 	type: T_Alteration;
 	predicate: Predicate | null;
 

@@ -1,4 +1,4 @@
-import { Thing, debug, T_Debug, databases, Predicate } from '../../common/Global_Imports';
+import { Thing, debug, DebugFlag, databases, Predicate } from '../../common/Global_Imports';
 import { s_hierarchy } from '../../state/S_Stores';
 import type { Integer } from '../../common/Types';
 import { get } from 'svelte/store';
@@ -13,8 +13,8 @@ export default class Relationship extends Datum {
 	idChild: string;
 	order: number; 
 
-	constructor(idBase: string, id: string, kindPredicate: string, idParent: string, idChild: string, order = 0, already_persisted: boolean = false) {
-		super(databases.db.type_db, idBase, id, already_persisted);
+	constructor(baseID: string, id: string, kindPredicate: string, idParent: string, idChild: string, order = 0, already_persisted: boolean = false) {
+		super(databases.db.dbType, baseID, id, already_persisted);
 		this.kindPredicate = kindPredicate;
 		this.hidParent = idParent.hash();
 		this.hidChild = idChild.hash();
@@ -30,8 +30,8 @@ export default class Relationship extends Datum {
 	get fields(): Airtable.FieldSet { return { kindPredicate: this.kindPredicate, parent: [this.idParent], child: [this.idChild], order: this.order }; }
 
 	get verbose(): string {
-		const persisted = this.persistence.already_persisted ? 'STORED' : 'DIRTY';
-		return `BASE ${this.idBase} ${persisted} [${this.order}] ${this.id} ${this.description}`;
+		const persisted = this.state.already_persisted ? 'STORED' : 'DIRTY';
+		return `BASE ${this.baseID} ${persisted} [${this.order}] ${this.id} ${this.description}`;
 	}
 
 	get description(): string {
@@ -40,7 +40,7 @@ export default class Relationship extends Datum {
 		return `${parent} ${this.predicate?.kind} ${child}`;
 	}
 
-	log(flag: T_Debug, message: string) { debug.log_maybe(flag, `${message} ${this.description}`); }
+	log(flag: DebugFlag, message: string) { debug.log_maybe(flag, `${message} ${this.description}`); }
 
 	thing(child: boolean): Thing | null {
 		const id = child ? this.idChild : this.idParent;

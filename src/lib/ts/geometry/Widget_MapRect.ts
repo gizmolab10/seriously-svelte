@@ -1,9 +1,9 @@
-import { k, u, ux, Rect, Thing, Point, Angle, Ancestry, T_Element, Element_State } from '../common/Global_Imports'
+import { k, u, ux, Rect, Thing, Point, Angle, Ancestry, T_Element, S_Element } from '../common/Global_Imports'
 
 export default class Widget_MapRect extends Rect {
 	parent_ancestry: Ancestry | null;
 	widget_ancestry: Ancestry | null;
-	element_state: Element_State;
+	element_state: S_Element;
 	childAngle: number | null;
 	points_right = true;
 	child: Thing | null;

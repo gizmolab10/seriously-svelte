@@ -1,6 +1,6 @@
-import { u, Rect } from '../common/Global_Imports';
+import { Rect } from '../common/Global_Imports';
 
-export default class Mouse_State {
+export default class S_Mouse {
 	element: HTMLElement | null;	// null means mouse responder
 	event: MouseEvent | null;		// null means mouse movement from global state
 	isDouble: boolean;
@@ -16,7 +16,7 @@ export default class Mouse_State {
 	//////////////////////////////////////////////
 	//	encapsulate relevant event properties	//
 	//	pass to buttons, widgets, radial & arcs	//
-	//	isOut is mirrored in Element_State		//
+	//	isOut is mirrored in S_Element		//
 	//////////////////////////////////////////////
 
 	constructor(event: MouseEvent | null, element: HTMLElement | null, isHover: boolean, isOut: boolean, isDown: boolean, isUp: boolean, isDouble: boolean, isLong: boolean, isMove: boolean, isHit: boolean = false) {
@@ -50,13 +50,13 @@ export default class Mouse_State {
 	}
 
 	descriptionFor(name: string = ''): string { return `${name} states: ${this.description}`; }
-	static empty(event: MouseEvent | null = null) { return new Mouse_State(event, null, false, false, false, true, false, false, false); }
-	static hit(event: MouseEvent | null = null) { return new Mouse_State(event, null, false, false, false, true, false, false, false, true); }
-	static up(event: MouseEvent | null, element: HTMLElement) { return new Mouse_State(event, element, false, false, false, true, false, false, false); }
-	static down(event: MouseEvent | null, element: HTMLElement) { return new Mouse_State(event, element, false, false, true, false, false, false, false); }
-	static long(event: MouseEvent | null, element: HTMLElement) { return new Mouse_State(event, element, false, false, false, false, false, true, false); }
-	static hover(event: MouseEvent | null, element: HTMLElement, isHit: boolean) { return new Mouse_State(event, element, true, !isHit, false, false, false, false, false); }
-	static clicks(event: MouseEvent | null, element: HTMLElement, clickCount: number) { return new Mouse_State(event, element, false, false, false, false, clickCount > 1, false, false); }
-	static move(event: MouseEvent | null, element: HTMLElement, isDown: boolean, isHit: boolean) { return new Mouse_State(event, element, false, false, isDown, false, false, false, isHit); }
+	static empty(event: MouseEvent | null = null) { return new S_Mouse(event, null, false, false, false, true, false, false, false); }
+	static hit(event: MouseEvent | null = null) { return new S_Mouse(event, null, false, false, false, true, false, false, false, true); }
+	static up(event: MouseEvent | null, element: HTMLElement) { return new S_Mouse(event, element, false, false, false, true, false, false, false); }
+	static down(event: MouseEvent | null, element: HTMLElement) { return new S_Mouse(event, element, false, false, true, false, false, false, false); }
+	static long(event: MouseEvent | null, element: HTMLElement) { return new S_Mouse(event, element, false, false, false, false, false, true, false); }
+	static hover(event: MouseEvent | null, element: HTMLElement, isHit: boolean) { return new S_Mouse(event, element, true, !isHit, false, false, false, false, false); }
+	static clicks(event: MouseEvent | null, element: HTMLElement, clickCount: number) { return new S_Mouse(event, element, false, false, false, false, clickCount > 1, false, false); }
+	static move(event: MouseEvent | null, element: HTMLElement, isDown: boolean, isHit: boolean) { return new S_Mouse(event, element, false, false, isDown, false, false, false, isHit); }
 
 }

@@ -1,17 +1,17 @@
 <script lang='ts'>
-	import { Element_State, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
+	import { S_Element, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { k, u, ux, Rect, Point, ZIndex } from '../../ts/common/Global_Imports';
-	import { s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
+	import { s_thing_fontFamily } from '../../ts/state/S_Stores';
 	import Identifiable from '../../ts/data/basis/Identifiable';
 	import type { Handle_Result } from '../../ts/common/Types';
 	import Mouse_Responder from './Mouse_Responder.svelte';
 	import { onMount } from 'svelte';
 	export let background_color = k.color_background;
-	export let closure = Handle_Result<Mouse_State>;
+	export let closure = Handle_Result<S_Mouse>;
 	export let border_color = k.color_default;
 	export let height = k.default_buttonSize;
 	export let width = k.default_buttonSize;
-	export let element_state: Element_State;
+	export let element_state: S_Element;
 	export let padding = '0px 6px 1px 6px';
 	export let color = k.color_default;
 	export let position = 'absolute';
@@ -29,7 +29,7 @@
 	//									//
 	//	adds: border_thickness & style	//
 	//									//
-	//	container owns Element_State:	//
+	//	container owns S_Element:	//
 	//	  (stroke, fill & cursor)		//
 	//	  calls closure to update it	//
 	//									//
@@ -63,7 +63,7 @@
 		}
 	}
 
-	function button_closure(mouse_state: Mouse_State) {
+	function button_closure(mouse_state: S_Mouse) {
 		closure(mouse_state);		// so container can adjust behavior or appearance
 		if (mouse_state.isHover) {	// NOT the same as isHovering
 			update_currentStyle();

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_thing_color, s_focus_ancestry, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
+	import { s_thing_color, s_focus_ancestry, s_thing_fontFamily } from '../../ts/state/S_Stores';
 	import { g, k, ux, w, Size, Point, debug, T_Tool, ZIndex, } from '../../ts/common/Global_Imports';
 	import { svgPaths, T_Element, Radial_Geometry } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';

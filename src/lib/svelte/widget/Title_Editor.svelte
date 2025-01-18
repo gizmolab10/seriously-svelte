@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { T_Graph, dbDispatch, Seriously_Range, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { s_hierarchy, s_graph_type, s_thing_color, s_thing_title, s_title_edit_state } from '../../ts/state/Svelte_Stores';
-	import { s_thing_fontFamily, s_grabbed_ancestries, s_ancestry_showing_tools } from '../../ts/state/Svelte_Stores';
+	import { T_Graph, databases, Seriously_Range, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
+	import { s_hierarchy, s_graph_type, s_thing_color, s_thing_title, s_title_edit_state } from '../../ts/state/S_Stores';
+	import { s_thing_fontFamily, s_grabbed_ancestries, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
 	import { g, k, u, Point, Thing, debug, Angle, ZIndex, signals } from '../../ts/common/Global_Imports';
 	import { onMount } from 'svelte';
 	export let fontSize = '1em';
@@ -25,7 +25,7 @@
 	function handle_mouse_up() { clearClicks(); }
 	var hasChanges = () => { return originalTitle != bound_title; };
 	function thing(): Thing | null { return ancestry?.thing ?? null; }
-	function handle_mouse_state(mouse_state: Mouse_State): boolean { return false; }
+	function handle_mouse_state(mouse_state: S_Mouse): boolean { return false; }
 
 	export const _____REACTIVES_____: unique symbol = Symbol('_____REACTIVES_____');
 	
@@ -234,7 +234,7 @@
 			extractRange();
 			input?.blur();
 			if (hasChanges()) {
-				dbDispatch.db.thing_persistentUpdate(thing());
+				databases.db.thing_persistentUpdate(thing());
 				originalTitle = thing()?.title;		// so hasChanges will be correct
 				ancestry.signal_relayoutWidgets();
 			}

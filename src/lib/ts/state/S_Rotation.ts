@@ -2,7 +2,7 @@ import { k, debug, Angle, cursors, svgPaths } from '../common/Global_Imports';
 
 // for rotating (paging arcs and rotation ring)
 
-export default class Rotation_State {
+export default class S_Rotation {
 	base64_rotateSVG = btoa(encodeURIComponent(svgPaths.rotateSVG));		// untested
 	active_angle: number | null = null;		// angle at location of mouse MOVE
 	basis_angle: number | null = null;		// angle at location of mouse DOWN

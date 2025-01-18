@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { signals, T_Info, T_Trait, preferences, T_Element, T_Preference } from '../../ts/common/Global_Imports';
 	import { g, k, ux, show, Rect, Size, Point, Thing, debug, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
-	import { s_focus_ancestry, s_grabbed_ancestries, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
-	import { s_hierarchy, s_thing_color, s_thing_title } from '../../ts/state/Svelte_Stores';
+	import { s_focus_ancestry, s_grabbed_ancestries, s_thing_fontFamily } from '../../ts/state/S_Stores';
+	import { s_hierarchy, s_thing_color, s_thing_title } from '../../ts/state/S_Stores';
 	import Identifiable from '../../ts/data/basis/Identifiable';
 	import type { Dictionary } from '../../ts/common/Types';
 	import type { Integer } from '../../ts/common/Types';

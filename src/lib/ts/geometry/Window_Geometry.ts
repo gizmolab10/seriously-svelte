@@ -1,6 +1,6 @@
 import { k, Rect, Size, Point, debug, signals, preferences, T_Preference } from '../common/Global_Imports';
-import { s_graphRect, s_user_graph_offset, s_user_graph_center } from '../state/Svelte_Stores';
-import { s_show_details, s_scaled_mouse_location } from '../state/Svelte_Stores';
+import { s_graphRect, s_user_graph_offset, s_user_graph_center } from '../state/S_Stores';
+import { s_show_details, s_scaled_mouse_location } from '../state/S_Stores';
 import { get } from 'svelte/store';
 
 class Window_Geometry {

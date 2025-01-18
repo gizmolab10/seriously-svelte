@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, k, u, show, Point, debug, ZIndex, T_Details } from '../../ts/common/Global_Imports';
-	import { s_graphRect, s_detail_types } from '../../ts/state/Svelte_Stores';
+	import { s_graphRect, s_detail_types } from '../../ts/state/S_Stores';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
 	import Recents from './Recents.svelte';

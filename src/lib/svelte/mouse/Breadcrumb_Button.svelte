@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { k, u, ux, Point, Thing, T_Tool, signals } from '../../ts/common/Global_Imports';
-	import { dbDispatch, T_Element, Element_State } from '../../ts/common/Global_Imports';
-	import { s_thing_color, s_focus_ancestry } from '../../ts/state/Svelte_Stores';
-	import { s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
+	import { databases, T_Element, S_Element } from '../../ts/common/Global_Imports';
+	import { s_thing_color, s_focus_ancestry } from '../../ts/state/S_Stores';
+	import { s_thing_fontFamily } from '../../ts/state/S_Stores';
 	import Button from './Button.svelte';
 	import { onMount } from 'svelte';
 	export let left = 0;
@@ -15,7 +15,7 @@
 	let height = k.default_buttonSize;
 	let thing: Thing = ancestry.thing;
 	let title: string = thing.title;
-	let element_state: Element_State;
+	let element_state: S_Element;
 	let colorStyles = k.empty;
 	let style = k.empty;
 	let name = k.empty;
@@ -66,7 +66,7 @@
 	}
 
 	function closure(mouse_state) {
-		if (dbDispatch.db.hierarchy.hasRoot) {
+		if (databases.db.hierarchy.hasRoot) {
 			if (mouse_state.isHover) {
 				if (mouse_state.isOut) {
 					border = `${borderStyle} ${borderColor}`;

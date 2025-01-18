@@ -1,6 +1,6 @@
-import Ancestry from '../data/basis/runtime/Ancestry';
+import Ancestry from '../data/runtime/Ancestry';
 
-export default class Title_Edit_State {
+export default class S_Title_Edit {
 	stopping: Ancestry | null = null;
 	editing!: Ancestry;
 

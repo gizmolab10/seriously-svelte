@@ -1,8 +1,8 @@
 import { g, k, u, show, User, Thing, Trait, Grabs, debug, files, Access, T_Tool, signals, T_Info, T_Graph } from '../common/Global_Imports';
-import { s_graph_type, s_storage_update_trigger, s_grabbed_ancestries, s_ancestry_showing_tools } from '../state/Svelte_Stores';
-import { Ancestry, T_Thing, T_Trait, Predicate, Relationship, Mouse_State, T_Predicate } from '../common/Global_Imports';
-import { T_Control, preferences, T_Create, T_Alteration, Alteration_State } from '../common/Global_Imports';
-import { s_title_edit_state, s_id_popupView, s_focus_ancestry, s_alteration_mode } from '../state/Svelte_Stores';
+import { s_graph_type, s_storage_update_trigger, s_grabbed_ancestries, s_ancestry_showing_tools } from '../state/S_Stores';
+import { Ancestry, T_Thing, T_Trait, Predicate, Relationship, S_Mouse, T_Predicate } from '../common/Global_Imports';
+import { T_Control, preferences, T_Create, T_Alteration, S_Alteration } from '../common/Global_Imports';
+import { s_title_edit_state, s_id_popupView, s_focus_ancestry, s_alteration_mode } from '../state/S_Stores';
 import { T_Datum } from '../../ts/data/basis/Persistent_Identifiable';
 import type { Integer, Dictionary } from '../common/Types';
 import Identifiable from '../data/basis/Identifiable';
@@ -72,7 +72,7 @@ export class Hierarchy {
 
 	static readonly EVENTS: unique symbol;
 
-	async handle_tool_clicked(idControl: string, mouse_state: Mouse_State) {
+	async handle_tool_clicked(idControl: string, mouse_state: S_Mouse) {
 		const event: MouseEvent | null = mouse_state.event as MouseEvent;
         const ancestry = get(s_ancestry_showing_tools);
 		if (!!ancestry) {
@@ -118,7 +118,7 @@ export class Hierarchy {
 							case k.space:	await this.ancestry_edit_persistentCreateChildOf(ancestryGrab); break;
 							case 'd':		await this.thing_edit_persistentDuplicate(ancestryGrab); break;
 							case '-':		if (!COMMAND) { await this.thing_edit_persistentAddLine(ancestryGrab); } break;
-							case 'tab':		await this.ancestry_edit_persistentCreateChildOf(ancestryGrab.parentAncestry); break; // Title_Edit_State editor also makes this call
+							case 'tab':		await this.ancestry_edit_persistentCreateChildOf(ancestryGrab.parentAncestry); break; // S_Title_Edit editor also makes this call
 							case 'enter':	ancestryGrab.startEdit(); break;
 						}
 					}
@@ -739,7 +739,7 @@ export class Hierarchy {
 			const changingBulk = parent.isBulkAlias || child.idBase != this.db.idBase;
 			const idBase = changingBulk ? child.idBase : parent.idBase;
 			if (!child.persistence.already_persisted) {
-				await this.db.thing_remember_persistentCreate(child);					// for everything below, need to await child.id fetched from dbDispatch
+				await this.db.thing_remember_persistentCreate(child);					// for everything below, need to await child.id fetched from databases
 			}
 			const relationship = await this.relationship_remember_persistentCreateUnique(idBase, Identifiable.newID(), kindPredicate, parent.idBridging, child.id, 0, T_Create.getPersistentID);
 			const childAncestry = parentAncestry.uniquelyAppendID(relationship.id);
@@ -1361,7 +1361,7 @@ export class Hierarchy {
 	toggleAlteration(wantsAlteration: T_Alteration, isRelated: boolean) {
 		const isAltering = get(s_alteration_mode)?.type;
 		const predicate = isRelated ? Predicate.isRelated : Predicate.contains;
-		const nextAltering = wantsAlteration == isAltering ? null : new Alteration_State(wantsAlteration, predicate);
+		const nextAltering = wantsAlteration == isAltering ? null : new S_Alteration(wantsAlteration, predicate);
 		if (!!nextAltering) {
 			debug.log_tools(`needs ${wantsAlteration} ${predicate?.kind} alteration`)
 		} else {
