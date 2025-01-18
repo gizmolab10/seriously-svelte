@@ -18,6 +18,7 @@
 	const font_ratio = 0.8;
 	const text_top = top + 52;
 	const font_size = `${font_ratio}em`;
+	const color_origin = new Point(67, 122);
 	const info_width = k.width_details - 30;
 	const traits_width = k.width_details - (margin * 2);
 	const traits_center = new Point(122, text_top - 20);
@@ -32,9 +33,35 @@
 	let color = k.thing_color_default;
 	let grabs = $s_grabbed_ancestries;
 	let thing_title = thing?.title;
+	let tops: Array<number> = [];
 	let rebuilds = 0;
 	let info;
 
+	private enum TI {
+		segments,
+		before_title,
+		title,
+		after_title,
+		table,
+		traits,
+		consequence,
+		quest,
+	}
+
+	function heightAt(index: number) {
+		switch (index) {
+			case TI.segments:	  return 21;
+			case TI.before_title: return  3;
+			case TI.title:		  return 17;
+			case TI.after_title:  return  3;
+			case TI.table:		  return 10;
+			case TI.traits:		  return  2;
+			case TI.consequence:  return  2;
+			case TI.quest:		  return  2;
+		}
+	}
+
+	setup_tops();
 	element_state.set_forHovering(k.color_default, 'pointer');
 	
 	onMount(() => {
@@ -50,16 +77,16 @@
 	}
 	
 	$: {
-		const id = $s_thing_color;
-		if (!!thing && thing.id == id) {
-			color = thing.color;
-			rebuilds += 1;
+		if (thing != ancestry?.thing) {
+			update_forAncestry();
 		}
 	}
 	
 	$: {
-		if (thing != ancestry?.thing) {
-			update_forAncestry();
+		const id = $s_thing_color;
+		if (!!thing && thing.id == id) {
+			color = thing.color;
+			rebuilds += 1;
 		}
 	}
 
@@ -73,6 +100,15 @@
 		preferences.write_key(IDPreference.info_type, type);
 		show.info_type = type;
 		update_forKind();
+	}
+	
+	function setup_tops() {
+		let top = 0;
+		tops = [];
+		for (let i = 0; i < TI.quest; i++) {
+			tops.push(top);
+			top += heightAt(i);
+		}
 	}
 
 	function update_forKind() {
@@ -131,48 +167,48 @@
 				position:absolute;
 				width:{traits_width}px;'>
 			{#if information.length != 0}
-				{#key thing_title}
-					<div style='
-						top:-2px;
-						position:absolute;
-						text-align:center;
-						width:{traits_width}px;'>
-						{thing_title.clipWithEllipsisAt(30)}
-					</div>
-				{/key}
-				<Separator top=16 left=5 width={info_width}/>
 				<Segmented
 					name='info-type'
 					font_size={font_size}
-					origin={new Point(41, 23)}
 					selected={[show.info_type]}
 					height={k.row_height * font_ratio}
 					selection_closure={selection_closure}
+					origin={new Point(45, tops[TI.segments])}
 					titles={[InfoType.focus, InfoType.selection]}/>
-				<Table top={43} array={information}/>
+				{#key thing_title}
+					<Separator top={tops[TI.before_title]} left=5 title='title' width={info_width}/>
+					<div style='
+						position:absolute;
+						text-align:center;
+						top:{tops[TI.title]}px;
+						width:{traits_width}px;'>
+						{thing_title.clipWithEllipsisAt(30)}
+					</div>
+					<Separator top={tops[TI.after_title]} left=5 width={info_width}/>
+				{/key}
+				<Table top={tops[TI.table]} array={information}/>
 			{/if}
-			<Color thing={thing} origin={new Point(67, 122)}/>
+			<Color thing={thing} origin={color_origin}/>
 			{#if show.traits}
 				<div class='horizontal-line'
 					style='
-						top:20px;
 						left:{-margin}px;
 						position:absolute;
 						width:{k.width_details}px;
 						z-index:{ZIndex.frontmost};'>
 				</div>
 				<Text_Editor
-					color=k.color_default
-					top={text_top}
 					label='consequence'
+					color=k.color_default
+					top={tops[TI.consequence]}
 					width={text_box_size.width}
 					height={text_box_size.height}
 					original_text={thing.consequence}
 					handle_textChange={handle_textChange}/>
 				<Text_Editor
-					color=k.color_default
 					label='quest'
-					top={text_top + 90}
+					top={tops[TI.quest]}
+					color=k.color_default
 					original_text={thing.quest}
 					width={text_box_size.width}
 					height={text_box_size.height}
