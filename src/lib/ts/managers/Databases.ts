@@ -67,10 +67,10 @@ export default class Databases {
 		return `(loading your ${type} data${from})`;
 	}
 
-	db_change_toType(newT_Database: T_Database) {
-		const db = db_forType(newT_Database);
-		preferences.write_key(T_Preference.db, newT_Database);
-		s_type_db.set(newT_Database);		// tell components to render the [possibly previously] fetched data
+	db_change_toType(newDatabaseType: T_Database) {
+		const db = db_forType(newDatabaseType);
+		preferences.write_key(T_Preference.db, newDatabaseType);
+		s_type_db.set(newDatabaseType);		// tell components to render the [possibly previously] fetched data
 	}
 
 	db_next_get(forward: boolean): T_Database {

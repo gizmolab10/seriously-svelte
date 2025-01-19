@@ -32,8 +32,8 @@ export default class Thing extends Datum {
 	get parentAncestries(): 	Array	  <Ancestry> { return this.parentAncestries_for(Predicate.contains); }
 	get relatedRelationships(): Array <Relationship> { return this.relationships_forParents_ofKind(T_Predicate.isRelated, false); }
 	get fields():		  		Dictionary  <string> { return { title: this.title, color: this.color, type: this.type }; }
-	get quest():					   string | null { return get(s_hierarchy).trait_forT_ownerHID(T_Trait.quest, this.hid)?.text ?? null; }
-	get consequence():				   string | null { return get(s_hierarchy).trait_forT_ownerHID(T_Trait.consequence, this.hid)?.text ?? null; }
+	get quest():					   string | null { return get(s_hierarchy).trait_forType_ownerHID(T_Trait.quest, this.hid)?.text ?? null; }
+	get consequence():				   string | null { return get(s_hierarchy).trait_forType_ownerHID(T_Trait.consequence, this.hid)?.text ?? null; }
 	get idBridging():						  string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get description():						  string { return this.id + ' \"' + this.title + '\"'; }
 	get breadcrumb_title():					  string { return this.title.clipWithEllipsisAt(15); }
@@ -94,7 +94,7 @@ export default class Thing extends Datum {
 	debugLog(message: string) { this.log(T_Debug.things, message); }
 	log(option: T_Debug, message: string) { debug.log_maybe(option, message + k.space + this.description); }
 	hasParents_forKind(kindPredicate: string): boolean { return this.parents_forKind(kindPredicate).length > 0; }
-	setTraitText_forType(text: string, type: T_Trait) { get(s_hierarchy).trait_setText_forT_ownerHID(text, type, this.id); }
+	setTraitText_forType(text: string, type: T_Trait) { get(s_hierarchy).trait_setText_forType_ownerHID(text, type, this.id); }
 
 	override isInDifferentBulkThan(other: Thing): boolean {
 		return super.isInDifferentBulkThan(other) || (other.isBulkAlias && !this.isBulkAlias && this.idBase != other.title);

@@ -92,7 +92,7 @@ class Utilities {
 		return stripped;
 	}
 
-	basis_angle_ofT_Quadrant(quadrant: T_Quadrant): number {
+	basis_angle_ofType_Quadrant(quadrant: T_Quadrant): number {
 		switch (quadrant) {
 			case T_Quadrant.upperRight: return Angle.three_quarters;
 			case T_Quadrant.lowerLeft:  return Angle.quarter;

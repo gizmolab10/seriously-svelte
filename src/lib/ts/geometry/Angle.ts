@@ -32,7 +32,7 @@ export default class Angle {
 
 	static radians_from_degrees(degrees: number): number { return Math.PI / 180 * degrees; }
 	get angle_orientsDown(): boolean { return this.orientation_ofAngle == T_Orientation.down; }
-	get quadrant_basis_angle(): number { return u.basis_angle_ofT_Quadrant(this.quadrant_ofAngle); }
+	get quadrant_basis_angle(): number { return u.basis_angle_ofType_Quadrant(this.quadrant_ofAngle); }
 
 	get angle_slantsForward(): boolean {
 		const quadrant = this.quadrant_ofAngle;

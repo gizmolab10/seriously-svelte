@@ -138,7 +138,7 @@ export default class Cluster_Map {
 		let start = this.arc_map.start_angle.angle_normalized();
 		const quadrant = u.quadrant_ofAngle(end);
 		if (quadrant != T_Quadrant.upperRight) {
-			let delta = u.basis_angle_ofT_Quadrant(quadrant) + Angle.quarter;
+			let delta = u.basis_angle_ofType_Quadrant(quadrant) + Angle.quarter;
 
 			// prevent peculiar thumb-flip-to-end when mouse.y > 0
 			// HOW? angles increase counter-clockwise

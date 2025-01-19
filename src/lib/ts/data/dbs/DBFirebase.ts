@@ -76,7 +76,7 @@ export default class DBFirebase extends DBCommon {
 			let querySnapshot = await getDocs(collectionRef);
 			if (!!idBase) {
 				if (querySnapshot.empty) {
-					await this.document_defaults_ofT_persistentCreateIn(datum_type, idBase, collectionRef);
+					await this.document_defaults_ofType_persistentCreateIn(datum_type, idBase, collectionRef);
 					querySnapshot = await getDocs(collectionRef);
 				}
 			}
@@ -85,7 +85,7 @@ export default class DBFirebase extends DBCommon {
 			for (const docSnapshot of docs) {
 				const id = docSnapshot.id;
 				const data = docSnapshot.data();
-				await this.document_ofT_remember_validated(datum_type, id, data, idBase ?? this.idBase);
+				await this.document_ofType_remember_validated(datum_type, id, data, idBase ?? this.idBase);
 			}
 		} catch (error) {
 			this.reportError(error);
@@ -164,7 +164,7 @@ export default class DBFirebase extends DBCommon {
 	}
 
 	setup_remote_handlers() {
-		for (const datum_type of this.hierarchy.fetching_dataTypes) {
+		for (const datum_type of this.hierarchy.dataTypes_forFetching) {
 			if (datum_type == T_Datum.predicates) {
 				this.predicatesCollection = collection(this.firestore, datum_type);
 			} else {
@@ -218,7 +218,7 @@ export default class DBFirebase extends DBCommon {
 
 	static readonly SUBCOLLECTIONS: unique symbol;
 
-	async document_defaults_ofT_persistentCreateIn(datum_type: T_Datum, idBase: string, collectionRef: CollectionReference) {
+	async document_defaults_ofType_persistentCreateIn(datum_type: T_Datum, idBase: string, collectionRef: CollectionReference) {
 		if (!!idBase) {
 			const docRef = doc(this.firestore, this.bulksName, idBase);
 			await setDoc(docRef, { isReal: true }, { merge: true });
@@ -230,7 +230,7 @@ export default class DBFirebase extends DBCommon {
 		}
 	}
 
-	async document_ofT_remember_validated(datum_type: T_Datum, id: string, data: DocumentData, idBase: string) {
+	async document_ofType_remember_validated(datum_type: T_Datum, id: string, data: DocumentData, idBase: string) {
 		if (DBFirebase.data_isValidOfKind(datum_type, data)) {
 			const h = this.hierarchy;
 			switch (datum_type) {
