@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, u, ux, Point, Thing, T_Tool, signals } from '../../ts/common/Global_Imports';
 	import { databases, T_Element, S_Element } from '../../ts/common/Global_Imports';
-	import { s_thing_color, s_focus_ancestry } from '../../ts/state/S_Stores';
+	import { s_thing_color, s_ancestry_focus } from '../../ts/state/S_Stores';
 	import { s_thing_fontFamily } from '../../ts/state/S_Stores';
 	import Button from './Button.svelte';
 	import { onMount } from 'svelte';
@@ -42,7 +42,7 @@
 
 	function updateColors() {
 		if (!!thing) {
-			if ($s_focus_ancestry.idThing == thing.id) {
+			if ($s_ancestry_focus.idThing == thing.id) {
 				colorStyles = `background-color: ${u.opacitize(thing.color, 0.85)}; color: ${k.color_background}`;
 			} else {
 				colorStyles = `background-color: ${k.color_background}; color: ${thing.color}`;

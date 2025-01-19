@@ -3,7 +3,7 @@
 	import { T_Element, S_Element, T_Preference, preferences } from '../../ts/common/Global_Imports';
 	import { s_storage_update_trigger, s_thing_fontFamily } from '../../ts/state/S_Stores';
 	import { s_type_db, s_hierarchy } from '../../ts/state/S_Stores';
-	import { T_Database } from '../../ts/data/basis/Persistence_State';
+	import { T_Database } from '../../ts/data/dbs/DBCommon';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Button from '../mouse/Button.svelte';
 	import Table from '../kit/Table.svelte';

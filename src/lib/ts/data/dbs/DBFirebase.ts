@@ -1,12 +1,10 @@
-import { g, k, u, Thing, Trait, debug, signals, T_Debug, Predicate, T_Trait } from '../../common/Global_Imports';
-import { T_Thing, preferences, T_Preference, Relationship, T_Create } from '../../common/Global_Imports';
+import { g, k, u, Thing, Trait, debug, signals, Predicate, preferences, Relationship } from '../../common/Global_Imports';
 import { QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
 import { onSnapshot, deleteField, getFirestore, DocumentData, DocumentChange } from 'firebase/firestore';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
-import { T_Datum } from '../basis/Persistent_Identifiable';
-import { T_Database } from '../basis/Persistence_State';
+import { T_Thing, T_Trait, T_Debug, T_Create, T_Preference } from '../../common/Global_Imports';
+import { T_Datum, T_Database, T_Persistence } from './DBCommon';
 import Identifiable from '../basis/Identifiable';
-import { T_Persistence } from './DBCommon';
 import { initializeApp } from 'firebase/app';
 import DBCommon from './DBCommon';
 

@@ -1,11 +1,11 @@
-import { g, k, u, show, User, Thing, Trait, Grabs, debug, files, Access, T_Tool, signals, T_Info, T_Graph } from '../common/Global_Imports';
-import { s_graph_type, s_storage_update_trigger, s_grabbed_ancestries, s_ancestry_showing_tools } from '../state/S_Stores';
-import { Ancestry, T_Thing, T_Trait, Predicate, Relationship, S_Mouse, T_Predicate } from '../common/Global_Imports';
-import { T_Control, preferences, T_Create, T_Alteration, S_Alteration } from '../common/Global_Imports';
-import { s_title_edit_state, s_id_popupView, s_focus_ancestry, s_alteration_mode } from '../state/S_Stores';
-import { T_Datum } from '../../ts/data/basis/Persistent_Identifiable';
+import { T_Tool, T_Info, T_Graph, T_Thing, T_Trait, T_Create, T_Alteration, T_Control, T_Predicate } from '../common/Global_Imports';
+import { g, k, u, show, User, Thing, Trait, Grabs, debug, files, signals, Access, Ancestry } from '../common/Global_Imports';
+import { s_storage_update_trigger, s_ancestries_grabbed, s_title_edit_state, s_ancestry_showing_tools } from '../state/S_Stores';
+import { preferences, Predicate, Relationship, S_Mouse, S_Alteration } from '../common/Global_Imports';
+import { s_graph_type, s_id_popupView, s_ancestry_focus, s_alteration_mode } from '../state/S_Stores';
 import type { Integer, Dictionary } from '../common/Types';
 import Identifiable from '../data/basis/Identifiable';
+import { T_Datum } from '../../ts/data/dbs/DBCommon';
 import DBCommon from '../data/dbs/DBCommon';
 import { get } from 'svelte/store';
 
@@ -122,7 +122,7 @@ export class Hierarchy {
 					}
 					switch (key) {
 						case 'delete':
-						case 'backspace':	await this.ancestries_rebuild_traverse_persistentDelete(get(s_grabbed_ancestries)); s_grabbed_ancestries.set([]); break;
+						case 'backspace':	await this.ancestries_rebuild_traverse_persistentDelete(get(s_ancestries_grabbed)); s_ancestries_grabbed.set([]); break;
 					}
 				}
 				if (!!ancestryGrab) {
@@ -154,7 +154,7 @@ export class Hierarchy {
 	static readonly FOCUS: unique symbol;
 
 	get focus(): Thing | null {
-		const ancestry = get(s_focus_ancestry);
+		const ancestry = get(s_ancestry_focus);
 		return !ancestry ? this.root : ancestry.thing;
 	}
 
@@ -224,14 +224,6 @@ export class Hierarchy {
 
 	thing_forHID(hid: Integer): Thing | null { return this.thing_byHID[hid ?? undefined]; }
 
-	thing_remember_updateID_to(thing: Thing, id: string) {
-		this.relationships_translate_idsFromTo_forParents(thing.id, id, true);
-		this.relationships_translate_idsFromTo_forParents(thing.id, id, false);
-		this.thing_forget(thing);
-		thing.setID(id);
-		this.thing_remember(thing);
-	}
-
 	thing_forget(thing: Thing) {
 		const typeThings = this.things_byType[thing.type];
 		delete this.thing_byHID[thing.hid];
@@ -241,6 +233,14 @@ export class Hierarchy {
 		}
 	}
 
+	thing_remember_updateID_to(thing: Thing, id: string) {
+		this.relationships_translate_idsFromTo_forParents(thing.id, id, true);
+		this.relationships_translate_idsFromTo_forParents(thing.id, id, false);
+		this.thing_forget(thing);
+		thing.setID(id);
+		this.thing_remember(thing);
+	}
+
 	thing_remember_runtimeCreateUnique(idBase: string, id: string, title: string, color: string, type: string,
 		already_persisted: boolean = false): Thing {
 		let thing = this.thing_forHID(id?.hash() ?? null);
@@ -248,6 +248,26 @@ export class Hierarchy {
 			thing = this.thing_remember_runtimeCreate(idBase, id, title, color, type, already_persisted);
 		}
 		return thing;
+	}
+
+	thing_remember_runtimeCreate(idBase: string, id: string, title: string, color: string, type: string,
+		already_persisted: boolean = false, needs_upgrade: boolean = false): Thing {
+		const thing = this.thing_runtimeCreate(idBase, id, title, color, type, already_persisted);
+		this.thing_remember(thing);
+		if (needs_upgrade) {
+			thing.set_isDirty();	// add type and remove trait fields
+		}
+		return thing;
+	}
+
+	async thing_remember_runtimeCopy(idBase: string, parent: Thing) {
+		const newThing = new Thing(idBase, Identifiable.newID(), parent.title, parent.color, parent.type);
+		const prohibitedTraits: Array<string> = [T_Thing.roots, T_Thing.root, T_Thing.bulk];
+		if (prohibitedTraits.includes(parent.type)) {
+			newThing.type = k.empty;
+		}
+		this.thing_remember(newThing);
+		return newThing;
 	}
 
 	async thing_remember_persistentRelocateChild(child: Thing, fromParent: Thing, toParent: Thing): Promise<any> {
@@ -281,26 +301,6 @@ export class Hierarchy {
 			const child = this.thing_runtimeCreate(thing.idBase, Identifiable.newID(), k.title_line, parent.color, k.empty);
 			await this.ancestry_edit_persistentAddAsChild(parentAncestry, child, order, false);
 		}
-	}
-
-	thing_remember_runtimeCreate(idBase: string, id: string, title: string, color: string, type: string,
-		already_persisted: boolean = false, needs_upgrade: boolean = false): Thing {
-		const thing = this.thing_runtimeCreate(idBase, id, title, color, type, already_persisted);
-		this.thing_remember(thing);
-		if (needs_upgrade) {
-			thing.set_isDirty();	// add type and remove trait fields
-		}
-		return thing;
-	}
-
-	async thing_remember_runtimeCopy(idBase: string, parent: Thing) {
-		const newThing = new Thing(idBase, Identifiable.newID(), parent.title, parent.color, parent.type);
-		const prohibitedTraits: Array<string> = [T_Thing.roots, T_Thing.root, T_Thing.bulk];
-		if (prohibitedTraits.includes(parent.type)) {
-			newThing.type = k.empty;
-		}
-		this.thing_remember(newThing);
-		return newThing;
 	}
 
 	async thing_edit_persistentDuplicate(ancestry: Ancestry) {
@@ -581,15 +581,15 @@ export class Hierarchy {
 				if (!forParents && relationship.idParent != idTo) {
 					this.relationship_forget(relationship);
 					relationship.hidParent = idTo.hash();
-					relationship.set_isDirty();
 					relationship.idParent = idTo;
+					relationship.set_isDirty();
 					this.relationship_remember(relationship);
 				}
 				if (forParents && relationship.idChild != idTo) {
 					this.relationship_forget(relationship);
 					relationship.hidChild = idTo.hash();
-					relationship.set_isDirty();
 					relationship.idChild = idTo;
+					relationship.set_isDirty();
 					this.relationship_remember(relationship);
 				}
 			}
@@ -749,7 +749,7 @@ export class Hierarchy {
 	}
 
 	async ancestries_rebuild_traverse_persistentDelete(ancestries: Array<Ancestry>) {
-		if (get(s_focus_ancestry)) {
+		if (get(s_ancestry_focus)) {
 			for (const ancestry of ancestries) {
 				const thing = ancestry.thing;
 				const parentAncestry = ancestry.parentAncestry;
@@ -782,7 +782,7 @@ export class Hierarchy {
 	ancestry_forHID(hid: Integer): Ancestry | null { return this.ancestry_byHID[hid] ?? null; }
 
 	get ancestry_forBreadcrumbs(): Ancestry {
-		const focus = get(s_focus_ancestry);
+		const focus = get(s_ancestry_focus);
 		const grab = this.grabs.ancestry_lastGrabbed;
 		const grab_containsFocus = !!grab && focus.isAProgenyOf(grab)
 		return (!!grab && grab.isVisible && !grab_containsFocus) ? grab : focus;
@@ -1181,7 +1181,7 @@ export class Hierarchy {
 	}
 
 	get user_selected_ancestry(): Ancestry {
-		const focus = get(s_focus_ancestry);
+		const focus = get(s_ancestry_focus);
 		let grabbed = this.grabs.ancestry_lastGrabbed;
 		if (!!focus && show.info_type == T_Info.focus) {
 			return focus;

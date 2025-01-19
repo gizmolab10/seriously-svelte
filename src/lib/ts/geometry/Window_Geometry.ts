@@ -1,6 +1,6 @@
 import { k, Rect, Size, Point, debug, signals, preferences, T_Preference } from '../common/Global_Imports';
 import { s_graphRect, s_user_graph_offset, s_user_graph_center } from '../state/S_Stores';
-import { s_show_details, s_scaled_mouse_location } from '../state/S_Stores';
+import { s_details_show, s_mouse_location_scaled } from '../state/S_Stores';
 import { get } from 'svelte/store';
 
 class Window_Geometry {
@@ -30,7 +30,7 @@ class Window_Geometry {
 	}
 
 	mouse_vector_ofOffset_fromGraphCenter(offset: Point = Point.zero): Point | null {
-		const mouse_location = get(s_scaled_mouse_location);
+		const mouse_location = get(s_mouse_location_scaled);
 		if (!!mouse_location) {
 			const center_offset = get(s_user_graph_center).offsetBy(offset);
 			const mouse_vector = center_offset.vector_to(mouse_location);
@@ -55,7 +55,7 @@ class Window_Geometry {
 	}
 
 	graphRect_update() {
-		const left = get(s_show_details) ? k.width_details : 0;			// width of details
+		const left = get(s_details_show) ? k.width_details : 0;			// width of details
 		const originOfGraph = new Point(left, 69);						// 69 = height of content above the graph
 		const sizeOfGraph = this.windowSize.reducedBy(originOfGraph);	// account for origin
 		const rect = new Rect(originOfGraph, sizeOfGraph);

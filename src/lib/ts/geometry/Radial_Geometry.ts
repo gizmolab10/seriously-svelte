@@ -1,6 +1,6 @@
 import { u, Thing, debug, Ancestry, Predicate, T_Predicate } from '../common/Global_Imports';
 import { Cluster_Map, S_Paging, Widget_MapRect } from '../common/Global_Imports';
-import { s_focus_ancestry, s_ancestry_showing_tools } from '../state/S_Stores';
+import { s_ancestry_focus, s_ancestry_showing_tools } from '../state/S_Stores';
 import { s_hierarchy, s_paging_state } from '../state/S_Stores';
 import Parent_Ancestry from '../data/runtime/Parent_Ancestry';
 import { get } from 'svelte/store';
@@ -14,7 +14,7 @@ export default class Radial_Geometry {
 	// layout all the widgets, radial and arcs
 
 	constructor() {
-		debug.log_layout(`GEOMETRY (ts)  ${get(s_focus_ancestry)?.thing?.title}`);
+		debug.log_layout(`GEOMETRY (ts)  ${get(s_ancestry_focus)?.thing?.title}`);
 		this.layoutAll_clusters();
 		s_paging_state.subscribe((state: S_Paging) => {
 			this.update_forPaging_state(state);
@@ -73,7 +73,7 @@ export default class Radial_Geometry {
 
 	layout_clusterFor(ancestries: Array<Ancestry>, predicate: Predicate | null, toChildren: boolean) {
 		if (!!predicate) {
-			const paging_state = get(s_focus_ancestry)?.thing?.page_states?.paging_state_forPointingTo(toChildren, predicate);
+			const paging_state = get(s_ancestry_focus)?.thing?.page_states?.paging_state_forPointingTo(toChildren, predicate);
 			const onePage = paging_state?.onePage_from(ancestries) ?? [];
 			const cluster_map = new Cluster_Map(ancestries.length, onePage, predicate, toChildren);
 			const cluster_maps = this.cluster_maps_toChildren(toChildren);
@@ -83,7 +83,7 @@ export default class Radial_Geometry {
 
 	layoutAll_clusters() {
 		this.destructor();
-		const ancestry = get(s_focus_ancestry);
+		const ancestry = get(s_ancestry_focus);
 		const focus = ancestry.thing;
 		let childAncestries = ancestry.childAncestries;
 		this.layout_clusterFor(childAncestries, Predicate.contains, true);
@@ -96,7 +96,7 @@ export default class Radial_Geometry {
 	}
 
 	update_forPaging_state(paging_state: S_Paging) {
-		const ancestry = get(s_focus_ancestry);
+		const ancestry = get(s_ancestry_focus);
 		if (!!paging_state && !!ancestry) {
 			if (paging_state.toChildren) {
 				let childAncestries = ancestry.childAncestries;

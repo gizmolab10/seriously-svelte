@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, u, ux, show, Size, Thing, Point, debug, ZIndex, signals, svgPaths, T_Graph } from '../../ts/common/Global_Imports';
 	import { Direction, databases, Predicate, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { s_graph_type, s_expanded_ancestries, s_grabbed_ancestries } from '../../ts/state/S_Stores';
+	import { s_graph_type, s_ancestries_expanded, s_ancestries_grabbed } from '../../ts/state/S_Stores';
 	import { s_hierarchy, s_alteration_mode, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
@@ -40,12 +40,12 @@
 	}
 
 	$: {
-		const _ = $s_expanded_ancestries;
+		const _ = $s_ancestries_expanded;
 		svgPath_update();
 	}
 
 	$: {
-		if (!!$s_grabbed_ancestries || !!ancestry.thing) {
+		if (!!$s_ancestries_grabbed || !!ancestry.thing) {
 			svgPath_update();
 		}
 	}

@@ -1,10 +1,10 @@
 import { s_graph_type, s_thing_color, s_startup_state, s_device_isMobile } from './S_Stores';
-import { s_hierarchy, s_resize_count, s_mouse_up_count, s_rebuild_count } from './S_Stores';
+import { s_hierarchy, s_count_resize, s_count_mouse_up, s_count_rebuild } from './S_Stores';
 import { Hierarchy, T_Graph, preferences, T_Preference } from '../common/Global_Imports';
 import { S_Rotation, T_Startup, S_Expansion } from '../common/Global_Imports';
 import { e, k, u, ux, w, show, debug, databases } from '../common/Global_Imports';
-import { s_grabbed_ancestries, s_expanded_ancestries } from './S_Stores';
-import { s_focus_ancestry } from './S_Stores';
+import { s_ancestries_grabbed, s_ancestries_expanded } from './S_Stores';
+import { s_ancestry_focus } from './S_Stores';
 import { get } from 'svelte/store';
 
 class S_Global {
@@ -43,9 +43,9 @@ class S_Global {
 	}
 
 	setup_defaults() {
-		s_resize_count.set(0);
-		s_rebuild_count.set(0);
-		s_mouse_up_count.set(0);
+		s_count_resize.set(0);
+		s_count_rebuild.set(0);
+		s_count_mouse_up.set(0);
 		s_thing_color.set(null);
 		s_startup_state.set(T_Startup.start);
 		s_device_isMobile.set(this.device_isMobile);
@@ -74,9 +74,9 @@ class S_Global {
 					break;
 				case 'settings':
 					preferences.reset();
-					s_expanded_ancestries.set([]);
-					s_focus_ancestry.set(this.hierarchy.rootAncestry);
-					s_grabbed_ancestries.set([this.hierarchy.rootAncestry]);
+					s_ancestries_expanded.set([]);
+					s_ancestry_focus.set(this.hierarchy.rootAncestry);
+					s_ancestries_grabbed.set([this.hierarchy.rootAncestry]);
 					break;
 			}
 		}

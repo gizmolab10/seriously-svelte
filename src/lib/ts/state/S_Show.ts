@@ -1,5 +1,5 @@
 import { g, k, w, signals, preferences, T_Preference } from '../common/Global_Imports';
-import { s_show_details, s_tree_type } from './S_Stores';
+import { s_details_show, s_tree_type } from './S_Stores';
 import { T_Info, T_Tree } from '../common/Enumerations';
 import type { Dictionary } from '../common/Types';
 
@@ -21,7 +21,7 @@ class S_Show {
         for (const [name, flag] of Object.entries(keyedFlags)) {
 			switch (name) {
 				case 'details':
-					s_show_details.set(flag);
+					s_details_show.set(flag);
 					break;
 				case 'traits':
 					this.traits = flag;
@@ -42,7 +42,7 @@ class S_Show {
 	restore_state() {
 		this.traits = preferences.read_key(T_Preference.traits) ?? false;
 		this.tiny_dots = preferences.read_key(T_Preference.tiny_dots) ?? false;
-		s_show_details.set(preferences.read_key(T_Preference.details) ?? false);
+		s_details_show.set(preferences.read_key(T_Preference.details) ?? false);
 		this.arrowheads = preferences.read_key(T_Preference.arrowheads) ?? false;
 		this.info_type = preferences.read_key(T_Preference.info_type) ?? T_Info.focus;
 		s_tree_type.set(preferences.read_key(T_Preference.tree_type) ?? T_Tree.children);
@@ -52,7 +52,7 @@ class S_Show {
 		s_tree_type.subscribe((relations: string) => {
 			preferences.write_key(T_Preference.tree_type, relations);
 		});
-		s_show_details.subscribe((flag: boolean) => {
+		s_details_show.subscribe((flag: boolean) => {
 			preferences.write_key(T_Preference.details, flag);
 			w.restore_state();
 			signals.signal_relayoutWidgets_fromFocus();

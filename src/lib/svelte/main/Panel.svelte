@@ -1,13 +1,13 @@
 <script lang='ts'>
-	import { s_title_edit_state, s_show_details, s_device_isMobile, } from '../../ts/state/S_Stores';
+	import { s_title_edit_state, s_details_show, s_device_isMobile, } from '../../ts/state/S_Stores';
 	import { g, k, u, ux, w, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
 	import { debug, ZIndex, Ancestry, T_Startup } from '../../ts/common/Global_Imports';
 	import { s_type_db, s_graphRect, s_hierarchy } from '../../ts/state/S_Stores';
 	import { T_Control, Hierarchy, databases } from '../../ts/common/Global_Imports';
-	import { s_id_popupView, s_focus_ancestry } from '../../ts/state/S_Stores';
-	import { s_resize_count, s_startup_state } from '../../ts/state/S_Stores';
-	import { T_Database } from '../../ts/data/basis/Persistence_State';
+	import { s_id_popupView, s_ancestry_focus } from '../../ts/state/S_Stores';
+	import { s_count_resize, s_startup_state } from '../../ts/state/S_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
+	import { T_Database } from '../../ts/data/dbs/DBCommon';
 	import Details from '../details/Details.svelte';
 	import Breadcrumbs from './Breadcrumbs.svelte';
 	import BuildNotes from './BuildNotes.svelte';
@@ -95,7 +95,7 @@
 					top: {k.height_banner}px;
 					z-index: {ZIndex.lines};'>
 				</div>
-				{#if $s_show_details}
+				{#if $s_details_show}
 					<Details/>
 					<div class='vertical-line'
 						style='
@@ -114,7 +114,7 @@
 					height: 100%;
 					position: fixed;
 					z-index: {ZIndex.backmost};
-					left: {$s_show_details ? k.width_details : 0}px;'>
+					left: {$s_details_show ? k.width_details : 0}px;'>
 				{#key $s_id_popupView}
 					{#if $s_id_popupView == T_Control.builds}
 						<BuildNotes/>

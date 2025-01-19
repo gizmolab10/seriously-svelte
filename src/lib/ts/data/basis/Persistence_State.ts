@@ -1,13 +1,5 @@
 import type { Handle_Boolean } from '../../common/Types';
-
-export enum T_Database {
-	postgres = 'postgres',
-	airtable = 'airtable',
-	firebase = 'firebase',
-	plugin	 = 'plugin',
-	local	 = 'local',
-	test	 = 'test',
-}
+import { db_forType } from '../../managers/Databases';
 
 export default class Persistence_State {
 	lastModifyDate = new Date();
@@ -16,14 +8,15 @@ export default class Persistence_State {
 	type_db: string;
 	isDirty = false;
 
-	constructor(type_db: string, already_persisted: boolean = false, awaitingCreation: boolean = false) {
-		this.isDirty			= type_db != T_Database.test && !already_persisted;
-		this.already_persisted	= already_persisted;
-		this.awaitingCreation	= awaitingCreation;
-		this.type_db			= type_db;
-	}
-
+	get isRemote(): boolean { return db_forType(this.type_db)?.isRemote ?? false; }
 	updateModifyDate() { this.lastModifyDate = new Date(); }
+
+	constructor(type_db: string, already_persisted: boolean = false, awaitingCreation: boolean = false) {
+		this.type_db			= type_db;
+		this.awaitingCreation	= awaitingCreation;
+		this.already_persisted	= already_persisted;
+		this.isDirty			= this.isRemote && !already_persisted;
+	}
 
 	wasModifiedWithinMS(threshold: number): boolean {
 		const duration = new Date().getTime() - this.lastModifyDate.getTime();
@@ -35,9 +28,11 @@ export default class Persistence_State {
 	}
 
 	async persist_withClosure(closure: Handle_Boolean) {
-		if (this.isDirty || !this.awaitingCreation) {
+		if (!this.awaitingCreation) {
 			this.updateModifyDate();
-			closure(this.already_persisted);
+			if (this.isRemote) {
+				closure(this.already_persisted);
+			}
 		}
 	}
 

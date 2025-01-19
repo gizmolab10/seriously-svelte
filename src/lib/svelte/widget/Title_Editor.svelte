@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { T_Graph, databases, Seriously_Range, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { s_hierarchy, s_graph_type, s_thing_color, s_thing_title, s_title_edit_state } from '../../ts/state/S_Stores';
-	import { s_thing_fontFamily, s_grabbed_ancestries, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
+	import { s_thing_fontFamily, s_ancestries_grabbed, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
 	import { g, k, u, Point, Thing, debug, Angle, ZIndex, signals } from '../../ts/common/Global_Imports';
 	import { onMount } from 'svelte';
 	export let fontSize = '1em';
@@ -55,7 +55,7 @@
 		//////////////////////////////////////////////////////
 
 		if (!!ancestry) {
-			const hasGrabbed = ($s_grabbed_ancestries ?? [])?.length > 0;
+			const hasGrabbed = ($s_ancestries_grabbed ?? [])?.length > 0;
 			const te_state = $s_title_edit_state; // react to s_title_edit_state
 			if (ancestry.isEditable) {
 				if (!!ancestry && (ancestry.isStoppingEdit ?? false)) {

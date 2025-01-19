@@ -1,5 +1,5 @@
-import { s_mouse_location, s_scaled_mouse_location, s_mouse_up_count, s_alteration_mode } from '../state/S_Stores';
-import { s_resize_count, s_device_isMobile, s_user_graph_offset } from '../state/S_Stores';
+import { s_mouse_location, s_mouse_location_scaled, s_count_mouse_up, s_alteration_mode } from '../state/S_Stores';
+import { s_count_resize, s_device_isMobile, s_user_graph_offset } from '../state/S_Stores';
 import { g, k, w, Point, debug, signals, S_Alteration } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
@@ -62,7 +62,7 @@ class Events {
 	handle_mouse_up(event: MouseEvent) {
 		event.preventDefault();
 		event.stopPropagation();
-		s_mouse_up_count.set(get(s_mouse_up_count) + 1);
+		s_count_mouse_up.set(get(s_count_mouse_up) + 1);
 		// this.respondTo_closure(event, S_Mouse.up);
 	}
 
@@ -71,7 +71,7 @@ class Events {
 		event.stopPropagation();
 		const location = new Point(event.clientX, event.clientY);
 		s_mouse_location.set(location);
-		s_scaled_mouse_location.set(location.dividedBy(w.scale_factor));
+		s_mouse_location_scaled.set(location.dividedBy(w.scale_factor));
 		// this.respondTo_closure(event, S_Mouse.move);
 	}
 
@@ -109,7 +109,7 @@ class Events {
 		// called when simulator switches platform (e.g., desktop <--> iphone)
 		const isMobile = g.device_isMobile;
 		debug.log_action(` resize [is${isMobile ? '' : ' not'} mobile] STATE`);
-		s_resize_count.set(get(s_resize_count) + 1);
+		s_count_resize.set(get(s_count_resize) + 1);
 		s_device_isMobile.set(isMobile);
 		w.restore_state();
 	}

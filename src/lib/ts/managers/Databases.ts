@@ -1,8 +1,8 @@
 import { g, k, T_Preference, preferences } from '../common/Global_Imports';
-import { s_type_db } from '../state/S_Stores';
-import { T_Database } from '../data/basis/Persistence_State';
 import { dbFirebase } from '../data/dbs/DBFirebase';
 import { dbAirtable } from '../data/dbs/DBAirtable';
+import { T_Database } from '../data/dbs/DBCommon';
+import { s_type_db } from '../state/S_Stores';
 import { dbLocal } from '../data/dbs/DBLocal';
 import { dbTest } from '../data/dbs/DBTest';
 import DBCommon from '../data/dbs/DBCommon';

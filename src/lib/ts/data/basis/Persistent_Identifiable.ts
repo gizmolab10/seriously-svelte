@@ -3,17 +3,6 @@ import { s_hierarchy } from '../../state/S_Stores';
 import Identifiable from './Identifiable';
 import { get } from 'svelte/store';
 
-export enum T_Datum {
-	relationships = 'Relationships',
-	predicates	  = 'Predicates',
-	hierarchy	  = 'Hierarchy',	// includes parent contains and relateds
-	progeny		  = 'Progeny',		// only child contains
-	things		  = 'Things',
-	traits		  = 'Traits',
-	access		  = 'Access',
-	users		  = 'Users',
-}
-
 export default class Persistent_Identifiable extends Identifiable {
 	persistence!: Persistence_State;
 

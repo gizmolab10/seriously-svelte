@@ -1,7 +1,5 @@
-import { k, u, Thing, Trait, Predicate, Relationship } from '../../common/Global_Imports';
-import { T_Database } from '../basis/Persistence_State';
-import { Hierarchy } from '../../common/Global_Imports';
-import { T_Persistence } from './DBCommon';
+import { k, Thing, Trait, Hierarchy, Predicate, Relationship } from '../../common/Global_Imports';
+import { T_Database, T_Persistence } from './DBCommon';
 import DBCommon from './DBCommon';
 
 export default class DBPlugin extends DBCommon {

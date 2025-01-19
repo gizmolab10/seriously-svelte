@@ -1,4 +1,4 @@
-import { s_focus_ancestry, s_rebuild_isInProgress } from '../state/S_Stores';
+import { s_ancestry_focus, s_rebuild_isInProgress } from '../state/S_Stores';
 import { debug } from '../common/Debug';
 import { Signal } from 'typed-signals';
 import { get } from 'svelte/store';
@@ -16,9 +16,9 @@ export class Signals {
 	handler = new Signal<(ids_signal: Array<T_Signal>, value: any, priority: number) => void>();
 
 	signal_altering(value: any = null) { this.signal(T_Signal.alterState, value); }
-	signal_rebuildGraph_fromFocus() { this.signal_rebuildGraph(get(s_focus_ancestry)); }
+	signal_rebuildGraph_fromFocus() { this.signal_rebuildGraph(get(s_ancestry_focus)); }
 	signal_relayoutWidgets(value: any = null) { this.signal(T_Signal.relayout, value); }
-	signal_relayoutWidgets_fromFocus() { this.signal_relayoutWidgets(get(s_focus_ancestry)); }
+	signal_relayoutWidgets_fromFocus() { this.signal_relayoutWidgets(get(s_ancestry_focus)); }
 
 	handle_rebuildGraph(priority: number, onSignal: (value: any | null) => any ) {
 		return this.handle_signalOfKind(priority, T_Signal.rebuild, onSignal);

@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { s_device_isMobile, s_user_graph_offset, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
 	import { g, k, w, Rect, Point, debug, ZIndex, signals, T_Graph } from '../../ts/common/Global_Imports';
-	import { s_graphRect, s_graph_type, s_focus_ancestry } from '../../ts/state/S_Stores';
+	import { s_graphRect, s_graph_type, s_ancestry_focus } from '../../ts/state/S_Stores';
 	import Radial_Graph from '../radial/Radial_Graph.svelte';
 	import Tree_Graph from '../tree/Tree_Graph.svelte';
 	import { onMount } from 'svelte';
@@ -54,7 +54,7 @@
 
 </script>
 
-{#key $s_focus_ancestry, rebuilds}
+{#key $s_ancestry_focus, rebuilds}
 	<div class='draggable'
 		bind:this={draggable}
 		style={style}>

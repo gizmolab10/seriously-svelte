@@ -1,10 +1,10 @@
 <script lang='ts'>
 	import { g, k, u, ux, w, Thing, Point, Angle, debug, ZIndex } from '../../ts/common/Global_Imports';
-	import { s_thing_color, s_focus_ancestry, s_radial_geometry } from '../../ts/state/S_Stores';
-	import { s_rotation_ring_angle, s_ring_rotation_radius } from '../../ts/state/S_Stores';
+	import { s_thing_color, s_ancestry_focus, s_radial_geometry } from '../../ts/state/S_Stores';
+	import { s_ring_rotation_angle, s_ring_rotation_radius } from '../../ts/state/S_Stores';
 	import { signals, svgPaths, T_Ring, databases } from '../../ts/common/Global_Imports';
-	import { s_mouse_up_count, s_active_cluster_map } from '../../ts/state/S_Stores';
-	import { s_graphRect, s_scaled_mouse_location } from '../../ts/state/S_Stores';
+	import { s_count_mouse_up, s_active_cluster_map } from '../../ts/state/S_Stores';
+	import { s_graphRect, s_mouse_location_scaled } from '../../ts/state/S_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/basis/Identifiable';
 	import Paging_Arc from './Paging_Arc.svelte';
@@ -20,8 +20,8 @@
 	const svgPathFor_rotationRing = svgPaths.annulus(Point.square($s_ring_rotation_radius), middle_radius, ring_width, Point.square(ring_width));
 	const svgPathFor_resizingRing = svgPaths.annulus(Point.square(middle_radius), outer_radius, ring_width);
 	const viewBox = `${-ring_width}, ${-ring_width}, ${outer_diameter}, ${outer_diameter}`;
-	let color = $s_focus_ancestry?.thing?.color ?? k.thing_color_default;
-	let mouse_up_count = $s_mouse_up_count;
+	let color = $s_ancestry_focus?.thing?.color ?? k.thing_color_default;
+	let mouse_up_count = $s_count_mouse_up;
 	let cursor = k.cursor_default;
 	let rebuilds = 0;
 	let pagingArcs;
@@ -35,16 +35,16 @@
 	function isHit(): boolean { return w.mouse_distance_fromGraphCenter <= outer_radius; }
 
 	$: {
-		if (!!$s_focus_ancestry.thing && $s_focus_ancestry.thing.id == $s_thing_color?.split(k.generic_separator)[0]) {
-			color = $s_focus_ancestry?.thing?.color ?? k.thing_color_default;
+		if (!!$s_ancestry_focus.thing && $s_ancestry_focus.thing.id == $s_thing_color?.split(k.generic_separator)[0]) {
+			color = $s_ancestry_focus?.thing?.color ?? k.thing_color_default;
 			rebuilds += 1;
 		}
 	}
 
 	$: {
 		// mouse up ... end all (rotation, resizing, paging)
-		if (mouse_up_count != $s_mouse_up_count) {
-			mouse_up_count = $s_mouse_up_count;
+		if (mouse_up_count != $s_count_mouse_up) {
+			mouse_up_count = $s_count_mouse_up;
 			if (ringZone_forMouseLocation() == T_Ring.miss) {			// only respond if NOT isHit
 				reset();
 			}
@@ -125,7 +125,7 @@
 		// detect movement & adjust state //
 		////////////////////////////////////
 
-		const _ = $s_scaled_mouse_location;											// use store, to invoke this code
+		const _ = $s_mouse_location_scaled;											// use store, to invoke this code
 		const mouse_vector = w.mouse_vector_ofOffset_fromGraphCenter();
 		if (!!mouse_vector) {
 			const mouse_angle = mouse_vector.angle;
@@ -152,8 +152,8 @@
 				}
 			} else if (!!rotation_state.isActive) {								// rotate clusters
 				if (!signals.signal_isInFlight && !mouse_angle.isClocklyAlmost(rotation_state.active_angle, Angle.radians_from_degrees(4), Angle.full)) {		// detect >= 4° change
-					$s_rotation_ring_angle = mouse_angle.add_angle_normalized(-rotation_state.basis_angle);
-					debug.log_radial(` rotate ${$s_rotation_ring_angle.degrees_of(0)}`);
+					$s_ring_rotation_angle = mouse_angle.add_angle_normalized(-rotation_state.basis_angle);
+					debug.log_radial(` rotate ${$s_ring_rotation_angle.degrees_of(0)}`);
 					rotation_state.active_angle = mouse_angle;
 					detect_hovering();
 					cursor = g.ring_rotation_state.cursor;
@@ -195,7 +195,7 @@
 			} else if (mouse_state.isDown) {
 				// debug.log_radial(`DOWN`);
 				const mouse_wentDown_angle = w.mouse_angle_fromGraphCenter;
-				const rotation_angle = mouse_wentDown_angle.add_angle_normalized(-$s_rotation_ring_angle);
+				const rotation_angle = mouse_wentDown_angle.add_angle_normalized(-$s_ring_rotation_angle);
 				switch (ringZone_forMouseLocation()) {
 					case T_Ring.rotate:
 						debug.log_radial(` begin rotate  ${rotation_angle.degrees_of(0)}`);

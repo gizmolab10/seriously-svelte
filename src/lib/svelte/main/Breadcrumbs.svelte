@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { g, k, u, w, Size, Point, Thing, debug, ZIndex, signals } from '../../ts/common/Global_Imports';
-	import { s_hierarchy, s_focus_ancestry, s_grabbed_ancestries } from '../../ts/state/S_Stores';
+	import { s_hierarchy, s_ancestry_focus, s_ancestries_grabbed } from '../../ts/state/S_Stores';
 	import { svgPaths, Ancestry, databases, Direction } from '../../ts/common/Global_Imports';
-	import { s_graphRect, s_show_details, s_thing_color } from '../../ts/state/S_Stores';
+	import { s_graphRect, s_details_show, s_thing_color } from '../../ts/state/S_Stores';
 	import Breadcrumb_Button from '../mouse/Breadcrumb_Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import { onMount } from 'svelte';
@@ -25,7 +25,7 @@
 
 	$: {
 		const h = $s_hierarchy;
-		const needsUpdate = ($s_focus_ancestry?.title ?? k.empty) + $s_graphRect + ($s_grabbed_ancestries?.length ?? 0);
+		const needsUpdate = ($s_ancestry_focus?.title ?? k.empty) + $s_graphRect + ($s_ancestries_grabbed?.length ?? 0);
 		if (!ancestry || needsUpdate || things.length == 0) {
 			ancestry = h.ancestry_forBreadcrumbs;		// assure we have a ancestry
 			if (!!ancestry) {				

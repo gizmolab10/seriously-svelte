@@ -1,7 +1,6 @@
 import { k, Thing, Trait, T_Thing, Relationship, T_Predicate } from '../../common/Global_Imports';
 import type { Dictionary } from '../../../ts/common/Types';
-import { T_Database } from '../basis/Persistence_State';
-import { T_Persistence } from './DBCommon';
+import { T_Database, T_Persistence } from './DBCommon';
 import DBCommon from './DBCommon';
 
 export default class DBTest extends DBCommon {

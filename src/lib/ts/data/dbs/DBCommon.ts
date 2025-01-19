@@ -10,6 +10,26 @@ export enum T_Persistence {
 	none   = 'none',
 }
 
+export enum T_Database {
+	postgres = 'postgres',
+	airtable = 'airtable',
+	firebase = 'firebase',
+	plugin	 = 'plugin',
+	local	 = 'local',
+	test	 = 'test',
+}
+
+export enum T_Datum {
+	relationships = 'Relationships',
+	predicates	  = 'Predicates',
+	hierarchy	  = 'Hierarchy',	// includes parent contains and relateds
+	progeny		  = 'Progeny',		// only child contains
+	things		  = 'Things',
+	traits		  = 'Traits',
+	access		  = 'Access',
+	users		  = 'Users',
+}
+
 export default class DBCommon {
 	kind_persistence!: T_Persistence;
 	loadTime: string | null = null;

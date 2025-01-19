@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { signals, T_Info, T_Trait, preferences, T_Element, T_Preference } from '../../ts/common/Global_Imports';
 	import { g, k, ux, show, Rect, Size, Point, Thing, debug, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
-	import { s_focus_ancestry, s_grabbed_ancestries, s_thing_fontFamily } from '../../ts/state/S_Stores';
+	import { s_ancestry_focus, s_ancestries_grabbed, s_thing_fontFamily } from '../../ts/state/S_Stores';
 	import { s_hierarchy, s_thing_color, s_thing_title } from '../../ts/state/S_Stores';
 	import Identifiable from '../../ts/data/basis/Identifiable';
 	import type { Dictionary } from '../../ts/common/Types';
@@ -25,13 +25,13 @@
 	const traits_size = new Size(info_width - 58, k.default_buttonSize + 4);
 	const traits_rect = Rect.createCenterRect(traits_center, traits_size);
 	const element_state = ux.element_state_for(new Identifiable(id), T_Element.info, id);
-	let ancestry: Ancestry | null = $s_focus_ancestry;
+	let ancestry: Ancestry | null = $s_ancestry_focus;
 	let thing: Thing | null = ancestry?.thing ?? null;
 	let text_box_size = new Size(info_width - 4, 68);
 	let thingHID: Integer | null = thing?.hid;
 	let information: Array<Dictionary> = [];
 	let color = k.thing_color_default;
-	let grabs = $s_grabbed_ancestries;
+	let grabs = $s_ancestries_grabbed;
 	let thing_title = thing?.title;
 	let tops: Array<number> = [];
 	let rebuilds = 0;
@@ -72,7 +72,7 @@
 	});
 	
 	$: {
-		const _ = `${$s_grabbed_ancestries} ${$s_focus_ancestry} ${$s_thing_title}`;
+		const _ = `${$s_ancestries_grabbed} ${$s_ancestry_focus} ${$s_thing_title}`;
 		update_forKind();
 	}
 	
@@ -91,8 +91,8 @@
 	}
 
 	function hasGrabs(): boolean {
-		grabs = $s_grabbed_ancestries;
-		return !!grabs && (grabs.length > 1 || !$s_focus_ancestry.isGrabbed);
+		grabs = $s_ancestries_grabbed;
+		return !!grabs && (grabs.length > 1 || !$s_ancestry_focus.isGrabbed);
 	}
 
 	function selection_closure(types: Array<string>) {
@@ -113,9 +113,9 @@
 
 	function update_forKind() {
 		if (show.info_type == T_Info.focus || !hasGrabs()) {
-			ancestry = $s_focus_ancestry;
+			ancestry = $s_ancestry_focus;
 		} else {
-			grabs = $s_grabbed_ancestries;
+			grabs = $s_ancestries_grabbed;
 			if (!!grabs && grabs.length > 0) {
 				ancestry = grabs[0];
 			}

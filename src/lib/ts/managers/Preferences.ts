@@ -1,8 +1,8 @@
-import { s_paging_state, s_grabbed_ancestries, s_expanded_ancestries } from '../state/S_Stores';
+import { s_paging_state, s_ancestries_grabbed, s_ancestries_expanded } from '../state/S_Stores';
 import { s_hierarchy, s_tree_type, s_graph_type, s_detail_types } from '../state/S_Stores';
 import { T_Tree, T_Graph, T_Details, S_Paging } from '../common/Global_Imports';
-import { s_focus_ancestry, s_font_size, s_thing_fontFamily } from '../state/S_Stores';
-import { s_rotation_ring_angle, s_ring_rotation_radius } from '../state/S_Stores';
+import { s_ancestry_focus, s_font_size, s_thing_fontFamily } from '../state/S_Stores';
+import { s_ring_rotation_angle, s_ring_rotation_radius } from '../state/S_Stores';
 import { g, k, show, debug, Ancestry, databases } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
@@ -124,7 +124,7 @@ class Preferences {
 		s_detail_types.subscribe((value) => {
 			this.write_key(T_Preference.details_type, value);
 		});
-		s_rotation_ring_angle.subscribe((angle: number) => {
+		s_ring_rotation_angle.subscribe((angle: number) => {
 			this.write_key(T_Preference.ring_angle, angle);
 		});
 		s_paging_state.subscribe((paging_state: S_Paging) => {
@@ -141,7 +141,7 @@ class Preferences {
 			this.write_key(T_Preference.relationships, true);
 		}
 		s_font_size.set(this.read_key(T_Preference.font_size) ?? 14);
-		s_rotation_ring_angle.set(this.read_key(T_Preference.ring_angle) ?? 0);
+		s_ring_rotation_angle.set(this.read_key(T_Preference.ring_angle) ?? 0);
 		s_graph_type.set(this.read_key(T_Preference.graph_type) ?? T_Graph.tree);
 		s_tree_type.set(this.read_key(T_Preference.tree_type) ?? T_Tree.children);
 		s_thing_fontFamily.set(this.read_key(T_Preference.font) ?? 'Times New Roman');
@@ -172,16 +172,16 @@ class Preferences {
 		const erase = g.eraseDB;
 		const expanded = erase ? [] : this.ancestries_forKey(this.dbKey_for(T_Preference.expanded));
 		const grabbed = erase ? root : this.ancestries_forKey(this.dbKey_for(T_Preference.grabbed)) ?? root;
-		s_grabbed_ancestries.set(grabbed);
+		s_ancestries_grabbed.set(grabbed);
 		debug.log_persist(`^ GRABBED ${grabbed.map(a => a.title)}`);
-		s_expanded_ancestries.set(expanded);
+		s_ancestries_expanded.set(expanded);
 		debug.log_persist(`^ EXPANDED ${expanded.map(a => a.title)}`);
 		setTimeout(() => {
-			s_grabbed_ancestries.subscribe((g: Array<Ancestry>) => {
+			s_ancestries_grabbed.subscribe((g: Array<Ancestry>) => {
 				debug.log_persist(`  GRABBED ${g.map(a => a.title)}`);
 				this.writeDB_key(T_Preference.grabbed, !g ? null : g.map(a => a.id));		// ancestral paths
 			});
-			s_expanded_ancestries.subscribe((e: Array<Ancestry>) => {
+			s_ancestries_expanded.subscribe((e: Array<Ancestry>) => {
 				debug.log_persist(`  EXPANDED ${e.map(a => a.title)}`);
 				this.writeDB_key(T_Preference.expanded, !e ? null : e.map(a => a.id));		// ancestral paths
 			});
@@ -207,7 +207,7 @@ class Preferences {
 			}
 		}
 		ancestryToFocus.becomeFocus(true);
-		s_focus_ancestry.subscribe((ancestry: Ancestry) => {
+		s_ancestry_focus.subscribe((ancestry: Ancestry) => {
 			this.writeDB_key(T_Preference.focus, !ancestry ? null : ancestry.id);
 		});
 	}

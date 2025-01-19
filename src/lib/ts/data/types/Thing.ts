@@ -1,7 +1,7 @@
 import { k, u, Datum, debug, Trait, Ancestry, T_Thing, Predicate, Page_States, T_Debug } from '../../common/Global_Imports';
 import { T_Trait, databases, Relationship, T_Predicate, Seriously_Range } from '../../common/Global_Imports';
-import { s_hierarchy, s_thing_color, s_rebuild_count } from '../../state/S_Stores';
-import { s_focus_ancestry, s_expanded_ancestries } from '../../state/S_Stores';
+import { s_hierarchy, s_thing_color, s_count_rebuild } from '../../state/S_Stores';
+import { s_ancestry_focus, s_ancestries_expanded } from '../../state/S_Stores';
 import type { Dictionary } from '../../common/Types';
 import { get } from 'svelte/store';
 
@@ -43,7 +43,7 @@ export default class Thing extends Datum {
 	get isAcrossBulk():						 boolean { return this.idBase != get(s_hierarchy).db.idBase; }
 	get hasMultipleParents():				 boolean { return this.parentAncestries.length > 1; }
 	get hasParents():						 boolean { return this.hasParents_forKind(T_Predicate.contains); }
-	get isFocus():							 boolean { return (get(s_focus_ancestry).thing?.id ?? k.empty) == this.id; }
+	get isFocus():							 boolean { return (get(s_ancestry_focus).thing?.id ?? k.empty) == this.id; }
 	get isOrphaned():						 boolean { return !get(s_hierarchy).relationship_whereID_isChild(this.id) && this.type != T_Thing.root; }
 	get hasNoData():						 boolean { return !this.title && !this.color && !this.type; }
 	get hasRelated():						 boolean { return this.relatedRelationships.length > 0; }
@@ -66,7 +66,7 @@ export default class Thing extends Datum {
 
 	get thing_isBulk_expanded(): boolean {		// cross db ancestries needs special attention
 		if (this.isBulkAlias) {
-			const ancestries = get(s_expanded_ancestries);
+			const ancestries = get(s_ancestries_expanded);
 			for (const ancestry of ancestries) {
 				if (this.id == ancestry.thing?.id) {
 					return true;
@@ -109,8 +109,8 @@ export default class Thing extends Datum {
 	}
 
 	signal_color_change() {
-		const count = get(s_rebuild_count) + 1;
-		s_rebuild_count.set(count);
+		const count = get(s_count_rebuild) + 1;
+		s_count_rebuild.set(count);
 		s_thing_color.set(`${this.id}${k.generic_separator}${count}`);
 	}
 

@@ -1,7 +1,7 @@
 import { k, u, ux, w, Rect, Point, Angle, debug, T_Line, Arc_Map, T_Quadrant } from '../common/Global_Imports';
 import { Ancestry, Predicate, S_Paging, Widget_MapRect, S_Rotation } from '../common/Global_Imports';
-import { s_rotation_ring_angle, s_ring_rotation_radius } from '../state/S_Stores';
-import { s_graphRect, s_focus_ancestry } from '../state/S_Stores';
+import { s_ring_rotation_angle, s_ring_rotation_radius } from '../state/S_Stores';
+import { s_graphRect, s_ancestry_focus } from '../state/S_Stores';
 import { get } from 'svelte/store';
 
 //////////////////////////////////////////
@@ -20,7 +20,7 @@ import { get } from 'svelte/store';
 //////////////////////////////////////////
 
 export default class Cluster_Map {
-	focus_ancestry: Ancestry = get(s_focus_ancestry);
+	focus_ancestry: Ancestry = get(s_ancestry_focus);
 	widget_maps: Array<Widget_MapRect> = [];
 	ancestries: Array<Ancestry> = [];
 	color = k.thing_color_default;
@@ -176,7 +176,7 @@ export default class Cluster_Map {
 	update_fork_angle() {
 		// returns one of three angles: 1) children_angle 2) opposite+tweak 3) opposite-tweak
 		const tweak = 2 * Math.PI / 3;					// equilateral distribution
-		const children_angle = get(s_rotation_ring_angle);
+		const children_angle = get(s_ring_rotation_angle);
 		const raw = this.predicate.isBidirectional ?
 			children_angle + tweak :
 			this.toChildren ? children_angle :		// one directional, use global

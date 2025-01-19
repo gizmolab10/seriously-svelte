@@ -1,8 +1,6 @@
-import { T_Debug, Relationship, T_Create } from '../../common/Global_Imports';
-import { g, k, u, debug, Thing, Trait, T_Trait } from '../../common/Global_Imports';
-import { T_Datum } from '../basis/Persistent_Identifiable';
-import { T_Database } from '../basis/Persistence_State';
-import { T_Persistence } from './DBCommon';
+import { g, k, u, debug, Thing, Trait, Relationship } from '../../common/Global_Imports';
+import { T_Trait, T_Debug, T_Create } from '../../common/Global_Imports';
+import { T_Datum, T_Database, T_Persistence } from './DBCommon';
 import DBCommon from './DBCommon';
 import Airtable from 'airtable';
 

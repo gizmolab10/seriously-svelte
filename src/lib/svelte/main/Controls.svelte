@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { s_graph_type, s_tree_type, s_resize_count, s_device_isMobile } from '../../ts/state/S_Stores';
+	import { s_graph_type, s_tree_type, s_count_resize, s_device_isMobile } from '../../ts/state/S_Stores';
 	import { T_Control, preferences, S_Element, T_Preference } from '../../ts/common/Global_Imports';
-	import { s_show_details, s_id_popupView, s_thing_fontFamily } from '../../ts/state/S_Stores';
+	import { s_details_show, s_id_popupView, s_thing_fontFamily } from '../../ts/state/S_Stores';
 	import { g, k, u, ux, w, show, Point, ZIndex, signals } from '../../ts/common/Global_Imports';
 	import { svgPaths, T_Tree, T_Graph, T_Element } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/data/basis/Identifiable';
@@ -31,7 +31,7 @@
 	function togglePopupID(id) { $s_id_popupView = ($s_id_popupView == id) ? null : id; }
 
 	$: {
-		const _ = $s_resize_count;
+		const _ = $s_count_resize;
 		width = w.windowSize.width - 20;
 	}
 
@@ -61,7 +61,7 @@
 		} else if (mouse_state.isUp) {
 			switch (idControl) {
 				case T_Control.help: g.showHelp(); break;
-				case T_Control.details: $s_show_details = !$s_show_details; break;
+				case T_Control.details: $s_details_show = !$s_details_show; break;
 				case T_Control.bigger: width = w.zoomBy(k.zoom_in_ratio) - 20; break;	// mobile only
 				case T_Control.smaller: width = w.zoomBy(k.zoom_out_ratio) - 20; break;	//   "     "
 				default: togglePopupID(idControl); break;

@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { s_user_graph_center, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
 	import { g, u, w, Rect, Size, Point, debug, ZIndex } from '../../ts/common/Global_Imports';
-	import { s_graphRect, s_scaled_mouse_location } from '../../ts/state/S_Stores';
+	import { s_graphRect, s_mouse_location_scaled } from '../../ts/state/S_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Box from './Box.svelte';
 	export let size = 16;
@@ -15,7 +15,7 @@
 	}
 
 	$: {
-		const point = $s_scaled_mouse_location;
+		const point = $s_mouse_location_scaled;
 		if (!!point) {
 			const square = Size.square(size);
 			const origin = point.offsetBy(square.asPoint.negatedInHalf);
