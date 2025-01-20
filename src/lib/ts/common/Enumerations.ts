@@ -43,12 +43,6 @@ export enum T_Details {	// do not change the order
 	info,
 }
 
-export const all_detail_types = [
-	T_Details[T_Details.storage],
-	T_Details[T_Details.tools],
-	T_Details[T_Details.recents],
-	T_Details[T_Details.info]];
-
 export enum T_Startup {
 	start = 'start',
 	fetch = 'fetch',
@@ -86,18 +80,6 @@ export enum T_Predicate {
 	supports	= 'supports',
 }
 
-export enum T_Trait {
-	consequence = 'consequence',
-	hyperlink	= 'hyperlink',
-	generic		= 'generic',
-	money		= 'money',
-	phone		= 'phone',
-	quest		= 'quest',
-	note		= 'note',
-	date		= 'date',
-	sum			= 'sum',
-}
-
 export enum T_Control {
 	details	 = 'show details view',
 	builds	 = 'show build notes',
@@ -115,6 +97,18 @@ export enum T_Browser  {
 	safari	 = 'safari',
 	opera	 = 'opera',
 	orion	 = 'orion',
+}
+
+export enum T_Trait {
+	consequence = 'consequence',
+	hyperlink	= 'hyperlink',
+	generic		= 'generic',
+	money		= 'money',
+	phone		= 'phone',
+	quest		= 'quest',
+	note		= 'note',
+	date		= 'date',
+	sum			= 'sum',
 }
 
 export enum T_Element {

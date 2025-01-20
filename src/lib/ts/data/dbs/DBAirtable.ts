@@ -1,5 +1,5 @@
+import { T_Thing, T_Trait, T_Debug, T_Create, T_Predicate } from '../../common/Global_Imports';
 import { g, k, u, debug, Thing, Trait, Relationship } from '../../common/Global_Imports';
-import { T_Trait, T_Debug, T_Create } from '../../common/Global_Imports';
 import { T_Datum, T_Database, T_Persistence } from './DBCommon';
 import DBCommon from './DBCommon';
 import Airtable from 'airtable';
@@ -76,7 +76,7 @@ export default class DBAirtable extends DBCommon {
 				for (const remoteThing of remoteThings) {
 					const id = remoteThing.id;
 					const fields = remoteThing.fields;
-					this.hierarchy.thing_remember_runtimeCreate(k.empty, id, fields.title as string, fields.color as string, (fields.type as string) ?? fields.trait as string, true, !fields.type);
+					this.hierarchy.thing_remember_runtimeCreate(k.empty, id, fields.title as string, fields.color as string, (fields.type as T_Thing) ?? fields.trait as string, true, !fields.type);
 				}
 			})
 		} catch (error) {
@@ -176,7 +176,7 @@ export default class DBAirtable extends DBCommon {
 				const order = record.fields.order as number;
 				const parents = record.fields.parent as (Array<string>);
 				const children = record.fields.child as (Array<string>);
-				const kindPredicate = record.fields.kindPredicate as string;
+				const kindPredicate = record.fields.kindPredicate as T_Predicate;
 				this.hierarchy.relationship_remember_runtimeCreateUnique(k.empty, id, kindPredicate, parents[0], children[0], order, T_Create.isFromPersistent);
 			}
 		} catch (error) {
@@ -223,7 +223,7 @@ export default class DBAirtable extends DBCommon {
 			for (const record of records) {
 				const fields = record.fields;
 				const id = record.id as string; // do not yet need this
-				const kind = fields.kind as string;
+				const kind = fields.kind as T_Predicate;
 				const isBidirectional = fields.isBidirectional as boolean ?? false;
 				this.hierarchy.predicate_remember_runtimeCreate(id, kind, isBidirectional);
 			}

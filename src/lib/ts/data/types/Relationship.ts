@@ -1,4 +1,4 @@
-import { Thing, debug, T_Debug, databases, Predicate } from '../../common/Global_Imports';
+import { Thing, debug, T_Debug, databases, Predicate, T_Predicate } from '../../common/Global_Imports';
 import { s_hierarchy } from '../../state/S_Stores';
 import type { Integer } from '../../common/Types';
 import { get } from 'svelte/store';
@@ -6,14 +6,14 @@ import Datum from '../basis/Datum';
 import Airtable from 'airtable';
 
 export default class Relationship extends Datum {
-	kindPredicate: string;
+	kindPredicate: T_Predicate;
 	hidParent: Integer;
 	hidChild: Integer;
 	idParent: string;
 	idChild: string;
 	order: number; 
 
-	constructor(idBase: string, id: string, kindPredicate: string, idParent: string, idChild: string, order = 0, already_persisted: boolean = false) {
+	constructor(idBase: string, id: string, kindPredicate: T_Predicate, idParent: string, idChild: string, order = 0, already_persisted: boolean = false) {
 		super(databases.db.type_db, idBase, id, already_persisted);
 		this.kindPredicate = kindPredicate;
 		this.hidParent = idParent.hash();

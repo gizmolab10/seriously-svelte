@@ -22,12 +22,12 @@ export default class DBTest extends DBCommon {
 		const kindC = T_Predicate.contains;
 		const kindR = T_Predicate.isRelated;
 		h.predicate_defaults_remember_runtimeCreate();
-		h.thing_remember_runtimeCreateUnique(this.idBase, idTa, 'Active', 'red', 'a');
-		h.thing_remember_runtimeCreateUnique(this.idBase, idTb, 'Maintain', 'blue', 'b');
-		h.thing_remember_runtimeCreateUnique(this.idBase, idTc, 'Curiosity', '#d96726', 'c');
-		h.thing_remember_runtimeCreateUnique(this.idBase, idTd, 'Autonomy', 'purple', 'd');
-		h.thing_remember_runtimeCreateUnique(this.idBase, idTe, 'Aesthetics', 'mediumvioletred', 'e');
-		h.thing_remember_runtimeCreateUnique(this.idBase, idTf, 'Connections', 'coral', 'f');
+		h.thing_remember_runtimeCreateUnique(this.idBase, idTa, 'Active', 'red');
+		h.thing_remember_runtimeCreateUnique(this.idBase, idTb, 'Maintain', 'blue');
+		h.thing_remember_runtimeCreateUnique(this.idBase, idTc, 'Curiosity', '#d96726');
+		h.thing_remember_runtimeCreateUnique(this.idBase, idTd, 'Autonomy', 'purple');
+		h.thing_remember_runtimeCreateUnique(this.idBase, idTe, 'Aesthetics', 'mediumvioletred');
+		h.thing_remember_runtimeCreateUnique(this.idBase, idTf, 'Connections', 'coral');
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTr, 'Life', 'limegreen', T_Thing.root);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cra', kindC, idTr, idTa, 0);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Crb', kindC, idTr, idTb, 1);
@@ -54,12 +54,11 @@ export default class DBTest extends DBCommon {
 		this.makeMore(5, 'G', kindR, idTb, false);	// related to B
 	}
 
-	makeMore(count: number, first: string, kindPredicate: string, idOther: string, asChild: boolean) {
+	makeMore(count: number, first: string, kindPredicate: T_Predicate, idOther: string, asChild: boolean) {
 		for (let i = 0; i < count; i++) {
 			const h = this.hierarchy;
 			const code = first.charCodeAt(0) + i;
 			const idUpper = String.fromCharCode(code);
-			const type = String.fromCharCode(code + 32);
 			const predicate = h.predicate_forKind(kindPredicate);
 			const isBidirectional = predicate?.isBidirectional ?? false;
 			const idThing = asChild ? idOther + idUpper : idUpper + idOther;
@@ -68,7 +67,7 @@ export default class DBTest extends DBCommon {
 			const idRelationahip = prefix + idThing;
 			const idChild = asChild ? idThing : idOther;
 			const idParent = asChild ? idOther : idThing;
-			h.thing_remember_runtimeCreateUnique(this.idBase, idThing, title, 'red', type);
+			h.thing_remember_runtimeCreateUnique(this.idBase, idThing, title, 'red');
 			h.relationship_remember_runtimeCreateUnique(this.idBase, idRelationahip, kindPredicate, idParent, idChild, 1);
 			if (asChild || isBidirectional) {	// needs to be child of root
 				const idParentRelationship = 'CR' + idUpper;

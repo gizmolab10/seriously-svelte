@@ -234,10 +234,10 @@ export default class Ancestry extends Identifiable {
 
 	rect_ofWrapper(wrapper: Svelte_Wrapper | null): Rect | null { return wrapper?.boundingRect ?? null; }
 	matchesStore(store: Writable<Ancestry | null>): boolean { return get(store)?.ancestry_hasEqualID(this) ?? false; }
-	includesPredicateKind(kindPredicate: string): boolean { return this.thing?.hasParents_forKind(kindPredicate) ?? false; }
+	includesT_Predicate(kindPredicate: string): boolean { return this.thing?.hasParents_forKind(kindPredicate) ?? false; }
 	includedInStore_ofAncestries(store: Writable<Array<Ancestry>>): boolean { return this.includedInAncestries(get(store)); }
 	sharesAnID(ancestry: Ancestry | null): boolean { return !ancestry ? false : this.ids.some(id => ancestry.ids.includes(id)); }
-	showsClusterFor(predicate: Predicate): boolean { return this.includesPredicateKind(predicate.kind) && this.hasThings(predicate); }
+	showsClusterFor(predicate: Predicate): boolean { return this.includesT_Predicate(predicate.kind) && this.hasThings(predicate); }
 	relationshipAt(back: number = 1): Relationship | null { return this.hierarchy.relationship_forHID(this.idAt(back).hash()) ?? null; }
 	ancestry_hasEqualID(ancestry: Ancestry | null | undefined): boolean { return !!ancestry && this.hid == ancestry.hid&& this.type_db == ancestry.type_db; }
 	
@@ -330,7 +330,7 @@ export default class Ancestry extends Identifiable {
 	extend_withChild(child: Thing | null): Ancestry | null {
 		const idParent = this.thing?.idBridging;
 		if (!!child && !!idParent) {
-			const relationship = this.hierarchy.relationship_forPredicateKind_parent_child(T_Predicate.contains, idParent, child.id);
+			const relationship = this.hierarchy.relationship_forT_Predicate_parent_child(T_Predicate.contains, idParent, child.id);
 			if (!!relationship) {
 				return this.uniquelyAppendID(relationship.id);
 			}

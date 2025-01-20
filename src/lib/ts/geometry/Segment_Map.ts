@@ -36,7 +36,7 @@ export default class Segment_Map {
 		this.setup_path();
 	}
 
-	static grab_segment_map(name: string, title: string, font_size: string, isSelected: boolean, index: number, max_index: number, left: number, height: number) : Segment_Map {
+	static grab_segment_map(name: string, title: string, font_size: string, isSelected: boolean, index: Integer, max_index: Integer, left: number, height: number) : Segment_Map {
 		let map_name = `${title}-${name}-at-${index}`;
 		let map = ux.segment_map_forName(map_name);
 		if (!!map) {

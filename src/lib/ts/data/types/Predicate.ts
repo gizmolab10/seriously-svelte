@@ -6,9 +6,9 @@ import { get } from 'svelte/store';
 export default class Predicate extends Persistent_Identifiable {
 	isBidirectional: boolean;
 	stateIndex: number;
-	kind: string;
+	kind: T_Predicate;
 
-	constructor(id: string, kind: string, isBidirectional: boolean, already_persisted: boolean = false) {
+	constructor(id: string, kind: T_Predicate, isBidirectional: boolean, already_persisted: boolean = false) {
 		super(databases.db.type_db, id, already_persisted);
 		this.stateIndex		 = Predicate.stateIndex_forKind(kind);		// index in page states inward and outward arrays
 		this.isBidirectional = isBidirectional;

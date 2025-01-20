@@ -4,11 +4,11 @@
     "target": "es6",
     "jsx": "preserve",
     "outDir": "./dist",
-    "module": "esnext",
+    "module": "CommonJS",
     "esModuleInterop": true,
     "strictNullChecks": true,
     "moduleResolution": "node",
   },
-  "include": ["src/lib/**/*.ts", "src/lib/**/*.tsx"],
+  "include": ["src/lib/**/*"],
   "exclude": ["node_modules", "aside"],
 }

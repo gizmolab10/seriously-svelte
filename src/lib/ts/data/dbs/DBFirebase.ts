@@ -1,8 +1,8 @@
 import { g, k, u, Thing, Trait, debug, signals, Predicate, preferences, Relationship } from '../../common/Global_Imports';
+import { T_Thing, T_Trait, T_Debug, T_Create, T_Predicate, T_Preference } from '../../common/Global_Imports';
+import { doc, addDoc, setDoc, getDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
 import { QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
 import { onSnapshot, deleteField, getFirestore, DocumentData, DocumentChange } from 'firebase/firestore';
-import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
-import { T_Thing, T_Trait, T_Debug, T_Create, T_Preference } from '../../common/Global_Imports';
 import { T_Datum, T_Database, T_Persistence } from './DBCommon';
 import Identifiable from '../basis/Identifiable';
 import { initializeApp } from 'firebase/app';
@@ -203,8 +203,8 @@ export default class DBFirebase extends DBCommon {
 
 			try {
 				switch (datum_type) {
-					case T_Datum.things:		  this.thing_handle_docChanges(idBase, id, change, data); break;
-					case T_Datum.traits:		  this.trait_handle_docChanges(idBase, id, change, data); break;
+					case T_Datum.things:		this.thing_handle_docChanges(idBase, id, change, data); break;
+					case T_Datum.traits:		this.trait_handle_docChanges(idBase, id, change, data); break;
 					case T_Datum.relationships: this.relationship_handle_docChanges(idBase, id, change, data); break;
 				}
 			} catch (error) {
@@ -232,9 +232,9 @@ export default class DBFirebase extends DBCommon {
 		if (DBFirebase.data_isValidOfKind(datum_type, data)) {
 			const h = this.hierarchy;
 			switch (datum_type) {
-				case T_Datum.predicates:	  h.predicate_remember_runtimeCreate(id, data.kind, data.isBidirectional); break;
-				case T_Datum.traits:		  h.trait_remember_runtimeCreate(idBase, id, data.ownerID, data.type, data.text, true); break;
-				case T_Datum.things:		  h.thing_remember_runtimeCreate(idBase, id, data.title, data.color, data.type ?? data.trait, true, !data.type); break;
+				case T_Datum.predicates:	h.predicate_remember_runtimeCreate(id, data.kind, data.isBidirectional); break;
+				case T_Datum.traits:		h.trait_remember_runtimeCreate(idBase, id, data.ownerID, data.type, data.text, true); break;
+				case T_Datum.things:		h.thing_remember_runtimeCreate(idBase, id, data.title, data.color, data.type ?? data.trait, true, !data.type); break;
 				case T_Datum.relationships: h.relationship_remember_runtimeCreateUnique(idBase, id, data.predicate.id, data.parent.id, data.child.id, data.order, T_Create.isFromPersistent); break;
 			}
 		}
@@ -533,7 +533,7 @@ export default class DBFirebase extends DBCommon {
 			relationship.idChild = remote.child.id;
 			relationship.idParent = remote.parent.id;
 			relationship.persistence.already_persisted = true;
-			relationship.kindPredicate = remote.predicate.id;
+			relationship.kindPredicate = remote.kindPredicate;
 			relationship.order_setTo_persistentMaybe(remote.order + k.halfIncrement);
 		}
 		return changed;
@@ -572,7 +572,7 @@ export default class DBFirebase extends DBCommon {
 					if (!!relationship) {
 						return;
 					}
-					relationship = h.relationship_remember_runtimeCreateUnique(idBase, id, remoteRelationship.predicate.id, remoteRelationship.parent.id, remoteRelationship.child.id, remoteRelationship.order, T_Create.isFromPersistent);
+					relationship = h.relationship_remember_runtimeCreateUnique(idBase, id, remoteRelationship.kindPredicate, remoteRelationship.parent.id, remoteRelationship.child.id, remoteRelationship.order, T_Create.isFromPersistent);
 					break;
 				default:
 					if (!relationship) {
@@ -604,13 +604,13 @@ export default class DBFirebase extends DBCommon {
 	static data_isValidOfKind(datum_type: T_Datum, data: DocumentData) {
 		switch (datum_type) {
 			case T_Datum.things:		
-				const thing = data as Thing;	
+				const thing = data as PersistentThing;	
 				if (thing.hasNoData) {
 					return false;
 				}
 				break;
 			case T_Datum.traits:		
-				const trait = data as Trait;	
+				const trait = data as PersistentTrait;	
 				if (trait.hasNoData) {
 					return false;
 				}
@@ -695,7 +695,7 @@ class SnapshotDeferal {
 class PersistentThing {
 	title: string;
 	color: string;
-	type: string;
+	type: T_Thing;
 
 	constructor(data: DocumentData) {
 		const remote = data as PersistentThing;
@@ -703,6 +703,8 @@ class PersistentThing {
 		this.type	 = remote.type;
 		this.color	 = remote.color;
 	}
+
+	get hasNoData(): boolean { return !this.title && !this.color && !this.type; }
 
 	get virginTitle(): string {
 		const title = this.title;
@@ -732,6 +734,8 @@ class PersistentTrait {
 		this.type	 = remote.type;
 		this.text	 = remote.text;
 	}
+	
+	get hasNoData(): boolean { return !this.ownerID && !this.type && !this.type; }
 
 	isEqualTo(trait: Trait | null) {
 		return !!trait &&
@@ -744,7 +748,7 @@ class PersistentTrait {
 class PersistentPredicate {
 	isBidirectional: boolean;
 	stateIndex: number;
-	kind: string;
+	kind: T_Predicate;
 
 	constructor(data: DocumentData) {
 		const remote		 = data as PersistentPredicate;
@@ -761,14 +765,12 @@ class PersistentPredicate {
 	}
 }
 
-interface PersistentRelationship {
-	order: number;
-	child: DocumentReference<Thing, DocumentData>;
-	parent: DocumentReference<Thing, DocumentData>;
-	predicate: DocumentReference<Predicate, DocumentData>;
-}
-
 class PersistentRelationship implements PersistentRelationship {
+	predicate!: DocumentReference<Predicate, DocumentData>;
+	parent!: DocumentReference<Thing, DocumentData>;
+	child!: DocumentReference<Thing, DocumentData>;
+	kindPredicate!: T_Predicate;
+	order: number;
 
 	constructor(data: DocumentData | Relationship) {
 		const things = dbFirebase.bulk_for(dbFirebase.idBase)?.thingsCollection;
@@ -778,6 +780,7 @@ class PersistentRelationship implements PersistentRelationship {
 			try {
 				if (data instanceof Relationship) {
 					if (data.isValid) {
+						this.kindPredicate = data.kindPredicate;
 						this.child = doc(things, data.idChild) as DocumentReference<Thing>;
 						this.parent = doc(things, data.idParent) as DocumentReference<Thing>;
 						this.predicate = doc(predicates, data.kindPredicate) as DocumentReference<Predicate>;
@@ -785,6 +788,7 @@ class PersistentRelationship implements PersistentRelationship {
 				} else {
 					const remote = data as PersistentRelationship;
 					if (DBFirebase.data_isValidOfKind(T_Datum.relationships, data)) {
+						this.kindPredicate = data.kindPredicate;
 						this.child = doc(things, remote.child.id) as DocumentReference<Thing>;
 						this.parent = doc(things, remote.parent.id) as DocumentReference<Thing>;
 						this.predicate = doc(predicates, remote.predicate.id) as DocumentReference<Predicate>;
@@ -796,9 +800,9 @@ class PersistentRelationship implements PersistentRelationship {
 		}
 	}
 
-	isEqualTo(relationship: Relationship | null) {
+	async isEqualTo(relationship: Relationship | null) {
 		return !!relationship &&
-		relationship.kindPredicate == this.predicate.kind &&
+		relationship.kindPredicate == await this.kindPredicate &&
 		relationship.idParent == this.parent.id &&
 		relationship.idChild == this.child.id &&
 		relationship.order == this.order;

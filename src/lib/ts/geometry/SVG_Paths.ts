@@ -77,7 +77,7 @@ export default class SVG_Paths {
 		return '';
 	}
 
-	arc_partial(center: Point, radius: number, largeArcFlag: boolean, sweepFlag: boolean, endAngle: number): string {
+	arc_partial(center: Point, radius: number, largeArcFlag: number, sweepFlag: number, endAngle: number): string {
 		const end = center.offsetBy(Point.fromPolar(radius, endAngle));
 		return `\nA ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} \n${end.x} ${end.y}`;
 	}

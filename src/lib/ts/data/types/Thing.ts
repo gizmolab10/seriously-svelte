@@ -1,5 +1,6 @@
-import { k, u, Datum, debug, Trait, Ancestry, T_Thing, Predicate, Page_States, T_Debug } from '../../common/Global_Imports';
-import { T_Trait, databases, Relationship, T_Predicate, Seriously_Range } from '../../common/Global_Imports';
+import { k, u, Datum, Trait, Ancestry, Predicate, Relationship } from '../../common/Global_Imports';
+import { debug, databases, Page_States, Seriously_Range } from '../../common/Global_Imports';
+import { T_Thing, T_Trait, T_Debug, T_Predicate } from '../../common/Global_Imports';
 import { s_hierarchy, s_thing_color, s_count_rebuild } from '../../state/S_Stores';
 import { s_ancestry_focus, s_ancestries_expanded } from '../../state/S_Stores';
 import type { Dictionary } from '../../common/Types';
@@ -15,9 +16,9 @@ export default class Thing extends Datum {
 	isGrabbed = false;
 	title: string;
 	color: string;
-	type: string;
+	type: T_Thing;
 
-	constructor(idBase: string, id: string, title = k.title_default, color = k.thing_color_default, type = k.empty, already_persisted: boolean = false) {
+	constructor(idBase: string, id: string, title = k.title_default, color = k.thing_color_default, type = T_Thing.generic, already_persisted: boolean = false) {
 		super(databases.db.type_db, idBase, id, already_persisted);
 		this.selectionRange = new Seriously_Range(0, title.length);
 		this.page_states = new Page_States(this.id);
@@ -45,7 +46,6 @@ export default class Thing extends Datum {
 	get hasParents():						 boolean { return this.hasParents_forKind(T_Predicate.contains); }
 	get isFocus():							 boolean { return (get(s_ancestry_focus).thing?.id ?? k.empty) == this.id; }
 	get isOrphaned():						 boolean { return !get(s_hierarchy).relationship_whereID_isChild(this.id) && this.type != T_Thing.root; }
-	get hasNoData():						 boolean { return !this.title && !this.color && !this.type; }
 	get hasRelated():						 boolean { return this.relatedRelationships.length > 0; }
 
 	get ancestries(): Array<Ancestry> {

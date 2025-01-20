@@ -1,6 +1,6 @@
 import { T_Tool, T_Info, T_Graph, T_Thing, T_Trait, T_Create, T_Alteration, T_Control, T_Predicate } from '../common/Global_Imports';
+import { s_ancestries_grabbed, s_title_edit_state, s_storage_update_trigger, s_ancestry_showing_tools } from '../state/S_Stores';
 import { g, k, u, show, User, Thing, Trait, Grabs, debug, files, signals, Access, Ancestry } from '../common/Global_Imports';
-import { s_storage_update_trigger, s_ancestries_grabbed, s_title_edit_state, s_ancestry_showing_tools } from '../state/S_Stores';
 import { preferences, Predicate, Relationship, S_Mouse, S_Alteration } from '../common/Global_Imports';
 import { s_graph_type, s_id_popupView, s_ancestry_focus, s_alteration_mode } from '../state/S_Stores';
 import type { Integer, Dictionary } from '../common/Types';
@@ -241,7 +241,7 @@ export class Hierarchy {
 		this.thing_remember(thing);
 	}
 
-	thing_remember_runtimeCreateUnique(idBase: string, id: string, title: string, color: string, type: string,
+	thing_remember_runtimeCreateUnique(idBase: string, id: string, title: string, color: string, type: T_Thing = T_Thing.generic,
 		already_persisted: boolean = false): Thing {
 		let thing = this.thing_forHID(id?.hash() ?? null);
 		if (!thing) {
@@ -250,7 +250,7 @@ export class Hierarchy {
 		return thing;
 	}
 
-	thing_remember_runtimeCreate(idBase: string, id: string, title: string, color: string, type: string,
+	thing_remember_runtimeCreate(idBase: string, id: string, title: string, color: string, type: T_Thing = T_Thing.generic,
 		already_persisted: boolean = false, needs_upgrade: boolean = false): Thing {
 		const thing = this.thing_runtimeCreate(idBase, id, title, color, type, already_persisted);
 		this.thing_remember(thing);
@@ -264,7 +264,7 @@ export class Hierarchy {
 		const newThing = new Thing(idBase, Identifiable.newID(), parent.title, parent.color, parent.type);
 		const prohibitedTraits: Array<string> = [T_Thing.roots, T_Thing.root, T_Thing.bulk];
 		if (prohibitedTraits.includes(parent.type)) {
-			newThing.type = k.empty;
+			newThing.type = T_Thing.generic;
 		}
 		this.thing_remember(newThing);
 		return newThing;
@@ -298,7 +298,7 @@ export class Hierarchy {
 		const thing = ancestry.thing;
 		if (!!thing && parent && parentAncestry) {
 			const order = ancestry.order + (below ? k.halfIncrement : -k.halfIncrement);
-			const child = this.thing_runtimeCreate(thing.idBase, Identifiable.newID(), k.title_line, parent.color, k.empty);
+			const child = this.thing_runtimeCreate(thing.idBase, Identifiable.newID(), k.title_line, parent.color, T_Thing.generic);
 			await this.ancestry_edit_persistentAddAsChild(parentAncestry, child, order, false);
 		}
 	}
@@ -331,7 +331,7 @@ export class Hierarchy {
 		}
 	}
 
-	thing_runtimeCreate(idBase: string, id: string, title: string, color: string, type: string,
+	thing_runtimeCreate(idBase: string, id: string, title: string, color: string, type: T_Thing,
 		already_persisted: boolean = false): Thing {
 		let thing: Thing | null = null;
 		if (id && type == T_Thing.root && idBase != this.db.idBase) {			// other bulks have their own root & id
@@ -653,7 +653,7 @@ export class Hierarchy {
 		}
 	}
 
-	relationship_forPredicateKind_parent_child(kindPredicate: string, idParent: string, idChild: string): Relationship | null {
+	relationship_forT_Predicate_parent_child(kindPredicate: string, idParent: string, idChild: string): Relationship | null {
 		const matches = this.relationships_forPredicateThingIsChild(kindPredicate, idParent, false);
 		if (Array.isArray(matches)) {
 			for (const relationship of matches) {
@@ -665,9 +665,9 @@ export class Hierarchy {
 		return null;
 	}
 
-	async relationship_remember_persistentCreateUnique(idBase: string, idRelationship: string, kindPredicate: string, idParent: string, idChild: string,
+	async relationship_remember_persistentCreateUnique(idBase: string, idRelationship: string, kindPredicate: T_Predicate, idParent: string, idChild: string,
 		order: number, creationOptions: T_Create = T_Create.isFromPersistent): Promise<any> {
-		let relationship = this.relationship_forPredicateKind_parent_child(kindPredicate, idParent, idChild);
+		let relationship = this.relationship_forT_Predicate_parent_child(kindPredicate, idParent, idChild);
 		if (!!relationship) {
 			relationship.order_setTo_persistentMaybe(order, true);
 		} else {
@@ -692,7 +692,7 @@ export class Hierarchy {
 		}
 	}
 
-	async relationship_remember_persistent_addChild_toAncestry(child: Thing | null, parentAncestry: Ancestry, kindPredicate: string = T_Predicate.contains): Promise<any> {
+	async relationship_remember_persistent_addChild_toAncestry(child: Thing | null, parentAncestry: Ancestry, kindPredicate: T_Predicate = T_Predicate.contains): Promise<any> {
 		const parent = parentAncestry.thing;
 		if (!!child && !!parent && !child.isBulkAlias) {
 			const changingBulk = parent.isBulkAlias || child.idBase != this.db.idBase;
@@ -707,10 +707,10 @@ export class Hierarchy {
 		}
 	}
 
-	async relationship_forget_persistentDelete(ancestry: Ancestry, otherAncestry: Ancestry, kindPredicate: string) {
+	async relationship_forget_persistentDelete(ancestry: Ancestry, otherAncestry: Ancestry, kindPredicate: T_Predicate) {
 		const thing = ancestry.thing;
 		const parentAncestry = ancestry.parentAncestry;
-		const relationship = this.relationship_forPredicateKind_parent_child(kindPredicate, otherAncestry.idThing, ancestry.idThing);
+		const relationship = this.relationship_forT_Predicate_parent_child(kindPredicate, otherAncestry.idThing, ancestry.idThing);
 		if (!!parentAncestry && !!relationship && (thing?.hasParents ?? false)) {
 			this.relationship_forget(relationship);
 			if (otherAncestry.hasChildRelationships) {
@@ -722,10 +722,10 @@ export class Hierarchy {
 		}
 	}
 
-	relationship_remember_runtimeCreateUnique(idBase: string, id: string, kindPredicate: string, idParent: string, idChild: string,
+	relationship_remember_runtimeCreateUnique(idBase: string, id: string, kindPredicate: T_Predicate, idParent: string, idChild: string,
 		order: number, creationOptions: T_Create = T_Create.none): Relationship {
-		let reversed = this.relationship_forPredicateKind_parent_child(kindPredicate, idChild, idParent);
-		let relationship = this.relationship_forPredicateKind_parent_child(kindPredicate, idParent, idChild);
+		let reversed = this.relationship_forT_Predicate_parent_child(kindPredicate, idChild, idParent);
+		let relationship = this.relationship_forT_Predicate_parent_child(kindPredicate, idParent, idChild);
 		const isBidirectional = this.predicate_forKind(kindPredicate)?.isBidirectional ?? false;
 		const already_persisted = creationOptions == T_Create.isFromPersistent;
 		if (!relationship) {
@@ -1125,7 +1125,7 @@ export class Hierarchy {
 		}
 	}
 
-	predicate_remember_runtimeCreateUnique(id: string, kind: string, isBidirectional: boolean, already_persisted: boolean = true) {
+	predicate_remember_runtimeCreateUnique(id: string, kind: T_Predicate, isBidirectional: boolean, already_persisted: boolean = true) {
 		let predicate = this.predicate_forKind(kind);
 		if (!predicate) {
 			predicate = this.predicate_remember_runtimeCreate(id, kind, isBidirectional, already_persisted);
@@ -1133,7 +1133,7 @@ export class Hierarchy {
 		return predicate;
 	}
 
-	predicate_remember_runtimeCreate(id: string, kind: string, isBidirectional: boolean, already_persisted: boolean = true) {
+	predicate_remember_runtimeCreate(id: string, kind: T_Predicate, isBidirectional: boolean, already_persisted: boolean = true) {
 		let predicate = new Predicate(id, kind, isBidirectional, already_persisted);
 		this.predicate_remember(predicate);
 		return predicate;

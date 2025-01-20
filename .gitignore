@@ -16,6 +16,7 @@ esbuild
 *.local
 package
 dist
+docs
 
 # Editor directories and files
 !.vscode/extensions.json

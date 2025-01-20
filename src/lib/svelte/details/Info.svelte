@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { signals, T_Info, T_Trait, preferences, T_Element, T_Preference } from '../../ts/common/Global_Imports';
 	import { g, k, ux, show, Rect, Size, Point, Thing, debug, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
+	import { signals, T_Info, T_Trait, preferences, T_Element, T_Preference } from '../../ts/common/Global_Imports';
 	import { s_ancestry_focus, s_ancestries_grabbed, s_thing_fontFamily } from '../../ts/state/S_Stores';
 	import { s_hierarchy, s_thing_color, s_thing_title } from '../../ts/state/S_Stores';
 	import Identifiable from '../../ts/data/basis/Identifiable';
@@ -18,7 +18,6 @@
 	const font_ratio = 0.8;
 	const text_top = top + 52;
 	const font_size = `${font_ratio}em`;
-	const color_origin = new Point(67, 122);
 	const info_width = k.width_details - 30;
 	const traits_width = k.width_details - (margin * 2);
 	const traits_center = new Point(122, text_top - 20);
@@ -30,8 +29,9 @@
 	let text_box_size = new Size(info_width - 4, 68);
 	let thingHID: Integer | null = thing?.hid;
 	let information: Array<Dictionary> = [];
-	let color = k.thing_color_default;
+	let color_origin = new Point(67, 125);
 	let grabs = $s_ancestries_grabbed;
+	let color = k.thing_color_default;
 	let thing_title = thing?.title;
 	let tops: Array<number> = [];
 	let rebuilds = 0;
@@ -50,11 +50,11 @@
 
 	function heightAt(index: number) {
 		switch (index) {
-			case TI.segments:	  return 21;
+			case TI.segments:	  return 23;
 			case TI.before_title: return  3;
 			case TI.title:		  return 17;
 			case TI.after_title:  return  3;
-			case TI.table:		  return 10;
+			case TI.table:		  return 79;
 			case TI.traits:		  return  2;
 			case TI.consequence:  return  2;
 			case TI.quest:		  return  2;
@@ -105,10 +105,11 @@
 	function setup_tops() {
 		let top = 0;
 		tops = [];
-		for (let i = 0; i < TI.quest; i++) {
+		for (let i = 0; i <= TI.quest; i++) {
 			tops.push(top);
 			top += heightAt(i);
 		}
+		color_origin = new Point(67, tops[TI.traits]);
 	}
 
 	function update_forKind() {

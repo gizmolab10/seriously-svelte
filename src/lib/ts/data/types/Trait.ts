@@ -16,7 +16,6 @@ export default class Trait extends Datum {
 	}
 
 	get owner():	   Thing | null { return get(s_hierarchy).thing_forHID(this.ownerID.hash()); }
-	get hasNoData():		boolean { return !this.ownerID && !this.type && !this.type; }
 	get fields(): Airtable.FieldSet { return { type: this.type, ownerID: [this.ownerID], text: this.text }; }
 
 	async persistent_create_orUpdate(already_persisted: boolean) {
