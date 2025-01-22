@@ -14,7 +14,7 @@
 	const element_state = ux.element_state_forName(name);		// survives onDestroy, created by widget
 	let dragWrapper!: Svelte_Wrapper;
 	let svgPathFor_related = k.empty;
-	let svgPathFor_tinyDots = k.empty;
+	let svgPathFor_ellipses = k.empty;
 	let svgPathFor_dragDot = k.empty;
     let thing = ancestry.thing;
 	let isGrabbed = false;
@@ -79,11 +79,11 @@
 	}
 
 	function updateExtraSVGPaths() {
-		svgPathFor_related = svgPathFor_tinyDots = null;
+		svgPathFor_related = svgPathFor_ellipses = null;
 		if (!!thing) {
 			const count = thing.parents.length;		
 			if (count > 1) {
-				svgPathFor_tinyDots = svgPaths.ellipses(6, 0.5, false, count, size / 2);
+				svgPathFor_ellipses = svgPaths.ellipses(6, 0.5, false, count, size / 2);
 			}
 			if (thing.hasRelated) {
 				svgPathFor_related = svgPaths.circle_atOffset(size, 3, new Point(-4.5, 0));
@@ -162,13 +162,13 @@
 							svgPath={svgPathFor_dragDot}
 						/>
 						{#if show.tiny_dots}
-							{#if svgPathFor_tinyDots}
+							{#if svgPathFor_ellipses}
 								<SVGD3 name={'drag-inside-' + name + '-svg'}
 									width={size}
 									height={size}
 									fill={element_state.stroke}
 									stroke={element_state.stroke}
-									svgPath={svgPathFor_tinyDots}
+									svgPath={svgPathFor_ellipses}
 								/>
 							{/if}
 							{#if svgPathFor_related}
