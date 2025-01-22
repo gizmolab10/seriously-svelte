@@ -32,7 +32,7 @@ export enum T_Preference {
 	db			   = 'db',
 }
 
-class Preferences {
+export class Preferences {
 	// for backwards compatibility with {focus, grabbed, expanded} which were stored as relationship ids (not as ancestry string)
 	usesRelationships		 = localStorage[T_Preference.relationships];
 	ignoreAncestries		 = !this.usesRelationships || this.usesRelationships == 'undefined';

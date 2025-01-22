@@ -3,7 +3,7 @@ import { s_graphRect, s_user_graph_offset, s_user_graph_center } from '../state/
 import { s_details_show, s_mouse_location_scaled } from '../state/S_Stores';
 import { get } from 'svelte/store';
 
-class Window_Geometry {
+export class Window_Geometry {
 	scale_factor = 1;
 	scroll = this.windowScroll;
 	

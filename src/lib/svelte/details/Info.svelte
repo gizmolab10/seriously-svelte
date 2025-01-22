@@ -37,7 +37,7 @@
 	let rebuilds = 0;
 	let info;
 
-	private enum TI {
+	enum TI {
 		segments,
 		before_title,
 		title,
@@ -45,8 +45,8 @@
 		table,
 		traits,
 		consequence,
-		quest,
-	}
+		quest
+	};
 
 	function heightAt(index: number) {
 		switch (index) {

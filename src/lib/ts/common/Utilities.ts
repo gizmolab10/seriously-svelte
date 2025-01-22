@@ -12,7 +12,7 @@ import { k } from './Constants';
 import Angle from '../geometry/Angle';
 import { get } from 'svelte/store';
 
-class Utilities {
+export class Utilities {
 	ignore(event: Event) {}
 	location_ofMouseEvent(event: MouseEvent):					   Point { return new Point(event.clientX, event.clientY); }
 	getWidthOf(s: string):										  number { return this.getWidth_ofString_withSize(s, `${k.font_size}px`); }

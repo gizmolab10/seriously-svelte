@@ -1,5 +1,6 @@
-class Builds {
+export class Builds {
 	notes: { [id: number]: Array<string> } = {
+		127 : ['January 21, 2025', 'fixed translation of thing ids during import'],
 		126 : ['December 29, 2024', 'rename rings as radial'],
 		125 : ['December 28, 2024', 'working import and export buttons in Storage'],
 		124 : ['December 27, 2024', 'files can move across dbs'],

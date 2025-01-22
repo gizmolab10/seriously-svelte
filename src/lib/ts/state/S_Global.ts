@@ -7,7 +7,7 @@ import { s_ancestries_grabbed, s_ancestries_expanded } from './S_Stores';
 import { s_ancestry_focus } from './S_Stores';
 import { get } from 'svelte/store';
 
-class S_Global {
+export class S_Global {
 	allow_GraphEditing = true;
 	allow_TitleEditing = true;
 	allow_HorizontalScrolling = true;

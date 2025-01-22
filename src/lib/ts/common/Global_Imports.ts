@@ -1,5 +1,3 @@
-import type { SvelteComponent } from 'svelte';
-
 import { builds } from './Builds';
 import { show } from '../state/S_Show';
 import { files } from '../managers/Files';
@@ -69,13 +67,13 @@ export {
 	Angle, T_Quadrant, T_Orientation,
 	Children_Geometry, Widget_MapRect,
 	show, files, builds, signals, wrappers,
+	T_Element, Svelte_Wrapper, T_SvelteComponent,
 	S_Element, S_Paging, Page_States, S_Alteration,
 	Rect, Size, Point, cursors, svgPaths, Direction,
 	Arc_Map, Segment_Map, Cluster_Map, Radial_Geometry,
 	Grabs, Ancestry, Hierarchy, databases, preferences,
 	S_Mouse, T_Startup, S_Rotation, S_Expansion, S_Title_Edit,
 	User, Datum, Thing, Trait, Access, Predicate, Relationship,
-	T_Element, Svelte_Wrapper, SvelteComponent, T_SvelteComponent,
 	T_Info, T_Thing, T_Trait, T_Graph, T_Tree, T_Details, T_Rebuild,
 	T_Line, T_Tool, T_Signal, T_Control, T_Browser, T_Storage, T_Preference,
 };

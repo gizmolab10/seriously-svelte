@@ -1,5 +1,5 @@
 import { w, Rect, wrappers, S_Mouse, T_SvelteComponent } from './Global_Imports';
-import { Handle_S_Mouse, Create_S_Mouse } from './Types';
+import { Handle_Mouse_State, Create_Mouse_State } from './Types';
 import Identifiable from '../data/basis/Identifiable';
 import type { Integer } from './Types';
 
@@ -7,11 +7,11 @@ import type { Integer } from './Types';
 
 export default class Svelte_Wrapper extends Identifiable {
     _parentTypes: Array<T_SvelteComponent> = [];  // ABANDON
-    handle_mouse_state: Handle_S_Mouse;
+    handle_mouse_state: Handle_Mouse_State;
     type: T_SvelteComponent;
     element: HTMLElement;
 
-    constructor(element: HTMLElement, handle_mouse_state: Handle_S_Mouse, hid: Integer, type: T_SvelteComponent, parentTypes: Array<T_SvelteComponent> = []) {
+    constructor(element: HTMLElement, handle_mouse_state: Handle_Mouse_State, hid: Integer, type: T_SvelteComponent, parentTypes: Array<T_SvelteComponent> = []) {
 		super();
         this.hid = hid;
         this.type = type;
@@ -26,7 +26,7 @@ export default class Svelte_Wrapper extends Identifiable {
         return rect?.originMultipliedBy(1 / w.scale_factor) ?? Rect.zero;
     }
 
-    handle_event(event: MouseEvent, create_mouse_state: Create_S_Mouse): boolean {
+    handle_event(event: MouseEvent, create_mouse_state: Create_Mouse_State): boolean {
         const state = create_mouse_state(event, this.element);
         return this.handle_mouse_state(state);
     }

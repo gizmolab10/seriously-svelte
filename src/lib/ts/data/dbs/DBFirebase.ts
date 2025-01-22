@@ -162,7 +162,7 @@ export default class DBFirebase extends DBCommon {
 	}
 
 	setup_remote_handlers() {
-		for (const datum_type of this.hierarchy.dataTypes_forFetching) {
+		for (const datum_type of this.hierarchy.persistent_dataTypes) {
 			if (datum_type == T_Datum.predicates) {
 				this.predicatesCollection = collection(this.firestore, datum_type);
 			} else {
@@ -258,19 +258,19 @@ export default class DBFirebase extends DBCommon {
 		if (!!thingsCollection) {
 			const remoteThing = new PersistentThing(thing);
 			const jsThing = { ...remoteThing };
-			thing.persistence.awaitingCreation = true;
 			this.addedThing = thing;
+			this.deferSnapshots = true;
+			thing.persistence.awaitingCreation = true;
 			try {
-				this.deferSnapshots = true;
 				const ref = await addDoc(thingsCollection, jsThing);
-				thing.persistence.awaitingCreation = false;
-				thing.persistence.already_persisted = true;
 				this.hierarchy.thing_remember_updateID_to(thing, ref.id);
-				this.handle_deferredSnapshots();
-				thing.log(T_Debug.remote, 'CREATE T');
 			} catch (error) {
 				this.reportError(error);
 			}
+			thing.persistence.awaitingCreation = false;
+			thing.persistence.already_persisted = true;
+			this.handle_deferredSnapshots();
+			thing.log(T_Debug.remote, 'CREATE T');
 		}
 	}
 
@@ -393,14 +393,14 @@ export default class DBFirebase extends DBCommon {
 		if (!!traitsCollection) {
 			const remoteTrait = new PersistentTrait(trait);
 			const jsTrait = { ...remoteTrait };
-			trait.persistence.awaitingCreation = true;
 			this.addedTrait = trait;
 			try {
 				this.deferSnapshots = true;
+				trait.persistence.awaitingCreation = true;
 				const ref = await addDoc(traitsCollection, jsTrait)
-				const h = this.hierarchy;
 				trait.persistence.awaitingCreation = false;
 				trait.persistence.already_persisted = true;
+				const h = this.hierarchy;
 				h.trait_forget(trait);
 				trait.setID(ref.id);
 				h.trait_remember(trait);
@@ -476,13 +476,13 @@ export default class DBFirebase extends DBCommon {
 		if (!!predicatesCollection) {
 			const remotePredicate = new PersistentPredicate(predicate);
 			const jsPredicate = { ...remotePredicate };
-			predicate.persistence.awaitingCreation = true;
 			try {
 				this.deferSnapshots = true;
+				predicate.persistence.awaitingCreation = true;
 				const ref = await addDoc(predicatesCollection, jsPredicate);
-				const h = this.hierarchy;
 				predicate.persistence.awaitingCreation = false;
 				predicate.persistence.already_persisted = true;
+				const h = this.hierarchy;
 				h.predicate_forget(predicate);
 				predicate.setID(ref.id);
 				h.predicate_remember(predicate);
@@ -544,21 +544,21 @@ export default class DBFirebase extends DBCommon {
 		if (!!relationshipsCollection) {
 			const remoteRelationship = new PersistentRelationship(relationship);
 			const jsRelationship = { ...remoteRelationship };
+			const h = this.hierarchy;
+			this.deferSnapshots = true;
 			relationship.persistence.awaitingCreation = true;
 			try {
-				this.deferSnapshots = true;
 				const ref = await addDoc(relationshipsCollection, jsRelationship);
-				const h = this.hierarchy;
-				relationship.persistence.awaitingCreation = false;
-				relationship.persistence.already_persisted = true;
 				h.relationship_forget(relationship);
 				relationship.setID(ref.id);
 				h.relationship_remember(relationship);
-				this.handle_deferredSnapshots();
-				relationship.log(T_Debug.remote, 'CREATE R');
 			} catch (error) {
 				this.reportError(error);
 			}
+			relationship.persistence.awaitingCreation = false;
+			relationship.persistence.already_persisted = true;
+			this.handle_deferredSnapshots();
+			relationship.log(T_Debug.remote, 'CREATE R');
 		}
 	}
 
@@ -670,7 +670,7 @@ export default class DBFirebase extends DBCommon {
 
 }
 
-class Bulk {
+export class Bulk {
 	idBase: string = k.empty;
 	thingsCollection: CollectionReference | null = null;
 	traitsCollection: CollectionReference | null = null;
@@ -680,7 +680,7 @@ class Bulk {
 	}
 }
 
-class SnapshotDeferal {
+export class SnapshotDeferal {
 	idBase: string;
 	datum_type: T_Datum;
 	snapshot: QuerySnapshot;
@@ -692,7 +692,7 @@ class SnapshotDeferal {
 	}
 }
 
-class PersistentThing {
+export class PersistentThing {
 	title: string;
 	color: string;
 	type: T_Thing;
@@ -723,7 +723,7 @@ class PersistentThing {
 	}
 }
 
-class PersistentTrait {
+export class PersistentTrait {
 	ownerID: string;
 	type: T_Trait;
 	text: string;
@@ -745,7 +745,7 @@ class PersistentTrait {
 	}
 }
 
-class PersistentPredicate {
+export class PersistentPredicate {
 	isBidirectional: boolean;
 	stateIndex: number;
 	kind: T_Predicate;
@@ -765,7 +765,7 @@ class PersistentPredicate {
 	}
 }
 
-class PersistentRelationship implements PersistentRelationship {
+export class PersistentRelationship implements PersistentRelationship {
 	predicate!: DocumentReference<Predicate, DocumentData>;
 	parent!: DocumentReference<Thing, DocumentData>;
 	child!: DocumentReference<Thing, DocumentData>;

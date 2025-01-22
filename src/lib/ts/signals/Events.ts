@@ -3,7 +3,7 @@ import { s_count_resize, s_device_isMobile, s_user_graph_offset } from '../state
 import { g, k, w, Point, debug, signals, S_Alteration } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
-class Events {
+export class Events {
 	initialTouch: Point | null = null;
 	interval: NodeJS.Timeout | null = null;
 

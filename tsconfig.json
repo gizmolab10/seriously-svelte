@@ -1,14 +1,31 @@
 {
-  "compilerOptions": {
-    "strict": true,
-    "target": "es6",
-    "jsx": "preserve",
-    "outDir": "./dist",
-    "module": "CommonJS",
-    "esModuleInterop": true,
-    "strictNullChecks": true,
-    "moduleResolution": "node",
-  },
-  "include": ["src/lib/**/*"],
-  "exclude": ["node_modules", "aside"],
+	"compilerOptions": {
+		"strict": true,
+		"target": "es6",
+		"jsx": "preserve",
+		"outDir": "./dist",
+		"module": "CommonJS",
+		"esModuleInterop": true,
+		"strictNullChecks": true,
+		"moduleResolution": "node",
+	},
+	"typedocOptions": {
+		"highlightLanguages": {
+			"json": "javascript",
+			"js": "javascript",
+			"ts": "typescript",
+			"svelte": "svelte",
+			"html": "html",
+			"css": "css",
+		},
+	},
+	"exclude": [
+		"node_modules",
+		"bubble",
+		"aside",
+		"dist"
+	],
+	"include": [
+		"src/lib/**/*"
+	],
 }

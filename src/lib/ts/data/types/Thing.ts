@@ -4,6 +4,7 @@ import { T_Thing, T_Trait, T_Debug, T_Predicate } from '../../common/Global_Impo
 import { s_hierarchy, s_thing_color, s_count_rebuild } from '../../state/S_Stores';
 import { s_ancestry_focus, s_ancestries_expanded } from '../../state/S_Stores';
 import type { Dictionary } from '../../common/Types';
+import { T_Datum } from '../dbs/DBCommon';
 import { get } from 'svelte/store';
 
 export default class Thing extends Datum {
@@ -19,7 +20,7 @@ export default class Thing extends Datum {
 	type: T_Thing;
 
 	constructor(idBase: string, id: string, title = k.title_default, color = k.thing_color_default, type = T_Thing.generic, already_persisted: boolean = false) {
-		super(databases.db.type_db, idBase, id, already_persisted);
+		super(databases.db.type_db, idBase, T_Datum.things, id, already_persisted);
 		this.selectionRange = new Seriously_Range(0, title.length);
 		this.page_states = new Page_States(this.id);
 		this.title = title;
@@ -158,7 +159,7 @@ export default class Thing extends Datum {
 	relationships_forParents_ofKind(kindPredicate: string, forParents: boolean): Array<Relationship> {
 		const id = this.idBridging;				//  use idBridging in case thing is a bulk alias
 		if ((!!id || id == k.empty) && id != k.unknown) {
-			return get(s_hierarchy).relationships_forPredicateThingIsChild(kindPredicate, id, forParents);
+			return get(s_hierarchy).relationships_forPredicateThingIsChild(kindPredicate, id.hash(), forParents);
 		}
 		return [];
 	}

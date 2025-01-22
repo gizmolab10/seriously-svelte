@@ -3,7 +3,7 @@ import { s_details_show, s_tree_type } from './S_Stores';
 import { T_Info, T_Tree } from '../common/Enumerations';
 import type { Dictionary } from '../common/Types';
 
-class S_Show {
+export class S_Show {
 	info_type	 = T_Info.focus;
 	debug_cursor = false;
 	tree_types	 = false;

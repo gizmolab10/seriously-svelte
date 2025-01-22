@@ -1,6 +1,7 @@
 import { k, debug, T_Debug, databases, T_Predicate } from '../../common/Global_Imports';
 import Persistent_Identifiable from '../basis/Persistent_Identifiable';
 import { s_hierarchy } from '../../state/S_Stores';
+import { T_Datum } from '../dbs/DBCommon';
 import { get } from 'svelte/store';
 
 export default class Predicate extends Persistent_Identifiable {
@@ -9,7 +10,7 @@ export default class Predicate extends Persistent_Identifiable {
 	kind: T_Predicate;
 
 	constructor(id: string, kind: T_Predicate, isBidirectional: boolean, already_persisted: boolean = false) {
-		super(databases.db.type_db, id, already_persisted);
+		super(databases.db.type_db, T_Datum.predicates, id, already_persisted);
 		this.stateIndex		 = Predicate.stateIndex_forKind(kind);		// index in page states inward and outward arrays
 		this.isBidirectional = isBidirectional;
 		this.kind			 = kind;

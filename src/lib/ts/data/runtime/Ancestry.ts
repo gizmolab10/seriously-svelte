@@ -328,9 +328,9 @@ export default class Ancestry extends Identifiable {
 	}
 
 	extend_withChild(child: Thing | null): Ancestry | null {
-		const idParent = this.thing?.idBridging;
-		if (!!child && !!idParent) {
-			const relationship = this.hierarchy.relationship_forT_Predicate_parent_child(T_Predicate.contains, idParent, child.id);
+		const hidParent = this.thing?.idBridging.hash();
+		if (!!child && !!hidParent) {
+			const relationship = this.hierarchy.relationship_forPredicateKind_parent_child(T_Predicate.contains, hidParent, child.hid);
 			if (!!relationship) {
 				return this.uniquelyAppendID(relationship.id);
 			}

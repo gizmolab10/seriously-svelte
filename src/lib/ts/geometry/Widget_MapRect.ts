@@ -24,7 +24,7 @@ export default class Widget_MapRect extends Rect {
 		this.curveType = curveType;
 		this.subtype = subtype;
 		if (!this.child) {
-			console.log('geometry Widget_MapRect ... has no child');
+			console.log(`geometry Widget_MapRect ... relationship has no child ${widget_ancestry?.relationship?.description}`);
 		}
 	}
 

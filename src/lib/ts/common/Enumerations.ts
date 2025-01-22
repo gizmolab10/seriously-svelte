@@ -51,7 +51,8 @@ export enum T_Startup {
 }
 
 export enum T_Thing {
-	generic = '',
+	generic	= '',
+	found	= '*',
 	roots	= '^',
 	root	= '!',
 	bulk	= '~',

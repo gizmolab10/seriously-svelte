@@ -1,5 +1,6 @@
 import { k, Datum, Thing, databases, T_Trait } from '../../common/Global_Imports';
 import { s_hierarchy } from '../../state/S_Stores';
+import { T_Datum } from '../dbs/DBCommon';
 import { get } from 'svelte/store';
 import Airtable from 'airtable';
 
@@ -9,7 +10,7 @@ export default class Trait extends Datum {
 	text: string = k.empty;
 
 	constructor(idBase: string, id: string, ownerID: string, type: T_Trait, text: string = k.empty, already_persisted: boolean = false) {
-		super(databases.db.type_db, idBase, id, already_persisted);
+		super(databases.db.type_db, idBase, T_Datum.traits, id, already_persisted);
 		this.ownerID = ownerID;
 		this.type = type;
 		this.text = text;

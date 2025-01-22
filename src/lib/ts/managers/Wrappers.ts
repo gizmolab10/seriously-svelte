@@ -1,6 +1,6 @@
 import { u, debug, Svelte_Wrapper, T_SvelteComponent } from '../common/Global_Imports';
 import { s_hierarchy } from '../../ts/state/S_Stores';
-import { Create_S_Mouse } from '../common/Types';
+import { Create_Mouse_State } from '../common/Types';
 import type { Integer } from '../common/Types';
 import { get } from 'svelte/store';
 
@@ -63,7 +63,7 @@ export class Wrappers {
 		}
 	}
 
-	respondTo_closure(event: MouseEvent, closure: Create_S_Mouse) {
+	respondTo_closure(event: MouseEvent, closure: Create_Mouse_State) {
 		// gather all wrappers whose type generates a hit
 		// ask each wrapper to
 		// construct & handle the mouse state
