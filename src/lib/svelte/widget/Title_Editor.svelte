@@ -2,7 +2,7 @@
 	import { T_Graph, databases, Seriously_Range, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { s_hierarchy, s_graph_type, s_thing_color, s_thing_title, s_title_edit_state } from '../../ts/state/S_Stores';
 	import { s_thing_fontFamily, s_ancestries_grabbed, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
-	import { g, k, u, Point, Thing, debug, Angle, ZIndex, signals } from '../../ts/common/Global_Imports';
+	import { g, k, u, Point, Thing, debug, Angle, T_Layer, signals } from '../../ts/common/Global_Imports';
 	import { onMount } from 'svelte';
 	export let fontSize = '1em';
 	export let forward = true;
@@ -290,7 +290,7 @@
 			left: {titleLeft}px;
 			width: {titleWidth}px;
 			font-size: {fontSize};
-			z-index: {ZIndex.text};
+			z-index: {T_Layer.text};
 			{k.prevent_selection_style};
 			font-family: {$s_thing_fontFamily};
 			outline-color: {k.color_background};

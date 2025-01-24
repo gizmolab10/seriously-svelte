@@ -1,5 +1,5 @@
 <script>
-	import { k, u, Point, debug, ZIndex } from '../../ts/common/Global_Imports';
+	import { k, u, Point, debug, T_Layer } from '../../ts/common/Global_Imports';
 	import { s_thing_fontFamily } from '../../ts/state/S_Stores';
 	import { onMount } from 'svelte';
 	export let font_family = $s_thing_fontFamily;
@@ -18,7 +18,7 @@
 		top: {center.y}px;
 		left: {center.x}px;
 		position: absolute;
-		z-index: {ZIndex.backmost};
+		z-index: {T_Layer.backmost};
 		transform: translate(-50%, -50%) rotate({angleDeg}deg);'>
 	<span class='text'
 		style='

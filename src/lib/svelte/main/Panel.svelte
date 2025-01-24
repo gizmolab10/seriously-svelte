@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { s_title_edit_state, s_details_show, s_device_isMobile, } from '../../ts/state/S_Stores';
 	import { g, k, u, ux, w, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
-	import { debug, ZIndex, Ancestry, T_Startup } from '../../ts/common/Global_Imports';
+	import { debug, T_Layer, Ancestry, T_Startup } from '../../ts/common/Global_Imports';
 	import { s_type_db, s_graphRect, s_hierarchy } from '../../ts/state/S_Stores';
 	import { T_Control, Hierarchy, databases } from '../../ts/common/Global_Imports';
 	import { s_id_popupView, s_ancestry_focus } from '../../ts/state/S_Stores';
@@ -82,18 +82,18 @@
 					style='left:0px;
 						position: absolute;
 						top:{k.height_banner - 1}px;
-						z-index: {ZIndex.frontmost};
+						z-index: {T_Layer.frontmost};
 						width:{w.windowSize.width}px;
 						height:{k.height_breadcrumbs}px;'>
 					<Breadcrumbs/>
 					<div class='horizontal-line' style='
 						top: {k.height_banner + k.height_breadcrumbs}px;
-						z-index: {ZIndex.lines};'>
+						z-index: {T_Layer.lines};'>
 					</div>
 				</div>
 				<div class='horizontal-line' style='
 					top: {k.height_banner}px;
-					z-index: {ZIndex.lines};'>
+					z-index: {T_Layer.lines};'>
 				</div>
 				{#if $s_details_show}
 					<Details/>
@@ -101,7 +101,7 @@
 						style='
 							width: 1px;
 							position: absolute;
-							z-index: {ZIndex.lines};
+							z-index: {T_Layer.lines};
 							left: {k.width_details}px;
 							background-color: lightgray;
 							top: {$s_graphRect.origin.y}px;
@@ -113,7 +113,7 @@
 				style='
 					height: 100%;
 					position: fixed;
-					z-index: {ZIndex.backmost};
+					z-index: {T_Layer.backmost};
 					left: {$s_details_show ? k.width_details : 0}px;'>
 				{#key $s_id_popupView}
 					{#if $s_id_popupView == T_Control.builds}

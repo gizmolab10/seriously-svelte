@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { signals, T_Ring, T_Element, T_Rebuild, Radial_Geometry } from '../../ts/common/Global_Imports';
-	import { g, k, u, ux, Rect, Point, debug, T_Tool, ZIndex } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, Rect, Point, debug, T_Tool, T_Layer } from '../../ts/common/Global_Imports';
 	import { s_graphRect, s_details_show, s_ancestry_focus } from '../../ts/state/S_Stores';
 	import { s_user_graph_offset, s_thing_fontFamily } from '../../ts/state/S_Stores';
 	import { s_radial_geometry } from '../../ts/state/S_Stores';
@@ -44,7 +44,7 @@
 {#key g.readOnce_rebuild_needed_forType(T_Rebuild.radial), $s_ancestry_focus.hashedAncestry}
 	<div class='radial-graph'
 		style='
-			z-index:{ZIndex.backmost};
+			z-index:{T_Layer.backmost};
 			width:{$s_graphRect.size.width}px;
 			height:{$s_graphRect.size.height}px;
 			transform:translate({$s_user_graph_offset.x}px, {$s_user_graph_offset.y}px);'>

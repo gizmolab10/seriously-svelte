@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { s_graphRect, s_hierarchy, s_details_show, s_device_isMobile,  } from '../../ts/state/S_Stores';
-	import { g, k, u, ux, show, Rect, Size, Point, Thing, ZIndex, debug } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, show, Rect, Size, Point, Thing, T_Layer, debug } from '../../ts/common/Global_Imports';
 	import { s_id_popupView, s_ancestry_focus, s_user_graph_offset } from '../../ts/state/S_Stores';
 	import { signals, T_Signal, T_Control, Ancestry, databases } from '../../ts/common/Global_Imports';
 	import { Predicate, T_Element, preferences } from '../../ts/common/Global_Imports';

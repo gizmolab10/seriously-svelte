@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, ZIndex } from '../../ts/common/Global_Imports';
+	import { k, u, T_Layer } from '../../ts/common/Global_Imports';
 	export let title: string | null = null;
 	export let width = k.width_details;
 	export let left = 0;
@@ -18,7 +18,7 @@
 		left:{left}px;
 		width:{width}px;
 		position:absolute;
-		z-index:{ZIndex.details};
+		z-index:{T_Layer.details};
 		background-color:lightgray;'>
 </div>
 {#if !!title}
@@ -28,7 +28,7 @@
 			position:absolute;
 			top:{top - 5.3}px;
 			left:{title_left}px;
-			z-index:{ZIndex.frontmost};
+			z-index:{T_Layer.frontmost};
 			font-size:{title_font_size};
 			background-color:{k.color_background};'>
 		{title}

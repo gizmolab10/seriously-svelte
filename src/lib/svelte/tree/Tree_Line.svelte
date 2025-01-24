@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, Rect, Size, Point, debug, ZIndex, signals, svgPaths } from '../../ts/common/Global_Imports';
+	import { k, Rect, Size, Point, debug, T_Layer, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import { Svelte_Wrapper, Ancestry, T_SvelteComponent, T_Line } from '../../ts/common/Global_Imports';
 	import { s_thing_color } from '../../ts/state/S_Stores';
 	import Circle from '../kit/Circle.svelte';
@@ -81,7 +81,7 @@
 		class='tree-line-svg'
 		viewBox={viewBox.verbose}
 		height={Math.max(2, size.height)}px
-		style='z-index: {ZIndex.lines};
+		style='z-index: {T_Layer.lines};
 			top: {origin.y - size.height + 0.5}px;
 			left: {origin.x + 142}px;
 			position: absolute;

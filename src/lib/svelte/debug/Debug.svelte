@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { s_user_graph_center, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
-	import { g, u, w, Rect, Size, Point, debug, ZIndex } from '../../ts/common/Global_Imports';
+	import { g, u, w, Rect, Size, Point, debug, T_Layer } from '../../ts/common/Global_Imports';
 	import { s_graphRect, s_mouse_location_scaled } from '../../ts/state/S_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Box from './Box.svelte';
@@ -42,21 +42,21 @@
 		cross = {true}
 		name = 'graph'
 		color = 'green'
-		zindex = {ZIndex.common}
+		zindex = {T_Layer.common}
 		rect = {$s_graphRect}/>
 {/if}
 {#if debug.tools && !!$s_ancestry_showing_tools}
 	<Box
 		name = 'tools'
 		color = 'purple'
-		zindex = {ZIndex.frontmost}
+		zindex = {T_Layer.frontmost}
 		rect = {$s_ancestry_showing_tools.titleRect}/>
 {/if}
 {#if debug.cursor}
 	<Mouse_Responder
 		name='debug-cursor'
 		origin={Point.zero}
-		zindex = {ZIndex.common}
+		zindex = {T_Layer.common}
 		width={w.windowSize.width}
 		height={w.windowSize.height}
 		mouse_state_closure={hover_closure}>
@@ -65,13 +65,13 @@
 			cross = {true}
 			name = 'cursor'
 			rect = {mouse_rect}
-			zindex = {ZIndex.common}/>
+			zindex = {T_Layer.common}/>
 		{#if false}
 			<Box
 				cross = {true}
 				color = 'blue'
 				name = 'origin'
-				zindex = {ZIndex.common}
+				zindex = {T_Layer.common}
 				rect = {new Rect(debug_origin, Size.square(18))}/>
 		{/if}
 	</Mouse_Responder>

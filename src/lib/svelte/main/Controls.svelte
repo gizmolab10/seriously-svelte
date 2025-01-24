@@ -2,7 +2,7 @@
 	import { s_graph_type, s_tree_type, s_count_resize, s_device_isMobile } from '../../ts/state/S_Stores';
 	import { T_Control, preferences, S_Element, T_Preference } from '../../ts/common/Global_Imports';
 	import { s_details_show, s_id_popupView, s_thing_fontFamily } from '../../ts/state/S_Stores';
-	import { g, k, u, ux, w, show, Point, ZIndex, signals } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, w, show, Point, T_Layer, signals } from '../../ts/common/Global_Imports';
 	import { svgPaths, T_Tree, T_Graph, T_Element } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/data/basis/Identifiable';
 	import Segmented from '../mouse/Segmented.svelte';
@@ -85,7 +85,7 @@
 			top: 7px;
 			left: 0px;
 			position: absolute;
-			z-index: {ZIndex.frontmost};
+			z-index: {T_Layer.frontmost};
 			height: `${k.height_banner - 2}px`;'>
 		{#if !$s_id_popupView}
 			<Button

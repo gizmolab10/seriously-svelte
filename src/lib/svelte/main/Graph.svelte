@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { s_device_isMobile, s_user_graph_offset, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
-	import { g, k, w, Rect, Point, debug, ZIndex, signals, T_Graph } from '../../ts/common/Global_Imports';
+	import { g, k, w, Rect, Point, debug, T_Layer, signals, T_Graph } from '../../ts/common/Global_Imports';
 	import { s_graphRect, s_graph_type, s_ancestry_focus } from '../../ts/state/S_Stores';
 	import Radial_Graph from '../radial/Radial_Graph.svelte';
 	import Tree_Graph from '../tree/Tree_Graph.svelte';
@@ -45,7 +45,7 @@
 			position: absolute;
 			touch-action: none;
 			pointer-events: auto;
-			z-index: ${ZIndex.backmost};
+			z-index: ${T_Layer.backmost};
 			top:${draggableRect.origin.y}px;
 			width: ${draggableRect.size.width}px;
 			height: ${draggableRect.size.height}px;

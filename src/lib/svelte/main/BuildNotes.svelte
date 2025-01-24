@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import Directional_Buttons from '../mouse/Directional_Buttons.svelte'
-	import { k, builds, ZIndex } from '../../ts/common/Global_Imports';
+	import { k, builds, T_Layer } from '../../ts/common/Global_Imports';
 	import { s_id_popupView } from '../../ts/state/S_Stores';
 	import Close_Button from '../mouse/Close_Button.svelte';
 	import { onMount } from 'svelte';

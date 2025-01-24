@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, ux, Point, ZIndex, databases, Hierarchy, T_Storage } from '../../ts/common/Global_Imports';
+	import { k, u, ux, Point, T_Layer, databases, Hierarchy, T_Storage } from '../../ts/common/Global_Imports';
 	import { T_Element, S_Element, T_Preference, preferences } from '../../ts/common/Global_Imports';
 	import { s_storage_update_trigger, s_thing_fontFamily } from '../../ts/state/S_Stores';
 	import { s_type_db, s_hierarchy } from '../../ts/state/S_Stores';
@@ -76,7 +76,7 @@
 		</div>
 		<Button name='import'
 			width=42
-			zindex=ZIndex.frontmost
+			zindex=T_Layer.frontmost
 			center={new Point(74, buttons_top)}
 			height={k.default_buttonSize - 4}
 			element_state={element_states_byID[T_Storage.import]}
@@ -85,7 +85,7 @@
 		</Button>
 		<Button name='export'
 			width=42
-			zindex=ZIndex.frontmost
+			zindex=T_Layer.frontmost
 			center={new Point(122, buttons_top)}
 			height={k.default_buttonSize - 4}
 			element_state={element_states_byID[T_Storage.export]}

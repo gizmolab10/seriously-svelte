@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, ux, Point, Thing, ZIndex, signals } from '../../ts/common/Global_Imports';
+	import { k, u, ux, Point, Thing, T_Layer, signals } from '../../ts/common/Global_Imports';
 	import { s_thing_color } from '../../ts/state/S_Stores';
 	import ColorPicker from 'svelte-awesome-color-picker';
 	import { get } from 'svelte/store';
@@ -47,7 +47,7 @@
 				top: {origin.y}px;
 				left: {origin.x}px;
 				position: absolute;
-				z-index: {ZIndex.frontmost};'>
+				z-index: {T_Layer.frontmost};'>
 			<ColorPicker
 				label=''
 				hex={colorAsHEX}
@@ -56,7 +56,7 @@
 				--picker-width='{pickerSize}px'
 				--picker-height='{pickerSize}px'
 				--slider-width='{selectorSize}px'
-				--picker-z-index='{ZIndex.frontmost}'
+				--picker-z-index='{T_Layer.frontmost}'
 				--picker-indicator-size='{selectorSize}px'/>
 		</div>
 	{/key}

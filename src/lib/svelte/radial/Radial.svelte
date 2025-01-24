@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, u, ux, w, Thing, Point, Angle, debug, ZIndex } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, w, Thing, Point, Angle, debug, T_Layer } from '../../ts/common/Global_Imports';
 	import { s_thing_color, s_ancestry_focus, s_radial_geometry } from '../../ts/state/S_Stores';
 	import { s_ring_rotation_angle, s_ring_rotation_radius } from '../../ts/state/S_Stores';
 	import { signals, svgPaths, T_Ring, databases } from '../../ts/common/Global_Imports';
@@ -9,7 +9,7 @@
 	import Identifiable from '../../ts/data/basis/Identifiable';
 	import Paging_Arc from './Paging_Arc.svelte';
 	import { onMount } from 'svelte';
-	export let zindex = ZIndex.backmost;
+	export let zindex = T_Layer.backmost;
 	const ring_width = k.ring_rotation_thickness;
 	const middle_radius = $s_ring_rotation_radius + k.ring_rotation_thickness;
 	const middle_diameter = middle_radius * 2;
@@ -232,7 +232,7 @@
 </script>
 
 {#key rebuilds}
-	<div class='paging-arcs' bind:this={pagingArcs} style='z-index:{ZIndex.paging};'>
+	<div class='paging-arcs' bind:this={pagingArcs} style='z-index:{T_Layer.paging};'>
 		{#each $s_radial_geometry.cluster_maps as cluster_map}
 			{#if !!cluster_map && (cluster_map.widgets_shown > 0)}
 				<Paging_Arc
@@ -242,7 +242,7 @@
 		{/each}
 	</div>
 	{#if !debug.hide_rings}
-		<div class='rings' style='z-index:{ZIndex.rings};'>
+		<div class='rings' style='z-index:{T_Layer.rings};'>
 			<Mouse_Responder
 				name='rings'
 				zindex={zindex}

@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { s_thing_color, s_ancestry_focus, s_thing_fontFamily } from '../../ts/state/S_Stores';
-	import { g, k, ux, w, Size, Point, debug, T_Tool, ZIndex, } from '../../ts/common/Global_Imports';
+	import { g, k, ux, w, Size, Point, debug, T_Tool, T_Layer, } from '../../ts/common/Global_Imports';
 	import { svgPaths, T_Element, Radial_Geometry } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Title_Editor from '../widget/Title_Editor.svelte';
@@ -35,13 +35,13 @@
 		position: absolute;
 		width:{titleWidth}px;
 		top:{focus_origin.y}px;
-		z-index: {ZIndex.backmost};
+		z-index: {T_Layer.backmost};
 		left: {focus_origin.x}px;'>
 		<Mouse_Responder
 			height={height}
 			width={titleWidth}
 			name='radial-focus-border'
-			zindex={ZIndex.backmost}
+			zindex={T_Layer.backmost}
 			cursor={k.cursor_default}
 			isHit_closure={() => false}
 			mouse_state_closure={debug_closure}

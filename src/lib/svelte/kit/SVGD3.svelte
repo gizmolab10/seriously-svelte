@@ -1,9 +1,9 @@
 <script lang='ts'>
-    import { k, Point, ZIndex } from '../../ts/common/Global_Imports';
+    import { k, Point, T_Layer } from '../../ts/common/Global_Imports';
 	import { onMount } from 'svelte';
     import * as d3 from 'd3';
     export let position = 'absolute';
-    export let zIndex = ZIndex.dots;
+    export let zIndex = T_Layer.dots;
     export let svgPath = k.empty;
     export let stroke = k.color_default;
     export let name = 'SVGD3';

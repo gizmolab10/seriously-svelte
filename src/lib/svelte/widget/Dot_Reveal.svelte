@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, ux, show, Size, Thing, Point, debug, ZIndex, signals, T_Graph } from '../../ts/common/Global_Imports';
+	import { k, u, ux, show, Size, Thing, Point, debug, T_Layer, signals, T_Graph } from '../../ts/common/Global_Imports';
 	import { svgPaths, databases, Predicate, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { s_graph_type, s_ancestries_expanded, s_ancestries_grabbed } from '../../ts/state/S_Stores';
 	import { s_hierarchy, s_alteration_mode, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
@@ -9,7 +9,7 @@
 	export let center;
     export let ancestry;
 	export let name = k.empty;
-    export let zindex = ZIndex.dots;
+    export let zindex = T_Layer.dots;
     export let hover_isReversed = false;
 	const element_state = ux.element_state_forName(name);		// survives onDestroy, created by widget
 	let size = k.dot_size;

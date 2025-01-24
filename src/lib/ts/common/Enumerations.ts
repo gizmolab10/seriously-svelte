@@ -103,7 +103,9 @@ export enum T_Browser  {
 export enum T_Trait {
 	consequence = 'consequence',
 	hyperlink	= 'hyperlink',
+	citation	= 'citation',
 	generic		= 'generic',
+	comment		= 'comment',
 	money		= 'money',
 	phone		= 'phone',
 	quest		= 'quest',
@@ -139,7 +141,7 @@ export enum T_Rebuild {		// design goal: replace all rebuilds counts?
 	drag   = 'drag',
 }
 
-export enum ZIndex {	// DO NOT change the order
+export enum T_Layer {	// DO NOT change the order
 	common,
 	paging,
 	rings,

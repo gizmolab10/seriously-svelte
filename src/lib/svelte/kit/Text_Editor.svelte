@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, u, debug, ZIndex, databases } from '../../ts/common/Global_Imports';
+	import { g, k, u, debug, T_Layer, databases } from '../../ts/common/Global_Imports';
 	import { s_thing_fontFamily } from '../../ts/state/S_Stores';
 	export let handle_textChange = (label: string, text: string) => {};
 	export let color = k.thing_color_default;
@@ -81,7 +81,7 @@
 			overflow-x: hidden;
 			vertical-align: top;
 			white-space: normal;
-			z-index: {ZIndex.text};
+			z-index: {T_Layer.text};
 			overflow-wrap: break-word;
 			{k.prevent_selection_style};
 			font-family: {$s_thing_fontFamily};

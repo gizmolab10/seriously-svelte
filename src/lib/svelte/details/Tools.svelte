@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, u, ux, w, show, Rect, Size, Point, debug, T_Tool, ZIndex } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, w, show, Rect, Size, Point, debug, T_Tool, T_Layer } from '../../ts/common/Global_Imports';
 	import { s_graphRect, s_hierarchy, s_graph_type, s_details_show } from '../../ts/state/S_Stores';
 	import { databases, T_Element, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
 	import { S_Alteration, T_Alteration, Svelte_Wrapper } from '../../ts/common/Global_Imports';
@@ -183,12 +183,12 @@
 	{#if !!$s_ancestry_showing_tools}
 		<div class='editing-tools' style='
 			position:absolute;
-			z-index: {ZIndex.tools}'>
+			z-index: {T_Layer.tools}'>
 			<Transparent_Circle
 				color_background={u.opacitize(k.color_background, 0.95)}
 				center={getC(T_Tool.editingTools)}
 				radius={editingToolsRadius}
-				zindex={ZIndex.dots}
+				zindex={T_Layer.dots}
 				color={color}
 				opacity=0.85
 				thickness=1/>
@@ -197,7 +197,7 @@
 					<svg class='delete-confirm' style='
 							left:{getC(T_Tool.confirmation).x}px;
 							top:{getC(T_Tool.confirmation).y}px;
-							z-index:{ZIndex.dots};'
+							z-index:{T_Layer.dots};'
 						height={k.editingTools_diameter}
 						width={k.editingTools_diameter}
 						viewBox={half_circleViewBox}
@@ -210,7 +210,7 @@
 					<svg class='delete-cancel' style='
 							left:{getC(T_Tool.confirmation).x}px;
 							top:{getC(T_Tool.confirmation).y}px;
-							z-index:{ZIndex.dots};'
+							z-index:{T_Layer.dots};'
 						height={k.editingTools_diameter}
 						width={k.editingTools_diameter}
 						viewBox={half_circleViewBox}
@@ -226,14 +226,14 @@
 					height={k.editingTools_diameter / 2}
 					width={k.editingTools_diameter}
 					background_color='transparent'
-					zindex={ZIndex.dots}
+					zindex={T_Layer.dots}
 					color='transparent'
 					border_thickness=0
 					name='delete'>
 					{#key isHovering_byID[T_Tool.delete_confirm]}
 						<div style='
 							color: {isHovering_byID[T_Tool.delete_confirm] ? 'white' : thing.color};
-							z-index: {ZIndex.frontmost};
+							z-index: {T_Layer.frontmost};
 							position: absolute;
 							left: 13px;
 							top: 11px;'>
@@ -248,7 +248,7 @@
 					center={getC(T_Tool.delete_cancel)}
 					width={k.editingTools_diameter}
 					background_color='transparent'
-					zindex={ZIndex.dots}
+					zindex={T_Layer.dots}
 					color='transparent'
 					border_thickness=0
 					name='cancel'>
@@ -257,7 +257,7 @@
 							top: 4px;
 							left: 13px;
 							position: absolute;
-							z-index: {ZIndex.frontmost};
+							z-index: {T_Layer.frontmost};
 							color: {isHovering_byID[T_Tool.delete_cancel] ? 'white' : thing.color};'>
 							cancel
 						</div>
@@ -268,7 +268,7 @@
 						left: {getC(T_Tool.editingTools).x - editingToolsRadius}px;
 						top: {getC(T_Tool.editingTools).y + 0.5}px;
 						width: {k.editingTools_diameter + 1}px;
-						z-index: {ZIndex.tool_buttons};
+						z-index: {T_Layer.tool_buttons};
 						background-color: {color};
 						position: absolute;
 						height: 1px;'>
@@ -278,7 +278,7 @@
 					closure={(mouse_state) => handle_mouse_data(mouse_state, T_Tool.more)}
 					element_state={element_states_byID[T_Tool.more]}
 					height={k.default_buttonSize}
-					zindex={ZIndex.tool_buttons}
+					zindex={T_Layer.tool_buttons}
 					center={getC(T_Tool.more)}
 					color='transparent'
 					border_thickness=0
@@ -304,7 +304,7 @@
 					name={element_states_byID[T_Tool.dismiss].name}
 					ancestry={$s_ancestry_showing_tools}
 					center={getC(T_Tool.dismiss)}
-					zindex={ZIndex.tool_buttons}
+					zindex={T_Layer.tool_buttons}
 					hover_isReversed=true/>
 				<Triangle_Button
 					strokeColor={isDisabledFor(T_Tool.next) ? k.color_disabled : parentSensitiveColor}
@@ -351,7 +351,7 @@
 					style='
 						left: {getC(T_Tool.delete).x}px;
 						top: {getC(T_Tool.delete).y}px;
-						z-index: {ZIndex.dots};
+						z-index: {T_Layer.dots};
 						background: none;
 						cursor: pointer;
 						border: none;'>

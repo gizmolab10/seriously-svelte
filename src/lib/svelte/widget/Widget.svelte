@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, u, ux, Thing, Point, Angle, debug, ZIndex, signals, T_Graph } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, Thing, Point, Angle, debug, T_Layer, signals, T_Graph } from '../../ts/common/Global_Imports';
 	import { s_thing_fontFamily, s_ancestries_grabbed, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
 	import { T_Element, S_Element, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { s_title_edit_state, s_thing_color, s_graph_type } from '../../ts/state/S_Stores';
@@ -180,7 +180,7 @@
 				height: {height}px;
 				padding: {padding};
 				position: absolute;
-				z-index: {ZIndex.widgets};
+				z-index: {T_Layer.widgets};
 				border-radius: {radius}px;
 				border: {element_state.border};
 				background-color: {isGrabbed || g.inRadialMode ? k.color_background : 'transparent'};

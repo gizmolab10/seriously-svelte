@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { k, u, Point, debug, ZIndex } from '../../ts/common/Global_Imports'
+	import { k, u, Point, debug, T_Layer } from '../../ts/common/Global_Imports'
 	import { onMount } from 'svelte';
 	export let color_background = debug.lines ? 'transparent' : k.color_background;
-	export let zindex = ZIndex.dots;
+	export let zindex = T_Layer.dots;
 	export let center = Point.zero;
 	export let name = k.empty;
 	export let thickness = 1;

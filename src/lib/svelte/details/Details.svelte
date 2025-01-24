@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, u, show, Point, debug, ZIndex, T_Details } from '../../ts/common/Global_Imports';
+	import { g, k, u, show, Point, debug, T_Layer, T_Details } from '../../ts/common/Global_Imports';
 	import { s_graphRect, s_detail_types } from '../../ts/state/S_Stores';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
@@ -46,7 +46,7 @@
 			position:fixed;
 			font-size:0.95em;
 			background-color:#fff;
-			z-index:{ZIndex.details};
+			z-index:{T_Layer.details};
 			width:{k.width_details}px;
 			top:{$s_graphRect.origin.y}px;
 			height:{$s_graphRect.size.height}px;'>

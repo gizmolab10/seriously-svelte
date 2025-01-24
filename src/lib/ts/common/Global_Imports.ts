@@ -17,7 +17,7 @@ import { T_Tree, T_Graph, T_Startup } from './Enumerations';
 import { T_Quadrant, T_Orientation } from '../geometry/Angle';
 import { T_Preference, preferences } from '../managers/Preferences';
 import { T_Ring, T_Oblong, T_SvelteComponent } from './Enumerations';
-import { ZIndex, T_Browser, T_Predicate, T_Alteration } from './Enumerations';
+import { T_Layer, T_Browser, T_Predicate, T_Alteration } from './Enumerations';
 import { T_Thing, T_Trait, T_Element, T_Details, T_Rebuild } from './Enumerations';
 import { T_Info, T_Line, T_Tool, T_Create, T_Control, T_Storage } from './Enumerations';
 
@@ -64,7 +64,7 @@ export {
 	T_Oblong, T_Alteration,
 	T_Ring, Seriously_Range,
 	interact, transparentize,
-	ZIndex, T_Predicate, T_Create,
+	T_Layer, T_Predicate, T_Create,
 	Angle, T_Quadrant, T_Orientation,
 	Children_Geometry, Widget_MapRect,
 	show, files, builds, signals, wrappers,

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, g, u, ux, Rect, Size, Point, debug, ZIndex } from '../../ts/common/Global_Imports';
+	import { k, g, u, ux, Rect, Size, Point, debug, T_Layer } from '../../ts/common/Global_Imports';
 	import { T_Timer, Mouse_Timer, S_Mouse } from '../../ts/common/Global_Imports';
 	import { s_mouse_location, s_thing_fontFamily } from '../../ts/state/S_Stores';
 	import type { Handle_Result } from '../../ts/common/Types';
@@ -15,7 +15,7 @@
 	export let detect_mouseDown = true;
 	export let detect_mouseUp = true;
 	export let position = 'absolute';
-	export let zindex = ZIndex.dots;
+	export let zindex = T_Layer.dots;
 	export let font_size = '0.9em';
 	export let cursor = 'pointer';
 	export let align_left = true;

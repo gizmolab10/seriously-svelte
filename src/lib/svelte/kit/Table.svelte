@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, ZIndex } from '../../ts/common/Global_Imports';
+	import { k, T_Layer } from '../../ts/common/Global_Imports';
 	import type { Integer } from '../../ts/common/Types';
 	export let top = 0;
 	export let array;
@@ -42,7 +42,7 @@
 			left:10px;
 			top:{top}px;
 			position:absolute;
-			z-index: {ZIndex.details};'>
+			z-index: {T_Layer.details};'>
 		<table style='width: {k.width_details}px; left:12px; color:black;'>
 			{#each array as [key, value]}
 				<tr>

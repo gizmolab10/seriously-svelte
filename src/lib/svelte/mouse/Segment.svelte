@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, Rect, Size, Point, debug, ZIndex } from '../../ts/common/Global_Imports';
+	import { k, u, Rect, Size, Point, debug, T_Layer } from '../../ts/common/Global_Imports';
 	import { svgPaths, T_Oblong, Segment_Map } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from './Mouse_Responder.svelte';
 	export let hit_closure = (title, shift) => {};
@@ -36,7 +36,7 @@
 	width={size.width}
 	name={segment_name}
 	height={size.height}
-	zindex={ZIndex.frontmost}
+	zindex={T_Layer.frontmost}
 	origin={segment_map.origin}
 	mouse_state_closure={up_hover_closure}>
 	<svg

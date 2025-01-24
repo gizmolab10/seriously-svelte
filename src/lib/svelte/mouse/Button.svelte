@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { S_Element, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { k, u, ux, Rect, Point, ZIndex } from '../../ts/common/Global_Imports';
+	import { k, u, ux, Rect, Point, T_Layer } from '../../ts/common/Global_Imports';
 	import { s_thing_fontFamily } from '../../ts/state/S_Stores';
 	import Identifiable from '../../ts/data/basis/Identifiable';
 	import type { Handle_Result } from '../../ts/common/Types';
@@ -15,7 +15,7 @@
 	export let padding = '0px 6px 1px 6px';
 	export let color = k.color_default;
 	export let position = 'absolute';
-	export let zindex = ZIndex.dots;
+	export let zindex = T_Layer.dots;
 	export let border_thickness = 1;
 	export let center = Point.zero;
 	export let style = k.empty;

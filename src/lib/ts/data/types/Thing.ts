@@ -113,17 +113,6 @@ export default class Thing extends Datum {
 		return u.uniquely_concatenateArrays(parentsRelationships, childrenRelationships);
 	}
 
-	clear_grabbed_expanded_andResolveFocus() {
-		for (const ancestry of this.ancestries) {
-			ancestry.clear_grabbed_andExpanded();
-		}
-		this.oneAncestry.clear_grabbed_andExpanded();
-		const focus = get(s_ancestry_focus);
-		if (focus.thing?.hid == this.hid) {
-			get(s_hierarchy).rootAncestry.becomeFocus();
-		}
-	}
-
 	async persistent_create_orUpdate(already_persisted: boolean) {
 		if (already_persisted) {
 			await databases.db.thing_persistentUpdate(this);
@@ -140,6 +129,15 @@ export default class Thing extends Datum {
 		return [];
 	}
 
+	crumbWidth(numberOfParents: number): number {
+		const forNone = this.titleWidth + 10;
+		switch (numberOfParents) {
+			case 0:	 return forNone;
+			case 1:	 return forNone + 11;
+			default: return forNone + 18;
+		}
+	}
+
 	parentRelationships_for(predicate: Predicate): Array<Relationship> {
 		let relationships: Array<Relationship> = [] 
 		if (predicate.isBidirectional) {
@@ -150,12 +148,15 @@ export default class Thing extends Datum {
 		return relationships;
 	}
 
-	crumbWidth(numberOfParents: number): number {
-		const forNone = this.titleWidth + 10;
-		switch (numberOfParents) {
-			case 0:	 return forNone;
-			case 1:	 return forNone + 11;
-			default: return forNone + 18;
+	clear_grabbed_expanded_andResolveFocus() {
+		// called when remote alters number of things
+		for (const ancestry of this.ancestries) {
+			ancestry.clear_grabbed_andExpanded();
+		}
+		this.oneAncestry.clear_grabbed_andExpanded();
+		const focus = get(s_ancestry_focus);
+		if (focus.thing?.hid == this.hid) {
+			get(s_hierarchy).rootAncestry.becomeFocus();
 		}
 	}
 

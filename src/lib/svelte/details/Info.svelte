@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, ux, show, Rect, Size, Point, Thing, debug, ZIndex, Ancestry } from '../../ts/common/Global_Imports';
+	import { g, k, ux, show, Rect, Size, Point, Thing, debug, T_Layer, Ancestry } from '../../ts/common/Global_Imports';
 	import { signals, T_Info, T_Trait, preferences, T_Element, T_Preference } from '../../ts/common/Global_Imports';
 	import { s_ancestry_focus, s_ancestries_grabbed, s_thing_fontFamily } from '../../ts/state/S_Stores';
 	import { s_hierarchy, s_thing_color, s_thing_title } from '../../ts/state/S_Stores';
@@ -196,7 +196,7 @@
 						left:{-margin}px;
 						position:absolute;
 						width:{k.width_details}px;
-						z-index:{ZIndex.frontmost};'>
+						z-index:{T_Layer.frontmost};'>
 				</div>
 				<Text_Editor
 					label='consequence'

@@ -2,7 +2,7 @@
 	import { s_radial_geometry, s_ring_rotation_radius, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
 	import { s_graphRect, s_paging_state, s_ancestry_focus, s_thing_color } from '../../ts/state/S_Stores';
 	import { Predicate, Widget_MapRect, Radial_Geometry } from '../../ts/common/Global_Imports';
-	import { k, u, Point, ZIndex, signals } from '../../ts/common/Global_Imports';
+	import { k, u, Point, T_Layer, signals } from '../../ts/common/Global_Imports';
 	import Widget from '../widget/Widget.svelte';
 	import { onMount } from 'svelte';
     const ancestry = $s_ancestry_focus;
@@ -49,7 +49,7 @@
 
 {#key rebuilds}
 	{#if !!$s_radial_geometry}
-		<div class='necklace-widgets' style='z-index:{ZIndex.backmost};'>
+		<div class='necklace-widgets' style='z-index:{T_Layer.backmost};'>
 			{#each $s_radial_geometry.widget_maps as widget_map}
 				<Widget
 					subtype={widget_map.subtype}

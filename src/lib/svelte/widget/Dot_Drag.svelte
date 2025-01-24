@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { s_thing_color, s_graph_type, s_ancestries_grabbed, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
-	import { g, k, u, ux, show, Rect, Size, Point, Thing, debug, ZIndex, T_Tool } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, show, Rect, Size, Point, Thing, debug, T_Layer, T_Tool } from '../../ts/common/Global_Imports';
 	import { databases, Svelte_Wrapper, T_Alteration, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { signals, svgPaths, T_Graph, T_Element } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
@@ -142,7 +142,7 @@
 					height:{size}px;
 					color:transparent;
 					position:absolute;
-					z-index:{ZIndex.dots};
+					z-index:{T_Layer.dots};
 					background-color:transparent;'>
 				{#key redraws}
 					<div id={'drag-div-for-' + name}
@@ -153,7 +153,7 @@
 							height:{size}px;
 							color:transparent;
 							position:absolute;
-							z-index:{ZIndex.dots};'>
+							z-index:{T_Layer.dots};'>
 						<SVGD3 name={'drag-' + name + '-svg'}
 							width={size}
 							height={size}

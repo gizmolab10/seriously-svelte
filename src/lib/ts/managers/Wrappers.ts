@@ -10,7 +10,7 @@ export class Wrappers {
 	
 	// assure delivery of events
 	// to a svelt component
-	// with a higher ZIndex
+	// with a higher T_Layer
 	// than the containing component
 	// when they overlap
 
