@@ -101,6 +101,29 @@ export default class Thing extends Datum {
 		return super.isInDifferentBulkThan(other) || (other.isBulkAlias && !this.isBulkAlias && this.idBase != other.title);
 	}
 
+	signal_color_change() {
+		const count = get(s_count_rebuild) + 1;
+		s_count_rebuild.set(count);
+		s_thing_color.set(`${this.id}${k.generic_separator}${count}`);
+	}
+
+	relationships_inBothDirections_forKind(kindPredicate: string): Array<Relationship> {
+		const childrenRelationships = this.relationships_forParents_ofKind(kindPredicate, false);
+		const parentsRelationships = this.relationships_forParents_ofKind(kindPredicate, true);
+		return u.uniquely_concatenateArrays(parentsRelationships, childrenRelationships);
+	}
+
+	clear_grabbed_expanded_andResolveFocus() {
+		for (const ancestry of this.ancestries) {
+			ancestry.clear_grabbed_andExpanded();
+		}
+		this.oneAncestry.clear_grabbed_andExpanded();
+		const focus = get(s_ancestry_focus);
+		if (focus.thing?.hid == this.hid) {
+			get(s_hierarchy).rootAncestry.becomeFocus();
+		}
+	}
+
 	async persistent_create_orUpdate(already_persisted: boolean) {
 		if (already_persisted) {
 			await databases.db.thing_persistentUpdate(this);
@@ -109,10 +132,22 @@ export default class Thing extends Datum {
 		}
 	}
 
-	signal_color_change() {
-		const count = get(s_count_rebuild) + 1;
-		s_count_rebuild.set(count);
-		s_thing_color.set(`${this.id}${k.generic_separator}${count}`);
+	relationships_forParents_ofKind(kindPredicate: string, forParents: boolean): Array<Relationship> {
+		const id = this.idBridging;				//  use idBridging in case thing is a bulk alias
+		if ((!!id || id == k.empty) && id != k.unknown) {
+			return get(s_hierarchy).relationships_forPredicateThingIsChild(kindPredicate, id.hash(), forParents);
+		}
+		return [];
+	}
+
+	parentRelationships_for(predicate: Predicate): Array<Relationship> {
+		let relationships: Array<Relationship> = [] 
+		if (predicate.isBidirectional) {
+			relationships = this.relationships_inBothDirections_forKind(predicate.kind);
+		} else {
+			relationships = this.relationships_forParents_ofKind(predicate.kind, true);
+		}
+		return relationships;
 	}
 
 	crumbWidth(numberOfParents: number): number {
@@ -148,30 +183,6 @@ export default class Thing extends Datum {
 			}
 			oneAncestry.children.map(c => c.oneAncestries_rebuild_forSubtree());
 		}
-	}
-
-	relationships_inBothDirections_forKind(kindPredicate: string): Array<Relationship> {
-		const childrenRelationships = this.relationships_forParents_ofKind(kindPredicate, false);
-		const parentsRelationships = this.relationships_forParents_ofKind(kindPredicate, true);
-		return u.uniquely_concatenateArrays(parentsRelationships, childrenRelationships);
-	}
-
-	relationships_forParents_ofKind(kindPredicate: string, forParents: boolean): Array<Relationship> {
-		const id = this.idBridging;				//  use idBridging in case thing is a bulk alias
-		if ((!!id || id == k.empty) && id != k.unknown) {
-			return get(s_hierarchy).relationships_forPredicateThingIsChild(kindPredicate, id.hash(), forParents);
-		}
-		return [];
-	}
-
-	parentRelationships_for(predicate: Predicate): Array<Relationship> {
-		let relationships: Array<Relationship> = [] 
-		if (predicate.isBidirectional) {
-			relationships = this.relationships_inBothDirections_forKind(predicate.kind);
-		} else {
-			relationships = this.relationships_forParents_ofKind(predicate.kind, true);
-		}
-		return relationships;
 	}
 
 	uniqueAncestries_for(predicate: Predicate | null): Array<Ancestry> {

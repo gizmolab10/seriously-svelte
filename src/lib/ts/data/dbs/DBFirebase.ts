@@ -159,6 +159,8 @@ export default class DBFirebase extends DBCommon {
 				});
 			}
 		}
+		signals.signal_rebuildGraph(this.hierarchy.rootAncestry);		// first recreate ancestries
+		this.hierarchy.signal_storage_redraw(10);
 	}
 
 	setup_remote_handlers() {
@@ -171,8 +173,8 @@ export default class DBFirebase extends DBCommon {
 				const collectionRef = collection(this.firestore, this.bulksName, idBase, datum_type);
 				if (!!bulk) {
 					switch (datum_type) {
-						case T_Datum.things:				 bulk.thingsCollection = collectionRef; break;
-						case T_Datum.traits:				 bulk.traitsCollection = collectionRef; break;
+						case T_Datum.things:		bulk.thingsCollection = collectionRef; break;
+						case T_Datum.traits:		bulk.traitsCollection = collectionRef; break;
 						case T_Datum.relationships: bulk.relationshipsCollection = collectionRef; break;
 					}
 				}
@@ -184,9 +186,11 @@ export default class DBFirebase extends DBCommon {
 							snapshot.docChanges().forEach(async (change) => {	// convert and remember
 								await this.handle_docChanges(idBase, datum_type, change);
 							});
+							signals.signal_rebuildGraph(this.hierarchy.rootAncestry);		// first recreate ancestries
+							this.hierarchy.signal_storage_redraw(10);
 						}
 					}
-				})
+				});
 			}
 		}
 	}
@@ -335,6 +339,7 @@ export default class DBFirebase extends DBCommon {
 					break;
 				case 'removed':
 					if (!!thing) {
+						thing.clear_grabbed_expanded_andResolveFocus();
 						h.thing_forget(thing);
 					}
 					break;

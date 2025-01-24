@@ -239,7 +239,7 @@ export default class Ancestry extends Identifiable {
 	sharesAnID(ancestry: Ancestry | null): boolean { return !ancestry ? false : this.ids.some(id => ancestry.ids.includes(id)); }
 	showsClusterFor(predicate: Predicate): boolean { return this.includesT_Predicate(predicate.kind) && this.hasThings(predicate); }
 	relationshipAt(back: number = 1): Relationship | null { return this.hierarchy.relationship_forHID(this.idAt(back).hash()) ?? null; }
-	ancestry_hasEqualID(ancestry: Ancestry | null | undefined): boolean { return !!ancestry && this.hid == ancestry.hid&& this.type_db == ancestry.type_db; }
+	ancestry_hasEqualID(ancestry: Ancestry | null | undefined): boolean { return !!ancestry && this.hid == ancestry.hid && this.type_db == ancestry.type_db; }
 	
 	relationships_forParents_ofKind(kindPredicate: string, forParents: boolean) {
 		return this.thing?.relationships_forParents_ofKind(kindPredicate, forParents) ?? [];
@@ -526,6 +526,11 @@ export default class Ancestry extends Identifiable {
 	grabOnly() {
 		s_ancestries_grabbed.set([this]);
 		this.toggle_editingTools();
+	}
+
+	clear_grabbed_andExpanded() {
+		this.collapse();
+		this.ungrab();
 	}
 
 	becomeFocus(force: boolean = false): boolean {

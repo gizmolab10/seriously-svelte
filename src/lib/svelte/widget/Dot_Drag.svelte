@@ -2,7 +2,7 @@
 	import { s_thing_color, s_graph_type, s_ancestries_grabbed, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
 	import { g, k, u, ux, show, Rect, Size, Point, Thing, debug, ZIndex, T_Tool } from '../../ts/common/Global_Imports';
 	import { databases, Svelte_Wrapper, T_Alteration, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { signals, svgPaths, Direction, T_Graph, T_Element } from '../../ts/common/Global_Imports';
+	import { signals, svgPaths, T_Graph, T_Element } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import { onMount } from 'svelte';

@@ -2,15 +2,15 @@
 
 import { s_thing_fontFamily } from '../state/S_Stores';
 import Identifiable from '../data/basis/Identifiable';
-import { T_Browser } from './Enumerations';
-import type { Dictionary } from './Types';
 import Ancestry from '../data/runtime/Ancestry';
 import { T_Quadrant } from '../geometry/Angle';
 import { Point } from '../geometry/Geometry';
+import { T_Browser } from './Enumerations';
+import type { Dictionary } from './Types';
 import { transparentize } from 'color2k';
-import { k } from './Constants';
 import Angle from '../geometry/Angle';
 import { get } from 'svelte/store';
+import { k } from './Constants';
 
 export class Utilities {
 	ignore(event: Event) {}
@@ -38,11 +38,25 @@ export class Utilities {
 		return `${fontSize} ${fontFamily}`;
 	}
 
-	remove<T>(from: Array<T>, item: T): void {
-		const index = from.findIndex((element: T) => element === item);
+	conntains_byHID<T>(from: Array<T>, item: T): boolean {
+		const identifiable = item as Identifiable;
+		const identifiables = from as Array<Identifiable>;
+		return identifiables.filter(t => t.hid == identifiable.hid).length > 0;
+	}
+
+	remove_byHID<T>(from: Array<T>, item: T): Array<T> {
+		const identifiable = item as Identifiable;
+		const identifiables = from as Array<Identifiable>;
+		return identifiables.filter(t => t.hid != identifiable.hid) as Array<T>;
+	}
+
+	remove<T>(from: Array<T>, item: T): Array<T> {
+		let array = from;
+		const index = array.findIndex((element: T) => element === item);
 		if (index !== -1) {
-			from.splice(index, 1);
+			array.splice(index, 1);
 		}
+		return array;
 	}
 
 	sort_byTitleTop(ancestries: Array<Ancestry>): Array<Ancestry> {

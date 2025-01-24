@@ -31,7 +31,7 @@ export default class Radial_Geometry {
 	cluster_map_toChildren(toChildren: boolean, predicate: Predicate): Cluster_Map { return this.cluster_maps_toChildren(toChildren)[predicate.stateIndex]; }
 
 	widget_mapFor(ancestry: Ancestry): Widget_MapRect | null {
-		const maps = this.widget_maps.filter(m => m.widget_ancestry == ancestry);
+		const maps = this.widget_maps.filter(m => m.widget_ancestry?.hid == ancestry.hid);
 		return maps.length > 0 ? maps[0] : null;
 	}
 
@@ -43,7 +43,7 @@ export default class Radial_Geometry {
 			if (!!cluster_map) {
 				for (const widget_map of cluster_map.widget_maps) {
 					// set aside tools_ancestry map, it's widget needs to be drawn last
-					if (widget_map.widget_ancestry == tools_ancestry) {
+					if (!!widget_map.widget_ancestry && widget_map.widget_ancestry?.hid == tools_ancestry?.hid) {
 						this.tools_widget_map = widget_map;
 					} else {
 						widget_maps.push(widget_map);

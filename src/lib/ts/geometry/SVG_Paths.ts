@@ -1,12 +1,5 @@
-import { k, u, Size, Point, Angle, T_Oblong } from '../common/Global_Imports';
+import { k, u, Size, Point, T_Oblong, Direction } from '../common/Global_Imports';
 import type { Integer } from '../common/Types';
-
-export enum Direction {
-	up = Angle.three_quarters,
-	down = Angle.quarter,
-	right = Angle.half,
-	left = Angle.zero,
-}
 
 export default class SVG_Paths {
 
@@ -144,29 +137,27 @@ export default class SVG_Paths {
 		if (count == 0) {
 			return k.empty;
 		}
-		let i = 0;
-		let path = k.empty;
 		const radius = diameter / 3;
 		const isOdd = (count % 2) != 0;
 		const increment = Math.PI * 2 / count;
 		let radial = new Point(isOdd ? radius : 0, isOdd ? 0 : radius);
-		while (i++ < count) {
-			path = path + this.circle_atOffset(diameter, dot_size, radial.offsetByXY(-0.7, 0.3));
-			radial = radial.rotate_by(increment);
-		}
-		return path;
+		return this.tinyDots(diameter, dot_size, increment, count, radial);
 	}
 
 	tinyDots_halfCircular(diameter: number, count: Integer, isBig: boolean): string {
 		if (count == 0) {
 			return k.empty;
 		}
-		let i = 0;
-		let path = k.empty;
 		const radius = diameter / 3;
 		const dot_size = isBig ? 4 : 2;
 		const increment = Math.PI / count;
 		let radial = new Point(0, isBig ? -radius : radius).rotate_by(increment / 2);
+		return this.tinyDots(diameter, dot_size, increment, count, radial);
+	}
+
+	tinyDots(diameter: number, dot_size: number, increment: number, count: Integer, radial: Point) {
+		let i = 0;
+		let path = k.empty;
 		while (i++ < count) {
 			path = path + this.circle_atOffset(diameter, dot_size, radial.offsetByXY(-0.7, 0.3));
 			radial = radial.rotate_by(increment);

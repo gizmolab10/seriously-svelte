@@ -234,11 +234,19 @@ export class Hierarchy {
 	}
 
 	thing_forget(thing: Thing) {
-		const thingsOfType = this.things_byType[thing.type];
-		delete this.thing_byHID[thing.hid];
-		this.things = u.strip_invalid(this.things);
-		if (!!thingsOfType) {
-			this.things_byType[thing.type] = u.strip_invalid(thingsOfType);
+		const type = thing.type;
+		if (type != T_Thing.root) {		// do NOT forget root
+			const thingsOfType = this.things_byType[type];
+			delete this.thing_byHID[thing.hid];
+			this.things = u.remove_byHID<Thing>(this.things, thing);
+			if (!!thingsOfType) {
+				const validated = u.strip_invalid(thingsOfType);
+				if (validated.length == 0) {
+					delete this.things_byType[type];
+				} else {
+					this.things_byType[type] = validated;
+				}
+			}
 		}
 	}
 
@@ -378,6 +386,7 @@ export class Hierarchy {
 			this.relationships_byChildHID[thing.hid] ?? [],
 			this.relationships_byParentHID[thing.hid] ?? []
 		)
+		thing.clear_grabbed_expanded_andResolveFocus();
 		this.thing_forget(thing);				// forget so onSnapshot logic will not signal children, do first so UX updates quickly
 		await this.db.thing_persistentDelete(thing);
 		for (const ancestry of thing.ancestries) {
@@ -492,8 +501,8 @@ export class Hierarchy {
 	trait_forget(trait: Trait) {
 		delete this.trait_byHID[trait.hid];
 		delete this.traits_byOwnerHID[trait.ownerID.hash()];
-		this.traits = this.traits.filter(t => t !== trait);
-		this.traits_byType[trait.type] = this.traits_byType[trait.type].filter(t => t !== trait);
+		this.traits = u.remove_byHID<Trait>(this.traits, trait);
+		this.traits_byType[trait.type] = u.remove_byHID<Trait>(this.traits_byType[trait.type], trait);;
 	}
 
 	trait_remember(trait: Trait) {
@@ -612,7 +621,7 @@ export class Hierarchy {
 	
 	relationship_forget_forHID(relationships: Relationships_ByHID, hid: Integer, relationship: Relationship) {
 		let array = relationships[hid] ?? [];
-		u.remove<Relationship>(array, relationship)
+		array = u.remove_byHID<Relationship>(array, relationship);
 		if (array.length == 0) {
 			delete relationships[hid];
 		} else {
@@ -629,8 +638,8 @@ export class Hierarchy {
 	}
 
 	relationship_forget(relationship: Relationship) {
-		u.remove<Relationship>(this.relationships, relationship);
 		delete this.relationship_byHID[relationship.hid];
+		this.relationships = u.remove_byHID<Relationship>(this.relationships, relationship);
 		this.relationship_forget_forHID(this.relationships_byChildHID, relationship.hidChild, relationship);
 		this.relationship_forget_forHID(this.relationships_byParentHID, relationship.hidParent, relationship);
 	}
@@ -1123,9 +1132,13 @@ export class Hierarchy {
 
 	predicate_forget(predicate: Predicate) {
 		let predicates = this.predicates_byDirection(predicate.isBidirectional) ?? [];
-		u.remove<Predicate>(predicates, predicate);
-		this.predicate_byDirection[predicate.isBidirectional ? 1 : 0] = predicates;
-		u.remove<Predicate>(this.predicates, predicate);
+		predicates = u.remove_byHID<Predicate>(predicates, predicate);
+		if (predicates.length == 0) {
+			delete this.predicate_byDirection[predicate.isBidirectional ? 1 : 0];
+		} else {
+			this.predicate_byDirection[predicate.isBidirectional ? 1 : 0] = predicates;
+		}
+		this.predicates = u.remove_byHID<Predicate>(this.predicates, predicate);
 		delete this.predicate_byKind[predicate.kind];
 	}
 
@@ -1347,7 +1360,9 @@ export class Hierarchy {
 
 	signal_storage_redraw(after: number = 100) {
 		setTimeout(() => {			// depth is not immediately updated
-			s_storage_update_trigger.set(this.data_count * 100 + this.depth);
+			const trigger = this.data_count * 100 + this.depth;
+			console.log(`signal storage redraw ${trigger}`)
+			s_storage_update_trigger.set(trigger);
 		}, after);
 	}
 

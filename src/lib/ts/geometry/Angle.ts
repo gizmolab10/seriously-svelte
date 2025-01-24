@@ -98,3 +98,10 @@ export default class Angle {
 	}
 
 }
+
+export enum Direction {
+	up = Angle.three_quarters,
+	down = Angle.quarter,
+	right = Angle.half,
+	left = Angle.zero,
+}
