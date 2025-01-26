@@ -46,7 +46,6 @@ export default class Thing extends Datum {
 	get hasMultipleParents():				 boolean { return this.parentAncestries.length > 1; }
 	get hasParents():						 boolean { return this.hasParents_forKind(T_Predicate.contains); }
 	get isFocus():							 boolean { return (get(s_ancestry_focus).thing?.id ?? k.empty) == this.id; }
-	get isOrphaned():						 boolean { return !get(s_hierarchy).relationship_whereID_isChild(this.id) && this.type != T_Thing.root; }
 	get hasRelated():						 boolean { return this.relatedRelationships.length > 0; }
 
 	get ancestries(): Array<Ancestry> {
@@ -124,7 +123,7 @@ export default class Thing extends Datum {
 	relationships_forParents_ofKind(kindPredicate: string, forParents: boolean): Array<Relationship> {
 		const id = this.idBridging;				//  use idBridging in case thing is a bulk alias
 		if ((!!id || id == k.empty) && id != k.unknown) {
-			return get(s_hierarchy).relationships_forPredicateThingIsChild(kindPredicate, id.hash(), forParents);
+			return get(s_hierarchy).relationships_forKindPredicate_hidThing_isChild(kindPredicate, id.hash(), forParents);
 		}
 		return [];
 	}

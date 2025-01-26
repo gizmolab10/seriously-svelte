@@ -33,7 +33,7 @@
 	});
 
 	$: {
-		if (!!dotReveal && !ancestry.ancestry_hasEqualID($s_ancestry_showing_tools)) {
+		if (!!dotReveal) {
 			revealWrapper = new Svelte_Wrapper(dotReveal, handle_mouse_state, ancestry.hid, T_SvelteComponent.reveal);
 			element_state.set_forHovering(ancestry.thing.color, 'pointer');
 		}
@@ -60,16 +60,14 @@
 
 	function svgPath_update() {
 		const thing = ancestry.thing;
-		hasInsidePath = ancestry.toolsGrabbed || thing.isBulkAlias;
+		hasInsidePath = thing.isBulkAlias;
 		insideOffset = hasInsidePath ? 0 : -1;
-		if (!ancestry.showsReveal || ancestry.toolsGrabbed) {
+		if (!ancestry.showsReveal) {
 			svgPathFor_revealDot = svgPaths.circle_atOffset(size, size - 1);
 		} else {
 			svgPathFor_revealDot = svgPaths.fat_polygon(size, ancestry.direction_ofReveal);
 		}
-		if (ancestry.toolsGrabbed) {
-			svgPathFor_insideReveal = svgPaths.x_cross(size, 1.5);
-		} else if (hasInsidePath) {
+		if (hasInsidePath) {
 			svgPathFor_insideReveal = svgPaths.circle_atOffset(size, 3);
 		}
 	}

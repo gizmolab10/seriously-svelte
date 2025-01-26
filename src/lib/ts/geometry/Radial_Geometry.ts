@@ -1,12 +1,10 @@
 import { u, Thing, debug, Ancestry, Predicate, T_Predicate } from '../common/Global_Imports';
+import { s_hierarchy, s_paging_state, s_ancestry_focus } from '../state/S_Stores';
 import { Cluster_Map, S_Paging, Widget_MapRect } from '../common/Global_Imports';
-import { s_ancestry_focus, s_ancestry_showing_tools } from '../state/S_Stores';
-import { s_hierarchy, s_paging_state } from '../state/S_Stores';
 import Parent_Ancestry from '../data/runtime/Parent_Ancestry';
 import { get } from 'svelte/store';
 
 export default class Radial_Geometry {
-	tools_widget_map: Widget_MapRect | null = null;
 	parent_cluster_maps: Array<Cluster_Map> = [];
 	child_cluster_maps: Array<Cluster_Map> = [];
 	ancestry_focus!: Ancestry;
@@ -36,18 +34,11 @@ export default class Radial_Geometry {
 	}
 
 	get widget_maps(): Array<Widget_MapRect> {
-		const tools_ancestry = get(s_ancestry_showing_tools);
 		let widget_maps: Array<Widget_MapRect> = [];
-		this.tools_widget_map = null;
 		for (const cluster_map of this.cluster_maps) {
 			if (!!cluster_map) {
 				for (const widget_map of cluster_map.widget_maps) {
-					// set aside tools_ancestry map, it's widget needs to be drawn last
-					if (!!widget_map.widget_ancestry && widget_map.widget_ancestry?.hid == tools_ancestry?.hid) {
-						this.tools_widget_map = widget_map;
-					} else {
-						widget_maps.push(widget_map);
-					}
+					widget_maps.push(widget_map);
 				}
 			}
 		}

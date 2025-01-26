@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { g, k, u, ux, Thing, Point, Angle, debug, T_Layer, signals, T_Graph } from '../../ts/common/Global_Imports';
-	import { s_thing_fontFamily, s_ancestries_grabbed, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
 	import { T_Element, S_Element, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { s_title_edit_state, s_thing_color, s_graph_type } from '../../ts/state/S_Stores';
+	import { s_thing_fontFamily, s_ancestries_grabbed } from '../../ts/state/S_Stores';
 	import Title_Editor from './Title_Editor.svelte';
 	import Dot_Reveal from './Dot_Reveal.svelte';
 	import Dot_Drag from './Dot_Drag.svelte';
@@ -20,7 +20,6 @@
 	let revealCenter = Point.zero;
 	let dragCenter = Point.zero;
 	let radius = k.dot_size / 2;
-	let showingTools = false;
 	let priorOrigin = origin;
 	let background = k.empty;
 	let widgetName = k.empty;
@@ -68,7 +67,7 @@
 	});
 
 	$: {
-		const _ = $s_title_edit_state + $s_ancestries_grabbed + $s_ancestry_showing_tools;
+		const _ = $s_title_edit_state + $s_ancestries_grabbed;
 		updateBorder_fromState();
 	}
 
@@ -127,12 +126,10 @@
 		if (!!thing) {
 			const shallEdit = ancestry.isEditing;
 			const shallGrab = ancestry.isGrabbed;
-			const shallShowTools = ancestry.toolsGrabbed && !ancestry.isFocus;
-			const change = (isEditing != shallEdit || isGrabbed != shallGrab || showingTools != shallShowTools);
+			const change = (isEditing != shallEdit || isGrabbed != shallGrab);
 			if (change) {
 				const showBackground = shallGrab || g.inRadialMode;
 				background = showBackground ? `background-color: ${k.color_background}` : k.empty
-				showingTools = shallShowTools;
 				isGrabbed = shallGrab;
 				isEditing = shallEdit;
 				layout_widget();

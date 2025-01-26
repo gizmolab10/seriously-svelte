@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { s_radial_geometry, s_ring_rotation_radius, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
 	import { s_graphRect, s_paging_state, s_ancestry_focus, s_thing_color } from '../../ts/state/S_Stores';
 	import { Predicate, Widget_MapRect, Radial_Geometry } from '../../ts/common/Global_Imports';
+	import { s_radial_geometry, s_ring_rotation_radius } from '../../ts/state/S_Stores';
 	import { k, u, Point, T_Layer, signals } from '../../ts/common/Global_Imports';
 	import Widget from '../widget/Widget.svelte';
 	import { onMount } from 'svelte';
@@ -9,7 +9,6 @@
 	const center = $s_graphRect.size.asPoint.dividedInHalf;
 	const childOffset = new Point(k.dot_size / -2, 4 - k.dot_size);
 	let color = ancestry.thing?.color ?? k.thing_color_default;
-	let tools_widget_map: Widget_MapRect | null = null;
 	let rebuilds = 0;
 
 	// draw widgets, lines and arcs
@@ -22,14 +21,6 @@
 			handleAny.disconnect();
 		};
 	});
-
-	$: {
-		const _ = $s_ancestry_showing_tools;
-		tools_widget_map = null;
-		setTimeout(() => {
-			tools_widget_map = $s_radial_geometry?.tools_widget_map ?? null;
-		}, 1);
-	}
 
 	$: {
 		if (!!ancestry.thing && ancestry.thing.id == $s_thing_color?.split(k.generic_separator)[0]) {
@@ -58,14 +49,6 @@
 					points_right={widget_map.points_right}
 					origin={widget_map.childOrigin.offsetBy(childOffset)}/>
 			{/each}
-			{#if tools_widget_map}
-				<Widget
-					subtype={tools_widget_map.subtype}
-					name={tools_widget_map.element_state.name}
-					ancestry={tools_widget_map.widget_ancestry}
-					points_right={tools_widget_map.points_right}
-					origin={tools_widget_map.childOrigin.offsetBy(childOffset)}/>
-			{/if}
 		</div>
 	{/if}
 {/key}

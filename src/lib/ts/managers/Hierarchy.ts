@@ -316,7 +316,7 @@ export class Hierarchy {
 	}
 
 	async thing_remember_persistentRelocateChild(child: Thing, fromParent: Thing, toParent: Thing): Promise<any> {
-		let relationship = this.relationship_whereID_isChild(child.id);
+		let relationship = this.relationship_whereHID_isChild(child.hid);
 		if (!!relationship && relationship.idParent == fromParent.id) {
 			this.relationship_forget(relationship);
 			relationship.idParent = toParent.id;
@@ -583,7 +583,7 @@ export class Hierarchy {
 
 	async relationships_contains_persistentCreateMissing(idBase: string) {
 		for (const thing of this.things) {
-			if (thing.isOrphaned && thing.idBase == idBase && !!this.idRoot) {			// add orphaned things to root
+			if (!thing.isRoot && !this.relationship_whereHID_isChild(thing.hid) && thing.idBase == idBase && !!this.idRoot) {			// add orphaned things to root
 				const lost_and_found = await this.thing_lost_and_found_persistentCreateUnique();
 				await this.relationship_remember_persistentCreateUnique(idBase, Identifiable.newID(),
 					T_Predicate.contains, lost_and_found.id, thing.id, 0, T_Create.getPersistentID);
@@ -591,7 +591,7 @@ export class Hierarchy {
 		}
 	}
 
-	relationships_forPredicateThingIsChild(kindPredicate: string, hid: Integer, forParents: boolean): Array<Relationship> {
+	relationships_forKindPredicate_hidThing_isChild(kindPredicate: string, hid: Integer, forParents: boolean): Array<Relationship> {
 		const dict = forParents ? this.relationships_byChildHID : this.relationships_byParentHID;
 		const matches = dict[hid] as Array<Relationship>; // filter out bad values (dunno what this does)
 		const array: Array<Relationship> = [];
@@ -622,7 +622,7 @@ export class Hierarchy {
 
 	relationships_translate_idsFromTo_forParents(idFrom: string, idTo: string, forParents: boolean) {
 		for (const predicate of this.predicates) {
-			const relationships = this.relationships_forPredicateThingIsChild(predicate.kind, idFrom.hash(), forParents);
+			const relationships = this.relationships_forKindPredicate_hidThing_isChild(predicate.kind, idFrom.hash(), forParents);
 			for (const relationship of relationships) {
 				if (!forParents && relationship.idParent != idTo) {
 					this.relationship_forget(relationship);
@@ -645,23 +645,10 @@ export class Hierarchy {
 	static readonly RELATIONSHIP: unique symbol;
 
 	relationship_forHID(hid: Integer): Relationship | null { return this.relationship_byHID[hid ?? undefined]; }
-	
-	relationship_forget_forHID(relationships: Relationships_ByHID, hid: Integer, relationship: Relationship) {
-		let array = relationships[hid] ?? [];
-		array = u.remove_byHID<Relationship>(array, relationship);
-		if (array.length == 0) {
-			delete relationships[hid];
-		} else {
-			relationships[hid] = array;
-		}
-	}
 
-	relationship_remember_ifValid(relationship: Relationship) {
-		if (relationship.isValid) {
-			this.relationship_remember(relationship);
-		} else {
-			console.log(`invalid relationship ${relationship.description}`);
-		}
+	relationship_whereHID_isChild(hidThing: Integer, isChild: boolean = true): Relationship | null {
+		const matches = this.relationships_forKindPredicate_hidThing_isChild(T_Predicate.contains, hidThing, isChild);
+		return matches.length == 0 ? null : matches[0];
 	}
 
 	relationship_forget(relationship: Relationship) {
@@ -671,13 +658,22 @@ export class Hierarchy {
 		this.relationship_forget_forHID(this.relationships_byParentHID, relationship.hidParent, relationship);
 	}
 
-	relationship_whereID_isChild(idThing: string, isChild: boolean = true): Relationship | null {
-		const matches = this.relationships_forPredicateThingIsChild(T_Predicate.contains, idThing.hash(), isChild);
-		if (matches.length > 0) {
-			const relationship = matches[0];
-			return relationship;
+	relationship_remember_ifValid(relationship: Relationship) {
+		if (relationship.isValid) {
+			this.relationship_remember(relationship);
+		} else {
+			console.log(`invalid relationship ${relationship.description}`);
 		}
-		return null;
+	}
+	
+	relationship_forget_forHID(relationships: Relationships_ByHID, hid: Integer, relationship: Relationship) {
+		let array = relationships[hid] ?? [];
+		array = u.remove_byHID<Relationship>(array, relationship);
+		if (array.length == 0) {
+			delete relationships[hid];
+		} else {
+			relationships[hid] = array;
+		}
 	}
 
 	relationship_extract_fromDict(dict: Dictionary) {
@@ -701,7 +697,7 @@ export class Hierarchy {
 	}
 
 	relationship_forPredicateKind_parent_child(kindPredicate: string, hidParent: Integer, hidChild: Integer): Relationship | null {
-		const matches = this.relationships_forPredicateThingIsChild(kindPredicate, hidParent, false);
+		const matches = this.relationships_forKindPredicate_hidThing_isChild(kindPredicate, hidParent, false);
 		if (Array.isArray(matches)) {
 			for (const relationship of matches) {
 				if (relationship.hidChild == hidChild) {
