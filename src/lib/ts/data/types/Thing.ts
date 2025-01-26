@@ -150,7 +150,6 @@ export default class Thing extends Datum {
 
 	remove_fromGrabbed_andExpanded_andResolveFocus() {
 		// called when this (thing) is being deleted
-		console.log(`while deleting ${this.title}`);
 		for (const ancestry of this.ancestries) {
 			ancestry.remove_fromGrabbed_andExpanded();
 		}

@@ -74,8 +74,8 @@ export default class Radial_Geometry {
 	layout_clusterFor(ancestries: Array<Ancestry>, predicate: Predicate | null, toChildren: boolean) {
 		if (!!predicate) {
 			const paging_state = get(s_ancestry_focus)?.thing?.page_states?.paging_state_forPointingTo(toChildren, predicate);
-			const onePage = paging_state?.onePage_from(ancestries) ?? [];
-			const cluster_map = new Cluster_Map(ancestries.length, onePage, predicate, toChildren);
+			const onePageOf_ancestries = paging_state?.onePage_from(ancestries) ?? [];
+			const cluster_map = new Cluster_Map(ancestries.length, onePageOf_ancestries, predicate, toChildren);
 			const cluster_maps = this.cluster_maps_toChildren(toChildren);
 			cluster_maps[predicate.stateIndex] = cluster_map;
 		}

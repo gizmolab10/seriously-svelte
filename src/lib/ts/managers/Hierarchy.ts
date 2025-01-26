@@ -573,7 +573,7 @@ export class Hierarchy {
 	}
 
 	relationships_areAllValid_forIDs(ids: Array<string>) {
-		for (const id of ids) {
+		for (const id of ids) {		// ignore empty id (root placeholder)
 			if (id != k.empty && !this.relationship_forHID(id.hash())) {
 				return false;
 			}
