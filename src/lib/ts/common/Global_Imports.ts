@@ -1,7 +1,6 @@
 import { builds } from './Builds';
 import { show } from '../state/S_Show';
 import { files } from '../managers/Files';
-import { cursors } from '../maybe/Cursors';
 import { Direction } from '../geometry/Angle';
 import { wrappers } from '../managers/Wrappers';
 import { debug, Debug, T_Debug } from './Debug';
@@ -44,7 +43,6 @@ import Trait from '../data/types/Trait';
 import S_Mouse from '../state/S_Mouse';
 import User from '../data/types/User';
 import Angle from '../geometry/Angle';
-import Grabs from '../managers/Grabs';
 
 import './Extensions';
 import { k } from './Constants';
@@ -61,18 +59,18 @@ export {
 	e, g, k, u, ux, w,
 	T_Timer, Mouse_Timer,
 	debug, Debug, T_Debug,
-	T_Oblong, T_Alteration,
-	T_Ring, Seriously_Range,
 	interact, transparentize,
+	wrappers, Seriously_Range,
+	Rect, Size, Point, svgPaths,
+	show, files, builds, signals,
 	T_Layer, T_Predicate, T_Create,
-	Angle, T_Quadrant, T_Orientation,
-	Children_Geometry, Widget_MapRect,
-	show, files, builds, signals, wrappers,
+	T_Ring, T_Oblong, T_Alteration,
+	Widget_MapRect, Children_Geometry,
+	Angle, Direction, T_Quadrant, T_Orientation,
+	Ancestry, Hierarchy, databases, preferences,
 	T_Element, Svelte_Wrapper, T_SvelteComponent,
 	S_Element, S_Paging, Page_States, S_Alteration,
-	Rect, Size, Point, cursors, svgPaths, Direction,
 	Arc_Map, Segment_Map, Cluster_Map, Radial_Geometry,
-	Grabs, Ancestry, Hierarchy, databases, preferences,
 	S_Mouse, T_Startup, S_Rotation, S_Expansion, S_Title_Edit,
 	User, Datum, Thing, Trait, Access, Predicate, Relationship,
 	T_Info, T_Thing, T_Trait, T_Graph, T_Tree, T_Details, T_Rebuild,

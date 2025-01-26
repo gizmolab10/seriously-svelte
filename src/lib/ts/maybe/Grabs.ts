@@ -4,7 +4,7 @@ import { get } from 'svelte/store';
 
 export default class Grabs {
 	
-	get thing_lastGrabbed(): Thing | null { return this.ancestry_lastGrabbed?.thing || null; }
+	get grabs_latest_thing(): Thing | null { return this.grabs_latest_ancestry?.thing || null; }
 
 	get areInvisible(): boolean {
 		const ancestries = get(s_ancestries_grabbed) ?? [];
@@ -16,7 +16,7 @@ export default class Grabs {
 		return false;
 	}
 
-	get ancestry_lastGrabbed(): Ancestry | null {
+	get grabs_latest_ancestry(): Ancestry | null {
 		const ancestries = get(s_ancestries_grabbed) ?? [];
 		if (ancestries.length > 0) {
 			const ancestry = ancestries.slice(-1)[0];	// does not alter ancestries
@@ -28,7 +28,7 @@ export default class Grabs {
 		return null;
 	}
 
-	latestAncestryGrabbed(up: boolean): Ancestry | null {	// does not alter array
+	grabs_latest_ancestry_upward(up: boolean): Ancestry | null {	// does not alter array
 		const ancestries = get(s_ancestries_grabbed) ?? [];
 		if (ancestries.length > 0) {
 			if (up) {

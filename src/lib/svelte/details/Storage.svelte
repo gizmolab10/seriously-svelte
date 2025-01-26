@@ -17,7 +17,7 @@
 	setup_element_states();
 	
 	$: {
-		const _ = $s_storage_update_trigger;
+		const trigger = $s_storage_update_trigger;
 		const h = $s_hierarchy;
 		if (!!h) {
 			const dict = h.db.dict_forStorageDetails;

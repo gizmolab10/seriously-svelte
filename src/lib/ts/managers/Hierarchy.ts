@@ -1,8 +1,9 @@
 import { T_Tool, T_Info, T_Graph, T_Thing, T_Trait, T_Create, T_Alteration, T_Control, T_Predicate } from '../common/Global_Imports';
-import { s_ancestries_grabbed, s_title_edit_state, s_storage_update_trigger, s_ancestry_showing_tools } from '../state/S_Stores';
-import { g, k, u, show, User, Thing, Trait, Grabs, debug, files, signals, Access, Ancestry } from '../common/Global_Imports';
-import { preferences, Predicate, Relationship, S_Mouse, S_Alteration } from '../common/Global_Imports';
+import { g, k, u, show, User, Thing, Trait, debug, files, signals, Access, Ancestry } from '../common/Global_Imports';
+import { s_title_edit_state, s_storage_update_trigger, s_ancestry_showing_tools } from '../state/S_Stores';
+import { S_Mouse, Predicate, Relationship, preferences, S_Alteration } from '../common/Global_Imports';
 import { s_graph_type, s_id_popupView, s_ancestry_focus, s_alteration_mode } from '../state/S_Stores';
+import { s_ancestries_grabbed, s_ancestries_expanded } from '../state/S_Stores';
 import type { Integer, Dictionary } from '../common/Types';
 import Identifiable from '../data/basis/Identifiable';
 import { T_Datum } from '../../ts/data/dbs/DBCommon';
@@ -38,7 +39,6 @@ export class Hierarchy {
 	persistent_dataTypes = [T_Datum.predicates, T_Datum.relationships, T_Datum.traits, T_Datum.things];
 	replace_rootID: string | null = k.empty;		// required for DBLocal at launch
 	isAssembled = false;
-	grabs = new Grabs();
 	root!: Thing;
 	db: DBCommon;
 
@@ -93,7 +93,7 @@ export class Hierarchy {
 		// main key dispatch //
 		///////////////////////
 
-		let ancestryGrab = this.grabs.latestAncestryGrabbed(true);
+		let ancestryGrab = this.grabs_latest_ancestry_upward(true);
 		if (event.type == 'keydown' && !g.isEditing_text) {
 			const OPTION = event.altKey;
 			const SHIFT = event.shiftKey;
@@ -105,10 +105,6 @@ export class Hierarchy {
 			const time = new Date().getTime();
 			let graph_needsRebuild = false;
 			if (!modifiers.includes(key)) {		// ignore modifier-key-only events
-				if (!ancestryGrab) {
-					ancestryGrab = rootAncestry;
-					graph_needsRebuild = rootAncestry.becomeFocus();
-				}
 				if (g.allow_GraphEditing) {
 					if (!!ancestryGrab && g.allow_TitleEditing) {
 						switch (key) {
@@ -159,16 +155,47 @@ export class Hierarchy {
 
 	static readonly GRABS: unique symbol;
 
-	async grabs_latest_rebuild_persistentMoveUp_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
-		const ancestry = this.grabs.latestAncestryGrabbed(up);
-		if (!!ancestry) {
-			this.ancestry_rebuild_persistentMoveUp_maybe(ancestry, up, SHIFT, OPTION, EXTREME);
+	get grabs_latest_thing(): Thing | null { return this.grabs_latest_ancestry?.thing || null; }
+
+	get grabs_areInvisible(): boolean {
+		const ancestries = get(s_ancestries_grabbed) ?? [];
+		for (const ancestry of ancestries) {
+			if (!ancestry.isVisible) {
+				return true;
+			}
 		}
+		return false;
+	}
+
+	get grabs_latest_ancestry(): Ancestry | null {
+		const ancestry = this.grabs_latest_ancestry_upward(false);
+		const relationshipHID = ancestry?.relationship?.hid;
+		if (!!relationshipHID && !!this.relationship_forHID(relationshipHID)) {
+			return ancestry;
+		}
+		return null;
+	}
+
+	grabs_latest_ancestry_upward(up: boolean): Ancestry {	// does not alter array
+		const ancestries = get(s_ancestries_grabbed) ?? [];
+		if (ancestries.length > 0) {
+			if (up) {
+				return ancestries[0];
+			} else {
+				return ancestries.slice(-1)[0];
+			}
+		}
+		return this.rootAncestry;
+	}
+
+	async grabs_latest_rebuild_persistentMoveUp_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
+		const ancestry = this.grabs_latest_ancestry_upward(up);
+		this.ancestry_rebuild_persistentMoveUp_maybe(ancestry, up, SHIFT, OPTION, EXTREME);
 	}
 
 	grabs_latest_toggleEditingTools(up: boolean = true) {
-		const ancestry = this.grabs.latestAncestryGrabbed(up);
-		if (!!ancestry && !ancestry.isRoot) {
+		const ancestry = this.grabs_latest_ancestry_upward(up);
+		if (!ancestry.isRoot) {
 			s_ancestry_showing_tools.set(ancestry.toolsGrabbed ? null : ancestry);
 			signals.signal_rebuildGraph_fromFocus();
 		}
@@ -386,7 +413,7 @@ export class Hierarchy {
 			this.relationships_byChildHID[thing.hid] ?? [],
 			this.relationships_byParentHID[thing.hid] ?? []
 		)
-		thing.clear_grabbed_expanded_andResolveFocus();
+		thing.remove_fromGrabbed_andExpanded_andResolveFocus();
 		this.thing_forget(thing);				// forget so onSnapshot logic will not signal children, do first so UX updates quickly
 		await this.db.thing_persistentDelete(thing);
 		for (const ancestry of thing.ancestries) {
@@ -547,7 +574,7 @@ export class Hierarchy {
 
 	relationships_areAllValid_forIDs(ids: Array<string>) {
 		for (const id of ids) {
-			if (!this.relationship_forHID(id.hash())) {
+			if (id != k.empty && !this.relationship_forHID(id.hash())) {
 				return false;
 			}
 		}
@@ -782,6 +809,14 @@ export class Hierarchy {
 		this.ancestry_byHID = {};
 	}
 
+	ancestries_fullRebuild() {
+		const rootAncestry = this.rootAncestry;
+		this.ancestries_forget_all();
+		this.ancestry_remember(rootAncestry);
+		this.root?.oneAncestries_rebuild_forSubtree();		// recreate ancestries
+		signals.signal_rebuildGraph_from(rootAncestry);
+	}
+
 	async ancestries_rebuild_traverse_persistentDelete(ancestries: Array<Ancestry>) {
 		if (get(s_ancestry_focus)) {
 			for (const ancestry of ancestries) {
@@ -817,7 +852,7 @@ export class Hierarchy {
 
 	get ancestry_forBreadcrumbs(): Ancestry {
 		const focus = get(s_ancestry_focus);
-		const grab = this.grabs.ancestry_lastGrabbed;
+		const grab = this.grabs_latest_ancestry;
 		const grab_containsFocus = !!grab && focus.isAProgenyOf(grab)
 		return (!!grab && grab.isVisible && !grab_containsFocus) ? grab : focus;
 	}
@@ -892,7 +927,7 @@ export class Hierarchy {
 	async ancestry_remember_bulk_persistentRelocateRight(ancestry: Ancestry, newParentAncestry: Ancestry) {
 		const newThingAncestry = await this.bulks_thing_remember_recursive_persistentRelocateRight(ancestry, newParentAncestry);
 		if (!!newThingAncestry) {
-			newParentAncestry.signal_relayoutWidgets();
+			newParentAncestry.signal_relayoutWidgets_fromThis();
 			if (newParentAncestry.isExpanded) {
 				newThingAncestry.grabOnly();
 			} else {
@@ -953,10 +988,8 @@ export class Hierarchy {
 				}
 			}
 		} else if (g.allow_GraphEditing) {
-			const grab = this.grabs.latestAncestryGrabbed(true);
-			if (!!grab) {
-				this.ancestry_rebuild_persistentRelocateRight(grab, RIGHT, EXTREME);
-			}
+			const grab = this.grabs_latest_ancestry_upward(true);
+			this.ancestry_rebuild_persistentRelocateRight(grab, RIGHT, EXTREME);
 		}
 	}
 
@@ -1074,7 +1107,7 @@ export class Hierarchy {
 				} else if (newGrabAncestry) { 
 					if (ancestry.isExpanded) {
 						graph_needsRebuild = ancestry.collapse();
-						newGrabAncestry = this.grabs.areInvisible ? ancestry : null;
+						newGrabAncestry = this.grabs_areInvisible ? ancestry : null;
 					} else if (newGrabAncestry.isExpanded || (!!rootAncestry && !rootAncestry.ancestry_hasEqualID(newGrabAncestry))) {
 						graph_needsRebuild = newGrabAncestry.collapse();
 					}
@@ -1220,7 +1253,7 @@ export class Hierarchy {
 
 	get user_selected_ancestry(): Ancestry {
 		const focus = get(s_ancestry_focus);
-		let grabbed = this.grabs.ancestry_lastGrabbed;
+		let grabbed = this.grabs_latest_ancestry;
 		if (!!focus && show.info_type == T_Info.focus) {
 			return focus;
 		} else if (!!grabbed) {
@@ -1286,7 +1319,7 @@ export class Hierarchy {
 		s_ancestry_showing_tools.set(null);
 		s_title_edit_state.set(null);
 		preferences.restore_focus();
-		preferences.restore_grabbed_andExpanded(true);
+		preferences.restore_grabbed_andExpanded();
 		// preferences.restore_page_states();
 		this.isAssembled = true;
 	}
@@ -1361,7 +1394,6 @@ export class Hierarchy {
 	signal_storage_redraw(after: number = 100) {
 		setTimeout(() => {			// depth is not immediately updated
 			const trigger = this.data_count * 100 + this.depth;
-			console.log(`signal storage redraw ${trigger}`)
 			s_storage_update_trigger.set(trigger);
 		}, after);
 	}

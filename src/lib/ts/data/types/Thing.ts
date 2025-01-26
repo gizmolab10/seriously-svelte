@@ -37,7 +37,7 @@ export default class Thing extends Datum {
 	get quest():					   string | null { return get(s_hierarchy).trait_forType_ownerHID(T_Trait.quest, this.hid)?.text ?? null; }
 	get consequence():				   string | null { return get(s_hierarchy).trait_forType_ownerHID(T_Trait.consequence, this.hid)?.text ?? null; }
 	get idBridging():						  string { return this.isBulkAlias ? this.bulkRootID : this.id; }
-	get description():						  string { return this.id + ' \"' + this.title + '\"'; }
+	get description():						  string { return this.id + ' "' + this.title + '"'; }
 	get breadcrumb_title():					  string { return this.title.clipWithEllipsisAt(15); }
 	get titleWidth():						  number { return u.getWidthOf(this.title); }
 	get isRoot():							 boolean { return this.type == T_Thing.root; }
@@ -148,12 +148,13 @@ export default class Thing extends Datum {
 		return relationships;
 	}
 
-	clear_grabbed_expanded_andResolveFocus() {
-		// called when remote alters number of things
+	remove_fromGrabbed_andExpanded_andResolveFocus() {
+		// called when this (thing) is being deleted
+		console.log(`while deleting ${this.title}`);
 		for (const ancestry of this.ancestries) {
-			ancestry.clear_grabbed_andExpanded();
+			ancestry.remove_fromGrabbed_andExpanded();
 		}
-		this.oneAncestry.clear_grabbed_andExpanded();
+		this.oneAncestry.remove_fromGrabbed_andExpanded();
 		const focus = get(s_ancestry_focus);
 		if (focus.thing?.hid == this.hid) {
 			get(s_hierarchy).rootAncestry.becomeFocus();

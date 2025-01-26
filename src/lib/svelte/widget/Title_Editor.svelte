@@ -4,8 +4,8 @@
 	import { s_thing_fontFamily, s_ancestries_grabbed, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
 	import { g, k, u, Point, Thing, debug, Angle, T_Layer, signals } from '../../ts/common/Global_Imports';
 	import { onMount } from 'svelte';
+	export let points_right = true;
 	export let fontSize = '1em';
-	export let forward = true;
 	export let ancestry;
 	let bound_title = thing()?.title ?? k.empty;
     let color = thing()?.color ?? k.empty;
@@ -126,7 +126,7 @@
 		if (!!thing()) {
 			const showingReveal = ancestry?.showsReveal ?? false;
 			titleWidth = thing().titleWidth + (showingReveal ? 6 : 1) + 15;
-			titleLeft = g.inRadialMode ? ancestry.isFocus ? 5 : (forward ? 21 : (showingReveal ? 18.5 : 10)) : 19;
+			titleLeft = g.inRadialMode ? ancestry.isFocus ? 5 : (points_right ? 21 : (showingReveal ? 18.5 : 10)) : 19;
 		}
 		const handler = signals.handle_anySignal((T_Signal, ancestry) => { updateInputWidth(); });
 		setTimeout(() => { updateInputWidth(); }, 100);
@@ -135,7 +135,7 @@
 
 	function handle_cut_paste(event) {
 		extractRange();
-		ancestry?.signal_relayoutWidgets();
+		ancestry?.signal_relayoutWidgets_fromThis();
 	}
 
 	function handleBlur(event) {
@@ -236,7 +236,7 @@
 			if (hasChanges()) {
 				databases.db.thing_persistentUpdate(thing());
 				originalTitle = thing()?.title;		// so hasChanges will be correct
-				ancestry.signal_relayoutWidgets();
+				ancestry.signal_relayoutWidgets_fromThis();
 			}
 		}
 	}

@@ -1,14 +1,14 @@
 import { g } from '../state/S_Global';
 
-// query string: ?debug=reticule,tools
+// query string: ?debug=preferences,action
 
 export enum T_Debug {
+	preferences	= 'preferences',
 	hide_rings	= 'hide_rings',
 	fast_load	= 'fast_load',
 	reticule	= 'reticule',	// debug radial layout geometry
 	segments	= 'segments',
 	origins 	= 'origins',
-	persist		= 'persist',
 	rebuild 	= 'rebuild',
 	action  	= 'action',
 	colors		= 'colors',		// indicate some coordinates
@@ -21,6 +21,7 @@ export enum T_Debug {
 	signal		= 'signal',
 	build		= 'build',
 	error		= 'error',		// async errors
+	grabs		= 'grabs',
 	graph		= 'graph',		// log size of graph area
 	lines		= 'lines',		// alignment dots for lines and widgets
 	mount		= 'mount',
@@ -37,37 +38,44 @@ export class Debug {
 	flags: Array<T_Debug>;
 	constructor(flags: Array<T_Debug>) { this.flags = flags; }
 	hasOption(option: T_Debug) { return this.flags.includes(option); }
-	log_key(message: string) { this.log_maybe(T_Debug.key, message); }
-	log_edit(message: string) { this.log_maybe(T_Debug.edit, message); }
-	log_info(message: string) { this.log_maybe(T_Debug.info, message); }
-	log_build(message: string) { this.log_maybe(T_Debug.build, message) }
-	log_error(message: string) { this.log_maybe(T_Debug.error, message) }
-	log_hover(message: string) { this.log_maybe(T_Debug.hover, message) }
-	log_mount(message: string) { this.log_maybe(T_Debug.mount, message) }
-	log_mouse(message: string) { this.log_maybe(T_Debug.mouse, message) }
-	log_tools(message: string) { this.log_maybe(T_Debug.tools, message) }
-	log_action(message: string) { this.log_maybe(T_Debug.action, message) }
-	log_crumbs(message: string) { this.log_maybe(T_Debug.crumbs, message) }
-	log_cursor(message: string) { this.log_maybe(T_Debug.cursor, message) }
-	log_layout(message: string) { this.log_maybe(T_Debug.layout, message) }
-	log_radial(message: string) { this.log_maybe(T_Debug.radial, message) }
-	log_remote(message: string) { this.log_maybe(T_Debug.remote, message) }
-	log_signal(message: string) { this.log_maybe(T_Debug.signal, message) }
-	log_origins(message: string) { this.log_maybe(T_Debug.origins, message) }
-	log_persist(message: string) { this.log_maybe(T_Debug.persist, message) }
-	log_rebuild(message: string) { this.log_maybe(T_Debug.rebuild, message) }
-	log_segments(message: string) { this.log_maybe(T_Debug.segments, message) }
-	log_target(target: any, key: string) { console.log(`Method \'${key}\' is called on class \'${target.constructor.name}\'`); }
-	log_maybe(option: T_Debug, message: string) { if (this.hasOption(option)) { console.log(option.toUpperCase(), message); } }
-	get hide_rings(): boolean { return this.hasOption(T_Debug.hide_rings); }
-	get fast_load(): boolean { return this.hasOption(T_Debug.fast_load); }
-	get reticule(): boolean { return this.hasOption(T_Debug.reticule); }
-	get cursor(): boolean { return this.hasOption(T_Debug.cursor); }
-	get radial(): boolean { return this.hasOption(T_Debug.radial); }
+
+	get info(): boolean { return this.hasOption(T_Debug.info); }
 	get graph(): boolean { return this.hasOption(T_Debug.graph); }
 	get lines(): boolean { return this.hasOption(T_Debug.lines); }
 	get tools(): boolean { return this.hasOption(T_Debug.tools); }
-	get info(): boolean { return this.hasOption(T_Debug.info); }
+	get cursor(): boolean { return this.hasOption(T_Debug.cursor); }
+	get radial(): boolean { return this.hasOption(T_Debug.radial); }
+	get reticule(): boolean { return this.hasOption(T_Debug.reticule); }
+	get fast_load(): boolean { return this.hasOption(T_Debug.fast_load); }
+	get hide_rings(): boolean { return this.hasOption(T_Debug.hide_rings); }
+
+	log_key(message: string) { this.log_maybe(T_Debug.key, message); }
+	log_edit(message: string) { this.log_maybe(T_Debug.edit, message); }
+	log_info(message: string) { this.log_maybe(T_Debug.info, message); }
+	log_build(message: string) { this.log_maybe(T_Debug.build, message); }
+	log_error(message: string) { this.log_maybe(T_Debug.error, message); }
+	log_grabs(message: string) { this.log_maybe(T_Debug.grabs, message); }
+	log_hover(message: string) { this.log_maybe(T_Debug.hover, message); }
+	log_mount(message: string) { this.log_maybe(T_Debug.mount, message); }
+	log_mouse(message: string) { this.log_maybe(T_Debug.mouse, message); }
+	log_tools(message: string) { this.log_maybe(T_Debug.tools, message); }
+	log_action(message: string) { this.log_maybe(T_Debug.action, message); }
+	log_crumbs(message: string) { this.log_maybe(T_Debug.crumbs, message); }
+	log_cursor(message: string) { this.log_maybe(T_Debug.cursor, message); }
+	log_layout(message: string) { this.log_maybe(T_Debug.layout, message); }
+	log_radial(message: string) { this.log_maybe(T_Debug.radial, message); }
+	log_remote(message: string) { this.log_maybe(T_Debug.remote, message); }
+	log_signal(message: string) { this.log_maybe(T_Debug.signal, message); }
+	log_origins(message: string) { this.log_maybe(T_Debug.origins, message); }
+	log_rebuild(message: string) { this.log_maybe(T_Debug.rebuild, message); }
+	log_segments(message: string) { this.log_maybe(T_Debug.segments, message); }
+	log_preferences(message: string) { this.log_maybe(T_Debug.preferences, message); }
+	
+	log_maybe(option: T_Debug, message: string) {
+		if (this.hasOption(option)) {
+			console.log(option.toUpperCase(), message);
+		}
+	}
 
 	queryStrings_apply() {
 		const debug = g.queryStrings.get('debug');
@@ -75,11 +83,11 @@ export class Debug {
 			const flags = debug.split(',');
 			for (const option of flags) {
 				switch (option) {
+					case 'preferences': this.flags.push(T_Debug.preferences); break;
 					case 'hide_rings': this.flags.push(T_Debug.hide_rings); break;
 					case 'reticule': this.flags.push(T_Debug.reticule); break;
 					case 'segments': this.flags.push(T_Debug.segments); break;
 					case 'origins': this.flags.push(T_Debug.origins); break;
-					case 'persist': this.flags.push(T_Debug.persist); break;
 					case 'rebuild': this.flags.push(T_Debug.rebuild); break;
 					case 'action': this.flags.push(T_Debug.action); break;
 					case 'colors': this.flags.push(T_Debug.colors); break;
@@ -92,6 +100,7 @@ export class Debug {
 					case 'things': this.flags.push(T_Debug.things); break;
 					case 'build': this.flags.push(T_Debug.build); break;
 					case 'error': this.flags.push(T_Debug.error); break;
+					case 'grabs': this.flags.push(T_Debug.grabs); break;
 					case 'graph': this.flags.push(T_Debug.graph); break;
 					case 'hover': this.flags.push(T_Debug.hover); break;
 					case 'lines': this.flags.push(T_Debug.lines); break;

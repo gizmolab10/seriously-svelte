@@ -12,7 +12,7 @@ export class S_Global {
 	allow_TitleEditing = true;
 	allow_HorizontalScrolling = true;
 
-	eraseDB = false;
+	eraseDB = 0;
 	isEditing_text = false;
 	mouse_responder_number = 0;
 	ring_rotation_state!: S_Rotation;
@@ -68,9 +68,10 @@ export class S_Global {
 		for (const option of eraseOptions) {
 			switch (option) {
 				case 'data':
-					this.eraseDB = true;
+					this.eraseDB = 2;
 					preferences.writeDB_key(T_Preference.focus, null);
-					preferences.writeDB_key(T_Preference.expanded, null); 
+					preferences.writeDB_key(T_Preference.grabbed, null);
+					preferences.writeDB_key(T_Preference.expanded, null);
 					break;
 				case 'settings':
 					preferences.reset();

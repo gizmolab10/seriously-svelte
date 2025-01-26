@@ -8,9 +8,9 @@
 	import Dot_Drag from './Dot_Drag.svelte';
 	import { onMount } from 'svelte';
 	export let origin = new Point(160, 5);
+    export let points_right = true;
 	export let subtype = k.empty;
     export let name = k.empty;
-    export let forward = true;
     export let ancestry;
 	const revealState = ux.element_state_for(ancestry, T_Element.reveal, subtype);
 	const dragState = ux.element_state_for(ancestry, T_Element.drag, subtype);
@@ -40,7 +40,7 @@
     let widget;
 	let thing;
 
-	update_fromAncestry();
+	setup_fromAncestry();
 
 	onMount(() => {
 		layout_widget();
@@ -104,17 +104,17 @@
 
 	function extraWidth() {
 		const multiplier = ancestry?.showsReveal ? 2 : 1.35;
-		const clustersAdjustment = g.inRadialMode ? (forward ? 14 : 0) : -10;
+		const clustersAdjustment = g.inRadialMode ? (points_right ? 14 : 0) : -10;
 		return (k.dot_size * multiplier) + clustersAdjustment;
 	}
 
-	function update_fromAncestry() {
+	function setup_fromAncestry() {
 		isGrabbed = ancestry?.isGrabbed;
 		thing = ancestry?.thing;
 		if (!ancestry) {
 			console.log('bad ancestry');
 		} else if (!thing) {
-			console.log(`bad thing for \"${ancestry?.id ?? 'indeed'}\"`);
+			console.log(`bad thing for "${ancestry?.id ?? 'indeed'}"`);
 		} else {
 			const title = thing.title ?? thing.id ?? k.unknown;
 			widgetName = `widget ${title}`;
@@ -149,12 +149,12 @@
 		const leftForward = deltaX - dragX;
 		const leftBackward = -(titleWidth + (showingReveal ? 25.5 : 15.5));
 		const dragOffsetY = g.inRadialMode ? 2.8 : 2.7;
-		const dragOffsetX = forward ? (dragX - 1.5) : (titleWidth + deltaX + (showingReveal ? 22.5 : 14));
+		const dragOffsetX = points_right ? (dragX - 1.5) : (titleWidth + deltaX + (showingReveal ? 22.5 : 14));
 		const hasExtraForTinyDots = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
 		const rightPadding = g.inRadialMode ? 0 : (hasExtraForTinyDots ? 0.5 : 0) + 21;
-		const leftPadding = forward ? 1 : 14;
+		const leftPadding = points_right ? 1 : 14;
 		dragCenter = Point.square(k.dot_size / 2).offsetByXY(dragOffsetX, dragOffsetY);
-		left = origin.x + deltaX + (forward ? leftForward : leftBackward);
+		left = origin.x + deltaX + (points_right ? leftForward : leftBackward);
 		padding = `0px ${rightPadding}px 0px ${leftPadding}px`;
 		width = titleWidth + extraWidth();
 		height = k.row_height - 1.5;
@@ -162,7 +162,7 @@
 		top = origin.y + ((showingBorder && !ancestry.isRoot) ? 0 : 1);
 		if (showingReveal) {
 			const revealY = k.dot_size - 3.62;
-			const revealX = forward ? (k.dot_size + titleWidth + (g.inRadialMode ? 19 : 17)) : 9;
+			const revealX = points_right ? (k.dot_size + titleWidth + (g.inRadialMode ? 19 : 17)) : 9;
 			revealCenter = new Point(revealX, revealY);
 		}
 	}
@@ -191,7 +191,7 @@
 				name={dragState.name}
 			/>
 			<Title_Editor
-				forward={forward}
+				points_right={points_right}
 				ancestry={ancestry}
 				fontSize={k.font_size}px
 			/>

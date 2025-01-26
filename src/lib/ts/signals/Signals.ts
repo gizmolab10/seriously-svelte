@@ -16,9 +16,9 @@ export class Signals {
 	handler = new Signal<(ids_signal: Array<T_Signal>, value: any, priority: number) => void>();
 
 	signal_altering(value: any = null) { this.signal(T_Signal.alterState, value); }
-	signal_rebuildGraph_fromFocus() { this.signal_rebuildGraph(get(s_ancestry_focus)); }
-	signal_relayoutWidgets(value: any = null) { this.signal(T_Signal.relayout, value); }
-	signal_relayoutWidgets_fromFocus() { this.signal_relayoutWidgets(get(s_ancestry_focus)); }
+	signal_rebuildGraph_fromFocus() { this.signal_rebuildGraph_from(get(s_ancestry_focus)); }
+	signal_relayoutWidgets_from(value: any = null) { this.signal(T_Signal.relayout, value); }
+	signal_relayoutWidgets_fromFocus() { this.signal_relayoutWidgets_from(get(s_ancestry_focus)); }
 
 	handle_rebuildGraph(priority: number, onSignal: (value: any | null) => any ) {
 		return this.handle_signalOfKind(priority, T_Signal.rebuild, onSignal);
@@ -65,7 +65,7 @@ export class Signals {
 		}
 	}
 
-	signal_rebuildGraph(value: any = null) {
+	signal_rebuildGraph_from(value: any = null) {
 		s_rebuild_isInProgress.set(true);
 		this.signal(T_Signal.rebuild, value);
 		s_rebuild_isInProgress.set(false);				// N.B., widget whatches this to reveal tools

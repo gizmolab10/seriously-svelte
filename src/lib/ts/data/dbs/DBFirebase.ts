@@ -159,7 +159,7 @@ export default class DBFirebase extends DBCommon {
 				});
 			}
 		}
-		signals.signal_rebuildGraph(this.hierarchy.rootAncestry);		// first recreate ancestries
+		this.hierarchy.ancestries_fullRebuild();		// first recreate ancestries
 		this.hierarchy.signal_storage_redraw(10);
 	}
 
@@ -186,7 +186,7 @@ export default class DBFirebase extends DBCommon {
 							snapshot.docChanges().forEach(async (change) => {	// convert and remember
 								await this.handle_docChanges(idBase, datum_type, change);
 							});
-							signals.signal_rebuildGraph(this.hierarchy.rootAncestry);		// first recreate ancestries
+							this.hierarchy.ancestries_fullRebuild();		// first recreate ancestries
 							this.hierarchy.signal_storage_redraw(10);
 						}
 					}
@@ -333,19 +333,23 @@ export default class DBFirebase extends DBCommon {
 			switch (change.type) {
 				case 'added':
 					if (!!thing || remoteThing.isEqualTo(this.addedThing) || remoteThing.type == T_Thing.root) {
-						return;			// do not invoke signal because nothing has changed
+						return;			// do not invoke rebuild because nothing has changed
 					}
 					thing = h.thing_remember_runtimeCreate(idBase, id, remoteThing.title, remoteThing.color, remoteThing.type, true);
 					break;
 				case 'removed':
 					if (!!thing) {
-						thing.clear_grabbed_expanded_andResolveFocus();
+						if (thing.isRoot) {
+							thing.set_isDirty();
+							return;			// do not invoke rebuild
+						}
+						thing.remove_fromGrabbed_andExpanded_andResolveFocus();
 						h.thing_forget(thing);
 					}
 					break;
 				case 'modified':
 					if (!thing || thing.persistence.wasModifiedWithinMS(800) || !this.thing_extractChangesFromPersistent(thing, remoteThing)) {
-						return;		// do not invoke signal if nothing changed
+						return;		// do not invoke rebuild
 					}
 					break;
 			}

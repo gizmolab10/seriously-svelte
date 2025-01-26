@@ -38,8 +38,7 @@ export default class Ancestry extends Identifiable {
 	
 	static readonly GENERAL: unique symbol;
 
-	signal_rebuildGraph()  { signals.signal_rebuildGraph(this); }
-	signal_relayoutWidgets() { signals.signal_relayoutWidgets(this); }
+	signal_relayoutWidgets_fromThis() { signals.signal_relayoutWidgets_from(this); }
 
 	traverse(apply_closureTo: (ancestry: Ancestry) => boolean) {
 		if (!apply_closureTo(this)) {
@@ -82,6 +81,7 @@ export default class Ancestry extends Identifiable {
 	get depth():							number { return this.ids.length; }
 	get order():						    number { return this.relationship?.order ?? -1; }
 	get visibleProgeny_halfHeight():	    number { return this.visibleProgeny_height() / 2; }
+	get direction_ofReveal():				number { return this.points_right ? Direction.right : Direction.left; }
 	get siblingIndex():					    number { return this.siblingAncestries.map(p => p.id).indexOf(this.id); }
 	get visibleProgeny_halfSize():			  Size { return this.visibleProgeny_size.dividedInHalf; }
 	get visibleProgeny_size():				  Size { return new Size(this.visibleProgeny_width(), this.visibleProgeny_height()); }
@@ -97,7 +97,7 @@ export default class Ancestry extends Identifiable {
 	get titleWrapper():		 Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.hid, T_SvelteComponent.title); }
 	get ids_hashed():		   Array	 <Integer> { return this.ids.map(i => i.hash()); }
 	get ids():				   Array	  <string> { return this.id.split(k.generic_separator); }
-	get titles():			   Array	  <string> { return this.ancestors?.map(t => ` \"${t ? t.title : 'null'}\"`) ?? []; }
+	get titles():			   Array	  <string> { return this.ancestors?.map(t => ` "${t ? t.title : 'null'}"`) ?? []; }
 	get children():			   Array	   <Thing> { return this.hierarchy.things_forAncestries(this.childAncestries); }
 	get ancestors():		   Array	   <Thing> { return this.hierarchy.things_forAncestry(this); }
 	get siblingAncestries():   Array	<Ancestry> { return this.parentAncestry?.childAncestries ?? []; }
@@ -110,10 +110,9 @@ export default class Ancestry extends Identifiable {
 		return u.strip_invalid(relationships);
 	}
 
-	get svgDirection_ofReveal(): number {
+	get points_right(): boolean {
 		const radial_points_right = (this.widget_map?.points_right ?? true) == this.hasChildRelationships;
-		const points_right = g.inRadialMode ? radial_points_right : !this.isExpanded;
-		return points_right ? Direction.right : Direction.left;
+		return g.inRadialMode ? radial_points_right : !this.isExpanded;
 	}
 	
 	get showsReveal(): boolean {
@@ -524,11 +523,12 @@ export default class Ancestry extends Identifiable {
 	}
 
 	grabOnly() {
+		debug.log_grabs(`  GRAB ONLY "${this.id}"`);
 		s_ancestries_grabbed.set([this]);
 		this.toggle_editingTools();
 	}
 
-	clear_grabbed_andExpanded() {
+	remove_fromGrabbed_andExpanded() {
 		this.collapse();
 		this.ungrab();
 	}
@@ -595,6 +595,7 @@ export default class Ancestry extends Identifiable {
 			}
 			return array;
 		});
+		debug.log_grabs(`  GRAB "${this.id}"`);
 		this.toggle_editingTools();
 	}
 
@@ -619,6 +620,7 @@ export default class Ancestry extends Identifiable {
 		} else {
 			this.toggle_editingTools(); // do not show editingTools for root
 		}
+		debug.log_grabs(`  UNGRAB "${this.id}"`);
 	}
 
 	toggle_editingTools() {

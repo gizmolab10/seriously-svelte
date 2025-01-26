@@ -12,14 +12,14 @@
     export let zindex = T_Layer.dots;
     export let hover_isReversed = false;
 	const element_state = ux.element_state_forName(name);		// survives onDestroy, created by widget
-	let size = k.dot_size;
-	let tinyDotsDiameter = size * 1.8;
-	let tinyDotsDelta = size * -0.4 + 0.01;
-	let tinyDotsOffset = new Point(0.65, -0.361);
+	const size = k.dot_size;
 	let childrenCount = ancestry.childRelationships.length;
 	let svgPathFor_insideReveal = svgPaths.circle_atOffset(16, 6);
-	let revealWrapper!: Svelte_Wrapper;
+	let tinyDotsOffset = new Point(0.65, -0.361);
+	let tinyDotsDelta = size * -0.4 + 0.01;
 	let svgPathFor_revealDot = k.empty;
+	let revealWrapper!: Svelte_Wrapper;
+	let tinyDotsDiameter = size * 1.8;
 	let hasInsidePath = false;
 	let insideOffset = 0;
 	let dotReveal = null;
@@ -65,7 +65,7 @@
 		if (!ancestry.showsReveal || ancestry.toolsGrabbed) {
 			svgPathFor_revealDot = svgPaths.circle_atOffset(size, size - 1);
 		} else {
-			svgPathFor_revealDot = svgPaths.fat_polygon(size, ancestry.svgDirection_ofReveal);
+			svgPathFor_revealDot = svgPaths.fat_polygon(size, ancestry.direction_ofReveal);
 		}
 		if (ancestry.toolsGrabbed) {
 			svgPathFor_insideReveal = svgPaths.x_cross(size, 1.5);
@@ -158,7 +158,7 @@
 							width:{tinyDotsDiameter}px;
 							position:absolute;'>
 							<SVGD3 name='tiny-dots-svg'
-								svgPath={svgPaths.tinyDots_circular(tinyDotsDiameter, childrenCount)}
+								svgPath={svgPaths.tinyDots_circular(tinyDotsDiameter, childrenCount, ancestry.points_right)}
 								stroke={ancestry.thing.color}
 								fill={ancestry.thing.color}
 								height={tinyDotsDiameter}

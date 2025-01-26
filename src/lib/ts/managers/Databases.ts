@@ -77,7 +77,7 @@ export default class Databases {
 		switch (this.db.type_db) {
 			case T_Database.airtable: return forward ? T_Database.test	   : T_Database.firebase;
 			case T_Database.test:	  return forward ? T_Database.firebase : T_Database.airtable;
-			default:			  return forward ? T_Database.airtable : T_Database.test;
+			default:			  	  return forward ? T_Database.airtable : T_Database.test;
 		}
 	}
 

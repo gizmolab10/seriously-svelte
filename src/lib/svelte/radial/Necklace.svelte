@@ -53,17 +53,17 @@
 			{#each $s_radial_geometry.widget_maps as widget_map}
 				<Widget
 					subtype={widget_map.subtype}
-					forward={widget_map.points_right}
 					name={widget_map.element_state.name}
 					ancestry={widget_map.widget_ancestry}
+					points_right={widget_map.points_right}
 					origin={widget_map.childOrigin.offsetBy(childOffset)}/>
 			{/each}
 			{#if tools_widget_map}
 				<Widget
 					subtype={tools_widget_map.subtype}
-					forward={tools_widget_map.points_right}
 					name={tools_widget_map.element_state.name}
 					ancestry={tools_widget_map.widget_ancestry}
+					points_right={tools_widget_map.points_right}
 					origin={tools_widget_map.childOrigin.offsetBy(childOffset)}/>
 			{/if}
 		</div>

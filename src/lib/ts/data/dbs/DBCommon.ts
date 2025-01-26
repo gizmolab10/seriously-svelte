@@ -115,8 +115,8 @@ export default class DBCommon {
 	
 	async hierarchy_create_fastLoad_or_fetch_andBuild() {
 		const h = this.hierarchy;
-		if (g.eraseDB) {
-			g.eraseDB = false;			// only apply on launch
+		if (g.eraseDB > 0) {
+			g.eraseDB -= 1;
 			await this.remove_all();	// start fresh
 		}
 		h.forget_all();

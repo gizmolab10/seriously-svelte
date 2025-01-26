@@ -39,10 +39,10 @@ export class Preferences {
 
 	read_key				(key: string): any | null { return this.parse(localStorage[key]); }
 	write_key<T>			(key: string, value: T) { localStorage[key] = JSON.stringify(value); }
-	writeDB_key<T>			(key: string, value: T) { this.write_key(this.dbKey_for(key), value); }
-	readDB_key				(key: string): any | null { return this.read_key(this.dbKey_for(key)); }
-	dbKey_for				(key: string): string { return this.keyPair_for(databases.db.type_db, key); }
-	delete_paging_state_for (key: string) { this.write_keyPair(this.dbKey_for(T_Preference.page_states), key, null); }
+	writeDB_key<T>			(key: string, value: T) { this.write_key(this.db_keyFor(key), value); }
+	readDB_key				(key: string): any | null { return this.read_key(this.db_keyFor(key)); }
+	delete_paging_state_for (key: string) { this.writeDB_keyPair(T_Preference.page_states, key, null); }
+	db_keyFor				(key: string): string { return this.keyPair_for(databases.db.type_db, key); }
 	keyPair_for				(key: string, sub_key: string): string { return `${key}${k.generic_separator}${sub_key}`; }
 
 	reset() {
@@ -64,30 +64,33 @@ export class Preferences {
 		return JSON.parse(key);
 	}
 
-	write_keyPair<T>(key: string, sub_key: string, value: T): void {	// pair => key, sub_key
-		const sub_keys: Array<string> = this.read_key(key) ?? [];
-		const pair = this.keyPair_for(key, sub_key);
+	writeDB_keyPair<T>(key: string, sub_key: string, value: T): void {	// pair => key, sub_key
+		const dbKey = this.db_keyFor(key);
+		const sub_keys: Array<string> = this.read_key(dbKey) ?? [];
+		const pair = this.keyPair_for(dbKey, sub_key);
 		this.write_key(pair, value);			// first store the value by key pair
 		if (sub_keys.length == 0 || !sub_keys.includes(sub_key)) {
 			sub_keys.push(sub_key);
-			this.write_key(key, sub_keys);								// then store they sub key by key
+			this.write_key(dbKey, sub_keys);								// then store they sub key by key
 		}
 	}
 
 	delete_sub_keys_forKey(key: string) {
-		const sub_keys: Array<string> = this.read_key(key) ?? [];
-		this.write_key(key, null);
+		const dbKey = this.db_keyFor(key);
+		const sub_keys: Array<string> = this.read_key(dbKey) ?? [];
+		this.write_key(dbKey, null);
 		for (const sub_key of sub_keys) {
-			const pair = this.keyPair_for(key, sub_key);
+			const pair = this.keyPair_for(dbKey, sub_key);
 			this.write_key(pair, null);
 		}
 	}
 
-	read_sub_keys_forKey(key: string): Array<any> {
+	readDB_sub_keys_forKey(key: string): Array<any> {
 		let values: Array<any> = [];
-		const sub_keys: Array<string> = this.read_key(key) ?? [];
+		const dbKey = this.db_keyFor(key);
+		const sub_keys: Array<string> = this.read_key(dbKey) ?? [];
 		for (const sub_key of sub_keys) {
-			const value = this.read_key(this.keyPair_for(key, sub_key));
+			const value = this.read_key(this.keyPair_for(dbKey, sub_key));
 			if (!!value) {												// ignore undefined or null
 				values.push(value);
 			}
@@ -95,8 +98,14 @@ export class Preferences {
 		return values;
 	}
 
-	ancestries_forKey(key: string): Array<Ancestry> {	// 2 keys supported so far {grabbed, expanded}
-		const aids = this.read_key(key);
+	ancestries_writeDB_key(ancestries: Array<Ancestry>, key: string) {
+		const path_strings = ancestries.map(a => a.id);		// ancestry id is actually a path string (of Relationship ids)
+		this.writeDB_key(key, ancestries.length == 0 ? null : path_strings);
+		debug.log_preferences(`! ${key.toUpperCase()} ${ancestries.length} paths "${path_strings}" titles "${ancestries.map(a => a.title)}"`);
+	}
+
+	ancestries_readDB_key(key: string): Array<Ancestry> {	// 2 keys supported so far {grabbed, expanded}
+		const aids = this.readDB_key(key);
 		const length = aids?.length ?? 0;
 		let ancestries: Array<Ancestry> = [];
 		if (!this.ignoreAncestries && length > 0) {
@@ -108,13 +117,11 @@ export class Preferences {
 				}
 			};
 		}
+		debug.log_preferences(`  ${key.toUpperCase()} ${ancestries.map(a => a.id)}`);
 		return ancestries;
 	}
 
 	reactivity_subscribe() {
-		s_ring_rotation_radius.subscribe((radius: number) => {
-			this.write_key(T_Preference.ring_radius, radius);
-		});
 		s_tree_type.subscribe((value) => {
 			this.write_key(T_Preference.tree_type, value);
 		});
@@ -127,10 +134,12 @@ export class Preferences {
 		s_ring_rotation_angle.subscribe((angle: number) => {
 			this.write_key(T_Preference.ring_angle, angle);
 		});
+		s_ring_rotation_radius.subscribe((radius: number) => {
+			this.write_key(T_Preference.ring_radius, radius);
+		});
 		s_paging_state.subscribe((paging_state: S_Paging) => {
 			if (!!paging_state) {
-				const dbKey = this.dbKey_for(T_Preference.page_states);
-				this.write_keyPair(dbKey, paging_state.sub_key, paging_state.description);
+				this.writeDB_keyPair(T_Preference.page_states, paging_state.sub_key, paging_state.description);
 			}
 		})
 		show.reactivity_subscribe();
@@ -152,7 +161,7 @@ export class Preferences {
 
 	// not used!!!
 	restore_page_states() {
-		const descriptions = this.read_sub_keys_forKey(this.dbKey_for(T_Preference.page_states)) ?? k.empty;
+		const descriptions = this.readDB_sub_keys_forKey(T_Preference.page_states) ?? k.empty;
 		for (const description of descriptions) {
 			const paging_state = S_Paging.create_paging_state_from(description);
 			if (!!paging_state) {
@@ -167,23 +176,29 @@ export class Preferences {
 	}
 
 	restore_grabbed_andExpanded(force: boolean = false) {
-		const h = get(s_hierarchy);
-		const root = [h.rootAncestry];
-		const erase = g.eraseDB;
-		const expanded = erase ? [] : this.ancestries_forKey(this.dbKey_for(T_Preference.expanded));
-		const grabbed = erase ? root : this.ancestries_forKey(this.dbKey_for(T_Preference.grabbed)) ?? root;
-		s_ancestries_grabbed.set(grabbed);
-		debug.log_persist(`^ GRABBED ${grabbed.map(a => a.title)}`);
-		s_ancestries_expanded.set(expanded);
-		debug.log_persist(`^ EXPANDED ${expanded.map(a => a.title)}`);
+		if (g.eraseDB > 0) {
+			g.eraseDB -= 1;
+			s_ancestries_expanded.set([]);
+			s_ancestries_grabbed.set([get(s_hierarchy).rootAncestry]);
+		} else {
+			s_ancestries_grabbed.set(this.ancestries_readDB_key(T_Preference.grabbed));
+			s_ancestries_expanded.set(this.ancestries_readDB_key(T_Preference.expanded));
+		}
 		setTimeout(() => {
-			s_ancestries_grabbed.subscribe((g: Array<Ancestry>) => {
-				debug.log_persist(`  GRABBED ${g.map(a => a.title)}`);
-				this.writeDB_key(T_Preference.grabbed, !g ? null : g.map(a => a.id));		// ancestral paths
+			const threshold = 0;
+			let grabbed_count = 0;
+			let expanded_count = 0;
+			s_ancestries_grabbed.subscribe((array: Array<Ancestry>) => {
+				if (grabbed_count > threshold) {
+					this.ancestries_writeDB_key(array, T_Preference.grabbed);
+				}
+				grabbed_count += 1;
 			});
-			s_ancestries_expanded.subscribe((e: Array<Ancestry>) => {
-				debug.log_persist(`  EXPANDED ${e.map(a => a.title)}`);
-				this.writeDB_key(T_Preference.expanded, !e ? null : e.map(a => a.id));		// ancestral paths
+			s_ancestries_expanded.subscribe((array: Array<Ancestry>) => {
+				if (expanded_count > threshold) {
+					this.ancestries_writeDB_key(array, T_Preference.expanded);
+				}
+				expanded_count += 1;
 			});
 		}, 100);
 	}
@@ -201,7 +216,7 @@ export class Preferences {
 			}
 		}
 		if (!ancestryToFocus.thing) {
-			const lastGrabbedAncestry = h.grabs.ancestry_lastGrabbed?.parentAncestry;
+			const lastGrabbedAncestry = h.grabs_latest_ancestry?.parentAncestry;
 			if (lastGrabbedAncestry) {
 				ancestryToFocus = lastGrabbedAncestry;
 			}
