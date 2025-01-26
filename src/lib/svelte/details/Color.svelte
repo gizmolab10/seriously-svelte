@@ -30,7 +30,7 @@
 
 <style>
 	div :global(.wrapper) {
-		left: -77px;
+		left: -83px;
 		top: 24px;
 	}
 

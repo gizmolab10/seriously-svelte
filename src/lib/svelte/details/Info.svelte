@@ -29,7 +29,7 @@
 	let text_box_size = new Size(info_width - 4, 68);
 	let thingHID: Integer | null = thing?.hid;
 	let information: Array<Dictionary> = [];
-	let color_origin = new Point(67, 125);
+	let color_origin = new Point(67, 165);
 	let grabs = $s_ancestries_grabbed;
 	let color = k.thing_color_default;
 	let thing_title = thing?.title;
@@ -50,14 +50,14 @@
 
 	function heightAt(index: number) {
 		switch (index) {
-			case TI.segments:	  return 23;
-			case TI.before_title: return  3;
-			case TI.title:		  return 17;
-			case TI.after_title:  return  3;
-			case TI.table:		  return 79;
-			case TI.traits:		  return  2;
-			case TI.consequence:  return  2;
-			case TI.quest:		  return  2;
+			case TI.segments:	  return  23;
+			case TI.before_title: return   3;
+			case TI.title:		  return  17;
+			case TI.after_title:  return   3;
+			case TI.table:		  return 111;
+			case TI.traits:		  return   2;
+			case TI.consequence:  return   2;
+			case TI.quest:		  return   2;
 		}
 	}
 
@@ -109,7 +109,7 @@
 			tops.push(top);
 			top += heightAt(i);
 		}
-		color_origin = new Point(67, tops[TI.traits]);
+		color_origin = new Point(73, tops[TI.traits]);
 	}
 
 	function update_forKind() {
@@ -130,12 +130,14 @@
 			thing_title = thing.title;
 			thingHID = thing.hid;
 			const dict = {
-				'depth'		: ancestry.depth.expressZero_asHyphen(),
-				'children'	: ancestry.children.length.expressZero_asHyphen(),
-				'parents'	: thing.parents.length.expressZero_asHyphen(),
-				'related'	: thing.relatedRelationships.length.expressZero_asHyphen(),
-				'id'		: thing.id.clipWithEllipsisAt(12),
-				'color'		: k.empty,
+				'relationship' : ancestry.predicate.kind,
+				'depth'		   : ancestry.depth.expressZero_asHyphen(),
+				'children'	   : ancestry.children.length.expressZero_asHyphen(),
+				'progeny'	   : ancestry.progeny_count().expressZero_asHyphen(),
+				'parents'	   : thing.parents.length.expressZero_asHyphen(),
+				'related'	   : thing.relatedRelationships.length.expressZero_asHyphen(),
+				'id'		   : thing.id.clipWithEllipsisAt(12),
+				'color'		   : k.empty,
 			};
 			information = Object.entries(dict);
 			debug.log_info(information)

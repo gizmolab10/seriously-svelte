@@ -134,6 +134,18 @@ export default class Ancestry extends Identifiable {
 		return this.relationship?.idChild ?? k.unknown;
 	}
 
+	progeny_count(visited: Array<number> = []): number {
+		let sum = 0;
+		const hid = this.thing?.hid;
+		if (!!hid && !visited.includes(hid)) {
+			const children = this.childAncestries;
+			for (const child of children) {
+				sum += child.progeny_count([...visited, hid]) + 1;
+			}
+		}
+		return sum;
+	}
+
 	get paging_state(): S_Paging | null {
 		const predicate = this.predicate;
 		const geometry = get(s_radial_geometry);
