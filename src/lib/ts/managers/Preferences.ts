@@ -1,5 +1,5 @@
-import { s_paging_state, s_ancestries_grabbed, s_ancestries_expanded } from '../state/S_Stores';
-import { s_hierarchy, s_tree_type, s_graph_type, s_detail_types } from '../state/S_Stores';
+import { s_s_paging, s_ancestries_grabbed, s_ancestries_expanded } from '../state/S_Stores';
+import { s_hierarchy, s_t_tree, s_t_graph, s_t_details } from '../state/S_Stores';
 import { T_Tree, T_Graph, T_Details, S_Paging } from '../common/Global_Imports';
 import { s_ancestry_focus, s_font_size, s_thing_fontFamily } from '../state/S_Stores';
 import { s_ring_rotation_angle, s_ring_rotation_radius } from '../state/S_Stores';
@@ -122,13 +122,13 @@ export class Preferences {
 	}
 
 	reactivity_subscribe() {
-		s_tree_type.subscribe((value) => {
+		s_t_tree.subscribe((value) => {
 			this.write_key(T_Preference.tree_type, value);
 		});
-		s_graph_type.subscribe((value) => {
+		s_t_graph.subscribe((value) => {
 			this.write_key(T_Preference.graph_type, value);
 		});
-		s_detail_types.subscribe((value) => {
+		s_t_details.subscribe((value) => {
 			this.write_key(T_Preference.details_type, value);
 		});
 		s_ring_rotation_angle.subscribe((angle: number) => {
@@ -137,7 +137,7 @@ export class Preferences {
 		s_ring_rotation_radius.subscribe((radius: number) => {
 			this.write_key(T_Preference.ring_radius, radius);
 		});
-		s_paging_state.subscribe((paging_state: S_Paging) => {
+		s_s_paging.subscribe((paging_state: S_Paging) => {
 			if (!!paging_state) {
 				this.writeDB_keyPair(T_Preference.page_states, paging_state.sub_key, paging_state.description);
 			}
@@ -151,10 +151,10 @@ export class Preferences {
 		}
 		s_font_size.set(this.read_key(T_Preference.font_size) ?? 14);
 		s_ring_rotation_angle.set(this.read_key(T_Preference.ring_angle) ?? 0);
-		s_graph_type.set(this.read_key(T_Preference.graph_type) ?? T_Graph.tree);
-		s_tree_type.set(this.read_key(T_Preference.tree_type) ?? T_Tree.children);
+		s_t_graph.set(this.read_key(T_Preference.graph_type) ?? T_Graph.tree);
+		s_t_tree.set(this.read_key(T_Preference.tree_type) ?? T_Tree.children);
 		s_thing_fontFamily.set(this.read_key(T_Preference.font) ?? 'Times New Roman');
-		s_detail_types.set(this.read_key(T_Preference.details_type) ?? [T_Details.storage]);
+		s_t_details.set(this.read_key(T_Preference.details_type) ?? [T_Details.storage]);
 		s_ring_rotation_radius.set(Math.max(this.read_key(T_Preference.ring_radius) ?? 0, k.innermost_ring_radius));
 		this.reactivity_subscribe()
 	}

@@ -1,7 +1,7 @@
 import { g, k, u, Rect, Size, Thing, debug, signals, wrappers, Direction, Predicate } from '../../common/Global_Imports';
 import { Hierarchy, databases, Relationship, Svelte_Wrapper, G_Widget } from '../../common/Global_Imports';
 import { T_Element, T_Predicate, T_Alteration, T_SvelteComponent } from '../../common/Global_Imports';
-import { s_radial_geometry, s_alteration_mode, s_title_edit_state } from '../../state/S_Stores';
+import { s_g_radial, s_s_alteration, s_s_title_edit } from '../../state/S_Stores';
 import { s_hierarchy, s_ancestry_focus, s_ancestry_showing_tools } from '../../state/S_Stores';
 import { s_ancestries_grabbed, s_ancestries_expanded, } from '../../state/S_Stores';
 import { S_Paging, S_Title_Edit } from '../../common/Global_Imports';
@@ -69,8 +69,8 @@ export default class Ancestry extends Identifiable {
 	get hasRelevantRelationships():			 boolean { return this.relevantRelationships_count > 0; }
 	get toolsGrabbed():						 boolean { return this.matchesStore(s_ancestry_showing_tools); }
 	get showsChildRelationships():			 boolean { return this.isExpanded && this.hasChildRelationships; }
-	get isEditing():						 boolean { return this.ancestry_hasEqualID(get(s_title_edit_state)?.editing); }
-	get isStoppingEdit():					 boolean { return this.ancestry_hasEqualID(get(s_title_edit_state)?.stopping); }
+	get isEditing():						 boolean { return this.ancestry_hasEqualID(get(s_s_title_edit)?.editing); }
+	get isStoppingEdit():					 boolean { return this.ancestry_hasEqualID(get(s_s_title_edit)?.stopping); }
 	get isGrabbed():						 boolean { return this.includedInStore_ofAncestries(s_ancestries_grabbed); }
 	get isInvalid():						 boolean { return this.containsReciprocals || this.containsMixedPredicates; }
 	get hasRelationships():					 boolean { return this.hasParentRelationships || this.hasChildRelationships; }
@@ -94,7 +94,7 @@ export default class Ancestry extends Identifiable {
 	get parentAncestry():			 Ancestry | null { return this.stripBack(); }
 	get predicate():				Predicate | null { return this.hierarchy.predicate_forKind(this.kindPredicate) }
 	get relationship():			 Relationship | null { return this.relationshipAt(); }
-	get g_widget():		   G_Widget | null { return get(s_radial_geometry)?.widget_mapFor(this) ?? null; }
+	get g_widget():		   G_Widget | null { return get(s_g_radial)?.widget_mapFor(this) ?? null; }
 	get titleWrapper():		   Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.hid, T_SvelteComponent.title); }
 	get ids_hashed():		 	 Array	   <Integer> { return this.ids.map(i => i.hash()); }
 	get ids():				 	 Array		<string> { return this.id.split(k.generic_separator); }
@@ -151,7 +151,7 @@ export default class Ancestry extends Identifiable {
 
 	get paging_state(): S_Paging | null {
 		const predicate = this.predicate;
-		const geometry = get(s_radial_geometry);
+		const geometry = get(s_g_radial);
 		if (!!predicate && !!geometry) {
 			const map = geometry?.cluster_map_toChildren(this.thing_isChild, predicate)
 			return map?.paging_state_ofAncestry(this) ?? null;
@@ -224,7 +224,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	get canConnect_toToolsAncestry(): boolean {
-		const alteration = get(s_alteration_mode);
+		const alteration = get(s_s_alteration);
 		const predicate = alteration?.predicate;
 		if (!!alteration && !!predicate) {
 			const toolsAncestry = get(s_ancestry_showing_tools);
@@ -554,7 +554,7 @@ export default class Ancestry extends Identifiable {
 		const priorFocus = get(s_ancestry_focus)
 		const changed = force || !priorFocus || !this.ancestry_hasEqualID(priorFocus!);
 		if (changed) {
-			s_alteration_mode.set(null);
+			s_s_alteration.set(null);
 			s_ancestry_focus.set(this);
 		}
 		this.expand();
@@ -582,8 +582,8 @@ export default class Ancestry extends Identifiable {
 		if (this.predicate?.isBidirectional ?? false) {
 			this.thing?.oneAncestry?.handle_singleClick_onDragDot(shiftKey);
 		} else {
-			s_title_edit_state?.set(null);
-			if (!!get(s_alteration_mode)) {
+			s_s_title_edit?.set(null);
+			if (!!get(s_s_alteration)) {
 				this.ancestry_alterMaybe(this);
 			} else if (!shiftKey && g.inRadialMode) {
 				this.becomeFocus();
@@ -643,7 +643,7 @@ export default class Ancestry extends Identifiable {
 	toggle_editingTools() {
 		const toolsAncestry = get(s_ancestry_showing_tools);
 		if (!!toolsAncestry) { // ignore if editingTools not in use
-			s_alteration_mode.set(null);
+			s_s_alteration.set(null);
 			if (this.ancestry_hasEqualID(toolsAncestry)) {
 				s_ancestry_showing_tools.set(null);
 			} else if (!this.isRoot) {
@@ -654,7 +654,7 @@ export default class Ancestry extends Identifiable {
 
 	async ancestry_alterMaybe(ancestry: Ancestry) {
 		if (ancestry.canConnect_toToolsAncestry) {
-			const alteration = get(s_alteration_mode);
+			const alteration = get(s_s_alteration);
 			const toolsAncestry = get(s_ancestry_showing_tools);
 			const kindPredicate = alteration?.predicate?.kind;
 			if (!!alteration && !!toolsAncestry && !!kindPredicate) {
@@ -713,7 +713,7 @@ export default class Ancestry extends Identifiable {
 		if (this.isEditable) {
 			debug.log_edit(`EDIT ${this.title}`)
 			this.grabOnly();
-			s_title_edit_state.set(new S_Title_Edit(this));
+			s_s_title_edit.set(new S_Title_Edit(this));
 		}
 	}
 

@@ -1,4 +1,4 @@
-import { Segment_Map, S_Element, S_Rotation } from '../common/Global_Imports';
+import { G_Segment, S_Element, S_Rotation } from '../common/Global_Imports';
 import { S_Mouse, Mouse_Timer, T_Element } from '../common/Global_Imports';
 import Identifiable from '../data/basis/Identifiable';
 
@@ -8,7 +8,7 @@ export default class S_UX {
 	element_state_byName: {[name: string]: S_Element} = {};
 	mouse_state_byName: { [name: string]: S_Mouse } = {};
 	mouse_timer_byName: { [name: string]: Mouse_Timer } = {};
-	segment_map_byName: {[name: string]: Segment_Map} = {};
+	segment_map_byName: {[name: string]: G_Segment} = {};
 
 	//////////////////////////////////////
 	//									//
@@ -24,10 +24,10 @@ export default class S_UX {
 	//////////////////////////////////////
 
 	reset_paging() { this.rotation_states.map(s => s.reset()); }
-	segment_map_forName(name: string): Segment_Map { return this.segment_map_byName[name]; }
+	segment_map_forName(name: string): G_Segment { return this.segment_map_byName[name]; }
 	element_state_forName(name: string): S_Element { return this.element_state_byName[name]; }
 	get rotation_states(): Array<S_Rotation> { return Object.values(this.rotation_state_byName); }
-	set_segment_map_forName(map: Segment_Map, name: string) { return this.segment_map_byName[name] = map; }
+	set_segment_map_forName(map: G_Segment, name: string) { return this.segment_map_byName[name] = map; }
 	get isAny_paging_arc_active(): boolean { return this.rotation_states.filter(s => s.isActive).length > 0; }
 	get isAny_paging_arc_hovering(): boolean { return this.rotation_states.filter(s => s.isHovering).length > 0; }
 

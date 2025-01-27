@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { g, k, u, ux, w, show, Rect, Size, Point, debug, T_Tool, T_Layer } from '../../ts/common/Global_Imports';
-	import { s_graphRect, s_hierarchy, s_graph_type, s_details_show } from '../../ts/state/S_Stores';
+	import { s_graphRect, s_hierarchy, s_t_graph, s_details_show } from '../../ts/state/S_Stores';
 	import { databases, T_Element, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
 	import { S_Alteration, T_Alteration, Svelte_Wrapper } from '../../ts/common/Global_Imports';
-	import { s_alteration_mode, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
+	import { s_s_alteration, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
 	import { svgPaths, signals, Direction, T_Graph } from '../../ts/common/Global_Imports';
 	import Transparent_Circle from '../kit/Transparent_Circle.svelte';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
@@ -47,7 +47,7 @@
 	});
 
 	function isInvertedFor(id: string) {
-		return parentAlteringIDs.includes(id) && $s_alteration_mode?.type == alteration_forID(id);
+		return parentAlteringIDs.includes(id) && $s_s_alteration?.type == alteration_forID(id);
 	}
 
 	function isDisabledFor(id: string) {

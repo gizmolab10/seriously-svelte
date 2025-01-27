@@ -1,7 +1,7 @@
-import { k, u, ux, Rect, Size, Point, svgPaths, T_Oblong } from '../../ts/common/Global_Imports';
+import { k, u, ux, Rect, Size, Point, svgPaths, T_Oblong } from '../common/Global_Imports';
 import type { Integer } from '../common/Types';
 
-export default class Segment_Map {
+export default class G_Segment {
 	relative_font_size = k.font_size;
 	title_origin = Point.x(8);
 	part = T_Oblong.right;
@@ -36,13 +36,13 @@ export default class Segment_Map {
 		this.setup_path();
 	}
 
-	static grab_segment_map(name: string, title: string, font_size: string, isSelected: boolean, index: Integer, max_index: Integer, left: number, height: number) : Segment_Map {
+	static grab_segment_map(name: string, title: string, font_size: string, isSelected: boolean, index: Integer, max_index: Integer, left: number, height: number) : G_Segment {
 		let map_name = `${title}-${name}-at-${index}`;
 		let map = ux.segment_map_forName(map_name);
 		if (!!map) {
 			map.isSelected = isSelected;
 		} else {
-			map = new Segment_Map(name, title, font_size, isSelected, index, max_index, left, height);
+			map = new G_Segment(name, title, font_size, isSelected, index, max_index, left, height);
 			ux.set_segment_map_forName(map, map_name);
 		}
 		return map;

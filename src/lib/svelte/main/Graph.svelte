@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, k, w, Rect, Point, debug, T_Layer, signals, T_Graph } from '../../ts/common/Global_Imports';
-	import { s_graphRect, s_graph_type, s_ancestry_focus } from '../../ts/state/S_Stores';
+	import { s_graphRect, s_t_graph, s_ancestry_focus } from '../../ts/state/S_Stores';
 	import { s_device_isMobile, s_user_graph_offset } from '../../ts/state/S_Stores';
 	import Radial_Graph from '../radial/Radial_Graph.svelte';
 	import Tree_Graph from '../tree/Tree_Graph.svelte';
@@ -58,7 +58,7 @@
 	<div class='draggable'
 		bind:this={draggable}
 		style={style}>
-		{#if $s_graph_type == T_Graph.radial}
+		{#if $s_t_graph == T_Graph.radial}
 			<Radial_Graph/>
 		{:else}
 			<Tree_Graph/>

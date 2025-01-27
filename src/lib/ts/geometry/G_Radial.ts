@@ -1,12 +1,12 @@
 import { u, Thing, debug, Ancestry, Predicate, T_Predicate } from '../common/Global_Imports';
-import { s_hierarchy, s_paging_state, s_ancestry_focus } from '../state/S_Stores';
-import { Cluster_Map, S_Paging, G_Widget } from '../common/Global_Imports';
+import { s_hierarchy, s_s_paging, s_ancestry_focus } from '../state/S_Stores';
+import { G_Cluster, S_Paging, G_Widget } from '../common/Global_Imports';
 import Parent_Ancestry from '../data/runtime/Parent_Ancestry';
 import { get } from 'svelte/store';
 
-export default class Radial_Geometry {
-	parent_cluster_maps: Array<Cluster_Map> = [];
-	child_cluster_maps: Array<Cluster_Map> = [];
+export default class G_Radial {
+	parent_cluster_maps: Array<G_Cluster> = [];
+	child_cluster_maps: Array<G_Cluster> = [];
 	ancestry_focus!: Ancestry;
 
 	// layout all the widgets, radial and arcs
@@ -14,7 +14,7 @@ export default class Radial_Geometry {
 	constructor() {
 		debug.log_layout(`GEOMETRY (ts)  ${get(s_ancestry_focus)?.thing?.title}`);
 		this.layoutAll_clusters();
-		s_paging_state.subscribe((state: S_Paging) => {
+		s_s_paging.subscribe((state: S_Paging) => {
 			this.update_forPaging_state(state);
 		});
 	}
@@ -24,9 +24,9 @@ export default class Radial_Geometry {
 		this.parent_cluster_maps.forEach(l => l.destructor());
 	}
 
-	get cluster_maps(): Array<Cluster_Map> { return u.concatenateArrays(this.parent_cluster_maps, this.child_cluster_maps); }		// for lines and arcs
-	cluster_maps_toChildren(points_toChildren: boolean): Array<Cluster_Map> { return points_toChildren ? this.child_cluster_maps : this.parent_cluster_maps; }
-	cluster_map_toChildren(points_toChildren: boolean, predicate: Predicate): Cluster_Map { return this.cluster_maps_toChildren(points_toChildren)[predicate.stateIndex]; }
+	get cluster_maps(): Array<G_Cluster> { return u.concatenateArrays(this.parent_cluster_maps, this.child_cluster_maps); }		// for lines and arcs
+	cluster_maps_toChildren(points_toChildren: boolean): Array<G_Cluster> { return points_toChildren ? this.child_cluster_maps : this.parent_cluster_maps; }
+	cluster_map_toChildren(points_toChildren: boolean, predicate: Predicate): G_Cluster { return this.cluster_maps_toChildren(points_toChildren)[predicate.stateIndex]; }
 
 	widget_mapFor(ancestry: Ancestry): G_Widget | null {
 		const maps = this.g_widgets.filter(m => m.widget_ancestry?.hid == ancestry.hid);
@@ -35,9 +35,9 @@ export default class Radial_Geometry {
 
 	get g_widgets(): Array<G_Widget> {
 		let g_widgets: Array<G_Widget> = [];
-		for (const cluster_map of this.cluster_maps) {
-			if (!!cluster_map) {
-				for (const g_widget of cluster_map.g_widgets) {
+		for (const g_cluster of this.cluster_maps) {
+			if (!!g_cluster) {
+				for (const g_widget of g_cluster.g_widgets) {
 					g_widgets.push(g_widget);
 				}
 			}
@@ -45,10 +45,10 @@ export default class Radial_Geometry {
 		return g_widgets;		
 	}
 
-	get cluster_mapFor_mouseLocation(): Cluster_Map | null {
-		for (const cluster_map of this.cluster_maps) {
-			if (!!cluster_map && cluster_map.thumb_isHit) {
-				return cluster_map;
+	get cluster_mapFor_mouseLocation(): G_Cluster | null {
+		for (const g_cluster of this.cluster_maps) {
+			if (!!g_cluster && g_cluster.thumb_isHit) {
+				return g_cluster;
 			}
 		}
 		return null;
@@ -66,9 +66,9 @@ export default class Radial_Geometry {
 		if (!!predicate) {
 			const paging_state = get(s_ancestry_focus)?.thing?.page_states?.paging_state_forPointingTo(points_toChildren, predicate);
 			const onePageOf_ancestries = paging_state?.onePage_from(ancestries) ?? [];
-			const cluster_map = new Cluster_Map(ancestries.length, onePageOf_ancestries, predicate, points_toChildren);
+			const g_cluster = new G_Cluster(ancestries.length, onePageOf_ancestries, predicate, points_toChildren);
 			const cluster_maps = this.cluster_maps_toChildren(points_toChildren);
-			cluster_maps[predicate.stateIndex] = cluster_map;
+			cluster_maps[predicate.stateIndex] = g_cluster;
 		}
 	}
 

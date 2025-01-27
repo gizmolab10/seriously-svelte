@@ -1,4 +1,4 @@
-import { s_graph_type, s_thing_color, s_startup_state, s_device_isMobile } from './S_Stores';
+import { s_t_graph, s_thing_color, s_t_startup, s_device_isMobile } from './S_Stores';
 import { s_hierarchy, s_count_resize, s_count_mouse_up, s_count_rebuild } from './S_Stores';
 import { Hierarchy, T_Graph, preferences, T_Preference } from '../common/Global_Imports';
 import { S_Rotation, T_Startup, S_Expansion } from '../common/Global_Imports';
@@ -47,7 +47,7 @@ export class S_Global {
 		s_count_rebuild.set(0);
 		s_count_mouse_up.set(0);
 		s_thing_color.set(null);
-		s_startup_state.set(T_Startup.start);
+		s_t_startup.set(T_Startup.start);
 		s_device_isMobile.set(this.device_isMobile);
 		this.ring_resizing_state = new S_Expansion();
 		this.ring_rotation_state  = new S_Rotation();
@@ -83,7 +83,7 @@ export class S_Global {
 		}
     }
 
-	get inRadialMode(): boolean { return get(s_graph_type) == T_Graph.radial; }
+	get inRadialMode(): boolean { return get(s_t_graph) == T_Graph.radial; }
 	get hierarchy(): Hierarchy { return get(s_hierarchy); }
 
 	get isAny_rotation_active(): boolean {

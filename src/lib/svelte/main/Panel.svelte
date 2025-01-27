@@ -1,11 +1,11 @@
 <script lang='ts'>
-	import { s_title_edit_state, s_details_show, s_device_isMobile, } from '../../ts/state/S_Stores';
+	import { s_s_title_edit, s_details_show, s_device_isMobile, } from '../../ts/state/S_Stores';
 	import { g, k, u, ux, w, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
 	import { debug, T_Layer, Ancestry, T_Startup } from '../../ts/common/Global_Imports';
-	import { s_type_db, s_graphRect, s_hierarchy } from '../../ts/state/S_Stores';
+	import { s_t_db, s_graphRect, s_hierarchy } from '../../ts/state/S_Stores';
 	import { T_Control, Hierarchy, databases } from '../../ts/common/Global_Imports';
 	import { s_id_popupView, s_ancestry_focus } from '../../ts/state/S_Stores';
-	import { s_count_resize, s_startup_state } from '../../ts/state/S_Stores';
+	import { s_count_resize, s_t_startup } from '../../ts/state/S_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { T_Database } from '../../ts/data/dbs/DBCommon';
 	import Details from '../details/Details.svelte';
@@ -23,7 +23,7 @@
 	function ignore_wheel(event) { event.preventDefault(); }
 
 	$: {
-		const _ = $s_type_db + $s_startup_state + $s_id_popupView;
+		const _ = $s_t_db + $s_t_startup + $s_id_popupView;
 		rebuilds += 1;
 	}
 	
@@ -32,7 +32,7 @@
 			const key = event.key.toLowerCase();
 			if (key == undefined) {
 				alert('No key for ' + event.type);
-			} else if (!$s_title_edit_state && !g.isEditing_text) {			// let title editor (when active) consume the events
+			} else if (!$s_s_title_edit && !g.isEditing_text) {			// let title editor (when active) consume the events
 				const h = $s_hierarchy;
 				switch (key) {
 					case 'o': h.select_file_toUpload(event.shiftKey); break;
@@ -68,14 +68,14 @@
 		pointer-events: auto;
 		{k.prevent_selection_style};'
 		on:wheel={ignore_wheel}>
-		{#if [T_Startup.start, T_Startup.fetch].includes($s_startup_state) && databases.db.isPersistent}
+		{#if [T_Startup.start, T_Startup.fetch].includes($s_t_startup) && databases.db.isPersistent}
 			<p>Welcome to Seriously</p>
-			{#if $s_startup_state == T_Startup.fetch}
+			{#if $s_t_startup == T_Startup.fetch}
 				<p>{databases.startupExplanation}</p>
 			{/if}
-		{:else if $s_startup_state == T_Startup.empty}
+		{:else if $s_t_startup == T_Startup.empty}
 			<p>Nothing is available.</p>
-		{:else if $s_startup_state == T_Startup.ready}
+		{:else if $s_t_startup == T_Startup.ready}
 			<Controls/>
 			{#if !$s_id_popupView}
 				<div class='breadcrumbs'

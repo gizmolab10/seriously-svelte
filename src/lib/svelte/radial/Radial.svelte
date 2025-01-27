@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { g, k, u, ux, w, Thing, Point, Angle, debug, T_Layer } from '../../ts/common/Global_Imports';
-	import { s_thing_color, s_ancestry_focus, s_radial_geometry } from '../../ts/state/S_Stores';
+	import { s_thing_color, s_ancestry_focus, s_g_radial } from '../../ts/state/S_Stores';
 	import { s_ring_rotation_angle, s_ring_rotation_radius } from '../../ts/state/S_Stores';
 	import { signals, svgPaths, T_Ring, databases } from '../../ts/common/Global_Imports';
-	import { s_count_mouse_up, s_active_cluster_map } from '../../ts/state/S_Stores';
+	import { s_count_mouse_up, s_g_active_cluster } from '../../ts/state/S_Stores';
 	import { s_graphRect, s_mouse_location_scaled } from '../../ts/state/S_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/basis/Identifiable';
@@ -30,7 +30,7 @@
 
 	update_cursor();
 	debug.log_build(` (svelte)`);
-	$s_radial_geometry.layoutAll_clusters();
+	$s_g_radial.layoutAll_clusters();
 	function handle_mouse_state(mouse_state: S_Mouse): boolean { return true; }				// only for wrappers
 	function isHit(): boolean { return w.mouse_distance_fromGraphCenter <= outer_radius; }
 
@@ -64,7 +64,7 @@
 		ux.mouse_timer_forName(name).reset();
 		g.ring_resizing_state.reset();
 		g.ring_rotation_state.reset();
-		$s_active_cluster_map = null;
+		$s_g_active_cluster = null;
 		mouse_timer.reset();
 		ux.reset_paging();
 		rebuilds += 1;
@@ -160,15 +160,15 @@
 					signals.signal_relayoutWidgets_fromFocus();					// destroys this component (properties are in s_ring_rotation_state)
 					rebuilds += 1;
 				}
-			} else if (!!$s_active_cluster_map) {
-				const paging_rotation = $s_active_cluster_map.paging_rotation;
+			} else if (!!$s_g_active_cluster) {
+				const paging_rotation = $s_g_active_cluster.paging_rotation;
 				const basis_angle = paging_rotation.basis_angle;
 				const active_angle = paging_rotation.active_angle;
 				const delta_angle = (active_angle - mouse_angle).angle_normalized_aroundZero();
 				paging_rotation.active_angle = mouse_angle;
 				detect_hovering();
 				cursor = paging_rotation.cursor;
-				if (!!basis_angle && !!active_angle && basis_angle != active_angle && $s_active_cluster_map.adjust_paging_index_byAdding_angle(delta_angle)) {
+				if (!!basis_angle && !!active_angle && basis_angle != active_angle && $s_g_active_cluster.adjust_paging_index_byAdding_angle(delta_angle)) {
 					debug.log_radial(` page  ${delta_angle.degrees_of(0)}`);
 					signals.signal_rebuildGraph_fromFocus();
 					rebuilds += 1;
@@ -213,12 +213,12 @@
 						break;
 					case T_Ring.paging: 
 						const paging_angle = mouse_wentDown_angle.angle_normalized();
-						const map = $s_radial_geometry.cluster_mapFor_mouseLocation;
+						const map = $s_g_radial.cluster_mapFor_mouseLocation;
 						if (!!map) {
 							debug.log_radial(` begin paging  ${paging_angle.degrees_of(0)}`);
 							map.paging_rotation.active_angle = paging_angle;
 							map.paging_rotation.basis_angle = paging_angle;
-							$s_active_cluster_map = map;
+							$s_g_active_cluster = map;
 							rebuilds += 1;
 						}
 						break;
@@ -233,11 +233,11 @@
 
 {#key rebuilds}
 	<div class='paging-arcs' bind:this={pagingArcs} style='z-index:{T_Layer.paging};'>
-		{#each $s_radial_geometry.cluster_maps as cluster_map}
-			{#if !!cluster_map && (cluster_map.widgets_shown > 0)}
+		{#each $s_g_radial.cluster_maps as g_cluster}
+			{#if !!g_cluster && (g_cluster.widgets_shown > 0)}
 				<Paging_Arc
 					color={color}
-					cluster_map={cluster_map}/>
+					g_cluster={g_cluster}/>
 			{/if}
 		{/each}
 	</div>

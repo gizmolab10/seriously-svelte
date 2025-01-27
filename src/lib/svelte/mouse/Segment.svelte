@@ -1,23 +1,23 @@
 <script lang='ts'>
 	import { k, u, Rect, Size, Point, debug, T_Layer } from '../../ts/common/Global_Imports';
-	import { svgPaths, T_Oblong, Segment_Map } from '../../ts/common/Global_Imports';
+	import { svgPaths, T_Oblong, G_Segment } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from './Mouse_Responder.svelte';
 	export let hit_closure = (title, shift) => {};
 	export let fill = k.color_background;
-	export let segment_map!: Segment_Map;
-    export let name = segment_map.title;
+	export let g_segment!: G_Segment;
+    export let name = g_segment.title;
 	export let stroke = k.color_default;
 	const segment_name = `${name}-segment`;
 	let title_color = k.color_default;
-	let size = segment_map.size;
+	let size = g_segment.size;
 	let isHovering = false;
 
 	update_colors();
 
 	function update_colors() {
 		title_color = isHovering ? k.color_background : k.color_default ;
-		fill = isHovering ? k.color_default : segment_map.isSelected ? u.opacitize('skyblue', 0.6) : k.color_background;
-		debug.log_segments(`${name} ${segment_map.isSelected ? 'selected' : ''} ${fill}`)
+		fill = isHovering ? k.color_default : g_segment.isSelected ? u.opacitize('skyblue', 0.6) : k.color_background;
+		debug.log_segments(`${name} ${g_segment.isSelected ? 'selected' : ''} ${fill}`)
 	}
 
 	function up_hover_closure(mouse_state) {
@@ -37,12 +37,12 @@
 	name={segment_name}
 	height={size.height}
 	zindex={T_Layer.frontmost}
-	origin={segment_map.origin}
+	origin={g_segment.origin}
 	mouse_state_closure={up_hover_closure}>
 	<svg
 		id={`${name}`}
 		class='segment-svg'
-		viewBox={segment_map.viewBox}
+		viewBox={g_segment.viewBox}
 		style='
 			height:{size.height}px;
 			width:{size.width}px;
@@ -50,7 +50,7 @@
 			left:0px;'>
 		<path
 			class='segment-path'
-			d={segment_map.path}
+			d={g_segment.path}
 			stroke-width=0.3px
 			stroke={stroke}
 			id={`${name}`}
@@ -59,10 +59,10 @@
 	<div
 		class='title'
 		style='
-			left:{segment_map.title_origin.x}px;
-			top:{segment_map.title_origin.y}px;
+			left:{g_segment.title_origin.x}px;
+			top:{g_segment.title_origin.y}px;
 			color:{title_color};
 			position:absolute;'>
-		{segment_map.title}
+		{g_segment.title}
 	</div>
 </Mouse_Responder>

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_graph_type, s_tree_type, s_count_resize, s_device_isMobile } from '../../ts/state/S_Stores';
+	import { s_t_graph, s_t_tree, s_count_resize, s_device_isMobile } from '../../ts/state/S_Stores';
 	import { T_Control, preferences, S_Element, T_Preference } from '../../ts/common/Global_Imports';
 	import { s_details_show, s_id_popupView, s_thing_fontFamily } from '../../ts/state/S_Stores';
 	import { g, k, u, ux, w, show, Point, T_Layer, signals } from '../../ts/common/Global_Imports';
@@ -48,7 +48,7 @@
 	}
 
 	function next_graph_relations() {
-		switch ($s_tree_type) {
+		switch ($s_t_tree) {
 			case T_Tree.parents:  return T_Tree.related;
 			case T_Tree.children: return T_Tree.parents;
 			default:				 return T_Tree.children;
@@ -72,8 +72,8 @@
 	function selection_closure(name: string, types: Array<string>) {
 		const type = types[0];	// only ever has one element
 		switch (name) {
-			case 'graph':	  $s_graph_type	  = type as T_Graph;	  break;
-			case 'relations': $s_tree_type	  = type as T_Tree;	  break;
+			case 'graph':	  $s_t_graph	  = type as T_Graph;	  break;
+			case 'relations': $s_t_tree	  = type as T_Tree;	  break;
 		}
 	}
 
@@ -97,19 +97,19 @@
 				closure={(mouse_state) => button_closure_forID(mouse_state, T_Control.details)}>
 				<img src='settings.svg' alt='circular button' width={size_small}px height={size_small}px/>
 			</Button>
-			{#key $s_graph_type}
+			{#key $s_t_graph}
 				<Segmented
 					name='graph'
 					origin={Point.x(30)}
-					selected={[$s_graph_type]}
+					selected={[$s_t_graph]}
 					titles={[T_Graph.tree, T_Graph.radial]}
 					selection_closure={(titles) => selection_closure('graph', titles)}/>
 				{#if !g.inRadialMode && show.tree_types}
-					{#key $s_tree_type}
+					{#key $s_t_tree}
 						<Segmented
 							name='tree'
 							origin={Point.x(114)}
-							selected={[$s_tree_type]}
+							selected={[$s_t_tree]}
 							titles={[T_Tree.children, T_Tree.parents, T_Tree.related]}
 							selection_closure={(titles) => selection_closure('relations', titles)}/>
 					{/key}

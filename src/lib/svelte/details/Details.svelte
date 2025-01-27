@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, k, u, show, Point, debug, T_Layer, T_Details } from '../../ts/common/Global_Imports';
-	import { s_graphRect, s_detail_types } from '../../ts/state/S_Stores';
+	import { s_graphRect, s_t_details } from '../../ts/state/S_Stores';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
 	import Recents from './Recents.svelte';
@@ -15,7 +15,7 @@
 	update_tops();
 
 	function selection_closure(types: Array<string>) {
-		$s_detail_types = types as Array<T_Details>;
+		$s_t_details = types as Array<T_Details>;
 		update_tops();
 		rebuilds += 1;
 	}
@@ -23,7 +23,7 @@
 	function update_tops() {
 		let top = 42;
 		let index = 0;
-		let indices = $s_detail_types;
+		let indices = $s_t_details;
 		while (index <= T_Details.info) {
 			tops[index] = top;
 			if (indices.includes(T_Details[index])) {
@@ -34,7 +34,7 @@
 	}
 
 	function shows_type(type: T_Details): boolean {
-		return $s_detail_types.includes(T_Details[type])
+		return $s_t_details.includes(T_Details[type])
 	}
 
 </script>
@@ -55,7 +55,7 @@
 			allow_multiple={true}
 			name='details-selector'
 			origin={new Point(6, 7)}
-			selected={$s_detail_types}
+			selected={$s_t_details}
 			selection_closure={selection_closure}/>
 		{#if shows_type(T_Details.storage)}
 			<Separator title='storage' top={tops[T_Details.storage] - 8}/>

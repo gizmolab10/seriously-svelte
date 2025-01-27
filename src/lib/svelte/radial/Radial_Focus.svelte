@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { s_thing_color, s_ancestry_focus, s_thing_fontFamily } from '../../ts/state/S_Stores';
 	import { g, k, ux, w, Size, Point, debug, T_Tool, T_Layer, } from '../../ts/common/Global_Imports';
-	import { svgPaths, T_Element, Radial_Geometry } from '../../ts/common/Global_Imports';
+	import { svgPaths, T_Element, G_Radial } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Title_Editor from '../widget/Title_Editor.svelte';
 	const element_state = ux.element_state_for($s_ancestry_focus, T_Element.focus, T_Tool.none);

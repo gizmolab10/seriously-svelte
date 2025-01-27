@@ -1,7 +1,7 @@
 import { g, k, u, Trait, Thing, T_Thing, Hierarchy, Predicate, Relationship } from '../../common/Global_Imports';
 import { debug, signals, T_Startup, preferences, T_Preference } from '../../common/Global_Imports';
 import Persistent_Identifiable from '../basis/Persistent_Identifiable';
-import { s_hierarchy, s_startup_state } from '../../state/S_Stores';
+import { s_hierarchy, s_t_startup } from '../../state/S_Stores';
 import type { Dictionary } from '../../common/Types';
 
 export enum T_Persistence {
@@ -104,11 +104,11 @@ export default class DBCommon {
 		if (h.hasRoot) {
 			h.restore_fromPersistLocal();
 		} else {
-			s_startup_state.set(T_Startup.fetch);
+			s_t_startup.set(T_Startup.fetch);
 			await this.hierarchy_create_fastLoad_or_fetch_andBuild();
 		}
 		setTimeout( () => {
-			s_startup_state.set(T_Startup.ready);
+			s_t_startup.set(T_Startup.ready);
 			signals.signal_rebuildGraph_fromFocus();
 		}, 1);
 	}

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, ux, Rect, Size, Point, Segment_Map } from '../../ts/common/Global_Imports';
+	import { k, u, ux, Rect, Size, Point, G_Segment } from '../../ts/common/Global_Imports';
 	import type { Handle_Result } from '../../ts/common/Types';
 	import Segment from './Segment.svelte';
 	export let selection_closure = Handle_Result<string>;
@@ -12,7 +12,7 @@
 	export let font_size = '0.95em';
 	export let origin = Point.zero;
     export let name = k.empty;
-	let segment_maps: Array<Segment_Map> = [];
+	let segment_maps: Array<G_Segment> = [];
 	let width = height / 2;
 
 	update_maps_andWidth();
@@ -30,7 +30,7 @@
 		let x = 0;
 		reset_maps_andWidth();
 		for (const title of titles) {
-			const map = Segment_Map.grab_segment_map(name, title, font_size, isSelected(title), index, max_index, x, height);
+			const map = G_Segment.grab_segment_map(name, title, font_size, isSelected(title), index, max_index, x, height);
 			segment_maps.push(map);
 			x += map.width;
 			index += 1;
@@ -62,11 +62,11 @@
 		left:{origin.x}px;
 		position:absolute;
 		height:{height}px;'>
-	{#each segment_maps as segment_map}
+	{#each segment_maps as g_segment}
 		<Segment
 			fill={fill}
 			stroke={stroke}
-			segment_map={segment_map}
+			g_segment={g_segment}
 			hit_closure={hit_closure}/>
 	{/each}
 </div>

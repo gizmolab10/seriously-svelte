@@ -9,7 +9,7 @@ import { get } from 'svelte/store';
 //	start, end & fork angles
 //	s_ring_rotation_radius
 
-export default class Arc_Map {
+export default class G_ArcSlider {
 	clusters_center = Point.zero;
 	outside_arc_radius = 0;
 	inside_arc_radius = 0;

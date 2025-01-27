@@ -1,6 +1,6 @@
 import { k, Rect, Size, Point, T_Line, Ancestry, G_Widget } from '../common/Global_Imports';
 
-export default class Children_Geometry {
+export default class G_Children {
 	g_widgets: Array<G_Widget> = [];
 	childHeight = 0;
 

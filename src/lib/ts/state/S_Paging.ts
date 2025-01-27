@@ -1,5 +1,5 @@
-import { k, Thing, Predicate, Ancestry, Cluster_Map } from '../common/Global_Imports';
-import { s_hierarchy, s_paging_state, s_ring_rotation_radius } from './S_Stores';
+import { k, Thing, Predicate, Ancestry, G_Cluster } from '../common/Global_Imports';
+import { s_hierarchy, s_s_paging, s_ring_rotation_radius } from './S_Stores';
 import { get } from 'svelte/store';
 
 export class S_Paging {
@@ -77,7 +77,7 @@ export class S_Paging {
 		this.total_widgets = ancestries.length;
 		this.widgets_shown = Math.min(this.canShow, this.total_widgets);
 		if (this.update_index_toShow(this.index)) {
-			s_paging_state.set(this);
+			s_s_paging.set(this);
 		}
 		const index = Math.round(this.index);
 		return ancestries.slice(index, index + this.widgets_shown);
@@ -104,7 +104,7 @@ export class Page_States {
 
 	get thing(): Thing | null { return get(s_hierarchy).thing_forHID(this.thing_id.hash()) ?? null; }
 	get description(): string { return this.description_for(true) + k.big_separator + this.description_for(false); }
-	paging_state_for(map: Cluster_Map): S_Paging { return this.paging_state_forPointingTo(map.points_toChildren, map.predicate); }
+	paging_state_for(map: G_Cluster): S_Paging { return this.paging_state_forPointingTo(map.points_toChildren, map.predicate); }
 	paging_states_for(points_toChildren: boolean): Array<S_Paging> { return points_toChildren ? this.outward_paging_states : this.inward_paging_states; }
 
 	add_paging_state(paging_state: S_Paging) {

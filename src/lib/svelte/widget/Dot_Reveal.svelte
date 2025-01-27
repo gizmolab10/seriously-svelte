@@ -2,7 +2,7 @@
 	import { k, u, ux, show, Size, Thing, Point, debug, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
 	import { Predicate, Svelte_Wrapper, T_Layer, T_Graph, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { s_ancestries_grabbed, s_ancestries_expanded, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
-	import { s_hierarchy, s_graph_type, s_alteration_mode } from '../../ts/state/S_Stores';
+	import { s_hierarchy, s_t_graph, s_s_alteration } from '../../ts/state/S_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import { onMount } from 'svelte';
@@ -79,11 +79,11 @@
 			set_isHovering(!mouse_state.isOut);
 		} else if (mouse_state.isUp) {
 			if (ancestry.toolsGrabbed) {
-				$s_alteration_mode = null;
+				$s_s_alteration = null;
 				$s_ancestry_showing_tools = null;
 				signals.signal_relayoutWidgets_fromFocus();
 			} else if (ancestry.hasChildRelationships || ancestry.thing.isBulkAlias) {
-				const RIGHT = ancestry.thing_isChild != ancestry.isExpanded || $s_graph_type == T_Graph.radial;
+				const RIGHT = ancestry.thing_isChild != ancestry.isExpanded || $s_t_graph == T_Graph.radial;
 				$s_hierarchy.ancestry_rebuild_persistentMoveRight(ancestry, RIGHT, false, false, false, true);
 			}
 		}
@@ -150,7 +150,7 @@
 							/>
 						</div>
 					{/if}
-					{#if (!ancestry.isExpanded || $s_graph_type == T_Graph.radial) && ancestry.hasChildRelationships}
+					{#if (!ancestry.isExpanded || $s_t_graph == T_Graph.radial) && ancestry.hasChildRelationships}
 						<div class='outside-tiny-dots' style='
 							left:{tinyDotsDelta + tinyDotsOffset.x}px;
 							top:{tinyDotsDelta + tinyDotsOffset.y}px;

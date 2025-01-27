@@ -1,6 +1,6 @@
 <script lang=ts>
 	import { k, u, Rect, Size, Point, Thing, debug, T_Line } from '../../ts/common/Global_Imports';
-	import { signals, T_Debug, Children_Geometry } from '../../ts/common/Global_Imports';
+	import { signals, T_Debug, G_Children } from '../../ts/common/Global_Imports';
 	import { s_graphRect } from '../../ts/state/S_Stores';
 	import Tree_Children from './Tree_Children.svelte';
 	import Widget from '../widget/Widget.svelte';
@@ -47,9 +47,9 @@
 			const childrenOrigin = origin.offsetByXY(3, height + 1);
 			let sum = -ancestry.visibleProgeny_height() / 2; // start out negative and grow positive
 			for (const childAncestry of childAncestries) {
-				const tree_layout = new Children_Geometry(sum, ancestry, childAncestry, childrenOrigin);
-				g_widgets = u.concatenateArrays(g_widgets, tree_layout.g_widgets);
-				sum += tree_layout.childHeight + 1;
+				const g_children = new G_Children(sum, ancestry, childAncestry, childrenOrigin);
+				g_widgets = u.concatenateArrays(g_widgets, g_children.g_widgets);
+				sum += g_children.childHeight + 1;
 			}
 			center = childrenOrigin.offsetByXY(20, 2);
 		} else {

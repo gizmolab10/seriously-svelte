@@ -1,8 +1,8 @@
 import { T_Tool, T_Info, T_Graph, T_Thing, T_Trait, T_Create, T_Alteration, T_Control, T_Predicate } from '../common/Global_Imports';
 import { g, k, u, show, User, Thing, Trait, debug, files, signals, Access, Ancestry } from '../common/Global_Imports';
-import { s_title_edit_state, s_storage_update_trigger, s_ancestry_showing_tools } from '../state/S_Stores';
+import { s_s_title_edit, s_storage_update_trigger, s_ancestry_showing_tools } from '../state/S_Stores';
 import { S_Mouse, Predicate, Relationship, preferences, S_Alteration } from '../common/Global_Imports';
-import { s_graph_type, s_id_popupView, s_ancestry_focus, s_alteration_mode } from '../state/S_Stores';
+import { s_t_graph, s_id_popupView, s_ancestry_focus, s_s_alteration } from '../state/S_Stores';
 import { s_ancestries_grabbed, s_ancestries_expanded } from '../state/S_Stores';
 import type { Integer, Dictionary } from '../common/Types';
 import Identifiable from '../data/basis/Identifiable';
@@ -1083,7 +1083,7 @@ export class Hierarchy {
 					newGrabAncestry = null;
 				}
 				graph_needsRebuild = ancestry.expand();
-				if (get(s_graph_type) == T_Graph.radial) {
+				if (get(s_t_graph) == T_Graph.radial) {
 					graph_needsRebuild = ancestry.becomeFocus() || graph_needsRebuild;
 				}
 			} else {
@@ -1110,7 +1110,7 @@ export class Hierarchy {
 				}
 			}
 		}
-		s_title_edit_state.set(null);
+		s_s_title_edit.set(null);
 		if (!!newGrabAncestry) {
 			newGrabAncestry.grabOnly();
 			if (!RIGHT && !!newFocusAncestry) {
@@ -1313,7 +1313,7 @@ export class Hierarchy {
 
 	restore_fromPersistLocal() {
 		s_ancestry_showing_tools.set(null);
-		s_title_edit_state.set(null);
+		s_s_title_edit.set(null);
 		preferences.restore_focus();
 		preferences.restore_grabbed_andExpanded();
 		// preferences.restore_page_states();
@@ -1383,7 +1383,7 @@ export class Hierarchy {
 	get data_count(): number { return this.things.length + this.relationships.length }
 
 	clear_editingTools() {
-		s_alteration_mode.set(null);
+		s_s_alteration.set(null);
 		s_ancestry_showing_tools.set(null);
 	}
 
@@ -1407,7 +1407,7 @@ export class Hierarchy {
 	}
 
 	toggleAlteration(wantsAlteration: T_Alteration, isRelated: boolean) {
-		const isAltering = get(s_alteration_mode)?.type;
+		const isAltering = get(s_s_alteration)?.type;
 		const predicate = isRelated ? Predicate.isRelated : Predicate.contains;
 		const nextAltering = wantsAlteration == isAltering ? null : new S_Alteration(wantsAlteration, predicate);
 		if (!!nextAltering) {
@@ -1415,7 +1415,7 @@ export class Hierarchy {
 		} else {
 			debug.log_tools(`end ${wantsAlteration} alteration`)
 		}
-		s_alteration_mode.set(nextAltering);
+		s_s_alteration.set(nextAltering);
 	}
 
 }

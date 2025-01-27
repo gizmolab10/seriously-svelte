@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { T_Graph, databases, Seriously_Range, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { s_hierarchy, s_graph_type, s_thing_color, s_thing_title, s_title_edit_state } from '../../ts/state/S_Stores';
+	import { s_hierarchy, s_t_graph, s_thing_color, s_thing_title, s_s_title_edit } from '../../ts/state/S_Stores';
 	import { s_thing_fontFamily, s_ancestries_grabbed, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
 	import { g, k, u, Point, Thing, debug, Angle, T_Layer, signals } from '../../ts/common/Global_Imports';
 	import { onMount } from 'svelte';
@@ -30,7 +30,7 @@
 	export const _____REACTIVES_____: unique symbol = Symbol('_____REACTIVES_____');
 	
 	$: {
-		const _ = $s_title_edit_state;
+		const _ = $s_s_title_edit;
 		updateInputWidth();
 	}
 
@@ -56,11 +56,11 @@
 
 		if (!!ancestry) {
 			const hasGrabbed = ($s_ancestries_grabbed ?? [])?.length > 0;
-			const te_state = $s_title_edit_state; // react to s_title_edit_state
+			const te_state = $s_s_title_edit; // react to s_s_title_edit
 			if (ancestry.isEditable) {
 				if (!!ancestry && (ancestry.isStoppingEdit ?? false)) {
 					debug.log_edit(`STOPPING ${bound_title}`);
-					$s_title_edit_state = null;
+					$s_s_title_edit = null;
 					input?.blur();
 				} else if (isEditing != title_isEditing()) {
 					if (!isEditing) {
@@ -81,7 +81,7 @@
 	export const _____PRIMITIVES_____: unique symbol = Symbol('_____PRIMITIVES_____');
  
 	function title_isEditing(): boolean {
-		const te_state = $s_title_edit_state;
+		const te_state = $s_s_title_edit;
 		return !!ancestry && !!te_state && te_state.editing && ancestry.ancestry_hasEqualID(te_state.editing);
 	}
 
@@ -181,7 +181,7 @@
 				} else {
 					ancestry.grabOnly();
 				}
-				$s_title_edit_state = null;
+				$s_s_title_edit = null;
 				signals.signal_relayoutWidgets_fromFocus();
 			}
 		}
@@ -219,7 +219,7 @@
 		invokeBlurNotClearEditing();
 		if (!!ancestry && ancestry.isEditing) {				
 			setTimeout(() => {									// eliminate infinite recursion
-				const te_state = $s_title_edit_state;
+				const te_state = $s_s_title_edit;
 				if (!!te_state) {
 					te_state.stop();
 					signals.signal_relayoutWidgets_fromFocus();

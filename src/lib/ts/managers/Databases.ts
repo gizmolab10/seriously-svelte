@@ -2,7 +2,7 @@ import { g, k, T_Preference, preferences } from '../common/Global_Imports';
 import { dbFirebase } from '../data/dbs/DBFirebase';
 import { dbAirtable } from '../data/dbs/DBAirtable';
 import { T_Database } from '../data/dbs/DBCommon';
-import { s_type_db } from '../state/S_Stores';
+import { s_t_db } from '../state/S_Stores';
 import { dbLocal } from '../data/dbs/DBLocal';
 import { dbTest } from '../data/dbs/DBTest';
 import DBCommon from '../data/dbs/DBCommon';
@@ -28,7 +28,7 @@ export default class Databases {
 		const type = queryStrings.get('db');
 		if (!!type) {
 			this.db_set_accordingToType(type);
-			s_type_db.set(type);
+			s_t_db.set(type);
 		}
 		this.db.queryStrings_apply();
 	}
@@ -36,7 +36,7 @@ export default class Databases {
 	constructor() {
 		let done = false;
 		this.db = dbFirebase;
-		s_type_db.subscribe((type: string) => {
+		s_t_db.subscribe((type: string) => {
 			if (!!type && (!done || (type && this.db.type_db != type))) {
 				done = true;
 				setTimeout( async () => {
@@ -54,7 +54,7 @@ export default class Databases {
 	restore_db() {
 		let type = preferences.read_key(T_Preference.db) ?? 'firebase';
 		if (type == 'file') { type = 'local'; }
-		s_type_db.set(type);
+		s_t_db.set(type);
 	}
 
 	get startupExplanation(): string {
@@ -70,7 +70,7 @@ export default class Databases {
 	db_change_toType(newDatabaseType: T_Database) {
 		const db = db_forType(newDatabaseType);
 		preferences.write_key(T_Preference.db, newDatabaseType);
-		s_type_db.set(newDatabaseType);		// tell components to render the [possibly previously] fetched data
+		s_t_db.set(newDatabaseType);		// tell components to render the [possibly previously] fetched data
 	}
 
 	db_next_get(forward: boolean): T_Database {

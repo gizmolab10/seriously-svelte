@@ -1,9 +1,9 @@
 <script lang='ts'>
-	import { signals, T_Ring, T_Element, T_Rebuild, Radial_Geometry } from '../../ts/common/Global_Imports';
+	import { signals, T_Ring, T_Element, T_Rebuild, G_Radial } from '../../ts/common/Global_Imports';
 	import { g, k, u, ux, Rect, Point, debug, T_Tool, T_Layer } from '../../ts/common/Global_Imports';
 	import { s_graphRect, s_details_show, s_ancestry_focus } from '../../ts/state/S_Stores';
 	import { s_user_graph_offset, s_thing_fontFamily } from '../../ts/state/S_Stores';
-	import { s_radial_geometry } from '../../ts/state/S_Stores';
+	import { s_g_radial } from '../../ts/state/S_Stores';
 	import Radial_Focus from './Radial_Focus.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Necklace from './Necklace.svelte';
@@ -20,7 +20,7 @@
 	//	edit titles (keydown terminates edit) BROKEN
 	//	displays editing tools when asked by user
 	
-	$s_radial_geometry = new Radial_Geometry();
+	$s_g_radial = new G_Radial();
 	debug.log_tools(` CLUSTERS (svelte)`);
 
 	onMount(() => {
@@ -33,7 +33,7 @@
 	
 	$: {
 		const _ = $s_details_show;
-		$s_radial_geometry = new Radial_Geometry();
+		$s_g_radial = new G_Radial();
 		setTimeout(() => {
 			g.require_rebuild_forType(T_Rebuild.radial);
 		}, 100);

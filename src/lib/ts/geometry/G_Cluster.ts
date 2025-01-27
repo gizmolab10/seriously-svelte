@@ -1,4 +1,4 @@
-import { k, u, ux, w, Rect, Point, Angle, debug, T_Line, Arc_Map, T_Quadrant } from '../common/Global_Imports';
+import { k, u, ux, w, Rect, Point, Angle, debug, T_Line, G_ArcSlider, T_Quadrant } from '../common/Global_Imports';
 import { Ancestry, Predicate, S_Paging, G_Widget, S_Rotation } from '../common/Global_Imports';
 import { s_ring_rotation_angle, s_ring_rotation_radius } from '../state/S_Stores';
 import { s_graphRect, s_ancestry_focus } from '../state/S_Stores';
@@ -19,7 +19,7 @@ import { get } from 'svelte/store';
 //										//
 //////////////////////////////////////////
 
-export default class Cluster_Map {
+export default class G_Cluster {
 	focus_ancestry: Ancestry = get(s_ancestry_focus);
 	g_widgets: Array<G_Widget> = [];
 	ancestries: Array<Ancestry> = [];
@@ -28,10 +28,10 @@ export default class Cluster_Map {
 	arc_straddles_zero = false;
 	arc_in_lower_half = false;
 	label_center = Point.zero;
-	thumb_map = new Arc_Map();
+	thumb_map = new G_ArcSlider();
 	label_position_angle = 0;
 	cluster_title = k.empty;
-	arc_map = new Arc_Map();
+	g_arcSlider = new G_ArcSlider();
 	predicate: Predicate;
 	points_toChildren: boolean;
 	center = Point.zero;
@@ -48,7 +48,7 @@ export default class Cluster_Map {
 		debug.log_build(` C MAP (ts)  ${total_widgets}  ${this.direction_kind}`);
 		this.update_all();
 		s_ring_rotation_radius.subscribe((radius: number) => {
-			if (this.arc_map.outside_arc_radius != radius) {
+			if (this.g_arcSlider.outside_arc_radius != radius) {
 				this.update_all();		// do not set_paging_index (else expand will hang)
 			}
 		})
@@ -74,7 +74,7 @@ export default class Cluster_Map {
 	get paging_rotation(): S_Rotation { return ux.rotation_state_forName(this.name); }
 	get kind(): string { return this.predicate?.kind.unCamelCase().lastWord() ?? k.empty; }
 	get name(): string { return `${this.focus_ancestry.title}-cluster-${this.direction_kind}`; }
-	get fork_radial(): Point { return Point.fromPolar(get(s_ring_rotation_radius), this.arc_map.fork_angle); }
+	get fork_radial(): Point { return Point.fromPolar(get(s_ring_rotation_radius), this.g_arcSlider.fork_angle); }
 	get paging_state_ofFocus(): S_Paging | null { return this.paging_state_ofAncestry(this.focus_ancestry); }
 
 	get thumb_isHit(): boolean {
@@ -92,11 +92,11 @@ export default class Cluster_Map {
 	static readonly LABEL: unique symbol;
 
 	update_label_geometry() {		// rotate text tangent to arc, at center of arc
-		const angle = this.arc_map.center_angle;
+		const angle = this.g_arcSlider.center_angle;
 		const ortho = this.arc_in_lower_half ? Angle.quarter : Angle.three_quarters;
 		const radius = get(s_ring_rotation_radius) - k.ring_rotation_thickness + (this.arc_in_lower_half ? 5 : 0) + 15;
 		this.label_center = this.center.offsetBy(Point.fromPolar(radius, angle));
-		this.arc_map.label_text_angle = ortho - angle;
+		this.g_arcSlider.label_text_angle = ortho - angle;
 		this.label_position_angle = angle;
 	}
 	
@@ -119,7 +119,7 @@ export default class Cluster_Map {
 	adjust_paging_index_byAdding_angle(delta_angle: number) {
 		const paging = this.paging_state_ofFocus;
 		if (!!paging) {
-			const spread_angle = (-this.arc_map.spread_angle).angle_normalized();
+			const spread_angle = (-this.g_arcSlider.spread_angle).angle_normalized();
 			const delta_fraction = (delta_angle / spread_angle);
 			const delta_index = delta_fraction * this.maximum_paging_index;			// convert rotation delta to index delta
 			const adjusted = paging.addTo_paging_index_for(delta_index) ?? false;	// add index delta to index
@@ -134,8 +134,8 @@ export default class Cluster_Map {
 	
 	compute_paging_fraction(delta_angle: number): number {
 		let angle = delta_angle.angle_normalized();
-		let end = this.arc_map.end_angle.angle_normalized();
-		let start = this.arc_map.start_angle.angle_normalized();
+		let end = this.g_arcSlider.end_angle.angle_normalized();
+		let start = this.g_arcSlider.start_angle.angle_normalized();
 		const quadrant = u.quadrant_ofAngle(end);
 		if (quadrant != T_Quadrant.upperRight) {
 			let delta = u.basis_angle_ofType_Quadrant(quadrant) + Angle.quarter;
@@ -156,7 +156,7 @@ export default class Cluster_Map {
 			return 1;
 		} else {
 			const moved_angle = (start - angle).angle_normalized();
-			const spread_angle = (-this.arc_map.spread_angle).angle_normalized();
+			const spread_angle = (-this.g_arcSlider.spread_angle).angle_normalized();
 			return (moved_angle / spread_angle).force_between(0, 1);
 		}
 	}
@@ -166,10 +166,10 @@ export default class Cluster_Map {
 	update_arc_angles(index: number, max: number, child_angle: number) {
 		// index increases & angle decreases clockwise
 		if (index == max) {
-			this.arc_map.start_angle = child_angle;
+			this.g_arcSlider.start_angle = child_angle;
 		}
 		if (index == 0) {
-			this.arc_map.end_angle = child_angle;
+			this.g_arcSlider.end_angle = child_angle;
 		}
 	}
 
@@ -182,7 +182,7 @@ export default class Cluster_Map {
 			this.points_toChildren ? children_angle :		// one directional, use global
 			children_angle - tweak;
 		const fork_angle = raw.angle_normalized() ?? 0;
-		this.arc_map.update_fork_angle(fork_angle);
+		this.g_arcSlider.update_fork_angle(fork_angle);
 	}
 
 	update_widget_angles() {
@@ -190,7 +190,7 @@ export default class Cluster_Map {
 		if (this.widgets_shown > 0 && !!this.predicate) {
 			const radius = get(s_ring_rotation_radius);
 			const radial = new Point(radius + k.radial_widget_padding, 0);
-			const fork_pointsRight = new Angle(this.arc_map.fork_angle).angle_pointsRight;
+			const fork_pointsRight = new Angle(this.g_arcSlider.fork_angle).angle_pointsRight;
 			const tweak = this.center.offsetByXY(2, -1.5);	// tweak so that drag dots are centered within the rotation ring
 			const max = this.widgets_shown - 1;
 			let index = 0;
@@ -203,10 +203,10 @@ export default class Cluster_Map {
 				this.g_widgets.push(g_widget);
 				index += 1;
 			}
-			this.arc_map.finalize_angles();
+			this.g_arcSlider.finalize_angles();
 			this.arc_in_lower_half = this.fork_radial.y < 0;
-			this.arc_straddles_zero = this.arc_map.arc_straddles(0);
-			this.arc_straddles_nadir = this.arc_map.arc_straddles(Angle.three_quarters);
+			this.arc_straddles_zero = this.g_arcSlider.arc_straddles(0);
+			this.arc_straddles_nadir = this.g_arcSlider.arc_straddles(Angle.three_quarters);
 		}
 	}
 
@@ -246,13 +246,13 @@ export default class Cluster_Map {
 		// 1. start & end are sometimes reversed (hasNegative_spread)
 		// 2. arc can straddle nadir when fork y is outside of ring
 
-		const spread_angle = this.arc_map.spread_angle;
+		const spread_angle = this.g_arcSlider.spread_angle;
 		const hasNegative_spread = spread_angle < 0
 		const inverter = hasNegative_spread ? 1 : -1;
 		const otherInverter = (hasNegative_spread == this.arc_straddles_nadir) ? -1 : 1;
 		const arc_spread = this.arc_straddles_nadir ? (-spread_angle).angle_normalized() : spread_angle;
 		const increment = arc_spread / this.total_widgets * inverter;
-		const arc_start = this.arc_map.start_angle * otherInverter;
+		const arc_start = this.g_arcSlider.start_angle * otherInverter;
 		const start = arc_start + (increment * this.paging_index_ofFocus);
 		const end = start + (increment * this.widgets_shown);
 		this.thumb_map.update_fork_angle((start + end) / 2);

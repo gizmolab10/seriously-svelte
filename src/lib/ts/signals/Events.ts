@@ -1,4 +1,4 @@
-import { s_mouse_location, s_mouse_location_scaled, s_count_mouse_up, s_alteration_mode } from '../state/S_Stores';
+import { s_mouse_location, s_mouse_location_scaled, s_count_mouse_up, s_s_alteration } from '../state/S_Stores';
 import { s_count_resize, s_device_isMobile, s_user_graph_offset } from '../state/S_Stores';
 import { g, k, w, Point, debug, signals, S_Alteration } from '../common/Global_Imports';
 import { get } from 'svelte/store';
@@ -8,7 +8,7 @@ export class Events {
 	interval: NodeJS.Timeout | null = null;
 
 	setup() {
-		s_alteration_mode.subscribe((state: S_Alteration | null) => { this.handle_alteration_state(state); });
+		s_s_alteration.subscribe((state: S_Alteration | null) => { this.handle_alteration_state(state); });
 		s_device_isMobile.subscribe((isMobile: boolean) => { this.subscribeTo_events(); });
 		this.subscribeTo_events();
 	}

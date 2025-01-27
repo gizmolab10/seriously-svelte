@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { g, k, u, ux, Thing, Point, Angle, debug, signals, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { S_Element, T_Element, T_Layer, T_Graph, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { s_title_edit_state, s_thing_color, s_graph_type } from '../../ts/state/S_Stores';
+	import { s_s_title_edit, s_thing_color, s_t_graph } from '../../ts/state/S_Stores';
 	import { s_thing_fontFamily, s_ancestries_grabbed } from '../../ts/state/S_Stores';
 	import Title_Editor from './Title_Editor.svelte';
 	import Dot_Reveal from './Dot_Reveal.svelte';
@@ -67,7 +67,7 @@
 	});
 
 	$: {
-		const _ = $s_title_edit_state + $s_ancestries_grabbed;
+		const _ = $s_s_title_edit + $s_ancestries_grabbed;
 		updateBorder_fromState();
 	}
 

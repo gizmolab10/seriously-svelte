@@ -2,7 +2,7 @@
 	import { k, u, ux, Point, T_Layer, databases, Hierarchy, T_Storage } from '../../ts/common/Global_Imports';
 	import { T_Element, S_Element, T_Preference, preferences } from '../../ts/common/Global_Imports';
 	import { s_storage_update_trigger, s_thing_fontFamily } from '../../ts/state/S_Stores';
-	import { s_type_db, s_hierarchy } from '../../ts/state/S_Stores';
+	import { s_t_db, s_hierarchy } from '../../ts/state/S_Stores';
 	import { T_Database } from '../../ts/data/dbs/DBCommon';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Button from '../mouse/Button.svelte';
@@ -58,14 +58,14 @@
 
 </script>
 
-{#key $s_type_db, rebuilds}
+{#key $s_t_db, rebuilds}
 	<div class='storage-information'
 		style='
 			height:40px;
 			padding:5px;'>
 		<Segmented
 			name='db'
-			selected={[$s_type_db]}
+			selected={[$s_t_db]}
 			origin={new Point(4, top)}
 			selection_closure={selection_closure}
 			titles={[T_Database.local, T_Database.firebase, T_Database.airtable, T_Database.test]}/>

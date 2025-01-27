@@ -1,5 +1,5 @@
 import { g, k, w, signals, preferences, T_Preference } from '../common/Global_Imports';
-import { s_details_show, s_tree_type } from './S_Stores';
+import { s_details_show, s_t_tree } from './S_Stores';
 import { T_Info, T_Tree } from '../common/Enumerations';
 import type { Dictionary } from '../common/Types';
 
@@ -45,11 +45,11 @@ export class S_Show {
 		s_details_show.set(preferences.read_key(T_Preference.details) ?? false);
 		this.arrowheads = preferences.read_key(T_Preference.arrowheads) ?? false;
 		this.info_type = preferences.read_key(T_Preference.info_type) ?? T_Info.focus;
-		s_tree_type.set(preferences.read_key(T_Preference.tree_type) ?? T_Tree.children);
+		s_t_tree.set(preferences.read_key(T_Preference.tree_type) ?? T_Tree.children);
 	}
 
 	reactivity_subscribe() {
-		s_tree_type.subscribe((relations: string) => {
+		s_t_tree.subscribe((relations: string) => {
 			preferences.write_key(T_Preference.tree_type, relations);
 		});
 		s_details_show.subscribe((flag: boolean) => {
