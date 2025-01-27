@@ -1,5 +1,5 @@
-import { G_Segment, S_Element, S_Rotation } from '../common/Global_Imports';
-import { S_Mouse, Mouse_Timer, T_Element } from '../common/Global_Imports';
+import { S_Mouse, G_Segment, S_Element, S_Rotation } from '../common/Global_Imports';
+import { T_Element, Mouse_Timer } from '../common/Global_Imports';
 import Identifiable from '../data/basis/Identifiable';
 
 export default class S_UX {
@@ -19,7 +19,7 @@ export default class S_UX {
 	//	  by their own event handling	//
 	//									//
 	//	used by: Button, Close_Button,	//
-	//	  Radial & Paging_Arc			//
+	//	  Radial & Paging_ArcSlider		//
 	//									//
 	//////////////////////////////////////
 

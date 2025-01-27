@@ -1,4 +1,4 @@
-import { k, Rect, Size, Point, debug, signals, preferences, T_Preference } from '../common/Global_Imports';
+import { k, Rect, Size, Point, debug, preferences, T_Preference } from '../common/Global_Imports';
 import { s_graphRect, s_user_graph_offset, s_user_graph_center } from '../state/S_Stores';
 import { s_details_show, s_mouse_location_scaled } from '../state/S_Stores';
 import { get } from 'svelte/store';

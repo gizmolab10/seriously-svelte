@@ -7,7 +7,7 @@
 	import { s_graphRect, s_mouse_location_scaled } from '../../ts/state/S_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/basis/Identifiable';
-	import Paging_Arc from './Paging_Arc.svelte';
+	import Paging_ArcSlider from './Paging_ArcSlider.svelte';
 	import { onMount } from 'svelte';
 	export let zindex = T_Layer.backmost;
 	const ring_width = k.ring_rotation_thickness;
@@ -235,7 +235,7 @@
 	<div class='paging-arcs' bind:this={pagingArcs} style='z-index:{T_Layer.paging};'>
 		{#each $s_g_radial.cluster_maps as g_cluster}
 			{#if !!g_cluster && (g_cluster.widgets_shown > 0)}
-				<Paging_Arc
+				<Paging_ArcSlider
 					color={color}
 					g_cluster={g_cluster}/>
 			{/if}

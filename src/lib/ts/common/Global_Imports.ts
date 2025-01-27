@@ -20,22 +20,22 @@ import { T_Layer, T_Browser, T_Predicate, T_Alteration } from './Enumerations';
 import { T_Thing, T_Trait, T_Element, T_Details, T_Rebuild } from './Enumerations';
 import { T_Info, T_Line, T_Tool, T_Create, T_Control, T_Storage } from './Enumerations';
 
-import G_Children from '../geometry/G_Children';
-import G_Radial from '../geometry/G_Radial';
 import Relationship from '../data/types/Relationship';
-import G_Cluster from '../geometry/G_Cluster';
-import G_Segment from '../geometry/G_Segment';
+import G_ArcSlider from '../geometry/G_ArcSlider';
 import S_Title_Edit from '../state/S_Title_Edit';
 import Mouse_Timer from '../signals/Mouse_Timer';
 import S_Alteration from '../state/S_Alteration';
+import G_Children from '../geometry/G_Children';
 import Predicate from '../data/types/Predicate';
 import Ancestry from '../data/runtime/Ancestry';
 import S_Expansion from '../state/S_Expansion';
 import Svelte_Wrapper from './Svelte_Wrapper';
+import G_Cluster from '../geometry/G_Cluster';
+import G_Segment from '../geometry/G_Segment';
 import S_Rotation from '../state/S_Rotation';
+import G_Radial from '../geometry/G_Radial';
 import G_Widget from '../geometry/G_Widget';
 import S_Element from '../state/S_Element';
-import G_ArcSlider from '../geometry/G_ArcSlider';
 import Access from '../data/types/Access';
 import Datum from '../data/basis/Datum';
 import Thing from '../data/types/Thing';
@@ -62,7 +62,6 @@ export {
 	interact, transparentize,
 	wrappers, Seriously_Range,
 	Rect, Size, Point, svgPaths,
-	G_Widget, G_Children,
 	show, files, builds, signals,
 	T_Layer, T_Predicate, T_Create,
 	T_Ring, T_Oblong, T_Alteration,
@@ -70,9 +69,9 @@ export {
 	Ancestry, Hierarchy, databases, preferences,
 	T_Element, Svelte_Wrapper, T_SvelteComponent,
 	S_Element, S_Paging, Page_States, S_Alteration,
-	G_ArcSlider, G_Segment, G_Cluster, G_Radial,
 	S_Mouse, T_Startup, S_Rotation, S_Expansion, S_Title_Edit,
 	User, Datum, Thing, Trait, Access, Predicate, Relationship,
 	T_Info, T_Thing, T_Trait, T_Graph, T_Tree, T_Details, T_Rebuild,
+	G_Widget, G_Children, G_ArcSlider, G_Segment, G_Cluster, G_Radial,
 	T_Line, T_Tool, T_Signal, T_Control, T_Browser, T_Storage, T_Preference,
 };

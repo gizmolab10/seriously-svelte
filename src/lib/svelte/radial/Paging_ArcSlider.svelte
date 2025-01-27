@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { g, k, u, ux, w, show, Rect, Size, Point, debug, Angle, T_Layer } from '../../ts/common/Global_Imports';
-	import { G_Cluster, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, w, show, Rect, Size, Point, debug, Angle } from '../../ts/common/Global_Imports';
+	import { T_Layer, G_Cluster, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { s_thing_fontFamily, s_ring_rotation_radius } from '../../ts/state/S_Stores';
 	import { s_count_mouse_up, s_ancestry_focus } from '../../ts/state/S_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
@@ -9,8 +9,8 @@
 	export let color = 'red';
 	export let g_cluster!: G_Cluster;
 	const offset = k.radial_widget_padding;
-	const radius = $s_ring_rotation_radius + offset;
 	const thumb_name = `thumb-${g_cluster.name}`;
+	const radius = $s_ring_rotation_radius + offset;
 	const viewBox=`${-offset} ${-offset} ${radius * 2} ${radius * 2}`;
 	let origin = w.center_ofGraphSize.offsetBy(Point.square(-radius));
 	let mouse_up_count = $s_count_mouse_up;

@@ -1,6 +1,6 @@
 <script lang=ts>
-	import { k, u, Rect, Size, Point, Thing, debug, T_Line } from '../../ts/common/Global_Imports';
-	import { signals, T_Debug, G_Children } from '../../ts/common/Global_Imports';
+	import { k, u, Rect, Size, Point, Thing, debug, signals } from '../../ts/common/Global_Imports';
+	import { T_Line, T_Debug, G_Children } from '../../ts/common/Global_Imports';
 	import { s_graphRect } from '../../ts/state/S_Stores';
 	import Tree_Children from './Tree_Children.svelte';
 	import Widget from '../widget/Widget.svelte';
