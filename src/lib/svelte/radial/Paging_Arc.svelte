@@ -8,7 +8,7 @@
 	import Angled_Text from '../kit/Angled_Text.svelte';
 	export let color = 'red';
 	export let cluster_map!: Cluster_Map;
-	const offset = k.ring_widget_padding;
+	const offset = k.radial_widget_padding;
 	const radius = $s_ring_rotation_radius + offset;
 	const thumb_name = `thumb-${cluster_map.name}`;
 	const viewBox=`${-offset} ${-offset} ${radius * 2} ${radius * 2}`;

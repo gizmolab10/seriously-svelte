@@ -22,7 +22,6 @@ import { T_Info, T_Line, T_Tool, T_Create, T_Control, T_Storage } from './Enumer
 
 import Children_Geometry from '../geometry/Children_Geometry';
 import Radial_Geometry from '../geometry/Radial_Geometry';
-import Widget_MapRect from '../geometry/Widget_MapRect';
 import Relationship from '../data/types/Relationship';
 import Cluster_Map from '../geometry/Cluster_Map';
 import Segment_Map from '../geometry/Segment_Map';
@@ -34,6 +33,7 @@ import Ancestry from '../data/runtime/Ancestry';
 import S_Expansion from '../state/S_Expansion';
 import Svelte_Wrapper from './Svelte_Wrapper';
 import S_Rotation from '../state/S_Rotation';
+import G_Widget from '../geometry/G_Widget';
 import S_Element from '../state/S_Element';
 import Arc_Map from '../geometry/Arc_Map';
 import Access from '../data/types/Access';
@@ -62,10 +62,10 @@ export {
 	interact, transparentize,
 	wrappers, Seriously_Range,
 	Rect, Size, Point, svgPaths,
+	G_Widget, Children_Geometry,
 	show, files, builds, signals,
 	T_Layer, T_Predicate, T_Create,
 	T_Ring, T_Oblong, T_Alteration,
-	Widget_MapRect, Children_Geometry,
 	Angle, Direction, T_Quadrant, T_Orientation,
 	Ancestry, Hierarchy, databases, preferences,
 	T_Element, Svelte_Wrapper, T_SvelteComponent,

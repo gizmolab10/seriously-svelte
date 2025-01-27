@@ -1,5 +1,5 @@
 import { k, u, ux, w, Rect, Point, Angle, debug, T_Line, Arc_Map, T_Quadrant } from '../common/Global_Imports';
-import { Ancestry, Predicate, S_Paging, Widget_MapRect, S_Rotation } from '../common/Global_Imports';
+import { Ancestry, Predicate, S_Paging, G_Widget, S_Rotation } from '../common/Global_Imports';
 import { s_ring_rotation_angle, s_ring_rotation_radius } from '../state/S_Stores';
 import { s_graphRect, s_ancestry_focus } from '../state/S_Stores';
 import { get } from 'svelte/store';
@@ -21,7 +21,7 @@ import { get } from 'svelte/store';
 
 export default class Cluster_Map {
 	focus_ancestry: Ancestry = get(s_ancestry_focus);
-	widget_maps: Array<Widget_MapRect> = [];
+	g_widgets: Array<G_Widget> = [];
 	ancestries: Array<Ancestry> = [];
 	color = k.thing_color_default;
 	arc_straddles_nadir = false;
@@ -33,17 +33,17 @@ export default class Cluster_Map {
 	cluster_title = k.empty;
 	arc_map = new Arc_Map();
 	predicate: Predicate;
-	toChildren: boolean;
+	points_toChildren: boolean;
 	center = Point.zero;
 	widgets_shown = 0;
 	total_widgets = 0;
 	isPaging = false;
 
 	destructor() { this.ancestries = []; }
-	constructor(total_widgets: number, ancestries: Array<Ancestry>, predicate: Predicate, toChildren: boolean) {
+	constructor(total_widgets: number, ancestries: Array<Ancestry>, predicate: Predicate, points_toChildren: boolean) {
+		this.points_toChildren = points_toChildren;
 		this.total_widgets = total_widgets;
 		this.ancestries = ancestries;
-		this.toChildren = toChildren;
 		this.predicate = predicate;
 		debug.log_build(` C MAP (ts)  ${total_widgets}  ${this.direction_kind}`);
 		this.update_all();
@@ -85,8 +85,8 @@ export default class Cluster_Map {
 
 	get direction_kind(): string {
 		const isSingular = this.total_widgets == 1;
-		const isParental = !this.toChildren && !this.predicate?.isBidirectional;
-		return isParental ? isSingular ? 'parent' : 'parents' : this.toChildren ? isSingular ? 'child' : 'children' : this.kind;
+		const isParental = !this.points_toChildren && !this.predicate?.isBidirectional;
+		return isParental ? isSingular ? 'parent' : 'parents' : this.points_toChildren ? isSingular ? 'child' : 'children' : this.kind;
 	}
 
 	static readonly LABEL: unique symbol;
@@ -179,17 +179,17 @@ export default class Cluster_Map {
 		const children_angle = get(s_ring_rotation_angle);
 		const raw = this.predicate.isBidirectional ?
 			children_angle + tweak :
-			this.toChildren ? children_angle :		// one directional, use global
+			this.points_toChildren ? children_angle :		// one directional, use global
 			children_angle - tweak;
 		const fork_angle = raw.angle_normalized() ?? 0;
 		this.arc_map.update_fork_angle(fork_angle);
 	}
 
 	update_widget_angles() {
-		this.widget_maps = [];
+		this.g_widgets = [];
 		if (this.widgets_shown > 0 && !!this.predicate) {
 			const radius = get(s_ring_rotation_radius);
-			const radial = new Point(radius + k.ring_widget_padding, 0);
+			const radial = new Point(radius + k.radial_widget_padding, 0);
 			const fork_pointsRight = new Angle(this.arc_map.fork_angle).angle_pointsRight;
 			const tweak = this.center.offsetByXY(2, -1.5);	// tweak so that drag dots are centered within the rotation ring
 			const max = this.widgets_shown - 1;
@@ -197,10 +197,10 @@ export default class Cluster_Map {
 			while (index < this.widgets_shown) {
 				const child_index = !fork_pointsRight ? index : max - index;
 				const child_ancestry = this.ancestries[child_index];
-				const childAngle = this.angle_at_index(index);
-				const childOrigin = tweak.offsetBy(radial.rotate_by(childAngle));
-				const map = new Widget_MapRect(T_Line.flat, new Rect(), childOrigin, child_ancestry, this.focus_ancestry, childAngle);
-				this.widget_maps.push(map);
+				const child_angle = this.angle_at_index(index);
+				const child_origin = tweak.offsetBy(radial.rotate_by(child_angle));
+				const g_widget = new G_Widget(T_Line.flat, new Rect(), child_origin, child_ancestry, this.focus_ancestry, this.points_toChildren, child_angle);
+				this.g_widgets.push(g_widget);
 				index += 1;
 			}
 			this.arc_map.finalize_angles();

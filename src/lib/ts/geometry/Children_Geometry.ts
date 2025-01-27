@@ -1,7 +1,7 @@
-import { k, Rect, Size, Point, T_Line, Ancestry, Widget_MapRect } from '../common/Global_Imports';
+import { k, Rect, Size, Point, T_Line, Ancestry, G_Widget } from '../common/Global_Imports';
 
 export default class Children_Geometry {
-	widgetMapRects: Array<Widget_MapRect> = [];
+	g_widgets: Array<G_Widget> = [];
 	childHeight = 0;
 
 	constructor(sum: number, parent_ancestry: Ancestry, child_ancestry: Ancestry, origin: Point) {
@@ -9,10 +9,10 @@ export default class Children_Geometry {
 		const sizeY = sum + childHeight / 2;
 		const direction = this.getDirection(sizeY);
 		const rect = new Rect(origin, new Size(k.line_stretch, sizeY - 1));
-		const childOrigin = this.originForChildrenOf(child_ancestry, rect);
-		const map = new Widget_MapRect(direction, rect, childOrigin, child_ancestry, parent_ancestry);
+		const child_origin = this.originForChildrenOf(child_ancestry, rect);
+		const g_widget = new G_Widget(direction, rect, child_origin, child_ancestry, parent_ancestry);
 		this.childHeight = childHeight;
-		this.widgetMapRects.push(map);
+		this.g_widgets.push(g_widget);
 	}
 
 	originForChildrenOf(childAncestry: Ancestry, rect: Rect): Point {

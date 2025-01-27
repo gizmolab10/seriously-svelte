@@ -8,7 +8,7 @@ export class S_Paging {
 	// widgets_shown == length of subset
 	// index == first of subset
 
-	toChildren = false;
+	points_toChildren = false;
 	thing_id = k.empty;
 	widgets_shown = 0;
 	total_widgets = 0;
@@ -23,11 +23,11 @@ export class S_Paging {
 
 	static create_paging_state_from(description: string): S_Paging | null {
 		let string = description.split(k.generic_separator);
-		const [toChildren, kind, id, ...remaining] = string;
+		const [points_toChildren, kind, id, ...remaining] = string;
 		if (remaining.length > 2) {
 			const v: Array<number> = remaining.map(r => Number(r));
 			const paging_state = new S_Paging(v[0], v[1], v[2]);
-			paging_state.toChildren = toChildren == 'true';
+			paging_state.points_toChildren = points_toChildren == 'true';
 			paging_state.thing_id = id;
 			paging_state.kind = kind;
 			return paging_state;
@@ -42,11 +42,11 @@ export class S_Paging {
 	get thing(): Thing | null { return get(s_hierarchy).thing_forHID(this.thing_id.hash()) ?? null; }
 	get predicate(): Predicate | null { return get(s_hierarchy).predicate_forKind(this.kind) ?? null; }
 	get canShow(): number { return Math.round((get(s_ring_rotation_radius) ** 1.5) * Math.PI / 45 / k.row_height) + 1; }
-	get sub_key(): string { return `${this.thing_id}${k.generic_separator}${this.kind}${k.generic_separator}${this.toChildren}`; }
+	get sub_key(): string { return `${this.thing_id}${k.generic_separator}${this.kind}${k.generic_separator}${this.points_toChildren}`; }
 
 	get description(): string {
 		const string = [
-			`${this.toChildren}`,
+			`${this.points_toChildren}`,
 			`${this.kind}`,
 			`${this.thing_id}`,
 			`${this.index}`,
@@ -104,16 +104,16 @@ export class Page_States {
 
 	get thing(): Thing | null { return get(s_hierarchy).thing_forHID(this.thing_id.hash()) ?? null; }
 	get description(): string { return this.description_for(true) + k.big_separator + this.description_for(false); }
-	paging_state_for(map: Cluster_Map): S_Paging { return this.paging_state_forPointingTo(map.toChildren, map.predicate); }
-	paging_states_for(toChildren: boolean): Array<S_Paging> { return toChildren ? this.outward_paging_states : this.inward_paging_states; }
+	paging_state_for(map: Cluster_Map): S_Paging { return this.paging_state_forPointingTo(map.points_toChildren, map.predicate); }
+	paging_states_for(points_toChildren: boolean): Array<S_Paging> { return points_toChildren ? this.outward_paging_states : this.inward_paging_states; }
 
 	add_paging_state(paging_state: S_Paging) {
-		const paging_states = this.paging_states_for(paging_state.toChildren);
+		const paging_states = this.paging_states_for(paging_state.points_toChildren);
 		paging_states[paging_state.stateIndex] = paging_state;
 	}
 
-	description_for(toChildren: boolean): string {
-		const paging_states = this.paging_states_for(toChildren);
+	description_for(points_toChildren: boolean): string {
+		const paging_states = this.paging_states_for(points_toChildren);
 		let separator, result = k.empty;
 		for (const paging_state of paging_states) {
 			result = result + separator + paging_state.description;
@@ -122,14 +122,14 @@ export class Page_States {
 		return result;
 	}
 
-	paging_state_forPointingTo(toChildren: boolean, predicate: Predicate): S_Paging {
-		let paging_states = this.paging_states_for(toChildren);
+	paging_state_forPointingTo(points_toChildren: boolean, predicate: Predicate): S_Paging {
+		let paging_states = this.paging_states_for(points_toChildren);
 		const stateIndex = predicate.stateIndex;
 		let paging_state = paging_states[stateIndex]
 		if (!paging_state) {
 			paging_state = new S_Paging();
 			paging_state.kind = predicate.kind;
-			paging_state.toChildren = toChildren;
+			paging_state.points_toChildren = points_toChildren;
 			paging_state.thing_id = this.thing_id;
 			paging_states[stateIndex] = paging_state;
 		}

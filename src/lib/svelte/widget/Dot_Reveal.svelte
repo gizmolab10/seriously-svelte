@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { k, u, ux, show, Size, Thing, Point, debug, T_Layer, signals, T_Graph } from '../../ts/common/Global_Imports';
-	import { svgPaths, databases, Predicate, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { s_graph_type, s_ancestries_expanded, s_ancestries_grabbed } from '../../ts/state/S_Stores';
-	import { s_hierarchy, s_alteration_mode, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
+	import { k, u, ux, show, Size, Thing, Point, debug, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
+	import { Predicate, Svelte_Wrapper, T_Layer, T_Graph, T_SvelteComponent } from '../../ts/common/Global_Imports';
+	import { s_ancestries_grabbed, s_ancestries_expanded, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
+	import { s_hierarchy, s_graph_type, s_alteration_mode } from '../../ts/state/S_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import { onMount } from 'svelte';
@@ -10,10 +10,11 @@
     export let ancestry;
 	export let name = k.empty;
     export let zindex = T_Layer.dots;
+	export let points_toChild = true;
     export let hover_isReversed = false;
+	const outside_tinyDots_count = ancestry.relationships_forChildren(points_toChild).length;
 	const element_state = ux.element_state_forName(name);		// survives onDestroy, created by widget
 	const size = k.dot_size;
-	let childrenCount = ancestry.childRelationships.length;
 	let svgPathFor_insideReveal = svgPaths.circle_atOffset(16, 6);
 	let tinyDotsOffset = new Point(0.65, -0.361);
 	let tinyDotsDelta = size * -0.4 + 0.01;
@@ -25,6 +26,7 @@
 	let dotReveal = null;
 	let rebuilds = 0;
 	
+	console.log(`reveal ${outside_tinyDots_count} ${points_toChild ? 'children' : 'parents'} ${ancestry.title}`)
 	function handle_context_menu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
 
 	onMount(() => {
@@ -133,13 +135,13 @@
 				{/key}
 				{#if show.tiny_dots}
 					{#if hasInsidePath}
-						<div class='reveal-inside' style='
+						<div class='inside-tiny-dots' style='
 							left:{insideOffset}px;
 							top:{insideOffset}px;
 							position:absolute;
 							height:{size}px;
 							width:{size}px;'>
-							<SVGD3 name='inside-svg'
+							<SVGD3 name='inside-tiny-dots-svg'
 								svgPath={svgPathFor_insideReveal}
 								stroke={element_state.stroke}
 								fill={element_state.stroke}
@@ -148,15 +150,15 @@
 							/>
 						</div>
 					{/if}
-					{#if !ancestry.isExpanded && ancestry.hasChildRelationships}
+					{#if (!ancestry.isExpanded || $s_graph_type == T_Graph.radial) && ancestry.hasChildRelationships}
 						<div class='outside-tiny-dots' style='
 							left:{tinyDotsDelta + tinyDotsOffset.x}px;
 							top:{tinyDotsDelta + tinyDotsOffset.y}px;
 							height:{tinyDotsDiameter}px;
 							width:{tinyDotsDiameter}px;
 							position:absolute;'>
-							<SVGD3 name='tiny-dots-svg'
-								svgPath={svgPaths.tinyDots_circular(tinyDotsDiameter, childrenCount, ancestry.points_right)}
+							<SVGD3 name='outside-tiny-dots-svg'
+								svgPath={svgPaths.tinyDots_circular(tinyDotsDiameter, outside_tinyDots_count, ancestry.points_right)}
 								stroke={ancestry.thing.color}
 								fill={ancestry.thing.color}
 								height={tinyDotsDiameter}

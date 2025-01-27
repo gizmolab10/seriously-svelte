@@ -32,7 +32,7 @@ export default class Thing extends Datum {
 	get traits():				Array		 <Trait> { return get(s_hierarchy).traits_forOwnerHID(this.hid) ?? []; }
 	get parentIDs():			Array		<string> { return this.parents.map(t => t.id); }
 	get parentAncestries(): 	Array	  <Ancestry> { return this.parentAncestries_for(Predicate.contains); }
-	get relatedRelationships(): Array <Relationship> { return this.relationships_forParents_ofKind(T_Predicate.isRelated, false); }
+	get relatedRelationships(): Array <Relationship> { return this.relationships_ofKind_forParents(T_Predicate.isRelated, false); }
 	get fields():		  		Dictionary  <string> { return { title: this.title, color: this.color, type: this.type }; }
 	get quest():					   string | null { return get(s_hierarchy).trait_forType_ownerHID(T_Trait.quest, this.hid)?.text ?? null; }
 	get consequence():				   string | null { return get(s_hierarchy).trait_forType_ownerHID(T_Trait.consequence, this.hid)?.text ?? null; }
@@ -81,7 +81,7 @@ export default class Thing extends Datum {
 		if (this.isRoot) {			// if root, use root ancestry
 			oneAncestry = get(s_hierarchy).rootAncestry;
 		} else {					// if not, use parent.oneAncestry and append id of forParents relationship
-			const relationships = this.relationships_forParents_ofKind(T_Predicate.contains, true);
+			const relationships = this.relationships_ofKind_forParents(T_Predicate.contains, true);
 			if (relationships && relationships.length > 0) {
 				const relationship = relationships[0];
 				const parentAncestry = relationship.parent?.oneAncestry;
@@ -107,8 +107,8 @@ export default class Thing extends Datum {
 	}
 
 	relationships_inBothDirections_forKind(kindPredicate: string): Array<Relationship> {
-		const childrenRelationships = this.relationships_forParents_ofKind(kindPredicate, false);
-		const parentsRelationships = this.relationships_forParents_ofKind(kindPredicate, true);
+		const childrenRelationships = this.relationships_ofKind_forParents(kindPredicate, false);
+		const parentsRelationships = this.relationships_ofKind_forParents(kindPredicate, true);
 		return u.uniquely_concatenateArrays(parentsRelationships, childrenRelationships);
 	}
 
@@ -120,7 +120,7 @@ export default class Thing extends Datum {
 		}
 	}
 
-	relationships_forParents_ofKind(kindPredicate: string, forParents: boolean): Array<Relationship> {
+	relationships_ofKind_forParents(kindPredicate: string, forParents: boolean): Array<Relationship> {
 		const id = this.idBridging;				//  use idBridging in case thing is a bulk alias
 		if ((!!id || id == k.empty) && id != k.unknown) {
 			return get(s_hierarchy).relationships_forKindPredicate_hidThing_isChild(kindPredicate, id.hash(), forParents);
@@ -142,7 +142,7 @@ export default class Thing extends Datum {
 		if (predicate.isBidirectional) {
 			relationships = this.relationships_inBothDirections_forKind(predicate.kind);
 		} else {
-			relationships = this.relationships_forParents_ofKind(predicate.kind, true);
+			relationships = this.relationships_ofKind_forParents(predicate.kind, true);
 		}
 		return relationships;
 	}
@@ -162,7 +162,7 @@ export default class Thing extends Datum {
 	parents_forKind(kindPredicate: string): Array<Thing> {
 		let parents: Array<Thing> = [];
 		if (!this.isRoot) {
-			const relationships = this.relationships_forParents_ofKind(kindPredicate, true);
+			const relationships = this.relationships_ofKind_forParents(kindPredicate, true);
 			for (const relationship of relationships) {
 				const thing = relationship.parent;
 				if (!!thing) {

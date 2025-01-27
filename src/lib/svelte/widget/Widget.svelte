@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { g, k, u, ux, Thing, Point, Angle, debug, T_Layer, signals, T_Graph } from '../../ts/common/Global_Imports';
-	import { T_Element, S_Element, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, Thing, Point, Angle, debug, signals, Svelte_Wrapper } from '../../ts/common/Global_Imports';
+	import { S_Element, T_Element, T_Layer, T_Graph, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { s_title_edit_state, s_thing_color, s_graph_type } from '../../ts/state/S_Stores';
 	import { s_thing_fontFamily, s_ancestries_grabbed } from '../../ts/state/S_Stores';
 	import Title_Editor from './Title_Editor.svelte';
@@ -8,12 +8,12 @@
 	import Dot_Drag from './Dot_Drag.svelte';
 	import { onMount } from 'svelte';
 	export let origin = new Point(160, 5);
+	export let points_toChild = true;
     export let points_right = true;
-	export let subtype = k.empty;
     export let name = k.empty;
     export let ancestry;
-	const revealState = ux.element_state_for(ancestry, T_Element.reveal, subtype);
-	const dragState = ux.element_state_for(ancestry, T_Element.drag, subtype);
+	const revealState = ux.element_state_for(ancestry, T_Element.reveal, k.empty);
+	const dragState = ux.element_state_for(ancestry, T_Element.drag, k.empty);
 	const priorRowHeight = k.row_height;
 	let widgetWrapper!: Svelte_Wrapper;
 	let element_state!: S_Element;
@@ -197,6 +197,7 @@
 					ancestry={ancestry}
 					center={revealCenter}
 					name={revealState.name}
+					points_toChild={points_toChild}
 				/>
 			{/if}
 		</div>

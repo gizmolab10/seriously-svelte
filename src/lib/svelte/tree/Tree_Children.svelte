@@ -11,11 +11,11 @@
     export let ancestry;
 	const widgetOffset = new Point(17, (k.dot_size / -15) - 7);
 	const lineOffset = new Point(-122.5, 2.5);
-	let widgetMapRects: Array<Widget_MapRect> = [];
+	let g_widgets: Array<G_Widget> = [];
 	let priorTime = new Date().getTime();
 	let center = Point.zero;
 	
-	onDestroy(() => { widgetMapRects = []; });
+	onDestroy(() => { g_widgets = []; });
 
 	onMount(() => {
 		layoutAll_children();
@@ -39,7 +39,7 @@
 	}
 	
 	function layoutAll_children() {
-		widgetMapRects = [];
+		g_widgets = [];
 		if (ancestry.isExpanded || ancestry.isRoot) {
 			debug.log_origins(origin.x + ' children layout');
 			const height = ancestry.visibleProgeny_halfHeight;
@@ -48,7 +48,7 @@
 			let sum = -ancestry.visibleProgeny_height() / 2; // start out negative and grow positive
 			for (const childAncestry of childAncestries) {
 				const tree_layout = new Children_Geometry(sum, ancestry, childAncestry, childrenOrigin);
-				widgetMapRects = u.concatenateArrays(widgetMapRects, tree_layout.widgetMapRects);
+				g_widgets = u.concatenateArrays(g_widgets, tree_layout.g_widgets);
 				sum += tree_layout.childHeight + 1;
 			}
 			center = childrenOrigin.offsetByXY(20, 2);
@@ -63,11 +63,11 @@
 {/if}
 {#if ancestry.isExpanded}
 	<div class='tree-children'>
-		{#each widgetMapRects as map}
-			<Widget name={map.element_state.name} ancestry={map.widget_ancestry} origin={map.extent.offsetBy(widgetOffset)}/>
-			<Tree_Line ancestry={map.widget_ancestry} curveType={map.curveType} rect={map.offsetBy(lineOffset)}/>
-			{#if map.widget_ancestry.showsChildRelationships}
-				<Tree_Children ancestry={map.widget_ancestry} origin={map.childOrigin}/>
+		{#each g_widgets as g_widget}
+			<Widget name={g_widget.element_state.name} ancestry={g_widget.widget_ancestry} origin={g_widget.extent.offsetBy(widgetOffset)}/>
+			<Tree_Line ancestry={g_widget.widget_ancestry} curveType={g_widget.curveType} rect={g_widget.offsetBy(lineOffset)}/>
+			{#if g_widget.widget_ancestry.showsChildRelationships}
+				<Tree_Children ancestry={g_widget.widget_ancestry} origin={g_widget.child_origin}/>
 			{/if}
 		{/each}
 	</div>
