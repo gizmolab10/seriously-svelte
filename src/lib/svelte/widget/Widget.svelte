@@ -177,8 +177,8 @@
 				height: {height}px;
 				padding: {padding};
 				position: absolute;
-				z-index: {T_Layer.widgets};
 				border-radius: {radius}px;
+				z-index: {T_Layer.widgets};
 				border: {s_element.border};
 				background-color: {isGrabbed || g.inRadialMode ? k.color_background : 'transparent'};
 			'>
@@ -188,15 +188,15 @@
 				name={s_drag.name}
 			/>
 			<Title_Editor
-				points_right={points_right}
 				ancestry={ancestry}
 				fontSize={k.font_size}px
+				points_right={points_right}
 			/>
-			{#if ancestry?.showsReveal}
+			{#if ancestry?.showsReveal_forPointingToChild(points_toChild)}
 				<Dot_Reveal
 					ancestry={ancestry}
-					center={revealCenter}
 					name={s_reveal.name}
+					center={revealCenter}
 					points_toChild={points_toChild}
 				/>
 			{/if}

@@ -26,7 +26,6 @@
 	let dotReveal = null;
 	let rebuilds = 0;
 	
-	console.log(`reveal ${outside_tinyDots_count} ${points_toChild ? 'children' : 'parents'} ${ancestry.title}`)
 	function handle_context_menu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
 
 	onMount(() => {

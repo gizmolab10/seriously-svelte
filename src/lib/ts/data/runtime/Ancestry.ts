@@ -14,14 +14,13 @@ export default class Ancestry extends Identifiable {
 	_thing: Thing | null = null;
 	kindPredicate: string;
 	thing_isChild = true;
-	unsubscribe: any;
 	t_database: string;
 
 	// id => ancestry string 
 	//   "   composed of ids of each relationship
 	// NOTE: first relationship's parent is always the root
 	//   "   kindPredicate is from the last relationship
-	//   "   children are of that kind of predicate
+	//   "   all children are of that kind of predicate
 
 	constructor(t_database: string, ancestryString: string = k.empty, kindPredicate: string = T_Predicate.contains, thing_isChild: boolean = true) {
 		super(ancestryString);
@@ -31,10 +30,7 @@ export default class Ancestry extends Identifiable {
 		get(s_hierarchy).signal_storage_redraw(0);
 	}
 
-	destroy() {
-		this.unsubscribe();
-		this._thing = null;
-	}
+	destroy() { this._thing = null; }
 	
 	static readonly GENERAL: unique symbol;
 
@@ -67,6 +63,7 @@ export default class Ancestry extends Identifiable {
 	get hasParentRelationships():			 boolean { return this.parentRelationships.length > 0; }
 	get isFocus():							 boolean { return this.matchesStore(s_ancestry_focus); }
 	get hasRelevantRelationships():			 boolean { return this.relevantRelationships_count > 0; }
+	get showsReveal():						 boolean { return this.showsReveal_forPointingToChild(true); }
 	get toolsGrabbed():						 boolean { return this.matchesStore(s_ancestry_showing_tools); }
 	get showsChildRelationships():			 boolean { return this.isExpanded && this.hasChildRelationships; }
 	get isEditing():						 boolean { return this.ancestry_hasEqualID(get(s_s_title_edit)?.editing); }
@@ -117,12 +114,6 @@ export default class Ancestry extends Identifiable {
 		const radial_points_right = (this.g_widget?.points_right ?? true) == this.hasChildRelationships;
 		return g.inRadialMode ? radial_points_right : !hasVisibleChildren;
 	}
-	
-	get showsReveal(): boolean {
- 		const isVisible = this.hasRelevantRelationships || (this.thing?.isBulkAlias ?? false);
-		const isBidirectional = this.predicate?.isBidirectional ?? false;
-		return !isBidirectional && isVisible;
-	}
 
 	get isEditable(): boolean {
 		const isBulkAlias = this.thing?.isBulkAlias ?? true;	// missing thing, return not allow
@@ -135,18 +126,6 @@ export default class Ancestry extends Identifiable {
 			return this.hierarchy.idRoot ?? k.unknown;
 		}
 		return this.relationship?.idChild ?? k.unknown;
-	}
-
-	progeny_count(visited: Array<number> = []): number {
-		let sum = 0;
-		const hid = this.thing?.hid;
-		if (!!hid && !visited.includes(hid)) {
-			const children = this.childAncestries;
-			for (const child of children) {
-				sum += child.progeny_count([...visited, hid]) + 1;
-			}
-		}
-		return sum;
 	}
 
 	get s_paging(): S_Paging | null {
@@ -246,19 +225,23 @@ export default class Ancestry extends Identifiable {
 		return false;
 	}
 	
-	relationships_count_for(toChild: boolean): number { return this.relevantRelationships.length; }
-	rect_ofWrapper(wrapper: Svelte_Wrapper | null): Rect | null { return wrapper?.boundingRect ?? null; }
-	matchesStore(store: Writable<Ancestry | null>): boolean { return get(store)?.ancestry_hasEqualID(this) ?? false; }
+	relationships_count_for(toChild: boolean):						 number { return this.relevantRelationships.length; }
 	includedInStore_ofAncestries(store: Writable<Array<Ancestry>>): boolean { return this.includedInAncestries(get(store)); }
-	includesPredicate_ofKind(kindPredicate: string): boolean { return this.thing?.hasParents_forKind(kindPredicate) ?? false; }
-	sharesAnID(ancestry: Ancestry | null): boolean { return !ancestry ? false : this.ids.some(id => ancestry.ids.includes(id)); }
-	relationshipAt(back: number = 1): Relationship | null { return this.hierarchy.relationship_forHID(this.idAt(back).hash()) ?? null; }
-	showsCluster_forPredicate(predicate: Predicate): boolean { return this.includesPredicate_ofKind(predicate.kind) && this.hasThings(predicate); }
-	relationships_forChildren(forChildren: boolean): Array<Relationship> { return forChildren ? this.childRelationships : this.parentRelationships; }
-	ancestry_hasEqualID(ancestry: Ancestry | null | undefined): boolean { return !!ancestry && this.hid == ancestry.hid && this.t_database == ancestry.t_database; }
-	
-	relationships_ofKind_forParents(kindPredicate: string, forParents: boolean) {
+	matchesStore(store: Writable<Ancestry | null>):					boolean { return get(store)?.ancestry_hasEqualID(this) ?? false; }
+	includesPredicate_ofKind(kindPredicate: string):				boolean { return this.thing?.hasParents_forKind(kindPredicate) ?? false; }
+	sharesAnID(ancestry: Ancestry | null):							boolean { return !ancestry ? false : this.ids.some(id => ancestry.ids.includes(id)); }
+	showsCluster_forPredicate(predicate: Predicate):				boolean { return this.includesPredicate_ofKind(predicate.kind) && this.hasThings(predicate); }
+	ancestry_hasEqualID(ancestry: Ancestry | null | undefined):		boolean { return !!ancestry && this.hid == ancestry.hid && this.t_database == ancestry.t_database; }
+	relationships_forChildren(forChildren: boolean):	Array<Relationship> { return forChildren ? this.childRelationships : this.parentRelationships; }
+	relationshipAt(back: number = 1):					Relationship | null { return this.hierarchy.relationship_forHID(this.idAt(back).hash()) ?? null; }
+	rect_ofWrapper(wrapper: Svelte_Wrapper | null):				Rect | null { return wrapper?.boundingRect ?? null; }
+
+	relationships_ofKind_forParents(kindPredicate: string, forParents: boolean): Array<Relationship> {
 		return this.thing?.relationships_ofKind_forParents(kindPredicate, forParents) ?? [];
+	}
+
+	showsReveal_forPointingToChild(toChild: boolean): boolean {
+		return (this.relationships_forChildren(toChild).length > 0) || (this.thing?.isBulkAlias ?? false);
 	}
 
 	thingAt(back: number): Thing | null {			// 1 == last
@@ -318,6 +301,18 @@ export default class Ancestry extends Identifiable {
 			}
 		}
 		return k.color_background;
+	}
+
+	progeny_count(visited: Array<number> = []): number {
+		let sum = 0;
+		const hid = this.thing?.hid;
+		if (!!hid && !visited.includes(hid)) {
+			const children = this.childAncestries;
+			for (const child of children) {
+				sum += child.progeny_count([...visited, hid]) + 1;
+			}
+		}
+		return sum;
 	}
 
 	visibleParentAncestries(back: number = 1): Array<Ancestry> {
