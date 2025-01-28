@@ -16,7 +16,7 @@ export class S_Global {
 	isEditing_text = false;
 	mouse_responder_number = 0;
 	ring_rotation_state!: S_Rotation;
-	cluster_paging_state!: S_Rotation;
+	cluster_s_paging!: S_Rotation;
 	ring_resizing_state!: S_Expansion;
 	rebuild_needed_byType: {[type: string]: boolean} = {};
 	queryStrings = new URLSearchParams(window.location.search);
@@ -51,7 +51,7 @@ export class S_Global {
 		s_device_isMobile.set(this.device_isMobile);
 		this.ring_resizing_state = new S_Expansion();
 		this.ring_rotation_state  = new S_Rotation();
-		this.cluster_paging_state = new S_Rotation();
+		this.cluster_s_paging = new S_Rotation();
 	}
 
 	queryStrings_apply() {
@@ -87,7 +87,7 @@ export class S_Global {
 	get hierarchy(): Hierarchy { return get(s_hierarchy); }
 
 	get isAny_rotation_active(): boolean {
-		return ux.isAny_paging_arc_active || this.cluster_paging_state.isActive || this.ring_rotation_state.isActive;
+		return ux.isAny_paging_arc_active || this.cluster_s_paging.isActive || this.ring_rotation_state.isActive;
 	}
 
 	get next_mouse_responder_number(): number {
@@ -101,10 +101,10 @@ export class S_Global {
 	}
 
 	get siteTitle(): string {
-		const type_db = databases.db.type_db;
+		const t_database = databases.db.t_database;
 		const idBase = databases.db.idBase;
 		const host = this.isServerLocal ? 'local' : 'remote';
-		const db_name = type_db ? (type_db! + ', ') : k.empty;
+		const db_name = t_database ? (t_database! + ', ') : k.empty;
 		const base_name = idBase ? (idBase! + ', ') : k.empty;
 		return `Seriously (${host}, ${db_name}${base_name}${u.browserType}, α)`;
 	}

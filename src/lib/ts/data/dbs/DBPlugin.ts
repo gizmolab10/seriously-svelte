@@ -4,7 +4,7 @@ import DBCommon from './DBCommon';
 
 export default class DBPlugin extends DBCommon {
 	kind_persistence = T_Persistence.none;
-	type_db = T_Database.plugin;
+	t_database = T_Database.plugin;
 	idBase = k.empty;
 
 	get h(): Hierarchy { return this.hierarchy; }

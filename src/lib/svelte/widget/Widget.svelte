@@ -12,13 +12,13 @@
     export let points_right = true;
     export let name = k.empty;
     export let ancestry;
-	const revealState = ux.element_state_for(ancestry, T_Element.reveal, k.empty);
-	const dragState = ux.element_state_for(ancestry, T_Element.drag, k.empty);
+	const s_reveal = ux.s_element_for(ancestry, T_Element.reveal, k.empty);
+	const s_drag = ux.s_element_for(ancestry, T_Element.drag, k.empty);
 	const priorRowHeight = k.row_height;
 	let widgetWrapper!: Svelte_Wrapper;
-	let element_state!: S_Element;
 	let revealCenter = Point.zero;
 	let dragCenter = Point.zero;
+	let s_element!: S_Element;
 	let radius = k.dot_size / 2;
 	let priorOrigin = origin;
 	let background = k.empty;
@@ -43,7 +43,7 @@
 
 	onMount(() => {
 		layout_widget();
-		element_state = ux.element_state_forName(name);		// survives onDestroy, created by {tree, radial} children
+		s_element = ux.s_element_forName(name);		// survives onDestroy, created by {tree, radial} children
 		debug.log_mount(`WIDGET ${thing?.description} ${isGrabbed}`);
 		fullUpdate();
 		const handleAny = signals.handle_anySignal((ids_signal, id) => {
@@ -97,7 +97,7 @@
 
 	function updateBorder_fromState() {
 		if (!!widget) {
-			widget.style.border = element_state.border;
+			widget.style.border = s_element.border;
 		}
 	}
 
@@ -167,7 +167,7 @@
 </script>
 
 {#key rebuilds}
-	{#if element_state}
+	{#if s_element}
 		<div class='widget' id='{widgetName}'
 			bind:this={widget}
 			style='
@@ -179,13 +179,13 @@
 				position: absolute;
 				z-index: {T_Layer.widgets};
 				border-radius: {radius}px;
-				border: {element_state.border};
+				border: {s_element.border};
 				background-color: {isGrabbed || g.inRadialMode ? k.color_background : 'transparent'};
 			'>
 			<Dot_Drag
 				ancestry={ancestry}
 				center={dragCenter}
-				name={dragState.name}
+				name={s_drag.name}
 			/>
 			<Title_Editor
 				points_right={points_right}
@@ -196,7 +196,7 @@
 				<Dot_Reveal
 					ancestry={ancestry}
 					center={revealCenter}
-					name={revealState.name}
+					name={s_reveal.name}
 					points_toChild={points_toChild}
 				/>
 			{/if}

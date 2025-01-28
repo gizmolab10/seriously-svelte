@@ -1,5 +1,5 @@
 import { k, Rect, Size, Point, debug, preferences, T_Preference } from '../common/Global_Imports';
-import { s_graphRect, s_user_graph_offset, s_user_graph_center } from '../state/S_Stores';
+import { s_graph_rect, s_user_graph_offset, s_user_graph_center } from '../state/S_Stores';
 import { s_details_show, s_mouse_location_scaled } from '../state/S_Stores';
 import { get } from 'svelte/store';
 
@@ -8,7 +8,7 @@ export class G_Window {
 	scroll = this.windowScroll;
 	
 	get windowScroll(): Point { return new Point(window.scrollX, window.scrollY); }
-	get center_ofGraphSize(): Point { return get(s_graphRect).size.asPoint.dividedInHalf; }
+	get center_ofGraphSize(): Point { return get(s_graph_rect).size.asPoint.dividedInHalf; }
 	renormalize_user_graph_offset() { this.user_graph_offset_setTo(this.persisted_user_offset); }
 	get mouse_distance_fromGraphCenter(): number { return this.mouse_vector_ofOffset_fromGraphCenter()?.magnitude ?? 0; }
 	get mouse_angle_fromGraphCenter(): number | null { return this.mouse_vector_ofOffset_fromGraphCenter()?.angle ?? null; }
@@ -47,7 +47,7 @@ export class G_Window {
 			preferences.write_key(T_Preference.user_offset, user_offset);
 			changed = true;
 		}
-		const center_offset = get(s_graphRect).center.offsetBy(user_offset);
+		const center_offset = get(s_graph_rect).center.offsetBy(user_offset);
 		s_user_graph_center.set(center_offset);
 		s_user_graph_offset.set(user_offset);
 		debug.log_mouse(`USER ====> ${user_offset.description}  ${center_offset.description}`);
@@ -60,7 +60,7 @@ export class G_Window {
 		const sizeOfGraph = this.windowSize.reducedBy(originOfGraph);	// account for origin
 		const rect = new Rect(originOfGraph, sizeOfGraph);
 		debug.log_mouse(`GRAPH ====> ${rect.description}`);
-		s_graphRect.set(rect);											// used by Panel and Graph_Tree
+		s_graph_rect.set(rect);											// used by Panel and Graph_Tree
 	}
 
 	zoomBy(factor: number): number {

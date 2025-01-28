@@ -23,7 +23,7 @@
 	const traits_center = new Point(122, text_top - 20);
 	const traits_size = new Size(info_width - 58, k.default_buttonSize + 4);
 	const traits_rect = Rect.createCenterRect(traits_center, traits_size);
-	const element_state = ux.element_state_for(new Identifiable(id), T_Element.info, id);
+	const s_element = ux.s_element_for(new Identifiable(id), T_Element.info, id);
 	let ancestry: Ancestry | null = $s_ancestry_focus;
 	let thing: Thing | null = ancestry?.thing ?? null;
 	let text_box_size = new Size(info_width - 4, 68);
@@ -62,7 +62,7 @@
 	}
 
 	setup_tops();
-	element_state.set_forHovering(k.color_default, 'pointer');
+	s_element.set_forHovering(k.color_default, 'pointer');
 	
 	onMount(() => {
 		const handler = signals.handle_rebuildGraph(1, (ancestry) => {
@@ -95,10 +95,10 @@
 		return !!grabs && (grabs.length > 1 || !$s_ancestry_focus.isGrabbed);
 	}
 
-	function selection_closure(types: Array<string>) {
-		const type = types[0];
-		preferences.write_key(T_Preference.info_type, type);
-		show.info_type = type;
+	function selection_closure(t_infos: Array<string>) {
+		const t_info = t_infos[0];
+		preferences.write_key(T_Preference.t_info, t_info);
+		show.t_info = t_info;
 		update_forKind();
 	}
 	
@@ -113,7 +113,7 @@
 	}
 
 	function update_forKind() {
-		if (show.info_type == T_Info.focus || !hasGrabs()) {
+		if (show.t_info == T_Info.focus || !hasGrabs()) {
 			ancestry = $s_ancestry_focus;
 		} else {
 			grabs = $s_ancestries_grabbed;
@@ -173,7 +173,7 @@
 				<Segmented
 					name='info-type'
 					font_size={font_size}
-					selected={[show.info_type]}
+					selected={[show.t_info]}
 					height={k.row_height * font_ratio}
 					selection_closure={selection_closure}
 					origin={new Point(45, tops[TI.segments])}

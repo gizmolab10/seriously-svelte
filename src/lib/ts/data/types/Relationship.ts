@@ -15,7 +15,7 @@ export default class Relationship extends Datum {
 	order: number; 
 
 	constructor(idBase: string, id: string, kindPredicate: T_Predicate, idParent: string, idChild: string, order = 0, already_persisted: boolean = false) {
-		super(databases.db.type_db, idBase, T_Datum.relationships, id, already_persisted);
+		super(databases.db.t_database, idBase, T_Datum.relationships, id, already_persisted);
 		this.kindPredicate = kindPredicate;
 		this.hidParent = idParent.hash();
 		this.hidChild = idChild.hash();

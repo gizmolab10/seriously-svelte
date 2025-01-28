@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, k, u, show, Point, debug, T_Layer, T_Details } from '../../ts/common/Global_Imports';
-	import { s_graphRect, s_t_details } from '../../ts/state/S_Stores';
+	import { s_graph_rect, s_t_details } from '../../ts/state/S_Stores';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
 	import Recents from './Recents.svelte';
@@ -14,8 +14,8 @@
 
 	update_tops();
 
-	function selection_closure(types: Array<string>) {
-		$s_t_details = types as Array<T_Details>;
+	function selection_closure(t_details: Array<string>) {
+		$s_t_details = t_details as Array<T_Details>;
 		update_tops();
 		rebuilds += 1;
 	}
@@ -33,8 +33,8 @@
 		}
 	}
 
-	function shows_type(type: T_Details): boolean {
-		return $s_t_details.includes(T_Details[type])
+	function showingDetails_ofType(t_details: T_Details): boolean {
+		return $s_t_details.includes(T_Details[t_details])
 	}
 
 </script>
@@ -48,8 +48,8 @@
 			background-color:#fff;
 			z-index:{T_Layer.details};
 			width:{k.width_details}px;
-			top:{$s_graphRect.origin.y}px;
-			height:{$s_graphRect.size.height}px;'>
+			top:{$s_graph_rect.origin.y}px;
+			height:{$s_graph_rect.size.height}px;'>
 		<Segmented
 			titles={titles}
 			allow_multiple={true}
@@ -57,22 +57,22 @@
 			origin={new Point(6, 7)}
 			selected={$s_t_details}
 			selection_closure={selection_closure}/>
-		{#if shows_type(T_Details.storage)}
+		{#if showingDetails_ofType(T_Details.storage)}
 			<Separator title='storage' top={tops[T_Details.storage] - 8}/>
 			<Storage top={tops[T_Details.storage]}/>
 		{/if}
 		<div class='further-details'
 			style='font-size:0.8em;
 				width:{k.width_details}px;'>
-			{#if shows_type(T_Details.tools)}
+			{#if showingDetails_ofType(T_Details.tools)}
 				<Separator title='tools' top={tops[T_Details.tools] - 8}/>
 				<Tools top={tops[T_Details.tools]}/>
 			{/if}
-			{#if shows_type(T_Details.recents)}
+			{#if showingDetails_ofType(T_Details.recents)}
 				<Separator title='recents' top={tops[T_Details.recents] - 8}/>
 				<Recents top={tops[T_Details.recents]}/>
 			{/if}
-			{#if shows_type(T_Details.info)}
+			{#if showingDetails_ofType(T_Details.info)}
 				<Separator title='info' top={tops[T_Details.info] - 7}/>
 				<Info top={tops[T_Details.info]}/>
 			{/if}

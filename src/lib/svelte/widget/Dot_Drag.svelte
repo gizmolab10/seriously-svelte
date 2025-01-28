@@ -11,7 +11,7 @@
     export let ancestry;
 	const radius = k.dot_size;
 	const diameter = radius * 2;
-	const element_state = ux.element_state_forName(name);		// survives onDestroy, created by widget
+	const s_element = ux.s_element_forName(name);		// survives onDestroy, created by widget
 	let dragWrapper!: Svelte_Wrapper;
 	let svgPathFor_related = k.empty;
 	let svgPathFor_ellipses = k.empty;
@@ -35,7 +35,7 @@
     onMount(() => {
         const handleAltering = signals.handle_altering((blink_flag) => {
 			const invert_flag = blink_flag && !!ancestry && ancestry.canConnect_toToolsAncestry;
-			element_state.isInverted = invert_flag;
+			s_element.isInverted = invert_flag;
 			updateExtraSVGPaths();
         });
 		return () => { handleAltering.disconnect(); };
@@ -50,7 +50,7 @@
 	$: {
 		if (!!dotDrag) {
 			dragWrapper = new Svelte_Wrapper(dotDrag, handle_mouse_state, ancestry.hid, T_SvelteComponent.drag);
-			element_state.set_forHovering(ancestry.thing?.color, 'pointer');
+			s_element.set_forHovering(ancestry.thing?.color, 'pointer');
 		}
 	}
 
@@ -96,9 +96,9 @@
 			isHovering = !isOut;
 			const usePointer = (!ancestry.isGrabbed || g.inRadialMode) && ancestry.hasChildRelationships && !g.isAny_rotation_active;
 			const cursor = usePointer ? 'pointer' : 'normal';
-			if (!!element_state && !!thing) {
-				element_state.set_forHovering(thing.color, cursor);
-				element_state.isOut = isOut;
+			if (!!s_element && !!thing) {
+				s_element.set_forHovering(thing.color, cursor);
+				s_element.isOut = isOut;
 			}
 			redraws += 1;
 		}
@@ -124,13 +124,13 @@
 </script>
 
 {#key rebuilds}
-	{#if element_state}
+	{#if s_element}
 		<Mouse_Responder
 			width={size}
 			height={size}
 			center={center}
 			detect_longClick={true}
-			name={element_state.name}
+			name={s_element.name}
 			mouse_state_closure={up_long_hover_clusure}>
 			<button class='drag'
 				bind:this={dotDrag}
@@ -158,7 +158,7 @@
 							width={size}
 							height={size}
 							stroke={thing?.color}
-							fill={element_state.fill}
+							fill={s_element.fill}
 							svgPath={svgPathFor_dragDot}
 						/>
 						{#if show.tiny_dots}
@@ -166,8 +166,8 @@
 								<SVGD3 name={'drag-inside-' + name + '-svg'}
 									width={size}
 									height={size}
-									fill={element_state.stroke}
-									stroke={element_state.stroke}
+									fill={s_element.stroke}
+									stroke={s_element.stroke}
 									svgPath={svgPathFor_ellipses}
 								/>
 							{/if}

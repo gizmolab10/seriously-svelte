@@ -7,7 +7,7 @@
 	import Button from './Button.svelte';
 	export let handle_mouse_state = Handle_Result<S_Mouse>;
 	export let hover_closure = Handle_Result<boolean>;
-	export let element_state = S_Element.none;
+	export let s_element = S_Element.none;
 	export let extraPath = null;
 	export let name = k.empty;
 	export let strokeColor;
@@ -45,7 +45,7 @@
 </script>
 
 <Button
-	element_state={element_state}
+	s_element={s_element}
 	border_thickness=0
 	closure={closure}
 	center={center}

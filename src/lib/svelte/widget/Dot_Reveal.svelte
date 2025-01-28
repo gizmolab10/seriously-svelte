@@ -13,7 +13,7 @@
 	export let points_toChild = true;
     export let hover_isReversed = false;
 	const outside_tinyDots_count = ancestry.relationships_forChildren(points_toChild).length;
-	const element_state = ux.element_state_forName(name);		// survives onDestroy, created by widget
+	const s_element = ux.s_element_forName(name);		// survives onDestroy, created by widget
 	const size = k.dot_size;
 	let svgPathFor_insideReveal = svgPaths.circle_atOffset(16, 6);
 	let tinyDotsOffset = new Point(0.65, -0.361);
@@ -37,7 +37,7 @@
 	$: {
 		if (!!dotReveal) {
 			revealWrapper = new Svelte_Wrapper(dotReveal, handle_mouse_state, ancestry.hid, T_SvelteComponent.reveal);
-			element_state.set_forHovering(ancestry.thing.color, 'pointer');
+			s_element.set_forHovering(ancestry.thing.color, 'pointer');
 		}
 	}
 
@@ -54,8 +54,8 @@
 
 	function set_isHovering(hovering) {
 		const corrected = hover_isReversed ? !hovering : hovering;
-		if (!!element_state && element_state.isOut == corrected) {
-			element_state.isOut = !corrected;
+		if (!!s_element && s_element.isOut == corrected) {
+			s_element.isOut = !corrected;
 			rebuilds += 1;
 		}
 	}
@@ -109,12 +109,12 @@
 </style>
 
 {#key rebuilds}
-	{#if element_state}
+	{#if s_element}
 		<Mouse_Responder
 			width={size}
 			height={size}
 			center={center}
-			name={element_state.name}
+			name={s_element.name}
 			mouse_state_closure={up_hover_closure}>
 			<button class='dot'
 				bind:this={dotReveal}
@@ -126,7 +126,7 @@
 				'>
 				{#key svgPathFor_revealDot}
 					<SVGD3 name='reveal-svg'
-						fill={debug.lines ? 'transparent' : element_state.fill}
+						fill={debug.lines ? 'transparent' : s_element.fill}
 						svgPath={svgPathFor_revealDot}
 						stroke={ancestry.thing.color}
 						height={size}
@@ -143,8 +143,8 @@
 							width:{size}px;'>
 							<SVGD3 name='inside-tiny-dots-svg'
 								svgPath={svgPathFor_insideReveal}
-								stroke={element_state.stroke}
-								fill={element_state.stroke}
+								stroke={s_element.stroke}
+								fill={s_element.stroke}
 								height={size}
 								width={size}
 							/>

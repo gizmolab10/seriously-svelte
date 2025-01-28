@@ -2,7 +2,7 @@
 	import { s_s_title_edit, s_details_show, s_device_isMobile, } from '../../ts/state/S_Stores';
 	import { g, k, u, ux, w, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
 	import { debug, T_Layer, Ancestry, T_Startup } from '../../ts/common/Global_Imports';
-	import { s_t_db, s_graphRect, s_hierarchy } from '../../ts/state/S_Stores';
+	import { s_t_database, s_graph_rect, s_hierarchy } from '../../ts/state/S_Stores';
 	import { T_Control, Hierarchy, databases } from '../../ts/common/Global_Imports';
 	import { s_id_popupView, s_ancestry_focus } from '../../ts/state/S_Stores';
 	import { s_count_resize, s_t_startup } from '../../ts/state/S_Stores';
@@ -23,7 +23,7 @@
 	function ignore_wheel(event) { event.preventDefault(); }
 
 	$: {
-		const _ = $s_t_db + $s_t_startup + $s_id_popupView;
+		const _ = $s_t_database + $s_t_startup + $s_id_popupView;
 		rebuilds += 1;
 	}
 	
@@ -104,8 +104,8 @@
 							z-index: {T_Layer.lines};
 							left: {k.width_details}px;
 							background-color: lightgray;
-							top: {$s_graphRect.origin.y}px;
-							height: {$s_graphRect.size.height}px;'>
+							top: {$s_graph_rect.origin.y}px;
+							height: {$s_graph_rect.size.height}px;'>
 					</div>
 				{/if}
 			{/if}

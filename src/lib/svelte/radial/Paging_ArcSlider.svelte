@@ -49,7 +49,7 @@
 
 	function update_colors() {
 		fork_color = u.opacitize(color, 0.3);
-		arc_color = u.opacitize(color, g.cluster_paging_state.stroke_opacity);
+		arc_color = u.opacitize(color, g.cluster_s_paging.stroke_opacity);
 		thumb_color = u.opacitize(color, g.ring_rotation_state.isActive ? 0.15 : g_cluster.paging_rotation.three_level_opacity);
 	}
 
@@ -85,7 +85,7 @@
 						<path id='arc' stroke={arc_color} fill=transparent d={g_cluster.g_arcSlider.svgPathFor_arc}/>
 						<path id='fork' stroke={fork_color} fill=transparent d={g_cluster.g_arcSlider.svgPathFor_forkRadial}/>
 						{#if g_cluster.isPaging && g_cluster.widgets_shown > 1}
-							<path id='thumb' fill={thumb_color} d={g_cluster.thumb_map.svgPathFor_arc}/>
+							<path id='thumb' fill={thumb_color} d={g_cluster.g_arcSlider.svgPathFor_arc}/>
 						{/if}
 					</svg>
 				</Mouse_Responder>

@@ -5,8 +5,8 @@ export default class User extends Persistent_Identifiable {
 	email: string;
 	phone: string;
 
-	constructor(type_db: string, id: string, name: string, email: string, phone: string, already_persisted: boolean = false) {
-		super(type_db, id, already_persisted);
+	constructor(t_database: string, id: string, name: string, email: string, phone: string, already_persisted: boolean = false) {
+		super(t_database, id, already_persisted);
 		this.name = name;
 		this.email = email;
 		this.phone = phone;

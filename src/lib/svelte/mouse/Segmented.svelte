@@ -12,27 +12,27 @@
 	export let font_size = '0.95em';
 	export let origin = Point.zero;
     export let name = k.empty;
-	let segment_maps: Array<G_Segment> = [];
+	let g_segments: Array<G_Segment> = [];
 	let width = height / 2;
 
-	update_maps_andWidth();
+	update_g_segments_andWidth();
 	function isSelected(title: string) { return selected.includes(title); }
 	function nextAfter(title: string): string { return titles[titles.indexOf(title).increment(true, titles.length)]; }		// next one after title
 
-	function reset_maps_andWidth() {
+	function reset_g_segments_andWidth() {
 		width = height / 2;
-		segment_maps = [];
+		g_segments = [];
 	}
 
-	function update_maps_andWidth() {
+	function update_g_segments_andWidth() {
 		const max_index = titles.length - 1;
 		let index = 0;
 		let x = 0;
-		reset_maps_andWidth();
+		reset_g_segments_andWidth();
 		for (const title of titles) {
-			const map = G_Segment.grab_segment_map(name, title, font_size, isSelected(title), index, max_index, x, height);
-			segment_maps.push(map);
-			x += map.width;
+			const g_segment = G_Segment.grab_g_segment(name, title, font_size, isSelected(title), index, max_index, x, height);
+			g_segments.push(g_segment);
+			x += g_segment.width;
 			index += 1;
 		}
 		width = x;
@@ -62,7 +62,7 @@
 		left:{origin.x}px;
 		position:absolute;
 		height:{height}px;'>
-	{#each segment_maps as g_segment}
+	{#each g_segments as g_segment}
 		<Segment
 			fill={fill}
 			stroke={stroke}

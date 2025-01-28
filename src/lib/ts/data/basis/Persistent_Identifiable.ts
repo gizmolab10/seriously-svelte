@@ -7,9 +7,9 @@ import { get } from 'svelte/store';
 export default class Persistent_Identifiable extends Identifiable {
 	persistence!: Persistence_State;
 
-	constructor(type_db: string, type_datum: T_Datum, id: string, already_persisted: boolean = false) {
+	constructor(t_database: string, type_datum: T_Datum, id: string, already_persisted: boolean = false) {
 		super(id);
-		this.persistence = new Persistence_State(type_db, type_datum, id, already_persisted, false);
+		this.persistence = new Persistence_State(t_database, type_datum, id, already_persisted, false);
 		get(s_hierarchy).signal_storage_redraw();
 	}
 

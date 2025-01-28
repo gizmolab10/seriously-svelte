@@ -4,7 +4,7 @@
 	import { s_ring_rotation_angle, s_ring_rotation_radius } from '../../ts/state/S_Stores';
 	import { signals, svgPaths, T_Ring, databases } from '../../ts/common/Global_Imports';
 	import { s_count_mouse_up, s_g_active_cluster } from '../../ts/state/S_Stores';
-	import { s_graphRect, s_mouse_location_scaled } from '../../ts/state/S_Stores';
+	import { s_graph_rect, s_mouse_location_scaled } from '../../ts/state/S_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/basis/Identifiable';
 	import Paging_ArcSlider from './Paging_ArcSlider.svelte';
@@ -53,7 +53,7 @@
 
 	function update_cursor() {
 		switch (ringZone_forMouseLocation()) {
-			case T_Ring.paging: cursor = g.cluster_paging_state.cursor; break;
+			case T_Ring.paging: cursor = g.cluster_s_paging.cursor; break;
 			case T_Ring.resize: cursor = g.ring_resizing_state.cursor; break;
 			case T_Ring.rotate: cursor = g.ring_rotation_state.cursor; break;
 			default:			   cursor = 'default'; break;
@@ -102,8 +102,8 @@
 		const inRotate = ring_zone == T_Ring.rotate && !arc_isActive && !g.ring_resizing_state.isActive;
 		const inResize = ring_zone == T_Ring.resize && !arc_isActive && !g.ring_rotation_state.isActive;
 		const inPaging = ring_zone == T_Ring.paging && !g.ring_rotation_state.isActive && !g.ring_resizing_state.isActive;
-		if (g.cluster_paging_state.isHovering != inPaging) {
-			g.cluster_paging_state.isHovering  = inPaging;
+		if (g.cluster_s_paging.isHovering != inPaging) {
+			g.cluster_s_paging.isHovering  = inPaging;
 			debug.log_hover(` hover paging  ${inPaging}`);
 			rebuilds += 1;
 		}
@@ -213,7 +213,7 @@
 						break;
 					case T_Ring.paging: 
 						const paging_angle = mouse_wentDown_angle.angle_normalized();
-						const map = $s_g_radial.cluster_mapFor_mouseLocation;
+						const map = $s_g_radial.g_clusterFor_mouseLocation;
 						if (!!map) {
 							debug.log_radial(` begin paging  ${paging_angle.degrees_of(0)}`);
 							map.paging_rotation.active_angle = paging_angle;
@@ -233,7 +233,7 @@
 
 {#key rebuilds}
 	<div class='paging-arcs' bind:this={pagingArcs} style='z-index:{T_Layer.paging};'>
-		{#each $s_g_radial.cluster_maps as g_cluster}
+		{#each $s_g_radial.g_clusters as g_cluster}
 			{#if !!g_cluster && (g_cluster.widgets_shown > 0)}
 				<Paging_ArcSlider
 					color={color}

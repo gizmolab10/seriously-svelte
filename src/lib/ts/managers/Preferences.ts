@@ -1,28 +1,28 @@
 import { s_s_paging, s_ancestries_grabbed, s_ancestries_expanded } from '../state/S_Stores';
-import { s_hierarchy, s_t_tree, s_t_graph, s_t_details } from '../state/S_Stores';
-import { T_Tree, T_Graph, T_Details, S_Paging } from '../common/Global_Imports';
 import { s_ancestry_focus, s_font_size, s_thing_fontFamily } from '../state/S_Stores';
+import { s_hierarchy, s_t_tree, s_t_graph, s_t_details } from '../state/S_Stores';
 import { s_ring_rotation_angle, s_ring_rotation_radius } from '../state/S_Stores';
 import { g, k, show, debug, Ancestry, databases } from '../common/Global_Imports';
+import { T_Tree, T_Graph, T_Details, S_Paging } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
 export enum T_Preference {
 	relationships  = 'relationships',
-	details_type   = 'details_type',
 	ring_radius	   = 'ring_radius',
-	page_states    = 'page_states',
 	user_offset	   = 'user_offset',
-	graph_type	   = 'graph_type',
 	ring_angle     = 'ring_angle',
 	arrowheads	   = 'arrowheads',
-	tree_type	   = 'tree_type',
-	info_type      = 'info_type',
+	t_details	   = 't_details',
 	font_size	   = 'font_size',
 	tiny_dots	   = 'tiny_dots',
+	base_id		   = 'base_id',
+	details		   = 'details',
 	expanded	   = 'expanded',
 	grabbed		   = 'grabbed',
-	details		   = 'details',
-	base_id		   = 'base_id',
+	s_pages 	   = 's_pages',
+	t_graph		   = 't_graph',
+	t_info	       = 't_info',
+	t_tree		   = 't_tree',
 	traits		   = 'traits',
 	scale		   = 'scale',
 	focus		   = 'focus',
@@ -41,8 +41,8 @@ export class Preferences {
 	write_key<T>			(key: string, value: T) { localStorage[key] = JSON.stringify(value); }
 	writeDB_key<T>			(key: string, value: T) { this.write_key(this.db_keyFor(key), value); }
 	readDB_key				(key: string): any | null { return this.read_key(this.db_keyFor(key)); }
-	delete_paging_state_for (key: string) { this.writeDB_keyPair(T_Preference.page_states, key, null); }
-	db_keyFor				(key: string): string { return this.keyPair_for(databases.db.type_db, key); }
+	delete_s_paging_for (key: string) { this.writeDB_keyPair(T_Preference.s_pages, key, null); }
+	db_keyFor				(key: string): string { return this.keyPair_for(databases.db.t_database, key); }
 	keyPair_for				(key: string, sub_key: string): string { return `${key}${k.generic_separator}${sub_key}`; }
 
 	reset() {
@@ -123,13 +123,13 @@ export class Preferences {
 
 	reactivity_subscribe() {
 		s_t_tree.subscribe((value) => {
-			this.write_key(T_Preference.tree_type, value);
+			this.write_key(T_Preference.t_tree, value);
 		});
 		s_t_graph.subscribe((value) => {
-			this.write_key(T_Preference.graph_type, value);
+			this.write_key(T_Preference.t_graph, value);
 		});
 		s_t_details.subscribe((value) => {
-			this.write_key(T_Preference.details_type, value);
+			this.write_key(T_Preference.t_details, value);
 		});
 		s_ring_rotation_angle.subscribe((angle: number) => {
 			this.write_key(T_Preference.ring_angle, angle);
@@ -137,9 +137,9 @@ export class Preferences {
 		s_ring_rotation_radius.subscribe((radius: number) => {
 			this.write_key(T_Preference.ring_radius, radius);
 		});
-		s_s_paging.subscribe((paging_state: S_Paging) => {
-			if (!!paging_state) {
-				this.writeDB_keyPair(T_Preference.page_states, paging_state.sub_key, paging_state.description);
+		s_s_paging.subscribe((s_paging: S_Paging) => {
+			if (!!s_paging) {
+				this.writeDB_keyPair(T_Preference.s_pages, s_paging.sub_key, s_paging.description);
 			}
 		})
 		show.reactivity_subscribe();
@@ -151,25 +151,25 @@ export class Preferences {
 		}
 		s_font_size.set(this.read_key(T_Preference.font_size) ?? 14);
 		s_ring_rotation_angle.set(this.read_key(T_Preference.ring_angle) ?? 0);
-		s_t_graph.set(this.read_key(T_Preference.graph_type) ?? T_Graph.tree);
-		s_t_tree.set(this.read_key(T_Preference.tree_type) ?? T_Tree.children);
+		s_t_graph.set(this.read_key(T_Preference.t_graph) ?? T_Graph.tree);
+		s_t_tree.set(this.read_key(T_Preference.t_tree) ?? T_Tree.children);
 		s_thing_fontFamily.set(this.read_key(T_Preference.font) ?? 'Times New Roman');
-		s_t_details.set(this.read_key(T_Preference.details_type) ?? [T_Details.storage]);
+		s_t_details.set(this.read_key(T_Preference.t_details) ?? [T_Details.storage]);
 		s_ring_rotation_radius.set(Math.max(this.read_key(T_Preference.ring_radius) ?? 0, k.innermost_ring_radius));
 		this.reactivity_subscribe()
 	}
 
 	// not used!!!
-	restore_page_states() {
-		const descriptions = this.readDB_sub_keys_forKey(T_Preference.page_states) ?? k.empty;
+	restore_s_pages() {
+		const descriptions = this.readDB_sub_keys_forKey(T_Preference.s_pages) ?? k.empty;
 		for (const description of descriptions) {
-			const paging_state = S_Paging.create_paging_state_from(description);
-			if (!!paging_state) {
-				const thing = paging_state?.thing;
+			const s_paging = S_Paging.create_s_paging_from(description);
+			if (!!s_paging) {
+				const thing = s_paging?.thing;
 				if (!!thing) {
-					thing.page_states.add_paging_state(paging_state);
+					thing.s_pages.add_s_paging(s_paging);
 				} else {															// if no thing => delete paging state
-					preferences.delete_paging_state_for(paging_state.sub_key);
+					preferences.delete_s_paging_for(s_paging.sub_key);
 				}
 			}
 		}

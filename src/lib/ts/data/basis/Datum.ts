@@ -6,8 +6,8 @@ export default class Datum extends Persistent_Identifiable {
 	type_datum: T_Datum;
 	idBase: string;
 
-	constructor(type_db: string, idBase: string, type_datum: T_Datum, id: string, already_persisted: boolean = false) {
-		super(type_db, type_datum, id, already_persisted);
+	constructor(t_database: string, idBase: string, type_datum: T_Datum, id: string, already_persisted: boolean = false) {
+		super(t_database, type_datum, id, already_persisted);
 		this.type_datum = type_datum;
 		this.idBase = idBase;
 	}

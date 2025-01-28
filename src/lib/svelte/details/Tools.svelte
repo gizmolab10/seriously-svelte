@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, k, u, ux, w, show, Rect, Size, Point, debug, T_Tool, T_Layer } from '../../ts/common/Global_Imports';
-	import { s_graphRect, s_hierarchy, s_t_graph, s_details_show } from '../../ts/state/S_Stores';
+	import { s_graph_rect, s_hierarchy, s_t_graph, s_details_show } from '../../ts/state/S_Stores';
 	import { databases, T_Element, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
 	import { S_Alteration, T_Alteration, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { s_s_alteration, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
@@ -18,7 +18,7 @@
 	const parentAlteringIDs = [T_Tool.add_parent, T_Tool.delete_parent];
 	const needsMultipleVisibleParents = [T_Tool.next, T_Tool.delete_parent];
 	const half_circleViewBox = `0 0 ${k.editingTools_diameter} ${k.editingTools_diameter}`;
-	let element_states_byID: { [id: string]: S_Element } = {};
+	let s_elements_byID: { [id: string]: S_Element } = {};
 	let isHovering_byID: { [id: string]: boolean } = {};
 	let centers_byID: { [id: string]: Point } = {};
 	let parentSensitiveColor = k.empty;
@@ -55,24 +55,24 @@
 		((countOfVisibleParents < 2) && needsMultipleVisibleParents.includes(id));
 	}
 
-	function reset_all_element_states_for_ancestry_change() {
+	function reset_all_s_elements_for_ancestry_change() {
 		if (!!ancestry) {
 			debug.log_tools('element states')
 			const ids = [T_Tool.delete_cancel, T_Tool.add_parent, T_Tool.delete_parent, T_Tool.delete_cancel, T_Tool.delete_confirm, T_Tool.dismiss, T_Tool.create, T_Tool.next, T_Tool.more];
 			for (const id of ids) {
 				const isDismiss = (id == T_Tool.dismiss);
-				const element_state = ux.element_state_for(ancestry, T_Element.tool, id);
-				element_state.color_background = isDismiss ? k.color_background : 'transparent';
-				element_state.set_forHovering(color, 'pointer');
-				element_state.hoverIgnore = !isDismiss;
-				element_states_byID[id] = element_state;
+				const s_element = ux.s_element_for(ancestry, T_Element.tool, id);
+				s_element.color_background = isDismiss ? k.color_background : 'transparent';
+				s_element.set_forHovering(color, 'pointer');
+				s_element.hoverIgnore = !isDismiss;
+				s_elements_byID[id] = s_element;
 			}		
 		}
 	}
 
 	$: {
-		if (graphRect != $s_graphRect) {
-			graphRect = $s_graphRect;
+		if (graphRect != $s_graph_rect) {
+			graphRect = $s_graph_rect;
 			layout_tools_forceRedraw();
 		}
 	}
@@ -87,7 +87,7 @@
 				const hasOneParent = (thing?.parents.length ?? 0) == 1;
 				countOfVisibleParents = ancestry.visibleParentAncestries(0).length;
 				parentSensitiveColor = (hasOneParent || ancestry.isFocus) ? k.color_disabled : color ;
-				reset_all_element_states_for_ancestry_change();
+				reset_all_s_elements_for_ancestry_change();
 				layout_tools_forceRedraw(true);
 			}
 		}
@@ -115,10 +115,10 @@
 
 	async function handle_mouse_data(mouse_state: S_Mouse, id: string) {
 		if (mouse_state.isHover) {
-			const element_state = element_states_byID[id];
+			const s_element = s_elements_byID[id];
 			const isOut = mouse_state.isOut;
 			isHovering_byID[id] = !isOut;
-			element_state.isOut = isOut;
+			s_element.isOut = isOut;
 		} else if (mouse_state.isUp || mouse_state.isLong) {
 			switch (id) {
 				case T_Tool.delete_cancel: confirmingDelete = false; break;
@@ -216,7 +216,7 @@
 				{/if}
 				<Button
 					closure={(mouse_state) => handle_mouse_data(mouse_state, T_Tool.delete_confirm)}
-					element_state={element_states_byID[T_Tool.delete_confirm]}
+					s_element={s_elements_byID[T_Tool.delete_confirm]}
 					center={getC(T_Tool.delete_confirm)}
 					height={k.editingTools_diameter / 2}
 					width={k.editingTools_diameter}
@@ -238,7 +238,7 @@
 				</Button>
 				<Button
 					closure={(mouse_state) => handle_mouse_data(mouse_state, T_Tool.delete_cancel, )}
-					element_state={element_states_byID[T_Tool.delete_cancel]}
+					s_element={s_elements_byID[T_Tool.delete_cancel]}
 					height={k.editingTools_diameter / 2}
 					center={getC(T_Tool.delete_cancel)}
 					width={k.editingTools_diameter}
@@ -271,7 +271,7 @@
 			{:else}
 				<Button
 					closure={(mouse_state) => handle_mouse_data(mouse_state, T_Tool.more)}
-					element_state={element_states_byID[T_Tool.more]}
+					s_element={s_elements_byID[T_Tool.more]}
 					height={k.default_buttonSize}
 					zindex={T_Layer.tool_buttons}
 					center={getC(T_Tool.more)}
@@ -296,7 +296,7 @@
 					</svg>
 				</Button>
 				<Dot_Reveal
-					name={element_states_byID[T_Tool.dismiss].name}
+					name={s_elements_byID[T_Tool.dismiss].name}
 					ancestry={$s_ancestry_showing_tools}
 					center={getC(T_Tool.dismiss)}
 					zindex={T_Layer.tool_buttons}

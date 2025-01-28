@@ -4,7 +4,7 @@ export default class Parent_Ancestry extends Ancestry {
 	ancestry_inReverse!: Ancestry;
 
 	constructor(ancestry: Ancestry) {
-		super(ancestry.type_db, ancestry.id, ancestry.kindPredicate, false);	// thing_isChild = false
+		super(ancestry.t_database, ancestry.id, ancestry.kindPredicate, false);	// thing_isChild = false
 		this.ancestry_inReverse = ancestry;
 	}
 

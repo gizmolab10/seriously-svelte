@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { signals, T_Ring, T_Element, T_Rebuild, G_Radial } from '../../ts/common/Global_Imports';
 	import { g, k, u, ux, Rect, Point, debug, T_Tool, T_Layer } from '../../ts/common/Global_Imports';
-	import { s_graphRect, s_details_show, s_ancestry_focus } from '../../ts/state/S_Stores';
+	import { s_graph_rect, s_details_show, s_ancestry_focus } from '../../ts/state/S_Stores';
 	import { s_user_graph_offset, s_thing_fontFamily } from '../../ts/state/S_Stores';
 	import { s_g_radial } from '../../ts/state/S_Stores';
 	import Radial_Focus from './Radial_Focus.svelte';
@@ -45,8 +45,8 @@
 	<div class='radial-graph'
 		style='
 			z-index:{T_Layer.backmost};
-			width:{$s_graphRect.size.width}px;
-			height:{$s_graphRect.size.height}px;
+			width:{$s_graph_rect.size.width}px;
+			height:{$s_graph_rect.size.height}px;
 			transform:translate({$s_user_graph_offset.x}px, {$s_user_graph_offset.y}px);'>
 		<Radial/>
 		<Radial_Focus/>

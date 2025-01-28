@@ -25,7 +25,7 @@ export default class DBFirebase extends DBCommon {
 	bulksName = 'Bulks';
 	bulks!: Array<Bulk>;
 	deferSnapshots = false;
-	type_db = T_Database.firebase;
+	t_database = T_Database.firebase;
 	kind_persistence = T_Persistence.remote;
 	app = initializeApp(this.firebaseConfig);
 	firestore = getFirestore(this.app);
@@ -68,22 +68,22 @@ export default class DBFirebase extends DBCommon {
 		await this.fetch_documentsOf(T_Datum.relationships, idBase);
 	}
 		
-	async fetch_documentsOf(datum_type: T_Datum, idBase: string | null = null) {
+	async fetch_documentsOf(t_datum: T_Datum, idBase: string | null = null) {
 		try {
-			const collectionRef = !idBase ? collection(this.firestore, datum_type) : collection(this.firestore, this.bulksName, idBase, datum_type);
+			const collectionRef = !idBase ? collection(this.firestore, t_datum) : collection(this.firestore, this.bulksName, idBase, t_datum);
 			let querySnapshot = await getDocs(collectionRef);
 			if (!!idBase) {
 				if (querySnapshot.empty) {
-					await this.document_defaults_ofType_persistentCreateIn(datum_type, idBase, collectionRef);
+					await this.document_defaults_ofType_persistentCreateIn(t_datum, idBase, collectionRef);
 					querySnapshot = await getDocs(collectionRef);
 				}
 			}
 			const docs = querySnapshot.docs;
-			debug.log_remote('READ ' + docs.length + ' from ' + idBase + ':' + datum_type);
+			debug.log_remote('READ ' + docs.length + ' from ' + idBase + ':' + t_datum);
 			for (const docSnapshot of docs) {
 				const id = docSnapshot.id;
 				const data = docSnapshot.data();
-				await this.document_ofType_remember_validated(datum_type, id, data, idBase ?? this.idBase);
+				await this.document_ofType_remember_validated(t_datum, id, data, idBase ?? this.idBase);
 			}
 		} catch (error) {
 			this.reportError(error);
@@ -144,8 +144,8 @@ export default class DBFirebase extends DBCommon {
 
 	static readonly REMOTE: unique symbol;
 	
-	snapshot_deferOne(idBase: string, datum_type: T_Datum, snapshot: QuerySnapshot) {
-		const deferral = new SnapshotDeferal(idBase, datum_type, snapshot);
+	snapshot_deferOne(idBase: string, t_datum: T_Datum, snapshot: QuerySnapshot) {
+		const deferral = new SnapshotDeferal(idBase, t_datum, snapshot);
 		this.deferredSnapshots.push(deferral);
 	}
 
@@ -155,7 +155,7 @@ export default class DBFirebase extends DBCommon {
 			const deferral = this.deferredSnapshots.pop();
 			if (!!deferral) {
 				deferral.snapshot.docChanges().forEach((change) => {	// convert and remember
-					this.handle_docChanges(deferral.idBase, deferral.datum_type, change);
+					this.handle_docChanges(deferral.idBase, deferral.t_datum, change);
 				});
 			}
 		}
@@ -164,15 +164,15 @@ export default class DBFirebase extends DBCommon {
 	}
 
 	setup_remote_handlers() {
-		for (const datum_type of this.hierarchy.persistent_dataTypes) {
-			if (datum_type == T_Datum.predicates) {
-				this.predicatesCollection = collection(this.firestore, datum_type);
+		for (const t_datum of this.hierarchy.persistent_dataTypes) {
+			if (t_datum == T_Datum.predicates) {
+				this.predicatesCollection = collection(this.firestore, t_datum);
 			} else {
 				const idBase = this.idBase;
 				const bulk = this.bulk_for(idBase);
-				const collectionRef = collection(this.firestore, this.bulksName, idBase, datum_type);
+				const collectionRef = collection(this.firestore, this.bulksName, idBase, t_datum);
 				if (!!bulk) {
-					switch (datum_type) {
+					switch (t_datum) {
 						case T_Datum.things:		bulk.thingsCollection = collectionRef; break;
 						case T_Datum.traits:		bulk.traitsCollection = collectionRef; break;
 						case T_Datum.relationships: bulk.relationshipsCollection = collectionRef; break;
@@ -181,10 +181,10 @@ export default class DBFirebase extends DBCommon {
 				onSnapshot(collectionRef, (snapshot) => {
 					if (this.hierarchy.isAssembled) {		// u.ignore snapshots caused by data written to server
 						if (this.deferSnapshots) {
-							this.snapshot_deferOne(idBase, datum_type, snapshot);
+							this.snapshot_deferOne(idBase, t_datum, snapshot);
 						} else {
 							snapshot.docChanges().forEach(async (change) => {	// convert and remember
-								await this.handle_docChanges(idBase, datum_type, change);
+								await this.handle_docChanges(idBase, t_datum, change);
 							});
 							this.hierarchy.ancestries_fullRebuild();		// first recreate ancestries
 							this.hierarchy.signal_storage_redraw(10);
@@ -195,10 +195,10 @@ export default class DBFirebase extends DBCommon {
 		}
 	}
 
-	async handle_docChanges(idBase: string, datum_type: T_Datum, change: DocumentChange) {
+	async handle_docChanges(idBase: string, t_datum: T_Datum, change: DocumentChange) {
 		const doc = change.doc;
 		const data = doc.data();
-		if (DBFirebase.data_isValidOfKind(datum_type, data)) {
+		if (DBFirebase.data_isValidOfKind(t_datum, data)) {
 			const id = doc.id;
 
 			//////////////////////////////
@@ -206,7 +206,7 @@ export default class DBFirebase extends DBCommon {
 			//////////////////////////////
 
 			try {
-				switch (datum_type) {
+				switch (t_datum) {
 					case T_Datum.things:		this.thing_handle_docChanges(idBase, id, change, data); break;
 					case T_Datum.traits:		this.trait_handle_docChanges(idBase, id, change, data); break;
 					case T_Datum.relationships: this.relationship_handle_docChanges(idBase, id, change, data); break;
@@ -214,28 +214,28 @@ export default class DBFirebase extends DBCommon {
 			} catch (error) {
 				this.reportError(error);
 			}
-			debug.log_remote('HANDLE ' + idBase + ':' + datum_type + k.space + change.type);
+			debug.log_remote('HANDLE ' + idBase + ':' + t_datum + k.space + change.type);
 		}
 	}
 
 	static readonly SUBCOLLECTIONS: unique symbol;
 
-	async document_defaults_ofType_persistentCreateIn(datum_type: T_Datum, idBase: string, collectionRef: CollectionReference) {
+	async document_defaults_ofType_persistentCreateIn(t_datum: T_Datum, idBase: string, collectionRef: CollectionReference) {
 		if (!!idBase) {
 			const docRef = doc(this.firestore, this.bulksName, idBase);
 			await setDoc(docRef, { isReal: true }, { merge: true });
 			await updateDoc(docRef, { isReal: deleteField() });
 		}
-		switch (datum_type) {
+		switch (t_datum) {
 			case T_Datum.predicates: this.hierarchy.predicate_defaults_remember_runtimeCreate(); break;
 			case T_Datum.things: await this.root_default_remember_persistentCreateIn(collectionRef); break;
 		}
 	}
 
-	async document_ofType_remember_validated(datum_type: T_Datum, id: string, data: DocumentData, idBase: string) {
-		if (DBFirebase.data_isValidOfKind(datum_type, data)) {
+	async document_ofType_remember_validated(t_datum: T_Datum, id: string, data: DocumentData, idBase: string) {
+		if (DBFirebase.data_isValidOfKind(t_datum, data)) {
 			const h = this.hierarchy;
-			switch (datum_type) {
+			switch (t_datum) {
 				case T_Datum.predicates:	h.predicate_remember_runtimeCreate(id, data.kind, data.isBidirectional); break;
 				case T_Datum.traits:		h.trait_remember_runtimeCreate(idBase, id, data.ownerID, data.type, data.text, true); break;
 				case T_Datum.things:		h.thing_remember_runtimeCreate(idBase, id, data.title, data.color, data.type ?? data.trait, true, !data.type); break;
@@ -610,8 +610,8 @@ export default class DBFirebase extends DBCommon {
 
 	static readonly VALIDATION: unique symbol;
 
-	static data_isValidOfKind(datum_type: T_Datum, data: DocumentData) {
-		switch (datum_type) {
+	static data_isValidOfKind(t_datum: T_Datum, data: DocumentData) {
+		switch (t_datum) {
 			case T_Datum.things:		
 				const thing = data as PersistentThing;	
 				if (thing.hasNoData) {
@@ -691,13 +691,13 @@ export class Bulk {
 
 export class SnapshotDeferal {
 	idBase: string;
-	datum_type: T_Datum;
+	t_datum: T_Datum;
 	snapshot: QuerySnapshot;
 
-	constructor(idBase: string, datum_type: T_Datum, snapshot: QuerySnapshot) {
+	constructor(idBase: string, t_datum: T_Datum, snapshot: QuerySnapshot) {
 		this.idBase = idBase;
 		this.snapshot = snapshot;
-		this.datum_type = datum_type;
+		this.t_datum = t_datum;
 	}
 }
 

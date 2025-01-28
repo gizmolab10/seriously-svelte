@@ -15,7 +15,7 @@
 	let height = k.default_buttonSize;
 	let thing: Thing = ancestry.thing;
 	let title: string = thing.title;
-	let element_state: S_Element;
+	let s_element: S_Element;
 	let colorStyles = k.empty;
 	let style = k.empty;
 	let name = k.empty;
@@ -30,7 +30,7 @@
 		name = `crumb (for ${title ?? 'unknown'})`
 		width = u.getWidthOf(title) + 15;
 		center = new Point(left + width / 2, height - 1);
-		element_state = ux.element_state_for(ancestry, elementType, T_Tool.none);
+		s_element = ux.s_element_for(ancestry, elementType, T_Tool.none);
 		updateColors();
 	}
 
@@ -74,8 +74,8 @@
 					border = `${borderStyle} ${thing.color}`;
 				}
 				const cursor = !ancestry.isGrabbed && ancestry.hasChildRelationships ? 'pointer' : k.cursor_default;
-				element_state.set_forHovering(thing.color, cursor);
-				element_state.isOut = mouse_state.isOut;
+				s_element.set_forHovering(thing.color, cursor);
+				s_element.isOut = mouse_state.isOut;
 				updateStyle();
 				rebuilds += 1;
 			} else if (mouse_state.isUp) {
@@ -97,7 +97,7 @@
 		center={center}
 		closure={closure}
 		position='absolute'
-		element_state={element_state}>
+		s_element={s_element}>
 		{title}
 	</Button>
 {/key}

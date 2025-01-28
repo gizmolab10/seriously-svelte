@@ -4,7 +4,7 @@ export default class G_Widget extends Rect {
 	parent_ancestry: Ancestry | null;
 	widget_ancestry: Ancestry | null;
 	child_angle: number | null;
-	element_state: S_Element;
+	s_element: S_Element;
 	points_toChild = true;
 	points_right = true;
 	child: Thing | null;
@@ -14,7 +14,7 @@ export default class G_Widget extends Rect {
 	constructor(curveType: string, rect: Rect, child_origin: Point, widget_ancestry: Ancestry | null,
 		parent_ancestry: Ancestry | null, points_toChild: boolean = true, child_angle: number | null = null) {
 		super(u.copyObject(rect.origin), u.copyObject(rect.size));
-		this.element_state = ux.element_state_for(widget_ancestry, T_Element.widget, k.empty);
+		this.s_element = ux.s_element_for(widget_ancestry, T_Element.widget, k.empty);
 		this.points_right = !child_angle ? true : new Angle(child_angle).angle_pointsRight;
 		this.child = widget_ancestry?.thing ?? null;
 		this.parent_ancestry = parent_ancestry;
@@ -33,6 +33,6 @@ export default class G_Widget extends Rect {
 		this.widget_ancestry = null;
 	}
 
-	get responder(): HTMLElement | null { return this.element_state.responder; }
+	get responder(): HTMLElement | null { return this.s_element.responder; }
 
 }

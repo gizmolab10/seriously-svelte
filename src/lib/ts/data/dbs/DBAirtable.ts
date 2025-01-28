@@ -26,7 +26,7 @@ export default class DBAirtable extends DBCommon {
 	access_table = this.base(T_Datum.access);
 	users_table = this.base(T_Datum.users);
 	kind_persistence = T_Persistence.remote;
-	type_db = T_Database.airtable;
+	t_database = T_Database.airtable;
 	idBase = k.empty;
 
 	relationships_errorMessage = 'Error in Relationships:';

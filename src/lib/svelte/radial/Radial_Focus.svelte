@@ -4,7 +4,7 @@
 	import { svgPaths, T_Element, G_Radial } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Title_Editor from '../widget/Title_Editor.svelte';
-	const element_state = ux.element_state_for($s_ancestry_focus, T_Element.focus, T_Tool.none);
+	const s_element = ux.s_element_for($s_ancestry_focus, T_Element.focus, T_Tool.none);
 	const height = k.row_height + 10;
 	let centerOffset = Point.zero;
 	let focus_origin = Point.zero;

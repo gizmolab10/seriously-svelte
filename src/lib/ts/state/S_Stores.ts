@@ -14,11 +14,11 @@ export const s_s_title_edit			  = writable<S_Title_Edit | null>();
 export const s_s_alteration			  = writable<S_Alteration | null>();
 export const s_s_paging				  = writable<S_Paging>();
 
+export const s_t_database			  = writable<string>();
 export const s_t_details			  = writable<Array<T_Details>>();
 export const s_t_startup			  = writable<T_Startup>();
 export const s_t_graph				  = writable<T_Graph>();
 export const s_t_tree				  = writable<T_Tree>();
-export const s_t_db					  = writable<string>();
 
 export const s_g_active_cluster		  = writable<G_Cluster | null>();
 export const s_g_radial				  = writable<G_Radial | null>();
@@ -27,7 +27,7 @@ export const s_mouse_location_scaled  = writable<Point>();
 export const s_user_graph_offset	  = writable<Point>();
 export const s_user_graph_center	  = writable<Point>();
 export const s_mouse_location		  = writable<Point>();
-export const s_graphRect			  = writable<Rect>();
+export const s_graph_rect			  = writable<Rect>();
 
 export const s_id_popupView			  = writable<string | null>();
 export const s_thing_title			  = writable<string | null>();

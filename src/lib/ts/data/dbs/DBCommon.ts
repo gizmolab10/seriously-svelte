@@ -34,7 +34,7 @@ export default class DBCommon {
 	kind_persistence!: T_Persistence;
 	loadTime: string | null = null;
 	hierarchy!: Hierarchy;
-	type_db = k.empty;
+	t_database = k.empty;
 	idBase = k.empty;
 	
 	queryStrings_apply() {}

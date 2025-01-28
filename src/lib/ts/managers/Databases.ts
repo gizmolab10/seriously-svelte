@@ -2,7 +2,7 @@ import { g, k, T_Preference, preferences } from '../common/Global_Imports';
 import { dbFirebase } from '../data/dbs/DBFirebase';
 import { dbAirtable } from '../data/dbs/DBAirtable';
 import { T_Database } from '../data/dbs/DBCommon';
-import { s_t_db } from '../state/S_Stores';
+import { s_t_database } from '../state/S_Stores';
 import { dbLocal } from '../data/dbs/DBLocal';
 import { dbTest } from '../data/dbs/DBTest';
 import DBCommon from '../data/dbs/DBCommon';
@@ -11,8 +11,8 @@ import DBCommon from '../data/dbs/DBCommon';
 // when switching to another db
 // s_hierarchy is set to its hierarchy
 
-export function db_forType(type_db: string): DBCommon {
-	switch (type_db) {
+export function db_forType(t_database: string): DBCommon {
+	switch (t_database) {
 		case T_Database.firebase: return dbFirebase;
 		case T_Database.airtable: return dbAirtable;
 		case T_Database.test:	  return dbTest;
@@ -28,7 +28,7 @@ export default class Databases {
 		const type = queryStrings.get('db');
 		if (!!type) {
 			this.db_set_accordingToType(type);
-			s_t_db.set(type);
+			s_t_database.set(type);
 		}
 		this.db.queryStrings_apply();
 	}
@@ -36,8 +36,8 @@ export default class Databases {
 	constructor() {
 		let done = false;
 		this.db = dbFirebase;
-		s_t_db.subscribe((type: string) => {
-			if (!!type && (!done || (type && this.db.type_db != type))) {
+		s_t_database.subscribe((type: string) => {
+			if (!!type && (!done || (type && this.db.t_database != type))) {
 				done = true;
 				setTimeout( async () => {
 					preferences.write_key(T_Preference.db, type);
@@ -54,11 +54,11 @@ export default class Databases {
 	restore_db() {
 		let type = preferences.read_key(T_Preference.db) ?? 'firebase';
 		if (type == 'file') { type = 'local'; }
-		s_t_db.set(type);
+		s_t_database.set(type);
 	}
 
 	get startupExplanation(): string {
-		const type = this.db.type_db;
+		const type = this.db.t_database;
 		let from = k.empty;
 		switch (type) {
 			case T_Database.firebase: from = `, from ${this.db.idBase}`; break;
@@ -70,11 +70,11 @@ export default class Databases {
 	db_change_toType(newDatabaseType: T_Database) {
 		const db = db_forType(newDatabaseType);
 		preferences.write_key(T_Preference.db, newDatabaseType);
-		s_t_db.set(newDatabaseType);		// tell components to render the [possibly previously] fetched data
+		s_t_database.set(newDatabaseType);		// tell components to render the [possibly previously] fetched data
 	}
 
 	db_next_get(forward: boolean): T_Database {
-		switch (this.db.type_db) {
+		switch (this.db.t_database) {
 			case T_Database.airtable: return forward ? T_Database.test	   : T_Database.firebase;
 			case T_Database.test:	  return forward ? T_Database.firebase : T_Database.airtable;
 			default:			  	  return forward ? T_Database.airtable : T_Database.test;

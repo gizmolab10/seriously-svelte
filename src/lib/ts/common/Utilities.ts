@@ -224,15 +224,15 @@ export class Utilities {
 		const extras = [
 			'hid',
 			'state',
-			'type_db',
 			'idBase',
+			's_pages',
 			'hidChild',
 			'hidParent',
 			'isEditing',
 			'isGrabbed',
 			'bulkRootID',
+			't_database',
 			'oneAncestry',
-			'page_states',
 			'needsBulkFetch',
 			'selectionRange',
 		];

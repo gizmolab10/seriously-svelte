@@ -4,9 +4,9 @@ import { T_Info, T_Tree } from '../common/Enumerations';
 import type { Dictionary } from '../common/Types';
 
 export class S_Show {
-	info_type	 = T_Info.focus;
+	t_info	 = T_Info.focus;
 	debug_cursor = false;
-	tree_types	 = false;
+	t_trees	 = false;
 	arrowheads	 = false;
 	traits		 = false;
 	tiny_dots	 = true;
@@ -44,13 +44,13 @@ export class S_Show {
 		this.tiny_dots = preferences.read_key(T_Preference.tiny_dots) ?? false;
 		s_details_show.set(preferences.read_key(T_Preference.details) ?? false);
 		this.arrowheads = preferences.read_key(T_Preference.arrowheads) ?? false;
-		this.info_type = preferences.read_key(T_Preference.info_type) ?? T_Info.focus;
-		s_t_tree.set(preferences.read_key(T_Preference.tree_type) ?? T_Tree.children);
+		this.t_info = preferences.read_key(T_Preference.t_info) ?? T_Info.focus;
+		s_t_tree.set(preferences.read_key(T_Preference.t_tree) ?? T_Tree.children);
 	}
 
 	reactivity_subscribe() {
 		s_t_tree.subscribe((relations: string) => {
-			preferences.write_key(T_Preference.tree_type, relations);
+			preferences.write_key(T_Preference.t_tree, relations);
 		});
 		s_details_show.subscribe((flag: boolean) => {
 			preferences.write_key(T_Preference.details, flag);

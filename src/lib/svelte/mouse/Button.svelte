@@ -11,7 +11,7 @@
 	export let border_color = k.color_default;
 	export let height = k.default_buttonSize;
 	export let width = k.default_buttonSize;
-	export let element_state: S_Element;
+	export let s_element: S_Element;
 	export let padding = '0px 6px 1px 6px';
 	export let color = k.color_default;
 	export let position = 'absolute';
@@ -42,8 +42,8 @@
 	update_currentStyle();	// call during instantiate
 	
 	function update_currentStyle() {
-		color = element_state.stroke;
-		background_color = element_state.fill;
+		color = s_element.stroke;
+		background_color = s_element.fill;
 		if (style.length == 0) {
 			border = border_thickness == 0 ? 'none' : `${border_thickness}px solid ${border_color}`;
 			currentStyle=`
@@ -56,7 +56,7 @@
 				height:${height}px;
 				position:${position};
 				border-radius:${height / 2}px;
-				cursor:${element_state.cursor};
+				cursor:${s_element.cursor};
 				font-family:${$s_thing_fontFamily};
 				background-color:${background_color};
 			`.removeWhiteSpace();

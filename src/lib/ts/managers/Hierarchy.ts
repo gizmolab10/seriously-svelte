@@ -937,7 +937,7 @@ export class Hierarchy {
 		let dict = this.ancestry_byType_andHash[kindPredicate] ?? {};
 		let ancestry = dict[hid];
 		if (!ancestry) {
-			ancestry = new Ancestry(this.db.type_db, id, kindPredicate);
+			ancestry = new Ancestry(this.db.t_database, id, kindPredicate);
 			this.ancestry_remember(ancestry);
 		}
 		return ancestry;
@@ -1209,13 +1209,13 @@ export class Hierarchy {
 	static readonly ANCILLARY: unique symbol;
 
 	access_runtimeCreate(idAccess: string, kind: string) {
-		const access = new Access(this.db.type_db, idAccess, kind);
+		const access = new Access(this.db.t_database, idAccess, kind);
 		this.access_byHID[idAccess.hash()] = access;
 		this.access_byKind[kind] = access;
 	}
 
 	user_runtimeCreate(id: string, name: string, email: string, phone: string) {
-		const user = new User(this.db.type_db, id, name, email, phone);
+		const user = new User(this.db.t_database, id, name, email, phone);
 		this.user_byHID[id.hash()] = user;
 	}
 
@@ -1250,7 +1250,7 @@ export class Hierarchy {
 	get user_selected_ancestry(): Ancestry {
 		const focus = get(s_ancestry_focus);
 		let grabbed = this.grabs_latest_ancestry;
-		if (!!focus && show.info_type == T_Info.focus) {
+		if (!!focus && show.t_info == T_Info.focus) {
 			return focus;
 		} else if (!!grabbed) {
 			return grabbed;
@@ -1316,7 +1316,7 @@ export class Hierarchy {
 		s_s_title_edit.set(null);
 		preferences.restore_focus();
 		preferences.restore_grabbed_andExpanded();
-		// preferences.restore_page_states();
+		// preferences.restore_s_pages();
 		this.isAssembled = true;
 	}
 

@@ -15,7 +15,7 @@ export default class Ancestry extends Identifiable {
 	kindPredicate: string;
 	thing_isChild = true;
 	unsubscribe: any;
-	type_db: string;
+	t_database: string;
 
 	// id => ancestry string 
 	//   "   composed of ids of each relationship
@@ -23,11 +23,11 @@ export default class Ancestry extends Identifiable {
 	//   "   kindPredicate is from the last relationship
 	//   "   children are of that kind of predicate
 
-	constructor(type_db: string, ancestryString: string = k.empty, kindPredicate: string = T_Predicate.contains, thing_isChild: boolean = true) {
+	constructor(t_database: string, ancestryString: string = k.empty, kindPredicate: string = T_Predicate.contains, thing_isChild: boolean = true) {
 		super(ancestryString);
 		this.thing_isChild = thing_isChild;
 		this.kindPredicate = kindPredicate;
-		this.type_db = type_db;
+		this.t_database = t_database;
 		get(s_hierarchy).signal_storage_redraw(0);
 	}
 
@@ -94,7 +94,7 @@ export default class Ancestry extends Identifiable {
 	get parentAncestry():			 Ancestry | null { return this.stripBack(); }
 	get predicate():				Predicate | null { return this.hierarchy.predicate_forKind(this.kindPredicate) }
 	get relationship():			 Relationship | null { return this.relationshipAt(); }
-	get g_widget():		   G_Widget | null { return get(s_g_radial)?.widget_mapFor(this) ?? null; }
+	get g_widget():		   G_Widget | null { return get(s_g_radial)?.widgetg_arcSliderFor(this) ?? null; }
 	get titleWrapper():		   Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.hid, T_SvelteComponent.title); }
 	get ids_hashed():		 	 Array	   <Integer> { return this.ids.map(i => i.hash()); }
 	get ids():				 	 Array		<string> { return this.id.split(k.generic_separator); }
@@ -126,7 +126,7 @@ export default class Ancestry extends Identifiable {
 
 	get isEditable(): boolean {
 		const isBulkAlias = this.thing?.isBulkAlias ?? true;	// missing thing, return not allow
-		const canEdit = !this.isRoot || databases.db.type_db == T_Database.local;
+		const canEdit = !this.isRoot || databases.db.t_database == T_Database.local;
 		return canEdit && g.allow_TitleEditing && !isBulkAlias;
 	}
 
@@ -149,14 +149,14 @@ export default class Ancestry extends Identifiable {
 		return sum;
 	}
 
-	get paging_state(): S_Paging | null {
+	get s_paging(): S_Paging | null {
 		const predicate = this.predicate;
-		const geometry = get(s_g_radial);
-		if (!!predicate && !!geometry) {
-			const map = geometry?.cluster_map_toChildren(this.thing_isChild, predicate)
-			return map?.paging_state_ofAncestry(this) ?? null;
+		const g_radial = get(s_g_radial);
+		if (!!predicate && !!g_radial) {
+			const map = g_radial?.g_cluster_pointing_toChildren(this.thing_isChild, predicate)
+			return map?.s_paging_ofAncestry(this) ?? null;
 		}
-		return null;	// either geometry is not setup or predicate is bogus
+		return null;	// either g_radial is not setup or predicate is bogus
 	}
 	
 	get thing(): Thing | null {
@@ -173,7 +173,7 @@ export default class Ancestry extends Identifiable {
 
 	get isVisible(): boolean {
 		if (g.inRadialMode) {
-			return this.parentAncestry?.paging_state?.index_isVisible(this.siblingIndex) ?? false;
+			return this.parentAncestry?.s_paging?.index_isVisible(this.siblingIndex) ?? false;
 		} else {
 			const focus = get(s_ancestry_focus);
 			const incorporates = this.incorporates(focus);
@@ -255,7 +255,7 @@ export default class Ancestry extends Identifiable {
 	relationshipAt(back: number = 1): Relationship | null { return this.hierarchy.relationship_forHID(this.idAt(back).hash()) ?? null; }
 	showsCluster_forPredicate(predicate: Predicate): boolean { return this.includesPredicate_ofKind(predicate.kind) && this.hasThings(predicate); }
 	relationships_forChildren(forChildren: boolean): Array<Relationship> { return forChildren ? this.childRelationships : this.parentRelationships; }
-	ancestry_hasEqualID(ancestry: Ancestry | null | undefined): boolean { return !!ancestry && this.hid == ancestry.hid && this.type_db == ancestry.type_db; }
+	ancestry_hasEqualID(ancestry: Ancestry | null | undefined): boolean { return !!ancestry && this.hid == ancestry.hid && this.t_database == ancestry.t_database; }
 	
 	relationships_ofKind_forParents(kindPredicate: string, forParents: boolean) {
 		return this.thing?.relationships_ofKind_forParents(kindPredicate, forParents) ?? [];
@@ -536,7 +536,7 @@ export default class Ancestry extends Identifiable {
 	toggleExpanded() { return this.isExpanded ? this.collapse() : this.expand(); }
 
 	assureIsVisible_inClusters(): boolean {
-		return this.parentAncestry?.paging_state?.update_index_toShow(this.siblingIndex) ?? false;
+		return this.parentAncestry?.s_paging?.update_index_toShow(this.siblingIndex) ?? false;
 	}
 
 	grabOnly() {

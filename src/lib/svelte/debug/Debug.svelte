@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { s_user_graph_center, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
 	import { g, u, w, Rect, Size, Point, debug, T_Layer } from '../../ts/common/Global_Imports';
-	import { s_graphRect, s_mouse_location_scaled } from '../../ts/state/S_Stores';
+	import { s_graph_rect, s_mouse_location_scaled } from '../../ts/state/S_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Box from './Box.svelte';
 	export let size = 16;
@@ -43,7 +43,7 @@
 		name = 'graph'
 		color = 'green'
 		zindex = {T_Layer.common}
-		rect = {$s_graphRect}/>
+		rect = {$s_graph_rect}/>
 {/if}
 {#if debug.tools && !!$s_ancestry_showing_tools}
 	<Box

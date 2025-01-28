@@ -5,8 +5,8 @@ import Parent_Ancestry from '../data/runtime/Parent_Ancestry';
 import { get } from 'svelte/store';
 
 export default class G_Radial {
-	parent_cluster_maps: Array<G_Cluster> = [];
-	child_cluster_maps: Array<G_Cluster> = [];
+	parent_g_clusters: Array<G_Cluster> = [];
+	child_g_clusters: Array<G_Cluster> = [];
 	ancestry_focus!: Ancestry;
 
 	// layout all the widgets, radial and arcs
@@ -20,22 +20,22 @@ export default class G_Radial {
 	}
 
 	destructor() {
-		this.child_cluster_maps.forEach(l => l.destructor());
-		this.parent_cluster_maps.forEach(l => l.destructor());
+		this.child_g_clusters.forEach(l => l.destructor());
+		this.parent_g_clusters.forEach(l => l.destructor());
 	}
 
-	get cluster_maps(): Array<G_Cluster> { return u.concatenateArrays(this.parent_cluster_maps, this.child_cluster_maps); }		// for lines and arcs
-	cluster_maps_toChildren(points_toChildren: boolean): Array<G_Cluster> { return points_toChildren ? this.child_cluster_maps : this.parent_cluster_maps; }
-	cluster_map_toChildren(points_toChildren: boolean, predicate: Predicate): G_Cluster { return this.cluster_maps_toChildren(points_toChildren)[predicate.stateIndex]; }
+	get g_clusters(): Array<G_Cluster> { return u.concatenateArrays(this.parent_g_clusters, this.child_g_clusters); }		// for lines and arcs
+	g_clusters_toChildren(points_toChildren: boolean): Array<G_Cluster> { return points_toChildren ? this.child_g_clusters : this.parent_g_clusters; }
+	g_cluster_pointing_toChildren(points_toChildren: boolean, predicate: Predicate): G_Cluster { return this.g_clusters_toChildren(points_toChildren)[predicate.stateIndex]; }
 
-	widget_mapFor(ancestry: Ancestry): G_Widget | null {
-		const maps = this.g_widgets.filter(m => m.widget_ancestry?.hid == ancestry.hid);
-		return maps.length > 0 ? maps[0] : null;
+	widgetg_arcSliderFor(ancestry: Ancestry): G_Widget | null {
+		const g_widgets = this.g_widgets.filter(m => m.widget_ancestry?.hid == ancestry.hid);
+		return g_widgets.length > 0 ? g_widgets[0] : null;
 	}
 
 	get g_widgets(): Array<G_Widget> {
 		let g_widgets: Array<G_Widget> = [];
-		for (const g_cluster of this.cluster_maps) {
+		for (const g_cluster of this.g_clusters) {
 			if (!!g_cluster) {
 				for (const g_widget of g_cluster.g_widgets) {
 					g_widgets.push(g_widget);
@@ -45,8 +45,8 @@ export default class G_Radial {
 		return g_widgets;		
 	}
 
-	get cluster_mapFor_mouseLocation(): G_Cluster | null {
-		for (const g_cluster of this.cluster_maps) {
+	get g_clusterFor_mouseLocation(): G_Cluster | null {
+		for (const g_cluster of this.g_clusters) {
 			if (!!g_cluster && g_cluster.thumb_isHit) {
 				return g_cluster;
 			}
@@ -64,11 +64,11 @@ export default class G_Radial {
 
 	layout_clusterFor(ancestries: Array<Ancestry>, predicate: Predicate | null, points_toChildren: boolean) {
 		if (!!predicate) {
-			const paging_state = get(s_ancestry_focus)?.thing?.page_states?.paging_state_forPointingTo(points_toChildren, predicate);
-			const onePageOf_ancestries = paging_state?.onePage_from(ancestries) ?? [];
+			const s_paging = get(s_ancestry_focus)?.thing?.s_pages?.s_paging_forPointingTo(points_toChildren, predicate);
+			const onePageOf_ancestries = s_paging?.onePage_from(ancestries) ?? [];
 			const g_cluster = new G_Cluster(ancestries.length, onePageOf_ancestries, predicate, points_toChildren);
-			const cluster_maps = this.cluster_maps_toChildren(points_toChildren);
-			cluster_maps[predicate.stateIndex] = g_cluster;
+			const g_clusters = this.g_clusters_toChildren(points_toChildren);
+			g_clusters[predicate.stateIndex] = g_cluster;
 		}
 	}
 
@@ -86,10 +86,10 @@ export default class G_Radial {
 		}
 	}
 
-	update_forPaging_state(paging_state: S_Paging) {
+	update_forPaging_state(s_paging: S_Paging) {
 		const focus_ancestry = get(s_ancestry_focus);
-		if (!!paging_state && !!focus_ancestry) {
-			if (paging_state.points_toChildren) {
+		if (!!s_paging && !!focus_ancestry) {
+			if (s_paging.points_toChildren) {
 				let childAncestries = focus_ancestry.childAncestries;
 				this.layout_clusterFor(childAncestries, Predicate.contains, true);
 			} else {

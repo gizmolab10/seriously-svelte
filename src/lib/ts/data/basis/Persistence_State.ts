@@ -7,16 +7,16 @@ export default class Persistence_State {
 	already_persisted = false;
 	awaitingCreation = false;
 	type_datum: T_Datum;
-	type_db: string;
+	t_database: string;
 	isDirty = false;
 	id: string;
 
-	get isRemote(): boolean { return db_forType(this.type_db)?.isRemote ?? false; }
+	get isRemote(): boolean { return db_forType(this.t_database)?.isRemote ?? false; }
 	updateModifyDate() { this.lastModifyDate = new Date(); }
 
-	constructor(type_db: string, type_datum: T_Datum, id: string, already_persisted: boolean = false, awaitingCreation: boolean = false) {
+	constructor(t_database: string, type_datum: T_Datum, id: string, already_persisted: boolean = false, awaitingCreation: boolean = false) {
 		this.id				   = id;
-		this.type_db		   = type_db;			// needed for this.isRemote, below
+		this.t_database		   = t_database;			// needed for this.isRemote, below
 		this.type_datum		   = type_datum;
 		this.awaitingCreation  = awaitingCreation;
 		this.already_persisted = already_persisted;

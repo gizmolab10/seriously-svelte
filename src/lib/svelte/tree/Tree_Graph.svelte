@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_graphRect, s_hierarchy, s_details_show, s_device_isMobile,  } from '../../ts/state/S_Stores';
+	import { s_graph_rect, s_hierarchy, s_details_show, s_device_isMobile,  } from '../../ts/state/S_Stores';
 	import { g, k, u, ux, show, Rect, Size, Point, Thing, T_Layer, debug } from '../../ts/common/Global_Imports';
 	import { s_id_popupView, s_ancestry_focus, s_user_graph_offset } from '../../ts/state/S_Stores';
 	import { signals, T_Signal, T_Control, Ancestry, databases } from '../../ts/common/Global_Imports';
@@ -8,8 +8,8 @@
 	import Widget from '../widget/Widget.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import { onMount } from 'svelte';
-	const revealState = ux.element_state_for($s_ancestry_focus, T_Element.reveal, 'tree');
-	const focusState = ux.element_state_for($s_ancestry_focus, T_Element.focus, 'tree');
+	const s_reveal = ux.s_element_for($s_ancestry_focus, T_Element.reveal, 'tree');
+	const s_focus = ux.s_element_for($s_ancestry_focus, T_Element.focus, 'tree');
 	let origin_ofFirstReveal = Point.zero;
 	let origin_ofChildren = Point.zero;
 	let childrenSize = Point.zero;
@@ -33,8 +33,8 @@
 	}
 	
 	$: {
-		if (graphRect != $s_graphRect) {
-			graphRect = $s_graphRect;
+		if (graphRect != $s_graph_rect) {
+			graphRect = $s_graph_rect;
 			height = graphRect.size.height;
 			width = graphRect.size.width;
 			left = graphRect.origin.x;
@@ -78,7 +78,7 @@
 	{#key rebuilds}
 		<div class='tree'
 			style='transform:translate({$s_user_graph_offset.x}px, {$s_user_graph_offset.y}px);'>
-			<Widget name={focusState.name} ancestry={$s_ancestry_focus} origin={origin_ofFirstReveal.offsetByXY(-21.5 - offsetX_ofFirstReveal, -5)}/>
+			<Widget name={s_focus.name} ancestry={$s_ancestry_focus} origin={origin_ofFirstReveal.offsetByXY(-21.5 - offsetX_ofFirstReveal, -5)}/>
 			{#if $s_ancestry_focus.isExpanded}
 				<Tree_Children ancestry={$s_ancestry_focus} origin={origin_ofChildren}/>
 			{/if}

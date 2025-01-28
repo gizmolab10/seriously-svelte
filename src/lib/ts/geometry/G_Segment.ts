@@ -36,16 +36,16 @@ export default class G_Segment {
 		this.setup_path();
 	}
 
-	static grab_segment_map(name: string, title: string, font_size: string, isSelected: boolean, index: Integer, max_index: Integer, left: number, height: number) : G_Segment {
-		let map_name = `${title}-${name}-at-${index}`;
-		let map = ux.segment_map_forName(map_name);
-		if (!!map) {
-			map.isSelected = isSelected;
+	static grab_g_segment(name: string, title: string, font_size: string, isSelected: boolean, index: Integer, max_index: Integer, left: number, height: number) : G_Segment {
+		let g_segment_name = `${title}-${name}-at-${index}`;
+		let g_segment = ux.g_segment_forName(g_segment_name);
+		if (!!g_segment) {
+			g_segment.isSelected = isSelected;
 		} else {
-			map = new G_Segment(name, title, font_size, isSelected, index, max_index, left, height);
-			ux.set_segment_map_forName(map, map_name);
+			g_segment = new G_Segment(name, title, font_size, isSelected, index, max_index, left, height);
+			ux.set_g_segment_forName(g_segment, g_segment_name);
 		}
-		return map;
+		return g_segment;
 	}
 
 	setup_path() {

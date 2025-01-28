@@ -5,7 +5,7 @@ import DBCommon from './DBCommon';
 
 export default class DBLocal extends DBCommon {
 	kind_persistence = T_Persistence.local;
-	type_db = T_Database.local;
+	t_database = T_Database.local;
 	idBase = k.idBase_file;
 	
 	get dict_forStorageDetails(): Dictionary { return {'data' : 'fast and local'} }

@@ -5,10 +5,10 @@ import Identifiable from '../data/basis/Identifiable';
 export default class S_UX {
 
 	rotation_state_byName: {[name: string]: S_Rotation} = {};
-	element_state_byName: {[name: string]: S_Element} = {};
+	s_element_byName: {[name: string]: S_Element} = {};
 	mouse_state_byName: { [name: string]: S_Mouse } = {};
 	mouse_timer_byName: { [name: string]: Mouse_Timer } = {};
-	segment_map_byName: {[name: string]: G_Segment} = {};
+	g_segment_byName: {[name: string]: G_Segment} = {};
 
 	//////////////////////////////////////
 	//									//
@@ -24,11 +24,11 @@ export default class S_UX {
 	//////////////////////////////////////
 
 	reset_paging() { this.rotation_states.map(s => s.reset()); }
-	segment_map_forName(name: string): G_Segment { return this.segment_map_byName[name]; }
-	element_state_forName(name: string): S_Element { return this.element_state_byName[name]; }
+	g_segment_forName(name: string): G_Segment { return this.g_segment_byName[name]; }
+	s_element_forName(name: string): S_Element { return this.s_element_byName[name]; }
 	get rotation_states(): Array<S_Rotation> { return Object.values(this.rotation_state_byName); }
-	set_segment_map_forName(map: G_Segment, name: string) { return this.segment_map_byName[name] = map; }
 	get isAny_paging_arc_active(): boolean { return this.rotation_states.filter(s => s.isActive).length > 0; }
+	set_g_segment_forName(g_segment: G_Segment, name: string) { return this.g_segment_byName[name] = g_segment; }
 	get isAny_paging_arc_hovering(): boolean { return this.rotation_states.filter(s => s.isHovering).length > 0; }
 
 	name_from(identifiable: Identifiable, type: T_Element, subtype: string): string {
@@ -62,15 +62,15 @@ export default class S_UX {
 		return state;
 	}
 
-	element_state_for(identifiable: Identifiable | null, type: T_Element, subtype: string): S_Element {
+	s_element_for(identifiable: Identifiable | null, type: T_Element, subtype: string): S_Element {
 		const realIdentifiable = identifiable ?? new Identifiable()
 		const name = this.name_from(realIdentifiable, type, subtype);
-		let element_state = this.element_state_forName(name);
-		if (!element_state) {
-			element_state = new S_Element(realIdentifiable, type, subtype);
-			this.element_state_byName[name] = element_state;
+		let s_element = this.s_element_forName(name);
+		if (!s_element) {
+			s_element = new S_Element(realIdentifiable, type, subtype);
+			this.s_element_byName[name] = s_element;
 		}
-		return element_state;
+		return s_element;
 	}
 
 }

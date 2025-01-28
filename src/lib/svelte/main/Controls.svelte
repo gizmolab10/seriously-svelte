@@ -15,7 +15,7 @@
 	const size_big = size_small + 4;
 	const lefts = [10, 55, 117];
 	const resize_viewBox = `0, 0, ${size_big}, ${size_big}`;
-	let element_states_byID: { [id: string]: S_Element } = {};
+	let s_elements_byID: { [id: string]: S_Element } = {};
 	let elementShown_byID: {[key: string]: boolean} = {};
 	let width = w.windowSize.width - 20;
 
@@ -39,10 +39,10 @@
 		let total = w.windowSize.width + 50;
 		for (const id of ids) {
 			total -= u.getWidthOf(id);
-			const element_state = ux.element_state_for(new Identifiable(id), T_Element.control, id);
-			element_state.set_forHovering(k.color_default, 'pointer');
-			element_state.hoverIgnore = id == T_Control.details;
-			element_states_byID[id] = element_state;
+			const s_element = ux.s_element_for(new Identifiable(id), T_Element.control, id);
+			s_element.set_forHovering(k.color_default, 'pointer');
+			s_element.hoverIgnore = id == T_Control.details;
+			s_elements_byID[id] = s_element;
 			elementShown_byID[id] = total > 0;
 		}
 	}
@@ -57,7 +57,7 @@
 
 	function button_closure_forID(mouse_state, idControl) {
 		if (mouse_state.isHover) {
-			element_states_byID[idControl].isOut = mouse_state.isOut;
+			s_elements_byID[idControl].isOut = mouse_state.isOut;
 		} else if (mouse_state.isUp) {
 			switch (idControl) {
 				case T_Control.help: g.showHelp(); break;
@@ -72,14 +72,14 @@
 	function selection_closure(name: string, types: Array<string>) {
 		const type = types[0];	// only ever has one element
 		switch (name) {
-			case 'graph':	  $s_t_graph	  = type as T_Graph;	  break;
-			case 'relations': $s_t_tree	  = type as T_Tree;	  break;
+			case 'graph':	  $s_t_graph = type as T_Graph;	break;
+			case 'relations': $s_t_tree	 = type as T_Tree;	break;
 		}
 	}
 
 </script>
 
-{#if Object.values(element_states_byID).length > 0}
+{#if Object.values(s_elements_byID).length > 0}
 	<div id='controls'
 		style='
 			top: 7px;
@@ -93,7 +93,7 @@
 				border_thickness=0
 				color='transparent'
 				center={new Point(lefts[0], details_top + 3)}
-				element_state={element_states_byID[T_Control.details]}
+				s_element={s_elements_byID[T_Control.details]}
 				closure={(mouse_state) => button_closure_forID(mouse_state, T_Control.details)}>
 				<img src='settings.svg' alt='circular button' width={size_small}px height={size_small}px/>
 			</Button>
@@ -104,7 +104,7 @@
 					selected={[$s_t_graph]}
 					titles={[T_Graph.tree, T_Graph.radial]}
 					selection_closure={(titles) => selection_closure('graph', titles)}/>
-				{#if !g.inRadialMode && show.tree_types}
+				{#if !g.inRadialMode && show.t_trees}
 					{#key $s_t_tree}
 						<Segmented
 							name='tree'
@@ -124,7 +124,7 @@
 						height={size_big}
 						name={T_Control.smaller}
 						center={new Point(width - 110, y_center)}
-						element_state={element_states_byID[T_Control.smaller]}
+						s_element={s_elements_byID[T_Control.smaller]}
 						closure={(mouse_state) => button_closure_forID(mouse_state, T_Control.smaller)}>
 						<svg
 							id='shrink-svg'>
@@ -142,7 +142,7 @@
 						height={size_big}
 						name={T_Control.bigger}
 						center={new Point(width - 140, y_center)}
-						element_state={element_states_byID[T_Control.bigger]}
+						s_element={s_elements_byID[T_Control.bigger]}
 						closure={(mouse_state) => button_closure_forID(mouse_state, T_Control.bigger)}>
 						<svg
 							id='enlarge-svg'>
@@ -161,7 +161,7 @@
 				width=75
 				height={size_big}
 				center={new Point(width - 55, y_center)}
-				element_state={element_states_byID[T_Control.builds]}
+				s_element={s_elements_byID[T_Control.builds]}
 				closure={(mouse_state) => button_closure_forID(mouse_state, T_Control.builds)}>
 				<span style='font-family: {$s_thing_fontFamily};'>
 					{'build ' + k.build_number}
@@ -173,7 +173,7 @@
 				width={size_big}
 				height={size_big}
 				center={new Point(width, y_center)}
-				element_state={element_states_byID[T_Control.help]}
+				s_element={s_elements_byID[T_Control.help]}
 				closure={(mouse_state) => button_closure_forID(mouse_state, T_Control.help)}>
 				<span
 					style='top:2px;
