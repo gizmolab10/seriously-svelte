@@ -10,7 +10,7 @@
 	export let top = 28;
 	const buttons_top = 138;
 	const button_style = `font-family: ${$s_thing_fontFamily}; font-size:0.85em; left: 5px; top: -2px; position: absolute;`;
-	let s_elements_byID: { [id: string]: S_Element } = {};
+	let s_elements_byT_Storage: { [id: string]: S_Element } = {};
 	let information: Array<Dictionary> = [];
 	let rebuilds = 0;
 
@@ -40,16 +40,16 @@
 			const s_element = ux.s_element_for(null, T_Element.storage, id);
 			s_element.set_forHovering('black', 'pointer');
 			s_element.color_background = k.color_background;
-			s_elements_byID[id] = s_element;
+			s_elements_byT_Storage[id] = s_element;
 		}
 	}
 	
-	function button_closure_forID(mouse_state, idStorage) {
+	function button_closure_forT_Storage(mouse_state, t_storage) {
 		if (mouse_state.isHover) {
-			s_elements_byID[idStorage].isOut = mouse_state.isOut;
+			s_elements_byT_Storage[t_storage].isOut = mouse_state.isOut;
 		} else if (mouse_state.isUp) {
 			const h = $s_hierarchy;
-			switch (idStorage) {
+			switch (t_storage) {
 				case T_Storage.export: h.persist_toFile(); break;
 				case T_Storage.import: h.select_file_toUpload(mouse_state.event.shiftKey); break;
 			}
@@ -79,8 +79,8 @@
 			zindex=T_Layer.frontmost
 			center={new Point(74, buttons_top)}
 			height={k.default_buttonSize - 4}
-			s_element={s_elements_byID[T_Storage.import]}
-			closure={(mouse_state) => button_closure_forID(mouse_state, T_Storage.import)}>
+			s_element={s_elements_byT_Storage[T_Storage.import]}
+			closure={(mouse_state) => button_closure_forT_Storage(mouse_state, T_Storage.import)}>
 			<span style={button_style}>import</span>
 		</Button>
 		<Button name='export'
@@ -88,8 +88,8 @@
 			zindex=T_Layer.frontmost
 			center={new Point(122, buttons_top)}
 			height={k.default_buttonSize - 4}
-			s_element={s_elements_byID[T_Storage.export]}
-			closure={(mouse_state) => button_closure_forID(mouse_state, T_Storage.export)}>
+			s_element={s_elements_byT_Storage[T_Storage.export]}
+			closure={(mouse_state) => button_closure_forT_Storage(mouse_state, T_Storage.export)}>
 			<span style={button_style}>export</span>
 		</Button>
 	</div>

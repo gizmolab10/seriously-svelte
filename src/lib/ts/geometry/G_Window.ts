@@ -1,6 +1,6 @@
 import { k, Rect, Size, Point, debug, preferences, T_Preference } from '../common/Global_Imports';
 import { s_graph_rect, s_user_graph_offset, s_user_graph_center } from '../state/S_Stores';
-import { s_details_show, s_mouse_location_scaled } from '../state/S_Stores';
+import { s_show_details, s_mouse_location_scaled } from '../state/S_Stores';
 import { get } from 'svelte/store';
 
 export class G_Window {
@@ -55,7 +55,7 @@ export class G_Window {
 	}
 
 	graphRect_update() {
-		const left = get(s_details_show) ? k.width_details : 0;			// width of details
+		const left = get(s_show_details) ? k.width_details : 0;			// width of details
 		const originOfGraph = new Point(left, 69);						// 69 = height of content above the graph
 		const sizeOfGraph = this.windowSize.reducedBy(originOfGraph);	// account for origin
 		const rect = new Rect(originOfGraph, sizeOfGraph);

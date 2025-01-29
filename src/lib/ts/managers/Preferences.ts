@@ -1,9 +1,9 @@
+import { s_hierarchy, s_t_tree, s_t_graph, s_t_counts, s_t_details } from '../state/S_Stores';
 import { s_s_paging, s_ancestries_grabbed, s_ancestries_expanded } from '../state/S_Stores';
+import { T_Tree, T_Graph, T_Counts, T_Details, S_Paging } from '../common/Global_Imports';
 import { s_ancestry_focus, s_font_size, s_thing_fontFamily } from '../state/S_Stores';
-import { s_hierarchy, s_t_tree, s_t_graph, s_t_details } from '../state/S_Stores';
 import { s_ring_rotation_angle, s_ring_rotation_radius } from '../state/S_Stores';
 import { g, k, show, debug, Ancestry, databases } from '../common/Global_Imports';
-import { T_Tree, T_Graph, T_Details, S_Paging } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
 export enum T_Preference {
@@ -15,9 +15,10 @@ export enum T_Preference {
 	t_details	   = 't_details',
 	font_size	   = 'font_size',
 	tiny_dots	   = 'tiny_dots',
+	expanded	   = 'expanded',
+	t_counts	   = 't_counts',
 	base_id		   = 'base_id',
 	details		   = 'details',
-	expanded	   = 'expanded',
 	grabbed		   = 'grabbed',
 	s_pages 	   = 's_pages',
 	t_graph		   = 't_graph',
@@ -128,6 +129,9 @@ export class Preferences {
 		s_t_graph.subscribe((value) => {
 			this.write_key(T_Preference.t_graph, value);
 		});
+		s_t_counts.subscribe((value) => {
+			this.write_key(T_Preference.t_counts, value);
+		});
 		s_t_details.subscribe((value) => {
 			this.write_key(T_Preference.t_details, value);
 		});
@@ -150,9 +154,10 @@ export class Preferences {
 			this.write_key(T_Preference.relationships, true);
 		}
 		s_font_size.set(this.read_key(T_Preference.font_size) ?? 14);
-		s_ring_rotation_angle.set(this.read_key(T_Preference.ring_angle) ?? 0);
 		s_t_graph.set(this.read_key(T_Preference.t_graph) ?? T_Graph.tree);
 		s_t_tree.set(this.read_key(T_Preference.t_tree) ?? T_Tree.children);
+		s_ring_rotation_angle.set(this.read_key(T_Preference.ring_angle) ?? 0);
+		s_t_counts.set(this.read_key(T_Preference.t_counts) ?? [T_Counts.family]);
 		s_thing_fontFamily.set(this.read_key(T_Preference.font) ?? 'Times New Roman');
 		s_t_details.set(this.read_key(T_Preference.t_details) ?? [T_Details.storage]);
 		s_ring_rotation_radius.set(Math.max(this.read_key(T_Preference.ring_radius) ?? 0, k.innermost_ring_radius));

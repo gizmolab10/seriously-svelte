@@ -1,5 +1,5 @@
 import { S_Mouse, G_Segment, S_Element, S_Rotation } from '../common/Global_Imports';
-import { T_Element, Mouse_Timer } from '../common/Global_Imports';
+import { T_Counts, T_Element, Mouse_Timer } from '../common/Global_Imports';
 import Identifiable from '../data/basis/Identifiable';
 
 export default class S_UX {

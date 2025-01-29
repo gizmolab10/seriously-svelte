@@ -3,12 +3,12 @@
 	import { s_graph_rect, s_t_details } from '../../ts/state/S_Stores';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
-	import Recents from './Recents.svelte';
+	import Display from './Display.svelte';
 	import Storage from './Storage.svelte';
 	import Tools from './Tools.svelte';
 	import Info from './Info.svelte';
-	const titles = [T_Details[T_Details.storage], T_Details[T_Details.tools], T_Details[T_Details.recents], T_Details[T_Details.info]];
-	const heights = [116, 40, 100, 0];
+	const titles = [T_Details[T_Details.storage], T_Details[T_Details.tools], T_Details[T_Details.display], T_Details[T_Details.info]];
+	const heights = [116, 40, 42, 0];
 	let tops = [0, 0, 0, 0];
 	let rebuilds = 0;
 
@@ -44,7 +44,6 @@
 		style='
 			left:0px;
 			position:fixed;
-			font-size:0.95em;
 			background-color:#fff;
 			z-index:{T_Layer.details};
 			width:{k.width_details}px;
@@ -62,15 +61,14 @@
 			<Storage top={tops[T_Details.storage]}/>
 		{/if}
 		<div class='further-details'
-			style='font-size:0.8em;
-				width:{k.width_details}px;'>
+			style='width:{k.width_details}px;'>
 			{#if showingDetails_ofType(T_Details.tools)}
 				<Separator title='tools' top={tops[T_Details.tools] - 8}/>
 				<Tools top={tops[T_Details.tools]}/>
 			{/if}
-			{#if showingDetails_ofType(T_Details.recents)}
-				<Separator title='recents' top={tops[T_Details.recents] - 8}/>
-				<Recents top={tops[T_Details.recents]}/>
+			{#if showingDetails_ofType(T_Details.display)}
+				<Separator title='display' top={tops[T_Details.display] - 8}/>
+				<Display top={tops[T_Details.display]}/>
 			{/if}
 			{#if showingDetails_ofType(T_Details.info)}
 				<Separator title='info' top={tops[T_Details.info] - 7}/>

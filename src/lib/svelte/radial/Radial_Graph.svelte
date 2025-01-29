@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { signals, T_Ring, T_Element, T_Rebuild, G_Radial } from '../../ts/common/Global_Imports';
+	import { signals, T_RingZone, T_Element, T_Rebuild, G_Radial } from '../../ts/common/Global_Imports';
 	import { g, k, u, ux, Rect, Point, debug, T_Tool, T_Layer } from '../../ts/common/Global_Imports';
-	import { s_graph_rect, s_details_show, s_ancestry_focus } from '../../ts/state/S_Stores';
+	import { s_graph_rect, s_show_details, s_ancestry_focus } from '../../ts/state/S_Stores';
 	import { s_user_graph_offset, s_thing_fontFamily } from '../../ts/state/S_Stores';
 	import { s_g_radial } from '../../ts/state/S_Stores';
 	import Radial_Focus from './Radial_Focus.svelte';
@@ -32,7 +32,7 @@
 
 	
 	$: {
-		const _ = $s_details_show;
+		const _ = $s_show_details;
 		$s_g_radial = new G_Radial();
 		setTimeout(() => {
 			g.require_rebuild_forType(T_Rebuild.radial);

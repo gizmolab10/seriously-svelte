@@ -2,7 +2,7 @@
 	import { g, k, u, w, Size, Point, Thing, debug, T_Layer } from '../../ts/common/Global_Imports';
 	import { s_hierarchy, s_ancestry_focus, s_ancestries_grabbed } from '../../ts/state/S_Stores';
 	import { signals, svgPaths, Ancestry, databases } from '../../ts/common/Global_Imports';
-	import { s_graph_rect, s_details_show, s_thing_color } from '../../ts/state/S_Stores';
+	import { s_graph_rect, s_thing_color } from '../../ts/state/S_Stores';
 	import Breadcrumb_Button from '../mouse/Breadcrumb_Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import { onMount } from 'svelte';

@@ -1,5 +1,5 @@
 import { Rect, Point, Ancestry, Hierarchy, G_Cluster, G_Radial } from '../common/Global_Imports';
-import { T_Tree, T_Details, T_Graph, T_Startup } from '../common/Global_Imports';
+import { T_Tree, T_Graph, T_Counts, T_Details, T_Startup } from '../common/Global_Imports';
 import { S_Paging, S_Title_Edit, S_Alteration } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
 
@@ -14,8 +14,10 @@ export const s_s_title_edit			  = writable<S_Title_Edit | null>();
 export const s_s_alteration			  = writable<S_Alteration | null>();
 export const s_s_paging				  = writable<S_Paging>();
 
-export const s_t_database			  = writable<string>();
 export const s_t_details			  = writable<Array<T_Details>>();
+export const s_t_counts				  = writable<Array<T_Counts>>();
+
+export const s_t_database			  = writable<string>();
 export const s_t_startup			  = writable<T_Startup>();
 export const s_t_graph				  = writable<T_Graph>();
 export const s_t_tree				  = writable<T_Tree>();
@@ -40,6 +42,6 @@ export const s_count_mouse_up		  = writable<number>();
 export const s_count_rebuild		  = writable<number>();
 export const s_count_resize			  = writable<number>();
 export const s_font_size			  = writable<number>();
-export const s_details_show			  = writable<boolean>();
+export const s_show_details			  = writable<boolean>();
 export const s_device_isMobile		  = writable<boolean>();
 export const s_rebuild_isInProgress	  = writable<boolean>();

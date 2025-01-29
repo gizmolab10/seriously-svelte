@@ -2,7 +2,7 @@
 	import { g, k, u, ux, w, Thing, Point, Angle, debug, T_Layer } from '../../ts/common/Global_Imports';
 	import { s_thing_color, s_ancestry_focus, s_g_radial } from '../../ts/state/S_Stores';
 	import { s_ring_rotation_angle, s_ring_rotation_radius } from '../../ts/state/S_Stores';
-	import { signals, svgPaths, T_Ring, databases } from '../../ts/common/Global_Imports';
+	import { signals, svgPaths, T_RingZone, databases } from '../../ts/common/Global_Imports';
 	import { s_count_mouse_up, s_g_active_cluster } from '../../ts/state/S_Stores';
 	import { s_graph_rect, s_mouse_location_scaled } from '../../ts/state/S_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
@@ -45,7 +45,7 @@
 		// mouse up ... end all (rotation, resizing, paging)
 		if (mouse_up_count != $s_count_mouse_up) {
 			mouse_up_count = $s_count_mouse_up;
-			if (ringZone_forMouseLocation() == T_Ring.miss) {			// only respond if NOT isHit
+			if (ringZone_forMouseLocation() == T_RingZone.miss) {			// only respond if NOT isHit
 				reset();
 			}
 		}
@@ -53,9 +53,9 @@
 
 	function update_cursor() {
 		switch (ringZone_forMouseLocation()) {
-			case T_Ring.paging: cursor = g.cluster_s_paging.cursor; break;
-			case T_Ring.resize: cursor = g.ring_resizing_state.cursor; break;
-			case T_Ring.rotate: cursor = g.ring_rotation_state.cursor; break;
+			case T_RingZone.paging: cursor = g.cluster_s_paging.cursor; break;
+			case T_RingZone.resize: cursor = g.ring_resizing_state.cursor; break;
+			case T_RingZone.rotate: cursor = g.ring_rotation_state.cursor; break;
 			default:			   cursor = 'default'; break;
 		}
 	}
@@ -70,8 +70,8 @@
 		rebuilds += 1;
 	}
 
-	function ringZone_forMouseLocation(): T_Ring {
-		let ring_zone = T_Ring.miss;
+	function ringZone_forMouseLocation(): T_RingZone {
+		let ring_zone = T_RingZone.miss;
 		const mouse_vector = w.mouse_vector_ofOffset_fromGraphCenter();
 		if (!!mouse_vector) {
 			const distance = mouse_vector.magnitude;
@@ -83,11 +83,11 @@
 			const thumb = inner - thin;
 			if (!!distance && distance <= resize) {
 				if (distance > rotate) {
-					ring_zone = T_Ring.resize;
+					ring_zone = T_RingZone.resize;
 				} else if (distance > inner) {
-					ring_zone = T_Ring.rotate;
+					ring_zone = T_RingZone.rotate;
 				} else if (distance > thumb) {
-					ring_zone = T_Ring.paging;
+					ring_zone = T_RingZone.paging;
 				}
 			}
 			debug.log_hover(` ring zone ${ring_zone} ${distance.toFixed(0)}`);
@@ -99,9 +99,9 @@
 	function detect_hovering() {
 		const ring_zone = ringZone_forMouseLocation();
 		const arc_isActive = ux.isAny_paging_arc_active;
-		const inRotate = ring_zone == T_Ring.rotate && !arc_isActive && !g.ring_resizing_state.isActive;
-		const inResize = ring_zone == T_Ring.resize && !arc_isActive && !g.ring_rotation_state.isActive;
-		const inPaging = ring_zone == T_Ring.paging && !g.ring_rotation_state.isActive && !g.ring_resizing_state.isActive;
+		const inRotate = ring_zone == T_RingZone.rotate && !arc_isActive && !g.ring_resizing_state.isActive;
+		const inResize = ring_zone == T_RingZone.resize && !arc_isActive && !g.ring_rotation_state.isActive;
+		const inPaging = ring_zone == T_RingZone.paging && !g.ring_rotation_state.isActive && !g.ring_resizing_state.isActive;
 		if (g.cluster_s_paging.isHovering != inPaging) {
 			g.cluster_s_paging.isHovering  = inPaging;
 			debug.log_hover(` hover paging  ${inPaging}`);
@@ -197,13 +197,13 @@
 				const mouse_wentDown_angle = w.mouse_angle_fromGraphCenter;
 				const rotation_angle = mouse_wentDown_angle.add_angle_normalized(-$s_ring_rotation_angle);
 				switch (ringZone_forMouseLocation()) {
-					case T_Ring.rotate:
+					case T_RingZone.rotate:
 						debug.log_radial(` begin rotate  ${rotation_angle.degrees_of(0)}`);
 						g.ring_rotation_state.active_angle = mouse_wentDown_angle;
 						g.ring_rotation_state.basis_angle = rotation_angle;
 						rebuilds += 1;
 						break;
-					case T_Ring.resize:
+					case T_RingZone.resize:
 						const radius_offset = w.mouse_distance_fromGraphCenter - $s_ring_rotation_radius;
 						debug.log_radial(` begin resize  ${radius_offset.toFixed(0)}`);
 						g.ring_rotation_state.active_angle = mouse_wentDown_angle + Angle.quarter;	// needed for cursor
@@ -211,7 +211,7 @@
 						g.ring_resizing_state.basis_radius = radius_offset;
 						rebuilds += 1;
 						break;
-					case T_Ring.paging: 
+					case T_RingZone.paging: 
 						const paging_angle = mouse_wentDown_angle.angle_normalized();
 						const map = $s_g_radial.g_clusterFor_mouseLocation;
 						if (!!map) {

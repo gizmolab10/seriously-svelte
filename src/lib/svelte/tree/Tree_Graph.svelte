@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_graph_rect, s_hierarchy, s_details_show, s_device_isMobile,  } from '../../ts/state/S_Stores';
+	import { s_graph_rect, s_hierarchy, s_show_details, s_device_isMobile,  } from '../../ts/state/S_Stores';
 	import { g, k, u, ux, show, Rect, Size, Point, Thing, T_Layer, debug } from '../../ts/common/Global_Imports';
 	import { s_id_popupView, s_ancestry_focus, s_user_graph_offset } from '../../ts/state/S_Stores';
 	import { signals, T_Signal, T_Control, Ancestry, databases } from '../../ts/common/Global_Imports';
@@ -60,7 +60,7 @@
 		const focusAncestry = $s_ancestry_focus;
 		if (!!focusAncestry && !!graphRect) {
 			childrenSize = focusAncestry.visibleProgeny_size;
-			const offsetX = 15 + ($s_details_show ? -k.width_details : 0) - (childrenSize.width / 2) - (k.dot_size / 2.5) + offsetX_ofFirstReveal;
+			const offsetX = 15 + ($s_show_details ? -k.width_details : 0) - (childrenSize.width / 2) - (k.dot_size / 2.5) + offsetX_ofFirstReveal;
 			const offsetY = -1 - graphRect.origin.y;
 			origin_ofFirstReveal = graphRect.center.offsetByXY(offsetX, offsetY);
 			if ($s_device_isMobile) {

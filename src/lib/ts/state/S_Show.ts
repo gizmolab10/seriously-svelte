@@ -1,15 +1,15 @@
 import { g, k, w, signals, preferences, T_Preference } from '../common/Global_Imports';
-import { s_details_show, s_t_tree } from './S_Stores';
-import { T_Info, T_Tree } from '../common/Enumerations';
+import { s_t_tree, s_t_counts, s_show_details } from './S_Stores';
+import { T_Info, T_Tree, T_Counts } from '../common/Enumerations';
 import type { Dictionary } from '../common/Types';
+import { get } from 'svelte/store';
 
 export class S_Show {
-	t_info	 = T_Info.focus;
 	debug_cursor = false;
-	t_trees	 = false;
 	arrowheads	 = false;
+	t_trees		 = false;	// logic for this is still under construction
 	traits		 = false;
-	tiny_dots	 = true;
+	t_info		 = T_Info.focus;
 
 	queryStrings_apply() {
 		const queryStrings = g.queryStrings;
@@ -21,15 +21,11 @@ export class S_Show {
         for (const [name, flag] of Object.entries(keyedFlags)) {
 			switch (name) {
 				case 'details':
-					s_details_show.set(flag);
+					s_show_details.set(flag);
 					break;
 				case 'traits':
 					this.traits = flag;
 					preferences.write_key(T_Preference.traits, flag);
-					break;
-				case 'tiny_dots':
-					this.tiny_dots = flag;
-					preferences.write_key(T_Preference.tiny_dots, flag);
 					break;
 				case 'arrowheads':
 					this.arrowheads = flag;
@@ -39,10 +35,14 @@ export class S_Show {
 		}
 	}
 
+	showing_countDots_ofType(t_counts: T_Counts): boolean { return get(s_t_counts).includes(T_Counts[t_counts]) }
+	get children_dots(): boolean { return  this.showing_countDots_ofType(T_Counts.children); }
+	get related_dots(): boolean { return  this.showing_countDots_ofType(T_Counts.related); }
+	get parent_dots(): boolean { return  this.showing_countDots_ofType(T_Counts.parents); }
+	
 	restore_state() {
 		this.traits = preferences.read_key(T_Preference.traits) ?? false;
-		this.tiny_dots = preferences.read_key(T_Preference.tiny_dots) ?? false;
-		s_details_show.set(preferences.read_key(T_Preference.details) ?? false);
+		s_show_details.set(preferences.read_key(T_Preference.details) ?? false);
 		this.arrowheads = preferences.read_key(T_Preference.arrowheads) ?? false;
 		this.t_info = preferences.read_key(T_Preference.t_info) ?? T_Info.focus;
 		s_t_tree.set(preferences.read_key(T_Preference.t_tree) ?? T_Tree.children);
@@ -52,7 +52,7 @@ export class S_Show {
 		s_t_tree.subscribe((relations: string) => {
 			preferences.write_key(T_Preference.t_tree, relations);
 		});
-		s_details_show.subscribe((flag: boolean) => {
+		s_show_details.subscribe((flag: boolean) => {
 			preferences.write_key(T_Preference.details, flag);
 			w.restore_state();
 			signals.signal_relayoutWidgets_fromFocus();

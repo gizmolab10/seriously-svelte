@@ -50,14 +50,14 @@ export default class G_Segment {
 
 	setup_path() {
 		const isFirst = this.index == 0;
-		const title_top = 5 - this.height / 6;
 		const size = this.size.expandedEquallyBy(-2);
 		const center = this.size.asPoint.dividedInHalf;
+		const title_y = (this.height - this.relative_font_size) / 5;
 		const path_center = center.offsetByXY(isFirst ? 10 : -10, -1);
 		const title_x = (isFirst ? 2 : 0) + 1 + this.relative_font_size / 2;
 		this.path = svgPaths.oblong(path_center, size, this.part);
-		this.title_origin = new Point(title_x, title_top);
 		this.viewBox = Rect.createSizeRect(size).viewBox;
+		this.title_origin = new Point(title_x, title_y);
 		this.origin = Point.x(this.left);
 	}
 

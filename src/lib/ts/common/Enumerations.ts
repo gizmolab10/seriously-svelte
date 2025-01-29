@@ -18,6 +18,12 @@ export enum T_Storage {
 	export = 'export',
 }
 
+export enum T_Counts {
+	children = 'children',
+	parents	 = 'parents',
+	related  = 'related',
+}
+
 export enum T_Tree {
 	children = 'children',
 	parents	 = 'parents',
@@ -39,7 +45,7 @@ export enum T_Line {
 export enum T_Details {	// do not change the order
 	storage,
 	tools,
-	recents,
+	display,
 	info,
 }
 
@@ -58,7 +64,7 @@ export enum T_Thing {
 	bulk	= '~',
 }
 
-export enum T_Ring {
+export enum T_RingZone {
 	miss   = 'miss',
 	resize = 'resize',
 	rotate = 'rotate',

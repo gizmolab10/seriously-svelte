@@ -9,16 +9,16 @@ import { svgPaths } from '../geometry/SVG_Paths';
 import { Hierarchy } from '../managers/Hierarchy';
 import { databases } from '../managers/Databases';
 import { Seriously_Range } from './Seriously_Range';
+import { S_Paging, S_Pages } from '../state/S_Paging';
 import { signals, T_Signal } from '../signals/Signals';
 import { Rect, Size, Point } from '../geometry/Geometry';
-import { S_Paging, S_Pages } from '../state/S_Paging';
-import { T_Tree, T_Graph, T_Startup } from './Enumerations';
 import { T_Quadrant, T_Orientation } from '../geometry/Angle';
+import { T_Create, T_Browser, T_Alteration } from './Enumerations';
 import { T_Preference, preferences } from '../managers/Preferences';
-import { T_Ring, T_Oblong, T_SvelteComponent } from './Enumerations';
-import { T_Layer, T_Browser, T_Predicate, T_Alteration } from './Enumerations';
-import { T_Thing, T_Trait, T_Element, T_Details, T_Rebuild } from './Enumerations';
-import { T_Info, T_Line, T_Tool, T_Create, T_Control, T_Storage } from './Enumerations';
+import { T_Oblong, T_Element, T_SvelteComponent } from './Enumerations';
+import { T_Line, T_Layer, T_Thing, T_Trait, T_Predicate } from './Enumerations';
+import { T_Tree, T_Graph, T_Rebuild, T_Startup, T_RingZone } from './Enumerations';
+import { T_Info, T_Tool, T_Counts, T_Control, T_Details, T_Storage } from './Enumerations';
 
 import Relationship from '../data/types/Relationship';
 import G_ArcSlider from '../geometry/G_ArcSlider';
@@ -64,14 +64,14 @@ export {
 	Rect, Size, Point, svgPaths,
 	show, files, builds, signals,
 	T_Layer, T_Predicate, T_Create,
-	T_Ring, T_Oblong, T_Alteration,
+	T_RingZone, T_Oblong, T_Alteration,
+	S_Element, S_Paging, S_Pages, S_Alteration,
 	Angle, Direction, T_Quadrant, T_Orientation,
 	Ancestry, Hierarchy, databases, preferences,
 	T_Element, Svelte_Wrapper, T_SvelteComponent,
-	S_Element, S_Paging, S_Pages, S_Alteration,
 	S_Mouse, T_Startup, S_Rotation, S_Expansion, S_Title_Edit,
 	User, Datum, Thing, Trait, Access, Predicate, Relationship,
 	T_Info, T_Thing, T_Trait, T_Graph, T_Tree, T_Details, T_Rebuild,
 	G_Widget, G_Children, G_ArcSlider, G_Segment, G_Cluster, G_Radial,
-	T_Line, T_Tool, T_Signal, T_Control, T_Browser, T_Storage, T_Preference,
+	T_Line, T_Tool, T_Signal, T_Counts, T_Control, T_Browser, T_Storage, T_Preference,
 };

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_s_title_edit, s_details_show, s_device_isMobile, } from '../../ts/state/S_Stores';
+	import { s_s_title_edit, s_show_details, s_device_isMobile, } from '../../ts/state/S_Stores';
 	import { g, k, u, ux, w, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
 	import { debug, T_Layer, Ancestry, T_Startup } from '../../ts/common/Global_Imports';
 	import { s_t_database, s_graph_rect, s_hierarchy } from '../../ts/state/S_Stores';
@@ -95,7 +95,7 @@
 					top: {k.height_banner}px;
 					z-index: {T_Layer.lines};'>
 				</div>
-				{#if $s_details_show}
+				{#if $s_show_details}
 					<Details/>
 					<div class='vertical-line'
 						style='
@@ -114,7 +114,7 @@
 					height: 100%;
 					position: fixed;
 					z-index: {T_Layer.backmost};
-					left: {$s_details_show ? k.width_details : 0}px;'>
+					left: {$s_show_details ? k.width_details : 0}px;'>
 				{#key $s_id_popupView}
 					{#if $s_id_popupView == T_Control.builds}
 						<BuildNotes/>

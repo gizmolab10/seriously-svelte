@@ -6,9 +6,11 @@ export default class Constants {
 	width_max = 200;
 	line_stretch = 22;
 	height_banner = 35;
+	tiny_font_size = 9;
 	halfIncrement = 0.5;
 	width_details = 200;
 	zoom_in_ratio = 1.1;
+	small_font_size = 11;
 	default_buttonSize = 16;
 	height_breadcrumbs = 33;
 	threshold_longClick = 800;

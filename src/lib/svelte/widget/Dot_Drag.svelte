@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { g, k, u, ux, show, Rect, Size, Point, Thing, debug, T_Layer, T_Tool } from '../../ts/common/Global_Imports';
 	import { databases, Svelte_Wrapper, T_Alteration, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { s_thing_color, s_t_graph, s_ancestries_grabbed } from '../../ts/state/S_Stores';
+	import { s_t_graph, s_t_counts, s_thing_color, s_ancestries_grabbed } from '../../ts/state/S_Stores';
 	import { signals, svgPaths, T_Graph, T_Element } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
@@ -27,7 +27,7 @@
 	let top = 0;
 	let dotDrag;
 
-	updateSVGPaths();
+	svgPaths_update();
 	updateColors_forHovering(true);
 
 	function handle_context_menu(event) { event.preventDefault(); }		// no default context menu on right-click
@@ -36,10 +36,15 @@
         const handleAltering = signals.handle_altering((blink_flag) => {
 			const invert_flag = blink_flag && !!ancestry && ancestry.canConnect_toToolsAncestry;
 			s_element.isInverted = invert_flag;
-			updateExtraSVGPaths();
+			svgPaths_updateExtra();
         });
 		return () => { handleAltering.disconnect(); };
 	});
+	
+	$: {
+		const _ = $s_t_counts;
+		svgPaths_update();
+	}
 
 	$: {
 		if (!!ancestry) {
@@ -69,23 +74,23 @@
 		}
 	}
 
-	function updateSVGPaths() {
+	function svgPaths_update() {
 		if (g.inRadialMode) {
 			svgPathFor_dragDot = svgPaths.circle_atOffset(size, size - 1);
 		} else {
 			svgPathFor_dragDot = svgPaths.oval(size, false);
 		}
-		updateExtraSVGPaths();
+		svgPaths_updateExtra();
 	}
 
-	function updateExtraSVGPaths() {
+	function svgPaths_updateExtra() {
 		svgPathFor_related = svgPathFor_ellipses = null;
 		if (!!thing) {
 			const count = thing.parents.length;		
-			if (count > 1) {
+			if (count > 1 && show.parent_dots) {
 				svgPathFor_ellipses = svgPaths.ellipses(6, 0.5, false, count, size / 2);
 			}
-			if (thing.hasRelated) {
+			if (thing.hasRelated && show.related_dots) {
 				svgPathFor_related = svgPaths.circle_atOffset(size, 3, new Point(-4.5, 0));
 			}
 		}
@@ -161,25 +166,23 @@
 							fill={s_element.fill}
 							svgPath={svgPathFor_dragDot}
 						/>
-						{#if show.tiny_dots}
-							{#if svgPathFor_ellipses}
-								<SVGD3 name={'drag-inside-' + name + '-svg'}
-									width={size}
-									height={size}
-									fill={s_element.stroke}
-									stroke={s_element.stroke}
-									svgPath={svgPathFor_ellipses}
-								/>
-							{/if}
-							{#if svgPathFor_related}
-								<SVGD3 name={'drag-related-' + name + '-svg'}
-									width={size}
-									height={size}
-									stroke={thing?.color}
-									fill={k.color_background}
-									svgPath={svgPathFor_related}
-								/>
-							{/if}
+						{#if svgPathFor_ellipses}
+							<SVGD3 name={'drag-inside-' + name + '-svg'}
+								width={size}
+								height={size}
+								fill={s_element.stroke}
+								stroke={s_element.stroke}
+								svgPath={svgPathFor_ellipses}
+							/>
+						{/if}
+						{#if svgPathFor_related}
+							<SVGD3 name={'drag-related-' + name + '-svg'}
+								width={size}
+								height={size}
+								stroke={thing?.color}
+								fill={k.color_background}
+								svgPath={svgPathFor_related}
+							/>
 						{/if}
 					</div>
 				{/key}

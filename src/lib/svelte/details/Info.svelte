@@ -19,8 +19,9 @@
 	const text_top = top + 52;
 	const font_size = `${font_ratio}em`;
 	const info_width = k.width_details - 30;
-	const traits_width = k.width_details - (margin * 2);
+	const separator_font_size = `${k.tiny_font_size}px`;
 	const traits_center = new Point(122, text_top - 20);
+	const traits_width = k.width_details - (margin * 2);
 	const traits_size = new Size(info_width - 58, k.default_buttonSize + 4);
 	const traits_rect = Rect.createCenterRect(traits_center, traits_size);
 	const s_element = ux.s_element_for(new Identifiable(id), T_Element.info, id);
@@ -29,7 +30,7 @@
 	let text_box_size = new Size(info_width - 4, 68);
 	let thingHID: Integer | null = thing?.hid;
 	let information: Array<Dictionary> = [];
-	let color_origin = new Point(67, 165);
+	let color_origin = new Point(70, 165);
 	let grabs = $s_ancestries_grabbed;
 	let color = k.thing_color_default;
 	let thing_title = thing?.title;
@@ -109,7 +110,7 @@
 			tops.push(top);
 			top += heightAt(i);
 		}
-		color_origin = new Point(73, tops[TI.traits]);
+		color_origin = new Point(76, tops[TI.traits]);
 	}
 
 	function update_forKind() {
@@ -167,6 +168,7 @@
 				color:black;
 				top:{top}px;
 				left:{margin}px;
+				font-size:0.8em;
 				position:absolute;
 				width:{traits_width}px;'>
 			{#if information.length != 0}
@@ -179,7 +181,7 @@
 					origin={new Point(45, tops[TI.segments])}
 					titles={[T_Info.focus, T_Info.selection]}/>
 				{#key thing_title}
-					<Separator top={tops[TI.before_title]} left=5 title='title' width={info_width}/>
+					<Separator title_font_size={separator_font_size} top={tops[TI.before_title]} left=5 title='title' width={info_width}/>
 					<div style='
 						position:absolute;
 						text-align:center;
