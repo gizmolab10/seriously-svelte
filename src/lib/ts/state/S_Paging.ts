@@ -104,7 +104,7 @@ export class S_Pages {
 
 	get thing(): Thing | null { return get(s_hierarchy).thing_forHID(this.thing_id.hash()) ?? null; }
 	get description(): string { return this.description_for(true) + k.big_separator + this.description_for(false); }
-	s_paging_for(map: G_Cluster): S_Paging { return this.s_paging_forPointingTo(map.points_toChildren, map.predicate); }
+	s_paging_for(g_cluster: G_Cluster): S_Paging { return this.s_paging_forPointingTo(g_cluster.points_toChildren, g_cluster.predicate); }
 	s_pagings_for(points_toChildren: boolean): Array<S_Paging> { return points_toChildren ? this.outward_s_pagings : this.inward_s_pagings; }
 
 	add_s_paging(s_paging: S_Paging) {

@@ -82,10 +82,10 @@
 					isHit_closure={isHit_closure}
 					mouse_state_closure={hover_closure}>
 					<svg id='arc' viewBox={viewBox}>
-						<path id='arc' stroke={arc_color} fill=transparent d={g_cluster.g_arcSlider.svgPathFor_arc}/>
+						<path id='arc' stroke={arc_color} fill=transparent d={g_cluster.g_arcSlider.svgPathFor_arcSlider}/>
 						<path id='fork' stroke={fork_color} fill=transparent d={g_cluster.g_arcSlider.svgPathFor_forkRadial}/>
 						{#if g_cluster.isPaging && g_cluster.widgets_shown > 1}
-							<path id='thumb' fill={thumb_color} d={g_cluster.g_arcSlider.svgPathFor_arc}/>
+							<path id={thumb_name} fill={thumb_color} d={g_cluster.g_thumbSlider.svgPathFor_arcSlider}/>
 						{/if}
 					</svg>
 				</Mouse_Responder>

@@ -213,12 +213,12 @@
 						break;
 					case T_RingZone.paging: 
 						const paging_angle = mouse_wentDown_angle.angle_normalized();
-						const map = $s_g_radial.g_clusterFor_mouseLocation;
-						if (!!map) {
+						const g_cluster = $s_g_radial.g_clusterFor_mouseLocation;
+						if (!!g_cluster) {
 							debug.log_radial(` begin paging  ${paging_angle.degrees_of(0)}`);
-							map.paging_rotation.active_angle = paging_angle;
-							map.paging_rotation.basis_angle = paging_angle;
-							$s_g_active_cluster = map;
+							g_cluster.paging_rotation.active_angle = paging_angle;
+							g_cluster.paging_rotation.basis_angle = paging_angle;
+							$s_g_active_cluster = g_cluster;
 							rebuilds += 1;
 						}
 						break;

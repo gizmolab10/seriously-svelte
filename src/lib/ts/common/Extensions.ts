@@ -133,12 +133,12 @@ Object.defineProperty(String.prototype, 'html_encode', {
 
 declare global {
 	interface Number {
-		roundToEven(): Integer;
+		roundToEven(): number;
 		angle_normalized(): number;
 		expressZero_asHyphen(): string;
-		toFixed(precision: Integer): string;
+		toFixed(precision: number): string;
 		angle_normalized_aroundZero(): number;
-		degrees_of(precision: Integer): string;
+		degrees_of(precision: number): string;
 		straddles_zero(other: number): boolean;
 		add_angle_normalized(angle: number): number;
 		normalize_between_zeroAnd(value: number): number;

@@ -21,19 +21,19 @@ import { get } from 'svelte/store';
 
 export default class G_Cluster {
 	focus_ancestry: Ancestry = get(s_ancestry_focus);
-	g_widgets: Array<G_Widget> = [];
+	g_thumbSlider = new G_ArcSlider();
 	ancestries: Array<Ancestry> = [];
+	g_widgets: Array<G_Widget> = [];
+	g_arcSlider = new G_ArcSlider();
 	color = k.thing_color_default;
 	arc_straddles_nadir = false;
+	points_toChildren: boolean;
 	arc_straddles_zero = false;
 	arc_in_lower_half = false;
 	label_center = Point.zero;
-	thumbg_arcSlider = new G_ArcSlider();
 	label_position_angle = 0;
 	cluster_title = k.empty;
-	g_arcSlider = new G_ArcSlider();
 	predicate: Predicate;
-	points_toChildren: boolean;
 	center = Point.zero;
 	widgets_shown = 0;
 	total_widgets = 0;
@@ -67,20 +67,20 @@ export default class G_Cluster {
 	}
 
 	get paging_radius(): number { return k.paging_arc_thickness * 0.8; }
-	get maximum_paging_index(): number { return this.total_widgets - this.widgets_shown; }
 	get titles(): string { return this.ancestries.map(a => a.title).join(', '); }
 	get description(): string { return `(${this.cluster_title}) ${this.titles}`; }
-	get paging_index_ofFocus(): number { return this.s_paging_ofFocus?.index ?? 0; }
+	get paging_index_ofFocus(): number { return this.s_focusPaging?.index ?? 0; }
 	get paging_rotation(): S_Rotation { return ux.rotation_state_forName(this.name); }
+	get maximum_paging_index(): number { return this.total_widgets - this.widgets_shown; }
 	get kind(): string { return this.predicate?.kind.unCamelCase().lastWord() ?? k.empty; }
 	get name(): string { return `${this.focus_ancestry.title}-cluster-${this.direction_kind}`; }
 	get fork_radial(): Point { return Point.fromPolar(get(s_ring_rotation_radius), this.g_arcSlider.fork_angle); }
-	get s_paging_ofFocus(): S_Paging | null { return this.s_paging_ofAncestry(this.focus_ancestry); }
+	get s_focusPaging(): S_Paging | null { return this.s_ancestryPaging(this.focus_ancestry); }
 
 	get thumb_isHit(): boolean {
 		const offset = Point.square(-get(s_ring_rotation_radius));
 		const mouse_vector = w.mouse_vector_ofOffset_fromGraphCenter(offset);
-		return this.isPaging && !!mouse_vector && mouse_vector.isContainedBy_path(this.thumbg_arcSlider.svgPathFor_arc);
+		return this.isPaging && !!mouse_vector && mouse_vector.isContainedBy_path(this.g_thumbSlider.svgPathFor_arcSlider);
 	}
 
 	get direction_kind(): string {
@@ -112,12 +112,12 @@ export default class G_Cluster {
 	
 	static readonly PAGING: unique symbol;
 	
-	s_paging_ofAncestry(ancestry: Ancestry): S_Paging | null {
+	s_ancestryPaging(ancestry: Ancestry): S_Paging | null {
 		return ancestry.thing?.s_pages?.s_paging_for(this) ?? null;
 	}
 	
 	adjust_paging_index_byAdding_angle(delta_angle: number) {
-		const paging = this.s_paging_ofFocus;
+		const paging = this.s_focusPaging;
 		if (!!paging) {
 			const spread_angle = (-this.g_arcSlider.spread_angle).angle_normalized();
 			const delta_fraction = (delta_angle / spread_angle);
@@ -246,18 +246,20 @@ export default class G_Cluster {
 		// 1. start & end are sometimes reversed (hasNegative_spread)
 		// 2. arc can straddle nadir when fork y is outside of ring
 
-		const spread_angle = this.g_arcSlider.spread_angle;
-		const hasNegative_spread = spread_angle < 0
-		const inverter = hasNegative_spread ? 1 : -1;
-		const otherInverter = (hasNegative_spread == this.arc_straddles_nadir) ? -1 : 1;
-		const arc_spread = this.arc_straddles_nadir ? (-spread_angle).angle_normalized() : spread_angle;
-		const increment = arc_spread / this.total_widgets * inverter;
-		const arc_start = this.g_arcSlider.start_angle * otherInverter;
-		const start = arc_start + (increment * this.paging_index_ofFocus);
-		const end = start + (increment * this.widgets_shown);
-		this.thumbg_arcSlider.update_fork_angle((start + end) / 2);
-		this.thumbg_arcSlider.start_angle = start;
-		this.thumbg_arcSlider.end_angle = end;
+		if (this.total_widgets > 0) {	// avoid division by zero
+			const spread_angle = this.g_arcSlider.spread_angle;
+			const hasNegative_spread = spread_angle < 0
+			const inverter = hasNegative_spread ? 1 : -1;
+			const otherInverter = (hasNegative_spread == this.arc_straddles_nadir) ? -1 : 1;
+			const arc_spread = this.arc_straddles_nadir ? (-spread_angle).angle_normalized() : spread_angle;
+			const increment = arc_spread / this.total_widgets * inverter;
+			const arc_start = this.g_arcSlider.start_angle * otherInverter;
+			const start = arc_start + (increment * this.paging_index_ofFocus);
+			const end = start + (increment * this.widgets_shown);
+			this.g_thumbSlider.update_fork_angle((start + end) / 2);
+			this.g_thumbSlider.start_angle = start;
+			this.g_thumbSlider.end_angle = end;
+		}
 	}
 
 }

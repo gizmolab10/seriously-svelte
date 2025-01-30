@@ -92,13 +92,13 @@ export default class G_ArcSlider {
 
 	static readonly SVG_PATHS: unique symbol;
 
-	get svgPathFor_arc(): string {
+	get svgPathFor_arcSlider(): string {
 		const [start, end] = this.angles;
 		const paths = [
 			this.svgPathFor_start(start, this.outside_arc_radius),
-			this.svgPathFor_arcEdge(end, this.outside_arc_radius, false),
+			this.svgPathFor_arcSliderEdge(end, this.outside_arc_radius, false),
 			this.svgPathFor_cap(end, false),
-			this.svgPathFor_arcEdge(start, this.inside_arc_radius, true),
+			this.svgPathFor_arcSliderEdge(start, this.inside_arc_radius, true),
 			this.svgPathFor_cap(start, true),
 		];
 		return paths.join(k.space);
@@ -108,7 +108,7 @@ export default class G_ArcSlider {
 		return svgPaths.startOutAt(this.clusters_center, radius, start_angle);
 	}
 
-	svgPathFor_arcEdge(end_angle: number, radius: number, clockwise: boolean) {
+	svgPathFor_arcSliderEdge(end_angle: number, radius: number, clockwise: boolean) {
 		const sweep_flag = clockwise ? 0 : 1;
 		return svgPaths.arc_partial(this.clusters_center, radius, 0, sweep_flag, end_angle);
 	}

@@ -24,11 +24,11 @@ export default class G_Radial {
 		this.parent_g_clusters.forEach(l => l.destructor());
 	}
 
-	get g_clusters(): Array<G_Cluster> { return u.concatenateArrays(this.parent_g_clusters, this.child_g_clusters); }		// for lines and arcs
-	g_clusters_toChildren(points_toChildren: boolean): Array<G_Cluster> { return points_toChildren ? this.child_g_clusters : this.parent_g_clusters; }
-	g_cluster_pointing_toChildren(points_toChildren: boolean, predicate: Predicate): G_Cluster { return this.g_clusters_toChildren(points_toChildren)[predicate.stateIndex]; }
+	get g_clusters(): Array<G_Cluster> { return u.concatenateArrays(this.parent_g_clusters, this.child_g_clusters); }		// for lines and arc sliders
+	g_clusters_pointing_toChildren(toChildren: boolean): Array<G_Cluster> { return toChildren ? this.child_g_clusters : this.parent_g_clusters; }
+	g_cluster_pointing_toChildren(toChildren: boolean, predicate: Predicate): G_Cluster { return this.g_clusters_pointing_toChildren(toChildren)[predicate.stateIndex]; }
 
-	widgetg_arcSliderFor(ancestry: Ancestry): G_Widget | null {
+	g_widget_forAncestry(ancestry: Ancestry): G_Widget | null {
 		const g_widgets = this.g_widgets.filter(m => m.widget_ancestry?.hid == ancestry.hid);
 		return g_widgets.length > 0 ? g_widgets[0] : null;
 	}
@@ -67,7 +67,7 @@ export default class G_Radial {
 			const s_paging = get(s_ancestry_focus)?.thing?.s_pages?.s_paging_forPointingTo(points_toChildren, predicate);
 			const onePageOf_ancestries = s_paging?.onePage_from(ancestries) ?? [];
 			const g_cluster = new G_Cluster(ancestries.length, onePageOf_ancestries, predicate, points_toChildren);
-			const g_clusters = this.g_clusters_toChildren(points_toChildren);
+			const g_clusters = this.g_clusters_pointing_toChildren(points_toChildren);
 			g_clusters[predicate.stateIndex] = g_cluster;
 		}
 	}

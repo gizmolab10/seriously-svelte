@@ -89,9 +89,9 @@ export default class Ancestry extends Identifiable {
 	get titleRect():					 Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
 	get idBridging():				   string | null { return this.thing?.idBridging ?? null; }
 	get parentAncestry():			 Ancestry | null { return this.stripBack(); }
+	get g_widget():				 	 G_Widget | null { return get(s_g_radial)?.g_widget_forAncestry(this) ?? null; }
 	get predicate():				Predicate | null { return this.hierarchy.predicate_forKind(this.kindPredicate) }
 	get relationship():			 Relationship | null { return this.relationshipAt(); }
-	get g_widget():		   G_Widget | null { return get(s_g_radial)?.widgetg_arcSliderFor(this) ?? null; }
 	get titleWrapper():		   Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.hid, T_SvelteComponent.title); }
 	get ids_hashed():		 	 Array	   <Integer> { return this.ids.map(i => i.hash()); }
 	get ids():				 	 Array		<string> { return this.id.split(k.generic_separator); }
@@ -139,8 +139,8 @@ export default class Ancestry extends Identifiable {
 		const predicate = this.predicate;
 		const g_radial = get(s_g_radial);
 		if (!!predicate && !!g_radial) {
-			const map = g_radial?.g_cluster_pointing_toChildren(this.thing_isChild, predicate)
-			return map?.s_paging_ofAncestry(this) ?? null;
+			const g_cluster = g_radial?.g_cluster_pointing_toChildren(this.thing_isChild, predicate)
+			return g_cluster?.s_ancestryPaging(this) ?? null;
 		}
 		return null;	// either g_radial is not setup or predicate is bogus
 	}
@@ -374,7 +374,6 @@ export default class Ancestry extends Identifiable {
 		const isVisible_inRadial = points_toChild ? isVisible_forChild : this.hasParentRelationships && (isUnidirectional ? show.parent_dots : show.related_dots);
 		const show_outside_tinyDots = (get(s_t_graph) == T_Graph.tree) ? isVisible_forChild : isVisible_inRadial;
 		const outside_tinyDots_count = this.relationships_count_forChildren(points_toChild);
-		// console.log(`${this.title} ${this.kindPredicate} ${isUnidirectional} ${points_toChild} ${this.thing_isChild}`);
 		return !show_outside_tinyDots ? null : svgPaths.tinyDots_circular(k.diameterOf_outside_tinyDots, outside_tinyDots_count as Integer, this.points_right);
 	}
 
