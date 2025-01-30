@@ -183,9 +183,10 @@
 				background-color: {isGrabbed || g.inRadialMode ? k.color_background : 'transparent'};
 			'>
 			<Dot_Drag
+				name={s_drag.name}
 				ancestry={ancestry}
 				center={dragCenter}
-				name={s_drag.name}
+				points_right={points_right}
 			/>
 			<Title_Editor
 				ancestry={ancestry}

@@ -6,16 +6,17 @@
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import { onMount } from 'svelte';
+	export let points_right = true;
 	export let center = Point.zero;
 	export let name = k.empty;
     export let ancestry;
 	const radius = k.dot_size;
 	const diameter = radius * 2;
 	const s_element = ux.s_element_forName(name);		// survives onDestroy, created by widget
-	let dragWrapper!: Svelte_Wrapper;
-	let svgPathFor_related = k.empty;
 	let svgPathFor_ellipses = k.empty;
+	let svgPathFor_related = k.empty;
 	let svgPathFor_dragDot = k.empty;
+	let dragWrapper!: Svelte_Wrapper;
     let thing = ancestry.thing;
 	let isGrabbed = false;
 	let isHovering = true;
@@ -91,7 +92,8 @@
 				svgPathFor_ellipses = svgPaths.ellipses(6, 0.5, false, count, size / 2);
 			}
 			if (thing.hasRelated && show.related_dots) {
-				svgPathFor_related = svgPaths.circle_atOffset(size, 3, new Point(-4.5, 0));
+				const x = (($s_t_graph == T_Graph.tree) ? 4.5 : 3.2) * (points_right ? -1 : 1);
+				svgPathFor_related = svgPaths.circle_atOffset(size, 3, new Point(x, 0));
 			}
 		}
 	}
