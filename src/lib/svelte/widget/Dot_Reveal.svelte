@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { s_t_counts, s_ancestries_grabbed, s_ancestries_expanded, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
-	import { k, u, ux, show, Size, Thing, Point, debug, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
-	import { Predicate, Svelte_Wrapper, T_Layer, T_Graph, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { s_hierarchy, s_t_graph, s_s_alteration } from '../../ts/state/S_Stores';
+	import { k, u, ux, Size, Thing, Point, debug, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Graph, Predicate, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
+	import { s_ancestries_grabbed, s_ancestries_expanded, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
+	import { s_t_counts, s_hierarchy, s_t_graph, s_s_alteration } from '../../ts/state/S_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import { onMount } from 'svelte';
@@ -14,14 +14,12 @@
     export let hover_isReversed = false;
 	const outside_tinyDots_count = ancestry.relationships_forChildren(points_toChild).length;
 	const s_element = ux.s_element_forName(name);		// survives onDestroy, created by widget
-	const size = k.dot_size;
-	let svgPathFor_bulkAlias = svgPaths.circle_atOffset(16, 6);
+	let svgPathFor_outer_tinyDots: string | null = null;
+	let svgPathFor_bulkAlias: string | null = null;
 	let tinyDotsOffset = new Point(0.65, -0.361);
-	let tinyDotsDelta = size * -0.4 + 0.01;
+	let tinyDotsDelta = k.dot_size * -0.4 + 0.01;
 	let svgPathFor_revealDot = k.empty;
 	let revealWrapper!: Svelte_Wrapper;
-	let tinyDotsDiameter = size * 1.8;
-	let hasBulkAliasPath = false;
 	let bulkAliasOffset = 0;
 	let dotReveal = null;
 	let rebuilds = 0;
@@ -66,16 +64,12 @@
 
 	function svgPath_update() {
 		const thing = ancestry.thing;
-		hasBulkAliasPath = thing.isBulkAlias;
-		bulkAliasOffset = hasBulkAliasPath ? 0 : -1;
-		if (!ancestry.showsReveal) {
-			svgPathFor_revealDot = svgPaths.circle_atOffset(size, size - 1);
-		} else {
-			svgPathFor_revealDot = svgPaths.fat_polygon(size, ancestry.direction_ofReveal);
+		bulkAliasOffset = thing.isBulkAlias ? 0 : -1;
+		if (thing.isBulkAlias) {
+			svgPathFor_bulkAlias = svgPaths.circle_atOffset(k.dot_size, 3);
 		}
-		if (hasBulkAliasPath) {
-			svgPathFor_bulkAlias = svgPaths.circle_atOffset(size, 3);
-		}
+		svgPathFor_outer_tinyDots = ancestry.svgPathFor_tinyDots_outsideReveal(points_toChild);
+		svgPathFor_revealDot = ancestry.svgPathFor_revealDot;
 		rebuilds += 1;
 	}
 
@@ -116,8 +110,8 @@
 {#key rebuilds}
 	{#if s_element}
 		<Mouse_Responder
-			width={size}
-			height={size}
+			width={k.dot_size}
+			height={k.dot_size}
 			center={center}
 			name={s_element.name}
 			mouse_state_closure={up_hover_closure}>
@@ -125,8 +119,8 @@
 				bind:this={dotReveal}
 				on:contextmenu={handle_context_menu}
 				style='
-					width: {size}px;
-					height: {size}px;
+					width: {k.dot_size}px;
+					height: {k.dot_size}px;
 					z-index: {zindex};
 				'>
 				{#key svgPathFor_revealDot}
@@ -134,39 +128,39 @@
 						fill={debug.lines ? 'transparent' : s_element.fill}
 						svgPath={svgPathFor_revealDot}
 						stroke={ancestry.thing.color}
-						height={size}
-						width={size}
+						height={k.dot_size}
+						width={k.dot_size}
 					/>
 				{/key}
-				{#if hasBulkAliasPath}
+				{#if !!svgPathFor_bulkAlias}
 					<div class='bulk-alias-dot' style='
 						left:{bulkAliasOffset}px;
 						top:{bulkAliasOffset}px;
 						position:absolute;
-						height:{size}px;
-						width:{size}px;'>
+						height:{k.dot_size}px;
+						width:{k.dot_size}px;'>
 						<SVGD3 name='bulk-alias-dot-svg'
 							svgPath={svgPathFor_bulkAlias}
 							stroke={s_element.stroke}
 							fill={s_element.stroke}
-							height={size}
-							width={size}
+							height={k.dot_size}
+							width={k.dot_size}
 						/>
 					</div>
 				{/if}
-				{#if (!ancestry.isExpanded || $s_t_graph == T_Graph.radial) && ancestry.hasChildRelationships && show.children_dots}
+				{#if !!svgPathFor_outer_tinyDots}
 					<div class='outside-tiny-dots' style='
 						left:{tinyDotsDelta + tinyDotsOffset.x}px;
 						top:{tinyDotsDelta + tinyDotsOffset.y}px;
-						height:{tinyDotsDiameter}px;
-						width:{tinyDotsDiameter}px;
+						height:{k.diameterOf_outside_tinyDots}px;
+						width:{k.diameterOf_outside_tinyDots}px;
 						position:absolute;'>
 						<SVGD3 name='outside-tiny-dots-svg'
-							svgPath={svgPaths.tinyDots_circular(tinyDotsDiameter, outside_tinyDots_count, ancestry.points_right)}
+							svgPath={svgPathFor_outer_tinyDots}
+							height={k.diameterOf_outside_tinyDots}
+							width={k.diameterOf_outside_tinyDots}
 							stroke={ancestry.thing.color}
 							fill={ancestry.thing.color}
-							height={tinyDotsDiameter}
-							width={tinyDotsDiameter}
 						/>
 					</div>
 				{/if}

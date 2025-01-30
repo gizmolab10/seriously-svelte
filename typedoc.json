@@ -1,0 +1,6 @@
+{
+	"out": "docs",
+	"theme": "default",
+	"entryPoints": ["src/lib"],
+	"entryPointStrategy": "expand",
+}

@@ -1,10 +1,10 @@
-import { g, k, u, Rect, Size, Thing, debug, signals, wrappers, Direction, Predicate } from '../../common/Global_Imports';
-import { Hierarchy, databases, Relationship, Svelte_Wrapper, G_Widget } from '../../common/Global_Imports';
-import { T_Element, T_Predicate, T_Alteration, T_SvelteComponent } from '../../common/Global_Imports';
-import { s_g_radial, s_s_alteration, s_s_title_edit } from '../../state/S_Stores';
-import { s_hierarchy, s_ancestry_focus, s_ancestry_showing_tools } from '../../state/S_Stores';
+import { Direction, Predicate, Hierarchy, databases, Relationship, Svelte_Wrapper } from '../../common/Global_Imports';
+import { g, k, u, show, Rect, Size, Thing, debug, signals, wrappers, svgPaths } from '../../common/Global_Imports';
+import { T_Graph, T_Element, T_Predicate, T_Alteration, T_SvelteComponent } from '../../common/Global_Imports';
+import { s_t_graph, s_hierarchy, s_ancestry_focus, s_ancestry_showing_tools } from '../../state/S_Stores';
 import { s_ancestries_grabbed, s_ancestries_expanded, } from '../../state/S_Stores';
-import { S_Paging, S_Title_Edit } from '../../common/Global_Imports';
+import { s_g_radial, s_s_alteration, s_s_title_edit } from '../../state/S_Stores';
+import { G_Widget, S_Paging, S_Title_Edit } from '../../common/Global_Imports';
 import type { Integer } from '../../common/Types';
 import Identifiable from '../basis/Identifiable';
 import { get, Writable } from 'svelte/store';
@@ -128,6 +128,13 @@ export default class Ancestry extends Identifiable {
 		return this.relationship?.idChild ?? k.unknown;
 	}
 
+	get svgPathFor_revealDot(): string {
+		if (this.showsReveal) {
+			return svgPaths.fat_polygon(k.dot_size, this.direction_ofReveal);
+		}
+		return svgPaths.circle_atOffset(k.dot_size, k.dot_size - 1);
+	}
+
 	get s_paging(): S_Paging | null {
 		const predicate = this.predicate;
 		const g_radial = get(s_g_radial);
@@ -225,7 +232,7 @@ export default class Ancestry extends Identifiable {
 		return false;
 	}
 	
-	relationships_count_for(toChild: boolean):						 number { return this.relevantRelationships.length; }
+	relationships_count_forChildren(forChildren: boolean):			 number { return this.relationships_forChildren(forChildren).length; }
 	includedInStore_ofAncestries(store: Writable<Array<Ancestry>>): boolean { return this.includedInAncestries(get(store)); }
 	matchesStore(store: Writable<Ancestry | null>):					boolean { return get(store)?.ancestry_hasEqualID(this) ?? false; }
 	includesPredicate_ofKind(kindPredicate: string):				boolean { return this.thing?.hasParents_forKind(kindPredicate) ?? false; }
@@ -240,8 +247,8 @@ export default class Ancestry extends Identifiable {
 		return this.thing?.relationships_ofKind_forParents(kindPredicate, forParents) ?? [];
 	}
 
-	showsReveal_forPointingToChild(toChild: boolean): boolean {
-		return (this.relationships_forChildren(toChild).length > 0) || (this.thing?.isBulkAlias ?? false);
+	showsReveal_forPointingToChild(points_toChild: boolean): boolean {
+		return (this.relationships_count_forChildren(points_toChild) > 0) || (this.thing?.isBulkAlias ?? false);
 	}
 
 	thingAt(back: number): Thing | null {			// 1 == last
@@ -361,6 +368,16 @@ export default class Ancestry extends Identifiable {
 		return true;
 	}
 
+	svgPathFor_tinyDots_outsideReveal(points_toChild: boolean): string | null {
+		const isUnidirectional = !(this.predicate?.isBidirectional ?? true);
+		const isVisible_forChild = this.hasChildRelationships && show.children_dots && !this.isExpanded;
+		const isVisible_inRadial = points_toChild ? isVisible_forChild : this.hasParentRelationships && (isUnidirectional ? show.parent_dots : show.related_dots);
+		const show_outside_tinyDots = (get(s_t_graph) == T_Graph.tree) ? isVisible_forChild : isVisible_inRadial;
+		const outside_tinyDots_count = this.relationships_count_forChildren(points_toChild);
+		// console.log(`${this.title} ${this.kindPredicate} ${isUnidirectional} ${points_toChild} ${this.thing_isChild}`);
+		return !show_outside_tinyDots ? null : svgPaths.tinyDots_circular(k.diameterOf_outside_tinyDots, outside_tinyDots_count as Integer, this.points_right);
+	}
+
 	things_childrenFor(kindPredicate: string): Array<Thing> {
 		const relationships = this.thing?.relationships_ofKind_forParents(kindPredicate, true);
 		let children: Array<Thing> = [];
@@ -452,8 +469,8 @@ export default class Ancestry extends Identifiable {
 
 	childAncestries_ofKind(kindPredicate: string): Array<Ancestry> {
 		let ancestries: Array<Ancestry> = [];
+		const childRelationships = this.childRelationships;
 		const isContains = kindPredicate == T_Predicate.contains;
-		const childRelationships = this.relationships_ofKind_forParents(kindPredicate, false);
 		if (childRelationships.length > 0) {
 			for (const childRelationship of childRelationships) {					// loop through all child relationships
 				if (childRelationship.kindPredicate == kindPredicate) {
@@ -556,7 +573,7 @@ export default class Ancestry extends Identifiable {
 		return changed;
 	}
 
-	assureIsVisible_inTree() {
+	assureisVisible_forChild() {
 		// visit and expand each parent until this
 		let ancestry: Ancestry | null = this;
 		do {

@@ -1,5 +1,5 @@
 import { Rect, Point, Ancestry, Hierarchy, G_Cluster, G_Radial } from '../common/Global_Imports';
-import { T_Tree, T_Graph, T_Counts, T_Details, T_Startup } from '../common/Global_Imports';
+import { T_Graph, T_Hierarchy, T_Details, T_Startup } from '../common/Global_Imports';
 import { S_Paging, S_Title_Edit, S_Alteration } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
 
@@ -15,12 +15,12 @@ export const s_s_alteration			  = writable<S_Alteration | null>();
 export const s_s_paging				  = writable<S_Paging>();
 
 export const s_t_details			  = writable<Array<T_Details>>();
-export const s_t_counts				  = writable<Array<T_Counts>>();
+export const s_t_counts				  = writable<Array<T_Hierarchy>>();
 
 export const s_t_database			  = writable<string>();
 export const s_t_startup			  = writable<T_Startup>();
 export const s_t_graph				  = writable<T_Graph>();
-export const s_t_tree				  = writable<T_Tree>();
+export const s_t_tree				  = writable<T_Hierarchy>();
 
 export const s_g_active_cluster		  = writable<G_Cluster | null>();
 export const s_g_radial				  = writable<G_Radial | null>();

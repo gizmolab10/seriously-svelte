@@ -15,7 +15,6 @@
 	//	also selection & hover for arcs & radial
 
 	// needs:
-	//	arrowheads
 	//	handle keys
 	//	edit titles (keydown terminates edit) BROKEN
 	//	displays editing tools when asked by user

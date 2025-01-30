@@ -3,7 +3,7 @@
 	import { T_Control, preferences, S_Element, T_Preference } from '../../ts/common/Global_Imports';
 	import { s_show_details, s_id_popupView, s_thing_fontFamily } from '../../ts/state/S_Stores';
 	import { g, k, u, ux, w, show, Point, T_Layer, signals } from '../../ts/common/Global_Imports';
-	import { svgPaths, T_Tree, T_Graph, T_Element } from '../../ts/common/Global_Imports';
+	import { svgPaths, T_Hierarchy, T_Graph, T_Element } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/data/basis/Identifiable';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Button from '../mouse/Button.svelte';
@@ -49,9 +49,9 @@
 
 	function next_graph_relations() {
 		switch ($s_t_tree) {
-			case T_Tree.parents:  return T_Tree.related;
-			case T_Tree.children: return T_Tree.parents;
-			default:				 return T_Tree.children;
+			case T_Hierarchy.parents:  return T_Hierarchy.related;
+			case T_Hierarchy.children: return T_Hierarchy.parents;
+			default:				 return T_Hierarchy.children;
 		}
 	}
 
@@ -73,7 +73,7 @@
 		const type = types[0];	// only ever has one element
 		switch (name) {
 			case 'graph':	  $s_t_graph = type as T_Graph;	break;
-			case 'relations': $s_t_tree	 = type as T_Tree;	break;
+			case 'relations': $s_t_tree	 = type as T_Hierarchy;	break;
 		}
 	}
 
@@ -110,7 +110,7 @@
 							name='tree'
 							origin={Point.x(114)}
 							selected={[$s_t_tree]}
-							titles={[T_Tree.children, T_Tree.parents, T_Tree.related]}
+							titles={[T_Hierarchy.children, T_Hierarchy.parents, T_Hierarchy.related]}
 							selection_closure={(titles) => selection_closure('relations', titles)}/>
 					{/key}
 				{/if}

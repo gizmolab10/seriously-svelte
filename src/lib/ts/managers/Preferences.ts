@@ -1,7 +1,7 @@
 import { s_hierarchy, s_t_tree, s_t_graph, s_t_counts, s_t_details } from '../state/S_Stores';
 import { s_s_paging, s_ancestries_grabbed, s_ancestries_expanded } from '../state/S_Stores';
-import { T_Tree, T_Graph, T_Counts, T_Details, S_Paging } from '../common/Global_Imports';
 import { s_ancestry_focus, s_font_size, s_thing_fontFamily } from '../state/S_Stores';
+import { T_Graph, T_Hierarchy, T_Details, S_Paging } from '../common/Global_Imports';
 import { s_ring_rotation_angle, s_ring_rotation_radius } from '../state/S_Stores';
 import { g, k, show, debug, Ancestry, databases } from '../common/Global_Imports';
 import { get } from 'svelte/store';
@@ -11,10 +11,8 @@ export enum T_Preference {
 	ring_radius	   = 'ring_radius',
 	user_offset	   = 'user_offset',
 	ring_angle     = 'ring_angle',
-	arrowheads	   = 'arrowheads',
 	t_details	   = 't_details',
 	font_size	   = 'font_size',
-	tiny_dots	   = 'tiny_dots',
 	expanded	   = 'expanded',
 	t_counts	   = 't_counts',
 	base_id		   = 'base_id',
@@ -35,35 +33,15 @@ export enum T_Preference {
 
 export class Preferences {
 	// for backwards compatibility with {focus, grabbed, expanded} which were stored as relationship ids (not as ancestry string)
-	usesRelationships		 = localStorage[T_Preference.relationships];
-	ignoreAncestries		 = !this.usesRelationships || this.usesRelationships == 'undefined';
+	usesRelationships	= localStorage[T_Preference.relationships];
+	ignoreAncestries	= !this.usesRelationships || this.usesRelationships == 'undefined';
+	
+	static readonly READ_WRITE: unique symbol;
 
-	read_key				(key: string): any | null { return this.parse(localStorage[key]); }
-	write_key<T>			(key: string, value: T) { localStorage[key] = JSON.stringify(value); }
-	writeDB_key<T>			(key: string, value: T) { this.write_key(this.db_keyFor(key), value); }
-	readDB_key				(key: string): any | null { return this.read_key(this.db_keyFor(key)); }
-	delete_s_paging_for (key: string) { this.writeDB_keyPair(T_Preference.s_pages, key, null); }
-	db_keyFor				(key: string): string { return this.keyPair_for(databases.db.t_database, key); }
-	keyPair_for				(key: string, sub_key: string): string { return `${key}${k.generic_separator}${sub_key}`; }
-
-	reset() {
-		const ids = Object.keys(T_Preference)
-			.filter(key => isNaN(Number(key))) // Exclude numeric keys
-			.map(key => T_Preference[key as keyof typeof T_Preference]);
-		for (const id of ids) {
-			if (id != 'local') {
-				this.write_key(id, null);
-			}
-		}
-
-	}
-
-	parse(key: string | null): any | null {
-		if (!key || key == 'undefined') {
-			return null;
-		}		
-		return JSON.parse(key);
-	}
+	read_key			(key: string): any | null { return this.parse(localStorage[key]); }
+	write_key<T>		(key: string, value: T) { localStorage[key] = JSON.stringify(value); }
+	writeDB_key<T>		(key: string, value: T) { this.write_key(this.db_keyFor(key), value); }
+	readDB_key			(key: string): any | null { return this.read_key(this.db_keyFor(key)); }
 
 	writeDB_keyPair<T>(key: string, sub_key: string, value: T): void {	// pair => key, sub_key
 		const dbKey = this.db_keyFor(key);
@@ -73,16 +51,6 @@ export class Preferences {
 		if (sub_keys.length == 0 || !sub_keys.includes(sub_key)) {
 			sub_keys.push(sub_key);
 			this.write_key(dbKey, sub_keys);								// then store they sub key by key
-		}
-	}
-
-	delete_sub_keys_forKey(key: string) {
-		const dbKey = this.db_keyFor(key);
-		const sub_keys: Array<string> = this.read_key(dbKey) ?? [];
-		this.write_key(dbKey, null);
-		for (const sub_key of sub_keys) {
-			const pair = this.keyPair_for(dbKey, sub_key);
-			this.write_key(pair, null);
 		}
 	}
 
@@ -98,6 +66,8 @@ export class Preferences {
 		}
 		return values;
 	}
+	
+	static readonly ANCESTRIES: unique symbol;
 
 	ancestries_writeDB_key(ancestries: Array<Ancestry>, key: string) {
 		const path_strings = ancestries.map(a => a.id);		// ancestry id is actually a path string (of Relationship ids)
@@ -121,6 +91,46 @@ export class Preferences {
 		debug.log_preferences(`  ${key.toUpperCase()} ${ancestries.map(a => a.id)}`);
 		return ancestries;
 	}
+	
+	static readonly DELETE: unique symbol;
+
+	delete_s_paging_for (key: string) { this.writeDB_keyPair(T_Preference.s_pages, key, null); }
+
+	delete_sub_keys_forKey(key: string) {
+		const dbKey = this.db_keyFor(key);
+		const sub_keys: Array<string> = this.read_key(dbKey) ?? [];
+		this.write_key(dbKey, null);
+		for (const sub_key of sub_keys) {
+			const pair = this.keyPair_for(dbKey, sub_key);
+			this.write_key(pair, null);
+		}
+	}
+	
+	static readonly PRIMITIVES: unique symbol;
+
+	db_keyFor	(key: string):					string { return this.keyPair_for(databases.db.t_database, key); }
+	keyPair_for	(key: string, sub_key: string):	string { return `${key}${k.generic_separator}${sub_key}`; }
+
+	parse(key: string | null): any | null {
+		if (!key || key == 'undefined') {
+			return null;
+		}		
+		return JSON.parse(key);
+	}
+
+	reset() {
+		const ids = Object.keys(T_Preference)
+			.filter(key => isNaN(Number(key))) // Exclude numeric keys
+			.map(key => T_Preference[key as keyof typeof T_Preference]);
+		for (const id of ids) {
+			if (id != 'local') {
+				this.write_key(id, null);
+			}
+		}
+
+	}
+	
+	static readonly SUBSCRIBE: unique symbol;
 
 	reactivity_subscribe() {
 		s_t_tree.subscribe((value) => {
@@ -148,6 +158,8 @@ export class Preferences {
 		})
 		show.reactivity_subscribe();
 	}
+	
+	static readonly RESTORE: unique symbol;
 
 	restore_defaults() {
 		if (this.ignoreAncestries) {
@@ -155,9 +167,9 @@ export class Preferences {
 		}
 		s_font_size.set(this.read_key(T_Preference.font_size) ?? 14);
 		s_t_graph.set(this.read_key(T_Preference.t_graph) ?? T_Graph.tree);
-		s_t_tree.set(this.read_key(T_Preference.t_tree) ?? T_Tree.children);
+		s_t_tree.set(this.read_key(T_Preference.t_tree) ?? T_Hierarchy.children);
 		s_ring_rotation_angle.set(this.read_key(T_Preference.ring_angle) ?? 0);
-		s_t_counts.set(this.read_key(T_Preference.t_counts) ?? [T_Counts.family]);
+		s_t_counts.set(this.read_key(T_Preference.t_counts) ?? [T_Hierarchy.children]);
 		s_thing_fontFamily.set(this.read_key(T_Preference.font) ?? 'Times New Roman');
 		s_t_details.set(this.read_key(T_Preference.t_details) ?? [T_Details.storage]);
 		s_ring_rotation_radius.set(Math.max(this.read_key(T_Preference.ring_radius) ?? 0, k.innermost_ring_radius));

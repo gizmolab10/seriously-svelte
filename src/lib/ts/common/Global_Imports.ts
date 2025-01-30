@@ -17,8 +17,8 @@ import { T_Create, T_Browser, T_Alteration } from './Enumerations';
 import { T_Preference, preferences } from '../managers/Preferences';
 import { T_Oblong, T_Element, T_SvelteComponent } from './Enumerations';
 import { T_Line, T_Layer, T_Thing, T_Trait, T_Predicate } from './Enumerations';
-import { T_Tree, T_Graph, T_Rebuild, T_Startup, T_RingZone } from './Enumerations';
-import { T_Info, T_Tool, T_Counts, T_Control, T_Details, T_Storage } from './Enumerations';
+import { T_Info, T_Tool, T_Control, T_Details, T_Storage } from './Enumerations';
+import { T_Hierarchy, T_Graph, T_Rebuild, T_Startup, T_RingZone } from './Enumerations';
 
 import Relationship from '../data/types/Relationship';
 import G_ArcSlider from '../geometry/G_ArcSlider';
@@ -71,7 +71,7 @@ export {
 	T_Element, Svelte_Wrapper, T_SvelteComponent,
 	S_Mouse, T_Startup, S_Rotation, S_Expansion, S_Title_Edit,
 	User, Datum, Thing, Trait, Access, Predicate, Relationship,
-	T_Info, T_Thing, T_Trait, T_Graph, T_Tree, T_Details, T_Rebuild,
 	G_Widget, G_Children, G_ArcSlider, G_Segment, G_Cluster, G_Radial,
-	T_Line, T_Tool, T_Signal, T_Counts, T_Control, T_Browser, T_Storage, T_Preference,
+	T_Info, T_Thing, T_Trait, T_Graph, T_Hierarchy, T_Details, T_Rebuild,
+	T_Line, T_Tool, T_Signal, T_Control, T_Browser, T_Storage, T_Preference,
 };

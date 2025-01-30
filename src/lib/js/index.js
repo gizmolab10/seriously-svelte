@@ -1,1 +1,1 @@
-export {default as SeriouslyApp} from './SeriouslyApp.svelte';
+export {default as SeriouslyApp} from '../svelte/main/SeriouslyApp.svelte';

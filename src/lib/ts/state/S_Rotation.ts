@@ -1,4 +1,4 @@
-import { k, debug, Angle, cursors, svgPaths } from '../common/Global_Imports';
+import { k, Angle, svgPaths } from '../common/Global_Imports';
 
 // for rotating (paging arcs and rotation ring)
 

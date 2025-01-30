@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, Point, T_Counts } from '../../ts/common/Global_Imports';
+	import { k, Point, T_Hierarchy } from '../../ts/common/Global_Imports';
 	import { s_t_counts } from '../../ts/state/S_Stores';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
@@ -7,11 +7,11 @@
 	const font_ratio = 0.8;
 	const info_width = k.width_details - 30;
 	const separator_font_size = `${k.tiny_font_size}px`;
-	const titles = [T_Counts[T_Counts.children], T_Counts[T_Counts.parents], T_Counts[T_Counts.related]];
+	const titles = [T_Hierarchy[T_Hierarchy.children], T_Hierarchy[T_Hierarchy.parents], T_Hierarchy[T_Hierarchy.related]];
 	let rebuilds = 0;
 	
 	function selection_closure(t_counts: Array<string>) {
-		$s_t_counts = t_counts as Array<T_Counts>;
+		$s_t_counts = t_counts as Array<T_Hierarchy>;
 		rebuilds += 1;
 	}
 

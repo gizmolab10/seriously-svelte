@@ -4,8 +4,9 @@ export default class Parent_Ancestry extends Ancestry {
 	ancestry_inReverse!: Ancestry;
 
 	constructor(ancestry: Ancestry) {
-		super(ancestry.t_database, ancestry.id, ancestry.kindPredicate, false);	// thing_isChild = false
+		super(ancestry.t_database, ancestry.id, ancestry.kindPredicate, false);
 		this.ancestry_inReverse = ancestry;
+		this.thing_isChild = false;
 	}
 
 	get depth(): number { return this.ancestry_inReverse.depth; }

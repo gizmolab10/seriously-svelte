@@ -18,13 +18,7 @@ export enum T_Storage {
 	export = 'export',
 }
 
-export enum T_Counts {
-	children = 'children',
-	parents	 = 'parents',
-	related  = 'related',
-}
-
-export enum T_Tree {
+export enum T_Hierarchy {
 	children = 'children',
 	parents	 = 'parents',
 	related  = 'related',
@@ -56,14 +50,6 @@ export enum T_Startup {
 	ready = 'ready',
 }
 
-export enum T_Thing {
-	generic	= '',
-	found	= '*',
-	roots	= '^',
-	root	= '!',
-	bulk	= '~',
-}
-
 export enum T_RingZone {
 	miss   = 'miss',
 	resize = 'resize',
@@ -76,6 +62,14 @@ export enum T_Oblong {
 	right  = 'right',
 	left   = 'left',
 	full   = 'full',
+}
+
+export enum T_Thing {
+	generic	= '',
+	found	= '?',
+	roots	= '^',
+	root	= '!',
+	bulk	= '~',
 }
 
 export enum T_Predicate {
