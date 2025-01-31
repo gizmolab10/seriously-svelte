@@ -1,7 +1,7 @@
 import { u, Thing, debug, Ancestry, Predicate, T_Predicate } from '../common/Global_Imports';
 import { s_hierarchy, s_s_paging, s_ancestry_focus } from '../state/S_Stores';
 import { G_Cluster, S_Paging, G_Widget } from '../common/Global_Imports';
-import Parent_Ancestry from '../data/runtime/Parent_Ancestry';
+import Reverse_Ancestry from '../data/runtime/Reverse_Ancestry';
 import { get } from 'svelte/store';
 
 export default class G_Radial {
@@ -54,10 +54,10 @@ export default class G_Radial {
 		return null;
 	}
 
-	parent_ancestries_maybeFor(focus: Thing, predicate: Predicate): Array<Ancestry> {
+	reverse_ancestries_maybeFor(focus: Thing, predicate: Predicate): Array<Ancestry> {
 		let ancestries = focus.uniqueAncestries_for(predicate);
 		if (predicate.kind == T_Predicate.isRelated) {
-			ancestries = ancestries.map(a => new Parent_Ancestry(a));
+			ancestries = ancestries.map(a => new Reverse_Ancestry(a));
 		}
 		return ancestries;
 	}
@@ -80,8 +80,8 @@ export default class G_Radial {
 		this.layout_clusterFor(childAncestries, Predicate.contains, true);
 		if (!!focus_thing) {
 			for (const predicate of get(s_hierarchy).predicates) {
-				let ancestries = this.parent_ancestries_maybeFor(focus_thing, predicate);
-				this.layout_clusterFor(ancestries, predicate, false);
+				let reverse_ancestries = this.reverse_ancestries_maybeFor(focus_thing, predicate);
+				this.layout_clusterFor(reverse_ancestries, predicate, false);
 			}
 		}
 	}

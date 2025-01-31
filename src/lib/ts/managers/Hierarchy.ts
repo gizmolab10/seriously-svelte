@@ -581,7 +581,7 @@ export class Hierarchy {
 		return true;
 	}
 
-	async relationships_contains_persistentCreateMissing(idBase: string) {
+	async relationships_lostAndFound_persistentCreate(idBase: string) {
 		for (const thing of this.things) {
 			if (!thing.isRoot && !this.relationship_whereHID_isChild(thing.hid) && thing.idBase == idBase && !!this.idRoot) {			// add orphaned things to root
 				const lost_and_found = await this.thing_lost_and_found_persistentCreateUnique();
@@ -1322,7 +1322,7 @@ export class Hierarchy {
 
 	async wrapUp_data_forUX() {
 		this.setup_root_andAncestry();
-		await this.relationships_contains_persistentCreateMissing(this.db.idBase);
+		// await this.relationships_lostAndFound_persistentCreate(this.db.idBase);
 		// await this.relationships_removeHavingNullReferences();
 		this.restore_fromPersistLocal();
 		this.signal_storage_redraw();
