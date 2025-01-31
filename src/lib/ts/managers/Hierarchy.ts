@@ -396,15 +396,16 @@ export class Hierarchy {
 	}
 
 	thing_extract_fromDict(dict: Dictionary) {
+		let type = dict.type;
 		const root = this.root;
-		if (this.replace_rootID != dict.id) {
-			let type = dict.type;
-			if (!!root && type == T_Thing.root) {
+		const isRootDict = type == T_Thing.root;
+		if ((!root && isRootDict) || (this.replace_rootID != dict.id)) {
+			if (!!root && isRootDict) {
 				type = k.empty;			// prevent multiple roots
 			}
 			this.thing_remember_runtimeCreateUnique(this.db.idBase, dict.id, dict.title, dict.color, type);
-		} else if (!!root && !this.db.isRemote) {
-			root.title = dict.title;	// new title for root
+		} else if (!!root && isRootDict && !this.db.isRemote) {
+			root.title = dict.title;	// new title for root (only in local or test)
 		}
 	}
 
@@ -1222,7 +1223,7 @@ export class Hierarchy {
 	static readonly FILES: unique symbol;
 
 	select_file_toUpload(SHIFT: boolean) {
-		s_id_popupView.set(T_Control.open);				// extract_fromDict
+		s_id_popupView.set(T_Control.import);				// extract_fromDict
 		this.replace_rootID = SHIFT ? k.empty : null;	// prime it to be updated from file (after user choses it)
 	}
 

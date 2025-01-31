@@ -369,10 +369,11 @@ export default class Ancestry extends Identifiable {
 	}
 
 	svgPathFor_tinyDots_outsideReveal(points_toChild: boolean): string | null {
+		const in_radial_mode = get(s_t_graph) == T_Graph.radial;
 		const isUnidirectional = !(this.predicate?.isBidirectional ?? true);
-		const isVisible_forChild = this.hasChildRelationships && show.children_dots && !this.isExpanded;
+		const isVisible_forChild = this.hasChildRelationships && show.children_dots && (in_radial_mode ? true : !this.isExpanded);
 		const isVisible_inRadial = points_toChild ? isVisible_forChild : this.hasParentRelationships && (isUnidirectional ? show.parent_dots : show.related_dots);
-		const show_outside_tinyDots = (get(s_t_graph) == T_Graph.tree) ? isVisible_forChild : isVisible_inRadial;
+		const show_outside_tinyDots = in_radial_mode ? isVisible_inRadial : isVisible_forChild;
 		const outside_tinyDots_count = this.relationships_count_forChildren(points_toChild);
 		return !show_outside_tinyDots ? null : svgPaths.tinyDots_circular(k.diameterOf_outside_tinyDots, outside_tinyDots_count as Integer, this.points_right);
 	}

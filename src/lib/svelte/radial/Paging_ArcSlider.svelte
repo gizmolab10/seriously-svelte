@@ -93,9 +93,9 @@
 		</div>
 	{/key}
 	<Angled_Text
-		font_size='0.6em'
 		text={g_cluster.cluster_title}
 		center={g_cluster.label_center}
+		font_size={k.small_font_size}px
 		font_family={$s_thing_fontFamily}
 		angle={g_cluster.g_arcSlider.label_text_angle}
 		color={$s_ancestry_focus.thing?.color ?? k.thing_color_default}/>

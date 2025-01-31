@@ -13,8 +13,8 @@
 	import BuildNotes from './BuildNotes.svelte';
 	import Debug from '../debug/Debug.svelte';
 	import Controls from './Controls.svelte';
-	import Open from '../file/Open.svelte';
 	import Box from '../debug/Box.svelte';
+	import Import from './Import.svelte';
 	import Graph from './Graph.svelte';
 	import { onMount } from 'svelte';
 	let chain = ['Panel'];
@@ -118,8 +118,8 @@
 				{#key $s_id_popupView}
 					{#if $s_id_popupView == T_Control.builds}
 						<BuildNotes/>
-					{:else if $s_id_popupView == T_Control.open}
-						<Open accept='.json'/>
+					{:else if $s_id_popupView == T_Control.import}
+						<Import accept='.json'/>
 					{:else if !$s_id_popupView}
 						<Graph/>
 					{/if}

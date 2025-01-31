@@ -258,8 +258,8 @@
 					<path class='resize-path' d={svgPathFor_resizingRing}
 						fill={u.opacitize(color, g.ring_resizing_state.fill_opacity)}
 						stroke={u.opacitize(color, g.ring_resizing_state.stroke_opacity)}/>
-					{#if debug.reticule}
-						<path class='reticule-path' stroke='green' fill=transparent d={svgPaths.t_cross(middle_radius * 2, -2)}/>
+					{#if debug.reticle}
+						<path class='reticle-path' stroke='green' fill=transparent d={svgPaths.t_cross(middle_radius * 2, -2)}/>
 					{/if}
 					<path class='rotate-path' d={svgPathFor_rotationRing}
 						fill={u.opacitize(color, g.ring_rotation_state.fill_opacity * (g.ring_resizing_state.isHighlighted ? 0.3 : 1))}

@@ -94,7 +94,7 @@ export default class G_Cluster {
 	update_label_geometry() {		// rotate text tangent to arc, at center of arc
 		const angle = this.g_arcSlider.center_angle;
 		const ortho = this.arc_in_lower_half ? Angle.quarter : Angle.three_quarters;
-		const radius = get(s_ring_rotation_radius) - k.ring_rotation_thickness + (this.arc_in_lower_half ? 5 : 0) + 15;
+		const radius = get(s_ring_rotation_radius) - k.ring_rotation_thickness + (this.arc_in_lower_half ? 5 : 0) + 10;
 		this.label_center = this.center.offsetBy(Point.fromPolar(radius, angle));
 		this.g_arcSlider.label_text_angle = ortho - angle;
 		this.label_position_angle = angle;

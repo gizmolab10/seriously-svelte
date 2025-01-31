@@ -86,7 +86,7 @@ export enum T_Control {
 	builds	 = 'show build notes',
 	smaller	 = 'smaller',
 	bigger	 = 'bigger',
-	open	 = 'open',
+	import	 = 'import',
 	help	 = '?',
 }
 
