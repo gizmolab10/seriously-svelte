@@ -47,6 +47,7 @@
 	}
 
 	$: {
+		const _ = $s_s_title_edit;		// react to s_s_title_edit
 
 		//////////////////////////////////////////////////////
 		//													//
@@ -56,7 +57,6 @@
 
 		if (!!ancestry) {
 			const hasGrabbed = ($s_ancestries_grabbed ?? [])?.length > 0;
-			const te_state = $s_s_title_edit; // react to s_s_title_edit
 			if (ancestry.isEditable) {
 				if (!!ancestry && (ancestry.isStoppingEdit ?? false)) {
 					debug.log_edit(`STOPPING ${bound_title}`);
@@ -81,8 +81,8 @@
 	export const _____PRIMITIVES_____: unique symbol = Symbol('_____PRIMITIVES_____');
  
 	function title_isEditing(): boolean {
-		const te_state = $s_s_title_edit;
-		return !!ancestry && !!te_state && te_state.editing && ancestry.ancestry_hasEqualID(te_state.editing);
+		const s_title_edit = $s_s_title_edit;
+		return !!ancestry && !!s_title_edit && s_title_edit.editing && ancestry.ancestry_hasEqualID(s_title_edit.editing);
 	}
 
 	function clearClicks() {
@@ -139,9 +139,11 @@
 	}
 
 	function handleBlur(event) {
-		stopAndClearEditing();
-		debug.log_edit(`BLUR ${bound_title}`);
-		updateInputWidth();
+		if (!!ancestry && !ancestry.isEditing) {
+			stopAndClearEditing();
+			debug.log_edit(`BLUR ${bound_title}`);
+			updateInputWidth();
+		}
 	}
 
 	function handle_doubleClick(event) {
@@ -219,9 +221,9 @@
 		invokeBlurNotClearEditing();
 		if (!!ancestry && ancestry.isEditing) {				
 			setTimeout(() => {									// eliminate infinite recursion
-				const te_state = $s_s_title_edit;
-				if (!!te_state) {
-					te_state.stop();
+				const s_title_edit = $s_s_title_edit;
+				if (!!s_title_edit) {
+					s_title_edit.stop();
 					signals.signal_relayoutWidgets_fromFocus();
 				}
 			}, 2);
