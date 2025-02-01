@@ -136,11 +136,6 @@ export class Preferences {
 		s_ring_rotation_radius.subscribe((radius: number) => {
 			this.write_key(T_Preference.ring_radius, radius);
 		});
-		s_s_paging.subscribe((s_paging: S_Paging) => {
-			if (!!s_paging) {
-				this.writeDB_keyPairs_forKey(T_Preference.paging, s_paging.sub_key, s_paging.description);
-			}
-		})
 		show.reactivity_subscribe();
 	}
 
@@ -159,20 +154,7 @@ export class Preferences {
 		this.reactivity_subscribe()
 	}
 
-	restore_paging() {
-		const descriptions = this.readDB_keyPairs_forKey(T_Preference.paging) ?? k.empty;
-		for (const description of descriptions) {
-			const s_paging = S_Paging.create_s_paging_from(description);
-			if (!!s_paging) {
-				const thing = s_paging?.thing;
-				if (!!thing) {
-					thing.s_pages.add_s_paging(s_paging);
-				} else {															// if no thing => delete paging state
-					this.writeDB_keyPairs_forKey(T_Preference.paging, s_paging.sub_key, null);
-				}
-			}
-		}
-	}
+	restore_paging() {}
 
 	restore_grabbed_andExpanded(force: boolean = false) {
 		if (g.eraseDB > 0) {

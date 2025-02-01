@@ -20,7 +20,7 @@
 	export let cursor = 'pointer';
 	export let align_left = true;
 	export let name = 'generic';
-	const s_mouse = ux.mouse_state_forName(name);	// persist across destroy/recreate
+	const s_mouse = ux.s_mouse_forName(name);	// persist across destroy/recreate
 	const mouse_timer = ux.mouse_timer_forName(name);	// persist across destroy/recreate
 	const mouse_responder_number = g.next_mouse_responder_number;
 	let mouse_isDown = false;
