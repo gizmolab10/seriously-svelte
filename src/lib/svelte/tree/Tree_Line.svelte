@@ -67,7 +67,7 @@
 		return false
 	}
 
-	function handle_mouse_state(mouse_state: S_Mouse): boolean {
+	function handle_mouse_state(s_mouse: S_Mouse): boolean {
 		return false;
 	}
 

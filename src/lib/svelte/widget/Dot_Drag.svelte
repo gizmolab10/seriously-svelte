@@ -111,20 +111,20 @@
 		}
 	}
 
-	function up_long_hover_clusure(mouse_state) {
+	function up_long_hover_clusure(s_mouse) {
 		if (!g.isAny_rotation_active) {
-			if (mouse_state.isHover) {
-				updateColors_forHovering(mouse_state.isOut);
-			} else if (mouse_state.isLong) {
+			if (s_mouse.isHover) {
+				updateColors_forHovering(s_mouse.isOut);
+			} else if (s_mouse.isLong) {
 				ancestry?.becomeFocus();
-			} else if (mouse_state.isUp) {
-				const shiftKey = mouse_state.event?.shiftKey ?? false
+			} else if (s_mouse.isUp) {
+				const shiftKey = s_mouse.event?.shiftKey ?? false
 				ancestry?.handle_singleClick_onDragDot(shiftKey);
 			}
 		}
 	}
 
-	function handle_mouse_state(mouse_state: S_Mouse): boolean {
+	function handle_mouse_state(s_mouse: S_Mouse): boolean {
 		return false;
 	}
 
@@ -138,7 +138,7 @@
 			center={center}
 			detect_longClick={true}
 			name={s_element.name}
-			mouse_state_closure={up_long_hover_clusure}>
+			mouse_closure={up_long_hover_clusure}>
 			<button class='drag'
 				bind:this={dotDrag}
 				id={'drag-for-' + name}

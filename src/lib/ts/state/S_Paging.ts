@@ -13,7 +13,7 @@ export class S_Paging {
 	widgets_shown = 0;
 	total_widgets = 0;
 	kind = k.empty;
-	index = 0;
+	index = 0;			// this value changes when uset moves paging arc [thumb] slider
 
 	constructor(index: number = 0, widgets_shown: number = 0, total_widgets: number = 0) {
 		this.index = index.force_between(0, total_widgets - widgets_shown);
@@ -85,7 +85,7 @@ export class S_Paging {
 
 }
 
-export class S_Pages {
+export class S_Thing_Pages {
 	outward_s_pagings: Array<S_Paging> = [];
 	inward_s_pagings: Array<S_Paging> = [];
 	thing_id = k.empty;

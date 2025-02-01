@@ -93,7 +93,7 @@
 	}
  
 	function isHit(): boolean { return false; }
-	function handle_mouse_state(mouse_state: S_Mouse): boolean { return false; }
+	function handle_mouse_state(s_mouse: S_Mouse): boolean { return false; }
 
 	function updateBorder_fromState() {
 		if (!!widget) {

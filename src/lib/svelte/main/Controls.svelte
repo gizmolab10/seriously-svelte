@@ -55,10 +55,10 @@
 		}
 	}
 
-	function button_closure_forT_Control(mouse_state, t_control) {
-		if (mouse_state.isHover) {
-			s_elements_byT_Control[t_control].isOut = mouse_state.isOut;
-		} else if (mouse_state.isUp) {
+	function button_closure_forT_Control(s_mouse, t_control) {
+		if (s_mouse.isHover) {
+			s_elements_byT_Control[t_control].isOut = s_mouse.isOut;
+		} else if (s_mouse.isUp) {
 			switch (t_control) {
 				case T_Control.help: g.showHelp(); break;
 				case T_Control.details: $s_show_details = !$s_show_details; break;
@@ -94,7 +94,7 @@
 				color='transparent'
 				center={new Point(lefts[0], details_top + 3)}
 				s_element={s_elements_byT_Control[T_Control.details]}
-				closure={(mouse_state) => button_closure_forT_Control(mouse_state, T_Control.details)}>
+				closure={(s_mouse) => button_closure_forT_Control(s_mouse, T_Control.details)}>
 				<img src='settings.svg' alt='circular button' width={size_small}px height={size_small}px/>
 			</Button>
 			{#key $s_t_graph}
@@ -125,7 +125,7 @@
 						name={T_Control.smaller}
 						center={new Point(width - 110, y_center)}
 						s_element={s_elements_byT_Control[T_Control.smaller]}
-						closure={(mouse_state) => button_closure_forT_Control(mouse_state, T_Control.smaller)}>
+						closure={(s_mouse) => button_closure_forT_Control(s_mouse, T_Control.smaller)}>
 						<svg
 							id='shrink-svg'>
 							<path
@@ -143,7 +143,7 @@
 						name={T_Control.bigger}
 						center={new Point(width - 140, y_center)}
 						s_element={s_elements_byT_Control[T_Control.bigger]}
-						closure={(mouse_state) => button_closure_forT_Control(mouse_state, T_Control.bigger)}>
+						closure={(s_mouse) => button_closure_forT_Control(s_mouse, T_Control.bigger)}>
 						<svg
 							id='enlarge-svg'>
 							<path
@@ -162,7 +162,7 @@
 				height={size_big}
 				center={new Point(width - 55, y_center)}
 				s_element={s_elements_byT_Control[T_Control.builds]}
-				closure={(mouse_state) => button_closure_forT_Control(mouse_state, T_Control.builds)}>
+				closure={(s_mouse) => button_closure_forT_Control(s_mouse, T_Control.builds)}>
 				<span style='font-family: {$s_thing_fontFamily};'>
 					{'build ' + k.build_number}
 				</span>
@@ -174,7 +174,7 @@
 				height={size_big}
 				center={new Point(width, y_center)}
 				s_element={s_elements_byT_Control[T_Control.help]}
-				closure={(mouse_state) => button_closure_forT_Control(mouse_state, T_Control.help)}>
+				closure={(s_mouse) => button_closure_forT_Control(s_mouse, T_Control.help)}>
 				<span
 					style='top:2px;
 						left:5.5px;

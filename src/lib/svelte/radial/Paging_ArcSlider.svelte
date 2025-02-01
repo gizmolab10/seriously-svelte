@@ -49,20 +49,20 @@
 
 	function update_colors() {
 		fork_color = u.opacitize(color, 0.3);
-		arc_color = u.opacitize(color, g.cluster_s_paging.stroke_opacity);
-		thumb_color = u.opacitize(color, g.ring_rotation_state.isActive ? 0.15 : g_cluster.paging_rotation.three_level_opacity);
+		arc_color = u.opacitize(color, g.s_cluster_rotation.stroke_opacity);
+		thumb_color = u.opacitize(color, g.s_ring_rotation.isActive ? 0.15 : g_cluster.paging_rotation.three_level_opacity);
 	}
 
-	function hover_closure(mouse_state) {
+	function hover_closure(s_mouse) {
 		if (g_cluster.isPaging) {
-			if (mouse_state.isHover) {
+			if (s_mouse.isHover) {
 				g_cluster.paging_rotation.isHovering = g_cluster.thumb_isHit;	// show highlight around ring
 				update_colors();
 			}
 		}
 	}
 
-	function isHit_closure(mouse_state: S_Mouse): boolean {
+	function isHit_closure(s_mouse: S_Mouse): boolean {
 		return g_cluster.thumb_isHit;
 	}
 
@@ -80,7 +80,7 @@
 					cursor={k.cursor_default}
 					center={w.center_ofGraphSize}
 					isHit_closure={isHit_closure}
-					mouse_state_closure={hover_closure}>
+					mouse_closure={hover_closure}>
 					<svg id='arc' viewBox={viewBox}>
 						<path id='arc' stroke={arc_color} fill=transparent d={g_cluster.g_arcSlider.svgPathFor_arcSlider}/>
 						<path id='fork' stroke={fork_color} fill=transparent d={g_cluster.g_arcSlider.svgPathFor_forkRadial}/>

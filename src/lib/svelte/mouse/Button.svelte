@@ -63,9 +63,9 @@
 		}
 	}
 
-	function button_closure(mouse_state: S_Mouse) {
-		closure(mouse_state);		// so container can adjust behavior or appearance
-		if (mouse_state.isHover) {	// NOT the same as isHovering
+	function button_closure(s_mouse: S_Mouse) {
+		closure(s_mouse);		// so container can adjust behavior or appearance
+		if (s_mouse.isHover) {	// NOT the same as isHovering
 			update_currentStyle();
 		}
 	}
@@ -78,7 +78,7 @@
 	height={height}
 	zindex={zindex}
 	center={center}
-	mouse_state_closure={button_closure}>
+	mouse_closure={button_closure}>
 	<button class='button' id={'button-for-' + name} style={currentStyle}>
 		<slot></slot>
 	</button>

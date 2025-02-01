@@ -37,17 +37,17 @@ export class S_Show {
 	
 	restore_state() {
 		this.traits = preferences.read_key(T_Preference.traits) ?? false;
-		this.t_info = preferences.read_key(T_Preference.t_info) ?? T_Info.focus;
-		s_show_details.set(preferences.read_key(T_Preference.details) ?? false);
-		s_t_tree.set(preferences.read_key(T_Preference.t_tree) ?? T_Hierarchy.children);
+		this.t_info = preferences.read_key(T_Preference.info) ?? T_Info.focus;
+		s_show_details.set(preferences.read_key(T_Preference.show_details) ?? false);
+		s_t_tree.set(preferences.read_key(T_Preference.tree) ?? T_Hierarchy.children);
 	}
 
 	reactivity_subscribe() {
 		s_t_tree.subscribe((relations: string) => {
-			preferences.write_key(T_Preference.t_tree, relations);
+			preferences.write_key(T_Preference.tree, relations);
 		});
 		s_show_details.subscribe((flag: boolean) => {
-			preferences.write_key(T_Preference.details, flag);
+			preferences.write_key(T_Preference.show_details, flag);
 			w.restore_state();
 			signals.signal_relayoutWidgets_fromFocus();
 		});

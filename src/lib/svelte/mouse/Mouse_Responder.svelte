@@ -5,7 +5,7 @@
 	import type { Handle_Result } from '../../ts/common/Types';
 	import { onMount } from 'svelte';
 	export let isHit_closure: () => {flag: boolean} | null = null;
-	export let mouse_state_closure = Handle_Result<S_Mouse>;
+	export let mouse_closure = Handle_Result<S_Mouse>;
 	export let height = k.default_buttonSize;
 	export let width = k.default_buttonSize;
 	export let origin: Point | null = null;
@@ -20,7 +20,7 @@
 	export let cursor = 'pointer';
 	export let align_left = true;
 	export let name = 'generic';
-	const mouse_state = ux.mouse_state_forName(name);	// persist across destroy/recreate
+	const s_mouse = ux.mouse_state_forName(name);	// persist across destroy/recreate
 	const mouse_timer = ux.mouse_timer_forName(name);	// persist across destroy/recreate
 	const mouse_responder_number = g.next_mouse_responder_number;
 	let mouse_isDown = false;
@@ -34,7 +34,7 @@
 	//		 width, height, closure & name						//
 	//															//
 	//	isHit_closure: caller can override hit geometry & logic	//
-	//	mouse_state_closure: give caller relevant mouse info	//
+	//	mouse_closure: give caller relevant mouse info	//
 	//															//
 	//////////////////////////////////////////////////////////////
 
@@ -64,23 +64,23 @@
 			} else {							// if this element's hover shape is not its bounding rect
 				isHit = isHit_closure();		// use hover shape
 			}
-			if (mouse_state.isHover != isHit) {
-				mouse_state.isHover = isHit;
-				mouse_state.isOut = !isHit;		// TODO: called far too often
-				mouse_state_closure(S_Mouse.hover(null, mouse_button_div, isHit));	// pass a null event
+			if (s_mouse.isHover != isHit) {
+				s_mouse.isHover = isHit;
+				s_mouse.isOut = !isHit;		// TODO: called far too often
+				mouse_closure(S_Mouse.hover(null, mouse_button_div, isHit));	// pass a null event
 			} else {
-				mouse_state_closure(S_Mouse.move(null, mouse_button_div, mouse_isDown, isHit));	// pass a null event
+				mouse_closure(S_Mouse.move(null, mouse_button_div, mouse_isDown, isHit));	// pass a null event
 			}
 		}
 	}
 
 	function reset() {	// tear down
-		mouse_state.clicks = 0;
+		s_mouse.clicks = 0;
 		mouse_timer.reset();
 	}
 
 	function create_state(isDown: boolean, isDouble: boolean = false, isLong: boolean = false): S_Mouse {
-		const state = u.copyObject(mouse_state);
+		const state = u.copyObject(s_mouse);
 		state.isUp = !isDown && !isDouble && !isLong;
 		state.element = mouse_button_div;
 		state.isDouble = isDouble;
@@ -95,21 +95,21 @@
 	function handle_pointerUp(event) {
 		if (detect_mouseUp) {
 			reset();
-			mouse_state_closure(S_Mouse.up(event, mouse_button_div));
+			mouse_closure(S_Mouse.up(event, mouse_button_div));
 			debug.log_action(` up ${mouse_responder_number} RESPONDER`);
 		}
 	}
 	
 	function handle_pointerDown(event) {
-		if (detect_mouseDown && mouse_state.clicks == 0) {
-			mouse_state_closure(create_state(true));
+		if (detect_mouseDown && s_mouse.clicks == 0) {
+			mouse_closure(create_state(true));
 		}
-		mouse_state.clicks += 1;
+		s_mouse.clicks += 1;
 		if (detect_doubleClick) {
 			mouse_timer.setTimeout(T_Timer.double, () => {
-				if (mouse_timer.hasTimer && mouse_state.clicks == 2) {
+				if (mouse_timer.hasTimer && s_mouse.clicks == 2) {
 					reset();
-					mouse_state_closure(create_state(false, true, false));
+					mouse_closure(create_state(false, true, false));
 				}
 			});
 		}
@@ -117,7 +117,7 @@
 			mouse_timer.setTimeout(T_Timer.long, () => {
 				if (mouse_timer.hasTimer) {
 					reset();
-					mouse_state_closure(create_state(false, false, true));
+					mouse_closure(create_state(false, false, true));
 					debug.log_action(` long ${mouse_responder_number} RESPONDER`);
 				}
 			});

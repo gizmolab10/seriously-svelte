@@ -44,14 +44,14 @@
 		}
 	}
 	
-	function button_closure_forT_Storage(mouse_state, t_storage) {
-		if (mouse_state.isHover) {
-			s_elements_byT_Storage[t_storage].isOut = mouse_state.isOut;
-		} else if (mouse_state.isUp) {
+	function button_closure_forT_Storage(s_mouse, t_storage) {
+		if (s_mouse.isHover) {
+			s_elements_byT_Storage[t_storage].isOut = s_mouse.isOut;
+		} else if (s_mouse.isUp) {
 			const h = $s_hierarchy;
 			switch (t_storage) {
 				case T_Storage.export: h.persist_toFile(); break;
-				case T_Storage.import: h.select_file_toUpload(mouse_state.event.shiftKey); break;
+				case T_Storage.import: h.select_file_toUpload(s_mouse.event.shiftKey); break;
 			}
 		}
 	}
@@ -80,7 +80,7 @@
 			center={new Point(74, buttons_top)}
 			height={k.default_buttonSize - 4}
 			s_element={s_elements_byT_Storage[T_Storage.import]}
-			closure={(mouse_state) => button_closure_forT_Storage(mouse_state, T_Storage.import)}>
+			closure={(s_mouse) => button_closure_forT_Storage(s_mouse, T_Storage.import)}>
 			<span style={button_style}>import</span>
 		</Button>
 		<Button name='export'
@@ -89,7 +89,7 @@
 			center={new Point(122, buttons_top)}
 			height={k.default_buttonSize - 4}
 			s_element={s_elements_byT_Storage[T_Storage.export]}
-			closure={(mouse_state) => button_closure_forT_Storage(mouse_state, T_Storage.export)}>
+			closure={(s_mouse) => button_closure_forT_Storage(s_mouse, T_Storage.export)}>
 			<span style={button_style}>export</span>
 		</Button>
 	</div>

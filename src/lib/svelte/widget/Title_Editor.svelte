@@ -25,7 +25,7 @@
 	function handle_mouse_up() { clearClicks(); }
 	var hasChanges = () => { return originalTitle != bound_title; };
 	function thing(): Thing | null { return ancestry?.thing ?? null; }
-	function handle_mouse_state(mouse_state: S_Mouse): boolean { return false; }
+	function handle_mouse_state(s_mouse: S_Mouse): boolean { return false; }
 
 	export const _____REACTIVES_____: unique symbol = Symbol('_____REACTIVES_____');
 	

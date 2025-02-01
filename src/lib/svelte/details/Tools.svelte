@@ -113,18 +113,18 @@
 		return [color, k.color_background];
 	}
 
-	async function handle_mouse_data(mouse_state: S_Mouse, id: string) {
-		if (mouse_state.isHover) {
+	async function handle_mouse_data(s_mouse: S_Mouse, id: string) {
+		if (s_mouse.isHover) {
 			const s_element = s_elements_byT_Tool[id];
-			const isOut = mouse_state.isOut;
+			const isOut = s_mouse.isOut;
 			isHovering_byID[id] = !isOut;
 			s_element.isOut = isOut;
-		} else if (mouse_state.isUp || mouse_state.isLong) {
+		} else if (s_mouse.isUp || s_mouse.isLong) {
 			switch (id) {
 				case T_Tool.delete_cancel: confirmingDelete = false; break;
 				default:
 					if (!isDisabledFor(id)) {
-						await $s_hierarchy.handle_tool_clicked(id, mouse_state);
+						await $s_hierarchy.handle_tool_clicked(id, s_mouse);
 					}
 					break;
 			}
@@ -215,7 +215,7 @@
 					</svg>
 				{/if}
 				<Button
-					closure={(mouse_state) => handle_mouse_data(mouse_state, T_Tool.delete_confirm)}
+					closure={(s_mouse) => handle_mouse_data(s_mouse, T_Tool.delete_confirm)}
 					s_element={s_elements_byT_Tool[T_Tool.delete_confirm]}
 					center={getC(T_Tool.delete_confirm)}
 					height={k.editingTools_diameter / 2}
@@ -237,7 +237,7 @@
 					{/key}
 				</Button>
 				<Button
-					closure={(mouse_state) => handle_mouse_data(mouse_state, T_Tool.delete_cancel, )}
+					closure={(s_mouse) => handle_mouse_data(s_mouse, T_Tool.delete_cancel, )}
 					s_element={s_elements_byT_Tool[T_Tool.delete_cancel]}
 					height={k.editingTools_diameter / 2}
 					center={getC(T_Tool.delete_cancel)}
@@ -270,7 +270,7 @@
 				</div>
 			{:else}
 				<Button
-					closure={(mouse_state) => handle_mouse_data(mouse_state, T_Tool.more)}
+					closure={(s_mouse) => handle_mouse_data(s_mouse, T_Tool.more)}
 					s_element={s_elements_byT_Tool[T_Tool.more]}
 					height={k.default_buttonSize}
 					zindex={T_Layer.tool_buttons}
@@ -304,7 +304,7 @@
 				<Triangle_Button
 					strokeColor={isDisabledFor(T_Tool.next) ? k.color_disabled : parentSensitiveColor}
 					hover_closure={(isHovering) => { return fillColorsFor(T_Tool.next, isHovering) }}
-					handle_mouse_state={(mouse_state) => handle_mouse_data(mouse_state, T_Tool.next)}
+					handle_mouse_state={(s_mouse) => handle_mouse_data(s_mouse, T_Tool.next)}
 					extraPath={svgPaths.circle_atOffset(toolDiameter, 4)}
 					center={getC(T_Tool.next)}
 					angle={Direction.up}
@@ -313,7 +313,7 @@
 				<Triangle_Button
 					strokeColor={isDisabledFor(T_Tool.delete_parent) ? k.color_disabled : parentSensitiveColor}
 					hover_closure={(isHovering) => { return fillColorsFor(T_Tool.delete_parent, isHovering) }}
-					handle_mouse_state={(mouse_state) => handle_mouse_data(mouse_state, T_Tool.delete_parent)}
+					handle_mouse_state={(s_mouse) => handle_mouse_data(s_mouse, T_Tool.delete_parent)}
 					extraPath={svgPaths.dash(toolDiameter, 4)}
 					center={getC(T_Tool.delete_parent)}
 					angle={Direction.left}
@@ -321,7 +321,7 @@
 					size={toolDiameter}/>
 				<Triangle_Button
 					hover_closure={(isHovering) => { return fillColorsFor(T_Tool.add_parent, isHovering) }}
-					handle_mouse_state={(mouse_state) => handle_mouse_data(mouse_state, T_Tool.add_parent)}
+					handle_mouse_state={(s_mouse) => handle_mouse_data(s_mouse, T_Tool.add_parent)}
 					strokeColor={isDisabledFor(T_Tool.add_parent) ? k.color_disabled : color}
 					extraPath={svgPaths.t_cross(toolDiameter, 3)}
 					center={getC(T_Tool.add_parent)}
@@ -330,7 +330,7 @@
 					name='add_parent'/>
 				<Triangle_Button
 					hover_closure={(isHovering) => { return fillColorsFor(T_Tool.create, isHovering) }}
-					handle_mouse_state={(mouse_state) => handle_mouse_data(mouse_state, T_Tool.create)}
+					handle_mouse_state={(s_mouse) => handle_mouse_data(s_mouse, T_Tool.create)}
 					extraPath={svgPaths.t_cross(toolDiameter, 3)}
 					center={getC(T_Tool.create)}
 					angle={Direction.right}

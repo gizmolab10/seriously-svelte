@@ -9,9 +9,9 @@ import { svgPaths } from '../geometry/SVG_Paths';
 import { Hierarchy } from '../managers/Hierarchy';
 import { databases } from '../managers/Databases';
 import { Seriously_Range } from './Seriously_Range';
-import { S_Paging, S_Pages } from '../state/S_Paging';
 import { signals, T_Signal } from '../signals/Signals';
 import { Rect, Size, Point } from '../geometry/Geometry';
+import { S_Paging, S_Thing_Pages } from '../state/S_Paging';
 import { T_Quadrant, T_Orientation } from '../geometry/Angle';
 import { T_Create, T_Browser, T_Alteration } from './Enumerations';
 import { T_Preference, preferences } from '../managers/Preferences';
@@ -65,10 +65,10 @@ export {
 	show, files, builds, signals,
 	T_Layer, T_Predicate, T_Create,
 	T_RingZone, T_Oblong, T_Alteration,
-	S_Element, S_Paging, S_Pages, S_Alteration,
 	Angle, Direction, T_Quadrant, T_Orientation,
 	Ancestry, Hierarchy, databases, preferences,
 	T_Element, Svelte_Wrapper, T_SvelteComponent,
+	S_Element, S_Paging, S_Thing_Pages, S_Alteration,
 	S_Mouse, T_Startup, S_Rotation, S_Expansion, S_Title_Edit,
 	User, Datum, Thing, Trait, Access, Predicate, Relationship,
 	G_Widget, G_Children, G_ArcSlider, G_Segment, G_Cluster, G_Radial,

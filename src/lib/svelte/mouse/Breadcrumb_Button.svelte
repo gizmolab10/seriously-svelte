@@ -65,20 +65,20 @@
 		`.removeWhiteSpace();
 	}
 
-	function closure(mouse_state) {
+	function closure(s_mouse) {
 		if (databases.db.hierarchy.hasRoot) {
-			if (mouse_state.isHover) {
-				if (mouse_state.isOut) {
+			if (s_mouse.isHover) {
+				if (s_mouse.isOut) {
 					border = `${borderStyle} ${borderColor}`;
 				} else {
 					border = `${borderStyle} ${thing.color}`;
 				}
 				const cursor = !ancestry.isGrabbed && ancestry.hasChildRelationships ? 'pointer' : k.cursor_default;
 				s_element.set_forHovering(thing.color, cursor);
-				s_element.isOut = mouse_state.isOut;
+				s_element.isOut = s_mouse.isOut;
 				updateStyle();
 				rebuilds += 1;
-			} else if (mouse_state.isUp) {
+			} else if (s_mouse.isUp) {
 				ancestry.grabOnly();
 				if (ancestry.becomeFocus()) {
 					signals.signal_rebuildGraph_fromFocus();

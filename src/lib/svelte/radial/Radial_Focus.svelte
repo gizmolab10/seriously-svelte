@@ -23,8 +23,8 @@
 		color = $s_ancestry_focus?.thing?.color;
 	}
 
-	function debug_closure(mouse_state) {
-		debug.log_radial(` ${mouse_state.descriptionFor('FOCUS')}`);
+	function debug_closure(s_mouse) {
+		debug.log_radial(` ${s_mouse.descriptionFor('FOCUS')}`);
 	}
 
 </script>
@@ -44,7 +44,7 @@
 			zindex={T_Layer.backmost}
 			cursor={k.cursor_default}
 			isHit_closure={() => false}
-			mouse_state_closure={debug_closure}
+			mouse_closure={debug_closure}
 			center={centerOffset.offsetByX(-13)}>
 			{#key color}
 				<svg

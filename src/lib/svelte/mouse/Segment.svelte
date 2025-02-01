@@ -20,11 +20,11 @@
 		debug.log_segments(`${name} ${g_segment.isSelected ? 'selected' : ''} ${fill}`)
 	}
 
-	function up_hover_closure(mouse_state) {
-		if (mouse_state.isHover) {
-			isHovering = !mouse_state.isOut;
-		} else if (mouse_state.isUp) {
-			hit_closure(name, mouse_state.event?.isShift ?? false);
+	function up_hover_closure(s_mouse) {
+		if (s_mouse.isHover) {
+			isHovering = !s_mouse.isOut;
+		} else if (s_mouse.isUp) {
+			hit_closure(name, s_mouse.event?.isShift ?? false);
 		}
 		update_colors();
 	}
@@ -38,7 +38,7 @@
 	height={size.height}
 	zindex={T_Layer.frontmost}
 	origin={g_segment.origin}
-	mouse_state_closure={up_hover_closure}>
+	mouse_closure={up_hover_closure}>
 	<svg
 		id={`${name}`}
 		class='segment-svg'

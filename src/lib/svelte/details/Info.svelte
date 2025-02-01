@@ -98,7 +98,7 @@
 
 	function selection_closure(t_infos: Array<string>) {
 		const t_info = t_infos[0];
-		preferences.write_key(T_Preference.t_info, t_info);
+		preferences.write_key(T_Preference.info, t_info);
 		show.t_info = t_info;
 		update_forKind();
 	}

@@ -23,8 +23,8 @@
 		}
 	}
 
-	function hover_closure(mouse_state) {
-		if (mouse_state.isMove) {
+	function hover_closure(s_mouse) {
+		if (s_mouse.isMove) {
 			const distance = u.mouse_distance_fromGraphCenter;
 			// debug.log_cursor(distance.toFixed(2));
 			// mouse location
@@ -59,7 +59,7 @@
 		zindex = {T_Layer.common}
 		width={w.windowSize.width}
 		height={w.windowSize.height}
-		mouse_state_closure={hover_closure}>
+		mouse_closure={hover_closure}>
 		<Box
 			color = 'red'
 			cross = {true}

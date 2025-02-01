@@ -15,9 +15,9 @@ export class S_Global {
 	eraseDB = 0;
 	isEditing_text = false;
 	mouse_responder_number = 0;
-	ring_rotation_state!: S_Rotation;
-	cluster_s_paging!: S_Rotation;
-	ring_resizing_state!: S_Expansion;
+	s_ring_rotation!: S_Rotation;
+	s_ring_resizing!: S_Expansion;
+	s_cluster_rotation!: S_Rotation;
 	rebuild_needed_byType: {[type: string]: boolean} = {};
 	queryStrings = new URLSearchParams(window.location.search);
 
@@ -49,9 +49,9 @@ export class S_Global {
 		s_thing_color.set(null);
 		s_t_startup.set(T_Startup.start);
 		s_device_isMobile.set(this.device_isMobile);
-		this.ring_resizing_state = new S_Expansion();
-		this.ring_rotation_state  = new S_Rotation();
-		this.cluster_s_paging = new S_Rotation();
+		this.s_ring_resizing = new S_Expansion();
+		this.s_ring_rotation  = new S_Rotation();
+		this.s_cluster_rotation = new S_Rotation();
 	}
 
 	queryStrings_apply() {
@@ -87,7 +87,7 @@ export class S_Global {
 	get hierarchy(): Hierarchy { return get(s_hierarchy); }
 
 	get isAny_rotation_active(): boolean {
-		return ux.isAny_paging_arc_active || this.cluster_s_paging.isActive || this.ring_rotation_state.isActive;
+		return ux.isAny_paging_arc_active || this.s_cluster_rotation.isActive || this.s_ring_rotation.isActive;
 	}
 
 	get next_mouse_responder_number(): number {

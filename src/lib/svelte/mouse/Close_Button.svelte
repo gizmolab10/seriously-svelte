@@ -8,12 +8,12 @@
 	let stroke = k.color_default;
 	let fill = k.color_background;
 
-	function hover_up_closure(mouse_state) {
-		if (mouse_state.isHover) {
-			const isHovering = !mouse_state.isOut;
+	function hover_up_closure(s_mouse) {
+		if (s_mouse.isHover) {
+			const isHovering = !s_mouse.isOut;
 			fill = isHovering ? k.color_default : k.color_background;
 			stroke = isHovering ? k.color_background : k.color_default;
-		} else if (mouse_state.isUp) {
+		} else if (s_mouse.isUp) {
 			$s_id_popupView = null;
 		}
 	}
@@ -26,7 +26,7 @@
 	height={size}
 	align_left={false}
 	origin={new Point(8, size / 2)}
-	mouse_state_closure={hover_up_closure}>
+	mouse_closure={hover_up_closure}>
     <SVGD3 name='close'
 		fill={fill}
 		width={size}

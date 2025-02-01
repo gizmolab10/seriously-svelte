@@ -69,17 +69,17 @@ export class Hierarchy {
 
 	static readonly EVENTS: unique symbol;
 
-	async handle_tool_clicked(idControl: string, mouse_state: S_Mouse) {
-		const event: MouseEvent | null = mouse_state.event as MouseEvent;
+	async handle_tool_clicked(idControl: string, s_mouse: S_Mouse) {
+		const event: MouseEvent | null = s_mouse.event as MouseEvent;
         const ancestry = get(s_ancestry_showing_tools);
 		if (!!ancestry) {
 			switch (idControl) {
 				case T_Tool.more: debug.log_tools('needs more'); break;
 				case T_Tool.create: await this.ancestry_edit_persistentCreateChildOf(ancestry); break;
 				case T_Tool.next: this.ancestry_relayout_toolCluster_nextParent(event?.altKey ?? false); return;
-				case T_Tool.add_parent: this.toggleAlteration(T_Alteration.adding, mouse_state.isLong); return;
+				case T_Tool.add_parent: this.toggleAlteration(T_Alteration.adding, s_mouse.isLong); return;
 				case T_Tool.delete_confirm: await this.ancestries_rebuild_traverse_persistentDelete([ancestry]); break;
-				case T_Tool.delete_parent: this.toggleAlteration(T_Alteration.deleting, mouse_state.isLong); return;
+				case T_Tool.delete_parent: this.toggleAlteration(T_Alteration.deleting, s_mouse.isLong); return;
 				default: break;
 			}
 			s_ancestry_showing_tools.set(null);
@@ -1317,7 +1317,7 @@ export class Hierarchy {
 		s_s_title_edit.set(null);
 		preferences.restore_focus();
 		preferences.restore_grabbed_andExpanded();
-		// preferences.restore_s_pages();
+		preferences.restore_paging();
 		this.isAssembled = true;
 	}
 

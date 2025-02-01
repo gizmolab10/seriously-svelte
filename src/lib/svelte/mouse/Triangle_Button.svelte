@@ -34,11 +34,11 @@
 		}
 	}
 
-	function closure(mouse_state) {
-		if (mouse_state.isHover) {
-			setFillColor(!mouse_state.isOut);
+	function closure(s_mouse) {
+		if (s_mouse.isHover) {
+			setFillColor(!s_mouse.isOut);
 		} else {
-			handle_mouse_state(mouse_state);
+			handle_mouse_state(s_mouse);
 		}
 	}
 

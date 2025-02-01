@@ -73,10 +73,10 @@
 		rebuilds += 1;
 	}
 
-	function up_hover_closure(mouse_state) {
-		if (mouse_state.isHover) {
-			set_isHovering(!mouse_state.isOut);
-		} else if (mouse_state.isUp) {
+	function up_hover_closure(s_mouse) {
+		if (s_mouse.isHover) {
+			set_isHovering(!s_mouse.isOut);
+		} else if (s_mouse.isUp) {
 			if (ancestry.toolsGrabbed) {
 				$s_s_alteration = null;
 				$s_ancestry_showing_tools = null;
@@ -92,7 +92,7 @@
 		return false
 	}
 
-	function handle_mouse_state(mouse_state: S_Mouse): boolean {
+	function handle_mouse_state(s_mouse: S_Mouse): boolean {
 		return false;
 	}
 
@@ -114,7 +114,7 @@
 			height={k.dot_size}
 			center={center}
 			name={s_element.name}
-			mouse_state_closure={up_hover_closure}>
+			mouse_closure={up_hover_closure}>
 			<button class='dot'
 				bind:this={dotReveal}
 				on:contextmenu={handle_context_menu}

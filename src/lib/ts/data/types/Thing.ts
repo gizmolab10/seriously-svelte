@@ -1,5 +1,5 @@
 import { k, u, Datum, Trait, Ancestry, Predicate, Relationship } from '../../common/Global_Imports';
-import { debug, databases, S_Pages, Seriously_Range } from '../../common/Global_Imports';
+import { debug, databases, S_Thing_Pages, Seriously_Range } from '../../common/Global_Imports';
 import { T_Thing, T_Trait, T_Debug, T_Predicate } from '../../common/Global_Imports';
 import { s_hierarchy, s_thing_color, s_count_rebuild } from '../../state/S_Stores';
 import { s_ancestry_focus, s_ancestries_expanded } from '../../state/S_Stores';
@@ -10,7 +10,7 @@ import { get } from 'svelte/store';
 export default class Thing extends Datum {
 	selectionRange = new Seriously_Range(0, 0);
 	bulkRootID: string = k.empty;
-	s_pages!: S_Pages;
+	s_pages!: S_Thing_Pages;
 	oneAncestry!: Ancestry;
 	needsBulkFetch = false;
 	isEditing = false;
@@ -22,7 +22,7 @@ export default class Thing extends Datum {
 	constructor(idBase: string, id: string, title = k.title_default, color = k.thing_color_default, type = T_Thing.generic, already_persisted: boolean = false) {
 		super(databases.db.t_database, idBase, T_Datum.things, id, already_persisted);
 		this.selectionRange = new Seriously_Range(0, title.length);
-		this.s_pages = new S_Pages(this.id);
+		this.s_pages = new S_Thing_Pages(this.id);
 		this.title = title;
 		this.color = color;
 		this.type = type;
