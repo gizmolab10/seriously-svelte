@@ -1,9 +1,9 @@
-import { s_hierarchy, s_t_tree, s_t_graph, s_t_counts, s_t_details } from '../state/S_Stores';
-import { s_s_paging, s_ancestries_grabbed, s_ancestries_expanded } from '../state/S_Stores';
-import { s_ancestry_focus, s_font_size, s_thing_fontFamily } from '../state/S_Stores';
+import { w_hierarchy, w_t_tree, w_t_graph, w_t_counts, w_t_details } from '../state/S_Stores';
+import { w_s_paging, w_ancestries_grabbed, w_ancestries_expanded } from '../state/S_Stores';
+import { g, k, ux, show, debug, Ancestry, databases } from '../common/Global_Imports';
+import { w_ancestry_focus, w_font_size, w_thing_fontFamily } from '../state/S_Stores';
 import { T_Graph, T_Hierarchy, T_Details, S_Paging } from '../common/Global_Imports';
-import { s_ring_rotation_angle, s_ring_rotation_radius } from '../state/S_Stores';
-import { g, k, show, debug, Ancestry, databases } from '../common/Global_Imports';
+import { w_ring_rotation_angle, w_ring_rotation_radius } from '../state/S_Stores';
 import { get } from 'svelte/store';
 
 export enum T_Preference {
@@ -71,7 +71,7 @@ export class Preferences {
 	ancestries_writeDB_key(ancestries: Array<Ancestry>, key: string) {
 		const path_strings = ancestries.map(a => a.id);		// ancestry id is actually a path string (of Relationship ids)
 		this.writeDB_key(key, ancestries.length == 0 ? null : path_strings);
-		debug.log_preferences(`! ${key.toUpperCase()} ${ancestries.length} paths "${path_strings}" titles "${ancestries.map(a => a.title)}"`);
+		debug.log_p(`! ${key.toUpperCase()} ${ancestries.length} paths "${path_strings}" titles "${ancestries.map(a => a.title)}"`);
 	}
 
 	ancestries_readDB_key(key: string): Array<Ancestry> {	// 2 keys supported so far {grabbed, expanded}
@@ -79,7 +79,7 @@ export class Preferences {
 		const length = aids?.length ?? 0;
 		let ancestries: Array<Ancestry> = [];
 		if (!this.ignoreAncestries && length > 0) {
-			let h = get(s_hierarchy);
+			let h = get(w_hierarchy);
 			for (const aid of aids) {
 				const a = h.ancestry_valid_forID(aid);
 				if (!!a) {
@@ -87,7 +87,7 @@ export class Preferences {
 				}
 			};
 		}
-		debug.log_preferences(`  ${key.toUpperCase()} ${ancestries.map(a => a.id)}`);
+		debug.log_p(`  ${key.toUpperCase()} ${ancestries.map(a => a.id)}`);
 		return ancestries;
 	}
 	
@@ -96,7 +96,7 @@ export class Preferences {
 	db_keyFor	(key: string):					string { return this.keyPair_for(databases.db.t_database, key); }
 	keyPair_for	(key: string, sub_key: string):	string { return `${key}${k.generic_separator}${sub_key}`; }
 
-	parse(key: string | null): any | null {
+	parse(key: string | null | undefined): any | null {
 		if (!key || key == 'undefined') {
 			return null;
 		}		
@@ -117,25 +117,30 @@ export class Preferences {
 	
 	static readonly SUBSCRIBE_AND_RESTORE: unique symbol;
 
+	restore_paging() { ux.createAll_thing_pages_fromDict(this.readDB_key(T_Preference.paging)); }
+
 	reactivity_subscribe() {
-		s_t_tree.subscribe((value) => {
+		w_t_tree.subscribe((value) => {
 			this.write_key(T_Preference.tree, value);
 		});
-		s_t_graph.subscribe((value) => {
+		w_t_graph.subscribe((value) => {
 			this.write_key(T_Preference.graph, value);
 		});
-		s_t_counts.subscribe((value) => {
+		w_t_counts.subscribe((value) => {
 			this.write_key(T_Preference.counts, value);
 		});
-		s_t_details.subscribe((value) => {
-			this.write_key(T_Preference.detail_types, value);
-		});
-		s_ring_rotation_angle.subscribe((angle: number) => {
+		w_ring_rotation_angle.subscribe((angle: number) => {
 			this.write_key(T_Preference.ring_angle, angle);
 		});
-		s_ring_rotation_radius.subscribe((radius: number) => {
+		w_t_details.subscribe((value) => {
+			this.write_key(T_Preference.detail_types, value);
+		});
+		w_ring_rotation_radius.subscribe((radius: number) => {
 			this.write_key(T_Preference.ring_radius, radius);
 		});
+		w_s_paging.subscribe((s_paging: S_Paging) => {
+			this.writeDB_key(T_Preference.paging, ux.s_thing_pages_byThingID);
+		})
 		show.reactivity_subscribe();
 	}
 
@@ -143,39 +148,37 @@ export class Preferences {
 		if (this.ignoreAncestries) {
 			this.write_key(T_Preference.relationships, true);
 		}
-		s_font_size.set(this.read_key(T_Preference.font_size) ?? 14);
-		s_t_graph.set(this.read_key(T_Preference.graph) ?? T_Graph.tree);
-		s_t_tree.set(this.read_key(T_Preference.tree) ?? T_Hierarchy.children);
-		s_ring_rotation_angle.set(this.read_key(T_Preference.ring_angle) ?? 0);
-		s_t_counts.set(this.read_key(T_Preference.counts) ?? [T_Hierarchy.children]);
-		s_thing_fontFamily.set(this.read_key(T_Preference.font) ?? 'Times New Roman');
-		s_t_details.set(this.read_key(T_Preference.detail_types) ?? [T_Details.storage]);
-		s_ring_rotation_radius.set(Math.max(this.read_key(T_Preference.ring_radius) ?? 0, k.innermost_ring_radius));
+		w_font_size.set(this.read_key(T_Preference.font_size) ?? 14);
+		w_t_graph.set(this.read_key(T_Preference.graph) ?? T_Graph.tree);
+		w_t_tree.set(this.read_key(T_Preference.tree) ?? T_Hierarchy.children);
+		w_ring_rotation_angle.set(this.read_key(T_Preference.ring_angle) ?? 0);
+		w_t_counts.set(this.read_key(T_Preference.counts) ?? [T_Hierarchy.children]);
+		w_thing_fontFamily.set(this.read_key(T_Preference.font) ?? 'Times New Roman');
+		w_t_details.set(this.read_key(T_Preference.detail_types) ?? [T_Details.storage]);
+		w_ring_rotation_radius.set(Math.max(this.read_key(T_Preference.ring_radius) ?? 0, k.innermost_ring_radius));
 		this.reactivity_subscribe()
 	}
-
-	restore_paging() {}
 
 	restore_grabbed_andExpanded(force: boolean = false) {
 		if (g.eraseDB > 0) {
 			g.eraseDB -= 1;
-			s_ancestries_expanded.set([]);
-			s_ancestries_grabbed.set([get(s_hierarchy).rootAncestry]);
+			w_ancestries_expanded.set([]);
+			w_ancestries_grabbed.set([get(w_hierarchy).rootAncestry]);
 		} else {
-			s_ancestries_grabbed.set(this.ancestries_readDB_key(T_Preference.grabbed));
-			s_ancestries_expanded.set(this.ancestries_readDB_key(T_Preference.expanded));
+			w_ancestries_grabbed.set(this.ancestries_readDB_key(T_Preference.grabbed));
+			w_ancestries_expanded.set(this.ancestries_readDB_key(T_Preference.expanded));
 		}
 		setTimeout(() => {
 			const threshold = 0;
 			let grabbed_count = 0;
 			let expanded_count = 0;
-			s_ancestries_grabbed.subscribe((array: Array<Ancestry>) => {
+			w_ancestries_grabbed.subscribe((array: Array<Ancestry>) => {
 				if (grabbed_count > threshold) {
 					this.ancestries_writeDB_key(array, T_Preference.grabbed);
 				}
 				grabbed_count += 1;
 			});
-			s_ancestries_expanded.subscribe((array: Array<Ancestry>) => {
+			w_ancestries_expanded.subscribe((array: Array<Ancestry>) => {
 				if (expanded_count > threshold) {
 					this.ancestries_writeDB_key(array, T_Preference.expanded);
 				}
@@ -185,7 +188,7 @@ export class Preferences {
 	}
 
 	restore_focus() {
-		const h = get(s_hierarchy);
+		const h = get(w_hierarchy);
 		let ancestryToFocus = h.rootAncestry;
 		if (!this.ignoreAncestries && !g.eraseDB) {
 			const focusid = this.readDB_key(T_Preference.focus);
@@ -203,11 +206,11 @@ export class Preferences {
 			}
 		}
 		ancestryToFocus.becomeFocus(true);
-		s_ancestry_focus.subscribe((ancestry: Ancestry) => {
+		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
 			this.writeDB_key(T_Preference.focus, !ancestry ? null : ancestry.id);
 		});
 	}
 
 }
 
-export const preferences = new Preferences();
+export const p = new Preferences();

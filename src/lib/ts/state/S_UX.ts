@@ -1,14 +1,15 @@
 import { S_Mouse, G_Segment, S_Element, S_Rotation, S_Thing_Pages } from '../common/Global_Imports';
 import { T_Element, Mouse_Timer } from '../common/Global_Imports';
 import Identifiable from '../data/basis/Identifiable';
+import type { Dictionary } from '../common/Types';
 
 export default class S_UX {
 
 	mouse_timer_byName: { [name: string]: Mouse_Timer } = {};
-	s_pages_byThingID: {[id: string]: S_Thing_Pages} = {};
+	s_thing_pages_byThingID: {[id: string]: S_Thing_Pages} = {};
 	s_rotation_byName: {[name: string]: S_Rotation} = {};
-	s_element_byName: {[name: string]: S_Element} = {};
 	g_segment_byName: {[name: string]: G_Segment} = {};
+	s_element_byName: {[name: string]: S_Element} = {};
 	s_mouse_byName: { [name: string]: S_Mouse } = {};
 
 	//////////////////////////////////////
@@ -36,18 +37,9 @@ export default class S_UX {
 		return `${type}-${subtype}-id:${identifiable.id}`;
 	}
 
-	rotation_state_forName(name: string): S_Rotation {
-		let rotation_state = this.s_rotation_byName[name];
-		if (!rotation_state) {
-			rotation_state = new S_Rotation();
-			this.s_rotation_byName[name] = rotation_state;
-		}
-		return rotation_state;
-	}
-
 	s_mouse_forName(name: string): S_Mouse {
 		let state = this.s_mouse_byName[name];
-		if (!state) {
+		if (!state) {		// always assure it exists
 			state = S_Mouse.empty();
 			this.s_mouse_byName[name] = state;
 		}
@@ -55,23 +47,53 @@ export default class S_UX {
 	}
 
 	mouse_timer_forName(name: string): Mouse_Timer {
-		let state = this.mouse_timer_byName[name];
-		if (!state) {
-			state = new Mouse_Timer();
-			this.mouse_timer_byName[name] = state;
+		let timer = this.mouse_timer_byName[name];
+		if (!timer) {		// always assure it exists
+			timer = new Mouse_Timer();
+			this.mouse_timer_byName[name] = timer;
 		}
-		return state;
+		return timer;
+	}
+
+	s_rotation_forName(name: string): S_Rotation {
+		let s_rotation = this.s_rotation_byName[name];
+		if (!s_rotation) {		// always assure it exists
+			s_rotation = new S_Rotation();
+			this.s_rotation_byName[name] = s_rotation;
+		}
+		return s_rotation;
 	}
 
 	s_element_for(identifiable: Identifiable | null, type: T_Element, subtype: string): S_Element {
 		const realIdentifiable = identifiable ?? new Identifiable()
 		const name = this.name_from(realIdentifiable, type, subtype);
 		let s_element = this.s_element_forName(name);
-		if (!s_element) {
+		if (!s_element) {			// always assure it exists
 			s_element = new S_Element(realIdentifiable, type, subtype);
 			this.s_element_byName[name] = s_element;
 		}
 		return s_element;
+	}
+
+	s_thing_pages_forThingID(id: string | null | undefined): S_Thing_Pages | null {
+		if (!id) {
+			return null;
+		}
+		let s_thing_pages = this.s_thing_pages_byThingID[id];
+		if (!s_thing_pages) {		// always assure it exists
+			s_thing_pages = new S_Thing_Pages(id);
+			this.s_thing_pages_byThingID[id] = s_thing_pages;
+		}
+		return s_thing_pages;
+	}
+
+	createAll_thing_pages_fromDict(dict: Dictionary) {
+		for (const sub_dict of Object.values(dict)) {
+			const s_thing_pages = S_Thing_Pages.create_fromDict(sub_dict);
+			if (!!s_thing_pages) {
+				this.s_thing_pages_byThingID[s_thing_pages.thing_id] = s_thing_pages;
+			}
+		}
 	}
 
 }

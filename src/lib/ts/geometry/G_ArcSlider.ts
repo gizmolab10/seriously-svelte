@@ -1,5 +1,5 @@
 import { k, Rect, Point, Angle, svgPaths } from '../common/Global_Imports';
-import { s_ring_rotation_radius } from '../state/S_Stores';
+import { w_ring_rotation_radius } from '../state/S_Stores';
 import { get } from 'svelte/store';
 
 // create svg paths for generic arcs
@@ -7,7 +7,7 @@ import { get } from 'svelte/store';
 //
 // given:
 //	start, end & fork angles
-//	s_ring_rotation_radius
+//	w_ring_rotation_radius
 
 export default class G_ArcSlider {
 	clusters_center = Point.zero;
@@ -24,7 +24,7 @@ export default class G_ArcSlider {
 
 	constructor() {
 		const thickness = k.paging_arc_thickness;
-		const radius = get(s_ring_rotation_radius);
+		const radius = get(w_ring_rotation_radius);
 		this.clusters_center = Point.square(radius);
 		this.inside_arc_radius = radius - thickness;
 		this.cap_radius = k.ring_rotation_thickness / 6;

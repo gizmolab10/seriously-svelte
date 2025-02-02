@@ -1,5 +1,5 @@
-import { g, k, w, signals, preferences, T_Preference } from '../common/Global_Imports';
-import { s_t_tree, s_t_counts, s_show_details } from './S_Stores';
+import { g, k, w, signals, p, T_Preference } from '../common/Global_Imports';
+import { w_t_tree, w_t_counts, w_show_details } from './S_Stores';
 import { T_Info, T_Hierarchy } from '../common/Enumerations';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
@@ -20,34 +20,34 @@ export class S_Show {
         for (const [name, flag] of Object.entries(keyedFlags)) {
 			switch (name) {
 				case 'details':
-					s_show_details.set(flag);
+					w_show_details.set(flag);
 					break;
 				case 'traits':
 					this.traits = flag;
-					preferences.write_key(T_Preference.traits, flag);
+					p.write_key(T_Preference.traits, flag);
 					break;
 			}
 		}
 	}
 
-	showing_countDots_ofType(t_counts: T_Hierarchy): boolean { return get(s_t_counts).includes(T_Hierarchy[t_counts]) }
+	showing_countDots_ofType(t_counts: T_Hierarchy): boolean { return get(w_t_counts).includes(T_Hierarchy[t_counts]) }
 	get children_dots(): boolean { return  this.showing_countDots_ofType(T_Hierarchy.children); }
 	get related_dots(): boolean { return  this.showing_countDots_ofType(T_Hierarchy.related); }
 	get parent_dots(): boolean { return  this.showing_countDots_ofType(T_Hierarchy.parents); }
 	
 	restore_state() {
-		this.traits = preferences.read_key(T_Preference.traits) ?? false;
-		this.t_info = preferences.read_key(T_Preference.info) ?? T_Info.focus;
-		s_show_details.set(preferences.read_key(T_Preference.show_details) ?? false);
-		s_t_tree.set(preferences.read_key(T_Preference.tree) ?? T_Hierarchy.children);
+		this.traits = p.read_key(T_Preference.traits) ?? false;
+		this.t_info = p.read_key(T_Preference.info) ?? T_Info.focus;
+		w_show_details.set(p.read_key(T_Preference.show_details) ?? false);
+		w_t_tree.set(p.read_key(T_Preference.tree) ?? T_Hierarchy.children);
 	}
 
 	reactivity_subscribe() {
-		s_t_tree.subscribe((relations: string) => {
-			preferences.write_key(T_Preference.tree, relations);
+		w_t_tree.subscribe((relations: string) => {
+			p.write_key(T_Preference.tree, relations);
 		});
-		s_show_details.subscribe((flag: boolean) => {
-			preferences.write_key(T_Preference.show_details, flag);
+		w_show_details.subscribe((flag: boolean) => {
+			p.write_key(T_Preference.show_details, flag);
 			w.restore_state();
 			signals.signal_relayoutWidgets_fromFocus();
 		});

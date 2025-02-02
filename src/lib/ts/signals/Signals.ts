@@ -1,4 +1,4 @@
-import { s_ancestry_focus, s_rebuild_isInProgress } from '../state/S_Stores';
+import { w_ancestry_focus, w_rebuild_isInProgress } from '../state/S_Stores';
 import { debug } from '../common/Debug';
 import { Signal } from 'typed-signals';
 import { get } from 'svelte/store';
@@ -16,9 +16,9 @@ export class Signals {
 	handler = new Signal<(ids_signal: Array<T_Signal>, value: any, priority: number) => void>();
 
 	signal_altering(value: any = null) { this.signal(T_Signal.alterState, value); }
-	signal_rebuildGraph_fromFocus() { this.signal_rebuildGraph_from(get(s_ancestry_focus)); }
+	signal_rebuildGraph_fromFocus() { this.signal_rebuildGraph_from(get(w_ancestry_focus)); }
 	signal_relayoutWidgets_from(value: any = null) { this.signal(T_Signal.relayout, value); }
-	signal_relayoutWidgets_fromFocus() { this.signal_relayoutWidgets_from(get(s_ancestry_focus)); }
+	signal_relayoutWidgets_fromFocus() { this.signal_relayoutWidgets_from(get(w_ancestry_focus)); }
 
 	handle_rebuildGraph(priority: number, onSignal: (value: any | null) => any ) {
 		return this.handle_signalOfKind(priority, T_Signal.rebuild, onSignal);
@@ -53,7 +53,7 @@ export class Signals {
 	signal(id_signal: T_Signal, value: any = null) {
 		if (this.signal_isInFlight) {
 			debug.log_signal(`${id_signal} in flight`);
-		} else if (!get(s_rebuild_isInProgress) ||		// if rebuild is in progress
+		} else if (!get(w_rebuild_isInProgress) ||		// if rebuild is in progress
 			id_signal != T_Signal.relayout) {			// disable relayout
 			this.signal_isInFlight = true;
 			const highestPriority = this.highestPriorities[id_signal] ?? 0;
@@ -66,9 +66,9 @@ export class Signals {
 	}
 
 	signal_rebuildGraph_from(value: any = null) {
-		s_rebuild_isInProgress.set(true);
+		w_rebuild_isInProgress.set(true);
 		this.signal(T_Signal.rebuild, value);
-		s_rebuild_isInProgress.set(false);				// N.B., widget whatches this to reveal tools
+		w_rebuild_isInProgress.set(false);				// N.B., widget whatches this to reveal tools
 	}
 
 }

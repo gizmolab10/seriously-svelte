@@ -1,5 +1,5 @@
 import { Thing, debug, T_Debug, databases, Predicate, T_Predicate } from '../../common/Global_Imports';
-import { s_hierarchy } from '../../state/S_Stores';
+import { w_hierarchy } from '../../state/S_Stores';
 import type { Integer } from '../../common/Types';
 import { T_Datum } from '../dbs/DBCommon';
 import { get } from 'svelte/store';
@@ -27,7 +27,7 @@ export default class Relationship extends Datum {
 	get child(): Thing | null { return this.thing(true); }
 	get parent(): Thing | null { return this.thing(false); }
 	get isValid(): boolean { return !!this.kindPredicate && !!this.parent && !!this.child; }
-	get predicate(): Predicate | null { return get(s_hierarchy).predicate_forKind(this.kindPredicate); }
+	get predicate(): Predicate | null { return get(w_hierarchy).predicate_forKind(this.kindPredicate); }
 	get fields(): Airtable.FieldSet { return { kindPredicate: this.kindPredicate, parent: [this.idParent], child: [this.idChild], order: this.order }; }
 
 	get verbose(): string {
@@ -45,7 +45,7 @@ export default class Relationship extends Datum {
 
 	thing(child: boolean): Thing | null {
 		const id = child ? this.idChild : this.idParent;
-		return get(s_hierarchy).thing_forHID(id.hash()) ?? null
+		return get(w_hierarchy).thing_forHID(id.hash()) ?? null
 	}
 
 	order_setTo_persistentMaybe(newOrder: number, persist: boolean = false) {

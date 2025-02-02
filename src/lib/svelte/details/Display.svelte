@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, Point, T_Hierarchy } from '../../ts/common/Global_Imports';
-	import { s_t_counts } from '../../ts/state/S_Stores';
+	import { w_t_counts } from '../../ts/state/S_Stores';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
 	export let top = 0;
@@ -11,7 +11,7 @@
 	let rebuilds = 0;
 	
 	function selection_closure(t_counts: Array<string>) {
-		$s_t_counts = t_counts as Array<T_Hierarchy>;
+		$w_t_counts = t_counts as Array<T_Hierarchy>;
 		rebuilds += 1;
 	}
 
@@ -31,7 +31,7 @@
 			titles={titles}
 			allow_multiple={true}
 			name='counts-selector'
-			selected={$s_t_counts}
+			selected={$w_t_counts}
 			origin={new Point(4, 9)}
 			height={k.row_height * font_ratio}
 			selection_closure={selection_closure}/>

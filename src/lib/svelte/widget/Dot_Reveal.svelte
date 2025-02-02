@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { k, u, ux, Size, Thing, Point, debug, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, Predicate, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { s_ancestries_grabbed, s_ancestries_expanded, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
-	import { s_t_counts, s_hierarchy, s_t_graph, s_s_alteration } from '../../ts/state/S_Stores';
+	import { w_ancestries_grabbed, w_ancestries_expanded, w_ancestry_showing_tools } from '../../ts/state/S_Stores';
+	import { w_t_counts, w_hierarchy, w_t_graph, w_s_alteration } from '../../ts/state/S_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import { onMount } from 'svelte';
@@ -32,17 +32,17 @@
 	});
 
 	$: {
-		const _ = $s_t_counts;
+		const _ = $w_t_counts;
 		svgPath_update();
 	}
 
 	$: {
-		const _ = $s_ancestries_expanded;
+		const _ = $w_ancestries_expanded;
 		svgPath_update();
 	}
 
 	$: {
-		if (!!$s_ancestries_grabbed || !!ancestry.thing) {
+		if (!!$w_ancestries_grabbed || !!ancestry.thing) {
 			svgPath_update();
 		}
 	}
@@ -78,12 +78,12 @@
 			set_isHovering(!s_mouse.isOut);
 		} else if (s_mouse.isUp) {
 			if (ancestry.toolsGrabbed) {
-				$s_s_alteration = null;
-				$s_ancestry_showing_tools = null;
+				$w_s_alteration = null;
+				$w_ancestry_showing_tools = null;
 				signals.signal_relayoutWidgets_fromFocus();
 			} else if (ancestry.hasChildRelationships || ancestry.thing.isBulkAlias) {
-				const RIGHT = ancestry.thing_isChild != ancestry.isExpanded || $s_t_graph == T_Graph.radial;
-				$s_hierarchy.ancestry_rebuild_persistentMoveRight(ancestry, RIGHT, false, false, false, true);
+				const RIGHT = ancestry.thing_isChild != ancestry.isExpanded || $w_t_graph == T_Graph.radial;
+				$w_hierarchy.ancestry_rebuild_persistentMoveRight(ancestry, RIGHT, false, false, false, true);
 			}
 		}
 	}

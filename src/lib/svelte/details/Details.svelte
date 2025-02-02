@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, k, u, show, Point, debug, T_Layer, T_Details } from '../../ts/common/Global_Imports';
-	import { s_graph_rect, s_t_details } from '../../ts/state/S_Stores';
+	import { w_graph_rect, w_t_details } from '../../ts/state/S_Stores';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
 	import Display from './Display.svelte';
@@ -15,7 +15,7 @@
 	update_tops();
 
 	function selection_closure(t_details: Array<string>) {
-		$s_t_details = t_details as Array<T_Details>;
+		$w_t_details = t_details as Array<T_Details>;
 		update_tops();
 		rebuilds += 1;
 	}
@@ -23,7 +23,7 @@
 	function update_tops() {
 		let top = 42;
 		let index = 0;
-		let indices = $s_t_details;
+		let indices = $w_t_details;
 		while (index <= T_Details.info) {
 			tops[index] = top;
 			if (indices.includes(T_Details[index])) {
@@ -34,7 +34,7 @@
 	}
 
 	function showingDetails_ofType(t_details: T_Details): boolean {
-		return $s_t_details.includes(T_Details[t_details])
+		return $w_t_details.includes(T_Details[t_details])
 	}
 
 </script>
@@ -47,14 +47,14 @@
 			background-color:#fff;
 			z-index:{T_Layer.details};
 			width:{k.width_details}px;
-			top:{$s_graph_rect.origin.y}px;
-			height:{$s_graph_rect.size.height}px;'>
+			top:{$w_graph_rect.origin.y}px;
+			height:{$w_graph_rect.size.height}px;'>
 		<Segmented
 			titles={titles}
 			allow_multiple={true}
 			name='details-selector'
 			origin={new Point(6, 7)}
-			selected={$s_t_details}
+			selected={$w_t_details}
 			selection_closure={selection_closure}/>
 		{#if showingDetails_ofType(T_Details.storage)}
 			<Separator title='storage' top={tops[T_Details.storage] - 8}/>

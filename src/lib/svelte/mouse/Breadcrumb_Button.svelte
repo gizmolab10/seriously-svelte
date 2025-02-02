@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { k, u, ux, Point, Thing, T_Tool, signals } from '../../ts/common/Global_Imports';
 	import { databases, T_Element, S_Element } from '../../ts/common/Global_Imports';
-	import { s_thing_color, s_ancestry_focus } from '../../ts/state/S_Stores';
-	import { s_thing_fontFamily } from '../../ts/state/S_Stores';
+	import { w_thing_color, w_ancestry_focus } from '../../ts/state/S_Stores';
+	import { w_thing_fontFamily } from '../../ts/state/S_Stores';
 	import Button from './Button.svelte';
 	import { onMount } from 'svelte';
 	export let left = 0;
@@ -35,14 +35,14 @@
 	}
 
 	$: {
-		if (!!thing && thing.id == $s_thing_color?.split(k.generic_separator)[0]) {
+		if (!!thing && thing.id == $w_thing_color?.split(k.generic_separator)[0]) {
 			updateColors();
 		}
 	}
 
 	function updateColors() {
 		if (!!thing) {
-			if ($s_ancestry_focus.idThing == thing.id) {
+			if ($w_ancestry_focus.idThing == thing.id) {
 				colorStyles = `background-color: ${u.opacitize(thing.color, 0.85)}; color: ${k.color_background}`;
 			} else {
 				colorStyles = `background-color: ${k.color_background}; color: ${thing.color}`;
@@ -61,7 +61,7 @@
 			border:${border};
 			border-radius: 1em;
 			padding:0px 6px 2px 6px;
-			font: ${k.font_size}px ${$s_thing_fontFamily};
+			font: ${k.font_size}px ${$w_thing_fontFamily};
 		`.removeWhiteSpace();
 	}
 

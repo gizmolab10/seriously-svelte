@@ -155,7 +155,6 @@ export class Rect {
 	get description():		   string { return `${this.origin.verbose}, ${this.size.verbose}`; }
 	get viewBox():			   string { return `${this.origin.description} ${this.size.description}`; }
 	get pixelVerbose():		   string { return `${this.origin.pixelVerbose} ${this.size.pixelVerbose}`; }
-	get rangeDescription():	   string { return `(${this.origin.x.toFixed(2)} ... ${this.extent.x.toFixed(2)}), (${this.origin.y.toFixed(2)} ... ${this.extent.y.toFixed(2)})`; }
 	get center():				Point { return this.origin.offsetBy(this.size.asPoint.dividedInHalf); }
 	get extent():				Point { return this.origin.offsetBy(this.size.asPoint); }		// bottom right
 	get topRight():				Point { return new Point(this.extent.x, this.origin.y); };

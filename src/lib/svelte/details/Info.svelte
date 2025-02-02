@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { g, k, ux, show, Rect, Size, Point, Thing, debug, T_Layer, Ancestry } from '../../ts/common/Global_Imports';
-	import { signals, T_Info, T_Trait, preferences, T_Element, T_Preference } from '../../ts/common/Global_Imports';
-	import { s_ancestry_focus, s_ancestries_grabbed, s_thing_fontFamily } from '../../ts/state/S_Stores';
-	import { s_hierarchy, s_thing_color, s_thing_title } from '../../ts/state/S_Stores';
+	import { signals, T_Info, T_Trait, p, T_Element, T_Preference } from '../../ts/common/Global_Imports';
+	import { w_ancestry_focus, w_ancestries_grabbed, w_thing_fontFamily } from '../../ts/state/S_Stores';
+	import { w_hierarchy, w_thing_color, w_thing_title } from '../../ts/state/S_Stores';
 	import Identifiable from '../../ts/data/basis/Identifiable';
 	import type { Dictionary } from '../../ts/common/Types';
 	import type { Integer } from '../../ts/common/Types';
@@ -25,13 +25,13 @@
 	const traits_size = new Size(info_width - 58, k.default_buttonSize + 4);
 	const traits_rect = Rect.createCenterRect(traits_center, traits_size);
 	const s_element = ux.s_element_for(new Identifiable(id), T_Element.info, id);
-	let ancestry: Ancestry | null = $s_ancestry_focus;
+	let ancestry: Ancestry | null = $w_ancestry_focus;
 	let thing: Thing | null = ancestry?.thing ?? null;
 	let text_box_size = new Size(info_width - 4, 68);
 	let thingHID: Integer | null = thing?.hid;
 	let information: Array<Dictionary> = [];
 	let color_origin = new Point(70, 165);
-	let grabs = $s_ancestries_grabbed;
+	let grabs = $w_ancestries_grabbed;
 	let color = k.thing_color_default;
 	let thing_title = thing?.title;
 	let tops: Array<number> = [];
@@ -73,7 +73,7 @@
 	});
 	
 	$: {
-		const _ = `${$s_ancestries_grabbed} ${$s_ancestry_focus} ${$s_thing_title}`;
+		const _ = `${$w_ancestries_grabbed} ${$w_ancestry_focus} ${$w_thing_title}`;
 		update_forKind();
 	}
 	
@@ -84,7 +84,7 @@
 	}
 	
 	$: {
-		const id = $s_thing_color;
+		const id = $w_thing_color;
 		if (!!thing && thing.id == id) {
 			color = thing.color;
 			rebuilds += 1;
@@ -92,13 +92,13 @@
 	}
 
 	function hasGrabs(): boolean {
-		grabs = $s_ancestries_grabbed;
-		return !!grabs && (grabs.length > 1 || !$s_ancestry_focus.isGrabbed);
+		grabs = $w_ancestries_grabbed;
+		return !!grabs && (grabs.length > 1 || !$w_ancestry_focus.isGrabbed);
 	}
 
 	function selection_closure(t_infos: Array<string>) {
 		const t_info = t_infos[0];
-		preferences.write_key(T_Preference.info, t_info);
+		p.write_key(T_Preference.info, t_info);
 		show.t_info = t_info;
 		update_forKind();
 	}
@@ -115,9 +115,9 @@
 
 	function update_forKind() {
 		if (show.t_info == T_Info.focus || !hasGrabs()) {
-			ancestry = $s_ancestry_focus;
+			ancestry = $w_ancestry_focus;
 		} else {
-			grabs = $s_ancestries_grabbed;
+			grabs = $w_ancestries_grabbed;
 			if (!!grabs && grabs.length > 0) {
 				ancestry = grabs[0];
 			}
@@ -154,7 +154,7 @@
 			}
 		} else if (!text) {		// do after test for k.empty, which also is interpreted as falsey
 			(async () => {
-				await $s_hierarchy.db.persist_all();
+				await $w_hierarchy.db.persist_all();
 			})();
 		}
 	}

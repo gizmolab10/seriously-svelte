@@ -1,10 +1,10 @@
-import { s_t_graph, s_thing_color, s_t_startup, s_device_isMobile } from './S_Stores';
-import { s_hierarchy, s_count_resize, s_count_mouse_up, s_count_rebuild } from './S_Stores';
-import { Hierarchy, T_Graph, preferences, T_Preference } from '../common/Global_Imports';
+import { w_t_graph, w_thing_color, w_t_startup, w_device_isMobile } from './S_Stores';
+import { w_hierarchy, w_count_resize, w_count_mouse_up, w_count_rebuild } from './S_Stores';
+import { Hierarchy, T_Graph, p, T_Preference } from '../common/Global_Imports';
 import { S_Rotation, T_Startup, S_Expansion } from '../common/Global_Imports';
 import { e, k, u, ux, w, show, debug, databases } from '../common/Global_Imports';
-import { s_ancestries_grabbed, s_ancestries_expanded } from './S_Stores';
-import { s_ancestry_focus } from './S_Stores';
+import { w_ancestries_grabbed, w_ancestries_expanded } from './S_Stores';
+import { w_ancestry_focus } from './S_Stores';
 import { get } from 'svelte/store';
 
 export class S_Global {
@@ -15,8 +15,8 @@ export class S_Global {
 	eraseDB = 0;
 	isEditing_text = false;
 	mouse_responder_number = 0;
-	s_ring_rotation!: S_Rotation;
-	s_ring_resizing!: S_Expansion;
+	w_ring_rotation!: S_Rotation;
+	w_ring_resizing!: S_Expansion;
 	s_cluster_rotation!: S_Rotation;
 	rebuild_needed_byType: {[type: string]: boolean} = {};
 	queryStrings = new URLSearchParams(window.location.search);
@@ -35,7 +35,7 @@ export class S_Global {
 		this.setup_defaults();							// defaults
 		w.restore_state();
 		show.restore_state();							// local persistance
-		preferences.restore_defaults();
+		p.restore_defaults();
 		databases.restore_db();
 		this.queryStrings_apply();						// query string
 		show.queryStrings_apply();
@@ -43,14 +43,14 @@ export class S_Global {
 	}
 
 	setup_defaults() {
-		s_count_resize.set(0);
-		s_count_rebuild.set(0);
-		s_count_mouse_up.set(0);
-		s_thing_color.set(null);
-		s_t_startup.set(T_Startup.start);
-		s_device_isMobile.set(this.device_isMobile);
-		this.s_ring_resizing = new S_Expansion();
-		this.s_ring_rotation  = new S_Rotation();
+		w_count_resize.set(0);
+		w_count_rebuild.set(0);
+		w_count_mouse_up.set(0);
+		w_thing_color.set(null);
+		w_t_startup.set(T_Startup.start);
+		w_device_isMobile.set(this.device_isMobile);
+		this.w_ring_resizing = new S_Expansion();
+		this.w_ring_rotation  = new S_Rotation();
 		this.s_cluster_rotation = new S_Rotation();
 	}
 
@@ -69,25 +69,25 @@ export class S_Global {
 			switch (option) {
 				case 'data':
 					this.eraseDB = 2;
-					preferences.writeDB_key(T_Preference.focus, null);
-					preferences.writeDB_key(T_Preference.grabbed, null);
-					preferences.writeDB_key(T_Preference.expanded, null);
+					p.writeDB_key(T_Preference.focus, null);
+					p.writeDB_key(T_Preference.grabbed, null);
+					p.writeDB_key(T_Preference.expanded, null);
 					break;
 				case 'settings':
-					preferences.reset();
-					s_ancestries_expanded.set([]);
-					s_ancestry_focus.set(this.hierarchy.rootAncestry);
-					s_ancestries_grabbed.set([this.hierarchy.rootAncestry]);
+					p.reset();
+					w_ancestries_expanded.set([]);
+					w_ancestry_focus.set(this.hierarchy.rootAncestry);
+					w_ancestries_grabbed.set([this.hierarchy.rootAncestry]);
 					break;
 			}
 		}
     }
 
-	get inRadialMode(): boolean { return get(s_t_graph) == T_Graph.radial; }
-	get hierarchy(): Hierarchy { return get(s_hierarchy); }
+	get inRadialMode(): boolean { return get(w_t_graph) == T_Graph.radial; }
+	get hierarchy(): Hierarchy { return get(w_hierarchy); }
 
 	get isAny_rotation_active(): boolean {
-		return ux.isAny_paging_arc_active || this.s_cluster_rotation.isActive || this.s_ring_rotation.isActive;
+		return ux.isAny_paging_arc_active || this.s_cluster_rotation.isActive || this.w_ring_rotation.isActive;
 	}
 
 	get next_mouse_responder_number(): number {

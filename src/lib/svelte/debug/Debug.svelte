@@ -1,21 +1,21 @@
 <script lang='ts'>
-	import { s_user_graph_center, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
+	import { w_user_graph_center, w_ancestry_showing_tools } from '../../ts/state/S_Stores';
 	import { g, u, w, Rect, Size, Point, debug, T_Layer } from '../../ts/common/Global_Imports';
-	import { s_graph_rect, s_mouse_location_scaled } from '../../ts/state/S_Stores';
+	import { w_graph_rect, w_mouse_location_scaled } from '../../ts/state/S_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Box from './Box.svelte';
 	export let size = 16;
 	const multiplier = 0.6;
 	let mouse_rect = Rect.zero;
 	let base = new Point(-39, -28);
-	let debug_origin = $s_user_graph_center.offsetBy(base);
+	let debug_origin = $w_user_graph_center.offsetBy(base);
 
 	$: {
-		debug_origin = $s_user_graph_center.offsetBy(base);
+		debug_origin = $w_user_graph_center.offsetBy(base);
 	}
 
 	$: {
-		const point = $s_mouse_location_scaled;
+		const point = $w_mouse_location_scaled;
 		if (!!point) {
 			const square = Size.square(size);
 			const origin = point.offsetBy(square.asPoint.negatedInHalf);
@@ -43,14 +43,14 @@
 		name = 'graph'
 		color = 'green'
 		zindex = {T_Layer.common}
-		rect = {$s_graph_rect}/>
+		rect = {$w_graph_rect}/>
 {/if}
-{#if debug.tools && !!$s_ancestry_showing_tools}
+{#if debug.tools && !!$w_ancestry_showing_tools}
 	<Box
 		name = 'tools'
 		color = 'purple'
 		zindex = {T_Layer.frontmost}
-		rect = {$s_ancestry_showing_tools.titleRect}/>
+		rect = {$w_ancestry_showing_tools.titleRect}/>
 {/if}
 {#if debug.cursor}
 	<Mouse_Responder

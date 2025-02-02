@@ -1,10 +1,10 @@
 <script lang='ts'>
-	import { s_thing_color, s_ancestry_focus, s_thing_fontFamily } from '../../ts/state/S_Stores';
+	import { w_thing_color, w_ancestry_focus, w_thing_fontFamily } from '../../ts/state/S_Stores';
 	import { g, k, ux, w, Size, Point, debug, T_Tool, T_Layer, } from '../../ts/common/Global_Imports';
 	import { svgPaths, T_Element, G_Radial } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Title_Editor from '../widget/Title_Editor.svelte';
-	const s_element = ux.s_element_for($s_ancestry_focus, T_Element.focus, T_Tool.none);
+	const s_element = ux.s_element_for($w_ancestry_focus, T_Element.focus, T_Tool.none);
 	const height = k.row_height + 10;
 	let centerOffset = Point.zero;
 	let focus_origin = Point.zero;
@@ -12,15 +12,15 @@
 	let titleWidth = 0;
 
 	$: {
-		titleWidth = 10 + ($s_ancestry_focus?.thing?.titleWidth ?? 0);
+		titleWidth = 10 + ($w_ancestry_focus?.thing?.titleWidth ?? 0);
 		const offsetX = -titleWidth / 2;
 		focus_origin = w.center_ofGraphSize.offsetByXY(offsetX, 1 - k.dot_size);
 		centerOffset = new Point(titleWidth + 25, height).dividedInHalf;
 	}
 
 	$: {
-		const _ = $s_thing_color;
-		color = $s_ancestry_focus?.thing?.color;
+		const _ = $w_thing_color;
+		color = $w_ancestry_focus?.thing?.color;
 	}
 
 	function debug_closure(s_mouse) {
@@ -68,7 +68,7 @@
 			top:3px;
 			position: absolute;'>
 		<Title_Editor
-			ancestry={$s_ancestry_focus}
+			ancestry={$w_ancestry_focus}
 			fontSize={k.font_size}px/>
 	</div>
 </div>

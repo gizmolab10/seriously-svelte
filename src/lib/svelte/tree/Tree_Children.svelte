@@ -1,7 +1,7 @@
 <script lang=ts>
 	import { k, u, Rect, Size, Point, Thing, debug, signals } from '../../ts/common/Global_Imports';
 	import { T_Line, T_Debug, G_Children } from '../../ts/common/Global_Imports';
-	import { s_graph_rect } from '../../ts/state/S_Stores';
+	import { w_graph_rect } from '../../ts/state/S_Stores';
 	import Tree_Children from './Tree_Children.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import { onMount, onDestroy } from 'svelte';
@@ -33,7 +33,7 @@
 	});
 	
 	$: {
-		if (!!$s_graph_rect) {
+		if (!!$w_graph_rect) {
 			layoutAll_children()
 		}
 	}

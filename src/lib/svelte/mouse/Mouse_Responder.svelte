@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, g, u, ux, Rect, Size, Point, debug, T_Layer } from '../../ts/common/Global_Imports';
 	import { T_Timer, Mouse_Timer, S_Mouse } from '../../ts/common/Global_Imports';
-	import { s_mouse_location, s_thing_fontFamily } from '../../ts/state/S_Stores';
+	import { w_mouse_location, w_thing_fontFamily } from '../../ts/state/S_Stores';
 	import type { Handle_Result } from '../../ts/common/Types';
 	import { onMount } from 'svelte';
 	export let isHit_closure: () => {flag: boolean} | null = null;
@@ -56,7 +56,7 @@
 	}
 	
 	$: {	// hover
-		const mouse_location = $s_mouse_location;
+		const mouse_location = $w_mouse_location;
 		if (!!mouse_button_div && !!mouse_location) {
 			let isHit = false;
 			if (!isHit_closure) {				// is mouse inside this element's bounding rect
@@ -131,7 +131,7 @@
 			height: ${height}px;
 			position: ${position};
 			font-size: ${font_size};
-			font-family: ${$s_thing_fontFamily};
+			font-family: ${$w_thing_fontFamily};
 			`.removeWhiteSpace();
 		if (!!cursor) {
 			style = `${style} cursor: ${cursor};`;

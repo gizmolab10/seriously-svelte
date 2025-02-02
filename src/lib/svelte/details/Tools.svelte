@@ -3,8 +3,8 @@
 	import { S_Alteration, T_Alteration, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { databases, T_Element, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
 	import { svgPaths, signals, Direction, T_Graph } from '../../ts/common/Global_Imports';
-	import { s_s_alteration, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
-	import { s_graph_rect, s_hierarchy, s_t_graph } from '../../ts/state/S_Stores';
+	import { w_s_alteration, w_ancestry_showing_tools } from '../../ts/state/S_Stores';
+	import { w_graph_rect, w_hierarchy, w_t_graph } from '../../ts/state/S_Stores';
 	import Transparent_Circle from '../kit/Transparent_Circle.svelte';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Triangle_Button from '../mouse/Triangle_Button.svelte';
@@ -47,7 +47,7 @@
 	});
 
 	function isInvertedFor(id: string) {
-		return parentAlteringIDs.includes(id) && $s_s_alteration?.type == alteration_forID(id);
+		return parentAlteringIDs.includes(id) && $w_s_alteration?.type == alteration_forID(id);
 	}
 
 	function isDisabledFor(id: string) {
@@ -71,15 +71,15 @@
 	}
 
 	$: {
-		if (graphRect != $s_graph_rect) {
-			graphRect = $s_graph_rect;
+		if (graphRect != $w_graph_rect) {
+			graphRect = $w_graph_rect;
 			layout_tools_forceRedraw();
 		}
 	}
 
 	$: {
-		if (!ancestry || !ancestry.ancestry_hasEqualID($s_ancestry_showing_tools)) {
-			ancestry = $s_ancestry_showing_tools;
+		if (!ancestry || !ancestry.ancestry_hasEqualID($w_ancestry_showing_tools)) {
+			ancestry = $w_ancestry_showing_tools;
 			if (!!ancestry) {
 				thing = ancestry.thing;
 				color = thing?.color ?? k.empty;
@@ -124,7 +124,7 @@
 				case T_Tool.delete_cancel: confirmingDelete = false; break;
 				default:
 					if (!isDisabledFor(id)) {
-						await $s_hierarchy.handle_tool_clicked(id, s_mouse);
+						await $w_hierarchy.handle_tool_clicked(id, s_mouse);
 					}
 					break;
 			}
@@ -175,7 +175,7 @@
 </style>
 
 {#key rebuilds}
-	{#if !!$s_ancestry_showing_tools}
+	{#if !!$w_ancestry_showing_tools}
 		<div class='editing-tools' style='
 			position:absolute;
 			z-index: {T_Layer.tools}'>
@@ -297,7 +297,7 @@
 				</Button>
 				<Dot_Reveal
 					name={s_elements_byT_Tool[T_Tool.dismiss].name}
-					ancestry={$s_ancestry_showing_tools}
+					ancestry={$w_ancestry_showing_tools}
 					center={getC(T_Tool.dismiss)}
 					zindex={T_Layer.tool_buttons}
 					hover_isReversed=true/>

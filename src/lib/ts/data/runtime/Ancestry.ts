@@ -1,9 +1,9 @@
 import { Direction, Predicate, Hierarchy, databases, Relationship, Svelte_Wrapper } from '../../common/Global_Imports';
 import { g, k, u, show, Rect, Size, Thing, debug, signals, wrappers, svgPaths } from '../../common/Global_Imports';
 import { T_Graph, T_Element, T_Predicate, T_Alteration, T_SvelteComponent } from '../../common/Global_Imports';
-import { s_t_graph, s_hierarchy, s_ancestry_focus, s_ancestry_showing_tools } from '../../state/S_Stores';
-import { s_ancestries_grabbed, s_ancestries_expanded, } from '../../state/S_Stores';
-import { s_g_radial, s_s_alteration, s_s_title_edit } from '../../state/S_Stores';
+import { w_t_graph, w_hierarchy, w_ancestry_focus, w_ancestry_showing_tools } from '../../state/S_Stores';
+import { w_ancestries_grabbed, w_ancestries_expanded, } from '../../state/S_Stores';
+import { w_g_radial, w_s_alteration, w_s_title_edit } from '../../state/S_Stores';
 import { G_Widget, S_Paging, S_Title_Edit } from '../../common/Global_Imports';
 import type { Integer } from '../../common/Types';
 import Identifiable from '../basis/Identifiable';
@@ -27,7 +27,7 @@ export default class Ancestry extends Identifiable {
 		this.thing_isChild = thing_isChild;
 		this.kindPredicate = kindPredicate;
 		this.t_database = t_database;
-		get(s_hierarchy).signal_storage_redraw(0);
+		get(w_hierarchy).signal_storage_redraw(0);
 	}
 
 	destroy() { this._thing = null; }
@@ -61,17 +61,17 @@ export default class Ancestry extends Identifiable {
 	get isRoot():							 boolean { return this.thing?.isRoot ?? false; }
 	get hasChildRelationships():			 boolean { return this.childRelationships.length > 0; }
 	get hasParentRelationships():			 boolean { return this.parentRelationships.length > 0; }
-	get isFocus():							 boolean { return this.matchesStore(s_ancestry_focus); }
+	get isFocus():							 boolean { return this.matchesStore(w_ancestry_focus); }
 	get hasRelevantRelationships():			 boolean { return this.relevantRelationships_count > 0; }
 	get showsReveal():						 boolean { return this.showsReveal_forPointingToChild(true); }
-	get toolsGrabbed():						 boolean { return this.matchesStore(s_ancestry_showing_tools); }
+	get toolsGrabbed():						 boolean { return this.matchesStore(w_ancestry_showing_tools); }
 	get showsChildRelationships():			 boolean { return this.isExpanded && this.hasChildRelationships; }
-	get isEditing():						 boolean { return this.ancestry_hasEqualID(get(s_s_title_edit)?.editing); }
-	get isStoppingEdit():					 boolean { return this.ancestry_hasEqualID(get(s_s_title_edit)?.stopping); }
-	get isGrabbed():						 boolean { return this.includedInStore_ofAncestries(s_ancestries_grabbed); }
+	get isEditing():						 boolean { return this.ancestry_hasEqualID(get(w_s_title_edit)?.editing); }
+	get isStoppingEdit():					 boolean { return this.ancestry_hasEqualID(get(w_s_title_edit)?.stopping); }
+	get isGrabbed():						 boolean { return this.includedInStore_ofAncestries(w_ancestries_grabbed); }
 	get isInvalid():						 boolean { return this.containsReciprocals || this.containsMixedPredicates; }
 	get hasRelationships():					 boolean { return this.hasParentRelationships || this.hasChildRelationships; }
-	get isExpanded():						 boolean { return this.isRoot || this.includedInStore_ofAncestries(s_ancestries_expanded); }
+	get isExpanded():						 boolean { return this.isRoot || this.includedInStore_ofAncestries(w_ancestries_expanded); }
 	get endID():						   	  string { return this.idAt(); }
 	get title():						   	  string { return this.thing?.title ?? 'missing title'; }
 	get description():					   	  string { return `${this.kindPredicate} ${this.titles.join(':')}`; }
@@ -85,11 +85,11 @@ export default class Ancestry extends Identifiable {
 	get visibleProgeny_halfSize():				Size { return this.visibleProgeny_size.dividedInHalf; }
 	get lastChild():						   Thing { return this.children.slice(-1)[0]; }
 	get firstChild():						   Thing { return this.children[0]; }
-	get hierarchy():					   Hierarchy { return get(s_hierarchy); }
+	get hierarchy():					   Hierarchy { return get(w_hierarchy); }
 	get titleRect():					 Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
 	get idBridging():				   string | null { return this.thing?.idBridging ?? null; }
 	get parentAncestry():			 Ancestry | null { return this.stripBack(); }
-	get g_widget():				 	 G_Widget | null { return get(s_g_radial)?.g_widget_forAncestry(this) ?? null; }
+	get g_widget():				 	 G_Widget | null { return get(w_g_radial)?.g_widget_forAncestry(this) ?? null; }
 	get predicate():				Predicate | null { return this.hierarchy.predicate_forKind(this.kindPredicate) }
 	get relationship():			 Relationship | null { return this.relationshipAt(); }
 	get titleWrapper():		   Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.hid, T_SvelteComponent.title); }
@@ -137,10 +137,10 @@ export default class Ancestry extends Identifiable {
 
 	get s_paging(): S_Paging | null {
 		const predicate = this.predicate;
-		const g_radial = get(s_g_radial);
+		const g_radial = get(w_g_radial);
 		if (!!predicate && !!g_radial) {
 			const g_cluster = g_radial?.g_cluster_pointing_toChildren(this.thing_isChild, predicate)
-			return g_cluster?.s_ancestryPaging(this) ?? null;
+			return g_cluster?.w_ancestryPaging(this) ?? null;
 		}
 		return null;	// either g_radial is not setup or predicate is bogus
 	}
@@ -161,7 +161,7 @@ export default class Ancestry extends Identifiable {
 		if (g.inRadialMode) {
 			return this.parentAncestry?.s_paging?.index_isVisible(this.siblingIndex) ?? false;
 		} else {
-			const focus = get(s_ancestry_focus);
+			const focus = get(w_ancestry_focus);
 			const incorporates = this.incorporates(focus);
 			const expanded = this.isAllExpandedFrom(focus);
 			return (incorporates && expanded);
@@ -210,10 +210,10 @@ export default class Ancestry extends Identifiable {
 	}
 
 	get canConnect_toToolsAncestry(): boolean {
-		const alteration = get(s_s_alteration);
+		const alteration = get(w_s_alteration);
 		const predicate = alteration?.predicate;
 		if (!!alteration && !!predicate) {
-			const toolsAncestry = get(s_ancestry_showing_tools);
+			const toolsAncestry = get(w_ancestry_showing_tools);
 			const toolThing = toolsAncestry?.thing;
 			const thing = this.thing;
 			if (!!thing && !!toolThing && !!toolsAncestry) {
@@ -369,7 +369,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	svgPathFor_tinyDots_outsideReveal(points_toChild: boolean): string | null {
-		const in_radial_mode = get(s_t_graph) == T_Graph.radial;
+		const in_radial_mode = get(w_t_graph) == T_Graph.radial;
 		const isUnidirectional = !(this.predicate?.isBidirectional ?? true);
 		const isVisible_forChild = this.hasChildRelationships && show.children_dots && (in_radial_mode ? true : !this.isExpanded);
 		const isVisible_inRadial = points_toChild ? isVisible_forChild : this.hasParentRelationships && (isUnidirectional ? show.parent_dots : show.related_dots);
@@ -553,7 +553,7 @@ export default class Ancestry extends Identifiable {
 
 	grabOnly() {
 		debug.log_grabs(`  GRAB ONLY "${this.id}"`);
-		s_ancestries_grabbed.set([this]);
+		w_ancestries_grabbed.set([this]);
 		this.toggle_editingTools();
 	}
 
@@ -563,11 +563,11 @@ export default class Ancestry extends Identifiable {
 	}
 
 	becomeFocus(force: boolean = false): boolean {
-		const priorFocus = get(s_ancestry_focus)
+		const priorFocus = get(w_ancestry_focus)
 		const changed = force || !priorFocus || !this.ancestry_hasEqualID(priorFocus!);
 		if (changed) {
-			s_s_alteration.set(null);
-			s_ancestry_focus.set(this);
+			w_s_alteration.set(null);
+			w_ancestry_focus.set(this);
 		}
 		this.expand();
 		return changed;
@@ -594,8 +594,8 @@ export default class Ancestry extends Identifiable {
 		if (this.predicate?.isBidirectional ?? false) {
 			this.thing?.oneAncestry?.handle_singleClick_onDragDot(shiftKey);
 		} else {
-			s_s_title_edit?.set(null);
-			if (!!get(s_s_alteration)) {
+			w_s_title_edit?.set(null);
+			if (!!get(w_s_alteration)) {
 				this.ancestry_alterMaybe(this);
 			} else if (!shiftKey && g.inRadialMode) {
 				this.becomeFocus();
@@ -609,7 +609,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	grab() {
-		s_ancestries_grabbed.update((a) => {
+		w_ancestries_grabbed.update((a) => {
 			let array = a ?? [];
 			if (!!array) {
 				const index = array.indexOf(this);
@@ -630,7 +630,7 @@ export default class Ancestry extends Identifiable {
 
 	ungrab() {
 		const rootAncestry = this.hierarchy.rootAncestry;
-		s_ancestries_grabbed.update((a) => {
+		w_ancestries_grabbed.update((a) => {
 			let array = a ?? [];
 			if (!!array) {
 				const index = array.indexOf(this);
@@ -643,7 +643,7 @@ export default class Ancestry extends Identifiable {
 			}
 			return array;
 		});
-		let ancestries = get(s_ancestries_grabbed) ?? [];
+		let ancestries = get(w_ancestries_grabbed) ?? [];
 		if (ancestries.length == 0 && !g.inRadialMode) {
 			rootAncestry.grabOnly();
 		} else {
@@ -653,21 +653,21 @@ export default class Ancestry extends Identifiable {
 	}
 
 	toggle_editingTools() {
-		const toolsAncestry = get(s_ancestry_showing_tools);
+		const toolsAncestry = get(w_ancestry_showing_tools);
 		if (!!toolsAncestry) { // ignore if editingTools not in use
-			s_s_alteration.set(null);
+			w_s_alteration.set(null);
 			if (this.ancestry_hasEqualID(toolsAncestry)) {
-				s_ancestry_showing_tools.set(null);
+				w_ancestry_showing_tools.set(null);
 			} else if (!this.isRoot) {
-				s_ancestry_showing_tools.set(this);
+				w_ancestry_showing_tools.set(this);
 			}
 		}
 	}
 
 	async ancestry_alterMaybe(ancestry: Ancestry) {
 		if (ancestry.canConnect_toToolsAncestry) {
-			const alteration = get(s_s_alteration);
-			const toolsAncestry = get(s_ancestry_showing_tools);
+			const alteration = get(w_s_alteration);
+			const toolsAncestry = get(w_ancestry_showing_tools);
 			const kindPredicate = alteration?.predicate?.kind;
 			if (!!alteration && !!toolsAncestry && !!kindPredicate) {
 				this.hierarchy.clear_editingTools();
@@ -701,7 +701,7 @@ export default class Ancestry extends Identifiable {
 	expanded_setTo(expand: boolean) {
 		let mutated = false;
 		if (!this.isRoot || expand) {
-			s_ancestries_expanded.update((a) => {
+			w_ancestries_expanded.update((a) => {
 				let array = a ?? [];
 				if (!!array) {
 					const index = array.map(a => a.id).indexOf(this.id);
@@ -725,7 +725,7 @@ export default class Ancestry extends Identifiable {
 		if (this.isEditable) {
 			debug.log_edit(`EDIT ${this.title}`)
 			this.grabOnly();
-			s_s_title_edit.set(new S_Title_Edit(this));
+			w_s_title_edit.set(new S_Title_Edit(this));
 		}
 	}
 

@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { s_t_graph, s_t_tree, s_count_resize, s_device_isMobile } from '../../ts/state/S_Stores';
-	import { T_Control, preferences, S_Element, T_Preference } from '../../ts/common/Global_Imports';
-	import { s_show_details, s_id_popupView, s_thing_fontFamily } from '../../ts/state/S_Stores';
+	import { w_t_graph, w_t_tree, w_count_resize, w_device_isMobile } from '../../ts/state/S_Stores';
+	import { T_Control, p, S_Element, T_Preference } from '../../ts/common/Global_Imports';
+	import { w_show_details, w_id_popupView, w_thing_fontFamily } from '../../ts/state/S_Stores';
 	import { g, k, u, ux, w, show, Point, T_Layer, signals } from '../../ts/common/Global_Imports';
 	import { svgPaths, T_Hierarchy, T_Graph, T_Element } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/data/basis/Identifiable';
@@ -28,10 +28,10 @@
 	];
 
 	onMount(() => { setup_forIDs(); });
-	function togglePopupID(id) { $s_id_popupView = ($s_id_popupView == id) ? null : id; }
+	function togglePopupID(id) { $w_id_popupView = ($w_id_popupView == id) ? null : id; }
 
 	$: {
-		const _ = $s_count_resize;
+		const _ = $w_count_resize;
 		width = w.windowSize.width - 20;
 	}
 
@@ -48,20 +48,20 @@
 	}
 
 	function next_graph_relations() {
-		switch ($s_t_tree) {
+		switch ($w_t_tree) {
 			case T_Hierarchy.parents:  return T_Hierarchy.related;
 			case T_Hierarchy.children: return T_Hierarchy.parents;
 			default:				 return T_Hierarchy.children;
 		}
 	}
 
-	function button_closure_forT_Control(s_mouse, t_control) {
+	function mouse_closure_forControl_Type(s_mouse, t_control) {
 		if (s_mouse.isHover) {
 			s_elements_byT_Control[t_control].isOut = s_mouse.isOut;
 		} else if (s_mouse.isUp) {
 			switch (t_control) {
 				case T_Control.help: g.showHelp(); break;
-				case T_Control.details: $s_show_details = !$s_show_details; break;
+				case T_Control.details: $w_show_details = !$w_show_details; break;
 				case T_Control.bigger: width = w.zoomBy(k.zoom_in_ratio) - 20; break;	// mobile only
 				case T_Control.smaller: width = w.zoomBy(k.zoom_out_ratio) - 20; break;	//   "     "
 				default: togglePopupID(t_control); break;
@@ -72,8 +72,8 @@
 	function selection_closure(name: string, types: Array<string>) {
 		const type = types[0];	// only ever has one element
 		switch (name) {
-			case 'graph':	  $s_t_graph = type as T_Graph;	break;
-			case 'relations': $s_t_tree	 = type as T_Hierarchy;	break;
+			case 'graph':	  $w_t_graph = type as T_Graph;	break;
+			case 'relations': $w_t_tree	 = type as T_Hierarchy;	break;
 		}
 	}
 
@@ -87,37 +87,37 @@
 			position: absolute;
 			z-index: {T_Layer.frontmost};
 			height: `${k.height_banner - 2}px`;'>
-		{#if !$s_id_popupView}
+		{#if !$w_id_popupView}
 			<Button
 				name='hamburger'
 				border_thickness=0
 				color='transparent'
 				center={new Point(lefts[0], details_top + 3)}
 				s_element={s_elements_byT_Control[T_Control.details]}
-				closure={(s_mouse) => button_closure_forT_Control(s_mouse, T_Control.details)}>
+				closure={(s_mouse) => mouse_closure_forControl_Type(s_mouse, T_Control.details)}>
 				<img src='settings.svg' alt='circular button' width={size_small}px height={size_small}px/>
 			</Button>
-			{#key $s_t_graph}
+			{#key $w_t_graph}
 				<Segmented
 					name='graph'
 					origin={Point.x(30)}
-					selected={[$s_t_graph]}
+					selected={[$w_t_graph]}
 					titles={[T_Graph.tree, T_Graph.radial]}
 					selection_closure={(titles) => selection_closure('graph', titles)}/>
 				{#if !g.inRadialMode && show.t_trees}
-					{#key $s_t_tree}
+					{#key $w_t_tree}
 						<Segmented
 							name='tree'
 							origin={Point.x(114)}
-							selected={[$s_t_tree]}
+							selected={[$w_t_tree]}
 							titles={[T_Hierarchy.children, T_Hierarchy.parents, T_Hierarchy.related]}
 							selection_closure={(titles) => selection_closure('relations', titles)}/>
 					{/key}
 				{/if}
 			{/key}
 		{/if}
-		{#key $s_device_isMobile}
-			{#if $s_device_isMobile}
+		{#key $w_device_isMobile}
+			{#if $w_device_isMobile}
 				{#if elementShown_byT_Control[T_Control.smaller]}
 					<Button
 						width={size_big}
@@ -125,7 +125,7 @@
 						name={T_Control.smaller}
 						center={new Point(width - 110, y_center)}
 						s_element={s_elements_byT_Control[T_Control.smaller]}
-						closure={(s_mouse) => button_closure_forT_Control(s_mouse, T_Control.smaller)}>
+						closure={(s_mouse) => mouse_closure_forControl_Type(s_mouse, T_Control.smaller)}>
 						<svg
 							id='shrink-svg'>
 							<path
@@ -143,7 +143,7 @@
 						name={T_Control.bigger}
 						center={new Point(width - 140, y_center)}
 						s_element={s_elements_byT_Control[T_Control.bigger]}
-						closure={(s_mouse) => button_closure_forT_Control(s_mouse, T_Control.bigger)}>
+						closure={(s_mouse) => mouse_closure_forControl_Type(s_mouse, T_Control.bigger)}>
 						<svg
 							id='enlarge-svg'>
 							<path
@@ -162,8 +162,8 @@
 				height={size_big}
 				center={new Point(width - 55, y_center)}
 				s_element={s_elements_byT_Control[T_Control.builds]}
-				closure={(s_mouse) => button_closure_forT_Control(s_mouse, T_Control.builds)}>
-				<span style='font-family: {$s_thing_fontFamily};'>
+				closure={(s_mouse) => mouse_closure_forControl_Type(s_mouse, T_Control.builds)}>
+				<span style='font-family: {$w_thing_fontFamily};'>
 					{'build ' + k.build_number}
 				</span>
 			</Button>
@@ -174,7 +174,7 @@
 				height={size_big}
 				center={new Point(width, y_center)}
 				s_element={s_elements_byT_Control[T_Control.help]}
-				closure={(s_mouse) => button_closure_forT_Control(s_mouse, T_Control.help)}>
+				closure={(s_mouse) => mouse_closure_forControl_Type(s_mouse, T_Control.help)}>
 				<span
 					style='top:2px;
 						left:5.5px;

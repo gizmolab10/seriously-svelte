@@ -1,5 +1,5 @@
 import { u, debug, Svelte_Wrapper, T_SvelteComponent } from '../common/Global_Imports';
-import { s_hierarchy } from '../../ts/state/S_Stores';
+import { w_hierarchy } from '../../ts/state/S_Stores';
 import { Create_Mouse_State } from '../common/Types';
 import type { Integer } from '../common/Types';
 import { get } from 'svelte/store';
@@ -86,7 +86,7 @@ export class Wrappers {
 			const wrappers = Object.values(wrappers_byHID);
 			for (const wrapper of wrappers) {
 				const hid = wrapper.hid;
-				const ancestry = get(s_hierarchy).ancestry_forHID(hid)
+				const ancestry = get(w_hierarchy).ancestry_forHID(hid)
 				const title = ancestry?.title ?? hid;
 				debug.log_action(`hitsFor ${type} ${title}`);
 				if (wrapper.isHit(event)) {

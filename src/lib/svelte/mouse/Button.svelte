@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { S_Element, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { k, u, ux, Rect, Point, T_Layer } from '../../ts/common/Global_Imports';
-	import { s_thing_fontFamily } from '../../ts/state/S_Stores';
+	import { w_thing_fontFamily } from '../../ts/state/S_Stores';
 	import Identifiable from '../../ts/data/basis/Identifiable';
 	import type { Handle_Result } from '../../ts/common/Types';
 	import Mouse_Responder from './Mouse_Responder.svelte';
@@ -57,7 +57,7 @@
 				position:${position};
 				border-radius:${height / 2}px;
 				cursor:${s_element.cursor};
-				font-family:${$s_thing_fontFamily};
+				font-family:${$w_thing_fontFamily};
 				background-color:${background_color};
 			`.removeWhiteSpace();
 		}

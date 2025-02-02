@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { g, k, u, ux, w, show, Rect, Size, Point, debug, Angle } from '../../ts/common/Global_Imports';
 	import { T_Layer, G_Cluster, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { s_thing_fontFamily, s_ring_rotation_radius } from '../../ts/state/S_Stores';
-	import { s_count_mouse_up, s_ancestry_focus } from '../../ts/state/S_Stores';
+	import { w_thing_fontFamily, w_ring_rotation_radius } from '../../ts/state/S_Stores';
+	import { w_count_mouse_up, w_ancestry_focus } from '../../ts/state/S_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/basis/Identifiable';
 	import Angled_Text from '../kit/Angled_Text.svelte';
@@ -10,10 +10,10 @@
 	export let g_cluster!: G_Cluster;
 	const offset = k.radial_widget_padding;
 	const thumb_name = `thumb-${g_cluster.name}`;
-	const radius = $s_ring_rotation_radius + offset;
+	const radius = $w_ring_rotation_radius + offset;
 	const viewBox=`${-offset} ${-offset} ${radius * 2} ${radius * 2}`;
 	let origin = w.center_ofGraphSize.offsetBy(Point.square(-radius));
-	let mouse_up_count = $s_count_mouse_up;
+	let mouse_up_count = $w_count_mouse_up;
 	let arc_wrapper!: Svelte_Wrapper;
 	let thumb_color = color;
 	let fork_color = color;
@@ -37,9 +37,9 @@
 	}
 
 	$: {
-		if (mouse_up_count != $s_count_mouse_up) {		// NEVER gets executed
-			mouse_up_count = $s_count_mouse_up;			// WHY? because mouse_up_count is always
-			g_cluster.paging_rotation.reset();		// reset to s_count_mouse_up by rebuild
+		if (mouse_up_count != $w_count_mouse_up) {		// NEVER gets executed
+			mouse_up_count = $w_count_mouse_up;			// WHY? because mouse_up_count is always
+			g_cluster.paging_rotation.reset();		// reset to w_count_mouse_up by rebuild
 		}
 	}
 
@@ -50,7 +50,7 @@
 	function update_colors() {
 		fork_color = u.opacitize(color, 0.3);
 		arc_color = u.opacitize(color, g.s_cluster_rotation.stroke_opacity);
-		thumb_color = u.opacitize(color, g.s_ring_rotation.isActive ? 0.15 : g_cluster.paging_rotation.three_level_opacity);
+		thumb_color = u.opacitize(color, g.w_ring_rotation.isActive ? 0.15 : g_cluster.paging_rotation.three_level_opacity);
 	}
 
 	function hover_closure(s_mouse) {
@@ -96,7 +96,7 @@
 		text={g_cluster.cluster_title}
 		center={g_cluster.label_center}
 		font_size={k.small_font_size}px
-		font_family={$s_thing_fontFamily}
+		font_family={$w_thing_fontFamily}
 		angle={g_cluster.g_arcSlider.label_text_angle}
-		color={$s_ancestry_focus.thing?.color ?? k.thing_color_default}/>
+		color={$w_ancestry_focus.thing?.color ?? k.thing_color_default}/>
 {/if}

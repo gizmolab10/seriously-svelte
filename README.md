@@ -16,6 +16,6 @@ export function initializeApp(): void {
 kind|prefix
 :----:|:----:
 type|T_
-store|s_
+store|w_
 state|S_
 geometry|G_

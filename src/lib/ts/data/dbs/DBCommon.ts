@@ -1,7 +1,7 @@
 import { g, k, u, Trait, Thing, T_Thing, Hierarchy, Predicate, Relationship } from '../../common/Global_Imports';
-import { debug, signals, T_Startup, preferences, T_Preference } from '../../common/Global_Imports';
+import { debug, signals, T_Startup, p, T_Preference } from '../../common/Global_Imports';
 import Persistent_Identifiable from '../basis/Persistent_Identifiable';
-import { s_hierarchy, s_t_startup } from '../../state/S_Stores';
+import { w_hierarchy, w_t_startup } from '../../state/S_Stores';
 import type { Dictionary } from '../../common/Types';
 
 export enum T_Persistence {
@@ -46,8 +46,8 @@ export default class DBCommon {
 	
 	async fetch_all() { this.fetch_all_fromLocal(); }
 	async remove_all() { this.remove_all_fromLocal(); }
-	remove_all_fromLocal() { if (this.isPersistent) { preferences.writeDB_key(T_Preference.local, null); } }
-	persist_all_toLocal() { if (this.isPersistent) { preferences.writeDB_key(T_Preference.local, u.stringify_object(this.hierarchy.all_data)); } }
+	remove_all_fromLocal() { if (this.isPersistent) { p.writeDB_key(T_Preference.local, null); } }
+	persist_all_toLocal() { if (this.isPersistent) { p.writeDB_key(T_Preference.local, u.stringify_object(this.hierarchy.all_data)); } }
 
 	async thing_persistentUpdate(thing: Thing) {}
 	async thing_persistentDelete(thing: Thing) {}
@@ -86,7 +86,7 @@ export default class DBCommon {
 	}
 
 	async fetch_all_fromLocal() {
-		const json = preferences.readDB_key(T_Preference.local);
+		const json = p.readDB_key(T_Preference.local);
 		const h = this.hierarchy;
 		if (!!json) {
 			await h.extract_fromDict(JSON.parse(json) as Dictionary);
@@ -100,15 +100,15 @@ export default class DBCommon {
 		this.queryStrings_apply();
 		const h = this.hierarchy ?? new Hierarchy(this);
 		this.hierarchy = h;
-		s_hierarchy.set(h);
+		w_hierarchy.set(h);
 		if (h.hasRoot) {
 			h.restore_fromPersistLocal();
 		} else {
-			s_t_startup.set(T_Startup.fetch);
+			w_t_startup.set(T_Startup.fetch);
 			await this.hierarchy_create_fastLoad_or_fetch_andBuild();
 		}
 		setTimeout( () => {
-			s_t_startup.set(T_Startup.ready);
+			w_t_startup.set(T_Startup.ready);
 			signals.signal_rebuildGraph_fromFocus();
 		}, 1);
 	}

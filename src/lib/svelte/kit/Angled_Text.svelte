@@ -1,8 +1,8 @@
 <script>
 	import { k, u, Point, debug, T_Layer } from '../../ts/common/Global_Imports';
-	import { s_thing_fontFamily } from '../../ts/state/S_Stores';
+	import { w_thing_fontFamily } from '../../ts/state/S_Stores';
 	import { onMount } from 'svelte';
-	export let font_family = $s_thing_fontFamily;
+	export let font_family = $w_thing_fontFamily;
 	export let center = Point.zero;
 	export let font_size = '0.7em';
 	export let text = k.space;

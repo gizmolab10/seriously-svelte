@@ -1,11 +1,11 @@
 <script lang='ts'>
-	import { s_s_title_edit, s_show_details, s_device_isMobile, } from '../../ts/state/S_Stores';
+	import { w_s_title_edit, w_show_details, w_device_isMobile, } from '../../ts/state/S_Stores';
 	import { g, k, u, ux, w, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
 	import { debug, T_Layer, Ancestry, T_Startup } from '../../ts/common/Global_Imports';
-	import { s_t_database, s_graph_rect, s_hierarchy } from '../../ts/state/S_Stores';
+	import { w_t_database, w_graph_rect, w_hierarchy } from '../../ts/state/S_Stores';
 	import { T_Control, Hierarchy, databases } from '../../ts/common/Global_Imports';
-	import { s_id_popupView, s_ancestry_focus } from '../../ts/state/S_Stores';
-	import { s_count_resize, s_t_startup } from '../../ts/state/S_Stores';
+	import { w_id_popupView, w_ancestry_focus } from '../../ts/state/S_Stores';
+	import { w_count_resize, w_t_startup } from '../../ts/state/S_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { T_Database } from '../../ts/data/dbs/DBCommon';
 	import Details from '../details/Details.svelte';
@@ -23,7 +23,7 @@
 	function ignore_wheel(event) { event.preventDefault(); }
 
 	$: {
-		const _ = $s_t_database + $s_t_startup + $s_id_popupView;
+		const _ = $w_t_database + $w_t_startup + $w_id_popupView;
 		rebuilds += 1;
 	}
 	
@@ -32,8 +32,8 @@
 			const key = event.key.toLowerCase();
 			if (key == undefined) {
 				alert('No key for ' + event.type);
-			} else if (!$s_s_title_edit && !g.isEditing_text) {			// let title editor (when active) consume the events
-				const h = $s_hierarchy;
+			} else if (!$w_s_title_edit && !g.isEditing_text) {			// let title editor (when active) consume the events
+				const h = $w_hierarchy;
 				switch (key) {
 					case 'o': h.select_file_toUpload(event.shiftKey); break;
 					case 'c': w.user_graph_offset_setTo(Point.zero); break;
@@ -68,16 +68,16 @@
 		pointer-events: auto;
 		{k.prevent_selection_style};'
 		on:wheel={ignore_wheel}>
-		{#if [T_Startup.start, T_Startup.fetch].includes($s_t_startup) && databases.db.isPersistent}
+		{#if [T_Startup.start, T_Startup.fetch].includes($w_t_startup) && databases.db.isPersistent}
 			<p>Welcome to Seriously</p>
-			{#if $s_t_startup == T_Startup.fetch}
+			{#if $w_t_startup == T_Startup.fetch}
 				<p>{databases.startupExplanation}</p>
 			{/if}
-		{:else if $s_t_startup == T_Startup.empty}
+		{:else if $w_t_startup == T_Startup.empty}
 			<p>Nothing is available.</p>
-		{:else if $s_t_startup == T_Startup.ready}
+		{:else if $w_t_startup == T_Startup.ready}
 			<Controls/>
-			{#if !$s_id_popupView}
+			{#if !$w_id_popupView}
 				<div class='breadcrumbs'
 					style='left:0px;
 						position: absolute;
@@ -95,7 +95,7 @@
 					top: {k.height_banner}px;
 					z-index: {T_Layer.lines};'>
 				</div>
-				{#if $s_show_details}
+				{#if $w_show_details}
 					<Details/>
 					<div class='vertical-line'
 						style='
@@ -104,8 +104,8 @@
 							z-index: {T_Layer.lines};
 							left: {k.width_details}px;
 							background-color: lightgray;
-							top: {$s_graph_rect.origin.y}px;
-							height: {$s_graph_rect.size.height}px;'>
+							top: {$w_graph_rect.origin.y}px;
+							height: {$w_graph_rect.size.height}px;'>
 					</div>
 				{/if}
 			{/if}
@@ -114,13 +114,13 @@
 					height: 100%;
 					position: fixed;
 					z-index: {T_Layer.backmost};
-					left: {$s_show_details ? k.width_details : 0}px;'>
-				{#key $s_id_popupView}
-					{#if $s_id_popupView == T_Control.builds}
+					left: {$w_show_details ? k.width_details : 0}px;'>
+				{#key $w_id_popupView}
+					{#if $w_id_popupView == T_Control.builds}
 						<BuildNotes/>
-					{:else if $s_id_popupView == T_Control.import}
+					{:else if $w_id_popupView == T_Control.import}
 						<Import accept='.json'/>
-					{:else if !$s_id_popupView}
+					{:else if !$w_id_popupView}
 						<Graph/>
 					{/if}
 				{/key}

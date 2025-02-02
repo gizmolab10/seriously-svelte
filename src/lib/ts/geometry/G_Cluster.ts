@@ -1,7 +1,7 @@
 import { k, u, ux, w, Rect, Point, Angle, debug, T_Line, G_ArcSlider, T_Quadrant } from '../common/Global_Imports';
 import { Ancestry, Predicate, S_Paging, G_Widget, S_Rotation } from '../common/Global_Imports';
-import { s_ring_rotation_angle, s_ring_rotation_radius } from '../state/S_Stores';
-import { s_graph_rect, s_ancestry_focus } from '../state/S_Stores';
+import { w_ring_rotation_angle, w_ring_rotation_radius } from '../state/S_Stores';
+import { w_graph_rect, w_ancestry_focus } from '../state/S_Stores';
 import { get } from 'svelte/store';
 
 //////////////////////////////////////////
@@ -20,7 +20,7 @@ import { get } from 'svelte/store';
 //////////////////////////////////////////
 
 export default class G_Cluster {
-	focus_ancestry: Ancestry = get(s_ancestry_focus);
+	focuw_ancestry: Ancestry = get(w_ancestry_focus);
 	g_thumbSlider = new G_ArcSlider();
 	ancestries: Array<Ancestry> = [];
 	g_widgets: Array<G_Widget> = [];
@@ -47,7 +47,7 @@ export default class G_Cluster {
 		this.predicate = predicate;
 		debug.log_build(` C MAP (ts)  ${total_widgets}  ${this.direction_kind}`);
 		this.update_all();
-		s_ring_rotation_radius.subscribe((radius: number) => {
+		w_ring_rotation_radius.subscribe((radius: number) => {
 			if (this.g_arcSlider.outside_arc_radius != radius) {
 				this.update_all();		// do not set_paging_index (else expand will hang)
 			}
@@ -57,8 +57,8 @@ export default class G_Cluster {
 	update_all() {
 		this.widgets_shown = this.ancestries.length;
 		this.isPaging = this.widgets_shown < this.total_widgets;
-		this.center = get(s_graph_rect).size.asPoint.dividedInHalf;
-		this.color = u.opacitize(this.focus_ancestry.thing?.color ?? this.color, 0.2);
+		this.center = get(w_graph_rect).size.asPoint.dividedInHalf;
+		this.color = u.opacitize(this.focuw_ancestry.thing?.color ?? this.color, 0.2);
 		this.update_fork_angle();
 		this.update_widget_angles();
 		this.update_label_geometry();
@@ -70,15 +70,15 @@ export default class G_Cluster {
 	get titles(): string { return this.ancestries.map(a => a.title).join(', '); }
 	get description(): string { return `(${this.cluster_title}) ${this.titles}`; }
 	get paging_index_ofFocus(): number { return this.s_focusPaging?.index ?? 0; }
-	get paging_rotation(): S_Rotation { return ux.rotation_state_forName(this.name); }
+	get paging_rotation(): S_Rotation { return ux.s_rotation_forName(this.name); }
 	get maximum_paging_index(): number { return this.total_widgets - this.widgets_shown; }
 	get kind(): string { return this.predicate?.kind.unCamelCase().lastWord() ?? k.empty; }
-	get name(): string { return `${this.focus_ancestry.title}-cluster-${this.direction_kind}`; }
-	get fork_radial(): Point { return Point.fromPolar(get(s_ring_rotation_radius), this.g_arcSlider.fork_angle); }
-	get s_focusPaging(): S_Paging | null { return this.s_ancestryPaging(this.focus_ancestry); }
+	get name(): string { return `${this.focuw_ancestry.title}-cluster-${this.direction_kind}`; }
+	get fork_radial(): Point { return Point.fromPolar(get(w_ring_rotation_radius), this.g_arcSlider.fork_angle); }
+	get s_focusPaging(): S_Paging | null { return this.w_ancestryPaging(this.focuw_ancestry); }
 
 	get thumb_isHit(): boolean {
-		const offset = Point.square(-get(s_ring_rotation_radius));
+		const offset = Point.square(-get(w_ring_rotation_radius));
 		const mouse_vector = w.mouse_vector_ofOffset_fromGraphCenter(offset);
 		return this.isPaging && !!mouse_vector && mouse_vector.isContainedBy_path(this.g_thumbSlider.svgPathFor_arcSlider);
 	}
@@ -94,7 +94,7 @@ export default class G_Cluster {
 	update_label_geometry() {		// rotate text tangent to arc, at center of arc
 		const angle = this.g_arcSlider.center_angle;
 		const ortho = this.arc_in_lower_half ? Angle.quarter : Angle.three_quarters;
-		const radius = get(s_ring_rotation_radius) - k.ring_rotation_thickness + (this.arc_in_lower_half ? 5 : 0) + 10;
+		const radius = get(w_ring_rotation_radius) - k.ring_rotation_thickness + (this.arc_in_lower_half ? 5 : 0) + 10;
 		this.label_center = this.center.offsetBy(Point.fromPolar(radius, angle));
 		this.g_arcSlider.label_text_angle = ortho - angle;
 		this.label_position_angle = angle;
@@ -112,8 +112,9 @@ export default class G_Cluster {
 	
 	static readonly PAGING: unique symbol;
 	
-	s_ancestryPaging(ancestry: Ancestry): S_Paging | null {
-		return ancestry.thing?.s_pages?.s_paging_for(this) ?? null;
+	w_ancestryPaging(ancestry: Ancestry): S_Paging | null {
+		const w_thing_pages = ux.s_thing_pages_forThingID(ancestry.thing?.id);
+		return w_thing_pages?.s_paging_for(this) ?? null;
 	}
 	
 	adjust_paging_index_byAdding_angle(delta_angle: number) {
@@ -176,7 +177,7 @@ export default class G_Cluster {
 	update_fork_angle() {
 		// returns one of three angles: 1) children_angle 2) opposite+tweak 3) opposite-tweak
 		const tweak = 2 * Math.PI / 3;					// equilateral distribution
-		const children_angle = get(s_ring_rotation_angle);
+		const children_angle = get(w_ring_rotation_angle);
 		const raw = this.predicate.isBidirectional ?
 			children_angle + tweak :
 			this.points_toChildren ? children_angle :		// one directional, use global
@@ -188,7 +189,7 @@ export default class G_Cluster {
 	update_widget_angles() {
 		this.g_widgets = [];
 		if (this.widgets_shown > 0 && !!this.predicate) {
-			const radius = get(s_ring_rotation_radius);
+			const radius = get(w_ring_rotation_radius);
 			const radial = new Point(radius + k.radial_widget_padding, 0);
 			const fork_pointsRight = new Angle(this.g_arcSlider.fork_angle).angle_pointsRight;
 			const tweak = this.center.offsetByXY(2, -1.5);	// tweak so that drag dots are centered within the rotation ring
@@ -199,7 +200,7 @@ export default class G_Cluster {
 				const child_ancestry = this.ancestries[child_index];
 				const child_angle = this.angle_at_index(index);
 				const child_origin = tweak.offsetBy(radial.rotate_by(child_angle));
-				const g_widget = new G_Widget(T_Line.flat, new Rect(), child_origin, child_ancestry, this.focus_ancestry, this.points_toChildren, child_angle);
+				const g_widget = new G_Widget(T_Line.flat, new Rect(), child_origin, child_ancestry, this.focuw_ancestry, this.points_toChildren, child_angle);
 				this.g_widgets.push(g_widget);
 				index += 1;
 			}
@@ -223,7 +224,7 @@ export default class G_Cluster {
 
 		const max = this.widgets_shown - 1;
 		const row = (max / 2) - index;						// row centered around zero
-		const radius = get(s_ring_rotation_radius);
+		const radius = get(w_ring_rotation_radius);
 		const radial = this.fork_radial;					// points at middle widget
 		let y = radial.y + (row * (k.row_height - 2));		// distribute y equally around fork_y
 		let y_isOutside = false;

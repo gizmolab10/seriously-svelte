@@ -1,5 +1,5 @@
-import { s_mouse_location, s_mouse_location_scaled, s_count_mouse_up, s_s_alteration } from '../state/S_Stores';
-import { s_count_resize, s_device_isMobile, s_user_graph_offset } from '../state/S_Stores';
+import { w_mouse_location, w_mouse_location_scaled, w_count_mouse_up, w_s_alteration } from '../state/S_Stores';
+import { w_count_resize, w_device_isMobile, w_user_graph_offset } from '../state/S_Stores';
 import { g, k, w, Point, debug, signals, S_Alteration } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
@@ -8,8 +8,8 @@ export class Events {
 	interval: NodeJS.Timeout | null = null;
 
 	setup() {
-		s_s_alteration.subscribe((state: S_Alteration | null) => { this.handle_alteration_state(state); });
-		s_device_isMobile.subscribe((isMobile: boolean) => { this.subscribeTo_events(); });
+		w_s_alteration.subscribe((state: S_Alteration | null) => { this.handle_alteration_state(state); });
+		w_device_isMobile.subscribe((isMobile: boolean) => { this.subscribeTo_events(); });
 		this.subscribeTo_events();
 	}
 
@@ -62,7 +62,7 @@ export class Events {
 	handle_mouse_up(event: MouseEvent) {
 		event.preventDefault();
 		event.stopPropagation();
-		s_count_mouse_up.set(get(s_count_mouse_up) + 1);
+		w_count_mouse_up.set(get(w_count_mouse_up) + 1);
 		// this.respondTo_closure(event, S_Mouse.up);
 	}
 
@@ -70,8 +70,8 @@ export class Events {
 		event.preventDefault();
 		event.stopPropagation();
 		const location = new Point(event.clientX, event.clientY);
-		s_mouse_location.set(location);
-		s_mouse_location_scaled.set(location.dividedBy(w.scale_factor));
+		w_mouse_location.set(location);
+		w_mouse_location_scaled.set(location.dividedBy(w.scale_factor));
 		// this.respondTo_closure(event, S_Mouse.move);
 	}
 
@@ -80,7 +80,7 @@ export class Events {
 		event.stopPropagation();
 		if (!g.device_isMobile) {
 			const e = event as WheelEvent;
-			const userOffset = get(s_user_graph_offset);
+			const userOffset = get(w_user_graph_offset);
 			const delta = new Point(-e.deltaX, -e.deltaY);
 			if (!!userOffset && g.allow_HorizontalScrolling && delta.magnitude > 1) {
 				debug.log_action(` wheel GRAPH`);
@@ -109,15 +109,15 @@ export class Events {
 		// called when simulator switches platform (e.g., desktop <--> iphone)
 		const isMobile = g.device_isMobile;
 		debug.log_action(` resize [is${isMobile ? '' : ' not'} mobile] STATE`);
-		s_count_resize.set(get(s_count_resize) + 1);
-		s_device_isMobile.set(isMobile);
+		w_count_resize.set(get(w_count_resize) + 1);
+		w_device_isMobile.set(isMobile);
 		w.restore_state();
 	}
 
 	handle_orientation_change(event: Event) {
 		const isMobile = g.device_isMobile;
 		debug.log_action(` orientation change [is${isMobile ? '' : ' not'} mobile] STATE`);
-		s_device_isMobile.set(isMobile);
+		w_device_isMobile.set(isMobile);
 		w.restore_state();
 	}
 

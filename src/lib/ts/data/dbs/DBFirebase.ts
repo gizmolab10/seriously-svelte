@@ -1,4 +1,4 @@
-import { g, k, u, Thing, Trait, debug, signals, Predicate, preferences, Relationship } from '../../common/Global_Imports';
+import { g, k, u, Thing, Trait, debug, signals, Predicate, p, Relationship } from '../../common/Global_Imports';
 import { T_Thing, T_Trait, T_Debug, T_Create, T_Predicate, T_Preference } from '../../common/Global_Imports';
 import { doc, addDoc, setDoc, getDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
 import { QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
@@ -35,9 +35,9 @@ export default class DBFirebase extends DBCommon {
 	reportError(error: any) { console.log(error); }
 
 	queryStrings_apply() {
-		const persistedID = preferences.read_key(T_Preference.base_id);
+		const persistedID = p.read_key(T_Preference.base_id);
 		const id = g.queryStrings.get('name') ?? g.queryStrings.get('dbid') ?? persistedID ?? 'Public';
-		preferences.write_key(T_Preference.base_id, id);
+		p.write_key(T_Preference.base_id, id);
 		this.idBase = id;
 	}
 
@@ -756,20 +756,17 @@ export class PersistentTrait {
 
 export class PersistentPredicate {
 	isBidirectional: boolean;
-	stateIndex: number;
 	kind: T_Predicate;
 
 	constructor(data: DocumentData) {
 		const remote		 = data as PersistentPredicate;
 		this.isBidirectional = remote.isBidirectional;
-		this.stateIndex		 = remote.stateIndex;
 		this.kind			 = remote.kind;
 	}
 
 	isEqualTo(predicate: Predicate | null) {
 		return !!predicate &&
 		predicate.isBidirectional == this.isBidirectional &&
-		predicate.stateIndex	  == this.stateIndex &&
 		predicate.kind			  == this.kind;
 	}
 }

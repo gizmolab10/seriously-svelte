@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { T_Graph, databases, Seriously_Range, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { s_hierarchy, s_t_graph, s_thing_color, s_thing_title, s_s_title_edit } from '../../ts/state/S_Stores';
-	import { s_thing_fontFamily, s_ancestries_grabbed, s_ancestry_showing_tools } from '../../ts/state/S_Stores';
+	import { w_hierarchy, w_t_graph, w_thing_color, w_thing_title, w_s_title_edit } from '../../ts/state/S_Stores';
+	import { w_thing_fontFamily, w_ancestries_grabbed, w_ancestry_showing_tools } from '../../ts/state/S_Stores';
 	import { g, k, u, Point, Thing, debug, Angle, T_Layer, signals } from '../../ts/common/Global_Imports';
 	import { onMount } from 'svelte';
 	export let points_right = true;
@@ -30,7 +30,7 @@
 	export const _____REACTIVES_____: unique symbol = Symbol('_____REACTIVES_____');
 	
 	$: {
-		const _ = $s_s_title_edit;
+		const _ = $w_s_title_edit;
 		updateInputWidth();
 	}
 
@@ -41,13 +41,13 @@
 	}
 
 	$: {
-		if (!!thing() && thing().id == $s_thing_color?.split(k.generic_separator)[0]) {
+		if (!!thing() && thing().id == $w_thing_color?.split(k.generic_separator)[0]) {
 			color = thing()?.color;
 		}
 	}
 
 	$: {
-		const _ = $s_s_title_edit;		// react to s_s_title_edit
+		const _ = $w_s_title_edit;		// react to w_s_title_edit
 
 		//////////////////////////////////////////////////////
 		//													//
@@ -56,11 +56,11 @@
 		//////////////////////////////////////////////////////
 
 		if (!!ancestry) {
-			const hasGrabbed = ($s_ancestries_grabbed ?? [])?.length > 0;
+			const hasGrabbed = ($w_ancestries_grabbed ?? [])?.length > 0;
 			if (ancestry.isEditable) {
 				if (!!ancestry && (ancestry.isStoppingEdit ?? false)) {
 					debug.log_edit(`STOPPING ${bound_title}`);
-					$s_s_title_edit = null;
+					$w_s_title_edit = null;
 					input?.blur();
 				} else if (isEditing != title_isEditing()) {
 					if (!isEditing) {
@@ -81,7 +81,7 @@
 	export const _____PRIMITIVES_____: unique symbol = Symbol('_____PRIMITIVES_____');
  
 	function title_isEditing(): boolean {
-		const s_title_edit = $s_s_title_edit;
+		const s_title_edit = $w_s_title_edit;
 		return !!ancestry && !!s_title_edit && s_title_edit.editing && ancestry.ancestry_hasEqualID(s_title_edit.editing);
 	}
 
@@ -157,7 +157,7 @@
 		const title = event.target.value;
 		if (!!thing() && (!!title || title == k.empty)) {
 			thing().title = bound_title = title;
-			s_thing_title.set(null);
+			w_thing_title.set(null);
 		}
 	};
 
@@ -165,9 +165,9 @@
 		if (!!thing() && !!ancestry && ancestry.isEditing && canAlterTitle(event)) {
 			debug.log_key(`TITLE  ${event.key}`);
 			switch (event.key) {	
-				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); $s_hierarchy.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break;
+				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); $w_hierarchy.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
-				default:	  s_thing_title.set(thing().id); break;
+				default:	  w_thing_title.set(thing().id); break;
 			}
 		}
 	}
@@ -183,7 +183,7 @@
 				} else {
 					ancestry.grabOnly();
 				}
-				$s_s_title_edit = null;
+				$w_s_title_edit = null;
 				signals.signal_relayoutWidgets_fromFocus();
 			}
 		}
@@ -196,11 +196,11 @@
 			mouse_click_timer = setTimeout(() => {
 				clearClicks();
 				if (ancestry.isEditable) {
-					if ($s_ancestry_showing_tools == ancestry) {
-						$s_ancestry_showing_tools = null;
+					if ($w_ancestry_showing_tools == ancestry) {
+						$w_ancestry_showing_tools = null;
 					} else  {
 						ancestry.grabOnly();
-						$s_ancestry_showing_tools = ancestry;
+						$w_ancestry_showing_tools = ancestry;
 					}
 					signals.signal_rebuildGraph_fromFocus();
 				}
@@ -221,7 +221,7 @@
 		invokeBlurNotClearEditing();
 		if (!!ancestry && ancestry.isEditing) {				
 			setTimeout(() => {									// eliminate infinite recursion
-				const s_title_edit = $s_s_title_edit;
+				const s_title_edit = $w_s_title_edit;
 				if (!!s_title_edit) {
 					s_title_edit.stop();
 					signals.signal_relayoutWidgets_fromFocus();
@@ -259,7 +259,7 @@
 			position: absolute;
 			visibility: hidden;
 			font-size: {fontSize};
-			font-family: {$s_thing_fontFamily};
+			font-family: {$w_thing_fontFamily};
 			white-space: pre; /* Preserve whitespace to accurately measure the width */
 	'>
 		{bound_title}
@@ -294,7 +294,7 @@
 			font-size: {fontSize};
 			z-index: {T_Layer.text};
 			{k.prevent_selection_style};
-			font-family: {$s_thing_fontFamily};
+			font-family: {$w_thing_fontFamily};
 			outline-color: {k.color_background};
 		'/>
 {/key}

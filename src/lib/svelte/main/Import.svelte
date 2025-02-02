@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { s_hierarchy, s_id_popupView } from '../../ts/state/S_Stores';
+	import { w_hierarchy, w_id_popupView } from '../../ts/state/S_Stores';
 	import { k, ux, Point } from '../../ts/common/Global_Imports';
 	import { files } from '../../ts/managers/Files';
 	import { get } from 'svelte/store';
@@ -15,14 +15,14 @@
 	});
 
 	function dismiss_popup() {
-		$s_id_popupView = null;
+		$w_id_popupView = null;
 	}
 
 	function handle_selection(event: Event) {
 		const target = event.target as HTMLInputElement;
 		const files = target?.files;
 		if (!!files && files.length > 0) {
-			$s_hierarchy.fetch_fromFile(files[0]);
+			$w_hierarchy.fetch_fromFile(files[0]);
 		}
 		target.value = k.empty;		// allow re-selection of the same file, MUST do this AFTER fetch
 		dismiss_popup();

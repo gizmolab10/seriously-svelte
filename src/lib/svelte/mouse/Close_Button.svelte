@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, Size, Point, T_Layer, svgPaths } from '../../ts/common/Global_Imports';
-    import { s_id_popupView } from '../../ts/state/S_Stores';
+    import { w_id_popupView } from '../../ts/state/S_Stores';
 	import Mouse_Responder from './Mouse_Responder.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
     export let name = 'generic close';
@@ -14,7 +14,7 @@
 			fill = isHovering ? k.color_default : k.color_background;
 			stroke = isHovering ? k.color_background : k.color_default;
 		} else if (s_mouse.isUp) {
-			$s_id_popupView = null;
+			$w_id_popupView = null;
 		}
 	}
 

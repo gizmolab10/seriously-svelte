@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { g, k, u, ux, show, Rect, Size, Point, Thing, debug, T_Layer, T_Tool } from '../../ts/common/Global_Imports';
 	import { databases, Svelte_Wrapper, T_Alteration, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { s_t_graph, s_t_counts, s_thing_color, s_ancestries_grabbed } from '../../ts/state/S_Stores';
+	import { w_t_graph, w_t_counts, w_thing_color, w_ancestries_grabbed } from '../../ts/state/S_Stores';
 	import { signals, svgPaths, T_Graph, T_Element } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
@@ -43,7 +43,7 @@
 	});
 	
 	$: {
-		const _ = $s_t_counts;
+		const _ = $w_t_counts;
 		svgPaths_update();
 	}
 
@@ -61,13 +61,13 @@
 	}
 
 	$: {
-		if (!!thing && thing.id == $s_thing_color?.split(k.generic_separator)[0]) {
+		if (!!thing && thing.id == $w_thing_color?.split(k.generic_separator)[0]) {
 			updateColors_forHovering(true);
 		}
 	}
 
 	$: {
-		const _ = $s_ancestries_grabbed;
+		const _ = $w_ancestries_grabbed;
 		const grabbed = ancestry.isGrabbed;
 		if (isGrabbed != grabbed) {
 			isGrabbed = grabbed;
@@ -92,7 +92,7 @@
 				svgPathFor_ellipses = svgPaths.ellipses(6, 0.5, false, count, size / 2);
 			}
 			if (thing.hasRelated && show.related_dots) {
-				const x = (($s_t_graph == T_Graph.tree) ? 4.5 : 3.2) * (points_right ? -1 : 1);
+				const x = (($w_t_graph == T_Graph.tree) ? 4.5 : 3.2) * (points_right ? -1 : 1);
 				svgPathFor_related = svgPaths.circle_atOffset(size, 3, new Point(x, 0));
 			}
 		}

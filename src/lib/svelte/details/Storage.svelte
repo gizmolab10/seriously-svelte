@@ -1,15 +1,15 @@
 <script lang='ts'>
 	import { k, u, ux, Point, T_Layer, databases, Hierarchy, T_Storage } from '../../ts/common/Global_Imports';
-	import { T_Element, S_Element, T_Preference, preferences } from '../../ts/common/Global_Imports';
-	import { s_storage_update_trigger, s_thing_fontFamily } from '../../ts/state/S_Stores';
-	import { s_t_database, s_hierarchy } from '../../ts/state/S_Stores';
+	import { T_Element, S_Element, T_Preference, p } from '../../ts/common/Global_Imports';
+	import { w_storage_update_trigger, w_thing_fontFamily } from '../../ts/state/S_Stores';
+	import { w_t_database, w_hierarchy } from '../../ts/state/S_Stores';
 	import { T_Database } from '../../ts/data/dbs/DBCommon';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Button from '../mouse/Button.svelte';
 	import Table from '../kit/Table.svelte';
 	export let top = 28;
 	const buttons_top = 138;
-	const button_style = `font-family: ${$s_thing_fontFamily}; font-size:0.85em; left: 5px; top: -2px; position: absolute;`;
+	const button_style = `font-family: ${$w_thing_fontFamily}; font-size:0.85em; left: 5px; top: -2px; position: absolute;`;
 	let s_elements_byT_Storage: { [id: string]: S_Element } = {};
 	let information: Array<Dictionary> = [];
 	let rebuilds = 0;
@@ -17,8 +17,8 @@
 	setup_s_elements();
 	
 	$: {
-		const trigger = $s_storage_update_trigger;
-		const h = $s_hierarchy;
+		const trigger = $w_storage_update_trigger;
+		const h = $w_hierarchy;
 		if (!!h) {
 			const dict = h.db.dict_forStorageDetails;
 			dict['depth'] = h.depth;
@@ -44,11 +44,11 @@
 		}
 	}
 	
-	function button_closure_forT_Storage(s_mouse, t_storage) {
+	function button_closure_forStorage_Type(s_mouse, t_storage) {
 		if (s_mouse.isHover) {
 			s_elements_byT_Storage[t_storage].isOut = s_mouse.isOut;
 		} else if (s_mouse.isUp) {
-			const h = $s_hierarchy;
+			const h = $w_hierarchy;
 			switch (t_storage) {
 				case T_Storage.export: h.persist_toFile(); break;
 				case T_Storage.import: h.select_file_toUpload(s_mouse.event.shiftKey); break;
@@ -58,14 +58,14 @@
 
 </script>
 
-{#key $s_t_database, rebuilds}
+{#key $w_t_database, rebuilds}
 	<div class='storage-information'
 		style='
 			height:40px;
 			padding:5px;'>
 		<Segmented
 			name='db'
-			selected={[$s_t_database]}
+			selected={[$w_t_database]}
 			origin={new Point(4, top)}
 			selection_closure={selection_closure}
 			titles={[T_Database.local, T_Database.firebase, T_Database.airtable, T_Database.test]}/>
@@ -80,7 +80,7 @@
 			center={new Point(74, buttons_top)}
 			height={k.default_buttonSize - 4}
 			s_element={s_elements_byT_Storage[T_Storage.import]}
-			closure={(s_mouse) => button_closure_forT_Storage(s_mouse, T_Storage.import)}>
+			closure={(s_mouse) => button_closure_forStorage_Type(s_mouse, T_Storage.import)}>
 			<span style={button_style}>import</span>
 		</Button>
 		<Button name='export'
@@ -89,7 +89,7 @@
 			center={new Point(122, buttons_top)}
 			height={k.default_buttonSize - 4}
 			s_element={s_elements_byT_Storage[T_Storage.export]}
-			closure={(s_mouse) => button_closure_forT_Storage(s_mouse, T_Storage.export)}>
+			closure={(s_mouse) => button_closure_forStorage_Type(s_mouse, T_Storage.export)}>
 			<span style={button_style}>export</span>
 		</Button>
 	</div>

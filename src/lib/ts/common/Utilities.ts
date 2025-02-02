@@ -1,6 +1,6 @@
 // N.B., do not import these from Global Imports --> avoid dependency issues when importing Utilities class
 
-import { s_thing_fontFamily } from '../state/S_Stores';
+import { w_thing_fontFamily } from '../state/S_Stores';
 import Identifiable from '../data/basis/Identifiable';
 import Ancestry from '../data/runtime/Ancestry';
 import { T_Quadrant } from '../geometry/Angle';
@@ -176,7 +176,7 @@ export class Utilities {
 
 	getWidth_ofString_withSize(s: string, fontSize: string): number {
 		const element: HTMLElement = document.createElement('div');
-		element.style.fontFamily = get(s_thing_fontFamily);
+		element.style.fontFamily = get(w_thing_fontFamily);
 		element.style.left = '-9999px'; // offscreen
 		element.style.padding = '0px 0px 0px 0px';
 		element.style.position = 'absolute';
@@ -225,7 +225,6 @@ export class Utilities {
 			'hid',
 			'state',
 			'idBase',
-			's_pages',
 			'hidChild',
 			'hidParent',
 			'isEditing',
@@ -233,6 +232,7 @@ export class Utilities {
 			'bulkRootID',
 			't_database',
 			'oneAncestry',
+			'w_thing_pages',
 			'needsBulkFetch',
 			'selectionRange',
 		];

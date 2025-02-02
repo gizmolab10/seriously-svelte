@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, k, u, debug, T_Layer, databases } from '../../ts/common/Global_Imports';
-	import { s_thing_fontFamily } from '../../ts/state/S_Stores';
+	import { w_thing_fontFamily } from '../../ts/state/S_Stores';
 	export let handle_textChange = (label: string, text: string) => {};
 	export let color = k.thing_color_default;
 	export let width = k.width_details - 40;
@@ -84,7 +84,7 @@
 			z-index: {T_Layer.text};
 			overflow-wrap: break-word;
 			{k.prevent_selection_style};
-			font-family: {$s_thing_fontFamily};
+			font-family: {$w_thing_fontFamily};
 			border-radius: {k.row_height / 2}px;
 		'/>
 	<div

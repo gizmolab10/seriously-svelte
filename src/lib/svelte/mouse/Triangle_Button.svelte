@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, u, Size, Thing, Point, T_Layer, svgPaths } from '../../ts/common/Global_Imports';
 	import { databases, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
-	import { s_ancestries_grabbed } from '../../ts/state/S_Stores';
+	import { w_ancestries_grabbed } from '../../ts/state/S_Stores';
 	import type { Handle_Result } from '../../ts/common/Types';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import Button from './Button.svelte';
@@ -24,7 +24,7 @@
 	}
 
 	$: {
-		const _ = $s_ancestries_grabbed;
+		const _ = $w_ancestries_grabbed;
 		setFillColor(false);
 	}
 
