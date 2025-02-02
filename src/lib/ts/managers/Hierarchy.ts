@@ -146,13 +146,6 @@ export class Hierarchy {
 		}
 	}
 
-	static readonly FOCUS: unique symbol;
-
-	get focus(): Thing | null {
-		const ancestry = get(w_ancestry_focus);
-		return !ancestry ? this.root : ancestry.thing;
-	}
-
 	static readonly GRABS: unique symbol;
 
 	get grabs_latest_thing(): Thing | null { return this.grabs_latest_ancestry?.thing || null; }
@@ -1381,6 +1374,11 @@ export class Hierarchy {
 	static readonly OTHER: unique symbol;
 
 	get data_count(): number { return this.things.length + this.relationships.length }
+
+	get focus(): Thing | null {
+		const ancestry = get(w_ancestry_focus);
+		return !ancestry ? this.root : ancestry.thing;
+	}
 
 	clear_editingTools() {
 		w_s_alteration.set(null);

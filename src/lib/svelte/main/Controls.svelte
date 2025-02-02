@@ -1,9 +1,8 @@
 <script lang='ts'>
-	import { w_t_graph, w_t_tree, w_count_resize, w_device_isMobile } from '../../ts/state/S_Stores';
-	import { T_Control, p, S_Element, T_Preference } from '../../ts/common/Global_Imports';
-	import { w_show_details, w_id_popupView, w_thing_fontFamily } from '../../ts/state/S_Stores';
-	import { g, k, u, ux, w, show, Point, T_Layer, signals } from '../../ts/common/Global_Imports';
-	import { svgPaths, T_Hierarchy, T_Graph, T_Element } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Graph, T_Element, T_Control, T_Hierarchy, T_Preference } from '../../ts/common/Global_Imports';
+	import { g, k, p, u, ux, w, show, Point, svgPaths, signals, S_Element } from '../../ts/common/Global_Imports';
+	import { w_t_graph, w_t_tree, w_count_resize, w_hierarchy, w_id_popupView } from '../../ts/state/S_Stores';
+	import { w_show_details, w_device_isMobile, w_thing_fontFamily } from '../../ts/state/S_Stores';
 	import Identifiable from '../../ts/data/basis/Identifiable';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Button from '../mouse/Button.svelte';
@@ -18,6 +17,9 @@
 	let s_elements_byT_Control: { [t_control: string]: S_Element } = {};
 	let elementShown_byT_Control: {[t_control: string]: boolean} = {};
 	let width = w.windowSize.width - 20;
+	let displayName = k.empty;
+	let displayName_width = 0;
+	let displayName_x = 200;
 
 	const t_controls = [	// in order of importance on mobile
 		T_Control.details,
@@ -33,6 +35,13 @@
 	$: {
 		const _ = $w_count_resize;
 		width = w.windowSize.width - 20;
+	}
+
+	$: {
+		const h = $w_hierarchy;
+		displayName = h.db.displayName
+		displayName_width = u.getWidthOf(displayName);
+		displayName_x = (width - displayName_width) / 2;
 	}
 
 	function setup_forIDs() {
@@ -89,7 +98,7 @@
 			height: `${k.height_banner - 2}px`;'>
 		{#if !$w_id_popupView}
 			<Button
-				name='hamburger'
+				name='details-toggle'
 				border_thickness=0
 				color='transparent'
 				center={new Point(lefts[0], details_top + 3)}
@@ -99,7 +108,7 @@
 			</Button>
 			{#key $w_t_graph}
 				<Segmented
-					name='graph'
+					name='graph-type-selector'
 					origin={Point.x(30)}
 					selected={[$w_t_graph]}
 					titles={[T_Graph.tree, T_Graph.radial]}
@@ -114,6 +123,14 @@
 							selection_closure={(titles) => selection_closure('relations', titles)}/>
 					{/key}
 				{/if}
+			{/key}
+			{#key displayName}
+				<div style='
+					width:{displayName_width + 20}px;
+					left:{displayName_x}px;
+					position:absolute;'>
+					{displayName}
+				</div>
 			{/key}
 		{/if}
 		{#key $w_device_isMobile}

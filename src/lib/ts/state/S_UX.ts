@@ -87,11 +87,13 @@ export default class S_UX {
 		return s_thing_pages;
 	}
 
-	createAll_thing_pages_fromDict(dict: Dictionary) {
-		for (const sub_dict of Object.values(dict)) {
-			const s_thing_pages = S_Thing_Pages.create_fromDict(sub_dict);
-			if (!!s_thing_pages) {
-				this.s_thing_pages_byThingID[s_thing_pages.thing_id] = s_thing_pages;
+	createAll_thing_pages_fromDict(dict: Dictionary | null) {
+		if (!!dict) {
+			for (const sub_dict of Object.values(dict)) {
+				const s_thing_pages = S_Thing_Pages.create_fromDict(sub_dict);
+				if (!!s_thing_pages) {
+					this.s_thing_pages_byThingID[s_thing_pages.thing_id] = s_thing_pages;
+				}
 			}
 		}
 	}

@@ -39,6 +39,7 @@ export default class DBCommon {
 	
 	queryStrings_apply() {}
 	setup_remote_handlers() {}
+	get displayName(): string { return this.t_database; }
 	get dict_forStorageDetails(): Dictionary { return {'fetch took' : this.loadTime} }
 	get isRemote(): boolean { return this.kind_persistence == T_Persistence.remote; }
 	get isPersistent(): boolean { return this.kind_persistence != T_Persistence.none; }

@@ -51,6 +51,9 @@ export default class DBFirebase extends DBCommon {
 			this.reportError(error);
 		}
 	}
+	
+	get displayName(): string {
+		return `${super.displayName} : ${this.idBase}`; }
 
 	static readonly FETCH: unique symbol;
 
