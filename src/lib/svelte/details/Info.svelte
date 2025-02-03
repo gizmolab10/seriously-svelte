@@ -30,10 +30,10 @@
 	let text_box_size = new Size(info_width - 4, 68);
 	let thingHID: Integer | null = thing?.hid;
 	let information: Array<Dictionary> = [];
-	let color_origin = new Point(70, 165);
 	let grabs = $w_ancestries_grabbed;
 	let color = k.thing_color_default;
 	let thing_title = thing?.title;
+	let color_origin = Point.zero;
 	let tops: Array<number> = [];
 	let rebuilds = 0;
 	let info;
@@ -44,6 +44,7 @@
 		title,
 		after_title,
 		table,
+		color,
 		traits,
 		consequence,
 		quest
@@ -55,10 +56,11 @@
 			case TI.before_title: return   3;
 			case TI.title:		  return  17;
 			case TI.after_title:  return   3;
-			case TI.table:		  return 111;
+			case TI.table:		  return 109;
+			case TI.color:		  return   2;
 			case TI.traits:		  return   2;
-			case TI.consequence:  return   2;
-			case TI.quest:		  return   2;
+			case TI.consequence:  return  50;
+			case TI.quest:		  return  50;
 		}
 	}
 
@@ -110,7 +112,7 @@
 			tops.push(top);
 			top += heightAt(i);
 		}
-		color_origin = new Point(76, tops[TI.traits]);
+		color_origin = new Point(76, tops[TI.color]);
 	}
 
 	function update_forKind() {

@@ -140,7 +140,7 @@ export default class Ancestry extends Identifiable {
 		const g_radial = get(w_g_radial);
 		if (!!predicate && !!g_radial) {
 			const g_cluster = g_radial?.g_cluster_pointing_toChildren(this.thing_isChild, predicate)
-			return g_cluster?.w_ancestryPaging(this) ?? null;
+			return g_cluster?.s_ancestryPaging(this) ?? null;
 		}
 		return null;	// either g_radial is not setup or predicate is bogus
 	}

@@ -49,8 +49,8 @@ export class S_Global {
 		w_thing_color.set(null);
 		w_t_startup.set(T_Startup.start);
 		w_device_isMobile.set(this.device_isMobile);
-		this.w_ring_resizing = new S_Expansion();
-		this.w_ring_rotation  = new S_Rotation();
+		this.s_ring_resizing = new S_Expansion();
+		this.s_ring_rotation  = new S_Rotation();
 		this.s_cluster_rotation = new S_Rotation();
 	}
 
@@ -87,7 +87,7 @@ export class S_Global {
 	get hierarchy(): Hierarchy { return get(w_hierarchy); }
 
 	get isAny_rotation_active(): boolean {
-		return ux.isAny_paging_arc_active || this.s_cluster_rotation.isActive || this.w_ring_rotation.isActive;
+		return ux.isAny_paging_arc_active || this.s_cluster_rotation.isActive || this.s_ring_rotation.isActive;
 	}
 
 	get next_mouse_responder_number(): number {

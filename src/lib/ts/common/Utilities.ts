@@ -232,7 +232,6 @@ export class Utilities {
 			'bulkRootID',
 			't_database',
 			'oneAncestry',
-			'w_thing_pages',
 			'needsBulkFetch',
 			'selectionRange',
 		];

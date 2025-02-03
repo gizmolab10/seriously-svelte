@@ -54,16 +54,16 @@
 	function update_cursor() {
 		switch (ringZone_forMouseLocation()) {
 			case T_RingZone.paging: cursor = g.s_cluster_rotation.cursor; break;
-			case T_RingZone.resize: cursor = g.w_ring_resizing.cursor; break;
-			case T_RingZone.rotate: cursor = g.w_ring_rotation.cursor; break;
+			case T_RingZone.resize: cursor = g.s_ring_resizing.cursor; break;
+			case T_RingZone.rotate: cursor = g.s_ring_rotation.cursor; break;
 			default:			   cursor = 'default'; break;
 		}
 	}
 
 	function reset() {
 		ux.mouse_timer_forName(name).reset();
-		g.w_ring_resizing.reset();
-		g.w_ring_rotation.reset();
+		g.s_ring_resizing.reset();
+		g.s_ring_rotation.reset();
 		$w_g_active_cluster = null;
 		mouse_timer.reset();
 		ux.reset_paging();
@@ -99,21 +99,21 @@
 	function detect_hovering() {
 		const ring_zone = ringZone_forMouseLocation();
 		const arc_isActive = ux.isAny_paging_arc_active;
-		const inRotate = ring_zone == T_RingZone.rotate && !arc_isActive && !g.w_ring_resizing.isActive;
-		const inResize = ring_zone == T_RingZone.resize && !arc_isActive && !g.w_ring_rotation.isActive;
-		const inPaging = ring_zone == T_RingZone.paging && !g.w_ring_rotation.isActive && !g.w_ring_resizing.isActive;
+		const inRotate = ring_zone == T_RingZone.rotate && !arc_isActive && !g.s_ring_resizing.isActive;
+		const inResize = ring_zone == T_RingZone.resize && !arc_isActive && !g.s_ring_rotation.isActive;
+		const inPaging = ring_zone == T_RingZone.paging && !g.s_ring_rotation.isActive && !g.s_ring_resizing.isActive;
 		if (g.s_cluster_rotation.isHovering != inPaging) {
 			g.s_cluster_rotation.isHovering  = inPaging;
 			debug.log_hover(` hover paging  ${inPaging}`);
 			rebuilds += 1;
 		}
-		if (g.w_ring_rotation.isHovering != inRotate) {
-			g.w_ring_rotation.isHovering  = inRotate;
+		if (g.s_ring_rotation.isHovering != inRotate) {
+			g.s_ring_rotation.isHovering  = inRotate;
 			debug.log_hover(` hover rotate  ${inRotate}`);
 			rebuilds += 1;
 		}
-		if (g.w_ring_resizing.isHovering != inResize) {
-			g.w_ring_resizing.isHovering  = inResize;
+		if (g.s_ring_resizing.isHovering != inResize) {
+			g.s_ring_resizing.isHovering  = inResize;
 			debug.log_hover(` hover resize  ${inResize}`);
 			rebuilds += 1;
 		}
@@ -129,8 +129,8 @@
 		const mouse_vector = w.mouse_vector_ofOffset_fromGraphCenter();
 		if (!!mouse_vector) {
 			const mouse_angle = mouse_vector.angle;
-			const rotation_state = g.w_ring_rotation;
-			const resizing_state = g.w_ring_resizing;
+			const rotation_state = g.s_ring_rotation;
+			const resizing_state = g.s_ring_resizing;
 
 			// check if already dragging in one of the three ring zones
 
@@ -143,7 +143,7 @@
 				const radius = $w_ring_rotation_radius + delta;
 				resizing_state.active_angle = mouse_angle + Angle.quarter;
 				detect_hovering();
-				cursor = g.w_ring_resizing.cursor;
+				cursor = g.s_ring_resizing.cursor;
 				if (Math.abs(delta) > 1) {										// granularity of 1 pixel
 					debug.log_radial(` resize  D ${distance.toFixed(0)}  R ${radius.toFixed(0)}  + ${delta.toFixed(1)}`);
 					$w_ring_rotation_radius = radius;
@@ -156,7 +156,7 @@
 					debug.log_radial(` rotate ${$w_ring_rotation_angle.degrees_of(0)}`);
 					rotation_state.active_angle = mouse_angle;
 					detect_hovering();
-					cursor = g.w_ring_rotation.cursor;
+					cursor = g.s_ring_rotation.cursor;
 					signals.signal_relayoutWidgets_fromFocus();					// destroys this component (properties are in w_w_ring_rotation)
 					rebuilds += 1;
 				}
@@ -199,16 +199,16 @@
 				switch (ringZone_forMouseLocation()) {
 					case T_RingZone.rotate:
 						debug.log_radial(` begin rotate  ${rotation_angle.degrees_of(0)}`);
-						g.w_ring_rotation.active_angle = mouse_wentDown_angle;
-						g.w_ring_rotation.basis_angle = rotation_angle;
+						g.s_ring_rotation.active_angle = mouse_wentDown_angle;
+						g.s_ring_rotation.basis_angle = rotation_angle;
 						rebuilds += 1;
 						break;
 					case T_RingZone.resize:
 						const radius_offset = w.mouse_distance_fromGraphCenter - $w_ring_rotation_radius;
 						debug.log_radial(` begin resize  ${radius_offset.toFixed(0)}`);
-						g.w_ring_rotation.active_angle = mouse_wentDown_angle + Angle.quarter;	// needed for cursor
-						g.w_ring_rotation.basis_angle = rotation_angle + Angle.quarter;
-						g.w_ring_resizing.basis_radius = radius_offset;
+						g.s_ring_rotation.active_angle = mouse_wentDown_angle + Angle.quarter;	// needed for cursor
+						g.s_ring_rotation.basis_angle = rotation_angle + Angle.quarter;
+						g.s_ring_resizing.basis_radius = radius_offset;
 						rebuilds += 1;
 						break;
 					case T_RingZone.paging: 
@@ -256,14 +256,14 @@
 					class='rings-svg'
 					viewBox={viewBox}>
 					<path class='resize-path' d={svgPathFor_resizingRing}
-						fill={u.opacitize(color, g.w_ring_resizing.fill_opacity)}
-						stroke={u.opacitize(color, g.w_ring_resizing.stroke_opacity)}/>
+						fill={u.opacitize(color, g.s_ring_resizing.fill_opacity)}
+						stroke={u.opacitize(color, g.s_ring_resizing.stroke_opacity)}/>
 					{#if debug.reticle}
 						<path class='reticle-path' stroke='green' fill=transparent d={svgPaths.t_cross(middle_radius * 2, -2)}/>
 					{/if}
 					<path class='rotate-path' d={svgPathFor_rotationRing}
-						fill={u.opacitize(color, g.w_ring_rotation.fill_opacity * (g.w_ring_resizing.isHighlighted ? 0.3 : 1))}
-						stroke={u.opacitize(color, g.w_ring_rotation.stroke_opacity * (g.w_ring_resizing.isHighlighted ? 0.7 : 1))}/>
+						fill={u.opacitize(color, g.s_ring_rotation.fill_opacity * (g.s_ring_resizing.isHighlighted ? 0.3 : 1))}
+						stroke={u.opacitize(color, g.s_ring_rotation.stroke_opacity * (g.s_ring_resizing.isHighlighted ? 0.7 : 1))}/>
 				</svg>
 			</Mouse_Responder>
 		</div>

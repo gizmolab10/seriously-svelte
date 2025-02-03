@@ -50,7 +50,7 @@
 	function update_colors() {
 		fork_color = u.opacitize(color, 0.3);
 		arc_color = u.opacitize(color, g.s_cluster_rotation.stroke_opacity);
-		thumb_color = u.opacitize(color, g.w_ring_rotation.isActive ? 0.15 : g_cluster.paging_rotation.three_level_opacity);
+		thumb_color = u.opacitize(color, g.s_ring_rotation.isActive ? 0.15 : g_cluster.paging_rotation.three_level_opacity);
 	}
 
 	function hover_closure(s_mouse) {

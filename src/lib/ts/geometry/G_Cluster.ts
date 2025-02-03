@@ -75,7 +75,7 @@ export default class G_Cluster {
 	get kind(): string { return this.predicate?.kind.unCamelCase().lastWord() ?? k.empty; }
 	get name(): string { return `${this.focuw_ancestry.title}-cluster-${this.direction_kind}`; }
 	get fork_radial(): Point { return Point.fromPolar(get(w_ring_rotation_radius), this.g_arcSlider.fork_angle); }
-	get s_focusPaging(): S_Paging | null { return this.w_ancestryPaging(this.focuw_ancestry); }
+	get s_focusPaging(): S_Paging | null { return this.s_ancestryPaging(this.focuw_ancestry); }
 
 	get thumb_isHit(): boolean {
 		const offset = Point.square(-get(w_ring_rotation_radius));
@@ -112,9 +112,9 @@ export default class G_Cluster {
 	
 	static readonly PAGING: unique symbol;
 	
-	w_ancestryPaging(ancestry: Ancestry): S_Paging | null {
-		const w_thing_pages = ux.s_thing_pages_forThingID(ancestry.thing?.id);
-		return w_thing_pages?.s_paging_for(this) ?? null;
+	s_ancestryPaging(ancestry: Ancestry): S_Paging | null {
+		const s_thing_pages = ux.s_thing_pages_forThingID(ancestry.thing?.id);
+		return s_thing_pages?.s_paging_for(this) ?? null;
 	}
 	
 	adjust_paging_index_byAdding_angle(delta_angle: number) {
