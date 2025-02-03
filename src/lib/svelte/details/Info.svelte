@@ -56,7 +56,7 @@
 			case TI.before_title: return   3;
 			case TI.title:		  return  17;
 			case TI.after_title:  return   3;
-			case TI.table:		  return 109;
+			case TI.table:		  return 125;
 			case TI.color:		  return   2;
 			case TI.traits:		  return   2;
 			case TI.consequence:  return  50;
@@ -135,6 +135,7 @@
 			const dict = {
 				'relationship' : ancestry.predicate.kind,
 				'depth'		   : ancestry.depth.expressZero_asHyphen(),
+				'order'		   : (ancestry.relationship?.order ?? 0).expressZero_asHyphen(),
 				'children'	   : ancestry.children.length.expressZero_asHyphen(),
 				'progeny'	   : ancestry.progeny_count().expressZero_asHyphen(),
 				'parents'	   : thing.parents.length.expressZero_asHyphen(),
