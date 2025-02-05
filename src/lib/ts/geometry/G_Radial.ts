@@ -1,5 +1,5 @@
-import { u, ux, Thing, debug, Ancestry, Predicate, T_Predicate } from '../common/Global_Imports';
-import { G_Widget, G_Cluster, S_Paging, S_Thing_Pages } from '../common/Global_Imports';
+import { G_Widget, G_Cluster, S_Paging, T_Predicate } from '../common/Global_Imports';
+import { u, ux, Thing, debug, Ancestry, Predicate } from '../common/Global_Imports';
 import { w_hierarchy, w_s_paging, w_ancestry_focus } from '../state/S_Stores';
 import Reverse_Ancestry from '../data/runtime/Reverse_Ancestry';
 import type { Dictionary } from '../common/Types';
@@ -76,9 +76,9 @@ export default class G_Radial {
 
 	layout_allClusters() {
 		this.destructor();
-		const focuw_ancestry = get(w_ancestry_focus);
-		const focus_thing = focuw_ancestry.thing;
-		let childAncestries = focuw_ancestry.childAncestries;
+		const focus_ancestry = get(w_ancestry_focus);
+		const focus_thing = focus_ancestry.thing;
+		let childAncestries = focus_ancestry.childAncestries;
 		this.layout_clusterFor(childAncestries, Predicate.contains, true);
 		if (!!focus_thing) {
 			for (const predicate of get(w_hierarchy).predicates) {
@@ -89,13 +89,13 @@ export default class G_Radial {
 	}
 
 	update_forPaging_state(s_paging: S_Paging) {
-		const focuw_ancestry = get(w_ancestry_focus);
-		if (!!s_paging && !!focuw_ancestry) {
+		const focus_ancestry = get(w_ancestry_focus);
+		if (!!s_paging && !!focus_ancestry) {
 			if (s_paging.points_toChildren) {
-				let childAncestries = focuw_ancestry.childAncestries;
+				let childAncestries = focus_ancestry.childAncestries;
 				this.layout_clusterFor(childAncestries, Predicate.contains, true);
 			} else {
-				const focus_thing = focuw_ancestry.thing;
+				const focus_thing = focus_ancestry.thing;
 				if (!!focus_thing) {
 					for (const predicate of get(w_hierarchy).predicates) {
 						let ancestries = focus_thing.uniqueAncestries_for(predicate) ?? [];

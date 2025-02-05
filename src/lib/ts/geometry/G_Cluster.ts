@@ -20,7 +20,7 @@ import { get } from 'svelte/store';
 //////////////////////////////////////////
 
 export default class G_Cluster {
-	focuw_ancestry: Ancestry = get(w_ancestry_focus);
+	focus_ancestry: Ancestry = get(w_ancestry_focus);
 	g_thumbSlider = new G_ArcSlider();
 	ancestries: Array<Ancestry> = [];
 	g_widgets: Array<G_Widget> = [];
@@ -58,7 +58,7 @@ export default class G_Cluster {
 		this.widgets_shown = this.ancestries.length;
 		this.isPaging = this.widgets_shown < this.total_widgets;
 		this.center = get(w_graph_rect).size.asPoint.dividedInHalf;
-		this.color = u.opacitize(this.focuw_ancestry.thing?.color ?? this.color, 0.2);
+		this.color = u.opacitize(this.focus_ancestry.thing?.color ?? this.color, 0.2);
 		this.update_fork_angle();
 		this.update_widget_angles();
 		this.update_label_geometry();
@@ -73,9 +73,9 @@ export default class G_Cluster {
 	get paging_rotation(): S_Rotation { return ux.s_rotation_forName(this.name); }
 	get maximum_paging_index(): number { return this.total_widgets - this.widgets_shown; }
 	get kind(): string { return this.predicate?.kind.unCamelCase().lastWord() ?? k.empty; }
-	get name(): string { return `${this.focuw_ancestry.title}-cluster-${this.direction_kind}`; }
+	get name(): string { return `${this.focus_ancestry.title}-cluster-${this.direction_kind}`; }
 	get fork_radial(): Point { return Point.fromPolar(get(w_ring_rotation_radius), this.g_arcSlider.fork_angle); }
-	get s_focusPaging(): S_Paging | null { return this.s_ancestryPaging(this.focuw_ancestry); }
+	get s_focusPaging(): S_Paging | null { return this.s_ancestryPaging(this.focus_ancestry); }
 
 	get thumb_isHit(): boolean {
 		const offset = Point.square(-get(w_ring_rotation_radius));
@@ -200,7 +200,7 @@ export default class G_Cluster {
 				const child_ancestry = this.ancestries[child_index];
 				const child_angle = this.angle_at_index(index);
 				const child_origin = radial.rotate_by(child_angle).offsetBy(tweak);
-				const g_widget = new G_Widget(T_Line.flat, new Rect(), child_origin, child_ancestry, this.focuw_ancestry, this.points_toChildren, child_angle);
+				const g_widget = new G_Widget(T_Line.flat, new Rect(), child_origin, child_ancestry, this.focus_ancestry, this.points_toChildren, child_angle);
 				this.g_widgets.push(g_widget);
 				index += 1;
 			}

@@ -121,7 +121,7 @@ export default class Thing extends Persistable {
 	}
 
 	relationships_ofKind_forParents(kindPredicate: string, forParents: boolean): Array<Relationship> {
-		const id = this.idBridging;				//  use idBridging in case thing is a bulk alias
+		const id = forParents ? this.id : this.idBridging;				//  use idBridging in case thing is a bulk alias
 		if ((!!id || id == k.empty) && id != k.unknown) {
 			return get(w_hierarchy).relationships_forKindPredicate_hidThing_isChild(kindPredicate, id.hash(), forParents);
 		}

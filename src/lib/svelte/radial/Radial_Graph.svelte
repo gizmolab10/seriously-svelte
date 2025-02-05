@@ -32,7 +32,6 @@
 	
 	$: {
 		const _ = $w_show_details;
-		$w_g_radial = new G_Radial();
 		setTimeout(() => {
 			g.require_rebuild_forType(T_Rebuild.radial);
 		}, 100);
