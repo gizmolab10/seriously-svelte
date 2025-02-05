@@ -199,7 +199,7 @@ export default class G_Cluster {
 				const child_index = !fork_pointsRight ? index : max - index;
 				const child_ancestry = this.ancestries[child_index];
 				const child_angle = this.angle_at_index(index);
-				const child_origin = tweak.offsetBy(radial.rotate_by(child_angle));
+				const child_origin = radial.rotate_by(child_angle).offsetBy(tweak);
 				const g_widget = new G_Widget(T_Line.flat, new Rect(), child_origin, child_ancestry, this.focuw_ancestry, this.points_toChildren, child_angle);
 				this.g_widgets.push(g_widget);
 				index += 1;

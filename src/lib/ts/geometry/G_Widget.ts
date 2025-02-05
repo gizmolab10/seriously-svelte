@@ -8,10 +8,10 @@ export default class G_Widget extends Rect {
 	points_toChild = true;
 	points_right = true;
 	child: Thing | null;
-	child_origin: Point;
+	children_origin: Point;
 	curveType: string;
 
-	constructor(curveType: string, rect: Rect, child_origin: Point, widget_ancestry: Ancestry | null,
+	constructor(curveType: string, rect: Rect, children_origin: Point, widget_ancestry: Ancestry | null,
 		parent_ancestry: Ancestry | null, points_toChild: boolean = true, child_angle: number | null = null) {
 		super(u.copyObject(rect.origin), u.copyObject(rect.size));
 		this.s_element = ux.s_element_for(widget_ancestry, T_Element.widget, k.empty);
@@ -20,7 +20,7 @@ export default class G_Widget extends Rect {
 		this.parent_ancestry = parent_ancestry;
 		this.widget_ancestry = widget_ancestry;
 		this.points_toChild = points_toChild;
-		this.child_origin = child_origin;
+		this.children_origin = children_origin;
 		this.child_angle = child_angle;
 		this.curveType = curveType;
 		if (!this.child) {

@@ -44,7 +44,7 @@
 			debug.log_origins(origin.x + ' children layout');
 			const height = ancestry.visibleProgeny_halfHeight;
 			const childAncestries = ancestry.childAncestries;
-			const childrenOrigin = origin.offsetByXY(3, height + 1);
+			const childrenOrigin = origin.offsetByXY(5.5, height + 1);
 			let sum = -ancestry.visibleProgeny_height() / 2; // start out negative and grow positive
 			for (const childAncestry of childAncestries) {
 				const g_children = new G_Children(sum, ancestry, childAncestry, childrenOrigin);
@@ -67,7 +67,7 @@
 			<Widget name={g_widget.s_element.name} ancestry={g_widget.widget_ancestry} origin={g_widget.extent.offsetBy(widgetOffset)}/>
 			<Tree_Line ancestry={g_widget.widget_ancestry} curveType={g_widget.curveType} rect={g_widget.offsetBy(lineOffset)}/>
 			{#if g_widget.widget_ancestry.showsChildRelationships}
-				<Tree_Children ancestry={g_widget.widget_ancestry} origin={g_widget.child_origin}/>
+				<Tree_Children ancestry={g_widget.widget_ancestry} origin={g_widget.children_origin}/>
 			{/if}
 		{/each}
 	</div>

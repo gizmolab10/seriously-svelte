@@ -65,9 +65,11 @@ export default class Thing extends Persistable {
 	get thing_isBulk_expanded(): boolean {		// cross db ancestries needs special attention
 		if (this.isBulkAlias) {
 			const ancestries = get(w_ancestries_expanded);
-			for (const ancestry of ancestries) {
-				if (this.id == ancestry.thing?.id) {
-					return true;
+			if (!!ancestries) {
+				for (const ancestry of ancestries) {
+					if (this.id == ancestry.thing?.id) {
+						return true;
+					}
 				}
 			}
 		}

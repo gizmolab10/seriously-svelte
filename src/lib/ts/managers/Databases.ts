@@ -31,16 +31,16 @@ export default class Databases {
 			if (!!type && (!done || (type && this.db_now.t_database != type))) {
 				done = true;
 				setTimeout( async () => {
-					p.write_key(T_Preference.db, type);
 					this.db_set_accordingToType(type);
+					p.write_key(T_Preference.db, type);
 					await this.db_now.hierarchy_setup_fetch_andBuild();
-				}, 10);
+				}, 0);
 			}
 		});
 	}
 
 	db_set_accordingToType(type: string) { this.db_now = this.db_forType(type); }
-	db_change_toNext(forward: boolean) { this.db_change_toType(this.db_next_get(forward)); }
+	db_change_toNext(forward: boolean) { w_t_database.set(this.db_next_get(forward)); }
 	isRemote(kind_persistence: T_Persistence): boolean { return kind_persistence == T_Persistence.remote; }
 	isPersistent(kind_persistence: T_Persistence): boolean { return kind_persistence != T_Persistence.none; }
 
@@ -48,22 +48,6 @@ export default class Databases {
 		let type = p.read_key(T_Preference.db) ?? 'firebase';
 		if (type == 'file') { type = 'local'; }
 		w_t_database.set(type);
-	}
-
-	get startupExplanation(): string {
-		const type = this.db_now.t_database;
-		let from = k.empty;
-		switch (type) {
-			case T_Database.firebase: from = `, from ${this.db_now.idBase}`; break;
-			case T_Database.test:	  return k.empty;
-		}
-		return `(loading your ${type} data${from})`;
-	}
-
-	db_change_toType(newDatabaseType: T_Database) {
-		this.db_now = this.db_forType(newDatabaseType);
-		p.write_key(T_Preference.db, newDatabaseType);
-		w_t_database.set(newDatabaseType);		// tell components to render the [possibly previously] fetched data
 	}
 
 	db_next_get(forward: boolean): T_Database {
@@ -82,6 +66,16 @@ export default class Databases {
 			case T_Database.local:	  return dbLocal;
 			default:				  return dbTest;
 		}
+	}
+
+	get startupExplanation(): string {
+		const type = this.db_now.t_database;
+		let from = k.empty;
+		switch (type) {
+			case T_Database.firebase: from = `, from ${this.db_now.idBase}`; break;
+			case T_Database.test:	  return k.empty;
+		}
+		return `(loading your ${type} data${from})`;
 	}
 
 }

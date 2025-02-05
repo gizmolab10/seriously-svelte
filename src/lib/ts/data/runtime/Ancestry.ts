@@ -110,8 +110,8 @@ export default class Ancestry extends Identifiable {
 	}
 
 	get points_right(): boolean {
+		const radial_points_right = this.g_widget?.points_right ?? true;
 		const hasVisibleChildren = this.isExpanded && this.hasChildRelationships;
-		const radial_points_right = (this.g_widget?.points_right ?? true) == this.hasChildRelationships;
 		return g.inRadialMode ? radial_points_right : !hasVisibleChildren;
 	}
 

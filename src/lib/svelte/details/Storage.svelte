@@ -31,7 +31,7 @@
 
 	function selection_closure(titles: Array<string>) {
 		const t_database = titles[0] as T_Database;	// only ever contains one title
-		databases.db_change_toType(t_database);
+		w_t_database.set(t_database);
 	}
 	
 	function setup_s_elements() {

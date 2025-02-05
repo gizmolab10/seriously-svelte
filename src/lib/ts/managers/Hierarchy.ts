@@ -985,15 +985,22 @@ export class Hierarchy {
 	}
 
 	async ancestry_redraw_persistentFetchBulk_browseRight(thing: Thing, ancestry: Ancestry | null = null, grab: boolean = false) {
-		if (!!this.externalsAncestry && thing && thing.title != 'roots') {	// not create roots bulk
+		if (!!thing && !!this.externalsAncestry && thing.title != 'externals') {	// not create externals bulk
 			await this.db.hierarchy_fetch_forID(thing.title)
 			this.relationships_refreshKnowns();
 			const childAncestries = ancestry?.childAncestries;
+			const isRadialMode = get(w_t_graph) == T_Graph.radial;
 			if (!!childAncestries && childAncestries.length > 0) {
 				if (!!grab) {
 					childAncestries[0].grabOnly()
 				}
 				ancestry?.expand()
+				if (!isRadialMode) {
+					signals.signal_rebuildGraph_fromFocus();	// not rebuild until focus changes
+				}
+			}
+			if (isRadialMode) {
+				ancestry?.becomeFocus();
 				signals.signal_rebuildGraph_fromFocus();
 			}
 		}

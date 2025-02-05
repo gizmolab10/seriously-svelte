@@ -9,8 +9,8 @@ export default class G_Children {
 		const sizeY = sum + childHeight / 2;
 		const direction = this.getDirection(sizeY);
 		const rect = new Rect(origin, new Size(k.line_stretch, sizeY - 1));
-		const child_origin = this.originForChildrenOf(child_ancestry, rect);
-		const g_widget = new G_Widget(direction, rect, child_origin, child_ancestry, parent_ancestry);
+		const children_origin = this.originForChildrenOf(child_ancestry, rect);
+		const g_widget = new G_Widget(direction, rect, children_origin, child_ancestry, parent_ancestry);
 		this.childHeight = childHeight;
 		this.g_widgets.push(g_widget);
 	}

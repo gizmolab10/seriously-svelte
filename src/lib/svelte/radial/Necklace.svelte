@@ -47,7 +47,7 @@
 					ancestry={g_widget.widget_ancestry}
 					points_right={g_widget.points_right}
 					points_toChild={g_widget.points_toChild}
-					origin={g_widget.child_origin.offsetBy(childOffset)}/>
+					origin={g_widget.children_origin.offsetBy(childOffset)}/>
 			{/each}
 		</div>
 	{/if}
