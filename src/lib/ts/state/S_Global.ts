@@ -1,8 +1,8 @@
-import { w_t_graph, w_thing_color, w_t_startup, w_device_isMobile } from './S_Stores';
 import { w_hierarchy, w_count_resize, w_count_mouse_up, w_count_rebuild } from './S_Stores';
-import { Hierarchy, T_Graph, p, T_Preference } from '../common/Global_Imports';
-import { S_Rotation, T_Startup, S_Expansion } from '../common/Global_Imports';
-import { e, k, u, ux, w, show, debug, databases } from '../common/Global_Imports';
+import { w_t_graph, w_thing_color, w_t_startup, w_device_isMobile } from './S_Stores';
+import { e, k, p, u, ux, w, show, debug, databases } from '../common/Global_Imports';
+import { Hierarchy, S_Rotation, S_Expansion } from '../common/Global_Imports';
+import { T_Graph, T_Startup, T_Preference } from '../common/Global_Imports';
 import { w_ancestries_grabbed, w_ancestries_expanded } from './S_Stores';
 import { w_ancestry_focus } from './S_Stores';
 import { get } from 'svelte/store';
@@ -15,8 +15,8 @@ export class S_Global {
 	eraseDB = 0;
 	isEditing_text = false;
 	mouse_responder_number = 0;
-	w_ring_rotation!: S_Rotation;
-	w_ring_resizing!: S_Expansion;
+	s_ring_rotation!: S_Rotation;
+	s_ring_resizing!: S_Expansion;
 	s_cluster_rotation!: S_Rotation;
 	rebuild_needed_byType: {[type: string]: boolean} = {};
 	queryStrings = new URLSearchParams(window.location.search);
@@ -101,8 +101,8 @@ export class S_Global {
 	}
 
 	get siteTitle(): string {
-		const t_database = databases.db.t_database;
-		const idBase = databases.db.idBase;
+		const t_database = databases.db_now.t_database;
+		const idBase = databases.db_now.idBase;
 		const host = this.isServerLocal ? 'local' : 'remote';
 		const db_name = t_database ? (t_database! + ', ') : k.empty;
 		const base_name = idBase ? (idBase! + ', ') : k.empty;

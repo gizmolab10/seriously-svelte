@@ -30,7 +30,7 @@ export default class DBAirtable extends DBCommon {
 	idBase = k.empty;
 
 	relationships_errorMessage = 'Error in Relationships:';
-	async hierarchy_fetchForID(idBase: string) {}
+	async hierarchy_fetch_forID(idBase: string) {}
 	things_errorMessage = 'Error in Things:';
 	traits_errorMessage = 'Error in Traits:';
 

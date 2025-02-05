@@ -1,7 +1,7 @@
 import { g, k, T_Preference, p } from '../common/Global_Imports';
-import { dbFirebase } from '../data/dbs/DBFirebase';
+import { T_Database, T_Persistence } from '../data/dbs/DBCommon';
 import { dbAirtable } from '../data/dbs/DBAirtable';
-import { T_Database } from '../data/dbs/DBCommon';
+import { dbFirebase } from '../data/dbs/DBFirebase';
 import { w_t_database } from '../state/S_Stores';
 import { dbLocal } from '../data/dbs/DBLocal';
 import { dbTest } from '../data/dbs/DBTest';
@@ -11,17 +11,8 @@ import DBCommon from '../data/dbs/DBCommon';
 // when switching to another db
 // w_hierarchy is set to its hierarchy
 
-export function db_forType(t_database: string): DBCommon {
-	switch (t_database) {
-		case T_Database.firebase: return dbFirebase;
-		case T_Database.airtable: return dbAirtable;
-		case T_Database.test:	  return dbTest;
-		default:			  return dbLocal;
-	}
-}
-
 export default class Databases {
-	db: DBCommon;
+	db_now: DBCommon;
 
 	queryStrings_apply() {
 		const queryStrings = g.queryStrings;
@@ -30,26 +21,28 @@ export default class Databases {
 			this.db_set_accordingToType(type);
 			w_t_database.set(type);
 		}
-		this.db.queryStrings_apply();
+		this.db_now.queryStrings_apply();
 	}
 
 	constructor() {
 		let done = false;
-		this.db = dbFirebase;
+		this.db_now = dbFirebase;
 		w_t_database.subscribe((type: string) => {
-			if (!!type && (!done || (type && this.db.t_database != type))) {
+			if (!!type && (!done || (type && this.db_now.t_database != type))) {
 				done = true;
 				setTimeout( async () => {
 					p.write_key(T_Preference.db, type);
 					this.db_set_accordingToType(type);
-					await this.db.hierarchy_setup_fetch_andBuild();
+					await this.db_now.hierarchy_setup_fetch_andBuild();
 				}, 10);
 			}
 		});
 	}
 
-	db_set_accordingToType(type: string) { this.db = db_forType(type); }
+	db_set_accordingToType(type: string) { this.db_now = this.db_forType(type); }
 	db_change_toNext(forward: boolean) { this.db_change_toType(this.db_next_get(forward)); }
+	isRemote(kind_persistence: T_Persistence): boolean { return kind_persistence == T_Persistence.remote; }
+	isPersistent(kind_persistence: T_Persistence): boolean { return kind_persistence != T_Persistence.none; }
 
 	restore_db() {
 		let type = p.read_key(T_Preference.db) ?? 'firebase';
@@ -58,26 +51,36 @@ export default class Databases {
 	}
 
 	get startupExplanation(): string {
-		const type = this.db.t_database;
+		const type = this.db_now.t_database;
 		let from = k.empty;
 		switch (type) {
-			case T_Database.firebase: from = `, from ${this.db.idBase}`; break;
+			case T_Database.firebase: from = `, from ${this.db_now.idBase}`; break;
 			case T_Database.test:	  return k.empty;
 		}
 		return `(loading your ${type} data${from})`;
 	}
 
 	db_change_toType(newDatabaseType: T_Database) {
-		const db = db_forType(newDatabaseType);
+		this.db_now = this.db_forType(newDatabaseType);
 		p.write_key(T_Preference.db, newDatabaseType);
 		w_t_database.set(newDatabaseType);		// tell components to render the [possibly previously] fetched data
 	}
 
 	db_next_get(forward: boolean): T_Database {
-		switch (this.db.t_database) {
+		switch (this.db_now.t_database) {
+			case T_Database.local:	  return forward ? T_Database.firebase : T_Database.test;
+			case T_Database.firebase: return forward ? T_Database.airtable : T_Database.local;
 			case T_Database.airtable: return forward ? T_Database.test	   : T_Database.firebase;
-			case T_Database.test:	  return forward ? T_Database.firebase : T_Database.airtable;
-			default:			  	  return forward ? T_Database.airtable : T_Database.test;
+			default:				  return forward ? T_Database.local	   : T_Database.airtable;
+		}
+	}
+
+	db_forType(t_database: string): DBCommon {
+		switch (t_database) {
+			case T_Database.firebase: return dbFirebase;
+			case T_Database.airtable: return dbAirtable;
+			case T_Database.local:	  return dbLocal;
+			default:				  return dbTest;
 		}
 	}
 

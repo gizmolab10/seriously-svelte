@@ -1,5 +1,5 @@
-import { Datum } from '../../common/Global_Imports';
+import { Persistable } from '../../common/Global_Imports';
 
-export default class Tag extends Datum {
+export default class Tag extends Persistable {
 	type: string = '';
 }

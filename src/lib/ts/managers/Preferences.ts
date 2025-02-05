@@ -93,7 +93,7 @@ export class Preferences {
 	
 	static readonly PRIMITIVES: unique symbol;
 
-	db_keyFor	(key: string):					string { return this.keyPair_for(databases.db.t_database, key); }
+	db_keyFor	(key: string):					string { return this.keyPair_for(databases.db_now.t_database, key); }
 	keyPair_for	(key: string, sub_key: string):	string { return `${key}${k.generic_separator}${sub_key}`; }
 
 	parse(key: string | null | undefined): any | null {

@@ -326,7 +326,7 @@ export default class SVG_Paths {
 			x = endX;
 			y = endY;
 			const xAxisRotationRad = (xAxisRotation * Math.PI) / 180;							// Convert rotation to radians
-			const dx2 = (startX - endX) / 2.0;													// Compute the half distance between the current and the end point
+			const dx2 = (startX - endX) / 2.0;													// Compute the half distance between the db_now and the end point
 			const dy2 = (startY - endY) / 2.0;
 			const x1 = Math.cos(xAxisRotationRad) * dx2 + Math.sin(xAxisRotationRad) * dy2;
 			const y1 = -Math.sin(xAxisRotationRad) * dx2 + Math.cos(xAxisRotationRad) * dy2;

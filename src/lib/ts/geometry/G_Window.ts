@@ -1,5 +1,5 @@
-import { k, Rect, Size, Point, debug, p, T_Preference } from '../common/Global_Imports';
 import { w_graph_rect, w_user_graph_offset, w_user_graph_center } from '../state/S_Stores';
+import { k, p, Rect, Size, Point, debug, T_Preference } from '../common/Global_Imports';
 import { w_show_details, w_mouse_location_scaled } from '../state/S_Stores';
 import { get } from 'svelte/store';
 

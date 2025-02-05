@@ -1,8 +1,9 @@
-import { g, k, u, Trait, Thing, T_Thing, Hierarchy, Predicate, Relationship } from '../../common/Global_Imports';
-import { debug, signals, T_Startup, p, T_Preference } from '../../common/Global_Imports';
-import Persistent_Identifiable from '../basis/Persistent_Identifiable';
+import { Trait, Thing, Hierarchy, Predicate, Relationship } from '../../common/Global_Imports';
+import { T_Thing, T_Startup, T_Preference } from '../../common/Global_Imports';
+import { g, k, p, u, debug, signals } from '../../common/Global_Imports';
 import { w_hierarchy, w_t_startup } from '../../state/S_Stores';
 import type { Dictionary } from '../../common/Types';
+import Persistable from '../basis/Persistable';
 
 export enum T_Persistence {
 	remote = 'remote',
@@ -11,7 +12,6 @@ export enum T_Persistence {
 }
 
 export enum T_Database {
-	postgres = 'postgres',
 	airtable = 'airtable',
 	firebase = 'firebase',
 	plugin	 = 'plugin',
@@ -43,28 +43,28 @@ export default class DBCommon {
 	get dict_forStorageDetails(): Dictionary { return {'fetch took' : this.loadTime} }
 	get isRemote(): boolean { return this.kind_persistence == T_Persistence.remote; }
 	get isPersistent(): boolean { return this.kind_persistence != T_Persistence.none; }
-	async hierarchy_fetchForID(idBase: string) {}	// support for browsing multiple firebase bulks
+	async hierarchy_fetch_forID(idBase: string) {}	// support for browsing multiple firebase bulks
 	
 	async fetch_all() { this.fetch_all_fromLocal(); }
 	async remove_all() { this.remove_all_fromLocal(); }
 	remove_all_fromLocal() { if (this.isPersistent) { p.writeDB_key(T_Preference.local, null); } }
 	persist_all_toLocal() { if (this.isPersistent) { p.writeDB_key(T_Preference.local, u.stringify_object(this.hierarchy.all_data)); } }
 
-	async thing_persistentUpdate(thing: Thing) {}
-	async thing_persistentDelete(thing: Thing) {}
-	async thing_remember_persistentCreate(thing: Thing) {}
+	async thing_persistentUpdate(thing: Thing) { this.persist_all(); }
+	async thing_persistentDelete(thing: Thing) { this.persist_all(); }
+	async thing_remember_persistentCreate(thing: Thing) { this.hierarchy.thing_remember(thing); this.persist_all(); }
 
-	async trait_persistentUpdate(trait: Trait) {}
-	async trait_persistentDelete(trait: Trait) {}
-	async trait_remember_persistentCreate(trait: Trait) {}
+	async trait_persistentUpdate(trait: Trait) { this.persist_all(); }
+	async trait_persistentDelete(trait: Trait) { this.persist_all(); }
+	async trait_remember_persistentCreate(trait: Trait) { this.hierarchy.trait_remember(trait); this.persist_all(); }
+	
+	async predicate_persistentUpdate(predicate: Predicate) { this.persist_all(); }
+	async predicate_persistentDelete(predicate: Predicate) { this.persist_all(); }
+	async predicate_remember_persistentCreate(predicate: Predicate) { this.hierarchy.predicate_remember(predicate); this.persist_all(); }
 
-	async predicate_persistentUpdate(predicate: Predicate) {}
-	async predicate_persistentDelete(predicate: Predicate) {}
-	async predicate_remember_persistentCreate(predicate: Predicate) {}
-
-	async relationship_persistentUpdate(relationship: Relationship) {}
-	async relationship_persistentDelete(relationship: Relationship) {}
-	async relationship_remember_persistentCreate(relationship: Relationship) {}
+	async relationship_persistentUpdate(relationship: Relationship) { this.persist_all(); }
+	async relationship_persistentDelete(relationship: Relationship) { this.persist_all(); }
+	async relationship_remember_persistentCreate(relationship: Relationship) { this.hierarchy.relationship_remember_ifValid(relationship); this.persist_all(); }
 
 	async persist_all(force: boolean = false) {
 		if (this.isRemote) {
@@ -77,7 +77,7 @@ export default class DBCommon {
 		this.persist_all_toLocal();
 	}
 
-	async persist_maybe_all_identifiables(force: boolean = false, identifiables: Array<Persistent_Identifiable>) {
+	async persist_maybe_all_identifiables(force: boolean = false, identifiables: Array<Persistable>) {
 		for (const identifiable of identifiables) {
 			if (identifiable.persistence.isDirty || force) {
 				await identifiable.persist();

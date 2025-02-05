@@ -1,16 +1,16 @@
-import { k, Datum, Thing, databases, T_Trait } from '../../common/Global_Imports';
+import { k, Persistable, Thing, databases, T_Trait } from '../../common/Global_Imports';
 import { w_hierarchy } from '../../state/S_Stores';
 import { T_Datum } from '../dbs/DBCommon';
 import { get } from 'svelte/store';
 import Airtable from 'airtable';
 
-export default class Trait extends Datum {
+export default class Trait extends Persistable {
 	type: T_Trait = T_Trait.generic;
 	ownerID: string = k.empty;
 	text: string = k.empty;
 
 	constructor(idBase: string, id: string, ownerID: string, type: T_Trait, text: string = k.empty, already_persisted: boolean = false) {
-		super(databases.db.t_database, idBase, T_Datum.traits, id, already_persisted);
+		super(databases.db_now.t_database, idBase, T_Datum.traits, id, already_persisted);
 		this.ownerID = ownerID;
 		this.type = type;
 		this.text = text;
@@ -21,9 +21,9 @@ export default class Trait extends Datum {
 
 	async persistent_create_orUpdate(already_persisted: boolean) {
 		if (already_persisted) {
-			await databases.db.trait_persistentUpdate(this);
-		} else if (databases.db.isPersistent) {
-			await databases.db.trait_remember_persistentCreate(this);
+			await databases.db_now.trait_persistentUpdate(this);
+		} else {
+			await databases.db_now.trait_remember_persistentCreate(this);
 		}
 	}
 

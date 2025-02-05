@@ -66,7 +66,7 @@
 	}
 
 	function closure(s_mouse) {
-		if (databases.db.hierarchy.hasRoot) {
+		if (databases.db_now.hierarchy.hasRoot) {
 			if (s_mouse.isHover) {
 				if (s_mouse.isOut) {
 					border = `${borderStyle} ${borderColor}`;

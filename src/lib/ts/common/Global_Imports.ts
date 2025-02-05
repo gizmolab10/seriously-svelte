@@ -40,7 +40,7 @@ import Predicate from '../data/types/Predicate';
 import Ancestry from '../data/runtime/Ancestry';
 import Svelte_Wrapper from './Svelte_Wrapper';
 import Access from '../data/types/Access';
-import Datum from '../data/basis/Datum';
+import Persistable from '../data/basis/Persistable';
 import Thing from '../data/types/Thing';
 import Trait from '../data/types/Trait';
 import Angle from '../geometry/Angle';
@@ -73,7 +73,7 @@ export {
 	T_Element, Svelte_Wrapper, T_SvelteComponent,
 	S_Element, S_Paging, S_Thing_Pages, S_Alteration,
 	S_Mouse, T_Startup, S_Rotation, S_Expansion, S_Title_Edit,
-	User, Datum, Thing, Trait, Access, Predicate, Relationship,
+	User, Persistable, Thing, Trait, Access, Predicate, Relationship,
 	G_Widget, G_Children, G_ArcSlider, G_Segment, G_Cluster, G_Radial,
 	T_Info, T_Thing, T_Trait, T_Graph, T_Hierarchy, T_Details, T_Rebuild,
 	T_Line, T_Tool, T_Signal, T_Control, T_Browser, T_Storage, T_Preference,

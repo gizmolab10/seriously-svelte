@@ -1,7 +1,7 @@
-import Persistent_Identifiable from '../basis/Persistent_Identifiable';
+import Persistable from '../basis/Persistable';
 import { T_Datum } from '../dbs/DBCommon';
 
-export default class User extends Persistent_Identifiable {
+export default class User extends Persistable {
 	email: string;
 	phone: string;
 	name: string;

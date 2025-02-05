@@ -232,7 +232,7 @@ export class Utilities {
 			'bulkRootID',
 			't_database',
 			'oneAncestry',
-			'needsBulkFetch',
+			'persistence',
 			'selectionRange',
 		];
 		function removeExtras(key: string, value: any): any | undefined {

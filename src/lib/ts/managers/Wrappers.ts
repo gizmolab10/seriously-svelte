@@ -64,7 +64,7 @@ export class Wrappers {
 	}
 
 	respondTo_closure(event: MouseEvent, closure: Create_Mouse_State) {
-		// gather all wrappers whose type generates a hit
+		// external all wrappers whose type generates a hit
 		// ask each wrapper to
 		// construct & handle the mouse state
 		// stop if handled

@@ -236,7 +236,7 @@
 			extractRange();
 			input?.blur();
 			if (hasChanges()) {
-				databases.db.thing_persistentUpdate(thing());
+				databases.db_now.thing_persistentUpdate(thing());
 				originalTitle = thing()?.title;		// so hasChanges will be correct
 				ancestry.signal_relayoutWidgets_fromThis();
 			}

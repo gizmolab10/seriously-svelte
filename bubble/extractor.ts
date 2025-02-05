@@ -50,7 +50,7 @@ function extractHTMLComponents(inputFilePath: string) {
 // Entry point
 const inputFilePath = path.resolve(__dirname, 'index.html');
 if (!fs.existsSync(inputFilePath)) {
-    console.error('Error: index.html not found in the current directory.');
+    console.error('Error: index.html not found in the db_now directory.');
     process.exit(1);
 }
 

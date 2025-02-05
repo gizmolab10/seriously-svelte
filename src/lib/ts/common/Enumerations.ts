@@ -65,11 +65,11 @@ export enum T_Oblong {
 }
 
 export enum T_Thing {
-	generic	= '',
-	found	= '?',
-	roots	= '^',
-	root	= '!',
-	bulk	= '~',
+	externals = '^',	// list of bulks
+	generic	  = '',
+	found	  = '?',
+	root	  = '!',
+	bulk	  = '~',	// bulk alias
 }
 
 export enum T_Predicate {

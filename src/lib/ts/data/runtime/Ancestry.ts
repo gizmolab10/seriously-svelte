@@ -74,7 +74,7 @@ export default class Ancestry extends Identifiable {
 	get isExpanded():						 boolean { return this.isRoot || this.includedInStore_ofAncestries(w_ancestries_expanded); }
 	get endID():						   	  string { return this.idAt(); }
 	get title():						   	  string { return this.thing?.title ?? 'missing title'; }
-	get description():					   	  string { return `${this.kindPredicate} ${this.titles.join(':')}`; }
+	get description():					   	  string { return `${this.kindPredicate} "${this.thing?.type ?? '-'}" ${this.titles.join(':')}`; }
 	get depth():							  number { return this.ids.length; }
 	get order():						   	  number { return this.relationship?.order ?? -1; }
 	get visibleProgeny_halfHeight():	   	  number { return this.visibleProgeny_height() / 2; }
@@ -117,7 +117,7 @@ export default class Ancestry extends Identifiable {
 
 	get isEditable(): boolean {
 		const isBulkAlias = this.thing?.isBulkAlias ?? true;	// missing thing, return not allow
-		const canEdit = !this.isRoot || databases.db.t_database == T_Database.local;
+		const canEdit = !this.isRoot || databases.db_now.t_database == T_Database.local;
 		return canEdit && g.allow_TitleEditing && !isBulkAlias;
 	}
 
@@ -678,7 +678,7 @@ export default class Ancestry extends Identifiable {
 					case T_Alteration.adding:
 						const toolsThing = toolsAncestry.thing;
 						if (!!toolsThing) {
-							await this.hierarchy.relationship_remember_persistent_addChild_toAncestry(toolsThing, ancestry, kindPredicate);
+							await this.hierarchy.ancestry_extended_byAddingThing_toAncestry_remember_persistentCreate_relationship(toolsThing, ancestry, kindPredicate);
 							signals.signal_rebuildGraph_fromFocus();
 						}
 						break;

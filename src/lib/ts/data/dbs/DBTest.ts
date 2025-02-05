@@ -76,10 +76,6 @@ export default class DBTest extends DBCommon {
 		}
 	}
 
-	async thing_remember_persistentCreate(thing: Thing) { this.hierarchy.thing_remember(thing); }
-	async trait_remember_persistentCreate(trait: Trait) { this.hierarchy.trait_remember(trait); }
-	async relationship_remember_persistentCreate(relationship: Relationship) { this.hierarchy.relationship_remember_ifValid(relationship); }
-
 }
 
 export const dbTest = new DBTest();

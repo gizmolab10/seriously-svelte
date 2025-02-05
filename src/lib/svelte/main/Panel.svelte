@@ -68,7 +68,7 @@
 		pointer-events: auto;
 		{k.prevent_selection_style};'
 		on:wheel={ignore_wheel}>
-		{#if [T_Startup.start, T_Startup.fetch].includes($w_t_startup) && databases.db.isPersistent}
+		{#if [T_Startup.start, T_Startup.fetch].includes($w_t_startup) && databases.db_now.isPersistent}
 			<p>Welcome to Seriously</p>
 			{#if $w_t_startup == T_Startup.fetch}
 				<p>{databases.startupExplanation}</p>

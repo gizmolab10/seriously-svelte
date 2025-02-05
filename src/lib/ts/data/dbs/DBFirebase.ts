@@ -1,15 +1,16 @@
-import { g, k, u, Thing, Trait, debug, signals, Predicate, p, Relationship } from '../../common/Global_Imports';
+import { g, k, p, u, Thing, Trait, debug, signals, Predicate, Relationship } from '../../common/Global_Imports';
 import { T_Thing, T_Trait, T_Debug, T_Create, T_Predicate, T_Preference } from '../../common/Global_Imports';
 import { doc, addDoc, setDoc, getDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
 import { QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
 import { onSnapshot, deleteField, getFirestore, DocumentData, DocumentChange } from 'firebase/firestore';
 import { T_Datum, T_Database, T_Persistence } from './DBCommon';
+import type { Dictionary } from '../../common/Types';
 import Identifiable from '../basis/Identifiable';
 import { initializeApp } from 'firebase/app';
 import DBCommon from './DBCommon';
 
 export default class DBFirebase extends DBCommon {
-	firebaseConfig = {
+	config = {
 		appId: "1:224721814373:web:0c60f394c056ef3decd78c",
 		apiKey: "AIzaSyAFy4H3Ej5zfI46fvCJpBfUxmyQco-dx9U",
 		authDomain: "seriously-4536d.firebaseapp.com",
@@ -23,16 +24,17 @@ export default class DBFirebase extends DBCommon {
 	addedThing!: Thing;
 	addedTrait!: Trait;
 	bulksName = 'Bulks';
-	bulks!: Array<Bulk>;
 	deferSnapshots = false;
+	bulks: Dictionary<Bulk> = {};
 	t_database = T_Database.firebase;
-	kind_persistence = T_Persistence.remote;
-	app = initializeApp(this.firebaseConfig);
+	app = initializeApp(this.config);
 	firestore = getFirestore(this.app);
+	kind_persistence = T_Persistence.remote;
 	predicatesCollection!: CollectionReference;
 	deferredSnapshots: Array<SnapshotDeferal> = [];
 
 	reportError(error: any) { console.log(error); }
+	get displayName(): string { return this.idBase; }
 
 	queryStrings_apply() {
 		const persistedID = p.read_key(T_Preference.base_id);
@@ -51,27 +53,24 @@ export default class DBFirebase extends DBCommon {
 			this.reportError(error);
 		}
 	}
-	
-	get displayName(): string {
-		return `${super.displayName} : ${this.idBase}`; }
 
 	static readonly FETCH: unique symbol;
 
 	async fetch_all() {
 		await this.recordLoginIP();
-		await this.fetch_documentsOf(T_Datum.predicates);
-		await this.hierarchy_fetchForID(this.idBase);
-		await this.fetch_bulkAliases();		// TODO: assumes all ancestries are already created
+		await this.documents_fetch_ofType(T_Datum.predicates);
+		await this.hierarchy_fetch_forID(this.idBase);
 		this.setup_remote_handlers();
+		await this.fetch_bulkAliases();		// TODO: assumes all ancestries are already created, including h.rootAncestry
 	}
 
-	async hierarchy_fetchForID(idBase: string) {
-		await this.fetch_documentsOf(T_Datum.things, idBase);
-		await this.fetch_documentsOf(T_Datum.traits, idBase);
-		await this.fetch_documentsOf(T_Datum.relationships, idBase);
+	async hierarchy_fetch_forID(idBase: string) {
+		await this.documents_fetch_ofType(T_Datum.things, idBase);
+		await this.documents_fetch_ofType(T_Datum.traits, idBase);
+		await this.documents_fetch_ofType(T_Datum.relationships, idBase);
 	}
 		
-	async fetch_documentsOf(t_datum: T_Datum, idBase: string | null = null) {
+	async documents_fetch_ofType(t_datum: T_Datum, idBase: string | null = null) {
 		try {
 			const collectionRef = !idBase ? collection(this.firestore, t_datum) : collection(this.firestore, this.bulksName, idBase, t_datum);
 			let querySnapshot = await getDocs(collectionRef);
@@ -95,45 +94,36 @@ export default class DBFirebase extends DBCommon {
 
 	static readonly BULKS: unique symbol;
 
-	bulk_for(idBase: string | null) {
-		if (!!idBase) {
-			if (!this.bulks) {
-				this.bulks = [new Bulk(this.idBase)];
-			}
-			const bulks = this.bulks;
-			if (!!bulks) {
-				for (const bulk of bulks) {
-					if (bulk.idBase == idBase) {
-						return bulk;
-					}
-				}
-				const newBulk = new Bulk(idBase);
-				bulks.push(newBulk);
-				return newBulk;
-			}
+	bulk_forID(idBase: string | null) {
+		if (!idBase) {
+			return null;
 		}
-		return null;
+		let bulk = this.bulks[idBase];
+		if (!bulk) {
+			bulk = new Bulk(idBase)
+			this.bulks[idBase] = bulk;
+		}
+		return bulk;
 	}
 	
 	async fetch_bulkAliases() {
 		const h = this.hierarchy;
 		const root = h.root;
-		if (this.idBase == k.name_bulkAdmin && root) {
-			const rootsAncestry = await h.ancestry_roots();		// TODO: assumes all ancestries created
-			if (!!rootsAncestry) {
-				h.rootsAncestry = rootsAncestry;
+		if (!!root && this.idBase == k.name_bulkAdmin) {
+			const externalsAncestry = await h.ancestry_externals;		// TODO: assumes all ancestries created
+			if (!!externalsAncestry) {
 				try {		// add bulk aliases to roots thing
 					const bulk = collection(this.firestore, this.bulksName);	// fetch all bulks (documents)
 					let bulkSnapshot = await getDocs(bulk);
 					for (const bulkDoc of bulkSnapshot.docs) {
-						const idBase = bulkDoc.id;
-						if (idBase != this.idBase) {
-							let thing = h.bulks_alias_forTitle_ofThing(idBase);
+						const idBulk = bulkDoc.id;
+						if (idBulk != this.idBase) {
+							let thing = h.bulkAlias_forTitle(idBulk);
 							if (!thing) {								// create a thing for each bulk
-								thing = h.thing_runtimeCreate(this.idBase, Identifiable.newID(), idBase, 'red', T_Thing.bulk);
-								await h.relationship_remember_persistent_addChild_toAncestry(thing, rootsAncestry);
+								thing = h.thing_runtimeCreate(this.idBase, Identifiable.newID(), idBulk, 'red', T_Thing.bulk);
+								await h.ancestry_extended_byAddingThing_toAncestry_remember_persistentCreate_relationship(thing, externalsAncestry);
 							} else if (thing.thing_isBulk_expanded) {
-								await h.ancestry_redraw_persistentFetchBulk_browseRight(thing);
+								await h.ancestry_redraw_persistentFetchBulk_browseRight(thing);		// preload
 							}
 						}
 					}
@@ -172,7 +162,7 @@ export default class DBFirebase extends DBCommon {
 				this.predicatesCollection = collection(this.firestore, t_datum);
 			} else {
 				const idBase = this.idBase;
-				const bulk = this.bulk_for(idBase);
+				const bulk = this.bulk_forID(idBase);
 				const collectionRef = collection(this.firestore, this.bulksName, idBase, t_datum);
 				if (!!bulk) {
 					switch (t_datum) {
@@ -261,7 +251,7 @@ export default class DBFirebase extends DBCommon {
 	static readonly THING: unique symbol;
 
 	async thing_remember_persistentCreate(thing: Thing) {
-		const thingsCollection = this.bulk_for(thing.idBase)?.thingsCollection;
+		const thingsCollection = this.bulk_forID(thing.idBase)?.thingsCollection;
 		if (!!thingsCollection) {
 			const remoteThing = new PersistentThing(thing);
 			const jsThing = { ...remoteThing };
@@ -291,7 +281,7 @@ export default class DBFirebase extends DBCommon {
 	}
 
 	async thing_persistentUpdate(thing: Thing) {
-		const thingsCollection = this.bulk_for(thing.idBase)?.thingsCollection;
+		const thingsCollection = this.bulk_forID(thing.idBase)?.thingsCollection;
 		if (!!thingsCollection) {
 			const ref = doc(thingsCollection, thing.id) as DocumentReference<Thing>;
 			const remoteThing = new PersistentThing(thing);
@@ -306,7 +296,7 @@ export default class DBFirebase extends DBCommon {
 	}
 
 	async thing_persistentDelete(thing: Thing) {
-		const thingsCollection = this.bulk_for(thing.idBase)?.thingsCollection;
+		const thingsCollection = this.bulk_forID(thing.idBase)?.thingsCollection;
 		if (!!thingsCollection) {
 			try {
 				const ref = doc(thingsCollection, thing.id) as DocumentReference<Thing>;
@@ -373,7 +363,7 @@ export default class DBFirebase extends DBCommon {
 	}
 
 	async trait_persistentDelete(trait: Trait) {
-		const traitsCollection = this.bulk_for(trait.idBase)?.traitsCollection;
+		const traitsCollection = this.bulk_forID(trait.idBase)?.traitsCollection;
 		if (!!traitsCollection) {
 			try {
 				const ref = doc(traitsCollection, trait.id) as DocumentReference<Trait>;
@@ -386,7 +376,7 @@ export default class DBFirebase extends DBCommon {
 	}
 
 	async trait_persistentUpdate(trait: Trait) {
-		const traitsCollection = this.bulk_for(trait.idBase)?.traitsCollection;
+		const traitsCollection = this.bulk_forID(trait.idBase)?.traitsCollection;
 		if (!!traitsCollection) {
 			const ref = doc(traitsCollection, trait.id) as DocumentReference<Trait>;
 			const remoteTrait = new PersistentTrait(trait);
@@ -401,7 +391,7 @@ export default class DBFirebase extends DBCommon {
 	}
 
 	async trait_remember_persistentCreate(trait: Trait) {
-		const traitsCollection = this.bulk_for(trait.idBase)?.traitsCollection;
+		const traitsCollection = this.bulk_forID(trait.idBase)?.traitsCollection;
 		if (!!traitsCollection) {
 			const remoteTrait = new PersistentTrait(trait);
 			const jsTrait = { ...remoteTrait };
@@ -509,7 +499,7 @@ export default class DBFirebase extends DBCommon {
 	static readonly RELATIONSHIP: unique symbol;
 
 	async relationship_persistentDelete(relationship: Relationship) {
-		const relationshipsCollection = this.bulk_for(relationship.idBase)?.relationshipsCollection;
+		const relationshipsCollection = this.bulk_forID(relationship.idBase)?.relationshipsCollection;
 		if (!!relationshipsCollection) {
 			try {
 				const ref = doc(relationshipsCollection, relationship.id) as DocumentReference<PersistentRelationship>;
@@ -522,7 +512,7 @@ export default class DBFirebase extends DBCommon {
 	}
 
 	async relationship_persistentUpdate(relationship: Relationship) {
-		const relationshipsCollection = this.bulk_for(relationship.idBase)?.relationshipsCollection;
+		const relationshipsCollection = this.bulk_forID(relationship.idBase)?.relationshipsCollection;
 		if (!!relationshipsCollection) {
 			try {
 				const ref = doc(relationshipsCollection, relationship.id) as DocumentReference<PersistentRelationship>;
@@ -552,7 +542,7 @@ export default class DBFirebase extends DBCommon {
 	}
 
 	async relationship_remember_persistentCreate(relationship: Relationship) {
-		const relationshipsCollection = this.bulk_for(relationship.idBase)?.relationshipsCollection;
+		const relationshipsCollection = this.bulk_forID(relationship.idBase)?.relationshipsCollection;
 		if (!!relationshipsCollection) {
 			const remoteRelationship = new PersistentRelationship(relationship);
 			const jsRelationship = { ...remoteRelationship };
@@ -667,7 +657,7 @@ export default class DBFirebase extends DBCommon {
 	
 	async getUserIPAddress(): Promise<string | null> {
 		try {
-			// Use an external service to determine the IP address (you can replace this URL with a different service if needed).
+			// Use an externals service to determine the IP address (you can replace this URL with a different service if needed).
 			const response = await fetch('https://ipv4.icanhazip.com');
 			if (!response.ok) {
 				throw new Error('Unable to fetch IP address.');
@@ -782,7 +772,7 @@ export class PersistentRelationship implements PersistentRelationship {
 	order: number;
 
 	constructor(data: DocumentData | Relationship) {
-		const things = dbFirebase.bulk_for(dbFirebase.idBase)?.thingsCollection;
+		const things = dbFirebase.bulk_forID(dbFirebase.idBase)?.thingsCollection;
 		const predicates = dbFirebase.predicatesCollection;
 		this.order = data.order;
 		if (!!things && !!predicates) {

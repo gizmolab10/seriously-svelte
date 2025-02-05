@@ -1,11 +1,10 @@
 <script lang='ts'>
-	import { g, k, ux, show, Rect, Size, Point, Thing, debug, T_Layer, Ancestry } from '../../ts/common/Global_Imports';
-	import { signals, T_Info, T_Trait, p, T_Element, T_Preference } from '../../ts/common/Global_Imports';
+	import { g, k, p, ux, show, Rect, Size, Point, Thing, debug, signals, Ancestry } from '../../ts/common/Global_Imports';
 	import { w_ancestry_focus, w_ancestries_grabbed, w_thing_fontFamily } from '../../ts/state/S_Stores';
+	import { T_Info, T_Trait, T_Layer, T_Element, T_Preference } from '../../ts/common/Global_Imports';
 	import { w_hierarchy, w_thing_color, w_thing_title } from '../../ts/state/S_Stores';
+	import type { Integer, Dictionary } from '../../ts/common/Types';
 	import Identifiable from '../../ts/data/basis/Identifiable';
-	import type { Dictionary } from '../../ts/common/Types';
-	import type { Integer } from '../../ts/common/Types';
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';

@@ -3,10 +3,10 @@ import { w_hierarchy } from '../../state/S_Stores';
 import type { Integer } from '../../common/Types';
 import { T_Datum } from '../dbs/DBCommon';
 import { get } from 'svelte/store';
-import Datum from '../basis/Datum';
+import Persistable from '../basis/Persistable';
 import Airtable from 'airtable';
 
-export default class Relationship extends Datum {
+export default class Relationship extends Persistable {
 	kindPredicate: T_Predicate;
 	hidParent: Integer;
 	hidChild: Integer;
@@ -15,7 +15,7 @@ export default class Relationship extends Datum {
 	order: number; 
 
 	constructor(idBase: string, id: string, kindPredicate: T_Predicate, idParent: string, idChild: string, order = 0, already_persisted: boolean = false) {
-		super(databases.db.t_database, idBase, T_Datum.relationships, id, already_persisted);
+		super(databases.db_now.t_database, idBase, T_Datum.relationships, id, already_persisted);
 		this.kindPredicate = kindPredicate;
 		this.hidParent = idParent.hash();
 		this.hidChild = idChild.hash();
@@ -59,9 +59,9 @@ export default class Relationship extends Datum {
 
 	async persistent_create_orUpdate(already_persisted: boolean) {
 		if (already_persisted) {
-			await databases.db.relationship_persistentUpdate(this);
-		} else if (databases.db.isPersistent) {
-			await databases.db.relationship_remember_persistentCreate(this);
+			await databases.db_now.relationship_persistentUpdate(this);
+		} else {
+			await databases.db_now.relationship_remember_persistentCreate(this);
 		}
 	}
 

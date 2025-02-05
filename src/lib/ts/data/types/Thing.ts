@@ -1,4 +1,4 @@
-import { k, u, debug, Datum, Trait, Ancestry, databases } from '../../common/Global_Imports';
+import { k, u, debug, Persistable, Trait, Ancestry, databases } from '../../common/Global_Imports';
 import { Predicate, Relationship, Seriously_Range } from '../../common/Global_Imports';
 import { T_Thing, T_Trait, T_Debug, T_Predicate } from '../../common/Global_Imports';
 import { w_hierarchy, w_thing_color, w_count_rebuild } from '../../state/S_Stores';
@@ -7,11 +7,10 @@ import type { Dictionary } from '../../common/Types';
 import { T_Datum } from '../dbs/DBCommon';
 import { get } from 'svelte/store';
 
-export default class Thing extends Datum {
+export default class Thing extends Persistable {
 	selectionRange = new Seriously_Range(0, 0);
 	bulkRootID: string = k.empty;
 	oneAncestry!: Ancestry;
-	needsBulkFetch = false;
 	isEditing = false;
 	isGrabbed = false;
 	title: string;
@@ -19,7 +18,7 @@ export default class Thing extends Datum {
 	type: T_Thing;
 
 	constructor(idBase: string, id: string, title = k.title_default, color = k.thing_color_default, type = T_Thing.generic, already_persisted: boolean = false) {
-		super(databases.db.t_database, idBase, T_Datum.things, id, already_persisted);
+		super(databases.db_now.t_database, idBase, T_Datum.things, id, already_persisted);
 		this.selectionRange = new Seriously_Range(0, title.length);
 		this.title = title;
 		this.color = color;
@@ -112,9 +111,9 @@ export default class Thing extends Datum {
 
 	async persistent_create_orUpdate(already_persisted: boolean) {
 		if (already_persisted) {
-			await databases.db.thing_persistentUpdate(this);
-		} else if (databases.db.isPersistent) {
-			await databases.db.thing_remember_persistentCreate(this);
+			await databases.db_now.thing_persistentUpdate(this);
+		} else {
+			await databases.db_now.thing_remember_persistentCreate(this);
 		}
 	}
 
@@ -171,7 +170,12 @@ export default class Thing extends Datum {
 		return parents;
 	}
 
-	oneAncestries_rebuild_forSubtree() {		// set oneAncestry for this and all its progeny
+	oneAncestries_rebuild_forSubtree() {
+
+		// set oneAncestry for this and all its progeny,
+		// they are all backwards dependent,
+		// so must be done top-down all at once
+
 		const oneAncestry = this.oneAncestry_derived;
 		if (!!oneAncestry) {
 			const predicate = oneAncestry.predicate;

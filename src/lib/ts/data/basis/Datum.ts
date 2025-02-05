@@ -1,8 +1,8 @@
-import Persistent_Identifiable from './Persistent_Identifiable';
 import { T_Debug } from '../../common/Debug';
 import { T_Datum } from '../dbs/DBCommon';
+import Persistable from './Persistable';
 
-export default class Datum extends Persistent_Identifiable {
+export default class Datum extends Persistable {
 	type_datum: T_Datum;
 	idBase: string;
 

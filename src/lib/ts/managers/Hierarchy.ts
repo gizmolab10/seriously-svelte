@@ -1,9 +1,8 @@
-import { T_Tool, T_Info, T_Graph, T_Thing, T_Trait, T_Create, T_Alteration, T_Control, T_Predicate } from '../common/Global_Imports';
-import { g, k, u, show, User, Thing, Trait, debug, files, signals, Access, Ancestry } from '../common/Global_Imports';
-import { w_s_title_edit, w_storage_update_trigger, w_ancestry_showing_tools } from '../state/S_Stores';
-import { S_Mouse, Predicate, Relationship, p, S_Alteration } from '../common/Global_Imports';
-import { w_t_graph, w_id_popupView, w_ancestry_focus, w_s_alteration } from '../state/S_Stores';
-import { w_ancestries_grabbed, w_ancestries_expanded } from '../state/S_Stores';
+import { T_Tool, T_Info, T_Graph, T_Thing, T_Trait, T_Create, T_Control, T_Predicate, T_Alteration } from '../common/Global_Imports';
+import { g, k, p, u, show, User, Thing, Trait, debug, files, signals, Access, Ancestry } from '../common/Global_Imports';
+import { w_t_graph, w_id_popupView, w_ancestry_focus, w_s_title_edit, w_s_alteration } from '../state/S_Stores';
+import { w_storage_update_trigger, w_ancestry_showing_tools, w_ancestries_grabbed } from '../state/S_Stores';
+import { S_Mouse, Predicate, Relationship, S_Alteration } from '../common/Global_Imports';
 import type { Integer, Dictionary } from '../common/Types';
 import Identifiable from '../data/basis/Identifiable';
 import { T_Datum } from '../../ts/data/dbs/DBCommon';
@@ -33,7 +32,7 @@ export class Hierarchy {
 	predicates: Array<Predicate> = [];
 	things: Array<Thing> = [];
 	traits: Array<Trait> = [];
-	rootsAncestry!: Ancestry;
+	externalsAncestry!: Ancestry;
 	rootAncestry!: Ancestry;
 
 	persistent_dataTypes = [T_Datum.predicates, T_Datum.relationships, T_Datum.traits, T_Datum.things];
@@ -54,11 +53,9 @@ export class Hierarchy {
 	get hasRoot(): boolean { return !!this.root; }
 	get idRoot(): string | null { return this.root?.id ?? null; };
 
-	setup_root_andAncestry() {
-		const rootAncestry = this.ancestry_remember_createUnique();
-		if (!rootAncestry) {
-			alert('No root ancestry. Please, write me at sand@gizmolab.com');
-		} else {
+	assure_root_andAncestry() {
+		if (!this.rootAncestry) {
+			const rootAncestry = this.ancestry_remember_createUnique();
 			const root = rootAncestry.thing;
 			this.rootAncestry = rootAncestry;
 			if (!!root) {
@@ -249,7 +246,7 @@ export class Hierarchy {
 			return founds[0];
 		}
 		const lost_and_found = this.thing_remember_runtimeCreateUnique(this.db.idBase, Identifiable.newID(), 'lost and found', k.color_default, T_Thing.found);
-		await this.relationship_remember_persistent_addChild_toAncestry(lost_and_found, this.rootAncestry);
+		await this.ancestry_extended_byAddingThing_toAncestry_remember_persistentCreate_relationship(lost_and_found, this.rootAncestry);
 		return lost_and_found;
 	}
 
@@ -298,14 +295,14 @@ export class Hierarchy {
 		return thing;
 	}
 
-	async thing_remember_runtimeCopy(idBase: string, parent: Thing) {
-		const newThing = new Thing(idBase, Identifiable.newID(), parent.title, parent.color, parent.type);
-		const prohibitedTraits: Array<string> = [T_Thing.roots, T_Thing.root, T_Thing.bulk];
-		if (prohibitedTraits.includes(parent.type)) {
-			newThing.type = T_Thing.generic;
+	async thing_remember_runtimeCopy(idBase: string, original: Thing) {
+		const copiedThing = new Thing(idBase, Identifiable.newID(), original.title, original.color, original.type);
+		const prohibitedTraits: Array<string> = [T_Thing.externals, T_Thing.root, T_Thing.bulk];
+		if (prohibitedTraits.includes(original.type)) {
+			copiedThing.type = T_Thing.generic;
 		}
-		this.thing_remember(newThing);
-		return newThing;
+		this.thing_remember(copiedThing);
+		return copiedThing;
 	}
 
 	async thing_remember_persistentRelocateChild(child: Thing, fromParent: Thing, toParent: Thing): Promise<any> {
@@ -373,11 +370,11 @@ export class Hierarchy {
 		already_persisted: boolean = false): Thing {
 		let thing: Thing | null = null;
 		if (id && type == T_Thing.root && idBase != this.db.idBase) {			// other bulks have their own root & id
-			thing = this.bulks_remember_rootID_ofThing(idBase, id, color);		// which our thing needs to adopt
+			thing = this.bulkAlias_remember_forRootID_create(idBase, id, color);		// which our thing needs to adopt
 		} else {
 			thing = new Thing(idBase, id, title, color, type, already_persisted);
 			if (thing.isBulkAlias) {
-				thing.needsBulkFetch = true;
+				thing.persistence.needsBulkFetch = true;
 				if (title.includes('@')) {
 					const parts = title.split('@');
 					thing.title = parts[0];
@@ -425,44 +422,45 @@ export class Hierarchy {
 
 	static readonly BULKS: unique symbol;
 
-	bulks_alias_forTitle_ofThing(title: string | null) {
+	bulkAlias_forTitle(title: string | null) {
 		if (!!title) {
-			for (const thing of this.things_byType[T_Thing.bulk]) {
-				if  (thing.title == title) {		// special case TODO: convert to a query string
-					return thing;
+			const bulkAliases = this.things_byType[T_Thing.bulk] ?? [];
+			for (const bulkAlias of bulkAliases) {
+				if  (bulkAlias.title == title) {		// special case TODO: convert to a query string
+					return bulkAlias;
 				}
 			}
 		}
 		return null;
 	}
 
-	bulks_remember_rootID_ofThing(idBase: string, rootID: string, color: string) {
-		const thing = this.bulks_alias_forTitle_ofThing(idBase);
-		if (!!thing) {
+	bulkAlias_remember_forRootID_create(title: string, rootID: string, color: string) {
+		const bulkAlias = this.bulkAlias_forTitle(title);
+		if (!!bulkAlias) {
 			// rootID is of the root thing from bulk fetch all
-			// i.ux., it is the root id from another idBase
-			// need a second thing lookup by this id
+			// i.e., it is the root id from another idBase (title)
+			// need a second thing remembered by this root id
 			// so children relationships will work
-			this.thing_byHID[rootID.hash()] = thing;
-			thing.needsBulkFetch = true;
-			thing.bulkRootID = rootID;
-			thing.color = color;
+			this.thing_byHID[rootID.hash()] = bulkAlias;
+			bulkAlias.persistence.needsBulkFetch = true;
+			bulkAlias.bulkRootID = rootID;
+			bulkAlias.color = color;
 		}
-		return thing;
+		return bulkAlias;
 	}
 
-	async bulkw_thing_remember_recursive_persistentRelocateRight(ancestry: Ancestry, newParentAncestry: Ancestry) {
-		const newParent = newParentAncestry.thing;
+	async bulkAlias_remember_recursive_persistentRelocateRight(ancestry: Ancestry, parentAncestry: Ancestry) {
+		const parent = parentAncestry.thing;
 		let newThingAncestry: Ancestry | null = null;
 		const thing = ancestry.thing;
-		if (!!thing && newParent) {
-			const idBase = newParent.isBulkAlias ? newParent.title : newParent.idBase;
+		if (!!thing && parent) {
+			const idBase = parent.isBulkAlias ? parent.title : parent.idBase;
 			const newThing = await this.thing_remember_runtimeCopy(idBase, thing);
-			newThingAncestry = newParentAncestry.extend_withChild(newThing);
+			newThingAncestry = parentAncestry.extend_withChild(newThing);
 			if (!!newThingAncestry) {
-				await this.relationship_remember_persistent_addChild_toAncestry(newThing, newParentAncestry);
+				await this.ancestry_extended_byAddingThing_toAncestry_remember_persistentCreate_relationship(newThing, parentAncestry);
 				for (const childAncestry of ancestry.childAncestries) {
-					this.bulkw_thing_remember_recursive_persistentRelocateRight(childAncestry, newThingAncestry);
+					this.bulkAlias_remember_recursive_persistentRelocateRight(childAncestry, newThingAncestry);
 				}
 				if (!newThingAncestry.isExpanded) {
 					setTimeout(() => {
@@ -743,21 +741,6 @@ export class Hierarchy {
 		}
 	}
 
-	async relationship_remember_persistent_addChild_toAncestry(child: Thing | null, parentAncestry: Ancestry, kindPredicate: T_Predicate = T_Predicate.contains): Promise<any> {
-		const parent = parentAncestry.thing;
-		if (!!child && !!parent && !child.isBulkAlias) {
-			const changingBulk = parent.isBulkAlias || child.idBase != this.db.idBase;
-			const idBase = changingBulk ? child.idBase : parent.idBase;
-			if (!child.persistence.already_persisted) {
-				await this.db.thing_remember_persistentCreate(child);					// for everything below, need to await child.id fetched from databases
-			}
-			const relationship = await this.relationship_remember_persistentCreateUnique(idBase, Identifiable.newID(), kindPredicate, parent.idBridging, child.id, 0, T_Create.getPersistentID);
-			const childAncestry = parentAncestry.uniquelyAppendID(relationship.id);
-			u.ancestries_orders_normalize_persistentMaybe(parentAncestry.childAncestries);		// write new order values for relationships
-			return childAncestry;
-		}
-	}
-
 	async relationship_forget_persistentDelete(ancestry: Ancestry, otherAncestry: Ancestry, kindPredicate: T_Predicate) {
 		const thing = ancestry.thing;
 		const parentAncestry = ancestry.parentAncestry;
@@ -902,26 +885,14 @@ export class Hierarchy {
 		}
 	}
 
-	async ancestry_edit_persistentAddAsChild(parentAncestry: Ancestry, child: Thing, order: number, shouldStartEdit: boolean = true) {
-		const childAncestry = await this.relationship_remember_persistent_addChild_toAncestry(child, parentAncestry);
-		childAncestry.grabOnly();
-		childAncestry.relationship?.order_setTo_persistentMaybe(order);
-		signals.signal_rebuildGraph_fromFocus();
-		if (shouldStartEdit) {
-			setTimeout(() => {
-				childAncestry.startEdit();
-			}, 20);
-		}
-	}
-
-	async ancestry_remember_bulk_persistentRelocateRight(ancestry: Ancestry, newParentAncestry: Ancestry) {
-		const newThingAncestry = await this.bulkw_thing_remember_recursive_persistentRelocateRight(ancestry, newParentAncestry);
+	async ancestry_remember_bulk_persistentRelocateRight(ancestry: Ancestry, parentAncestry: Ancestry) {
+		const newThingAncestry = await this.bulkAlias_remember_recursive_persistentRelocateRight(ancestry, parentAncestry);
 		if (!!newThingAncestry) {
-			newParentAncestry.signal_relayoutWidgets_fromThis();
-			if (newParentAncestry.isExpanded) {
+			parentAncestry.signal_relayoutWidgets_fromThis();
+			if (parentAncestry.isExpanded) {
 				newThingAncestry.grabOnly();
 			} else {
-				newParentAncestry.grabOnly();
+				parentAncestry.grabOnly();
 			}
 		}
 	}
@@ -937,24 +908,85 @@ export class Hierarchy {
 		return ancestry;
 	}
 
-	async ancestry_roots() {		// TODO: assumes all ancestries created
-		let rootsAncestry: Ancestry | null = null;
-		const rootAncestry = this.rootAncestry;
-		if (!!rootAncestry) {
-			for (const rootsMaybe of this.things_byType[T_Thing.roots]) {	// should only be one
-				if  (rootsMaybe.title == 'roots') {		// special case TODO: convert to a query string
-					return rootAncestry.extend_withChild(rootsMaybe) ?? null;
+	async ancestry_edit_persistentAddAsChild(parentAncestry: Ancestry, child: Thing, order: number, shouldStartEdit: boolean = true) {
+		await this.ancestry_extended_byAddingThing_toAncestry_remember_persistentCreate_relationship(child, parentAncestry)
+		.then((childAncestry) => {
+			if (!!childAncestry) {
+				childAncestry.grabOnly();
+				childAncestry.relationship?.order_setTo_persistentMaybe(order);
+				signals.signal_rebuildGraph_fromFocus();
+				if (shouldStartEdit) {
+					setTimeout(() => {
+						childAncestry.startEdit();
+					}, 20);
 				}
 			}
-			const roots = this.thing_runtimeCreate(this.db.idBase, Identifiable.newID(), 'roots', 'red', T_Thing.roots);
-			await this.relationship_remember_persistent_addChild_toAncestry(roots, rootAncestry).then((ancestry) => { rootsAncestry = ancestry; });
+		})
+	}
+
+	get ancestry_externals(): Promise<Ancestry | null> {
+		return (async () => {
+			const externalsAncestry = await this.ancestry_assure_externals;		// TODO: assumes all ancestries created
+			if (!!externalsAncestry) {
+				this.externalsAncestry = externalsAncestry;
+			}
+			return externalsAncestry;
+		})();
+	}
+
+	// create the externals ancestry
+	// still can be null, but only if root ancestry is null
+	
+	get ancestry_assure_externals(): Promise<Ancestry | null> {		// TODO: requires all ancestries created and externals thing too
+		return (async () => {
+			this.assure_root_andAncestry();
+			let externalsAncestry: Ancestry | null = null;
+			const rootAncestry = this.rootAncestry;
+			if (!!rootAncestry) {
+				const externalsArray = this.things_byType[T_Thing.externals] ?? [];		// there should only be one
+				const length = externalsArray.length;
+				if (!length) {				// might have zero or more than one ==
+					console.log(`externals does not exist`)
+				} else {
+					for (const externalsThing of externalsArray) {				// add to the root ancestry
+						if  (externalsThing.title == 'externals') {
+							return rootAncestry.extend_withChild(externalsThing) ?? null;
+						}
+					}
+				}
+				const externalsThing = this.thing_remember_runtimeCreateUnique(this.db.idBase, Identifiable.newID(), 'externals', 'red', T_Thing.externals);
+
+				// VITAL: the following code has problems
+
+				await externalsThing.persist();
+				await this.ancestry_extended_byAddingThing_toAncestry_remember_persistentCreate_relationship(externalsThing, rootAncestry)
+				.then((ancestry) => {
+					console.log(`externalsAncestry is wrong type: "${ancestry?.thing?.type ?? 'unknown'}" (should be "^")`)
+					// externalsAncestry = ancestry;
+				});
+			}
+			return externalsAncestry;
+		})();
+	}
+
+	async ancestry_extended_byAddingThing_toAncestry_remember_persistentCreate_relationship(child: Thing | null, ancestry: Ancestry, kindPredicate: T_Predicate = T_Predicate.contains): Promise<Ancestry | null | undefined> {
+		const parent = ancestry.thing;
+		if (!!child && !!parent) {
+			const changingBulk = parent.isBulkAlias || child.idBase != this.db.idBase;
+			const idBase = changingBulk ? child.idBase : parent.idBase;
+			if (!child.persistence.already_persisted) {
+				await this.db.thing_remember_persistentCreate(child);					// for everything below, need to await child.id fetched from databases
+			}
+			const relationship = await this.relationship_remember_persistentCreateUnique(idBase, Identifiable.newID(), kindPredicate, parent.idBridging, child.id, 0, T_Create.getPersistentID);
+			const childAncestry = ancestry.uniquelyAppendID(relationship.id);
+			u.ancestries_orders_normalize_persistentMaybe(ancestry.childAncestries);		// write new order values for relationships
+			return childAncestry;
 		}
-		return rootsAncestry;
 	}
 
 	async ancestry_redraw_persistentFetchBulk_browseRight(thing: Thing, ancestry: Ancestry | null = null, grab: boolean = false) {
-		if (!!this.rootsAncestry && thing && thing.title != 'roots') {	// not create roots bulk
-			await this.db.hierarchy_fetchForID(thing.title)
+		if (!!this.externalsAncestry && thing && thing.title != 'roots') {	// not create roots bulk
+			await this.db.hierarchy_fetch_forID(thing.title)
 			this.relationships_refreshKnowns();
 			const childAncestries = ancestry?.childAncestries;
 			if (!!childAncestries && childAncestries.length > 0) {
@@ -971,7 +1003,7 @@ export class Hierarchy {
 		if (!OPTION) {
 			const thing = ancestry.thing;
 			if (!!thing) {
-				if (RIGHT && thing.needsBulkFetch) {
+				if (RIGHT && thing.persistence.needsBulkFetch) {
 					await this.ancestry_redraw_persistentFetchBulk_browseRight(thing, ancestry, true);
 				} else {
 					this.ancestry_rebuild_runtimeBrowseRight(ancestry, RIGHT, SHIFT, EXTREME, fromReveal);
@@ -1039,26 +1071,26 @@ export class Hierarchy {
 
 	ancestry_rebuild_persistentRelocateRight(ancestry: Ancestry, RIGHT: boolean, EXTREME: boolean) {
 		const thing = ancestry.thing;
-		const newParentAncestry = RIGHT ? ancestry.ancestry_ofNextSibling(false) : ancestry.stripBack(2);
-		const newParent = newParentAncestry?.thing;
-		if (!!thing && newParent && newParentAncestry) {
-			if (thing.isInDifferentBulkThan(newParent)) {		// should move across bulks
-				this.ancestry_remember_bulk_persistentRelocateRight(ancestry, newParentAncestry);
+		const parentAncestry = RIGHT ? ancestry.ancestry_ofNextSibling(false) : ancestry.stripBack(2);
+		const parent = parentAncestry?.thing;
+		if (!!thing && parent && parentAncestry) {
+			if (thing.isInDifferentBulkThan(parent)) {		// should move across bulks
+				this.ancestry_remember_bulk_persistentRelocateRight(ancestry, parentAncestry);
 			} else {
 				const relationship = ancestry.relationship;
 				if (!!relationship) {
 					const order = RIGHT ? relationship.order : 0;
-					relationship.idParent = newParent.id;
+					relationship.idParent = parent.id;
 					relationship.order_setTo_persistentMaybe(order + k.halfIncrement, true);
 				}
 				this.relationships_refreshKnowns();
-				newParentAncestry.extend_withChild(thing)?.grabOnly();
+				parentAncestry.extend_withChild(thing)?.grabOnly();
 				this.rootAncestry.order_normalizeRecursive_persistentMaybe(true);
-				if (!newParentAncestry.isExpanded) {
-					newParentAncestry.expand();
+				if (!parentAncestry.isExpanded) {
+					parentAncestry.expand();
 				}
-				if (!newParentAncestry.isVisible) {
-					newParentAncestry.becomeFocus();
+				if (!parentAncestry.isVisible) {
+					parentAncestry.becomeFocus();
 				}
 			}
 			signals.signal_rebuildGraph_fromFocus();			// so Tree_Children component will update
@@ -1314,7 +1346,7 @@ export class Hierarchy {
 	}
 
 	async wrapUp_data_forUX() {
-		this.setup_root_andAncestry();
+		this.assure_root_andAncestry();
 		// await this.relationships_lostAndFound_persistentCreate(this.db.idBase);
 		// await this.relationships_removeHavingNullReferences();
 		this.restore_fromPersistLocal();
@@ -1326,7 +1358,7 @@ export class Hierarchy {
 		if (this.replace_rootID == null) {
 			this.objects_ofAllTypes_extract_fromDict(dict);			// extract
 			const child = this.thing_forHID(idRoot.hash());			// relationship: adds it as child to the grab or focus
-			await this.relationship_remember_persistent_addChild_toAncestry(child, this.user_selected_ancestry);
+			await this.ancestry_extended_byAddingThing_toAncestry_remember_persistentCreate_relationship(child, this.user_selected_ancestry);
 		} else {													// on launch or import with SHIFT-O
 			this.forget_all();										// retain predicates: same across all dbs
 			await this.db.remove_all();								// firebase deletes document (called dbid/name)
