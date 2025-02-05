@@ -1,13 +1,13 @@
 import S_Persistence from '../../state/S_Persistence';
 import Identifiable from '../runtime/Identifiable';
 import { w_hierarchy } from '../../state/S_Stores';
-import { T_Debug } from '../../common/Debug';
 import { T_Persistable } from '../dbs/DBCommon';
+import { T_Debug } from '../../common/Debug';
 import { get } from 'svelte/store';
 
 export default class Persistable extends Identifiable {
-	persistence!: S_Persistence;
 	t_persistable: T_Persistable;
+	persistence!: S_Persistence;
 	idBase: string;
 
 	constructor(t_database: string, idBase: string, t_persistable: T_Persistable, id: string, already_persisted: boolean = false) {

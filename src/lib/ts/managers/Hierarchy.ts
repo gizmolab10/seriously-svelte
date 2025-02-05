@@ -4,8 +4,8 @@ import { w_t_graph, w_id_popupView, w_ancestry_focus, w_s_title_edit, w_s_altera
 import { w_storage_update_trigger, w_ancestry_showing_tools, w_ancestries_grabbed } from '../state/S_Stores';
 import { S_Mouse, Predicate, Relationship, S_Alteration } from '../common/Global_Imports';
 import type { Integer, Dictionary } from '../common/Types';
-import Identifiable from '../data/runtime/Identifiable';
 import { T_Persistable } from '../../ts/data/dbs/DBCommon';
+import Identifiable from '../data/runtime/Identifiable';
 import DBCommon from '../data/dbs/DBCommon';
 import { get } from 'svelte/store';
 

@@ -7,7 +7,7 @@ export default class User extends Persistable {
 	name: string;
 
 	constructor(t_database: string, t_persistable: T_Persistable, id: string, name: string, email: string, phone: string, already_persisted: boolean = false) {
-		super(t_database, t_persistable, id, already_persisted);
+		super(t_database, '', t_persistable, id, already_persisted);
 		this.name = name;
 		this.email = email;
 		this.phone = phone;
