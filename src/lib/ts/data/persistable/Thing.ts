@@ -39,6 +39,7 @@ export default class Thing extends Persistable {
 	get titleWidth():						  number { return u.getWidthOf(this.title); }
 	get isRoot():							 boolean { return this.type == T_Thing.root; }
 	get isBulkAlias():						 boolean { return this.type == T_Thing.bulk; }
+	get isExternals():						 boolean { return this.type == T_Thing.externals; }
 	get isAcrossBulk():						 boolean { return this.idBase != get(w_hierarchy).db.idBase; }
 	get hasMultipleParents():				 boolean { return this.parentAncestries.length > 1; }
 	get hasParents():						 boolean { return this.hasParents_forKind(T_Predicate.contains); }

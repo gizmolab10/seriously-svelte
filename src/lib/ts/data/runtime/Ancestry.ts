@@ -116,9 +116,10 @@ export default class Ancestry extends Identifiable {
 	}
 
 	get isEditable(): boolean {
-		const isBulkAlias = this.thing?.isBulkAlias ?? true;	// missing thing, return not allow
+		const isExternals = this.thing?.isExternals ?? true;
+		const isBulkAlias = this.thing?.isBulkAlias ?? true;	// missing thing, return not editable
 		const canEdit = !this.isRoot || databases.db_now.t_database == T_Database.local;
-		return canEdit && g.allow_TitleEditing && !isBulkAlias;
+		return canEdit && g.allow_TitleEditing && !isExternals && !isBulkAlias;
 	}
 
 	get idThing(): string {
