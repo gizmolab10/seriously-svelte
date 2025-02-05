@@ -1,7 +1,7 @@
 import { k, debug, T_Debug, databases, T_Predicate } from '../../common/Global_Imports';
+import Persistable from '../persistable/Persistable';
 import { w_hierarchy } from '../../state/S_Stores';
-import Persistable from '../basis/Persistable';
-import { T_Datum } from '../dbs/DBCommon';
+import { T_Persistable } from '../dbs/DBCommon';
 import { get } from 'svelte/store';
 
 export default class Predicate extends Persistable {
@@ -9,7 +9,7 @@ export default class Predicate extends Persistable {
 	kind: T_Predicate;
 
 	constructor(id: string, kind: T_Predicate, isBidirectional: boolean, already_persisted: boolean = false) {
-		super(databases.db_now.t_database, k.empty, T_Datum.predicates, id, already_persisted);
+		super(databases.db_now.t_database, k.empty, T_Persistable.predicates, id, already_persisted);
 		this.isBidirectional = isBidirectional;
 		this.kind			 = kind;
 	}

@@ -1,6 +1,6 @@
 import { T_Thing, T_Trait, T_Debug, T_Create, T_Predicate } from '../../common/Global_Imports';
 import { g, k, u, debug, Thing, Trait, Relationship } from '../../common/Global_Imports';
-import { T_Datum, T_Database, T_Persistence } from './DBCommon';
+import { T_Persistable, T_Database, T_Persistence } from './DBCommon';
 import DBCommon from './DBCommon';
 import Airtable from 'airtable';
 
@@ -19,12 +19,12 @@ export default class DBAirtable extends DBCommon {
 	baseCatalist = new Airtable({ apiKey: this.personalAccessToken }).base('apphGUCbYIEJLvRrR');
 	basePublic = new Airtable({ apiKey: this.personalAccessToken }).base('appq1IjzmiRdlZi3H');
 	base = this.basePublic;
-	relationships_table = this.base(T_Datum.relationships);
-	predicates_table = this.base(T_Datum.predicates);
-	things_table = this.base(T_Datum.things);
-	traits_table = this.base(T_Datum.traits);
-	access_table = this.base(T_Datum.access);
-	users_table = this.base(T_Datum.users);
+	relationships_table = this.base(T_Persistable.relationships);
+	predicates_table = this.base(T_Persistable.predicates);
+	things_table = this.base(T_Persistable.things);
+	traits_table = this.base(T_Persistable.traits);
+	access_table = this.base(T_Persistable.access);
+	users_table = this.base(T_Persistable.users);
 	kind_persistence = T_Persistence.remote;
 	t_database = T_Database.airtable;
 	idBase = k.empty;
@@ -53,11 +53,11 @@ export default class DBAirtable extends DBCommon {
 				const tableID = names[0]
 				this.personalAccessToken = names[1];
 				this.base = new Airtable({ apiKey: this.personalAccessToken }).base(tableID);
-				this.relationships_table = this.base(T_Datum.relationships);
-				this.predicates_table = this.base(T_Datum.predicates);
-				this.things_table = this.base(T_Datum.things);
-				this.access_table = this.base(T_Datum.access);
-				this.users_table = this.base(T_Datum.users);
+				this.relationships_table = this.base(T_Persistable.relationships);
+				this.predicates_table = this.base(T_Persistable.predicates);
+				this.things_table = this.base(T_Persistable.things);
+				this.access_table = this.base(T_Persistable.access);
+				this.users_table = this.base(T_Persistable.users);
 			}
 		}
 	}

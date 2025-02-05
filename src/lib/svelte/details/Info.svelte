@@ -4,7 +4,7 @@
 	import { T_Info, T_Trait, T_Layer, T_Element, T_Preference } from '../../ts/common/Global_Imports';
 	import { w_hierarchy, w_thing_color, w_thing_title } from '../../ts/state/S_Stores';
 	import type { Integer, Dictionary } from '../../ts/common/Types';
-	import Identifiable from '../../ts/data/basis/Identifiable';
+	import Identifiable from '../../ts/data/runtime/Identifiable';
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';

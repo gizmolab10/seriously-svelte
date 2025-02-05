@@ -1,19 +1,19 @@
 import S_Persistence from '../../state/S_Persistence';
+import Identifiable from '../runtime/Identifiable';
 import { w_hierarchy } from '../../state/S_Stores';
 import { T_Debug } from '../../common/Debug';
-import Identifiable from './Identifiable';
-import { T_Datum } from '../dbs/DBCommon';
+import { T_Persistable } from '../dbs/DBCommon';
 import { get } from 'svelte/store';
 
 export default class Persistable extends Identifiable {
 	persistence!: S_Persistence;
-	type_datum: T_Datum;
+	t_persistable: T_Persistable;
 	idBase: string;
 
-	constructor(t_database: string, idBase: string, type_datum: T_Datum, id: string, already_persisted: boolean = false) {
+	constructor(t_database: string, idBase: string, t_persistable: T_Persistable, id: string, already_persisted: boolean = false) {
 		super(id);
-		this.persistence = new S_Persistence(t_database, type_datum, id, already_persisted, false);
-		this.type_datum = type_datum;
+		this.persistence = new S_Persistence(t_database, t_persistable, id, already_persisted, false);
+		this.t_persistable = t_persistable;
 		this.idBase = idBase;
 		get(w_hierarchy).signal_storage_redraw();
 	}

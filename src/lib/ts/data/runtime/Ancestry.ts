@@ -6,7 +6,7 @@ import { w_ancestries_grabbed, w_ancestries_expanded, } from '../../state/S_Stor
 import { w_g_radial, w_s_alteration, w_s_title_edit } from '../../state/S_Stores';
 import { G_Widget, S_Paging, S_Title_Edit } from '../../common/Global_Imports';
 import type { Integer } from '../../common/Types';
-import Identifiable from '../basis/Identifiable';
+import Identifiable from './Identifiable';
 import { get, Writable } from 'svelte/store';
 import { T_Database } from '../dbs/DBCommon';
 

@@ -3,7 +3,7 @@ import { T_Thing, T_Startup, T_Preference } from '../../common/Global_Imports';
 import { g, k, p, u, debug, signals } from '../../common/Global_Imports';
 import { w_hierarchy, w_t_startup } from '../../state/S_Stores';
 import type { Dictionary } from '../../common/Types';
-import Persistable from '../basis/Persistable';
+import Persistable from '../persistable/Persistable';
 
 export enum T_Persistence {
 	remote = 'remote',
@@ -19,7 +19,7 @@ export enum T_Database {
 	test	 = 'test',
 }
 
-export enum T_Datum {
+export enum T_Persistable {
 	relationships = 'Relationships',
 	predicates	  = 'Predicates',
 	hierarchy	  = 'Hierarchy',	// includes parent contains and relateds

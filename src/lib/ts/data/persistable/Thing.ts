@@ -4,7 +4,7 @@ import { T_Thing, T_Trait, T_Debug, T_Predicate } from '../../common/Global_Impo
 import { w_hierarchy, w_thing_color, w_count_rebuild } from '../../state/S_Stores';
 import { w_ancestry_focus, w_ancestries_expanded } from '../../state/S_Stores';
 import type { Dictionary } from '../../common/Types';
-import { T_Datum } from '../dbs/DBCommon';
+import { T_Persistable } from '../dbs/DBCommon';
 import { get } from 'svelte/store';
 
 export default class Thing extends Persistable {
@@ -18,7 +18,7 @@ export default class Thing extends Persistable {
 	type: T_Thing;
 
 	constructor(idBase: string, id: string, title = k.title_default, color = k.thing_color_default, type = T_Thing.generic, already_persisted: boolean = false) {
-		super(databases.db_now.t_database, idBase, T_Datum.things, id, already_persisted);
+		super(databases.db_now.t_database, idBase, T_Persistable.things, id, already_persisted);
 		this.selectionRange = new Seriously_Range(0, title.length);
 		this.title = title;
 		this.color = color;

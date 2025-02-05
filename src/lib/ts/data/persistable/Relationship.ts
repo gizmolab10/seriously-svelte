@@ -1,9 +1,9 @@
 import { Thing, debug, T_Debug, databases, Predicate, T_Predicate } from '../../common/Global_Imports';
 import { w_hierarchy } from '../../state/S_Stores';
 import type { Integer } from '../../common/Types';
-import { T_Datum } from '../dbs/DBCommon';
+import { T_Persistable } from '../dbs/DBCommon';
 import { get } from 'svelte/store';
-import Persistable from '../basis/Persistable';
+import Persistable from '../persistable/Persistable';
 import Airtable from 'airtable';
 
 export default class Relationship extends Persistable {
@@ -15,7 +15,7 @@ export default class Relationship extends Persistable {
 	order: number; 
 
 	constructor(idBase: string, id: string, kindPredicate: T_Predicate, idParent: string, idChild: string, order = 0, already_persisted: boolean = false) {
-		super(databases.db_now.t_database, idBase, T_Datum.relationships, id, already_persisted);
+		super(databases.db_now.t_database, idBase, T_Persistable.relationships, id, already_persisted);
 		this.kindPredicate = kindPredicate;
 		this.hidParent = idParent.hash();
 		this.hidChild = idChild.hash();

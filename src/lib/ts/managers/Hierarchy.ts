@@ -4,8 +4,8 @@ import { w_t_graph, w_id_popupView, w_ancestry_focus, w_s_title_edit, w_s_altera
 import { w_storage_update_trigger, w_ancestry_showing_tools, w_ancestries_grabbed } from '../state/S_Stores';
 import { S_Mouse, Predicate, Relationship, S_Alteration } from '../common/Global_Imports';
 import type { Integer, Dictionary } from '../common/Types';
-import Identifiable from '../data/basis/Identifiable';
-import { T_Datum } from '../../ts/data/dbs/DBCommon';
+import Identifiable from '../data/runtime/Identifiable';
+import { T_Persistable } from '../../ts/data/dbs/DBCommon';
 import DBCommon from '../data/dbs/DBCommon';
 import { get } from 'svelte/store';
 
@@ -35,7 +35,7 @@ export class Hierarchy {
 	externalsAncestry!: Ancestry;
 	rootAncestry!: Ancestry;
 
-	persistent_dataTypes = [T_Datum.predicates, T_Datum.relationships, T_Datum.traits, T_Datum.things];
+	persistent_dataTypes = [T_Persistable.predicates, T_Persistable.relationships, T_Persistable.traits, T_Persistable.things];
 	replace_rootID: string | null = k.empty;		// required for DBLocal at launch
 	isAssembled = false;
 	root!: Thing;
@@ -1234,13 +1234,13 @@ export class Hierarchy {
 	static readonly ANCILLARY: unique symbol;
 
 	access_runtimeCreate(idAccess: string, kind: string) {
-		const access = new Access(this.db.t_database, T_Datum.access, idAccess, kind);
+		const access = new Access(this.db.t_database, T_Persistable.access, idAccess, kind);
 		this.access_byHID[idAccess.hash()] = access;
 		this.access_byKind[kind] = access;
 	}
 
 	user_runtimeCreate(id: string, name: string, email: string, phone: string) {
-		const user = new User(this.db.t_database, T_Datum.users, id, name, email, phone);
+		const user = new User(this.db.t_database, T_Persistable.users, id, name, email, phone);
 		this.user_byHID[id.hash()] = user;
 	}
 
@@ -1293,10 +1293,10 @@ export class Hierarchy {
 			'idRoot' : root.id};
 		for (const type of this.persistent_dataTypes) {
 			switch(type) {
-				case T_Datum.things:		data[type] = this.things; break;
-				case T_Datum.traits:		data[type] = this.traits; break;
-				case T_Datum.predicates:	data[type] = this.predicates; break;
-				case T_Datum.relationships: data[type] = this.relationships; break;
+				case T_Persistable.things:		data[type] = this.things; break;
+				case T_Persistable.traits:		data[type] = this.traits; break;
+				case T_Persistable.predicates:	data[type] = this.predicates; break;
+				case T_Persistable.relationships: data[type] = this.relationships; break;
 			}
 		}
 		return data;
@@ -1311,7 +1311,7 @@ export class Hierarchy {
 		let relationships: Array<Relationship> = [];
 		let things: Array<Thing> = [];
 		let traits: Array<Trait> = [];
-		data[T_Datum.predicates] = this.predicates;
+		data[T_Persistable.predicates] = this.predicates;
 		ancestry.traverse((ancestry: Ancestry) => {
 			const thing = ancestry.thing;
 			const thingTraits = thing?.traits;
@@ -1328,9 +1328,9 @@ export class Hierarchy {
 			isFirst = false;
 			return false;
 		});
-		data[T_Datum.relationships] = relationships;
-		data[T_Datum.things] = things;
-		data[T_Datum.traits] = traits;
+		data[T_Persistable.relationships] = relationships;
+		data[T_Persistable.things] = things;
+		data[T_Persistable.traits] = traits;
 		return data;
 	}
 
@@ -1376,10 +1376,10 @@ export class Hierarchy {
 			const subdicts = dict[type] as Array<Dictionary>;
 			for (const subdict of subdicts) {
 				switch(type) {
-					case T_Datum.predicates:	this.predicate_extract_fromDict(subdict); break;
-					case T_Datum.relationships: this.relationship_extract_fromDict(subdict); break;
-					case T_Datum.traits:		this.trait_extract_fromDict(subdict); break;
-					case T_Datum.things:		this.thing_extract_fromDict(subdict); break;
+					case T_Persistable.predicates:	this.predicate_extract_fromDict(subdict); break;
+					case T_Persistable.relationships: this.relationship_extract_fromDict(subdict); break;
+					case T_Persistable.traits:		this.trait_extract_fromDict(subdict); break;
+					case T_Persistable.things:		this.thing_extract_fromDict(subdict); break;
 				}
 			}
 		}

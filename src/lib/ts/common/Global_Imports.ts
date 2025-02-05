@@ -34,17 +34,17 @@ import G_Widget from '../geometry/G_Widget';
 import S_Element from '../state/S_Element';
 import S_Mouse from '../state/S_Mouse';
 
-import Relationship from '../data/types/Relationship';
+import Relationship from '../data/persistable/Relationship';
+import Persistable from '../data/persistable/Persistable';
+import Predicate from '../data/persistable/Predicate';
 import Mouse_Timer from '../signals/Mouse_Timer';
-import Predicate from '../data/types/Predicate';
 import Ancestry from '../data/runtime/Ancestry';
+import Access from '../data/persistable/Access';
 import Svelte_Wrapper from './Svelte_Wrapper';
-import Access from '../data/types/Access';
-import Persistable from '../data/basis/Persistable';
-import Thing from '../data/types/Thing';
-import Trait from '../data/types/Trait';
+import Thing from '../data/persistable/Thing';
+import Trait from '../data/persistable/Trait';
+import User from '../data/persistable/User';
 import Angle from '../geometry/Angle';
-import User from '../data/types/User';
 
 import './Extensions';
 import { k } from './Constants';
@@ -67,9 +67,9 @@ export {
 	Rect, Size, Point, svgPaths,
 	show, files, builds, signals,
 	T_Layer, T_Predicate, T_Create,
+	Ancestry, Hierarchy, databases,
 	T_RingZone, T_Oblong, T_Alteration,
 	Angle, Direction, T_Quadrant, T_Orientation,
-	Ancestry, Hierarchy, databases,
 	T_Element, Svelte_Wrapper, T_SvelteComponent,
 	S_Element, S_Paging, S_Thing_Pages, S_Alteration,
 	S_Mouse, T_Startup, S_Rotation, S_Expansion, S_Title_Edit,

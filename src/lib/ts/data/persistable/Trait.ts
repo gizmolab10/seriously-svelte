@@ -1,6 +1,6 @@
 import { k, Persistable, Thing, databases, T_Trait } from '../../common/Global_Imports';
 import { w_hierarchy } from '../../state/S_Stores';
-import { T_Datum } from '../dbs/DBCommon';
+import { T_Persistable } from '../dbs/DBCommon';
 import { get } from 'svelte/store';
 import Airtable from 'airtable';
 
@@ -10,7 +10,7 @@ export default class Trait extends Persistable {
 	text: string = k.empty;
 
 	constructor(idBase: string, id: string, ownerID: string, type: T_Trait, text: string = k.empty, already_persisted: boolean = false) {
-		super(databases.db_now.t_database, idBase, T_Datum.traits, id, already_persisted);
+		super(databases.db_now.t_database, idBase, T_Persistable.traits, id, already_persisted);
 		this.ownerID = ownerID;
 		this.type = type;
 		this.text = text;
