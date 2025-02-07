@@ -143,20 +143,30 @@ export default class DBFirebase extends DBCommon {
 	}
 
 	handle_deferredSnapshots() {
+		let needsRebuild = false;
 		this.deferSnapshots = false;
+		let relationship_handled = false;
 		while (this.deferredSnapshots.length > 0) {
 			const deferral = this.deferredSnapshots.pop();
 			if (!!deferral) {
-				deferral.snapshot.docChanges().forEach((change) => {	// convert and remember
-					this.handle_docChanges(deferral.idBase, deferral.t_persistable, change);
+				deferral.snapshot.docChanges().forEach(async (change) => {	// convert and remember
+					if (await this.handle_docChanges(deferral.idBase, deferral.t_persistable, change)) {
+						if (deferral.t_persistable == T_Persistable.relationships) {
+							relationship_handled = true;
+						}
+						needsRebuild = true;
+					}
 				});
 			}
 		}
-		this.hierarchy.ancestries_fullRebuild();		// first recreate ancestries
-		this.hierarchy.signal_storage_redraw(10);
+		if (needsRebuild) {
+			this.signal_docHandled(relationship_handled);
+		}
 	}
 
 	setup_remote_handlers() {
+		let needsRebuild = false;
+		let relationship_handled = false;
 		for (const t_persistable of this.hierarchy.persistent_dataTypes) {
 			if (t_persistable == T_Persistable.predicates) {
 				this.predicatesCollection = collection(this.firestore, t_persistable);
@@ -166,8 +176,8 @@ export default class DBFirebase extends DBCommon {
 				const collectionRef = collection(this.firestore, this.bulksName, idBase, t_persistable);
 				if (!!bulk) {
 					switch (t_persistable) {
-						case T_Persistable.things:		bulk.thingsCollection = collectionRef; break;
-						case T_Persistable.traits:		bulk.traitsCollection = collectionRef; break;
+						case T_Persistable.things:		  bulk.thingsCollection = collectionRef; break;
+						case T_Persistable.traits:		  bulk.traitsCollection = collectionRef; break;
 						case T_Persistable.relationships: bulk.relationshipsCollection = collectionRef; break;
 					}
 				}
@@ -177,20 +187,39 @@ export default class DBFirebase extends DBCommon {
 							this.snapshot_deferOne(idBase, t_persistable, snapshot);
 						} else {
 							snapshot.docChanges().forEach(async (change) => {	// convert and remember
-								await this.handle_docChanges(idBase, t_persistable, change);
+								if (await this.handle_docChanges(idBase, t_persistable, change)) {
+									if (t_persistable == T_Persistable.relationships) {
+										relationship_handled = true;
+									}
+									needsRebuild = true;
+								}
 							});
-							this.hierarchy.ancestries_fullRebuild();		// first recreate ancestries
-							this.hierarchy.signal_storage_redraw(10);
 						}
 					}
 				});
 			}
+			if (needsRebuild) {
+				this.signal_docHandled(relationship_handled);
+			}
 		}
 	}
 
-	async handle_docChanges(idBase: string, t_persistable: T_Persistable, change: DocumentChange) {
+	signal_docHandled(relationship_handled: boolean) {
+		if (relationship_handled) {
+			setTimeout(() => { // wait in case a thing involved in this relationship arrives in the data
+				this.hierarchy.relationships_refreshKnowns();
+				this.hierarchy.rootAncestry.order_normalizeRecursive_persistentMaybe(true);
+				signals.signal_rebuildGraph_fromFocus();
+			}, 20);
+		}
+		this.hierarchy.ancestries_fullRebuild();		// first recreate ancestries
+		this.hierarchy.signal_storage_redraw(10);
+	}
+
+	async handle_docChanges(idBase: string, t_persistable: T_Persistable, change: DocumentChange): Promise<boolean> {
 		const doc = change.doc;
 		const data = doc.data();
+		let needsRebuild = false;
 		if (DBFirebase.data_isValidOfKind(t_persistable, data)) {
 			const id = doc.id;
 
@@ -200,15 +229,16 @@ export default class DBFirebase extends DBCommon {
 
 			try {
 				switch (t_persistable) {
-					case T_Persistable.things:		this.thing_handle_docChanges(idBase, id, change, data); break;
-					case T_Persistable.traits:		this.trait_handle_docChanges(idBase, id, change, data); break;
-					case T_Persistable.relationships: this.relationship_handle_docChanges(idBase, id, change, data); break;
+					case T_Persistable.things:		  needsRebuild = this.thing_handle_docChanges(idBase, id, change, data); break;
+					case T_Persistable.traits:		  needsRebuild = this.trait_handle_docChanges(idBase, id, change, data); break;
+					case T_Persistable.relationships: needsRebuild = this.relationship_handle_docChanges(idBase, id, change, data); break;
 				}
 			} catch (error) {
 				this.reportError(error);
 			}
 			debug.log_remote('HANDLE ' + idBase + ':' + t_persistable + k.space + change.type);
 		}
+		return needsRebuild;
 	}
 
 	static readonly SUBCOLLECTIONS: unique symbol;
@@ -221,7 +251,7 @@ export default class DBFirebase extends DBCommon {
 		}
 		switch (t_persistable) {
 			case T_Persistable.predicates: this.hierarchy.predicate_defaults_remember_runtimeCreate(); break;
-			case T_Persistable.things: await this.root_default_remember_persistentCreateIn(collectionRef); break;
+			case T_Persistable.things:	   await this.root_default_remember_persistentCreateIn(collectionRef); break;
 		}
 	}
 
@@ -229,9 +259,9 @@ export default class DBFirebase extends DBCommon {
 		if (DBFirebase.data_isValidOfKind(t_persistable, data)) {
 			const h = this.hierarchy;
 			switch (t_persistable) {
-				case T_Persistable.predicates:	h.predicate_remember_runtimeCreate(id, data.kind, data.isBidirectional); break;
-				case T_Persistable.traits:		h.trait_remember_runtimeCreate(idBase, id, data.ownerID, data.type, data.text, true); break;
-				case T_Persistable.things:		h.thing_remember_runtimeCreate(idBase, id, data.title, data.color, data.type ?? data.trait, true, !data.type); break;
+				case T_Persistable.predicates:	  h.predicate_remember_runtimeCreate(id, data.kind, data.isBidirectional); break;
+				case T_Persistable.traits:		  h.trait_remember_runtimeCreate(idBase, id, data.ownerID, data.type, data.text, true); break;
+				case T_Persistable.things:		  h.thing_remember_runtimeCreate(idBase, id, data.title, data.color, data.type ?? data.trait, true, !data.type); break;
 				case T_Persistable.relationships: h.relationship_remember_runtimeCreateUnique(idBase, id, data.predicate.id, data.parent.id, data.child.id, data.order, T_Create.isFromPersistent); break;
 			}
 		}
@@ -318,15 +348,17 @@ export default class DBFirebase extends DBCommon {
 		return changed;
 	}
 
-	thing_handle_docChanges(idBase: string, id: string, change: DocumentChange, data: DocumentData) {
+	thing_handle_docChanges(idBase: string, id: string, change: DocumentChange, data: DocumentData): boolean {
 		const remoteThing = new PersistentThing(data);
 		const h = this.hierarchy;
 		let thing = h.thing_forHID(id.hash());
-		if (!!remoteThing) {
+		if (!remoteThing) {
+			return false;
+		} else {
 			switch (change.type) {
 				case 'added':
 					if (!!thing || remoteThing.isEqualTo(this.addedThing) || remoteThing.type == T_Thing.root) {
-						return;			// do not invoke rebuild because nothing has changed
+						return false;			// do not invoke rebuild because nothing has changed
 					}
 					thing = h.thing_remember_runtimeCreate(idBase, id, remoteThing.title, remoteThing.color, remoteThing.type, true);
 					break;
@@ -334,7 +366,7 @@ export default class DBFirebase extends DBCommon {
 					if (!!thing) {
 						if (thing.isRoot) {
 							thing.set_isDirty();
-							return;			// do not invoke rebuild
+							return false;			// do not invoke rebuild
 						}
 						thing.remove_fromGrabbed_andExpanded_andResolveFocus();
 						h.thing_forget(thing);
@@ -342,12 +374,12 @@ export default class DBFirebase extends DBCommon {
 					break;
 				case 'modified':
 					if (!thing || thing.persistence.wasModifiedWithinMS(800) || !this.thing_extractChangesFromPersistent(thing, remoteThing)) {
-						return;		// do not invoke rebuild
+						return false;		// do not invoke rebuild
 					}
 					break;
 			}
-			signals.signal_rebuildGraph_fromFocus();
 		}
+		return true;
 	}
 
 	static readonly TRAIT: unique symbol;
@@ -414,15 +446,17 @@ export default class DBFirebase extends DBCommon {
 		}
 	}
 
-	trait_handle_docChanges(idBase: string, id: string, change: DocumentChange, data: DocumentData) {
+	trait_handle_docChanges(idBase: string, id: string, change: DocumentChange, data: DocumentData): boolean {
 		const remoteTrait = new PersistentTrait(data);
-		if (!!remoteTrait) {
+		if (!remoteTrait) {
+			return false;
+		} else {
 			const h = this.hierarchy;
 			let trait = h.trait_forHID(id.hash());
 			switch (change.type) {
 				case 'added':
 					if (!!trait || remoteTrait.isEqualTo(this.addedTrait)) {
-						return;		// do not invoke signal because nothing has changed
+						return false;		// do not invoke signal because nothing has changed
 					}
 					trait = h.trait_remember_runtimeCreate(idBase, id, remoteTrait.ownerID, remoteTrait.type, remoteTrait.text, true);
 					break;
@@ -433,7 +467,7 @@ export default class DBFirebase extends DBCommon {
 					break;
 				case 'modified':
 					if (!trait || trait.persistence.wasModifiedWithinMS(800) || !this.trait_extractChangesFromPersistent(trait, remoteTrait)) {
-						return;		// do not invoke signal because nothing has changed
+						return false;		// do not invoke signal because nothing has changed
 					}
 					break;
 			}
@@ -442,6 +476,7 @@ export default class DBFirebase extends DBCommon {
 				signals.signal_rebuildGraph_fromFocus();
 			}, 20);
 		}
+		return true;
 	}
 	
 	static readonly PREDICATE: unique symbol;
@@ -564,26 +599,28 @@ export default class DBFirebase extends DBCommon {
 		}
 	}
 
-	relationship_handle_docChanges(idBase: string, id: string, change: DocumentChange, data: DocumentData) {
+	relationship_handle_docChanges(idBase: string, id: string, change: DocumentChange, data: DocumentData): boolean {
 		const remoteRelationship = new PersistentRelationship(data);
-		if (!!remoteRelationship) {
+		if (!remoteRelationship) {
+			return false;
+		} else {
 			const h = this.hierarchy;
 			let relationship = h.relationship_forHID(id.hash());
 			switch (change.type) {
 				case 'added':
 					if (!!relationship) {
-						return;
+						return false;
 					}
 					relationship = h.relationship_remember_runtimeCreateUnique(idBase, id, remoteRelationship.kindPredicate, remoteRelationship.parent.id, remoteRelationship.child.id, remoteRelationship.order, T_Create.isFromPersistent);
 					break;
 				default:
 					if (!relationship) {
-						return;	// not known so do not signal
+						return false;	// not known so do not signal
 					} else {
 						switch (change.type) {
 							case 'modified':
 								if (relationship.persistence.wasModifiedWithinMS(800) || !this.relationship_extractChangesFromPersistent(relationship, remoteRelationship)) {
-									return;	// already known and contains no new data, or needs to be 'tamed'
+									return false;	// already known and contains no new data, or needs to be 'tamed'
 								}
 								break;
 							case 'removed':
@@ -593,12 +630,8 @@ export default class DBFirebase extends DBCommon {
 					}
 					break;
 			}
-			setTimeout(() => { // wait in case a thing involved in this relationship arrives in the data
-				h.relationships_refreshKnowns();
-				h.rootAncestry.order_normalizeRecursive_persistentMaybe(true);
-				signals.signal_rebuildGraph_fromFocus();
-			}, 20);
 		}
+		return true;
 	}
 
 	static readonly VALIDATION: unique symbol;
