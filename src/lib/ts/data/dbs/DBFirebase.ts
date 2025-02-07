@@ -60,7 +60,7 @@ export default class DBFirebase extends DBCommon {
 		await this.recordLoginIP();
 		await this.documents_fetch_ofType(T_Persistable.predicates);
 		await this.hierarchy_fetch_forID(this.idBase);
-		this.setup_remote_handlers();
+		await this.setup_remote_handlers();
 		await this.fetch_bulkAliases();		// TODO: assumes all ancestries are already created, including h.rootAncestry
 	}
 
@@ -142,31 +142,31 @@ export default class DBFirebase extends DBCommon {
 		this.deferredSnapshots.push(deferral);
 	}
 
-	handle_deferredSnapshots() {
+	async handle_deferredSnapshots() {
 		let needsRebuild = false;
 		this.deferSnapshots = false;
-		let relationship_handled = false;
+		let relationships_haveChanged = false;
 		while (this.deferredSnapshots.length > 0) {
 			const deferral = this.deferredSnapshots.pop();
 			if (!!deferral) {
-				deferral.snapshot.docChanges().forEach(async (change) => {	// convert and remember
+				for (const change of deferral.snapshot.docChanges()) {	// convert and remember
 					if (await this.handle_docChanges(deferral.idBase, deferral.t_persistable, change)) {
 						if (deferral.t_persistable == T_Persistable.relationships) {
-							relationship_handled = true;
+							relationships_haveChanged = true;
 						}
 						needsRebuild = true;
 					}
-				});
+				};
 			}
 		}
 		if (needsRebuild) {
-			this.signal_docHandled(relationship_handled);
+			this.signal_docHandled(relationships_haveChanged);
 		}
 	}
 
-	setup_remote_handlers() {
-		let needsRebuild = false;
-		let relationship_handled = false;
+	async setup_remote_handlers() {
+		let rebuildScheduled = false;
+		let relationships_haveChanged = false;
 		for (const t_persistable of this.hierarchy.persistent_dataTypes) {
 			if (t_persistable == T_Persistable.predicates) {
 				this.predicatesCollection = collection(this.firestore, t_persistable);
@@ -181,31 +181,36 @@ export default class DBFirebase extends DBCommon {
 						case T_Persistable.relationships: bulk.relationshipsCollection = collectionRef; break;
 					}
 				}
-				onSnapshot(collectionRef, (snapshot) => {
+				onSnapshot(collectionRef, async (snapshot) => {
 					if (this.hierarchy.isAssembled) {		// u.ignore snapshots caused by data written to server
 						if (this.deferSnapshots) {
 							this.snapshot_deferOne(idBase, t_persistable, snapshot);
+							return;
 						} else {
-							snapshot.docChanges().forEach(async (change) => {	// convert and remember
+							for (const change of snapshot.docChanges()) {	// convert and remember
 								if (await this.handle_docChanges(idBase, t_persistable, change)) {
 									if (t_persistable == T_Persistable.relationships) {
-										relationship_handled = true;
+										relationships_haveChanged = true;
 									}
-									needsRebuild = true;
+									if (!rebuildScheduled) {
+										rebuildScheduled = true;
+										setTimeout(() => {		// defer signal_docHandled until after all handle_docChanges calls [microtasks] complete
+											this.signal_docHandled(relationships_haveChanged);	  // so that this is called exactly once.
+											relationships_haveChanged = false;
+											rebuildScheduled = false;
+										}, 0);
+									}
 								}
-							});
+							}
 						}
 					}
 				});
 			}
-			if (needsRebuild) {
-				this.signal_docHandled(relationship_handled);
-			}
 		}
 	}
 
-	signal_docHandled(relationship_handled: boolean) {
-		if (relationship_handled) {
+	signal_docHandled(relationships_haveChanged: boolean) {
+		if (relationships_haveChanged) {
 			setTimeout(() => { // wait in case a thing involved in this relationship arrives in the data
 				this.hierarchy.relationships_refreshKnowns();
 				this.hierarchy.rootAncestry.order_normalizeRecursive_persistentMaybe(true);
@@ -296,7 +301,7 @@ export default class DBFirebase extends DBCommon {
 			}
 			thing.persistence.awaitingCreation = false;
 			thing.persistence.already_persisted = true;
-			this.handle_deferredSnapshots();
+			await this.handle_deferredSnapshots();
 			thing.log(T_Debug.remote, 'CREATE T');
 		}
 	}
@@ -438,7 +443,7 @@ export default class DBFirebase extends DBCommon {
 				h.trait_forget(trait);
 				trait.setID(ref.id);
 				h.trait_remember(trait);
-				this.handle_deferredSnapshots();
+				await this.handle_deferredSnapshots();
 				trait.log(T_Debug.remote, 'CREATE T');
 			} catch (error) {
 				this.reportError(error);
@@ -523,7 +528,7 @@ export default class DBFirebase extends DBCommon {
 				h.predicate_forget(predicate);
 				predicate.setID(ref.id);
 				h.predicate_remember(predicate);
-				this.handle_deferredSnapshots();
+				await this.handle_deferredSnapshots();
 				predicate.log(T_Debug.remote, 'CREATE P');
 			} catch (error) {
 				this.reportError(error);
@@ -594,7 +599,7 @@ export default class DBFirebase extends DBCommon {
 			}
 			relationship.persistence.awaitingCreation = false;
 			relationship.persistence.already_persisted = true;
-			this.handle_deferredSnapshots();
+			await this.handle_deferredSnapshots();
 			relationship.log(T_Debug.remote, 'CREATE R');
 		}
 	}
