@@ -11,8 +11,6 @@ export default class Thing extends Persistable {
 	selectionRange = new Seriously_Range(0, 0);
 	bulkRootID: string = k.empty;
 	oneAncestry!: Ancestry;
-	isEditing = false;
-	isGrabbed = false;
 	title: string;
 	color: string;
 	type: T_Thing;

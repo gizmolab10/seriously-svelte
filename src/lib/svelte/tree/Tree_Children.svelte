@@ -64,7 +64,7 @@
 {#if ancestry.isExpanded}
 	<div class='tree-children'>
 		{#each g_widgets as g_widget}
-			<Widget name={g_widget.s_element.name} ancestry={g_widget.widget_ancestry} origin={g_widget.extent.offsetBy(widgetOffset)}/>
+			<Widget name={g_widget.s_widget.name} ancestry={g_widget.widget_ancestry} origin={g_widget.extent.offsetBy(widgetOffset)}/>
 			<Tree_Line ancestry={g_widget.widget_ancestry} curveType={g_widget.curveType} rect={g_widget.offsetBy(lineOffset)}/>
 			{#if g_widget.widget_ancestry.showsChildRelationships}
 				<Tree_Children ancestry={g_widget.widget_ancestry} origin={g_widget.children_origin}/>

@@ -6,7 +6,7 @@ import { get } from 'svelte/store';
 
 export class S_Show {
 	debug_cursor = false;
-	t_trees		 = false;	// logic for this is still under construction
+	t_trees		 = false;	// future feature: parent trees, ...
 	traits		 = false;
 	t_info		 = T_Info.focus;
 

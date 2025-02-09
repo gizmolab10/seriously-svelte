@@ -1,6 +1,6 @@
 import Ancestry from '../data/runtime/Ancestry';
 
-export default class S_Title_Edit {
+export default class S_Ancestry_Edit {
 	stopping: Ancestry | null = null;
 	editing!: Ancestry;
 

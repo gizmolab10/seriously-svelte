@@ -43,7 +43,7 @@
 		<div class='necklace-widgets' style='z-index:{T_Layer.backmost};'>
 			{#each $w_g_radial.g_widgets as g_widget}
 				<Widget
-					name={g_widget.s_element.name}
+					name={g_widget.s_widget.name}
 					ancestry={g_widget.widget_ancestry}
 					points_right={g_widget.points_right}
 					points_toChild={g_widget.points_toChild}

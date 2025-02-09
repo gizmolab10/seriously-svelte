@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { g, k, u, ux, Thing, Point, Angle, debug, signals, S_Element, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Signal, T_Element, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { w_s_title_edit, w_thing_color, w_t_graph } from '../../ts/state/S_Stores';
+	import { w_s_ancestry_edit, w_thing_color, w_t_graph } from '../../ts/state/S_Stores';
 	import { w_thing_fontFamily, w_ancestries_grabbed } from '../../ts/state/S_Stores';
 	import Title_Editor from './Title_Editor.svelte';
 	import Dot_Reveal from './Dot_Reveal.svelte';
@@ -12,13 +12,13 @@
     export let points_right = true;
     export let name = k.empty;
     export let ancestry;
-	const s_reveal = ux.s_element_for(ancestry, T_Element.reveal, k.empty);
-	const s_drag = ux.s_element_for(ancestry, T_Element.drag, k.empty);
 	const priorRowHeight = k.row_height;
+	const s_drag = ux.s_element_for(ancestry, T_Element.drag, k.empty);
+	const s_reveal = ux.s_element_for(ancestry, T_Element.reveal, k.empty);
+	let s_widget = ux.s_element_forName(name);		// survives onDestroy, created by G_Widget
 	let widgetWrapper!: Svelte_Wrapper;
 	let revealCenter = Point.zero;
 	let dragCenter = Point.zero;
-	let s_element!: S_Element;
 	let radius = k.dot_size / 2;
 	let priorOrigin = origin;
 	let background = k.empty;
@@ -43,7 +43,6 @@
 
 	onMount(() => {
 		layout_widget();
-		s_element = ux.s_element_forName(name);		// survives onDestroy, created by {tree, radial} children
 		debug.log_mount(`WIDGET ${thing?.description} ${isGrabbed}`);
 		fullUpdate();
 		const handleAny = signals.handle_anySignal_atPriority(3, (t_signal, ancestry) => {
@@ -65,7 +64,7 @@
 	});
 
 	$: {
-		const _ = $w_s_title_edit + $w_ancestries_grabbed;
+		const _ = $w_s_ancestry_edit + $w_ancestries_grabbed;
 		updateBorder_fromState();
 	}
 
@@ -95,7 +94,7 @@
 
 	function updateBorder_fromState() {
 		if (!!widget) {
-			widget.style.border = s_element.border;
+			widget.style.border = s_widget.border;
 		}
 	}
 
@@ -120,8 +119,7 @@
 	}
 
 	function fullUpdate() {
-		thing = ancestry?.thing;
-		if (!!thing) {
+		if (!!ancestry) {
 			const shallEdit = ancestry.isEditing;
 			const shallGrab = ancestry.isGrabbed;
 			const change = (isEditing != shallEdit || isGrabbed != shallGrab);
@@ -167,7 +165,7 @@
 </script>
 
 {#key rebuilds}
-	{#if s_element}
+	{#if s_widget}
 		<div class='widget' id='{widgetName}'
 			bind:this={widget}
 			style='
@@ -179,7 +177,7 @@
 				position: absolute;
 				border-radius: {radius}px;
 				z-index: {T_Layer.widgets};
-				border: {s_element.border};
+				border: {s_widget.border};
 				background-color: {isGrabbed || g.inRadialMode ? k.color_background : 'transparent'};
 			'>
 			<Dot_Drag

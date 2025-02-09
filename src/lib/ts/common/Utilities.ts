@@ -221,13 +221,12 @@ export class Utilities {
 	static readonly JSON: unique symbol;
 
 	stringify_object(object: Object): string {
-		const extras = [
+		const ignored = [
 			'hid',
 			'state',
 			'idBase',
 			'hidChild',
 			'hidParent',
-			'isEditing',
 			'isGrabbed',
 			'bulkRootID',
 			't_database',
@@ -236,7 +235,7 @@ export class Utilities {
 			'selectionRange',
 		];
 		function removeExtras(key: string, value: any): any | undefined {
-			if (extras.includes(key)) {
+			if (ignored.includes(key)) {
 				return undefined;
 			}
 			return value;

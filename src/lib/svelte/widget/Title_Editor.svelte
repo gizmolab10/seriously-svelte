@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { T_Graph, databases, Seriously_Range, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { w_hierarchy, w_t_graph, w_thing_color, w_thing_title, w_s_title_edit } from '../../ts/state/S_Stores';
+	import { w_hierarchy, w_t_graph, w_thing_color, w_thing_title, w_s_ancestry_edit } from '../../ts/state/S_Stores';
 	import { w_thing_fontFamily, w_ancestries_grabbed, w_ancestry_showing_tools } from '../../ts/state/S_Stores';
 	import { g, k, u, Point, Thing, debug, Angle, T_Layer, signals } from '../../ts/common/Global_Imports';
 	import { onMount } from 'svelte';
@@ -30,7 +30,7 @@
 	export const REACTIVES: unique symbol = Symbol('REACTIVES');
 	
 	$: {
-		const _ = $w_s_title_edit;
+		const _ = $w_s_ancestry_edit;
 		updateInputWidth();
 	}
 
@@ -47,7 +47,7 @@
 	}
 
 	$: {
-		const _ = $w_s_title_edit;		// react to w_s_title_edit
+		const _ = $w_s_ancestry_edit;		// react to w_s_ancestry_edit
 
 		//////////////////////////////////////////////////////
 		//													//
@@ -60,7 +60,7 @@
 			if (ancestry.isEditable) {
 				if (!!ancestry && (ancestry.isStoppingEdit ?? false)) {
 					debug.log_edit(`STOPPING ${bound_title}`);
-					$w_s_title_edit = null;
+					$w_s_ancestry_edit = null;
 					input?.blur();
 				} else if (isEditing != title_isEditing()) {
 					if (!isEditing) {
@@ -81,8 +81,8 @@
 	export const PRIMITIVES: unique symbol = Symbol('PRIMITIVES');
  
 	function title_isEditing(): boolean {
-		const s_title_edit = $w_s_title_edit;
-		return !!ancestry && !!s_title_edit && s_title_edit.editing && ancestry.ancestry_hasEqualID(s_title_edit.editing);
+		const s_ancestry_edit = $w_s_ancestry_edit;
+		return !!ancestry && !!s_ancestry_edit && s_ancestry_edit.editing && ancestry.ancestry_hasEqualID(s_ancestry_edit.editing);
 	}
 
 	function clearClicks() {
@@ -196,7 +196,7 @@
 				} else {
 					ancestry.grabOnly();
 				}
-				$w_s_title_edit = null;
+				$w_s_ancestry_edit = null;
 				signals.signal_relayoutWidgets_fromFocus();
 			}
 		}
@@ -235,9 +235,9 @@
 		invokeBlurNotClearEditing();
 		if (!!ancestry && ancestry.isEditing) {				
 			setTimeout(() => {									// eliminate infinite recursion
-				const s_title_edit = $w_s_title_edit;
-				if (!!s_title_edit) {
-					s_title_edit.stop();
+				const s_ancestry_edit = $w_s_ancestry_edit;
+				if (!!s_ancestry_edit) {
+					s_ancestry_edit.stop();
 					signals.signal_relayoutWidgets_fromFocus();
 				}
 			}, 2);
