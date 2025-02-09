@@ -42,7 +42,7 @@
 
 	function updateColors() {
 		if (!!thing) {
-			if ($w_ancestry_focus.idThing == thing.id) {
+			if ($w_ancestry_focus.id_thing == thing.id) {
 				colorStyles = `background-color: ${u.opacitize(thing.color, 0.85)}; color: ${k.color_background}`;
 			} else {
 				colorStyles = `background-color: ${k.color_background}; color: ${thing.color}`;

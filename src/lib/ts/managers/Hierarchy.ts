@@ -583,7 +583,7 @@ export class Hierarchy {
 		}
 	}
 
-	relationships_forKindPredicate_hidThing_isChild(kindPredicate: string, hid: Integer, forParents: boolean): Array<Relationship> {
+	relationships_forKindPredicate_hid_thing_isChild(kindPredicate: string, hid: Integer, forParents: boolean): Array<Relationship> {
 		const dict = forParents ? this.relationships_byChildHID : this.relationships_byParentHID;
 		const matches = dict[hid] as Array<Relationship>; // filter out bad values (dunno what this does)
 		const array: Array<Relationship> = [];
@@ -614,7 +614,7 @@ export class Hierarchy {
 
 	relationships_translate_idsFromTo_forParents(idFrom: string, idTo: string, forParents: boolean) {
 		for (const predicate of this.predicates) {
-			const relationships = this.relationships_forKindPredicate_hidThing_isChild(predicate.kind, idFrom.hash(), forParents);
+			const relationships = this.relationships_forKindPredicate_hid_thing_isChild(predicate.kind, idFrom.hash(), forParents);
 			for (const relationship of relationships) {
 				if (!forParents && relationship.idParent != idTo) {
 					this.relationship_forget(relationship);
@@ -638,8 +638,8 @@ export class Hierarchy {
 
 	relationship_forHID(hid: Integer): Relationship | null { return this.relationship_byHID[hid ?? undefined]; }
 
-	relationship_whereHID_isChild(hidThing: Integer, isChild: boolean = true): Relationship | null {
-		const matches = this.relationships_forKindPredicate_hidThing_isChild(T_Predicate.contains, hidThing, isChild);
+	relationship_whereHID_isChild(hid_thing: Integer, isChild: boolean = true): Relationship | null {
+		const matches = this.relationships_forKindPredicate_hid_thing_isChild(T_Predicate.contains, hid_thing, isChild);
 		return matches.length == 0 ? null : matches[0];
 	}
 
@@ -689,7 +689,7 @@ export class Hierarchy {
 	}
 
 	relationship_forPredicateKind_parent_child(kindPredicate: string, hidParent: Integer, hidChild: Integer): Relationship | null {
-		const matches = this.relationships_forKindPredicate_hidThing_isChild(kindPredicate, hidParent, false);
+		const matches = this.relationships_forKindPredicate_hid_thing_isChild(kindPredicate, hidParent, false);
 		if (Array.isArray(matches)) {
 			for (const relationship of matches) {
 				if (relationship.hidChild == hidChild) {
@@ -744,7 +744,7 @@ export class Hierarchy {
 	async relationship_forget_persistentDelete(ancestry: Ancestry, otherAncestry: Ancestry, kindPredicate: T_Predicate) {
 		const thing = ancestry.thing;
 		const parentAncestry = ancestry.parentAncestry;
-		const relationship = this.relationship_forPredicateKind_parent_child(kindPredicate, otherAncestry.idThing.hash(), ancestry.idThing.hash());
+		const relationship = this.relationship_forPredicateKind_parent_child(kindPredicate, otherAncestry.id_thing.hash(), ancestry.id_thing.hash());
 		if (!!parentAncestry && !!relationship && (thing?.hasParents ?? false)) {
 			this.relationship_forget(relationship);
 			if (otherAncestry.hasChildRelationships) {

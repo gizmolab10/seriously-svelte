@@ -61,17 +61,17 @@ export default class DBTest extends DBCommon {
 			const idUpper = String.fromCharCode(code);
 			const predicate = h.predicate_forKind(kindPredicate);
 			const isBidirectional = predicate?.isBidirectional ?? false;
-			const idThing = asChild ? idOther + idUpper : idUpper + idOther;
-			const title = asChild ? idUpper : idThing;
+			const id_thing = asChild ? idOther + idUpper : idUpper + idOther;
+			const title = asChild ? idUpper : id_thing;
 			const prefix = isBidirectional ? 'R' : 'C';
-			const idRelationahip = prefix + idThing;
-			const idChild = asChild ? idThing : idOther;
-			const idParent = asChild ? idOther : idThing;
-			h.thing_remember_runtimeCreateUnique(this.idBase, idThing, title, 'red');
+			const idRelationahip = prefix + id_thing;
+			const idChild = asChild ? id_thing : idOther;
+			const idParent = asChild ? idOther : id_thing;
+			h.thing_remember_runtimeCreateUnique(this.idBase, id_thing, title, 'red');
 			h.relationship_remember_runtimeCreateUnique(this.idBase, idRelationahip, kindPredicate, idParent, idChild, 1);
 			if (asChild || isBidirectional) {	// needs to be child of root
 				const idParentRelationship = 'CR' + idUpper;
-				h.relationship_remember_runtimeCreateUnique(this.idBase, idParentRelationship, T_Predicate.contains, h.root.id, idThing, 1);
+				h.relationship_remember_runtimeCreateUnique(this.idBase, idParentRelationship, T_Predicate.contains, h.root.id, id_thing, 1);
 			}
 		}
 	}

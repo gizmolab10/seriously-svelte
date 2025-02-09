@@ -14,7 +14,7 @@
 	// draw widgets, lines and arcs
 
 	onMount(() => {
-		const handleAny = signals.handle_anySignal((signal_ancestry) => {
+		const handleAny = signals.handle_anySignal_atPriority(0, (t_signal, signal_ancestry) => {
 			rebuilds += 1;
 		});
 		return () => {

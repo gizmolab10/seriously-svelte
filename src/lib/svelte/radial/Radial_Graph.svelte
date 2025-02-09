@@ -23,7 +23,7 @@
 	debug.log_tools(` CLUSTERS (svelte)`);
 
 	onMount(() => {
-		const handler = signals.handle_relayoutWidgets(0, ($w_ancestry_focus) => {
+		const handler = signals.handle_relayoutWidgets(0, (ancestry) => {
 			g.require_rebuild_forType(T_Rebuild.radial);
 		});
 		return () => { handler.disconnect() };

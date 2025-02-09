@@ -84,7 +84,7 @@ Object.defineProperty(String.prototype, 'clipWithEllipsisAt', {
 
 Object.defineProperty(String.prototype, 'hash', {
 	value: function() {
-		var hash = 0,
+		let hash = 0,
 		i, character;
 		if (this.length === 0) {
 			return hash;
@@ -185,7 +185,7 @@ Object.defineProperty(Number.prototype, 'increment', {
 
 Object.defineProperty(Number.prototype, 'increment_by', {
 	value: function(delta: number, total: number): number {
-		var result = this.valueOf() + delta;
+		let result = this.valueOf() + delta;
 		return result.normalize_between_zeroAnd(total);
 	},
 	writable: false,
@@ -264,7 +264,7 @@ Object.defineProperty(Number.prototype, 'isClocklyBetween', {
 	value: function(a: number, b: number, normalizeTo: number): boolean {
 		const value = this.normalize_between_zeroAnd(normalizeTo);
 		const cycled: number = value - normalizeTo;
-		var min = Math.min(a, b),
+		let min = Math.min(a, b),
 			max = Math.max(a, b);
 		return this.isBetween(min, max, true) || cycled.isBetween(min, max, true);
 	},
@@ -323,12 +323,12 @@ Object.defineProperty(Number.prototype, 'bump_towards', {
 
 Object.defineProperty(Number.prototype, 'increment_by_assuring', {
 	value: function(delta: number, total: number): number {
-		var assure = Math.abs(delta);
-		var value = this.valueOf();
+		let assure = Math.abs(delta);
+		let value = this.valueOf();
 		if (value < assure && assure != delta) {
 			return 0;
 		}
-		var result = value + delta;
+		let result = value + delta;
 		result = Math.min(total - assure, result);
 		return result;
 	},

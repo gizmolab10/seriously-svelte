@@ -23,11 +23,11 @@
 
 	function isHit(): boolean { return false }
 	function handle_mouse_up() { clearClicks(); }
-	var hasChanges = () => { return originalTitle != bound_title; };
+	let hasChanges = () => { return originalTitle != bound_title; };
 	function thing(): Thing | null { return ancestry?.thing ?? null; }
 	function handle_mouse_state(s_mouse: S_Mouse): boolean { return false; }
 
-	export const _____REACTIVES_____: unique symbol = Symbol('_____REACTIVES_____');
+	export const REACTIVES: unique symbol = Symbol('REACTIVES');
 	
 	$: {
 		const _ = $w_s_title_edit;
@@ -78,7 +78,7 @@
 		}
 	}
 
-	export const _____PRIMITIVES_____: unique symbol = Symbol('_____PRIMITIVES_____');
+	export const PRIMITIVES: unique symbol = Symbol('PRIMITIVES');
  
 	function title_isEditing(): boolean {
 		const s_title_edit = $w_s_title_edit;
@@ -113,14 +113,23 @@
 	}
 
 	function canAlterTitle(event) {
-		var canAlter = (event instanceof KeyboardEvent) && !event.altKey && !event.shiftKey && !event.code.startsWith("Cluster_Label");
+		let canAlter = (event instanceof KeyboardEvent) && !event.altKey && !event.shiftKey && !event.code.startsWith("Cluster_Label");
 		if (canAlter && event.metaKey) {
 			canAlter = false;
 		}
 		return canAlter;
 	}
 
-	export const _____HANDLERS_____: unique symbol = Symbol('_____HANDLERS_____');
+	function title_updatedTo(title: string | null) {
+		const prior = $w_thing_title;
+		if (prior != title) {
+			$w_thing_title = title;		// tell Info to update it's selection's title
+			debug.log_signals(`title_updatedTo ${title}`);
+			// ancestry?.signal_relayoutWidgets_fromThis();
+		}
+	}
+
+	export const HANDLERS: unique symbol = Symbol('HANDLERS');
 	
 	onMount(() => {
 		if (!!thing()) {
@@ -128,7 +137,7 @@
 			titleWidth = thing().titleWidth + (showingReveal ? 6 : 1) + 15;
 			titleLeft = g.inRadialMode ? ancestry.isFocus ? 5 : (points_right ? 21 : (showingReveal ? 18.5 : 10)) : 19;
 		}
-		const handler = signals.handle_anySignal((T_Signal, ancestry) => { updateInputWidth(); });
+		const handler = signals.handle_anySignal_atPriority(0, (t_signal, ancestry) => { updateInputWidth(); });
 		setTimeout(() => { updateInputWidth(); }, 100);
 		return () => { handler.disconnect() };
 	})
@@ -157,7 +166,7 @@
 		const title = event.target.value;
 		if (!!thing() && (!!title || title == k.empty)) {
 			thing().title = bound_title = title;
-			w_thing_title.set(null);
+			title_updatedTo(title);
 		}
 	};
 
@@ -165,9 +174,13 @@
 		if (!!thing() && !!ancestry && ancestry.isEditing && canAlterTitle(event)) {
 			debug.log_key(`TITLE  ${event.key}`);
 			switch (event.key) {	
+				case 'ArrowUp':
+				case 'ArrowDown':
+				case 'ArrowLeft':
+				case 'ArrowRight': break;
 				case 'Tab':	  event.preventDefault(); stopAndClearEditing(); $w_hierarchy.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break;
 				case 'Enter': event.preventDefault(); stopAndClearEditing(); break;
-				default:	  w_thing_title.set(thing().id); break;
+				default:	  title_updatedTo(thing().title); break;
 			}
 		}
 	}
@@ -208,11 +221,12 @@
 		}
 	}
 
-	export const _____EDIT_____: unique symbol = Symbol('_____EDIT_____');
+	export const EDIT: unique symbol = Symbol('EDIT');
 
 	function startEditMaybe() {
 		if (ancestry.isEditable) {
 			ancestry?.startEdit();
+			title_updatedTo(thing().title);
 			input?.focus();
 		}
 	}

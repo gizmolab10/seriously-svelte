@@ -10,6 +10,7 @@ export enum T_Debug {
 	origins 	= 'origins',
 	rebuild 	= 'rebuild',
 	reticle		= 'reticle',	// debug radial layout geometry
+	signals		= 'signals',
 	action  	= 'action',
 	colors		= 'colors',		// indicate some coordinates
 	cursor		= 'cursor',
@@ -18,7 +19,6 @@ export enum T_Debug {
 	radial		= 'radial',
 	remote		= 'remote',		// interactions with remote
 	things		= 'things',		// enable Things.debugLog
-	signal		= 'signal',
 	build		= 'build',
 	error		= 'error',		// async errors
 	grabs		= 'grabs',
@@ -67,7 +67,7 @@ export class Debug {
 	log_layout(message: string) { this.log_maybe(T_Debug.layout, message); }
 	log_radial(message: string) { this.log_maybe(T_Debug.radial, message); }
 	log_remote(message: string) { this.log_maybe(T_Debug.remote, message); }
-	log_signal(message: string) { this.log_maybe(T_Debug.signal, message); }
+	log_signals(message: string) { this.log_maybe(T_Debug.signals, message); }
 	log_origins(message: string) { this.log_maybe(T_Debug.origins, message); }
 	log_rebuild(message: string) { this.log_maybe(T_Debug.rebuild, message); }
 	log_segments(message: string) { this.log_maybe(T_Debug.segments, message); }
@@ -91,6 +91,7 @@ export class Debug {
 					case 'origins': this.flags.push(T_Debug.origins); break;
 					case 'rebuild': this.flags.push(T_Debug.rebuild); break;
 					case 'reticle': this.flags.push(T_Debug.reticle); break;
+					case 'signals': this.flags.push(T_Debug.signals); break;
 					case 'action': this.flags.push(T_Debug.action); break;
 					case 'colors': this.flags.push(T_Debug.colors); break;
 					case 'crumbs': this.flags.push(T_Debug.crumbs); break;
@@ -98,7 +99,6 @@ export class Debug {
 					case 'layout': this.flags.push(T_Debug.layout); break;
 					case 'radial': this.flags.push(T_Debug.radial); break;
 					case 'remote': this.flags.push(T_Debug.remote); break;
-					case 'signal': this.flags.push(T_Debug.signal); break;
 					case 'things': this.flags.push(T_Debug.things); break;
 					case 'build': this.flags.push(T_Debug.build); break;
 					case 'error': this.flags.push(T_Debug.error); break;

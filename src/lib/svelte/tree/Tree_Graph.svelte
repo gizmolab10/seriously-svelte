@@ -22,7 +22,11 @@
 	let top = 0;
 	
 	onMount(() => {
-		const handler = signals.handle_relayoutWidgets(0, (ancestry) => { updateOrigins(); });
+		const handler = signals.handle_relayoutWidgets(0, (ancestry) => {
+			if (!ancestry || (!!$w_ancestry_focus && $w_ancestry_focus == ancestry)) {
+				updateOrigins();
+			}
+		});
 		return () => { handler.disconnect() };
 	});
 

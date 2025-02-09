@@ -122,7 +122,7 @@ export default class Ancestry extends Identifiable {
 		return canEdit && g.allow_TitleEditing && !isExternals && !isBulkAlias;
 	}
 
-	get idThing(): string {
+	get id_thing(): string {
 		if (this.isRoot) {
 			return this.hierarchy.idRoot ?? k.unknown;
 		}
@@ -261,10 +261,10 @@ export default class Ancestry extends Identifiable {
 	}
 
 	thing_isImmediateParentOf(ancestry: Ancestry, kind: string): boolean {
-		const idThing = this.idThing;
-		if (idThing != k.unknown) {
+		const id_thing = this.id_thing;
+		if (id_thing != k.unknown) {
 			const parents = ancestry.thing?.parents_forKind(kind);
-			return parents?.map(t => t.id).includes(idThing) ?? false;
+			return parents?.map(t => t.id).includes(id_thing) ?? false;
 		}
 		return false;
 	}

@@ -126,8 +126,8 @@ export class Utilities {
 	}
 
 	removeAll(item: string, from: string): string {
-		var to = from;
-		var length = from.length;
+		let to = from;
+		let length = from.length;
 		do {
 			length = to.length;
 			to = to.replace(item, '');

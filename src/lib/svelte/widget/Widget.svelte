@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { g, k, u, ux, Thing, Point, Angle, debug, signals, Svelte_Wrapper } from '../../ts/common/Global_Imports';
-	import { S_Element, T_Element, T_Layer, T_Graph, T_SvelteComponent } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, Thing, Point, Angle, debug, signals, S_Element, Svelte_Wrapper } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Graph, T_Signal, T_Element, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_thing_color, w_t_graph } from '../../ts/state/S_Stores';
 	import { w_thing_fontFamily, w_ancestries_grabbed } from '../../ts/state/S_Stores';
 	import Title_Editor from './Title_Editor.svelte';
@@ -46,19 +46,17 @@
 		s_element = ux.s_element_forName(name);		// survives onDestroy, created by {tree, radial} children
 		debug.log_mount(`WIDGET ${thing?.description} ${isGrabbed}`);
 		fullUpdate();
-		const handleAny = signals.handle_anySignal((ids_signal, id) => {
-			for (const kind of ids_signal) {
-				switch (kind) {
-					case ids_signal.relayout:
-						if (id == thing?.id) {
-							debug.log_layout(`WIDGET signal ${thing?.description}`);
-							layout_widget()
-						}
-						break;
-					default:
-						fullUpdate();
-						break;
-				}
+		const handleAny = signals.handle_anySignal_atPriority(3, (t_signal, ancestry) => {
+			debug.log_layout(`WIDGET ${thing?.description}`);
+			switch (t_signal) {
+				case T_Signal.relayout:
+					if (ancestry.id_thing == thing?.id) {
+						layout_widget()
+					}
+					break;
+				default:
+					fullUpdate();
+					break;
 			}
 		});
 		return () => {
@@ -162,6 +160,8 @@
 			const revealX = points_right ? (k.dot_size + titleWidth + (g.inRadialMode ? 19 : 17)) : 9;
 			revealCenter = new Point(revealX, revealY);
 		}
+		debug.log_layout(`WIDGET ${thing?.title ?? k.unknown}`);
+		rebuilds += 1;
 	}
 
 </script>

@@ -21,13 +21,13 @@
 		layoutAll_children();
 		const handler = signals.handle_relayoutWidgets(1, (signal_ancestry) => {
 			const now = new Date().getTime();
-			if (ancestry.isExpanded &&
-				((now - priorTime) > 100) &&
-				ancestry.ancestry_hasEqualID(signal_ancestry)) {
+			if (((now - priorTime) > 100) &&	// no more often than ten times per second
+				(!signal_ancestry || (ancestry.isExpanded &&
+				signal_ancestry.ancestry_hasEqualID(ancestry)))) {
 				priorTime = now;
 				debug.log_origins(origin.x + ' before timeout');
+				layoutAll_children();
 			}
-			layoutAll_children();
 		});
 		return () => { handler.disconnect() };
 	});
