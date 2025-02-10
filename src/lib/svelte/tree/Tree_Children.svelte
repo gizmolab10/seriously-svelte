@@ -23,7 +23,7 @@
 			const now = new Date().getTime();
 			if (((now - priorTime) > 100) &&	// no more often than ten times per second
 				(!signal_ancestry || (ancestry.isExpanded &&
-				signal_ancestry.ancestry_hasEqualID(ancestry)))) {
+				signal_ancestry.hasMatchingID(ancestry)))) {
 				priorTime = now;
 				debug.log_origins(origin.x + ' before timeout');
 				layoutAll_children();

@@ -78,7 +78,7 @@
 	}
 
 	$: {
-		if (!ancestry || !ancestry.ancestry_hasEqualID($w_ancestry_showing_tools)) {
+		if (!ancestry || !ancestry.hasMatchingID($w_ancestry_showing_tools)) {
 			ancestry = $w_ancestry_showing_tools;
 			if (!!ancestry) {
 				thing = ancestry.thing;

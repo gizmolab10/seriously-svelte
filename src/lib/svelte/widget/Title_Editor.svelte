@@ -82,10 +82,7 @@
 
 	export const PRIMITIVES: unique symbol = Symbol('PRIMITIVES');
  
-	function title_isEditing(): boolean {
-		const s_title_edit = $w_s_title_edit;
-		return !!ancestry && !!s_title_edit && s_title_edit.editing && ancestry.ancestry_hasEqualID(s_title_edit.editing);
-	}
+	function title_isEditing(): boolean { return ancestry?.isEditing ?? false; }
 
 	function clearClicks() {
 		clickCount = 0;

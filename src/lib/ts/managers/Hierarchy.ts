@@ -1137,7 +1137,7 @@ export class Hierarchy {
 					if (ancestry.isExpanded) {
 						graph_needsRebuild = ancestry.collapse();
 						newGrabAncestry = this.grabs_areInvisible ? ancestry : null;
-					} else if (newGrabAncestry.isExpanded || (!!rootAncestry && !rootAncestry.ancestry_hasEqualID(newGrabAncestry))) {
+					} else if (newGrabAncestry.isExpanded || (!!rootAncestry && !rootAncestry.hasMatchingID(newGrabAncestry))) {
 						graph_needsRebuild = newGrabAncestry.collapse();
 					}
 				}
@@ -1147,7 +1147,7 @@ export class Hierarchy {
 		if (!!newGrabAncestry) {
 			newGrabAncestry.grabOnly();
 			if (!RIGHT && !!newFocusAncestry) {
-				const newFocusIsGrabbed = newFocusAncestry && newFocusAncestry.ancestry_hasEqualID(newGrabAncestry);
+				const newFocusIsGrabbed = newFocusAncestry && newFocusAncestry.hasMatchingID(newGrabAncestry);
 				const canBecomeFocus = (!SHIFT || newFocusIsGrabbed) && newGrabIsNotFocus;
 				const shouldBecomeFocus = newFocusAncestry.isRoot || !newFocusAncestry.isVisible;
 				const becomeFocus = canBecomeFocus && shouldBecomeFocus;
