@@ -10,7 +10,7 @@
 	export let top = 28;
 	const buttons_top = 138;
 	const button_style = `font-family: ${$w_thing_fontFamily}; font-size:0.85em; left: 5px; top: -2px; position: absolute;`;
-	let s_elements_byT_Storage: { [id: string]: S_Element } = {};
+	let s_element_byStorageType: { [id: string]: S_Element } = {};
 	let information: Array<Dictionary> = [];
 	let rebuilds = 0;
 
@@ -40,13 +40,13 @@
 			const s_element = ux.s_element_for(null, T_Element.storage, id);
 			s_element.set_forHovering('black', 'pointer');
 			s_element.color_background = k.color_background;
-			s_elements_byT_Storage[id] = s_element;
+			s_element_byStorageType[id] = s_element;
 		}
 	}
 	
 	function button_closure_forStorage_Type(s_mouse, t_storage) {
 		if (s_mouse.isHover) {
-			s_elements_byT_Storage[t_storage].isOut = s_mouse.isOut;
+			s_element_byStorageType[t_storage].isOut = s_mouse.isOut;
 		} else if (s_mouse.isUp) {
 			const h = $w_hierarchy;
 			switch (t_storage) {
@@ -79,7 +79,7 @@
 			zindex=T_Layer.frontmost
 			center={new Point(74, buttons_top)}
 			height={k.default_buttonSize - 4}
-			s_element={s_elements_byT_Storage[T_Storage.import]}
+			s_element={s_element_byStorageType[T_Storage.import]}
 			closure={(s_mouse) => button_closure_forStorage_Type(s_mouse, T_Storage.import)}>
 			<span style={button_style}>import</span>
 		</Button>
@@ -88,7 +88,7 @@
 			zindex=T_Layer.frontmost
 			center={new Point(122, buttons_top)}
 			height={k.default_buttonSize - 4}
-			s_element={s_elements_byT_Storage[T_Storage.export]}
+			s_element={s_element_byStorageType[T_Storage.export]}
 			closure={(s_mouse) => button_closure_forStorage_Type(s_mouse, T_Storage.export)}>
 			<span style={button_style}>export</span>
 		</Button>

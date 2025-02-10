@@ -11,7 +11,6 @@ export default class S_Element {
 	type = T_Element.none;
 	hoverIgnore = false;
 	isInverted = false;
-	isEditing = false;
 	subtype = k.empty;
 	name = k.empty;
 	isOut = true;

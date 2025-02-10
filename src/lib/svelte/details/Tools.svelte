@@ -18,7 +18,7 @@
 	const parentAlteringIDs = [T_Tool.add_parent, T_Tool.delete_parent];
 	const needsMultipleVisibleParents = [T_Tool.next, T_Tool.delete_parent];
 	const half_circleViewBox = `0 0 ${k.editingTools_diameter} ${k.editingTools_diameter}`;
-	let s_elements_byT_Tool: { [id: string]: S_Element } = {};
+	let s_element_byToolType: { [id: string]: S_Element } = {};
 	let isHovering_byID: { [id: string]: boolean } = {};
 	let centers_byID: { [id: string]: Point } = {};
 	let parentSensitiveColor = k.empty;
@@ -65,7 +65,7 @@
 				s_element.color_background = isDismiss ? k.color_background : 'transparent';
 				s_element.set_forHovering(color, 'pointer');
 				s_element.hoverIgnore = !isDismiss;
-				s_elements_byT_Tool[id] = s_element;
+				s_element_byToolType[id] = s_element;
 			}		
 		}
 	}
@@ -115,7 +115,7 @@
 
 	async function handle_mouse_data(s_mouse: S_Mouse, id: string) {
 		if (s_mouse.isHover) {
-			const s_element = s_elements_byT_Tool[id];
+			const s_element = s_element_byToolType[id];
 			const isOut = s_mouse.isOut;
 			isHovering_byID[id] = !isOut;
 			s_element.isOut = isOut;
@@ -216,7 +216,7 @@
 				{/if}
 				<Button
 					closure={(s_mouse) => handle_mouse_data(s_mouse, T_Tool.delete_confirm)}
-					s_element={s_elements_byT_Tool[T_Tool.delete_confirm]}
+					s_element={s_element_byToolType[T_Tool.delete_confirm]}
 					center={getC(T_Tool.delete_confirm)}
 					height={k.editingTools_diameter / 2}
 					width={k.editingTools_diameter}
@@ -238,7 +238,7 @@
 				</Button>
 				<Button
 					closure={(s_mouse) => handle_mouse_data(s_mouse, T_Tool.delete_cancel, )}
-					s_element={s_elements_byT_Tool[T_Tool.delete_cancel]}
+					s_element={s_element_byToolType[T_Tool.delete_cancel]}
 					height={k.editingTools_diameter / 2}
 					center={getC(T_Tool.delete_cancel)}
 					width={k.editingTools_diameter}
@@ -271,7 +271,7 @@
 			{:else}
 				<Button
 					closure={(s_mouse) => handle_mouse_data(s_mouse, T_Tool.more)}
-					s_element={s_elements_byT_Tool[T_Tool.more]}
+					s_element={s_element_byToolType[T_Tool.more]}
 					height={k.default_buttonSize}
 					zindex={T_Layer.tool_buttons}
 					center={getC(T_Tool.more)}
@@ -296,7 +296,7 @@
 					</svg>
 				</Button>
 				<Dot_Reveal
-					name={s_elements_byT_Tool[T_Tool.dismiss].name}
+					name={s_element_byToolType[T_Tool.dismiss].name}
 					ancestry={$w_ancestry_showing_tools}
 					center={getC(T_Tool.dismiss)}
 					zindex={T_Layer.tool_buttons}

@@ -1,8 +1,10 @@
 <script lang='ts'>
-	import { T_Graph, databases, Seriously_Range, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { w_hierarchy, w_t_graph, w_thing_color, w_thing_title, w_s_ancestry_edit } from '../../ts/state/S_Stores';
-	import { w_thing_fontFamily, w_ancestries_grabbed, w_ancestry_showing_tools } from '../../ts/state/S_Stores';
-	import { g, k, u, Point, Thing, debug, Angle, T_Layer, signals } from '../../ts/common/Global_Imports';
+	import { g, k, u, w, Rect, Point, Thing, debug, Angle, signals } from '../../ts/common/Global_Imports';
+	import { w_t_graph, w_hierarchy, w_s_title_edit, w_mouse_location } from '../../ts/state/S_Stores';
+	import { databases, Seriously_Range, Svelte_Wrapper } from '../../ts/common/Global_Imports';
+	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/state/S_Stores';
+	import { w_ancestries_grabbed, w_ancestry_showing_tools } from '../../ts/state/S_Stores';
+	import { T_Graph, T_Layer, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { onMount } from 'svelte';
 	export let points_right = true;
 	export let fontSize = '1em';
@@ -30,7 +32,7 @@
 	export const REACTIVES: unique symbol = Symbol('REACTIVES');
 	
 	$: {
-		const _ = $w_s_ancestry_edit;
+		const _ = $w_s_title_edit;
 		updateInputWidth();
 	}
 
@@ -47,7 +49,7 @@
 	}
 
 	$: {
-		const _ = $w_s_ancestry_edit;		// react to w_s_ancestry_edit
+		const _ = $w_s_title_edit;		// react to w_s_title_edit
 
 		//////////////////////////////////////////////////////
 		//													//
@@ -60,13 +62,13 @@
 			if (ancestry.isEditable) {
 				if (!!ancestry && (ancestry.isStoppingEdit ?? false)) {
 					debug.log_edit(`STOPPING ${bound_title}`);
-					$w_s_ancestry_edit = null;
+					$w_s_title_edit = null;
 					input?.blur();
 				} else if (isEditing != title_isEditing()) {
 					if (!isEditing) {
 						input?.focus();
 						debug.log_edit(`RANGE ${bound_title}`);
-						applyRange();
+						setSelectionRange_accordingTo_mouse_location();
 					} else {
 						debug.log_edit(`STOP ${bound_title}`);
 						input?.blur();
@@ -81,8 +83,8 @@
 	export const PRIMITIVES: unique symbol = Symbol('PRIMITIVES');
  
 	function title_isEditing(): boolean {
-		const s_ancestry_edit = $w_s_ancestry_edit;
-		return !!ancestry && !!s_ancestry_edit && s_ancestry_edit.editing && ancestry.ancestry_hasEqualID(s_ancestry_edit.editing);
+		const s_title_edit = $w_s_title_edit;
+		return !!ancestry && !!s_title_edit && s_title_edit.editing && ancestry.ancestry_hasEqualID(s_title_edit.editing);
 	}
 
 	function clearClicks() {
@@ -120,11 +122,22 @@
 		return canAlter;
 	}
 
+	function setSelectionRange_accordingTo_mouse_location() {
+		if (!!input) {
+			const location = $w_mouse_location;//.dividedBy(w.scale_factor);
+			if (Rect.rect_forElement_containsPoint(input, location)) {
+				const offset = u.convert_windowOffset_toCharacterOffset_in(location.x, input)
+				input.setSelectionRange(offset, offset);
+			}
+		}
+	}
+
 	function title_updatedTo(title: string | null) {
 		const prior = $w_thing_title;
 		if (prior != title) {
 			$w_thing_title = title;		// tell Info to update it's selection's title
 			debug.log_signals(`title_updatedTo ${title}`);
+			$w_s_title_edit.mutate();
 			// ancestry?.signal_relayoutWidgets_fromThis();
 		}
 	}
@@ -186,18 +199,23 @@
 	}
 
 	function handle_singleClick(event) {
-		if (!!ancestry && !ancestry.isEditing) {
-			event.preventDefault();
-			if (ancestry.isGrabbed) {
-				startEditMaybe();
+		if (!!ancestry) {
+			if (ancestry.isEditing) {
+				debug.log_edit(`CLICK ${ancestry.title}`);
+				setSelectionRange_accordingTo_mouse_location();
 			} else {
-				if (event.shiftKey) {
-					ancestry.grab();
+				event.preventDefault();
+				if (ancestry.isGrabbed) {
+					startEditMaybe();
 				} else {
-					ancestry.grabOnly();
+					if (event.shiftKey) {
+						ancestry.grab();
+					} else {
+						ancestry.grabOnly();
+					}
+					$w_s_title_edit = null;
+					signals.signal_relayoutWidgets_fromFocus();
 				}
-				$w_s_ancestry_edit = null;
-				signals.signal_relayoutWidgets_fromFocus();
 			}
 		}
 	}
@@ -232,12 +250,11 @@
 	}
 
 	function stopAndClearEditing() {
-		invokeBlurNotClearEditing();
-		if (!!ancestry && ancestry.isEditing) {				
+		if (invokeBlurNotClearEditing()) {				
 			setTimeout(() => {									// eliminate infinite recursion
-				const s_ancestry_edit = $w_s_ancestry_edit;
-				if (!!s_ancestry_edit) {
-					s_ancestry_edit.stop();
+				const s_title_edit = $w_s_title_edit;
+				if (!!s_title_edit) {
+					s_title_edit.stop();
 					signals.signal_relayoutWidgets_fromFocus();
 				}
 			}, 2);
@@ -245,7 +262,7 @@
 	}
 
 	function invokeBlurNotClearEditing() {
-		if (!!ancestry && ancestry.isEditing && thing()) {
+		if (!!ancestry && ancestry.isEditing && !ancestry.isMutating && !!thing()) {
 			isEditing = false;
 			extractRange();
 			input?.blur();
@@ -254,7 +271,9 @@
 				originalTitle = thing()?.title;		// so hasChanges will be correct
 				ancestry.signal_relayoutWidgets_fromThis();
 			}
+			return true;
 		}
+		return false;
 	}
 
 </script>

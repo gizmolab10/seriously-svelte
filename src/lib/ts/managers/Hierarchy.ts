@@ -1,6 +1,6 @@
 import { T_Tool, T_Info, T_Graph, T_Thing, T_Trait, T_Create, T_Control, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { g, k, p, u, show, User, Thing, Trait, debug, files, signals, Access, Ancestry } from '../common/Global_Imports';
-import { w_t_graph, w_id_popupView, w_ancestry_focus, w_s_ancestry_edit, w_s_alteration } from '../state/S_Stores';
+import { w_t_graph, w_id_popupView, w_ancestry_focus, w_s_title_edit, w_s_alteration } from '../state/S_Stores';
 import { w_storage_update_trigger, w_ancestry_showing_tools, w_ancestries_grabbed } from '../state/S_Stores';
 import { S_Mouse, Predicate, Relationship, S_Alteration } from '../common/Global_Imports';
 import type { Integer, Dictionary } from '../common/Types';
@@ -108,7 +108,7 @@ export class Hierarchy {
 							case k.space:	await this.ancestry_edit_persistentCreateChildOf(ancestryGrab); break;
 							case 'd':		await this.thing_edit_persistentDuplicate(ancestryGrab); break;
 							case '-':		if (!COMMAND) { await this.thing_edit_persistentAddLine(ancestryGrab); } break;
-							case 'tab':		await this.ancestry_edit_persistentCreateChildOf(ancestryGrab.parentAncestry); break; // S_Ancestry_Edit editor also makes this call
+							case 'tab':		await this.ancestry_edit_persistentCreateChildOf(ancestryGrab.parentAncestry); break; // S_Title_Edit editor also makes this call
 							case 'enter':	ancestryGrab.startEdit(); break;
 						}
 					}
@@ -1143,7 +1143,7 @@ export class Hierarchy {
 				}
 			}
 		}
-		w_s_ancestry_edit.set(null);
+		w_s_title_edit.set(null);
 		if (!!newGrabAncestry) {
 			newGrabAncestry.grabOnly();
 			if (!RIGHT && !!newFocusAncestry) {
@@ -1345,7 +1345,7 @@ export class Hierarchy {
 
 	restore_fromPersistLocal() {
 		w_ancestry_showing_tools.set(null);
-		w_s_ancestry_edit.set(null);
+		w_s_title_edit.set(null);
 		p.restore_focus();
 		p.restore_grabbed_andExpanded();
 		p.restore_paging();

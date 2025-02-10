@@ -3,8 +3,8 @@ import { g, k, u, show, Rect, Size, Thing, debug, signals, wrappers, svgPaths } 
 import { T_Graph, T_Element, T_Predicate, T_Alteration, T_SvelteComponent } from '../../common/Global_Imports';
 import { w_t_graph, w_hierarchy, w_ancestry_focus, w_ancestry_showing_tools } from '../../state/S_Stores';
 import { w_ancestries_grabbed, w_ancestries_expanded, } from '../../state/S_Stores';
-import { w_g_radial, w_s_alteration, w_s_ancestry_edit } from '../../state/S_Stores';
-import { G_Widget, S_Paging, S_Ancestry_Edit } from '../../common/Global_Imports';
+import { w_g_radial, w_s_alteration, w_s_title_edit } from '../../state/S_Stores';
+import { G_Widget, S_Paging, S_Title_Edit } from '../../common/Global_Imports';
 import type { Integer } from '../../common/Types';
 import Identifiable from './Identifiable';
 import { get, Writable } from 'svelte/store';
@@ -66,11 +66,12 @@ export default class Ancestry extends Identifiable {
 	get showsReveal():						 boolean { return this.showsReveal_forPointingToChild(true); }
 	get toolsGrabbed():						 boolean { return this.matchesStore(w_ancestry_showing_tools); }
 	get showsChildRelationships():			 boolean { return this.isExpanded && this.hasChildRelationships; }
+	get isEditing():						 boolean { return this.ancestry_hasEqualID(get(w_s_title_edit)?.editing); }
+	get isMutating():						 boolean { return this.ancestry_hasEqualID(get(w_s_title_edit)?.mutating); }
+	get isStoppingEdit():					 boolean { return this.ancestry_hasEqualID(get(w_s_title_edit)?.stopping); }
 	get isGrabbed():						 boolean { return this.includedInStore_ofAncestries(w_ancestries_grabbed); }
 	get isInvalid():						 boolean { return this.containsReciprocals || this.containsMixedPredicates; }
 	get hasRelationships():					 boolean { return this.hasParentRelationships || this.hasChildRelationships; }
-	get isEditing():						 boolean { return this.ancestry_hasEqualID(get(w_s_ancestry_edit)?.editing); }
-	get isStoppingEdit():					 boolean { return this.ancestry_hasEqualID(get(w_s_ancestry_edit)?.stopping); }
 	get isExpanded():						 boolean { return this.isRoot || this.includedInStore_ofAncestries(w_ancestries_expanded); }
 	get endID():						   	  string { return this.idAt(); }
 	get title():						   	  string { return this.thing?.title ?? 'missing title'; }
@@ -595,7 +596,7 @@ export default class Ancestry extends Identifiable {
 		if (this.predicate?.isBidirectional ?? false) {
 			this.thing?.oneAncestry?.handle_singleClick_onDragDot(shiftKey);
 		} else {
-			w_s_ancestry_edit?.set(null);
+			w_s_title_edit?.set(null);
 			if (!!get(w_s_alteration)) {
 				this.ancestry_alterMaybe(this);
 			} else if (!shiftKey && g.inRadialMode) {
@@ -724,9 +725,9 @@ export default class Ancestry extends Identifiable {
 
 	startEdit() {
 		if (this.isEditable) {
-			debug.log_edit(`EDIT ${this.title}`)
+			debug.log_edit(`START ${this.title}`);
 			this.grabOnly();
-			w_s_ancestry_edit.set(new S_Ancestry_Edit(this));
+			w_s_title_edit.set(new S_Title_Edit(this));
 		}
 	}
 

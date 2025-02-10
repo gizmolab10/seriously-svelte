@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { w_s_ancestry_edit, w_show_details, w_device_isMobile, } from '../../ts/state/S_Stores';
+	import { w_s_title_edit, w_show_details, w_device_isMobile, } from '../../ts/state/S_Stores';
 	import { g, k, u, ux, w, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
 	import { debug, T_Layer, Ancestry, T_Startup } from '../../ts/common/Global_Imports';
 	import { w_t_database, w_graph_rect, w_hierarchy } from '../../ts/state/S_Stores';
@@ -32,7 +32,7 @@
 			const key = event.key.toLowerCase();
 			if (key == undefined) {
 				alert('No key for ' + event.type);
-			} else if (!$w_s_ancestry_edit && !g.isEditing_text) {			// let title editor (when active) consume the events
+			} else if (!$w_s_title_edit && !g.isEditing_text) {			// let title editor (when active) consume the events
 				const h = $w_hierarchy;
 				switch (key) {
 					case 'o': h.select_file_toUpload(event.shiftKey); break;

@@ -14,8 +14,8 @@
 	const size_big = size_small + 4;
 	const lefts = [10, 55, 117];
 	const resize_viewBox = `0, 0, ${size_big}, ${size_big}`;
-	let s_elements_byT_Control: { [t_control: string]: S_Element } = {};
-	let elementShown_byT_Control: {[t_control: string]: boolean} = {};
+	let s_elements_byControlType: { [t_control: string]: S_Element } = {};
+	let elementShown_byControlType: {[t_control: string]: boolean} = {};
 	let width = w.windowSize.width - 20;
 	let displayName = k.empty;
 	let displayName_width = 0;
@@ -51,8 +51,8 @@
 			const s_element = ux.s_element_for(new Identifiable(t_control), T_Element.control, t_control);
 			s_element.set_forHovering(k.color_default, 'pointer');
 			s_element.hoverIgnore = (t_control == T_Control.details);
-			s_elements_byT_Control[t_control] = s_element;
-			elementShown_byT_Control[t_control] = total > 0;
+			s_elements_byControlType[t_control] = s_element;
+			elementShown_byControlType[t_control] = total > 0;
 		}
 	}
 
@@ -66,7 +66,7 @@
 
 	function mouse_closure_forControl_Type(s_mouse, t_control) {
 		if (s_mouse.isHover) {
-			s_elements_byT_Control[t_control].isOut = s_mouse.isOut;
+			s_elements_byControlType[t_control].isOut = s_mouse.isOut;
 		} else if (s_mouse.isUp) {
 			switch (t_control) {
 				case T_Control.help: g.showHelp(); break;
@@ -88,7 +88,7 @@
 
 </script>
 
-{#if Object.values(s_elements_byT_Control).length > 0}
+{#if Object.values(s_elements_byControlType).length > 0}
 	<div id='controls'
 		style='
 			top: 7px;
@@ -102,7 +102,7 @@
 				border_thickness=0
 				color='transparent'
 				center={new Point(lefts[0], details_top + 3)}
-				s_element={s_elements_byT_Control[T_Control.details]}
+				s_element={s_elements_byControlType[T_Control.details]}
 				closure={(s_mouse) => mouse_closure_forControl_Type(s_mouse, T_Control.details)}>
 				<img src='settings.svg' alt='circular button' width={size_small}px height={size_small}px/>
 			</Button>
@@ -135,13 +135,13 @@
 		{/if}
 		{#key $w_device_isMobile}
 			{#if $w_device_isMobile}
-				{#if elementShown_byT_Control[T_Control.smaller]}
+				{#if elementShown_byControlType[T_Control.smaller]}
 					<Button
 						width={size_big}
 						height={size_big}
 						name={T_Control.smaller}
 						center={new Point(width - 110, y_center)}
-						s_element={s_elements_byT_Control[T_Control.smaller]}
+						s_element={s_elements_byControlType[T_Control.smaller]}
 						closure={(s_mouse) => mouse_closure_forControl_Type(s_mouse, T_Control.smaller)}>
 						<svg
 							id='shrink-svg'>
@@ -153,13 +153,13 @@
 						</svg>
 					</Button>
 				{/if}
-				{#if elementShown_byT_Control[T_Control.bigger]}
+				{#if elementShown_byControlType[T_Control.bigger]}
 					<Button
 						width={size_big}
 						height={size_big}
 						name={T_Control.bigger}
 						center={new Point(width - 140, y_center)}
-						s_element={s_elements_byT_Control[T_Control.bigger]}
+						s_element={s_elements_byControlType[T_Control.bigger]}
 						closure={(s_mouse) => mouse_closure_forControl_Type(s_mouse, T_Control.bigger)}>
 						<svg
 							id='enlarge-svg'>
@@ -173,24 +173,24 @@
 				{/if}
 			{/if}
 		{/key}
-		{#if elementShown_byT_Control[T_Control.builds]}
+		{#if elementShown_byControlType[T_Control.builds]}
 			<Button name={T_Control.builds}
 				width=75
 				height={size_big}
 				center={new Point(width - 55, y_center)}
-				s_element={s_elements_byT_Control[T_Control.builds]}
+				s_element={s_elements_byControlType[T_Control.builds]}
 				closure={(s_mouse) => mouse_closure_forControl_Type(s_mouse, T_Control.builds)}>
 				<span style='font-family: {$w_thing_fontFamily};'>
 					{'build ' + k.build_number}
 				</span>
 			</Button>
 		{/if}
-		{#if elementShown_byT_Control[T_Control.help]}
+		{#if elementShown_byControlType[T_Control.help]}
 			<Button name={T_Control.help}
 				width={size_big}
 				height={size_big}
 				center={new Point(width, y_center)}
-				s_element={s_elements_byT_Control[T_Control.help]}
+				s_element={s_elements_byControlType[T_Control.help]}
 				closure={(s_mouse) => mouse_closure_forControl_Type(s_mouse, T_Control.help)}>
 				<span
 					style='top:2px;

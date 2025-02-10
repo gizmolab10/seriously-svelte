@@ -1,6 +1,6 @@
 import { Rect, Point, Ancestry, Hierarchy, G_Cluster, G_Radial } from '../common/Global_Imports';
 import { T_Graph, T_Hierarchy, T_Details, T_Startup } from '../common/Global_Imports';
-import { S_Paging, S_Ancestry_Edit, S_Alteration } from '../common/Global_Imports';
+import { S_Paging, S_Title_Edit, S_Alteration } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
 
 
@@ -10,7 +10,7 @@ export const w_ancestries_expanded	  = writable<Array<Ancestry>>();
 export const w_ancestry_showing_tools = writable<Ancestry | null>();
 export const w_ancestry_focus		  = writable<Ancestry>();
 
-export const w_s_ancestry_edit			  = writable<S_Ancestry_Edit | null>();
+export const w_s_title_edit			  = writable<S_Title_Edit | null>();
 export const w_s_alteration			  = writable<S_Alteration | null>();
 export const w_s_paging				  = writable<S_Paging>();
 

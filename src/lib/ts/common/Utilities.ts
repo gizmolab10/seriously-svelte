@@ -8,6 +8,7 @@ import { Point } from '../geometry/Geometry';
 import { T_Browser } from './Enumerations';
 import type { Dictionary } from './Types';
 import { transparentize } from 'color2k';
+import { w } from '../geometry/G_Window';
 import Angle from '../geometry/Angle';
 import { get } from 'svelte/store';
 import { k } from './Constants';
@@ -147,6 +148,54 @@ export class Utilities {
 		} while (index > 0)
 		return points;
 	}
+
+	convert_windowOffset_toCharacterOffset_in(offset: number, input: HTMLInputElement): number {
+		const rect = input.getBoundingClientRect();
+		const style = window.getComputedStyle(input);
+		const paddingLeft = parseFloat(style.paddingLeft) || 0;
+		const borderLeft = parseFloat(style.borderLeftWidth) || 0;
+		const contentLeft = rect.left + borderLeft + paddingLeft;
+		let relativeX = offset - contentLeft;
+		if (relativeX < 0) {
+			relativeX = 0;
+		}
+		const effectiveX = (relativeX + input.scrollLeft) / w.scale_factor;
+		// Create a canvas context for measuring text.
+		const canvas = document.createElement('canvas');
+		const context = canvas.getContext('2d');
+		if (!context) {
+			return 0;
+		}
+		context.font = style.font || `${style.fontSize} ${style.fontFamily}`;
+		const text = input.value;
+		if (text.length === 0) {
+			return 0;
+		}
+		// Use binary search to find the character index
+		// whose measured width is as close as possible to effectiveX.
+		let low = 0;
+		let high = text.length;
+		while (low < high) {
+			const mid = Math.floor((low + high) / 2);
+			const width = context.measureText(text.substring(0, mid)).width;
+			if (width < effectiveX) {
+				low = mid + 1;
+			} else {
+				high = mid;
+			}
+		}
+		// low is now the smallest index where the width is >= effectiveX.
+		// Optionally, check if the previous index was closer.
+		if (low > 0) {
+			const prevWidth = context.measureText(text.substring(0, low - 1)).width;
+			const currWidth = context.measureText(text.substring(0, low)).width;
+			if (Math.abs(effectiveX - prevWidth) < Math.abs(currWidth - effectiveX)) {
+				return low - 1;
+			}
+		}
+		return low;
+	}
+
 
 	get browserType(): T_Browser {
 		const userAgent: string = navigator.userAgent;
