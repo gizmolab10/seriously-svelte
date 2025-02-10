@@ -67,7 +67,7 @@ export default class Ancestry extends Identifiable {
 	get toolsGrabbed():						 boolean { return this.matchesStore(w_ancestry_showing_tools); }
 	get showsChildRelationships():			 boolean { return this.isExpanded && this.hasChildRelationships; }
 	get isEditing():						 boolean { return this.ancestry_hasEqualID(get(w_s_title_edit)?.editing); }
-	get isMutating():						 boolean { return this.ancestry_hasEqualID(get(w_s_title_edit)?.mutating); }
+	get isMutating():						 boolean { return true; }// this.ancestry_hasEqualID(get(w_s_title_edit)?.mutating); }
 	get isStoppingEdit():					 boolean { return this.ancestry_hasEqualID(get(w_s_title_edit)?.stopping); }
 	get isGrabbed():						 boolean { return this.includedInStore_ofAncestries(w_ancestries_grabbed); }
 	get isInvalid():						 boolean { return this.containsReciprocals || this.containsMixedPredicates; }

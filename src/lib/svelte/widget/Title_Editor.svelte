@@ -124,7 +124,7 @@
 
 	function setSelectionRange_accordingTo_mouse_location() {
 		if (!!input) {
-			const location = $w_mouse_location;//.dividedBy(w.scale_factor);
+			const location = $w_mouse_location;
 			if (Rect.rect_forElement_containsPoint(input, location)) {
 				const offset = u.convert_windowOffset_toCharacterOffset_in(location.x, input)
 				input.setSelectionRange(offset, offset);
