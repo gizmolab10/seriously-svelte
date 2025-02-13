@@ -19,8 +19,8 @@ export class Signals {
 
 	signal_altering(value: any = null) { this.signal(T_Signal.alterState, value); }
 	signal_rebuildGraph_fromFocus() { this.signal_rebuildGraph_from(get(w_ancestry_focus)); }
-	signal_relayoutWidgets_from(value: any = null) { this.signal(T_Signal.relayout, value); }
-	signal_relayoutWidgets_fromFocus() { this.signal_relayoutWidgets_from(get(w_ancestry_focus)); }
+	signal_relayoutAndRecreate_widgets_from(value: any = null) { this.signal(T_Signal.relayout, value); }
+	signal_relayoutAndRecreate_widgets_fromFocus() { this.signal_relayoutAndRecreate_widgets_from(get(w_ancestry_focus)); }
 
 	signal_rebuildGraph_from(value: any = null) {
 		w_rebuild_isInProgress.set(true);
@@ -49,7 +49,7 @@ export class Signals {
 		return this.handle_t_signal_atPriority(T_Signal.rebuild, priority, onSignal);
 	}
 
-	handle_relayoutWidgets(priority: number, onSignal: (value: any | null) => any ) {
+	handle_relayoutAndRecreate_widgets(priority: number, onSignal: (value: any | null) => any ) {
 		return this.handle_t_signal_atPriority(T_Signal.relayout, priority, onSignal);
 	}
 

@@ -22,7 +22,7 @@
 	let top = 0;
 	
 	onMount(() => {
-		const handler = signals.handle_relayoutWidgets(0, (ancestry) => {
+		const handler = signals.handle_relayoutAndRecreate_widgets(0, (ancestry) => {
 			if (!ancestry || (!!$w_ancestry_focus && $w_ancestry_focus == ancestry)) {
 				updateOrigins();
 			}

@@ -118,6 +118,7 @@ export enum T_Element {
 	control	= 'control',
 	storage	= 'storage',
 	reveal	= 'reveal',
+	title	= 'title',
 	widget	= 'widget',
 	crumb	= 'crumb',
 	focus	= 'focus',

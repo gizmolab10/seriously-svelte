@@ -207,7 +207,7 @@ export class Preferences {
 		}
 		ancestryToFocus.becomeFocus(true);
 		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
-			this.writeDB_key(T_Preference.focus, !ancestry ? null : ancestry.id);
+			this.writeDB_key(T_Preference.focus, !ancestry ? null : ancestry.pathString);
 		});
 	}
 

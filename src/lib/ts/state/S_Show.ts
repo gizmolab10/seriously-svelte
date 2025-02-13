@@ -49,7 +49,7 @@ export class S_Show {
 		w_show_details.subscribe((flag: boolean) => {
 			p.write_key(T_Preference.show_details, flag);
 			w.restore_state();
-			signals.signal_relayoutWidgets_fromFocus();
+			signals.signal_relayoutAndRecreate_widgets_fromFocus();
 		});
     }
 

@@ -87,8 +87,7 @@
 			font-family: {$w_thing_fontFamily};
 			border-radius: {k.row_height / 2}px;
 		'/>
-	<div
-	style='
+	<div style='
 		top: -8px;
 		color: gray;
 		font-size: 0.9em;

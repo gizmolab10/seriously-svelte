@@ -157,7 +157,7 @@
 					rotation_state.active_angle = mouse_angle;
 					detect_hovering();
 					cursor = g.s_ring_rotation.cursor;
-					signals.signal_relayoutWidgets_fromFocus();					// destroys this component (properties are in w_w_ring_rotation)
+					signals.signal_relayoutAndRecreate_widgets_fromFocus();					// destroys this component (properties are in w_w_ring_rotation)
 					rebuilds += 1;
 				}
 			} else if (!!$w_g_active_cluster) {

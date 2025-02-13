@@ -1,20 +1,58 @@
-import Ancestry from '../data/runtime/Ancestry';
+import { Thing, Ancestry, Seriously_Range } from '../common/Global_Imports';
+
+export enum T_Edit {
+	percolating	= 'percolating',
+	stopping	= 'stopping',
+	editing		= 'editing',
+	done		= 'done',
+}
 
 export default class S_Title_Edit {
-	stopping: string | null = null;
-	mutating: string | null = null;
-	editing!: string;		
+	t_edit = T_Edit.editing;
+	ancestry: Ancestry;
 	
-	// single source of truth
-	// ancestry uses this class:
-	// created by ancestry.startEdit()
-	// both of the following get-vars reference this object
-	// {isStoppingEdit, isEditing}
-	// title editor calls blur if isStoppingEdit is true
+	constructor(ancestry: Ancestry) { this.ancestry = ancestry; }
+	get thing(): Thing | null { return this.ancestry.thing; }
+	
+	// thing is source of truth for selection range
+	// why? it initially uses title width
 
-	constructor(editing: Ancestry) { this.editing = editing.id; }
-	mutate(start: boolean = true) { this.mutating = start ? this.editing : null; }
-	stop(stop: boolean = true) { this.stopping = (stop ? this.editing : null); this.mutate(false); }
-	get isStopping(): boolean { return !!this.editing && !!this.stopping && this.editing == this.stopping; }
+	get thing_selectionRange(): Seriously_Range | undefined {
+		return this.thing?.selectionRange;
+	}
+
+	thing_setSelectionRange_fromOffset(offset: number) {
+		this.thing_setSelectionRange(new Seriously_Range(offset, offset));
+	}
+
+	thing_setSelectionRange(range: Seriously_Range) {
+		if (!!this.thing) {
+			this.thing.selectionRange = range;
+		}
+	}
+	
+	// ///////////////////////////////////////////
+	//											//
+	// single source of truth for editing state //
+	//											//
+	// ///////////////////////////////////////////
+
+	// created by ancestry start edit
+	// widget reacts to changes too it
+	// title editor calls blur if isEditStopping is true
+	// ancestry props that reference this object: {isEditing, isEditStopping, isEditPercolating}
+
+	isAncestry_inState(ancestry: Ancestry | null, t_edit: string) {
+		return (!ancestry || (this.ancestry.pathString != ancestry.pathString)) ? false : (this.t_edit == t_edit);
+	}
+
+	setState_temporarily_whileApplying(t_edit: T_Edit, apply: () => void) {
+		const saved = this.t_edit;
+		this.t_edit = t_edit;
+		apply();
+		setTimeout(() => {
+			this.t_edit = saved;
+		}, 1);
+	}
 
 }

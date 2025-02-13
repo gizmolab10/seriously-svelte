@@ -3,7 +3,7 @@
 	import { g, k, ux, w, Size, Point, debug, T_Tool, T_Layer, } from '../../ts/common/Global_Imports';
 	import { svgPaths, T_Element, G_Radial } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import Title_Editor from '../widget/Title_Editor.svelte';
+	import W_Title_Editor from '../widget/W_Title_Editor.svelte';
 	const s_element = ux.s_element_for($w_ancestry_focus, T_Element.focus, T_Tool.none);
 	const height = k.row_height + 10;
 	let centerOffset = Point.zero;
@@ -67,7 +67,7 @@
 		style='
 			top:3px;
 			position: absolute;'>
-		<Title_Editor
+		<W_Title_Editor
 			ancestry={$w_ancestry_focus}
 			fontSize={k.font_size}px/>
 	</div>

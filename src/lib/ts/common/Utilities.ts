@@ -14,11 +14,12 @@ import { get } from 'svelte/store';
 import { k } from './Constants';
 
 export class Utilities {
-	ignore(event: Event) {}
+	ignore(event: Event)												 {}
+	onNextCycle_apply(closure: () => {})								 { setTimeout(() => { closure(); }, 0); }
 	location_ofMouseEvent(event: MouseEvent):					   Point { return new Point(event.clientX, event.clientY); }
 	getWidthOf(s: string):										  number { return this.getWidth_ofString_withSize(s, `${k.font_size}px`); }
 	opacitize(color: string, amount: number):					  string { return transparentize(color, 1 - amount); }
-	quadrant_ofAngle(angle: number):							T_Quadrant { return new Angle(angle).quadrant_ofAngle; }
+	quadrant_ofAngle(angle: number):						  T_Quadrant { return new Angle(angle).quadrant_ofAngle; }
 	concatenateArrays(a: Array<any>, b: Array<any>):		  Array<any> { return [...a, ...b]; }
 	strip_falsies(array: Array<any>):						  Array<any> { return array.filter(a => !!a); }
 	subtract_arrayFrom(a: Array<any>, b: Array<any>):		  Array<any> { return b.filter(c => a.filter(d => c != d)); }

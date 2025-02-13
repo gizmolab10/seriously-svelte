@@ -3,9 +3,9 @@
 	import { T_Layer, T_Graph, T_Signal, T_Element, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_thing_color, w_t_graph } from '../../ts/state/S_Stores';
 	import { w_thing_fontFamily, w_ancestries_grabbed } from '../../ts/state/S_Stores';
-	import Title_Editor from './Title_Editor.svelte';
-	import Dot_Reveal from './Dot_Reveal.svelte';
-	import Dot_Drag from './Dot_Drag.svelte';
+	import W_Title_Editor from './W_Title_Editor.svelte';
+	import W_Dot_Reveal from './W_Dot_Reveal.svelte';
+	import W_Dot_Drag from './W_Dot_Drag.svelte';
 	import { onMount } from 'svelte';
 	export let origin = new Point(160, 5);
 	export let points_toChild = true;
@@ -14,6 +14,7 @@
     export let ancestry;
 	const priorRowHeight = k.row_height;
 	const s_drag = ux.s_element_for(ancestry, T_Element.drag, k.empty);
+	const s_title = ux.s_element_for(ancestry, T_Element.title, k.empty);
 	const s_reveal = ux.s_element_for(ancestry, T_Element.reveal, k.empty);
 	let s_widget = ux.s_element_forName(name);		// survives onDestroy, created by G_Widget
 	let widgetWrapper!: Svelte_Wrapper;
@@ -180,19 +181,20 @@
 				border: {s_widget.border};
 				background-color: {isGrabbed || g.inRadialMode ? k.color_background : 'transparent'};
 			'>
-			<Dot_Drag
+			<W_Dot_Drag
 				name={s_drag.name}
 				ancestry={ancestry}
 				center={dragCenter}
 				points_right={points_right}
 			/>
-			<Title_Editor
+			<W_Title_Editor
+				name={s_title.name}
 				ancestry={ancestry}
 				fontSize={k.font_size}px
 				points_right={points_right}
 			/>
 			{#if ancestry?.showsReveal_forPointingToChild(points_toChild)}
-				<Dot_Reveal
+				<W_Dot_Reveal
 					ancestry={ancestry}
 					name={s_reveal.name}
 					center={revealCenter}

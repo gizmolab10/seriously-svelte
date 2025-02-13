@@ -8,7 +8,7 @@
 	import Transparent_Circle from '../kit/Transparent_Circle.svelte';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Triangle_Button from '../mouse/Triangle_Button.svelte';
-	import Dot_Reveal from '../widget/Dot_Reveal.svelte';
+	import W_Dot_Reveal from '../widget/W_Dot_Reveal.svelte';
 	import Button from '../mouse/Button.svelte';
 	import Trash from '../kit/Trash.svelte';
 	import { onMount } from 'svelte';
@@ -40,7 +40,7 @@
 	setTimeout(() => { layout_tools_forceRedraw(); }, 20);
 
 	onMount(() => {
-		const handler = signals.handle_relayoutWidgets(2, (ancestry) => {	// priority of 2 assures layout is finished
+		const handler = signals.handle_relayoutAndRecreate_widgets(2, (ancestry) => {	// priority of 2 assures layout is finished
 			layout_tools_forceRedraw(true);
 		});
 		return () => { handler.disconnect() };
@@ -295,7 +295,7 @@
 						<path class='ellipses-path' d={svgPaths.ellipses(7, 1)}/>
 					</svg>
 				</Button>
-				<Dot_Reveal
+				<W_Dot_Reveal
 					name={s_element_byToolType[T_Tool.dismiss].name}
 					ancestry={$w_ancestry_showing_tools}
 					center={getC(T_Tool.dismiss)}

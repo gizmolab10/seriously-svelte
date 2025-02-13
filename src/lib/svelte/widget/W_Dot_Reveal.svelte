@@ -80,7 +80,7 @@
 			if (ancestry.toolsGrabbed) {
 				$w_s_alteration = null;
 				$w_ancestry_showing_tools = null;
-				signals.signal_relayoutWidgets_fromFocus();
+				signals.signal_relayoutAndRecreate_widgets_fromFocus();
 			} else if (ancestry.hasChildRelationships || ancestry.thing.isBulkAlias) {
 				const RIGHT = ancestry.thing_isChild != ancestry.isExpanded || $w_t_graph == T_Graph.radial;
 				$w_hierarchy.ancestry_rebuild_persistentMoveRight(ancestry, RIGHT, false, false, false, true);
