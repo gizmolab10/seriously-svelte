@@ -13,7 +13,7 @@
     export let name = k.empty;
 	export let ancestry;
 	const padding = `0.5px 0px 0px 0px`;
-	const titleOrigin = new Point(10, 0);
+	const titleOrigin = new Point(19, 0);
 	const s_editor = ux.s_element_forName(name);
 	let bound_title = thing()?.title ?? k.empty;
 	let color = thing()?.color ?? k.empty;
@@ -42,7 +42,7 @@
 	if (!!thing()) {
 		const showingReveal = ancestry?.showsReveal ?? false;
 		titleWidth = thing().titleWidth + (showingReveal ? 6 : 1) + 15;
-		titleLeft = g.inRadialMode ? ancestry.isFocus ? 5 : (points_right ? 12 : (showingReveal ? 9.5 : 0)) : 9;
+		titleLeft = g.inRadialMode ? ancestry.isFocus ? -4 : (points_right ? 1 : (showingReveal ? 1 : -11)) : 1;
 	}
 
 	onMount(() => {
@@ -102,7 +102,7 @@
 
 	function updateInputWidth() {
 		if (!!input && !!ghost) { // ghost only exists to provide its width (in pixels)
-			titleWidth = ghost.scrollWidth + 5;
+			titleWidth = ghost.scrollWidth;
 			input.style.width = `${titleWidth}px`;	// apply its width to the input element
 		}
 	}
@@ -298,10 +298,10 @@
 
 {#key originalTitle}
 	<Mouse_Responder
-		width={titleWidth}
-		height={k.dot_size}
 		origin={titleOrigin}
 		name={s_editor.name}
+		height={k.row_height}
+		width={titleWidth - 22}
 		handle_mouse_state={handle_up_hover}>
 		<span class="ghost" bind:this={ghost}
 			style='
@@ -329,7 +329,7 @@
 			on:keydown={handle_key_down}
 			on:mouseover={(event) => { event.preventDefault(); }}
 			style='
-				top: 0.3px;
+				top: 0.5px;
 				border: none;
 				{cursorStyle};
 				outline: none;
