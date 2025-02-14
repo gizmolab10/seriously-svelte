@@ -12,11 +12,11 @@
 	export let fontSize = '1em';
     export let name = k.empty;
 	export let ancestry;
-	const s_element = ux.s_element_forName(name);
-	let titleCenter = new Point(0, k.dot_size / 2);
+	const padding = `0.5px 0px 0px 0px`;
+	const titleOrigin = new Point(10, 0);
+	const s_editor = ux.s_element_forName(name);
 	let bound_title = thing()?.title ?? k.empty;
 	let color = thing()?.color ?? k.empty;
-	let padding = `0.5px 0px 0px 0px`;
 	let titleWrapper: Svelte_Wrapper;
 	let originalTitle = k.empty;
 	let cursorStyle = k.empty;
@@ -39,13 +39,13 @@
 	function ancestry_isEditStopping():	   boolean { return get(w_s_title_edit)?.isAncestry_inState(ancestry, T_Edit.stopping) ?? false; }
 	function ancestry_isEditPercolating(): boolean { return get(w_s_title_edit)?.isAncestry_inState(ancestry, T_Edit.percolating) ?? false; }
 
+	if (!!thing()) {
+		const showingReveal = ancestry?.showsReveal ?? false;
+		titleWidth = thing().titleWidth + (showingReveal ? 6 : 1) + 15;
+		titleLeft = g.inRadialMode ? ancestry.isFocus ? 5 : (points_right ? 12 : (showingReveal ? 9.5 : 0)) : 9;
+	}
 
 	onMount(() => {
-		if (!!thing()) {
-			const showingReveal = ancestry?.showsReveal ?? false;
-			titleWidth = thing().titleWidth + (showingReveal ? 6 : 1) + 15;
-			titleLeft = g.inRadialMode ? ancestry.isFocus ? 5 : (points_right ? 21 : (showingReveal ? 18.5 : 10)) : 19;
-		}
 		const handler = signals.handle_anySignal_atPriority(0, (t_signal, ancestry) => { updateInputWidth(); });
 		setTimeout(() => { updateInputWidth(); }, 100);
 		return () => { handler.disconnect() };
@@ -60,7 +60,7 @@
 
 	$: {
 		if (!!input && !titleWrapper) {
-			titleWrapper = new Svelte_Wrapper(input, handle_mouse_state, ancestry.hid, T_SvelteComponent.title);
+			titleWrapper = new Svelte_Wrapper(input, handle_forWrapper, ancestry.hid, T_SvelteComponent.title);
 		}
 	}
 
@@ -157,11 +157,17 @@
 
 	export const HANDLERS: unique symbol = Symbol('HANDLERS');
 
-	function handle_mouse_state(s_mouse: S_Mouse): boolean { return false; }
-	
-	function handle_cut_paste(event) {
-		extractRange();
-		ancestry?.signal_relayoutAndRecreate_widgets_fromThis();
+	function handle_forWrapper(s_mouse: S_Mouse): boolean { return false; }
+
+	function handle_focus(event) {
+		event.preventDefault();
+		debug.log_edit(`FOCUS ${ancestry.title}`);
+	}
+
+	function handle_up_hover(s_mouse: S_Mouse) {
+		if (!s_mouse.isEmpty) {
+			debug.log_edit(`HOVER ${s_mouse.description}`);
+		}
 	}
 
 	function handle_blur(event) {
@@ -170,6 +176,11 @@
 			debug.log_edit(`BLUR ${bound_title}`);
 			updateInputWidth();
 		}
+	}
+	
+	function handle_cut_paste(event) {
+		extractRange();
+		ancestry?.signal_relayoutAndRecreate_widgets_fromThis();
 	}
 
 	function handle_doubleClick(event) {
@@ -201,11 +212,6 @@
 				default:	  title_updatedTo(thing().title); break;
 			}
 		}
-	}
-
-	function handle_focus(event) {
-		event.preventDefault();
-		debug.log_edit(`FOCUS ${ancestry.title}`);
 	}
 
 	function handle_singleClick(event) {
@@ -282,8 +288,6 @@
 		return false;
 	}
 
-	function handle_up_hover(s_mouse) {}
-
 </script>
 
 <style lang='scss'>
@@ -296,9 +300,9 @@
 	<Mouse_Responder
 		width={titleWidth}
 		height={k.dot_size}
-		center={titleCenter}
-		name={s_element.name}
-		mouse_closure={handle_up_hover}>
+		origin={titleOrigin}
+		name={s_editor.name}
+		handle_mouse_state={handle_up_hover}>
 		<span class="ghost" bind:this={ghost}
 			style='
 				left:-9999px;
@@ -323,6 +327,7 @@
 			on:cut={handle_cut_paste}
 			on:paste={handle_cut_paste}
 			on:keydown={handle_key_down}
+			on:mouseover={(event) => { event.preventDefault(); }}
 			style='
 				top: 0.3px;
 				border: none;

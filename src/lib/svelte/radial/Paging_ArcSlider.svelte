@@ -32,7 +32,7 @@
 
 	$: {
 		if (!!arc) {
-			arc_wrapper = new Svelte_Wrapper(arc, isHit_closure, -1, T_SvelteComponent.thumb);
+			arc_wrapper = new Svelte_Wrapper(arc, handle_isHit, -1, T_SvelteComponent.thumb);
 		}
 	}
 
@@ -62,7 +62,7 @@
 		}
 	}
 
-	function isHit_closure(s_mouse: S_Mouse): boolean {
+	function handle_isHit(s_mouse: S_Mouse): boolean {
 		return g_cluster.thumb_isHit;
 	}
 
@@ -75,12 +75,12 @@
 				<Mouse_Responder
 					width={radius * 2}
 					height={radius * 2}
-					zindex={T_Layer.backmost}
 					name={g_cluster.name}
+					zindex={T_Layer.backmost}
 					cursor={k.cursor_default}
+					handle_isHit={handle_isHit}
 					center={w.center_ofGraphSize}
-					isHit_closure={isHit_closure}
-					mouse_closure={hover_closure}>
+					handle_mouse_state={hover_closure}>
 					<svg id='arc' viewBox={viewBox}>
 						<path id='arc' stroke={arc_color} fill=transparent d={g_cluster.g_arcSlider.svgPathFor_arcSlider}/>
 						<path id='fork' stroke={fork_color} fill=transparent d={g_cluster.g_arcSlider.svgPathFor_forkRadial}/>

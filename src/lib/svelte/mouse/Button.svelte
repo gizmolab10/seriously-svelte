@@ -78,7 +78,7 @@
 	height={height}
 	zindex={zindex}
 	center={center}
-	mouse_closure={button_closure}>
+	handle_mouse_state={button_closure}>
 	<button class='button' id={'button-for-' + name} style={currentStyle}>
 		<slot></slot>
 	</button>

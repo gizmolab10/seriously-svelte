@@ -64,7 +64,7 @@
 		}
 	}
 
-	function mouse_closure_forControl_Type(s_mouse, t_control) {
+	function handle_mouse_state_forControl_Type(s_mouse, t_control) {
 		if (s_mouse.isHover) {
 			s_elements_byControlType[t_control].isOut = s_mouse.isOut;
 		} else if (s_mouse.isUp) {
@@ -103,7 +103,7 @@
 				color='transparent'
 				center={new Point(lefts[0], details_top + 3)}
 				s_element={s_elements_byControlType[T_Control.details]}
-				closure={(s_mouse) => mouse_closure_forControl_Type(s_mouse, T_Control.details)}>
+				closure={(s_mouse) => handle_mouse_state_forControl_Type(s_mouse, T_Control.details)}>
 				<img src='settings.svg' alt='circular button' width={size_small}px height={size_small}px/>
 			</Button>
 			{#key $w_t_graph}
@@ -142,7 +142,7 @@
 						name={T_Control.smaller}
 						center={new Point(width - 110, y_center)}
 						s_element={s_elements_byControlType[T_Control.smaller]}
-						closure={(s_mouse) => mouse_closure_forControl_Type(s_mouse, T_Control.smaller)}>
+						closure={(s_mouse) => handle_mouse_state_forControl_Type(s_mouse, T_Control.smaller)}>
 						<svg
 							id='shrink-svg'>
 							<path
@@ -160,7 +160,7 @@
 						name={T_Control.bigger}
 						center={new Point(width - 140, y_center)}
 						s_element={s_elements_byControlType[T_Control.bigger]}
-						closure={(s_mouse) => mouse_closure_forControl_Type(s_mouse, T_Control.bigger)}>
+						closure={(s_mouse) => handle_mouse_state_forControl_Type(s_mouse, T_Control.bigger)}>
 						<svg
 							id='enlarge-svg'>
 							<path
@@ -179,7 +179,7 @@
 				height={size_big}
 				center={new Point(width - 55, y_center)}
 				s_element={s_elements_byControlType[T_Control.builds]}
-				closure={(s_mouse) => mouse_closure_forControl_Type(s_mouse, T_Control.builds)}>
+				closure={(s_mouse) => handle_mouse_state_forControl_Type(s_mouse, T_Control.builds)}>
 				<span style='font-family: {$w_thing_fontFamily};'>
 					{'build ' + k.build_number}
 				</span>
@@ -191,7 +191,7 @@
 				height={size_big}
 				center={new Point(width, y_center)}
 				s_element={s_elements_byControlType[T_Control.help]}
-				closure={(s_mouse) => mouse_closure_forControl_Type(s_mouse, T_Control.help)}>
+				closure={(s_mouse) => handle_mouse_state_forControl_Type(s_mouse, T_Control.help)}>
 				<span
 					style='top:2px;
 						left:5.5px;

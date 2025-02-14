@@ -1,6 +1,6 @@
 export class Builds {
 	notes: { [id: number]: Array<string> } = {
-		129 : ['February 13, 2025', 'title editor currently complete broken'],
+		129 : ['February 13, 2025', 'title editor temporarily broken'],
 		128 : ['January 29, 2025', 'display details, finish logic for controlling tiny dots'],
 		127 : ['January 21, 2025', 'fixed translation of thing ids during import'],
 		126 : ['December 29, 2024', 'rename rings as radial'],

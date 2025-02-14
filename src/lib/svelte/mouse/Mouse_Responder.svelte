@@ -4,8 +4,8 @@
 	import { w_mouse_location, w_thing_fontFamily } from '../../ts/state/S_Stores';
 	import type { Handle_Result } from '../../ts/common/Types';
 	import { onMount } from 'svelte';
-	export let isHit_closure: () => {flag: boolean} | null = null;
-	export let mouse_closure = Handle_Result<S_Mouse>;
+	export let handle_isHit: () => {flag: boolean} | null = null;
+	export let handle_mouse_state = Handle_Result<S_Mouse>;
 	export let height = k.default_buttonSize;
 	export let width = k.default_buttonSize;
 	export let origin: Point | null = null;
@@ -24,7 +24,7 @@
 	const mouse_timer = ux.mouse_timer_forName(name);	// persist across destroy/recreate
 	const mouse_responder_number = g.next_mouse_responder_number;
 	let mouse_isDown = false;
-	let mouse_button_div;
+	let responding_element;
 	let style = k.empty;
 
 	//////////////////////////////////////////////////////////////
@@ -33,19 +33,19 @@
 	//	requires: center or origin (one must remain null),		//
 	//		 width, height, closure & name						//
 	//															//
-	//	isHit_closure: caller can override hit geometry & logic	//
-	//	mouse_closure: give caller relevant mouse info	//
+	//	handle_isHit: caller can override hit geometry & logic	//
+	//	handle_mouse_state: mouse info relevant to caller		//
 	//															//
 	//////////////////////////////////////////////////////////////
 
 	onMount(() => {
 		setupStyle();
-		if (!!mouse_button_div) {
-			mouse_button_div.addEventListener('pointerup', handle_pointerUp);
-			mouse_button_div.addEventListener('pointerdown', handle_pointerDown);
+		if (!!responding_element) {
+			responding_element.addEventListener('pointerup', handle_pointerUp);
+			responding_element.addEventListener('pointerdown', handle_pointerDown);
 			return () => {
-				mouse_button_div.removeEventListener('pointerup', handle_pointerUp);
-				mouse_button_div.removeEventListener('pointerdown', handle_pointerDown);
+				responding_element.removeEventListener('pointerup', handle_pointerUp);
+				responding_element.removeEventListener('pointerdown', handle_pointerDown);
 			}
 		}
 	});
@@ -57,19 +57,19 @@
 	
 	$: {	// hover
 		const mouse_location = $w_mouse_location;
-		if (!!mouse_button_div && !!mouse_location) {
+		if (!!responding_element && !!mouse_location) {
 			let isHit = false;
-			if (!isHit_closure) {				// is mouse inside this element's bounding rect
-				isHit = Rect.rect_forElement_containsPoint(mouse_button_div, mouse_location);
-			} else {							// if this element's hover shape is not its bounding rect
-				isHit = isHit_closure();		// use hover shape
+			if (!!handle_isHit) {
+				isHit = handle_isHit();				// used when this element's hover shape is not its bounding rect
+			} else {					
+				isHit = Rect.rect_forElement_containsPoint(responding_element, mouse_location);		// use bounding rect
 			}
-			if (s_mouse.isHover != isHit) {
-				s_mouse.isHover = isHit;
-				s_mouse.isOut = !isHit;		// TODO: called far too often
-				mouse_closure(S_Mouse.hover(null, mouse_button_div, isHit));	// pass a null event
+			if (s_mouse.isHover == isHit) {
+				handle_mouse_state(S_Mouse.move(null, responding_element, mouse_isDown, isHit));		// pass a null event
 			} else {
-				mouse_closure(S_Mouse.move(null, mouse_button_div, mouse_isDown, isHit));	// pass a null event
+				s_mouse.isHover =  isHit;
+				s_mouse.isOut   = !isHit;												// TODO: called far too often
+				handle_mouse_state(S_Mouse.hover(null, responding_element, isHit));					// pass a null event
 			}
 		}
 	}
@@ -82,7 +82,7 @@
 	function create_state(isDown: boolean, isDouble: boolean = false, isLong: boolean = false): S_Mouse {
 		const state = u.copyObject(s_mouse);
 		state.isUp = !isDown && !isDouble && !isLong;
-		state.element = mouse_button_div;
+		state.element = responding_element;
 		state.isDouble = isDouble;
 		state.isLong = isLong;
 		state.isHover = false;
@@ -95,21 +95,21 @@
 	function handle_pointerUp(event) {
 		if (detect_mouseUp) {
 			reset();
-			mouse_closure(S_Mouse.up(event, mouse_button_div));
+			handle_mouse_state(S_Mouse.up(event, responding_element));
 			debug.log_action(` up ${mouse_responder_number} RESPONDER`);
 		}
 	}
 	
 	function handle_pointerDown(event) {
 		if (detect_mouseDown && s_mouse.clicks == 0) {
-			mouse_closure(create_state(true));
+			handle_mouse_state(create_state(true));
 		}
 		s_mouse.clicks += 1;
 		if (detect_doubleClick) {
 			mouse_timer.setTimeout(T_Timer.double, () => {
 				if (mouse_timer.hasTimer && s_mouse.clicks == 2) {
 					reset();
-					mouse_closure(create_state(false, true, false));
+					handle_mouse_state(create_state(false, true, false));
 				}
 			});
 		}
@@ -117,7 +117,7 @@
 			mouse_timer.setTimeout(T_Timer.long, () => {
 				if (mouse_timer.hasTimer) {
 					reset();
-					mouse_closure(create_state(false, false, true));
+					handle_mouse_state(create_state(false, false, true));
 					debug.log_action(` long ${mouse_responder_number} RESPONDER`);
 				}
 			});
@@ -147,7 +147,7 @@
 </script>
 
 <div class='mouse-responder' id={name}
-	bind:this={mouse_button_div}
+	bind:this={responding_element}
 	style={style}>
 	<slot></slot>
 </div>

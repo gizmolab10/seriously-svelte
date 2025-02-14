@@ -5,6 +5,7 @@
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import W_Title_Editor from '../widget/W_Title_Editor.svelte';
 	const s_element = ux.s_element_for($w_ancestry_focus, T_Element.focus, T_Tool.none);
+	const s_title = ux.s_element_for($w_ancestry_focus, T_Element.title, k.empty);
 	const height = k.row_height + 10;
 	let centerOffset = Point.zero;
 	let focus_origin = Point.zero;
@@ -43,8 +44,8 @@
 			name='radial-focus-border'
 			zindex={T_Layer.backmost}
 			cursor={k.cursor_default}
-			isHit_closure={() => false}
-			mouse_closure={debug_closure}
+			handle_isHit={() => false}
+			handle_mouse_state={debug_closure}
 			center={centerOffset.offsetByX(-13)}>
 			{#key color}
 				<svg
@@ -66,9 +67,11 @@
 	<div class='radial-focus-title'
 		style='
 			top:3px;
+			left:-11px;
 			position: absolute;'>
 		<W_Title_Editor
 			ancestry={$w_ancestry_focus}
-			fontSize={k.font_size}px/>
+			fontSize={k.font_size}px
+			name={s_title.name}/>
 	</div>
 </div>

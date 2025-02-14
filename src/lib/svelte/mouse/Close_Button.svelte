@@ -26,7 +26,7 @@
 	height={size}
 	align_left={false}
 	origin={new Point(8, size / 2)}
-	mouse_closure={hover_up_closure}>
+	handle_mouse_state={hover_up_closure}>
     <SVGD3 name='close'
 		fill={fill}
 		width={size}

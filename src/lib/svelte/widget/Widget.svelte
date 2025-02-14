@@ -13,10 +13,10 @@
     export let name = k.empty;
     export let ancestry;
 	const priorRowHeight = k.row_height;
+	const s_widget = ux.s_element_forName(name);	// created by G_Widget
 	const s_drag = ux.s_element_for(ancestry, T_Element.drag, k.empty);
 	const s_title = ux.s_element_for(ancestry, T_Element.title, k.empty);
 	const s_reveal = ux.s_element_for(ancestry, T_Element.reveal, k.empty);
-	let s_widget = ux.s_element_forName(name);		// survives onDestroy, created by G_Widget
 	let widgetWrapper!: Svelte_Wrapper;
 	let revealCenter = Point.zero;
 	let dragCenter = Point.zero;

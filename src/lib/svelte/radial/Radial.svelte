@@ -32,7 +32,7 @@
 	debug.log_build(` (svelte)`);
 	$w_g_radial.layout_allClusters();
 	function handle_mouse_state(s_mouse: S_Mouse): boolean { return true; }				// only for wrappers
-	function isHit(): boolean { return w.mouse_distance_fromGraphCenter <= outer_radius; }
+	function handle_isHit(): boolean { return w.mouse_distance_fromGraphCenter <= outer_radius; }
 
 	$: {
 		if (!!$w_ancestry_focus.thing && $w_ancestry_focus.thing.id == $w_thing_color?.split(k.generic_separator)[0]) {
@@ -247,11 +247,11 @@
 				name='rings'
 				zindex={zindex}
 				cursor={cursor}
-				isHit_closure={isHit}
 				width={outer_diameter}
 				height={outer_diameter}
 				center={w.center_ofGraphSize}
-				mouse_closure={down_up_closure}>
+				handle_isHit={handle_isHit}
+				handle_mouse_state={down_up_closure}>
 				<svg
 					class='rings-svg'
 					viewBox={viewBox}>

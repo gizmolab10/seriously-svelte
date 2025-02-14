@@ -138,7 +138,7 @@
 			center={center}
 			detect_longClick={true}
 			name={s_element.name}
-			mouse_closure={up_long_hover_clusure}>
+			handle_mouse_state={up_long_hover_clusure}>
 			<button class='drag'
 				bind:this={dotDrag}
 				id={'drag-for-' + name}

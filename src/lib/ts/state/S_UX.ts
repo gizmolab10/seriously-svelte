@@ -34,7 +34,7 @@ export default class S_UX {
 	get isAny_paging_arc_hovering(): boolean { return this.rotation_states.filter(s => s.isHovering).length > 0; }
 
 	name_from(identifiable: Identifiable, type: T_Element, subtype: string): string {
-		return `${type}-${subtype}-id:${identifiable.id}`;
+		return `${type}(${subtype}) (id '${identifiable.id}')`;
 	}
 
 	s_mouse_forName(name: string): S_Mouse {

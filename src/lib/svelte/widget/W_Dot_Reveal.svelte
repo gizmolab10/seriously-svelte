@@ -114,7 +114,7 @@
 			height={k.dot_size}
 			center={center}
 			name={s_element.name}
-			mouse_closure={up_hover_closure}>
+			handle_mouse_state={up_hover_closure}>
 			<button class='dot'
 				bind:this={dotReveal}
 				on:contextmenu={handle_context_menu}

@@ -38,7 +38,7 @@
 	height={size.height}
 	zindex={T_Layer.frontmost}
 	origin={g_segment.origin}
-	mouse_closure={up_hover_closure}>
+	handle_mouse_state={up_hover_closure}>
 	<svg
 		id={`${name}`}
 		class='segment-svg'
