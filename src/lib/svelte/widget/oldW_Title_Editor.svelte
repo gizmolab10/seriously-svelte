@@ -74,7 +74,7 @@
 		//													//
 		//////////////////////////////////////////////////////
 
-		if ((!!ancestry && ancestry.isEditable) && (ancestry.isEditStopping || (hasFocus && !$w_s_title_edit))) {
+		if ((!!ancestry && ancestry.isEditable) && (ancestry_isEditStopping || (hasFocus && !$w_s_title_edit))) {
 			debug.log_edit(`STOP ${bound_title}`);
 			$w_s_title_edit = null;
 			hasFocus = false;

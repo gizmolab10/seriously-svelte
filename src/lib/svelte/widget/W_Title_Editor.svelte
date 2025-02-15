@@ -35,9 +35,9 @@
 	function hasChanges() { return originalTitle != bound_title; };
 	function handle_mouse_up() { clearClicks(); }
 	function isHit(): boolean { return false }
-	function ancestry_isEditing():		   boolean { return get(w_s_title_edit)?.isAncestry_inState(ancestry, T_Edit.editing) ?? false; }
-	function ancestry_isEditStopping():	   boolean { return get(w_s_title_edit)?.isAncestry_inState(ancestry, T_Edit.stopping) ?? false; }
-	function ancestry_isEditPercolating(): boolean { return get(w_s_title_edit)?.isAncestry_inState(ancestry, T_Edit.percolating) ?? false; }
+	function ancestry_isEditing():		   boolean { return $w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.editing) ?? false; }
+	function ancestry_isEditStopping():	   boolean { return $w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.stopping) ?? false; }
+	function ancestry_isEditPercolating(): boolean { return $w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.percolating) ?? false; }
 
 	if (!!thing()) {
 		const showingReveal = ancestry?.showsReveal ?? false;
@@ -67,23 +67,6 @@
 	$: {
 		if (!!thing() && thing().id == $w_thing_color?.split(k.generic_separator)[0]) {
 			color = thing()?.color;
-		}
-	}
-
-	$: {
-
-		//////////////////////////////////////////////////////
-		//													//
-		//				manage hasFocus & blur				//
-		//													//
-		//////////////////////////////////////////////////////
-
-		if ((!!ancestry && ancestry.isEditable) && (ancestry.isEditStopping || (hasFocus && !$w_s_title_edit))) {
-			debug.log_edit(`STOP ${bound_title}`);
-			$w_s_title_edit = null;
-			hasFocus = false;
-			input?.blur();
-			update_cursorStyle();
 		}
 	}
 
@@ -159,21 +142,49 @@
 
 	function handle_forWrapper(s_mouse: S_Mouse): boolean { return false; }
 
-	function handle_focus(event) {
-		event.preventDefault();
-		debug.log_edit(`FOCUS ${ancestry.title}`);
+	$: {
+		const s_title_edit = $w_s_title_edit;
+
+		//////////////////////////////////////////////////////
+		//													//
+		//				manage hasFocus & blur				//
+		//													//
+		//////////////////////////////////////////////////////
+
+		// debug.log_edit(`REACT "${ancestry?.title}" ${ancestry_isEditStopping()} (was ${$w_s_title_edit?.description})`);
+		if (!!ancestry && ancestry.isEditable && (ancestry_isEditStopping() || (hasFocus && !s_title_edit))) {
+			debug.log_edit(`STOP ${bound_title}`);
+			$w_s_title_edit = null;
+			hasFocus = false;
+			input?.blur();
+			update_cursorStyle();
+		}
 	}
 
-	function handle_up_hover(s_mouse: S_Mouse) {
-		if (!s_mouse.isEmpty) {
-			debug.log_edit(`HOVER ${s_mouse.description}`);
+	function handle_focus(event) {
+		event.preventDefault();
+		debug.log_edit(`H FOCUS on "${ancestry?.title}" (was ${$w_s_title_edit?.description})`);
+	}
+
+	function handle_mouse_state(s_mouse: S_Mouse) {
+		if (!!ancestry && !s_mouse.notRelevant) {
+			if (s_mouse.isDown && !s_mouse.isMove && !ancestry_isEditing()) {
+				$w_s_title_edit?.t_edit = T_Edit.stopping;	// stop prior edit, wait for it to percolate
+				debug.log_edit(`H STATE ${$w_s_title_edit?.description}`);
+				setTimeout(() => {
+					ancestry.startEdit();
+					input.focus();
+				}, 10);
+			// } else {
+			// 	debug.log_edit(`H STATE ${s_mouse.description}`);
+			}
 		}
 	}
 
 	function handle_blur(event) {
 		if (!!ancestry && !ancestry_isEditing) {
 			stopAndClearEditing();
-			debug.log_edit(`BLUR ${bound_title}`);
+			debug.log_edit(`H BLUR ${bound_title}`);
 			updateInputWidth();
 		}
 	}
@@ -184,7 +195,7 @@
 	}
 
 	function handle_doubleClick(event) {
-		debug.log_action(` double click '${thing().title}' TITLE`);
+		debug.log_action(`H double click '${thing().title}' TITLE`);
 		event.preventDefault();
 		startEditMaybe();
 		clearClicks();
@@ -201,7 +212,7 @@
 	function handle_key_down(event) {
 		if (!!thing() && !!ancestry && ancestry_isEditing && canAlterTitle(event)) {
 			const key = event.key.toLowerCase();
-			debug.log_key(`TITLE  ${key}`);
+			debug.log_key(`H KEY ${key}`);
 			switch (key) {	
 				case 'arrowup':
 				case 'arrowdown':
@@ -218,7 +229,7 @@
 		if (!!ancestry && !$w_s_title_edit) {			// react only when not yet editing
 			event.preventDefault();
 			if (ancestry.isGrabbed && ancestry.isEditable) {
-				debug.log_edit(`CLICK ${ancestry.title}`);
+				debug.log_edit(`H CLICK ${ancestry.title}`);
 				thing_setSelectionRangeFrom_mouse_location();
 				startEditMaybe();
 			} else {
@@ -302,7 +313,7 @@
 		name={s_editor.name}
 		height={k.row_height}
 		width={titleWidth - 22}
-		handle_mouse_state={handle_up_hover}>
+		handle_mouse_state={handle_mouse_state}>
 		<span class="ghost" bind:this={ghost}
 			style='
 				left:-9999px;

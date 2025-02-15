@@ -34,7 +34,7 @@ export default class S_Mouse {
 
 	get isShapeHit():	boolean { return false; }
 	get isElementHit(): boolean { return !!this.event && !!this.element && Rect.rect_forElement_containsEvent(this.element, this.event); }
-	get isEmpty():		boolean { return !this.isHover && !this.isOut && !this.isDown && !this.isUp && !this.isDouble && !this.isLong && !this.isMove && !this.isHit; }
+	get notRelevant():	boolean { return !this.isHover && !this.isOut && !this.isDown && !this.isUp && !this.isDouble && !this.isLong && !this.isMove && !this.isHit; }
 
 	get description(): string {
 		let states: Array<string> = [];

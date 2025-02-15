@@ -64,9 +64,9 @@
 			} else {					
 				isHit = Rect.rect_forElement_containsPoint(responding_element, mouse_location);		// use bounding rect
 			}
-			if (s_mouse.isHover == isHit) {
-				handle_mouse_state(S_Mouse.move(null, responding_element, mouse_isDown, isHit));		// pass a null event
-			} else {
+			if (s_mouse.isHover != isHit) {
+			// 	handle_mouse_state(S_Mouse.move(null, responding_element, mouse_isDown, isHit));		// pass a null event
+			// } else {
 				s_mouse.isHover =  isHit;
 				s_mouse.isOut   = !isHit;												// TODO: called far too often
 				handle_mouse_state(S_Mouse.hover(null, responding_element, isHit));					// pass a null event

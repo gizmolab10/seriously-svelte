@@ -11,11 +11,16 @@ export default class S_Title_Edit {
 	t_edit = T_Edit.editing;
 	ancestry: Ancestry;
 	
+	// singleton (store)
+	// t_edit is source of truth for all editing
+	// ancestry.thing is source of truth for selection range
+	
 	constructor(ancestry: Ancestry) { this.ancestry = ancestry; }
 	get thing(): Thing | null { return this.ancestry.thing; }
-	
-	// thing is source of truth for selection range
-	// why? it initially uses title width
+
+	get description(): string {
+		return `${this.t_edit} ${this.thing?.title}`
+	}
 
 	get thing_selectionRange(): Seriously_Range | undefined {
 		return this.thing?.selectionRange;
