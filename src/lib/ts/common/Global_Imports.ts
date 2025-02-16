@@ -32,6 +32,7 @@ import S_Rotation from '../state/S_Rotation';
 import G_Radial from '../geometry/G_Radial';
 import G_Widget from '../geometry/G_Widget';
 import S_Element from '../state/S_Element';
+import S_Widget from '../state/S_Widget';
 import S_Mouse from '../state/S_Mouse';
 
 import Relationship from '../data/persistable/Relationship';
@@ -72,7 +73,7 @@ export {
 	Angle, Direction, T_Quadrant, T_Orientation,
 	T_Element, Svelte_Wrapper, T_SvelteComponent,
 	S_Paging, S_Rotation, S_Expansion, S_Thing_Pages,
-	S_Mouse, S_Element, S_Alteration, S_Title_Edit,
+	S_Mouse, S_Widget, S_Element, S_Alteration, S_Title_Edit,
 	User, Persistable, Thing, Trait, Access, Predicate, Relationship,
 	G_Widget, G_Children, G_ArcSlider, G_Segment, G_Cluster, G_Radial,
 	T_Line, T_Tool, T_Signal, T_Control, T_Browser, T_Storage, T_Preference,

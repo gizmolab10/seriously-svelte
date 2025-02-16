@@ -11,7 +11,7 @@ export default class G_Widget extends Rect {
 	child: Thing | null;
 	curveType: string;
 
-	constructor(curveType: string, rect: Rect, children_origin: Point, widget_ancestry: Ancestry | null,
+	constructor(curveType: string, rect: Rect, children_origin: Point, widget_ancestry: Ancestry,
 		parent_ancestry: Ancestry | null, points_toChild: boolean = true, child_angle: number | null = null) {
 		super(u.copyObject(rect.origin), u.copyObject(rect.size));
 		this.s_widget = ux.s_element_for(widget_ancestry, T_Element.widget, k.empty);

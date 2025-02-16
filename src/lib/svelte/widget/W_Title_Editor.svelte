@@ -168,15 +168,13 @@
 
 	function handle_mouse_state(s_mouse: S_Mouse) {
 		if (!!ancestry && !s_mouse.notRelevant) {
-			if (s_mouse.isDown && !s_mouse.isMove && !ancestry_isEditing()) {
+			if (s_mouse.isDown && !ancestry_isEditing()) {
 				$w_s_title_edit?.t_edit = T_Edit.stopping;	// stop prior edit, wait for it to percolate
 				debug.log_edit(`H STATE ${$w_s_title_edit?.description}`);
 				setTimeout(() => {
 					ancestry.startEdit();
 					input.focus();
-				}, 10);
-			// } else {
-			// 	debug.log_edit(`H STATE ${s_mouse.description}`);
+				}, 1);
 			}
 		}
 	}

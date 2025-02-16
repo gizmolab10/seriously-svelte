@@ -1,8 +1,9 @@
 <script lang='ts'>
 	import { g, k, u, ux, Thing, Point, Angle, debug, signals, S_Element, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Signal, T_Element, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { w_s_title_edit, w_thing_color, w_t_graph } from '../../ts/state/S_Stores';
-	import { w_thing_fontFamily, w_ancestries_grabbed } from '../../ts/state/S_Stores';
+	import { w_t_graph, w_thing_color, w_thing_fontFamily } from '../../ts/state/S_Stores';
+	import { w_s_title_edit, w_ancestries_grabbed } from '../../ts/state/S_Stores';
+	import { T_Edit } from '../../ts/state/S_Title_Edit';
 	import W_Title_Editor from './W_Title_Editor.svelte';
 	import W_Dot_Reveal from './W_Dot_Reveal.svelte';
 	import W_Dot_Drag from './W_Dot_Drag.svelte';
@@ -13,10 +14,11 @@
     export let name = k.empty;
     export let ancestry;
 	const priorRowHeight = k.row_height;
-	const s_widget = ux.s_element_forName(name);	// created by G_Widget
-	const s_drag = ux.s_element_for(ancestry, T_Element.drag, k.empty);
-	const s_title = ux.s_element_for(ancestry, T_Element.title, k.empty);
-	const s_reveal = ux.s_element_for(ancestry, T_Element.reveal, k.empty);
+	const s_widget = ux.s_widget_forAncestry(ancestry);
+	const es_widget = ux.s_element_forName(name);	// created by G_Widget
+	const es_drag = ux.s_element_for(ancestry, T_Element.drag, k.empty);
+	const es_title = ux.s_element_for(ancestry, T_Element.title, k.empty);
+	const es_reveal = ux.s_element_for(ancestry, T_Element.reveal, k.empty);
 	let widgetWrapper!: Svelte_Wrapper;
 	let revealCenter = Point.zero;
 	let dragCenter = Point.zero;
@@ -28,8 +30,6 @@
 	let widgetData = k.empty;
 	let revealData = k.empty;
 	let dragData = k.empty;
-	let isGrabbed = false;
-	let isEditing = false;
 	let padding = k.empty;
 	let border = k.empty;
 	let rebuilds = 0;
@@ -44,7 +44,7 @@
 
 	onMount(() => {
 		layout_widget();
-		debug.log_mount(`WIDGET ${thing?.description} ${isGrabbed}`);
+		debug.log_mount(`WIDGET ${thing?.description} ${ancestry.isGrabbed}`);
 		fullUpdate();
 		const handleAny = signals.handle_anySignal_atPriority(3, (t_signal, ancestry) => {
 			debug.log_layout(`WIDGET ${thing?.description}`);
@@ -67,6 +67,7 @@
 	$: {
 		const _ = $w_s_title_edit + $w_ancestries_grabbed;
 		updateBorder_fromState();
+		fullUpdate();
 	}
 
 	$: {
@@ -95,7 +96,7 @@
 
 	function updateBorder_fromState() {
 		if (!!widget) {
-			widget.style.border = s_widget.border;
+			widget.style.border = es_widget.border;
 		}
 	}
 
@@ -106,12 +107,12 @@
 	}
 
 	function setup_fromAncestry() {
-		isGrabbed = ancestry?.isGrabbed;
+		s_widget.update_forChange;
 		thing = ancestry?.thing;
 		if (!ancestry) {
 			console.log('bad ancestry');
 		} else if (!thing) {
-			console.log(`bad thing for "${ancestry?.id ?? 'indeed'}"`);
+			console.log(`bad thing for "${ancestry?.id ?? k.unknown}"`);
 		} else {
 			const title = thing.title ?? thing.id ?? k.unknown;
 			widgetName = `widget ${title}`;
@@ -119,41 +120,37 @@
 		}
 	}
 
+	function showBorder(): boolean {
+		return ancestry.isGrabbed || ($w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.editing) ?? false);
+	}
+
 	function fullUpdate() {
-		if (!!ancestry) {
-			const shallEdit = ancestry.isEditing;
-			const shallGrab = ancestry.isGrabbed;
-			const change = (isEditing != shallEdit || isGrabbed != shallGrab);
-			if (change) {
-				const showBackground = shallGrab || g.inRadialMode;
-				background = showBackground ? `background-color: ${k.color_background}` : k.empty
-				isGrabbed = shallGrab;
-				isEditing = shallEdit;
-				layout_widget();
-			}
+		if (!!ancestry && s_widget.update_forChange) {
+			const showBackground = showBorder() || g.inRadialMode;
+			background = showBackground ? `background-color: ${k.color_background}` : k.empty
+			layout_widget();
 		}
 	}
 
 	function layout_widget() {
 		const dragX = 5.5;
 		const showingReveal = ancestry?.showsReveal ?? false;
-		const showingBorder = isEditing || isGrabbed;
 		const titleWidth = thing?.titleWidth ?? 0;
-		const deltaX = showingBorder ? 0 : 0.5;
-		const leftForward = deltaX - dragX;
+		const delta = showBorder() ? 0 : 1;
+		const leftForward = -dragX;
 		const leftBackward = -(titleWidth + (showingReveal ? 25.5 : 15.5));
 		const dragOffsetY = g.inRadialMode ? 2.8 : 2.7;
-		const dragOffsetX = points_right ? (dragX - 1.5) : (titleWidth + deltaX + (showingReveal ? 22.5 : 14));
+		const dragOffsetX = points_right ? (dragX - 1.5) : (titleWidth + delta + (showingReveal ? 22.5 : 14));
 		const hasExtraForTinyDots = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
 		const rightPadding = g.inRadialMode ? 0 : (hasExtraForTinyDots ? 0.5 : 0) + 21;
 		const leftPadding = points_right ? 1 : 14;
 		dragCenter = Point.square(k.dot_size / 2).offsetByXY(dragOffsetX, dragOffsetY);
-		left = origin.x + deltaX + (points_right ? leftForward : leftBackward);
+		left = origin.x + delta + (points_right ? leftForward : leftBackward);
 		padding = `0px ${rightPadding}px 0px ${leftPadding}px`;
 		width = titleWidth + extraWidth();
 		height = k.row_height - 1.5;
 		radius = k.row_height / 2;
-		top = origin.y + ((showingBorder && !ancestry.isRoot) ? 0 : 1);
+		top = origin.y + delta;
 		if (showingReveal) {
 			const revealY = k.dot_size - 3.62;
 			const revealX = points_right ? (k.dot_size + titleWidth + (g.inRadialMode ? 19 : 17)) : 9;
@@ -166,7 +163,7 @@
 </script>
 
 {#key rebuilds}
-	{#if s_widget}
+	{#if es_widget}
 		<div class='widget' id='{widgetName}'
 			bind:this={widget}
 			style='
@@ -178,17 +175,17 @@
 				position: absolute;
 				border-radius: {radius}px;
 				z-index: {T_Layer.widgets};
-				border: {s_widget.border};
-				background-color: {isGrabbed || g.inRadialMode ? k.color_background : 'transparent'};
+				border: {es_widget.border};
+				background-color: {ancestry.isGrabbed || g.inRadialMode ? k.color_background : 'transparent'};
 			'>
 			<W_Dot_Drag
-				name={s_drag.name}
+				name={es_drag.name}
 				ancestry={ancestry}
 				center={dragCenter}
 				points_right={points_right}
 			/>
 			<W_Title_Editor
-				name={s_title.name}
+				name={es_title.name}
 				ancestry={ancestry}
 				fontSize={k.font_size}px
 				points_right={points_right}
@@ -196,7 +193,7 @@
 			{#if ancestry?.showsReveal_forPointingToChild(points_toChild)}
 				<W_Dot_Reveal
 					ancestry={ancestry}
-					name={s_reveal.name}
+					name={es_reveal.name}
 					center={revealCenter}
 					points_toChild={points_toChild}
 				/>

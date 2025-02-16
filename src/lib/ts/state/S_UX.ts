@@ -1,16 +1,17 @@
-import { S_Mouse, G_Segment, S_Element, S_Rotation, S_Thing_Pages } from '../common/Global_Imports';
-import { T_Element, Mouse_Timer } from '../common/Global_Imports';
+import { S_Mouse, S_Widget, S_Element, S_Rotation, S_Thing_Pages } from '../common/Global_Imports';
+import { Ancestry, G_Segment, T_Element, Mouse_Timer } from '../common/Global_Imports';
 import Identifiable from '../data/runtime/Identifiable';
 import type { Dictionary } from '../common/Types';
 
 export default class S_UX {
 
-	mouse_timer_byName: { [name: string]: Mouse_Timer } = {};
 	s_thing_pages_byThingID: {[id: string]: S_Thing_Pages} = {};
-	s_rotation_byName: {[name: string]: S_Rotation} = {};
-	g_segment_byName: {[name: string]: G_Segment} = {};
-	s_element_byName: {[name: string]: S_Element} = {};
+	mouse_timer_byName: { [name: string]: Mouse_Timer } = {};
+	s_rotation_byName: { [name: string]: S_Rotation } = {};
+	g_segment_byName: { [name: string]: G_Segment } = {};
+	s_element_byName: { [name: string]: S_Element } = {};
 	s_mouse_byName: { [name: string]: S_Mouse } = {};
+	s_widget_byAncestryID: { [id: string]: S_Widget } = {};
 
 	//////////////////////////////////////
 	//									//
@@ -26,6 +27,7 @@ export default class S_UX {
 	//////////////////////////////////////
 
 	reset_paging() { this.rotation_states.map(s => s.reset()); }
+	s_widget_forID(id: string): S_Widget { return this.s_widget_byAncestryID[id]; }
 	g_segment_forName(name: string): G_Segment { return this.g_segment_byName[name]; }
 	s_element_forName(name: string): S_Element { return this.s_element_byName[name]; }
 	get rotation_states(): Array<S_Rotation> { return Object.values(this.s_rotation_byName); }
@@ -62,6 +64,16 @@ export default class S_UX {
 			this.s_rotation_byName[name] = s_rotation;
 		}
 		return s_rotation;
+	}
+
+	s_widget_forAncestry(ancestry: Ancestry): S_Widget {
+		const id = ancestry.id;
+		let s_widget = this.s_widget_forID(id);
+		if (!s_widget) {			// always assure it exists
+			s_widget = new S_Widget(ancestry);
+			this.s_widget_byAncestryID[id] = s_widget;
+		}
+		return s_widget;
 	}
 
 	s_element_for(identifiable: Identifiable | null, type: T_Element, subtype: string): S_Element {
