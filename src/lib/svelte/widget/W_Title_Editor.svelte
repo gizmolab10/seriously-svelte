@@ -52,17 +52,6 @@
 	export const REACTIVES: unique symbol = Symbol('REACTIVES');
 
 	$: {
-		const s_title_edit = $w_s_title_edit;
-		if (!!input && !!s_title_edit && s_title_edit.ancestry.id == ancestry.id) {
-			switch (s_title_edit.t_edit) {
-				case T_Edit.editing: if (!hasFocus()) { input.focus(); applyRange_fromThing_toInput(); } break;
-				case T_Edit.stopping: stopEdit(); break;
-				default: break;
-			}
-		}
-	}
-
-	$: {
 		if (!!input && !title_wrapper) {
 			title_wrapper = new Svelte_Wrapper(input, handle_forWrapper, ancestry.hid, T_SvelteComponent.title);
 		}
@@ -76,15 +65,32 @@
 
 	$: {
 		const s_title_edit = $w_s_title_edit;
-
-		//////////////////////////////////////////////////////
-		//													//
-		//				manage hasFocus & blur				//
-		//													//
-		//////////////////////////////////////////////////////
-
 		if (!!ancestry && (ancestry_isEditStopping() || (hasFocus() && !s_title_edit))) {
 			stopEdit();
+		}
+	}
+
+	$: {
+		const s_title_edit = $w_s_title_edit;
+		if (!!input && !!s_title_edit && s_title_edit.ancestry.id == ancestry.id) {
+
+			//////////////////////////////////////////////////////
+			//													//
+			//			handle w_s_title_edit state				//
+			//													//
+			//////////////////////////////////////////////////////
+
+			switch (s_title_edit.t_edit) {
+				case T_Edit.stopping:
+					stopEdit();
+					break;
+				case T_Edit.editing:
+					if (!hasFocus()) {
+						input.focus();
+						applyRange_fromThing_toInput();
+					}
+					break;
+			}
 		}
 	}
 
@@ -186,7 +192,7 @@
 
 	function handle_blur(event) {
 		if (!!ancestry && !ancestry_isEditing()) {
-			stopAndClearEditing();
+			stop_andPersist();
 			debug.log_edit(`H BLUR ${title_binded}`);
 			updateInputWidth();
 		}
@@ -214,8 +220,8 @@
 				case 'arrowdown':
 				case 'arrowleft':
 				case 'arrowright': break;
-				case 'tab':	  event.preventDefault(); stopAndClearEditing(); $w_hierarchy.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break;
-				case 'enter': event.preventDefault(); stopAndClearEditing(); break;
+				case 'tab':	  event.preventDefault(); stop_andPersist(); $w_hierarchy.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break;
+				case 'enter': event.preventDefault(); stop_andPersist(); break;
 				default:	  title_updatedTo(thing().title); break;
 			}
 		}
@@ -255,30 +261,23 @@
 		update_cursorStyle();
 	}
 
-	function stopAndClearEditing() {
-		if (invokeBlurNotClearEditing()) {				
-			setTimeout(() => {										// eliminate infinite recursion
-				if (!!$w_s_title_edit) {
-					debug.log_edit(`STOPPING ${ancestry.title}`);
-					$w_s_title_edit.t_edit = T_Edit.stopping;		// inform Widget
-				}
-			}, 2);
-		}
-	}
-
-	async function invokeBlurNotClearEditing() {
+	async function stop_andPersist() {
 		if (!!thing() && !!input && !!ancestry && ancestry_isEditing() && !ancestry_isEditPercolating()) {
-			debug.log_edit(`INVOKE BLUR ${ancestry.title}`);
+			debug.log_edit(`INVOKING BLUR ${ancestry.title}`);
 			extractRange_fromInput_toThing();
 			input.blur();
 			if (hasChanges()) {
 				debug.log_edit(`PERSISTING ${thing()?.title}`);
 				await databases.db_now.thing_persistentUpdate(thing());
-				title_original = thing()?.title;		// so hasChanges will be correct next time
+				title_original = thing()?.title;			// so hasChanges will be correct next time
 			}
-			return true;
+			u.onNextCycle_apply(() => {		// prevent Panel's enter key handler call to start edit from actually starting
+				if (!!$w_s_title_edit) {
+					debug.log_edit(`STOPPING ${ancestry.title}`);
+					$w_s_title_edit.t_edit = T_Edit.stopping;	// inform Widget
+				}
+			});
 		}
-		return false;
 	}
 
 </script>
