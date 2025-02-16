@@ -5,8 +5,8 @@ import { get } from 'svelte/store';
 
 export default class S_Widget {
 	ancestry!: Ancestry;
-	isGrabbed = false;		// NOT a source of truth, ...
-	isEditing = false;		// only needed for update_forChange
+	isGrabbed = false;		// NOT a source of truth
+	isEditing = false;		// ... only needed for widget relayout
 
 	constructor(ancestry: Ancestry) { this.ancestry = ancestry; }
 

@@ -157,7 +157,6 @@
 			revealCenter = new Point(revealX, revealY);
 		}
 		debug.log_layout(`WIDGET ${thing?.title ?? k.unknown}`);
-		rebuilds += 1;
 	}
 
 </script>

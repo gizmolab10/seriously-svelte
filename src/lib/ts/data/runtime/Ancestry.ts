@@ -611,6 +611,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	grab() {
+		w_s_title_edit.set(null);
 		w_ancestries_grabbed.update((a) => {
 			let array = a ?? [];
 			if (!!array) {
@@ -631,6 +632,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	ungrab() {
+		w_s_title_edit.set(null);
 		const rootAncestry = this.hierarchy.rootAncestry;
 		w_ancestries_grabbed.update((a) => {
 			let array = a ?? [];
