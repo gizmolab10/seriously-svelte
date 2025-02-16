@@ -15,20 +15,11 @@ export default class S_Title_Edit {
 	// t_edit is source of truth for all editing
 	// ancestry.thing is source of truth for selection range
 	
-	constructor(ancestry: Ancestry) { this.ancestry = ancestry; }
 	get thing(): Thing | null { return this.ancestry.thing; }
-
-	get description(): string {
-		return `${this.t_edit} ${this.thing?.title}`
-	}
-
-	get thing_selectionRange(): Seriously_Range | undefined {
-		return this.thing?.selectionRange;
-	}
-
-	thing_setSelectionRange_fromOffset(offset: number) {
-		this.thing_setSelectionRange(new Seriously_Range(offset, offset));
-	}
+	constructor(ancestry: Ancestry) { this.ancestry = ancestry; }
+	get description(): string { return `${this.t_edit} ${this.thing?.title}`; }
+	get thing_selectionRange(): Seriously_Range | undefined { return this.thing?.selectionRange; }
+	thing_setSelectionRange_fromOffset(offset: number) { this.thing_setSelectionRange(new Seriously_Range(offset, offset)); }
 
 	thing_setSelectionRange(range: Seriously_Range) {
 		if (!!this.thing) {
@@ -55,9 +46,7 @@ export default class S_Title_Edit {
 		const saved = this.t_edit;
 		this.t_edit = t_edit;
 		apply();
-		setTimeout(() => {
-			this.t_edit = saved;
-		}, 1);
+		this.t_edit = saved;
 	}
 
 }
