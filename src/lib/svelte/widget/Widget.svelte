@@ -65,12 +65,6 @@
 	});
 
 	$: {
-		const _ = $w_s_title_edit + $w_ancestries_grabbed;
-		updateBorder_fromState();
-		fullUpdate();
-	}
-
-	$: {
 		if (!!thing && thing.id == $w_thing_color?.split(k.generic_separator)[0]) {
 			rebuilds += 1;
 		}
@@ -90,6 +84,15 @@
 			}, 1);
 		}
 	}
+
+	$: {
+		const _ = $w_s_title_edit + $w_ancestries_grabbed;
+		if (!!ancestry && !!widget && s_widget.update_forChange) {
+			widget.style.border = es_widget.border;		// avoid rebuilding by injecting style changes
+			widget.style.backgroundColor = ancestry.isGrabbed || g.inRadialMode ? k.color_background : 'transparent';
+			layout_widget();
+		}
+	}
  
 	function isHit(): boolean { return false; }
 	function handle_mouse_state(s_mouse: S_Mouse): boolean { return false; }
@@ -98,12 +101,6 @@
 		if (!!widget) {
 			widget.style.border = es_widget.border;
 		}
-	}
-
-	function extraWidth() {
-		const multiplier = ancestry?.showsReveal ? 2 : 1.35;
-		const clustersAdjustment = g.inRadialMode ? (points_right ? 14 : 0) : -10;
-		return (k.dot_size * multiplier) + clustersAdjustment;
 	}
 
 	function setup_fromAncestry() {
@@ -134,20 +131,23 @@
 
 	function layout_widget() {
 		const dragX = 5.5;
+		const multiplier = ancestry?.showsReveal ? 2 : 1.35;
 		const showingReveal = ancestry?.showsReveal ?? false;
+		const hasExtraForTinyDots = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
 		const titleWidth = thing?.titleWidth ?? 0;
 		const delta = showBorder() ? 0 : 1;
 		const leftForward = -dragX;
 		const leftBackward = -(titleWidth + (showingReveal ? 25.5 : 15.5));
-		const dragOffsetY = g.inRadialMode ? 2.8 : 2.7;
 		const dragOffsetX = points_right ? (dragX - 1.5) : (titleWidth + delta + (showingReveal ? 22.5 : 14));
-		const hasExtraForTinyDots = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
+		const dragOffsetY = g.inRadialMode ? 2.8 : 2.7;
 		const rightPadding = g.inRadialMode ? 0 : (hasExtraForTinyDots ? 0.5 : 0) + 21;
 		const leftPadding = points_right ? 1 : 14;
+		const clustersAdjustment = g.inRadialMode ? (points_right ? 14 : 0) : -10;
+		const extraWidth = (k.dot_size * multiplier) + clustersAdjustment;
 		dragCenter = Point.square(k.dot_size / 2).offsetByXY(dragOffsetX, dragOffsetY);
 		left = origin.x + delta + (points_right ? leftForward : leftBackward);
 		padding = `0px ${rightPadding}px 0px ${leftPadding}px`;
-		width = titleWidth + extraWidth();
+		width = titleWidth + extraWidth;
 		height = k.row_height - 1.5;
 		radius = k.row_height / 2;
 		top = origin.y + delta;
@@ -156,7 +156,7 @@
 			const revealX = points_right ? (k.dot_size + titleWidth + (g.inRadialMode ? 19 : 17)) : 9;
 			revealCenter = new Point(revealX, revealY);
 		}
-		debug.log_layout(`WIDGET ${thing?.title ?? k.unknown}`);
+		debug.log_layout(`LAYOUT WIDGET ${delta} ${thing?.title ?? k.unknown}`);
 	}
 
 </script>
@@ -166,16 +166,16 @@
 		<div class='widget' id='{widgetName}'
 			bind:this={widget}
 			style='
-				top: {top}px;
-				left: {left}px;
-				width: {width}px;
-				height: {height}px;
-				padding: {padding};
+				top:{top}px;
+				left:{left}px;
+				width:{width}px;
+				height:{height}px;
+				padding:{padding};
 				position: absolute;
-				border-radius: {radius}px;
-				z-index: {T_Layer.widgets};
-				border: {es_widget.border};
-				background-color: {ancestry.isGrabbed || g.inRadialMode ? k.color_background : 'transparent'};
+				border-radius:{radius}px;
+				z-index:{T_Layer.widgets};
+				border:{es_widget.border};
+				background-color:{ancestry.isGrabbed || g.inRadialMode ? k.color_background : 'transparent'};
 			'>
 			<W_Dot_Drag
 				name={es_drag.name}

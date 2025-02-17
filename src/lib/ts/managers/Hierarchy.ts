@@ -2,7 +2,7 @@ import { T_Tool, T_Info, T_Graph, T_Thing, T_Trait, T_Create, T_Control, T_Predi
 import { g, k, p, u, show, User, Thing, Trait, debug, files, signals, Access, Ancestry } from '../common/Global_Imports';
 import { w_t_graph, w_id_popupView, w_ancestry_focus, w_s_title_edit, w_s_alteration } from '../state/S_Stores';
 import { w_storage_update_trigger, w_ancestry_showing_tools, w_ancestries_grabbed } from '../state/S_Stores';
-import { S_Mouse, Predicate, Relationship, S_Alteration } from '../common/Global_Imports';
+import { Predicate, Relationship, S_Mouse, S_Alteration, S_Title_Edit } from '../common/Global_Imports';
 import type { Integer, Dictionary } from '../common/Types';
 import { T_Persistable } from '../../ts/data/dbs/DBCommon';
 import Identifiable from '../data/runtime/Identifiable';
@@ -30,9 +30,9 @@ export class Hierarchy {
 	ids_translated: { [prior: string]: string } = {};
 	relationships: Array<Relationship> = [];
 	predicates: Array<Predicate> = [];
+	externalsAncestry!: Ancestry;
 	things: Array<Thing> = [];
 	traits: Array<Trait> = [];
-	externalsAncestry!: Ancestry;
 	rootAncestry!: Ancestry;
 
 	persistent_dataTypes = [T_Persistable.predicates, T_Persistable.relationships, T_Persistable.traits, T_Persistable.things];
@@ -58,6 +58,7 @@ export class Hierarchy {
 			const rootAncestry = this.ancestry_remember_createUnique();
 			const root = rootAncestry.thing;
 			this.rootAncestry = rootAncestry;
+			w_s_title_edit.set(new S_Title_Edit(rootAncestry));
 			if (!!root) {
 				this.root = root;
 			}
