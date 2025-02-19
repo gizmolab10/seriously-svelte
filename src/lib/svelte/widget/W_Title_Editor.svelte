@@ -102,9 +102,9 @@
 	}
 	
 	function update_cursorStyle() {
-			const noCursor = (ancestry_isEditing() || ancestry.isGrabbed) && !g.inRadialMode && ancestry.isEditable;
-			const useTextCursor = ancestry_isEditing() || ancestry.isGrabbed || !(g.inRadialMode || ancestry.isEditable);
-			cursor_style = noCursor ? k.empty : `cursor: ${useTextCursor ? 'text' : 'pointer'}`;
+		const noCursor = (ancestry_isEditing() || ancestry.isGrabbed) && !g.inRadialMode && ancestry.isEditable;
+		const useTextCursor = ancestry_isEditing() || ancestry.isGrabbed || !(g.inRadialMode || ancestry.isEditable);
+		cursor_style = noCursor ? k.empty : `cursor: ${useTextCursor ? 'text' : 'pointer'}`;
 	}
 
 	function updateInputWidth() {
@@ -156,10 +156,11 @@
 	function title_updatedTo(title: string | null) {
 		const prior = $w_thing_title;
 		if (prior != title) {
+			extractRange_fromInput_toThing();
 			$w_thing_title = title;		// tell Info to update it's selection's title
 			debug.log_edit(`TITLE ${title}`);
 			$w_s_title_edit?.setState_temporarily_whileApplying(T_Edit.percolating, () => {
-				relayout();
+				signals.signal_rebuildGraph_fromFocus();
 			});
 			debug.log_edit(`UPDATED ${$w_s_title_edit?.description}`);
 		}
@@ -246,6 +247,7 @@
 		$w_s_title_edit = null;
 		input?.blur();
 		update_cursorStyle();
+		// layout not needed
 	}
 
 	function startEditMaybe() {
@@ -259,7 +261,6 @@
 	async function stop_andPersist() {
 		if (!!thing() && !!input && !!ancestry && ancestry_isEditing() && !ancestry_isEditPercolating()) {
 			debug.log_edit(`INVOKING BLUR ${ancestry.title}`);
-			extractRange_fromInput_toThing();
 			input.blur();
 			if (hasChanges()) {
 				debug.log_edit(`PERSISTING ${thing()?.title}`);

@@ -62,6 +62,7 @@ export class Debug {
 	log_mouse(message: string) { this.log_maybe(T_Debug.mouse, message); }
 	log_tools(message: string) { this.log_maybe(T_Debug.tools, message); }
 	log_action(message: string) { this.log_maybe(T_Debug.action, message); }
+	log_colors(message: string) { this.log_maybe(T_Debug.colors, message); }
 	log_crumbs(message: string) { this.log_maybe(T_Debug.crumbs, message); }
 	log_cursor(message: string) { this.log_maybe(T_Debug.cursor, message); }
 	log_layout(message: string) { this.log_maybe(T_Debug.layout, message); }
