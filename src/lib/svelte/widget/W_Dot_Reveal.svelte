@@ -12,8 +12,8 @@
     export let zindex = T_Layer.dots;
 	export let points_toChild = true;
     export let hover_isReversed = false;
+	const es_reveal = ux.s_element_forName(name);		// survives onDestroy, created by widget
 	const outside_tinyDots_count = ancestry.relationships_forChildren(points_toChild).length;
-	const s_element = ux.s_element_forName(name);		// survives onDestroy, created by widget
 	let svgPathFor_outer_tinyDots: string | null = null;
 	let svgPathFor_bulkAlias: string | null = null;
 	let tinyDotsOffset = new Point(0.65, -0.361);
@@ -50,14 +50,14 @@
 	$: {
 		if (!!dotReveal) {
 			revealWrapper = new Svelte_Wrapper(dotReveal, handle_mouse_state, ancestry.hid, T_SvelteComponent.reveal);
-			s_element.set_forHovering(ancestry.thing.color, 'pointer');
+			es_reveal.set_forHovering(ancestry.thing.color, 'pointer');
 		}
 	}
 
 	function set_isHovering(hovering) {
 		const corrected = hover_isReversed ? !hovering : hovering;
-		if (!!s_element && s_element.isOut == corrected) {
-			s_element.isOut = !corrected;
+		if (!!es_reveal && es_reveal.isOut == corrected) {
+			es_reveal.isOut = !corrected;
 			rebuilds += 1;
 		}
 	}
@@ -108,12 +108,12 @@
 </style>
 
 {#key rebuilds}
-	{#if s_element}
+	{#if es_reveal}
 		<Mouse_Responder
 			width={k.dot_size}
 			height={k.dot_size}
 			center={center}
-			name={s_element.name}
+			name={es_reveal.name}
 			handle_mouse_state={up_hover_closure}>
 			<button class='dot'
 				bind:this={dotReveal}
@@ -125,7 +125,7 @@
 				'>
 				{#key svgPathFor_revealDot}
 					<SVGD3 name='reveal-svg'
-						fill={debug.lines ? 'transparent' : s_element.fill}
+						fill={debug.lines ? 'transparent' : es_reveal.fill}
 						svgPath={svgPathFor_revealDot}
 						stroke={ancestry.thing.color}
 						height={k.dot_size}
@@ -141,8 +141,8 @@
 						width:{k.dot_size}px;'>
 						<SVGD3 name='bulk-alias-dot-svg'
 							svgPath={svgPathFor_bulkAlias}
-							stroke={s_element.stroke}
-							fill={s_element.stroke}
+							stroke={es_reveal.stroke}
+							fill={es_reveal.stroke}
 							height={k.dot_size}
 							width={k.dot_size}
 						/>

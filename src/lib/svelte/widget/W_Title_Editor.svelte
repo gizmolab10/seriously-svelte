@@ -14,7 +14,7 @@
 	export let ancestry;
 	const padding = `0.5px 0px 0px 0px`;
 	const title_origin = new Point(19, 0);
-	const s_editor = ux.s_element_forName(name);
+	const es_title = ux.s_element_forName(name);
 	let title_binded = thing()?.title ?? k.empty;
 	let color = thing()?.color ?? k.empty;
 	let title_original = thing()?.title;
@@ -95,6 +95,11 @@
 	}
 
 	export const PRIMITIVES: unique symbol = Symbol('PRIMITIVES');
+
+	function relayout() {
+		debug.log_edit(`RELAYOUT ${ancestry.title}`);
+		signals.signal_relayoutAndRecreate_widgets_from(ancestry);
+	}
 	
 	function update_cursorStyle() {
 			const noCursor = (ancestry_isEditing() || ancestry.isGrabbed) && !g.inRadialMode && ancestry.isEditable;
@@ -154,7 +159,7 @@
 			$w_thing_title = title;		// tell Info to update it's selection's title
 			debug.log_edit(`TITLE ${title}`);
 			$w_s_title_edit?.setState_temporarily_whileApplying(T_Edit.percolating, () => {
-				ancestry?.signal_relayoutAndRecreate_widgets_fromThis();
+				relayout();
 			});
 			debug.log_edit(`UPDATED ${$w_s_title_edit?.description}`);
 		}
@@ -166,7 +171,7 @@
 	
 	function handle_cut_paste(event) {
 		extractRange_fromInput_toThing();
-		ancestry?.signal_relayoutAndRecreate_widgets_fromThis();
+		relayout();
 	}
 
 	function handle_focus(event) {
@@ -177,7 +182,7 @@
 	}
 
 	function handle_blur(event) {
-		if (!!ancestry && !ancestry_isEditing()) {
+		if (!!ancestry && !ancestry_isEditing() && hasFocus()) {
 			stop_andPersist();
 			debug.log_edit(`H BLUR ${title_binded}`);
 			updateInputWidth();
@@ -189,6 +194,7 @@
 		if (!!thing() && (!!title || title == k.empty)) {
 			thing().title = title_binded = title;
 			title_updatedTo(title);
+			relayout();
 		}
 	};
 
@@ -278,7 +284,7 @@
 </style>
 
 <Mouse_Responder
-	name={s_editor.name}
+	name={es_title.name}
 	origin={title_origin}
 	height={k.row_height}
 	width={title_width - 22}

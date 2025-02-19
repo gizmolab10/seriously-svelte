@@ -35,8 +35,6 @@ export default class Ancestry extends Identifiable {
 	
 	static readonly GENERAL: unique symbol;
 
-	signal_relayoutAndRecreate_widgets_fromThis() { signals.signal_relayoutAndRecreate_widgets_from(this); }
-
 	traverse(apply_closureTo: (ancestry: Ancestry) => boolean) {
 		if (!apply_closureTo(this)) {
 			for (const childAncestry of this.childAncestries) {
@@ -553,12 +551,6 @@ export default class Ancestry extends Identifiable {
 		return this.parentAncestry?.s_paging?.update_index_toShow(this.siblingIndex) ?? false;
 	}
 
-	grabOnly() {
-		debug.log_grabs(`  GRAB ONLY "${this.id}"`);
-		w_ancestries_grabbed.set([this]);
-		this.toggle_editingTools();
-	}
-
 	remove_fromGrabbed_andExpanded() {
 		this.collapse();
 		this.ungrab();
@@ -608,52 +600,6 @@ export default class Ancestry extends Identifiable {
 			}
 			signals.signal_rebuildGraph_fromFocus();
 		}
-	}
-
-	grab() {
-		w_s_title_edit.set(null);
-		w_ancestries_grabbed.update((a) => {
-			let array = a ?? [];
-			if (!!array) {
-				const index = array.indexOf(this);
-				if (array.length == 0) {
-					array.push(this);
-				} else if (index != array.length - 1) {	// not already last?
-					if (index != -1) {					// found: remove
-						array.splice(index, 1);
-					}
-					array.push(this);					// always add last
-				}
-			}
-			return array;
-		});
-		debug.log_grabs(`  GRAB "${this.id}"`);
-		this.toggle_editingTools();
-	}
-
-	ungrab() {
-		w_s_title_edit.set(null);
-		const rootAncestry = this.hierarchy.rootAncestry;
-		w_ancestries_grabbed.update((a) => {
-			let array = a ?? [];
-			if (!!array) {
-				const index = array.indexOf(this);
-				if (index != -1) {				// only splice array when item is found
-					array.splice(index, 1);		// 2nd parameter means remove one item only
-				}
-				if (array.length == 0) {
-					array.push(rootAncestry);
-				}
-			}
-			return array;
-		});
-		let ancestries = get(w_ancestries_grabbed) ?? [];
-		if (ancestries.length == 0 && !g.inRadialMode) {
-			rootAncestry.grabOnly();
-		} else {
-			this.toggle_editingTools(); // do not show editingTools for root
-		}
-		debug.log_grabs(`  UNGRAB "${this.id}"`);
 	}
 
 	toggle_editingTools() {
@@ -723,6 +669,60 @@ export default class Ancestry extends Identifiable {
 			});
 		}
 		return mutated;
+	}
+
+	static readonly GRAB_AND_EDIT: unique symbol;
+
+	grabOnly() {
+		debug.log_grab(`  GRAB ONLY "${this.title}"`);
+		w_ancestries_grabbed.set([this]);
+		this.toggle_editingTools();
+	}
+
+	grab() {
+		w_s_title_edit.set(null);
+		w_ancestries_grabbed.update((a) => {
+			let array = a ?? [];
+			if (!!array) {
+				const index = array.indexOf(this);
+				if (array.length == 0) {
+					array.push(this);
+				} else if (index != array.length - 1) {	// not already last?
+					if (index != -1) {					// found: remove
+						array.splice(index, 1);
+					}
+					array.push(this);					// always add last
+				}
+			}
+			return array;
+		});
+		debug.log_grab(`  GRAB "${this.title}"`);
+		this.toggle_editingTools();
+	}
+
+	ungrab() {
+		w_s_title_edit.set(null);
+		const rootAncestry = this.hierarchy.rootAncestry;
+		w_ancestries_grabbed.update((a) => {
+			let array = a ?? [];
+			if (!!array) {
+				const index = array.indexOf(this);
+				if (index != -1) {				// only splice array when item is found
+					array.splice(index, 1);		// 2nd parameter means remove one item only
+				}
+				if (array.length == 0) {
+					array.push(rootAncestry);
+				}
+			}
+			return array;
+		});
+		let ancestries = get(w_ancestries_grabbed) ?? [];
+		if (ancestries.length == 0 && !g.inRadialMode) {
+			rootAncestry.grabOnly();
+		} else {
+			this.toggle_editingTools(); // do not show editingTools for root
+		}
+		debug.log_grab(`  UNGRAB "${this.title}"`);
 	}
 
 	startEdit() {

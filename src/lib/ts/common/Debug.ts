@@ -21,7 +21,6 @@ export enum T_Debug {
 	things		= 'things',		// enable Things.debugLog
 	build		= 'build',
 	error		= 'error',		// async errors
-	grabs		= 'grabs',
 	graph		= 'graph',		// log size of graph area
 	lines		= 'lines',		// alignment dots for lines and widgets
 	mount		= 'mount',
@@ -31,6 +30,7 @@ export enum T_Debug {
 	tools		= 'tools',		// state logic of add parent tool
 	dots		= 'dots',
 	edit		= 'edit',		// state machine for editing
+	grab		= 'grab',
 	info		= 'info',
 	key			= 'key',		// keyboard input
 }
@@ -54,9 +54,9 @@ export class Debug {
 	log_dots(message: string) { this.log_maybe(T_Debug.dots, message); }
 	log_edit(message: string) { this.log_maybe(T_Debug.edit, message); }
 	log_info(message: string) { this.log_maybe(T_Debug.info, message); }
+	log_grab(message: string) { this.log_maybe(T_Debug.grab, message); }
 	log_build(message: string) { this.log_maybe(T_Debug.build, message); }
 	log_error(message: string) { this.log_maybe(T_Debug.error, message); }
-	log_grabs(message: string) { this.log_maybe(T_Debug.grabs, message); }
 	log_hover(message: string) { this.log_maybe(T_Debug.hover, message); }
 	log_mount(message: string) { this.log_maybe(T_Debug.mount, message); }
 	log_mouse(message: string) { this.log_maybe(T_Debug.mouse, message); }
@@ -102,7 +102,6 @@ export class Debug {
 					case 'things': this.flags.push(T_Debug.things); break;
 					case 'build': this.flags.push(T_Debug.build); break;
 					case 'error': this.flags.push(T_Debug.error); break;
-					case 'grabs': this.flags.push(T_Debug.grabs); break;
 					case 'graph': this.flags.push(T_Debug.graph); break;
 					case 'hover': this.flags.push(T_Debug.hover); break;
 					case 'lines': this.flags.push(T_Debug.lines); break;
@@ -112,6 +111,7 @@ export class Debug {
 					case 'tools': this.flags.push(T_Debug.tools); break;
 					case 'dots': this.flags.push(T_Debug.dots); break;
 					case 'edit': this.flags.push(T_Debug.edit); break;
+					case 'grab': this.flags.push(T_Debug.grab); break;
 					case 'info': this.flags.push(T_Debug.info); break;
 					case 'key': this.flags.push(T_Debug.key); break;
 				}

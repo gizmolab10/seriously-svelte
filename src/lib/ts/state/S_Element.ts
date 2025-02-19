@@ -1,4 +1,4 @@
-import { k, ux, Ancestry, T_Element } from '../common/Global_Imports';
+import { k, ux, debug, Ancestry, T_Element } from '../common/Global_Imports';
 import Identifiable from '../data/runtime/Identifiable';
 
 export default class S_Element {
@@ -48,6 +48,9 @@ export default class S_Element {
 	
 	get border(): string {
 		let color = this.ancestry.thing?.color;
+		if (this.type == T_Element.widget) {
+			console.log(`  WIDGET S_Element "${this.ancestry.thing?.type}" "${color}" "${this.ancestry.title}"`);
+		}
 		if (!!color) {
 			if (this.ancestry.isEditing) {
 				return `dashed ${color} 1px`;

@@ -41,6 +41,7 @@
 	let thing;
 
 	setup_fromAncestry();
+	debug.log_grab(`  WIDGET ${ancestry.isGrabbed} "${es_widget.border}" "${ancestry.title}"`);
 
 	onMount(() => {
 		layout_widget();
@@ -90,18 +91,13 @@
 		if (!!ancestry && !!widget && s_widget.update_forChange) {
 			widget.style.border = es_widget.border;		// avoid rebuilding by injecting style changes
 			widget.style.backgroundColor = ancestry.isGrabbed || g.inRadialMode ? k.color_background : 'transparent';
+			debug.log_grab(`  CHANGE "${es_widget.border}" "${ancestry.title}"`);
 			layout_widget();
 		}
 	}
  
 	function isHit(): boolean { return false; }
 	function handle_mouse_state(s_mouse: S_Mouse): boolean { return false; }
-
-	function updateBorder_fromState() {
-		if (!!widget) {
-			widget.style.border = es_widget.border;
-		}
-	}
 
 	function setup_fromAncestry() {
 		s_widget.update_forChange;
@@ -114,6 +110,9 @@
 			const title = thing.title ?? thing.id ?? k.unknown;
 			widgetName = `widget ${title}`;
 			revealName = `reveal ${title}`;
+			if (ancestry.isFocus) {
+				debug.log_grab(`  FOCUS grabbed: "${ancestry.isGrabbed}"`);
+			}
 		}
 	}
 

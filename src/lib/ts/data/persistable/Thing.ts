@@ -10,7 +10,7 @@ import { get } from 'svelte/store';
 export default class Thing extends Persistable {
 	selectionRange = new Seriously_Range(0, 0);
 	bulkRootID: string = k.empty;
-	oneAncestry!: Ancestry;
+	oneAncestry!: Ancestry;			// arbitrarily chosen from more than one (if has more than one parent AND/OR one or more related)
 	title: string;
 	color: string;
 	type: T_Thing;
@@ -147,8 +147,10 @@ export default class Thing extends Persistable {
 
 	remove_fromGrabbed_andExpanded_andResolveFocus() {
 		// called when this (thing) is being deleted
-		for (const ancestry of this.ancestries) {
-			ancestry.remove_fromGrabbed_andExpanded();
+		for (const ancestry of this.ancestries) {		// DO NOT REMOVE ANCESTRIES ???
+			if (ancestry.id_thing == this.id) {
+				ancestry.remove_fromGrabbed_andExpanded();
+			}
 		}
 		this.oneAncestry.remove_fromGrabbed_andExpanded();
 		const focus = get(w_ancestry_focus);

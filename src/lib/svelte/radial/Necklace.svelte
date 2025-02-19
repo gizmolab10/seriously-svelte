@@ -1,8 +1,7 @@
 <script lang='ts'>
-	import { w_graph_rect, w_s_paging, w_ancestry_focus, w_thing_color } from '../../ts/state/S_Stores';
-	import { Predicate, G_Widget, G_Radial } from '../../ts/common/Global_Imports';
-	import { w_g_radial, w_ring_rotation_radius } from '../../ts/state/S_Stores';
-	import { k, u, Point, T_Layer, signals } from '../../ts/common/Global_Imports';
+import { k, u, Point, T_Layer, signals, G_Radial, Predicate } from '../../ts/common/Global_Imports';
+	import { w_g_radial, w_s_paging, w_ring_rotation_radius } from '../../ts/state/S_Stores';
+	import { w_graph_rect, w_ancestry_focus, w_thing_color } from '../../ts/state/S_Stores';
 	import Widget from '../widget/Widget.svelte';
 	import { onMount } from 'svelte';
     const ancestry = $w_ancestry_focus;
@@ -43,7 +42,7 @@
 		<div class='necklace-widgets' style='z-index:{T_Layer.backmost};'>
 			{#each $w_g_radial.g_widgets as g_widget}
 				<Widget
-					name={g_widget.s_widget.name}
+					name={g_widget.es_widget.name}
 					ancestry={g_widget.widget_ancestry}
 					points_right={g_widget.points_right}
 					points_toChild={g_widget.points_toChild}
