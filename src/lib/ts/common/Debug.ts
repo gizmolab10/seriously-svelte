@@ -3,12 +3,11 @@ import { g } from '../state/S_Global';
 // query string: ?debug=p,action
 
 export enum T_Debug {
-	p	= 'p',
+	preferences	= 'preferences',
 	hide_rings	= 'hide_rings',
 	fast_load	= 'fast_load',
 	segments	= 'segments',
 	origins 	= 'origins',
-	rebuild 	= 'rebuild',
 	reticle		= 'reticle',	// debug radial layout geometry
 	signals		= 'signals',
 	action  	= 'action',
@@ -68,11 +67,11 @@ export class Debug {
 	log_layout(message: string) { this.log_maybe(T_Debug.layout, message); }
 	log_radial(message: string) { this.log_maybe(T_Debug.radial, message); }
 	log_remote(message: string) { this.log_maybe(T_Debug.remote, message); }
+	log_things(message: string) { this.log_maybe(T_Debug.things, message); }
 	log_signals(message: string) { this.log_maybe(T_Debug.signals, message); }
 	log_origins(message: string) { this.log_maybe(T_Debug.origins, message); }
-	log_rebuild(message: string) { this.log_maybe(T_Debug.rebuild, message); }
 	log_segments(message: string) { this.log_maybe(T_Debug.segments, message); }
-	log_p(message: string) { this.log_maybe(T_Debug.p, message); }
+	log_preferences(message: string) { this.log_maybe(T_Debug.preferences, message); }
 	
 	log_maybe(option: T_Debug, message: string) {
 		if (this.hasOption(option)) {
@@ -86,11 +85,10 @@ export class Debug {
 			const flags = debug.split(',');
 			for (const option of flags) {
 				switch (option) {
-					case 'p': this.flags.push(T_Debug.p); break;
+					case 'preferences': this.flags.push(T_Debug.preferences); break;
 					case 'hide_rings': this.flags.push(T_Debug.hide_rings); break;
 					case 'segments': this.flags.push(T_Debug.segments); break;
 					case 'origins': this.flags.push(T_Debug.origins); break;
-					case 'rebuild': this.flags.push(T_Debug.rebuild); break;
 					case 'reticle': this.flags.push(T_Debug.reticle); break;
 					case 'signals': this.flags.push(T_Debug.signals); break;
 					case 'action': this.flags.push(T_Debug.action); break;

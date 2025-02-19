@@ -71,7 +71,7 @@ export class Preferences {
 	ancestries_writeDB_key(ancestries: Array<Ancestry>, key: string) {
 		const path_strings = ancestries.map(a => a.id);		// ancestry id is actually a path string (of Relationship ids)
 		this.writeDB_key(key, ancestries.length == 0 ? null : path_strings);
-		debug.log_p(`! ${key.toUpperCase()} ${ancestries.length} paths "${path_strings}" titles "${ancestries.map(a => a.title)}"`);
+		debug.log_preferences(`! ${key.toUpperCase()} ${ancestries.length} paths "${path_strings}" titles "${ancestries.map(a => a.title)}"`);
 	}
 
 	ancestries_readDB_key(key: string): Array<Ancestry> {	// 2 keys supported so far {grabbed, expanded}
@@ -87,7 +87,7 @@ export class Preferences {
 				}
 			};
 		}
-		debug.log_p(`  ${key.toUpperCase()} ${ancestries.map(a => a.id)}`);
+		debug.log_preferences(`  ${key.toUpperCase()} ${ancestries.map(a => a.id)}`);
 		return ancestries;
 	}
 	
@@ -103,7 +103,7 @@ export class Preferences {
 		return JSON.parse(key);
 	}
 
-	reset() {
+	preferences_reset() {
 		const ids = Object.keys(T_Preference)
 			.filter(key => isNaN(Number(key))) // Exclude numeric keys
 			.map(key => T_Preference[key as keyof typeof T_Preference]);

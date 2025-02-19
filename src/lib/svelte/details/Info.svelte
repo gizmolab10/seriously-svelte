@@ -129,6 +129,7 @@
 	function update_forAncestry() {
 		thing = ancestry?.thing;
 		if (!!thing) {
+			console.log('INFO')
 			thing_title = thing.title;
 			thingHID = thing.hid;
 			const dict = {

@@ -103,7 +103,7 @@ export default class DBCommon {
 		this.hierarchy = h;
 		w_hierarchy.set(h);
 		if (h.hasRoot) {
-			h.restore_fromPersistLocal();
+			h.restore_fromPreferences();
 		} else {
 			w_t_startup.set(T_Startup.fetch);
 			await this.hierarchy_create_fastLoad_or_fetch_andBuild();

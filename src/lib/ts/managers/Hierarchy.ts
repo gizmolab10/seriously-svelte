@@ -1344,7 +1344,7 @@ export class Hierarchy {
 
 	static readonly BUILD: unique symbol;
 
-	restore_fromPersistLocal() {
+	restore_fromPreferences() {
 		w_ancestry_showing_tools.set(null);
 		w_s_title_edit.set(null);
 		p.restore_focus();
@@ -1357,7 +1357,7 @@ export class Hierarchy {
 		this.assure_root_andAncestry();
 		// await this.relationships_lostAndFound_persistentCreate(this.db.idBase);
 		// await this.relationships_removeHavingNullReferences();
-		this.restore_fromPersistLocal();
+		this.restore_fromPreferences();
 		this.signal_storage_redraw();
 	}
 

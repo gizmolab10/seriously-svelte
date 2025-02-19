@@ -1,10 +1,9 @@
-import { w_hierarchy, w_count_resize, w_count_mouse_up, w_count_rebuild } from './S_Stores';
-import { w_t_graph, w_thing_color, w_t_startup, w_device_isMobile } from './S_Stores';
 import { e, k, p, u, ux, w, show, debug, databases } from '../common/Global_Imports';
 import { Hierarchy, S_Rotation, S_Expansion } from '../common/Global_Imports';
-import { T_Graph, T_Startup, T_Preference } from '../common/Global_Imports';
+import { stores_reset_settings, stores_setup_defaults } from './S_Stores';
 import { w_ancestries_grabbed, w_ancestries_expanded } from './S_Stores';
-import { w_ancestry_focus } from './S_Stores';
+import { w_t_graph, w_hierarchy, w_ancestry_focus } from './S_Stores';
+import { T_Graph, T_Preference } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
 export class S_Global {
@@ -43,12 +42,7 @@ export class S_Global {
 	}
 
 	setup_defaults() {
-		w_count_resize.set(0);
-		w_count_rebuild.set(0);
-		w_count_mouse_up.set(0);
-		w_thing_color.set(null);
-		w_t_startup.set(T_Startup.start);
-		w_device_isMobile.set(this.device_isMobile);
+		stores_setup_defaults();
 		this.s_ring_resizing = new S_Expansion();
 		this.s_ring_rotation  = new S_Rotation();
 		this.s_cluster_rotation = new S_Rotation();
@@ -67,17 +61,15 @@ export class S_Global {
 		}
 		for (const option of eraseOptions) {
 			switch (option) {
+				case 'settings':
+					p.preferences_reset();
+					stores_reset_settings();
+					break;
 				case 'data':
 					this.eraseDB = 2;
 					p.writeDB_key(T_Preference.focus, null);
 					p.writeDB_key(T_Preference.grabbed, null);
 					p.writeDB_key(T_Preference.expanded, null);
-					break;
-				case 'settings':
-					p.reset();
-					w_ancestries_expanded.set([]);
-					w_ancestry_focus.set(this.hierarchy.rootAncestry);
-					w_ancestries_grabbed.set([this.hierarchy.rootAncestry]);
 					break;
 			}
 		}

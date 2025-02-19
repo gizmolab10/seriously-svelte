@@ -8,7 +8,7 @@ export class Wrappers {
 	private child_wrapperTypes_byType: {[type: string]: Array<string>} = {};
 	private wrappers_byType_andHID: { [type: string]: { [hid: Integer]: Svelte_Wrapper } } = {};
 	
-	// assure delivery of events
+	// support for delivery of events
 	// to a svelt component
 	// with a higher T_Layer
 	// than the containing component

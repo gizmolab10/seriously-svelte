@@ -173,20 +173,25 @@ export default class Thing extends Persistable {
 		return parents;
 	}
 
-	oneAncestries_rebuild_forSubtree() {
+	oneAncestries_rebuild_forSubtree(visited: Array<string> = []) {
 
 		// set oneAncestry for this and all its progeny,
 		// they are all backwards dependent,
 		// so must be done top-down all at once
 
-		const oneAncestry = this.oneAncestry_derived;
-		if (!!oneAncestry) {
-			const predicate = oneAncestry.predicate;
-			if (!!predicate && !predicate.isBidirectional && this.oneAncestry != oneAncestry) {
-				get(w_hierarchy).ancestry_forget(this.oneAncestry);
-				this.oneAncestry = oneAncestry;
+		if (visited.includes(this.id)) {
+			debug.log_things(`oneAncestry repeated "${this.title}"`)
+		} else {
+			const oneAncestry = this.oneAncestry ?? this.oneAncestry_derived;
+			if (!!oneAncestry) {
+				const newVisited = [...visited, this.id];
+				const predicate = oneAncestry.predicate;
+				if (!!predicate && !predicate.isBidirectional && this.oneAncestry != oneAncestry) {
+					get(w_hierarchy).ancestry_forget(this.oneAncestry);
+					this.oneAncestry = oneAncestry;
+				}
+				oneAncestry.children.map(c => c.oneAncestries_rebuild_forSubtree(newVisited));
 			}
-			oneAncestry.children.map(c => c.oneAncestries_rebuild_forSubtree());
 		}
 	}
 

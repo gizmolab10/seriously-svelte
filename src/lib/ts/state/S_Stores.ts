@@ -1,8 +1,7 @@
-import { Rect, Point, Ancestry, Hierarchy, G_Cluster, G_Radial } from '../common/Global_Imports';
+import { g, Rect, Point, Ancestry, Hierarchy, G_Cluster, G_Radial } from '../common/Global_Imports';
 import { T_Graph, T_Hierarchy, T_Details, T_Startup } from '../common/Global_Imports';
 import { S_Paging, S_Title_Edit, S_Alteration } from '../common/Global_Imports';
-import { writable } from 'svelte/store';
-
+import { get, writable } from 'svelte/store';
 
 export const w_hierarchy			  = writable<Hierarchy>();
 export const w_ancestries_grabbed	  = writable<Array<Ancestry>>();
@@ -39,9 +38,26 @@ export const w_storage_update_trigger = writable<number>();
 export const w_ring_rotation_radius	  = writable<number>();
 export const w_ring_rotation_angle	  = writable<number>();
 export const w_count_mouse_up		  = writable<number>();
+export const w_count_relayout		  = writable<number>();
 export const w_count_rebuild		  = writable<number>();
 export const w_count_resize			  = writable<number>();
 export const w_font_size			  = writable<number>();
 export const w_show_details			  = writable<boolean>();
 export const w_device_isMobile		  = writable<boolean>();
-export const w_rebuild_isInProgress	  = writable<boolean>();
+
+export function stores_reset_settings() {
+	const rootAncestry = get(w_hierarchy).rootAncestry;
+	w_ancestries_grabbed.set([rootAncestry]);
+	w_ancestry_focus.set(rootAncestry);
+	w_ancestries_expanded.set([]);
+}
+
+export function stores_setup_defaults() {
+	w_device_isMobile.set(g.device_isMobile);
+	w_t_startup.set(T_Startup.start);
+	w_thing_color.set(null);
+	w_count_relayout.set(0);
+	w_count_mouse_up.set(0);
+	w_count_rebuild.set(0);
+	w_count_resize.set(0);
+}
