@@ -1,9 +1,9 @@
 <script lang='ts'>
-	import { w_graph_rect, w_hierarchy, w_show_details, w_device_isMobile,  } from '../../ts/state/S_Stores';
-	import { g, k, u, ux, show, Rect, Size, Point, Thing, T_Layer, debug } from '../../ts/common/Global_Imports';
-	import { w_id_popupView, w_ancestry_focus, w_user_graph_offset } from '../../ts/state/S_Stores';
-	import { signals, T_Signal, T_Control, Ancestry, databases } from '../../ts/common/Global_Imports';
-	import { Predicate, T_Element, p } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, show, Rect, Size, Point, Thing, debug, signals } from '../../ts/common/Global_Imports';
+	import { T_Line, T_Layer, T_Signal, G_Widget, T_Control, T_Element } from '../../ts/common/Global_Imports';
+	import { w_graph_rect, w_hierarchy, w_show_details, w_ancestry_focus } from '../../ts/state/S_Stores';
+	import { w_id_popupView, w_device_isMobile, w_user_graph_offset } from '../../ts/state/S_Stores';
+	import { Predicate, Ancestry, databases } from '../../ts/common/Global_Imports';
 	import Tree_Children from './Tree_Children.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import Circle from '../kit/Circle.svelte';
@@ -15,6 +15,7 @@
 	let origin_ofWidget = Point.zero;
 	let childrenSize = Point.zero;
 	let offsetX_ofFirstReveal = 0;
+	let g_widget!: G_Widget;
 	let graphRect: Rect;
 	let rebuilds = 0;
 	let height = 0;
@@ -74,6 +75,7 @@
 			const offset_toChildren = new Point(-42.2 + k.line_stretch - (k.dot_size / 2) + offsetX_ofFirstReveal, (k.dot_size / 2) -(childrenSize.height / 2) - 4);
 			origin_ofChildren = origin_ofFirstReveal.offsetBy(offset_toChildren);
 			origin_ofWidget = origin_ofFirstReveal.offsetByXY(-21.5 - offsetX_ofFirstReveal, -5);
+			g_widget = new G_Widget(T_Line.flat, Rect.zero, origin_ofChildren, focusAncestry, null);
 			debug.log_origins(origin_ofChildren.x + ' updateOrigins');
 		}
 	}
@@ -84,7 +86,11 @@
 	{#key rebuilds}
 		<div class='tree'
 			style='transform:translate({$w_user_graph_offset.x}px, {$w_user_graph_offset.y}px);'>
-			<Widget name={s_focus.name} ancestry={$w_ancestry_focus} origin={origin_ofWidget}/>
+			<Widget
+				name={s_focus.name}
+				origin={origin_ofWidget}
+				ancestry={$w_ancestry_focus}
+				width={g_widget.widget_width}/>
 			{#if $w_ancestry_focus.isExpanded}
 				<Tree_Children ancestry={$w_ancestry_focus} origin={origin_ofChildren}/>
 			{/if}

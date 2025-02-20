@@ -38,9 +38,15 @@ export default class G_Widget extends Rect {
 	get responder(): HTMLElement | null { return this.es_widget.responder; }
 
 	get getWidth(): number {
-		const titleWidth = this.widget_ancestry?.thing?.titleWidth ?? 0;
-		const showingReveal = this.widget_ancestry?.showsReveal ?? false;
-		return k.row_height * (showingReveal ? 2 : 1) + titleWidth + (g.inRadialMode ? 13 : 2);
+		let width = 0
+		if (!!this.widget_ancestry?.thing) {
+			const titleWidth = this.widget_ancestry.thing.titleWidth;
+			const multiplier = this.widget_ancestry.showsReveal ? 2 : 1.35;
+			const clustersAdjustment = g.inRadialMode ? (this.points_right ? 14 : 0) : -17;
+			const extraWidth = (k.dot_size * multiplier) + clustersAdjustment;
+			width = titleWidth + extraWidth;
+		}
+		return width;
 	}
 
 }

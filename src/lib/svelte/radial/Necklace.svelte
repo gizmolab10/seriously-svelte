@@ -42,6 +42,7 @@ import { k, u, Point, T_Layer, signals, G_Radial, Predicate } from '../../ts/com
 		<div class='necklace-widgets' style='z-index:{T_Layer.backmost};'>
 			{#each $w_g_radial.g_widgets as g_widget}
 				<Widget
+					width={g_widget.widget_width}
 					name={g_widget.es_widget.name}
 					ancestry={g_widget.widget_ancestry}
 					points_right={g_widget.points_right}

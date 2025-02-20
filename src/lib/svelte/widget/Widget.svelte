@@ -13,6 +13,7 @@
 	export let points_toChild = true;
     export let points_right = true;
     export let name = k.empty;
+	export let width = 0;
     export let ancestry;
 	const s_widget = ux.s_widget_forAncestry(ancestry);
 	const es_widget = ux.s_element_forName(name);	// created by G_Widget
@@ -34,7 +35,6 @@
 	let border = k.empty;
 	let rebuilds = 0;
 	let height = 0;
-	let width = 0;
 	let left = 0;
 	let top = 0;
     let widget;
@@ -139,7 +139,6 @@
 
 	function layout_widget() {
 		const dragX = 5.5;
-		const multiplier = ancestry?.showsReveal ? 2 : 1.35;
 		const showingReveal = ancestry?.showsReveal ?? false;
 		const hasExtraForTinyDots = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
 		const titleWidth = thing?.titleWidth ?? 0;
@@ -150,13 +149,10 @@
 		const dragOffsetY = g.inRadialMode ? 2.8 : 2.7;
 		const rightPadding = g.inRadialMode ? 0 : (hasExtraForTinyDots ? 0.5 : 0) + 21;
 		const leftPadding = points_right ? 1 : 14;
-		const clustersAdjustment = g.inRadialMode ? (points_right ? 14 : 0) : -17;
-		const extraWidth = (k.dot_size * multiplier) + clustersAdjustment;
 		dragCenter = Point.square(k.dot_size / 2).offsetByXY(dragOffsetX, dragOffsetY);
 		left = origin.x + delta + (points_right ? leftForward : leftBackward);
 		padding = `0px ${rightPadding}px 0px ${leftPadding}px`;
 		border_radius = k.row_height / 2;
-		width = titleWidth + extraWidth;
 		height = k.row_height - 1.5;
 		top = origin.y + delta;
 		if (showingReveal) {
