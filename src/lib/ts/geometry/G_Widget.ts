@@ -1,4 +1,4 @@
-import { k, u, ux, Rect, Thing, Point, Angle, Ancestry, T_Element, S_Element } from '../common/Global_Imports'
+import { g, k, u, ux, Rect, Thing, Point, Angle, Ancestry, T_Element, S_Element } from '../common/Global_Imports'
 
 export default class G_Widget extends Rect {
 	parent_ancestry: Ancestry | null;
@@ -6,10 +6,11 @@ export default class G_Widget extends Rect {
 	child_angle: number | null;
 	children_origin: Point;
 	points_toChild = true;
-	points_right = true;
 	es_widget: S_Element;
+	points_right = true;
 	child: Thing | null;
 	curveType: string;
+	widget_width = 0;
 
 	constructor(curveType: string, rect: Rect, children_origin: Point, widget_ancestry: Ancestry,
 		parent_ancestry: Ancestry | null, points_toChild: boolean = true, child_angle: number | null = null) {
@@ -19,8 +20,9 @@ export default class G_Widget extends Rect {
 		this.child = widget_ancestry?.thing ?? null;
 		this.parent_ancestry = parent_ancestry;
 		this.widget_ancestry = widget_ancestry;
-		this.points_toChild = points_toChild;
 		this.children_origin = children_origin;
+		this.points_toChild = points_toChild;
+		this.widget_width = this.getWidth;
 		this.child_angle = child_angle;
 		this.curveType = curveType;
 		if (!this.child) {
@@ -34,5 +36,11 @@ export default class G_Widget extends Rect {
 	}
 
 	get responder(): HTMLElement | null { return this.es_widget.responder; }
+
+	get getWidth(): number {
+		const titleWidth = this.widget_ancestry?.thing?.titleWidth ?? 0;
+		const showingReveal = this.widget_ancestry?.showsReveal ?? false;
+		return k.row_height * (showingReveal ? 2 : 1) + titleWidth + (g.inRadialMode ? 13 : 2);
+	}
 
 }

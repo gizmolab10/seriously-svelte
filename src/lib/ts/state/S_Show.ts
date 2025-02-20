@@ -1,5 +1,5 @@
 import { g, k, p, w, signals, T_Preference } from '../common/Global_Imports';
-import { w_t_tree, w_t_counts, w_show_details } from './S_Stores';
+import { w_t_tree, w_t_countDots, w_show_details } from './S_Stores';
 import { T_Info, T_Hierarchy } from '../common/Enumerations';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
@@ -30,7 +30,7 @@ export class S_Show {
 		}
 	}
 
-	showing_countDots_ofType(t_counts: T_Hierarchy): boolean { return get(w_t_counts).includes(T_Hierarchy[t_counts]) }
+	showing_countDots_ofType(t_counts: T_Hierarchy): boolean { return get(w_t_countDots).includes(T_Hierarchy[t_counts]) }
 	get children_dots(): boolean { return  this.showing_countDots_ofType(T_Hierarchy.children); }
 	get related_dots(): boolean { return  this.showing_countDots_ofType(T_Hierarchy.related); }
 	get parent_dots(): boolean { return  this.showing_countDots_ofType(T_Hierarchy.parents); }

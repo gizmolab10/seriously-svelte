@@ -9,10 +9,10 @@
 	import Circle from '../kit/Circle.svelte';
 	export let origin = Point.zero;
     export let ancestry;
-	const widgetOffset = new Point(17, (k.dot_size / -15) - 7);
 	const lineOffset = new Point(-122.5, 2.5);
-	let g_widgets: Array<G_Widget> = [];
+	const widgetOffset = new Point(17, (k.dot_size / -15) - 7);
 	let priorTime = new Date().getTime();
+	let g_widgets: Array<G_Widget> = [];
 	let center = Point.zero;
 	
 	onDestroy(() => { g_widgets = []; });
@@ -48,7 +48,7 @@
 			let sum = -ancestry.visibleProgeny_height() / 2; // start out negative and grow positive
 			for (const childAncestry of childAncestries) {
 				const g_children = new G_Children(sum, ancestry, childAncestry, childrenOrigin);
-				g_widgets = u.concatenateArrays(g_widgets, g_children.g_widgets);
+				g_widgets = u.concatenateArrays(g_widgets, [g_children.g_widget]);
 				sum += g_children.childHeight + 1;
 			}
 			center = childrenOrigin.offsetByXY(20, 2);

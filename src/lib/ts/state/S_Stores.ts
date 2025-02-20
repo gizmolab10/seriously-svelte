@@ -13,8 +13,8 @@ export const w_s_title_edit			  = writable<S_Title_Edit | null>();
 export const w_s_alteration			  = writable<S_Alteration | null>();
 export const w_s_paging				  = writable<S_Paging>();
 
+export const w_t_countDots			  = writable<Array<T_Hierarchy>>();
 export const w_t_details			  = writable<Array<T_Details>>();
-export const w_t_counts				  = writable<Array<T_Hierarchy>>();
 
 export const w_t_database			  = writable<string>();
 export const w_t_startup			  = writable<T_Startup>();
@@ -45,19 +45,25 @@ export const w_font_size			  = writable<number>();
 export const w_show_details			  = writable<boolean>();
 export const w_device_isMobile		  = writable<boolean>();
 
-export function stores_reset_settings() {
-	const rootAncestry = get(w_hierarchy).rootAncestry;
-	w_ancestries_grabbed.set([rootAncestry]);
-	w_ancestry_focus.set(rootAncestry);
-	w_ancestries_expanded.set([]);
+class Stores {
+	trigger_relayout() { w_count_relayout.set(get(w_count_relayout) + 1); }
+
+	reset_settings() {
+		const rootAncestry = get(w_hierarchy).rootAncestry;
+		w_ancestries_grabbed.set([rootAncestry]);
+		w_ancestry_focus.set(rootAncestry);
+		w_ancestries_expanded.set([]);
+	}
+	
+	setup_defaults() {
+		w_device_isMobile.set(g.device_isMobile);
+		w_t_startup.set(T_Startup.start);
+		w_thing_color.set(null);
+		w_count_relayout.set(0);
+		w_count_mouse_up.set(0);
+		w_count_rebuild.set(0);
+		w_count_resize.set(0);
+	}
 }
 
-export function stores_setup_defaults() {
-	w_device_isMobile.set(g.device_isMobile);
-	w_t_startup.set(T_Startup.start);
-	w_thing_color.set(null);
-	w_count_relayout.set(0);
-	w_count_mouse_up.set(0);
-	w_count_rebuild.set(0);
-	w_count_resize.set(0);
-}
+export const stores = new Stores();

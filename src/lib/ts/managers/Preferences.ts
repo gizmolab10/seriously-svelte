@@ -1,4 +1,4 @@
-import { w_hierarchy, w_t_tree, w_t_graph, w_t_counts, w_t_details } from '../state/S_Stores';
+import { w_hierarchy, w_t_tree, w_t_graph, w_t_countDots, w_t_details } from '../state/S_Stores';
 import { w_s_paging, w_ancestries_grabbed, w_ancestries_expanded } from '../state/S_Stores';
 import { g, k, ux, show, debug, Ancestry, databases } from '../common/Global_Imports';
 import { w_ancestry_focus, w_font_size, w_thing_fontFamily } from '../state/S_Stores';
@@ -13,11 +13,11 @@ export enum T_Preference {
 	ring_radius	  = 'ring_radius',
 	user_offset	  = 'user_offset',
 	ring_angle    = 'ring_angle',
+	countDots	  = 'countDots',
 	font_size	  = 'font_size',
 	expanded	  = 'expanded',
 	base_id		  = 'base_id',
 	grabbed		  = 'grabbed',
-	counts		  = 'counts',
 	paging 		  = 'paging',
 	traits		  = 'traits',
 	graph		  = 'graph',
@@ -126,8 +126,8 @@ export class Preferences {
 		w_t_graph.subscribe((value) => {
 			this.write_key(T_Preference.graph, value);
 		});
-		w_t_counts.subscribe((value) => {
-			this.write_key(T_Preference.counts, value);
+		w_t_countDots.subscribe((value) => {
+			this.write_key(T_Preference.countDots, value);
 		});
 		w_ring_rotation_angle.subscribe((angle: number) => {
 			this.write_key(T_Preference.ring_angle, angle);
@@ -152,7 +152,7 @@ export class Preferences {
 		w_t_graph.set(this.read_key(T_Preference.graph) ?? T_Graph.tree);
 		w_t_tree.set(this.read_key(T_Preference.tree) ?? T_Hierarchy.children);
 		w_ring_rotation_angle.set(this.read_key(T_Preference.ring_angle) ?? 0);
-		w_t_counts.set(this.read_key(T_Preference.counts) ?? [T_Hierarchy.children]);
+		w_t_countDots.set(this.read_key(T_Preference.countDots) ?? [T_Hierarchy.children]);
 		w_thing_fontFamily.set(this.read_key(T_Preference.font) ?? 'Times New Roman');
 		w_t_details.set(this.read_key(T_Preference.detail_types) ?? [T_Details.storage]);
 		w_ring_rotation_radius.set(Math.max(this.read_key(T_Preference.ring_radius) ?? 0, k.innermost_ring_radius));

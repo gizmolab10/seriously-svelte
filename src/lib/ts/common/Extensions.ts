@@ -133,6 +133,7 @@ Object.defineProperty(String.prototype, 'html_encode', {
 
 declare global {
 	interface Number {
+		asInt(): string;
 		roundToEven(): number;
 		angle_normalized(): number;
 		expressZero_asHyphen(): string;
@@ -286,6 +287,15 @@ Object.defineProperty(Number.prototype, 'isClocklyAlmost', {
 Object.defineProperty(Number.prototype, 'expressZero_asHyphen', {
 	value: function(): string | number {
 		return this == 0 ? '-' : this;
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
+});
+
+Object.defineProperty(Number.prototype, 'asInt', {
+	value: function(): string {
+		return this.toFixed(0);
 	},
 	writable: false,
 	enumerable: false,

@@ -1,9 +1,7 @@
 import { e, k, p, u, ux, w, show, debug, databases } from '../common/Global_Imports';
 import { Hierarchy, S_Rotation, S_Expansion } from '../common/Global_Imports';
-import { stores_reset_settings, stores_setup_defaults } from './S_Stores';
-import { w_ancestries_grabbed, w_ancestries_expanded } from './S_Stores';
-import { w_t_graph, w_hierarchy, w_ancestry_focus } from './S_Stores';
 import { T_Graph, T_Preference } from '../common/Global_Imports';
+import { stores, w_t_graph, w_hierarchy } from './S_Stores';
 import { get } from 'svelte/store';
 
 export class S_Global {
@@ -42,7 +40,7 @@ export class S_Global {
 	}
 
 	setup_defaults() {
-		stores_setup_defaults();
+		stores.setup_defaults();
 		this.s_ring_resizing = new S_Expansion();
 		this.s_ring_rotation  = new S_Rotation();
 		this.s_cluster_rotation = new S_Rotation();
@@ -63,7 +61,7 @@ export class S_Global {
 			switch (option) {
 				case 'settings':
 					p.preferences_reset();
-					stores_reset_settings();
+					stores.reset_settings();
 					break;
 				case 'data':
 					this.eraseDB = 2;

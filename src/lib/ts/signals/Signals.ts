@@ -1,4 +1,4 @@
-import { w_count_relayout, w_ancestry_focus } from '../state/S_Stores';
+import { stores, w_ancestry_focus } from '../state/S_Stores';
 import { debug } from '../common/Debug';
 import { Signal } from 'typed-signals';
 import { get } from 'svelte/store';
@@ -24,7 +24,9 @@ export class Signals {
 
 	signal_relayoutAndRecreate_widgets_from(value: any = null) {
 		this.signal(T_Signal.relayout, value);
-		w_count_relayout.set(get(w_count_relayout) + 1);	// NEW, untested
+		setTimeout(() => {
+			stores.trigger_relayout();					// NEW, untested
+		}, 200);
 	}
 
 	signal_rebuildGraph_from(value: any = null) {

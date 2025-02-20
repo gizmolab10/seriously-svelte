@@ -6,6 +6,7 @@
 	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/state/S_Stores';
 	import { w_ancestries_grabbed, w_ancestry_showing_tools } from '../../ts/state/S_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
+	import { w_count_relayout } from '../../ts/state/S_Stores';
 	import { T_Edit } from '../../ts/state/S_Title_Edit';
 	import { onMount, onDestroy } from 'svelte';
 	export let points_right = true;
@@ -68,6 +69,10 @@
 		if (!!ancestry && (ancestry_isEditStopping() || (hasFocus() && !s_title_edit))) {
 			stopEdit();
 		}
+	}
+
+	$: {
+		const _ = $w_count_relayout;
 	}
 
 	$: {
@@ -160,7 +165,7 @@
 			$w_thing_title = title;		// tell Info to update it's selection's title
 			debug.log_edit(`TITLE ${title}`);
 			$w_s_title_edit?.setState_temporarily_whileApplying(T_Edit.percolating, () => {
-				signals.signal_rebuildGraph_fromFocus();
+				relayout();
 			});
 			debug.log_edit(`UPDATED ${$w_s_title_edit?.description}`);
 		}

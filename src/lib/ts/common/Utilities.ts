@@ -234,7 +234,7 @@ export class Utilities {
 		element.style.whiteSpace = 'pre';
 		element.textContent = s;
 		document.body.appendChild(element);
-		const width: number = element.scrollWidth;
+		const width: number = element.getBoundingClientRect().width / w.scale_factor;
 		document.body.removeChild(element);
 		return width;
 	}

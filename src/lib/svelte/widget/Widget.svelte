@@ -3,6 +3,7 @@
 	import { T_Layer, T_Graph, T_Signal, T_Element, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_t_graph, w_thing_color, w_thing_fontFamily } from '../../ts/state/S_Stores';
 	import { w_s_title_edit, w_ancestries_grabbed } from '../../ts/state/S_Stores';
+	import { w_count_relayout } from '../../ts/state/S_Stores';
 	import { T_Edit } from '../../ts/state/S_Title_Edit';
 	import W_Title_Editor from './W_Title_Editor.svelte';
 	import W_Dot_Reveal from './W_Dot_Reveal.svelte';
@@ -13,16 +14,15 @@
     export let points_right = true;
     export let name = k.empty;
     export let ancestry;
-	const priorRowHeight = k.row_height;
 	const s_widget = ux.s_widget_forAncestry(ancestry);
 	const es_widget = ux.s_element_forName(name);	// created by G_Widget
 	const es_drag = ux.s_element_for(ancestry, T_Element.drag, k.empty);
 	const es_title = ux.s_element_for(ancestry, T_Element.title, k.empty);
 	const es_reveal = ux.s_element_for(ancestry, T_Element.reveal, k.empty);
 	let widgetWrapper!: Svelte_Wrapper;
+	let border_radius = k.dot_size / 2;
 	let revealCenter = Point.zero;
 	let dragCenter = Point.zero;
-	let radius = k.dot_size / 2;
 	let priorOrigin = origin;
 	let background = k.empty;
 	let widgetName = k.empty;
@@ -48,7 +48,7 @@
 		debug.log_mount(`WIDGET ${thing?.description} ${ancestry.isGrabbed}`);
 		fullUpdate();
 		const handleAny = signals.handle_anySignal_atPriority(3, (t_signal, ancestry) => {
-			debug.log_layout(`WIDGET ${thing?.description}`);
+			debug.log_signals(`WIDGET ${thing?.description}`);
 			switch (t_signal) {
 				case T_Signal.relayout:
 					if (ancestry.id_thing == thing?.id) {
@@ -74,6 +74,15 @@
 	$: {
 		if (!!widget) {
 			widgetWrapper = new Svelte_Wrapper(widget, handle_mouse_state, ancestry.hid, T_SvelteComponent.widget);
+		}
+	}
+
+	$: {
+		const _ = $w_count_relayout;
+		if (!!widget) {
+			// debug.log_layout(`TRIIGGER at (${left.asInt()}, ${top.asInt()}) "${ancestry.title}"`);
+			widget.style.left = `${left}px`;
+			widget.style.top = `${top}px`;
 		}
 	}
 	
@@ -141,21 +150,21 @@
 		const dragOffsetY = g.inRadialMode ? 2.8 : 2.7;
 		const rightPadding = g.inRadialMode ? 0 : (hasExtraForTinyDots ? 0.5 : 0) + 21;
 		const leftPadding = points_right ? 1 : 14;
-		const clustersAdjustment = g.inRadialMode ? (points_right ? 14 : 0) : -10;
+		const clustersAdjustment = g.inRadialMode ? (points_right ? 14 : 0) : -17;
 		const extraWidth = (k.dot_size * multiplier) + clustersAdjustment;
 		dragCenter = Point.square(k.dot_size / 2).offsetByXY(dragOffsetX, dragOffsetY);
 		left = origin.x + delta + (points_right ? leftForward : leftBackward);
 		padding = `0px ${rightPadding}px 0px ${leftPadding}px`;
+		border_radius = k.row_height / 2;
 		width = titleWidth + extraWidth;
 		height = k.row_height - 1.5;
-		radius = k.row_height / 2;
 		top = origin.y + delta;
 		if (showingReveal) {
 			const revealY = k.dot_size - 3.62;
-			const revealX = points_right ? (k.dot_size + titleWidth + (g.inRadialMode ? 19 : 17)) : 9;
+			const revealX = !points_right ? 9 : (k.row_height + titleWidth + (g.inRadialMode ? 13 : 2));
 			revealCenter = new Point(revealX, revealY);
 		}
-		debug.log_layout(`LAYOUT WIDGET ${delta} ${thing?.title ?? k.unknown}`);
+		debug.log_layout(`WIDGET (${left.asInt()}, ${top.asInt()}) ${thing?.title ?? k.unknown}`);
 	}
 
 </script>
@@ -171,9 +180,9 @@
 				height:{height}px;
 				padding:{padding};
 				position: absolute;
-				border-radius:{radius}px;
 				z-index:{T_Layer.widgets};
 				border:{es_widget.border};
+				border-radius:{border_radius}px;
 				background-color:{ancestry.isGrabbed || g.inRadialMode ? k.color_background : 'transparent'};
 			'>
 			<W_Dot_Drag

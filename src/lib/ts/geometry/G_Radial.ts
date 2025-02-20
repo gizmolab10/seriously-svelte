@@ -13,7 +13,7 @@ export default class G_Radial {
 	// layout all the widgets, radial and arcs
 
 	constructor() {
-		debug.log_layout(`GEOMETRY (ts)  ${get(w_ancestry_focus)?.thing?.title}`);
+		debug.log_layout(`RADIAL ${get(w_ancestry_focus)?.thing?.title}`);
 		this.layout_allClusters();
 		w_s_paging.subscribe((state: S_Paging) => {
 			this.update_forPaging_state(state);

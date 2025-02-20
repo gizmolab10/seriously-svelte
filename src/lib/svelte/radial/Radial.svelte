@@ -90,7 +90,7 @@
 					ring_zone = T_RingZone.paging;
 				}
 			}
-			debug.log_hover(` ring zone ${ring_zone} ${distance.toFixed(0)}`);
+			debug.log_hover(` ring zone ${ring_zone} ${distance.asInt()}`);
 			debug.log_cursor(` ring zone ${ring_zone} ${mouse_vector.description}`);
 		}
 		return ring_zone;
@@ -145,7 +145,7 @@
 				detect_hovering();
 				cursor = g.s_ring_resizing.cursor;
 				if (Math.abs(delta) > 1) {										// granularity of 1 pixel
-					debug.log_radial(` resize  D ${distance.toFixed(0)}  R ${radius.toFixed(0)}  + ${delta.toFixed(1)}`);
+					debug.log_radial(` resize  D ${distance.asInt()}  R ${radius.asInt()}  + ${delta.toFixed(1)}`);
 					$w_ring_rotation_radius = radius;
 					signals.signal_rebuildGraph_fromFocus();					// destroys this component (properties are in w_w_ring_resizing)
 					rebuilds += 1;
@@ -205,7 +205,7 @@
 						break;
 					case T_RingZone.resize:
 						const radius_offset = w.mouse_distance_fromGraphCenter - $w_ring_rotation_radius;
-						debug.log_radial(` begin resize  ${radius_offset.toFixed(0)}`);
+						debug.log_radial(` begin resize  ${radius_offset.asInt()}`);
 						g.s_ring_rotation.active_angle = mouse_wentDown_angle + Angle.quarter;	// needed for cursor
 						g.s_ring_rotation.basis_angle = rotation_angle + Angle.quarter;
 						g.s_ring_resizing.basis_radius = radius_offset;
