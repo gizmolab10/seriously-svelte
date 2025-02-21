@@ -41,7 +41,7 @@
 	if (!!thing()) {
 		const showingReveal = ancestry?.showsReveal ?? false;
 		title_width = thing().title_width + (showingReveal ? 6 : 1) + 15;
-		title_left = g.inRadialMode ? ancestry.isFocus ? -4 : (points_right ? 1 : (showingReveal ? 1 : -11)) : 1;
+		title_left = g.inRadialMode ? (ancestry.isFocus ? -4 : (points_right ? 1 : (showingReveal ? 1 : -11))) : -3;
 	}
 
 	onMount(() => {
@@ -290,9 +290,9 @@
 </style>
 
 <Mouse_Responder
+	height={k.dot_size}
 	name={es_title.name}
 	origin={title_origin}
-	height={k.row_height}
 	width={title_width - 22}
 	handle_mouse_state={handle_mouse_state}>
 	<span class="ghost"
@@ -320,19 +320,20 @@
 		on:keydown={handle_key_down}
 		on:mouseover={(event) => { event.preventDefault(); }}
 		style='
-			top: 0.5px;
-			border: none;
+			top : 1.5px;
+			border : none;
 			{cursor_style};
-			outline: none;
-			color: {color};
-			white-space: pre;
-			position: absolute;
-			padding: {padding};
-			fontSize: {fontSize};
-			left: {title_left}px;
-			width: {title_width}px;
-			z-index: {T_Layer.text};
+			outline : none;
+			color : {color};
+			white-space : pre;
+			position : absolute;
+			padding : {padding};
+			left : {title_left}px;
+			font-size : {fontSize};
+			height : {k.dot_size}px;
+			width : {title_width}px;
+			z-index : {T_Layer.text};
 			{k.prevent_selection_style};
-			font-family: {$w_thing_fontFamily};
-			outline-color: {k.color_background};'/>
+			font-family : {$w_thing_fontFamily};
+			outline-color : {k.color_background};'/>
 </Mouse_Responder>

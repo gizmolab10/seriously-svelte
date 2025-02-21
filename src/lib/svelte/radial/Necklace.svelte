@@ -6,7 +6,7 @@ import { k, u, Point, T_Layer, signals, G_Radial, Predicate } from '../../ts/com
 	import { onMount } from 'svelte';
     const ancestry = $w_ancestry_focus;
 	const center = $w_graph_rect.size.asPoint.dividedInHalf;
-	const childOffset = new Point(k.dot_size / -2, 4 - k.dot_size);
+	const childOffset = new Point(-k.dot_size * 3, 4 - k.dot_size);
 	let color = ancestry.thing?.color ?? k.thing_color_default;
 	let rebuilds = 0;
 
@@ -39,15 +39,17 @@ import { k, u, Point, T_Layer, signals, G_Radial, Predicate } from '../../ts/com
 
 {#key rebuilds}
 	{#if !!$w_g_radial}
-		<div class='necklace-widgets' style='z-index:{T_Layer.backmost};'>
+		<div
+			class = 'necklace-widgets'
+			style = 'z-index : {T_Layer.backmost};'>
 			{#each $w_g_radial.g_widgets as g_widget}
 				<Widget
-					width={g_widget.widget_width}
-					name={g_widget.es_widget.name}
-					ancestry={g_widget.widget_ancestry}
-					points_right={g_widget.points_right}
-					points_toChild={g_widget.points_toChild}
-					origin={g_widget.children_origin.offsetBy(childOffset)}/>
+					width = {g_widget.widget_width}
+					name = {g_widget.es_widget.name}
+					ancestry = {g_widget.widget_ancestry}
+					points_right = {g_widget.points_right}
+					points_toChild = {g_widget.points_toChild}
+					origin = {g_widget.child_origin.offsetBy(childOffset)}/>
 			{/each}
 		</div>
 	{/if}

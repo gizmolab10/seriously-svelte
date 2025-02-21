@@ -66,14 +66,15 @@
 		const focusAncestry = $w_ancestry_focus;
 		if (!!focusAncestry && !!graphRect) {
 			childrenSize = focusAncestry.visibleProgeny_size;
-			const offsetX = 15 + ($w_show_details ? -k.width_details : 0) - (childrenSize.width / 2) - (k.dot_size / 2.5) + offsetX_ofFirstReveal;
 			const offsetY = -1 - graphRect.origin.y;
+			const child_offsetY = (k.dot_size / 2) -(childrenSize.height / 2) - 4;
+			const child_offsetX = -37 + k.line_stretch - (k.dot_size / 2) + offsetX_ofFirstReveal;
+			const offsetX = 15 + ($w_show_details ? -k.width_details : 0) - (childrenSize.width / 2) - (k.dot_size / 2.5) + offsetX_ofFirstReveal;
 			origin_ofFirstReveal = graphRect.center.offsetByXY(offsetX, offsetY);
 			if ($w_device_isMobile) {
 				origin_ofFirstReveal.x = 25;
 			}
-			const offset_toChildren = new Point(-42.2 + k.line_stretch - (k.dot_size / 2) + offsetX_ofFirstReveal, (k.dot_size / 2) -(childrenSize.height / 2) - 4);
-			origin_ofChildren = origin_ofFirstReveal.offsetBy(offset_toChildren);
+			origin_ofChildren = origin_ofFirstReveal.offsetByXY(child_offsetX, child_offsetY);
 			origin_ofWidget = origin_ofFirstReveal.offsetByXY(-21.5 - offsetX_ofFirstReveal, -5);
 			g_widget = new G_Widget(T_Line.flat, Rect.zero, origin_ofChildren, focusAncestry, null);
 			debug.log_origins(origin_ofChildren.x + ' updateOrigins');
@@ -84,15 +85,17 @@
 
 {#if $w_ancestry_focus}
 	{#key rebuilds}
-		<div class='tree'
-			style='transform:translate({$w_user_graph_offset.x}px, {$w_user_graph_offset.y}px);'>
+		<div class = 'tree'
+			style = 'transform:translate({$w_user_graph_offset.x}px, {$w_user_graph_offset.y}px);'>
 			<Widget
-				name={s_focus.name}
-				origin={origin_ofWidget}
-				ancestry={$w_ancestry_focus}
-				width={g_widget.widget_width}/>
+				name = {s_focus.name}
+				origin = {origin_ofWidget}
+				ancestry = {$w_ancestry_focus}
+				width = {g_widget.widget_width}/>
 			{#if $w_ancestry_focus.isExpanded}
-				<Tree_Children ancestry={$w_ancestry_focus} origin={origin_ofChildren}/>
+				<Tree_Children
+					origin = {origin_ofChildren}
+					ancestry = {$w_ancestry_focus}/>
 			{/if}
 		</div>
 	{/key}

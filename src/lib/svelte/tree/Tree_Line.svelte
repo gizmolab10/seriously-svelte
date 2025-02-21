@@ -75,20 +75,29 @@
 
 {#key rebuilds}
 	<svg
-		bind:this={line}
-		id={ancestry.title}
-		width={size.width}px
-		class='tree-line-svg'
-		viewBox={viewBox.verbose}
-		height={Math.max(2, size.height)}px
-		style='z-index: {T_Layer.lines};
+		bind:this = {line}
+		id = {ancestry.title}
+		width = {size.width}px
+		class = 'tree-line-svg'
+		viewBox = {viewBox.verbose}
+		height = {Math.max(2, size.height)}px
+		style = '
 			top: {origin.y - size.height + 0.5}px;
 			left: {origin.x + 142}px;
+			z-index: {T_Layer.lines};
 			position: absolute;
 			stroke-width:1px;'>
-		<path class='tree-line-path' d={linePath} stroke={ancestry.thing.color} fill='none'/>
+		<path
+			fill = 'none'
+			d = {linePath}
+			class = 'tree-line-path'
+			stroke = {ancestry.thing.color}/>
 	</svg>
 	{#if debug.lines}
-		<Circle radius=1 center={rect.extent.offsetBy(debugOffset)} color=black thickness=1/>
+		<Circle
+			radius = 1
+			thickness = 1
+			color = black
+			center = {rect.extent.offsetBy(debugOffset)}/>
 	{/if}
 {/key}

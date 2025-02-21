@@ -138,14 +138,12 @@
 	}
 
 	function layout_widget() {
-		const dragX = 5.5;
 		const showingReveal = ancestry?.showsReveal ?? false;
 		const hasExtraForTinyDots = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
-		const titleWidth = thing?.titleWidth ?? 0;
 		const delta = showBorder() ? 0 : 1;
-		const leftForward = -dragX;
-		const leftBackward = -(titleWidth + (showingReveal ? 25.5 : 15.5));
-		const dragOffsetX = points_right ? (dragX - 1.5) : (titleWidth + delta + (showingReveal ? 22.5 : 14));
+		const leftForward = -7;
+		const leftBackward = 50 - (width + (showingReveal ? 25.5 : 15.5));
+		const dragOffsetX = points_right ? 2 : (width + (showingReveal ? 22.5 : 14)) - 20;
 		const dragOffsetY = g.inRadialMode ? 2.8 : 2.7;
 		const rightPadding = g.inRadialMode ? 0 : (hasExtraForTinyDots ? 0.5 : 0) + 21;
 		const leftPadding = points_right ? 1 : 14;
@@ -156,8 +154,8 @@
 		height = k.row_height - 1.5;
 		top = origin.y + delta;
 		if (showingReveal) {
-			const revealY = k.dot_size - 3.62;
-			const revealX = !points_right ? 9 : (k.row_height + titleWidth + (g.inRadialMode ? 13 : 2));
+			const revealY = k.dot_size * 0.72;
+			const revealX = !points_right ? 9 : width + k.dot_size;
 			revealCenter = new Point(revealX, revealY);
 		}
 		debug.log_layout(`WIDGET (${left.asInt()}, ${top.asInt()}) ${thing?.title ?? k.unknown}`);
@@ -167,38 +165,39 @@
 
 {#key rebuilds}
 	{#if es_widget}
-		<div class='widget' id='{widgetName}'
-			bind:this={widget}
-			style='
-				top:{top}px;
-				left:{left}px;
-				width:{width}px;
-				height:{height}px;
-				padding:{padding};
-				position: absolute;
-				z-index:{T_Layer.widgets};
-				border:{es_widget.border};
-				border-radius:{border_radius}px;
-				background-color:{ancestry.isGrabbed || g.inRadialMode ? k.color_background : 'transparent'};
+		<div class = 'widget'
+			id = '{widgetName}'
+			bind:this = {widget}
+			style = '
+				top : {top}px;
+				left : {left}px;
+				width : {width}px;
+				height : {height}px;
+				padding : {padding};
+				position :  absolute;
+				z-index : {T_Layer.widgets};
+				border : {es_widget.border};
+				border-radius : {border_radius}px;
+				background-color : {ancestry.isGrabbed || g.inRadialMode ? k.color_background : 'transparent'};
 			'>
 			<W_Dot_Drag
-				name={es_drag.name}
-				ancestry={ancestry}
-				center={dragCenter}
-				points_right={points_right}
+				name = {es_drag.name}
+				ancestry = {ancestry}
+				center = {dragCenter}
+				points_right = {points_right}
 			/>
 			<W_Title_Editor
-				name={es_title.name}
-				ancestry={ancestry}
-				fontSize={k.font_size}px
-				points_right={points_right}
+				ancestry = {ancestry}
+				name = {es_title.name}
+				fontSize = {k.font_size}px
+				points_right = {points_right}
 			/>
 			{#if ancestry?.showsReveal_forPointingToChild(points_toChild)}
 				<W_Dot_Reveal
-					ancestry={ancestry}
-					name={es_reveal.name}
-					center={revealCenter}
-					points_toChild={points_toChild}
+					ancestry = {ancestry}
+					name = {es_reveal.name}
+					center = {revealCenter}
+					points_toChild = {points_toChild}
 				/>
 			{/if}
 		</div>

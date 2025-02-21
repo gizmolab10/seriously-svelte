@@ -24,7 +24,7 @@ import { T_Hierarchy, T_Graph, T_Rebuild, T_Startup, T_RingZone } from './Enumer
 import S_Title_Edit from '../state/S_Title_Edit';
 import G_ArcSlider from '../geometry/G_ArcSlider';
 import S_Alteration from '../state/S_Alteration';
-import G_Children from '../geometry/G_Children';
+import G_TreeChild from '../geometry/G_TreeChild';
 import S_Expansion from '../state/S_Expansion';
 import G_Cluster from '../geometry/G_Cluster';
 import G_Segment from '../geometry/G_Segment';
@@ -75,7 +75,7 @@ export {
 	S_Paging, S_Rotation, S_Expansion, S_Thing_Pages,
 	S_Mouse, S_Widget, S_Element, S_Alteration, S_Title_Edit,
 	User, Persistable, Thing, Trait, Access, Predicate, Relationship,
-	G_Widget, G_Children, G_ArcSlider, G_Segment, G_Cluster, G_Radial,
+	G_Widget, G_TreeChild, G_ArcSlider, G_Segment, G_Cluster, G_Radial,
 	T_Line, T_Tool, T_Signal, T_Control, T_Browser, T_Storage, T_Preference,
 	T_Info, T_Thing, T_Trait, T_Graph, T_Hierarchy, T_Details, T_Rebuild, T_Startup,
 };

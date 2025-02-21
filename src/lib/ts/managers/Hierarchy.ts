@@ -317,16 +317,6 @@ export class Hierarchy {
 		}
 	}
 
-	thing_child_forRelationshipHID(hid: Integer | null): Thing | null {
-		if (!!hid || hid == 0) {
-			const relationship = this.relationship_forHID(hid);
-			if (!!relationship) {
-				return this.thing_forHID(relationship.idChild.hash());
-			}
-		}
-		return this.root;
-	}
-
 	async thing_edit_persistentAddLine(ancestry: Ancestry, below: boolean = true) {
 		const parentAncestry = ancestry.parentAncestry;
 		const parent = parentAncestry?.thing;

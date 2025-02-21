@@ -49,9 +49,10 @@ export default class DBTest extends DBCommon {
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Rbd', kindR, idTb, idTd, 2);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Rac', kindR, idTa, idTc, 2);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Rce', kindR, idTc, idTe, 2);
-		this.makeMore(20, 'G', kindC, idTb, true);	// contained by B
-		this.makeMore(5, 'G', kindC, idTb, false);	// containing B
-		this.makeMore(5, 'G', kindR, idTb, false);	// related to B
+		this.makeMore(2, 'B', kindC, idTc, true);	// children of Curiosity
+		this.makeMore(5, 'D', kindC, idTb, true);	// children of Maintain
+		this.makeMore(5, 'G', kindC, idTb, false);	// parents of  "
+		this.makeMore(5, 'G', kindR, idTb, false);	// related to  "
 	}
 
 	makeMore(count: number, first: string, kindPredicate: T_Predicate, idOther: string, asChild: boolean) {

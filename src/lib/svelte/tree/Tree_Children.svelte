@@ -1,6 +1,6 @@
 <script lang=ts>
 	import { k, u, Rect, Size, Point, Thing, debug, signals } from '../../ts/common/Global_Imports';
-	import { T_Line, T_Debug, G_Widget, G_Children } from '../../ts/common/Global_Imports';
+	import { T_Line, T_Debug, G_Widget, G_TreeChild } from '../../ts/common/Global_Imports';
 	import { w_graph_rect } from '../../ts/state/S_Stores';
 	import Tree_Children from './Tree_Children.svelte';
 	import Widget from '../widget/Widget.svelte';
@@ -42,14 +42,14 @@
 		g_widgets = [];
 		if (ancestry.isExpanded || ancestry.isRoot) {
 			debug.log_origins(origin.x + ' children layout');
-			const height = ancestry.visibleProgeny_halfHeight;
 			const childAncestries = ancestry.childAncestries;
-			const childrenOrigin = origin.offsetByXY(5.5, height + 1);
+			const height = ancestry.visibleProgeny_halfHeight + 1;
+			const childrenOrigin = origin.offsetByXY(2.5, height);
 			let sum = -ancestry.visibleProgeny_height() / 2; // start out negative and grow positive
 			for (const childAncestry of childAncestries) {
-				const g_children = new G_Children(sum, ancestry, childAncestry, childrenOrigin);
-				g_widgets = u.concatenateArrays(g_widgets, [g_children.g_widget]);
-				sum += g_children.childHeight + 1;
+				const g_child = new G_TreeChild(sum, ancestry, childAncestry, childrenOrigin);
+				g_widgets = u.concatenateArrays(g_widgets, [g_child.g_widget]);
+				sum += g_child.progeny_height + 1;
 			}
 			center = childrenOrigin.offsetByXY(20, 2);
 		} else {
@@ -59,19 +59,28 @@
 </script>
 
 {#if debug.lines}
-	<Circle radius=1 center={center} color=black thickness=1/>
+	<Circle
+		radius = 1
+		thickness = 1
+		color = black
+		center = {center}/>
 {/if}
 {#if ancestry.isExpanded}
-	<div class='tree-children'>
+	<div class = 'tree-children'>
 		{#each g_widgets as g_widget}
 			<Widget
-				width={g_widget.widget_width}
-				name={g_widget.es_widget.name}
-				ancestry={g_widget.widget_ancestry}
-				origin={g_widget.extent.offsetBy(widgetOffset)}/>
-			<Tree_Line ancestry={g_widget.widget_ancestry} curveType={g_widget.curveType} rect={g_widget.offsetBy(lineOffset)}/>
+				width = {g_widget.widget_width}
+				name = {g_widget.es_widget.name}
+				ancestry = {g_widget.widget_ancestry}
+				origin = {g_widget.extent.offsetBy(widgetOffset)}/>
+			<Tree_Line
+				curveType = {g_widget.curveType}
+				ancestry = {g_widget.widget_ancestry}
+				rect = {g_widget.offsetBy(lineOffset)}/>
 			{#if g_widget.widget_ancestry.showsChildRelationships}
-				<Tree_Children ancestry={g_widget.widget_ancestry} origin={g_widget.children_origin}/>
+				<Tree_Children
+					origin = {g_widget.child_origin}
+					ancestry = {g_widget.widget_ancestry}/>
 			{/if}
 		{/each}
 	</div>

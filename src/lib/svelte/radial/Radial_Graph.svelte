@@ -40,12 +40,12 @@
 </script>
 
 {#key g.readOnce_rebuild_needed_forType(T_Rebuild.radial), $w_ancestry_focus.hashedAncestry}
-	<div class='radial-graph'
-		style='
-			z-index:{T_Layer.backmost};
-			width:{$w_graph_rect.size.width}px;
-			height:{$w_graph_rect.size.height}px;
-			transform:translate({$w_user_graph_offset.x}px, {$w_user_graph_offset.y}px);'>
+	<div class = 'radial-graph'
+		style = '
+			z-index : {T_Layer.backmost};
+			width : {$w_graph_rect.size.width}px;
+			height : {$w_graph_rect.size.height}px;
+			transform : translate({$w_user_graph_offset.x}px, {$w_user_graph_offset.y}px);'>
 		<Radial/>
 		<Radial_Focus/>
 		<Necklace/>
