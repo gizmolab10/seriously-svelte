@@ -19,13 +19,13 @@ export default class G_Widget extends Rect {
 	//	its radial angles and orientations (in/out, right/left)
 
 	constructor(
-			curveType: string,
-			rect: Rect,
-			child_origin: Point,
-			widget_ancestry: Ancestry,
-			parent_ancestry: Ancestry | null,
-			points_toChild: boolean = true,
-			child_angle: number | null = null) {
+		curveType: string,
+		rect: Rect,
+		child_origin: Point,
+		widget_ancestry: Ancestry,
+		parent_ancestry: Ancestry | null,
+		points_toChild: boolean = true,
+		child_angle: number | null = null) {
 		super(u.copyObject(rect.origin), u.copyObject(rect.size));
 		this.es_widget = ux.s_element_for(widget_ancestry, T_Element.widget, k.empty);
 		this.points_right = !child_angle ? true : new Angle(child_angle).angle_pointsRight;
@@ -47,6 +47,12 @@ export default class G_Widget extends Rect {
 
 	get responder(): HTMLElement | null { return this.es_widget.responder; }
 
+	get radial_origin(): Point {
+		const x = this.points_right ? -4 : -k.dot_size * 3;
+		const offset = new Point(x, 4 - k.dot_size);
+		return this.child_origin.offsetBy(offset);
+	}
+
 	get widget_width(): number {
 		let width = 0
 		if (!!this.widget_ancestry?.thing) {
@@ -57,12 +63,6 @@ export default class G_Widget extends Rect {
 			width = titleWidth + extraWidth + 5;
 		}
 		return width;
-	}
-
-	get radial_origin(): Point {
-		const x = this.points_right ? -4 : -k.dot_size * 3;
-		const childOffset = new Point(x, 4 - k.dot_size);
-		return this.child_origin.offsetBy(childOffset);
 	}
 
 }

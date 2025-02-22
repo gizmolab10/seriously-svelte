@@ -88,10 +88,10 @@
 		<div class = 'tree'
 			style = 'transform:translate({$w_user_graph_offset.x}px, {$w_user_graph_offset.y}px);'>
 			<Widget
-				name = {s_focus.name}
 				origin = {origin_ofWidget}
-				ancestry = {$w_ancestry_focus}
-				width = {g_widget.widget_width}/>
+				width = {g_widget.widget_width}
+				name = {g_widget.es_widget.name}
+				ancestry = {g_widget.widget_ancestry}/>
 			{#if $w_ancestry_focus.isExpanded}
 				<Tree_Children
 					origin = {origin_ofChildren}
