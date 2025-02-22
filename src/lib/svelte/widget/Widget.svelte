@@ -1,20 +1,22 @@
 <script lang='ts'>
-	import { g, k, u, ux, Thing, Point, Angle, debug, signals, S_Element, Svelte_Wrapper } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, Thing, Point, Angle, debug, signals, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Signal, T_Element, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_t_graph, w_thing_color, w_thing_fontFamily } from '../../ts/state/S_Stores';
 	import { w_s_title_edit, w_ancestries_grabbed } from '../../ts/state/S_Stores';
+	import { G_Widget, S_Element } from '../../ts/common/Global_Imports';
 	import { w_count_relayout } from '../../ts/state/S_Stores';
 	import { T_Edit } from '../../ts/state/S_Title_Edit';
 	import W_Title_Editor from './W_Title_Editor.svelte';
 	import W_Dot_Reveal from './W_Dot_Reveal.svelte';
 	import W_Dot_Drag from './W_Dot_Drag.svelte';
 	import { onMount } from 'svelte';
-	export let origin = new Point(160, 5);
-	export let points_toChild = true;
-    export let points_right = true;
-    export let name = k.empty;
-	export let width = 0;
-    export let ancestry;
+	export let g_widget!: G_Widget;
+	export let origin = Point.zero;
+	const width = g_widget.widget_width;
+	const name = g_widget.es_widget.name;
+    const ancestry = g_widget.widget_ancestry;
+    const points_right = g_widget.points_right;
+	const points_toChild = g_widget.points_toChild;
 	const s_widget = ux.s_widget_forAncestry(ancestry);
 	const es_widget = ux.s_element_forName(name);	// created by G_Widget
 	const es_drag = ux.s_element_for(ancestry, T_Element.drag, k.empty);

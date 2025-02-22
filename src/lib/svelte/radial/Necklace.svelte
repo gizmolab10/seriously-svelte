@@ -43,12 +43,8 @@ import { k, u, Point, T_Layer, signals, G_Radial, Predicate } from '../../ts/com
 			style = 'z-index : {T_Layer.backmost};'>
 			{#each $w_g_radial.g_widgets as g_widget}
 				<Widget
-					width = {g_widget.widget_width}
-					name = {g_widget.es_widget.name}
-					origin = {g_widget.radial_origin}
-					ancestry = {g_widget.widget_ancestry}
-					points_right = {g_widget.points_right}
-					points_toChild = {g_widget.points_toChild}/>
+					g_widget = {g_widget}
+					origin = {g_widget.radial_origin}/>
 			{/each}
 		</div>
 	{/if}
