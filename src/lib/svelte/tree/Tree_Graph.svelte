@@ -87,13 +87,9 @@
 	{#key rebuilds}
 		<div class = 'tree'
 			style = 'transform:translate({$w_user_graph_offset.x}px, {$w_user_graph_offset.y}px);'>
-			<Widget
-				g_widget = {g_widget}
-				origin = {origin_ofWidget}/>
+			<Widget g_widget = {g_widget} origin = {origin_ofWidget}/>
 			{#if $w_ancestry_focus.isExpanded}
-				<Tree_Children
-					origin = {origin_ofChildren}
-					ancestry = {$w_ancestry_focus}/>
+				<Tree_Children g_widget = {g_widget}/>
 			{/if}
 		</div>
 	{/key}
