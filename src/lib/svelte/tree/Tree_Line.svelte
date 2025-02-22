@@ -4,13 +4,13 @@
 	import { w_thing_color } from '../../ts/state/S_Stores';
 	import Circle from '../kit/Circle.svelte';
     export let ancestry;
-	export let rect = new Rect();
+	export let rect = Rect.zero;
 	export let curveType: string = T_Line.up;
 	const debugOffset = new Point(131, -0.5);
 	let lineWrapper: Svelte_Wrapper;
 	let origin = rect.origin;
 	let extent = rect.extent;
-	let viewBox = new Rect();
+	let viewBox = Rect.zero;
 	let linePath = k.empty;
 	let size = Size.zero;
 	let rebuilds = 0;

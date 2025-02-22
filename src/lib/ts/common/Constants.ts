@@ -45,7 +45,7 @@ export default class Constants {
 	empty = '';
 
 	paging_arc_thickness: number;
-	radial_widget_padding: number;
+	radial_widget_inset: number;		// so widgets are centered in necklace
 	zoom_out_ratio: number;
 	build_number: string;
 	row_height: number;
@@ -55,7 +55,7 @@ export default class Constants {
 		this.row_height = this.dot_size + 7;
 		this.zoom_out_ratio = 1 / this.zoom_in_ratio;
 		this.paging_arc_thickness = this.ring_rotation_thickness / 3;
-		this.radial_widget_padding = (this.ring_rotation_thickness - 1) / 2;
+		this.radial_widget_inset = (this.ring_rotation_thickness - 1) / 2;
 	}
 
 }

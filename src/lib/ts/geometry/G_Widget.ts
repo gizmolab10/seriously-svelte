@@ -59,4 +59,10 @@ export default class G_Widget extends Rect {
 		return width;
 	}
 
+	get radial_origin(): Point {
+		const x = this.points_right ? -4 : -k.dot_size * 3;
+		const childOffset = new Point(x, 4 - k.dot_size);
+		return this.child_origin.offsetBy(childOffset);
+	}
+
 }

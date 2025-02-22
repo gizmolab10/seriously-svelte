@@ -188,10 +188,9 @@ export default class G_Cluster {
 	update_widget_angles() {
 		this.g_widgets = [];
 		if (this.widgets_shown > 0 && !!this.predicate) {
-			const radius = get(w_ring_rotation_radius);
-			const radial = new Point(radius + k.radial_widget_padding, 0);
-			const fork_pointsRight = new Angle(this.g_arcSlider.fork_angle).angle_pointsRight;
 			const tweak = this.center.offsetByXY(2, -1.5);	// tweak so that drag dots are centered within the rotation ring
+			const radial = new Point(get(w_ring_rotation_radius) + k.radial_widget_inset, 0);
+			const fork_pointsRight = new Angle(this.g_arcSlider.fork_angle).angle_pointsRight;
 			const max = this.widgets_shown - 1;
 			let index = 0;
 			while (index < this.widgets_shown) {
@@ -199,7 +198,7 @@ export default class G_Cluster {
 				const child_ancestry = this.ancestries[child_index];
 				const child_angle = this.angle_at_index(index);
 				const child_origin = radial.rotate_by(child_angle).offsetBy(tweak);
-				const g_widget = new G_Widget(T_Line.flat, new Rect(), child_origin, child_ancestry, get(w_ancestry_focus), this.points_toChildren, child_angle);
+				const g_widget = new G_Widget(T_Line.flat, Rect.zero, child_origin, child_ancestry, get(w_ancestry_focus), this.points_toChildren, child_angle);
 				this.g_widgets.push(g_widget);
 				index += 1;
 			}

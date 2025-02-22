@@ -24,7 +24,7 @@
 	let parentSensitiveColor = k.empty;
 	let countOfVisibleParents = 0;
 	let confirmingDelete = false;
-	let graphRect = new Rect();
+	let graphRect = Rect.zero;
 	let mouse_click_timer;
 	let color = k.empty;
 	let titleWidth = 0;
