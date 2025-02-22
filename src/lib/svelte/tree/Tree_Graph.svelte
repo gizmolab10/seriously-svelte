@@ -12,7 +12,7 @@
 	const s_focus = ux.s_element_for($w_ancestry_focus, T_Element.focus, 'tree');
 	let origin_ofFirstReveal = Point.zero;
 	let origin_ofChildren = Point.zero;
-	let origin_ofWidget = Point.zero;
+	let origin_ofFocus = Point.zero;
 	let childrenSize = Point.zero;
 	let offsetX_ofFirstReveal = 0;
 	let g_widget!: G_Widget;
@@ -75,7 +75,7 @@
 				origin_ofFirstReveal.x = 25;
 			}
 			origin_ofChildren = origin_ofFirstReveal.offsetByXY(child_offsetX, child_offsetY);
-			origin_ofWidget = origin_ofFirstReveal.offsetByXY(-21.5 - offsetX_ofFirstReveal, -5);
+			origin_ofFocus = origin_ofFirstReveal.offsetByXY(-21.5 - offsetX_ofFirstReveal, -5);
 			g_widget = new G_Widget(T_Line.flat, Rect.zero, origin_ofChildren, focusAncestry, null);
 			debug.log_origins(origin_ofChildren.x + ' updateOrigins');
 		}
@@ -87,7 +87,7 @@
 	{#key rebuilds}
 		<div class = 'tree'
 			style = 'transform:translate({$w_user_graph_offset.x}px, {$w_user_graph_offset.y}px);'>
-			<Widget g_widget = {g_widget} origin = {origin_ofWidget}/>
+			<Widget g_widget = {g_widget} origin = {origin_ofFocus}/>
 			{#if $w_ancestry_focus.isExpanded}
 				<Tree_Children g_widget = {g_widget}/>
 			{/if}

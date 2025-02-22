@@ -1,4 +1,4 @@
-import { g, k, u, ux, Rect, Thing, Point, Angle, Ancestry, T_Element, S_Element } from '../common/Global_Imports'
+import { g, k, u, ux, Rect, Point, Angle, Ancestry, T_Element, S_Element } from '../common/Global_Imports'
 
 export default class G_Widget extends Rect {
 	parent_ancestry: Ancestry | null;
@@ -10,13 +10,13 @@ export default class G_Widget extends Rect {
 	child_origin: Point;
 	curveType: string;
 
-	// truth of:
-	// overall width (computed here)
+	// single source of truth for widget's
+	//
+	// width (computed here)
 	// UX state (fill, border) 
-	// its relevant ancestries (children, thing, shows reveal)
-	// location of widget's
-	//	child tree
-	//	its radial angles and orientations (in/out, right/left)
+	// relevant ancestries (children, thing, shows reveal)
+	// location of child tree
+	// radial origin, angles and orientations (in/out, right/left)
 
 	constructor(
 		curveType: string,
@@ -27,8 +27,8 @@ export default class G_Widget extends Rect {
 		points_toChild: boolean = true,
 		child_angle: number | null = null) {
 		super(u.copyObject(rect.origin), u.copyObject(rect.size));
-		this.es_widget = ux.s_element_for(widget_ancestry, T_Element.widget, k.empty);
 		this.points_right = !child_angle ? true : new Angle(child_angle).angle_pointsRight;
+		this.es_widget = ux.s_element_for(widget_ancestry, T_Element.widget, k.empty);
 		this.parent_ancestry = parent_ancestry;
 		this.widget_ancestry = widget_ancestry;
 		this.points_toChild = points_toChild;

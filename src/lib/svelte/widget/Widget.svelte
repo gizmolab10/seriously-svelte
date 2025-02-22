@@ -145,7 +145,7 @@
 		const delta = showBorder() ? 0 : 1;
 		const leftForward = -7;
 		const leftBackward = 50 - (width + (showingReveal ? 25.5 : 15.5));
-		const dragOffsetX = points_right ? 2 : (width + (showingReveal ? 22.5 : 14)) - 20;
+		const dragOffsetX = points_right ? (g.inRadialMode ? 3 : 2) : (width + (showingReveal ? 22.5 : 14)) - 20;
 		const dragOffsetY = g.inRadialMode ? 2.8 : 2.7;
 		const rightPadding = g.inRadialMode ? 0 : (hasExtraForTinyDots ? 0.5 : 0) + 21;
 		const leftPadding = points_right ? 1 : 14;
@@ -184,8 +184,8 @@
 			'>
 			<W_Dot_Drag
 				name = {es_drag.name}
-				ancestry = {ancestry}
 				center = {dragCenter}
+				ancestry = {ancestry}
 				points_right = {points_right}
 			/>
 			<W_Title_Editor

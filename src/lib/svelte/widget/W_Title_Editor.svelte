@@ -14,8 +14,8 @@
     export let name = k.empty;
 	export let ancestry;
 	const padding = `0.5px 0px 0px 0px`;
-	const title_origin = new Point(19, 0);
 	const es_title = ux.s_element_forName(name);
+	const title_origin = new Point(($w_t_graph == T_Graph.radial) ? 18 : 19, 0);
 	let title_binded = thing()?.title ?? k.empty;
 	let color = thing()?.color ?? k.empty;
 	let title_original = thing()?.title;
@@ -69,10 +69,6 @@
 		if (!!ancestry && (ancestry_isEditStopping() || (hasFocus() && !s_title_edit))) {
 			stopEdit();
 		}
-	}
-
-	$: {
-		const _ = $w_count_relayout;
 	}
 
 	$: {
