@@ -17,8 +17,8 @@
 	const padding = `0.5px 0px 0px 0px`;
 	const es_title = ux.s_element_forName(name);
 	const showingReveal = ancestry?.showsReveal ?? false;
-	const title_origin = new Point(g.inRadialMode ? 18 : 16, 2);
 	const input_height = k.dot_size - (g.inRadialMode ? 0 : 0.5);
+	const title_origin = new Point(g.inRadialMode ? 18 : 15.5, 2);
 	const input_left = g.inRadialMode ? (ancestry.isFocus ? -5 : (points_right ? 0 : (showingReveal ? 0 : -12))) : 0;
 	let title_width = (thing?.titleWidth ?? 0);// + (showingReveal ? 6 : 1) + 15;
 	let title_binded = thing?.title ?? k.empty;
