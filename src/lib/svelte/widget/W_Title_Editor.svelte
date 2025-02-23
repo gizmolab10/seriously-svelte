@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, u, ux, w, Rect, Point, Thing, debug, Angle, signals } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, w, Rect, Size, Point, Thing, debug, Angle, signals } from '../../ts/common/Global_Imports';
 	import { T_Graph, T_Layer, S_Title_Edit, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_t_graph, w_hierarchy, w_s_title_edit, w_mouse_location } from '../../ts/state/S_Stores';
 	import { databases, Seriously_Range, Svelte_Wrapper } from '../../ts/common/Global_Imports';
@@ -17,9 +17,9 @@
 	const padding = `0.5px 0px 0px 0px`;
 	const es_title = ux.s_element_forName(name);
 	const showingReveal = ancestry?.showsReveal ?? false;
-	const input_height = k.dot_size - (g.inRadialMode ? 0 : 0.5);
 	const title_origin = new Point(g.inRadialMode ? 18 : 15.5, 2);
-	const input_left = g.inRadialMode ? (ancestry.isFocus ? -5 : (points_right ? 0 : (showingReveal ? 0 : -12))) : 0;
+	const input_height = k.dot_size - (g.inRadialMode ? 0.5 : 0.2);
+	const input_left = g.inRadialMode ? (ancestry.isFocus ? -5 : (points_right ? 0 : (showingReveal ? 0 : 0) + 13)) : 0;
 	let title_width = (thing?.titleWidth ?? 0);// + (showingReveal ? 6 : 1) + 15;
 	let title_binded = thing?.title ?? k.empty;
 	let color = thing?.color ?? k.empty;
@@ -312,7 +312,7 @@
 		on:keydown={handle_key_down}
 		on:mouseover={(event) => { event.preventDefault(); }}
 		style='
-			top : -0.1px;
+			top : -0.2px;
 			border : none;
 			{cursor_style};
 			outline : none;

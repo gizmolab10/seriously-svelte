@@ -146,8 +146,8 @@
 		const leftBackward = 50 - (width + (showingReveal ? 25.5 : 15.5));
 		const dragOffsetX = points_right ? (g.inRadialMode ? 3 : 2) : (width + (showingReveal ? 22.5 : 14)) - 20;
 		const dragOffsetY = g.inRadialMode ? 2.8 : 2.7;
-		const rightPadding = g.inRadialMode ? 0 : (hasExtraForTinyDots ? 0.5 : 0) + 21;
 		const leftPadding = points_right ? 1 : 14;
+		const rightPadding = g.inRadialMode ? 0 : (hasExtraForTinyDots ? 0.5 : 0) + 21;
 		dragCenter = Point.square(k.dot_size / 2).offsetByXY(dragOffsetX, dragOffsetY);
 		left = origin.x + delta + (points_right ? leftForward : leftBackward);
 		padding = `0px ${rightPadding}px 0px ${leftPadding}px`;
@@ -156,7 +156,7 @@
 		top = origin.y + delta;
 		if (showingReveal) {
 			const revealY = k.dot_size * 0.72;
-			const revealX = !points_right ? 9 : width + k.dot_size;
+			const revealX = (!points_right ? (g.inRadialMode ? 21 : 9) : width + k.dot_size - (g.inRadialMode ? 30 : 0));
 			revealCenter = new Point(revealX, revealY);
 		}
 		debug.log_layout(`WIDGET (${left.asInt()}, ${top.asInt()}) ${thing?.title ?? k.unknown}`);
