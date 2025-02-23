@@ -2,7 +2,7 @@
 	import { k, u, ux, Size, Thing, Point, debug, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, Predicate, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_ancestries_grabbed, w_ancestries_expanded, w_ancestry_showing_tools } from '../../ts/state/S_Stores';
-	import { w_t_countDots, w_hierarchy, w_t_graph, w_s_alteration } from '../../ts/state/S_Stores';
+	import { w_t_countDots, w_hierarchy, w_s_alteration } from '../../ts/state/S_Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { w_count_relayout } from '../../ts/state/S_Stores';
 	import SVGD3 from '../kit/SVGD3.svelte';
@@ -87,7 +87,7 @@
 				$w_ancestry_showing_tools = null;
 				signals.signal_relayoutAndRecreate_widgets_fromFocus();
 			} else if (ancestry.hasChildRelationships || ancestry.thing.isBulkAlias) {
-				const RIGHT = ancestry.thing_isChild != ancestry.isExpanded || $w_t_graph == T_Graph.radial;
+				const RIGHT = ancestry.thing_isChild != ancestry.isExpanded || g.inRadialMode;
 				$w_hierarchy.ancestry_rebuild_persistentMoveRight(ancestry, RIGHT, false, false, false, true);
 			}
 		}

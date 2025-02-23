@@ -1,8 +1,8 @@
-import { T_Tool, T_Info, T_Graph, T_Thing, T_Trait, T_Create, T_Control, T_Predicate, T_Alteration } from '../common/Global_Imports';
+import { T_Tool, T_Info, T_Thing, T_Trait, T_Create, T_Control, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { g, k, p, u, show, User, Thing, Trait, debug, files, signals, Access, Ancestry } from '../common/Global_Imports';
-import { w_t_graph, w_id_popupView, w_ancestry_focus, w_s_title_edit, w_s_alteration } from '../state/S_Stores';
 import { w_storage_update_trigger, w_ancestry_showing_tools, w_ancestries_grabbed } from '../state/S_Stores';
 import { Predicate, Relationship, S_Mouse, S_Alteration, S_Title_Edit } from '../common/Global_Imports';
+import { w_id_popupView, w_ancestry_focus, w_s_title_edit, w_s_alteration } from '../state/S_Stores';
 import type { Integer, Dictionary } from '../common/Types';
 import { T_Persistable } from '../../ts/data/dbs/DBCommon';
 import Identifiable from '../data/runtime/Identifiable';
@@ -980,7 +980,7 @@ export class Hierarchy {
 			await this.db.hierarchy_fetch_forID(thing.title)
 			this.relationships_refreshKnowns();
 			const childAncestries = ancestry?.childAncestries;
-			const isRadialMode = get(w_t_graph) == T_Graph.radial;
+			const isRadialMode = g.inRadialMode;
 			if (!!childAncestries && childAncestries.length > 0) {
 				if (!!grab) {
 					childAncestries[0].grabOnly()
@@ -1107,7 +1107,7 @@ export class Hierarchy {
 					newGrabAncestry = null;
 				}
 				graph_needsRebuild = ancestry.expand();
-				if (get(w_t_graph) == T_Graph.radial) {
+				if (g.inRadialMode) {
 					graph_needsRebuild = ancestry.becomeFocus() || graph_needsRebuild;
 				}
 			} else {

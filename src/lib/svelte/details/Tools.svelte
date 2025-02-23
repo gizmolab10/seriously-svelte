@@ -4,7 +4,7 @@
 	import { databases, T_Element, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
 	import { svgPaths, signals, Direction, T_Graph } from '../../ts/common/Global_Imports';
 	import { w_s_alteration, w_ancestry_showing_tools } from '../../ts/state/S_Stores';
-	import { w_graph_rect, w_hierarchy, w_t_graph } from '../../ts/state/S_Stores';
+	import { w_graph_rect, w_hierarchy } from '../../ts/state/S_Stores';
 	import Transparent_Circle from '../kit/Transparent_Circle.svelte';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Triangle_Button from '../mouse/Triangle_Button.svelte';

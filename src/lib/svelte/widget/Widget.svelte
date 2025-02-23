@@ -1,10 +1,9 @@
 <script lang='ts'>
 	import { g, k, u, ux, Thing, Point, Angle, debug, signals, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Signal, T_Element, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { w_t_graph, w_thing_color, w_thing_fontFamily } from '../../ts/state/S_Stores';
+	import { w_thing_color, w_thing_fontFamily, w_count_relayout } from '../../ts/state/S_Stores';
 	import { w_s_title_edit, w_ancestries_grabbed } from '../../ts/state/S_Stores';
 	import { G_Widget, S_Element } from '../../ts/common/Global_Imports';
-	import { w_count_relayout } from '../../ts/state/S_Stores';
 	import { T_Edit } from '../../ts/state/S_Title_Edit';
 	import W_Title_Editor from './W_Title_Editor.svelte';
 	import W_Dot_Reveal from './W_Dot_Reveal.svelte';

@@ -13,16 +13,19 @@
 	export let fontSize = '1em';
     export let name = k.empty;
 	export let ancestry;
+	const thing = ancestry?.thing;
 	const padding = `0.5px 0px 0px 0px`;
 	const es_title = ux.s_element_forName(name);
-	const title_origin = new Point(($w_t_graph == T_Graph.radial) ? 18 : 19, 0);
-	let title_binded = thing()?.title ?? k.empty;
-	let color = thing()?.color ?? k.empty;
-	let title_original = thing()?.title;
+	const showingReveal = ancestry?.showsReveal ?? false;
+	const title_origin = new Point(g.inRadialMode ? 18 : 16, 2);
+	const input_height = k.dot_size - (g.inRadialMode ? 0 : 0.5);
+	const input_left = g.inRadialMode ? (ancestry.isFocus ? -5 : (points_right ? 0 : (showingReveal ? 0 : -12))) : 0;
+	let title_width = (thing?.titleWidth ?? 0);// + (showingReveal ? 6 : 1) + 15;
+	let title_binded = thing?.title ?? k.empty;
+	let color = thing?.color ?? k.empty;
+	let title_original = thing?.title;
 	let title_wrapper: Svelte_Wrapper;
 	let cursor_style = k.empty;
-	let title_width = 0;
-	let title_left = 0;
 	let ghost = null;
 	let input = null;
 
@@ -30,19 +33,12 @@
 	onDestroy(() => { debug.log_mount(`DESTROY ${ancestry?.title}`); });
 	
 	function hasFocus(): boolean { return document.activeElement === input; }
-	function thing(): Thing | null { return ancestry?.thing ?? null; }
 	function hasChanges() { return title_original != title_binded; };
 	function handle_mouse_up() { clearClicks(); }
 	function isHit(): boolean { return false }
 	function ancestry_isEditing():		   boolean { return $w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.editing) ?? false; }
 	function ancestry_isEditStopping():	   boolean { return $w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.stopping) ?? false; }
 	function ancestry_isEditPercolating(): boolean { return $w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.percolating) ?? false; }
-
-	if (!!thing()) {
-		const showingReveal = ancestry?.showsReveal ?? false;
-		title_width = thing().title_width + (showingReveal ? 6 : 1) + 15;
-		title_left = g.inRadialMode ? (ancestry.isFocus ? -4 : (points_right ? 1 : (showingReveal ? 1 : -11))) : -3;
-	}
 
 	onMount(() => {
 		const handler = signals.handle_anySignal_atPriority(0, (t_signal, ancestry) => { updateInputWidth(); });
@@ -59,8 +55,8 @@
 	}
 
 	$: {
-		if (!!thing() && thing().id == $w_thing_color?.split(k.generic_separator)[0]) {
-			color = thing()?.color;
+		if (!!thing && thing.id == $w_thing_color?.split(k.generic_separator)[0]) {
+			color = thing?.color;
 		}
 	}
 
@@ -193,15 +189,15 @@
 
 	function handle_input(event) {
 		const title = event.target.value;
-		if (!!thing() && (!!title || title == k.empty)) {
-			thing().title = title_binded = title;
+		if (!!thing && (!!title || title == k.empty)) {
+			thing.title = title_binded = title;
 			title_updatedTo(title);
 			relayout();
 		}
 	};
 
 	function handle_key_down(event) {
-		if (!!thing() && !!ancestry && ancestry_isEditing() && canAlterTitle(event)) {
+		if (!!thing && !!ancestry && ancestry_isEditing() && canAlterTitle(event)) {
 			const key = event.key.toLowerCase();
 			debug.log_key(`H KEY ${key}`);
 			switch (key) {	
@@ -211,7 +207,7 @@
 				case 'arrowright': break;
 				case 'tab':	  event.preventDefault(); stop_andPersist(); $w_hierarchy.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break;
 				case 'enter': event.preventDefault(); stop_andPersist(); break;
-				default:	  title_updatedTo(thing().title); break;
+				default:	  title_updatedTo(thing.title); break;
 			}
 		}
 	}
@@ -254,19 +250,19 @@
 	function startEditMaybe() {
 		if (ancestry.isEditable) {
 			ancestry?.startEdit();
-			title_updatedTo(thing().title);
+			title_updatedTo(thing.title);
 			input?.focus();
 		}
 	}
 
 	async function stop_andPersist() {
-		if (!!thing() && !!input && !!ancestry && ancestry_isEditing() && !ancestry_isEditPercolating()) {
+		if (!!thing && !!input && !!ancestry && ancestry_isEditing() && !ancestry_isEditPercolating()) {
 			debug.log_edit(`INVOKING BLUR ${ancestry.title}`);
 			input.blur();
 			if (hasChanges()) {
-				debug.log_edit(`PERSISTING ${thing()?.title}`);
-				await databases.db_now.thing_persistentUpdate(thing());
-				title_original = thing()?.title;			// so hasChanges will be correct next time
+				debug.log_edit(`PERSISTING ${thing?.title}`);
+				await databases.db_now.thing_persistentUpdate(thing);
+				title_original = thing?.title;			// so hasChanges will be correct next time
 			}
 			u.onNextCycle_apply(() => {		// prevent Panel's enter key handler call to start edit from actually starting
 				if ($w_s_title_edit?.actively_refersTo(ancestry)) {
@@ -286,10 +282,10 @@
 </style>
 
 <Mouse_Responder
+	width={title_width}
 	height={k.dot_size}
 	name={es_title.name}
 	origin={title_origin}
-	width={title_width - 22}
 	handle_mouse_state={handle_mouse_state}>
 	<span class="ghost"
 		bind:this={ghost}
@@ -316,7 +312,7 @@
 		on:keydown={handle_key_down}
 		on:mouseover={(event) => { event.preventDefault(); }}
 		style='
-			top : 1.5px;
+			top : -0.1px;
 			border : none;
 			{cursor_style};
 			outline : none;
@@ -324,11 +320,11 @@
 			white-space : pre;
 			position : absolute;
 			padding : {padding};
-			left : {title_left}px;
+			left : {input_left}px;
 			font-size : {fontSize};
-			height : {k.dot_size}px;
 			width : {title_width}px;
 			z-index : {T_Layer.text};
+			height : {input_height}px;
 			{k.prevent_selection_style};
 			font-family : {$w_thing_fontFamily};
 			outline-color : {k.color_background};'/>

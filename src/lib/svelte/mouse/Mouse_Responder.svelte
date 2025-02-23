@@ -139,7 +139,7 @@
 		if (!!origin || !!center) {
 			const x = origin?.x ?? center?.x - width / 2;
 			const y = origin?.y ?? center?.y - height / 2;
-			const alignment = align_left ? `left: ` : `right: `;
+			const alignment = align_left ? 'left: ' : 'right: ';
 			style = `${style} ${alignment}${x}px; top: ${y}px;`;
 		}
 	}

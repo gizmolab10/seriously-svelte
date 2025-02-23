@@ -1,7 +1,7 @@
 import { Direction, Predicate, Hierarchy, databases, Relationship, Svelte_Wrapper } from '../../common/Global_Imports';
 import { g, k, u, show, Rect, Size, Thing, debug, signals, wrappers, svgPaths } from '../../common/Global_Imports';
-import { T_Graph, T_Element, T_Predicate, T_Alteration, T_SvelteComponent } from '../../common/Global_Imports';
-import { w_t_graph, w_hierarchy, w_ancestry_focus, w_ancestry_showing_tools } from '../../state/S_Stores';
+import { T_Element, T_Predicate, T_Alteration, T_SvelteComponent } from '../../common/Global_Imports';
+import { w_hierarchy, w_ancestry_focus, w_ancestry_showing_tools } from '../../state/S_Stores';
 import { w_ancestries_grabbed, w_ancestries_expanded, } from '../../state/S_Stores';
 import { w_g_radial, w_s_alteration, w_s_title_edit } from '../../state/S_Stores';
 import { G_Widget, S_Paging, S_Title_Edit } from '../../common/Global_Imports';
@@ -369,7 +369,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	svgPathFor_tinyDots_outsideReveal(points_toChild: boolean): string | null {
-		const in_radial_mode = get(w_t_graph) == T_Graph.radial;
+		const in_radial_mode = g.inRadialMode;
 		const isUnidirectional = !(this.predicate?.isBidirectional ?? true);
 		const isVisible_forChild = this.hasChildRelationships && show.children_dots && (in_radial_mode ? true : !this.isExpanded);
 		const isVisible_inRadial = points_toChild ? isVisible_forChild : this.hasParentRelationships && (isUnidirectional ? show.parent_dots : show.related_dots);

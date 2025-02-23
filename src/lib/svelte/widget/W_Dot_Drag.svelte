@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { g, k, u, ux, show, Rect, Size, Point, Thing, debug, T_Layer, T_Tool } from '../../ts/common/Global_Imports';
 	import { databases, Svelte_Wrapper, T_Alteration, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { w_t_graph, w_t_countDots, w_thing_color, w_ancestries_grabbed } from '../../ts/state/S_Stores';
+	import { w_t_countDots, w_thing_color, w_ancestries_grabbed } from '../../ts/state/S_Stores';
 	import { signals, svgPaths, T_Graph, T_Element } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { w_count_relayout } from '../../ts/state/S_Stores';
@@ -97,7 +97,7 @@
 				svgPathFor_ellipses = svgPaths.ellipses(6, 0.5, false, count, size / 2);
 			}
 			if (thing.hasRelated && show.related_dots) {
-				const x = (($w_t_graph == T_Graph.tree) ? 4.5 : 3.2) * (points_right ? -1 : 1);
+				const x = (g.inRadialMode ? 3.2 : 4.5) * (points_right ? -1 : 1);
 				svgPathFor_related = svgPaths.circle_atOffset(size, 3, new Point(x, 0));
 			}
 		}

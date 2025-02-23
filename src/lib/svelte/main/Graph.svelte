@@ -40,7 +40,6 @@
 	
 	function update_style() {
 		style=`
-			left: 0px;
 			overflow: hidden;
 			position: absolute;
 			touch-action: none;
