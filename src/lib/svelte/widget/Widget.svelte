@@ -42,11 +42,11 @@
 	let thing;
 
 	setup_fromAncestry();
-	debug.log_grab(`  WIDGET ${ancestry.isGrabbed} "${es_widget.border}" "${ancestry.title}"`);
+	debug.log_mount(`WIDGET grabbed ${ancestry.isGrabbed} ${ancestry.titles}`);
+	debug.log_grab(`  WIDGET grabbed ${ancestry.isGrabbed} "${es_widget.border}" "${ancestry.titles}"`);
 
 	onMount(() => {
 		layout_widget();
-		debug.log_mount(`WIDGET ${thing?.description} ${ancestry.isGrabbed}`);
 		fullUpdate();
 		const handleAny = signals.handle_anySignal_atPriority(3, (t_signal, ancestry) => {
 			debug.log_signals(`WIDGET ${thing?.description}`);

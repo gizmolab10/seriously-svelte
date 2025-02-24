@@ -48,7 +48,7 @@ export default class Relationship extends Persistable {
 		return get(w_hierarchy).thing_forHID(id.hash()) ?? null
 	}
 
-	order_setTo_persistentMaybe(newOrder: number, persist: boolean = false) {
+	order_setTo(newOrder: number, persist: boolean = false) {
 		if (Math.abs(this.order - newOrder) > 0.001) {
 			this.order = newOrder;
 			if (persist) {

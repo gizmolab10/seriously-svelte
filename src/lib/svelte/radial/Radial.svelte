@@ -26,7 +26,7 @@
 	let rebuilds = 0;
 	let pagingArcs;
 
-	// paging arcs and rings
+	// UX for paging arcs and rings
 
 	update_cursor();
 	debug.log_build(` (svelte)`);
@@ -132,9 +132,9 @@
 			const rotation_state = g.s_ring_rotation;
 			const resizing_state = g.s_ring_resizing;
 
-			// check if already dragging in one of the three ring zones
+			// check if one of the three ring zones is active (already dragging)
 
-			if (!!resizing_state.isActive) {									// resize, check this FIRST (when both states return isActive true, rotation should be ignored)
+			if (resizing_state.isActive) {										// resize, check this FIRST (when both states return isActive true, rotation should be ignored)
 				const smallest = k.innermost_ring_radius;
 				const largest = smallest * 3;
 				const magnitude = mouse_vector.magnitude - resizing_state.basis_radius;
@@ -150,14 +150,14 @@
 					signals.signal_rebuildGraph_fromFocus();					// destroys this component (properties are in w_w_ring_resizing)
 					rebuilds += 1;
 				}
-			} else if (!!rotation_state.isActive) {								// rotate clusters
+			} else if (rotation_state.isActive) {								// rotate clusters
 				if (!signals.signal_isInFlight && !mouse_angle.isClocklyAlmost(rotation_state.active_angle, Angle.radians_from_degrees(4), Angle.full)) {		// detect >= 4° change
 					$w_ring_rotation_angle = mouse_angle.add_angle_normalized(-rotation_state.basis_angle);
 					debug.log_radial(` rotate ${$w_ring_rotation_angle.degrees_of(0)}`);
 					rotation_state.active_angle = mouse_angle;
 					detect_hovering();
 					cursor = g.s_ring_rotation.cursor;
-					signals.signal_relayoutAndRecreate_widgets_fromFocus();					// destroys this component (properties are in w_w_ring_rotation)
+					signals.signal_relayoutAndRecreate_widgets_fromFocus();		// destroys this component (properties are in w_w_ring_rotation)
 					rebuilds += 1;
 				}
 			} else if (!!$w_g_active_cluster) {

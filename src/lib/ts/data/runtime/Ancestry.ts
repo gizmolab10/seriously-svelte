@@ -25,9 +25,9 @@ export default class Ancestry extends Identifiable {
 
 	constructor(t_database: string, ancestryString: string = k.empty, kindPredicate: string = T_Predicate.contains, thing_isChild: boolean = true) {
 		super(ancestryString);
+		this.t_database = t_database;
 		this.thing_isChild = thing_isChild;
 		this.kindPredicate = kindPredicate;
-		this.t_database = t_database;
 		get(w_hierarchy).signal_storage_redraw(0);
 	}
 
@@ -486,7 +486,7 @@ export default class Ancestry extends Identifiable {
 				}
 			}
 			if (isContains) {
-				u.ancestries_orders_normalize_persistentMaybe(ancestries);			// normalize order of children only
+				u.ancestries_orders_normalize(ancestries);			// normalize order of children only
 			}
 		}
 		return ancestries;
@@ -637,13 +637,13 @@ export default class Ancestry extends Identifiable {
 		}
 	}
 
-	order_normalizeRecursive_persistentMaybe(persist: boolean, visited: Array<number> = []) {
+	order_normalizeRecursive(persist: boolean, visited: Array<number> = []) {
 		const hid = this.hid;
 		const childAncestries = this.childAncestries;
 		if (!visited.includes(hid) && childAncestries && childAncestries.length > 1) {
-			u.ancestries_orders_normalize_persistentMaybe(childAncestries, persist);
+			u.ancestries_orders_normalize(childAncestries, persist);
 			for (const childAncestry of childAncestries) {
-				childAncestry.order_normalizeRecursive_persistentMaybe(persist, [...visited, hid]);
+				childAncestry.order_normalizeRecursive(persist, [...visited, hid]);
 			}
 		}
 	}

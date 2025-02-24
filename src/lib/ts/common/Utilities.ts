@@ -202,23 +202,23 @@ export class Utilities {
 		const userAgent: string = navigator.userAgent;
 		switch (true) {
 			case /msie (\d+)/i.test(userAgent) ||
-				/trident\/.*; rv:(\d+)/i.test(userAgent):	return T_Browser.explorer;
-			case /(chrome|crios)\/(\d+)/i.test(userAgent):	return T_Browser.chrome;
-			case /firefox\/(\d+)/i.test(userAgent):			return T_Browser.firefox;
-			case /opr\/(\d+)/i.test(userAgent):				return T_Browser.opera;
-			case /orion\/(\d+)/i.test(userAgent):			return T_Browser.orion;
-			case /safari\/(\d+)/i.test(userAgent):			return T_Browser.safari;
-			default:										return T_Browser.unknown
+				/trident\/.*; rv:(\d+)/i.test(userAgent):  return T_Browser.explorer;
+			case /(chrome|crios)\/(\d+)/i.test(userAgent): return T_Browser.chrome;
+			case /firefox\/(\d+)/i.test(userAgent):		   return T_Browser.firefox;
+			case /opr\/(\d+)/i.test(userAgent):			   return T_Browser.opera;
+			case /orion\/(\d+)/i.test(userAgent):		   return T_Browser.orion;
+			case /safari\/(\d+)/i.test(userAgent):		   return T_Browser.safari;
+			default:									   return T_Browser.unknown
 		}
 	}
 
-	ancestries_orders_normalize_persistentMaybe(array: Array<Ancestry>, persist: boolean = true): void {
+	ancestries_orders_normalize(array: Array<Ancestry>, persist: boolean = true): void {
 		if (array.length > 1) {
 			this.sort_byOrder(array);
 			array.forEach( (ancestry, index) => {
 				if (ancestry.order != index) {
 					const relationship = ancestry.relationship;
-					relationship?.order_setTo_persistentMaybe(index, persist);
+					relationship?.order_setTo(index, persist);
 				}
 			});
 		}

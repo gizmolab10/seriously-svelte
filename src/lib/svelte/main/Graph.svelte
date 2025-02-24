@@ -13,7 +13,7 @@
 	onMount(() => {
 		update_style();
 		const handler = signals.handle_rebuildGraph(1, (ancestry) => {
-			debug.log_mount(` rebuild GRAPH`);
+			debug.log_mount(`GRAPH ${ancestry.title}`);
 			rebuilds += 1;
 		});
 		return () => { handler.disconnect() };

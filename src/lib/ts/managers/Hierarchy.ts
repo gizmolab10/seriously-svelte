@@ -309,6 +309,7 @@ export class Hierarchy {
 		let relationship = this.relationship_whereHID_isChild(child.hid);
 		if (!!relationship && relationship.idParent == fromParent.id) {
 			this.relationship_forget(relationship);
+			relationship.hidParent = toParent.hid;
 			relationship.idParent = toParent.id;
 			if (relationship.isValid) {
 				this.relationship_remember(relationship);
@@ -694,7 +695,7 @@ export class Hierarchy {
 		order: number, creationOptions: T_Create = T_Create.isFromPersistent): Promise<any> {
 		let relationship = this.relationship_forPredicateKind_parent_child(kindPredicate, idParent.hash(), idChild.hash());
 		if (!!relationship) {
-			relationship.order_setTo_persistentMaybe(order, true);
+			relationship.order_setTo(order, true);
 		} else {
 			relationship = new Relationship(idBase, idRelationship, kindPredicate, idParent, idChild, order, creationOptions == T_Create.isFromPersistent);
 			await this.db.relationship_remember_persistentCreate(relationship);
@@ -738,7 +739,7 @@ export class Hierarchy {
 		if (!!parentAncestry && !!relationship && (thing?.hasParents ?? false)) {
 			this.relationship_forget(relationship);
 			if (otherAncestry.hasChildRelationships) {
-				parentAncestry.order_normalizeRecursive_persistentMaybe(true);
+				parentAncestry.order_normalizeRecursive(true);
 			} else {
 				otherAncestry.collapse();
 			}
@@ -760,8 +761,8 @@ export class Hierarchy {
 			reversed = new Relationship(idBase, Identifiable.newID(), kindPredicate, idChild, idParent, order, already_persisted);
 			this.relationship_remember(reversed);
 		}
-		relationship?.order_setTo_persistentMaybe(order);
-		reversed?.order_setTo_persistentMaybe(order);
+		relationship?.order_setTo(order);
+		reversed?.order_setTo(order);
 		return relationship;
 	}
 
@@ -904,7 +905,7 @@ export class Hierarchy {
 		.then((childAncestry) => {
 			if (!!childAncestry) {
 				childAncestry.grabOnly();
-				childAncestry.relationship?.order_setTo_persistentMaybe(order);
+				childAncestry.relationship?.order_setTo(order);
 				signals.signal_rebuildGraph_fromFocus();
 				if (shouldStartEdit) {
 					setTimeout(() => {
@@ -970,7 +971,7 @@ export class Hierarchy {
 			}
 			const relationship = await this.relationship_remember_persistentCreateUnique(idBase, Identifiable.newID(), kindPredicate, parent.idBridging, child.id, 0, T_Create.getPersistentID);
 			const childAncestry = ancestry.uniquelyAppendID(relationship.id);
-			u.ancestries_orders_normalize_persistentMaybe(ancestry.childAncestries);		// write new order values for relationships
+			u.ancestries_orders_normalize(ancestry.childAncestries);		// write new order values for relationships
 			return childAncestry;
 		}
 	}
@@ -1050,12 +1051,12 @@ export class Hierarchy {
 						}
 					} else if (g.allow_GraphEditing && OPTION) {
 						graph_needsRebuild = true;
-						u.ancestries_orders_normalize_persistentMaybe(parentAncestry.childAncestries, false);
+						u.ancestries_orders_normalize(parentAncestry.childAncestries, false);
 						const wrapped = up ? (index == 0) : (index + 1 == length);
 						const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
 						const newOrder = newIndex + goose;
-						ancestry.relationship?.order_setTo_persistentMaybe(newOrder);
-						u.ancestries_orders_normalize_persistentMaybe(parentAncestry.childAncestries);
+						ancestry.relationship?.order_setTo(newOrder);
+						u.ancestries_orders_normalize(parentAncestry.childAncestries);
 					}
 				}
 				if (graph_needsRebuild) {
@@ -1068,22 +1069,27 @@ export class Hierarchy {
 	}
 
 	ancestry_rebuild_persistentRelocateRight(ancestry: Ancestry, RIGHT: boolean, EXTREME: boolean) {
-		const thing = ancestry.thing;
 		const parentAncestry = RIGHT ? ancestry.ancestry_ofNextSibling(false) : ancestry.stripBack(2);
-		const parent = parentAncestry?.thing;
-		if (!!thing && parent && parentAncestry) {
-			if (thing.isInDifferentBulkThan(parent)) {		// should move across bulks
+		const parentThing = parentAncestry?.thing;
+		const thing = ancestry.thing;
+		if (!!thing && !!parentThing && !!parentAncestry) {
+			if (thing.isInDifferentBulkThan(parentThing)) {		// should move across bulks
 				this.ancestry_remember_bulk_persistentRelocateRight(ancestry, parentAncestry);
 			} else {
 				const relationship = ancestry.relationship;
 				if (!!relationship) {
 					const order = RIGHT ? relationship.order : 0;
-					relationship.idParent = parent.id;
-					relationship.order_setTo_persistentMaybe(order + k.halfIncrement, true);
+					this.relationship_forget(relationship);
+					relationship.idParent = parentThing.id;			// point at parent into which thing is being relocated
+					relationship.hidParent = parentThing.hid;
+					relationship.order_setTo(order + k.halfIncrement, true);
+					this.relationship_remember(relationship);
+					debug.log_move(`relocate ${relationship.description}`)
+					const childAncestry = parentAncestry.uniquelyAppendID(relationship!.id);
+					thing?.setOneAncestryTo(childAncestry);
+					childAncestry?.grabOnly();
 				}
-				this.relationships_refreshKnowns();
-				parentAncestry.extend_withChild(thing)?.grabOnly();
-				this.rootAncestry.order_normalizeRecursive_persistentMaybe(true);
+				this.rootAncestry.order_normalizeRecursive(true);
 				if (!parentAncestry.isExpanded) {
 					parentAncestry.expand();
 				}

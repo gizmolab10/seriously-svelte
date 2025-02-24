@@ -27,10 +27,10 @@ export enum T_Debug {
 	hover		= 'hover',
 	order		= 'order',		// observe relocating
 	tools		= 'tools',		// state logic of add parent tool
-	dots		= 'dots',
 	edit		= 'edit',		// state machine for editing
 	grab		= 'grab',
 	info		= 'info',
+	move		= 'move',
 	key			= 'key',		// keyboard input
 }
 
@@ -50,10 +50,10 @@ export class Debug {
 	get hide_rings(): boolean { return this.hasOption(T_Debug.hide_rings); }
 
 	log_key(message: string) { this.log_maybe(T_Debug.key, message); }
-	log_dots(message: string) { this.log_maybe(T_Debug.dots, message); }
 	log_edit(message: string) { this.log_maybe(T_Debug.edit, message); }
-	log_info(message: string) { this.log_maybe(T_Debug.info, message); }
 	log_grab(message: string) { this.log_maybe(T_Debug.grab, message); }
+	log_info(message: string) { this.log_maybe(T_Debug.info, message); }
+	log_move(message: string) { this.log_maybe(T_Debug.move, message); }
 	log_build(message: string) { this.log_maybe(T_Debug.build, message); }
 	log_error(message: string) { this.log_maybe(T_Debug.error, message); }
 	log_hover(message: string) { this.log_maybe(T_Debug.hover, message); }
@@ -108,10 +108,10 @@ export class Debug {
 					case 'mouse': this.flags.push(T_Debug.mouse); break;
 					case 'order': this.flags.push(T_Debug.order); break;
 					case 'tools': this.flags.push(T_Debug.tools); break;
-					case 'dots': this.flags.push(T_Debug.dots); break;
 					case 'edit': this.flags.push(T_Debug.edit); break;
 					case 'grab': this.flags.push(T_Debug.grab); break;
 					case 'info': this.flags.push(T_Debug.info); break;
+					case 'move': this.flags.push(T_Debug.move); break;
 					case 'key': this.flags.push(T_Debug.key); break;
 				}
 			}

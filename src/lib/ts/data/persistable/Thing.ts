@@ -88,10 +88,11 @@ export default class Thing extends Persistable {
 		}
 		return oneAncestry;
 	}
-	
+
 	debugLog(message: string) { this.log(T_Debug.things, message); }
 	log(option: T_Debug, message: string) { debug.log_maybe(option, message + k.space + this.description); }
 	hasParents_forKind(kindPredicate: string): boolean { return this.parents_forKind(kindPredicate).length > 0; }
+	setOneAncestryTo(oneAncestry: Ancestry | null | undefined) { if (!!oneAncestry) { this.oneAncestry = oneAncestry; } }
 	setTraitText_forType(text: string, type: T_Trait) { get(w_hierarchy).trait_setText_forType_ownerHID(text, type, this.id); }
 
 	override isInDifferentBulkThan(other: Thing): boolean {
@@ -188,7 +189,7 @@ export default class Thing extends Persistable {
 				const predicate = oneAncestry.predicate;
 				if (!!predicate && !predicate.isBidirectional && this.oneAncestry != oneAncestry) {
 					get(w_hierarchy).ancestry_forget(this.oneAncestry);
-					this.oneAncestry = oneAncestry;
+					this.setOneAncestryTo(oneAncestry);
 				}
 				oneAncestry.children.map(c => c.oneAncestries_rebuild_forSubtree(newVisited));
 			}

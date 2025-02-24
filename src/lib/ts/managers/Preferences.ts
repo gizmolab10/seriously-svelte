@@ -169,20 +169,11 @@ export class Preferences {
 			w_ancestries_expanded.set(this.ancestries_readDB_key(T_Preference.expanded));
 		}
 		setTimeout(() => {
-			const threshold = 0;
-			let grabbed_count = 0;
-			let expanded_count = 0;
 			w_ancestries_grabbed.subscribe((array: Array<Ancestry>) => {
-				if (grabbed_count > threshold) {
-					this.ancestries_writeDB_key(array, T_Preference.grabbed);
-				}
-				grabbed_count += 1;
+				this.ancestries_writeDB_key(array, T_Preference.grabbed);
 			});
 			w_ancestries_expanded.subscribe((array: Array<Ancestry>) => {
-				if (expanded_count > threshold) {
-					this.ancestries_writeDB_key(array, T_Preference.expanded);
-				}
-				expanded_count += 1;
+				this.ancestries_writeDB_key(array, T_Preference.expanded);
 			});
 		}, 100);
 	}

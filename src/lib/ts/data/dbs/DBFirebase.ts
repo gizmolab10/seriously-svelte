@@ -213,7 +213,7 @@ export default class DBFirebase extends DBCommon {
 		if (relationships_haveChanged) {
 			setTimeout(() => { // wait in case a thing involved in this relationship arrives in the data
 				this.hierarchy.relationships_refreshKnowns();
-				this.hierarchy.rootAncestry.order_normalizeRecursive_persistentMaybe(true);
+				this.hierarchy.rootAncestry.order_normalizeRecursive(true);
 				signals.signal_rebuildGraph_fromFocus();
 			}, 20);
 		}
@@ -574,9 +574,11 @@ export default class DBFirebase extends DBCommon {
 		if (changed) {
 			relationship.idChild = remote.child.id;
 			relationship.idParent = remote.parent.id;
+			relationship.hidChild = remote.child.id.hash();
+			relationship.hidParent = remote.parent.id.hash();
 			relationship.persistence.already_persisted = true;
 			relationship.kindPredicate = remote.kindPredicate;
-			relationship.order_setTo_persistentMaybe(remote.order + k.halfIncrement);
+			relationship.order_setTo(remote.order + k.halfIncrement);
 		}
 		return changed;
 	}
