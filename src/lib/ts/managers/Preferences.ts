@@ -167,9 +167,11 @@ export class Preferences {
 		} else {
 			w_ancestries_grabbed.set(this.ancestries_readDB_key(T_Preference.grabbed));
 			w_ancestries_expanded.set(this.ancestries_readDB_key(T_Preference.expanded));
+			debug.log_grab(`  READ grabbed: "${get(w_ancestries_grabbed).map(a => a.thing?.id).join(', ')}"`);
 		}
 		setTimeout(() => {
 			w_ancestries_grabbed.subscribe((array: Array<Ancestry>) => {
+				debug.log_grab(`  WRITE grabbed: "${array.map(a => a.thing?.id).join(', ')}"`);
 				this.ancestries_writeDB_key(array, T_Preference.grabbed);
 			});
 			w_ancestries_expanded.subscribe((array: Array<Ancestry>) => {

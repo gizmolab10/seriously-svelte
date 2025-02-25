@@ -29,8 +29,8 @@
 	let ghost = null;
 	let input = null;
 
-	// debug.log_mount(`TITLE ${ancestry?.title}`);
-	// onDestroy(() => { debug.log_mount(`DESTROY TITLE ${ancestry?.title}`); });
+	debug.log_mount(`TITLE ${ancestry?.title}`);
+	onDestroy(() => { debug.log_mount(`DESTROY TITLE ${ancestry?.title}`); });
 	
 	function hasFocus(): boolean { return document.activeElement === input; }
 	function hasChanges() { return title_original != title_binded; };

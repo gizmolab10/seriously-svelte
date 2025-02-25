@@ -42,8 +42,8 @@
 	let thing;
 
 	setup_fromAncestry();
-	debug.log_mount(`WIDGET grabbed ${ancestry.isGrabbed} ${ancestry.titles}`);
-	debug.log_grab(`  WIDGET grabbed ${ancestry.isGrabbed} "${es_widget.border}" "${ancestry.titles}"`);
+	debug.log_mount(`WIDGET (grabbed: ${ancestry.isGrabbed}) "${ancestry.title}"`);
+	debug.log_grab(`  WIDGET (grabbed: ${ancestry.isGrabbed}) (border: ${es_widget.border}) "${ancestry.title}"`);
 
 	onMount(() => {
 		layout_widget();
@@ -101,7 +101,7 @@
 		if (!!ancestry && !!widget && s_widget.update_forChange) {
 			widget.style.border = es_widget.border;		// avoid rebuilding by injecting style changes
 			widget.style.backgroundColor = ancestry.isGrabbed || g.inRadialMode ? k.color_background : 'transparent';
-			debug.log_grab(`  CHANGE "${es_widget.border}" "${ancestry.title}"`);
+			debug.log_grab(`  CHANGE (grabbed: ${ancestry.isGrabbed}) (border: ${es_widget.border}) "${ancestry.title}"`);
 			layout_widget();
 		}
 	}
@@ -121,7 +121,7 @@
 			widgetName = `widget ${title}`;
 			revealName = `reveal ${title}`;
 			if (ancestry.isFocus) {
-				debug.log_grab(`  FOCUS grabbed: "${ancestry.isGrabbed}"`);
+				debug.log_grab(`  FOCUS (grabbed: ${ancestry.isGrabbed}) "${ancestry.title}"`);
 			}
 		}
 	}
