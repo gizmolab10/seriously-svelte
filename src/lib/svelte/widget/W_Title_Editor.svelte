@@ -19,7 +19,7 @@
 	const es_title = ux.s_element_forName(name);
 	const showingReveal = ancestry?.showsReveal ?? false;
 	const input_height = k.dot_size - (g.inRadialMode ? 0.5 : 0.2);
-	const input_left = g.inRadialMode ? (ancestry.isFocus ? -5 : (points_right ? 0 : (showingReveal ? 0 : 0) + 13)) : 0;
+	const input_left = g.inRadialMode ? (ancestry.isFocus ? -5 : (points_right ? 0 : 0)) : 0;
 	let title_width = (thing?.titleWidth ?? 0) + (showingReveal ? 6 : 1);
 	let title_binded = thing?.title ?? k.empty;
 	let color = thing?.color ?? k.empty;
@@ -283,9 +283,9 @@
 
 <Mouse_Responder
 	origin={origin}
-	width={title_width}
 	height={k.dot_size}
 	name={es_title.name}
+	width={title_width - 5.5}
 	handle_mouse_state={handle_mouse_state}>
 	<span class="ghost"
 		bind:this={ghost}

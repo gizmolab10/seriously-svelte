@@ -13,7 +13,7 @@
 	export let origin = Point.zero;
 	const width = g_widget.width_ofWidget;
 	const name = g_widget.es_widget.name;
-    const ancestry = g_widget.ancestry_widget;
+    const ancestry = g_widget.ancestry_ofWidget;
     const points_right = g_widget.points_right;
 	const points_toChild = g_widget.points_toChild;
 	const s_widget = ux.s_widget_forAncestry(ancestry);
@@ -46,14 +46,14 @@
 	debug.log_grab(`  WIDGET (grabbed: ${ancestry.isGrabbed}) (border: ${es_widget.border}) "${ancestry.title}"`);
 
 	onMount(() => {
-		layout_widget();
+		layout();
 		fullUpdate();
 		const handleAny = signals.handle_anySignal_atPriority(3, (t_signal, ancestry) => {
 			debug.log_signals(`WIDGET ${thing?.description}`);
 			switch (t_signal) {
 				case T_Signal.relayout:
 					if (ancestry.id_thing == thing?.id) {
-						layout_widget()
+						layout()
 					}
 					break;
 				default:
@@ -91,7 +91,7 @@
 		if (priorOrigin != origin) {
 			priorOrigin = origin;
 			setTimeout(() => {
-				layout_widget()
+				layout()
 			}, 1);
 		}
 	}
@@ -102,7 +102,7 @@
 			widget.style.border = es_widget.border;		// avoid rebuilding by injecting style changes
 			widget.style.backgroundColor = ancestry.isGrabbed || g.inRadialMode ? k.color_background : 'transparent';
 			debug.log_grab(`  CHANGE (grabbed: ${ancestry.isGrabbed}) (border: ${es_widget.border}) "${ancestry.title}"`);
-			layout_widget();
+			layout();
 		}
 	}
  
@@ -134,23 +134,21 @@
 		if (!!ancestry && s_widget.update_forChange) {
 			const showBackground = showBorder() || g.inRadialMode;
 			background = showBackground ? `background-color: ${k.color_background}` : k.empty
-			layout_widget();
+			layout();
 		}
 	}
 
-	function layout_widget() {
-		const showingReveal = ancestry?.showsReveal ?? false;
-		const hasExtraForTinyDots = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
-		const delta = showBorder() ? 0 : 1;
-		const leftForward = -7;
-		const leftBackward = 44.5 - (width + (showingReveal ? 10 : 0));
-		const leftPadding = points_right ? 1 : 14;
-		const rightPadding = g.inRadialMode ? 0 : (hasExtraForTinyDots ? 0.5 : 0) + 21;
-		left = origin.x + delta + (points_right ? leftForward : leftBackward);
-		padding = `0px ${rightPadding}px 0px ${leftPadding}px`;
-		border_radius = k.row_height / 2;
+	function layout() {
+		g_widget.layout();
+		const hasExtra_onRight = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
+		const onRight = g.inRadialMode ? 0 : 21 + (hasExtra_onRight ? 0.5 : 0);
+		const origin_ofWidget = origin.offsetBy(g_widget.offset);
+		const onLeft = points_right ? 1 : 14;
+		top = origin_ofWidget.y;
+		left = origin_ofWidget.x;
 		height = k.row_height - 1.5;
-		top = origin.y + delta;
+		border_radius = k.row_height / 2;
+		padding = `0px ${onRight}px 0px ${onLeft}px`;
 		debug.log_layout(`WIDGET (${left.asInt()}, ${top.asInt()}) ${thing?.title ?? k.unknown}`);
 	}
 

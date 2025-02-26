@@ -6,7 +6,7 @@
 	export let g_widget!: G_Widget;
 	const curveType = g_widget.curveType;
 	const debugOffset = new Point(131, -0.5);
-	const ancestry = g_widget.ancestry_widget;
+	const ancestry = g_widget.ancestry_ofWidget;
 	const lineOffset = new Point(-122.5, 2.5);
 	let rect = g_widget.offsetBy(lineOffset);
 	let lineWrapper: Svelte_Wrapper;

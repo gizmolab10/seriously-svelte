@@ -163,13 +163,13 @@ export default class G_Cluster {
 
 	static readonly ANGLES: unique symbol;
 
-	update_arc_angles(index: number, max: number, child_angle: number) {
+	update_arc_angles(index: number, max: number, angle_ofChild: number) {
 		// index increases & angle decreases clockwise
 		if (index == max) {
-			this.g_arcSlider.start_angle = child_angle;
+			this.g_arcSlider.start_angle = angle_ofChild;
 		}
 		if (index == 0) {
-			this.g_arcSlider.end_angle = child_angle;
+			this.g_arcSlider.end_angle = angle_ofChild;
 		}
 	}
 
@@ -196,9 +196,9 @@ export default class G_Cluster {
 			while (index < this.widgets_shown) {
 				const child_index = !fork_pointsRight ? index : max - index;
 				const child_ancestry = this.ancestries[child_index];
-				const child_angle = this.angle_at_index(index);
-				const origin_ofChild = radial.rotate_by(child_angle).offsetBy(tweak);
-				const g_widget = new G_Widget(T_Line.flat, Rect.zero, origin_ofChild, child_ancestry, get(w_ancestry_focus), this.points_toChildren, child_angle);
+				const angle_ofChild = this.angle_at_index(index);
+				const origin_ofChild = radial.rotate_by(angle_ofChild).offsetBy(tweak);
+				const g_widget = new G_Widget(T_Line.flat, Rect.zero, origin_ofChild, child_ancestry, get(w_ancestry_focus), this.points_toChildren, angle_ofChild);
 				this.g_widgets.push(g_widget);
 				index += 1;
 			}
@@ -231,12 +231,12 @@ export default class G_Cluster {
 			y_isOutside = true;								// y is outside rotation ring
 			y = radius * (y / absY) - (y % radius);			// swing around (bottom | top) --> back inside rotation
 		}
-		let child_angle = -Math.asin(y / radius);			// arc-sin only defined (-90 to 90) [ALSO: negate angles so things advance clockwise]
+		let angle_ofChild = -Math.asin(y / radius);			// arc-sin only defined (-90 to 90) [ALSO: negate angles so things advance clockwise]
 		if (y_isOutside == (radial.x > 0)) {				// counter-clockwise if (x is positive AND y is outside) OR (x is negative AND y is inside)
-			child_angle = Angle.half - child_angle			// otherwise it's clockwise, so invert it
+			angle_ofChild = Angle.half - angle_ofChild			// otherwise it's clockwise, so invert it
 		}
-		this.update_arc_angles(index, max, child_angle);
-		return child_angle									// angle at index
+		this.update_arc_angles(index, max, angle_ofChild);
+		return angle_ofChild									// angle at index
 	}
 
 	update_thumb_angles() {
