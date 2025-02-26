@@ -61,7 +61,7 @@ export default class G_Widget extends Rect {
 		const offset_ofWidget = new Point(17, (k.dot_size / -15) - 7);
 		const showingReveal = this.ancestry_widget?.showsReveal_forPointingToChild(this.points_toChild) ?? false;
 		this.origin_ofRadial = this.origin_ofChild.offsetBy(offset_ofRadial);
-		this.origin_ofTitle = new Point(g.inRadialMode ? (this.points_right ? 18 : -3) : 15.5, 2);
+		this.origin_ofTitle = new Point(g.inRadialMode ? (this.points_right ? 18 : (showingReveal ? 4.5 : -3)) : 15.5, 2);
 		this.origin_ofTree = this.extent.offsetBy(offset_ofWidget);
 		if (!!this.ancestry_widget?.thing) {
 			const multiplier = showingReveal ? 2 : 1.35;
