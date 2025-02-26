@@ -10,7 +10,7 @@ export default class G_TreeChild {
 
 	constructor(
 		sum: number,
-		parent_ancestry: Ancestry,
+		ancestry_parent: Ancestry,
 		child_ancestry: Ancestry,
 		origin: Point) {
 		const progeny_height = child_ancestry.visibleProgeny_height();
@@ -18,7 +18,7 @@ export default class G_TreeChild {
 		const direction = this.getDirection(sizeY);
 		const rect = new Rect(origin, new Size(k.line_stretch, sizeY - 1));
 		const widget_origin = this.origin_forAncestry_inRect(child_ancestry, rect);
-		this.g_widget = new G_Widget(direction, rect, widget_origin, child_ancestry, parent_ancestry);
+		this.g_widget = new G_Widget(direction, rect, widget_origin, child_ancestry, ancestry_parent);
 		this.progeny_height = progeny_height;
 	}
 

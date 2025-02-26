@@ -13,7 +13,7 @@
 	export let origin = Point.zero;
 	const width = g_widget.widget_width;
 	const name = g_widget.es_widget.name;
-    const ancestry = g_widget.widget_ancestry;
+    const ancestry = g_widget.ancestry_widget;
     const points_right = g_widget.points_right;
 	const points_toChild = g_widget.points_toChild;
 	const s_widget = ux.s_widget_forAncestry(ancestry);
@@ -24,7 +24,7 @@
 	let widgetWrapper!: Svelte_Wrapper;
 	let border_radius = k.dot_size / 2;
 	let revealCenter = Point.zero;
-	let dragCenter = Point.zero;
+	let center_drag = Point.zero;
 	let priorOrigin = origin;
 	let background = k.empty;
 	let widgetName = k.empty;
@@ -144,21 +144,13 @@
 		const delta = showBorder() ? 0 : 1;
 		const leftForward = -7;
 		const leftBackward = 50 - (width + (showingReveal ? 25.5 : 15.5));
-		const dragOffsetX = points_right ? (g.inRadialMode ? 3 : 2) : (width + (showingReveal ? 22.5 : 14)) - 20;
-		const dragOffsetY = g.inRadialMode ? 2.8 : 2.7;
 		const leftPadding = points_right ? 1 : 14;
 		const rightPadding = g.inRadialMode ? 0 : (hasExtraForTinyDots ? 0.5 : 0) + 21;
-		dragCenter = Point.square(k.dot_size / 2).offsetByXY(dragOffsetX, dragOffsetY);
 		left = origin.x + delta + (points_right ? leftForward : leftBackward);
 		padding = `0px ${rightPadding}px 0px ${leftPadding}px`;
 		border_radius = k.row_height / 2;
 		height = k.row_height - 1.5;
 		top = origin.y + delta;
-		if (showingReveal) {
-			const revealY = k.dot_size * 0.72;
-			const revealX = (!points_right ? (g.inRadialMode ? 21 : 9) : width + k.dot_size - (g.inRadialMode ? 30 : 0));
-			revealCenter = new Point(revealX, revealY);
-		}
 		debug.log_layout(`WIDGET (${left.asInt()}, ${top.asInt()}) ${thing?.title ?? k.unknown}`);
 	}
 
@@ -183,21 +175,22 @@
 			'>
 			<W_Dot_Drag
 				name = {es_drag.name}
-				center = {dragCenter}
 				ancestry = {ancestry}
 				points_right = {points_right}
+				center = {g_widget.center_drag}
 			/>
 			<W_Title_Editor
 				ancestry = {ancestry}
 				name = {es_title.name}
 				fontSize = {k.font_size}px
 				points_right = {points_right}
+				origin_title = {g_widget.origin_title}
 			/>
 			{#if ancestry?.showsReveal_forPointingToChild(points_toChild)}
 				<W_Dot_Reveal
 					ancestry = {ancestry}
 					name = {es_reveal.name}
-					center = {revealCenter}
+					center = {g_widget.center_reveal}
 					points_toChild = {points_toChild}
 				/>
 			{/if}

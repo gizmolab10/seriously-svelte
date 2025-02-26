@@ -30,7 +30,7 @@ export default class G_Radial {
 	g_cluster_pointing_toChildren(toChildren: boolean, predicate: Predicate): G_Cluster { return this.g_clusters_pointing_toChildren(toChildren)[predicate.kind]; }
 
 	g_widget_forAncestry(ancestry: Ancestry): G_Widget | null {
-		const g_widgets = this.g_widgets.filter(m => m.widget_ancestry?.hid == ancestry.hid);
+		const g_widgets = this.g_widgets.filter(m => m.ancestry_widget?.hid == ancestry.hid);
 		return g_widgets.length > 0 ? g_widgets[0] : null;
 	}
 

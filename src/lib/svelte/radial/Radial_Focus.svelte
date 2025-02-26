@@ -6,15 +6,17 @@
 	import W_Title_Editor from '../widget/W_Title_Editor.svelte';
 	const es_title = ux.s_element_for($w_ancestry_focus, T_Element.title, k.empty);
 	const height = k.row_height + 10;
-	let centerOffset = Point.zero;
-	let focus_origin = Point.zero;
 	let color = k.thing_color_default;
+	let centerOffset = Point.zero;
+	let origin_focus = Point.zero;
+	let origin_title = Point.zero;
 	let titleWidth = 0;
 
 	$: {
 		titleWidth = 10 + ($w_ancestry_focus?.thing?.titleWidth ?? 0);
 		const offsetX = -titleWidth / 2;
-		focus_origin = w.center_ofGraphSize.offsetByXY(offsetX, 1 - k.dot_size);
+		origin_title = new Point(g.inRadialMode ? 18 : 15.5, 2);
+		origin_focus = w.center_ofGraphSize.offsetByXY(offsetX, 1 - k.dot_size);
 		centerOffset = new Point(titleWidth + 25, height).dividedInHalf;
 	}
 
@@ -34,9 +36,9 @@
 		height:{height}px;
 		position: absolute;
 		width:{titleWidth}px;
-		top:{focus_origin.y}px;
+		top:{origin_focus.y}px;
 		z-index: {T_Layer.backmost};
-		left: {focus_origin.x}px;'>
+		left: {origin_focus.x}px;'>
 		<Mouse_Responder
 			height={height}
 			width={titleWidth}
@@ -69,6 +71,7 @@
 			left:-11px;
 			position: absolute;'>
 		<W_Title_Editor
+			origin_title = {origin_title}
 			ancestry={$w_ancestry_focus}
 			fontSize={k.font_size}px
 			name={es_title.name}/>

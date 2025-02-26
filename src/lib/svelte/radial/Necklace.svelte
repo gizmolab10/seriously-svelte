@@ -42,7 +42,7 @@ import { k, u, Point, T_Layer, signals, G_Radial, Predicate } from '../../ts/com
 			class = 'necklace-widgets'
 			style = 'z-index : {T_Layer.backmost};'>
 			{#each $w_g_radial.g_widgets as g_widget}
-				<Widget g_widget = {g_widget} origin = {g_widget.radial_origin}/>
+				<Widget g_widget = {g_widget} origin = {g_widget.origin_radial}/>
 			{/each}
 		</div>
 	{/if}

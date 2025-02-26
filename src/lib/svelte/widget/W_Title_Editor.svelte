@@ -12,19 +12,19 @@
 	export let points_right = true;
 	export let fontSize = '1em';
     export let name = k.empty;
+	export let origin_title;
 	export let ancestry;
 	const thing = ancestry?.thing;
 	const padding = `0.5px 0px 0px 0px`;
 	const es_title = ux.s_element_forName(name);
 	const showingReveal = ancestry?.showsReveal ?? false;
-	const title_origin = new Point(g.inRadialMode ? 18 : 15.5, 2);
 	const input_height = k.dot_size - (g.inRadialMode ? 0.5 : 0.2);
 	const input_left = g.inRadialMode ? (ancestry.isFocus ? -5 : (points_right ? 0 : (showingReveal ? 0 : 0) + 13)) : 0;
-	let title_width = (thing?.titleWidth ?? 0);// + (showingReveal ? 6 : 1) + 15;
+	let title_width = (thing?.titleWidth ?? 0) + (showingReveal ? 6 : 1);
 	let title_binded = thing?.title ?? k.empty;
 	let color = thing?.color ?? k.empty;
-	let title_original = thing?.title;
 	let title_wrapper: Svelte_Wrapper;
+	let title_prior = thing?.title;
 	let cursor_style = k.empty;
 	let ghost = null;
 	let input = null;
@@ -33,7 +33,7 @@
 	onDestroy(() => { debug.log_mount(`DESTROY TITLE ${ancestry?.title}`); });
 	
 	function hasFocus(): boolean { return document.activeElement === input; }
-	function hasChanges() { return title_original != title_binded; };
+	function hasChanges() { return title_prior != title_binded; };
 	function handle_mouse_up() { clearClicks(); }
 	function isHit(): boolean { return false }
 	function ancestry_isEditing():		   boolean { return $w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.editing) ?? false; }
@@ -262,7 +262,7 @@
 			if (hasChanges()) {
 				debug.log_edit(`PERSISTING ${thing?.title}`);
 				await databases.db_now.thing_persistentUpdate(thing);
-				title_original = thing?.title;			// so hasChanges will be correct next time
+				title_prior = thing?.title;			// so hasChanges will be correct next time
 			}
 			u.onNextCycle_apply(() => {		// prevent Panel's enter key handler call to start edit from actually starting
 				if ($w_s_title_edit?.actively_refersTo(ancestry)) {
@@ -285,7 +285,7 @@
 	width={title_width}
 	height={k.dot_size}
 	name={es_title.name}
-	origin={title_origin}
+	origin={origin_title}
 	handle_mouse_state={handle_mouse_state}>
 	<span class="ghost"
 		bind:this={ghost}
