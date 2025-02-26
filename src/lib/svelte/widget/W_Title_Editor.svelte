@@ -12,8 +12,8 @@
 	export let points_right = true;
 	export let fontSize = '1em';
     export let name = k.empty;
-	export let origin_title;
 	export let ancestry;
+	export let origin;
 	const thing = ancestry?.thing;
 	const padding = `0.5px 0px 0px 0px`;
 	const es_title = ux.s_element_forName(name);
@@ -282,10 +282,10 @@
 </style>
 
 <Mouse_Responder
+	origin={origin}
 	width={title_width}
 	height={k.dot_size}
 	name={es_title.name}
-	origin={origin_title}
 	handle_mouse_state={handle_mouse_state}>
 	<span class="ghost"
 		bind:this={ghost}

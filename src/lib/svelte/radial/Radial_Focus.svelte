@@ -7,17 +7,17 @@
 	const es_title = ux.s_element_for($w_ancestry_focus, T_Element.title, k.empty);
 	const height = k.row_height + 10;
 	let color = k.thing_color_default;
-	let centerOffset = Point.zero;
-	let origin_focus = Point.zero;
-	let origin_title = Point.zero;
+	let center_ofFocus = Point.zero;
+	let origin_ofFocus = Point.zero;
+	let origin_ofTitle = Point.zero;
 	let titleWidth = 0;
 
 	$: {
 		titleWidth = 10 + ($w_ancestry_focus?.thing?.titleWidth ?? 0);
-		const offsetX = -titleWidth / 2;
-		origin_title = new Point(g.inRadialMode ? 18 : 15.5, 2);
-		origin_focus = w.center_ofGraphSize.offsetByXY(offsetX, 1 - k.dot_size);
-		centerOffset = new Point(titleWidth + 25, height).dividedInHalf;
+		const x = -titleWidth / 2;
+		origin_ofTitle = new Point(20, 2);
+		center_ofFocus = new Point(titleWidth + 25, height).dividedInHalf;
+		origin_ofFocus = new Point(x, 1 - k.dot_size).offsetBy(w.center_ofGraphSize);
 	}
 
 	$: {
@@ -36,9 +36,9 @@
 		height:{height}px;
 		position: absolute;
 		width:{titleWidth}px;
-		top:{origin_focus.y}px;
+		top:{origin_ofFocus.y}px;
 		z-index: {T_Layer.backmost};
-		left: {origin_focus.x}px;'>
+		left: {origin_ofFocus.x}px;'>
 		<Mouse_Responder
 			height={height}
 			width={titleWidth}
@@ -47,7 +47,7 @@
 			cursor={k.cursor_default}
 			handle_isHit={() => false}
 			handle_mouse_state={debug_closure}
-			center={centerOffset.offsetByX(-13)}>
+			center={center_ofFocus.offsetByX(-13)}>
 			{#key color}
 				<svg
 					class='radial-focus-svg'
@@ -61,7 +61,7 @@
 						fill='white'
 						stroke={color}
 						class='radial-focus-path'
-						d={svgPaths.oblong(centerOffset, new Size(titleWidth - 6, k.row_height))}/>
+						d={svgPaths.oblong(center_ofFocus, new Size(titleWidth - 6, k.row_height))}/>
 				</svg>
 			{/key}
 		</Mouse_Responder>
@@ -71,9 +71,9 @@
 			left:-11px;
 			position: absolute;'>
 		<W_Title_Editor
-			origin_title = {origin_title}
 			ancestry={$w_ancestry_focus}
 			fontSize={k.font_size}px
+			origin = {origin_ofTitle}
 			name={es_title.name}/>
 	</div>
 </div>

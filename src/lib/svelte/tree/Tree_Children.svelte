@@ -9,7 +9,7 @@
 	import Circle from '../kit/Circle.svelte';
 	export let g_widget!: G_Widget;
     const ancestry = g_widget.ancestry_widget;
-	const origin = g_widget.origin_child;
+	const origin = g_widget.origin_ofChild;
 	let priorTime = new Date().getTime();
 	let g_widgets: Array<G_Widget> = [];
 	let center = Point.zero;
@@ -67,7 +67,7 @@
 {#if ancestry.isExpanded}
 	<div class = 'tree-children'>
 		{#each g_widgets as g_widget}
-			<Widget g_widget = {g_widget} origin = {g_widget.origin_widget}/>
+			<Widget g_widget = {g_widget} origin = {g_widget.origin_ofTree}/>
 			<Tree_Line g_widget = {g_widget}/>
 			{#if g_widget.ancestry_widget.showsChildRelationships}
 				<Tree_Children g_widget = {g_widget}/>

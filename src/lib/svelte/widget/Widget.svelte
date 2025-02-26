@@ -11,7 +11,7 @@
 	import { onMount } from 'svelte';
 	export let g_widget!: G_Widget;
 	export let origin = Point.zero;
-	const width = g_widget.widget_width;
+	const width = g_widget.width_ofWidget;
 	const name = g_widget.es_widget.name;
     const ancestry = g_widget.ancestry_widget;
     const points_right = g_widget.points_right;
@@ -24,7 +24,7 @@
 	let widgetWrapper!: Svelte_Wrapper;
 	let border_radius = k.dot_size / 2;
 	let revealCenter = Point.zero;
-	let center_drag = Point.zero;
+	let center_ofDrag = Point.zero;
 	let priorOrigin = origin;
 	let background = k.empty;
 	let widgetName = k.empty;
@@ -143,7 +143,7 @@
 		const hasExtraForTinyDots = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
 		const delta = showBorder() ? 0 : 1;
 		const leftForward = -7;
-		const leftBackward = 50 - (width + (showingReveal ? 25.5 : 15.5));
+		const leftBackward = 44.5 - (width + (showingReveal ? 10 : 0));
 		const leftPadding = points_right ? 1 : 14;
 		const rightPadding = g.inRadialMode ? 0 : (hasExtraForTinyDots ? 0.5 : 0) + 21;
 		left = origin.x + delta + (points_right ? leftForward : leftBackward);
@@ -177,21 +177,21 @@
 				name = {es_drag.name}
 				ancestry = {ancestry}
 				points_right = {points_right}
-				center = {g_widget.center_drag}
+				center = {g_widget.center_ofDrag}
 			/>
 			<W_Title_Editor
 				ancestry = {ancestry}
 				name = {es_title.name}
 				fontSize = {k.font_size}px
 				points_right = {points_right}
-				origin_title = {g_widget.origin_title}
+				origin = {g_widget.origin_ofTitle}
 			/>
 			{#if ancestry?.showsReveal_forPointingToChild(points_toChild)}
 				<W_Dot_Reveal
 					ancestry = {ancestry}
 					name = {es_reveal.name}
-					center = {g_widget.center_reveal}
 					points_toChild = {points_toChild}
+					center = {g_widget.center_ofReveal}
 				/>
 			{/if}
 		</div>
