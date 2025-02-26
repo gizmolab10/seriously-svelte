@@ -23,7 +23,7 @@ export default class Ancestry extends Identifiable {
 	//   "   kindPredicate is from the last relationship
 	//   "   all children are of that kind of predicate
 
-	constructor(t_database: string, ancestryString: string = k.empty, kindPredicate: string = T_Predicate.contains, thing_isChild: boolean = true) {
+	constructor(t_database: string, ancestryString: string = k.root_path, kindPredicate: string = T_Predicate.contains, thing_isChild: boolean = true) {
 		super(ancestryString);
 		this.t_database = t_database;
 		this.thing_isChild = thing_isChild;
@@ -57,7 +57,7 @@ export default class Ancestry extends Identifiable {
 	
 	static readonly PROPERTIES: unique symbol;
 	
-	get isRoot():							 boolean { return this.thing?.isRoot ?? false; }
+	get isRoot():							 boolean { return this.pathString == k.root_path; }
 	get hasChildRelationships():			 boolean { return this.childRelationships.length > 0; }
 	get hasParentRelationships():			 boolean { return this.parentRelationships.length > 0; }
 	get isFocus():							 boolean { return this.matchesStore(w_ancestry_focus); }
@@ -74,7 +74,7 @@ export default class Ancestry extends Identifiable {
 	get endID():						   	  string { return this.idAt(); }
 	get title():						   	  string { return this.thing?.title ?? 'missing title'; }
 	get description():					   	  string { return `${this.kindPredicate} "${this.thing?.type ?? '-'}" ${this.titles.join(':')}`; }
-	get depth():							  number { return this.ids.length; }
+	get depth():							  number { return this.relationship_ids.length; }
 	get order():						   	  number { return this.relationship?.order ?? -1; }
 	get visibleProgeny_halfHeight():	   	  number { return this.visibleProgeny_height() / 2; }
 	get relevantRelationships_count():		  number { return this.relevantRelationships.length; }
@@ -92,9 +92,9 @@ export default class Ancestry extends Identifiable {
 	get predicate():				Predicate | null { return this.hierarchy.predicate_forKind(this.kindPredicate) }
 	get relationship():			 Relationship | null { return this.relationshipAt(); }
 	get titleWrapper():		   Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.hid, T_SvelteComponent.title); }
-	get ids_hashed():		 	 Array	   <Integer> { return this.ids.map(i => i.hash()); }
-	get ids():				 	 Array		<string> { return this.id.split(k.generic_separator); }
-	get titles():			 	 Array		<string> { return this.ancestors?.map(t => ` "${t ? t.title : 'null'}"`) ?? []; }
+	get relationship_hids():	 Array	   <Integer> { return this.relationship_ids.map(i => i.hash()); }
+	get relationship_ids():	 	 Array		<string> { return this.isRoot ? [] : this.id.split(k.generic_separator); }
+	get titles():			 	 Array		<string> { return this.ancestors?.map(a => ` "${a ? a.title : 'null'}"`) ?? []; }
 	get children():			 	 Array		 <Thing> { return this.hierarchy.things_forAncestries(this.childAncestries); }
 	get ancestors():		 	 Array		 <Thing> { return this.hierarchy.things_forAncestry(this); }
 	get siblingAncestries(): 	 Array	  <Ancestry> { return this.parentAncestry?.childAncestries ?? []; }
@@ -104,7 +104,7 @@ export default class Ancestry extends Identifiable {
 	get relevantRelationships(): Array<Relationship> { return this.relationships_forChildren(this.thing_isChild); }
 
 	get relationships(): Array<Relationship> {
-		const relationships = this.ids_hashed.map(hid => this.hierarchy.relationship_forHID(hid)) ?? [];
+		const relationships = this.relationship_hids.map(hid => this.hierarchy.relationship_forHID(hid)) ?? [];
 		return u.strip_invalid(relationships);
 	}
 
@@ -148,7 +148,11 @@ export default class Ancestry extends Identifiable {
 	get thing(): Thing | null {
 		let thing = this._thing;
 		if (!thing) {
-			thing = this.thingAt(1) ?? null;	// always recompute, cache is for debugging
+			if (this.isRoot) {
+				thing = this.hierarchy.root;
+			} else {
+				thing = this.thingAt(1) ?? null;	// always recompute, cache is for debugging
+			}
 			this._thing = thing;
 		}
 		if (!!thing && !thing.oneAncestry && !!this.predicate && !this.predicate.isBidirectional) {
@@ -236,7 +240,7 @@ export default class Ancestry extends Identifiable {
 	includedInStore_ofAncestries(store: Writable<Array<Ancestry>>): boolean { return this.includedInAncestries(get(store)); }
 	matchesStore(store: Writable<Ancestry | null>):					boolean { return get(store)?.hasMatchingID(this) ?? false; }
 	includesPredicate_ofKind(kindPredicate: string):				boolean { return this.thing?.hasParents_forKind(kindPredicate) ?? false; }
-	sharesAnID(ancestry: Ancestry | null):							boolean { return !ancestry ? false : this.ids.some(id => ancestry.ids.includes(id)); }
+	sharesAnID(ancestry: Ancestry | null):							boolean { return !ancestry ? false : this.relationship_ids.some(id => ancestry.relationship_ids.includes(id)); }
 	showsCluster_forPredicate(predicate: Predicate):				boolean { return this.includesPredicate_ofKind(predicate.kind) && this.hasThings(predicate); }
 	hasMatchingID(ancestry: Ancestry | null | undefined):		boolean { return !!ancestry && this.hid == ancestry.hid && this.t_database == ancestry.t_database; }
 	relationships_forChildren(forChildren: boolean):	Array<Relationship> { return forChildren ? this.childRelationships : this.parentRelationships; }
@@ -253,7 +257,7 @@ export default class Ancestry extends Identifiable {
 
 	thingAt(back: number): Thing | null {			// 1 == last
 		const relationship = this.relationshipAt(back);
-		if (!!relationship && this.id != k.empty) {
+		if (!!relationship && this.id != k.root_path) {
 			return relationship.child;
 		}
 		return this.hierarchy.root;	// N.B., this.hierarchy.root is wrong immediately after switching db type
@@ -284,9 +288,9 @@ export default class Ancestry extends Identifiable {
 	}
 
 	idAt(back: number = 1): string {	// default 1 == last
-		const ids = this.ids;
+		const ids = this.relationship_ids;
 		if (back > ids.length) {
-			return k.empty;
+			return k.root_path;
 		}
 		return ids.slice(-(Math.max(1, back)))[0];
 	}
@@ -338,11 +342,12 @@ export default class Ancestry extends Identifiable {
 		if (back == 0) {
 			return this;
 		}
-		const ids = this.ids.slice(0, -back);
-		if (ids.length < 1) {
+		const stripped_ids = this.relationship_ids.slice(0, -back);
+		if (stripped_ids.length == 0) {
 			return this.hierarchy.rootAncestry;
+		} else {
+			return this.hierarchy.ancestry_remember_createUnique(stripped_ids.join(k.generic_separator));
 		}
-		return this.hierarchy.ancestry_remember_createUnique(ids.join(k.generic_separator));
 	}
 
 	extend_withChild(child: Thing | null): Ancestry | null {
@@ -350,7 +355,7 @@ export default class Ancestry extends Identifiable {
 		if (!!child && !!hidParent) {
 			const relationship = this.hierarchy.relationship_forPredicateKind_parent_child(T_Predicate.contains, hidParent, child.hid);
 			if (!!relationship) {
-				return this.uniquelyAppendID(relationship.id);
+				return this.uniquelyAppend_relationshipID(relationship.id);
 			}
 		}
 		return null;
@@ -421,8 +426,8 @@ export default class Ancestry extends Identifiable {
 
 	incorporates(ancestry: Ancestry | null): boolean {
 		if (!!ancestry) {
-			const ids = this.ids;
-			const ancestryIDs = ancestry.ids;
+			const ids = this.relationship_ids;
+			const ancestryIDs = ancestry.relationship_ids;
 			let index = 0;
 			while (index < ancestryIDs.length) {
 				if (ids[index] != ancestryIDs[index]) {
@@ -450,21 +455,25 @@ export default class Ancestry extends Identifiable {
 		return 0;
 	}
 
-	uniquelyAppendID(id: string): Ancestry | null {
-		let ids = this.ids;
-		ids.push(id);
-		const ancestry = this.hierarchy.ancestry_remember_createUnique(ids.join(k.generic_separator));
-		if (!!ancestry) {
-			if (ancestry.containsMixedPredicates) {
-				this.hierarchy.ancestry_forget(ancestry);
-				return null;
+	uniquelyAppend_relationshipID(id: string): Ancestry | null {
+		if (this.isRoot) {
+			return this.hierarchy.ancestry_remember_createUnique(id);
+		} else {
+			let ids = this.relationship_ids;
+			ids.push(id);
+			const ancestry = this.hierarchy.ancestry_remember_createUnique(ids.join(k.generic_separator));
+			if (!!ancestry) {
+				if (ancestry.containsMixedPredicates) {
+					this.hierarchy.ancestry_forget(ancestry);
+					return null;
+				}
+				if (ancestry.containsReciprocals) {
+					this.hierarchy.ancestry_forget(ancestry);
+					return null;
+				}
 			}
-			if (ancestry.containsReciprocals) {
-				this.hierarchy.ancestry_forget(ancestry);
-				return null;
-			}
+			return ancestry;
 		}
-		return ancestry;
 	}
 
 	childAncestries_ofKind(kindPredicate: string): Array<Ancestry> {
@@ -476,7 +485,7 @@ export default class Ancestry extends Identifiable {
 				if (childRelationship.kindPredicate == kindPredicate) {
 					let ancestry: Ancestry | null;
 					if (isContains) {
-						ancestry = this.uniquelyAppendID(childRelationship.id); 	// add each childRelationship's id
+						ancestry = this.uniquelyAppend_relationshipID(childRelationship.id); 	// add each childRelationship's id
 					} else {
 						ancestry = this.hierarchy.ancestry_remember_createUnique(childRelationship.id, kindPredicate);
 					}
@@ -486,7 +495,7 @@ export default class Ancestry extends Identifiable {
 				}
 			}
 			if (isContains) {
-				u.ancestries_orders_normalize(ancestries);			// normalize order of children only
+				u.ancestries_orders_normalize(ancestries);							// normalize order of children only
 			}
 		}
 		return ancestries;

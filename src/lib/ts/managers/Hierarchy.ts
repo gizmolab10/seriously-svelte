@@ -54,14 +54,15 @@ export class Hierarchy {
 	get idRoot(): string | null { return this.root?.id ?? null; };
 
 	assure_root_andAncestry() {
-		if (!this.rootAncestry) {
-			const rootAncestry = this.ancestry_remember_createUnique();
-			const root = rootAncestry.thing;
+		let rootAncestry = this.rootAncestry;
+		if (!rootAncestry) {
+			rootAncestry = this.ancestry_remember_createUnique();
 			this.rootAncestry = rootAncestry;
-			w_s_title_edit.set(new S_Title_Edit(rootAncestry));
-			if (!!root) {
-				this.root = root;
-			}
+		}
+		const root = rootAncestry.thing;
+		w_s_title_edit.set(new S_Title_Edit(rootAncestry));
+		if (!!root) {
+			this.root = root;
 		}
 	}
 
@@ -219,7 +220,7 @@ export class Hierarchy {
 	things_forAncestry(ancestry: Ancestry): Array<Thing> {
 		const isContains = ancestry.kindPredicate == T_Predicate.contains;
 		let things: Array<Thing> = isContains ? [this.root] : [];
-		const hids = ancestry.ids_hashed;
+		const hids = ancestry.relationship_hids;
 		if (!isContains || hids.length != 0) {
 			for (const hid of hids) {
 				const relationship = this.relationship_forHID(hid);
@@ -822,12 +823,16 @@ export class Hierarchy {
 		return (!!grab && grab.isVisible && !grab_containsFocus) ? grab : focus;
 	}
 
-	ancestry_valid_forID(idAncestry: string): Ancestry | null {
-		const ids = idAncestry.split(k.generic_separator);					// ancestor id is multiple relationship ids separated by generic_separator
-		const id = ids.slice(-1)[0];										// grab last relationship id
-		const kindPredicate = this.predicate_kindFor_idRelationship(id);		// grab its predicate kind
-		const notValid = !this.relationships_areAllValid_forIDs(ids) || !kindPredicate;
-		return notValid ? null : this.ancestry_remember_createUnique(idAncestry, kindPredicate);
+	ancestry_valid_forPath(path: string): Ancestry | null {
+		if (path == k.root_path) {
+			return this.rootAncestry;
+		} else {
+			const ids = path.split(k.generic_separator);						// path is multiple relationship ids separated by generic_separator
+			const id = ids.slice(-1)[0];										// grab last relationship id
+			const kindPredicate = this.predicate_kindFor_idRelationship(id);	// grab its predicate kind
+			const notValid = !this.relationships_areAllValid_forIDs(ids) || !kindPredicate;
+			return notValid ? null : this.ancestry_remember_createUnique(path, kindPredicate);
+		}
 	}
 
 	async ancestry_forget_persistentUpdate(ancestry: Ancestry) {
@@ -889,12 +894,12 @@ export class Hierarchy {
 		}
 	}
 
-	ancestry_remember_createUnique(id: string = k.empty, kindPredicate: string = T_Predicate.contains): Ancestry {
-		const hid = id.hash();
+	ancestry_remember_createUnique(path: string = k.root_path, kindPredicate: string = T_Predicate.contains): Ancestry {
+		const hid = path.hash();
 		let dict = this.ancestry_byType_andHash[kindPredicate] ?? {};
 		let ancestry = dict[hid];
 		if (!ancestry) {
-			ancestry = new Ancestry(this.db.t_database, id, kindPredicate);
+			ancestry = new Ancestry(this.db.t_database, path, kindPredicate);
 			this.ancestry_remember(ancestry);
 		}
 		return ancestry;
@@ -970,7 +975,7 @@ export class Hierarchy {
 				await this.db.thing_remember_persistentCreate(child);					// for everything below, need to await child.id fetched from databases
 			}
 			const relationship = await this.relationship_remember_persistentCreateUnique(idBase, Identifiable.newID(), kindPredicate, parent.idBridging, child.id, 0, T_Create.getPersistentID);
-			const childAncestry = ancestry.uniquelyAppendID(relationship.id);
+			const childAncestry = ancestry.uniquelyAppend_relationshipID(relationship.id);
 			u.ancestries_orders_normalize(ancestry.childAncestries);		// write new order values for relationships
 			return childAncestry;
 		}
@@ -1085,7 +1090,7 @@ export class Hierarchy {
 					relationship.order_setTo(order + k.halfIncrement, true);
 					this.relationship_remember(relationship);
 					debug.log_move(`relocate ${relationship.description}`)
-					const childAncestry = parentAncestry.uniquelyAppendID(relationship!.id);
+					const childAncestry = parentAncestry.uniquelyAppend_relationshipID(relationship!.id);
 					thing?.setOneAncestryTo(childAncestry);
 					childAncestry?.grabOnly();
 				}
@@ -1252,7 +1257,7 @@ export class Hierarchy {
 
 	select_file_toUpload(SHIFT: boolean) {
 		w_id_popupView.set(T_Control.import);				// extract_fromDict
-		this.replace_rootID = SHIFT ? k.empty : null;	// prime it to be updated from file (after user choses it)
+		this.replace_rootID = SHIFT ? k.empty : null;		// prime it to be updated from file (after user choses it)
 	}
 
 	get data_toSave(): Dictionary {

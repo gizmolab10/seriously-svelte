@@ -83,7 +83,7 @@ export default class Thing extends Persistable {
 			if (relationships && relationships.length > 0) {
 				const relationship = relationships[0];
 				const parentAncestry = relationship.parent?.oneAncestry;
-				oneAncestry = parentAncestry?.uniquelyAppendID(relationship.id) ?? null;
+				oneAncestry = parentAncestry?.uniquelyAppend_relationshipID(relationship.id) ?? null;
 			}
 		}
 		return oneAncestry;
@@ -230,9 +230,9 @@ export default class Thing extends Persistable {
 						const endID = relationship.id;		// EGADS, this is the wrong relationship; needs the next one
 						const parentAncestries = parent.parentAncestries_for(predicate, u.uniquely_concatenateArrays(visited, [parent.id])) ?? [];
 						if (parentAncestries.length == 0) {
-							addAncestry(get(w_hierarchy).rootAncestry.uniquelyAppendID(endID));
+							addAncestry(get(w_hierarchy).rootAncestry.uniquelyAppend_relationshipID(endID));
 						} else {
-							parentAncestries.map((p: Ancestry) => addAncestry(p.uniquelyAppendID(endID)));
+							parentAncestries.map((p: Ancestry) => addAncestry(p.uniquelyAppend_relationshipID(endID)));
 						}
 					}
 				}

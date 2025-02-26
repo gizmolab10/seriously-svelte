@@ -39,6 +39,7 @@ export default class Constants {
 	big_separator = '::::';
 	idBase_file = 'data';
 	unknown = 'unknown';
+	root_path = 'root';
 	newLine = '\n';
 	comma = ',';
 	space = ' ';

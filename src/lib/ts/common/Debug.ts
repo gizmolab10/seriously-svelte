@@ -14,6 +14,7 @@ export enum T_Debug {
 	colors		= 'colors',		// indicate some coordinates
 	cursor		= 'cursor',
 	crumbs  	= 'crumbs',
+	expand  	= 'expand',
 	layout		= 'layout',
 	radial		= 'radial',
 	remote		= 'remote',		// interactions with remote
@@ -64,6 +65,7 @@ export class Debug {
 	log_colors(message: string) { this.log_maybe(T_Debug.colors, message); }
 	log_crumbs(message: string) { this.log_maybe(T_Debug.crumbs, message); }
 	log_cursor(message: string) { this.log_maybe(T_Debug.cursor, message); }
+	log_expand(message: string) { this.log_maybe(T_Debug.expand, message); }
 	log_layout(message: string) { this.log_maybe(T_Debug.layout, message); }
 	log_radial(message: string) { this.log_maybe(T_Debug.radial, message); }
 	log_remote(message: string) { this.log_maybe(T_Debug.remote, message); }
@@ -95,6 +97,7 @@ export class Debug {
 					case 'colors': this.flags.push(T_Debug.colors); break;
 					case 'crumbs': this.flags.push(T_Debug.crumbs); break;
 					case 'cursor': this.flags.push(T_Debug.cursor); break;
+					case 'expand': this.flags.push(T_Debug.expand); break;
 					case 'layout': this.flags.push(T_Debug.layout); break;
 					case 'radial': this.flags.push(T_Debug.radial); break;
 					case 'remote': this.flags.push(T_Debug.remote); break;

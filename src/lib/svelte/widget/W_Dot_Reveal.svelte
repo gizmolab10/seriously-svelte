@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, ux, Size, Thing, Point, debug, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
+	import { g, k, u, ux, Size, Thing, Point, debug, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, Predicate, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_ancestries_grabbed, w_ancestries_expanded, w_ancestry_showing_tools } from '../../ts/state/S_Stores';
 	import { w_t_countDots, w_hierarchy, w_s_alteration } from '../../ts/state/S_Stores';

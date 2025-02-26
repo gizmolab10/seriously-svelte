@@ -68,20 +68,67 @@ export class Preferences {
 	
 	static readonly ANCESTRIES: unique symbol;
 
-	ancestries_writeDB_key(ancestries: Array<Ancestry>, key: string) {
-		const path_strings = ancestries.map(a => a.id);		// ancestry id is actually a path string (of Relationship ids)
-		this.writeDB_key(key, ancestries.length == 0 ? null : path_strings);
-		debug.log_preferences(`! ${key.toUpperCase()} ${ancestries.length} paths "${path_strings}" titles "${ancestries.map(a => a.title)}"`);
+	restore_grabbed_andExpanded(force: boolean = false) {
+		if (g.eraseDB > 0) {
+			g.eraseDB -= 1;
+			w_ancestries_expanded.set([]);
+			w_ancestries_grabbed.set([get(w_hierarchy).rootAncestry]);
+		} else {
+			w_ancestries_grabbed.set(this.ancestries_readDB_key(T_Preference.grabbed));
+			w_ancestries_expanded.set(this.ancestries_readDB_key(T_Preference.expanded));
+			debug.log_grab(`  READ grabbed: "${get(w_ancestries_grabbed).map(a => a.id).join(', ')}"`);
+			debug.log_expand(`  READ expanded: "${get(w_ancestries_expanded).map(a => a.id).join(', ')}"`);
+		}
+		setTimeout(() => {
+			w_ancestries_grabbed.subscribe((array: Array<Ancestry>) => {
+				this.ancestries_writeDB_key(array, T_Preference.grabbed);
+				debug.log_grab(`  WRITE grabbed: "${array.map(a => a.id).join(', ')}"`);
+			});
+			w_ancestries_expanded.subscribe((array: Array<Ancestry>) => {
+				this.ancestries_writeDB_key(array, T_Preference.expanded);
+				debug.log_expand(`  WRITE expanded: "${array.map(a => a.id).join(', ')}"`);
+			});
+		}, 100);
 	}
 
-	ancestries_readDB_key(key: string): Array<Ancestry> {	// 2 keys supported so far {grabbed, expanded}
-		const aids = this.readDB_key(key);
-		const length = aids?.length ?? 0;
+	restore_focus() {
+		const h = get(w_hierarchy);
+		let ancestryToFocus = h.rootAncestry;
+		if (!this.ignoreAncestries && !g.eraseDB) {
+			const focusPath = this.readDB_key(T_Preference.focus);
+			if (!!focusPath) {
+				const focusAncestry = h.ancestry_remember_createUnique(focusPath);
+				if (!!focusAncestry) {
+					ancestryToFocus = focusAncestry;
+				}
+			}
+		}
+		if (!ancestryToFocus.thing) {
+			const lastGrabbedAncestry = h.grabs_latest_ancestry?.parentAncestry;
+			if (lastGrabbedAncestry) {
+				ancestryToFocus = lastGrabbedAncestry;
+			}
+		}
+		ancestryToFocus.becomeFocus(true);
+		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
+			this.writeDB_key(T_Preference.focus, !ancestry ? null : ancestry.pathString);
+		});
+	}
+
+	ancestries_writeDB_key(ancestries: Array<Ancestry>, key: string) {
+		const paths = ancestries.map(a => a.pathString);			// array of paths (of Relationship ids)
+		this.writeDB_key(key, ancestries.length == 0 ? null : paths);
+		debug.log_preferences(`! ${key.toUpperCase()} ${ancestries.length} paths "${paths}" titles "${ancestries.map(a => a.title)}"`);
+	}
+
+	ancestries_readDB_key(key: string): Array<Ancestry> {	// 2 keys use this {grabbed, expanded}
+		const paths = this.readDB_key(key);
+		const length = paths?.length ?? 0;
 		let ancestries: Array<Ancestry> = [];
 		if (!this.ignoreAncestries && length > 0) {
 			let h = get(w_hierarchy);
-			for (const aid of aids) {
-				const a = h.ancestry_valid_forID(aid);
+			for (const path of paths) {
+				const a = h.ancestry_valid_forPath(path);
 				if (!!a) {
 					ancestries.push(a);
 				}
@@ -157,51 +204,6 @@ export class Preferences {
 		w_t_details.set(this.read_key(T_Preference.detail_types) ?? [T_Details.storage]);
 		w_ring_rotation_radius.set(Math.max(this.read_key(T_Preference.ring_radius) ?? 0, k.innermost_ring_radius));
 		this.reactivity_subscribe()
-	}
-
-	restore_grabbed_andExpanded(force: boolean = false) {
-		if (g.eraseDB > 0) {
-			g.eraseDB -= 1;
-			w_ancestries_expanded.set([]);
-			w_ancestries_grabbed.set([get(w_hierarchy).rootAncestry]);
-		} else {
-			w_ancestries_grabbed.set(this.ancestries_readDB_key(T_Preference.grabbed));
-			w_ancestries_expanded.set(this.ancestries_readDB_key(T_Preference.expanded));
-			debug.log_grab(`  READ grabbed: "${get(w_ancestries_grabbed).map(a => a.thing?.id).join(', ')}"`);
-		}
-		setTimeout(() => {
-			w_ancestries_grabbed.subscribe((array: Array<Ancestry>) => {
-				debug.log_grab(`  WRITE grabbed: "${array.map(a => a.thing?.id).join(', ')}"`);
-				this.ancestries_writeDB_key(array, T_Preference.grabbed);
-			});
-			w_ancestries_expanded.subscribe((array: Array<Ancestry>) => {
-				this.ancestries_writeDB_key(array, T_Preference.expanded);
-			});
-		}, 100);
-	}
-
-	restore_focus() {
-		const h = get(w_hierarchy);
-		let ancestryToFocus = h.rootAncestry;
-		if (!this.ignoreAncestries && !g.eraseDB) {
-			const focusid = this.readDB_key(T_Preference.focus);
-			if (!!focusid || focusid == k.empty) {
-				const focusAncestry = h.ancestry_remember_createUnique(focusid);
-				if (!!focusAncestry) {
-					ancestryToFocus = focusAncestry;
-				}
-			}
-		}
-		if (!ancestryToFocus.thing) {
-			const lastGrabbedAncestry = h.grabs_latest_ancestry?.parentAncestry;
-			if (lastGrabbedAncestry) {
-				ancestryToFocus = lastGrabbedAncestry;
-			}
-		}
-		ancestryToFocus.becomeFocus(true);
-		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
-			this.writeDB_key(T_Preference.focus, !ancestry ? null : ancestry.pathString);
-		});
 	}
 
 }
