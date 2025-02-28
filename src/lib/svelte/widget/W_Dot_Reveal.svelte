@@ -13,12 +13,11 @@
     export let zindex = T_Layer.dots;
 	export let points_toChild = true;
     export let hover_isReversed = false;
-	const es_reveal = ux.s_element_forName(name);		// survives onDestroy, created by widget
-	const outside_tinyDots_count = ancestry.relationships_forChildren(points_toChild).length;
+	const tinyDotsOffset = new Point(-3, -2.6);
+	const es_reveal = ux.s_element_forName(name);		// survives onDestroy, created by g widget (TODO: radial focus widget has no g widget)
+	const viewBox = `0.5 2.35 ${k.diameterOf_outer_tinyDots} ${k.diameterOf_outer_tinyDots}`;
 	let svgPathFor_outer_tinyDots: string | null = null;
 	let svgPathFor_bulkAlias: string | null = null;
-	let tinyDotsOffset = new Point(0.65, -0.361);
-	let tinyDotsDelta = k.dot_size * -0.4 + 0.01;
 	let svgPathFor_revealDot = k.empty;
 	let revealWrapper!: Svelte_Wrapper;
 	let bulkAliasOffset = 0;
@@ -115,21 +114,21 @@
 {#key rebuilds}
 	{#if es_reveal}
 		<Mouse_Responder
+			center={center}
+			zindex={zindex}
 			width={k.dot_size}
 			height={k.dot_size}
-			center={center}
 			name={es_reveal.name}
+			bind:this={dotReveal}
 			handle_mouse_state={up_hover_closure}>
-			<button class='dot'
-				bind:this={dotReveal}
+			<div class='reveal-almost-button'
 				on:contextmenu={handle_context_menu}
 				style='
 					width: {k.dot_size}px;
 					height: {k.dot_size}px;
-					z-index: {zindex};
 				'>
 				{#key svgPathFor_revealDot}
-					<SVGD3 name='reveal-svg'
+					<SVGD3 name='reveal-almost-button-svg'
 						fill={debug.lines ? 'transparent' : es_reveal.fill}
 						svgPath={svgPathFor_revealDot}
 						stroke={ancestry.thing.color}
@@ -154,22 +153,29 @@
 					</div>
 				{/if}
 				{#if !!svgPathFor_outer_tinyDots}
-					<div class='outside-tiny-dots' style='
-						left:{tinyDotsDelta + tinyDotsOffset.x}px;
-						top:{tinyDotsDelta + tinyDotsOffset.y}px;
-						height:{k.diameterOf_outside_tinyDots}px;
-						width:{k.diameterOf_outside_tinyDots}px;
-						position:absolute;'>
-						<SVGD3 name='outside-tiny-dots-svg'
-							svgPath={svgPathFor_outer_tinyDots}
-							height={k.diameterOf_outside_tinyDots}
-							width={k.diameterOf_outside_tinyDots}
-							stroke={ancestry.thing.color}
-							fill={ancestry.thing.color}
-						/>
+					<div class='tiny-dots' style='
+						height:{k.diameterOf_outer_tinyDots}px;
+						width:{k.diameterOf_outer_tinyDots}px;
+						left:{tinyDotsOffset.x}px;
+						top:{tinyDotsOffset.y}px;
+						position:absolute;
+						z-index:0'>
+						<svg class='tiny-dots-svg'
+							height={k.diameterOf_outer_tinyDots}px
+							width={k.diameterOf_outer_tinyDots}px
+							viewBox='{viewBox}'
+							style='
+								position: absolute;
+								shape-rendering: geometricPrecision;'>
+							<path
+								d={svgPathFor_outer_tinyDots}
+								fill={ancestry.thing.color}
+								stroke={ancestry.thing.color}
+							/>
+						</svg>
 					</div>
 				{/if}
-			</button>
+			</div>
 		</Mouse_Responder>
 	{/if}
 {/key}

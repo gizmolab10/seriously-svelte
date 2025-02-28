@@ -380,7 +380,7 @@ export default class Ancestry extends Identifiable {
 		const isVisible_inRadial = points_toChild ? isVisible_forChild : this.hasParentRelationships && (isUnidirectional ? show.parent_dots : show.related_dots);
 		const show_outside_tinyDots = in_radial_mode ? isVisible_inRadial : isVisible_forChild;
 		const outside_tinyDots_count = this.relationships_count_forChildren(points_toChild);
-		return !show_outside_tinyDots ? null : svgPaths.tinyDots_circular(k.diameterOf_outside_tinyDots, outside_tinyDots_count as Integer, this.points_right);
+		return !show_outside_tinyDots ? null : svgPaths.tinyDots_circular(k.diameterOf_outer_tinyDots + 4, outside_tinyDots_count as Integer, this.points_right);
 	}
 
 	things_childrenFor(kindPredicate: string): Array<Thing> {

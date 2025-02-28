@@ -138,6 +138,10 @@
 		}
 	}
 
+	async function handle_click_event(event) {
+		ancestry?.grabOnly();
+	}
+
 	function layout() {
 		g_widget.layout();
 		const hasExtra_onRight = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
@@ -159,6 +163,7 @@
 		<div class = 'widget'
 			id = '{widgetName}'
 			bind:this = {widget}
+			on:click={handle_click_event}
 			style = '
 				top : {top}px;
 				left : {left}px;

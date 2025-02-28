@@ -20,7 +20,7 @@ export default class Constants {
 	hid_unknown = 1000000000000;
 	ring_resizing_thickness = 30;
 	ring_rotation_thickness = 44;
-	diameterOf_outside_tinyDots = this.dot_size * 1.8;
+	diameterOf_outer_tinyDots = this.dot_size * 1.4;
 	prevent_selection_style = '-webkit-user-select: none; user-select: none; -moz-user-select: none';
 	local_help_url = 'http://localhost:8000/README.html';
 	remote_help_url = 'https://help.webseriously.org';

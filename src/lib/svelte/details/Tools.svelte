@@ -97,7 +97,7 @@
 		return !ancestry ? 0 : g.inRadialMode ? ancestry.points_right ? titleWidth + 23 : -6 : ancestry.showsReveal ? titleWidth + 25 : titleWidth + 17;
 	}
 
-	async function handle_delete_event(event) {
+	function handle_delete_event(event) {
 		if (!isDisabledFor(T_Tool.delete)) {
 			confirmingDelete = true;
 		}
