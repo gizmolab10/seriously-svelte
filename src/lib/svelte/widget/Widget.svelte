@@ -139,7 +139,7 @@
 	}
 
 	async function handle_click_event(event) {
-		ancestry?.grabOnly();
+		ancestry?.grab();
 	}
 
 	function layout() {

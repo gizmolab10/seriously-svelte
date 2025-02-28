@@ -1047,11 +1047,7 @@ export class Hierarchy {
 									alert('PROGRAMMING ERROR: child of focus is not visible');
 								}
 							}
-							if (SHIFT) {
-								grabAncestry.toggleGrab();
-							} else {
-								grabAncestry.grabOnly();
-							}
+							grabAncestry.grab_forShift(SHIFT);
 							graph_needsRelayout = true;
 						}
 					} else if (g.allow_GraphEditing && OPTION) {

@@ -688,8 +688,15 @@ export default class Ancestry extends Identifiable {
 		this.toggle_editingTools();
 	}
 
+	grab_forShift(SHIFT: boolean) {
+		if (SHIFT) {
+			this.toggleGrab();
+		} else {
+			this.grabOnly();
+		}
+	}
+
 	grab() {
-		w_s_title_edit.set(null);
 		w_ancestries_grabbed.update((a) => {
 			let array = a ?? [];
 			if (!!array) {

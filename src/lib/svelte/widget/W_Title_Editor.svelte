@@ -23,6 +23,7 @@
 	let title_binded = thing?.title ?? k.empty;
 	let color = thing?.color ?? k.empty;
 	let title_wrapper: Svelte_Wrapper;
+	let origin_ofInput = Point.zero;
 	let title_prior = thing?.title;
 	let cursor_style = k.empty;
 	let ghost = null;
@@ -60,10 +61,15 @@
 	}
 
 	$: {
-		const s_title_edit = $w_s_title_edit;
-		if (!!ancestry && (ancestry_isEditStopping() || (hasFocus() && !s_title_edit))) {
+		if (!!ancestry && (ancestry_isEditStopping() || (hasFocus() && !$w_s_title_edit))) {
 			stopEdit();
 		}
+	}
+
+	$: {
+		const _ = $w_ancestries_grabbed;
+		const isGrabbed = ancestry?.isGrabbed ?? false;
+		origin_ofInput = new Point(3.5, 1.8).offsetBy(isGrabbed ? new Point(0.1, 0.2) : Point.zero);
 	}
 
 	$: {
@@ -218,11 +224,7 @@
 					$w_s_title_edit?.t_edit = T_Edit.stopping;		// stop prior edit, wait for it to percolate (below with setTimeout)
 				}
 				if (!ancestry.isGrabbed) {
-					if (event.shiftKey) {
-						ancestry.grab();
-					} else {
-						ancestry.grabOnly();
-					}
+					ancestry.grab_forShift(event.shiftKey);
 				} else if (ancestry.isEditable) {
 					setTimeout(() => {
 						ancestry.startEdit();
@@ -243,7 +245,7 @@
 		$w_s_title_edit = null;
 		input?.blur();
 		update_cursorStyle();
-		// layout not needed
+		// relayout not needed
 	}
 
 	function startEditMaybe() {
@@ -311,8 +313,6 @@
 		on:keydown={handle_key_down}
 		on:mouseover={(event) => { event.preventDefault(); }}
 		style='
-			top : 1.8px;
-			left : 3.5px;
 			border : none;
 			{cursor_style};
 			outline : none;
@@ -324,6 +324,8 @@
 			width : {title_width}px;
 			z-index : {T_Layer.text};
 			height : {input_height}px;
+			top : {origin_ofInput.y}px;
+			left : {origin_ofInput.x}px;
 			{k.prevent_selection_style};
 			font-family : {$w_thing_fontFamily};
 			outline-color : {k.color_background};'/>
