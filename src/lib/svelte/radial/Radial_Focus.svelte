@@ -30,7 +30,7 @@
 	$: {
 		width_ofTitle = ($w_ancestry_focus?.thing?.titleWidth ?? 0) - 4;
 		const x = -6 - (width_ofTitle / 2);
-		origin_ofTitle = new Point(11, 2);
+		origin_ofTitle = Point.x(11);
 		center_ofBorder = new Point(width_ofTitle + 19, height).dividedInHalf;
 		origin_ofWidget = new Point(x, 1 - k.dot_size).offsetBy(w.center_ofGraphSize);
 	}

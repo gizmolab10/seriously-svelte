@@ -14,7 +14,6 @@
     export let name = k.empty;
 	export let ancestry;
 	export let origin;
-	const input_left = 3.5;
 	const thing = ancestry?.thing;
 	const padding = `0.5px 0px 0px 0px`;
 	const es_title = ux.s_element_forName(name);
@@ -283,8 +282,8 @@
 
 <Mouse_Responder
 	origin={origin}
-	height={k.dot_size}
 	name={es_title.name}
+	height={k.row_height}
 	width={title_width + 2}
 	handle_mouse_state={handle_mouse_state}>
 	<span class="ghost"
@@ -312,7 +311,8 @@
 		on:keydown={handle_key_down}
 		on:mouseover={(event) => { event.preventDefault(); }}
 		style='
-			top : -0.2px;
+			top : 1.8px;
+			left : 3.5px;
 			border : none;
 			{cursor_style};
 			outline : none;
@@ -320,7 +320,6 @@
 			white-space : pre;
 			position : absolute;
 			padding : {padding};
-			left : {input_left}px;
 			font-size : {fontSize};
 			width : {title_width}px;
 			z-index : {T_Layer.text};

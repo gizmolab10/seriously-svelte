@@ -58,14 +58,15 @@ export default class G_Widget extends Rect {
 
 	layout() {
 		const ancestry = this.ancestry_ofWidget;
-		const showBorder = !ancestry ? false : ancestry.isGrabbed || ancestry.isEditing;
-		const adjustment_forBorder = showBorder ? 0 : 1;
+		const showingReveal = ancestry?.showsReveal_forPointingToChild(this.points_toChild) ?? false;
+		const showingBorder = !ancestry ? false : ancestry.isGrabbed || ancestry.isEditing;
+		const adjustment_forBorder = showingBorder ? 0 : 1;
 		const x_radial = this.points_right ? -4 : -k.dot_size * 3.5;
 		const offset_ofRadial = new Point(x_radial, 4 - k.dot_size);
 		const offset_ofWidget = new Point(17, (k.dot_size / -15) - 7);
-		const showingReveal = this.ancestry_ofWidget?.showsReveal_forPointingToChild(this.points_toChild) ?? false;
+		const offset_ofTitle_forRadial = (this.points_right ? 15 : (showingReveal ? 14 : 6));
+		this.origin_ofTitle = new Point(g.inRadialMode ? offset_ofTitle_forRadial : 12.5, 0);
 		this.origin_ofRadial = this.origin_ofChild.offsetBy(offset_ofRadial);
-		this.origin_ofTitle = new Point(g.inRadialMode ? (this.points_right ? 18 : (showingReveal ? 17 : -3)) : 15.5, 2).offsetByX(-3);
 		this.origin_ofTree = this.extent.offsetBy(offset_ofWidget);
 		if (!!this.ancestry_ofWidget?.thing) {
 			const multiplier = showingReveal ? 2 : 1.35;
