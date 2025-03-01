@@ -787,24 +787,22 @@ export class Hierarchy {
 			for (const ancestry of ancestries) {
 				const thing = ancestry.thing;
 				const parentAncestry = ancestry.parentAncestry;
-				if (!!parentAncestry) {
-					const grandParentAncestry = parentAncestry.parentAncestry;
-					if (!!thing && !!grandParentAncestry && !thing.isBulkAlias) {
-						const siblings = parentAncestry.children;
-						let index = siblings.indexOf(thing);
-						siblings.splice(index, 1);
-						parentAncestry.grabOnly();
-						if (siblings.length == 0) {
-							parentAncestry.collapse();
-							if (!grandParentAncestry.isVisible) {
-								grandParentAncestry.becomeFocus();	// call become focus before applying
-							}
+				const grandParentAncestry = parentAncestry?.parentAncestry;
+				if (!!grandParentAncestry && !!thing && !thing.isBulkAlias) {
+					const siblings = parentAncestry.children;
+					let index = siblings.indexOf(thing);
+					siblings.splice(index, 1);
+					parentAncestry.grabOnly();
+					if (siblings.length == 0) {
+						parentAncestry.collapse();
+						if (!grandParentAncestry.isVisible) {
+							grandParentAncestry.becomeFocus();	// call become focus before applying
 						}
-						await ancestry.traverse_async(async (progenyAncestry: Ancestry): Promise<boolean> => {
-							await this.ancestry_forget_persistentUpdate(progenyAncestry);
-							return false; // continue the traversal
-						});
 					}
+					await ancestry.traverse_async(async (progenyAncestry: Ancestry): Promise<boolean> => {
+						await this.ancestry_forget_persistentUpdate(progenyAncestry);
+						return false; // continue the traversal
+					});
 				}
 			}
 			debug.log_grab(`  DELETE, FOCUS grabbed: "${get(w_ancestry_focus).isGrabbed}"`);

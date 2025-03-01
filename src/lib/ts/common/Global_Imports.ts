@@ -3,12 +3,13 @@ import { show } from '../state/S_Show';
 import { files } from '../managers/Files';
 import { Direction } from '../geometry/Angle';
 import { wrappers } from '../managers/Wrappers';
-import { debug, Debug, T_Debug } from './Debug';
 import { svgPaths } from '../geometry/SVG_Paths';
+import { ErrorTrace } from '../debug/ErrorTrace';
 import { Hierarchy } from '../managers/Hierarchy';
 import { databases } from '../managers/Databases';
 import { Seriously_Range } from './Seriously_Range';
 import { signals, T_Signal } from '../signals/Signals';
+import { debug, Debug, T_Debug } from '../debug/Debug';
 import { Rect, Size, Point } from '../geometry/Geometry';
 
 import { T_Timer } from '../signals/Mouse_Timer';
@@ -62,13 +63,13 @@ import interact from 'interactjs';
 export {
 	e, g, k, p, u, ux, w,
 	T_Timer, Mouse_Timer,
-	debug, Debug, T_Debug,
 	interact, transparentize,
 	wrappers, Seriously_Range,
 	Rect, Size, Point, svgPaths,
 	show, files, builds, signals,
 	T_Layer, T_Predicate, T_Create,
 	Ancestry, Hierarchy, databases,
+	debug, Debug, T_Debug, ErrorTrace,
 	T_RingZone, T_Oblong, T_Alteration,
 	Angle, Direction, T_Quadrant, T_Orientation,
 	T_Element, Svelte_Wrapper, T_SvelteComponent,

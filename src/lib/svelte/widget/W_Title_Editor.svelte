@@ -219,6 +219,7 @@
 				case 'enter': event.preventDefault(); stop_andPersist(); break;
 				default:	  title_updatedTo(thing.title); break;
 			}
+			extractRange_fromInput_toThing();
 		}
 	}
 

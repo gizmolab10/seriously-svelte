@@ -607,8 +607,8 @@ export default class Ancestry extends Identifiable {
 			} else {
 				this.grabOnly();
 			}
-			signals.signal_rebuildGraph_fromFocus();
 		}
+		signals.signal_rebuildGraph_fromFocus();
 	}
 
 	toggle_editingTools() {

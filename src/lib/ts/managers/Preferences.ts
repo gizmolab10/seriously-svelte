@@ -82,11 +82,15 @@ export class Preferences {
 		setTimeout(() => {
 			w_ancestries_grabbed.subscribe((array: Array<Ancestry>) => {
 				this.ancestries_writeDB_key(array, T_Preference.grabbed);
-				debug.log_grab(`  WRITE grabbed: "${array.map(a => a.id).join(', ')}"`);
+				if (array.length > 0) {
+					debug.log_grab(`  WRITING grabbed: "${array.map(a => a.id).join(', ')}"`);
+				}
 			});
 			w_ancestries_expanded.subscribe((array: Array<Ancestry>) => {
 				this.ancestries_writeDB_key(array, T_Preference.expanded);
-				debug.log_expand(`  WRITE expanded: "${array.map(a => a.id).join(', ')}"`);
+				if (array.length > 0) {
+					debug.log_expand(`  WRITING expanded: "${array.map(a => a.id).join(', ')}"`);
+				}
 			});
 		}, 100);
 	}

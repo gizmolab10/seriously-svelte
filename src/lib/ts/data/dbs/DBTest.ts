@@ -1,4 +1,4 @@
-import { k, Thing, Trait, T_Thing, Relationship, T_Predicate } from '../../common/Global_Imports';
+import { k, T_Thing, Predicate, T_Predicate } from '../../common/Global_Imports';
 import type { Dictionary } from '../../../ts/common/Types';
 import { T_Database, T_Persistence } from './DBCommon';
 import DBCommon from './DBCommon';
@@ -25,8 +25,8 @@ export default class DBTest extends DBCommon {
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTa, 'Active', 'red');
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTb, 'Maintain', 'blue');
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTc, 'Curiosity', '#d96726');
-		h.thing_remember_runtimeCreateUnique(this.idBase, idTd, 'Autonomy', 'purple');
-		h.thing_remember_runtimeCreateUnique(this.idBase, idTe, 'Aesthetics', 'mediumvioletred');
+		h.thing_remember_runtimeCreateUnique(this.idBase, idTd, 'Aesthetics', 'mediumvioletred');
+		h.thing_remember_runtimeCreateUnique(this.idBase, idTe, 'Autonomy', 'purple');
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTf, 'Connections', 'coral');
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTr, 'Life', 'limegreen', T_Thing.root);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cra', kindC, idTr, idTa, 0);
@@ -51,29 +51,24 @@ export default class DBTest extends DBCommon {
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Rce', kindR, idTc, idTe, 2);
 		this.makeMore(2, 'B', kindC, idTc, true);	// children of Curiosity
 		this.makeMore(5, 'D', kindC, idTb, true);	// children of Maintain
-		this.makeMore(5, 'G', kindC, idTb, false);	// parents of  "
+		this.makeMore(2, 'G', kindC, idTb, false);	// parents of  "
 		this.makeMore(5, 'G', kindR, idTb, false);	// related to  "
 	}
 
 	makeMore(count: number, first: string, kindPredicate: T_Predicate, idOther: string, asChild: boolean) {
+		const isBidirectional = Predicate.isBidirectional(kindPredicate);
+		const prefix = isBidirectional ? 'R' : 'C';
+		const charCode = first.charCodeAt(0);
+		const h = this.hierarchy;
 		for (let i = 0; i < count; i++) {
-			const h = this.hierarchy;
-			const code = first.charCodeAt(0) + i;
-			const idUpper = String.fromCharCode(code);
-			const predicate = h.predicate_forKind(kindPredicate);
-			const isBidirectional = predicate?.isBidirectional ?? false;
+			const idUpper = String.fromCharCode(charCode + i);
 			const id_thing = asChild ? idOther + idUpper : idUpper + idOther;
 			const title = asChild ? idUpper : id_thing;
-			const prefix = isBidirectional ? 'R' : 'C';
 			const idRelationahip = prefix + id_thing;
 			const idChild = asChild ? id_thing : idOther;
 			const idParent = asChild ? idOther : id_thing;
 			h.thing_remember_runtimeCreateUnique(this.idBase, id_thing, title, 'red');
-			h.relationship_remember_runtimeCreateUnique(this.idBase, idRelationahip, kindPredicate, idParent, idChild, 1);
-			if (asChild || isBidirectional) {	// needs to be child of root
-				const idParentRelationship = 'CR' + idUpper;
-				h.relationship_remember_runtimeCreateUnique(this.idBase, idParentRelationship, T_Predicate.contains, h.root.id, id_thing, 1);
-			}
+			h.relationship_remember_runtimeCreateUnique(this.idBase, idRelationahip, kindPredicate, idParent, idChild, i);
 		}
 	}
 

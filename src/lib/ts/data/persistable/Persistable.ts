@@ -2,7 +2,7 @@ import S_Persistence from '../../state/S_Persistence';
 import Identifiable from '../runtime/Identifiable';
 import { w_hierarchy } from '../../state/S_Stores';
 import { T_Persistable } from '../dbs/DBCommon';
-import { T_Debug } from '../../common/Debug';
+import { T_Debug } from '../../debug/Debug';
 import { get } from 'svelte/store';
 
 export default class Persistable extends Identifiable {

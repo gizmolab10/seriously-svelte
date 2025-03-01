@@ -43,7 +43,6 @@
 
 	setup_fromAncestry();
 	debug.log_mount(`WIDGET (grabbed: ${ancestry.isGrabbed}) "${ancestry.title}"`);
-	debug.log_grab(`  WIDGET (grabbed: ${ancestry.isGrabbed}) (border: ${es_widget.border}) "${ancestry.title}"`);
 
 	onMount(() => {
 		layout();
@@ -139,7 +138,8 @@
 	}
 
 	async function handle_click_event(event) {
-		ancestry?.grab();
+		event.preventDefault();
+		ancestry?.grab_forShift(event.shiftKey);
 	}
 
 	function layout() {

@@ -16,6 +16,7 @@ export default class Predicate extends Persistable {
 	
 	log(option: T_Debug, message: string)					 { debug.log_maybe(option, message + k.space + this.description); }
 	get description():					  			  string { return this.kind.unCamelCase().lastWord(); }
+	static isBidirectional(kind: T_Predicate):		 boolean { return kind == T_Predicate.isRelated; }
 	static get contains():				    Predicate | null { return this.predicate_forKind(T_Predicate.contains); }
 	static get explains():				    Predicate | null { return this.predicate_forKind(T_Predicate.explains); }
 	static get requires():				    Predicate | null { return this.predicate_forKind(T_Predicate.requires); }

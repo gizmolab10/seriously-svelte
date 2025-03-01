@@ -80,6 +80,10 @@
 		}
 	}
 
+	function handle_mouse_state(s_mouse: S_Mouse): boolean {
+		return false;
+	}
+
 	function svgPaths_update() {
 		if (g.inRadialMode) {
 			svgPathFor_dragDot = svgPaths.circle_atOffset(size, size - 1);
@@ -127,10 +131,6 @@
 				ancestry?.handle_singleClick_onDragDot(shiftKey);
 			}
 		}
-	}
-
-	function handle_mouse_state(s_mouse: S_Mouse): boolean {
-		return false;
 	}
 
 </script>

@@ -3,6 +3,7 @@
 		"strict": true,
 		"target": "es6",
 		"jsx": "preserve",
+		"sourceMap": true,
 		"outDir": "./dist",
 		"module": "CommonJS",
 		"esModuleInterop": true,

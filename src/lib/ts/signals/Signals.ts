@@ -1,5 +1,5 @@
 import { stores, w_ancestry_focus } from '../state/S_Stores';
-import { debug } from '../common/Debug';
+import { debug } from '../debug/Debug';
 import { Signal } from 'typed-signals';
 import { get } from 'svelte/store';
 

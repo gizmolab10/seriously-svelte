@@ -1,4 +1,5 @@
 import { g } from '../state/S_Global';
+import { Trace } from './ErrorTrace';
 
 // query string: ?debug=p,action
 
@@ -27,6 +28,7 @@ export enum T_Debug {
 	mouse		= 'mouse',
 	hover		= 'hover',
 	order		= 'order',		// observe relocating
+	trace		= 'trace',
 	tools		= 'tools',		// state logic of add parent tool
 	edit		= 'edit',		// state machine for editing
 	grab		= 'grab',
@@ -39,11 +41,13 @@ export class Debug {
 	flags: Array<T_Debug>;
 	constructor(flags: Array<T_Debug>) { this.flags = flags; }
 	hasOption(option: T_Debug) { return this.flags.includes(option); }
+	captureStackTrace(): string | undefined { return new Error().stack; }
 
 	get info(): boolean { return this.hasOption(T_Debug.info); }
 	get graph(): boolean { return this.hasOption(T_Debug.graph); }
 	get lines(): boolean { return this.hasOption(T_Debug.lines); }
 	get tools(): boolean { return this.hasOption(T_Debug.tools); }
+	get trace(): boolean { return this.hasOption(T_Debug.trace); }
 	get cursor(): boolean { return this.hasOption(T_Debug.cursor); }
 	get radial(): boolean { return this.hasOption(T_Debug.radial); }
 	get reticle(): boolean { return this.hasOption(T_Debug.reticle); }
@@ -77,7 +81,11 @@ export class Debug {
 	
 	log_maybe(option: T_Debug, message: string) {
 		if (this.hasOption(option)) {
-			console.log(option.toUpperCase(), message);
+			let log = message;
+			if (this.trace) {
+				log = `\n${log}\n${this.captureStackTrace()}`;
+			}
+			console.log(option.toUpperCase(), log);
 		}
 	}
 
@@ -111,6 +119,7 @@ export class Debug {
 					case 'mouse': this.flags.push(T_Debug.mouse); break;
 					case 'order': this.flags.push(T_Debug.order); break;
 					case 'tools': this.flags.push(T_Debug.tools); break;
+					case 'trace': this.flags.push(T_Debug.trace); break;
 					case 'edit': this.flags.push(T_Debug.edit); break;
 					case 'grab': this.flags.push(T_Debug.grab); break;
 					case 'info': this.flags.push(T_Debug.info); break;

@@ -74,25 +74,9 @@ export default class Thing extends Persistable {
 		return false;
 	}
 
-	get oneAncestry_derived(): Ancestry | null {
-		let oneAncestry: Ancestry | null = null;
-		if (this.isRoot) {			// if root, use root ancestry
-			oneAncestry = get(w_hierarchy).rootAncestry;
-		} else {					// if not, use parent.oneAncestry and append id of forParents relationship
-			const relationships = this.relationships_ofKind_forParents(T_Predicate.contains, true);
-			if (relationships && relationships.length > 0) {
-				const relationship = relationships[0];
-				const parentAncestry = relationship.parent?.oneAncestry;
-				oneAncestry = parentAncestry?.uniquelyAppend_relationshipID(relationship.id) ?? null;
-			}
-		}
-		return oneAncestry;
-	}
-
 	debugLog(message: string) { this.log(T_Debug.things, message); }
 	log(option: T_Debug, message: string) { debug.log_maybe(option, message + k.space + this.description); }
 	hasParents_forKind(kindPredicate: string): boolean { return this.parents_forKind(kindPredicate).length > 0; }
-	setOneAncestryTo(oneAncestry: Ancestry | null | undefined) { if (!!oneAncestry) { this.oneAncestry = oneAncestry; } }
 	setTraitText_forType(text: string, type: T_Trait) { get(w_hierarchy).trait_setText_forType_ownerHID(text, type, this.id); }
 
 	override isInDifferentBulkThan(other: Thing): boolean {
@@ -172,6 +156,29 @@ export default class Thing extends Persistable {
 			}
 		}
 		return parents;
+	}
+
+	static readonly ANCESTRIES: unique symbol;
+
+	setOneAncestryTo(oneAncestry: Ancestry | null | undefined) {
+		if (!!oneAncestry) {
+			this.oneAncestry = oneAncestry;
+		}
+	}
+
+	get oneAncestry_derived(): Ancestry | null {
+		let oneAncestry: Ancestry | null = null;
+		if (this.isRoot) {			// if root, use root ancestry
+			oneAncestry = get(w_hierarchy).rootAncestry;
+		} else {					// if not, use parent.oneAncestry and append id of forParents relationship
+			const relationships = this.relationships_ofKind_forParents(T_Predicate.contains, true);
+			if (relationships && relationships.length > 0) {
+				const relationship = relationships[0];
+				const parentAncestry = relationship.parent?.oneAncestry;
+				oneAncestry = parentAncestry?.uniquelyAppend_relationshipID(relationship.id) ?? null;
+			}
+		}
+		return oneAncestry;
 	}
 
 	oneAncestries_rebuild_forSubtree(visited: Array<string> = []) {
