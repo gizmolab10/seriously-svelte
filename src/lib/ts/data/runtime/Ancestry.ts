@@ -5,6 +5,7 @@ import { w_hierarchy, w_ancestry_focus, w_ancestry_showing_tools } from '../../s
 import { w_ancestries_grabbed, w_ancestries_expanded, } from '../../state/S_Stores';
 import { w_g_radial, w_s_alteration, w_s_title_edit } from '../../state/S_Stores';
 import { G_Widget, S_Paging, S_Title_Edit } from '../../common/Global_Imports';
+import Reciprocal_Ancestry from './Reciprocal_Ancestry';
 import type { Integer } from '../../common/Types';
 import { T_Edit } from '../../state/S_Title_Edit';
 import { get, Writable } from 'svelte/store';
@@ -155,9 +156,6 @@ export default class Ancestry extends Identifiable {
 			}
 			this._thing = thing;
 		}
-		if (!!thing && !thing.oneAncestry && !!this.predicate && !this.predicate.isBidirectional) {
-			thing.oneAncestry = this;
-		}
 		return thing;
 	}
 
@@ -183,14 +181,25 @@ export default class Ancestry extends Identifiable {
 		return false;
 	}
 
+	get isBidirectional(): boolean { return this.predicate?.isBidirectional ?? false; }
+	get isUnidirectional(): boolean { return this.predicate?.isBidirectional ?? true; }
+
+	get reciprocalAncestry(): Ancestry | null {
+		if (this.isBidirectional) {
+			return new Reciprocal_Ancestry(this);
+		}
+		return null;
+	}
+
 	get containsReciprocals(): boolean {
 		let idChild: string | null =  null;
 		let idParent: string | null =  null;
 		for (const relationship of this.relationships) {
-			if ((!!idParent || idParent == k.empty) && (!!idChild || idChild == k.empty)) {
-				if (idParent == relationship.idChild && idChild == relationship.idParent) {
-					return true;
-				}
+			if ((!!idParent || idParent == k.empty) 
+				&& (!!idChild || idChild == k.empty) 
+				&& idParent == relationship.idChild 
+				&& idChild == relationship.idParent) {
+				return true;
 			}
 			idChild = relationship.idChild;
 			idParent = relationship.idParent;
@@ -375,9 +384,8 @@ export default class Ancestry extends Identifiable {
 
 	svgPathFor_tinyDots_outsideReveal(points_toChild: boolean): string | null {
 		const in_radial_mode = g.inRadialMode;
-		const isUnidirectional = !(this.predicate?.isBidirectional ?? true);
 		const isVisible_forChild = this.hasChildRelationships && show.children_dots && (in_radial_mode ? true : !this.isExpanded);
-		const isVisible_inRadial = points_toChild ? isVisible_forChild : this.hasParentRelationships && (isUnidirectional ? show.parent_dots : show.related_dots);
+		const isVisible_inRadial = points_toChild ? isVisible_forChild : this.hasParentRelationships && (this.isUnidirectional ? show.parent_dots : show.related_dots);
 		const show_outside_tinyDots = in_radial_mode ? isVisible_inRadial : isVisible_forChild;
 		const outside_tinyDots_count = this.relationships_count_forChildren(points_toChild);
 		return !show_outside_tinyDots ? null : svgPaths.tinyDots_circular(k.diameterOf_outer_tinyDots + 4, outside_tinyDots_count as Integer, this.points_right);
@@ -399,7 +407,7 @@ export default class Ancestry extends Identifiable {
 
 	isAProgenyOf(ancestry: Ancestry): boolean {
 		let isAProgeny = false;
-		if (!(ancestry.predicate?.isBidirectional ?? true)) {
+		if (!ancestry.isUnidirectional) {
 			ancestry.traverse((progenyAncestry: Ancestry) => {
 				if (progenyAncestry.hid == this.hid) {
 					isAProgeny = true;
@@ -594,8 +602,8 @@ export default class Ancestry extends Identifiable {
 	}
 
 	handle_singleClick_onDragDot(shiftKey: boolean) {
-		if (this.predicate?.isBidirectional ?? false) {
-			this.thing?.oneAncestry?.handle_singleClick_onDragDot(shiftKey);
+		if (this.isBidirectional && !(this instanceof Reciprocal_Ancestry)) {
+			this.reciprocalAncestry?.handle_singleClick_onDragDot(shiftKey);
 		} else {
 			w_s_title_edit?.set(null);
 			if (!!get(w_s_alteration)) {

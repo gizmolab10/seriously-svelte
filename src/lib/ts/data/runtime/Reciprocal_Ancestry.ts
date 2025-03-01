@@ -1,6 +1,6 @@
 import Ancestry from './Ancestry';
 
-export default class Reverse_Ancestry extends Ancestry {
+export default class Reciprocal_Ancestry extends Ancestry {
 	original_ancestry!: Ancestry;
 
 	constructor(original_ancestry: Ancestry) {

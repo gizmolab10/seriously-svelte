@@ -9,8 +9,8 @@ import { get } from 'svelte/store';
 
 export default class Thing extends Persistable {
 	selectionRange = new Seriously_Range(0, 0);
+	_oneAncestry: Ancestry | null = null;
 	bulkRootID: string = k.empty;
-	oneAncestry!: Ancestry;			// arbitrarily chosen from more than one (if has more than one parent AND/OR one or more related)
 	title: string;
 	color: string;
 	type: T_Thing;
@@ -137,7 +137,7 @@ export default class Thing extends Persistable {
 				ancestry.remove_fromGrabbed_andExpanded();
 			}
 		}
-		this.oneAncestry.remove_fromGrabbed_andExpanded();
+		this.oneAncestry?.remove_fromGrabbed_andExpanded();
 		const focus = get(w_ancestry_focus);
 		if (focus.thing?.hid == this.hid) {
 			get(w_hierarchy).rootAncestry.becomeFocus();
@@ -160,13 +160,10 @@ export default class Thing extends Persistable {
 
 	static readonly ANCESTRIES: unique symbol;
 
-	setOneAncestryTo(oneAncestry: Ancestry | null | undefined) {
-		if (!!oneAncestry) {
-			this.oneAncestry = oneAncestry;
-		}
-	}
+	clear_oneAncestry() { this._oneAncestry = null; }
 
-	get oneAncestry_derived(): Ancestry | null {
+	get oneAncestry(): Ancestry | null {
+		// arbitrarily choose from more than one (if has more than one parent AND/OR one or more related)
 		let oneAncestry: Ancestry | null = null;
 		if (this.isRoot) {			// if root, use root ancestry
 			oneAncestry = get(w_hierarchy).rootAncestry;
@@ -181,24 +178,13 @@ export default class Thing extends Persistable {
 		return oneAncestry;
 	}
 
-	oneAncestries_rebuild_forSubtree(visited: Array<string> = []) {
-
-		// set oneAncestry for this and all its progeny,
-		// they are all backwards dependent,
-		// so must be done top-down all at once
-
+	oneAncestries_clearAll_inSubtree(visited: Array<string> = []) {
 		if (visited.includes(this.id)) {
 			debug.log_things(`oneAncestry repeated "${this.title}"`)
 		} else {
-			const oneAncestry = this.oneAncestry ?? this.oneAncestry_derived;
+			const oneAncestry = this.oneAncestry;
 			if (!!oneAncestry) {
-				const newVisited = [...visited, this.id];
-				const predicate = oneAncestry.predicate;
-				if (!!predicate && !predicate.isBidirectional && this.oneAncestry != oneAncestry) {
-					get(w_hierarchy).ancestry_forget(this.oneAncestry);
-					this.setOneAncestryTo(oneAncestry);
-				}
-				oneAncestry.children.map(c => c.oneAncestries_rebuild_forSubtree(newVisited));
+				oneAncestry.children.map(c => c.oneAncestries_clearAll_inSubtree([...visited, this.id]));
 			}
 		}
 	}
