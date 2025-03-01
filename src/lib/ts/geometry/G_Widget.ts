@@ -62,7 +62,7 @@ export default class G_Widget extends Rect {
 
 	get width_ofBigDots(): number {
 		const adjustment_forReveal = k.dot_size * (this.showingReveal ? 2 : 1);
-		const adjustment_forRadial = !g.inRadialMode ? -13.5 : (this.points_right ? 9. : -0.5);
+		const adjustment_forRadial = !g.inRadialMode ? -13.5 : (this.points_right ? 11 : -0.5);
 		return adjustment_forReveal + adjustment_forRadial;
 	}
 
@@ -90,7 +90,7 @@ export default class G_Widget extends Rect {
 		}
 		if (showingReveal) {
 			const y_reveal = k.dot_size * 0.72;
-			const x_reveal = k.dot_size + (!this.points_right ? -3 : this.width_ofWidget + (g.inRadialMode ? -20 : 0));
+			const x_reveal = k.dot_size + (!this.points_right ? -3 : this.width_ofWidget + (g.inRadialMode ? -21 : 0));
 			this.center_ofReveal = new Point(x_reveal, y_reveal);
 		}
 	}
