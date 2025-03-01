@@ -139,6 +139,8 @@ export class Size {
 	static fromDOMRect(rect: DOMRect):	Size { return new Size(rect.width, rect.height); }
 	static square(length: number):		Size { return new Size(length, length); }
 	static get zero():					Size { return new Size(); }
+	static width(width: number):		Size { return new Size(width, 0); }
+	static height(height: number):		Size { return new Size(0, height); }
 
 }
 

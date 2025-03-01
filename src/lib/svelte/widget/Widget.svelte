@@ -146,7 +146,7 @@
 		g_widget.layout();
 		const hasExtra_onRight = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
 		const onRight = g.inRadialMode ? 0 : 21 + (hasExtra_onRight ? 0.5 : 0);
-		const origin_ofWidget = origin.offsetBy(g_widget.offset);
+		const origin_ofWidget = origin.offsetBy(g_widget.offset_ofWidget);
 		const onLeft = points_right ? 1 : 14;
 		top = origin_ofWidget.y;
 		left = origin_ofWidget.x;

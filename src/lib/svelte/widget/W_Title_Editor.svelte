@@ -19,7 +19,7 @@
 	const es_title = ux.s_element_forName(name);
 	const showingReveal = ancestry?.showsReveal ?? false;
 	const input_height = k.dot_size - (g.inRadialMode ? 0.5 : 0.2);
-	let title_width = (thing?.titleWidth ?? 0) + (showingReveal ? 6 : 1);
+	let title_width = (thing?.titleWidth ?? 0) + 1;
 	let title_binded = thing?.title ?? k.empty;
 	let color = thing?.color ?? k.empty;
 	let title_wrapper: Svelte_Wrapper;

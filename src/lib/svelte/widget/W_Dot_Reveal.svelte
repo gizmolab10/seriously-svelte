@@ -13,9 +13,11 @@
     export let zindex = T_Layer.dots;
 	export let points_toChild = true;
     export let hover_isReversed = false;
-	const tinyDotsOffset = new Point(-3, -2.6);
+	const tinyDotsOffset = new Point(-5, -2.6);
+	const outer_diameter = k.diameterOf_outer_tinyDots;
+	const size_ofTinyDots = Size.width(3).expandedEquallyBy(outer_diameter)
 	const es_reveal = ux.s_element_forName(name);		// survives onDestroy, created by g widget (TODO: radial focus widget has no g widget)
-	const viewBox = `0.5 2.35 ${k.diameterOf_outer_tinyDots} ${k.diameterOf_outer_tinyDots}`;
+	const viewBox = `0.5 2.35 ${outer_diameter} ${outer_diameter}`;
 	let svgPathFor_outer_tinyDots: string | null = null;
 	let svgPathFor_bulkAlias: string | null = null;
 	let svgPathFor_revealDot = k.empty;
@@ -121,14 +123,14 @@
 			name={es_reveal.name}
 			bind:this={dotReveal}
 			handle_mouse_state={up_hover_closure}>
-			<div class='reveal-almost-button'
+			<div class='reveal-div-button'
 				on:contextmenu={handle_context_menu}
 				style='
 					width: {k.dot_size}px;
 					height: {k.dot_size}px;
 				'>
 				{#key svgPathFor_revealDot}
-					<SVGD3 name='reveal-almost-button-svg'
+					<SVGD3 name='reveal-div-button-svg'
 						fill={debug.lines ? 'transparent' : es_reveal.fill}
 						svgPath={svgPathFor_revealDot}
 						stroke={ancestry.thing.color}
@@ -154,15 +156,15 @@
 				{/if}
 				{#if !!svgPathFor_outer_tinyDots}
 					<div class='tiny-dots' style='
-						height:{k.diameterOf_outer_tinyDots}px;
-						width:{k.diameterOf_outer_tinyDots}px;
+						height:{size_ofTinyDots.height}px;
+						width:{size_ofTinyDots.width}px;
 						left:{tinyDotsOffset.x}px;
 						top:{tinyDotsOffset.y}px;
 						position:absolute;
 						z-index:0'>
 						<svg class='tiny-dots-svg'
-							height={k.diameterOf_outer_tinyDots}px
-							width={k.diameterOf_outer_tinyDots}px
+							height={size_ofTinyDots.height}px
+							width={size_ofTinyDots.width}px
 							viewBox='{viewBox}'
 							style='
 								position: absolute;

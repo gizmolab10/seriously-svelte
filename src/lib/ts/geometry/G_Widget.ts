@@ -4,6 +4,7 @@ export default class G_Widget extends Rect {
 	ancestry_ofWidget: Ancestry | null;
 	ancestry_ofParent: Ancestry | null;
 	angle_ofChild: number | null;
+	offset_ofWidget = Point.zero;
 	center_ofReveal = Point.zero;
 	origin_ofRadial = Point.zero;
 	origin_ofChild = Point.zero;
@@ -12,7 +13,6 @@ export default class G_Widget extends Rect {
 	center_ofDrag = Point.zero;
 	points_toChild = true;
 	es_widget: S_Element;
-	offset = Point.zero;
 	points_right = true;
 	width_ofWidget = 0;
 	curveType: string;
@@ -56,35 +56,42 @@ export default class G_Widget extends Rect {
 		this.ancestry_ofParent = null;
 	}
 
+	get showingReveal(): boolean {
+		return this.ancestry_ofWidget?.showsReveal_forPointingToChild(this.points_toChild) ?? false;
+	}
+
+	get width_ofBigDots(): number {
+		const adjustment_forReveal = k.dot_size * (this.showingReveal ? 2 : 1);
+		const adjustment_forRadial = !g.inRadialMode ? -13.5 : (this.points_right ? 9. : -0.5);
+		return adjustment_forReveal + adjustment_forRadial;
+	}
+
 	layout() {
 		const ancestry = this.ancestry_ofWidget;
-		const showingReveal = ancestry?.showsReveal_forPointingToChild(this.points_toChild) ?? false;
+		const showingReveal = this.showingReveal;
 		const showingBorder = !ancestry ? false : ancestry.isGrabbed || ancestry.isEditing;
 		const adjustment_forBorder = showingBorder ? 0 : 1;
 		const x_radial = this.points_right ? -4 : -k.dot_size * 3.5;
 		const offset_ofRadial = new Point(x_radial, 4 - k.dot_size);
 		const offset_ofWidget = new Point(17, (k.dot_size / -15) - 7);
-		const offset_ofTitle_forRadial = (this.points_right ? 15 : (showingReveal ? 14 : 6));
+		const offset_ofTitle_forRadial = (this.points_right ? 15 : (showingReveal ? 16 : 6));
 		this.origin_ofTitle = new Point(g.inRadialMode ? offset_ofTitle_forRadial : 12.5, 0);
 		this.origin_ofRadial = this.origin_ofChild.offsetBy(offset_ofRadial);
 		this.origin_ofTree = this.extent.offsetBy(offset_ofWidget);
-		if (!!this.ancestry_ofWidget?.thing) {
-			const multiplier = showingReveal ? 2 : 1.35;
-			const width_ofTitle = this.ancestry_ofWidget.thing.titleWidth;
-			const adjustment_forRadial = !g.inRadialMode ? -20 : (this.points_right ? 3 : -8);
-			const width_ofExtra = (k.dot_size * multiplier) + adjustment_forRadial;
-			this.width_ofWidget = width_ofTitle + width_ofExtra + 5;
-			const offset_forPointingLeft = 44.5 - (this.width_ofWidget + (showingReveal ? 10 : 0));
-			const x_offset = adjustment_forBorder + (this.points_right ? -7 : offset_forPointingLeft);
-			const x_drag = this.points_right ? (g.inRadialMode ? 3 : 2) : (this.width_ofWidget + (showingReveal ? -2.5 : -2));
+		if (!!ancestry?.thing) {
+			const width_ofWidget = ancestry.thing.titleWidth + this.width_ofBigDots;
+			const adjustment_forPointingLeft = 44.5 - (width_ofWidget + (showingReveal ? 10 : 0));
+			const x_offset_ofWidget = adjustment_forBorder + (this.points_right ? -7 : adjustment_forPointingLeft);
+			const x_drag = this.points_right ? (g.inRadialMode ? 3 : 2) : (width_ofWidget + (showingReveal ? -2.5 : -2));
 			const y_drag = g.inRadialMode ? 2.8 : 2.7;
-			this.offset = new Point(x_offset, adjustment_forBorder);
 			this.center_ofDrag = new Point(x_drag, y_drag).offsetEquallyBy(k.dot_size / 2);
+			this.offset_ofWidget = new Point(x_offset_ofWidget, adjustment_forBorder);
+			this.width_ofWidget = width_ofWidget;
 		}
 		if (showingReveal) {
-			const y_reveal = k.dot_size * 0.22;
-			const x_reveal = (!this.points_right ? 3 : this.width_ofWidget + k.dot_size - (g.inRadialMode ? 27 : 6));
-			this.center_ofReveal = new Point(x_reveal, y_reveal).offsetEquallyBy(k.dot_size / 2);
+			const y_reveal = k.dot_size * 0.72;
+			const x_reveal = k.dot_size + (!this.points_right ? -3 : this.width_ofWidget + (g.inRadialMode ? -20 : 0));
+			this.center_ofReveal = new Point(x_reveal, y_reveal);
 		}
 	}
 	
