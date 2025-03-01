@@ -32,17 +32,22 @@
 	debug.log_mount(`TITLE ${ancestry?.title}`);
 	onDestroy(() => { debug.log_mount(`DESTROY TITLE ${ancestry?.title}`); });
 	
-	function hasFocus(): boolean { return document.activeElement === input; }
-	function hasChanges() { return title_prior != title_binded; };
-	function handle_mouse_up() { clearClicks(); }
 	function isHit(): boolean { return false }
+	function handle_mouse_up() { clearClicks(); }
+	function hasChanges() { return title_prior != title_binded; };
+	function hasFocus(): boolean { return document.activeElement === input; }
 	function ancestry_isEditing():		   boolean { return $w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.editing) ?? false; }
 	function ancestry_isEditStopping():	   boolean { return $w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.stopping) ?? false; }
 	function ancestry_isEditPercolating(): boolean { return $w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.percolating) ?? false; }
 
 	onMount(() => {
 		const handler = signals.handle_anySignal_atPriority(0, (t_signal, ancestry) => { updateInputWidth(); });
-		setTimeout(() => { updateInputWidth(); }, 100);
+		setTimeout(() => {
+			updateInputWidth();
+			if (ancestry_isEditing()) {
+				applyRange_fromThing_toInput();
+			}
+		}, 100);
 		return () => { handler.disconnect() };
 	});
 
@@ -219,7 +224,9 @@
 
 	function handle_mouse_state(s_mouse: S_Mouse) {
 		if (!!ancestry && !s_mouse.notRelevant) {
-			if (s_mouse.isDown && !ancestry_isEditing()) {
+			if (ancestry_isEditing()) {
+				extractRange_fromInput_toThing();
+			} else if (s_mouse.isDown) {
 				if ($w_s_title_edit?.isActive) {
 					$w_s_title_edit?.t_edit = T_Edit.stopping;		// stop prior edit, wait for it to percolate (below with setTimeout)
 				}
