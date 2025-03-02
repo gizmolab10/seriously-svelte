@@ -1067,6 +1067,22 @@ export class Hierarchy {
 		}
 	}
 
+	// relationship_adjust(relationship: Relationship, parentAncestry: Ancestry, order: number) {
+	// 	const parentThing = parentAncestry?.thing;
+	// 	const thing = ancestry.thing;
+	// 	if (!!thing && !!parentThing && !!relationship) {
+	// 		this.relationship_forget(relationship);
+	// 		relationship.idParent = parentThing.id;			// point at parent into which thing is being relocated
+	// 		relationship.hidParent = parentThing.hid;
+	// 		relationship.order_setTo(order + k.halfIncrement, true);
+	// 		this.relationship_remember(relationship);
+	// 		debug.log_move(`relocate ${relationship.description}`)
+	// 		const childAncestry = parentAncestry.uniquelyAppend_relationshipID(relationship!.id);
+	// 		thing?.clear_oneAncestry();
+	// 		childAncestry?.grabOnly();
+	// 	}
+	// }
+
 	ancestry_rebuild_persistentRelocateRight(ancestry: Ancestry, RIGHT: boolean, EXTREME: boolean) {
 		const parentAncestry = RIGHT ? ancestry.ancestry_ofNextSibling(false) : ancestry.stripBack(2);
 		const parentThing = parentAncestry?.thing;

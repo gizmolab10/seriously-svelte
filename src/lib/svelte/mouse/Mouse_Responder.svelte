@@ -29,12 +29,14 @@
 
 	//////////////////////////////////////////////////////////////
 	//															//
-	//	handles mouse: down, up, double, long & hover			//
-	//	requires: center or origin (one must remain null),		//
-	//		 width, height, closure & name						//
+	//	required: width, height, name,							//
+	//		handle_mouse_state closure (*),						//
+	//  	center or origin (one must remain null)				//
+	//  optional: handle_isHit closure (*)						//
 	//															//
-	//	handle_isHit: caller can override hit geometry & logic	//
-	//	handle_mouse_state: mouse info relevant to caller		//
+	//  (*)	handle_isHit: override for hit geometry & logic		//
+	//	(*)	handle_mouse_state: mouse info relevant to caller:	//
+	//		down, up, double, long & hover						//
 	//															//
 	//////////////////////////////////////////////////////////////
 
@@ -65,9 +67,7 @@
 				isHit = Rect.rect_forElement_containsPoint(responding_element, mouse_location);		// use bounding rect
 			}
 			if (s_mouse.isHover != isHit) {
-			// 	handle_mouse_state(S_Mouse.move(null, responding_element, mouse_isDown, isHit));		// pass a null event
-			// } else {
-				s_mouse.isHover =  isHit;
+				s_mouse.isHover  = isHit;
 				s_mouse.isOut   = !isHit;												// TODO: called far too often
 				handle_mouse_state(S_Mouse.hover(null, responding_element, isHit));					// pass a null event
 			}

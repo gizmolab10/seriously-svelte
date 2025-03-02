@@ -11,8 +11,8 @@
 	export let center = Point.zero;
 	export let name = k.empty;
     export let ancestry;
-	const radius = k.dot_size;
-	const diameter = radius * 2;
+	const size = k.dot_size;
+	const capture_size = size;
 	const es_drag = ux.s_element_forName(name);		// survives onDestroy, created by widget
 	let svgPathFor_ellipses = k.empty;
 	let svgPathFor_related = k.empty;
@@ -21,7 +21,6 @@
     let thing = ancestry.thing;
 	let isGrabbed = false;
 	let isHovering = true;
-	let size = k.dot_size;
 	let mouse_click_timer;
 	let rebuilds = 0;
 	let redraws = 0;
@@ -120,7 +119,7 @@
 		}
 	}
 
-	function up_long_hover_clusure(s_mouse) {
+	function handle_up_long_hover(s_mouse) {
 		if (!g.isAny_rotation_active) {
 			if (s_mouse.isHover) {
 				updateColors_forHovering(s_mouse.isOut);
@@ -138,15 +137,15 @@
 {#key rebuilds}
 	{#if es_drag}
 		<Mouse_Responder
-			width={size}
-			height={size}
 			center={center}
+			width={capture_size}
+			height={capture_size}
 			detect_longClick={true}
 			name={es_drag.name}
-			handle_mouse_state={up_long_hover_clusure}>
-			<button class='drag'
+			handle_mouse_state={handle_up_long_hover}>
+			<button class={name}
 				bind:this={dotDrag}
-				id={'drag-for-' + name}
+				id={name}
 				style='
 					border:none;
 					cursor:pointer;
@@ -157,16 +156,16 @@
 					z-index:{T_Layer.dots};
 					background-color:transparent;'>
 				{#key redraws}
-					<div id={'drag-div-for-' + name}
+					<div id={'div-for-' + name}
 						style='
-							top:0px;
 							left:0px;
+							top:0px;
 							width:{size}px;
 							height:{size}px;
 							color:transparent;
 							position:absolute;
 							z-index:{T_Layer.dots};'>
-						<SVGD3 name={'drag-' + name + '-svg'}
+						<SVGD3 name={'svg-' + name}
 							width={size}
 							height={size}
 							stroke={thing?.color}
@@ -174,7 +173,7 @@
 							svgPath={svgPathFor_dragDot}
 						/>
 						{#if svgPathFor_ellipses}
-							<SVGD3 name={'drag-inside-' + name + '-svg'}
+							<SVGD3 name={'svg-inside-' + name}
 								width={size}
 								height={size}
 								fill={es_drag.stroke}
@@ -183,7 +182,7 @@
 							/>
 						{/if}
 						{#if svgPathFor_related}
-							<SVGD3 name={'drag-related-' + name + '-svg'}
+							<SVGD3 name={'svg-related-' + name}
 								width={size}
 								height={size}
 								stroke={thing?.color}

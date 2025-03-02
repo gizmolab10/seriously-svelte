@@ -60,7 +60,7 @@ export default class G_Widget extends Rect {
 		return this.ancestry_ofWidget?.showsReveal_forPointingToChild(this.points_toChild) ?? false;
 	}
 
-	get width_ofBigDots(): number {
+	get width_ofBothDots(): number {
 		const adjustment_forReveal = k.dot_size * (this.showingReveal ? 2 : 1);
 		const adjustment_forRadial = !g.inRadialMode ? -13.5 : (this.points_right ? 11 : -0.5);
 		return adjustment_forReveal + adjustment_forRadial;
@@ -79,7 +79,7 @@ export default class G_Widget extends Rect {
 		this.origin_ofRadial = this.origin_ofChild.offsetBy(offset_ofRadial);
 		this.origin_ofTree = this.extent.offsetBy(offset_ofWidget);
 		if (!!ancestry?.thing) {
-			const width_ofWidget = ancestry.thing.titleWidth + this.width_ofBigDots;
+			const width_ofWidget = ancestry.thing.titleWidth + this.width_ofBothDots;
 			const adjustment_forPointingLeft = 44.5 - (width_ofWidget + (showingReveal ? 10 : 0));
 			const x_offset_ofWidget = adjustment_forBorder + (this.points_right ? -7 : adjustment_forPointingLeft);
 			const x_drag = this.points_right ? (g.inRadialMode ? 3 : 2) : (width_ofWidget + (showingReveal ? -2.5 : -2));
