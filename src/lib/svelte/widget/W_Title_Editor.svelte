@@ -16,9 +16,9 @@
 	export let origin;
 	const thing = ancestry?.thing;
 	const padding = `0.5px 0px 0px 0px`;
+	const input_height = k.dot_size + 2;
 	const es_title = ux.s_element_forName(name);
 	const showingReveal = ancestry?.showsReveal ?? false;
-	const input_height = k.dot_size - (g.inRadialMode ? 0.5 : 0.2);
 	let title_width = (thing?.titleWidth ?? 0) + 1;
 	let title_binded = thing?.title ?? k.empty;
 	let color = thing?.color ?? k.empty;
@@ -74,7 +74,7 @@
 	$: {
 		const _ = $w_ancestries_grabbed;
 		const isGrabbed = ancestry?.isGrabbed ?? false;
-		origin_ofInput = new Point(3.5, 1.8).offsetBy(isGrabbed ? new Point(0.1, 0.2) : Point.zero);
+		origin_ofInput = new Point(3.5, 0.8).offsetBy(isGrabbed ? new Point(0.1, 0.2) : Point.zero);
 	}
 
 	$: {

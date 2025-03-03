@@ -115,7 +115,7 @@ export class Hierarchy {
 					}
 					switch (key) {
 						case 'delete':
-						case 'backspace':	await this.ancestries_rebuild_traverse_persistentDelete(get(w_ancestries_grabbed)); w_ancestries_grabbed.set([]); break;
+						case 'backspace':	await this.ancestries_rebuild_traverse_persistentDelete(get(w_ancestries_grabbed)); break;
 					}
 				}
 				if (!!ancestryGrab) {

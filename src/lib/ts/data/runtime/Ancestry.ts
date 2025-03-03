@@ -448,21 +448,6 @@ export default class Ancestry extends Identifiable {
 		return false;		
 	}
 
-	visibleProgeny_height(visited: Array<string> = []): number {
-		const thing = this.thing;
-		if (!!thing) {
-			if (!visited.includes(this.id) && this.showsChildRelationships) {
-				let height = 0;
-				for (const childAncestry of this.childAncestries) {
-					height += childAncestry.visibleProgeny_height([...visited, this.id]);
-				}
-				return Math.max(height, k.row_height);
-			}
-			return k.row_height;
-		}
-		return 0;
-	}
-
 	uniquelyAppend_relationshipID(id: string): Ancestry | null {
 		if (this.isRoot) {
 			return this.hierarchy.ancestry_remember_createUnique(id);
@@ -537,6 +522,77 @@ export default class Ancestry extends Identifiable {
 		return [crumb_things, widths, lefts, parent_widths];
 	}
 
+	static readonly FOCUS: unique symbol;
+
+	becomeFocus(force: boolean = false): boolean {
+		const priorFocus = get(w_ancestry_focus)
+		const changed = force || !priorFocus || !this.hasMatchingID(priorFocus!);
+		if (changed) {
+			w_s_alteration.set(null);
+			w_ancestry_focus.set(this);
+		}
+		this.expand();
+		return changed;
+	}
+
+	static readonly EVENTS: unique symbol;
+
+	handle_singleClick_onDragDot(shiftKey: boolean) {
+		if (this.isBidirectional && !(this instanceof Reciprocal_Ancestry)) {
+			this.reciprocalAncestry?.handle_singleClick_onDragDot(shiftKey);
+		} else {
+			w_s_title_edit?.set(null);
+			if (!!get(w_s_alteration)) {
+				this.ancestry_alterMaybe(this);
+			} else if (!shiftKey && g.inRadialMode) {
+				this.becomeFocus();
+			} else if (shiftKey || this.isGrabbed) {
+				this.toggleGrab();
+			} else {
+				this.grabOnly();
+			}
+		}
+		signals.signal_rebuildGraph_fromFocus();
+	}
+
+	static readonly VISIBILITY: unique symbol;
+
+	assureIsVisible_inClusters(): boolean {
+		return this.parentAncestry?.s_paging?.update_index_toShow(this.siblingIndex) ?? false;
+	}
+
+	assureisVisible_forChild() {
+		// visit and expand each parent until this
+		let ancestry: Ancestry | null = this;
+		do {
+			ancestry = ancestry?.parentAncestry ?? null;
+			if (!!ancestry) {
+				if (!!ancestry.isVisible) {
+					ancestry.becomeFocus();
+					return;
+				}
+				ancestry.expand();
+			}
+		} while (!ancestry);
+		this.hierarchy.rootAncestry.expand();
+		this.hierarchy.rootAncestry.becomeFocus();
+	}
+
+	visibleProgeny_height(visited: Array<string> = []): number {
+		const thing = this.thing;
+		if (!!thing) {
+			if (!visited.includes(this.id) && this.showsChildRelationships) {
+				let height = 0;
+				for (const childAncestry of this.childAncestries) {
+					height += childAncestry.visibleProgeny_height([...visited, this.id]);
+				}
+				return Math.max(height, k.row_height);
+			}
+			return k.row_height;
+		}
+		return 0;
+	}
+
 	visibleProgeny_width(special: boolean = false, visited: Array<number> = []): number {
 		const thing = this.thing;
 		if (!!thing) {
@@ -557,66 +613,14 @@ export default class Ancestry extends Identifiable {
 		return 0;
 	}
 
-	static readonly MUTATION: unique symbol;
-	
-	expand() { return this.expanded_setTo(true); }
-	collapse() { return this.expanded_setTo(false); }
-	toggleGrab() { if (this.isGrabbed) { this.ungrab(); } else { this.grab(); } }
-	toggleExpanded() { return this.isExpanded ? this.collapse() : this.expand(); }
+	static readonly EDIT: unique symbol;
 
-	assureIsVisible_inClusters(): boolean {
-		return this.parentAncestry?.s_paging?.update_index_toShow(this.siblingIndex) ?? false;
-	}
-
-	remove_fromGrabbed_andExpanded() {
-		this.collapse();
-		this.ungrab();
-	}
-
-	becomeFocus(force: boolean = false): boolean {
-		const priorFocus = get(w_ancestry_focus)
-		const changed = force || !priorFocus || !this.hasMatchingID(priorFocus!);
-		if (changed) {
-			w_s_alteration.set(null);
-			w_ancestry_focus.set(this);
+	startEdit() {
+		if (this.isEditable && !get(w_s_title_edit)) {
+			w_s_title_edit.set(new S_Title_Edit(this));
+			debug.log_edit(`SETUP ${this.title}`);
+			this.grabOnly();
 		}
-		this.expand();
-		return changed;
-	}
-
-	assureisVisible_forChild() {
-		// visit and expand each parent until this
-		let ancestry: Ancestry | null = this;
-		do {
-			ancestry = ancestry?.parentAncestry ?? null;
-			if (!!ancestry) {
-				if (!!ancestry.isVisible) {
-					ancestry.becomeFocus();
-					return;
-				}
-				ancestry.expand();
-			}
-		} while (!ancestry);
-		this.hierarchy.rootAncestry.expand();
-		this.hierarchy.rootAncestry.becomeFocus();
-	}
-
-	handle_singleClick_onDragDot(shiftKey: boolean) {
-		if (this.isBidirectional && !(this instanceof Reciprocal_Ancestry)) {
-			this.reciprocalAncestry?.handle_singleClick_onDragDot(shiftKey);
-		} else {
-			w_s_title_edit?.set(null);
-			if (!!get(w_s_alteration)) {
-				this.ancestry_alterMaybe(this);
-			} else if (!shiftKey && g.inRadialMode) {
-				this.becomeFocus();
-			} else if (shiftKey || this.isGrabbed) {
-				this.toggleGrab();
-			} else {
-				this.grabOnly();
-			}
-		}
-		signals.signal_rebuildGraph_fromFocus();
 	}
 
 	toggle_editingTools() {
@@ -664,6 +668,17 @@ export default class Ancestry extends Identifiable {
 			}
 		}
 	}
+
+	static readonly EXPAND: unique symbol;
+	
+	expand() { return this.expanded_setTo(true); }
+	collapse() { return this.expanded_setTo(false); }
+	toggleExpanded() { return this.isExpanded ? this.collapse() : this.expand(); }
+
+	remove_fromGrabbed_andExpanded() {
+		this.collapse();
+		this.ungrab();
+	}
 	
 	expanded_setTo(expand: boolean) {
 		let mutated = false;
@@ -688,7 +703,9 @@ export default class Ancestry extends Identifiable {
 		return mutated;
 	}
 
-	static readonly GRAB_AND_EDIT: unique symbol;
+	static readonly GRAB: unique symbol;
+	
+	toggleGrab() { if (this.isGrabbed) { this.ungrab(); } else { this.grab(); } }
 
 	grabOnly() {
 		debug.log_grab(`  GRAB ONLY "${this.title}"`);
@@ -747,14 +764,6 @@ export default class Ancestry extends Identifiable {
 			this.toggle_editingTools(); // do not show editingTools for root
 		}
 		debug.log_grab(`  UNGRAB "${this.title}"`);
-	}
-
-	startEdit() {
-		if (this.isEditable && !get(w_s_title_edit)) {
-			w_s_title_edit.set(new S_Title_Edit(this));
-			debug.log_edit(`SETUP ${this.title}`);
-			this.grabOnly();
-		}
 	}
 
 }
