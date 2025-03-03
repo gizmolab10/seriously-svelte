@@ -73,7 +73,7 @@ export default class G_Widget extends Rect {
 		const adjustment_forBorder = showingBorder ? 0 : 1;
 		const x_radial = this.points_right ? 4 : k.dot_size * 3.5;
 		const offset_ofRadial = new Point(x_radial, k.dot_size - 4).negated;
-		const offset_ofChildrenTree = new Point(17, -(7 + k.dot_size / 15));
+		const offset_ofChildrenTree = new Point(k.dot_size * 1.3, -(7 + k.dot_size / 15));
 		const offset_ofTitle_forRadial = (this.points_right ? 15 : (showingReveal ? 16 : 3));
 		this.origin_ofTitle = new Point(g.inRadialMode ? offset_ofTitle_forRadial : 12.5, 0);
 		this.origin_ofRadial = this.origin_ofChild.offsetBy(offset_ofRadial);

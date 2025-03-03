@@ -43,12 +43,12 @@
 			debug.log_origins(origin.x + ' children layout');
 			const childAncestries = ancestry.childAncestries;
 			const height = ancestry.visibleProgeny_halfHeight + 1;
-			const childrenOrigin = origin.offsetByXY(2.5, height);
+			const childrenOrigin = origin.offsetByXY(4.5, height);
 			let sum = -ancestry.visibleProgeny_height() / 2; // start out negative and grow positive
 			for (const childAncestry of childAncestries) {
-				const g_child = new G_TreeChild(sum, ancestry, childAncestry, childrenOrigin);
-				g_widgets = u.concatenateArrays(g_widgets, [g_child.g_widget]);
-				sum += g_child.progeny_height + 1;
+				const temp_g_treeChild = new G_TreeChild(sum, ancestry, childAncestry, childrenOrigin);
+				g_widgets = u.concatenateArrays(g_widgets, [temp_g_treeChild.g_widget]);
+				sum += temp_g_treeChild.progeny_height + 1;
 			}
 			center = childrenOrigin.offsetByXY(20, 2);
 		} else {
