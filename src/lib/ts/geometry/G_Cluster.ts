@@ -1,7 +1,7 @@
 import { k, u, ux, w, Rect, Point, Angle, debug, T_Line, G_ArcSlider, T_Quadrant } from '../common/Global_Imports';
 import { Ancestry, Predicate, S_Paging, G_Widget, S_Rotation } from '../common/Global_Imports';
-import { w_ring_rotation_angle, w_ring_rotation_radius } from '../state/S_Stores';
-import { w_graph_rect, w_ancestry_focus } from '../state/S_Stores';
+import { w_ring_rotation_angle, w_ring_rotation_radius } from '../managers/Stores';
+import { w_graph_rect, w_ancestry_focus } from '../managers/Stores';
 import { get } from 'svelte/store';
 
 //////////////////////////////////////////

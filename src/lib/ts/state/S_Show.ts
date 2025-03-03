@@ -1,5 +1,5 @@
+import { w_t_tree, w_t_countDots, w_show_details } from '../managers/Stores';
 import { g, k, p, w, signals, T_Preference } from '../common/Global_Imports';
-import { w_t_tree, w_t_countDots, w_show_details } from './S_Stores';
 import { T_Info, T_Hierarchy } from '../common/Enumerations';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';

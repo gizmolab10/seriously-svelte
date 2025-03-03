@@ -1,8 +1,8 @@
 import { T_Tool, T_Info, T_Thing, T_Trait, T_Create, T_Control, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { g, k, p, u, show, User, Thing, Trait, debug, files, signals, Access, Ancestry } from '../common/Global_Imports';
-import { w_storage_update_trigger, w_ancestry_showing_tools, w_ancestries_grabbed } from '../state/S_Stores';
+import { w_storage_update_trigger, w_ancestry_showing_tools, w_ancestries_grabbed } from './Stores';
 import { Predicate, Relationship, S_Mouse, S_Alteration, S_Title_Edit } from '../common/Global_Imports';
-import { w_id_popupView, w_ancestry_focus, w_s_title_edit, w_s_alteration } from '../state/S_Stores';
+import { w_id_popupView, w_ancestry_focus, w_s_title_edit, w_s_alteration } from './Stores';
 import type { Integer, Dictionary } from '../common/Types';
 import { T_Persistable } from '../../ts/data/dbs/DBCommon';
 import Identifiable from '../data/runtime/Identifiable';
@@ -1066,22 +1066,6 @@ export class Hierarchy {
 			}
 		}
 	}
-
-	// relationship_adjust(relationship: Relationship, parentAncestry: Ancestry, order: number) {
-	// 	const parentThing = parentAncestry?.thing;
-	// 	const thing = ancestry.thing;
-	// 	if (!!thing && !!parentThing && !!relationship) {
-	// 		this.relationship_forget(relationship);
-	// 		relationship.idParent = parentThing.id;			// point at parent into which thing is being relocated
-	// 		relationship.hidParent = parentThing.hid;
-	// 		relationship.order_setTo(order + k.halfIncrement, true);
-	// 		this.relationship_remember(relationship);
-	// 		debug.log_move(`relocate ${relationship.description}`)
-	// 		const childAncestry = parentAncestry.uniquelyAppend_relationshipID(relationship!.id);
-	// 		thing?.clear_oneAncestry();
-	// 		childAncestry?.grabOnly();
-	// 	}
-	// }
 
 	ancestry_rebuild_persistentRelocateRight(ancestry: Ancestry, RIGHT: boolean, EXTREME: boolean) {
 		const parentAncestry = RIGHT ? ancestry.ancestry_ofNextSibling(false) : ancestry.stripBack(2);

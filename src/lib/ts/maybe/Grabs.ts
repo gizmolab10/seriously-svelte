@@ -1,4 +1,4 @@
-import { w_hierarchy, w_ancestries_grabbed } from '../state/S_Stores';
+import { w_hierarchy, w_ancestries_grabbed } from '../managers/Stores';
 import { Thing, Ancestry } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 

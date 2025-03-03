@@ -1,5 +1,5 @@
-import { u, debug, Svelte_Wrapper, T_SvelteComponent } from '../common/Global_Imports';
-import { w_hierarchy } from '../../ts/state/S_Stores';
+import { u, w, debug, Svelte_Wrapper, T_SvelteComponent } from '../common/Global_Imports';
+import { w_hierarchy, w_mouse_location_scaled } from './Stores';
 import { Create_Mouse_State } from '../common/Types';
 import type { Integer } from '../common/Types';
 import { get } from 'svelte/store';
@@ -34,6 +34,21 @@ export class Wrappers {
 		dict[hid] = wrapper;
 		array[type] = dict;
 		// this.add_toHitHierarchy(wrapper);
+	}
+	
+	wrappers_ofType_atMouseLocation(type: string): Array<Svelte_Wrapper> {
+		const mouse_vector = get(w_mouse_location_scaled);
+		const dict = this.wrappers_byHID_forType(type);
+		let found: Array<Svelte_Wrapper> = [];
+		if (!!dict && !!mouse_vector) {
+			const wrappers = Object.values(dict);
+			for (const wrapper of wrappers) {
+				if (wrapper.containsPoint(mouse_vector)) {
+					found.push(wrapper);
+				}
+			}
+		}
+		return found;
 	}
 
 	//////////////////////////////////////

@@ -1,7 +1,7 @@
 <script lang='ts'>
 import { k, u, Point, T_Layer, signals, G_Radial, Predicate } from '../../ts/common/Global_Imports';
-	import { w_g_radial, w_s_paging, w_ring_rotation_radius } from '../../ts/state/S_Stores';
-	import { w_graph_rect, w_ancestry_focus, w_thing_color } from '../../ts/state/S_Stores';
+	import { w_g_radial, w_s_paging, w_ring_rotation_radius } from '../../ts/managers/Stores';
+	import { w_graph_rect, w_ancestry_focus, w_thing_color } from '../../ts/managers/Stores';
 	import Widget from '../widget/Widget.svelte';
 	import { onMount } from 'svelte';
     const ancestry = $w_ancestry_focus;

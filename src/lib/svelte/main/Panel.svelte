@@ -1,11 +1,11 @@
 <script lang='ts'>
-	import { w_s_title_edit, w_show_details, w_device_isMobile, } from '../../ts/state/S_Stores';
 	import { g, k, u, ux, w, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
+	import { w_s_title_edit, w_show_details, w_device_isMobile, } from '../../ts/managers/Stores';
 	import { debug, T_Layer, Ancestry, T_Startup } from '../../ts/common/Global_Imports';
-	import { w_t_database, w_graph_rect, w_hierarchy } from '../../ts/state/S_Stores';
+	import { w_t_database, w_graph_rect, w_hierarchy } from '../../ts/managers/Stores';
 	import { T_Control, Hierarchy, databases } from '../../ts/common/Global_Imports';
-	import { w_id_popupView, w_ancestry_focus } from '../../ts/state/S_Stores';
-	import { w_count_resize, w_t_startup } from '../../ts/state/S_Stores';
+	import { w_id_popupView, w_ancestry_focus } from '../../ts/managers/Stores';
+	import { w_count_resize, w_t_startup } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { T_Database } from '../../ts/data/dbs/DBCommon';
 	import Details from '../details/Details.svelte';

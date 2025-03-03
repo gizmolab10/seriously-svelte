@@ -1,9 +1,9 @@
 import { Direction, Predicate, Hierarchy, databases, Relationship, Svelte_Wrapper } from '../../common/Global_Imports';
 import { g, k, u, show, Rect, Size, Thing, debug, signals, wrappers, svgPaths } from '../../common/Global_Imports';
 import { T_Element, T_Predicate, T_Alteration, T_SvelteComponent } from '../../common/Global_Imports';
-import { w_hierarchy, w_ancestry_focus, w_ancestry_showing_tools } from '../../state/S_Stores';
-import { w_ancestries_grabbed, w_ancestries_expanded, } from '../../state/S_Stores';
-import { w_g_radial, w_s_alteration, w_s_title_edit } from '../../state/S_Stores';
+import { w_hierarchy, w_ancestry_focus, w_ancestry_showing_tools } from '../../managers/Stores';
+import { w_ancestries_grabbed, w_ancestries_expanded, } from '../../managers/Stores';
+import { w_g_radial, w_s_alteration, w_s_title_edit } from '../../managers/Stores';
 import { G_Widget, S_Paging, S_Title_Edit } from '../../common/Global_Imports';
 import Reciprocal_Ancestry from './Reciprocal_Ancestry';
 import type { Integer } from '../../common/Types';

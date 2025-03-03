@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, Point, T_Hierarchy } from '../../ts/common/Global_Imports';
-	import { w_t_countDots } from '../../ts/state/S_Stores';
+	import { w_t_countDots } from '../../ts/managers/Stores';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
 	export let top = 0;

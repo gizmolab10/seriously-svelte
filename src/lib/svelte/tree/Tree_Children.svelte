@@ -1,7 +1,7 @@
 <script lang=ts>
 	import { k, u, Rect, Size, Point, Thing, debug, signals } from '../../ts/common/Global_Imports';
 	import { T_Line, T_Debug, G_Widget, G_TreeChild } from '../../ts/common/Global_Imports';
-	import { w_graph_rect } from '../../ts/state/S_Stores';
+	import { w_graph_rect } from '../../ts/managers/Stores';
 	import Tree_Children from './Tree_Children.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import { onMount, onDestroy } from 'svelte';

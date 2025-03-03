@@ -1,10 +1,10 @@
 <script lang='ts'>
 	import { g, k, u, ux, show, Rect, Size, Point, Thing, debug, T_Layer, T_Tool } from '../../ts/common/Global_Imports';
 	import { databases, Svelte_Wrapper, T_Alteration, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { w_t_countDots, w_thing_color, w_ancestries_grabbed } from '../../ts/state/S_Stores';
+	import { w_t_countDots, w_thing_color, w_ancestries_grabbed } from '../../ts/managers/Stores';
 	import { signals, svgPaths, T_Graph, T_Element } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import { w_count_relayout } from '../../ts/state/S_Stores';
+	import { w_count_relayout } from '../../ts/managers/Stores';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import { onMount } from 'svelte';
 	export let points_right = true;

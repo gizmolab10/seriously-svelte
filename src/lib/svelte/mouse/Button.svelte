@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, u, ux, Rect, Point, T_Layer } from '../../ts/common/Global_Imports';
 	import { S_Element, Svelte_Wrapper } from '../../ts/common/Global_Imports';
-	import { w_thing_fontFamily } from '../../ts/state/S_Stores';
+	import { w_thing_fontFamily } from '../../ts/managers/Stores';
 	import Identifiable from '../../ts/data/runtime/Identifiable';
 	import type { Handle_Result } from '../../ts/common/Types';
 	import Mouse_Responder from './Mouse_Responder.svelte';

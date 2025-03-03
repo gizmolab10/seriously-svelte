@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { g, k, u, ux, w, show, Rect, Size, Point, debug, Angle } from '../../ts/common/Global_Imports';
 	import { T_Layer, G_Cluster, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { w_thing_fontFamily, w_ring_rotation_radius } from '../../ts/state/S_Stores';
-	import { w_count_mouse_up, w_ancestry_focus } from '../../ts/state/S_Stores';
+	import { w_thing_fontFamily, w_ring_rotation_radius } from '../../ts/managers/Stores';
+	import { w_count_mouse_up, w_ancestry_focus } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/runtime/Identifiable';
 	import Angled_Text from '../kit/Angled_Text.svelte';

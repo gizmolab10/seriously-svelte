@@ -51,9 +51,9 @@ import Angle from '../geometry/Angle';
 import './Extensions';
 import { k } from './Constants';
 import { u } from './Utilities';
-import { ux } from '../state/S_UX';
-import { g } from '../state/S_Global';
+import { ux } from '../managers/UX';
 import { e } from '../signals/Events';
+import { g } from '../managers/Globals';
 import { w } from '../geometry/G_Window';
 import { p } from '../managers/Preferences';
 

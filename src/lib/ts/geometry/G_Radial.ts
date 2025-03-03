@@ -1,6 +1,6 @@
 import { G_Widget, G_Cluster, S_Paging, T_Predicate } from '../common/Global_Imports';
 import { u, ux, Thing, debug, Ancestry, Predicate } from '../common/Global_Imports';
-import { w_hierarchy, w_s_paging, w_ancestry_focus } from '../state/S_Stores';
+import { w_hierarchy, w_s_paging, w_ancestry_focus } from '../managers/Stores';
 import Reciprocal_Ancestry from '../data/runtime/Reciprocal_Ancestry';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
@@ -34,7 +34,7 @@ export default class G_Radial {
 		return g_widgets.length > 0 ? g_widgets[0] : null;
 	}
 
-	get g_cluster_forMouseLocation(): G_Cluster | null {
+	get g_cluster_atMouseLocation(): G_Cluster | null {
 		for (const g_cluster of this.g_clusters) {
 			if (!!g_cluster && g_cluster.thumb_isHit) {
 				return g_cluster;

@@ -1,5 +1,5 @@
+import { w_hierarchy, w_s_paging, w_ring_rotation_radius } from '../managers/Stores';
 import { k, Thing, Predicate, Ancestry, G_Cluster } from '../common/Global_Imports';
-import { w_hierarchy, w_s_paging, w_ring_rotation_radius } from './S_Stores';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
 

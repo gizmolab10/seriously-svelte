@@ -1,4 +1,4 @@
-import { w, Rect, wrappers, S_Mouse, T_SvelteComponent } from './Global_Imports';
+import { w, Rect, Point, wrappers, S_Mouse, T_SvelteComponent } from './Global_Imports';
 import { Handle_Mouse_State, Create_Mouse_State } from './Types';
 import Identifiable from '../data/runtime/Identifiable';
 import type { Integer } from './Types';
@@ -24,6 +24,13 @@ export default class Svelte_Wrapper extends Identifiable {
     get boundingRect(): Rect {
         const rect = Rect.boundingRectFor(this.element);
         return rect?.originMultipliedBy(1 / w.scale_factor) ?? Rect.zero;
+    }
+
+    containsPoint(point: Point) {
+        const rect = this.boundingRect;
+        const hit = rect.contains(point);
+        console.log(`wrapper ${hit} ${point.verbose} (${rect.origin.verbose} ${rect.extent.verbose})`)
+        return hit;
     }
 
     handle_event(event: MouseEvent, create_mouse_state: Create_Mouse_State): boolean {

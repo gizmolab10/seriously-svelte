@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { g, k, u, ux, show, Rect, Size, Point, Thing, debug, signals } from '../../ts/common/Global_Imports';
 	import { T_Line, T_Layer, T_Signal, G_Widget, T_Control, T_Element } from '../../ts/common/Global_Imports';
-	import { w_graph_rect, w_hierarchy, w_show_details, w_ancestry_focus } from '../../ts/state/S_Stores';
-	import { w_id_popupView, w_device_isMobile, w_user_graph_offset } from '../../ts/state/S_Stores';
+	import { w_graph_rect, w_hierarchy, w_show_details, w_ancestry_focus } from '../../ts/managers/Stores';
+	import { w_id_popupView, w_device_isMobile, w_user_graph_offset } from '../../ts/managers/Stores';
 	import { Predicate, Ancestry, databases } from '../../ts/common/Global_Imports';
 	import Tree_Children from './Tree_Children.svelte';
 	import Widget from '../widget/Widget.svelte';

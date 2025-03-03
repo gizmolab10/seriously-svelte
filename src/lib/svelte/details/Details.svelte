@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, k, u, show, Point, debug, T_Layer, T_Details } from '../../ts/common/Global_Imports';
-	import { w_graph_rect, w_t_details } from '../../ts/state/S_Stores';
+	import { w_graph_rect, w_t_details } from '../../ts/managers/Stores';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
 	import Display from './Display.svelte';

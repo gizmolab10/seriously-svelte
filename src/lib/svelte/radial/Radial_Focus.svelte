@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { w_thing_color, w_s_title_edit, w_thing_fontFamily } from '../../ts/state/S_Stores';
+	import { w_thing_color, w_s_title_edit, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { g, k, ux, w, Size, Point, debug, svgPaths } from '../../ts/common/Global_Imports';
 	import { T_Tool, T_Layer, T_Element, G_Radial } from '../../ts/common/Global_Imports';
-	import { w_ancestry_focus, w_ancestries_grabbed } from '../../ts/state/S_Stores';
+	import { w_ancestry_focus, w_ancestries_grabbed } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import W_Title_Editor from '../widget/W_Title_Editor.svelte';
 	const es_title = ux.s_element_for($w_ancestry_focus, T_Element.title, k.empty);

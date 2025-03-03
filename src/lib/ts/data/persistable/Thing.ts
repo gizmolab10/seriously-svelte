@@ -1,8 +1,8 @@
 import { k, u, debug, Persistable, Trait, Ancestry, databases } from '../../common/Global_Imports';
 import { Predicate, Relationship, Seriously_Range } from '../../common/Global_Imports';
+import { w_hierarchy, w_thing_color, w_count_rebuild } from '../../managers/Stores';
 import { T_Thing, T_Trait, T_Debug, T_Predicate } from '../../common/Global_Imports';
-import { w_hierarchy, w_thing_color, w_count_rebuild } from '../../state/S_Stores';
-import { w_ancestry_focus, w_ancestries_expanded } from '../../state/S_Stores';
+import { w_ancestry_focus, w_ancestries_expanded } from '../../managers/Stores';
 import type { Dictionary } from '../../common/Types';
 import { T_Persistable } from '../dbs/DBCommon';
 import { get } from 'svelte/store';

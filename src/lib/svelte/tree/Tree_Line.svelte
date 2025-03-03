@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, Rect, Size, Point, debug, T_Layer, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import { Svelte_Wrapper, Ancestry, T_SvelteComponent, T_Line } from '../../ts/common/Global_Imports';
-	import { w_thing_color } from '../../ts/state/S_Stores';
+	import { w_thing_color } from '../../ts/managers/Stores';
 	import Circle from '../kit/Circle.svelte';
 	export let g_widget!: G_Widget;
 	const curveType = g_widget.curveType;

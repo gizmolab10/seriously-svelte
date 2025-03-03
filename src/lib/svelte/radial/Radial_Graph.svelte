@@ -1,9 +1,8 @@
 <script lang='ts'>
 	import { signals, T_RingZone, T_Element, T_Rebuild, G_Radial } from '../../ts/common/Global_Imports';
 	import { g, k, u, ux, Rect, Point, debug, T_Tool, T_Layer } from '../../ts/common/Global_Imports';
-	import { w_graph_rect, w_show_details, w_ancestry_focus } from '../../ts/state/S_Stores';
-	import { w_user_graph_offset, w_thing_fontFamily } from '../../ts/state/S_Stores';
-	import { w_g_radial } from '../../ts/state/S_Stores';
+	import { w_g_radial, w_user_graph_offset, w_thing_fontFamily } from '../../ts/managers/Stores';
+	import { w_graph_rect, w_show_details, w_ancestry_focus } from '../../ts/managers/Stores';
 	import Radial_Focus from './Radial_Focus.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Necklace from './Necklace.svelte';

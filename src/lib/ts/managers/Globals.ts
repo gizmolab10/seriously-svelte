@@ -1,10 +1,10 @@
 import { e, k, p, u, ux, w, show, debug, databases } from '../common/Global_Imports';
 import { Hierarchy, S_Rotation, S_Expansion } from '../common/Global_Imports';
 import { T_Graph, T_Preference } from '../common/Global_Imports';
-import { stores, w_t_graph, w_hierarchy } from './S_Stores';
+import { stores, w_t_graph, w_hierarchy } from './Stores';
 import { get } from 'svelte/store';
 
-export class S_Global {
+export class Globals {
 	allow_GraphEditing = true;
 	allow_TitleEditing = true;
 	allow_HorizontalScrolling = true;
@@ -122,4 +122,4 @@ export class S_Global {
 
 }
 
-export let g = new S_Global();
+export let g = new Globals();
