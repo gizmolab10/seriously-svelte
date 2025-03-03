@@ -26,12 +26,7 @@ export default class Svelte_Wrapper extends Identifiable {
         return rect?.originMultipliedBy(1 / w.scale_factor) ?? Rect.zero;
     }
 
-    containsPoint(point: Point) {
-        const rect = this.boundingRect;
-        const hit = rect.contains(point);
-        console.log(`wrapper ${hit} ${point.verbose} (${rect.origin.verbose} ${rect.extent.verbose})`)
-        return hit;
-    }
+    containsPoint(point: Point) { return this.boundingRect.contains(point); }
 
     handle_event(event: MouseEvent, create_mouse_state: Create_Mouse_State): boolean {
         const state = create_mouse_state(event, this.element);

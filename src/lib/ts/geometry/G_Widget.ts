@@ -9,7 +9,7 @@ export default class G_Widget extends Rect {
 	origin_ofRadial = Point.zero;
 	origin_ofChild = Point.zero;
 	origin_ofTitle = Point.zero;
-	origin_ofTree = Point.zero;
+	origin_ofChildrenTree = Point.zero;
 	center_ofDrag = Point.zero;
 	points_toChild = true;
 	es_widget: S_Element;
@@ -71,26 +71,26 @@ export default class G_Widget extends Rect {
 		const showingReveal = this.showingReveal;
 		const showingBorder = !ancestry ? false : ancestry.isGrabbed || ancestry.isEditing;
 		const adjustment_forBorder = showingBorder ? 0 : 1;
-		const x_radial = this.points_right ? -4 : -k.dot_size * 3.5;
-		const offset_ofRadial = new Point(x_radial, 4 - k.dot_size);
-		const offset_ofWidget = new Point(17, (k.dot_size / -15) - 7);
+		const x_radial = this.points_right ? 4 : k.dot_size * 3.5;
+		const offset_ofRadial = new Point(x_radial, k.dot_size - 4).negated;
+		const offset_ofChildrenTree = new Point(17, -(7 + k.dot_size / 15));
 		const offset_ofTitle_forRadial = (this.points_right ? 15 : (showingReveal ? 16 : 3));
 		this.origin_ofTitle = new Point(g.inRadialMode ? offset_ofTitle_forRadial : 12.5, 0);
 		this.origin_ofRadial = this.origin_ofChild.offsetBy(offset_ofRadial);
-		this.origin_ofTree = this.extent.offsetBy(offset_ofWidget);
+		this.origin_ofChildrenTree = this.extent.offsetBy(offset_ofChildrenTree);
 		if (!!ancestry?.thing) {
 			const width_ofWidget = ancestry.thing.titleWidth + this.width_ofBothDots;
-			const adjustment_forPointingLeft = 44.5 - (width_ofWidget + (showingReveal ? 10 : 0));
-			const x_offset_ofWidget = adjustment_forBorder + (this.points_right ? -7 : adjustment_forPointingLeft);
-			const x_drag = this.points_right ? (g.inRadialMode ? 3 : 2) : (width_ofWidget + (showingReveal ? -2.5 : -2));
+			const adjustment_forDirection = this.points_right ? 7 : width_ofWidget - 34.5;
+			const adjustment_x = adjustment_forBorder - adjustment_forDirection;
+			const x_drag = this.points_right ? (g.inRadialMode ? 3 : 2) : (width_ofWidget - (showingReveal ? 2.5 : 2));
 			const y_drag = g.inRadialMode ? 2.8 : 2.7;
 			this.center_ofDrag = new Point(x_drag, y_drag).offsetEquallyBy(k.dot_size / 2);
-			this.offset_ofWidget = new Point(x_offset_ofWidget, adjustment_forBorder);
+			this.offset_ofWidget = new Point(adjustment_x, adjustment_forBorder);
 			this.width_ofWidget = width_ofWidget;
 		}
 		if (showingReveal) {
 			const y_reveal = k.dot_size * 0.72;
-			const x_reveal = k.dot_size + (!this.points_right ? -3 : this.width_ofWidget + (g.inRadialMode ? -21 : 0));
+			const x_reveal = k.dot_size - (!this.points_right ? 3 : (g.inRadialMode ? 21 : 0) - this.width_ofWidget);
 			this.center_ofReveal = new Point(x_reveal, y_reveal);
 		}
 	}

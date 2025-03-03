@@ -1,4 +1,4 @@
-import { g } from '../managers/Globals';
+import { g } from '../common/Globals';
 import { Trace } from './ErrorTrace';
 
 // query string: ?debug=p,action

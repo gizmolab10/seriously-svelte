@@ -22,7 +22,7 @@ export default class DBTest extends DBCommon {
 		const kindC = T_Predicate.contains;
 		const kindR = T_Predicate.isRelated;
 		h.predicate_defaults_remember_runtimeCreate();
-		h.thing_remember_runtimeCreateUnique(this.idBase, idTa, 'Active', 'red');
+		h.thing_remember_runtimeCreateUnique(this.idBase, idTa, 'Active', 'green');
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTb, 'Maintain', 'blue');
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTc, 'Curiosity', '#d96726');
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTd, 'Aesthetics', 'mediumvioletred');
@@ -67,7 +67,7 @@ export default class DBTest extends DBCommon {
 			const idRelationahip = prefix + id_thing;
 			const idChild = asChild ? id_thing : idOther;
 			const idParent = asChild ? idOther : id_thing;
-			h.thing_remember_runtimeCreateUnique(this.idBase, id_thing, title, 'red');
+			h.thing_remember_runtimeCreateUnique(this.idBase, id_thing, title, 'aqua');
 			h.relationship_remember_runtimeCreateUnique(this.idBase, idRelationahip, kindPredicate, idParent, idChild, i);
 		}
 	}

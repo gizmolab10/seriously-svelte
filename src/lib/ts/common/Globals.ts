@@ -1,7 +1,7 @@
-import { e, k, p, u, ux, w, show, debug, databases } from '../common/Global_Imports';
-import { Hierarchy, S_Rotation, S_Expansion } from '../common/Global_Imports';
-import { T_Graph, T_Preference } from '../common/Global_Imports';
-import { stores, w_t_graph, w_hierarchy } from './Stores';
+import { e, k, p, u, ux, w, show, debug, databases } from './Global_Imports';
+import { Hierarchy, S_Rotation, S_Expansion } from './Global_Imports';
+import { T_Graph, T_Preference } from './Global_Imports';
+import { stores, w_t_graph, w_hierarchy } from '../managers/Stores';
 import { get } from 'svelte/store';
 
 export class Globals {

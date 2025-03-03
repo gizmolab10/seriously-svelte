@@ -53,7 +53,7 @@ import { k } from './Constants';
 import { u } from './Utilities';
 import { ux } from '../managers/UX';
 import { e } from '../signals/Events';
-import { g } from '../managers/Globals';
+import { g } from './Globals';
 import { w } from '../geometry/G_Window';
 import { p } from '../managers/Preferences';
 
