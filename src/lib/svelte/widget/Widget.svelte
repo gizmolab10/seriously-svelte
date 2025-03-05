@@ -11,7 +11,6 @@
 	import { onMount } from 'svelte';
 	export let g_widget!: G_Widget;
 	export let origin = Point.zero;
-	const width = g_widget.width_ofWidget;
 	const name = g_widget.es_widget.name;
     const ancestry = g_widget.ancestry_ofWidget;
     const points_right = g_widget.points_right;
@@ -48,7 +47,7 @@
 		layout();
 		fullUpdate();
 		const handleAny = signals.handle_anySignal_atPriority(3, (t_signal, ancestry) => {
-			debug.log_signals(`WIDGET ${thing?.description}`);
+			debug.log_signal(`WIDGET ${thing?.description}`);
 			switch (t_signal) {
 				case T_Signal.relayout:
 					if (ancestry.id_thing == thing?.id) {
@@ -78,9 +77,10 @@
 	}
 
 	$: {
-		const _ = $w_count_relayout;
+		const _ = $w_count_relayout;	// signal relayout causes this count to change
 		if (!!widget) {
-			// debug.log_layout(`TRIIGGER at (${left.asInt()}, ${top.asInt()}) "${ancestry.title}"`);
+			debug.log_layout(`TRIIGGER widget on "${ancestry.title}"`);
+			widget.style.width = `${g_widget.width_ofWidget}px`;
 			widget.style.left = `${left}px`;
 			widget.style.top = `${top}px`;
 		}
@@ -147,13 +147,14 @@
 		const hasExtra_onRight = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
 		const onRight = g.inRadialMode ? 0 : 21 + (hasExtra_onRight ? 0.5 : 0);
 		const origin_ofWidget = origin.offsetBy(g_widget.offset_ofWidget);
+		const width = g_widget.width_ofWidget;
 		const onLeft = points_right ? 1 : 14;
 		top = origin_ofWidget.y;
 		left = origin_ofWidget.x;
 		height = k.row_height - 1.5;
 		border_radius = k.row_height / 2;
 		padding = `0px ${onRight}px 0px ${onLeft}px`;
-		debug.log_layout(`WIDGET (${left.asInt()}, ${top.asInt()}) ${thing?.title ?? k.unknown}`);
+		debug.log_layout(`WIDGET (O (${left.asInt()}, ${top.asInt()}) W ${width.asInt()}) ${thing?.title ?? k.unknown}`);
 	}
 
 </script>
@@ -167,13 +168,13 @@
 			style = '
 				top : {top}px;
 				left : {left}px;
-				width : {width}px;
 				height : {height}px;
 				padding : {padding};
 				position :  absolute;
 				z-index : {T_Layer.widgets};
 				border : {es_widget.border};
 				border-radius : {border_radius}px;
+				width : {g_widget.width_ofWidget}px;
 				background-color : {ancestry.isGrabbed || g.inRadialMode ? k.color_background : 'transparent'};
 			'>
 			<W_Dot_Drag

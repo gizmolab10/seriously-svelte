@@ -82,7 +82,7 @@ export class Hierarchy {
 				default: break;
 			}
 			w_ancestry_showing_tools.set(null);
-			signals.signal_relayoutAndRecreate_widgets_fromFocus();
+			signals.signal_recreate_widgets_fromFocus();
 		}
 	}
 
@@ -875,7 +875,7 @@ export class Hierarchy {
 		if (!!toolsAncestry) {
 			let ancestry = toolsAncestry;
 			ancestry.grabOnly();
-			signals.signal_relayoutAndRecreate_widgets_fromFocus();
+			signals.signal_relayout_widgets_fromFocus();
 			w_ancestry_showing_tools.set(ancestry);
 		}
 	}
@@ -883,7 +883,7 @@ export class Hierarchy {
 	async ancestry_remember_bulk_persistentRelocateRight(ancestry: Ancestry, parentAncestry: Ancestry) {
 		const newThingAncestry = await this.bulkAlias_remember_recursive_persistentRelocateRight(ancestry, parentAncestry);
 		if (!!newThingAncestry) {
-			signals.signal_relayoutAndRecreate_widgets_from(parentAncestry);
+			signals.signal_recreate_widgets_from(parentAncestry);
 			if (parentAncestry.isExpanded) {
 				newThingAncestry.grabOnly();
 			} else {
@@ -1061,7 +1061,7 @@ export class Hierarchy {
 				if (graph_needsRebuild) {
 					signals.signal_rebuildGraph_fromFocus();
 				} else if (graph_needsRelayout) {
-					signals.signal_relayoutAndRecreate_widgets_fromFocus();
+					signals.signal_recreate_widgets_fromFocus();
 				}
 			}
 		}
@@ -1155,7 +1155,7 @@ export class Hierarchy {
 		if (graph_needsRebuild) {
 			signals.signal_rebuildGraph_fromFocus();
 		} else {
-			signals.signal_relayoutAndRecreate_widgets_fromFocus();
+			signals.signal_relayout_widgets_fromFocus();
 		}
 	}
 

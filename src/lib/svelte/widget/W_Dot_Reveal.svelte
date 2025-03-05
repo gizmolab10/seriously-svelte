@@ -33,10 +33,6 @@
 	});
 
 	$: {
-		const _ = $w_count_relayout;
-	}
-
-	$: {
 		const _ = $w_t_countDots;
 		svgPath_update();
 	}
@@ -56,6 +52,13 @@
 		if (!!dotReveal) {
 			revealWrapper = new Svelte_Wrapper(dotReveal, handle_mouse_state, ancestry.hid, T_SvelteComponent.reveal);
 			es_reveal.set_forHovering(ancestry.thing.color, 'pointer');
+		}
+	}
+
+	$: {
+		const _ = $w_count_relayout;	// signal relayout causes this count to change
+		if (!!dotReveal) {
+			debug.log_layout(`TRIIGGER dotReveal on "${ancestry.title}"`);
 		}
 	}
 
@@ -85,7 +88,7 @@
 			if (ancestry.toolsGrabbed) {
 				$w_s_alteration = null;
 				$w_ancestry_showing_tools = null;
-				signals.signal_relayoutAndRecreate_widgets_fromFocus();
+				signals.signal_relayout_widgets_fromFocus();
 			} else if (ancestry.hasChildRelationships || ancestry.thing.isBulkAlias) {
 				const RIGHT = ancestry.thing_isChild != ancestry.isExpanded || g.inRadialMode;
 				$w_hierarchy.ancestry_rebuild_persistentMoveRight(ancestry, RIGHT, false, false, false, true);

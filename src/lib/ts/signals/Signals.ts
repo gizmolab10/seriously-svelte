@@ -6,6 +6,7 @@ import { get } from 'svelte/store';
 export enum T_Signal {
 	thing	   = 'thing',
 	rebuild	   = 'rebuild',
+	recreate   = 'recreate',
 	relayout   = 'relayout',
 	alterState = 'alterState',
 }
@@ -20,12 +21,14 @@ export class Signals {
 
 	signal_altering(value: any = null) { this.signal(T_Signal.alterState, value); }
 	signal_rebuildGraph_fromFocus() { this.signal_rebuildGraph_from(get(w_ancestry_focus)); }
-	signal_relayoutAndRecreate_widgets_fromFocus() { this.signal_relayoutAndRecreate_widgets_from(get(w_ancestry_focus)); }
+	signal_recreate_widgets_from(value: any = null) { this.signal(T_Signal.recreate, value); }
+	signal_recreate_widgets_fromFocus() { this.signal_recreate_widgets_from(get(w_ancestry_focus)); }
+	signal_relayout_widgets_fromFocus() { this.signal_relayout_widgets_from(get(w_ancestry_focus)); }
 
-	signal_relayoutAndRecreate_widgets_from(value: any = null) {
+	signal_relayout_widgets_from(value: any = null) {
 		this.signal(T_Signal.relayout, value);
 		setTimeout(() => {
-			stores.trigger_relayout();					// NEW, untested
+			stores.bump_relayout_count();					// works GREAT
 		}, 200);
 	}
 
@@ -37,13 +40,13 @@ export class Signals {
 
 	signal(t_signal: T_Signal, value: any = null) {
 		if (this.signal_isInFlight) {					// avoid sending multiple simultaneous signals
-			debug.log_signals(`NOT SENDING ${t_signal} in flight`);
+			debug.log_signal(`NOT SENDING ${t_signal} in flight`);
 		} else if (!this.rebuild_isInProgress ||		// also, if rebuild is in progress
 			t_signal != T_Signal.relayout) {			// suppress relayout
 			this.signal_isInFlight = true;
 			const highestPriority = this.highestPriorities[t_signal] ?? 0;
 			for (let priority = 0; priority <= highestPriority; priority++) {
-				// debug.log_signals(`SENDING ${t_signal}`);
+				// debug.log_signal(`SENDING ${t_signal}`);
 				this.conduit.emit(t_signal, priority, value);
 			}
 			this.signal_isInFlight = false;
@@ -56,7 +59,11 @@ export class Signals {
 		return this.handle_t_signal_atPriority(T_Signal.rebuild, priority, onSignal);
 	}
 
-	handle_relayoutAndRecreate_widgets(priority: number, onSignal: (value: any | null) => any ) {
+	handle_recreate_widgets(priority: number, onSignal: (value: any | null) => any ) {
+		return this.handle_t_signal_atPriority(T_Signal.recreate, priority, onSignal);
+	}
+
+	handle_relayout_widgets(priority: number, onSignal: (value: any | null) => any ) {
 		return this.handle_t_signal_atPriority(T_Signal.relayout, priority, onSignal);
 	}
 
@@ -66,10 +73,10 @@ export class Signals {
 
 	handle_anySignal_atPriority(priority: number, onSignal: (t_signal: T_Signal, value: any | null) => any ) {
 		this.adjust_highestPriority_forAllSignals(priority);
-		return this.conduit.connect((ignored_t_signal, signalPriority, value) => {
+		return this.conduit.connect((received_t_signal, signalPriority, value) => {
 			if (signalPriority == priority) {
-				debug.log_signals(`HANDLING ${ignored_t_signal} at ${priority}`);
-				onSignal(ignored_t_signal, value);
+				debug.log_handle(`(ANY) ${received_t_signal} at ${priority}`);
+				onSignal(received_t_signal, value);
 			}
 		});
 	}
@@ -78,7 +85,7 @@ export class Signals {
 		this.adjust_highestPriority_forSignal(priority, t_signal);
 		return this.conduit.connect((t_signals, signalPriority, value) => {
 			if (t_signals.includes(t_signal) && signalPriority == priority) {
-				debug.log_signals(`HANDLING ${t_signal} at ${priority}`);
+				debug.log_handle(`(ONLY) ${t_signal} at ${priority}`);
 				onSignal(value);
 			}
 		});

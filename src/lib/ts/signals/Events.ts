@@ -62,7 +62,7 @@ export class Events {
 	handle_mouse_up(event: MouseEvent) {
 		event.preventDefault();
 		event.stopPropagation();
-		w_count_mouse_up.set(get(w_count_mouse_up) + 1);
+		w_count_mouse_up.update(n => n + 1);
 		// this.respondTo_closure(event, S_Mouse.up);
 	}
 
@@ -109,7 +109,7 @@ export class Events {
 		// called when simulator switches platform (e.g., desktop <--> iphone)
 		const isMobile = g.device_isMobile;
 		debug.log_action(` resize [is${isMobile ? '' : ' not'} mobile] STATE`);
-		w_count_resize.set(get(w_count_resize) + 1);
+		w_count_resize.update(n => n + 1);
 		w_device_isMobile.set(isMobile);
 		w.restore_state();
 	}

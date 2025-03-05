@@ -46,7 +46,7 @@ export const w_show_details			  = writable<boolean>();
 export const w_device_isMobile		  = writable<boolean>();
 
 class Stores {
-	trigger_relayout() { w_count_relayout.set(get(w_count_relayout) + 1); }
+	bump_relayout_count() { w_count_relayout.update(n => n + 1); }
 
 	reset_settings() {
 		const rootAncestry = get(w_hierarchy).rootAncestry;

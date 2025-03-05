@@ -17,15 +17,15 @@
 	onDestroy(() => { g_widgets = []; });
 
 	onMount(() => {
-		layoutAll_children();
-		const handler = signals.handle_relayoutAndRecreate_widgets(1, (signal_ancestry) => {
+		layout_allChildren();
+		const handler = signals.handle_relayout_widgets(1, (signal_ancestry) => {
 			const now = new Date().getTime();
 			if (((now - priorTime) > 100) &&	// no more often than ten times per second
 				(!signal_ancestry || (ancestry.isExpanded &&
 				signal_ancestry.hasMatchingID(ancestry)))) {
 				priorTime = now;
 				debug.log_origins(origin.x + ' before timeout');
-				layoutAll_children();
+				layout_allChildren();
 			}
 		});
 		return () => { handler.disconnect() };
@@ -33,11 +33,11 @@
 	
 	$: {
 		if (!!$w_graph_rect) {
-			layoutAll_children()
+			layout_allChildren()
 		}
 	}
 	
-	function layoutAll_children() {
+	function layout_allChildren() {
 		g_widgets = [];
 		if (ancestry.isExpanded || ancestry.isRoot) {
 			debug.log_origins(origin.x + ' children layout');

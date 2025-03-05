@@ -1,5 +1,4 @@
 import { g } from '../common/Globals';
-import { Trace } from './ErrorTrace';
 
 // query string: ?debug=p,action
 
@@ -10,15 +9,16 @@ export enum T_Debug {
 	segments	= 'segments',
 	origins 	= 'origins',
 	reticle		= 'reticle',	// debug radial layout geometry
-	signals		= 'signals',
 	action  	= 'action',
 	colors		= 'colors',		// indicate some coordinates
 	cursor		= 'cursor',
 	crumbs  	= 'crumbs',
 	expand  	= 'expand',
+	handle		= 'handle',
 	layout		= 'layout',
 	radial		= 'radial',
 	remote		= 'remote',		// interactions with remote
+	signal		= 'signal	',
 	things		= 'things',		// enable Things.debugLog
 	build		= 'build',
 	error		= 'error',		// async errors
@@ -70,11 +70,12 @@ export class Debug {
 	log_crumbs(message: string) { this.log_maybe(T_Debug.crumbs, message); }
 	log_cursor(message: string) { this.log_maybe(T_Debug.cursor, message); }
 	log_expand(message: string) { this.log_maybe(T_Debug.expand, message); }
+	log_handle(message: string) { this.log_maybe(T_Debug.handle, message); }
 	log_layout(message: string) { this.log_maybe(T_Debug.layout, message); }
 	log_radial(message: string) { this.log_maybe(T_Debug.radial, message); }
 	log_remote(message: string) { this.log_maybe(T_Debug.remote, message); }
+	log_signal(message: string) { this.log_maybe(T_Debug.signal, message); }
 	log_things(message: string) { this.log_maybe(T_Debug.things, message); }
-	log_signals(message: string) { this.log_maybe(T_Debug.signals, message); }
 	log_origins(message: string) { this.log_maybe(T_Debug.origins, message); }
 	log_segments(message: string) { this.log_maybe(T_Debug.segments, message); }
 	log_preferences(message: string) { this.log_maybe(T_Debug.preferences, message); }
@@ -100,15 +101,16 @@ export class Debug {
 					case 'segments': this.flags.push(T_Debug.segments); break;
 					case 'origins': this.flags.push(T_Debug.origins); break;
 					case 'reticle': this.flags.push(T_Debug.reticle); break;
-					case 'signals': this.flags.push(T_Debug.signals); break;
 					case 'action': this.flags.push(T_Debug.action); break;
 					case 'colors': this.flags.push(T_Debug.colors); break;
 					case 'crumbs': this.flags.push(T_Debug.crumbs); break;
 					case 'cursor': this.flags.push(T_Debug.cursor); break;
 					case 'expand': this.flags.push(T_Debug.expand); break;
+					case 'handle': this.flags.push(T_Debug.handle); break;
 					case 'layout': this.flags.push(T_Debug.layout); break;
 					case 'radial': this.flags.push(T_Debug.radial); break;
 					case 'remote': this.flags.push(T_Debug.remote); break;
+					case 'signal': this.flags.push(T_Debug.signal); break;
 					case 'things': this.flags.push(T_Debug.things); break;
 					case 'build': this.flags.push(T_Debug.build); break;
 					case 'error': this.flags.push(T_Debug.error); break;

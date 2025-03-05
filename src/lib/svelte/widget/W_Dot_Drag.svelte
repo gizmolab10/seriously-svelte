@@ -41,10 +41,6 @@
         });
 		return () => { handleAltering.disconnect(); };
 	});
-
-	$: {
-		const _ = $w_count_relayout;
-	}
 	
 	$: {
 		const _ = $w_t_countDots;
@@ -58,6 +54,12 @@
 	};
 
 	$: {
+		if (!!thing && thing.id == $w_thing_color?.split(k.generic_separator)[0]) {
+			updateColors_forHovering(true);
+		}
+	}
+
+	$: {
 		if (!!dotDrag) {
 			dragWrapper = new Svelte_Wrapper(dotDrag, handle_mouse_state, ancestry.hid, T_SvelteComponent.drag);
 			es_drag.set_forHovering(ancestry.thing?.color, 'pointer');
@@ -65,8 +67,11 @@
 	}
 
 	$: {
-		if (!!thing && thing.id == $w_thing_color?.split(k.generic_separator)[0]) {
-			updateColors_forHovering(true);
+		const _ = $w_count_relayout;	// signal relayout causes this count to change
+		if (!!dotDrag) {
+			debug.log_layout(`TRIIGGER dotDrag on "${ancestry.title}"`);
+			dotDrag.style.left = `${left}px`;
+			dotDrag.style.top = `${top}px`;
 		}
 	}
 

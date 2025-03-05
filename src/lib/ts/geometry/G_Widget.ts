@@ -1,4 +1,4 @@
-import { g, k, u, ux, Rect, Point, Angle, Ancestry, T_Element, S_Element } from '../common/Global_Imports'
+import { g, k, u, ux, Rect, Point, Angle, debug, Ancestry, T_Element, S_Element } from '../common/Global_Imports'
 
 export default class G_Widget extends Rect {
 	ancestry_ofWidget: Ancestry | null;
@@ -79,14 +79,15 @@ export default class G_Widget extends Rect {
 		this.origin_ofRadial = this.origin_ofChild.offsetBy(offset_ofRadial);
 		this.origin_ofChildrenTree = this.extent.offsetBy(offset_ofChildrenTree);
 		if (!!ancestry?.thing) {
-			const width_ofWidget = ancestry.thing.titleWidth + this.width_ofBothDots;
-			const adjustment_forDirection = this.points_right ? 7 : width_ofWidget - 34.5;
+			debug.log_layout(`G WIDGET for ${ancestry.title}`);
+			const width = ancestry.thing.titleWidth + this.width_ofBothDots;
+			const adjustment_forDirection = this.points_right ? 7 : width - 34.5;
 			const adjustment_x = adjustment_forBorder - adjustment_forDirection;
-			const x_drag = this.points_right ? (g.inRadialMode ? 3 : 2) : (width_ofWidget - (showingReveal ? 2.5 : 2));
+			const x_drag = this.points_right ? (g.inRadialMode ? 3 : 2) : (width - (showingReveal ? 2.5 : 2));
 			const y_drag = g.inRadialMode ? 2.8 : 2.7;
 			this.center_ofDrag = new Point(x_drag, y_drag).offsetEquallyBy(k.dot_size / 2);
 			this.offset_ofWidget = new Point(adjustment_x, adjustment_forBorder);
-			this.width_ofWidget = width_ofWidget;
+			this.width_ofWidget = width;
 		}
 		if (showingReveal) {
 			const y_reveal = k.dot_size * 0.72;

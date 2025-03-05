@@ -66,68 +66,20 @@
 	}
 
 	$: {
-		if (!!ancestry && (ancestry_isEditStopping() || (hasFocus() && !$w_s_title_edit))) {
-			stopEdit();
-		}
-	}
-
-	$: {
 		const _ = $w_ancestries_grabbed;
 		const isGrabbed = ancestry?.isGrabbed ?? false;
 		origin_ofInput = new Point(3.5, 0.8).offsetBy(isGrabbed ? new Point(0.1, 0.2) : Point.zero);
 	}
 
 	$: {
-		const s_title_edit = $w_s_title_edit;
-		if (!!input && !!s_title_edit && s_title_edit.ancestry.id == ancestry.id) {
-
-			//////////////////////////////////////////////////////
-			//													//
-			//			handle w_s_title_edit state				//
-			//													//
-			//////////////////////////////////////////////////////
-
-			switch (s_title_edit.t_edit) {
-				case T_Edit.stopping:
-					stopEdit();
-					break;
-				case T_Edit.editing:
-					if (!hasFocus()) {
-						input.focus();
-						applyRange_fromThing_toInput();
-					}
-					break;
-			}
+		const _ = $w_count_relayout;	// signal relayout causes this count to change
+		if (!!input) {
+			debug.log_layout(`TRIIGGER input on "${ancestry.title}"`);
+			input.style.width = `${ancestry.thing.titleWidth}px`;
 		}
 	}
 
-	export const PRIMITIVES: unique symbol = Symbol('PRIMITIVES');
-
-	function relayout() {
-		debug.log_edit(`RELAYOUT ${ancestry.title}`);
-		signals.signal_relayoutAndRecreate_widgets_from(ancestry);
-	}
-	
-	function update_cursorStyle() {
-		const noCursor = (ancestry_isEditing() || ancestry.isGrabbed) && !g.inRadialMode && ancestry.isEditable;
-		const useTextCursor = ancestry_isEditing() || ancestry.isGrabbed || !(g.inRadialMode || ancestry.isEditable);
-		cursor_style = noCursor ? k.empty : `cursor: ${useTextCursor ? 'text' : 'pointer'}`;
-	}
-
-	function updateInputWidth() {
-		if (!!input && !!ghost) { // ghost only exists to provide its width (in pixels)
-			title_width = ghost.scrollWidth;
-			input.style.width = `${title_width}px`;	// apply its width to the input element
-		}
-	}
-
-	function canAlterTitle(event) {
-		let canAlter = (event instanceof KeyboardEvent) && !event.altKey && !event.shiftKey && !event.code.startsWith("Cluster_Label");
-		if (canAlter && event.metaKey) {
-			canAlter = false;
-		}
-		return canAlter;
-	}
+	export const RANGE: unique symbol = Symbol('RANGE');
 
 	function extractRange_fromInput_toThing() {
 		if (!!input) {
@@ -160,17 +112,17 @@
 		}
 	}
 
-	function title_updatedTo(title: string | null) {
-		const prior = $w_thing_title;
-		if (prior != title) {
-			extractRange_fromInput_toThing();
-			$w_thing_title = title;		// tell Info to update it's selection's title
-			debug.log_edit(`TITLE ${title}`);
-			$w_s_title_edit?.setState_temporarily_whileApplying(T_Edit.percolating, () => {
-				relayout();
-			});
-			debug.log_edit(`UPDATED ${$w_s_title_edit?.description}`);
-		}
+	export const UPDATE: unique symbol = Symbol('UPDATE');
+
+	function relayout() {
+		debug.log_edit(`RELAYOUT ${ancestry.title}`);
+		signals.signal_relayout_widgets_from(ancestry);
+	}
+	
+	function update_cursorStyle() {
+		const noCursor = (ancestry_isEditing() || ancestry.isGrabbed) && !g.inRadialMode && ancestry.isEditable;
+		const useTextCursor = ancestry_isEditing() || ancestry.isGrabbed || !(g.inRadialMode || ancestry.isEditable);
+		cursor_style = noCursor ? k.empty : `cursor: ${useTextCursor ? 'text' : 'pointer'}`;
 	}
 
 	export const HANDLERS: unique symbol = Symbol('HANDLERS');
@@ -253,7 +205,7 @@
 		$w_s_title_edit = null;
 		input?.blur();
 		update_cursorStyle();
-		// relayout not needed
+		relayout();
 	}
 
 	function startEditMaybe() {
@@ -261,6 +213,34 @@
 			ancestry?.startEdit();
 			title_updatedTo(thing.title);
 			input?.focus();
+		}
+	}
+
+	function canAlterTitle(event) {
+		let canAlter = (event instanceof KeyboardEvent) && !event.altKey && !event.shiftKey && !event.code.startsWith("Cluster_Label");
+		if (canAlter && event.metaKey) {
+			canAlter = false;
+		}
+		return canAlter;
+	}
+
+	function updateInputWidth() {
+		if (!!input && !!ghost) { // ghost only exists to provide its width (in pixels)
+			title_width = ghost.scrollWidth;
+			input.style.width = `${title_width}px`;	// apply its width to the input element
+		}
+	}
+
+	function title_updatedTo(title: string | null) {
+		const prior = $w_thing_title;
+		if (prior != title) {
+			extractRange_fromInput_toThing();
+			$w_thing_title = title;		// tell Info to update it's selection's title
+			debug.log_edit(`TITLE ${title}`);
+			$w_s_title_edit?.setState_temporarily_whileApplying(T_Edit.percolating, () => {
+				relayout();
+			});
+			debug.log_edit(`UPDATED ${$w_s_title_edit?.description}`);
 		}
 	}
 
@@ -279,6 +259,32 @@
 					$w_s_title_edit?.t_edit = T_Edit.stopping;	// inform Widget
 				}
 			});
+		}
+	}
+
+	$: {
+		const s_title_edit = $w_s_title_edit;
+		if (hasFocus() && !s_title_edit) {
+			stopEdit();
+		} else if (!!input && !!s_title_edit && s_title_edit.ancestry.id == ancestry.id) {
+
+			//////////////////////////////////////////////////////
+			//													//
+			//			handle w_s_title_edit state				//
+			//													//
+			//////////////////////////////////////////////////////
+
+			switch (s_title_edit.t_edit) {
+				case T_Edit.stopping:
+					stopEdit();
+					break;
+				case T_Edit.editing:
+					if (!hasFocus()) {
+						input.focus();
+						applyRange_fromThing_toInput();
+					}
+					break;
+			}
 		}
 	}
 
