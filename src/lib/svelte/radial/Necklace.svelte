@@ -41,7 +41,7 @@
 		<div
 			class = 'necklace-widgets'
 			style = 'z-index : {T_Layer.backmost};'>
-			{#each $w_g_radial.g_widgets as g_necklace_widget}
+			{#each $w_g_radial.g_necklace_widgets as g_necklace_widget}
 				<Widget g_widget = {g_necklace_widget}/>
 			{/each}
 		</div>

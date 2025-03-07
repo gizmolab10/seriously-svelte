@@ -11,10 +11,10 @@
     const ancestry = g_widget.ancestry_ofWidget;
 	const origin = g_widget.origin_ofChild;
 	let priorTime = new Date().getTime();
-	let g_widgets: Array<G_Widget> = [];
+	let g_children_widgets: Array<G_Widget> = [];
 	let center = Point.zero;
 	
-	onDestroy(() => { g_widgets = []; });
+	onDestroy(() => { g_children_widgets = []; });
 
 	onMount(() => {
 		layout_allChildren();
@@ -39,7 +39,7 @@
 	}
 	
 	function layout_allChildren() {
-		g_widgets = [];
+		g_children_widgets = [];
 		if (ancestry.isExpanded || ancestry.isRoot) {
 			debug.log_origins(origin.x + ' children layout');
 			const childAncestries = ancestry.childAncestries;
@@ -48,7 +48,7 @@
 			let sum = -ancestry.visibleProgeny_height() / 2; // start out negative and grow positive
 			for (const childAncestry of childAncestries) {
 				const temp_g_treeChild = new G_TreeChild(sum, ancestry, childAncestry, childrenOrigin);
-				g_widgets = u.concatenateArrays(g_widgets, [temp_g_treeChild.g_widget]);
+				g_children_widgets = u.concatenateArrays(g_children_widgets, [temp_g_treeChild.g_widget]);
 				sum += temp_g_treeChild.progeny_height + 1;
 			}
 			center = childrenOrigin.offsetByXY(20, 2);
@@ -67,7 +67,7 @@
 {/if}
 {#if ancestry.isExpanded}
 	<div class = 'tree-children'>
-		{#each g_widgets as g_child_widget}
+		{#each g_children_widgets as g_child_widget}
 			<Widget g_widget = {g_child_widget}/>
 			<Tree_Line g_widget = {g_child_widget}/>
 			{#if g_widget.ancestry_ofWidget.showsChildRelationships}

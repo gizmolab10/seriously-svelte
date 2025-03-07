@@ -6,11 +6,11 @@ import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
 
 export default class G_Radial {
-	parent_g_clusters: Dictionary<G_Cluster> = {};
-	child_g_clusters: Dictionary<G_Cluster> = {};
+	g_parent_clusters: Dictionary<G_Cluster> = {};		// includes related
+	g_child_clusters: Dictionary<G_Cluster> = {};
 	ancestry_focus!: Ancestry;
 
-	// layout all the widgets, radial and arcs
+	// layout widgets, radial lines, and arcs
 
 	constructor() {
 		debug.log_layout(`RADIAL ${get(w_ancestry_focus)?.thing?.title}`);
@@ -21,17 +21,17 @@ export default class G_Radial {
 	}
 
 	destructor() {
-		// this.child_g_clusters.forEach(l => l.destructor());
-		// this.parent_g_clusters.forEach(l => l.destructor());
+		// this.g_child_clusters.forEach(l => l.destructor());
+		// this.g_parent_clusters.forEach(l => l.destructor());
 	}
 
-	get g_clusters(): Array<G_Cluster> { return u.concatenateArrays(Object.values(this.parent_g_clusters), Object.values(this.child_g_clusters)); }
-	g_clusters_pointing_toChildren(toChildren: boolean): Dictionary<G_Cluster> { return toChildren ? this.child_g_clusters : this.parent_g_clusters; }
+	get g_clusters(): Array<G_Cluster> { return u.concatenateArrays(Object.values(this.g_parent_clusters), Object.values(this.g_child_clusters)); }
+	g_clusters_pointing_toChildren(toChildren: boolean): Dictionary<G_Cluster> { return toChildren ? this.g_child_clusters : this.g_parent_clusters; }
 	g_cluster_pointing_toChildren(toChildren: boolean, predicate: Predicate): G_Cluster { return this.g_clusters_pointing_toChildren(toChildren)[predicate.kind]; }
 
-	g_widget_forAncestry(ancestry: Ancestry): G_Widget | null {
-		const g_widgets = this.g_widgets.filter(m => m.ancestry_ofWidget?.hid == ancestry.hid);
-		return g_widgets.length > 0 ? g_widgets[0] : null;
+	g_necklace_widget_forAncestry(ancestry: Ancestry): G_Widget | null {
+		const array = this.g_necklace_widgets.filter(m => m.ancestry_ofWidget?.hid == ancestry.hid);
+		return array.length > 0 ? array[0] : null;
 	}
 
 	get g_cluster_atMouseLocation(): G_Cluster | null {
@@ -43,16 +43,16 @@ export default class G_Radial {
 		return null;
 	}
 
-	get g_widgets(): Array<G_Widget> {
-		let g_widgets: Array<G_Widget> = [];
+	get g_necklace_widgets(): Array<G_Widget> {
+		let array: Array<G_Widget> = [];
 		for (const g_cluster of this.g_clusters) {
 			if (!!g_cluster) {
-				for (const g_widget of g_cluster.g_widgets) {
-					g_widgets.push(g_widget);
+				for (const g_cluster_widget of g_cluster.g_cluster_widgets) {
+					array.push(g_cluster_widget);
 				}
 			}
 		}
-		return g_widgets;		
+		return array;		
 	}
 
 	reciprocal_ancestries_maybeFor(focus: Thing, predicate: Predicate): Array<Ancestry> {

@@ -20,9 +20,9 @@ import { get } from 'svelte/store';
 //////////////////////////////////////////
 
 export default class G_Cluster {
+	g_cluster_widgets: Array<G_Widget> = [];
 	g_thumbSlider = new G_ArcSlider();
 	ancestries: Array<Ancestry> = [];
-	g_widgets: Array<G_Widget> = [];
 	g_arcSlider = new G_ArcSlider();
 	color = k.thing_color_default;
 	arc_straddles_nadir = false;
@@ -186,7 +186,7 @@ export default class G_Cluster {
 	}
 
 	update_widget_angles() {
-		this.g_widgets = [];
+		this.g_cluster_widgets = [];
 		if (this.widgets_shown > 0 && !!this.predicate) {
 			const tweak = this.center.offsetByXY(2, -1.5);	// tweak so that drag dots are centered within the rotation ring
 			const radial = new Point(get(w_ring_rotation_radius) + k.radial_widget_inset, 0);
@@ -199,7 +199,7 @@ export default class G_Cluster {
 				const angle_ofChild = this.angle_at_index(index);
 				const origin_ofChild = radial.rotate_by(angle_ofChild).offsetBy(tweak);
 				const g_widget = new G_Widget(Rect.zero, T_Widget.radial, T_Line.flat, origin_ofChild, child_ancestry, get(w_ancestry_focus), this.points_toChildren, angle_ofChild);
-				this.g_widgets.push(g_widget);
+				this.g_cluster_widgets.push(g_widget);
 				index += 1;
 			}
 			this.g_arcSlider.finalize_angles();
