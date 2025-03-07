@@ -1,13 +1,13 @@
 <script lang='ts'>
 	import { k, Rect, Size, Point, debug, T_Layer, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import { Svelte_Wrapper, Ancestry, T_SvelteComponent, T_Line } from '../../ts/common/Global_Imports';
-	import { w_thing_color } from '../../ts/managers/Stores';
+	import { w_thing_color } from '../../ts/common/Stores';
 	import Circle from '../kit/Circle.svelte';
 	export let g_widget!: G_Widget;
 	const curveType = g_widget.curveType;
-	const debugOffset = new Point(131, -0.5);
-	const ancestry = g_widget.ancestry_ofWidget;
+	const debugOffset = new Point(141, -0.5);
 	const lineOffset = new Point(-122.5, 2.5);
+	const ancestry = g_widget.ancestry_ofWidget;
 	let rect = g_widget.offsetBy(lineOffset);
 	let lineWrapper: Svelte_Wrapper;
 	let origin = rect.origin;

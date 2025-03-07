@@ -1,7 +1,7 @@
 <script lang=ts>
 	import { k, u, Rect, Size, Point, Thing, debug, signals } from '../../ts/common/Global_Imports';
 	import { T_Debug, T_Widget, G_Widget, G_TreeChild } from '../../ts/common/Global_Imports';
-	import { w_graph_rect } from '../../ts/managers/Stores';
+	import { w_graph_rect } from '../../ts/common/Stores';
 	import Tree_Children from './Tree_Children.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import { onMount, onDestroy } from 'svelte';
@@ -67,11 +67,11 @@
 {/if}
 {#if ancestry.isExpanded}
 	<div class = 'tree-children'>
-		{#each g_widgets as g_widget}
-			<Widget g_widget = {g_widget} t_widget = {T_Widget.tree}/>
-			<Tree_Line g_widget = {g_widget}/>
+		{#each g_widgets as g_child_widget}
+			<Widget g_widget = {g_child_widget}/>
+			<Tree_Line g_widget = {g_child_widget}/>
 			{#if g_widget.ancestry_ofWidget.showsChildRelationships}
-				<Tree_Children g_widget = {g_widget}/>
+				<Tree_Children g_widget = {g_child_widget}/>
 			{/if}
 		{/each}
 	</div>

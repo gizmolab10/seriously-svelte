@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, Size, Point, T_Layer, svgPaths } from '../../ts/common/Global_Imports';
-    import { w_id_popupView } from '../../ts/managers/Stores';
+    import { w_id_popupView } from '../../ts/common/Stores';
 	import Mouse_Responder from './Mouse_Responder.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
     export let name = 'generic close';

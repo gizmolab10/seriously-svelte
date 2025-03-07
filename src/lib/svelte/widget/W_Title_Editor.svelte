@@ -1,10 +1,10 @@
 <script lang='ts'>
 	import { g, k, u, ux, w, Rect, Size, Point, Thing, debug, Angle, signals } from '../../ts/common/Global_Imports';
-	import { w_t_graph, w_hierarchy, w_s_title_edit, w_mouse_location } from '../../ts/managers/Stores';
+	import { w_t_graph, w_hierarchy, w_s_title_edit, w_mouse_location } from '../../ts/common/Stores';
 	import { T_Graph, T_Layer, S_Title_Edit, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { databases, Seriously_Range, Svelte_Wrapper } from '../../ts/common/Global_Imports';
-	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/managers/Stores';
-	import { w_ancestries_grabbed, w_ancestry_showing_tools } from '../../ts/managers/Stores';
+	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/common/Stores';
+	import { w_ancestries_grabbed, w_ancestry_showing_tools } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { T_Edit } from '../../ts/state/S_Title_Edit';
 	import { onMount, onDestroy } from 'svelte';

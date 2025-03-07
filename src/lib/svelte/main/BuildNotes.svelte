@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import Directional_Buttons from '../mouse/Directional_Buttons.svelte';
 	import { k, builds, T_Layer } from '../../ts/common/Global_Imports';
-	import { w_id_popupView } from '../../ts/managers/Stores';
+	import { w_id_popupView } from '../../ts/common/Stores';
 	import Close_Button from '../mouse/Close_Button.svelte';
 	import { onMount } from 'svelte';
 	const notesIndexed = Object.entries(builds.notes).reverse();

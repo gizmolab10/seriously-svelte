@@ -1,5 +1,5 @@
 import { u, w, debug, Svelte_Wrapper, T_SvelteComponent } from '../common/Global_Imports';
-import { w_hierarchy, w_mouse_location_scaled } from './Stores';
+import { w_hierarchy, w_mouse_location_scaled } from '../common/Stores';
 import { Create_Mouse_State } from '../common/Types';
 import type { Integer } from '../common/Types';
 import { get } from 'svelte/store';

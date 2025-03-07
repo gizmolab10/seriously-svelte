@@ -1,5 +1,5 @@
-import { w_mouse_location, w_mouse_location_scaled, w_count_mouse_up, w_s_alteration } from '../managers/Stores';
-import { w_count_resize, w_device_isMobile, w_user_graph_offset } from '../managers/Stores';
+import { w_mouse_location, w_mouse_location_scaled, w_count_mouse_up, w_s_alteration } from '../common/Stores';
+import { w_count_resize, w_device_isMobile, w_user_graph_offset } from '../common/Stores';
 import { g, k, w, Point, debug, signals, S_Alteration } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 

@@ -1,10 +1,11 @@
-import { g, k, u, ux, Rect, Point, Angle, debug, Ancestry, T_Element, S_Element } from '../common/Global_Imports'
-import { w_hierarchy, w_graph_rect, w_show_details, w_ancestry_focus } from '../managers/Stores';
+import { g, k, u, ux, Rect, Point, Angle, Ancestry, T_Element, S_Element } from '../common/Global_Imports'
+import { w_hierarchy, w_graph_rect, w_show_details, w_ancestry_focus } from '../common/Stores';
 import { get } from 'svelte/store';
 
 export default class G_Widget extends Rect {
 	ancestry_ofWidget: Ancestry | null;
 	ancestry_ofParent: Ancestry | null;
+	origin_ofChildrenTree = Point.zero;
 	origin_ofFirstReveal = Point.zero;
 	angle_ofChild: number | null;
 	offset_ofWidget = Point.zero;
@@ -13,13 +14,13 @@ export default class G_Widget extends Rect {
 	origin_ofChild = Point.zero;
 	origin_ofFocus = Point.zero;
 	origin_ofTitle = Point.zero;
-	origin_ofChildrenTree = Point.zero;
 	center_ofDrag = Point.zero;
 	points_toChild = true;
 	es_widget: S_Element;
 	points_right = true;
 	width_ofWidget = 0;
 	curveType: string;
+	t_widget: string;
 
 	get responder(): HTMLElement | null { return this.es_widget.responder; }
 
@@ -33,8 +34,9 @@ export default class G_Widget extends Rect {
 	//  radial origin, angles and orientations (in/out, right/left)
 
 	constructor(
-		curveType: string,
 		rect: Rect,
+		t_widget: string,
+		curveType: string,
 		origin_ofChild: Point,
 		ancestry_ofWidget: Ancestry,
 		ancestry_ofParent: Ancestry | null,
@@ -49,6 +51,7 @@ export default class G_Widget extends Rect {
 		this.origin_ofChild = origin_ofChild;
 		this.angle_ofChild = angle_ofChild;
 		this.curveType = curveType;
+		this.t_widget = t_widget;
 		if (!ancestry_ofWidget?.thing) {
 			console.log(`geometry G_Widget ... relationship has no child ${ancestry_ofWidget?.relationship?.description}`);
 		}

@@ -1,5 +1,5 @@
 import { k, Persistable, Thing, databases, T_Trait } from '../../common/Global_Imports';
-import { w_hierarchy } from '../../managers/Stores';
+import { w_hierarchy } from '../../common/Stores';
 import { T_Persistable } from '../dbs/DBCommon';
 import { get } from 'svelte/store';
 import Airtable from 'airtable';

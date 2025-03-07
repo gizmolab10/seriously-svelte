@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, k, u, debug, T_Layer, databases } from '../../ts/common/Global_Imports';
-	import { w_thing_fontFamily } from '../../ts/managers/Stores';
+	import { w_thing_fontFamily } from '../../ts/common/Stores';
 	export let handle_textChange = (label: string, text: string) => {};
 	export let color = k.thing_color_default;
 	export let width = k.width_details - 40;

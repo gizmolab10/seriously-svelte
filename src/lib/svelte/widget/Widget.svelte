@@ -2,29 +2,28 @@
 	import { g, k, u, ux, Thing, Point, Angle, debug, signals, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Widget, T_Signal, T_Element } from '../../ts/common/Global_Imports';
 	import { G_Widget, S_Element, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { w_s_title_edit, w_ancestries_grabbed } from '../../ts/managers/Stores';
-	import { w_thing_color, w_thing_fontFamily } from '../../ts/managers/Stores';
+	import { w_s_title_edit, w_ancestries_grabbed } from '../../ts/common/Stores';
+	import { w_thing_color, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { T_Edit } from '../../ts/state/S_Title_Edit';
 	import W_Title_Editor from './W_Title_Editor.svelte';
 	import W_Dot_Reveal from './W_Dot_Reveal.svelte';
 	import W_Dot_Drag from './W_Dot_Drag.svelte';
 	import { onMount } from 'svelte';
 	export let g_widget!: G_Widget;
-	export let t_widget!: T_Widget;
-	const name = g_widget.es_widget.name;
+	const es_widget = g_widget.es_widget;
+	const name = es_widget.name;
     const ancestry = g_widget.ancestry_ofWidget;
     const points_right = g_widget.points_right;
 	const points_toChild = g_widget.points_toChild;
 	const s_widget = ux.s_widget_forAncestry(ancestry);
-	const es_widget = ux.s_element_forName(name);	// created by G_Widget
 	const es_drag = ux.s_element_for(ancestry, T_Element.drag, k.empty);
 	const es_title = ux.s_element_for(ancestry, T_Element.title, k.empty);
 	const es_reveal = ux.s_element_for(ancestry, T_Element.reveal, k.empty);
 	let widgetWrapper!: Svelte_Wrapper;
 	let border_radius = k.dot_size / 2;
+	let t_widget = g_widget.t_widget;
 	let center_ofDrag = Point.zero;
 	let revealCenter = Point.zero;
-	let priorOrigin = Point.zero;
 	let background = k.empty;
 	let widgetName = k.empty;
 	let revealName = k.empty;
@@ -43,16 +42,16 @@
 
 	setup_fromAncestry();
 	debug.log_mount(`WIDGET (grabbed: ${ancestry.isGrabbed}) "${ancestry.title}"`);
+	layout();
+	layout_maybe();
 
 	onMount(() => {
-		layout();
-		fullUpdate();
 		const handle_anySignal = signals.handle_anySignal_atPriority(2, (t_signal, received_ancestry) => {
 			if (!!widget) {
 				debug.log_handle(`(ANY as: ${t_signal}) WIDGET "${thing?.title}"`);
 				switch (t_signal) {
 					case T_Signal.recreate:
-						fullUpdate();
+						layout_maybe();
 						break;
 					case T_Signal.relayout:
 						layout();
@@ -78,15 +77,6 @@
 	$: {
 		if (!!widget) {
 			widgetWrapper = new Svelte_Wrapper(widget, handle_mouse_state, ancestry.hid, T_SvelteComponent.widget);
-		}
-	}
-	
-	$: {
-		if (priorOrigin != origin) {
-			priorOrigin = origin;
-			setTimeout(() => {
-				layout()
-			}, 1);
 		}
 	}
 
@@ -124,7 +114,9 @@
 		switch (t_widget) {
 			case T_Widget.radial: origin = g_widget.origin_ofRadial; break;
 			case T_Widget.focus:  origin = g_widget.origin_ofFocus; break;
-			case T_Widget.tree:   origin = g_widget.origin_ofChildrenTree; break;
+			case T_Widget.tree:   origin = g_widget.origin_ofChildrenTree;
+				console.log(`update_origin ${t_widget} o: ${origin.verbose} "${ancestry.title}"`)
+				break;
 		}
 	}
 
@@ -132,7 +124,7 @@
 		return ancestry.isGrabbed || ($w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.editing) ?? false);
 	}
 
-	function fullUpdate() {
+	function layout_maybe() {
 		if (!!ancestry && s_widget.update_forChange) {
 			const showBackground = showBorder() || g.inRadialMode;
 			background = showBackground ? `background-color: ${k.color_background}` : k.empty

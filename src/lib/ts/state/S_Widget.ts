@@ -1,4 +1,4 @@
-import { w_s_title_edit } from '../managers/Stores';
+import { w_s_title_edit } from '../common/Stores';
 import { Ancestry } from '../common/Global_Imports';
 import { T_Edit } from './S_Title_Edit';
 import { get } from 'svelte/store';

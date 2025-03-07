@@ -1,6 +1,6 @@
 import { k, p, Rect, Size, Point, debug, wrappers, T_RingZone, T_Preference, T_SvelteComponent } from '../common/Global_Imports';
-import { w_graph_rect, w_show_details, w_user_graph_offset, w_user_graph_center } from '../managers/Stores';
-import { w_ring_rotation_radius, w_mouse_location_scaled } from '../managers/Stores';
+import { w_graph_rect, w_show_details, w_user_graph_offset, w_user_graph_center } from '../common/Stores';
+import { w_ring_rotation_radius, w_mouse_location_scaled } from '../common/Stores';
 import { get } from 'svelte/store';
 
 export class G_Window {

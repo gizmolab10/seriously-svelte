@@ -1,6 +1,6 @@
 // N.B., do not import these from Global Imports --> avoid dependency issues when importing Utilities class
 
-import { w_thing_fontFamily } from '../managers/Stores';
+import { w_thing_fontFamily } from '../common/Stores';
 import Identifiable from '../data/runtime/Identifiable';
 import Ancestry from '../data/runtime/Ancestry';
 import { T_Quadrant } from '../geometry/Angle';

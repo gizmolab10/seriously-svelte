@@ -1,6 +1,6 @@
 import { G_Widget, G_Cluster, S_Paging, T_Predicate } from '../common/Global_Imports';
 import { u, ux, Thing, debug, Ancestry, Predicate } from '../common/Global_Imports';
-import { w_hierarchy, w_s_paging, w_ancestry_focus } from '../managers/Stores';
+import { w_hierarchy, w_s_paging, w_ancestry_focus } from '../common/Stores';
 import Reciprocal_Ancestry from '../data/runtime/Reciprocal_Ancestry';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';

@@ -1,10 +1,10 @@
 <script lang='ts'>
 	import { g, k, u, ux, w, Thing, Point, Angle, debug, T_Layer } from '../../ts/common/Global_Imports';
-	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/managers/Stores';
+	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/common/Stores';
 	import { signals, svgPaths, T_RingZone, databases } from '../../ts/common/Global_Imports';
-	import { w_thing_color, w_ancestry_focus, w_g_radial } from '../../ts/managers/Stores';
-	import { w_graph_rect, w_mouse_location_scaled } from '../../ts/managers/Stores';
-	import { w_count_mouse_up, w_g_active_cluster } from '../../ts/managers/Stores';
+	import { w_thing_color, w_ancestry_focus, w_g_radial } from '../../ts/common/Stores';
+	import { w_graph_rect, w_mouse_location_scaled } from '../../ts/common/Stores';
+	import { w_count_mouse_up, w_g_active_cluster } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/runtime/Identifiable';
 	import Paging_ArcSlider from './Paging_ArcSlider.svelte';

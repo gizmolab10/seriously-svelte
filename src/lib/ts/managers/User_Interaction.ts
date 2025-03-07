@@ -3,7 +3,7 @@ import { Ancestry, G_Segment, T_Element, Mouse_Timer } from '../common/Global_Im
 import Identifiable from '../data/runtime/Identifiable';
 import type { Dictionary } from '../common/Types';
 
-export default class UX {
+export default class User_Interaction {
 
 	s_thing_pages_byThingID: {[id: string]: S_Thing_Pages} = {};
 	mouse_timer_byName: { [name: string]: Mouse_Timer } = {};
@@ -74,4 +74,4 @@ export default class UX {
 
 }
 
-export const ux = new UX();
+export const ux = new User_Interaction();

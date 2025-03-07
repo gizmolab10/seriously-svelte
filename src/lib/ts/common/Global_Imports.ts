@@ -52,10 +52,10 @@ import './Extensions';
 import { g } from './Globals';
 import { k } from './Constants';
 import { u } from './Utilities';
-import { ux } from '../managers/UX';
 import { e } from '../signals/Events';
 import { w } from '../geometry/G_Window';
 import { p } from '../managers/Preferences';
+import { ux } from '../managers/User_Interaction';
 
 import { transparentize } from 'color2k';
 import interact from 'interactjs';

@@ -1,5 +1,5 @@
 import { Thing, debug, T_Debug, databases, Predicate, T_Predicate } from '../../common/Global_Imports';
-import { w_hierarchy } from '../../managers/Stores';
+import { w_hierarchy } from '../../common/Stores';
 import Persistable from '../persistable/Persistable';
 import type { Integer } from '../../common/Types';
 import { T_Persistable } from '../dbs/DBCommon';
