@@ -28,14 +28,8 @@
 	function handle_context_menu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
 
 	onMount(() => {
-		const handle_relayout = signals.handle_relayout_widgets(2, (received_ancestry) => {
-			if (!!dotReveal) {
-				debug.log_layout(`TRIGGER [. . .] dotReveal on "${ancestry.title}"`);
-			}
-		});
 		svgPath_update();
 		set_isHovering(false);
-		return () => { handle_relayout.disconnect(); };
 	});
 
 	$: {

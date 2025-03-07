@@ -56,7 +56,6 @@
 						break;
 					case T_Signal.relayout:
 						layout();
-						update_origin();
 						debug.log_layout(`TRIGGER [. . .] widget on "${ancestry.title}"`);
 						widget.style.width = `${g_widget.width_ofWidget}px`;
 						widget.style.left = `${left}px`;
@@ -134,7 +133,6 @@
 	}
 
 	function fullUpdate() {
-		update_origin();
 		if (!!ancestry && s_widget.update_forChange) {
 			const showBackground = showBorder() || g.inRadialMode;
 			background = showBackground ? `background-color: ${k.color_background}` : k.empty
@@ -149,6 +147,7 @@
 
 	function layout() {
 		g_widget.layout();
+		update_origin();
 		const hasExtra_onRight = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
 		const onRight = g.inRadialMode ? 0 : 21 + (hasExtra_onRight ? 0.5 : 0);
 		const origin_ofWidget = origin.offsetBy(g_widget.offset_ofWidget);
@@ -159,7 +158,7 @@
 		height = k.row_height - 1.5;
 		border_radius = k.row_height / 2;
 		padding = `0px ${onRight}px 0px ${onLeft}px`;
-		debug.log_layout(`WIDGET (O (${left.asInt()}, ${top.asInt()}) W ${width.asInt()}) ${thing?.title ?? k.unknown}`);
+		debug.log_layout(`WIDGET o: (${left.asInt()}, ${top.asInt()}) w: ${width.asInt()} ${thing?.title ?? k.unknown}`);
 	}
 
 </script>

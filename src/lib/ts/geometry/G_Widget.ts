@@ -83,7 +83,7 @@ export default class G_Widget extends Rect {
 		this.origin_ofRadial = this.origin_ofChild.offsetBy(offset_ofRadial);
 		this.origin_ofChildrenTree = this.extent.offsetBy(offset_ofChildrenTree);
 		if (!!ancestry?.thing) {
-			debug.log_layout(`G WIDGET for ${ancestry.title}`);
+			// debug.log_layout(`G WIDGET for ${ancestry.title}`);
 			const width = ancestry.thing.titleWidth + this.width_ofBothDots;
 			const adjustment_forDirection = this.points_right ? 7 : width - 34.5;
 			const adjustment_x = adjustment_forBorder - adjustment_forDirection;
