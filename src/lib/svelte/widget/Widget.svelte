@@ -1,16 +1,16 @@
 <script lang='ts'>
 	import { g, k, u, ux, Thing, Point, Angle, debug, signals, Svelte_Wrapper } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Graph, T_Signal, T_Element, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { w_thing_color, w_thing_fontFamily, w_count_relayout } from '../../ts/managers/Stores';
+	import { T_Layer, T_Graph, T_Widget, T_Signal, T_Element } from '../../ts/common/Global_Imports';
+	import { G_Widget, S_Element, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_ancestries_grabbed } from '../../ts/managers/Stores';
-	import { G_Widget, S_Element } from '../../ts/common/Global_Imports';
+	import { w_thing_color, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { T_Edit } from '../../ts/state/S_Title_Edit';
 	import W_Title_Editor from './W_Title_Editor.svelte';
 	import W_Dot_Reveal from './W_Dot_Reveal.svelte';
 	import W_Dot_Drag from './W_Dot_Drag.svelte';
 	import { onMount } from 'svelte';
 	export let g_widget!: G_Widget;
-	export let origin = Point.zero;
+	export let t_widget!: T_Widget;
 	const name = g_widget.es_widget.name;
     const ancestry = g_widget.ancestry_ofWidget;
     const points_right = g_widget.points_right;
@@ -22,14 +22,15 @@
 	const es_reveal = ux.s_element_for(ancestry, T_Element.reveal, k.empty);
 	let widgetWrapper!: Svelte_Wrapper;
 	let border_radius = k.dot_size / 2;
-	let revealCenter = Point.zero;
 	let center_ofDrag = Point.zero;
-	let priorOrigin = origin;
+	let revealCenter = Point.zero;
+	let priorOrigin = Point.zero;
 	let background = k.empty;
 	let widgetName = k.empty;
 	let revealName = k.empty;
 	let widgetData = k.empty;
 	let revealData = k.empty;
+	let origin = Point.zero;
 	let dragData = k.empty;
 	let padding = k.empty;
 	let border = k.empty;
@@ -46,21 +47,26 @@
 	onMount(() => {
 		layout();
 		fullUpdate();
-		const handleAny = signals.handle_anySignal_atPriority(3, (t_signal, ancestry) => {
-			debug.log_signal(`WIDGET ${thing?.description}`);
-			switch (t_signal) {
-				case T_Signal.relayout:
-					if (ancestry.id_thing == thing?.id) {
-						layout()
-					}
-					break;
-				default:
-					fullUpdate();
-					break;
+		const handle_anySignal = signals.handle_anySignal_atPriority(2, (t_signal, received_ancestry) => {
+			if (!!widget) {
+				debug.log_handle(`(ANY as: ${t_signal}) WIDGET "${thing?.title}"`);
+				switch (t_signal) {
+					case T_Signal.recreate:
+						fullUpdate();
+						break;
+					case T_Signal.relayout:
+						layout();
+						update_origin();
+						debug.log_layout(`TRIGGER [. . .] widget on "${ancestry.title}"`);
+						widget.style.width = `${g_widget.width_ofWidget}px`;
+						widget.style.left = `${left}px`;
+						widget.style.top = `${top}px`;
+						break;
+				}
 			}
 		});
 		return () => {
-			handleAny.disconnect();
+			handle_anySignal.disconnect();
 		};
 	});
 
@@ -73,16 +79,6 @@
 	$: {
 		if (!!widget) {
 			widgetWrapper = new Svelte_Wrapper(widget, handle_mouse_state, ancestry.hid, T_SvelteComponent.widget);
-		}
-	}
-
-	$: {
-		const _ = $w_count_relayout;	// signal relayout causes this count to change
-		if (!!widget) {
-			debug.log_layout(`TRIIGGER widget on "${ancestry.title}"`);
-			widget.style.width = `${g_widget.width_ofWidget}px`;
-			widget.style.left = `${left}px`;
-			widget.style.top = `${top}px`;
 		}
 	}
 	
@@ -125,11 +121,20 @@
 		}
 	}
 
+	function update_origin() {
+		switch (t_widget) {
+			case T_Widget.radial: origin = g_widget.origin_ofRadial; break;
+			case T_Widget.focus:  origin = g_widget.origin_ofFocus; break;
+			case T_Widget.tree:   origin = g_widget.origin_ofChildrenTree; break;
+		}
+	}
+
 	function showBorder(): boolean {
 		return ancestry.isGrabbed || ($w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.editing) ?? false);
 	}
 
 	function fullUpdate() {
+		update_origin();
 		if (!!ancestry && s_widget.update_forChange) {
 			const showBackground = showBorder() || g.inRadialMode;
 			background = showBackground ? `background-color: ${k.color_background}` : k.empty

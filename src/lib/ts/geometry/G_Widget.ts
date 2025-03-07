@@ -1,13 +1,17 @@
 import { g, k, u, ux, Rect, Point, Angle, debug, Ancestry, T_Element, S_Element } from '../common/Global_Imports'
+import { w_hierarchy, w_graph_rect, w_show_details, w_ancestry_focus } from '../managers/Stores';
+import { get } from 'svelte/store';
 
 export default class G_Widget extends Rect {
 	ancestry_ofWidget: Ancestry | null;
 	ancestry_ofParent: Ancestry | null;
+	origin_ofFirstReveal = Point.zero;
 	angle_ofChild: number | null;
 	offset_ofWidget = Point.zero;
 	center_ofReveal = Point.zero;
 	origin_ofRadial = Point.zero;
 	origin_ofChild = Point.zero;
+	origin_ofFocus = Point.zero;
 	origin_ofTitle = Point.zero;
 	origin_ofChildrenTree = Point.zero;
 	center_ofDrag = Point.zero;
@@ -88,6 +92,17 @@ export default class G_Widget extends Rect {
 			this.center_ofDrag = new Point(x_drag, y_drag).offsetEquallyBy(k.dot_size / 2);
 			this.offset_ofWidget = new Point(adjustment_x, adjustment_forBorder);
 			this.width_ofWidget = width;
+		}
+		if (!g.inRadialMode) {
+			const graphRect = get(w_graph_rect);
+			const focusAncestry = get(w_ancestry_focus);
+			const focus = focusAncestry?.thing ?? get(w_hierarchy).root;
+			const childrenSize = focusAncestry?.visibleProgeny_size;
+			const offsetX_ofFirstReveal = focus?.titleWidth / 2 - 2;
+			const offsetY = -1 - graphRect.origin.y;
+			const offsetX = 15 + (get(w_show_details) ? -k.width_details : 0) - (childrenSize.width / 2) - (k.dot_size / 2.5) + offsetX_ofFirstReveal;
+			this.origin_ofFirstReveal = graphRect.center.offsetByXY(offsetX, offsetY);
+			this.origin_ofFocus = this.origin_ofFirstReveal.offsetByXY(-21.5 - offsetX_ofFirstReveal, -5);
 		}
 		if (showingReveal) {
 			const y_reveal = k.dot_size * 0.72;

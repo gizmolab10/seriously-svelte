@@ -1,6 +1,6 @@
 <script lang=ts>
 	import { k, u, Rect, Size, Point, Thing, debug, signals } from '../../ts/common/Global_Imports';
-	import { T_Line, T_Debug, G_Widget, G_TreeChild } from '../../ts/common/Global_Imports';
+	import { T_Debug, T_Widget, G_Widget, G_TreeChild } from '../../ts/common/Global_Imports';
 	import { w_graph_rect } from '../../ts/managers/Stores';
 	import Tree_Children from './Tree_Children.svelte';
 	import Widget from '../widget/Widget.svelte';
@@ -18,13 +18,14 @@
 
 	onMount(() => {
 		layout_allChildren();
-		const handler = signals.handle_relayout_widgets(1, (signal_ancestry) => {
+		const handler = signals.handle_relayout_widgets(1, (received_ancestry) => {
 			const now = new Date().getTime();
 			if (((now - priorTime) > 100) &&	// no more often than ten times per second
-				(!signal_ancestry || (ancestry.isExpanded &&
-				signal_ancestry.hasMatchingID(ancestry)))) {
+				(!received_ancestry || (ancestry.isExpanded &&
+				received_ancestry.hasMatchingID(ancestry)))) {
 				priorTime = now;
 				debug.log_origins(origin.x + ' before timeout');
+				debug.log_layout(`TRIGGER [. .] tree children on "${ancestry.title}"`);
 				layout_allChildren();
 			}
 		});
@@ -67,7 +68,7 @@
 {#if ancestry.isExpanded}
 	<div class = 'tree-children'>
 		{#each g_widgets as g_widget}
-			<Widget g_widget = {g_widget} origin = {g_widget.origin_ofChildrenTree}/>
+			<Widget g_widget = {g_widget} t_widget = {T_Widget.tree}/>
 			<Tree_Line g_widget = {g_widget}/>
 			{#if g_widget.ancestry_ofWidget.showsChildRelationships}
 				<Tree_Children g_widget = {g_widget}/>

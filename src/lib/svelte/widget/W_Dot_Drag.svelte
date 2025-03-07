@@ -4,7 +4,6 @@
 	import { w_t_countDots, w_thing_color, w_ancestries_grabbed } from '../../ts/managers/Stores';
 	import { signals, svgPaths, T_Graph, T_Element } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import { w_count_relayout } from '../../ts/managers/Stores';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import { onMount } from 'svelte';
 	export let points_right = true;
@@ -34,12 +33,19 @@
 	function handle_context_menu(event) { event.preventDefault(); }		// no default context menu on right-click
 
     onMount(() => {
-        const handleAltering = signals.handle_altering((blink_flag) => {
+        const handle_altering = signals.handle_altering((blink_flag) => {
 			const invert_flag = blink_flag && !!ancestry && ancestry.canConnect_toToolsAncestry;
 			es_drag.isInverted = invert_flag;
 			svgPaths_updateExtra();
         });
-		return () => { handleAltering.disconnect(); };
+		const handle_relayout = signals.handle_relayout_widgets(2, (received_ancestry) => {
+			if (!!dotDrag) {
+				debug.log_layout(`TRIGGER [. . .] dotDrag on "${ancestry.title}"`);
+				dotDrag.style.left = `${left}px`;
+				dotDrag.style.top = `${top}px`;
+			}
+		});
+		return () => { handle_relayout.disconnect(); handle_altering.disconnect(); };
 	});
 	
 	$: {
@@ -63,15 +69,6 @@
 		if (!!dotDrag) {
 			dragWrapper = new Svelte_Wrapper(dotDrag, handle_mouse_state, ancestry.hid, T_SvelteComponent.drag);
 			es_drag.set_forHovering(ancestry.thing?.color, 'pointer');
-		}
-	}
-
-	$: {
-		const _ = $w_count_relayout;	// signal relayout causes this count to change
-		if (!!dotDrag) {
-			debug.log_layout(`TRIIGGER dotDrag on "${ancestry.title}"`);
-			dotDrag.style.left = `${left}px`;
-			dotDrag.style.top = `${top}px`;
 		}
 	}
 

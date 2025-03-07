@@ -30,6 +30,12 @@ export enum T_Create {
 	none			 = '',
 }
 
+export enum T_Widget {
+	radial = 'radial',
+	focus  = 'focus',
+	tree   = 'tree',
+}
+
 export enum T_Line {
 	flat = 'flat',
 	down = 'down',

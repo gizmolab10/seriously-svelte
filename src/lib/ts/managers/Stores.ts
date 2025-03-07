@@ -38,7 +38,6 @@ export const w_storage_update_trigger = writable<number>();
 export const w_ring_rotation_radius	  = writable<number>();
 export const w_ring_rotation_angle	  = writable<number>();
 export const w_count_mouse_up		  = writable<number>();
-export const w_count_relayout		  = writable<number>();
 export const w_count_rebuild		  = writable<number>();
 export const w_count_resize			  = writable<number>();
 export const w_font_size			  = writable<number>();
@@ -46,7 +45,6 @@ export const w_show_details			  = writable<boolean>();
 export const w_device_isMobile		  = writable<boolean>();
 
 class Stores {
-	bump_relayout_count() { w_count_relayout.update(n => n + 1); }
 
 	reset_settings() {
 		const rootAncestry = get(w_hierarchy).rootAncestry;
@@ -59,7 +57,6 @@ class Stores {
 		w_device_isMobile.set(g.device_isMobile);
 		w_t_startup.set(T_Startup.start);
 		w_thing_color.set(null);
-		w_count_relayout.set(0);
 		w_count_mouse_up.set(0);
 		w_count_rebuild.set(0);
 		w_count_resize.set(0);

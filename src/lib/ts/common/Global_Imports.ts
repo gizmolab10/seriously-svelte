@@ -19,8 +19,8 @@ import { T_Quadrant, T_Orientation } from '../geometry/Angle';
 import { T_Create, T_Browser, T_Alteration } from './Enumerations';
 import { T_Oblong, T_Element, T_SvelteComponent } from './Enumerations';
 import { T_Line, T_Layer, T_Thing, T_Trait, T_Predicate } from './Enumerations';
-import { T_Info, T_Tool, T_Control, T_Details, T_Storage } from './Enumerations';
-import { T_Hierarchy, T_Graph, T_Rebuild, T_Startup, T_RingZone } from './Enumerations';
+import { T_Graph, T_Widget, T_Rebuild, T_RingZone, T_Startup } from './Enumerations';
+import { T_Info, T_Tool, T_Control, T_Details, T_Storage, T_Hierarchy } from './Enumerations';
 
 import S_Title_Edit from '../state/S_Title_Edit';
 import G_ArcSlider from '../geometry/G_ArcSlider';
@@ -49,11 +49,11 @@ import User from '../data/persistable/User';
 import Angle from '../geometry/Angle';
 
 import './Extensions';
+import { g } from './Globals';
 import { k } from './Constants';
 import { u } from './Utilities';
 import { ux } from '../managers/UX';
 import { e } from '../signals/Events';
-import { g } from './Globals';
 import { w } from '../geometry/G_Window';
 import { p } from '../managers/Preferences';
 
@@ -77,6 +77,6 @@ export {
 	S_Mouse, S_Widget, S_Element, S_Alteration, S_Title_Edit,
 	User, Persistable, Thing, Trait, Access, Predicate, Relationship,
 	G_Widget, G_TreeChild, G_ArcSlider, G_Segment, G_Cluster, G_Radial,
-	T_Line, T_Tool, T_Signal, T_Control, T_Browser, T_Storage, T_Preference,
+	T_Line, T_Tool, T_Widget, T_Signal, T_Control, T_Browser, T_Storage, T_Preference,
 	T_Info, T_Thing, T_Trait, T_Graph, T_Hierarchy, T_Details, T_Rebuild, T_Startup,
 };

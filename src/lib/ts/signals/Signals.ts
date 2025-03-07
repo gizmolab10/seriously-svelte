@@ -22,15 +22,9 @@ export class Signals {
 	signal_altering(value: any = null) { this.signal(T_Signal.alterState, value); }
 	signal_rebuildGraph_fromFocus() { this.signal_rebuildGraph_from(get(w_ancestry_focus)); }
 	signal_recreate_widgets_from(value: any = null) { this.signal(T_Signal.recreate, value); }
+	signal_relayout_widgets_from(value: any = null) { this.signal(T_Signal.relayout, value); }
 	signal_recreate_widgets_fromFocus() { this.signal_recreate_widgets_from(get(w_ancestry_focus)); }
 	signal_relayout_widgets_fromFocus() { this.signal_relayout_widgets_from(get(w_ancestry_focus)); }
-
-	signal_relayout_widgets_from(value: any = null) {
-		this.signal(T_Signal.relayout, value);
-		setTimeout(() => {
-			stores.bump_relayout_count();					// works GREAT
-		}, 200);
-	}
 
 	signal_rebuildGraph_from(value: any = null) {
 		this.rebuild_isInProgress = true;
@@ -56,37 +50,37 @@ export class Signals {
 	static readonly RECEIVING: unique symbol;
 
 	handle_rebuildGraph(priority: number, onSignal: (value: any | null) => any ) {
-		return this.handle_t_signal_atPriority(T_Signal.rebuild, priority, onSignal);
+		return this.handle_signal_atPriority(T_Signal.rebuild, priority, onSignal);
 	}
 
 	handle_recreate_widgets(priority: number, onSignal: (value: any | null) => any ) {
-		return this.handle_t_signal_atPriority(T_Signal.recreate, priority, onSignal);
+		return this.handle_signal_atPriority(T_Signal.recreate, priority, onSignal);
 	}
 
 	handle_relayout_widgets(priority: number, onSignal: (value: any | null) => any ) {
-		return this.handle_t_signal_atPriority(T_Signal.relayout, priority, onSignal);
+		return this.handle_signal_atPriority(T_Signal.relayout, priority, onSignal);
 	}
 
 	handle_altering(onSignal: (value: any | null) => any ) {
-		return this.handle_t_signal_atPriority(T_Signal.alterState, 0, onSignal);
+		return this.handle_signal_atPriority(T_Signal.alterState, 0, onSignal);
+	}
+
+	handle_signal_atPriority(t_signal: T_Signal, priority: number, onSignal: (value: any | null) => any ) {
+		this.adjust_highestPriority_forSignal(priority, t_signal);
+		return this.conduit.connect((received_t_signal, signalPriority, value) => {
+			if (received_t_signal == t_signal && signalPriority == priority) {
+				// debug.log_handle(`(ONLY) ${t_signal} at ${priority}`);
+				onSignal(value);
+			}
+		});
 	}
 
 	handle_anySignal_atPriority(priority: number, onSignal: (t_signal: T_Signal, value: any | null) => any ) {
 		this.adjust_highestPriority_forAllSignals(priority);
 		return this.conduit.connect((received_t_signal, signalPriority, value) => {
 			if (signalPriority == priority) {
-				debug.log_handle(`(ANY) ${received_t_signal} at ${priority}`);
+				// debug.log_handle(`(ANY as: ${received_t_signal}) at ${priority}`);
 				onSignal(received_t_signal, value);
-			}
-		});
-	}
-
-	handle_t_signal_atPriority(t_signal: T_Signal, priority: number, onSignal: (value: any | null) => any ) {
-		this.adjust_highestPriority_forSignal(priority, t_signal);
-		return this.conduit.connect((t_signals, signalPriority, value) => {
-			if (t_signals.includes(t_signal) && signalPriority == priority) {
-				debug.log_handle(`(ONLY) ${t_signal} at ${priority}`);
-				onSignal(value);
 			}
 		});
 	}

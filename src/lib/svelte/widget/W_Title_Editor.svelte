@@ -2,11 +2,10 @@
 	import { g, k, u, ux, w, Rect, Size, Point, Thing, debug, Angle, signals } from '../../ts/common/Global_Imports';
 	import { w_t_graph, w_hierarchy, w_s_title_edit, w_mouse_location } from '../../ts/managers/Stores';
 	import { T_Graph, T_Layer, S_Title_Edit, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { databases, Seriously_Range, Svelte_Wrapper } from '../../ts/common/Global_Imports';
+	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { w_ancestries_grabbed, w_ancestry_showing_tools } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import { w_count_relayout } from '../../ts/managers/Stores';
 	import { T_Edit } from '../../ts/state/S_Title_Edit';
 	import { onMount, onDestroy } from 'svelte';
 	export let points_right = true;
@@ -41,14 +40,25 @@
 	function ancestry_isEditPercolating(): boolean { return $w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.percolating) ?? false; }
 
 	onMount(() => {
-		const handler = signals.handle_anySignal_atPriority(0, (t_signal, ancestry) => { updateInputWidth(); });
+		const handle_anySignal = signals.handle_anySignal_atPriority(0, (t_signal, ancestry) => {
+			updateInputWidth();
+		});
+		const handle_relayout = signals.handle_relayout_widgets(2, (received_ancestry) => {
+			if (!!input && ancestry.pathString == received_ancestry.pathString) {
+				debug.log_layout(`TRIGGER [. . .] input on "${ancestry.title}"`);
+				input.style.width = `${ancestry.thing.titleWidth}px`;
+			}
+		});
 		setTimeout(() => {
 			updateInputWidth();
 			if (ancestry_isEditing()) {
 				applyRange_fromThing_toInput();
 			}
 		}, 100);
-		return () => { handler.disconnect() };
+		return () => {
+			handle_relayout.disconnect();
+			handle_anySignal.disconnect();
+		};
 	});
 
 	export const REACTIVES: unique symbol = Symbol('REACTIVES');
@@ -69,14 +79,6 @@
 		const _ = $w_ancestries_grabbed;
 		const isGrabbed = ancestry?.isGrabbed ?? false;
 		origin_ofInput = new Point(3.5, 0.8).offsetBy(isGrabbed ? new Point(0.1, 0.2) : Point.zero);
-	}
-
-	$: {
-		const _ = $w_count_relayout;	// signal relayout causes this count to change
-		if (!!input) {
-			debug.log_layout(`TRIIGGER input on "${ancestry.title}"`);
-			input.style.width = `${ancestry.thing.titleWidth}px`;
-		}
 	}
 
 	export const RANGE: unique symbol = Symbol('RANGE');
@@ -131,7 +133,6 @@
 	
 	function handle_cut_paste(event) {
 		extractRange_fromInput_toThing();
-		relayout();
 	}
 
 	function handle_focus(event) {
@@ -154,7 +155,6 @@
 		if (!!thing && (!!title || title == k.empty)) {
 			thing.title = title_binded = title;
 			title_updatedTo(title);
-			relayout();
 		}
 	};
 

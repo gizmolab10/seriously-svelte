@@ -2,7 +2,7 @@
 	import { g, k, u, ux, Size, Thing, Point, debug, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
 	import { w_ancestries_grabbed, w_ancestries_expanded, w_ancestry_showing_tools } from '../../ts/managers/Stores';
 	import { T_Layer, T_Graph, Predicate, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { w_t_countDots, w_count_relayout, w_hierarchy, w_s_alteration } from '../../ts/managers/Stores';
+	import { w_t_countDots, w_hierarchy, w_s_alteration } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import { onMount } from 'svelte';
@@ -28,8 +28,14 @@
 	function handle_context_menu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
 
 	onMount(() => {
+		const handle_relayout = signals.handle_relayout_widgets(2, (received_ancestry) => {
+			if (!!dotReveal) {
+				debug.log_layout(`TRIGGER [. . .] dotReveal on "${ancestry.title}"`);
+			}
+		});
 		svgPath_update();
 		set_isHovering(false);
+		return () => { handle_relayout.disconnect(); };
 	});
 
 	$: {
@@ -52,13 +58,6 @@
 		if (!!dotReveal) {
 			revealWrapper = new Svelte_Wrapper(dotReveal, handle_mouse_state, ancestry.hid, T_SvelteComponent.reveal);
 			es_reveal.set_forHovering(ancestry.thing.color, 'pointer');
-		}
-	}
-
-	$: {
-		const _ = $w_count_relayout;	// signal relayout causes this count to change
-		if (!!dotReveal) {
-			debug.log_layout(`TRIIGGER dotReveal on "${ancestry.title}"`);
 		}
 	}
 

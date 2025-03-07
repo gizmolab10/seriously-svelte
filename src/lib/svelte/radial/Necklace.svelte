@@ -1,5 +1,5 @@
 <script lang='ts'>
-import { k, u, Point, T_Layer, signals, G_Radial, Predicate } from '../../ts/common/Global_Imports';
+	import { k, u, Point, T_Layer, T_Widget, signals, G_Radial, Predicate } from '../../ts/common/Global_Imports';
 	import { w_g_radial, w_s_paging, w_ring_rotation_radius } from '../../ts/managers/Stores';
 	import { w_graph_rect, w_ancestry_focus, w_thing_color } from '../../ts/managers/Stores';
 	import Widget from '../widget/Widget.svelte';
@@ -42,7 +42,7 @@ import { k, u, Point, T_Layer, signals, G_Radial, Predicate } from '../../ts/com
 			class = 'necklace-widgets'
 			style = 'z-index : {T_Layer.backmost};'>
 			{#each $w_g_radial.g_widgets as g_widget}
-				<Widget g_widget = {g_widget} origin = {g_widget.origin_ofRadial}/>
+				<Widget g_widget = {g_widget} t_widget = {T_Widget.radial}/>
 			{/each}
 		</div>
 	{/if}
