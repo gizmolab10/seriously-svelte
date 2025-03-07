@@ -1,9 +1,8 @@
-import { g, k, u, ux, Rect, Point, Angle, Ancestry, T_Element, S_Element } from '../common/Global_Imports'
+import { g, k, ux, Rect, Point, Angle, Ancestry, T_Element, S_Element } from '../common/Global_Imports'
 import { w_hierarchy, w_graph_rect, w_show_details, w_ancestry_focus } from '../common/Stores';
 import { get } from 'svelte/store';
 
-export default class G_Widget extends Rect {
-	ancestry_ofWidget: Ancestry | null;
+export default class G_Widget {
 	ancestry_ofParent: Ancestry | null;
 	origin_ofChildrenTree = Point.zero;
 	origin_ofFirstReveal = Point.zero;
@@ -15,12 +14,14 @@ export default class G_Widget extends Rect {
 	origin_ofFocus = Point.zero;
 	origin_ofTitle = Point.zero;
 	center_ofDrag = Point.zero;
+	ancestry: Ancestry | null;
 	points_toChild = true;
 	es_widget: S_Element;
 	points_right = true;
 	width_ofWidget = 0;
 	curveType: string;
 	t_widget: string;
+	rect: Rect;
 
 	get responder(): HTMLElement | null { return this.es_widget.responder; }
 
@@ -38,33 +39,34 @@ export default class G_Widget extends Rect {
 		t_widget: string,
 		curveType: string,
 		origin_ofChild: Point,
-		ancestry_ofWidget: Ancestry,
+		ancestry: Ancestry,
 		ancestry_ofParent: Ancestry | null,
 		points_toChild: boolean = true,
 		angle_ofChild: number | null = null) {
-		super(u.copyObject(rect.origin), u.copyObject(rect.size));
-		this.points_right = !angle_ofChild ? true : new Angle(angle_ofChild).angle_pointsRight;
-		this.es_widget = ux.s_element_for(ancestry_ofWidget, T_Element.widget, k.empty);
-		this.ancestry_ofParent = ancestry_ofParent;
-		this.ancestry_ofWidget = ancestry_ofWidget;
-		this.points_toChild = points_toChild;
-		this.origin_ofChild = origin_ofChild;
-		this.angle_ofChild = angle_ofChild;
-		this.curveType = curveType;
-		this.t_widget = t_widget;
-		if (!ancestry_ofWidget?.thing) {
-			console.log(`geometry G_Widget ... relationship has no child ${ancestry_ofWidget?.relationship?.description}`);
-		}
-		this.layout();
+			this.rect = rect;
+			this.points_right = !angle_ofChild ? true : new Angle(angle_ofChild).angle_pointsRight;
+			this.es_widget = ux.s_element_for(ancestry, T_Element.widget, k.empty);
+			this.ancestry_ofParent = ancestry_ofParent;
+			this.points_toChild = points_toChild;
+			this.origin_ofChild = origin_ofChild;
+			this.angle_ofChild = angle_ofChild;
+			this.curveType = curveType;
+			this.t_widget = t_widget;
+			this.ancestry = ancestry;
+			if (!ancestry?.thing) {
+				console.log(`geometry G_Widget ... relationship has no child ${ancestry?.relationship?.description}`);
+			}
+			ux.set_g_widget_forID(this, ancestry.id);
+			this.layout();
 	}
 
 	destroy() {
-		this.ancestry_ofWidget = null;
+		this.ancestry = null;
 		this.ancestry_ofParent = null;
 	}
 
 	get showingReveal(): boolean {
-		return this.ancestry_ofWidget?.showsReveal_forPointingToChild(this.points_toChild) ?? false;
+		return this.ancestry?.showsReveal_forPointingToChild(this.points_toChild) ?? false;
 	}
 
 	get width_ofBothDots(): number {
@@ -73,20 +75,29 @@ export default class G_Widget extends Rect {
 		return adjustment_forReveal + adjustment_forRadial;
 	}
 
+	relayout_recursively() {
+		this.layout();
+		const ancestry = this.ancestry;
+		if (!!ancestry && ancestry.showsChildRelationships) {
+			for (const childAncestry of ancestry.childAncestries) {
+				const g_child_widget = ux.g_widget_forID(childAncestry.id);
+				g_child_widget.relayout_recursively();
+			}
+		}
+	}
+
 	layout() {
-		const ancestry = this.ancestry_ofWidget;
+		const ancestry = this.ancestry;
 		const showingReveal = this.showingReveal;
-		const showingBorder = !ancestry ? false : ancestry.isGrabbed || ancestry.isEditing;
-		const adjustment_forBorder = showingBorder ? 0 : 1;
+		const showingBorder = !ancestry ? false : (ancestry.isGrabbed || ancestry.isEditing);
 		const x_radial = this.points_right ? 4 : k.dot_size * 3.5;
-		const offset_ofRadial = new Point(x_radial, k.dot_size - 4).negated;
 		const offset_ofChildrenTree = new Point(k.dot_size * 1.3, -(7 + k.dot_size / 15));
 		const offset_ofTitle_forRadial = (this.points_right ? 15 : (showingReveal ? 16 : 3));
 		this.origin_ofTitle = new Point(g.inRadialMode ? offset_ofTitle_forRadial : 12.5, 0);
-		this.origin_ofRadial = this.origin_ofChild.offsetBy(offset_ofRadial);
-		this.origin_ofChildrenTree = this.extent.offsetBy(offset_ofChildrenTree);
+		this.origin_ofRadial = this.origin_ofChild.offsetByXY(-x_radial, 4 - k.dot_size);
+		this.origin_ofChildrenTree = this.rect.extent.offsetBy(offset_ofChildrenTree);
 		if (!!ancestry?.thing) {
-			// debug.log_layout(`G WIDGET for ${ancestry.title}`);
+			const adjustment_forBorder = showingBorder ? 0 : 1;
 			const width = ancestry.thing.titleWidth + this.width_ofBothDots;
 			const adjustment_forDirection = this.points_right ? 7 : width - 34.5;
 			const adjustment_x = adjustment_forBorder - adjustment_forDirection;
@@ -109,7 +120,7 @@ export default class G_Widget extends Rect {
 		}
 		if (showingReveal) {
 			const y_reveal = k.dot_size * 0.72;
-			const x_reveal = k.dot_size - (!this.points_right ? 3 : (g.inRadialMode ? 21 : 0) - this.width_ofWidget);
+			const x_reveal = k.dot_size - (!this.points_right ? 3 : (g.inRadialMode ? 21 : -1) - this.width_ofWidget);
 			this.center_ofReveal = new Point(x_reveal, y_reveal);
 		}
 	}

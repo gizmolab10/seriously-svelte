@@ -12,7 +12,7 @@
 	export let g_widget!: G_Widget;
 	const es_widget = g_widget.es_widget;
 	const name = es_widget.name;
-    const ancestry = g_widget.ancestry_ofWidget;
+    const ancestry = g_widget.ancestry;
     const points_right = g_widget.points_right;
 	const points_toChild = g_widget.points_toChild;
 	const s_widget = ux.s_widget_forAncestry(ancestry);

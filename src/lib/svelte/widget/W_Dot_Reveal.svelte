@@ -118,14 +118,14 @@
 			name={es_reveal.name}
 			bind:this={dotReveal}
 			handle_mouse_state={up_hover_closure}>
-			<div class='reveal-div-button'
+			<div class='reveal-dot'
 				on:contextmenu={handle_context_menu}
 				style='
 					width: {k.dot_size}px;
 					height: {k.dot_size}px;
 				'>
 				{#key svgPathFor_revealDot}
-					<SVGD3 name='reveal-div-button-svg'
+					<SVGD3 name='reveal-dot-svg'
 						fill={debug.lines ? 'transparent' : es_reveal.fill}
 						svgPath={svgPathFor_revealDot}
 						stroke={ancestry.thing.color}

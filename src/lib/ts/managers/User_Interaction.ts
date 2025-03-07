@@ -1,5 +1,5 @@
 import { S_Mouse, S_Widget, S_Element, S_Rotation, S_Thing_Pages } from '../common/Global_Imports';
-import { Ancestry, G_Segment, T_Element, Mouse_Timer } from '../common/Global_Imports';
+import { Ancestry, G_Widget, G_Segment, T_Element, Mouse_Timer } from '../common/Global_Imports';
 import Identifiable from '../data/runtime/Identifiable';
 import type { Dictionary } from '../common/Types';
 
@@ -7,6 +7,7 @@ export default class User_Interaction {
 
 	s_thing_pages_byThingID: {[id: string]: S_Thing_Pages} = {};
 	mouse_timer_byName: { [name: string]: Mouse_Timer } = {};
+	g_widget_byAncestryID: { [id: string]: G_Widget } = {};
 	s_widget_byAncestryID: { [id: string]: S_Widget } = {};
 	s_rotation_byName: { [name: string]: S_Rotation } = {};
 	g_segment_byName: { [name: string]: G_Segment } = {};
@@ -27,10 +28,12 @@ export default class User_Interaction {
 	//////////////////////////////////////
 
 	reset_paging() { this.rotation_states.map(s => s.reset()); }
+	g_widget_forID(id: string): G_Widget { return this.g_widget_byAncestryID[id]; }
 	s_widget_forID(id: string): S_Widget { return this.s_widget_byAncestryID[id]; }
 	g_segment_forName(name: string): G_Segment { return this.g_segment_byName[name]; }
 	s_element_forName(name: string): S_Element { return this.s_element_byName[name]; }
 	get rotation_states(): Array<S_Rotation> { return Object.values(this.s_rotation_byName); }
+	set_g_widget_forID(g_widget: G_Widget, id: string) { return this.g_widget_byAncestryID[id] = g_widget; }
 	get isAny_paging_arc_active(): boolean { return this.rotation_states.filter(s => s.isActive).length > 0; }
 	set_g_segment_forName(g_segment: G_Segment, name: string) { return this.g_segment_byName[name] = g_segment; }
 	get isAny_paging_arc_hovering(): boolean { return this.rotation_states.filter(s => s.isHovering).length > 0; }

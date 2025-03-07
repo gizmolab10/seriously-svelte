@@ -171,8 +171,8 @@
 							width={size}
 							height={size}
 							stroke={thing?.color}
-							fill={es_drag.fill}
 							svgPath={svgPathFor_dragDot}
+							fill={debug.lines ? 'transparent' : es_drag.fill}
 						/>
 						{#if svgPathFor_ellipses}
 							<SVGD3 name={'svg-inside-' + name}

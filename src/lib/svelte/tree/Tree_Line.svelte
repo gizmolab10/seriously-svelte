@@ -4,11 +4,11 @@
 	import { w_thing_color } from '../../ts/common/Stores';
 	import Circle from '../kit/Circle.svelte';
 	export let g_widget!: G_Widget;
+	const ancestry = g_widget.ancestry;
 	const curveType = g_widget.curveType;
-	const debugOffset = new Point(141, -0.5);
+	const debugOffset = new Point(142, -0);
 	const lineOffset = new Point(-122.5, 2.5);
-	const ancestry = g_widget.ancestry_ofWidget;
-	let rect = g_widget.offsetBy(lineOffset);
+	let rect = g_widget.rect.offsetBy(lineOffset);
 	let lineWrapper: Svelte_Wrapper;
 	let origin = rect.origin;
 	let extent = rect.extent;

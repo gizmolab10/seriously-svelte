@@ -7,11 +7,10 @@
 	import { onMount, onDestroy } from 'svelte';
 	import Tree_Line from './Tree_Line.svelte';
 	import Circle from '../kit/Circle.svelte';
-	export let g_widget!: G_Widget;
-    const ancestry = g_widget.ancestry_ofWidget;
-	const origin = g_widget.origin_ofChild;
-	let priorTime = new Date().getTime();
+	export let g_tree_widget!: G_Widget;
+    const ancestry = g_tree_widget.ancestry;
 	let g_children_widgets: Array<G_Widget> = [];
+	let priorTime = new Date().getTime();
 	let center = Point.zero;
 	
 	onDestroy(() => { g_children_widgets = []; });
@@ -24,7 +23,7 @@
 				(!received_ancestry || (ancestry.isExpanded &&
 				received_ancestry.hasMatchingID(ancestry)))) {
 				priorTime = now;
-				debug.log_origins(origin.x + ' before timeout');
+				debug.log_origins(g_tree_widget.origin_ofChild.x + ' before timeout');
 				debug.log_layout(`TRIGGER [. .] tree children on "${ancestry.title}"`);
 				layout_allChildren();
 			}
@@ -41,15 +40,15 @@
 	function layout_allChildren() {
 		g_children_widgets = [];
 		if (ancestry.isExpanded || ancestry.isRoot) {
-			debug.log_origins(origin.x + ' children layout');
+			debug.log_origins(g_tree_widget.origin_ofChild.x + ' children layout');
 			const childAncestries = ancestry.childAncestries;
 			const height = ancestry.visibleProgeny_halfHeight + 1;
-			const childrenOrigin = origin.offsetByXY(4.5, height);
+			const childrenOrigin = g_tree_widget.origin_ofChild.offsetByXY(4.5, height);
 			let sum = -ancestry.visibleProgeny_height() / 2; // start out negative and grow positive
 			for (const childAncestry of childAncestries) {
-				const temp_g_treeChild = new G_TreeChild(sum, ancestry, childAncestry, childrenOrigin);
-				g_children_widgets = u.concatenateArrays(g_children_widgets, [temp_g_treeChild.g_widget]);
-				sum += temp_g_treeChild.progeny_height + 1;
+				const scratchpad = new G_TreeChild(sum, childrenOrigin, childAncestry, ancestry);
+				g_children_widgets = u.concatenateArrays(g_children_widgets, [scratchpad.g_child_widget]);
+				sum += scratchpad.progeny_height;
 			}
 			center = childrenOrigin.offsetByXY(20, 2);
 		} else {
@@ -70,8 +69,8 @@
 		{#each g_children_widgets as g_child_widget}
 			<Widget g_widget = {g_child_widget}/>
 			<Tree_Line g_widget = {g_child_widget}/>
-			{#if g_widget.ancestry_ofWidget.showsChildRelationships}
-				<Tree_Children g_widget = {g_child_widget}/>
+			{#if g_child_widget.ancestry.showsChildRelationships}
+				<Tree_Children g_tree_widget = {g_child_widget}/>
 			{/if}
 		{/each}
 	</div>

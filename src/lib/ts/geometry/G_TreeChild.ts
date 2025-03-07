@@ -1,7 +1,7 @@
 import { k, Rect, Size, Point, T_Line, T_Widget, Ancestry, G_Widget } from '../common/Global_Imports';
 
 export default class G_TreeChild {
-	g_widget: G_Widget;
+	g_child_widget: G_Widget;
 	progeny_height = 0;
 
 	// scratchpad for
@@ -10,15 +10,15 @@ export default class G_TreeChild {
 
 	constructor(
 		sum: number,
-		ancestry_ofParent: Ancestry,
-		child_ancestry: Ancestry,
-		origin: Point) {
-		const progeny_height = child_ancestry.visibleProgeny_height();
-		const sizeY = sum + progeny_height / 2;
-		const direction = this.getDirection(sizeY);
-		const rect = new Rect(origin, new Size(k.line_stretch, sizeY - 1));
-		const widget_origin = this.origin_forAncestry_inRect(child_ancestry, rect);
-		this.g_widget = new G_Widget(rect, T_Widget.tree, direction, widget_origin, child_ancestry, ancestry_ofParent);
+		origin: Point,
+		ancestry: Ancestry,
+		ancestry_ofParent: Ancestry) {
+		const progeny_height = ancestry.visibleProgeny_height();
+		const child_sizeY = sum + progeny_height / 2;
+		const child_direction = this.getDirection(child_sizeY);
+		const child_rect = new Rect(origin, new Size(k.line_stretch, child_sizeY - 1));
+		const child_widget_origin = this.origin_forAncestry_inRect(ancestry, child_rect);
+		this.g_child_widget = new G_Widget(child_rect, T_Widget.tree, child_direction, child_widget_origin, ancestry, ancestry_ofParent);
 		this.progeny_height = progeny_height;
 	}
 
@@ -41,4 +41,5 @@ export default class G_TreeChild {
 			return T_Line.flat;
 		}
 	}
+
 }

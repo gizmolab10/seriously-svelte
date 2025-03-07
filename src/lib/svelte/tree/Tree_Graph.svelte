@@ -88,7 +88,7 @@
 			style = 'transform:translate({$w_user_graph_offset.x}px, {$w_user_graph_offset.y}px);'>
 			<Widget g_widget = {g_focus_widget}/>
 			{#if $w_ancestry_focus.isExpanded}
-				<Tree_Children g_widget = {g_focus_widget}/>
+				<Tree_Children g_tree_widget = {g_focus_widget}/>
 			{/if}
 		</div>
 	{/key}
