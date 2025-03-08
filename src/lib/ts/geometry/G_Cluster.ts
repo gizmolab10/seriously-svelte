@@ -69,8 +69,8 @@ export default class G_Cluster {
 	get titles(): string { return this.ancestries.map(a => a.title).join(', '); }
 	get description(): string { return `(${this.cluster_title}) ${this.titles}`; }
 	get paging_index_ofFocus(): number { return this.s_focusPaging?.index ?? 0; }
-	get paging_rotation(): S_Rotation { return ux.s_rotation_forName(this.name); }
 	get maximum_paging_index(): number { return this.total_widgets - this.widgets_shown; }
+	get s_paging_rotation(): S_Rotation { return ux.s_paging_rotation_forName(this.name); }
 	get kind(): string { return this.predicate?.kind.unCamelCase().lastWord() ?? k.empty; }
 	get name(): string { return `${get(w_ancestry_focus).title}-cluster-${this.direction_kind}`; }
 	get fork_radial(): Point { return Point.fromPolar(get(w_ring_rotation_radius), this.g_arcSlider.fork_angle); }

@@ -1,6 +1,6 @@
 import { Trait, Thing, Hierarchy, Predicate, Relationship } from '../../common/Global_Imports';
 import { T_Thing, T_Startup, T_Preference } from '../../common/Global_Imports';
-import { g, k, p, u, debug, signals } from '../../common/Global_Imports';
+import { c, k, p, u, debug, signals } from '../../common/Global_Imports';
 import { w_hierarchy, w_t_startup } from '../../common/Stores';
 import type { Dictionary } from '../../common/Types';
 import Persistable from '../persistable/Persistable';
@@ -116,8 +116,8 @@ export default class DBCommon {
 	
 	async hierarchy_create_fastLoad_or_fetch_andBuild() {
 		const h = this.hierarchy;
-		if (g.eraseDB > 0) {
-			g.eraseDB -= 1;
+		if (c.eraseDB > 0) {
+			c.eraseDB -= 1;
 			await this.remove_all();	// start fresh
 		}
 		h.forget_all();

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, u, ux, Thing, Point, Angle, debug, signals, Svelte_Wrapper } from '../../ts/common/Global_Imports';
+	import { c, k, u, ux, Thing, Point, Angle, debug, signals, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Widget, T_Signal, T_Element } from '../../ts/common/Global_Imports';
 	import { G_Widget, S_Element, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_ancestries_grabbed } from '../../ts/common/Stores';
@@ -84,7 +84,7 @@
 		const _ = $w_s_title_edit + $w_ancestries_grabbed;
 		if (!!ancestry && !!widget && s_widget.update_forChange) {
 			widget.style.border = es_widget.border;		// avoid rebuilding by injecting style changes
-			widget.style.backgroundColor = ancestry.isGrabbed || g.inRadialMode ? k.color_background : 'transparent';
+			widget.style.backgroundColor = ancestry.isGrabbed || !ux.inTreeMode ? k.color_background : 'transparent';
 			debug.log_grab(`  CHANGE (grabbed: ${ancestry.isGrabbed}) (border: ${es_widget.border}) "${ancestry.title}"`);
 			layout();
 		}
@@ -126,7 +126,7 @@
 
 	function layout_maybe() {
 		if (!!ancestry && s_widget.update_forChange) {
-			const showBackground = showBorder() || g.inRadialMode;
+			const showBackground = showBorder() || !ux.inTreeMode;
 			background = showBackground ? `background-color: ${k.color_background}` : k.empty
 			layout();
 		}
@@ -141,7 +141,7 @@
 		g_widget.layout();
 		update_origin();
 		const hasExtra_onRight = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
-		const onRight = g.inRadialMode ? 0 : 21 + (hasExtra_onRight ? 0.5 : 0);
+		const onRight = !ux.inTreeMode ? 0 : 21 + (hasExtra_onRight ? 0.5 : 0);
 		const origin_ofWidget = origin.offsetBy(g_widget.offset_ofWidget);
 		const width = g_widget.width_ofWidget;
 		const onLeft = points_right ? 1 : 14;
@@ -171,7 +171,7 @@
 				border : {es_widget.border};
 				border-radius : {border_radius}px;
 				width : {g_widget.width_ofWidget}px;
-				background-color : {ancestry.isGrabbed || g.inRadialMode ? k.color_background : 'transparent'};
+				background-color : {ancestry.isGrabbed || !ux.inTreeMode ? k.color_background : 'transparent'};
 			'>
 			<W_Dot_Drag
 				name = {es_drag.name}

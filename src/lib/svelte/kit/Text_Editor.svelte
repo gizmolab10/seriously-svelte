@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, u, debug, T_Layer, databases } from '../../ts/common/Global_Imports';
+	import { k, u, ux, debug, T_Layer, databases } from '../../ts/common/Global_Imports';
 	import { w_thing_fontFamily } from '../../ts/common/Stores';
 	export let handle_textChange = (label: string, text: string) => {};
 	export let color = k.thing_color_default;
@@ -14,12 +14,12 @@
 	let cursorStyle = 'cursor: text';
 	let label_left = (k.width_details - 28 - u.getWidthOf(label) * 0.7) / 2;
 
-	function handle_focus(event: Event) { g.isEditing_text = true; }
+	function handle_focus(event: Event) { ux.isEditing_text = true; }
 	function handle_keyup(event: KeyboardEvent) { handle_key(false, event); }
 	function handle_keydown(event: KeyboardEvent) { handle_key(true, event); }
 	function handle_blur(event: Event) {
 		handle_textChange(label, null);
-		g.isEditing_text = false;
+		ux.isEditing_text = false;
 	}
 
 	function handle_key(down: boolean, event: KeyboardEvent) {

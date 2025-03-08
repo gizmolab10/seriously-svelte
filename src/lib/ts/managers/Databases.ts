@@ -1,4 +1,4 @@
-import { g, k, T_Preference, p } from '../common/Global_Imports';
+import { c, k, T_Preference, p } from '../common/Global_Imports';
 import { T_Database, T_Persistence } from '../data/dbs/DBCommon';
 import { dbAirtable } from '../data/dbs/DBAirtable';
 import { dbFirebase } from '../data/dbs/DBFirebase';
@@ -15,7 +15,7 @@ export default class Databases {
 	db_now: DBCommon;
 
 	queryStrings_apply() {
-		const queryStrings = g.queryStrings;
+		const queryStrings = c.queryStrings;
 		const type = queryStrings.get('db');
 		if (!!type) {
 			this.db_set_accordingToType(type);

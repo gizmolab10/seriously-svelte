@@ -1,4 +1,4 @@
-import { g, k, p, u, Thing, Trait, debug, signals, Predicate, Relationship } from '../../common/Global_Imports';
+import { c, k, p, u, Thing, Trait, debug, signals, Predicate, Relationship } from '../../common/Global_Imports';
 import { T_Thing, T_Trait, T_Debug, T_Create, T_Predicate, T_Preference } from '../../common/Global_Imports';
 import { doc, addDoc, setDoc, getDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
 import { QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
@@ -38,7 +38,7 @@ export default class DBFirebase extends DBCommon {
 
 	queryStrings_apply() {
 		const persistedID = p.read_key(T_Preference.base_id);
-		const id = g.queryStrings.get('name') ?? g.queryStrings.get('dbid') ?? persistedID ?? 'Public';
+		const id = c.queryStrings.get('name') ?? c.queryStrings.get('dbid') ?? persistedID ?? 'Public';
 		p.write_key(T_Preference.base_id, id);
 		this.idBase = id;
 	}
@@ -677,7 +677,7 @@ export default class DBFirebase extends DBCommon {
 	async recordLoginIP() {
 		await this.getUserIPAddress().then( async (ipAddress) => {
 			if (!!ipAddress && ipAddress != '69.181.235.85') {
-				const queryStrings = g.queryStrings.toString() ?? 'empty';
+				const queryStrings = c.queryStrings.toString() ?? 'empty';
 				const logRef = collection(this.firestore, 'access_logs');
 				const item = {
 					queries: queryStrings,

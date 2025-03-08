@@ -1,5 +1,5 @@
 import { w_t_tree, w_t_countDots, w_show_details } from '../common/Stores';
-import { g, k, p, w, signals, T_Preference } from '../common/Global_Imports';
+import { c, k, p, w, signals, T_Preference } from '../common/Global_Imports';
 import { T_Info, T_Hierarchy } from '../common/Enumerations';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
@@ -11,7 +11,7 @@ export class S_Show {
 	t_info		 = T_Info.focus;
 
 	queryStrings_apply() {
-		const queryStrings = g.queryStrings;
+		const queryStrings = c.queryStrings;
 		const hiddenNames = queryStrings.get('hide')?.split(k.comma) ?? [];
 		const visibleNames = queryStrings.get('show')?.split(k.comma) ?? [];
 		const hidden = Object.fromEntries(hiddenNames.map(s => [s, false]) ?? {});

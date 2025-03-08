@@ -1,5 +1,5 @@
 import { T_Tool, T_Info, T_Thing, T_Trait, T_Create, T_Control, T_Predicate, T_Alteration } from '../common/Global_Imports';
-import { g, k, p, u, show, User, Thing, Trait, debug, files, signals, Access, Ancestry } from '../common/Global_Imports';
+import { c, k, p, u, ux, show, User, Thing, Trait, debug, files, signals, Access, Ancestry } from '../common/Global_Imports';
 import { w_storage_update_trigger, w_ancestry_showing_tools, w_ancestries_grabbed } from '../common/Stores';
 import { Predicate, Relationship, S_Mouse, S_Alteration, S_Title_Edit } from '../common/Global_Imports';
 import { w_id_popupView, w_ancestry_focus, w_s_title_edit, w_s_alteration } from '../common/Stores';
@@ -93,7 +93,7 @@ export class Hierarchy {
 		///////////////////////
 
 		let ancestryGrab = this.grabs_latest_ancestry_upward(true);
-		if (event.type == 'keydown' && !g.isEditing_text) {
+		if (event.type == 'keydown' && !ux.isEditing_text) {
 			const OPTION = event.altKey;
 			const SHIFT = event.shiftKey;
 			const COMMAND = event.metaKey;
@@ -103,8 +103,8 @@ export class Hierarchy {
 			const time = new Date().getTime();
 			let graph_needsRebuild = false;
 			if (!modifiers.includes(key)) {		// ignore modifier-key-only events
-				if (g.allow_GraphEditing) {
-					if (!!ancestryGrab && g.allow_TitleEditing) {
+				if (c.allow_GraphEditing) {
+					if (!!ancestryGrab && c.allow_TitleEditing) {
 						switch (key) {
 							case k.space:	await this.ancestry_edit_persistentCreateChildOf(ancestryGrab); break;
 							case 'd':		await this.thing_edit_persistentDuplicate(ancestryGrab); break;
@@ -875,7 +875,7 @@ export class Hierarchy {
 		if (!!toolsAncestry) {
 			let ancestry = toolsAncestry;
 			ancestry.grabOnly();
-			signals.signal_relayout_widgets_fromFocus();
+			signals.signal_reposition_widgets_fromFocus();
 			w_ancestry_showing_tools.set(ancestry);
 		}
 	}
@@ -984,7 +984,7 @@ export class Hierarchy {
 			await this.db.hierarchy_fetch_forID(thing.title)
 			this.relationships_refreshKnowns();
 			const childAncestries = ancestry?.childAncestries;
-			const isRadialMode = g.inRadialMode;
+			const isRadialMode = !ux.inTreeMode;
 			if (!!childAncestries && childAncestries.length > 0) {
 				if (!!grab) {
 					childAncestries[0].grabOnly()
@@ -1011,7 +1011,7 @@ export class Hierarchy {
 					this.ancestry_rebuild_runtimeBrowseRight(ancestry, RIGHT, SHIFT, EXTREME, fromReveal);
 				}
 			}
-		} else if (g.allow_GraphEditing) {
+		} else if (c.allow_GraphEditing) {
 			const grab = this.grabs_latest_ancestry_upward(true);
 			this.ancestry_rebuild_persistentRelocateRight(grab, RIGHT, EXTREME);
 		}
@@ -1028,7 +1028,7 @@ export class Hierarchy {
 			if (!siblings || length == 0) {		// friendly for first-time users
 				this.ancestry_rebuild_runtimeBrowseRight(ancestry, true, EXTREME, up, true);
 			} else if (!!thing) {
-				const is_radial_mode = g.inRadialMode;
+				const is_radial_mode = !ux.inTreeMode;
 				const isBidirectional = ancestry.predicate?.isBidirectional ?? false;
 				if ((!isBidirectional && ancestry.thing_isChild) || !is_radial_mode) {
 					const index = siblings.indexOf(thing);
@@ -1048,7 +1048,7 @@ export class Hierarchy {
 							grabAncestry.grab_forShift(SHIFT);
 							graph_needsRelayout = true;
 						}
-					} else if (g.allow_GraphEditing && OPTION) {
+					} else if (c.allow_GraphEditing && OPTION) {
 						graph_needsRebuild = true;
 						u.ancestries_orders_normalize(parentAncestry.childAncestries, false);
 						const wrapped = up ? (index == 0) : (index + 1 == length);
@@ -1112,7 +1112,7 @@ export class Hierarchy {
 					newGrabAncestry = null;
 				}
 				graph_needsRebuild = ancestry.expand();
-				if (g.inRadialMode) {
+				if (!ux.inTreeMode) {
 					graph_needsRebuild = ancestry.becomeFocus() || graph_needsRebuild;
 				}
 			} else {
@@ -1155,7 +1155,7 @@ export class Hierarchy {
 		if (graph_needsRebuild) {
 			signals.signal_rebuildGraph_fromFocus();
 		} else {
-			signals.signal_relayout_widgets_fromFocus();
+			signals.signal_reposition_widgets_fromFocus();
 		}
 	}
 

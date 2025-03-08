@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { w_thing_color, w_s_title_edit, w_thing_fontFamily } from '../../ts/common/Stores';
-	import { g, k, ux, w, Size, Point, debug, svgPaths } from '../../ts/common/Global_Imports';
+	import { c, k, ux, w, Size, Point, debug, svgPaths } from '../../ts/common/Global_Imports';
 	import { T_Tool, T_Layer, T_Element, G_Radial } from '../../ts/common/Global_Imports';
 	import { w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';

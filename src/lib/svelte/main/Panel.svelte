@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, u, ux, w, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
+	import { c, k, u, ux, w, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_show_details, w_device_isMobile, } from '../../ts/common/Stores';
 	import { debug, T_Layer, Ancestry, T_Startup } from '../../ts/common/Global_Imports';
 	import { w_t_database, w_graph_rect, w_hierarchy } from '../../ts/common/Stores';
@@ -32,13 +32,13 @@
 			const key = event.key.toLowerCase();
 			if (key == undefined) {
 				alert('No key for ' + event.type);
-			} else if (!$w_s_title_edit && !g.isEditing_text) {			// let title editor (when active) consume the events
+			} else if (!$w_s_title_edit && !ux.isEditing_text) {			// let title editor (when active) consume the events
 				const h = $w_hierarchy;
 				switch (key) {
 					case 'o': h.select_file_toUpload(event.shiftKey); break;
 					case 'c': w.user_graph_offset_setTo(Point.zero); break;
 					case 's': h.persist_toFile(); break;
-					case '?': g.showHelp(); break;
+					case '?': c.showHelp(); break;
 					default:  await h.handle_key_down(event); return;	// let hierarchy consume the events
 				}
 				debug.log_key(`PANEL  ${key}`);

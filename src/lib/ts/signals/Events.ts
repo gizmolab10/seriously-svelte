@@ -1,6 +1,6 @@
 import { w_mouse_location, w_mouse_location_scaled, w_count_mouse_up, w_s_alteration } from '../common/Stores';
 import { w_count_resize, w_device_isMobile, w_user_graph_offset } from '../common/Stores';
-import { g, k, w, Point, debug, signals, S_Alteration } from '../common/Global_Imports';
+import { c, k, w, Point, debug, signals, S_Alteration } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
 export class Events {
@@ -32,7 +32,7 @@ export class Events {
 		this.update_event_listener('keydown', this.handle_zoom);
 		this.update_event_listener('resize', this.handle_resize);
 		this.update_event_listener('orientationchange', this.handle_orientation_change);
-		if (g.device_isMobile) {
+		if (c.device_isMobile) {
 			debug.log_action(`  mobile subscribe GRAPH`);
 			window.addEventListener('touchend', this.handle_touch_end, { passive: false });
 			window.addEventListener('touchmove', this.handle_touch_move, { passive: false });
@@ -78,11 +78,11 @@ export class Events {
 	handle_wheel(event: Event) {
 		event.preventDefault();
 		event.stopPropagation();
-		if (!g.device_isMobile) {
+		if (!c.device_isMobile) {
 			const e = event as WheelEvent;
 			const userOffset = get(w_user_graph_offset);
 			const delta = new Point(-e.deltaX, -e.deltaY);
-			if (!!userOffset && g.allow_HorizontalScrolling && delta.magnitude > 1) {
+			if (!!userOffset && c.allow_HorizontalScrolling && delta.magnitude > 1) {
 				debug.log_action(` wheel GRAPH`);
 				w.user_graph_offset_setTo(userOffset.offsetBy(delta));
 			}
@@ -106,8 +106,8 @@ export class Events {
 	}
 
 	handle_resize(event: Event) {
-		// called when simulator switches platform (e.g., desktop <--> iphone)
-		const isMobile = g.device_isMobile;
+		// called when simulator switches platform (e.c., desktop <--> iphone)
+		const isMobile = c.device_isMobile;
 		debug.log_action(` resize [is${isMobile ? '' : ' not'} mobile] STATE`);
 		w_count_resize.update(n => n + 1);
 		w_device_isMobile.set(isMobile);
@@ -115,7 +115,7 @@ export class Events {
 	}
 
 	handle_orientation_change(event: Event) {
-		const isMobile = g.device_isMobile;
+		const isMobile = c.device_isMobile;
 		debug.log_action(` orientation change [is${isMobile ? '' : ' not'} mobile] STATE`);
 		w_device_isMobile.set(isMobile);
 		w.restore_state();
@@ -153,7 +153,7 @@ export class Events {
 	// });
 
 	// window.addEventListener('drop', (event) => {
-	//     event.preventDefault(); // Prevent default behavior (e.g., opening the file in the browser)
+	//     event.preventDefault(); // Prevent default behavior (e.c., opening the file in the browser)
 
 	//     // Access the dropped files
 	//     const files = event.dataTransfer?.files;

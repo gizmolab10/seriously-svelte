@@ -1,6 +1,6 @@
 import { w_hierarchy, w_t_tree, w_t_graph, w_t_countDots, w_t_details } from '../common/Stores';
 import { w_s_paging, w_ancestries_grabbed, w_ancestries_expanded } from '../common/Stores';
-import { g, k, ux, show, debug, Ancestry, databases } from '../common/Global_Imports';
+import { c, k, ux, show, debug, Ancestry, databases } from '../common/Global_Imports';
 import { w_ancestry_focus, w_font_size, w_thing_fontFamily } from '../common/Stores';
 import { T_Graph, T_Hierarchy, T_Details, S_Paging } from '../common/Global_Imports';
 import { w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
@@ -69,8 +69,8 @@ export class Preferences {
 	static readonly ANCESTRIES: unique symbol;
 
 	restore_grabbed_andExpanded(force: boolean = false) {
-		if (g.eraseDB > 0) {
-			g.eraseDB -= 1;
+		if (c.eraseDB > 0) {
+			c.eraseDB -= 1;
 			w_ancestries_expanded.set([]);
 			w_ancestries_grabbed.set([get(w_hierarchy).rootAncestry]);
 		} else {
@@ -98,7 +98,7 @@ export class Preferences {
 	restore_focus() {
 		const h = get(w_hierarchy);
 		let ancestryToFocus = h.rootAncestry;
-		if (!this.ignoreAncestries && !g.eraseDB) {
+		if (!this.ignoreAncestries && !c.eraseDB) {
 			const focusPath = this.readDB_key(T_Preference.focus);
 			if (!!focusPath) {
 				const focusAncestry = h.ancestry_remember_createUnique(focusPath);

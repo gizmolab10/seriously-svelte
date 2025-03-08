@@ -1,5 +1,5 @@
 import { Direction, Predicate, Hierarchy, databases, Relationship, Svelte_Wrapper } from '../../common/Global_Imports';
-import { g, k, u, show, Rect, Size, Thing, debug, signals, wrappers, svgPaths } from '../../common/Global_Imports';
+import { c, k, u, ux, show, Rect, Size, Thing, debug, signals, wrappers, svgPaths } from '../../common/Global_Imports';
 import { T_Element, T_Predicate, T_Alteration, T_SvelteComponent } from '../../common/Global_Imports';
 import { w_hierarchy, w_ancestry_focus, w_ancestry_showing_tools } from '../../common/Stores';
 import { w_ancestries_grabbed, w_ancestries_expanded, } from '../../common/Stores';
@@ -112,14 +112,14 @@ export default class Ancestry extends Identifiable {
 	get points_right(): boolean {
 		const radial_points_right = this.g_widget?.points_right ?? true;
 		const hasVisibleChildren = this.isExpanded && this.hasChildRelationships;
-		return g.inRadialMode ? radial_points_right : !hasVisibleChildren;
+		return !ux.inTreeMode ? radial_points_right : !hasVisibleChildren;
 	}
 
 	get isEditable(): boolean {
 		const isExternals = this.thing?.isExternals ?? true;
 		const isBulkAlias = this.thing?.isBulkAlias ?? true;	// missing thing, return not editable
 		const canEdit = !this.isRoot || databases.db_now.t_database == T_Database.local;
-		return canEdit && g.allow_TitleEditing && !isExternals && !isBulkAlias;
+		return canEdit && c.allow_TitleEditing && !isExternals && !isBulkAlias;
 	}
 
 	get id_thing(): string {
@@ -160,7 +160,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	get isVisible(): boolean {
-		if (g.inRadialMode) {
+		if (!ux.inTreeMode) {
 			return this.parentAncestry?.s_paging?.index_isVisible(this.siblingIndex) ?? false;
 		} else {
 			const focus = get(w_ancestry_focus);
@@ -383,7 +383,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	svgPathFor_tinyDots_outsideReveal(points_toChild: boolean): string | null {
-		const in_radial_mode = g.inRadialMode;
+		const in_radial_mode = !ux.inTreeMode;
 		const isVisible_forChild = this.hasChildRelationships && show.children_dots && (in_radial_mode ? true : !this.isExpanded);
 		const isVisible_inRadial = points_toChild ? isVisible_forChild : this.hasParentRelationships && (this.isUnidirectional ? show.parent_dots : show.related_dots);
 		const show_outside_tinyDots = in_radial_mode ? isVisible_inRadial : isVisible_forChild;
@@ -544,7 +544,7 @@ export default class Ancestry extends Identifiable {
 			w_s_title_edit?.set(null);
 			if (!!get(w_s_alteration)) {
 				this.ancestry_alterMaybe(this);
-			} else if (!shiftKey && g.inRadialMode) {
+			} else if (!shiftKey && !ux.inTreeMode) {
 				this.becomeFocus();
 			} else if (shiftKey || this.isGrabbed) {
 				this.toggleGrab();
@@ -758,7 +758,7 @@ export default class Ancestry extends Identifiable {
 			return array;
 		});
 		let ancestries = get(w_ancestries_grabbed) ?? [];
-		if (ancestries.length == 0 && !g.inRadialMode) {
+		if (ancestries.length == 0 && ux.inTreeMode) {
 			rootAncestry.grabOnly();
 		} else {
 			this.toggle_editingTools(); // do not show editingTools for root

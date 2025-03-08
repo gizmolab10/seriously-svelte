@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, u, ux, w, show, Rect, Size, Point, debug, Angle } from '../../ts/common/Global_Imports';
+	import { c, k, u, ux, w, show, Rect, Size, Point, debug, Angle } from '../../ts/common/Global_Imports';
 	import { T_Layer, G_Cluster, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_thing_fontFamily, w_ring_rotation_radius } from '../../ts/common/Stores';
 	import { w_count_mouse_up, w_ancestry_focus } from '../../ts/common/Stores';
@@ -39,7 +39,7 @@
 	$: {
 		if (mouse_up_count != $w_count_mouse_up) {		// NEVER gets executed
 			mouse_up_count = $w_count_mouse_up;			// WHY? because mouse_up_count is always
-			g_cluster.paging_rotation.reset();		// reset to w_count_mouse_up by rebuild
+			g_cluster.s_paging_rotation.reset();		// reset to w_count_mouse_up by rebuild
 		}
 	}
 
@@ -49,14 +49,14 @@
 
 	function update_colors() {
 		fork_color = u.opacitize(color, 0.3);
-		arc_color = u.opacitize(color, g.s_cluster_rotation.stroke_opacity);
-		thumb_color = u.opacitize(color, g.s_ring_rotation.isActive ? 0.15 : g_cluster.paging_rotation.three_level_opacity);
+		arc_color = u.opacitize(color, ux.s_cluster_rotation.stroke_opacity);
+		thumb_color = u.opacitize(color, ux.s_ring_rotation.isActive ? 0.15 : g_cluster.s_paging_rotation.three_level_opacity);
 	}
 
 	function hover_closure(s_mouse) {
 		if (g_cluster.isPaging) {
 			if (s_mouse.isHover) {
-				g_cluster.paging_rotation.isHovering = g_cluster.thumb_isHit;	// show highlight around ring
+				g_cluster.s_paging_rotation.isHovering = g_cluster.thumb_isHit;	// show highlight around ring
 				update_colors();
 			}
 		}

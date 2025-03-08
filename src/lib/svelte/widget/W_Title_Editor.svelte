@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, u, ux, w, Rect, Size, Point, Thing, debug, Angle, signals } from '../../ts/common/Global_Imports';
+	import { c, k, u, ux, w, Rect, Size, Point, Thing, debug, Angle, signals } from '../../ts/common/Global_Imports';
 	import { w_t_graph, w_hierarchy, w_s_title_edit, w_mouse_location } from '../../ts/common/Stores';
 	import { T_Graph, T_Layer, S_Title_Edit, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { databases, Seriously_Range, Svelte_Wrapper } from '../../ts/common/Global_Imports';
@@ -43,7 +43,7 @@
 		const handle_anySignal = signals.handle_anySignal_atPriority(0, (t_signal, ancestry) => {
 			updateInputWidth();
 		});
-		const handle_relayout = signals.handle_relayout_widgets(2, (received_ancestry) => {
+		const handle_relayout = signals.handle_reposition_widgets(2, (received_ancestry) => {
 			if (!!input && ancestry.pathString == received_ancestry.pathString) {
 				debug.log_layout(`TRIGGER [. . .] input on "${ancestry.title}"`);
 				input.style.width = `${ancestry.thing.titleWidth}px`;
@@ -118,12 +118,13 @@
 
 	function relayout() {
 		debug.log_edit(`RELAYOUT ${ancestry.title}`);
-		signals.signal_relayout_widgets_from(ancestry);
+		ux.g_widget_forID(ancestry.id).relayout_recursively();
+		signals.signal_reposition_widgets_from(ancestry);
 	}
 	
 	function update_cursorStyle() {
-		const noCursor = (ancestry_isEditing() || ancestry.isGrabbed) && !g.inRadialMode && ancestry.isEditable;
-		const useTextCursor = ancestry_isEditing() || ancestry.isGrabbed || !(g.inRadialMode || ancestry.isEditable);
+		const noCursor = (ancestry_isEditing() || ancestry.isGrabbed) && ux.inTreeMode && ancestry.isEditable;
+		const useTextCursor = ancestry_isEditing() || ancestry.isGrabbed || !(!ux.inTreeMode || ancestry.isEditable);
 		cursor_style = noCursor ? k.empty : `cursor: ${useTextCursor ? 'text' : 'pointer'}`;
 	}
 

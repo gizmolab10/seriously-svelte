@@ -49,19 +49,19 @@ import User from '../data/persistable/User';
 import Angle from '../geometry/Angle';
 
 import './Extensions';
-import { g } from './Globals';
 import { k } from './Constants';
 import { u } from './Utilities';
 import { e } from '../signals/Events';
 import { w } from '../geometry/G_Window';
 import { p } from '../managers/Preferences';
+import { c } from '../managers/Configuration';
 import { ux } from '../managers/User_Interaction';
 
 import { transparentize } from 'color2k';
 import interact from 'interactjs';
 
 export {
-	e, g, k, p, u, ux, w,
+	e, c, k, p, u, ux, w,
 	T_Timer, Mouse_Timer,
 	interact, transparentize,
 	wrappers, Seriously_Range,

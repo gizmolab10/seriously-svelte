@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, p, ux, show, Rect, Size, Point, Thing, debug, signals, Ancestry } from '../../ts/common/Global_Imports';
+	import { c, k, p, ux, show, Rect, Size, Point, Thing, debug, signals, Ancestry } from '../../ts/common/Global_Imports';
 	import { w_ancestry_focus, w_ancestries_grabbed, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { T_Info, T_Trait, T_Layer, T_Element, T_Preference } from '../../ts/common/Global_Imports';
 	import { w_hierarchy, w_thing_color, w_thing_title } from '../../ts/common/Stores';

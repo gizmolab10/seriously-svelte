@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, u, ux, show, Rect, Size, Point, Thing, debug, T_Layer, T_Tool } from '../../ts/common/Global_Imports';
+	import { c, k, u, ux, show, Rect, Size, Point, Thing, debug, T_Layer, T_Tool } from '../../ts/common/Global_Imports';
 	import { databases, Svelte_Wrapper, T_Alteration, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_t_countDots, w_thing_color, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { signals, svgPaths, T_Graph, T_Element } from '../../ts/common/Global_Imports';
@@ -38,7 +38,7 @@
 			es_drag.isInverted = invert_flag;
 			svgPaths_updateExtra();
         });
-		const handle_relayout = signals.handle_relayout_widgets(2, (received_ancestry) => {
+		const handle_relayout = signals.handle_reposition_widgets(2, (received_ancestry) => {
 			if (!!dotDrag) {
 				debug.log_layout(`TRIGGER [. . .] dotDrag on "${ancestry.title}"`);
 				dotDrag.style.left = `${left}px`;
@@ -86,7 +86,7 @@
 	}
 
 	function svgPaths_update() {
-		if (g.inRadialMode) {
+		if (!ux.inTreeMode) {
 			svgPathFor_dragDot = svgPaths.circle_atOffset(size, size - 1);
 		} else {
 			svgPathFor_dragDot = svgPaths.oval(size, false);
@@ -102,16 +102,16 @@
 				svgPathFor_ellipses = svgPaths.ellipses(6, 0.5, false, count, size / 2);
 			}
 			if (thing.hasRelated && show.related_dots) {
-				const x = (g.inRadialMode ? 3.2 : 4.5) * (points_right ? -1 : 1);
+				const x = (!ux.inTreeMode ? 3.2 : 4.5) * (points_right ? -1 : 1);
 				svgPathFor_related = svgPaths.circle_atOffset(size, 3, new Point(x, 0));
 			}
 		}
 	}
 
 	function updateColors_forHovering(isOut) {
-		if (!g.isAny_rotation_active) {
+		if (!ux.isAny_rotation_active) {
 			isHovering = !isOut;
-			const usePointer = (!ancestry.isGrabbed || g.inRadialMode) && ancestry.hasChildRelationships && !g.isAny_rotation_active;
+			const usePointer = (!ancestry.isGrabbed || !ux.inTreeMode) && ancestry.hasChildRelationships && !c.isAny_rotation_active;
 			const cursor = usePointer ? 'pointer' : 'normal';
 			if (!!es_drag && !!thing) {
 				es_drag.set_forHovering(thing.color, cursor);
@@ -122,7 +122,7 @@
 	}
 
 	function handle_up_long_hover(s_mouse) {
-		if (!g.isAny_rotation_active) {
+		if (!ux.isAny_rotation_active) {
 			if (s_mouse.isHover) {
 				updateColors_forHovering(s_mouse.isOut);
 			} else if (s_mouse.isLong) {

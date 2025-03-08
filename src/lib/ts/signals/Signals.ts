@@ -7,7 +7,7 @@ export enum T_Signal {
 	thing	   = 'thing',
 	rebuild	   = 'rebuild',
 	recreate   = 'recreate',
-	relayout   = 'relayout',
+	reposition = 'reposition',
 	alterState = 'alterState',
 }
 
@@ -22,9 +22,9 @@ export class Signals {
 	signal_altering(value: any = null) { this.signal(T_Signal.alterState, value); }
 	signal_rebuildGraph_fromFocus() { this.signal_rebuildGraph_from(get(w_ancestry_focus)); }
 	signal_recreate_widgets_from(value: any = null) { this.signal(T_Signal.recreate, value); }
-	signal_relayout_widgets_from(value: any = null) { this.signal(T_Signal.relayout, value); }
+	signal_reposition_widgets_from(value: any = null) { this.signal(T_Signal.reposition, value); }
 	signal_recreate_widgets_fromFocus() { this.signal_recreate_widgets_from(get(w_ancestry_focus)); }
-	signal_relayout_widgets_fromFocus() { this.signal_relayout_widgets_from(get(w_ancestry_focus)); }
+	signal_reposition_widgets_fromFocus() { this.signal_reposition_widgets_from(get(w_ancestry_focus)); }
 
 	signal_rebuildGraph_from(value: any = null) {
 		this.rebuild_isInProgress = true;
@@ -36,7 +36,7 @@ export class Signals {
 		if (this.signal_isInFlight) {					// avoid sending multiple simultaneous signals
 			debug.log_signal(`NOT SENDING ${t_signal} in flight`);
 		} else if (!this.rebuild_isInProgress ||		// also, if rebuild is in progress
-			t_signal != T_Signal.relayout) {			// suppress relayout
+			t_signal != T_Signal.reposition) {			// suppress reposition
 			this.signal_isInFlight = true;
 			const highestPriority = this.highestPriorities[t_signal] ?? 0;
 			for (let priority = 0; priority <= highestPriority; priority++) {
@@ -57,8 +57,8 @@ export class Signals {
 		return this.handle_signal_atPriority(T_Signal.recreate, priority, onSignal);
 	}
 
-	handle_relayout_widgets(priority: number, onSignal: (value: any | null) => any ) {
-		return this.handle_signal_atPriority(T_Signal.relayout, priority, onSignal);
+	handle_reposition_widgets(priority: number, onSignal: (value: any | null) => any ) {
+		return this.handle_signal_atPriority(T_Signal.reposition, priority, onSignal);
 	}
 
 	handle_altering(onSignal: (value: any | null) => any ) {
@@ -94,7 +94,7 @@ export class Signals {
 	highestPriorities: { [id_signal: string]: number } = {}
 
 	adjust_highestPriority_forAllSignals(priority: number) {
-		const all_t_signals = [T_Signal.thing, T_Signal.rebuild, T_Signal.relayout, T_Signal.alterState];
+		const all_t_signals = [T_Signal.thing, T_Signal.rebuild, T_Signal.reposition, T_Signal.alterState];
 		for (const t_signal of all_t_signals) {
 			this.adjust_highestPriority_forSignal(priority, t_signal);
 		}

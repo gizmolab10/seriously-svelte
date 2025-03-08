@@ -17,7 +17,7 @@
 
 	onMount(() => {
 		layout_allChildren();
-		const handler = signals.handle_relayout_widgets(1, (received_ancestry) => {
+		const handler = signals.handle_reposition_widgets(1, (received_ancestry) => {
 			const now = new Date().getTime();
 			if (((now - priorTime) > 100) &&	// no more often than ten times per second
 				(!received_ancestry || (ancestry.isExpanded &&

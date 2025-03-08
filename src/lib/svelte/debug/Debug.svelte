@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, u, w, Rect, Size, Point, debug, T_Layer } from '../../ts/common/Global_Imports';
+	import { c, u, w, Rect, Size, Point, debug, T_Layer } from '../../ts/common/Global_Imports';
 	import { w_user_graph_center, w_ancestry_showing_tools } from '../../ts/common/Stores';
 	import { w_graph_rect, w_mouse_location_scaled } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';

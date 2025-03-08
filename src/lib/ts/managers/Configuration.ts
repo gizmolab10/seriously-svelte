@@ -1,24 +1,17 @@
-import { e, k, p, u, ux, w, show, debug, databases } from './Global_Imports';
-import { Hierarchy, S_Rotation, S_Expansion } from './Global_Imports';
-import { T_Graph, T_Preference } from './Global_Imports';
-import { stores, w_t_graph, w_hierarchy } from '../common/Stores';
+import { e, k, p, u, w, show, debug, databases, Hierarchy } from '../common/Global_Imports';
+import { T_Preference } from '../common/Global_Imports';
+import { stores, w_hierarchy } from '../common/Stores';
 import { get } from 'svelte/store';
 
-export class Globals {
+export class Configuration {
+
+	eraseDB = 0;
 	allow_GraphEditing = true;
 	allow_TitleEditing = true;
 	allow_HorizontalScrolling = true;
-
-	eraseDB = 0;
-	isEditing_text = false;
-	mouse_responder_number = 0;
-	s_ring_rotation!: S_Rotation;
-	s_ring_resizing!: S_Expansion;
-	s_cluster_rotation!: S_Rotation;
-	rebuild_needed_byType: {[type: string]: boolean} = {};
 	queryStrings = new URLSearchParams(window.location.search);
 
-	startup() {
+	configure() {
 		
 		//////////////////////////////////////////////////
 		//												//
@@ -29,7 +22,7 @@ export class Globals {
 		//////////////////////////////////////////////////
 
 		debug.queryStrings_apply();						// debug even setup code
-		this.setup_defaults();							// defaults
+		stores.setup_defaults();
 		w.restore_state();
 		show.restore_state();							// local persistance
 		p.restore_defaults();
@@ -37,13 +30,6 @@ export class Globals {
 		this.queryStrings_apply();						// query string
 		show.queryStrings_apply();
 		e.setup();
-	}
-
-	setup_defaults() {
-		stores.setup_defaults();
-		this.s_ring_resizing = new S_Expansion();
-		this.s_ring_rotation  = new S_Rotation();
-		this.s_cluster_rotation = new S_Rotation();
 	}
 
 	queryStrings_apply() {
@@ -73,17 +59,7 @@ export class Globals {
 		}
     }
 
-	get inRadialMode(): boolean { return get(w_t_graph) == T_Graph.radial; }
 	get hierarchy(): Hierarchy { return get(w_hierarchy); }
-
-	get isAny_rotation_active(): boolean {
-		return ux.isAny_paging_arc_active || this.s_cluster_rotation.isActive || this.s_ring_rotation.isActive;
-	}
-
-	get next_mouse_responder_number(): number {
-		this.mouse_responder_number += 1;
-		return this.mouse_responder_number;
-	}
 
 	get isServerLocal(): boolean {
 		const hostname = window.location.hostname;
@@ -111,15 +87,8 @@ export class Globals {
 	}
 
 	open_tabFor(url: string) { window.open(url, 'help-webseriously')?.focus(); }
-	require_rebuild_forType(type: string) { this.rebuild_needed_byType[type] = true; }
 	showHelp() { this.open_tabFor(this.isServerLocal ? k.local_help_url : k.remote_help_url); }
-
-	readOnce_rebuild_needed_forType(type: string) : boolean {
-		const needed = this.rebuild_needed_byType[type];
-		this.rebuild_needed_byType[type] = false;
-		return needed;
-	}
 
 }
 
-export let g = new Globals();
+export let c = new Configuration();

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, g, u, ux, Rect, Size, Point, debug, T_Layer } from '../../ts/common/Global_Imports';
+	import { k, c, u, ux, Rect, Size, Point, debug, T_Layer } from '../../ts/common/Global_Imports';
 	import { w_mouse_location, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { T_Timer, Mouse_Timer, S_Mouse } from '../../ts/common/Global_Imports';
 	import type { Handle_Result } from '../../ts/common/Types';
@@ -22,7 +22,7 @@
 	export let name = 'generic';
 	const s_mouse = ux.s_mouse_forName(name);	// persist across destroy/recreate
 	const mouse_timer = ux.mouse_timer_forName(name);	// persist across destroy/recreate
-	const mouse_responder_number = g.next_mouse_responder_number;
+	const mouse_responder_number = ux.next_mouse_responder_number;
 	let mouse_isDown = false;
 	let responding_element;
 	let style = k.empty;

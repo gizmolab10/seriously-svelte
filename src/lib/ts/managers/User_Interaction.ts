@@ -1,18 +1,25 @@
-import { S_Mouse, S_Widget, S_Element, S_Rotation, S_Thing_Pages } from '../common/Global_Imports';
-import { Ancestry, G_Widget, G_Segment, T_Element, Mouse_Timer } from '../common/Global_Imports';
+import { S_Mouse, S_Widget, S_Element, S_Expansion, S_Rotation, S_Thing_Pages } from '../common/Global_Imports';
+import { Ancestry, G_Widget, G_Segment, T_Graph, T_Element, Mouse_Timer } from '../common/Global_Imports';
 import Identifiable from '../data/runtime/Identifiable';
 import type { Dictionary } from '../common/Types';
+import { w_t_graph } from '../common/Stores';
+import { get } from 'svelte/store';
 
 export default class User_Interaction {
-
 	s_thing_pages_byThingID: {[id: string]: S_Thing_Pages} = {};
 	mouse_timer_byName: { [name: string]: Mouse_Timer } = {};
 	g_widget_byAncestryID: { [id: string]: G_Widget } = {};
 	s_widget_byAncestryID: { [id: string]: S_Widget } = {};
 	s_rotation_byName: { [name: string]: S_Rotation } = {};
+	rebuild_needed_byType: {[type: string]: boolean} = {};
 	g_segment_byName: { [name: string]: G_Segment } = {};
 	s_element_byName: { [name: string]: S_Element } = {};
 	s_mouse_byName: { [name: string]: S_Mouse } = {};
+	s_cluster_rotation!: S_Rotation;
+	s_ring_resizing!: S_Expansion;
+	s_ring_rotation!: S_Rotation;
+	mouse_responder_number = 0;
+	isEditing_text = false;
 
 	//////////////////////////////////////
 	//									//
@@ -26,25 +33,46 @@ export default class User_Interaction {
 	//	  Radial & Paging_ArcSlider		//
 	//									//
 	//////////////////////////////////////
+	
+	constructor() {
+		this.s_cluster_rotation = new S_Rotation();
+		this.s_ring_rotation	= new S_Rotation();
+		this.s_ring_resizing	= new S_Expansion();
+	}
+	
+	get inTreeMode(): boolean { return get(w_t_graph) == T_Graph.tree; }
+	get s_paging_rotations(): Array<S_Rotation> { return Object.values(this.s_rotation_byName); }
+	get isAny_paging_arc_active(): boolean { return this.s_paging_rotations.filter(s => s.isActive).length > 0; }
+	get isAny_paging_arc_hovering(): boolean { return this.s_paging_rotations.filter(s => s.isHovering).length > 0; }
+	get isAny_rotation_active(): boolean { return this.isAny_paging_arc_active || this.s_cluster_rotation.isActive || this.s_ring_rotation.isActive; }
 
-	reset_paging() { this.rotation_states.map(s => s.reset()); }
+	reset_paging() { this.s_paging_rotations.map(s => s.reset()); }
 	g_widget_forID(id: string): G_Widget { return this.g_widget_byAncestryID[id]; }
 	s_widget_forID(id: string): S_Widget { return this.s_widget_byAncestryID[id]; }
+	require_rebuild_forType(type: string) { this.rebuild_needed_byType[type] = true; }
 	g_segment_forName(name: string): G_Segment { return this.g_segment_byName[name]; }
 	s_element_forName(name: string): S_Element { return this.s_element_byName[name]; }
-	get rotation_states(): Array<S_Rotation> { return Object.values(this.s_rotation_byName); }
 	set_g_widget_forID(g_widget: G_Widget, id: string) { return this.g_widget_byAncestryID[id] = g_widget; }
-	get isAny_paging_arc_active(): boolean { return this.rotation_states.filter(s => s.isActive).length > 0; }
 	set_g_segment_forName(g_segment: G_Segment, name: string) { return this.g_segment_byName[name] = g_segment; }
-	get isAny_paging_arc_hovering(): boolean { return this.rotation_states.filter(s => s.isHovering).length > 0; }
 	s_mouse_forName(name: string): S_Mouse { return this.assure_forKey_inDict(name, this.s_mouse_byName, () => S_Mouse.empty()); }
-	s_rotation_forName(name: string): S_Rotation { return this.assure_forKey_inDict(name, this.s_rotation_byName, () => new S_Rotation()); }
 	name_from(identifiable: Identifiable, type: T_Element, subtype: string): string { return `${type}(${subtype}) (id '${identifiable.id}')`; }
 	mouse_timer_forName(name: string): Mouse_Timer { return this.assure_forKey_inDict(name, this.mouse_timer_byName, () => new Mouse_Timer()); }
+	s_paging_rotation_forName(name: string): S_Rotation { return this.assure_forKey_inDict(name, this.s_rotation_byName, () => new S_Rotation()); }
 	s_widget_forAncestry(ancestry: Ancestry): S_Widget { return this.assure_forKey_inDict(ancestry.id, this.s_widget_byAncestryID, () => new S_Widget(ancestry)); }
-
+	
 	s_thing_pages_forThingID(id: string | null | undefined): S_Thing_Pages | null {
 		return !id ? null : this.assure_forKey_inDict(id, this.s_thing_pages_byThingID, () => new S_Thing_Pages(id));
+	}
+
+	get next_mouse_responder_number(): number {
+		this.mouse_responder_number += 1;
+		return this.mouse_responder_number;
+	}
+
+	readOnce_rebuild_needed_forType(type: string) : boolean {
+		const needed = this.rebuild_needed_byType[type];
+		this.rebuild_needed_byType[type] = false;
+		return needed;
 	}
 
 	s_element_for(identifiable: Identifiable | null, type: T_Element, subtype: string): S_Element {

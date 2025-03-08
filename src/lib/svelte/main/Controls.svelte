@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { T_Layer, T_Graph, T_Element, T_Control, T_Hierarchy, T_Preference } from '../../ts/common/Global_Imports';
-	import { g, k, p, u, ux, w, show, Point, svgPaths, signals, S_Element } from '../../ts/common/Global_Imports';
+	import { c, k, p, u, ux, w, show, Point, svgPaths, signals, S_Element } from '../../ts/common/Global_Imports';
 	import { w_t_graph, w_t_tree, w_count_resize, w_hierarchy, w_id_popupView } from '../../ts/common/Stores';
 	import { w_show_details, w_device_isMobile, w_thing_fontFamily } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/data/runtime/Identifiable';
@@ -69,7 +69,7 @@
 			s_elements_byControlType[t_control].isOut = s_mouse.isOut;
 		} else if (s_mouse.isUp) {
 			switch (t_control) {
-				case T_Control.help: g.showHelp(); break;
+				case T_Control.help: c.showHelp(); break;
 				case T_Control.details: $w_show_details = !$w_show_details; break;
 				case T_Control.bigger: width = w.zoomBy(k.zoom_in_ratio) - 20; break;	// mobile only
 				case T_Control.smaller: width = w.zoomBy(k.zoom_out_ratio) - 20; break;	//   "     "
@@ -113,7 +113,7 @@
 					selected={[$w_t_graph]}
 					titles={[T_Graph.tree, T_Graph.radial]}
 					selection_closure={(titles) => selection_closure('graph', titles)}/>
-				{#if !g.inRadialMode && show.t_trees}
+				{#if ux.inTreeMode && show.t_trees}
 					{#key $w_t_tree}
 						<Segmented
 							name='tree'

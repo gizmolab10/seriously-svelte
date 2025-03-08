@@ -1,4 +1,4 @@
-import { g, Rect, Point, Ancestry, Hierarchy, G_Cluster, G_Radial } from '../common/Global_Imports';
+import { c, Rect, Point, Ancestry, Hierarchy, G_Cluster, G_Radial } from '../common/Global_Imports';
 import { T_Graph, T_Hierarchy, T_Details, T_Startup } from '../common/Global_Imports';
 import { S_Paging, S_Title_Edit, S_Alteration } from '../common/Global_Imports';
 import { get, writable } from 'svelte/store';
@@ -54,7 +54,7 @@ class Stores {
 	}
 	
 	setup_defaults() {
-		w_device_isMobile.set(g.device_isMobile);
+		w_device_isMobile.set(c.device_isMobile);
 		w_t_startup.set(T_Startup.start);
 		w_thing_color.set(null);
 		w_count_mouse_up.set(0);

@@ -1,4 +1,4 @@
-import { g } from '../common/Globals';
+import { c } from '../managers/Configuration';
 
 // query string: ?debug=p,action
 
@@ -91,7 +91,7 @@ export class Debug {
 	}
 
 	queryStrings_apply() {
-		const debug = g.queryStrings.get('debug');
+		const debug = c.queryStrings.get('debug');
 		if (debug) {
 			const flags = debug.split(',');
 			for (const option of flags) {

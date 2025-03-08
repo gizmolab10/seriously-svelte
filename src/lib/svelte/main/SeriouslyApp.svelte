@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { g } from '../../ts/common/Globals';
+	import { c } from '../../ts/managers/Configuration';
 	import Panel from './Panel.svelte';
-	g.startup();
+	c.configure();
 </script>
 <Panel/>
 

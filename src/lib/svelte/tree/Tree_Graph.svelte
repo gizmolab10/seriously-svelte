@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, u, ux, show, Rect, Size, Point, Thing, debug, signals } from '../../ts/common/Global_Imports';
+	import { c, k, u, ux, show, Rect, Size, Point, Thing, debug, signals } from '../../ts/common/Global_Imports';
 	import { T_Line, T_Layer, T_Widget, T_Signal, T_Control, T_Element } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_hierarchy, w_show_details, w_ancestry_focus } from '../../ts/common/Stores';
 	import { w_id_popupView, w_device_isMobile, w_user_graph_offset } from '../../ts/common/Stores';
@@ -23,7 +23,7 @@
 	let top = 0;
 	
 	onMount(() => {
-		const handler = signals.handle_relayout_widgets(0, (received_ancestry) => {
+		const handler = signals.handle_reposition_widgets(0, (received_ancestry) => {
 			if (!received_ancestry || (!!$w_ancestry_focus && $w_ancestry_focus.pathString == received_ancestry.pathString)) {
 				debug.log_layout(`TRIGGER [ ] tree graph on "${$w_ancestry_focus.title}"`);
 				updateOrigins();

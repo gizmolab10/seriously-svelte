@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, u, w, Size, Point, Thing, debug, T_Layer } from '../../ts/common/Global_Imports';
+	import { c, k, u, w, Size, Point, Thing, debug, T_Layer } from '../../ts/common/Global_Imports';
 	import { signals, svgPaths, Ancestry, databases } from '../../ts/common/Global_Imports';
 	import { w_hierarchy, w_graph_rect, w_thing_color } from '../../ts/common/Stores';
 	import { w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';

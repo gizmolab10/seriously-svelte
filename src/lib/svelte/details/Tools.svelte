@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, u, ux, w, show, Rect, Size, Point, debug, T_Tool, T_Layer } from '../../ts/common/Global_Imports';
+	import { c, k, u, ux, w, show, Rect, Size, Point, debug, T_Tool, T_Layer } from '../../ts/common/Global_Imports';
 	import { S_Alteration, T_Alteration, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { databases, T_Element, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
 	import { svgPaths, signals, Direction, T_Graph } from '../../ts/common/Global_Imports';
@@ -94,7 +94,7 @@
 	}
 
 	function titleOffsetX(): number {
-		return !ancestry ? 0 : g.inRadialMode ? ancestry.points_right ? titleWidth + 23 : -6 : ancestry.showsReveal ? titleWidth + 25 : titleWidth + 17;
+		return !ancestry ? 0 : !ux.inTreeMode ? ancestry.points_right ? titleWidth + 23 : -6 : ancestry.showsReveal ? titleWidth + 25 : titleWidth + 17;
 	}
 
 	function handle_delete_event(event) {
