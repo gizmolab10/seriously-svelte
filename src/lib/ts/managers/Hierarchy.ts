@@ -1,5 +1,5 @@
-import { T_Tool, T_Info, T_Thing, T_Trait, T_Create, T_Control, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { c, k, p, u, ux, show, User, Thing, Trait, debug, files, signals, Access, Ancestry } from '../common/Global_Imports';
+import { T_Tool, T_Info, T_Thing, T_Trait, T_Create, T_Control, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { w_storage_update_trigger, w_ancestry_showing_tools, w_ancestries_grabbed } from '../common/Stores';
 import { Predicate, Relationship, S_Mouse, S_Alteration, S_Title_Edit } from '../common/Global_Imports';
 import { w_id_popupView, w_ancestry_focus, w_s_title_edit, w_s_alteration } from '../common/Stores';

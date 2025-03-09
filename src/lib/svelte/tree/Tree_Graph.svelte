@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, k, u, ux, show, Rect, Size, Point, Thing, debug, signals } from '../../ts/common/Global_Imports';
+	import { c, g, k, u, show, Rect, Size, Point, Thing, debug, signals } from '../../ts/common/Global_Imports';
 	import { T_Line, T_Layer, T_Widget, T_Signal, T_Control, T_Element } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_hierarchy, w_show_details, w_ancestry_focus } from '../../ts/common/Stores';
 	import { w_id_popupView, w_device_isMobile, w_user_graph_offset } from '../../ts/common/Stores';
@@ -8,76 +8,23 @@
 	import Widget from '../widget/Widget.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import { onMount } from 'svelte';
-	const s_reveal = ux.s_element_for($w_ancestry_focus, T_Element.reveal, 'tree');
-	const s_focus = ux.s_element_for($w_ancestry_focus, T_Element.focus, 'tree');
-	let origin_ofFirstReveal = Point.zero;
-	let origin_ofChildren = Point.zero;
-	let childrenSize = Point.zero;
-	let g_focus_widget!: G_Widget;
-	let offsetX_ofFirstReveal = 0;
-	let graphRect: Rect;
+	const g_treeGraph = g.g_treeGraph;
 	let rebuilds = 0;
-	let height = 0;
-	let width = 0;
-	let left = 0;
-	let top = 0;
 	
 	onMount(() => {
 		const handler = signals.handle_reposition_widgets(0, (received_ancestry) => {
 			if (!received_ancestry || (!!$w_ancestry_focus && $w_ancestry_focus.pathString == received_ancestry.pathString)) {
-				debug.log_layout(`TRIGGER [ ] tree graph on "${$w_ancestry_focus.title}"`);
-				updateOrigins();
+				debug.log_reposition(`tree graph [ ] on "${$w_ancestry_focus.title}"`);
+				g_treeGraph.update_origins();
 			}
 		});
 		return () => { handler.disconnect() };
 	});
-
-	$: {
-		const _ = $w_device_isMobile;
-		updateOrigins();
-		rebuilds += 1;
-	}
 	
 	$: {
-		const focus = !!$w_ancestry_focus ? $w_ancestry_focus.thing : $w_hierarchy.root;
-		offsetX_ofFirstReveal = focus?.titleWidth / 2 - 2;
-		updateOrigins();
+		const _ = $w_ancestry_focus + $w_hierarchy + $w_device_isMobile + $w_graph_rect;
+		g_treeGraph.update_origins();
 		rebuilds += 1;
-	}
-	
-	$: {
-		if (graphRect != $w_graph_rect) {
-			graphRect = $w_graph_rect;
-			height = graphRect.size.height;
-			width = graphRect.size.width;
-			left = graphRect.origin.x;
-			top = graphRect.origin.y;
-			updateOrigins();
-		}
-	}
-
-	function rectOfChildren(): Rect {
-		const delta = new Point(9, -2);
-		const origin = graphRect.origin.offsetBy(delta).offsetBy(origin_ofChildren);
-		return new Rect(origin, $w_ancestry_focus.visibleProgeny_size.expandedByX(3));
-	}
-
-	function updateOrigins() {
-		const focusAncestry = $w_ancestry_focus;
-		if (!!focusAncestry && !!graphRect) {
-			childrenSize = focusAncestry.visibleProgeny_size;
-			const offsetY = -1 - graphRect.origin.y;
-			const child_offsetY = (k.dot_size / 2) -(childrenSize.height / 2) - 4;
-			const child_offsetX = -37 + k.line_stretch - (k.dot_size / 2) + offsetX_ofFirstReveal;
-			const offsetX = 15 + ($w_show_details ? -k.width_details : 0) - (childrenSize.width / 2) - (k.dot_size / 2.5) + offsetX_ofFirstReveal;
-			origin_ofFirstReveal = graphRect.center.offsetByXY(offsetX, offsetY);
-			if ($w_device_isMobile) {
-				origin_ofFirstReveal.x = 25;
-			}
-			origin_ofChildren = origin_ofFirstReveal.offsetByXY(child_offsetX, child_offsetY);
-			g_focus_widget = new G_Widget(Rect.zero, T_Widget.focus, T_Line.flat, origin_ofChildren, focusAncestry, null);
-			debug.log_origins(origin_ofChildren.x + ' updateOrigins');
-		}
 	}
 
 </script>
@@ -86,9 +33,9 @@
 	{#key rebuilds}
 		<div class = 'tree'
 			style = 'transform:translate({$w_user_graph_offset.x}px, {$w_user_graph_offset.y}px);'>
-			<Widget g_widget = {g_focus_widget}/>
+			<Widget g_widget = {g_treeGraph.g_focus_widget}/>
 			{#if $w_ancestry_focus.isExpanded}
-				<Tree_Children g_tree_widget = {g_focus_widget}/>
+				<Tree_Children g_tree_widget = {g_treeGraph.g_focus_widget}/>
 			{/if}
 		</div>
 	{/key}

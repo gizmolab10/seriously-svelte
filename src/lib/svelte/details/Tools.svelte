@@ -1,10 +1,10 @@
 <script lang='ts'>
-	import { c, k, u, ux, w, show, Rect, Size, Point, debug, T_Tool, T_Layer } from '../../ts/common/Global_Imports';
-	import { S_Alteration, T_Alteration, Svelte_Wrapper } from '../../ts/common/Global_Imports';
-	import { databases, T_Element, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
-	import { svgPaths, signals, Direction, T_Graph } from '../../ts/common/Global_Imports';
+	import { c, k, u, ux, w, show, Rect, Size, Point, debug, signals } from '../../ts/common/Global_Imports';
+	import { T_Tool, T_Graph, T_Layer, T_Element, T_Alteration } from '../../ts/common/Global_Imports';
+	import { svgPaths, databases, Direction, Svelte_Wrapper } from '../../ts/common/Global_Imports';
+	import { S_Mouse, S_Element, S_Alteration } from '../../ts/common/Global_Imports';
 	import { w_s_alteration, w_ancestry_showing_tools } from '../../ts/common/Stores';
-	import { w_graph_rect, w_hierarchy } from '../../ts/common/Stores';
+	import { w_hierarchy, w_graph_rect } from '../../ts/common/Stores';
 	import Transparent_Circle from '../kit/Transparent_Circle.svelte';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Triangle_Button from '../mouse/Triangle_Button.svelte';

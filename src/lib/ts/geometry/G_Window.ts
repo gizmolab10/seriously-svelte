@@ -5,7 +5,6 @@ import { get } from 'svelte/store';
 
 export class G_Window {
 	scale_factor = 1;
-	scroll = this.windowScroll;
 	
 	get windowScroll(): Point { return new Point(window.scrollX, window.scrollY); }
 	get center_ofGraphSize(): Point { return get(w_graph_rect).size.asPoint.dividedInHalf; }

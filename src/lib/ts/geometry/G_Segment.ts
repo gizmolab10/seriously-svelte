@@ -1,4 +1,4 @@
-import { k, u, ux, Rect, Size, Point, svgPaths, T_Oblong } from '../common/Global_Imports';
+import { g, k, u, ux, Rect, Size, Point, svgPaths, T_Oblong } from '../common/Global_Imports';
 import type { Integer } from '../common/Types';
 
 export default class G_Segment {
@@ -38,12 +38,12 @@ export default class G_Segment {
 
 	static grab_g_segment(name: string, title: string, font_size: string, isSelected: boolean, index: Integer, max_index: Integer, left: number, height: number) : G_Segment {
 		let g_segment_name = `${title}-${name}-at-${index}`;
-		let g_segment = ux.g_segment_forName(g_segment_name);
+		let g_segment = g.g_segment_forName(g_segment_name);
 		if (!!g_segment) {
 			g_segment.isSelected = isSelected;
 		} else {
 			g_segment = new G_Segment(name, title, font_size, isSelected, index, max_index, left, height);
-			ux.set_g_segment_forName(g_segment, g_segment_name);
+			g.set_g_segment_forName(g_segment, g_segment_name);
 		}
 		return g_segment;
 	}

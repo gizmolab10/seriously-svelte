@@ -52,7 +52,7 @@ export default class S_Title_Edit {
 		return (!ancestry || (this.ancestry.pathString != ancestry.pathString)) ? false : (this.t_edit == t_edit);
 	}
 
-	setState_temporarily_whileApplying(t_edit: T_Edit, apply: () => void) {
+	setState_temporarilyTo_whileApplying(t_edit: T_Edit, apply: () => void) {
 		const saved = this.t_edit;
 		this.t_edit = t_edit;
 		apply();

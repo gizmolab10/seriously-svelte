@@ -1,9 +1,9 @@
 <script lang='ts'>
-	import { c, k, u, ux, w, Rect, Size, Point, Thing, debug, Angle, signals } from '../../ts/common/Global_Imports';
-	import { w_t_graph, w_hierarchy, w_s_title_edit, w_mouse_location } from '../../ts/common/Stores';
+	import { c, g, k, u, ux, w, Rect, Size, Point, Thing, debug, Angle } from '../../ts/common/Global_Imports';
+	import { signals, databases, Seriously_Range, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { T_Graph, T_Layer, S_Title_Edit, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { databases, Seriously_Range, Svelte_Wrapper } from '../../ts/common/Global_Imports';
-	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/common/Stores';
+	import { w_t_graph, w_hierarchy, w_s_title_edit, w_mouse_location } from '../../ts/common/Stores';
+	import { w_thing_color, w_info_title, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { w_ancestries_grabbed, w_ancestry_showing_tools } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { T_Edit } from '../../ts/state/S_Title_Edit';
@@ -45,7 +45,7 @@
 		});
 		const handle_relayout = signals.handle_reposition_widgets(2, (received_ancestry) => {
 			if (!!input && ancestry.pathString == received_ancestry.pathString) {
-				debug.log_layout(`TRIGGER [. . .] input on "${ancestry.title}"`);
+				debug.log_reposition(`input [. . .] w: ${title_width.asInt()} "${ancestry.title}"`);
 				input.style.width = `${ancestry.thing.titleWidth}px`;
 			}
 		});
@@ -118,7 +118,8 @@
 
 	function relayout() {
 		debug.log_edit(`RELAYOUT ${ancestry.title}`);
-		ux.g_widget_forID(ancestry.id).relayout_recursively();
+		g.g_treeGraph.relayout_recursively();
+		// g.g_widget_forID(ancestry.id).relayout_recursively();
 		signals.signal_reposition_widgets_from(ancestry);
 	}
 	
@@ -168,9 +169,8 @@
 				case 'arrowdown':
 				case 'arrowleft':
 				case 'arrowright': break;
-				case 'tab':	  event.preventDefault(); stop_andPersist(); $w_hierarchy.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break;
 				case 'enter': event.preventDefault(); stop_andPersist(); break;
-				default:	  title_updatedTo(thing.title); break;
+				case 'tab':	  event.preventDefault(); stop_andPersist(); $w_hierarchy.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break;
 			}
 			extractRange_fromInput_toThing();
 		}
@@ -233,12 +233,12 @@
 	}
 
 	function title_updatedTo(title: string | null) {
-		const prior = $w_thing_title;
+		const prior = $w_info_title;
 		if (prior != title) {
 			extractRange_fromInput_toThing();
-			$w_thing_title = title;		// tell Info to update it's selection's title
+			$w_info_title = title;		// tell Info to update it's selection's title
 			debug.log_edit(`TITLE ${title}`);
-			$w_s_title_edit?.setState_temporarily_whileApplying(T_Edit.percolating, () => {
+			$w_s_title_edit?.setState_temporarilyTo_whileApplying(T_Edit.percolating, () => {
 				relayout();
 			});
 			debug.log_edit(`UPDATED ${$w_s_title_edit?.description}`);

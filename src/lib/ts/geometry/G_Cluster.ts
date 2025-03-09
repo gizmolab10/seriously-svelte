@@ -1,5 +1,5 @@
-import { k, u, ux, w, Rect, Point, Angle, debug, T_Line, T_Widget, G_ArcSlider, T_Quadrant } from '../common/Global_Imports';
-import { Ancestry, Predicate, S_Paging, G_Widget, S_Rotation } from '../common/Global_Imports';
+import { G_Widget, G_ArcSlider, S_Paging, S_Rotation, T_Line, T_Widget, T_Quadrant } from '../common/Global_Imports';
+import { k, u, ux, w, Rect, Point, Angle, debug, Ancestry, Predicate } from '../common/Global_Imports';
 import { w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
 import { w_graph_rect, w_ancestry_focus } from '../common/Stores';
 import { get } from 'svelte/store';
@@ -198,7 +198,7 @@ export default class G_Cluster {
 				const child_ancestry = this.ancestries[child_index];
 				const angle_ofChild = this.angle_at_index(index);
 				const origin_ofChild = radial.rotate_by(angle_ofChild).offsetBy(tweak);
-				const g_widget = new G_Widget(Rect.zero, T_Widget.radial, T_Line.flat, origin_ofChild, child_ancestry, get(w_ancestry_focus), this.points_toChildren, angle_ofChild);
+				const g_widget = new G_Widget(Rect.zero, T_Widget.radial, T_Line.flat, origin_ofChild, child_ancestry, this.points_toChildren, angle_ofChild);
 				this.g_cluster_widgets.push(g_widget);
 				index += 1;
 			}

@@ -1,8 +1,8 @@
 
-import { T_Quadrant, T_Orientation } from '../geometry/Angle';
+import { T_Quadrant, T_Orientation } from '../common/Angle';
 import type { SvelteComponent } from 'svelte';
-import { u } from '../common/Utilities';
-import Angle from '../geometry/Angle';
+import Angle from '../common/Angle';
+import { u } from './Utilities';
 
 export class Point {
 	x: number;

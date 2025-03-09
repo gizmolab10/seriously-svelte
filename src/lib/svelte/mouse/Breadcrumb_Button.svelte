@@ -1,8 +1,7 @@
 <script lang='ts'>
-	import { k, u, ux, Point, Thing, T_Tool, signals } from '../../ts/common/Global_Imports';
-	import { databases, T_Element, S_Element } from '../../ts/common/Global_Imports';
-	import { w_thing_color, w_ancestry_focus } from '../../ts/common/Stores';
-	import { w_thing_fontFamily } from '../../ts/common/Stores';
+	import { w_thing_color, w_thing_fontFamily, w_ancestry_focus } from '../../ts/common/Stores';
+	import { k, u, ux, Point, Thing, signals, databases } from '../../ts/common/Global_Imports';
+	import { T_Tool, T_Element, S_Element } from '../../ts/common/Global_Imports';
 	import Button from './Button.svelte';
 	import { onMount } from 'svelte';
 	export let left = 0;

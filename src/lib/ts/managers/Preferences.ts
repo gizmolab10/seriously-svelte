@@ -1,9 +1,9 @@
-import { w_hierarchy, w_t_tree, w_t_graph, w_t_countDots, w_t_details } from '../common/Stores';
-import { w_s_paging, w_ancestries_grabbed, w_ancestries_expanded } from '../common/Stores';
+import { w_ancestry_focus, w_ancestries_grabbed, w_ancestries_expanded } from '../common/Stores';
+import { w_t_tree, w_t_graph, w_hierarchy, w_t_details, w_t_countDots } from '../common/Stores';
 import { c, k, ux, show, debug, Ancestry, databases } from '../common/Global_Imports';
-import { w_ancestry_focus, w_font_size, w_thing_fontFamily } from '../common/Stores';
-import { T_Graph, T_Hierarchy, T_Details, S_Paging } from '../common/Global_Imports';
+import { S_Paging, T_Graph, T_Hierarchy, T_Details } from '../common/Global_Imports';
 import { w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
+import { w_s_paging, w_font_size, w_thing_fontFamily } from '../common/Stores';
 import { get } from 'svelte/store';
 
 export enum T_Preference {

@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { k, u, ux, Point, T_Layer, databases, Hierarchy, T_Storage } from '../../ts/common/Global_Imports';
+	import { k, ux, Point, S_Element, databases, Hierarchy, T_Storage } from '../../ts/common/Global_Imports';
 	import { w_storage_update_trigger, w_thing_fontFamily } from '../../ts/common/Stores';
-	import { T_Element, S_Element, T_Preference, p } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Element, T_Preference } from '../../ts/common/Global_Imports';
 	import { w_t_database, w_hierarchy } from '../../ts/common/Stores';
 	import { T_Database } from '../../ts/data/dbs/DBCommon';
 	import Segmented from '../mouse/Segmented.svelte';

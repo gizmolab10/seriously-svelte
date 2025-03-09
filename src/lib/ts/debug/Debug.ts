@@ -5,6 +5,7 @@ import { c } from '../managers/Configuration';
 export enum T_Debug {
 	preferences	= 'preferences',
 	hide_rings	= 'hide_rings',
+	reposition	= 'reposition',
 	fast_load	= 'fast_load',
 	segments	= 'segments',
 	origins 	= 'origins',
@@ -15,7 +16,6 @@ export enum T_Debug {
 	crumbs  	= 'crumbs',
 	expand  	= 'expand',
 	handle		= 'handle',
-	layout		= 'layout',
 	radial		= 'radial',
 	remote		= 'remote',		// interactions with remote
 	signal		= 'signal	',
@@ -71,13 +71,13 @@ export class Debug {
 	log_cursor(message: string) { this.log_maybe(T_Debug.cursor, message); }
 	log_expand(message: string) { this.log_maybe(T_Debug.expand, message); }
 	log_handle(message: string) { this.log_maybe(T_Debug.handle, message); }
-	log_layout(message: string) { this.log_maybe(T_Debug.layout, message); }
 	log_radial(message: string) { this.log_maybe(T_Debug.radial, message); }
 	log_remote(message: string) { this.log_maybe(T_Debug.remote, message); }
 	log_signal(message: string) { this.log_maybe(T_Debug.signal, message); }
 	log_things(message: string) { this.log_maybe(T_Debug.things, message); }
 	log_origins(message: string) { this.log_maybe(T_Debug.origins, message); }
 	log_segments(message: string) { this.log_maybe(T_Debug.segments, message); }
+	log_reposition(message: string) { this.log_maybe(T_Debug.reposition, message); }
 	log_preferences(message: string) { this.log_maybe(T_Debug.preferences, message); }
 	
 	log_maybe(option: T_Debug, message: string) {
@@ -98,6 +98,7 @@ export class Debug {
 				switch (option) {
 					case 'preferences': this.flags.push(T_Debug.preferences); break;
 					case 'hide_rings': this.flags.push(T_Debug.hide_rings); break;
+					case 'reposition': this.flags.push(T_Debug.reposition); break;
 					case 'segments': this.flags.push(T_Debug.segments); break;
 					case 'origins': this.flags.push(T_Debug.origins); break;
 					case 'reticle': this.flags.push(T_Debug.reticle); break;
@@ -107,7 +108,6 @@ export class Debug {
 					case 'cursor': this.flags.push(T_Debug.cursor); break;
 					case 'expand': this.flags.push(T_Debug.expand); break;
 					case 'handle': this.flags.push(T_Debug.handle); break;
-					case 'layout': this.flags.push(T_Debug.layout); break;
 					case 'radial': this.flags.push(T_Debug.radial); break;
 					case 'remote': this.flags.push(T_Debug.remote); break;
 					case 'signal': this.flags.push(T_Debug.signal); break;

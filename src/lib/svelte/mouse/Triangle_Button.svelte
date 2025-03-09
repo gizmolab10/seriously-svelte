@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { k, u, Size, Thing, Point, T_Layer, svgPaths } from '../../ts/common/Global_Imports';
-	import { databases, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
+	import { k, u, Size, Thing, Point, svgPaths, databases } from '../../ts/common/Global_Imports';
+	import { T_Layer, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
 	import { w_ancestries_grabbed } from '../../ts/common/Stores';
 	import type { Handle_Result } from '../../ts/common/Types';
 	import SVGD3 from '../kit/SVGD3.svelte';

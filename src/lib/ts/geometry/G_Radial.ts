@@ -1,6 +1,6 @@
-import { G_Widget, G_Cluster, S_Paging, T_Predicate } from '../common/Global_Imports';
 import { u, ux, Thing, debug, Ancestry, Predicate } from '../common/Global_Imports';
 import { w_hierarchy, w_s_paging, w_ancestry_focus } from '../common/Stores';
+import { G_Widget, G_Cluster, S_Paging } from '../common/Global_Imports';
 import Reciprocal_Ancestry from '../data/runtime/Reciprocal_Ancestry';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
@@ -13,7 +13,7 @@ export default class G_Radial {
 	// layout widgets, radial lines, and arcs
 
 	constructor() {
-		debug.log_layout(`RADIAL ${get(w_ancestry_focus)?.thing?.title}`);
+		debug.log_reposition(`radial ${get(w_ancestry_focus)?.thing?.title}`);
 		this.layout_allClusters();
 		w_s_paging.subscribe((state: S_Paging) => {
 			this.update_forPaging_state(state);

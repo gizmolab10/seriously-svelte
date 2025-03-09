@@ -53,9 +53,9 @@
 					case T_Signal.recreate:
 						layout_maybe();
 						break;
-					case T_Signal.relayout:
+					case T_Signal.reposition:
 						layout();
-						debug.log_layout(`TRIGGER [. . .] widget on "${ancestry.title}"`);
+						debug.log_reposition(`widget o: (${left.asInt()}, ${top.asInt()}) w: ${g_widget.width_ofWidget.asInt()} ${thing?.title ?? k.unknown}`);
 						widget.style.width = `${g_widget.width_ofWidget}px`;
 						widget.style.left = `${left}px`;
 						widget.style.top = `${top}px`;
@@ -112,11 +112,9 @@
 
 	function update_origin() {
 		switch (t_widget) {
-			case T_Widget.radial: origin = g_widget.origin_ofRadial; break;
-			case T_Widget.focus:  origin = g_widget.origin_ofFocus; break;
-			case T_Widget.tree:   origin = g_widget.origin_ofChildrenTree;
-				console.log(`update_origin ${t_widget} o: ${origin.verbose} "${ancestry.title}"`)
-				break;
+			case T_Widget.focus:  origin = g_widget.origin_ofFocus;		   break;
+			case T_Widget.radial: origin = g_widget.origin_ofRadial;	   break;
+			case T_Widget.tree:   origin = g_widget.origin_ofChildrenTree; break;
 		}
 	}
 
@@ -150,7 +148,6 @@
 		height = k.row_height - 1.5;
 		border_radius = k.row_height / 2;
 		padding = `0px ${onRight}px 0px ${onLeft}px`;
-		debug.log_layout(`WIDGET o: (${left.asInt()}, ${top.asInt()}) w: ${width.asInt()} ${thing?.title ?? k.unknown}`);
 	}
 
 </script>

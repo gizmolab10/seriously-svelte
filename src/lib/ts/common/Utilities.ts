@@ -1,15 +1,15 @@
 // N.B., do not import these from Global Imports --> avoid dependency issues when importing Utilities class
 
-import { w_thing_fontFamily } from '../common/Stores';
 import Identifiable from '../data/runtime/Identifiable';
+import { w_thing_fontFamily } from '../common/Stores';
 import Ancestry from '../data/runtime/Ancestry';
-import { T_Quadrant } from '../geometry/Angle';
-import { Point } from '../geometry/Geometry';
+import { T_Quadrant } from '../common/Angle';
 import { T_Browser } from './Enumerations';
 import type { Dictionary } from './Types';
 import { transparentize } from 'color2k';
 import { w } from '../geometry/G_Window';
-import Angle from '../geometry/Angle';
+import Angle from '../common/Angle';
+import { Point } from './Geometry';
 import { get } from 'svelte/store';
 import { k } from './Constants';
 

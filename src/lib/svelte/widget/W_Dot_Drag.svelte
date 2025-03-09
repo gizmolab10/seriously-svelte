@@ -40,7 +40,7 @@
         });
 		const handle_relayout = signals.handle_reposition_widgets(2, (received_ancestry) => {
 			if (!!dotDrag) {
-				debug.log_layout(`TRIGGER [. . .] dotDrag on "${ancestry.title}"`);
+				debug.log_reposition(`dotDrag [. . .] o: (${left.asInt()}, ${top.asInt()}) ${ancestry.title}`);
 				dotDrag.style.left = `${left}px`;
 				dotDrag.style.top = `${top}px`;
 			}

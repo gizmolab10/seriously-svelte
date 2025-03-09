@@ -2,7 +2,7 @@
 	import { c, k, p, ux, show, Rect, Size, Point, Thing, debug, signals, Ancestry } from '../../ts/common/Global_Imports';
 	import { w_ancestry_focus, w_ancestries_grabbed, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { T_Info, T_Trait, T_Layer, T_Element, T_Preference } from '../../ts/common/Global_Imports';
-	import { w_hierarchy, w_thing_color, w_thing_title } from '../../ts/common/Stores';
+	import { w_hierarchy, w_thing_color, w_info_title } from '../../ts/common/Stores';
 	import type { Integer, Dictionary } from '../../ts/common/Types';
 	import Identifiable from '../../ts/data/runtime/Identifiable';
 	import Text_Editor from '../kit/Text_Editor.svelte';
@@ -74,7 +74,7 @@
 	});
 	
 	$: {
-		const _ = `${$w_ancestries_grabbed} ${$w_ancestry_focus} ${$w_thing_title}`;
+		const _ = `${$w_ancestries_grabbed} ${$w_ancestry_focus} ${$w_info_title}`;
 		update_forKind();
 	}
 	

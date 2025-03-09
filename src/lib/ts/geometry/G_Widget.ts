@@ -1,9 +1,8 @@
-import { c, k, ux, Rect, Point, Angle, Ancestry, T_Element, S_Element } from '../common/Global_Imports'
+import { g, k, ux, Rect, Point, Angle, Ancestry, S_Element, T_Element } from '../common/Global_Imports'
 import { w_hierarchy, w_graph_rect, w_show_details, w_ancestry_focus } from '../common/Stores';
 import { get } from 'svelte/store';
 
 export default class G_Widget {
-	ancestry_ofParent: Ancestry | null;
 	origin_ofChildrenTree = Point.zero;
 	origin_ofFirstReveal = Point.zero;
 	angle_ofChild: number | null;
@@ -40,13 +39,11 @@ export default class G_Widget {
 		curveType: string,
 		origin_ofChild: Point,
 		ancestry: Ancestry,
-		ancestry_ofParent: Ancestry | null,
 		points_toChild: boolean = true,
 		angle_ofChild: number | null = null) {
 			this.rect = rect;
 			this.points_right = !angle_ofChild ? true : new Angle(angle_ofChild).angle_pointsRight;
 			this.es_widget = ux.s_element_for(ancestry, T_Element.widget, k.empty);
-			this.ancestry_ofParent = ancestry_ofParent;
 			this.points_toChild = points_toChild;
 			this.origin_ofChild = origin_ofChild;
 			this.angle_ofChild = angle_ofChild;
@@ -56,18 +53,12 @@ export default class G_Widget {
 			if (!ancestry?.thing) {
 				console.log(`geometry G_Widget ... relationship has no child ${ancestry?.relationship?.description}`);
 			}
-			ux.set_g_widget_forID(this, ancestry.id);
+			g.set_g_widget_forID(this, ancestry.id);
 			this.layout();
 	}
 
-	destroy() {
-		this.ancestry = null;
-		this.ancestry_ofParent = null;
-	}
-
-	get showingReveal(): boolean {
-		return this.ancestry?.showsReveal_forPointingToChild(this.points_toChild) ?? false;
-	}
+	destroy() { this.ancestry = null; }
+	get showingReveal(): boolean { return this.ancestry?.showsReveal_forPointingToChild(this.points_toChild) ?? false; }
 
 	get width_ofBothDots(): number {
 		const adjustment_forReveal = k.dot_size * (this.showingReveal ? 2 : 1);
@@ -81,7 +72,7 @@ export default class G_Widget {
 			const ancestry = this.ancestry;
 			if (!!ancestry && ancestry.showsChildRelationships) {
 				for (const childAncestry of ancestry.childAncestries) {
-					const g_child_widget = ux.g_widget_forID(childAncestry.id);
+					const g_child_widget = g.g_widget_forID(childAncestry.id);
 					g_child_widget.relayout_recursively();
 				}
 			}
