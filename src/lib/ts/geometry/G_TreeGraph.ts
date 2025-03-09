@@ -22,7 +22,7 @@ export default class G_TreeGraph {
 				origin_ofFirstReveal.x = 25;
 			}
 			const origin_ofChildren = origin_ofFirstReveal.offsetByXY(child_offsetX, child_offsetY);
-			this.g_focus_widget = new G_Widget(Rect.zero, T_Widget.focus, T_Line.flat, origin_ofChildren, focusAncestry, null);
+			this.g_focus_widget = new G_Widget(Rect.zero, T_Line.flat, origin_ofChildren, focusAncestry, null);
 			debug.log_origins(origin_ofChildren.x + ' update_origins');
 		}
 	}

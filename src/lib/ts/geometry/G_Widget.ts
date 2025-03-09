@@ -19,7 +19,6 @@ export default class G_Widget {
 	points_right = true;
 	width_ofWidget = 0;
 	curveType: string;
-	t_widget: string;
 	rect: Rect;
 
 	get responder(): HTMLElement | null { return this.es_widget.responder; }
@@ -35,7 +34,6 @@ export default class G_Widget {
 
 	constructor(
 		rect: Rect,
-		t_widget: string,
 		curveType: string,
 		origin_ofChild: Point,
 		ancestry: Ancestry,
@@ -48,7 +46,6 @@ export default class G_Widget {
 			this.origin_ofChild = origin_ofChild;
 			this.angle_ofChild = angle_ofChild;
 			this.curveType = curveType;
-			this.t_widget = t_widget;
 			this.ancestry = ancestry;
 			if (!ancestry?.thing) {
 				console.log(`geometry G_Widget ... relationship has no child ${ancestry?.relationship?.description}`);

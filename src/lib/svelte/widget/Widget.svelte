@@ -21,7 +21,6 @@
 	const es_reveal = ux.s_element_for(ancestry, T_Element.reveal, k.empty);
 	let widgetWrapper!: Svelte_Wrapper;
 	let border_radius = k.dot_size / 2;
-	let t_widget = g_widget.t_widget;
 	let center_ofDrag = Point.zero;
 	let revealCenter = Point.zero;
 	let background = k.empty;
@@ -111,6 +110,8 @@
 	}
 
 	function update_origin() {
+		const isFocus = ancestry?.isFocus ?? false;
+		const t_widget = ux.inTreeMode ? isFocus ? T_Widget.focus : T_Widget.tree : T_Widget.radial;
 		switch (t_widget) {
 			case T_Widget.focus:  origin = g_widget.origin_ofFocus;		   break;
 			case T_Widget.radial: origin = g_widget.origin_ofRadial;	   break;
