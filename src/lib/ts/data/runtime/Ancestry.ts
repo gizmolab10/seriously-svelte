@@ -231,7 +231,7 @@ export default class Ancestry extends Identifiable {
 			const toolThing = toolsAncestry?.thing;
 			const thing = this.thing;
 			if (!!thing && !!toolThing && !!toolsAncestry) {
-				if (thing.hid != toolThing.hid && !toolsAncestry.hasMatchingID(this)) {
+				if (thing.hid != toolThing.hid && !toolsAncestry.hasPathString_matching(this)) {
 					const isRelated = predicate.kind == T_Predicate.isRelated;
 					const toolIsAnAncestor = isRelated ? false : thing.parentIDs.includes(toolThing.id);
 					const isParentOfTool = this.thing_isImmediateParentOf(toolsAncestry, predicate.kind);
@@ -248,11 +248,11 @@ export default class Ancestry extends Identifiable {
 	
 	relationships_count_forChildren(forChildren: boolean):			 number { return this.relationships_forChildren(forChildren).length; }
 	includedInStore_ofAncestries(store: Writable<Array<Ancestry>>): boolean { return this.includedInAncestries(get(store)); }
-	matchesStore(store: Writable<Ancestry | null>):					boolean { return get(store)?.hasMatchingID(this) ?? false; }
+	matchesStore(store: Writable<Ancestry | null>):					boolean { return get(store)?.hasPathString_matching(this) ?? false; }
 	includesPredicate_ofKind(kindPredicate: string):				boolean { return this.thing?.hasParents_forKind(kindPredicate) ?? false; }
 	sharesAnID(ancestry: Ancestry | null):							boolean { return !ancestry ? false : this.relationship_ids.some(id => ancestry.relationship_ids.includes(id)); }
 	showsCluster_forPredicate(predicate: Predicate):				boolean { return this.includesPredicate_ofKind(predicate.kind) && this.hasThings(predicate); }
-	hasMatchingID(ancestry: Ancestry | null | undefined):		boolean { return !!ancestry && this.hid == ancestry.hid && this.t_database == ancestry.t_database; }
+	hasPathString_matching(ancestry: Ancestry | null | undefined):		boolean { return !!ancestry && this.hid == ancestry.hid && this.t_database == ancestry.t_database; }
 	relationships_forChildren(forChildren: boolean):	Array<Relationship> { return forChildren ? this.childRelationships : this.parentRelationships; }
 	relationshipAt(back: number = 1):					Relationship | null { return this.hierarchy.relationship_forHID(this.idAt(back).hash()) ?? null; }
 	rect_ofWrapper(wrapper: Svelte_Wrapper | null):				Rect | null { return wrapper?.boundingRect ?? null; }
@@ -284,7 +284,7 @@ export default class Ancestry extends Identifiable {
 
 	includedInAncestries(ancestries: Array<Ancestry> | undefined): boolean {
 		const included = ancestries?.filter(a => {
-			return this.hasMatchingID(a);
+			return this.hasPathString_matching(a);
 		});
 		return (included?.length ?? 0) > 0;
 	}
@@ -374,7 +374,7 @@ export default class Ancestry extends Identifiable {
 	isAllExpandedFrom(targetAncestry: Ancestry | null): boolean {
 		// visit ancestors until encountering
 		// either this ancestry (???) or an unexpanded parent
-		if (!!targetAncestry && !this.hasMatchingID(targetAncestry)) {
+		if (!!targetAncestry && !this.hasPathString_matching(targetAncestry)) {
 			const ancestry = this.parentAncestry;			// visit parent of ancestry
 			if (!ancestry || (!ancestry.isExpanded && !ancestry.isAllExpandedFrom(targetAncestry))) {
 				return false;	// stop when no ancestor or ancestor is not expanded
@@ -527,7 +527,7 @@ export default class Ancestry extends Identifiable {
 
 	becomeFocus(force: boolean = false): boolean {
 		const priorFocus = get(w_ancestry_focus)
-		const changed = force || !priorFocus || !this.hasMatchingID(priorFocus!);
+		const changed = force || !priorFocus || !this.hasPathString_matching(priorFocus!);
 		if (changed) {
 			w_s_alteration.set(null);
 			w_ancestry_focus.set(this);
@@ -628,7 +628,7 @@ export default class Ancestry extends Identifiable {
 		const toolsAncestry = get(w_ancestry_showing_tools);
 		if (!!toolsAncestry) { // ignore if editingTools not in use
 			w_s_alteration.set(null);
-			if (this.hasMatchingID(toolsAncestry)) {
+			if (this.hasPathString_matching(toolsAncestry)) {
 				w_ancestry_showing_tools.set(null);
 			} else if (!this.isRoot) {
 				w_ancestry_showing_tools.set(this);

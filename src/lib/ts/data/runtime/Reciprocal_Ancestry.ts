@@ -4,7 +4,7 @@ export default class Reciprocal_Ancestry extends Ancestry {
 	original_ancestry!: Ancestry;
 
 	constructor(original_ancestry: Ancestry) {
-		super(original_ancestry.t_database, original_ancestry.id, original_ancestry.kindPredicate, false);
+		super(original_ancestry.t_database, original_ancestry.pathString, original_ancestry.kindPredicate, false);
 		this.original_ancestry = original_ancestry;
 		this.thing_isChild = false;
 	}

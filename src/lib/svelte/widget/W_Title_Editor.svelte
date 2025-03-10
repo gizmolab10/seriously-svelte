@@ -42,8 +42,8 @@
 		const handle_anySignal = signals.handle_anySignal_atPriority(0, (t_signal, ancestry) => {
 			updateInputWidth();
 		});
-		const handle_relayout = signals.handle_reposition_widgets(2, (received_ancestry) => {
-			if (!!input && ancestry.pathString == received_ancestry.pathString) {
+		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
+			if (!!input && ancestry.hasPathString_matching(received_ancestry)) {
 				debug.log_reposition(`input [. . .] w: ${title_width.asInt()} "${ancestry.title}"`);
 				input.style.width = `${ancestry.thing.titleWidth}px`;
 			}
@@ -55,7 +55,7 @@
 			}
 		}, 100);
 		return () => {
-			handle_relayout.disconnect();
+			handle_reposition.disconnect();
 			handle_anySignal.disconnect();
 		};
 	});
@@ -265,7 +265,7 @@
 		const s_title_edit = $w_s_title_edit;
 		if (hasFocus() && !s_title_edit) {
 			stopEdit();
-		} else if (!!input && !!s_title_edit && s_title_edit.ancestry.id == ancestry.id) {
+		} else if (!!input && !!s_title_edit && s_title_edit.hasPathString_matching(ancestry)) {
 
 			//////////////////////////////////////////////////////
 			//													//

@@ -30,7 +30,7 @@
 	onMount(() => {
 		svgPath_update();
 		set_isHovering(false);
-		const handle_relayout = signals.handle_reposition_widgets(2, (received_ancestry) => {
+		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
 			if (!!dotReveal) {
 				center = ancestry.g_widget.center_ofReveal;
 				const origin = center.offsetEquallyBy(-k.dot_size);
@@ -38,7 +38,7 @@
 				rebuilds += 1;
 			}
 		});
-		return () => { handle_relayout.disconnect(); };
+		return () => { handle_reposition.disconnect(); };
 	});
 	$: {
 		const _ = $w_t_countDots;
@@ -89,7 +89,7 @@
 			if (ancestry.toolsGrabbed) {
 				$w_s_alteration = null;
 				$w_ancestry_showing_tools = null;
-				signals.signal_reposition_widgets_fromFocus();
+				signals.signal_recreate_widgets_fromFocus();
 			} else if (ancestry.hasChildRelationships || ancestry.thing.isBulkAlias) {
 				const RIGHT = ancestry.thing_isChild != ancestry.isExpanded || !ux.inTreeMode;
 				$w_hierarchy.ancestry_rebuild_persistentMoveRight(ancestry, RIGHT, false, false, false, true);

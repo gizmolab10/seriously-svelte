@@ -84,9 +84,8 @@ export default class Thing extends Persistable {
 	}
 
 	signal_color_change() {
-		const count = get(w_count_rebuild) + 1;
-		w_count_rebuild.set(count);
-		w_thing_color.set(`${this.id}${k.generic_separator}${count}`);
+		w_count_rebuild.update(n => n + 1);
+		w_thing_color.set(`${this.id}${k.generic_separator}${get(w_count_rebuild)}`);
 	}
 
 	relationships_inBothDirections_forKind(kindPredicate: string): Array<Relationship> {

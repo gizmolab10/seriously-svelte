@@ -12,7 +12,7 @@
 	
 	onMount(() => {
 		const handler = signals.handle_reposition_widgets(0, (received_ancestry) => {
-			if (!received_ancestry || (!!$w_ancestry_focus && $w_ancestry_focus.pathString == received_ancestry.pathString)) {
+			if (!received_ancestry || (!!$w_ancestry_focus && $w_ancestry_focus.hasPathString_matching(received_ancestry))) {
 				debug.log_reposition(`tree graph [ ] on "${$w_ancestry_focus.title}"`);
 				ux.g_treeGraph.update_origins();
 			}

@@ -51,7 +51,7 @@ export default class User_Interaction {
 	name_from(identifiable: Identifiable, type: T_Element, subtype: string): string { return `${type}(${subtype}) (id '${identifiable.id}')`; }
 	mouse_timer_forName(name: string): Mouse_Timer { return this.assure_forKey_inDict(name, this.mouse_timer_byName, () => new Mouse_Timer()); }
 	s_paging_rotation_forName(name: string): S_Rotation { return this.assure_forKey_inDict(name, this.s_rotation_byName, () => new S_Rotation()); }
-	s_widget_forAncestry(ancestry: Ancestry): S_Widget { return this.assure_forKey_inDict(ancestry.id, this.s_widget_byAncestryID, () => new S_Widget(ancestry)); }
+	s_widget_forAncestry(ancestry: Ancestry): S_Widget { return this.assure_forKey_inDict(ancestry.pathString, this.s_widget_byAncestryID, () => new S_Widget(ancestry)); }
 	
 	s_thing_pages_forThingID(id: string | null | undefined): S_Thing_Pages | null {
 		return !id ? null : this.assure_forKey_inDict(id, this.s_thing_pages_byThingID, () => new S_Thing_Pages(id));

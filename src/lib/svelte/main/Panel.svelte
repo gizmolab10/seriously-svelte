@@ -1,11 +1,10 @@
 <script lang='ts'>
 	import { c, k, u, ux, w, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_show_details, w_device_isMobile, } from '../../ts/common/Stores';
+	import { w_t_startup, w_id_popupView, w_ancestry_focus } from '../../ts/common/Stores';
 	import { debug, T_Layer, Ancestry, T_Startup } from '../../ts/common/Global_Imports';
 	import { w_t_database, w_graph_rect, w_hierarchy } from '../../ts/common/Stores';
 	import { T_Control, Hierarchy, databases } from '../../ts/common/Global_Imports';
-	import { w_id_popupView, w_ancestry_focus } from '../../ts/common/Stores';
-	import { w_count_resize, w_t_startup } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { T_Database } from '../../ts/data/dbs/DBCommon';
 	import Breadcrumbs from './Breadcrumbs.svelte';

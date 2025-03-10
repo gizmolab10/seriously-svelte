@@ -875,7 +875,7 @@ export class Hierarchy {
 		if (!!toolsAncestry) {
 			let ancestry = toolsAncestry;
 			ancestry.grabOnly();
-			signals.signal_reposition_widgets_fromFocus();
+			signals.signal_recreate_widgets_fromFocus();
 			w_ancestry_showing_tools.set(ancestry);
 		}
 	}
@@ -1133,7 +1133,7 @@ export class Hierarchy {
 					if (ancestry.isExpanded) {
 						graph_needsRebuild = ancestry.collapse();
 						newGrabAncestry = this.grabs_areInvisible ? ancestry : null;
-					} else if (newGrabAncestry.isExpanded || (!!rootAncestry && !rootAncestry.hasMatchingID(newGrabAncestry))) {
+					} else if (newGrabAncestry.isExpanded || (!!rootAncestry && !rootAncestry.hasPathString_matching(newGrabAncestry))) {
 						graph_needsRebuild = newGrabAncestry.collapse();
 					}
 				}
@@ -1143,7 +1143,7 @@ export class Hierarchy {
 		if (!!newGrabAncestry) {
 			newGrabAncestry.grabOnly();
 			if (!RIGHT && !!newFocusAncestry) {
-				const newFocusIsGrabbed = newFocusAncestry && newFocusAncestry.hasMatchingID(newGrabAncestry);
+				const newFocusIsGrabbed = newFocusAncestry && newFocusAncestry.hasPathString_matching(newGrabAncestry);
 				const canBecomeFocus = (!SHIFT || newFocusIsGrabbed) && newGrabIsNotFocus;
 				const shouldBecomeFocus = newFocusAncestry.isRoot || !newFocusAncestry.isVisible;
 				const becomeFocus = canBecomeFocus && shouldBecomeFocus;
@@ -1155,7 +1155,7 @@ export class Hierarchy {
 		if (graph_needsRebuild) {
 			signals.signal_rebuildGraph_fromFocus();
 		} else {
-			signals.signal_reposition_widgets_fromFocus();
+			signals.signal_recreate_widgets_fromFocus();
 		}
 	}
 

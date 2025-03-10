@@ -38,14 +38,14 @@
 			es_drag.isInverted = invert_flag;
 			svgPaths_updateExtra();
         });
-		const handle_relayout = signals.handle_reposition_widgets(2, (received_ancestry) => {
+		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
 			if (!!dotDrag) {
 				center = ancestry.g_widget.center_ofDrag;
 				debug.log_reposition(`dotDrag [. . .] c: (${center.x.asInt()}, ${center.y.asInt()}) ${ancestry.title}`);
 				rebuilds += 1;
 			}
 		});
-		return () => { handle_relayout.disconnect(); handle_altering.disconnect(); };
+		return () => { handle_reposition.disconnect(); handle_altering.disconnect(); };
 	});
 	
 	$: {

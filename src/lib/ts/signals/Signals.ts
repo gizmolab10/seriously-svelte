@@ -24,7 +24,6 @@ export class Signals {
 	signal_recreate_widgets_from(value: any = null) { this.signal(T_Signal.recreate, value); }
 	signal_reposition_widgets_from(value: any = null) { this.signal(T_Signal.reposition, value); }
 	signal_recreate_widgets_fromFocus() { this.signal_recreate_widgets_from(get(w_ancestry_focus)); }
-	signal_reposition_widgets_fromFocus() { this.signal_reposition_widgets_from(get(w_ancestry_focus)); }
 
 	signal_rebuildGraph_from(value: any = null) {
 		this.rebuild_isInProgress = true;
