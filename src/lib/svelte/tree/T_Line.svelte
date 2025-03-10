@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, Rect, Size, Point, debug, T_Layer, signals, svgPaths } from '../../ts/common/Global_Imports';
-	import { Svelte_Wrapper, Ancestry, T_SvelteComponent, T_Line } from '../../ts/common/Global_Imports';
+	import { Svelte_Wrapper, Ancestry, T_SvelteComponent, T_Curve } from '../../ts/common/Global_Imports';
 	import { w_thing_color } from '../../ts/common/Stores';
 	import Circle from '../kit/Circle.svelte';
 	export let ancestry!: Ancestry;
@@ -37,15 +37,15 @@
 	$: {
 		if (k.dot_size > 0) {
 			switch (curveType) {
-				case T_Line.up:
+				case T_Curve.up:
 					origin = rect.origin;
 					extent = rect.extent.offsetByY(-1.5);
 					break;
-				case T_Line.down:
+				case T_Curve.down:
 					origin = rect.bottomLeft.offsetByY(-0.5);
 					extent = origin.offsetBy(rect.size.asPoint).offsetByY(0.5);
 					break;
-				case T_Line.flat:
+				case T_Curve.flat:
 					rect = rect.offsetByY(-1.5);
 					origin = rect.centerLeft;
 					extent = rect.centerRight;
@@ -54,10 +54,10 @@
 			}
 			const vector = origin.vector_to(extent);
 			size = vector.abs.asSize;
-			if (curveType != T_Line.flat) {
-				const flag = (curveType == T_Line.down) ? 0 : 1;
-				const originY = curveType == T_Line.down ? 0 : size.height;
-				const extentY = curveType == T_Line.up   ? 0 : size.height;
+			if (curveType != T_Curve.flat) {
+				const flag = (curveType == T_Curve.down) ? 0 : 1;
+				const originY = curveType == T_Curve.down ? 0 : size.height;
+				const extentY = curveType == T_Curve.up   ? 0 : size.height;
 				linePath = `M0 ${originY} A ${size.description} 0 0 ${flag} ${size.width} ${extentY}`;
 			}
 			const boxSize = new Size(size.width, Math.max(2, size.height));

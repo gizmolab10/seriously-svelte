@@ -3,10 +3,10 @@
 	import { w_g_radialGraph, w_user_graph_offset, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { w_graph_rect, w_show_details, w_ancestry_focus } from '../../ts/common/Stores';
 	import { k, u, ux, Rect, Point, debug, signals } from '../../ts/common/Global_Imports';
-	import Radial_Focus from './Radial_Focus.svelte';
+	import R_Necklace from './R_Necklace.svelte';
 	import Circle from '../kit/Circle.svelte';
-	import Necklace from './Necklace.svelte';
-	import Radial from './Radial.svelte';
+	import R_Focus from './R_Focus.svelte';
+	import R_UX from './R_UX.svelte';
 	import { onMount } from 'svelte';
 	let toolsOffset = new Point(31, -173.5).offsetBy($w_user_graph_offset.negated);
 
@@ -45,8 +45,8 @@
 			width : {$w_graph_rect.size.width}px;
 			height : {$w_graph_rect.size.height}px;
 			transform : translate({$w_user_graph_offset.x}px, {$w_user_graph_offset.y}px);'>
-		<Radial/>
-		<Radial_Focus/>
-		<Necklace/>
+		<R_UX/>
+		<R_Focus/>
+		<R_Necklace/>
 	</div>
 {/key}

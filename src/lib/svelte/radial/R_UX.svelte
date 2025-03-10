@@ -7,7 +7,7 @@
 	import { w_count_mouse_up, w_g_active_cluster } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/runtime/Identifiable';
-	import Paging_ArcSlider from './Paging_ArcSlider.svelte';
+	import R_ArcSlider from './R_ArcSlider.svelte';
 	import { onMount } from 'svelte';
 	export let zindex = T_Layer.backmost;
 	const ring_width = k.ring_rotation_thickness;
@@ -209,7 +209,7 @@
 	<div class='paging-arcs' bind:this={pagingArcs} style='z-index:{T_Layer.paging};'>
 		{#each $w_g_radialGraph.g_clusters as g_cluster}
 			{#if !!g_cluster && (g_cluster.widgets_shown > 0)}
-				<Paging_ArcSlider
+				<R_ArcSlider
 					color={color}
 					g_cluster={g_cluster}/>
 			{/if}

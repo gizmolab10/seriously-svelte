@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { c, k, u, ux, Thing, Point, Angle, debug, signals, Ancestry, Svelte_Wrapper } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Graph, T_Widget, T_Signal, T_Element } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_GraphMode, T_Widget, T_Signal, T_Element } from '../../ts/common/Global_Imports';
 	import { G_Widget, S_Element, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { w_thing_color, w_thing_fontFamily } from '../../ts/common/Stores';
@@ -175,7 +175,6 @@
 				name = {es_drag.name}
 				ancestry = {ancestry}
 				points_right = {points_right}
-				center = {g_widget.center_ofDrag}
 			/>
 			<W_Title_Editor
 				ancestry = {ancestry}
@@ -188,7 +187,6 @@
 					ancestry = {ancestry}
 					name = {es_reveal.name}
 					points_toChild = {points_toChild}
-					center = {g_widget.center_ofReveal}
 				/>
 			{/if}
 		</div>

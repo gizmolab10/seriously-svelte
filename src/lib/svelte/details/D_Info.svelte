@@ -8,8 +8,8 @@
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
+	import Color from '../kit/Color.svelte';
 	import Table from '../kit/Table.svelte';
-	import Color from './Color.svelte';
 	import { onMount } from 'svelte';
 	export let top = 0;
 	const id = 'info';

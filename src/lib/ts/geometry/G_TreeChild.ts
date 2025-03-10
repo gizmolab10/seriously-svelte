@@ -1,4 +1,4 @@
-import { k, Rect, Size, Point, T_Line, Ancestry, G_Widget } from '../common/Global_Imports';
+import { k, Rect, Size, Point, T_Curve, Ancestry, G_Widget } from '../common/Global_Imports';
 
 export default class G_TreeChild {
 	progeny_height = 0;
@@ -32,11 +32,11 @@ export default class G_TreeChild {
 
 	getDirection(delta: number) {
 		if (delta > 1) {
-			return T_Line.down;
+			return T_Curve.down;
 		} else if (delta < -1) {
-			return T_Line.up;
+			return T_Curve.up;
 		} else {
-			return T_Line.flat;
+			return T_Curve.flat;
 		}
 	}
 

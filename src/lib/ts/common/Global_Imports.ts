@@ -18,11 +18,12 @@ import { S_Paging, S_Thing_Pages } from '../state/S_Paging';
 import { T_Quadrant, T_Orientation } from '../common/Angle';
 import { T_Create, T_Browser, T_Alteration } from './Enumerations';
 import { T_Oblong, T_Element, T_SvelteComponent } from './Enumerations';
-import { T_Line, T_Layer, T_Thing, T_Trait, T_Predicate } from './Enumerations';
-import { T_Graph, T_Widget, T_Rebuild, T_RingZone, T_Startup } from './Enumerations';
+import { T_Curve, T_Layer, T_Thing, T_Trait, T_Predicate } from './Enumerations';
+import { T_GraphMode, T_Widget, T_Rebuild, T_RingZone, T_Startup } from './Enumerations';
 import { T_Info, T_Tool, T_Control, T_Details, T_Storage, T_Hierarchy } from './Enumerations';
 
 import G_TreeChildren from '../geometry/G_TreeChildren';
+import G_RadialGraph from '../geometry/G_RadialGraph';
 import G_ArcSlider from '../geometry/G_ArcSlider';
 import G_TreeChild from '../geometry/G_TreeChild';
 import G_TreeGraph from '../geometry/G_TreeGraph';
@@ -32,7 +33,6 @@ import S_Expansion from '../state/S_Expansion';
 import G_Cluster from '../geometry/G_Cluster';
 import G_Segment from '../geometry/G_Segment';
 import S_Rotation from '../state/S_Rotation';
-import G_RadialGraph from '../geometry/G_RadialGraph';
 import G_Widget from '../geometry/G_Widget';
 import S_Element from '../state/S_Element';
 import S_Widget from '../state/S_Widget';
@@ -78,7 +78,7 @@ export {
 	S_Paging, S_Rotation, S_Expansion, S_Thing_Pages,
 	S_Mouse, S_Widget, S_Element, S_Alteration, S_Title_Edit,
 	User, Persistable, Thing, Trait, Access, Predicate, Relationship,
-	T_Info, T_Thing, T_Trait, T_Graph, T_Hierarchy, T_Details, T_Rebuild, T_Startup,
-	T_Line, T_Tool, T_Widget, T_Signal, T_Control, T_Browser, T_Storage, T_Preference,
+	T_Info, T_Thing, T_Trait, T_GraphMode, T_Hierarchy, T_Details, T_Rebuild, T_Startup,
+	T_Curve, T_Tool, T_Widget, T_Signal, T_Control, T_Browser, T_Storage, T_Preference,
 	G_Widget, G_Segment, G_Cluster, G_RadialGraph, G_TreeChild, G_TreeGraph, G_ArcSlider, G_TreeChildren,
 };

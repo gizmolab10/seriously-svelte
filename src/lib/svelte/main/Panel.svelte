@@ -8,11 +8,11 @@
 	import { w_count_resize, w_t_startup } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { T_Database } from '../../ts/data/dbs/DBCommon';
-	import Details from '../details/Details.svelte';
 	import Breadcrumbs from './Breadcrumbs.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	import Debug from '../debug/Debug.svelte';
 	import Controls from './Controls.svelte';
+	import Details from './Details.svelte';
 	import Box from '../debug/Box.svelte';
 	import Import from './Import.svelte';
 	import Graph from './Graph.svelte';

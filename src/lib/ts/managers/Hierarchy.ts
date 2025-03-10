@@ -1096,7 +1096,7 @@ export class Hierarchy {
 					parentAncestry.becomeFocus();
 				}
 			}
-			signals.signal_rebuildGraph_fromFocus();			// so Tree_Children component will update
+			signals.signal_rebuildGraph_fromFocus();			// so T_Children component will update
 		}
 	}
 

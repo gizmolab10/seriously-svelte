@@ -1,5 +1,5 @@
 import { c, Rect, Point, Ancestry, Hierarchy, G_Cluster, G_RadialGraph } from '../common/Global_Imports';
-import { T_Graph, T_Hierarchy, T_Details, T_Startup } from '../common/Global_Imports';
+import { T_GraphMode, T_Hierarchy, T_Details, T_Startup } from '../common/Global_Imports';
 import { S_Paging, S_Title_Edit, S_Alteration } from '../common/Global_Imports';
 import { get, writable } from 'svelte/store';
 
@@ -18,8 +18,8 @@ export const w_t_details			  = writable<Array<T_Details>>();
 
 export const w_t_database			  = writable<string>();
 export const w_t_startup			  = writable<T_Startup>();
-export const w_t_graph				  = writable<T_Graph>();
-export const w_t_tree				  = writable<T_Hierarchy>();
+export const w_t_treeMode			  = writable<T_Hierarchy>();
+export const w_t_graphMode			  = writable<T_GraphMode>();
 
 export const w_g_active_cluster		  = writable<G_Cluster | null>();
 export const w_g_radialGraph		  = writable<G_RadialGraph | null>();

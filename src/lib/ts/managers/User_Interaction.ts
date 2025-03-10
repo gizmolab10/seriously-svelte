@@ -1,9 +1,9 @@
 import { S_Mouse, S_Widget, S_Element, S_Expansion, S_Rotation, S_Thing_Pages } from '../common/Global_Imports';
-import { G_Segment, G_TreeGraph, T_Graph, T_Element } from '../common/Global_Imports';
+import { G_Segment, G_TreeGraph, T_GraphMode, T_Element } from '../common/Global_Imports';
 import { Ancestry, Mouse_Timer } from '../common/Global_Imports';
 import Identifiable from '../data/runtime/Identifiable';
 import type { Dictionary } from '../common/Types';
-import { w_t_graph } from '../common/Stores';
+import { w_t_graphMode } from '../common/Stores';
 import { get } from 'svelte/store';
 
 export default class User_Interaction {
@@ -31,11 +31,11 @@ export default class User_Interaction {
 	//	  by their own event handling	//
 	//									//
 	//	used by: Button, Close_Button,	//
-	//	  Radial & Paging_ArcSlider		//
+	//	  Radial & R_ArcSlider		//
 	//									//
 	//////////////////////////////////////
 	
-	get inTreeMode(): boolean { return get(w_t_graph) == T_Graph.tree; }
+	get inTreeMode(): boolean { return get(w_t_graphMode) == T_GraphMode.tree; }
 	get s_paging_rotations(): Array<S_Rotation> { return Object.values(this.s_rotation_byName); }
 	get isAny_paging_arc_active(): boolean { return this.s_paging_rotations.filter(s => s.isActive).length > 0; }
 	get isAny_paging_arc_hovering(): boolean { return this.s_paging_rotations.filter(s => s.isHovering).length > 0; }

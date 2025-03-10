@@ -2,17 +2,17 @@
 	import { c, k, u, ux, show, Rect, Size, Point, Thing, debug, T_Layer, T_Tool } from '../../ts/common/Global_Imports';
 	import { databases, Svelte_Wrapper, T_Alteration, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_t_countDots, w_thing_color, w_ancestries_grabbed } from '../../ts/common/Stores';
-	import { signals, svgPaths, T_Graph, T_Element } from '../../ts/common/Global_Imports';
+	import { signals, svgPaths, T_GraphMode, T_Element } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import { onMount } from 'svelte';
 	export let points_right = true;
-	export let center = Point.zero;
 	export let name = k.empty;
     export let ancestry;
 	const size = k.dot_size;
 	const capture_size = size;
 	const es_drag = ux.s_element_forName(name);		// survives onDestroy, created by widget
+	let center = ancestry.g_widget.center_ofDrag;
 	let svgPathFor_ellipses = k.empty;
 	let svgPathFor_related = k.empty;
 	let svgPathFor_dragDot = k.empty;
@@ -40,9 +40,9 @@
         });
 		const handle_relayout = signals.handle_reposition_widgets(2, (received_ancestry) => {
 			if (!!dotDrag) {
-				debug.log_reposition(`dotDrag [. . .] o: (${left.asInt()}, ${top.asInt()}) ${ancestry.title}`);
-				dotDrag.style.left = `${left}px`;
-				dotDrag.style.top = `${top}px`;
+				center = ancestry.g_widget.center_ofDrag;
+				debug.log_reposition(`dotDrag [. . .] c: (${center.x.asInt()}, ${center.y.asInt()}) ${ancestry.title}`);
+				rebuilds += 1;
 			}
 		});
 		return () => { handle_relayout.disconnect(); handle_altering.disconnect(); };

@@ -1,11 +1,11 @@
-import { k, ux, Rect, Point, Angle, T_Line, Ancestry, S_Element, T_Element } from '../common/Global_Imports'
+import { k, ux, Rect, Point, Angle, T_Curve, Ancestry, S_Element, T_Element } from '../common/Global_Imports'
 import { w_hierarchy, w_graph_rect, w_show_details } from '../common/Stores';
 import { get } from 'svelte/store';
 
 export default class G_Widget {
 	angle_ofChild: number | null = null;
 	origin_ofChildrenTree = Point.zero;
-	curveType: string = T_Line.flat;
+	curveType: string = T_Curve.flat;
 	offset_ofWidget = Point.zero;
 	center_ofReveal = Point.zero;
 	origin_ofRadial = Point.zero;
@@ -53,7 +53,7 @@ export default class G_Widget {
 	update(
 		rect: Rect = Rect.zero,
 		points_toChild: boolean = true,
-		curveType: string = T_Line.flat,
+		curveType: string = T_Curve.flat,
 		origin_ofChild: Point = Point.zero,
 		angle_ofChild: number | null = null) {
 			this.rect = rect;

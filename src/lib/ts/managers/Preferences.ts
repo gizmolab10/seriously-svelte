@@ -1,7 +1,7 @@
 import { w_ancestry_focus, w_ancestries_grabbed, w_ancestries_expanded } from '../common/Stores';
-import { w_t_tree, w_t_graph, w_hierarchy, w_t_details, w_t_countDots } from '../common/Stores';
+import { w_t_treeMode, w_t_graphMode, w_hierarchy, w_t_details, w_t_countDots } from '../common/Stores';
 import { c, k, ux, show, debug, Ancestry, databases } from '../common/Global_Imports';
-import { S_Paging, T_Graph, T_Hierarchy, T_Details } from '../common/Global_Imports';
+import { S_Paging, T_GraphMode, T_Hierarchy, T_Details } from '../common/Global_Imports';
 import { w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
 import { w_s_paging, w_font_size, w_thing_fontFamily } from '../common/Stores';
 import { get } from 'svelte/store';
@@ -171,10 +171,10 @@ export class Preferences {
 	restore_paging() { ux.createAll_thing_pages_fromDict(this.readDB_key(T_Preference.paging)); }
 
 	reactivity_subscribe() {
-		w_t_tree.subscribe((value) => {
+		w_t_treeMode.subscribe((value) => {
 			this.write_key(T_Preference.tree, value);
 		});
-		w_t_graph.subscribe((value) => {
+		w_t_graphMode.subscribe((value) => {
 			this.write_key(T_Preference.graph, value);
 		});
 		w_t_countDots.subscribe((value) => {
@@ -200,8 +200,8 @@ export class Preferences {
 			this.write_key(T_Preference.relationships, true);
 		}
 		w_font_size.set(this.read_key(T_Preference.font_size) ?? 14);
-		w_t_graph.set(this.read_key(T_Preference.graph) ?? T_Graph.tree);
-		w_t_tree.set(this.read_key(T_Preference.tree) ?? T_Hierarchy.children);
+		w_t_graphMode.set(this.read_key(T_Preference.graph) ?? T_GraphMode.tree);
+		w_t_treeMode.set(this.read_key(T_Preference.tree) ?? T_Hierarchy.children);
 		w_ring_rotation_angle.set(this.read_key(T_Preference.ring_angle) ?? 0);
 		w_t_countDots.set(this.read_key(T_Preference.countDots) ?? [T_Hierarchy.children]);
 		w_thing_fontFamily.set(this.read_key(T_Preference.font) ?? 'Times New Roman');

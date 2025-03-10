@@ -3,9 +3,9 @@ export enum T_Alteration {
 	adding	 = 'adding',
 }
 
-export enum T_Graph {
+export enum T_GraphMode {
 	radial = 'radial',
-	tree  = 'tree',
+	tree   = 'tree',
 }
 
 export enum T_Info {
@@ -36,7 +36,7 @@ export enum T_Widget {
 	tree   = 'tree',
 }
 
-export enum T_Line {
+export enum T_Curve {
 	flat = 'flat',
 	down = 'down',
 	up	 = 'up',
@@ -135,7 +135,7 @@ export enum T_Element {
 }
 
 export enum T_Rebuild {		// design goal: replace all rebuilds counts?
-	radial = 'radial',		// only this enum is used    (in Radial_Graph)
+	radial = 'radial',		// only this enum is used    (in R_Graph)
 	reveal = 'reveal',
 	widget = 'widget',
 	crumbs = 'crumbs',

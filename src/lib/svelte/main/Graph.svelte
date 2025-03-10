@@ -1,9 +1,9 @@
 <script lang='ts'>
-	import { c, k, w, Rect, Point, debug, T_Layer, signals, T_Graph } from '../../ts/common/Global_Imports';
-	import { w_graph_rect, w_t_graph, w_ancestry_focus } from '../../ts/common/Stores';
+	import { c, k, w, Rect, Point, debug, T_Layer, signals, T_GraphMode } from '../../ts/common/Global_Imports';
+	import { w_graph_rect, w_t_graphMode, w_ancestry_focus } from '../../ts/common/Stores';
 	import { w_device_isMobile, w_user_graph_offset } from '../../ts/common/Stores';
-	import Radial_Graph from '../radial/Radial_Graph.svelte';
-	import Tree_Graph from '../tree/Tree_Graph.svelte';
+	import R_Graph from '../radial/R_Graph.svelte';
+	import T_Graoh from '../tree/T_Graoh.svelte';
 	import { onMount } from 'svelte';
 	let draggableRect: Rect | null = null;
 	let style = k.empty;
@@ -57,10 +57,10 @@
 	<div class='draggable'
 		bind:this={draggable}
 		style={style}>
-		{#if $w_t_graph == T_Graph.radial}
-			<Radial_Graph/>
+		{#if $w_t_graphMode == T_GraphMode.radial}
+			<R_Graph/>
 		{:else}
-			<Tree_Graph/>
+			<T_Graoh/>
 		{/if}
 	</div>
 {/key}

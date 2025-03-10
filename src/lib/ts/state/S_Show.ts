@@ -1,4 +1,4 @@
-import { w_t_tree, w_t_countDots, w_show_details } from '../common/Stores';
+import { w_t_treeMode, w_t_countDots, w_show_details } from '../common/Stores';
 import { c, k, p, w, signals, T_Preference } from '../common/Global_Imports';
 import { T_Info, T_Hierarchy } from '../common/Enumerations';
 import type { Dictionary } from '../common/Types';
@@ -39,11 +39,11 @@ export class S_Show {
 		this.traits = p.read_key(T_Preference.traits) ?? false;
 		this.t_info = p.read_key(T_Preference.info) ?? T_Info.focus;
 		w_show_details.set(p.read_key(T_Preference.show_details) ?? false);
-		w_t_tree.set(p.read_key(T_Preference.tree) ?? T_Hierarchy.children);
+		w_t_treeMode.set(p.read_key(T_Preference.tree) ?? T_Hierarchy.children);
 	}
 
 	reactivity_subscribe() {
-		w_t_tree.subscribe((relations: string) => {
+		w_t_treeMode.subscribe((relations: string) => {
 			p.write_key(T_Preference.tree, relations);
 		});
 		w_show_details.subscribe((flag: boolean) => {

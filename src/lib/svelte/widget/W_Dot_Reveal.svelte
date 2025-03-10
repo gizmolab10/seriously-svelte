@@ -1,12 +1,11 @@
 <script lang='ts'>
 	import { c, k, u, ux, Size, Thing, Point, debug, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
 	import { w_ancestries_grabbed, w_ancestries_expanded, w_ancestry_showing_tools } from '../../ts/common/Stores';
-	import { T_Layer, T_Graph, Predicate, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_GraphMode, Predicate, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_t_countDots, w_hierarchy, w_s_alteration } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import { onMount } from 'svelte';
-	export let center;
     export let ancestry;
 	export let name = k.empty;
     export let zindex = T_Layer.dots;
@@ -19,6 +18,7 @@
 	const viewBox = `0.5 2.35 ${outer_diameter} ${outer_diameter}`;
 	let svgPathFor_outer_tinyDots: string | null = null;
 	let svgPathFor_bulkAlias: string | null = null;
+	let center = ancestry.g_widget.center_ofReveal;
 	let svgPathFor_revealDot = k.empty;
 	let revealWrapper!: Svelte_Wrapper;
 	let bulkAliasOffset = 0;
@@ -30,8 +30,16 @@
 	onMount(() => {
 		svgPath_update();
 		set_isHovering(false);
+		const handle_relayout = signals.handle_reposition_widgets(2, (received_ancestry) => {
+			if (!!dotReveal) {
+				center = ancestry.g_widget.center_ofReveal;
+				const origin = center.offsetEquallyBy(-k.dot_size);
+				debug.log_reposition(`dotReveal [. . .] o: (${origin.x.asInt()}, ${origin.y.asInt()}) ${ancestry.title}`);
+				rebuilds += 1;
+			}
+		});
+		return () => { handle_relayout.disconnect(); };
 	});
-
 	$: {
 		const _ = $w_t_countDots;
 		svgPath_update();

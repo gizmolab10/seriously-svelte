@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { c, k, u, ux, w, show, Rect, Size, Point, debug, signals } from '../../ts/common/Global_Imports';
-	import { T_Tool, T_Graph, T_Layer, T_Element, T_Alteration } from '../../ts/common/Global_Imports';
+	import { T_Tool, T_GraphMode, T_Layer, T_Element, T_Alteration } from '../../ts/common/Global_Imports';
 	import { svgPaths, databases, Direction, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { S_Mouse, S_Element, S_Alteration } from '../../ts/common/Global_Imports';
 	import { w_s_alteration, w_ancestry_showing_tools } from '../../ts/common/Stores';
