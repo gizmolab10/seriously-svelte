@@ -8,7 +8,6 @@
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { T_Edit } from '../../ts/state/S_Title_Edit';
 	import { onMount, onDestroy } from 'svelte';
-	export let points_right = true;
 	export let fontSize = '1em';
     export let name = k.empty;
 	export let ancestry;

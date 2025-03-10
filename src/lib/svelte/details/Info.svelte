@@ -23,7 +23,7 @@
 	const traits_width = k.width_details - (margin * 2);
 	const traits_size = new Size(info_width - 58, k.default_buttonSize + 4);
 	const traits_rect = Rect.createCenterRect(traits_center, traits_size);
-	const s_element = ux.s_element_for(new Identifiable(id), T_Element.info, id);
+	const es_info = ux.s_element_for(new Identifiable(id), T_Element.info, id);
 	let ancestry: Ancestry | null = $w_ancestry_focus;
 	let thing: Thing | null = ancestry?.thing ?? null;
 	let text_box_size = new Size(info_width - 4, 68);
@@ -64,7 +64,7 @@
 	}
 
 	setup_tops();
-	s_element.set_forHovering(k.color_default, 'pointer');
+	es_info.set_forHovering(k.color_default, 'pointer');
 	
 	onMount(() => {
 		const handler = signals.handle_rebuildGraph(1, (ancestry) => {

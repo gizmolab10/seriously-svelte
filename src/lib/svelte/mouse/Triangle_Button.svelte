@@ -7,7 +7,7 @@
 	import Button from './Button.svelte';
 	export let handle_mouse_state = Handle_Result<S_Mouse>;
 	export let hover_closure = Handle_Result<boolean>;
-	export let s_element = S_Element.none;
+	export let es_triangle = S_Element.empty();
 	export let extraPath = null;
 	export let name = k.empty;
 	export let strokeColor;
@@ -45,7 +45,7 @@
 </script>
 
 <Button
-	s_element={s_element}
+	s_element={es_triangle}
 	border_thickness=0
 	closure={closure}
 	center={center}

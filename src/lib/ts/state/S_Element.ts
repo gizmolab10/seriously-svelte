@@ -33,7 +33,7 @@ export default class S_Element {
 		this.type = type;
 	}
 
-	static none() { return {}; }
+	static empty() { return {}; }
 	get ancestry(): Ancestry { return this.identifiable as Ancestry; }
 	get invertColor(): boolean { return this.isInverted || this.isHovering; }
 	get cursor(): string { return this.isHovering ? this.hoverCursor : this.defaultCursor; }

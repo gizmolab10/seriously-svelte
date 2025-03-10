@@ -14,7 +14,7 @@
 	let height = k.default_buttonSize;
 	let thing: Thing = ancestry.thing;
 	let title: string = thing.title;
-	let s_element: S_Element;
+	let es_breadcrumb: S_Element;
 	let colorStyles = k.empty;
 	let style = k.empty;
 	let name = k.empty;
@@ -29,7 +29,7 @@
 		name = `crumb (for ${title ?? 'unknown'})`
 		width = u.getWidthOf(title) + 15;
 		center = new Point(left + width / 2, height - 1);
-		s_element = ux.s_element_for(ancestry, elementType, T_Tool.none);
+		es_breadcrumb = ux.s_element_for(ancestry, elementType, T_Tool.none);
 		updateColors();
 	}
 
@@ -73,8 +73,8 @@
 					border = `${borderStyle} ${thing.color}`;
 				}
 				const cursor = !ancestry.isGrabbed && ancestry.hasChildRelationships ? 'pointer' : k.cursor_default;
-				s_element.set_forHovering(thing.color, cursor);
-				s_element.isOut = s_mouse.isOut;
+				es_breadcrumb.set_forHovering(thing.color, cursor);
+				es_breadcrumb.isOut = s_mouse.isOut;
 				updateStyle();
 				rebuilds += 1;
 			} else if (s_mouse.isUp) {
@@ -96,7 +96,7 @@
 		center={center}
 		closure={closure}
 		position='absolute'
-		s_element={s_element}>
+		s_element={es_breadcrumb}>
 		{title}
 	</Button>
 {/key}

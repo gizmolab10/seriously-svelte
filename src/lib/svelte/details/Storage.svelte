@@ -37,10 +37,10 @@
 	function setup_s_elements() {
 		const ids = [T_Storage.export, T_Storage.import];
 		for (const id of ids) {
-			const s_element = ux.s_element_for(null, T_Element.storage, id);
-			s_element.set_forHovering('black', 'pointer');
-			s_element.color_background = k.color_background;
-			s_element_byStorageType[id] = s_element;
+			const es_storage = ux.s_element_for(null, T_Element.storage, id);
+			es_storage.set_forHovering('black', 'pointer');
+			es_storage.color_background = k.color_background;
+			s_element_byStorageType[id] = es_storage;
 		}
 	}
 	

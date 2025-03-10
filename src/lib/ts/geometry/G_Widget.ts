@@ -5,7 +5,6 @@ import { get } from 'svelte/store';
 export default class G_Widget {
 	angle_ofChild: number | null = null;
 	origin_ofChildrenTree = Point.zero;
-	origin_ofFirstReveal = Point.zero;
 	curveType: string = T_Line.flat;
 	offset_ofWidget = Point.zero;
 	center_ofReveal = Point.zero;
@@ -100,18 +99,18 @@ export default class G_Widget {
 			this.width_ofWidget = width;
 			if (showingReveal) {
 				const y_reveal = k.dot_size * 0.72;
-				const x_reveal = k.dot_size - (!this.points_right ? 3 : (!ux.inTreeMode ? 21 : -1) - this.width_ofWidget);
+				const x_reveal = k.dot_size - (this.points_right ? ((ux.inTreeMode ? -1 : 21) - width) : 3);
 				this.center_ofReveal = new Point(x_reveal, y_reveal);
 			}
 			if (ux.inTreeMode && ancestry.isFocus) {
 				const graphRect = get(w_graph_rect);
 				const childrenSize = ancestry.visibleProgeny_size;
 				const focus = ancestry.thing ?? get(w_hierarchy).root;
-				const offsetX_ofFirstReveal = focus?.titleWidth / 2 - 2;
+				const offsetX_ofReveal = focus?.titleWidth / 2 - 2;
 				const offsetY = -1 - graphRect.origin.y;
-				const offsetX = 15 + (get(w_show_details) ? -k.width_details : 0) - (childrenSize.width / 2) - (k.dot_size / 2.5) + offsetX_ofFirstReveal;
-				this.origin_ofFirstReveal = graphRect.center.offsetByXY(offsetX, offsetY);
-				this.origin_ofFocus = this.origin_ofFirstReveal.offsetByXY(-21.5 - offsetX_ofFirstReveal, -5);
+				const offsetX = 15 + (get(w_show_details) ? -k.width_details : 0) - (childrenSize.width / 2) - (k.dot_size / 2.5) + offsetX_ofReveal;
+				const origin_ofReveal = graphRect.center.offsetByXY(offsetX, offsetY);
+				this.origin_ofFocus = origin_ofReveal.offsetByXY(-21.5 - offsetX_ofReveal, -5);
 			}
 		}
 	}

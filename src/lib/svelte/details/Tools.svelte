@@ -61,11 +61,11 @@
 			const ids = [T_Tool.delete_cancel, T_Tool.add_parent, T_Tool.delete_parent, T_Tool.delete_cancel, T_Tool.delete_confirm, T_Tool.dismiss, T_Tool.create, T_Tool.next, T_Tool.more];
 			for (const id of ids) {
 				const isDismiss = (id == T_Tool.dismiss);
-				const s_element = ux.s_element_for(ancestry, T_Element.tool, id);
-				s_element.color_background = isDismiss ? k.color_background : 'transparent';
-				s_element.set_forHovering(color, 'pointer');
-				s_element.hoverIgnore = !isDismiss;
-				s_element_byToolType[id] = s_element;
+				const es_tool = ux.s_element_for(ancestry, T_Element.tool, id);
+				es_tool.color_background = isDismiss ? k.color_background : 'transparent';
+				es_tool.set_forHovering(color, 'pointer');
+				es_tool.hoverIgnore = !isDismiss;
+				s_element_byToolType[id] = es_tool;
 			}		
 		}
 	}
@@ -115,10 +115,10 @@
 
 	async function handle_mouse_data(s_mouse: S_Mouse, id: string) {
 		if (s_mouse.isHover) {
-			const s_element = s_element_byToolType[id];
+			const es_tool = s_element_byToolType[id];
 			const isOut = s_mouse.isOut;
 			isHovering_byID[id] = !isOut;
-			s_element.isOut = isOut;
+			es_tool.isOut = isOut;
 		} else if (s_mouse.isUp || s_mouse.isLong) {
 			switch (id) {
 				case T_Tool.delete_cancel: confirmingDelete = false; break;

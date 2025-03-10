@@ -181,7 +181,6 @@
 				ancestry = {ancestry}
 				name = {es_title.name}
 				fontSize = {k.font_size}px
-				points_right = {points_right}
 				origin = {g_widget.origin_ofTitle}
 			/>
 			{#if ancestry?.showsReveal_forPointingToChild(points_toChild)}

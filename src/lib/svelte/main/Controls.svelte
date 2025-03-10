@@ -48,10 +48,10 @@
 		let total = w.windowSize.width + 50;
 		for (const t_control of t_controls) {
 			total -= u.getWidthOf(t_control);
-			const s_element = ux.s_element_for(new Identifiable(t_control), T_Element.control, t_control);
-			s_element.set_forHovering(k.color_default, 'pointer');
-			s_element.hoverIgnore = (t_control == T_Control.details);
-			s_elements_byControlType[t_control] = s_element;
+			const es_control = ux.s_element_for(new Identifiable(t_control), T_Element.control, t_control);
+			es_control.set_forHovering(k.color_default, 'pointer');
+			es_control.hoverIgnore = (t_control == T_Control.details);
+			s_elements_byControlType[t_control] = es_control;
 			elementShown_byControlType[t_control] = total > 0;
 		}
 	}
