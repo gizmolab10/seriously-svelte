@@ -3,8 +3,8 @@ import { show } from '../state/S_Show';
 import { files } from '../managers/Files';
 import { Direction } from '../common/Angle';
 import { Rect, Size, Point } from './Geometry';
+import { svgPaths } from '../common/SVG_Paths';
 import { wrappers } from '../managers/Wrappers';
-import { svgPaths } from '../geometry/SVG_Paths';
 import { ErrorTrace } from '../debug/ErrorTrace';
 import { Hierarchy } from '../managers/Hierarchy';
 import { databases } from '../managers/Databases';
@@ -55,7 +55,6 @@ import { k } from './Constants';
 import { u } from './Utilities';
 import { e } from '../signals/Events';
 import { w } from '../geometry/G_Window';
-import { g } from '../managers/Geometrics';
 import { p } from '../managers/Preferences';
 import { c } from '../managers/Configuration';
 import { ux } from '../managers/User_Interaction';
@@ -64,8 +63,8 @@ import { transparentize } from 'color2k';
 import interact from 'interactjs';
 
 export {
+	e, c, k, p, u, ux, w,
 	T_Timer, Mouse_Timer,
-	e, c, g, k, p, u, ux, w,
 	interact, transparentize,
 	wrappers, Seriously_Range,
 	Rect, Size, Point, svgPaths,

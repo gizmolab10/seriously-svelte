@@ -1,7 +1,6 @@
 import { k, Rect, Size, Point, T_Line, T_Widget, Ancestry, G_Widget } from '../common/Global_Imports';
 
 export default class G_TreeChild {
-	g_child_widget: G_Widget;
 	progeny_height = 0;
 
 	// scratchpad for
@@ -17,8 +16,9 @@ export default class G_TreeChild {
 		const child_direction = this.getDirection(child_sizeY);
 		const child_rect = new Rect(origin, new Size(k.line_stretch, child_sizeY - 1));
 		const child_widget_origin = this.origin_forAncestry_inRect(ancestry, child_rect);
-		this.g_child_widget = new G_Widget(child_rect, child_direction, child_widget_origin, ancestry);
+		const g_widget = new G_Widget(child_rect, child_direction, ancestry, child_widget_origin);
 		this.progeny_height = progeny_height;
+		ancestry.g_widget = g_widget;
 	}
 
 	origin_forAncestry_inRect(childAncestry: Ancestry, rect: Rect): Point {

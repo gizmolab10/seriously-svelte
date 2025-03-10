@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, g, k, u, ux, w, Rect, Size, Point, Thing, debug, Angle } from '../../ts/common/Global_Imports';
+	import { c, k, u, ux, w, Rect, Size, Point, Thing, debug, Angle } from '../../ts/common/Global_Imports';
 	import { signals, databases, Seriously_Range, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { T_Graph, T_Layer, S_Title_Edit, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_t_graph, w_hierarchy, w_s_title_edit, w_mouse_location } from '../../ts/common/Stores';
@@ -118,8 +118,7 @@
 
 	function relayout() {
 		debug.log_edit(`RELAYOUT ${ancestry.title}`);
-		g.g_treeGraph.relayout_recursively();
-		// g.g_widget_forID(ancestry.id).relayout_recursively();
+		ux.g_treeGraph.relayout_recursively();
 		signals.signal_reposition_widgets_from(ancestry);
 	}
 	

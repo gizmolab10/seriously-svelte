@@ -1,4 +1,4 @@
-import { g, k, ux, Rect, Point, Angle, Ancestry, S_Element, T_Element } from '../common/Global_Imports'
+import { k, ux, Rect, Point, Angle, Ancestry, S_Element, T_Element } from '../common/Global_Imports'
 import { w_hierarchy, w_graph_rect, w_show_details, w_ancestry_focus } from '../common/Stores';
 import { get } from 'svelte/store';
 
@@ -35,8 +35,8 @@ export default class G_Widget {
 	constructor(
 		rect: Rect,
 		curveType: string,
-		origin_ofChild: Point,
 		ancestry: Ancestry,
+		origin_ofChild: Point,
 		points_toChild: boolean = true,
 		angle_ofChild: number | null = null) {
 			this.rect = rect;
@@ -50,7 +50,6 @@ export default class G_Widget {
 			if (!ancestry?.thing) {
 				console.log(`geometry G_Widget ... relationship has no child ${ancestry?.relationship?.description}`);
 			}
-			g.set_g_widget_forID(this, ancestry.id);
 			this.layout();
 	}
 
@@ -69,8 +68,7 @@ export default class G_Widget {
 			const ancestry = this.ancestry;
 			if (!!ancestry && ancestry.showsChildRelationships) {
 				for (const childAncestry of ancestry.childAncestries) {
-					const g_child_widget = g.g_widget_forID(childAncestry.id);
-					g_child_widget.relayout_recursively();
+					childAncestry.g_widget.relayout_recursively();
 				}
 			}
 		}

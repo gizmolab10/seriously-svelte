@@ -17,6 +17,7 @@ export default class Ancestry extends Identifiable {
 	kindPredicate: string;
 	thing_isChild = true;
 	t_database: string;
+	g_widget!: G_Widget
 
 	// id => ancestry string 
 	//   "   composed of ids of each relationship
@@ -89,7 +90,7 @@ export default class Ancestry extends Identifiable {
 	get titleRect():					 Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
 	get idBridging():				   string | null { return this.thing?.idBridging ?? null; }
 	get parentAncestry():			 Ancestry | null { return this.stripBack(); }
-	get g_widget():				 	 G_Widget | null { return get(w_g_radial)?.g_necklace_widget_forAncestry(this) ?? null; }
+	// get g_widget():				 	 G_Widget | null { return get(w_g_radial)?.g_necklace_widget_forAncestry(this) ?? null; }
 	get predicate():				Predicate | null { return this.hierarchy.predicate_forKind(this.kindPredicate) }
 	get relationship():			 Relationship | null { return this.relationshipAt(); }
 	get titleWrapper():		   Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.hid, T_SvelteComponent.title); }

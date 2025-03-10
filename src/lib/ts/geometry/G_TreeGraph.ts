@@ -1,6 +1,6 @@
-import { k, Rect, debug, T_Line, G_Widget, T_Widget } from '../common/Global_Imports';
 import { w_hierarchy, w_graph_rect, w_show_details  } from '../../ts/common/Stores';
 import { w_ancestry_focus, w_device_isMobile } from '../../ts/common/Stores';
+import { k, Rect, debug, T_Line, G_Widget } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
 export default class G_TreeGraph {
@@ -22,7 +22,8 @@ export default class G_TreeGraph {
 				origin_ofFirstReveal.x = 25;
 			}
 			const origin_ofChildren = origin_ofFirstReveal.offsetByXY(child_offsetX, child_offsetY);
-			this.g_focus_widget = new G_Widget(Rect.zero, T_Line.flat, origin_ofChildren, focusAncestry, null);
+			this.g_focus_widget = new G_Widget(Rect.zero, T_Line.flat, focusAncestry, origin_ofChildren);
+			focusAncestry.g_widget = this.g_focus_widget;
 			debug.log_origins(origin_ofChildren.x + ' update_origins');
 		}
 	}

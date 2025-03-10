@@ -26,7 +26,7 @@ export default class G_TreeChildren {
 				let sum = -this.ancestry.visibleProgeny_height() / 2; // start out negative and grow positive
 				for (const childAncestry of childAncestries) {
 					const scratchpad = new G_TreeChild(sum, childrenOrigin, childAncestry);
-					this.g_children_widgets.push(scratchpad.g_child_widget);
+					this.g_children_widgets.push(childAncestry.g_widget);
 					sum += scratchpad.progeny_height;
 				}
 				this.center = childrenOrigin.offsetByXY(20, 2);
