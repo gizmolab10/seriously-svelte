@@ -19,7 +19,7 @@
 				(!received_ancestry || (ancestry.isExpanded &&
 				received_ancestry.hasMatchingID(ancestry)))) {
 				lastLayoutTime = now;
-				debug.log_origins(g_tree_widget.origin_ofChild.x + ' before timeout');
+				debug.log_origins(ancestry.g_widget.origin_ofChild.x + ' before timeout');
 				debug.log_reposition(`tree children [. .] on "${ancestry.title}"`);
 				g_tree_children.layout_allChildren();
 			}

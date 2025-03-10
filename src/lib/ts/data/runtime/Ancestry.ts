@@ -16,8 +16,8 @@ export default class Ancestry extends Identifiable {
 	_thing: Thing | null = null;
 	kindPredicate: string;
 	thing_isChild = true;
+	g_widget!: G_Widget;
 	t_database: string;
-	g_widget!: G_Widget
 
 	// id => ancestry string 
 	//   "   composed of ids of each relationship
@@ -30,6 +30,7 @@ export default class Ancestry extends Identifiable {
 		this.t_database = t_database;
 		this.thing_isChild = thing_isChild;
 		this.kindPredicate = kindPredicate;
+		this.g_widget = G_Widget.empty(this);
 		get(w_hierarchy).signal_storage_redraw(0);
 	}
 
@@ -281,11 +282,11 @@ export default class Ancestry extends Identifiable {
 		return false;
 	}
 
-	includedInAncestries(ancestries: Array<Ancestry>): boolean {
-		const included = ancestries.filter(a => {
+	includedInAncestries(ancestries: Array<Ancestry> | undefined): boolean {
+		const included = ancestries?.filter(a => {
 			return this.hasMatchingID(a);
 		});
-		return included.length > 0;
+		return (included?.length ?? 0) > 0;
 	}
 
 	hasThings(predicate: Predicate): boolean {

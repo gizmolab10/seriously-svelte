@@ -120,21 +120,21 @@ export class Preferences {
 	}
 
 	ancestries_writeDB_key(ancestries: Array<Ancestry>, key: string) {
-		const paths = ancestries.map(a => a.pathString);			// array of paths (of Relationship ids)
-		this.writeDB_key(key, ancestries.length == 0 ? null : paths);
-		debug.log_preferences(`! ${key.toUpperCase()} ${ancestries.length} paths "${paths}" titles "${ancestries.map(a => a.title)}"`);
+		const pathStrings = ancestries.map(a => a.pathString);			// array of pathStrings (of Relationship ids)
+		this.writeDB_key(key, ancestries.length == 0 ? null : pathStrings);
+		debug.log_preferences(`! ${key.toUpperCase()} ${ancestries.length} pathStrings "${pathStrings}" titles "${ancestries.map(a => a.title)}"`);
 	}
 
 	ancestries_readDB_key(key: string): Array<Ancestry> {	// 2 keys use this {grabbed, expanded}
-		const paths = this.readDB_key(key);
-		const length = paths?.length ?? 0;
+		const pathStrings = this.readDB_key(key);
+		const length = pathStrings?.length ?? 0;
 		let ancestries: Array<Ancestry> = [];
 		if (!this.ignoreAncestries && length > 0) {
 			let h = get(w_hierarchy);
-			for (const path of paths) {
-				const a = h.ancestry_valid_forPath(path);
-				if (!!a) {
-					ancestries.push(a);
+			for (const pathString of pathStrings) {
+				const ancestry = h.ancestry_valid_forPath(pathString);
+				if (!!ancestry) {
+					ancestries.push(ancestry);
 				}
 			};
 		}
