@@ -26,7 +26,7 @@ export default class G_TreeGraph {
 				origin_ofFirstReveal.x = 25;
 			}
 			const origin_ofChildren = origin_ofFirstReveal.offsetByXY(child_offsetX, child_offsetY);
-			focusAncestry.g_widget = new G_Widget(Rect.zero, T_Line.flat, focusAncestry, origin_ofChildren);
+			focusAncestry.g_widget.update(Rect.zero, true, T_Line.flat, origin_ofChildren);
 			debug.log_origins(origin_ofChildren.x + ' update_origins');
 		}
 	}
