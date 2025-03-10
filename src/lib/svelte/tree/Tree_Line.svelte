@@ -3,8 +3,8 @@
 	import { Svelte_Wrapper, Ancestry, T_SvelteComponent, T_Line } from '../../ts/common/Global_Imports';
 	import { w_thing_color } from '../../ts/common/Stores';
 	import Circle from '../kit/Circle.svelte';
-	export let g_widget!: G_Widget;
-	const ancestry = g_widget.ancestry;
+	export let ancestry!: Ancestry;
+	const g_widget = ancestry.g_widget;
 	const curveType = g_widget.curveType;
 	const debugOffset = new Point(142, -0);
 	const lineOffset = new Point(-122.5, 2.5);

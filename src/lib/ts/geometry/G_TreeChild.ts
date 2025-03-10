@@ -1,11 +1,11 @@
-import { k, Rect, Size, Point, T_Line, T_Widget, Ancestry, G_Widget } from '../common/Global_Imports';
+import { k, Rect, Size, Point, T_Line, Ancestry, G_Widget } from '../common/Global_Imports';
 
 export default class G_TreeChild {
 	progeny_height = 0;
 
 	// scratchpad for
 	//  computing progeny height and widget origin
-	//  creating single source of truth for widget geometry
+	//  creating single source of truth for g_widget
 
 	constructor(
 		sum: number,

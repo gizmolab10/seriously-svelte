@@ -32,9 +32,9 @@
 	{#key rebuilds}
 		<div class = 'tree'
 			style = 'transform:translate({$w_user_graph_offset.x}px, {$w_user_graph_offset.y}px);'>
-			<Widget g_widget = {ux.g_treeGraph.g_focus_widget}/>
+			<Widget ancestry = {$w_ancestry_focus}/>
 			{#if $w_ancestry_focus.isExpanded}
-				<Tree_Children g_tree_widget = {ux.g_treeGraph.g_focus_widget}/>
+				<Tree_Children ancestry = {$w_ancestry_focus}/>
 			{/if}
 		</div>
 	{/key}

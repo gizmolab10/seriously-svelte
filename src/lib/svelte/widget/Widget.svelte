@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, k, u, ux, Thing, Point, Angle, debug, signals, Svelte_Wrapper } from '../../ts/common/Global_Imports';
+	import { c, k, u, ux, Thing, Point, Angle, debug, signals, Ancestry, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Widget, T_Signal, T_Element } from '../../ts/common/Global_Imports';
 	import { G_Widget, S_Element, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_ancestries_grabbed } from '../../ts/common/Stores';
@@ -9,10 +9,10 @@
 	import W_Dot_Reveal from './W_Dot_Reveal.svelte';
 	import W_Dot_Drag from './W_Dot_Drag.svelte';
 	import { onMount } from 'svelte';
-	export let g_widget!: G_Widget;
+	export let ancestry!: Ancestry;
+	const g_widget = ancestry.g_widget;
 	const es_widget = g_widget.es_widget;
 	const name = es_widget.name;
-    const ancestry = g_widget.ancestry;
     const points_right = g_widget.points_right;
 	const points_toChild = g_widget.points_toChild;
 	const s_widget = ux.s_widget_forAncestry(ancestry);

@@ -4,7 +4,11 @@ import { k, Rect, debug, T_Line, G_Widget } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
 export default class G_TreeGraph {
-	g_focus_widget!: G_Widget;
+
+	relayout_recursively() {
+		this.update_origins();
+		get(w_ancestry_focus)?.g_widget.relayout_recursively();
+	}
 
 	update_origins() {
 		const graphRect = get(w_graph_rect);
@@ -22,15 +26,9 @@ export default class G_TreeGraph {
 				origin_ofFirstReveal.x = 25;
 			}
 			const origin_ofChildren = origin_ofFirstReveal.offsetByXY(child_offsetX, child_offsetY);
-			this.g_focus_widget = new G_Widget(Rect.zero, T_Line.flat, focusAncestry, origin_ofChildren);
-			focusAncestry.g_widget = this.g_focus_widget;
+			focusAncestry.g_widget = new G_Widget(Rect.zero, T_Line.flat, focusAncestry, origin_ofChildren);
 			debug.log_origins(origin_ofChildren.x + ' update_origins');
 		}
-	}
-
-	relayout_recursively() {
-		this.update_origins();
-		this.g_focus_widget.relayout_recursively();
 	}
 
 }

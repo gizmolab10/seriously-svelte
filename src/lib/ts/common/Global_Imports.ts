@@ -32,7 +32,7 @@ import S_Expansion from '../state/S_Expansion';
 import G_Cluster from '../geometry/G_Cluster';
 import G_Segment from '../geometry/G_Segment';
 import S_Rotation from '../state/S_Rotation';
-import G_Radial from '../geometry/G_Radial';
+import G_RadialGraph from '../geometry/G_RadialGraph';
 import G_Widget from '../geometry/G_Widget';
 import S_Element from '../state/S_Element';
 import S_Widget from '../state/S_Widget';
@@ -80,5 +80,5 @@ export {
 	User, Persistable, Thing, Trait, Access, Predicate, Relationship,
 	T_Info, T_Thing, T_Trait, T_Graph, T_Hierarchy, T_Details, T_Rebuild, T_Startup,
 	T_Line, T_Tool, T_Widget, T_Signal, T_Control, T_Browser, T_Storage, T_Preference,
-	G_Widget, G_Segment, G_Cluster, G_Radial, G_TreeChild, G_TreeGraph, G_ArcSlider, G_TreeChildren,
+	G_Widget, G_Segment, G_Cluster, G_RadialGraph, G_TreeChild, G_TreeGraph, G_ArcSlider, G_TreeChildren,
 };

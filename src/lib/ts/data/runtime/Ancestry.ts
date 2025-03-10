@@ -3,7 +3,7 @@ import { c, k, u, ux, show, Rect, Size, Thing, debug, signals, wrappers, svgPath
 import { T_Element, T_Predicate, T_Alteration, T_SvelteComponent } from '../../common/Global_Imports';
 import { w_hierarchy, w_ancestry_focus, w_ancestry_showing_tools } from '../../common/Stores';
 import { w_ancestries_grabbed, w_ancestries_expanded, } from '../../common/Stores';
-import { w_g_radial, w_s_alteration, w_s_title_edit } from '../../common/Stores';
+import { w_g_radialGraph, w_s_alteration, w_s_title_edit } from '../../common/Stores';
 import { G_Widget, S_Paging, S_Title_Edit } from '../../common/Global_Imports';
 import Reciprocal_Ancestry from './Reciprocal_Ancestry';
 import type { Integer } from '../../common/Types';
@@ -90,7 +90,6 @@ export default class Ancestry extends Identifiable {
 	get titleRect():					 Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
 	get idBridging():				   string | null { return this.thing?.idBridging ?? null; }
 	get parentAncestry():			 Ancestry | null { return this.stripBack(); }
-	// get g_widget():				 	 G_Widget | null { return get(w_g_radial)?.g_necklace_widget_forAncestry(this) ?? null; }
 	get predicate():				Predicate | null { return this.hierarchy.predicate_forKind(this.kindPredicate) }
 	get relationship():			 Relationship | null { return this.relationshipAt(); }
 	get titleWrapper():		   Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.hid, T_SvelteComponent.title); }
@@ -139,12 +138,12 @@ export default class Ancestry extends Identifiable {
 
 	get s_paging(): S_Paging | null {
 		const predicate = this.predicate;
-		const g_radial = get(w_g_radial);
-		if (!!predicate && !!g_radial) {
-			const g_cluster = g_radial?.g_cluster_pointing_toChildren(this.thing_isChild, predicate)
+		const g_radialGraph = get(w_g_radialGraph);
+		if (!!predicate && !!g_radialGraph) {
+			const g_cluster = g_radialGraph?.g_cluster_pointing_toChildren(this.thing_isChild, predicate)
 			return g_cluster?.s_ancestryPaging(this) ?? null;
 		}
-		return null;	// either g_radial is not setup or predicate is bogus
+		return null;	// either g_radialGraph is not setup or predicate is bogus
 	}
 	
 	get thing(): Thing | null {

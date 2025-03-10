@@ -5,7 +5,7 @@ import Reciprocal_Ancestry from '../data/runtime/Reciprocal_Ancestry';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
 
-export default class G_Radial {
+export default class G_RadialGraph {
 	g_parent_clusters: Dictionary<G_Cluster> = {};		// includes related
 	g_child_clusters: Dictionary<G_Cluster> = {};
 	ancestry_focus!: Ancestry;
@@ -28,11 +28,6 @@ export default class G_Radial {
 	get g_clusters(): Array<G_Cluster> { return u.concatenateArrays(Object.values(this.g_parent_clusters), Object.values(this.g_child_clusters)); }
 	g_clusters_pointing_toChildren(toChildren: boolean): Dictionary<G_Cluster> { return toChildren ? this.g_child_clusters : this.g_parent_clusters; }
 	g_cluster_pointing_toChildren(toChildren: boolean, predicate: Predicate): G_Cluster { return this.g_clusters_pointing_toChildren(toChildren)[predicate.kind]; }
-
-	g_necklace_widget_forAncestry(ancestry: Ancestry): G_Widget | null {
-		const array = this.g_necklace_widgets.filter(m => m.ancestry?.hid == ancestry.hid);
-		return array.length > 0 ? array[0] : null;
-	}
 
 	get g_cluster_atMouseLocation(): G_Cluster | null {
 		for (const g_cluster of this.g_clusters) {
