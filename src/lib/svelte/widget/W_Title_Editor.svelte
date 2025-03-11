@@ -265,7 +265,7 @@
 		const s_title_edit = $w_s_title_edit;
 		if (hasFocus() && !s_title_edit) {
 			stopEdit();
-		} else if (!!input && !!s_title_edit && s_title_edit.hasPathString_matching(ancestry)) {
+		} else if (!!input && !!s_title_edit && s_title_edit.ancestry.hasPathString_matching(ancestry)) {
 
 			//////////////////////////////////////////////////////
 			//													//

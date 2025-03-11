@@ -8,12 +8,12 @@
 	import T_Line from './T_Line.svelte';
 	import Circle from '../kit/Circle.svelte';
 	export let ancestry: Ancestry;
-    const g_T_Children = new G_TreeChildren(ancestry);
+    const g_t_children = new G_TreeChildren(ancestry);
 	let lastLayoutTime = new Date().getTime();
 
 	onMount(() => {
-		g_T_Children.layout_allChildren();
-		const handler = signals.handle_reposition_widgets(1, (received_ancestry) => {
+		g_t_children.layout_allChildren();
+		const handle_reposition = signals.handle_reposition_widgets(1, (received_ancestry) => {
 			const now = new Date().getTime();
 			if (((now - lastLayoutTime) > 100) &&	// no more often than ten times per second
 				(!received_ancestry || (ancestry.isExpanded &&
@@ -21,15 +21,15 @@
 				lastLayoutTime = now;
 				debug.log_origins(ancestry.g_widget.origin_ofChild.x + ' before timeout');
 				debug.log_reposition(`tree children [. .] on "${ancestry.title}"`);
-				g_T_Children.layout_allChildren();
+				g_t_children.layout_allChildren();
 			}
 		});
-		return () => { handler.disconnect() };
+		return () => { handle_reposition.disconnect() };
 	});
 	
 	$: {
 		if (!!$w_graph_rect) {
-			g_T_Children.layout_allChildren()
+			g_t_children.layout_allChildren()
 		}
 	}
 	
@@ -40,7 +40,7 @@
 		radius = 1
 		thickness = 1
 		color = black
-		center = {g_T_Children.center}/>
+		center = {g_t_children.center}/>
 {/if}
 {#if !!ancestry}
 	<div class = 'tree-children'>
