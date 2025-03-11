@@ -22,7 +22,6 @@ export const w_t_treeMode			  = writable<T_Hierarchy>();
 export const w_t_graphMode			  = writable<T_GraphMode>();
 
 export const w_g_active_cluster		  = writable<G_Cluster | null>();
-export const w_g_radialGraph		  = writable<G_RadialGraph | null>();
 
 export const w_mouse_location_scaled  = writable<Point>();
 export const w_user_graph_center	  = writable<Point>();

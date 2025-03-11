@@ -28,7 +28,7 @@
 	}
 
 	$: {
-		width_ofTitle = ($w_ancestry_focus?.thing?.titleWidth ?? 0) - 4;
+		width_ofTitle = ($w_ancestry_focus?.thing?.titleWidth ?? 0);
 		const x = -6 - (width_ofTitle / 2);
 		origin_ofTitle = Point.x(11);
 		center_ofBorder = new Point(width_ofTitle + 19, height).dividedInHalf;

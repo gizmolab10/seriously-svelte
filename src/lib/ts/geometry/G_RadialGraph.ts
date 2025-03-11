@@ -13,8 +13,6 @@ export default class G_RadialGraph {
 	// layout widgets, radial lines, and arcs
 
 	constructor() {
-		debug.log_reposition(`radial ${get(w_ancestry_focus)?.thing?.title}`);
-		this.layout_allClusters();
 		w_s_paging.subscribe((state: S_Paging) => {
 			this.update_forPaging_state(state);
 		});

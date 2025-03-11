@@ -38,6 +38,9 @@ export default class G_Cluster {
 	total_widgets = 0;
 	isPaging = false;
 
+	// heavy lifting for positioning everything 
+	// in one cluster of the radial view
+
 	destructor() { this.ancestries = []; }
 	constructor(total_widgets: number, ancestries: Array<Ancestry>, predicate: Predicate, points_toChildren: boolean) {
 		this.points_toChildren = points_toChildren;

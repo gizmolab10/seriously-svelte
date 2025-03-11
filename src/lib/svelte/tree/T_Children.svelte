@@ -4,27 +4,13 @@
 	import { w_graph_rect } from '../../ts/common/Stores';
 	import T_Children from './T_Children.svelte';
 	import Widget from '../widget/Widget.svelte';
-	import { onMount, onDestroy } from 'svelte';
-	import T_Line from './T_Line.svelte';
 	import Circle from '../kit/Circle.svelte';
+	import T_Line from './T_Line.svelte';
 	export let ancestry: Ancestry;
-    const g_t_children = new G_TreeChildren(ancestry);
-	let lastLayoutTime = new Date().getTime();
+	const g_t_children = new G_TreeChildren(ancestry);
 
-	onMount(() => {
-		g_t_children.layout_allChildren();
-		const handle_reposition = signals.handle_reposition_widgets(1, (received_ancestry) => {
-			const now = new Date().getTime();
-			if (((now - lastLayoutTime) > 100) &&	// no more often than ten times per second
-				ancestry.isExpanded) {
-				lastLayoutTime = now;
-				debug.log_origins(ancestry.g_widget.origin_ofChild.x + ' before timeout');
-				debug.log_reposition(`tree children [. .] on "${ancestry.title}"`);
-				g_t_children.layout_allChildren();
-			}
-		});
-		return () => { handle_reposition.disconnect() };
-	});
+	ancestry.g_widget.g_t_children = g_t_children;	// so percolate happens in the right order
+	g_t_children.layout_allChildren();
 	
 	$: {
 		if (!!$w_graph_rect) {
@@ -42,13 +28,11 @@
 		center = {g_t_children.center}/>
 {/if}
 {#if !!ancestry}
-	<div class = 'tree-children'>
-		{#each ancestry.childAncestries as childAncestry}
-			<T_Line ancestry = {childAncestry}/>
-			<Widget ancestry = {childAncestry}/>
-			{#if childAncestry.showsChildRelationships}
-				<T_Children ancestry = {childAncestry}/>
-			{/if}
-		{/each}
-	</div>
+	{#each ancestry.childAncestries as childAncestry}
+		<T_Line ancestry = {childAncestry}/>
+		<Widget ancestry = {childAncestry}/>
+		{#if childAncestry.showsChildRelationships}
+			<T_Children ancestry = {childAncestry}/>
+		{/if}
+	{/each}
 {/if}

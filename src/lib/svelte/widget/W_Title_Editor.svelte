@@ -15,9 +15,10 @@
 	const thing = ancestry?.thing;
 	const padding = `0.5px 0px 0px 0px`;
 	const input_height = k.dot_size + 2;
+	const title_extra = ux.inTreeMode ? 5 : 0;	// avoid clipping during edit inTreeMode
 	const es_title = ux.s_element_forName(name);
 	const showingReveal = ancestry?.showsReveal ?? false;
-	let title_width = (thing?.titleWidth ?? 0) + 1;
+	let title_width = (thing?.titleWidth ?? 0) + title_extra;
 	let title_binded = thing?.title ?? k.empty;
 	let color = thing?.color ?? k.empty;
 	let title_wrapper: Svelte_Wrapper;
@@ -44,8 +45,8 @@
 		});
 		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
 			if (!!input && ancestry.hasPathString_matching(received_ancestry)) {
-				debug.log_reposition(`input [. . .] w: ${title_width.asInt()} "${ancestry.title}"`);
-				input.style.width = `${ancestry.thing.titleWidth}px`;
+				input.style.width = `${ancestry.thing.titleWidth + 15}px`;
+				debug.log_edit(`INPUT width: ${input.style.width} "${ancestry.title}"`);
 			}
 		});
 		setTimeout(() => {
@@ -114,12 +115,6 @@
 	}
 
 	export const UPDATE: unique symbol = Symbol('UPDATE');
-
-	function relayout() {
-		debug.log_edit(`RELAYOUT ${ancestry.title}`);
-		ux.g_treeGraph.percolate_relayout();
-		signals.signal_reposition_widgets_from(ancestry);
-	}
 	
 	function update_cursorStyle() {
 		const noCursor = (ancestry_isEditing() || ancestry.isGrabbed) && ux.inTreeMode && ancestry.isEditable;
@@ -204,7 +199,7 @@
 		$w_s_title_edit = null;
 		input?.blur();
 		update_cursorStyle();
-		relayout();
+		ux.relayout_all();
 	}
 
 	function startEditMaybe() {
@@ -225,7 +220,7 @@
 
 	function updateInputWidth() {
 		if (!!input && !!ghost) { // ghost only exists to provide its width (in pixels)
-			title_width = ghost.scrollWidth;
+			title_width = ghost.scrollWidth + title_extra;
 			input.style.width = `${title_width}px`;	// apply its width to the input element
 		}
 	}
@@ -237,7 +232,7 @@
 			$w_info_title = title;		// tell Info to update it's selection's title
 			debug.log_edit(`TITLE ${title}`);
 			$w_s_title_edit?.setState_temporarilyTo_whileApplying(T_Edit.percolating, () => {
-				relayout();
+				ux.relayout_all();
 			});
 			debug.log_edit(`UPDATED ${$w_s_title_edit?.description}`);
 		}
@@ -297,9 +292,9 @@
 
 <Mouse_Responder
 	origin={origin}
+	width={title_width}
 	name={es_title.name}
 	height={k.row_height}
-	width={title_width + 2}
 	handle_mouse_state={handle_mouse_state}>
 	<span class="ghost"
 		bind:this={ghost}

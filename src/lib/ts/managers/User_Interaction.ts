@@ -1,9 +1,9 @@
 import { S_Mouse, S_Widget, S_Element, S_Expansion, S_Rotation, S_Thing_Pages } from '../common/Global_Imports';
-import { G_Segment, G_TreeGraph, T_GraphMode, T_Element } from '../common/Global_Imports';
-import { Ancestry, Mouse_Timer } from '../common/Global_Imports';
+import { G_Segment, G_TreeGraph, G_RadialGraph, T_GraphMode, T_Element } from '../common/Global_Imports';
+import { signals, Ancestry, Mouse_Timer } from '../common/Global_Imports';
+import { w_t_graphMode, w_ancestry_focus } from '../common/Stores';
 import Identifiable from '../data/runtime/Identifiable';
 import type { Dictionary } from '../common/Types';
-import { w_t_graphMode } from '../common/Stores';
 import { get } from 'svelte/store';
 
 export default class User_Interaction {
@@ -16,6 +16,7 @@ export default class User_Interaction {
 	s_element_byName: { [name: string]: S_Element } = {};
 	s_mouse_byName: { [name: string]: S_Mouse } = {};
 	s_cluster_rotation = new S_Rotation();
+	g_radialGraph = new G_RadialGraph();
 	s_ring_resizing	= new S_Expansion();
 	s_ring_rotation	= new S_Rotation();
 	g_treeGraph = new G_TreeGraph();
@@ -24,14 +25,13 @@ export default class User_Interaction {
 
 	//////////////////////////////////////
 	//									//
-	//	preservation of state outside	//
-	//	  transient svelte components	//
+	//	state managed outside svelte	//
 	//									//
-	//  this allows them to be deleted	//
+	//  allows svelte to be deleted		//
 	//	  by their own event handling	//
 	//									//
 	//	used by: Button, Close_Button,	//
-	//	  Radial & R_ArcSlider		//
+	//	  Radial & R_ArcSlider			//
 	//									//
 	//////////////////////////////////////
 	
@@ -60,6 +60,16 @@ export default class User_Interaction {
 	get next_mouse_responder_number(): number {
 		this.mouse_responder_number += 1;
 		return this.mouse_responder_number;
+	}
+
+	relayout_all() {
+		if (this.inTreeMode) {
+			this.g_treeGraph.update_origins();
+			get(w_ancestry_focus)?.g_widget.grand_sweep();
+			signals.signal_reposition_widgets_fromFocus();
+		} else {
+			this.g_radialGraph.layout_allClusters();
+		}
 	}
 
 	s_element_for(identifiable: Identifiable | null, type: T_Element, subtype: string): S_Element {

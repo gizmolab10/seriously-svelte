@@ -1,10 +1,10 @@
 <script lang='ts'>
 	import { c, k, u, ux, w, Thing, Point, Angle, debug, T_Layer } from '../../ts/common/Global_Imports';
-	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/common/Stores';
 	import { signals, svgPaths, T_RingZone, databases } from '../../ts/common/Global_Imports';
-	import { w_thing_color, w_ancestry_focus, w_g_radialGraph } from '../../ts/common/Stores';
+	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/common/Stores';
 	import { w_graph_rect, w_mouse_location_scaled } from '../../ts/common/Stores';
 	import { w_count_mouse_up, w_g_active_cluster } from '../../ts/common/Stores';
+	import { w_thing_color, w_ancestry_focus } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/runtime/Identifiable';
 	import R_ArcSlider from './R_ArcSlider.svelte';
@@ -30,7 +30,7 @@
 
 	update_cursor();
 	debug.log_build(` (svelte)`);
-	$w_g_radialGraph.layout_allClusters();
+	ux.g_radialGraph.layout_allClusters();
 	function handle_mouse_state(s_mouse: S_Mouse): boolean { return true; }				// only for wrappers
 	function handle_isHit(): boolean { return w.mouse_distance_fromGraphCenter <= outer_radius; }
 
@@ -187,7 +187,7 @@
 						break;
 					case T_RingZone.paging: 
 						const paging_angle = mouse_wentDown_angle.angle_normalized();
-						const g_cluster = $w_g_radialGraph.g_cluster_atMouseLocation;
+						const g_cluster = ux.g_radialGraph.g_cluster_atMouseLocation;
 						if (!!g_cluster) {
 							debug.log_radial(` begin paging  ${paging_angle.degrees_of(0)}`);
 							g_cluster.s_paging_rotation.active_angle = paging_angle;
@@ -207,7 +207,7 @@
 
 {#key rebuilds}
 	<div class='paging-arcs' bind:this={pagingArcs} style='z-index:{T_Layer.paging};'>
-		{#each $w_g_radialGraph.g_clusters as g_cluster}
+		{#each ux.g_radialGraph.g_clusters as g_cluster}
 			{#if !!g_cluster && (g_cluster.widgets_shown > 0)}
 				<R_ArcSlider
 					color={color}

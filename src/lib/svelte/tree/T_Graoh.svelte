@@ -7,18 +7,7 @@
 	import T_Children from './T_Children.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import Circle from '../kit/Circle.svelte';
-	import { onMount } from 'svelte';
 	let rebuilds = 0;
-	
-	onMount(() => {
-		const handler = signals.handle_reposition_widgets(0, (received_ancestry) => {
-			if (!received_ancestry || (!!$w_ancestry_focus && $w_ancestry_focus.hasPathString_matching(received_ancestry))) {
-				debug.log_reposition(`tree graph [ ] on "${$w_ancestry_focus.title}"`);
-				ux.g_treeGraph.update_origins();
-			}
-		});
-		return () => { handler.disconnect() };
-	});
 	
 	$: {
 		const _ = $w_ancestry_focus + $w_hierarchy + $w_device_isMobile + $w_graph_rect;

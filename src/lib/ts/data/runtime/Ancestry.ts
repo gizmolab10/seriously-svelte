@@ -3,8 +3,8 @@ import { c, k, u, ux, show, Rect, Size, Thing, debug, signals, wrappers, svgPath
 import { T_Element, T_Predicate, T_Alteration, T_SvelteComponent } from '../../common/Global_Imports';
 import { w_hierarchy, w_ancestry_focus, w_ancestry_showing_tools } from '../../common/Stores';
 import { w_ancestries_grabbed, w_ancestries_expanded, } from '../../common/Stores';
-import { w_g_radialGraph, w_s_alteration, w_s_title_edit } from '../../common/Stores';
 import { G_Widget, S_Paging, S_Title_Edit } from '../../common/Global_Imports';
+import { w_s_alteration, w_s_title_edit } from '../../common/Stores';
 import Reciprocal_Ancestry from './Reciprocal_Ancestry';
 import type { Integer } from '../../common/Types';
 import { T_Edit } from '../../state/S_Title_Edit';
@@ -139,7 +139,7 @@ export default class Ancestry extends Identifiable {
 
 	get s_paging(): S_Paging | null {
 		const predicate = this.predicate;
-		const g_radialGraph = get(w_g_radialGraph);
+		const g_radialGraph = ux.g_radialGraph;
 		if (!!predicate && !!g_radialGraph) {
 			const g_cluster = g_radialGraph?.g_cluster_pointing_toChildren(this.thing_isChild, predicate)
 			return g_cluster?.s_ancestryPaging(this) ?? null;

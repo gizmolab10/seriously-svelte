@@ -1,14 +1,9 @@
-import { w_hierarchy, w_graph_rect, w_show_details  } from '../../ts/common/Stores';
 import { w_ancestry_focus, w_device_isMobile } from '../../ts/common/Stores';
-import { k, Rect, debug, T_Curve } from '../common/Global_Imports';
+import { w_graph_rect, w_show_details  } from '../../ts/common/Stores';
+import { k, debug } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
 export default class G_TreeGraph {
-
-	percolate_relayout() {
-		this.update_origins();
-		get(w_ancestry_focus)?.g_widget.percolate_relayout();
-	}
 
 	update_origins() {
 		const graphRect = get(w_graph_rect);

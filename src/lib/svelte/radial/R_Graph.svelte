@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { T_Tool, T_Layer, T_RingZone, T_Element, T_Rebuild, G_RadialGraph } from '../../ts/common/Global_Imports';
-	import { w_g_radialGraph, w_user_graph_offset, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { w_graph_rect, w_show_details, w_ancestry_focus } from '../../ts/common/Stores';
 	import { k, u, ux, Rect, Point, debug, signals } from '../../ts/common/Global_Imports';
+	import { w_user_graph_offset, w_thing_fontFamily } from '../../ts/common/Stores';
 	import R_Necklace from './R_Necklace.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import R_Focus from './R_Focus.svelte';
@@ -18,7 +18,7 @@
 	//	edit titles (keydown terminates edit) BROKEN
 	//	displays editing tools when asked by user
 	
-	$w_g_radialGraph = new G_RadialGraph();
+	ux.g_radialGraph.layout_allClusters();
 	debug.log_tools(` CLUSTERS (svelte)`);
 
 	onMount(() => {
