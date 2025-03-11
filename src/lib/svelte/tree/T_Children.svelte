@@ -16,8 +16,7 @@
 		const handle_reposition = signals.handle_reposition_widgets(1, (received_ancestry) => {
 			const now = new Date().getTime();
 			if (((now - lastLayoutTime) > 100) &&	// no more often than ten times per second
-				(!received_ancestry || (ancestry.isExpanded &&
-				received_ancestry.hasPathString_matching(ancestry)))) {
+				ancestry.isExpanded) {
 				lastLayoutTime = now;
 				debug.log_origins(ancestry.g_widget.origin_ofChild.x + ' before timeout');
 				debug.log_reposition(`tree children [. .] on "${ancestry.title}"`);

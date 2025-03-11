@@ -117,7 +117,7 @@
 
 	function relayout() {
 		debug.log_edit(`RELAYOUT ${ancestry.title}`);
-		ux.g_treeGraph.relayout_recursively();
+		ux.g_treeGraph.percolate_relayout();
 		signals.signal_reposition_widgets_from(ancestry);
 	}
 	

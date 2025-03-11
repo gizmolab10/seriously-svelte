@@ -1,4 +1,4 @@
-import { k, ux, Rect, Point, Angle, T_Curve, Ancestry, S_Element, T_Element } from '../common/Global_Imports'
+import { k, ux, Rect, Point, Angle, debug, T_Curve, Ancestry, S_Element, T_Element } from '../common/Global_Imports'
 import { w_hierarchy, w_graph_rect, w_show_details } from '../common/Stores';
 import { get } from 'svelte/store';
 
@@ -51,11 +51,11 @@ export default class G_Widget {
 	}
 
 	update(
-		rect: Rect = Rect.zero,
-		points_toChild: boolean = true,
-		curveType: string = T_Curve.flat,
 		origin_ofChild: Point = Point.zero,
-		angle_ofChild: number | null = null) {
+		points_toChild: boolean = true,
+		angle_ofChild: number | null = null,
+		rect: Rect = Rect.zero,
+		curveType: string = T_Curve.flat) {
 			this.rect = rect;
 			this.points_right = !angle_ofChild ? true : new Angle(angle_ofChild).angle_pointsRight;
 			this.points_toChild = points_toChild;
@@ -65,13 +65,13 @@ export default class G_Widget {
 			this.layout();
 	}
 
-	relayout_recursively() {
+	percolate_relayout() {
 		this.layout();
 		if (ux.inTreeMode) {
 			const ancestry = this.ancestry;
 			if (!!ancestry && ancestry.showsChildRelationships) {
 				for (const childAncestry of ancestry.childAncestries) {
-					childAncestry.g_widget.relayout_recursively();
+					childAncestry.g_widget.percolate_relayout();
 				}
 			}
 		}
@@ -97,6 +97,7 @@ export default class G_Widget {
 			this.center_ofDrag = new Point(x_drag, y_drag).offsetEquallyBy(k.dot_size / 2);
 			this.offset_ofWidget = new Point(adjustment_x, adjustment_forBorder);
 			this.width_ofWidget = width;
+			debug.log_reposition(`g_widget x: ${adjustment_x.asInt()} ${ancestry.titles}`);
 			if (showingReveal) {
 				const y_reveal = k.dot_size * 0.72;
 				const x_reveal = k.dot_size - (this.points_right ? ((ux.inTreeMode ? -1 : 21) - width) : 3);

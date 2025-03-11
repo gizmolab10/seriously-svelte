@@ -198,7 +198,7 @@ export default class G_Cluster {
 				const child_ancestry = this.ancestries[child_index];
 				const angle_ofChild = this.angle_at_index(index);
 				const origin_ofChild = radial.rotate_by(angle_ofChild).offsetBy(tweak);
-				child_ancestry.g_widget.update(Rect.zero, this.points_toChildren, T_Curve.flat, origin_ofChild, angle_ofChild);
+				child_ancestry.g_widget.update(origin_ofChild, this.points_toChildren, angle_ofChild);
 				this.g_cluster_widgets.push(child_ancestry.g_widget);
 				index += 1;
 			}
