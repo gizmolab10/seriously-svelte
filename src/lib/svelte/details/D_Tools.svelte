@@ -8,7 +8,7 @@
 	import Transparent_Circle from '../kit/Transparent_Circle.svelte';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Triangle_Button from '../mouse/Triangle_Button.svelte';
-	import W_Dot_Reveal from '../widget/W_Dot_Reveal.svelte';
+	import Widget_Reveal from '../widget/Widget_Reveal.svelte';
 	import Button from '../mouse/Button.svelte';
 	import Trash from '../kit/Trash.svelte';
 	import { onMount } from 'svelte';
@@ -295,7 +295,7 @@
 						<path class='ellipses-path' d={svgPaths.ellipses(7, 1)}/>
 					</svg>
 				</Button>
-				<W_Dot_Reveal
+				<Widget_Reveal
 					name={s_element_byToolType[T_Tool.dismiss].name}
 					ancestry={$w_ancestry_showing_tools}
 					center={getC(T_Tool.dismiss)}

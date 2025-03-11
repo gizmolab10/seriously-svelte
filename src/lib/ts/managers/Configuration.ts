@@ -1,6 +1,6 @@
 import { e, k, p, u, w, show, debug, databases, Hierarchy } from '../common/Global_Imports';
+import { stores, w_hierarchy, w_device_isMobile } from '../common/Stores';
 import { T_Preference } from '../common/Global_Imports';
-import { stores, w_hierarchy } from '../common/Stores';
 import { get } from 'svelte/store';
 
 export class Configuration {
@@ -21,8 +21,9 @@ export class Configuration {
 		//												//
 		//////////////////////////////////////////////////
 
+		w_device_isMobile.set(this.device_isMobile);
 		debug.queryStrings_apply();						// debug even setup code
-		stores.setup_defaults();
+		stores.setup_defaults();8
 		w.restore_state();
 		show.restore_state();							// local persistance
 		p.restore_defaults();
@@ -58,8 +59,6 @@ export class Configuration {
 			}
 		}
     }
-
-	get hierarchy(): Hierarchy { return get(w_hierarchy); }
 
 	get isServerLocal(): boolean {
 		const hostname = window.location.hostname;

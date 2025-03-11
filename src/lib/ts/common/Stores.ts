@@ -1,13 +1,13 @@
-import { c, Rect, Point, Ancestry, Hierarchy, G_Cluster, G_RadialGraph } from '../common/Global_Imports';
+import { Rect, Point, Ancestry, Hierarchy, G_Cluster } from '../common/Global_Imports';
 import { T_GraphMode, T_Hierarchy, T_Details, T_Startup } from '../common/Global_Imports';
 import { S_Paging, S_Title_Edit, S_Alteration } from '../common/Global_Imports';
 import { get, writable } from 'svelte/store';
 
-export const w_hierarchy			  = writable<Hierarchy>();
-export const w_ancestries_grabbed	  = writable<Array<Ancestry>>();
-export const w_ancestries_expanded	  = writable<Array<Ancestry>>();
 export const w_ancestry_showing_tools = writable<Ancestry | null>();
+export const w_ancestries_expanded	  = writable<Array<Ancestry>>();
+export const w_ancestries_grabbed	  = writable<Array<Ancestry>>();
 export const w_ancestry_focus		  = writable<Ancestry>();
+export const w_hierarchy			  = writable<Hierarchy>();
 
 export const w_s_title_edit			  = writable<S_Title_Edit | null>();
 export const w_s_alteration			  = writable<S_Alteration | null>();
@@ -16,10 +16,10 @@ export const w_s_paging				  = writable<S_Paging>();
 export const w_t_countDots			  = writable<Array<T_Hierarchy>>();
 export const w_t_details			  = writable<Array<T_Details>>();
 
-export const w_t_database			  = writable<string>();
-export const w_t_startup			  = writable<T_Startup>();
-export const w_t_treeMode			  = writable<T_Hierarchy>();
 export const w_t_graphMode			  = writable<T_GraphMode>();
+export const w_t_treeMode			  = writable<T_Hierarchy>();
+export const w_t_startup			  = writable<T_Startup>();
+export const w_t_database			  = writable<string>();4
 
 export const w_g_active_cluster		  = writable<G_Cluster | null>();
 
@@ -53,13 +53,13 @@ class Stores {
 	}
 	
 	setup_defaults() {
-		w_device_isMobile.set(c.device_isMobile);
 		w_t_startup.set(T_Startup.start);
 		w_thing_color.set(null);
 		w_count_mouse_up.set(0);
 		w_count_rebuild.set(0);
 		w_count_resize.set(0);
 	}
+
 }
 
 export const stores = new Stores();

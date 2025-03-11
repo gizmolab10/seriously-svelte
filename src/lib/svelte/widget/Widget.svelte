@@ -5,9 +5,9 @@
 	import { w_s_title_edit, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { w_thing_color, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { T_Edit } from '../../ts/state/S_Title_Edit';
-	import W_Title_Editor from './W_Title_Editor.svelte';
-	import W_Dot_Reveal from './W_Dot_Reveal.svelte';
-	import W_Dot_Drag from './W_Dot_Drag.svelte';
+	import Widget_Title from './Widget_Title.svelte';
+	import Widget_Reveal from './Widget_Reveal.svelte';
+	import Widget_Drag from './Widget_Drag.svelte';
 	import { onMount } from 'svelte';
 	export let ancestry!: Ancestry;
 	const g_widget = ancestry.g_widget;
@@ -171,19 +171,19 @@
 				width : {g_widget.width_ofWidget}px;
 				background-color : {ancestry.isGrabbed || !ux.inTreeMode ? k.color_background : 'transparent'};
 			'>
-			<W_Dot_Drag
+			<Widget_Drag
 				name = {es_drag.name}
 				ancestry = {ancestry}
 				points_right = {points_right}
 			/>
-			<W_Title_Editor
+			<Widget_Title
 				ancestry = {ancestry}
 				name = {es_title.name}
 				fontSize = {k.font_size}px
 				origin = {g_widget.origin_ofTitle}
 			/>
 			{#if ancestry?.showsReveal_forPointingToChild(points_toChild)}
-				<W_Dot_Reveal
+				<Widget_Reveal
 					ancestry = {ancestry}
 					name = {es_reveal.name}
 					points_toChild = {points_toChild}

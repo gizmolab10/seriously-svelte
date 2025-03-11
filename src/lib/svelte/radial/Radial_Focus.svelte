@@ -4,7 +4,7 @@
 	import { T_Tool, T_Layer, T_Element, G_RadialGraph } from '../../ts/common/Global_Imports';
 	import { w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import W_Title_Editor from '../widget/W_Title_Editor.svelte';
+	import Widget_Title from '../widget/Widget_Title.svelte';
 	const es_title = ux.s_element_for($w_ancestry_focus, T_Element.title, k.empty);
 	const height = k.row_height + 10;
 	let svg_strokeColor = 'transparent';
@@ -91,7 +91,7 @@
 			top:3px;
 			left:-11px;
 			position: absolute;'>
-		<W_Title_Editor
+		<Widget_Title
 			ancestry={$w_ancestry_focus}
 			origin = {origin_ofTitle}
 			fontSize={k.font_size}px
