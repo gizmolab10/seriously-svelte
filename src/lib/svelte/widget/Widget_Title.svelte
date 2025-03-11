@@ -17,8 +17,7 @@
 	const input_height = k.dot_size + 2;
 	const es_title = ux.s_element_forName(name);
 	const showingReveal = ancestry?.showsReveal ?? false;
-	const title_extra = (ux.inTreeMode && ancestry_isEditing()) ? 5 : 0;	// avoid clipping during edit inTreeMode
-	let title_width = (thing?.titleWidth ?? 0) + title_extra;
+	let title_width = (thing?.titleWidth ?? 0) + title_extra();
 	let title_binded = thing?.title ?? k.empty;
 	let color = thing?.color ?? k.empty;
 	let title_wrapper: Svelte_Wrapper;
@@ -31,13 +30,14 @@
 	debug.log_mount(`TITLE ${ancestry?.title}`);
 	onDestroy(() => { debug.log_mount(`DESTROY TITLE ${ancestry?.title}`); });
 	
-	function isHit(): boolean { return false }
-	function handle_mouse_up() { clearClicks(); }
-	function hasChanges() { return title_prior != title_binded; };
-	function hasFocus(): boolean { return document.activeElement === input; }
+	function isHit():					   boolean { return false }
+	function hasFocus():				   boolean { return document.activeElement === input; }
 	function ancestry_isEditing():		   boolean { return $w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.editing) ?? false; }
 	function ancestry_isEditStopping():	   boolean { return $w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.stopping) ?? false; }
 	function ancestry_isEditPercolating(): boolean { return $w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.percolating) ?? false; }
+	function title_extra():					number { return (ux.inTreeMode && ancestry_isEditing()) ? 2 : 0; }
+	function hasChanges()						   { return title_prior != title_binded; };
+	function handle_mouse_up()					   { clearClicks(); }
 
 	onMount(() => {
 		const handle_anySignal = signals.handle_anySignal_atPriority(0, (t_signal, ancestry) => {
@@ -45,7 +45,7 @@
 		});
 		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
 			if (!!input && ancestry.hasPathString_matching(received_ancestry)) {
-				input.style.width = `${ancestry.thing.titleWidth + 15}px`;
+				input.style.width = `${ancestry.thing.titleWidth}px`;
 				debug.log_edit(`INPUT width: ${input.style.width} "${ancestry.title}"`);
 			}
 		});
@@ -62,6 +62,12 @@
 	});
 
 	export const REACTIVES: unique symbol = Symbol('REACTIVES');
+
+	$: {
+		const state = $w_s_title_edit;
+		title_width = (thing?.titleWidth ?? 0) + title_extra();
+		input?.style.width = `${title_width}px`;
+	}
 
 	$: {
 		if (!!input && !title_wrapper) {
@@ -220,7 +226,7 @@
 
 	function updateInputWidth() {
 		if (!!input && !!ghost) { // ghost only exists to provide its width (in pixels)
-			title_width = ghost.scrollWidth + title_extra;
+			title_width = ghost.scrollWidth + title_extra();
 			input.style.width = `${title_width}px`;	// apply its width to the input element
 		}
 	}
