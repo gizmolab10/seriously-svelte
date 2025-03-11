@@ -2,8 +2,8 @@
 	import { c, k, w, Rect, Point, debug, T_Layer, signals, T_GraphMode } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_t_graphMode, w_ancestry_focus } from '../../ts/common/Stores';
 	import { w_device_isMobile, w_user_graph_offset } from '../../ts/common/Stores';
-	import R_Graph from '../radial/R_Graph.svelte';
-	import T_Graoh from '../tree/T_Graoh.svelte';
+	import Radial_Graph from '../radial/Radial_Graph.svelte';
+	import Tree_Graoh from '../tree/Tree_Graoh.svelte';
 	import { onMount } from 'svelte';
 	let draggableRect: Rect | null = null;
 	let style = k.empty;
@@ -58,9 +58,9 @@
 		bind:this={draggable}
 		style={style}>
 		{#if $w_t_graphMode == T_GraphMode.radial}
-			<R_Graph/>
+			<Radial_Graph/>
 		{:else}
-			<T_Graoh/>
+			<Tree_Graoh/>
 		{/if}
 	</div>
 {/key}

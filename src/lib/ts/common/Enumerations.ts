@@ -135,7 +135,7 @@ export enum T_Element {
 }
 
 export enum T_Rebuild {		// design goal: replace all rebuilds counts?
-	radial = 'radial',		// only this enum is used    (in R_Graph)
+	radial = 'radial',		// only this enum is used    (in Radial_Graph)
 	reveal = 'reveal',
 	widget = 'widget',
 	crumbs = 'crumbs',

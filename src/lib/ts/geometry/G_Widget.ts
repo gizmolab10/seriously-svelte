@@ -3,7 +3,7 @@ import { w_hierarchy, w_graph_rect, w_show_details } from '../common/Stores';
 import { get } from 'svelte/store';
 
 export default class G_Widget {
-	g_t_children: G_TreeChildren | null = null;
+	g_tree_children: G_TreeChildren | null = null;
 	angle_ofChild: number | null = null;
 	origin_ofChildrenTree = Point.zero;
 	curveType: string = T_Curve.flat;
@@ -38,7 +38,6 @@ export default class G_Widget {
 		if (!ancestry?.thing) {
 			console.log(`G_Widget ... ancestry has no thing ${ancestry?.relationship?.description}`);
 		}
-		this.layout();
 	}
 
 	destroy() { this.ancestry = null; }
@@ -66,13 +65,13 @@ export default class G_Widget {
 			this.layout();
 	}
 
-	grand_sweep() {
+	recursively_relayout() {
 		this.layout();
 		if (ux.inTreeMode) {
 			const ancestry = this.ancestry;
 			if (!!ancestry && ancestry.showsChildRelationships) {
 				for (const childAncestry of ancestry.childAncestries) {
-					childAncestry.g_widget.grand_sweep();
+					childAncestry.g_widget.recursively_relayout();
 				}
 			}
 		}
@@ -81,8 +80,8 @@ export default class G_Widget {
 	layout() {
 		const ancestry = this.ancestry;
 		if (!!ancestry?.thing) {
-			if (!!this.g_t_children) {
-				this.g_t_children.layout_allChildren();
+			if (!!this.g_tree_children) {
+				this.g_tree_children.layout_allChildren();		// only called for expanded [tree] things with children
 			}
 			const showingReveal = this.showingReveal;
 			const showingBorder = !ancestry ? false : (ancestry.isGrabbed || ancestry.isEditing);

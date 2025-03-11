@@ -183,7 +183,7 @@ export default class Thing extends Persistable {
 		} else {
 			const oneAncestry = this.oneAncestry;
 			if (!!oneAncestry) {
-				oneAncestry.children.map(c => c.oneAncestries_clearAll_inSubtree([...visited, this.id]));
+				oneAncestry.children.map(child => child.oneAncestries_clearAll_inSubtree([...visited, this.id]));
 			}
 		}
 	}

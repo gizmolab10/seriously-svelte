@@ -153,7 +153,7 @@ export class Events {
 	// });
 
 	// window.addEventListener('drop', (event) => {
-	//     event.preventDefault(); // Prevent default behavior (e.c., opening the file in the browser)
+	//     event.preventDefault(); // Prevent default behavior (e.g., opening the file in the browser)
 
 	//     // Access the dropped files
 	//     const files = event.dataTransfer?.files;

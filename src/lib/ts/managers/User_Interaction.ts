@@ -31,7 +31,7 @@ export default class User_Interaction {
 	//	  by their own event handling	//
 	//									//
 	//	used by: Button, Close_Button,	//
-	//	  Radial & R_ArcSlider			//
+	//	  Radial & Radial_ArcSlider			//
 	//									//
 	//////////////////////////////////////
 	
@@ -60,16 +60,6 @@ export default class User_Interaction {
 	get next_mouse_responder_number(): number {
 		this.mouse_responder_number += 1;
 		return this.mouse_responder_number;
-	}
-
-	relayout_all() {
-		if (this.inTreeMode) {
-			this.g_treeGraph.update_origins();
-			get(w_ancestry_focus)?.g_widget.grand_sweep();
-			signals.signal_reposition_widgets_fromFocus();
-		} else {
-			this.g_radialGraph.layout_allClusters();
-		}
 	}
 
 	s_element_for(identifiable: Identifiable | null, type: T_Element, subtype: string): S_Element {
@@ -104,6 +94,16 @@ export default class User_Interaction {
 				}
 			}
 		}
+	}
+
+	relayout_all() {
+		if (this.inTreeMode) {
+			this.g_treeGraph.update_origins();
+			get(w_ancestry_focus)?.g_widget.recursively_relayout();
+		} else {
+			this.g_radialGraph.layout_allClusters();
+		}
+		signals.signal_reposition_widgets_fromFocus();
 	}
 
 }

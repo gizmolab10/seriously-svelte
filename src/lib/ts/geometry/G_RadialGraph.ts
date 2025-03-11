@@ -1,4 +1,4 @@
-import { u, ux, Thing, debug, Ancestry, Predicate } from '../common/Global_Imports';
+import { u, ux, Thing, Ancestry, Predicate } from '../common/Global_Imports';
 import { w_hierarchy, w_s_paging, w_ancestry_focus } from '../common/Stores';
 import { G_Widget, G_Cluster, S_Paging } from '../common/Global_Imports';
 import Reciprocal_Ancestry from '../data/runtime/Reciprocal_Ancestry';
@@ -19,8 +19,24 @@ export default class G_RadialGraph {
 	}
 
 	destructor() {
-		// this.g_child_clusters.forEach(l => l.destructor());
-		// this.g_parent_clusters.forEach(l => l.destructor());
+		Object.values(this.g_parent_clusters).forEach(cluster => cluster.destructor());
+		Object.values(this.g_child_clusters).forEach(cluster => cluster.destructor());
+		this.g_parent_clusters = {};
+		this.g_child_clusters = {};
+	}
+
+	layout_allClusters() {
+		this.destructor();
+		const focus_ancestry = get(w_ancestry_focus);
+		const focus_thing = focus_ancestry.thing;
+		let childAncestries = focus_ancestry.childAncestries;
+		this.layout_clusterFor(childAncestries, Predicate.contains, true);
+		if (!!focus_thing) {
+			for (const predicate of get(w_hierarchy).predicates) {
+				let reciprocal_ancestries = this.reciprocal_ancestries_maybeFor(focus_thing, predicate);
+				this.layout_clusterFor(reciprocal_ancestries, predicate, false);
+			}
+		}
 	}
 
 	get g_clusters(): Array<G_Cluster> { return u.concatenateArrays(Object.values(this.g_parent_clusters), Object.values(this.g_child_clusters)); }
@@ -64,20 +80,6 @@ export default class G_RadialGraph {
 			const g_cluster = new G_Cluster(ancestries.length, onePageOf_ancestries, predicate, points_toChildren);
 			const g_clusters = this.g_clusters_pointing_toChildren(points_toChildren);
 			g_clusters[predicate.kind] = g_cluster;
-		}
-	}
-
-	layout_allClusters() {
-		this.destructor();
-		const focus_ancestry = get(w_ancestry_focus);
-		const focus_thing = focus_ancestry.thing;
-		let childAncestries = focus_ancestry.childAncestries;
-		this.layout_clusterFor(childAncestries, Predicate.contains, true);
-		if (!!focus_thing) {
-			for (const predicate of get(w_hierarchy).predicates) {
-				let reciprocal_ancestries = this.reciprocal_ancestries_maybeFor(focus_thing, predicate);
-				this.layout_clusterFor(reciprocal_ancestries, predicate, false);
-			}
 		}
 	}
 

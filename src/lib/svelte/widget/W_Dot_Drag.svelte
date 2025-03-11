@@ -111,7 +111,7 @@
 	function updateColors_forHovering(isOut) {
 		if (!ux.isAny_rotation_active) {
 			isHovering = !isOut;
-			const usePointer = (!ancestry.isGrabbed || !ux.inTreeMode) && ancestry.hasChildRelationships && !c.isAny_rotation_active;
+			const usePointer = (!ancestry.isGrabbed || !ux.inTreeMode) && ancestry.hasChildRelationships && !ux.isAny_rotation_active;
 			const cursor = usePointer ? 'pointer' : 'normal';
 			if (!!es_drag && !!thing) {
 				es_drag.set_forHovering(thing.color, cursor);

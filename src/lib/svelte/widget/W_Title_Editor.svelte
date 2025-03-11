@@ -15,7 +15,7 @@
 	const thing = ancestry?.thing;
 	const padding = `0.5px 0px 0px 0px`;
 	const input_height = k.dot_size + 2;
-	const title_extra = ux.inTreeMode ? 5 : 0;	// avoid clipping during edit inTreeMode
+	const title_extra = (ux.inTreeMode && ancestry.isEditing) ? 5 : 0;	// avoid clipping during edit inTreeMode
 	const es_title = ux.s_element_forName(name);
 	const showingReveal = ancestry?.showsReveal ?? false;
 	let title_width = (thing?.titleWidth ?? 0) + title_extra;

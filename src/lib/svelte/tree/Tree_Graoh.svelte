@@ -4,27 +4,23 @@
 	import { w_graph_rect, w_hierarchy, w_show_details, w_ancestry_focus } from '../../ts/common/Stores';
 	import { w_id_popupView, w_device_isMobile, w_user_graph_offset } from '../../ts/common/Stores';
 	import { G_Widget, Predicate, Ancestry, databases } from '../../ts/common/Global_Imports';
-	import T_Children from './T_Children.svelte';
+	import Tree_Children from './Tree_Children.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import Circle from '../kit/Circle.svelte';
-	let rebuilds = 0;
 	
 	$: {
 		const _ = $w_ancestry_focus + $w_hierarchy + $w_device_isMobile + $w_graph_rect;
 		ux.g_treeGraph.update_origins();
-		rebuilds += 1;
 	}
 
 </script>
 
 {#if $w_ancestry_focus}
-	{#key rebuilds}
-		<div class = 'tree'
-			style = 'transform:translate({$w_user_graph_offset.x}px, {$w_user_graph_offset.y}px);'>
-			<Widget ancestry = {$w_ancestry_focus}/>
-			{#if $w_ancestry_focus.isExpanded}
-				<T_Children ancestry = {$w_ancestry_focus}/>
-			{/if}
-		</div>
-	{/key}
+	<div class = 'tree'
+		style = 'transform:translate({$w_user_graph_offset.x}px, {$w_user_graph_offset.y}px);'>
+		<Widget ancestry = {$w_ancestry_focus}/>
+		{#if $w_ancestry_focus.isExpanded}
+			<Tree_Children ancestry = {$w_ancestry_focus}/>
+		{/if}
+	</div>
 {/if}

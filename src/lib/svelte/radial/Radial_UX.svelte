@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, k, u, ux, w, Thing, Point, Angle, debug, T_Layer } from '../../ts/common/Global_Imports';
+	import { k, u, ux, w, Thing, Point, Angle, debug, T_Layer } from '../../ts/common/Global_Imports';
 	import { signals, svgPaths, T_RingZone, databases } from '../../ts/common/Global_Imports';
 	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/common/Stores';
 	import { w_graph_rect, w_mouse_location_scaled } from '../../ts/common/Stores';
@@ -7,7 +7,7 @@
 	import { w_thing_color, w_ancestry_focus } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/runtime/Identifiable';
-	import R_ArcSlider from './R_ArcSlider.svelte';
+	import Radial_ArcSlider from './Radial_ArcSlider.svelte';
 	import { onMount } from 'svelte';
 	export let zindex = T_Layer.backmost;
 	const ring_width = k.ring_rotation_thickness;
@@ -30,7 +30,6 @@
 
 	update_cursor();
 	debug.log_build(` (svelte)`);
-	ux.g_radialGraph.layout_allClusters();
 	function handle_mouse_state(s_mouse: S_Mouse): boolean { return true; }				// only for wrappers
 	function handle_isHit(): boolean { return w.mouse_distance_fromGraphCenter <= outer_radius; }
 
@@ -209,7 +208,7 @@
 	<div class='paging-arcs' bind:this={pagingArcs} style='z-index:{T_Layer.paging};'>
 		{#each ux.g_radialGraph.g_clusters as g_cluster}
 			{#if !!g_cluster && (g_cluster.widgets_shown > 0)}
-				<R_ArcSlider
+				<Radial_ArcSlider
 					color={color}
 					g_cluster={g_cluster}/>
 			{/if}

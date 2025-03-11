@@ -3,10 +3,10 @@
 	import { w_graph_rect, w_show_details, w_ancestry_focus } from '../../ts/common/Stores';
 	import { k, u, ux, Rect, Point, debug, signals } from '../../ts/common/Global_Imports';
 	import { w_user_graph_offset, w_thing_fontFamily } from '../../ts/common/Stores';
-	import R_Necklace from './R_Necklace.svelte';
+	import Radial_Necklace from './Radial_Necklace.svelte';
 	import Circle from '../kit/Circle.svelte';
-	import R_Focus from './R_Focus.svelte';
-	import R_UX from './R_UX.svelte';
+	import Radial_Focus from './Radial_Focus.svelte';
+	import Radial_UX from './Radial_UX.svelte';
 	import { onMount } from 'svelte';
 	let toolsOffset = new Point(31, -173.5).offsetBy($w_user_graph_offset.negated);
 
@@ -18,7 +18,7 @@
 	//	edit titles (keydown terminates edit) BROKEN
 	//	displays editing tools when asked by user
 	
-	ux.g_radialGraph.layout_allClusters();
+	ux.relayout_all();
 	debug.log_tools(` CLUSTERS (svelte)`);
 
 	onMount(() => {
@@ -45,8 +45,8 @@
 			width : {$w_graph_rect.size.width}px;
 			height : {$w_graph_rect.size.height}px;
 			transform : translate({$w_user_graph_offset.x}px, {$w_user_graph_offset.y}px);'>
-		<R_UX/>
-		<R_Focus/>
-		<R_Necklace/>
+		<Radial_UX/>
+		<Radial_Focus/>
+		<Radial_Necklace/>
 	</div>
 {/key}
