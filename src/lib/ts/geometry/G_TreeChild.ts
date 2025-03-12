@@ -16,7 +16,7 @@ export default class G_TreeChild {
 		const t_childCurve = this.get_t_childCurve(child_sizeY);
 		const child_rect = new Rect(origin, new Size(k.line_stretch, child_sizeY - 1));
 		const child_widget_origin = this.origin_forAncestry_inRect(ancestry, child_rect);
-		ancestry.g_widget.update(child_widget_origin, true, 0, child_rect, t_childCurve);
+		ancestry.g_widget.update(child_widget_origin, 0, true, child_rect, t_childCurve);
 		this.progeny_height = progeny_height;
 	}
 

@@ -1,9 +1,9 @@
 import { Direction, Predicate, Hierarchy, databases, Relationship, Svelte_Wrapper } from '../../common/Global_Imports';
 import { c, k, u, ux, show, Rect, Size, Thing, debug, signals, wrappers, svgPaths } from '../../common/Global_Imports';
 import { T_Element, T_Predicate, T_Alteration, T_SvelteComponent } from '../../common/Global_Imports';
+import { G_Widget, S_Paging, S_Title_Edit, G_TreeChildren } from '../../common/Global_Imports';
 import { w_hierarchy, w_ancestry_focus, w_ancestry_showing_tools } from '../../common/Stores';
 import { w_ancestries_grabbed, w_ancestries_expanded, } from '../../common/Stores';
-import { G_Widget, S_Paging, S_Title_Edit } from '../../common/Global_Imports';
 import { w_s_alteration, w_s_title_edit } from '../../common/Stores';
 import Reciprocal_Ancestry from './Reciprocal_Ancestry';
 import type { Integer } from '../../common/Types';
@@ -674,7 +674,7 @@ export default class Ancestry extends Identifiable {
 	
 	expand() { return this.expanded_setTo(true); }
 	collapse() { return this.expanded_setTo(false); }
-	toggleExpanded() { return this.isExpanded ? this.collapse() : this.expand(); }
+	toggleExpanded() { return this.expanded_setTo(!this.isExpanded); }
 
 	remove_fromGrabbed_andExpanded() {
 		this.collapse();
@@ -684,6 +684,7 @@ export default class Ancestry extends Identifiable {
 	expanded_setTo(expand: boolean) {
 		let mutated = false;
 		if (!this.isRoot || expand) {
+			this.g_widget.g_treeChildren = expand ? new G_TreeChildren(this) : null;
 			w_ancestries_expanded.update((a) => {
 				let array = a ?? [];
 				if (!!array) {

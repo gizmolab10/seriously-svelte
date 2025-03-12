@@ -3,7 +3,7 @@ import { w_hierarchy, w_graph_rect, w_show_details } from '../common/Stores';
 import { get } from 'svelte/store';
 
 export default class G_Widget {
-	g_tree_children: G_TreeChildren | null = null;
+	g_treeChildren: G_TreeChildren | null = null;
 	angle_ofChild: number | null = null;
 	origin_ofChildrenTree = Point.zero;
 	curveType: string = T_Curve.flat;
@@ -52,8 +52,8 @@ export default class G_Widget {
 
 	update(
 		origin_ofChild: Point = Point.zero,
-		points_toChild: boolean = true,
 		angle_ofChild: number | null = null,
+		points_toChild: boolean = true,
 		rect: Rect = Rect.zero,
 		curveType: string = T_Curve.flat) {
 			this.rect = rect;
@@ -62,7 +62,6 @@ export default class G_Widget {
 			this.origin_ofChild = origin_ofChild;
 			this.angle_ofChild = angle_ofChild;
 			this.curveType = curveType;
-			this.layout();
 	}
 
 	recursively_relayout() {
@@ -80,8 +79,8 @@ export default class G_Widget {
 	layout() {
 		const ancestry = this.ancestry;
 		if (!!ancestry?.thing) {
-			if (!!this.g_tree_children) {
-				this.g_tree_children.layout_allChildren();		// only called for expanded [tree] things with children
+			if (!!this.g_treeChildren) {
+				this.g_treeChildren.layout_allChildren();		// only called for expanded [tree] things with children
 			}
 			const showingReveal = this.showingReveal;
 			const showingBorder = !ancestry ? false : (ancestry.isGrabbed || ancestry.isEditing);

@@ -7,14 +7,13 @@
 	import Circle from '../kit/Circle.svelte';
 	import Tree_Line from './Tree_Line.svelte';
 	export let ancestry: Ancestry;
-	const g_tree_children = new G_TreeChildren(ancestry);
+	const g_treeChildren = ancestry.g_widget.g_treeChildren;	// so percolate happens in the right order
 
-	ancestry.g_widget.g_tree_children = g_tree_children;	// so percolate happens in the right order
-	g_tree_children.layout_allChildren();
+	g_treeChildren.layout_allChildren();
 	
 	$: {
 		if (!!$w_graph_rect) {
-			g_tree_children.layout_allChildren()
+			g_treeChildren.layout_allChildren()
 		}
 	}
 	
@@ -25,7 +24,7 @@
 		radius = 1
 		thickness = 1
 		color = black
-		center = {g_tree_children.center}/>
+		center = {g_treeChildren.center}/>
 {/if}
 {#if !!ancestry}
 	{#each ancestry.childAncestries as childAncestry}

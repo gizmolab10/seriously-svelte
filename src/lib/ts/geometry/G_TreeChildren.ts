@@ -14,7 +14,7 @@ export default class G_TreeChildren {
 		const ancestry = this.ancestry;
 		if (!!ancestry) {
 			if (!ancestry.isExpanded && !ancestry.isRoot) {
-				console.log(`not expanded, cannot layout ${ancestry.description}`);
+				console.log(`not expanded, cannot layout ${ancestry.titles}`);
 			} else {
 				debug.log_origins(ancestry.g_widget.origin_ofChild.x + ' children layout');
 				const childAncestries = ancestry.childAncestries;

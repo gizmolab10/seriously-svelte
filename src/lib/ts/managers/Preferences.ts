@@ -1,7 +1,7 @@
-import { w_ancestry_focus, w_ancestries_grabbed, w_ancestries_expanded } from '../common/Stores';
+import { S_Paging, T_GraphMode, T_Hierarchy, T_Details, G_TreeChildren } from '../common/Global_Imports';
 import { w_t_treeMode, w_t_graphMode, w_hierarchy, w_t_details, w_t_countDots } from '../common/Stores';
+import { w_ancestry_focus, w_ancestries_grabbed, w_ancestries_expanded } from '../common/Stores';
 import { c, k, ux, show, debug, Ancestry, databases } from '../common/Global_Imports';
-import { S_Paging, T_GraphMode, T_Hierarchy, T_Details } from '../common/Global_Imports';
 import { w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
 import { w_s_paging, w_font_size, w_thing_fontFamily } from '../common/Stores';
 import { get } from 'svelte/store';
@@ -76,6 +76,9 @@ export class Preferences {
 		} else {
 			w_ancestries_grabbed.set(this.ancestries_readDB_key(T_Preference.grabbed));
 			w_ancestries_expanded.set(this.ancestries_readDB_key(T_Preference.expanded));
+			for (const expanded of get(w_ancestries_expanded)) {
+				expanded.g_widget.g_treeChildren = new G_TreeChildren(expanded);
+			}
 			debug.log_grab(`  READ grabbed: "${get(w_ancestries_grabbed).map(a => a.id).join(', ')}"`);
 			debug.log_expand(`  READ expanded: "${get(w_ancestries_expanded).map(a => a.id).join(', ')}"`);
 		}
