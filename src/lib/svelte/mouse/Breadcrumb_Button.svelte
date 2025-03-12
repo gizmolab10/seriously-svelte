@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { w_thing_color, w_s_title_edit, w_thing_fontFamily, w_ancestry_focus } from '../../ts/common/Stores';
+	import { w_thing_color, w_thing_fontFamily, w_ancestry_focus } from '../../ts/common/Stores';
 	import { k, u, ux, Point, Thing, signals, databases } from '../../ts/common/Global_Imports';
 	import { T_Tool, T_Element, S_Element } from '../../ts/common/Global_Imports';
 	import Button from './Button.svelte';
@@ -8,19 +8,19 @@
     export let ancestry;
 	export let center = Point.zero;
 	const borderStyle = '1px solid';
-	const elementType = T_Element.crumb;
 	let borderColor = k.color_background;
+	let es_breadcrumb = ux.s_element_for(ancestry, T_Element.breadcrumb, T_Tool.none);
+	let title = ancestry.thing?.breadcrumb_title ?? k.empty;
+	let name = `crumb (for ${title ?? 'unknown'})`
 	let border = `${borderStyle} ${borderColor}`;
 	let height = k.default_buttonSize;
 	let thing: Thing = ancestry.thing;
-	let title: string = thing.title;
-	let es_breadcrumb: S_Element;
 	let colorStyles = k.empty;
 	let style = k.empty;
-	let name = k.empty;
 	let rebuilds = 0;
-	let width = 0;
-
+	let width = u.getWidthOf(title) + 15;
+		
+	center = new Point(left + width / 2, height - 1);
 	updateColors();
 
 	$: {
@@ -28,16 +28,7 @@
 			updateColors();
 		}
 	}
-
-	$: {
-		thing = ancestry?.thing;
-		title = thing?.breadcrumb_title ?? k.empty;
-		name = `crumb (for ${title ?? 'unknown'})`
-		width = u.getWidthOf(title) + 15;
-		center = new Point(left + width / 2, height - 1);
-		es_breadcrumb = ux.s_element_for(ancestry, elementType, T_Tool.none);
-		updateColors();
-	}
+	
 	function updateColors() {
 		if (!!thing) {
 			if ($w_ancestry_focus.id_thing == thing.id) {
@@ -95,7 +86,7 @@
 		center={center}
 		closure={closure}
 		position='absolute'
-		s_element={es_breadcrumb}>
+		es_button={es_breadcrumb}>
 		{title}
 	</Button>
 {/key}

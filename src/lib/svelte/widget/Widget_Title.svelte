@@ -237,6 +237,7 @@
 			extractRange_fromInput_toThing();
 			$w_info_title = title;		// tell Info to update it's selection's title
 			debug.log_edit(`TITLE ${title}`);
+			$w_s_title_edit?.title = title;
 			$w_s_title_edit?.setState_temporarilyTo_whileApplying(T_Edit.percolating, () => {
 				ux.relayout_all();
 			});

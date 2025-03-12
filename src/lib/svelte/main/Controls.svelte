@@ -14,7 +14,7 @@
 	const size_big = size_small + 4;
 	const lefts = [10, 55, 117];
 	const resize_viewBox = `0, 0, ${size_big}, ${size_big}`;
-	let s_elements_byControlType: { [t_control: string]: S_Element } = {};
+	let es_buttons_byControlType: { [t_control: string]: S_Element } = {};
 	let elementShown_byControlType: {[t_control: string]: boolean} = {};
 	let width = w.windowSize.width - 20;
 	let displayName = k.empty;
@@ -51,7 +51,7 @@
 			const es_control = ux.s_element_for(new Identifiable(t_control), T_Element.control, t_control);
 			es_control.set_forHovering(k.color_default, 'pointer');
 			es_control.hoverIgnore = (t_control == T_Control.details);
-			s_elements_byControlType[t_control] = es_control;
+			es_buttons_byControlType[t_control] = es_control;
 			elementShown_byControlType[t_control] = total > 0;
 		}
 	}
@@ -66,7 +66,7 @@
 
 	function handle_mouse_state_forControl_Type(s_mouse, t_control) {
 		if (s_mouse.isHover) {
-			s_elements_byControlType[t_control].isOut = s_mouse.isOut;
+			es_buttons_byControlType[t_control].isOut = s_mouse.isOut;
 		} else if (s_mouse.isUp) {
 			switch (t_control) {
 				case T_Control.help: c.showHelp(); break;
@@ -88,7 +88,7 @@
 
 </script>
 
-{#if Object.values(s_elements_byControlType).length > 0}
+{#if Object.values(es_buttons_byControlType).length > 0}
 	<div id='controls'
 		style='
 			top: 7px;
@@ -102,7 +102,7 @@
 				border_thickness=0
 				color='transparent'
 				center={new Point(lefts[0], details_top + 3)}
-				s_element={s_elements_byControlType[T_Control.details]}
+				es_button={es_buttons_byControlType[T_Control.details]}
 				closure={(s_mouse) => handle_mouse_state_forControl_Type(s_mouse, T_Control.details)}>
 				<img src='settings.svg' alt='circular button' width={size_small}px height={size_small}px/>
 			</Button>
@@ -141,7 +141,7 @@
 						height={size_big}
 						name={T_Control.smaller}
 						center={new Point(width - 110, y_center)}
-						s_element={s_elements_byControlType[T_Control.smaller]}
+						es_button={es_buttons_byControlType[T_Control.smaller]}
 						closure={(s_mouse) => handle_mouse_state_forControl_Type(s_mouse, T_Control.smaller)}>
 						<svg
 							id='shrink-svg'>
@@ -159,7 +159,7 @@
 						height={size_big}
 						name={T_Control.bigger}
 						center={new Point(width - 140, y_center)}
-						s_element={s_elements_byControlType[T_Control.bigger]}
+						es_button={es_buttons_byControlType[T_Control.bigger]}
 						closure={(s_mouse) => handle_mouse_state_forControl_Type(s_mouse, T_Control.bigger)}>
 						<svg
 							id='enlarge-svg'>
@@ -178,7 +178,7 @@
 				width=75
 				height={size_big}
 				center={new Point(width - 55, y_center)}
-				s_element={s_elements_byControlType[T_Control.builds]}
+				es_button={es_buttons_byControlType[T_Control.builds]}
 				closure={(s_mouse) => handle_mouse_state_forControl_Type(s_mouse, T_Control.builds)}>
 				<span style='font-family: {$w_thing_fontFamily};'>
 					{'build ' + k.build_number}
@@ -190,7 +190,7 @@
 				width={size_big}
 				height={size_big}
 				center={new Point(width, y_center)}
-				s_element={s_elements_byControlType[T_Control.help]}
+				es_button={es_buttons_byControlType[T_Control.help]}
 				closure={(s_mouse) => handle_mouse_state_forControl_Type(s_mouse, T_Control.help)}>
 				<span
 					style='top:2px;

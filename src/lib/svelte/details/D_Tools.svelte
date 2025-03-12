@@ -216,7 +216,7 @@
 				{/if}
 				<Button
 					closure={(s_mouse) => handle_mouse_data(s_mouse, T_Tool.delete_confirm)}
-					s_element={s_element_byToolType[T_Tool.delete_confirm]}
+					es_button={s_element_byToolType[T_Tool.delete_confirm]}
 					center={getC(T_Tool.delete_confirm)}
 					height={k.editingTools_diameter / 2}
 					width={k.editingTools_diameter}
@@ -238,7 +238,7 @@
 				</Button>
 				<Button
 					closure={(s_mouse) => handle_mouse_data(s_mouse, T_Tool.delete_cancel, )}
-					s_element={s_element_byToolType[T_Tool.delete_cancel]}
+					es_button={s_element_byToolType[T_Tool.delete_cancel]}
 					height={k.editingTools_diameter / 2}
 					center={getC(T_Tool.delete_cancel)}
 					width={k.editingTools_diameter}
@@ -271,7 +271,7 @@
 			{:else}
 				<Button
 					closure={(s_mouse) => handle_mouse_data(s_mouse, T_Tool.more)}
-					s_element={s_element_byToolType[T_Tool.more]}
+					es_button={s_element_byToolType[T_Tool.more]}
 					height={k.default_buttonSize}
 					zindex={T_Layer.tool_buttons}
 					center={getC(T_Tool.more)}

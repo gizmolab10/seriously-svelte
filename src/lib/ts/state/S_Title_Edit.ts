@@ -1,4 +1,4 @@
-import { Thing, Ancestry, Seriously_Range } from '../common/Global_Imports';
+import { k, Thing, Ancestry, Seriously_Range } from '../common/Global_Imports';
 
 export enum T_Edit {
 	percolating	= 'percolating',
@@ -10,6 +10,7 @@ export enum T_Edit {
 export default class S_Title_Edit {
 	t_edit = T_Edit.editing;
 	ancestry: Ancestry;
+	title = k.empty
 	
 	// singleton (store)
 	// t_edit is source of truth for all editing

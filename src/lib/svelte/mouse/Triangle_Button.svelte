@@ -45,7 +45,7 @@
 </script>
 
 <Button
-	s_element={es_triangle}
+	es_button={es_triangle}
 	border_thickness=0
 	closure={closure}
 	center={center}
