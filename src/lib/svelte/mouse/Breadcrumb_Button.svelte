@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { w_thing_color, w_thing_fontFamily, w_ancestry_focus } from '../../ts/common/Stores';
+	import { w_thing_color, w_s_title_edit, w_thing_fontFamily, w_ancestry_focus } from '../../ts/common/Stores';
 	import { k, u, ux, Point, Thing, signals, databases } from '../../ts/common/Global_Imports';
 	import { T_Tool, T_Element, S_Element } from '../../ts/common/Global_Imports';
 	import Button from './Button.svelte';
@@ -24,6 +24,12 @@
 	updateColors();
 
 	$: {
+		if (!!thing && thing.id == $w_thing_color?.split(k.generic_separator)[0]) {
+			updateColors();
+		}
+	}
+
+	$: {
 		thing = ancestry?.thing;
 		title = thing?.breadcrumb_title ?? k.empty;
 		name = `crumb (for ${title ?? 'unknown'})`
@@ -32,13 +38,6 @@
 		es_breadcrumb = ux.s_element_for(ancestry, elementType, T_Tool.none);
 		updateColors();
 	}
-
-	$: {
-		if (!!thing && thing.id == $w_thing_color?.split(k.generic_separator)[0]) {
-			updateColors();
-		}
-	}
-
 	function updateColors() {
 		if (!!thing) {
 			if ($w_ancestry_focus.id_thing == thing.id) {

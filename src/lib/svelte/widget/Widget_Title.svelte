@@ -266,24 +266,29 @@
 		const s_title_edit = $w_s_title_edit;
 		if (hasFocus() && !s_title_edit) {
 			stopEdit();
-		} else if (!!input && !!s_title_edit && s_title_edit.ancestry.hasPathString_matching(ancestry)) {
+		} else if (!!input && !!s_title_edit) {
+			if (s_title_edit.ancestry.id_thing == ancestry.id_thing) {
+				input.value = ancestry.title;	// consistently update titles of widgets of things with multiple parents
+			}
+			if (s_title_edit.ancestry.hasPathString_matching(ancestry)) {
 
-			//////////////////////////////////////////////////////
-			//													//
-			//			handle w_s_title_edit state				//
-			//													//
-			//////////////////////////////////////////////////////
+				//////////////////////////////////////////////////////
+				//													//
+				//			handle w_s_title_edit state				//
+				//													//
+				//////////////////////////////////////////////////////
 
-			switch (s_title_edit.t_edit) {
-				case T_Edit.stopping:
-					stopEdit();
-					break;
-				case T_Edit.editing:
-					if (!hasFocus()) {
-						input.focus();
-						applyRange_fromThing_toInput();
-					}
-					break;
+				switch (s_title_edit.t_edit) {
+					case T_Edit.stopping:
+						stopEdit();
+						break;
+					case T_Edit.editing:
+						if (!hasFocus()) {
+							input.focus();
+							applyRange_fromThing_toInput();
+						}
+						break;
+				}
 			}
 		}
 	}

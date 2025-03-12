@@ -684,7 +684,7 @@ export default class Ancestry extends Identifiable {
 	expanded_setTo(expand: boolean) {
 		let mutated = false;
 		if (!this.isRoot || expand) {
-			this.g_widget.g_treeChildren = expand ? new G_TreeChildren(this) : null;
+			this.g_widget.g_treeChildren = expand ? new G_TreeChildren(this) : null;	// for layout
 			w_ancestries_expanded.update((a) => {
 				let array = a ?? [];
 				if (!!array) {
