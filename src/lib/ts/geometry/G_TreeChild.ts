@@ -8,15 +8,15 @@ export default class G_TreeChild {
 	//  creating single source of truth for g_widget
 
 	constructor(
-		sum: number,
+		height: number,
 		origin: Point,
 		ancestry: Ancestry) {
 		const progeny_height = ancestry.visibleProgeny_height();
-		const child_sizeY = sum + progeny_height / 2;
-		const t_childCurve = this.get_t_childCurve(child_sizeY);
-		const child_rect = new Rect(origin, new Size(k.line_stretch, child_sizeY - 1));
+		const child_height = height + progeny_height / 2;
+		const t_childCurve = this.get_t_childCurve(child_height);
+		const child_rect = new Rect(origin, new Size(k.line_stretch, child_height - 1));
 		const child_widget_origin = this.origin_forAncestry_inRect(ancestry, child_rect);
-		ancestry.g_widget.update(child_widget_origin, 0, true, child_rect, t_childCurve);
+		ancestry.g_widget.update(child_widget_origin, true, true, child_rect, t_childCurve);
 		this.progeny_height = progeny_height;
 	}
 

@@ -62,6 +62,14 @@ export default class User_Interaction {
 		return this.mouse_responder_number;
 	}
 
+	toggle_graphMode() {
+		switch (get(w_t_graphMode)) {
+			case T_GraphMode.tree: w_t_graphMode.set(T_GraphMode.radial); break;
+			case T_GraphMode.radial: w_t_graphMode.set(T_GraphMode.tree); break;
+		}
+		signals.signal_recreate_widgets_fromFocus();
+	}
+
 	s_element_for(identifiable: Identifiable | null, type: T_Element, subtype: string): S_Element {
 		const realIdentifiable = identifiable ?? new Identifiable()
 		const name = this.name_from(realIdentifiable, type, subtype);
@@ -99,7 +107,7 @@ export default class User_Interaction {
 	relayout_all() {
 		if (this.inTreeMode) {
 			this.g_treeGraph.update_origins();
-			get(w_ancestry_focus)?.g_widget.recursively_relayout();
+			get(w_ancestry_focus)?.g_widget.recursively_relayout_tree();
 		} else {
 			this.g_radialGraph.layout_allClusters();
 		}

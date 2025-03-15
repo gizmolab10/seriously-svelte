@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, Rect, Size, Point, debug, T_Layer, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import { Svelte_Wrapper, Ancestry, T_SvelteComponent, T_Curve } from '../../ts/common/Global_Imports';
-	import { w_thing_color } from '../../ts/common/Stores';
+	import { w_color_trigger } from '../../ts/common/Stores';
 	import Circle from '../kit/Circle.svelte';
 	import { onMount } from 'svelte';
 	export let ancestry!: Ancestry;
@@ -35,7 +35,7 @@
 	}
 
 	$: {
-		if (!!ancestry.thing && ancestry.thing.id == $w_thing_color?.split(k.generic_separator)[0]) {
+		if (!!ancestry.thing && ancestry.thing.id == $w_color_trigger?.split(k.generic_separator)[0]) {
 			rebuilds += 1;
 		}
 	}

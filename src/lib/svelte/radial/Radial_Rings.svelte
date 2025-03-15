@@ -4,7 +4,7 @@
 	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/common/Stores';
 	import { w_graph_rect, w_mouse_location_scaled } from '../../ts/common/Stores';
 	import { w_count_mouse_up, w_g_active_cluster } from '../../ts/common/Stores';
-	import { w_thing_color, w_ancestry_focus } from '../../ts/common/Stores';
+	import { w_color_trigger, w_ancestry_focus } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/runtime/Identifiable';
 	import Radial_ArcSlider from './Radial_ArcSlider.svelte';
@@ -34,7 +34,7 @@
 	function handle_isHit(): boolean { return w.mouse_distance_fromGraphCenter <= outer_radius; }
 
 	$: {
-		if (!!$w_ancestry_focus.thing && $w_ancestry_focus.thing.id == $w_thing_color?.split(k.generic_separator)[0]) {
+		if (!!$w_ancestry_focus.thing && $w_ancestry_focus.thing.id == $w_color_trigger?.split(k.generic_separator)[0]) {
 			color = $w_ancestry_focus?.thing?.color ?? k.thing_color_default;
 			rebuilds += 1;
 		}
@@ -126,7 +126,7 @@
 			} else if (rotation_state.isActive) {								// rotate clusters
 				if (!signals.signal_isInFlight && !mouse_angle.isClocklyAlmost(rotation_state.active_angle, Angle.radians_from_degrees(4), Angle.full)) {		// detect >= 4° change
 					$w_ring_rotation_angle = mouse_angle.add_angle_normalized(-rotation_state.basis_angle);
-					debug.log_radial(` rotate ${$w_ring_rotation_angle.degrees_of(0)}`);
+					debug.log_radial(` rotate ${$w_ring_rotation_angle.asDegrees()}`);
 					rotation_state.active_angle = mouse_angle;
 					detect_hovering();
 					cursor = ux.s_ring_rotation.cursor;
@@ -142,7 +142,7 @@
 				detect_hovering();
 				cursor = s_paging_rotation.cursor;
 				if (!!basis_angle && !!active_angle && basis_angle != active_angle && $w_g_active_cluster.adjust_paging_index_byAdding_angle(delta_angle)) {
-					debug.log_radial(` page  ${delta_angle.degrees_of(0)}`);
+					debug.log_radial(` page  ${delta_angle.asDegrees()}`);
 					signals.signal_rebuildGraph_fromFocus();
 					rebuilds += 1;
 				}
@@ -171,7 +171,7 @@
 				const rotation_angle = mouse_wentDown_angle.add_angle_normalized(-$w_ring_rotation_angle);
 				switch (w.ringZone_atMouseLocation) {
 					case T_RingZone.rotate:
-						debug.log_radial(` begin rotate  ${rotation_angle.degrees_of(0)}`);
+						debug.log_radial(` begin rotate  ${rotation_angle.asDegrees()}`);
 						ux.s_ring_rotation.active_angle = mouse_wentDown_angle;
 						ux.s_ring_rotation.basis_angle = rotation_angle;
 						rebuilds += 1;
@@ -188,7 +188,7 @@
 						const paging_angle = mouse_wentDown_angle.angle_normalized();
 						const g_cluster = ux.g_radialGraph.g_cluster_atMouseLocation;
 						if (!!g_cluster) {
-							debug.log_radial(` begin paging  ${paging_angle.degrees_of(0)}`);
+							debug.log_radial(` begin paging  ${paging_angle.asDegrees()}`);
 							g_cluster.s_paging_rotation.active_angle = paging_angle;
 							g_cluster.s_paging_rotation.basis_angle = paging_angle;
 							$w_g_active_cluster = g_cluster;

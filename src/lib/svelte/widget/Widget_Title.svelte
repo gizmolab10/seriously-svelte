@@ -3,7 +3,7 @@
 	import { signals, databases, Seriously_Range, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { T_GraphMode, T_Layer, S_Title_Edit, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_t_graphMode, w_hierarchy, w_s_title_edit, w_mouse_location } from '../../ts/common/Stores';
-	import { w_thing_color, w_info_title, w_thing_fontFamily } from '../../ts/common/Stores';
+	import { w_color_trigger, w_info_title, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { w_ancestries_grabbed, w_ancestry_showing_tools } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { T_Edit } from '../../ts/state/S_Title_Edit';
@@ -76,7 +76,7 @@
 	}
 
 	$: {
-		if (!!thing && thing.id == $w_thing_color?.split(k.generic_separator)[0]) {
+		if (!!thing && thing.id == $w_color_trigger?.split(k.generic_separator)[0]) {
 			color = thing?.color;
 		}
 	}

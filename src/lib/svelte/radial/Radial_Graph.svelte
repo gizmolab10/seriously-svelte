@@ -6,7 +6,7 @@
 	import Radial_Necklace from './Radial_Necklace.svelte';
 	import Circle from '../kit/Circle.svelte';
 	import Radial_Focus from './Radial_Focus.svelte';
-	import Radial_UX from './Radial_UX.svelte';
+	import Radial_Rings from './Radial_Rings.svelte';
 	import { onMount } from 'svelte';
 	let toolsOffset = new Point(31, -173.5).offsetBy($w_user_graph_offset.negated);
 
@@ -45,7 +45,7 @@
 			width : {$w_graph_rect.size.width}px;
 			height : {$w_graph_rect.size.height}px;
 			transform : translate({$w_user_graph_offset.x}px, {$w_user_graph_offset.y}px);'>
-		<Radial_UX/>
+		<Radial_Rings/>
 		<Radial_Focus/>
 		<Radial_Necklace/>
 	</div>

@@ -92,7 +92,7 @@ export class Hierarchy {
 		// main key dispatch //
 		///////////////////////
 
-		let ancestryGrab = this.grabs_latest_ancestry_upward(true);
+		let ancestryGrab = this.latest_grabbed_upward(true);
 		if (event.type == 'keydown' && !ux.isEditing_text) {
 			const OPTION = event.altKey;
 			const SHIFT = event.shiftKey;
@@ -159,7 +159,7 @@ export class Hierarchy {
 	}
 
 	get grabs_latest_ancestry(): Ancestry | null {
-		const ancestry = this.grabs_latest_ancestry_upward(false);
+		const ancestry = this.latest_grabbed_upward(false);
 		const relationshipHID = ancestry?.relationship?.hid;
 		if (!!relationshipHID && !!this.relationship_forHID(relationshipHID)) {
 			return ancestry;
@@ -167,7 +167,7 @@ export class Hierarchy {
 		return null;
 	}
 
-	grabs_latest_ancestry_upward(up: boolean): Ancestry {	// does not alter array
+	latest_grabbed_upward(up: boolean): Ancestry {	// does not alter array
 		const ancestries = get(w_ancestries_grabbed) ?? [];
 		if (ancestries.length > 0) {
 			if (up) {
@@ -180,12 +180,12 @@ export class Hierarchy {
 	}
 
 	async grabs_latest_rebuild_persistentMoveUp_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
-		const ancestry = this.grabs_latest_ancestry_upward(up);
+		const ancestry = this.latest_grabbed_upward(up);
 		this.ancestry_rebuild_persistentMoveUp_maybe(ancestry, up, SHIFT, OPTION, EXTREME);
 	}
 
 	grabs_latest_toggleEditingTools(up: boolean = true) {
-		const ancestry = this.grabs_latest_ancestry_upward(up);
+		const ancestry = this.latest_grabbed_upward(up);
 		if (!ancestry.isRoot) {
 			w_ancestry_showing_tools.set(ancestry.toolsGrabbed ? null : ancestry);
 			signals.signal_rebuildGraph_fromFocus();
@@ -1012,58 +1012,17 @@ export class Hierarchy {
 				}
 			}
 		} else if (c.allow_GraphEditing) {
-			const grab = this.grabs_latest_ancestry_upward(true);
+			const grab = this.latest_grabbed_upward(true);
 			this.ancestry_rebuild_persistentRelocateRight(grab, RIGHT, EXTREME);
 		}
 	}
 
 	ancestry_rebuild_persistentMoveUp_maybe(ancestry: Ancestry, up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
-		const parentAncestry = ancestry.parentAncestry;
-		if (!!parentAncestry) {
-			let graph_needsRebuild = false;
-			let graph_needsRelayout = false;
-			const siblings = parentAncestry.children;
-			const length = siblings.length;
-			const thing = ancestry?.thing;
-			if (!siblings || length == 0) {		// friendly for first-time users
-				this.ancestry_rebuild_runtimeBrowseRight(ancestry, true, EXTREME, up, true);
-			} else if (!!thing) {
-				const is_radial_mode = !ux.inTreeMode;
-				const isBidirectional = ancestry.predicate?.isBidirectional ?? false;
-				if ((!isBidirectional && ancestry.thing_isChild) || !is_radial_mode) {
-					const index = siblings.indexOf(thing);
-					const newIndex = index.increment(!up, length);
-					if (!!parentAncestry && !OPTION) {
-						const grabAncestry = parentAncestry.extend_withChild(siblings[newIndex]);
-						if (!!grabAncestry) {
-							if (!grabAncestry.isVisible) {
-								if (!parentAncestry.isFocus) {
-									graph_needsRebuild = parentAncestry.becomeFocus();
-								} else if (is_radial_mode) {
-									graph_needsRebuild = grabAncestry.assureIsVisible_inClusters();	// change paging
-								} else {
-									alert('PROGRAMMING ERROR: child of focus is not visible');
-								}
-							}
-							grabAncestry.grab_forShift(SHIFT);
-							graph_needsRelayout = true;
-						}
-					} else if (c.allow_GraphEditing && OPTION) {
-						graph_needsRebuild = true;
-						u.ancestries_orders_normalize(parentAncestry.childAncestries, false);
-						const wrapped = up ? (index == 0) : (index + 1 == length);
-						const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
-						const newOrder = newIndex + goose;
-						ancestry.relationship?.order_setTo(newOrder);
-						u.ancestries_orders_normalize(parentAncestry.childAncestries);
-					}
-				}
-				if (graph_needsRebuild) {
-					signals.signal_rebuildGraph_fromFocus();
-				} else if (graph_needsRelayout) {
-					signals.signal_recreate_widgets_fromFocus();
-				}
-			}
+		const [graph_needsRebuild, graph_needsRelayout] = ancestry.persistentMoveUp_maybe(up, SHIFT, OPTION, EXTREME);
+		if (graph_needsRebuild) {
+			signals.signal_rebuildGraph_fromFocus();
+		} else if (graph_needsRelayout) {
+			signals.signal_recreate_widgets_fromFocus();
 		}
 	}
 

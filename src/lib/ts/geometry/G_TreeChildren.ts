@@ -16,16 +16,16 @@ export default class G_TreeChildren {
 			if (!ancestry.isExpanded && !ancestry.isRoot) {
 				console.log(`not expanded, cannot layout ${ancestry.titles}`);
 			} else {
-				debug.log_origins(ancestry.g_widget.origin_ofChild.x + ' children layout');
+				debug.log_origins(ancestry.g_widget.origin_ofWidget.x + ' children layout');
 				const childAncestries = ancestry.childAncestries;
-				const height = ancestry.visibleProgeny_halfHeight + 1;
-				const childrenOrigin = ancestry.g_widget.origin_ofChild.offsetByXY(4.5, height);
-				let sum = -ancestry.visibleProgeny_height() / 2; // start out negative and grow positive
+				const halfHeight = ancestry.visibleProgeny_halfHeight;
+				const origin_ofWidget = ancestry.g_widget.origin_ofWidget.offsetByXY(4.5, halfHeight + 1);
+				let height = -halfHeight;		// start out negative and grow positive
 				for (const childAncestry of childAncestries) {
-					const scratchpad = new G_TreeChild(sum, childrenOrigin, childAncestry);
-					sum += scratchpad.progeny_height;
+					const scratchpad = new G_TreeChild(height, origin_ofWidget, childAncestry);
+					height += scratchpad.progeny_height;
 				}
-				this.center = childrenOrigin.offsetByXY(20, 2);
+				this.center = origin_ofWidget.offsetByXY(20, 2);
 			}
 		}
 	}

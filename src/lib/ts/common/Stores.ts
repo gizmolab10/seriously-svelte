@@ -31,7 +31,7 @@ export const w_graph_rect			  = writable<Rect>();
 
 export const w_id_popupView			  = writable<string | null>();
 export const w_info_title			  = writable<string | null>();
-export const w_thing_color			  = writable<string | null>();
+export const w_color_trigger			  = writable<string | null>();
 export const w_thing_fontFamily		  = writable<string>();
 export const w_storage_update_trigger = writable<number>();
 export const w_ring_rotation_radius	  = writable<number>();
@@ -44,17 +44,10 @@ export const w_show_details			  = writable<boolean>();
 export const w_device_isMobile		  = writable<boolean>();
 
 class Stores {
-
-	reset_settings() {
-		const rootAncestry = get(w_hierarchy).rootAncestry;
-		w_ancestries_grabbed.set([rootAncestry]);
-		w_ancestry_focus.set(rootAncestry);
-		w_ancestries_expanded.set([]);
-	}
 	
 	setup_defaults() {
 		w_t_startup.set(T_Startup.start);
-		w_thing_color.set(null);
+		w_color_trigger.set(null);
 		w_count_mouse_up.set(0);
 		w_count_rebuild.set(0);
 		w_count_resize.set(0);

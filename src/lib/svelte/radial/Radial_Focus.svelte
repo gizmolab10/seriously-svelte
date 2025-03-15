@@ -1,12 +1,13 @@
 <script lang='ts'>
-	import { w_thing_color, w_s_title_edit, w_thing_fontFamily } from '../../ts/common/Stores';
+	import { w_color_trigger, w_s_title_edit, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { c, k, ux, w, Size, Point, debug, svgPaths } from '../../ts/common/Global_Imports';
 	import { T_Tool, T_Layer, T_Element, G_RadialGraph } from '../../ts/common/Global_Imports';
 	import { w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Widget_Title from '../widget/Widget_Title.svelte';
-	const es_title = ux.s_element_for($w_ancestry_focus, T_Element.title, k.empty);
 	const height = k.row_height + 10;
+	const fontSize = `{k.font_size}px`;
+	const es_title = ux.s_element_for($w_ancestry_focus, T_Element.radial_focus, k.empty);
 	let svg_strokeColor = 'transparent';
 	let svg_fillColor = 'transparent';
 	let color = k.thing_color_default;
@@ -16,21 +17,23 @@
 	let svg_dasharray = '';
 	let width_ofTitle = 0;
 
+	// mimic a Widget
+
 	$: {
 		const _ = $w_ancestry_focus + $w_s_title_edit + $w_ancestries_grabbed;
 		update_svg();
 	}
 
 	$: {
-		const _ = $w_thing_color;
+		const _ = $w_color_trigger;
 		color = $w_ancestry_focus?.thing?.color;
 		update_svg();
 	}
 
 	$: {
+		origin_ofTitle = Point.x(15);
 		width_ofTitle = ($w_ancestry_focus?.thing?.titleWidth ?? 0);
 		const x = -6 - (width_ofTitle / 2);
-		origin_ofTitle = Point.x(11);
 		center_ofBorder = new Point(width_ofTitle + 19, height).dividedInHalf;
 		origin_ofWidget = new Point(x, 1 - k.dot_size).offsetBy(w.center_ofGraphSize);
 	}
@@ -52,49 +55,49 @@
 
 <div class='radial-focus'
 	style='
-		height:{height}px;
-		position: absolute;
-		width:{width_ofTitle}px;
-		top:{origin_ofWidget.y}px;
-		z-index: {T_Layer.backmost};
-		left: {origin_ofWidget.x}px;'>
+		position : absolute;
+		height : {height}px;
+		width : {width_ofTitle}px;
+		top : {origin_ofWidget.y}px;
+		z-index : {T_Layer.backmost};
+		left : {origin_ofWidget.x}px;'>
 		<Mouse_Responder
-			height={height}
-			width={width_ofTitle}
-			zindex={T_Layer.backmost}
-			cursor={k.cursor_default}
-			handle_isHit={() => false}
-			name='radial-focus-border'
-			handle_mouse_state={debug_closure}
-			center={center_ofBorder}>
+			height = {height}
+			width = {width_ofTitle}
+			center = {center_ofBorder}
+			zindex = {T_Layer.backmost}
+			cursor = {k.cursor_default}
+			name = 'radial-focus-border'
+			handle_isHit = {() => false}
+			handle_mouse_state = {debug_closure}>
 			{#key color}
 				<svg
 					class='radial-focus-svg'
 					style='
-						top: -2.7px;
-						left: -13px;
-						height:{height}px;
-						position: absolute;
-						width:{width_ofTitle + 40}px;'>
+						top : -2.7px;
+						left : -13px;
+						height : {height}px;
+						position : absolute;
+						width : {width_ofTitle + 40}px;'>
 					<path
-						stroke-width='0.8'
-						fill={svg_fillColor}
-						stroke={svg_strokeColor}
-						class='radial-focus-path'
-						stroke-dasharray={svg_dasharray}
-						d={svgPaths.oblong(center_ofBorder, new Size(width_ofTitle - 6, k.row_height))}/>
+						stroke-width = '0.8'
+						fill = {svg_fillColor}
+						stroke = {svg_strokeColor}
+						class = 'radial-focus-path'
+						stroke-dasharray = {svg_dasharray}
+						d = {svgPaths.oblong(center_ofBorder, new Size(width_ofTitle - 6, k.row_height))}/>
 				</svg>
 			{/key}
 		</Mouse_Responder>
 	<div class='radial-focus-title'
 		style='
-			top:3px;
-			left:-11px;
-			position: absolute;'>
+			top : 3px;
+			left : -11px;
+			position :  absolute;'>
 		<Widget_Title
-			ancestry={$w_ancestry_focus}
+			ancestry = {$w_ancestry_focus}
 			origin = {origin_ofTitle}
-			fontSize={k.font_size}px
-			name={es_title.name}/>
+			name = {es_title.name}
+			fontSize = {fontSize}/>
 	</div>
 </div>

@@ -3,7 +3,7 @@
 	import { T_Layer, T_GraphMode, T_Widget, T_Signal, T_Element } from '../../ts/common/Global_Imports';
 	import { G_Widget, S_Element, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_ancestries_grabbed } from '../../ts/common/Stores';
-	import { w_thing_color, w_thing_fontFamily } from '../../ts/common/Stores';
+	import { w_color_trigger, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { T_Edit } from '../../ts/state/S_Title_Edit';
 	import Widget_Title from './Widget_Title.svelte';
 	import Widget_Reveal from './Widget_Reveal.svelte';
@@ -68,7 +68,7 @@
 	});
 
 	$: {
-		if (!!thing && thing.id == $w_thing_color?.split(k.generic_separator)[0]) {
+		if (!!thing && thing.id == $w_color_trigger?.split(k.generic_separator)[0]) {
 			rebuilds += 1;
 		}
 	}

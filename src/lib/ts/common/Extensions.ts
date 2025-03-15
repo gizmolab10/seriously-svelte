@@ -134,6 +134,7 @@ Object.defineProperty(String.prototype, 'html_encode', {
 declare global {
 	interface Number {
 		asInt(): string;
+		asDegrees(): string;
 		roundToEven(): number;
 		angle_normalized(): number;
 		expressZero_asHyphen(): string;
@@ -245,6 +246,15 @@ Object.defineProperty(Number.prototype, 'isBetween', {
 Object.defineProperty(Number.prototype, 'roundToEven', {
 	value: function(): Integer {
 		return (Math.round(this / 2) * 2) as Integer;
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
+});
+
+Object.defineProperty(Number.prototype, 'asDegrees', {
+	value: function(): string {
+		return this.degrees_of(0);
 	},
 	writable: false,
 	enumerable: false,

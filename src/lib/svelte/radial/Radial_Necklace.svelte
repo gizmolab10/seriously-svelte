@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, ux, Point, T_Layer, T_Widget, signals, G_RadialGraph, Predicate } from '../../ts/common/Global_Imports';
-	import { w_graph_rect, w_ancestry_focus, w_thing_color } from '../../ts/common/Stores';
+	import { w_graph_rect, w_ancestry_focus, w_color_trigger } from '../../ts/common/Stores';
 	import { w_s_paging, w_ring_rotation_radius } from '../../ts/common/Stores';
 	import Widget from '../widget/Widget.svelte';
 	import { onMount } from 'svelte';
@@ -21,7 +21,7 @@
 	});
 
 	$: {
-		if (!!ancestry.thing && ancestry.thing.id == $w_thing_color?.split(k.generic_separator)[0]) {
+		if (!!ancestry.thing && ancestry.thing.id == $w_color_trigger?.split(k.generic_separator)[0]) {
 			color = ancestry.thing?.color ?? k.thing_color_default;
 			rebuilds += 1;
 		}

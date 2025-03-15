@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { c, k, u, ux, show, Rect, Size, Point, Thing, debug, T_Layer, T_Tool } from '../../ts/common/Global_Imports';
 	import { databases, Svelte_Wrapper, T_Alteration, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { w_t_countDots, w_thing_color, w_ancestries_grabbed } from '../../ts/common/Stores';
+	import { w_t_countDots, w_color_trigger, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { signals, svgPaths, T_GraphMode, T_Element } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
@@ -60,7 +60,7 @@
 	};
 
 	$: {
-		if (!!thing && thing.id == $w_thing_color?.split(k.generic_separator)[0]) {
+		if (!!thing && thing.id == $w_color_trigger?.split(k.generic_separator)[0]) {
 			updateColors_forHovering(true);
 		}
 	}
@@ -103,7 +103,7 @@
 			}
 			if (thing.hasRelated && show.related_dots) {
 				const x = (!ux.inTreeMode ? 3.2 : 4.5) * (points_right ? -1 : 1);
-				svgPathFor_related = svgPaths.circle_atOffset(size, 3, new Point(x, 0));
+				svgPathFor_related = svgPaths.circle_atOffset(size, 3, Point.x(x));
 			}
 		}
 	}

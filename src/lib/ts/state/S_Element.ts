@@ -17,12 +17,12 @@ export default class S_Element {
 
 	//////////////////////////////////////////////////
 	//												//
-	//	isOut state of html elements persists		//
+	//	state of html elements persists				//
 	//		while the element itself is replaced	//
 	//		thus preserving:						//
 	//			stroke, fill, cursor & border		//
 	//												//
-	//		used by buttons & widgets				//
+	//		used by buttons & widgets & editors		//
 	//												//
 	//////////////////////////////////////////////////
 

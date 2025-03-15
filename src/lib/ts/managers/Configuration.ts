@@ -6,6 +6,7 @@ import { get } from 'svelte/store';
 export class Configuration {
 
 	eraseDB = 0;
+	resetSettings = 0;
 	allow_GraphEditing = true;
 	allow_TitleEditing = true;
 	allow_HorizontalScrolling = true;
@@ -23,12 +24,12 @@ export class Configuration {
 
 		w_device_isMobile.set(this.device_isMobile);
 		debug.queryStrings_apply();						// debug even setup code
-		stores.setup_defaults();8
+		stores.setup_defaults();
 		w.restore_state();
 		show.restore_state();							// local persistance
+		this.queryStrings_apply();						// must call before prefs and db
 		p.restore_defaults();
 		databases.restore_db();
-		this.queryStrings_apply();						// query string
 		show.queryStrings_apply();
 		e.setup();
 	}
@@ -37,25 +38,17 @@ export class Configuration {
 		const queryStrings = this.queryStrings;
         const eraseOptions = queryStrings.get('erase')?.split(k.comma) ?? [];
         const disableOptions = queryStrings.get('disable')?.split(k.comma) ?? [];
-		for (const option of disableOptions) {
-			switch (option) {
+		for (const disableOption of disableOptions) {
+			switch (disableOption) {
 				case 'editGraph':			this.allow_GraphEditing		   = false; break;
 				case 'editTitles':			this.allow_TitleEditing		   = false; break;
 				case 'horizontalScrolling': this.allow_HorizontalScrolling = false; break;
 			}
 		}
-		for (const option of eraseOptions) {
-			switch (option) {
-				case 'settings':
-					p.preferences_reset();
-					stores.reset_settings();
-					break;
-				case 'data':
-					this.eraseDB = 2;
-					p.writeDB_key(T_Preference.focus, null);
-					p.writeDB_key(T_Preference.grabbed, null);
-					p.writeDB_key(T_Preference.expanded, null);
-					break;
+		for (const eraseOption of eraseOptions) {
+			switch (eraseOption) {
+				case 'data':	 this.eraseDB = 2;		 break;
+				case 'settings': this.resetSettings = 2; break;
 			}
 		}
     }

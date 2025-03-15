@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { w_thing_color, w_thing_fontFamily, w_ancestry_focus } from '../../ts/common/Stores';
+	import { w_color_trigger, w_thing_fontFamily, w_ancestry_focus } from '../../ts/common/Stores';
 	import { k, u, ux, Point, Thing, signals, databases } from '../../ts/common/Global_Imports';
 	import { T_Tool, T_Element, S_Element } from '../../ts/common/Global_Imports';
 	import Button from './Button.svelte';
@@ -24,7 +24,7 @@
 	updateColors();
 
 	$: {
-		if (!!thing && thing.id == $w_thing_color?.split(k.generic_separator)[0]) {
+		if (!!thing && thing.id == $w_color_trigger?.split(k.generic_separator)[0]) {
 			updateColors();
 		}
 	}

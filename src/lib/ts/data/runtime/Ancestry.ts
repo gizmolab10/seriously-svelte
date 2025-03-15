@@ -768,4 +768,50 @@ export default class Ancestry extends Identifiable {
 		debug.log_grab(`  UNGRAB "${this.title}"`);
 	}
 
+	persistentMoveUp_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
+		const parentAncestry = this.parentAncestry;
+		let graph_needsRelayout = false;
+		let graph_needsRebuild = false;
+		if (!!parentAncestry) {
+			const siblings = parentAncestry.children;
+			const length = siblings.length;
+			const thing = this?.thing;
+			if (!siblings || length == 0) {		// friendly for first-time users
+				this.hierarchy.ancestry_rebuild_runtimeBrowseRight(this, true, EXTREME, up, true);
+			} else if (!!thing) {
+				const is_radial_mode = !ux.inTreeMode;
+				const isBidirectional = this.predicate?.isBidirectional ?? false;
+				if ((!isBidirectional && this.thing_isChild) || !is_radial_mode) {
+					const index = siblings.indexOf(thing);
+					const newIndex = index.increment(!up, length);
+					if (!!parentAncestry && !OPTION) {
+						const grabAncestry = parentAncestry.extend_withChild(siblings[newIndex]);
+						if (!!grabAncestry) {
+							if (!grabAncestry.isVisible) {
+								if (!parentAncestry.isFocus) {
+									graph_needsRebuild = parentAncestry.becomeFocus();
+								} else if (is_radial_mode) {
+									graph_needsRebuild = grabAncestry.assureIsVisible_inClusters();	// change paging
+								} else {
+									alert('PROGRAMMING ERROR: child of focus is not visible');
+								}
+							}
+							grabAncestry.grab_forShift(SHIFT);
+							graph_needsRelayout = true;
+						}
+					} else if (c.allow_GraphEditing && OPTION) {
+						graph_needsRebuild = true;
+						u.ancestries_orders_normalize(parentAncestry.childAncestries, false);
+						const wrapped = up ? (index == 0) : (index + 1 == length);
+						const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
+						const newOrder = newIndex + goose;
+						this.relationship?.order_setTo(newOrder);
+						u.ancestries_orders_normalize(parentAncestry.childAncestries);
+					}
+				}
+			}
+		}
+		return [graph_needsRebuild, graph_needsRelayout];
+	}
+
 }

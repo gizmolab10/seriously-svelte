@@ -121,17 +121,18 @@ export enum T_Trait {
 }
 
 export enum T_Element {
-	breadcrumb = 'breadcrumb',
-	control	   = 'control',
-	storage	   = 'storage',
-	reveal	   = 'reveal',
-	title	   = 'title',
-	widget	   = 'widget',
-	focus	   = 'focus',
-	drag	   = 'drag',
-	info	   = 'info',
-	none	   = 'none',
-	tool	   = 'tool',
+	radial_focus = 'radial_focus',
+	breadcrumb 	 = 'breadcrumb',
+	control		 = 'control',
+	storage		 = 'storage',
+	reveal		 = 'reveal',
+	title		 = 'title',
+	widget		 = 'widget',
+	focus		 = 'focus',
+	drag		 = 'drag',
+	info		 = 'info',
+	none		 = 'none',
+	tool		 = 'tool',
 }
 
 export enum T_Rebuild {		// design goal: replace all rebuilds counts?

@@ -2,7 +2,7 @@
 	import { c, k, u, w, Size, Point, Thing, debug, T_Layer } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { signals, svgPaths, Ancestry, databases } from '../../ts/common/Global_Imports';
-	import { w_hierarchy, w_graph_rect, w_thing_color } from '../../ts/common/Stores';
+	import { w_hierarchy, w_graph_rect, w_color_trigger } from '../../ts/common/Stores';
 	import Breadcrumb_Button from '../mouse/Breadcrumb_Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import { onMount } from 'svelte';
@@ -18,7 +18,7 @@
 	});
 
 	$: {
-		const _ = $w_s_title_edit + $w_thing_color;
+		const _ = $w_s_title_edit + $w_color_trigger;
 		rebuilds += 1;
 	}
 

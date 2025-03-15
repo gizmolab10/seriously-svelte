@@ -4,20 +4,19 @@ import { get } from 'svelte/store';
 
 export default class G_Widget {
 	g_treeChildren: G_TreeChildren | null = null;
-	angle_ofChild: number | null = null;
 	origin_ofChildrenTree = Point.zero;
 	curveType: string = T_Curve.flat;
 	offset_ofWidget = Point.zero;
 	center_ofReveal = Point.zero;
 	origin_ofRadial = Point.zero;
-	origin_ofChild = Point.zero;
+	origin_ofWidget = Point.zero;
 	origin_ofFocus = Point.zero;
 	origin_ofTitle = Point.zero;
 	center_ofDrag = Point.zero;
-	ancestry: Ancestry | null;
 	points_toChild = true;
 	es_widget!: S_Element;
 	points_right = true;
+	ancestry!: Ancestry;
 	width_ofWidget = 0;
 	rect = Rect.zero;
 
@@ -35,42 +34,40 @@ export default class G_Widget {
 	constructor( ancestry: Ancestry) {
 		this.es_widget = ux.s_element_for(ancestry, T_Element.widget, k.empty);
 		this.ancestry = ancestry;
-		if (!ancestry?.thing) {
-			console.log(`G_Widget ... ancestry has no thing ${ancestry?.relationship?.description}`);
+		if (!ancestry.thing) {
+			console.log(`G_Widget ... ancestry has no thing ${ancestry.relationship?.description}`);
 		}
 	}
 
-	destroy() { this.ancestry = null; }
 	static empty(ancestry: Ancestry) { return new G_Widget(ancestry); }
-	get showingReveal(): boolean { return this.ancestry?.showsReveal_forPointingToChild(this.points_toChild) ?? false; }
+	get showingReveal(): boolean { return this.ancestry.showsReveal_forPointingToChild(this.points_toChild) ?? false; }
 
 	get width_ofBothDots(): number {
-		const adjustment_forReveal = k.dot_size * (this.showingReveal ? 2 : 1);
-		const adjustment_forRadial = ux.inTreeMode ? -13.5 : (this.points_right ? 11 : -0.5);
-		return adjustment_forReveal + adjustment_forRadial;
+		const offset_forReveal = k.dot_size * (this.showingReveal ? 2 : 1);
+		const offset_forRadial = ux.inTreeMode ? -13.5 : (this.points_right ? 11 : -0.5);
+		return offset_forReveal + offset_forRadial;
 	}
 
 	update(
-		origin_ofChild: Point = Point.zero,
-		angle_ofChild: number | null = null,
+		origin_ofWidget: Point = Point.zero,
 		points_toChild: boolean = true,
+		points_right: boolean = true,
 		rect: Rect = Rect.zero,
 		curveType: string = T_Curve.flat) {
-			this.rect = rect;
-			this.points_right = !angle_ofChild ? true : new Angle(angle_ofChild).angle_pointsRight;
-			this.points_toChild = points_toChild;
-			this.origin_ofChild = origin_ofChild;
-			this.angle_ofChild = angle_ofChild;
-			this.curveType = curveType;
+		this.rect = rect;
+		this.points_right = points_right;
+		this.points_toChild = points_toChild;
+		this.origin_ofWidget = origin_ofWidget;
+		this.curveType = curveType;
 	}
 
-	recursively_relayout() {
+	recursively_relayout_tree() {
 		this.layout();
 		if (ux.inTreeMode) {
 			const ancestry = this.ancestry;
-			if (!!ancestry && ancestry.showsChildRelationships) {
+			if (ancestry.showsChildRelationships && ancestry.thing_isChild) {
 				for (const childAncestry of ancestry.childAncestries) {
-					childAncestry.g_widget.recursively_relayout();
+					childAncestry.g_widget.recursively_relayout_tree();
 				}
 			}
 		}
@@ -78,7 +75,7 @@ export default class G_Widget {
 
 	layout() {
 		const ancestry = this.ancestry;
-		if (!!ancestry?.thing) {
+		if (!!ancestry.thing) {
 			if (!!this.g_treeChildren) {
 				this.g_treeChildren.layout_allChildren();		// only called for expanded [tree] things with children
 			}
@@ -87,17 +84,16 @@ export default class G_Widget {
 			const x_radial = this.points_right ? 4 : k.dot_size * 3.5;
 			const offset_ofChildrenTree = new Point(k.dot_size * 1.3, -(7 + k.dot_size / 15));
 			const offset_ofTitle_forRadial = (this.points_right ? 15 : (showingReveal ? 16 : 3));
-			const adjustment_forBorder = showingBorder ? 0 : 1;
 			const width = ancestry.thing.titleWidth + this.width_ofBothDots;
-			const adjustment_forDirection = this.points_right ? 7 : width - 34.5;
-			const adjustment_x = adjustment_forBorder - adjustment_forDirection;
+			const offset_forDirection = this.points_right ? -7 : 34.5 - width;
+			const offset_forBorder = showingBorder ? 0 : 1;
 			const x_drag = this.points_right ? (!ux.inTreeMode ? 3 : 2) : (width - (showingReveal ? 2.5 : 2));
 			const y_drag = !ux.inTreeMode ? 2.8 : 2.7;
 			this.origin_ofTitle = new Point(!ux.inTreeMode ? offset_ofTitle_forRadial : 12.5, 0);
-			this.origin_ofRadial = this.origin_ofChild.offsetByXY(-x_radial, 4 - k.dot_size);
-			this.origin_ofChildrenTree = this.rect.extent.offsetBy(offset_ofChildrenTree);
+			this.origin_ofRadial = this.origin_ofWidget.offsetByXY(-x_radial, 4 - k.dot_size);
 			this.center_ofDrag = new Point(x_drag, y_drag).offsetEquallyBy(k.dot_size / 2);
-			this.offset_ofWidget = new Point(adjustment_x, adjustment_forBorder);
+			this.origin_ofChildrenTree = this.rect.extent.offsetBy(offset_ofChildrenTree);
+			this.offset_ofWidget = Point.x(offset_forDirection).offsetEquallyBy(offset_forBorder);
 			this.width_ofWidget = width;
 			if (showingReveal) {
 				const y_reveal = k.dot_size * 0.72;

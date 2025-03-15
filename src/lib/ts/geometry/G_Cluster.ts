@@ -1,5 +1,5 @@
-import { G_Widget, G_ArcSlider, S_Paging, S_Rotation, T_Curve, T_Quadrant } from '../common/Global_Imports';
-import { k, u, ux, w, Rect, Point, Angle, debug, Ancestry, Predicate } from '../common/Global_Imports';
+import { G_Widget, G_ArcSlider, S_Paging, S_Rotation, T_Quadrant } from '../common/Global_Imports';
+import { k, u, ux, w, Point, Angle, debug, Ancestry, Predicate } from '../common/Global_Imports';
 import { w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
 import { w_graph_rect, w_ancestry_focus } from '../common/Stores';
 import { get } from 'svelte/store';
@@ -14,7 +14,7 @@ import { get } from 'svelte/store';
 //	computes:							//
 //		positions of arc, thumb & label	//
 //		svg paths for arc & thumb		//
-//		map rect for each widget		//
+//		geometry for each widget		//
 //		angle for fork & label			//
 //										//
 //////////////////////////////////////////
@@ -192,7 +192,7 @@ export default class G_Cluster {
 		this.g_cluster_widgets = [];
 		if (this.widgets_shown > 0 && !!this.predicate) {
 			const tweak = this.center.offsetByXY(2, -1.5);	// tweak so that drag dots are centered within the rotation ring
-			const radial = new Point(get(w_ring_rotation_radius) + k.radial_widget_inset, 0);
+			const radial = Point.x(get(w_ring_rotation_radius) + k.radial_widget_inset);
 			const fork_pointsRight = new Angle(this.g_arcSlider.fork_angle).angle_pointsRight;
 			const max = this.widgets_shown - 1;
 			let index = 0;
@@ -200,8 +200,9 @@ export default class G_Cluster {
 				const child_index = !fork_pointsRight ? index : max - index;
 				const child_ancestry = this.ancestries[child_index];
 				const angle_ofChild = this.angle_at_index(index);
-				const origin_ofChild = radial.rotate_by(angle_ofChild).offsetBy(tweak);
-				child_ancestry.g_widget.update(origin_ofChild, angle_ofChild, this.points_toChildren);
+				const origin_ofWidget = radial.rotate_by(angle_ofChild).offsetBy(tweak);
+				const points_right = !angle_ofChild ? true : new Angle(angle_ofChild).angle_pointsRight;
+				child_ancestry.g_widget.update(origin_ofWidget, this.points_toChildren, points_right);
 				this.g_cluster_widgets.push(child_ancestry.g_widget);
 				index += 1;
 			}
@@ -224,22 +225,22 @@ export default class G_Cluster {
 		//	widgets distributed half-and-half around fork-angle
 
 		const max = this.widgets_shown - 1;
-		const row = (max / 2) - index;						// row centered around zero
+		const row = (max / 2) - index;							// row centered around zero
 		const radius = get(w_ring_rotation_radius);
-		const radial = this.fork_radial;					// points at middle widget
-		let y = radial.y + (row * (k.row_height - 2));		// distribute y equally around fork_y
+		const radial = this.fork_radial;						// points at middle widget
+		let y = radial.y + (row * (k.row_height - 3));			// distribute y equally around fork_y
 		let y_isOutside = false;
 		const absY = Math.abs(y);
 		if (absY > radius) {
-			y_isOutside = true;								// y is outside rotation ring
-			y = radius * (y / absY) - (y % radius);			// swing around (bottom | top) --> back inside rotation
+			y_isOutside = true;									// y is outside rotation ring
+			y = radius * (y / absY) - (y % radius);				// swing around (bottom | top) --> back inside rotation
 		}
-		let angle_ofChild = -Math.asin(y / radius);			// arc-sin only defined (-90 to 90) [ALSO: negate angles so things advance clockwise]
-		if (y_isOutside == (radial.x > 0)) {				// counter-clockwise if (x is positive AND y is outside) OR (x is negative AND y is inside)
+		let angle_ofChild = -Math.asin(y / radius);				// arc-sin only defined (-90 to 90) [ALSO: negate angles so things advance clockwise]
+		if (y_isOutside == (radial.x > 0)) {					// counter-clockwise if (x is positive AND y is outside) OR (x is negative AND y is inside)
 			angle_ofChild = Angle.half - angle_ofChild			// otherwise it's clockwise, so invert it
 		}
 		this.update_arc_angles(index, max, angle_ofChild);
-		return angle_ofChild									// angle at index
+		return angle_ofChild;									// angle at index
 	}
 
 	update_thumb_angles() {

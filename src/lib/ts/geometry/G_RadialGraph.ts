@@ -10,8 +10,6 @@ export default class G_RadialGraph {
 	g_child_clusters: Dictionary<G_Cluster> = {};
 	ancestry_focus!: Ancestry;
 
-	// layout widgets, radial lines, and arcs
-
 	constructor() {
 		w_s_paging.subscribe((state: S_Paging) => {
 			this.update_forPaging_state(state);
@@ -24,6 +22,10 @@ export default class G_RadialGraph {
 		this.g_parent_clusters = {};
 		this.g_child_clusters = {};
 	}
+
+	//////////////////////////////////////////////////
+	// layout widgets, cluster lines, & paging arcs //
+	//////////////////////////////////////////////////
 
 	layout_allClusters() {
 		this.destructor();
