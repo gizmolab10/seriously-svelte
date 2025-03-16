@@ -13,6 +13,7 @@ export default class G_Widget {
 	origin_ofFocus = Point.zero;
 	origin_ofTitle = Point.zero;
 	center_ofDrag = Point.zero;
+	forGraphMode: T_GraphMode;
 	points_toChild = true;
 	es_widget!: S_Element;
 	points_right = true;
@@ -33,6 +34,7 @@ export default class G_Widget {
 
 	constructor( ancestry: Ancestry) {
 		this.es_widget = ux.s_element_for(ancestry, T_Element.widget, k.empty);
+		this.forGraphMode = get(w_t_graphMode);
 		this.ancestry = ancestry;
 		if (!ancestry.thing) {
 			console.log(`G_Widget ... ancestry has no thing ${ancestry.relationship?.description}`);
@@ -49,18 +51,19 @@ export default class G_Widget {
 	}
 
 	update(
-		forMode: T_GraphMode,
+		forGraphMode: T_GraphMode,
 		origin_ofWidget: Point = Point.zero,
 		points_toChild: boolean = true,
 		points_right: boolean = true,
 		rect: Rect = Rect.zero,
 		curveType: string = T_Curve.flat) {
-		if (forMode == get(w_t_graphMode)) {		// modes must match, else widgets get misplaced
+		if (forGraphMode == get(w_t_graphMode)) {		// modes must match, else widgets get misplaced
 			this.rect = rect;
+			this.curveType = curveType;
 			this.points_right = points_right;
 			this.points_toChild = points_toChild;
 			this.origin_ofWidget = origin_ofWidget;
-			this.curveType = curveType;
+			this.forGraphMode = get(w_t_graphMode);
 		}
 	}
 
@@ -78,10 +81,8 @@ export default class G_Widget {
 
 	layout() {
 		const ancestry = this.ancestry;
-		if (!!ancestry.thing) {
-			if (!!this.g_treeChildren) {
-				this.g_treeChildren.layout_allChildren();		// only called for expanded [tree] things with children
-			}
+		if (!!ancestry.thing && this.forGraphMode == get(w_t_graphMode)) {		// short-circuit mismatched graph mode
+			this.g_treeChildren?.layout_allChildren();							// g_treeChildren only valid for [tree] thing expanded with children
 			const showingReveal = this.showingReveal;
 			const showingBorder = !ancestry ? false : (ancestry.isGrabbed || ancestry.isEditing);
 			const x_radial = this.points_right ? 4 : k.dot_size * 3.5;

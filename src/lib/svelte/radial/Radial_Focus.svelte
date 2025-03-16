@@ -1,10 +1,11 @@
 <script lang='ts'>
+	import { c, k, ux, w, Size, Point, debug, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import { w_color_trigger, w_s_title_edit, w_thing_fontFamily } from '../../ts/common/Stores';
-	import { c, k, ux, w, Size, Point, debug, svgPaths } from '../../ts/common/Global_Imports';
 	import { T_Tool, T_Layer, T_Element, G_RadialGraph } from '../../ts/common/Global_Imports';
 	import { w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Widget_Title from '../widget/Widget_Title.svelte';
+	import { onMount } from 'svelte';
 	const height = k.row_height + 10;
 	const fontSize = `{k.font_size}px`;
 	const es_title = ux.s_element_for($w_ancestry_focus, T_Element.radial_focus, k.empty);
@@ -19,9 +20,21 @@
 
 	// mimic a Widget
 
+	onMount(() => {
+		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
+			update();
+		});
+		return () => { handle_reposition.disconnect(); };
+	});
+
 	$: {
 		const _ = $w_ancestry_focus + $w_s_title_edit + $w_ancestries_grabbed;
 		update_svg();
+	}
+
+	$: {
+		const _ = $w_ancestry_focus;
+		update();
 	}
 
 	$: {
@@ -30,16 +43,17 @@
 		update_svg();
 	}
 
-	$: {
-		origin_ofTitle = Point.x(15);
-		width_ofTitle = ($w_ancestry_focus?.thing?.titleWidth ?? 0);
-		const x = -6 - (width_ofTitle / 2);
-		center_ofBorder = new Point(width_ofTitle + 19, height).dividedInHalf;
-		origin_ofWidget = new Point(x, 1 - k.dot_size).offsetBy(w.center_ofGraphSize);
-	}
-
 	function debug_closure(s_mouse) {
 		debug.log_radial(` ${s_mouse.descriptionFor('FOCUS')}`);
+	}
+
+	function update() {
+		width_ofTitle = ($w_ancestry_focus?.thing?.titleWidth ?? 0);
+		const x = -6 - (width_ofTitle / 2);
+		const y = 1 - k.dot_size;
+		origin_ofTitle = Point.x(15);
+		origin_ofWidget = w.center_ofGraphSize.offsetByXY(x, y);
+		center_ofBorder = new Point(width_ofTitle + 19, height).dividedInHalf;
 	}
 
 	function update_svg() {

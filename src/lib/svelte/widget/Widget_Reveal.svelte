@@ -40,6 +40,7 @@
 		});
 		return () => { handle_reposition.disconnect(); };
 	});
+	
 	$: {
 		const _ = $w_t_countDots;
 		svgPath_update();

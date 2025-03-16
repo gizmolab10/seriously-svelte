@@ -1,6 +1,6 @@
-import { u, ux, Thing, Ancestry, Predicate } from '../common/Global_Imports';
+import { G_Widget, G_Cluster, S_Paging, T_GraphMode } from '../common/Global_Imports';
+import { u, ux, Thing, Point, Ancestry, Predicate } from '../common/Global_Imports';
 import { w_hierarchy, w_s_paging, w_ancestry_focus } from '../common/Stores';
-import { G_Widget, G_Cluster, S_Paging } from '../common/Global_Imports';
 import Reciprocal_Ancestry from '../data/runtime/Reciprocal_Ancestry';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
@@ -32,6 +32,7 @@ export default class G_RadialGraph {
 		const focus_ancestry = get(w_ancestry_focus);
 		const focus_thing = focus_ancestry.thing;
 		let childAncestries = focus_ancestry.childAncestries;
+		focus_ancestry.g_widget.update(T_GraphMode.radial, Point.zero);
 		this.layout_clusterFor(childAncestries, Predicate.contains, true);
 		if (!!focus_thing) {
 			for (const predicate of get(w_hierarchy).predicates) {
