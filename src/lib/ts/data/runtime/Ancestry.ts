@@ -74,7 +74,6 @@ export default class Ancestry extends Identifiable {
 	get isEditing():						 boolean { return get(w_s_title_edit)?.isAncestry_inState(this, T_Edit.editing) ?? false; }
 	get isExpanded():						 boolean { return this.isRoot || this.includedInStore_ofAncestries(w_ancestries_expanded); }
 	get pathString():						  string { return this.id; }
-	get endID():						   	  string { return this.idAt(); }
 	get title():						   	  string { return this.thing?.title ?? 'missing title'; }
 	get description():					   	  string { return `${this.kindPredicate} "${this.thing?.type ?? '-'}" ${this.titles.join(':')}`; }
 	get depth():							  number { return this.relationship_ids.length; }

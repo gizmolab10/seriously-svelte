@@ -1,4 +1,4 @@
-import { k, Rect, Size, Point, T_Curve, Ancestry, G_Widget } from '../common/Global_Imports';
+import { k, Rect, Size, Point, T_Curve, Ancestry, T_GraphMode } from '../common/Global_Imports';
 
 export default class G_TreeChild {
 	progeny_height = 0;
@@ -16,7 +16,7 @@ export default class G_TreeChild {
 		const t_childCurve = this.get_t_childCurve(child_height);
 		const child_rect = new Rect(origin, new Size(k.line_stretch, child_height - 1));
 		const child_widget_origin = this.origin_forAncestry_inRect(ancestry, child_rect);
-		ancestry.g_widget.update(child_widget_origin, true, true, child_rect, t_childCurve);
+		ancestry.g_widget.update(T_GraphMode.tree, child_widget_origin, true, true, child_rect, t_childCurve);
 		this.progeny_height = progeny_height;
 	}
 

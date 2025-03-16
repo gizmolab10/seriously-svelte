@@ -219,12 +219,12 @@ export default class Thing extends Persistable {
 				} else {
 					const parent = relationship.parent;
 					if (!!parent && !visited.includes(parent.id)) {
-						const endID = relationship.id;		// EGADS, this is the wrong relationship; needs the next one
+						const id_relationship = relationship.id;		// EGADS, this is the wrong relationship; needs the next one
 						const parentAncestries = parent.parentAncestries_for(predicate, u.uniquely_concatenateArrays(visited, [parent.id])) ?? [];
 						if (parentAncestries.length == 0) {
-							addAncestry(get(w_hierarchy).rootAncestry.uniquelyAppend_relationshipID(endID));
+							addAncestry(get(w_hierarchy).rootAncestry.uniquelyAppend_relationshipID(id_relationship));
 						} else {
-							parentAncestries.map((p: Ancestry) => addAncestry(p.uniquelyAppend_relationshipID(endID)));
+							parentAncestries.map((p: Ancestry) => addAncestry(p.uniquelyAppend_relationshipID(id_relationship)));
 						}
 					}
 				}

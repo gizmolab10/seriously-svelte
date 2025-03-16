@@ -1,5 +1,5 @@
-import { k, ux, Rect, Point, Angle, T_Curve, Ancestry, S_Element, T_Element, G_TreeChildren } from '../common/Global_Imports'
-import { w_hierarchy, w_graph_rect, w_show_details } from '../common/Stores';
+import { k, ux, Rect, Point, T_Curve, Ancestry, S_Element, T_Element, T_GraphMode, G_TreeChildren } from '../common/Global_Imports'
+import { w_hierarchy, w_graph_rect, w_t_graphMode, w_show_details } from '../common/Stores';
 import { get } from 'svelte/store';
 
 export default class G_Widget {
@@ -49,16 +49,19 @@ export default class G_Widget {
 	}
 
 	update(
+		forMode: T_GraphMode,
 		origin_ofWidget: Point = Point.zero,
 		points_toChild: boolean = true,
 		points_right: boolean = true,
 		rect: Rect = Rect.zero,
 		curveType: string = T_Curve.flat) {
-		this.rect = rect;
-		this.points_right = points_right;
-		this.points_toChild = points_toChild;
-		this.origin_ofWidget = origin_ofWidget;
-		this.curveType = curveType;
+		if (forMode == get(w_t_graphMode)) {		// modes must match, else widgets get misplaced
+			this.rect = rect;
+			this.points_right = points_right;
+			this.points_toChild = points_toChild;
+			this.origin_ofWidget = origin_ofWidget;
+			this.curveType = curveType;
+		}
 	}
 
 	recursively_relayout_tree() {

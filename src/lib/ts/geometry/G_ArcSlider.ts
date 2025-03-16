@@ -15,10 +15,10 @@ export default class G_ArcSlider {
 	inside_arc_radius = 0;
 	label_text_angle = 0;
 	arc_rect = Rect.zero;
+	angle_ofFork = 0;
 	fork_backoff = 0;
 	fork_radius = 0;
 	start_angle = 0;
-	fork_angle = 0;
 	cap_radius = 0;
 	end_angle = 0;
 
@@ -33,18 +33,18 @@ export default class G_ArcSlider {
 
 	static readonly PRIMITIVES: unique symbol;
 
-	get nadir_offset(): number { return (this.arc_straddles_nadir && !this.arc_straddles_zero) ? Angle.half : 0; }
-	get center_angle(): number { return (this.end_angle + this.start_angle) / 2 - this.nadir_offset; }
-	get fork_slantsForward(): boolean { return new Angle(this.fork_angle).angle_slantsForward; }
+	get spread_angle():			number { return this.end_angle - this.start_angle; }
+	get angle_ofCenter():		number { return (this.end_angle + this.start_angle) / 2 - this.offset_ofNadir; }
+	get offset_ofNadir():		number { return (this.arc_straddles_nadir && !this.arc_straddles_zero) ? Angle.half : 0; }
+	get fork_slantsForward():  boolean { return new Angle(this.angle_ofFork).angle_slantsForward; }
+	get straddles_zero():	   boolean { return this.end_angle.straddles_zero(this.start_angle); }
+	get fork_orientsDown():	   boolean { return new Angle(this.angle_ofFork).angle_orientsDown; }
+	get fork_pointsRight():	   boolean { return new Angle(this.angle_ofFork).angle_pointsRight; }
 	get arc_straddles_nadir(): boolean { return this.arc_straddles(Angle.three_quarters); }
-	get straddles_zero(): boolean { return this.end_angle.straddles_zero(this.start_angle); }
-	get fork_orientsDown(): boolean { return new Angle(this.fork_angle).angle_orientsDown; }
-	get fork_pointsRight(): boolean { return new Angle(this.fork_angle).angle_pointsRight; }
-	get angles(): [number, number] { return [this.start_angle, this.end_angle]; }
-	get spread_angle(): number { return this.end_angle - this.start_angle; }
-	get arc_straddles_zero(): boolean { return this.arc_straddles(0); }
-	get arc_origin(): Point { return this.arc_rect.origin; }
-	get arc_center(): Point { return this.arc_rect.center; }
+	get arc_straddles_zero():  boolean { return this.arc_straddles(0); }
+	get radial_ofFork():		 Point { return Point.fromPolar(get(w_ring_rotation_radius), this.angle_ofFork); }
+	get arc_origin():			 Point { return this.arc_rect.origin; }
+	get arc_center():			 Point { return this.arc_rect.center; }
 
 	get computed_arc_rect(): Rect {
 		let origin = Point.zero;
@@ -67,11 +67,11 @@ export default class G_ArcSlider {
 		return Point.fromPolar(middle_radius, angle);
 	}
 
-	update_fork_angle(fork_angle: number) {
+	update_angle_ofFork(angle_ofFork: number) {
 		const fork_raw_radius = k.ring_rotation_thickness * 0.6;
 		this.fork_backoff = this.fork_adjustment(fork_raw_radius, this.inside_arc_radius);
 		this.fork_radius = fork_raw_radius - this.fork_backoff;
-		this.fork_angle = fork_angle;
+		this.angle_ofFork = angle_ofFork;
 	}
 
 	fork_adjustment(fork_radius: number, inside_arc_radius: number): number {
@@ -93,7 +93,8 @@ export default class G_ArcSlider {
 	static readonly SVG_PATHS: unique symbol;
 
 	get svgPathFor_arcSlider(): string {
-		const [start, end] = this.angles;
+		const start = this.start_angle;
+		const end = this.end_angle;
 		const paths = [
 			this.svgPathFor_start(start, this.outside_arc_radius),
 			this.svgPathFor_arcSliderEdge(end, this.outside_arc_radius, false),
@@ -128,13 +129,13 @@ export default class G_ArcSlider {
 
 	get svgPathFor_forkRadial(): string {
 		const small = this.inside_arc_radius - k.paging_arc_thickness - 4;
-		return svgPaths.line_atAngle(this.clusters_center, small, this.center_angle);
+		return svgPaths.line_atAngle(this.clusters_center, small, this.angle_ofCenter);
 	}
 
 	// not used yet
 
 	get svgPathFor_forkArc(): string {
-		const angle = -this.fork_angle;
+		const angle = -this.angle_ofFork;
 		const fork_radius = this.fork_radius;
 		const forward = this.fork_slantsForward;
 		const y = fork_radius * (forward ? -1 : 1);

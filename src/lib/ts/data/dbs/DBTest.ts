@@ -33,26 +33,26 @@ export default class DBTest extends DBCommon {
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Crb', kindC, idTr, idTb, 1);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Crc', kindC, idTr, idTc, 2);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Crd', kindC, idTr, idTd, 3);
-		// h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cre', kindC, idTr, idTe, 4);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cre', kindC, idTr, idTe, 4);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cab', kindC, idTa, idTb, 0);
-		// h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cac', kindC, idTa, idTc, 1);
-		// h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cad', kindC, idTa, idTd, 2);
-		// h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cae', kindC, idTa, idTe, 3);
-		// h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cbc', kindC, idTb, idTc, 0);
-		// h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cbd', kindC, idTb, idTd, 1);
-		// h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cbe', kindC, idTb, idTe, 2);
-		// h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cbf', kindC, idTb, idTf, 2);
-		// h.relationship_remember_runtimeCreateUnique(this.idBase, 'Ccd', kindC, idTc, idTd, 0);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cac', kindC, idTa, idTc, 1);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cad', kindC, idTa, idTd, 2);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cae', kindC, idTa, idTe, 3);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cbc', kindC, idTb, idTc, 0);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cbd', kindC, idTb, idTd, 1);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cbe', kindC, idTb, idTe, 2);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cbf', kindC, idTb, idTf, 2);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Ccd', kindC, idTc, idTd, 0);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cce', kindC, idTc, idTe, 1);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cde', kindC, idTd, idTe, 0);
-		// h.relationship_remember_runtimeCreateUnique(this.idBase, 'Rrb', kindR, idTr, idTb, 2);
-		// h.relationship_remember_runtimeCreateUnique(this.idBase, 'Rbd', kindR, idTb, idTd, 2);
-		// h.relationship_remember_runtimeCreateUnique(this.idBase, 'Rac', kindR, idTa, idTc, 2);
-		// h.relationship_remember_runtimeCreateUnique(this.idBase, 'Rce', kindR, idTc, idTe, 2);
-		// this.makeMore(2, 'B', kindC, idTc, true);	// children of Curiosity
-		// this.makeMore(5, 'D', kindC, idTb, true);	// children of Maintain
-		// this.makeMore(2, 'G', kindC, idTb, false);	// parents of  "
-		// this.makeMore(5, 'G', kindR, idTb, false);	// related to  "
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Rrb', kindR, idTr, idTb, 2);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Rbd', kindR, idTb, idTd, 2);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Rac', kindR, idTa, idTc, 2);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Rce', kindR, idTc, idTe, 2);
+		this.makeMore(2, 'B', kindC, idTc, true);	// children of Curiosity
+		this.makeMore(5, 'D', kindC, idTb, true);	// children of Maintain
+		this.makeMore(2, 'G', kindC, idTb, false);	// parents of  "
+		this.makeMore(5, 'G', kindR, idTb, false);	// related to  "
 	}
 
 	makeMore(count: number, first: string, kindPredicate: T_Predicate, idOther: string, asChild: boolean) {

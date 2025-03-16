@@ -31,7 +31,7 @@ export const w_graph_rect			  = writable<Rect>();
 
 export const w_id_popupView			  = writable<string | null>();
 export const w_info_title			  = writable<string | null>();
-export const w_color_trigger			  = writable<string | null>();
+export const w_color_trigger		  = writable<string | null>();
 export const w_thing_fontFamily		  = writable<string>();
 export const w_storage_update_trigger = writable<number>();
 export const w_ring_rotation_radius	  = writable<number>();
