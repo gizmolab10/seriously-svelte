@@ -47,6 +47,7 @@
 		style=`
 			${colorStyles};
 			cursor:pointer;
+			white-space:pre;
 			border:${border};
 			border-radius: 1em;
 			padding:0px 6px 2px 6px;

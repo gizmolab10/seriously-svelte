@@ -186,6 +186,7 @@
 				{#key thing_title}
 					<Separator title_font_size={separator_font_size} top={tops[TI.before_title]} left=5 title='title' width={info_width}/>
 					<div style='
+						white-space:pre;
 						position:absolute;
 						text-align:center;
 						top:{tops[TI.title]}px;
