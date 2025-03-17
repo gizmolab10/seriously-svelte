@@ -44,6 +44,27 @@
 		displayName_x = (width - displayName_width) / 2;
 	}
 
+	function toggle_show_details() {
+		$w_show_details = !$w_show_details;
+		signals.signal_reposition_widgets_fromFocus();
+	}
+
+	function next_graph_relations() {
+		switch ($w_t_treeMode) {
+			case T_Hierarchy.parents:  return T_Hierarchy.related;
+			case T_Hierarchy.children: return T_Hierarchy.parents;
+			default:				 return T_Hierarchy.children;
+		}
+	}
+
+	function selection_closure(name: string, types: Array<string>) {
+		const type = types[0];	// only ever has one element
+		switch (name) {
+			case 'graph':	  $w_t_graphMode = type as T_GraphMode;	break;
+			case 'relations': $w_t_treeMode  = type as T_Hierarchy;	break;
+		}
+	}
+
 	function setup_forIDs() {
 		let total = w.windowSize.width + 50;
 		for (const t_control of t_controls) {
@@ -56,33 +77,17 @@
 		}
 	}
 
-	function next_graph_relations() {
-		switch ($w_t_treeMode) {
-			case T_Hierarchy.parents:  return T_Hierarchy.related;
-			case T_Hierarchy.children: return T_Hierarchy.parents;
-			default:				 return T_Hierarchy.children;
-		}
-	}
-
 	function handle_mouse_state_forControl_Type(s_mouse, t_control) {
 		if (s_mouse.isHover) {
 			es_buttons_byControlType[t_control].isOut = s_mouse.isOut;
 		} else if (s_mouse.isUp) {
 			switch (t_control) {
 				case T_Control.help: c.showHelp(); break;
-				case T_Control.details: $w_show_details = !$w_show_details; break;
+				case T_Control.details: toggle_show_details(); break;
 				case T_Control.bigger: width = w.zoomBy(k.zoom_in_ratio) - 20; break;	// mobile only
 				case T_Control.smaller: width = w.zoomBy(k.zoom_out_ratio) - 20; break;	//   "     "
 				default: togglePopupID(t_control); break;
 			}
-		}
-	}
-
-	function selection_closure(name: string, types: Array<string>) {
-		const type = types[0];	// only ever has one element
-		switch (name) {
-			case 'graph':	  $w_t_graphMode = type as T_GraphMode;	break;
-			case 'relations': $w_t_treeMode  = type as T_Hierarchy;	break;
 		}
 	}
 

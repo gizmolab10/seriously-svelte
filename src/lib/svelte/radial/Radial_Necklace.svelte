@@ -9,11 +9,27 @@
 	let color = ancestry.thing?.color ?? k.thing_color_default;
 	let rebuilds = 0;
 
-	// draw widgets, lines and arcs
+	
+	//////////////////////////////////////////
+	//										//
+	//	draw widgets, lines and arcs		//
+	//										//
+	//	REBUILDS components on/changes to:	//
+	//										//
+	//		handle_anySignal				//
+	//		w_ancestry_focus				//
+	//		w_s_paging						//
+	//										//
+	//	SHOULD only reposition for:			//
+	//										//
+	//		w_color_trigger					//
+	//		w_graph_rect					//
+	//										//
+	//////////////////////////////////////////
 
 	onMount(() => {
 		const handleAny = signals.handle_anySignal_atPriority(0, (t_signal, signal_ancestry) => {
-			rebuilds += 1;
+			rebuilds += 1;	
 		});
 		return () => {
 			handleAny.disconnect();

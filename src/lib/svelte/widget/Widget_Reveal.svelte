@@ -86,15 +86,9 @@
 	function up_hover_closure(s_mouse) {
 		if (s_mouse.isHover) {
 			set_isHovering(!s_mouse.isOut);
-		} else if (s_mouse.isUp) {
-			if (ancestry.toolsGrabbed) {
-				$w_s_alteration = null;
-				$w_ancestry_showing_tools = null;
-				signals.signal_recreate_widgets_fromFocus();
-			} else if (ancestry.hasChildRelationships || ancestry.thing.isBulkAlias) {
-				const RIGHT = ancestry.thing_isChild != ancestry.isExpanded || !ux.inTreeMode;
-				$w_hierarchy.ancestry_rebuild_persistentMoveRight(ancestry, RIGHT, false, false, false, true);
-			}
+		} else if (s_mouse.isUp && (ancestry.hasChildRelationships || ancestry.thing.isBulkAlias)) {
+			const RIGHT = ancestry.thing_isChild != ancestry.isExpanded || !ux.inTreeMode;
+			$w_hierarchy.ancestry_rebuild_persistentMoveRight(ancestry, RIGHT, false, false, false, true);
 		}
 	}
  

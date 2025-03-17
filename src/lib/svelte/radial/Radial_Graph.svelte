@@ -4,11 +4,26 @@
 	import { k, u, ux, Rect, Point, debug, signals } from '../../ts/common/Global_Imports';
 	import { w_user_graph_offset, w_thing_fontFamily } from '../../ts/common/Stores';
 	import Radial_Necklace from './Radial_Necklace.svelte';
-	import Circle from '../kit/Circle.svelte';
-	import Radial_Focus from './Radial_Focus.svelte';
 	import Radial_Rings from './Radial_Rings.svelte';
+	import Radial_Focus from './Radial_Focus.svelte';
 	import { onMount } from 'svelte';
 	let toolsOffset = new Point(31, -173.5).offsetBy($w_user_graph_offset.negated);
+
+	//////////////////////////////////////////
+	//										//
+	//	REBUILDS components on/changes to:	//
+	//										//
+	//		rebuild_needed_forType radial	//
+	//		handle_recreate_widgets			//
+	//		w_ancestry_focus				//
+	//										//
+	//	SHOULD only reposition for:			//
+	//										//
+	//		w_user_graph_offset				//
+	//		w_show_details					//
+	//		w_graph_rect					//
+	//										//
+	//////////////////////////////////////////
 
 	// draw center title, arcs, radial and widget necklace
 	//	also selection & hover for arcs & radial
@@ -22,19 +37,11 @@
 	debug.log_tools(` CLUSTERS (svelte)`);
 
 	onMount(() => {
-		const handler = signals.handle_recreate_widgets(0, (ancestry) => {
-			ux.require_rebuild_forType(T_Rebuild.radial);
+		const handle_recreate = signals.handle_recreate_widgets(0, (ancestry) => {
+			ux.require_rebuild_forType(T_Rebuild.radial);		// triggers {#key} below
 		});
-		return () => { handler.disconnect() };
+		return () => { handle_recreate.disconnect() };
 	});
-
-	
-	$: {
-		const _ = $w_show_details;
-		setTimeout(() => {
-			ux.require_rebuild_forType(T_Rebuild.radial);
-		}, 100);
-	}
 
 </script>
 

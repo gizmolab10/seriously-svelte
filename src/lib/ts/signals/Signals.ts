@@ -49,6 +49,10 @@ export class Signals {
 
 	static readonly RECEIVING: unique symbol;
 
+	handle_rebuild_andRecreate(priority: number, onSignal: (value: any | null) => any) {
+		return this.handle_signals_atPriority([T_Signal.rebuild, T_Signal.recreate], priority, onSignal);
+	}
+
 	handle_rebuildGraph(priority: number, onSignal: (value: any | null) => any ) {
 		return this.handle_signal_atPriority(T_Signal.rebuild, priority, onSignal);
 	}
@@ -66,11 +70,17 @@ export class Signals {
 	}
 
 	handle_signal_atPriority(t_signal: T_Signal, priority: number, onSignal: (value: any | null) => any ) {
-		this.adjust_highestPriority_forSignal(priority, t_signal);
+		return this.handle_signals_atPriority([t_signal], priority, onSignal);
+	}
+
+	handle_signals_atPriority(t_signals: Array<T_Signal>, priority: number, onSignal: (value: any | null) => any ) {
+		this.adjust_highestPriority_forSignals(priority, t_signals);
 		return this.conduit.connect((received_t_signal, signalPriority, value) => {
-			if (received_t_signal == t_signal && signalPriority == priority) {
-				// debug.log_handle(`(ONLY) ${t_signal} at ${priority}`);
-				onSignal(value);
+			for (const t_signal of t_signals) {
+				if (received_t_signal == t_signal && signalPriority == priority) {
+					// debug.log_handle(`(ONLY) ${t_signal} at ${priority}`);
+					onSignal(value);
+				}
 			}
 		});
 	}
@@ -93,9 +103,8 @@ export class Signals {
 	
 	highestPriorities: { [id_signal: string]: number } = {}
 
-	adjust_highestPriority_forAllSignals(priority: number) {
-		const all_t_signals = [T_Signal.thing, T_Signal.rebuild, T_Signal.reposition, T_Signal.alterState];
-		for (const t_signal of all_t_signals) {
+	adjust_highestPriority_forSignals(priority: number, t_signals: Array<T_Signal>) {
+		for (const t_signal of t_signals) {
 			this.adjust_highestPriority_forSignal(priority, t_signal);
 		}
 	}
@@ -104,6 +113,13 @@ export class Signals {
 		const highestPriority = this.highestPriorities[t_signal];
 		if (!highestPriority || priority > highestPriority) {
 			this.highestPriorities[t_signal] = priority;
+		}
+	}
+
+	adjust_highestPriority_forAllSignals(priority: number) {
+		const all_t_signals = [T_Signal.thing, T_Signal.rebuild, T_Signal.reposition, T_Signal.alterState];
+		for (const t_signal of all_t_signals) {
+			this.adjust_highestPriority_forSignal(priority, t_signal);
 		}
 	}
 

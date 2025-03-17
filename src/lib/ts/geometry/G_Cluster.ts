@@ -47,7 +47,7 @@ export default class G_Cluster {
 		this.total_widgets = total_widgets;
 		this.ancestries = ancestries;
 		this.predicate = predicate;
-		debug.log_build(` C MAP (ts)  ${total_widgets}  ${this.direction_kind}`);
+		debug.log_build(` g cluster (ts)  ${total_widgets}  ${this.direction_kind}`);
 		this.update_all();
 		w_ring_rotation_radius.subscribe((radius: number) => {
 			if (this.g_arcSlider.outside_arc_radius != radius) {

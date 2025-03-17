@@ -26,7 +26,7 @@
 	let rebuilds = 0;
 	let pagingArcs;
 
-	// UX for paging arcs and rings
+	// paging arcs and rings
 
 	update_cursor();
 	debug.log_build(` (svelte)`);
@@ -36,7 +36,6 @@
 	$: {
 		if (!!$w_ancestry_focus.thing && $w_ancestry_focus.thing.id == $w_color_trigger?.split(k.generic_separator)[0]) {
 			color = $w_ancestry_focus?.thing?.color ?? k.thing_color_default;
-			rebuilds += 1;
 		}
 	}
 
@@ -45,7 +44,7 @@
 		if (mouse_up_count != $w_count_mouse_up) {
 			mouse_up_count = $w_count_mouse_up;
 			if (w.ringZone_atMouseLocation == T_RingZone.miss) {			// only respond if NOT isHit
-				reset();
+				ux_reset();
 			}
 		}
 	}
@@ -55,18 +54,17 @@
 			case T_RingZone.paging: cursor = ux.s_cluster_rotation.cursor; break;
 			case T_RingZone.resize: cursor = ux.s_ring_resizing.cursor; break;
 			case T_RingZone.rotate: cursor = ux.s_ring_rotation.cursor; break;
-			default:			   cursor = 'default'; break;
+			default:				cursor = 'default'; break;
 		}
 	}
 
-	function reset() {
+	function ux_reset() {
 		ux.mouse_timer_forName(name).reset();
 		ux.s_ring_resizing.reset();
 		ux.s_ring_rotation.reset();
 		$w_g_active_cluster = null;
 		mouse_timer.reset();
 		ux.reset_paging();
-		rebuilds += 1;
 	}
 
 	function detect_hovering() {
@@ -78,17 +76,14 @@
 		if (ux.s_cluster_rotation.isHovering != inPaging) {
 			ux.s_cluster_rotation.isHovering  = inPaging;
 			debug.log_hover(` hover paging  ${inPaging}`);
-			rebuilds += 1;
 		}
 		if (ux.s_ring_rotation.isHovering != inRotate) {
 			ux.s_ring_rotation.isHovering  = inRotate;
 			debug.log_hover(` hover rotate  ${inRotate}`);
-			rebuilds += 1;
 		}
 		if (ux.s_ring_resizing.isHovering != inResize) {
 			ux.s_ring_resizing.isHovering  = inResize;
 			debug.log_hover(` hover resize  ${inResize}`);
-			rebuilds += 1;
 		}
 	}
 
@@ -130,7 +125,7 @@
 					rotation_state.active_angle = mouse_angle;
 					detect_hovering();
 					cursor = ux.s_ring_rotation.cursor;
-					signals.signal_recreate_widgets_fromFocus();		// destroys this component (properties are in w_w_ring_rotation)
+					signals.signal_reposition_widgets_fromFocus();
 					rebuilds += 1;
 				}
 			} else if (!!$w_g_active_cluster) {
@@ -149,7 +144,6 @@
 			} else {				// not dragging
 				detect_hovering();
 				update_cursor();
-				rebuilds += 1;
 			}
 		}
 	}
@@ -163,8 +157,7 @@
 		if (!s_mouse.isHover) {
 			if (s_mouse.isUp) {
 				// debug.log_radial(`UP`);
-				reset();
-				rebuilds += 1;
+				ux_reset();
 			} else if (s_mouse.isDown) {
 				// debug.log_radial(`DOWN`);
 				const mouse_wentDown_angle = w.mouse_angle_fromGraphCenter;
@@ -174,7 +167,6 @@
 						debug.log_radial(` begin rotate  ${rotation_angle.asDegrees()}`);
 						ux.s_ring_rotation.active_angle = mouse_wentDown_angle;
 						ux.s_ring_rotation.basis_angle = rotation_angle;
-						rebuilds += 1;
 						break;
 					case T_RingZone.resize:
 						const radius_offset = w.mouse_distance_fromGraphCenter - $w_ring_rotation_radius;
@@ -182,7 +174,6 @@
 						ux.s_ring_rotation.active_angle = mouse_wentDown_angle + Angle.quarter;	// needed for cursor
 						ux.s_ring_rotation.basis_angle = rotation_angle + Angle.quarter;
 						ux.s_ring_resizing.basis_radius = radius_offset;
-						rebuilds += 1;
 						break;
 					case T_RingZone.paging: 
 						const paging_angle = mouse_wentDown_angle.angle_normalized();
@@ -192,7 +183,6 @@
 							g_cluster.s_paging_rotation.active_angle = paging_angle;
 							g_cluster.s_paging_rotation.basis_angle = paging_angle;
 							$w_g_active_cluster = g_cluster;
-							rebuilds += 1;
 						}
 						break;
 				}

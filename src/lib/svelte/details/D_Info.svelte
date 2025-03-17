@@ -67,7 +67,7 @@
 	es_info.set_forHovering(k.color_default, 'pointer');
 	
 	onMount(() => {
-		const handler = signals.handle_rebuildGraph(1, (ancestry) => {
+		const handler = signals.handle_rebuild_andRecreate(1, (ancestry) => {
 			rebuilds += 1;
 		});
 		return () => { handler.disconnect() };
@@ -129,7 +129,6 @@
 	function update_forAncestry() {
 		thing = ancestry?.thing;
 		if (!!thing) {
-			console.log('INFO')
 			thing_title = thing.title;
 			thingHID = thing.hid;
 			const dict = {

@@ -67,7 +67,7 @@ export default class User_Interaction {
 			case T_GraphMode.tree: w_t_graphMode.set(T_GraphMode.radial); break;
 			case T_GraphMode.radial: w_t_graphMode.set(T_GraphMode.tree); break;
 		}
-		signals.signal_recreate_widgets_fromFocus();
+		signals.signal_rebuildGraph_fromFocus();
 	}
 
 	s_element_for(identifiable: Identifiable | null, type: T_Element, subtype: string): S_Element {

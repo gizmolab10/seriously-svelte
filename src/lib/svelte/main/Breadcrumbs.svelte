@@ -14,7 +14,7 @@
 	let rebuilds = 0;
 	let trigger = 0;
 
-	signals.handle_rebuildGraph(1, (ancestry) => {
+	signals.handle_rebuild_andRecreate(1, (ancestry) => {
 		rebuilds += 1;
 	});
 

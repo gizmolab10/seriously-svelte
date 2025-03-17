@@ -1,11 +1,12 @@
 <script lang='ts'>
-	import { c, k, u, ux, w, show, Rect, Size, Point, debug, Angle } from '../../ts/common/Global_Imports';
+	import { c, k, u, ux, w, show, Rect, Size, Point, debug, Angle, signals } from '../../ts/common/Global_Imports';
 	import { T_Layer, G_Cluster, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_thing_fontFamily, w_ring_rotation_radius } from '../../ts/common/Stores';
 	import { w_count_mouse_up, w_ancestry_focus } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/runtime/Identifiable';
 	import Angled_Text from '../kit/Angled_Text.svelte';
+	import { onMount } from 'svelte';
 	export let color = 'red';
 	export let g_cluster!: G_Cluster;
 	const offset = k.radial_widget_inset;
@@ -18,21 +19,34 @@
 	let thumb_color = color;
 	let fork_color = color;
 	let arc_color = color;
-	let arc;
+	let arc_slider_path;
+	let arc_slider;
+	let thumb_path;
+	let fork_path;
 
-	// draws the arc, thumb and label
-	// uses g_arcSlider for svg
-	// and cluster map for geometry and text
-	//
-	// contained by radial, which is contained by radial graph
+	//////////////////////////////////////////////////////
+	//	draws the arc, thumb & label					//
+	//	uses g_cluster for geometry & text				//
+	//	and g_arcSlider & g_thumbSlider for svg paths	//
+	//													//
+	//	radial graph => radial rings => this			//
+	//////////////////////////////////////////////////////
 
-	debug.log_build(` P ARC (svelte)  ${g_cluster.name}`);
+	debug.log_build(` radial arc slider (svelte)  ${g_cluster.name}`);
 	g_cluster.update_all();
 	update_colors();
+	
+	onMount(() => {
+		reposition();
+		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
+			reposition();
+		});
+		return () => { handle_reposition.disconnect() };
+	});
 
 	$: {
-		if (!!arc) {
-			arc_wrapper = new Svelte_Wrapper(arc, handle_isHit, -1, T_SvelteComponent.thumb);
+		if (!!arc_slider) {
+			arc_wrapper = new Svelte_Wrapper(arc_slider, handle_isHit, -1, T_SvelteComponent.thumb);
 		}
 	}
 
@@ -43,9 +57,22 @@
 		}
 	}
 
+	function reposition() {
+		// g cluster is source of truth for svg paths, including coordinates
+		arc_slider_path.setAttribute('d', g_cluster.g_arcSlider.svgPathFor_arcSlider);
+		thumb_path?.setAttribute('d', g_cluster.g_thumbSlider.svgPathFor_arcSlider);
+		fork_path?.setAttribute('d', g_cluster.g_arcSlider.svgPathFor_radialFork);
+	}
+
 	function computed_mouse_angle(): number | null {
 		return w.mouse_angle_fromGraphCenter ?? null
 	}
+
+	// function update_colors() {
+	// 	fork_path?.setAttribute('stroke', u.opacitize(color, 0.3));
+	// 	arc_slider_path?.setAttribute('stroke', ux.s_cluster_rotation.stroke_opacity);
+	// 	thumb_path?.setAttribute('stroke', u.opacitize(color, ux.s_ring_rotation.isActive ? 0.15 : g_cluster.s_paging_rotation.three_level_opacity));
+	// }
 
 	function update_colors() {
 		fork_color = u.opacitize(color, 0.3);
@@ -69,29 +96,44 @@
 </script>
 
 {#if !!g_cluster}
-	{#key arc_color}
-		<div class='arc' bind:this={arc} style='z-index:{T_Layer.paging};'>
-			{#if !debug.noRadial}
-				<Mouse_Responder
-					width={radius * 2}
-					height={radius * 2}
-					name={g_cluster.name}
-					zindex={T_Layer.backmost}
-					cursor={k.cursor_default}
-					handle_isHit={handle_isHit}
-					center={w.center_ofGraphSize}
-					handle_mouse_state={hover_closure}>
-					<svg id='arc' viewBox={viewBox}>
-						<path id='arc' stroke={arc_color} fill=transparent d={g_cluster.g_arcSlider.svgPathFor_arcSlider}/>
-						<path id='fork' stroke={fork_color} fill=transparent d={g_cluster.g_arcSlider.svgPathFor_forkRadial}/>
-						{#if g_cluster.isPaging && g_cluster.widgets_shown > 1}
-							<path id={thumb_name} fill={thumb_color} d={g_cluster.g_thumbSlider.svgPathFor_arcSlider}/>
-						{/if}
-					</svg>
-				</Mouse_Responder>
-			{/if}
-		</div>
-	{/key}
+	<div
+		class='arc-slider'
+		bind:this={arc_slider}
+		style='z-index:{T_Layer.paging};'>
+		{#if !debug.noRadial}
+			<Mouse_Responder
+				width={radius * 2}
+				height={radius * 2}
+				name={g_cluster.name}
+				zindex={T_Layer.backmost}
+				cursor={k.cursor_default}
+				handle_isHit={handle_isHit}
+				center={w.center_ofGraphSize}
+				handle_mouse_state={hover_closure}>
+				<svg class='svg-arc-slider' viewBox={viewBox}>
+					<path
+						fill=transparent
+						stroke={arc_color}
+						id = 'path-arc-slider'
+						bind:this={arc_slider_path}
+						d={' '}/>
+					<path
+						fill=transparent
+						id = 'path-fork'
+						stroke={fork_color}
+						bind:this={fork_path}
+						d={' '}/>
+					{#if g_cluster.isPaging && g_cluster.widgets_shown > 1}
+						<path
+							id = {thumb_name}
+							fill={thumb_color}
+							bind:this={thumb_path}
+							d={' '}/>
+					{/if}
+				</svg>
+			</Mouse_Responder>
+		{/if}
+	</div>
 	<Angled_Text
 		text={g_cluster.cluster_title}
 		center={g_cluster.label_center}

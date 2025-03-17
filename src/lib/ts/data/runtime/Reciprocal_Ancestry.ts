@@ -15,7 +15,7 @@ export default class Reciprocal_Ancestry extends Ancestry {
 	becomeFocus(): boolean { return this.original_ancestry.becomeFocus(); }		// to focus on non-reciprocal ancestry so tree does not crash
 	
 	// with thing_isChild = false, this fixes
-	// paging state & cluster map lookups,
+	// paging state & g_cluster lookups,
 	// is visible & assureIsVisible_inClusters
 
 	// what about:

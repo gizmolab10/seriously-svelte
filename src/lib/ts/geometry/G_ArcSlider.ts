@@ -127,7 +127,7 @@ export default class G_ArcSlider {
 		return svgPaths.circle(start, 5);
 	}
 
-	get svgPathFor_forkRadial(): string {
+	get svgPathFor_radialFork(): string {
 		const small = this.inside_arc_radius - k.paging_arc_thickness - 4;
 		return svgPaths.line_atAngle(this.clusters_center, small, this.angle_ofCenter);
 	}

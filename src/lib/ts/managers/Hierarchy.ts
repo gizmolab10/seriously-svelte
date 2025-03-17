@@ -82,7 +82,7 @@ export class Hierarchy {
 				default: break;
 			}
 			w_ancestry_showing_tools.set(null);
-			signals.signal_recreate_widgets_fromFocus();
+			signals.signal_reposition_widgets_fromFocus();
 		}
 	}
 
@@ -875,7 +875,7 @@ export class Hierarchy {
 		if (!!toolsAncestry) {
 			let ancestry = toolsAncestry;
 			ancestry.grabOnly();
-			signals.signal_recreate_widgets_fromFocus();
+			signals.signal_reposition_widgets_fromFocus();
 			w_ancestry_showing_tools.set(ancestry);
 		}
 	}
