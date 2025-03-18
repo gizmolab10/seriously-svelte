@@ -4,11 +4,11 @@ import { databases } from '../managers/Databases';
 import DBCommon from '../data/dbs/DBCommon';
 
 export default class S_Persistence {
+	t_persistable: T_Persistable;
 	lastModifyDate = new Date();
 	already_persisted = false;
 	awaitingCreation = false;
 	needsBulkFetch = false;
-	t_persistable: T_Persistable;
 	t_database: string;
 	isDirty = false;
 	id: string;
@@ -20,7 +20,7 @@ export default class S_Persistence {
 	constructor(t_database: string, t_persistable: T_Persistable, id: string, already_persisted: boolean = false, awaitingCreation: boolean = false) {
 		this.already_persisted = already_persisted;
 		this.awaitingCreation  = awaitingCreation;
-		this.t_persistable		   = t_persistable;
+		this.t_persistable	   = t_persistable;
 		this.t_database		   = t_database;			// needed for this.isPersistent, used next
 		this.isDirty		   = this.isPersistent && !already_persisted;
 		this.id				   = id;

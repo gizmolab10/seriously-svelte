@@ -25,6 +25,7 @@
 	let cursor = k.cursor_default;
 	let rings_rebuilds = 0;
 	let pagingArcs;
+	let time = 0;
 
 	// paging arcs and rings
 
@@ -96,9 +97,11 @@
 		const _ = $w_mouse_location_scaled;											// use store, to invoke this code
 		const mouse_vector = w.mouse_vector_ofOffset_fromGraphCenter();
 		if (!!mouse_vector) {
+			const now = new Date().getTime();
 			const mouse_angle = mouse_vector.angle;
 			const rotation_state = ux.s_ring_rotation;
 			const resizing_state = ux.s_ring_resizing;
+			const enoughTimeHasPassed = (now - time) > 100;
 
 			// check if one of the three ring zones is active (already dragging)
 
@@ -112,18 +115,21 @@
 				resizing_state.active_angle = mouse_angle + Angle.quarter;
 				detect_hovering();
 				cursor = ux.s_ring_resizing.cursor;
-				if (Math.abs(delta) > 1) {										// granularity of 1 pixel
+				if (enoughTimeHasPassed) {										// one tenth second
+					time = now;
 					debug.log_radial(` resize  D ${distance.asInt()}  R ${radius.asInt()}  + ${delta.toFixed(1)}`);
 					$w_ring_rotation_radius = radius;
 					signals.signal_rebuildGraph_fromFocus();					// destroys this component (properties are in w_w_ring_resizing)
 					rings_rebuilds += 1;
 				}
 			} else if (rotation_state.isActive) {								// rotate clusters
-				if (!signals.signal_isInFlight && !mouse_angle.isClocklyAlmost(rotation_state.active_angle, Angle.radians_from_degrees(2), Angle.full)) {		// detect >= 4° change
+				if (!signals.signal_isInFlight && enoughTimeHasPassed) {		// one tenth second
+					time = now;
 					$w_ring_rotation_angle = mouse_angle.add_angle_normalized(-rotation_state.basis_angle);
 					debug.log_radial(` rotate ${$w_ring_rotation_angle.asDegrees()}`);
 					rotation_state.active_angle = mouse_angle;
 					detect_hovering();
+					// ux.g_radialGraph.layout_allClusters();
 					cursor = ux.s_ring_rotation.cursor;
 					signals.signal_reposition_widgets_fromFocus();
 					rings_rebuilds += 1;
@@ -138,7 +144,7 @@
 				cursor = s_paging_rotation.cursor;
 				debug.log_radial(` page  ${delta_angle.asDegrees()}`);
 				if (!!basis_angle && !!active_angle && basis_angle != active_angle && $w_g_active_cluster.adjust_paging_index_byAdding_angle(delta_angle)) {
-					ux.relayout_all();
+					// ux.relayout_all();
 					signals.signal_rebuildGraph_fromFocus();
 					rings_rebuilds += 1;
 				}

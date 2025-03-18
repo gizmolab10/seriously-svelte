@@ -99,7 +99,7 @@ export class Hierarchy {
 			const COMMAND = event.metaKey;
 			const EXTREME = SHIFT && OPTION;
 			const key = event.key.toLowerCase();
-			const modifiers = ['alt', 'meta', 'shift', 'control']
+			const modifiers = ['alt', 'meta', 'shift', 'control'];
 			const time = new Date().getTime();
 			let graph_needsRebuild = false;
 			if (!modifiers.includes(key)) {		// ignore modifier-key-only events
