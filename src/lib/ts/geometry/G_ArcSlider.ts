@@ -119,7 +119,6 @@ export default class G_ArcSlider {
 		const center = this.clusters_center.offsetBy(radial);
 		const end_angle = clockwise ? arc_angle : (arc_angle + Math.PI).angle_normalized();
 		return svgPaths.arc_partial(center, this.cap_radius, 0, 1, end_angle);
-	
 	}
 
 	svgPathFor_tinyDot(radius: number, basis_angle: number) {

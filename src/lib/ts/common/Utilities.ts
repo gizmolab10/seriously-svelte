@@ -25,7 +25,7 @@ export class Utilities {
 	subtract_arrayFrom(a: Array<any>, b: Array<any>):		  Array<any> { return b.filter(c => a.filter(d => c != d)); }
 	uniquely_concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return this.strip_invalid(this.concatenateArrays(a, b)); }
 	strip_invalid(array: Array<any>):						  Array<any> { return this.strip_identifiableDuplicates(this.strip_falsies(array)); }
-	sort_byOrder(array: Array<Ancestry>):				 Array<Ancestry> { return array.sort( (a: Ancestry, b: Ancestry) => { return a.order - b.order; }); }
+	sort_byOrder(ancestries: Array<Ancestry>):			 Array<Ancestry> { return ancestries.sort( (a: Ancestry, b: Ancestry) => { return a.order - b.order; }); }
 
 	copyObject(obj: any): any {
 		const copiedObject = Object.create(Object.getPrototypeOf(obj));
@@ -197,7 +197,6 @@ export class Utilities {
 		return low;
 	}
 
-
 	get browserType(): T_Browser {
 		const userAgent: string = navigator.userAgent;
 		switch (true) {
@@ -212,10 +211,10 @@ export class Utilities {
 		}
 	}
 
-	ancestries_orders_normalize(array: Array<Ancestry>, persist: boolean = true): void {
-		if (array.length > 1) {
-			this.sort_byOrder(array);
-			array.forEach( (ancestry, index) => {
+	ancestries_orders_normalize(ancestries: Array<Ancestry>, persist: boolean = true): void {
+		if (ancestries.length > 1) {
+			this.sort_byOrder(ancestries);
+			ancestries.forEach( (ancestry, index) => {
 				if (ancestry.order != index) {
 					const relationship = ancestry.relationship;
 					relationship?.order_setTo(index, persist);

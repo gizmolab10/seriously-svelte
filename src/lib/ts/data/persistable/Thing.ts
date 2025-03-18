@@ -219,7 +219,7 @@ export default class Thing extends Persistable {
 				} else {
 					const parent = relationship.parent;
 					if (!!parent && !visited.includes(parent.id)) {
-						const id_relationship = relationship.id;		// EGADS, this is the wrong relationship; needs the next one
+						const id_relationship = relationship.id;		// TODO, this is the wrong relationship; needs the next one
 						const parentAncestries = parent.parentAncestries_for(predicate, u.uniquely_concatenateArrays(visited, [parent.id])) ?? [];
 						if (parentAncestries.length == 0) {
 							addAncestry(get(w_hierarchy).rootAncestry.uniquelyAppend_relationshipID(id_relationship));
@@ -236,7 +236,8 @@ export default class Thing extends Persistable {
 				}
 			}
 		}
-		return u.sort_byTitleTop(ancestries).reverse();
+		ancestries = u.sort_byOrder(ancestries).reverse();
+		return ancestries;
 	}
 	
 }

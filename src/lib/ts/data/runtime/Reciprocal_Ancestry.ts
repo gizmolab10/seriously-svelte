@@ -6,11 +6,14 @@ import Ancestry from './Ancestry';
 export default class Reciprocal_Ancestry extends Ancestry {
 	original_ancestry!: Ancestry;
 
+	///////////////////////////////////////////////
+	// only used for bidirectional relationships //
+	///////////////////////////////////////////////
+
 	constructor(original_ancestry: Ancestry) {
 		super(original_ancestry.t_database, original_ancestry.pathString, original_ancestry.kindPredicate, false);
 		this.original_ancestry = original_ancestry;
 	}
-
 	get depth(): number { return this.original_ancestry.depth; }
 	becomeFocus(): boolean { return this.original_ancestry.becomeFocus(); }		// to focus on non-reciprocal ancestry so tree does not crash
 	

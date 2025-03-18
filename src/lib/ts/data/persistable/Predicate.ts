@@ -1,5 +1,5 @@
 import { k, debug, T_Debug, databases, T_Predicate } from '../../common/Global_Imports';
-import { w_hierarchy } from '../../common/Stores';
+import { w_hierarchy, w_ring_rotation_angle } from '../../common/Stores';
 import Persistable from '../persistable/Persistable';
 import { T_Persistable } from '../dbs/DBCommon';
 import { get } from 'svelte/store';
@@ -31,6 +31,17 @@ export default class Predicate extends Persistable {
 		} else {
 			await databases.db_now.predicate_remember_persistentCreate(this);
 		}
+	}
+	
+	angle_ofFork_when(points_toChildren: boolean) {
+		// returns one of three angles: 1) children_angle 2) opposite+tweak 3) opposite-tweak
+		const tweak = 2 * Math.PI / 3;					// equilateral distribution
+		const children_angle = get(w_ring_rotation_angle);
+		const raw = this.isBidirectional ?
+			children_angle + tweak :
+			points_toChildren ? children_angle :		// one directional, use global
+			children_angle - tweak;
+		return raw.angle_normalized() ?? 0;
 	}
 
 }

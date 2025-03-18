@@ -163,6 +163,9 @@ export default class G_Cluster {
 	}
 
 	static readonly ANGLES: unique symbol;
+	
+	update_angle_ofFork() { this.g_arcSlider.update_angle_ofFork(this.angle_ofFork); }
+	get angle_ofFork(): number { return this.predicate.angle_ofFork_when(this.points_toChildren); }
 
 	update_arc_angles(index: number, max: number, child_angle: number) {
 		// index increases & angle decreases clockwise
@@ -172,18 +175,6 @@ export default class G_Cluster {
 		if (index == 0) {
 			this.g_arcSlider.end_angle = child_angle;
 		}
-	}
-
-	update_angle_ofFork() {
-		// returns one of three angles: 1) children_angle 2) opposite+tweak 3) opposite-tweak
-		const tweak = 2 * Math.PI / 3;					// equilateral distribution
-		const children_angle = get(w_ring_rotation_angle);
-		const raw = this.predicate.isBidirectional ?
-			children_angle + tweak :
-			this.points_toChildren ? children_angle :		// one directional, use global
-			children_angle - tweak;
-		const angle_ofFork = raw.angle_normalized() ?? 0;
-		this.g_arcSlider.update_angle_ofFork(angle_ofFork);
 	}
 
 	update_widget_angles() {
@@ -197,7 +188,7 @@ export default class G_Cluster {
 			let index = 0;
 			while (index < this.widgets_shown) {
 				const child_index = fork_pointsRight ? (this.widgets_shown - index - 1) : index;
-				const child_angle = this.angle_at_index(index);
+				const child_angle = this.angle_at_index(child_index);
 				const child_ancestry = this.ancestries[child_index];
 				const child_pointsRight = new Angle(child_angle).angle_pointsRight;
 				const child_origin = center.offsetBy(radial.rotate_by(child_angle));

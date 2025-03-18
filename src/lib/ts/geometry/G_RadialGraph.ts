@@ -1,5 +1,5 @@
+import { u, ux, Thing, Point, Angle, Ancestry, Predicate } from '../common/Global_Imports';
 import { G_Widget, G_Cluster, S_Paging, T_GraphMode } from '../common/Global_Imports';
-import { u, ux, Thing, Point, Ancestry, Predicate } from '../common/Global_Imports';
 import { w_hierarchy, w_s_paging, w_ancestry_focus } from '../common/Stores';
 import Reciprocal_Ancestry from '../data/runtime/Reciprocal_Ancestry';
 import type { Dictionary } from '../common/Types';
@@ -71,16 +71,20 @@ export default class G_RadialGraph {
 		let ancestries = focus.uniqueAncestries_for(predicate);
 		if (predicate.isBidirectional) {
 			ancestries = ancestries.map(a => new Reciprocal_Ancestry(a));
+			ancestries = u.sort_byOrder(ancestries);
 		}
 		return ancestries;
 	}
 
 	layout_clusterFor(ancestries: Array<Ancestry>, predicate: Predicate | null, points_toChildren: boolean) {
 		if (!!predicate && ancestries.length > 0) {
+			const angle_ofFork = predicate.angle_ofFork_when(points_toChildren);
+			const points_right = new Angle(angle_ofFork).angle_pointsRight;
 			const s_thing_pages = ux.s_thing_pages_forThingID(get(w_ancestry_focus)?.thing?.id);
 			const s_paging = s_thing_pages?.s_paging_pointingToChildren(points_toChildren, predicate);
-			const onePageOf_ancestries = s_paging?.onePage_from(ancestries) ?? [];
-			const g_cluster = new G_Cluster(ancestries.length, onePageOf_ancestries, predicate, points_toChildren);
+			const onePage_ofAncestries = s_paging?.onePage_from(ancestries) ?? [];
+			const corrected_ancestries = points_right ? onePage_ofAncestries : onePage_ofAncestries.reverse();			// reverse order for fork angle points left
+			const g_cluster = new G_Cluster(ancestries.length, corrected_ancestries, predicate, points_toChildren);
 			const g_clusters = this.g_clusters_pointing_toChildren(points_toChildren);
 			g_clusters[predicate.kind] = g_cluster;
 		}
@@ -96,7 +100,7 @@ export default class G_RadialGraph {
 				const focus_thing = focus_ancestry.thing;
 				if (!!focus_thing) {
 					for (const predicate of get(w_hierarchy).predicates) {
-						let ancestries = focus_thing.uniqueAncestries_for(predicate) ?? [];
+						const ancestries = focus_thing.uniqueAncestries_for(predicate) ?? [];
 						this.layout_clusterFor(ancestries, predicate, false);
 					}
 				}
