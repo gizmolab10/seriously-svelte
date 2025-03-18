@@ -24,7 +24,6 @@ export enum T_Debug {
 	error		= 'error',		// async errors
 	graph		= 'graph',		// log size of graph area
 	lines		= 'lines',		// alignment dots for lines and widgets
-	mount		= 'mount',
 	mouse		= 'mouse',
 	hover		= 'hover',
 	order		= 'order',		// observe relocating
@@ -62,7 +61,6 @@ export class Debug {
 	log_build(message: string) { this.log_maybe(T_Debug.build, message); }
 	log_error(message: string) { this.log_maybe(T_Debug.error, message); }
 	log_hover(message: string) { this.log_maybe(T_Debug.hover, message); }
-	log_mount(message: string) { this.log_maybe(T_Debug.mount, message); }
 	log_mouse(message: string) { this.log_maybe(T_Debug.mouse, message); }
 	log_tools(message: string) { this.log_maybe(T_Debug.tools, message); }
 	log_action(message: string) { this.log_maybe(T_Debug.action, message); }
@@ -117,7 +115,6 @@ export class Debug {
 					case 'graph': this.flags.push(T_Debug.graph); break;
 					case 'hover': this.flags.push(T_Debug.hover); break;
 					case 'lines': this.flags.push(T_Debug.lines); break;
-					case 'mount': this.flags.push(T_Debug.mount); break;
 					case 'mouse': this.flags.push(T_Debug.mouse); break;
 					case 'order': this.flags.push(T_Debug.order); break;
 					case 'tools': this.flags.push(T_Debug.tools); break;

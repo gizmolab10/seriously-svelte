@@ -10,14 +10,14 @@
 	const titles = [T_Details[T_Details.storage], T_Details[T_Details.tools], T_Details[T_Details.display], T_Details[T_Details.info]];
 	const heights = [116, 40, 42, 0];
 	let tops = [0, 0, 0, 0];
-	let rebuilds = 0;
+	let details_rebuilds = 0;
 
 	update_tops();
 
 	function selection_closure(t_details: Array<string>) {
 		$w_t_details = t_details as Array<T_Details>;
 		update_tops();
-		rebuilds += 1;
+		details_rebuilds += 1;
 	}
 
 	function update_tops() {
@@ -39,7 +39,7 @@
 
 </script>
 
-{#key rebuilds}
+{#key details_rebuilds}
 	<div class='details'
 		style='
 			left:0px;

@@ -23,7 +23,8 @@ export default class Svelte_Wrapper extends Identifiable {
 
     get boundingRect(): Rect {
         const rect = Rect.boundingRectFor(this.element);
-        return rect?.originMultipliedBy(1 / w.scale_factor) ?? Rect.zero;
+        const unscale_factor = 1 / w.scale_factor;
+        return rect?.multipliedBy(unscale_factor) ?? Rect.zero;
     }
 
     containsPoint(point: Point) { return this.boundingRect.contains(point); }

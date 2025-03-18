@@ -17,13 +17,13 @@
 	import Graph from './Graph.svelte';
 	import { onMount } from 'svelte';
 	let chain = ['Panel'];
-	let rebuilds = 0;
+	let panel_rebuilds = 0;
 
 	function ignore_wheel(event) { event.preventDefault(); }
 
 	$: {
 		const _ = $w_t_database + $w_t_startup + $w_id_popupView;
-		rebuilds += 1;
+		panel_rebuilds += 1;
 	}
 	
 	async function handle_key_down(event) {
@@ -61,7 +61,7 @@
 </style>
 
 <svelte:document on:keydown={handle_key_down}/>
-{#key rebuilds}
+{#key panel_rebuilds}
 	<Debug/>
 	<div style='
 		touch-action: none;

@@ -34,7 +34,7 @@
 	let thing_title = thing?.title;
 	let color_origin = Point.zero;
 	let tops: Array<number> = [];
-	let rebuilds = 0;
+	let info_rebuilds = 0;
 	let info;
 
 	enum TI {
@@ -68,7 +68,7 @@
 	
 	onMount(() => {
 		const handler = signals.handle_rebuild_andRecreate(1, (ancestry) => {
-			rebuilds += 1;
+			info_rebuilds += 1;
 		});
 		return () => { handler.disconnect() };
 	});
@@ -88,7 +88,7 @@
 		const id = $w_color_trigger;
 		if (!!thing && thing.id == id) {
 			color = thing.color;
-			rebuilds += 1;
+			info_rebuilds += 1;
 		}
 	}
 
@@ -144,7 +144,7 @@
 			};
 			information = Object.entries(dict);
 			debug.log_info(information)
-			rebuilds += 1;
+			info_rebuilds += 1;
 		}
 	}
 
@@ -163,7 +163,7 @@
 
 </script>
 
-{#key rebuilds}
+{#key info_rebuilds}
 	{#if !!thing}
 		<div class='info'
 			style='

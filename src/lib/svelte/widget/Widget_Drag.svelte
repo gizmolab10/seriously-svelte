@@ -21,7 +21,7 @@
 	let isGrabbed = false;
 	let isHovering = true;
 	let mouse_click_timer;
-	let rebuilds = 0;
+	let drag_rebuilds = 0;
 	let redraws = 0;
 	let left = 0;
 	let top = 0;
@@ -42,7 +42,7 @@
 			if (!!dotDrag) {
 				center = ancestry.g_widget.center_ofDrag;
 				debug.log_reposition(`dotDrag [. . .] c: (${center.x.asInt()}, ${center.y.asInt()}) ${ancestry.title}`);
-				rebuilds += 1;
+				drag_rebuilds += 1;
 			}
 		});
 		return () => { handle_reposition.disconnect(); handle_altering.disconnect(); };
@@ -136,7 +136,7 @@
 
 </script>
 
-{#key rebuilds}
+{#key drag_rebuilds}
 	{#if es_drag}
 		<Mouse_Responder
 			center={center}

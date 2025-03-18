@@ -18,7 +18,13 @@
 	let svg_dasharray = '';
 	let width_ofTitle = 0;
 
-	// mimic a Widget
+	//////////////////////////////////
+	//								//
+	//	mimic a Widget				//
+	//	ignores rebuild & recreate	//
+	//								//
+	//////////////////////////////////
+
 
 	onMount(() => {
 		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
@@ -51,7 +57,7 @@
 		width_ofTitle = ($w_ancestry_focus?.thing?.titleWidth ?? 0);
 		const x = -6 - (width_ofTitle / 2);
 		const y = 1 - k.dot_size;
-		origin_ofTitle = Point.x(15);
+		origin_ofTitle = Point.x(14);
 		origin_ofWidget = w.center_ofGraphSize.offsetByXY(x, y);
 		center_ofBorder = new Point(width_ofTitle + 19, height).dividedInHalf;
 	}

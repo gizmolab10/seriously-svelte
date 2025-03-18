@@ -6,7 +6,7 @@
     const buttonSize = 20;
     const origin = new Point(26, 27);
     const offsetY = buttonSize / 2 - 1;
-	let rebuilds = 0;
+	let directionals_rebuilds = 0;
 
 	function hover_closure(isHovering) {
         return [isHovering ? k.color_default : k.color_background, k.empty];
@@ -17,7 +17,7 @@
         if (!s_mouse.isHover && !!target && (s_mouse.isUp || s_mouse.isLong)) {
             const pointsUp = target.id == 'up';
             hit(pointsUp, s_mouse.isLong);
-            rebuilds += 1;
+            directionals_rebuilds += 1;
         }
 	}
 
@@ -31,7 +31,7 @@
     }
 </style>
 
-{#key rebuilds}
+{#key directionals_rebuilds}
     <div class='directionals'>
         {#if display(true)}
             <Triangle_Button

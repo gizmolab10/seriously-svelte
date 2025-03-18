@@ -17,7 +17,7 @@
 	let thing: Thing = ancestry.thing;
 	let colorStyles = k.empty;
 	let style = k.empty;
-	let rebuilds = 0;
+	let breadcrumb_rebuilds = 0;
 	let width = u.getWidthOf(title) + 15;
 		
 	center = new Point(left + width / 2, height - 1);
@@ -40,7 +40,7 @@
 			border = `${borderStyle} ${borderColor}`;
 			updateStyle();
 		}
-		rebuilds += 1;
+		breadcrumb_rebuilds += 1;
 	}
 
 	function updateStyle() {
@@ -67,7 +67,7 @@
 				es_breadcrumb.set_forHovering(thing.color, cursor);
 				es_breadcrumb.isOut = s_mouse.isOut;
 				updateStyle();
-				rebuilds += 1;
+				breadcrumb_rebuilds += 1;
 			} else if (s_mouse.isUp) {
 				ancestry.grabOnly();
 				if (ancestry.becomeFocus()) {
@@ -79,7 +79,7 @@
 
 </script>
 
-{#key rebuilds}
+{#key breadcrumb_rebuilds}
 	<Button
 		name={name}
 		style={style}

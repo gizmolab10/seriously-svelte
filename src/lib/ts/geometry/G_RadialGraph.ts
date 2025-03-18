@@ -76,7 +76,7 @@ export default class G_RadialGraph {
 	}
 
 	layout_clusterFor(ancestries: Array<Ancestry>, predicate: Predicate | null, points_toChildren: boolean) {
-		if (!!predicate) {
+		if (!!predicate && ancestries.length > 0) {
 			const s_thing_pages = ux.s_thing_pages_forThingID(get(w_ancestry_focus)?.thing?.id);
 			const s_paging = s_thing_pages?.s_paging_pointingToChildren(points_toChildren, predicate);
 			const onePageOf_ancestries = s_paging?.onePage_from(ancestries) ?? [];

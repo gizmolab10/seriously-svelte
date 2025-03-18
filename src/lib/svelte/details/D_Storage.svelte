@@ -12,7 +12,7 @@
 	const button_style = `font-family: ${$w_thing_fontFamily}; font-size:0.85em; left: 5px; top: -2px; position: absolute;`;
 	let s_element_byStorageType: { [id: string]: S_Element } = {};
 	let information: Array<Dictionary> = [];
-	let rebuilds = 0;
+	let storage_rebuilds = 0;
 
 	setup_s_elements();
 	
@@ -25,7 +25,7 @@
 			dict['things'] = h.things.length;
 			dict['relationships'] = h.relationships.length.expressZero_asHyphen();
 			information = Object.entries(dict);
-			rebuilds += 1;
+			storage_rebuilds += 1;
 		}
 	}
 
@@ -58,7 +58,7 @@
 
 </script>
 
-{#key $w_t_database, rebuilds}
+{#key $w_t_database, storage_rebuilds}
 	<div class='storage-information'
 		style='
 			height:40px;

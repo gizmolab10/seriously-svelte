@@ -25,18 +25,21 @@
 	let fork_path;
 
 	//////////////////////////////////////////////////////
-	//	draws the arc, thumb & label					//
-	//	uses g_cluster for geometry & text				//
-	//	and g_arcSlider & g_thumbSlider for svg paths	//
+	//													//
+	//	ignores rebuild & recreate						//
 	//													//
 	//	radial graph => radial rings => this			//
+	//	draws the arc, thumb & label					//
+	//	uses g_cluster => {geometry, text}				//
+	//		{g_arcSlider, g_thumbSlider} => svg paths	//
+	//													//
 	//////////////////////////////////////////////////////
 
-	debug.log_build(` radial arc slider (svelte)  ${g_cluster.name}`);
+	debug.log_build(`ARC SLIDER  ${g_cluster.name}`);
 	g_cluster.update_all();
-	update_colors();
 	
 	onMount(() => {
+		update_colors();
 		reposition();
 		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
 			reposition();

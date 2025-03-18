@@ -8,16 +8,16 @@
 	const info_width = k.width_details - 30;
 	const separator_font_size = `${k.tiny_font_size}px`;
 	const titles = [T_Hierarchy[T_Hierarchy.children], T_Hierarchy[T_Hierarchy.parents], T_Hierarchy[T_Hierarchy.related]];
-	let rebuilds = 0;
+	let display_rebuilds = 0;
 	
 	function selection_closure(t_counts: Array<string>) {
 		$w_t_countDots = t_counts as Array<T_Hierarchy>;
-		rebuilds += 1;
+		display_rebuilds += 1;
 	}
 
 	</script>
 
-{#key rebuilds}
+{#key display_rebuilds}
 	<div class='display'
 		style='
 			left:10px;

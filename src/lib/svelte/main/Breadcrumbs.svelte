@@ -10,17 +10,17 @@
 	let size = k.default_buttonSize;
 	let lefts: Array<string> = [];
 	let things: Array<Thing> = [];
+	let breadcrumbs_rebuilds = 0;
 	let ancestry: Ancestry;
-	let rebuilds = 0;
 	let trigger = 0;
 
 	signals.handle_rebuild_andRecreate(1, (ancestry) => {
-		rebuilds += 1;
+		breadcrumbs_rebuilds += 1;
 	});
 
 	$: {
 		const _ = $w_s_title_edit + $w_color_trigger;
-		rebuilds += 1;
+		breadcrumbs_rebuilds += 1;
 	}
 
 	$: {
@@ -33,7 +33,7 @@
 				const windowWidth = w.windowSize.width;
 				let parent_widths = 0;	// encoded as one parent count per 2 digits (base 10)
 				[things, widths, lefts, parent_widths] = ancestry.layout_breadcrumbs_within(windowWidth);
-				trigger = parent_widths * 10000 + rebuilds * 100 + lefts[0];		// re-render HTML when this value changes
+				trigger = parent_widths * 10000 + breadcrumbs_rebuilds * 100 + lefts[0];		// re-render HTML when this value changes
 				debug.log_crumbs(`${widths} ${things.map(t => t.title)}`);
 			}
 		}

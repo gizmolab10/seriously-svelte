@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { c, k, u, ux, Size, Thing, Point, debug, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
-	import { w_ancestries_grabbed, w_ancestries_expanded, w_ancestry_showing_tools } from '../../ts/common/Stores';
 	import { T_Layer, T_GraphMode, Predicate, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
+	import { w_ancestries_grabbed, w_ancestries_expanded, w_ancestry_showing_tools } from '../../ts/common/Stores';
 	import { w_t_countDots, w_hierarchy, w_s_alteration } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
@@ -22,8 +22,8 @@
 	let svgPathFor_revealDot = k.empty;
 	let revealWrapper!: Svelte_Wrapper;
 	let bulkAliasOffset = 0;
+	let reveal_rebuilds = 0;
 	let dotReveal = null;
-	let rebuilds = 0;
 	
 	function handle_context_menu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
 
@@ -35,7 +35,7 @@
 				center = ancestry.g_widget.center_ofReveal;
 				const origin = center.offsetEquallyBy(-k.dot_size);
 				debug.log_reposition(`dotReveal [. . .] o: (${origin.x.asInt()}, ${origin.y.asInt()}) ${ancestry.title}`);
-				rebuilds += 1;
+				reveal_rebuilds += 1;
 			}
 		});
 		return () => { handle_reposition.disconnect(); };
@@ -68,7 +68,7 @@
 		const corrected = hover_isReversed ? !hovering : hovering;
 		if (!!es_reveal && es_reveal.isOut == corrected) {
 			es_reveal.isOut = !corrected;
-			rebuilds += 1;
+			reveal_rebuilds += 1;
 		}
 	}
 
@@ -80,7 +80,7 @@
 		}
 		svgPathFor_outer_tinyDots = ancestry.svgPathFor_tinyDots_outsideReveal(points_toChild);
 		svgPathFor_revealDot = ancestry.svgPathFor_revealDot;
-		rebuilds += 1;
+		reveal_rebuilds += 1;
 	}
 
 	function up_hover_closure(s_mouse) {
@@ -111,7 +111,7 @@
 	}
 </style>
 
-{#key rebuilds}
+{#key reveal_rebuilds}
 	{#if es_reveal}
 		<Mouse_Responder
 			center={center}

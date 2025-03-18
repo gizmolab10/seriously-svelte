@@ -1,5 +1,6 @@
 <script lang='ts'>
-	import { k, u, ux, Point, T_Layer, T_Widget, signals, G_RadialGraph, Predicate } from '../../ts/common/Global_Imports';
+	import { k, u, ux, Point, debug, signals, Predicate } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Widget, T_Signal, G_RadialGraph } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_ancestry_focus, w_color_trigger } from '../../ts/common/Stores';
 	import { w_s_paging, w_ring_rotation_radius } from '../../ts/common/Stores';
 	import Widget from '../widget/Widget.svelte';
@@ -7,7 +8,7 @@
     const ancestry = $w_ancestry_focus;
 	const center = $w_graph_rect.size.asPoint.dividedInHalf;
 	let color = ancestry.thing?.color ?? k.thing_color_default;
-	let rebuilds = 0;
+	let necklace_rebuilds = 0;
 
 	
 	//////////////////////////////////////////
@@ -26,10 +27,16 @@
 	//		w_graph_rect					//
 	//										//
 	//////////////////////////////////////////
+	
+	debug.log_build(`NECKLACE  ${ancestry.title}`);
 
 	onMount(() => {
 		const handleAny = signals.handle_anySignal_atPriority(0, (t_signal, signal_ancestry) => {
-			rebuilds += 1;	
+			necklace_rebuilds += 1;
+			// switch (t_signal) {
+			// 	case T_Signal.recreate: necklace_rebuilds += 1; break;
+			// 	case T_Signal.reposition: break;
+			// }
 		});
 		return () => {
 			handleAny.disconnect();
@@ -39,20 +46,20 @@
 	$: {
 		if (!!ancestry.thing && ancestry.thing.id == $w_color_trigger?.split(k.generic_separator)[0]) {
 			color = ancestry.thing?.color ?? k.thing_color_default;
-			rebuilds += 1;
+			necklace_rebuilds += 1;
 		}
 	}
 
 	$: {
 		const s_paging = $w_s_paging;
 		if (!!s_paging && !!ancestry.thing && ancestry.thing.id == s_paging.thing_id) {
-			rebuilds += 1;
+			necklace_rebuilds += 1;
 		}
 	}
 
 </script>
 
-{#key rebuilds}
+{#key necklace_rebuilds}
 	{#if !!ux.g_radialGraph}
 		<div
 			class = 'necklace-widgets'

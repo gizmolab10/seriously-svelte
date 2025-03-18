@@ -38,8 +38,8 @@ export default class G_Cluster {
 	total_widgets = 0;
 	isPaging = false;
 
-	// heavy lifting for positioning everything 
-	// in one cluster of the radial view
+	// heavy lifting for positioning 
+	// everything in one cluster of the radial view
 
 	destructor() { this.ancestries = []; }
 	constructor(total_widgets: number, ancestries: Array<Ancestry>, predicate: Predicate, points_toChildren: boolean) {
@@ -47,7 +47,6 @@ export default class G_Cluster {
 		this.total_widgets = total_widgets;
 		this.ancestries = ancestries;
 		this.predicate = predicate;
-		debug.log_build(` g cluster (ts)  ${total_widgets}  ${this.direction_kind}`);
 		this.update_all();
 		w_ring_rotation_radius.subscribe((radius: number) => {
 			if (this.g_arcSlider.outside_arc_radius != radius) {
@@ -57,6 +56,7 @@ export default class G_Cluster {
 	}
 
 	update_all() {
+		debug.log_build(`G CLUSTER UPDATE  (${this.ancestries.length} shown)  ${this.direction_kind}`);
 		this.widgets_shown = this.ancestries.length;
 		this.isPaging = this.widgets_shown < this.total_widgets;
 		this.center = get(w_graph_rect).size.asPoint.dividedInHalf;

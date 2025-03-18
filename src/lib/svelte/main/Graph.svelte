@@ -6,8 +6,8 @@
 	import Tree_Graoh from '../tree/Tree_Graoh.svelte';
 	import { onMount } from 'svelte';
 	let draggableRect: Rect | null = null;
+	let graph_rebuilds = 0;
 	let style = k.empty;
-	let rebuilds = 0;
 	let draggable;
 
 	//////////////////////////////////////////
@@ -50,7 +50,7 @@
 		}, 1);
 	}
 
-	function rebuild() { rebuilds += 1; }
+	function rebuild() { graph_rebuilds += 1; }
 	
 	function update_style() {
 		style=`
@@ -67,7 +67,7 @@
 
 </script>
 
-{#key rebuilds}
+{#key graph_rebuilds}
 	<div
 		style={style}
 		class='draggable'

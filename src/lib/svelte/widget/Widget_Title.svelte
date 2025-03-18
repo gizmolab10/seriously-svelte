@@ -26,9 +26,6 @@
 	let cursor_style = k.empty;
 	let ghost = null;
 	let input = null;
-
-	debug.log_mount(`TITLE ${ancestry?.title}`);
-	onDestroy(() => { debug.log_mount(`DESTROY TITLE ${ancestry?.title}`); });
 	
 	function isHit():					   boolean { return false }
 	function hasFocus():				   boolean { return document.activeElement === input; }
@@ -40,6 +37,7 @@
 	function handle_mouse_up()					   { clearClicks(); }
 
 	onMount(() => {
+		debug.log_build(`TITLE ${ancestry?.title}`);
 		const handle_anySignal = signals.handle_anySignal_atPriority(0, (t_signal, ancestry) => {
 			updateInputWidth();
 		});

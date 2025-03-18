@@ -29,10 +29,10 @@
 	let widgetData = k.empty;
 	let revealData = k.empty;
 	let origin = Point.zero;
+	let widget_rebuilds = 0;
 	let dragData = k.empty;
 	let padding = k.empty;
 	let border = k.empty;
-	let rebuilds = 0;
 	let height = 0;
 	let left = 0;
 	let top = 0;
@@ -40,7 +40,7 @@
 	let thing;
 
 	setup_fromAncestry();
-	debug.log_mount(`WIDGET (grabbed: ${ancestry.isGrabbed}) "${ancestry.title}"`);
+	debug.log_build(`WIDGET (grabbed: ${ancestry.isGrabbed}) "${ancestry.title}"`);
 	layout();
 	layout_maybe();
 
@@ -51,13 +51,10 @@
 				switch (t_signal) {
 					case T_Signal.recreate:
 						layout_maybe();
+						widget_rebuilds += 1;
 						break;
 					case T_Signal.reposition:
 						layout();
-						debug.log_reposition(`widget o: (${left.asInt()}, ${top.asInt()}) w: ${g_widget.width_ofWidget.asInt()} ${thing?.title ?? k.unknown}`);
-						widget.style.width = `${g_widget.width_ofWidget}px`;
-						widget.style.left = `${left}px`;
-						widget.style.top = `${top}px`;
 						break;
 				}
 			}
@@ -69,7 +66,7 @@
 
 	$: {
 		if (!!thing && thing.id == $w_color_trigger?.split(k.generic_separator)[0]) {
-			rebuilds += 1;
+			widget_rebuilds += 1;
 		}
 	}
 
@@ -153,7 +150,7 @@
 
 </script>
 
-{#key rebuilds}
+{#key widget_rebuilds}
 	{#if es_widget}
 		<div class = 'widget'
 			id = '{widgetName}'

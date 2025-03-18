@@ -15,8 +15,8 @@
 	let extent = rect.extent;
 	let viewBox = Rect.zero;
 	let linePath = k.empty;
+	let line_rebuilds = 0;
 	let size = Size.zero;
-	let rebuilds = 0;
 	let line;
 
 	onMount(() => {
@@ -36,7 +36,7 @@
 
 	$: {
 		if (!!ancestry.thing && ancestry.thing.id == $w_color_trigger?.split(k.generic_separator)[0]) {
-			rebuilds += 1;
+			line_rebuilds += 1;
 		}
 	}
 
@@ -89,7 +89,7 @@
 
 </script>
 
-{#key rebuilds}
+{#key line_rebuilds}
 	<svg
 		bind:this = {line}
 		id = {ancestry.title}
