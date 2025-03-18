@@ -83,7 +83,7 @@ export default class G_RadialGraph {
 			const s_thing_pages = ux.s_thing_pages_forThingID(get(w_ancestry_focus)?.thing?.id);
 			const s_paging = s_thing_pages?.s_paging_pointingToChildren(points_toChildren, predicate);
 			const onePage_ofAncestries = s_paging?.onePage_from(ancestries) ?? [];
-			const corrected_ancestries = points_right ? onePage_ofAncestries : onePage_ofAncestries.reverse();			// reverse order for fork angle points left
+			const corrected_ancestries = points_right ? onePage_ofAncestries.reverse() : onePage_ofAncestries;			// reverse order for fork angle points left
 			const g_cluster = new G_Cluster(ancestries.length, corrected_ancestries, predicate, points_toChildren);
 			const g_clusters = this.g_clusters_pointing_toChildren(points_toChildren);
 			g_clusters[predicate.kind] = g_cluster;
