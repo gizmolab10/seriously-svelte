@@ -94,7 +94,7 @@
 		// detect movement & adjust state //
 		////////////////////////////////////
 
-		const _ = $w_mouse_location_scaled;											// use store, to invoke this code
+		const _ = $w_mouse_location_scaled;
 		const mouse_vector = w.mouse_vector_ofOffset_fromGraphCenter();
 		if (!!mouse_vector) {
 			const now = new Date().getTime();
@@ -129,10 +129,10 @@
 					debug.log_radial(` rotate ${$w_ring_rotation_angle.asDegrees()}`);
 					rotation_state.active_angle = mouse_angle;
 					detect_hovering();
-					// ux.g_radialGraph.layout_allClusters();
 					cursor = ux.s_ring_rotation.cursor;
-					signals.signal_reposition_widgets_fromFocus();
-					rings_rebuilds += 1;
+					ux.g_radialGraph.layout_allClusters();
+					rings_rebuilds += 1;										// for arc slider's ViewBox and MouseResponder center
+					signals.signal_reposition_widgets_fromFocus();				// to reposition necklace widgets
 				}
 			} else if (!!$w_g_active_cluster) {
 				const s_paging_rotation = $w_g_active_cluster.s_paging_rotation;
@@ -167,29 +167,29 @@
 				ux_reset();
 			} else if (s_mouse.isDown) {
 				// debug.log_radial(`DOWN`);
-				const mouse_wentDown_angle = w.mouse_angle_fromGraphCenter;
-				const rotation_angle = mouse_wentDown_angle.add_angle_normalized(-$w_ring_rotation_angle);
+				const angle_ofMouseDown = w.mouse_angle_fromGraphCenter;
+				const angle_ofRotation = angle_ofMouseDown.add_angle_normalized(-$w_ring_rotation_angle);
 				const zone = w.ringZone_atMouseLocation; 
 				switch (zone) {
 					case T_RingZone.rotate:
-						debug.log_radial(` begin rotate  ${rotation_angle.asDegrees()}`);
-						ux.s_ring_rotation.active_angle = mouse_wentDown_angle;
-						ux.s_ring_rotation.basis_angle = rotation_angle;
+						debug.log_radial(` begin rotate  ${angle_ofRotation.asDegrees()}`);
+						ux.s_ring_rotation.active_angle = angle_ofMouseDown;
+						ux.s_ring_rotation.basis_angle = angle_ofRotation;
 						break;
 					case T_RingZone.resize:
-						const radius_offset = w.mouse_distance_fromGraphCenter - $w_ring_rotation_radius;
-						debug.log_radial(` begin resize  ${radius_offset.asInt()}`);
-						ux.s_ring_rotation.active_angle = mouse_wentDown_angle + Angle.quarter;	// needed for cursor
-						ux.s_ring_rotation.basis_angle = rotation_angle + Angle.quarter;
-						ux.s_ring_resizing.basis_radius = radius_offset;
+						const change_ofRadius = w.mouse_distance_fromGraphCenter - $w_ring_rotation_radius;
+						debug.log_radial(` begin resize  ${change_ofRadius.asInt()}`);
+						ux.s_ring_rotation.active_angle = angle_ofMouseDown + Angle.quarter;	// needed for cursor
+						ux.s_ring_rotation.basis_angle = angle_ofRotation + Angle.quarter;		// "
+						ux.s_ring_resizing.basis_radius = change_ofRadius;
 						break;
 					case T_RingZone.paging: 
-						const paging_angle = mouse_wentDown_angle.angle_normalized();
+						const angle_ofPage = angle_ofMouseDown.angle_normalized();
 						const g_cluster = ux.g_radialGraph.g_cluster_atMouseLocation;
 						if (!!g_cluster) {
-							debug.log_radial(` begin paging  ${paging_angle.asDegrees()}`);
-							g_cluster.s_paging_rotation.active_angle = paging_angle;
-							g_cluster.s_paging_rotation.basis_angle = paging_angle;
+							debug.log_radial(` begin paging  ${angle_ofPage.asDegrees()}`);
+							g_cluster.s_paging_rotation.active_angle = angle_ofPage;
+							g_cluster.s_paging_rotation.basis_angle = angle_ofPage;
 							$w_g_active_cluster = g_cluster;
 						}
 						break;

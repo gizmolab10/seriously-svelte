@@ -60,15 +60,14 @@
 		}
 	}
 
-	function reposition() {
-		// g cluster is source of truth for svg paths, including coordinates
-		arc_slider_path.setAttribute('d', g_cluster.g_arcSlider.svgPathFor_arcSlider);
-		thumb_path?.setAttribute('d', g_cluster.g_thumbSlider.svgPathFor_arcSlider);
-		fork_path?.setAttribute('d', g_cluster.g_arcSlider.svgPathFor_radialFork);
-	}
-
 	function computed_mouse_angle(): number | null {
 		return w.mouse_angle_fromGraphCenter ?? null
+	}
+
+	function update_colors() {
+		fork_color = u.opacitize(color, 0.3);
+		arc_color = u.opacitize(color, ux.s_cluster_rotation.stroke_opacity);
+		thumb_color = u.opacitize(color, ux.s_ring_rotation.isActive ? 0.15 : g_cluster.s_paging_rotation.three_level_opacity);
 	}
 
 	// function update_colors() {
@@ -77,10 +76,12 @@
 	// 	thumb_path?.setAttribute('stroke', u.opacitize(color, ux.s_ring_rotation.isActive ? 0.15 : g_cluster.s_paging_rotation.three_level_opacity));
 	// }
 
-	function update_colors() {
-		fork_color = u.opacitize(color, 0.3);
-		arc_color = u.opacitize(color, ux.s_cluster_rotation.stroke_opacity);
-		thumb_color = u.opacitize(color, ux.s_ring_rotation.isActive ? 0.15 : g_cluster.s_paging_rotation.three_level_opacity);
+	function reposition() {
+		// INCOMPLETE: need to update view box, Mouse_Responder's center and Angled_Text's [dunno]
+		// g cluster is source of truth for svg paths, including coordinates
+		arc_slider_path.setAttribute('d', g_cluster.g_arcSlider.svgPathFor_arcSlider);
+		thumb_path?.setAttribute('d', g_cluster.g_thumbSlider.svgPathFor_arcSlider);
+		fork_path?.setAttribute('d', g_cluster.g_arcSlider.svgPathFor_radialFork);
 	}
 
 	function hover_closure(s_mouse) {
