@@ -132,15 +132,15 @@
 			thing_title = thing.title;
 			thingHID = thing.hid;
 			const dict = {
-				'relationship' : ancestry.predicate.kind,
-				'depth'		   : ancestry.depth.expressZero_asHyphen(),
-				'order'		   : (ancestry.relationship?.order ?? 0).expressZero_asHyphen(),
-				'children'	   : ancestry.children.length.expressZero_asHyphen(),
-				'progeny'	   : ancestry.progeny_count().expressZero_asHyphen(),
-				'parents'	   : thing.parents.length.expressZero_asHyphen(),
-				'related'	   : thing.relatedRelationships.length.expressZero_asHyphen(),
-				'id'		   : thing.id.clipWithEllipsisAt(12),
-				'color'		   : k.empty,
+				'depth'	   : ancestry.depth.expressZero_asHyphen(),
+				'parent'   : ancestry.predicate.kind,
+				'order'	   : ancestry.relationship?.order ?? 0,
+				'children' : ancestry.children.length.expressZero_asHyphen(),
+				'progeny'  : ancestry.progeny_count().expressZero_asHyphen(),
+				'parents'  : thing.parents.length.expressZero_asHyphen(),
+				'related'  : thing.relatedRelationships.length.expressZero_asHyphen(),
+				'id'	   : thing.id.clipWithEllipsisAt(12),
+				'color'	   : k.empty,
 			};
 			information = Object.entries(dict);
 			debug.log_info(information)
