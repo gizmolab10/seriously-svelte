@@ -101,48 +101,52 @@
 
 {#if !!g_cluster}
 	<div
-		class='arc-slider'
-		bind:this={arc_slider}
-		style='z-index:{T_Layer.paging};'>
+		class = 'arc-slider'
+		bind:this = {arc_slider}
+		style = 'z-index:{T_Layer.paging};'>
 		{#if !debug.noRadial}
 			<Mouse_Responder
-				width={radius * 2}
-				height={radius * 2}
-				name={g_cluster.name}
-				zindex={T_Layer.backmost}
-				cursor={k.cursor_default}
-				handle_isHit={handle_isHit}
-				center={w.center_ofGraphSize}
-				handle_mouse_state={hover_closure}>
-				<svg class='svg-arc-slider' viewBox={viewBox}>
+				width = {radius * 2}
+				height = {radius * 2}
+				name = {g_cluster.name}
+				zindex = {T_Layer.backmost}
+				cursor = {k.cursor_default}
+				handle_isHit = {handle_isHit}
+				center = {w.center_ofGraphSize}
+				handle_mouse_state = {hover_closure}>
+				<svg class = 'svg-arc-slider' viewBox = {viewBox}>
 					<path
-						fill=transparent
-						stroke={arc_color}
+						d = {k.empty}
+						fill = transparent
+						stroke = {arc_color}
 						id = 'path-arc-slider'
-						bind:this={arc_slider_path}
-						d={' '}/>
+						bind:this = {arc_slider_path}
+						stroke-width = {k.line_thickness}/>
 					<path
-						fill=transparent
+						d = {k.empty}
 						id = 'path-fork'
-						stroke={fork_color}
-						bind:this={fork_path}
-						d={' '}/>
+						fill = transparent
+						stroke = {fork_color}
+						bind:this = {fork_path}
+						stroke-width = {k.line_thickness}/>
 					{#if g_cluster.isPaging && g_cluster.widgets_shown > 1}
 						<path
+							d = {k.empty}
 							id = {thumb_name}
-							fill={thumb_color}
-							bind:this={thumb_path}
-							d={' '}/>
+							fill = {thumb_color}
+							stroke = {thumb_color}
+							bind:this = {thumb_path}
+							stroke-width = {k.line_thickness}/>
 					{/if}
 				</svg>
 			</Mouse_Responder>
 		{/if}
 	</div>
 	<Angled_Text
-		text={g_cluster.cluster_title}
-		center={g_cluster.label_center}
-		font_size={k.small_font_size}px
-		font_family={$w_thing_fontFamily}
-		angle={g_cluster.g_arcSlider.label_text_angle}
-		color={$w_ancestry_focus.thing?.color ?? k.thing_color_default}/>
+		text = {g_cluster.cluster_title}
+		center = {g_cluster.label_center}
+		font_size = {k.small_font_size}px
+		font_family = {$w_thing_fontFamily}
+		angle = {g_cluster.g_arcSlider.label_text_angle}
+		color = {$w_ancestry_focus.thing?.color ?? k.thing_color_default}/>
 {/if}

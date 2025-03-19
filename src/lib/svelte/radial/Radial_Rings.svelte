@@ -115,7 +115,7 @@
 				resizing_state.active_angle = mouse_angle + Angle.quarter;
 				detect_hovering();
 				cursor = ux.s_ring_resizing.cursor;
-				if (enoughTimeHasPassed) {										// one tenth second
+				if (Math.abs(delta) > 1 && enoughTimeHasPassed) {				// granularity of 1 pixel & 1 tenth second
 					time = now;
 					debug.log_radial(` resize  D ${distance.asInt()}  R ${radius.asInt()}  + ${delta.toFixed(1)}`);
 					$w_ring_rotation_radius = radius;
@@ -123,7 +123,7 @@
 					rings_rebuilds += 1;
 				}
 			} else if (rotation_state.isActive) {								// rotate clusters
-				if (!signals.signal_isInFlight && enoughTimeHasPassed) {		// one tenth second
+				if (!signals.signal_isInFlight && enoughTimeHasPassed) {		// 1 tenth second
 					time = now;
 					$w_ring_rotation_angle = mouse_angle.add_angle_normalized(-rotation_state.basis_angle);
 					debug.log_radial(` rotate ${$w_ring_rotation_angle.asDegrees()}`);
@@ -203,38 +203,53 @@
 </script>
 
 {#key rings_rebuilds}
-	<div class='paging-arcs' bind:this={pagingArcs} style='z-index:{T_Layer.paging};'>
+	<div
+		class = 'paging-arcs'
+		bind:this = {pagingArcs}
+		style = 'z-index:{T_Layer.paging};'>
 		{#each ux.g_radialGraph.g_clusters as g_cluster}
 			{#if !!g_cluster && (g_cluster.widgets_shown > 0)}
 				<Radial_ArcSlider
-					color={color}
-					g_cluster={g_cluster}/>
+					color = {color}
+					g_cluster = {g_cluster}/>
 			{/if}
 		{/each}
 	</div>
 	{#if !debug.hide_rings}
-		<div class='rings' style='z-index:{T_Layer.rings};'>
+		<div
+			class = 'rings'
+			style = 'z-index:{T_Layer.rings};'>
 			<Mouse_Responder
-				name='rings'
-				zindex={zindex}
-				cursor={cursor}
-				width={outer_diameter}
-				height={outer_diameter}
-				center={w.center_ofGraphSize}
-				handle_isHit={handle_isHit}
-				handle_mouse_state={down_up_closure}>
+				name = 'rings'
+				zindex = {zindex}
+				cursor = {cursor}
+				width = {outer_diameter}
+				height = {outer_diameter}
+				center = {w.center_ofGraphSize}
+				handle_isHit = {handle_isHit}
+				handle_mouse_state = {down_up_closure}>
 				<svg
-					class='rings-svg'
-					viewBox={viewBox}>
-					<path class='resize-path' d={svgPathFor_resizingRing}
-						fill={u.opacitize(color, ux.s_ring_resizing.fill_opacity)}
-						stroke={u.opacitize(color, ux.s_ring_resizing.stroke_opacity)}/>
+					class = 'rings-svg'
+					viewBox = {viewBox}>
+					<path
+						stroke-width = 0.5
+						class = 'resize-path'
+						d = {svgPathFor_resizingRing}
+						fill = {u.opacitize(color, ux.s_ring_resizing.fill_opacity)}
+						stroke = {u.opacitize(color, ux.s_ring_resizing.stroke_opacity)}/>
 					{#if debug.reticle}
-						<path class='reticle-path' stroke='green' fill=transparent d={svgPaths.t_cross(middle_radius * 2, -2)}/>
+						<path
+							stroke = 'green'
+							fill = transparent
+							class = 'reticle-path'
+							d = {svgPaths.t_cross(middle_radius * 2, -2)}/>
 					{/if}
-					<path class='rotate-path' d={svgPathFor_rotationRing}
-						fill={u.opacitize(color, ux.s_ring_rotation.fill_opacity * (ux.s_ring_resizing.isHighlighted ? 0.3 : 1))}
-						stroke={u.opacitize(color, ux.s_ring_rotation.stroke_opacity * (ux.s_ring_resizing.isHighlighted ? 0.7 : 1))}/>
+					<path
+						stroke-width = 0.5
+						class = 'rotate-path'
+						d = {svgPathFor_rotationRing}
+						fill = {u.opacitize(color, ux.s_ring_rotation.fill_opacity * (ux.s_ring_resizing.isHighlighted ? 0.3 : 1))}
+						stroke = {u.opacitize(color, ux.s_ring_rotation.stroke_opacity * (ux.s_ring_resizing.isHighlighted ? 0.7 : 1))}/>
 				</svg>
 			</Mouse_Responder>
 		</div>

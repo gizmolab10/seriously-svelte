@@ -7,6 +7,7 @@ export default class Constants {
 	line_stretch = 22;
 	height_banner = 35;
 	tiny_font_size = 9;
+	line_thickness = 2;
 	halfIncrement = 0.5;
 	width_details = 200;
 	zoom_in_ratio = 1.1;
