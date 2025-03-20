@@ -1,6 +1,6 @@
-import { k, p, Rect, Size, Point, debug, wrappers, T_RingZone, T_Preference, T_SvelteComponent } from '../common/Global_Imports';
-import { w_graph_rect, w_show_details, w_user_graph_offset, w_user_graph_center } from '../common/Stores';
-import { w_ring_rotation_radius, w_mouse_location_scaled } from '../common/Stores';
+import { w_graph_rect, w_show_details, w_mouse_location_scaled } from '../common/Stores';
+import { k, p, Rect, Size, Point, debug, T_Preference } from '../common/Global_Imports';
+import { w_user_graph_offset, w_user_graph_center } from '../common/Stores';
 import { get } from 'svelte/store';
 
 export class G_Window {
@@ -20,33 +20,6 @@ export class G_Window {
 	get windowSize(): Size {
 		const ratio = this.scale_factor;
 		return new Size(window.innerWidth / ratio, window.innerHeight / ratio);
-	}
-	
-	get ringZone_atMouseLocation(): T_RingZone {
-		let ring_zone = T_RingZone.miss;
-		const mouse_vector = w.mouse_vector_ofOffset_fromGraphCenter();
-		const widgets = wrappers.wrappers_ofType_atMouseLocation(T_SvelteComponent.widget);
-		if (!!mouse_vector && widgets.length == 0) {
-			const distance = mouse_vector.magnitude;
-			const thick = k.ring_rotation_thickness;
-			const inner = get(w_ring_rotation_radius);
-			const thin = k.paging_arc_thickness;
-			const resize = inner + thick * 2;
-			const rotate = inner + thick;
-			const thumb = inner - thin;
-			if (!!distance && distance <= resize) {
-				if (distance > rotate) {
-					ring_zone = T_RingZone.resize;
-				} else if (distance > inner) {
-					ring_zone = T_RingZone.rotate;
-				} else if (distance > thumb) {
-					ring_zone = T_RingZone.paging;
-				}
-			}
-			debug.log_hover(` ring zone ${ring_zone} ${distance.asInt()}`);
-			debug.log_cursor(` ring zone ${ring_zone} ${mouse_vector.verbose}`);
-		}
-		return ring_zone;
 	}
 
 	restore_state() {

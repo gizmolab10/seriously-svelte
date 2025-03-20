@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { c, k, ux, w, Size, Point, debug, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import { w_color_trigger, w_s_title_edit, w_thing_fontFamily } from '../../ts/common/Stores';
-	import { T_Tool, T_Layer, T_Element, G_RadialGraph } from '../../ts/common/Global_Imports';
 	import { w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
+	import { T_Tool, T_Layer, T_Element } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Widget_Title from '../widget/Widget_Title.svelte';
 	import { onMount } from 'svelte';

@@ -1,7 +1,7 @@
+import { G_Segment, G_TreeGraph, G_RadialGraph, T_GraphMode, T_Element, T_RingZone } from '../common/Global_Imports';
 import { S_Mouse, S_Widget, S_Element, S_Expansion, S_Rotation, S_Thing_Pages } from '../common/Global_Imports';
-import { G_Segment, G_TreeGraph, G_RadialGraph, T_GraphMode, T_Element } from '../common/Global_Imports';
-import { signals, Ancestry, Mouse_Timer } from '../common/Global_Imports';
-import { w_t_graphMode, w_ancestry_focus } from '../common/Stores';
+import { k, w, debug, signals, wrappers, Ancestry, Mouse_Timer, T_SvelteComponent } from '../common/Global_Imports';
+import { w_t_graphMode, w_ancestry_focus, w_ring_rotation_radius } from '../common/Stores';
 import Identifiable from '../data/runtime/Identifiable';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
@@ -60,6 +60,36 @@ export default class User_Interaction {
 	get next_mouse_responder_number(): number {
 		this.mouse_responder_number += 1;
 		return this.mouse_responder_number;
+	}
+
+	get ring_zone_atMouseLocation(): T_RingZone {
+		let ring_zone = T_RingZone.miss;
+		const mouse_vector = w.mouse_vector_ofOffset_fromGraphCenter();
+		const widgets = wrappers.wrappers_ofType_atMouseLocation(T_SvelteComponent.widget);
+		if (!!mouse_vector && widgets.length == 0) {
+			const distance = mouse_vector.magnitude;
+			const thick = k.ring_rotation_thickness;
+			const inner = get(w_ring_rotation_radius);
+			const thin = k.paging_arc_thickness;
+			const resize = inner + thick * 2;
+			const rotate = inner + thick;
+			const thumb = inner + thin;
+			if (!!distance && distance <= resize) {
+				if (distance > rotate) {
+					ring_zone = T_RingZone.resize;
+				} else if (distance > inner) {
+					const g_cluster = this.g_radialGraph.g_cluster_atMouseLocation;
+					if (distance < thumb && !!g_cluster && g_cluster.thumb_isHit) {
+						ring_zone = T_RingZone.paging;
+					} else {
+						ring_zone = T_RingZone.rotate;
+					}
+				}
+			}
+			debug.log_hover(` ring zone ${ring_zone} ${distance.asInt()}`);
+			debug.log_cursor(` ring zone ${ring_zone} ${mouse_vector.verbose}`);
+		}
+		return ring_zone;
 	}
 
 	toggle_graphMode() {

@@ -10,29 +10,40 @@
 	import Radial_ArcSlider from './Radial_ArcSlider.svelte';
 	import { onMount } from 'svelte';
 	export let zindex = T_Layer.backmost;
+	const name = 'rings';
 	const ring_width = k.ring_rotation_thickness;
 	const middle_radius = $w_ring_rotation_radius + k.ring_rotation_thickness;
 	const middle_diameter = middle_radius * 2;
 	const outer_radius = middle_radius + ring_width;
 	const outer_diameter = outer_radius * 2;
-	const name = 'rings';
 	const mouse_timer = ux.mouse_timer_forName(name);	// persist across destroy/recreate
-	const svgPathFor_rotationRing = svgPaths.annulus(Point.square($w_ring_rotation_radius), middle_radius, ring_width, Point.square(ring_width));
-	const svgPathFor_resizingRing = svgPaths.annulus(Point.square(middle_radius), outer_radius, ring_width);
 	const viewBox = `${-ring_width}, ${-ring_width}, ${outer_diameter}, ${outer_diameter}`;
 	let color = $w_ancestry_focus?.thing?.color ?? k.thing_color_default;
 	let mouse_up_count = $w_count_mouse_up;
 	let cursor = k.cursor_default;
 	let rings_rebuilds = 0;
+	let rotationPath;
+	let resizingPath;
+	let reticlePath;
 	let pagingArcs;
 	let time = 0;
-
+	
 	// paging arcs and rings
-
-	update_cursor();
-	debug.log_build(`RINGS`);
+	
+	class Path { d: string; stroke: string; fill: string; };
 	function handle_mouse_state(s_mouse: S_Mouse): boolean { return true; }				// only for wrappers
 	function handle_isHit(): boolean { return w.mouse_distance_fromGraphCenter <= outer_radius; }
+	
+	debug.log_build(`RINGS`);
+		
+	onMount(() => {
+		update_svgs();
+		update_cursor();
+		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
+			update_svgs();
+		});
+		return () => { handle_reposition.disconnect() };
+	});
 
 	$: {
 		if (!!$w_ancestry_focus.thing && $w_ancestry_focus.thing.id == $w_color_trigger?.split(k.generic_separator)[0]) {
@@ -44,14 +55,14 @@
 		// mouse up ... end all (rotation, resizing, paging)
 		if (mouse_up_count != $w_count_mouse_up) {
 			mouse_up_count = $w_count_mouse_up;
-			if (w.ringZone_atMouseLocation == T_RingZone.miss) {			// only respond if NOT isHit
-				ux_reset();
+			if (ux.ring_zone_atMouseLocation == T_RingZone.miss) {			// only respond if NOT isHit
+				reset_ux();
 			}
 		}
 	}
 
 	function update_cursor() {
-		switch (w.ringZone_atMouseLocation) {
+		switch (ux.ring_zone_atMouseLocation) {
 			case T_RingZone.paging: cursor = ux.s_cluster_rotation.cursor; break;
 			case T_RingZone.resize: cursor = ux.s_ring_resizing.cursor; break;
 			case T_RingZone.rotate: cursor = ux.s_ring_rotation.cursor; break;
@@ -59,17 +70,31 @@
 		}
 	}
 
-	function ux_reset() {
+	function reset_ux() {
 		ux.mouse_timer_forName(name).reset();
 		ux.s_ring_resizing.reset();
 		ux.s_ring_rotation.reset();
 		$w_g_active_cluster = null;
 		mouse_timer.reset();
 		ux.reset_paging();
+		update_svgs();
+	}
+
+	function update_svgs() {
+		reticlePath?.setAttribute('stroke', 'green');
+		reticlePath?.setAttribute('fill', 'transparent');
+		reticlePath?.setAttribute('d', svgPaths.t_cross(middle_radius * 2, -2));
+		resizingPath?.setAttribute('fill', u.opacitize(color, ux.s_ring_resizing.fill_opacity));
+		resizingPath?.setAttribute('stroke', u.opacitize(color, ux.s_ring_resizing.stroke_opacity));
+		resizingPath?.setAttribute('d', svgPaths.annulus(Point.square(middle_radius), outer_radius, ring_width));
+		rotationPath?.setAttribute('fill', u.opacitize(color, ux.s_ring_rotation.fill_opacity * (ux.s_ring_resizing.isHighlighted ? 0.3 : 1)));
+		rotationPath?.setAttribute('d', svgPaths.annulus(Point.square($w_ring_rotation_radius), middle_radius, ring_width, Point.square(ring_width)));
+		// rotationPath?.setAttribute('stroke', u.opacitize(color, ux.s_ring_rotation.stroke_opacity * (ux.s_ring_resizing.isHighlighted ? 0.7 : 1)));
 	}
 
 	function detect_hovering() {
-		const ring_zone = w.ringZone_atMouseLocation;
+		let needsUpdate = false;
+		const ring_zone = ux.ring_zone_atMouseLocation;
 		const arc_isActive = ux.isAny_paging_arc_active;
 		const inRotate = ring_zone == T_RingZone.rotate && !arc_isActive && !ux.s_ring_resizing.isActive;
 		const inResize = ring_zone == T_RingZone.resize && !arc_isActive && !ux.s_ring_rotation.isActive;
@@ -77,14 +102,20 @@
 		if (ux.s_cluster_rotation.isHovering != inPaging) {
 			ux.s_cluster_rotation.isHovering  = inPaging;
 			debug.log_hover(` hover paging  ${inPaging}`);
+			needsUpdate = true;
 		}
 		if (ux.s_ring_rotation.isHovering != inRotate) {
 			ux.s_ring_rotation.isHovering  = inRotate;
 			debug.log_hover(` hover rotate  ${inRotate}`);
+			needsUpdate = true;
 		}
 		if (ux.s_ring_resizing.isHovering != inResize) {
 			ux.s_ring_resizing.isHovering  = inResize;
 			debug.log_hover(` hover resize  ${inResize}`);
+			needsUpdate = true;
+		}
+		if (needsUpdate) {
+			update_svgs();
 		}
 	}
 
@@ -144,7 +175,6 @@
 				cursor = s_paging_rotation.cursor;
 				debug.log_radial(` page  ${delta_angle.asDegrees()}`);
 				if (!!basis_angle && !!active_angle && basis_angle != active_angle && $w_g_active_cluster.adjust_paging_index_byAdding_angle(delta_angle)) {
-					// ux.relayout_all();
 					signals.signal_rebuildGraph_fromFocus();
 					rings_rebuilds += 1;
 				}
@@ -163,13 +193,11 @@
 
 		if (!s_mouse.isHover) {
 			if (s_mouse.isUp) {
-				// debug.log_radial(`UP`);
-				ux_reset();
+				reset_ux();
 			} else if (s_mouse.isDown) {
-				// debug.log_radial(`DOWN`);
 				const angle_ofMouseDown = w.mouse_angle_fromGraphCenter;
 				const angle_ofRotation = angle_ofMouseDown.add_angle_normalized(-$w_ring_rotation_angle);
-				const zone = w.ringZone_atMouseLocation; 
+				const zone = ux.ring_zone_atMouseLocation; 
 				switch (zone) {
 					case T_RingZone.rotate:
 						debug.log_radial(` begin rotate  ${angle_ofRotation.asDegrees()}`);
@@ -232,24 +260,18 @@
 					class = 'rings-svg'
 					viewBox = {viewBox}>
 					<path
-						stroke-width = 0.5
+						stroke-width = 0.50
 						class = 'resize-path'
-						d = {svgPathFor_resizingRing}
-						fill = {u.opacitize(color, ux.s_ring_resizing.fill_opacity)}
-						stroke = {u.opacitize(color, ux.s_ring_resizing.stroke_opacity)}/>
+						bind:this = {resizingPath}/>
 					{#if debug.reticle}
 						<path
-							stroke = 'green'
-							fill = transparent
 							class = 'reticle-path'
-							d = {svgPaths.t_cross(middle_radius * 2, -2)}/>
+							bind:this = {reticlePath}/>
 					{/if}
 					<path
 						stroke-width = 0.5
 						class = 'rotate-path'
-						d = {svgPathFor_rotationRing}
-						fill = {u.opacitize(color, ux.s_ring_rotation.fill_opacity * (ux.s_ring_resizing.isHighlighted ? 0.3 : 1))}
-						stroke = {u.opacitize(color, ux.s_ring_rotation.stroke_opacity * (ux.s_ring_resizing.isHighlighted ? 0.7 : 1))}/>
+						bind:this = {rotationPath}/>
 				</svg>
 			</Mouse_Responder>
 		</div>

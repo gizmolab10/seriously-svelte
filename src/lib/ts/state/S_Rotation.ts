@@ -16,7 +16,7 @@ export default class S_Rotation {
 	get isActive(): boolean { return !!this.basis_angle || this.active_angle == 0; }
 	get active_cursor(): string { return new Angle(this.active_angle!).cursor_forAngle; }	// cursors.svg_cursor; } // 
 	get stroke_opacity(): number { return this.isHighlighted ? this.basis_opacity * 2 : this.basis_opacity; }
-	get fill_opacity(): number { return this.isHighlighted ? this.basis_opacity * 0.3 : this.basis_opacity * 0.1; }
+	get fill_opacity(): number { return this.isHighlighted ? this.basis_opacity * 0.3 : this.basis_opacity * 0.0; }
 	get cursor(): string { return this.isActive ? this.active_cursor : this.isHovering ? this.hover_cursor : k.cursor_default; }
 	get three_level_opacity(): number { return this.isActive ? 1 : this.isHovering ? this.basis_opacity * 4 : this.basis_opacity * 1.5; }
 	

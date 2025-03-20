@@ -7,15 +7,15 @@ export default class Constants {
 	line_stretch = 22;
 	height_banner = 35;
 	tiny_font_size = 9;
-	line_thickness = 2;
 	halfIncrement = 0.5;
 	width_details = 200;
 	zoom_in_ratio = 1.1;
+	line_thickness = 1.5;
 	small_font_size = 11;
 	default_buttonSize = 16;
 	height_breadcrumbs = 33;
 	threshold_longClick = 800;
-	innermost_ring_radius = 75;
+	innermost_ring_radius = 60;
 	editingTools_diameter = 64;
 	threshold_doubleClick = 700;
 	hid_unknown = 1000000000000;
@@ -57,7 +57,7 @@ export default class Constants {
 		this.row_height = this.dot_size + 7;
 		this.zoom_out_ratio = 1 / this.zoom_in_ratio;
 		this.paging_arc_thickness = this.ring_rotation_thickness / 3;
-		this.radial_widget_inset = (this.ring_rotation_thickness - 1) / 2;
+		this.radial_widget_inset = (this.ring_rotation_thickness - 1) * 0.6;
 	}
 
 }

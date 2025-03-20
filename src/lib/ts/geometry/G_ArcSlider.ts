@@ -26,9 +26,9 @@ export default class G_ArcSlider {
 		const thickness = k.paging_arc_thickness;
 		const radius = get(w_ring_rotation_radius);
 		this.clusters_center = Point.square(radius);
-		this.inside_arc_radius = radius - thickness;
+		this.outside_arc_radius = radius + thickness;
 		this.cap_radius = k.ring_rotation_thickness / 6;
-		this.outside_arc_radius = radius;
+		this.inside_arc_radius = radius;
 	}
 
 	static readonly PRIMITIVES: unique symbol;
@@ -69,8 +69,8 @@ export default class G_ArcSlider {
 
 	update_angle_ofFork(angle_ofFork: number) {
 		const fork_raw_radius = k.ring_rotation_thickness * 0.6;
-		this.fork_backoff = this.fork_adjustment(fork_raw_radius, this.inside_arc_radius);
 		this.fork_radius = fork_raw_radius - this.fork_backoff;
+		this.fork_backoff = this.fork_adjustment(fork_raw_radius, this.inside_arc_radius);
 		this.angle_ofFork = angle_ofFork;
 	}
 
@@ -127,7 +127,7 @@ export default class G_ArcSlider {
 	}
 
 	get svgPathFor_radialFork(): string {
-		const small = this.inside_arc_radius - k.paging_arc_thickness - 4;
+		const small = this.inside_arc_radius - k.paging_arc_thickness - 8;
 		return svgPaths.line_atAngle(this.clusters_center, small, this.angle_ofCenter);
 	}
 

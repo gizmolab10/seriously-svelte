@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, u, ux, Point, debug, signals, Predicate } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Widget, T_Signal, G_RadialGraph } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_ancestry_focus, w_color_trigger } from '../../ts/common/Stores';
+	import { T_Layer, T_Widget, T_Signal } from '../../ts/common/Global_Imports';
 	import { w_s_paging, w_ring_rotation_radius } from '../../ts/common/Stores';
 	import Widget from '../widget/Widget.svelte';
 	import { onMount } from 'svelte';

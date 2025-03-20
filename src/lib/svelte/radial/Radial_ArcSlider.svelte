@@ -85,11 +85,9 @@
 	}
 
 	function hover_closure(s_mouse) {
-		if (g_cluster.isPaging) {
-			if (s_mouse.isHover) {
-				g_cluster.s_paging_rotation.isHovering = g_cluster.thumb_isHit;	// show highlight around ring
-				update_colors();
-			}
+		if (g_cluster.isPaging && s_mouse.isHover) {
+			g_cluster.s_paging_rotation.isHovering = g_cluster.thumb_isHit;	// show highlight around ring
+			update_colors();
 		}
 	}
 
@@ -116,14 +114,12 @@
 				handle_mouse_state = {hover_closure}>
 				<svg class = 'svg-arc-slider' viewBox = {viewBox}>
 					<path
-						d = {k.empty}
-						stroke-width = 1
 						fill = transparent
 						stroke = {arc_color}
 						id = 'path-arc-slider'
-						bind:this = {arc_slider_path}/>
+						bind:this = {arc_slider_path}
+						stroke-width = {k.line_thickness}/>
 					<path
-						d = {k.empty}
 						id = 'path-fork'
 						fill = transparent
 						stroke = {fork_color}
@@ -131,12 +127,9 @@
 						stroke-width = {k.line_thickness}/>
 					{#if g_cluster.isPaging && g_cluster.widgets_shown > 1}
 						<path
-							d = {k.empty}
 							id = {thumb_name}
 							fill = {thumb_color}
-							stroke = {thumb_color}
-							bind:this = {thumb_path}
-							stroke-width = {k.line_thickness}/>
+							bind:this = {thumb_path}/>
 					{/if}
 				</svg>
 			</Mouse_Responder>
