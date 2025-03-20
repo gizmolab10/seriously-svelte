@@ -31,7 +31,7 @@
 	//	radial graph => radial rings => this			//
 	//	draws the arc, thumb & label					//
 	//	uses g_cluster => {geometry, text}				//
-	//		{g_arcSlider, g_thumbSlider} => svg paths	//
+	//		{g_sliderArc, g_thumbArc} => svg paths	//
 	//													//
 	//////////////////////////////////////////////////////
 
@@ -79,9 +79,9 @@
 	function reposition() {
 		// INCOMPLETE: need to update view box, Mouse_Responder's center and Angled_Text's [dunno]
 		// g cluster is source of truth for svg paths, including coordinates
-		arc_slider_path.setAttribute('d', g_cluster.g_arcSlider.svgPathFor_arcSlider);
-		thumb_path?.setAttribute('d', g_cluster.g_thumbSlider.svgPathFor_arcSlider);
-		fork_path?.setAttribute('d', g_cluster.g_arcSlider.svgPathFor_radialFork);
+		arc_slider_path.setAttribute('d', g_cluster.g_sliderArc.svgPathFor_arcSlider);
+		fork_path?.setAttribute('d', g_cluster.g_sliderArc.svgPathFor_radialFork);
+		thumb_path?.setAttribute('d', g_cluster.g_thumbArc.svgPathFor_arcSlider);
 	}
 
 	function hover_closure(s_mouse) {
@@ -117,11 +117,11 @@
 				<svg class = 'svg-arc-slider' viewBox = {viewBox}>
 					<path
 						d = {k.empty}
+						stroke-width = 1
 						fill = transparent
 						stroke = {arc_color}
 						id = 'path-arc-slider'
-						bind:this = {arc_slider_path}
-						stroke-width = {k.line_thickness}/>
+						bind:this = {arc_slider_path}/>
 					<path
 						d = {k.empty}
 						id = 'path-fork'
@@ -147,6 +147,6 @@
 		center = {g_cluster.label_center}
 		font_size = {k.small_font_size}px
 		font_family = {$w_thing_fontFamily}
-		angle = {g_cluster.g_arcSlider.label_text_angle}
+		angle = {g_cluster.g_sliderArc.label_text_angle}
 		color = {$w_ancestry_focus.thing?.color ?? k.thing_color_default}/>
 {/if}
