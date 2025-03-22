@@ -86,7 +86,7 @@
 	}
 
 	function svgPaths_update() {
-		if (!ux.inTreeMode) {
+		if (ux.inRadialMode) {
 			svgPathFor_dragDot = svgPaths.circle_atOffset(size, size - 1);
 		} else {
 			svgPathFor_dragDot = svgPaths.oval(size, false);
@@ -102,7 +102,7 @@
 				svgPathFor_ellipses = svgPaths.ellipses(6, 0.5, false, count, size / 2);
 			}
 			if (thing.hasRelated && show.related_dots) {
-				const x = (!ux.inTreeMode ? 3.2 : 4.5) * (points_right ? -1 : 1);
+				const x = (ux.inRadialMode ? 3.2 : 4.5) * (points_right ? -1 : 1);
 				svgPathFor_related = svgPaths.circle_atOffset(size, 3, Point.x(x));
 			}
 		}
@@ -111,7 +111,7 @@
 	function updateColors_forHovering(isOut) {
 		if (!ux.isAny_rotation_active) {
 			isHovering = !isOut;
-			const usePointer = (!ancestry.isGrabbed || !ux.inTreeMode) && ancestry.hasChildRelationships && !ux.isAny_rotation_active;
+			const usePointer = (!ancestry.isGrabbed || ux.inRadialMode) && ancestry.hasChildRelationships && !ux.isAny_rotation_active;
 			const cursor = usePointer ? 'pointer' : 'normal';
 			if (!!es_drag && !!thing) {
 				es_drag.set_forHovering(thing.color, cursor);

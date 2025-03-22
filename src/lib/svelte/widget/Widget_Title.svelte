@@ -122,7 +122,7 @@
 	
 	function update_cursorStyle() {
 		const noCursor = (ancestry_isEditing() || ancestry.isGrabbed) && ux.inTreeMode && ancestry.isEditable;
-		const useTextCursor = ancestry_isEditing() || ancestry.isGrabbed || !(!ux.inTreeMode || ancestry.isEditable);
+		const useTextCursor = ancestry_isEditing() || ancestry.isGrabbed || !(ux.inRadialMode || ancestry.isEditable);
 		cursor_style = noCursor ? k.empty : `cursor: ${useTextCursor ? 'text' : 'pointer'}`;
 	}
 

@@ -94,7 +94,7 @@
 	}
 
 	function titleOffsetX(): number {
-		return !ancestry ? 0 : !ux.inTreeMode ? ancestry.points_right ? titleWidth + 23 : -6 : ancestry.showsReveal ? titleWidth + 25 : titleWidth + 17;
+		return !ancestry ? 0 : ux.inRadialMode ? ancestry.points_right ? titleWidth + 23 : -6 : ancestry.showsReveal ? titleWidth + 25 : titleWidth + 17;
 	}
 
 	function handle_delete_event(event) {

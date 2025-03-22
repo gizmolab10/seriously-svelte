@@ -91,9 +91,9 @@ export default class G_Widget {
 			const width = ancestry.thing.titleWidth + this.width_ofBothDots;
 			const offset_forDirection = this.points_right ? -7 : 34.5 - width;
 			const offset_forBorder = showingBorder ? 0 : 1;
-			const x_drag = this.points_right ? (!ux.inTreeMode ? 3 : 2) : (width - (showingReveal ? 2.5 : 2));
-			const y_drag = !ux.inTreeMode ? 2.8 : 2.7;
-			this.origin_ofTitle = new Point(!ux.inTreeMode ? offset_ofTitle_forRadial : 12.5, 0);
+			const x_drag = this.points_right ? (ux.inRadialMode ? 3 : 2) : (width - (showingReveal ? 2.5 : 2));
+			const y_drag = ux.inRadialMode ? 2.8 : 2.7;
+			this.origin_ofTitle = new Point(ux.inRadialMode ? offset_ofTitle_forRadial : 12.5, 0);
 			this.origin_ofRadial = this.origin_ofWidget.offsetByXY(-x_radial, 4 - k.dot_size);
 			this.center_ofDrag = new Point(x_drag, y_drag).offsetEquallyBy(k.dot_size / 2);
 			this.origin_ofChildrenTree = this.rect.extent.offsetBy(offset_ofChildrenTree);

@@ -24,8 +24,8 @@
 	const mouse_timer = ux.mouse_timer_forName(name);	// persist across destroy/recreate
 	const mouse_responder_number = ux.next_mouse_responder_number;
 	let mouse_isDown = false;
-	let responding_element;
 	let style = k.empty;
+	let bound_element;
 
 	//////////////////////////////////////////////////////////////
 	//															//
@@ -42,12 +42,12 @@
 
 	onMount(() => {
 		setupStyle();
-		if (!!responding_element) {
-			responding_element.addEventListener('pointerup', handle_pointerUp);
-			responding_element.addEventListener('pointerdown', handle_pointerDown);
+		if (!!bound_element) {
+			bound_element.addEventListener('pointerup', handle_pointerUp);
+			bound_element.addEventListener('pointerdown', handle_pointerDown);
 			return () => {
-				responding_element.removeEventListener('pointerup', handle_pointerUp);
-				responding_element.removeEventListener('pointerdown', handle_pointerDown);
+				bound_element.removeEventListener('pointerup', handle_pointerUp);
+				bound_element.removeEventListener('pointerdown', handle_pointerDown);
 			}
 		}
 	});
@@ -59,17 +59,17 @@
 	
 	$: {	// hover
 		const mouse_location = $w_mouse_location;
-		if (!!responding_element && !!mouse_location) {
+		if (!!bound_element && !!mouse_location) {
 			let isHit = false;
 			if (!!handle_isHit) {
 				isHit = handle_isHit();				// used when this element's hover shape is not its bounding rect
 			} else {					
-				isHit = Rect.rect_forElement_containsPoint(responding_element, mouse_location);		// use bounding rect
+				isHit = Rect.rect_forElement_containsPoint(bound_element, mouse_location);		// use bounding rect
 			}
 			if (s_mouse.isHover != isHit) {
 				s_mouse.isHover  = isHit;
 				s_mouse.isOut   = !isHit;												// TODO: called far too often
-				handle_mouse_state(S_Mouse.hover(null, responding_element, isHit));					// pass a null event
+				handle_mouse_state(S_Mouse.hover(null, bound_element, isHit));					// pass a null event
 			}
 		}
 	}
@@ -82,7 +82,7 @@
 	function create_state(isDown: boolean, isDouble: boolean = false, isLong: boolean = false): S_Mouse {
 		const state = u.copyObject(s_mouse);
 		state.isUp = !isDown && !isDouble && !isLong;
-		state.element = responding_element;
+		state.element = bound_element;
 		state.isDouble = isDouble;
 		state.isLong = isLong;
 		state.isHover = false;
@@ -95,7 +95,7 @@
 	function handle_pointerUp(event) {
 		if (detect_mouseUp) {
 			reset();
-			handle_mouse_state(S_Mouse.up(event, responding_element));
+			handle_mouse_state(S_Mouse.up(event, bound_element));
 			debug.log_action(` up ${mouse_responder_number} RESPONDER`);
 		}
 	}
@@ -147,7 +147,7 @@
 </script>
 
 <div class='mouse-responder' id={name}
-	bind:this={responding_element}
+	bind:this={bound_element}
 	style={style}>
 	<slot></slot>
 </div>

@@ -37,11 +37,11 @@ export default class Reciprocal_Ancestry extends Ancestry {
 		let graph_needsRelayout = false;
 		let graph_needsRebuild = false;
 		if (!!focusAncestry && siblingAncestries) {
-			const siblings = siblingAncestries?.map(a => a.thing).filter(t => !!t);
+			const siblings = siblingAncestries?.map(a => a.thing).filter(t => !!t) ?? [];
 			const length = siblings.length;
 			const thing = this?.thing;
-			if (!siblings || length == 0) {		// friendly for first-time users
-				this.hierarchy.ancestry_rebuild_runtimeBrowseRight(this, true, EXTREME, up, true);
+			if (length == 0) {		// friendly for first-time users
+				this.hierarchy.ancestry_rebuild_runtimeBrowseRight(this, up, SHIFT, EXTREME, true);
 			} else if (!!thing) {
 				const is_radial_mode = true;
 				const isBidirectional = this.predicate?.isBidirectional ?? false;

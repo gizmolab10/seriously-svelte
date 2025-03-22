@@ -36,6 +36,7 @@ export default class User_Interaction {
 	//////////////////////////////////////
 	
 	get inTreeMode(): boolean { return get(w_t_graphMode) == T_GraphMode.tree; }
+	get inRadialMode(): boolean { return get(w_t_graphMode) == T_GraphMode.radial; }
 	get s_paging_rotations(): Array<S_Rotation> { return Object.values(this.s_paging_rotation_byName); }
 	get isAny_paging_arc_active(): boolean { return this.s_paging_rotations.filter(s => s.isActive).length > 0; }
 	get isAny_paging_arc_hovering(): boolean { return this.s_paging_rotations.filter(s => s.isHovering).length > 0; }

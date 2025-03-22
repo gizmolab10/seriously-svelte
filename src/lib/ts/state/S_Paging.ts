@@ -7,6 +7,7 @@ export class S_Paging {
 
 	// a page is a subset of a too-long list of things
 	// widgets_shown == length of subset
+	// thing id refers to "owner"
 	// index == first of subset
 
 	points_toChildren = false;
@@ -14,7 +15,7 @@ export class S_Paging {
 	widgets_shown = 0;
 	total_widgets = 0;
 	kind = k.empty;
-	index = 0;			// this value changes when uset moves paging arc [thumb] slider
+	index = 0;			// this value changes when user moves paging arc [thumb] slider, or when widget needs to be visible and isn't
 
 	constructor(index: number = 0, widgets_shown: number = 0, total_widgets: number = 0) {
 		this.index = index.force_between(0, total_widgets - widgets_shown);
@@ -29,6 +30,7 @@ export class S_Paging {
 	get predicate(): Predicate | null { return get(w_hierarchy).predicate_forKind(this.kind) ?? null; }
 	get canShow(): number { return Math.round((get(w_ring_rotation_radius) ** 1.5) * Math.PI / 45 / k.row_height) + 1; }
 	get sub_key(): string { return `${this.thing_id}${k.generic_separator}${this.kind}${k.generic_separator}${this.points_toChildren}`; }
+	ancestry_atIndex(ancestries: Array<Ancestry>): Ancestry { return ancestries[this.index]; }
 
 	index_isVisible(index: number): boolean {
 		return index.isBetween(this.index, this.indexOf_followingPage - 1, true);
@@ -84,13 +86,15 @@ export class S_Thing_Pages {
 	child_pagings_dict: Dictionary<S_Paging> = {};
 	thing_id = k.empty;
 
+	// every thing has an S_Thing_Pages
+	//
 	// two arrays of S_Paging (defined above)
 	// 1) child: (to) children and relateds (more kinds later?)
 	// 2) parent: (from) parents
 	// each array has one index for each predicate kind
 	// 
 	// page == a subset of a too-long list
-	// index == first of subset
+	// index == first of subset, and changes to show a different subset
 
 	constructor(thing_id: string = k.empty) {
 		this.thing_id = thing_id;
