@@ -7,10 +7,10 @@ import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
 
 export default class User_Interaction {
+	s_paging_rotation_byName: { [name: string]: S_Rotation } = {};
 	s_thing_pages_byThingID: {[id: string]: S_Thing_Pages} = {};
 	mouse_timer_byName: { [name: string]: Mouse_Timer } = {};
 	s_widget_byAncestryID: { [id: string]: S_Widget } = {};
-	s_rotation_byName: { [name: string]: S_Rotation } = {};
 	rebuild_needed_byType: {[type: string]: boolean} = {};
 	g_segment_byName: { [name: string]: G_Segment } = {};
 	s_element_byName: { [name: string]: S_Element } = {};
@@ -36,7 +36,7 @@ export default class User_Interaction {
 	//////////////////////////////////////
 	
 	get inTreeMode(): boolean { return get(w_t_graphMode) == T_GraphMode.tree; }
-	get s_paging_rotations(): Array<S_Rotation> { return Object.values(this.s_rotation_byName); }
+	get s_paging_rotations(): Array<S_Rotation> { return Object.values(this.s_paging_rotation_byName); }
 	get isAny_paging_arc_active(): boolean { return this.s_paging_rotations.filter(s => s.isActive).length > 0; }
 	get isAny_paging_arc_hovering(): boolean { return this.s_paging_rotations.filter(s => s.isHovering).length > 0; }
 	get isAny_rotation_active(): boolean { return this.isAny_paging_arc_active || this.s_cluster_rotation.isActive || this.s_ring_rotation.isActive; }
@@ -50,7 +50,7 @@ export default class User_Interaction {
 	s_mouse_forName(name: string): S_Mouse { return this.assure_forKey_inDict(name, this.s_mouse_byName, () => S_Mouse.empty()); }
 	name_from(identifiable: Identifiable, type: T_Element, subtype: string): string { return `${type}(${subtype}) (id '${identifiable.id}')`; }
 	mouse_timer_forName(name: string): Mouse_Timer { return this.assure_forKey_inDict(name, this.mouse_timer_byName, () => new Mouse_Timer()); }
-	s_paging_rotation_forName(name: string): S_Rotation { return this.assure_forKey_inDict(name, this.s_rotation_byName, () => new S_Rotation()); }
+	s_paging_rotation_forName(name: string): S_Rotation { return this.assure_forKey_inDict(name, this.s_paging_rotation_byName, () => new S_Rotation()); }
 	s_widget_forAncestry(ancestry: Ancestry): S_Widget { return this.assure_forKey_inDict(ancestry.pathString, this.s_widget_byAncestryID, () => new S_Widget(ancestry)); }
 	
 	s_thing_pages_forThingID(id: string | null | undefined): S_Thing_Pages | null {

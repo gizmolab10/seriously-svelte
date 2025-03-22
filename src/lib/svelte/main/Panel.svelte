@@ -66,6 +66,7 @@
 	<div style='
 		touch-action: none;
 		pointer-events: auto;
+		background-color: brown;
 		{k.prevent_selection_style};'
 		on:wheel={ignore_wheel}>
 		{#if [T_Startup.start, T_Startup.fetch].includes($w_t_startup) && databases.db_now.isPersistent}

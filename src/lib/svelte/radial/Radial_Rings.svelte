@@ -81,19 +81,25 @@
 	}
 
 	function update_svgs() {
-		reticlePath?.setAttribute('stroke', 'green');
-		reticlePath?.setAttribute('fill', 'transparent');
-		reticlePath?.setAttribute('d', svgPaths.t_cross(middle_radius * 2, -2));
-		resizingPath?.setAttribute('fill', u.opacitize(color, ux.s_ring_resizing.fill_opacity));
-		resizingPath?.setAttribute('stroke', u.opacitize(color, ux.s_ring_resizing.stroke_opacity));
-		resizingPath?.setAttribute('d', svgPaths.annulus(Point.square(middle_radius), outer_radius, ring_width));
-		rotationPath?.setAttribute('fill', u.opacitize(color, ux.s_ring_rotation.fill_opacity * (ux.s_ring_resizing.isHighlighted ? 0.3 : 1)));
-		rotationPath?.setAttribute('d', svgPaths.annulus(Point.square($w_ring_rotation_radius), middle_radius, ring_width, Point.square(ring_width)));
-		// rotationPath?.setAttribute('stroke', u.opacitize(color, ux.s_ring_rotation.stroke_opacity * (ux.s_ring_resizing.isHighlighted ? 0.7 : 1)));
+		if (!!reticlePath) {
+			reticlePath. setAttribute('stroke', 'green');
+			reticlePath. setAttribute('fill', 'transparent');
+			reticlePath. setAttribute('d', svgPaths.t_cross(middle_radius * 2, -2));
+		}
+		if (!!resizingPath) {
+			resizingPath.setAttribute('fill', u.opacitize(color, ux.s_ring_resizing.fill_opacity));
+			resizingPath.setAttribute('stroke', u.opacitize(color, ux.s_ring_resizing.stroke_opacity));
+			resizingPath.setAttribute('d', svgPaths.annulus(Point.square(middle_radius), outer_radius, ring_width));
+		}
+		if (!!rotationPath) {
+			rotationPath.setAttribute('fill', u.opacitize(color, ux.s_ring_rotation.fill_opacity * (ux.s_ring_resizing.isActive ? 0 : 1)));
+			rotationPath.setAttribute('stroke', u.opacitize(color, ux.s_ring_rotation.stroke_opacity * (ux.s_ring_resizing.isActive ? 0 : 1)));
+			rotationPath.setAttribute('d', svgPaths.annulus(Point.square($w_ring_rotation_radius), middle_radius, ring_width, Point.square(ring_width)));
+		}
 	}
 
 	function detect_hovering() {
-		let needsUpdate = false;
+		let needs_toUpdate_svgs = false;
 		const ring_zone = ux.ring_zone_atMouseLocation;
 		const arc_isActive = ux.isAny_paging_arc_active;
 		const inRotate = ring_zone == T_RingZone.rotate && !arc_isActive && !ux.s_ring_resizing.isActive;
@@ -102,19 +108,19 @@
 		if (ux.s_cluster_rotation.isHovering != inPaging) {
 			ux.s_cluster_rotation.isHovering  = inPaging;
 			debug.log_hover(` hover paging  ${inPaging}`);
-			needsUpdate = true;
+			needs_toUpdate_svgs = true;
 		}
 		if (ux.s_ring_rotation.isHovering != inRotate) {
 			ux.s_ring_rotation.isHovering  = inRotate;
 			debug.log_hover(` hover rotate  ${inRotate}`);
-			needsUpdate = true;
+			needs_toUpdate_svgs = true;
 		}
 		if (ux.s_ring_resizing.isHovering != inResize) {
 			ux.s_ring_resizing.isHovering  = inResize;
 			debug.log_hover(` hover resize  ${inResize}`);
-			needsUpdate = true;
+			needs_toUpdate_svgs = true;
 		}
-		if (needsUpdate) {
+		if (needs_toUpdate_svgs) {
 			update_svgs();
 		}
 	}
@@ -132,7 +138,7 @@
 			const mouse_angle = mouse_vector.angle;
 			const rotation_state = ux.s_ring_rotation;
 			const resizing_state = ux.s_ring_resizing;
-			const enoughTimeHasPassed = (now - time) > 100;
+			const enoughTimeHasPassed = (now - time) > 50;
 
 			// check if one of the three ring zones is active (already dragging)
 

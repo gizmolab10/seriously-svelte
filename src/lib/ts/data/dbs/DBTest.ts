@@ -67,7 +67,7 @@ export default class DBTest extends DBCommon {
 			const idRelationahip = prefix + id_thing;
 			const idChild = asChild ? id_thing : idOther;
 			const idParent = asChild ? idOther : id_thing;
-			h.thing_remember_runtimeCreateUnique(this.idBase, id_thing, title, 'aqua');
+			h.thing_remember_runtimeCreateUnique(this.idBase, id_thing, title, 'grey');
 			h.relationship_remember_runtimeCreateUnique(this.idBase, idRelationahip, kindPredicate, idParent, idChild, i);
 		}
 	}

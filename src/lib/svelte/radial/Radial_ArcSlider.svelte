@@ -16,9 +16,9 @@
 	let origin = w.center_ofGraphSize.offsetBy(Point.square(-radius));
 	let mouse_up_count = $w_count_mouse_up;
 	let arc_wrapper!: Svelte_Wrapper;
-	let thumb_color = color;
-	let fork_color = color;
-	let arc_color = color;
+	let fork_stroke_color = color;
+	let arc_stroke_color = color;
+	let thumb_fill_color = color;
 	let arc_slider_path;
 	let arc_slider;
 	let thumb_path;
@@ -65,15 +65,15 @@
 	}
 
 	function update_colors() {
-		fork_color = u.opacitize(color, 0.3);
-		arc_color = u.opacitize(color, ux.s_cluster_rotation.stroke_opacity);
-		thumb_color = u.opacitize(color, ux.s_ring_rotation.isActive ? 0.15 : g_cluster.s_paging_rotation.three_level_opacity);
+		arc_stroke_color = u.opacitize(color, 0.4);
+		fork_stroke_color = u.opacitize(color, 0.3);
+		thumb_fill_color = u.opacitize(color, ux.s_ring_rotation.isActive ? 0.15 : g_cluster.s_paging_rotation.thumb_opacity);
 	}
 
 	// function update_colors() {
+		// 	arc_slider_path?.setAttribute('stroke', 0.4);
 	// 	fork_path?.setAttribute('stroke', u.opacitize(color, 0.3));
-	// 	arc_slider_path?.setAttribute('stroke', ux.s_cluster_rotation.stroke_opacity);
-	// 	thumb_path?.setAttribute('stroke', u.opacitize(color, ux.s_ring_rotation.isActive ? 0.15 : g_cluster.s_paging_rotation.three_level_opacity));
+	// 	thumb_path?.setAttribute('stroke', u.opacitize(color, ux.s_ring_rotation.isActive ? 0.15 : g_cluster.s_paging_rotation.thumb_opacity));
 	// }
 
 	function reposition() {
@@ -115,20 +115,20 @@
 				<svg class = 'svg-arc-slider' viewBox = {viewBox}>
 					<path
 						fill = transparent
-						stroke = {arc_color}
+						stroke-width = 0.5
 						id = 'path-arc-slider'
-						bind:this = {arc_slider_path}
-						stroke-width = {k.line_thickness}/>
+						stroke = {arc_stroke_color}
+						bind:this = {arc_slider_path}/>
 					<path
 						id = 'path-fork'
 						fill = transparent
-						stroke = {fork_color}
 						bind:this = {fork_path}
+						stroke = {fork_stroke_color}
 						stroke-width = {k.line_thickness}/>
 					{#if g_cluster.isPaging && g_cluster.widgets_shown > 1}
 						<path
 							id = {thumb_name}
-							fill = {thumb_color}
+							fill = {thumb_fill_color}
 							bind:this = {thumb_path}/>
 					{/if}
 				</svg>
