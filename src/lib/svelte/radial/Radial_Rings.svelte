@@ -1,10 +1,10 @@
 <script lang='ts'>
 	import { k, u, ux, w, Thing, Point, Angle, debug, T_Layer } from '../../ts/common/Global_Imports';
+	import { w_color_trigger, w_ancestry_focus, w_s_title_edit } from '../../ts/common/Stores';
 	import { signals, svgPaths, T_RingZone, databases } from '../../ts/common/Global_Imports';
 	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/common/Stores';
 	import { w_graph_rect, w_mouse_location_scaled } from '../../ts/common/Stores';
 	import { w_count_mouse_up, w_g_active_cluster } from '../../ts/common/Stores';
-	import { w_color_trigger, w_ancestry_focus } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/runtime/Identifiable';
 	import Radial_ArcSlider from './Radial_ArcSlider.svelte';
@@ -204,7 +204,8 @@
 			} else if (s_mouse.isDown) {
 				const angle_ofMouseDown = w.mouse_angle_fromGraphCenter;
 				const angle_ofRotation = angle_ofMouseDown.add_angle_normalized(-$w_ring_rotation_angle);
-				const zone = ux.ring_zone_atMouseLocation; 
+				const zone = ux.ring_zone_atMouseLocation;
+				$w_s_title_edit?.stop_editing();
 				switch (zone) {
 					case T_RingZone.rotate:
 						debug.log_radial(` begin rotate  ${angle_ofRotation.asDegrees()}`);

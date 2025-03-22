@@ -73,10 +73,9 @@ export default class User_Interaction {
 			const distance = mouse_vector.magnitude;
 			const thick = k.ring_rotation_thickness;
 			const thin = k.paging_arc_thickness;
-			const resize = inner + thick * 2;
 			const rotate = inner + thick;
 			const thumb = inner + thin;
-			if (!!distance && distance <= resize) {
+			if (!!distance && distance <= rotate) {
 				if (distance < inner) {
 					ring_zone = T_RingZone.rotate;
 				} else if (distance < thumb && !!g_cluster && g_cluster.thumb_isHit) {
