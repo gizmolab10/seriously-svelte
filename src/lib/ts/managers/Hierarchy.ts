@@ -910,6 +910,9 @@ export class Hierarchy {
 			if (!!childAncestry) {
 				childAncestry.grabOnly();
 				childAncestry.relationship?.order_setTo(order);
+				if (!parentAncestry.isRoot && ux.inRadialMode) {
+					parentAncestry.becomeFocus();
+				}
 				signals.signal_rebuildGraph_fromFocus();
 				if (shouldStartEdit) {
 					setTimeout(() => {

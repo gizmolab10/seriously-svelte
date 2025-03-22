@@ -5,6 +5,7 @@
 	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';
 	export let origin = Point.zero;
+	export let picker_offset = '-77px';
 	export let thing: Thing;
 	const pickerSize = 122;
 	const selectorSize = k.dot_size + 1;
@@ -30,7 +31,7 @@
 
 <style>
 	div :global(.wrapper) {
-		left: -86px;
+		left: var(--picker_offset);
 		top: 24px;
 	}
 
@@ -47,7 +48,8 @@
 				top: {origin.y}px;
 				left: {origin.x}px;
 				position: absolute;
-				z-index: {T_Layer.frontmost};'>
+				z-index: {T_Layer.frontmost};
+				--picker_offset: {picker_offset};'>
 			<ColorPicker
 				label=''
 				hex={colorAsHEX}

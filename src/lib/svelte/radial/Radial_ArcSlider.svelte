@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { c, k, u, ux, w, show, Rect, Size, Point, debug, Angle, signals } from '../../ts/common/Global_Imports';
 	import { T_Layer, G_Cluster, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
+	import { w_count_mouse_up, w_ancestry_focus, w_g_active_cluster } from '../../ts/common/Stores';
 	import { w_thing_fontFamily, w_ring_rotation_radius } from '../../ts/common/Stores';
-	import { w_count_mouse_up, w_ancestry_focus } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/runtime/Identifiable';
 	import Angled_Text from '../kit/Angled_Text.svelte';
@@ -24,16 +24,16 @@
 	let thumb_path;
 	let fork_path;
 
-	//////////////////////////////////////////////////////
-	//													//
-	//	ignores rebuild & recreate						//
-	//													//
-	//	radial graph => radial rings => this			//
-	//	draws the arc, thumb & label					//
-	//	uses g_cluster => {geometry, text}				//
-	//		{g_sliderArc, g_thumbArc} => svg paths	//
-	//													//
-	//////////////////////////////////////////////////////
+	//////////////////////////////////////////////////
+	//												//
+	//	radial graph => radial rings => this		//
+	//	=> {arc, thumb, label, fork line}			//
+	//												//
+	//	ignores signals: {rebuild, recreate}		//
+	//	uses g_cluster => {geometry, text}			//
+	//	& {g_sliderArc, g_thumbArc} => svg paths	//
+	//												//
+	//////////////////////////////////////////////////
 
 	debug.log_build(`ARC SLIDER  ${g_cluster.name}`);
 	g_cluster.update_all();
@@ -46,6 +46,11 @@
 		});
 		return () => { handle_reposition.disconnect() };
 	});
+
+	$: {
+		const _ = $w_g_active_cluster;
+		update_colors();
+	}
 
 	$: {
 		if (!!arc_slider) {
@@ -71,7 +76,7 @@
 	}
 
 	// function update_colors() {
-		// 	arc_slider_path?.setAttribute('stroke', 0.4);
+	// 	arc_slider_path?.setAttribute('stroke', 0.4);
 	// 	fork_path?.setAttribute('stroke', u.opacitize(color, 0.3));
 	// 	thumb_path?.setAttribute('stroke', u.opacitize(color, ux.s_ring_rotation.isActive ? 0.15 : g_cluster.s_paging_rotation.thumb_opacity));
 	// }

@@ -34,6 +34,7 @@
 	let thing_title = thing?.title;
 	let color_origin = Point.zero;
 	let tops: Array<number> = [];
+	let picker_offset = k.empty;
 	let info_rebuilds = 0;
 	let info;
 
@@ -105,13 +106,15 @@
 	}
 	
 	function setup_tops() {
+		const color_left = 67
 		let top = 0;
 		tops = [];
 		for (let i = 0; i <= TI.quest; i++) {
 			tops.push(top);
 			top += heightAt(i);
 		}
-		color_origin = new Point(76, tops[TI.color]);
+		color_origin = new Point(color_left, tops[TI.color]);
+		picker_offset = `${-color_left - 10}px`;
 	}
 
 	function update_forKind() {
@@ -183,7 +186,12 @@
 					origin={new Point(45, tops[TI.segments])}
 					titles={[T_Info.focus, T_Info.selection]}/>
 				{#key thing_title}
-					<Separator title_font_size={separator_font_size} top={tops[TI.before_title]} left=5 title='title' width={info_width}/>
+					<Separator
+						left=5
+						title='title'
+						width={info_width}
+						top={tops[TI.before_title]}
+						title_font_size={separator_font_size}/>
 					<div style='
 						white-space:pre;
 						position:absolute;
@@ -192,11 +200,18 @@
 						width:{traits_width}px;'>
 						{thing_title.clipWithEllipsisAt(30)}
 					</div>
-					<Separator top={tops[TI.after_title]} left=5 width={info_width}/>
+					<Separator
+						top={tops[TI.after_title]}
+						left=5 width={info_width}/>
 				{/key}
-				<Table top={tops[TI.table]} array={information}/>
+				<Table
+					array={information}
+					top={tops[TI.table]}/>
 			{/if}
-			<Color thing={thing} origin={color_origin}/>
+			<Color
+				thing={thing}
+				origin={color_origin}
+				picker_offset={picker_offset}/>
 			{#if show.traits}
 				<div class='horizontal-line'
 					style='
