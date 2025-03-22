@@ -68,23 +68,21 @@ export default class User_Interaction {
 		const mouse_vector = w.mouse_vector_ofOffset_fromGraphCenter();
 		const widgets = wrappers.wrappers_ofType_atMouseLocation(T_SvelteComponent.widget);
 		if (!!mouse_vector && widgets.length == 0) {
+			const g_cluster = this.g_radialGraph.g_cluster_atMouseLocation;
+			const inner = get(w_ring_rotation_radius);
 			const distance = mouse_vector.magnitude;
 			const thick = k.ring_rotation_thickness;
-			const inner = get(w_ring_rotation_radius);
 			const thin = k.paging_arc_thickness;
 			const resize = inner + thick * 2;
 			const rotate = inner + thick;
 			const thumb = inner + thin;
 			if (!!distance && distance <= resize) {
-				if (distance > rotate) {
+				if (distance < inner) {
+					ring_zone = T_RingZone.rotate;
+				} else if (distance < thumb && !!g_cluster && g_cluster.thumb_isHit) {
+					ring_zone = T_RingZone.paging;
+				} else {
 					ring_zone = T_RingZone.resize;
-				} else if (distance > inner) {
-					const g_cluster = this.g_radialGraph.g_cluster_atMouseLocation;
-					if (distance < thumb && !!g_cluster && g_cluster.thumb_isHit) {
-						ring_zone = T_RingZone.paging;
-					} else {
-						ring_zone = T_RingZone.rotate;
-					}
 				}
 			}
 			debug.log_hover(` ring zone ${ring_zone} ${distance.asInt()}`);
