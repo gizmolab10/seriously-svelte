@@ -23,6 +23,7 @@
 	<span class='text'
 		style='
 			font-family: {font_family};
+			background-color: white;
 			font-size: {font_size};
 			color: {color};'>
 		{text}
