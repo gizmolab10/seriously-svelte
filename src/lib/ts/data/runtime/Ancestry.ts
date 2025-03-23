@@ -5,6 +5,7 @@ import { G_Widget, S_Paging, S_Title_Edit, G_TreeChildren } from '../../common/G
 import { w_hierarchy, w_ancestry_focus, w_ancestry_showing_tools } from '../../common/Stores';
 import { w_ancestries_grabbed, w_ancestries_expanded, } from '../../common/Stores';
 import { w_s_alteration, w_s_title_edit } from '../../common/Stores';
+import { w_background_color } from '../../common/Stores';
 import Reciprocal_Ancestry from './Reciprocal_Ancestry';
 import type { Integer } from '../../common/Types';
 import { T_Edit } from '../../state/S_Title_Edit';
@@ -333,7 +334,7 @@ export default class Ancestry extends Identifiable {
 				return thing.color;
 			}
 		}
-		return k.color_background;
+		return get(w_background_color);
 	}
 
 	progeny_count(visited: Array<number> = []): number {

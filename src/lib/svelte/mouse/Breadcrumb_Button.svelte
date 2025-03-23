@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { w_color_trigger, w_thing_fontFamily, w_ancestry_focus } from '../../ts/common/Stores';
+	import { w_color_trigger, w_background_color, w_thing_fontFamily, w_ancestry_focus } from '../../ts/common/Stores';
 	import { k, u, ux, Point, Thing, signals, databases } from '../../ts/common/Global_Imports';
 	import { T_Tool, T_Element, S_Element } from '../../ts/common/Global_Imports';
 	import Button from './Button.svelte';
@@ -8,7 +8,7 @@
     export let ancestry;
 	export let center = Point.zero;
 	const borderStyle = '1px solid';
-	let borderColor = k.color_background;
+	let borderColor = $w_background_color;
 	let es_breadcrumb = ux.s_element_for(ancestry, T_Element.breadcrumb, T_Tool.none);
 	let title = ancestry.thing?.breadcrumb_title ?? k.empty;
 	let name = `crumb (for ${title ?? 'unknown'})`
@@ -32,11 +32,11 @@
 	function updateColors() {
 		if (!!thing) {
 			if ($w_ancestry_focus.id_thing == thing.id) {
-				colorStyles = `background-color: ${u.opacitize(thing.color, 0.85)}; color: ${k.color_background}`;
+				colorStyles = `background-color: ${u.opacitize(thing.color, 0.85)}; color: ${$w_background_color}`;
 			} else {
-				colorStyles = `background-color: ${k.color_background}; color: ${thing.color}`;
+				colorStyles = `background-color: ${$w_background_color}; color: ${thing.color}`;
 			}
-			borderColor = ancestry.isGrabbed ? thing.color : k.color_background;
+			borderColor = ancestry.isGrabbed ? thing.color : $w_background_color;
 			border = `${borderStyle} ${borderColor}`;
 			updateStyle();
 		}

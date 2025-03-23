@@ -1,9 +1,10 @@
 <script lang='ts'>
 	import { k, u, Rect, Size, Point, debug, T_Layer } from '../../ts/common/Global_Imports';
 	import { svgPaths, T_Oblong, G_Segment } from '../../ts/common/Global_Imports';
+	import { w_background_color } from '../../ts/common/Stores';
 	import Mouse_Responder from './Mouse_Responder.svelte';
 	export let hit_closure = (title, shift) => {};
-	export let fill = k.color_background;
+	export let fill = $w_background_color;
 	export let g_segment!: G_Segment;
     export let name = g_segment.title;
 	export let stroke = k.color_default;
@@ -15,8 +16,8 @@
 	update_colors();
 
 	function update_colors() {
-		title_color = isHovering ? k.color_background : k.color_default ;
-		fill = isHovering ? k.color_default : g_segment.isSelected ? u.opacitize('skyblue', 0.6) : k.color_background;
+		title_color = isHovering ? $w_background_color : k.color_default ;
+		fill = isHovering ? k.color_default : g_segment.isSelected ? u.opacitize('skyblue', 0.6) : $w_background_color;
 		debug.log_segments(`${name} ${g_segment.isSelected ? 'selected' : ''} ${fill}`)
 	}
 

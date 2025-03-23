@@ -1,9 +1,9 @@
 import { S_Paging, T_GraphMode, T_Hierarchy, T_Details, G_TreeChildren } from '../common/Global_Imports';
 import { w_t_treeMode, w_t_graphMode, w_hierarchy, w_t_details, w_t_countDots } from '../common/Stores';
+import { w_s_paging, w_font_size, w_background_color, w_thing_fontFamily } from '../common/Stores';
 import { w_ancestry_focus, w_ancestries_grabbed, w_ancestries_expanded } from '../common/Stores';
 import { c, k, ux, show, debug, Ancestry, databases } from '../common/Global_Imports';
 import { w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
-import { w_s_paging, w_font_size, w_thing_fontFamily } from '../common/Stores';
 import { get } from 'svelte/store';
 
 export enum T_Preference {
@@ -12,6 +12,7 @@ export enum T_Preference {
 	show_details  = 'show_details',
 	ring_radius	  = 'ring_radius',
 	user_offset	  = 'user_offset',
+	background	  = 'background',
 	ring_angle    = 'ring_angle',
 	countDots	  = 'countDots',
 	font_size	  = 'font_size',
@@ -183,6 +184,9 @@ export class Preferences {
 		w_t_countDots.subscribe((value) => {
 			this.write_key(T_Preference.countDots, value);
 		});
+		w_background_color.subscribe((color: string) => {
+			this.write_key(T_Preference.background, color);
+		})
 		w_ring_rotation_angle.subscribe((angle: number) => {
 			this.write_key(T_Preference.ring_angle, angle);
 		});
@@ -203,13 +207,15 @@ export class Preferences {
 			this.write_key(T_Preference.relationships, true);
 		}
 		w_font_size.set(this.read_key(T_Preference.font_size) ?? 14);
+		w_ring_rotation_angle.set(this.read_key(T_Preference.ring_angle) ?? 0);
 		w_t_graphMode.set(this.read_key(T_Preference.graph) ?? T_GraphMode.tree);
 		w_t_treeMode.set(this.read_key(T_Preference.tree) ?? T_Hierarchy.children);
-		w_ring_rotation_angle.set(this.read_key(T_Preference.ring_angle) ?? 0);
-		w_t_countDots.set(this.read_key(T_Preference.countDots) ?? [T_Hierarchy.children]);
 		w_thing_fontFamily.set(this.read_key(T_Preference.font) ?? 'Times New Roman');
 		w_t_details.set(this.read_key(T_Preference.detail_types) ?? [T_Details.storage]);
+		w_t_countDots.set(this.read_key(T_Preference.countDots) ?? [T_Hierarchy.children]);
+		w_background_color.set(this.read_key(T_Preference.background) ?? k.color_background);
 		w_ring_rotation_radius.set(Math.max(this.read_key(T_Preference.ring_radius) ?? 0, k.innermost_ring_radius));
+		document.documentElement.style.setProperty('--css-background-color', get(w_background_color));
 		this.reactivity_subscribe()
 	}
 

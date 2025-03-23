@@ -94,7 +94,7 @@
 		padding: 0px 3px;
 		position: absolute;
 		left: {label_left}px;
-		background-color: {k.color_background}'>
+		background-color: {$w_background_color}'>
 		{label}
 	</div>
 </div>

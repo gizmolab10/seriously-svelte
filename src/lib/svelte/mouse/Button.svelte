@@ -1,12 +1,12 @@
 <script lang='ts'>
 	import { k, u, ux, Rect, Point, T_Layer } from '../../ts/common/Global_Imports';
+	import { w_thing_fontFamily, w_background_color } from '../../ts/common/Stores';
 	import { S_Element, Svelte_Wrapper } from '../../ts/common/Global_Imports';
-	import { w_thing_fontFamily } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/data/runtime/Identifiable';
 	import type { Handle_Result } from '../../ts/common/Types';
 	import Mouse_Responder from './Mouse_Responder.svelte';
 	import { onMount } from 'svelte';
-	export let background_color = k.color_background;
+	export let background_color = $w_background_color;
 	export let closure = Handle_Result<S_Mouse>;
 	export let border_color = k.color_default;
 	export let height = k.default_buttonSize;

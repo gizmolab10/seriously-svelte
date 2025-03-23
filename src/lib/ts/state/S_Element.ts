@@ -1,8 +1,10 @@
 import { k, ux, debug, Ancestry, T_Element } from '../common/Global_Imports';
+import { w_background_color } from '../../ts/common/Stores';
 import Identifiable from '../data/runtime/Identifiable';
-
+import { get } from 'svelte/store';
+	
 export default class S_Element {
-	color_background = k.color_background;
+	color_background = get(w_background_color);
 	responder: HTMLElement | null = null;
 	defaultCursor = k.cursor_default;
 	hoverCursor = k.cursor_default;

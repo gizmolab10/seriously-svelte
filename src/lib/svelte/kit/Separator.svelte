@@ -1,5 +1,6 @@
 <script lang='ts'>
 	import { k, u, T_Layer } from '../../ts/common/Global_Imports';
+	import { w_background_color } from '../../ts/common/Stores';
 	export let title_font_size = `${k.small_font_size}px`;
 	export let title: string | null = null;
 	export let width = k.width_details;
@@ -29,7 +30,7 @@
 			left:{title_left}px;
 			z-index:{T_Layer.frontmost};
 			font-size:{title_font_size};
-			background-color:{k.color_background};'>
+			background-color:{$w_background_color};'>
 		{title}
 	</div>
 {/if}

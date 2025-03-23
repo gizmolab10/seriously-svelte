@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k } from '../../ts/common/Global_Imports';
-    export let fill = k.color_background;
+    export let fill = $w_background_color;
 	export let invert = false;
 	export let color = black;
 	const viewBox = `0 -0.5 ${k.default_buttonSize} ${k.default_buttonSize}`;

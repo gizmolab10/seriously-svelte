@@ -4,6 +4,7 @@
 	import { w_t_countDots, w_color_trigger, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { signals, svgPaths, T_GraphMode, T_Element } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
+	import { w_background_color } from '../../ts/common/Stores';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import { onMount } from 'svelte';
 	export let points_right = true;
@@ -155,8 +156,7 @@
 					height:{size}px;
 					color:transparent;
 					position:absolute;
-					z-index:{T_Layer.dots};
-					background-color:transparent;'>
+					z-index:{T_Layer.dots};'>
 				{#key redraws}
 					<div id={'div-for-' + name}
 						style='
@@ -188,7 +188,7 @@
 								width={size}
 								height={size}
 								stroke={thing?.color}
-								fill={k.color_background}
+								fill={$w_background_color}
 								svgPath={svgPathFor_related}
 							/>
 						{/if}

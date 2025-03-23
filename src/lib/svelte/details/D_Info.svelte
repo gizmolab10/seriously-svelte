@@ -164,6 +164,19 @@
 		}
 	}
 
+	function handle_colors(result: string | null): string | null {
+		if (!result) {
+			return thing.color;
+		} else {
+			thing.color = result;
+			thing.signal_color_change();
+			(async () => {
+				await thing.persist();
+			})();
+			return null;
+		}
+	}
+
 </script>
 
 {#key info_rebuilds}
@@ -209,8 +222,8 @@
 					top={tops[TI.table]}/>
 			{/if}
 			<Color
-				thing={thing}
 				origin={color_origin}
+				color_closure={handle_colors}
 				picker_offset={picker_offset}/>
 			{#if show.traits}
 				<div class='horizontal-line'

@@ -1,7 +1,8 @@
 <script lang='ts'>
 	import { k, u, Point, debug, T_Layer } from '../../ts/common/Global_Imports'
+	import { w_background_color } from '../../ts/common/Stores';
 	import { onMount } from 'svelte';
-	export let color_background = debug.lines ? 'transparent' : k.color_background;
+	export let color_background = debug.lines ? 'transparent' : $w_background_color;
 	export let zindex = T_Layer.dots;
 	export let center = Point.zero;
 	export let name = k.empty;
@@ -22,7 +23,6 @@
 		width: {diameter}px;
 		height: {diameter}px;
 		border: {thickness}px solid {color};
-		background-color: {color_background};
 		top: {center.y - radius - thickness}px;
 		left: {center.x - radius - thickness}px;'>
 </div>

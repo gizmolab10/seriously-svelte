@@ -39,7 +39,6 @@
 		for (const id of ids) {
 			const es_storage = ux.s_element_for(null, T_Element.storage, id);
 			es_storage.set_forHovering('black', 'pointer');
-			es_storage.color_background = k.color_background;
 			s_element_byStorageType[id] = es_storage;
 		}
 	}

@@ -36,7 +36,6 @@
         style='
             z-index:{zindex};
             position:absolute;
-            background-color:{color};
             width:{cross_size.width}px;
             top:{cross_rect.center.y}px;
             left:{cross_rect.origin.x}px;
@@ -47,7 +46,6 @@
         style='
             z-index:{zindex};
             position:absolute;
-            background-color:{color};
             top:{cross_rect.origin.y}px;
             left:{cross_rect.center.x}px;
             height:{cross_size.height}px;

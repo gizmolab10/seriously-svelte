@@ -4,6 +4,7 @@
 	import { G_Widget, S_Element, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { w_color_trigger, w_thing_fontFamily } from '../../ts/common/Stores';
+	import { w_background_color } from '../../ts/common/Stores';
 	import { T_Edit } from '../../ts/state/S_Title_Edit';
 	import Widget_Title from './Widget_Title.svelte';
 	import Widget_Reveal from './Widget_Reveal.svelte';
@@ -80,7 +81,7 @@
 		const _ = $w_s_title_edit + $w_ancestries_grabbed;
 		if (!!ancestry && !!widget && s_widget.update_forChange) {
 			widget.style.border = es_widget.border;		// avoid rebuilding by injecting style changes
-			widget.style.backgroundColor = ancestry.isGrabbed || ux.inRadialMode ? k.color_background : 'transparent';
+			widget.style.backgroundColor = ancestry.isGrabbed || ux.inRadialMode ? $w_background_color : 'transparent';
 			debug.log_grab(`  CHANGE (grabbed: ${ancestry.isGrabbed}) (border: ${es_widget.border}) "${ancestry.title}"`);
 			layout();
 		}
@@ -123,7 +124,7 @@
 	function layout_maybe() {
 		if (!!ancestry && s_widget.update_forChange) {
 			const showBackground = showBorder() || ux.inRadialMode;
-			background = showBackground ? `background-color: ${k.color_background}` : k.empty
+			background = showBackground ? `background-color: ${$w_background_color}` : k.empty
 			layout();
 		}
 	}
@@ -166,7 +167,7 @@
 				border : {es_widget.border};
 				border-radius : {border_radius}px;
 				width : {g_widget.width_ofWidget}px;
-				background-color : {ancestry.isGrabbed || ux.inRadialMode ? k.color_background : 'transparent'};
+				background-color : {ancestry.isGrabbed || ux.inRadialMode ? $w_background_color : 'transparent'};
 			'>
 			<Widget_Drag
 				name = {es_drag.name}

@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, u, Size, Thing, Point, svgPaths, databases } from '../../ts/common/Global_Imports';
+	import { w_background_color, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { T_Layer, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
-	import { w_ancestries_grabbed } from '../../ts/common/Stores';
 	import type { Handle_Result } from '../../ts/common/Types';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import Button from './Button.svelte';
@@ -14,8 +14,8 @@
 	export let center;
 	export let angle;
 	export let size;
-	let fillColor = k.color_background;
-	let extraColor = k.color_background;
+	let fillColor = $w_background_color;
+	let extraColor = $w_background_color;
 	let trianglePath = svgPaths.fat_polygon(size, angle);
 	
 	$: {

@@ -8,6 +8,7 @@
 	import Transparent_Circle from '../kit/Transparent_Circle.svelte';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Triangle_Button from '../mouse/Triangle_Button.svelte';
+	import { w_background_color } from '../../ts/common/Stores';
 	import Widget_Reveal from '../widget/Widget_Reveal.svelte';
 	import Button from '../mouse/Button.svelte';
 	import Trash from '../kit/Trash.svelte';
@@ -62,7 +63,7 @@
 			for (const id of ids) {
 				const isDismiss = (id == T_Tool.dismiss);
 				const es_tool = ux.s_element_for(ancestry, T_Element.tool, id);
-				es_tool.color_background = isDismiss ? k.color_background : 'transparent';
+				es_tool.color_background = isDismiss ? $w_background_color : 'transparent';
 				es_tool.set_forHovering(color, 'pointer');
 				es_tool.hoverIgnore = !isDismiss;
 				s_element_byToolType[id] = es_tool;
@@ -108,9 +109,9 @@
 		const nextIsDisabled = isDisabled && needsMultipleVisibleParents.includes(id);
 		if (isDisabled || (isFilled == isInvertedFor(id))) {
 			const extraColor = nextIsDisabled ? k.color_disabled : isDisabled || isFilled ? parentSensitiveColor : color;
-			return [k.color_background, extraColor];
+			return [$w_background_color, extraColor];
 		}
-		return [color, k.color_background];
+		return [color, $w_background_color];
 	}
 
 	async function handle_mouse_data(s_mouse: S_Mouse, id: string) {
@@ -180,7 +181,7 @@
 			position:absolute;
 			z-index: {T_Layer.tools}'>
 			<Transparent_Circle
-				color_background={u.opacitize(k.color_background, 0.95)}
+				color_background={u.opacitize($w_background_color, 0.95)}
 				center={getC(T_Tool.editingTools)}
 				radius={editingToolsRadius}
 				zindex={T_Layer.dots}
@@ -264,7 +265,6 @@
 						top: {getC(T_Tool.editingTools).y + 0.5}px;
 						width: {k.editingTools_diameter + 1}px;
 						z-index: {T_Layer.tool_buttons};
-						background-color: {color};
 						position: absolute;
 						height: 1px;'>
 				</div>
@@ -291,7 +291,7 @@
 						class='ellipses-svg' 
 						viewBox='-0.5 -2 14 10'
 						width={k.default_buttonSize}
-						fill={isHovering_byID[T_Tool.more] ? k.color_background : color}>
+						fill={isHovering_byID[T_Tool.more] ? $w_background_color : color}>
 						<path class='ellipses-path' d={svgPaths.ellipses(7, 1)}/>
 					</svg>
 				</Button>

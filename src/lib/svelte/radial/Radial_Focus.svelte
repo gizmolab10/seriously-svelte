@@ -4,6 +4,7 @@
 	import { w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { T_Tool, T_Layer, T_Element } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
+	import { w_background_color } from '../../ts/common/Stores';
 	import Widget_Title from '../widget/Widget_Title.svelte';
 	import { onMount } from 'svelte';
 	const height = k.row_height + 10;
@@ -67,8 +68,8 @@
 		const grabbed = focus?.isGrabbed ?? false;
 		const editing = focus?.isEditing ?? false;
 		svg_dasharray = editing ? '1.8,1' : k.empty;
-		svg_fillColor = grabbed ? 'white' : 'transparent';
 		svg_strokeColor = grabbed ? color : 'transparent';
+		svg_fillColor = grabbed ? $w_background_color : 'transparent';
 	}
 
 </script>

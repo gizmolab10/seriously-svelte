@@ -1,3 +1,7 @@
+* {
+	background-color: var(--css-background-color);
+}
+
 html, body {
 	overflow: hidden;
 }
@@ -12,9 +16,8 @@ button, svg {
 	}
 }
 
-.root {
-	color: white;
-	background-color: white;
+div, svg, input {
+	background-color: transparent;
 }
 
 .horizontal-line {

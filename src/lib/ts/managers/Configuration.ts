@@ -1,7 +1,5 @@
-import { e, k, p, u, w, show, debug, databases, Hierarchy } from '../common/Global_Imports';
-import { stores, w_hierarchy, w_device_isMobile } from '../common/Stores';
-import { T_Preference } from '../common/Global_Imports';
-import { get } from 'svelte/store';
+import { e, k, p, u, w, show, debug, databases } from '../common/Global_Imports';
+import { stores, w_device_isMobile } from '../common/Stores';
 
 export class Configuration {
 

@@ -102,49 +102,45 @@
 
 </script>
 
-{#if !!g_cluster}
-	<div
-		class = 'arc-slider'
-		bind:this = {arc_slider}
-		style = 'z-index:{T_Layer.paging};'>
-		{#if !debug.noRadial}
-			<Mouse_Responder
-				width = {radius * 2}
-				height = {radius * 2}
-				name = {g_cluster.name}
-				zindex = {T_Layer.backmost}
-				cursor = {k.cursor_default}
-				handle_isHit = {handle_isHit}
-				center = {w.center_ofGraphSize}
-				handle_mouse_state = {hover_closure}>
-				<svg class = 'svg-arc-slider' viewBox = {viewBox}>
-					<path
-						fill = transparent
-						stroke-width = 0.5
-						id = 'path-arc-slider'
-						stroke = {arc_stroke_color}
-						bind:this = {arc_slider_path}/>
-					<path
-						id = 'path-fork'
-						fill = transparent
-						bind:this = {fork_path}
-						stroke = {fork_stroke_color}
-						stroke-width = {k.line_thickness}/>
-					{#if g_cluster.isPaging && g_cluster.widgets_shown > 1}
-						<path
-							id = {thumb_name}
-							fill = {thumb_fill_color}
-							bind:this = {thumb_path}/>
-					{/if}
-				</svg>
-			</Mouse_Responder>
-		{/if}
-	</div>
-	<Angled_Text
-		text = {g_cluster.cluster_title}
-		center = {g_cluster.label_center}
-		font_size = {k.small_font_size}px
-		font_family = {$w_thing_fontFamily}
-		angle = {g_cluster.g_sliderArc.label_text_angle}
-		color = {$w_ancestry_focus.thing?.color ?? k.thing_color_default}/>
-{/if}
+<div
+	class = 'arc-slider'
+	bind:this = {arc_slider}
+	style = 'z-index:{T_Layer.paging};'>
+	<Mouse_Responder
+		width = {radius * 2}
+		height = {radius * 2}
+		name = {g_cluster.name}
+		zindex = {T_Layer.backmost}
+		cursor = {k.cursor_default}
+		handle_isHit = {handle_isHit}
+		center = {w.center_ofGraphSize}
+		handle_mouse_state = {hover_closure}>
+		<svg class = 'svg-arc-slider' viewBox = {viewBox}>
+			<path
+				fill = transparent
+				stroke-width = 0.5
+				id = 'path-arc-slider'
+				stroke = {arc_stroke_color}
+				bind:this = {arc_slider_path}/>
+			<path
+				id = 'path-fork'
+				fill = transparent
+				bind:this = {fork_path}
+				stroke = {fork_stroke_color}
+				stroke-width = {k.line_thickness}/>
+			{#if g_cluster.isPaging && g_cluster.widgets_shown > 1}
+				<path
+					id = {thumb_name}
+					fill = {thumb_fill_color}
+					bind:this = {thumb_path}/>
+			{/if}
+		</svg>
+	</Mouse_Responder>
+</div>
+<Angled_Text
+	text = {g_cluster.cluster_title}
+	center = {g_cluster.label_center}
+	font_size = {k.small_font_size}px
+	font_family = {$w_thing_fontFamily}
+	angle = {g_cluster.g_sliderArc.label_text_angle}
+	color = {$w_ancestry_focus.thing?.color ?? k.thing_color_default}/>

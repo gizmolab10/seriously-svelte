@@ -1,6 +1,7 @@
 <script lang='ts'>
     import { k, Point, Direction } from '../../ts/common/Global_Imports';
-    import Triangle_Button from './Triangle_Button.svelte'
+	import { w_background_color } from '../../ts/common/Stores';
+    import Triangle_Button from './Triangle_Button.svelte';
     export let display;
     export let hit;
     const buttonSize = 20;
@@ -9,7 +10,7 @@
 	let directionals_rebuilds = 0;
 
 	function hover_closure(isHovering) {
-        return [isHovering ? k.color_default : k.color_background, k.empty];
+        return [isHovering ? k.color_default : $w_background_color, k.empty];
     }
 
 	function handle_mouse_state(s_mouse: S_Mouse): boolean {
