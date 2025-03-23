@@ -16,7 +16,7 @@ button, svg {
 	}
 }
 
-div, svg, input {
+div, svg, span, input {
 	background-color: transparent;
 }
 

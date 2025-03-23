@@ -2,8 +2,9 @@
 	import { c, k, u, ux, Size, Thing, Point, debug, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_GraphMode, Predicate, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_ancestries_grabbed, w_ancestries_expanded, w_ancestry_showing_tools } from '../../ts/common/Stores';
-	import { w_t_countDots, w_hierarchy, w_s_alteration } from '../../ts/common/Stores';
+	import { w_hierarchy, w_t_countDots, w_s_alteration } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
+	import { w_background_color } from '../../ts/common/Stores';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import { onMount } from 'svelte';
     export let ancestry;
@@ -127,7 +128,7 @@
 					width: {k.dot_size}px;
 					height: {k.dot_size}px;
 				'>
-				{#key svgPathFor_revealDot}
+				{#key svgPathFor_revealDot + $w_background_color}
 					<SVGD3 name='reveal-dot-svg'
 						fill={debug.lines ? 'transparent' : es_reveal.fill}
 						svgPath={svgPathFor_revealDot}

@@ -72,14 +72,16 @@
 
 </script>
 
-<Mouse_Responder
-	name={name}
-	width={width}
-	height={height}
-	zindex={zindex}
-	center={center}
-	handle_mouse_state={button_closure}>
-	<button class='button' id={'button-for-' + name} style={currentStyle}>
-		<slot></slot>
-	</button>
-</Mouse_Responder>
+{#key $w_background_color}
+	<Mouse_Responder
+		name={name}
+		width={width}
+		height={height}
+		zindex={zindex}
+		center={center}
+		handle_mouse_state={button_closure}>
+		<button class='button' id={'button-for-' + name} style={currentStyle}>
+			<slot></slot>
+		</button>
+	</Mouse_Responder>
+{/key}

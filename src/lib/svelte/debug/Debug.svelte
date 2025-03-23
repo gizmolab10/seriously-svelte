@@ -10,9 +10,7 @@
 	let base = new Point(-39, -28);
 	let debug_origin = $w_user_graph_center.offsetBy(base);
 
-	$: {
-		debug_origin = $w_user_graph_center.offsetBy(base);
-	}
+	$: debug_origin = $w_user_graph_center.offsetBy(base);
 
 	$: {
 		const point = $w_mouse_location_scaled;

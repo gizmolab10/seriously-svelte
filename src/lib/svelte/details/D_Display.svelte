@@ -55,9 +55,10 @@
 			style='
 				width: 20px;
 				height: 20px;
+				position: absolute;
+				background-color: white;
 				top: {color_origin.y}px;
 				left: {color_origin.x}px;
-				position: absolute;
 				border: 0.3px solid #999;'>
 			<Color
 				origin={Point.zero}

@@ -1,9 +1,10 @@
 <script lang='ts'>
 	import { T_Layer, T_GraphMode, T_Element, T_Control, T_Hierarchy, T_Preference } from '../../ts/common/Global_Imports';
-	import { c, k, p, u, ux, w, show, Point, svgPaths, signals, S_Element } from '../../ts/common/Global_Imports';
 	import { w_t_graphMode, w_t_treeMode, w_count_resize, w_hierarchy, w_id_popupView } from '../../ts/common/Stores';
+	import { c, k, p, u, ux, w, show, Point, svgPaths, signals, S_Element } from '../../ts/common/Global_Imports';
 	import { w_show_details, w_device_isMobile, w_thing_fontFamily } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/data/runtime/Identifiable';
+	import { w_background_color } from '../../ts/common/Stores';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Button from '../mouse/Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
@@ -102,15 +103,17 @@
 			z-index: {T_Layer.frontmost};
 			height: `${k.height_banner - 2}px`;'>
 		{#if !$w_id_popupView}
-			<Button
-				name='details-toggle'
-				border_thickness=0
-				color='transparent'
-				center={new Point(lefts[0], details_top + 3)}
-				es_button={es_buttons_byControlType[T_Control.details]}
-				closure={(s_mouse) => handle_mouse_state_forControl_Type(s_mouse, T_Control.details)}>
-				<img src='settings.svg' alt='circular button' width={size_small}px height={size_small}px/>
-			</Button>
+			{#key $w_background_color}
+				<Button
+					name='details-toggle'
+					border_thickness=0
+					color='transparent'
+					center={new Point(lefts[0], details_top + 3)}
+					es_button={es_buttons_byControlType[T_Control.details]}
+					closure={(s_mouse) => handle_mouse_state_forControl_Type(s_mouse, T_Control.details)}>
+					<img src='settings.svg' alt='circular button' width={size_small}px height={size_small}px/>
+				</Button>
+			{/key}
 			{#key $w_t_graphMode}
 				<Segmented
 					name='graph-type-selector'
@@ -178,32 +181,34 @@
 				{/if}
 			{/if}
 		{/key}
-		{#if elementShown_byControlType[T_Control.builds]}
-			<Button name={T_Control.builds}
-				width=75
-				height={size_big}
-				center={new Point(width - 55, y_center)}
-				es_button={es_buttons_byControlType[T_Control.builds]}
-				closure={(s_mouse) => handle_mouse_state_forControl_Type(s_mouse, T_Control.builds)}>
-				<span style='font-family: {$w_thing_fontFamily};'>
-					{'build ' + k.build_number}
-				</span>
-			</Button>
-		{/if}
-		{#if elementShown_byControlType[T_Control.help]}
-			<Button name={T_Control.help}
-				width={size_big}
-				height={size_big}
-				center={new Point(width, y_center)}
-				es_button={es_buttons_byControlType[T_Control.help]}
-				closure={(s_mouse) => handle_mouse_state_forControl_Type(s_mouse, T_Control.help)}>
-				<span
-					style='top:2px;
-						left:5.5px;
-						position:absolute;'>
-					?
-				</span>
-			</Button>
-		{/if}
+		{#key $w_background_color}
+			{#if elementShown_byControlType[T_Control.builds]}
+				<Button name={T_Control.builds}
+					width=75
+					height={size_big}
+					center={new Point(width - 55, y_center)}
+					es_button={es_buttons_byControlType[T_Control.builds]}
+					closure={(s_mouse) => handle_mouse_state_forControl_Type(s_mouse, T_Control.builds)}>
+					<span style='font-family: {$w_thing_fontFamily};'>
+						{'build ' + k.build_number}
+					</span>
+				</Button>
+			{/if}
+			{#if elementShown_byControlType[T_Control.help]}
+				<Button name={T_Control.help}
+					width={size_big}
+					height={size_big}
+					center={new Point(width, y_center)}
+					es_button={es_buttons_byControlType[T_Control.help]}
+					closure={(s_mouse) => handle_mouse_state_forControl_Type(s_mouse, T_Control.help)}>
+					<span
+						style='top:2px;
+							left:5.5px;
+							position:absolute;'>
+						?
+					</span>
+				</Button>
+			{/if}
+		{/key}
 	</div>
 {/if}

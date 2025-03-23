@@ -1,14 +1,13 @@
 import { k, ux, debug, Ancestry, T_Element } from '../common/Global_Imports';
 import { w_background_color } from '../../ts/common/Stores';
 import Identifiable from '../data/runtime/Identifiable';
-import { get } from 'svelte/store';
 	
 export default class S_Element {
-	color_background = get(w_background_color);
 	responder: HTMLElement | null = null;
 	defaultCursor = k.cursor_default;
 	hoverCursor = k.cursor_default;
 	identifiable!: Identifiable;
+	color_background = k.empty;
 	hoverColor = 'transparent';
 	type = T_Element.none;
 	hoverIgnore = false;
@@ -33,6 +32,9 @@ export default class S_Element {
 		this.identifiable = identifiable;
 		this.subtype = subtype;
 		this.type = type;
+		w_background_color.subscribe((color: string) => {
+			this.color_background = color;
+		})
 	}
 
 	static empty() { return {}; }

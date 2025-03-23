@@ -167,13 +167,15 @@
 							color:transparent;
 							position:absolute;
 							z-index:{T_Layer.dots};'>
-						<SVGD3 name={'svg-' + name}
-							width={size}
-							height={size}
-							stroke={thing?.color}
-							svgPath={svgPathFor_dragDot}
-							fill={debug.lines ? 'transparent' : es_drag.fill}
-						/>
+						{#key $w_background_color}
+							<SVGD3 name={'svg-' + name}
+								width={size}
+								height={size}
+								stroke={thing?.color}
+								svgPath={svgPathFor_dragDot}
+								fill={debug.lines ? 'transparent' : es_drag.fill}
+							/>
+						{/key}
 						{#if svgPathFor_ellipses}
 							<SVGD3 name={'svg-inside-' + name}
 								width={size}

@@ -28,6 +28,11 @@
 			updateColors();
 		}
 	}
+
+	$: {
+		const _ = $w_background_color;
+		updateColors();
+	}
 	
 	function updateColors() {
 		if (!!thing) {
@@ -79,7 +84,7 @@
 
 </script>
 
-{#key breadcrumb_rebuilds}
+{#key breadcrumb_rebuilds + $w_background_color}
 	<Button
 		name={name}
 		style={style}

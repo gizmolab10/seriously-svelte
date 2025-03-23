@@ -9,7 +9,7 @@
 	const left = 10.4;
 	let top = 6;
 
-	$: { top = invert ? 7 : 6; }
+	$: top = invert ? 7 : 6;
 
 </script>
 

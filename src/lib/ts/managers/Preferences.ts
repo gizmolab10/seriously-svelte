@@ -184,9 +184,6 @@ export class Preferences {
 		w_t_countDots.subscribe((value) => {
 			this.write_key(T_Preference.countDots, value);
 		});
-		w_background_color.subscribe((color: string) => {
-			this.write_key(T_Preference.background, color);
-		})
 		w_ring_rotation_angle.subscribe((angle: number) => {
 			this.write_key(T_Preference.ring_angle, angle);
 		});
@@ -198,6 +195,10 @@ export class Preferences {
 		});
 		w_s_paging.subscribe((s_paging: S_Paging) => {
 			this.writeDB_key(T_Preference.paging, ux.s_thing_pages_byThingID);
+		})
+		w_background_color.subscribe((color: string) => {
+			document.documentElement.style.setProperty('--css-background-color', color);
+			this.write_key(T_Preference.background, color);
 		})
 		show.reactivity_subscribe();
 	}
@@ -215,7 +216,6 @@ export class Preferences {
 		w_t_countDots.set(this.read_key(T_Preference.countDots) ?? [T_Hierarchy.children]);
 		w_background_color.set(this.read_key(T_Preference.background) ?? k.color_background);
 		w_ring_rotation_radius.set(Math.max(this.read_key(T_Preference.ring_radius) ?? 0, k.innermost_ring_radius));
-		document.documentElement.style.setProperty('--css-background-color', get(w_background_color));
 		this.reactivity_subscribe()
 	}
 

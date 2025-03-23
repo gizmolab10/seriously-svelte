@@ -15,6 +15,8 @@
 
 	update_colors();
 
+	$: fill = isHovering ? k.color_default : g_segment.isSelected ? u.opacitize('skyblue', 0.6) : $w_background_color;
+
 	function update_colors() {
 		title_color = isHovering ? $w_background_color : k.color_default ;
 		fill = isHovering ? k.color_default : g_segment.isSelected ? u.opacitize('skyblue', 0.6) : $w_background_color;
