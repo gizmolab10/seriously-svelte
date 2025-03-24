@@ -150,6 +150,47 @@ export class Utilities {
 		return points;
 	}
 
+	get browserType(): T_Browser {
+		const userAgent: string = navigator.userAgent;
+		switch (true) {
+			case /msie (\d+)/i.test(userAgent) ||
+				/trident\/.*; rv:(\d+)/i.test(userAgent):  return T_Browser.explorer;
+			case /(chrome|crios)\/(\d+)/i.test(userAgent): return T_Browser.chrome;
+			case /firefox\/(\d+)/i.test(userAgent):		   return T_Browser.firefox;
+			case /opr\/(\d+)/i.test(userAgent):			   return T_Browser.opera;
+			case /orion\/(\d+)/i.test(userAgent):		   return T_Browser.orion;
+			case /safari\/(\d+)/i.test(userAgent):		   return T_Browser.safari;
+			default:									   return T_Browser.unknown
+		}
+	}
+
+	ancestries_orders_normalize(ancestries: Array<Ancestry>, persist: boolean = true): void {
+		if (ancestries.length > 1) {
+			this.sort_byOrder(ancestries);
+			ancestries.forEach( (ancestry, index) => {
+				if (ancestry.order != index) {
+					const relationship = ancestry.relationship;
+					relationship?.order_setTo(index, persist);
+				}
+			});
+		}
+	}
+
+	getWidth_ofString_withSize(s: string, fontSize: string): number {
+		const element: HTMLElement = document.createElement('div');
+		element.style.fontFamily = get(w_thing_fontFamily);
+		element.style.left = '-9999px'; // offscreen
+		element.style.padding = '0px 0px 0px 0px';
+		element.style.position = 'absolute';
+		element.style.fontSize = fontSize;
+		element.style.whiteSpace = 'pre';
+		element.textContent = s;
+		document.body.appendChild(element);
+		const width: number = element.getBoundingClientRect().width / w.scale_factor;
+		document.body.removeChild(element);
+		return width;
+	}
+
 	convert_windowOffset_toCharacterOffset_in(offset: number, input: HTMLInputElement): number {
 		const rect = input.getBoundingClientRect();
 		const style = window.getComputedStyle(input);
@@ -197,45 +238,16 @@ export class Utilities {
 		return low;
 	}
 
-	get browserType(): T_Browser {
-		const userAgent: string = navigator.userAgent;
-		switch (true) {
-			case /msie (\d+)/i.test(userAgent) ||
-				/trident\/.*; rv:(\d+)/i.test(userAgent):  return T_Browser.explorer;
-			case /(chrome|crios)\/(\d+)/i.test(userAgent): return T_Browser.chrome;
-			case /firefox\/(\d+)/i.test(userAgent):		   return T_Browser.firefox;
-			case /opr\/(\d+)/i.test(userAgent):			   return T_Browser.opera;
-			case /orion\/(\d+)/i.test(userAgent):		   return T_Browser.orion;
-			case /safari\/(\d+)/i.test(userAgent):		   return T_Browser.safari;
-			default:									   return T_Browser.unknown
-		}
-	}
-
-	ancestries_orders_normalize(ancestries: Array<Ancestry>, persist: boolean = true): void {
-		if (ancestries.length > 1) {
-			this.sort_byOrder(ancestries);
-			ancestries.forEach( (ancestry, index) => {
-				if (ancestry.order != index) {
-					const relationship = ancestry.relationship;
-					relationship?.order_setTo(index, persist);
-				}
-			});
-		}
-	}
-
-	getWidth_ofString_withSize(s: string, fontSize: string): number {
-		const element: HTMLElement = document.createElement('div');
-		element.style.fontFamily = get(w_thing_fontFamily);
-		element.style.left = '-9999px'; // offscreen
-		element.style.padding = '0px 0px 0px 0px';
-		element.style.position = 'absolute';
-		element.style.fontSize = fontSize;
-		element.style.whiteSpace = 'pre';
-		element.textContent = s;
-		document.body.appendChild(element);
-		const width: number = element.getBoundingClientRect().width / w.scale_factor;
-		document.body.removeChild(element);
-		return width;
+	luminance(r: number, g: number, b: number, a: number ): number {
+		const linearize = (c: number) => {
+			const s = c / 255;
+			return s <= 0.04045 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+		};
+		const R = linearize(r);
+		const G = linearize(g);
+		const B = linearize(b);
+		const relative = 0.2126 * R + 0.7152 * G + 0.0722 * B;		// according to WCAG
+		return a * relative + (1 - a) * 1;							// assume white background with luminance = 1
 	}
 
 	colorToHex(color: string): string {

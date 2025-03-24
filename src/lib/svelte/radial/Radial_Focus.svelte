@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { c, k, ux, w, Size, Point, debug, signals, svgPaths } from '../../ts/common/Global_Imports';
+	import { c, k, ux, w, Size, Point, debug, signals, svgPaths, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { w_color_trigger, w_s_title_edit, w_thing_fontFamily } from '../../ts/common/Stores';
+	import { T_Tool, T_Layer, T_Element, T_SvelteComponent } from '../../ts/common/Enumerations';
 	import { w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
-	import { T_Tool, T_Layer, T_Element } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { w_background_color } from '../../ts/common/Stores';
 	import Widget_Title from '../widget/Widget_Title.svelte';
@@ -18,6 +18,7 @@
 	let origin_ofTitle = Point.zero;
 	let svg_dasharray = '';
 	let width_ofTitle = 0;
+	let focus;
 
 	//////////////////////////////////
 	//								//
@@ -26,13 +27,20 @@
 	//								//
 	//////////////////////////////////
 
-
 	onMount(() => {
 		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
 			update();
 		});
 		return () => { handle_reposition.disconnect(); };
 	});
+
+	function handle_mouse_state(s_mouse: S_Mouse): boolean { return false; }
+	
+	$: {
+		if (!!focus) {
+			new Svelte_Wrapper(focus, handle_mouse_state, $w_ancestry_focus.hid, T_SvelteComponent.widget);
+		}
+	}
 
 	$: {
 		const _ = $w_ancestry_focus + $w_s_title_edit + $w_ancestries_grabbed;
@@ -75,6 +83,7 @@
 </script>
 
 <div class='radial-focus'
+	bind:this = {focus}
 	style='
 		position : absolute;
 		height : {height}px;
@@ -102,9 +111,9 @@
 						width : {width_ofTitle + 40}px;'>
 					<path
 						stroke-width = '0.8'
-						fill = {svg_fillColor}
 						stroke = {svg_strokeColor}
 						class = 'radial-focus-path'
+						fill = {$w_background_color}
 						stroke-dasharray = {svg_dasharray}
 						d = {svgPaths.oblong(center_ofBorder, new Size(width_ofTitle - 6, k.row_height))}/>
 				</svg>
@@ -114,7 +123,8 @@
 		style='
 			top : 3px;
 			left : -11px;
-			position :  absolute;'>
+			position : absolute;
+			background-color : {$w_background_color};'>
 		<Widget_Title
 			ancestry = {$w_ancestry_focus}
 			origin = {origin_ofTitle}

@@ -82,7 +82,7 @@
 				<div class='breadcrumbs'
 					style='left:0px;
 						position: absolute;
-						top:{k.height_banner - 1}px;
+						top:{k.height_banner}px;
 						z-index: {T_Layer.frontmost};
 						width:{w.windowSize.width}px;
 						height:{k.height_breadcrumbs}px;'>

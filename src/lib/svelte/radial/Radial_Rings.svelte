@@ -252,11 +252,9 @@
 		{/each}
 	</div>
 	{#if !debug.hide_rings}
-		<div
-			class = 'rings'
+		<div class = 'rings'
 			style = 'z-index:{T_Layer.rings};'>
-			<Mouse_Responder
-				name = 'rings'
+			<Mouse_Responder name = 'rings'
 				zindex = {zindex}
 				cursor = {cursor}
 				width = {outer_diameter}
@@ -264,21 +262,17 @@
 				center = {w.center_ofGraphSize}
 				handle_isHit = {handle_isHit}
 				handle_mouse_state = {down_up_closure}>
-				<svg
-					class = 'rings-svg'
+				<svg class = 'rings-svg'
 					viewBox = {viewBox}>
-					<path
+					<path class = 'resize-path'
 						stroke-width = 0.50
-						class = 'resize-path'
 						bind:this = {resizingPath}/>
 					{#if debug.reticle}
-						<path
-							class = 'reticle-path'
+						<path class = 'reticle-path'
 							bind:this = {reticlePath}/>
 					{/if}
-					<path
+					<path class = 'rotate-path'
 						stroke-width = 0.5
-						class = 'rotate-path'
 						bind:this = {rotationPath}/>
 				</svg>
 			</Mouse_Responder>

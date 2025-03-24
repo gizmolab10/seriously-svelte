@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { c, k, u, ux, w, show, Rect, Size, Point, debug, Angle, signals } from '../../ts/common/Global_Imports';
+	import { w_background_color, w_thing_fontFamily, w_ring_rotation_radius } from '../../ts/common/Stores';
 	import { T_Layer, G_Cluster, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_count_mouse_up, w_ancestry_focus, w_g_active_cluster } from '../../ts/common/Stores';
-	import { w_thing_fontFamily, w_ring_rotation_radius } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/runtime/Identifiable';
 	import Angled_Text from '../kit/Angled_Text.svelte';
@@ -142,5 +142,6 @@
 	center = {g_cluster.label_center}
 	font_size = {k.small_font_size}px
 	font_family = {$w_thing_fontFamily}
+	background_color = {$w_background_color}
 	angle = {g_cluster.g_sliderArc.label_text_angle}
 	color = {$w_ancestry_focus.thing?.color ?? k.thing_color_default}/>

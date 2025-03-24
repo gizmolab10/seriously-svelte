@@ -2,6 +2,7 @@
 	import { k, u, Point, debug, T_Layer } from '../../ts/common/Global_Imports';
 	import { w_thing_fontFamily } from '../../ts/common/Stores';
 	import { onMount } from 'svelte';
+	export let background_color = k.color_background;
 	export let font_family = $w_thing_fontFamily;
 	export let center = Point.zero;
 	export let font_size = '0.7em';
@@ -22,6 +23,7 @@
 		transform: translate(-50%, -50%) rotate({angleDeg}deg);'>
 	<span class='text'
 		style='
+			background-color: {background_color};
 			font-family: {font_family};
 			font-size: {font_size};
 			color: {color};'>

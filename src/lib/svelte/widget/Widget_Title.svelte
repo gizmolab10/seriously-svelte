@@ -347,5 +347,5 @@
 			left : {origin_ofInput.x}px;
 			{k.prevent_selection_style};
 			font-family : {$w_thing_fontFamily};
-			outline-color : {$w_background_color};'/>
+			background-color : {$w_background_color};'/>
 </Mouse_Responder>

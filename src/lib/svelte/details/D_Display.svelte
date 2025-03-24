@@ -8,8 +8,8 @@
 	const color_left = 10
 	const font_ratio = 0.8;
 	const info_width = k.width_details - 30;
-	const picker_offset = `${-color_left - 10}px`;
-	const color_origin = new Point(color_left, 42);
+	const picker_offset = `-88px`;
+	const color_origin = new Point(color_left, 41);
 	const separator_font_size = `${k.tiny_font_size}px`;
 	const titles = [T_Hierarchy[T_Hierarchy.children], T_Hierarchy[T_Hierarchy.parents], T_Hierarchy[T_Hierarchy.related]];
 	let display_rebuilds = 0;
@@ -50,21 +50,30 @@
 			height={k.row_height * font_ratio}
 			selection_closure={selection_closure}/>
 		<Separator title='colors' top=32 left=5 width={info_width} title_font_size={separator_font_size}/>
+
 		<div 
 			class= 'background'
 			style='
-				width: 20px;
-				height: 20px;
-				position: absolute;
-				background-color: white;
+				position: absolute;;
 				top: {color_origin.y}px;
-				left: {color_origin.x}px;
-				border: 0.3px solid #999;'>
+				left: {color_origin.x}px;'>
+			background:
+		</div>
+		<div 
+			class= 'background'
+			style='
+				width: 15px;
+				height: 15px;
+				position: absolute;;
+				top: {color_origin.y - 1}px;
+				border: 1.5px solid black;
+				left: {color_origin.x + 70}px;
+				background-color: {$w_background_color}'>
 			<Color
-				origin={Point.zero}
 				label={'background'}
+				origin={Point.square(-3.5)}
 				color_closure={handle_colors}
 				picker_offset={picker_offset}/>
-		</div>
+			</div>
 	</div>
 {/key}

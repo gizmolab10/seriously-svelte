@@ -1,7 +1,8 @@
-import { G_Segment, G_TreeGraph, G_RadialGraph, T_GraphMode, T_Element, T_RingZone } from '../common/Global_Imports';
 import { S_Mouse, S_Widget, S_Element, S_Expansion, S_Rotation, S_Thing_Pages } from '../common/Global_Imports';
-import { k, w, debug, signals, wrappers, Ancestry, Mouse_Timer, T_SvelteComponent } from '../common/Global_Imports';
+import { k, w, debug, signals, wrappers, Ancestry, Mouse_Timer } from '../common/Global_Imports';
+import { T_Element, T_RingZone, T_GraphMode, T_SvelteComponent } from '../common/Enumerations';
 import { w_t_graphMode, w_ancestry_focus, w_ring_rotation_radius } from '../common/Stores';
+import { G_Segment, G_TreeGraph, G_RadialGraph } from '../common/Global_Imports';
 import Identifiable from '../data/runtime/Identifiable';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';

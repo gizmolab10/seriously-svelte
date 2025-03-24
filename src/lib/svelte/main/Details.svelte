@@ -9,7 +9,7 @@
 	import D_Tools from '../details/D_Tools.svelte';
 	import D_Info from '../details/D_Info.svelte';
 	const titles = [T_Details[T_Details.storage], T_Details[T_Details.tools], T_Details[T_Details.display], T_Details[T_Details.info]];
-	const heights = [116, 40, 42, 0];
+	const heights = [116, 40, 80, 0];
 	let tops = [0, 0, 0, 0];
 	let details_rebuilds = 0;
 
