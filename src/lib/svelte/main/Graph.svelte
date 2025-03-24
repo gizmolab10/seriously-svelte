@@ -58,7 +58,7 @@
 			position: absolute;
 			touch-action: none;
 			pointer-events: auto;
-			z-index: ${T_Layer.backmost};
+			z-index: ${T_Layer.common};
 			top:${draggableRect.origin.y}px;
 			width: ${draggableRect.size.width}px;
 			height: ${draggableRect.size.height}px;

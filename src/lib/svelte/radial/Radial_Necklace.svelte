@@ -63,7 +63,7 @@
 	{#if !!ux.g_radialGraph}
 		<div
 			class = 'necklace-widgets'
-			style = 'z-index : {T_Layer.backmost};'>
+			style = 'z-index : {T_Layer.necklace};'>
 			{#each ux.g_radialGraph.g_necklace_widgets as g_necklace_widget}
 				<Widget ancestry = {g_necklace_widget.ancestry}/>
 			{/each}

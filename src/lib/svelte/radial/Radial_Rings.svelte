@@ -9,7 +9,6 @@
 	import Identifiable from '../../ts/data/runtime/Identifiable';
 	import Radial_ArcSlider from './Radial_ArcSlider.svelte';
 	import { onMount } from 'svelte';
-	export let zindex = T_Layer.backmost;
 	const name = 'rings';
 	const ring_width = k.ring_rotation_thickness;
 	const middle_radius = $w_ring_rotation_radius + k.ring_rotation_thickness;
@@ -71,6 +70,7 @@
 	}
 
 	function reset_ux() {
+		debug.log_radial(` STOP`);
 		ux.mouse_timer_forName(name).reset();
 		ux.s_ring_resizing.reset();
 		ux.s_ring_rotation.reset();
@@ -239,28 +239,16 @@
 </script>
 
 {#key rings_rebuilds}
-	<div
-		class = 'paging-arcs'
-		bind:this = {pagingArcs}
-		style = 'z-index:{T_Layer.paging};'>
-		{#each ux.g_radialGraph.g_clusters as g_cluster}
-			{#if !!g_cluster && (g_cluster.widgets_shown > 0)}
-				<Radial_ArcSlider
-					color = {color}
-					g_cluster = {g_cluster}/>
-			{/if}
-		{/each}
-	</div>
 	{#if !debug.hide_rings}
 		<div class = 'rings'
 			style = 'z-index:{T_Layer.rings};'>
 			<Mouse_Responder name = 'rings'
-				zindex = {zindex}
 				cursor = {cursor}
 				width = {outer_diameter}
 				height = {outer_diameter}
-				center = {w.center_ofGraphSize}
+				zindex = {T_Layer.rings}
 				handle_isHit = {handle_isHit}
+				center = {w.center_ofGraphSize}
 				handle_mouse_state = {down_up_closure}>
 				<svg class = 'rings-svg'
 					viewBox = {viewBox}>
@@ -278,4 +266,16 @@
 			</Mouse_Responder>
 		</div>
 	{/if}
+	<div
+		class = 'paging-arcs'
+		bind:this = {pagingArcs}
+		style = 'z-index:{T_Layer.paging};'>
+		{#each ux.g_radialGraph.g_clusters as g_cluster}
+			{#if !!g_cluster && (g_cluster.widgets_shown > 0)}
+				<Radial_ArcSlider
+					color = {color}
+					g_cluster = {g_cluster}/>
+			{/if}
+		{/each}
+	</div>
 {/key}

@@ -114,7 +114,7 @@
 				style='
 					height: 100%;
 					position: fixed;
-					z-index: {T_Layer.backmost};
+					z-index: {T_Layer.common};
 					left: {$w_show_details ? k.width_details : 0}px;'>
 				{#key $w_id_popupView}
 					{#if $w_id_popupView == T_Control.builds}

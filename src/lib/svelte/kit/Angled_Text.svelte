@@ -4,6 +4,7 @@
 	import { onMount } from 'svelte';
 	export let background_color = k.color_background;
 	export let font_family = $w_thing_fontFamily;
+	export let zindex = T_Layer.paging;
 	export let center = Point.zero;
 	export let font_size = '0.7em';
 	export let text = k.space;
@@ -16,10 +17,10 @@
 
 <div class='angled-text'
 	style='
+		z-index: {zindex};
 		top: {center.y}px;
 		left: {center.x}px;
 		position: absolute;
-		z-index: {T_Layer.backmost};
 		transform: translate(-50%, -50%) rotate({angleDeg}deg);'>
 	<span class='text'
 		style='

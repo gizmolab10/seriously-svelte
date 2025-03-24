@@ -14,11 +14,13 @@
 	const radius = $w_ring_rotation_radius + offset;
 	const viewBox=`${-offset} ${-offset} ${radius * 2} ${radius * 2}`;
 	let origin = w.center_ofGraphSize.offsetBy(Point.square(-radius));
+	let text_background_color = $w_background_color;
 	let mouse_up_count = $w_count_mouse_up;
 	let arc_wrapper!: Svelte_Wrapper;
 	let fork_stroke_color = color;
-	let arc_stroke_color = color;
 	let thumb_fill_color = color;
+	let arc_stroke_color = color;
+	let arc_fill_color = color;
 	let arc_slider_path;
 	let arc_slider;
 	let thumb_path;
@@ -48,7 +50,7 @@
 	});
 
 	$: {
-		const _ = $w_g_active_cluster;
+		const _ = $w_g_active_cluster + $w_background_color;
 		update_colors();
 	}
 
@@ -70,9 +72,11 @@
 	}
 
 	function update_colors() {
+		arc_fill_color = $w_background_color;	// no effect because z-level not high enough
 		arc_stroke_color = u.opacitize(color, 0.4);
 		fork_stroke_color = u.opacitize(color, 0.3);
 		thumb_fill_color = u.opacitize(color, ux.s_ring_rotation.isActive ? 0.15 : g_cluster.s_paging_rotation.thumb_opacity);
+		text_background_color = !ux.s_ring_resizing.isHovering ? $w_background_color : u.opacitize(color, ux.s_ring_resizing.fill_opacity);
 	}
 
 	// function update_colors() {
@@ -110,16 +114,16 @@
 		width = {radius * 2}
 		height = {radius * 2}
 		name = {g_cluster.name}
-		zindex = {T_Layer.backmost}
+		zindex = {T_Layer.paging}
 		cursor = {k.cursor_default}
 		handle_isHit = {handle_isHit}
 		center = {w.center_ofGraphSize}
 		handle_mouse_state = {hover_closure}>
 		<svg class = 'svg-arc-slider' viewBox = {viewBox}>
 			<path
-				fill = transparent
 				stroke-width = 0.5
 				id = 'path-arc-slider'
+				fill = {arc_fill_color}
 				stroke = {arc_stroke_color}
 				bind:this = {arc_slider_path}/>
 			<path
@@ -131,17 +135,18 @@
 			{#if g_cluster.isPaging && g_cluster.widgets_shown > 1}
 				<path
 					id = {thumb_name}
-					fill = {thumb_fill_color}
-					bind:this = {thumb_path}/>
+					bind:this = {thumb_path}
+					fill = {thumb_fill_color}/>
 			{/if}
 		</svg>
 	</Mouse_Responder>
 </div>
 <Angled_Text
+	zindex = {T_Layer.paging}
 	text = {g_cluster.cluster_title}
 	center = {g_cluster.label_center}
 	font_size = {k.small_font_size}px
 	font_family = {$w_thing_fontFamily}
-	background_color = {$w_background_color}
+	background_color = {text_background_color}
 	angle = {g_cluster.g_sliderArc.label_text_angle}
 	color = {$w_ancestry_focus.thing?.color ?? k.thing_color_default}/>

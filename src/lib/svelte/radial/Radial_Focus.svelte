@@ -7,7 +7,7 @@
 	import { w_background_color } from '../../ts/common/Stores';
 	import Widget_Title from '../widget/Widget_Title.svelte';
 	import { onMount } from 'svelte';
-	const height = k.row_height + 10;
+	const height = k.row_height + 1;
 	const fontSize = `{k.font_size}px`;
 	const es_title = ux.s_element_for($w_ancestry_focus, T_Element.radial_focus, k.empty);
 	let svg_strokeColor = 'transparent';
@@ -16,6 +16,7 @@
 	let origin_ofWidget = Point.zero;
 	let center_ofBorder = Point.zero;
 	let origin_ofTitle = Point.zero;
+	let size_ofBorder = Size.zero;
 	let svg_dasharray = '';
 	let width_ofTitle = 0;
 	let focus;
@@ -64,11 +65,12 @@
 
 	function update() {
 		width_ofTitle = ($w_ancestry_focus?.thing?.titleWidth ?? 0);
-		const x = -6 - (width_ofTitle / 2);
-		const y = 1 - k.dot_size;
-		origin_ofTitle = Point.x(14);
+		const x = -9 - (width_ofTitle / 2);
+		const y = -11;
+		origin_ofTitle = new Point(16, -2);
 		origin_ofWidget = w.center_ofGraphSize.offsetByXY(x, y);
-		center_ofBorder = new Point(width_ofTitle + 19, height).dividedInHalf;
+		size_ofBorder = new Size(width_ofTitle - 6, k.row_height);
+		center_ofBorder = new Point(width_ofTitle + 15, height).dividedInHalf;
 	}
 
 	function update_svg() {
@@ -87,16 +89,16 @@
 	style='
 		position : absolute;
 		height : {height}px;
-		width : {width_ofTitle}px;
+		width : {width_ofTitle + 15}px;
 		top : {origin_ofWidget.y}px;
-		z-index : {T_Layer.backmost};
+		z-index : {T_Layer.widgets};
 		left : {origin_ofWidget.x}px;'>
 		<Mouse_Responder
 			height = {height}
-			width = {width_ofTitle}
 			center = {center_ofBorder}
-			zindex = {T_Layer.backmost}
+			zindex = {T_Layer.widgets}
 			cursor = {k.cursor_default}
+			width = {width_ofTitle + 15}
 			name = 'radial-focus-border'
 			handle_isHit = {() => false}
 			handle_mouse_state = {debug_closure}>
@@ -104,18 +106,16 @@
 				<svg
 					class='radial-focus-svg'
 					style='
-						top : -2.7px;
-						left : -13px;
 						height : {height}px;
 						position : absolute;
-						width : {width_ofTitle + 40}px;'>
+						width : {width_ofTitle + 15}px;'>
 					<path
 						stroke-width = '0.8'
 						stroke = {svg_strokeColor}
 						class = 'radial-focus-path'
 						fill = {$w_background_color}
 						stroke-dasharray = {svg_dasharray}
-						d = {svgPaths.oblong(center_ofBorder, new Size(width_ofTitle - 6, k.row_height))}/>
+						d = {svgPaths.oblong(center_ofBorder, size_ofBorder)}/>
 				</svg>
 			{/key}
 		</Mouse_Responder>

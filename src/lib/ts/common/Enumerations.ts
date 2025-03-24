@@ -153,7 +153,7 @@ export enum T_Layer {	// DO NOT change the order
 	common,
 	paging,
 	rings,
-	backmost,
+	necklace,
 	lines,
 	widgets,
 	dots,
