@@ -17,10 +17,10 @@
     onMount(() => {
         d3.select(svg)
             .append('path')
-            .attr('class', `${name}`)
-            .attr('stroke', stroke)
             .attr('fill', fill)
+            .attr('stroke', stroke)
             .attr('stroke-width', 1)
+            .attr('class', `${name}`)
             .attr('shape-rendering', 'geometricPrecision') // anti-alias;
             .attr('d', svgPath);
     })
@@ -29,10 +29,10 @@
         if (!!fill) {
             d3.select(svg)
                 .select('path')
-                .attr('class', `${name}-path`)
-                .attr('stroke', stroke)
                 .attr('fill', fill)
+                .attr('stroke', stroke)
                 .attr('stroke-width', 1)
+                .attr('class', `${name}-path`)
                 .attr('shape-rendering', 'geometricPrecision') // anti-alias
                 .attr('d', svgPath);
             svg = svg;
@@ -47,6 +47,8 @@
     height={height}px
     viewBox='{left} {top} {width} {height}'
     style='
+        top: 0px;
+        left: 0px;
         z-index: {zindex};
         position: {position};
         shape-rendering: geometricPrecision;'/>

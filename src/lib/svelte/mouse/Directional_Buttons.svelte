@@ -5,7 +5,7 @@
     export let display;
     export let hit;
     const buttonSize = 20;
-    const origin = new Point(26, 27);
+    const origin = new Point(32, 37);
     const offsetY = buttonSize / 2 - 1;
 	let directionals_rebuilds = 0;
 

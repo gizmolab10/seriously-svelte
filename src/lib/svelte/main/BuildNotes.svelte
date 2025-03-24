@@ -1,6 +1,7 @@
 <script lang='ts'>
 	import Directional_Buttons from '../mouse/Directional_Buttons.svelte';
 	import { k, builds, T_Layer } from '../../ts/common/Global_Imports';
+	import { w_background_color } from '../../ts/common/Stores';
 	import { w_id_popupView } from '../../ts/common/Stores';
 	import Close_Button from '../mouse/Close_Button.svelte';
 	import { onMount } from 'svelte';
@@ -35,7 +36,7 @@
 		}
 	}
 
-	function directional_hit_handler(pointsUp, isLong) {
+	function handle_hit_onDirectionals(pointsUp, isLong) {
 		if (isLong) {
 			notesIndex = pointsUp ? 0 : notesLimit - 10;
 		} else {			
@@ -87,10 +88,11 @@
 
 <svelte:document on:keydown={handle_key_down} />
 <div class='notes-modal-overlay'>
-	<div class='notes-modal-content'>
+	<div class='notes-modal-content'
+		style='background-color:{$w_background_color}'>
 		<div class='top-bar'>
 			{#key notes}
-				<Directional_Buttons hit={directional_hit_handler} display={display}/>
+				<Directional_Buttons hit={handle_hit_onDirectionals} display={display}/>
 			{/key}
 			<div class='title'>{title}</div>
 		</div>

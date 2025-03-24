@@ -79,6 +79,7 @@
 		height={height}
 		zindex={zindex}
 		center={center}
+		detect_longClick={true}
 		handle_mouse_state={button_closure}>
 		<button class='button' id={'button-for-' + name} style={currentStyle}>
 			<slot></slot>

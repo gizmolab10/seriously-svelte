@@ -9,7 +9,9 @@ export default class Mouse_Timer {
 	mouse_longClick_timer!: null | number | NodeJS.Timeout;
 	mouse_doubleClick_timer!: null | number | NodeJS.Timeout;
 
-	get hasTimer(): boolean { return !!this.mouse_doubleClick_timer || !!this.mouse_longClick_timer; }
+	get hasTimer(): boolean {
+		return !!this.mouse_doubleClick_timer || !!this.mouse_longClick_timer;
+	}
 
 	reset() {	// tear down
 		if (!!this.mouse_doubleClick_timer) {
@@ -24,11 +26,11 @@ export default class Mouse_Timer {
 	
 	setTimeout(type: T_Timer, callback: (args: void) => void, ms?: number) {
 		if (type == T_Timer.long && !this.mouse_longClick_timer) {
-			setTimeout(() => {
+			this.mouse_longClick_timer = setTimeout(() => {
 				callback();
 			}, k.threshold_longClick);
 		} else if (type == T_Timer.double && !this.mouse_doubleClick_timer) {
-			setTimeout(() => {
+			this.mouse_doubleClick_timer = setTimeout(() => {
 				callback();
 			}, k.threshold_doubleClick);
 		}

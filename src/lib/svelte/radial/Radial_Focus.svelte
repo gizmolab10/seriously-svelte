@@ -1,10 +1,9 @@
 <script lang='ts'>
 	import { c, k, ux, w, Size, Point, debug, signals, svgPaths, Svelte_Wrapper } from '../../ts/common/Global_Imports';
+	import { w_background_color, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { w_color_trigger, w_s_title_edit, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { T_Tool, T_Layer, T_Element, T_SvelteComponent } from '../../ts/common/Enumerations';
-	import { w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import { w_background_color } from '../../ts/common/Stores';
 	import Widget_Title from '../widget/Widget_Title.svelte';
 	import { onMount } from 'svelte';
 	const height = k.row_height + 1;
