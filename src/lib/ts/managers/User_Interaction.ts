@@ -1,8 +1,9 @@
 import { S_Mouse, S_Widget, S_Element, S_Expansion, S_Rotation, S_Thing_Pages } from '../common/Global_Imports';
 import { k, w, debug, signals, wrappers, Ancestry, Mouse_Timer } from '../common/Global_Imports';
 import { T_Element, T_RingZone, T_GraphMode, T_SvelteComponent } from '../common/Enumerations';
-import { w_t_graphMode, w_ancestry_focus, w_ring_rotation_radius } from '../common/Stores';
+import { w_ring_rotation_radius, w_mouse_location_scaled } from '../common/Stores';
 import { G_Segment, G_TreeGraph, G_RadialGraph } from '../common/Global_Imports';
+import { w_t_graphMode, w_ancestry_focus } from '../common/Stores';
 import Identifiable from '../data/runtime/Identifiable';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
@@ -66,9 +67,11 @@ export default class User_Interaction {
 
 	get ring_zone_atMouseLocation(): T_RingZone {
 		let ring_zone = T_RingZone.miss;
+		const scaled = get(w_mouse_location_scaled);
 		const mouse_vector = w.mouse_vector_ofOffset_fromGraphCenter();
 		const widgets = wrappers.wrappers_ofType_atMouseLocation(T_SvelteComponent.widget);
-		if (!!mouse_vector && widgets.length == 0) {
+		const insideGraphZone = scaled.x > k.width_details && scaled.y > k.height_banner + k.height_breadcrumbs;
+		if (!!mouse_vector && widgets.length == 0 && insideGraphZone) {
 			const g_cluster = this.g_radialGraph.g_cluster_atMouseLocation;
 			const inner = get(w_ring_rotation_radius);
 			const distance = mouse_vector.magnitude;

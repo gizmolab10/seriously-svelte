@@ -28,6 +28,16 @@ export class G_Window {
 		this.renormalize_user_graph_offset();	// must be called after apply scale (which fubars offset)
 	}
 
+	get mouse_vector_inGraphRect(): Point {
+		let mouse_vector = Point.zero;
+		const graph_rect = get(w_graph_rect);
+		const mouse_location = get(w_mouse_location_scaled);
+		if (!!mouse_location && !! graph_rect) {
+			mouse_vector = graph_rect.origin.vector_to(mouse_location);
+		}
+		return mouse_vector;
+	}
+
 	mouse_vector_ofOffset_fromGraphCenter(offset: Point = Point.zero): Point | null {
 		const mouse_location = get(w_mouse_location_scaled);
 		if (!!mouse_location) {
