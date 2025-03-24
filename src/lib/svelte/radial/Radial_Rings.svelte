@@ -90,12 +90,12 @@
 		if (!!resizingPath) {
 			resizingPath.setAttribute('fill', u.opacitize(color, ux.s_ring_resizing.fill_opacity));
 			resizingPath.setAttribute('stroke', u.opacitize(color, ux.s_ring_resizing.stroke_opacity));
-			resizingPath.setAttribute('d', svgPaths.annulus(center, middle_radius, ring_width, Point.square(ring_width)));
+			resizingPath.setAttribute('d', svgPaths.circle(center.offsetEquallyBy(44), $w_ring_rotation_radius, true));
 		}
 		if (!!rotationPath) {
 			rotationPath.setAttribute('fill', u.opacitize(color, ux.s_ring_rotation.fill_opacity * (ux.s_ring_resizing.isActive ? 0 : 1)));
 			rotationPath.setAttribute('stroke', u.opacitize(color, ux.s_ring_rotation.stroke_opacity * (ux.s_ring_resizing.isActive ? 0 : 1)));
-			rotationPath.setAttribute('d', svgPaths.circle(center.offsetEquallyBy(44), $w_ring_rotation_radius, true));
+			rotationPath.setAttribute('d', svgPaths.annulus(center, middle_radius, ring_width, Point.square(ring_width)));
 		}
 	}
 

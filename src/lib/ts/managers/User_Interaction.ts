@@ -70,7 +70,7 @@ export default class User_Interaction {
 		const scaled = get(w_mouse_location_scaled);
 		const mouse_vector = w.mouse_vector_ofOffset_fromGraphCenter();
 		const widgets = wrappers.wrappers_ofType_atMouseLocation(T_SvelteComponent.widget);
-		const insideGraphZone = scaled.x > k.width_details && scaled.y > k.height_banner + k.height_breadcrumbs;
+		const insideGraphZone = !!scaled && scaled.x > k.width_details && scaled.y > k.height_banner + k.height_breadcrumbs;
 		if (!!mouse_vector && widgets.length == 0 && insideGraphZone) {
 			const g_cluster = this.g_radialGraph.g_cluster_atMouseLocation;
 			const inner = get(w_ring_rotation_radius);
@@ -81,11 +81,11 @@ export default class User_Interaction {
 			const thumb = inner + thin;
 			if (!!distance && distance <= rotate) {
 				if (distance < inner) {
-					ring_zone = T_RingZone.rotate;
+					ring_zone = T_RingZone.resize;
 				} else if (distance < thumb && !!g_cluster && g_cluster.thumb_isHit) {
 					ring_zone = T_RingZone.paging;
 				} else {
-					ring_zone = T_RingZone.resize;
+					ring_zone = T_RingZone.rotate;
 				}
 			}
 			debug.log_hover(` ring zone ${ring_zone} ${distance.asInt()}`);
