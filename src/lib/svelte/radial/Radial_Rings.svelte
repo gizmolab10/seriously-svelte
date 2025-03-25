@@ -1,10 +1,10 @@
 <script lang='ts'>
-	import { k, u, ux, w, Thing, Point, Angle, debug, T_Layer } from '../../ts/common/Global_Imports';
+	import { k, ux, w, Thing, Point, Angle, debug, colors, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
 	import { w_color_trigger, w_ancestry_focus, w_s_title_edit } from '../../ts/common/Stores';
-	import { signals, svgPaths, T_RingZone, databases } from '../../ts/common/Global_Imports';
 	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/common/Stores';
 	import { w_graph_rect, w_mouse_location_scaled } from '../../ts/common/Stores';
 	import { w_count_mouse_up, w_g_active_cluster } from '../../ts/common/Stores';
+	import { T_Layer, T_RingZone } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/runtime/Identifiable';
 	import Radial_ArcSlider from './Radial_ArcSlider.svelte';
@@ -88,13 +88,13 @@
 			reticlePath. setAttribute('d', svgPaths.t_cross(middle_radius * 2, -2));
 		}
 		if (!!resizingPath) {
-			resizingPath.setAttribute('fill', u.opacitize(color, ux.s_ring_resizing.fill_opacity));
-			resizingPath.setAttribute('stroke', u.opacitize(color, ux.s_ring_resizing.stroke_opacity));
+			resizingPath.setAttribute('fill', colors.opacitize(color, ux.s_ring_resizing.fill_opacity));
+			resizingPath.setAttribute('stroke', colors.opacitize(color, ux.s_ring_resizing.stroke_opacity));
 			resizingPath.setAttribute('d', svgPaths.circle(center.offsetEquallyBy(44), $w_ring_rotation_radius, true));
 		}
 		if (!!rotationPath) {
-			rotationPath.setAttribute('fill', u.opacitize(color, ux.s_ring_rotation.fill_opacity * (ux.s_ring_resizing.isActive ? 0 : 1)));
-			rotationPath.setAttribute('stroke', u.opacitize(color, ux.s_ring_rotation.stroke_opacity * (ux.s_ring_resizing.isActive ? 0 : 1)));
+			rotationPath.setAttribute('fill', colors.opacitize(color, ux.s_ring_rotation.fill_opacity * (ux.s_ring_resizing.isActive ? 0 : 1)));
+			rotationPath.setAttribute('stroke', colors.opacitize(color, ux.s_ring_rotation.stroke_opacity * (ux.s_ring_resizing.isActive ? 0 : 1)));
 			rotationPath.setAttribute('d', svgPaths.annulus(center, middle_radius, ring_width, Point.square(ring_width)));
 		}
 	}

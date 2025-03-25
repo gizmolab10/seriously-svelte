@@ -10,6 +10,7 @@ export enum T_Preference {
 	relationships = 'relationships',
 	detail_types  = 'detail_types',
 	show_details  = 'show_details',
+	tree_choices  = 'tree_choices',
 	ring_radius	  = 'ring_radius',
 	user_offset	  = 'user_offset',
 	background	  = 'background',

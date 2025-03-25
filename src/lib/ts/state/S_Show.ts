@@ -6,8 +6,8 @@ import { get } from 'svelte/store';
 
 export class S_Show {
 	debug_cursor = false;
-	t_trees		 = false;	// future feature: parent trees, ...
 	traits		 = false;
+	tree_choices = false;	// future feature: parent trees, ...
 	t_info		 = T_Info.focus;
 
 	queryStrings_apply() {
@@ -26,6 +26,10 @@ export class S_Show {
 					this.traits = flag;
 					p.write_key(T_Preference.traits, flag);
 					break;
+				case 'tree_choices':
+					this.tree_choices = flag;
+					p.write_key(T_Preference.tree_choices, flag);
+					break;
 			}
 		}
 	}
@@ -38,6 +42,7 @@ export class S_Show {
 	restore_state() {
 		this.traits = p.read_key(T_Preference.traits) ?? false;
 		this.t_info = p.read_key(T_Preference.info) ?? T_Info.focus;
+		this.tree_choices = p.read_key(T_Preference.tree_choices) ?? false;
 		w_show_details.set(p.read_key(T_Preference.show_details) ?? false);
 		w_t_treeMode.set(p.read_key(T_Preference.tree) ?? T_Hierarchy.children);
 	}

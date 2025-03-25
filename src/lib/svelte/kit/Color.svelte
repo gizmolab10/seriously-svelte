@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, ux, Point, Thing, T_Layer, signals } from '../../ts/common/Global_Imports';
+	import { k, ux, Point, Thing, T_Layer, colors, signals } from '../../ts/common/Global_Imports';
 	// import type { Handle_Result } from '../../ts/common/Types';
 	import { w_color_trigger } from '../../ts/signals/Stores';
 	import ColorPicker from 'svelte-awesome-color-picker';
@@ -11,14 +11,14 @@
 	const pickerSize = 122;
 	const selectorSize = k.dot_size + 1;
 	let color = color_closure(null);
-	let colorAsHEX = u.colorToHex(color);
+	let colorAsHEX = colors.colorToRGB(color);
 
 	async function handleColorChange(event) {
 		event.preventDefault();
 		const hex_color = event.detail.hex;
 		if (color != hex_color) {
 			color = hex_color;
-			colorAsHEX = u.colorToHex(color);
+			colorAsHEX = colors.colorToRGB(color);
 			color_closure(color)
 		}
 	}

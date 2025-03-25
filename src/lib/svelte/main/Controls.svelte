@@ -20,7 +20,7 @@
 	let width = w.windowSize.width - 20;
 	let displayName = k.empty;
 	let displayName_width = 0;
-	let displayName_x = 200;
+	let displayName_x = 220;
 
 	const t_controls = [	// in order of importance on mobile
 		T_Control.details,
@@ -39,10 +39,13 @@
 	}
 
 	$: {
+		const _ = $w_t_graphMode;
 		const h = $w_hierarchy;
-		displayName = h.db.displayName
+		const needsExtra = ux.inTreeMode && show.tree_choices;
+		const extra = needsExtra ? 94 : 0;
+		displayName = h.db.displayName;
 		displayName_width = u.getWidthOf(displayName);
-		displayName_x = (width - displayName_width) / 2;
+		displayName_x = extra + (width - displayName_width) / 2;
 	}
 
 	function toggle_show_details() {
@@ -50,19 +53,19 @@
 		signals.signal_reposition_widgets_fromFocus();
 	}
 
-	function next_graph_relations() {
+	function next_graph_tree_choices() {
 		switch ($w_t_treeMode) {
-			case T_Hierarchy.parents:  return T_Hierarchy.related;
 			case T_Hierarchy.children: return T_Hierarchy.parents;
-			default:				 return T_Hierarchy.children;
+			case T_Hierarchy.parents:  return T_Hierarchy.related;
+			default:				   return T_Hierarchy.children;
 		}
 	}
 
 	function selection_closure(name: string, types: Array<string>) {
 		const type = types[0];	// only ever has one element
 		switch (name) {
-			case 'graph':	  $w_t_graphMode = type as T_GraphMode;	break;
-			case 'relations': $w_t_treeMode  = type as T_Hierarchy;	break;
+			case 'graph':		 $w_t_graphMode = type as T_GraphMode;	break;
+			case 'tree_choices': $w_t_treeMode  = type as T_Hierarchy;	break;
 		}
 	}
 
@@ -121,14 +124,14 @@
 					selected={[$w_t_graphMode]}
 					titles={[T_GraphMode.tree, T_GraphMode.radial]}
 					selection_closure={(titles) => selection_closure('graph', titles)}/>
-				{#if ux.inTreeMode && show.t_trees}
+				{#if ux.inTreeMode && show.tree_choices}
 					{#key $w_t_treeMode}
 						<Segmented
 							name='tree'
 							origin={Point.x(114)}
 							selected={[$w_t_treeMode]}
 							titles={[T_Hierarchy.children, T_Hierarchy.parents, T_Hierarchy.related]}
-							selection_closure={(titles) => selection_closure('relations', titles)}/>
+							selection_closure={(titles) => selection_closure('tree_choices', titles)}/>
 					{/key}
 				{/if}
 			{/key}

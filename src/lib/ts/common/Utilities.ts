@@ -18,7 +18,6 @@ export class Utilities {
 	onNextCycle_apply(closure: () => {})								 { setTimeout(() => { closure(); }, 0); }
 	location_ofMouseEvent(event: MouseEvent):					   Point { return new Point(event.clientX, event.clientY); }
 	getWidthOf(s: string):										  number { return this.getWidth_ofString_withSize(s, `${k.font_size}px`); }
-	opacitize(color: string, amount: number):					  string { return transparentize(color, 1 - amount); }
 	quadrant_ofAngle(angle: number):						  T_Quadrant { return new Angle(angle).quadrant_ofAngle; }
 	concatenateArrays(a: Array<any>, b: Array<any>):		  Array<any> { return [...a, ...b]; }
 	strip_falsies(array: Array<any>):						  Array<any> { return array.filter(a => !!a); }
@@ -236,47 +235,6 @@ export class Utilities {
 			}
 		}
 		return low;
-	}
-
-	luminance(r: number, g: number, b: number, a: number ): number {
-		const linearize = (c: number) => {
-			const s = c / 255;
-			return s <= 0.04045 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
-		};
-		const R = linearize(r);
-		const G = linearize(g);
-		const B = linearize(b);
-		const relative = 0.2126 * R + 0.7152 * G + 0.0722 * B;		// according to WCAG
-		return a * relative + (1 - a) * 1;							// assume white background with luminance = 1
-	}
-
-	colorToHex(color: string): string {
-		// Create a dummy element to apply the color and read it back
-		const dummyElement = document.createElement("div");
-		dummyElement.style.color = color;
-		document.body.appendChild(dummyElement);
-
-		// Use getComputedStyle to get the color value in rgb/rgba format
-		const computedColor = getComputedStyle(dummyElement).color;
-		document.body.removeChild(dummyElement);
-
-		// Convert RGB/RGBA string to hex
-		const rgb = computedColor.match(/\d+/g); // Extract numerical values for RGB
-
-		if (!rgb) {
-			throw new Error("Invalid color input");
-		}
-
-		let hexColor = "#";
-		for (let i = 0; i < 3; i++) { // Only need RGB parts for hex
-			let hexComponent = parseInt(rgb[i]).toString(16);
-			if (hexComponent.length === 1) {
-				hexComponent = "0" + hexComponent; // Padding
-			}
-			hexColor += hexComponent;
-		}
-
-		return hexColor;
 	}
 
 	static readonly JSON: unique symbol;

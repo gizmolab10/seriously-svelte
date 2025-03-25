@@ -1,5 +1,6 @@
 import { builds } from './Builds';
 import { show } from '../state/S_Show';
+import { colors } from '../common/Colors';
 import { files } from '../managers/Files';
 import { Direction } from '../common/Angle';
 import { Rect, Size, Point } from './Geometry';
@@ -68,11 +69,11 @@ export {
 	interact, transparentize,
 	wrappers, Seriously_Range,
 	Rect, Size, Point, svgPaths,
-	show, files, builds, signals,
 	T_Layer, T_Predicate, T_Create,
 	Ancestry, Hierarchy, databases,
 	debug, Debug, T_Debug, ErrorTrace,
 	T_RingZone, T_Oblong, T_Alteration,
+	show, files, builds, colors, signals,
 	Angle, Direction, T_Quadrant, T_Orientation,
 	T_Element, Svelte_Wrapper, T_SvelteComponent,
 	S_Paging, S_Rotation, S_Expansion, S_Thing_Pages,

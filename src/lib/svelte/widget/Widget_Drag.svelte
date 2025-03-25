@@ -141,10 +141,10 @@
 	{#if es_drag}
 		<Mouse_Responder
 			center={center}
+			name={es_drag.name}
 			width={capture_size}
 			height={capture_size}
 			detect_longClick={true}
-			name={es_drag.name}
 			handle_mouse_state={handle_up_long_hover}>
 			<button class={name}
 				bind:this={dotDrag}
@@ -156,12 +156,13 @@
 					height:{size}px;
 					color:transparent;
 					position:absolute;
-					z-index:{T_Layer.dots};'>
+					z-index:{T_Layer.dots};
+					background-color:transparent;'>
 				{#key redraws}
 					<div id={'div-for-' + name}
 						style='
-							left:0px;
 							top:0px;
+							left:0px;
 							width:{size}px;
 							height:{size}px;
 							color:transparent;

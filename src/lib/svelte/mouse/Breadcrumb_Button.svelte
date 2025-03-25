@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { w_color_trigger, w_background_color, w_thing_fontFamily, w_ancestry_focus } from '../../ts/common/Stores';
-	import { k, u, ux, Point, Thing, signals, databases } from '../../ts/common/Global_Imports';
+	import { k, u, ux, Point, Thing, colors, signals, databases } from '../../ts/common/Global_Imports';
 	import { T_Tool, T_Element, S_Element } from '../../ts/common/Global_Imports';
 	import Button from './Button.svelte';
 	import { onMount } from 'svelte';
@@ -37,7 +37,7 @@
 	function updateColors() {
 		if (!!thing) {
 			if ($w_ancestry_focus.id_thing == thing.id) {
-				colorStyles = `background-color: ${u.opacitize(thing.color, 0.85)}; color: ${$w_background_color}`;
+				colorStyles = `background-color: ${colors.opacitize(thing.color, 0.85)}; color: ${$w_background_color}`;
 			} else {
 				colorStyles = `background-color: ${$w_background_color}; color: ${thing.color}`;
 			}

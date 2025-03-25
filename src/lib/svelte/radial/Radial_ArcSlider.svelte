@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, k, u, ux, w, show, Rect, Size, Point, debug, Angle, signals } from '../../ts/common/Global_Imports';
+	import { c, k, ux, w, show, Rect, Size, Point, debug, Angle, colors, signals } from '../../ts/common/Global_Imports';
 	import { w_background_color, w_thing_fontFamily, w_ring_rotation_radius } from '../../ts/common/Stores';
 	import { T_Layer, G_Cluster, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_count_mouse_up, w_ancestry_focus, w_g_active_cluster } from '../../ts/common/Stores';
@@ -73,16 +73,16 @@
 
 	function update_colors() {
 		arc_fill_color = $w_background_color;	// no effect because z-level not high enough
-		arc_stroke_color = u.opacitize(color, 0.4);
-		fork_stroke_color = u.opacitize(color, 0.3);
-		thumb_fill_color = u.opacitize(color, ux.s_ring_rotation.isActive ? 0.15 : g_cluster.s_paging_rotation.thumb_opacity);
-		text_background_color = !ux.s_ring_resizing.isHovering ? $w_background_color : u.opacitize(color, ux.s_ring_resizing.fill_opacity);
+		arc_stroke_color = colors.opacitize(color, 0.4);
+		fork_stroke_color = colors.opacitize(color, 0.3);
+		thumb_fill_color = colors.opacitize(color, ux.s_ring_rotation.isActive ? 0.15 : g_cluster.s_paging_rotation.thumb_opacity);
+		text_background_color = !ux.s_ring_resizing.isHovering ? $w_background_color : colors.opacitize(color, ux.s_ring_resizing.fill_opacity);
 	}
 
 	// function update_colors() {
 	// 	arc_slider_path?.setAttribute('stroke', 0.4);
-	// 	fork_path?.setAttribute('stroke', u.opacitize(color, 0.3));
-	// 	thumb_path?.setAttribute('stroke', u.opacitize(color, ux.s_ring_rotation.isActive ? 0.15 : g_cluster.s_paging_rotation.thumb_opacity));
+	// 	fork_path?.setAttribute('stroke', colors.opacitize(color, 0.3));
+	// 	thumb_path?.setAttribute('stroke', colors.opacitize(color, ux.s_ring_rotation.isActive ? 0.15 : g_cluster.s_paging_rotation.thumb_opacity));
 	// }
 
 	function reposition() {

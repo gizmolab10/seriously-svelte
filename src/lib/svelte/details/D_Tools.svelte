@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, k, u, ux, w, show, Rect, Size, Point, debug, signals } from '../../ts/common/Global_Imports';
+	import { c, k, u, ux, w, show, Rect, Size, Point, debug, colors, signals } from '../../ts/common/Global_Imports';
 	import { T_Tool, T_GraphMode, T_Layer, T_Element, T_Alteration } from '../../ts/common/Global_Imports';
 	import { svgPaths, databases, Direction, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { S_Mouse, S_Element, S_Alteration } from '../../ts/common/Global_Imports';
@@ -181,7 +181,7 @@
 			position:absolute;
 			z-index: {T_Layer.tools}'>
 			<Transparent_Circle
-				color_background={u.opacitize($w_background_color, 0.95)}
+				color_background={colors.opacitize($w_background_color, 0.95)}
 				center={getC(T_Tool.editingTools)}
 				radius={editingToolsRadius}
 				zindex={T_Layer.dots}

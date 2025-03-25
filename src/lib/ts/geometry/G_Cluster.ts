@@ -1,5 +1,5 @@
 import { G_Widget, G_ArcSlider, S_Paging, S_Rotation, T_Quadrant, T_GraphMode } from '../common/Global_Imports';
-import { k, u, ux, w, Point, Angle, debug, Ancestry, Predicate } from '../common/Global_Imports';
+import { k, u, ux, w, Point, Angle, debug, colors, Ancestry, Predicate } from '../common/Global_Imports';
 import { w_ring_rotation_radius } from '../common/Stores';
 import { w_graph_rect, w_ancestry_focus } from '../common/Stores';
 import { get } from 'svelte/store';
@@ -60,7 +60,7 @@ export default class G_Cluster {
 		this.widgets_shown = this.ancestries.length;
 		this.isPaging = this.widgets_shown < this.total_widgets;
 		this.center = get(w_graph_rect).size.asPoint.dividedInHalf;
-		this.color = u.opacitize(get(w_ancestry_focus).thing?.color ?? this.color, 0.2);
+		this.color = colors.opacitize(get(w_ancestry_focus).thing?.color ?? this.color, 0.2);
 		this.update_angle_ofFork();
 		this.update_widget_geometry();
 		this.update_label_geometry();
