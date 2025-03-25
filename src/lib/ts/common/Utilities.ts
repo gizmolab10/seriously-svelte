@@ -249,7 +249,6 @@ export class Utilities {
 			'isGrabbed',
 			'bulkRootID',
 			't_database',
-			'oneAncestry',
 			'persistence',
 			'selectionRange',
 		];
