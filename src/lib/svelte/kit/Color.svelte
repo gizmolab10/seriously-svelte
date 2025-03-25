@@ -11,14 +11,14 @@
 	const pickerSize = 122;
 	const selectorSize = k.dot_size + 1;
 	let color = color_closure(null);
-	let colorAsHEX = colors.colorToRGB(color);
+	let colorAsHEX = colors.color_toHex(color);
 
 	async function handleColorChange(event) {
 		event.preventDefault();
 		const hex_color = event.detail.hex;
 		if (color != hex_color) {
 			color = hex_color;
-			colorAsHEX = colors.colorToRGB(color);
+			colorAsHEX = colors.color_toHex(color);
 			color_closure(color)
 		}
 	}

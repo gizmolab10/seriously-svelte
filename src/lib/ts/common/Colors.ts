@@ -5,6 +5,14 @@ export class Colors {
 	opacitize(color: string, amount: number): string {
 		return transparentize(color, 1 - amount);
 	}
+		
+	set_darkness_toColor(color: string, darkness: number): string | null {
+		const rgba = this.color_toRGBA(color);
+		if (!!rgba) {
+			return this.set_darkness_toRGBA(rgba, darkness);
+		}
+		return null
+	}
 	
 	darkerBy(color: string, ratio: number): string | null {
 		return this.adjust_luminance_byApplying(color, (lume => {
@@ -152,17 +160,22 @@ export class Colors {
 		return null;
 	}
 
+	set_darkness_toRGBA(rgba: RGBA, darkness: number): string | null {
+		const adjusted = this.adjust_RGBA_forDarkness(rgba, darkness);
+		const rgba_new = adjusted.result;
+		if (!adjusted.error && !!rgba_new) {
+			return this.RGBA_toHex(rgba_new);
+		}
+		return null
+	}
+
 	adjust_luminance_byApplying(color: string, closure: (lume: number) => number): string | null {
 		const rgba = this.color_toRGBA(color);
 		if (!!rgba) {
 			const lume = this.luminance_ofRGBA(rgba);
 			if (!!lume) {
 				const dark = closure(lume);
-				const adjusted = this.adjust_RGBA_forDarkness(rgba, dark);
-				const rgba_new = adjusted.result;
-				if (!adjusted.error && !!rgba_new) {
-					return this.RGBA_toHex(rgba_new);
-				}
+				return this.set_darkness_toRGBA(rgba, dark);
 			}
 		}
 		return null;
