@@ -20,7 +20,6 @@
 	}
 
 	function handle_colors(result: string | null): string | null {
-		console.log(result)
 		if (!result) {
 			return $w_background_color;
 		} else {

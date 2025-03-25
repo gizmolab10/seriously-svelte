@@ -12,8 +12,9 @@ import { get } from 'svelte/store';
 export type Relationships_ByHID = { [hid: Integer]: Array<Relationship> }
 
 export class Hierarchy {
-	private ancestry_byKind_andHash:{ [kind: string]: { [hash: Integer]: Ancestry } } = {};		// need for uniqueness
+	private ancestry_byKind_andHID: { [kind: string]: { [hash: Integer]: Ancestry } } = {};		// need for uniqueness
 	private predicate_byDirection: { [direction: number]: Array<Predicate> } = {};
+	private ancestries_byThingHID: { [thingHID: number]: Array<Ancestry> } = {};
 	private traits_byOwnerHID: { [ownerHID: Integer]: Array<Trait> } = {};
 	private relationship_byHID: { [hid: Integer]: Relationship } = {};
 	private predicate_byKind: { [kind: string]: Predicate } = {};
@@ -43,9 +44,6 @@ export class Hierarchy {
 
 	constructor(db: DBCommon) {
 		this.db = db;
-		signals.handle_rebuildGraph(0, (ancestry) => {
-			ancestry?.thing?.oneAncestries_clearAll_inSubtree();
-		});
 	}
 
 	static readonly ROOT: unique symbol;
@@ -770,15 +768,15 @@ export class Hierarchy {
 	static readonly ANCESTRIES: unique symbol;
 
 	ancestries_forget_all() {
-		this.ancestry_byKind_andHash = {};
 		this.ancestry_byHID = {};
+		this.ancestries_byThingHID = {};
+		this.ancestry_byKind_andHID = {};
 	}
 
 	ancestries_fullRebuild() {
 		const rootAncestry = this.rootAncestry;
 		this.ancestries_forget_all();
 		this.ancestry_remember(rootAncestry);
-		this.root?.oneAncestries_clearAll_inSubtree();		// recreate ancestries
 		signals.signal_rebuildGraph_from(rootAncestry);
 	}
 
@@ -811,24 +809,40 @@ export class Hierarchy {
 	}
 
 	static readonly ANCESTRY: unique symbol;
-
+	
 	ancestry_forHID(hid: Integer): Ancestry | null { return this.ancestry_byHID[hid] ?? null; }
+	ancestries_forThingHID(hid: Integer): Array<Ancestry> { return this.ancestries_byThingHID[hid] ?? []; }
 
 	ancestry_remember(ancestry: Ancestry) {
 		const hid = ancestry.hid;
-		let dict = this.ancestry_byKind_andHash[ancestry.kindPredicate] ?? {};
+		const thingHID = ancestry.thing?.hid;
+		let dict = this.ancestry_byKind_andHID[ancestry.kindPredicate] ?? {};
 		this.ancestry_byHID[hid] = ancestry;
 		dict[hid] = ancestry;
-		this.ancestry_byKind_andHash[ancestry.kindPredicate] = dict;
+		this.ancestry_byKind_andHID[ancestry.kindPredicate] = dict;
+		if (!!thingHID) {
+			const array = this.ancestries_forThingHID(thingHID);
+			if (!array.includes(ancestry)) {
+				array.push(ancestry);
+			}
+		}
 	}
 
 	ancestry_forget(ancestry: Ancestry | null) {
 		if (!!ancestry) {
 			const hid = ancestry.hid;
-			let dict = this.ancestry_byKind_andHash[ancestry.kindPredicate] ?? {};
+			const thingHID = ancestry.thing?.hid;
+			let dict = this.ancestry_byKind_andHID[ancestry.kindPredicate] ?? {};
 			delete this.ancestry_byHID[hid];
 			delete dict[hid];
-			this.ancestry_byKind_andHash[ancestry.kindPredicate] = dict;
+			this.ancestry_byKind_andHID[ancestry.kindPredicate] = dict;
+			if (!!thingHID) {
+				const array = this.ancestries_forThingHID(thingHID);
+				const index = array.indexOf(ancestry);
+				if (!!index) {
+					array.splice(index, 1);
+				}
+			}
 		}
 	}
 
@@ -895,7 +909,7 @@ export class Hierarchy {
 
 	ancestry_remember_createUnique(path: string = k.root_path, kindPredicate: string = T_Predicate.contains): Ancestry {
 		const hid = path.hash();
-		let dict = this.ancestry_byKind_andHash[kindPredicate] ?? {};
+		let dict = this.ancestry_byKind_andHID[kindPredicate] ?? {};
 		let ancestry = dict[hid];
 		if (!ancestry) {
 			ancestry = new Ancestry(this.db.t_database, path, kindPredicate);
@@ -1048,7 +1062,6 @@ export class Hierarchy {
 					this.relationship_remember(relationship);
 					debug.log_move(`relocate ${relationship.description}`)
 					const childAncestry = parentAncestry.uniquelyAppend_relationshipID(relationship!.id);
-					thing?.clear_oneAncestry();
 					childAncestry?.grabOnly();
 				}
 				this.rootAncestry.order_normalizeRecursive(true);

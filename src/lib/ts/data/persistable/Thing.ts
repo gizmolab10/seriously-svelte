@@ -9,7 +9,6 @@ import { get } from 'svelte/store';
 
 export default class Thing extends Persistable {
 	selectionRange = new Seriously_Range(0, 0);
-	_oneAncestry: Ancestry | null = null;
 	bulkRootID: string = k.empty;
 	title: string;
 	color: string;
@@ -27,6 +26,7 @@ export default class Thing extends Persistable {
 	get traits():				Array		 <Trait> { return get(w_hierarchy).traits_forOwnerHID(this.hid) ?? []; }
 	get parentIDs():			Array		<string> { return this.parents.map(t => t.id); }
 	get parentAncestries(): 	Array	  <Ancestry> { return this.parentAncestries_for(Predicate.contains); }
+	get ancestries():			Array	  <Ancestry> { return get(w_hierarchy).ancestries_forThingHID(this.hid); }
 	get relatedRelationships(): Array <Relationship> { return this.relationships_ofKind_forParents(T_Predicate.isRelated, false); }
 	get fields():		  		Dictionary  <string> { return { title: this.title, color: this.color, type: this.type }; }
 	get quest():					   string | null { return get(w_hierarchy).trait_forType_ownerHID(T_Trait.quest, this.hid)?.text ?? null; }
@@ -43,13 +43,6 @@ export default class Thing extends Persistable {
 	get hasParents():						 boolean { return this.hasParents_forKind(T_Predicate.contains); }
 	get isFocus():							 boolean { return (get(w_ancestry_focus).thing?.id ?? k.empty) == this.id; }
 	get hasRelated():						 boolean { return this.relatedRelationships.length > 0; }
-
-	get ancestries(): Array<Ancestry> {
-		return u.uniquely_concatenateArrays(
-			this.uniqueAncestries_for(Predicate.contains),
-			this.uniqueAncestries_for(Predicate.isRelated),
-		);
-	}
 
 	get parents_ofAllKinds(): Array<Thing> {
 		let parents: Array<Thing> = [];
@@ -129,6 +122,7 @@ export default class Thing extends Persistable {
 		return relationships;
 	}
 
+
 	remove_fromGrabbed_andExpanded_andResolveFocus() {
 		// called when this (thing) is being deleted
 		for (const ancestry of this.ancestries) {		// DO NOT REMOVE ANCESTRIES ???
@@ -136,7 +130,6 @@ export default class Thing extends Persistable {
 				ancestry.remove_fromGrabbed_andExpanded();
 			}
 		}
-		this.oneAncestry?.remove_fromGrabbed_andExpanded();
 		const focus = get(w_ancestry_focus);
 		if (focus.thing?.hid == this.hid) {
 			get(w_hierarchy).rootAncestry.becomeFocus();
@@ -158,35 +151,6 @@ export default class Thing extends Persistable {
 	}
 
 	static readonly ANCESTRIES: unique symbol;
-
-	clear_oneAncestry() { this._oneAncestry = null; }
-
-	get oneAncestry(): Ancestry | null {
-		// arbitrarily choose from more than one (if has more than one parent AND/OR one or more related)
-		let oneAncestry: Ancestry | null = null;
-		if (this.isRoot) {			// if root, use root ancestry
-			oneAncestry = get(w_hierarchy).rootAncestry;
-		} else {					// if not, use parent.oneAncestry and append id of forParents relationship
-			const relationships = this.relationships_ofKind_forParents(T_Predicate.contains, true);
-			if (relationships && relationships.length > 0) {
-				const relationship = relationships[0];
-				const parentAncestry = relationship.parent?.oneAncestry;
-				oneAncestry = parentAncestry?.uniquelyAppend_relationshipID(relationship.id) ?? null;
-			}
-		}
-		return oneAncestry;
-	}
-
-	oneAncestries_clearAll_inSubtree(visited: Array<string> = []) {
-		if (visited.includes(this.id)) {
-			debug.log_things(`oneAncestry repeated "${this.title}"`)
-		} else {
-			const oneAncestry = this.oneAncestry;
-			if (!!oneAncestry) {
-				oneAncestry.children.map(child => child.oneAncestries_clearAll_inSubtree([...visited, this.id]));
-			}
-		}
-	}
 
 	uniqueAncestries_for(predicate: Predicate | null): Array<Ancestry> {
 		if (!!predicate){

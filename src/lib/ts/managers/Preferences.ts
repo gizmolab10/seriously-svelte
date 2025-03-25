@@ -39,10 +39,11 @@ export class Preferences {
 	
 	static readonly READ_WRITE: unique symbol;
 
+	dump() 									 { console.log(localStorage); }
 	read_key	   (key: string): any | null { return this.parse(localStorage[key]); }
-	write_key<T>   (key: string, value: T) { localStorage[key] = JSON.stringify(value); }
-	writeDB_key<T> (key: string, value: T) { this.write_key(this.db_keyFor(key), value); }
 	readDB_key	   (key: string): any | null { return this.read_key(this.db_keyFor(key)); }
+	write_key<T>   (key: string, value: T)	 { localStorage[key] = JSON.stringify(value); }
+	writeDB_key<T> (key: string, value: T)	 { this.write_key(this.db_keyFor(key), value); }
 
 	writeDB_keyPairs_forKey<T>(key: string, sub_key: string, value: T): void {	// pair => key, sub_key
 		const dbKey = this.db_keyFor(key);
@@ -86,14 +87,14 @@ export class Preferences {
 		}
 		setTimeout(() => {
 			w_ancestries_grabbed.subscribe((array: Array<Ancestry>) => {
-				this.ancestries_writeDB_key(array, T_Preference.grabbed);
 				if (array.length > 0) {
+					this.ancestries_writeDB_key(array, T_Preference.grabbed);
 					debug.log_grab(`  WRITING grabbed: "${array.map(a => a.id).join(', ')}"`);
 				}
 			});
 			w_ancestries_expanded.subscribe((array: Array<Ancestry>) => {
-				this.ancestries_writeDB_key(array, T_Preference.expanded);
 				if (array.length > 0) {
+					this.ancestries_writeDB_key(array, T_Preference.expanded);
 					debug.log_expand(`  WRITING expanded: "${array.map(a => a.id).join(', ')}"`);
 				}
 			});
