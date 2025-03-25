@@ -198,11 +198,8 @@ export default class Ancestry extends Identifiable {
 	get isBidirectional(): boolean { return this.predicate?.isBidirectional ?? false; }
 	get isUnidirectional(): boolean { return this.predicate?.isBidirectional ?? true; }
 
-	get reciprocalAncestry(): Ancestry | null {
-		if (this.isBidirectional) {
-			return new Reciprocal_Ancestry(this);
-		}
-		return null;
+	get reciprocalAncestry(): Reciprocal_Ancestry | null {
+		return !this.isBidirectional ? null : get(w_hierarchy).reciprocal_ofAncestry(this);
 	}
 
 	get containsReciprocals(): boolean {
@@ -590,6 +587,20 @@ export default class Ancestry extends Identifiable {
 		} while (!ancestry);
 		this.hierarchy.rootAncestry.expand();
 		this.hierarchy.rootAncestry.becomeFocus();
+	}
+
+	visibleProgeny_ancestries(visited: Array<string> = []): Array<Ancestry> {
+		let ancestries: Array<Ancestry> = [this];
+		const thing = this.thing;
+		if (!!thing) {
+			if (!visited.includes(this.id) && this.showsChildRelationships) {
+				for (const childAncestry of this.childAncestries) {
+					const progeny = childAncestry.visibleProgeny_ancestries([...visited, this.id]);
+					ancestries = [...ancestries, ...progeny];
+				}
+			}
+		}
+		return ancestries;
 	}
 
 	visibleProgeny_height(visited: Array<string> = []): number {

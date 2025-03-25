@@ -3,6 +3,7 @@ import { T_Tool, T_Info, T_Thing, T_Trait, T_Create, T_Control, T_Predicate, T_A
 import { w_storage_update_trigger, w_ancestry_showing_tools, w_ancestries_grabbed } from '../common/Stores';
 import { Predicate, Relationship, S_Mouse, S_Alteration, S_Title_Edit } from '../common/Global_Imports';
 import { w_id_popupView, w_ancestry_focus, w_s_title_edit, w_s_alteration } from '../common/Stores';
+import Reciprocal_Ancestry from '../data/runtime/Reciprocal_Ancestry';
 import type { Integer, Dictionary } from '../common/Types';
 import { T_Persistable } from '../../ts/data/dbs/DBCommon';
 import Identifiable from '../data/runtime/Identifiable';
@@ -13,6 +14,7 @@ export type Relationships_ByHID = { [hid: Integer]: Array<Relationship> }
 
 export class Hierarchy {
 	private ancestry_byKind_andHID: { [kind: string]: { [hash: Integer]: Ancestry } } = {};		// need for uniqueness
+	private reciprocal_ancestry_byHID:{ [hid: Integer]: Reciprocal_Ancestry } = {};				// need for bidirectionals
 	private predicate_byDirection: { [direction: number]: Array<Predicate> } = {};
 	private ancestries_byThingHID: { [thingHID: number]: Array<Ancestry> } = {};
 	private traits_byOwnerHID: { [ownerHID: Integer]: Array<Trait> } = {};
@@ -767,6 +769,8 @@ export class Hierarchy {
 
 	static readonly ANCESTRIES: unique symbol;
 
+	get ancestries_thatAreVisible(): Array<Ancestry> { return this.rootAncestry.visibleProgeny_ancestries(); }
+
 	ancestries_forget_all() {
 		this.ancestry_byHID = {};
 		this.ancestries_byThingHID = {};
@@ -778,6 +782,16 @@ export class Hierarchy {
 		this.ancestries_forget_all();
 		this.ancestry_remember(rootAncestry);
 		signals.signal_rebuildGraph_from(rootAncestry);
+	}
+
+	reciprocal_ofAncestry(ancestry: Ancestry) {
+		const hid = ancestry.hid;
+		let reciprocal = this.reciprocal_ancestry_byHID[hid];
+		if (!reciprocal) {
+			reciprocal = new Reciprocal_Ancestry(ancestry);
+			this.reciprocal_ancestry_byHID[hid] = reciprocal;
+		}
+		return reciprocal;
 	}
 
 	async ancestries_rebuild_traverse_persistentDelete(ancestries: Array<Ancestry>) {

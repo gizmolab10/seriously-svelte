@@ -1,7 +1,6 @@
 import { u, ux, Thing, Point, Angle, Ancestry, Predicate } from '../common/Global_Imports';
 import { G_Widget, G_Cluster, S_Paging, T_GraphMode } from '../common/Global_Imports';
 import { w_hierarchy, w_s_paging, w_ancestry_focus } from '../common/Stores';
-import Reciprocal_Ancestry from '../data/runtime/Reciprocal_Ancestry';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
 
@@ -64,13 +63,13 @@ export default class G_RadialGraph {
 				}
 			}
 		}
-		return array;		
+		return array;
 	}
 
 	reciprocal_ancestries_maybeFor(focus: Thing, predicate: Predicate): Array<Ancestry> {
 		let ancestries = focus.uniqueAncestries_for(predicate);
 		if (predicate.isBidirectional) {
-			ancestries = ancestries.map(a => new Reciprocal_Ancestry(a));
+			ancestries = ancestries.map(a => a.reciprocalAncestry).filter(a => !!a);
 			ancestries = u.sort_byOrder(ancestries);
 		}
 		return ancestries;

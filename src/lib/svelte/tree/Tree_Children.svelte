@@ -28,7 +28,7 @@
 {/if}
 {#if !!ancestry}
 	{#each ancestry.childAncestries as childAncestry}
-		<Tree_Line ancestry = {childAncestry}/>
+		<Tree_Line ancestry = {childAncestry} svg_dasharray={''}/>
 		<Widget ancestry = {childAncestry}/>
 		{#if childAncestry.showsChildRelationships}
 			<Tree_Children ancestry = {childAncestry}/>

@@ -16,7 +16,7 @@
 	let center_ofBorder = Point.zero;
 	let origin_ofTitle = Point.zero;
 	let size_ofBorder = Size.zero;
-	let svg_dasharray = '';
+	let svg_dasharray = k.empty;
 	let width_ofTitle = 0;
 	let focus;
 

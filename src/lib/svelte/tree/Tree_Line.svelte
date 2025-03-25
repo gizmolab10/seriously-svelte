@@ -5,6 +5,7 @@
 	import Circle from '../kit/Circle.svelte';
 	import { onMount } from 'svelte';
 	export let ancestry!: Ancestry;
+	export let svg_dasharray = k.empty;
 	const g_widget = ancestry.g_widget;
 	const curveType = g_widget.curveType;
 	const debugOffset = new Point(142, -0);
@@ -18,6 +19,12 @@
 	let line_rebuilds = 0;
 	let size = Size.zero;
 	let line;
+
+	//////////////////////////////////
+	//	draw a curved line in rect	//
+	//		up, down or flat 		//
+	//		solid or dashed 		//
+	//////////////////////////////////
 
 	onMount(() => {
 		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
@@ -39,10 +46,6 @@
 			line_rebuilds += 1;
 		}
 	}
-
-	////////////////////////////////////////////////////
-	//	draw a curved line in rect, up, down or flat  //
-	////////////////////////////////////////////////////
 
 	$: {
 		if (k.dot_size > 0) {
@@ -107,7 +110,8 @@
 			fill = 'none'
 			d = {linePath}
 			class = 'tree-line-path'
-			stroke = {ancestry.thing.color}/>
+			stroke = {ancestry.thing.color}
+			stroke-dasharray = {svg_dasharray}/>
 	</svg>
 	{#if debug.lines}
 		<Circle
