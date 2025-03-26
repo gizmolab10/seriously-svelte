@@ -4,7 +4,6 @@ import { w_storage_update_trigger, w_ancestry_showing_tools, w_ancestries_grabbe
 import { Predicate, Relationship, S_Mouse, S_Alteration, S_Title_Edit } from '../common/Global_Imports';
 import { w_id_popupView, w_ancestry_focus, w_s_title_edit, w_s_alteration } from '../common/Stores';
 import Reciprocal_Ancestry from '../data/runtime/Reciprocal_Ancestry';
-import { Ancestry_Pair } from '../../ts/data/runtime/Ancestry';
 import type { Integer, Dictionary } from '../common/Types';
 import { T_Persistable } from '../../ts/data/dbs/DBCommon';
 import Identifiable from '../data/runtime/Identifiable';
@@ -15,18 +14,18 @@ export type Ancestries_ByHID = { [hid: Integer]: Ancestry }
 export type Relationships_ByHID = { [hid: Integer]: Array<Relationship> }
 
 export class Hierarchy {
-	private reciprocal_ancestry_byHID:{ [hid: Integer]: Reciprocal_Ancestry } = {};				// need for bidirectionals
+	private reciprocal_ancestry_byHID:{ [hid: Integer]: Reciprocal_Ancestry } = {};				// for bidirectionals
 	private predicate_byDirection: { [direction: number]: Array<Predicate> } = {};
 	private ancestries_byThingHID: { [thingHID: number]: Array<Ancestry> } = {};
 	private relationships_byKind: { [kind: string]: Array<Relationship> } = {};
-	private ancestry_byKind_andHID: { [kind: string]: Ancestries_ByHID } = {};					// need for uniqueness
+	private ancestry_byKind_andHID: { [kind: string]: Ancestries_ByHID } = {};					// for uniqueness
 	private traits_byOwnerHID: { [ownerHID: Integer]: Array<Trait> } = {};
 	private relationship_byHID: { [hid: Integer]: Relationship } = {};
 	private predicate_byKind: { [kind: string]: Predicate } = {};
 	private things_byType: { [type: string]: Array<Thing> } = {};
 	private traits_byType: { [type: string]: Array<Trait> } = {};
-	private relationships_byParentHID: Relationships_ByHID = {};
 	private thing_byAncestryHID: { [hid: Integer]: Thing } = {};
+	private relationships_byParentHID: Relationships_ByHID = {};
 	private relationships_byChildHID: Relationships_ByHID = {};
 	private ancestry_byHID:{ [hid: Integer]: Ancestry } = {};
 	private access_byKind: { [kind: string]: Access } = {};
@@ -794,33 +793,32 @@ export class Hierarchy {
 
 	static readonly ANCESTRIES: unique symbol;
 
+	get ancestries(): Array<Ancestry> { return Object.values(this.ancestry_byHID); }
 	ancestries_byHID_forKind(kind: string) { return this.ancestry_byKind_andHID[kind] ?? {}; }
 	ancestries_forThingHID(hid: Integer): Array<Ancestry> { return this.ancestries_byThingHID[hid] ?? []; }
 	get ancestries_thatAreVisible(): Array<Ancestry> { return this.rootAncestry.visibleProgeny_ancestries(); }
 
-	get visible_related_ancestries(): Array<Ancestry_Pair> {
-		let pairs: Array<Ancestry_Pair> = [];
-		const visibles = this.ancestries_thatAreVisible;
-		for (const predicate of this.predicates) {
-			if (predicate.isBidirectional) {
-				for (const ancestry of visibles) {
-					const reciprocals = ancestry.thing?.reciprocal_ancestries_forPredicate(predicate);
-					if (!!reciprocals) {
-						for (const reciprocal of reciprocals) {
-							const id_thing = reciprocal.id_thing;
-							const matches = visibles.map(v => {return (v.id_thing == id_thing) ? v : null});
-							for (const match of matches) {
-								if (!!match) {
-									pairs.push(new Ancestry_Pair(match, ancestry));
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		return pairs;
-	}
+	// update_related_ancestries() {
+	// 	const visibles = this.ancestries_thatAreVisible;
+	// 	for (const predicate of this.predicates) {
+	// 		if (predicate.isBidirectional) {
+	// 			for (const ancestry of visibles) {
+	// 				const reciprocals = ancestry.thing?.reciprocal_ancestries_forPredicate(predicate);
+	// 				if (!!reciprocals) {
+	// 					for (const reciprocal of reciprocals) {
+	// 						const id_thing = reciprocal.id_thing;
+	// 						const matches = visibles.map(v => {return (v.id_thing == id_thing) ? v : null});
+	// 						for (const match of matches) {
+	// 							if (!!match) {
+	// 								reciprocal.pair = new Ancestry_Pair(match, ancestry);
+	// 							}
+	// 						}
+	// 					}
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 	ancestries_forget_all() {
 		this.ancestry_byHID = {};

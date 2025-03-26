@@ -4,19 +4,36 @@ import { get } from 'svelte/store';
 import Ancestry from './Ancestry';
 
 export default class Reciprocal_Ancestry extends Ancestry {
-	original_ancestry!: Ancestry;
+	reciprocals: Array<Ancestry> = [];
+	original!: Ancestry;
 
-	///////////////////////////////////////////////
-	// only used for bidirectional relationships //
-	///////////////////////////////////////////////
+	//////////////////////////////////////////
+	//										//
+	// only for bidirectional relationships	//
+	// used in both graph modes				//
+	//										//
+	// computes ... ?
+	//										//
+	//////////////////////////////////////////
 
-	constructor(original_ancestry: Ancestry) {
-		super(original_ancestry.t_database, original_ancestry.pathString, original_ancestry.kindPredicate, false);
-		this.original_ancestry = original_ancestry;
+	constructor(ancestry: Ancestry) {
+		super(ancestry.t_database, ancestry.pathString, ancestry.kindPredicate, false);
+		this.original = ancestry;
+		this.update_reciprocals();
 	}
 
-	get depth(): number { return this.original_ancestry.depth; }
-	becomeFocus(): boolean { return this.original_ancestry.becomeFocus(); }		// to focus on non-reciprocal ancestry so tree does not crash
+	get depth(): number { return this.original.depth; }
+	becomeFocus(): boolean { return this.original.becomeFocus(); }		// to focus on non-reciprocal ancestry so tree does not crash
+
+	update_reciprocals() {
+		const id_thing = this.relationship?.idParent;
+		const matches = this.hierarchy.ancestries.map(v => {return (v.id_thing == id_thing) ? v : null});
+		for (const match of matches) {
+			if (!!match && !match.isBidirectional) {
+				this.reciprocals.push(match);
+			}
+		}
+	}
 	
 	// with thing_isChild = false, this fixes
 	// paging state & g_cluster lookups,

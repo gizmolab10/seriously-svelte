@@ -1,5 +1,5 @@
+import { w_graph_rect, w_show_details, w_hierarchy  } from '../../ts/common/Stores';
 import { w_ancestry_focus, w_device_isMobile } from '../../ts/common/Stores';
-import { w_graph_rect, w_show_details  } from '../../ts/common/Stores';
 import { k, debug, T_GraphMode } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
@@ -20,6 +20,7 @@ export default class G_TreeGraph {
 				origin_ofFocusReveal.x = 25;
 			}
 			const origin_ofChildren = origin_ofFocusReveal.offsetByXY(child_offsetX, child_offsetY);
+			// get(w_hierarchy).update_related_ancestries();
 			focusAncestry.g_widget.update(T_GraphMode.tree, origin_ofChildren);
 			debug.log_origins(origin_ofChildren.x + ' update_origins');
 		}

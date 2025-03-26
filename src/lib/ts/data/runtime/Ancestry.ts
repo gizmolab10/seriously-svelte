@@ -13,15 +13,6 @@ import { get, Writable } from 'svelte/store';
 import { T_Database } from '../dbs/DBCommon';
 import Identifiable from './Identifiable';
 
-export class Ancestry_Pair {
-	ancestry: Ancestry;
-	reciprocal: Ancestry;
-	constructor(ancestry: Ancestry, reciprocal: Ancestry) {
-		this.reciprocal = reciprocal;
-		this.ancestry = ancestry;
-	}
-};
-
 export default class Ancestry extends Identifiable {
 	kindPredicate: string;
 	thing_isChild = true;
@@ -525,6 +516,25 @@ export default class Ancestry extends Identifiable {
 			lefts.push(left);
 		}
 		return [crumb_things, widths, lefts, parent_widths];
+	}
+
+	goof() {
+		for (const predicate of this.hierarchy.predicates) {
+			if (predicate.isBidirectional) {
+				const reciprocals = this.thing?.reciprocal_ancestries_forPredicate(predicate);
+				if (!!reciprocals) {
+					for (const reciprocal of reciprocals) {
+						const id_thing = reciprocal.id_thing;
+						const matches = this.hierarchy.ancestries.map(v => {return (v.id_thing == id_thing) ? v : null});
+						for (const match of matches) {
+							if (!!match) {
+								reciprocal.reciprocals.push(match);
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	static readonly FOCUS: unique symbol;

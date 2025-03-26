@@ -1,10 +1,9 @@
 import { S_Mouse, S_Widget, S_Element, S_Expansion, S_Rotation, S_Thing_Pages } from '../common/Global_Imports';
 import { k, w, debug, signals, wrappers, Ancestry, Mouse_Timer } from '../common/Global_Imports';
-import { w_hierarchy, w_t_graphMode, w_show_details, w_ancestry_focus } from '../common/Stores';
 import { T_Element, T_RingZone, T_GraphMode, T_SvelteComponent } from '../common/Enumerations';
+import { w_t_graphMode, w_show_details, w_ancestry_focus } from '../common/Stores';
 import { w_ring_rotation_radius, w_mouse_location_scaled } from '../common/Stores';
 import { G_Segment, G_TreeGraph, G_RadialGraph } from '../common/Global_Imports';
-import { Ancestry_Pair } from '../../ts/data/runtime/Ancestry';
 import Identifiable from '../data/runtime/Identifiable';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
@@ -138,21 +137,9 @@ export default class User_Interaction {
 		}
 	}
 
-	identify_visible_related_ancestries() {
-		// const ancestries = get(w_hierarchy).ancestries_thatAreVisible;
-		// for (const ancestry of ancestries) {
-		// 	console.log(ancestry.titles)
-		// }
-		const ancestryPairs = get(w_hierarchy).visible_related_ancestries;
-		for (const pair of ancestryPairs) {
-			console.log(`${pair.reciprocal.titles} => ${pair.ancestry.titles}`)
-		}
-	}
-
 	relayout_all() {
 		if (this.inTreeMode) {
 			this.g_treeGraph.update_origins();
-			this.identify_visible_related_ancestries();
 			get(w_ancestry_focus)?.g_widget.recursively_relayout_tree();
 		} else {
 			this.g_radialGraph.layout_allClusters();
