@@ -798,18 +798,21 @@ export class Hierarchy {
 	ancestries_forThingHID(hid: Integer): Array<Ancestry> { return this.ancestries_byThingHID[hid] ?? []; }
 	get ancestries_thatAreVisible(): Array<Ancestry> { return this.rootAncestry.visibleProgeny_ancestries(); }
 
-	get related_ancestryPairs(): Array<Ancestry_Pair> {
+	get visible_related_ancestries(): Array<Ancestry_Pair> {
 		let pairs: Array<Ancestry_Pair> = [];
 		const visibles = this.ancestries_thatAreVisible;
 		for (const predicate of this.predicates) {
 			if (predicate.isBidirectional) {
 				for (const ancestry of visibles) {
 					const reciprocals = ancestry.thing?.reciprocal_ancestries_forPredicate(predicate);
-					if (!!reciprocals && reciprocals.length > 0) {
+					if (!!reciprocals) {
 						for (const reciprocal of reciprocals) {
-							const id = reciprocal.id_thing;
-							if (visibles.map(v => v.id_thing == id).filter(a => !!a).length > 0) {
-								pairs.push(new Ancestry_Pair(ancestry, reciprocal))
+							const id_thing = reciprocal.id_thing;
+							const matches = visibles.map(v => {return (v.id_thing == id_thing) ? v : null});
+							for (const match of matches) {
+								if (!!match) {
+									pairs.push(new Ancestry_Pair(match, ancestry));
+								}
 							}
 						}
 					}

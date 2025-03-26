@@ -138,17 +138,21 @@ export default class User_Interaction {
 		}
 	}
 
-	identify_related_ancestryPairs() {
-		const ancestryPairs = get(w_hierarchy).related_ancestryPairs;
+	identify_visible_related_ancestries() {
+		// const ancestries = get(w_hierarchy).ancestries_thatAreVisible;
+		// for (const ancestry of ancestries) {
+		// 	console.log(ancestry.titles)
+		// }
+		const ancestryPairs = get(w_hierarchy).visible_related_ancestries;
 		for (const pair of ancestryPairs) {
-			console.log(`${pair.a.titles} => ${pair.b.titles}`)
+			console.log(`${pair.reciprocal.titles} => ${pair.ancestry.titles}`)
 		}
 	}
 
 	relayout_all() {
 		if (this.inTreeMode) {
 			this.g_treeGraph.update_origins();
-			this.identify_related_ancestryPairs();
+			this.identify_visible_related_ancestries();
 			get(w_ancestry_focus)?.g_widget.recursively_relayout_tree();
 		} else {
 			this.g_radialGraph.layout_allClusters();

@@ -35,8 +35,13 @@ export default class G_RadialGraph {
 		this.layout_clusterFor(childAncestries, Predicate.contains, true);
 		if (!!focus_thing) {
 			for (const predicate of get(w_hierarchy).predicates) {
-				let reciprocal_ancestries = focus_thing.reciprocal_ancestries_forPredicate(predicate);
-				this.layout_clusterFor(reciprocal_ancestries, predicate, false);
+				if (predicate.isBidirectional) {
+					let reciprocal_ancestries = focus_thing.reciprocal_ancestries_forPredicate(predicate);
+					this.layout_clusterFor(reciprocal_ancestries, predicate, false);
+				} else {
+					const ancestries = focus_thing.uniqueAncestries_for(predicate);
+					this.layout_clusterFor(ancestries, predicate, false);
+				}
 			}
 		}
 	}
@@ -64,15 +69,6 @@ export default class G_RadialGraph {
 			}
 		}
 		return array;
-	}
-
-	reciprocal_ancestries_maybeFor(focus: Thing, predicate: Predicate): Array<Ancestry> {
-		let ancestries = focus.uniqueAncestries_for(predicate);
-		if (predicate.isBidirectional) {
-			ancestries = ancestries.map(a => a.reciprocalAncestry).filter(a => !!a);
-			ancestries = u.sort_byOrder(ancestries);
-		}
-		return ancestries;
 	}
 
 	layout_clusterFor(ancestries: Array<Ancestry>, predicate: Predicate | null, points_toChildren: boolean) {

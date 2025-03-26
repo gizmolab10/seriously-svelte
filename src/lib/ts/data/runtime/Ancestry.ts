@@ -14,13 +14,15 @@ import { T_Database } from '../dbs/DBCommon';
 import Identifiable from './Identifiable';
 
 export class Ancestry_Pair {
-	a: Ancestry;
-	b: Ancestry;
-	constructor(a: Ancestry, b: Ancestry) { this.a = a; this.b = b; }
+	ancestry: Ancestry;
+	reciprocal: Ancestry;
+	constructor(ancestry: Ancestry, reciprocal: Ancestry) {
+		this.reciprocal = reciprocal;
+		this.ancestry = ancestry;
+	}
 };
 
 export default class Ancestry extends Identifiable {
-	_thing: Thing | null = null;
 	kindPredicate: string;
 	thing_isChild = true;
 	g_widget!: G_Widget;
@@ -40,8 +42,6 @@ export default class Ancestry extends Identifiable {
 		this.g_widget = G_Widget.empty(this);
 		this.hierarchy.signal_storage_redraw(0);
 	}
-
-	destroy() { this._thing = null; }
 	
 	static readonly GENERAL: unique symbol;
 
@@ -584,7 +584,10 @@ export default class Ancestry extends Identifiable {
 	}
 
 	visibleProgeny_ancestries(visited: Array<string> = []): Array<Ancestry> {
-		let ancestries: Array<Ancestry> = [this];
+		let ancestries: Array<Ancestry> = [];
+		if (this.isVisible) {
+			ancestries.push(this);
+		}
 		const thing = this.thing;
 		if (!!thing) {
 			if (!visited.includes(this.id) && this.showsChildRelationships) {
