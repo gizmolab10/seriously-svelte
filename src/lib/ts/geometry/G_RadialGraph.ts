@@ -35,7 +35,7 @@ export default class G_RadialGraph {
 		this.layout_clusterFor(childAncestries, Predicate.contains, true);
 		if (!!focus_thing) {
 			for (const predicate of get(w_hierarchy).predicates) {
-				let reciprocal_ancestries = this.reciprocal_ancestries_maybeFor(focus_thing, predicate);
+				let reciprocal_ancestries = focus_thing.reciprocal_ancestries_forPredicate(predicate);
 				this.layout_clusterFor(reciprocal_ancestries, predicate, false);
 			}
 		}

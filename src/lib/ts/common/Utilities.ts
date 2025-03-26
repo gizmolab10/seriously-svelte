@@ -6,7 +6,6 @@ import Ancestry from '../data/runtime/Ancestry';
 import { T_Quadrant } from '../common/Angle';
 import { T_Browser } from './Enumerations';
 import type { Dictionary } from './Types';
-import { transparentize } from 'color2k';
 import { w } from '../geometry/G_Window';
 import Angle from '../common/Angle';
 import { Point } from './Geometry';
@@ -37,18 +36,6 @@ export class Utilities {
 		const fontFamily: string = computedStyle.fontFamily;
 		const fontSize: string = computedStyle.fontSize;
 		return `${fontSize} ${fontFamily}`;
-	}
-
-	conntains_byHID<T>(from: Array<T>, item: T): boolean {
-		const identifiable = item as Identifiable;
-		const identifiables = from as Array<Identifiable>;
-		return identifiables.filter(t => t.hid == identifiable.hid).length > 0;
-	}
-
-	remove_byHID<T>(from: Array<T>, item: T): Array<T> {
-		const identifiable = item as Identifiable;
-		const identifiables = from as Array<Identifiable>;
-		return identifiables.filter(t => t.hid != identifiable.hid) as Array<T>;
 	}
 
 	remove<T>(from: Array<T>, item: T): Array<T> {

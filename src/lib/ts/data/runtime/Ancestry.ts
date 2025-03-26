@@ -13,6 +13,12 @@ import { get, Writable } from 'svelte/store';
 import { T_Database } from '../dbs/DBCommon';
 import Identifiable from './Identifiable';
 
+export class Ancestry_Pair {
+	a: Ancestry;
+	b: Ancestry;
+	constructor(a: Ancestry, b: Ancestry) { this.a = a; this.b = b; }
+};
+
 export default class Ancestry extends Identifiable {
 	_thing: Thing | null = null;
 	kindPredicate: string;
@@ -32,7 +38,7 @@ export default class Ancestry extends Identifiable {
 		this.thing_isChild = thing_isChild;
 		this.kindPredicate = kindPredicate;
 		this.g_widget = G_Widget.empty(this);
-		get(w_hierarchy).signal_storage_redraw(0);
+		this.hierarchy.signal_storage_redraw(0);
 	}
 
 	destroy() { this._thing = null; }
@@ -89,6 +95,7 @@ export default class Ancestry extends Identifiable {
 	get firstChild():						   Thing { return this.children[0]; }
 	get hierarchy():					   Hierarchy { return get(w_hierarchy); }
 	get titleRect():					 Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
+	get thing():						Thing | null { return this.hierarchy.thing_forAncestry(this); }
 	get idBridging():				   string | null { return this.thing?.idBridging ?? null; }
 	get parentAncestry():			 Ancestry | null { return this.stripBack(); }
 	get predicate():				Predicate | null { return this.hierarchy.predicate_forKind(this.kindPredicate) }
@@ -159,19 +166,6 @@ export default class Ancestry extends Identifiable {
 		}
 		return first;
 	}
-	
-	get thing(): Thing | null {
-		let thing = this._thing;
-		if (!thing) {
-			if (this.isRoot) {
-				thing = this.hierarchy.root;
-			} else {
-				thing = this.thingAt(1) ?? null;	// always recompute, cache is for debugging
-			}
-			this._thing = thing;
-		}
-		return thing;
-	}
 
 	get isVisible(): boolean {
 		if (ux.inRadialMode) {
@@ -199,7 +193,7 @@ export default class Ancestry extends Identifiable {
 	get isUnidirectional(): boolean { return this.predicate?.isBidirectional ?? true; }
 
 	get reciprocalAncestry(): Reciprocal_Ancestry | null {
-		return !this.isBidirectional ? null : get(w_hierarchy).reciprocal_ofAncestry(this);
+		return !this.isBidirectional ? null : this.hierarchy.reciprocal_ofAncestry(this);
 	}
 
 	get containsReciprocals(): boolean {
@@ -242,8 +236,8 @@ export default class Ancestry extends Identifiable {
 			const thing = this.thing;
 			if (!!thing && !!toolThing && !!toolsAncestry) {
 				if (thing.hid != toolThing.hid && !toolsAncestry.hasPathString_matching(this)) {
-					const isRelated = predicate.kind == T_Predicate.isRelated;
-					const toolIsAnAncestor = isRelated ? false : thing.parentIDs.includes(toolThing.id);
+					const isBidirectional = predicate.isBidirectional;
+					const toolIsAnAncestor = isBidirectional ? false : thing.parentIDs.includes(toolThing.id);
 					const isParentOfTool = this.thing_isImmediateParentOf(toolsAncestry, predicate.kind);
 					const isProgenyOfTool = this.isAProgenyOf(toolsAncestry);
 					const isDeleting = alteration.type == T_Alteration.deleting;
@@ -303,7 +297,7 @@ export default class Ancestry extends Identifiable {
 		switch (predicate.kind) {
 			case T_Predicate.contains:  return this.thing?.hasParents_forKind(predicate.kind) ?? false;
 			case T_Predicate.isRelated: return this.hasRelationships;
-			default:					  return false;
+			default:					return false;
 		}
 	}
 

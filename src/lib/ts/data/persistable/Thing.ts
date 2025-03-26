@@ -1,8 +1,9 @@
 import { k, u, debug, Persistable, Trait, Ancestry, databases } from '../../common/Global_Imports';
 import { Predicate, Relationship, Seriously_Range } from '../../common/Global_Imports';
-import { w_hierarchy, w_color_trigger, w_count_rebuild } from '../../common/Stores';
 import { T_Thing, T_Trait, T_Debug, T_Predicate } from '../../common/Global_Imports';
+import { w_hierarchy, w_color_trigger, w_count_rebuild } from '../../common/Stores';
 import { w_ancestry_focus, w_ancestries_expanded } from '../../common/Stores';
+import Reciprocal_Ancestry from '../runtime/Reciprocal_Ancestry';
 import type { Dictionary } from '../../common/Types';
 import { T_Persistable } from '../dbs/DBCommon';
 import { get } from 'svelte/store';
@@ -151,6 +152,16 @@ export default class Thing extends Persistable {
 	}
 
 	static readonly ANCESTRIES: unique symbol;
+
+	reciprocal_ancestries_forPredicate(predicate: Predicate): Array<Reciprocal_Ancestry> {
+		let reciprocals: Array<Reciprocal_Ancestry> = []
+		let ancestries = this.uniqueAncestries_for(predicate);
+		if (predicate.isBidirectional) {
+			reciprocals = ancestries.map(a => a.reciprocalAncestry).filter(a => !!a);
+			reciprocals = u.sort_byOrder(reciprocals) as Array<Reciprocal_Ancestry>;
+		}
+		return reciprocals;
+	}
 
 	uniqueAncestries_for(predicate: Predicate | null): Array<Ancestry> {
 		if (!!predicate){

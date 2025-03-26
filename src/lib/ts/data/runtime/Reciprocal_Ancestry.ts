@@ -15,7 +15,7 @@ export default class Reciprocal_Ancestry extends Ancestry {
 		this.original_ancestry = original_ancestry;
 	}
 
-	// get depth(): number { return this.original_ancestry.depth; }
+	get depth(): number { return this.original_ancestry.depth; }
 	becomeFocus(): boolean { return this.original_ancestry.becomeFocus(); }		// to focus on non-reciprocal ancestry so tree does not crash
 	
 	// with thing_isChild = false, this fixes

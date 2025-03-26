@@ -65,4 +65,8 @@ export default class Relationship extends Persistable {
 		}
 	}
 
+	remove_from(relationships: Array<Relationship>) {
+		relationships.filter(t => t.kindPredicate != this.kindPredicate)
+	}
+
 }

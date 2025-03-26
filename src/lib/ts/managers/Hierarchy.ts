@@ -4,25 +4,29 @@ import { w_storage_update_trigger, w_ancestry_showing_tools, w_ancestries_grabbe
 import { Predicate, Relationship, S_Mouse, S_Alteration, S_Title_Edit } from '../common/Global_Imports';
 import { w_id_popupView, w_ancestry_focus, w_s_title_edit, w_s_alteration } from '../common/Stores';
 import Reciprocal_Ancestry from '../data/runtime/Reciprocal_Ancestry';
+import { Ancestry_Pair } from '../../ts/data/runtime/Ancestry';
 import type { Integer, Dictionary } from '../common/Types';
 import { T_Persistable } from '../../ts/data/dbs/DBCommon';
 import Identifiable from '../data/runtime/Identifiable';
 import DBCommon from '../data/dbs/DBCommon';
 import { get } from 'svelte/store';
 
+export type Ancestries_ByHID = { [hid: Integer]: Ancestry }
 export type Relationships_ByHID = { [hid: Integer]: Array<Relationship> }
 
 export class Hierarchy {
-	private ancestry_byKind_andHID: { [kind: string]: { [hash: Integer]: Ancestry } } = {};		// need for uniqueness
 	private reciprocal_ancestry_byHID:{ [hid: Integer]: Reciprocal_Ancestry } = {};				// need for bidirectionals
 	private predicate_byDirection: { [direction: number]: Array<Predicate> } = {};
 	private ancestries_byThingHID: { [thingHID: number]: Array<Ancestry> } = {};
+	private relationships_byKind: { [kind: string]: Array<Relationship> } = {};
+	private ancestry_byKind_andHID: { [kind: string]: Ancestries_ByHID } = {};					// need for uniqueness
 	private traits_byOwnerHID: { [ownerHID: Integer]: Array<Trait> } = {};
 	private relationship_byHID: { [hid: Integer]: Relationship } = {};
 	private predicate_byKind: { [kind: string]: Predicate } = {};
 	private things_byType: { [type: string]: Array<Thing> } = {};
 	private traits_byType: { [type: string]: Array<Trait> } = {};
 	private relationships_byParentHID: Relationships_ByHID = {};
+	private thing_byAncestryHID: { [hid: Integer]: Thing } = {};
 	private relationships_byChildHID: Relationships_ByHID = {};
 	private ancestry_byHID:{ [hid: Integer]: Ancestry } = {};
 	private access_byKind: { [kind: string]: Access } = {};
@@ -238,7 +242,7 @@ export class Hierarchy {
 	}
 
 	static readonly THING: unique symbol;
-
+	
 	thing_forHID(hid: Integer): Thing | null { return this.thing_byHID[hid ?? undefined]; }
 
 	async thing_lost_and_found_persistentCreateUnique(): Promise<Thing> {
@@ -249,23 +253,6 @@ export class Hierarchy {
 		const lost_and_found = this.thing_remember_runtimeCreateUnique(this.db.idBase, Identifiable.newID(), 'lost and found', k.color_default, T_Thing.found);
 		await this.ancestry_extended_byAddingThing_toAncestry_remember_persistentCreate_relationship(lost_and_found, this.rootAncestry);
 		return lost_and_found;
-	}
-
-	thing_forget(thing: Thing) {
-		const type = thing.type;
-		if (type != T_Thing.root) {		// do NOT forget root
-			const thingsOfType = this.things_byType[type];
-			delete this.thing_byHID[thing.hid];
-			this.things = u.remove_byHID<Thing>(this.things, thing);
-			if (!!thingsOfType) {
-				const validated = u.strip_invalid(thingsOfType);
-				if (validated.length == 0) {
-					delete this.things_byType[type];
-				} else {
-					this.things_byType[type] = validated;
-				}
-			}
-		}
 	}
 
 	thing_remember_updateID_to(thing: Thing, idTo: string) {
@@ -306,19 +293,6 @@ export class Hierarchy {
 		return copiedThing;
 	}
 
-	async thing_remember_persistentRelocateChild(child: Thing, fromParent: Thing, toParent: Thing): Promise<any> {
-		let relationship = this.relationship_whereHID_isChild(child.hid);
-		if (!!relationship && relationship.idParent == fromParent.id) {
-			this.relationship_forget(relationship);
-			relationship.hidParent = toParent.hid;
-			relationship.idParent = toParent.id;
-			if (relationship.isValid) {
-				this.relationship_remember(relationship);
-				await relationship.persist();
-			}
-		}
-	}
-
 	async thing_edit_persistentAddLine(ancestry: Ancestry, below: boolean = true) {
 		const parentAncestry = ancestry.parentAncestry;
 		const parent = parentAncestry?.thing;
@@ -338,6 +312,51 @@ export class Hierarchy {
 			const sibling = await this.thing_remember_runtimeCopy(id, thing);
 			sibling.title = 'idea';
 			await this.ancestry_edit_persistentAddAsChild(parentAncestry, sibling, ancestry.order + k.halfIncrement);
+		}
+	}
+
+	async thing_remember_persistentRelocateChild(child: Thing, fromParent: Thing, toParent: Thing): Promise<any> {
+		let relationship = this.relationship_whereHID_isChild(child.hid);
+		if (!!relationship && relationship.idParent == fromParent.id) {
+			this.relationship_forget(relationship);
+			relationship.hidParent = toParent.hid;
+			relationship.idParent = toParent.id;
+			if (relationship.isValid) {
+				this.relationship_remember(relationship);
+				await relationship.persist();
+			}
+		}
+	}
+
+	thing_forAncestry(ancestry: Ancestry): Thing | null {
+		let thing: Thing | null = this.thing_byAncestryHID[ancestry.hid];
+		if (!thing) {
+			if (ancestry.isRoot) {
+				thing = this.root;
+			} else {
+				thing = ancestry.thingAt(1) ?? null;	// always recompute
+				if (!!thing) {
+					this.thing_byAncestryHID[ancestry.hid] = thing;
+				}
+			}
+		}
+		return thing;
+	}
+
+	thing_forget(thing: Thing) {
+		const type = thing.type;
+		if (type != T_Thing.root) {		// do NOT forget root
+			const thingsOfType = this.things_byType[type];
+			delete this.thing_byHID[thing.hid];
+			this.things = Identifiable.remove_byHID<Thing>(this.things, thing);
+			if (!!thingsOfType) {
+				const validated = u.strip_invalid(thingsOfType);
+				if (validated.length == 0) {
+					delete this.things_byType[type];
+				} else {
+					this.things_byType[type] = validated;
+				}
+			}
 		}
 	}
 
@@ -512,8 +531,8 @@ export class Hierarchy {
 	trait_forget(trait: Trait) {
 		delete this.trait_byHID[trait.hid];
 		delete this.traits_byOwnerHID[trait.ownerID.hash()];
-		this.traits = u.remove_byHID<Trait>(this.traits, trait);
-		this.traits_byType[trait.type] = u.remove_byHID<Trait>(this.traits_byType[trait.type], trait);;
+		this.traits = Identifiable.remove_byHID<Trait>(this.traits, trait);
+		this.traits_byType[trait.type] = Identifiable.remove_byHID<Trait>(this.traits_byType[trait.type], trait);;
 	}
 
 	trait_remember(trait: Trait) {
@@ -635,13 +654,6 @@ export class Hierarchy {
 		return matches.length == 0 ? null : matches[0];
 	}
 
-	relationship_forget(relationship: Relationship) {
-		delete this.relationship_byHID[relationship.hid];
-		this.relationships = u.remove_byHID<Relationship>(this.relationships, relationship);
-		this.relationship_forget_forHID(this.relationships_byChildHID, relationship.hidChild, relationship);
-		this.relationship_forget_forHID(this.relationships_byParentHID, relationship.hidParent, relationship);
-	}
-
 	relationship_remember_ifValid(relationship: Relationship) {
 		if (relationship.isValid) {
 			this.relationship_remember(relationship);
@@ -652,7 +664,7 @@ export class Hierarchy {
 	
 	relationship_forget_forHID(relationships: Relationships_ByHID, hid: Integer, relationship: Relationship) {
 		let array = relationships[hid] ?? [];
-		array = u.remove_byHID<Relationship>(array, relationship);
+		array = Identifiable.remove_byHID<Relationship>(array, relationship);
 		if (array.length == 0) {
 			delete relationships[hid];
 		} else {
@@ -703,16 +715,29 @@ export class Hierarchy {
 		}
 		return relationship;
 	}
+
+	relationship_forget(relationship: Relationship) {
+		delete this.relationship_byHID[relationship.hid];
+		const relationships = this.relationships_byKind[relationship.kindPredicate];
+		this.relationships = Identifiable.remove_byHID<Relationship>(this.relationships, relationship);
+		this.relationship_forget_forHID(this.relationships_byChildHID, relationship.hidChild, relationship);
+		this.relationship_forget_forHID(this.relationships_byParentHID, relationship.hidParent, relationship);
+		relationship.remove_from(relationships);
+	}
 	
 	relationship_remember(relationship: Relationship) {
 		if (!this.relationship_byHID[relationship.hid]) {
+			let relationships = this.relationships_byKind[relationship.kindPredicate] ?? [];
 			if (!this.relationships.map(r => r.id).includes(relationship.id)) {
 				this.relationships.push(relationship);
+			}
+			if (!relationships.map(r => r.id).includes(relationship.id)) {
+				relationships.push(relationship);
+				this.relationships_byKind[relationship.kindPredicate] = relationships;
 			}
 			this.relationship_byHID[relationship.hid] = relationship;
 			this.relationship_remember_byKnown(relationship, relationship.hidChild, this.relationships_byChildHID);
 			this.relationship_remember_byKnown(relationship, relationship.hidParent, this.relationships_byParentHID);
-			
 			if (relationship.idBase != this.db.idBase) {
 				debug.log_error(`relationship crossing dbs: ${relationship.description}`);
 			}
@@ -769,7 +794,30 @@ export class Hierarchy {
 
 	static readonly ANCESTRIES: unique symbol;
 
+	ancestries_byHID_forKind(kind: string) { return this.ancestry_byKind_andHID[kind] ?? {}; }
+	ancestries_forThingHID(hid: Integer): Array<Ancestry> { return this.ancestries_byThingHID[hid] ?? []; }
 	get ancestries_thatAreVisible(): Array<Ancestry> { return this.rootAncestry.visibleProgeny_ancestries(); }
+
+	get related_ancestryPairs(): Array<Ancestry_Pair> {
+		let pairs: Array<Ancestry_Pair> = [];
+		const visibles = this.ancestries_thatAreVisible;
+		for (const predicate of this.predicates) {
+			if (predicate.isBidirectional) {
+				for (const ancestry of visibles) {
+					const reciprocals = ancestry.thing?.reciprocal_ancestries_forPredicate(predicate);
+					if (!!reciprocals && reciprocals.length > 0) {
+						for (const reciprocal of reciprocals) {
+							const id = reciprocal.id_thing;
+							if (visibles.map(v => v.id_thing == id).filter(a => !!a).length > 0) {
+								pairs.push(new Ancestry_Pair(ancestry, reciprocal))
+							}
+						}
+					}
+				}
+			}
+		}
+		return pairs;
+	}
 
 	ancestries_forget_all() {
 		this.ancestry_byHID = {};
@@ -825,12 +873,11 @@ export class Hierarchy {
 	static readonly ANCESTRY: unique symbol;
 	
 	ancestry_forHID(hid: Integer): Ancestry | null { return this.ancestry_byHID[hid] ?? null; }
-	ancestries_forThingHID(hid: Integer): Array<Ancestry> { return this.ancestries_byThingHID[hid] ?? []; }
 
 	ancestry_remember(ancestry: Ancestry) {
 		const hid = ancestry.hid;
 		const thingHID = ancestry.thing?.hid;
-		let dict = this.ancestry_byKind_andHID[ancestry.kindPredicate] ?? {};
+		let dict = this.ancestries_byHID_forKind(ancestry.kindPredicate);
 		this.ancestry_byHID[hid] = ancestry;
 		dict[hid] = ancestry;
 		this.ancestry_byKind_andHID[ancestry.kindPredicate] = dict;
@@ -846,7 +893,7 @@ export class Hierarchy {
 		if (!!ancestry) {
 			const hid = ancestry.hid;
 			const thingHID = ancestry.thing?.hid;
-			let dict = this.ancestry_byKind_andHID[ancestry.kindPredicate] ?? {};
+			let dict = this.ancestries_byHID_forKind(ancestry.kindPredicate);
 			delete this.ancestry_byHID[hid];
 			delete dict[hid];
 			this.ancestry_byKind_andHID[ancestry.kindPredicate] = dict;
@@ -923,7 +970,7 @@ export class Hierarchy {
 
 	ancestry_remember_createUnique(path: string = k.root_path, kindPredicate: string = T_Predicate.contains): Ancestry {
 		const hid = path.hash();
-		let dict = this.ancestry_byKind_andHID[kindPredicate] ?? {};
+		let dict = this.ancestries_byHID_forKind(kindPredicate);
 		let ancestry = dict[hid];
 		if (!ancestry) {
 			ancestry = new Ancestry(this.db.t_database, path, kindPredicate);
@@ -1185,13 +1232,13 @@ export class Hierarchy {
 
 	predicate_forget(predicate: Predicate) {
 		let predicates = this.predicates_byDirection(predicate.isBidirectional) ?? [];
-		predicates = u.remove_byHID<Predicate>(predicates, predicate);
+		predicates = Identifiable.remove_byHID<Predicate>(predicates, predicate);
 		if (predicates.length == 0) {
 			delete this.predicate_byDirection[predicate.isBidirectional ? 1 : 0];
 		} else {
 			this.predicate_byDirection[predicate.isBidirectional ? 1 : 0] = predicates;
 		}
-		this.predicates = u.remove_byHID<Predicate>(this.predicates, predicate);
+		this.predicates = Identifiable.remove_byHID<Predicate>(this.predicates, predicate);
 		delete this.predicate_byKind[predicate.kind];
 	}
 
