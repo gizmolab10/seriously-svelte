@@ -52,7 +52,7 @@ export default class DBTest extends DBCommon {
 		this.makeMore(2, 'B', kindC, idTc, true);	// children of Curiosity
 		this.makeMore(5, 'D', kindC, idTb, true);	// children of Maintain
 		this.makeMore(2, 'G', kindC, idTb, false);	// parents of  "
-		this.makeMore(5, 'G', kindR, idTb, false);	// related to  "
+		this.makeMore(5, 'Q', kindR, idTb, false);	// related to  "
 	}
 
 	makeMore(count: number, first: string, kindPredicate: T_Predicate, idOther: string, asChild: boolean) {

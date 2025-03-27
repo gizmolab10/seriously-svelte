@@ -6,7 +6,6 @@ import { w_hierarchy, w_ancestry_focus, w_ancestry_showing_tools } from '../../c
 import { w_ancestries_grabbed, w_ancestries_expanded, } from '../../common/Stores';
 import { w_s_alteration, w_s_title_edit } from '../../common/Stores';
 import { w_background_color } from '../../common/Stores';
-import Reciprocal_Ancestry from './Reciprocal_Ancestry';
 import type { Integer } from '../../common/Types';
 import { T_Edit } from '../../state/S_Title_Edit';
 import { get, Writable } from 'svelte/store';
@@ -14,16 +13,19 @@ import { T_Database } from '../dbs/DBCommon';
 import Identifiable from './Identifiable';
 
 export default class Ancestry extends Identifiable {
+	reciprocals: Array<Ancestry> = [];
 	kindPredicate: string;
 	thing_isChild = true;
 	g_widget!: G_Widget;
 	t_database: string;
 
-	// id => ancestry string 
+	// id => ancestry (path) string 
 	//   "   composed of ids of each relationship
 	// NOTE: first relationship's parent is always the root
 	//   "   kindPredicate is from the last relationship
-	//   "   all children are of that kind of predicate
+	//  	 all children are of that kind of predicate
+	//	 "	 reciprocals are all the ancestries that point to the isRelatedTo thing
+	//		 (there can be many if thing or its ancestors hav multiple parents)
 
 	constructor(t_database: string, ancestryString: string = k.root_path, kindPredicate: string = T_Predicate.contains, thing_isChild: boolean = true) {
 		super(ancestryString);
@@ -31,7 +33,11 @@ export default class Ancestry extends Identifiable {
 		this.thing_isChild = thing_isChild;
 		this.kindPredicate = kindPredicate;
 		this.g_widget = G_Widget.empty(this);
+		this.update_reciprocals();
 		this.hierarchy.signal_storage_redraw(0);
+		if (this.isBidirectional) {
+			console.log(`isBidirectional ${ancestryString} ${this.titles}`)
+		}
 	}
 	
 	static readonly GENERAL: unique symbol;
@@ -182,10 +188,6 @@ export default class Ancestry extends Identifiable {
 
 	get isBidirectional(): boolean { return this.predicate?.isBidirectional ?? false; }
 	get isUnidirectional(): boolean { return this.predicate?.isBidirectional ?? true; }
-
-	get reciprocalAncestry(): Reciprocal_Ancestry | null {
-		return !this.isBidirectional ? null : this.hierarchy.reciprocal_ofAncestry(this);
-	}
 
 	get containsReciprocals(): boolean {
 		let idChild: string | null =  null;
@@ -518,20 +520,15 @@ export default class Ancestry extends Identifiable {
 		return [crumb_things, widths, lefts, parent_widths];
 	}
 
-	goof() {
-		for (const predicate of this.hierarchy.predicates) {
-			if (predicate.isBidirectional) {
-				const reciprocals = this.thing?.reciprocal_ancestries_forPredicate(predicate);
-				if (!!reciprocals) {
-					for (const reciprocal of reciprocals) {
-						const id_thing = reciprocal.id_thing;
-						const matches = this.hierarchy.ancestries.map(v => {return (v.id_thing == id_thing) ? v : null});
-						for (const match of matches) {
-							if (!!match) {
-								reciprocal.reciprocals.push(match);
-							}
-						}
-					}
+	update_reciprocals() {
+		this.reciprocals = [];
+		if (this.isBidirectional) {
+			const id_thing = this.relationship?.idChild;
+			const matches = this.hierarchy.ancestries.map(v => {return (v.id_thing == id_thing) ? v : null});
+			for (const match of matches) {
+				if (!!match && !match.isBidirectional) {
+					this.reciprocals.push(match);
+					console.log(`match ${match.titles}`)
 				}
 			}
 		}
@@ -553,9 +550,7 @@ export default class Ancestry extends Identifiable {
 	static readonly EVENTS: unique symbol;
 
 	handle_singleClick_onDragDot(shiftKey: boolean) {
-		if (this.isBidirectional && !(this instanceof Reciprocal_Ancestry)) {
-			this.reciprocalAncestry?.handle_singleClick_onDragDot(shiftKey);
-		} else {
+		if (!this.isBidirectional) {
 			w_s_title_edit?.set(null);
 			if (!!get(w_s_alteration)) {
 				this.ancestry_alterMaybe(this);
@@ -566,6 +561,8 @@ export default class Ancestry extends Identifiable {
 			} else {
 				this.grabOnly();
 			}
+		} else if (this.reciprocals.length > 0) {
+			this.reciprocals[0].handle_singleClick_onDragDot(shiftKey);
 		}
 		signals.signal_rebuildGraph_fromFocus();
 	}

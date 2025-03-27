@@ -3,7 +3,6 @@ import { Predicate, Relationship, Seriously_Range } from '../../common/Global_Im
 import { T_Thing, T_Trait, T_Debug, T_Predicate } from '../../common/Global_Imports';
 import { w_hierarchy, w_color_trigger, w_count_rebuild } from '../../common/Stores';
 import { w_ancestry_focus, w_ancestries_expanded } from '../../common/Stores';
-import Reciprocal_Ancestry from '../runtime/Reciprocal_Ancestry';
 import type { Dictionary } from '../../common/Types';
 import { T_Persistable } from '../dbs/DBCommon';
 import { get } from 'svelte/store';
@@ -153,19 +152,9 @@ export default class Thing extends Persistable {
 
 	static readonly ANCESTRIES: unique symbol;
 
-	reciprocal_ancestries_forPredicate(predicate: Predicate): Array<Reciprocal_Ancestry> {
-		let reciprocals: Array<Reciprocal_Ancestry> = []
-		let ancestries = this.uniqueAncestries_for(predicate);
-		if (predicate.isBidirectional) {
-			reciprocals = ancestries.map(a => a.reciprocalAncestry).filter(a => !!a);
-			reciprocals = u.sort_byOrder(reciprocals) as Array<Reciprocal_Ancestry>;
-		}
-		return reciprocals;
-	}
-
 	uniqueAncestries_for(predicate: Predicate | null): Array<Ancestry> {
+		let ancestries: Array<Ancestry> = [];
 		if (!!predicate){
-			let ancestries: Array<Ancestry> = [];
 			if (predicate.isBidirectional) {
 				ancestries = this.parentAncestries_for(predicate);
 			} else {
@@ -175,15 +164,20 @@ export default class Thing extends Persistable {
 					ancestries = u.concatenateArrays(ancestries, parentAncestries);
 				}
 			}
-			return u.strip_thingDuplicates_from(u.strip_falsies(ancestries));
+			ancestries = u.strip_thingDuplicates_from(u.strip_falsies(ancestries));
 		}
-		return [];
+		return ancestries;
 	}
 
 	parentAncestries_for(predicate: Predicate | null, visited: Array<string> = []): Array<Ancestry> {
 		// the ancestry of each parent [of this thing]
 		let ancestries: Array<Ancestry> = [];
 		if (!!predicate) {
+			function addAncestry(ancestry: Ancestry | null) {
+				if (!!ancestry) {
+					ancestries.push(ancestry);
+				}
+			}
 			const relationships = this.parentRelationships_for(predicate);
 			for (const relationship of relationships) {
 				if (predicate.isBidirectional) {
@@ -205,11 +199,6 @@ export default class Thing extends Persistable {
 				}
 			}
 			ancestries = u.strip_hidDuplicates(ancestries);
-			function addAncestry(ancestry: Ancestry | null) {
-				if (!!ancestry) {
-					ancestries.push(ancestry);
-				}
-			}
 		}
 		ancestries = u.sort_byOrder(ancestries).reverse();
 		return ancestries;
