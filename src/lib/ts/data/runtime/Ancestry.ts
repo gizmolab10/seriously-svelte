@@ -27,8 +27,8 @@ export default class Ancestry extends Identifiable {
 	//	 "	 reciprocals are all the ancestries that point to the isRelatedTo thing
 	//		 (there can be many if thing or its ancestors hav multiple parents)
 
-	constructor(t_database: string, ancestryString: string = k.root_path, kindPredicate: string = T_Predicate.contains, thing_isChild: boolean = true) {
-		super(ancestryString);
+	constructor(t_database: string, path: string = k.root_path, kindPredicate: string = T_Predicate.contains, thing_isChild: boolean = true) {
+		super(path);
 		this.t_database = t_database;
 		this.thing_isChild = thing_isChild;
 		this.kindPredicate = kindPredicate;
@@ -36,7 +36,7 @@ export default class Ancestry extends Identifiable {
 		this.update_reciprocals();
 		this.hierarchy.signal_storage_redraw(0);
 		if (this.isBidirectional) {
-			console.log(`isBidirectional ${ancestryString} ${this.titles}`)
+			console.log(`isBidirectional ${path} ${this.titles}`)
 		}
 	}
 	
@@ -521,16 +521,18 @@ export default class Ancestry extends Identifiable {
 	}
 
 	update_reciprocals() {
-		this.reciprocals = [];
+		// determine visibility elsewhere (cache where?, stale?)
+		const reciprocals: Array<Ancestry> = [];
 		if (this.isBidirectional) {
 			const id_thing = this.relationship?.idChild;
 			const matches = this.hierarchy.ancestries.map(v => {return (v.id_thing == id_thing) ? v : null});
 			for (const match of matches) {
 				if (!!match && !match.isBidirectional) {
-					this.reciprocals.push(match);
-					console.log(`match ${match.titles}`)
+					reciprocals.push(match);
+					// console.log(`reciprocal ${match.titles}`)
 				}
 			}
+			this.reciprocals = reciprocals;
 		}
 	}
 
@@ -556,15 +558,17 @@ export default class Ancestry extends Identifiable {
 				this.ancestry_alterMaybe(this);
 			} else if (!shiftKey && ux.inRadialMode) {
 				this.becomeFocus();
+				signals.signal_rebuildGraph_fromFocus();
+				return;
 			} else if (shiftKey || this.isGrabbed) {
 				this.toggleGrab();
 			} else {
 				this.grabOnly();
 			}
+			signals.signal_reposition_widgets_fromFocus();
 		} else if (this.reciprocals.length > 0) {
 			this.reciprocals[0].handle_singleClick_onDragDot(shiftKey);
 		}
-		signals.signal_rebuildGraph_fromFocus();
 	}
 
 	static readonly VISIBILITY: unique symbol;

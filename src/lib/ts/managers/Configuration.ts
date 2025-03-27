@@ -4,7 +4,7 @@ import { stores, w_device_isMobile } from '../common/Stores';
 export class Configuration {
 
 	eraseDB = 0;
-	resetSettings = 0;
+	erasePreferences = 0;
 	allow_GraphEditing = true;
 	allow_TitleEditing = true;
 	allow_HorizontalScrolling = true;
@@ -45,8 +45,8 @@ export class Configuration {
 		}
 		for (const eraseOption of eraseOptions) {
 			switch (eraseOption) {
-				case 'data':	 this.eraseDB = 2;		 break;
-				case 'settings': this.resetSettings = 2; break;
+				case 'data':	 this.eraseDB = 2;			break;
+				case 'settings': this.erasePreferences = 2; break;
 			}
 		}
     }

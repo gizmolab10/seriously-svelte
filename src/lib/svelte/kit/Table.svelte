@@ -1,6 +1,7 @@
 <script lang='ts'>
 	import { k, T_Layer } from '../../ts/common/Global_Imports';
 	import type { Integer } from '../../ts/common/Types';
+	export let width = 100;
 	export let top = 0;
 	export let array;
 	let table;
@@ -43,7 +44,7 @@
 			top:{top}px;
 			position:absolute;
 			z-index: {T_Layer.details};'>
-		<table style='width: {k.width_details}px; left:12px; color:black;'>
+		<table style='width: {width}px; left:12px; color:black;'>
 			{#each array as [key, value]}
 				<tr>
 					<td class='first'>{key}:</td>

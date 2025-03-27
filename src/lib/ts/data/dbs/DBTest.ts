@@ -11,63 +11,63 @@ export default class DBTest extends DBCommon {
 	get dict_forStorageDetails(): Dictionary { return {'data' : 'recreated on launch'} }
 
 	async fetch_all_fromLocal() {
-		const idTa = 'A';
-		const idTb = 'B';
-		const idTc = 'C';
-		const idTd = 'D';
-		const idTe = 'E';
-		const idTf = 'F';
-		const idTr = 'R';
+		const idTa = 'a';
+		const idTb = 'b';
+		const idTc = 'c';
+		const idTd = 'd';
+		const idTe = 'e';
+		const idTf = 'f';
+		const idTr = 'r';
 		const h = this.hierarchy;
 		const kindC = T_Predicate.contains;
 		const kindR = T_Predicate.isRelated;
 		h.predicate_defaults_remember_runtimeCreate();
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTa, 'Active', 'green');
-		h.thing_remember_runtimeCreateUnique(this.idBase, idTb, 'Maintain', 'blue');
+		h.thing_remember_runtimeCreateUnique(this.idBase, idTb, 'Big', 'blue');
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTc, 'Curiosity', '#d96726');
-		h.thing_remember_runtimeCreateUnique(this.idBase, idTd, 'Aesthetics', 'mediumvioletred');
-		h.thing_remember_runtimeCreateUnique(this.idBase, idTe, 'Autonomy', 'purple');
-		h.thing_remember_runtimeCreateUnique(this.idBase, idTf, 'Connections', 'coral');
+		h.thing_remember_runtimeCreateUnique(this.idBase, idTd, 'Diligent', 'mediumvioletred');
+		h.thing_remember_runtimeCreateUnique(this.idBase, idTe, 'Energy', 'purple');
+		h.thing_remember_runtimeCreateUnique(this.idBase, idTf, 'Friends', 'coral');
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTr, 'Life', 'limegreen', T_Thing.root);
-		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cra', kindC, idTr, idTa, 0);
-		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Crb', kindC, idTr, idTb, 1);
-		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Crc', kindC, idTr, idTc, 2);
-		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Crd', kindC, idTr, idTd, 3);
-		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cre', kindC, idTr, idTe, 4);
-		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cab', kindC, idTa, idTb, 0);
-		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cac', kindC, idTa, idTc, 1);
-		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cad', kindC, idTa, idTd, 2);
-		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cae', kindC, idTa, idTe, 3);
-		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cbc', kindC, idTb, idTc, 0);
-		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cbd', kindC, idTb, idTd, 1);
-		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cbe', kindC, idTb, idTe, 2);
-		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cbf', kindC, idTb, idTf, 2);
-		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Ccd', kindC, idTc, idTd, 0);
-		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cce', kindC, idTc, idTe, 1);
-		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Cde', kindC, idTd, idTe, 0);
-		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Rrb', kindR, idTr, idTb, 2);
-		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Rbd', kindR, idTb, idTd, 2);
-		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Rac', kindR, idTa, idTc, 2);
-		h.relationship_remember_runtimeCreateUnique(this.idBase, 'Rce', kindR, idTc, idTe, 2);
-		this.makeMore(2, 'B', kindC, idTc, true);	// children of Curiosity
-		this.makeMore(5, 'D', kindC, idTb, true);	// children of Maintain
-		this.makeMore(2, 'G', kindC, idTb, false);	// parents of  "
-		this.makeMore(5, 'Q', kindR, idTb, false);	// related to  "
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cra', kindC, idTr, idTa, 0);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'crb', kindC, idTr, idTb, 1);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'crc', kindC, idTr, idTc, 2);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'crd', kindC, idTr, idTd, 3);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cre', kindC, idTr, idTe, 4);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cab', kindC, idTa, idTb, 0);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cac', kindC, idTa, idTc, 1);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cad', kindC, idTa, idTd, 2);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cae', kindC, idTa, idTe, 3);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cbc', kindC, idTb, idTc, 0);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cbd', kindC, idTb, idTd, 1);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cbe', kindC, idTb, idTe, 2);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cbf', kindC, idTb, idTf, 2);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'ccd', kindC, idTc, idTd, 0);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cce', kindC, idTc, idTe, 1);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cde', kindC, idTd, idTe, 0);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'rrb', kindR, idTr, idTb, 2);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'rbd', kindR, idTb, idTd, 2);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'rac', kindR, idTa, idTc, 2);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'rce', kindR, idTc, idTe, 2);
+		this.makeMore(3, 'c', kindC, idTf, true);	// children of Friends
+		// this.makeMore(2, 'e', kindC, idTb, true);	// children of Big
+		// this.makeMore(4, 'e', kindR, idTb, true);	// related to  "
+		// this.makeMore(2, 'c', kindC, idTb, false);	// parents of  "
 	}
 
-	makeMore(count: number, first: string, kindPredicate: T_Predicate, idOther: string, asChild: boolean) {
+	makeMore(count: number, first: string, kindPredicate: T_Predicate, idRef: string, asChild: boolean) {
 		const isBidirectional = Predicate.isBidirectional(kindPredicate);
-		const prefix = isBidirectional ? 'R' : 'C';
+		const prefix = isBidirectional ? 'r' : 'c';
 		const charCode = first.charCodeAt(0);
 		const h = this.hierarchy;
 		for (let i = 0; i < count; i++) {
-			const idUpper = String.fromCharCode(charCode + i);
-			const id_thing = asChild ? idOther + idUpper : idUpper + idOther;
-			const title = asChild ? idUpper : id_thing;
+			const idCode = String.fromCharCode(charCode + i);
+			const id_thing = asChild ? idRef + idCode : idCode + idRef;
+			const title = asChild ? idCode : id_thing;
 			const idRelationahip = prefix + id_thing;
-			const idChild = asChild ? id_thing : idOther;
-			const idParent = asChild ? idOther : id_thing;
-			h.thing_remember_runtimeCreateUnique(this.idBase, id_thing, title, 'grey');
+			const idChild = asChild ? idCode : idRef;
+			const idParent = asChild ? idRef : idCode;
+			// h.thing_remember_runtimeCreateUnique(this.idBase, id_thing, title, 'grey');
 			h.relationship_remember_runtimeCreateUnique(this.idBase, idRelationahip, kindPredicate, idParent, idChild, i);
 		}
 	}

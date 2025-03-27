@@ -56,7 +56,7 @@
 			case TI.before_title: return   3;
 			case TI.title:		  return  17;
 			case TI.after_title:  return   3;
-			case TI.table:		  return 125;
+			case TI.table:		  return 141;
 			case TI.color:		  return   2;
 			case TI.traits:		  return   2;
 			case TI.consequence:  return  50;
@@ -106,7 +106,7 @@
 	}
 	
 	function setup_tops() {
-		const color_left = 67
+		const color_left = 61
 		let top = 0;
 		tops = [];
 		for (let i = 0; i <= TI.quest; i++) {
@@ -143,6 +143,7 @@
 				'parents'  : thing.parents.length.expressZero_asHyphen(),
 				'related'  : thing.relatedRelationships.length.expressZero_asHyphen(),
 				'id'	   : thing.id.clipWithEllipsisAt(12),
+				'ancestry' : ancestry.id,
 				'color'	   : k.empty,
 			};
 			information = Object.entries(dict);
@@ -219,7 +220,8 @@
 				{/key}
 				<Table
 					array={information}
-					top={tops[TI.table]}/>
+					top={tops[TI.table]}
+					width = {k.width_details - 20}/>
 			{/if}
 			<Color
 				origin={color_origin}

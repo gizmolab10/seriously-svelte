@@ -5,14 +5,14 @@ import type { Integer } from './Types';
 
 // Ancestry sometimes needs to access and or alter an associated svelte component
 
-export default class Svelte_Wrapper extends Identifiable {
+export default class Svelte_Wrapper {
+	hid: Integer;
     _parentTypes: Array<T_SvelteComponent> = [];  // ABANDON
     handle_mouse_state: Handle_Mouse_State;
     type: T_SvelteComponent;
     element: HTMLElement;
 
     constructor(element: HTMLElement, handle_mouse_state: Handle_Mouse_State, hid: Integer, type: T_SvelteComponent, parentTypes: Array<T_SvelteComponent> = []) {
-		super();
         this.hid = hid;
         this.type = type;
         this.element = element;
