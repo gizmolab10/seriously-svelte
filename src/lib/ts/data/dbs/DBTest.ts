@@ -32,7 +32,6 @@ export default class DBTest extends DBCommon {
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cra', kindC, idTr, idTa, 0);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'crb', kindC, idTr, idTb, 1);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'crc', kindC, idTr, idTc, 2);
-		h.relationship_remember_runtimeCreateUnique(this.idBase, 'crd', kindC, idTr, idTd, 3);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cab', kindC, idTa, idTb, 0);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cac', kindC, idTa, idTc, 1);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cad', kindC, idTa, idTd, 2);
@@ -44,7 +43,7 @@ export default class DBTest extends DBCommon {
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'ccd', kindC, idTc, idTd, 0);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cce', kindC, idTc, idTe, 1);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cef', kindC, idTe, idTf, 0);
-		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cfd', kindC, idTf, idTd, 1);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cfd', kindC, idTf, idTd, 0);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'rrb', kindR, idTr, idTb, 2);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'rbd', kindR, idTb, idTd, 2);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'rac', kindR, idTa, idTc, 2);

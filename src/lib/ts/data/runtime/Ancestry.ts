@@ -13,7 +13,6 @@ import { T_Database } from '../dbs/DBCommon';
 import Identifiable from './Identifiable';
 
 export default class Ancestry extends Identifiable {
-	reciprocals: Array<Ancestry> = [];
 	kindPredicate: string;
 	thing_isChild = true;
 	g_widget!: G_Widget;
@@ -24,8 +23,6 @@ export default class Ancestry extends Identifiable {
 	// NOTE: first relationship's parent is always the root
 	//   "   kindPredicate is from the last relationship
 	//  	 all children are of that kind of predicate
-	//	 "	 reciprocals are all the ancestries that point to the isRelatedTo thing
-	//		 (there can be many if thing or its ancestors hav multiple parents)
 
 	constructor(t_database: string, path: string = k.root_path, kindPredicate: string = T_Predicate.contains, thing_isChild: boolean = true) {
 		super(path);
@@ -33,29 +30,30 @@ export default class Ancestry extends Identifiable {
 		this.thing_isChild = thing_isChild;
 		this.kindPredicate = kindPredicate;
 		this.g_widget = G_Widget.empty(this);
-		this.update_reciprocals();
 		this.hierarchy.signal_storage_redraw(0);
 	}
 	
 	static readonly GENERAL: unique symbol;
 
-	traverse(apply_closureTo: (ancestry: Ancestry) => boolean) {
-		if (!apply_closureTo(this)) {
+	traverse(apply_closureTo: (ancestry: Ancestry) => boolean, visited: Array<number> = []) {
+		if (!visited.includes(this.hid) && !apply_closureTo(this)) {
 			for (const childAncestry of this.childAncestries) {
-				childAncestry.traverse(apply_closureTo);
+				childAncestry.traverse(apply_closureTo, [...visited, this.hid]);
 			}
 		}
 	}
 
-	async traverse_async(apply_closureTo: (ancestry: Ancestry) => Promise<boolean>) {
-		try {
-			if (!await apply_closureTo(this)) {
-				for (const childAncestry of this.childAncestries) {
-					await childAncestry.traverse_async(apply_closureTo);
+	async traverse_async(apply_closureTo: (ancestry: Ancestry) => Promise<boolean>, visited: Array<number> = []) {
+		if (!visited.includes(this.hid)) {
+			try {
+				if (!await apply_closureTo(this)) {
+					for (const childAncestry of this.childAncestries) {
+						await childAncestry.traverse_async(apply_closureTo, [...visited, this.hid]);
+					}
 				}
+			} catch (error) {
+				console.error('Error during traverse_async:', error);
 			}
-		} catch (error) {
-			console.error('Error during traverse_async:', error);
 		}
 	}
 	
@@ -404,7 +402,7 @@ export default class Ancestry extends Identifiable {
 
 	isAProgenyOf(ancestry: Ancestry): boolean {
 		let isAProgeny = false;
-		if (!ancestry.isUnidirectional) {
+		if (ancestry.isUnidirectional) {
 			ancestry.traverse((progenyAncestry: Ancestry) => {
 				if (progenyAncestry.hid == this.hid) {
 					isAProgeny = true;
@@ -519,20 +517,19 @@ export default class Ancestry extends Identifiable {
 		return [crumb_things, widths, lefts, parent_widths];
 	}
 
-	update_reciprocals() {
-		// determine visibility elsewhere (cache where?, stale?)
+	get reciprocals(): Array<Ancestry> {
+		// ancestries that point back at this ancestry's thing
+		// (there can be many if thing or its ancestors have multiple parents)
 		const reciprocals: Array<Ancestry> = [];
 		if (this.isBidirectional) {
 			const id_thing = this.relationship?.idChild;
-			const matches = this.hierarchy.ancestries.map(v => {return (v.id_thing == id_thing) ? v : null});
-			for (const match of matches) {
-				if (!!match && !match.isBidirectional) {
-					reciprocals.push(match);
-					// console.log(`reciprocal ${match.titles}`)
+			for (const ancestry of this.hierarchy.ancestries) {
+				if (!ancestry.isBidirectional && id_thing == ancestry.id_thing) {
+					reciprocals.push(ancestry);
 				}
 			}
-			this.reciprocals = reciprocals;
 		}
+		return reciprocals;
 	}
 
 	static readonly FOCUS: unique symbol;
@@ -552,7 +549,6 @@ export default class Ancestry extends Identifiable {
 
 	handle_singleClick_onDragDot(shiftKey: boolean) {
 		if (this.isBidirectional && this.reciprocals.length > 0) {
-			console.log('hah')
 			this.reciprocals[0].handle_singleClick_onDragDot(shiftKey);
 		} else {
 			w_s_title_edit?.set(null);
@@ -594,23 +590,6 @@ export default class Ancestry extends Identifiable {
 		this.hierarchy.rootAncestry.becomeFocus();
 	}
 
-	visibleProgeny_ancestries(visited: Array<string> = []): Array<Ancestry> {
-		let ancestries: Array<Ancestry> = [];
-		if (this.isVisible) {
-			ancestries.push(this);
-		}
-		const thing = this.thing;
-		if (!!thing) {
-			if (!visited.includes(this.id) && this.showsChildRelationships) {
-				for (const childAncestry of this.childAncestries) {
-					const progeny = childAncestry.visibleProgeny_ancestries([...visited, this.id]);
-					ancestries = [...ancestries, ...progeny];
-				}
-			}
-		}
-		return ancestries;
-	}
-
 	visibleProgeny_height(visited: Array<string> = []): number {
 		const thing = this.thing;
 		if (!!thing) {
@@ -644,6 +623,23 @@ export default class Ancestry extends Identifiable {
 			return width;
 		}
 		return 0;
+	}
+
+	visibleProgeny_ancestries(visited: Array<string> = []): Array<Ancestry> {
+		let ancestries: Array<Ancestry> = [];
+		if (this.isVisible) {
+			ancestries.push(this);
+		}
+		const thing = this.thing;
+		if (!!thing) {
+			if (!visited.includes(this.id) && this.showsChildRelationships) {
+				for (const childAncestry of this.childAncestries) {
+					const progeny = childAncestry.visibleProgeny_ancestries([...visited, this.id]);
+					ancestries = [...ancestries, ...progeny];
+				}
+			}
+		}
+		return ancestries;
 	}
 
 	static readonly EDIT: unique symbol;

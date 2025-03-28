@@ -877,9 +877,8 @@ export class Hierarchy {
 	get ancestry_forBreadcrumbs(): Ancestry {
 		const focus = get(w_ancestry_focus);
 		const grab = this.grabs_latest_ancestry;
-		return (!!grab && grab.isVisible) ? grab : focus;
-		// const grab_containsFocus = !!grab && focus.isAProgenyOf(grab)
-		// return (!!grab && grab.isVisible && !grab_containsFocus) ? grab : focus;
+		const grab_containsFocus = !!grab && focus.isAProgenyOf(grab)
+		return (!!grab && grab.isVisible && !grab_containsFocus) ? grab : focus;
 	}
 
 	ancestry_valid_forPath(path: string): Ancestry | null {
