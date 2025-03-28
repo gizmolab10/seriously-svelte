@@ -220,13 +220,13 @@ export class Hierarchy {
 
 	things_forAncestry(ancestry: Ancestry): Array<Thing> {
 		const isContains = ancestry.kindPredicate == T_Predicate.contains;
+		const relationship_hids = ancestry.relationship_hids;
 		let things: Array<Thing> = isContains ? [this.root] : [];
-		const hids = ancestry.relationship_hids;
-		if (!isContains || hids.length != 0) {
-			for (const hid of hids) {
-				const relationship = this.relationship_forHID(hid);
+		if (!isContains || relationship_hids.length != 0) {
+			for (const relationship_hid of relationship_hids) {
+				const relationship = this.relationship_forHID(relationship_hid);
 				if (!!relationship) {
-					if (!!relationship.parent && things.length == 0 && !isContains) {
+					if (!!relationship.parent && things.length == 0) {
 						things.push(relationship.parent);
 					}
 					if (!!relationship.child) {

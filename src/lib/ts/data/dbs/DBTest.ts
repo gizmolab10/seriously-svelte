@@ -33,7 +33,6 @@ export default class DBTest extends DBCommon {
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'crb', kindC, idTr, idTb, 1);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'crc', kindC, idTr, idTc, 2);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'crd', kindC, idTr, idTd, 3);
-		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cre', kindC, idTr, idTe, 4);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cab', kindC, idTa, idTb, 0);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cac', kindC, idTa, idTc, 1);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cad', kindC, idTa, idTd, 2);
@@ -44,12 +43,14 @@ export default class DBTest extends DBCommon {
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cbf', kindC, idTb, idTf, 2);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'ccd', kindC, idTc, idTd, 0);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cce', kindC, idTc, idTe, 1);
-		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cde', kindC, idTd, idTe, 0);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cef', kindC, idTe, idTf, 0);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cfd', kindC, idTf, idTd, 1);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'rrb', kindR, idTr, idTb, 2);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'rbd', kindR, idTb, idTd, 2);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'rac', kindR, idTa, idTc, 2);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'raf', kindR, idTa, idTf, 2);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'rce', kindR, idTc, idTe, 2);
-		this.makeMore(3, 'c', kindC, idTf, true);	// children of Friends
+		// this.makeMore(3, 'c', kindC, idTf, true);	// children of Friends
 		// this.makeMore(2, 'e', kindC, idTb, true);	// children of Big
 		// this.makeMore(4, 'e', kindR, idTb, true);	// related to  "
 		// this.makeMore(2, 'c', kindC, idTb, false);	// parents of  "

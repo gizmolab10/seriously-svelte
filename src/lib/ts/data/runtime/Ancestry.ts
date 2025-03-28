@@ -35,9 +35,6 @@ export default class Ancestry extends Identifiable {
 		this.g_widget = G_Widget.empty(this);
 		this.update_reciprocals();
 		this.hierarchy.signal_storage_redraw(0);
-		if (this.isBidirectional) {
-			console.log(`isBidirectional ${path} ${this.titles}`)
-		}
 	}
 	
 	static readonly GENERAL: unique symbol;
@@ -105,9 +102,9 @@ export default class Ancestry extends Identifiable {
 	get ancestors():		 	 Array		 <Thing> { return this.hierarchy.things_forAncestry(this); }
 	get siblingAncestries(): 	 Array	  <Ancestry> { return this.parentAncestry?.childAncestries ?? []; }
 	get childAncestries():	 	 Array	  <Ancestry> { return this.childAncestries_ofKind(this.kindPredicate); }
-	get childRelationships():	 Array<Relationship> { return this.relationships_ofKind_forParents(this.kindPredicate, false); }
-	get parentRelationships():	 Array<Relationship> { return this.relationships_ofKind_forParents(this.kindPredicate, true); }
 	get relevantRelationships(): Array<Relationship> { return this.relationships_forChildren(this.thing_isChild); }
+	get parentRelationships():	 Array<Relationship> { return this.relationships_ofKind_forParents(this.kindPredicate, true); }
+	get childRelationships():	 Array<Relationship> { return this.relationships_ofKind_forParents(this.kindPredicate, false); }
 
 	get relationships(): Array<Relationship> {
 		const relationships = this.relationship_hids.map(hid => this.hierarchy.relationship_forHID(hid)) ?? [];
@@ -165,13 +162,15 @@ export default class Ancestry extends Identifiable {
 	}
 
 	get isVisible(): boolean {
-		if (ux.inRadialMode) {
-			return this.parentAncestry?.s_paging?.index_isVisible(this.siblingIndex) ?? false;
-		} else {
+		if (ux.inTreeMode) {
 			const focus = get(w_ancestry_focus);
 			const incorporates = this.incorporates(focus);
 			const expanded = this.isAllExpandedFrom(focus);
 			return (incorporates && expanded);
+		} else if (this.isBidirectional) {
+			return true;			// TODO: trouble?
+		} else {
+			return this.parentAncestry?.s_paging?.index_isVisible(this.siblingIndex) ?? false;
 		}
 	}
 
@@ -507,7 +506,7 @@ export default class Ancestry extends Identifiable {
 				total += width;
 				widths.push(width);
 				crumb_things.push(thing);
-				debug.log_crumbs(`${width} ${thing.title}`);
+				debug.log_crumbs(`ONE ${width} ${thing.title}`);
 				parent_widths = parent_widths * 100 + width;
 			}
 		}
@@ -552,7 +551,10 @@ export default class Ancestry extends Identifiable {
 	static readonly EVENTS: unique symbol;
 
 	handle_singleClick_onDragDot(shiftKey: boolean) {
-		if (!this.isBidirectional) {
+		if (this.isBidirectional && this.reciprocals.length > 0) {
+			console.log('hah')
+			this.reciprocals[0].handle_singleClick_onDragDot(shiftKey);
+		} else {
 			w_s_title_edit?.set(null);
 			if (!!get(w_s_alteration)) {
 				this.ancestry_alterMaybe(this);
@@ -566,8 +568,6 @@ export default class Ancestry extends Identifiable {
 				this.grabOnly();
 			}
 			signals.signal_reposition_widgets_fromFocus();
-		} else if (this.reciprocals.length > 0) {
-			this.reciprocals[0].handle_singleClick_onDragDot(shiftKey);
 		}
 	}
 
@@ -801,6 +801,9 @@ export default class Ancestry extends Identifiable {
 	}
 
 	persistentMoveUp_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
+		if (this.isBidirectional) {
+			return this.persistentMoveUp_forBidirectional_maybe(up, SHIFT, OPTION, EXTREME);
+		}
 		const parentAncestry = this.parentAncestry;
 		let graph_needsRelayout = false;
 		let graph_needsRebuild = false;
@@ -812,8 +815,7 @@ export default class Ancestry extends Identifiable {
 				this.hierarchy.ancestry_rebuild_runtimeBrowseRight(this, up, SHIFT, EXTREME, true);
 			} else if (!!thing) {
 				const is_radial_mode = ux.inRadialMode;
-				const isBidirectional = this.predicate?.isBidirectional ?? false;
-				if ((!isBidirectional && this.thing_isChild) || !is_radial_mode) {
+				if ((this.thing_isChild) || !is_radial_mode) {
 					const index = siblings.indexOf(thing);
 					const newIndex = index.increment(!up, length);
 					if (!!parentAncestry && !OPTION) {
@@ -840,6 +842,50 @@ export default class Ancestry extends Identifiable {
 						this.relationship?.order_setTo(newOrder);
 						u.ancestries_orders_normalize(parentAncestry.childAncestries);
 					}
+				}
+			}
+		}
+		return [graph_needsRebuild, graph_needsRelayout];
+	}
+
+	persistentMoveUp_forBidirectional_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
+		const focusAncestry = get(w_ancestry_focus);
+		const siblingAncestries = focusAncestry?.thing?.parentAncestries;
+		let graph_needsRelayout = false;
+		let graph_needsRebuild = false;
+		if (!!focusAncestry && siblingAncestries) {
+			const siblings = siblingAncestries?.map(a => a.thing).filter(t => !!t) ?? [];
+			const length = siblings.length;
+			const thing = this?.thing;
+			if (length == 0) {		// friendly for first-time users
+				this.hierarchy.ancestry_rebuild_runtimeBrowseRight(this, up, SHIFT, EXTREME, true);
+			} else if (!!thing) {
+				const is_radial_mode = true;
+				const index = siblings.indexOf(thing);
+				const newIndex = index.increment(!up, length);
+				if (!!focusAncestry && !OPTION) {
+					const grabAncestry = focusAncestry.extend_withChild(siblings[newIndex]);
+					if (!!grabAncestry) {
+						if (!grabAncestry.isVisible) {
+							if (!focusAncestry.isFocus) {
+								graph_needsRebuild = focusAncestry.becomeFocus();
+							} else if (is_radial_mode) {
+								graph_needsRebuild = grabAncestry.assureIsVisible_inClusters();	// change paging
+							} else {
+								alert('PROGRAMMING ERROR: child of focus is not visible');
+							}
+						}
+						grabAncestry.grab_forShift(SHIFT);
+						graph_needsRelayout = true;
+					}
+				} else if (c.allow_GraphEditing && OPTION) {
+					graph_needsRebuild = true;
+					u.ancestries_orders_normalize(siblingAncestries, false);
+					const wrapped = up ? (index == 0) : (index + 1 == length);
+					const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
+					const newOrder = newIndex + goose;
+					this.relationship?.order_setTo(newOrder);
+					u.ancestries_orders_normalize(siblingAncestries);
 				}
 			}
 		}

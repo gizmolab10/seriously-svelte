@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { c, k, ux, w, show, Rect, Size, Point, debug, Angle, colors, signals } from '../../ts/common/Global_Imports';
-	import { w_background_color, w_thing_fontFamily, w_ring_rotation_radius } from '../../ts/common/Stores';
+	import { w_count_mouse_up, w_ancestry_focus, w_g_active_cluster, w_ring_rotation_radius } from '../../ts/common/Stores';
 	import { T_Layer, G_Cluster, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { w_count_mouse_up, w_ancestry_focus, w_g_active_cluster } from '../../ts/common/Stores';
+	import { w_color_trigger, w_background_color, w_thing_fontFamily } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/runtime/Identifiable';
 	import Angled_Text from '../kit/Angled_Text.svelte';
@@ -17,6 +17,7 @@
 	let text_background_color = $w_background_color;
 	let mouse_up_count = $w_count_mouse_up;
 	let arc_wrapper!: Svelte_Wrapper;
+	let angled_text_color = color;
 	let fork_stroke_color = color;
 	let thumb_fill_color = color;
 	let arc_stroke_color = color;
@@ -50,7 +51,7 @@
 	});
 
 	$: {
-		const _ = $w_g_active_cluster + $w_background_color;
+		const _ = $w_g_active_cluster + $w_background_color + $w_color_trigger;
 		update_colors();
 	}
 
@@ -75,6 +76,7 @@
 		arc_fill_color = $w_background_color;	// no effect because z-level not high enough
 		arc_stroke_color = colors.opacitize(color, 0.4);
 		fork_stroke_color = colors.opacitize(color, 0.3);
+		angled_text_color = $w_ancestry_focus.thing?.color ?? k.thing_color_default;
 		thumb_fill_color = colors.opacitize(color, ux.s_ring_rotation.isActive ? 0.15 : g_cluster.s_paging_rotation.thumb_opacity);
 		text_background_color = !ux.s_ring_resizing.isHovering ? $w_background_color : colors.opacitize(color, ux.s_ring_resizing.fill_opacity);
 	}
@@ -143,10 +145,10 @@
 </div>
 <Angled_Text
 	zindex = {T_Layer.paging}
+	color = {angled_text_color}
 	text = {g_cluster.cluster_title}
 	center = {g_cluster.label_center}
 	font_size = {k.small_font_size}px
 	font_family = {$w_thing_fontFamily}
 	background_color = {text_background_color}
-	angle = {g_cluster.g_sliderArc.label_text_angle}
-	color = {$w_ancestry_focus.thing?.color ?? k.thing_color_default}/>
+	angle = {g_cluster.g_sliderArc.label_text_angle}/>

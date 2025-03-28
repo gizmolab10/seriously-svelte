@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, k, u, w, Size, Point, Thing, debug, T_Layer } from '../../ts/common/Global_Imports';
+	import { c, k, u, ux, w, Size, Point, Thing, debug, T_Tool, T_Layer, T_Element } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { signals, svgPaths, Ancestry, databases } from '../../ts/common/Global_Imports';
 	import { w_hierarchy, w_graph_rect, w_color_trigger } from '../../ts/common/Stores';
@@ -19,7 +19,7 @@
 	});
 
 	$: {
-		const _ = $w_s_title_edit + $w_color_trigger;
+		const _ = $w_s_title_edit + $w_color_trigger + $w_ancestries_grabbed;
 		breadcrumbs_rebuilds += 1;
 	}
 
@@ -34,9 +34,13 @@
 				let parent_widths = 0;	// encoded as one parent count per 2 digits (base 10)
 				[things, widths, lefts, parent_widths] = ancestry.layout_breadcrumbs_within(windowWidth);
 				trigger = parent_widths * 10000 + breadcrumbs_rebuilds * 100 + lefts[0];		// re-render HTML when this value changes
-				debug.log_crumbs(`${widths} ${things.map(t => t.title)}`);
+				debug.log_crumbs(`ALL ${widths} ${things.map(t => t.title)}`);
 			}
 		}
+	}
+
+	function es_breadcrumb(index: number, thing: Thing): S_Element {
+		return ux.s_element_for(ancestry?.stripBack(things.length - index - 1), T_Element.breadcrumb, T_Tool.none);
 	}
 
 </script>
@@ -53,6 +57,9 @@
 				{separator}
 			</div>
 		{/if}
-		<Breadcrumb_Button left={lefts[index]} ancestry={ancestry?.stripBack(things.length - index - 1)}/>
+		<Breadcrumb_Button
+			thing={thing}
+			left={lefts[index]}
+			es_breadcrumb={es_breadcrumb(index, thing)}/>
 	{/each}
 {/key}

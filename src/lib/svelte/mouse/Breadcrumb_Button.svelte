@@ -1,24 +1,24 @@
 <script lang='ts'>
 	import { w_color_trigger, w_background_color, w_thing_fontFamily, w_ancestry_focus } from '../../ts/common/Stores';
-	import { k, u, ux, Point, Thing, colors, signals, databases } from '../../ts/common/Global_Imports';
+	import { k, u, Point, Thing, colors, signals, databases } from '../../ts/common/Global_Imports';
 	import { T_Tool, T_Element, S_Element } from '../../ts/common/Global_Imports';
 	import Button from './Button.svelte';
 	import { onMount } from 'svelte';
+    export let thing;
 	export let left = 0;
-    export let ancestry;
+	export let es_breadcrumb;
 	export let center = Point.zero;
 	const borderStyle = '1px solid';
 	let borderColor = $w_background_color;
-	let es_breadcrumb = ux.s_element_for(ancestry, T_Element.breadcrumb, T_Tool.none);
-	let title = ancestry.thing?.breadcrumb_title ?? k.empty;
+	let title = thing.breadcrumb_title ?? k.empty;
 	let name = `crumb (for ${title ?? 'unknown'})`
 	let border = `${borderStyle} ${borderColor}`;
+	let ancestry = es_breadcrumb.ancestry;
+	let width = u.getWidthOf(title) + 15;
 	let height = k.default_buttonSize;
-	let thing: Thing = ancestry.thing;
+	let breadcrumb_rebuilds = 0;
 	let colorStyles = k.empty;
 	let style = k.empty;
-	let breadcrumb_rebuilds = 0;
-	let width = u.getWidthOf(title) + 15;
 		
 	center = new Point(left + width / 2, height - 1);
 	updateColors();
