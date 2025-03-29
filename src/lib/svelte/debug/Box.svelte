@@ -10,8 +10,6 @@
     let cross_size = box_size.multipliedBy(3);
     let cross_rect = Rect.createCenterRect(rect.center, cross_size);
 
-    console.log(rect.description)
-
     $: {
         box_size = rect.size;
         cross_size = box_size.multipliedBy(3);

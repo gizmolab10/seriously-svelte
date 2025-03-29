@@ -5,13 +5,13 @@
 	import Circle from '../kit/Circle.svelte';
 	import { onMount } from 'svelte';
 	export let stroke_width = 1;
-	export let ancestry!: Ancestry;
+	export let g_line!:G_TreeLine;
 	export let svg_dasharray = k.empty;
-	const g_widget = ancestry.g_widget;
-	const curveType = g_widget.curveType;
-	const debugOffset = new Point(142, -0);
+	const ancestry = g_line.parent_ancestry;
 	const lineOffset = new Point(-122.5, 2.5);
-	let lineRect = g_widget.g_treeLine.rect.offsetBy(lineOffset);
+	const debugOffset = new Point(142, -0);
+	const curveType = g_line.curveType;
+	let lineRect = g_line.rect.offsetBy(lineOffset);
 	let lineWrapper: Svelte_Wrapper;
 	let origin = lineRect.origin;
 	let extent = lineRect.extent;
@@ -29,7 +29,7 @@
 
 	onMount(() => {
 		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
-			lineRect = g_widget.g_treeLine.rect.offsetBy(lineOffset);
+			lineRect = g_line.rect.offsetBy(lineOffset);
 			debug.log_reposition(`tree line [. .] on "${ancestry.title}"`);
 			reposition();
 		});

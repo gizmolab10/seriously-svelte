@@ -17,16 +17,11 @@
 			g_treeChildren.layout_allChildren()
 		}
 	}
-		// {#each ancestry.g_widget.lineRects.entries() as [index, rect]}
-		// 	{#if index > 0}
-		// 		<Box rect = {rect} color = 'orange'/>
-		// 	{/if}
-		// {/each}
-				// <Tree_Line
-				// 	index = {index}
-				// 	stroke_width = 1
-				// 	svg_dasharray = '4,3'
-				// 	ancestry = {ancestry}/>
+	
+	// {#each ancestry.g_widget.g_reciprocalLines as g_line}
+	// 	<Tree_Line g_line = {g_line}/>
+	//	<Box rect={g_line.rect} color='purple'/>
+	// {/each}
 	
 </script>
 
@@ -39,10 +34,7 @@
 {/if}
 {#if !!ancestry}
 	{#each ancestry.childAncestries as childAncestry}
-		{#if ancestry.g_widget.g_reciprocalLines.length > 0}
-			<Box rect={ancestry.g_widget.g_reciprocalLines[0].rect} color='purple'/>
-		{/if}
-		<Tree_Line ancestry = {childAncestry}/>
+		<Tree_Line g_line = {childAncestry.g_widget.g_line}/>
 		<Widget ancestry = {childAncestry}/>
 		{#if childAncestry.showsChildRelationships}
 			<Tree_Children ancestry = {childAncestry}/>

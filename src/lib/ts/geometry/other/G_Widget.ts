@@ -8,7 +8,6 @@ export default class G_Widget {
 	g_treeChildren: G_TreeChildren | null = null;
 	g_reciprocalLines: Array<G_TreeLine> = [];
 	origin_ofChildrenTree = Point.zero;
-	curveType: string = T_Curve.flat;
 	offset_ofWidget = Point.zero;
 	center_ofReveal = Point.zero;
 	origin_ofRadial = Point.zero;
@@ -17,7 +16,7 @@ export default class G_Widget {
 	origin_ofTitle = Point.zero;
 	center_ofDrag = Point.zero;
 	forGraphMode: T_GraphMode;
-	g_treeLine!: G_TreeLine;
+	g_line!: G_TreeLine;
 	points_toChild = true;
 	es_widget!: S_Element;
 	points_right = true;
@@ -41,9 +40,9 @@ export default class G_Widget {
 	//		child tree
 	//		radial origin, angles and orientations (in/out, right/left)
 
-	constructor( ancestry: Ancestry) {
+	constructor(ancestry: Ancestry) {
 		this.es_widget = ux.s_element_for(ancestry, T_Element.widget, k.empty);
-		this.g_treeLine = new G_TreeLine(this.ancestry, this.ancestry);
+		this.g_line = new G_TreeLine(ancestry, ancestry);
 		this.forGraphMode = get(w_t_graphMode);
 		this.ancestry = ancestry;
 		if (!ancestry.thing) {
@@ -55,9 +54,9 @@ export default class G_Widget {
 	get showingReveal(): boolean { return this.ancestry.showsReveal_forPointingToChild(this.points_toChild) ?? false; }
 
 	get width_ofBothDots(): number {
-		const offset_forReveal = k.dot_size * (this.showingReveal ? 2 : 1);
-		const offset_forRadial = ux.inTreeMode ? -13.5 : (this.points_right ? 11 : -0.5);
-		return offset_forReveal + offset_forRadial;
+		const width_ofDrag = ux.inTreeMode ? -13.5 : (this.points_right ? 11 : -0.5);
+		const width_ofReveal = k.dot_size * (this.showingReveal ? 2 : 1);
+		return width_ofDrag + width_ofReveal;
 	}
 
 	update(
@@ -68,12 +67,11 @@ export default class G_Widget {
 		rect: Rect = Rect.zero,
 		curveType: string = T_Curve.flat) {
 		if (forGraphMode == get(w_t_graphMode)) {		// modes must match, else widgets get misplaced
-			this.curveType = curveType;
-			this.g_treeLine.rect = rect;
+			this.g_line.rect = rect;
 			this.forGraphMode = forGraphMode;
 			this.points_right = points_right;
 			this.points_toChild = points_toChild;
-			this.g_treeLine.curveType = curveType;
+			this.g_line.curveType = curveType;
 			this.origin_ofWidget = origin_ofWidget;
 		}
 	}
@@ -108,7 +106,7 @@ export default class G_Widget {
 			this.origin_ofTitle = new Point(ux.inRadialMode ? offset_ofTitle_forRadial : 12.5, 0);
 			this.origin_ofRadial = this.origin_ofWidget.offsetByXY(-x_radial, 4 - k.dot_size);
 			this.center_ofDrag = new Point(x_drag, y_drag).offsetEquallyBy(k.dot_size / 2);
-			this.origin_ofChildrenTree = this.g_treeLine.rect.extent.offsetBy(offset_ofChildrenTree);
+			this.origin_ofChildrenTree = this.g_line.rect.extent.offsetBy(offset_ofChildrenTree);
 			this.offset_ofWidget = Point.x(offset_forDirection).offsetEquallyBy(offset_forBorder);
 			this.width_ofWidget = width;
 			if (showingReveal) {
@@ -137,7 +135,6 @@ export default class G_Widget {
 			const g_line = new G_TreeLine(this.ancestry, this.ancestry);
 			this.g_reciprocalLines[index] = g_line;
 			g_line.rect = rect;
-			// console.log(` ${reciprocal.titles} => ${this.ancestry.titles}   ${rect.description}`)
 		}
 	}
 
