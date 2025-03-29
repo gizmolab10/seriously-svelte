@@ -1,5 +1,5 @@
-import { k, u, ux, Rect, Size, Point, svgPaths, T_Oblong } from '../common/Global_Imports';
-import type { Integer } from '../common/Types';
+import { k, u, ux, Rect, Size, Point, svgPaths, T_Oblong } from '../../common/Global_Imports';
+import type { Integer } from '../../common/Types';
 
 export default class G_Segment {
 	relative_font_size = k.font_size;

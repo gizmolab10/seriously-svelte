@@ -141,6 +141,7 @@ export default class User_Interaction {
 		if (this.inTreeMode) {
 			this.g_treeGraph.update_origins();
 			get(w_ancestry_focus)?.g_widget.recursively_relayout_tree();
+			// get(w_hierarchy).update_related_ancestries();
 		} else {
 			this.g_radialGraph.layout_allClusters();
 		}

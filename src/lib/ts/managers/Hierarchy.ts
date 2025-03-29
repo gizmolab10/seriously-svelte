@@ -559,6 +559,8 @@ export class Hierarchy {
 
 	static readonly RELATIONSHIPS: unique symbol;
 
+	relationships_forKind(kind: T_Predicate): Array<Relationship> { return this.relationships_byKind[kind] ?? [];; }
+
 	relationships_refreshKnowns() {
 		const saved = this.relationships;
 		this.relationships_forget_all();
@@ -715,7 +717,7 @@ export class Hierarchy {
 
 	relationship_forget(relationship: Relationship) {
 		delete this.relationship_byHID[relationship.hid];
-		const relationships = this.relationships_byKind[relationship.kindPredicate];
+		const relationships = this.relationships_forKind(relationship.kindPredicate);
 		this.relationships = Identifiable.remove_byHID<Relationship>(this.relationships, relationship);
 		this.relationship_forget_forHID(this.relationships_byChildHID, relationship.hidChild, relationship);
 		this.relationship_forget_forHID(this.relationships_byParentHID, relationship.hidParent, relationship);
@@ -724,7 +726,7 @@ export class Hierarchy {
 	
 	relationship_remember(relationship: Relationship) {
 		if (!this.relationship_byHID[relationship.hid]) {
-			let relationships = this.relationships_byKind[relationship.kindPredicate] ?? [];
+			let relationships = this.relationships_forKind(relationship.kindPredicate)
 			if (!this.relationships.map(r => r.id).includes(relationship.id)) {
 				this.relationships.push(relationship);
 			}

@@ -10,6 +10,8 @@
     let cross_size = box_size.multipliedBy(3);
     let cross_rect = Rect.createCenterRect(rect.center, cross_size);
 
+    console.log(rect.description)
+
     $: {
         box_size = rect.size;
         cross_size = box_size.multipliedBy(3);
@@ -42,14 +44,15 @@
             height:{line_thickness / 10}px;
     '>
     </div>
-    <div
-        style='
-            z-index:{zindex};
-            position:absolute;
-            top:{cross_rect.origin.y}px;
-            left:{cross_rect.center.x}px;
-            height:{cross_size.height}px;
-            width:{line_thickness / 10}px;
-    '>
-    </div>
 {/if}
+<div
+    style='
+    z-index:{zindex};
+    position:absolute;
+    top:{cross_rect.origin.y}px;
+    left:{cross_rect.center.x}px;
+    height:{cross_size.height}px;
+    width:{line_thickness / 10}px;
+    '>
+</div>
+    

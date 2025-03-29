@@ -201,19 +201,33 @@ export class Rect {
 			case T_Quadrant.lowerRight: return [this.bottomLeft, this.topRight];
 			case T_Quadrant.upperLeft:  return [this.topRight, this.bottomLeft];
 			case T_Quadrant.lowerLeft:  return [this.extent, this.origin];
-			default:				  return [this.origin, this.extent];
+			default:					return [this.origin, this.extent];
 		}
 	}
 
-	static createExtentRect(origin: Point, extent: Point) {
+	get normalized(): Rect {
+		const width = this.width;
+		const height = this.height;
+		if (width < 0) {
+			this.origin.x += width;
+			this.size.width = -width;
+		}
+		if (height < 0) {
+			this.origin.y += height
+			this.size.height = -height;
+		}
+		return this;
+	}
+
+	static createExtentRect(origin: Point, extent: Point): Rect {
 		return new Rect(origin, extent.vector_from(origin).asSize);
 	}
 
-	static createRightCenterRect(rightCenter: Point, size: Size) {
+	static createRightCenterRect(rightCenter: Point, size: Size): Rect {
 		return new Rect(rightCenter.offsetByY(size.height / -2), size);
 	}
 
-	static createCenterRect(center: Point, size: Size) {
+	static createCenterRect(center: Point, size: Size): Rect {
 		const offset_fromOrigin = size.asPoint.dividedInHalf;
 		const origin = center.offsetBy(offset_fromOrigin.negated);
 		return new Rect(origin, size);

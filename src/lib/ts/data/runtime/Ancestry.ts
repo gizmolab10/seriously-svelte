@@ -15,8 +15,8 @@ import Identifiable from './Identifiable';
 export default class Ancestry extends Identifiable {
 	kindPredicate: string;
 	thing_isChild = true;
-	g_widget!: G_Widget;
 	t_database: string;
+	g_widget: G_Widget;
 
 	// id => ancestry (path) string 
 	//   "   composed of ids of each relationship
@@ -516,9 +516,22 @@ export default class Ancestry extends Identifiable {
 		}
 		return [crumb_things, widths, lefts, parent_widths];
 	}
+	
+	get bidirectional_ancestries(): Array<Ancestry> {
+		let ancestries: Array<Ancestry> = []
+		for (const predicate of get(w_hierarchy).predicates) {
+			if (predicate.isBidirectional) {
+				const others = this.thing?.parentAncestries_for(predicate);
+				if (!!others) {
+					ancestries = [...ancestries, ...others];
+				}
+			}
+		}
+		return ancestries;
+	}
 
 	get reciprocals(): Array<Ancestry> {
-		// ancestries that point back at this ancestry's thing
+		// bidirectional ancestries that point back at this ancestry's thing
 		// (there can be many if thing or its ancestors have multiple parents)
 		const reciprocals: Array<Ancestry> = [];
 		if (this.isBidirectional) {

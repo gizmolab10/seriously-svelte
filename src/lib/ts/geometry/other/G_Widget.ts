@@ -1,9 +1,12 @@
-import { k, ux, Rect, Point, T_Curve, Ancestry, S_Element, T_Element, T_GraphMode, G_TreeChildren } from '../common/Global_Imports'
-import { w_hierarchy, w_graph_rect, w_t_graphMode, w_show_details } from '../common/Stores';
+import { w_hierarchy, w_graph_rect, w_t_graphMode, w_show_details } from '../../common/Stores';
+import { S_Element, G_TreeLine, G_TreeChildren } from '../../common/Global_Imports'
+import { T_Curve, T_Element, T_GraphMode } from '../../common/Global_Imports';
+import { k, ux, Rect, Point, Ancestry } from '../../common/Global_Imports'
 import { get } from 'svelte/store';
 
 export default class G_Widget {
 	g_treeChildren: G_TreeChildren | null = null;
+	g_reciprocalLines: Array<G_TreeLine> = [];
 	origin_ofChildrenTree = Point.zero;
 	curveType: string = T_Curve.flat;
 	offset_ofWidget = Point.zero;
@@ -14,12 +17,16 @@ export default class G_Widget {
 	origin_ofTitle = Point.zero;
 	center_ofDrag = Point.zero;
 	forGraphMode: T_GraphMode;
+	g_treeLine!: G_TreeLine;
 	points_toChild = true;
 	es_widget!: S_Element;
 	points_right = true;
 	ancestry!: Ancestry;
 	width_ofWidget = 0;
-	rect = Rect.zero;
+
+	// TODO:
+	// create a G_TreeLine as normal
+	// and one for each reciprocal
 
 	get responder(): HTMLElement | null { return this.es_widget.responder; }
 
@@ -28,12 +35,15 @@ export default class G_Widget {
 	// width (computed here)
 	// UX state (fill, border) 
 	// relevant ancestries (children, thing, shows reveal)
-	// location of dots, title
-	//  child tree
-	//  radial origin, angles and orientations (in/out, right/left)
+	// locations of:
+	//	 rects for lines from: parent and bidirectionals
+	//	 dots and title for:
+	//		child tree
+	//		radial origin, angles and orientations (in/out, right/left)
 
 	constructor( ancestry: Ancestry) {
 		this.es_widget = ux.s_element_for(ancestry, T_Element.widget, k.empty);
+		this.g_treeLine = new G_TreeLine(this.ancestry, this.ancestry);
 		this.forGraphMode = get(w_t_graphMode);
 		this.ancestry = ancestry;
 		if (!ancestry.thing) {
@@ -58,12 +68,13 @@ export default class G_Widget {
 		rect: Rect = Rect.zero,
 		curveType: string = T_Curve.flat) {
 		if (forGraphMode == get(w_t_graphMode)) {		// modes must match, else widgets get misplaced
-			this.rect = rect;
 			this.curveType = curveType;
+			this.g_treeLine.rect = rect;
+			this.forGraphMode = forGraphMode;
 			this.points_right = points_right;
 			this.points_toChild = points_toChild;
+			this.g_treeLine.curveType = curveType;
 			this.origin_ofWidget = origin_ofWidget;
-			this.forGraphMode = get(w_t_graphMode);
 		}
 	}
 
@@ -76,6 +87,7 @@ export default class G_Widget {
 					childAncestry.g_widget.recursively_relayout_tree();
 				}
 			}
+			this.layout_reciprocals();	// after entire sub tree is laid out
 		}
 	}
 
@@ -96,7 +108,7 @@ export default class G_Widget {
 			this.origin_ofTitle = new Point(ux.inRadialMode ? offset_ofTitle_forRadial : 12.5, 0);
 			this.origin_ofRadial = this.origin_ofWidget.offsetByXY(-x_radial, 4 - k.dot_size);
 			this.center_ofDrag = new Point(x_drag, y_drag).offsetEquallyBy(k.dot_size / 2);
-			this.origin_ofChildrenTree = this.rect.extent.offsetBy(offset_ofChildrenTree);
+			this.origin_ofChildrenTree = this.g_treeLine.rect.extent.offsetBy(offset_ofChildrenTree);
 			this.offset_ofWidget = Point.x(offset_forDirection).offsetEquallyBy(offset_forBorder);
 			this.width_ofWidget = width;
 			if (showingReveal) {
@@ -115,6 +127,33 @@ export default class G_Widget {
 				this.origin_ofFocus = origin_ofReveal.offsetByXY(-21.5 - offsetX_ofReveal, -5);
 			}
 		}
+	}
+
+	layout_reciprocals() {
+		const extent = this.center_ofDrag;
+		for (const [index, reciprocal] of this.shallower_reciprocals.entries()) {
+			const origin = reciprocal.g_widget.origin_ofChildrenTree;
+			const rect = Rect.createExtentRect(origin, extent).normalized;
+			const g_line = new G_TreeLine(this.ancestry, this.ancestry);
+			this.g_reciprocalLines[index] = g_line;
+			g_line.rect = rect;
+			// console.log(` ${reciprocal.titles} => ${this.ancestry.titles}   ${rect.description}`)
+		}
+	}
+
+	get shallower_reciprocals(): Array<Ancestry> {
+		let found: Array<Ancestry> = [];
+		const ancestry = this.ancestry;
+		const depth = ancestry.depth;
+		for (const bidirectional of ancestry.bidirectional_ancestries) {
+			for (const reciprocal of bidirectional.reciprocals) {
+				if (reciprocal.depth < depth) {
+					found.push(reciprocal);
+					return found;
+				}
+			}
+		}
+		return found;
 	}
 	
 }

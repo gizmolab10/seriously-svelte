@@ -4,31 +4,32 @@
 	import { w_color_trigger } from '../../ts/common/Stores';
 	import Circle from '../kit/Circle.svelte';
 	import { onMount } from 'svelte';
+	export let stroke_width = 1;
 	export let ancestry!: Ancestry;
 	export let svg_dasharray = k.empty;
 	const g_widget = ancestry.g_widget;
 	const curveType = g_widget.curveType;
 	const debugOffset = new Point(142, -0);
 	const lineOffset = new Point(-122.5, 2.5);
-	let rect = g_widget.rect.offsetBy(lineOffset);
+	let lineRect = g_widget.g_treeLine.rect.offsetBy(lineOffset);
 	let lineWrapper: Svelte_Wrapper;
-	let origin = rect.origin;
-	let extent = rect.extent;
+	let origin = lineRect.origin;
+	let extent = lineRect.extent;
 	let viewBox = Rect.zero;
 	let linePath = k.empty;
 	let line_rebuilds = 0;
 	let size = Size.zero;
 	let line;
 
-	//////////////////////////////////
-	//	draw a curved line in rect	//
-	//		up, down or flat 		//
-	//		solid or dashed 		//
-	//////////////////////////////////
+	//////////////////////////////////////
+	//	draw a curved line in lineRect	//
+	//		up, down or flat 			//
+	//		solid or dashed 			//
+	//////////////////////////////////////
 
 	onMount(() => {
 		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
-			rect = g_widget.rect.offsetBy(lineOffset);
+			lineRect = g_widget.g_treeLine.rect.offsetBy(lineOffset);
 			debug.log_reposition(`tree line [. .] on "${ancestry.title}"`);
 			reposition();
 		});
@@ -64,17 +65,17 @@
 	function reposition() {
 		switch (curveType) {
 			case T_Curve.up:
-				origin = rect.origin;
-				extent = rect.extent.offsetByY(-1.5);
+				origin = lineRect.origin;
+				extent = lineRect.extent.offsetByY(-1.5);
 				break;
 			case T_Curve.down:
-				origin = rect.bottomLeft.offsetByY(-0.5);
-				extent = origin.offsetBy(rect.size.asPoint).offsetByY(0.5);
+				origin = lineRect.bottomLeft.offsetByY(-0.5);
+				extent = origin.offsetBy(lineRect.size.asPoint).offsetByY(0.5);
 				break;
 			case T_Curve.flat:
-				rect = rect.offsetByY(-1.5);
-				origin = rect.centerLeft;
-				extent = rect.centerRight;
+				lineRect = lineRect.offsetByY(-1.5);
+				origin = lineRect.centerLeft;
+				extent = lineRect.centerRight;
 				linePath = svgPaths.line(origin.vector_to(extent));
 				break;
 		}
@@ -110,6 +111,7 @@
 			fill = 'none'
 			d = {linePath}
 			class = 'tree-line-path'
+			stroke-width = {stroke_width}
 			stroke = {ancestry.thing.color}
 			stroke-dasharray = {svg_dasharray}/>
 	</svg>
@@ -118,6 +120,6 @@
 			radius = 1
 			thickness = 1
 			color = black
-			center = {rect.extent.offsetBy(debugOffset)}/>
+			center = {lineRect.extent.offsetBy(debugOffset)}/>
 	{/if}
 {/key}

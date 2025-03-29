@@ -3,10 +3,10 @@
 import Identifiable from '../data/runtime/Identifiable';
 import { w_thing_fontFamily } from '../common/Stores';
 import Ancestry from '../data/runtime/Ancestry';
+import { w } from '../geometry/other/G_Window';
 import { T_Quadrant } from '../common/Angle';
 import { T_Browser } from './Enumerations';
 import type { Dictionary } from './Types';
-import { w } from '../geometry/G_Window';
 import Angle from '../common/Angle';
 import { Point } from './Geometry';
 import { get } from 'svelte/store';

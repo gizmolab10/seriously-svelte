@@ -1,4 +1,4 @@
-import { k, Rect, Size, Point, T_Curve, Ancestry, T_GraphMode } from '../common/Global_Imports';
+import { k, Rect, Size, Point, T_Curve, Ancestry, T_GraphMode } from '../../common/Global_Imports';
 
 export default class G_TreeChild {
 	progeny_height = 0;

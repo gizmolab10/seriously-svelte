@@ -1,4 +1,4 @@
-import { debug, Point, Ancestry, G_TreeChild } from '../common/Global_Imports';
+import { debug, Point, Ancestry, G_TreeChild } from '../../common/Global_Imports';
 
 export default class G_TreeChildren {
 	center = Point.zero;
