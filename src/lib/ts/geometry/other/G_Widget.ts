@@ -16,14 +16,13 @@ export default class G_Widget {
 	origin_ofTitle = Point.zero;
 	center_ofDrag = Point.zero;
 	forGraphMode: T_GraphMode;
-	g_line!: G_TreeLine;
 	points_toChild = true;
 	es_widget!: S_Element;
+	g_line!: G_TreeLine;
 	points_right = true;
 	ancestry!: Ancestry;
 	width_ofWidget = 0;
 
-	// TODO:
 	// create a G_TreeLine as normal
 	// and one for each reciprocal
 
@@ -73,20 +72,20 @@ export default class G_Widget {
 			this.points_toChild = points_toChild;
 			this.g_line.curveType = curveType;
 			this.origin_ofWidget = origin_ofWidget;
+			this.g_line.layout();
+			this.layout_reciprocals();
 		}
 	}
 
 	recursively_relayout_tree() {
 		this.layout();
-		if (ux.inTreeMode) {
-			const ancestry = this.ancestry;
-			if (ancestry.showsChildRelationships && ancestry.thing_isChild) {
-				for (const childAncestry of ancestry.childAncestries) {
-					childAncestry.g_widget.recursively_relayout_tree();
-				}
+		const ancestry = this.ancestry;
+		if (ancestry.showsChildRelationships && ancestry.thing_isChild) {
+			for (const childAncestry of ancestry.childAncestries) {
+				childAncestry.g_widget.recursively_relayout_tree();
 			}
-			this.layout_reciprocals();	// after entire sub tree is laid out
 		}
+		this.layout_reciprocals();	// after entire sub tree is laid out
 	}
 
 	layout() {
@@ -128,6 +127,7 @@ export default class G_Widget {
 	}
 
 	layout_reciprocals() {
+		this.g_reciprocalLines = [];
 		const extent = this.center_ofDrag;
 		for (const [index, reciprocal] of this.shallower_reciprocals.entries()) {
 			const origin = reciprocal.g_widget.origin_ofChildrenTree;
@@ -135,6 +135,7 @@ export default class G_Widget {
 			const g_line = new G_TreeLine(this.ancestry, this.ancestry);
 			this.g_reciprocalLines[index] = g_line;
 			g_line.rect = rect;
+			g_line.layout();
 		}
 	}
 
