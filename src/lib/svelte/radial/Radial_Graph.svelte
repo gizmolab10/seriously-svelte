@@ -33,7 +33,7 @@
 	//	edit titles (keydown terminates edit) BROKEN
 	//	displays editing tools when asked by user
 	
-	ux.relayout_all();
+	ux.grand_layout();
 	debug.log_tools(` CLUSTERS`);
 
 	onMount(() => {

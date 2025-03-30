@@ -204,7 +204,7 @@
 		$w_s_title_edit = null;
 		input?.blur();
 		update_cursorStyle();
-		ux.relayout_all();
+		ux.grand_layout();
 	}
 
 	function startEditMaybe() {
@@ -238,7 +238,7 @@
 			debug.log_edit(`TITLE ${title}`);
 			$w_s_title_edit?.title = title;
 			$w_s_title_edit?.setState_temporarilyTo_whileApplying(T_Edit.percolating, () => {
-				ux.relayout_all();
+				ux.grand_layout();
 			});
 			debug.log_edit(`UPDATED ${$w_s_title_edit?.description}`);
 		}

@@ -1,14 +1,14 @@
-import { w_graph_rect, w_show_details, w_hierarchy  } from '../../common/Stores';
+import { k, debug, Ancestry, T_GraphMode } from '../../common/Global_Imports';
 import { w_ancestry_focus, w_device_isMobile } from '../../common/Stores';
-import { k, debug, T_GraphMode } from '../../common/Global_Imports';
+import { w_graph_rect, w_show_details  } from '../../common/Stores';
 import { get } from 'svelte/store';
 
 export default class G_TreeGraph {
 
-	update_origins() {
+	grand_layout_tree() {
 		const graphRect = get(w_graph_rect);
 		const focusAncestry = get(w_ancestry_focus);
-		if (!!focusAncestry && !!graphRect) {
+		if (!!graphRect) {
 			const offsetY = graphRect.origin.y + 1;
 			const childrenSize = focusAncestry.visibleProgeny_size;
 			const offsetX_ofFirstReveal = (focusAncestry.thing?.titleWidth ?? 0) / 2 - 2;
@@ -20,8 +20,9 @@ export default class G_TreeGraph {
 				origin_ofFocusReveal.x = 25;
 			}
 			const origin_ofChildren = origin_ofFocusReveal.offsetByXY(child_offsetX, child_offsetY);
-			focusAncestry.g_widget.update(T_GraphMode.tree, origin_ofChildren);
 			debug.log_origins(origin_ofChildren.x + ' update_origins');
+			focusAncestry.g_widget.update(T_GraphMode.tree, origin_ofChildren);
+			focusAncestry.g_widget.recursively_relayout_tree();
 		}
 	}
 

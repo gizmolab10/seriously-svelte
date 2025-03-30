@@ -2,20 +2,20 @@ import { k, Rect, Size, Point, T_Curve, svgPaths, Ancestry } from '../../common/
 
 export default class G_TreeLine {
 	curveType: string = T_Curve.flat;
-	other_ancestry: Ancestry;
+	child_ancestry: Ancestry;	// child end of the line (N.B. main can be deeper!!)
 	points_atOther = true;
 	viewBox = Rect.zero;
 	origin = Point.zero;
 	extent = Point.zero;
-	ancestry: Ancestry;
+	ancestry: Ancestry;			// main end of the line
 	linePath = k.empty;
 	rect = Rect.zero;
 	size = Size.zero;
 
 	// scratchpad for one line drawn between a widget and its {child OR reciprocal} widgets
 
-	constructor(ancestry: Ancestry, other_ancestry: Ancestry) {
-		this.other_ancestry = other_ancestry;
+	constructor(ancestry: Ancestry, child_ancestry: Ancestry) {
+		this.child_ancestry = child_ancestry;
 		this.ancestry = ancestry;
 	}
 		

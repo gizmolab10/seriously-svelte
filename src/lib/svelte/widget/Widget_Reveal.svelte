@@ -13,9 +13,9 @@
 	export let points_toChild = true;
     export let hover_isReversed = false;
 	const tinyDotsOffset = new Point(-5, -2.6);
+	const es_reveal = ux.s_element_forName(name);
 	const outer_diameter = k.diameterOf_outer_tinyDots;
 	const size_ofTinyDots = Size.width(3).expandedEquallyBy(outer_diameter)
-	const es_reveal = ux.s_element_forName(name);		// survives onDestroy, created by g widget (TODO: radial focus widget has no g widget)
 	const viewBox = `0.5 2.35 ${outer_diameter} ${outer_diameter}`;
 	let svgPathFor_outer_tinyDots: string | null = null;
 	let svgPathFor_bulkAlias: string | null = null;
@@ -41,21 +41,10 @@
 		});
 		return () => { handle_reposition.disconnect(); };
 	});
-	
-	$: {
-		const _ = $w_t_countDots;
-		svgPath_update();
-	}
 
 	$: {
-		const _ = $w_ancestries_expanded;
+		const _ = $w_ancestries_expanded + $w_t_countDots + ancestry.title;
 		svgPath_update();
-	}
-
-	$: {
-		if (!!$w_ancestries_grabbed || !!ancestry.thing) {
-			svgPath_update();
-		}
 	}
 
 	$: {
@@ -76,11 +65,9 @@
 	function svgPath_update() {
 		const thing = ancestry.thing;
 		bulkAliasOffset = thing.isBulkAlias ? 0 : -1;
-		if (thing.isBulkAlias) {
-			svgPathFor_bulkAlias = svgPaths.circle_atOffset(k.dot_size, 3);
-		}
-		svgPathFor_outer_tinyDots = ancestry.svgPathFor_tinyDots_outsideReveal(points_toChild);
 		svgPathFor_revealDot = ancestry.svgPathFor_revealDot;
+		svgPathFor_outer_tinyDots = ancestry.svgPathFor_tinyDots_outsideReveal(points_toChild);
+		svgPathFor_bulkAlias = thing.isBulkAlias ? svgPaths.circle_atOffset(k.dot_size, 3) : null;
 		reveal_rebuilds += 1;
 	}
 
@@ -102,15 +89,6 @@
 	}
 
 </script>
-
-<style>
-	.dot {
-		border: none;
-		cursor: pointer;
-		background: none;
-		position: absolute;
-	}
-</style>
 
 {#key reveal_rebuilds}
 	{#if es_reveal}

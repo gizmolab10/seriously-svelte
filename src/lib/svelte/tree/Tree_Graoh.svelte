@@ -8,7 +8,7 @@
 	
 	$: {
 		const _ = $w_hierarchy + $w_graph_rect + $w_ancestry_focus + $w_device_isMobile;
-		ux.relayout_all();
+		ux.grand_layout();
 	}
 
 </script>

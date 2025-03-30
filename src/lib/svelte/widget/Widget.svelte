@@ -14,7 +14,7 @@
 	const g_widget = ancestry.g_widget;
 	const es_widget = g_widget.es_widget;
 	const name = es_widget.name;
-    const points_right = g_widget.points_right;
+    const points_right = g_widget.widget_pointsRight;
 	const points_toChild = g_widget.points_toChild;
 	const s_widget = ux.s_widget_forAncestry(ancestry);
 	const es_drag = ux.s_element_for(ancestry, T_Element.drag, k.empty);
@@ -135,7 +135,7 @@
 	}
 
 	function layout() {
-		g_widget.layout();
+		g_widget.layout_widget_andLine();
 		update_origin();
 		const hasExtra_onRight = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
 		const onRight = ux.inRadialMode ? 0 : 21 + (hasExtra_onRight ? 0.5 : 0);

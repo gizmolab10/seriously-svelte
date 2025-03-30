@@ -29,7 +29,7 @@
 
 	onMount(() => {
 		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
-			update();
+			layout();
 		});
 		return () => { handle_reposition.disconnect(); };
 	});
@@ -49,7 +49,7 @@
 
 	$: {
 		const _ = $w_ancestry_focus;
-		update();
+		layout();
 	}
 
 	$: {
@@ -62,7 +62,7 @@
 		debug.log_radial(` ${s_mouse.descriptionFor('FOCUS')}`);
 	}
 
-	function update() {
+	function layout() {
 		width_ofTitle = ($w_ancestry_focus?.thing?.titleWidth ?? 0);
 		const x = -9 - (width_ofTitle / 2);
 		const y = -11;

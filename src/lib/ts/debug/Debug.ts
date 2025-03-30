@@ -4,6 +4,7 @@ import { c } from '../managers/Configuration';
 
 export enum T_Debug {
 	preferences	= 'preferences',
+	reciprocals	= 'reciprocals',
 	hide_rings	= 'hide_rings',
 	reposition	= 'reposition',
 	fast_load	= 'fast_load',
@@ -61,6 +62,7 @@ export class Debug {
 	log_build(message: string) { this.log_maybe(T_Debug.build, message); }
 	log_error(message: string) { this.log_maybe(T_Debug.error, message); }
 	log_hover(message: string) { this.log_maybe(T_Debug.hover, message); }
+	log_lines(message: string) { this.log_maybe(T_Debug.lines, message); }
 	log_mouse(message: string) { this.log_maybe(T_Debug.mouse, message); }
 	log_tools(message: string) { this.log_maybe(T_Debug.tools, message); }
 	log_action(message: string) { this.log_maybe(T_Debug.action, message); }
@@ -77,6 +79,7 @@ export class Debug {
 	log_segments(message: string) { this.log_maybe(T_Debug.segments, message); }
 	log_reposition(message: string) { this.log_maybe(T_Debug.reposition, message); }
 	log_preferences(message: string) { this.log_maybe(T_Debug.preferences, message); }
+	log_reciprocals(message: string) { this.log_maybe(T_Debug.reciprocals, message); }
 	
 	log_maybe(option: T_Debug, message: string) {
 		if (this.hasOption(option)) {
@@ -95,6 +98,7 @@ export class Debug {
 			for (const option of flags) {
 				switch (option) {
 					case 'preferences': this.flags.push(T_Debug.preferences); break;
+					case 'reciprocals': this.flags.push(T_Debug.reciprocals); break;
 					case 'hide_rings': this.flags.push(T_Debug.hide_rings); break;
 					case 'reposition': this.flags.push(T_Debug.reposition); break;
 					case 'segments': this.flags.push(T_Debug.segments); break;

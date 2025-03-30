@@ -98,6 +98,7 @@ export default class Ancestry extends Identifiable {
 	get titles():			 	 Array		<string> { return this.ancestors?.map(a => ` "${a ? a.title : 'null'}"`) ?? []; }
 	get children():			 	 Array		 <Thing> { return this.hierarchy.things_forAncestries(this.childAncestries); }
 	get ancestors():		 	 Array		 <Thing> { return this.hierarchy.things_forAncestry(this); }
+	get parentAncestries():		 Array	  <Ancestry> { return this.thing?.parentAncestries ?? []; }
 	get siblingAncestries(): 	 Array	  <Ancestry> { return this.parentAncestry?.childAncestries ?? []; }
 	get childAncestries():	 	 Array	  <Ancestry> { return this.childAncestries_ofKind(this.kindPredicate); }
 	get relevantRelationships(): Array<Relationship> { return this.relationships_forChildren(this.thing_isChild); }
@@ -110,7 +111,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	get points_right(): boolean {
-		const radial_points_right = this.g_widget?.points_right ?? true;
+		const radial_points_right = this.g_widget?.widget_pointsRight ?? true;
 		const hasVisibleChildren = this.isExpanded && this.hasChildRelationships;
 		return ux.inRadialMode ? radial_points_right : !hasVisibleChildren;
 	}
@@ -331,12 +332,12 @@ export default class Ancestry extends Identifiable {
 	}
 
 	visibleParentAncestries(back: number = 1): Array<Ancestry> {
-		const parentAncestries = this.thing?.parentAncestries ?? [];
 		const ancestries: Array<Ancestry> = [];
-		for (const parentAncestry of parentAncestries) {
-			const ancestorAncestry = parentAncestry.stripBack(back);
-			if (!!ancestorAncestry && ancestorAncestry.isVisible) {
-				ancestries.push(parentAncestry);
+		const parents = this.parentAncestries;
+		for (const parent of parents) {
+			const ancestor = parent.stripBack(back);
+			if (!!ancestor && ancestor.isVisible) {
+				ancestries.push(parent);
 			}
 		}
 		return ancestries;
@@ -521,28 +522,32 @@ export default class Ancestry extends Identifiable {
 		let ancestries: Array<Ancestry> = []
 		for (const predicate of get(w_hierarchy).predicates) {
 			if (predicate.isBidirectional) {
-				const others = this.thing?.parentAncestries_for(predicate);
-				if (!!others) {
-					ancestries = [...ancestries, ...others];
+				const parents = this.thing?.parentAncestries_for(predicate);
+				if (!!parents) {	// each of the parents is bidirectional TO this ancestry's thing
+					ancestries = [...ancestries, ...parents];
+				}
+				const children = this.childAncestries_ofKind(predicate.kind)
+				if (!!children) {	// each of the children is bidirectional FROM this ancestry's thing
+					ancestries = [...ancestries, ...children];
 				}
 			}
 		}
 		return ancestries;
 	}
 
-	get reciprocals(): Array<Ancestry> {
-		// bidirectional ancestries that point back at this ancestry's thing
-		// (there can be many if thing or its ancestors have multiple parents)
-		const reciprocals: Array<Ancestry> = [];
-		if (this.isBidirectional) {
-			const id_thing = this.relationship?.idChild;
-			for (const ancestry of this.hierarchy.ancestries) {
-				if (!ancestry.isBidirectional && id_thing == ancestry.id_thing) {
-					reciprocals.push(ancestry);
+	get shallower_bidirectionals(): Array<Ancestry> {
+		let found: Array<Ancestry> = [];
+		for (const bidirectional of this.bidirectional_ancestries) {
+			const reciprocals = bidirectional.parentAncestries;
+			if (!!reciprocals) {
+				for (const reciprocal of reciprocals) {
+					if (reciprocal.depth < this.depth) {
+						found.push(reciprocal);
+					}
 				}
 			}
 		}
-		return reciprocals;
+		return found;
 	}
 
 	static readonly FOCUS: unique symbol;
@@ -561,8 +566,8 @@ export default class Ancestry extends Identifiable {
 	static readonly EVENTS: unique symbol;
 
 	handle_singleClick_onDragDot(shiftKey: boolean) {
-		if (this.isBidirectional && this.reciprocals.length > 0) {
-			this.reciprocals[0].handle_singleClick_onDragDot(shiftKey);
+		if (this.isBidirectional && this.parentAncestries.length > 0) {
+			this.parentAncestries[0].handle_singleClick_onDragDot(shiftKey);
 		} else {
 			w_s_title_edit?.set(null);
 			if (!!get(w_s_alteration)) {
@@ -859,7 +864,7 @@ export default class Ancestry extends Identifiable {
 
 	persistentMoveUp_forBidirectional_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
 		const focusAncestry = get(w_ancestry_focus);
-		const siblingAncestries = focusAncestry?.thing?.parentAncestries;
+		const siblingAncestries = focusAncestry?.parentAncestries;
 		let graph_needsRelayout = false;
 		let graph_needsRebuild = false;
 		if (!!focusAncestry && siblingAncestries) {

@@ -168,7 +168,7 @@
 					rotation_state.active_angle = mouse_angle;
 					detect_hovering();
 					cursor = ux.s_ring_rotation.cursor;
-					ux.g_radialGraph.layout_allClusters();
+					ux.g_radialGraph.grand_layout_radial();
 					rings_rebuilds += 1;										// for arc slider's ViewBox and MouseResponder center
 					signals.signal_reposition_widgets_fromFocus();				// to reposition necklace widgets
 				}

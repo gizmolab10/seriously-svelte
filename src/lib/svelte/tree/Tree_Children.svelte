@@ -4,11 +4,8 @@
 	import Widget from '../widget/Widget.svelte';
 	import Tree_Line from './Tree_Line.svelte';
 	import Circle from '../kit/Circle.svelte';
-	import Box from '../debug/Box.svelte';
 	export let ancestry: Ancestry;
 	const g_treeChildren = ancestry.g_widget.g_treeChildren;	// so percolate happens in the right order
-	
-		// <Box rect={g_line.rect} color='purple'/>
 	
 </script>
 
@@ -20,9 +17,11 @@
 		center = {g_treeChildren.center}/>
 {/if}
 {#if !!ancestry}
-	{#each ancestry.g_widget.g_reciprocalLines as g_line}
-		<Tree_Line g_line = {g_line}/>
-	{/each}
+	{#if false}
+		{#each ancestry.g_widget.g_reciprocalLines as g_line}
+			<Tree_Line g_line = {g_line} svg_dasharray = '4,3' stroke_width = 5/>
+		{/each}
+	{/if}
 	{#each ancestry.childAncestries as childAncestry}
 		<Tree_Line g_line = {childAncestry.g_widget.g_line}/>
 		<Widget ancestry = {childAncestry}/>

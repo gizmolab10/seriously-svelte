@@ -3,23 +3,23 @@
 	import { k, Point, debug, T_Layer } from '../../ts/common/Global_Imports';
 	import { w_color_trigger } from '../../ts/common/Stores';
 	import Circle from '../kit/Circle.svelte';
+	import Box from '../debug/Box.svelte';
 	export let stroke_width = 1;
 	export let g_line!: G_TreeLine;
 	export let svg_dasharray = k.empty;
-	const lineOffset = new Point(-122.5, 2.5);
-	const debugOffset = new Point(142, -0);
+	const debugOffset = new Point(k.line_stretch - 2.4, 2.5);
 	const curveType = g_line.curveType;
 	const ancestry = g_line.ancestry;
-	let lineRect = g_line.rect.offsetBy(lineOffset);
 	let lineWrapper: Svelte_Wrapper;
 	let line_rebuilds = 0;
 	let line;
 
-	//////////////////////////////////////
-	//	draw a curved line in lineRect	//
-	//		up, down or flat 			//
-	//		solid or dashed 			//
-	//////////////////////////////////////
+	//////////////////////////////
+	//	draw a curved line		//
+	//		in g_line.rect:		//
+	//		up, down or flat 	//
+	//		solid or dashed 	//
+	//////////////////////////////
  
 	function isHit(): boolean { return false }
 	function handle_mouse_state(s_mouse: S_Mouse): boolean { return false; }
@@ -39,6 +39,9 @@
 </script>
 
 {#key line_rebuilds}
+	{#if ancestry.isBidirectional}
+		<Box rect={g_line.rect} color={ancestry.thing.color}/>
+	{/if}
 	<svg
 		bind:this = {line}
 		id = {ancestry.title}
@@ -65,6 +68,6 @@
 			radius = 1
 			thickness = 1
 			color = black
-			center = {lineRect.extent.offsetBy(debugOffset)}/>
+			center = {g_line.rect.extent.offsetBy(debugOffset)}/>
 	{/if}
 {/key}

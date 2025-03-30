@@ -137,13 +137,11 @@ export default class User_Interaction {
 		}
 	}
 
-	relayout_all() {
+	grand_layout() {
 		if (this.inTreeMode) {
-			this.g_treeGraph.update_origins();
-			get(w_ancestry_focus)?.g_widget.recursively_relayout_tree();
-			// get(w_hierarchy).update_related_ancestries();
+			this.g_treeGraph.grand_layout_tree();
 		} else {
-			this.g_radialGraph.layout_allClusters();
+			this.g_radialGraph.grand_layout_radial();
 		}
 		signals.signal_reposition_widgets_fromFocus();
 	}

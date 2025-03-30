@@ -26,7 +26,7 @@ export default class G_RadialGraph {
 	// layout widgets, cluster lines, & paging arcs //
 	//////////////////////////////////////////////////
 
-	layout_allClusters() {
+	grand_layout_radial() {
 		this.destructor();
 		const focus_ancestry = get(w_ancestry_focus);
 		const focus_thing = focus_ancestry.thing;
