@@ -17,8 +17,8 @@
 		center = {g_treeChildren.center}/>
 {/if}
 {#if !!ancestry}
-	{#if false}
-		{#each ancestry.g_widget.g_reciprocalLines as g_line}
+	{#if true}
+		{#each ancestry.g_widget.g_bidirectionalLines as g_line}
 			<Tree_Line g_line = {g_line} svg_dasharray = '4,3' stroke_width = 5/>
 		{/each}
 	{/if}

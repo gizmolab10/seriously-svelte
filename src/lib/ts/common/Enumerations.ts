@@ -37,12 +37,13 @@ export enum T_Widget {
 }
 
 export enum T_Curve {
+	back = 'back',	// half circle for overlapping relateds
 	flat = 'flat',
 	down = 'down',
 	up	 = 'up',
 }
 
-export enum T_Details {	// do not change the order
+export enum T_Details {	// order must not change
 	storage,
 	tools,
 	display,

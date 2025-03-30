@@ -1,7 +1,7 @@
 import { Direction, Predicate, Hierarchy, databases, Relationship, Svelte_Wrapper } from '../../common/Global_Imports';
 import { c, k, u, ux, show, Rect, Size, Thing, debug, signals, wrappers, svgPaths } from '../../common/Global_Imports';
+import { G_Widget, S_Paging, S_Title_Edit, G_TreeLine, G_TreeChildren } from '../../common/Global_Imports';
 import { T_Element, T_Predicate, T_Alteration, T_SvelteComponent } from '../../common/Global_Imports';
-import { G_Widget, S_Paging, S_Title_Edit, G_TreeChildren } from '../../common/Global_Imports';
 import { w_hierarchy, w_ancestry_focus, w_ancestry_showing_tools } from '../../common/Stores';
 import { w_ancestries_grabbed, w_ancestries_expanded, } from '../../common/Stores';
 import { w_s_alteration, w_s_title_edit } from '../../common/Stores';
@@ -537,17 +537,30 @@ export default class Ancestry extends Identifiable {
 
 	get shallower_bidirectionals(): Array<Ancestry> {
 		let found: Array<Ancestry> = [];
+		const x = this.g_widget.center_ofReveal.x;
+		// debug.log_bidirectionals(this.id)
 		for (const bidirectional of this.bidirectional_ancestries) {
-			const reciprocals = bidirectional.parentAncestries;
-			if (!!reciprocals) {
-				for (const reciprocal of reciprocals) {
-					if (reciprocal.depth < this.depth) {
-						found.push(reciprocal);
+			const others = bidirectional.parentAncestries;
+			if (!!others) {
+				for (const other of others) {
+					if (other.g_widget.center_ofReveal.x < x) {
+						found.push(other);
+						// debug.log_bidirectionals(`--> ${other.id}`)
 					}
 				}
 			}
 		}
 		return found;
+	}
+
+	g_line_forOther(shallower: Ancestry) : G_TreeLine {
+		const g_line = new G_TreeLine(shallower, this)
+		const extent = this.g_widget.center_ofDrag;
+		const origin = shallower.g_widget.center_ofReveal;
+		const rect = Rect.createExtentRect(origin, extent).normalized;
+		g_line.rect = rect;
+		debug.log_bidirectionals(`line ${rect.size.verbose} ${shallower.id} <--> ${this.id}`)
+		return g_line;
 	}
 
 	static readonly FOCUS: unique symbol;

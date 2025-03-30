@@ -1,12 +1,12 @@
 import { w_hierarchy, w_graph_rect, w_t_graphMode, w_show_details } from '../../common/Stores';
 import { S_Element, G_TreeLine, G_TreeChildren } from '../../common/Global_Imports'
-import { T_Curve, T_Element, T_GraphMode } from '../../common/Global_Imports';
 import { k, ux, Rect, Point, debug, Ancestry } from '../../common/Global_Imports'
+import { T_Curve, T_Element, T_GraphMode } from '../../common/Global_Imports';
 import { get } from 'svelte/store';
 
 export default class G_Widget {
+	g_bidirectionalLines: Array<G_TreeLine> = [];
 	g_treeChildren: G_TreeChildren | null = null;
-	g_reciprocalLines: Array<G_TreeLine> = [];
 	origin_ofChildrenTree = Point.zero;
 	offset_ofWidget = Point.zero;
 	center_ofReveal = Point.zero;
@@ -41,7 +41,7 @@ export default class G_Widget {
 
 	constructor(ancestry: Ancestry) {
 		this.es_widget = ux.s_element_for(ancestry, T_Element.widget, k.empty);
-		this.g_line = new G_TreeLine(ancestry, ancestry);
+		this.g_line = new G_TreeLine(ancestry.parentAncestry, ancestry);
 		this.forGraphMode = get(w_t_graphMode);
 		this.ancestry = ancestry;
 		if (!ancestry.thing) {
@@ -135,17 +135,12 @@ export default class G_Widget {
 	}
 
 	private layout_bidirectional_lines() {
-		this.g_reciprocalLines = [];
-		const extent = this.center_ofDrag;
-		const bidirectionals = this.ancestry.shallower_bidirectionals;
-		for (const [index, bidirectional] of bidirectionals.entries()) {
-			const origin = bidirectional.g_widget.center_ofReveal;
-			const rect = Rect.createExtentRect(origin, extent).normalized;
-			const g_line = new G_TreeLine(this.ancestry, bidirectional);
-			this.g_reciprocalLines[index] = g_line;
-			g_line.rect = rect;
+		this.g_bidirectionalLines = [];
+		const others = this.ancestry.shallower_bidirectionals;
+		for (const [index, other] of others.entries()) {
+			const g_line = this.ancestry.g_line_forOther(other)
+			this.g_bidirectionalLines[index] = g_line;
 			g_line.layout();
-			// console.log(`bidi lines ${rect.size.verbose} ${bidirectional.titles} <--> ${this.ancestry.titles}`)
 		}
 	}
 	
