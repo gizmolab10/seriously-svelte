@@ -567,7 +567,7 @@ export default class DBFirebase extends DBCommon {
 	}
 
 	relationship_extractChangesFromPersistent(relationship: Relationship, remote: PersistentRelationship) {
-		const changed = (relationship.kindPredicate != remote.predicate.id ||
+		const changed = (relationship.kind != remote.predicate.id ||
 			relationship.idParent != remote.parent.id ||
 			relationship.idChild != remote.child.id ||
 			relationship.order != remote.order)
@@ -577,7 +577,7 @@ export default class DBFirebase extends DBCommon {
 			relationship.hidChild = remote.child.id.hash();
 			relationship.hidParent = remote.parent.id.hash();
 			relationship.persistence.already_persisted = true;
-			relationship.kindPredicate = remote.kindPredicate;
+			relationship.kind = remote.kind;
 			relationship.order_setTo(remote.order + k.halfIncrement);
 		}
 		return changed;
@@ -618,7 +618,7 @@ export default class DBFirebase extends DBCommon {
 					if (!!relationship) {
 						return false;
 					}
-					relationship = h.relationship_remember_runtimeCreateUnique(idBase, id, remoteRelationship.kindPredicate, remoteRelationship.parent.id, remoteRelationship.child.id, remoteRelationship.order, T_Create.isFromPersistent);
+					relationship = h.relationship_remember_runtimeCreateUnique(idBase, id, remoteRelationship.kind, remoteRelationship.parent.id, remoteRelationship.child.id, remoteRelationship.order, T_Create.isFromPersistent);
 					break;
 				default:
 					if (!relationship) {
@@ -808,7 +808,7 @@ export class PersistentRelationship implements PersistentRelationship {
 	predicate!: DocumentReference<Predicate, DocumentData>;
 	parent!: DocumentReference<Thing, DocumentData>;
 	child!: DocumentReference<Thing, DocumentData>;
-	kindPredicate!: T_Predicate;
+	kind!: T_Predicate;
 	order: number;
 
 	constructor(data: DocumentData | Relationship) {
@@ -819,15 +819,15 @@ export class PersistentRelationship implements PersistentRelationship {
 			try {
 				if (data instanceof Relationship) {
 					if (data.isValid) {
-						this.kindPredicate = data.kindPredicate;
+						this.kind = data.kind;
 						this.child = doc(things, data.idChild) as DocumentReference<Thing>;
 						this.parent = doc(things, data.idParent) as DocumentReference<Thing>;
-						this.predicate = doc(predicates, data.kindPredicate) as DocumentReference<Predicate>;
+						this.predicate = doc(predicates, data.kind) as DocumentReference<Predicate>;
 					}
 				} else {
 					const remote = data as PersistentRelationship;
 					if (DBFirebase.data_isValidOfKind(T_Persistable.relationships, data)) {
-						this.kindPredicate = data.kindPredicate;
+						this.kind = data.kind;
 						this.child = doc(things, remote.child.id) as DocumentReference<Thing>;
 						this.parent = doc(things, remote.parent.id) as DocumentReference<Thing>;
 						this.predicate = doc(predicates, remote.predicate.id) as DocumentReference<Predicate>;
@@ -841,7 +841,7 @@ export class PersistentRelationship implements PersistentRelationship {
 
 	async isEqualTo(relationship: Relationship | null) {
 		return !!relationship &&
-		relationship.kindPredicate == await this.kindPredicate &&
+		relationship.kind == await this.kind &&
 		relationship.idParent == this.parent.id &&
 		relationship.idChild == this.child.id &&
 		relationship.order == this.order;

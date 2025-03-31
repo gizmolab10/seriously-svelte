@@ -69,7 +69,7 @@ export default class Thing extends Persistable {
 
 	debugLog(message: string) { this.log(T_Debug.things, message); }
 	log(option: T_Debug, message: string) { debug.log_maybe(option, message + k.space + this.description); }
-	hasParents_forKind(kindPredicate: string): boolean { return this.parents_forKind(kindPredicate).length > 0; }
+	hasParents_forKind(kind: string): boolean { return this.parents_forKind(kind).length > 0; }
 	setTraitText_forType(text: string, type: T_Trait) { get(w_hierarchy).trait_setText_forType_ownerHID(text, type, this.id); }
 
 	override isInDifferentBulkThan(other: Thing): boolean {
@@ -81,9 +81,9 @@ export default class Thing extends Persistable {
 		w_color_trigger.set(`${this.id}${k.generic_separator}${get(w_count_rebuild)}`);
 	}
 
-	relationships_inBothDirections_forKind(kindPredicate: string): Array<Relationship> {
-		const childrenRelationships = this.relationships_ofKind_forParents(kindPredicate, false);
-		const parentsRelationships = this.relationships_ofKind_forParents(kindPredicate, true);
+	relationships_inBothDirections_forKind(kind: string): Array<Relationship> {
+		const childrenRelationships = this.relationships_ofKind_forParents(kind, false);
+		const parentsRelationships = this.relationships_ofKind_forParents(kind, true);
 		return u.uniquely_concatenateArrays(parentsRelationships, childrenRelationships);
 	}
 
@@ -95,10 +95,10 @@ export default class Thing extends Persistable {
 		}
 	}
 
-	relationships_ofKind_forParents(kindPredicate: string, forParents: boolean): Array<Relationship> {
+	relationships_ofKind_forParents(kind: string, forParents: boolean): Array<Relationship> {
 		const id = forParents ? this.id : this.idBridging;		//  use idBridging for children, in case thing is a bulk alias
 		if ((!!id || id == k.empty) && id != k.unknown) {
-			return get(w_hierarchy).relationships_forKindPredicate_hid_thing_isChild(kindPredicate, id.hash(), forParents);
+			return get(w_hierarchy).relationships_forKindPredicate_hid_thing_isChild(kind, id.hash(), forParents);
 		}
 		return [];
 	}
@@ -136,10 +136,10 @@ export default class Thing extends Persistable {
 		}
 	}
 
-	parents_forKind(kindPredicate: string): Array<Thing> {
+	parents_forKind(kind: string): Array<Thing> {
 		let parents: Array<Thing> = [];
 		if (!this.isRoot) {
-			const relationships = this.relationships_ofKind_forParents(kindPredicate, true);
+			const relationships = this.relationships_ofKind_forParents(kind, true);
 			for (const relationship of relationships) {
 				const thing = relationship.parent;
 				if (!!thing) {

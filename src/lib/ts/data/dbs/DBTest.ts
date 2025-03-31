@@ -55,8 +55,8 @@ export default class DBTest extends DBCommon {
 		// this.makeMore(2, 'c', kindC, idTb, false);	// parents of  "
 	}
 
-	makeMore(count: number, first: string, kindPredicate: T_Predicate, idRef: string, asChild: boolean) {
-		const isBidirectional = Predicate.isBidirectional(kindPredicate);
+	makeMore(count: number, first: string, kind: T_Predicate, idRef: string, asChild: boolean) {
+		const isBidirectional = Predicate.isBidirectional(kind);
 		const prefix = isBidirectional ? 'r' : 'c';
 		const charCode = first.charCodeAt(0);
 		const h = this.hierarchy;
@@ -68,7 +68,7 @@ export default class DBTest extends DBCommon {
 			const idChild = asChild ? idCode : idRef;
 			const idParent = asChild ? idRef : idCode;
 			// h.thing_remember_runtimeCreateUnique(this.idBase, id_thing, title, 'grey');
-			h.relationship_remember_runtimeCreateUnique(this.idBase, idRelationahip, kindPredicate, idParent, idChild, i);
+			h.relationship_remember_runtimeCreateUnique(this.idBase, idRelationahip, kind, idParent, idChild, i);
 		}
 	}
 

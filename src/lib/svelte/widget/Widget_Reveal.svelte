@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { c, k, u, ux, Size, Thing, Point, debug, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_GraphMode, Predicate, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Graph, Predicate, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_ancestries_grabbed, w_ancestries_expanded, w_ancestry_showing_tools } from '../../ts/common/Stores';
 	import { w_hierarchy, w_t_countDots, w_s_alteration } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';

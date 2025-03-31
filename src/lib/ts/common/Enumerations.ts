@@ -3,7 +3,7 @@ export enum T_Alteration {
 	adding	 = 'adding',
 }
 
-export enum T_GraphMode {
+export enum T_Graph {
 	radial = 'radial',
 	tree   = 'tree',
 }

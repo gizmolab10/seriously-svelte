@@ -219,7 +219,7 @@ export class Hierarchy {
 	}
 
 	things_forAncestry(ancestry: Ancestry): Array<Thing> {
-		const isContains = ancestry.kindPredicate == T_Predicate.contains;
+		const isContains = ancestry.kind == T_Predicate.contains;
 		const relationship_hids = ancestry.relationship_hids;
 		let things: Array<Thing> = isContains ? [this.root] : [];
 		if (!isContains || relationship_hids.length != 0) {
@@ -593,13 +593,13 @@ export class Hierarchy {
 		}
 	}
 
-	relationships_forKindPredicate_hid_thing_isChild(kindPredicate: string, hid: Integer, forParents: boolean): Array<Relationship> {
+	relationships_forKindPredicate_hid_thing_isChild(kind: string, hid: Integer, forParents: boolean): Array<Relationship> {
 		const dict = forParents ? this.relationships_byChildHID : this.relationships_byParentHID;
 		const matches = dict[hid] as Array<Relationship>; // filter out bad values (dunno what this does)
 		const array: Array<Relationship> = [];
 		if (Array.isArray(matches)) {
 			for (const relationship of matches) {
-				if (relationship.kindPredicate == kindPredicate && !array.includes(relationship)) {
+				if (relationship.kind == kind && !array.includes(relationship)) {
 					array.push(relationship);
 				}
 			}
@@ -678,7 +678,7 @@ export class Hierarchy {
 			if (idParent == dict.idChild) {
 				console.log('preventing infinite recursion')
 			} else {
-				this.relationship_remember_runtimeCreateUnique(this.db.idBase, dict.id, dict.kindPredicate, idParent, dict.idChild, dict.order);
+				this.relationship_remember_runtimeCreateUnique(this.db.idBase, dict.id, dict.kind, idParent, dict.idChild, dict.order);
 			}
 		}
 	}
@@ -691,8 +691,8 @@ export class Hierarchy {
 		relationships[hid] = array;
 	}
 
-	relationship_forPredicateKind_parent_child(kindPredicate: string, hidParent: Integer, hidChild: Integer): Relationship | null {
-		const matches = this.relationships_forKindPredicate_hid_thing_isChild(kindPredicate, hidParent, false);
+	relationship_forPredicateKind_parent_child(kind: string, hidParent: Integer, hidChild: Integer): Relationship | null {
+		const matches = this.relationships_forKindPredicate_hid_thing_isChild(kind, hidParent, false);
 		if (Array.isArray(matches)) {
 			for (const relationship of matches) {
 				if (relationship.hidChild == hidChild) {
@@ -703,13 +703,13 @@ export class Hierarchy {
 		return null;
 	}
 
-	async relationship_remember_persistentCreateUnique(idBase: string, idRelationship: string, kindPredicate: T_Predicate, idParent: string, idChild: string,
+	async relationship_remember_persistentCreateUnique(idBase: string, idRelationship: string, kind: T_Predicate, idParent: string, idChild: string,
 		order: number, creationOptions: T_Create = T_Create.isFromPersistent): Promise<any> {
-		let relationship = this.relationship_forPredicateKind_parent_child(kindPredicate, idParent.hash(), idChild.hash());
+		let relationship = this.relationship_forPredicateKind_parent_child(kind, idParent.hash(), idChild.hash());
 		if (!!relationship) {
 			relationship.order_setTo(order, true);
 		} else {
-			relationship = new Relationship(idBase, idRelationship, kindPredicate, idParent, idChild, order, creationOptions == T_Create.isFromPersistent);
+			relationship = new Relationship(idBase, idRelationship, kind, idParent, idChild, order, creationOptions == T_Create.isFromPersistent);
 			await this.db.relationship_remember_persistentCreate(relationship);
 		}
 		return relationship;
@@ -717,7 +717,7 @@ export class Hierarchy {
 
 	relationship_forget(relationship: Relationship) {
 		delete this.relationship_byHID[relationship.hid];
-		const relationships = this.relationships_forKind(relationship.kindPredicate);
+		const relationships = this.relationships_forKind(relationship.kind);
 		this.relationships = Identifiable.remove_byHID<Relationship>(this.relationships, relationship);
 		this.relationship_forget_forHID(this.relationships_byChildHID, relationship.hidChild, relationship);
 		this.relationship_forget_forHID(this.relationships_byParentHID, relationship.hidParent, relationship);
@@ -726,13 +726,13 @@ export class Hierarchy {
 	
 	relationship_remember(relationship: Relationship) {
 		if (!this.relationship_byHID[relationship.hid]) {
-			let relationships = this.relationships_forKind(relationship.kindPredicate)
+			let relationships = this.relationships_forKind(relationship.kind)
 			if (!this.relationships.map(r => r.id).includes(relationship.id)) {
 				this.relationships.push(relationship);
 			}
 			if (!relationships.map(r => r.id).includes(relationship.id)) {
 				relationships.push(relationship);
-				this.relationships_byKind[relationship.kindPredicate] = relationships;
+				this.relationships_byKind[relationship.kind] = relationships;
 			}
 			this.relationship_byHID[relationship.hid] = relationship;
 			this.relationship_remember_byKnown(relationship, relationship.hidChild, this.relationships_byChildHID);
@@ -747,7 +747,7 @@ export class Hierarchy {
 		if (!!idFrom && !!idTo) {
 			let idChild = dict.idChild;
 			let idParent = dict.idParent;
-			const isBidirectional = this.predicate_forKind(dict.kindPredicate)?.isBidirectional ?? false
+			const isBidirectional = this.predicate_forKind(dict.kind)?.isBidirectional ?? false
 			if (idParent == idFrom) {
 				dict.idParent = idTo;
 			}
@@ -757,10 +757,10 @@ export class Hierarchy {
 		}
 	}
 
-	async relationship_forget_persistentDelete(ancestry: Ancestry, otherAncestry: Ancestry, kindPredicate: T_Predicate) {
+	async relationship_forget_persistentDelete(ancestry: Ancestry, otherAncestry: Ancestry, kind: T_Predicate) {
 		const thing = ancestry.thing;
 		const parentAncestry = ancestry.parentAncestry;
-		const relationship = this.relationship_forPredicateKind_parent_child(kindPredicate, otherAncestry.id_thing.hash(), ancestry.id_thing.hash());
+		const relationship = this.relationship_forPredicateKind_parent_child(kind, otherAncestry.id_thing.hash(), ancestry.id_thing.hash());
 		if (!!parentAncestry && !!relationship && (thing?.hasParents ?? false)) {
 			this.relationship_forget(relationship);
 			if (otherAncestry.hasChildRelationships) {
@@ -772,18 +772,18 @@ export class Hierarchy {
 		}
 	}
 
-	relationship_remember_runtimeCreateUnique(idBase: string, id: string, kindPredicate: T_Predicate, idParent: string, idChild: string,
+	relationship_remember_runtimeCreateUnique(idBase: string, id: string, kind: T_Predicate, idParent: string, idChild: string,
 		order: number, creationOptions: T_Create = T_Create.none): Relationship {
-		let reversed = this.relationship_forPredicateKind_parent_child(kindPredicate, idChild.hash(), idParent.hash());
-		let relationship = this.relationship_forPredicateKind_parent_child(kindPredicate, idParent.hash(), idChild.hash());
-		const isBidirectional = this.predicate_forKind(kindPredicate)?.isBidirectional ?? false;
+		let reversed = this.relationship_forPredicateKind_parent_child(kind, idChild.hash(), idParent.hash());
+		let relationship = this.relationship_forPredicateKind_parent_child(kind, idParent.hash(), idChild.hash());
+		const isBidirectional = this.predicate_forKind(kind)?.isBidirectional ?? false;
 		const already_persisted = creationOptions == T_Create.isFromPersistent;
 		if (!relationship) {
-			relationship = new Relationship(idBase, id, kindPredicate, idParent, idChild, order, already_persisted);
+			relationship = new Relationship(idBase, id, kind, idParent, idChild, order, already_persisted);
 			this.relationship_remember(relationship);
 		}
 		if (isBidirectional && !reversed) {
-			reversed = new Relationship(idBase, Identifiable.newID(), kindPredicate, idChild, idParent, order, already_persisted);
+			reversed = new Relationship(idBase, Identifiable.newID(), kind, idChild, idParent, order, already_persisted);
 			this.relationship_remember(reversed);
 		}
 		relationship?.order_setTo(order);
@@ -846,10 +846,10 @@ export class Hierarchy {
 	ancestry_remember(ancestry: Ancestry) {
 		const hid = ancestry.hid;
 		const thingHID = ancestry.thing?.hid;
-		let dict = this.ancestries_byHID_forKind(ancestry.kindPredicate);
+		let dict = this.ancestries_byHID_forKind(ancestry.kind);
 		this.ancestry_byHID[hid] = ancestry;
 		dict[hid] = ancestry;
-		this.ancestry_byKind_andHID[ancestry.kindPredicate] = dict;
+		this.ancestry_byKind_andHID[ancestry.kind] = dict;
 		if (!!thingHID) {
 			const array = this.ancestries_forThingHID(thingHID);
 			if (!array.includes(ancestry)) {
@@ -862,10 +862,10 @@ export class Hierarchy {
 		if (!!ancestry) {
 			const hid = ancestry.hid;
 			const thingHID = ancestry.thing?.hid;
-			let dict = this.ancestries_byHID_forKind(ancestry.kindPredicate);
+			let dict = this.ancestries_byHID_forKind(ancestry.kind);
 			delete this.ancestry_byHID[hid];
 			delete dict[hid];
-			this.ancestry_byKind_andHID[ancestry.kindPredicate] = dict;
+			this.ancestry_byKind_andHID[ancestry.kind] = dict;
 			if (!!thingHID) {
 				const array = this.ancestries_forThingHID(thingHID);
 				const index = array.indexOf(ancestry);
@@ -889,9 +889,9 @@ export class Hierarchy {
 		} else {
 			const ids = path.split(k.generic_separator);						// path is multiple relationship ids separated by generic_separator
 			const id = ids.slice(-1)[0];										// grab last relationship id
-			const kindPredicate = this.predicate_kindFor_idRelationship(id);	// grab its predicate kind
-			const notValid = !this.relationships_areAllValid_forIDs(ids) || !kindPredicate;
-			return notValid ? null : this.ancestry_remember_createUnique(path, kindPredicate);
+			const kind = this.predicate_kindFor_idRelationship(id);	// grab its predicate kind
+			const notValid = !this.relationships_areAllValid_forIDs(ids) || !kind;
+			return notValid ? null : this.ancestry_remember_createUnique(path, kind);
 		}
 	}
 
@@ -936,12 +936,12 @@ export class Hierarchy {
 		}
 	}
 
-	ancestry_remember_createUnique(path: string = k.root_path, kindPredicate: string = T_Predicate.contains): Ancestry {
+	ancestry_remember_createUnique(path: string = k.root_path, kind: string = T_Predicate.contains): Ancestry {
 		const hid = path.hash();
-		let dict = this.ancestries_byHID_forKind(kindPredicate);
+		let dict = this.ancestries_byHID_forKind(kind);
 		let ancestry = dict[hid];
 		if (!ancestry) {
-			ancestry = new Ancestry(this.db.t_database, path, kindPredicate);
+			ancestry = new Ancestry(this.db.t_database, path, kind);
 			this.ancestry_remember(ancestry);
 		}
 		return ancestry;
@@ -1011,7 +1011,7 @@ export class Hierarchy {
 		})();
 	}
 
-	async ancestry_extended_byAddingThing_toAncestry_remember_persistentCreate_relationship(child: Thing | null, ancestry: Ancestry, kindPredicate: T_Predicate = T_Predicate.contains): Promise<Ancestry | null | undefined> {
+	async ancestry_extended_byAddingThing_toAncestry_remember_persistentCreate_relationship(child: Thing | null, ancestry: Ancestry, kind: T_Predicate = T_Predicate.contains): Promise<Ancestry | null | undefined> {
 		const parent = ancestry.thing;
 		if (!!child && !!parent) {
 			const changingBulk = parent.isBulkAlias || child.idBase != this.db.idBase;
@@ -1019,7 +1019,7 @@ export class Hierarchy {
 			if (!child.persistence.already_persisted) {
 				await this.db.thing_remember_persistentCreate(child);					// for everything below, need to await child.id fetched from databases
 			}
-			const relationship = await this.relationship_remember_persistentCreateUnique(idBase, Identifiable.newID(), kindPredicate, parent.idBridging, child.id, 0, T_Create.getPersistentID);
+			const relationship = await this.relationship_remember_persistentCreateUnique(idBase, Identifiable.newID(), kind, parent.idBridging, child.id, 0, T_Create.getPersistentID);
 			const childAncestry = ancestry.uniquelyAppend_relationshipID(relationship.id);
 			u.ancestries_orders_normalize(ancestry.childAncestries);		// write new order values for relationships
 			return childAncestry;
@@ -1191,7 +1191,7 @@ export class Hierarchy {
 
 	predicate_kindFor_idRelationship(idRelationship: string): string | null {
 		const relationship = this.relationship_forHID(idRelationship.hash());
-		return relationship?.kindPredicate ?? null;			// grab its predicate kind
+		return relationship?.kind ?? null;			// grab its predicate kind
 	}
 
 	predicate_extract_fromDict(dict: Dictionary) {

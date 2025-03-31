@@ -7,16 +7,16 @@ import { get } from 'svelte/store';
 import Airtable from 'airtable';
 
 export default class Relationship extends Persistable {
-	kindPredicate: T_Predicate;
+	kind: T_Predicate;
 	hidParent: Integer;
 	hidChild: Integer;
 	idParent: string;
 	idChild: string;
 	order: number; 
 
-	constructor(idBase: string, id: string, kindPredicate: T_Predicate, idParent: string, idChild: string, order = 0, already_persisted: boolean = false) {
+	constructor(idBase: string, id: string, kind: T_Predicate, idParent: string, idChild: string, order = 0, already_persisted: boolean = false) {
 		super(databases.db_now.t_database, idBase, T_Persistable.relationships, id, already_persisted);
-		this.kindPredicate = kindPredicate;
+		this.kind = kind;
 		this.hidParent = idParent.hash();
 		this.hidChild = idChild.hash();
 		this.idParent = idParent;
@@ -26,9 +26,9 @@ export default class Relationship extends Persistable {
 
 	get child(): Thing | null { return this.thing(true); }
 	get parent(): Thing | null { return this.thing(false); }
-	get isValid(): boolean { return !!this.kindPredicate && !!this.parent && !!this.child; }
-	get predicate(): Predicate | null { return get(w_hierarchy).predicate_forKind(this.kindPredicate); }
-	get fields(): Airtable.FieldSet { return { kindPredicate: this.kindPredicate, parent: [this.idParent], child: [this.idChild], order: this.order }; }
+	get isValid(): boolean { return !!this.kind && !!this.parent && !!this.child; }
+	get predicate(): Predicate | null { return get(w_hierarchy).predicate_forKind(this.kind); }
+	get fields(): Airtable.FieldSet { return { kind: this.kind, parent: [this.idParent], child: [this.idChild], order: this.order }; }
 
 	get verbose(): string {
 		const persisted = this.persistence.already_persisted ? 'STORED' : 'DIRTY';
@@ -66,7 +66,7 @@ export default class Relationship extends Persistable {
 	}
 
 	remove_from(relationships: Array<Relationship>) {
-		relationships.filter(t => t.kindPredicate != this.kindPredicate)
+		relationships.filter(t => t.kind != this.kind)
 	}
 
 }

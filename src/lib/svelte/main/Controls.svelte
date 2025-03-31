@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { T_Layer, T_GraphMode, T_Element, T_Control, T_Hierarchy, T_Preference } from '../../ts/common/Global_Imports';
-	import { w_t_graphMode, w_t_treeMode, w_count_resize, w_hierarchy, w_id_popupView } from '../../ts/common/Stores';
+	import { T_Layer, T_Graph, T_Element, T_Control, T_Hierarchy, T_Preference } from '../../ts/common/Global_Imports';
+	import { w_t_graph, w_t_treeMode, w_count_resize, w_hierarchy, w_id_popupView } from '../../ts/common/Stores';
 	import { c, k, p, u, ux, w, show, Point, svgPaths, signals, S_Element } from '../../ts/common/Global_Imports';
 	import { w_show_details, w_device_isMobile, w_thing_fontFamily } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/data/runtime/Identifiable';
@@ -39,7 +39,7 @@
 	}
 
 	$: {
-		const _ = $w_t_graphMode;
+		const _ = $w_t_graph;
 		const h = $w_hierarchy;
 		const needsExtra = ux.inTreeMode && show.tree_choices;
 		const extra = needsExtra ? 94 : 0;
@@ -64,7 +64,7 @@
 	function selection_closure(name: string, types: Array<string>) {
 		const type = types[0];	// only ever has one element
 		switch (name) {
-			case 'graph':		 $w_t_graphMode = type as T_GraphMode;	break;
+			case 'graph':		 $w_t_graph = type as T_Graph;	break;
 			case 'tree_choices': $w_t_treeMode  = type as T_Hierarchy;	break;
 		}
 	}
@@ -117,12 +117,12 @@
 					<img src='settings.svg' alt='circular button' width={size_small}px height={size_small}px/>
 				</Button>
 			{/key}
-			{#key $w_t_graphMode}
+			{#key $w_t_graph}
 				<Segmented
 					name='graph-type-selector'
 					origin={Point.x(30)}
-					selected={[$w_t_graphMode]}
-					titles={[T_GraphMode.tree, T_GraphMode.radial]}
+					selected={[$w_t_graph]}
+					titles={[T_Graph.tree, T_Graph.radial]}
 					selection_closure={(titles) => selection_closure('graph', titles)}/>
 				{#if ux.inTreeMode && show.tree_choices}
 					{#key $w_t_treeMode}

@@ -20,13 +20,12 @@ import { T_Quadrant, T_Orientation } from '../common/Angle';
 import { T_Create, T_Browser, T_Alteration } from './Enumerations';
 import { T_Oblong, T_Element, T_SvelteComponent } from './Enumerations';
 import { T_Curve, T_Layer, T_Thing, T_Trait, T_Predicate } from './Enumerations';
-import { T_GraphMode, T_Widget, T_Rebuild, T_RingZone, T_Startup } from './Enumerations';
+import { T_Graph, T_Widget, T_Rebuild, T_RingZone, T_Startup } from './Enumerations';
 import { T_Info, T_Tool, T_Control, T_Details, T_Storage, T_Hierarchy } from './Enumerations';
 
 import G_TreeChildren from '../geometry/tree/G_TreeChildren';
 import G_RadialGraph from '../geometry/radial/G_RadialGraph';
 import G_ArcSlider from '../geometry/radial/G_ArcSlider';
-import G_TreeChild from '../geometry/tree/G_TreeChild';
 import G_TreeGraph from '../geometry/tree/G_TreeGraph';
 import G_TreeLine from '../geometry/tree/G_TreeLine';
 import G_Cluster from '../geometry/radial/G_Cluster';
@@ -80,9 +79,9 @@ export {
 	T_Element, Svelte_Wrapper, T_SvelteComponent,
 	G_Segment, G_Cluster, G_RadialGraph, G_ArcSlider,
 	S_Paging, S_Rotation, S_Expansion, S_Thing_Pages,
+	G_Widget, G_TreeLine, G_TreeGraph, G_TreeChildren,
 	S_Mouse, S_Widget, S_Element, S_Alteration, S_Title_Edit,
-	G_Widget, G_TreeChild, G_TreeLine, G_TreeGraph, G_TreeChildren,
 	User, Persistable, Thing, Trait, Access, Predicate, Relationship,
 	T_Curve, T_Tool, T_Widget, T_Signal, T_Control, T_Browser, T_Storage, T_Preference,
-	T_Info, T_Thing, T_Trait, T_GraphMode, T_Hierarchy, T_Details, T_Rebuild, T_Startup,
+	T_Info, T_Thing, T_Trait, T_Graph, T_Hierarchy, T_Details, T_Rebuild, T_Startup,
 };

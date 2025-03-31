@@ -1,4 +1,4 @@
-import { G_Widget, G_ArcSlider, S_Paging, S_Rotation, T_Quadrant, T_GraphMode } from '../../common/Global_Imports';
+import { G_Widget, G_ArcSlider, S_Paging, S_Rotation, T_Quadrant, T_Graph } from '../../common/Global_Imports';
 import { k, u, ux, w, Point, Angle, debug, colors, Ancestry, Predicate } from '../../common/Global_Imports';
 import { w_graph_rect, w_ancestry_focus } from '../../common/Stores';
 import { w_ring_rotation_radius } from '../../common/Stores';
@@ -192,7 +192,7 @@ export default class G_Cluster {
 				const child_ancestry = this.ancestries[child_index];
 				const child_pointsRight = new Angle(child_angle).angle_pointsRight;
 				const child_origin = center.offsetBy(radial.rotate_by(child_angle));
-				child_ancestry.g_widget.update(T_GraphMode.radial, child_origin, this.points_toChildren, child_pointsRight);
+				child_ancestry.g_widget.update_forRadial(child_origin, this.points_toChildren, child_pointsRight);
 				this.g_cluster_widgets.push(child_ancestry.g_widget);
 				index += 1;
 			}

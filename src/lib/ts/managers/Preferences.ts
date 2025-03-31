@@ -1,5 +1,5 @@
-import { S_Paging, T_GraphMode, T_Hierarchy, T_Details, G_TreeChildren } from '../common/Global_Imports';
-import { w_t_treeMode, w_t_graphMode, w_hierarchy, w_t_details, w_t_countDots } from '../common/Stores';
+import { S_Paging, T_Graph, T_Hierarchy, T_Details, G_TreeChildren } from '../common/Global_Imports';
+import { w_t_treeMode, w_t_graph, w_hierarchy, w_t_details, w_t_countDots } from '../common/Stores';
 import { w_s_paging, w_font_size, w_background_color, w_thing_fontFamily } from '../common/Stores';
 import { w_ancestry_focus, w_ancestries_grabbed, w_ancestries_expanded } from '../common/Stores';
 import { c, k, ux, show, debug, Ancestry, databases } from '../common/Global_Imports';
@@ -79,8 +79,8 @@ export class Preferences {
 		} else {
 			w_ancestries_grabbed.set(this.ancestries_readDB_key(T_Preference.grabbed));
 			w_ancestries_expanded.set(this.ancestries_readDB_key(T_Preference.expanded));
-			for (const expanded of get(w_ancestries_expanded)) {
-				expanded.g_widget.g_treeChildren = new G_TreeChildren(expanded);
+			for (const ancestry of get(w_ancestries_expanded)) {
+				ancestry.g_widget.g_treeChildren = new G_TreeChildren(ancestry);
 			}
 			debug.log_grab(`  READ grabbed: "${get(w_ancestries_grabbed).map(a => a.id).join(', ')}"`);
 			debug.log_expand(`  READ expanded: "${get(w_ancestries_expanded).map(a => a.id).join(', ')}"`);
@@ -180,7 +180,7 @@ export class Preferences {
 		w_t_treeMode.subscribe((value) => {
 			this.write_key(T_Preference.tree, value);
 		});
-		w_t_graphMode.subscribe((value) => {
+		w_t_graph.subscribe((value) => {
 			this.write_key(T_Preference.graph, value);
 		});
 		w_t_countDots.subscribe((value) => {
@@ -211,7 +211,7 @@ export class Preferences {
 		}
 		w_font_size.set(this.read_key(T_Preference.font_size) ?? 14);
 		w_ring_rotation_angle.set(this.read_key(T_Preference.ring_angle) ?? 0);
-		w_t_graphMode.set(this.read_key(T_Preference.graph) ?? T_GraphMode.tree);
+		w_t_graph.set(this.read_key(T_Preference.graph) ?? T_Graph.tree);
 		w_t_treeMode.set(this.read_key(T_Preference.tree) ?? T_Hierarchy.children);
 		w_thing_fontFamily.set(this.read_key(T_Preference.font) ?? 'Times New Roman');
 		w_t_details.set(this.read_key(T_Preference.detail_types) ?? [T_Details.storage]);

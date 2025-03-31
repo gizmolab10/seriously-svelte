@@ -1,7 +1,7 @@
 import { S_Mouse, S_Widget, S_Element, S_Expansion, S_Rotation, S_Thing_Pages } from '../common/Global_Imports';
 import { k, w, debug, signals, wrappers, Ancestry, Mouse_Timer } from '../common/Global_Imports';
-import { T_Element, T_RingZone, T_GraphMode, T_SvelteComponent } from '../common/Enumerations';
-import { w_t_graphMode, w_show_details, w_ancestry_focus } from '../common/Stores';
+import { T_Element, T_RingZone, T_Graph, T_SvelteComponent } from '../common/Enumerations';
+import { w_t_graph, w_show_details, w_ancestry_focus } from '../common/Stores';
 import { w_ring_rotation_radius, w_mouse_location_scaled } from '../common/Stores';
 import { G_Segment, G_TreeGraph, G_RadialGraph } from '../common/Global_Imports';
 import Identifiable from '../data/runtime/Identifiable';
@@ -37,8 +37,8 @@ export default class User_Interaction {
 	//									//
 	//////////////////////////////////////
 	
-	get inTreeMode(): boolean { return get(w_t_graphMode) == T_GraphMode.tree; }
-	get inRadialMode(): boolean { return get(w_t_graphMode) == T_GraphMode.radial; }
+	get inTreeMode(): boolean { return get(w_t_graph) == T_Graph.tree; }
+	get inRadialMode(): boolean { return get(w_t_graph) == T_Graph.radial; }
 	get s_paging_rotations(): Array<S_Rotation> { return Object.values(this.s_paging_rotation_byName); }
 	get isAny_paging_arc_active(): boolean { return this.s_paging_rotations.filter(s => s.isActive).length > 0; }
 	get isAny_paging_arc_hovering(): boolean { return this.s_paging_rotations.filter(s => s.isHovering).length > 0; }
@@ -96,9 +96,9 @@ export default class User_Interaction {
 	}
 
 	toggle_graphMode() {
-		switch (get(w_t_graphMode)) {
-			case T_GraphMode.tree: w_t_graphMode.set(T_GraphMode.radial); break;
-			case T_GraphMode.radial: w_t_graphMode.set(T_GraphMode.tree); break;
+		switch (get(w_t_graph)) {
+			case T_Graph.tree: w_t_graph.set(T_Graph.radial); break;
+			case T_Graph.radial: w_t_graph.set(T_Graph.tree); break;
 		}
 		signals.signal_rebuildGraph_fromFocus();
 	}
