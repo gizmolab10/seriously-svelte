@@ -32,11 +32,10 @@
 
 	onMount(() => {
 		const handleAny = signals.handle_anySignal_atPriority(0, (t_signal, signal_ancestry) => {
-			necklace_rebuilds += 1;
-			// switch (t_signal) {
-			// 	case T_Signal.recreate: necklace_rebuilds += 1; break;
-			// 	case T_Signal.reposition: break;
-			// }
+			switch (t_signal) {
+				case T_Signal.recreate: necklace_rebuilds += 1; break;
+				default: break;
+			}
 		});
 		return () => {
 			handleAny.disconnect();

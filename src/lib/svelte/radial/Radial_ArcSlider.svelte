@@ -39,7 +39,7 @@
 	//////////////////////////////////////////////////
 
 	debug.log_build(`ARC SLIDER  ${g_cluster.name}`);
-	g_cluster.update_all();
+	g_cluster.layout_cluster();
 	
 	onMount(() => {
 		update_colors();
@@ -88,6 +88,7 @@
 	// }
 
 	function reposition() {
+		// console.log(`reposition`)
 		// INCOMPLETE: need to update view box, Mouse_Responder's center and Angled_Text's [dunno]
 		// g cluster is source of truth for svg paths, including coordinates
 		arc_slider_path.setAttribute('d', g_cluster.g_sliderArc.svgPathFor_arcSlider);

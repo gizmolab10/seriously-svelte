@@ -29,21 +29,21 @@ export default class G_RadialGraph {
 	grand_layout_radial() {
 		this.destructor();
 		const focus_ancestry = get(w_ancestry_focus);
-		const focus_thing = focus_ancestry.thing;
-		let childAncestries = focus_ancestry.childAncestries;
-		focus_ancestry.g_widget.update();
-		this.layout_clusterFor(childAncestries, Predicate.contains, true);
-		if (!!focus_thing) {
-			for (const predicate of get(w_hierarchy).predicates) {
-				const ancestries = focus_thing.uniqueAncestries_for(predicate);
-				this.layout_clusterFor(ancestries, predicate, false);
+		if (!!focus_ancestry) {
+			const focus_thing = focus_ancestry.thing;
+			let childAncestries = focus_ancestry.childAncestries;
+			focus_ancestry.g_widget.layout_widget();
+			this.layout_clusterFor(childAncestries, Predicate.contains, true);
+			if (!!focus_thing) {
+				for (const predicate of get(w_hierarchy).predicates) {
+					const ancestries = focus_thing.uniqueAncestries_for(predicate);
+					this.layout_clusterFor(ancestries, predicate, false);
+				}
 			}
 		}
 	}
 
 	get g_clusters(): Array<G_Cluster> { return u.concatenateArrays(Object.values(this.g_parent_clusters), Object.values(this.g_child_clusters)); }
-	g_clusters_pointing_toChildren(toChildren: boolean): Dictionary<G_Cluster> { return toChildren ? this.g_child_clusters : this.g_parent_clusters; }
-	g_cluster_pointing_toChildren(toChildren: boolean, predicate: Predicate): G_Cluster { return this.g_clusters_pointing_toChildren(toChildren)[predicate.kind]; }
 
 	get g_cluster_atMouseLocation(): G_Cluster | null {
 		for (const g_cluster of this.g_clusters) {
@@ -74,10 +74,19 @@ export default class G_RadialGraph {
 			const s_paging = s_thing_pages?.s_paging_pointingToChildren(points_toChildren, predicate);
 			const onePage_ofAncestries = s_paging?.onePage_from(ancestries) ?? [];
 			const corrected_ancestries = points_right ? onePage_ofAncestries.reverse() : onePage_ofAncestries;			// reverse order for fork angle points left
-			const g_cluster = new G_Cluster(ancestries.length, corrected_ancestries, predicate, points_toChildren);
-			const g_clusters = this.g_clusters_pointing_toChildren(points_toChildren);
+			const g_cluster = this.g_cluster_forPredicate_toChildren(predicate, points_toChildren);
+			g_cluster.layout_cluster_forAncestries(ancestries.length, corrected_ancestries);
+		}
+	}
+
+	g_cluster_forPredicate_toChildren(predicate: Predicate, points_toChildren: boolean) {
+		const g_clusters = points_toChildren ? this.g_child_clusters : this.g_parent_clusters;;
+		let g_cluster = g_clusters[predicate.kind];
+		if (!g_cluster) {
+			g_cluster = new G_Cluster(predicate, points_toChildren);
 			g_clusters[predicate.kind] = g_cluster;
 		}
+		return g_cluster;
 	}
 
 	update_forPaging_state(s_paging: S_Paging) {

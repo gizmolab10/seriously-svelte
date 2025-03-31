@@ -142,7 +142,7 @@ export default class Ancestry extends Identifiable {
 		const predicate = this.predicate;
 		const g_radialGraph = ux.g_radialGraph;
 		if (!!predicate && !!g_radialGraph) {
-			const g_cluster = g_radialGraph?.g_cluster_pointing_toChildren(this.thing_isChild, predicate)
+			const g_cluster = g_radialGraph?.g_cluster_forPredicate_toChildren(predicate, this.thing_isChild)
 			return g_cluster?.s_ancestryPaging(this) ?? null;
 		}
 		return null;	// either g_radialGraph is not setup or predicate is bogus
@@ -605,7 +605,6 @@ export default class Ancestry extends Identifiable {
 				this.grabOnly();
 			}
 			ux.grand_layout();
-			signals.signal_reposition_widgets_fromFocus();
 		}
 	}
 
@@ -754,7 +753,6 @@ export default class Ancestry extends Identifiable {
 	expanded_setTo(expand: boolean) {
 		let mutated = false;
 		if (!this.isRoot || expand) {
-			this.g_widget.g_treeChildren = expand ? new G_TreeChildren(this) : null;	// for layout
 			w_ancestries_expanded.update((a) => {
 				let array = a ?? [];
 				if (!!array) {

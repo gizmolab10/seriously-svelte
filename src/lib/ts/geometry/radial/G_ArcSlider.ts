@@ -67,7 +67,7 @@ export default class G_ArcSlider {
 		return Point.fromPolar(middle_radius, angle);
 	}
 
-	update_angle_ofFork(angle_ofFork: number) {
+	layout_angle_ofFork(angle_ofFork: number) {
 		const fork_raw_radius = k.ring_rotation_thickness * 0.6;
 		this.fork_radius = fork_raw_radius - this.fork_backoff;
 		this.fork_backoff = this.fork_adjustment(fork_raw_radius, this.inside_arc_radius);

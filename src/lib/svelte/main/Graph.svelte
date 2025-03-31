@@ -28,23 +28,20 @@
 		update_style();
 		const handle_rebuild = signals.handle_rebuildGraph(1, (ancestry) => {
 			ux.grand_layout();
-			rebuild();
+			graph_rebuilds += 1;
 		});
-		const handle_reposition = signals.handle_reposition_widgets(0, (received_ancestry) => {
-			ux.grand_layout();
-		});
-		return () => { handle_rebuild.disconnect(); handle_reposition.disconnect() };
+		return () => { handle_rebuild.disconnect(); };
 	});
 
 	$: {
 		const _ = $w_ancestry_focus;
-		rebuild();
+		graph_rebuilds += 1;
 	}
 
 	$: {
 		draggableRect = $w_graph_rect.offsetByY(-9);
 		update_style();
-		rebuild();
+		graph_rebuilds += 1;
 	}
 
 	$: {
@@ -58,8 +55,6 @@
 		const _ = $w_graph_rect + $w_ancestry_focus + $w_device_isMobile + $w_t_graph;
 		ux.grand_layout();
 	}
-
-	function rebuild() { graph_rebuilds += 1; }
 	
 	function update_style() {
 		style=`

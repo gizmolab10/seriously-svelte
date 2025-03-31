@@ -42,30 +42,35 @@ export default class G_Cluster {
 	// everything in one cluster of the radial view
 
 	destructor() { this.ancestries = []; }
-	constructor(total_widgets: number, ancestries: Array<Ancestry>, predicate: Predicate, points_toChildren: boolean) {
+	constructor(predicate: Predicate, points_toChildren: boolean) {
 		this.points_toChildren = points_toChildren;
-		this.total_widgets = total_widgets;
-		this.ancestries = ancestries;
 		this.predicate = predicate;
-		this.update_all();
 		w_ring_rotation_radius.subscribe((radius: number) => {
 			if (this.g_sliderArc.outside_arc_radius != radius) {
-				this.update_all();		// do not set_paging_index (else expand will hang)
+				this.layout_cluster();		// do not set_paging_index (else expand will hang)
 			}
 		})
 	}
 
-	update_all() {
-		debug.log_build(`G CLUSTER UPDATE  (${this.ancestries.length} shown)  ${this.direction_kind}`);
-		this.widgets_shown = this.ancestries.length;
-		this.isPaging = this.widgets_shown < this.total_widgets;
-		this.center = get(w_graph_rect).size.asPoint.dividedInHalf;
-		this.color = colors.opacitize(get(w_ancestry_focus).thing?.color ?? this.color, 0.2);
-		this.update_angle_ofFork();
-		this.update_widget_geometry();
-		this.update_label_geometry();
-		this.update_label_forIndex();
-		this.update_thumb_angles();
+	layout_cluster_forAncestries(total_widgets: number, ancestries: Array<Ancestry>) {
+		this.total_widgets = total_widgets;
+		this.ancestries = ancestries;
+		this.layout_cluster();
+	}
+
+	layout_cluster() {
+		if (this.ancestries.length > 0) {
+			debug.log_build(`layout_cluster (${this.ancestries.length} shown)  ${this.direction_kind}`);
+			this.widgets_shown = this.ancestries.length;
+			this.isPaging = this.widgets_shown < this.total_widgets;
+			this.center = get(w_graph_rect).size.asPoint.dividedInHalf;
+			this.color = colors.opacitize(get(w_ancestry_focus).thing?.color ?? this.color, 0.2);
+			this.layout_angle_ofFork();
+			this.layout_widget();
+			this.layout_label();
+			this.layout_label_forIndex();
+			this.layout_thumb_angles();
+		}
 	}
 
 	get paging_index_ofFocus(): number { return this.s_focusPaging?.index ?? 0; }
@@ -91,7 +96,7 @@ export default class G_Cluster {
 
 	static readonly LABEL: unique symbol;
 
-	update_label_geometry() {		// rotate text tangent to arc, at center of arc
+	layout_label() {		// rotate text tangent to arc, at center of arc
 		const angle = this.g_sliderArc.angle_ofCenter;
 		const ortho = this.arc_in_lower_half ? Angle.quarter : Angle.three_quarters;
 		const label_radius = get(w_ring_rotation_radius) + (this.arc_in_lower_half ? 5 : 0) - 20;
@@ -100,7 +105,7 @@ export default class G_Cluster {
 		this.label_position_angle = angle;
 	}
 	
-	update_label_forIndex() {
+	layout_label_forIndex() {
 		let cluster_title =  `${this.total_widgets} ${this.direction_kind}`;
 		if (this.isPaging) {
 			const index = Math.round(this.paging_index_ofFocus);
@@ -124,9 +129,9 @@ export default class G_Cluster {
 			const delta_fraction = (delta_angle / spread_angle);
 			const delta_index = delta_fraction * this.maximum_paging_index;			// convert rotation delta to index delta
 			const adjusted = paging.addTo_paging_index_for(delta_index) ?? false;	// add index delta to index
-			this.update_thumb_angles();
+			this.layout_thumb_angles();
 			if (adjusted) {
-				this.update_label_forIndex();
+				this.layout_label_forIndex();
 			}
 			return adjusted || delta_index != 0;
 		}
@@ -164,10 +169,10 @@ export default class G_Cluster {
 
 	static readonly ANGLES: unique symbol;
 	
-	update_angle_ofFork() { this.g_sliderArc.update_angle_ofFork(this.angle_ofFork); }
+	layout_angle_ofFork() { this.g_sliderArc.layout_angle_ofFork(this.angle_ofFork); }
 	get angle_ofFork(): number { return this.predicate.angle_ofFork_when(this.points_toChildren); }
 
-	update_arc_angles(index: number, max: number, child_angle: number) {
+	layout_arc_angles(index: number, max: number, child_angle: number) {
 		// index increases & angle decreases clockwise
 		if (index == max) {
 			this.g_sliderArc.start_angle = child_angle;
@@ -177,7 +182,7 @@ export default class G_Cluster {
 		}
 	}
 
-	update_widget_geometry() {
+	layout_widget() {
 		this.g_cluster_widgets = [];
 		if (this.widgets_shown > 0 && !!this.predicate) {
 			const center = this.center.offsetByXY(2, -1.5);			// tweak so that drag dots are centered within the rotation ring
@@ -192,7 +197,7 @@ export default class G_Cluster {
 				const child_ancestry = this.ancestries[child_index];
 				const child_pointsRight = new Angle(child_angle).angle_pointsRight;
 				const child_origin = center.offsetBy(radial.rotate_by(child_angle));
-				child_ancestry.g_widget.update_forRadial(child_origin, this.points_toChildren, child_pointsRight);
+				child_ancestry.g_widget.layout_radialWidget(child_origin, child_pointsRight);
 				this.g_cluster_widgets.push(child_ancestry.g_widget);
 				index += 1;
 			}
@@ -229,11 +234,11 @@ export default class G_Cluster {
 		if (y_isOutside == (radial.x > 0)) {					// counter-clockwise if (x is positive AND y is outside) OR (x is negative AND y is inside)
 			child_angle = Angle.half - child_angle			// otherwise it's clockwise, so invert it
 		}
-		this.update_arc_angles(index, max, child_angle);
+		this.layout_arc_angles(index, max, child_angle);
 		return child_angle;									// angle at index
 	}
 
-	update_thumb_angles() {
+	layout_thumb_angles() {
 
 		// very complex, because:
 		// 1. start & end are sometimes reversed (hasNegative_spread)
@@ -249,7 +254,7 @@ export default class G_Cluster {
 			const arc_start = this.g_sliderArc.start_angle * otherInverter;
 			const start = arc_start + (increment * this.paging_index_ofFocus);
 			const end = start + (increment * this.widgets_shown);
-			this.g_thumbArc.update_angle_ofFork((start + end) / 2);
+			this.g_thumbArc.layout_angle_ofFork((start + end) / 2);
 			this.g_thumbArc.start_angle = start;
 			this.g_thumbArc.end_angle = end;
 		}

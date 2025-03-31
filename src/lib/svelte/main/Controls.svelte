@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { T_Layer, T_Graph, T_Element, T_Control, T_Hierarchy, T_Preference } from '../../ts/common/Global_Imports';
-	import { w_t_graph, w_t_treeMode, w_count_resize, w_hierarchy, w_id_popupView } from '../../ts/common/Stores';
+	import { w_t_graph, w_t_tree, w_count_resize, w_hierarchy, w_id_popupView } from '../../ts/common/Stores';
 	import { c, k, p, u, ux, w, show, Point, svgPaths, signals, S_Element } from '../../ts/common/Global_Imports';
 	import { w_show_details, w_device_isMobile, w_thing_fontFamily } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/data/runtime/Identifiable';
@@ -50,22 +50,14 @@
 
 	function toggle_show_details() {
 		$w_show_details = !$w_show_details;
-		signals.signal_reposition_widgets_fromFocus();
-	}
-
-	function next_graph_tree_choices() {
-		switch ($w_t_treeMode) {
-			case T_Hierarchy.children: return T_Hierarchy.parents;
-			case T_Hierarchy.parents:  return T_Hierarchy.related;
-			default:				   return T_Hierarchy.children;
-		}
+		ux.grand_layout();
 	}
 
 	function selection_closure(name: string, types: Array<string>) {
 		const type = types[0];	// only ever has one element
 		switch (name) {
-			case 'graph':		 $w_t_graph = type as T_Graph;	break;
-			case 'tree_choices': $w_t_treeMode  = type as T_Hierarchy;	break;
+			case 'graph': $w_t_graph = type as T_Graph; break;
+			case 'tree':  $w_t_tree  = type as T_Hierarchy; break;
 		}
 	}
 
@@ -125,13 +117,13 @@
 					titles={[T_Graph.tree, T_Graph.radial]}
 					selection_closure={(titles) => selection_closure('graph', titles)}/>
 				{#if ux.inTreeMode && show.tree_choices}
-					{#key $w_t_treeMode}
+					{#key $w_t_tree}
 						<Segmented
 							name='tree'
 							origin={Point.x(114)}
-							selected={[$w_t_treeMode]}
+							selected={[$w_t_tree]}
 							titles={[T_Hierarchy.children, T_Hierarchy.parents, T_Hierarchy.related]}
-							selection_closure={(titles) => selection_closure('tree_choices', titles)}/>
+							selection_closure={(titles) => selection_closure('tree', titles)}/>
 					{/key}
 				{/if}
 			{/key}

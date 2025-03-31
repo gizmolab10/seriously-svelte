@@ -38,7 +38,7 @@
 	onMount(() => {
 		update_svgs();
 		update_cursor();
-		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
+		const handle_reposition = signals.handle_reposition_widgets(1, (received_ancestry) => {
 			update_svgs();
 		});
 		return () => { handle_reposition.disconnect() };
@@ -168,9 +168,8 @@
 					rotation_state.active_angle = mouse_angle;
 					detect_hovering();
 					cursor = ux.s_ring_rotation.cursor;
-					ux.g_radialGraph.grand_layout_radial();
+					ux.grand_layout();											// to reposition necklace widgets
 					rings_rebuilds += 1;										// for arc slider's ViewBox and MouseResponder center
-					signals.signal_reposition_widgets_fromFocus();				// to reposition necklace widgets
 				}
 			} else if (!!$w_g_active_cluster) {
 				const s_paging_rotation = $w_g_active_cluster.s_paging_rotation;

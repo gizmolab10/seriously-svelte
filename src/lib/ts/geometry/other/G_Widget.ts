@@ -7,8 +7,8 @@ import { get } from 'svelte/store';
 
 export default class G_Widget {
 	g_bidirectionalLines: Array<G_TreeLine> = [];
-	g_treeChildren: G_TreeChildren | null = null;
 	origin_ofChildrenTree = Point.zero;
+	g_treeChildren: G_TreeChildren;
 	offset_ofWidget = Point.zero;
 	center_ofReveal = Point.zero;
 	origin_ofRadial = Point.zero;
@@ -44,6 +44,7 @@ export default class G_Widget {
 	constructor(ancestry: Ancestry) {
 		this.es_widget = ux.s_element_for(ancestry, T_Element.widget, k.empty);
 		this.g_line = new G_TreeLine(ancestry.parentAncestry, ancestry);
+		this.g_treeChildren = new G_TreeChildren(ancestry);
 		this.forGraphMode = get(w_t_graph);
 		this.ancestry = ancestry;
 		if (!ancestry.thing) {
@@ -81,9 +82,9 @@ export default class G_Widget {
 		return new Point(x, y);
 	}
 
-	update_tree_atFocus() {
+	layout_tree_fromFocus() {
 		const graphRect = get(w_graph_rect);
-		if (!!graphRect) {
+		if (!!graphRect && ux.inTreeMode) {
 			const offsetY = graphRect.origin.y + 1;
 			const childrenSize = this.ancestry.visibleProgeny_size;
 			const offsetX_ofFirstReveal = (this.ancestry.thing?.titleWidth ?? 0) / 2 - 2;
@@ -100,48 +101,44 @@ export default class G_Widget {
 		}
 	}
 
-	update(
+	layout_widget(
 		height: number = 0,
 		origin: Point = Point.zero,
 		points_toChild: boolean = true,
 		forGraphMode = T_Graph.radial,
 		widget_pointsRight: boolean = true) {
-		if (forGraphMode == get(w_t_graph)) {
-			const progeny_height = this.ancestry.visibleProgeny_height();
-			const child_height = height + progeny_height / 2;
-			const t_childCurve = this.get_t_childCurve(child_height);
-			const child_rect = new Rect(origin, new Size(k.line_stretch, child_height - 1));
-			const child_widget_origin = this.origin_forAncestry_inRect(this.ancestry, child_rect);
-			this.g_line.rect = child_rect;
-			this.forGraphMode = forGraphMode;
-			this.progeny_height = progeny_height;
-			this.points_toChild = points_toChild;
-			this.g_line.curveType = t_childCurve;
-			this.origin_ofWidget = child_widget_origin;
-			this.widget_pointsRight = widget_pointsRight;
-			this.layout_children();
-		}
+			if (forGraphMode == get(w_t_graph)) {	// assure modes match
+				const progeny_height = this.ancestry.visibleProgeny_height();
+				const child_height = height + progeny_height / 2;
+				const t_childCurve = this.get_t_childCurve(child_height);
+				const child_rect = new Rect(origin, new Size(k.line_stretch, child_height - 1));
+				const child_widget_origin = this.origin_forAncestry_inRect(this.ancestry, child_rect);
+				this.g_line.rect = child_rect;
+				this.forGraphMode = forGraphMode;
+				this.progeny_height = progeny_height;
+				this.points_toChild = points_toChild;
+				this.g_line.curveType = t_childCurve;
+				this.origin_ofWidget = child_widget_origin;
+				this.widget_pointsRight = widget_pointsRight;
+				this.layout_children();
+			}
 	}
 
-	update_forRadial(
+	layout_radialWidget(
 		origin_ofWidget: Point,
-		points_toChild: boolean,
 		widget_pointsRight: boolean) {
-		if (T_Graph.radial == get(w_t_graph)) {		// modes must match, else widgets get misplaced
-			this.points_toChild = points_toChild;
-			this.origin_ofWidget = origin_ofWidget;
-			this.forGraphMode = T_Graph.radial;
-			this.widget_pointsRight = widget_pointsRight;
-			this.layout_children();
-		}
+			if (ux.inRadialMode) {
+				this.origin_ofWidget = origin_ofWidget;
+				this.forGraphMode = T_Graph.radial;
+				this.widget_pointsRight = widget_pointsRight;
+				// this.layout_children();
+			}
 	}
 
 	layout_children() {				// assumes all child trees are laid out (needed for progeny size)
-		if (this.forGraphMode == get(w_t_graph)) {
-			this.g_treeChildren?.update_children();	// evoke only for [tree] thing expanded with children
-			this.layout_widget_andLine();
-			this.layout_bidirectional_lines();
-		}
+		this.g_treeChildren.layout_children();	// evoke only for [tree] thing expanded with children
+		this.layout_widget_andLine();
+		this.layout_bidirectional_lines();
 	}
 
 	recursively_layout_subtree() {
@@ -157,7 +154,7 @@ export default class G_Widget {
 
 	private layout_widget_andLine() {
 		const ancestry = this.ancestry;
-		if (!!ancestry.thing && this.forGraphMode == get(w_t_graph)) {		// short-circuit mismatched graph mode
+		if (!!ancestry.thing) {		// short-circuit mismatched graph mode
 			const showingReveal = this.showingReveal;
 			const showingBorder = !ancestry ? false : (ancestry.isGrabbed || ancestry.isEditing);
 			const radial_x = this.widget_pointsRight ? 4 : k.dot_size * 3.5;
@@ -181,16 +178,16 @@ export default class G_Widget {
 				const reveal_x = k.dot_size - (this.widget_pointsRight ? -offset_forPointsRight : 3);
 				this.center_ofReveal = new Point(reveal_x, reveal_y);
 			}
-			if (ux.inTreeMode && ancestry.isFocus) {
-				const graph_rect = get(w_graph_rect);
-				const children_size = ancestry.visibleProgeny_size;
-				const focus = ancestry.thing ?? get(w_hierarchy).root;
-				const offset_x_ofReveal = focus?.titleWidth / 2 - 2;
-				const offset_y = -1 - graph_rect.origin.y;
-				const offset_x = 15 + (get(w_show_details) ? -k.width_details : 0) - (children_size.width / 2) - (k.dot_size / 2.5) + offset_x_ofReveal;
-				const origin_ofReveal = graph_rect.center.offsetByXY(offset_x, offset_y);
-				this.origin_ofFocus = origin_ofReveal.offsetByXY(-21.5 - offset_x_ofReveal, -5);
-			}
+		}
+		if (ux.inTreeMode && ancestry.isFocus) {
+			const graph_rect = get(w_graph_rect);
+			const children_size = ancestry.visibleProgeny_size;
+			const focus = ancestry.thing ?? get(w_hierarchy).root;
+			const offset_x_ofReveal = focus?.titleWidth / 2 - 2;
+			const offset_y = -1 - graph_rect.origin.y;
+			const offset_x = 15 + (get(w_show_details) ? -k.width_details : 0) - (children_size.width / 2) - (k.dot_size / 2.5) + offset_x_ofReveal;
+			const origin_ofReveal = graph_rect.center.offsetByXY(offset_x, offset_y);
+			this.origin_ofFocus = origin_ofReveal.offsetByXY(-21.5 - offset_x_ofReveal, -5);
 		}
 	}
 
