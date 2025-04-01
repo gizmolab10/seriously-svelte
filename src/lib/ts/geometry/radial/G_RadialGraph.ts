@@ -11,7 +11,7 @@ export default class G_RadialGraph {
 
 	constructor() {
 		w_s_paging.subscribe((state: S_Paging) => {
-			this.update_forPaging_state(state);
+			this.layout_forPaging_state(state);
 		});
 	}
 
@@ -89,7 +89,7 @@ export default class G_RadialGraph {
 		return g_cluster;
 	}
 
-	update_forPaging_state(s_paging: S_Paging) {
+	layout_forPaging_state(s_paging: S_Paging) {
 		const focus_ancestry = get(w_ancestry_focus);
 		if (!!s_paging && !!focus_ancestry) {
 			if (s_paging.points_toChildren) {

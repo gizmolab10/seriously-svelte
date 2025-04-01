@@ -38,10 +38,6 @@
 	onMount(() => {
 		update_svgs();
 		update_cursor();
-		const handle_reposition = signals.handle_reposition_widgets(1, (received_ancestry) => {
-			update_svgs();
-		});
-		return () => { handle_reposition.disconnect() };
 	});
 
 	$: {
@@ -51,12 +47,9 @@
 	}
 
 	$: {
-		// mouse up ... end all (rotation, resizing, paging)
 		if (mouse_up_count != $w_count_mouse_up) {
 			mouse_up_count = $w_count_mouse_up;
-			if (ux.ring_zone_atMouseLocation == T_RingZone.miss) {			// only respond if NOT isHit
-				reset_ux();
-			}
+			reset_ux();			// mouse up ... end all (rotation, resizing, paging)
 		}
 	}
 
@@ -75,9 +68,9 @@
 		ux.s_ring_resizing.reset();
 		ux.s_ring_rotation.reset();
 		$w_g_active_cluster = null;
+		cursor = 'default';
 		mouse_timer.reset();
 		ux.reset_paging();
-		update_svgs();
 	}
 
 	function update_svgs() {
@@ -157,8 +150,7 @@
 					time = now;
 					debug.log_radial(` resize  D ${distance.asInt()}  R ${radius.asInt()}  + ${delta.toFixed(1)}`);
 					$w_ring_rotation_radius = radius;
-					signals.signal_rebuildGraph_fromFocus();					// destroys this component (properties are in w_w_ring_resizing)
-					rings_rebuilds += 1;
+					ux.grand_build();					// destroys this component (properties are in w_w_ring_resizing)
 				}
 			} else if (rotation_state.isActive) {								// rotate clusters
 				if (!signals.signal_isInFlight && enoughTimeHasPassed) {		// 1 tenth second
@@ -169,7 +161,9 @@
 					detect_hovering();
 					cursor = ux.s_ring_rotation.cursor;
 					ux.grand_layout();											// to reposition necklace widgets
-					rings_rebuilds += 1;										// for arc slider's ViewBox and MouseResponder center
+					setTimeout(() => {
+						rings_rebuilds += 1;									// for arc sliders
+					}, 1)
 				}
 			} else if (!!$w_g_active_cluster) {
 				const s_paging_rotation = $w_g_active_cluster.s_paging_rotation;
@@ -181,8 +175,7 @@
 				cursor = s_paging_rotation.cursor;
 				debug.log_radial(` page  ${delta_angle.asDegrees()}`);
 				if (!!basis_angle && !!active_angle && basis_angle != active_angle && $w_g_active_cluster.adjust_paging_index_byAdding_angle(delta_angle)) {
-					signals.signal_rebuildGraph_fromFocus();
-					rings_rebuilds += 1;
+					ux.grand_build();
 				}
 			} else {				// not dragging
 				detect_hovering();

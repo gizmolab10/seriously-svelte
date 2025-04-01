@@ -20,7 +20,7 @@ export default class G_TreeLine {
 		this.ancestry = ancestry;
 	}
 		
-	update() {
+	layout() {
 		const lineOffset = new Point(-122.5, 2.5);
 		let lineRect = this.rect.offsetBy(lineOffset);
 		switch (this.curveType) {

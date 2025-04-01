@@ -83,7 +83,7 @@
 	$: {
 		const _ = $w_ancestries_grabbed;
 		const isGrabbed = ancestry?.isGrabbed ?? false;
-		origin_ofInput = new Point(3.5, 0.8).offsetBy(isGrabbed ? new Point(0.1, 0.2) : Point.zero);
+		origin_ofInput = Point.y(0.8).offsetBy(isGrabbed ? new Point(0.1, 0.2) : Point.zero);
 	}
 
 	export const RANGE: unique symbol = Symbol('RANGE');

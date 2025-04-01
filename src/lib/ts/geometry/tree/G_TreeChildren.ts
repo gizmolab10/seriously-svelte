@@ -1,4 +1,4 @@
-import { debug, Point, Ancestry, T_Graph } from '../../common/Global_Imports';
+import { ux, debug, Point, Ancestry, T_Graph } from '../../common/Global_Imports';
 
 export default class G_TreeChildren {
 	center = Point.zero;
@@ -12,7 +12,7 @@ export default class G_TreeChildren {
 		
 	layout_children() {
 		const ancestry = this.ancestry;
-		if (!!ancestry && ancestry.isExpanded|| ancestry.isRoot) {
+		if (!!ancestry && (ancestry.isExpanded || ancestry.isRoot) && ux.inTreeMode) {
 			debug.log_layout(`children ${ancestry.g_widget.origin_ofWidget.x} ${ancestry.id}`);
 			const childAncestries = ancestry.childAncestries;
 			const halfHeight = ancestry.visibleProgeny_halfHeight;
@@ -20,7 +20,7 @@ export default class G_TreeChildren {
 			let height = -halfHeight;		// start out negative and grow positive
 			for (const childAncestry of childAncestries) {
 				const g_widget = childAncestry.g_widget;
-				g_widget.layout_widget(height, origin_ofWidget, true, T_Graph.tree)
+				g_widget.layout_widget(height, origin_ofWidget, T_Graph.tree)
 				height += g_widget.progeny_height;
 			}
 			this.center = origin_ofWidget.offsetByXY(20, 2);

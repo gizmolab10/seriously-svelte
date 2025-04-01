@@ -1,4 +1,5 @@
-import { stores, w_ancestry_focus } from '../common/Stores';
+import { w_ancestry_focus } from '../common/Stores';
+import type { Dictionary } from '../common/Types';
 import { debug } from '../debug/Debug';
 import { Signal } from 'typed-signals';
 import { get } from 'svelte/store';
@@ -12,38 +13,35 @@ export enum T_Signal {
 }
 
 export class Signals {
+	signals_inFlight: Dictionary<boolean> = {}
 
 	static readonly SENDING: unique symbol;
 
-	signal_isInFlight = false;
-	rebuild_isInProgress = false;
 	conduit = new Signal<(t_signal: T_Signal, priority: number, value: any) => void>();
-
+	
 	signal_altering(value: any = null) { this.signal(T_Signal.alterState, value); }
+	signal_rebuildGraph_from(value: any = null) { this.signal(T_Signal.rebuild, value); }	// N.B., widget whatches this to reveal tools
 	signal_rebuildGraph_fromFocus() { this.signal_rebuildGraph_from(get(w_ancestry_focus)); }
 	signal_recreate_widgets_from(value: any = null) { this.signal(T_Signal.recreate, value); }
+	signal_setTo(t_signal: T_Signal, flag: boolean) { this.signals_inFlight[t_signal] = flag; }
 	signal_reposition_widgets_from(value: any = null) { this.signal(T_Signal.reposition, value); }
 	signal_recreate_widgets_fromFocus() { this.signal_recreate_widgets_from(get(w_ancestry_focus)); }
 	signal_reposition_widgets_fromFocus() { this.signal_reposition_widgets_from(get(w_ancestry_focus)); }
+	get signal_isInFlight(): boolean { return Object.values(this.signals_inFlight).filter(b => !!b).length > 0 }
 
-	signal_rebuildGraph_from(value: any = null) {
-		this.rebuild_isInProgress = true;
-		this.signal(T_Signal.rebuild, value);
-		this.rebuild_isInProgress = false;				// N.B., widget whatches this to reveal tools
-	}
 
 	signal(t_signal: T_Signal, value: any = null) {
-		if (this.signal_isInFlight) {					// avoid sending multiple simultaneous signals
+		if (this.signal_isInFlight) {							// avoid sending multiple simultaneous signals
 			debug.log_signal(`NOT SENDING ${t_signal} in flight`);
-		} else if (!this.rebuild_isInProgress ||		// also, if rebuild is in progress
-			t_signal != T_Signal.reposition) {			// suppress reposition
-			this.signal_isInFlight = true;
+		} else if (!this.signals_inFlight[T_Signal.rebuild] ||	// also, if rebuild is in progress
+			t_signal != T_Signal.reposition) {					// suppress reposition
+			this.signal_setTo(t_signal, true);
 			const highestPriority = this.highestPriorities[t_signal] ?? 0;
 			for (let priority = 0; priority <= highestPriority; priority++) {
 				// debug.log_signal(`SENDING ${t_signal}`);
 				this.conduit.emit(t_signal, priority, value);
 			}
-			this.signal_isInFlight = false;
+			this.signal_setTo(t_signal, false);
 		}
 	}
 

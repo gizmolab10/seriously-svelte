@@ -55,7 +55,7 @@ export class Events {
 				default: w.zoomBy(k.zoom_in_ratio); break;
 			}
 			w.renormalize_user_graph_offset();
-			signals.signal_rebuildGraph_fromFocus();
+			ux.grand_build();
 		}
 	}
 

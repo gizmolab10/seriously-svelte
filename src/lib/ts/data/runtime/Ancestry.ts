@@ -258,7 +258,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	showsReveal_forPointingToChild(points_toChild: boolean): boolean {
-		return ((this.relationships_count_forChildren(points_toChild) > 0) || (this.thing?.isBulkAlias ?? false)) && !(this.predicate?.isBidirectional ?? true);
+		return !(this.predicate?.isBidirectional ?? true) && ((this.relationships_count_forChildren(points_toChild) > 0) || (this.thing?.isBulkAlias ?? false));
 	}
 
 	thingAt(back: number): Thing | null {			// 1 == last
@@ -597,7 +597,7 @@ export default class Ancestry extends Identifiable {
 				this.ancestry_alterMaybe(this);
 			} else if (!shiftKey && ux.inRadialMode) {
 				this.becomeFocus();
-				signals.signal_rebuildGraph_fromFocus();
+				ux.grand_build();
 				return;
 			} else if (shiftKey || this.isGrabbed) {
 				this.toggleGrab();
@@ -720,7 +720,7 @@ export default class Ancestry extends Identifiable {
 						const toolsThing = toolsAncestry.thing;
 						if (!!toolsThing) {
 							await this.hierarchy.ancestry_extended_byAddingThing_toAncestry_remember_persistentCreate_relationship(toolsThing, ancestry, kind);
-							signals.signal_rebuildGraph_fromFocus();
+							ux.grand_build();
 						}
 						break;
 				}

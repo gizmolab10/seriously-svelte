@@ -55,7 +55,7 @@
 						widget_rebuilds += 1;
 						break;
 					case T_Signal.reposition:
-						layout();
+						reposition();
 						break;
 				}
 			}
@@ -66,7 +66,7 @@
 	});
 
 	$: {
-		if (!!thing && thing.id == $w_color_trigger?.split(k.generic_separator)[0]) {
+		if (!!thing && $w_color_trigger?.split(k.generic_separator).includes(thing.id)) {
 			widget_rebuilds += 1;
 		}
 	}
@@ -79,11 +79,8 @@
 
 	$: {
 		const _ = $w_s_title_edit + $w_ancestries_grabbed;
-		if (!!ancestry && !!widget && s_widget.update_forChange) {
-			widget.style.border = es_widget.border;		// avoid rebuilding by injecting style changes
-			widget.style.backgroundColor = ancestry.isGrabbed || ux.inRadialMode ? $w_background_color : 'transparent';
-			debug.log_grab(`  CHANGE (grabbed: ${ancestry.isGrabbed}) (border: ${es_widget.border}) "${ancestry.title}"`);
-			layout();
+		if (!!ancestry && !!widget && s_widget.update_forStateChange) {
+			reposition();
 		}
 	}
  
@@ -91,7 +88,7 @@
 	function handle_mouse_state(s_mouse: S_Mouse): boolean { return false; }
 
 	function setup_fromAncestry() {
-		s_widget.update_forChange;
+		s_widget.update_forStateChange;
 		thing = ancestry?.thing;
 		if (!ancestry) {
 			console.log('bad ancestry');
@@ -107,6 +104,11 @@
 		}
 	}
 
+	async function handle_click_event(event) {
+		event.preventDefault();
+		ancestry?.grab_forShift(event.shiftKey);
+	}
+
 	function update_origin() {
 		const isFocus = ancestry?.isFocus ?? false;
 		const t_widget = ux.inTreeMode ? isFocus ? T_Widget.focus : T_Widget.tree : T_Widget.radial;
@@ -117,21 +119,22 @@
 		}
 	}
 
-	function showBorder(): boolean {
-		return ancestry.isGrabbed || ($w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.editing) ?? false);
-	}
-
 	function layout_maybe() {
-		if (!!ancestry && s_widget.update_forChange) {
-			const showBackground = showBorder() || ux.inRadialMode;
+		if (!!ancestry && s_widget.update_forStateChange) {
+			const showBorder = ancestry.isGrabbed || ($w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.editing) ?? false);
+			const showBackground = showBorder || ux.inRadialMode;
 			background = showBackground ? `background-color: ${$w_background_color}` : k.empty
 			layout();
 		}
 	}
 
-	async function handle_click_event(event) {
-		event.preventDefault();
-		ancestry?.grab_forShift(event.shiftKey);
+	function reposition() {
+		layout();
+		widget.style.top = `${top}px`;
+		widget.style.left = `${left}px`;
+		widget.style.border = es_widget.border;		// avoid rebuilding by injecting style changes
+		widget.style.backgroundColor = ancestry.isGrabbed || ux.inRadialMode ? $w_background_color : 'transparent';
+		debug.log_reposition(`  reposition (grabbed: ${ancestry.isGrabbed}) (border: ${es_widget.border}) "${ancestry.title}"`);
 	}
 
 	function layout() {

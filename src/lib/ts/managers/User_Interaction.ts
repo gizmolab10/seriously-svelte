@@ -100,7 +100,7 @@ export default class User_Interaction {
 			case T_Graph.tree: w_t_graph.set(T_Graph.radial); break;
 			case T_Graph.radial: w_t_graph.set(T_Graph.tree); break;
 		}
-		signals.signal_rebuildGraph_fromFocus();
+		ux.grand_build();
 	}
 
 	s_element_for(identifiable: Identifiable | null, type: T_Element, subtype: string): S_Element {
@@ -135,6 +135,10 @@ export default class User_Interaction {
 				}
 			}
 		}
+	}
+
+	grand_build() {
+		signals.signal_rebuildGraph_fromFocus();
 	}
 
 	grand_layout() {

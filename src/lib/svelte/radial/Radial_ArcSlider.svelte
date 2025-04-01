@@ -82,13 +82,12 @@
 	}
 
 	// function update_colors() {
-	// 	arc_slider_path?.setAttribute('stroke', 0.4);
 	// 	fork_path?.setAttribute('stroke', colors.opacitize(color, 0.3));
+	// 	arc_slider_path?.setAttribute('stroke', colors.opacitize(color, 0.4));
 	// 	thumb_path?.setAttribute('stroke', colors.opacitize(color, ux.s_ring_rotation.isActive ? 0.15 : g_cluster.s_paging_rotation.thumb_opacity));
 	// }
 
 	function reposition() {
-		// console.log(`reposition`)
 		// INCOMPLETE: need to update view box, Mouse_Responder's center and Angled_Text's [dunno]
 		// g cluster is source of truth for svg paths, including coordinates
 		arc_slider_path.setAttribute('d', g_cluster.g_sliderArc.svgPathFor_arcSlider);

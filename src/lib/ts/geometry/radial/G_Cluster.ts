@@ -66,7 +66,7 @@ export default class G_Cluster {
 			this.center = get(w_graph_rect).size.asPoint.dividedInHalf;
 			this.color = colors.opacitize(get(w_ancestry_focus).thing?.color ?? this.color, 0.2);
 			this.layout_angle_ofFork();
-			this.layout_widget();
+			this.layout_widgets();
 			this.layout_label();
 			this.layout_label_forIndex();
 			this.layout_thumb_angles();
@@ -182,7 +182,7 @@ export default class G_Cluster {
 		}
 	}
 
-	layout_widget() {
+	layout_widgets() {
 		this.g_cluster_widgets = [];
 		if (this.widgets_shown > 0 && !!this.predicate) {
 			const center = this.center.offsetByXY(2, -1.5);			// tweak so that drag dots are centered within the rotation ring
@@ -197,7 +197,7 @@ export default class G_Cluster {
 				const child_ancestry = this.ancestries[child_index];
 				const child_pointsRight = new Angle(child_angle).angle_pointsRight;
 				const child_origin = center.offsetBy(radial.rotate_by(child_angle));
-				child_ancestry.g_widget.layout_radialWidget(child_origin, child_pointsRight);
+				child_ancestry.g_widget.layout_necklaceWidget(child_origin, child_pointsRight);
 				this.g_cluster_widgets.push(child_ancestry.g_widget);
 				index += 1;
 			}

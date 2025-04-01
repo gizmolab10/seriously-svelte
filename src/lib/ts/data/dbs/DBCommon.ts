@@ -1,6 +1,6 @@
 import { Trait, Thing, Hierarchy, Predicate, Relationship } from '../../common/Global_Imports';
 import { T_Thing, T_Startup, T_Preference } from '../../common/Global_Imports';
-import { c, k, p, u, debug, signals } from '../../common/Global_Imports';
+import { c, k, p, u, ux, debug } from '../../common/Global_Imports';
 import { w_hierarchy, w_t_startup } from '../../common/Stores';
 import type { Dictionary } from '../../common/Types';
 import Persistable from '../persistable/Persistable';
@@ -110,7 +110,7 @@ export default class DBCommon {
 		}
 		setTimeout( () => {
 			w_t_startup.set(T_Startup.ready);
-			signals.signal_rebuildGraph_fromFocus();
+			ux.grand_build();
 		}, 1);
 	}
 	

@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { w_color_trigger, w_background_color, w_thing_fontFamily, w_ancestry_focus } from '../../ts/common/Stores';
-	import { k, u, Point, Thing, colors, signals, databases } from '../../ts/common/Global_Imports';
+	import { k, u, ux, Point, Thing, colors, signals, databases } from '../../ts/common/Global_Imports';
 	import { T_Tool, T_Element, S_Element } from '../../ts/common/Global_Imports';
 	import Button from './Button.svelte';
 	import { onMount } from 'svelte';
@@ -76,7 +76,7 @@
 			} else if (s_mouse.isUp) {
 				ancestry.grabOnly();
 				if (ancestry.becomeFocus()) {
-					signals.signal_rebuildGraph_fromFocus();
+					ux.grand_build();
 				}
 			}
 		}

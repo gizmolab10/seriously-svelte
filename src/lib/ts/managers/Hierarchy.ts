@@ -134,7 +134,7 @@ export class Hierarchy {
 					case 'escape':			if (!!get(w_ancestry_showing_tools)) { this.clear_editingTools(); }
 				}
 				if (graph_needsRebuild) {
-					signals.signal_rebuildGraph_fromFocus();
+					ux.grand_build();
 				}
 				const duration = ((new Date().getTime()) - time).toFixed(1);
 				debug.log_key(`H  (${duration}) ${key}`);
@@ -189,7 +189,7 @@ export class Hierarchy {
 		const ancestry = this.latest_grabbed_upward(up);
 		if (!ancestry.isRoot) {
 			w_ancestry_showing_tools.set(ancestry.toolsGrabbed ? null : ancestry);
-			signals.signal_rebuildGraph_fromFocus();
+			ux.grand_build();
 		}
 	}
 	
@@ -835,7 +835,7 @@ export class Hierarchy {
 				}
 			}
 			debug.log_grab(`  DELETE, FOCUS grabbed: "${get(w_ancestry_focus).isGrabbed}"`);
-			signals.signal_rebuildGraph_fromFocus();
+			ux.grand_build();
 		}
 	}
 
@@ -956,7 +956,7 @@ export class Hierarchy {
 				if (!parentAncestry.isRoot && ux.inRadialMode) {
 					parentAncestry.becomeFocus();
 				}
-				signals.signal_rebuildGraph_fromFocus();
+				ux.grand_build();
 				if (shouldStartEdit) {
 					setTimeout(() => {
 						childAncestry.startEdit();
@@ -1038,12 +1038,12 @@ export class Hierarchy {
 				}
 				ancestry?.expand()
 				if (!isRadialMode) {
-					signals.signal_rebuildGraph_fromFocus();	// not rebuild until focus changes
+					ux.grand_build();	// not rebuild until focus changes
 				}
 			}
 			if (isRadialMode) {
 				ancestry?.becomeFocus();
-				signals.signal_rebuildGraph_fromFocus();
+				ux.grand_build();
 			}
 		}
 	}
@@ -1067,7 +1067,7 @@ export class Hierarchy {
 	ancestry_rebuild_persistentMoveUp_maybe(ancestry: Ancestry, up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const [graph_needsRebuild, graph_needsRelayout] = ancestry.persistentMoveUp_maybe(up, SHIFT, OPTION, EXTREME);
 		if (graph_needsRebuild) {
-			signals.signal_rebuildGraph_fromFocus();
+			ux.grand_build();
 		} else if (graph_needsRelayout) {
 			signals.signal_recreate_widgets_fromFocus();
 		}
@@ -1101,7 +1101,7 @@ export class Hierarchy {
 					parentAncestry.becomeFocus();
 				}
 			}
-			signals.signal_rebuildGraph_fromFocus();			// so Tree_Children component will update
+			ux.grand_build();			// so Tree_Children component will update
 		}
 	}
 
@@ -1164,7 +1164,7 @@ export class Hierarchy {
 			}
 		}
 		if (graph_needsRebuild) {
-			signals.signal_rebuildGraph_fromFocus();
+			ux.grand_build();
 		} else {
 			ux.grand_layout();
 		}
@@ -1382,7 +1382,7 @@ export class Hierarchy {
 			await this.wrapUp_data_forUX();
 			await this.db.persist_all(true);						// true means force (overrides isDirty) persists all of what was retained
 		}
-		signals.signal_rebuildGraph_fromFocus();
+		ux.grand_build();
 	}
 
 	objects_ofAllTypes_extract_fromDict(dict: Dictionary) {

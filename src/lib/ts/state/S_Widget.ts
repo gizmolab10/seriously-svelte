@@ -10,7 +10,7 @@ export default class S_Widget {
 
 	constructor(ancestry: Ancestry) { this.ancestry = ancestry; }
 
-	get update_forChange(): boolean {
+	get update_forStateChange(): boolean {
 		const shallGrab = this.ancestry.isGrabbed;
 		const shallEdit = get(w_s_title_edit)?.isAncestry_inState(this.ancestry, T_Edit.editing) ?? false;
 		const change = (this.isEditing != shallEdit || this.isGrabbed != shallGrab);

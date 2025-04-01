@@ -104,8 +104,8 @@ export default class G_Widget {
 	layout_widget(
 		height: number = 0,
 		origin: Point = Point.zero,
-		points_toChild: boolean = true,
 		forGraphMode = T_Graph.radial,
+		points_toChild: boolean = true,
 		widget_pointsRight: boolean = true) {
 			if (forGraphMode == get(w_t_graph)) {	// assure modes match
 				const progeny_height = this.ancestry.visibleProgeny_height();
@@ -120,28 +120,35 @@ export default class G_Widget {
 				this.g_line.curveType = t_childCurve;
 				this.origin_ofWidget = child_widget_origin;
 				this.widget_pointsRight = widget_pointsRight;
-				this.layout_children();
+				this.layout();
 			}
 	}
 
-	layout_radialWidget(
+	get description(): string {
+		return `toRight: ${this.widget_pointsRight} origin: ${this.origin_ofTitle.x.toFixed(1)}`;
+	}
+
+	layout_necklaceWidget(
 		origin_ofWidget: Point,
 		widget_pointsRight: boolean) {
 			if (ux.inRadialMode) {
-				this.origin_ofWidget = origin_ofWidget;
 				this.forGraphMode = T_Graph.radial;
+				this.origin_ofWidget = origin_ofWidget;
 				this.widget_pointsRight = widget_pointsRight;
-				// this.layout_children();
+				this.layout();
 			}
 	}
 
-	layout_children() {				// assumes all child trees are laid out (needed for progeny size)
-		this.g_treeChildren.layout_children();	// evoke only for [tree] thing expanded with children
+	layout() {			// assumes all children's subtrees are laid out (needed for progeny size)
+		this.g_treeChildren.layout_children();	// noop if radial, childless or collapsed
 		this.layout_widget_andLine();
 		this.layout_bidirectional_lines();
+		// if (this.ancestry.title == 'Active') {
+		// 	console.log(this.description);
+		// }
 	}
 
-	recursively_layout_subtree() {
+	private recursively_layout_subtree() {
 		const ancestry = this.ancestry;	
 		if (ancestry.showsChildRelationships && ancestry.thing_isChild) {
 			const childAncestries = ancestry.childAncestries;
@@ -149,7 +156,7 @@ export default class G_Widget {
 				childAncestry.g_widget.recursively_layout_subtree();		// layout progeny first
 			}
 		}
-		this.layout_children();
+		this.layout();
 	}
 
 	private layout_widget_andLine() {
@@ -159,45 +166,51 @@ export default class G_Widget {
 			const showingBorder = !ancestry ? false : (ancestry.isGrabbed || ancestry.isEditing);
 			const radial_x = this.widget_pointsRight ? 4 : k.dot_size * 3.5;
 			const offset_ofChildrenTree = new Point(k.dot_size * 1.3, -(7 + k.dot_size / 15));
-			const offset_ofTitle_forRadial = (this.widget_pointsRight ? 15 : (showingReveal ? 16 : 3));
+			const offset_ofTitle_forRadial = (this.widget_pointsRight ? 20 : (showingReveal ? 20 : 6));
 			const widget_width = ancestry.thing.titleWidth + this.width_ofBothDots;
 			const offset_forDirection = this.widget_pointsRight ? -7 : 34.5 - widget_width;
 			const offset_forBorder = showingBorder ? 0 : 1;
-			const drag_x = this.widget_pointsRight ? (ux.inRadialMode ? 3 : 2) : (widget_width - (showingReveal ? 2.5 : 2));
+			const drag_x_forLeft = (widget_width - (showingReveal ? 2.5 : 2));
+			const drag_x = this.widget_pointsRight ? (ux.inRadialMode ? 3 : 2) : drag_x_forLeft;
 			const drag_y = ux.inRadialMode ? 2.8 : 2.7;
-			this.origin_ofTitle = new Point(ux.inRadialMode ? offset_ofTitle_forRadial : 12.5, 0);
+			this.origin_ofTitle = Point.x(ux.inRadialMode ? offset_ofTitle_forRadial : k.dot_size + 5);
 			this.origin_ofRadial = this.origin_ofWidget.offsetByXY(-radial_x, 4 - k.dot_size);
 			this.center_ofDrag = new Point(drag_x, drag_y).offsetEquallyBy(k.dot_size / 2);
-			this.origin_ofChildrenTree = this.g_line.rect.extent.offsetBy(offset_ofChildrenTree);
 			this.offset_ofWidget = Point.x(offset_forDirection).offsetEquallyBy(offset_forBorder);
 			this.width_ofWidget = widget_width;
-			this.g_line.update();
 			if (showingReveal) {
 				const reveal_y = k.dot_size * 0.72;
 				const offset_forPointsRight = widget_width - (ux.inRadialMode ? 21 : -1);
 				const reveal_x = k.dot_size - (this.widget_pointsRight ? -offset_forPointsRight : 3);
 				this.center_ofReveal = new Point(reveal_x, reveal_y);
 			}
-		}
-		if (ux.inTreeMode && ancestry.isFocus) {
-			const graph_rect = get(w_graph_rect);
-			const children_size = ancestry.visibleProgeny_size;
-			const focus = ancestry.thing ?? get(w_hierarchy).root;
-			const offset_x_ofReveal = focus?.titleWidth / 2 - 2;
-			const offset_y = -1 - graph_rect.origin.y;
-			const offset_x = 15 + (get(w_show_details) ? -k.width_details : 0) - (children_size.width / 2) - (k.dot_size / 2.5) + offset_x_ofReveal;
-			const origin_ofReveal = graph_rect.center.offsetByXY(offset_x, offset_y);
-			this.origin_ofFocus = origin_ofReveal.offsetByXY(-21.5 - offset_x_ofReveal, -5);
+			if (ux.inTreeMode) {
+				this.origin_ofChildrenTree = this.g_line.rect.extent.offsetBy(offset_ofChildrenTree);
+				this.g_line.layout();
+				if (ancestry.isFocus) {
+					const focus = ancestry.thing;
+					const graph_rect = get(w_graph_rect);
+					const offset_y = -1 - graph_rect.origin.y;
+					const children_size = ancestry.visibleProgeny_size;
+					const offset_x_ofReveal = focus?.titleWidth / 2 - 2;
+					const offset_forDetails = (get(w_show_details) ? -k.width_details : 0);
+					const offset_x = 15 + offset_forDetails - (children_size.width / 2) - (k.dot_size / 2.5) + offset_x_ofReveal;
+					const origin_ofReveal = graph_rect.center.offsetByXY(offset_x, offset_y);
+					this.origin_ofFocus = origin_ofReveal.offsetByXY(-21.5 - offset_x_ofReveal, -5);
+				}
+			}
 		}
 	}
 
 	private layout_bidirectional_lines() {
-		this.g_bidirectionalLines = [];
-		const others = this.ancestry.shallower_bidirectionals;
-		for (const [index, other] of others.entries()) {
-			const g_line = this.ancestry.g_line_forOther(other)
-			this.g_bidirectionalLines[index] = g_line;
-			g_line.update();
+		if (ux.inTreeMode) {
+			this.g_bidirectionalLines = [];
+			const others = this.ancestry.shallower_bidirectionals;
+			for (const [index, other] of others.entries()) {
+				const g_line = this.ancestry.g_line_forOther(other)
+				this.g_bidirectionalLines[index] = g_line;
+				g_line.layout();
+			}
 		}
 	}
 	
