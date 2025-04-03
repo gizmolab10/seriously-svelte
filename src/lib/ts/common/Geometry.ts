@@ -33,7 +33,6 @@ export class Point {
 	offsetByXY(x: number, y: number):  Point { return new Point(this.x + x, this.y + y); }
 	offsetBy(point: Point):			   Point { return new Point(this.x + point.x, this.y + point.y); }
 	vector_to(point: Point):		   Point { return point.offsetBy(this.negated); }
-	vector_from(point: Point):		   Point { return point.vector_to(this); }
 	xMultipliedBy(multiplier: number): Point { return new Point(this.x * multiplier, this.y) }
 	yMultipliedBy(multiplier: number): Point { return new Point(this.x, this.y * multiplier) }
 	dividedBy(divisor: number):		   Point { return new Point(this.x / divisor, this.y / divisor) }
@@ -185,7 +184,7 @@ export class Rect {
 
 	expandedBy(expansion: Point): Rect {
 		const size = this.size.expandedBy(expansion);
-		const origin = this.origin.vector_from(expansion);
+		const origin = expansion.vector_to(this.origin);
 		return new Rect(origin, size)
 	}
 
@@ -206,21 +205,19 @@ export class Rect {
 	}
 
 	get normalized(): Rect {
-		const width = this.width;
-		const height = this.height;
+		let width = this.width;
+		let height = this.height;
 		if (width < 0) {
-			this.origin.x += width;
-			this.size.width = -width;
+			this.origin.x -= this.size.width = -width;
 		}
 		if (height < 0) {
-			this.origin.y += height
-			this.size.height = -height;
+			this.origin.y -= this.size.height = -height;
 		}
 		return this;
 	}
 
 	static createExtentRect(origin: Point, extent: Point): Rect {
-		return new Rect(origin, extent.vector_from(origin).asSize);
+		return new Rect(origin, origin.vector_to(extent).asSize);
 	}
 
 	static createRightCenterRect(rightCenter: Point, size: Size): Rect {
@@ -245,11 +242,11 @@ export class Rect {
 	}
 
 	static createFromDOMRect(domRect: DOMRect | null) {
-		if (!!domRect) {
-			const origin = new Point(domRect.x, domRect.y).offsetByXY(window.scrollX, window.scrollY);
-			return new Rect(origin, new Size(domRect.width, domRect.height));
+		if (!domRect) {
+			return null;
 		}
-		return null;
+		const origin = new Point(domRect.x, domRect.y).offsetByXY(window.scrollX, window.scrollY);
+		return new Rect(origin, new Size(domRect.width, domRect.height));
 	}
 
 	static rect_forComponent_contains(component: SvelteComponent, event: MouseEvent): boolean {
@@ -262,13 +259,13 @@ export class Rect {
 	}
 
 	static boundingRectFor(element: HTMLElement | null): Rect | null {
-		if (!!element) {
-			const domRect = element.getBoundingClientRect();
-			const origin = Point.fromDOMRect(domRect);
-			const size = Size.fromDOMRect(domRect);
-			return new Rect(origin, size);
+		if (!element) {
+			return null;
 		}
-		return null;
+		const domRect = element.getBoundingClientRect();
+		const origin = Point.fromDOMRect(domRect);
+		const size = Size.fromDOMRect(domRect);
+		return new Rect(origin, size);
 	}
 
 	static rect_forComponent(c: SvelteComponent): Rect {

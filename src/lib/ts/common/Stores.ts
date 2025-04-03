@@ -41,6 +41,7 @@ export const w_count_mouse_up		  = writable<number>();
 export const w_count_rebuild		  = writable<number>();
 export const w_count_resize			  = writable<number>();
 export const w_font_size			  = writable<number>();
+export const w_show_related			  = writable<boolean>();
 export const w_show_details			  = writable<boolean>();
 export const w_device_isMobile		  = writable<boolean>();
 

@@ -20,8 +20,8 @@
 	let svgPathFor_outer_tinyDots: string | null = null;
 	let svgPathFor_bulkAlias: string | null = null;
 	let center = ancestry.g_widget.center_ofReveal;
-	let svgPathFor_revealDot = k.empty;
 	let revealWrapper!: Svelte_Wrapper;
+	let svgPathFor_revealDot = k.empty;
 	let bulkAliasOffset = 0;
 	let reveal_rebuilds = 0;
 	let dotReveal = null;

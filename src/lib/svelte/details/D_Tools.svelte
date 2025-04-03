@@ -79,7 +79,7 @@
 	}
 
 	$: {
-		if (!ancestry || !ancestry.hasPathString_matching($w_ancestry_showing_tools)) {
+		if (!ancestry || !ancestry.equals($w_ancestry_showing_tools)) {
 			ancestry = $w_ancestry_showing_tools;
 			if (!!ancestry) {
 				thing = ancestry.thing;

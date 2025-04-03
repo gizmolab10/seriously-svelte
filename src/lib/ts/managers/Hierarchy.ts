@@ -14,7 +14,6 @@ export type Relationships_ByHID = { [hid: Integer]: Array<Relationship> }
 
 export class Hierarchy {
 	private predicate_byDirection: { [direction: number]: Array<Predicate> } = {};
-	private ancestries_byThingHID: { [thingHID: number]: Array<Ancestry> } = {};
 	private relationships_byKind: { [kind: string]: Array<Relationship> } = {};
 	private ancestry_byKind_andHID: { [kind: string]: Ancestries_ByHID } = {};					// for uniqueness
 	private traits_byOwnerHID: { [ownerHID: Integer]: Array<Trait> } = {};
@@ -795,12 +794,10 @@ export class Hierarchy {
 
 	get ancestries(): Array<Ancestry> { return Object.values(this.ancestry_byHID); }
 	ancestries_byHID_forKind(kind: string) { return this.ancestry_byKind_andHID[kind] ?? {}; }
-	ancestries_forThingHID(hid: Integer): Array<Ancestry> { return this.ancestries_byThingHID[hid] ?? []; }
 	get ancestries_thatAreVisible(): Array<Ancestry> { return this.rootAncestry.visibleProgeny_ancestries(); }
 
 	ancestries_forget_all() {
 		this.ancestry_byHID = {};
-		this.ancestries_byThingHID = {};
 		this.ancestry_byKind_andHID = {};
 	}
 
@@ -845,34 +842,19 @@ export class Hierarchy {
 
 	ancestry_remember(ancestry: Ancestry) {
 		const hid = ancestry.hid;
-		const thingHID = ancestry.thing?.hid;
 		let dict = this.ancestries_byHID_forKind(ancestry.kind);
 		this.ancestry_byHID[hid] = ancestry;
 		dict[hid] = ancestry;
 		this.ancestry_byKind_andHID[ancestry.kind] = dict;
-		if (!!thingHID) {
-			const array = this.ancestries_forThingHID(thingHID);
-			if (!array.includes(ancestry)) {
-				array.push(ancestry);
-			}
-		}
 	}
 
 	ancestry_forget(ancestry: Ancestry | null) {
 		if (!!ancestry) {
 			const hid = ancestry.hid;
-			const thingHID = ancestry.thing?.hid;
 			let dict = this.ancestries_byHID_forKind(ancestry.kind);
 			delete this.ancestry_byHID[hid];
 			delete dict[hid];
 			this.ancestry_byKind_andHID[ancestry.kind] = dict;
-			if (!!thingHID) {
-				const array = this.ancestries_forThingHID(thingHID);
-				const index = array.indexOf(ancestry);
-				if (!!index) {
-					array.splice(index, 1);
-				}
-			}
 		}
 	}
 
@@ -1144,7 +1126,7 @@ export class Hierarchy {
 					if (ancestry.isExpanded) {
 						graph_needsRebuild = ancestry.collapse();
 						newGrabAncestry = this.grabs_areInvisible ? ancestry : null;
-					} else if (newGrabAncestry.isExpanded || (!!rootAncestry && !rootAncestry.hasPathString_matching(newGrabAncestry))) {
+					} else if (newGrabAncestry.isExpanded || (!!rootAncestry && !rootAncestry.equals(newGrabAncestry))) {
 						graph_needsRebuild = newGrabAncestry.collapse();
 					}
 				}
@@ -1154,7 +1136,7 @@ export class Hierarchy {
 		if (!!newGrabAncestry) {
 			newGrabAncestry.grabOnly();
 			if (!RIGHT && !!newFocusAncestry) {
-				const newFocusIsGrabbed = newFocusAncestry.hasPathString_matching(newGrabAncestry);
+				const newFocusIsGrabbed = newFocusAncestry.equals(newGrabAncestry);
 				const canBecomeFocus = (!SHIFT || newFocusIsGrabbed) && newGrabIsNotFocus;
 				const shouldBecomeFocus = newFocusAncestry.isRoot || !newFocusAncestry.isVisible || ux.inRadialMode;
 				const becomeFocus = canBecomeFocus && shouldBecomeFocus;

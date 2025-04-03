@@ -29,7 +29,6 @@
 	let revealName = k.empty;
 	let widgetData = k.empty;
 	let revealData = k.empty;
-	let origin = Point.zero;
 	let widget_rebuilds = 0;
 	let dragData = k.empty;
 	let padding = k.empty;
@@ -109,16 +108,6 @@
 		ancestry?.grab_forShift(event.shiftKey);
 	}
 
-	function update_origin() {
-		const isFocus = ancestry?.isFocus ?? false;
-		const t_widget = ux.inTreeMode ? isFocus ? T_Widget.focus : T_Widget.tree : T_Widget.radial;
-		switch (t_widget) {
-			case T_Widget.focus:  origin = g_widget.origin_ofFocus;		   break;
-			case T_Widget.radial: origin = g_widget.origin_ofRadial;	   break;
-			case T_Widget.tree:   origin = g_widget.origin_ofChildrenTree; break;
-		}
-	}
-
 	function layout_maybe() {
 		if (!!ancestry && s_widget.update_forStateChange) {
 			const showBorder = ancestry.isGrabbed || ($w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.editing) ?? false);
@@ -139,10 +128,9 @@
 
 	function layout() {
 		g_widget.layout_widget_andLine();
-		update_origin();
 		const hasExtra_onRight = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
 		const onRight = ux.inRadialMode ? 0 : 21 + (hasExtra_onRight ? 0.5 : 0);
-		const origin_ofWidget = origin.offsetBy(g_widget.offset_ofWidget);
+		const origin_ofWidget = g_widget.origin.offsetBy(g_widget.offset_ofWidget);
 		const width = g_widget.width_ofWidget;
 		const onLeft = points_right ? 1 : 14;
 		top = origin_ofWidget.y;

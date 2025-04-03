@@ -43,7 +43,7 @@
 			updateInputWidth();
 		});
 		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
-			if (!!input && ancestry.hasPathString_matching(received_ancestry)) {
+			if (!!input && ancestry.equals(received_ancestry)) {
 				input.style.width = `${ancestry.thing.titleWidth}px`;
 				debug.log_edit(`INPUT width: ${input.style.width} "${ancestry.title}"`);
 			}
@@ -270,7 +270,7 @@
 			if (s_title_edit.ancestry.id_thing == ancestry.id_thing) {
 				input.value = ancestry.title;	// consistently update titles of widgets of things with multiple parents
 			}
-			if (s_title_edit.ancestry.hasPathString_matching(ancestry)) {
+			if (s_title_edit.ancestry.equals(ancestry)) {
 
 				//////////////////////////////////////////////////////
 				//													//
@@ -346,6 +346,6 @@
 			top : {origin_ofInput.y}px;
 			left : {origin_ofInput.x}px;
 			{k.prevent_selection_style};
-			font-family : {$w_thing_fontFamily};
-			background-color : {$w_background_color};'/>
+			background-color : transparent;
+			font-family : {$w_thing_fontFamily};'/>
 </Mouse_Responder>

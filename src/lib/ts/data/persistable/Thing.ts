@@ -25,8 +25,7 @@ export default class Thing extends Persistable {
 	get parents():				Array		 <Thing> { return this.parents_forKind(T_Predicate.contains); }
 	get traits():				Array		 <Trait> { return get(w_hierarchy).traits_forOwnerHID(this.hid) ?? []; }
 	get parentIDs():			Array		<string> { return this.parents.map(t => t.id); }
-	get parentAncestries(): 	Array	  <Ancestry> { return this.parentAncestries_for(Predicate.contains); }
-	get ancestries():			Array	  <Ancestry> { return get(w_hierarchy).ancestries_forThingHID(this.hid); }
+	get ancestries():		 	Array	  <Ancestry> { return this.ancestries_for(Predicate.contains); }
 	get relatedRelationships(): Array <Relationship> { return this.relationships_ofKind_forParents(T_Predicate.isRelated, false); }
 	get fields():		  		Dictionary  <string> { return { title: this.title, color: this.color, type: this.type }; }
 	get quest():					   string | null { return get(w_hierarchy).trait_forType_ownerHID(T_Trait.quest, this.hid)?.text ?? null; }
@@ -39,7 +38,7 @@ export default class Thing extends Persistable {
 	get isBulkAlias():						 boolean { return this.type == T_Thing.bulk; }
 	get isExternals():						 boolean { return this.type == T_Thing.externals; }
 	get isAcrossBulk():						 boolean { return this.idBase != get(w_hierarchy).db.idBase; }
-	get hasMultipleParents():				 boolean { return this.parentAncestries.length > 1; }
+	get hasMultipleParents():				 boolean { return this.ancestries.length > 1; }
 	get hasParents():						 boolean { return this.hasParents_forKind(T_Predicate.contains); }
 	get isFocus():							 boolean { return (get(w_ancestry_focus).thing?.id ?? k.empty) == this.id; }
 	get hasRelated():						 boolean { return this.relatedRelationships.length > 0; }
@@ -156,11 +155,11 @@ export default class Thing extends Persistable {
 		let ancestries: Array<Ancestry> = [];
 		if (!!predicate){
 			if (predicate.isBidirectional) {
-				ancestries = this.parentAncestries_for(predicate);
+				ancestries = this.ancestries_for(predicate);
 			} else {
 				let parents = this.parents_forKind(predicate.kind) ?? [];
 				for (const parent of parents) {
-					const parentAncestries = parent.isRoot ? [get(w_hierarchy).rootAncestry] : parent.parentAncestries_for(predicate);
+					const parentAncestries = parent.isRoot ? [get(w_hierarchy).rootAncestry] : parent.ancestries_for(predicate);
 					ancestries = u.concatenateArrays(ancestries, parentAncestries);
 				}
 			}
@@ -169,7 +168,7 @@ export default class Thing extends Persistable {
 		return ancestries;
 	}
 
-	parentAncestries_for(predicate: Predicate | null, visited: Array<string> = []): Array<Ancestry> {
+	ancestries_for(predicate: Predicate | null, visited: Array<string> = []): Array<Ancestry> {
 		// the ancestry of each parent [of this thing]
 		let ancestries: Array<Ancestry> = [];
 		if (!!predicate) {
@@ -178,22 +177,22 @@ export default class Thing extends Persistable {
 					ancestries.push(ancestry);
 				}
 			}
-			const relationships = this.parentRelationships_for(predicate);
-			for (const relationship of relationships) {
+			const parentRelationships = this.parentRelationships_for(predicate);
+			for (const parentRelationship of parentRelationships) {
 				if (predicate.isBidirectional) {
-					const child = relationship.child;
+					const child = parentRelationship.child;
 					if (!!child && child.id != this.id) {
-						addAncestry(get(w_hierarchy).ancestry_remember_createUnique(relationship.id, predicate.kind));
+						addAncestry(get(w_hierarchy).ancestry_remember_createUnique(parentRelationship.id, predicate.kind));
 					}
 				} else {
-					const parent = relationship.parent;
+					const parent = parentRelationship.parent;
 					if (!!parent && !visited.includes(parent.id)) {
-						const id_relationship = relationship.id;		// TODO, this is the wrong relationship; needs the next one
-						const parentAncestries = parent.parentAncestries_for(predicate, u.uniquely_concatenateArrays(visited, [parent.id])) ?? [];
+						const id_parentRelationship = parentRelationship.id;		// TODO, this is the wrong relationship; needs the next one
+						const parentAncestries = parent.ancestries_for(predicate, u.uniquely_concatenateArrays(visited, [parent.id])) ?? [];
 						if (parentAncestries.length == 0) {
-							addAncestry(get(w_hierarchy).rootAncestry.uniquelyAppend_relationshipID(id_relationship));
+							addAncestry(get(w_hierarchy).rootAncestry.uniquelyAppend_relationshipID(id_parentRelationship));
 						} else {
-							parentAncestries.map((p: Ancestry) => addAncestry(p.uniquelyAppend_relationshipID(id_relationship)));
+							parentAncestries.map((p: Ancestry) => addAncestry(p.uniquelyAppend_relationshipID(id_parentRelationship)));
 						}
 					}
 				}

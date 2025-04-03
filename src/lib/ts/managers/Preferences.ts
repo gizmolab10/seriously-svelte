@@ -1,7 +1,7 @@
 import { S_Paging, T_Graph, T_Hierarchy, T_Details, G_TreeChildren } from '../common/Global_Imports';
-import { w_t_tree, w_t_graph, w_hierarchy, w_t_details, w_t_countDots } from '../common/Stores';
 import { w_s_paging, w_font_size, w_background_color, w_thing_fontFamily } from '../common/Stores';
 import { w_ancestry_focus, w_ancestries_grabbed, w_ancestries_expanded } from '../common/Stores';
+import { w_t_tree, w_t_graph, w_hierarchy, w_t_details, w_t_countDots } from '../common/Stores';
 import { c, k, ux, show, debug, Ancestry, databases } from '../common/Global_Imports';
 import { w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
 import { get } from 'svelte/store';
@@ -10,7 +10,7 @@ export enum T_Preference {
 	relationships = 'relationships',
 	detail_types  = 'detail_types',
 	show_details  = 'show_details',
-	tree_choices  = 'tree_choices',
+	show_related  = 'show_related',
 	ring_radius	  = 'ring_radius',
 	user_offset	  = 'user_offset',
 	background	  = 'background',

@@ -1,8 +1,8 @@
-import { w_hierarchy, w_show_details, w_device_isMobile } from '../../common/Stores';
-import { S_Element, G_TreeLine, G_TreeChildren } from '../../common/Global_Imports'
-import { k, ux, Rect, Size, Point, Ancestry } from '../../common/Global_Imports'
-import { T_Curve, T_Element, T_Graph } from '../../common/Global_Imports';
-import { w_graph_rect, w_t_graph } from '../../common/Stores';
+import { S_Element, G_TreeLine, G_TreeChildren } from '../../common/Global_Imports';
+import { k, ux, Rect, Size, Point, Ancestry } from '../../common/Global_Imports';
+import { w_graph_rect, w_t_graph, w_device_isMobile} from '../../common/Stores';
+import { T_Widget, T_Element, T_Graph } from '../../common/Global_Imports';
+import { w_show_details, w_show_related } from '../../common/Stores';
 import { get } from 'svelte/store';
 
 export default class G_Widget {
@@ -13,7 +13,6 @@ export default class G_Widget {
 	center_ofReveal = Point.zero;
 	origin_ofRadial = Point.zero;
 	origin_ofWidget = Point.zero;
-	origin_ofFocus = Point.zero;
 	origin_ofTitle = Point.zero;
 	center_ofDrag = Point.zero;
 	widget_pointsRight = true;
@@ -53,6 +52,9 @@ export default class G_Widget {
 	}
 
 	static empty(ancestry: Ancestry) { return new G_Widget(ancestry); }
+	get absolute_center_ofDrag(): Point { return this.center_ofDrag.offsetBy(this.origin); }
+	get absolute_origin_ofTitle(): Point { return this.origin_ofTitle.offsetBy(this.origin); }
+	get absolute_center_ofReveal(): Point { return this.center_ofReveal.offsetBy(this.origin); }
 	get showingReveal(): boolean { return this.ancestry.showsReveal_forPointingToChild(this.points_toChild) ?? false; }
 
 	get width_ofBothDots(): number {
@@ -61,14 +63,14 @@ export default class G_Widget {
 		const drag_width = ux.inTreeMode ? 0 : k.dot_size + radial_extra;
 		return drag_width + reveal_width;
 	}
-
-	get_t_childCurve(delta: number): string {
-		if (delta > 1) {
-			return T_Curve.down;
-		} else if (delta < -1) {
-			return T_Curve.up;
-		} else {
-			return T_Curve.flat;
+	
+	get origin(): Point {
+		const isFocus = this.ancestry?.isFocus ?? false;
+		const t_widget = ux.inTreeMode ? isFocus ? T_Widget.focus : T_Widget.tree : T_Widget.radial;
+		switch (t_widget) {
+			case T_Widget.radial: return this.origin_ofRadial;
+			case T_Widget.focus:  return this.origin_ofWidget;
+			default:			  return this.origin_ofChildrenTree;
 		}
 	}
 
@@ -110,16 +112,15 @@ export default class G_Widget {
 			if (forGraphMode == get(w_t_graph)) {	// assure modes match
 				const progeny_height = this.ancestry.visibleProgeny_height();
 				const child_height = height + progeny_height / 2;
-				const t_childCurve = this.get_t_childCurve(child_height);
 				const child_rect = new Rect(origin, new Size(k.line_stretch, child_height - 1));
 				const child_widget_origin = this.origin_forAncestry_inRect(this.ancestry, child_rect);
 				this.g_line.rect = child_rect;
 				this.forGraphMode = forGraphMode;
 				this.progeny_height = progeny_height;
 				this.points_toChild = points_toChild;
-				this.g_line.curveType = t_childCurve;
 				this.origin_ofWidget = child_widget_origin;
 				this.widget_pointsRight = widget_pointsRight;
+				this.g_line.set_t_curve_forHeight(child_height);
 				this.layout();
 			}
 	}
@@ -139,13 +140,10 @@ export default class G_Widget {
 			}
 	}
 
-	layout() {			// assumes all children's subtrees are laid out (needed for progeny size)
-		this.g_treeChildren.layout_children();	// noop if radial, childless or collapsed
-		this.layout_widget_andLine();
+	layout() {
+		this.g_treeChildren.layout_children();		// noop if radial, childless or collapsed
+		this.layout_widget_andLine();				// assumes all children's subtrees are laid out (needed for progeny size)
 		this.layout_bidirectional_lines();
-		// if (this.ancestry.title == 'Active') {
-		// 	console.log(this.description);
-		// }
 	}
 
 	private recursively_layout_subtree() {
@@ -196,7 +194,7 @@ export default class G_Widget {
 					const offset_forDetails = (get(w_show_details) ? -k.width_details : 0);
 					const offset_x = 15 + offset_forDetails - (children_size.width / 2) - (k.dot_size / 2.5) + offset_x_ofReveal;
 					const origin_ofReveal = graph_rect.center.offsetByXY(offset_x, offset_y);
-					this.origin_ofFocus = origin_ofReveal.offsetByXY(-21.5 - offset_x_ofReveal, -5);
+					this.origin_ofWidget = origin_ofReveal.offsetByXY(-21.5 - offset_x_ofReveal, -5);
 				}
 			}
 		}
@@ -205,11 +203,12 @@ export default class G_Widget {
 	private layout_bidirectional_lines() {
 		if (ux.inTreeMode) {
 			this.g_bidirectionalLines = [];
-			const others = this.ancestry.shallower_bidirectionals;
-			for (const [index, other] of others.entries()) {
-				const g_line = this.ancestry.g_line_forOther(other)
-				this.g_bidirectionalLines[index] = g_line;
-				g_line.layout();
+			if (get(w_show_related)) {
+				const g_lines = this.ancestry.g_lines_forBidirectionals;
+				for (const [index, g_line] of g_lines.entries()) {
+					this.g_bidirectionalLines[index] = g_line;
+					g_line.layout();
+				}
 			}
 		}
 	}

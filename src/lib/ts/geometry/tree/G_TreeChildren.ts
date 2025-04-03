@@ -1,7 +1,7 @@
 import { ux, debug, Point, Ancestry, T_Graph } from '../../common/Global_Imports';
 
 export default class G_TreeChildren {
-	center = Point.zero;
+	origin_ofLine = Point.zero;
 	ancestry: Ancestry;
 
 	// scratchpad for widgets, progeny_height and center
@@ -23,7 +23,7 @@ export default class G_TreeChildren {
 				g_widget.layout_widget(height, origin_ofWidget, T_Graph.tree)
 				height += g_widget.progeny_height;
 			}
-			this.center = origin_ofWidget.offsetByXY(20, 2);
+			this.origin_ofLine = origin_ofWidget.offsetByXY(20, 2);
 		}
 	}
 

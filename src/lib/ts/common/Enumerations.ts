@@ -37,7 +37,7 @@ export enum T_Widget {
 }
 
 export enum T_Curve {
-	back = 'back',	// half circle for overlapping relateds
+	tilt = 'tilt',	// fpr bidirectionals
 	flat = 'flat',
 	down = 'down',
 	up	 = 'up',
@@ -91,6 +91,7 @@ export enum T_Predicate {
 export enum T_Control {
 	details	 = 'show details view',
 	builds	 = 'show build notes',
+	related	 = 'show related',
 	smaller	 = 'smaller',
 	bigger	 = 'bigger',
 	import	 = 'import',

@@ -18,11 +18,12 @@
 	export let es_button: S_Element;
 	export let border_thickness = 1;
 	export let center = Point.zero;
+	export let isToggle = false;
 	export let style = k.empty;
 	export let name = k.empty;
 	let border = k.empty;
-	let element: HTMLElement;
 	let currentStyle = style;
+	let element: HTMLElement;
 	let buttonWrapper: Svelte_Wrapper;
 
 	//////////////////////////////////////

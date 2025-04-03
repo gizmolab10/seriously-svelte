@@ -2,7 +2,7 @@
 	import { T_Layer, T_Graph, T_Element, T_Control, T_Hierarchy, T_Preference } from '../../ts/common/Global_Imports';
 	import { w_t_graph, w_t_tree, w_count_resize, w_hierarchy, w_id_popupView } from '../../ts/common/Stores';
 	import { c, k, p, u, ux, w, show, Point, svgPaths, signals, S_Element } from '../../ts/common/Global_Imports';
-	import { w_show_details, w_device_isMobile, w_thing_fontFamily } from '../../ts/common/Stores';
+	import { w_show_details, w_show_related, w_device_isMobile, w_thing_fontFamily } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/data/runtime/Identifiable';
 	import { w_background_color } from '../../ts/common/Stores';
 	import Segmented from '../mouse/Segmented.svelte';
@@ -13,10 +13,11 @@
 	const details_top = k.dot_size / 2;
 	const y_center = details_top + 3.5;
 	const size_big = size_small + 4;
-	const lefts = [10, 55, 117];
+	const lefts = [10, 55, 117, 278];
 	const resize_viewBox = `0, 0, ${size_big}, ${size_big}`;
-	let es_buttons_byControlType: { [t_control: string]: S_Element } = {};
 	let elementShown_byControlType: {[t_control: string]: boolean} = {};
+	let es_control_byType: { [t_control: string]: S_Element } = {};
+	let related_prefix = $w_show_related ? 'hide' : 'show'
 	let width = w.windowSize.width - 20;
 	let displayName = k.empty;
 	let displayName_width = 0;
@@ -24,6 +25,7 @@
 
 	const t_controls = [	// in order of importance on mobile
 		T_Control.details,
+		T_Control.related,
 		T_Control.smaller,
 		T_Control.bigger,
 		T_Control.help,
@@ -39,18 +41,19 @@
 	}
 
 	$: {
+		const show_related = $w_show_related;
+		related_prefix = show_related ? 'hide' : 'show'
+		es_control_byType[T_Control.related]?.isSelected = show_related;
+	}
+
+	$: {
 		const _ = $w_t_graph;
 		const h = $w_hierarchy;
-		const needsExtra = ux.inTreeMode && show.tree_choices;
-		const extra = needsExtra ? 94 : 0;
+		const needsExtra = ux.inTreeMode;
+		const extra = needsExtra ? 110 : 0;
 		displayName = h.db.displayName;
 		displayName_width = u.getWidthOf(displayName);
 		displayName_x = extra + (width - displayName_width) / 2;
-	}
-
-	function toggle_show_details() {
-		$w_show_details = !$w_show_details;
-		ux.grand_layout();
 	}
 
 	function selection_closure(name: string, types: Array<string>) {
@@ -66,20 +69,22 @@
 		for (const t_control of t_controls) {
 			total -= u.getWidthOf(t_control);
 			const es_control = ux.s_element_for(new Identifiable(t_control), T_Element.control, t_control);
+			es_control.hoverIgnore = [T_Control.details, T_Control.related].includes(t_control);
+			es_control.isSelected = (t_control == T_Control.related) && $w_show_related;
 			es_control.set_forHovering(k.color_default, 'pointer');
-			es_control.hoverIgnore = (t_control == T_Control.details);
-			es_buttons_byControlType[t_control] = es_control;
 			elementShown_byControlType[t_control] = total > 0;
+			es_control_byType[t_control] = es_control;
 		}
 	}
 
 	function handle_mouse_state_forControl_Type(s_mouse, t_control) {
 		if (s_mouse.isHover) {
-			es_buttons_byControlType[t_control].isOut = s_mouse.isOut;
+			es_control_byType[t_control].isOut = s_mouse.isOut;
 		} else if (s_mouse.isUp) {
 			switch (t_control) {
 				case T_Control.help: c.showHelp(); break;
-				case T_Control.details: toggle_show_details(); break;
+				case T_Control.details: $w_show_details = !$w_show_details; break;
+				case T_Control.related: $w_show_related = !$w_show_related; break;
 				case T_Control.bigger: width = w.zoomBy(k.zoom_in_ratio) - 20; break;	// mobile only
 				case T_Control.smaller: width = w.zoomBy(k.zoom_out_ratio) - 20; break;	//   "     "
 				default: togglePopupID(t_control); break;
@@ -89,7 +94,7 @@
 
 </script>
 
-{#if Object.values(es_buttons_byControlType).length > 0}
+{#if Object.values(es_control_byType).length > 0}
 	<div id='controls'
 		style='
 			top: 7px;
@@ -104,7 +109,7 @@
 					border_thickness=0
 					color='transparent'
 					center={new Point(lefts[0], details_top + 3)}
-					es_button={es_buttons_byControlType[T_Control.details]}
+					es_button={es_control_byType[T_Control.details]}
 					closure={(s_mouse) => handle_mouse_state_forControl_Type(s_mouse, T_Control.details)}>
 					<img src='settings.svg' alt='circular button' width={size_small}px height={size_small}px/>
 				</Button>
@@ -116,14 +121,30 @@
 					selected={[$w_t_graph]}
 					titles={[T_Graph.tree, T_Graph.radial]}
 					selection_closure={(titles) => selection_closure('graph', titles)}/>
-				{#if ux.inTreeMode && show.tree_choices}
+				{#if ux.inTreeMode}
 					{#key $w_t_tree}
 						<Segmented
 							name='tree'
 							origin={Point.x(114)}
 							selected={[$w_t_tree]}
-							titles={[T_Hierarchy.children, T_Hierarchy.parents, T_Hierarchy.related]}
+							titles={[T_Hierarchy.children, T_Hierarchy.parents]}
 							selection_closure={(titles) => selection_closure('tree', titles)}/>
+						{#key $w_show_related}
+							<Button
+								width=82
+								isToggle={true}
+								height={size_big}
+								name='show-related'
+								color='transparent'
+								border_thickness=0.5
+								center={new Point(lefts[3], details_top + 3.5)}
+								es_button={es_control_byType[T_Control.related]}
+								closure={(s_mouse) => handle_mouse_state_forControl_Type(s_mouse, T_Control.related)}>
+								<span style='font-family: {$w_thing_fontFamily};'>
+									{related_prefix} related
+								</span>
+							</Button>
+						{/key}
 					{/key}
 				{/if}
 			{/key}
@@ -142,9 +163,10 @@
 					<Button
 						width={size_big}
 						height={size_big}
+						border_thickness=0.5
 						name={T_Control.smaller}
 						center={new Point(width - 110, y_center)}
-						es_button={es_buttons_byControlType[T_Control.smaller]}
+						es_button={es_control_byType[T_Control.smaller]}
 						closure={(s_mouse) => handle_mouse_state_forControl_Type(s_mouse, T_Control.smaller)}>
 						<svg
 							id='shrink-svg'>
@@ -160,9 +182,10 @@
 					<Button
 						width={size_big}
 						height={size_big}
+						border_thickness=0.5
 						name={T_Control.bigger}
 						center={new Point(width - 140, y_center)}
-						es_button={es_buttons_byControlType[T_Control.bigger]}
+						es_button={es_control_byType[T_Control.bigger]}
 						closure={(s_mouse) => handle_mouse_state_forControl_Type(s_mouse, T_Control.bigger)}>
 						<svg
 							id='enlarge-svg'>
@@ -181,8 +204,9 @@
 				<Button name={T_Control.builds}
 					width=75
 					height={size_big}
+					border_thickness=0.5
 					center={new Point(width - 55, y_center)}
-					es_button={es_buttons_byControlType[T_Control.builds]}
+					es_button={es_control_byType[T_Control.builds]}
 					closure={(s_mouse) => handle_mouse_state_forControl_Type(s_mouse, T_Control.builds)}>
 					<span style='font-family: {$w_thing_fontFamily};'>
 						{'build ' + k.build_number}
@@ -193,8 +217,9 @@
 				<Button name={T_Control.help}
 					width={size_big}
 					height={size_big}
+					border_thickness=0.5
 					center={new Point(width, y_center)}
-					es_button={es_buttons_byControlType[T_Control.help]}
+					es_button={es_control_byType[T_Control.help]}
 					closure={(s_mouse) => handle_mouse_state_forControl_Type(s_mouse, T_Control.help)}>
 					<span
 						style='top:2px;

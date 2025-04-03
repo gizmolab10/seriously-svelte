@@ -1,10 +1,7 @@
 <script lang='ts'>
-	import { w_graph_rect, w_hierarchy, w_t_graph, w_ancestry_focus } from '../../ts/common/Stores';
-	import { w_device_isMobile, w_user_graph_offset } from '../../ts/common/Stores';
+	import { w_ancestry_focus, w_user_graph_offset } from '../../ts/common/Stores';
 	import Tree_Children from './Tree_Children.svelte';
 	import Widget from '../widget/Widget.svelte';
-	import Circle from '../kit/Circle.svelte';
-
 </script>
 
 {#if $w_ancestry_focus}

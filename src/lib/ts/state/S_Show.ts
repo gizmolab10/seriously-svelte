@@ -1,4 +1,4 @@
-import { w_t_tree, w_t_countDots, w_show_details } from '../common/Stores';
+import { w_t_tree, w_t_countDots, w_show_details, w_show_related } from '../common/Stores';
 import { c, k, p, w, ux, T_Preference } from '../common/Global_Imports';
 import { T_Info, T_Hierarchy } from '../common/Enumerations';
 import type { Dictionary } from '../common/Types';
@@ -7,7 +7,6 @@ import { get } from 'svelte/store';
 export class S_Show {
 	debug_cursor = false;
 	traits		 = false;
-	tree_choices = false;	// future feature: parent trees, ...
 	t_info		 = T_Info.focus;
 
 	queryStrings_apply() {
@@ -26,10 +25,6 @@ export class S_Show {
 					this.traits = flag;
 					p.write_key(T_Preference.traits, flag);
 					break;
-				case 'tree_choices':
-					this.tree_choices = flag;
-					p.write_key(T_Preference.tree_choices, flag);
-					break;
 			}
 		}
 	}
@@ -42,8 +37,8 @@ export class S_Show {
 	restore_state() {
 		this.traits = p.read_key(T_Preference.traits) ?? false;
 		this.t_info = p.read_key(T_Preference.info) ?? T_Info.focus;
-		this.tree_choices = p.read_key(T_Preference.tree_choices) ?? false;
 		w_show_details.set(p.read_key(T_Preference.show_details) ?? false);
+		w_show_related.set(p.read_key(T_Preference.show_related) ?? false);
 		w_t_tree.set(p.read_key(T_Preference.tree) ?? T_Hierarchy.children);
 	}
 
@@ -53,6 +48,11 @@ export class S_Show {
 		});
 		w_show_details.subscribe((flag: boolean) => {
 			p.write_key(T_Preference.show_details, flag);
+			w.restore_state();
+			ux.grand_layout();
+		});
+		w_show_related.subscribe((flag: boolean) => {
+			p.write_key(T_Preference.show_related, flag);
 			w.restore_state();
 			ux.grand_layout();
 		});

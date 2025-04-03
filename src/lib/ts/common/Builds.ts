@@ -1,5 +1,6 @@
 export class Builds {
 	notes: { [id: number]: Array<string> } = {
+		133 : ['April 3, 2025', 'new control to show related relationships'],
 		132 : ['March 19, 2025', 'new radial UX'],
 		131 : ['March 18, 2025', 'fast and smooth response to editing and rotating'],
 		130 : ['March 10, 2025', 'title editor busts ass, new Ancestry-centric architecture'],

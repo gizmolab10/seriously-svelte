@@ -22,7 +22,7 @@ export default class S_Title_Edit {
 	get isActive(): boolean { return this.t_edit != T_Edit.done; }
 	get description(): string { return `${this.t_edit} ${this.thing?.title}`; }
 	get thing_selectionRange(): Seriously_Range | undefined { return this.thing?.selectionRange; }
-	refersTo(ancestry: Ancestry): boolean { return this.ancestry.hasPathString_matching(ancestry); }
+	refersTo(ancestry: Ancestry): boolean { return this.ancestry.equals(ancestry); }
 	actively_refersTo(ancestry: Ancestry): boolean { return this.refersTo(ancestry) && this.isActive; }
 	inactively_refersTo(ancestry: Ancestry): boolean { return this.refersTo(ancestry) && !this.isActive; }
 	thing_setSelectionRange_fromOffset(offset: number) { this.thing_setSelectionRange(new Seriously_Range(offset, offset)); }
@@ -50,7 +50,7 @@ export default class S_Title_Edit {
 	}
 
 	isAncestry_inState(ancestry: Ancestry | null, t_edit: string) {
-		return (!ancestry || (!this.ancestry.hasPathString_matching(ancestry))) ? false : (this.t_edit == t_edit);
+		return (!ancestry || (!this.ancestry.equals(ancestry))) ? false : (this.t_edit == t_edit);
 	}
 
 	setState_temporarilyTo_whileApplying(t_edit: T_Edit, apply: () => void) {
