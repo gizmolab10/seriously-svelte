@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, T_Layer } from '../../ts/common/Global_Imports';
 	import type { Integer } from '../../ts/common/Types';
-	export let width = 100;
+	export let width = 180;
 	export let top = 0;
 	export let array;
 	let table;

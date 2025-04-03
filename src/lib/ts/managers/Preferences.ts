@@ -2,8 +2,8 @@ import { S_Paging, T_Graph, T_Hierarchy, T_Details, G_TreeChildren } from '../co
 import { w_s_paging, w_font_size, w_background_color, w_thing_fontFamily } from '../common/Stores';
 import { w_ancestry_focus, w_ancestries_grabbed, w_ancestries_expanded } from '../common/Stores';
 import { w_t_tree, w_t_graph, w_hierarchy, w_t_details, w_t_countDots } from '../common/Stores';
-import { c, k, ux, show, debug, Ancestry, databases } from '../common/Global_Imports';
-import { w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
+import { w_t_database, w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
+import { c, k, u, ux, show, debug, Ancestry, databases } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
 export enum T_Preference {
@@ -72,6 +72,7 @@ export class Preferences {
 	static readonly ANCESTRIES: unique symbol;
 
 	restore_grabbed_andExpanded(force: boolean = false) {
+		function ids_forDB(array: Array<Ancestry>): string { return u.ids_forDB(array).join(', '); }
 		if (c.eraseDB > 0) {
 			c.eraseDB -= 1;
 			w_ancestries_expanded.set([]);
@@ -79,26 +80,24 @@ export class Preferences {
 		} else {
 			w_ancestries_grabbed.set(this.ancestries_readDB_key(T_Preference.grabbed));
 			w_ancestries_expanded.set(this.ancestries_readDB_key(T_Preference.expanded));
-			for (const ancestry of get(w_ancestries_expanded)) {
-				ancestry.g_widget.g_treeChildren = new G_TreeChildren(ancestry);
-			}
-			debug.log_grab(`  READ grabbed: "${get(w_ancestries_grabbed).map(a => a.id).join(', ')}"`);
-			debug.log_expand(`  READ expanded: "${get(w_ancestries_expanded).map(a => a.id).join(', ')}"`);
+			debug.log_grab(`  READ (${get(w_t_database)}): "${ids_forDB(get(w_ancestries_grabbed))}"`);
+			debug.log_expand(`  READ (${get(w_t_database)}): "${ids_forDB(get(w_ancestries_expanded))}"`);
 		}
 		setTimeout(() => {
 			w_ancestries_grabbed.subscribe((array: Array<Ancestry>) => {
 				if (array.length > 0) {
 					this.ancestries_writeDB_key(array, T_Preference.grabbed);
-					debug.log_grab(`  WRITING grabbed: "${array.map(a => a.id).join(', ')}"`);
+					debug.log_grab(`  WRITING (${get(w_t_database)}): "${ids_forDB(array)}"`);
 				}
 			});
 			w_ancestries_expanded.subscribe((array: Array<Ancestry>) => {
 				if (array.length > 0) {
 					this.ancestries_writeDB_key(array, T_Preference.expanded);
-					debug.log_expand(`  WRITING expanded: "${array.map(a => a.id).join(', ')}"`);
+					debug.log_expand(`  WRITING (${get(w_t_database)}): "${ids_forDB(array)}"`);
 				}
 			});
 		}, 100);
+		
 	}
 
 	restore_focus() {

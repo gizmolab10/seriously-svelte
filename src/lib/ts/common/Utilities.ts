@@ -1,7 +1,7 @@
 // N.B., do not import these from Global Imports --> avoid dependency issues when importing Utilities class
 
+import { w_t_database, w_thing_fontFamily } from '../common/Stores';
 import Identifiable from '../data/runtime/Identifiable';
-import { w_thing_fontFamily } from '../common/Stores';
 import Ancestry from '../data/runtime/Ancestry';
 import { w } from '../geometry/other/G_Window';
 import { T_Quadrant } from '../common/Angle';
@@ -149,6 +149,11 @@ export class Utilities {
 			default:									   return T_Browser.unknown
 		}
 	}
+
+	ids_forDB(array: Array<Ancestry>): Array<string> {
+		return array.filter(a => a.t_database == get(w_t_database)).map(a => a.id);
+	}
+
 
 	ancestries_orders_normalize(ancestries: Array<Ancestry>, persist: boolean = true): void {
 		if (ancestries.length > 1) {

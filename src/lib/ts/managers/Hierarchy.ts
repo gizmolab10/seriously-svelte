@@ -1335,8 +1335,8 @@ export class Hierarchy {
 	restore_fromPreferences() {
 		w_ancestry_showing_tools.set(null);
 		w_s_title_edit.set(null);
+		p.restore_grabbed_andExpanded();	// must precede restore_focus (which alters grabbed and expanded)
 		p.restore_focus();
-		p.restore_grabbed_andExpanded();
 		p.restore_paging();
 		this.isAssembled = true;
 	}

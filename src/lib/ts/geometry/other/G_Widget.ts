@@ -177,9 +177,9 @@ export default class G_Widget {
 			this.offset_ofWidget = Point.x(offset_forDirection).offsetEquallyBy(offset_forBorder);
 			this.width_ofWidget = widget_width;
 			if (showingReveal) {
-				const reveal_y = k.dot_size * 0.72;
-				const offset_forPointsRight = widget_width - (ux.inRadialMode ? 21 : -1);
-				const reveal_x = k.dot_size - (this.widget_pointsRight ? -offset_forPointsRight : 3);
+				const reveal_y = k.dot_size * 0.70;
+				const offset_x_forPointsRight = widget_width - (ux.inRadialMode ? 21 : -1);
+				const reveal_x = k.dot_size - (this.widget_pointsRight ? -offset_x_forPointsRight : 3);
 				this.center_ofReveal = new Point(reveal_x, reveal_y);
 			}
 			if (ux.inTreeMode) {

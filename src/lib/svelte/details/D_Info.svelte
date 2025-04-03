@@ -53,9 +53,9 @@
 	function heightAt(index: number) {
 		switch (index) {
 			case TI.segments:	  return  23;
-			case TI.before_title: return   3;
+			case TI.before_title: return   4;
 			case TI.title:		  return  17;
-			case TI.after_title:  return   3;
+			case TI.after_title:  return   4;
 			case TI.table:		  return 141;
 			case TI.color:		  return   2;
 			case TI.traits:		  return   2;
@@ -107,7 +107,7 @@
 	
 	function setup_tops() {
 		const color_left = 61
-		let top = 0;
+		let top = 1;
 		tops = [];
 		for (let i = 0; i <= TI.quest; i++) {
 			tops.push(top);
@@ -142,8 +142,8 @@
 				'progeny'  : ancestry.progeny_count().expressZero_asHyphen(),
 				'parents'  : thing.parents.length.expressZero_asHyphen(),
 				'related'  : thing.relatedRelationships.length.expressZero_asHyphen(),
-				'id'	   : thing.id.clipWithEllipsisAt(12),
-				'ancestry' : ancestry.id,
+				'id'	   : thing.id.clipWithEllipsisAt(13),
+				'ancestry' : ancestry.id.clipWithEllipsisAt(13),
 				'color'	   : k.empty,
 			};
 			information = Object.entries(dict);

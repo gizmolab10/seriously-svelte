@@ -4,8 +4,8 @@ import { c, k, u, ux, show, Rect, Size, Thing, debug, wrappers, svgPaths } from 
 import { w_hierarchy, w_ancestry_focus, w_ancestry_showing_tools } from '../../common/Stores';
 import { G_Widget, S_Paging, S_Title_Edit, G_TreeLine } from '../../common/Global_Imports';
 import { w_ancestries_grabbed, w_ancestries_expanded, } from '../../common/Stores';
+import { w_background_color, w_t_graph, w_t_database } from '../../common/Stores';
 import { w_s_alteration, w_s_title_edit } from '../../common/Stores';
-import { w_background_color, w_t_graph } from '../../common/Stores';
 import type { Dictionary, Integer } from '../../common/Types';
 import { T_Edit } from '../../state/S_Title_Edit';
 import { get, Writable } from 'svelte/store';
@@ -562,7 +562,7 @@ export default class Ancestry extends Identifiable {
 
 	g_line_toOther(other: Ancestry) : G_TreeLine {
 		const offset = k.line_stretch + k.dot_size / 2;
-		const origin = this.g_widget.absolute_center_ofReveal.offsetByX(-offset);
+		const origin = this.g_widget.absolute_center_ofReveal.offsetByXY(-offset, -2.5);
 		const extent = other.g_widget.absolute_center_ofDrag.offsetByX(-offset);
 		const rect = Rect.createExtentRect(origin, extent);
 		const g_line = new G_TreeLine(this, other);
@@ -751,7 +751,8 @@ export default class Ancestry extends Identifiable {
 	
 	expanded_setTo(expand: boolean) {
 		let mutated = false;
-		if (!this.isRoot || expand) {
+		const matchesDB = this.t_database == get(w_t_database);
+		if (matchesDB && (!this.isRoot || expand)) {
 			w_ancestries_expanded.update((a) => {
 				let array = a ?? [];
 				if (!!array) {
