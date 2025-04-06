@@ -2,36 +2,44 @@
 	import { k, u, colors, T_Layer } from '../../ts/common/Global_Imports';
 	import { w_background_color } from '../../ts/common/Stores';
 	export let title_font_size = `${k.small_font_size}px`;
+	export let thickness = k.fat_separator_thickness;
 	export let title: string | null = null;
 	export let width = k.width_details;
 	export let left = 0;
 	export let top = 71;
-	export let thickness = k.fat_separator_thickness;
 	const title_width = u.getWidth_ofString_withSize(title ?? k.empty, title_font_size);
 	const title_left = (width + (left * 2.1) - title_width - 12) / 2;
+	let separator_rebuilds = 0;
+
+	$: {
+		const _ = $w_background_color;
+		separator_rebuilds += 1;
+	}
 
 </script>
 
-<div class='separator-line'
-	style='
-		top:{top}px;
-		left:{left}px;
-		width:{width}px;
-		position:absolute;
-		height:{thickness}px;
-		z-index:{T_Layer.details};
-		background-color:{colors.separator};'>
-</div>
-{#if !!title}
-	<div
+{#key separator_rebuilds}
+	<div class='separator-line'
 		style='
-			padding: 0px 5px;
+			top:{top}px;
+			left:{left}px;
+			width:{width}px;
 			position:absolute;
-			top:{top - 5.3}px;
-			left:{title_left}px;
-			z-index:{T_Layer.frontmost};
-			font-size:{title_font_size};
-			background-color:{$w_background_color};'>
-		{title}
+			height:{thickness}px;
+			z-index:{T_Layer.details};
+			background-color:{colors.separator};'>
 	</div>
-{/if}
+	{#if !!title}
+		<div
+			style='
+				padding: 0px 5px;
+				position:absolute;
+				top:{top - 5.3}px;
+				left:{title_left}px;
+				z-index:{T_Layer.frontmost};
+				font-size:{title_font_size};
+				background-color:{$w_background_color};'>
+			{title}
+		</div>
+	{/if}
+{/key}

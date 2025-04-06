@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { c, k, p, ux, show, Rect, Size, Point, Thing, debug, colors, signals, Ancestry } from '../../ts/common/Global_Imports';
+	import { w_hierarchy, w_color_trigger, w_info_title, w_background_color, } from '../../ts/common/Stores';
 	import { w_ancestry_focus, w_ancestries_grabbed, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { T_Info, T_Trait, T_Layer, T_Element, T_Preference } from '../../ts/common/Global_Imports';
-	import { w_hierarchy, w_color_trigger, w_info_title } from '../../ts/common/Stores';
 	import type { Integer, Dictionary } from '../../ts/common/Types';
 	import Identifiable from '../../ts/data/runtime/Identifiable';
 	import Text_Editor from '../kit/Text_Editor.svelte';
@@ -83,6 +83,11 @@
 		if (thing != ancestry?.thing) {
 			update_forAncestry();
 		}
+	}
+
+	$: {
+		const _ = $w_background_color;
+		info_rebuilds += 1;
 	}
 	
 	$: {

@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { c, k, u, ux, w, show, Rect, Size, Point, Thing, colors, layouts } from '../../ts/common/Global_Imports';
+	import { w_t_database, w_graph_rect, w_hierarchy, w_background_color } from '../../ts/common/Stores';
 	import { debug, T_Layer, T_Banner, Ancestry, T_Startup } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_show_details, w_device_isMobile, } from '../../ts/common/Stores';
 	import { w_t_startup, w_id_popupView, w_ancestry_focus } from '../../ts/common/Stores';
-	import { w_t_database, w_graph_rect, w_hierarchy } from '../../ts/common/Stores';
 	import { T_Control, Hierarchy, databases } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { T_Database } from '../../ts/data/dbs/DBCommon';
@@ -16,14 +16,20 @@
 	import Import from './Import.svelte';
 	import Graph from './Graph.svelte';
 	import { onMount } from 'svelte';
-	let chain = ['Panel'];
+	let separator_rebuilds = 0;
 	let panel_rebuilds = 0;
+	let chain = ['Panel'];
 
 	function ignore_wheel(event) { event.preventDefault(); }
 
 	$: {
 		const _ = $w_t_database + $w_t_startup + $w_id_popupView;
 		panel_rebuilds += 1;
+	}
+
+	$: {
+		const _ = $w_background_color;
+		separator_rebuilds += 1;
 	}
 	
 	async function handle_key_down(event) {
@@ -86,31 +92,37 @@
 						z-index: {T_Layer.frontmost};
 						width:{w.windowSize.width}px;'>
 					<Breadcrumbs/>
+					{#key separator_rebuilds}
+						<div class='horizontal-line' style='
+							top: {layouts.top_ofBannerAt(T_Banner.graph) - 3}px;
+							background-color:{colors.separator};
+							height: {k.separator_thickness}px;
+							z-index: {T_Layer.lines};'>
+						</div>
+					{/key}
+				</div>
+				{#key separator_rebuilds}
 					<div class='horizontal-line' style='
-						top: {layouts.top_ofBannerAt(T_Banner.graph) - 3}px;
+						top: {layouts.height_ofBannerAt(T_Banner.graph)}px;
 						background-color:{colors.separator};
 						height: {k.separator_thickness}px;
 						z-index: {T_Layer.lines};'>
 					</div>
-				</div>
-				<div class='horizontal-line' style='
-					top: {layouts.height_ofBannerAt(T_Banner.graph)}px;
-					background-color:{colors.separator};
-					height: {k.separator_thickness}px;
-					z-index: {T_Layer.lines};'>
-				</div>
+				{/key}
 				{#if $w_show_details}
 					<Details/>
-					<div class='vertical-line'
-						style='
-							position: absolute;
-							z-index: {T_Layer.lines};
-							left: {k.width_details}px;
-							top: {$w_graph_rect.origin.y}px;
-							width: {k.separator_thickness}px;
-							background-color: {colors.separator};
-							height: {$w_graph_rect.size.height}px;'>
-					</div>
+					{#key separator_rebuilds}
+						<div class='vertical-line'
+							style='
+								position: absolute;
+								z-index: {T_Layer.lines};
+								left: {k.width_details}px;
+								top: {$w_graph_rect.origin.y}px;
+								width: {k.separator_thickness}px;
+								background-color: {colors.separator};
+								height: {$w_graph_rect.size.height}px;'>
+						</div>
+					{/key}
 				{/if}
 			{/if}
 			<div class='right-side'

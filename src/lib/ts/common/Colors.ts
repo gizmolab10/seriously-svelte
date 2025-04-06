@@ -1,22 +1,34 @@
+import { w_background_color } from './Stores';
 import { transparentize } from 'color2k';
+import { get } from 'svelte/store';
 
 export class Colors {
-    default_forThings = 'blue';
-	separator = '#ddddddd0';
-    disabled = 'lightGray';
-	background = 'white';
 	default = 'black';
+	background = 'white';
+    disabled = 'lightGray';
+	separator = '#eeeeeee0';
+    default_forThings = 'blue';
+
+	constructor() {
+		w_background_color.subscribe((color: string) => {
+			this.separator = this.computed_separator;
+		})
+	}
+
+	get computed_separator(): string {
+		let color = '#eeeeeee0';
+		const background = get(w_background_color);
+		if (!this.colors_areIdentical(background, this.background)) {
+			const separator = this.moreSaturatedBy(background, 40);
+			if (!!separator) {
+				color = separator;
+			}
+		}
+		return color;
+	}
 
 	opacitize(color: string, amount: number): string {
 		return transparentize(color, 1 - amount);
-	}
-		
-	set_darkness_toColor(color: string, darkness: number): string | null {
-		const rgba = this.color_toRGBA(color);
-		if (!!rgba) {
-			return this.set_darkness_toRGBA(rgba, darkness);
-		}
-		return null
 	}
 	
 	darkerBy(color: string, ratio: number): string | null {
@@ -31,20 +43,39 @@ export class Colors {
 		}));
 	}
 
-	luminance_ofColor(color: string): number | null {
-		const rgba = this.color_toRGBA(color);
-		if (!!rgba) {
-			return this.luminance_ofRGBA(rgba);
+	moreSaturatedBy(color: string, increase: number): string | null {
+		let hsba = this.color_toHSBA(color);
+		if (!!hsba) {
+			hsba.s = Math.min(255, hsba.s + increase);
+			const rgba = this.HSBA_toRGBA(hsba);
+			return this.RGBA_toHex(rgba)
 		}
 		return null
 	}
 
 	static readonly CONVERSIONS: unique symbol;
 
+	colors_areIdentical(a: string, b: string): boolean {
+		const aHex = this.color_toHex(a);
+		const bHex = this.color_toHex(b);
+		if (!!aHex && !!bHex) {
+			return aHex == bHex;
+		}
+		return false;
+	}
+
 	color_toHex(color: string): string | null {
 		const rgba = this.color_toRGBA(color);
 		if (!!rgba) {
 			return this.RGBA_toHex(rgba);
+		}
+		return null;
+	}
+
+	color_toHSBA(color: string): HSBA | null {
+		const rgba = this.color_toRGBA(color);
+		if (!!rgba) {
+			return this.RBGA_toHSBA(rgba);
 		}
 		return null;
 	}
@@ -148,7 +179,29 @@ export class Colors {
 		return new HSBA(h, s, bValue, rgba.a);
 	}
 
+	static readonly SATURATION: unique symbol;
+
+	adjust_saturation_byApplying(color: string, closure: (lume: number) => number): string | null {
+		const rgba = this.color_toRGBA(color);
+		if (!!rgba) {
+			const lume = this.luminance_ofRGBA(rgba);
+			if (!!lume) {
+				const dark = closure(lume);
+				return this.set_darkness_toRGBA(rgba, dark);
+			}
+		}
+		return null;
+	}
+
 	static readonly LUMINANCE: unique symbol;
+
+	luminance_ofColor(color: string): number | null {
+		const rgba = this.color_toRGBA(color);
+		if (!!rgba) {
+			return this.luminance_ofRGBA(rgba);
+		}
+		return null
+	}
 
 	luminance_ofRGBA(rgba: RGBA): number | null {
 		if (!!rgba) {
@@ -165,15 +218,6 @@ export class Colors {
 		return null;
 	}
 
-	set_darkness_toRGBA(rgba: RGBA, darkness: number): string | null {
-		const adjusted = this.adjust_RGBA_forDarkness(rgba, darkness);
-		const rgba_new = adjusted.result;
-		if (!adjusted.error && !!rgba_new) {
-			return this.RGBA_toHex(rgba_new);
-		}
-		return null
-	}
-
 	adjust_luminance_byApplying(color: string, closure: (lume: number) => number): string | null {
 		const rgba = this.color_toRGBA(color);
 		if (!!rgba) {
@@ -184,6 +228,17 @@ export class Colors {
 			}
 		}
 		return null;
+	}
+
+	static readonly DARKNESS: unique symbol;
+
+	set_darkness_toRGBA(rgba: RGBA, darkness: number): string | null {
+		const adjusted = this.adjust_RGBA_forDarkness(rgba, darkness);
+		const rgba_new = adjusted.result;
+		if (!adjusted.error && !!rgba_new) {
+			return this.RGBA_toHex(rgba_new);
+		}
+		return null
 	}
 
 	adjust_RGBA_forDarkness(rgba: RGBA, targetDarkness: number): {result: RGBA | null, error: Error | null} {
