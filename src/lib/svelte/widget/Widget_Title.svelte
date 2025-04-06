@@ -63,9 +63,11 @@
 	export const REACTIVES: unique symbol = Symbol('REACTIVES');
 
 	$: {
-		const state = $w_s_title_edit;
-		title_width = (thing?.titleWidth ?? 0) + title_extra();
-		input?.style.width = `${title_width}px`;
+		const _ = $w_s_title_edit;
+		if (!!input) {
+			title_width = (thing?.titleWidth ?? 0) + title_extra();
+			input.style.width = `${title_width}px`;
+		}
 	}
 
 	$: {
@@ -113,8 +115,8 @@
 			if (Rect.rect_forElement_containsPoint(input, location)) {
 				const offset = u.convert_windowOffset_toCharacterOffset_in(location.x, input);
 				debug.log_edit(`CURSOR OFFSET ${offset}`);
-				$w_s_title_edit?.thing_setSelectionRange_fromOffset(offset);
-				$w_s_title_edit?.t_edit = T_Edit.editing;
+				$w_s_title_edit.thing_setSelectionRange_fromOffset(offset);
+				$w_s_title_edit.t_edit = T_Edit.editing;
 			}
 		}
 	}
@@ -179,8 +181,8 @@
 			if (ancestry_isEditing()) {
 				extractRange_fromInput_toThing();
 			} else if (s_mouse.isDown) {
-				if ($w_s_title_edit?.isActive) {
-					$w_s_title_edit?.t_edit = T_Edit.stopping;		// stop prior edit, wait for it to percolate (below with setTimeout)
+				if (!!$w_s_title_edit && $w_s_title_edit.isActive) {
+					$w_s_title_edit.t_edit = T_Edit.stopping;		// stop prior edit, wait for it to percolate (below with setTimeout)
 				}
 				if (!ancestry.isGrabbed) {
 					ancestry.grab_forShift(event.shiftKey);
@@ -188,7 +190,6 @@
 					setTimeout(() => {
 						ancestry.startEdit();
 						thing_setSelectionRange_fromMouseLocation();
-						debug.log_edit(`H START ${$w_s_title_edit?.description}`);
 						input.focus();
 						applyRange_fromThing_toInput();
 					}, 1);
@@ -232,15 +233,15 @@
 
 	function title_updatedTo(title: string | null) {
 		const prior = $w_info_title;
-		if (prior != title) {
+		if (prior != title && !!$w_s_title_edit) {
 			extractRange_fromInput_toThing();
 			$w_info_title = title;		// tell Info to update it's selection's title
 			debug.log_edit(`TITLE ${title}`);
-			$w_s_title_edit?.title = title;
-			$w_s_title_edit?.setState_temporarilyTo_whileApplying(T_Edit.percolating, () => {
+			$w_s_title_edit.title = title;
+			$w_s_title_edit.setState_temporarilyTo_whileApplying(T_Edit.percolating, () => {
 				ux.grand_layout();
 			});
-			debug.log_edit(`UPDATED ${$w_s_title_edit?.description}`);
+			debug.log_edit(`UPDATED ${$w_s_title_edit.description}`);
 		}
 	}
 
@@ -254,9 +255,9 @@
 				title_prior = thing?.title;			// so hasChanges will be correct next time
 			}
 			u.onNextCycle_apply(() => {		// prevent Panel's enter key handler call to start edit from actually starting
-				if ($w_s_title_edit?.actively_refersTo(ancestry)) {
+				if (!!$w_s_title_edit && $w_s_title_edit.actively_refersTo(ancestry)) {
 					debug.log_edit(`STOPPING ${ancestry.title}`);
-					$w_s_title_edit?.t_edit = T_Edit.stopping;	// inform Widget
+					$w_s_title_edit.t_edit = T_Edit.stopping;	// inform Widget
 				}
 			});
 		}

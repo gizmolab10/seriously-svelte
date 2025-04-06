@@ -1,6 +1,7 @@
 {
-	"out": "docs",
+	"out": "dist",
 	"theme": "default",
-	"entryPoints": ["src/lib"],
 	"entryPointStrategy": "expand",
+	"exclude": ["aside", "bubble", "docs"],
+	"entryPoints": ["src/lib", "index.html"]
 }

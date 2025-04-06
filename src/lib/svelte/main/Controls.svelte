@@ -43,7 +43,10 @@
 	$: {
 		const show_related = $w_show_related;
 		related_prefix = show_related ? 'hide' : 'show'
-		es_control_byType[T_Control.related]?.isSelected = show_related;
+		const es_related = es_control_byType[T_Control.related];
+		if (es_related) {
+			es_related.isSelected = show_related;
+		}
 	}
 
 	$: {

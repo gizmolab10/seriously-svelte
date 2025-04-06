@@ -46,19 +46,16 @@
 </script>
 
 {#key line_rebuilds}
-	{#if ancestry.isBidirectional}
-		<Box rect={g_line.rect} color={ancestry.thing.color}/>
-	{/if}
 	<svg
 		bind:this = {line}
 		id = {g_line.name}
 		class = 'tree-line-svg'
-		width = {g_line.size.width + stroke_width * 2}px
 		viewBox = {g_line.viewBox.verbose}
-		height = {Math.max(stroke_width * 2, g_line.size.height) + stroke_width * 2}px
 		style = '
 			top: {g_line.origin.y - g_line.size.height + 1 - stroke_width / 2}px;
 			left: {g_line.origin.x + 142 + stroke_width / 2}px;
+			height: {g_line.size.height + stroke_width * 2}px;
+			width: {g_line.size.width + stroke_width * 2}px;
 			z-index: {T_Layer.lines};
 			position: absolute;'>
 		<path

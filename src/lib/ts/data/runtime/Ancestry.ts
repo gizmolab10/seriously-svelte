@@ -1,6 +1,6 @@
 import { Direction, Predicate, Hierarchy, databases, Relationship, Svelte_Wrapper } from '../../common/Global_Imports';
+import { c, k, u, ux, show, Rect, Size, Point, Thing, debug, wrappers, svgPaths } from '../../common/Global_Imports';
 import { T_Graph, T_Element, T_Predicate, T_Alteration, T_SvelteComponent } from '../../common/Global_Imports';
-import { c, k, u, ux, show, Rect, Size, Thing, debug, wrappers, svgPaths } from '../../common/Global_Imports';
 import { w_hierarchy, w_ancestry_focus, w_ancestry_showing_tools } from '../../common/Stores';
 import { G_Widget, S_Paging, S_Title_Edit, G_TreeLine } from '../../common/Global_Imports';
 import { w_ancestries_grabbed, w_ancestries_expanded, } from '../../common/Stores';
@@ -561,13 +561,13 @@ export default class Ancestry extends Identifiable {
 	}
 
 	g_line_toOther(other: Ancestry) : G_TreeLine {
-		const offset = k.line_stretch + k.dot_size / 2;
-		const origin = this.g_widget.absolute_center_ofReveal.offsetByXY(-offset, -2.5);
-		const extent = other.g_widget.absolute_center_ofDrag.offsetByX(-offset);
-		const rect = Rect.createExtentRect(origin, extent);
-		const g_line = new G_TreeLine(this, other);
+		const offset_x = -(k.line_stretch + k.dot_size / 2);
+		const offset_y = 37;
+		const origin = this.g_widget.absolute_center_ofReveal.offsetByY(-2.5);
+		const extent = other.g_widget.absolute_center_ofDrag;
+		const rect = Rect.createExtentRect(origin, extent).offsetByXY(offset_x, offset_y);
+		const g_line = new G_TreeLine(this, other, true);
 		g_line.set_t_curve_forHeight(rect.height);
-		g_line.isBidirectional = true;
 		g_line.rect = rect;
 		return g_line;
 	}

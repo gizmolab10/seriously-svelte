@@ -146,7 +146,9 @@
 	{#if es_widget}
 		<div class = 'widget'
 			id = '{widgetName}'
+			on:keyup={u.ignore}
 			bind:this = {widget}
+			on:keydown={u.ignore}
 			on:click={handle_click_event}
 			style = '
 				top : {top}px;

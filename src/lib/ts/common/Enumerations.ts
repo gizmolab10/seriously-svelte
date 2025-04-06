@@ -37,7 +37,6 @@ export enum T_Widget {
 }
 
 export enum T_Curve {
-	tilt = 'tilt',	// fpr bidirectionals
 	flat = 'flat',
 	down = 'down',
 	up	 = 'up',

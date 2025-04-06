@@ -177,6 +177,7 @@ export class Rect {
 	offsetByX(x: number):			   Rect { return new Rect(this.origin.offsetByX(x), this.size); }
 	offsetByY(y: number):			   Rect { return new Rect(this.origin.offsetByY(y), this.size); }
 	offsetBy(delta: Point):			   Rect { return new Rect(this.origin.offsetBy(delta), this.size); }
+	offsetByXY(x: number, y: number):  Rect { return new Rect(this.origin.offsetByXY(x, y), this.size); }
 	originMultipliedBy(ratio: number): Rect { return new Rect(this.origin.multipliedBy(ratio), this.size); }
 	xMultipliedBy(ratio: number):	   Rect { return new Rect(this.origin.xMultipliedBy(ratio), this.size); }
 	yMultipliedBy(ratio: number):	   Rect { return new Rect(this.origin.yMultipliedBy(ratio), this.size); }

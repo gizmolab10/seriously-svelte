@@ -340,6 +340,8 @@
 				<button id='delete'
 					on:blur={u.ignore}
 					on:focus={u.ignore}
+					on:keyup={u.ignore}
+					on:keydown={u.ignore}
 					on:click={handle_delete_event}
 					on:mouseout={() => { isHovering_byID[T_Tool.delete] = false; }}
 					on:mouseover={() => { isHovering_byID[T_Tool.delete] = true; }}

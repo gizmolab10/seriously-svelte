@@ -191,8 +191,8 @@ export default class G_Widget {
 					const offset_y = -1 - graph_rect.origin.y;
 					const children_size = ancestry.visibleProgeny_size;
 					const offset_x_ofReveal = focus?.titleWidth / 2 - 2;
-					const offset_forDetails = (get(w_show_details) ? -k.width_details : 0);
-					const offset_x = 15 + offset_forDetails - (children_size.width / 2) - (k.dot_size / 2.5) + offset_x_ofReveal;
+					const offset_x_forDetails = (get(w_show_details) ? -k.width_details : 0);
+					const offset_x = 15 + offset_x_forDetails - (children_size.width / 2) - (k.dot_size / 2.5) + offset_x_ofReveal;
 					const origin_ofReveal = graph_rect.center.offsetByXY(offset_x, offset_y);
 					this.origin_ofWidget = origin_ofReveal.offsetByXY(-21.5 - offset_x_ofReveal, -5);
 				}

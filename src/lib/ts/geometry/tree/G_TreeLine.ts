@@ -5,6 +5,7 @@ export default class G_TreeLine {
 	ancestry: Ancestry | null;	// main end of the line
 	other_ancestry: Ancestry;	// other end of the line (N.B. main can be deeper!!)
 	isBidirectional = false;
+	stroke_width = this.isBidirectional ? 2 : 1;
 	points_atOther = true;
 	viewBox = Rect.zero;
 	origin = Point.zero;
@@ -17,10 +18,22 @@ export default class G_TreeLine {
 	// scratchpad for one line drawn
 	// from the "main" widget to its "other" {child OR bidirectional} widget
 
-	constructor(ancestry: Ancestry | null, other_ancestry: Ancestry) {
+	constructor(ancestry: Ancestry | null, other_ancestry: Ancestry, isBidirectional: boolean = false) {
 		this.name = ancestry?.title ?? k.empty;
+		this.isBidirectional = isBidirectional;
 		this.other_ancestry = other_ancestry;
 		this.ancestry = ancestry;
+	}
+		
+	layout() {
+		this.setup_t_curve();
+		this.setup_linePath();
+	}
+
+	update_name() {
+		if (!!this.ancestry && !this.ancestry.equals(this.other_ancestry)) {
+			this.name = `${this.ancestry.titles.join('.')}...${this.other_ancestry.titles.join('.')}`;
+		}
 	}
 
 	set_t_curve_forHeight(height: number) {
@@ -33,13 +46,7 @@ export default class G_TreeLine {
 		}
 	}
 
-	update_name() {
-		if (!!this.ancestry && !this.ancestry.equals(this.other_ancestry)) {
-			this.name = `${this.ancestry.titles.join('.')}...${this.other_ancestry.titles.join('.')}`;
-		}
-	}
-		
-	layout() {
+	setup_t_curve() {
 		const lineOffset = new Point(-122.5, 2.5);
 		let lineRect = this.rect.offsetBy(lineOffset);
 		switch (this.t_curve) {
@@ -57,19 +64,23 @@ export default class G_TreeLine {
 				this.extent = lineRect.centerRight;
 				this.linePath = svgPaths.line(this.origin.vector_to(this.extent));
 				break;
-			case T_Curve.tilt:
-				break;
 		}
-		const vector = this.origin.vector_to(this.extent);
-		this.size = vector.abs.asSize;
-		if (this.t_curve != T_Curve.flat) {
-			const flag = (this.t_curve == T_Curve.down) ? 0 : 1;
-			const originY = this.t_curve == T_Curve.down ? 0 : this.size.height;
-			const extentY = this.t_curve == T_Curve.up   ? 0 : this.size.height;
-			this.linePath = `M0 ${originY} A ${this.size.description} 0 0 ${flag} ${this.size.width} ${extentY}`;
+	}
+		
+	setup_linePath() {
+		const vector	 		 = this.origin.vector_to(this.extent);
+		this.size   	 		 = vector.abs.asSize;
+		const height	 		 = this.size.height;
+		if (this.t_curve 		!= T_Curve.flat) {
+			const y_end  		 = this.t_curve == T_Curve.up   ? 0 : height;
+			const y_start		 = this.t_curve == T_Curve.down ? 0 : height;
+			const large_arc_flag = this.t_curve == T_Curve.down ? 0 : 1;
+			const ratio  		 = this.isBidirectional ? 1.9 : 1;
+			const sweep_flag	 = 0;//this.isBidirectional ? 1 : 0;
+			this.size.height	 = height * ratio;
+			this.linePath		 = `M0 ${y_start} A ${this.size.description} 0 ${sweep_flag} ${large_arc_flag} ${this.size.width} ${y_end}`;
 		}
-		const boxSize = new Size(this.size.width, Math.max(2, this.size.height));
-		this.viewBox = new Rect(this.origin, boxSize);
+		this.viewBox = new Rect(this.origin, this.size);
 		this.update_name();
 	}
 
