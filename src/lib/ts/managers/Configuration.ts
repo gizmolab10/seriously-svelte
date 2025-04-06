@@ -23,9 +23,9 @@ export class Configuration {
 		w_device_isMobile.set(this.device_isMobile);
 		debug.queryStrings_apply();						// debug even setup code
 		stores.setup_defaults();
-		w.restore_state();
 		show.restore_state();							// local persistance
-		layouts.layout_bottoms_ofBanners();
+		layouts.layout_tops_ofBanners();
+		w.restore_state();
 		this.queryStrings_apply();						// must call before prefs and db
 		p.restore_defaults();
 		databases.restore_db();

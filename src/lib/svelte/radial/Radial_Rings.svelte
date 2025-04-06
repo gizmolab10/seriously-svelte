@@ -17,7 +17,7 @@
 	const outer_diameter = outer_radius * 2;
 	const mouse_timer = ux.mouse_timer_forName(name);	// persist across destroy/recreate
 	const viewBox = `${-ring_width}, ${-ring_width}, ${outer_diameter}, ${outer_diameter}`;
-	let color = $w_ancestry_focus?.thing?.color ?? k.thing_color_default;
+	let color = $w_ancestry_focus?.thing?.color ?? colors.default_forThings;
 	let mouse_up_count = $w_count_mouse_up;
 	let cursor = k.cursor_default;
 	let rings_rebuilds = 0;
@@ -42,7 +42,7 @@
 
 	$: {
 		if (!!$w_ancestry_focus.thing && $w_ancestry_focus.thing.id == $w_color_trigger?.split(k.generic_separator)[0]) {
-			color = $w_ancestry_focus?.thing?.color ?? k.thing_color_default;
+			color = $w_ancestry_focus?.thing?.color ?? colors.default_forThings;
 		}
 	}
 

@@ -66,7 +66,7 @@ export default class User_Interaction {
 		const mouse_vector = w.mouse_vector_ofOffset_fromGraphCenter();
 		const widgets = wrappers.wrappers_ofType_atMouseLocation(T_SvelteComponent.widget);
 		const outsideDetails = !!scaled && scaled.x > (!get(w_show_details) ? 0 : k.width_details);
-		const insideGraphZone = !!scaled && outsideDetails && scaled.y > layouts.bottom_ofBannerAt(T_Banner.crumbs);
+		const insideGraphZone = !!scaled && outsideDetails && scaled.y > layouts.top_ofBannerAt(T_Banner.crumbs);
 		if (!!mouse_vector && widgets.length == 0 && insideGraphZone) {
 			const g_cluster = layouts.g_radialGraph.g_cluster_atMouseLocation;
 			const inner = get(w_ring_rotation_radius);

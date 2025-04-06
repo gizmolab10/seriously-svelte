@@ -24,7 +24,7 @@ export default class G_Cluster {
 	ancestries: Array<Ancestry> = [];
 	g_sliderArc = new G_ArcSlider();
 	g_thumbArc = new G_ArcSlider();
-	color = k.thing_color_default;
+	color = colors.default_forThings;
 	arc_straddles_nadir = false;
 	points_toChildren: boolean;
 	arc_straddles_zero = false;

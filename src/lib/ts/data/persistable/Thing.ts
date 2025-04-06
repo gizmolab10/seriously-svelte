@@ -1,5 +1,5 @@
-import { k, u, debug, Persistable, Trait, Ancestry, databases } from '../../common/Global_Imports';
-import { Predicate, Relationship, Seriously_Range } from '../../common/Global_Imports';
+import { Predicate, Persistable, Relationship, Seriously_Range } from '../../common/Global_Imports';
+import { k, u, debug, colors, Trait, Ancestry, databases } from '../../common/Global_Imports';
 import { T_Thing, T_Trait, T_Debug, T_Predicate } from '../../common/Global_Imports';
 import { w_hierarchy, w_color_trigger, w_count_rebuild } from '../../common/Stores';
 import { w_ancestry_focus, w_ancestries_expanded } from '../../common/Stores';
@@ -14,7 +14,7 @@ export default class Thing extends Persistable {
 	color: string;
 	type: T_Thing;
 
-	constructor(idBase: string, id: string, title = k.title_default, color = k.thing_color_default, type = T_Thing.generic, already_persisted: boolean = false) {
+	constructor(idBase: string, id: string, title = k.title_default, color = colors.default_forThings, type = T_Thing.generic, already_persisted: boolean = false) {
 		super(databases.db_now.t_database, idBase, T_Persistable.things, id, already_persisted);
 		this.selectionRange = new Seriously_Range(0, title.length);
 		this.title = title;

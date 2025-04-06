@@ -215,7 +215,7 @@ export class Preferences {
 		w_thing_fontFamily.set(this.read_key(T_Preference.font) ?? 'Times New Roman');
 		w_t_details.set(this.read_key(T_Preference.detail_types) ?? [T_Details.storage]);
 		w_t_countDots.set(this.read_key(T_Preference.countDots) ?? [T_Hierarchy.children]);
-		w_background_color.set(this.read_key(T_Preference.background) ?? k.color_background);
+		w_background_color.set(this.read_key(T_Preference.background) ?? colors.background);
 		w_ring_rotation_radius.set(Math.max(this.read_key(T_Preference.ring_radius) ?? 0, k.innermost_ring_radius));
 		this.reactivity_subscribe()
 	}

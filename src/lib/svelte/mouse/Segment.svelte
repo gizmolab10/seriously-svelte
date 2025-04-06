@@ -7,19 +7,19 @@
 	export let fill = $w_background_color;
 	export let g_segment!: G_Segment;
     export let name = g_segment.title;
-	export let stroke = k.color_default;
+	export let stroke = colors.default;
 	const segment_name = `${name}-segment`;
-	let title_color = k.color_default;
+	let title_color = colors.default;
 	let size = g_segment.size;
 	let isHovering = false;
 
 	update_colors();
 
-	$: fill = isHovering ? k.color_default : g_segment.isSelected ? colors.opacitize('skyblue', 0.6) : $w_background_color;
+	$: fill = isHovering ? colors.default : g_segment.isSelected ? colors.opacitize('skyblue', 0.6) : $w_background_color;
 
 	function update_colors() {
-		title_color = isHovering ? $w_background_color : k.color_default ;
-		fill = isHovering ? k.color_default : g_segment.isSelected ? colors.opacitize('skyblue', 0.6) : $w_background_color;
+		title_color = isHovering ? $w_background_color : colors.default ;
+		fill = isHovering ? colors.default : g_segment.isSelected ? colors.opacitize('skyblue', 0.6) : $w_background_color;
 		debug.log_segments(`${name} ${g_segment.isSelected ? 'selected' : ''} ${fill}`)
 	}
 

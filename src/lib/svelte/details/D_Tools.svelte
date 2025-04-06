@@ -87,7 +87,7 @@
 				titleWidth = thing?.titleWidth ?? 0;
 				const hasOneParent = (thing?.parents.length ?? 0) == 1;
 				countOfVisibleParents = ancestry.visibleParentAncestries(0).length;
-				parentSensitiveColor = (hasOneParent || ancestry.isFocus) ? k.color_disabled : color ;
+				parentSensitiveColor = (hasOneParent || ancestry.isFocus) ? colors.disabled : color ;
 				reset_all_s_elements_for_ancestry_change();
 				layout_tools_forceRedraw(true);
 			}
@@ -108,7 +108,7 @@
 		const isDisabled = isDisabledFor(id);
 		const nextIsDisabled = isDisabled && needsMultipleVisibleParents.includes(id);
 		if (isDisabled || (isFilled == isInvertedFor(id))) {
-			const extraColor = nextIsDisabled ? k.color_disabled : isDisabled || isFilled ? parentSensitiveColor : color;
+			const extraColor = nextIsDisabled ? colors.disabled : isDisabled || isFilled ? parentSensitiveColor : color;
 			return [$w_background_color, extraColor];
 		}
 		return [color, $w_background_color];
@@ -264,6 +264,7 @@
 						left: {getC(T_Tool.editingTools).x - editingToolsRadius}px;
 						top: {getC(T_Tool.editingTools).y + 0.5}px;
 						width: {k.editingTools_diameter + 1}px;
+						background-color:{colors.separator};
 						z-index: {T_Layer.tool_buttons};
 						position: absolute;
 						height: 1px;'>
@@ -302,7 +303,7 @@
 					zindex={T_Layer.tool_buttons}
 					hover_isReversed=true/>
 				<Triangle_Button
-					strokeColor={isDisabledFor(T_Tool.next) ? k.color_disabled : parentSensitiveColor}
+					strokeColor={isDisabledFor(T_Tool.next) ? colors.disabled : parentSensitiveColor}
 					hover_closure={(isHovering) => { return fillColorsFor(T_Tool.next, isHovering) }}
 					handle_mouse_state={(s_mouse) => handle_mouse_data(s_mouse, T_Tool.next)}
 					extraPath={svgPaths.circle_atOffset(toolDiameter, 4)}
@@ -311,7 +312,7 @@
 					size={toolDiameter}
 					name='next'/>
 				<Triangle_Button
-					strokeColor={isDisabledFor(T_Tool.delete_parent) ? k.color_disabled : parentSensitiveColor}
+					strokeColor={isDisabledFor(T_Tool.delete_parent) ? colors.disabled : parentSensitiveColor}
 					hover_closure={(isHovering) => { return fillColorsFor(T_Tool.delete_parent, isHovering) }}
 					handle_mouse_state={(s_mouse) => handle_mouse_data(s_mouse, T_Tool.delete_parent)}
 					extraPath={svgPaths.dash(toolDiameter, 4)}
@@ -322,7 +323,7 @@
 				<Triangle_Button
 					hover_closure={(isHovering) => { return fillColorsFor(T_Tool.add_parent, isHovering) }}
 					handle_mouse_state={(s_mouse) => handle_mouse_data(s_mouse, T_Tool.add_parent)}
-					strokeColor={isDisabledFor(T_Tool.add_parent) ? k.color_disabled : color}
+					strokeColor={isDisabledFor(T_Tool.add_parent) ? colors.disabled : color}
 					extraPath={svgPaths.t_cross(toolDiameter, 3)}
 					center={getC(T_Tool.add_parent)}
 					angle={Direction.left}

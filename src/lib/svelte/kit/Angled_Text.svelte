@@ -2,7 +2,7 @@
 	import { k, u, Point, debug, T_Layer } from '../../ts/common/Global_Imports';
 	import { w_thing_fontFamily } from '../../ts/common/Stores';
 	import { onMount } from 'svelte';
-	export let background_color = k.color_background;
+	export let background_color = colors.background;
 	export let font_family = $w_thing_fontFamily;
 	export let zindex = T_Layer.paging;
 	export let center = Point.zero;

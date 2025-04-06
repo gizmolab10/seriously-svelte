@@ -5,7 +5,6 @@ export default class Constants {
 	font_size = 14;
 	width_max = 200;
 	line_stretch = 22;
-	height_banner = 24;
 	tiny_font_size = 9;
 	halfIncrement = 0.5;
 	width_details = 200;
@@ -13,12 +12,13 @@ export default class Constants {
 	line_thickness = 1.5;
 	small_font_size = 11;
 	default_buttonSize = 16;
-	height_breadcrumbs = 23;
+	separator_thickness = 3;
 	threshold_longClick = 800;
 	innermost_ring_radius = 60;
 	editingTools_diameter = 64;
 	threshold_doubleClick = 700;
 	hid_unknown = 1000000000000;
+	fat_separator_thickness = 6;
 	ring_resizing_thickness = 30;
 	ring_rotation_thickness = 44;
 	diameterOf_outer_tinyDots = this.dot_size * 1.4;
@@ -28,14 +28,9 @@ export default class Constants {
 	title_default = 'Please, enter a title';
 	title_line = '------------------------';
 	name_bulkAdmin = 'Jonathan Sand';
-	color_highlighted = '#9e7daa';
-    color_disabled = 'lightGray';
-    thing_color_default = 'blue';
 	idBase_test = 'handcrafted';
-	color_background = 'white';
 	cursor_default = 'default';
 	generic_separator = '::';
-	color_default = 'black';
 	small_separator = ':::';
 	big_separator = '::::';
 	idBase_file = 'data';

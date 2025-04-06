@@ -76,7 +76,7 @@
 		arc_fill_color = $w_background_color;	// no effect because z-level not high enough
 		arc_stroke_color = colors.opacitize(color, 0.4);
 		fork_stroke_color = colors.opacitize(color, 0.3);
-		angled_text_color = $w_ancestry_focus.thing?.color ?? k.thing_color_default;
+		angled_text_color = $w_ancestry_focus.thing?.color ?? colors.default_forThings;
 		thumb_fill_color = colors.opacitize(color, ux.s_ring_rotation.isActive ? 0.15 : g_cluster.s_paging_rotation.thumb_opacity);
 		text_background_color = !ux.s_ring_resizing.isHovering ? $w_background_color : colors.opacitize(color, ux.s_ring_resizing.fill_opacity);
 	}

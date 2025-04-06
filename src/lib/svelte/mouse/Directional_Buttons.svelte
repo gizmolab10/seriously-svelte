@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import { k, Point, Direction } from '../../ts/common/Global_Imports';
+    import { k, Point, colors, Direction } from '../../ts/common/Global_Imports';
 	import { w_background_color } from '../../ts/common/Stores';
     import Triangle_Button from './Triangle_Button.svelte';
     export let display;
@@ -10,7 +10,7 @@
 	let directionals_rebuilds = 0;
 
 	function hover_closure(isHovering) {
-        return [isHovering ? k.color_default : $w_background_color, k.empty];
+        return [isHovering ? colors.default : $w_background_color, k.empty];
     }
 
 	function handle_mouse_state(s_mouse: S_Mouse): boolean {
@@ -39,7 +39,7 @@
                 handle_mouse_state={handle_mouse_state}
                 center={origin.offsetByY(-offsetY)}
                 hover_closure={hover_closure}
-                strokeColor={k.color_default}
+                strokeColor={colors.default}
                 angle={Direction.up}
                 size={buttonSize}
                 name='up'
@@ -51,7 +51,7 @@
                 center={origin.offsetByY(offsetY)}
                 hover_closure={hover_closure}
                 angle={Direction.down}
-                strokeColor={k.color_default}
+                strokeColor={colors.default}
                 size={buttonSize}
                 name='down'
             />

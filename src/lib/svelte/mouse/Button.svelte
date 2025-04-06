@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, ux, Rect, Point, T_Layer } from '../../ts/common/Global_Imports';
+	import { k, u, ux, Rect, Point, colors, T_Layer } from '../../ts/common/Global_Imports';
 	import { w_thing_fontFamily, w_background_color } from '../../ts/common/Stores';
 	import { S_Element, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/data/runtime/Identifiable';
@@ -8,11 +8,11 @@
 	import { onMount } from 'svelte';
 	export let background_color = $w_background_color;
 	export let closure = Handle_Result<S_Mouse>;
-	export let border_color = k.color_default;
+	export let border_color = colors.default;
 	export let height = k.default_buttonSize;
 	export let width = k.default_buttonSize;
 	export let padding = '0px 6px 1px 6px';
-	export let color = k.color_default;
+	export let color = colors.default;
 	export let position = 'absolute';
 	export let zindex = T_Layer.dots;
 	export let es_button: S_Element;

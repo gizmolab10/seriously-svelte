@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, k, p, u, ux, w, show, Point, layouts, svgPaths, signals, S_Element } from '../../ts/common/Global_Imports';
+	import { c, k, p, u, ux, w, show, Point, colors, layouts, svgPaths, signals, S_Element } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Banner, T_Element, T_Control, T_Hierarchy, T_Preference } from '../../ts/common/Global_Imports';
 	import { w_show_details, w_show_related, w_device_isMobile, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { w_t_graph, w_t_tree, w_count_resize, w_hierarchy, w_id_popupView } from '../../ts/common/Stores';
@@ -70,7 +70,7 @@
 			const es_control = ux.s_element_for(new Identifiable(t_control), T_Element.control, t_control);
 			es_control.hoverIgnore = [T_Control.details, T_Control.related].includes(t_control);
 			es_control.isSelected = (t_control == T_Control.related) && $w_show_related;
-			es_control.set_forHovering(k.color_default, 'pointer');
+			es_control.set_forHovering(colors.default, 'pointer');
 			elementShown_byControlType[t_control] = total > 0;
 			es_control_byType[t_control] = es_control;
 		}
@@ -170,7 +170,7 @@
 						<svg
 							id='shrink-svg'>
 							<path
-								stroke=k.color_default
+								stroke=colors.default
 								fill=transparent
 								id='shrink-path'
 								d={svgPaths.dash(size_big, 2)}/>
@@ -189,7 +189,7 @@
 						<svg
 							id='enlarge-svg'>
 							<path
-								stroke=k.color_default
+								stroke=colors.default
 								fill=transparent
 								id='enlarge-path'
 								d={svgPaths.t_cross(size_big, 2)}/>

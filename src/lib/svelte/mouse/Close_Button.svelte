@@ -1,18 +1,18 @@
 <script lang='ts'>
-	import { k, u, Size, Point, T_Layer, svgPaths } from '../../ts/common/Global_Imports';
+	import { k, u, Size, Point, colors, T_Layer, svgPaths } from '../../ts/common/Global_Imports';
     import { w_id_popupView, w_background_color } from '../../ts/common/Stores';
 	import Mouse_Responder from './Mouse_Responder.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
     export let name = 'generic close';
     export let size = 20;
-	let stroke = k.color_default;
+	let stroke = colors.default;
 	let fill = $w_background_color;
 
 	function hover_up_closure(s_mouse) {
 		if (s_mouse.isHover) {
 			const isHovering = !s_mouse.isOut;
-			fill = isHovering ? k.color_default : $w_background_color;
-			stroke = isHovering ? $w_background_color : k.color_default;
+			fill = isHovering ? colors.default : $w_background_color;
+			stroke = isHovering ? $w_background_color : colors.default;
 		} else if (s_mouse.isUp) {
 			$w_id_popupView = null;
 		}
@@ -31,7 +31,7 @@
 		fill={fill}
 		width={size}
 		height={size}
-		stroke={k.color_default}
+		stroke={colors.default}
 		svgPath={svgPaths.circle_atOffset(size, size - 2)}
 	/>
     <SVGD3 name='closeInside'

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, k, p, ux, show, Rect, Size, Point, Thing, debug, signals, Ancestry } from '../../ts/common/Global_Imports';
+	import { c, k, p, ux, show, Rect, Size, Point, Thing, debug, colors, signals, Ancestry } from '../../ts/common/Global_Imports';
 	import { w_ancestry_focus, w_ancestries_grabbed, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { T_Info, T_Trait, T_Layer, T_Element, T_Preference } from '../../ts/common/Global_Imports';
 	import { w_hierarchy, w_color_trigger, w_info_title } from '../../ts/common/Stores';
@@ -30,7 +30,7 @@
 	let thingHID: Integer | null = thing?.hid;
 	let information: Array<Dictionary> = [];
 	let grabs = $w_ancestries_grabbed;
-	let color = k.thing_color_default;
+	let color = colors.default_forThings;
 	let thing_title = thing?.title;
 	let color_origin = Point.zero;
 	let tops: Array<number> = [];
@@ -65,7 +65,7 @@
 	}
 
 	setup_tops();
-	es_info.set_forHovering(k.color_default, 'pointer');
+	es_info.set_forHovering(colors.default, 'pointer');
 	
 	onMount(() => {
 		const handler = signals.handle_rebuild_andRecreate(1, (ancestry) => {
@@ -205,6 +205,7 @@
 						title='title'
 						width={info_width}
 						top={tops[TI.before_title]}
+						thickness={k.separator_thickness}
 						title_font_size={separator_font_size}/>
 					<div style='
 						white-space:pre;
@@ -215,8 +216,10 @@
 						{thing_title.clipWithEllipsisAt(30)}
 					</div>
 					<Separator
+						left=5
+						width={info_width}
 						top={tops[TI.after_title]}
-						left=5 width={info_width}/>
+						thickness={k.separator_thickness}/>
 				{/key}
 				<Table
 					array={information}
@@ -233,11 +236,13 @@
 						left:{-margin}px;
 						position:absolute;
 						width:{k.width_details}px;
-						z-index:{T_Layer.frontmost};'>
+						z-index:{T_Layer.frontmost};
+						height:{k.separator_thickness}px;
+						background-color:{colors.separator};'>
 				</div>
 				<Text_Editor
 					label='consequence'
-					color=k.color_default
+					color=colors.default
 					top={tops[TI.consequence]}
 					width={text_box_size.width}
 					height={text_box_size.height}
@@ -246,7 +251,7 @@
 				<Text_Editor
 					label='quest'
 					top={tops[TI.quest]}
-					color=k.color_default
+					color=colors.default
 					original_text={thing.quest}
 					width={text_box_size.width}
 					height={text_box_size.height}

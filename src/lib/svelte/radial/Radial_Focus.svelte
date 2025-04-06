@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, k, ux, w, Size, Point, debug, signals, svgPaths, Svelte_Wrapper } from '../../ts/common/Global_Imports';
+	import { c, k, ux, w, Size, Point, debug, colors, signals, svgPaths, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { w_background_color, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { w_color_trigger, w_s_title_edit, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { T_Tool, T_Layer, T_Element, T_SvelteComponent } from '../../ts/common/Enumerations';
@@ -11,7 +11,7 @@
 	const es_title = ux.s_element_for($w_ancestry_focus, T_Element.radial_focus, k.empty);
 	let svg_strokeColor = 'transparent';
 	let svg_fillColor = 'transparent';
-	let color = k.thing_color_default;
+	let color = colors.default_forThings;
 	let origin_ofWidget = Point.zero;
 	let center_ofBorder = Point.zero;
 	let origin_ofTitle = Point.zero;

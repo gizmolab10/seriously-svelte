@@ -1,6 +1,11 @@
 import { transparentize } from 'color2k';
 
 export class Colors {
+    default_forThings = 'blue';
+	separator = '#ddddddd0';
+    disabled = 'lightGray';
+	background = 'white';
+	default = 'black';
 
 	opacitize(color: string, amount: number): string {
 		return transparentize(color, 1 - amount);

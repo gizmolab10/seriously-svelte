@@ -9,7 +9,7 @@
 	import D_Tools from '../details/D_Tools.svelte';
 	import D_Info from '../details/D_Info.svelte';
 	const titles = [T_Details[T_Details.storage], T_Details[T_Details.tools], T_Details[T_Details.display], T_Details[T_Details.info]];
-	const heights = [119, 40, 80, 0];
+	const heights = [116, 40, 80, 0];
 	let details_rebuilds = 0;
 	let tops = [0, 0, 0, 0];
 
@@ -22,7 +22,7 @@
 	}
 
 	function update_tops() {
-		let top = layouts.bottom_ofBannerAt(T_Banner.crumbs);
+		let top = layouts.top_ofBannerAt(T_Banner.crumbs) + 14;
 		let index = 0;
 		let indices = $w_t_details;
 		while (index <= T_Details.info) {
@@ -53,8 +53,8 @@
 			titles={titles}
 			allow_multiple={true}
 			name='details-selector'
-			origin={new Point(6, 7)}
 			selected={$w_t_details}
+			origin={new Point(6, 3)}
 			selection_closure={selection_closure}/>
 		{#if showingDetails_ofType(T_Details.storage)}
 			<Separator title='storage' top={tops[T_Details.storage] - 8}/>

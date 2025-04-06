@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, ux, Rect, Size, Point, G_Segment } from '../../ts/common/Global_Imports';
+	import { k, u, ux, Rect, Size, Point, colors, G_Segment } from '../../ts/common/Global_Imports';
 	import { w_background_color } from '../../ts/common/Stores';
 	import type { Handle_Result } from '../../ts/common/Types';
 	import Segment from './Segment.svelte';
@@ -7,7 +7,7 @@
 	export let selected: Array<string> = [];
 	export let titles: Array<string> = [];
 	export let fill = $w_background_color;
-	export let stroke = k.color_default;
+	export let stroke = colors.default;
 	export let allow_multiple = false;
 	export let height = k.row_height + 1;
 	export let font_size = '0.95em';

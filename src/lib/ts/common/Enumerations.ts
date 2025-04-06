@@ -1,8 +1,3 @@
-export enum T_Banner {
-	controls,
-	crumbs,
-}
-
 export enum T_Graph {
 	radial = 'radial',
 	tree   = 'tree',
@@ -45,6 +40,12 @@ export enum T_Curve {
 	flat = 'flat',
 	down = 'down',
 	up	 = 'up',
+}
+
+export enum T_Banner {
+	controls,
+	crumbs,
+	graph,
 }
 
 export enum T_Details {	// order must not change

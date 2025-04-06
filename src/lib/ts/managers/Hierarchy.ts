@@ -1,4 +1,4 @@
-import { c, k, p, u, ux, show, User, Thing, Trait, debug, files, signals, layouts, Access } from '../common/Global_Imports';
+import { c, k, p, u, ux, show, User, Thing, Trait, debug, files, colors, signals, layouts, Access } from '../common/Global_Imports';
 import { T_Tool, T_Info, T_Thing, T_Trait, T_Create, T_Control, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { Ancestry, Predicate, Relationship, S_Mouse, S_Alteration, S_Title_Edit } from '../common/Global_Imports';
 import { w_storage_update_trigger, w_ancestry_showing_tools, w_ancestries_grabbed } from '../common/Stores';
@@ -246,7 +246,7 @@ export class Hierarchy {
 		if (!!founds && founds.length > 0) {
 			return founds[0];
 		}
-		const lost_and_found = this.thing_remember_runtimeCreateUnique(this.db.idBase, Identifiable.newID(), 'lost and found', k.color_default, T_Thing.found);
+		const lost_and_found = this.thing_remember_runtimeCreateUnique(this.db.idBase, Identifiable.newID(), 'lost and found', colors.default, T_Thing.found);
 		await this.ancestry_extended_byAddingThing_toAncestry_remember_persistentCreate_relationship(lost_and_found, this.rootAncestry);
 		return lost_and_found;
 	}
