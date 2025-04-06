@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { w_color_trigger, w_background_color, w_thing_fontFamily, w_ancestry_focus } from '../../ts/common/Stores';
-	import { k, u, ux, Point, Thing, colors, signals, databases } from '../../ts/common/Global_Imports';
+	import { k, u, ux, Point, Thing, colors, layouts, signals, databases } from '../../ts/common/Global_Imports';
 	import { T_Tool, T_Element, S_Element } from '../../ts/common/Global_Imports';
 	import Button from './Button.svelte';
 	import { onMount } from 'svelte';
@@ -20,7 +20,7 @@
 	let colorStyles = k.empty;
 	let style = k.empty;
 		
-	center = new Point(left + width / 2, height - 1);
+	center = new Point(left + width / 2, height / 2);
 	updateColors();
 
 	$: {
@@ -76,7 +76,7 @@
 			} else if (s_mouse.isUp) {
 				ancestry.grabOnly();
 				if (ancestry.becomeFocus()) {
-					ux.grand_build();
+					layouts.grand_build();
 				}
 			}
 		}

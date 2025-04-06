@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { c, k, u, ux, show, Rect, Size, Point, Thing, debug, T_Layer, T_Tool } from '../../ts/common/Global_Imports';
-	import { databases, Svelte_Wrapper, T_Alteration, T_SvelteComponent } from '../../ts/common/Global_Imports';
+	import { c, k, u, ux, show, Rect, Size, Point, Thing, debug, layouts, signals } from '../../ts/common/Global_Imports';
+	import { svgPaths, databases, Svelte_Wrapper, T_Alteration, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_t_countDots, w_color_trigger, w_ancestries_grabbed } from '../../ts/common/Stores';
-	import { signals, svgPaths, T_Graph, T_Element } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Tool, T_Graph, T_Element } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { w_background_color } from '../../ts/common/Stores';
 	import SVGD3 from '../kit/SVGD3.svelte';
@@ -87,7 +87,7 @@
 	}
 
 	function svgPaths_update() {
-		if (ux.inRadialMode) {
+		if (layouts.inRadialMode) {
 			svgPathFor_dragDot = svgPaths.circle_atOffset(size, size - 1);
 		} else {
 			svgPathFor_dragDot = svgPaths.oval(size, false);
@@ -103,7 +103,7 @@
 				svgPathFor_ellipses = svgPaths.ellipses(6, 0.5, false, count, size / 2);
 			}
 			if (thing.hasRelated && show.related_dots) {
-				const x = (ux.inRadialMode ? 3.2 : 4.5) * (points_right ? -1 : 1);
+				const x = (layouts.inRadialMode ? 3.2 : 4.5) * (points_right ? -1 : 1);
 				svgPathFor_related = svgPaths.circle_atOffset(size, 3, Point.x(x));
 			}
 		}
@@ -112,7 +112,7 @@
 	function updateColors_forHovering(isOut) {
 		if (!ux.isAny_rotation_active) {
 			isHovering = !isOut;
-			const usePointer = (!ancestry.isGrabbed || ux.inRadialMode) && ancestry.hasChildRelationships && !ux.isAny_rotation_active;
+			const usePointer = (!ancestry.isGrabbed || layouts.inRadialMode) && ancestry.hasChildRelationships && !ux.isAny_rotation_active;
 			const cursor = usePointer ? 'pointer' : 'normal';
 			if (!!es_drag && !!thing) {
 				es_drag.set_forHovering(thing.color, cursor);

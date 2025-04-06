@@ -214,7 +214,7 @@ export default class DBFirebase extends DBCommon {
 			setTimeout(() => { // wait in case a thing involved in this relationship arrives in the data
 				this.hierarchy.relationships_refreshKnowns();
 				this.hierarchy.rootAncestry.order_normalizeRecursive(true);
-				ux.grand_build();
+				layouts.grand_build();
 			}, 20);
 		}
 		this.hierarchy.ancestries_fullRebuild();		// first recreate ancestries
@@ -478,7 +478,7 @@ export default class DBFirebase extends DBCommon {
 			}
 			setTimeout(() => { // wait in case a thing involved in this trait arrives in the data
 				h.traits_refreshKnowns();
-				ux.grand_build();
+				layouts.grand_build();
 			}, 20);
 		}
 		return true;

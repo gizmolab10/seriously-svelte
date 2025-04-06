@@ -1,6 +1,6 @@
-export enum T_Alteration {
-	deleting = 'deleting',
-	adding	 = 'adding',
+export enum T_Banner {
+	controls,
+	crumbs,
 }
 
 export enum T_Graph {
@@ -16,6 +16,11 @@ export enum T_Info {
 export enum T_Storage {
 	import = 'import',
 	export = 'export',
+}
+
+export enum T_Alteration {
+	deleting = 'deleting',
+	adding	 = 'adding',
 }
 
 export enum T_Hierarchy {

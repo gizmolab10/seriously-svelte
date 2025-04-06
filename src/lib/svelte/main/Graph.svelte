@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, k, w, ux, Rect, Point, debug, T_Layer, signals, T_Graph } from '../../ts/common/Global_Imports';
+	import { c, k, w, Rect, Point, debug, layouts, T_Layer, signals, T_Graph } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_t_graph, w_ancestry_focus } from '../../ts/common/Stores';
 	import { w_device_isMobile, w_user_graph_offset } from '../../ts/common/Stores';
 	import Radial_Graph from '../radial/Radial_Graph.svelte';
@@ -27,7 +27,7 @@
 	onMount(() => {
 		update_style();
 		const handle_rebuild = signals.handle_rebuildGraph(1, (ancestry) => {
-			ux.grand_layout();
+			layouts.grand_layout();
 			graph_rebuilds += 1;
 		});
 		return () => { handle_rebuild.disconnect(); };
@@ -53,7 +53,7 @@
 	
 	$: {
 		const _ = $w_graph_rect + $w_ancestry_focus + $w_device_isMobile + $w_t_graph;
-		ux.grand_layout();
+		layouts.grand_layout();
 	}
 	
 	function update_style() {

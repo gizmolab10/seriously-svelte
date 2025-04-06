@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { T_Tool, T_Layer, T_Signal, T_RingZone, T_Element, T_Rebuild } from '../../ts/common/Global_Imports';
+	import { k, u, ux, Rect, Point, debug, layouts, signals } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_show_details, w_ancestry_focus } from '../../ts/common/Stores';
-	import { k, u, ux, Rect, Point, debug, signals } from '../../ts/common/Global_Imports';
 	import { w_user_graph_offset, w_thing_fontFamily } from '../../ts/common/Stores';
 	import Radial_Necklace from './Radial_Necklace.svelte';
 	import Radial_Rings from './Radial_Rings.svelte';
@@ -33,7 +33,7 @@
 	//	edit titles (keydown terminates edit) BROKEN
 	//	displays editing tools when asked by user
 	
-	ux.grand_layout();
+	layouts.grand_layout();
 	debug.log_tools(` CLUSTERS`);
 
 	onMount(() => {

@@ -1,4 +1,4 @@
-import { ux, debug, Point, Ancestry, T_Graph } from '../../common/Global_Imports';
+import { debug, Point, layouts, Ancestry, T_Graph } from '../../common/Global_Imports';
 
 export default class G_TreeChildren {
 	origin_ofLine = Point.zero;
@@ -12,7 +12,7 @@ export default class G_TreeChildren {
 		
 	layout_children() {
 		const ancestry = this.ancestry;
-		if (!!ancestry && (ancestry.isExpanded || ancestry.isRoot) && ux.inTreeMode) {
+		if (!!ancestry && (ancestry.isExpanded || ancestry.isRoot) && layouts.inTreeMode) {
 			debug.log_layout(`children ${ancestry.g_widget.origin_ofWidget.x} ${ancestry.id}`);
 			const childAncestries = ancestry.childAncestries;
 			const halfHeight = ancestry.visibleProgeny_halfHeight;

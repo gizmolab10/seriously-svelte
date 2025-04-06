@@ -52,7 +52,7 @@
 				style='
 					position:absolute;
 					color:{thing.color};
-					top:{size / 2 - 2}px;
+					top:{size / 2 - 8}px;
 					left:{lefts[index] - size + 4}px;'>
 				{separator}
 			</div>

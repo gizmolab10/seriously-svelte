@@ -3,7 +3,7 @@
 import { w_t_database, w_thing_fontFamily } from '../common/Stores';
 import Identifiable from '../data/runtime/Identifiable';
 import Ancestry from '../data/runtime/Ancestry';
-import { w } from '../geometry/other/G_Window';
+import { w } from '../geometry/common/G_Window';
 import { T_Quadrant } from '../common/Angle';
 import { T_Browser } from './Enumerations';
 import type { Dictionary } from './Types';

@@ -9,7 +9,7 @@
 	export let fill = $w_background_color;
 	export let stroke = k.color_default;
 	export let allow_multiple = false;
-	export let height = k.row_height;
+	export let height = k.row_height + 1;
 	export let font_size = '0.95em';
 	export let origin = Point.zero;
     export let name = k.empty;

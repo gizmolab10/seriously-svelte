@@ -1,5 +1,5 @@
 import { Direction, Predicate, Hierarchy, databases, Relationship, Svelte_Wrapper } from '../../common/Global_Imports';
-import { c, k, u, ux, show, Rect, Size, Point, Thing, debug, wrappers, svgPaths } from '../../common/Global_Imports';
+import { c, k, u, show, Rect, Size, Thing, debug, layouts, wrappers, svgPaths } from '../../common/Global_Imports';
 import { T_Graph, T_Element, T_Predicate, T_Alteration, T_SvelteComponent } from '../../common/Global_Imports';
 import { w_hierarchy, w_ancestry_focus, w_ancestry_showing_tools } from '../../common/Stores';
 import { G_Widget, S_Paging, S_Title_Edit, G_TreeLine } from '../../common/Global_Imports';
@@ -87,7 +87,7 @@ export default class Ancestry extends Identifiable {
 	get visibleProgeny_halfSize():				Size { return this.visibleProgeny_size.dividedInHalf; }
 	get lastChild():						   Thing { return this.children.slice(-1)[0]; }
 	get firstChild():						   Thing { return this.children[0]; }
-	get g_widget():							G_Widget { return this.g_widget_forMode(get(w_t_graph)); }
+	get g_widget():							G_Widget { return this.g_widget_forGraphMode(get(w_t_graph)); }
 	get hierarchy():					   Hierarchy { return get(w_hierarchy); }
 	get titleRect():					 Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
 	get thing():						Thing | null { return this.hierarchy.thing_forAncestry(this); }
@@ -116,7 +116,7 @@ export default class Ancestry extends Identifiable {
 	get points_right(): boolean {
 		const radial_points_right = this.g_widget?.widget_pointsRight ?? true;
 		const hasVisibleChildren = this.isExpanded && this.hasChildRelationships;
-		return ux.inRadialMode ? radial_points_right : !hasVisibleChildren;
+		return layouts.inRadialMode ? radial_points_right : !hasVisibleChildren;
 	}
 
 	get isEditable(): boolean {
@@ -142,7 +142,7 @@ export default class Ancestry extends Identifiable {
 
 	get s_paging(): S_Paging | null {
 		const predicate = this.predicate;
-		const g_radialGraph = ux.g_radialGraph;
+		const g_radialGraph = layouts.g_radialGraph;
 		if (!!predicate && !!g_radialGraph) {
 			const g_cluster = g_radialGraph?.g_cluster_forPredicate_toChildren(predicate, this.thing_isChild)
 			return g_cluster?.s_ancestryPaging(this) ?? null;
@@ -153,7 +153,7 @@ export default class Ancestry extends Identifiable {
 	get firstVisibleChildAncestry(): Ancestry {
 		const childAncestries = this.childAncestries;
 		const first = childAncestries[0]
-		if (ux.inRadialMode) {
+		if (layouts.inRadialMode) {
 			const s_paging = this.s_paging
 			const maybe = s_paging?.ancestry_atIndex(childAncestries);
 			if (!!maybe) {
@@ -164,7 +164,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	get isVisible(): boolean {
-		if (ux.inTreeMode) {
+		if (layouts.inTreeMode) {
 			const focus = get(w_ancestry_focus);
 			const incorporates = this.incorporates(focus);
 			const expanded = this.isAllExpandedFrom(focus);
@@ -299,7 +299,7 @@ export default class Ancestry extends Identifiable {
 		return ids.slice(-(Math.max(1, back)))[0];
 	}
 
-	g_widget_forMode(t_graph: T_Graph) {
+	g_widget_forGraphMode(t_graph: T_Graph) {
 		let g_widget = this.g_widgets[t_graph];
 		if (!g_widget) {
 			g_widget = G_Widget.empty(this);
@@ -390,8 +390,10 @@ export default class Ancestry extends Identifiable {
 		return true;
 	}
 
+	static readonly SVG: unique symbol;
+
 	svgPathFor_tinyDots_outsideReveal(points_toChild: boolean): string | null {
-		const in_radial_mode = ux.inRadialMode;
+		const in_radial_mode = layouts.inRadialMode;
 		const isVisible_forChild = this.hasChildRelationships && show.children_dots && (in_radial_mode ? true : !this.isExpanded);
 		const isVisible_inRadial = points_toChild ? isVisible_forChild : this.hasParentRelationships && (this.isUnidirectional ? show.parent_dots : show.related_dots);
 		const show_outside_tinyDots = in_radial_mode ? isVisible_inRadial : isVisible_forChild;
@@ -529,6 +531,8 @@ export default class Ancestry extends Identifiable {
 		}
 		return [crumb_things, widths, lefts, parent_widths];
 	}
+
+	static readonly BIDIRECTIONALS: unique symbol;
 	
 	get bidirectional_ancestries(): Array<Ancestry> {
 		let ancestries: Array<Ancestry> = []
@@ -562,7 +566,7 @@ export default class Ancestry extends Identifiable {
 
 	g_line_toOther(other: Ancestry) : G_TreeLine {
 		const offset_x = -(k.line_stretch + k.dot_size / 2);
-		const offset_y = 37;
+		const offset_y = 0.5;
 		const origin = this.g_widget.absolute_center_ofReveal.offsetByY(-2.5);
 		const extent = other.g_widget.absolute_center_ofDrag;
 		const rect = Rect.createExtentRect(origin, extent).offsetByXY(offset_x, offset_y);
@@ -594,16 +598,16 @@ export default class Ancestry extends Identifiable {
 			w_s_title_edit?.set(null);
 			if (!!get(w_s_alteration)) {
 				this.ancestry_alterMaybe(this);
-			} else if (!shiftKey && ux.inRadialMode) {
+			} else if (!shiftKey && layouts.inRadialMode) {
 				this.becomeFocus();
-				ux.grand_build();
+				layouts.grand_build();
 				return;
 			} else if (shiftKey || this.isGrabbed) {
 				this.toggleGrab();
 			} else {
 				this.grabOnly();
 			}
-			ux.grand_layout();
+			layouts.grand_layout();
 		}
 	}
 
@@ -719,7 +723,7 @@ export default class Ancestry extends Identifiable {
 						const toolsThing = toolsAncestry.thing;
 						if (!!toolsThing) {
 							await this.hierarchy.ancestry_extended_byAddingThing_toAncestry_remember_persistentCreate_relationship(toolsThing, ancestry, kind);
-							ux.grand_build();
+							layouts.grand_build();
 						}
 						break;
 				}
@@ -828,7 +832,7 @@ export default class Ancestry extends Identifiable {
 			return array;
 		});
 		let ancestries = get(w_ancestries_grabbed) ?? [];
-		if (ancestries.length == 0 && ux.inTreeMode) {
+		if (ancestries.length == 0 && layouts.inTreeMode) {
 			rootAncestry.grabOnly();
 		} else {
 			this.toggle_editingTools(); // do not show editingTools for root
@@ -850,7 +854,7 @@ export default class Ancestry extends Identifiable {
 			if (length == 0) {		// friendly for first-time users
 				this.hierarchy.ancestry_rebuild_runtimeBrowseRight(this, up, SHIFT, EXTREME, true);
 			} else if (!!thing) {
-				const is_radial_mode = ux.inRadialMode;
+				const is_radial_mode = layouts.inRadialMode;
 				if ((this.thing_isChild) || !is_radial_mode) {
 					const index = siblings.indexOf(thing);
 					const newIndex = index.increment(!up, length);

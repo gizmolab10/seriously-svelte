@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, k, u, ux, Thing, Point, Angle, debug, signals, Ancestry, Svelte_Wrapper } from '../../ts/common/Global_Imports';
+	import { c, k, u, ux, Thing, Point, Angle, debug, layouts, signals, Ancestry, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Widget, T_Signal, T_Element } from '../../ts/common/Global_Imports';
 	import { G_Widget, S_Element, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_ancestries_grabbed } from '../../ts/common/Stores';
@@ -111,7 +111,7 @@
 	function layout_maybe() {
 		if (!!ancestry && s_widget.update_forStateChange) {
 			const showBorder = ancestry.isGrabbed || ($w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.editing) ?? false);
-			const showBackground = showBorder || ux.inRadialMode;
+			const showBackground = showBorder || layouts.inRadialMode;
 			background = showBackground ? `background-color: ${$w_background_color}` : k.empty
 			layout();
 		}
@@ -122,14 +122,14 @@
 		widget.style.top = `${top}px`;
 		widget.style.left = `${left}px`;
 		widget.style.border = es_widget.border;		// avoid rebuilding by injecting style changes
-		widget.style.backgroundColor = ancestry.isGrabbed || ux.inRadialMode ? $w_background_color : 'transparent';
+		widget.style.backgroundColor = ancestry.isGrabbed || layouts.inRadialMode ? $w_background_color : 'transparent';
 		debug.log_reposition(`  reposition (grabbed: ${ancestry.isGrabbed}) (border: ${es_widget.border}) "${ancestry.title}"`);
 	}
 
 	function layout() {
 		g_widget.layout_widget_andLine();
 		const hasExtra_onRight = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
-		const onRight = ux.inRadialMode ? 0 : 21 + (hasExtra_onRight ? 0.5 : 0);
+		const onRight = layouts.inRadialMode ? 0 : 21 + (hasExtra_onRight ? 0.5 : 0);
 		const origin_ofWidget = g_widget.origin.offsetBy(g_widget.offset_ofWidget);
 		const width = g_widget.width_ofWidget;
 		const onLeft = points_right ? 1 : 14;
@@ -160,7 +160,7 @@
 				border : {es_widget.border};
 				border-radius : {border_radius}px;
 				width : {g_widget.width_ofWidget}px;
-				background-color : {ancestry.isGrabbed || ux.inRadialMode ? $w_background_color : 'transparent'};
+				background-color : {ancestry.isGrabbed || layouts.inRadialMode ? $w_background_color : 'transparent'};
 			'>
 			<Widget_Drag
 				name = {es_drag.name}

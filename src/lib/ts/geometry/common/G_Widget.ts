@@ -1,5 +1,5 @@
 import { S_Element, G_TreeLine, G_TreeChildren } from '../../common/Global_Imports';
-import { k, ux, Rect, Size, Point, Ancestry } from '../../common/Global_Imports';
+import { k, ux, Rect, Size, Point, layouts, Ancestry } from '../../common/Global_Imports';
 import { w_graph_rect, w_t_graph, w_device_isMobile} from '../../common/Stores';
 import { T_Widget, T_Element, T_Graph } from '../../common/Global_Imports';
 import { w_show_details, w_show_related } from '../../common/Stores';
@@ -60,13 +60,13 @@ export default class G_Widget {
 	get width_ofBothDots(): number {
 		const reveal_width = this.showingReveal ? k.dot_size : 0;
 		const radial_extra = this.widget_pointsRight ? 11 : -0.5;
-		const drag_width = ux.inTreeMode ? 0 : k.dot_size + radial_extra;
+		const drag_width = layouts.inTreeMode ? 0 : k.dot_size + radial_extra;
 		return drag_width + reveal_width;
 	}
 	
 	get origin(): Point {
 		const isFocus = this.ancestry?.isFocus ?? false;
-		const t_widget = ux.inTreeMode ? isFocus ? T_Widget.focus : T_Widget.tree : T_Widget.radial;
+		const t_widget = layouts.inTreeMode ? isFocus ? T_Widget.focus : T_Widget.tree : T_Widget.radial;
 		switch (t_widget) {
 			case T_Widget.radial: return this.origin_ofRadial;
 			case T_Widget.focus:  return this.origin_ofWidget;
@@ -86,7 +86,7 @@ export default class G_Widget {
 
 	layout_tree_fromFocus() {
 		const graphRect = get(w_graph_rect);
-		if (!!graphRect && ux.inTreeMode) {
+		if (!!graphRect && layouts.inTreeMode) {
 			const offsetY = graphRect.origin.y + 1;
 			const childrenSize = this.ancestry.visibleProgeny_size;
 			const offsetX_ofFirstReveal = (this.ancestry.thing?.titleWidth ?? 0) / 2 - 2;
@@ -132,7 +132,7 @@ export default class G_Widget {
 	layout_necklaceWidget(
 		origin_ofWidget: Point,
 		widget_pointsRight: boolean) {
-			if (ux.inRadialMode) {
+			if (layouts.inRadialMode) {
 				this.forGraphMode = T_Graph.radial;
 				this.origin_ofWidget = origin_ofWidget;
 				this.widget_pointsRight = widget_pointsRight;
@@ -169,20 +169,20 @@ export default class G_Widget {
 			const offset_forDirection = this.widget_pointsRight ? -7 : 34.5 - widget_width;
 			const offset_forBorder = showingBorder ? 0 : 1;
 			const drag_x_forLeft = (widget_width - (showingReveal ? 2.5 : 2));
-			const drag_x = this.widget_pointsRight ? (ux.inRadialMode ? 3 : 2) : drag_x_forLeft;
-			const drag_y = ux.inRadialMode ? 2.8 : 2.7;
-			this.origin_ofTitle = Point.x(ux.inRadialMode ? offset_ofTitle_forRadial : k.dot_size + 5);
+			const drag_x = this.widget_pointsRight ? (layouts.inRadialMode ? 3 : 2) : drag_x_forLeft;
+			const drag_y = layouts.inRadialMode ? 2.8 : 2.7;
+			this.origin_ofTitle = Point.x(layouts.inRadialMode ? offset_ofTitle_forRadial : k.dot_size + 5);
 			this.origin_ofRadial = this.origin_ofWidget.offsetByXY(-radial_x, 4 - k.dot_size);
 			this.center_ofDrag = new Point(drag_x, drag_y).offsetEquallyBy(k.dot_size / 2);
 			this.offset_ofWidget = Point.x(offset_forDirection).offsetEquallyBy(offset_forBorder);
 			this.width_ofWidget = widget_width;
 			if (showingReveal) {
 				const reveal_y = k.dot_size * 0.70;
-				const offset_x_forPointsRight = widget_width - (ux.inRadialMode ? 21 : -1);
+				const offset_x_forPointsRight = widget_width - (layouts.inRadialMode ? 21 : -1);
 				const reveal_x = k.dot_size - (this.widget_pointsRight ? -offset_x_forPointsRight : 3);
 				this.center_ofReveal = new Point(reveal_x, reveal_y);
 			}
-			if (ux.inTreeMode) {
+			if (layouts.inTreeMode) {
 				this.origin_ofChildrenTree = this.g_line.rect.extent.offsetBy(offset_ofChildrenTree);
 				this.g_line.layout();
 				if (ancestry.isFocus) {
@@ -201,7 +201,7 @@ export default class G_Widget {
 	}
 
 	private layout_bidirectional_lines() {
-		if (ux.inTreeMode) {
+		if (layouts.inTreeMode) {
 			this.g_bidirectionalLines = [];
 			if (get(w_show_related)) {
 				const g_lines = this.ancestry.g_lines_forBidirectionals;

@@ -1,10 +1,9 @@
 import { S_Mouse, S_Widget, S_Element, S_Expansion, S_Rotation, S_Thing_Pages } from '../common/Global_Imports';
-import { k, w, debug, signals, wrappers, Ancestry, Mouse_Timer } from '../common/Global_Imports';
-import { T_Element, T_RingZone, T_Graph, T_SvelteComponent } from '../common/Enumerations';
-import { w_t_graph, w_show_details, w_ancestry_focus } from '../common/Stores';
+import { k, w, debug, layouts, wrappers, Ancestry, G_Segment, Mouse_Timer } from '../common/Global_Imports';
+import { T_Banner, T_Element, T_RingZone, T_SvelteComponent } from '../common/Enumerations';
 import { w_ring_rotation_radius, w_mouse_location_scaled } from '../common/Stores';
-import { G_Segment, G_TreeGraph, G_RadialGraph } from '../common/Global_Imports';
 import Identifiable from '../data/runtime/Identifiable';
+import { w_show_details } from '../common/Stores';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
 
@@ -18,10 +17,8 @@ export default class User_Interaction {
 	s_element_byName: { [name: string]: S_Element } = {};
 	s_mouse_byName: { [name: string]: S_Mouse } = {};
 	s_cluster_rotation = new S_Rotation();
-	g_radialGraph = new G_RadialGraph();
 	s_ring_resizing	= new S_Expansion();
 	s_ring_rotation	= new S_Rotation();
-	g_treeGraph = new G_TreeGraph();
 	mouse_responder_number = 0;
 	isEditing_text = false;
 
@@ -37,8 +34,6 @@ export default class User_Interaction {
 	//									//
 	//////////////////////////////////////
 	
-	get inTreeMode(): boolean { return get(w_t_graph) == T_Graph.tree; }
-	get inRadialMode(): boolean { return get(w_t_graph) == T_Graph.radial; }
 	get s_paging_rotations(): Array<S_Rotation> { return Object.values(this.s_paging_rotation_byName); }
 	get isAny_paging_arc_active(): boolean { return this.s_paging_rotations.filter(s => s.isActive).length > 0; }
 	get isAny_paging_arc_hovering(): boolean { return this.s_paging_rotations.filter(s => s.isHovering).length > 0; }
@@ -71,9 +66,9 @@ export default class User_Interaction {
 		const mouse_vector = w.mouse_vector_ofOffset_fromGraphCenter();
 		const widgets = wrappers.wrappers_ofType_atMouseLocation(T_SvelteComponent.widget);
 		const outsideDetails = !!scaled && scaled.x > (!get(w_show_details) ? 0 : k.width_details);
-		const insideGraphZone = !!scaled && outsideDetails && scaled.y > k.height_banner + k.height_breadcrumbs;
+		const insideGraphZone = !!scaled && outsideDetails && scaled.y > layouts.bottom_ofBannerAt(T_Banner.crumbs);
 		if (!!mouse_vector && widgets.length == 0 && insideGraphZone) {
-			const g_cluster = this.g_radialGraph.g_cluster_atMouseLocation;
+			const g_cluster = layouts.g_radialGraph.g_cluster_atMouseLocation;
 			const inner = get(w_ring_rotation_radius);
 			const distance = mouse_vector.magnitude;
 			const thick = k.ring_rotation_thickness;
@@ -93,14 +88,6 @@ export default class User_Interaction {
 			debug.log_cursor(` ring zone ${ring_zone} ${mouse_vector.verbose}`);
 		}
 		return ring_zone;
-	}
-
-	toggle_graphMode() {
-		switch (get(w_t_graph)) {
-			case T_Graph.tree: w_t_graph.set(T_Graph.radial); break;
-			case T_Graph.radial: w_t_graph.set(T_Graph.tree); break;
-		}
-		ux.grand_build();
 	}
 
 	s_element_for(identifiable: Identifiable | null, type: T_Element, subtype: string): S_Element {
@@ -135,19 +122,6 @@ export default class User_Interaction {
 				}
 			}
 		}
-	}
-
-	grand_build() {
-		signals.signal_rebuildGraph_fromFocus();
-	}
-
-	grand_layout() {
-		if (this.inTreeMode) {
-			this.g_treeGraph.grand_layout_tree();
-		} else {
-			this.g_radialGraph.grand_layout_radial();
-		}
-		signals.signal_reposition_widgets_fromFocus();
 	}
 
 }

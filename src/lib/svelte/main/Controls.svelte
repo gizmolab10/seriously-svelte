@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { T_Layer, T_Graph, T_Element, T_Control, T_Hierarchy, T_Preference } from '../../ts/common/Global_Imports';
-	import { w_t_graph, w_t_tree, w_count_resize, w_hierarchy, w_id_popupView } from '../../ts/common/Stores';
-	import { c, k, p, u, ux, w, show, Point, svgPaths, signals, S_Element } from '../../ts/common/Global_Imports';
+	import { c, k, p, u, ux, w, show, Point, layouts, svgPaths, signals, S_Element } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Graph, T_Banner, T_Element, T_Control, T_Hierarchy, T_Preference } from '../../ts/common/Global_Imports';
 	import { w_show_details, w_show_related, w_device_isMobile, w_thing_fontFamily } from '../../ts/common/Stores';
+	import { w_t_graph, w_t_tree, w_count_resize, w_hierarchy, w_id_popupView } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/data/runtime/Identifiable';
 	import { w_background_color } from '../../ts/common/Stores';
 	import Segmented from '../mouse/Segmented.svelte';
@@ -52,7 +52,7 @@
 	$: {
 		const _ = $w_t_graph;
 		const h = $w_hierarchy;
-		const needsExtra = ux.inTreeMode;
+		const needsExtra = layouts.inTreeMode;
 		const extra = needsExtra ? 110 : 0;
 		displayName = h.db.displayName;
 		displayName_width = u.getWidthOf(displayName);
@@ -60,11 +60,7 @@
 	}
 
 	function selection_closure(name: string, types: Array<string>) {
-		const type = types[0];	// only ever has one element
-		switch (name) {
-			case 'graph': $w_t_graph = type as T_Graph; break;
-			case 'tree':  $w_t_tree  = type as T_Hierarchy; break;
-		}
+		layouts.handle_mode_selection
 	}
 
 	function setup_forIDs() {
@@ -100,11 +96,11 @@
 {#if Object.values(es_control_byType).length > 0}
 	<div id='controls'
 		style='
-			top: 7px;
+			top: 0px;
 			left: 0px;
 			position: absolute;
 			z-index: {T_Layer.frontmost};
-			height: `${k.height_banner - 2}px`;'>
+			height: `${layouts.height_ofBannerAt(T_Banner.controls) - 2}px`;'>
 		{#if !$w_id_popupView}
 			{#key $w_background_color}
 				<Button
@@ -123,15 +119,15 @@
 					origin={Point.x(30)}
 					selected={[$w_t_graph]}
 					titles={[T_Graph.tree, T_Graph.radial]}
-					selection_closure={(titles) => selection_closure('graph', titles)}/>
-				{#if ux.inTreeMode}
+					selection_closure={(titles) => layouts.handle_mode_selection('graph', titles)}/>
+				{#if layouts.inTreeMode}
 					{#key $w_t_tree}
 						<Segmented
 							name='tree'
 							origin={Point.x(114)}
 							selected={[$w_t_tree]}
 							titles={[T_Hierarchy.children, T_Hierarchy.parents]}
-							selection_closure={(titles) => selection_closure('tree', titles)}/>
+							selection_closure={(titles) => layouts.handle_mode_selection('tree', titles)}/>
 						{#key $w_show_related}
 							<Button
 								width=82

@@ -5,7 +5,7 @@ export default class Constants {
 	font_size = 14;
 	width_max = 200;
 	line_stretch = 22;
-	height_banner = 35;
+	height_banner = 24;
 	tiny_font_size = 9;
 	halfIncrement = 0.5;
 	width_details = 200;
@@ -13,7 +13,7 @@ export default class Constants {
 	line_thickness = 1.5;
 	small_font_size = 11;
 	default_buttonSize = 16;
-	height_breadcrumbs = 33;
+	height_breadcrumbs = 23;
 	threshold_longClick = 800;
 	innermost_ring_radius = 60;
 	editingTools_diameter = 64;

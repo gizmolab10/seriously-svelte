@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, k, u, ux, Size, Thing, Point, debug, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
+	import { c, k, u, ux, Size, Thing, Point, debug, layouts, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, Predicate, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_ancestries_grabbed, w_ancestries_expanded, w_ancestry_showing_tools } from '../../ts/common/Stores';
 	import { w_hierarchy, w_t_countDots, w_s_alteration } from '../../ts/common/Stores';
@@ -75,7 +75,7 @@
 		if (s_mouse.isHover) {
 			set_isHovering(!s_mouse.isOut);
 		} else if (s_mouse.isUp && (ancestry.hasChildRelationships || ancestry.thing.isBulkAlias)) {
-			const RIGHT = ancestry.thing_isChild != ancestry.isExpanded || ux.inRadialMode;
+			const RIGHT = ancestry.thing_isChild != ancestry.isExpanded || layouts.inRadialMode;
 			$w_hierarchy.ancestry_rebuild_persistentMoveRight(ancestry, RIGHT, false, false, false, true);
 		}
 	}

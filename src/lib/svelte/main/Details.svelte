@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, k, u, show, Point, debug, T_Layer, T_Details } from '../../ts/common/Global_Imports';
+	import { c, k, u, show, Point, debug, layouts, T_Layer, T_Banner, T_Details } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_t_details } from '../../ts/common/Stores';
 	import { w_background_color } from '../../ts/common/Stores';
 	import D_Display from '../details/D_Display.svelte';
@@ -22,7 +22,7 @@
 	}
 
 	function update_tops() {
-		let top = 42;
+		let top = layouts.bottom_ofBannerAt(T_Banner.crumbs);
 		let index = 0;
 		let indices = $w_t_details;
 		while (index <= T_Details.info) {

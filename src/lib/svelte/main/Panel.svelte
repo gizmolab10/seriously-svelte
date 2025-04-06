@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { c, k, u, ux, w, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
+	import { c, k, u, ux, w, show, Rect, Size, Point, Thing, layouts } from '../../ts/common/Global_Imports';
+	import { debug, T_Layer, T_Banner, Ancestry, T_Startup } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_show_details, w_device_isMobile, } from '../../ts/common/Stores';
 	import { w_t_startup, w_id_popupView, w_ancestry_focus } from '../../ts/common/Stores';
-	import { debug, T_Layer, Ancestry, T_Startup } from '../../ts/common/Global_Imports';
 	import { w_t_database, w_graph_rect, w_hierarchy } from '../../ts/common/Stores';
 	import { T_Control, Hierarchy, databases } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
@@ -36,7 +36,7 @@
 				switch (key) {
 					case 'o': h.select_file_toUpload(event.shiftKey); break;
 					case 'c': w.user_graph_offset_setTo(Point.zero); break;
-					case 'm': ux.toggle_graphMode(); break;
+					case 'm': layouts.toggle_graphMode(); break;
 					case 's': h.persist_toFile(); break;
 					case '?': c.showHelp(); break;
 					default:  await h.handle_key_down(event); return;	// let hierarchy consume the events
@@ -82,18 +82,20 @@
 				<div class='breadcrumbs'
 					style='left:0px;
 						position: absolute;
-						top:{k.height_banner}px;
+						top:{layouts.bottom_ofBannerAt(T_Banner.controls)}px;
 						z-index: {T_Layer.frontmost};
 						width:{w.windowSize.width}px;
-						height:{k.height_breadcrumbs}px;'>
+						height:{layouts.height_ofBannerAt(T_Banner.crumbs)}px;'>
 					<Breadcrumbs/>
 					<div class='horizontal-line' style='
-						top: {k.height_banner + k.height_breadcrumbs}px;
-						z-index: {T_Layer.lines};'>
+						height: 1.3px;
+						z-index: {T_Layer.lines};
+						top: {layouts.bottom_ofBannerAt(T_Banner.crumbs)}px;'>
 					</div>
 				</div>
 				<div class='horizontal-line' style='
-					top: {k.height_banner}px;
+					top: {layouts.height_ofBannerAt(T_Banner.crumbs)}px;
+					height: 1.3px;
 					z-index: {T_Layer.lines};'>
 				</div>
 				{#if $w_show_details}

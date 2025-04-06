@@ -1,7 +1,7 @@
 <script lang='ts'>
+	import { layouts, signals, databases, Seriously_Range, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { c, k, u, ux, w, Rect, Size, Point, Thing, debug, Angle } from '../../ts/common/Global_Imports';
 	import { T_Graph, T_Layer, S_Title_Edit, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { signals, databases, Seriously_Range, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { w_color_trigger, w_info_title, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { w_ancestries_grabbed, w_ancestry_showing_tools } from '../../ts/common/Stores';
 	import { w_hierarchy, w_s_title_edit, w_mouse_location } from '../../ts/common/Stores';
@@ -33,7 +33,7 @@
 	function ancestry_isEditing():		   boolean { return $w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.editing) ?? false; }
 	function ancestry_isEditStopping():	   boolean { return $w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.stopping) ?? false; }
 	function ancestry_isEditPercolating(): boolean { return $w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.percolating) ?? false; }
-	function title_extra():					number { return (ux.inTreeMode && ancestry_isEditing()) ? 2 : 0; }
+	function title_extra():					number { return (layouts.inTreeMode && ancestry_isEditing()) ? 2 : 0; }
 	function hasChanges()						   { return title_prior != title_binded; };
 	function handle_mouse_up()					   { clearClicks(); }
 
@@ -124,8 +124,8 @@
 	export const UPDATE: unique symbol = Symbol('UPDATE');
 	
 	function update_cursorStyle() {
-		const noCursor = (ancestry_isEditing() || ancestry.isGrabbed) && ux.inTreeMode && ancestry.isEditable;
-		const useTextCursor = ancestry_isEditing() || ancestry.isGrabbed || !(ux.inRadialMode || ancestry.isEditable);
+		const noCursor = (ancestry_isEditing() || ancestry.isGrabbed) && layouts.inTreeMode && ancestry.isEditable;
+		const useTextCursor = ancestry_isEditing() || ancestry.isGrabbed || !(layouts.inRadialMode || ancestry.isEditable);
 		cursor_style = noCursor ? k.empty : `cursor: ${useTextCursor ? 'text' : 'pointer'}`;
 	}
 
@@ -205,7 +205,7 @@
 		$w_s_title_edit = null;
 		input?.blur();
 		update_cursorStyle();
-		ux.grand_layout();
+		layouts.grnd_layout();
 	}
 
 	function startEditMaybe() {
@@ -239,7 +239,7 @@
 			debug.log_edit(`TITLE ${title}`);
 			$w_s_title_edit.title = title;
 			$w_s_title_edit.setState_temporarilyTo_whileApplying(T_Edit.percolating, () => {
-				ux.grand_layout();
+				layouts.grnd_layout();
 			});
 			debug.log_edit(`UPDATED ${$w_s_title_edit.description}`);
 		}
