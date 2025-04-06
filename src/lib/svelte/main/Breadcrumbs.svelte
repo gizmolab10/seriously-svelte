@@ -6,7 +6,6 @@
 	import Breadcrumb_Button from '../mouse/Breadcrumb_Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import { onMount } from 'svelte';
-	const separator = '>';
 	let size = k.default_buttonSize;
 	let lefts: Array<string> = [];
 	let things: Array<Thing> = [];
@@ -50,11 +49,11 @@
 		{#if index > 0}
 			<div class='crumb-separator'
 				style='
-					top:0px;
+					top:1.5px;
 					position:absolute;
 					color:{thing.color};
-					left:{lefts[index] - size + 4}px;'>
-				{separator}
+					left:{lefts[index] - size + 3}px;'>
+				>
 			</div>
 		{/if}
 		<Breadcrumb_Button

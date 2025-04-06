@@ -1,6 +1,6 @@
+import { T_Graph, T_Banner, T_Details, T_Hierarchy } from '../../common/Global_Imports';
 import { k, signals, G_TreeGraph, G_RadialGraph } from '../../common/Global_Imports';
-import { T_Graph, T_Banner, T_Hierarchy } from '../../common/Global_Imports';
-import { w_t_tree, w_t_graph } from '../../common/Stores';
+import { w_t_tree, w_t_graph, w_t_details } from '../../common/Stores';
 import { get } from 'svelte/store';
 
 class Verticals {
@@ -17,11 +17,13 @@ export default class G_Layouts {
 	_g_treeGraph!: G_TreeGraph;
 	_g_radialGraph!: G_RadialGraph;
 	verticals_ofBanners = new Verticals(3);
+	verticals_ofDetails = new Verticals(4);
 
 	get inTreeMode(): boolean { return get(w_t_graph) == T_Graph.tree; }
 	get inRadialMode(): boolean { return get(w_t_graph) == T_Graph.radial; }
 	height_ofBannerAt(index: number) { return this.verticals_ofBanners.heights[index]; }
 	top_ofBannerAt(index: number) { return this.verticals_ofBanners.tops[index] + k.separator_thickness; }
+	top_ofDetailAt(index: number) { return this.verticals_ofDetails.tops[index] + k.separator_thickness; }
 	get g_treeGraph() { let g = this._g_treeGraph; if (!g) { g = new G_TreeGraph(); this._g_treeGraph = g }; return g; }
 	get g_radialGraph() { let g = this._g_radialGraph; if (!g) { g = new G_RadialGraph(); this._g_radialGraph = g }; return g; }
 
@@ -59,6 +61,21 @@ export default class G_Layouts {
 		while (index <= T_Banner.graph) {
 			this.verticals_ofBanners.tops[index] = top;
 			top += this.verticals_ofBanners.heights[index] + 1;
+			index += 1;
+		}
+	}
+	
+	layout_tops_ofDetails() {
+		let top = this.top_ofBannerAt(T_Banner.crumbs) + 11;
+		this.verticals_ofDetails.heights = [116, 40, 80, 0];
+		let index = 0;
+		let indices = get(w_t_details);
+		while (index <= T_Details.info) {
+			this.verticals_ofDetails.tops[index] = top;
+			const t_detail = T_Details[index] as unknown as T_Details;
+			if (indices.includes(t_detail)) {
+				top += this.verticals_ofDetails.heights[index];
+			}
 			index += 1;
 		}
 	}
