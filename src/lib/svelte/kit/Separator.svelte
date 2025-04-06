@@ -6,7 +6,7 @@
 	export let title: string | null = null;
 	export let width = k.width_details;
 	export let left = 0;
-	export let top = 71;
+	export let top = 0;
 	const title_width = u.getWidth_ofString_withSize(title ?? k.empty, title_font_size);
 	const title_left = (width + (left * 2.1) - title_width - 12) / 2;
 	let separator_rebuilds = 0;

@@ -87,14 +87,14 @@
 				<div class='breadcrumbs'
 					style='left:0px;
 						position: absolute;
-						height:{layouts.height_ofBannerAt(T_Banner.crumbs)}px;
-						top:{layouts.top_ofBannerAt(T_Banner.crumbs) - 3}px;
 						z-index: {T_Layer.frontmost};
-						width:{w.windowSize.width}px;'>
+						width:{w.windowSize.width}px;
+						top:{layouts.top_ofBannerAt(T_Banner.crumbs) - 2}px;
+						height:{layouts.height_ofBannerAt(T_Banner.crumbs)}px;'>
 					<Breadcrumbs/>
 					{#key separator_rebuilds}
-						<div class='horizontal-line' style='
-							top: {layouts.top_ofBannerAt(T_Banner.graph) - 3}px;
+						<div class='separator-above-crumbs' style='
+							top: {layouts.top_ofBannerAt(T_Banner.crumbs) - 3}px;
 							background-color:{colors.separator};
 							height: {k.separator_thickness}px;
 							z-index: {T_Layer.lines};'>
@@ -102,11 +102,14 @@
 					{/key}
 				</div>
 				{#key separator_rebuilds}
-					<div class='horizontal-line' style='
-						top: {layouts.height_ofBannerAt(T_Banner.graph)}px;
-						background-color:{colors.separator};
+					<div class='separator-above-graph' style='
+						top: {layouts.top_ofBannerAt(T_Banner.graph)}px;
+						background-color: {colors.separator};
 						height: {k.separator_thickness}px;
-						z-index: {T_Layer.lines};'>
+						width: {w.windowSize.width}px;
+						z-index: {T_Layer.lines};
+						position: absolute;
+						left: 0px;'>
 					</div>
 				{/key}
 				{#if $w_show_details}

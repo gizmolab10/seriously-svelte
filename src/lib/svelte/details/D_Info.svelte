@@ -1,10 +1,12 @@
 <script lang='ts'>
-	import { c, k, p, ux, show, Rect, Size, Point, Thing, debug, colors, signals, Ancestry } from '../../ts/common/Global_Imports';
 	import { w_hierarchy, w_color_trigger, w_info_title, w_background_color, } from '../../ts/common/Stores';
 	import { w_ancestry_focus, w_ancestries_grabbed, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { T_Info, T_Trait, T_Layer, T_Element, T_Preference } from '../../ts/common/Global_Imports';
+	import { c, k, p, ux, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
+	import { debug, colors, signals, layouts, Ancestry } from '../../ts/common/Global_Imports';
 	import type { Integer, Dictionary } from '../../ts/common/Types';
 	import Identifiable from '../../ts/data/runtime/Identifiable';
+	import { TI } from '../../ts/geometry/common/G_Layouts';
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
@@ -33,38 +35,12 @@
 	let color = colors.default_forThings;
 	let thing_title = thing?.title;
 	let color_origin = Point.zero;
-	let tops: Array<number> = [];
 	let picker_offset = k.empty;
 	let info_rebuilds = 0;
 	let info;
 
-	enum TI {
-		segments,
-		before_title,
-		title,
-		after_title,
-		table,
-		color,
-		traits,
-		consequence,
-		quest
-	};
-
-	function heightAt(index: number) {
-		switch (index) {
-			case TI.segments:	  return  23;
-			case TI.before_title: return   4;
-			case TI.title:		  return  17;
-			case TI.after_title:  return   4;
-			case TI.table:		  return 141;
-			case TI.color:		  return   2;
-			case TI.traits:		  return   2;
-			case TI.consequence:  return  50;
-			case TI.quest:		  return  50;
-		}
-	}
-
-	setup_tops();
+	layouts.layout_tops_forInfo(1);
+	setup_forColor();	// must call layout_tops_forInfo first
 	es_info.set_forHovering(colors.default, 'pointer');
 	
 	onMount(() => {
@@ -110,15 +86,9 @@
 		update_forKind();
 	}
 	
-	function setup_tops() {
+	function setup_forColor() {
 		const color_left = 61
-		let top = 1;
-		tops = [];
-		for (let i = 0; i <= TI.quest; i++) {
-			tops.push(top);
-			top += heightAt(i);
-		}
-		color_origin = new Point(color_left, tops[TI.color]);
+		color_origin = new Point(color_left, layouts.top_ofInfoAt(TI.color));
 		picker_offset = `${-color_left - 10}px`;
 	}
 
@@ -202,34 +172,34 @@
 					selected={[show.t_info]}
 					height={k.row_height * font_ratio}
 					selection_closure={selection_closure}
-					origin={new Point(45, tops[TI.segments])}
-					titles={[T_Info.focus, T_Info.selection]}/>
+					titles={[T_Info.focus, T_Info.selection]}
+					origin={new Point(45, layouts.top_ofInfoAt(TI.segments))}/>
+				<Separator
+					left=5
+					title='title'
+					width={info_width}
+					thickness={k.separator_thickness}
+					title_font_size={separator_font_size}
+					top={layouts.top_ofInfoAt(TI.before_title)}/>
 				{#key thing_title}
-					<Separator
-						left=5
-						title='title'
-						width={info_width}
-						top={tops[TI.before_title]}
-						thickness={k.separator_thickness}
-						title_font_size={separator_font_size}/>
 					<div style='
 						white-space:pre;
 						position:absolute;
 						text-align:center;
-						top:{tops[TI.title]}px;
-						width:{traits_width}px;'>
+						width:{traits_width}px;
+						top:{layouts.top_ofInfoAt(TI.title)}px;'>
 						{thing_title.clipWithEllipsisAt(30)}
 					</div>
-					<Separator
-						left=5
-						width={info_width}
-						top={tops[TI.after_title]}
-						thickness={k.separator_thickness}/>
 				{/key}
+				<Separator
+					left=5
+					width={info_width}
+					thickness={k.separator_thickness}
+					top={layouts.top_ofInfoAt(TI.after_title)}/>
 				<Table
 					array={information}
-					top={tops[TI.table]}
-					width = {k.width_details - 20}/>
+					width = {k.width_details - 20}
+					top = {layouts.top_ofInfoAt(TI.table)}/>
 			{/if}
 			<Color
 				origin={color_origin}
@@ -248,19 +218,19 @@
 				<Text_Editor
 					label='consequence'
 					color=colors.default
-					top={tops[TI.consequence]}
 					width={text_box_size.width}
 					height={text_box_size.height}
 					original_text={thing.consequence}
-					handle_textChange={handle_textChange}/>
+					handle_textChange={handle_textChange}
+					top={layouts.top_ofInfoAt(TI.consequence)}/>
 				<Text_Editor
 					label='quest'
-					top={tops[TI.quest]}
 					color=colors.default
 					original_text={thing.quest}
 					width={text_box_size.width}
 					height={text_box_size.height}
-					handle_textChange={handle_textChange}/>
+					handle_textChange={handle_textChange}
+					top={layouts.top_ofInfoAt(TI.quest)}/>
 			{/if}
 		</div>
 	{/if}

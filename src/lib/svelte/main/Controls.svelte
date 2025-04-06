@@ -96,7 +96,7 @@
 {#if Object.values(es_control_byType).length > 0}
 	<div id='controls'
 		style='
-			top: 0px;
+			top: 2px;
 			left: 0px;
 			position: absolute;
 			z-index: {T_Layer.frontmost};

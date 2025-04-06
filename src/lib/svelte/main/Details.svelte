@@ -11,11 +11,11 @@
 	const titles = [T_Details[T_Details.storage], T_Details[T_Details.tools], T_Details[T_Details.display], T_Details[T_Details.info]];
 	let details_rebuilds = 0;
 
-	layouts.layout_tops_ofDetails();
+	layouts.layout_tops_forDetails();
 
 	function selection_closure(t_details: Array<string>) {
 		$w_t_details = t_details as Array<T_Details>;
-		layouts.layout_tops_ofDetails();
+		layouts.layout_tops_forDetails();
 		details_rebuilds += 1;
 	}
 
@@ -39,7 +39,7 @@
 			allow_multiple={true}
 			name='details-selector'
 			selected={$w_t_details}
-			origin={new Point(6, 3)}
+			origin={new Point(6, 6)}
 			selection_closure={selection_closure}/>
 		{#if showingDetails_ofType(T_Details.storage)}
 			<Separator title='storage' top={layouts.top_ofDetailAt(T_Details.storage) - 8}/>

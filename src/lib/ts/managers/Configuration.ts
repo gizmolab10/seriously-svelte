@@ -24,7 +24,7 @@ export class Configuration {
 		debug.queryStrings_apply();						// debug even setup code
 		stores.setup_defaults();
 		show.restore_state();							// local persistance
-		layouts.layout_tops_ofBanners();
+		layouts.layout_tops_forPanelBanners();
 		w.restore_state();
 		this.queryStrings_apply();						// must call before prefs and db
 		p.restore_defaults();

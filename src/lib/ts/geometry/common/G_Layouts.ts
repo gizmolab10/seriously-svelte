@@ -1,5 +1,5 @@
-import { T_Graph, T_Banner, T_Details, T_Hierarchy } from '../../common/Global_Imports';
 import { k, signals, G_TreeGraph, G_RadialGraph } from '../../common/Global_Imports';
+import { T_Graph, T_Banner, T_Details, T_Hierarchy } from '../../common/Global_Imports';
 import { w_t_tree, w_t_graph, w_t_details } from '../../common/Stores';
 import { get } from 'svelte/store';
 
@@ -8,19 +8,33 @@ class Verticals {
 	heights: Array<number> = [];
 
 	constructor(capacity: number) {
-		this.tops = new Array(capacity).fill({} as number);
-		this.heights = new Array(capacity).fill({} as number);
+		this.tops = new Array(capacity).fill(0);
+		this.heights = new Array(capacity).fill(0);
 	}
 }
+
+export enum TI {
+	segments,
+	before_title,
+	title,
+	after_title,
+	table,
+	color,
+	traits,
+	consequence,
+	quest
+};
 
 export default class G_Layouts {
 	_g_treeGraph!: G_TreeGraph;
 	_g_radialGraph!: G_RadialGraph;
+	verticals_ofInfo = new Verticals(9);
 	verticals_ofBanners = new Verticals(3);
 	verticals_ofDetails = new Verticals(4);
 
 	get inTreeMode(): boolean { return get(w_t_graph) == T_Graph.tree; }
 	get inRadialMode(): boolean { return get(w_t_graph) == T_Graph.radial; }
+	top_ofInfoAt(index: number) { return this.verticals_ofInfo.tops[index]; }
 	height_ofBannerAt(index: number) { return this.verticals_ofBanners.heights[index]; }
 	top_ofBannerAt(index: number) { return this.verticals_ofBanners.tops[index] + k.separator_thickness; }
 	top_ofDetailAt(index: number) { return this.verticals_ofDetails.tops[index] + k.separator_thickness; }
@@ -53,19 +67,43 @@ export default class G_Layouts {
 		}
 		signals.signal_reposition_widgets_fromFocus();
 	}
+		
+	layout_tops_forInfo(start: number) {
+		let top = start;
+		for (let i = 0; i <= TI.quest; i++) {
+			const height = this.height_ofInfoAt(i);
+			this.verticals_ofInfo.heights[i] = height;
+			this.verticals_ofInfo.tops[i] = top;
+			top += height;
+		}
+	}
+
+	height_ofInfoAt(index: number): number {
+		switch (index) {
+			case TI.segments:	  return  21;
+			case TI.before_title: return   4;
+			case TI.title:		  return  17;
+			case TI.after_title:  return   4;
+			case TI.table:		  return 141;
+			case TI.color:		  return   2;
+			case TI.traits:		  return   2;
+			case TI.consequence:  return  50;
+			default:			  return  50;
+		}
+	}
 	
-	layout_tops_ofBanners() {
-		this.verticals_ofBanners.heights = [k.row_height, k.row_height, k.row_height];
+	layout_tops_forPanelBanners() {
+		this.verticals_ofBanners.heights = [k.row_height - 2, k.row_height, k.row_height];
 		let index = 0;
-		let top = 0;
+		let top = 2;
 		while (index <= T_Banner.graph) {
 			this.verticals_ofBanners.tops[index] = top;
-			top += this.verticals_ofBanners.heights[index] + 1;
+			top += this.verticals_ofBanners.heights[index] + 3;
 			index += 1;
 		}
 	}
 	
-	layout_tops_ofDetails() {
+	layout_tops_forDetails() {
 		let top = this.top_ofBannerAt(T_Banner.crumbs) + 11;
 		this.verticals_ofDetails.heights = [116, 40, 80, 0];
 		let index = 0;
