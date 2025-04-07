@@ -1,5 +1,5 @@
-import { k, signals, G_TreeGraph, G_RadialGraph } from '../../common/Global_Imports';
 import { T_Graph, T_Banner, T_Details, T_Hierarchy } from '../../common/Global_Imports';
+import { k, signals, G_TreeGraph, G_RadialGraph } from '../../common/Global_Imports';
 import { w_t_tree, w_t_graph, w_t_details } from '../../common/Stores';
 import { get } from 'svelte/store';
 

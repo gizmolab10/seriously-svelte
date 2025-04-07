@@ -1,13 +1,15 @@
 <script lang='ts'>
-	import { c, k, u, ux, Thing, Point, Angle, debug, layouts, signals, Ancestry, Svelte_Wrapper } from '../../ts/common/Global_Imports';
+	import { c, k, u, ux, Thing, Point, Angle, debug, layouts } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Widget, T_Signal, T_Element } from '../../ts/common/Global_Imports';
+	import { layouts, signals, Ancestry, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { G_Widget, S_Element, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { w_color_trigger, w_thing_fontFamily } from '../../ts/common/Stores';
-	import { w_background_color } from '../../ts/common/Stores';
+	import { w_show_related, w_background_color } from '../../ts/common/Stores';
 	import { T_Edit } from '../../ts/state/S_Title_Edit';
-	import Widget_Title from './Widget_Title.svelte';
 	import Widget_Reveal from './Widget_Reveal.svelte';
+	import Tree_Line from '../tree/Tree_Line.svelte';
+	import Widget_Title from './Widget_Title.svelte';
 	import Widget_Drag from './Widget_Drag.svelte';
 	import { onMount } from 'svelte';
 	export let ancestry!: Ancestry;
@@ -181,5 +183,10 @@
 				/>
 			{/if}
 		</div>
+		{#if $w_show_related}
+			{#each ancestry.g_widget.g_bidirectionalLines as g_line}	<!-- can be none -->
+				<Tree_Line g_line = {g_line}/>
+			{/each}
+		{/if}
 	{/if}
 {/key}

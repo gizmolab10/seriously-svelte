@@ -23,6 +23,11 @@ export default class G_TreeLine {
 		this.isBidirectional = isBidirectional;
 		this.ancestry = ancestry;
 	}
+		
+	layout() {
+		this.layout_svgPaths();
+		this.update_name();
+	}
 
 	set_t_curve_forHeight(height: number) {
 		if (height > 1) {
@@ -34,13 +39,13 @@ export default class G_TreeLine {
 		}
 	}
 
-	update_name() {
+	private update_name() {
 		if (!!this.ancestry && !this.ancestry.equals(this.other_ancestry)) {
 			this.name = `${this.ancestry.titles.join('.')}...${this.other_ancestry.titles.join('.')}`;
 		}
 	}
 		
-	layout() {
+	private layout_svgPaths() {
 		const lineOffset = new Point(-122.5, 2.5);
 		let lineRect = this.rect.offsetBy(lineOffset);
 		switch (this.t_curve) {
@@ -69,7 +74,6 @@ export default class G_TreeLine {
 		}
 		const boxSize = new Size(this.size.width, Math.max(2, this.size.height));
 		this.viewBox = new Rect(this.origin, boxSize);
-		this.update_name();
 	}
 
 }

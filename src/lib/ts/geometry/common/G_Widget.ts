@@ -74,33 +74,23 @@ export default class G_Widget {
 		}
 	}
 
-	origin_forAncestry_inRect(ancestry: Ancestry, rect: Rect): Point {
-		const child = ancestry.thing;
-		let x, y = 0;
-		if (!!child) {
-			y = rect.extent.y - ancestry.visibleProgeny_halfHeight;
-			x = rect.origin.x + child.titleWidth + k.dot_size + k.line_stretch;
-		}
-		return new Point(x, y);
-	}
+	static readonly LAYOUT: unique symbol;
 
 	layout_tree_fromFocus() {
-		const graphRect = get(w_graph_rect);
-		if (!!graphRect && layouts.inTreeMode) {
-			const offsetY = graphRect.origin.y + 1;
-			const childrenSize = this.ancestry.visibleProgeny_size;
-			const offsetX_ofFirstReveal = (this.ancestry.thing?.titleWidth ?? 0) / 2 - 2;
-			const child_offsetY = (k.dot_size / 2) -(childrenSize.height / 2) - 4;
-			const child_offsetX = -37 + k.line_stretch - (k.dot_size / 2) + offsetX_ofFirstReveal;
-			const offsetX = (get(w_show_details) ? -k.width_details : 0) + 15 + offsetX_ofFirstReveal - (childrenSize.width / 2) - (k.dot_size / 2.5);
-			const origin_ofFocusReveal = graphRect.center.offsetByXY(offsetX, -offsetY);
-			if (get(w_device_isMobile)) {
-				origin_ofFocusReveal.x = 25;
+		this.layout_focus_ofTree()
+		this.recursively_layout_subtree();
+		this.recursively_layout_bidirectionals();
+	}
+
+	layout_necklaceWidget(
+		origin_ofWidget: Point,
+		widget_pointsRight: boolean) {
+			if (layouts.inRadialMode) {
+				this.forGraphMode = T_Graph.radial;
+				this.origin_ofWidget = origin_ofWidget;
+				this.widget_pointsRight = widget_pointsRight;
+				this.layout_widget_andChildren();
 			}
-			const origin_ofChildren = origin_ofFocusReveal.offsetByXY(child_offsetX, child_offsetY);
-			this.origin_ofWidget = origin_ofChildren;
-			this.recursively_layout_subtree();
-		}
 	}
 
 	layout_widget(
@@ -121,29 +111,25 @@ export default class G_Widget {
 				this.origin_ofWidget = child_widget_origin;
 				this.widget_pointsRight = widget_pointsRight;
 				this.g_line.set_t_curve_forHeight(child_height);
-				this.layout();
+				this.layout_widget_andChildren();
 			}
 	}
 
-	get description(): string {
-		return `toRight: ${this.widget_pointsRight} origin: ${this.origin_ofTitle.x.toFixed(1)}`;
-	}
+	static readonly INTERNAL: unique symbol;
 
-	layout_necklaceWidget(
-		origin_ofWidget: Point,
-		widget_pointsRight: boolean) {
-			if (layouts.inRadialMode) {
-				this.forGraphMode = T_Graph.radial;
-				this.origin_ofWidget = origin_ofWidget;
-				this.widget_pointsRight = widget_pointsRight;
-				this.layout();
-			}
-	}
-
-	layout() {
+	private layout_widget_andChildren() {
 		this.g_treeChildren.layout_children();		// noop if radial, childless or collapsed
 		this.layout_widget_andLine();				// assumes all children's subtrees are laid out (needed for progeny size)
-		this.layout_bidirectional_lines();
+	}
+
+	private origin_forAncestry_inRect(ancestry: Ancestry, rect: Rect): Point {
+		const child = ancestry.thing;
+		let x, y = 0;
+		if (!!child) {
+			y = rect.extent.y - ancestry.visibleProgeny_halfHeight;
+			x = rect.origin.x + child.titleWidth + k.dot_size + k.line_stretch;
+		}
+		return new Point(x, y);
 	}
 
 	private recursively_layout_subtree() {
@@ -154,7 +140,51 @@ export default class G_Widget {
 				childAncestry.g_widget.recursively_layout_subtree();		// layout progeny first
 			}
 		}
-		this.layout();
+		this.layout_widget_andChildren();
+	}
+
+	private recursively_layout_bidirectionals() {
+		if (layouts.inTreeMode) {
+			this.layout_bidirectional_lines();
+			const ancestry = this.ancestry;	
+			if (ancestry.showsChildRelationships && ancestry.thing_isChild) {
+				const childAncestries = ancestry.childAncestries;
+				for (const childAncestry of childAncestries) {
+					childAncestry.g_widget.recursively_layout_bidirectionals();		// layout progeny first
+				}
+			}
+		}
+	}
+
+	private layout_bidirectional_lines() {
+		if (layouts.inTreeMode) {
+			this.g_bidirectionalLines = [];
+			if (get(w_show_related)) {
+				const g_lines = this.ancestry.g_lines_forBidirectionals;
+				for (const [index, g_line] of g_lines.entries()) {
+					this.g_bidirectionalLines[index] = g_line;
+					g_line.layout();
+				}
+			}
+		}
+	}
+
+	private layout_focus_ofTree() {
+		const graphRect = get(w_graph_rect);
+		if (!!graphRect && layouts.inTreeMode) {
+			const offsetY = graphRect.origin.y + 1;
+			const childrenSize = this.ancestry.visibleProgeny_size;
+			const offsetX_ofFirstReveal = (this.ancestry.thing?.titleWidth ?? 0) / 2 - 2;
+			const child_offsetY = (k.dot_size / 2) -(childrenSize.height / 2) - 4;
+			const child_offsetX = -37 + k.line_stretch - (k.dot_size / 2) + offsetX_ofFirstReveal;
+			const offsetX = (get(w_show_details) ? -k.width_details : 0) + 15 + offsetX_ofFirstReveal - (childrenSize.width / 2) - (k.dot_size / 2.5);
+			const origin_ofFocusReveal = graphRect.center.offsetByXY(offsetX, -offsetY);
+			if (get(w_device_isMobile)) {
+				origin_ofFocusReveal.x = 25;
+			}
+			const origin_ofChildren = origin_ofFocusReveal.offsetByXY(child_offsetX, child_offsetY);
+			this.origin_ofWidget = origin_ofChildren;
+		}
 	}
 
 	private layout_widget_andLine() {
@@ -195,19 +225,6 @@ export default class G_Widget {
 					const offset_x = 15 + offset_x_forDetails - (children_size.width / 2) - (k.dot_size / 2.5) + offset_x_ofReveal;
 					const origin_ofReveal = graph_rect.center.offsetByXY(offset_x, offset_y);
 					this.origin_ofWidget = origin_ofReveal.offsetByXY(-21.5 - offset_x_ofReveal, -5);
-				}
-			}
-		}
-	}
-
-	private layout_bidirectional_lines() {
-		if (layouts.inTreeMode) {
-			this.g_bidirectionalLines = [];
-			if (get(w_show_related)) {
-				const g_lines = this.ancestry.g_lines_forBidirectionals;
-				for (const [index, g_line] of g_lines.entries()) {
-					this.g_bidirectionalLines[index] = g_line;
-					g_line.layout();
 				}
 			}
 		}

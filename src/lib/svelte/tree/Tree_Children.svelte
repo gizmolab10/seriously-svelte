@@ -25,9 +25,4 @@
 			<Tree_Children ancestry = {childAncestry}/>
 		{/if}
 	{/each}
-	{#if $w_show_related}
-		{#each ancestry.g_widget.g_bidirectionalLines as g_line}	<!-- can be zero lines -->
-			<Tree_Line g_line = {g_line}/>
-		{/each}
-	{/if}
 {/if}
