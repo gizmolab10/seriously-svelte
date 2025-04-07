@@ -1,6 +1,6 @@
 import { debug, Point, layouts, Ancestry, T_Graph } from '../../common/Global_Imports';
 
-export default class G_TreeChildren {
+export default class G_TreeBranches {
 	origin_ofLine = Point.zero;
 	ancestry: Ancestry;
 

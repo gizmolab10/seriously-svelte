@@ -1,4 +1,4 @@
-import { S_Element, G_TreeLine, G_TreeChildren } from '../../common/Global_Imports';
+import { S_Element, G_TreeLine, G_TreeBranches } from '../../common/Global_Imports';
 import { k, ux, Rect, Size, Point, layouts, Ancestry } from '../../common/Global_Imports';
 import { w_graph_rect, w_t_graph, w_device_isMobile} from '../../common/Stores';
 import { T_Widget, T_Element, T_Graph } from '../../common/Global_Imports';
@@ -8,7 +8,7 @@ import { get } from 'svelte/store';
 export default class G_Widget {
 	g_bidirectionalLines: Array<G_TreeLine> = [];
 	origin_ofChildrenTree = Point.zero;
-	g_treeChildren: G_TreeChildren;
+	g_treeBranches: G_TreeBranches;
 	offset_ofWidget = Point.zero;
 	center_ofReveal = Point.zero;
 	origin_ofRadial = Point.zero;
@@ -43,7 +43,7 @@ export default class G_Widget {
 	constructor(ancestry: Ancestry) {
 		this.es_widget = ux.s_element_for(ancestry, T_Element.widget, k.empty);
 		this.g_line = new G_TreeLine(ancestry.parentAncestry, ancestry);
-		this.g_treeChildren = new G_TreeChildren(ancestry);
+		this.g_treeBranches = new G_TreeBranches(ancestry);
 		this.forGraphMode = get(w_t_graph);
 		this.ancestry = ancestry;
 		if (!ancestry.thing) {
@@ -118,7 +118,7 @@ export default class G_Widget {
 	static readonly INTERNAL: unique symbol;
 
 	private layout_widget_andChildren() {
-		this.g_treeChildren.layout_children();		// noop if radial, childless or collapsed
+		this.g_treeBranches.layout_children();		// noop if radial, childless or collapsed
 		this.layout_widget();						// assumes all children's subtrees are laid out (needed for progeny size)
 		this.layout_line();
 		this.layout_focus();

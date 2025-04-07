@@ -24,7 +24,7 @@ import { T_Curve, T_Layer, T_Thing, T_Trait, T_Predicate } from './Enumerations'
 import { T_Info, T_Tool, T_Banner, T_Control, T_Details, T_Storage } from './Enumerations';
 import { T_Graph, T_Widget, T_Rebuild, T_RingZone, T_Startup, T_Hierarchy } from './Enumerations';
 
-import G_TreeChildren from '../geometry/tree/G_TreeChildren';
+import G_TreeBranches from '../geometry/tree/G_TreeBranches';
 import G_RadialGraph from '../geometry/radial/G_RadialGraph';
 import G_ArcSlider from '../geometry/radial/G_ArcSlider';
 import G_TreeGraph from '../geometry/tree/G_TreeGraph';
@@ -78,7 +78,7 @@ export {
 	T_Element, Svelte_Wrapper, T_SvelteComponent,
 	G_Segment, G_Cluster, G_RadialGraph, G_ArcSlider,
 	S_Paging, S_Rotation, S_Expansion, S_Thing_Pages,
-	G_Widget, G_TreeLine, G_TreeGraph, G_TreeChildren,
+	G_Widget, G_TreeLine, G_TreeGraph, G_TreeBranches,
 	T_Layer, T_Create, T_RingZone, T_Oblong, T_Alteration,
 	T_Control, T_Browser, T_Signal, T_Storage, T_Preference,
 	S_Mouse, S_Widget, S_Element, S_Alteration, S_Title_Edit,

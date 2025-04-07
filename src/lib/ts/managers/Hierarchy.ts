@@ -1083,7 +1083,7 @@ export class Hierarchy {
 					parentAncestry.becomeFocus();
 				}
 			}
-			layouts.grand_build();			// so Tree_Children component will update
+			layouts.grand_build();			// so Tree_Branches component will update
 		}
 	}
 
