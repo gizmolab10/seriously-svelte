@@ -23,7 +23,7 @@
 	function ignore_wheel(event) { event.preventDefault(); }
 
 	$: {
-		const _ = $w_t_database + $w_t_startup + $w_id_popupView;
+		const _ = $w_t_database + $w_t_startup + $w_id_popupView + $w_graph_rect;
 		panel_rebuilds += 1;
 	}
 
