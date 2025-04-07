@@ -10,16 +10,16 @@ export default class G_TreeBranches {
 		this.ancestry = ancestry;
 	}
 		
-	layout_children() {
+	layout_branches() {
 		const ancestry = this.ancestry;
 		if (!!ancestry && (ancestry.isExpanded || ancestry.isRoot) && layouts.inTreeMode) {
 			debug.log_layout(`children ${ancestry.g_widget.origin_ofWidget.x} ${ancestry.id}`);
-			const childAncestries = ancestry.childAncestries;
+			const branchAncestries = ancestry.branchAncestries;
 			const halfHeight = ancestry.visibleProgeny_halfHeight;
 			const origin_ofWidget = ancestry.g_widget.origin_ofWidget.offsetByXY(4.5, halfHeight + 1);
 			let height = -halfHeight;		// start out negative and grow positive
-			for (const childAncestry of childAncestries) {
-				const g_widget = childAncestry.g_widget;
+			for (const branchAncestry of branchAncestries) {
+				const g_widget = branchAncestry.g_widget;
 				g_widget.configure_widget(height, origin_ofWidget, T_Graph.tree)
 				height += g_widget.progeny_height;
 			}

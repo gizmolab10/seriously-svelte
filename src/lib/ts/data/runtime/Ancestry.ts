@@ -102,8 +102,9 @@ export default class Ancestry extends Identifiable {
 	get children():			 	 Array		 <Thing> { return this.hierarchy.things_forAncestries(this.childAncestries); }
 	get ancestors():		 	 Array		 <Thing> { return this.hierarchy.things_forAncestry(this); }
 	get parentAncestries():		 Array	  <Ancestry> { return this.thing?.ancestries ?? []; }
-	get siblingAncestries(): 	 Array	  <Ancestry> { return this.parentAncestry?.childAncestries ?? []; }
 	get childAncestries():	 	 Array	  <Ancestry> { return this.childAncestries_ofKind(this.kind); }
+	get siblingAncestries(): 	 Array	  <Ancestry> { return this.parentAncestry?.childAncestries ?? []; }
+	get branchAncestries():	 	 Array	  <Ancestry> { return layouts.branches_areChildren ? this.childAncestries : this.parentAncestries; }
 	get relevantRelationships(): Array<Relationship> { return this.relationships_forChildren(this.thing_isChild); }
 	get parentRelationships():	 Array<Relationship> { return this.relationships_ofKind_forParents(this.kind, true); }
 	get childRelationships():	 Array<Relationship> { return this.relationships_ofKind_forParents(this.kind, false); }
@@ -261,7 +262,7 @@ export default class Ancestry extends Identifiable {
 	
 	thingAt(back: number): Thing | null {			// 1 == last
 		const relationship = this.relationshipAt(back);
-		if (!!relationship && this.pathString != k.root_path) {
+		if (!!relationship && !this.isRoot) {
 			return relationship.child;
 		}
 		return this.hierarchy.root;	// N.B., this.hierarchy.root is wrong immediately after switching db type
@@ -549,12 +550,12 @@ export default class Ancestry extends Identifiable {
 
 	get g_lines_forBidirectionals(): Array<G_TreeLine> {
 		let found: Array<G_TreeLine> = [];
-		const x = this.depth + 1;
+		const depth = this.depth + 1;
 		for (const bidirectional of this.bidirectional_ancestries) {
 			const others = bidirectional.thing?.ancestries;
 			if (!!others) {
 				for (const other of others) {
-					if (other.isVisible && x < other.depth) {
+					if (other.isVisible && other.depth > depth && other.pathString != bidirectional.pathString) {
 						const g_line = this.g_line_toOther(other);
 						found.push(g_line);
 					}

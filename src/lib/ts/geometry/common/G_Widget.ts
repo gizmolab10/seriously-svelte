@@ -118,7 +118,7 @@ export default class G_Widget {
 	static readonly INTERNAL: unique symbol;
 
 	private layout_widget_andChildren() {
-		this.g_treeBranches.layout_children();		// noop if radial, childless or collapsed
+		this.g_treeBranches.layout_branches();		// noop if radial, childless or collapsed
 		this.layout_widget();						// assumes all children's subtrees are laid out (needed for progeny size)
 		this.layout_line();
 		this.layout_focus();
@@ -137,9 +137,11 @@ export default class G_Widget {
 	private recursively_layout_subtree() {
 		const ancestry = this.ancestry;	
 		if (ancestry.showsChildRelationships && ancestry.thing_isChild) {
-			const childAncestries = ancestry.childAncestries;
-			for (const childAncestry of childAncestries) {
-				childAncestry.g_widget.recursively_layout_subtree();		// layout progeny first
+			const branchAncestries = ancestry.branchAncestries;
+			for (const branchAncestry of branchAncestries) {
+				if (ancestry.pathString != branchAncestry.pathString) {
+					branchAncestry.g_widget.recursively_layout_subtree();		// layout progeny first
+				}
 			}
 		}
 		this.layout_widget_andChildren();

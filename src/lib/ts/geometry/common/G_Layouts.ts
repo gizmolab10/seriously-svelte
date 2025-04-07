@@ -36,25 +36,26 @@ export default class G_Layouts {
 	get inRadialMode(): boolean { return get(w_t_graph) == T_Graph.radial; }
 	top_ofInfoAt(index: number) { return this.verticals_ofInfo.tops[index]; }
 	height_ofBannerAt(index: number) { return this.verticals_ofBanners.heights[index]; }
+	get branches_areChildren(): boolean { return get(w_t_tree) == T_Hierarchy.children; }
 	top_ofBannerAt(index: number) { return this.verticals_ofBanners.tops[index] + k.separator_thickness; }
 	top_ofDetailAt(index: number) { return this.verticals_ofDetails.tops[index] + k.separator_thickness; }
 	get g_treeGraph() { let g = this._g_treeGraph; if (!g) { g = new G_TreeGraph(); this._g_treeGraph = g }; return g; }
 	get g_radialGraph() { let g = this._g_radialGraph; if (!g) { g = new G_RadialGraph(); this._g_radialGraph = g }; return g; }
 
-	grand_build() { signals.signal_rebuildGraph_fromFocus(); }
+	grand_build() { this.grand_layout(); signals.signal_rebuildGraph_fromFocus(); }
 	
 	handle_mode_selection(name: string, types: Array<string>) {
 		const type = types[0];	// only ever has one element
 		switch (name) {
 			case 'graph': w_t_graph.set(type as T_Graph); break;
-			case 'tree': w_t_tree.set(type as T_Hierarchy); break;
+			case 'tree': w_t_tree.set(type as T_Hierarchy); this.grand_build(); break;
 		}
 	}
 	
 	toggle_graphMode() {
 		switch (get(w_t_graph)) {
 			case T_Graph.tree: w_t_graph.set(T_Graph.radial); break;
-			case T_Graph.radial: w_t_graph.set(T_Graph.tree); break;
+			case T_Graph.radial: w_t_graph.set(T_Graph.tree); this.grand_build(); break;
 		}
 		this.grand_build();
 	}
