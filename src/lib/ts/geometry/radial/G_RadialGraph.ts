@@ -32,7 +32,7 @@ export default class G_RadialGraph {
 		if (!!focus_ancestry) {
 			const focus_thing = focus_ancestry.thing;
 			let childAncestries = focus_ancestry.childAncestries;
-			focus_ancestry.g_widget.layout_widget();
+			focus_ancestry.g_widget.configure_widget();
 			this.layout_clusterFor(childAncestries, Predicate.contains, true);
 			if (!!focus_thing) {
 				for (const predicate of get(w_hierarchy).predicates) {

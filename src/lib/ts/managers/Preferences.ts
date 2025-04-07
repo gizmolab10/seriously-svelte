@@ -137,7 +137,7 @@ export class Preferences {
 		if (!this.ignoreAncestries && length > 0) {
 			let h = get(w_hierarchy);
 			for (const pathString of pathStrings) {
-				const ancestry = h.ancestry_valid_forPath(pathString);
+				const ancestry = h.ancestry_isAssured_valid_forPath(pathString);
 				if (!!ancestry) {
 					ancestries.push(ancestry);
 				}

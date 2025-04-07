@@ -865,7 +865,7 @@ export class Hierarchy {
 		return (!!grab && grab.isVisible && !grab_containsFocus) ? grab : focus;
 	}
 
-	ancestry_valid_forPath(path: string): Ancestry | null {
+	ancestry_isAssured_valid_forPath(path: string): Ancestry | null {
 		if (path == k.root_path) {
 			return this.rootAncestry;
 		} else {

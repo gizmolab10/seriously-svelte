@@ -20,7 +20,7 @@ export default class G_TreeChildren {
 			let height = -halfHeight;		// start out negative and grow positive
 			for (const childAncestry of childAncestries) {
 				const g_widget = childAncestry.g_widget;
-				g_widget.layout_widget(height, origin_ofWidget, T_Graph.tree)
+				g_widget.configure_widget(height, origin_ofWidget, T_Graph.tree)
 				height += g_widget.progeny_height;
 			}
 			this.origin_ofLine = origin_ofWidget.offsetByXY(20, 2);

@@ -59,10 +59,6 @@
 		displayName_x = extra + (width - displayName_width) / 2;
 	}
 
-	function selection_closure(name: string, types: Array<string>) {
-		layouts.handle_mode_selection
-	}
-
 	function setup_forIDs() {
 		let total = w.windowSize.width + 50;
 		for (const t_control of t_controls) {
@@ -116,17 +112,17 @@
 				{/key}
 				{#key $w_t_graph}
 					<Segmented
-						name='graph-type-selector'
 						origin={Point.x(30)}
 						selected={[$w_t_graph]}
+						name='graph-type-selector'
 						titles={[T_Graph.tree, T_Graph.radial]}
 						selection_closure={(titles) => layouts.handle_mode_selection('graph', titles)}/>
 					{#if layouts.inTreeMode}
 						{#key $w_t_tree}
 							<Segmented
-								name='tree'
 								origin={Point.x(114)}
 								selected={[$w_t_tree]}
+								name='tree-type-selector'
 								titles={[T_Hierarchy.children, T_Hierarchy.parents]}
 								selection_closure={(titles) => layouts.handle_mode_selection('tree', titles)}/>
 							{#key $w_show_related}

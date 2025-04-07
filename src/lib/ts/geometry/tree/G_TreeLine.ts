@@ -24,7 +24,7 @@ export default class G_TreeLine {
 		this.ancestry = ancestry;
 	}
 		
-	layout() {
+	layout_line() {
 		this.layout_svgPaths();
 		this.update_name();
 	}

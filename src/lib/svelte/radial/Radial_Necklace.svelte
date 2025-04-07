@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, ux, Point, debug, colors, signals, Predicate } from '../../ts/common/Global_Imports';
+	import { k, u, Point, debug, colors, layouts, signals, Predicate } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_ancestry_focus, w_color_trigger } from '../../ts/common/Stores';
 	import { T_Layer, T_Widget, T_Signal } from '../../ts/common/Global_Imports';
 	import { w_s_paging, w_ring_rotation_radius } from '../../ts/common/Stores';
@@ -59,11 +59,11 @@
 </script>
 
 {#key necklace_rebuilds}
-	{#if !!ux.g_radialGraph}
+	{#if !!layouts.g_radialGraph}
 		<div
 			class = 'necklace-widgets'
 			style = 'z-index : {T_Layer.necklace};'>
-			{#each ux.g_radialGraph.g_necklace_widgets as g_necklace_widget}
+			{#each layouts.g_radialGraph.g_necklace_widgets as g_necklace_widget}
 				<Widget ancestry = {g_necklace_widget.ancestry}/>
 			{/each}
 		</div>

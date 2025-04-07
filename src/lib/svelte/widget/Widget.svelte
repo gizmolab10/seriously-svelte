@@ -129,7 +129,8 @@
 	}
 
 	function layout() {
-		g_widget.layout_widget_andLine();
+		g_widget.layout_widget();						// assumes all children's subtrees are laid out (needed for progeny size)
+		g_widget.layout_line();
 		const hasExtra_onRight = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
 		const onRight = layouts.inRadialMode ? 0 : 21 + (hasExtra_onRight ? 0.5 : 0);
 		const origin_ofWidget = g_widget.origin.offsetBy(g_widget.offset_ofWidget);

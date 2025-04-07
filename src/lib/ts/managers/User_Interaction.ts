@@ -7,7 +7,7 @@ import { w_show_details } from '../common/Stores';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
 
-export default class User_Interaction {
+export default class User_Interaction { // Gizmos
 	s_paging_rotation_byName: { [name: string]: S_Rotation } = {};
 	s_thing_pages_byThingID: {[id: string]: S_Thing_Pages} = {};
 	mouse_timer_byName: { [name: string]: Mouse_Timer } = {};
@@ -30,7 +30,7 @@ export default class User_Interaction {
 	//	  by their own event handling	//
 	//									//
 	//	used by: Button, Close_Button,	//
-	//	  Radial & Radial_ArcSlider			//
+	//	  Radial & Radial_ArcSlider		//
 	//									//
 	//////////////////////////////////////
 	
