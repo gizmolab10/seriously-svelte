@@ -1,4 +1,4 @@
-import { k, Rect, Size, Point, T_Curve, svgPaths, Ancestry } from '../../common/Global_Imports';
+import { k, Rect, Size, Point, T_Curve, svgPaths, Ancestry } from '../common/Global_Imports';
 
 export default class GG_TreeLine {
 	t_curve: string = T_Curve.flat;

@@ -1,7 +1,7 @@
-import { G_Widget, G_Cluster, S_Paging, T_Graph } from '../../common/Global_Imports';
-import { u, ux, Point, Angle, Ancestry, Predicate } from '../../common/Global_Imports';
-import { w_hierarchy, w_s_paging, w_ancestry_focus } from '../../common/Stores';
-import type { Dictionary } from '../../common/Types';
+import { G_Widget, G_Cluster, S_Paging, T_Graph } from '../common/Global_Imports';
+import { u, ux, Point, Angle, Ancestry, Predicate } from '../common/Global_Imports';
+import { w_hierarchy, w_s_paging, w_ancestry_focus } from '../common/Stores';
+import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
 
 export default class G_RadialGraph {

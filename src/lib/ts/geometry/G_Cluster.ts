@@ -1,7 +1,7 @@
-import { G_Widget, G_ArcSlider, S_Paging, S_Rotation, T_Quadrant, T_Graph } from '../../common/Global_Imports';
-import { k, u, ux, w, Point, Angle, debug, colors, Ancestry, Predicate } from '../../common/Global_Imports';
-import { w_graph_rect, w_ancestry_focus } from '../../common/Stores';
-import { w_ring_rotation_radius } from '../../common/Stores';
+import { G_Widget, G_ArcSlider, S_Paging, S_Rotation, T_Quadrant, T_Graph } from '../common/Global_Imports';
+import { k, u, ux, w, Point, Angle, debug, colors, Ancestry, Predicate } from '../common/Global_Imports';
+import { w_graph_rect, w_ancestry_focus } from '../common/Stores';
+import { w_ring_rotation_radius } from '../common/Stores';
 import { get } from 'svelte/store';
 
 //////////////////////////////////////////

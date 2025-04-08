@@ -24,14 +24,13 @@ import { T_Curve, T_Layer, T_Thing, T_Trait, T_Predicate } from './Enumerations'
 import { T_Info, T_Tool, T_Banner, T_Control, T_Details, T_Storage } from './Enumerations';
 import { T_Graph, T_Widget, T_Rebuild, T_RingZone, T_Startup, T_Hierarchy } from './Enumerations';
 
-import G_TreeBranches from '../geometry/tree/G_TreeBranches';
-import G_RadialGraph from '../geometry/radial/G_RadialGraph';
-import G_ArcSlider from '../geometry/radial/G_ArcSlider';
-import G_TreeGraph from '../geometry/tree/G_TreeGraph';
-import G_TreeLine from '../geometry/tree/G_TreeLine';
-import G_Cluster from '../geometry/radial/G_Cluster';
-import G_Segment from '../geometry/common/G_Segment';
-import G_Widget from '../geometry/common/G_Widget';
+import G_TreeBranches from '../geometry/G_TreeBranches';
+import G_RadialGraph from '../geometry/G_RadialGraph';
+import G_ArcSlider from '../geometry/G_ArcSlider';
+import G_TreeLine from '../geometry/G_TreeLine';
+import G_Cluster from '../geometry/G_Cluster';
+import G_Segment from '../geometry/G_Segment';
+import G_Widget from '../geometry/G_Widget';
 
 import S_Title_Edit from '../state/S_Title_Edit';
 import S_Alteration from '../state/S_Alteration';
@@ -57,9 +56,9 @@ import './Extensions';
 import { k } from './Constants';
 import { u } from './Utilities';
 import { e } from '../signals/Events';
+import { w } from '../geometry/G_Window';
 import { p } from '../managers/Preferences';
 import { c } from '../managers/Configuration';
-import { w } from '../geometry/common/G_Window';
 import { ux } from '../managers/User_Interaction';
 
 import { transparentize } from 'color2k';
@@ -73,12 +72,12 @@ export {
 	Rect, Size, Point, svgPaths,
 	Ancestry, Hierarchy, databases,
 	debug, Debug, T_Debug, ErrorTrace,
+	G_Widget, G_TreeLine, G_TreeBranches,
 	Angle, Direction, T_Quadrant, T_Orientation,
 	show, files, builds, colors, signals, layout,
 	T_Element, Svelte_Wrapper, T_SvelteComponent,
 	G_Segment, G_Cluster, G_RadialGraph, G_ArcSlider,
 	S_Paging, S_Rotation, S_Expansion, S_Thing_Pages,
-	G_Widget, G_TreeLine, G_TreeGraph, G_TreeBranches,
 	T_Layer, T_Create, T_RingZone, T_Oblong, T_Alteration,
 	T_Control, T_Browser, T_Signal, T_Storage, T_Preference,
 	S_Mouse, S_Widget, S_Element, S_Alteration, S_Title_Edit,

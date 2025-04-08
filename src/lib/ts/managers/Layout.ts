@@ -1,6 +1,6 @@
+import { w_t_tree, w_t_graph, w_t_details, w_hierarchy, w_ancestry_focus } from '../common/Stores';
 import { T_Graph, T_Banner, T_Details, T_Hierarchy } from '../common/Global_Imports';
-import { k, signals, G_TreeGraph, G_RadialGraph } from '../common/Global_Imports';
-import { w_t_tree, w_t_graph, w_t_details } from '../common/Stores';
+import { k, signals, G_RadialGraph } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
 class Verticals {
@@ -26,7 +26,6 @@ export enum TI {
 };
 
 export default class Layout {
-	_g_treeGraph!: G_TreeGraph;
 	_g_radialGraph!: G_RadialGraph;
 	verticals_ofInfo = new Verticals(9);
 	verticals_ofBanners = new Verticals(3);
@@ -39,16 +38,16 @@ export default class Layout {
 	get branches_areChildren(): boolean { return get(w_t_tree) == T_Hierarchy.children; }
 	top_ofBannerAt(index: number) { return this.verticals_ofBanners.tops[index] + k.separator_thickness; }
 	top_ofDetailAt(index: number) { return this.verticals_ofDetails.tops[index] + k.separator_thickness; }
-	get g_treeGraph() { let g = this._g_treeGraph; if (!g) { g = new G_TreeGraph(); this._g_treeGraph = g }; return g; }
 	get g_radialGraph() { let g = this._g_radialGraph; if (!g) { g = new G_RadialGraph(); this._g_radialGraph = g }; return g; }
 
 	grand_build() { this.grand_layout(); signals.signal_rebuildGraph_fromFocus(); }
 
 	grand_layout() {
-		if (this.inTreeMode) {
-			this.g_treeGraph.grand_layout_tree();
-		} else {
+		if (this.inRadialMode) {
 			this.g_radialGraph.grand_layout_radial();
+		} else {
+			const tree_trunk = this.branches_areChildren ? get(w_ancestry_focus) : get(w_hierarchy).grabs_latest_ancestry;
+			tree_trunk?.g_widget.layout_entireTree();
 		}
 		signals.signal_reposition_widgets_fromFocus();
 	}
@@ -57,8 +56,13 @@ export default class Layout {
 		const type = types[0];	// only ever has one element
 		switch (name) {
 			case 'graph': w_t_graph.set(type as T_Graph); break;
-			case 'tree': w_t_tree.set(type as T_Hierarchy); this.grand_build(); break;
+			case 'tree': this.set_t_tree(type as T_Hierarchy);; break;
 		}
+	}
+
+	set_t_tree(t_tree: T_Hierarchy) {
+		w_t_tree.set(t_tree);
+		this.grand_build()
 	}
 	
 	toggle_graphMode() {

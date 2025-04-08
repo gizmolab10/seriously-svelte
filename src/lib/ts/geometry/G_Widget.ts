@@ -1,8 +1,8 @@
-import { S_Element, G_TreeLine, G_TreeBranches } from '../../common/Global_Imports';
-import { k, ux, Rect, Size, Point, layout, Ancestry } from '../../common/Global_Imports';
-import { w_graph_rect, w_t_graph, w_device_isMobile} from '../../common/Stores';
-import { T_Widget, T_Element, T_Graph } from '../../common/Global_Imports';
-import { w_show_details, w_show_related } from '../../common/Stores';
+import { S_Element, G_TreeLine, G_TreeBranches } from '../common/Global_Imports';
+import { k, ux, Rect, Size, Point, layout, Ancestry } from '../common/Global_Imports';
+import { w_graph_rect, w_t_graph, w_device_isMobile} from '../common/Stores';
+import { T_Widget, T_Element, T_Graph } from '../common/Global_Imports';
+import { w_show_details, w_show_related } from '../common/Stores';
 import { get } from 'svelte/store';
 
 export default class G_Widget {
@@ -76,8 +76,8 @@ export default class G_Widget {
 
 	static readonly LAYOUT: unique symbol;
 
-	layout_tree_fromFocus() {
-		this.layout_focus_ofTree()
+	layout_entireTree() {
+		this.layout_trunk_ofTree()
 		this.recursively_layout_subtree();
 		this.recursively_layout_bidirectionals();
 	}
@@ -173,7 +173,7 @@ export default class G_Widget {
 		}
 	}
 
-	private layout_focus_ofTree() {
+	private layout_trunk_ofTree() {
 		const graphRect = get(w_graph_rect);
 		if (!!graphRect && layout.inTreeMode) {
 			const offsetY = graphRect.origin.y + 1;
