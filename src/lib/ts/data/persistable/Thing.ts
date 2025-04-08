@@ -188,7 +188,7 @@ export default class Thing extends Persistable {
 					const parent = parentRelationship.parent;
 					if (!!parent && !visited.includes(parent.id)) {
 						const id_parentRelationship = parentRelationship.id;		// TODO, this is the wrong relationship; needs the next one
-						const parentAncestries = parent.ancestries_for(predicate, u.uniquely_concatenateArrays(visited, [parent.id])) ?? [];
+						const parentAncestries = parent.ancestries_for(predicate, [...visited, parent.id]) ?? [];
 						if (parentAncestries.length == 0) {
 							addAncestry(get(w_hierarchy).rootAncestry.uniquelyAppend_relationshipID(id_parentRelationship));
 						} else {

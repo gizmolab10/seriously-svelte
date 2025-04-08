@@ -21,7 +21,7 @@
 	{#each ancestry.childAncestries as childAncestry}
 		<Tree_Line g_line = {childAncestry.g_widget.g_line}/>
 		<Widget ancestry = {childAncestry}/>
-		{#if childAncestry.showsChildRelationships}
+		{#if childAncestry.showsBranchRelationships}
 			<Tree_Branches ancestry = {childAncestry}/>
 		{/if}
 	{/each}

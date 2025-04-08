@@ -1,10 +1,10 @@
 import { w_t_countDots, w_show_details, w_show_related } from '../common/Stores';
-import { c, k, p, w, layouts, T_Preference } from '../common/Global_Imports';
+import { c, k, p, w, layout, T_Preference } from '../common/Global_Imports';
 import { T_Info, T_Hierarchy } from '../common/Enumerations';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
 
-export class S_Show {
+export class Visibility {
 	debug_cursor = false;
 	traits		 = false;
 	t_info		 = T_Info.focus;
@@ -20,6 +20,9 @@ export class S_Show {
 			switch (name) {
 				case 'details':
 					w_show_details.set(flag);
+					break;
+				case 'related':
+					w_show_related.set(flag);
 					break;
 				case 'traits':
 					this.traits = flag;
@@ -45,15 +48,15 @@ export class S_Show {
 		w_show_details.subscribe((flag: boolean) => {
 			p.write_key(T_Preference.show_details, flag);
 			w.restore_state();
-			layouts.grand_layout();
+			layout.grand_layout();
 		});
 		w_show_related.subscribe((flag: boolean) => {
 			p.write_key(T_Preference.show_related, flag);
 			w.restore_state();
-			layouts.grand_layout();
+			layout.grand_layout();
 		});
     }
 
 }
 
-export let show = new S_Show();
+export let show = new Visibility();

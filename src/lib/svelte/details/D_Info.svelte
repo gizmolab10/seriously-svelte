@@ -3,10 +3,10 @@
 	import { w_ancestry_focus, w_ancestries_grabbed, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { T_Info, T_Trait, T_Layer, T_Element, T_Preference } from '../../ts/common/Global_Imports';
 	import { c, k, p, ux, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
-	import { debug, colors, signals, layouts, Ancestry } from '../../ts/common/Global_Imports';
+	import { debug, colors, signals, layout, Ancestry } from '../../ts/common/Global_Imports';
 	import type { Integer, Dictionary } from '../../ts/common/Types';
 	import Identifiable from '../../ts/data/runtime/Identifiable';
-	import { TI } from '../../ts/geometry/common/G_Layouts';
+	import { TI } from '../../ts/managers/Layout';
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
@@ -39,7 +39,7 @@
 	let info_rebuilds = 0;
 	let info;
 
-	layouts.layout_tops_forInfo(1);
+	layout.layout_tops_forInfo(1);
 	setup_forColor();	// must call layout_tops_forInfo first
 	es_info.set_forHovering(colors.default, 'pointer');
 	
@@ -88,7 +88,7 @@
 	
 	function setup_forColor() {
 		const color_left = 61
-		color_origin = new Point(color_left, layouts.top_ofInfoAt(TI.color));
+		color_origin = new Point(color_left, layout.top_ofInfoAt(TI.color));
 		picker_offset = `${-color_left - 10}px`;
 	}
 
@@ -173,21 +173,21 @@
 					height={k.row_height * font_ratio}
 					selection_closure={selection_closure}
 					titles={[T_Info.focus, T_Info.selection]}
-					origin={new Point(45, layouts.top_ofInfoAt(TI.segments))}/>
+					origin={new Point(45, layout.top_ofInfoAt(TI.segments))}/>
 				<Separator
 					left=5
 					title='title'
 					width={info_width}
 					thickness={k.separator_thickness}
 					title_font_size={separator_font_size}
-					top={layouts.top_ofInfoAt(TI.before_title)}/>
+					top={layout.top_ofInfoAt(TI.before_title)}/>
 				{#key thing_title}
 					<div style='
 						white-space:pre;
 						position:absolute;
 						text-align:center;
 						width:{traits_width}px;
-						top:{layouts.top_ofInfoAt(TI.title)}px;'>
+						top:{layout.top_ofInfoAt(TI.title)}px;'>
 						{thing_title.clipWithEllipsisAt(30)}
 					</div>
 				{/key}
@@ -195,11 +195,11 @@
 					left=5
 					width={info_width}
 					thickness={k.separator_thickness}
-					top={layouts.top_ofInfoAt(TI.after_title)}/>
+					top={layout.top_ofInfoAt(TI.after_title)}/>
 				<Table
 					array={information}
 					width = {k.width_details - 20}
-					top = {layouts.top_ofInfoAt(TI.table)}/>
+					top = {layout.top_ofInfoAt(TI.table)}/>
 			{/if}
 			<Color
 				origin={color_origin}
@@ -222,7 +222,7 @@
 					height={text_box_size.height}
 					original_text={thing.consequence}
 					handle_textChange={handle_textChange}
-					top={layouts.top_ofInfoAt(TI.consequence)}/>
+					top={layout.top_ofInfoAt(TI.consequence)}/>
 				<Text_Editor
 					label='quest'
 					color=colors.default
@@ -230,7 +230,7 @@
 					width={text_box_size.width}
 					height={text_box_size.height}
 					handle_textChange={handle_textChange}
-					top={layouts.top_ofInfoAt(TI.quest)}/>
+					top={layout.top_ofInfoAt(TI.quest)}/>
 			{/if}
 		</div>
 	{/if}

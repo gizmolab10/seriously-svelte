@@ -1,6 +1,6 @@
-import { T_Graph, T_Banner, T_Details, T_Hierarchy } from '../../common/Global_Imports';
-import { k, signals, G_TreeGraph, G_RadialGraph } from '../../common/Global_Imports';
-import { w_t_tree, w_t_graph, w_t_details } from '../../common/Stores';
+import { T_Graph, T_Banner, T_Details, T_Hierarchy } from '../common/Global_Imports';
+import { k, signals, G_TreeGraph, G_RadialGraph } from '../common/Global_Imports';
+import { w_t_tree, w_t_graph, w_t_details } from '../common/Stores';
 import { get } from 'svelte/store';
 
 class Verticals {
@@ -25,7 +25,7 @@ export enum TI {
 	quest
 };
 
-export default class G_Layouts {
+export default class Layout {
 	_g_treeGraph!: G_TreeGraph;
 	_g_radialGraph!: G_RadialGraph;
 	verticals_ofInfo = new Verticals(9);
@@ -55,7 +55,7 @@ export default class G_Layouts {
 	toggle_graphMode() {
 		switch (get(w_t_graph)) {
 			case T_Graph.tree: w_t_graph.set(T_Graph.radial); break;
-			case T_Graph.radial: w_t_graph.set(T_Graph.tree); this.grand_build(); break;
+			case T_Graph.radial: w_t_graph.set(T_Graph.tree); break;
 		}
 		this.grand_build();
 	}
@@ -121,4 +121,4 @@ export default class G_Layouts {
 
 }
 
-export let layouts = new G_Layouts();
+export let layout = new Layout();

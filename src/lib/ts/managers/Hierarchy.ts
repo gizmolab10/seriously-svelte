@@ -1,4 +1,4 @@
-import { c, k, p, u, ux, show, User, Thing, Trait, debug, files, colors, signals, layouts, Access } from '../common/Global_Imports';
+import { c, k, p, u, ux, show, User, Thing, Trait, debug, files, colors, signals, layout, Access } from '../common/Global_Imports';
 import { T_Tool, T_Info, T_Thing, T_Trait, T_Create, T_Control, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { Ancestry, Predicate, Relationship, S_Mouse, S_Alteration, S_Title_Edit } from '../common/Global_Imports';
 import { w_storage_update_trigger, w_ancestry_showing_tools, w_ancestries_grabbed } from '../common/Stores';
@@ -82,7 +82,7 @@ export class Hierarchy {
 				default: break;
 			}
 			w_ancestry_showing_tools.set(null);
-			layouts.grand_layout();
+			layout.grand_layout();
 		}
 	}
 
@@ -133,7 +133,7 @@ export class Hierarchy {
 					case 'escape':			if (!!get(w_ancestry_showing_tools)) { this.clear_editingTools(); }
 				}
 				if (graph_needsRebuild) {
-					layouts.grand_build();
+					layout.grand_build();
 				}
 				const duration = ((new Date().getTime()) - time).toFixed(1);
 				debug.log_key(`H  (${duration}) ${key}`);
@@ -188,7 +188,7 @@ export class Hierarchy {
 		const ancestry = this.latest_grabbed_upward(up);
 		if (!ancestry.isRoot) {
 			w_ancestry_showing_tools.set(ancestry.toolsGrabbed ? null : ancestry);
-			layouts.grand_build();
+			layout.grand_build();
 		}
 	}
 	
@@ -794,7 +794,7 @@ export class Hierarchy {
 
 	get ancestries(): Array<Ancestry> { return Object.values(this.ancestry_byHID); }
 	ancestries_byHID_forKind(kind: string) { return this.ancestry_byKind_andHID[kind] ?? {}; }
-	get ancestries_thatAreVisible(): Array<Ancestry> { return this.rootAncestry.visibleProgeny_ancestries(); }
+	get ancestries_thatAreVisible(): Array<Ancestry> { return this.rootAncestry.visibleSubtree_ancestries(); }
 
 	ancestries_forget_all() {
 		this.ancestry_byHID = {};
@@ -832,7 +832,7 @@ export class Hierarchy {
 				}
 			}
 			debug.log_grab(`  DELETE, FOCUS grabbed: "${get(w_ancestry_focus).isGrabbed}"`);
-			layouts.grand_build();
+			layout.grand_build();
 		}
 	}
 
@@ -861,7 +861,7 @@ export class Hierarchy {
 	get ancestry_forBreadcrumbs(): Ancestry {
 		const focus = get(w_ancestry_focus);
 		const grab = this.grabs_latest_ancestry;
-		const grab_containsFocus = !!grab && focus.isAProgenyOf(grab)
+		const grab_containsFocus = !!grab && focus.isABranchOf(grab)
 		return (!!grab && grab.isVisible && !grab_containsFocus) ? grab : focus;
 	}
 
@@ -901,7 +901,7 @@ export class Hierarchy {
 		if (!!toolsAncestry) {
 			let ancestry = toolsAncestry;
 			ancestry.grabOnly();
-			layouts.grand_layout();
+			layout.grand_layout();
 			w_ancestry_showing_tools.set(ancestry);
 		}
 	}
@@ -935,10 +935,10 @@ export class Hierarchy {
 			if (!!childAncestry) {
 				childAncestry.grabOnly();
 				childAncestry.relationship?.order_setTo(order);
-				if (!parentAncestry.isRoot && layouts.inRadialMode) {
+				if (!parentAncestry.isRoot && layout.inRadialMode) {
 					parentAncestry.becomeFocus();
 				}
-				layouts.grand_build();
+				layout.grand_build();
 				if (shouldStartEdit) {
 					setTimeout(() => {
 						childAncestry.startEdit();
@@ -1013,19 +1013,19 @@ export class Hierarchy {
 			await this.db.hierarchy_fetch_forID(thing.title)
 			this.relationships_refreshKnowns();
 			const childAncestries = ancestry?.childAncestries;
-			const isRadialMode = layouts.inRadialMode;
+			const isRadialMode = layout.inRadialMode;
 			if (!!childAncestries && childAncestries.length > 0) {
 				if (!!grab) {
 					childAncestries[0].grabOnly()
 				}
 				ancestry?.expand()
 				if (!isRadialMode) {
-					layouts.grand_build();	// not rebuild until focus changes
+					layout.grand_build();	// not rebuild until focus changes
 				}
 			}
 			if (isRadialMode) {
 				ancestry?.becomeFocus();
-				layouts.grand_build();
+				layout.grand_build();
 			}
 		}
 	}
@@ -1049,7 +1049,7 @@ export class Hierarchy {
 	ancestry_rebuild_persistentMoveUp_maybe(ancestry: Ancestry, up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const [graph_needsRebuild, graph_needsRelayout] = ancestry.persistentMoveUp_maybe(up, SHIFT, OPTION, EXTREME);
 		if (graph_needsRebuild) {
-			layouts.grand_build();
+			layout.grand_build();
 		} else if (graph_needsRelayout) {
 			signals.signal_recreate_widgets_fromFocus();
 		}
@@ -1083,7 +1083,7 @@ export class Hierarchy {
 					parentAncestry.becomeFocus();
 				}
 			}
-			layouts.grand_build();			// so Tree_Branches component will update
+			layout.grand_build();			// so Tree_Branches component will update
 		}
 	}
 
@@ -1094,13 +1094,13 @@ export class Hierarchy {
 		const newGrabIsNotFocus = !newGrabAncestry?.isFocus;
 		let graph_needsRebuild = false;
 		if (RIGHT) {
-			if (!ancestry.hasRelevantRelationships && layouts.inTreeMode) {
+			if (!ancestry.hasRelevantRelationships && layout.inTreeMode) {
 				return;
 			} else {
 				if (SHIFT) {
 					newGrabAncestry = null;
 				}
-				if (layouts.inTreeMode) {
+				if (layout.inTreeMode) {
 					graph_needsRebuild = ancestry.expand();
 				} else {
 					graph_needsRebuild = ancestry.becomeFocus();
@@ -1138,7 +1138,7 @@ export class Hierarchy {
 			if (!RIGHT && !!newFocusAncestry) {
 				const newFocusIsGrabbed = newFocusAncestry.equals(newGrabAncestry);
 				const canBecomeFocus = (!SHIFT || newFocusIsGrabbed) && newGrabIsNotFocus;
-				const shouldBecomeFocus = newFocusAncestry.isRoot || !newFocusAncestry.isVisible || layouts.inRadialMode;
+				const shouldBecomeFocus = newFocusAncestry.isRoot || !newFocusAncestry.isVisible || layout.inRadialMode;
 				const becomeFocus = canBecomeFocus && shouldBecomeFocus;
 				if (becomeFocus && newFocusAncestry.becomeFocus()) {
 					graph_needsRebuild = true;
@@ -1146,9 +1146,9 @@ export class Hierarchy {
 			}
 		}
 		if (graph_needsRebuild) {
-			layouts.grand_build();
+			layout.grand_build();
 		} else {
-			layouts.grand_layout();
+			layout.grand_layout();
 		}
 	}
 
@@ -1364,7 +1364,7 @@ export class Hierarchy {
 			await this.wrapUp_data_forUX();
 			await this.db.persist_all(true);						// true means force (overrides isDirty) persists all of what was retained
 		}
-		layouts.grand_build();
+		layout.grand_build();
 	}
 
 	objects_ofAllTypes_extract_fromDict(dict: Dictionary) {

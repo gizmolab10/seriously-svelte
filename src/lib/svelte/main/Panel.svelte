@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, k, u, ux, w, show, Rect, Size, Point, Thing, colors, layouts } from '../../ts/common/Global_Imports';
+	import { c, k, u, ux, w, show, Rect, Size, Point, Thing, colors, layout } from '../../ts/common/Global_Imports';
 	import { w_t_database, w_graph_rect, w_hierarchy, w_background_color } from '../../ts/common/Stores';
 	import { debug, T_Layer, T_Banner, Ancestry, T_Startup } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_show_details, w_device_isMobile, } from '../../ts/common/Stores';
@@ -42,7 +42,7 @@
 				switch (key) {
 					case 'o': h.select_file_toUpload(event.shiftKey); break;
 					case 'c': w.user_graph_offset_setTo(Point.zero); break;
-					case 'm': layouts.toggle_graphMode(); break;
+					case 'm': layout.toggle_graphMode(); break;
 					case 's': h.persist_toFile(); break;
 					case '?': c.showHelp(); break;
 					default:  await h.handle_key_down(event); return;	// let hierarchy consume the events
@@ -89,12 +89,12 @@
 						position: absolute;
 						z-index: {T_Layer.frontmost};
 						width:{w.windowSize.width}px;
-						top:{layouts.top_ofBannerAt(T_Banner.crumbs) - 2}px;
-						height:{layouts.height_ofBannerAt(T_Banner.crumbs)}px;'>
+						top:{layout.top_ofBannerAt(T_Banner.crumbs) - 2}px;
+						height:{layout.height_ofBannerAt(T_Banner.crumbs)}px;'>
 					<Breadcrumbs/>
 					{#key separator_rebuilds}
 						<div class='separator-above-crumbs' style='
-							top: {layouts.top_ofBannerAt(T_Banner.crumbs) - 3}px;
+							top: {layout.top_ofBannerAt(T_Banner.crumbs) - 3}px;
 							background-color:{colors.separator};
 							height: {k.separator_thickness}px;
 							z-index: {T_Layer.lines};'>
@@ -103,7 +103,7 @@
 				</div>
 				{#key separator_rebuilds}
 					<div class='separator-above-graph' style='
-						top: {layouts.top_ofBannerAt(T_Banner.graph)}px;
+						top: {layout.top_ofBannerAt(T_Banner.graph)}px;
 						background-color: {colors.separator};
 						height: {k.separator_thickness}px;
 						width: {w.windowSize.width}px;

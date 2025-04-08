@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { w_color_trigger, w_background_color, w_thing_fontFamily, w_ancestry_focus } from '../../ts/common/Stores';
-	import { k, u, ux, Point, Thing, colors, layouts, signals, databases } from '../../ts/common/Global_Imports';
+	import { k, u, ux, Point, Thing, colors, layout, signals, databases } from '../../ts/common/Global_Imports';
 	import { T_Tool, T_Banner, T_Element, S_Element } from '../../ts/common/Global_Imports';
 	import Button from './Button.svelte';
 	import { onMount } from 'svelte';
@@ -11,7 +11,7 @@
 	const borderStyle = '1px solid';
 	let borderColor = $w_background_color;
 	let title = thing.breadcrumb_title ?? k.empty;
-	let height = layouts.height_ofBannerAt(T_Banner.crumbs);
+	let height = layout.height_ofBannerAt(T_Banner.crumbs);
 	let name = `crumb (for ${title ?? 'unknown'})`;
 	let border = `${borderStyle} ${borderColor}`;
 	let ancestry = es_breadcrumb.ancestry;
@@ -76,7 +76,7 @@
 			} else if (s_mouse.isUp) {
 				ancestry.grabOnly();
 				if (ancestry.becomeFocus()) {
-					layouts.grand_build();
+					layout.grand_build();
 				}
 			}
 		}

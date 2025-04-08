@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, k, p, u, ux, w, show, Point, colors, layouts, svgPaths, signals, S_Element } from '../../ts/common/Global_Imports';
+	import { c, k, p, u, ux, w, show, Point, colors, layout, svgPaths, signals, S_Element } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Banner, T_Element, T_Control, T_Hierarchy, T_Preference } from '../../ts/common/Global_Imports';
 	import { w_t_graph, w_t_tree, w_graph_rect, w_count_resize, w_hierarchy, w_id_popupView } from '../../ts/common/Stores';
 	import { w_show_details, w_show_related, w_device_isMobile, w_thing_fontFamily } from '../../ts/common/Stores';
@@ -52,7 +52,7 @@
 	$: {
 		const _ = $w_t_graph;
 		const h = $w_hierarchy;
-		const needsExtra = layouts.inTreeMode;
+		const needsExtra = layout.inTreeMode;
 		const extra = needsExtra ? 110 : 0;
 		displayName = h.db.displayName;
 		displayName_width = u.getWidthOf(displayName);
@@ -97,7 +97,7 @@
 				left: 0px;
 				position: absolute;
 				z-index: {T_Layer.frontmost};
-				height: `${layouts.height_ofBannerAt(T_Banner.controls) - 2}px`;'>
+				height: `${layout.height_ofBannerAt(T_Banner.controls) - 2}px`;'>
 			{#if !$w_id_popupView}
 				{#key $w_background_color}
 					<Button
@@ -116,15 +116,15 @@
 						selected={[$w_t_graph]}
 						name='graph-type-selector'
 						titles={[T_Graph.tree, T_Graph.radial]}
-						selection_closure={(titles) => layouts.handle_mode_selection('graph', titles)}/>
-					{#if layouts.inTreeMode}
+						selection_closure={(titles) => layout.handle_mode_selection('graph', titles)}/>
+					{#if layout.inTreeMode}
 						{#key $w_t_tree}
 							<Segmented
 								origin={Point.x(114)}
 								selected={[$w_t_tree]}
 								name='tree-type-selector'
 								titles={[T_Hierarchy.children, T_Hierarchy.parents]}
-								selection_closure={(titles) => layouts.handle_mode_selection('tree', titles)}/>
+								selection_closure={(titles) => layout.handle_mode_selection('tree', titles)}/>
 							{#key $w_show_related}
 								<Button
 									width=82

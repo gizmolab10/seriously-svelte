@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, k, u, show, Point, debug, layouts, T_Layer, T_Banner, T_Details } from '../../ts/common/Global_Imports';
+	import { c, k, u, show, Point, debug, layout, T_Layer, T_Banner, T_Details } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_t_details } from '../../ts/common/Stores';
 	import { w_background_color } from '../../ts/common/Stores';
 	import D_Display from '../details/D_Display.svelte';
@@ -11,11 +11,11 @@
 	const titles = [T_Details[T_Details.storage], T_Details[T_Details.tools], T_Details[T_Details.display], T_Details[T_Details.info]];
 	let details_rebuilds = 0;
 
-	layouts.layout_tops_forDetails();
+	layout.layout_tops_forDetails();
 
 	function selection_closure(t_details: Array<string>) {
 		$w_t_details = t_details as Array<T_Details>;
-		layouts.layout_tops_forDetails();
+		layout.layout_tops_forDetails();
 		details_rebuilds += 1;
 	}
 
@@ -42,22 +42,22 @@
 			origin={new Point(6, 6)}
 			selection_closure={selection_closure}/>
 		{#if showingDetails_ofType(T_Details.storage)}
-			<Separator title='storage' top={layouts.top_ofDetailAt(T_Details.storage) - 8}/>
-			<D_Storage top={layouts.top_ofDetailAt(T_Details.storage)}/>
+			<Separator title='storage' top={layout.top_ofDetailAt(T_Details.storage) - 8}/>
+			<D_Storage top={layout.top_ofDetailAt(T_Details.storage)}/>
 		{/if}
 		<div class='further-details'
 			style='width:{k.width_details}px;'>
 			{#if showingDetails_ofType(T_Details.tools)}
-				<Separator title='tools' top={layouts.top_ofDetailAt(T_Details.tools) - 8}/>
-				<D_Tools top={layouts.top_ofDetailAt(T_Details.tools)}/>
+				<Separator title='tools' top={layout.top_ofDetailAt(T_Details.tools) - 8}/>
+				<D_Tools top={layout.top_ofDetailAt(T_Details.tools)}/>
 			{/if}
 			{#if showingDetails_ofType(T_Details.display)}
-				<Separator title='display' top={layouts.top_ofDetailAt(T_Details.display) - 8}/>
-				<D_Display top={layouts.top_ofDetailAt(T_Details.display)}/>
+				<Separator title='display' top={layout.top_ofDetailAt(T_Details.display) - 8}/>
+				<D_Display top={layout.top_ofDetailAt(T_Details.display)}/>
 			{/if}
 			{#if showingDetails_ofType(T_Details.info)}
-				<Separator title='info' top={layouts.top_ofDetailAt(T_Details.info) - 7}/>
-				<D_Info top={layouts.top_ofDetailAt(T_Details.info)}/>
+				<Separator title='info' top={layout.top_ofDetailAt(T_Details.info) - 7}/>
+				<D_Info top={layout.top_ofDetailAt(T_Details.info)}/>
 			{/if}
 		</div>
 	</div>

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, ux, w, Thing, Point, Angle, debug, colors, layouts, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
+	import { k, ux, w, Thing, Point, Angle, debug, colors, layout, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
 	import { w_color_trigger, w_ancestry_focus, w_s_title_edit } from '../../ts/common/Stores';
 	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/common/Stores';
 	import { w_graph_rect, w_mouse_location_scaled } from '../../ts/common/Stores';
@@ -150,7 +150,7 @@
 					time = now;
 					debug.log_radial(` resize  D ${distance.asInt()}  R ${radius.asInt()}  + ${delta.toFixed(1)}`);
 					$w_ring_rotation_radius = radius;
-					layouts.grand_build();					// destroys this component (properties are in w_w_ring_resizing)
+					layout.grand_build();					// destroys this component (properties are in w_w_ring_resizing)
 				}
 			} else if (rotation_state.isActive) {								// rotate clusters
 				if (!signals.signal_isInFlight && enoughTimeHasPassed) {		// 1 tenth second
@@ -160,7 +160,7 @@
 					rotation_state.active_angle = mouse_angle;
 					detect_hovering();
 					cursor = ux.s_ring_rotation.cursor;
-					layouts.grand_layout();											// to reposition necklace widgets
+					layout.grand_layout();											// to reposition necklace widgets
 					setTimeout(() => {
 						rings_rebuilds += 1;									// for arc sliders
 					}, 1)
@@ -175,7 +175,7 @@
 				cursor = s_paging_rotation.cursor;
 				debug.log_radial(` page  ${delta_angle.asDegrees()}`);
 				if (!!basis_angle && !!active_angle && basis_angle != active_angle && $w_g_active_cluster.adjust_paging_index_byAdding_angle(delta_angle)) {
-					layouts.grand_build();
+					layout.grand_build();
 				}
 			} else {				// not dragging
 				detect_hovering();
@@ -262,7 +262,7 @@
 		class = 'paging-arcs'
 		bind:this = {pagingArcs}
 		style = 'z-index:{T_Layer.paging};'>
-		{#each layouts.g_radialGraph.g_clusters as g_cluster}
+		{#each layout.g_radialGraph.g_clusters as g_cluster}
 			{#if !!g_cluster && (g_cluster.widgets_shown > 0)}
 				<Radial_ArcSlider
 					color = {color}

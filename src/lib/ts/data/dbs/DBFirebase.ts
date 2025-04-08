@@ -1,8 +1,8 @@
-import { c, k, p, u, Thing, Trait, debug, signals, Predicate, Relationship } from '../../common/Global_Imports';
+import { c, k, p, u, Thing, Trait, debug, layout, Predicate, Relationship } from '../../common/Global_Imports';
 import { T_Thing, T_Trait, T_Debug, T_Create, T_Predicate, T_Preference } from '../../common/Global_Imports';
-import { doc, addDoc, setDoc, getDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
 import { QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
 import { onSnapshot, deleteField, getFirestore, DocumentData, DocumentChange } from 'firebase/firestore';
+import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
 import { T_Persistable, T_Database, T_Persistence } from './DBCommon';
 import type { Dictionary } from '../../common/Types';
 import Identifiable from '../runtime/Identifiable';
@@ -214,7 +214,7 @@ export default class DBFirebase extends DBCommon {
 			setTimeout(() => { // wait in case a thing involved in this relationship arrives in the data
 				this.hierarchy.relationships_refreshKnowns();
 				this.hierarchy.rootAncestry.order_normalizeRecursive(true);
-				layouts.grand_build();
+				layout.grand_build();
 			}, 20);
 		}
 		this.hierarchy.ancestries_fullRebuild();		// first recreate ancestries
@@ -478,7 +478,7 @@ export default class DBFirebase extends DBCommon {
 			}
 			setTimeout(() => { // wait in case a thing involved in this trait arrives in the data
 				h.traits_refreshKnowns();
-				layouts.grand_build();
+				layout.grand_build();
 			}, 20);
 		}
 		return true;

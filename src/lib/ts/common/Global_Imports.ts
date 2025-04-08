@@ -1,8 +1,9 @@
 import { builds } from './Builds';
-import { show } from '../state/S_Show';
+import { show } from '../managers/Visibility';
 import { colors } from '../common/Colors';
 import { files } from '../managers/Files';
 import { Direction } from '../common/Angle';
+import { layout } from '../managers/Layout';
 import { Rect, Size, Point } from './Geometry';
 import { svgPaths } from '../common/SVG_Paths';
 import { wrappers } from '../managers/Wrappers';
@@ -10,7 +11,6 @@ import { ErrorTrace } from '../debug/ErrorTrace';
 import { Hierarchy } from '../managers/Hierarchy';
 import { databases } from '../managers/Databases';
 import { Seriously_Range } from './Seriously_Range';
-import { layouts } from '../geometry/common/G_Layouts';
 import { signals, T_Signal } from '../signals/Signals';
 import { debug, Debug, T_Debug } from '../debug/Debug';
 
@@ -74,7 +74,7 @@ export {
 	Ancestry, Hierarchy, databases,
 	debug, Debug, T_Debug, ErrorTrace,
 	Angle, Direction, T_Quadrant, T_Orientation,
-	show, files, builds, colors, signals, layouts,
+	show, files, builds, colors, signals, layout,
 	T_Element, Svelte_Wrapper, T_SvelteComponent,
 	G_Segment, G_Cluster, G_RadialGraph, G_ArcSlider,
 	S_Paging, S_Rotation, S_Expansion, S_Thing_Pages,

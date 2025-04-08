@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { c, k, u, ux, w, show, Rect, Size, Point, debug, colors, signals } from '../../ts/common/Global_Imports';
 	import { T_Tool, T_Graph, T_Layer, T_Element, T_Alteration } from '../../ts/common/Global_Imports';
-	import { layouts, svgPaths, databases, Direction, Svelte_Wrapper } from '../../ts/common/Global_Imports';
+	import { layout, svgPaths, databases, Direction, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { S_Mouse, S_Element, S_Alteration } from '../../ts/common/Global_Imports';
 	import { w_s_alteration, w_ancestry_showing_tools } from '../../ts/common/Stores';
 	import { w_hierarchy, w_graph_rect } from '../../ts/common/Stores';
@@ -95,7 +95,7 @@
 	}
 
 	function titleOffsetX(): number {
-		return !ancestry ? 0 : layouts.inRadialMode ? ancestry.points_right ? titleWidth + 23 : -6 : ancestry.showsReveal ? titleWidth + 25 : titleWidth + 17;
+		return !ancestry ? 0 : layout.inRadialMode ? ancestry.points_right ? titleWidth + 23 : -6 : ancestry.showsReveal ? titleWidth + 25 : titleWidth + 17;
 	}
 
 	function handle_delete_event(event) {

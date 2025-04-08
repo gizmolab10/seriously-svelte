@@ -1,6 +1,6 @@
 import { w_count_resize, w_count_mouse_up, w_device_isMobile, w_s_alteration } from '../common/Stores';
 import { w_user_graph_offset, w_mouse_location, w_mouse_location_scaled } from '../common/Stores';
-import { c, k, w, Point, debug, layouts, signals, S_Alteration } from '../common/Global_Imports';
+import { c, k, w, Point, debug, layout, signals, S_Alteration } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
 export class Events {
@@ -55,7 +55,7 @@ export class Events {
 				default: w.zoomBy(k.zoom_in_ratio); break;
 			}
 			w.renormalize_user_graph_offset();
-			layouts.grand_build();
+			layout.grand_build();
 		}
 	}
 
@@ -159,7 +159,7 @@ export class Events {
 	// 			switch (key) {
 	// 				case 'o': h.select_file_toUpload(event.shiftKey); break;
 	// 				case 'c': w.user_graph_offset_setTo(Point.zero); break;
-	// 				case 'm': layouts.toggle_graphMode(); break;
+	// 				case 'm': layout.toggle_graphMode(); break;
 	// 				case 's': h.persist_toFile(); break;
 	// 				case '?': c.showHelp(); break;
 	// 				default:  await h.handle_key_down(event); return;	// let hierarchy consume the events

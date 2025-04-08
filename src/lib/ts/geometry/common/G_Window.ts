@@ -1,4 +1,4 @@
-import { k, p, Rect, Size, Point, debug, layouts, T_Banner, T_Preference } from '../../common/Global_Imports';
+import { k, p, Rect, Size, Point, debug, layout, T_Banner, T_Preference } from '../../common/Global_Imports';
 import { w_graph_rect, w_show_details, w_mouse_location_scaled } from '../../common/Stores';
 import { w_user_graph_offset, w_user_graph_center } from '../../common/Stores';
 import { get } from 'svelte/store';
@@ -65,7 +65,7 @@ export class G_Window {
 
 	graphRect_update() {
 		const left = get(w_show_details) ? k.width_details : 0;			// width of details
-		const originOfGraph = new Point(left, layouts.top_ofBannerAt(T_Banner.graph));						// 69 = height of content above the graph
+		const originOfGraph = new Point(left, layout.top_ofBannerAt(T_Banner.graph));						// 69 = height of content above the graph
 		const sizeOfGraph = this.windowSize.reducedBy(originOfGraph);	// account for origin
 		const rect = new Rect(originOfGraph, sizeOfGraph);
 		debug.log_mouse(`GRAPH ====> ${rect.description}`);

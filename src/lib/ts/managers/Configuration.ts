@@ -1,4 +1,4 @@
-import { e, k, p, u, w, show, debug, layouts, databases } from '../common/Global_Imports';
+import { e, k, p, u, w, show, debug, layout, databases } from '../common/Global_Imports';
 import { stores, w_device_isMobile } from '../common/Stores';
 
 export class Configuration {
@@ -21,10 +21,10 @@ export class Configuration {
 		//////////////////////////////////////////////////
 
 		w_device_isMobile.set(this.device_isMobile);
-		debug.queryStrings_apply();						// debug even setup code
+		debug.queryStrings_apply();						// debugging
 		stores.setup_defaults();
 		show.restore_state();							// local persistance
-		layouts.layout_tops_forPanelBanners();
+		layout.layout_tops_forPanelBanners();
 		w.restore_state();
 		this.queryStrings_apply();						// must call before prefs and db
 		p.restore_defaults();
