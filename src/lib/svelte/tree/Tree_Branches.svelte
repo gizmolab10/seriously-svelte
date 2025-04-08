@@ -18,11 +18,11 @@
 		center = {g_treeBranches.origin_ofLine}/>
 {/if}
 {#if !!ancestry}
-	{#each ancestry.childAncestries as childAncestry}
-		<Tree_Line g_line = {childAncestry.g_widget.g_line}/>
-		<Widget ancestry = {childAncestry}/>
-		{#if childAncestry.showsBranchRelationships}
-			<Tree_Branches ancestry = {childAncestry}/>
+	{#each ancestry.branchAncestries as branchAncestry}
+		<Tree_Line g_line = {branchAncestry.g_widget.g_line}/>
+		<Widget ancestry = {branchAncestry}/>
+		{#if branchAncestry.showsBranchRelationships}
+			<Tree_Branches ancestry = {branchAncestry}/>
 		{/if}
 	{/each}
 {/if}

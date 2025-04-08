@@ -121,8 +121,8 @@ export class Hierarchy {
 				if (!!ancestryGrab) {
 					switch (key) {
 						case '/':			graph_needsRebuild = ancestryGrab.becomeFocus(); break;
-						case 'arrowright':	event.preventDefault(); await this.ancestry_rebuild_persistentMoveRight(ancestryGrab,  ancestryGrab.thing_isChild, SHIFT, OPTION, EXTREME, false); break;
-						case 'arrowleft':	event.preventDefault(); await this.ancestry_rebuild_persistentMoveRight(ancestryGrab, !ancestryGrab.thing_isChild, SHIFT, OPTION, EXTREME, false); break;
+						case 'arrowright':	event.preventDefault(); await this.ancestry_rebuild_persistentMoveRight(ancestryGrab,  true, SHIFT, OPTION, EXTREME, false); break;
+						case 'arrowleft':	event.preventDefault(); await this.ancestry_rebuild_persistentMoveRight(ancestryGrab, false, SHIFT, OPTION, EXTREME, false); break;
 					}
 				}
 				switch (key) {

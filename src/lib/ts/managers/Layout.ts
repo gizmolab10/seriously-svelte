@@ -43,6 +43,15 @@ export default class Layout {
 	get g_radialGraph() { let g = this._g_radialGraph; if (!g) { g = new G_RadialGraph(); this._g_radialGraph = g }; return g; }
 
 	grand_build() { this.grand_layout(); signals.signal_rebuildGraph_fromFocus(); }
+
+	grand_layout() {
+		if (this.inTreeMode) {
+			this.g_treeGraph.grand_layout_tree();
+		} else {
+			this.g_radialGraph.grand_layout_radial();
+		}
+		signals.signal_reposition_widgets_fromFocus();
+	}
 	
 	handle_mode_selection(name: string, types: Array<string>) {
 		const type = types[0];	// only ever has one element
@@ -58,15 +67,6 @@ export default class Layout {
 			case T_Graph.radial: w_t_graph.set(T_Graph.tree); break;
 		}
 		this.grand_build();
-	}
-
-	grand_layout() {
-		if (this.inTreeMode) {
-			this.g_treeGraph.grand_layout_tree();
-		} else {
-			this.g_radialGraph.grand_layout_radial();
-		}
-		signals.signal_reposition_widgets_fromFocus();
 	}
 		
 	layout_tops_forInfo(start: number) {

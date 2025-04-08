@@ -4,7 +4,7 @@ export default class G_TreeLine {
 	t_curve: string = T_Curve.flat;
 	ancestry: Ancestry | null;	// main end of the line
 	other_ancestry: Ancestry;	// other end of the line (N.B. main can be deeper!!)
-	isBidirectional = false;
+	isBidirectional: boolean;
 	points_atOther = true;
 	viewBox = Rect.zero;
 	origin = Point.zero;
@@ -19,10 +19,12 @@ export default class G_TreeLine {
 
 	constructor(ancestry: Ancestry | null, other_ancestry: Ancestry, isBidirectional: boolean = false) {
 		this.name = ancestry?.title ?? k.empty;
-		this.other_ancestry = other_ancestry;
 		this.isBidirectional = isBidirectional;
+		this.other_ancestry = other_ancestry;
 		this.ancestry = ancestry;
 	}
+
+	get branchAncestry(): Ancestry | null { return this.points_atOther ? this.other_ancestry : this.ancestry; }
 		
 	layout_line() {
 		this.layout_svgPaths();

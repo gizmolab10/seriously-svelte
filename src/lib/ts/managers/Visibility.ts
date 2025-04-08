@@ -1,4 +1,4 @@
-import { w_t_countDots, w_show_details, w_show_related } from '../common/Stores';
+import { w_t_tree, w_t_countDots, w_show_details, w_show_related } from '../common/Stores';
 import { c, k, p, w, layout, T_Preference } from '../common/Global_Imports';
 import { T_Info, T_Hierarchy } from '../common/Enumerations';
 import type { Dictionary } from '../common/Types';
@@ -27,6 +27,10 @@ export class Visibility {
 				case 'traits':
 					this.traits = flag;
 					p.write_key(T_Preference.traits, flag);
+					break;
+				case 'parents':
+					const mode = flag ? T_Hierarchy.parents : T_Hierarchy.children;
+					w_t_tree.set(mode);
 					break;
 			}
 		}

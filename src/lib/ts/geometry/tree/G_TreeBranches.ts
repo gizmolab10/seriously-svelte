@@ -4,7 +4,7 @@ export default class G_TreeBranches {
 	origin_ofLine = Point.zero;
 	ancestry: Ancestry;
 
-	// scratchpad for widgets, progeny_height and center
+	// scratchpad for widgets, subtree_height and center
 
 	constructor(ancestry: Ancestry) {
 		this.ancestry = ancestry;
@@ -22,7 +22,7 @@ export default class G_TreeBranches {
 				if (branchAncestry.depth > ancestry.depth) {
 					const g_widget = branchAncestry.g_widget;
 					g_widget.configure_widget(height, origin_ofWidget, T_Graph.tree)
-					height += g_widget.progeny_height;
+					height += g_widget.subtree_height;
 				}
 			}
 			this.origin_ofLine = origin_ofWidget.offsetByXY(20, 2);

@@ -14,9 +14,8 @@ import Identifiable from './Identifiable';
 
 export default class Ancestry extends Identifiable {
 	g_widgets: Dictionary<G_Widget> = {};
-	kind: string;
-	thing_isChild = true;
 	t_database: string;
+	kind: string;
 
 
 	// id => ancestry (path) string 
@@ -25,11 +24,10 @@ export default class Ancestry extends Identifiable {
 	//   "   kind is from the last relationship
 	//  	 all children are of that kind of predicate
 
-	constructor(t_database: string, path: string = k.root_path, kind: string = T_Predicate.contains, thing_isChild: boolean = true) {
+	constructor(t_database: string, path: string = k.root_path, kind: string = T_Predicate.contains) {
 		super(path);
 		this.kind = kind;
 		this.t_database = t_database;
-		this.thing_isChild = thing_isChild;
 		this.hierarchy.signal_storage_redraw(0);
 	}
 	
@@ -59,12 +57,12 @@ export default class Ancestry extends Identifiable {
 	
 	static readonly PROPERTIES: unique symbol;
 	
+	get isUnidirectional():					 boolean { return !this.isBidirectional; }
 	get isRoot():							 boolean { return this.pathString == k.root_path; }
 	get hasChildRelationships():			 boolean { return this.childRelationships.length > 0; }
 	get hasParentRelationships():			 boolean { return this.parentRelationships.length > 0; }
 	get isFocus():							 boolean { return this.matchesStore(w_ancestry_focus); }
 	get hasRelevantRelationships():			 boolean { return this.relevantRelationships_count > 0; }
-	get isUnidirectional():					 boolean { return this.predicate?.isBidirectional ?? true; }
 	get isBidirectional():					 boolean { return this.predicate?.isBidirectional ?? false; }
 	get showsReveal():						 boolean { return this.showsReveal_forPointingToChild(true); }
 	get toolsGrabbed():						 boolean { return this.matchesStore(w_ancestry_showing_tools); }
@@ -102,17 +100,21 @@ export default class Ancestry extends Identifiable {
 	get titles():			 	 Array		<string> { return this.ancestors?.map(a => `${!a ? 'null' : a.title}`) ?? []; }
 	get children():			 	 Array		 <Thing> { return this.hierarchy.things_forAncestries(this.childAncestries); }
 	get ancestors():		 	 Array		 <Thing> { return this.hierarchy.things_forAncestry(this); }
-	get parentAncestries():		 Array	  <Ancestry> { return this.thing?.ancestries ?? []; }
 	get childAncestries():	 	 Array	  <Ancestry> { return this.childAncestries_ofKind(this.kind); }
 	get siblingAncestries(): 	 Array	  <Ancestry> { return this.parentAncestry?.childAncestries ?? []; }
-	get branchAncestries():	 	 Array	  <Ancestry> { return layout.branches_areChildren ? this.childAncestries : this.parentAncestries; }
-	get relevantRelationships(): Array<Relationship> { return this.relationships_forChildren(this.thing_isChild); }
-	get parentRelationships():	 Array<Relationship> { return this.relationships_ofKind_forParents(this.kind, true); }
+	get branchAncestries():		 Array	  <Ancestry> { return layout.branches_areChildren ? this.childAncestries : this.parentAncestries; }
 	get childRelationships():	 Array<Relationship> { return this.relationships_ofKind_forParents(this.kind, false); }
+	get parentRelationships():	 Array<Relationship> { return this.relationships_ofKind_forParents(this.kind, true); }
+	get relevantRelationships(): Array<Relationship> { return this.relationships_forChildren(true); }
 
 	get relationships(): Array<Relationship> {
 		const relationships = this.relationship_hids.map(hid => this.hierarchy.relationship_forHID(hid)) ?? [];
 		return u.strip_invalid(relationships);
+	}
+
+	get parentAncestries(): Array<Ancestry> {
+		const ancestries = this.thing?.ancestries ?? [];
+		return ancestries.map(a => a.parentAncestry).filter(a => !!a).filter(a => !a.equals(this) && a.depth < this.depth);
 	}
 
 	get points_right(): boolean {
@@ -146,7 +148,7 @@ export default class Ancestry extends Identifiable {
 		const predicate = this.predicate;
 		const g_radialGraph = layout.g_radialGraph;
 		if (!!predicate && !!g_radialGraph) {
-			const g_cluster = g_radialGraph?.g_cluster_forPredicate_toChildren(predicate, this.thing_isChild)
+			const g_cluster = g_radialGraph?.g_cluster_forPredicate_toChildren(predicate, true)
 			return g_cluster?.s_ancestryPaging(this) ?? null;
 		}
 		return null;	// either g_radialGraph is not setup or predicate is bogus
@@ -248,7 +250,7 @@ export default class Ancestry extends Identifiable {
 	matchesStore(store: Writable<Ancestry | null>):					boolean { return get(store)?.equals(this) ?? false; }
 	sharesAnID(ancestry: Ancestry | null):							boolean { return !ancestry ? false : this.relationship_ids.some(id => ancestry.relationship_ids.includes(id)); }
 	showsCluster_forPredicate(predicate: Predicate):				boolean { return this.includesPredicate_ofKind(predicate.kind) && this.hasThings(predicate); }
-	equals(ancestry: Ancestry | null | undefined):	boolean { return !!ancestry && this.hid == ancestry.hid && this.t_database == ancestry.t_database; }
+	equals(ancestry: Ancestry | null | undefined):					boolean { return super.equals(ancestry) && this.t_database == ancestry?.t_database; }
 	relationships_forChildren(forChildren: boolean):	Array<Relationship> { return forChildren ? this.childRelationships : this.parentRelationships; }
 	relationshipAt(back: number = 1):					Relationship | null { return this.hierarchy.relationship_forHID(this.idAt(back).hash()) ?? null; }
 	rect_ofWrapper(wrapper: Svelte_Wrapper | null):				Rect | null { return wrapper?.boundingRect ?? null; }
@@ -421,7 +423,7 @@ export default class Ancestry extends Identifiable {
 		let isABranch = false;
 		if (ancestry.isUnidirectional) {
 			ancestry.traverse((progenyAncestry: Ancestry) => {
-				if (progenyAncestry.hid == this.hid) {
+				if (this.equals(progenyAncestry)) {
 					isABranch = true;
 					return true;	// stop traversal
 				}
@@ -641,8 +643,8 @@ export default class Ancestry extends Identifiable {
 		if (!!thing) {
 			if (!visited.includes(this.pathString) && this.showsBranchRelationships) {
 				let height = 0;
-				for (const childAncestry of this.childAncestries) {
-					height += childAncestry.visibleSubtree_height([...visited, this.pathString]);
+				for (const branchAncestry of this.branchAncestries) {
+					height += branchAncestry.visibleSubtree_height([...visited, this.pathString]);
 				}
 				return Math.max(height, k.row_height);
 			}
@@ -651,20 +653,20 @@ export default class Ancestry extends Identifiable {
 		return 0;
 	}
 
-	visibleSubtree_width(special: boolean = false, visited: Array<number> = []): number {
+	visibleSubtree_width(special: boolean = false, visited: Array<string> = []): number {
 		const thing = this.thing;
 		if (!!thing) {
-			const hid = this.hid;
+			const id = this.id;
 			let width = special ? 0 : (thing.titleWidth + 6);
-			if (!visited.includes(hid) && this.showsBranchRelationships) {
-				let progenyWidth = 0;
-				for (const childAncestry of this.childAncestries) {
-					const childProgenyWidth = childAncestry.visibleSubtree_width(false, [...visited, hid]);
-					if (progenyWidth < childProgenyWidth) {
-						progenyWidth = childProgenyWidth;
+			if (!visited.includes(id) && this.showsBranchRelationships) {
+				let subtreeWidth = 0;
+				for (const branchAncestry of this.branchAncestries) {
+					const branchWidth = branchAncestry.visibleSubtree_width(false, [...visited, id]);
+					if (subtreeWidth < branchWidth) {
+						subtreeWidth = branchWidth;
 					}
 				}
-				width += progenyWidth + k.line_stretch + k.dot_size * (special ? 2 : 1);
+				width += subtreeWidth + k.line_stretch + k.dot_size * (special ? 2 : 1);
 			}
 			return width;
 		}
@@ -855,35 +857,30 @@ export default class Ancestry extends Identifiable {
 			const thing = this?.thing;
 			if (length == 0) {		// friendly for first-time users
 				this.hierarchy.ancestry_rebuild_runtimeBrowseRight(this, up, SHIFT, EXTREME, true);
-			} else if (!!thing) {
-				const is_radial_mode = layout.inRadialMode;
-				if ((this.thing_isChild) || !is_radial_mode) {
-					const index = siblings.indexOf(thing);
-					const newIndex = index.increment(!up, length);
-					if (!!parentAncestry && !OPTION) {
-						const grabAncestry = parentAncestry.extend_withChild(siblings[newIndex]);
-						if (!!grabAncestry) {
-							if (!grabAncestry.isVisible) {
-								if (!parentAncestry.isFocus) {
-									graph_needsRebuild = parentAncestry.becomeFocus();
-								} else if (is_radial_mode) {
-									graph_needsRebuild = grabAncestry.assureIsVisible_inClusters();	// change paging
-								} else {
-									alert('PROGRAMMING ERROR: child of focus is not visible');
-								}
+			} else if (!!thing && layout.inTreeMode) {
+				const index = siblings.indexOf(thing);
+				const newIndex = index.increment(!up, length);
+				if (!!parentAncestry && !OPTION) {
+					const grabAncestry = parentAncestry.extend_withChild(siblings[newIndex]);
+					if (!!grabAncestry) {
+						if (!grabAncestry.isVisible) {
+							if (!parentAncestry.isFocus) {
+								graph_needsRebuild = parentAncestry.becomeFocus();
+							} else {
+								alert('PROGRAMMING ERROR: child of focus is not visible');
 							}
-							grabAncestry.grab_forShift(SHIFT);
-							graph_needsRelayout = true;
 						}
-					} else if (c.allow_GraphEditing && OPTION) {
-						graph_needsRebuild = true;
-						u.ancestries_orders_normalize(parentAncestry.childAncestries, false);
-						const wrapped = up ? (index == 0) : (index + 1 == length);
-						const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
-						const newOrder = newIndex + goose;
-						this.relationship?.order_setTo(newOrder);
-						u.ancestries_orders_normalize(parentAncestry.childAncestries);
+						grabAncestry.grab_forShift(SHIFT);
+						graph_needsRelayout = true;
 					}
+				} else if (c.allow_GraphEditing && OPTION) {
+					graph_needsRebuild = true;
+					u.ancestries_orders_normalize(parentAncestry.childAncestries, false);
+					const wrapped = up ? (index == 0) : (index + 1 == length);
+					const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
+					const newOrder = newIndex + goose;
+					this.relationship?.order_setTo(newOrder);
+					u.ancestries_orders_normalize(parentAncestry.childAncestries);
 				}
 			}
 		}
