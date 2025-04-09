@@ -136,7 +136,7 @@ export default class G_Widget {
 
 	private recursively_layout_subtree(visited: Array<number> = []) {
 		const ancestry = this.ancestry;	
-		if (!visited.includes(ancestry.hid) && ancestry.showsBranchRelationships) {
+		if (!visited.includes(ancestry.hid) && ancestry.show_branch_relationships) {
 			const branchAncestries = ancestry.branchAncestries;
 			for (const branchAncestry of branchAncestries) {
 				branchAncestry.g_widget.recursively_layout_subtree([...visited, branchAncestry.hid]);		// layout progeny first
@@ -149,7 +149,7 @@ export default class G_Widget {
 		if (layout.inTreeMode && get(w_show_related)) {
 			this.layout_bidirectional_lines();
 			const ancestry = this.ancestry;	
-			if (!visited.includes(ancestry.hid) && ancestry.showsBranchRelationships) {
+			if (!visited.includes(ancestry.hid) && ancestry.show_branch_relationships) {
 				const childAncestries = ancestry.childAncestries;
 				for (const childAncestry of childAncestries) {
 					childAncestry.g_widget.recursively_layout_bidirectionals([...visited, childAncestry.hid]);		// layout progeny first

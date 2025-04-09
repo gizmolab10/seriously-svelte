@@ -17,6 +17,7 @@ class Verticals {
 export default class Layout {
 	verticals_ofBanners = new Verticals(3);
 	verticals_ofDetails = new Verticals(4);
+	branches_visited: Array<string> = [];
 	verticals_ofInfo = new Verticals(9);
 	parents_focus_ancestry!: Ancestry;
 	_g_radialGraph!: G_RadialGraph;
@@ -54,6 +55,17 @@ export default class Layout {
 			case 'graph': w_t_graph.set(type as T_Graph); break;
 			case 'tree': this.set_t_tree(type as T_Hierarchy);; break;
 		}
+	}
+
+	was_visited(ancestry: Ancestry, clear: boolean = false): boolean {
+		if (clear) {
+			this.branches_visited = [];	// null clears the array
+		}
+		const visited = this.branches_visited.includes(ancestry.id);
+		if (!visited) {
+			this.branches_visited.push(ancestry.id);
+		}
+		return visited;
 	}
 	
 	toggle_t_graph() {

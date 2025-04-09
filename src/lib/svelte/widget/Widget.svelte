@@ -168,24 +168,21 @@
 			<Widget_Drag
 				name = {es_drag.name}
 				ancestry = {ancestry}
-				points_right = {points_right}
-			/>
+				points_right = {points_right}/>
 			<Widget_Title
 				ancestry = {ancestry}
 				name = {es_title.name}
 				fontSize = {k.font_size}px
-				origin = {g_widget.origin_ofTitle}
-			/>
+				origin = {g_widget.origin_ofTitle}/>
 			{#if ancestry?.showsReveal_forPointingToChild(points_toChild)}
 				<Widget_Reveal
 					ancestry = {ancestry}
 					name = {es_reveal.name}
-					points_toChild = {points_toChild}
-				/>
+					points_toChild = {points_toChild}/>
 			{/if}
 		</div>
 		{#if $w_show_related}
-			{#each ancestry.g_widget.g_bidirectionalLines as g_line}	<!-- can be none -->
+			{#each ancestry.g_widget.g_bidirectionalLines as g_line}
 				<Tree_Line g_line = {g_line}/>
 			{/each}
 		{/if}

@@ -72,7 +72,7 @@ export default class Ancestry extends Identifiable {
 	get hasRelationships():					 boolean { return this.hasParentRelationships || this.hasChildRelationships; }
 	get isEditing():						 boolean { return get(w_s_title_edit)?.isAncestry_inState(this, T_Edit.editing) ?? false; }
 	get isExpanded():						 boolean { return this.isRoot || this.includedInStore_ofAncestries(w_ancestries_expanded); }
-	get showsBranchRelationships():			 boolean { return layout.branches_areChildren ? this.showsChildRelationships : !this.isRoot; }
+	get show_branch_relationships():		 boolean { return layout.branches_areChildren ? this.showsChildRelationships : !this.isRoot; }
 	get description():					   	  string { return `${this.kind} "${this.thing?.type ?? '-'}" ${this.titles.join(':')}`; }
 	get title():						   	  string { return this.thing?.title ?? 'missing title'; }
 	get pathString():						  string { return this.id; }
@@ -113,8 +113,9 @@ export default class Ancestry extends Identifiable {
 	}
 
 	get parentAncestries(): Array<Ancestry> {
-		const ancestries = this.thing?.ancestries ?? [];
-		return ancestries.map(a => a.parentAncestry).filter(a => !!a).filter(a => !a.equals(this) && a.depth < this.depth);
+		let ancestries = this.thing?.ancestries ?? [];
+		ancestries = ancestries.map(a => a.parentAncestry).filter(a => !!a).filter(a => !a.equals(this) && a.depth < this.depth);
+		return ancestries;
 	}
 
 	get points_right(): boolean {
@@ -641,7 +642,7 @@ export default class Ancestry extends Identifiable {
 	visibleSubtree_height(visited: Array<string> = []): number {
 		const thing = this.thing;
 		if (!!thing && !visited.includes(this.pathString)) {
-			if (this.showsBranchRelationships) {
+			if (this.show_branch_relationships) {
 				let height = 0;
 				for (const branchAncestry of this.branchAncestries) {
 					height += branchAncestry.visibleSubtree_height([...visited, this.pathString]);
@@ -653,20 +654,20 @@ export default class Ancestry extends Identifiable {
 		return 0;
 	}
 
-	visibleSubtree_width(special: boolean = false, visited: Array<string> = []): number {
+	visibleSubtree_width(visited: Array<string> = []): number {
 		const thing = this.thing;
 		if (!!thing) {
 			const id = this.id;
-			let width = special ? 0 : (thing.titleWidth + 6);
-			if (!visited.includes(id) && this.showsBranchRelationships) {
+			let width = thing.titleWidth + 6;
+			if (!visited.includes(id) && this.show_branch_relationships) {
 				let subtreeWidth = 0;
 				for (const branchAncestry of this.branchAncestries) {
-					const branchWidth = branchAncestry.visibleSubtree_width(false, [...visited, id]);
+					const branchWidth = branchAncestry.visibleSubtree_width([...visited, id]);
 					if (subtreeWidth < branchWidth) {
 						subtreeWidth = branchWidth;
 					}
 				}
-				width += subtreeWidth + k.line_stretch + k.dot_size * (special ? 2 : 1);
+				width += subtreeWidth + k.line_stretch + k.dot_size;
 			}
 			return width;
 		}
@@ -680,7 +681,7 @@ export default class Ancestry extends Identifiable {
 		}
 		const thing = this.thing;
 		if (!!thing) {
-			if (!visited.includes(this.pathString) && this.showsBranchRelationships) {
+			if (!visited.includes(this.pathString) && this.show_branch_relationships) {
 				for (const childAncestry of this.childAncestries) {
 					const progeny = childAncestry.visibleSubtree_ancestries([...visited, this.pathString]);
 					ancestries = [...ancestries, ...progeny];
