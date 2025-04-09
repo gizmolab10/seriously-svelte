@@ -72,7 +72,6 @@ export default class Ancestry extends Identifiable {
 	get hasRelationships():					 boolean { return this.hasParentRelationships || this.hasChildRelationships; }
 	get isEditing():						 boolean { return get(w_s_title_edit)?.isAncestry_inState(this, T_Edit.editing) ?? false; }
 	get isExpanded():						 boolean { return this.isRoot || this.includedInStore_ofAncestries(w_ancestries_expanded); }
-	get show_branch_relationships():		 boolean { return layout.branches_areChildren ? this.showsChildRelationships : !this.isRoot; }
 	get description():					   	  string { return `${this.kind} "${this.thing?.type ?? '-'}" ${this.titles.join(':')}`; }
 	get title():						   	  string { return this.thing?.title ?? 'missing title'; }
 	get pathString():						  string { return this.id; }
@@ -102,7 +101,6 @@ export default class Ancestry extends Identifiable {
 	get ancestors():		 	 Array		 <Thing> { return this.hierarchy.things_forAncestry(this); }
 	get childAncestries():	 	 Array	  <Ancestry> { return this.childAncestries_ofKind(this.kind); }
 	get siblingAncestries(): 	 Array	  <Ancestry> { return this.parentAncestry?.childAncestries ?? []; }
-	get branchAncestries():		 Array	  <Ancestry> { return layout.branches_areChildren ? this.childAncestries : this.parentAncestries; }
 	get childRelationships():	 Array<Relationship> { return this.relationships_ofKind_forParents(this.kind, false); }
 	get parentRelationships():	 Array<Relationship> { return this.relationships_ofKind_forParents(this.kind, true); }
 	get relevantRelationships(): Array<Relationship> { return this.relationships_forChildren(true); }
@@ -255,6 +253,9 @@ export default class Ancestry extends Identifiable {
 	relationships_forChildren(forChildren: boolean):	Array<Relationship> { return forChildren ? this.childRelationships : this.parentRelationships; }
 	relationshipAt(back: number = 1):					Relationship | null { return this.hierarchy.relationship_forHID(this.idAt(back).hash()) ?? null; }
 	rect_ofWrapper(wrapper: Svelte_Wrapper | null):				Rect | null { return wrapper?.boundingRect ?? null; }
+
+	get show_branch_relationships():		 boolean { return layout.branches_areChildren ? this.showsChildRelationships : !this.isRoot; }
+	get branchAncestries():		 Array	  <Ancestry> { return layout.branches_areChildren ? this.childAncestries : this.parentAncestries; }
 
 	relationships_ofKind_forParents(kind: string, forParents: boolean): Array<Relationship> {
 		return this.thing?.relationships_ofKind_forParents(kind, forParents) ?? [];

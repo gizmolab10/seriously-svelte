@@ -213,7 +213,7 @@
 						break;
 					case T_RingZone.paging: 
 						const angle_ofPage = angle_ofMouseDown.angle_normalized();
-						const g_cluster = ux.g_radialGraph.g_cluster_atMouseLocation;
+						const g_cluster = layout.g_radialGraph.g_cluster_atMouseLocation;
 						if (!!g_cluster) {
 							debug.log_radial(` begin paging  ${angle_ofPage.asDegrees()}`);
 							g_cluster.s_paging_rotation.active_angle = angle_ofPage;

@@ -6,8 +6,9 @@
 	import Tree_Line from './Tree_Line.svelte';
 	import Circle from '../kit/Circle.svelte';
 	export let ancestry: Ancestry;
-	const g_treeBranches = ancestry.g_widget.g_treeBranches;
-	console.log(`${ancestry.id}\n     { ${ancestry.branchAncestries.map(a => a.id).join(',\n       ')} }`)
+	export let show_child_branches = true;
+	const g_childBranches = ancestry.g_widget.g_childBranches;
+	// console.log(`${ancestry.id}\n     { ${ancestry.branchAncestries.map(a => a.id).join(',\n       ')} }`)
 </script>
 
 {#if debug.lines}
@@ -15,7 +16,7 @@
 		radius = 1
 		thickness = 1
 		color = black
-		center = {g_treeBranches.origin_ofLine}/>
+		center = {g_childBranches.origin_ofLine}/>
 {/if}
 {#if !!ancestry}
 	{#each ancestry.branchAncestries as branchAncestry}

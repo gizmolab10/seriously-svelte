@@ -1,12 +1,14 @@
 import { debug, Point, layout, Ancestry, T_Graph } from '../common/Global_Imports';
 
 export default class G_TreeBranches {
+	show_child_branches = true;
 	origin_ofLine = Point.zero;
 	ancestry: Ancestry;
 
 	// scratchpad for widgets, subtree_height and center
 
-	constructor(ancestry: Ancestry) {
+	constructor(ancestry: Ancestry, show_child_branches: boolean = true) {
+		this.show_child_branches = show_child_branches;
 		this.ancestry = ancestry;
 	}
 		

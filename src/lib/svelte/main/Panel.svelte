@@ -7,14 +7,14 @@
 	import { T_Control, Hierarchy, databases } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { T_Database } from '../../ts/data/dbs/DBCommon';
+	import Details from '../details/Details.svelte';
 	import Breadcrumbs from './Breadcrumbs.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	import Debug from '../debug/Debug.svelte';
+	import Graph from '../graph/Graph.svelte';
 	import Controls from './Controls.svelte';
-	import Details from './Details.svelte';
 	import Box from '../debug/Box.svelte';
 	import Import from './Import.svelte';
-	import Graph from './Graph.svelte';
 	import { onMount } from 'svelte';
 	let separator_rebuilds = 0;
 	let panel_rebuilds = 0;
