@@ -1,6 +1,7 @@
-import { w_t_tree, w_t_graph, w_t_details, w_hierarchy, w_ancestry_focus } from '../common/Stores';
-import { T_Graph, T_Banner, T_Details, T_Hierarchy } from '../common/Global_Imports';
-import { k, signals, G_RadialGraph } from '../common/Global_Imports';
+import { T_Info, T_Graph, T_Banner, T_Details, T_Hierarchy, T_Preference } from '../common/Global_Imports';
+import { c, k, p, u, debug, signals, Ancestry, G_RadialGraph } from '../common/Global_Imports';
+import { w_t_database, w_ancestry_focus, w_ancestries_expanded } from '../common/Stores';
+import { w_t_tree, w_t_graph, w_t_details, w_hierarchy } from '../common/Stores';
 import { get } from 'svelte/store';
 
 class Verticals {
@@ -13,41 +14,36 @@ class Verticals {
 	}
 }
 
-export enum TI {
-	segments,
-	before_title,
-	title,
-	after_title,
-	table,
-	color,
-	traits,
-	consequence,
-	quest
-};
-
 export default class Layout {
-	_g_radialGraph!: G_RadialGraph;
-	verticals_ofInfo = new Verticals(9);
 	verticals_ofBanners = new Verticals(3);
 	verticals_ofDetails = new Verticals(4);
+	verticals_ofInfo = new Verticals(9);
+	parents_focus_ancestry!: Ancestry;
+	_g_radialGraph!: G_RadialGraph;
+	focus_ancestry!: Ancestry;
 
 	get inTreeMode(): boolean { return get(w_t_graph) == T_Graph.tree; }
 	get inRadialMode(): boolean { return get(w_t_graph) == T_Graph.radial; }
 	top_ofInfoAt(index: number) { return this.verticals_ofInfo.tops[index]; }
+	ids_forDB(array: Array<Ancestry>): string { return u.ids_forDB(array).join(', '); }
 	height_ofBannerAt(index: number) { return this.verticals_ofBanners.heights[index]; }
 	get branches_areChildren(): boolean { return get(w_t_tree) == T_Hierarchy.children; }
 	top_ofBannerAt(index: number) { return this.verticals_ofBanners.tops[index] + k.separator_thickness; }
 	top_ofDetailAt(index: number) { return this.verticals_ofDetails.tops[index] + k.separator_thickness; }
 	get g_radialGraph() { let g = this._g_radialGraph; if (!g) { g = new G_RadialGraph(); this._g_radialGraph = g }; return g; }
+	get focus_key(): string { return this.branches_areChildren ? T_Preference.focus_forChildren : T_Preference.focus_forParents; }
+	get expanded_key(): string { return this.branches_areChildren ? T_Preference.expanded_children : T_Preference.expanded_parents; }
 
-	grand_build() { this.grand_layout(); signals.signal_rebuildGraph_fromFocus(); }
+	grand_build() {
+		this.grand_layout();
+		signals.signal_rebuildGraph_fromFocus();
+	}
 
 	grand_layout() {
 		if (this.inRadialMode) {
 			this.g_radialGraph.grand_layout_radial();
 		} else {
-			const tree_trunk = this.branches_areChildren ? get(w_ancestry_focus) : get(w_hierarchy).grabs_latest_ancestry;
-			tree_trunk?.g_widget.layout_entireTree();
+			get(w_ancestry_focus)?.g_widget.layout_entireTree();
 		}
 		signals.signal_reposition_widgets_fromFocus();
 	}
@@ -59,13 +55,8 @@ export default class Layout {
 			case 'tree': this.set_t_tree(type as T_Hierarchy);; break;
 		}
 	}
-
-	set_t_tree(t_tree: T_Hierarchy) {
-		w_t_tree.set(t_tree);
-		this.grand_build()
-	}
 	
-	toggle_graphMode() {
+	toggle_t_graph() {
 		switch (get(w_t_graph)) {
 			case T_Graph.tree: w_t_graph.set(T_Graph.radial); break;
 			case T_Graph.radial: w_t_graph.set(T_Graph.tree); break;
@@ -75,7 +66,7 @@ export default class Layout {
 		
 	layout_tops_forInfo(start: number) {
 		let top = start;
-		for (let i = 0; i <= TI.quest; i++) {
+		for (let i = 0; i <= T_Info.quest; i++) {
 			const height = this.height_ofInfoAt(i);
 			this.verticals_ofInfo.heights[i] = height;
 			this.verticals_ofInfo.tops[i] = top;
@@ -85,14 +76,14 @@ export default class Layout {
 
 	height_ofInfoAt(index: number): number {
 		switch (index) {
-			case TI.segments:	  return  21;
-			case TI.before_title: return   4;
-			case TI.title:		  return  17;
-			case TI.after_title:  return   4;
-			case TI.table:		  return 141;
-			case TI.color:		  return   2;
-			case TI.traits:		  return   2;
-			case TI.consequence:  return  50;
+			case T_Info.segments:	  return  21;
+			case T_Info.before_title: return   4;
+			case T_Info.title:		  return  17;
+			case T_Info.after_title:  return   4;
+			case T_Info.table:		  return 141;
+			case T_Info.color:		  return   2;
+			case T_Info.traits:		  return   2;
+			case T_Info.consequence:  return  50;
 			default:			  return  50;
 		}
 	}
@@ -121,6 +112,65 @@ export default class Layout {
 			}
 			index += 1;
 		}
+	}
+
+	set_t_tree(t_tree: T_Hierarchy) {
+		w_t_tree.set(t_tree);
+		let focus_ancestry = get(w_ancestry_focus);
+		if (this.branches_areChildren) {
+			this.parents_focus_ancestry = focus_ancestry;
+			focus_ancestry = this.focus_ancestry;
+		} else {
+			this.focus_ancestry = focus_ancestry;
+			focus_ancestry = this.parents_focus_ancestry ?? get(w_hierarchy).grabs_latest_ancestry;
+		}
+		focus_ancestry?.becomeFocus();
+		this.restore_expanded();
+		this.grand_build();
+	}
+		
+	restore_expanded() {
+		if (c.eraseDB > 0) {
+			c.eraseDB -= 1;
+			w_ancestries_expanded.set([]);
+		} else {
+			const expanded = p.ancestries_readDB_key(this.expanded_key) ?? p.ancestries_readDB_key('expanded');	// backwards compatible with 'expanded' key
+			debug.log_expand(`  READ (${get(w_t_database)}): "${this.ids_forDB(expanded)}"`);
+			w_ancestries_expanded.set(expanded);
+		}
+		setTimeout(() => {
+			w_ancestries_expanded.subscribe((array: Array<Ancestry>) => {
+				if (array.length > 0) {
+					debug.log_expand(`  WRITING (${get(w_t_database)}): "${this.ids_forDB(array)}"`);
+					p.ancestries_writeDB_key(array, this.expanded_key);
+				}
+			});
+		}, 100);
+	}
+
+	restore_focus() {
+		const h = get(w_hierarchy);
+		let ancestryToFocus = h.rootAncestry;
+		if (!p.ignoreAncestries && !c.eraseDB) {
+			const key = this.branches_areChildren ? T_Preference.focus_forChildren : T_Preference.focus_forParents;
+			const focusPath = p.readDB_key(this.focus_key) ?? p.readDB_key('focus');
+			if (!!focusPath) {
+				const focusAncestry = h.ancestry_remember_createUnique(focusPath);
+				if (!!focusAncestry) {
+					ancestryToFocus = focusAncestry;
+				}
+			}
+		}
+		if (!ancestryToFocus.thing) {
+			const lastGrabbedAncestry = h.grabs_latest_ancestry?.parentAncestry;
+			if (lastGrabbedAncestry) {
+				ancestryToFocus = lastGrabbedAncestry;
+			}
+		}
+		ancestryToFocus.becomeFocus(true);
+		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
+			p.writeDB_key(this.focus_key, !ancestry ? null : ancestry.pathString);
+		});
 	}
 
 }

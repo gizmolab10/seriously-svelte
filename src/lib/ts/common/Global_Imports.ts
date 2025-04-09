@@ -1,9 +1,35 @@
+import G_TreeBranches from '../geometry/G_TreeBranches';
+import G_RadialGraph from '../geometry/G_RadialGraph';
+import G_ArcSlider from '../geometry/G_ArcSlider';
+import G_TreeLine from '../geometry/G_TreeLine';
+import G_Cluster from '../geometry/G_Cluster';
+import G_Segment from '../geometry/G_Segment';
+import G_Widget from '../geometry/G_Widget';
+
+import { T_Preference } from './Enumerations';
+import { T_Timer } from '../signals/Mouse_Timer';
+import { S_Paging, S_Thing_Pages } from '../state/S_Paging';
+import { T_Quadrant, T_Orientation } from '../common/Angle';
+import { T_Create, T_Browser, T_Alteration } from './Enumerations';
+import { T_Oblong, T_Element, T_SvelteComponent } from './Enumerations';
+import { T_Curve, T_Layer, T_Thing, T_Trait, T_Predicate } from './Enumerations';
+import { T_Info, T_Tool, T_Banner, T_Control, T_Details, T_Report, T_Storage } from './Enumerations';
+import { T_Graph, T_Widget, T_Rebuild, T_RingZone, T_Startup, T_Hierarchy } from './Enumerations';
+
+import S_Title_Edit from '../state/S_Title_Edit';
+import S_Alteration from '../state/S_Alteration';
+import S_Expansion from '../state/S_Expansion';
+import S_Rotation from '../state/S_Rotation';
+import S_Element from '../state/S_Element';
+import S_Widget from '../state/S_Widget';
+import S_Mouse from '../state/S_Mouse';
+
 import { builds } from './Builds';
-import { show } from '../managers/Visibility';
 import { colors } from '../common/Colors';
 import { files } from '../managers/Files';
 import { Direction } from '../common/Angle';
 import { layout } from '../managers/Layout';
+import { show } from '../managers/Visibility';
 import { Rect, Size, Point } from './Geometry';
 import { svgPaths } from '../common/SVG_Paths';
 import { wrappers } from '../managers/Wrappers';
@@ -13,32 +39,6 @@ import { databases } from '../managers/Databases';
 import { Seriously_Range } from './Seriously_Range';
 import { signals, T_Signal } from '../signals/Signals';
 import { debug, Debug, T_Debug } from '../debug/Debug';
-
-import { T_Timer } from '../signals/Mouse_Timer';
-import { T_Preference } from '../managers/Preferences';
-import { S_Paging, S_Thing_Pages } from '../state/S_Paging';
-import { T_Quadrant, T_Orientation } from '../common/Angle';
-import { T_Create, T_Browser, T_Alteration } from './Enumerations';
-import { T_Oblong, T_Element, T_SvelteComponent } from './Enumerations';
-import { T_Curve, T_Layer, T_Thing, T_Trait, T_Predicate } from './Enumerations';
-import { T_Info, T_Tool, T_Banner, T_Control, T_Details, T_Storage } from './Enumerations';
-import { T_Graph, T_Widget, T_Rebuild, T_RingZone, T_Startup, T_Hierarchy } from './Enumerations';
-
-import G_TreeBranches from '../geometry/G_TreeBranches';
-import G_RadialGraph from '../geometry/G_RadialGraph';
-import G_ArcSlider from '../geometry/G_ArcSlider';
-import G_TreeLine from '../geometry/G_TreeLine';
-import G_Cluster from '../geometry/G_Cluster';
-import G_Segment from '../geometry/G_Segment';
-import G_Widget from '../geometry/G_Widget';
-
-import S_Title_Edit from '../state/S_Title_Edit';
-import S_Alteration from '../state/S_Alteration';
-import S_Expansion from '../state/S_Expansion';
-import S_Rotation from '../state/S_Rotation';
-import S_Element from '../state/S_Element';
-import S_Widget from '../state/S_Widget';
-import S_Mouse from '../state/S_Mouse';
 
 import Relationship from '../data/persistable/Relationship';
 import Persistable from '../data/persistable/Persistable';
@@ -79,9 +79,9 @@ export {
 	G_Segment, G_Cluster, G_RadialGraph, G_ArcSlider,
 	S_Paging, S_Rotation, S_Expansion, S_Thing_Pages,
 	T_Layer, T_Create, T_RingZone, T_Oblong, T_Alteration,
-	T_Control, T_Browser, T_Signal, T_Storage, T_Preference,
 	S_Mouse, S_Widget, S_Element, S_Alteration, S_Title_Edit,
 	T_Tool, T_Banner, T_Details, T_Rebuild, T_Startup, T_Graph,
+	T_Thing, T_Trait, T_Curve, T_Widget, T_Predicate, T_Hierarchy,
 	User, Persistable, Thing, Trait, Access, Predicate, Relationship,
-	T_Info, T_Thing, T_Trait, T_Curve, T_Widget, T_Predicate, T_Hierarchy,
+	T_Info, T_Control, T_Browser, T_Signal, T_Report, T_Storage, T_Preference,
 };

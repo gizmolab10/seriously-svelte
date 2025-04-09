@@ -8,7 +8,7 @@
 	import { w_show_related, w_background_color } from '../../ts/common/Stores';
 	import { T_Edit } from '../../ts/state/S_Title_Edit';
 	import Widget_Reveal from './Widget_Reveal.svelte';
-	import Tree_Line from '../tree/Tree_Line.svelte';
+	import Tree_Line from '../graph/Tree_Line.svelte';
 	import Widget_Title from './Widget_Title.svelte';
 	import Widget_Drag from './Widget_Drag.svelte';
 	import { onMount } from 'svelte';

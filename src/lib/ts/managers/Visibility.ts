@@ -1,13 +1,13 @@
-import { w_t_tree, w_t_countDots, w_show_details, w_show_related } from '../common/Stores';
+import { w_t_countDots, w_show_details, w_show_related } from '../common/Stores';
 import { c, k, p, w, layout, T_Preference } from '../common/Global_Imports';
-import { T_Info, T_Hierarchy } from '../common/Enumerations';
+import { T_Report, T_Hierarchy } from '../common/Enumerations';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
 
 export class Visibility {
 	debug_cursor = false;
 	traits		 = false;
-	t_info		 = T_Info.focus;
+	t_info		 = T_Report.focus;
 
 	queryStrings_apply() {
 		const queryStrings = c.queryStrings;
@@ -30,7 +30,7 @@ export class Visibility {
 					break;
 				case 'parents':
 					const mode = flag ? T_Hierarchy.parents : T_Hierarchy.children;
-					w_t_tree.set(mode);
+					layout.set_t_tree(mode);
 					break;
 			}
 		}
@@ -43,7 +43,7 @@ export class Visibility {
 	
 	restore_state() {
 		this.traits = p.read_key(T_Preference.traits) ?? false;
-		this.t_info = p.read_key(T_Preference.info) ?? T_Info.focus;
+		this.t_info = p.read_key(T_Preference.info) ?? T_Report.focus;
 		w_show_details.set(p.read_key(T_Preference.show_details) ?? false);
 		w_show_related.set(p.read_key(T_Preference.show_related) ?? false);
 	}
@@ -60,7 +60,6 @@ export class Visibility {
 			layout.grand_layout();
 		});
     }
-
 }
 
 export let show = new Visibility();

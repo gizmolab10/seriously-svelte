@@ -77,7 +77,7 @@ export default class G_Widget {
 	static readonly LAYOUT: unique symbol;
 
 	layout_entireTree() {
-		this.layout_trunk_ofTree()
+		this.layout_focus_ofTree()
 		this.recursively_layout_subtree();
 		this.recursively_layout_bidirectionals();
 	}
@@ -93,7 +93,7 @@ export default class G_Widget {
 			}
 	}
 
-	configure_widget(
+	layout_widget_forBranches(
 		height: number = 0,
 		origin: Point = Point.zero,
 		forGraphMode = T_Graph.radial,
@@ -101,16 +101,16 @@ export default class G_Widget {
 		widget_pointsRight: boolean = true) {
 			if (forGraphMode == get(w_t_graph)) {	// assure modes match
 				const subtree_height = this.ancestry.visibleSubtree_height();
-				const child_height = height + subtree_height / 2;
-				const child_rect = new Rect(origin, new Size(k.line_stretch, child_height - 1));
-				const child_widget_origin = this.origin_forAncestry_inRect(this.ancestry, child_rect);
-				this.g_line.rect = child_rect;
+				const branches_height = height + subtree_height / 2;
+				const branches_rect = new Rect(origin, new Size(k.line_stretch, branches_height - 1));
+				const branches_widget_origin = this.origin_forAncestry_inRect(this.ancestry, branches_rect);
+				this.g_line.rect = branches_rect;
 				this.forGraphMode = forGraphMode;
 				this.subtree_height = subtree_height;
 				this.points_toChild = points_toChild;
-				this.origin_ofWidget = child_widget_origin;
+				this.origin_ofWidget = branches_widget_origin;
 				this.widget_pointsRight = widget_pointsRight;
-				this.g_line.set_t_curve_forHeight(child_height);
+				this.g_line.set_t_curve_forHeight(branches_height);
 				this.layout_widget_andChildren();
 			}
 	}
@@ -125,11 +125,11 @@ export default class G_Widget {
 	}
 
 	private origin_forAncestry_inRect(ancestry: Ancestry, rect: Rect): Point {
-		const child = ancestry.thing;
+		const branch = ancestry.thing;
 		let x, y = 0;
-		if (!!child) {
+		if (!!branch) {
 			y = rect.extent.y - ancestry.visibleSubtree_halfHeight;
-			x = rect.origin.x + child.titleWidth + k.dot_size + k.line_stretch;
+			x = rect.origin.x + branch.titleWidth + k.dot_size + k.line_stretch;
 		}
 		return new Point(x, y);
 	}
@@ -145,14 +145,14 @@ export default class G_Widget {
 		this.layout_widget_andChildren();
 	}
 
-	private recursively_layout_bidirectionals() {
-		if (layout.inTreeMode) {
+	private recursively_layout_bidirectionals(visited: Array<number> = []) {
+		if (layout.inTreeMode && get(w_show_related)) {
 			this.layout_bidirectional_lines();
 			const ancestry = this.ancestry;	
-			if (ancestry.showsBranchRelationships) {
+			if (!visited.includes(ancestry.hid) && ancestry.showsBranchRelationships) {
 				const childAncestries = ancestry.childAncestries;
 				for (const childAncestry of childAncestries) {
-					childAncestry.g_widget.recursively_layout_bidirectionals();		// layout progeny first
+					childAncestry.g_widget.recursively_layout_bidirectionals([...visited, childAncestry.hid]);		// layout progeny first
 				}
 			}
 		}
@@ -173,20 +173,20 @@ export default class G_Widget {
 		}
 	}
 
-	private layout_trunk_ofTree() {
+	private layout_focus_ofTree() {
 		const graphRect = get(w_graph_rect);
 		if (!!graphRect && layout.inTreeMode) {
 			const offsetY = graphRect.origin.y + 1;
 			const subtree_size = this.ancestry.visibleSubtree_size;
 			const offsetX_ofFirstReveal = (this.ancestry.thing?.titleWidth ?? 0) / 2 - 2;
-			const child_offsetY = (k.dot_size / 2) -(subtree_size.height / 2) - 4;
-			const child_offsetX = -37 + k.line_stretch - (k.dot_size / 2) + offsetX_ofFirstReveal;
+			const branches_offsetY = (k.dot_size / 2) -(subtree_size.height / 2) - 4;
+			const branches_offsetX = -37 + k.line_stretch - (k.dot_size / 2) + offsetX_ofFirstReveal;
 			const offsetX = (get(w_show_details) ? -k.width_details : 0) + 15 + offsetX_ofFirstReveal - (subtree_size.width / 2) - (k.dot_size / 2.5);
 			const origin_ofFocusReveal = graphRect.center.offsetByXY(offsetX, -offsetY);
 			if (get(w_device_isMobile)) {
 				origin_ofFocusReveal.x = 25;
 			}
-			const origin_ofChildren = origin_ofFocusReveal.offsetByXY(child_offsetX, child_offsetY);
+			const origin_ofChildren = origin_ofFocusReveal.offsetByXY(branches_offsetX, branches_offsetY);
 			this.origin_ofWidget = origin_ofChildren;
 		}
 	}

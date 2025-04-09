@@ -1,5 +1,5 @@
 import { c, k, p, u, ux, show, User, Thing, Trait, debug, files, colors, signals, layout, Access } from '../common/Global_Imports';
-import { T_Tool, T_Info, T_Thing, T_Trait, T_Create, T_Control, T_Predicate, T_Alteration } from '../common/Global_Imports';
+import { T_Tool, T_Report, T_Thing, T_Trait, T_Create, T_Control, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { Ancestry, Predicate, Relationship, S_Mouse, S_Alteration, S_Title_Edit } from '../common/Global_Imports';
 import { w_storage_update_trigger, w_ancestry_showing_tools, w_ancestries_grabbed } from '../common/Stores';
 import { w_id_popupView, w_ancestry_focus, w_s_title_edit, w_s_alteration } from '../common/Stores';
@@ -1271,7 +1271,7 @@ export class Hierarchy {
 	get user_selected_ancestry(): Ancestry {
 		const focus = get(w_ancestry_focus);
 		let grabbed = this.grabs_latest_ancestry;
-		if (!!focus && show.t_info == T_Info.focus) {
+		if (!!focus && show.t_info == T_Report.focus) {
 			return focus;
 		} else if (!!grabbed) {
 			return grabbed;
@@ -1335,9 +1335,10 @@ export class Hierarchy {
 	restore_fromPreferences() {
 		w_ancestry_showing_tools.set(null);
 		w_s_title_edit.set(null);
-		p.restore_grabbed_andExpanded();	// must precede restore_focus (which alters grabbed and expanded)
-		p.restore_focus();
+		p.restore_grabbed();	// must precede restore_focus (which alters grabbed and expanded)
 		p.restore_paging();
+		layout.restore_expanded();
+		layout.restore_focus();
 		this.isAssembled = true;
 	}
 

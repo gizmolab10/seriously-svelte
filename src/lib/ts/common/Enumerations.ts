@@ -3,7 +3,7 @@ export enum T_Graph {
 	tree   = 'tree',
 }
 
-export enum T_Info {
+export enum T_Report {
 	selection = 'selection',
 	focus	  = 'focus',
 }
@@ -113,6 +113,18 @@ export enum T_Browser  {
 	orion	 = 'orion',
 }
 
+export enum T_Info {
+	segments,
+	before_title,
+	title,
+	after_title,
+	table,
+	color,
+	traits,
+	consequence,
+	quest
+};
+
 export enum T_Trait {
 	consequence = 'consequence',
 	hyperlink	= 'hyperlink',
@@ -200,4 +212,33 @@ export enum T_SvelteComponent {
 	drag	= 'drag',
 	line	= 'line',
 	app		= 'app',
+}
+
+export enum T_Preference {
+	expanded_children = 'expanded_children',
+	focus_forChildren = 'focus_forChildren',
+	expanded_parents  = 'expanded_parents',
+	focus_forParents  = 'focus_forParents',
+	relationships	  = 'relationships',
+	detail_types	  = 'detail_types',
+	show_details	  = 'show_details',
+	show_related	  = 'show_related',
+	ring_radius		  = 'ring_radius',
+	user_offset		  = 'user_offset',
+	background		  = 'background',
+	ring_angle  	  = 'ring_angle',
+	countDots		  = 'countDots',
+	font_size		  = 'font_size',
+	base_id			  = 'base_id',
+	grabbed			  = 'grabbed',
+	paging 			  = 'paging',
+	traits			  = 'traits',
+	graph			  = 'graph',
+	scale			  = 'scale',
+	focus			  = 'focus',
+	local			  = 'local',
+	info	    	  = 'info',
+	font			  = 'font',
+	tree			  = 'tree',
+	db				  = 'db',
 }

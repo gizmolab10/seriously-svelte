@@ -1,12 +1,11 @@
 <script lang='ts'>
+	import { T_Info, T_Trait, T_Layer, T_Element, T_Report, T_Preference } from '../../ts/common/Global_Imports';
 	import { w_hierarchy, w_color_trigger, w_info_title, w_background_color, } from '../../ts/common/Stores';
 	import { w_ancestry_focus, w_ancestries_grabbed, w_thing_fontFamily } from '../../ts/common/Stores';
-	import { T_Info, T_Trait, T_Layer, T_Element, T_Preference } from '../../ts/common/Global_Imports';
 	import { c, k, p, ux, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
 	import { debug, colors, signals, layout, Ancestry } from '../../ts/common/Global_Imports';
 	import type { Integer, Dictionary } from '../../ts/common/Types';
 	import Identifiable from '../../ts/data/runtime/Identifiable';
-	import { TI } from '../../ts/managers/Layout';
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
@@ -88,12 +87,12 @@
 	
 	function setup_forColor() {
 		const color_left = 61
-		color_origin = new Point(color_left, layout.top_ofInfoAt(TI.color));
+		color_origin = new Point(color_left, layout.top_ofInfoAt(T_Info.color));
 		picker_offset = `${-color_left - 10}px`;
 	}
 
 	function update_forKind() {
-		if (show.t_info == T_Info.focus || !hasGrabs()) {
+		if (show.t_info == T_Report.focus || !hasGrabs()) {
 			ancestry = $w_ancestry_focus;
 		} else {
 			grabs = $w_ancestries_grabbed;
@@ -172,22 +171,22 @@
 					selected={[show.t_info]}
 					height={k.row_height * font_ratio}
 					selection_closure={selection_closure}
-					titles={[T_Info.focus, T_Info.selection]}
-					origin={new Point(45, layout.top_ofInfoAt(TI.segments))}/>
+					titles={[T_Report.focus, T_Report.selection]}
+					origin={new Point(45, layout.top_ofInfoAt(T_Info.segments))}/>
 				<Separator
 					left=5
 					title='title'
 					width={info_width}
 					thickness={k.separator_thickness}
 					title_font_size={separator_font_size}
-					top={layout.top_ofInfoAt(TI.before_title)}/>
+					top={layout.top_ofInfoAt(T_Info.before_title)}/>
 				{#key thing_title}
 					<div style='
 						white-space:pre;
 						position:absolute;
 						text-align:center;
 						width:{traits_width}px;
-						top:{layout.top_ofInfoAt(TI.title)}px;'>
+						top:{layout.top_ofInfoAt(T_Info.title)}px;'>
 						{thing_title.clipWithEllipsisAt(30)}
 					</div>
 				{/key}
@@ -195,11 +194,11 @@
 					left=5
 					width={info_width}
 					thickness={k.separator_thickness}
-					top={layout.top_ofInfoAt(TI.after_title)}/>
+					top={layout.top_ofInfoAt(T_Info.after_title)}/>
 				<Table
 					array={information}
 					width = {k.width_details - 20}
-					top = {layout.top_ofInfoAt(TI.table)}/>
+					top = {layout.top_ofInfoAt(T_Info.table)}/>
 			{/if}
 			<Color
 				origin={color_origin}
@@ -222,7 +221,7 @@
 					height={text_box_size.height}
 					original_text={thing.consequence}
 					handle_textChange={handle_textChange}
-					top={layout.top_ofInfoAt(TI.consequence)}/>
+					top={layout.top_ofInfoAt(T_Info.consequence)}/>
 				<Text_Editor
 					label='quest'
 					color=colors.default
@@ -230,7 +229,7 @@
 					width={text_box_size.width}
 					height={text_box_size.height}
 					handle_textChange={handle_textChange}
-					top={layout.top_ofInfoAt(TI.quest)}/>
+					top={layout.top_ofInfoAt(T_Info.quest)}/>
 			{/if}
 		</div>
 	{/if}

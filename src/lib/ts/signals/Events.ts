@@ -159,7 +159,7 @@ export class Events {
 	// 			switch (key) {
 	// 				case 'o': h.select_file_toUpload(event.shiftKey); break;
 	// 				case 'c': w.user_graph_offset_setTo(Point.zero); break;
-	// 				case 'm': layout.toggle_graphMode(); break;
+	// 				case 'm': layout.toggle_t_graph(); break;
 	// 				case 's': h.persist_toFile(); break;
 	// 				case '?': c.showHelp(); break;
 	// 				default:  await h.handle_key_down(event); return;	// let hierarchy consume the events

@@ -1,36 +1,10 @@
 import { w_s_paging, w_font_size, w_background_color, w_thing_fontFamily } from '../common/Stores';
+import { S_Paging, T_Graph, T_Details, T_Hierarchy, T_Preference } from '../common/Global_Imports';
 import { c, k, u, ux, show, debug, colors, Ancestry, databases } from '../common/Global_Imports';
-import { w_ancestry_focus, w_ancestries_grabbed, w_ancestries_expanded } from '../common/Stores';
 import { w_t_tree, w_t_graph, w_hierarchy, w_t_details, w_t_countDots } from '../common/Stores';
 import { w_t_database, w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
-import { S_Paging, T_Graph, T_Hierarchy, T_Details } from '../common/Global_Imports';
+import { w_ancestry_focus, w_ancestries_grabbed } from '../common/Stores';
 import { get } from 'svelte/store';
-
-export enum T_Preference {
-	relationships = 'relationships',
-	detail_types  = 'detail_types',
-	show_details  = 'show_details',
-	show_related  = 'show_related',
-	ring_radius	  = 'ring_radius',
-	user_offset	  = 'user_offset',
-	background	  = 'background',
-	ring_angle    = 'ring_angle',
-	countDots	  = 'countDots',
-	font_size	  = 'font_size',
-	expanded	  = 'expanded',
-	base_id		  = 'base_id',
-	grabbed		  = 'grabbed',
-	paging 		  = 'paging',
-	traits		  = 'traits',
-	graph		  = 'graph',
-	scale		  = 'scale',
-	focus		  = 'focus',
-	local		  = 'local',
-	info	      = 'info',
-	font		  = 'font',
-	tree		  = 'tree',
-	db			  = 'db',
-}
 
 export class Preferences {
 	// for backwards compatibility with {focus, grabbed, expanded} which were stored as relationship ids (not as ancestry string)
@@ -71,17 +45,14 @@ export class Preferences {
 	
 	static readonly ANCESTRIES: unique symbol;
 
-	restore_grabbed_andExpanded(force: boolean = false) {
+	restore_grabbed() {
 		function ids_forDB(array: Array<Ancestry>): string { return u.ids_forDB(array).join(', '); }
 		if (c.eraseDB > 0) {
 			c.eraseDB -= 1;
-			w_ancestries_expanded.set([]);
 			w_ancestries_grabbed.set([get(w_hierarchy).rootAncestry]);
 		} else {
 			w_ancestries_grabbed.set(this.ancestries_readDB_key(T_Preference.grabbed));
-			w_ancestries_expanded.set(this.ancestries_readDB_key(T_Preference.expanded));
 			debug.log_grab(`  READ (${get(w_t_database)}): "${ids_forDB(get(w_ancestries_grabbed))}"`);
-			debug.log_expand(`  READ (${get(w_t_database)}): "${ids_forDB(get(w_ancestries_expanded))}"`);
 		}
 		setTimeout(() => {
 			w_ancestries_grabbed.subscribe((array: Array<Ancestry>) => {
@@ -90,38 +61,7 @@ export class Preferences {
 					debug.log_grab(`  WRITING (${get(w_t_database)}): "${ids_forDB(array)}"`);
 				}
 			});
-			w_ancestries_expanded.subscribe((array: Array<Ancestry>) => {
-				if (array.length > 0) {
-					this.ancestries_writeDB_key(array, T_Preference.expanded);
-					debug.log_expand(`  WRITING (${get(w_t_database)}): "${ids_forDB(array)}"`);
-				}
-			});
 		}, 100);
-		
-	}
-
-	restore_focus() {
-		const h = get(w_hierarchy);
-		let ancestryToFocus = h.rootAncestry;
-		if (!this.ignoreAncestries && !c.eraseDB) {
-			const focusPath = this.readDB_key(T_Preference.focus);
-			if (!!focusPath) {
-				const focusAncestry = h.ancestry_remember_createUnique(focusPath);
-				if (!!focusAncestry) {
-					ancestryToFocus = focusAncestry;
-				}
-			}
-		}
-		if (!ancestryToFocus.thing) {
-			const lastGrabbedAncestry = h.grabs_latest_ancestry?.parentAncestry;
-			if (lastGrabbedAncestry) {
-				ancestryToFocus = lastGrabbedAncestry;
-			}
-		}
-		ancestryToFocus.becomeFocus(true);
-		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
-			this.writeDB_key(T_Preference.focus, !ancestry ? null : ancestry.pathString);
-		});
 	}
 
 	ancestries_writeDB_key(ancestries: Array<Ancestry>, key: string) {	// 2 keys use this {grabbed, expanded}
