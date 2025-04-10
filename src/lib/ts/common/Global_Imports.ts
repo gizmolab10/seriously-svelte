@@ -13,8 +13,8 @@ import { T_Quadrant, T_Orientation } from '../common/Angle';
 import { T_Create, T_Browser, T_Alteration } from './Enumerations';
 import { T_Oblong, T_Element, T_SvelteComponent } from './Enumerations';
 import { T_Curve, T_Layer, T_Thing, T_Trait, T_Predicate } from './Enumerations';
-import { T_Info, T_Tool, T_Banner, T_Control, T_Details, T_Report, T_Storage } from './Enumerations';
 import { T_Graph, T_Widget, T_Rebuild, T_RingZone, T_Startup, T_Hierarchy } from './Enumerations';
+import { T_Info, T_Tool, T_Banner, T_Control, T_Details, T_Report, T_Storage } from './Enumerations';
 
 import S_Title_Edit from '../state/S_Title_Edit';
 import S_Alteration from '../state/S_Alteration';
@@ -40,17 +40,17 @@ import { Seriously_Range } from './Seriously_Range';
 import { signals, T_Signal } from '../signals/Signals';
 import { debug, Debug, T_Debug } from '../debug/Debug';
 
-import Relationship from '../data/persistable/Relationship';
-import Persistable from '../data/persistable/Persistable';
-import Predicate from '../data/persistable/Predicate';
 import Mouse_Timer from '../signals/Mouse_Timer';
-import Ancestry from '../data/runtime/Ancestry';
-import Access from '../data/persistable/Access';
+import Relationship from '../data/Relationship';
+import Persistable from '../data/Persistable';
 import Svelte_Wrapper from './Svelte_Wrapper';
-import Thing from '../data/persistable/Thing';
-import Trait from '../data/persistable/Trait';
-import User from '../data/persistable/User';
+import Ancestry from '../runtime/Ancestry';
+import Predicate from '../data/Predicate';
+import Access from '../data/Access';
 import Angle from '../common/Angle';
+import Thing from '../data/Thing';
+import Trait from '../data/Trait';
+import User from '../data/User';
 
 import './Extensions';
 import { k } from './Constants';

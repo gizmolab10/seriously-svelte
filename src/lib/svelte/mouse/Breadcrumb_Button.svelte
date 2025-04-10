@@ -1,13 +1,24 @@
 <script lang='ts'>
-	import { w_color_trigger, w_background_color, w_thing_fontFamily, w_ancestry_focus } from '../../ts/common/Stores';
-	import { k, u, ux, Point, Thing, colors, layout, signals, databases } from '../../ts/common/Global_Imports';
-	import { T_Tool, T_Banner, T_Element, S_Element } from '../../ts/common/Global_Imports';
+	import { run } from 'svelte/legacy';
+
+	import { w_color_trigger, w_background_color, w_thing_fontFamily, w_ancestry_focus } from '../ts/common/Stores';
+	import { k, u, ux, Point, Thing, colors, layout, signals, databases } from '../ts/common/Global_Imports';
+	import { T_Tool, T_Banner, T_Element, S_Element } from '../ts/common/Global_Imports';
 	import Button from './Button.svelte';
 	import { onMount } from 'svelte';
-    export let thing;
-	export let left = 0;
-	export let es_breadcrumb;
-	export let center = Point.zero;
+	interface Props {
+		thing: any;
+		left?: number;
+		es_breadcrumb: any;
+		center?: any;
+	}
+
+	let {
+		thing,
+		left = 0,
+		es_breadcrumb = $bindable(),
+		center = $bindable(Point.zero)
+	}: Props = $props();
 	const borderStyle = '1px solid';
 	let borderColor = $w_background_color;
 	let title = thing.breadcrumb_title ?? k.empty;
@@ -16,23 +27,14 @@
 	let border = `${borderStyle} ${borderColor}`;
 	let ancestry = es_breadcrumb.ancestry;
 	let width = u.getWidthOf(title) + 15;
-	let breadcrumb_rebuilds = 0;
+	let breadcrumb_rebuilds = $state(0);
 	let colorStyles = k.empty;
-	let style = k.empty;
+	let style = $state(k.empty);
 		
 	center = new Point(left + width / 2, height / 2 + 2);
 	updateColors();
 
-	$: {
-		if (!!thing && thing.id == $w_color_trigger?.split(k.generic_separator)[0]) {
-			updateColors();
-		}
-	}
 
-	$: {
-		const _ = $w_background_color;
-		updateColors();
-	}
 	
 	function updateColors() {
 		if (!!thing) {
@@ -82,6 +84,15 @@
 		}
 	}
 
+	run(() => {
+		if (!!thing && thing.id == $w_color_trigger?.split(k.generic_separator)[0]) {
+			updateColors();
+		}
+	});
+	run(() => {
+		const _ = $w_background_color;
+		updateColors();
+	});
 </script>
 
 {#key breadcrumb_rebuilds + $w_background_color}

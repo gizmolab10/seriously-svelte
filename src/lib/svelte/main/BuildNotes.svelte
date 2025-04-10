@@ -1,15 +1,15 @@
 <script lang='ts'>
 	import Directional_Buttons from '../mouse/Directional_Buttons.svelte';
-	import { k, builds, T_Layer } from '../../ts/common/Global_Imports';
-	import { w_background_color } from '../../ts/common/Stores';
-	import { w_id_popupView } from '../../ts/common/Stores';
+	import { k, builds, T_Layer } from '../ts/common/Global_Imports';
+	import { w_background_color } from '../ts/common/Stores';
+	import { w_id_popupView } from '../ts/common/Stores';
 	import Close_Button from '../mouse/Close_Button.svelte';
 	import { onMount } from 'svelte';
 	const notesIndexed = Object.entries(builds.notes).reverse();
 	const notesLimit = notesIndexed.length - 1;
-	let title = k.empty;
+	let title = $state(k.empty);
 	let notesIndex = 0;
-	let notes = [];
+	let notes = $state([]);
 	
 	updateNotes();
     function display(pointsUp) { return shouldEnable(pointsUp) ? 'block' : 'none'; }
@@ -86,7 +86,7 @@
 	}
 </style>
 
-<svelte:document on:keydown={handle_key_down} />
+<svelte:document onkeydown={handle_key_down} />
 <div class='notes-modal-overlay'>
 	<div class='notes-modal-content'
 		style='background-color:{$w_background_color}'>

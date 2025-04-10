@@ -1,28 +1,30 @@
 <script lang='ts'>
-	import { c, k, u, ux, w, Size, Point, Thing, debug, T_Tool, T_Layer, T_Element } from '../../ts/common/Global_Imports';
-	import { w_s_title_edit, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
-	import { signals, svgPaths, Ancestry, databases } from '../../ts/common/Global_Imports';
-	import { w_hierarchy, w_graph_rect, w_color_trigger } from '../../ts/common/Stores';
+	import { run } from 'svelte/legacy';
+
+	import { c, k, u, ux, w, Size, Point, Thing, debug, T_Tool, T_Layer, T_Element } from '../ts/common/Global_Imports';
+	import { w_s_title_edit, w_ancestry_focus, w_ancestries_grabbed } from '../ts/common/Stores';
+	import { signals, svgPaths, Ancestry, databases } from '../ts/common/Global_Imports';
+	import { w_hierarchy, w_graph_rect, w_color_trigger } from '../ts/common/Stores';
 	import Breadcrumb_Button from '../mouse/Breadcrumb_Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import { onMount } from 'svelte';
 	let size = k.default_buttonSize;
-	let lefts: Array<string> = [];
-	let things: Array<Thing> = [];
-	let breadcrumbs_rebuilds = 0;
-	let ancestry: Ancestry;
-	let trigger = 0;
+	let lefts: Array<string> = $state([]);
+	let things: Array<Thing> = $state([]);
+	let breadcrumbs_rebuilds = $state(0);
+	let ancestry: Ancestry = $state();
+	let trigger = $state(0);
 
 	signals.handle_rebuild_andRecreate(1, (ancestry) => {
 		breadcrumbs_rebuilds += 1;
 	});
 
-	$: {
+	run(() => {
 		const _ = $w_s_title_edit + $w_color_trigger + $w_ancestries_grabbed;
 		breadcrumbs_rebuilds += 1;
-	}
+	});
 
-	$: {
+	run(() => {
 		const h = $w_hierarchy;
 		const needsUpdate = ($w_ancestry_focus?.title ?? k.empty) + $w_graph_rect + ($w_ancestries_grabbed?.length ?? 0);
 		if (!ancestry || needsUpdate || things.length == 0) {
@@ -36,7 +38,7 @@
 				debug.log_crumbs(`ALL ${widths} ${things.map(t => t.title)}`);
 			}
 		}
-	}
+	});
 
 	function es_breadcrumb(index: number, thing: Thing): S_Element {
 		return ux.s_element_for(ancestry?.stripBack(things.length - index - 1), T_Element.breadcrumb, T_Tool.none);

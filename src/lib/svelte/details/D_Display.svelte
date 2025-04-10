@@ -1,10 +1,14 @@
 <script lang='ts'>
-	import { w_t_countDots, w_background_color } from '../../ts/common/Stores';
-	import { k, Point, T_Hierarchy } from '../../ts/common/Global_Imports';
+	import { w_t_countDots, w_background_color } from '../ts/common/Stores';
+	import { k, Point, T_Hierarchy } from '../ts/common/Global_Imports';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
 	import Color from '../kit/Color.svelte';
-	export let top = 0;
+	interface Props {
+		top?: number;
+	}
+
+	let { top = 0 }: Props = $props();
 	const color_left = 10
 	const font_ratio = 0.8;
 	const info_width = k.width_details - 30;
@@ -12,7 +16,7 @@
 	const color_origin = new Point(color_left, 41);
 	const separator_font_size = `${k.tiny_font_size}px`;
 	const titles = [T_Hierarchy[T_Hierarchy.children], T_Hierarchy[T_Hierarchy.parents], T_Hierarchy[T_Hierarchy.related]];
-	let display_rebuilds = 0;
+	let display_rebuilds = $state(0);
 	
 	function selection_closure(t_counts: Array<string>) {
 		$w_t_countDots = t_counts as Array<T_Hierarchy>;

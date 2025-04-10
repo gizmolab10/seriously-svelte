@@ -1,18 +1,24 @@
 <script lang='ts'>
-	import { T_Info, T_Trait, T_Layer, T_Element, T_Report, T_Preference } from '../../ts/common/Global_Imports';
-	import { w_hierarchy, w_color_trigger, w_info_title, w_background_color, } from '../../ts/common/Stores';
-	import { w_ancestry_focus, w_ancestries_grabbed, w_thing_fontFamily } from '../../ts/common/Stores';
-	import { c, k, p, ux, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
-	import { debug, colors, signals, layout, Ancestry } from '../../ts/common/Global_Imports';
-	import type { Integer, Dictionary } from '../../ts/common/Types';
-	import Identifiable from '../../ts/data/runtime/Identifiable';
+	import { run } from 'svelte/legacy';
+
+	import { T_Info, T_Trait, T_Layer, T_Element, T_Report, T_Preference } from '../ts/common/Global_Imports';
+	import { w_hierarchy, w_color_trigger, w_info_title, w_background_color, } from '../ts/common/Stores';
+	import { w_ancestry_focus, w_ancestries_grabbed, w_thing_fontFamily } from '../ts/common/Stores';
+	import { c, k, p, ux, show, Rect, Size, Point, Thing } from '../ts/common/Global_Imports';
+	import { debug, colors, signals, layout, Ancestry } from '../ts/common/Global_Imports';
+	import type { Integer, Dictionary } from '../ts/common/Types';
+	import Identifiable from '../ts/runtime/Identifiable';
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
 	import Color from '../kit/Color.svelte';
 	import Table from '../kit/Table.svelte';
 	import { onMount } from 'svelte';
-	export let top = 0;
+	interface Props {
+		top?: number;
+	}
+
+	let { top = 0 }: Props = $props();
 	const id = 'info';
 	const margin = 10;
 	const font_ratio = 0.8;
@@ -25,17 +31,17 @@
 	const traits_size = new Size(info_width - 58, k.default_buttonSize + 4);
 	const traits_rect = Rect.createCenterRect(traits_center, traits_size);
 	const es_info = ux.s_element_for(new Identifiable(id), T_Element.info, id);
-	let ancestry: Ancestry | null = $w_ancestry_focus;
-	let thing: Thing | null = ancestry?.thing ?? null;
+	let ancestry: Ancestry | null = $state($w_ancestry_focus);
+	let thing: Thing | null = $state(ancestry?.thing ?? null);
 	let text_box_size = new Size(info_width - 4, 68);
 	let thingHID: Integer | null = thing?.hid;
-	let information: Array<Dictionary> = [];
+	let information: Array<Dictionary> = $state([]);
 	let grabs = $w_ancestries_grabbed;
-	let color = colors.default_forThings;
-	let thing_title = thing?.title;
-	let color_origin = Point.zero;
-	let picker_offset = k.empty;
-	let info_rebuilds = 0;
+	let color = $state(colors.default_forThings);
+	let thing_title = $state(thing?.title);
+	let color_origin = $state(Point.zero);
+	let picker_offset = $state(k.empty);
+	let info_rebuilds = $state(0);
 	let info;
 
 	layout.layout_tops_forInfo(1);
@@ -49,29 +55,9 @@
 		return () => { handler.disconnect() };
 	});
 	
-	$: {
-		const _ = `${$w_ancestries_grabbed} ${$w_ancestry_focus} ${$w_info_title}`;
-		update_forKind();
-	}
 	
-	$: {
-		if (thing != ancestry?.thing) {
-			update_forAncestry();
-		}
-	}
 
-	$: {
-		const _ = $w_background_color;
-		info_rebuilds += 1;
-	}
 	
-	$: {
-		const id = $w_color_trigger;
-		if (!!thing && thing.id == id) {
-			color = thing.color;
-			info_rebuilds += 1;
-		}
-	}
 
 	function hasGrabs(): boolean {
 		grabs = $w_ancestries_grabbed;
@@ -152,6 +138,26 @@
 		}
 	}
 
+	run(() => {
+		const _ = `${$w_ancestries_grabbed} ${$w_ancestry_focus} ${$w_info_title}`;
+		update_forKind();
+	});
+	run(() => {
+		if (thing != ancestry?.thing) {
+			update_forAncestry();
+		}
+	});
+	run(() => {
+		const _ = $w_background_color;
+		info_rebuilds += 1;
+	});
+	run(() => {
+		const id = $w_color_trigger;
+		if (!!thing && thing.id == id) {
+			color = thing.color;
+			info_rebuilds += 1;
+		}
+	});
 </script>
 
 {#key info_rebuilds}

@@ -10,19 +10,19 @@
     ],
   };
 
-  let showTooltip = false;
+  let showTooltip = $state(false);
 </script>
 
 <button
   use:popperRef
-  on:mouseenter={() => showTooltip = true}
-  on:mouseleave={() => showTooltip = false}
+  onmouseenter={() => showTooltip = true}
+  onmouseleave={() => showTooltip = false}
 >
   My button
 </button>
 {#if showTooltip}
   <div id="tooltip" use:popperContent={extraOpts}>
     My tooltip
-    <div id="arrow" data-popper-arrow />
+    <div id="arrow" data-popper-arrow></div>
   </div>
 {/if}

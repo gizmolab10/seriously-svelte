@@ -1,13 +1,12 @@
 <script lang='ts'>
-    import { k, Point, colors, Direction } from '../../ts/common/Global_Imports';
-	import { w_background_color } from '../../ts/common/Stores';
+    import { k, Point, colors, Direction } from '../ts/common/Global_Imports';
+	import { w_background_color } from '../ts/common/Stores';
     import Triangle_Button from './Triangle_Button.svelte';
-    export let display;
-    export let hit;
+    let { display, hit } = $props();
     const buttonSize = 20;
     const origin = new Point(32, 37);
     const offsetY = buttonSize / 2 - 1;
-	let directionals_rebuilds = 0;
+	let directionals_rebuilds = $state(0);
 
 	function hover_closure(isHovering) {
         return [isHovering ? colors.default : $w_background_color, k.empty];

@@ -1,7 +1,7 @@
-import type { Integer } from '../../common/Types';
-import { u } from '../../common/Utilities';
+import type { Integer } from '../common/Types';
+import { u } from '../common/Utilities';
 import { v4 as uuid } from 'uuid';
-import '../../common/Extensions';
+import '../common/Extensions';
 
 export default class Identifiable {
 	hid: Integer;

@@ -1,14 +1,16 @@
 <script lang='ts'>
-	import { c, k, w, Rect, Point, debug, layout, T_Layer, signals, T_Graph } from '../../ts/common/Global_Imports';
-	import { w_graph_rect, w_t_graph, w_ancestry_focus } from '../../ts/common/Stores';
-	import { w_device_isMobile, w_user_graph_offset } from '../../ts/common/Stores';
+	import { run } from 'svelte/legacy';
+
+	import { c, k, w, Rect, Point, debug, layout, T_Layer, signals, T_Graph } from '../ts/common/Global_Imports';
+	import { w_graph_rect, w_t_graph, w_ancestry_focus } from '../ts/common/Stores';
+	import { w_device_isMobile, w_user_graph_offset } from '../ts/common/Stores';
 	import Radial_Graph from '../graph/Radial_Graph.svelte';
 	import Tree_Graph from '../graph/Tree_Graph.svelte';
 	import { onMount } from 'svelte';
-	let draggableRect: Rect | null = null;
-	let graph_rebuilds = 0;
-	let style = k.empty;
-	let draggable;
+	let draggableRect: Rect | null = $state(null);
+	let graph_rebuilds = $state(0);
+	let style = $state(k.empty);
+	let draggable = $state();
 
 	//////////////////////////////////////////
 	//										//
@@ -33,28 +35,9 @@
 		return () => { handle_rebuild.disconnect(); };
 	});
 
-	$: {
-		const _ = $w_ancestry_focus;
-		graph_rebuilds += 1;
-	}
 
-	$: {
-		draggableRect = $w_graph_rect.offsetByY(-9);
-		update_style();
-		graph_rebuilds += 1;
-	}
 
-	$: {
-		const _ = $w_device_isMobile;
-		setTimeout(() => {
-			update_style();
-		}, 1);
-	}
 	
-	$: {
-		const _ = $w_graph_rect + $w_ancestry_focus + $w_device_isMobile + $w_t_graph;
-		layout.grand_layout();
-	}
 	
 	function update_style() {
 		style=`
@@ -69,6 +52,25 @@
 		`.removeWhiteSpace();
 	}
 
+	run(() => {
+		const _ = $w_ancestry_focus;
+		graph_rebuilds += 1;
+	});
+	run(() => {
+		draggableRect = $w_graph_rect.offsetByY(-9);
+		update_style();
+		graph_rebuilds += 1;
+	});
+	run(() => {
+		const _ = $w_device_isMobile;
+		setTimeout(() => {
+			update_style();
+		}, 1);
+	});
+	run(() => {
+		const _ = $w_graph_rect + $w_ancestry_focus + $w_device_isMobile + $w_t_graph;
+		layout.grand_layout();
+	});
 </script>
 
 {#key graph_rebuilds}

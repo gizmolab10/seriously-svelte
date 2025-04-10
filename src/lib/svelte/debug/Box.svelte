@@ -1,20 +1,33 @@
 <script lang='ts'>
-    import { Rect } from '../../ts/common/Global_Imports'
-    export let line_thickness = 1;
-    export let rect = Rect.zero;
-    export let cross = false;
-    export let name = 'box';
-    export let zindex = 0;
-    export let color;
-    let box_size = rect.size;
-    let cross_size = box_size.multipliedBy(3);
-    let cross_rect = Rect.createCenterRect(rect.center, cross_size);
+    import { run } from 'svelte/legacy';
 
-    $: {
+    import { Rect } from '../ts/common/Global_Imports'
+    interface Props {
+        line_thickness?: number;
+        rect?: any;
+        cross?: boolean;
+        name?: string;
+        zindex?: number;
+        color: any;
+    }
+
+    let {
+        line_thickness = 1,
+        rect = Rect.zero,
+        cross = false,
+        name = 'box',
+        zindex = 0,
+        color
+    }: Props = $props();
+    let box_size = $state(rect.size);
+    let cross_size = $state(box_size.multipliedBy(3));
+    let cross_rect = $state(Rect.createCenterRect(rect.center, cross_size));
+
+    run(() => {
         box_size = rect.size;
         cross_size = box_size.multipliedBy(3);
         cross_rect = Rect.createCenterRect(rect.center, cross_size);
-    }
+    });
 
 </script>
 

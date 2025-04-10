@@ -1,12 +1,16 @@
 <script lang='ts'>
-	import { w_hierarchy, w_id_popupView } from '../../ts/common/Stores';
-	import { k, ux, Point } from '../../ts/common/Global_Imports';
-	import { files } from '../../ts/managers/Files';
+	import { w_hierarchy, w_id_popupView } from '../ts/common/Stores';
+	import { k, ux, Point } from '../ts/common/Global_Imports';
+	import { files } from '../ts/managers/Files';
 	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';
-	export let accept: string = k.empty;
-	export let multiple = k.empty;		// can be set to 'multiple'
-	let file_input: HTMLInputElement;
+	interface Props {
+		accept?: string;
+		multiple?: any; // can be set to 'multiple'
+	}
+
+	let { accept = k.empty, multiple = k.empty }: Props = $props();
+	let file_input: HTMLInputElement = $state();
 	
 	onMount(() => {
 		if (file_input) {
@@ -31,8 +35,8 @@
 </script>
 
 <input
-	on:change={handle_selection}
-	on:cancel={dismiss_popup}
+	onchange={handle_selection}
+	oncancel={dismiss_popup}
 	bind:this={file_input}
 	style='display: none'
 	type='file'

@@ -1,32 +1,43 @@
 <script lang='ts'>
-	import { layout, signals, databases, Seriously_Range, Svelte_Wrapper } from '../../ts/common/Global_Imports';
-	import { c, k, u, ux, w, Rect, Size, Point, Thing, debug, Angle } from '../../ts/common/Global_Imports';
-	import { T_Graph, T_Layer, S_Title_Edit, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { w_color_trigger, w_info_title, w_thing_fontFamily } from '../../ts/common/Stores';
-	import { w_ancestries_grabbed, w_ancestry_showing_tools } from '../../ts/common/Stores';
-	import { w_hierarchy, w_s_title_edit, w_mouse_location } from '../../ts/common/Stores';
+	import { run } from 'svelte/legacy';
+
+	import { layout, signals, databases, Seriously_Range, Svelte_Wrapper } from '../ts/common/Global_Imports';
+	import { c, k, u, ux, w, Rect, Size, Point, Thing, debug, Angle } from '../ts/common/Global_Imports';
+	import { T_Graph, T_Layer, S_Title_Edit, T_SvelteComponent } from '../ts/common/Global_Imports';
+	import { w_color_trigger, w_info_title, w_thing_fontFamily } from '../ts/common/Stores';
+	import { w_ancestries_grabbed, w_ancestry_showing_tools } from '../ts/common/Stores';
+	import { w_hierarchy, w_s_title_edit, w_mouse_location } from '../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import { w_background_color } from '../../ts/common/Stores';
-	import { T_Edit } from '../../ts/state/S_Title_Edit';
+	import { w_background_color } from '../ts/common/Stores';
+	import { T_Edit } from '../ts/state/S_Title_Edit';
 	import { onMount, onDestroy } from 'svelte';
-	export let fontSize = '1em';
-    export let name = k.empty;
-	export let ancestry;
-	export let origin;
-	const thing = ancestry?.thing;
+	interface Props {
+		fontSize?: string;
+		name?: any;
+		ancestry: any;
+		origin: any;
+	}
+
+	let {
+		fontSize = '1em',
+		name = k.empty,
+		ancestry,
+		origin
+	}: Props = $props();
+	const thing = $state(ancestry?.thing);
 	const padding = `0.5px 0px 0px 0px`;
 	const input_height = k.dot_size + 2;
 	const es_title = ux.s_element_forName(name);
 	const showingReveal = ancestry?.showsReveal ?? false;
-	let title_width = (thing?.titleWidth ?? 0) + title_extra();
-	let title_binded = thing?.title ?? k.empty;
-	let color = thing?.color ?? k.empty;
-	let title_wrapper: Svelte_Wrapper;
-	let origin_ofInput = Point.zero;
+	let title_width = $state((thing?.titleWidth ?? 0) + title_extra());
+	let title_binded = $state(thing?.title ?? k.empty);
+	let color = $state(thing?.color ?? k.empty);
+	let title_wrapper: Svelte_Wrapper = $state();
+	let origin_ofInput = $state(Point.zero);
 	let title_prior = thing?.title;
-	let cursor_style = k.empty;
-	let ghost = null;
-	let input = null;
+	let cursor_style = $state(k.empty);
+	let ghost = $state(null);
+	let input = $state(null);
 	
 	function isHit():					   boolean { return false }
 	function hasFocus():				   boolean { return document.activeElement === input; }
@@ -62,31 +73,9 @@
 
 	export const REACTIVES: unique symbol = Symbol('REACTIVES');
 
-	$: {
-		const _ = $w_s_title_edit;
-		if (!!input) {
-			title_width = (thing?.titleWidth ?? 0) + title_extra();
-			input.style.width = `${title_width}px`;
-		}
-	}
 
-	$: {
-		if (!!input && !title_wrapper) {
-			title_wrapper = new Svelte_Wrapper(input, handle_forWrapper, ancestry.hid, T_SvelteComponent.title);
-		}
-	}
 
-	$: {
-		if (!!thing && thing.id == $w_color_trigger?.split(k.generic_separator)[0]) {
-			color = thing?.color;
-		}
-	}
 
-	$: {
-		const _ = $w_ancestries_grabbed;
-		const isGrabbed = ancestry?.isGrabbed ?? false;
-		origin_ofInput = Point.y(0.8).offsetBy(isGrabbed ? new Point(0.1, 0.2) : Point.zero);
-	}
 
 	export const RANGE: unique symbol = Symbol('RANGE');
 
@@ -263,7 +252,30 @@
 		}
 	}
 
-	$: {
+
+	run(() => {
+		const _ = $w_s_title_edit;
+		if (!!input) {
+			title_width = (thing?.titleWidth ?? 0) + title_extra();
+			input.style.width = `${title_width}px`;
+		}
+	});
+	run(() => {
+		if (!!input && !title_wrapper) {
+			title_wrapper = new Svelte_Wrapper(input, handle_forWrapper, ancestry.hid, T_SvelteComponent.title);
+		}
+	});
+	run(() => {
+		if (!!thing && thing.id == $w_color_trigger?.split(k.generic_separator)[0]) {
+			color = thing?.color;
+		}
+	});
+	run(() => {
+		const _ = $w_ancestries_grabbed;
+		const isGrabbed = ancestry?.isGrabbed ?? false;
+		origin_ofInput = Point.y(0.8).offsetBy(isGrabbed ? new Point(0.1, 0.2) : Point.zero);
+	});
+	run(() => {
 		const s_title_edit = $w_s_title_edit;
 		if (hasFocus() && !s_title_edit) {
 			stopEdit();
@@ -292,8 +304,7 @@
 				}
 			}
 		}
-	}
-
+	});
 </script>
 
 <style lang='scss'>
@@ -324,14 +335,14 @@
 		name='title'
 		class='title'
 		bind:this={input}
-		on:blur={handle_blur}
-		on:focus={handle_focus}
-		on:input={handle_input}
+		onblur={handle_blur}
+		onfocus={handle_focus}
+		oninput={handle_input}
 		bind:value={title_binded}
-		on:cut={handle_cut_paste}
-		on:paste={handle_cut_paste}
-		on:keydown={handle_key_down}
-		on:mouseover={(event) => { event.preventDefault(); }}
+		oncut={handle_cut_paste}
+		onpaste={handle_cut_paste}
+		onkeydown={handle_key_down}
+		onmouseover={(event) => { event.preventDefault(); }}
 		style='
 			border : none;
 			{cursor_style};

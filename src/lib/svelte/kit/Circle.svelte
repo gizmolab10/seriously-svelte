@@ -1,17 +1,29 @@
 <script lang='ts'>
-	import { k, u, Point, debug, T_Layer } from '../../ts/common/Global_Imports'
-	import { w_background_color } from '../../ts/common/Stores';
+	import { k, u, Point, debug, T_Layer } from '../ts/common/Global_Imports'
+	import { w_background_color } from '../ts/common/Stores';
 	import { onMount } from 'svelte';
-	export let color_background = debug.lines ? 'transparent' : $w_background_color;
-	export let zindex = T_Layer.dots;
-	export let center = Point.zero;
-	export let name = k.empty;
-	export let thickness = 1;
-	export let radius = 2;
-	export let color;
-	let diameter = 0;
+	interface Props {
+		color_background?: any;
+		zindex?: any;
+		center?: any;
+		name?: any;
+		thickness?: number;
+		radius?: number;
+		color: any;
+	}
 
-	$: diameter = radius * 2;
+	let {
+		color_background = debug.lines ? 'transparent' : $w_background_color,
+		zindex = T_Layer.dots,
+		center = Point.zero,
+		name = k.empty,
+		thickness = 1,
+		radius = 2,
+		color
+	}: Props = $props();
+	let diameter = $state(0);
+
+	let diameter = $derived(radius * 2);
 
 </script>
 

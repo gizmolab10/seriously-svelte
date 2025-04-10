@@ -1,12 +1,10 @@
-<script>
+<script lang="ts">
 	import { s_hierarchy, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
 	import { k, u, Size, Point } from '../../ts/common/Global_Imports';
-	export let center = Point.zero;
-	export let multiple = k.empty;		// can be set to 'multiple'
-	export let accept = k.empty;
+	let { center = Point.zero, multiple = k.empty, accept = k.empty } = $props();
 	const label = 'import';
 	const labelWidth = u.getWidthOf(label);
-	let fileInput;
+	let fileInput = $state();
 
 	function handleClick() {
 		fileInput.click();
@@ -51,12 +49,12 @@
 	accept={accept}
 	bind:this={fileInput}
 	style='display: none;'
-	on:change={handleFileChange}
+	onchange={handleFileChange}
 />
 
 <button
 	class='button'
-	on:click={handleClick}
+	onclick={handleClick}
 	style='
 		top: {center.y}px;
 		left: {center.x}px;'>

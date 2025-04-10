@@ -1,28 +1,50 @@
 <script lang='ts'>
-	import { k, u, ux, Rect, Point, colors, T_Layer } from '../../ts/common/Global_Imports';
-	import { w_thing_fontFamily, w_background_color } from '../../ts/common/Stores';
-	import { S_Element, Svelte_Wrapper } from '../../ts/common/Global_Imports';
-	import Identifiable from '../../ts/data/runtime/Identifiable';
-	import type { Handle_Result } from '../../ts/common/Types';
+	import { k, u, ux, Rect, Point, colors, T_Layer } from '../ts/common/Global_Imports';
+	import { w_thing_fontFamily, w_background_color } from '../ts/common/Stores';
+	import { S_Element, Svelte_Wrapper } from '../ts/common/Global_Imports';
+	import Identifiable from '../ts/runtime/Identifiable';
+	import type { Handle_Result } from '../ts/common/Types';
 	import Mouse_Responder from './Mouse_Responder.svelte';
 	import { onMount } from 'svelte';
-	export let background_color = $w_background_color;
-	export let closure = Handle_Result<S_Mouse>;
-	export let border_color = colors.default;
-	export let height = k.default_buttonSize;
-	export let width = k.default_buttonSize;
-	export let padding = '0px 6px 1px 6px';
-	export let color = colors.default;
-	export let position = 'absolute';
-	export let zindex = T_Layer.dots;
-	export let es_button: S_Element;
-	export let border_thickness = 1;
-	export let center = Point.zero;
-	export let isToggle = false;
-	export let style = k.empty;
-	export let name = k.empty;
+	interface Props {
+		background_color?: any;
+		closure?: any;
+		border_color?: any;
+		height?: any;
+		width?: any;
+		padding?: string;
+		color?: any;
+		position?: string;
+		zindex?: any;
+		es_button: S_Element;
+		border_thickness?: number;
+		center?: any;
+		isToggle?: boolean;
+		style?: any;
+		name?: any;
+		children?: import('svelte').Snippet;
+	}
+
+	let {
+		background_color = $bindable($w_background_color),
+		closure = Handle_Result<S_Mouse>,
+		border_color = colors.default,
+		height = k.default_buttonSize,
+		width = k.default_buttonSize,
+		padding = '0px 6px 1px 6px',
+		color = $bindable(colors.default),
+		position = 'absolute',
+		zindex = T_Layer.dots,
+		es_button,
+		border_thickness = 1,
+		center = Point.zero,
+		isToggle = false,
+		style = k.empty,
+		name = k.empty,
+		children
+	}: Props = $props();
 	let border = k.empty;
-	let currentStyle = style;
+	let currentStyle = $state(style);
 	let element: HTMLElement;
 	let buttonWrapper: Svelte_Wrapper;
 
@@ -83,7 +105,7 @@
 		detect_longClick={true}
 		handle_mouse_state={button_closure}>
 		<button class='button' id={'button-for-' + name} style={currentStyle}>
-			<slot></slot>
+			{@render children?.()}
 		</button>
 	</Mouse_Responder>
 {/key}

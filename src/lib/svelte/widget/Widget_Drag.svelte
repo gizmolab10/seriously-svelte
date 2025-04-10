@@ -1,32 +1,38 @@
 <script lang='ts'>
-	import { c, k, u, ux, show, Rect, Size, Point, Thing, debug, layout, signals } from '../../ts/common/Global_Imports';
-	import { svgPaths, databases, Svelte_Wrapper, T_Alteration, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { w_t_countDots, w_color_trigger, w_ancestries_grabbed } from '../../ts/common/Stores';
-	import { T_Layer, T_Tool, T_Graph, T_Element } from '../../ts/common/Global_Imports';
+	import { run } from 'svelte/legacy';
+
+	import { c, k, u, ux, show, Rect, Size, Point, Thing, debug, layout, signals } from '../ts/common/Global_Imports';
+	import { svgPaths, databases, Svelte_Wrapper, T_Alteration, T_SvelteComponent } from '../ts/common/Global_Imports';
+	import { w_t_countDots, w_color_trigger, w_ancestries_grabbed } from '../ts/common/Stores';
+	import { T_Layer, T_Tool, T_Graph, T_Element } from '../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import { w_background_color } from '../../ts/common/Stores';
+	import { w_background_color } from '../ts/common/Stores';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import { onMount } from 'svelte';
-	export let points_right = true;
-	export let name = k.empty;
-    export let ancestry;
+	interface Props {
+		points_right?: boolean;
+		name?: any;
+		ancestry: any;
+	}
+
+	let { points_right = true, name = k.empty, ancestry }: Props = $props();
 	const size = k.dot_size;
 	const capture_size = size;
-	const es_drag = ux.s_element_forName(name);		// survives onDestroy, created by widget
-	let center = ancestry.g_widget.center_ofDrag;
-	let svgPathFor_ellipses = k.empty;
-	let svgPathFor_related = k.empty;
-	let svgPathFor_dragDot = k.empty;
-	let dragWrapper!: Svelte_Wrapper;
-    let thing = ancestry.thing;
-	let isGrabbed = false;
-	let isHovering = true;
+	const es_drag = $state(ux.s_element_forName(name));		// survives onDestroy, created by widget
+	let center = $state(ancestry.g_widget.center_ofDrag);
+	let svgPathFor_ellipses = $state(k.empty);
+	let svgPathFor_related = $state(k.empty);
+	let svgPathFor_dragDot = $state(k.empty);
+	let dragWrapper!: Svelte_Wrapper = $state();
+    let thing = $state(ancestry.thing);
+	let isGrabbed = $state(false);
+	let isHovering = $state(true);
 	let mouse_click_timer;
-	let drag_rebuilds = 0;
-	let redraws = 0;
+	let drag_rebuilds = $state(0);
+	let redraws = $state(0);
 	let left = 0;
 	let top = 0;
-	let dotDrag;
+	let dotDrag = $state();
 
 	svgPaths_update();
 	updateColors_forHovering(true);
@@ -49,38 +55,10 @@
 		return () => { handle_reposition.disconnect(); handle_altering.disconnect(); };
 	});
 	
-	$: {
-		const _ = $w_t_countDots;
-		svgPaths_update();
-	}
+;
 
-	$: {
-		if (!!ancestry) {
-			thing = ancestry.thing;
-		}
-	};
 
-	$: {
-		if (!!thing && thing.id == $w_color_trigger?.split(k.generic_separator)[0]) {
-			updateColors_forHovering(true);
-		}
-	}
 
-	$: {
-		if (!!dotDrag) {
-			dragWrapper = new Svelte_Wrapper(dotDrag, handle_mouse_state, ancestry.hid, T_SvelteComponent.drag);
-			es_drag.set_forHovering(ancestry.thing?.color, 'pointer');
-		}
-	}
-
-	$: {
-		const _ = $w_ancestries_grabbed;
-		const grabbed = ancestry.isGrabbed;
-		if (isGrabbed != grabbed) {
-			isGrabbed = grabbed;
-			updateColors_forHovering(!isHovering);
-		}
-	}
 
 	function handle_mouse_state(s_mouse: S_Mouse): boolean {
 		return false;
@@ -135,6 +113,34 @@
 		}
 	}
 
+	run(() => {
+		const _ = $w_t_countDots;
+		svgPaths_update();
+	});
+	run(() => {
+		if (!!ancestry) {
+			thing = ancestry.thing;
+		}
+	});
+	run(() => {
+		if (!!thing && thing.id == $w_color_trigger?.split(k.generic_separator)[0]) {
+			updateColors_forHovering(true);
+		}
+	});
+	run(() => {
+		if (!!dotDrag) {
+			dragWrapper = new Svelte_Wrapper(dotDrag, handle_mouse_state, ancestry.hid, T_SvelteComponent.drag);
+			es_drag.set_forHovering(ancestry.thing?.color, 'pointer');
+		}
+	});
+	run(() => {
+		const _ = $w_ancestries_grabbed;
+		const grabbed = ancestry.isGrabbed;
+		if (isGrabbed != grabbed) {
+			isGrabbed = grabbed;
+			updateColors_forHovering(!isHovering);
+		}
+	});
 </script>
 
 {#key drag_rebuilds}

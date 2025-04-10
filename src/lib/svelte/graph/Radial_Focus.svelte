@@ -1,24 +1,26 @@
 <script lang='ts'>
-	import { c, k, ux, w, Size, Point, debug, colors, signals, svgPaths, Svelte_Wrapper } from '../../ts/common/Global_Imports';
-	import { w_background_color, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
-	import { w_color_trigger, w_s_title_edit, w_thing_fontFamily } from '../../ts/common/Stores';
-	import { T_Tool, T_Layer, T_Element, T_SvelteComponent } from '../../ts/common/Enumerations';
+	import { run } from 'svelte/legacy';
+
+	import { c, k, ux, w, Size, Point, debug, colors, signals, svgPaths, Svelte_Wrapper } from '../ts/common/Global_Imports';
+	import { w_background_color, w_ancestry_focus, w_ancestries_grabbed } from '../ts/common/Stores';
+	import { w_color_trigger, w_s_title_edit, w_thing_fontFamily } from '../ts/common/Stores';
+	import { T_Tool, T_Layer, T_Element, T_SvelteComponent } from '../ts/common/Enumerations';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Widget_Title from '../widget/Widget_Title.svelte';
 	import { onMount } from 'svelte';
 	const height = k.row_height + 1;
 	const fontSize = `{k.font_size}px`;
 	const es_title = ux.s_element_for($w_ancestry_focus, T_Element.radial_focus, k.empty);
-	let svg_strokeColor = 'transparent';
+	let svg_strokeColor = $state('transparent');
 	let svg_fillColor = 'transparent';
-	let color = colors.default_forThings;
-	let origin_ofWidget = Point.zero;
-	let center_ofBorder = Point.zero;
-	let origin_ofTitle = Point.zero;
-	let size_ofBorder = Size.zero;
-	let svg_dasharray = k.empty;
-	let width_ofTitle = 0;
-	let focus;
+	let color = $state(colors.default_forThings);
+	let origin_ofWidget = $state(Point.zero);
+	let center_ofBorder = $state(Point.zero);
+	let origin_ofTitle = $state(Point.zero);
+	let size_ofBorder = $state(Size.zero);
+	let svg_dasharray = $state(k.empty);
+	let width_ofTitle = $state(0);
+	let focus = $state();
 
 	//////////////////////////////////
 	//								//
@@ -36,27 +38,9 @@
 
 	function handle_mouse_state(s_mouse: S_Mouse): boolean { return false; }
 	
-	$: {
-		if (!!focus) {
-			new Svelte_Wrapper(focus, handle_mouse_state, $w_ancestry_focus.hid, T_SvelteComponent.widget);
-		}
-	}
 
-	$: {
-		const _ = $w_ancestry_focus + $w_s_title_edit + $w_ancestries_grabbed;
-		update_svg();
-	}
 
-	$: {
-		const _ = $w_ancestry_focus;
-		layout();
-	}
 
-	$: {
-		const _ = $w_color_trigger;
-		color = $w_ancestry_focus?.thing?.color;
-		update_svg();
-	}
 
 	function debug_closure(s_mouse) {
 		debug.log_radial(` ${s_mouse.descriptionFor('FOCUS')}`);
@@ -81,6 +65,24 @@
 		svg_fillColor = grabbed ? $w_background_color : 'transparent';
 	}
 
+	run(() => {
+		if (!!focus) {
+			new Svelte_Wrapper(focus, handle_mouse_state, $w_ancestry_focus.hid, T_SvelteComponent.widget);
+		}
+	});
+	run(() => {
+		const _ = $w_ancestry_focus + $w_s_title_edit + $w_ancestries_grabbed;
+		update_svg();
+	});
+	run(() => {
+		const _ = $w_ancestry_focus;
+		layout();
+	});
+	run(() => {
+		const _ = $w_color_trigger;
+		color = $w_ancestry_focus?.thing?.color;
+		update_svg();
+	});
 </script>
 
 <div class='radial-focus'

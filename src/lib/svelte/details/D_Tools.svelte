@@ -1,38 +1,44 @@
 <script lang='ts'>
-	import { c, k, u, ux, w, show, Rect, Size, Point, debug, colors, signals } from '../../ts/common/Global_Imports';
-	import { T_Tool, T_Graph, T_Layer, T_Element, T_Alteration } from '../../ts/common/Global_Imports';
-	import { layout, svgPaths, databases, Direction, Svelte_Wrapper } from '../../ts/common/Global_Imports';
-	import { S_Mouse, S_Element, S_Alteration } from '../../ts/common/Global_Imports';
-	import { w_s_alteration, w_ancestry_showing_tools } from '../../ts/common/Stores';
-	import { w_hierarchy, w_graph_rect } from '../../ts/common/Stores';
+	import { run } from 'svelte/legacy';
+
+	import { c, k, u, ux, w, show, Rect, Size, Point, debug, colors, signals } from '../ts/common/Global_Imports';
+	import { T_Tool, T_Graph, T_Layer, T_Element, T_Alteration } from '../ts/common/Global_Imports';
+	import { layout, svgPaths, databases, Direction, Svelte_Wrapper } from '../ts/common/Global_Imports';
+	import { S_Mouse, S_Element, S_Alteration } from '../ts/common/Global_Imports';
+	import { w_s_alteration, w_ancestry_showing_tools } from '../ts/common/Stores';
+	import { w_hierarchy, w_graph_rect } from '../ts/common/Stores';
 	import Transparent_Circle from '../kit/Transparent_Circle.svelte';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Triangle_Button from '../mouse/Triangle_Button.svelte';
-	import { w_background_color } from '../../ts/common/Stores';
+	import { w_background_color } from '../ts/common/Stores';
 	import Widget_Reveal from '../widget/Widget_Reveal.svelte';
 	import Button from '../mouse/Button.svelte';
 	import Trash from '../kit/Trash.svelte';
 	import { onMount } from 'svelte';
-	export let top = 0;
+	interface Props {
+		top?: number;
+	}
+
+	let { top = 0 }: Props = $props();
 	const toolDiameter = k.dot_size * 1.4;
 	const editingToolsRadius = k.editingTools_diameter / 2;
 	const parentAlteringIDs = [T_Tool.add_parent, T_Tool.delete_parent];
 	const needsMultipleVisibleParents = [T_Tool.next, T_Tool.delete_parent];
 	const half_circleViewBox = `0 0 ${k.editingTools_diameter} ${k.editingTools_diameter}`;
-	let s_element_byToolType: { [id: string]: S_Element } = {};
-	let isHovering_byID: { [id: string]: boolean } = {};
+	let s_element_byToolType: { [id: string]: S_Element } = $state({});
+	let isHovering_byID: { [id: string]: boolean } = $state({});
 	let centers_byID: { [id: string]: Point } = {};
-	let parentSensitiveColor = k.empty;
-	let countOfVisibleParents = 0;
-	let confirmingDelete = false;
-	let graphRect = Rect.zero;
-	let tools_rebuilds = 0;
+	let parentSensitiveColor = $state(k.empty);
+	let countOfVisibleParents = $state(0);
+	let confirmingDelete = $state(false);
+	let graphRect = $state(Rect.zero);
+	let tools_rebuilds = $state(0);
 	let mouse_click_timer;
-	let color = k.empty;
-	let titleWidth = 0;
+	let color = $state(k.empty);
+	let titleWidth = $state(0);
 	let left = 64;
-	let ancestry;
-	let thing;
+	let ancestry = $state();
+	let thing = $state();
 	function getC(id: string) { return centers_byID[id] ?? Point.zero; }
 	function setC(id: string, center: Point) { return centers_byID[id] = center; }
 	function alteration_forID(id: string) { return (id == T_Tool.add_parent) ? T_Alteration.adding : T_Alteration.deleting; }
@@ -71,28 +77,7 @@
 		}
 	}
 
-	$: {
-		if (graphRect != $w_graph_rect) {
-			graphRect = $w_graph_rect;
-			layout_tools_forceRedraw();
-		}
-	}
 
-	$: {
-		if (!ancestry || !ancestry.equals($w_ancestry_showing_tools)) {
-			ancestry = $w_ancestry_showing_tools;
-			if (!!ancestry) {
-				thing = ancestry.thing;
-				color = thing?.color ?? k.empty;
-				titleWidth = thing?.titleWidth ?? 0;
-				const hasOneParent = (thing?.parents.length ?? 0) == 1;
-				countOfVisibleParents = ancestry.visibleParentAncestries(0).length;
-				parentSensitiveColor = (hasOneParent || ancestry.isFocus) ? colors.disabled : color ;
-				reset_all_s_elements_for_ancestry_change();
-				layout_tools_forceRedraw(true);
-			}
-		}
-	}
 
 	function titleOffsetX(): number {
 		return !ancestry ? 0 : layout.inRadialMode ? ancestry.points_right ? titleWidth + 23 : -6 : ancestry.showsReveal ? titleWidth + 25 : titleWidth + 17;
@@ -156,6 +141,27 @@
 		}
 	}
 
+	run(() => {
+		if (graphRect != $w_graph_rect) {
+			graphRect = $w_graph_rect;
+			layout_tools_forceRedraw();
+		}
+	});
+	run(() => {
+		if (!ancestry || !ancestry.equals($w_ancestry_showing_tools)) {
+			ancestry = $w_ancestry_showing_tools;
+			if (!!ancestry) {
+				thing = ancestry.thing;
+				color = thing?.color ?? k.empty;
+				titleWidth = thing?.titleWidth ?? 0;
+				const hasOneParent = (thing?.parents.length ?? 0) == 1;
+				countOfVisibleParents = ancestry.visibleParentAncestries(0).length;
+				parentSensitiveColor = (hasOneParent || ancestry.isFocus) ? colors.disabled : color ;
+				reset_all_s_elements_for_ancestry_change();
+				layout_tools_forceRedraw(true);
+			}
+		}
+	});
 </script>
 
 <style>
@@ -339,13 +345,13 @@
 					size={toolDiameter}
 					name='add'/>
 				<button id='delete'
-					on:blur={u.ignore}
-					on:focus={u.ignore}
-					on:keyup={u.ignore}
-					on:keydown={u.ignore}
-					on:click={handle_delete_event}
-					on:mouseout={() => { isHovering_byID[T_Tool.delete] = false; }}
-					on:mouseover={() => { isHovering_byID[T_Tool.delete] = true; }}
+					onblur={u.ignore}
+					onfocus={u.ignore}
+					onkeyup={u.ignore}
+					onkeydown={u.ignore}
+					onclick={handle_delete_event}
+					onmouseout={() => { isHovering_byID[T_Tool.delete] = false; }}
+					onmouseover={() => { isHovering_byID[T_Tool.delete] = true; }}
 					style='
 						left: {getC(T_Tool.delete).x}px;
 						top: {getC(T_Tool.delete).y}px;

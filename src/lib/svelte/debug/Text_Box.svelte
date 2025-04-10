@@ -1,5 +1,9 @@
 <script lang='ts'>
-	export let text = 'If you can read this, your TextBox needs its text set.';
+	interface Props {
+		text?: string;
+	}
+
+	let { text = 'If you can read this, your TextBox needs its text set.' }: Props = $props();
 </script>
 
 <div class="container">

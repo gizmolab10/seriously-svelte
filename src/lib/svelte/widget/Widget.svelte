@@ -1,12 +1,14 @@
+<!-- @migration-task Error while migrating Svelte code: Identifier 'layout' has already been declared
+https://svelte.dev/e/js_parse_error -->
 <script lang='ts'>
-	import { c, k, u, ux, Thing, Point, Angle, debug, layout } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Graph, T_Widget, T_Signal, T_Element } from '../../ts/common/Global_Imports';
-	import { layout, signals, Ancestry, Svelte_Wrapper } from '../../ts/common/Global_Imports';
-	import { G_Widget, S_Element, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { w_s_title_edit, w_ancestries_grabbed } from '../../ts/common/Stores';
-	import { w_color_trigger, w_thing_fontFamily } from '../../ts/common/Stores';
-	import { w_show_related, w_background_color } from '../../ts/common/Stores';
-	import { T_Edit } from '../../ts/state/S_Title_Edit';
+	import { c, k, u, ux, Thing, Point, Angle, debug, layout } from '../ts/common/Global_Imports';
+	import { T_Layer, T_Graph, T_Widget, T_Signal, T_Element } from '../ts/common/Global_Imports';
+	import { layout, signals, Ancestry, Svelte_Wrapper } from '../ts/common/Global_Imports';
+	import { G_Widget, S_Element, T_SvelteComponent } from '../ts/common/Global_Imports';
+	import { w_s_title_edit, w_ancestries_grabbed } from '../ts/common/Stores';
+	import { w_color_trigger, w_thing_fontFamily } from '../ts/common/Stores';
+	import { w_show_related, w_background_color } from '../ts/common/Stores';
+	import { T_Edit } from '../ts/state/S_Title_Edit';
 	import Widget_Reveal from './Widget_Reveal.svelte';
 	import Tree_Line from '../graph/Tree_Line.svelte';
 	import Widget_Title from './Widget_Title.svelte';

@@ -1,10 +1,14 @@
 <script lang='ts'>
-	import { k, T_Layer } from '../../ts/common/Global_Imports';
-	import type { Integer } from '../../ts/common/Types';
-	export let width = 180;
-	export let top = 0;
-	export let array;
-	let table;
+	import { k, T_Layer } from '../ts/common/Global_Imports';
+	import type { Integer } from '../ts/common/Types';
+	interface Props {
+		width?: number;
+		top?: number;
+		array: any;
+	}
+
+	let { width = 180, top = 0, array }: Props = $props();
+	let table = $state();
 
 	function location_ofCellAt(x: Integer, y: Integer): Point {
 		const rows = table.rows;

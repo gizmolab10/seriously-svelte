@@ -1,12 +1,12 @@
 // N.B., do not import these from Global Imports --> avoid dependency issues when importing Utilities class
 
 import { w_t_database, w_thing_fontFamily } from '../common/Stores';
-import Identifiable from '../data/runtime/Identifiable';
-import Ancestry from '../data/runtime/Ancestry';
-import { w } from '../layout/G_Window';
+import Identifiable from '../runtime/Identifiable';
 import { T_Quadrant } from '../common/Angle';
 import { T_Browser } from './Enumerations';
+import Ancestry from '../runtime/Ancestry';
 import type { Dictionary } from './Types';
+import { w } from '../layout/G_Window';
 import Angle from '../common/Angle';
 import { Point } from './Geometry';
 import { get } from 'svelte/store';

@@ -1,18 +1,31 @@
-<script>
-	import { k, u, Point, debug, T_Layer } from '../../ts/common/Global_Imports';
-	import { w_thing_fontFamily } from '../../ts/common/Stores';
+<script lang="ts">
+	import { k, u, Point, debug, T_Layer } from '../ts/common/Global_Imports';
+	import { w_thing_fontFamily } from '../ts/common/Stores';
 	import { onMount } from 'svelte';
-	export let background_color = colors.background;
-	export let font_family = $w_thing_fontFamily;
-	export let zindex = T_Layer.paging;
-	export let center = Point.zero;
-	export let font_size = '0.7em';
-	export let text = k.space;
-	export let color = 'red';
-	export let angle = 0;
+	interface Props {
+		background_color?: any;
+		font_family?: any;
+		zindex?: any;
+		center?: any;
+		font_size?: string;
+		text?: any;
+		color?: string;
+		angle?: number;
+	}
+
+	let {
+		background_color = colors.background,
+		font_family = $w_thing_fontFamily,
+		zindex = T_Layer.paging,
+		center = Point.zero,
+		font_size = '0.7em',
+		text = k.space,
+		color = 'red',
+		angle = 0
+	}: Props = $props();
 
 	// Calculate degrees from radians for CSS rotation
-	$: angleDeg = angle * 180 / Math.PI;
+	let angleDeg = $derived(angle * 180 / Math.PI);
 </script>
 
 <div class='angled-text'

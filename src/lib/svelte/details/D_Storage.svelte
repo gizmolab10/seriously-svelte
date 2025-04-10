@@ -1,22 +1,28 @@
 <script lang='ts'>
-	import { k, ux, Point, S_Element, databases, Hierarchy, T_Storage } from '../../ts/common/Global_Imports';
-	import { w_storage_update_trigger, w_thing_fontFamily } from '../../ts/common/Stores';
-	import { T_Layer, T_Element, T_Preference } from '../../ts/common/Global_Imports';
-	import { w_t_database, w_hierarchy } from '../../ts/common/Stores';
-	import { T_Database } from '../../ts/data/dbs/DBCommon';
+	import { run } from 'svelte/legacy';
+
+	import { k, ux, Point, S_Element, databases, Hierarchy, T_Storage } from '../ts/common/Global_Imports';
+	import { w_storage_update_trigger, w_thing_fontFamily } from '../ts/common/Stores';
+	import { T_Layer, T_Element, T_Preference } from '../ts/common/Global_Imports';
+	import { w_t_database, w_hierarchy } from '../ts/common/Stores';
+	import { T_Database } from '../../ts/dbs/DBCommon';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Button from '../mouse/Button.svelte';
 	import Table from '../kit/Table.svelte';
-	export let top = 0;
+	interface Props {
+		top?: number;
+	}
+
+	let { top = 0 }: Props = $props();
 	const buttons_top = 138;
 	const button_style = `font-family: ${$w_thing_fontFamily}; font-size:0.85em; left: 5px; top: -2px; position: absolute;`;
-	let s_element_byStorageType: { [id: string]: S_Element } = {};
-	let information: Array<Dictionary> = [];
-	let storage_rebuilds = 0;
+	let s_element_byStorageType: { [id: string]: S_Element } = $state({});
+	let information: Array<Dictionary> = $state([]);
+	let storage_rebuilds = $state(0);
 
 	setup_s_elements();
 	
-	$: {
+	run(() => {
 		const trigger = $w_storage_update_trigger;
 		const h = $w_hierarchy;
 		if (!!h) {
@@ -27,7 +33,7 @@
 			information = Object.entries(dict);
 			storage_rebuilds += 1;
 		}
-	}
+	});
 
 	function selection_closure(titles: Array<string>) {
 		const t_database = titles[0] as T_Database;	// only ever contains one title

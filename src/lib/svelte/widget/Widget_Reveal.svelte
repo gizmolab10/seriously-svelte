@@ -1,30 +1,42 @@
 <script lang='ts'>
-	import { c, k, u, ux, Size, Thing, Point, debug, layout, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Graph, Predicate, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { w_ancestries_grabbed, w_ancestries_expanded, w_ancestry_showing_tools } from '../../ts/common/Stores';
-	import { w_hierarchy, w_t_countDots, w_s_alteration } from '../../ts/common/Stores';
+	import { run } from 'svelte/legacy';
+
+	import { c, k, u, ux, Size, Thing, Point, debug, layout, signals, svgPaths, databases } from '../ts/common/Global_Imports';
+	import { T_Layer, T_Graph, Predicate, Svelte_Wrapper, T_SvelteComponent } from '../ts/common/Global_Imports';
+	import { w_ancestries_grabbed, w_ancestries_expanded, w_ancestry_showing_tools } from '../ts/common/Stores';
+	import { w_hierarchy, w_t_countDots, w_s_alteration } from '../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import { w_background_color } from '../../ts/common/Stores';
+	import { w_background_color } from '../ts/common/Stores';
 	import SVGD3 from '../kit/SVGD3.svelte';
 	import { onMount } from 'svelte';
-    export let ancestry;
-	export let name = k.empty;
-    export let zindex = T_Layer.dots;
-	export let points_toChild = true;
-    export let hover_isReversed = false;
+	interface Props {
+		ancestry: any;
+		name?: any;
+		zindex?: any;
+		points_toChild?: boolean;
+		hover_isReversed?: boolean;
+	}
+
+	let {
+		ancestry,
+		name = k.empty,
+		zindex = T_Layer.dots,
+		points_toChild = true,
+		hover_isReversed = false
+	}: Props = $props();
 	const tinyDotsOffset = new Point(-5, -2.6);
-	const es_reveal = ux.s_element_forName(name);
+	const es_reveal = $state(ux.s_element_forName(name));
 	const outer_diameter = k.diameterOf_outer_tinyDots;
 	const size_ofTinyDots = Size.width(3).expandedEquallyBy(outer_diameter)
 	const viewBox = `0.5 2.35 ${outer_diameter} ${outer_diameter}`;
-	let svgPathFor_outer_tinyDots: string | null = null;
-	let svgPathFor_bulkAlias: string | null = null;
-	let center = ancestry.g_widget.center_ofReveal;
-	let revealWrapper!: Svelte_Wrapper;
-	let svgPathFor_revealDot = k.empty;
-	let bulkAliasOffset = 0;
-	let reveal_rebuilds = 0;
-	let dotReveal = null;
+	let svgPathFor_outer_tinyDots: string | null = $state(null);
+	let svgPathFor_bulkAlias: string | null = $state(null);
+	let center = $state(ancestry.g_widget.center_ofReveal);
+	let revealWrapper!: Svelte_Wrapper = $state();
+	let svgPathFor_revealDot = $state(k.empty);
+	let bulkAliasOffset = $state(0);
+	let reveal_rebuilds = $state(0);
+	let dotReveal = $state(null);
 	
 	function handle_context_menu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
 
@@ -42,17 +54,7 @@
 		return () => { handle_reposition.disconnect(); };
 	});
 
-	$: {
-		const _ = $w_ancestries_expanded + $w_t_countDots + ancestry.title;
-		svgPath_update();
-	}
 
-	$: {
-		if (!!dotReveal) {
-			revealWrapper = new Svelte_Wrapper(dotReveal, handle_mouse_state, ancestry.hid, T_SvelteComponent.reveal);
-			es_reveal.set_forHovering(ancestry.thing.color, 'pointer');
-		}
-	}
 
 	function set_isHovering(hovering) {
 		const corrected = hover_isReversed ? !hovering : hovering;
@@ -88,6 +90,16 @@
 		return false;
 	}
 
+	run(() => {
+		const _ = $w_ancestries_expanded + $w_t_countDots + ancestry.title;
+		svgPath_update();
+	});
+	run(() => {
+		if (!!dotReveal) {
+			revealWrapper = new Svelte_Wrapper(dotReveal, handle_mouse_state, ancestry.hid, T_SvelteComponent.reveal);
+			es_reveal.set_forHovering(ancestry.thing.color, 'pointer');
+		}
+	});
 </script>
 
 {#key reveal_rebuilds}
@@ -101,7 +113,7 @@
 			bind:this={dotReveal}
 			handle_mouse_state={up_hover_closure}>
 			<div class='reveal-dot'
-				on:contextmenu={handle_context_menu}
+				oncontextmenu={handle_context_menu}
 				style='
 					width: {k.dot_size}px;
 					height: {k.dot_size}px;

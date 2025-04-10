@@ -1,16 +1,14 @@
 <script lang='ts'>
-	import { k, ux, Point, Thing, T_Layer, colors, signals } from '../../ts/common/Global_Imports';
-	import { w_color_trigger } from '../../ts/signals/Stores';
+	import { k, ux, Point, Thing, T_Layer, colors, signals } from '../ts/common/Global_Imports';
+	import { w_color_trigger } from '../ts/signals/Stores';
 	import ColorPicker from 'svelte-awesome-color-picker';
 	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';
-	export let color_closure = (color: string | null): string | null => {};
-	export let picker_offset = k.empty;
-	export let origin = Point.zero;
+	let { color_closure = (color: string | null): string | null => {}, picker_offset = k.empty, origin = Point.zero } = $props();
 	const pickerSize = 122;
 	const selectorSize = k.dot_size + 1;
 	let color = color_closure(null);
-	let colorAsHEX = colors.color_toHex(color);
+	let colorAsHEX = $state(colors.color_toHex(color));
 
 	async function handleColorChange(event) {
 		event.preventDefault();

@@ -1,12 +1,16 @@
 <script lang=ts>
-	import { debug, layout, Ancestry } from '../../ts/common/Global_Imports';
-	import { w_show_related } from '../../ts/common/Stores';
+	import { debug, layout, Ancestry } from '../ts/common/Global_Imports';
+	import { w_show_related } from '../ts/common/Stores';
 	import Tree_Branches from './Tree_Branches.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import Tree_Line from './Tree_Line.svelte';
 	import Circle from '../kit/Circle.svelte';
-	export let ancestry: Ancestry;
-	export let show_child_branches = true;
+	interface Props {
+		ancestry: Ancestry;
+		show_child_branches?: boolean;
+	}
+
+	let { ancestry, show_child_branches = true }: Props = $props();
 	const g_childBranches = ancestry.g_widget.g_childBranches;
 	// console.log(`${ancestry.id}\n     { ${ancestry.branchAncestries.map(a => a.id).join(',\n       ')} }`)
 </script>

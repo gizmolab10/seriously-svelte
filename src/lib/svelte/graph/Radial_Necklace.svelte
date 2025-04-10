@@ -1,14 +1,16 @@
 <script lang='ts'>
-	import { k, u, Point, debug, colors, layout, signals, Predicate } from '../../ts/common/Global_Imports';
-	import { w_graph_rect, w_ancestry_focus, w_color_trigger } from '../../ts/common/Stores';
-	import { T_Layer, T_Widget, T_Signal } from '../../ts/common/Global_Imports';
-	import { w_s_paging, w_ring_rotation_radius } from '../../ts/common/Stores';
+	import { run } from 'svelte/legacy';
+
+	import { k, u, Point, debug, colors, layout, signals, Predicate } from '../ts/common/Global_Imports';
+	import { w_graph_rect, w_ancestry_focus, w_color_trigger } from '../ts/common/Stores';
+	import { T_Layer, T_Widget, T_Signal } from '../ts/common/Global_Imports';
+	import { w_s_paging, w_ring_rotation_radius } from '../ts/common/Stores';
 	import Widget from '../widget/Widget.svelte';
 	import { onMount } from 'svelte';
     const ancestry = $w_ancestry_focus;
 	const center = $w_graph_rect.size.asPoint.dividedInHalf;
-	let color = ancestry.thing?.color ?? colors.default_forThings;
-	let necklace_rebuilds = 0;
+	let color = $state(ancestry.thing?.color ?? colors.default_forThings);
+	let necklace_rebuilds = $state(0);
 
 	
 	//////////////////////////////////////////
@@ -42,19 +44,19 @@
 		};
 	});
 
-	$: {
+	run(() => {
 		if (!!ancestry.thing && ancestry.thing.id == $w_color_trigger?.split(k.generic_separator)[0]) {
 			color = ancestry.thing?.color ?? colors.default_forThings;
 			necklace_rebuilds += 1;
 		}
-	}
+	});
 
-	$: {
+	run(() => {
 		const s_paging = $w_s_paging;
 		if (!!s_paging && !!ancestry.thing && ancestry.thing.id == s_paging.thing_id) {
 			necklace_rebuilds += 1;
 		}
-	}
+	});
 
 </script>
 

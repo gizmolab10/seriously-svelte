@@ -1,16 +1,29 @@
 <script lang='ts'>
-	import { k, u, ux, debug, colors, T_Layer, databases } from '../../ts/common/Global_Imports';
-	import { w_thing_fontFamily, w_background_color } from '../../ts/common/Stores';
-	export let handle_textChange = (label: string, text: string) => {};
-	export let color = colors.default_forThings;
-	export let width = k.width_details - 40;
-	export let original_text = k.empty;
-	export let label = k.empty;
-	export let height = 200;
-	export let left = 0;
-	export let top = 0;
-	let textarea = null;
-	let bound_text = original_text;
+	import { k, u, ux, debug, colors, T_Layer, databases } from '../ts/common/Global_Imports';
+	import { w_thing_fontFamily, w_background_color } from '../ts/common/Stores';
+	interface Props {
+		handle_textChange?: any;
+		color?: any;
+		width?: any;
+		original_text?: any;
+		label?: any;
+		height?: number;
+		left?: number;
+		top?: number;
+	}
+
+	let {
+		handle_textChange = (label: string, text: string) => {},
+		color = colors.default_forThings,
+		width = k.width_details - 40,
+		original_text = k.empty,
+		label = k.empty,
+		height = 200,
+		left = 0,
+		top = 0
+	}: Props = $props();
+	let textarea = $state(null);
+	let bound_text = $state(original_text);
 	let cursorStyle = 'cursor: text';
 	let label_left = (k.width_details - 28 - u.getWidthOf(label) * 0.7) / 2;
 
@@ -66,11 +79,11 @@
 		wrap='soft'
 		class='text'
 		bind:this={textarea}
-		on:blur={handle_blur}
+		onblur={handle_blur}
 		bind:value={bound_text}
-		on:focus={handle_focus}
-		on:keyup={handle_keyup}
-		on:keydown={handle_keydown}
+		onfocus={handle_focus}
+		onkeyup={handle_keyup}
+		onkeydown={handle_keydown}
 		style='
 			resize: none;
 			padding: 6px;
@@ -86,7 +99,7 @@
 			{k.prevent_selection_style};
 			font-family: {$w_thing_fontFamily};
 			border-radius: {k.row_height / 2}px;
-		'/>
+		'></textarea>
 	<div style='
 		top: -8px;
 		color: gray;

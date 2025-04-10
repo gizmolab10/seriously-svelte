@@ -1,5 +1,9 @@
 <script lang='ts'>
-	export let width = 10;
+	interface Props {
+		width?: number;
+	}
+
+	let { width = 10 }: Props = $props();
 </script>
 
 <div style='width: {width}px; position: absolute;'></div>

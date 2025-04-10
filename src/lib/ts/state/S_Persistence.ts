@@ -1,7 +1,7 @@
 import type { Async_Handle_Boolean } from '../common/Types';
-import { T_Persistable } from '../data/dbs/DBCommon';
+import { T_Persistable } from '../dbs/DBCommon';
 import { databases } from '../managers/Databases';
-import DBCommon from '../data/dbs/DBCommon';
+import DBCommon from '../dbs/DBCommon';
 
 export default class S_Persistence {
 	t_persistable: T_Persistable;

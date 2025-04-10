@@ -2,7 +2,7 @@ import { S_Mouse, S_Widget, S_Element, S_Expansion, S_Rotation, S_Thing_Pages } 
 import { k, w, debug, layout, wrappers, Ancestry, G_Segment, Mouse_Timer } from '../common/Global_Imports';
 import { T_Banner, T_Element, T_RingZone, T_SvelteComponent } from '../common/Enumerations';
 import { w_ring_rotation_radius, w_mouse_location_scaled } from '../common/Stores';
-import Identifiable from '../data/runtime/Identifiable';
+import Identifiable from '../runtime/Identifiable';
 import { w_show_details } from '../common/Stores';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';

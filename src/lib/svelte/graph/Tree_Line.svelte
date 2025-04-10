@@ -1,19 +1,25 @@
 <script lang='ts'>
-	import { Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { k, Point, debug, colors, T_Layer } from '../../ts/common/Global_Imports';
-	import { w_color_trigger } from '../../ts/common/Stores';
+	import { run } from 'svelte/legacy';
+
+	import { Svelte_Wrapper, T_SvelteComponent } from '../ts/common/Global_Imports';
+	import { k, Point, debug, colors, T_Layer } from '../ts/common/Global_Imports';
+	import { w_color_trigger } from '../ts/common/Stores';
 	import Circle from '../kit/Circle.svelte';
 	import Box from '../debug/Box.svelte';
-	export let g_line!: G_TreeLine;
+	interface Props {
+		g_line: G_TreeLine;
+	}
+
+	let { g_line }: Props = $props();
 	const t_curve = g_line.t_curve;
 	const ancestry = g_line.branchAncestry;
 	const debugOffset = new Point(k.line_stretch - 2.4, 2.5);
-	let stroke_color = ancestry?.thing?.color;
-	let lineWrapper: Svelte_Wrapper;
-	let svg_dasharray = k.empty;
-	let line_rebuilds = 0;
-	let stroke_width = 1;
-	let line;
+	let stroke_color = $state(ancestry?.thing?.color);
+	let lineWrapper: Svelte_Wrapper = $state();
+	let svg_dasharray = $state(k.empty);
+	let line_rebuilds = $state(0);
+	let stroke_width = $state(1);
+	let line = $state();
 
 	//////////////////////////////
 	//	draw a curved line		//
@@ -31,17 +37,17 @@
 		stroke_width = 2;
 	}
 
-	$: {
+	run(() => {
 		if (!!ancestry && !!line) {
 			lineWrapper = new Svelte_Wrapper(line, handle_mouse_state, ancestry.hid, T_SvelteComponent.line);
 		}
-	}
+	});
 
-	$: {
+	run(() => {
 		if (!!ancestry && !!ancestry.thing && ancestry.thing.id == $w_color_trigger?.split(k.generic_separator)[0]) {
 			line_rebuilds += 1;
 		}
-	}
+	});
 
 </script>
 

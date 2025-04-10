@@ -1,10 +1,12 @@
 <script lang='ts'>
-	import { c, k, p, u, ux, w, show, Point, colors, layout, svgPaths, signals, S_Element } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Graph, T_Banner, T_Element, T_Control, T_Hierarchy, T_Preference } from '../../ts/common/Global_Imports';
-	import { w_t_graph, w_t_tree, w_graph_rect, w_count_resize, w_hierarchy, w_id_popupView } from '../../ts/common/Stores';
-	import { w_show_details, w_show_related, w_device_isMobile, w_thing_fontFamily } from '../../ts/common/Stores';
-	import Identifiable from '../../ts/data/runtime/Identifiable';
-	import { w_background_color } from '../../ts/common/Stores';
+	import { run } from 'svelte/legacy';
+
+	import { c, k, p, u, ux, w, show, Point, colors, layout, svgPaths, signals, S_Element } from '../ts/common/Global_Imports';
+	import { T_Layer, T_Graph, T_Banner, T_Element, T_Control, T_Hierarchy, T_Preference } from '../ts/common/Global_Imports';
+	import { w_t_graph, w_t_tree, w_graph_rect, w_count_resize, w_hierarchy, w_id_popupView } from '../ts/common/Stores';
+	import { w_show_details, w_show_related, w_device_isMobile, w_thing_fontFamily } from '../ts/common/Stores';
+	import Identifiable from '../ts/runtime/Identifiable';
+	import { w_background_color } from '../ts/common/Stores';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Button from '../mouse/Button.svelte';
 	import SVGD3 from '../kit/SVGD3.svelte';
@@ -15,13 +17,13 @@
 	const size_big = size_small + 4;
 	const lefts = [10, 55, 117, 278];
 	const resize_viewBox = `0, 0, ${size_big}, ${size_big}`;
-	let elementShown_byControlType: {[t_control: string]: boolean} = {};
-	let es_control_byType: { [t_control: string]: S_Element } = {};
-	let related_prefix = $w_show_related ? 'hide' : 'show'
-	let width = w.windowSize.width - 20;
-	let displayName = k.empty;
-	let displayName_width = 0;
-	let displayName_x = 220;
+	let elementShown_byControlType: {[t_control: string]: boolean} = $state({});
+	let es_control_byType: { [t_control: string]: S_Element } = $state({});
+	let related_prefix = $state($w_show_related ? 'hide' : 'show')
+	let width = $state(w.windowSize.width - 20);
+	let displayName = $state(k.empty);
+	let displayName_width = $state(0);
+	let displayName_x = $state(220);
 
 	const t_controls = [	// in order of importance on mobile
 		T_Control.details,
@@ -35,21 +37,21 @@
 	onMount(() => { setup_forIDs(); });
 	function togglePopupID(id) { $w_id_popupView = ($w_id_popupView == id) ? null : id; }
 
-	$: {
+	run(() => {
 		const _ = `${$w_count_resize} ${$w_graph_rect}`;
 		width = w.windowSize.width - 20;
-	}
+	});
 
-	$: {
+	run(() => {
 		const show_related = $w_show_related;
 		related_prefix = show_related ? 'hide' : 'show'
 		const es_related = es_control_byType[T_Control.related];
 		if (es_related) {
 			es_related.isSelected = show_related;
 		}
-	}
+	});
 
-	$: {
+	run(() => {
 		const _ = $w_t_graph;
 		const h = $w_hierarchy;
 		const needsExtra = layout.inTreeMode;
@@ -57,7 +59,7 @@
 		displayName = h.db.displayName;
 		displayName_width = u.getWidthOf(displayName);
 		displayName_x = extra + (width - displayName_width) / 2;
-	}
+	});
 
 	function setup_forIDs() {
 		let total = w.windowSize.width + 50;

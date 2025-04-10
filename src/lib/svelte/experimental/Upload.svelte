@@ -1,41 +1,64 @@
-<script>
+<script lang="ts">
+	import { run, stopPropagation } from 'svelte/legacy';
+
 	import { s_hierarchy, s_thing_fontFamily } from '../../ts/state/Svelte_Stores';
 	import { k, u, Size, Point } from '../../ts/common/Global_Imports';
 	import { createEventDispatcher } from "svelte";
 	import icons from "../../js/icons.js";
-	export let center = Point.zero;
-	export let multiple = k.empty;		// can be set to 'multiple'
-	export let accept = k.empty;
-	export let buttonText = "upload";
-	export let doneButtonText = "Done";
-	export let doneText = "Successfully uploaded"
-	export let descriptionText = "Drag or click to upload";
-	export let input = null;
-	export let fixed = true;
-	//Files from the file input and the drag zone
-	export let inputFiles = [];
-	export let dragZoneFiles = [];
-	// Called when maxuploads is reached or the done button is clicked
-	export let callback = () => {};
-	//Called when the "Done" button is clicked
-	export let doneCallback = () => {};
-	// Drag zone element
-	export let dragZone = null;
-	//Maximum files that can be uploaded
-	export let maxFiles = 3;
-	// When the maximum files are uploaded
-	export let maxFilesCallback = () => {};
-	//Show a list of files + icons?
-	export let listFiles = true;
 	
-	$: files = [...inputFiles, ...dragZoneFiles];
-	$: {
-		if (files.length >= maxFiles){
-			maxFilesCallback(files, maxFiles);
-			dispatch("change", files)
-			callback(files);
-		}
+	
+	
+	
+	
+	
+	
+	interface Props {
+		center?: any;
+		multiple?: any; // can be set to 'multiple'
+		accept?: any;
+		buttonText?: string;
+		doneButtonText?: string;
+		doneText?: string;
+		descriptionText?: string;
+		input?: any;
+		fixed?: boolean;
+		//Files from the file input and the drag zone
+		inputFiles?: any;
+		dragZoneFiles?: any;
+		// Called when maxuploads is reached or the done button is clicked
+		callback?: any;
+		//Called when the "Done" button is clicked
+		doneCallback?: any;
+		// Drag zone element
+		dragZone?: any;
+		//Maximum files that can be uploaded
+		maxFiles?: number;
+		// When the maximum files are uploaded
+		maxFilesCallback?: any;
+		//Show a list of files + icons?
+		listFiles?: boolean;
 	}
+
+	let {
+		center = Point.zero,
+		multiple = k.empty,
+		accept = k.empty,
+		buttonText = "upload",
+		doneButtonText = "Done",
+		doneText = "Successfully uploaded",
+		descriptionText = "Drag or click to upload",
+		input = $bindable(null),
+		fixed = true,
+		inputFiles = $bindable([]),
+		dragZoneFiles = $bindable([]),
+		callback = () => {},
+		doneCallback = () => {},
+		dragZone = $bindable(null),
+		maxFiles = 3,
+		maxFilesCallback = () => {},
+		listFiles = true
+	}: Props = $props();
+	
 	
 	function trigger() { input.click(); }
 	
@@ -102,16 +125,24 @@
 	function openFile(file){
 		window.open(URL.createObjectURL(file), "filewin");
 	}
+	let files = $derived([...inputFiles, ...dragZoneFiles]);
+	run(() => {
+		if (files.length >= maxFiles){
+			maxFilesCallback(files, maxFiles);
+			dispatch("change", files)
+			callback(files);
+		}
+	});
 </script>
-<div bind:this={dragZone} on:dragover={dragover} on:drop={drop} on:dragenter={dragenter} on:dragleave={dragleave} class={`${fixed ? 'fixed' : ''} fileUploader dragzone`}>
+<div bind:this={dragZone} ondragover={dragover} ondrop={drop} ondragenter={dragenter} ondragleave={dragleave} class={`${fixed ? 'fixed' : ''} fileUploader dragzone`}>
 	{#if files.length !== maxFiles}
 	  {#if listFiles}
 			<ul>
 				{#each files.slice(0, maxFiles) as file}
-					<li on:click={() => openFile(file)}>
+					<li onclick={() => openFile(file)}>
 						<span class="icon">
 							<span class="fileicon">{@html getIcon(file.name)}</span>
-							<span class="deleteicon" on:click|stopPropagation={() => del(file)}><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--ph" width="32" height="32" preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 256"><path fill="currentColor" d="M216 48h-40v-8a24.1 24.1 0 0 0-24-24h-48a24.1 24.1 0 0 0-24 24v8H40a8 8 0 0 0 0 16h8v144a16 16 0 0 0 16 16h128a16 16 0 0 0 16-16V64h8a8 8 0 0 0 0-16ZM96 40a8 8 0 0 1 8-8h48a8 8 0 0 1 8 8v8H96Zm96 168H64V64h128Zm-80-104v64a8 8 0 0 1-16 0v-64a8 8 0 0 1 16 0Zm48 0v64a8 8 0 0 1-16 0v-64a8 8 0 0 1 16 0Z"></path></svg></span>
+							<span class="deleteicon" onclick={stopPropagation(() => del(file))}><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--ph" width="32" height="32" preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 256"><path fill="currentColor" d="M216 48h-40v-8a24.1 24.1 0 0 0-24-24h-48a24.1 24.1 0 0 0-24 24v8H40a8 8 0 0 0 0 16h8v144a16 16 0 0 0 16 16h128a16 16 0 0 0 16-16V64h8a8 8 0 0 0 0-16ZM96 40a8 8 0 0 1 8-8h48a8 8 0 0 1 8 8v8H96Zm96 168H64V64h128Zm-80-104v64a8 8 0 0 1-16 0v-64a8 8 0 0 1 16 0Zm48 0v64a8 8 0 0 1-16 0v-64a8 8 0 0 1 16 0Z"></path></svg></span>
 						</span>
 						<span class="filename">{file.name}</span>
 						<span class="filesize">{formatBytes(file.size)}</span>
@@ -120,21 +151,21 @@
 			</ul>
 		{/if}
 		<div class="buttons">
-			<button on:click={trigger} class="upload">
+			<button onclick={trigger} class="upload">
 				{buttonText}
 			</button>
-			{#if doneButtonText && files.length}<button on:click={() => (doneCallback(),callback(files))}>{doneButtonText}</button>{/if}
+			{#if doneButtonText && files.length}<button onclick={() => (doneCallback(),callback(files))}>{doneButtonText}</button>{/if}
 		</div>
 		{#if descriptionText}<span class="text">{descriptionText}</span>{/if}
 	{:else if maxFiles > 1}
 		<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--ph" width="32" height="32" preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 256"><path fill="currentColor" d="m150.8 86.8l-88 88a3.9 3.9 0 0 1-5.6 0l-44-44a4 4 0 1 1 5.6-5.6L60 166.3l85.2-85.1a4 4 0 1 1 5.6 5.6Zm92-5.6a3.9 3.9 0 0 0-5.6 0L152 166.3l-20.5-20.5a4 4 0 0 0-5.7 5.7l23.4 23.3a3.9 3.9 0 0 0 5.6 0l88-88a3.9 3.9 0 0 0 0-5.6Z"></path></svg>
-		{#if doneText}<span class="doneText" on:click={() => callback(files)}>{doneText}</span>{/if}
+		{#if doneText}<span class="doneText" onclick={() => callback(files)}>{doneText}</span>{/if}
 	{:else}
 		<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--ph" width="32" height="32" preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 256"><path fill="currentColor" d="M174.9 101.2a4.1 4.1 0 0 1-.1 5.7l-58.7 56a4.3 4.3 0 0 1-2.8 1.1a3.9 3.9 0 0 1-2.7-1.1l-29.4-28a4 4 0 1 1 5.6-5.8l26.5 25.4l55.9-53.4a4.1 4.1 0 0 1 5.7.1ZM228 128A100 100 0 1 1 128 28a100.2 100.2 0 0 1 100 100Zm-8 0a92 92 0 1 0-92 92a92.1 92.1 0 0 0 92-92Z"></path></svg>
 		{#if doneText}<span class="doneText">{doneText}</span>{/if}
 	{/if}
 </div>
-<input type="file" hidden bind:this={input} on:change={inputChanged} multiple={maxFiles > 1}>
+<input type="file" hidden bind:this={input} onchange={inputChanged} multiple={maxFiles > 1}>
 
 <style>
 	.dragzone {

@@ -1,3 +1,5 @@
+<!-- @migration-task Error while migrating Svelte code: `$s_hierarchygrabs` is an illegal variable name. To reference a global variable called `$s_hierarchygrabs`, use `globalThis.$s_hierarchygrabs`
+https://svelte.dev/e/global_reference_invalid -->
 <script lang='ts'>
 	import { k, ux, Point, debug, Direction, dbDispatch } from '../../ts/common/Global_Imports';
 	import Triangle_Button from '../mouse/Triangle_Button.svelte';

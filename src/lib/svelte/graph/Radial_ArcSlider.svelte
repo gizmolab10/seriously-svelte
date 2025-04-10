@@ -1,31 +1,37 @@
 <script lang='ts'>
-	import { c, k, ux, w, show, Rect, Size, Point, debug, Angle, colors, signals } from '../../ts/common/Global_Imports';
-	import { w_count_mouse_up, w_ancestry_focus, w_g_active_cluster, w_ring_rotation_radius } from '../../ts/common/Stores';
-	import { T_Layer, G_Cluster, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { w_color_trigger, w_background_color, w_thing_fontFamily } from '../../ts/common/Stores';
+	import { run } from 'svelte/legacy';
+
+	import { c, k, ux, w, show, Rect, Size, Point, debug, Angle, colors, signals } from '../ts/common/Global_Imports';
+	import { w_count_mouse_up, w_ancestry_focus, w_g_active_cluster, w_ring_rotation_radius } from '../ts/common/Stores';
+	import { T_Layer, G_Cluster, Svelte_Wrapper, T_SvelteComponent } from '../ts/common/Global_Imports';
+	import { w_color_trigger, w_background_color, w_thing_fontFamily } from '../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import Identifiable from '../../ts/data/runtime/Identifiable';
+	import Identifiable from '../ts/runtime/Identifiable';
 	import Angled_Text from '../kit/Angled_Text.svelte';
 	import { onMount } from 'svelte';
-	export let color = 'red';
-	export let g_cluster!: G_Cluster;
+	interface Props {
+		color?: string;
+		g_cluster: G_Cluster;
+	}
+
+	let { color = 'red', g_cluster = $bindable() }: Props = $props();
 	const offset = k.radial_widget_inset;
 	const thumb_name = `thumb-${g_cluster.name}`;
 	const radius = $w_ring_rotation_radius + offset;
 	const viewBox=`${-offset} ${-offset} ${radius * 2} ${radius * 2}`;
 	let origin = w.center_ofGraphSize.offsetBy(Point.square(-radius));
-	let text_background_color = $w_background_color;
-	let mouse_up_count = $w_count_mouse_up;
-	let arc_wrapper!: Svelte_Wrapper;
-	let angled_text_color = color;
-	let fork_stroke_color = color;
-	let thumb_fill_color = color;
-	let arc_stroke_color = color;
-	let arc_fill_color = color;
-	let arc_slider_path;
-	let arc_slider;
-	let thumb_path;
-	let fork_path;
+	let text_background_color = $state($w_background_color);
+	let mouse_up_count = $state($w_count_mouse_up);
+	let arc_wrapper!: Svelte_Wrapper = $state();
+	let angled_text_color = $state(color);
+	let fork_stroke_color = $state(color);
+	let thumb_fill_color = $state(color);
+	let arc_stroke_color = $state(color);
+	let arc_fill_color = $state(color);
+	let arc_slider_path = $state();
+	let arc_slider = $state();
+	let thumb_path = $state();
+	let fork_path = $state();
 
 	//////////////////////////////////////////////////
 	//												//
@@ -50,23 +56,8 @@
 		return () => { handle_reposition.disconnect() };
 	});
 
-	$: {
-		const _ = $w_g_active_cluster + $w_background_color + $w_color_trigger;
-		update_colors();
-	}
 
-	$: {
-		if (!!arc_slider) {
-			arc_wrapper = new Svelte_Wrapper(arc_slider, handle_isHit, -1, T_SvelteComponent.thumb);
-		}
-	}
 
-	$: {
-		if (mouse_up_count != $w_count_mouse_up) {		// NEVER gets executed
-			mouse_up_count = $w_count_mouse_up;			// WHY? because mouse_up_count is always
-			g_cluster.s_paging_rotation.reset();		// reset to w_count_mouse_up by rebuild
-		}
-	}
 
 	function computed_mouse_angle(): number | null {
 		return w.mouse_angle_fromGraphCenter ?? null
@@ -106,6 +97,21 @@
 		return g_cluster.thumb_isHit;
 	}
 
+	run(() => {
+		const _ = $w_g_active_cluster + $w_background_color + $w_color_trigger;
+		update_colors();
+	});
+	run(() => {
+		if (!!arc_slider) {
+			arc_wrapper = new Svelte_Wrapper(arc_slider, handle_isHit, -1, T_SvelteComponent.thumb);
+		}
+	});
+	run(() => {
+		if (mouse_up_count != $w_count_mouse_up) {		// NEVER gets executed
+			mouse_up_count = $w_count_mouse_up;			// WHY? because mouse_up_count is always
+			g_cluster.s_paging_rotation.reset();		// reset to w_count_mouse_up by rebuild
+		}
+	});
 </script>
 
 <div

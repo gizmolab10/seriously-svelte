@@ -1,10 +1,10 @@
-import { c, k, p, u, Thing, Trait, debug, layout, Predicate, Relationship } from '../../common/Global_Imports';
-import { T_Thing, T_Trait, T_Debug, T_Create, T_Predicate, T_Preference } from '../../common/Global_Imports';
+import { c, k, p, u, Thing, Trait, debug, layout, Predicate, Relationship } from '../common/Global_Imports';
+import { T_Thing, T_Trait, T_Debug, T_Create, T_Predicate, T_Preference } from '../common/Global_Imports';
 import { QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
 import { onSnapshot, deleteField, getFirestore, DocumentData, DocumentChange } from 'firebase/firestore';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
 import { T_Persistable, T_Database, T_Persistence } from './DBCommon';
-import type { Dictionary } from '../../common/Types';
+import type { Dictionary } from '../common/Types';
 import Identifiable from '../runtime/Identifiable';
 import { initializeApp } from 'firebase/app';
 import DBCommon from './DBCommon';

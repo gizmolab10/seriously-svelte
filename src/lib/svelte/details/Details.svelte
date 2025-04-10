@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { c, k, u, show, Point, debug, layout, T_Layer, T_Banner, T_Details } from '../../ts/common/Global_Imports';
-	import { w_graph_rect, w_t_details } from '../../ts/common/Stores';
-	import { w_background_color } from '../../ts/common/Stores';
+	import { c, k, u, show, Point, debug, layout, T_Layer, T_Banner, T_Details } from '../ts/common/Global_Imports';
+	import { w_graph_rect, w_t_details } from '../ts/common/Stores';
+	import { w_background_color } from '../ts/common/Stores';
 	import D_Display from '../details/D_Display.svelte';
 	import D_Storage from '../details/D_Storage.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
@@ -9,7 +9,7 @@
 	import D_Tools from '../details/D_Tools.svelte';
 	import D_Info from '../details/D_Info.svelte';
 	const titles = [T_Details[T_Details.storage], T_Details[T_Details.tools], T_Details[T_Details.display], T_Details[T_Details.info]];
-	let details_rebuilds = 0;
+	let details_rebuilds = $state(0);
 
 	layout.layout_tops_forDetails();
 

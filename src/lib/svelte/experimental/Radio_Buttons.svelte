@@ -1,11 +1,20 @@
 <script lang='ts'>
 	import { k, u } from '../../ts/common/Global_Imports';
 	import { onMount } from 'svelte';
-	export let fitWithin = k.width_details;
-	export let idSelected = null;
-	export let name = 'menu';
-	export let menuItems;
-	let style = k.empty;
+	interface Props {
+		fitWithin?: any;
+		idSelected?: any;
+		name?: string;
+		menuItems: any;
+	}
+
+	let {
+		fitWithin = k.width_details,
+		idSelected = $bindable(null),
+		name = 'menu',
+		menuItems
+	}: Props = $props();
+	let style = $state(k.empty);
 
 	onMount(() => {
 		determineStyle();
@@ -69,8 +78,8 @@
 				value={menuItem.id}
 				style='outline: none'
 				bind:group={idSelected}
-				on:keydown={handle_key_down}
-				on:change={() => handle_singleClick(menuItem.id) }/>
+				onkeydown={handle_key_down}
+				onchange={() => handle_singleClick(menuItem.id)}/>
 			<div class="label-text">{menuItem.label}</div>
 		</label>
 	{/each}

@@ -2,10 +2,14 @@
 	import { s_hierarchy } from '../../ts/state/Svelte_Stores';
 	import { k } from '../../ts/common/Global_Imports';
 	import { get } from 'svelte/store';
-	export let label = 'Choose a file';
-	export let multiple = false;		// Can be set to 'multiple'
-	export let accept = '';
-	let file_input: HTMLInputElement;
+	interface Props {
+		label?: string;
+		multiple?: boolean; // Can be set to 'multiple'
+		accept?: string;
+	}
+
+	let { label = 'Choose a file', multiple = false, accept = '' }: Props = $props();
+	let file_input: HTMLInputElement = $state();
 
 	function handle_selection(event: Event) {
 		const target = event.target as HTMLInputElement;
@@ -44,7 +48,7 @@
 </style>
 
 <label
-	on:keydown={() => {
+	onkeydown={() => {
 		if (event.key.toLowerCase() == 'enter') {
 			event.preventDefault();
 			file_input.click();
@@ -61,7 +65,7 @@
 </label>
 
 <input
-	on:change={handle_selection}
+	onchange={handle_selection}
 	bind:this={file_input}
 	class='file-input'
 	accept={accept}

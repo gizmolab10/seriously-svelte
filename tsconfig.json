@@ -5,7 +5,7 @@
 		"jsx": "preserve",
 		"sourceMap": true,
 		"outDir": "./dist",
-		"module": "CommonJS",
+		"module": "ESNext",
 		"esModuleInterop": true,
 		"strictNullChecks": true,
 		"moduleResolution": "node",

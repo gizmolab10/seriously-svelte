@@ -1,4 +1,4 @@
-import Persistable from '../persistable/Persistable';
+import Persistable from './Persistable';
 import { T_Persistable } from '../dbs/DBCommon';
 
 export default class Access extends Persistable {

@@ -1,12 +1,14 @@
 <script lang='ts'>
-	import { k, ux, w, Thing, Point, Angle, debug, colors, layout, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
-	import { w_color_trigger, w_ancestry_focus, w_s_title_edit } from '../../ts/common/Stores';
-	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/common/Stores';
-	import { w_graph_rect, w_mouse_location_scaled } from '../../ts/common/Stores';
-	import { w_count_mouse_up, w_g_active_cluster } from '../../ts/common/Stores';
-	import { T_Layer, T_RingZone } from '../../ts/common/Global_Imports';
+	import { run } from 'svelte/legacy';
+
+	import { k, ux, w, Thing, Point, Angle, debug, colors, layout, signals, svgPaths, databases } from '../ts/common/Global_Imports';
+	import { w_color_trigger, w_ancestry_focus, w_s_title_edit } from '../ts/common/Stores';
+	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../ts/common/Stores';
+	import { w_graph_rect, w_mouse_location_scaled } from '../ts/common/Stores';
+	import { w_count_mouse_up, w_g_active_cluster } from '../ts/common/Stores';
+	import { T_Layer, T_RingZone } from '../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import Identifiable from '../../ts/data/runtime/Identifiable';
+	import Identifiable from '../ts/runtime/Identifiable';
 	import Radial_ArcSlider from './Radial_ArcSlider.svelte';
 	import { onMount } from 'svelte';
 	const name = 'rings';
@@ -17,15 +19,15 @@
 	const outer_diameter = outer_radius * 2;
 	const mouse_timer = ux.mouse_timer_forName(name);	// persist across destroy/recreate
 	const viewBox = `${-ring_width}, ${-ring_width}, ${outer_diameter}, ${outer_diameter}`;
-	let color = $w_ancestry_focus?.thing?.color ?? colors.default_forThings;
-	let mouse_up_count = $w_count_mouse_up;
-	let cursor = k.cursor_default;
-	let rings_rebuilds = 0;
-	let rotationPath;
-	let resizingPath;
-	let reticlePath;
-	let pagingArcs;
-	let time = 0;
+	let color = $state($w_ancestry_focus?.thing?.color ?? colors.default_forThings);
+	let mouse_up_count = $state($w_count_mouse_up);
+	let cursor = $state(k.cursor_default);
+	let rings_rebuilds = $state(0);
+	let rotationPath = $state();
+	let resizingPath = $state();
+	let reticlePath = $state();
+	let pagingArcs = $state();
+	let time = $state(0);
 	
 	// paging arcs and rings
 	
@@ -40,18 +42,7 @@
 		update_cursor();
 	});
 
-	$: {
-		if (!!$w_ancestry_focus.thing && $w_ancestry_focus.thing.id == $w_color_trigger?.split(k.generic_separator)[0]) {
-			color = $w_ancestry_focus?.thing?.color ?? colors.default_forThings;
-		}
-	}
 
-	$: {
-		if (mouse_up_count != $w_count_mouse_up) {
-			mouse_up_count = $w_count_mouse_up;
-			reset_ux();			// mouse up ... end all (rotation, resizing, paging)
-		}
-	}
 
 	function update_cursor() {
 		switch (ux.ring_zone_atMouseLocation) {
@@ -119,7 +110,63 @@
 		}
 	}
 
-	$: {
+
+	function down_up_closure(s_mouse) {
+
+		/////////////////////////////
+		// setup or teardown state //
+		/////////////////////////////
+
+		if (!s_mouse.isHover) {
+			if (s_mouse.isUp) {
+				reset_ux();
+			} else if (s_mouse.isDown) {
+				const angle_ofMouseDown = w.mouse_angle_fromGraphCenter;
+				const angle_ofRotation = angle_ofMouseDown.add_angle_normalized(-$w_ring_rotation_angle);
+				const zone = ux.ring_zone_atMouseLocation;
+				$w_s_title_edit?.stop_editing();
+				switch (zone) {
+					case T_RingZone.rotate:
+						debug.log_radial(` begin rotate  ${angle_ofRotation.asDegrees()}`);
+						ux.s_ring_rotation.active_angle = angle_ofMouseDown;
+						ux.s_ring_rotation.basis_angle = angle_ofRotation;
+						break;
+					case T_RingZone.resize:
+						const change_ofRadius = w.mouse_distance_fromGraphCenter - $w_ring_rotation_radius;
+						debug.log_radial(` begin resize  ${change_ofRadius.asInt()}`);
+						ux.s_ring_rotation.active_angle = angle_ofMouseDown + Angle.quarter;	// needed for cursor
+						ux.s_ring_rotation.basis_angle = angle_ofRotation + Angle.quarter;		// "
+						ux.s_ring_resizing.basis_radius = change_ofRadius;
+						break;
+					case T_RingZone.paging: 
+						const angle_ofPage = angle_ofMouseDown.angle_normalized();
+						const g_cluster = layout.g_radialGraph.g_cluster_atMouseLocation;
+						if (!!g_cluster) {
+							debug.log_radial(` begin paging  ${angle_ofPage.asDegrees()}`);
+							g_cluster.s_paging_rotation.active_angle = angle_ofPage;
+							g_cluster.s_paging_rotation.basis_angle = angle_ofPage;
+							$w_g_active_cluster = g_cluster;
+						}
+						break;
+				}
+			}
+		}
+		detect_hovering();
+		update_cursor();
+	}
+
+	run(() => {
+		if (!!$w_ancestry_focus.thing && $w_ancestry_focus.thing.id == $w_color_trigger?.split(k.generic_separator)[0]) {
+			color = $w_ancestry_focus?.thing?.color ?? colors.default_forThings;
+		}
+	});
+	run(() => {
+		if (mouse_up_count != $w_count_mouse_up) {
+			mouse_up_count = $w_count_mouse_up;
+			reset_ux();			// mouse up ... end all (rotation, resizing, paging)
+		}
+	});
+	run(() => {
 
 		////////////////////////////////////
 		// detect movement & adjust state //
@@ -182,52 +229,7 @@
 				update_cursor();
 			}
 		}
-	}
-
-	function down_up_closure(s_mouse) {
-
-		/////////////////////////////
-		// setup or teardown state //
-		/////////////////////////////
-
-		if (!s_mouse.isHover) {
-			if (s_mouse.isUp) {
-				reset_ux();
-			} else if (s_mouse.isDown) {
-				const angle_ofMouseDown = w.mouse_angle_fromGraphCenter;
-				const angle_ofRotation = angle_ofMouseDown.add_angle_normalized(-$w_ring_rotation_angle);
-				const zone = ux.ring_zone_atMouseLocation;
-				$w_s_title_edit?.stop_editing();
-				switch (zone) {
-					case T_RingZone.rotate:
-						debug.log_radial(` begin rotate  ${angle_ofRotation.asDegrees()}`);
-						ux.s_ring_rotation.active_angle = angle_ofMouseDown;
-						ux.s_ring_rotation.basis_angle = angle_ofRotation;
-						break;
-					case T_RingZone.resize:
-						const change_ofRadius = w.mouse_distance_fromGraphCenter - $w_ring_rotation_radius;
-						debug.log_radial(` begin resize  ${change_ofRadius.asInt()}`);
-						ux.s_ring_rotation.active_angle = angle_ofMouseDown + Angle.quarter;	// needed for cursor
-						ux.s_ring_rotation.basis_angle = angle_ofRotation + Angle.quarter;		// "
-						ux.s_ring_resizing.basis_radius = change_ofRadius;
-						break;
-					case T_RingZone.paging: 
-						const angle_ofPage = angle_ofMouseDown.angle_normalized();
-						const g_cluster = layout.g_radialGraph.g_cluster_atMouseLocation;
-						if (!!g_cluster) {
-							debug.log_radial(` begin paging  ${angle_ofPage.asDegrees()}`);
-							g_cluster.s_paging_rotation.active_angle = angle_ofPage;
-							g_cluster.s_paging_rotation.basis_angle = angle_ofPage;
-							$w_g_active_cluster = g_cluster;
-						}
-						break;
-				}
-			}
-		}
-		detect_hovering();
-		update_cursor();
-	}
-
+	});
 </script>
 
 {#key rings_rebuilds}

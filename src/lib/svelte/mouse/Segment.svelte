@@ -1,21 +1,31 @@
 <script lang='ts'>
-	import { k, Rect, Size, Point, debug, colors, svgPaths } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Oblong, G_Segment } from '../../ts/common/Global_Imports';
-	import { w_background_color } from '../../ts/common/Stores';
+	import { k, Rect, Size, Point, debug, colors, svgPaths } from '../ts/common/Global_Imports';
+	import { T_Layer, T_Oblong, G_Segment } from '../ts/common/Global_Imports';
+	import { w_background_color } from '../ts/common/Stores';
 	import Mouse_Responder from './Mouse_Responder.svelte';
-	export let hit_closure = (title, shift) => {};
-	export let fill = $w_background_color;
-	export let g_segment!: G_Segment;
-    export let name = g_segment.title;
-	export let stroke = colors.default;
+	interface Props {
+		hit_closure?: any;
+		fill?: any;
+		g_segment: G_Segment;
+		name?: any;
+		stroke?: any;
+	}
+
+	let {
+		hit_closure = (title, shift) => {},
+		fill = $bindable($w_background_color),
+		g_segment,
+		name = g_segment.title,
+		stroke = colors.default
+	}: Props = $props();
 	const segment_name = `${name}-segment`;
-	let title_color = colors.default;
+	let title_color = $state(colors.default);
 	let size = g_segment.size;
-	let isHovering = false;
+	let isHovering = $state(false);
 
 	update_colors();
 
-	$: fill = isHovering ? colors.default : g_segment.isSelected ? colors.opacitize('skyblue', 0.6) : $w_background_color;
+	let fill = $derived(isHovering ? colors.default : g_segment.isSelected ? colors.opacitize('skyblue', 0.6) : $w_background_color);
 
 	function update_colors() {
 		title_color = isHovering ? $w_background_color : colors.default ;

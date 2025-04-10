@@ -1,4 +1,5 @@
 import SeriouslyApp from './lib/svelte/main/SeriouslyApp.svelte';
 import './styles/app.css';
+import { mount } from "svelte";
 
-new SeriouslyApp({ target: document.body });
+mount(SeriouslyApp, { target: document.body });

@@ -1,4 +1,4 @@
-import { k } from '../../ts/common/Global_Imports';
+import { k } from '../common/Global_Imports';
 
 export enum T_Timer {
 	double	= 'double',
