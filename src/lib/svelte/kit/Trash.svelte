@@ -1,5 +1,7 @@
 <!-- @migration-task Error while migrating Svelte code: `$w_background_color` is an illegal variable name. To reference a global variable called `$w_background_color`, use `globalThis.$w_background_color`
 https://svelte.dev/e/global_reference_invalid -->
+<!-- @migration-task Error while migrating Svelte code: `$w_background_color` is an illegal variable name. To reference a global variable called `$w_background_color`, use `globalThis.$w_background_color`
+https://svelte.dev/e/global_reference_invalid -->
 <script lang='ts'>
 	import { k } from '../ts/common/Global_Imports';
     export let fill = $w_background_color;

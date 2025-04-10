@@ -1,3 +1,5 @@
+<!-- @migration-task Error while migrating Svelte code: Identifier 'diameter' has already been declared
+https://svelte.dev/e/js_parse_error -->
 <script lang='ts'>
 	import { k, u, Point, debug, T_Layer } from '../ts/common/Global_Imports'
 	import { w_background_color } from '../ts/common/Stores';

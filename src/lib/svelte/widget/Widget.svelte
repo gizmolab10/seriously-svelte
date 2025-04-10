@@ -1,5 +1,7 @@
 <!-- @migration-task Error while migrating Svelte code: Identifier 'layout' has already been declared
 https://svelte.dev/e/js_parse_error -->
+<!-- @migration-task Error while migrating Svelte code: Identifier 'layout' has already been declared
+https://svelte.dev/e/js_parse_error -->
 <script lang='ts'>
 	import { c, k, u, ux, Thing, Point, Angle, debug, layout } from '../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Widget, T_Signal, T_Element } from '../ts/common/Global_Imports';
