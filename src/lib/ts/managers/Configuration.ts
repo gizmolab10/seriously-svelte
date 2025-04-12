@@ -20,9 +20,9 @@ export class Configuration {
 		//												//
 		//////////////////////////////////////////////////
 
+		stores.setup_defaults();
 		w_device_isMobile.set(this.device_isMobile);
 		debug.queryStrings_apply();						// debugging
-		stores.setup_defaults();
 		show.restore_state();							// local persistance
 		layout.layout_tops_forPanelBanners();
 		w.restore_state();

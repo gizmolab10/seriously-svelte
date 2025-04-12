@@ -1,5 +1,3 @@
-<!-- @migration-task Error while migrating Svelte code: Identifier 'fill' has already been declared
-https://svelte.dev/e/js_parse_error -->
 <script lang='ts'>
 	import { k, Rect, Size, Point, debug, colors, svgPaths } from '../ts/common/Global_Imports';
 	import { T_Layer, T_Oblong, G_Segment } from '../ts/common/Global_Imports';
@@ -26,8 +24,6 @@ https://svelte.dev/e/js_parse_error -->
 	let isHovering = $state(false);
 
 	update_colors();
-
-	let fill = $derived(isHovering ? colors.default : g_segment.isSelected ? colors.opacitize('skyblue', 0.6) : $w_background_color);
 
 	function update_colors() {
 		title_color = isHovering ? $w_background_color : colors.default ;

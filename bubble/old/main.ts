@@ -1,6 +1,7 @@
-import SeriouslyApp from '../src/lib/svelte/main/SeriouslyApp.svelte';
-import '../src/styles/app.css';
+import SeriouslyApp from '/src/lib/svelte/main/SeriouslyApp.svelte';
+import '/src/styles/app.css';
+import { mount } from "svelte";
 
-new SeriouslyApp({ target: document.body });
+mount(SeriouslyApp, { target: document.body });
 
 export { SeriouslyApp };

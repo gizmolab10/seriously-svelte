@@ -1,5 +1,8 @@
-import SeriouslyApp from './lib/svelte/main/SeriouslyApp.svelte';
-import './styles/app.css';
+// @ts-ignore
+import SeriouslyApp from './SeriouslyApp.svelte';
 import { mount } from "svelte";
+import './styles/app.css';
 
-mount(SeriouslyApp, { target: document.body });
+const app = mount(SeriouslyApp, { target: document.body });
+
+export default app;

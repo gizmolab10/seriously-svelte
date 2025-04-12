@@ -9,6 +9,17 @@
 		"esModuleInterop": true,
 		"strictNullChecks": true,
 		"moduleResolution": "node",
+		"allowSyntheticDefaultImports": true,
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"noEmit": true,
+		"allowJs": true,
+		"checkJs": true,
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["src/*"]
+		},
+		"types": ["svelte"]
 	},
 	"typedocOptions": {
 		"highlightLanguages": {
@@ -27,6 +38,7 @@
 		"dist"
 	],
 	"include": [
-		"src/lib/**/*"
-, "src/main.js"	],
+		"src/**/*",
+		"src/main.js"
+	]
 }

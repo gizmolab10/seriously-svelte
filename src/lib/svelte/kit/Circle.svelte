@@ -23,7 +23,6 @@ https://svelte.dev/e/js_parse_error -->
 		radius = 2,
 		color
 	}: Props = $props();
-	let diameter = $state(0);
 
 	let diameter = $derived(radius * 2);
 

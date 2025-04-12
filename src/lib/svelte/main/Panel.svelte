@@ -1,36 +1,35 @@
 <script lang='ts'>
-	import { run } from 'svelte/legacy';
-
-	import { c, k, u, ux, w, show, Rect, Size, Point, Thing, colors, layout } from '../ts/common/Global_Imports';
-	import { w_t_database, w_graph_rect, w_hierarchy, w_background_color } from '../ts/common/Stores';
-	import { debug, T_Layer, T_Banner, Ancestry, T_Startup } from '../ts/common/Global_Imports';
-	import { w_s_title_edit, w_show_details, w_device_isMobile, } from '../ts/common/Stores';
-	import { w_t_startup, w_id_popupView, w_ancestry_focus } from '../ts/common/Stores';
-	import { T_Control, Hierarchy, databases } from '../ts/common/Global_Imports';
+	import { c, k, u, ux, w, show, Rect, Size, Point, Thing, colors, layout } from '../../ts/common/Global_Imports';
+	import { w_t_database, w_graph_rect, w_hierarchy, w_background_color } from '../../ts/common/Stores';
+	import { debug, T_Layer, T_Banner, Ancestry, T_Startup } from '../../ts/common/Global_Imports';
+	import { w_s_title_edit, w_show_details, w_device_isMobile, } from '../../ts/common/Stores';
+	import { w_t_startup, w_id_popupView, w_ancestry_focus } from '../../ts/common/Stores';
+	import { T_Control, Hierarchy, databases } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import { T_Database } from '../../ts/dbs/DBCommon';
+	import { T_Database } from '../../../ts/dbs/DBCommon';
 	import Details from '../details/Details.svelte';
 	import Breadcrumbs from './Breadcrumbs.svelte';
 	import BuildNotes from './BuildNotes.svelte';
-	import Debug from '../debug/Debug.svelte';
 	import Graph from '../graph/Graph.svelte';
 	import Controls from './Controls.svelte';
 	import Box from '../debug/Box.svelte';
 	import Import from './Import.svelte';
 	import { onMount } from 'svelte';
-	let separator_rebuilds = $state(0);
-	let panel_rebuilds = $state(0);
+	import { get } from 'svelte/store';
+
+	let separator_rebuilds = 0;
+	let panel_rebuilds = 0;
 	let chain = ['Panel'];
 
 	function ignore_wheel(event) { event.preventDefault(); }
 
-	run(() => {
-		const _ = $w_t_database + $w_t_startup + $w_id_popupView + $w_graph_rect;
+	$effect(() => {
+		const _ = get(w_t_database) + get(w_t_startup) + get(w_id_popupView) + get(w_graph_rect);
 		panel_rebuilds += 1;
 	});
 
-	run(() => {
-		const _ = $w_background_color;
+	$effect(() => {
+		const _ = get(w_background_color);
 		separator_rebuilds += 1;
 	});
 	
@@ -39,8 +38,8 @@
 			const key = event.key.toLowerCase();
 			if (key == undefined) {
 				alert('No key for ' + event.type);
-			} else if (!$w_s_title_edit && !ux.isEditing_text) {			// let title editor (when active) consume the events
-				const h = $w_hierarchy;
+			} else if (!get(w_s_title_edit) && !ux.isEditing_text) {			// let title editor (when active) consume the events
+				const h = get(w_hierarchy);
 				switch (key) {
 					case 'o': h.select_file_toUpload(event.shiftKey); break;
 					case 'c': w.user_graph_offset_setTo(Point.zero); break;
@@ -61,31 +60,25 @@
 		text-align: center;
 		font-size: 3em;
 	}
-	.horizontal-line {
-		position: fixed;
-		width: 110%;
-		left: 0px;
-	}
 </style>
 
 <svelte:document onkeydown={handle_key_down}/>
 {#key panel_rebuilds}
-	<Debug/>
 	<div style='
 		touch-action: none;
 		pointer-events: auto;
 		{k.prevent_selection_style};'
 		onwheel={ignore_wheel}>
-		{#if [T_Startup.start, T_Startup.fetch].includes($w_t_startup) && databases.db_now.isPersistent}
+		{#if [T_Startup.start, T_Startup.fetch].includes(get(w_t_startup)) && databases.db_now.isPersistent}
 			<p>Welcome to Seriously</p>
-			{#if $w_t_startup == T_Startup.fetch}
+			{#if get(w_t_startup) == T_Startup.fetch}
 				<p>{databases.startupExplanation}</p>
 			{/if}
-		{:else if $w_t_startup == T_Startup.empty}
+		{:else if get(w_t_startup) == T_Startup.empty}
 			<p>Nothing is available.</p>
-		{:else if $w_t_startup == T_Startup.ready}
+		{:else if get(w_t_startup) == T_Startup.ready}
 			<Controls/>
-			{#if !$w_id_popupView}
+			{#if !get(w_id_popupView)}
 				<div class='breadcrumbs'
 					style='left:0px;
 						position: absolute;
@@ -114,7 +107,7 @@
 						left: 0px;'>
 					</div>
 				{/key}
-				{#if $w_show_details}
+				{#if get(w_show_details)}
 					<Details/>
 					{#key separator_rebuilds}
 						<div class='vertical-line'
@@ -122,10 +115,10 @@
 								position: absolute;
 								z-index: {T_Layer.lines};
 								left: {k.width_details}px;
-								top: {$w_graph_rect.origin.y}px;
+								top: {get(w_graph_rect)?.origin.y}px;
 								width: {k.separator_thickness}px;
 								background-color: {colors.separator};
-								height: {$w_graph_rect.size.height}px;'>
+								height: {get(w_graph_rect)?.size.height}px;'>
 						</div>
 					{/key}
 				{/if}
@@ -135,13 +128,13 @@
 					height: 100%;
 					position: fixed;
 					z-index: {T_Layer.common};
-					left: {$w_show_details ? k.width_details : 0}px;'>
-				{#key $w_id_popupView}
-					{#if $w_id_popupView == T_Control.builds}
+					left: {get(w_show_details) ? k.width_details : 0}px;'>
+				{#key get(w_id_popupView)}
+					{#if get(w_id_popupView) == T_Control.builds}
 						<BuildNotes/>
-					{:else if $w_id_popupView == T_Control.import}
+					{:else if get(w_id_popupView) == T_Control.import}
 						<Import accept='.json'/>
-					{:else if !$w_id_popupView}
+					{:else if !get(w_id_popupView)}
 						<Graph/>
 					{/if}
 				{/key}

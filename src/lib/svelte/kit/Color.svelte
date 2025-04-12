@@ -4,7 +4,10 @@
 	import ColorPicker from 'svelte-awesome-color-picker';
 	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';
-	let { color_closure = (color: string | null): string | null => {}, picker_offset = k.empty, origin = Point.zero } = $props();
+	let {
+		color_closure = (color: string | null): string | null => {},
+		picker_offset = k.empty,
+		origin = Point.zero } = $props();
 	const pickerSize = 122;
 	const selectorSize = k.dot_size + 1;
 	let color = color_closure(null);

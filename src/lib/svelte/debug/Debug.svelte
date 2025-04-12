@@ -16,8 +16,6 @@ https://svelte.dev/e/js_parse_error -->
 	const multiplier = 0.6;
 	let mouse_rect = $state(Rect.zero);
 	let base = new Point(-39, -28);
-	let debug_origin = $state($w_user_graph_center.offsetBy(base));
-
 	let debug_origin = $derived($w_user_graph_center.offsetBy(base));
 
 	run(() => {
