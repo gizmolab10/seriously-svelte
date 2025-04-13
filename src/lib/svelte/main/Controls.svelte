@@ -51,12 +51,13 @@
 
 	$: {
 		const _ = $w_t_graph;
-		const h = $w_hierarchy;
-		const needsExtra = layout.inTreeMode;
-		const extra = needsExtra ? 110 : 0;
-		displayName = h.db.displayName;
-		displayName_width = u.getWidthOf(displayName);
-		displayName_x = extra + (width - displayName_width) / 2;
+		const db = $w_hierarchy.db;
+		if (!!db) {
+			const extra = layout.inTreeMode ? 110 : 0;
+			displayName = db.displayName;
+			displayName_width = u.getWidthOf(displayName);
+			displayName_x = extra + (width - displayName_width) / 2;
+		}
 	}
 
 	function setup_forIDs() {

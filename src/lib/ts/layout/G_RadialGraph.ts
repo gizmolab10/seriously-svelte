@@ -1,6 +1,6 @@
-import { G_Widget, G_Cluster, S_Paging, T_Graph } from '../common/Global_Imports';
-import { u, ux, Point, Angle, Ancestry, Predicate } from '../common/Global_Imports';
+import { u, ux, Angle, Ancestry, Predicate } from '../common/Global_Imports';
 import { w_hierarchy, w_s_paging, w_ancestry_focus } from '../common/Stores';
+import { G_Widget, G_Cluster, S_Paging } from '../common/Global_Imports';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
 
@@ -66,20 +66,24 @@ export default class G_RadialGraph {
 		return array;
 	}
 
+	s_paging_forPredicate_toChildren(predicate: Predicate, points_toChildren: boolean): S_Paging | null {
+		const s_thing_pages = ux.s_thing_pages_forThingID(get(w_ancestry_focus)?.thing?.id);
+		return s_thing_pages?.s_paging_forPredicate_toChildren(predicate, points_toChildren) ?? null;
+	}
+
 	layout_clusterFor(ancestries: Array<Ancestry>, predicate: Predicate | null, points_toChildren: boolean) {
 		if (!!predicate && ancestries.length > 0) {
 			const angle_ofFork = predicate.angle_ofFork_when(points_toChildren);
 			const points_right = new Angle(angle_ofFork).angle_pointsRight;
-			const s_thing_pages = ux.s_thing_pages_forThingID(get(w_ancestry_focus)?.thing?.id);
-			const s_paging = s_thing_pages?.s_paging_pointingToChildren(points_toChildren, predicate);
+			const g_cluster = this.g_cluster_forPredicate_toChildren(predicate, points_toChildren);
+			const s_paging = this.s_paging_forPredicate_toChildren(predicate, points_toChildren);
 			const onePage_ofAncestries = s_paging?.onePage_from(ancestries) ?? [];
 			const corrected_ancestries = points_right ? onePage_ofAncestries.reverse() : onePage_ofAncestries;			// reverse order for fork angle points left
-			const g_cluster = this.g_cluster_forPredicate_toChildren(predicate, points_toChildren);
 			g_cluster.layout_cluster_forAncestries(ancestries.length, corrected_ancestries);
 		}
 	}
 
-	g_cluster_forPredicate_toChildren(predicate: Predicate, points_toChildren: boolean) {
+	g_cluster_forPredicate_toChildren(predicate: Predicate, points_toChildren: boolean) : G_Cluster {
 		const g_clusters = points_toChildren ? this.g_child_clusters : this.g_parent_clusters;;
 		let g_cluster = g_clusters[predicate.kind];
 		if (!g_cluster) {
@@ -91,8 +95,8 @@ export default class G_RadialGraph {
 
 	layout_forPaging_state(s_paging: S_Paging) {
 		const focus_ancestry = get(w_ancestry_focus);
-		if (!!s_paging && !!focus_ancestry) {
-			if (s_paging.points_toChildren) {
+		if (!!focus_ancestry) {
+			if (!!s_paging && s_paging.points_toChildren) {
 				let childAncestries = focus_ancestry.childAncestries;
 				this.layout_clusterFor(childAncestries, Predicate.contains, true);
 			} else {

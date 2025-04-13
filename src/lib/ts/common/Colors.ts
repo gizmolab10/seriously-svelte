@@ -9,25 +9,8 @@ export class Colors {
 	separator = '#eeeeeee0';
     default_forThings = 'blue';
 
-	constructor() {
-		this.checkBackgroundColor = this.checkBackgroundColor.bind(this);
-		this.checkBackgroundColor();
-	}
-
-	checkBackgroundColor() {
-		const currentColor = get(w_background_color);
-		if (!!currentColor) {
-			w_background_color.subscribe((color: string) => {
-				this.separator = this.computed_separator;
-			});
-		} else {
-			setTimeout(() => this.checkBackgroundColor(), 100);
-		}
-	};
-
-	get computed_separator(): string {
+	separatorFor(background: string): string {
 		let color = '#eeeeeee0';
-		const background = get(w_background_color);
 		if (!this.colors_areIdentical(background, this.background)) {
 			const separator = this.moreSaturatedBy(background, 40);
 			if (!!separator) {

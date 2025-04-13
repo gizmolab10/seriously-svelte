@@ -62,18 +62,18 @@ export class S_Paging {
 		return ancestries.slice(index, index + this.widgets_shown);
 	}
 
-	static create_s_paging_fromDict(dict: Dictionary): S_Paging {
+	static create_s_paging_fromDict(dict: Dictionary, points_toChildren: boolean): S_Paging {
 		const s_paging = new S_Paging(dict.index, dict.widgets_shown, dict.total_widgets);
-		s_paging.points_toChildren = dict.points_toChildren == 'true';
+		s_paging.points_toChildren = points_toChildren;
 		s_paging.thing_id = dict.thing_id;
 		s_paging.kind = dict.kind;
 		return s_paging;
 	}
 
-	static create_s_paging_dict_fromDict(dict: Dictionary): Dictionary<S_Paging> {
+	static create_s_paging_dict_fromDict(dict: Dictionary, points_toChildren: boolean): Dictionary<S_Paging> {
 		const result: Dictionary<S_Paging> = {}
 		for (const [key, subdict] of Object.entries(dict)) {
-			result[key] = this.create_s_paging_fromDict(subdict);
+			result[key] = this.create_s_paging_fromDict(subdict, points_toChildren);
 		}
 		return result;
 	}
@@ -101,14 +101,14 @@ export class S_Thing_Pages {
 	}
 
 	static create_fromDict(dict: Dictionary): S_Thing_Pages | null {
-		const s_thing_pages = new S_Thing_Pages(dict.thing_id);
-		s_thing_pages.child_pagings_dict = S_Paging.create_s_paging_dict_fromDict(dict.child_pagings_dict);
-		s_thing_pages.parent_pagings_dict = S_Paging.create_s_paging_dict_fromDict(dict.parent_pagings_dict);
-		return s_thing_pages;
+		const s_pages = new S_Thing_Pages(dict.thing_id);
+		s_pages.child_pagings_dict = S_Paging.create_s_paging_dict_fromDict(dict.child_pagings_dict, true);
+		s_pages.parent_pagings_dict = S_Paging.create_s_paging_dict_fromDict(dict.parent_pagings_dict, false);
+		return s_pages;
 	}
 
 	get thing(): Thing | null { return get(w_hierarchy).thing_forHID(this.thing_id.hash()) ?? null; }
-	s_paging_for(g_cluster: G_Cluster): S_Paging { return this.s_paging_pointingToChildren(g_cluster.points_toChildren, g_cluster.predicate); }
+	s_paging_for(g_cluster: G_Cluster): S_Paging { return this.s_paging_forPredicate_toChildren(g_cluster.predicate, g_cluster.points_toChildren); }
 	s_pagings_dict_forChildren(points_toChildren: boolean): Dictionary<S_Paging> { return points_toChildren ? this.child_pagings_dict : this.parent_pagings_dict; }
 
 	add_s_paging(s_paging: S_Paging) {
@@ -116,15 +116,15 @@ export class S_Thing_Pages {
 		s_pagings[s_paging.kind] = s_paging;
 	}
 
-	s_paging_pointingToChildren(points_toChildren: boolean, predicate: Predicate): S_Paging {
+	s_paging_forPredicate_toChildren(predicate: Predicate, points_toChildren: boolean): S_Paging {
 		let s_pagings = this.s_pagings_dict_forChildren(points_toChildren);
 		let s_paging = s_pagings[predicate.kind]
 		if (!s_paging) {
 			s_paging = new S_Paging();
 			s_paging.kind = predicate.kind;
-			s_paging.points_toChildren = points_toChildren;
 			s_paging.thing_id = this.thing_id;
 			s_pagings[predicate.kind] = s_paging;
+			s_paging.points_toChildren = points_toChildren;
 		}
 		return s_paging;
 	}

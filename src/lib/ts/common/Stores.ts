@@ -1,4 +1,4 @@
-import { Rect, Point, Ancestry, Hierarchy, G_Cluster } from '../common/Global_Imports';
+import { Rect, Point, colors, Ancestry, Hierarchy, G_Cluster } from '../common/Global_Imports';
 import { T_Graph, T_Hierarchy, T_Details, T_Startup } from '../common/Global_Imports';
 import { S_Paging, S_Title_Edit, S_Alteration } from '../common/Global_Imports';
 import { get, writable } from 'svelte/store';
@@ -53,6 +53,9 @@ class Stores {
 		w_count_mouse_up.set(0);
 		w_count_rebuild.set(0);
 		w_count_resize.set(0);
+		w_background_color.subscribe((color: string) => {
+			colors.separator = colors.separatorFor(color);
+		});
 	}
 
 }

@@ -54,7 +54,7 @@ export default class User_Interaction { // Gizmos
 	s_thing_pages_forThingID(id: string | null | undefined): S_Thing_Pages | null {
 		return !id ? null : this.assure_forKey_inDict(id, this.s_thing_pages_byThingID, () => new S_Thing_Pages(id));
 	}
-
+	
 	get next_mouse_responder_number(): number {
 		this.mouse_responder_number += 1;
 		return this.mouse_responder_number;

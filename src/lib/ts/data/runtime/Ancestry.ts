@@ -2,10 +2,11 @@ import { Direction, Predicate, Hierarchy, databases, Relationship, Svelte_Wrappe
 import { c, k, u, show, Rect, Size, Thing, debug, layout, wrappers, svgPaths } from '../../common/Global_Imports';
 import { T_Graph, T_Element, T_Predicate, T_Alteration, T_SvelteComponent } from '../../common/Global_Imports';
 import { w_hierarchy, w_ancestry_focus, w_ancestry_showing_tools } from '../../common/Stores';
-import { G_Widget, S_Paging, S_Title_Edit, G_TreeLine } from '../../common/Global_Imports';
 import { w_ancestries_grabbed, w_ancestries_expanded, } from '../../common/Stores';
 import { w_background_color, w_t_graph, w_t_database } from '../../common/Stores';
+import { G_Widget, G_Cluster, G_TreeLine } from '../../common/Global_Imports';
 import { w_s_alteration, w_s_title_edit } from '../../common/Stores';
+import { S_Paging, S_Title_Edit } from '../../common/Global_Imports';
 import type { Dictionary, Integer } from '../../common/Types';
 import { T_Edit } from '../../state/S_Title_Edit';
 import { get, Writable } from 'svelte/store';
@@ -91,6 +92,7 @@ export default class Ancestry extends Identifiable {
 	get thing():						Thing | null { return this.hierarchy.thing_forAncestry(this); }
 	get idBridging():				   string | null { return this.thing?.idBridging ?? null; }
 	get parentAncestry():			 Ancestry | null { return this.stripBack(); }
+	get s_paging():					 S_Paging | null { return this.g_cluster?.s_ancestryPaging(this) ?? null; }
 	get predicate():				Predicate | null { return this.hierarchy.predicate_forKind(this.kind) }
 	get relationship():			 Relationship | null { return this.relationshipAt(); }
 	get titleWrapper():		   Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.hid, T_SvelteComponent.title); }
@@ -143,12 +145,11 @@ export default class Ancestry extends Identifiable {
 		return svgPaths.circle_atOffset(k.dot_size, k.dot_size - 1);
 	}
 
-	get s_paging(): S_Paging | null {
+	get g_cluster(): G_Cluster | null {
 		const predicate = this.predicate;
 		const g_radialGraph = layout.g_radialGraph;
 		if (!!predicate && !!g_radialGraph) {
-			const g_cluster = g_radialGraph?.g_cluster_forPredicate_toChildren(predicate, true)
-			return g_cluster?.s_ancestryPaging(this) ?? null;
+			return g_radialGraph?.g_cluster_forPredicate_toChildren(predicate, true) ?? null;
 		}
 		return null;	// either g_radialGraph is not setup or predicate is bogus
 	}
@@ -851,15 +852,15 @@ export default class Ancestry extends Identifiable {
 			return this.persistentMoveUp_forBidirectional_maybe(up, SHIFT, OPTION, EXTREME);
 		}
 		const parentAncestry = this.parentAncestry;
-		let graph_needsRelayout = false;
-		let graph_needsRebuild = false;
+		let needs_graphRelayout = false;
+		let needs_graphRebuild = false;
 		if (!!parentAncestry) {
 			const siblings = parentAncestry.children ?? [];
 			const length = siblings.length;
 			const thing = this?.thing;
 			if (length == 0) {		// friendly for first-time users
 				this.hierarchy.ancestry_rebuild_runtimeBrowseRight(this, up, SHIFT, EXTREME, true);
-			} else if (!!thing && layout.inTreeMode) {
+			} else if (!!thing) {
 				const index = siblings.indexOf(thing);
 				const newIndex = index.increment(!up, length);
 				if (!!parentAncestry && !OPTION) {
@@ -867,16 +868,16 @@ export default class Ancestry extends Identifiable {
 					if (!!grabAncestry) {
 						if (!grabAncestry.isVisible) {
 							if (!parentAncestry.isFocus) {
-								graph_needsRebuild = parentAncestry.becomeFocus();
-							} else {
-								alert('PROGRAMMING ERROR: child of focus is not visible');
+								needs_graphRebuild = parentAncestry.becomeFocus();
+							} else if (layout.inRadialMode) {
+								needs_graphRebuild = grabAncestry.assureIsVisible_inClusters();	// change paging
 							}
 						}
 						grabAncestry.grab_forShift(SHIFT);
-						graph_needsRelayout = true;
+						needs_graphRelayout = true;
 					}
 				} else if (c.allow_GraphEditing && OPTION) {
-					graph_needsRebuild = true;
+					needs_graphRebuild = true;
 					u.ancestries_orders_normalize(parentAncestry.childAncestries, false);
 					const wrapped = up ? (index == 0) : (index + 1 == length);
 					const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
@@ -886,51 +887,43 @@ export default class Ancestry extends Identifiable {
 				}
 			}
 		}
-		return [graph_needsRebuild, graph_needsRelayout];
+		return [needs_graphRebuild, needs_graphRelayout];
 	}
 
 	persistentMoveUp_forBidirectional_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
-		const focusAncestry = get(w_ancestry_focus);
-		const siblingAncestries = focusAncestry?.parentAncestries;
-		let graph_needsRelayout = false;
-		let graph_needsRebuild = false;
-		if (!!focusAncestry && siblingAncestries) {
-			const siblings = siblingAncestries?.map(a => a.thing).filter(t => !!t) ?? [];
-			const length = siblings.length;
-			const thing = this?.thing;
+		const focus_ancestry = get(w_ancestry_focus);
+		const sibling_ancestries = focus_ancestry?.thing?.uniqueAncestries_for(this.predicate) ?? [];
+		let needs_graphRelayout = false;
+		let needs_graphRebuild = false;
+		if (!!sibling_ancestries) {
+			const length = sibling_ancestries.length;
 			if (length == 0) {		// friendly for first-time users
 				this.hierarchy.ancestry_rebuild_runtimeBrowseRight(this, up, SHIFT, EXTREME, true);
-			} else if (!!thing) {
-				const is_radial_mode = true;
-				const index = siblings.indexOf(thing);
+			} else {
+				const index = sibling_ancestries.indexOf(this);
 				const newIndex = index.increment(!up, length);
-				if (!!focusAncestry && !OPTION) {
-					const grabAncestry = focusAncestry.extend_withChild(siblings[newIndex]);
+				if (!OPTION) {
+					const grabAncestry = sibling_ancestries[newIndex];
 					if (!!grabAncestry) {
-						if (!grabAncestry.isVisible) {
-							if (!focusAncestry.isFocus) {
-								graph_needsRebuild = focusAncestry.becomeFocus();
-							} else if (is_radial_mode) {
-								graph_needsRebuild = grabAncestry.assureIsVisible_inClusters();	// change paging
-							} else {
-								alert('PROGRAMMING ERROR: child of focus is not visible');
-							}
+						if (!grabAncestry.isVisible && !!this.predicate) {
+							const s_paging = layout.g_radialGraph.s_paging_forPredicate_toChildren(this.predicate, false);
+							needs_graphRebuild = !!s_paging && s_paging.update_index_toShow(newIndex);
 						}
 						grabAncestry.grab_forShift(SHIFT);
-						graph_needsRelayout = true;
+						needs_graphRelayout = true;
 					}
 				} else if (c.allow_GraphEditing && OPTION) {
-					graph_needsRebuild = true;
-					u.ancestries_orders_normalize(siblingAncestries, false);
+					needs_graphRebuild = true;
+					u.ancestries_orders_normalize(sibling_ancestries, false);
 					const wrapped = up ? (index == 0) : (index + 1 == length);
 					const goose = ((wrapped == up) ? 1 : -1) * k.halfIncrement;
 					const newOrder = newIndex + goose;
 					this.relationship?.order_setTo(newOrder);
-					u.ancestries_orders_normalize(siblingAncestries);
+					u.ancestries_orders_normalize(sibling_ancestries);
 				}
 			}
 		}
-		return [graph_needsRebuild, graph_needsRelayout];
+		return [needs_graphRebuild, needs_graphRelayout];
 	}
 
 }
