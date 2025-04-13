@@ -18,7 +18,7 @@ export class S_Paging {
 	index = 0;			// this value changes when user moves paging arc [thumb] slider, or when widget needs to be visible and isn't
 
 	constructor(index: number = 0, widgets_shown: number = 0, total_widgets: number = 0) {
-		this.index = index.force_between(0, total_widgets - widgets_shown);
+		this.index = index.force_asInteger_between(0, total_widgets - widgets_shown);
 		this.total_widgets = total_widgets;
 		this.widgets_shown = widgets_shown;
 	}
@@ -30,7 +30,7 @@ export class S_Paging {
 	get predicate(): Predicate | null { return get(w_hierarchy).predicate_forKind(this.kind) ?? null; }
 	get canShow(): number { return Math.round((get(w_ring_rotation_radius) ** 1.5) * Math.PI / 45 / k.row_height) + 1; }
 	get sub_key(): string { return `${this.thing_id}${k.generic_separator}${this.kind}${k.generic_separator}${this.points_toChildren}`; }
-	ancestry_atIndex(ancestries: Array<Ancestry>): Ancestry { return ancestries[this.index]; }
+	ancestry_atIndex(ancestries: Array<Ancestry>): Ancestry { return ancestries[Math.round(this.index)]; }
 
 	index_isVisible(index: number): boolean {
 		return index.isBetween(this.index, this.indexOf_followingPage - 1, true);

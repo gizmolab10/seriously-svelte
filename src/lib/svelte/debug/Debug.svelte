@@ -8,9 +8,9 @@
 	const multiplier = 0.6;
 	let mouse_rect = Rect.zero;
 	let base = new Point(-39, -28);
-	let debug_origin = $w_user_graph_center.offsetBy(base);
+	let debug_origin = $w_user_graph_center?.offsetBy(base) ?? Point.zero;
 
-	$: debug_origin = $w_user_graph_center.offsetBy(base);
+	$: debug_origin = $w_user_graph_center?.offsetBy(base) ?? Point.zero;
 
 	$: {
 		const point = $w_mouse_location_scaled;

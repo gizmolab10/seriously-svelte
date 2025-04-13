@@ -73,13 +73,9 @@ export default class G_Cluster {
 		}
 	}
 
-	get paging_index_ofFocus(): number { return this.s_focusPaging?.index ?? 0; }
 	get titles(): string { return this.ancestries.map(a => a.title).join(', '); }
 	get description(): string { return `(${this.cluster_title}) ${this.titles}`; }
-	get maximum_paging_index(): number { return this.total_widgets - this.widgets_shown; }
-	get s_paging_rotation(): S_Rotation { return ux.s_paging_rotation_forName(this.name); }
 	get kind(): string { return this.predicate?.kind.unCamelCase().lastWord() ?? k.empty; }
-	get s_focusPaging(): S_Paging | null { return this.s_ancestryPaging(get(w_ancestry_focus)); }
 	get name(): string { return `${get(w_ancestry_focus).title}-cluster-${this.direction_kind}`; }
 
 	get thumb_isHit(): boolean {
@@ -108,7 +104,7 @@ export default class G_Cluster {
 	layout_label_forIndex() {
 		let cluster_title =  `${this.total_widgets} ${this.direction_kind}`;
 		if (this.isPaging) {
-			const index = Math.round(this.paging_index_ofFocus);
+			const index = this.paging_index_ofFocus;
 			const middle = (this.widgets_shown < 2) ? k.empty : `-${index + this.widgets_shown}`;
 			cluster_title += ` (${index + 1}${middle})`
 		}
@@ -116,7 +112,12 @@ export default class G_Cluster {
 	}
 	
 	static readonly PAGING: unique symbol;
-	
+
+	get s_paging_rotation():  S_Rotation { return ux.s_paging_rotation_forName(this.name); }
+	get maximum_paging_index()	: number { return this.total_widgets - this.widgets_shown; }	
+	get paging_index_ofFocus()	: number { return Math.round(this.s_focusPaging?.index ?? 0); }
+	get s_focusPaging(): S_Paging | null { return this.s_ancestryPaging(get(w_ancestry_focus)); }
+
 	s_ancestryPaging(ancestry: Ancestry): S_Paging | null {
 		const s_thing_pages = ux.s_thing_pages_forThingID(ancestry.thing?.id);
 		return s_thing_pages?.s_paging_for(this) ?? null;

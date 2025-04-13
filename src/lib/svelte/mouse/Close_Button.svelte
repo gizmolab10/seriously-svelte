@@ -2,7 +2,7 @@
 	import { k, u, Size, Point, colors, T_Layer, svgPaths } from '../../ts/common/Global_Imports';
     import { w_id_popupView, w_background_color } from '../../ts/common/Stores';
 	import Mouse_Responder from './Mouse_Responder.svelte';
-	import SVGD3 from '../kit/SVGD3.svelte';
+	import SVG_D3 from '../kit/SVG_D3.svelte';
     export let name = 'generic close';
     export let size = 20;
 	let stroke = colors.default;
@@ -27,14 +27,14 @@
 	align_left={false}
 	origin={new Point(8, size / 2)}
 	handle_mouse_state={hover_up_closure}>
-    <SVGD3 name='close'
+    <SVG_D3 name='close'
 		fill={fill}
 		width={size}
 		height={size}
 		stroke={colors.default}
 		svgPath={svgPaths.circle_atOffset(size, size - 2)}
 	/>
-    <SVGD3 name='closeInside'
+    <SVG_D3 name='closeInside'
 		width={size}
 		height={size}
 		stroke={stroke}

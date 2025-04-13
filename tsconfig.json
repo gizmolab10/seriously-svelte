@@ -9,6 +9,12 @@
 		"esModuleInterop": true,
 		"strictNullChecks": true,
 		"moduleResolution": "node",
+		"allowJs": true,
+		"checkJs": true,
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true
 	},
 	"typedocOptions": {
 		"highlightLanguages": {
@@ -17,16 +23,19 @@
 			"ts": "typescript",
 			"svelte": "svelte",
 			"html": "html",
-			"css": "css",
-		},
+			"css": "css"
+		}
 	},
 	"exclude": [
 		"node_modules",
 		"bubble",
 		"aside",
-		"dist"
+		"dist",
+		"**/*.svelte"
 	],
 	"include": [
-		"src/lib/**/*"
-, "src/main.js"	],
+		"src/**/*",
+		"src/lib/**/*",
+		"src/main.js"
+	]
 }

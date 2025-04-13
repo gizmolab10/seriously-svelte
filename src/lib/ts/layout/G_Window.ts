@@ -43,7 +43,7 @@ export class G_Window {
 		if (!!mouse_location) {
 			const center_offset = get(w_user_graph_center).offsetBy(offset);
 			const mouse_vector = center_offset.vector_to(mouse_location);
-			debug.log_hover(`offset  ${get(w_user_graph_offset).verbose}  ${mouse_vector.verbose}`);
+			debug.log_mouse(`offset  ${get(w_user_graph_offset).verbose}  ${mouse_vector.verbose}`);
 			return mouse_vector;
 		}
 		return null

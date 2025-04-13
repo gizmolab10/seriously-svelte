@@ -84,7 +84,7 @@ export default class User_Interaction { // Gizmos
 					ring_zone = T_RingZone.rotate;
 				}
 			}
-			debug.log_hover(` ring zone ${ring_zone} ${distance.asInt()}`);
+			debug.log_mouse(` ring zone ${ring_zone} ${distance.asInt()}`);
 			debug.log_cursor(` ring zone ${ring_zone} ${mouse_vector.verbose}`);
 		}
 		return ring_zone;

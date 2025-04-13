@@ -5,7 +5,7 @@
 	import { T_Layer, T_Tool, T_Graph, T_Element } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { w_background_color } from '../../ts/common/Stores';
-	import SVGD3 from '../kit/SVGD3.svelte';
+	import SVG_D3 from '../kit/SVG_D3.svelte';
 	import { onMount } from 'svelte';
 	export let points_right = true;
 	export let name = k.empty;
@@ -169,7 +169,7 @@
 							position:absolute;
 							z-index:{T_Layer.dots};'>
 						{#key $w_background_color}
-							<SVGD3 name={'svg-' + name}
+							<SVG_D3 name={'svg-' + name}
 								width={size}
 								height={size}
 								stroke={thing?.color}
@@ -178,7 +178,7 @@
 							/>
 						{/key}
 						{#if svgPathFor_ellipses}
-							<SVGD3 name={'svg-inside-' + name}
+							<SVG_D3 name={'svg-inside-' + name}
 								width={size}
 								height={size}
 								fill={es_drag.stroke}
@@ -187,7 +187,7 @@
 							/>
 						{/if}
 						{#if svgPathFor_related}
-							<SVGD3 name={'svg-related-' + name}
+							<SVG_D3 name={'svg-related-' + name}
 								width={size}
 								height={size}
 								stroke={thing?.color}

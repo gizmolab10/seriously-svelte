@@ -3,7 +3,7 @@
 	import { w_background_color, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { T_Layer, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
 	import type { Handle_Result } from '../../ts/common/Types';
-	import SVGD3 from '../kit/SVGD3.svelte';
+	import SVG_D3 from '../kit/SVG_D3.svelte';
 	import Button from './Button.svelte';
 	export let handle_mouse_state = Handle_Result<S_Mouse>;
 	export let hover_closure = Handle_Result<boolean>;
@@ -52,7 +52,7 @@
 	height={size}
 	width={size}
 	name={name}>
-	<SVGD3 name='triangle'
+	<SVG_D3 name='triangle'
 		svgPath={trianglePath}
 		stroke={strokeColor}
 		fill={fillColor}
@@ -60,7 +60,7 @@
 		width={size}
 	/>
 	{#if extraPath}
-		<SVGD3 name='triangleInside'
+		<SVG_D3 name='triangleInside'
 			svgPath={extraPath}
 			stroke={extraColor}
 			fill={extraColor}

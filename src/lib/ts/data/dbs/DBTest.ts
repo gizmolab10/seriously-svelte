@@ -50,8 +50,8 @@ export default class DBTest extends DBCommon {
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'raf', kindR, idTa, idTf, 0);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'rce', kindR, idTc, idTe, 0);
 		// this.makeMore(3, 'c', kindC, idTf, true);	// children of Friends
-		// this.makeMore(2, 'e', kindC, idTb, true);	// children of Big
-		// this.makeMore(4, 'e', kindR, idTb, true);	// related to  "
+		this.makeMore(2, 'g', kindC, idTb, true);		// children of Big
+		this.makeMore(4, 'e', kindR, idTb, true);		// related to  "
 		// this.makeMore(2, 'c', kindC, idTb, false);	// parents of  "
 	}
 
@@ -67,7 +67,7 @@ export default class DBTest extends DBCommon {
 			const idRelationahip = prefix + id_thing;
 			const idChild = asChild ? idCode : idRef;
 			const idParent = asChild ? idRef : idCode;
-			// h.thing_remember_runtimeCreateUnique(this.idBase, id_thing, title, 'grey');
+			h.thing_remember_runtimeCreateUnique(this.idBase, idCode, title, 'grey');
 			h.relationship_remember_runtimeCreateUnique(this.idBase, idRelationahip, kind, idParent, idChild, i);
 		}
 	}

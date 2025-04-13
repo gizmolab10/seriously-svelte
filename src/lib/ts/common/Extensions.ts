@@ -151,6 +151,7 @@ declare global {
 		increment_by_assuring(delta: number, total: number): number;
 		isBetween(a: number, b: number, inclusive: boolean): boolean;
 		isClocklyBetween(a: number, b: number, limit: number): boolean;
+		force_asInteger_between(smallest: number, largest: number): number;
 		bump_towards(smallest: number, largest: number, within: number): number;
 		isClocklyAlmost(target: number, within: number, clock: number): boolean;
 	}
@@ -159,6 +160,15 @@ declare global {
 Object.defineProperty(Number.prototype, 'isAlmost', {
 	value: function(target: number, within: number): boolean {
 		return Math.abs(this - target) < within;
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
+});
+
+Object.defineProperty(Number.prototype, 'force_asInteger_between', {
+	value: function(a: number, b: number): number {
+		return Math.round(this.force_between(a, b));
 	},
 	writable: false,
 	enumerable: false,

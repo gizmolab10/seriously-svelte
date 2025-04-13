@@ -7,7 +7,7 @@
 	import { w_background_color } from '../../ts/common/Stores';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Button from '../mouse/Button.svelte';
-	import SVGD3 from '../kit/SVGD3.svelte';
+	import SVG_D3 from '../kit/SVG_D3.svelte';
 	import { onMount } from 'svelte';
 	const size_small = k.default_buttonSize;
 	const details_top = k.dot_size / 2;

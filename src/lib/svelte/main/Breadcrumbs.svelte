@@ -4,7 +4,7 @@
 	import { signals, svgPaths, Ancestry, databases } from '../../ts/common/Global_Imports';
 	import { w_hierarchy, w_graph_rect, w_color_trigger } from '../../ts/common/Stores';
 	import Breadcrumb_Button from '../mouse/Breadcrumb_Button.svelte';
-	import SVGD3 from '../kit/SVGD3.svelte';
+	import SVG_D3 from '../kit/SVG_D3.svelte';
 	import { onMount } from 'svelte';
 	let size = k.default_buttonSize;
 	let lefts: Array<string> = [];

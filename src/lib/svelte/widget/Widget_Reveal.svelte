@@ -5,7 +5,7 @@
 	import { w_hierarchy, w_t_countDots, w_s_alteration } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { w_background_color } from '../../ts/common/Stores';
-	import SVGD3 from '../kit/SVGD3.svelte';
+	import SVG_D3 from '../kit/SVG_D3.svelte';
 	import { onMount } from 'svelte';
     export let ancestry;
 	export let name = k.empty;
@@ -107,7 +107,7 @@
 					height: {k.dot_size}px;
 				'>
 				{#key svgPathFor_revealDot + $w_background_color}
-					<SVGD3 name='reveal-dot-svg'
+					<SVG_D3 name='reveal-dot-svg'
 						fill={debug.lines ? 'transparent' : es_reveal.fill}
 						svgPath={svgPathFor_revealDot}
 						stroke={ancestry.thing.color}
@@ -122,7 +122,7 @@
 						position:absolute;
 						height:{k.dot_size}px;
 						width:{k.dot_size}px;'>
-						<SVGD3 name='bulk-alias-dot-svg'
+						<SVG_D3 name='bulk-alias-dot-svg'
 							svgPath={svgPathFor_bulkAlias}
 							stroke={es_reveal.stroke}
 							fill={es_reveal.stroke}

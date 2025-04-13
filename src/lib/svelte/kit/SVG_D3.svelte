@@ -6,7 +6,7 @@
     export let zindex = T_Layer.common;
     export let position = 'absolute';
     export let svgPath = k.empty;
-    export let name = 'SVGD3';
+    export let name = 'SVG_D3';
     export let fill = 'none';
     export let height = 10;
     export let width = 10;

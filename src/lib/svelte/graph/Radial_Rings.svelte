@@ -86,32 +86,35 @@
 			resizingPath.setAttribute('d', svgPaths.circle(center.offsetEquallyBy(44), $w_ring_rotation_radius, true));
 		}
 		if (!!rotationPath) {
-			rotationPath.setAttribute('fill', colors.opacitize(color, ux.s_ring_rotation.fill_opacity * (ux.s_ring_resizing.isActive ? 0 : 1)));
-			rotationPath.setAttribute('stroke', colors.opacitize(color, ux.s_ring_rotation.stroke_opacity * (ux.s_ring_resizing.isActive ? 0 : 1)));
+			const isResizing = ux.s_ring_resizing.isActive;
+			rotationPath.setAttribute('fill', colors.opacitize(color, ux.s_ring_rotation.fill_opacity * (isResizing ? 0 : 1)));
+			rotationPath.setAttribute('stroke', colors.opacitize(color, ux.s_ring_rotation.stroke_opacity * (isResizing ? 0 : 1)));
 			rotationPath.setAttribute('d', svgPaths.annulus(center, middle_radius, ring_width, Point.square(ring_width)));
 		}
 	}
 
 	function detect_hovering() {
 		let needs_toUpdate_svgs = false;
+		const isPaging = ux.isAny_paging_arc_active;
+		const isResizing = ux.s_ring_resizing.isActive;
+		const isRotating = ux.s_ring_rotation.isActive;
 		const ring_zone = ux.ring_zone_atMouseLocation;
-		const arc_isActive = ux.isAny_paging_arc_active;
-		const inRotate = ring_zone == T_RingZone.rotate && !arc_isActive && !ux.s_ring_resizing.isActive;
-		const inResize = ring_zone == T_RingZone.resize && !arc_isActive && !ux.s_ring_rotation.isActive;
-		const inPaging = ring_zone == T_RingZone.paging && !ux.s_ring_rotation.isActive && !ux.s_ring_resizing.isActive;
-		if (ux.s_cluster_rotation.isHovering != inPaging) {
-			ux.s_cluster_rotation.isHovering  = inPaging;
-			debug.log_hover(` hover paging  ${inPaging}`);
-			needs_toUpdate_svgs = true;
-		}
+		const inRotate = ring_zone == T_RingZone.rotate && !isPaging && !isResizing;
+		const inResize = ring_zone == T_RingZone.resize && !isPaging && !isRotating;
+		const inPaging = ring_zone == T_RingZone.paging && !isRotating && !isResizing;
 		if (ux.s_ring_rotation.isHovering != inRotate) {
 			ux.s_ring_rotation.isHovering  = inRotate;
 			debug.log_hover(` hover rotate  ${inRotate}`);
-			needs_toUpdate_svgs = true;
+			needs_toUpdate_svgs = !isRotating;
 		}
 		if (ux.s_ring_resizing.isHovering != inResize) {
 			ux.s_ring_resizing.isHovering  = inResize;
 			debug.log_hover(` hover resize  ${inResize}`);
+			needs_toUpdate_svgs = true;
+		}
+		if (ux.s_cluster_rotation.isHovering != inPaging) {
+			ux.s_cluster_rotation.isHovering  = inPaging;
+			debug.log_hover(` hover paging  ${inPaging}`);
 			needs_toUpdate_svgs = true;
 		}
 		if (needs_toUpdate_svgs) {

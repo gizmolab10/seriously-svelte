@@ -123,6 +123,7 @@
 		layout();
 		widget.style.top = `${top}px`;
 		widget.style.left = `${left}px`;
+		widget.style.width = `${g_widget.width_ofWidget}px`;
 		widget.style.border = es_widget.border;		// avoid rebuilding by injecting style changes
 		widget.style.backgroundColor = ancestry.isGrabbed || layout.inRadialMode ? $w_background_color : 'transparent';
 		debug.log_reposition(`  reposition (grabbed: ${ancestry.isGrabbed}) (border: ${es_widget.border}) "${ancestry.title}"`);
@@ -134,7 +135,6 @@
 		const hasExtra_onRight = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
 		const onRight = layout.inRadialMode ? 0 : 21 + (hasExtra_onRight ? 0.5 : 0);
 		const origin_ofWidget = g_widget.origin.offsetBy(g_widget.offset_ofWidget);
-		const width = g_widget.width_ofWidget;
 		const onLeft = points_right ? 1 : 14;
 		top = origin_ofWidget.y;
 		left = origin_ofWidget.x;
