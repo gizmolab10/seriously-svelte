@@ -39,7 +39,7 @@
 	//////////////////////////////////////////////////
 
 	debug.log_build(`ARC SLIDER  ${g_cluster.name}`);
-	g_cluster.layout_cluster();
+	// g_cluster.layout_cluster();
 	
 	onMount(() => {
 		update_colors();

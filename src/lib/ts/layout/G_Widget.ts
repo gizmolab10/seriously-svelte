@@ -219,25 +219,23 @@ export default class G_Widget {
 			const width_ofDrag = layout.inTreeMode ? 0 : 5;
 			const width_ofWidget = ancestry.thing.titleWidth + width_ofDrag + width_ofReveal;
 			const thickness_ofBorder = show_border ? 0 : 1;
-			const x_ofDrag_forPointsLeft = width_ofWidget + 19 + (show_reveal ? 0.5 : 0);
+			const x_ofDrag_forPointsLeft = width_ofWidget + 7 + (show_reveal ? 0.5 : 0);
 			const x_ofDrag = points_right ? (layout.inRadialMode ? 3 : 2) : x_ofDrag_forPointsLeft;
 			const y_ofDrag = 2.7 + (layout.inRadialMode ? 0.1 : 0);
 			const x_ofRadial = points_right ? -4 : k.dot_size * -2;
-			const offset_x_ofWidget = points_right ? -7 : -5 - width_ofWidget;
+			const origin_ofDrag = new Point(x_ofDrag, y_ofDrag);
+			const offset_x_ofWidget = points_right ? -7 : 10 - width_ofWidget;
 			const origin_ofRadial_title = (points_right ? 20 : (show_reveal ? 20 : 6));
 			this.origin_ofTitle = Point.x(layout.inRadialMode ? origin_ofRadial_title : k.dot_size + 5);
 			this.origin_ofRadial = this.origin_ofWidget.offsetByXY(x_ofRadial, 4 - k.dot_size);
-			this.center_ofDrag = new Point(x_ofDrag, y_ofDrag).offsetEquallyBy(k.dot_size / 2);
 			this.offset_ofWidget = Point.square(thickness_ofBorder).offsetByX(offset_x_ofWidget);
+			this.center_ofDrag = origin_ofDrag.offsetEquallyBy(k.dot_size / 2);
 			this.width_ofWidget = width_ofWidget;
 			if (show_reveal) {
 				const reveal_y = k.dot_size * 0.7;
 				const offset_x_forPointsRight = (layout.inRadialMode ? 0 : -1) - width_ofWidget;
 				const reveal_x = k.dot_size - (points_right ? offset_x_forPointsRight : 3);
 				this.center_ofReveal = new Point(reveal_x, reveal_y);
-				if (show_border) {
-					console.log(`width: ${width_ofWidget.toFixed(2)}, width_ofReveal: ${width_ofReveal.toFixed(2)}, width_ofDrag: ${width_ofDrag.toFixed(2)}`);
-				}
 			}
 		}
 	}

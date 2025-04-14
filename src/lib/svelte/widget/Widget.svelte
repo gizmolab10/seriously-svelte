@@ -131,7 +131,7 @@
 	}
 
 	function layout() {
-		g_widget.layout_widget();						// assumes all children's subtrees are laid out (needed for progeny size)
+		// g_widget.layout_widget();						// assumes all children's subtrees are laid out (needed for progeny size)
 		g_widget.layout_line();
 		const hasExtra_onRight = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
 		const onRight = layout.inRadialMode ? 0 : 21 + (hasExtra_onRight ? 0.5 : 0);

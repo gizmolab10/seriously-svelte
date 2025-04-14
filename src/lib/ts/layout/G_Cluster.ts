@@ -224,7 +224,7 @@ export default class G_Cluster {
 		const row = (max / 2) - index;							// row centered around zero
 		const radius = get(w_ring_rotation_radius);
 		const radial = this.g_sliderArc.radial_ofFork;			// points at middle widget
-		let y = radial.y + (row * (k.row_height - 3));			// distribute y equally around fork_y
+		let y = radial.y + (row * (k.dot_size + 1));			// distribute y equally around fork_y
 		let y_isOutside = false;
 		const absY = Math.abs(y);
 		if (absY > radius) {
