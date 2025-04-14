@@ -21,7 +21,7 @@ export const w_t_tree				  = writable<T_Hierarchy>();
 export const w_t_startup			  = writable<T_Startup>();
 export const w_t_database			  = writable<string>();4
 
-export const w_g_active_cluster		  = writable<G_Cluster | null>();
+export const w_g_paging_cluster		  = writable<G_Cluster | null>();
 
 export const w_mouse_location_scaled  = writable<Point>();
 export const w_user_graph_center	  = writable<Point>();

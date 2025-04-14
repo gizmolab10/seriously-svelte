@@ -43,9 +43,12 @@
 			updateInputWidth();
 		});
 		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
-			if (!!input && ancestry.equals(received_ancestry)) {
+			if (!!input) {
+				input.style.left = `${origin_ofInput.x}px`;
 				input.style.width = `${ancestry.thing.titleWidth}px`;
-				debug.log_edit(`INPUT width: ${input.style.width} "${ancestry.title}"`);
+				if (ancestry.isGrabbed) {
+					debug.log_grab(`INPUT  (left: ${origin_ofInput.x.toFixed(2)}) (width: ${ancestry.thing.titleWidth.toFixed(2)} )"${ancestry.title}"`);
+				}
 			}
 		});
 		setTimeout(() => {
@@ -85,7 +88,7 @@
 	$: {
 		const _ = $w_ancestries_grabbed;
 		const isGrabbed = ancestry?.isGrabbed ?? false;
-		origin_ofInput = Point.y(0.8).offsetBy(isGrabbed ? new Point(0.1, 0.2) : Point.zero);
+		origin_ofInput = isGrabbed ? new Point(0.1, 1) : Point.y(0.8);
 	}
 
 	export const RANGE: unique symbol = Symbol('RANGE');

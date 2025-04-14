@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { c, k, ux, w, show, Rect, Size, Point, debug, Angle, colors, signals } from '../../ts/common/Global_Imports';
-	import { w_count_mouse_up, w_ancestry_focus, w_g_active_cluster, w_ring_rotation_radius } from '../../ts/common/Stores';
+	import { w_count_mouse_up, w_ancestry_focus, w_g_paging_cluster, w_ring_rotation_radius } from '../../ts/common/Stores';
 	import { T_Layer, G_Cluster, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_color_trigger, w_background_color, w_thing_fontFamily } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
@@ -51,7 +51,7 @@
 	});
 
 	$: {
-		const _ = $w_g_active_cluster + $w_background_color + $w_color_trigger;
+		const _ = $w_g_paging_cluster + $w_background_color + $w_color_trigger;
 		update_colors();
 	}
 

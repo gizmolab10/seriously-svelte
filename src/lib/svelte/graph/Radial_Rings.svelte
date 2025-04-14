@@ -3,7 +3,7 @@
 	import { w_color_trigger, w_ancestry_focus, w_s_title_edit } from '../../ts/common/Stores';
 	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/common/Stores';
 	import { w_graph_rect, w_mouse_location_scaled } from '../../ts/common/Stores';
-	import { w_count_mouse_up, w_g_active_cluster } from '../../ts/common/Stores';
+	import { w_count_mouse_up, w_g_paging_cluster } from '../../ts/common/Stores';
 	import { T_Layer, T_RingZone } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/runtime/Identifiable';
@@ -67,7 +67,7 @@
 		ux.mouse_timer_forName(name).reset();
 		ux.s_ring_resizing.reset();
 		ux.s_ring_rotation.reset();
-		$w_g_active_cluster = null;
+		$w_g_paging_cluster = null;
 		cursor = 'default';
 		mouse_timer.reset();
 		ux.reset_paging();
@@ -163,13 +163,13 @@
 					rotation_state.active_angle = mouse_angle;
 					detect_hovering();
 					cursor = ux.s_ring_rotation.cursor;
-					layout.grand_layout();											// to reposition necklace widgets
+					layout.grand_layout();										// recompute positions of necklace widgets
 					setTimeout(() => {
 						rings_rebuilds += 1;									// for arc sliders
 					}, 1)
 				}
-			} else if (!!$w_g_active_cluster) {
-				const s_paging_rotation = $w_g_active_cluster.s_paging_rotation;
+			} else if (!!$w_g_paging_cluster) {
+				const s_paging_rotation = $w_g_paging_cluster.s_paging_rotation;
 				const basis_angle = s_paging_rotation.basis_angle;
 				const active_angle = s_paging_rotation.active_angle;
 				const delta_angle = (active_angle - mouse_angle).angle_normalized_aroundZero();
@@ -177,7 +177,7 @@
 				detect_hovering();
 				cursor = s_paging_rotation.cursor;
 				debug.log_radial(` page  ${delta_angle.asDegrees()}`);
-				if (!!basis_angle && !!active_angle && basis_angle != active_angle && $w_g_active_cluster.adjust_paging_index_byAdding_angle(delta_angle)) {
+				if (!!basis_angle && !!active_angle && basis_angle != active_angle && $w_g_paging_cluster.adjust_paging_index_byAdding_angle(delta_angle)) {
 					layout.grand_build();
 				}
 			} else {				// not dragging
@@ -221,7 +221,7 @@
 							debug.log_radial(` begin paging  ${angle_ofPage.asDegrees()}`);
 							g_cluster.s_paging_rotation.active_angle = angle_ofPage;
 							g_cluster.s_paging_rotation.basis_angle = angle_ofPage;
-							$w_g_active_cluster = g_cluster;
+							$w_g_paging_cluster = g_cluster;
 						}
 						break;
 				}

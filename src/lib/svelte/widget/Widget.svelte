@@ -26,6 +26,7 @@
 	let border_radius = k.dot_size / 2;
 	let center_ofDrag = Point.zero;
 	let revealCenter = Point.zero;
+	let internal_rebuilds = 0;
 	let background = k.empty;
 	let widgetName = k.empty;
 	let revealName = k.empty;
@@ -47,7 +48,7 @@
 	layout_maybe();
 
 	onMount(() => {
-		const handle_anySignal = signals.handle_anySignal_atPriority(2, (t_signal, received_ancestry) => {
+		const handle_anySignal = signals.handle_anySignal_atPriority(1, (t_signal, received_ancestry) => {
 			if (!!widget) {
 				debug.log_handle(`(ANY as: ${t_signal}) WIDGET "${thing?.title}"`);
 				switch (t_signal) {
@@ -126,7 +127,7 @@
 		widget.style.width = `${g_widget.width_ofWidget}px`;
 		widget.style.border = es_widget.border;		// avoid rebuilding by injecting style changes
 		widget.style.backgroundColor = ancestry.isGrabbed || layout.inRadialMode ? $w_background_color : 'transparent';
-		debug.log_reposition(`  reposition (grabbed: ${ancestry.isGrabbed}) (border: ${es_widget.border}) "${ancestry.title}"`);
+		internal_rebuilds += 1;
 	}
 
 	function layout() {
@@ -165,21 +166,23 @@
 				width : {g_widget.width_ofWidget}px;
 				background-color : {ancestry.isGrabbed || layout.inRadialMode ? $w_background_color : 'transparent'};
 			'>
-			<Widget_Drag
-				name = {es_drag.name}
-				ancestry = {ancestry}
-				points_right = {points_right}/>
-			<Widget_Title
-				ancestry = {ancestry}
-				name = {es_title.name}
-				fontSize = {k.font_size}px
-				origin = {g_widget.origin_ofTitle}/>
-			{#if ancestry?.showsReveal_forPointingToChild(points_toChild)}
-				<Widget_Reveal
+			{#key internal_rebuilds}
+				<Widget_Drag
+					name = {es_drag.name}
 					ancestry = {ancestry}
-					name = {es_reveal.name}
-					points_toChild = {points_toChild}/>
-			{/if}
+					points_right = {points_right}/>
+				<Widget_Title
+					ancestry = {ancestry}
+					name = {es_title.name}
+					fontSize = {k.font_size}px
+					origin = {g_widget.origin_ofTitle}/>
+				{#if ancestry?.showsReveal_forPointingToChild(points_toChild)}
+					<Widget_Reveal
+						ancestry = {ancestry}
+						name = {es_reveal.name}
+						points_toChild = {points_toChild}/>
+				{/if}
+			{/key}
 		</div>
 		{#if $w_show_related}
 			{#each ancestry.g_widget.g_bidirectionalLines as g_line}
