@@ -9,7 +9,7 @@ export default class Constants {
 	halfIncrement = 0.5;
 	width_details = 200;
 	zoom_in_ratio = 1.1;
-	line_thickness = 1.5;
+	fork_thicknes = 2.5;
 	small_font_size = 11;
 	default_buttonSize = 16;
 	separator_thickness = 3;

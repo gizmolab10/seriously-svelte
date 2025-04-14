@@ -29,9 +29,9 @@
 
 	//////////////////////////////////////////////////
 	//												//
-	//	radial graph => radial rings => this		//
-	//	=> {arc, thumb, label, fork line}			//
+	//	draw arc, thumb, label, fork line			//
 	//												//
+	//	radial graph => radial rings => this		//
 	//	ignores signals: {rebuild, recreate}		//
 	//	uses g_cluster => {geometry, text}			//
 	//	& {g_sliderArc, g_thumbArc} => svg paths	//
@@ -133,7 +133,7 @@
 				fill = transparent
 				bind:this = {fork_path}
 				stroke = {fork_stroke_color}
-				stroke-width = {k.line_thickness}/>
+				stroke-width = {k.fork_thicknes}/>
 			{#if g_cluster.isPaging && g_cluster.widgets_shown > 1}
 				<path
 					id = {thumb_name}
