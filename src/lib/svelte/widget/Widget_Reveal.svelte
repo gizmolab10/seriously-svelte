@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { c, k, u, ux, Size, Thing, Point, debug, layout, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Graph, Predicate, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_ancestries_grabbed, w_ancestries_expanded, w_ancestry_showing_tools } from '../../ts/common/Stores';
 	import { w_hierarchy, w_t_countDots, w_s_alteration } from '../../ts/common/Stores';
+	import { T_Layer, T_Graph, Predicate } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { w_background_color } from '../../ts/common/Stores';
 	import SVG_D3 from '../kit/SVG_D3.svelte';
@@ -20,7 +20,6 @@
 	let svgPathFor_outer_tinyDots: string | null = null;
 	let svgPathFor_bulkAlias: string | null = null;
 	let center = ancestry.g_widget.center_ofReveal;
-	let revealWrapper!: Svelte_Wrapper;
 	let svgPathFor_revealDot = k.empty;
 	let bulkAliasOffset = 0;
 	let reveal_rebuilds = 0;
@@ -49,7 +48,6 @@
 
 	$: {
 		if (!!dotReveal) {
-			revealWrapper = new Svelte_Wrapper(dotReveal, handle_mouse_state, ancestry.hid, T_SvelteComponent.reveal);
 			es_reveal.set_forHovering(ancestry.thing.color, 'pointer');
 		}
 	}

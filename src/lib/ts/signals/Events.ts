@@ -63,7 +63,6 @@ export class Events {
 		event.preventDefault();
 		event.stopPropagation();
 		w_count_mouse_up.update(n => n + 1);
-		// this.respondTo_closure(event, S_Mouse.up);
 	}
 
 	handle_mouse_move(event: MouseEvent) {
@@ -72,7 +71,6 @@ export class Events {
 		const location = new Point(event.clientX, event.clientY);
 		w_mouse_location.set(location);
 		w_mouse_location_scaled.set(location.dividedBy(w.scale_factor));
-		// this.respondTo_closure(event, S_Mouse.move);
 	}
 
 	handle_wheel(event: Event) {

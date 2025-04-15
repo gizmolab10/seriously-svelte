@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { c, k, ux, w, show, Rect, Size, Point, debug, Angle, colors, signals } from '../../ts/common/Global_Imports';
-	import { w_count_mouse_up, w_ancestry_focus, w_g_paging_cluster, w_ring_rotation_radius } from '../../ts/common/Stores';
-	import { T_Layer, G_Cluster, Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { w_color_trigger, w_background_color, w_thing_fontFamily } from '../../ts/common/Stores';
+	import { w_ancestry_focus, w_color_trigger, w_background_color, w_thing_fontFamily } from '../../ts/common/Stores';
+	import { w_count_mouse_up, w_g_paging_cluster, w_ring_rotation_radius } from '../../ts/common/Stores';
+	import { T_Layer, G_Cluster } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/data/runtime/Identifiable';
 	import Angled_Text from '../kit/Angled_Text.svelte';
@@ -16,7 +16,6 @@
 	let origin = w.center_ofGraphSize.offsetBy(Point.square(-radius));
 	let text_background_color = $w_background_color;
 	let mouse_up_count = $w_count_mouse_up;
-	let arc_wrapper!: Svelte_Wrapper;
 	let angled_text_color = color;
 	let fork_stroke_color = color;
 	let thumb_fill_color = color;
@@ -53,12 +52,6 @@
 	$: {
 		const _ = $w_g_paging_cluster + $w_background_color + $w_color_trigger;
 		update_colors();
-	}
-
-	$: {
-		if (!!arc_slider) {
-			arc_wrapper = new Svelte_Wrapper(arc_slider, handle_isHit, -1, T_SvelteComponent.thumb);
-		}
 	}
 
 	$: {

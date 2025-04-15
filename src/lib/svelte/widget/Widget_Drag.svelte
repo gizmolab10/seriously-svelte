@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { c, k, u, ux, show, Rect, Size, Point, Thing, debug, layout, signals } from '../../ts/common/Global_Imports';
-	import { svgPaths, databases, Svelte_Wrapper, T_Alteration, T_SvelteComponent } from '../../ts/common/Global_Imports';
+	import { svgPaths, databases, T_Alteration, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_t_countDots, w_color_trigger, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { T_Layer, T_Tool, T_Graph, T_Element } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
@@ -17,7 +17,6 @@
 	let svgPathFor_ellipses = k.empty;
 	let svgPathFor_related = k.empty;
 	let svgPathFor_dragDot = k.empty;
-	let dragWrapper!: Svelte_Wrapper;
     let thing = ancestry.thing;
 	let isGrabbed = false;
 	let isHovering = true;
@@ -68,7 +67,6 @@
 
 	$: {
 		if (!!dotDrag) {
-			dragWrapper = new Svelte_Wrapper(dotDrag, handle_mouse_state, ancestry.hid, T_SvelteComponent.drag);
 			es_drag.set_forHovering(ancestry.thing?.color, 'pointer');
 		}
 	}
@@ -103,7 +101,7 @@
 				svgPathFor_ellipses = svgPaths.ellipses(6, 0.5, false, count, size / 2);
 			}
 			if (thing.hasRelated && show.related_dots) {
-				const x = (layout.inRadialMode ? 3.2 : 4.5) * (points_right ? -1 : 1);
+				const x = (layout.inRadialMode ? 5.2 : 4.5) * (points_right ? -1 : 1);
 				svgPathFor_related = svgPaths.circle_atOffset(size, 3, Point.x(x));
 			}
 		}

@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { c, k, u, ux, Thing, Point, Angle, debug, layout } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Widget, T_Signal, T_Element } from '../../ts/common/Global_Imports';
-	import { layout, signals, Ancestry, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { G_Widget, S_Element, T_SvelteComponent } from '../../ts/common/Global_Imports';
+	import { signals, Ancestry, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { w_color_trigger, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { w_show_related, w_background_color } from '../../ts/common/Stores';
@@ -22,20 +22,19 @@
 	const es_drag = ux.s_element_for(ancestry, T_Element.drag, k.empty);
 	const es_title = ux.s_element_for(ancestry, T_Element.title, k.empty);
 	const es_reveal = ux.s_element_for(ancestry, T_Element.reveal, k.empty);
+	let origin_ofTitle = g_widget.origin_ofTitle;
 	let widgetWrapper!: Svelte_Wrapper;
 	let border_radius = k.dot_size / 2;
 	let center_ofDrag = Point.zero;
 	let revealCenter = Point.zero;
-	let internal_rebuilds = 0;
+	let border = es_widget.border;
 	let background = k.empty;
 	let widgetName = k.empty;
 	let revealName = k.empty;
 	let widgetData = k.empty;
 	let revealData = k.empty;
-	let widget_rebuilds = 0;
 	let dragData = k.empty;
 	let padding = k.empty;
-	let border = k.empty;
 	let height = 0;
 	let left = 0;
 	let top = 0;
@@ -54,7 +53,6 @@
 				switch (t_signal) {
 					case T_Signal.recreate:
 						layout_maybe();
-						widget_rebuilds += 1;
 						break;
 					case T_Signal.reposition:
 						reposition();
@@ -68,12 +66,6 @@
 	});
 
 	$: {
-		if (!!thing && $w_color_trigger?.split(k.generic_separator).includes(thing.id)) {
-			widget_rebuilds += 1;
-		}
-	}
-
-	$: {
 		if (!!widget) {
 			widgetWrapper = new Svelte_Wrapper(widget, handle_mouse_state, ancestry.hid, T_SvelteComponent.widget);
 		}
@@ -82,6 +74,7 @@
 	$: {
 		const _ = $w_s_title_edit + $w_ancestries_grabbed;
 		if (!!ancestry && !!widget && s_widget.update_forStateChange) {
+			border = es_widget.border;
 			reposition();
 		}
 	}
@@ -127,12 +120,11 @@
 		widget.style.width = `${g_widget.width_ofWidget}px`;
 		widget.style.border = es_widget.border;		// avoid rebuilding by injecting style changes
 		widget.style.backgroundColor = ancestry.isGrabbed || layout.inRadialMode ? $w_background_color : 'transparent';
-		internal_rebuilds += 1;
+		origin_ofTitle = g_widget.origin_ofTitle;
 	}
 
 	function layout() {
-		// g_widget.layout_widget();						// assumes all children's subtrees are laid out (needed for progeny size)
-		g_widget.layout_line();
+		// g_widget.layout_line();
 		const hasExtra_onRight = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
 		const onRight = layout.inRadialMode ? 0 : 21 + (hasExtra_onRight ? 0.5 : 0);
 		const origin_ofWidget = g_widget.origin.offsetBy(g_widget.offset_ofWidget);
@@ -146,48 +138,44 @@
 
 </script>
 
-{#key widget_rebuilds}
-	{#if es_widget}
-		<div class = 'widget'
-			id = '{widgetName}'
-			on:keyup={u.ignore}
-			bind:this = {widget}
-			on:keydown={u.ignore}
-			on:click={handle_click_event}
-			style = '
-				top : {top}px;
-				left : {left}px;
-				height : {height}px;
-				padding : {padding};
-				position :  absolute;
-				z-index : {T_Layer.widgets};
-				border : {es_widget.border};
-				border-radius : {border_radius}px;
-				width : {g_widget.width_ofWidget}px;
-				background-color : {ancestry.isGrabbed || layout.inRadialMode ? $w_background_color : 'transparent'};
-			'>
-			{#key internal_rebuilds}
-				<Widget_Drag
-					name = {es_drag.name}
-					ancestry = {ancestry}
-					points_right = {points_right}/>
-				<Widget_Title
-					ancestry = {ancestry}
-					name = {es_title.name}
-					fontSize = {k.font_size}px
-					origin = {g_widget.origin_ofTitle}/>
-				{#if ancestry?.showsReveal_forPointingToChild(points_toChild)}
-					<Widget_Reveal
-						ancestry = {ancestry}
-						name = {es_reveal.name}
-						points_toChild = {points_toChild}/>
-				{/if}
-			{/key}
-		</div>
-		{#if $w_show_related}
-			{#each ancestry.g_widget.g_bidirectionalLines as g_line}
-				<Tree_Line g_line = {g_line}/>
-			{/each}
+{#if es_widget}
+	<div class = 'widget'
+		id = '{widgetName}'
+		on:keyup={u.ignore}
+		bind:this = {widget}
+		on:keydown={u.ignore}
+		on:click={handle_click_event}
+		style = '
+			top : {top}px;
+			left : {left}px;
+			border : {border};
+			height : {height}px;
+			padding : {padding};
+			position :  absolute;
+			z-index : {T_Layer.widgets};
+			border-radius : {border_radius}px;
+			width : {g_widget.width_ofWidget}px;
+			background-color : {ancestry.isGrabbed || layout.inRadialMode ? $w_background_color : 'transparent'};
+		'>
+		<Widget_Drag
+			name = {es_drag.name}
+			ancestry = {ancestry}
+			points_right = {points_right}/>
+		<Widget_Title
+			ancestry = {ancestry}
+			name = {es_title.name}
+			origin = {origin_ofTitle}
+			fontSize = {k.font_size}px/>
+		{#if ancestry?.showsReveal_forPointingToChild(points_toChild)}
+			<Widget_Reveal
+				ancestry = {ancestry}
+				name = {es_reveal.name}
+				points_toChild = {points_toChild}/>
 		{/if}
+	</div>
+	{#if $w_show_related}
+		{#each ancestry.g_widget.g_bidirectionalLines as g_line}
+			<Tree_Line g_line = {g_line}/>
+		{/each}
 	{/if}
-{/key}
+{/if}

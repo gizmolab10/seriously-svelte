@@ -198,19 +198,8 @@ export enum T_Tool {
 }
 
 export enum T_SvelteComponent {
-	banners	= 'banners',
-	details	= 'details',
-	rotate	= 'rotate',
-	paging	= 'paging',
 	widget	= 'widget',		// *
-	button	= 'button',		// *
-	reveal	= 'reveal',
-	graph	= 'graph',
-	thumb	= 'thumb',
-	tools	= 'tools',
-	title	= 'title',		// *
-	drag	= 'drag',
-	line	= 'line',
+	title	= 'title',
 	app		= 'app',
 }
 

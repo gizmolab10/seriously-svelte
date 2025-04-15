@@ -1,5 +1,4 @@
 <script lang='ts'>
-	import { Svelte_Wrapper, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { k, Point, debug, colors, T_Layer } from '../../ts/common/Global_Imports';
 	import { w_color_trigger } from '../../ts/common/Stores';
 	import Circle from '../kit/Circle.svelte';
@@ -17,24 +16,17 @@
 
 	//////////////////////////////
 	//	draw a curved line		//
-	//		in g_line.rect:		//
+	//		in g_line.rect		//
 	//		up, down or flat 	//
 	//		solid or dashed 	//
 	//////////////////////////////
  
 	function isHit(): boolean { return false }
-	function handle_mouse_state(s_mouse: S_Mouse): boolean { return false; }
 
 	if (g_line.isBidirectional) {
 		stroke_color = colors.opacitize(ancestry.thing.color, 0.2);
 		svg_dasharray = '4,3';
 		stroke_width = 2;
-	}
-
-	$: {
-		if (!!ancestry && !!line) {
-			lineWrapper = new Svelte_Wrapper(line, handle_mouse_state, ancestry.hid, T_SvelteComponent.line);
-		}
 	}
 
 	$: {
