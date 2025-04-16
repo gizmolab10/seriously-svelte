@@ -18,7 +18,7 @@
 		tops = layout.tops_ofDetails;
 	}
 
-	$: showingDetails_ofType = (t_details: T_Details) => $w_t_details.includes(T_Details[t_details])
+	$: showingDetails_ofType = (t_details: T_Details) => $w_t_details.includes(T_Details[t_details]);
 
 </script>
 

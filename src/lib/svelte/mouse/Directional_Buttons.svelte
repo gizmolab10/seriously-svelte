@@ -1,13 +1,11 @@
 <script lang='ts'>
     import { k, Point, colors, Direction } from '../../ts/common/Global_Imports';
-	import { w_background_color } from '../../ts/common/Stores';
+	import { w_background_color, w_visibility_ofNotes } from '../../ts/common/Stores';
     import Triangle_Button from './Triangle_Button.svelte';
-    export let display;
-    export let hit;
+    export let hit_closure;
     const buttonSize = 20;
     const origin = new Point(32, 37);
     const offsetY = buttonSize / 2 - 1;
-	let directionals_rebuilds = 0;
 
 	function hover_closure(isHovering) {
         return [isHovering ? colors.default : $w_background_color, k.empty];
@@ -17,12 +15,36 @@
         const target = s_mouse.element;
         if (!s_mouse.isHover && !!target && (s_mouse.isUp || s_mouse.isLong)) {
             const pointsUp = target.id == 'up';
-            hit(pointsUp, s_mouse.isLong);
-            directionals_rebuilds += 1;
+            hit_closure(pointsUp, s_mouse.isLong);
         }
 	}
 
 </script>
+
+<div class='directionals'>
+    {#if $w_visibility_ofNotes[0]}
+        <Triangle_Button
+            handle_mouse_state={handle_mouse_state}
+            center={origin.offsetByY(-offsetY)}
+            hover_closure={hover_closure}
+            strokeColor={colors.default}
+            angle={Direction.up}
+            size={buttonSize}
+            name='up'
+        />
+    {/if}
+    {#if $w_visibility_ofNotes[1]}
+        <Triangle_Button
+            handle_mouse_state={handle_mouse_state}
+            center={origin.offsetByY(offsetY)}
+            hover_closure={hover_closure}
+            strokeColor={colors.default}
+            angle={Direction.down}
+            size={buttonSize}
+            name='down'
+        />
+    {/if}
+</div>
 
 <style>
     .directionals {
@@ -31,30 +53,3 @@
 		position: absolute;     
     }
 </style>
-
-{#key directionals_rebuilds}
-    <div class='directionals'>
-        {#if display(true)}
-            <Triangle_Button
-                handle_mouse_state={handle_mouse_state}
-                center={origin.offsetByY(-offsetY)}
-                hover_closure={hover_closure}
-                strokeColor={colors.default}
-                angle={Direction.up}
-                size={buttonSize}
-                name='up'
-            />
-        {/if}
-        {#if display(false)}
-            <Triangle_Button
-                handle_mouse_state={handle_mouse_state}
-                center={origin.offsetByY(offsetY)}
-                hover_closure={hover_closure}
-                angle={Direction.down}
-                strokeColor={colors.default}
-                size={buttonSize}
-                name='down'
-            />
-        {/if}
-    </div>
-{/key}

@@ -1,8 +1,7 @@
 <script lang='ts'>
+	import { w_id_popupView, w_background_color, w_visibility_ofNotes } from '../../ts/common/Stores';
 	import Directional_Buttons from '../mouse/Directional_Buttons.svelte';
 	import { k, builds, T_Layer } from '../../ts/common/Global_Imports';
-	import { w_background_color } from '../../ts/common/Stores';
-	import { w_id_popupView } from '../../ts/common/Stores';
 	import Close_Button from '../mouse/Close_Button.svelte';
 	import { onMount } from 'svelte';
 	const notesIndexed = Object.entries(builds.notes).reverse();
@@ -12,7 +11,7 @@
 	let notes = [];
 	
 	updateNotes();
-    function display(pointsUp) { return shouldEnable(pointsUp) ? 'block' : 'none'; }
+	$w_visibility_ofNotes = [false, true];
 
 	function updateNotes() {
 		const end = Math.min(notesLimit, notesIndex + 10);
@@ -28,28 +27,47 @@
 		}
 	}
 
-	function shouldEnable(pointsUp) {
-		if (pointsUp) {
-			return notesIndex >= 0;
-		} else {
-			return (notesLimit - notesIndex) > 0;
-		}
-	}
-
-	function handle_hit_onDirectionals(pointsUp, isLong) {
+	function hit_closure(pointsUp, isLong) {
 		if (isLong) {
 			notesIndex = pointsUp ? 0 : notesLimit - 10;
 		} else {			
-			let nextIndex = notesIndex + (10 * (pointsUp ? -1 : 1));
-			if (nextIndex < 0 || (notesLimit - nextIndex) < 1) {
-				return;
-			}
-			notesIndex = nextIndex;
+			const nextIndex = notesIndex + (10 * (pointsUp ? -1 : 1));
+			notesIndex = nextIndex.force_between(0, notesLimit - 10);
 		}
+		$w_visibility_ofNotes = [notesIndex > 0, notesIndex < notesLimit - 10];
 		updateNotes();
 	}
 
 </script>
+
+<svelte:document on:keydown={handle_key_down} />
+<div class='notes-modal-overlay'>
+	<div class='notes-modal-content'
+		style='background-color:{$w_background_color}'>
+		<div class='top-bar'>
+			<Directional_Buttons hit_closure={hit_closure}/>
+			<div class='title'>{title}</div>
+		</div>
+		<Close_Button name='builds-close' size={k.dot_size * 1.5}/>
+		<br>
+		<table style='width:100%'>
+			<tbody>
+				<tr>
+					<th>Build</th>
+					<th>Date</th>
+					<th>Note</th>
+				</tr>
+				{#each notes as [key, value]}
+					<tr>
+						<td>{key}</td>
+						<td>{value[0]}</td>
+						<td>&nbsp; {value[1]}</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+	</div>
+</div>
 
 <style>
 	.notes-modal-overlay {
@@ -85,36 +103,3 @@
 		border-bottom: 1px solid black;
 	}
 </style>
-
-<svelte:document on:keydown={handle_key_down} />
-<div class='notes-modal-overlay'>
-	<div class='notes-modal-content'
-		style='background-color:{$w_background_color}'>
-		<div class='top-bar'>
-			{#key notes}
-				<Directional_Buttons hit={handle_hit_onDirectionals} display={display}/>
-			{/key}
-			<div class='title'>{title}</div>
-		</div>
-		<Close_Button name='builds-close' size={k.dot_size * 1.5}/>
-		<br>
-		<table style='width:100%'>
-			<tbody>
-				<tr>
-					<th>Build</th>
-					<th>Date</th>
-					<th>Note</th>
-				</tr>
-				{#key notes}
-					{#each notes as [key, value]}
-						<tr>
-							<td>{key}</td>
-							<td>{value[0]}</td>
-							<td>&nbsp; {value[1]}</td>
-						</tr>
-					{/each}
-				{/key}
-			</tbody>
-		</table>
-	</div>
-</div>

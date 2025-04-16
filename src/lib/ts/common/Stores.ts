@@ -29,6 +29,7 @@ export const w_user_graph_offset	  = writable<Point>();
 export const w_mouse_location		  = writable<Point>();
 export const w_graph_rect			  = writable<Rect>();
 
+export const w_visibility_ofNotes	  = writable<Array<string>>();
 export const w_info_title			  = writable<string | null>();
 export const w_id_popupView			  = writable<string | null>();
 export const w_color_trigger		  = writable<string | null>();
