@@ -1,6 +1,4 @@
-import { w_background_color } from './Stores';
 import { transparentize } from 'color2k';
-import { get } from 'svelte/store';
 
 export class Colors {
 	default = 'black';
@@ -12,7 +10,7 @@ export class Colors {
 	separatorFor(background: string): string {
 		let color = '#eeeeeee0';
 		if (!this.colors_areIdentical(background, this.background)) {
-			const separator = this.moreSaturatedBy(background, 40);
+			const separator = this.increase_saturationOf_by(background, 40);
 			if (!!separator) {
 				color = separator;
 			}
@@ -36,7 +34,7 @@ export class Colors {
 		}));
 	}
 
-	moreSaturatedBy(color: string, increase: number): string | null {
+	increase_saturationOf_by(color: string, increase: number): string | null {
 		let hsba = this.color_toHSBA(color);
 		if (!!hsba) {
 			hsba.s = Math.min(255, hsba.s + increase);

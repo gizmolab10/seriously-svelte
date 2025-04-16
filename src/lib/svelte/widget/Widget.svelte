@@ -72,6 +72,11 @@
 	}
 
 	$: {
+		const _ = $w_color_trigger + $w_ancestries_grabbed;
+		border = es_widget.border;
+	}
+
+	$: {
 		const _ = $w_s_title_edit + $w_ancestries_grabbed;
 		if (!!ancestry && !!widget && s_widget.update_forStateChange) {
 			border = es_widget.border;

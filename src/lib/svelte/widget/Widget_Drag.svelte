@@ -21,7 +21,6 @@
 	let isGrabbed = false;
 	let isHovering = true;
 	let mouse_click_timer;
-	let drag_rebuilds = 0;
 	let redraws = 0;
 	let left = 0;
 	let top = 0;
@@ -42,7 +41,6 @@
 			if (!!dotDrag) {
 				center = ancestry.g_widget.center_ofDrag;
 				debug.log_reposition(`dotDrag [. . .] c: (${center.x.asInt()}, ${center.y.asInt()}) ${ancestry.title}`);
-				drag_rebuilds += 1;
 			}
 		});
 		return () => { handle_reposition.disconnect(); handle_altering.disconnect(); };
@@ -135,67 +133,60 @@
 
 </script>
 
-{#key drag_rebuilds}
-	{#if es_drag}
-		<Mouse_Responder
-			center={center}
-			name={es_drag.name}
-			width={capture_size}
-			height={capture_size}
-			detect_longClick={true}
-			handle_mouse_state={handle_up_long_hover}>
-			<button class={name}
-				bind:this={dotDrag}
-				id={name}
-				style='
-					border:none;
-					cursor:pointer;
-					width:{size}px;
-					height:{size}px;
-					color:transparent;
-					position:absolute;
-					z-index:{T_Layer.dots};
-					background-color:transparent;'>
-				{#key redraws}
-					<div id={'div-for-' + name}
-						style='
-							top:0px;
-							left:0px;
-							width:{size}px;
-							height:{size}px;
-							color:transparent;
-							position:absolute;
-							z-index:{T_Layer.dots};'>
-						{#key $w_background_color}
-							<SVG_D3 name={'svg-' + name}
-								width={size}
-								height={size}
-								stroke={thing?.color}
-								svgPath={svgPathFor_dragDot}
-								fill={debug.lines ? 'transparent' : es_drag.fill}
-							/>
-						{/key}
-						{#if svgPathFor_ellipses}
-							<SVG_D3 name={'svg-inside-' + name}
-								width={size}
-								height={size}
-								fill={es_drag.stroke}
-								stroke={es_drag.stroke}
-								svgPath={svgPathFor_ellipses}
-							/>
-						{/if}
-						{#if svgPathFor_related}
-							<SVG_D3 name={'svg-related-' + name}
-								width={size}
-								height={size}
-								stroke={thing?.color}
-								fill={$w_background_color}
-								svgPath={svgPathFor_related}
-							/>
-						{/if}
-					</div>
-				{/key}
-			</button>
-		</Mouse_Responder>
-	{/if}
-{/key}
+{#if es_drag}
+	<Mouse_Responder
+		center={center}
+		name={es_drag.name}
+		width={capture_size}
+		height={capture_size}
+		detect_longClick={true}
+		handle_mouse_state={handle_up_long_hover}>
+		<button class={name}
+			bind:this={dotDrag}
+			id={name}
+			style='
+				border:none;
+				cursor:pointer;
+				width:{size}px;
+				height:{size}px;
+				color:transparent;
+				position:absolute;
+				z-index:{T_Layer.dots};
+				background-color:transparent;'>
+			{#key redraws}
+				<div id={'div-for-' + name}
+					style='
+						top:0px;
+						left:0px;
+						width:{size}px;
+						height:{size}px;
+						color:transparent;
+						position:absolute;
+						z-index:{T_Layer.dots};'>
+					<SVG_D3 name={'svg-' + name}
+						width={size}
+						height={size}
+						stroke={thing?.color}
+						svgPath={svgPathFor_dragDot}
+						fill={debug.lines ? 'transparent' : es_drag.fill}/>
+					{#if svgPathFor_ellipses}
+						<SVG_D3 name={'svg-inside-' + name}
+							width={size}
+							height={size}
+							fill={es_drag.stroke}
+							stroke={es_drag.stroke}
+							svgPath={svgPathFor_ellipses}/>
+					{/if}
+					{#if svgPathFor_related}
+						<SVG_D3 name={'svg-related-' + name}
+							width={size}
+							height={size}
+							stroke={thing?.color}
+							fill={$w_background_color}
+							svgPath={svgPathFor_related}/>
+					{/if}
+				</div>
+			{/key}
+		</button>
+	</Mouse_Responder>
+{/if}

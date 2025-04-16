@@ -30,24 +30,16 @@
 	let text_box_size = new Size(info_width - 4, 68);
 	let thingHID: Integer | null = thing?.hid;
 	let information: Array<Dictionary> = [];
-	let grabs = $w_ancestries_grabbed;
 	let color = colors.default_forThings;
+	let grabs = $w_ancestries_grabbed;
 	let thing_title = thing?.title;
 	let color_origin = Point.zero;
 	let picker_offset = k.empty;
-	let info_rebuilds = 0;
 	let info;
 
 	layout.layout_tops_forInfo(1);
 	setup_forColor();	// must call layout_tops_forInfo first
 	es_info.set_forHovering(colors.default, 'pointer');
-	
-	onMount(() => {
-		const handler = signals.handle_rebuild_andRecreate(1, (ancestry) => {
-			info_rebuilds += 1;
-		});
-		return () => { handler.disconnect() };
-	});
 	
 	$: {
 		const _ = `${$w_ancestries_grabbed} ${$w_ancestry_focus} ${$w_info_title}`;
@@ -61,15 +53,14 @@
 	}
 
 	$: {
-		const _ = $w_background_color;
-		info_rebuilds += 1;
+		const _ = ancestry?.relationship?.order;
+		update_forAncestry();
 	}
 	
 	$: {
 		const id = $w_color_trigger;
 		if (!!thing && thing.id == id) {
 			color = thing.color;
-			info_rebuilds += 1;
 		}
 	}
 
@@ -122,7 +113,6 @@
 			};
 			information = Object.entries(dict);
 			debug.log_info(information)
-			info_rebuilds += 1;
 		}
 	}
 
@@ -154,83 +144,81 @@
 
 </script>
 
-{#key info_rebuilds}
-	{#if !!thing}
-		<div class='info'
-			style='
-				color:black;
-				top:{top}px;
-				left:{margin}px;
-				font-size:0.8em;
-				position:absolute;
-				width:{traits_width}px;'>
-			{#if information.length != 0}
-				<Segmented
-					name='info-type'
-					font_size={font_size}
-					selected={[show.t_info]}
-					height={k.row_height * font_ratio}
-					selection_closure={selection_closure}
-					titles={[T_Report.focus, T_Report.selection]}
-					origin={new Point(45, layout.top_ofInfoAt(T_Info.segments))}/>
-				<Separator
-					left=5
-					title='title'
-					width={info_width}
-					thickness={k.separator_thickness}
-					title_font_size={separator_font_size}
-					top={layout.top_ofInfoAt(T_Info.before_title)}/>
-				{#key thing_title}
-					<div style='
-						white-space:pre;
-						position:absolute;
-						text-align:center;
-						width:{traits_width}px;
-						top:{layout.top_ofInfoAt(T_Info.title)}px;'>
-						{thing_title.clipWithEllipsisAt(30)}
-					</div>
-				{/key}
-				<Separator
-					left=5
-					width={info_width}
-					thickness={k.separator_thickness}
-					top={layout.top_ofInfoAt(T_Info.after_title)}/>
-				<Table
-					array={information}
-					width = {k.width_details - 20}
-					top = {layout.top_ofInfoAt(T_Info.table)}/>
-			{/if}
-			<Color
-				origin={color_origin}
-				color_closure={handle_colors}
-				picker_offset={picker_offset}/>
-			{#if show.traits}
-				<div class='horizontal-line'
-					style='
-						left:{-margin}px;
-						position:absolute;
-						width:{k.width_details}px;
-						z-index:{T_Layer.frontmost};
-						height:{k.separator_thickness}px;
-						background-color:{colors.separator};'>
+{#if !!thing}
+	<div class='info'
+		style='
+			color:black;
+			top:{top}px;
+			left:{margin}px;
+			font-size:0.8em;
+			position:absolute;
+			width:{traits_width}px;'>
+		{#if information.length != 0}
+			<Segmented
+				name='info-type'
+				font_size={font_size}
+				selected={[show.t_info]}
+				height={k.row_height * font_ratio}
+				selection_closure={selection_closure}
+				titles={[T_Report.focus, T_Report.selection]}
+				origin={new Point(45, layout.top_ofInfoAt(T_Info.segments))}/>
+			<Separator
+				left=5
+				title='title'
+				width={info_width}
+				thickness={k.separator_thickness}
+				title_font_size={separator_font_size}
+				top={layout.top_ofInfoAt(T_Info.before_title)}/>
+			{#key thing_title}
+				<div style='
+					white-space:pre;
+					position:absolute;
+					text-align:center;
+					width:{traits_width}px;
+					top:{layout.top_ofInfoAt(T_Info.title)}px;'>
+					{thing_title.clipWithEllipsisAt(30)}
 				</div>
-				<Text_Editor
-					label='consequence'
-					color=colors.default
-					width={text_box_size.width}
-					height={text_box_size.height}
-					original_text={thing.consequence}
-					handle_textChange={handle_textChange}
-					top={layout.top_ofInfoAt(T_Info.consequence)}/>
-				<Text_Editor
-					label='quest'
-					color=colors.default
-					original_text={thing.quest}
-					width={text_box_size.width}
-					height={text_box_size.height}
-					handle_textChange={handle_textChange}
-					top={layout.top_ofInfoAt(T_Info.quest)}/>
-			{/if}
-		</div>
-	{/if}
-{/key}
+			{/key}
+			<Separator
+				left=5
+				width={info_width}
+				thickness={k.separator_thickness}
+				top={layout.top_ofInfoAt(T_Info.after_title)}/>
+			<Table
+				array={information}
+				width = {k.width_details - 20}
+				top = {layout.top_ofInfoAt(T_Info.table)}/>
+		{/if}
+		<Color
+			origin={color_origin}
+			color_closure={handle_colors}
+			picker_offset={picker_offset}/>
+		{#if show.traits}
+			<div class='horizontal-line'
+				style='
+					left:{-margin}px;
+					position:absolute;
+					width:{k.width_details}px;
+					z-index:{T_Layer.frontmost};
+					height:{k.separator_thickness}px;
+					background-color:{colors.separator};'>
+			</div>
+			<Text_Editor
+				label='consequence'
+				color=colors.default
+				width={text_box_size.width}
+				height={text_box_size.height}
+				original_text={thing.consequence}
+				handle_textChange={handle_textChange}
+				top={layout.top_ofInfoAt(T_Info.consequence)}/>
+			<Text_Editor
+				label='quest'
+				color=colors.default
+				original_text={thing.quest}
+				width={text_box_size.width}
+				height={text_box_size.height}
+				handle_textChange={handle_textChange}
+				top={layout.top_ofInfoAt(T_Info.quest)}/>
+		{/if}
+	</div>
+{/if}

@@ -1,7 +1,6 @@
 <script lang='ts'>
 	import { c, k, u, show, Point, debug, layout, T_Layer, T_Banner, T_Details } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_t_details } from '../../ts/common/Stores';
-	import { w_background_color } from '../../ts/common/Stores';
 	import D_Display from '../details/D_Display.svelte';
 	import D_Storage from '../details/D_Storage.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
