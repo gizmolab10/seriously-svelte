@@ -151,16 +151,14 @@
 				thickness={k.separator_thickness}
 				title_font_size={separator_font_size}
 				top={layout.top_ofInfoAt(T_Info.before_title)}/>
-			{#key thing_title}
-				<div style='
-					white-space:pre;
-					position:absolute;
-					text-align:center;
-					width:{traits_width}px;
-					top:{layout.top_ofInfoAt(T_Info.title)}px;'>
-					{thing_title.clipWithEllipsisAt(30)}
-				</div>
-			{/key}
+			<div style='
+				white-space:pre;
+				position:absolute;
+				text-align:center;
+				width:{traits_width}px;
+				top:{layout.top_ofInfoAt(T_Info.title)}px;'>
+				{thing_title.clipWithEllipsisAt(30)}
+			</div>
 			<Separator
 				left=5
 				width={info_width}

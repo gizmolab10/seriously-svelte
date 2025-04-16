@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, ux, Point, S_Element, databases, Hierarchy, T_Storage } from '../../ts/common/Global_Imports';
-	import { w_storage_update_trigger, w_thing_fontFamily } from '../../ts/common/Stores';
+	import { w_storage_updated, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { T_Layer, T_Element, T_Preference } from '../../ts/common/Global_Imports';
 	import { w_t_database, w_hierarchy } from '../../ts/common/Stores';
 	import { T_Database } from '../../ts/data/dbs/DBCommon';
@@ -12,12 +12,11 @@
 	const button_style = `font-family: ${$w_thing_fontFamily}; font-size:0.85em; left: 5px; top: -2px; position: absolute;`;
 	let s_element_byStorageType: { [id: string]: S_Element } = {};
 	let information: Array<Dictionary> = [];
-	let storage_rebuilds = 0;
 
 	setup_s_elements();
 	
 	$: {
-		const trigger = $w_storage_update_trigger;
+		const trigger = $w_storage_updated;
 		const h = $w_hierarchy;
 		if (!!h) {
 			const dict = h.db.dict_forStorageDetails;
@@ -25,7 +24,6 @@
 			dict['things'] = h.things.length;
 			dict['relationships'] = h.relationships.length.expressZero_asHyphen();
 			information = Object.entries(dict);
-			storage_rebuilds += 1;
 		}
 	}
 
@@ -57,7 +55,6 @@
 
 </script>
 
-{#key $w_t_database, storage_rebuilds}
 	<div class='storage-information'
 		style='
 			height:40px;
@@ -92,4 +89,3 @@
 			<span style={button_style}>export</span>
 		</Button>
 	</div>
-{/key}

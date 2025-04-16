@@ -16,6 +16,11 @@
 	let g_segments: Array<G_Segment> = [];
 	let width = height / 2;
 
+	$: {
+		const _ = selected;
+		update_g_segments_andWidth();
+	}
+
 	update_g_segments_andWidth();
 	function isSelected(title: string) { return selected.includes(title); }
 	function nextAfter(title: string): string { return titles[titles.indexOf(title).increment(true, titles.length)]; }		// next one after title

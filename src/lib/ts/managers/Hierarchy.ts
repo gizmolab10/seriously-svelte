@@ -1,7 +1,7 @@
 import { c, k, p, u, ux, show, User, Thing, Trait, debug, files, colors, signals, layout, Access } from '../common/Global_Imports';
 import { T_Tool, T_Report, T_Thing, T_Trait, T_Create, T_Control, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { Ancestry, Predicate, Relationship, S_Mouse, S_Alteration, S_Title_Edit } from '../common/Global_Imports';
-import { w_storage_update_trigger, w_ancestry_showing_tools, w_ancestries_grabbed } from '../common/Stores';
+import { w_storage_updated, w_ancestry_showing_tools, w_ancestries_grabbed } from '../common/Stores';
 import { w_id_popupView, w_ancestry_focus, w_s_title_edit, w_s_alteration } from '../common/Stores';
 import type { Integer, Dictionary } from '../common/Types';
 import { T_Persistable } from '../../ts/data/dbs/DBCommon';
@@ -1416,8 +1416,8 @@ export class Hierarchy {
 
 	signal_storage_redraw(after: number = 100) {
 		setTimeout(() => {			// depth is not immediately updated
-			const trigger = this.data_count * 100 + this.depth;
-			w_storage_update_trigger.set(trigger);
+			const update = this.data_count * 100 + this.depth;
+			w_storage_updated.set(update);
 		}, after);
 	}
 

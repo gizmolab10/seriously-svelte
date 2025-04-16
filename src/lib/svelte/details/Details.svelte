@@ -8,23 +8,20 @@
 	import D_Tools from '../details/D_Tools.svelte';
 	import D_Info from '../details/D_Info.svelte';
 	const titles = [T_Details[T_Details.storage], T_Details[T_Details.tools], T_Details[T_Details.display], T_Details[T_Details.info]];
-	let details_rebuilds = 0;
-
+	
 	layout.layout_tops_forDetails();
+	let tops = layout.top_ofDetails;
 
 	function selection_closure(t_details: Array<string>) {
 		$w_t_details = t_details as Array<T_Details>;
 		layout.layout_tops_forDetails();
-		details_rebuilds += 1;
+		tops = layout.top_ofDetails;
 	}
 
-	function showingDetails_ofType(t_details: T_Details): boolean {
-		return $w_t_details.includes(T_Details[t_details])
-	}
+	$: showingDetails_ofType = (t_details: T_Details) => $w_t_details.includes(T_Details[t_details])
 
 </script>
 
-{#key details_rebuilds}
 	<div class='details'
 		style='
 			left:0px;
@@ -41,23 +38,22 @@
 			origin={new Point(6, 6)}
 			selection_closure={selection_closure}/>
 		{#if showingDetails_ofType(T_Details.storage)}
-			<Separator title='storage' top={layout.top_ofDetailAt(T_Details.storage) - 8}/>
-			<D_Storage top={layout.top_ofDetailAt(T_Details.storage)}/>
+			<Separator title='storage' top={tops[T_Details.storage] - 8}/>
+			<D_Storage top={tops[T_Details.storage]}/>
 		{/if}
 		<div class='further-details'
 			style='width:{k.width_details}px;'>
 			{#if showingDetails_ofType(T_Details.tools)}
-				<Separator title='tools' top={layout.top_ofDetailAt(T_Details.tools) - 8}/>
-				<D_Tools top={layout.top_ofDetailAt(T_Details.tools)}/>
+				<Separator title='tools' top={tops[T_Details.tools] - 8}/>
+				<D_Tools top={tops[T_Details.tools]}/>
 			{/if}
 			{#if showingDetails_ofType(T_Details.display)}
-				<Separator title='display' top={layout.top_ofDetailAt(T_Details.display) - 8}/>
-				<D_Display top={layout.top_ofDetailAt(T_Details.display)}/>
+				<Separator title='display' top={tops[T_Details.display] - 8}/>
+				<D_Display top={tops[T_Details.display]}/>
 			{/if}
 			{#if showingDetails_ofType(T_Details.info)}
-				<Separator title='info' top={layout.top_ofDetailAt(T_Details.info) - 7}/>
-				<D_Info top={layout.top_ofDetailAt(T_Details.info)}/>
+				<Separator title='info' top={tops[T_Details.info] - 7}/>
+				<D_Info top={tops[T_Details.info]}/>
 			{/if}
 		</div>
 	</div>
-{/key}

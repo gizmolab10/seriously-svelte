@@ -31,6 +31,7 @@ export default class Layout {
 	get branches_areChildren(): boolean { return get(w_t_tree) == T_Hierarchy.children; }
 	top_ofBannerAt(index: number) { return this.verticals_ofBanners.tops[index] + k.separator_thickness; }
 	top_ofDetailAt(index: number) { return this.verticals_ofDetails.tops[index] + k.separator_thickness; }
+	get top_ofDetails(): Array<number> { return this.verticals_ofDetails.tops.map(top => top + k.separator_thickness); }
 	get g_radialGraph() { let g = this._g_radialGraph; if (!g) { g = new G_RadialGraph(); this._g_radialGraph = g }; return g; }
 	get focus_key(): string { return this.branches_areChildren ? T_Preference.focus_forChildren : T_Preference.focus_forParents; }
 	get expanded_key(): string { return this.branches_areChildren ? T_Preference.expanded_children : T_Preference.expanded_parents; }
