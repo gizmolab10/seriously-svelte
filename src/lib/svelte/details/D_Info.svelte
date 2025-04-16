@@ -1,7 +1,7 @@
 <script lang='ts'>
+	import { w_ancestry_focus, w_ancestries_grabbed, w_thing_fontFamily, w_order_trigger } from '../../ts/common/Stores';
 	import { T_Info, T_Trait, T_Layer, T_Element, T_Report, T_Preference } from '../../ts/common/Global_Imports';
-	import { w_hierarchy, w_color_trigger, w_info_title, w_background_color, } from '../../ts/common/Stores';
-	import { w_ancestry_focus, w_ancestries_grabbed, w_thing_fontFamily } from '../../ts/common/Stores';
+	import { w_hierarchy, w_color_trigger, w_info_title, w_background_color } from '../../ts/common/Stores';
 	import { c, k, p, ux, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
 	import { debug, colors, signals, layout, Ancestry } from '../../ts/common/Global_Imports';
 	import type { Integer, Dictionary } from '../../ts/common/Types';
@@ -38,30 +38,17 @@
 	let info;
 
 	layout.layout_tops_forInfo(1);
-	setup_forColor();	// must call layout_tops_forInfo first
+	layout_forColor();	// must call layout_tops_forInfo first
 	es_info.set_forHovering(colors.default, 'pointer');
 	
 	$: {
 		const _ = `${$w_ancestries_grabbed} ${$w_ancestry_focus} ${$w_info_title}`;
 		update_forKind();
 	}
-	
-	$: {
-		if (thing != ancestry?.thing) {
-			update_forAncestry();
-		}
-	}
 
 	$: {
-		const _ = ancestry?.relationship?.order;
+		const _ = $w_order_trigger;
 		update_forAncestry();
-	}
-	
-	$: {
-		const id = $w_color_trigger;
-		if (!!thing && thing.id == id) {
-			color = thing.color;
-		}
 	}
 
 	function hasGrabs(): boolean {
@@ -76,7 +63,7 @@
 		update_forKind();
 	}
 	
-	function setup_forColor() {
+	function layout_forColor() {
 		const color_left = 61
 		color_origin = new Point(color_left, layout.top_ofInfoAt(T_Info.color));
 		picker_offset = `${-color_left - 10}px`;
@@ -99,6 +86,7 @@
 		if (!!thing) {
 			thing_title = thing.title;
 			thingHID = thing.hid;
+			color = thing.color;
 			const dict = {
 				'depth'	   : ancestry.depth.expressZero_asHyphen(),
 				'parent'   : ancestry.predicate.kind,
@@ -109,10 +97,9 @@
 				'related'  : thing.relatedRelationships.length.expressZero_asHyphen(),
 				'id'	   : thing.id.clipWithEllipsisAt(13),
 				'ancestry' : ancestry.id.clipWithEllipsisAt(13),
-				'color'	   : k.empty,
+				'color'	   : ancestry.isEditable ? k.empty : 'not editable',
 			};
 			information = Object.entries(dict);
-			debug.log_info(information)
 		}
 	}
 
@@ -129,17 +116,12 @@
 		}
 	}
 
-	function handle_colors(result: string | null): string | null {
-		if (!result) {
-			return thing.color;
-		} else {
-			thing.color = result;
-			thing.signal_color_change();
-			(async () => {
-				await thing.persist();
-			})();
-			return null;
-		}
+	function handle_colors(result: string) {
+		thing.color = color = result;
+		thing.signal_color_change();
+		(async () => {
+			await thing.persist();
+		})();
 	}
 
 </script>
@@ -189,10 +171,13 @@
 				width = {k.width_details - 20}
 				top = {layout.top_ofInfoAt(T_Info.table)}/>
 		{/if}
-		<Color
-			origin={color_origin}
-			color_closure={handle_colors}
-			picker_offset={picker_offset}/>
+		{#if !!ancestry && ancestry.isEditable}
+			<Color
+				color={color}
+				origin={color_origin}
+				color_closure={handle_colors}
+				picker_offset={picker_offset}/>
+		{/if}
 		{#if show.traits}
 			<div class='horizontal-line'
 				style='

@@ -19,7 +19,7 @@ export const w_t_details			  = writable<Array<T_Details>>();
 export const w_t_graph				  = writable<T_Graph>();
 export const w_t_tree				  = writable<T_Hierarchy>();
 export const w_t_startup			  = writable<T_Startup>();
-export const w_t_database			  = writable<string>();4
+export const w_t_database			  = writable<string>();
 
 export const w_g_paging_cluster		  = writable<G_Cluster | null>();
 
@@ -32,6 +32,7 @@ export const w_graph_rect			  = writable<Rect>();
 export const w_info_title			  = writable<string | null>();
 export const w_id_popupView			  = writable<string | null>();
 export const w_color_trigger		  = writable<string | null>();
+export const w_order_trigger		  = writable<number>();
 export const w_thing_fontFamily		  = writable<string>();
 export const w_background_color		  = writable<string>();
 export const w_storage_update_trigger = writable<number>();
