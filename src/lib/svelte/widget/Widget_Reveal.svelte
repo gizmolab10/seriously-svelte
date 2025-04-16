@@ -22,7 +22,6 @@
 	let center = ancestry.g_widget.center_ofReveal;
 	let svgPathFor_revealDot = k.empty;
 	let bulkAliasOffset = 0;
-	let reveal_rebuilds = 0;
 	let dotReveal = null;
 	
 	function handle_context_menu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
@@ -35,7 +34,6 @@
 				center = ancestry.g_widget.center_ofReveal;
 				const origin = center.offsetEquallyBy(-k.dot_size);
 				debug.log_reposition(`dotReveal [. . .] o: (${origin.x.asInt()}, ${origin.y.asInt()}) ${ancestry.title}`);
-				reveal_rebuilds += 1;
 			}
 		});
 		return () => { handle_reposition.disconnect(); };
@@ -56,7 +54,6 @@
 		const corrected = hover_isReversed ? !hovering : hovering;
 		if (!!es_reveal && es_reveal.isOut == corrected) {
 			es_reveal.isOut = !corrected;
-			reveal_rebuilds += 1;
 		}
 	}
 
@@ -66,7 +63,6 @@
 		svgPathFor_revealDot = ancestry.svgPathFor_revealDot;
 		svgPathFor_outer_tinyDots = ancestry.svgPathFor_tinyDots_outsideReveal(points_toChild);
 		svgPathFor_bulkAlias = thing.isBulkAlias ? svgPaths.circle_atOffset(k.dot_size, 3) : null;
-		reveal_rebuilds += 1;
 	}
 
 	function up_hover_closure(s_mouse) {
@@ -88,71 +84,65 @@
 
 </script>
 
-{#key reveal_rebuilds}
-	{#if es_reveal}
-		<Mouse_Responder
-			center={center}
-			zindex={zindex}
-			width={k.dot_size}
-			height={k.dot_size}
-			name={es_reveal.name}
-			bind:this={dotReveal}
-			handle_mouse_state={up_hover_closure}>
-			<div class='reveal-dot'
-				on:contextmenu={handle_context_menu}
-				style='
-					width: {k.dot_size}px;
-					height: {k.dot_size}px;
-				'>
-				{#key svgPathFor_revealDot + $w_background_color}
-					<SVG_D3 name='reveal-dot-svg'
-						fill={debug.lines ? 'transparent' : es_reveal.fill}
-						svgPath={svgPathFor_revealDot}
-						stroke={ancestry.thing.color}
+{#if es_reveal}
+	<Mouse_Responder
+		center={center}
+		zindex={zindex}
+		width={k.dot_size}
+		height={k.dot_size}
+		name={es_reveal.name}
+		bind:this={dotReveal}
+		handle_mouse_state={up_hover_closure}>
+		<div class='reveal-dot'
+			on:contextmenu={handle_context_menu}
+			style='
+				width: {k.dot_size}px;
+				height: {k.dot_size}px;'>
+			<SVG_D3 name='reveal-dot-svg'
+				fill={debug.lines ? 'transparent' : es_reveal.fill}
+				svgPath={svgPathFor_revealDot}
+				stroke={ancestry.thing.color}
+				height={k.dot_size}
+				width={k.dot_size}/>
+			{#if !!svgPathFor_bulkAlias}
+				<div class='bulk-alias-dot' style='
+					left:{bulkAliasOffset}px;
+					top:{bulkAliasOffset}px;
+					position:absolute;
+					height:{k.dot_size}px;
+					width:{k.dot_size}px;'>
+					<SVG_D3 name='bulk-alias-dot-svg'
+						svgPath={svgPathFor_bulkAlias}
+						stroke={es_reveal.stroke}
+						fill={es_reveal.stroke}
 						height={k.dot_size}
 						width={k.dot_size}
 					/>
-				{/key}
-				{#if !!svgPathFor_bulkAlias}
-					<div class='bulk-alias-dot' style='
-						left:{bulkAliasOffset}px;
-						top:{bulkAliasOffset}px;
-						position:absolute;
-						height:{k.dot_size}px;
-						width:{k.dot_size}px;'>
-						<SVG_D3 name='bulk-alias-dot-svg'
-							svgPath={svgPathFor_bulkAlias}
-							stroke={es_reveal.stroke}
-							fill={es_reveal.stroke}
-							height={k.dot_size}
-							width={k.dot_size}
+				</div>
+			{/if}
+			{#if !!svgPathFor_outer_tinyDots}
+				<div class='tiny-dots' style='
+					height:{size_ofTinyDots.height}px;
+					width:{size_ofTinyDots.width}px;
+					left:{tinyDotsOffset.x}px;
+					top:{tinyDotsOffset.y}px;
+					position:absolute;
+					z-index:0'>
+					<svg class='tiny-dots-svg'
+						height={size_ofTinyDots.height}px
+						width={size_ofTinyDots.width}px
+						viewBox='{viewBox}'
+						style='
+							position: absolute;
+							shape-rendering: geometricPrecision;'>
+						<path
+							d={svgPathFor_outer_tinyDots}
+							fill={ancestry.thing.color}
+							stroke={ancestry.thing.color}
 						/>
-					</div>
-				{/if}
-				{#if !!svgPathFor_outer_tinyDots}
-					<div class='tiny-dots' style='
-						height:{size_ofTinyDots.height}px;
-						width:{size_ofTinyDots.width}px;
-						left:{tinyDotsOffset.x}px;
-						top:{tinyDotsOffset.y}px;
-						position:absolute;
-						z-index:0'>
-						<svg class='tiny-dots-svg'
-							height={size_ofTinyDots.height}px
-							width={size_ofTinyDots.width}px
-							viewBox='{viewBox}'
-							style='
-								position: absolute;
-								shape-rendering: geometricPrecision;'>
-							<path
-								d={svgPathFor_outer_tinyDots}
-								fill={ancestry.thing.color}
-								stroke={ancestry.thing.color}
-							/>
-						</svg>
-					</div>
-				{/if}
-			</div>
-		</Mouse_Responder>
-	{/if}
-{/key}
+					</svg>
+				</div>
+			{/if}
+		</div>
+	</Mouse_Responder>
+{/if}

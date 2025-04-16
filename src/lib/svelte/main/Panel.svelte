@@ -16,7 +16,8 @@
 	import Box from '../debug/Box.svelte';
 	import Import from './Import.svelte';
 	import { onMount } from 'svelte';
-	let separator_rebuilds = 0;
+	let separator_color = colors.separator;
+	let tops = layout.tops_ofBanners;
 	let panel_rebuilds = 0;
 	let chain = ['Panel'];
 
@@ -29,7 +30,7 @@
 
 	$: {
 		const _ = $w_background_color;
-		separator_rebuilds += 1;
+		separator_color = colors.separator;
 	}
 	
 	async function handle_key_down(event) {
@@ -89,43 +90,37 @@
 						position: absolute;
 						z-index: {T_Layer.frontmost};
 						width:{w.windowSize.width}px;
-						top:{layout.top_ofBannerAt(T_Banner.crumbs) - 2}px;
+						top:{tops[T_Banner.crumbs] - 2}px;
 						height:{layout.height_ofBannerAt(T_Banner.crumbs)}px;'>
 					<Breadcrumbs/>
-					{#key separator_rebuilds}
-						<div class='separator-above-crumbs' style='
-							top: {layout.top_ofBannerAt(T_Banner.crumbs) - 3}px;
-							background-color:{colors.separator};
-							height: {k.separator_thickness}px;
-							z-index: {T_Layer.lines};'>
-						</div>
-					{/key}
-				</div>
-				{#key separator_rebuilds}
-					<div class='separator-above-graph' style='
-						top: {layout.top_ofBannerAt(T_Banner.graph)}px;
-						background-color: {colors.separator};
+					<div class='separator-above-crumbs' style='
+						top: {tops[T_Banner.crumbs] - 3}px;
+						background-color:{separator_color};
 						height: {k.separator_thickness}px;
-						width: {w.windowSize.width}px;
-						z-index: {T_Layer.lines};
-						position: absolute;
-						left: 0px;'>
+						z-index: {T_Layer.lines};'>
 					</div>
-				{/key}
+				</div>
+				<div class='separator-above-graph' style='
+					top: {tops[T_Banner.graph]}px;
+					background-color: {separator_color};
+					height: {k.separator_thickness}px;
+					width: {w.windowSize.width}px;
+					z-index: {T_Layer.lines};
+					position: absolute;
+					left: 0px;'>
+				</div>
 				{#if $w_show_details}
 					<Details/>
-					{#key separator_rebuilds}
-						<div class='vertical-line'
-							style='
-								position: absolute;
-								z-index: {T_Layer.lines};
-								left: {k.width_details}px;
-								top: {$w_graph_rect.origin.y}px;
-								width: {k.separator_thickness}px;
-								background-color: {colors.separator};
-								height: {$w_graph_rect.size.height}px;'>
-						</div>
-					{/key}
+					<div class='vertical-line'
+						style='
+							position: absolute;
+							z-index: {T_Layer.lines};
+							left: {k.width_details}px;
+							top: {$w_graph_rect.origin.y}px;
+							width: {k.separator_thickness}px;
+							background-color: {separator_color};
+							height: {$w_graph_rect.size.height}px;'>
+					</div>
 				{/if}
 			{/if}
 			<div class='right-side'

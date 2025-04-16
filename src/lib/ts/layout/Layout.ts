@@ -30,8 +30,8 @@ export default class Layout {
 	height_ofBannerAt(index: number) { return this.verticals_ofBanners.heights[index]; }
 	get branches_areChildren(): boolean { return get(w_t_tree) == T_Hierarchy.children; }
 	top_ofBannerAt(index: number) { return this.verticals_ofBanners.tops[index] + k.separator_thickness; }
-	top_ofDetailAt(index: number) { return this.verticals_ofDetails.tops[index] + k.separator_thickness; }
-	get top_ofDetails(): Array<number> { return this.verticals_ofDetails.tops.map(top => top + k.separator_thickness); }
+	get tops_ofBanners(): Array<number> { return this.verticals_ofBanners.tops.map(top => top + k.separator_thickness); }
+	get tops_ofDetails(): Array<number> { return this.verticals_ofDetails.tops.map(top => top + k.separator_thickness); }
 	get g_radialGraph() { let g = this._g_radialGraph; if (!g) { g = new G_RadialGraph(); this._g_radialGraph = g }; return g; }
 	get focus_key(): string { return this.branches_areChildren ? T_Preference.focus_forChildren : T_Preference.focus_forParents; }
 	get expanded_key(): string { return this.branches_areChildren ? T_Preference.expanded_children : T_Preference.expanded_parents; }
@@ -114,7 +114,7 @@ export default class Layout {
 	
 	layout_tops_forDetails() {
 		let top = this.top_ofBannerAt(T_Banner.crumbs) + 11;
-		this.verticals_ofDetails.heights = [116, 40, 80, 0];
+		this.verticals_ofDetails.heights = [120, 40, 76, 0];
 		let index = 0;
 		let indices = get(w_t_details);
 		while (index <= T_Details.info) {

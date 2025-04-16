@@ -21,7 +21,6 @@
 	let isGrabbed = false;
 	let isHovering = true;
 	let mouse_click_timer;
-	let redraws = 0;
 	let left = 0;
 	let top = 0;
 	let dotDrag;
@@ -114,7 +113,6 @@
 				es_drag.set_forHovering(thing.color, cursor);
 				es_drag.isOut = isOut;
 			}
-			redraws += 1;
 		}
 	}
 
@@ -153,40 +151,38 @@
 				position:absolute;
 				z-index:{T_Layer.dots};
 				background-color:transparent;'>
-			{#key redraws}
-				<div id={'div-for-' + name}
-					style='
-						top:0px;
-						left:0px;
-						width:{size}px;
-						height:{size}px;
-						color:transparent;
-						position:absolute;
-						z-index:{T_Layer.dots};'>
-					<SVG_D3 name={'svg-' + name}
+			<div id={'div-for-' + name}
+				style='
+					top:0px;
+					left:0px;
+					width:{size}px;
+					height:{size}px;
+					color:transparent;
+					position:absolute;
+					z-index:{T_Layer.dots};'>
+				<SVG_D3 name={'svg-' + name}
+					width={size}
+					height={size}
+					stroke={thing?.color}
+					svgPath={svgPathFor_dragDot}
+					fill={debug.lines ? 'transparent' : es_drag.fill}/>
+				{#if svgPathFor_ellipses}
+					<SVG_D3 name={'svg-inside-' + name}
+						width={size}
+						height={size}
+						fill={es_drag.stroke}
+						stroke={es_drag.stroke}
+						svgPath={svgPathFor_ellipses}/>
+				{/if}
+				{#if svgPathFor_related}
+					<SVG_D3 name={'svg-related-' + name}
 						width={size}
 						height={size}
 						stroke={thing?.color}
-						svgPath={svgPathFor_dragDot}
-						fill={debug.lines ? 'transparent' : es_drag.fill}/>
-					{#if svgPathFor_ellipses}
-						<SVG_D3 name={'svg-inside-' + name}
-							width={size}
-							height={size}
-							fill={es_drag.stroke}
-							stroke={es_drag.stroke}
-							svgPath={svgPathFor_ellipses}/>
-					{/if}
-					{#if svgPathFor_related}
-						<SVG_D3 name={'svg-related-' + name}
-							width={size}
-							height={size}
-							stroke={thing?.color}
-							fill={$w_background_color}
-							svgPath={svgPathFor_related}/>
-					{/if}
-				</div>
-			{/key}
+						fill={$w_background_color}
+						svgPath={svgPathFor_related}/>
+				{/if}
+			</div>
 		</button>
 	</Mouse_Responder>
 {/if}

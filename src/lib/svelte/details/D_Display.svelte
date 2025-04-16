@@ -12,18 +12,14 @@
 	const color_origin = new Point(color_left, 41);
 	const separator_font_size = `${k.tiny_font_size}px`;
 	const titles = [T_Hierarchy[T_Hierarchy.children], T_Hierarchy[T_Hierarchy.parents], T_Hierarchy[T_Hierarchy.related]];
+	let color = $w_background_color;
 	
 	function selection_closure(t_counts: Array<string>) {
 		$w_t_countDots = t_counts as Array<T_Hierarchy>;
 	}
 
-	function handle_colors(result: string | null): string | null {
-		if (!result) {
-			return $w_background_color;
-		} else {
-			$w_background_color = result;
-			return null;
-		}
+	function handle_colors(result: string) {
+		$w_background_color = color = result;
 	}
 
 	</script>
@@ -46,7 +42,6 @@
 		height={k.row_height * font_ratio}
 		selection_closure={selection_closure}/>
 	<Separator title='colors' top=32 left=5 width={info_width} title_font_size={separator_font_size} thickness={k.separator_thickness}/>
-
 	<div 
 		class= 'background'
 		style='
@@ -66,9 +61,10 @@
 			left: {color_origin.x + 70}px;
 			background-color: {$w_background_color}'>
 		<Color
+			color={color}
 			label={'background'}
 			origin={Point.square(-3.5)}
 			color_closure={handle_colors}
 			picker_offset={picker_offset}/>
-		</div>
+	</div>
 </div>
