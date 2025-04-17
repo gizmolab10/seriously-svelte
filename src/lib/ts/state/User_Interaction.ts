@@ -12,7 +12,6 @@ export default class User_Interaction { // Gizmos
 	s_thing_pages_byThingID: {[id: string]: S_Thing_Pages} = {};
 	mouse_timer_byName: { [name: string]: Mouse_Timer } = {};
 	s_widget_byAncestryID: { [id: string]: S_Widget } = {};
-	rebuild_needed_byType: {[type: string]: boolean} = {};
 	g_segment_byName: { [name: string]: G_Segment } = {};
 	s_element_byName: { [name: string]: S_Element } = {};
 	s_mouse_byName: { [name: string]: S_Mouse } = {};
@@ -43,7 +42,6 @@ export default class User_Interaction { // Gizmos
 	s_widget_forID(id: string): S_Widget { return this.s_widget_byAncestryID[id]; }
 	s_element_forName(name: string): S_Element { return this.s_element_byName[name]; }
 	g_segment_forName(name: string): G_Segment { return this.g_segment_byName[name]; }
-	require_rebuild_forType(type: string) { this.rebuild_needed_byType[type] = true; }
 	set_g_segment_forName(g_segment: G_Segment, name: string) { return this.g_segment_byName[name] = g_segment; }
 	s_mouse_forName(name: string): S_Mouse { return this.assure_forKey_inDict(name, this.s_mouse_byName, () => S_Mouse.empty()); }
 	name_from(identifiable: Identifiable, type: T_Element, subtype: string): string { return `${type}(${subtype}) (id '${identifiable.id}')`; }
@@ -94,12 +92,6 @@ export default class User_Interaction { // Gizmos
 		const realIdentifiable = identifiable ?? new Identifiable()
 		const name = this.name_from(realIdentifiable, type, subtype);
 		return this.assure_forKey_inDict(name, this.s_element_byName, () => new S_Element(realIdentifiable, type, subtype));
-	}
-
-	readOnce_rebuild_needed_forType(type: string) : boolean {
-		const needed = this.rebuild_needed_byType[type];
-		this.rebuild_needed_byType[type] = false;
-		return needed;
 	}
 
 	assure_forKey_inDict<T>(key: string, dict: Dictionary, closure: () => T): T {

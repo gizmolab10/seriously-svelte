@@ -101,22 +101,20 @@
 			name = 'radial-focus-border'
 			handle_isHit = {() => false}
 			handle_mouse_state = {debug_closure}>
-			{#key color}
-				<svg
-					class='radial-focus-svg'
-					style='
-						height : {height}px;
-						position : absolute;
-						width : {width_ofTitle + 15}px;'>
-					<path
-						stroke-width = '0.8'
-						stroke = {svg_strokeColor}
-						class = 'radial-focus-path'
-						fill = {$w_background_color}
-						stroke-dasharray = {svg_dasharray}
-						d = {svgPaths.oblong(center_ofBorder, size_ofBorder)}/>
-				</svg>
-			{/key}
+			<svg
+				class='radial-focus-svg'
+				style='
+					height : {height}px;
+					position : absolute;
+					width : {width_ofTitle + 15}px;'>
+				<path
+					stroke-width = '0.8'
+					stroke = {svg_strokeColor}
+					class = 'radial-focus-path'
+					fill = {$w_background_color}
+					stroke-dasharray = {svg_dasharray}
+					d = {svgPaths.oblong(center_ofBorder, size_ofBorder)}/>
+			</svg>
 		</Mouse_Responder>
 	<div class='radial-focus-title'
 		style='

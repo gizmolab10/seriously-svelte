@@ -1,12 +1,11 @@
 <script lang='ts'>
-	import { k, ux, w, Thing, Point, Angle, debug, colors, layout, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
+	import { k, u, ux, w, Thing, Point, Angle, debug, colors, layout, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
 	import { w_color_trigger, w_ancestry_focus, w_s_title_edit } from '../../ts/common/Stores';
 	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/common/Stores';
 	import { w_graph_rect, w_mouse_location_scaled } from '../../ts/common/Stores';
 	import { w_count_mouse_up, w_g_paging_cluster } from '../../ts/common/Stores';
 	import { T_Layer, T_RingZone } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import Identifiable from '../../ts/data/runtime/Identifiable';
 	import Radial_ArcSlider from './Radial_ArcSlider.svelte';
 	import { onMount } from 'svelte';
 	const name = 'rings';
@@ -163,10 +162,10 @@
 					rotation_state.active_angle = mouse_angle;
 					detect_hovering();
 					cursor = ux.s_ring_rotation.cursor;
-					layout.grand_layout();										// recompute positions of necklace widgets
-					setTimeout(() => {
-						rings_rebuilds += 1;									// for arc sliders
-					}, 1)
+					layout.grand_layout();										// reposition necklace widgets and arc sliders
+					u.onNextCycle_apply(() => {									// so response to rotation is immediate
+						rings_rebuilds += 1;									// reattach arc sliders
+					});
 				}
 			} else if (!!$w_g_paging_cluster) {
 				const s_paging_rotation = $w_g_paging_cluster.s_paging_rotation;
