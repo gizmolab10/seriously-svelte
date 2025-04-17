@@ -9,7 +9,7 @@ export default class G_Widget {
 	g_bidirectionalLines: Array<G_TreeLine> = [];
 	g_parentBranches: G_TreeBranches;
 	g_childBranches: G_TreeBranches;
-	origin_ofSubtree = Point.zero;
+	origin_ofBranch = Point.zero;
 	offset_ofWidget = Point.zero;
 	center_ofReveal = Point.zero;
 	origin_ofRadial = Point.zero;
@@ -58,31 +58,34 @@ export default class G_Widget {
 	get absolute_origin_ofTitle(): Point { return this.origin_ofTitle.offsetBy(this.origin); }
 	get absolute_center_ofReveal(): Point { return this.center_ofReveal.offsetBy(this.origin); }
 	get showingReveal(): boolean { return this.ancestry.showsReveal_forPointingToChild(this.points_toChild) ?? false; }
+
+	get t_widget(): T_Widget {
+		const isFocus = this.ancestry?.isFocus ?? false;
+		return layout.inTreeMode ? isFocus ? T_Widget.focus : T_Widget.tree : T_Widget.radial;
+	}
 	
 	get origin(): Point {
-		const isFocus = this.ancestry?.isFocus ?? false;
-		const t_widget = layout.inTreeMode ? isFocus ? T_Widget.focus : T_Widget.tree : T_Widget.radial;
-		switch (t_widget) {
+		switch (this.t_widget) {
 			case T_Widget.radial: return this.origin_ofRadial;
-			case T_Widget.focus:  return this.origin_ofWidget;
-			default:			  return this.origin_ofSubtree;
+			case T_Widget.focus:  return this.origin_ofWidget;	// tree focus
+			default:			  return this.origin_ofBranch;
 		}
 	}
 
 	static readonly LAYOUT: unique symbol;
 
-	layout_entireTree() {
+	layout_entireTree() {		// misses every Widget.layout
 		this.layout_focus_ofTree()
 		this.recursively_layout_subtree();
 		this.recursively_layout_bidirectionals();
 	}
 
 	layout_necklaceWidget(
-		origin_ofWidget: Point,
+		rotated_origin: Point,
 		widget_pointsRight: boolean) {
 			if (layout.inRadialMode) {
 				this.forGraphMode = T_Graph.radial;
-				this.origin_ofWidget = origin_ofWidget;
+				this.origin_ofWidget = rotated_origin;
 				this.widget_pointsRight = widget_pointsRight;
 				this.layout_widget();
 			}
@@ -116,7 +119,7 @@ export default class G_Widget {
 		this.g_parentBranches.layout_branches();	// noop if radial, parentless or collapsed
 		this.g_childBranches.layout_branches();		// noop if radial, childless or collapsed
 		this.layout_widget();						// assumes all children's subtrees are laid out (needed for progeny size)
-		this.layout_line();
+		this.layout_treeLine();
 		this.layout_focus();
 	}
 
@@ -194,18 +197,18 @@ export default class G_Widget {
 				const g_lines = this.ancestry.g_lines_forBidirectionals;
 				for (const [index, g_line] of g_lines.entries()) {
 					this.g_bidirectionalLines[index] = g_line;
-					g_line.layout_line();
+					g_line.update_svg_andName();
 				}
 			}
 		}
 	}
 
-	private layout_line() {
+	private layout_treeLine() {
 		const ancestry = this.ancestry;
 		if (!!ancestry.thing && layout.inTreeMode) {
-			const offset_ofChildrenTree = new Point(k.dot_size * 1.3, -(7 + k.dot_size / 15));
-			this.origin_ofSubtree = this.g_line.rect.extent.offsetBy(offset_ofChildrenTree);
-			this.g_line.layout_line();
+			const offset_ofBranch = new Point(k.dot_size * 1.3, -(7 + k.dot_size / 15));
+			this.origin_ofBranch = this.g_line.rect.extent.offsetBy(offset_ofBranch);
+			this.g_line.update_svg_andName();
 		}
 	}
 
@@ -216,17 +219,17 @@ export default class G_Widget {
 			const show_reveal = this.showingReveal;
 			const show_border = !ancestry ? false : (ancestry.isGrabbed || ancestry.isEditing);
 			const width_ofReveal = show_reveal ? k.dot_size : 0;
-			const width_ofDrag = layout.inTreeMode ? 0 : 5;
+			const width_ofDrag = layout.inTreeMode ? 0 : k.dot_size;
 			const width_ofWidget = ancestry.thing.titleWidth + width_ofDrag + width_ofReveal;
 			const thickness_ofBorder = show_border ? 0 : 1;
-			const x_ofDrag_forPointsLeft = width_ofWidget + 4 + (show_reveal ? 0.5 : 0);
+			const x_ofDrag_forPointsLeft = width_ofWidget - 4 + (show_reveal ? 0.5 : 0);
 			const x_ofDrag = points_right ? (layout.inRadialMode ? 3 : 2) : x_ofDrag_forPointsLeft;
 			const y_ofDrag = 2.7 + (layout.inRadialMode ? 0.1 : 0);
-			const x_ofRadial = points_right ? -4 : k.dot_size * -2;
+			const x_ofRadial = points_right ? -4 : k.dot_size * -1;
 			const origin_ofDrag = new Point(x_ofDrag, y_ofDrag);
-			const offset_x_ofWidget = points_right ? -7 : 10 - width_ofWidget;
-			const origin_x_ofRadial_title = (points_right ? 20 : (show_reveal ? 20 : 6));
-			this.origin_ofTitle = Point.x(layout.inRadialMode ? origin_x_ofRadial_title : k.dot_size + 5);
+			const offset_x_ofWidget = points_right ? -7 : 7 - width_ofWidget;
+			const x_ofRadial_title = (points_right ? 20 : (show_reveal ? 20 : 6));
+			this.origin_ofTitle = Point.x(layout.inRadialMode ? x_ofRadial_title : k.dot_size + 5);
 			this.offset_ofWidget = Point.square(thickness_ofBorder).offsetByX(offset_x_ofWidget);
 			this.origin_ofRadial = this.origin_ofWidget.offsetByXY(x_ofRadial, 4 - k.dot_size);
 			this.center_ofDrag = origin_ofDrag.offsetEquallyBy(k.dot_size / 2);
@@ -236,11 +239,11 @@ export default class G_Widget {
 				const offset_x_forPointsRight = (layout.inRadialMode ? 0 : -1) - width_ofWidget;
 				const reveal_x = k.dot_size - (points_right ? offset_x_forPointsRight : 3);
 				this.center_ofReveal = new Point(reveal_x, reveal_y);
-				if (show_border) {
-					console.log(`width: ${width_ofWidget.toFixed(2)}, width_ofReveal: ${width_ofReveal.toFixed(2)}, width_ofDrag: ${width_ofDrag.toFixed(2)}`);
-					// console.log(`origin: ${this.origin.verbose}, offset: ${this.offset_ofWidget.verbose}, drag: ${origin_ofDrag.verbose}`);
-				}
 			}
+			// if (show_border) {
+			// 	console.log(`width: ${width_ofWidget.toFixed(2)},`);
+			// 	// console.log(`title: ${this.origin_ofTitle.x.toFixed(2)}, origin: ${this.origin.verbose}, offset: ${this.offset_ofWidget.verbose}, drag: ${origin_ofDrag.verbose} width_ofReveal: ${width_ofReveal.toFixed(2)}, width_ofDrag: ${width_ofDrag.toFixed(2)}`);
+			// }
 		}
 	}
 	

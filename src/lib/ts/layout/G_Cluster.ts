@@ -193,13 +193,13 @@ export default class G_Cluster {
 			const fork_pointsDown = radial_ofFork.y < 0;
 			let index = 0;
 			while (index < this.widgets_shown) {
-				const child_index = fork_pointsRight ? (this.widgets_shown - index - 1) : index;
-				const child_angle = this.angle_at_index(child_index);
-				const child_ancestry = this.ancestries[child_index];
-				const child_pointsRight = new Angle(child_angle).angle_pointsRight;
-				const child_origin = center.offsetBy(radial.rotate_by(child_angle));
-				child_ancestry.g_widget.layout_necklaceWidget(child_origin, child_pointsRight);
-				this.g_cluster_widgets.push(child_ancestry.g_widget);
+				const adjusted_index = fork_pointsRight ? (this.widgets_shown - index - 1) : index;
+				const angle = this.angle_at_index(adjusted_index);
+				const ancestry = this.ancestries[adjusted_index];
+				const pointsRight = new Angle(angle).angle_pointsRight;
+				const rotated_origin = center.offsetBy(radial.rotate_by(angle));
+				ancestry.g_widget.layout_necklaceWidget(rotated_origin, pointsRight);
+				this.g_cluster_widgets.push(ancestry.g_widget);
 				index += 1;
 			}
 			this.g_sliderArc.finalize_angles();

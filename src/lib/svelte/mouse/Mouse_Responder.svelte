@@ -53,7 +53,7 @@
 	});
 
 	$: {
-		const _ = center;
+		const _ = `${origin?.description ?? k.empty} ${center?.description ?? k.empty}`;
 		setupStyle();
 	}
 	

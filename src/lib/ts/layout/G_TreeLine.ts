@@ -26,7 +26,7 @@ export default class G_TreeLine {
 
 	get branchAncestry(): Ancestry | null { return this.points_atOther ? this.other_ancestry : this.ancestry; }
 		
-	layout_line() {
+	update_svg_andName() {
 		this.layout_svgPaths();
 		this.update_name();
 	}
@@ -40,6 +40,8 @@ export default class G_TreeLine {
 			this.t_curve = T_Curve.flat;
 		}
 	}
+
+	static readonly INTERNAL: unique symbol;
 
 	private update_name() {
 		if (!!this.ancestry && !this.ancestry.equals(this.other_ancestry)) {

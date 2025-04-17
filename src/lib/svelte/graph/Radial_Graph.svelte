@@ -15,7 +15,7 @@
 	//	reattaches components on/changes to:	//
 	//											//
 	//		rebuild_needed_forType radial		//
-	//		handle_recreate_widgets				//
+	//		handle_reattach_widgets				//
 	//		w_ancestry_focus					//
 	//											//
 	//	SHOULD only reposition for:				//
@@ -38,7 +38,7 @@
 	debug.log_tools(` CLUSTERS`);
 
 	onMount(() => {
-		const handle_recreate = signals.handle_recreate_widgets(0, (t_signal, ancestry) => {
+		const handle_recreate = signals.handle_reattach_widgets(0, (t_signal, ancestry) => {
 			graph_reattachments += 1;		// triggers {#key} below
 		});
 		return () => { handle_recreate.disconnect() };

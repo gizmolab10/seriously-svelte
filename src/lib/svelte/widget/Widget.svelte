@@ -43,7 +43,7 @@
 
 	setup_fromAncestry();
 	debug.log_build(`WIDGET (grabbed: ${ancestry.isGrabbed}) "${ancestry.title}"`);
-	layout();
+	final_layout();
 	layout_maybe();
 
 	onMount(() => {
@@ -51,7 +51,7 @@
 			if (!!widget) {
 				debug.log_handle(`(ANY as: ${t_signal}) WIDGET "${thing?.title}"`);
 				switch (t_signal) {
-					case T_Signal.recreate:
+					case T_Signal.reattach:
 						layout_maybe();
 						break;
 					case T_Signal.reposition:
@@ -114,22 +114,21 @@
 			const showBorder = ancestry.isGrabbed || ($w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.editing) ?? false);
 			const showBackground = showBorder || layout.inRadialMode;
 			background = showBackground ? `background-color: ${$w_background_color}` : k.empty
-			layout();
+			final_layout();
 		}
 	}
 
 	function reposition() {
-		layout();
+		final_layout();
 		widget.style.top = `${top}px`;
 		widget.style.left = `${left}px`;
 		widget.style.width = `${g_widget.width_ofWidget}px`;
-		widget.style.border = es_widget.border;		// avoid rebuilding by injecting style changes
+		widget.style.border = es_widget.border;		// avoid reattaching by injecting style changes
 		widget.style.backgroundColor = ancestry.isGrabbed || layout.inRadialMode ? $w_background_color : 'transparent';
 		origin_ofTitle = g_widget.origin_ofTitle;
 	}
 
-	function layout() {
-		// g_widget.layout_line();
+	function final_layout() {
 		const hasExtra_onRight = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
 		const onRight = layout.inRadialMode ? 0 : 21 + (hasExtra_onRight ? 0.5 : 0);
 		const origin_ofWidget = g_widget.origin.offsetBy(g_widget.offset_ofWidget);

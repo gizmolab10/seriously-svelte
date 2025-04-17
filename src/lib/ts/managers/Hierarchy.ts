@@ -909,7 +909,7 @@ export class Hierarchy {
 	async ancestry_remember_bulk_persistentRelocateRight(ancestry: Ancestry, parentAncestry: Ancestry) {
 		const newThingAncestry = await this.bulkAlias_remember_recursive_persistentRelocateRight(ancestry, parentAncestry);
 		if (!!newThingAncestry) {
-			signals.signal_recreate_widgets_from(parentAncestry);
+			signals.signal_reattach_widgets_from(parentAncestry);
 			if (parentAncestry.isExpanded) {
 				newThingAncestry.grabOnly();
 			} else {
@@ -1051,7 +1051,7 @@ export class Hierarchy {
 		if (graph_needsRebuild) {
 			layout.grand_build();
 		} else if (graph_needsRelayout) {
-			signals.signal_recreate_widgets_fromFocus();
+			signals.signal_reattach_widgets_fromFocus();
 		}
 	}
 

@@ -6,14 +6,14 @@
 	import Breadcrumb_Button from '../mouse/Breadcrumb_Button.svelte';
 	import SVG_D3 from '../kit/SVG_D3.svelte';
 	import { onMount } from 'svelte';
+	let breadcrumb_reattachments = 0;
 	let size = k.default_buttonSize;
 	let lefts: Array<string> = [];
 	let things: Array<Thing> = [];
-	let breadcrumb_reattachments = 0;
 	let ancestry: Ancestry;
 	let trigger = 0;
 
-	signals.handle_rebuild_andRecreate(1, (ancestry) => {
+	signals.handle_rebuild_andReattach(1, (ancestry) => {
 		breadcrumb_reattachments += 1;
 	});
 

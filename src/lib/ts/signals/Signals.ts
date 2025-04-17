@@ -7,7 +7,7 @@ import { get } from 'svelte/store';
 export enum T_Signal {
 	thing	   = 'thing',
 	rebuild	   = 'rebuild',
-	recreate   = 'recreate',
+	reattach   = 'reattach',
 	reposition = 'reposition',
 	alterState = 'alterState',
 }
@@ -22,10 +22,10 @@ export class Signals {
 	signal_altering(value: any = null) { this.signal(T_Signal.alterState, value); }
 	signal_rebuildGraph_from(value: any = null) { this.signal(T_Signal.rebuild, value); }	// N.B., widget whatches this to reveal tools
 	signal_rebuildGraph_fromFocus() { this.signal_rebuildGraph_from(get(w_ancestry_focus)); }
-	signal_recreate_widgets_from(value: any = null) { this.signal(T_Signal.recreate, value); }
+	signal_reattach_widgets_from(value: any = null) { this.signal(T_Signal.reattach, value); }
 	signal_setTo(t_signal: T_Signal, flag: boolean) { this.signals_inFlight[t_signal] = flag; }
 	signal_reposition_widgets_from(value: any = null) { this.signal(T_Signal.reposition, value); }
-	signal_recreate_widgets_fromFocus() { this.signal_recreate_widgets_from(get(w_ancestry_focus)); }
+	signal_reattach_widgets_fromFocus() { this.signal_reattach_widgets_from(get(w_ancestry_focus)); }
 	signal_reposition_widgets_fromFocus() { this.signal_reposition_widgets_from(get(w_ancestry_focus)); }
 	get signal_isInFlight(): boolean { return Object.values(this.signals_inFlight).filter(b => !!b).length > 0 }
 
@@ -47,16 +47,16 @@ export class Signals {
 
 	static readonly RECEIVING: unique symbol;
 
-	handle_rebuild_andRecreate(priority: number, onSignal: (value: any | null) => any) {
-		return this.handle_signals_atPriority([T_Signal.rebuild, T_Signal.recreate], priority, onSignal);
+	handle_rebuild_andReattach(priority: number, onSignal: (value: any | null) => any) {
+		return this.handle_signals_atPriority([T_Signal.rebuild, T_Signal.reattach], priority, onSignal);
 	}
 
 	handle_rebuildGraph(priority: number, onSignal: (value: any | null) => any ) {
 		return this.handle_signal_atPriority(T_Signal.rebuild, priority, onSignal);
 	}
 
-	handle_recreate_widgets(priority: number, onSignal: (value: any | null) => any ) {
-		return this.handle_signal_atPriority(T_Signal.recreate, priority, onSignal);
+	handle_reattach_widgets(priority: number, onSignal: (value: any | null) => any ) {
+		return this.handle_signal_atPriority(T_Signal.reattach, priority, onSignal);
 	}
 
 	handle_reposition_widgets(priority: number, onSignal: (value: any | null) => any ) {

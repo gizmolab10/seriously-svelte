@@ -41,7 +41,7 @@
 	setTimeout(() => { layout_tools_forceRedraw(); }, 20);
 
 	onMount(() => {
-		const handler = signals.handle_recreate_widgets(2, (ancestry) => {	// priority of 2 assures layout is finished
+		const handler = signals.handle_reattach_widgets(2, (ancestry) => {	// priority of 2 assures layout is finished
 			layout_tools_forceRedraw(true);
 		});
 		return () => { handler.disconnect() };
