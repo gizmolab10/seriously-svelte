@@ -18,14 +18,14 @@
 	import { onMount } from 'svelte';
 	let separator_color = colors.separator;
 	let tops = layout.tops_ofBanners;
-	let panel_rebuilds = 0;
+	let panel_reattachments = 0;
 	let chain = ['Panel'];
 
 	function ignore_wheel(event) { event.preventDefault(); }
 
 	$: {
 		const _ = $w_t_database + $w_t_startup + $w_id_popupView + $w_graph_rect;
-		panel_rebuilds += 1;
+		panel_reattachments += 1;
 	}
 
 	$: {
@@ -68,7 +68,7 @@
 </style>
 
 <svelte:document on:keydown={handle_key_down}/>
-{#key panel_rebuilds}
+{#key panel_reattachments}
 	<Debug/>
 	<div style='
 		touch-action: none;

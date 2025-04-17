@@ -26,7 +26,7 @@
 	let countOfVisibleParents = 0;
 	let confirmingDelete = false;
 	let graphRect = Rect.zero;
-	let tools_rebuilds = 0;
+	let tool_reattachments = 0;
 	let mouse_click_timer;
 	let color = k.empty;
 	let titleWidth = 0;
@@ -150,9 +150,9 @@
 			setC(T_Tool.delete,		 	center.offsetByXY(5.5, 3));
 			setC(T_Tool.dismiss,		center.offsetByXY(1, 1));
 			setC(T_Tool.editingTools,   center);
-			tools_rebuilds += 1;
+			tool_reattachments += 1;
 		} else if (force) {
-			tools_rebuilds += 1;
+			tool_reattachments += 1;
 		}
 	}
 
@@ -175,7 +175,7 @@
 	}
 </style>
 
-{#key tools_rebuilds}
+{#key tool_reattachments}
 	{#if !!$w_ancestry_showing_tools}
 		<div class='editing-tools' style='
 			position:absolute;

@@ -6,42 +6,42 @@
 	import Tree_Graph from '../graph/Tree_Graph.svelte';
 	import { onMount } from 'svelte';
 	let draggableRect: Rect | null = null;
-	let graph_rebuilds = 0;
+	let graph_reattachments = 0;
 	let style = k.empty;
 	let draggable;
 
-	//////////////////////////////////////////
-	//										//
-	//	REBUILDS components on/changes to:	//
-	//										//
-	//		signal_rebuildGraph				//
-	//		w_ancestry_focus				//
-	//										//
-	//	SHOULD only reposition for:			//
-	//										//
-	//		w_user_graph_offset				//
-	//		w_graph_rect					//
-	//										//
-	//////////////////////////////////////////
+	//////////////////////////////////////////////
+	//											//
+	//	reattaches components on/changes to:	//
+	//											//
+	//		signal_rebuildGraph					//
+	//		w_ancestry_focus					//
+	//											//
+	//	SHOULD only reposition for:				//
+	//											//
+	//		w_user_graph_offset					//
+	//		w_graph_rect						//
+	//											//
+	/////////////////////////////////////////////
 	
 	onMount(() => {
 		update_style();
 		const handle_rebuild = signals.handle_rebuildGraph(1, (ancestry) => {
 			layout.grand_layout();
-			graph_rebuilds += 1;
+			graph_reattachments += 1;
 		});
 		return () => { handle_rebuild.disconnect(); };
 	});
 
 	$: {
 		const _ = $w_ancestry_focus;
-		graph_rebuilds += 1;
+		graph_reattachments += 1;
 	}
 
 	$: {
 		draggableRect = $w_graph_rect.offsetByY(-9);
 		update_style();
-		graph_rebuilds += 1;
+		graph_reattachments += 1;
 	}
 
 	$: {
@@ -71,7 +71,7 @@
 
 </script>
 
-{#key graph_rebuilds}
+{#key graph_reattachments}
 	<div
 		style={style}
 		class='draggable'

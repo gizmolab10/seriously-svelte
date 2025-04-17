@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { w_color_trigger, w_background_color, w_thing_fontFamily, w_ancestry_focus } from '../../ts/common/Stores';
 	import { k, u, ux, Point, Thing, colors, layout, signals, databases } from '../../ts/common/Global_Imports';
-	import { T_Tool, T_Banner, T_Element, S_Element } from '../../ts/common/Global_Imports';
+	import { T_Tool, T_Banner, S_Element } from '../../ts/common/Global_Imports';
 	import Button from './Button.svelte';
 	import { onMount } from 'svelte';
     export let thing;
@@ -16,7 +16,7 @@
 	let border = `${borderStyle} ${borderColor}`;
 	let ancestry = es_breadcrumb.ancestry;
 	let width = u.getWidthOf(title) + 15;
-	let breadcrumb_rebuilds = 0;
+	let breadcrumb_reattachments = 0;
 	let colorStyles = k.empty;
 	let style = k.empty;
 		
@@ -45,7 +45,7 @@
 			border = `${borderStyle} ${borderColor}`;
 			updateStyle();
 		}
-		breadcrumb_rebuilds += 1;
+		breadcrumb_reattachments += 1;
 	}
 
 	function updateStyle() {
@@ -72,7 +72,7 @@
 				es_breadcrumb.set_forHovering(thing.color, cursor);
 				es_breadcrumb.isOut = s_mouse.isOut;
 				updateStyle();
-				breadcrumb_rebuilds += 1;
+				breadcrumb_reattachments += 1;
 			} else if (s_mouse.isUp) {
 				ancestry.grabOnly();
 				if (ancestry.becomeFocus()) {
@@ -84,7 +84,7 @@
 
 </script>
 
-{#key breadcrumb_rebuilds + $w_background_color}
+{#key breadcrumb_reattachments + $w_background_color}
 	<Button
 		name={name}
 		style={style}

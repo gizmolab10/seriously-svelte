@@ -19,7 +19,7 @@
 	let color = $w_ancestry_focus?.thing?.color ?? colors.default_forThings;
 	let mouse_up_count = $w_count_mouse_up;
 	let cursor = k.cursor_default;
-	let rings_rebuilds = 0;
+	let ring_reattachments = 0;
 	let rotationPath;
 	let resizingPath;
 	let reticlePath;
@@ -164,7 +164,7 @@
 					cursor = ux.s_ring_rotation.cursor;
 					layout.grand_layout();										// reposition necklace widgets and arc sliders
 					u.onNextCycle_apply(() => {									// so response to rotation is immediate
-						rings_rebuilds += 1;									// reattach arc sliders
+						ring_reattachments += 1;									// reattach arc sliders
 					});
 				}
 			} else if (!!$w_g_paging_cluster) {
@@ -232,7 +232,7 @@
 
 </script>
 
-{#key rings_rebuilds}
+{#key ring_reattachments}
 	{#if !debug.hide_rings}
 		<div class = 'rings'
 			style = 'z-index:{T_Layer.rings};'>

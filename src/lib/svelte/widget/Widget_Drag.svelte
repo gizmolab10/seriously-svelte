@@ -2,7 +2,7 @@
 	import { c, k, u, ux, show, Rect, Size, Point, Thing, debug, layout, signals } from '../../ts/common/Global_Imports';
 	import { svgPaths, databases, T_Alteration, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_t_countDots, w_color_trigger, w_ancestries_grabbed } from '../../ts/common/Stores';
-	import { T_Layer, T_Tool, T_Graph, T_Element } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Tool, T_Graph } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { w_background_color } from '../../ts/common/Stores';
 	import SVG_D3 from '../kit/SVG_D3.svelte';

@@ -10,7 +10,7 @@
 	let stroke_color = ancestry?.thing?.color;
 	let lineWrapper: Svelte_Wrapper;
 	let svg_dasharray = k.empty;
-	let line_rebuilds = 0;
+	let line_reattachments = 0;
 	let stroke_width = 1;
 	let line;
 
@@ -31,13 +31,13 @@
 
 	$: {
 		if (!!ancestry && !!ancestry.thing && ancestry.thing.id == $w_color_trigger?.split(k.generic_separator)[0]) {
-			line_rebuilds += 1;
+			line_reattachments += 1;
 		}
 	}
 
 </script>
 
-{#key line_rebuilds}
+{#key line_reattachments}
 	{#if !!ancestry}
 		<svg
 			bind:this = {line}

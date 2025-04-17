@@ -1,30 +1,30 @@
 <script lang='ts'>
-	import { T_Tool, T_Layer, T_Signal, T_RingZone, T_Element, T_Rebuild } from '../../ts/common/Global_Imports';
 	import { k, u, ux, Rect, Point, debug, layout, signals } from '../../ts/common/Global_Imports';
 	import { w_s_paging, w_user_graph_offset, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { w_graph_rect, w_show_details, w_ancestry_focus } from '../../ts/common/Stores';
+	import { T_Tool, T_Layer, T_Signal, T_RingZone } from '../../ts/common/Global_Imports';
 	import Radial_Rings from './Radial_Rings.svelte';
 	import Radial_Focus from './Radial_Focus.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import { onMount } from 'svelte';
 	let toolsOffset = new Point(31, -173.5).offsetBy($w_user_graph_offset.negated);
-	let graph_rebuilds = 0;
+	let graph_reattachments = 0;
 
-	//////////////////////////////////////////
-	//										//
-	//	REBUILDS components on/changes to:	//
-	//										//
-	//		rebuild_needed_forType radial	//
-	//		handle_recreate_widgets			//
-	//		w_ancestry_focus				//
-	//										//
-	//	SHOULD only reposition for:			//
-	//										//
-	//		w_user_graph_offset				//
-	//		w_show_details					//
-	//		w_graph_rect					//
-	//										//
-	//////////////////////////////////////////
+	//////////////////////////////////////////////
+	//											//
+	//	reattaches components on/changes to:	//
+	//											//
+	//		rebuild_needed_forType radial		//
+	//		handle_recreate_widgets				//
+	//		w_ancestry_focus					//
+	//											//
+	//	SHOULD only reposition for:				//
+	//											//
+	//		w_user_graph_offset					//
+	//		w_show_details						//
+	//		w_graph_rect						//
+	//											//
+	//////////////////////////////////////////////
 
 	// draw center title, arcs, radial and widget necklace
 	//	also selection & hover for arcs & radial
@@ -39,7 +39,7 @@
 
 	onMount(() => {
 		const handle_recreate = signals.handle_recreate_widgets(0, (t_signal, ancestry) => {
-			graph_rebuilds += 1;		// triggers {#key} below
+			graph_reattachments += 1;		// triggers {#key} below
 		});
 		return () => { handle_recreate.disconnect() };
 	});
@@ -47,13 +47,13 @@
 	$: {
 		const s_paging = $w_s_paging;
 		if (!!s_paging && !!$w_ancestry_focus.thing && $w_ancestry_focus.thing.id == s_paging.thing_id) {
-			graph_rebuilds += 1;
+			graph_reattachments += 1;
 		}
 	}
 
 </script>
 
-{#key graph_rebuilds}
+{#key graph_reattachments}
 	<div class = 'radial-graph'
 		style = '
 			z-index : {T_Layer.common};

@@ -147,25 +147,10 @@ export enum T_Element {
 	reveal		 = 'reveal',
 	title		 = 'title',
 	widget		 = 'widget',
-	focus		 = 'focus',
 	drag		 = 'drag',
 	info		 = 'info',
 	none		 = 'none',
 	tool		 = 'tool',
-}
-
-export enum T_Rebuild {		// design goal: replace all rebuilds counts?
-	radial = 'radial',		// only this enum is used    (in Radial_Graph)
-	reveal = 'reveal',
-	widget = 'widget',
-	crumbs = 'crumbs',
-	crumb  = 'crumb',
-	tools  = 'tools',
-	panel  = 'panel',
-	info   = 'info',
-	tree   = 'tree',
-	line   = 'line',
-	drag   = 'drag',
 }
 
 export enum T_Layer {	// DO NOT change the order
