@@ -2,9 +2,9 @@
 	import { c, k, u, ux, Size, Thing, Point, debug, layout, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
 	import { w_ancestries_grabbed, w_ancestries_expanded, w_ancestry_showing_tools } from '../../ts/common/Stores';
 	import { w_hierarchy, w_t_countDots, w_s_alteration } from '../../ts/common/Stores';
+	import { w_thing_color, w_background_color } from '../../ts/common/Stores';
 	import { T_Layer, T_Graph, Predicate } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import { w_background_color } from '../../ts/common/Stores';
 	import SVG_D3 from '../kit/SVG_D3.svelte';
 	import { onMount } from 'svelte';
     export let ancestry;
@@ -17,10 +17,13 @@
 	const outer_diameter = k.diameterOf_outer_tinyDots;
 	const size_ofTinyDots = Size.width(3).expandedEquallyBy(outer_diameter)
 	const viewBox = `0.5 2.35 ${outer_diameter} ${outer_diameter}`;
+	let fill_color = debug.lines ? 'transparent' : es_reveal.fill;
 	let svgPathFor_outer_tinyDots: string | null = null;
 	let svgPathFor_bulkAlias: string | null = null;
 	let center = ancestry.g_widget.center_ofReveal;
+	let bulkAlias_color = es_reveal.stroke;
 	let svgPathFor_revealDot = k.empty;
+	let color = ancestry.thing?.color;
 	let bulkAliasOffset = 0;
 	let dotReveal = null;
 	
@@ -32,8 +35,6 @@
 		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
 			if (!!dotReveal) {
 				center = ancestry.g_widget.center_ofReveal;
-				const origin = center.offsetEquallyBy(-k.dot_size);
-				debug.log_reposition(`dotReveal [. . .] o: (${origin.x.asInt()}, ${origin.y.asInt()}) ${ancestry.title}`);
 			}
 		});
 		return () => { handle_reposition.disconnect(); };
@@ -45,8 +46,16 @@
 	}
 
 	$: {
+		const _ = $w_ancestries_expanded + $w_background_color + $w_thing_color;
+		fill_color = debug.lines ? 'transparent' : es_reveal.fill;
+		es_reveal.set_forHovering(color, 'pointer');
+		bulkAlias_color = es_reveal.stroke;
+		color = ancestry.thing?.color;
+	}
+
+	$: {
 		if (!!dotReveal) {
-			es_reveal.set_forHovering(ancestry.thing.color, 'pointer');
+			es_reveal.set_forHovering(color, 'pointer');
 		}
 	}
 
@@ -99,22 +108,22 @@
 				width: {k.dot_size}px;
 				height: {k.dot_size}px;'>
 			<SVG_D3 name='reveal-dot-svg'
-				fill={debug.lines ? 'transparent' : es_reveal.fill}
 				svgPath={svgPathFor_revealDot}
-				stroke={ancestry.thing.color}
 				height={k.dot_size}
-				width={k.dot_size}/>
+				width={k.dot_size}
+				fill={fill_color}
+				stroke={color}/>
 			{#if !!svgPathFor_bulkAlias}
 				<div class='bulk-alias-dot' style='
 					left:{bulkAliasOffset}px;
 					top:{bulkAliasOffset}px;
-					position:absolute;
 					height:{k.dot_size}px;
-					width:{k.dot_size}px;'>
+					width:{k.dot_size}px;
+					position:absolute;'>
 					<SVG_D3 name='bulk-alias-dot-svg'
 						svgPath={svgPathFor_bulkAlias}
-						stroke={es_reveal.stroke}
-						fill={es_reveal.stroke}
+						stroke={bulkAlias_color}
+						fill={bulkAlias_color}
 						height={k.dot_size}
 						width={k.dot_size}
 					/>
@@ -133,13 +142,12 @@
 						width={size_ofTinyDots.width}px
 						viewBox='{viewBox}'
 						style='
-							position: absolute;
-							shape-rendering: geometricPrecision;'>
+							shape-rendering: geometricPrecision;
+							position: absolute;'>
 						<path
 							d={svgPathFor_outer_tinyDots}
-							fill={ancestry.thing.color}
-							stroke={ancestry.thing.color}
-						/>
+							stroke={color}
+							fill={color}/>
 					</svg>
 				</div>
 			{/if}

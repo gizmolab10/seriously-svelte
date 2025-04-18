@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { w_id_popupView, w_background_color, w_visibility_ofNotes } from '../../ts/common/Stores';
+	import { w_popupView_id, w_background_color, w_visibility_ofNotes } from '../../ts/common/Stores';
 	import Directional_Buttons from '../mouse/Directional_Buttons.svelte';
 	import { k, builds, T_Layer } from '../../ts/common/Global_Imports';
 	import Close_Button from '../mouse/Close_Button.svelte';
@@ -23,7 +23,7 @@
 	function handle_key_down(event) {
 		const key = event.key.toLowerCase();
 		switch (key) {
-			case 'escape': $w_id_popupView = null; break;
+			case 'escape': $w_popupView_id = null; break;
 		}
 	}
 

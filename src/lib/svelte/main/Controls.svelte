@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { c, k, p, u, ux, w, show, Point, colors, layout, svgPaths, signals, S_Element } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Banner, T_Element, T_Control, T_Hierarchy, T_Preference } from '../../ts/common/Global_Imports';
-	import { w_t_graph, w_t_tree, w_graph_rect, w_count_resize, w_hierarchy, w_id_popupView } from '../../ts/common/Stores';
+	import { w_t_graph, w_t_tree, w_graph_rect, w_count_resize, w_hierarchy, w_popupView_id } from '../../ts/common/Stores';
 	import { w_show_details, w_show_related, w_device_isMobile, w_thing_fontFamily } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/data/runtime/Identifiable';
 	import { w_background_color } from '../../ts/common/Stores';
@@ -33,7 +33,7 @@
 	];
 
 	onMount(() => { setup_forIDs(); });
-	function togglePopupID(id) { $w_id_popupView = ($w_id_popupView == id) ? null : id; }
+	function togglePopupID(id) { $w_popupView_id = ($w_popupView_id == id) ? null : id; }
 
 	$: {
 		const _ = `${$w_count_resize} ${$w_graph_rect}`;
@@ -99,7 +99,7 @@
 				position: absolute;
 				z-index: {T_Layer.frontmost};
 				height: `${layout.height_ofBannerAt(T_Banner.controls) - 2}px`;'>
-			{#if !$w_id_popupView}
+			{#if !$w_popupView_id}
 				{#key $w_background_color}
 					<Button
 						name='details-toggle'

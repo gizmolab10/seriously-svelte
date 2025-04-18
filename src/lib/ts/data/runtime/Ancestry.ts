@@ -323,13 +323,12 @@ export default class Ancestry extends Identifiable {
 		}
 	}
 
-	dotColor(isInverted: boolean): string {
+	dotColor(isInverted: boolean = false): string {
 		const thing = this.thing;
-		if (!!thing) {
-			const showBorder = this.isGrabbed || this.isEditing;
-			if (isInverted != showBorder) {
-				return thing.color;
-			}
+		const showBorder = this.isGrabbed || this.isEditing;
+		if (!!thing && (isInverted != showBorder)) {
+			console.log(thing.title)
+			return thing.color;
 		}
 		return get(w_background_color);
 	}

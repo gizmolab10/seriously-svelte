@@ -30,10 +30,10 @@ export const w_mouse_location		  = writable<Point>();
 export const w_graph_rect			  = writable<Rect>();
 
 export const w_visibility_ofNotes	  = writable<Array<string>>();
-export const w_info_title			  = writable<string | null>();
-export const w_id_popupView			  = writable<string | null>();
-export const w_color_trigger		  = writable<string | null>();
-export const w_order_trigger		  = writable<number>();
+export const w_thing_title			  = writable<string | null>();
+export const w_thing_color			  = writable<string | null>();
+export const w_popupView_id			  = writable<string | null>();
+export const w_relationship_order	  = writable<number>();
 export const w_thing_fontFamily		  = writable<string>();
 export const w_background_color		  = writable<string>();
 export const w_ring_rotation_radius	  = writable<number>();
@@ -51,7 +51,7 @@ class Stores {
 	
 	setup_defaults() {
 		w_t_startup.set(T_Startup.start);
-		w_color_trigger.set(null);
+		w_thing_color.set(null);
 		w_count_mouse_up.set(0);
 		w_count_rebuild.set(0);
 		w_count_resize.set(0);

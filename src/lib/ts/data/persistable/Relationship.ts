@@ -1,5 +1,5 @@
 import { Thing, debug, T_Debug, databases, Predicate, T_Predicate } from '../../common/Global_Imports';
-import { w_hierarchy, w_order_trigger } from '../../common/Stores';
+import { w_hierarchy, w_relationship_order } from '../../common/Stores';
 import Persistable from '../persistable/Persistable';
 import type { Integer } from '../../common/Types';
 import { T_Persistable } from '../dbs/DBCommon';
@@ -51,7 +51,7 @@ export default class Relationship extends Persistable {
 	order_setTo(newOrder: number, persist: boolean = false) {
 		if (Math.abs(this.order - newOrder) > 0.001) {
 			this.order = newOrder;
-			w_order_trigger.set(Date.now());
+			w_relationship_order.set(Date.now());
 			if (persist) {
 				this.set_isDirty();
 			}

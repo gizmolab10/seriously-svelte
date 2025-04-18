@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { w_ancestry_focus, w_ancestries_grabbed, w_thing_fontFamily, w_order_trigger } from '../../ts/common/Stores';
+	import { w_ancestry_focus, w_ancestries_grabbed, w_thing_fontFamily, w_relationship_order } from '../../ts/common/Stores';
 	import { T_Info, T_Trait, T_Layer, T_Element, T_Report, T_Preference } from '../../ts/common/Global_Imports';
-	import { w_hierarchy, w_color_trigger, w_info_title, w_background_color } from '../../ts/common/Stores';
+	import { w_hierarchy, w_thing_color, w_thing_title, w_background_color } from '../../ts/common/Stores';
 	import { c, k, p, ux, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
 	import { debug, colors, signals, layout, Ancestry } from '../../ts/common/Global_Imports';
 	import type { Integer, Dictionary } from '../../ts/common/Types';
@@ -42,12 +42,12 @@
 	es_info.set_forHovering(colors.default, 'pointer');
 	
 	$: {
-		const _ = `${$w_ancestries_grabbed} ${$w_ancestry_focus} ${$w_info_title}`;
+		const _ = `${$w_ancestries_grabbed} ${$w_ancestry_focus} ${$w_thing_title}`;
 		update_forKind();
 	}
 
 	$: {
-		const _ = $w_order_trigger;
+		const _ = $w_relationship_order;
 		update_forAncestry();
 	}
 

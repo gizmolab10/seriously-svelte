@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { c, k, u, ux, show, Rect, Size, Point, Thing, debug, layout, signals } from '../../ts/common/Global_Imports';
 	import { svgPaths, databases, T_Alteration, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { w_t_countDots, w_color_trigger, w_ancestries_grabbed } from '../../ts/common/Stores';
+	import { w_t_countDots, w_thing_color, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { T_Layer, T_Tool, T_Graph } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { w_background_color } from '../../ts/common/Stores';
@@ -13,24 +13,27 @@
 	const size = k.dot_size;
 	const capture_size = size;
 	const es_drag = ux.s_element_forName(name);		// survives onDestroy, created by widget
+	let fill_color = debug.lines ? 'transparent' : es_drag.fill;
 	let center = ancestry.g_widget.center_ofDrag;
+	let ellipsis_color = es_drag.stroke;
 	let svgPathFor_ellipses = k.empty;
 	let svgPathFor_related = k.empty;
 	let svgPathFor_dragDot = k.empty;
     let thing = ancestry.thing;
-	let isGrabbed = false;
-	let isHovering = true;
+	let color = thing?.color;
+	let isHovering = false;
 	let mouse_click_timer;
 	let left = 0;
 	let top = 0;
 	let dotDrag;
 
 	svgPaths_update();
-	updateColors_forHovering(true);
+	updateColors_forHovering();
 
 	function handle_context_menu(event) { event.preventDefault(); }		// no default context menu on right-click
 
     onMount(() => {
+		es_drag.set_forHovering(thing?.color, 'pointer');
         const handle_altering = signals.handle_altering((blink_flag) => {
 			const invert_flag = blink_flag && !!ancestry && ancestry.canConnect_toToolsAncestry;
 			es_drag.isInverted = invert_flag;
@@ -39,7 +42,6 @@
 		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
 			if (!!dotDrag) {
 				center = ancestry.g_widget.center_ofDrag;
-				debug.log_reposition(`dotDrag [. . .] c: (${center.x.asInt()}, ${center.y.asInt()}) ${ancestry.title}`);
 			}
 		});
 		return () => { handle_reposition.disconnect(); handle_altering.disconnect(); };
@@ -51,30 +53,8 @@
 	}
 
 	$: {
-		if (!!ancestry) {
-			thing = ancestry.thing;
-		}
-	};
-
-	$: {
-		if (!!thing && thing.id == $w_color_trigger?.split(k.generic_separator)[0]) {
-			updateColors_forHovering(true);
-		}
-	}
-
-	$: {
-		if (!!dotDrag) {
-			es_drag.set_forHovering(ancestry.thing?.color, 'pointer');
-		}
-	}
-
-	$: {
-		const _ = $w_ancestries_grabbed;
-		const grabbed = ancestry.isGrabbed;
-		if (isGrabbed != grabbed) {
-			isGrabbed = grabbed;
-			updateColors_forHovering(!isHovering);
-		}
+		const _ = $w_background_color + $w_thing_color + $w_ancestries_grabbed;
+		updateColors_forHovering();
 	}
 
 	function handle_mouse_state(s_mouse: S_Mouse): boolean {
@@ -88,6 +68,18 @@
 			svgPathFor_dragDot = svgPaths.oval(size, false);
 		}
 		svgPaths_updateExtra();
+	}
+
+	function updateColors_forHovering() {
+		if (!ux.isAny_rotation_active && !!es_drag && !!thing) {
+			const usePointer = (!ancestry.isGrabbed || layout.inRadialMode) && ancestry.hasChildRelationships;
+			const cursor = usePointer ? 'pointer' : 'normal';
+			es_drag.set_forHovering(thing.color, cursor);
+			es_drag.isOut = !isHovering;
+			color = thing.color;
+			ellipsis_color = es_drag.stroke;
+			fill_color = debug.lines ? 'transparent' : es_drag.fill;
+		}
 	}
 
 	function svgPaths_updateExtra() {
@@ -104,22 +96,11 @@
 		}
 	}
 
-	function updateColors_forHovering(isOut) {
-		if (!ux.isAny_rotation_active) {
-			isHovering = !isOut;
-			const usePointer = (!ancestry.isGrabbed || layout.inRadialMode) && ancestry.hasChildRelationships && !ux.isAny_rotation_active;
-			const cursor = usePointer ? 'pointer' : 'normal';
-			if (!!es_drag && !!thing) {
-				es_drag.set_forHovering(thing.color, cursor);
-				es_drag.isOut = isOut;
-			}
-		}
-	}
-
 	function handle_up_long_hover(s_mouse) {
 		if (!ux.isAny_rotation_active) {
 			if (s_mouse.isHover) {
-				updateColors_forHovering(s_mouse.isOut);
+				isHovering = !s_mouse.isOut;
+				updateColors_forHovering();
 			} else if (s_mouse.isLong) {
 				ancestry?.becomeFocus();
 			} else if (s_mouse.isUp) {
@@ -163,22 +144,22 @@
 				<SVG_D3 name={'svg-' + name}
 					width={size}
 					height={size}
-					stroke={thing?.color}
+					stroke={color}
 					svgPath={svgPathFor_dragDot}
-					fill={debug.lines ? 'transparent' : es_drag.fill}/>
+					fill={fill_color}/>
 				{#if svgPathFor_ellipses}
 					<SVG_D3 name={'svg-inside-' + name}
 						width={size}
 						height={size}
-						fill={es_drag.stroke}
-						stroke={es_drag.stroke}
+						fill={ellipsis_color}
+						stroke={ellipsis_color}
 						svgPath={svgPathFor_ellipses}/>
 				{/if}
 				{#if svgPathFor_related}
 					<SVG_D3 name={'svg-related-' + name}
 						width={size}
 						height={size}
-						stroke={thing?.color}
+						stroke={color}
 						fill={$w_background_color}
 						svgPath={svgPathFor_related}/>
 				{/if}

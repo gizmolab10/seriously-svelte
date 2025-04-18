@@ -2,7 +2,7 @@ import { c, k, p, u, ux, show, User, Thing, Trait, debug, files, colors, signals
 import { T_Tool, T_Report, T_Thing, T_Trait, T_Create, T_Control, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { Ancestry, Predicate, Relationship, S_Mouse, S_Alteration, S_Title_Edit } from '../common/Global_Imports';
 import { w_storage_updated, w_ancestry_showing_tools, w_ancestries_grabbed } from '../common/Stores';
-import { w_id_popupView, w_ancestry_focus, w_s_title_edit, w_s_alteration } from '../common/Stores';
+import { w_popupView_id, w_ancestry_focus, w_s_title_edit, w_s_alteration } from '../common/Stores';
 import type { Integer, Dictionary } from '../common/Types';
 import { T_Persistable } from '../../ts/data/dbs/DBCommon';
 import Identifiable from '../data/runtime/Identifiable';
@@ -1243,7 +1243,7 @@ export class Hierarchy {
 	static readonly FILES: unique symbol;
 
 	select_file_toUpload(SHIFT: boolean) {
-		w_id_popupView.set(T_Control.import);				// extract_fromDict
+		w_popupView_id.set(T_Control.import);				// extract_fromDict
 		this.replace_rootID = SHIFT ? k.empty : null;		// prime it to be updated from file (after user choses it)
 	}
 

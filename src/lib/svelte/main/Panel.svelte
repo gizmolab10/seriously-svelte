@@ -3,7 +3,7 @@
 	import { w_t_database, w_graph_rect, w_hierarchy, w_background_color } from '../../ts/common/Stores';
 	import { debug, T_Layer, T_Banner, Ancestry, T_Startup } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_show_details, w_device_isMobile, } from '../../ts/common/Stores';
-	import { w_t_startup, w_id_popupView, w_ancestry_focus } from '../../ts/common/Stores';
+	import { w_t_startup, w_popupView_id, w_ancestry_focus } from '../../ts/common/Stores';
 	import { T_Control, Hierarchy, databases } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { T_Database } from '../../ts/data/dbs/DBCommon';
@@ -24,7 +24,7 @@
 	function ignore_wheel(event) { event.preventDefault(); }
 
 	$: {
-		const _ = $w_t_database + $w_t_startup + $w_id_popupView + $w_graph_rect;
+		const _ = $w_t_database + $w_t_startup + $w_popupView_id + $w_graph_rect;
 		panel_reattachments += 1;
 	}
 
@@ -84,7 +84,7 @@
 			<p>Nothing is available.</p>
 		{:else if $w_t_startup == T_Startup.ready}
 			<Controls/>
-			{#if !$w_id_popupView}
+			{#if !$w_popupView_id}
 				<div class='breadcrumbs'
 					style='left:0px;
 						position: absolute;
@@ -129,12 +129,12 @@
 					position: fixed;
 					z-index: {T_Layer.common};
 					left: {$w_show_details ? k.width_details : 0}px;'>
-				{#key $w_id_popupView}
-					{#if $w_id_popupView == T_Control.builds}
+				{#key $w_popupView_id}
+					{#if $w_popupView_id == T_Control.builds}
 						<BuildNotes/>
-					{:else if $w_id_popupView == T_Control.import}
+					{:else if $w_popupView_id == T_Control.import}
 						<Import accept='.json'/>
-					{:else if !$w_id_popupView}
+					{:else if !$w_popupView_id}
 						<Graph/>
 					{/if}
 				{/key}

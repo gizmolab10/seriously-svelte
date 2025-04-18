@@ -2,7 +2,7 @@
 	import { layout, signals, databases, Seriously_Range, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { c, k, u, ux, w, Rect, Size, Point, Thing, debug, Angle } from '../../ts/common/Global_Imports';
 	import { T_Graph, T_Layer, S_Title_Edit, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { w_color_trigger, w_info_title, w_thing_fontFamily } from '../../ts/common/Stores';
+	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { w_ancestries_grabbed, w_ancestry_showing_tools } from '../../ts/common/Stores';
 	import { w_hierarchy, w_s_title_edit, w_mouse_location } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
@@ -69,7 +69,7 @@
 	}
 
 	$: {
-		if (!!thing && thing.id == $w_color_trigger?.split(k.generic_separator)[0]) {
+		if (!!thing && thing.id == $w_thing_color?.split(k.generic_separator)[0]) {
 			color = thing?.color;
 		}
 	}
@@ -223,10 +223,10 @@
 	}
 
 	function title_updatedTo(title: string | null) {
-		const prior = $w_info_title;
+		const prior = $w_thing_title;
 		if (prior != title && !!$w_s_title_edit) {
 			extractRange_fromInput_toThing();
-			$w_info_title = title;		// tell Info to update it's selection's title
+			$w_thing_title = title;		// tell Info to update it's selection's title
 			debug.log_edit(`TITLE ${title}`);
 			$w_s_title_edit.title = title;
 			$w_s_title_edit.setState_temporarilyTo_whileApplying(T_Edit.percolating, () => {

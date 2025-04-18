@@ -1,7 +1,7 @@
 import { Predicate, Persistable, Relationship, Seriously_Range } from '../../common/Global_Imports';
 import { k, u, debug, colors, Trait, Ancestry, databases } from '../../common/Global_Imports';
 import { T_Thing, T_Trait, T_Debug, T_Predicate } from '../../common/Global_Imports';
-import { w_hierarchy, w_color_trigger, w_count_rebuild } from '../../common/Stores';
+import { w_hierarchy, w_thing_color, w_count_rebuild } from '../../common/Stores';
 import { w_ancestry_focus, w_ancestries_expanded } from '../../common/Stores';
 import type { Dictionary } from '../../common/Types';
 import { T_Persistable } from '../dbs/DBCommon';
@@ -77,7 +77,7 @@ export default class Thing extends Persistable {
 
 	signal_color_change() {
 		w_count_rebuild.update(n => n + 1);
-		w_color_trigger.set(`${this.id}${k.generic_separator}${get(w_count_rebuild)}`);
+		w_thing_color.set(`${this.id}${k.generic_separator}${get(w_count_rebuild)}`);
 	}
 
 	relationships_inBothDirections_forKind(kind: string): Array<Relationship> {

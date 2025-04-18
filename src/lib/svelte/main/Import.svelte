@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { w_hierarchy, w_id_popupView } from '../../ts/common/Stores';
+	import { w_hierarchy, w_popupView_id } from '../../ts/common/Stores';
 	import { k, ux, Point } from '../../ts/common/Global_Imports';
 	import { files } from '../../ts/managers/Files';
 	import { get } from 'svelte/store';
@@ -15,7 +15,7 @@
 	});
 
 	function dismiss_popup() {
-		$w_id_popupView = null;
+		$w_popupView_id = null;
 	}
 
 	function handle_selection(event: Event) {

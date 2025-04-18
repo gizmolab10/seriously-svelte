@@ -4,7 +4,7 @@
 	import { G_Widget, S_Element, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { signals, Ancestry, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_ancestries_grabbed } from '../../ts/common/Stores';
-	import { w_color_trigger, w_thing_fontFamily } from '../../ts/common/Stores';
+	import { w_thing_color, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { w_show_related, w_background_color } from '../../ts/common/Stores';
 	import { T_Edit } from '../../ts/state/S_Title_Edit';
 	import Widget_Reveal from './Widget_Reveal.svelte';
@@ -15,9 +15,9 @@
 	export let ancestry!: Ancestry;
 	const g_widget = ancestry.g_widget;
 	const es_widget = g_widget.es_widget;
-	const name = es_widget.name;
-    const points_right = g_widget.widget_pointsRight;
+	const name = g_widget.es_widget.name;
 	const points_toChild = g_widget.points_toChild;
+    const points_right = g_widget.widget_pointsRight;
 	const s_widget = ux.s_widget_forAncestry(ancestry);
 	const es_drag = ux.s_element_for(ancestry, T_Element.drag, k.empty);
 	const es_title = ux.s_element_for(ancestry, T_Element.title, k.empty);
@@ -72,7 +72,7 @@
 	}
 
 	$: {
-		const _ = $w_color_trigger + $w_ancestries_grabbed;
+		const _ = $w_thing_color + $w_ancestries_grabbed;
 		border = es_widget.border;
 	}
 

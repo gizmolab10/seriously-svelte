@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, Point, debug, colors, T_Layer } from '../../ts/common/Global_Imports';
-	import { w_color_trigger } from '../../ts/common/Stores';
+	import { w_thing_color } from '../../ts/common/Stores';
 	import Circle from '../kit/Circle.svelte';
 	import Box from '../debug/Box.svelte';
 	export let g_line!: G_TreeLine;
@@ -30,7 +30,7 @@
 	}
 
 	$: {
-		if (!!ancestry && !!ancestry.thing && ancestry.thing.id == $w_color_trigger?.split(k.generic_separator)[0]) {
+		if (!!ancestry && !!ancestry.thing && ancestry.thing.id == $w_thing_color?.split(k.generic_separator)[0]) {
 			line_reattachments += 1;
 		}
 	}

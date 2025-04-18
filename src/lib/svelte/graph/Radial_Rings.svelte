@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, ux, w, Thing, Point, Angle, debug, colors, layout, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
-	import { w_color_trigger, w_ancestry_focus, w_s_title_edit } from '../../ts/common/Stores';
+	import { w_thing_color, w_ancestry_focus, w_s_title_edit } from '../../ts/common/Stores';
 	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/common/Stores';
 	import { w_graph_rect, w_mouse_location_scaled } from '../../ts/common/Stores';
 	import { w_count_mouse_up, w_g_paging_cluster } from '../../ts/common/Stores';
@@ -40,7 +40,7 @@
 	});
 
 	$: {
-		if (!!$w_ancestry_focus.thing && $w_ancestry_focus.thing.id == $w_color_trigger?.split(k.generic_separator)[0]) {
+		if (!!$w_ancestry_focus.thing && $w_ancestry_focus.thing.id == $w_thing_color?.split(k.generic_separator)[0]) {
 			color = $w_ancestry_focus?.thing?.color ?? colors.default_forThings;
 		}
 	}
