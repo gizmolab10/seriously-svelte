@@ -164,11 +164,11 @@ export default class G_Widget {
 			const graph_rect = get(w_graph_rect);
 			const offset_y = -1 - graph_rect.origin.y;
 			const subtree_size = ancestry.visibleSubtree_size;
-			const offset_x_ofReveal = focus?.width_ofTitle / 2 - 2;
-			const offset_x_forDetails = (get(w_show_details) ? -k.width_details : 0);
-			const offset_x = 15 + offset_x_forDetails - (subtree_size.width / 2) - (k.dot_size / 2.5) + offset_x_ofReveal;
-			const origin_ofReveal = graph_rect.center.offsetByXY(offset_x, offset_y);
-			this.origin_ofWidget = origin_ofReveal.offsetByXY(-21.5 - offset_x_ofReveal, -5);
+			const x_offset_ofReveal = focus?.width_ofTitle / 2 - 2;
+			const x_offset_forDetails = (get(w_show_details) ? -k.width_details : 0);
+			const x_offset = 15 + x_offset_forDetails - (subtree_size.width / 2) - (k.dot_size / 2.5) + x_offset_ofReveal;
+			const origin_ofReveal = graph_rect.center.offsetByXY(x_offset, offset_y);
+			this.origin_ofWidget = origin_ofReveal.offsetByXY(-21.5 - x_offset_ofReveal, -5);
 		}
 	}
 
@@ -215,35 +215,30 @@ export default class G_Widget {
 	private layout_widget() {
 		const ancestry = this.ancestry;
 		if (!!ancestry.thing) {		// short-circuit mismatched graph mode
-			const points_right = this.widget_pointsRight;
 			const show_reveal = this.showingReveal;
-			const show_border = !ancestry ? false : (ancestry.isGrabbed || ancestry.isEditing);
+			const widget_pointsRight = this.widget_pointsRight;
 			const width_ofReveal = show_reveal ? k.dot_size : 0;
 			const width_ofDrag = layout.inTreeMode ? 0 : k.dot_size;
-			const width_ofWidget = ancestry.thing.width_ofTitle + width_ofDrag + width_ofReveal;
-			const thickness_ofBorder = show_border ? 0 : 1;
-			const x_ofDrag_forPointsLeft = width_ofWidget - 8 + (show_reveal ? 0.5 : 0);
-			const x_ofDrag = points_right ? (layout.inRadialMode ? 3 : 2) : x_ofDrag_forPointsLeft;
+			const show_border = !ancestry ? false : (ancestry.isGrabbed || ancestry.isEditing);
+			const width_ofWidget = ancestry.thing.width_ofTitle + width_ofDrag + width_ofReveal - (show_border ? 0.5 : 0);
+			const x_ofDrag_forPointsLeft = width_ofWidget - 3 + (show_reveal ? 0.5 : 0);
+			const x_ofDrag = widget_pointsRight ? (layout.inRadialMode ? 3 : 2) : x_ofDrag_forPointsLeft;
 			const y_ofDrag = 2.7 + (layout.inRadialMode ? 0.1 : 0);
-			const x_ofRadial = points_right ? -4 : -k.dot_size;
 			const origin_ofDrag = new Point(x_ofDrag, y_ofDrag);
-			const offset_x_ofWidget = points_right ? -7 : 7 - width_ofWidget;
-			const x_ofRadial_title = (points_right ? 20 : (show_reveal ? 20 : 6));
+			const x_ofRadial = widget_pointsRight ? -4 : -k.dot_size;
+			const x_offset_ofWidget = widget_pointsRight ? -7 : 7 - width_ofWidget;
+			const x_ofRadial_title = (widget_pointsRight ? 20 : (show_reveal ? 20 : 6));
 			this.origin_ofTitle = Point.x(layout.inRadialMode ? x_ofRadial_title : k.dot_size + 5);
-			this.offset_ofWidget = Point.square(thickness_ofBorder).offsetByX(offset_x_ofWidget);
+			this.offset_ofWidget = Point.square(show_border ? 0 : 1).offsetByX(x_offset_ofWidget);
 			this.origin_ofRadial = this.origin_ofWidget.offsetByXY(x_ofRadial, 4 - k.dot_size);
 			this.center_ofDrag = origin_ofDrag.offsetEquallyBy(k.dot_size / 2);
 			this.width_ofWidget = width_ofWidget;
 			if (show_reveal) {
-				const reveal_y = k.dot_size * 0.7;
-				const offset_x_forPointsRight = (layout.inRadialMode ? 0 : -1) - width_ofWidget;
-				const reveal_x = k.dot_size - (points_right ? offset_x_forPointsRight : 3);
-				this.center_ofReveal = new Point(reveal_x, reveal_y);
+				const y_ofReveal = k.dot_size * 0.7;
+				const x_offset_forPointsRight = (layout.inRadialMode ? 4 : -1) - width_ofWidget;
+				const x_ofReveal = k.dot_size - (widget_pointsRight ? x_offset_forPointsRight : 3);
+				this.center_ofReveal = new Point(x_ofReveal, y_ofReveal);
 			}
-			// if (show_border) {
-			// 	console.log(`width: ${width_ofWidget.toFixed(2)},`);
-			// 	// console.log(`title: ${this.origin_ofTitle.x.toFixed(2)}, origin: ${this.origin.verbose}, offset: ${this.offset_ofWidget.verbose}, drag: ${origin_ofDrag.verbose} width_ofReveal: ${width_ofReveal.toFixed(2)}, width_ofDrag: ${width_ofDrag.toFixed(2)}`);
-			// }
 		}
 	}
 	
