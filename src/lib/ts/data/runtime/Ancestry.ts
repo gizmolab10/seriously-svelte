@@ -65,12 +65,13 @@ export default class Ancestry extends Identifiable {
 	get isFocus():							 boolean { return this.matchesStore(w_ancestry_focus); }
 	get hasRelevantRelationships():			 boolean { return this.relevantRelationships_count > 0; }
 	get isBidirectional():					 boolean { return this.predicate?.isBidirectional ?? false; }
-	get showsReveal():						 boolean { return this.showsReveal_forPointingToChild(true); }
+	get shows_reveal():						 boolean { return this.showsReveal_forPointingToChild(true); }
 	get toolsGrabbed():						 boolean { return this.matchesStore(w_ancestry_showing_tools); }
-	get showsChildRelationships():			 boolean { return this.isExpanded && this.hasChildRelationships; }
+	get shows_children():					 boolean { return this.isExpanded && this.hasChildRelationships; }
 	get isGrabbed():						 boolean { return this.includedInStore_ofAncestries(w_ancestries_grabbed); }
 	get isInvalid():						 boolean { return this.containsReciprocals || this.containsMixedPredicates; }
 	get hasRelationships():					 boolean { return this.hasParentRelationships || this.hasChildRelationships; }
+	get shows_branches():					 boolean { return layout.branches_areChildren ? this.shows_children : !this.isRoot; }
 	get isEditing():						 boolean { return get(w_s_title_edit)?.isAncestry_inState(this, T_Edit.editing) ?? false; }
 	get isExpanded():						 boolean { return this.isRoot || this.includedInStore_ofAncestries(w_ancestries_expanded); }
 	get description():					   	  string { return `${this.kind} "${this.thing?.type ?? '-'}" ${this.titles.join(':')}`; }
@@ -103,9 +104,11 @@ export default class Ancestry extends Identifiable {
 	get ancestors():		 	 Array		 <Thing> { return this.hierarchy.things_forAncestry(this); }
 	get childAncestries():	 	 Array	  <Ancestry> { return this.childAncestries_ofKind(this.kind); }
 	get siblingAncestries(): 	 Array	  <Ancestry> { return this.parentAncestry?.childAncestries ?? []; }
+	get branchAncestries():		 Array	  <Ancestry> { return layout.branches_areChildren ? this.childAncestries : this.parentAncestries; }
 	get childRelationships():	 Array<Relationship> { return this.relationships_ofKind_forParents(this.kind, false); }
 	get parentRelationships():	 Array<Relationship> { return this.relationships_ofKind_forParents(this.kind, true); }
 	get relevantRelationships(): Array<Relationship> { return this.relationships_forChildren(true); }
+
 
 	get relationships(): Array<Relationship> {
 		const relationships = this.relationship_hids.map(hid => this.hierarchy.relationship_forHID(hid)) ?? [];
@@ -139,7 +142,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	get svgPathFor_revealDot(): string {
-		if (this.showsReveal) {
+		if (this.shows_reveal) {
 			return svgPaths.fat_polygon(k.dot_size, this.direction_ofReveal);
 		}
 		return svgPaths.circle_atOffset(k.dot_size, k.dot_size - 1);
@@ -254,9 +257,6 @@ export default class Ancestry extends Identifiable {
 	relationships_forChildren(forChildren: boolean):	Array<Relationship> { return forChildren ? this.childRelationships : this.parentRelationships; }
 	relationshipAt(back: number = 1):					Relationship | null { return this.hierarchy.relationship_forHID(this.idAt(back).hash()) ?? null; }
 	rect_ofWrapper(wrapper: Svelte_Wrapper | null):				Rect | null { return wrapper?.boundingRect ?? null; }
-
-	get show_branch_relationships():		 boolean { return layout.branches_areChildren ? this.showsChildRelationships : !this.isRoot; }
-	get branchAncestries():		 Array	  <Ancestry> { return layout.branches_areChildren ? this.childAncestries : this.parentAncestries; }
 
 	relationships_ofKind_forParents(kind: string, forParents: boolean): Array<Relationship> {
 		return this.thing?.relationships_ofKind_forParents(kind, forParents) ?? [];
@@ -644,7 +644,7 @@ export default class Ancestry extends Identifiable {
 	visibleSubtree_height(visited: Array<string> = []): number {
 		const thing = this.thing;
 		if (!!thing && !visited.includes(this.pathString)) {
-			if (this.show_branch_relationships) {
+			if (this.shows_branches) {
 				let height = 0;
 				for (const branchAncestry of this.branchAncestries) {
 					height += branchAncestry.visibleSubtree_height([...visited, this.pathString]);
@@ -660,8 +660,8 @@ export default class Ancestry extends Identifiable {
 		const thing = this.thing;
 		if (!!thing) {
 			const id = this.id;
-			let width = thing.titleWidth + 6;
-			if (!visited.includes(id) && this.show_branch_relationships) {
+			let width = thing.width_ofTitle + 6;
+			if (!visited.includes(id) && this.shows_branches) {
 				let subtreeWidth = 0;
 				for (const branchAncestry of this.branchAncestries) {
 					const branchWidth = branchAncestry.visibleSubtree_width([...visited, id]);
@@ -683,7 +683,7 @@ export default class Ancestry extends Identifiable {
 		}
 		const thing = this.thing;
 		if (!!thing) {
-			if (!visited.includes(this.pathString) && this.show_branch_relationships) {
+			if (!visited.includes(this.pathString) && this.shows_branches) {
 				for (const childAncestry of this.childAncestries) {
 					const progeny = childAncestry.visibleSubtree_ancestries([...visited, this.pathString]);
 					ancestries = [...ancestries, ...progeny];

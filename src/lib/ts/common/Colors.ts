@@ -72,11 +72,11 @@ export class Colors {
 	}
 
 	color_toRGBA(color: string): RGBA | null {
-		const element = document.createElement('div');
-		element.style.color = color;
-		document.body.appendChild(element);
-		const computedColor = window.getComputedStyle(element).color;
-		document.body.removeChild(element);
+		const div = document.createElement('div');
+		div.style.color = color;
+		document.body.appendChild(div);
+		const computedColor = window.getComputedStyle(div).color;
+		document.body.removeChild(div);
 		const rgba = computedColor.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d*\.?\d+))?\)$/);
 		if (rgba) {
 			return new RGBA(

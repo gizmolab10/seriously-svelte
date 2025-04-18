@@ -22,7 +22,7 @@
 	{#each ancestry.branchAncestries as branchAncestry}
 		<Tree_Line g_line = {branchAncestry.g_widget.g_line}/>
 		<Widget ancestry = {branchAncestry}/>
-		{#if branchAncestry.show_branch_relationships && !layout.was_visited(branchAncestry)}
+		{#if branchAncestry.shows_branches && !layout.was_visited(branchAncestry)}
 			<Tree_Branches ancestry = {branchAncestry}/>
 		{/if}
 	{/each}

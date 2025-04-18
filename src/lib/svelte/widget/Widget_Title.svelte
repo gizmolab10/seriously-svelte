@@ -17,8 +17,8 @@
 	const padding = `0.5px 0px 0px 0px`;
 	const input_height = k.dot_size + 2;
 	const es_title = ux.s_element_forName(name);
-	const showingReveal = ancestry?.showsReveal ?? false;
-	let title_width = (thing?.titleWidth ?? 0) + title_extra();
+	const showingReveal = ancestry?.shows_reveal ?? false;
+	let title_width = (thing?.width_ofTitle ?? 0) + title_extra();
 	let title_binded = thing?.title ?? k.empty;
 	let color = thing?.color ?? k.empty;
 	let title_wrapper: Svelte_Wrapper;
@@ -42,15 +42,6 @@
 		const handle_anySignal = signals.handle_anySignal_atPriority(0, (t_signal, ancestry) => {
 			updateInputWidth();
 		});
-		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
-			if (!!input) {
-				input.style.left = `${origin_ofInput.x}px`;
-				input.style.width = `${ancestry.thing.titleWidth}px`;
-				if (ancestry.isGrabbed) {
-					debug.log_grab(`INPUT  (left: ${origin_ofInput.x.toFixed(2)}) (width: ${ancestry.thing.titleWidth.toFixed(2)} )"${ancestry.title}"`);
-				}
-			}
-		});
 		setTimeout(() => {
 			updateInputWidth();
 			if (ancestry_isEditing()) {
@@ -58,7 +49,6 @@
 			}
 		}, 100);
 		return () => {
-			handle_reposition.disconnect();
 			handle_anySignal.disconnect();
 		};
 	});
@@ -68,8 +58,7 @@
 	$: {
 		const _ = $w_s_title_edit;
 		if (!!input) {
-			title_width = (thing?.titleWidth ?? 0) + title_extra();
-			input.style.width = `${title_width}px`;
+			title_width = (thing?.width_ofTitle ?? 0) + title_extra();
 		}
 	}
 
@@ -230,7 +219,6 @@
 	function updateInputWidth() {
 		if (!!input && !!ghost) { // ghost only exists to provide its width (in pixels)
 			title_width = ghost.scrollWidth + title_extra();
-			input.style.width = `${title_width}px`;	// apply its width to the input element
 		}
 	}
 

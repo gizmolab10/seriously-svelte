@@ -33,7 +33,7 @@ export default class Thing extends Persistable {
 	get idBridging():						  string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get description():						  string { return this.id + ' "' + this.title + '"'; }
 	get breadcrumb_title():					  string { return this.title.clipWithEllipsisAt(15); }
-	get titleWidth():						  number { return u.getWidthOf(this.title); }
+	get width_ofTitle():					  number { return u.getWidthOf(this.title); }
 	get isRoot():							 boolean { return this.type == T_Thing.root; }
 	get isBulkAlias():						 boolean { return this.type == T_Thing.bulk; }
 	get isExternals():						 boolean { return this.type == T_Thing.externals; }
@@ -103,7 +103,7 @@ export default class Thing extends Persistable {
 	}
 
 	crumbWidth(numberOfParents: number): number {
-		const forNone = this.titleWidth + 10;
+		const forNone = this.width_ofTitle + 10;
 		switch (numberOfParents) {
 			case 0:	 return forNone;
 			case 1:	 return forNone + 11;

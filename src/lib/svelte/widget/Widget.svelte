@@ -120,11 +120,6 @@
 
 	function reposition() {
 		final_layout();
-		widget.style.top = `${top}px`;
-		widget.style.left = `${left}px`;
-		widget.style.width = `${g_widget.width_ofWidget}px`;
-		widget.style.border = es_widget.border;		// avoid reattaching by injecting style changes
-		widget.style.backgroundColor = ancestry.isGrabbed || layout.inRadialMode ? $w_background_color : 'transparent';
 		origin_ofTitle = g_widget.origin_ofTitle;
 	}
 

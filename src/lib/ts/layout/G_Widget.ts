@@ -128,14 +128,14 @@ export default class G_Widget {
 		let x, y = 0;
 		if (!!branch) {
 			y = rect.extent.y - ancestry.visibleSubtree_halfHeight;
-			x = rect.origin.x + branch.titleWidth + k.dot_size + k.line_stretch;
+			x = rect.origin.x + branch.width_ofTitle + k.dot_size + k.line_stretch;
 		}
 		return new Point(x, y);
 	}
 
 	private recursively_layout_subtree(visited: Array<number> = []) {
 		const ancestry = this.ancestry;	
-		if (!visited.includes(ancestry.hid) && ancestry.show_branch_relationships) {
+		if (!visited.includes(ancestry.hid) && ancestry.shows_branches) {
 			const branchAncestries = ancestry.branchAncestries;
 			for (const branchAncestry of branchAncestries) {
 				branchAncestry.g_widget.recursively_layout_subtree([...visited, branchAncestry.hid]);		// layout progeny first
@@ -148,7 +148,7 @@ export default class G_Widget {
 		if (layout.inTreeMode && get(w_show_related)) {
 			this.layout_bidirectional_lines();
 			const ancestry = this.ancestry;	
-			if (!visited.includes(ancestry.hid) && ancestry.show_branch_relationships) {
+			if (!visited.includes(ancestry.hid) && ancestry.shows_branches) {
 				const childAncestries = ancestry.childAncestries;
 				for (const childAncestry of childAncestries) {
 					childAncestry.g_widget.recursively_layout_bidirectionals([...visited, childAncestry.hid]);		// layout progeny first
@@ -164,7 +164,7 @@ export default class G_Widget {
 			const graph_rect = get(w_graph_rect);
 			const offset_y = -1 - graph_rect.origin.y;
 			const subtree_size = ancestry.visibleSubtree_size;
-			const offset_x_ofReveal = focus?.titleWidth / 2 - 2;
+			const offset_x_ofReveal = focus?.width_ofTitle / 2 - 2;
 			const offset_x_forDetails = (get(w_show_details) ? -k.width_details : 0);
 			const offset_x = 15 + offset_x_forDetails - (subtree_size.width / 2) - (k.dot_size / 2.5) + offset_x_ofReveal;
 			const origin_ofReveal = graph_rect.center.offsetByXY(offset_x, offset_y);
@@ -177,7 +177,7 @@ export default class G_Widget {
 		if (!!graphRect && layout.inTreeMode) {
 			const offsetY = graphRect.origin.y + 1;
 			const subtree_size = this.ancestry.visibleSubtree_size;
-			const offsetX_ofFirstReveal = (this.ancestry.thing?.titleWidth ?? 0) / 2 - 2;
+			const offsetX_ofFirstReveal = (this.ancestry.thing?.width_ofTitle ?? 0) / 2 - 2;
 			const branches_offsetY = (k.dot_size / 2) -(subtree_size.height / 2) - 4;
 			const branches_offsetX = -37 + k.line_stretch - (k.dot_size / 2) + offsetX_ofFirstReveal;
 			const offsetX = (get(w_show_details) ? -k.width_details : 0) + 15 + offsetX_ofFirstReveal - (subtree_size.width / 2) - (k.dot_size / 2.5);
@@ -220,12 +220,12 @@ export default class G_Widget {
 			const show_border = !ancestry ? false : (ancestry.isGrabbed || ancestry.isEditing);
 			const width_ofReveal = show_reveal ? k.dot_size : 0;
 			const width_ofDrag = layout.inTreeMode ? 0 : k.dot_size;
-			const width_ofWidget = ancestry.thing.titleWidth + width_ofDrag + width_ofReveal;
+			const width_ofWidget = ancestry.thing.width_ofTitle + width_ofDrag + width_ofReveal;
 			const thickness_ofBorder = show_border ? 0 : 1;
-			const x_ofDrag_forPointsLeft = width_ofWidget - 4 + (show_reveal ? 0.5 : 0);
+			const x_ofDrag_forPointsLeft = width_ofWidget - 8 + (show_reveal ? 0.5 : 0);
 			const x_ofDrag = points_right ? (layout.inRadialMode ? 3 : 2) : x_ofDrag_forPointsLeft;
 			const y_ofDrag = 2.7 + (layout.inRadialMode ? 0.1 : 0);
-			const x_ofRadial = points_right ? -4 : k.dot_size * -1;
+			const x_ofRadial = points_right ? -4 : -k.dot_size;
 			const origin_ofDrag = new Point(x_ofDrag, y_ofDrag);
 			const offset_x_ofWidget = points_right ? -7 : 7 - width_ofWidget;
 			const x_ofRadial_title = (points_right ? 20 : (show_reveal ? 20 : 6));

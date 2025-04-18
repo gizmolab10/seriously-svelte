@@ -29,7 +29,7 @@
 	let tool_reattachments = 0;
 	let mouse_click_timer;
 	let color = k.empty;
-	let titleWidth = 0;
+	let width_ofTitle = 0;
 	let left = 64;
 	let ancestry;
 	let thing;
@@ -84,7 +84,7 @@
 			if (!!ancestry) {
 				thing = ancestry.thing;
 				color = thing?.color ?? k.empty;
-				titleWidth = thing?.titleWidth ?? 0;
+				width_ofTitle = thing?.width_ofTitle ?? 0;
 				const hasOneParent = (thing?.parents.length ?? 0) == 1;
 				countOfVisibleParents = ancestry.visibleParentAncestries(0).length;
 				parentSensitiveColor = (hasOneParent || ancestry.isFocus) ? colors.disabled : color ;
@@ -95,7 +95,7 @@
 	}
 
 	function titleOffsetX(): number {
-		return !ancestry ? 0 : layout.inRadialMode ? ancestry.points_right ? titleWidth + 23 : -6 : ancestry.showsReveal ? titleWidth + 25 : titleWidth + 17;
+		return !ancestry ? 0 : layout.inRadialMode ? ancestry.points_right ? width_ofTitle + 23 : -6 : ancestry.shows_reveal ? width_ofTitle + 25 : width_ofTitle + 17;
 	}
 
 	function handle_delete_event(event) {

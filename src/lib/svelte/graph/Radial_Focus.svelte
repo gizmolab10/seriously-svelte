@@ -63,7 +63,7 @@
 	}
 
 	function layout() {
-		width_ofTitle = ($w_ancestry_focus?.thing?.titleWidth ?? 0);
+		width_ofTitle = ($w_ancestry_focus?.thing?.width_ofTitle ?? 0);
 		const x = -7.5 - (width_ofTitle / 2);
 		const y = -11;
 		origin_ofTitle = new Point(19, -2);
