@@ -65,7 +65,7 @@ export class G_Window {
 
 	graphRect_update() {
 		const left = get(w_show_details) ? k.width_details : 0;			// width of details
-		const originOfGraph = new Point(left, layout.top_ofBannerAt(T_Banner.graph));						// 69 = height of content above the graph
+		const originOfGraph = new Point(left, layout.top_ofBannerAt(T_Banner.graph) + 5);						// 69 = height of content above the graph
 		const sizeOfGraph = this.windowSize.reducedBy(originOfGraph);	// account for origin
 		const rect = new Rect(originOfGraph, sizeOfGraph);
 		debug.log_mouse(`GRAPH ====> ${rect.description}`);

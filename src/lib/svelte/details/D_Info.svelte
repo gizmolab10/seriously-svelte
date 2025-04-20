@@ -148,7 +148,7 @@
 				left=5
 				title='title'
 				width={info_width}
-				thickness={k.separator_thickness}
+				thickness={k.thin_separator_thickness}
 				title_font_size={separator_font_size}
 				top={layout.top_ofInfoAt(T_Info.before_title)}/>
 			<div style='
@@ -162,7 +162,7 @@
 			<Separator
 				left=5
 				width={info_width}
-				thickness={k.separator_thickness}
+				thickness={k.thin_separator_thickness}
 				top={layout.top_ofInfoAt(T_Info.after_title)}/>
 			<Table
 				array={information}
@@ -183,7 +183,7 @@
 					position:absolute;
 					width:{k.width_details}px;
 					z-index:{T_Layer.frontmost};
-					height:{k.separator_thickness}px;
+					height:{k.thin_separator_thickness}px;
 					background-color:{colors.separator};'>
 			</div>
 			<Text_Editor

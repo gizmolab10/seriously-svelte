@@ -35,7 +35,7 @@
 		allow_multiple={true}
 		name='details-selector'
 		selected={$w_t_details}
-		origin={new Point(6, 6)}
+		origin={new Point(6, 4)}
 		selection_closure={selection_closure}/>
 	{#if showingDetails_ofType(T_Details.storage)}
 		<Separator title='storage' top={tops[T_Details.storage] - 8}/>

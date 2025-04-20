@@ -218,15 +218,15 @@ export default class G_Widget {
 			const show_reveal = this.showingReveal;
 			const widget_pointsRight = this.widget_pointsRight;
 			const width_ofReveal = show_reveal ? k.dot_size : 0;
-			const width_ofDrag = layout.inTreeMode ? 0 : k.dot_size;
+			const width_ofDrag = layout.inTreeMode ? 0 : k.dot_size * 2;
 			const show_border = !ancestry ? false : (ancestry.isGrabbed || ancestry.isEditing);
-			const width_ofWidget = ancestry.thing.width_ofTitle + width_ofDrag + width_ofReveal - (show_border ? 0.5 : 0);
-			const x_ofDrag_forPointsLeft = width_ofWidget - 3 + (show_reveal ? 0.5 : 0);
+			const width_ofWidget = ancestry.thing.width_ofTitle + width_ofDrag + width_ofReveal;
+			const x_ofDrag_forPointsLeft = width_ofWidget - 16 + (show_reveal ? 0.5 : 0);
 			const x_ofDrag = widget_pointsRight ? (layout.inRadialMode ? 3 : 2) : x_ofDrag_forPointsLeft;
 			const y_ofDrag = 2.7 + (layout.inRadialMode ? 0.1 : 0);
 			const origin_ofDrag = new Point(x_ofDrag, y_ofDrag);
 			const x_ofRadial = widget_pointsRight ? -4 : -k.dot_size;
-			const x_offset_ofWidget = widget_pointsRight ? -7 : 7 - width_ofWidget;
+			const x_offset_ofWidget = widget_pointsRight ? -7 : 13 - width_ofWidget;
 			const x_ofRadial_title = (widget_pointsRight ? 20 : (show_reveal ? 20 : 6));
 			this.origin_ofTitle = Point.x(layout.inRadialMode ? x_ofRadial_title : k.dot_size + 5);
 			this.offset_ofWidget = Point.square(show_border ? 0 : 1).offsetByX(x_offset_ofWidget);
@@ -235,8 +235,8 @@ export default class G_Widget {
 			this.width_ofWidget = width_ofWidget;
 			if (show_reveal) {
 				const y_ofReveal = k.dot_size * 0.7;
-				const x_offset_forPointsRight = (layout.inRadialMode ? 4 : -1) - width_ofWidget;
-				const x_ofReveal = k.dot_size - (widget_pointsRight ? x_offset_forPointsRight : 3);
+				const x_offset_forPointsRight = (layout.inRadialMode ? -20 : 1) + width_ofWidget;
+				const x_ofReveal = k.dot_size + (widget_pointsRight ? x_offset_forPointsRight : -3);
 				this.center_ofReveal = new Point(x_ofReveal, y_ofReveal);
 			}
 		}

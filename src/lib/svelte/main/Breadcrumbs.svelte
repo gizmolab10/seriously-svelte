@@ -49,7 +49,7 @@
 		{#if index > 0}
 			<div class='crumb-separator'
 				style='
-					top:1.5px;
+					top:3.5px;
 					position:absolute;
 					color:{thing.color};
 					left:{lefts[index] - size + 3}px;'>

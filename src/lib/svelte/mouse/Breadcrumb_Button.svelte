@@ -19,8 +19,8 @@
 	let breadcrumb_reattachments = 0;
 	let colorStyles = k.empty;
 	let style = k.empty;
-		
-	center = new Point(left + width / 2, height / 2 + 2);
+
+	center = new Point(left + width / 2, height / 2 + 3.7);
 	updateColors();
 
 	$: {

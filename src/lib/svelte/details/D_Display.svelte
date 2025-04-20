@@ -32,7 +32,7 @@
 		position:absolute;
 		font-size:{font_ratio}em;
 		width:{k.width_details}px;'>
-	<Separator title='show tiny dots for' top=2 left=5 width={info_width} title_font_size={separator_font_size} thickness={k.separator_thickness}/>
+	<Separator title='show tiny dots for' top=2 left=5 width={info_width} title_font_size={separator_font_size} thickness={k.thin_separator_thickness}/>
 	<Segmented
 		titles={titles}
 		allow_multiple={true}
@@ -41,7 +41,7 @@
 		selected={$w_t_countDots}
 		height={k.row_height * font_ratio}
 		selection_closure={selection_closure}/>
-	<Separator title='colors' top=32 left=5 width={info_width} title_font_size={separator_font_size} thickness={k.separator_thickness}/>
+	<Separator title='colors' top=32 left=5 width={info_width} title_font_size={separator_font_size} thickness={k.thin_separator_thickness}/>
 	<div 
 		class= 'background'
 		style='

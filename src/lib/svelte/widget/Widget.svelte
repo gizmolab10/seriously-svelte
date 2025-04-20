@@ -23,6 +23,7 @@
 	const es_title = ux.s_element_for(ancestry, T_Element.title, k.empty);
 	const es_reveal = ux.s_element_for(ancestry, T_Element.reveal, k.empty);
 	let origin_ofTitle = g_widget.origin_ofTitle;
+	let width_ofWidget = g_widget.width_ofWidget;
 	let widgetWrapper!: Svelte_Wrapper;
 	let border_radius = k.dot_size / 2;
 	let center_ofDrag = Point.zero;
@@ -55,7 +56,7 @@
 						layout_maybe();
 						break;
 					case T_Signal.reposition:
-						reposition();
+						final_layout();
 						break;
 				}
 			}
@@ -80,7 +81,7 @@
 		const _ = $w_s_title_edit + $w_ancestries_grabbed;
 		if (!!ancestry && !!widget && s_widget.update_forStateChange) {
 			border = es_widget.border;
-			reposition();
+			final_layout();
 		}
 	}
  
@@ -118,21 +119,18 @@
 		}
 	}
 
-	function reposition() {
-		final_layout();
-		origin_ofTitle = g_widget.origin_ofTitle;
-	}
-
 	function final_layout() {
 		const hasExtra_onRight = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
-		const onRight = layout.inRadialMode ? 0 : 21 + (hasExtra_onRight ? 0.5 : 0);
+		const padding_onRight = layout.inRadialMode ? -10 : 21 + (hasExtra_onRight ? 0.5 : 0);
 		const origin_ofWidget = g_widget.origin.offsetBy(g_widget.offset_ofWidget);
-		const onLeft = points_right ? 1 : 14;
+		const padding_onLeft = points_right ? 1 : 14;
 		top = origin_ofWidget.y;
 		left = origin_ofWidget.x;
 		height = k.row_height - 1.5;
 		border_radius = k.row_height / 2;
-		padding = `0px ${onRight}px 0px ${onLeft}px`;
+		width_ofWidget = g_widget.width_ofWidget;
+		origin_ofTitle = g_widget.origin_ofTitle;
+		padding = `0px ${padding_onRight}px 0px ${padding_onLeft}px`;
 	}
 
 </script>
@@ -151,9 +149,9 @@
 			height : {height}px;
 			padding : {padding};
 			position :  absolute;
+			width : {width_ofWidget}px;
 			z-index : {T_Layer.widgets};
 			border-radius : {border_radius}px;
-			width : {g_widget.width_ofWidget}px;
 			background-color : {ancestry.isGrabbed || layout.inRadialMode ? $w_background_color : 'transparent'};
 		'>
 		<Widget_Drag

@@ -12,15 +12,15 @@ export default class Constants {
 	fork_thicknes = 2.5;
 	small_font_size = 11;
 	default_buttonSize = 16;
-	separator_thickness = 3;
+	separator_thickness = 5;
 	threshold_longClick = 800;
 	innermost_ring_radius = 60;
 	editingTools_diameter = 64;
 	threshold_doubleClick = 700;
 	hid_unknown = 1000000000000;
-	fat_separator_thickness = 6;
 	ring_resizing_thickness = 30;
 	ring_rotation_thickness = 44;
+	thin_separator_thickness = 3;
 	diameterOf_outer_tinyDots = this.dot_size * 1.4;
 	prevent_selection_style = '-webkit-user-select: none; user-select: none; -moz-user-select: none';
 	local_help_url = 'http://localhost:8000/README.html';

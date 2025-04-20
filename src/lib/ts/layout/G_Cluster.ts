@@ -221,18 +221,18 @@ export default class G_Cluster {
 		//	widgets distributed half-and-half around fork-angle
 
 		const max = this.widgets_shown - 1;
-		const row = (max / 2) - index;							// row centered around zero
+		const row = (max / 2) - index;						// row centered around zero
 		const radius = get(w_ring_rotation_radius);
-		const radial = this.g_sliderArc.radial_ofFork;			// points at middle widget
-		let y = radial.y + (row * (k.dot_size + 1));			// distribute y equally around fork_y
+		const radial = this.g_sliderArc.radial_ofFork;		// points at middle widget
+		let y = radial.y + (row * (k.dot_size + 1.3));		// distribute y equally around fork_y
 		let y_isOutside = false;
 		const absY = Math.abs(y);
 		if (absY > radius) {
-			y_isOutside = true;									// y is outside rotation ring
-			y = radius * (y / absY) - (y % radius);				// swing around (bottom | top) --> back inside rotation
+			y_isOutside = true;								// y is outside rotation ring
+			y = radius * (y / absY) - (y % radius);			// swing around (bottom | top) --> back inside rotation
 		}
-		let child_angle = -Math.asin(y / radius);				// arc-sin only defined (-90 to 90) [ALSO: negate angles so things advance clockwise]
-		if (y_isOutside == (radial.x > 0)) {					// counter-clockwise if (x is positive AND y is outside) OR (x is negative AND y is inside)
+		let child_angle = -Math.asin(y / radius);			// arc-sin only defined (-90 to 90) [ALSO: negate angles so things advance clockwise]
+		if (y_isOutside == (radial.x > 0)) {				// counter-clockwise if (x is positive AND y is outside) OR (x is negative AND y is inside)
 			child_angle = Angle.half - child_angle			// otherwise it's clockwise, so invert it
 		}
 		this.layout_arc_angles(index, max, child_angle);

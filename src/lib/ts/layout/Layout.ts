@@ -102,19 +102,19 @@ export default class Layout {
 	}
 	
 	layout_tops_forPanelBanners() {
-		this.verticals_ofBanners.heights = [k.row_height - 2, k.row_height, k.row_height];
+		this.verticals_ofBanners.heights = [k.row_height - 5, k.row_height, k.row_height];
 		let index = 0;
 		let top = 2;
 		while (index <= T_Banner.graph) {
 			this.verticals_ofBanners.tops[index] = top;
-			top += this.verticals_ofBanners.heights[index] + 3;
+			top += this.verticals_ofBanners.heights[index] + 4;
 			index += 1;
 		}
 	}
 	
 	layout_tops_forDetails() {
-		let top = this.top_ofBannerAt(T_Banner.crumbs) + 11;
-		this.verticals_ofDetails.heights = [120, 40, 76, 0];
+		let top = this.top_ofBannerAt(T_Banner.crumbs) + 8;
+		this.verticals_ofDetails.heights = [118, 40, 76, 0];
 		let index = 0;
 		let indices = get(w_t_details);
 		while (index <= T_Details.info) {
