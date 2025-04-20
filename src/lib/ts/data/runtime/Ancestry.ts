@@ -598,8 +598,14 @@ export default class Ancestry extends Identifiable {
 	static readonly EVENTS: unique symbol;
 
 	handle_singleClick_onDragDot(shiftKey: boolean) {
-		if (this.isBidirectional && this.parentAncestries.length > 0) {
-			this.parentAncestries[0].handle_singleClick_onDragDot(shiftKey);
+		if (this.isBidirectional) {
+			if (this.thing?.isRoot) {
+				this.hierarchy.rootAncestry.handle_singleClick_onDragDot(shiftKey);
+			} else if (this.thing?.ancestries?.length > 0) {
+				this.thing?.ancestries[0].handle_singleClick_onDragDot(shiftKey);
+			} else {
+				alert(`${this.title} refuses focus`);
+			}
 		} else {
 			w_s_title_edit?.set(null);
 			if (!!get(w_s_alteration)) {
