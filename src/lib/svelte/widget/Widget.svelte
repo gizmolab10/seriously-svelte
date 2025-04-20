@@ -81,6 +81,7 @@
 		const _ = $w_s_title_edit + $w_ancestries_grabbed;
 		if (!!ancestry && !!widget && s_widget.update_forStateChange) {
 			border = es_widget.border;
+			g_widget.layout_widget();
 			final_layout();
 		}
 	}
@@ -121,16 +122,13 @@
 
 	function final_layout() {
 		const hasExtra_onRight = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
-		const padding_onRight = layout.inRadialMode ? -10 : 21 + (hasExtra_onRight ? 0.5 : 0);
 		const origin_ofWidget = g_widget.origin.offsetBy(g_widget.offset_ofWidget);
-		const padding_onLeft = points_right ? 1 : 14;
 		top = origin_ofWidget.y;
 		left = origin_ofWidget.x;
 		height = k.row_height - 1.5;
 		border_radius = k.row_height / 2;
 		width_ofWidget = g_widget.width_ofWidget;
 		origin_ofTitle = g_widget.origin_ofTitle;
-		padding = `0px ${padding_onRight}px 0px ${padding_onLeft}px`;
 	}
 
 </script>
@@ -147,7 +145,6 @@
 			left : {left}px;
 			border : {border};
 			height : {height}px;
-			padding : {padding};
 			position :  absolute;
 			width : {width_ofWidget}px;
 			z-index : {T_Layer.widgets};
