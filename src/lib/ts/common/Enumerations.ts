@@ -18,6 +18,11 @@ export enum T_Alteration {
 	adding	 = 'adding',
 }
 
+export enum T_Order {
+	natural,
+	parent
+}
+
 export enum T_Hierarchy {
 	children = 'children',
 	parents	 = 'parents',

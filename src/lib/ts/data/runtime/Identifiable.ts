@@ -32,5 +32,12 @@ export default class Identifiable {
 		const identifiables = from as Array<Identifiable>;
 		return identifiables.filter(t => t.hid != identifiable.hid) as Array<T>;
 	}
+
+	static id_inReverseOrder(id: string): string {
+		if (id.length > 3) { return this.newID(); }
+		const parts = id.split('');
+		const start = parts.shift();
+		return [start, ...parts.reverse()].join('');
+	}
 	
 }

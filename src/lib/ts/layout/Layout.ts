@@ -93,11 +93,11 @@ export default class Layout {
 			case T_Info.before_title: return   4;
 			case T_Info.title:		  return  17;
 			case T_Info.after_title:  return   4;
-			case T_Info.table:		  return 141;
+			case T_Info.table:		  return 139;
 			case T_Info.color:		  return   2;
 			case T_Info.traits:		  return   2;
 			case T_Info.consequence:  return  50;
-			default:			  return  50;
+			default:				  return  50;
 		}
 	}
 	

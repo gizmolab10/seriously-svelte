@@ -177,7 +177,7 @@ export default class DBAirtable extends DBCommon {
 				const parents = record.fields.parent as (Array<string>);
 				const children = record.fields.child as (Array<string>);
 				const kind = record.fields.kind as T_Predicate;
-				this.hierarchy.relationship_remember_runtimeCreateUnique(k.empty, id, kind, parents[0], children[0], order, T_Create.isFromPersistent);
+				this.hierarchy.relationship_remember_runtimeCreateUnique(k.empty, id, kind, parents[0], children[0], order, 0, T_Create.isFromPersistent);
 			}
 		} catch (error) {
 			debug.log_error(this.relationships_errorMessage + error);

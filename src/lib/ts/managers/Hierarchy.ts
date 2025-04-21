@@ -1,5 +1,5 @@
+import { T_Tool, T_Thing, T_Trait, T_Order, T_Create, T_Report, T_Control, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { c, k, p, u, ux, show, User, Thing, Trait, debug, files, colors, signals, layout, Access } from '../common/Global_Imports';
-import { T_Tool, T_Report, T_Thing, T_Trait, T_Create, T_Control, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { Ancestry, Predicate, Relationship, S_Mouse, S_Alteration, S_Title_Edit } from '../common/Global_Imports';
 import { w_storage_updated, w_ancestry_showing_tools, w_ancestries_grabbed } from '../common/Stores';
 import { w_popupView_id, w_ancestry_focus, w_s_title_edit, w_s_alteration } from '../common/Stores';
@@ -772,19 +772,20 @@ export class Hierarchy {
 	}
 
 	relationship_remember_runtimeCreateUnique(idBase: string, id: string, kind: T_Predicate, idParent: string, idChild: string,
-		order: number, creationOptions: T_Create = T_Create.none): Relationship {
+		order: number, parentOrder: number = 0, creationOptions: T_Create = T_Create.none): Relationship {
 		let reversed = this.relationship_forPredicateKind_parent_child(kind, idChild.hash(), idParent.hash());
 		let relationship = this.relationship_forPredicateKind_parent_child(kind, idParent.hash(), idChild.hash());
 		const isBidirectional = this.predicate_forKind(kind)?.isBidirectional ?? false;
 		const already_persisted = creationOptions == T_Create.isFromPersistent;
 		if (!relationship) {
-			relationship = new Relationship(idBase, id, kind, idParent, idChild, order, already_persisted);
+			relationship = new Relationship(idBase, id, kind, idParent, idChild, order, parentOrder, already_persisted);
 			this.relationship_remember(relationship);
 		}
 		if (isBidirectional && !reversed) {
-			reversed = new Relationship(idBase, Identifiable.newID(), kind, idChild, idParent, order, already_persisted);
+			reversed = new Relationship(idBase, Identifiable.id_inReverseOrder(id), kind, idChild, idParent, order, parentOrder, already_persisted);
 			this.relationship_remember(reversed);
 		}
+		relationship?.order_setTo(parentOrder, T_Order.parent);
 		relationship?.order_setTo(order);
 		reversed?.order_setTo(order);
 		return relationship;

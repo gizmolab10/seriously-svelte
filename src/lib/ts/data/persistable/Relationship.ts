@@ -1,4 +1,4 @@
-import { Thing, debug, T_Debug, databases, Predicate, T_Predicate } from '../../common/Global_Imports';
+import { Thing, debug, T_Debug, T_Order, databases, Predicate, T_Predicate } from '../../common/Global_Imports';
 import { w_hierarchy, w_relationship_order } from '../../common/Stores';
 import Persistable from '../persistable/Persistable';
 import type { Integer } from '../../common/Types';
@@ -7,32 +7,34 @@ import { get } from 'svelte/store';
 import Airtable from 'airtable';
 
 export default class Relationship extends Persistable {
-	kind: T_Predicate;
 	hidParent: Integer;
 	hidChild: Integer;
+	kind: T_Predicate;
 	idParent: string;
 	idChild: string;
-	order: number; 
+	orders = [0, 0];
 
-	constructor(idBase: string, id: string, kind: T_Predicate, idParent: string, idChild: string, order = 0, already_persisted: boolean = false) {
+	constructor(idBase: string, id: string, kind: T_Predicate, idParent: string, idChild: string, order = 0, parentOrder: number = 0, already_persisted: boolean = false) {
 		super(databases.db_now.t_database, idBase, T_Persistable.relationships, id, already_persisted);
-		this.kind = kind;
+		this.orders = [order, parentOrder];
 		this.hidParent = idParent.hash();
 		this.hidChild = idChild.hash();
 		this.idParent = idParent;
 		this.idChild = idChild;
-		this.order = order;
+		this.kind = kind;
 	}
 
 	get child(): Thing | null { return this.thing(true); }
 	get parent(): Thing | null { return this.thing(false); }
+	get order(): number { return this.orders[T_Order.natural]; }
+	get order_ofParent(): number { return this.orders[T_Order.parent]; }
 	get isValid(): boolean { return !!this.kind && !!this.parent && !!this.child; }
 	get predicate(): Predicate | null { return get(w_hierarchy).predicate_forKind(this.kind); }
-	get fields(): Airtable.FieldSet { return { kind: this.kind, parent: [this.idParent], child: [this.idChild], order: this.order }; }
+	get fields(): Airtable.FieldSet { return { kind: this.kind, parent: [this.idParent], child: [this.idChild], orders: this.orders }; }
 
 	get verbose(): string {
 		const persisted = this.persistence.already_persisted ? 'STORED' : 'DIRTY';
-		return `BASE ${this.idBase} ${persisted} [${this.order}] ${this.id} ${this.description}`;
+		return `BASE ${this.idBase} ${persisted} [${this.orders}] ${this.id} ${this.description}`;
 	}
 
 	get description(): string {
@@ -41,21 +43,18 @@ export default class Relationship extends Persistable {
 		return `${parent} ${this.predicate?.kind} ${child}`;
 	}
 
-	log(flag: T_Debug, message: string) { debug.log_maybe(flag, `${message} ${this.description}`); }
+	remove_from(relationships: Array<Relationship>) {
+		relationships.filter(t => t.kind != this.kind)
+	}
+
+	orders_setTo(newOrders: Array<number>, persist: boolean = false) {
+		this.order_setTo(newOrders[T_Order.natural]);	// don't persist or signal, yet
+		this.order_setTo(newOrders[T_Order.parent], T_Order.parent, persist, true);
+	}
 
 	thing(child: boolean): Thing | null {
 		const id = child ? this.idChild : this.idParent;
 		return get(w_hierarchy).thing_forHID(id.hash()) ?? null
-	}
-
-	order_setTo(newOrder: number, persist: boolean = false) {
-		if (Math.abs(this.order - newOrder) > 0.001) {
-			this.order = newOrder;
-			w_relationship_order.set(Date.now());
-			if (persist) {
-				this.set_isDirty();
-			}
-		}
 	}
 
 	async persistent_create_orUpdate(already_persisted: boolean) {
@@ -66,8 +65,17 @@ export default class Relationship extends Persistable {
 		}
 	}
 
-	remove_from(relationships: Array<Relationship>) {
-		relationships.filter(t => t.kind != this.kind)
+	order_setTo(newOrder: number, t_order: T_Order = T_Order.natural, persist: boolean = false, signalUpdates: boolean = false) {
+		const order = this.orders[t_order];
+		if (Math.abs(order - newOrder) > 0.001) {
+			this.orders[t_order] = newOrder;
+			if (signalUpdates) {
+				w_relationship_order.set(Date.now());
+			}
+			if (persist) {
+				this.set_isDirty();
+			}
+		}
 	}
 
 }

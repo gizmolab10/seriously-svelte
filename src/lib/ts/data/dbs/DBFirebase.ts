@@ -267,7 +267,7 @@ export default class DBFirebase extends DBCommon {
 				case T_Persistable.predicates:	  h.predicate_remember_runtimeCreate(id, data.kind, data.isBidirectional); break;
 				case T_Persistable.traits:		  h.trait_remember_runtimeCreate(idBase, id, data.ownerID, data.type, data.text, true); break;
 				case T_Persistable.things:		  h.thing_remember_runtimeCreate(idBase, id, data.title, data.color, data.type ?? data.trait, true, !data.type); break;
-				case T_Persistable.relationships: h.relationship_remember_runtimeCreateUnique(idBase, id, data.predicate.id, data.parent.id, data.child.id, data.order, T_Create.isFromPersistent); break;
+				case T_Persistable.relationships: h.relationship_remember_runtimeCreateUnique(idBase, id, data.predicate.id, data.parent.id, data.child.id, data.order, 0, T_Create.isFromPersistent); break;
 			}
 		}
 	}
@@ -570,7 +570,7 @@ export default class DBFirebase extends DBCommon {
 		const changed = (relationship.kind != remote.predicate.id ||
 			relationship.idParent != remote.parent.id ||
 			relationship.idChild != remote.child.id ||
-			relationship.order != remote.order)
+			relationship.orders != remote.orders)
 		if (changed) {
 			relationship.idChild = remote.child.id;
 			relationship.idParent = remote.parent.id;
@@ -578,7 +578,7 @@ export default class DBFirebase extends DBCommon {
 			relationship.hidParent = remote.parent.id.hash();
 			relationship.persistence.already_persisted = true;
 			relationship.kind = remote.kind;
-			relationship.order_setTo(remote.order + k.halfIncrement);
+			relationship.order_setTo(remote.orders.map(o => o + k.halfIncrement));
 		}
 		return changed;
 	}
@@ -618,7 +618,7 @@ export default class DBFirebase extends DBCommon {
 					if (!!relationship) {
 						return false;
 					}
-					relationship = h.relationship_remember_runtimeCreateUnique(idBase, id, remoteRelationship.kind, remoteRelationship.parent.id, remoteRelationship.child.id, remoteRelationship.order, T_Create.isFromPersistent);
+					relationship = h.relationship_remember_runtimeCreateUnique(idBase, id, remoteRelationship.kind, remoteRelationship.parent.id, remoteRelationship.child.id, remoteRelationship.order, 0, T_Create.isFromPersistent);
 					break;
 				default:
 					if (!relationship) {
