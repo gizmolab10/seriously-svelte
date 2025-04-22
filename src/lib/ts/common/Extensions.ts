@@ -10,6 +10,7 @@ declare global {
 		injectEllipsisAt(at: number): string;
 		clipWithEllipsisAt(at: number): string;
 		fontSize_relativeTo(base: number): number;
+		beginWithEllipsis_forLength(length: number): string;
 	}
 }
 
@@ -76,6 +77,19 @@ Object.defineProperty(String.prototype, 'clipWithEllipsisAt', {
 			clipped = clipped.slice(0, at) + ' ...';
 		}
 		return clipped;
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
+});
+
+Object.defineProperty(String.prototype, 'beginWithEllipsis_forLength', {
+	value: function(length: number = 6): string {
+		let injected = this;
+		if (injected.length > length) {
+			injected = ' ... ' + injected.slice(injected.length - length, injected.length);
+		}
+		return injected;
 	},
 	writable: false,
 	enumerable: false,

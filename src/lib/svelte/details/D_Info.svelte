@@ -95,8 +95,8 @@
 				'progeny'  : ancestry.progeny_count().expressZero_asHyphen(),
 				'parents'  : thing.parents.length.expressZero_asHyphen(),
 				'related'  : thing.relatedRelationships.length.expressZero_asHyphen(),
-				'id'	   : thing.id.clipWithEllipsisAt(13),
-				'ancestry' : ancestry.id.clipWithEllipsisAt(13),
+				'id'	   : thing.id.beginWithEllipsis_forLength(13),
+				'ancestry' : ancestry.id.beginWithEllipsis_forLength(13),
 				'color'	   : ancestry.isEditable ? k.empty : 'not editable',
 			};
 			information = Object.entries(dict);
@@ -106,7 +106,7 @@
 	function handle_textChange(label: string, text: string | null) {
 		if (!!thing && (!!text || text == k.empty)) {
 			switch (label) {
-				case 'quest':		thing.setTraitText_forType(text, T_Trait.quest);		 break;
+				case 'quest':		thing.setTraitText_forType(text, T_Trait.quest);	   break;
 				case 'consequence':	thing.setTraitText_forType(text, T_Trait.consequence); break;
 			}
 		} else if (!text) {		// do after test for k.empty, which also is interpreted as falsey
