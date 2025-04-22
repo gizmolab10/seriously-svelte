@@ -81,11 +81,6 @@
 		update_forAncestry();
 	}
 
-	function orders(): string {
-		const orders = ancestry.relationship?.orders ?? [0, 0];
-		return orders.map(order => order.expressZero_asHyphen()).join(', ');
-	}
-
 	function update_forAncestry() {
 		thing = ancestry?.thing;
 		if (!!thing) {
@@ -95,7 +90,7 @@
 			const dict = {
 				'depth'	   : ancestry.depth.expressZero_asHyphen(),
 				'parent'   : ancestry.predicate.kind,
-				'orders'   : orders(),
+				'order'	   : ancestry.order.expressZero_asHyphen(),
 				'children' : ancestry.children.length.expressZero_asHyphen(),
 				'progeny'  : ancestry.progeny_count().expressZero_asHyphen(),
 				'parents'  : thing.parents.length.expressZero_asHyphen(),

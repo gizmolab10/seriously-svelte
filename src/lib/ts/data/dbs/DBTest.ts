@@ -45,10 +45,10 @@ export default class DBTest extends DBCommon {
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cef', kindC, idTe, idTf, 0, 1);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cfd', kindC, idTf, idTd, 0, 3);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'rrb', kindR, idTr, idTb, 0, 0);
-		h.relationship_remember_runtimeCreateUnique(this.idBase, 'rbd', kindR, idTb, idTd, 1, 0);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'rbd', kindR, idTb, idTd, 0, 1);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'rac', kindR, idTa, idTc, 0, 0);
-		h.relationship_remember_runtimeCreateUnique(this.idBase, 'raf', kindR, idTa, idTf, 1, 0);
-		h.relationship_remember_runtimeCreateUnique(this.idBase, 'rce', kindR, idTc, idTe, 1, 0);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'raf', kindR, idTa, idTf, 0, 1);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'rce', kindR, idTc, idTe, 0, 1);
 		// this.makeMore(3, 'c', kindC, idTf, true);	// children of Friends
 		this.makeMore(2, 'g', kindC, idTb, true, 4);	// children of Big
 		this.makeMore(4, 'e', kindR, idTb, true, 2);	// related to  "

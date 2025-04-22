@@ -1,5 +1,5 @@
 import { k, ux, Rect, Size, Point, layout, Ancestry } from '../common/Global_Imports';
-import { S_Element, G_TreeLine, G_TreeBranches } from '../common/Global_Imports';
+import { S_Element, G_Cluster, G_TreeLine, G_TreeBranches } from '../common/Global_Imports';
 import { w_graph_rect, w_t_graph, w_device_isMobile} from '../common/Stores';
 import { T_Widget, T_Element, T_Graph } from '../common/Global_Imports';
 import { w_show_details, w_show_related } from '../common/Stores';
@@ -9,17 +9,18 @@ export default class G_Widget {
 	g_bidirectionalLines: Array<G_TreeLine> = [];
 	g_parentBranches: G_TreeBranches;
 	g_childBranches: G_TreeBranches;
-	origin_ofBranch = Point.zero;
-	offset_ofWidget = Point.zero;
 	center_ofReveal = Point.zero;
-	origin_ofRadial = Point.zero;
+	offset_ofWidget = Point.zero;
 	origin_ofWidget = Point.zero;
+	origin_ofRadial = Point.zero;
+	origin_ofTrunk = Point.zero;
 	origin_ofTitle = Point.zero;
 	center_ofDrag = Point.zero;
 	widget_pointsRight = true;
 	forGraphMode: T_Graph;
 	points_toChild = true;
 	es_widget!: S_Element;
+	g_cluster!: G_Cluster;
 	g_line!: G_TreeLine;
 	ancestry!: Ancestry;
 	subtree_height = 0;
@@ -68,7 +69,7 @@ export default class G_Widget {
 		switch (this.t_widget) {
 			case T_Widget.radial: return this.origin_ofRadial;
 			case T_Widget.focus:  return this.origin_ofWidget;	// tree focus
-			default:			  return this.origin_ofBranch;
+			default:			  return this.origin_ofTrunk;
 		}
 	}
 
@@ -208,7 +209,7 @@ export default class G_Widget {
 		if (!!ancestry.thing && layout.inTreeMode) {
 			const dot_size = k.dot_size;
 			const offset_ofBranch = new Point(dot_size * 1.3, -(7 + dot_size / 15));
-			this.origin_ofBranch = this.g_line.rect.extent.offsetBy(offset_ofBranch);
+			this.origin_ofTrunk = this.g_line.rect.extent.offsetBy(offset_ofBranch);
 			this.g_line.update_svg_andName();
 		}
 	}

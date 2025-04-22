@@ -128,8 +128,8 @@ export class Hierarchy {
 				switch (key) {
 					case '!':				graph_needsRebuild = this.rootAncestry?.becomeFocus(); break;
 					case '`':               event.preventDefault(); this.grabs_latest_toggleEditingTools(); break;
-					case 'arrowup':			await this.grabs_latest_rebuild_persistentMoveUp_maybe(true, SHIFT, OPTION, EXTREME); break;
-					case 'arrowdown':		await this.grabs_latest_rebuild_persistentMoveUp_maybe(false, SHIFT, OPTION, EXTREME); break;
+					case 'arrowup':			this.grabs_latest_rebuild_persistentMoveUp_maybe(true, SHIFT, OPTION, EXTREME); break;
+					case 'arrowdown':		this.grabs_latest_rebuild_persistentMoveUp_maybe(false, SHIFT, OPTION, EXTREME); break;
 					case 'escape':			if (!!get(w_ancestry_showing_tools)) { this.clear_editingTools(); }
 				}
 				if (graph_needsRebuild) {
@@ -179,7 +179,7 @@ export class Hierarchy {
 		return this.rootAncestry;
 	}
 
-	async grabs_latest_rebuild_persistentMoveUp_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
+	grabs_latest_rebuild_persistentMoveUp_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const ancestry = this.latest_grabbed_upward(up);
 		this.ancestry_rebuild_persistentMoveUp_maybe(ancestry, up, SHIFT, OPTION, EXTREME);
 	}
@@ -463,7 +463,7 @@ export class Hierarchy {
 		if (!!thing && parent) {
 			const idBase = parent.isBulkAlias ? parent.title : parent.idBase;
 			const newThing = await this.thing_remember_runtimeCopy(idBase, thing);
-			newThingAncestry = parentAncestry.extend_withChild(newThing);
+			newThingAncestry = parentAncestry.extendUniquely_withChild(newThing);
 			if (!!newThingAncestry) {
 				await this.ancestry_extended_byAddingThing_toAncestry_remember_persistentCreate_relationship(newThing, parentAncestry);
 				for (const childAncestry of ancestry.childAncestries) {
@@ -782,12 +782,12 @@ export class Hierarchy {
 			this.relationship_remember(relationship);
 		}
 		if (isBidirectional && !reversed) {
-			reversed = new Relationship(idBase, Identifiable.id_inReverseOrder(id), kind, idChild, idParent, order, parentOrder, already_persisted);
+			reversed = new Relationship(idBase, Identifiable.id_inReverseOrder(id), kind, idChild, idParent, parentOrder, order, already_persisted);
 			this.relationship_remember(reversed);
 		}
 		relationship?.order_setTo(parentOrder, T_Order.parent);
+		reversed?.order_setTo(parentOrder);
 		relationship?.order_setTo(order);
-		reversed?.order_setTo(order);
 		return relationship;
 	}
 
@@ -935,7 +935,7 @@ export class Hierarchy {
 		.then((childAncestry) => {
 			if (!!childAncestry) {
 				childAncestry.grabOnly();
-				childAncestry.relationship?.order_setTo(order);
+				childAncestry.order_setTo(order);
 				if (!parentAncestry.isRoot && layout.inRadialMode) {
 					parentAncestry.becomeFocus();
 				}
@@ -975,7 +975,7 @@ export class Hierarchy {
 				} else {
 					for (const externalsThing of externalsArray) {				// add to the root ancestry
 						if  (externalsThing.title == 'externals') {
-							return rootAncestry.extend_withChild(externalsThing) ?? null;
+							return rootAncestry.extendUniquely_withChild(externalsThing) ?? null;
 						}
 					}
 				}
@@ -1000,11 +1000,11 @@ export class Hierarchy {
 			const changingBulk = parent.isBulkAlias || child.idBase != this.db.idBase;
 			const idBase = changingBulk ? child.idBase : parent.idBase;
 			if (!child.persistence.already_persisted) {
-				await this.db.thing_remember_persistentCreate(child);					// for everything below, need to await child.id fetched from databases
+				await this.db.thing_remember_persistentCreate(child);				// for everything below, need to await child.id fetched from databases
 			}
 			const relationship = await this.relationship_remember_persistentCreateUnique(idBase, Identifiable.newID(), kind, parent.idBridging, child.id, 0, T_Create.getPersistentID);
 			const childAncestry = ancestry.uniquelyAppend_relationshipID(relationship.id);
-			u.ancestries_orders_normalize(ancestry.childAncestries);		// write new order values for relationships
+			u.ancestries_orders_normalize(ancestry.childAncestries, true);			// write new order values for relationships
 			return childAncestry;
 		}
 	}

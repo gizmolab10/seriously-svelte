@@ -22,9 +22,9 @@ import { get } from 'svelte/store';
 export default class G_Cluster {
 	g_cluster_widgets: Array<G_Widget> = [];
 	ancestries: Array<Ancestry> = [];
+	color = colors.default_forThings;
 	g_sliderArc = new G_ArcSlider();
 	g_thumbArc = new G_ArcSlider();
-	color = colors.default_forThings;
 	arc_straddles_nadir = false;
 	points_toChildren: boolean;
 	arc_straddles_zero = false;
@@ -199,6 +199,7 @@ export default class G_Cluster {
 				const pointsRight = new Angle(angle).angle_pointsRight;
 				const rotated_origin = center.offsetBy(radial.rotate_by(angle));
 				ancestry.g_widget.layout_necklaceWidget(rotated_origin, pointsRight);
+				ancestry.g_widget.g_cluster = this;
 				this.g_cluster_widgets.push(ancestry.g_widget);
 				index += 1;
 			}

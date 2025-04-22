@@ -26,8 +26,6 @@ export default class Relationship extends Persistable {
 
 	get child(): Thing | null { return this.thing(true); }
 	get parent(): Thing | null { return this.thing(false); }
-	get order(): number { return this.orders[T_Order.natural]; }
-	get order_ofParent(): number { return this.orders[T_Order.parent]; }
 	get isValid(): boolean { return !!this.kind && !!this.parent && !!this.child; }
 	get predicate(): Predicate | null { return get(w_hierarchy).predicate_forKind(this.kind); }
 	get fields(): Airtable.FieldSet { return { kind: this.kind, parent: [this.idParent], child: [this.idChild], orders: this.orders }; }
@@ -41,6 +39,10 @@ export default class Relationship extends Persistable {
 		const child = this.child ? this.child.description : this.idChild;
 		const parent = this.parent ? this.parent.description : this.idParent;
 		return `${parent} ${this.predicate?.kind} ${child}`;
+	}
+
+	order_forPointsTo(pointsToChildren: boolean): number {
+		return pointsToChildren ? this.orders[T_Order.natural] : this.orders[T_Order.parent];
 	}
 
 	remove_from(relationships: Array<Relationship>) {
@@ -65,13 +67,16 @@ export default class Relationship extends Persistable {
 		}
 	}
 
-	order_setTo(newOrder: number, t_order: T_Order = T_Order.natural, persist: boolean = false, signalUpdates: boolean = false) {
+	order_setTo_forPointsTo(order: number, toChildren: boolean = true, persist: boolean = false) {
+		const t_order = toChildren ? T_Order.natural : T_Order.parent;
+		this.order_setTo(order, t_order, persist);
+	}
+
+	order_setTo(newOrder: number, t_order: T_Order = T_Order.natural, persist: boolean = false) {
 		const order = this.orders[t_order];
 		if (Math.abs(order - newOrder) > 0.001) {
 			this.orders[t_order] = newOrder;
-			if (signalUpdates) {
-				w_relationship_order.set(Date.now());
-			}
+			w_relationship_order.set(Date.now());
 			if (persist) {
 				this.set_isDirty();
 			}

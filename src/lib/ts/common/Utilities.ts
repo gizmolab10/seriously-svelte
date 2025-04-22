@@ -154,16 +154,13 @@ export class Utilities {
 		return array.filter(a => a.t_database == get(w_t_database)).map(a => a.id);
 	}
 
-
-	ancestries_orders_normalize(ancestries: Array<Ancestry>, persist: boolean = true): void {
-		if (ancestries.length > 1) {
+	ancestries_orders_normalize(ancestries: Array<Ancestry>, persist: boolean = false): void {
+		const length = ancestries.length;
+		if (length > 1) {
 			this.sort_byOrder(ancestries);
-			ancestries.forEach( (ancestry, index) => {
-				if (ancestry.order != index) {
-					const relationship = ancestry.relationship;
-					relationship?.order_setTo(index, persist);
-				}
-			});
+			for (let index = 0; index < length; index++) {
+				ancestries[index].order_setTo(index, persist);
+			}
 		}
 	}
 

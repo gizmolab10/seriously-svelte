@@ -74,7 +74,7 @@ export default class G_RadialGraph {
 		if (!!predicate && ancestries.length > 0) {
 			const angle_ofFork = predicate.angle_ofFork_when(points_toChildren);
 			const points_right = new Angle(angle_ofFork).angle_pointsRight;
-			const g_cluster = this.g_cluster_forPredicate_toChildren(predicate, points_toChildren);
+			const g_cluster = this.g_cluster_forPredicate_toChild(predicate, points_toChildren);
 			const s_paging = this.s_paging_forPredicate_toChildren(predicate, points_toChildren);
 			const onePage_ofAncestries = s_paging?.onePage_from(ancestries) ?? [];
 			const corrected_ancestries = points_right ? onePage_ofAncestries.reverse() : onePage_ofAncestries;			// reverse order for fork angle points left
@@ -82,7 +82,7 @@ export default class G_RadialGraph {
 		}
 	}
 
-	g_cluster_forPredicate_toChildren(predicate: Predicate, points_toChildren: boolean) : G_Cluster {
+	g_cluster_forPredicate_toChild(predicate: Predicate, points_toChildren: boolean) : G_Cluster {
 		const g_clusters = points_toChildren ? this.g_child_clusters : this.g_parent_clusters;;
 		let g_cluster = g_clusters[predicate.kind];
 		if (!g_cluster) {

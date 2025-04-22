@@ -375,11 +375,13 @@ Object.defineProperty(Number.prototype, 'normalize_between_zeroAnd', {
 
 	value: function(value: number): number {
 		let result = this;
-		while (result < 0) {
-			result += value;
-		}
-		while (result >= value) {
-			result -= value;
+		if (value != 0) {
+			while (result < 0) {
+				result += value;
+			}
+			while (result >= value) {
+				result -= value;
+			}
 		}
 		return result;
 	},
