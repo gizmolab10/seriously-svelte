@@ -6,8 +6,9 @@
 	import Color from '../kit/Color.svelte';
 	export let top = 0;
 	const color_left = 10
-	const info_width = k.width_details - 30;
 	const picker_offset = `-88px`;
+	const info_width = k.width_details - 30;
+	const font_size = `${k.size.smaller_font}px`;
 	const color_origin = new Point(color_left, 41);
 	const separator_font_size = `${k.size.smallest_font}px`;
 	const titles = [T_Hierarchy[T_Hierarchy.children], T_Hierarchy[T_Hierarchy.parents], T_Hierarchy[T_Hierarchy.related]];
@@ -35,9 +36,10 @@
 	<Segmented
 		titles={titles}
 		allow_multiple={true}
+		font_size={font_size}
 		name='counts-selector'
 		height={k.height.small}
-		origin={new Point(4, 9)}
+		origin={new Point(19, 9)}
 		selected={$w_t_countDots}
 		selection_closure={selection_closure}/>
 	<Separator title='colors' top=32 left=5 width={info_width} title_font_size={separator_font_size} thickness={k.thickness.thin}/>

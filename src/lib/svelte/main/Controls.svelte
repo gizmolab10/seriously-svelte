@@ -138,11 +138,11 @@
 					{#if layout.inTreeMode}
 						{#key $w_t_tree}
 							<Segmented
-								origin={Point.x(114)}
+								selected={$w_t_tree}
+								origin={Point.x(110)}
 								allow_multiple={true}
-								selected={[$w_t_tree]}
 								name='tree-type-selector'
-								titles={[T_Hierarchy.parents, T_Hierarchy.related]}
+								titles={[T_Hierarchy.children, T_Hierarchy.parents, T_Hierarchy.related]}
 								selection_closure={(titles) => layout.handle_mode_selection('tree', titles)}/>
 						{/key}
 					{/if}

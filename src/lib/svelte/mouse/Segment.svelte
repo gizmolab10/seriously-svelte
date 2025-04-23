@@ -3,12 +3,12 @@
 	import { T_Layer, T_Oblong, G_Segment } from '../../ts/common/Global_Imports';
 	import { w_background_color } from '../../ts/common/Stores';
 	import Mouse_Responder from './Mouse_Responder.svelte';
+	export let font_size = `${k.size.small_font}px`;
 	export let hit_closure = (title, shift) => {};
 	export let fill = $w_background_color;
 	export let stroke = colors.default;
 	export let g_segment!: G_Segment;
     export let name = g_segment.title;
-	export let font_size = '0.9em';
 	const segment_name = `${name}-segment`;
 	let title_color = colors.default;
 	let size = g_segment.size;

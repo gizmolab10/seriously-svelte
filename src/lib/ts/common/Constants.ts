@@ -57,6 +57,12 @@ export default class Constants {
 			segmented: 21,
 			small: 16,
 			row: 20, });
+		this.thickness = E_Array.create({
+			ring_rotation: 44,
+			paging_arc: 15,
+			separator: 5,
+			fork: 2.5,
+			thin: 2, });
 		this.size = E_Array.create({
 			smallest_font: 9,
 			smaller_font: 11,
@@ -64,12 +70,6 @@ export default class Constants {
 			button: 16,
 			font: 14,
 			dot: 13, });
-		this.thickness = E_Array.create({
-			ring_rotation: 44,
-			paging_arc: 15,
-			separator: 5,
-			fork: 2.5,
-			thin: 2, });
 	}
 
 }

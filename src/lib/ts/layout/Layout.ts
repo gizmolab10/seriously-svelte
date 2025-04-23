@@ -1,7 +1,7 @@
 import { T_Info, T_Graph, T_Banner, T_Details, T_Hierarchy, T_Preference } from '../common/Global_Imports';
 import { c, k, p, u, debug, signals, Ancestry, G_RadialGraph } from '../common/Global_Imports';
-import { w_t_database, w_ancestry_focus, w_ancestries_expanded } from '../common/Stores';
-import { w_t_tree, w_t_graph, w_t_details, w_hierarchy } from '../common/Stores';
+import { w_t_tree, w_t_graph, w_t_details, w_hierarchy, w_t_database } from '../common/Stores';
+import { w_show_related, w_ancestry_focus, w_ancestries_expanded } from '../common/Stores';
 import { get } from 'svelte/store';
 
 class Verticals {
@@ -53,7 +53,7 @@ export default class Layout {
 	handle_mode_selection(name: string, types: Array<string>) {
 		switch (name) {
 			case 'graph': w_t_graph.set(types[0] as T_Graph); break;
-			case 'tree': this.set_t_tree(types as Array<T_Hierarchy>);; break;
+			case 'tree': this.set_t_tree(types as Array<T_Hierarchy>); break;
 		}
 	}
 
@@ -126,8 +126,11 @@ export default class Layout {
 		}
 	}
 
-	set_t_tree(t_tree: T_Hierarchy) {
-		w_t_tree.set(t_tree);
+	set_t_tree(t_trees: Array<T_Hierarchy>) {
+		if (t_trees.length == 0) {
+			t_trees = [T_Hierarchy.children];
+		}
+		w_t_tree.set(t_trees);
 		let focus_ancestry = get(w_ancestry_focus);
 		if (this.branches_areChildren) {
 			this.parents_focus_ancestry = focus_ancestry;
@@ -136,6 +139,7 @@ export default class Layout {
 			this.focus_ancestry = focus_ancestry;
 			focus_ancestry = this.parents_focus_ancestry ?? get(w_hierarchy).grabs_latest_ancestry;
 		}
+		w_show_related.set(t_trees.includes(T_Hierarchy.related));
 		focus_ancestry?.becomeFocus();
 		this.restore_expanded();
 		this.grand_build();
