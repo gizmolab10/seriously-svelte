@@ -19,8 +19,8 @@ export enum T_Alteration {
 }
 
 export enum T_Order {
-	natural,
-	parent
+	child,
+	other,
 }
 
 export enum T_Hierarchy {

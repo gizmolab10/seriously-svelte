@@ -9,8 +9,8 @@
 	export let background_color = $w_background_color;
 	export let closure = Handle_Result<S_Mouse>;
 	export let border_color = colors.default;
-	export let height = k.default_buttonSize;
-	export let width = k.default_buttonSize;
+	export let height = k.size.button;
+	export let width = k.size.button;
 	export let padding = '0px 6px 1px 6px';
 	export let color = colors.default;
 	export let position = 'absolute';

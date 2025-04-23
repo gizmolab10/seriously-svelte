@@ -74,7 +74,7 @@
 			width=42
 			zindex=T_Layer.frontmost
 			center={new Point(74, buttons_top)}
-			height={k.default_buttonSize - 4}
+			height={k.size.button - 4}
 			es_button={s_element_byStorageType[T_Storage.import]}
 			closure={(s_mouse) => button_closure_forStorage_Type(s_mouse, T_Storage.import)}>
 			<span style={button_style}>import</span>
@@ -83,7 +83,7 @@
 			width=42
 			zindex=T_Layer.frontmost
 			center={new Point(122, buttons_top)}
-			height={k.default_buttonSize - 4}
+			height={k.size.button - 4}
 			es_button={s_element_byStorageType[T_Storage.export]}
 			closure={(s_mouse) => button_closure_forStorage_Type(s_mouse, T_Storage.export)}>
 			<span style={button_style}>export</span>

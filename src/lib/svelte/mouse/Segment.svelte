@@ -5,9 +5,10 @@
 	import Mouse_Responder from './Mouse_Responder.svelte';
 	export let hit_closure = (title, shift) => {};
 	export let fill = $w_background_color;
+	export let stroke = colors.default;
 	export let g_segment!: G_Segment;
     export let name = g_segment.title;
-	export let stroke = colors.default;
+	export let font_size = '0.9em';
 	const segment_name = `${name}-segment`;
 	let title_color = colors.default;
 	let size = g_segment.size;
@@ -39,8 +40,9 @@
 	width={size.width}
 	name={segment_name}
 	height={size.height}
-	zindex={T_Layer.frontmost}
+	font_size={font_size}
 	origin={g_segment.origin}
+	zindex={T_Layer.frontmost}
 	handle_mouse_state={up_hover_closure}>
 	<svg
 		id={`${name}`}

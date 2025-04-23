@@ -4,12 +4,12 @@
 	import type { Handle_Result } from '../../ts/common/Types';
 	import Segment from './Segment.svelte';
 	export let selection_closure = Handle_Result<string>;
+	export let height = k.height.segmented;
 	export let selected: Array<string> = [];
 	export let titles: Array<string> = [];
 	export let fill = $w_background_color;
 	export let stroke = colors.default;
 	export let allow_multiple = false;
-	export let height = k.row_height + 1;
 	export let font_size = '0.95em';
 	export let origin = Point.zero;
     export let name = k.empty;
@@ -72,6 +72,7 @@
 		<Segment
 			fill={fill}
 			stroke={stroke}
+			font_size={font_size}
 			g_segment={g_segment}
 			hit_closure={hit_closure}/>
 	{/each}

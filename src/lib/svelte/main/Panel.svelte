@@ -96,14 +96,14 @@
 					<div class='separator-above-crumbs' style='
 						top: {tops[T_Banner.crumbs] - 3}px;
 						background-color:{separator_color};
-						height: {k.separator_thickness}px;
+						height: {k.thickness.separator}px;
 						z-index: {T_Layer.lines};'>
 					</div>
 				</div>
 				<div class='separator-above-graph' style='
 					top: {tops[T_Banner.graph]}px;
 					background-color: {separator_color};
-					height: {k.separator_thickness}px;
+					height: {k.thickness.separator}px;
 					width: {w.windowSize.width}px;
 					z-index: {T_Layer.lines};
 					position: absolute;
@@ -117,7 +117,7 @@
 							z-index: {T_Layer.lines};
 							left: {k.width_details}px;
 							top: {$w_graph_rect.origin.y}px;
-							width: {k.separator_thickness}px;
+							width: {k.thickness.separator}px;
 							background-color: {separator_color};
 							height: {$w_graph_rect.size.height}px;'>
 					</div>

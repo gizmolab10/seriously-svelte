@@ -9,8 +9,8 @@
 	import Button from '../mouse/Button.svelte';
 	import SVG_D3 from '../kit/SVG_D3.svelte';
 	import { onMount } from 'svelte';
-	const size_small = k.default_buttonSize;
-	const details_top = k.dot_size / 2;
+	const size_small = k.size.button;
+	const details_top = k.size.dot / 2;
 	const y_center = details_top + 3.5;
 	const size_big = size_small + 4;
 	const lefts = [10, 55, 117, 278];
@@ -81,12 +81,29 @@
 				case T_Control.help: c.showHelp(); break;
 				case T_Control.details: $w_show_details = !$w_show_details; break;
 				case T_Control.related: $w_show_related = !$w_show_related; break;
-				case T_Control.bigger: width = w.zoomBy(k.zoom_in_ratio) - 20; break;	// mobile only
-				case T_Control.smaller: width = w.zoomBy(k.zoom_out_ratio) - 20; break;	//   "     "
+				case T_Control.bigger: width = w.zoomBy(k.zoom_ratio.in) - 20; break;	// mobile only
+				case T_Control.smaller: width = w.zoomBy(k.zoom_ratio.out) - 20; break;	//   "     "
 				default: togglePopupID(t_control); break;
 			}
 		}
 	}
+
+							// {#key $w_show_related}
+							// 	<Button
+							// 		width=82
+							// 		isToggle={true}
+							// 		height={size_big}
+							// 		name='show-related'
+							// 		color='transparent'
+							// 		border_thickness=0.5
+							// 		center={new Point(lefts[3], details_top + 3.5)}
+							// 		es_button={es_control_byType[T_Control.related]}
+							// 		closure={(s_mouse) => handle_mouse_state_forControl_Type(s_mouse, T_Control.related)}>
+							// 		<span style='font-family: {$w_thing_fontFamily};'>
+							// 			{related_prefix} related
+							// 		</span>
+							// 	</Button>
+							// {/key}
 
 </script>
 
@@ -122,26 +139,11 @@
 						{#key $w_t_tree}
 							<Segmented
 								origin={Point.x(114)}
+								allow_multiple={true}
 								selected={[$w_t_tree]}
 								name='tree-type-selector'
-								titles={[T_Hierarchy.children, T_Hierarchy.parents]}
+								titles={[T_Hierarchy.parents, T_Hierarchy.related]}
 								selection_closure={(titles) => layout.handle_mode_selection('tree', titles)}/>
-							{#key $w_show_related}
-								<Button
-									width=82
-									isToggle={true}
-									height={size_big}
-									name='show-related'
-									color='transparent'
-									border_thickness=0.5
-									center={new Point(lefts[3], details_top + 3.5)}
-									es_button={es_control_byType[T_Control.related]}
-									closure={(s_mouse) => handle_mouse_state_forControl_Type(s_mouse, T_Control.related)}>
-									<span style='font-family: {$w_thing_fontFamily};'>
-										{related_prefix} related
-									</span>
-								</Button>
-							{/key}
 						{/key}
 					{/if}
 				{/key}

@@ -25,7 +25,7 @@
 	let origin_ofTitle = g_widget.origin_ofTitle;
 	let width_ofWidget = g_widget.width_ofWidget;
 	let widgetWrapper!: Svelte_Wrapper;
-	let border_radius = k.dot_size / 2;
+	let border_radius = k.size.dot / 2;
 	let center_ofDrag = Point.zero;
 	let revealCenter = Point.zero;
 	let border = es_widget.border;
@@ -125,8 +125,8 @@
 		const origin_ofWidget = g_widget.origin.offsetBy(g_widget.offset_ofWidget);
 		top = origin_ofWidget.y;
 		left = origin_ofWidget.x;
-		height = k.row_height - 1.5;
-		border_radius = k.row_height / 2;
+		height = k.height.row - 1.5;
+		border_radius = k.height.row / 2;
 		width_ofWidget = g_widget.width_ofWidget;
 		origin_ofTitle = g_widget.origin_ofTitle;
 	}
@@ -159,7 +159,7 @@
 			ancestry = {ancestry}
 			name = {es_title.name}
 			origin = {origin_ofTitle}
-			fontSize = {k.font_size}px/>
+			fontSize = {k.size.font}px/>
 		{#if ancestry?.showsReveal_forPointingToChild(points_toChild)}
 			<Widget_Reveal
 				ancestry = {ancestry}

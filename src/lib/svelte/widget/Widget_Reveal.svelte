@@ -71,7 +71,7 @@
 		bulkAliasOffset = thing.isBulkAlias ? 0 : -1;
 		svgPathFor_revealDot = ancestry.svgPathFor_revealDot;
 		svgPathFor_outer_tinyDots = ancestry.svgPathFor_tinyDots_outsideReveal(points_toChild);
-		svgPathFor_bulkAlias = thing.isBulkAlias ? svgPaths.circle_atOffset(k.dot_size, 3) : null;
+		svgPathFor_bulkAlias = thing.isBulkAlias ? svgPaths.circle_atOffset(k.size.dot, 3) : null;
 	}
 
 	function up_hover_closure(s_mouse) {
@@ -97,35 +97,35 @@
 	<Mouse_Responder
 		center={center}
 		zindex={zindex}
-		width={k.dot_size}
-		height={k.dot_size}
+		width={k.size.dot}
+		height={k.size.dot}
 		name={es_reveal.name}
 		bind:this={dotReveal}
 		handle_mouse_state={up_hover_closure}>
 		<div class='reveal-dot'
 			on:contextmenu={handle_context_menu}
 			style='
-				width: {k.dot_size}px;
-				height: {k.dot_size}px;'>
+				width: {k.size.dot}px;
+				height: {k.size.dot}px;'>
 			<SVG_D3 name='reveal-dot-svg'
 				svgPath={svgPathFor_revealDot}
-				height={k.dot_size}
-				width={k.dot_size}
+				height={k.size.dot}
+				width={k.size.dot}
 				fill={fill_color}
 				stroke={color}/>
 			{#if !!svgPathFor_bulkAlias}
 				<div class='bulk-alias-dot' style='
 					left:{bulkAliasOffset}px;
 					top:{bulkAliasOffset}px;
-					height:{k.dot_size}px;
-					width:{k.dot_size}px;
+					height:{k.size.dot}px;
+					width:{k.size.dot}px;
 					position:absolute;'>
 					<SVG_D3 name='bulk-alias-dot-svg'
 						svgPath={svgPathFor_bulkAlias}
 						stroke={bulkAlias_color}
 						fill={bulkAlias_color}
-						height={k.dot_size}
-						width={k.dot_size}
+						height={k.size.dot}
+						width={k.size.dot}
 					/>
 				</div>
 			{/if}

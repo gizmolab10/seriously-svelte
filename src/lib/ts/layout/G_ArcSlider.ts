@@ -23,11 +23,11 @@ export default class G_ArcSlider {
 	end_angle = 0;
 
 	constructor() {
-		const thickness = k.paging_arc_thickness;
+		const thickness = k.thickness.paging_arc;
 		const radius = get(w_ring_rotation_radius);
 		this.clusters_center = Point.square(radius);
 		this.outside_arc_radius = radius + thickness;
-		this.cap_radius = k.ring_rotation_thickness / 6;
+		this.cap_radius = k.thickness.ring_rotation / 6;
 		this.inside_arc_radius = radius;
 	}
 
@@ -68,7 +68,7 @@ export default class G_ArcSlider {
 	}
 
 	layout_angle_ofFork(angle_ofFork: number) {
-		const fork_raw_radius = k.ring_rotation_thickness * 0.6;
+		const fork_raw_radius = k.thickness.ring_rotation * 0.6;
 		this.fork_radius = fork_raw_radius - this.fork_backoff;
 		this.fork_backoff = this.fork_adjustment(fork_raw_radius, this.inside_arc_radius);
 		this.angle_ofFork = angle_ofFork;

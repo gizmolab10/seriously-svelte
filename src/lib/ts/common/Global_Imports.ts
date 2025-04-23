@@ -53,6 +53,7 @@ import User from '../data/persistable/User';
 import Angle from '../common/Angle';
 
 import './Extensions';
+import { initializeExtensions } from './Extensions';
 import { k } from './Constants';
 import { u } from './Utilities';
 import { e } from '../signals/Events';

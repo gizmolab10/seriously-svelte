@@ -2,7 +2,7 @@ import { k, u, ux, Rect, Size, Point, svgPaths, T_Oblong } from '../common/Globa
 import type { Integer } from '../common/Types';
 
 export default class G_Segment {
-	relative_font_size = k.font_size;
+	relative_font_size = k.size.font;
 	title_origin = Point.x(8);
 	part = T_Oblong.right;
 	font_size = '0.95em';
@@ -22,12 +22,12 @@ export default class G_Segment {
 	get description(): string { return `${this.title} ${this.part} ${this.path}`; }
 
 	constructor(name: string, title: string, font_size: string, isSelected: boolean, index: Integer, max_index: Integer, left: number, height: number) {
-		this.relative_font_size = font_size.fontSize_relativeTo(k.font_size);
+		this.relative_font_size = 13;
 		this.width = u.getWidth_ofString_withSize(title, font_size) + this.relative_font_size - 2;
 		this.part = this.part_forIndex(index, max_index);
 		this.size = new Size(this.width, height);
 		this.isSelected = isSelected;
-		this.font_size = font_size;
+		this.size.font = font_size;
 		this.height = height;
 		this.title = title;
 		this.index = index;
@@ -53,10 +53,13 @@ export default class G_Segment {
 		const size = this.size.expandedEquallyBy(-2);
 		const center = this.size.asPoint.dividedInHalf;
 		const title_y = (this.height - this.relative_font_size) / 5;
-		const path_center = center.offsetByXY(isFirst ? 10 : -10, -1);
-		const title_x = (isFirst ? 2 : 0) + 1 + this.relative_font_size / 2;
+		const isNormal = (this.height == k.height.segmented) || (this.part === T_Oblong.right);
+		const xOffset = isFirst ? 10 : isNormal ? -10 : -8;
+		const path_center = center.offsetByXY(xOffset, -1);
+		const title_x = (isFirst ? 2 : 0) + this.relative_font_size / 2;
 		this.path = svgPaths.oblong(path_center, size, this.part);
-		this.viewBox = Rect.createSizeRect(size).viewBox;
+		const viewBoxSize = this.part === T_Oblong.right ? size.expandedByX(1) : size;
+		this.viewBox = Rect.createSizeRect(viewBoxSize).viewBox;
 		this.title_origin = new Point(title_x, title_y);
 		this.origin = Point.x(this.left);
 	}

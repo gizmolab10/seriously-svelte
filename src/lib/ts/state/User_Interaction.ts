@@ -69,8 +69,8 @@ export default class User_Interaction { // Gizmos
 			const g_cluster = layout.g_radialGraph.g_cluster_atMouseLocation;
 			const inner = get(w_ring_rotation_radius);
 			const distance = mouse_vector.magnitude;
-			const thick = k.ring_rotation_thickness;
-			const thin = k.paging_arc_thickness;
+			const thick = k.thickness.ring_rotation;
+			const thin = k.thickness.paging_arc;
 			const rotate = inner + thick;
 			const thumb = inner + thin;
 			if (!!distance && distance <= rotate) {

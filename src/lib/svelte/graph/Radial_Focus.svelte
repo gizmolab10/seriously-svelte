@@ -6,8 +6,8 @@
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Widget_Title from '../widget/Widget_Title.svelte';
 	import { onMount } from 'svelte';
-	const height = k.row_height + 1;
-	const fontSize = `{k.font_size}px`;
+	const height = k.height.row + 1;
+	const fontSize = `{k.size.font}px`;
 	const es_title = ux.s_element_for($w_ancestry_focus, T_Element.radial_focus, k.empty);
 	let svg_strokeColor = 'transparent';
 	let svg_fillColor = 'transparent';
@@ -68,7 +68,7 @@
 		const y = -11;
 		origin_ofTitle = new Point(19, -2);
 		origin_ofWidget = w.center_ofGraphSize.offsetByXY(x, y);
-		size_ofBorder = new Size(width_ofTitle - 6, k.row_height);
+		size_ofBorder = new Size(width_ofTitle - 6, k.height.row);
 		center_ofBorder = new Point(width_ofTitle + 15, height).dividedInHalf;
 	}
 

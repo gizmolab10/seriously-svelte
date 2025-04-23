@@ -15,7 +15,7 @@
 	export let origin;
 	const thing = ancestry?.thing;
 	const padding = `0.5px 0px 0px 0px`;
-	const input_height = k.dot_size + 2;
+	const input_height = k.size.dot + 2;
 	const es_title = ux.s_element_forName(name);
 	const showingReveal = ancestry?.shows_reveal ?? false;
 	let title_width = (thing?.width_ofTitle ?? 0) + title_extra();
@@ -297,7 +297,7 @@
 	origin={origin}
 	width={title_width}
 	name={es_title.name}
-	height={k.row_height}
+	height={k.height.row}
 	handle_mouse_state={handle_mouse_state}>
 	<span class="ghost"
 		bind:this={ghost}

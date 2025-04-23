@@ -9,8 +9,8 @@
 	import Radial_ArcSlider from './Radial_ArcSlider.svelte';
 	import { onMount } from 'svelte';
 	const name = 'rings';
-	const ring_width = k.ring_rotation_thickness;
-	const middle_radius = $w_ring_rotation_radius + k.ring_rotation_thickness;
+	const ring_width = k.thickness.ring_rotation;
+	const middle_radius = $w_ring_rotation_radius + k.thickness.ring_rotation;
 	const middle_diameter = middle_radius * 2;
 	const outer_radius = middle_radius + ring_width;
 	const outer_diameter = outer_radius * 2;

@@ -16,7 +16,7 @@ export class Utilities {
 	ignore(event: Event)												 {}
 	onNextCycle_apply(closure: () => {})								 { setTimeout(() => { closure(); }, 0); }
 	location_ofMouseEvent(event: MouseEvent):					   Point { return new Point(event.clientX, event.clientY); }
-	getWidthOf(s: string):										  number { return this.getWidth_ofString_withSize(s, `${k.font_size}px`); }
+	getWidthOf(s: string):										  number { return this.getWidth_ofString_withSize(s, `${k.size.font}px`); }
 	quadrant_ofAngle(angle: number):						  T_Quadrant { return new Angle(angle).quadrant_ofAngle; }
 	concatenateArrays(a: Array<any>, b: Array<any>):		  Array<any> { return [...a, ...b]; }
 	strip_falsies(array: Array<any>):						  Array<any> { return array.filter(a => !!a); }
@@ -86,7 +86,7 @@ export class Utilities {
 		let stripped: Array<Ancestry> = [];
 		for (const ancestry of ancestries) {
 			const hid = ancestry.thing?.id.hash();
-			if ((!!hid || hid == 0) && (!ancestriesByHID[hid])) {
+			if ((!!hid || hid == 0) && !ancestriesByHID[hid]) {
 				ancestriesByHID[hid] = ancestry;
 				stripped.push(ancestry);
 			}

@@ -14,10 +14,10 @@ export const w_s_alteration			  = writable<S_Alteration | null>();
 export const w_s_paging				  = writable<S_Paging>();
 
 export const w_t_countDots			  = writable<Array<T_Hierarchy>>();
+export const w_t_tree				  = writable<Array<T_Hierarchy>>();
 export const w_t_details			  = writable<Array<T_Details>>();
 
 export const w_t_graph				  = writable<T_Graph>();
-export const w_t_tree				  = writable<T_Hierarchy>();
 export const w_t_startup			  = writable<T_Startup>();
 export const w_t_database			  = writable<string>();
 

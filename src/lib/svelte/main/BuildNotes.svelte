@@ -48,7 +48,7 @@
 			<Directional_Buttons hit_closure={hit_closure}/>
 			<div class='title'>{title}</div>
 		</div>
-		<Close_Button name='builds-close' size={k.dot_size * 1.5}/>
+		<Close_Button name='builds-close' size={k.size.dot * 1.5}/>
 		<br>
 		<table style='width:100%'>
 			<tbody>

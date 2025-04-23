@@ -42,7 +42,7 @@ export default class Relationship extends Persistable {
 	}
 
 	order_forPointsTo(pointsToChildren: boolean): number {
-		return pointsToChildren ? this.orders[T_Order.natural] : this.orders[T_Order.parent];
+		return pointsToChildren ? this.orders[T_Order.child] : this.orders[T_Order.other];
 	}
 
 	remove_from(relationships: Array<Relationship>) {
@@ -50,8 +50,8 @@ export default class Relationship extends Persistable {
 	}
 
 	orders_setTo(newOrders: Array<number>, persist: boolean = false) {
-		this.order_setTo(newOrders[T_Order.natural]);	// don't persist or signal, yet
-		this.order_setTo(newOrders[T_Order.parent], T_Order.parent, persist, true);
+		this.order_setTo(newOrders[T_Order.child]);	// don't persist or signal, yet
+		this.order_setTo(newOrders[T_Order.other], T_Order.other, persist, true);
 	}
 
 	thing(child: boolean): Thing | null {
@@ -68,11 +68,11 @@ export default class Relationship extends Persistable {
 	}
 
 	order_setTo_forPointsTo(order: number, toChildren: boolean = true, persist: boolean = false) {
-		const t_order = toChildren ? T_Order.natural : T_Order.parent;
+		const t_order = toChildren ? T_Order.child : T_Order.other;
 		this.order_setTo(order, t_order, persist);
 	}
 
-	order_setTo(newOrder: number, t_order: T_Order = T_Order.natural, persist: boolean = false) {
+	order_setTo(newOrder: number, t_order: T_Order = T_Order.child, persist: boolean = false) {
 		const order = this.orders[t_order];
 		if (Math.abs(order - newOrder) > 0.001) {
 			this.orders[t_order] = newOrder;

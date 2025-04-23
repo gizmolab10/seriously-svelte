@@ -10,7 +10,7 @@ class Verticals {
 
 	constructor(capacity: number) {
 		this.tops = new Array(capacity).fill(0);
-		this.heights = new Array(capacity).fill(0);
+		this.height = new Array(capacity).fill(0);
 	}
 }
 
@@ -27,11 +27,11 @@ export default class Layout {
 	get inRadialMode(): boolean { return get(w_t_graph) == T_Graph.radial; }
 	top_ofInfoAt(index: number) { return this.verticals_ofInfo.tops[index]; }
 	ids_forDB(array: Array<Ancestry>): string { return u.ids_forDB(array).join(', '); }
-	height_ofBannerAt(index: number) { return this.verticals_ofBanners.heights[index]; }
-	get branches_areChildren(): boolean { return get(w_t_tree) == T_Hierarchy.children; }
-	top_ofBannerAt(index: number) { return this.verticals_ofBanners.tops[index] + k.separator_thickness; }
-	get tops_ofBanners(): Array<number> { return this.verticals_ofBanners.tops.map(top => top + k.separator_thickness); }
-	get tops_ofDetails(): Array<number> { return this.verticals_ofDetails.tops.map(top => top + k.separator_thickness); }
+	height_ofBannerAt(index: number) { return this.verticals_ofBanners.height[index]; }
+	get branches_areChildren(): boolean { return true; } // get(w_t_tree) == T_Hierarchy.children; }
+	top_ofBannerAt(index: number) { return this.verticals_ofBanners.tops[index] + k.thickness.separator; }
+	get tops_ofBanners(): Array<number> { return this.verticals_ofBanners.tops.map(top => top + k.thickness.separator); }
+	get tops_ofDetails(): Array<number> { return this.verticals_ofDetails.tops.map(top => top + k.thickness.separator); }
 	get g_radialGraph() { let g = this._g_radialGraph; if (!g) { g = new G_RadialGraph(); this._g_radialGraph = g }; return g; }
 	get focus_key(): string { return this.branches_areChildren ? T_Preference.focus_forChildren : T_Preference.focus_forParents; }
 	get expanded_key(): string { return this.branches_areChildren ? T_Preference.expanded_children : T_Preference.expanded_parents; }
@@ -51,10 +51,9 @@ export default class Layout {
 	}
 	
 	handle_mode_selection(name: string, types: Array<string>) {
-		const type = types[0];	// only ever has one element
 		switch (name) {
-			case 'graph': w_t_graph.set(type as T_Graph); break;
-			case 'tree': this.set_t_tree(type as T_Hierarchy);; break;
+			case 'graph': w_t_graph.set(types[0] as T_Graph); break;
+			case 'tree': this.set_t_tree(types as Array<T_Hierarchy>);; break;
 		}
 	}
 
@@ -81,7 +80,7 @@ export default class Layout {
 		let top = start;
 		for (let i = 0; i <= T_Info.quest; i++) {
 			const height = this.height_ofInfoAt(i);
-			this.verticals_ofInfo.heights[i] = height;
+			this.verticals_ofInfo.height[i] = height;
 			this.verticals_ofInfo.tops[i] = top;
 			top += height;
 		}
@@ -102,26 +101,26 @@ export default class Layout {
 	}
 	
 	layout_tops_forPanelBanners() {
-		this.verticals_ofBanners.heights = [k.row_height - 5, k.row_height, k.row_height];
+		this.verticals_ofBanners.height = [k.height.row - 5, k.height.row, k.height.row];
 		let index = 0;
 		let top = 2;
 		while (index <= T_Banner.graph) {
 			this.verticals_ofBanners.tops[index] = top;
-			top += this.verticals_ofBanners.heights[index] + 4;
+			top += this.verticals_ofBanners.height[index] + 4;
 			index += 1;
 		}
 	}
 	
 	layout_tops_forDetails() {
 		let top = this.top_ofBannerAt(T_Banner.crumbs) + 8;
-		this.verticals_ofDetails.heights = [118, 40, 76, 0];
+		this.verticals_ofDetails.height = [118, 40, 76, 0];
 		let index = 0;
 		let indices = get(w_t_details);
 		while (index <= T_Details.info) {
 			this.verticals_ofDetails.tops[index] = top;
 			const t_detail = T_Details[index] as unknown as T_Details;
 			if (indices.includes(t_detail)) {
-				top += this.verticals_ofDetails.heights[index];
+				top += this.verticals_ofDetails.height[index];
 			}
 			index += 1;
 		}

@@ -14,7 +14,7 @@
 	import Trash from '../kit/Trash.svelte';
 	import { onMount } from 'svelte';
 	export let top = 0;
-	const toolDiameter = k.dot_size * 1.4;
+	const toolDiameter = k.size.dot * 1.4;
 	const editingToolsRadius = k.editingTools_diameter / 2;
 	const parentAlteringIDs = [T_Tool.add_parent, T_Tool.delete_parent];
 	const needsMultipleVisibleParents = [T_Tool.next, T_Tool.delete_parent];
@@ -273,7 +273,7 @@
 				<Button
 					closure={(s_mouse) => handle_mouse_data(s_mouse, T_Tool.more)}
 					es_button={s_element_byToolType[T_Tool.more]}
-					height={k.default_buttonSize}
+					height={k.size.button}
 					zindex={T_Layer.tool_buttons}
 					center={getC(T_Tool.more)}
 					color='transparent'
@@ -284,14 +284,14 @@
 						stroke={color}
 						class='more-svg' 
 						viewBox='0 1 18 16'
-						height={k.default_buttonSize}
+						height={k.size.button}
 						fill={isHovering_byID[T_Tool.more] ? color : 'transparent'}>
 						<path class='more-path' d={svgPaths.oval(18, true)}/>
 					</svg>
 					<svg height=10
 						class='ellipses-svg' 
 						viewBox='-0.5 -2 14 10'
-						width={k.default_buttonSize}
+						width={k.size.button}
 						fill={isHovering_byID[T_Tool.more] ? $w_background_color : color}>
 						<path class='ellipses-path' d={svgPaths.ellipses(7, 1)}/>
 					</svg>

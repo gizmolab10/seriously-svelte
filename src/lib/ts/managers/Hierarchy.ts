@@ -785,7 +785,7 @@ export class Hierarchy {
 			reversed = new Relationship(idBase, Identifiable.id_inReverseOrder(id), kind, idChild, idParent, parentOrder, order, already_persisted);
 			this.relationship_remember(reversed);
 		}
-		relationship?.order_setTo(parentOrder, T_Order.parent);
+		relationship?.order_setTo(parentOrder, T_Order.other);
 		reversed?.order_setTo(parentOrder);
 		relationship?.order_setTo(order);
 		return relationship;

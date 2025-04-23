@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { k, u, colors, T_Layer } from '../../ts/common/Global_Imports';
 	import { w_background_color } from '../../ts/common/Stores';
-	export let title_font_size = `${k.small_font_size}px`;
-	export let thickness = k.separator_thickness;
+	export let title_font_size = `${k.size.smaller_font}px`;
+	export let thickness = k.thickness.separator;
 	export let title: string | null = null;
 	export let width = k.width_details;
 	export let left = 0;

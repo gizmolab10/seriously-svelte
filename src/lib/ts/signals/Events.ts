@@ -51,8 +51,8 @@ export class Events {
 			event.stopPropagation();
 			switch (key) {
 				case '0': w.applyScale(1); break;
-				case '-': w.zoomBy(k.zoom_out_ratio); break;
-				default: w.zoomBy(k.zoom_in_ratio); break;
+				case '=': w.zoomBy(k.zoom_ratio.in); break;
+				default: w.zoomBy(k.zoom_ratio.out); break;
 			}
 			w.renormalize_user_graph_offset();
 			layout.grand_build();

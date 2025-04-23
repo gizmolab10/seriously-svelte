@@ -28,11 +28,11 @@ export default class Mouse_Timer {
 		if (type == T_Timer.long && !this.mouse_longClick_timer) {
 			this.mouse_longClick_timer = setTimeout(() => {
 				callback();
-			}, k.threshold_longClick);
+			}, k.threshold.long_click);
 		} else if (type == T_Timer.double && !this.mouse_doubleClick_timer) {
 			this.mouse_doubleClick_timer = setTimeout(() => {
 				callback();
-			}, k.threshold_doubleClick);
+			}, k.threshold.double_click);
 		}
 
 	}

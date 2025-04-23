@@ -6,11 +6,10 @@
 	import Color from '../kit/Color.svelte';
 	export let top = 0;
 	const color_left = 10
-	const font_ratio = 0.8;
 	const info_width = k.width_details - 30;
 	const picker_offset = `-88px`;
 	const color_origin = new Point(color_left, 41);
-	const separator_font_size = `${k.tiny_font_size}px`;
+	const separator_font_size = `${k.size.smallest_font}px`;
 	const titles = [T_Hierarchy[T_Hierarchy.children], T_Hierarchy[T_Hierarchy.parents], T_Hierarchy[T_Hierarchy.related]];
 	let color = $w_background_color;
 	
@@ -30,18 +29,18 @@
 		color:black;
 		top:{top + 3}px;
 		position:absolute;
-		font-size:{font_ratio}em;
-		width:{k.width_details}px;'>
-	<Separator title='show tiny dots for' top=2 left=5 width={info_width} title_font_size={separator_font_size} thickness={k.thin_separator_thickness}/>
+		width:{k.width_details}px;
+		font-size:{k.size.small_font}px;'>
+	<Separator title='show tiny dots for' top=2 left=5 width={info_width} title_font_size={separator_font_size} thickness={k.thickness.thin}/>
 	<Segmented
 		titles={titles}
 		allow_multiple={true}
 		name='counts-selector'
+		height={k.height.small}
 		origin={new Point(4, 9)}
 		selected={$w_t_countDots}
-		height={k.row_height * font_ratio}
 		selection_closure={selection_closure}/>
-	<Separator title='colors' top=32 left=5 width={info_width} title_font_size={separator_font_size} thickness={k.thin_separator_thickness}/>
+	<Separator title='colors' top=32 left=5 width={info_width} title_font_size={separator_font_size} thickness={k.thickness.thin}/>
 	<div 
 		class= 'background'
 		style='

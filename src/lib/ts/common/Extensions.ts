@@ -46,7 +46,7 @@ Object.defineProperty(String.prototype, 'fontSize_relativeTo', {
 		if (this.includes('em')) {
 			return base * parseFloat(this.split('em')[0]);
 		} else if (this.includes('px')) {
-			return Number(this.split('em')[0]);
+			return Number(this.split('px')[0]);
 		}
 		return Number(this);
 	},

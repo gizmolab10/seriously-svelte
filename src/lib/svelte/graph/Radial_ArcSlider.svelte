@@ -126,7 +126,7 @@
 				fill = transparent
 				bind:this = {fork_path}
 				stroke = {fork_stroke_color}
-				stroke-width = {k.fork_thicknes}/>
+				stroke-width = {k.thickness.fork}/>
 			{#if g_cluster.isPaging && g_cluster.widgets_shown > 1}
 				<path
 					id = {thumb_name}
@@ -141,7 +141,7 @@
 	color = {angled_text_color}
 	text = {g_cluster.cluster_title}
 	center = {g_cluster.label_center}
-	font_size = {k.small_font_size}px
+	font_size = {k.size.smaller_font}px
 	font_family = {$w_thing_fontFamily}
 	background_color = {text_background_color}
 	angle = {g_cluster.g_sliderArc.label_text_angle}/>

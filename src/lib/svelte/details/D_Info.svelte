@@ -15,14 +15,12 @@
 	export let top = 0;
 	const id = 'info';
 	const margin = 10;
-	const font_ratio = 0.8;
 	const text_top = top + 52;
-	const font_size = `${font_ratio}em`;
 	const info_width = k.width_details - 30;
-	const separator_font_size = `${k.tiny_font_size}px`;
+	const separator_font_size = `${k.size.smallest_font}px`;
 	const traits_center = new Point(122, text_top - 20);
 	const traits_width = k.width_details - (margin * 2);
-	const traits_size = new Size(info_width - 58, k.default_buttonSize + 4);
+	const traits_size = new Size(info_width - 58, k.size.button + 4);
 	const traits_rect = Rect.createCenterRect(traits_center, traits_size);
 	const es_info = ux.s_element_for(new Identifiable(id), T_Element.info, id);
 	let ancestry: Ancestry | null = $w_ancestry_focus;
@@ -132,15 +130,15 @@
 			color:black;
 			top:{top}px;
 			left:{margin}px;
-			font-size:0.8em;
 			position:absolute;
-			width:{traits_width}px;'>
+			width:{traits_width}px;
+			font-size:{k.size.small_font}px;'>
 		{#if information.length != 0}
 			<Segmented
 				name='info-type'
-				font_size={font_size}
+				height={k.height.small}
 				selected={[show.t_info]}
-				height={k.row_height * font_ratio}
+				font_size={k.size.smaller_font}px
 				selection_closure={selection_closure}
 				titles={[T_Report.focus, T_Report.selection]}
 				origin={new Point(45, layout.top_ofInfoAt(T_Info.segments))}/>
@@ -148,7 +146,7 @@
 				left=5
 				title='title'
 				width={info_width}
-				thickness={k.thin_separator_thickness}
+				thickness={k.thickness.thin}
 				title_font_size={separator_font_size}
 				top={layout.top_ofInfoAt(T_Info.before_title)}/>
 			<div style='
@@ -162,7 +160,7 @@
 			<Separator
 				left=5
 				width={info_width}
-				thickness={k.thin_separator_thickness}
+				thickness={k.thickness.thin}
 				top={layout.top_ofInfoAt(T_Info.after_title)}/>
 			<Table
 				array={information}
@@ -183,7 +181,7 @@
 					position:absolute;
 					width:{k.width_details}px;
 					z-index:{T_Layer.frontmost};
-					height:{k.thin_separator_thickness}px;
+					height:{k.thickness.thin}px;
 					background-color:{colors.separator};'>
 			</div>
 			<Text_Editor
