@@ -6,8 +6,6 @@ export default class Constants {
 	line_stretch = 22;
 	halfIncrement = 0.5;
 	width_details = 200;
-	radial_widget_inset = 26;
-	innermost_ring_radius = 60;
 	editingTools_diameter = 64;
 	hid_unknown = 1000000000000;
 	diameterOf_outer_tinyDots = 19;
@@ -26,6 +24,7 @@ export default class Constants {
 	build_number: string;
 	size: E_Array<number>;
 	height: E_Array<number>;
+	radial: E_Array<number>;
 	id_base: E_Array<string>;
 	help_url: E_Array<string>;
 	separator: E_Array<string>;
@@ -47,14 +46,17 @@ export default class Constants {
 		this.threshold = E_Array.create({
 			double_click: 700,
 			long_click: 800, });
-		this.height = E_Array.create({
-			segmented: 21,
-			small: 16,
-			row: 20, });
+		this.radial = E_Array.create({
+			widget_inset: 26,
+			innermost: 60, });
 		this.separator = E_Array.create({
 			generic: '::',
 			small: ':::',
 			big: '::::', });
+		this.height = E_Array.create({
+			segmented: 21,
+			small: 16,
+			row: 20, });
 		this.size = E_Array.create({
 			smallest_font: 9,
 			smaller_font: 11,

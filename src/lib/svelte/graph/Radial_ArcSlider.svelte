@@ -9,7 +9,7 @@
 	import { onMount } from 'svelte';
 	export let color = 'red';
 	export let g_cluster!: G_Cluster;
-	const offset = k.radial_widget_inset;
+	const offset = k.radial.widget_inset;
 	const thumb_name = `thumb-${g_cluster.name}`;
 	const radius = $w_ring_rotation_radius + offset;
 	const viewBox=`${-offset} ${-offset} ${radius * 2} ${radius * 2}`;

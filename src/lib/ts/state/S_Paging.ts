@@ -63,7 +63,7 @@ export class S_Paging {
 	}
 
 	static create_s_paging_fromDict(dict: Dictionary, points_toChildren: boolean): S_Paging {
-		const s_paging = new S_Paging(dict.index, dict.widgets_shown, dict.total_widgets);
+		const s_paging = new S_Paging(dict.index ?? 0, dict.widgets_shown ?? 0, dict.total_widgets);
 		s_paging.points_toChildren = points_toChildren;
 		s_paging.thing_id = dict.thing_id;
 		s_paging.kind = dict.kind;
