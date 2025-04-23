@@ -99,7 +99,7 @@ export default class Ancestry extends Identifiable {
 	get relationship():			 Relationship | null { return this.relationshipAt(); }
 	get titleWrapper():		   Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.hid, T_SvelteComponent.title); }
 	get relationship_hids():	 Array	   <Integer> { return this.relationship_ids.map(i => i.hash()); }
-	get relationship_ids():	 	 Array		<string> { return this.isRoot ? [] : this.pathString.split(k.generic_separator); }
+	get relationship_ids():	 	 Array		<string> { return this.isRoot ? [] : this.pathString.split(k.separator.generic); }
 	get titles():			 	 Array		<string> { return this.ancestors?.map(a => `${!a ? 'null' : a.title}`) ?? []; }
 	get children():			 	 Array		 <Thing> { return this.hierarchy.things_forAncestries(this.childAncestries); }
 	get parents():			 	 Array		 <Thing> { return this.thing?.parents ?? []; }
@@ -360,7 +360,7 @@ export default class Ancestry extends Identifiable {
 		if (stripped_ids.length == 0) {
 			return this.hierarchy.rootAncestry;
 		} else {
-			return this.hierarchy.ancestry_remember_createUnique(stripped_ids.join(k.generic_separator));
+			return this.hierarchy.ancestry_remember_createUnique(stripped_ids.join(k.separator.generic));
 		}
 	}
 
@@ -451,7 +451,7 @@ export default class Ancestry extends Identifiable {
 		} else {
 			let ids = this.relationship_ids;
 			ids.push(id);
-			const ancestry = this.hierarchy.ancestry_remember_createUnique(ids.join(k.generic_separator));
+			const ancestry = this.hierarchy.ancestry_remember_createUnique(ids.join(k.separator.generic));
 			if (!!ancestry) {
 				if (ancestry.containsMixedPredicates) {
 					this.hierarchy.ancestry_forget(ancestry);

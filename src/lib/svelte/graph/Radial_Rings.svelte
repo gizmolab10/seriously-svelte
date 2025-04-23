@@ -40,7 +40,7 @@
 	});
 
 	$: {
-		if (!!$w_ancestry_focus.thing && $w_ancestry_focus.thing.id == $w_thing_color?.split(k.generic_separator)[0]) {
+		if (!!$w_ancestry_focus.thing && $w_ancestry_focus.thing.id == $w_thing_color?.split(k.separator.generic)[0]) {
 			color = $w_ancestry_focus?.thing?.color ?? colors.default_forThings;
 		}
 	}

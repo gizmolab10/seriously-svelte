@@ -1,10 +1,10 @@
 import type { Dictionary } from './Types';
 
-export default class E_Array<T, D extends Dictionary<any>> {
-	private enums: { [key: string]: number };
+export default class E_Array<T, D extends Dictionary<T>> {
+	private enums: Dictionary<T>;
 	private array: T[];
 
-	static create<D extends Dictionary<any>>(dictionary: D) {
+	static create<D extends Dictionary<T>>(dictionary: D) {
 		// Proxy handler to intercept property access
 		return new Proxy(new E_Array(dictionary), {
 			get: (target, prop) => {
@@ -18,9 +18,9 @@ export default class E_Array<T, D extends Dictionary<any>> {
 		this.array = Object.values(dictionary);
 	}
 
-	private createEnumFromDictionary(dictionary: D): { [key: string]: number } {
+	private createEnumFromDictionary(dictionary: D): Dictionary<T> {
 		// Create an enum-like object from the dictionary keys
-		const enumObject: { [key: string]: number } = {};
+		const enumObject: Dictionary<T> = {};
 		let index = 0;
 
 		for (const key in dictionary) {

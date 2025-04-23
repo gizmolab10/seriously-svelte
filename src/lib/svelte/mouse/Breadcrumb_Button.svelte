@@ -24,7 +24,7 @@
 	updateColors();
 
 	$: {
-		if (!!thing && thing.id == $w_thing_color?.split(k.generic_separator)[0]) {
+		if (!!thing && thing.id == $w_thing_color?.split(k.separator.generic)[0]) {
 			updateColors();
 		}
 	}

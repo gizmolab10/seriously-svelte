@@ -5,8 +5,8 @@ import DBCommon from './DBCommon';
 
 export default class DBTest extends DBCommon {
 	kind_persistence = T_Persistence.none;
-	idBase = k.idBase_test;
 	t_database = T_Database.test;
+	idBase = k.id_base.test;
 	
 	get dict_forStorageDetails(): Dictionary { return {'data' : 'recreated on launch'} }
 

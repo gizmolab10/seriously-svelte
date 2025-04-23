@@ -870,7 +870,7 @@ export class Hierarchy {
 		if (path == k.root_path) {
 			return this.rootAncestry;
 		} else {
-			const ids = path.split(k.generic_separator);						// path is multiple relationship ids separated by generic_separator
+			const ids = path.split(k.separator.generic);						// path is multiple relationship ids separated by separator.generic
 			const id = ids.slice(-1)[0];										// grab last relationship id
 			const kind = this.predicate_kindFor_idRelationship(id);	// grab its predicate kind
 			const notValid = !this.relationships_areAllValid_forIDs(ids) || !kind;

@@ -29,7 +29,7 @@ export class S_Paging {
 	get thing(): Thing | null { return get(w_hierarchy).thing_forHID(this.thing_id.hash()) ?? null; }
 	get predicate(): Predicate | null { return get(w_hierarchy).predicate_forKind(this.kind) ?? null; }
 	get canShow(): number { return Math.round((get(w_ring_rotation_radius) ** 1.5) * Math.PI / 45 / k.height.row) + 1; }
-	get sub_key(): string { return `${this.thing_id}${k.generic_separator}${this.kind}${k.generic_separator}${this.points_toChildren}`; }
+	get sub_key(): string { return `${this.thing_id}${k.separator.generic}${this.kind}${k.separator.generic}${this.points_toChildren}`; }
 	ancestry_atIndex(ancestries: Array<Ancestry>): Ancestry { return ancestries[Math.round(this.index)]; }
 
 	index_isVisible(index: number): boolean {

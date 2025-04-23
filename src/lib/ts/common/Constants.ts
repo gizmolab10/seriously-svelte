@@ -12,17 +12,10 @@ export default class Constants {
 	hid_unknown = 1000000000000;
 	diameterOf_outer_tinyDots = 19;
 	prevent_selection_style = '-webkit-user-select: none; user-select: none; -moz-user-select: none';
-	local_help_url = 'http://localhost:8000/README.html';
-	remote_help_url = 'https://help.webseriously.org';
 	title_default = 'Please, enter a title';
 	title_line = '------------------------';
 	name_bulkAdmin = 'Jonathan Sand';
-	idBase_test = 'handcrafted';
 	cursor_default = 'default';
-	generic_separator = '::';
-	small_separator = ':::';
-	big_separator = '::::';
-	idBase_file = 'data';
 	unknown = 'unknown';
 	root_path = 'root';
 	newLine = '\n';
@@ -31,14 +24,23 @@ export default class Constants {
 	empty = '';
 
 	build_number: string;
-	zoom_ratio: E_Array;
-	threshold: E_Array;
-	thickness: E_Array;
-	height: E_Array;
-	size: E_Array;
+	size: E_Array<number>;
+	height: E_Array<number>;
+	id_base: E_Array<string>;
+	help_url: E_Array<string>;
+	separator: E_Array<string>;
+	thickness: E_Array<number>;
+	threshold: E_Array<number>;
+	zoom_ratio: E_Array<number>;
 
 	constructor() {
 		this.build_number = builds.latest;
+		this.help_url = E_Array.create({
+			local: 'http://localhost:8000/README.html',
+			remote: 'https://help.webseriously.org', });
+		this.id_base = E_Array.create({
+			test: 'handcrafted',
+			local: 'data', });
 		this.zoom_ratio = E_Array.create({
 			out: 0.9,
 			in: 1.1, });
@@ -49,6 +51,10 @@ export default class Constants {
 			segmented: 21,
 			small: 16,
 			row: 20, });
+		this.separator = E_Array.create({
+			generic: '::',
+			small: ':::',
+			big: '::::', });
 		this.size = E_Array.create({
 			smallest_font: 9,
 			smaller_font: 11,

@@ -78,7 +78,7 @@ export class Configuration {
 	}
 
 	open_tabFor(url: string) { window.open(url, 'help-webseriously')?.focus(); }
-	showHelp() { this.open_tabFor(this.isServerLocal ? k.local_help_url : k.remote_help_url); }
+	showHelp() { this.open_tabFor(this.isServerLocal ? k.help_url.local : k.help_url.remote); }
 
 }
 
