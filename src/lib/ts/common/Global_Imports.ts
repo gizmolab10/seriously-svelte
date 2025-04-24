@@ -53,7 +53,6 @@ import User from '../data/persistable/User';
 import Angle from '../common/Angle';
 
 import './Extensions';
-import { initializeExtensions } from './Extensions';
 import { k } from './Constants';
 import { u } from './Utilities';
 import { e } from '../signals/Events';
@@ -66,8 +65,8 @@ import { transparentize } from 'color2k';
 import interact from 'interactjs';
 
 export {
-	T_Timer, Mouse_Timer,
 	e, c, k, p, u, ux, w,
+	T_Timer, Mouse_Timer,
 	interact, transparentize,
 	wrappers, Seriously_Range,
 	Rect, Size, Point, svgPaths,

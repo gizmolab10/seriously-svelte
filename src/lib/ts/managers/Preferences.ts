@@ -156,7 +156,7 @@ export class Preferences {
 		w_t_details.set(this.read_key(T_Preference.detail_types) ?? [T_Details.storage]);
 		w_t_countDots.set(this.read_key(T_Preference.countDots) ?? [T_Hierarchy.children]);
 		w_background_color.set(this.read_key(T_Preference.background) ?? colors.background);
-		w_ring_rotation_radius.set(Math.max(this.read_key(T_Preference.ring_radius) ?? 0, k.radial.innermost));
+		w_ring_rotation_radius.set(Math.max(this.read_key(T_Preference.ring_radius) ?? 0, k.radial.central));
 		this.reactivity_subscribe()
 	}
 
