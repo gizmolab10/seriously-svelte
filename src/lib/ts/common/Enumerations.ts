@@ -1,3 +1,52 @@
+// DO NOT change the order of the following
+
+export enum T_Order {	
+	child,
+	other,
+}
+
+export enum T_Banner {
+	controls,
+	crumbs,
+	graph,
+}
+
+export enum T_Details {
+	storage,
+	tools,
+	display,
+	info,
+}
+
+export enum T_Info {
+	segments,
+	before_title,
+	title,
+	after_title,
+	table,
+	color,
+	traits,
+	consequence,
+	quest
+}
+
+export enum T_Layer {
+	common,
+	paging,
+	rings,
+	necklace,
+	lines,
+	widgets,
+	dots,
+	text,
+	tools,
+	tool_buttons,
+	details,
+	frontmost,
+}
+
+// the order of the following is unimportant
+
 export enum T_Graph {
 	radial = 'radial',
 	tree   = 'tree',
@@ -18,21 +67,10 @@ export enum T_Alteration {
 	adding	 = 'adding',
 }
 
-export enum T_Order {
-	child,
-	other,
-}
-
 export enum T_Hierarchy {
 	children = 'children',
 	parents	 = 'parents',
 	related  = 'related',
-}
-
-export enum T_Create {
-	isFromPersistent = 'isFrom',
-	getPersistentID	 = 'getID',
-	none			 = '',
 }
 
 export enum T_Widget {
@@ -47,17 +85,10 @@ export enum T_Curve {
 	up	 = 'up',
 }
 
-export enum T_Banner {
-	controls,
-	crumbs,
-	graph,
-}
-
-export enum T_Details {	// order must not change
-	storage,
-	tools,
-	display,
-	info,
+export enum T_Create {
+	isFromPersistent = 'isFrom',
+	getPersistentID	 = 'getID',
+	none			 = '',
 }
 
 export enum T_Startup {
@@ -118,18 +149,6 @@ export enum T_Browser  {
 	orion	 = 'orion',
 }
 
-export enum T_Info {
-	segments,
-	before_title,
-	title,
-	after_title,
-	table,
-	color,
-	traits,
-	consequence,
-	quest
-};
-
 export enum T_Trait {
 	consequence = 'consequence',
 	hyperlink	= 'hyperlink',
@@ -156,21 +175,6 @@ export enum T_Element {
 	info		 = 'info',
 	none		 = 'none',
 	tool		 = 'tool',
-}
-
-export enum T_Layer {	// DO NOT change the order
-	common,
-	paging,
-	rings,
-	necklace,
-	lines,
-	widgets,
-	dots,
-	text,
-	tools,
-	tool_buttons,
-	details,
-	frontmost,
 }
 
 export enum T_Tool {

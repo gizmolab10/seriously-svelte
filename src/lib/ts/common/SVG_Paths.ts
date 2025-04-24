@@ -26,6 +26,30 @@ export default class SVG_Paths {
         return `M ${margin + 2} ${radius} L ${length + 1} ${radius} M ${radius} ${margin + 2} L ${radius} ${diameter - margin - 2}`;
     }
 
+	rounded_T(thickness: number, radius: number, direction: Direction): string {
+		const center = Point.square(radius);
+		const halfThickness = thickness / 2;
+		
+		// For direction Down, we start at the bottom center and create two arcs
+		if (direction === Direction.down) {
+			const start = center.offsetByY(radius);
+			const leftEnd = center.offsetByX(-radius);
+			const rightEnd = center.offsetByX(radius);
+			
+			// Create left arc (from bottom center to left)
+			const leftArc = this.arc(center, radius, 1, Math.PI, Math.PI * 1.5);
+			
+			// Create right arc (from bottom center to right)
+			const rightArc = this.arc(center, radius, 0, Math.PI, Math.PI * 0.5);
+			
+			return `${leftArc} ${rightArc}`;
+		}
+		
+		// For other directions, we'll need to implement similar logic
+		// but for now we'll just return an empty string
+		return '';
+	}
+
     circle_atOffset(width: number, diameter: number, offset: Point = Point.zero): string {
         const center = offset.offsetEquallyBy(width / 2);
 		return this.circle(center, diameter / 2);

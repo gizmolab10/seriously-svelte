@@ -139,7 +139,7 @@
 			// check if one of the three ring zones is active (already dragging)
 
 			if (resizing_state.isActive) {										// resize, check this FIRST (when both states return isActive true, rotation should be ignored)
-				const smallest = k.radial.central;
+				const smallest = k.radius.ring_center;
 				const largest = smallest * 3;
 				const magnitude = mouse_vector.magnitude - resizing_state.basis_radius;
 				const distance = magnitude.force_between(smallest, largest);

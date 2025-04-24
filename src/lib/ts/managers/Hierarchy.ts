@@ -295,7 +295,7 @@ export class Hierarchy {
 		const thing = ancestry.thing;
 		if (!!thing && parent && parentAncestry) {
 			const order = ancestry.order + (below ? k.halfIncrement : -k.halfIncrement);
-			const child = this.thing_runtimeCreate(thing.idBase, Identifiable.newID(), k.title_line, parent.color, T_Thing.generic);
+			const child = this.thing_runtimeCreate(thing.idBase, Identifiable.newID(), k.title.line, parent.color, T_Thing.generic);
 			await this.ancestry_edit_persistentAddAsChild(parentAncestry, child, order, false);
 		}
 	}

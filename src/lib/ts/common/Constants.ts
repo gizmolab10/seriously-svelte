@@ -5,13 +5,12 @@ export default class Constants {
 	line_stretch = 22;
 	halfIncrement = 0.5;
 	width_details = 200;
+	radial_widget_inset = 26;
 	editingTools_diameter = 64;
 	hid_unknown = 1000000000000;
-	diameterOf_outer_tinyDots = 19;
 	build_number = builds.latest;
+	diameterOf_outer_tinyDots = 19;
 	prevent_selection_style = '-webkit-user-select: none; user-select: none; -moz-user-select: none';
-	title_default = 'Please, enter a title';
-	title_line = '------------------------';
 	name_bulkAdmin = 'Jonathan Sand';
 	cursor_default = 'default';
 	unknown = 'unknown';
@@ -20,6 +19,11 @@ export default class Constants {
 	comma = ',';
 	space = ' ';
 	empty = '';
+
+	radius = {
+		arcSlider_cap: 7.5,
+		ring_center: 60,
+		rounded_t: 30, };
 
 	id_base = {
 		test: 'handcrafted',
@@ -37,9 +41,9 @@ export default class Constants {
 		double_click: 700,
 		long_click: 800, };
 
-	radial = {
-		widget_inset: 26,
-		central: 60, };
+	title = {
+		separator: '------------------------',
+		default: 'Please, enter a title', };
 
 	separator = {
 		generic: '::',
@@ -65,7 +69,6 @@ export default class Constants {
 		button: 16,
 		font: 14,
 		dot: 13, };
-
 }
 
 export const k = new Constants();

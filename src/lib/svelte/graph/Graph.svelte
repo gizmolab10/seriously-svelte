@@ -39,7 +39,7 @@
 	}
 
 	$: {
-		draggableRect = $w_graph_rect.offsetByY(-9);
+		draggableRect = $w_graph_rect;
 		update_style();
 		graph_reattachments += 1;
 	}

@@ -158,7 +158,7 @@ export default class G_Cluster {
 		this.g_cluster_widgets = [];
 		if (this.widgets_shown > 0 && !!this.predicate) {
 			const center = this.center.offsetByXY(2, -1.5);			// tweak so that drag dots are centered within the rotation ring
-			const radial = Point.x(get(w_ring_rotation_radius) + k.radial.widget_inset);
+			const radial = Point.x(get(w_ring_rotation_radius) + k.radial_widget_inset);
 			const radial_ofFork = this.g_sliderArc.radial_ofFork;	// points at middle widget
 			const fork_pointsRight = radial_ofFork.x > 0;
 			const fork_pointsDown = radial_ofFork.y < 0;

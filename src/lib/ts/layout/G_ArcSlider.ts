@@ -25,9 +25,9 @@ export default class G_ArcSlider {
 	constructor() {
 		const thickness = k.thickness.paging_arc;
 		const radius = get(w_ring_rotation_radius);
-		this.clusters_center = Point.square(radius);
 		this.outside_arc_radius = radius + thickness;
-		this.cap_radius = k.thickness.ring_rotation / 6;
+		this.clusters_center = Point.square(radius);
+		this.cap_radius = k.radius.arcSlider_cap;
 		this.inside_arc_radius = radius;
 	}
 

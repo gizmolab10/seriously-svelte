@@ -128,7 +128,8 @@
 					height: 100%;
 					position: fixed;
 					z-index: {T_Layer.common};
-					left: {$w_show_details ? k.width_details : 0}px;'>
+					top: 0px;
+					left: {$w_graph_rect.origin.x}px;'>
 				{#key $w_popupView_id}
 					{#if $w_popupView_id == T_Control.builds}
 						<BuildNotes/>
