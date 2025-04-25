@@ -3,6 +3,7 @@
     export let thickness = k.thickness.separator;
     export let radius = k.radius.gull_wings;
     export let direction = Direction.down;
+    export let zindex = T_Layer.lines;
     export let center = Point.zero;
     export let color = 'black';
     const diameter = radius * 2;
@@ -22,11 +23,11 @@
 
 <svg
     style='
+        z-index: {zindex};
         position: absolute;
         pointer-events: none;
         top: {center.y - radius}px;
-        left: {center.x - radius}px;
-        z-index: {T_Layer.frontmost};'
+        left: {center.x - radius}px;'
     class='gull-wings'
     width={diameter}
     height={diameter}

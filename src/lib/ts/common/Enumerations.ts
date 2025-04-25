@@ -36,6 +36,8 @@ export enum T_Layer {
 	rings,
 	necklace,
 	lines,
+	thumbs,
+	arc,
 	widgets,
 	dots,
 	text,

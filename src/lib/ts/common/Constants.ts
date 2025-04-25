@@ -1,8 +1,10 @@
 import { builds } from './Builds';
 
+const dot_size = 13;
+const separator_thickness = 4;
+const row_height = dot_size + 7 ;
+
 export default class Constants {
-	dot_size = 13;
-	line_stretch = 22;
 	halfIncrement = 0.5;
 	width_details = 200;
 	radial_widget_inset = 26;
@@ -42,8 +44,8 @@ export default class Constants {
 
 	radius = {
 		arcSlider_cap: 7.5,
-		ring_center:  60,
-		gull_wings:	  9, };
+		ring_center:   60,
+		gull_wings:	   separator_thickness * 3, };
 
 	separator = {
 		generic: '::',
@@ -53,25 +55,26 @@ export default class Constants {
 	thickness = {
 		ring_rotation: 44,
 		paging_arc:	   15,
-		separator:		3,
-		fork:			2.5,
-		thin:			2, };
+		separator: 	   separator_thickness,
+		fork:		   2.5,
+		thin:		   2, };
 
 	size = {
-		smallest_font: 9,
-		smaller_font: 11,
-		small_font:	  13,
-		button:		  16,
-		font:		  14,
-		dot:		  13, };
+		smallest_font: dot_size - 4,
+		smaller_font:  dot_size - 2,
+		small_font:	   dot_size,
+		button:		   dot_size + 3,
+		line:		   row_height + 2,
+		font:		   dot_size + 1,
+		dot:		   dot_size, };
 
 	height = {
-		segmented: 21,
-		small:	   16,
-		row:	   20,
+		segmented: row_height + 1,
+		small:	   dot_size + 3,
+		row:	   row_height,
 		banner: {
 			controls: 18,
-			crumbs:	  20,
+			crumbs:	  row_height,
 			graph:	   0,
 		},
 		detail: {

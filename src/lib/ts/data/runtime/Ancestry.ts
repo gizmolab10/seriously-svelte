@@ -565,7 +565,7 @@ export default class Ancestry extends Identifiable {
 	g_line_toOther(other: Ancestry) : G_TreeLine {
 		const offset_y = 0.5;
 		const g_line = new G_TreeLine(this, other, true);
-		const offset_x = -(k.line_stretch + k.size.dot / 2);
+		const offset_x = -(k.size.line + k.size.dot / 2);
 		const extent = other.g_widget.absolute_center_ofDrag;
 		const origin = this.g_widget.absolute_center_ofReveal.offsetByY(-2.5);
 		const rect = Rect.createExtentRect(origin, extent).offsetByXY(offset_x, offset_y);
@@ -654,7 +654,7 @@ export default class Ancestry extends Identifiable {
 						subtreeWidth = branchWidth;
 					}
 				}
-				width += subtreeWidth + k.line_stretch + k.size.dot;
+				width += subtreeWidth + k.size.line + k.size.dot;
 			}
 			return width;
 		}

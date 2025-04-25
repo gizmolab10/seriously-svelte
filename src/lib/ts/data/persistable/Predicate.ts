@@ -33,7 +33,7 @@ export default class Predicate extends Persistable {
 		}
 	}
 	
-	angle_ofFork_when(points_toChildren: boolean) {
+	angle_ofCluster_when(points_toChildren: boolean) {
 		// returns one of three angles: 1) children_angle 2) opposite+tweak 3) opposite-tweak
 		const tweak = 2 * Math.PI / 3;					// equilateral distribution
 		const children_angle = get(w_ring_rotation_angle);

@@ -11,12 +11,13 @@ import { get } from 'svelte/store';
 
 export default class G_ArcSlider {
 	clusters_center = Point.zero;
+	label_center = Point.zero;
+	tip_ofFork = Point.zero;
 	outside_arc_radius = 0;
 	inside_arc_radius = 0;
 	label_text_angle = 0;
 	arc_rect = Rect.zero;
-	angle_ofFork = 0;
-	fork_backoff = 0;
+	angle_ofCluster = 0;
 	fork_radius = 0;
 	start_angle = 0;
 	cap_radius = 0;
@@ -34,15 +35,14 @@ export default class G_ArcSlider {
 	static readonly PRIMITIVES: unique symbol;
 
 	get spread_angle():			number { return this.end_angle - this.start_angle; }
-	get angle_ofCenter():		number { return (this.end_angle + this.start_angle) / 2 - this.offset_ofNadir; }
+	get angle_ofFork():			number { return (this.end_angle + this.start_angle) / 2 - this.offset_ofNadir; }
 	get offset_ofNadir():		number { return (this.arc_straddles_nadir && !this.arc_straddles_zero) ? Angle.half : 0; }
-	get fork_slantsForward():  boolean { return new Angle(this.angle_ofFork).angle_slantsForward; }
+	get fork_slantsForward():  boolean { return new Angle(this.angle_ofCluster).angle_slantsForward; }
 	get straddles_zero():	   boolean { return this.end_angle.straddles_zero(this.start_angle); }
-	get fork_orientsDown():	   boolean { return new Angle(this.angle_ofFork).angle_orientsDown; }
-	get fork_pointsRight():	   boolean { return new Angle(this.angle_ofFork).angle_pointsRight; }
+	get fork_orientsDown():	   boolean { return new Angle(this.angle_ofCluster).angle_orientsDown; }
+	get fork_pointsRight():	   boolean { return new Angle(this.angle_ofCluster).angle_pointsRight; }
 	get arc_straddles_nadir(): boolean { return this.arc_straddles(Angle.three_quarters); }
 	get arc_straddles_zero():  boolean { return this.arc_straddles(0); }
-	get radial_ofFork():		 Point { return Point.fromPolar(get(w_ring_rotation_radius), this.angle_ofFork); }
 	get arc_origin():			 Point { return this.arc_rect.origin; }
 	get arc_center():			 Point { return this.arc_rect.center; }
 
@@ -67,11 +67,16 @@ export default class G_ArcSlider {
 		return Point.fromPolar(middle_radius, angle);
 	}
 
-	layout_angle_ofFork(angle_ofFork: number) {
+	layout_fork(angle_ofCluster: number) {
 		const fork_raw_radius = k.thickness.ring_rotation * 0.6;
-		this.fork_radius = fork_raw_radius - this.fork_backoff;
-		this.fork_backoff = this.fork_adjustment(fork_raw_radius, this.inside_arc_radius);
-		this.angle_ofFork = angle_ofFork;
+		const fork_backoff = this.fork_adjustment(fork_raw_radius, this.inside_arc_radius);
+		this.fork_radius = fork_raw_radius - fork_backoff;
+		this.angle_ofCluster = angle_ofCluster;
+	}
+
+	layout_forkTip(center: Point) {
+		const radial = Point.fromPolar(this.inside_arc_radius, this.angle_ofFork);
+		this.tip_ofFork = center.offsetBy(radial);
 	}
 
 	fork_adjustment(fork_radius: number, inside_arc_radius: number): number {
@@ -121,27 +126,8 @@ export default class G_ArcSlider {
 		return svgPaths.arc_partial(center, this.cap_radius, 0, 1, end_angle);
 	}
 
-	svgPathFor_tinyDot(radius: number, basis_angle: number) {
-		const start = this.clusters_center.offsetBy(Point.fromPolar(radius, basis_angle));
-		return svgPaths.circle(start, 5);
-	}
-
 	get svgPathFor_radialFork(): string {
-		return svgPaths.line_atAngle(this.clusters_center, this.inside_arc_radius, this.angle_ofCenter);
-	}
-
-	// not used yet
-
-	get svgPathFor_forkArc(): string {
-		const angle = -this.angle_ofFork;
-		const fork_radius = this.fork_radius;
-		const forward = this.fork_slantsForward;
-		const y = fork_radius * (forward ? -1 : 1);
-		const x = this.inside_arc_radius - fork_radius - this.fork_backoff;
-		const origin = new Point(x, y).rotate_by(angle);
-		return svgPaths.arc(origin.offsetBy(this.clusters_center), fork_radius, 1,
-			angle + (forward ? Angle.quarter : 0),
-			angle - (forward ? 0 : Angle.quarter));
+		return svgPaths.line_atAngle(this.clusters_center, this.inside_arc_radius, this.angle_ofFork);
 	}
 
 }

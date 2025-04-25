@@ -7,10 +7,14 @@ export class Colors {
 	separator = '#eeeeeee0';
     default_forThings = 'blue';
 
+	opacitize(color: string, amount: number): string {
+		return transparentize(color, 1 - amount);
+	}
+
 	separatorFor(background: string): string {
 		let color = '#eeeeeee0';
 		if (!this.colors_areIdentical(background, this.background)) {
-			const separator = this.increase_saturationOf_by(background, 40);
+			const separator = this.multiply_saturationOf_by(background, 5);
 			if (!!separator) {
 				color = separator;
 			}
@@ -18,9 +22,19 @@ export class Colors {
 		return color;
 	}
 
-	opacitize(color: string, amount: number): string {
-		return transparentize(color, 1 - amount);
+	static readonly SATURATION: unique symbol;
+
+	multiply_saturationOf_by(color: string, ratio: number): string | null {
+		let hsba = this.color_toHSBA(color);
+		if (!!hsba) {
+			hsba.s = Math.min(255, hsba.s * ratio);
+			const rgba = this.HSBA_toRGBA(hsba);
+			return this.RGBA_toHex(rgba)
+		}
+		return null
 	}
+
+	static readonly LUMINANCE: unique symbol;
 	
 	darkerBy(color: string, ratio: number): string | null {
 		return this.adjust_luminance_byApplying(color, (lume => {
@@ -34,14 +48,113 @@ export class Colors {
 		}));
 	}
 
-	increase_saturationOf_by(color: string, increase: number): string | null {
-		let hsba = this.color_toHSBA(color);
-		if (!!hsba) {
-			hsba.s = Math.min(255, hsba.s + increase);
-			const rgba = this.HSBA_toRGBA(hsba);
-			return this.RGBA_toHex(rgba)
+	luminance_ofColor(color: string): number | null {
+		const rgba = this.color_toRGBA(color);
+		if (!!rgba) {
+			return this.luminance_ofRGBA(rgba);
 		}
 		return null
+	}
+
+	luminance_ofRGBA(rgba: RGBA): number | null {
+		if (!!rgba) {
+			const linearize = (c: number) => {
+				const s = c / 255;
+				return s <= 0.04045 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+			};
+			const R = linearize(rgba.r);
+			const G = linearize(rgba.g);
+			const B = linearize(rgba.b);
+			const relative = 0.2126 * R + 0.7152 * G + 0.0722 * B;		// according to WCAG
+			return rgba.a * relative + (1 - rgba.a) * 1;				// assume white background with luminance = 1
+		}
+		return null;
+	}
+
+	adjust_luminance_byApplying(color: string, closure: (lume: number) => number): string | null {
+		const rgba = this.color_toRGBA(color);
+		if (!!rgba) {
+			const lume = this.luminance_ofRGBA(rgba);
+			if (!!lume) {
+				const dark = closure(lume);
+				return this.set_darkness_toRGBA(rgba, dark);
+			}
+		}
+		return null;
+	}
+
+	static readonly DARKNESS: unique symbol;
+
+	set_darkness_toRGBA(rgba: RGBA, darkness: number): string | null {
+		const adjusted = this.adjust_RGBA_forDarkness(rgba, darkness);
+		const rgba_new = adjusted.result;
+		if (!adjusted.error && !!rgba_new) {
+			return this.RGBA_toHex(rgba_new);
+		}
+		return null
+	}
+
+	adjust_RGBA_forDarkness(rgba: RGBA, targetDarkness: number): {result: RGBA | null, error: Error | null} {
+		
+		///////////////////////////////////////////////////////////////////////////////////
+		// Adjusts an RGBA color so that its "perceived darkness" 
+		//		equals the given target darkness.
+		// returns an Error if a valid adjustment cannot be computed.
+		//  Darkness is defined here as:
+		// 	 darkness = 1 - (a * Y + (1 - a) * 1)
+		//  where Y is the relative luminance computed from the linearized sRGB values.
+		// 
+		//  The function scales the color channels (preserving hue/saturation) such that:
+		// 	 Y_new = 1 - (targetDarkness / a)
+		///////////////////////////////////////////////////////////////////////////////////
+
+		const r = rgba.r;
+		const g = rgba.g;
+		const b = rgba.b;
+		const a = rgba.a;
+		if (a === 0) {			// Check alpha constraints:
+			if (targetDarkness !== 0) {
+				return {result: rgba, error: new Error("With zero alpha, only target darkness 0 is possible.")};
+			}
+		}
+		if (targetDarkness > a) {
+			return {result: rgba, error: new Error("Target darkness must be <= alpha.")};
+		}
+		const srgbToLinear = (c: number): number => {
+			// Helper to convert sRGB channel [0,255] to linear value [0,1]
+			const s = c / 255;
+			return s <= 0.04045 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+		};
+		const linearToSrgb = (c: number): number => {
+			// Helper to convert linear value [0,1] to sRGB channel [0,1]
+			return c <= 0.0031308 ? c * 12.92 : 1.055 * Math.pow(c, 1 / 2.4) - 0.055;
+		};
+		const R_lin = srgbToLinear(r);		// Convert original channels to linear space
+		const G_lin = srgbToLinear(g);
+		const B_lin = srgbToLinear(b);
+		const Y = 0.2126 * R_lin + 0.7152 * G_lin + 0.0722 * B_lin;		// Compute current relative luminance Y
+		if (Y === 0) {			// If the color is black and target darkness is not full darkness, we can't scale from 0.
+			if (targetDarkness !== 1) {
+				return {result: null, error: new Error("Cannot adjust a black color to be lighter while preserving hue.")};
+			}
+			return {result: rgba, error: null}; // already black
+		}
+		// Compute the desired relative luminance from target darkness:
+		// effective luminance = 1 - targetDarkness must equal a * Y_new + (1-a)*1,
+		// so Y_new = ( (1 - targetDarkness) - (1-a) ) / a = (a - targetDarkness) / a.
+		const Y_new = (a - targetDarkness) / a;
+		if (Y_new < 0 || Y_new > 1) {
+			return {result: null, error: new Error("Computed target luminance out of range.")};
+		}
+		const k = Y_new / Y;		// Compute scaling factor k to adjust the color channels
+		const R_new_lin = Math.min(R_lin * k, 1);		// Scale each channel in linear space (clamping to 1 if necessary)
+		const G_new_lin = Math.min(G_lin * k, 1);
+		const B_new_lin = Math.min(B_lin * k, 1);
+		const R_new = Math.round(linearToSrgb(R_new_lin) * 255);		// Convert back to sRGB (and then to 0-255 integer values)
+		const G_new = Math.round(linearToSrgb(G_new_lin) * 255);
+		const B_new = Math.round(linearToSrgb(B_new_lin) * 255);
+
+		return {result: new RGBA(R_new, G_new, B_new, a), error: null};
 	}
 
 	static readonly CONVERSIONS: unique symbol;
@@ -168,131 +281,6 @@ export class Colors {
 		const s = max === 0 ? 0 : (delta / max) * 100;
 		const bValue = max * 100;
 		return new HSBA(h, s, bValue, rgba.a);
-	}
-
-	static readonly SATURATION: unique symbol;
-
-	adjust_saturation_byApplying(color: string, closure: (lume: number) => number): string | null {
-		const rgba = this.color_toRGBA(color);
-		if (!!rgba) {
-			const lume = this.luminance_ofRGBA(rgba);
-			if (!!lume) {
-				const dark = closure(lume);
-				return this.set_darkness_toRGBA(rgba, dark);
-			}
-		}
-		return null;
-	}
-
-	static readonly LUMINANCE: unique symbol;
-
-	luminance_ofColor(color: string): number | null {
-		const rgba = this.color_toRGBA(color);
-		if (!!rgba) {
-			return this.luminance_ofRGBA(rgba);
-		}
-		return null
-	}
-
-	luminance_ofRGBA(rgba: RGBA): number | null {
-		if (!!rgba) {
-			const linearize = (c: number) => {
-				const s = c / 255;
-				return s <= 0.04045 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
-			};
-			const R = linearize(rgba.r);
-			const G = linearize(rgba.g);
-			const B = linearize(rgba.b);
-			const relative = 0.2126 * R + 0.7152 * G + 0.0722 * B;		// according to WCAG
-			return rgba.a * relative + (1 - rgba.a) * 1;				// assume white background with luminance = 1
-		}
-		return null;
-	}
-
-	adjust_luminance_byApplying(color: string, closure: (lume: number) => number): string | null {
-		const rgba = this.color_toRGBA(color);
-		if (!!rgba) {
-			const lume = this.luminance_ofRGBA(rgba);
-			if (!!lume) {
-				const dark = closure(lume);
-				return this.set_darkness_toRGBA(rgba, dark);
-			}
-		}
-		return null;
-	}
-
-	static readonly DARKNESS: unique symbol;
-
-	set_darkness_toRGBA(rgba: RGBA, darkness: number): string | null {
-		const adjusted = this.adjust_RGBA_forDarkness(rgba, darkness);
-		const rgba_new = adjusted.result;
-		if (!adjusted.error && !!rgba_new) {
-			return this.RGBA_toHex(rgba_new);
-		}
-		return null
-	}
-
-	adjust_RGBA_forDarkness(rgba: RGBA, targetDarkness: number): {result: RGBA | null, error: Error | null} {
-		
-		///////////////////////////////////////////////////////////////////////////////////
-		// Adjusts an RGBA color so that its "perceived darkness" 
-		//		equals the given target darkness.
-		// returns an Error if a valid adjustment cannot be computed.
-		//  Darkness is defined here as:
-		// 	 darkness = 1 - (a * Y + (1-a)*1)
-		//  where Y is the relative luminance computed from the linearized sRGB values.
-		// 
-		//  The function scales the color channels (preserving hue/saturation) such that:
-		// 	 Y_new = (a - targetDarkness) / a.
-		///////////////////////////////////////////////////////////////////////////////////
-
-		const r = rgba.r;
-		const g = rgba.g;
-		const b = rgba.b;
-		const a = rgba.a;
-		if (a === 0) {			// Check alpha constraints:
-			if (targetDarkness !== 0) {
-				return {result: rgba, error: new Error("With zero alpha, only target darkness 0 is possible.")};
-			}
-		}
-		if (targetDarkness > a) {
-			return {result: rgba, error: new Error("Target darkness must be <= alpha.")};
-		}
-		const srgbToLinear = (c: number): number => {
-			// Helper to convert sRGB channel [0,255] to linear value [0,1]
-			const s = c / 255;
-			return s <= 0.04045 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
-		};
-		const linearToSrgb = (c: number): number => {
-			// Helper to convert linear value [0,1] to sRGB channel [0,1]
-			return c <= 0.0031308 ? c * 12.92 : 1.055 * Math.pow(c, 1 / 2.4) - 0.055;
-		};
-		const R_lin = srgbToLinear(r);		// Convert original channels to linear space
-		const G_lin = srgbToLinear(g);
-		const B_lin = srgbToLinear(b);
-		const Y = 0.2126 * R_lin + 0.7152 * G_lin + 0.0722 * B_lin;		// Compute current relative luminance Y
-		if (Y === 0) {			// If the color is black and target darkness is not full darkness, we can't scale from 0.
-			if (targetDarkness !== 1) {
-				return {result: null, error: new Error("Cannot adjust a black color to be lighter while preserving hue.")};
-			}
-			return {result: rgba, error: null}; // already black
-		}
-		// Compute the desired relative luminance from target darkness:
-		// effective luminance = 1 - targetDarkness must equal a * Y_new + (1-a)*1,
-		// so Y_new = ( (1 - targetDarkness) - (1-a) ) / a = (a - targetDarkness) / a.
-		const Y_new = (a - targetDarkness) / a;
-		if (Y_new < 0 || Y_new > 1) {
-			return {result: null, error: new Error("Computed target luminance out of range.")};
-		}
-		const k = Y_new / Y;		// Compute scaling factor k to adjust the color channels
-		const R_new_lin = Math.min(R_lin * k, 1);		// Scale each channel in linear space (clamping to 1 if necessary)
-		const G_new_lin = Math.min(G_lin * k, 1);
-		const B_new_lin = Math.min(B_lin * k, 1);
-		const R_new = Math.round(linearToSrgb(R_new_lin) * 255);		// Convert back to sRGB (and then to 0-255 integer values)
-		const G_new = Math.round(linearToSrgb(G_new_lin) * 255);
-		const B_new = Math.round(linearToSrgb(B_new_lin) * 255);
-
-		return {result: new RGBA(R_new, G_new, B_new, a), error: null};
 	}
 
 }

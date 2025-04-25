@@ -72,8 +72,8 @@ export default class G_RadialGraph {
 
 	private layout_clusterFor(ancestries: Array<Ancestry>, predicate: Predicate | null, points_toChildren: boolean) {
 		if (!!predicate && ancestries.length > 0) {
-			const angle_ofFork = predicate.angle_ofFork_when(points_toChildren);
-			const points_right = new Angle(angle_ofFork).angle_pointsRight;
+			const angle_ofCluster = predicate.angle_ofCluster_when(points_toChildren);
+			const points_right = new Angle(angle_ofCluster).angle_pointsRight;
 			const g_cluster = this.g_cluster_forPredicate_toChild(predicate, points_toChildren);
 			const s_paging = this.s_paging_forPredicate_toChildren(predicate, points_toChildren);
 			const onePage_ofAncestries = s_paging?.onePage_from(ancestries) ?? [];
