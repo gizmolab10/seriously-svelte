@@ -1,8 +1,8 @@
-import { Thing, debug, T_Debug, T_Order, databases, Predicate, T_Predicate } from '../../common/Global_Imports';
-import { w_hierarchy, w_relationship_order } from '../../common/Stores';
+import { Thing, debug, T_Debug, T_Order, databases, Predicate, T_Predicate } from '../common/Global_Imports';
+import { w_hierarchy, w_relationship_order } from '../common/Stores';
 import Persistable from '../persistable/Persistable';
-import type { Integer } from '../../common/Types';
-import { T_Persistable } from '../dbs/DBCommon';
+import type { Integer } from '../common/Types';
+import { T_Persistable } from '../database/DBCommon';
 import { get } from 'svelte/store';
 import Airtable from 'airtable';
 

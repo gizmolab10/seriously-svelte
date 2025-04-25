@@ -1,4 +1,4 @@
-import { k, Thing, Trait, Hierarchy, Predicate, Relationship } from '../../common/Global_Imports';
+import { k, Thing, Trait, Hierarchy, Predicate, Relationship } from '../common/Global_Imports';
 import { T_Database, T_Persistence } from './DBCommon';
 import DBCommon from './DBCommon';
 

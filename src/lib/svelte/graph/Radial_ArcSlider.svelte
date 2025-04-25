@@ -4,7 +4,7 @@
 	import { w_count_mouse_up, w_g_paging_cluster, w_ring_rotation_radius } from '../../ts/common/Stores';
 	import { T_Layer, G_Cluster, Direction } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import Identifiable from '../../ts/data/runtime/Identifiable';
+	import Identifiable from '../../ts/runtime/Identifiable';
 	import Angled_Text from '../kit/Angled_Text.svelte';
 	import Gull_Wings from '../kit/Gull_Wings.svelte';
 	import { onMount } from 'svelte';

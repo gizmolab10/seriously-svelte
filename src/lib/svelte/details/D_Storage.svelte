@@ -3,7 +3,7 @@
 	import { w_storage_updated, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { T_Layer, T_Element, T_Preference } from '../../ts/common/Global_Imports';
 	import { w_t_database, w_hierarchy } from '../../ts/common/Stores';
-	import { T_Database } from '../../ts/data/dbs/DBCommon';
+	import { T_Database } from '../../ts/database/DBCommon';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Button from '../mouse/Button.svelte';
 	import Table from '../kit/Table.svelte';

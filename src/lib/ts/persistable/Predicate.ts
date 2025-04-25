@@ -1,7 +1,7 @@
-import { k, debug, T_Debug, databases, T_Predicate } from '../../common/Global_Imports';
-import { w_hierarchy, w_ring_rotation_angle } from '../../common/Stores';
+import { k, debug, T_Debug, databases, T_Predicate } from '../common/Global_Imports';
+import { w_hierarchy, w_ring_rotation_angle } from '../common/Stores';
 import Persistable from '../persistable/Persistable';
-import { T_Persistable } from '../dbs/DBCommon';
+import { T_Persistable } from '../database/DBCommon';
 import { get } from 'svelte/store';
 
 export default class Predicate extends Persistable {

@@ -4,9 +4,9 @@ import { Ancestry, Predicate, Relationship, S_Mouse, S_Alteration, S_Title_Edit 
 import { w_storage_updated, w_ancestry_showing_tools, w_ancestries_grabbed } from '../common/Stores';
 import { w_popupView_id, w_ancestry_focus, w_s_title_edit, w_s_alteration } from '../common/Stores';
 import type { Integer, Dictionary } from '../common/Types';
-import { T_Persistable } from '../../ts/data/dbs/DBCommon';
-import Identifiable from '../data/runtime/Identifiable';
-import DBCommon from '../data/dbs/DBCommon';
+import { T_Persistable } from '../../ts/database/DBCommon';
+import Identifiable from '../runtime/Identifiable';
+import DBCommon from '../database/DBCommon';
 import { get } from 'svelte/store';
 
 export type Ancestries_ByHID = { [hid: Integer]: Ancestry }

@@ -1,16 +1,16 @@
-import { Direction, Predicate, Hierarchy, databases, Relationship, Svelte_Wrapper } from '../../common/Global_Imports';
-import { c, k, u, show, Rect, Size, Thing, debug, layout, wrappers, svgPaths } from '../../common/Global_Imports';
-import { T_Graph, T_Element, T_Predicate, T_Alteration, T_SvelteComponent } from '../../common/Global_Imports';
-import { w_hierarchy, w_ancestry_focus, w_ancestry_showing_tools } from '../../common/Stores';
-import { w_ancestries_grabbed, w_ancestries_expanded, } from '../../common/Stores';
-import { w_background_color, w_t_graph, w_t_database } from '../../common/Stores';
-import { G_Widget, G_Cluster, G_TreeLine } from '../../common/Global_Imports';
-import { w_s_alteration, w_s_title_edit } from '../../common/Stores';
-import { S_Paging, S_Title_Edit } from '../../common/Global_Imports';
-import type { Dictionary, Integer } from '../../common/Types';
-import { T_Edit } from '../../state/S_Title_Edit';
+import { Direction, Predicate, Hierarchy, databases, Relationship, Svelte_Wrapper } from '../common/Global_Imports';
+import { c, k, u, show, Rect, Size, Thing, debug, layout, wrappers, svgPaths } from '../common/Global_Imports';
+import { T_Graph, T_Element, T_Predicate, T_Alteration, T_SvelteComponent } from '../common/Global_Imports';
+import { w_hierarchy, w_ancestry_focus, w_ancestry_showing_tools } from '../common/Stores';
+import { w_ancestries_grabbed, w_ancestries_expanded, } from '../common/Stores';
+import { w_background_color, w_t_graph, w_t_database } from '../common/Stores';
+import { G_Widget, G_Cluster, G_TreeLine } from '../common/Global_Imports';
+import { w_s_alteration, w_s_title_edit } from '../common/Stores';
+import { S_Paging, S_Title_Edit } from '../common/Global_Imports';
+import type { Dictionary, Integer } from '../common/Types';
+import { T_Edit } from '../state/S_Title_Edit';
 import { get, Writable } from 'svelte/store';
-import { T_Database } from '../dbs/DBCommon';
+import { T_Database } from '../database/DBCommon';
 import Identifiable from './Identifiable';
 
 export default class Ancestry extends Identifiable {

@@ -1,8 +1,8 @@
 // N.B., do not import these from Global Imports --> avoid dependency issues when importing Utilities class
 
 import { w_t_database, w_thing_fontFamily } from '../common/Stores';
-import Identifiable from '../data/runtime/Identifiable';
-import Ancestry from '../data/runtime/Ancestry';
+import Identifiable from '../runtime/Identifiable';
+import Ancestry from '../runtime/Ancestry';
 import { w } from '../layout/G_Window';
 import { T_Quadrant } from '../common/Angle';
 import { T_Browser } from './Enumerations';

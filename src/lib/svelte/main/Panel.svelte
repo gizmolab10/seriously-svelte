@@ -6,7 +6,7 @@
 	import { T_Control, Hierarchy, databases, Direction } from '../../ts/common/Global_Imports';
 	import { w_t_startup, w_popupView_id, w_ancestry_focus } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import { T_Database } from '../../ts/data/dbs/DBCommon';
+	import { T_Database } from '../../ts/database/DBCommon';
 	import Gull_Wings from '../kit/Gull_Wings.svelte';
 	import Details from '../details/Details.svelte';
 	import Breadcrumbs from './Breadcrumbs.svelte';

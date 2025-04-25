@@ -1,8 +1,8 @@
-import { Trait, Thing, Hierarchy, Predicate, Relationship } from '../../common/Global_Imports';
-import { T_Thing, T_Startup, T_Preference } from '../../common/Global_Imports';
-import { c, k, p, u, debug, layout } from '../../common/Global_Imports';
-import { w_hierarchy, w_t_startup } from '../../common/Stores';
-import type { Dictionary } from '../../common/Types';
+import { Trait, Thing, Hierarchy, Predicate, Relationship } from '../common/Global_Imports';
+import { T_Thing, T_Startup, T_Preference } from '../common/Global_Imports';
+import { c, k, p, u, debug, layout } from '../common/Global_Imports';
+import { w_hierarchy, w_t_startup } from '../common/Stores';
+import type { Dictionary } from '../common/Types';
 import Persistable from '../persistable/Persistable';
 
 export enum T_Persistence {

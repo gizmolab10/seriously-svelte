@@ -1,6 +1,6 @@
 import type { Dictionary } from '../../../ts/common/Types';
 import { T_Database, T_Persistence } from './DBCommon';
-import { k } from '../../common/Global_Imports';
+import { k } from '../common/Global_Imports';
 import DBCommon from './DBCommon';
 
 export default class DBLocal extends DBCommon {

@@ -3,7 +3,7 @@
 	import { T_Layer, T_Graph, T_Banner, T_Element, T_Control, T_Hierarchy, T_Preference } from '../../ts/common/Global_Imports';
 	import { w_t_graph, w_t_tree, w_graph_rect, w_count_resize, w_hierarchy, w_popupView_id } from '../../ts/common/Stores';
 	import { w_show_details, w_show_related, w_device_isMobile, w_thing_fontFamily } from '../../ts/common/Stores';
-	import Identifiable from '../../ts/data/runtime/Identifiable';
+	import Identifiable from '../../ts/runtime/Identifiable';
 	import { w_background_color } from '../../ts/common/Stores';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Button from '../mouse/Button.svelte';

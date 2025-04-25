@@ -1,7 +1,7 @@
-import S_Persistence from '../../state/S_Persistence';
+import S_Persistence from '../state/S_Persistence';
 import Identifiable from '../runtime/Identifiable';
-import { w_hierarchy } from '../../common/Stores';
-import { T_Persistable } from '../dbs/DBCommon';
+import { w_hierarchy } from '../common/Stores';
+import { T_Persistable } from '../database/DBCommon';
 import { T_Debug } from '../../debug/Debug';
 import { get } from 'svelte/store';
 

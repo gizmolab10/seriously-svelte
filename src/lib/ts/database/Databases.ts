@@ -1,11 +1,11 @@
 import { c, k, T_Preference, p } from '../common/Global_Imports';
-import { T_Database, T_Persistence } from '../data/dbs/DBCommon';
-import { dbAirtable } from '../data/dbs/DBAirtable';
-import { dbFirebase } from '../data/dbs/DBFirebase';
+import { T_Database, T_Persistence } from '../database/DBCommon';
+import { dbAirtable } from '../database/DBAirtable';
+import { dbFirebase } from '../database/DBFirebase';
 import { w_t_database } from '../common/Stores';
-import { dbLocal } from '../data/dbs/DBLocal';
-import { dbTest } from '../data/dbs/DBTest';
-import DBCommon from '../data/dbs/DBCommon';
+import { dbLocal } from '../database/DBLocal';
+import { dbTest } from '../database/DBTest';
+import DBCommon from '../database/DBCommon';
 
 // each db has its own hierarchy
 // when switching to another db
