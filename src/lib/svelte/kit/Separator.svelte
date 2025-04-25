@@ -46,7 +46,7 @@
 {/if}
 {#if add_wings}
 	<Gull_Wings
-		center={new Point(width + 2.5, top + 2.5)}
+		center={new Point(width, top).offsetEquallyBy(k.thickness.separator / 2)}
 		thickness={k.thickness.separator}
 		radius={k.radius.gull_wings}
 		direction={Direction.left}

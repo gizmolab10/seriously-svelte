@@ -4,34 +4,22 @@ import { w_t_tree, w_t_graph, w_t_details, w_hierarchy, w_t_database } from '../
 import { w_show_related, w_ancestry_focus, w_ancestries_expanded } from '../common/Stores';
 import { get } from 'svelte/store';
 
-class Verticals {
-	tops: Array<number> = [];
-	heights: Array<number> = [];
-
-	constructor(capacity: number) {
-		this.tops = new Array(capacity).fill(0);
-		this.height = new Array(capacity).fill(0);
-	}
-}
-
 export default class Layout {
-	verticals_ofBanners = new Verticals(3);
-	verticals_ofDetails = new Verticals(4);
 	branches_visited: Array<string> = [];
-	verticals_ofInfo = new Verticals(9);
+	tops_ofBanners: Array<number> = [];
+	tops_ofDetails: Array<number> = [];
 	parents_focus_ancestry!: Ancestry;
+	tops_ofInfo: Array<number> = [];
 	_g_radialGraph!: G_RadialGraph;
 	focus_ancestry!: Ancestry;
 
+	get branches_areChildren(): boolean { return true; }
+	top_ofInfoAt(index: number) { return this.tops_ofInfo[index]; }
 	get inTreeMode(): boolean { return get(w_t_graph) == T_Graph.tree; }
 	get inRadialMode(): boolean { return get(w_t_graph) == T_Graph.radial; }
-	top_ofInfoAt(index: number) { return this.verticals_ofInfo.tops[index]; }
+	height_ofBannerAt(index: number) { return Object.values(k.height.banner)[index]; }
 	ids_forDB(array: Array<Ancestry>): string { return u.ids_forDB(array).join(', '); }
-	height_ofBannerAt(index: number) { return this.verticals_ofBanners.height[index]; }
-	get branches_areChildren(): boolean { return true; } // get(w_t_tree) == T_Hierarchy.children; }
-	top_ofBannerAt(index: number) { return this.verticals_ofBanners.tops[index] + k.thickness.separator; }
-	get tops_ofBanners(): Array<number> { return this.verticals_ofBanners.tops.map(top => top + k.thickness.separator); }
-	get tops_ofDetails(): Array<number> { return this.verticals_ofDetails.tops.map(top => top + k.thickness.separator); }
+	top_ofBannerAt(index: number) { return this.tops_ofBanners[index] + k.thickness.separator; }
 	get g_radialGraph() { let g = this._g_radialGraph; if (!g) { g = new G_RadialGraph(); this._g_radialGraph = g }; return g; }
 	get focus_key(): string { return this.branches_areChildren ? T_Preference.focus_forChildren : T_Preference.focus_forParents; }
 	get expanded_key(): string { return this.branches_areChildren ? T_Preference.expanded_children : T_Preference.expanded_parents; }
@@ -79,34 +67,33 @@ export default class Layout {
 	layout_tops_forInfo(start: number) {
 		let top = start;
 		for (let i = 0; i <= T_Info.quest; i++) {
-			const height = u.valueFrom_atIndex(k.info, i);
-			this.verticals_ofInfo.height[i] = height;
-			this.verticals_ofInfo.tops[i] = top;
+			const height = u.valueFrom_atIndex(k.height.info, i);
+			this.tops_ofInfo[i] = top;
 			top += height;
 		}
 	}
 	
 	layout_tops_forPanelBanners() {
-		this.verticals_ofBanners.height = Object.values(k.height.banners);
+		const heights = Object.values(k.height.banner);
 		let index = 0;
 		let top = 2;
 		while (index <= T_Banner.graph) {
-			this.verticals_ofBanners.tops[index] = top;
-			top += this.verticals_ofBanners.height[index] + 4;
+			this.tops_ofBanners[index] = top;
+			top += heights[index] + 4;
 			index += 1;
 		}
 	}
 	
 	layout_tops_forDetails() {
 		let top = this.top_ofBannerAt(T_Banner.crumbs) + 8;
-		this.verticals_ofDetails.height = Object.values(k.height.details);
+		const heights = Object.values(k.height.detail);
 		let index = 0;
 		let indices = get(w_t_details);
 		while (index <= T_Details.info) {
-			this.verticals_ofDetails.tops[index] = top;
+			this.tops_ofDetails[index] = top;
 			const t_detail = T_Details[index] as unknown as T_Details;
 			if (indices.includes(t_detail)) {
-				top += this.verticals_ofDetails.height[index];
+				top += heights[index];
 			}
 			index += 1;
 		}

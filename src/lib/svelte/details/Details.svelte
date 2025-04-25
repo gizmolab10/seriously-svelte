@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, k, u, show, Point, debug, layout, T_Layer, T_Banner, T_Details } from '../../ts/common/Global_Imports';
+	import { c, k, u, show, Point, debug, layout, T_Layer, T_Details } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_t_details } from '../../ts/common/Stores';
 	import D_Display from '../details/D_Display.svelte';
 	import D_Storage from '../details/D_Storage.svelte';
@@ -35,7 +35,7 @@
 		allow_multiple={true}
 		name='details-selector'
 		selected={$w_t_details}
-		origin={new Point(14, 4)}
+		origin={new Point(14, 1)}
 		selection_closure={selection_closure}/>
 	{#if showingDetails_ofType(T_Details.storage)}
 		<Separator add_wings={true} title='storage' top={tops[T_Details.storage] - 8}/>

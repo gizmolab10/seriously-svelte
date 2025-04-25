@@ -43,7 +43,7 @@ export default class Constants {
 	radius = {
 		arcSlider_cap: 7.5,
 		ring_center:  60,
-		gull_wings:	  11, };
+		gull_wings:	  9, };
 
 	separator = {
 		generic: '::',
@@ -53,7 +53,7 @@ export default class Constants {
 	thickness = {
 		ring_rotation: 44,
 		paging_arc:	   15,
-		separator:		5,
+		separator:		3,
 		fork:			2.5,
 		thin:			2, };
 
@@ -65,34 +65,34 @@ export default class Constants {
 		font:		  14,
 		dot:		  13, };
 
-	info = {
-		segments:	  21,
-		before_title:  4,
-		title:		  17,
-		after_title:   4,
-		table:		 139,
-		color:		   2,
-		traits:		   2,
-		consequence:  50,
-		quest:		  50,
-	};
-
 	height = {
 		segmented: 21,
 		small:	   16,
 		row:	   20,
-		banners: {
-			controls: 15,
+		banner: {
+			controls: 18,
 			crumbs:	  20,
-			main:	  20,
+			graph:	   0,
 		},
-		details: {
-			storage: 118,
+		detail: {
+			storage: 122,
 			tools:	  40,
 			display:  76,
 			info:	   0,
 		},
+		info: {
+			segments:	  21,
+			before_title:  4,
+			title:		  17,
+			after_title:   4,
+			table:		 139,
+			color:		   2,
+			traits:		   2,
+			consequence:  50,
+			quest:		  50,
+		},
 	 };
+
 }
 
 export const k = new Constants();

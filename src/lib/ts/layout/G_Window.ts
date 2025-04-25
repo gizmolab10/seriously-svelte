@@ -66,7 +66,7 @@ export class G_Window {
 	graphRect_update() {
 		const x = get(w_show_details) ? k.width_details : 0;
 		const y = layout.top_ofBannerAt(T_Banner.graph);
-		const originOfGraph = new Point(x, y).offsetEquallyBy(k.thickness.separator);
+		const originOfGraph = new Point(x, y).offsetByX(k.thickness.separator);
 		const sizeOfGraph = this.windowSize.reducedBy(originOfGraph);	// account for origin
 		const rect = new Rect(originOfGraph, sizeOfGraph);
 		debug.log_mouse(`GRAPH ====> ${rect.description}`);

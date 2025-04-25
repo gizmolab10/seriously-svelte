@@ -24,9 +24,9 @@
     style='
         position: absolute;
         pointer-events: none;
-        z-index: {T_Layer.frontmost};
         top: {center.y - radius}px;
-        left: {center.x - radius}px;'
+        left: {center.x - radius}px;
+        z-index: {T_Layer.frontmost};'
     class='gull-wings'
     width={diameter}
     height={diameter}

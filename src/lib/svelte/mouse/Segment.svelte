@@ -6,7 +6,7 @@
 	export let font_size = `${k.size.small_font}px`;
 	export let hit_closure = (title, shift) => {};
 	export let fill = $w_background_color;
-	export let stroke = colors.default;
+	export let stroke = colors.separator;
 	export let g_segment!: G_Segment;
     export let name = g_segment.title;
 	const segment_name = `${name}-segment`;
