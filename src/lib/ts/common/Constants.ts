@@ -20,11 +20,6 @@ export default class Constants {
 	space = ' ';
 	empty = '';
 
-	radius = {
-		arcSlider_cap: 7.5,
-		ring_center: 60,
-		rounded_t: 30, };
-
 	id_base = {
 		test: 'handcrafted',
 		local: 'data', };
@@ -44,6 +39,11 @@ export default class Constants {
 	title = {
 		separator: '------------------------',
 		default: 'Please, enter a title', };
+
+	radius = {
+		arcSlider_cap: 7.5,
+		ring_center: 60,
+		gull_wings: 11, };
 
 	separator = {
 		generic: '::',

@@ -3,10 +3,11 @@
 	import { w_t_database, w_graph_rect, w_hierarchy, w_background_color } from '../../ts/common/Stores';
 	import { debug, T_Layer, T_Banner, Ancestry, T_Startup } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_show_details, w_device_isMobile, } from '../../ts/common/Stores';
+	import { T_Control, Hierarchy, databases, Direction } from '../../ts/common/Global_Imports';
 	import { w_t_startup, w_popupView_id, w_ancestry_focus } from '../../ts/common/Stores';
-	import { T_Control, Hierarchy, databases } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { T_Database } from '../../ts/data/dbs/DBCommon';
+	import Gull_Wings from '../kit/Gull_Wings.svelte';
 	import Details from '../details/Details.svelte';
 	import Breadcrumbs from './Breadcrumbs.svelte';
 	import BuildNotes from './BuildNotes.svelte';
@@ -16,6 +17,7 @@
 	import Box from '../debug/Box.svelte';
 	import Import from './Import.svelte';
 	import { onMount } from 'svelte';
+	const offset_toIntersection = new Point(-4, 8);
 	let separator_color = colors.separator;
 	let tops = layout.tops_ofBanners;
 	let panel_reattachments = 0;
@@ -111,7 +113,7 @@
 				</div>
 				{#if $w_show_details}
 					<Details/>
-					<div class='vertical-line'
+					<div class='details-separator'
 						style='
 							position: absolute;
 							z-index: {T_Layer.lines};
@@ -121,6 +123,12 @@
 							background-color: {separator_color};
 							height: {$w_graph_rect.size.height}px;'>
 					</div>
+					<Gull_Wings
+						center={$w_graph_rect.origin.offsetByXY(-2.3, -2.3)}
+						thickness={k.thickness.separator}
+						radius={k.radius.gull_wings}
+						direction={Direction.down}
+						color={separator_color}/>
 				{/if}
 			{/if}
 			<div class='right-side'

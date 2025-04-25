@@ -26,7 +26,7 @@ export default class SVG_Paths {
         return `M ${margin + 2} ${radius} L ${length + 1} ${radius} M ${radius} ${margin + 2} L ${radius} ${diameter - margin - 2}`;
     }
 
-	rounded_T(thickness: number, radius: number, direction: Direction): string {
+	gull_wings(thickness: number, radius: number, direction: Direction): string {
 		const center = Point.square(radius);
 		const halfThickness = thickness / 2;
 		

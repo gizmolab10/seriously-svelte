@@ -1,10 +1,13 @@
 <script lang='ts'>
-	import { k, u, colors, T_Layer } from '../../ts/common/Global_Imports';
+	import { T_Layer, Direction,  } from '../../ts/common/Global_Imports';
+	import { k, u, Point, colors } from '../../ts/common/Global_Imports';
 	import { w_background_color } from '../../ts/common/Stores';
+	import Gull_Wings from '../kit/Gull_Wings.svelte';
 	export let title_font_size = `${k.size.smaller_font}px`;
 	export let thickness = k.thickness.separator;
 	export let title: string | null = null;
 	export let width = k.width_details;
+	export let add_wings = false;
 	export let left = 0;
 	export let top = 0;
 	const title_width = u.getWidth_ofString_withSize(title ?? k.empty, title_font_size);
@@ -40,4 +43,12 @@
 			background-color:{$w_background_color};'>
 		{title}
 	</div>
+{/if}
+{#if add_wings}
+	<Gull_Wings
+		center={new Point(width + 2.5, top + 2.5)}
+		thickness={k.thickness.separator}
+		radius={k.radius.gull_wings}
+		direction={Direction.left}
+		color={separator_color}/>
 {/if}
