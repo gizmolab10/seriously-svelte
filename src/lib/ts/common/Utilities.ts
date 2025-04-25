@@ -47,6 +47,14 @@ export class Utilities {
 		return array;
 	}
 
+	valueFrom_atIndex<T extends Record<string, number>>(object: T, index: number): number {
+		const propNames = Object.keys(object) as Array<keyof T>;
+		if (index < 0 || index >= propNames.length) {
+			throw new Error(`Index ${index} is out of bounds`);
+		}
+		return object[propNames[index]];
+	}
+
 	sort_byTitleTop(ancestries: Array<Ancestry>): Array<Ancestry> {
 		return ancestries.sort( (a: Ancestry, b: Ancestry) => {
 			const aTop = a.titleRect?.origin.y;

@@ -79,29 +79,15 @@ export default class Layout {
 	layout_tops_forInfo(start: number) {
 		let top = start;
 		for (let i = 0; i <= T_Info.quest; i++) {
-			const height = this.height_ofInfoAt(i);
+			const height = u.valueFrom_atIndex(k.info, i);
 			this.verticals_ofInfo.height[i] = height;
 			this.verticals_ofInfo.tops[i] = top;
 			top += height;
 		}
 	}
-
-	height_ofInfoAt(index: number): number {
-		switch (index) {
-			case T_Info.segments:	  return  21;
-			case T_Info.before_title: return   4;
-			case T_Info.title:		  return  17;
-			case T_Info.after_title:  return   4;
-			case T_Info.table:		  return 139;
-			case T_Info.color:		  return   2;
-			case T_Info.traits:		  return   2;
-			case T_Info.consequence:  return  50;
-			default:				  return  50;
-		}
-	}
 	
 	layout_tops_forPanelBanners() {
-		this.verticals_ofBanners.height = [k.height.row - 5, k.height.row, k.height.row];
+		this.verticals_ofBanners.height = Object.values(k.height.banners);
 		let index = 0;
 		let top = 2;
 		while (index <= T_Banner.graph) {
@@ -113,7 +99,7 @@ export default class Layout {
 	
 	layout_tops_forDetails() {
 		let top = this.top_ofBannerAt(T_Banner.crumbs) + 8;
-		this.verticals_ofDetails.height = [118, 40, 76, 0];
+		this.verticals_ofDetails.height = Object.values(k.height.details);
 		let index = 0;
 		let indices = get(w_t_details);
 		while (index <= T_Details.info) {
