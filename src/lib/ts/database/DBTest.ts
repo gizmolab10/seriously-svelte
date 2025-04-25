@@ -1,5 +1,5 @@
 import { k, T_Thing, Predicate, T_Predicate } from '../common/Global_Imports';
-import type { Dictionary } from '../../../ts/common/Types';
+import type { Dictionary } from './common/Types';
 import { T_Database, T_Persistence } from './DBCommon';
 import DBCommon from './DBCommon';
 

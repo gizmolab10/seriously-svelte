@@ -8,9 +8,9 @@ import { G_Widget, G_Cluster, G_TreeLine } from '../common/Global_Imports';
 import { w_s_alteration, w_s_title_edit } from '../common/Stores';
 import { S_Paging, S_Title_Edit } from '../common/Global_Imports';
 import type { Dictionary, Integer } from '../common/Types';
+import { T_Database } from '../database/DBCommon';
 import { T_Edit } from '../state/S_Title_Edit';
 import { get, Writable } from 'svelte/store';
-import { T_Database } from '../database/DBCommon';
 import Identifiable from './Identifiable';
 
 export default class Ancestry extends Identifiable {
@@ -593,7 +593,7 @@ export default class Ancestry extends Identifiable {
 		if (this.isBidirectional) {
 			if (this.thing?.isRoot) {
 				this.hierarchy.rootAncestry.handle_singleClick_onDragDot(shiftKey);
-			} else if (this.thing?.ancestries?.length > 0) {
+			} else if (this.thing?.ancestries?.length ?? 0 > 0) {
 				this.thing?.ancestries[0].handle_singleClick_onDragDot(shiftKey);
 			} else {
 				alert(`${this.title} refuses focus`);
@@ -619,9 +619,11 @@ export default class Ancestry extends Identifiable {
 
 	assure_isVisible() {
 		const toChildren = this.points_toChildren;
-		const s_paging = layout.g_radialGraph.s_paging_forPredicate_toChildren(this.predicate, toChildren);
-		if (!!s_paging && !s_paging.index_isVisible(this.siblingIndex)) {
-			return s_paging.update_index_toShow(this.order);		// change paging
+		if (!!this.predicate) {
+			const s_paging = layout.g_radialGraph.s_paging_forPredicate_toChildren(this.predicate, toChildren);
+			if (!!s_paging && !s_paging.index_isVisible(this.siblingIndex)) {
+				return s_paging.update_index_toShow(this.order);		// change paging
+			}
 		}
 		return false;
 	}
@@ -746,7 +748,7 @@ export default class Ancestry extends Identifiable {
 			if (length == 0) {		// friendly for first-time users
 				this.hierarchy.ancestry_rebuild_runtimeBrowseRight(this, up, SHIFT, EXTREME, true);
 			} else if (!!thing) {
-				let grabAncestry = this;
+				let grabAncestry: Ancestry | null = this;
 				const fromOrder = siblings.indexOf(thing);
 				const toOrder = fromOrder.increment(!up, length);
 				if (!OPTION) {
@@ -761,9 +763,9 @@ export default class Ancestry extends Identifiable {
 				}
 				if (!!grabAncestry) {
 					if (layout.inRadialMode) {
-						needs_graphRebuild |= grabAncestry.assure_isVisible();	// change paging
+						needs_graphRebuild = needs_graphRebuild || grabAncestry.assure_isVisible();	// change paging
 					} else if (!parentAncestry.isFocus && !grabAncestry.isVisible) {
-						needs_graphRebuild |= parentAncestry.becomeFocus();
+						needs_graphRebuild = needs_graphRebuild || parentAncestry.becomeFocus();
 					}
 				}
 			}
@@ -773,11 +775,11 @@ export default class Ancestry extends Identifiable {
 
 	persistentMoveUp_forParent_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
 		const focusAncestry = get(w_ancestry_focus);
-		const sibling_ancestries = focusAncestry?.thing?.ancestries.map(a => a.parentAncestry) ?? [];
+		const sibling_ancestries = focusAncestry?.thing?.ancestries.map(a => a.parentAncestry).filter((a): a is Ancestry => a !== null) ?? [];
 		let needs_graphRelayout = false;
 		let needs_graphRebuild = false;
 		if (!!sibling_ancestries) {
-			let grabAncestry = this;
+			let grabAncestry: Ancestry | null = this;
 			if (!OPTION) {
 				const fromOrder = sibling_ancestries.indexOf(this);
 				const toOrder = fromOrder.increment(!up, sibling_ancestries.length);
@@ -791,7 +793,7 @@ export default class Ancestry extends Identifiable {
 				this.reorder_within(sibling_ancestries, up);
 			}
 			if (!!grabAncestry && !!this.predicate) {
-				needs_graphRebuild |= grabAncestry.assure_isVisible();
+				needs_graphRebuild = needs_graphRebuild || grabAncestry.assure_isVisible();
 			}
 		}
 		return [needs_graphRebuild, needs_graphRelayout];
@@ -803,7 +805,7 @@ export default class Ancestry extends Identifiable {
 		let needs_graphRelayout = false;
 		let needs_graphRebuild = false;
 		if (!!sibling_ancestries) {
-			let grabAncestry = this;
+			let grabAncestry: Ancestry | null = this;
 			if (!OPTION) {
 				const fromOrder = sibling_ancestries.indexOf(this);
 				const toOrder = fromOrder.increment(!up, sibling_ancestries.length);
@@ -817,7 +819,7 @@ export default class Ancestry extends Identifiable {
 				this.reorder_within(sibling_ancestries, up);
 			}
 			if (!!grabAncestry && !!this.predicate) {
-				needs_graphRebuild |= grabAncestry.assure_isVisible();
+				needs_graphRebuild = needs_graphRebuild || grabAncestry.assure_isVisible();
 			}
 		}
 		return [needs_graphRebuild, needs_graphRelayout];

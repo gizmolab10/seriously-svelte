@@ -1,5 +1,5 @@
-import type { Dictionary } from '../../../ts/common/Types';
 import { T_Database, T_Persistence } from './DBCommon';
+import type { Dictionary } from '../common/Types';
 import { k } from '../common/Global_Imports';
 import DBCommon from './DBCommon';
 

@@ -44,7 +44,7 @@ export class Colors {
 
 	lighterBy(color: string, ratio: number): string | null {
 		return this.adjust_luminance_byApplying(color, (lume => {
-			return 1 - (lume * (1 - ratio));
+			return Math.max(0, (1 - lume) - ratio);
 		}));
 	}
 

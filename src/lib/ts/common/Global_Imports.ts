@@ -8,8 +8,8 @@ import G_Widget from '../layout/G_Widget';
 
 import { T_Preference } from './Enumerations';
 import { T_Timer } from '../signals/Mouse_Timer';
+import { T_Quadrant, T_Orientation } from './Angle';
 import { S_Paging, S_Thing_Pages } from '../state/S_Paging';
-import { T_Quadrant, T_Orientation } from '../common/Angle';
 import { T_Create, T_Browser, T_Alteration } from './Enumerations';
 import { T_Oblong, T_Element, T_SvelteComponent } from './Enumerations';
 import { T_Curve, T_Layer, T_Thing, T_Trait, T_Predicate } from './Enumerations';
@@ -25,13 +25,13 @@ import S_Widget from '../state/S_Widget';
 import S_Mouse from '../state/S_Mouse';
 
 import { builds } from './Builds';
-import { colors } from '../common/Colors';
+import { colors } from './Colors';
+import { Direction } from './Angle';
+import { svgPaths } from './SVG_Paths';
 import { files } from '../managers/Files';
 import { layout } from '../layout/Layout';
-import { Direction } from '../common/Angle';
 import { show } from '../managers/Visibility';
 import { Rect, Size, Point } from './Geometry';
-import { svgPaths } from '../common/SVG_Paths';
 import { wrappers } from '../managers/Wrappers';
 import { ErrorTrace } from '../debug/ErrorTrace';
 import { Hierarchy } from '../managers/Hierarchy';
@@ -50,7 +50,7 @@ import Svelte_Wrapper from './Svelte_Wrapper';
 import Thing from '../persistable/Thing';
 import Trait from '../persistable/Trait';
 import User from '../persistable/User';
-import Angle from '../common/Angle';
+import Angle from './Angle';
 
 import './Extensions';
 import { k } from './Constants';

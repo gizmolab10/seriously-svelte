@@ -60,11 +60,11 @@
 	}
 
 	function update_colors() {
-		arc_fill_color = $w_background_color;	// no effect because z-level not high enough
-		arc_stroke_color = colors.multiply_saturationOf_by(color, 0.2);
-		fork_stroke_color = colors.multiply_saturationOf_by(color, 0.2);
-		angled_text_color = $w_ancestry_focus.thing?.color ?? colors.default_forThings;
-		thumb_fill_color = colors.multiply_saturationOf_by(color, ux.s_ring_rotation.isActive ? 0.2 : g_cluster.s_paging_rotation.thumb_saturation);
+		arc_fill_color		  = $w_background_color;	// no effect because z-level not high enough
+		arc_stroke_color	  = colors.multiply_saturationOf_by(color, 0.2);
+		fork_stroke_color	  = colors.lighterBy(color, 0.8);
+		angled_text_color	  = $w_ancestry_focus.thing?.color ?? colors.default_forThings;
+		thumb_fill_color	  = colors.multiply_saturationOf_by(color, ux.s_ring_rotation.isActive ? 0.2 : g_cluster.s_paging_rotation.thumb_saturation);
 		text_background_color = !ux.s_ring_resizing.isHovering ? $w_background_color : colors.opacitize(color, ux.s_ring_resizing.fill_opacity);
 	}
 
