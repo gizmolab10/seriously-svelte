@@ -84,7 +84,7 @@
         "sass": "^1.81.0",
         "scss": "^0.2.4",
         "svelte": "4.x",
-        "svelte-awesome-color-picker": "^3.0.6",
+        "svelte-awesome-color-picker": "3.x",
         "svelte-icons": "^2.1.0",
         "svelte-ux": "^0.74.9",
         "tcs": "^10.0.2",

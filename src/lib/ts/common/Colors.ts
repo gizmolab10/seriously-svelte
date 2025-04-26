@@ -26,12 +26,12 @@ export class Colors {
 		const rgbaA = this.color_toRGBA(color);
 		const rgbaB = this.color_toRGBA(background);		
 		if (!rgbaA || !rgbaB) return null;
-		const newAlphaA = rgbaA.a * ratio;
-		const r = Math.round((rgbaA.r * newAlphaA) + (rgbaB.r * (1 - newAlphaA)));
-		const g = Math.round((rgbaA.g * newAlphaA) + (rgbaB.g * (1 - newAlphaA)));
-		const b = Math.round((rgbaA.b * newAlphaA) + (rgbaB.b * (1 - newAlphaA)));
-		const blendedColor = colors.RGBA_toHex(new RGBA(r, g, b, 1));
-		return colors.multiply_saturationOf_by(blendedColor, 1+ ratio);
+		const alpha = rgbaA.a * ratio;
+		const r = Math.round((rgbaA.r * alpha) + (rgbaB.r * (1 - alpha)));
+		const g = Math.round((rgbaA.g * alpha) + (rgbaB.g * (1 - alpha)));
+		const b = Math.round((rgbaA.b * alpha) + (rgbaB.b * (1 - alpha)));
+		const blendedHex = colors.RGBA_toHex(new RGBA(r, g, b, 1));
+		return colors.multiply_saturationOf_by(blendedHex, 1+ ratio);
 	}
 
 	maximumContrast(color: string): string | null {
