@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, ux, w, Thing, Point, Angle, debug, colors, layout, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
-	import { w_thing_color, w_ancestry_focus, w_s_title_edit } from '../../ts/common/Stores';
+	import { w_thing_color, w_background_color, w_ancestry_focus, w_s_title_edit } from '../../ts/common/Stores';
 	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/common/Stores';
 	import { w_graph_rect, w_mouse_location_scaled } from '../../ts/common/Stores';
 	import { w_count_mouse_up, w_g_paging_cluster } from '../../ts/common/Stores';
@@ -62,17 +62,17 @@
 	}
 
 	function reset_ux() {
-		debug.log_radial(` STOP`);
 		ux.mouse_timer_forName(name).reset();
+		$w_g_paging_cluster = null;
 		ux.s_ring_resizing.reset();
 		ux.s_ring_rotation.reset();
-		$w_g_paging_cluster = null;
-		cursor = 'default';
 		mouse_timer.reset();
+		cursor = 'default';
 		ux.reset_paging();
 	}
 
 	function update_svgs() {
+		const background = $w_background_color;
 		const center = Point.square($w_ring_rotation_radius);
 		if (!!reticlePath) {
 			reticlePath. setAttribute('stroke', 'green');
@@ -80,14 +80,16 @@
 			reticlePath. setAttribute('d', svgPaths.t_cross(middle_radius * 2, -2));
 		}
 		if (!!resizingPath) {
-			resizingPath.setAttribute('fill', colors.opacitize(color, ux.s_ring_resizing.fill_opacity));
-			resizingPath.setAttribute('stroke', colors.opacitize(color, ux.s_ring_resizing.stroke_opacity));
+			const isHighlighted = ux.s_ring_resizing.isHighlighted;
+			const fill = isHighlighted ? colors.opacitize(color, ux.s_ring_resizing.fill_opacity) : 'transparent';
+			resizingPath.setAttribute('fill', fill);
 			resizingPath.setAttribute('d', svgPaths.circle(center.offsetEquallyBy(44), $w_ring_rotation_radius, true));
 		}
 		if (!!rotationPath) {
 			const isResizing = ux.s_ring_resizing.isActive;
-			rotationPath.setAttribute('fill', colors.opacitize(color, ux.s_ring_rotation.fill_opacity * (isResizing ? 0 : 1)));
-			rotationPath.setAttribute('stroke', colors.opacitize(color, ux.s_ring_rotation.stroke_opacity * (isResizing ? 0 : 1)));
+			const isHighlighted = ux.s_ring_rotation.isHighlighted;
+			const fill = isHighlighted ? colors.opacitize(color, ux.s_ring_rotation.fill_opacity * (isResizing ? 0 : 1)) : 'transparent';
+			rotationPath.setAttribute('fill', fill);
 			rotationPath.setAttribute('d', svgPaths.annulus(center, middle_radius, ring_width, Point.square(ring_width)));
 		}
 	}
@@ -247,14 +249,12 @@
 				<svg class = 'rings-svg'
 					viewBox = {viewBox}>
 					<path class = 'resize-path'
-						stroke-width = 2
 						bind:this = {resizingPath}/>
 					{#if debug.reticle}
 						<path class = 'reticle-path'
 							bind:this = {reticlePath}/>
 					{/if}
 					<path class = 'rotate-path'
-						stroke-width = 2
 						bind:this = {rotationPath}/>
 				</svg>
 			</Mouse_Responder>

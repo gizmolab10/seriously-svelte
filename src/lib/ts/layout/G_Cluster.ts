@@ -1,5 +1,5 @@
-import { G_Widget, G_ArcSlider, S_Paging, S_Rotation, T_Quadrant, T_Graph } from '../common/Global_Imports';
-import { k, u, ux, w, Point, Angle, debug, colors, Ancestry, Predicate } from '../common/Global_Imports';
+import { k, ux, w, Point, Angle, debug, colors, Ancestry, Predicate } from '../common/Global_Imports';
+import { G_Widget, G_ArcSlider, S_Paging, S_Rotation } from '../common/Global_Imports';
 import { w_graph_rect, w_ancestry_focus } from '../common/Stores';
 import { w_ring_rotation_radius } from '../common/Stores';
 import { get } from 'svelte/store';
@@ -21,10 +21,10 @@ import { get } from 'svelte/store';
 
 export default class G_Cluster {
 	g_cluster_widgets: Array<G_Widget> = [];
+	g_thumbArc = new G_ArcSlider(true);
 	ancestries: Array<Ancestry> = [];
 	color = colors.default_forThings;
 	g_sliderArc = new G_ArcSlider();
-	g_thumbArc = new G_ArcSlider();
 	arc_straddles_nadir = false;
 	points_toChildren: boolean;
 	arc_straddles_zero = false;

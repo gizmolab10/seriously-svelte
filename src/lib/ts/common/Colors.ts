@@ -22,16 +22,16 @@ export class Colors {
 		return color;
 	}
 
-	blendWithOpacity(color: string, background: string, opacityFactor: number): string | null {
+	specialBlend(color: string, background: string, ratio: number): string | null {
 		const rgbaA = this.color_toRGBA(color);
 		const rgbaB = this.color_toRGBA(background);		
 		if (!rgbaA || !rgbaB) return null;
-		const newAlphaA = rgbaA.a * opacityFactor;
+		const newAlphaA = rgbaA.a * ratio;
 		const r = Math.round((rgbaA.r * newAlphaA) + (rgbaB.r * (1 - newAlphaA)));
 		const g = Math.round((rgbaA.g * newAlphaA) + (rgbaB.g * (1 - newAlphaA)));
 		const b = Math.round((rgbaA.b * newAlphaA) + (rgbaB.b * (1 - newAlphaA)));
 		const blendedColor = colors.RGBA_toHex(new RGBA(r, g, b, 1));
-		return colors.multiply_saturationOf_by(blendedColor, 1.2);
+		return colors.multiply_saturationOf_by(blendedColor, 1+ ratio);
 	}
 
 	maximumContrast(color: string): string | null {

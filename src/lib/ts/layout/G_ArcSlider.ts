@@ -23,13 +23,22 @@ export default class G_ArcSlider {
 	cap_radius = 0;
 	end_angle = 0;
 
-	constructor() {
+	constructor(forThumb: boolean = false) {
 		const thickness = k.thickness.paging_arc;
 		const radius = get(w_ring_rotation_radius);
 		this.outside_arc_radius = radius + thickness;
 		this.clusters_center = Point.square(radius);
 		this.cap_radius = k.radius.arcSlider_cap;
 		this.inside_arc_radius = radius;
+		if (forThumb) {
+			const delta = k.thickness.separator / 3;
+			this.outside_arc_radius -= delta;
+			this.inside_arc_radius += delta;
+			this.cap_radius -= delta;		
+		}
+	}
+
+		tweak_forThumb() {
 	}
 
 	static readonly PRIMITIVES: unique symbol;

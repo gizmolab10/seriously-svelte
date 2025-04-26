@@ -59,16 +59,8 @@
 		return w.mouse_angle_fromGraphCenter ?? null
 	}
 
-	function update_colors() {
-		const background	  = $w_background_color;
-		const ratio			  = k.ratio.standard_saturation;
-		const blend			  = colors.blendWithOpacity(color, background, ratio);
-		arc_fill_color		  = background;			// N.B., no effect because z-level not high enough
-		arc_stroke_color	  = blend;
-		fork_stroke_color	  = blend;
-		angled_text_color	  = $w_ancestry_focus.thing?.color ?? colors.default_forThings;
-		thumb_fill_color	  = colors.blendWithOpacity(color, background, ux.s_ring_rotation.isActive ? ratio : g_cluster.s_paging_rotation.thumb_saturation);
-		text_background_color = !ux.s_ring_resizing.isHovering ? background : colors.blendWithOpacity(color, background, ux.s_ring_resizing.fill_opacity);
+	function handle_isHit(s_mouse: S_Mouse): boolean {
+		return g_cluster.thumb_isHit;
 	}
 
 	function hover_closure(s_mouse) {
@@ -78,8 +70,21 @@
 		}
 	}
 
-	function handle_isHit(s_mouse: S_Mouse): boolean {
-		return g_cluster.thumb_isHit;
+	function update_colors() {
+		const background			= $w_background_color;
+		const ratio			  		= k.ratio.standard_saturation;
+		const color			  		= $w_ancestry_focus.thing?.color ?? colors.default_forThings;
+		const blend			  		= colors.specialBlend(color, background, ratio);
+		const textBlend				= !ux.s_ring_resizing.isHovering ? background : colors.specialBlend(color, background, ux.s_ring_resizing.fill_opacity);
+		const thumbBlend			= colors.specialBlend(color, background, ux.s_ring_rotation.isActive ? ratio : g_cluster.s_paging_rotation.thumb_saturation);
+		if (!!blend && !!thumbBlend && !!textBlend && !!background) {	
+			arc_fill_color			= background;					// N.B., no effect because z-level not high enough
+			arc_stroke_color		= blend;
+			fork_stroke_color		= blend;
+			angled_text_color		= color;
+			thumb_fill_color		= thumbBlend;
+			text_background_color	= textBlend;
+		}
 	}
 
 </script>
@@ -130,9 +135,9 @@
 </div>
 <Angled_Text
 	zindex = {T_Layer.paging}
-	color = {angled_text_color}
 	text = {g_cluster.cluster_title}
 	center = {g_cluster.label_center}
+	color = {angled_text_color}
 	font_family = {$w_thing_fontFamily}
 	font_size = {k.size.smaller_font}px
 	angle = {g_sliderArc.label_text_angle}
