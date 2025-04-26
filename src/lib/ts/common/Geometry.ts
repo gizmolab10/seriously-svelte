@@ -1,8 +1,8 @@
 
 import { T_Quadrant, T_Orientation } from '../common/Angle';
 import type { SvelteComponent } from 'svelte';
+import { tu } from './Testworthy_Utilities';
 import Angle from '../common/Angle';
-import { u } from './Utilities';
 
 export class Point {
 	x: number;
@@ -238,7 +238,7 @@ export class Rect {
 
 	static rect_forElement_containsEvent(element: HTMLElement | null, event: MouseEvent): boolean {
 		const rect = Rect.boundingRectFor(element);
-		const point = u.location_ofMouseEvent(event);
+		const point = tu.location_ofMouseEvent(event);
 		return rect?.contains(point) ?? false;
 	}
 
@@ -252,7 +252,7 @@ export class Rect {
 
 	static rect_forComponent_contains(component: SvelteComponent, event: MouseEvent): boolean {
 		const rect = Rect.rect_forComponent(component);
-		const point = u.location_ofMouseEvent(event);
+		const point = tu.location_ofMouseEvent(event);
 		if (rect.isZero) {
 			return false;
 		}

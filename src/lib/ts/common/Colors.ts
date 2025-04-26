@@ -1,4 +1,4 @@
-import { transparentize } from 'color2k';
+import { parseToRgba, transparentize } from 'color2k';
 
 export class Colors {
 	default = 'black';
@@ -84,6 +84,14 @@ export class Colors {
 	}
 
 	static readonly DARKNESS: unique symbol;
+
+	set_darkness_toColor(color: string, darkness: number): string | null {
+		const rgba = this.color_toRGBA(color);
+		if (!!rgba	) {
+			return this.set_darkness_toRGBA(rgba, darkness);
+		}
+		return null;
+	}
 
 	set_darkness_toRGBA(rgba: RGBA, darkness: number): string | null {
 		const adjusted = this.adjust_RGBA_forDarkness(rgba, darkness);
@@ -185,21 +193,12 @@ export class Colors {
 	}
 
 	color_toRGBA(color: string): RGBA | null {
-		const div = document.createElement('div');
-		div.style.color = color;
-		document.body.appendChild(div);
-		const computedColor = window.getComputedStyle(div).color;
-		document.body.removeChild(div);
-		const rgba = computedColor.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d*\.?\d+))?\)$/);
-		if (rgba) {
-			return new RGBA(
-				parseInt(rgba[1], 10),
-				parseInt(rgba[2], 10),
-				parseInt(rgba[3], 10),
-				rgba[4] ? parseFloat(rgba[4]) : 1		 // Default alpha to 1 (fully opaque) if not present
-			)
+		try {
+			const [r, g, b, a] = parseToRgba(color);
+			return new RGBA(r, g, b, a);
+		} catch {
+			return null;
 		}
-		return null;
 	}
 
 	RGBA_toHex(rgba: RGBA, omitAlpha: boolean = true): string {
