@@ -32,9 +32,9 @@ export default class Constants {
 		remote: 'https://help.webseriously.org', };
 
 	ratio = {
-		zoom_in:			 1.1,
+		standard_saturation: 0.1,
 		zoom_out:			 0.9,
-		standard_saturation: 0.2 };
+		zoom_in:			 1.1 };
 
 	threshold = {
 		double_click: 700,

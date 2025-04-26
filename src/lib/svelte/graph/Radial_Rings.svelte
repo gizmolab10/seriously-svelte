@@ -247,14 +247,14 @@
 				<svg class = 'rings-svg'
 					viewBox = {viewBox}>
 					<path class = 'resize-path'
-						stroke-width = 0.50
+						stroke-width = 2
 						bind:this = {resizingPath}/>
 					{#if debug.reticle}
 						<path class = 'reticle-path'
 							bind:this = {reticlePath}/>
 					{/if}
 					<path class = 'rotate-path'
-						stroke-width = 0.5
+						stroke-width = 2
 						bind:this = {rotationPath}/>
 				</svg>
 			</Mouse_Responder>

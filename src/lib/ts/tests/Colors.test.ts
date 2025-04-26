@@ -11,6 +11,21 @@ describe('darkness', () => {
 	});
 });
 
+describe('saturation', () => {
+	it('red', () => {
+		const color = colors.multiply_saturationOf_by('red', 0.2);
+		expect(color).toBe('#ffcccc');
+	});
+	it('blue', () => {
+		const color = colors.multiply_saturationOf_by('blue', 0.2);
+		expect(color).toBe('#ccccff');
+	});
+	it('green', () => {
+		const color = colors.multiply_saturationOf_by('green', 0.2);
+		expect(color).toBe('#668066');
+	});
+});
+
 describe('luminance', () => {
 	it('666', () => {
 		const luminance = colors.luminance_ofColor('#666');

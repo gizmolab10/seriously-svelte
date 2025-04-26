@@ -60,13 +60,15 @@
 	}
 
 	function update_colors() {
+		const background	  = $w_background_color;
 		const ratio			  = k.ratio.standard_saturation;
-		arc_fill_color		  = $w_background_color;			// N.B., no effect because z-level not high enough
-		arc_stroke_color	  = colors.multiply_saturationOf_by(color, ratio);
-		fork_stroke_color	  = colors.multiply_saturationOf_by(color, ratio);
+		const blend			  = colors.blendWithOpacity(color, background, ratio);
+		arc_fill_color		  = background;			// N.B., no effect because z-level not high enough
+		arc_stroke_color	  = blend;
+		fork_stroke_color	  = blend;
 		angled_text_color	  = $w_ancestry_focus.thing?.color ?? colors.default_forThings;
-		thumb_fill_color	  = colors.multiply_saturationOf_by(color, ux.s_ring_rotation.isActive ? ratio : g_cluster.s_paging_rotation.thumb_saturation);
-		text_background_color = !ux.s_ring_resizing.isHovering ? $w_background_color : colors.multiply_saturationOf_by(color, ux.s_ring_resizing.fill_opacity);
+		thumb_fill_color	  = colors.blendWithOpacity(color, background, ux.s_ring_rotation.isActive ? ratio : g_cluster.s_paging_rotation.thumb_saturation);
+		text_background_color = !ux.s_ring_resizing.isHovering ? background : colors.blendWithOpacity(color, background, ux.s_ring_resizing.fill_opacity);
 	}
 
 	function hover_closure(s_mouse) {

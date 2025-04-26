@@ -22,6 +22,27 @@ export class Colors {
 		return color;
 	}
 
+	blendWithOpacity(color: string, background: string, opacityFactor: number): string | null {
+		const rgbaA = this.color_toRGBA(color);
+		const rgbaB = this.color_toRGBA(background);		
+		if (!rgbaA || !rgbaB) return null;
+		const newAlphaA = rgbaA.a * opacityFactor;
+		const r = Math.round((rgbaA.r * newAlphaA) + (rgbaB.r * (1 - newAlphaA)));
+		const g = Math.round((rgbaA.g * newAlphaA) + (rgbaB.g * (1 - newAlphaA)));
+		const b = Math.round((rgbaA.b * newAlphaA) + (rgbaB.b * (1 - newAlphaA)));
+		const blendedColor = colors.RGBA_toHex(new RGBA(r, g, b, 1));
+		return colors.multiply_saturationOf_by(blendedColor, 1.2);
+	}
+
+	maximumContrast(color: string): string | null {
+		const colors = new Colors();
+		const luminance = colors.luminance_ofColor(color);
+		if (luminance === null) return null;
+		const darkness = 1 - luminance;
+		const targetDarkness = darkness < 0.5 ? 0.8 : 0.2;
+		return colors.set_darkness_toColor(color, targetDarkness);
+	}
+
 	static readonly SATURATION: unique symbol;
 
 	multiply_saturationOf_by(color: string, ratio: number): string | null {
