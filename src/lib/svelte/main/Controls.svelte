@@ -81,8 +81,8 @@
 				case T_Control.help: c.showHelp(); break;
 				case T_Control.details: $w_show_details = !$w_show_details; break;
 				case T_Control.related: $w_show_related = !$w_show_related; break;
-				case T_Control.bigger: width = w.zoomBy(k.zoom_ratio.in) - 20; break;	// mobile only
-				case T_Control.smaller: width = w.zoomBy(k.zoom_ratio.out) - 20; break;	//   "     "
+				case T_Control.bigger: width = w.zoomBy(k.ratio.zoom_in) - 20; break;	// mobile only
+				case T_Control.smaller: width = w.zoomBy(k.ratio.zoom_out) - 20; break;	//   "     "
 				default: togglePopupID(t_control); break;
 			}
 		}

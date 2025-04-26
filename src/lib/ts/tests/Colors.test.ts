@@ -39,6 +39,10 @@ describe('names', () => {
 		const color = colors.color_toHex('red');
 		expect(color).toBe('#ff0000');
 	});
+	it('limegreen', () => {
+		const color = colors.color_toHex('limegreen');
+		expect(color).toBe('#32cd32');
+	});
 	it('blue', () => {
 		const color = colors.color_toHex('blue');
 		expect(color).toBe('#0000ff');

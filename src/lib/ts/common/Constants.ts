@@ -31,9 +31,10 @@ export default class Constants {
 		local:  'http://localhost:8000/README.html',
 		remote: 'https://help.webseriously.org', };
 
-	zoom_ratio = {
-		out: 0.9,
-		in:	 1.1, };
+	ratio = {
+		zoom_in:			 1.1,
+		zoom_out:			 0.9,
+		standard_saturation: 0.2 };
 
 	threshold = {
 		double_click: 700,
