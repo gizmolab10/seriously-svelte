@@ -1,8 +1,9 @@
 import { builds } from './Builds';
 
 const dot_size = 13;
+const row_height = 20;
+const banner_height = 18;
 const separator_thickness = 4;
-const row_height = dot_size + 7 ;
 
 export default class Constants {
 	halfIncrement = 0.5;
@@ -73,8 +74,8 @@ export default class Constants {
 		small:	   dot_size + 3,
 		row:	   row_height,
 		banner: {
-			controls: 18,
-			crumbs:	  row_height,
+			controls: banner_height,
+			crumbs:	  banner_height,
 			graph:	   0,
 		},
 		detail: {

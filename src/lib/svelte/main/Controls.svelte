@@ -111,7 +111,7 @@
 	{#key width}
 		<div id='controls'
 			style='
-				top: 0px;
+				top: 0.7px;
 				left: 0px;
 				position: absolute;
 				z-index: {T_Layer.frontmost};
