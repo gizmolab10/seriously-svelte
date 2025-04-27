@@ -14,9 +14,12 @@
 	const g_arcSlider = g_cluster.g_arcSlider;
 	const thumb_name = `thumb-${g_cluster.name}`;
 	const radius = $w_ring_rotation_radius + offset;
+	const s_paging_rotation = g_cluster.s_paging_rotation;
 	const viewBox=`${-offset} ${-offset} ${radius * 2} ${radius * 2}`;
 	let origin = w.center_ofGraphSize.offsetBy(Point.square(-radius));
 	let mouse_up_count = $w_count_mouse_up;
+	let textBackground = 'transparent';
+	let thumbFill = 'transparent';
 
 	//////////////////////////////////////////////////
 	//												//
@@ -29,6 +32,7 @@
 	//												//
 	//////////////////////////////////////////////////
 	
+	$: textBackground = radial.s_ring_rotation.isHighlighted ? $w_background_color : colors.specialBlend(color, $w_background_color, radial.s_ring_resizing.fill_opacity);
 	$: thumbPath = g_cluster.isPaging && g_cluster.widgets_shown > 1 ? g_cluster.g_thumbArc.svgPathFor_arcSlider : '';
 	$: arcSliderPath = g_arcSlider.svgPathFor_arcSlider;
 	$: forkPath = g_arcSlider.svgPathFor_radialFork;
@@ -37,21 +41,15 @@
 	$: labelCenter = g_cluster.label_center;
 	$: forkTip = g_arcSlider.tip_ofFork;
 
-	function computed_mouse_angle(): number | null {
-		return w.mouse_angle_fromGraphCenter ?? null
-	}
+	$: s_paging_rotation.basis_angle, s_paging_rotation.isHovering, radial.s_ring_rotation.isHighlighted,
+		thumbFill = colors.specialBlend(color, $w_background_color, radial.s_ring_rotation.isHighlighted ? k.opacity.thumb : s_paging_rotation.thumb_opacity);
 
-	function handle_isHit(s_mouse: S_Mouse): boolean {
-		return g_cluster.thumb_isHit;
-	}
+	function handle_isHit(s_mouse: S_Mouse): boolean { return g_cluster.isMouse_insideThumb; }
+	function computed_mouse_angle(): number | null { return w.mouse_angle_fromGraphCenter ?? null }
 
 	function hover_closure(s_mouse) {
-		if (s_mouse.isUp) {
-			g_cluster.s_paging_rotation.reset();
-		} else if (s_mouse.isDown) {
-			g_cluster.s_paging_rotation.basis_angle = w.mouse_angle_fromGraphCenter;
-		} else if (s_mouse.isHover) {
-			g_cluster.s_paging_rotation.isHovering = true;
+		if (s_mouse.isHover) {
+			s_paging_rotation.isHovering = !s_mouse.isOut;
 		}
 	}
 
@@ -59,12 +57,12 @@
 
 {#if g_cluster.widgets_shown > 1}
 	<Gull_Wings
+		center={forkTip}
 		zindex={T_Layer.paging}
+		direction={forkDirection}
 		thickness={k.thickness.fork}
 		radius={k.thickness.fork * 3}
-		center={forkTip}
-		direction={forkDirection}
-		color={colors.specialBlend($w_ancestry_focus.thing?.color ?? colors.default_forThings, $w_background_color, k.opacity.standard)}/>
+		color={colors.specialBlend(color, $w_background_color, k.opacity.least)}/>
 {/if}
 <div class='arc-slider' style='z-index:{T_Layer.paging};'>
     <Mouse_Responder
@@ -78,32 +76,33 @@
 		handle_mouse_state = {hover_closure}>
         <svg class='svg-arc-slider' viewBox={viewBox}>
             <path
-                id='path-arc-slider'
+                d={arcSliderPath}
+                class='path-arc-slider'
                 fill={$w_background_color}
                 stroke-width={k.thickness.fork}
-                d={arcSliderPath}
-                stroke={colors.specialBlend($w_ancestry_focus.thing?.color ?? colors.default_forThings, $w_background_color, k.opacity.standard)}/>
+                stroke={colors.specialBlend(color, $w_background_color, k.opacity.least)}/>
             <path
-                id='path-fork'
+                d={forkPath}
+                class='path-fork'
                 fill="transparent"
-                stroke={colors.specialBlend($w_ancestry_focus.thing?.color ?? colors.default_forThings, $w_background_color, k.opacity.standard)}
                 stroke-width={k.thickness.fork}
-                d={forkPath}/>
+                stroke={colors.specialBlend(color, $w_background_color, k.opacity.least)}/>
             {#if g_cluster.isPaging && g_cluster.widgets_shown > 1}
                 <path
-                    id={thumb_name}
                     d={thumbPath}
-                    fill={colors.specialBlend($w_ancestry_focus.thing?.color ?? colors.default_forThings, $w_background_color, radial.s_ring_rotation.isHighlighted ? k.opacity.standard : g_cluster.s_paging_rotation.thumb_opacity)}/>
+					id={thumb_name}
+                    fill={thumbFill}
+                    class='path-thumb'/>
             {/if}
         </svg>
     </Mouse_Responder>
 </div>
 <Angled_Text
+    color={color}
+    angle={labelAngle}
+    center={labelCenter}
     zindex={T_Layer.paging}
     text={g_cluster.cluster_title}
-    center={labelCenter}
-    color={$w_ancestry_focus.thing?.color ?? colors.default_forThings}
+    background_color={textBackground}
     font_family={$w_thing_fontFamily}
-    font_size={k.size.smaller_font}px
-    angle={labelAngle}
-    background_color={!radial.s_ring_resizing.isHovering ? $w_background_color : colors.specialBlend($w_ancestry_focus.thing?.color ?? colors.default_forThings, $w_background_color, radial.s_ring_resizing.fill_opacity)}/>
+    font_size={k.size.smaller_font}px/>

@@ -46,7 +46,7 @@ export default class G_RadialGraph {
 
 	get g_cluster_atMouseLocation(): G_Cluster | null {
 		for (const g_cluster of this.g_clusters) {
-			if (g_cluster.thumb_isHit) {
+			if (g_cluster.isMouse_insideThumb) {
 				return g_cluster;
 			}
 		}

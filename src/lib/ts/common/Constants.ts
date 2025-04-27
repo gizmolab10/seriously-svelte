@@ -54,11 +54,11 @@ export default class Constants {
 		big:	 '::::', };
 
 	opacity = {
-		none:	  0,
-		standard: 0.1,
-		thumb:	  0.13,
-		hover:	  0.3,
-		active:	  0.5 };
+		none:	0,
+		least:  0.1,
+		thumb:	0.17,
+		hover:	0.3,
+		active:	0.4 };
 
 	thickness = {
 		ring_rotation: 44,

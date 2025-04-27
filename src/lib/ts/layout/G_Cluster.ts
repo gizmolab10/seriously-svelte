@@ -78,7 +78,7 @@ export default class G_Cluster {
 	get kind(): string { return this.predicate?.kind.unCamelCase().lastWord() ?? k.empty; }
 	get name(): string { return `${get(w_ancestry_focus).title}-cluster-${this.direction_kind}`; }
 
-	get thumb_isHit(): boolean {
+	get isMouse_insideThumb(): boolean {
 		const offset = Point.square(-get(w_ring_rotation_radius));
 		const mouse_vector = w.mouse_vector_ofOffset_fromGraphCenter(offset);
 		return this.isPaging && !!mouse_vector && mouse_vector.isContainedBy_path(this.g_thumbArc.svgPathFor_arcSlider);

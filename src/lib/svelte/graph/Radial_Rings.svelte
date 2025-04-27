@@ -28,7 +28,7 @@
 	
 	onMount(() => {
 		update_svgs();
-		update_cursor();
+		cursor = radial.cursor_forRingZone;
 	});
 
 	function handle_mouse_state(s_mouse: S_Mouse): boolean { return true; }				// only for wrappers
@@ -47,27 +47,16 @@
 	$: {
 		if (mouse_up_count != $w_count_mouse_up) {
 			mouse_up_count = $w_count_mouse_up;
-			reset_ux();			// mouse up ... end all (rotation, resizing, paging)
+			s_reset();			// mouse up ... end all (rotation, resizing, paging)
 		}
 	}
 
-	function update_cursor() {
-		switch (radial.ring_zone_atMouseLocation) {
-			case T_RingZone.paging: cursor = radial.s_cluster_rotation.cursor; break;
-			case T_RingZone.resize: cursor = radial.s_ring_resizing.cursor; break;
-			case T_RingZone.rotate: cursor = radial.s_ring_rotation.cursor; break;
-			default:				cursor = 'default'; break;
-		}
-	}
-
-	function reset_ux() {
+	function s_reset() {
 		ux.mouse_timer_forName(name).reset();
 		$w_g_paging_cluster = null;
-		radial.s_ring_resizing.reset();
-		radial.s_ring_rotation.reset();
 		mouse_timer.reset();
 		cursor = 'default';
-		radial.reset_paging();
+		radial.reset();
 	}
 
 	function update_svgs() {
@@ -82,7 +71,7 @@
 			const isHighlighted = radial.s_ring_resizing.isHighlighted;
 			const fill = isHighlighted ? colors.opacitize(color, radial.s_ring_resizing.fill_opacity) : 'transparent';
 			resizingPath.setAttribute('fill', fill);
-			resizingPath.setAttribute('d', svgPaths.circle(center.offsetEquallyBy(44), $w_ring_rotation_radius, true));
+			resizingPath.setAttribute('d', svgPaths.circle(center.offsetEquallyBy(44), $w_ring_rotation_radius - 0.3, true));
 		}
 		if (!!rotationPath) {
 			const isResizing = radial.s_ring_resizing.isActive;
@@ -180,12 +169,12 @@
 				}
 			} else {				// not dragging
 				detect_hovering();
-				update_cursor();
+				cursor = radial.cursor_forRingZone;
 			}
 		}
 	}
 
-	function down_up_closure(s_mouse) {
+	function up_down_closure(s_mouse) {
 
 		/////////////////////////////
 		// setup or teardown state //
@@ -193,7 +182,7 @@
 
 		if (!s_mouse.isHover) {
 			if (s_mouse.isUp) {
-				reset_ux();
+				s_reset();
 			} else if (s_mouse.isDown) {
 				const angle_ofMouseDown = w.mouse_angle_fromGraphCenter;
 				const angle_ofRotation = angle_ofMouseDown.add_angle_normalized(-$w_ring_rotation_angle);
@@ -226,7 +215,7 @@
 			}
 		}
 		detect_hovering();
-		update_cursor();
+		cursor = radial.cursor_forRingZone;
 	}
 
 </script>
@@ -242,7 +231,7 @@
 				zindex = {T_Layer.rings}
 				handle_isHit = {handle_isHit}
 				center = {w.center_ofGraphSize}
-				handle_mouse_state = {down_up_closure}>
+				handle_mouse_state = {up_down_closure}>
 				<svg class = 'rings-svg'
 					viewBox = {viewBox}>
 					<path class = 'resize-path'

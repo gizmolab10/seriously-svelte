@@ -22,6 +22,7 @@ import S_Expansion from '../state/S_Expansion';
 import S_Rotation from '../state/S_Rotation';
 import S_Element from '../state/S_Element';
 import S_Widget from '../state/S_Widget';
+import S_Common from '../state/S_Common';
 import S_Mouse from '../state/S_Mouse';
 
 import { builds } from './Builds';
@@ -77,11 +78,11 @@ export {
 	Angle, Direction, T_Quadrant, T_Orientation,
 	T_Element, Svelte_Wrapper, T_SvelteComponent,
 	G_Segment, G_Cluster, G_RadialGraph, G_ArcSlider,
-	S_Paging, S_Rotation, S_Expansion, S_Thing_Pages,
 	show, files, builds, colors, layout, radial, signals,
 	T_Layer, T_Create, T_RingZone, T_Oblong, T_Alteration,
 	S_Mouse, S_Widget, S_Element, S_Alteration, S_Title_Edit,
 	T_Tool, T_Order, T_Banner, T_Details, T_Startup, T_Graph,
+	S_Paging, S_Common, S_Rotation, S_Expansion, S_Thing_Pages,
 	T_Thing, T_Trait, T_Curve, T_Widget, T_Predicate, T_Hierarchy,
 	User, Persistable, Thing, Trait, Access, Predicate, Relationship,
 	T_Info, T_Control, T_Browser, T_Signal, T_Report, T_Storage, T_Preference,

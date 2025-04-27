@@ -37,6 +37,12 @@ export default class S_Radial_Graph {
 		return !id ? null : u.assure_forKey_inDict(id, this.s_thing_pages_byThingID, () => new S_Thing_Pages(id));
 	}
 
+	reset() {
+		this.s_ring_resizing.reset();
+		this.s_ring_rotation.reset();
+		this.reset_paging();
+	}
+
 	createAll_thing_pages_fromDict(dict: Dictionary | null) {
 		if (!!dict) {
 			for (const sub_dict of Object.values(dict)) {
@@ -45,6 +51,15 @@ export default class S_Radial_Graph {
 					this.s_thing_pages_byThingID[s_thing_pages.thing_id] = s_thing_pages;
 				}
 			}
+		}
+	}
+
+	get cursor_forRingZone(): string {
+		switch (this.ring_zone_atMouseLocation) {
+			case T_RingZone.paging: return this.s_cluster_rotation.cursor;
+			case T_RingZone.resize: return this.s_ring_resizing.cursor;
+			case T_RingZone.rotate: return this.s_ring_rotation.cursor;
+			default:				return 'default';
 		}
 	}
 
@@ -63,7 +78,7 @@ export default class S_Radial_Graph {
 			if (!!distance && distance <= rotate) {
 				if (distance < inner) {
 					ring_zone = T_RingZone.resize;
-				} else if (distance < thumb && !!g_cluster && g_cluster.thumb_isHit) {
+				} else if (distance < thumb && !!g_cluster && g_cluster.isMouse_insideThumb) {
 					ring_zone = T_RingZone.paging;
 				} else {
 					ring_zone = T_RingZone.rotate;

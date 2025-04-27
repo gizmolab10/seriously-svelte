@@ -26,10 +26,10 @@ export default class G_ArcSlider {
 	constructor(forThumb: boolean = false) {
 		const thickness = k.thickness.paging_arc;
 		const radius = get(w_ring_rotation_radius);
-		this.outside_arc_radius = radius + thickness;
+		this.outside_arc_radius = radius + thickness + 1;
 		this.clusters_center = Point.square(radius);
 		this.cap_radius = k.radius.arcSlider_cap;
-		this.inside_arc_radius = radius;
+		this.inside_arc_radius = radius + 1;
 		if (forThumb) {
 			const delta = k.thickness.separator / 3;
 			this.outside_arc_radius -= delta;
