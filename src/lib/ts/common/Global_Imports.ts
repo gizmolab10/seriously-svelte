@@ -18,7 +18,7 @@ import { T_Info, T_Tool, T_Banner, T_Control, T_Details, T_Report, T_Storage } f
 
 import S_Title_Edit from '../state/S_Title_Edit';
 import S_Alteration from '../state/S_Alteration';
-import S_Expansion from '../state/S_Expansion';
+import S_Resizing from '../state/S_Resizing';
 import S_Rotation from '../state/S_Rotation';
 import S_Element from '../state/S_Element';
 import S_Widget from '../state/S_Widget';
@@ -82,7 +82,7 @@ export {
 	T_Layer, T_Create, T_RingZone, T_Oblong, T_Alteration,
 	S_Mouse, S_Widget, S_Element, S_Alteration, S_Title_Edit,
 	T_Tool, T_Order, T_Banner, T_Details, T_Startup, T_Graph,
-	S_Paging, S_Common, S_Rotation, S_Expansion, S_Thing_Pages,
+	S_Paging, S_Common, S_Rotation, S_Resizing, S_Thing_Pages,
 	T_Thing, T_Trait, T_Curve, T_Widget, T_Predicate, T_Hierarchy,
 	User, Persistable, Thing, Trait, Access, Predicate, Relationship,
 	T_Info, T_Control, T_Browser, T_Signal, T_Report, T_Storage, T_Preference,

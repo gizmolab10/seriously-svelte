@@ -1,8 +1,8 @@
 import S_Rotation from './S_Rotation';
 
-// for resizing (resize ring)
+// for resizing necklace
 
-export default class S_Expansion extends S_Rotation {
+export default class S_Resizing extends S_Rotation {
 	basis_radius: number | null = null;		// distance from arc radius to location of mouse DOWN
 
 	get hover_cursor(): string { return 'all-scroll'; }

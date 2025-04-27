@@ -28,7 +28,7 @@ export class S_Paging {
 	get maximum_paging_index(): number { return this.total_widgets - this.widgets_shown; }
 	get thing(): Thing | null { return get(w_hierarchy).thing_forHID(this.thing_id.hash()) ?? null; }
 	get predicate(): Predicate | null { return get(w_hierarchy).predicate_forKind(this.kind) ?? null; }
-	get canShow(): number { return Math.round((get(w_ring_rotation_radius) ** 1.5) * Math.PI / 45 / k.height.row) + 1; }
+	get canShow(): number { return Math.round((get(w_ring_rotation_radius) ** 1.5) * Math.PI / 22.5 / k.height.row) + 1; }
 	get sub_key(): string { return `${this.thing_id}${k.separator.generic}${this.kind}${k.separator.generic}${this.points_toChildren}`; }
 	ancestry_atIndex(ancestries: Array<Ancestry>): Ancestry { return ancestries[Math.round(this.index)]; }
 

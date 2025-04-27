@@ -1,4 +1,4 @@
-import { S_Rotation, S_Expansion, S_Thing_Pages } from '../common/Global_Imports';
+import { S_Rotation, S_Resizing, S_Thing_Pages } from '../common/Global_Imports';
 import { k, u, w, debug, layout, wrappers } from '../common/Global_Imports';
 import { T_RingZone, T_SvelteComponent } from '../common/Global_Imports';
 import { w_ring_rotation_radius } from '../common/Stores';
@@ -22,7 +22,7 @@ export default class S_Radial_Graph {
 	s_paging_rotation_byName: { [name: string]: S_Rotation } = {};
 	s_thing_pages_byThingID: {[id: string]: S_Thing_Pages} = {};
 	s_cluster_rotation = new S_Rotation();
-	s_ring_resizing	= new S_Expansion();
+	s_ring_resizing	= new S_Resizing();
 	s_ring_rotation	= new S_Rotation();
 	zone = T_RingZone.miss;
 

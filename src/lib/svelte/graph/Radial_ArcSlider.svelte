@@ -32,6 +32,7 @@
 	//												//
 	//////////////////////////////////////////////////
 	
+	$: $w_g_paging_cluster, thumbFill = colors.specialBlend(color, $w_background_color, radial.s_ring_rotation.isHighlighted ? k.opacity.thumb : s_paging_rotation.thumb_opacity);
 	$: textBackground = radial.s_ring_rotation.isHighlighted ? $w_background_color : colors.specialBlend(color, $w_background_color, radial.s_ring_resizing.fill_opacity);
 	$: thumbPath = g_cluster.isPaging && g_cluster.widgets_shown > 1 ? g_cluster.g_thumbArc.svgPathFor_arcSlider : '';
 	$: arcSliderPath = g_arcSlider.svgPathFor_arcSlider;
@@ -40,9 +41,6 @@
 	$: forkDirection = g_arcSlider.angle_ofFork;
 	$: labelCenter = g_cluster.label_center;
 	$: forkTip = g_arcSlider.tip_ofFork;
-
-	$: s_paging_rotation.basis_angle, s_paging_rotation.isHovering, radial.s_ring_rotation.isHighlighted,
-		thumbFill = colors.specialBlend(color, $w_background_color, radial.s_ring_rotation.isHighlighted ? k.opacity.thumb : s_paging_rotation.thumb_opacity);
 
 	function handle_isHit(s_mouse: S_Mouse): boolean { return g_cluster.isMouse_insideThumb; }
 	function computed_mouse_angle(): number | null { return w.mouse_angle_fromGraphCenter ?? null }
