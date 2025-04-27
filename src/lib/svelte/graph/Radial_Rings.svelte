@@ -1,19 +1,20 @@
 <script lang='ts'>
-	import { k, u, ux, w, Thing, Point, Angle, debug, colors, layout, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
-	import { w_thing_color, w_background_color, w_ancestry_focus, w_s_title_edit } from '../../ts/common/Stores';
+	import { k, u, ux, w, Thing, Point, Angle, debug, colors } from '../../ts/common/Global_Imports';
+	import { layout, radial, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
+	import { w_count_mouse_up, w_s_title_edit, w_g_paging_cluster } from '../../ts/common/Stores';
+	import { w_thing_color, w_background_color, w_ancestry_focus } from '../../ts/common/Stores';
 	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/common/Stores';
 	import { w_graph_rect, w_mouse_location_scaled } from '../../ts/common/Stores';
-	import { w_count_mouse_up, w_g_paging_cluster } from '../../ts/common/Stores';
 	import { T_Layer, T_RingZone } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Radial_ArcSlider from './Radial_ArcSlider.svelte';
 	import { onMount } from 'svelte';
-	const name = 'rings';
 	const ring_width = k.thickness.ring_rotation;
 	const middle_radius = $w_ring_rotation_radius + k.thickness.ring_rotation;
 	const middle_diameter = middle_radius * 2;
 	const outer_radius = middle_radius + ring_width;
 	const outer_diameter = outer_radius * 2;
+	const name = 'rings';
 	const mouse_timer = ux.mouse_timer_forName(name);	// persist across destroy/recreate
 	const viewBox = `${-ring_width}, ${-ring_width}, ${outer_diameter}, ${outer_diameter}`;
 	let color = $w_ancestry_focus?.thing?.color ?? colors.default_forThings;
@@ -25,13 +26,15 @@
 	let reticlePath;
 	let time = 0;
 	
-	update_svgs();
-	update_cursor();
+	onMount(() => {
+		update_svgs();
+		update_cursor();
+	});
 
 	function handle_mouse_state(s_mouse: S_Mouse): boolean { return true; }				// only for wrappers
 
 	function handle_isHit(): boolean {
-		const zone = ux.ring_zone_atMouseLocation;
+		const zone = radial.ring_zone_atMouseLocation;
 		return [T_RingZone.resize, T_RingZone.rotate].includes(zone);
 	}
 		
@@ -49,10 +52,10 @@
 	}
 
 	function update_cursor() {
-		switch (ux.ring_zone_atMouseLocation) {
-			case T_RingZone.paging: cursor = ux.s_cluster_rotation.cursor; break;
-			case T_RingZone.resize: cursor = ux.s_ring_resizing.cursor; break;
-			case T_RingZone.rotate: cursor = ux.s_ring_rotation.cursor; break;
+		switch (radial.ring_zone_atMouseLocation) {
+			case T_RingZone.paging: cursor = radial.s_cluster_rotation.cursor; break;
+			case T_RingZone.resize: cursor = radial.s_ring_resizing.cursor; break;
+			case T_RingZone.rotate: cursor = radial.s_ring_rotation.cursor; break;
 			default:				cursor = 'default'; break;
 		}
 	}
@@ -60,11 +63,11 @@
 	function reset_ux() {
 		ux.mouse_timer_forName(name).reset();
 		$w_g_paging_cluster = null;
-		ux.s_ring_resizing.reset();
-		ux.s_ring_rotation.reset();
+		radial.s_ring_resizing.reset();
+		radial.s_ring_rotation.reset();
 		mouse_timer.reset();
 		cursor = 'default';
-		ux.reset_paging();
+		radial.reset_paging();
 	}
 
 	function update_svgs() {
@@ -76,15 +79,15 @@
 			reticlePath. setAttribute('d', svgPaths.t_cross(middle_radius * 2, -2));
 		}
 		if (!!resizingPath) {
-			const isHighlighted = ux.s_ring_resizing.isHighlighted;
-			const fill = isHighlighted ? colors.opacitize(color, ux.s_ring_resizing.fill_opacity) : 'transparent';
+			const isHighlighted = radial.s_ring_resizing.isHighlighted;
+			const fill = isHighlighted ? colors.opacitize(color, radial.s_ring_resizing.fill_opacity) : 'transparent';
 			resizingPath.setAttribute('fill', fill);
 			resizingPath.setAttribute('d', svgPaths.circle(center.offsetEquallyBy(44), $w_ring_rotation_radius, true));
 		}
 		if (!!rotationPath) {
-			const isResizing = ux.s_ring_resizing.isActive;
-			const isHighlighted = ux.s_ring_rotation.isHighlighted;
-			const fill = isHighlighted ? colors.opacitize(color, ux.s_ring_rotation.fill_opacity * (isResizing ? 0 : 1)) : 'transparent';
+			const isResizing = radial.s_ring_resizing.isActive;
+			const isHighlighted = radial.s_ring_rotation.isHighlighted;
+			const fill = isHighlighted ? colors.opacitize(color, radial.s_ring_rotation.fill_opacity * (isResizing ? 0 : 1)) : 'transparent';
 			rotationPath.setAttribute('fill', fill);
 			rotationPath.setAttribute('d', svgPaths.annulus(center, middle_radius, ring_width, Point.square(ring_width)));
 		}
@@ -92,25 +95,25 @@
 
 	function detect_hovering() {
 		let needs_toUpdate_svgs = false;
-		const isPaging = ux.isAny_paging_arc_active;
-		const isResizing = ux.s_ring_resizing.isActive;
-		const isRotating = ux.s_ring_rotation.isActive;
-		const ring_zone = ux.ring_zone_atMouseLocation;
+		const isPaging = radial.isAny_paging_arc_active;
+		const isResizing = radial.s_ring_resizing.isActive;
+		const isRotating = radial.s_ring_rotation.isActive;
+		const ring_zone = radial.ring_zone_atMouseLocation;
 		const inRotate = ring_zone == T_RingZone.rotate && !isPaging && !isResizing;
 		const inResize = ring_zone == T_RingZone.resize && !isPaging && !isRotating;
 		const inPaging = ring_zone == T_RingZone.paging && !isRotating && !isResizing;
-		if (ux.s_ring_rotation.isHovering != inRotate) {
-			ux.s_ring_rotation.isHovering  = inRotate;
+		if (radial.s_ring_rotation.isHovering != inRotate) {
+			radial.s_ring_rotation.isHovering  = inRotate;
 			debug.log_hover(` hover rotate  ${inRotate}`);
 			needs_toUpdate_svgs = !isRotating;
 		}
-		if (ux.s_ring_resizing.isHovering != inResize) {
-			ux.s_ring_resizing.isHovering  = inResize;
+		if (radial.s_ring_resizing.isHovering != inResize) {
+			radial.s_ring_resizing.isHovering  = inResize;
 			debug.log_hover(` hover resize  ${inResize}`);
 			needs_toUpdate_svgs = true;
 		}
-		if (ux.s_cluster_rotation.isHovering != inPaging) {
-			ux.s_cluster_rotation.isHovering  = inPaging;
+		if (radial.s_cluster_rotation.isHovering != inPaging) {
+			radial.s_cluster_rotation.isHovering  = inPaging;
 			debug.log_hover(` hover paging  ${inPaging}`);
 			needs_toUpdate_svgs = true;
 		}
@@ -130,9 +133,9 @@
 		if (!!mouse_vector) {
 			const now = new Date().getTime();
 			const mouse_angle = mouse_vector.angle;
-			const rotation_state = ux.s_ring_rotation;
-			const resizing_state = ux.s_ring_resizing;
-			const enoughTimeHasPassed = (now - time) > 50;
+			const rotation_state = radial.s_ring_rotation;
+			const resizing_state = radial.s_ring_resizing;
+			const enoughTimeHasPassed = (now - time) > 75;		// must not overload DOM refresh
 
 			// check if one of the three ring zones is active (already dragging)
 
@@ -145,7 +148,7 @@
 				const radius = $w_ring_rotation_radius + delta;
 				resizing_state.active_angle = mouse_angle + Angle.quarter;
 				detect_hovering();
-				cursor = ux.s_ring_resizing.cursor;
+				cursor = radial.s_ring_resizing.cursor;
 				if (Math.abs(delta) > 1 && enoughTimeHasPassed) {				// granularity of 1 pixel & 1 tenth second
 					time = now;
 					debug.log_radial(` resize  D ${distance.asInt()}  R ${radius.asInt()}  + ${delta.toFixed(1)}`);
@@ -159,11 +162,9 @@
 					debug.log_radial(` rotate ${$w_ring_rotation_angle.asDegrees()}`);
 					rotation_state.active_angle = mouse_angle;
 					detect_hovering();
-					cursor = ux.s_ring_rotation.cursor;
+					cursor = radial.s_ring_rotation.cursor;
 					layout.grand_layout();										// reposition necklace widgets and arc sliders
-					u.onNextCycle_apply(() => {									// so response to rotation is immediate
-						ring_reattachments += 1;									// reattach arc sliders
-					});
+					ring_reattachments += 1;									// reattach arc sliders
 				}
 			} else if (!!$w_g_paging_cluster) {
 				const s_paging_rotation = $w_g_paging_cluster.s_paging_rotation;
@@ -196,20 +197,20 @@
 			} else if (s_mouse.isDown) {
 				const angle_ofMouseDown = w.mouse_angle_fromGraphCenter;
 				const angle_ofRotation = angle_ofMouseDown.add_angle_normalized(-$w_ring_rotation_angle);
-				const zone = ux.ring_zone_atMouseLocation;
+				const zone = radial.ring_zone_atMouseLocation;
 				$w_s_title_edit?.stop_editing();
 				switch (zone) {
 					case T_RingZone.rotate:
 						debug.log_radial(` begin rotate  ${angle_ofRotation.asDegrees()}`);
-						ux.s_ring_rotation.active_angle = angle_ofMouseDown;
-						ux.s_ring_rotation.basis_angle = angle_ofRotation;
+						radial.s_ring_rotation.active_angle = angle_ofMouseDown;
+						radial.s_ring_rotation.basis_angle = angle_ofRotation;
 						break;
 					case T_RingZone.resize:
 						const change_ofRadius = w.mouse_distance_fromGraphCenter - $w_ring_rotation_radius;
 						debug.log_radial(` begin resize  ${change_ofRadius.asInt()}`);
-						ux.s_ring_rotation.active_angle = angle_ofMouseDown + Angle.quarter;	// needed for cursor
-						ux.s_ring_rotation.basis_angle = angle_ofRotation + Angle.quarter;		// "
-						ux.s_ring_resizing.basis_radius = change_ofRadius;
+						radial.s_ring_rotation.active_angle = angle_ofMouseDown + Angle.quarter;	// needed for cursor
+						radial.s_ring_rotation.basis_angle = angle_ofRotation + Angle.quarter;		// "
+						radial.s_ring_resizing.basis_radius = change_ofRadius;
 						break;
 					case T_RingZone.paging: 
 						const angle_ofPage = angle_ofMouseDown.angle_normalized();

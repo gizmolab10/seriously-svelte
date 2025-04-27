@@ -1,4 +1,4 @@
-import { k, ux, w, Point, Angle, debug, colors, Ancestry, Predicate } from '../common/Global_Imports';
+import { k, w, Point, Angle, debug, colors, radial, Ancestry, Predicate } from '../common/Global_Imports';
 import { G_Widget, G_ArcSlider, S_Paging, S_Rotation } from '../common/Global_Imports';
 import { w_graph_rect, w_ancestry_focus } from '../common/Stores';
 import { w_ring_rotation_radius } from '../common/Stores';
@@ -24,7 +24,7 @@ export default class G_Cluster {
 	g_thumbArc = new G_ArcSlider(true);
 	ancestries: Array<Ancestry> = [];
 	color = colors.default_forThings;
-	g_sliderArc = new G_ArcSlider();
+	g_arcSlider = new G_ArcSlider();
 	arc_straddles_nadir = false;
 	points_toChildren: boolean;
 	arc_straddles_zero = false;
@@ -45,7 +45,7 @@ export default class G_Cluster {
 		this.points_toChildren = points_toChildren;
 		this.predicate = predicate;
 		w_ring_rotation_radius.subscribe((radius: number) => {
-			if (this.g_sliderArc.outside_arc_radius != radius) {
+			if (this.g_arcSlider.outside_arc_radius != radius) {
 				this.layout_cluster();		// do not set_paging_index (else expand will hang)
 			}
 		})
@@ -64,9 +64,9 @@ export default class G_Cluster {
 			this.isPaging = this.widgets_shown < this.total_widgets;
 			this.center = get(w_graph_rect).size.asPoint.dividedInHalf;
 			this.color = colors.opacitize(get(w_ancestry_focus).thing?.color ?? this.color, 0.2);
-			this.g_sliderArc.layout_fork(this.angle_ofCluster);
+			this.g_arcSlider.layout_fork(this.angle_ofCluster);
 			this.layout_widgets_inCluster();
-			this.g_sliderArc.layout_forkTip(this.center);
+			this.g_arcSlider.layout_forkTip(this.center);
 			this.layout_label();
 			this.layout_thumb_angles();
 			this.update_label_forIndex();
@@ -93,11 +93,11 @@ export default class G_Cluster {
 	static readonly LABEL: unique symbol;
 
 	private layout_label() {		// rotate text tangent to arc, at center of arc
-		const angle = this.g_sliderArc.angle_ofFork;
+		const angle = this.g_arcSlider.angle_ofFork;
 		const ortho = this.arc_in_lower_half ? Angle.quarter : Angle.three_quarters;
 		const label_radius = get(w_ring_rotation_radius) + (this.arc_in_lower_half ? 5 : 0) - 23;
 		this.label_center = this.center.offsetBy(Point.fromPolar(label_radius, angle));
-		this.g_sliderArc.label_text_angle = ortho - angle;
+		this.g_arcSlider.label_text_angle = ortho - angle;
 	}
 	
 	private update_label_forIndex() {
@@ -112,21 +112,21 @@ export default class G_Cluster {
 	
 	static readonly PAGING: unique symbol;
 
-	get s_paging_rotation():  S_Rotation { return ux.s_paging_rotation_forName(this.name); }
+	get s_paging_rotation():  S_Rotation { return radial.s_paging_rotation_forName(this.name); }
 	get maximum_paging_index()	: number { return this.total_widgets - this.widgets_shown; }	
 	get paging_index_ofFocus()	: number { return Math.round(this.s_focusPaging?.index ?? 0); }
 	get s_focusPaging(): S_Paging | null { return this.s_paging_forAncestry(get(w_ancestry_focus)); }
 	get radial_ofFork():		   Point { return Point.fromPolar(get(w_ring_rotation_radius), this.angle_ofCluster); }
 
 	s_paging_forAncestry(ancestry: Ancestry): S_Paging | null {
-		const s_thing_pages = ux.s_thing_pages_forThingID(ancestry.thing?.id);
+		const s_thing_pages = radial.s_thing_pages_forThingID(ancestry.thing?.id);
 		return s_thing_pages?.s_paging_for(this) ?? null;
 	}
 	
 	adjust_paging_index_byAdding_angle(delta_angle: number) {
 		const paging = this.s_focusPaging;
 		if (!!paging) {
-			const spread_angle = (-this.g_sliderArc.spread_angle).angle_normalized();
+			const spread_angle = (-this.g_arcSlider.spread_angle).angle_normalized();
 			const delta_fraction = (delta_angle / spread_angle);
 			const delta_index = delta_fraction * this.maximum_paging_index;			// convert rotation delta to index delta
 			const adjusted = paging.addTo_paging_index_for(delta_index) ?? false;	// add index delta to index
@@ -146,10 +146,10 @@ export default class G_Cluster {
 	private layout_arc_angles(index: number, max: number, child_angle: number) {
 		// index increases & angle decreases clockwise
 		if (index == max) {
-			this.g_sliderArc.start_angle = child_angle;
+			this.g_arcSlider.start_angle = child_angle;
 		}
 		if (index == 0) {
-			this.g_sliderArc.end_angle = child_angle;
+			this.g_arcSlider.end_angle = child_angle;
 		}
 	}
 
@@ -173,10 +173,10 @@ export default class G_Cluster {
 				this.g_cluster_widgets.push(ancestry.g_widget);
 				index += 1;
 			}
-			this.g_sliderArc.finalize_angles();
+			this.g_arcSlider.finalize_angles();
 			this.arc_in_lower_half = fork_pointsDown;
-			this.arc_straddles_zero = this.g_sliderArc.arc_straddles(0);
-			this.arc_straddles_nadir = this.g_sliderArc.arc_straddles(Angle.three_quarters);
+			this.arc_straddles_zero = this.g_arcSlider.arc_straddles(0);
+			this.arc_straddles_nadir = this.g_arcSlider.arc_straddles(Angle.three_quarters);
 		}
 	}
 
@@ -217,13 +217,13 @@ export default class G_Cluster {
 		// 2. arc can straddle nadir when fork y is outside of ring
 
 		if (this.total_widgets > 0) {	// avoid division by zero
-			const spread_angle = this.g_sliderArc.spread_angle;
+			const spread_angle = this.g_arcSlider.spread_angle;
 			const hasNegative_spread = spread_angle < 0
 			const inverter = hasNegative_spread ? 1 : -1;
 			const otherInverter = (hasNegative_spread == this.arc_straddles_nadir) ? -1 : 1;
 			const arc_spread = this.arc_straddles_nadir ? (-spread_angle).angle_normalized() : spread_angle;
 			const increment = arc_spread / this.total_widgets * inverter;
-			const arc_start = this.g_sliderArc.start_angle * otherInverter;
+			const arc_start = this.g_arcSlider.start_angle * otherInverter;
 			const start = arc_start + (increment * this.paging_index_ofFocus);
 			const end = start + (increment * this.widgets_shown);
 			this.g_thumbArc.layout_fork((start + end) / 2);

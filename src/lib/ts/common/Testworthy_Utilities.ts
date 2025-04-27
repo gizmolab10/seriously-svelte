@@ -24,6 +24,14 @@ export class Testworthy_Utilities {
 		return copiedObject;
 	}
 
+	valueFrom_atIndex<T extends Record<string, number>>(object: T, index: number): number {
+		const propNames = Object.keys(object) as Array<keyof T>;
+		if (index < 0 || index >= propNames.length) {
+			throw new Error(`Index ${index} is out of bounds`);
+		}
+		return object[propNames[index]];
+	}
+
 	remove<T>(from: Array<T>, item: T): Array<T> {
 		let array = from;
 		const index = array.findIndex((element: T) => element === item);
@@ -33,12 +41,15 @@ export class Testworthy_Utilities {
 		return array;
 	}
 
-	valueFrom_atIndex<T extends Record<string, number>>(object: T, index: number): number {
-		const propNames = Object.keys(object) as Array<keyof T>;
-		if (index < 0 || index >= propNames.length) {
-			throw new Error(`Index ${index} is out of bounds`);
+	assure_forKey_inDict<T>(key: string, dict: Dictionary, closure: () => T): T {
+		let result = dict[key];
+		if (!result) {
+			result = closure();
+			if (!!result) {
+				dict[key] = result;
+			}
 		}
-		return object[propNames[index]];
+		return result;
 	}
 
 	strip_identifiableDuplicates(identifiables: Array<Identifiable>): Array<Identifiable> {

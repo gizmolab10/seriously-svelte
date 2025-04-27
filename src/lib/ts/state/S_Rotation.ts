@@ -1,6 +1,6 @@
-import { k, Angle, svgPaths } from '../common/Global_Imports';
+import { k, Angle } from '../common/Global_Imports';
 
-// for rotating (sliding arcs and rotation ring)
+// for rotating (arc sliders and the rotation ring)
 
 export default class S_Rotation {
 	active_angle: number | null = null;		// current angle (at location of mouse MOVE)

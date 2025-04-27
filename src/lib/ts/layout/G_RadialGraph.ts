@@ -1,4 +1,4 @@
-import { u, ux, Angle, Ancestry, Predicate } from '../common/Global_Imports';
+import { u, Angle, radial, Ancestry, Predicate } from '../common/Global_Imports';
 import { w_hierarchy, w_s_paging, w_ancestry_focus } from '../common/Stores';
 import { G_Widget, G_Cluster, S_Paging } from '../common/Global_Imports';
 import type { Dictionary } from '../common/Types';
@@ -66,7 +66,7 @@ export default class G_RadialGraph {
 	}
 
 	s_paging_forPredicate_toChildren(predicate: Predicate, points_toChildren: boolean): S_Paging | null {
-		const s_thing_pages = ux.s_thing_pages_forThingID(get(w_ancestry_focus)?.thing?.id);
+		const s_thing_pages = radial.s_thing_pages_forThingID(get(w_ancestry_focus)?.thing?.id);
 		return s_thing_pages?.s_paging_forPredicate_toChildren(predicate, points_toChildren) ?? null;
 	}
 

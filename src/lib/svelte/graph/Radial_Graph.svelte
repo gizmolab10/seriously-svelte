@@ -8,7 +8,7 @@
 	import Widget from '../widget/Widget.svelte';
 	import { onMount } from 'svelte';
 	let toolsOffset = new Point(31, -173.5).offsetBy($w_user_graph_offset.negated);
-	let graph_reattachments = 0;
+	let necklace_reattachments = 0;
 
 	//////////////////////////////////////////////
 	//											//
@@ -39,7 +39,7 @@
 
 	onMount(() => {
 		const handle_recreate = signals.handle_reattach_widgets(0, (t_signal, ancestry) => {
-			graph_reattachments += 1;		// triggers {#key} below
+			necklace_reattachments += 1;		// triggers {#key} below
 		});
 		return () => { handle_recreate.disconnect() };
 	});
@@ -47,21 +47,21 @@
 	$: {
 		const s_paging = $w_s_paging;
 		if (!!s_paging && !!$w_ancestry_focus.thing && $w_ancestry_focus.thing.id == s_paging.thing_id) {
-			graph_reattachments += 1;
+			necklace_reattachments += 1;
 		}
 	}
 
 </script>
 
-{#key graph_reattachments}
-	<div class = 'radial-graph'
-		style = '
-			z-index : {T_Layer.common};
-			width : {$w_graph_rect.size.width}px;
-			height : {$w_graph_rect.size.height}px;
-			transform : translate({$w_user_graph_offset.x}px, {$w_user_graph_offset.y}px);'>
-		<Radial_Rings/>
-		<Radial_Focus/>
+<div class = 'radial-graph'
+	style = '
+		z-index : {T_Layer.common};
+		width : {$w_graph_rect.size.width}px;
+		height : {$w_graph_rect.size.height}px;
+		transform : translate({$w_user_graph_offset.x}px, {$w_user_graph_offset.y}px);'>
+	<Radial_Rings/>
+	<Radial_Focus/>
+	{#key necklace_reattachments}
 		<div
 			class = 'necklace-widgets'
 			style = 'z-index : {T_Layer.necklace};'>
@@ -69,5 +69,5 @@
 				<Widget ancestry = {g_necklace_widget.ancestry}/>
 			{/each}
 		</div>
-	</div>
-{/key}
+	{/key}
+</div>
