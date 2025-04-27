@@ -101,10 +101,10 @@ export enum T_Startup {
 }
 
 export enum T_RingZone {
-	miss   = 'miss',
 	resize = 'resize',
-	rotate = 'rotate',
 	paging = 'paging',
+	rotate = 'rotate',
+	miss   = 'miss',
 }
 
 export enum T_Oblong {

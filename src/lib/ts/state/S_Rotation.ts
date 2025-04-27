@@ -3,9 +3,8 @@ import { k, Angle, svgPaths } from '../common/Global_Imports';
 // for rotating (sliding arcs and rotation ring)
 
 export default class S_Rotation {
-	base64_rotateSVG = btoa(encodeURIComponent(svgPaths.rotateSVG));		// untested
 	active_angle: number | null = null;		// current angle (at location of mouse MOVE)
-	basis_angle: number | null = null;		// starting angle (" " DOWN)
+	basis_angle: number | null = null;		// starting angle (where mouse went DOWN)
 	isHovering = false;
 
 	get hover_cursor():	  string { return 'alias'; }

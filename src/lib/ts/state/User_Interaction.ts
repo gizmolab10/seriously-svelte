@@ -60,12 +60,9 @@ export default class User_Interaction { // Gizmos
 
 	get ring_zone_atMouseLocation(): T_RingZone {
 		let ring_zone = T_RingZone.miss;
-		const scaled = get(w_mouse_location_scaled);
 		const mouse_vector = w.mouse_vector_ofOffset_fromGraphCenter();
 		const widgets = wrappers.wrappers_ofType_atMouseLocation(T_SvelteComponent.widget);
-		const outsideDetails = !!scaled && scaled.x > (!get(w_show_details) ? 0 : k.width_details);
-		const insideGraphZone = !!scaled && outsideDetails && scaled.y > layout.tops_ofBanners[T_Banner.crumbs];
-		if (!!mouse_vector && widgets.length == 0 && insideGraphZone) {
+		if (!!mouse_vector && widgets.length == 0) {
 			const g_cluster = layout.g_radialGraph.g_cluster_atMouseLocation;
 			const inner = get(w_ring_rotation_radius);
 			const distance = mouse_vector.magnitude;

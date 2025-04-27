@@ -56,9 +56,9 @@ export default class Constants {
 	opacity = {
 		none:	  0,
 		standard: 0.1,
-		thumb:	  0.2,
-		hover:	  0.4,
-		active:	  0.6 };
+		thumb:	  0.13,
+		hover:	  0.3,
+		active:	  0.5 };
 
 	thickness = {
 		ring_rotation: 44,

@@ -30,13 +30,6 @@
 	//												//
 	//////////////////////////////////////////////////
 
-	$: {
-		if (mouse_up_count != $w_count_mouse_up) {		// NEVER gets executed
-			mouse_up_count = $w_count_mouse_up;			// WHY? because mouse_up_count is always
-			g_cluster.s_paging_rotation.reset();		// reset to w_count_mouse_up by rebuild
-		}
-	}
-
 	function computed_mouse_angle(): number | null {
 		return w.mouse_angle_fromGraphCenter ?? null
 	}
@@ -46,8 +39,12 @@
 	}
 
 	function hover_closure(s_mouse) {
-		if (g_cluster.isPaging && s_mouse.isHover) {
-			g_cluster.s_paging_rotation.isHovering = g_cluster.thumb_isHit;	// show highlight around ring
+		if (s_mouse.isUp) {
+			g_cluster.s_paging_rotation.reset();
+		} else if (s_mouse.isDown) {
+			g_cluster.s_paging_rotation.basis_angle = w.mouse_angle_fromGraphCenter;
+		} else if (s_mouse.isHover) {
+			g_cluster.s_paging_rotation.isHovering = true;
 		}
 	}
 

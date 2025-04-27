@@ -25,19 +25,16 @@
 	let reticlePath;
 	let time = 0;
 	
-	// paging arcs and rings
-	
-	class Path { d: string; stroke: string; fill: string; };
-	function handle_mouse_state(s_mouse: S_Mouse): boolean { return true; }				// only for wrappers
-	function handle_isHit(): boolean { return w.mouse_distance_fromGraphCenter <= outer_radius; }
-	
-	debug.log_build(`RINGS`);
-		
-	onMount(() => {
-		update_svgs();
-		update_cursor();
-	});
+	update_svgs();
+	update_cursor();
 
+	function handle_mouse_state(s_mouse: S_Mouse): boolean { return true; }				// only for wrappers
+
+	function handle_isHit(): boolean {
+		const zone = ux.ring_zone_atMouseLocation;
+		return [T_RingZone.resize, T_RingZone.rotate].includes(zone);
+	}
+		
 	$: {
 		if (!!$w_ancestry_focus.thing && $w_ancestry_focus.thing.id == $w_thing_color?.split(k.separator.generic)[0]) {
 			color = $w_ancestry_focus?.thing?.color ?? colors.default_forThings;
