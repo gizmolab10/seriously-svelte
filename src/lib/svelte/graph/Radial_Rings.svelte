@@ -23,7 +23,6 @@
 	let rotationPath;
 	let resizingPath;
 	let reticlePath;
-	let pagingArcs;
 	let time = 0;
 	
 	// paging arcs and rings
@@ -262,7 +261,6 @@
 	{/if}
 	<div
 		class = 'paging-arcs'
-		bind:this = {pagingArcs}
 		style = 'z-index:{T_Layer.paging};'>
 		{#each layout.g_radialGraph.g_clusters as g_cluster}
 			{#if !!g_cluster && (g_cluster.widgets_shown > 0)}

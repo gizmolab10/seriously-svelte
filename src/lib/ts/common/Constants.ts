@@ -31,11 +31,6 @@ export default class Constants {
 		local:  'http://localhost:8000/README.html',
 		remote: 'https://help.webseriously.org', };
 
-	ratio = {
-		standard_saturation: 0.1,
-		zoom_out:			 0.9,
-		zoom_in:			 1.1 };
-
 	threshold = {
 		double_click: 700,
 		long_click:	  800, };
@@ -44,15 +39,26 @@ export default class Constants {
 		separator: '------------------------',
 		default: 'Please, enter a title', };
 
+	ratio = {
+		zoom_out: 0.9,
+		zoom_in:  1.1 };
+
 	radius = {
 		arcSlider_cap: 7.5,
-		ring_center:   60,
+		ring_center:   50,
 		gull_wings:	   separator_thickness * 3, };
 
 	separator = {
 		generic: '::',
 		small:	 ':::',
 		big:	 '::::', };
+
+	opacity = {
+		none:	  0,
+		standard: 0.1,
+		thumb:	  0.2,
+		hover:	  0.4,
+		active:	  0.6 };
 
 	thickness = {
 		ring_rotation: 44,

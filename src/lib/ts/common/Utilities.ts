@@ -4,7 +4,6 @@ import { Testworthy_Utilities } from './Testworthy_Utilities';
 import { w_t_database, w_thing_fontFamily } from './Stores';
 import Identifiable from '../runtime/Identifiable';
 import Ancestry from '../runtime/Ancestry';
-import { T_Browser } from './Enumerations';
 import type { Dictionary } from './Types';
 import { w } from '../layout/G_Window';
 import { Point } from './Geometry';
@@ -22,6 +21,15 @@ export class Utilities extends Testworthy_Utilities {
 		const fontFamily: string = computedStyle.fontFamily;
 		const fontSize: string = computedStyle.fontSize;
 		return `${fontSize} ${fontFamily}`;
+	}
+
+	indexOf_withMatchingThingID_in(ancestry: Ancestry, ancestries: Array<Ancestry>): number {
+		const thing = ancestry.thing;
+		if (!!thing) {
+			const index = ancestries.findIndex(a => a.thing?.id == thing.id);
+			return index;
+		}
+		return -1;
 	}
 
 	sort_byTitleTop(ancestries: Array<Ancestry>): Array<Ancestry> {

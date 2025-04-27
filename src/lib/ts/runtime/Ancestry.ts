@@ -1,4 +1,4 @@
-import { Direction, Predicate, Hierarchy, databases, Relationship, Svelte_Wrapper } from '../common/Global_Imports';
+import { Direction, Predicate, Hierarchy, databases, Relationship, Svelte_Wrapper, p } from '../common/Global_Imports';
 import { c, k, u, show, Rect, Size, Thing, debug, layout, wrappers, svgPaths } from '../common/Global_Imports';
 import { T_Graph, T_Element, T_Predicate, T_Alteration, T_SvelteComponent } from '../common/Global_Imports';
 import { w_hierarchy, w_ancestry_focus, w_ancestry_showing_tools } from '../common/Stores';
@@ -730,10 +730,8 @@ export default class Ancestry extends Identifiable {
 	persistentMoveUp_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
 		if (this.points_toChildren) {													// trees and radials
 			return this.persistentMoveUp_forChild_maybe(up, SHIFT, OPTION, EXTREME);
-		} else if (this.isBidirectional) {												// radials
-			return this.persistentMoveUp_forBidirectional_maybe(up, SHIFT, OPTION, EXTREME);
 		} else {																		// parents
-			return this.persistentMoveUp_forParent_maybe(up, SHIFT, OPTION, EXTREME);
+			return this.persistentMoveUp_forOther_maybe(up, SHIFT, OPTION, EXTREME);
 		}
 	}
 
@@ -763,9 +761,9 @@ export default class Ancestry extends Identifiable {
 				}
 				if (!!grabAncestry) {
 					if (layout.inRadialMode) {
-						needs_graphRebuild = needs_graphRebuild || grabAncestry.assure_isVisible();	// change paging
+						needs_graphRebuild = grabAncestry.assure_isVisible() || needs_graphRebuild;	// change paging
 					} else if (!parentAncestry.isFocus && !grabAncestry.isVisible) {
-						needs_graphRebuild = needs_graphRebuild || parentAncestry.becomeFocus();
+						needs_graphRebuild = parentAncestry.becomeFocus() || needs_graphRebuild;
 					}
 				}
 			}
@@ -773,15 +771,14 @@ export default class Ancestry extends Identifiable {
 		return [needs_graphRebuild, needs_graphRelayout];
 	}
 
-	persistentMoveUp_forParent_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
-		const focusAncestry = get(w_ancestry_focus);
-		const sibling_ancestries = focusAncestry?.thing?.ancestries.map(a => a.parentAncestry).filter((a): a is Ancestry => a !== null) ?? [];
+	persistentMoveUp_forOther_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
+		const sibling_ancestries = get(w_ancestry_focus)?.thing?.uniqueAncestries_for(Predicate.contains);
 		let needs_graphRelayout = false;
 		let needs_graphRebuild = false;
 		if (!!sibling_ancestries) {
 			let grabAncestry: Ancestry | null = this;
 			if (!OPTION) {
-				const fromOrder = sibling_ancestries.indexOf(this);
+				const fromOrder = u.indexOf_withMatchingThingID_in(this, sibling_ancestries);
 				const toOrder = fromOrder.increment(!up, sibling_ancestries.length);
 				grabAncestry = sibling_ancestries[toOrder];
 				if (!!grabAncestry) {
@@ -792,34 +789,8 @@ export default class Ancestry extends Identifiable {
 				needs_graphRebuild = true;
 				this.reorder_within(sibling_ancestries, up);
 			}
-			if (!!grabAncestry && !!this.predicate) {
-				needs_graphRebuild = needs_graphRebuild || grabAncestry.assure_isVisible();
-			}
-		}
-		return [needs_graphRebuild, needs_graphRelayout];
-	}
-
-	persistentMoveUp_forBidirectional_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
-		const focus_ancestry = get(w_ancestry_focus);
-		const sibling_ancestries = focus_ancestry?.thing?.uniqueAncestries_for(this.predicate) ?? [];
-		let needs_graphRelayout = false;
-		let needs_graphRebuild = false;
-		if (!!sibling_ancestries) {
-			let grabAncestry: Ancestry | null = this;
-			if (!OPTION) {
-				const fromOrder = sibling_ancestries.indexOf(this);
-				const toOrder = fromOrder.increment(!up, sibling_ancestries.length);
-				grabAncestry = sibling_ancestries[toOrder];
-				if (!!grabAncestry) {
-					grabAncestry.grab_forShift(SHIFT);
-					needs_graphRelayout = true;
-				}
-			} else if (c.allow_GraphEditing) {
-				needs_graphRebuild = true;
-				this.reorder_within(sibling_ancestries, up);
-			}
-			if (!!grabAncestry && !!this.predicate) {
-				needs_graphRebuild = needs_graphRebuild || grabAncestry.assure_isVisible();
+			if (!!grabAncestry) {
+				needs_graphRebuild = grabAncestry.assure_isVisible() || needs_graphRebuild;
 			}
 		}
 		return [needs_graphRebuild, needs_graphRelayout];
