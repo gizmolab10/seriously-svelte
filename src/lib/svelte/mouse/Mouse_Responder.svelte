@@ -68,7 +68,7 @@
 			}
 			if (s_mouse.isHover != isHit) {
 				s_mouse.isHover  = isHit;
-				s_mouse.isOut   = !isHit;												// TODO: called far too often
+				s_mouse.isOut   = !isHit;
 				handle_mouse_state(S_Mouse.hover(null, bound_element, isHit));					// pass a null event
 			}
 		}

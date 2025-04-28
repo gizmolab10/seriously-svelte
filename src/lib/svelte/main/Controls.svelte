@@ -53,7 +53,7 @@
 		const _ = $w_t_graph;
 		const db = $w_hierarchy.db;
 		if (!!db) {
-			const extra = layout.inTreeMode ? 110 : 0;
+			const extra = layout.inTreeMode ? 84 : 0;
 			displayName = db.displayName;
 			displayName_width = u.getWidthOf(displayName);
 			displayName_x = extra + (width - displayName_width) / 2;

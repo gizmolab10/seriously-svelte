@@ -7,9 +7,10 @@
 	export let hit_closure = (title, shift) => {};
 	export let fill = $w_background_color;
 	export let stroke = colors.separator;
+	export let segmented_name = k.empty;
 	export let g_segment!: G_Segment;
-    export let name = g_segment.title;
-	const segment_name = `${name}-segment`;
+    const name = g_segment.title;
+	const segment_name = `${segmented_name}-${name}-segment`;
 	let title_color = colors.default;
 	let size = g_segment.size;
 	let isHovering = false;
@@ -20,8 +21,6 @@
 
 	function update_colors() {
 		title_color = isHovering ? $w_background_color : colors.default ;
-		fill = isHovering ? colors.default : g_segment.isSelected ? colors.opacitize('skyblue', 0.6) : $w_background_color;
-		debug.log_segments(`${name} ${g_segment.isSelected ? 'selected' : ''} ${fill}`)
 	}
 
 	function up_hover_closure(s_mouse) {

@@ -42,7 +42,7 @@
 		origin={new Point(19, 9)}
 		selected={$w_t_countDots}
 		selection_closure={selection_closure}/>
-	<Separator title='colors' top=32 left=5 width={info_width} title_font_size={separator_font_size} thickness={k.thickness.thin}/>
+	<Separator title='color' top=32 left=5 width={info_width} title_font_size={separator_font_size} thickness={k.thickness.thin}/>
 	<div 
 		class= 'background'
 		style='
@@ -52,18 +52,17 @@
 		background:
 	</div>
 	<div 
-		class= 'background'
+		class= 'background-color'
 		style='
 			width: 15px;
 			height: 15px;
 			position: absolute;;
-			top: {color_origin.y - 1}px;
 			border: 1.5px solid black;
+			top: {color_origin.y - 1}px;
 			left: {color_origin.x + 70}px;
 			background-color: {$w_background_color}'>
 		<Color
 			color={color}
-			label={'background'}
 			origin={Point.square(-3.5)}
 			color_closure={handle_colors}
 			picker_offset={picker_offset}/>

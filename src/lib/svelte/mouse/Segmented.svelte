@@ -74,6 +74,7 @@
 			stroke={stroke}
 			font_size={font_size}
 			g_segment={g_segment}
+			segmented_name={name}
 			hit_closure={hit_closure}/>
 	{/each}
 </div>
