@@ -60,8 +60,7 @@ export default class G_Cluster {
 	layout_forPaging() {
 		const g_paging = this.g_paging_forPredicate_toChildren(this.predicate, this.points_toChildren);
 		if (!!g_paging) {
-			const angle_ofCluster = this.predicate.angle_ofCluster_when(this.points_toChildren);
-			const points_right = new Angle(angle_ofCluster).angle_pointsRight;
+			const points_right = new Angle(this.angle_ofCluster).angle_pointsRight;
 			const onePage_ofAncestries = g_paging.onePage_from(this.widgets_shown, this.ancestries);
 			this.ancestries_shown = points_right ? onePage_ofAncestries.reverse() : onePage_ofAncestries;	
 			this.layout_cluster();
