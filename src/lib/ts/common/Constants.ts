@@ -45,7 +45,7 @@ export default class Constants {
 
 	radius = {
 		arcSlider_cap: 7.5,
-		ring_center:   50,
+		ring_center:   55,
 		gull_wings:	   separator_thickness * 3, };
 
 	separator = {
@@ -83,7 +83,7 @@ export default class Constants {
 		banner: {
 			controls: banner_height,
 			crumbs:	  banner_height,
-			graph:	   0,
+			graph:	  0,
 		},
 		detail: {
 			storage: 122,
