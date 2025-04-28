@@ -6,7 +6,7 @@ import { w_ancestries_grabbed, w_ancestries_expanded, } from '../common/Stores';
 import { w_background_color, w_t_graph, w_t_database } from '../common/Stores';
 import { G_Widget, G_Cluster, G_TreeLine } from '../common/Global_Imports';
 import { w_s_alteration, w_s_title_edit } from '../common/Stores';
-import { S_Paging, S_Title_Edit } from '../common/Global_Imports';
+import { G_Paging, S_Title_Edit } from '../common/Global_Imports';
 import type { Dictionary, Integer } from '../common/Types';
 import { T_Database } from '../database/DBCommon';
 import { T_Edit } from '../state/S_Title_Edit';
@@ -94,7 +94,7 @@ export default class Ancestry extends Identifiable {
 	get idBridging():				   string | null { return this.thing?.idBridging ?? null; }
 	get parentAncestry():			 Ancestry | null { return this.stripBack(); }
 	get g_cluster():				G_Cluster | null { return this.g_widget.g_cluster ?? null; }
-	get s_paging():					 S_Paging | null { return this.g_cluster?.s_paging_forAncestry(this) ?? null; }
+	get g_paging():					 G_Paging | null { return this.g_cluster?.g_paging_forAncestry(this) ?? null; }
 	get predicate():				Predicate | null { return this.hierarchy.predicate_forKind(this.kind) }
 	get relationship():			 Relationship | null { return this.relationshipAt(); }
 	get titleWrapper():		   Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.hid, T_SvelteComponent.title); }
@@ -153,8 +153,8 @@ export default class Ancestry extends Identifiable {
 		const childAncestries = this.childAncestries;
 		const first = childAncestries[0]
 		if (layout.inRadialMode) {
-			const s_paging = this.s_paging
-			const maybe = s_paging?.ancestry_atIndex(childAncestries);
+			const g_paging = this.g_paging
+			const maybe = g_paging?.ancestry_atIndex(childAncestries);
 			if (!!maybe) {
 				return maybe;
 			}
@@ -169,7 +169,7 @@ export default class Ancestry extends Identifiable {
 			const expanded = this.isAllExpandedFrom(focus);
 			return (incorporates && expanded);
 		} else {
-			return this.parentAncestry?.s_paging?.index_isVisible(this.siblingIndex) ?? false;
+			return this.parentAncestry?.g_paging?.index_isVisible(this.siblingIndex) ?? false;
 		}
 	}
 
@@ -620,9 +620,9 @@ export default class Ancestry extends Identifiable {
 	assure_isVisible() {
 		const toChildren = this.points_toChildren;
 		if (!!this.predicate) {
-			const s_paging = layout.g_radialGraph.s_paging_forPredicate_toChildren(this.predicate, toChildren);
-			if (!!s_paging && !s_paging.index_isVisible(this.siblingIndex)) {
-				return s_paging.update_index_toShow(this.order);		// change paging
+			const g_paging = layout.g_radialGraph.g_paging_forPredicate_toChildren(this.predicate, toChildren);
+			if (!!g_paging && !g_paging.index_isVisible(this.siblingIndex)) {
+				return g_paging.update_index_toShow(this.order);		// change paging
 			}
 		}
 		return false;

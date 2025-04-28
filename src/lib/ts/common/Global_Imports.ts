@@ -9,7 +9,7 @@ import G_Widget from '../layout/G_Widget';
 import { T_Preference } from './Enumerations';
 import { T_Timer } from '../signals/Mouse_Timer';
 import { T_Quadrant, T_Orientation } from './Angle';
-import { S_Paging, S_Thing_Pages } from '../state/S_Paging';
+import { G_Paging, G_Thing_Pages } from '../layout/G_Paging';
 import { T_Create, T_Browser, T_Alteration } from './Enumerations';
 import { T_Oblong, T_Element, T_SvelteComponent } from './Enumerations';
 import { T_Curve, T_Layer, T_Thing, T_Trait, T_Predicate } from './Enumerations';
@@ -30,11 +30,11 @@ import { colors } from './Colors';
 import { Direction } from './Angle';
 import { svgPaths } from './SVG_Paths';
 import { files } from '../managers/Files';
-import { layout } from '../layout/Layout';
+import { layout } from '../layout/G_Common';
 import { show } from '../managers/Visibility';
 import { Rect, Size, Point } from './Geometry';
 import { wrappers } from '../managers/Wrappers';
-import { radial } from '../state/S_Radial_Graph';
+import { radial } from '../state/S_RadialGraph';
 import { ErrorTrace } from '../debug/ErrorTrace';
 import { Hierarchy } from '../managers/Hierarchy';
 import { databases } from '../database/Databases';
@@ -74,15 +74,15 @@ export {
 	Rect, Size, Point, svgPaths,
 	Ancestry, Hierarchy, databases,
 	debug, Debug, T_Debug, ErrorTrace,
-	G_Widget, G_TreeLine, G_TreeBranches,
 	Angle, Direction, T_Quadrant, T_Orientation,
 	T_Element, Svelte_Wrapper, T_SvelteComponent,
-	G_Segment, G_Cluster, G_RadialGraph, G_ArcSlider,
+	S_Common, S_Rotation, S_Resizing, G_Thing_Pages,
+	G_Widget, G_Segment, G_TreeLine, G_TreeBranches,
+	G_Paging, G_Cluster, G_RadialGraph, G_ArcSlider,
 	show, files, builds, colors, layout, radial, signals,
 	T_Layer, T_Create, T_RingZone, T_Oblong, T_Alteration,
 	S_Mouse, S_Widget, S_Element, S_Alteration, S_Title_Edit,
 	T_Tool, T_Order, T_Banner, T_Details, T_Startup, T_Graph,
-	S_Paging, S_Common, S_Rotation, S_Resizing, S_Thing_Pages,
 	T_Thing, T_Trait, T_Curve, T_Widget, T_Predicate, T_Hierarchy,
 	User, Persistable, Thing, Trait, Access, Predicate, Relationship,
 	T_Info, T_Control, T_Browser, T_Signal, T_Report, T_Storage, T_Preference,

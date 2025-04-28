@@ -1,6 +1,6 @@
 import { Rect, Point, colors, Ancestry, Hierarchy, G_Cluster } from '../common/Global_Imports';
 import { T_Graph, T_Hierarchy, T_Details, T_Startup } from '../common/Global_Imports';
-import { S_Paging, S_Title_Edit, S_Alteration } from '../common/Global_Imports';
+import { G_Paging, S_Title_Edit, S_Alteration } from '../common/Global_Imports';
 import { get, writable } from 'svelte/store';
 
 export const w_ancestry_showing_tools = writable<Ancestry | null>();
@@ -11,7 +11,6 @@ export const w_hierarchy			  = writable<Hierarchy>();
 
 export const w_s_title_edit			  = writable<S_Title_Edit | null>();
 export const w_s_alteration			  = writable<S_Alteration | null>();
-export const w_s_paging				  = writable<S_Paging>();
 
 export const w_t_countDots			  = writable<Array<T_Hierarchy>>();
 export const w_t_tree				  = writable<Array<T_Hierarchy>>();
@@ -22,6 +21,7 @@ export const w_t_startup			  = writable<T_Startup>();
 export const w_t_database			  = writable<string>();
 
 export const w_g_paging_cluster		  = writable<G_Cluster | null>();
+export const w_g_paging				  = writable<G_Paging>();
 
 export const w_mouse_location_scaled  = writable<Point>();
 export const w_user_graph_center	  = writable<Point>();

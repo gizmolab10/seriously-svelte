@@ -1,40 +1,33 @@
-import { S_Rotation, S_Resizing, S_Thing_Pages } from '../common/Global_Imports';
+import { S_Rotation, S_Resizing, G_Thing_Pages } from '../common/Global_Imports';
 import { k, u, w, debug, layout, wrappers } from '../common/Global_Imports';
 import { T_RingZone, T_SvelteComponent } from '../common/Global_Imports';
 import { w_ring_rotation_radius } from '../common/Stores';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
 
-//////////////////////////////////////////////////////////////////
-//																//
-// 	track into which zone the mouse last went down				//
-// 	so that if it comes up in a different zone,					//
-// 	we can reset the state for the first zone					//
-//																//
-// 	WHY? ring z-index is above paging z-index,					//
-// 	and latter's mouse up must not be captured by former		//
-//																//
-// 	N.B., must ignore up in case of detection of a double click	//
-//																//
-//////////////////////////////////////////////////////////////////
+//////////////////////////////////
+//								//
+// 	manage rotating & resizing	//
+//								//
+//////////////////////////////////
 
-export default class S_Radial_Graph {
-	s_paging_rotation_byName: { [name: string]: S_Rotation } = {};
-	s_thing_pages_byThingID: {[id: string]: S_Thing_Pages} = {};
+export default class S_RadialGraph {
+	g_paging_rotation_byName: { [name: string]: S_Rotation } = {};
+	s_thing_pages_byThingID: {[id: string]: G_Thing_Pages} = {};
 	s_cluster_rotation = new S_Rotation();
 	s_ring_resizing	= new S_Resizing();
 	s_ring_rotation	= new S_Rotation();
 	zone = T_RingZone.miss;
 
-	reset_paging() { this.s_paging_rotations.map(s => s.reset()); }
-	get s_paging_rotations(): Array<S_Rotation> { return Object.values(this.s_paging_rotation_byName); }
-	get isAny_paging_arc_active(): boolean { return this.s_paging_rotations.filter(s => s.isActive).length > 0; }
-	get isAny_paging_arc_hovering(): boolean { return this.s_paging_rotations.filter(s => s.isHovering).length > 0; }
+	reset_paging() { this.g_paging_rotations.map(s => s.reset()); }
+	get g_paging_rotations(): Array<S_Rotation> { return Object.values(this.g_paging_rotation_byName); }
+	get isAny_paging_arc_active(): boolean { return this.g_paging_rotations.filter(s => s.isActive).length > 0; }
+	get isAny_paging_arc_hovering(): boolean { return this.g_paging_rotations.filter(s => s.isHovering).length > 0; }
 	get isAny_rotation_active(): boolean { return this.isAny_paging_arc_active || radial.s_cluster_rotation.isActive || radial.s_ring_rotation.isActive; }
-	s_paging_rotation_forName(name: string): S_Rotation { return u.assure_forKey_inDict(name, this.s_paging_rotation_byName, () => new S_Rotation()); }
+	g_paging_rotation_forName(name: string): S_Rotation { return u.assure_forKey_inDict(name, this.g_paging_rotation_byName, () => new S_Rotation()); }
 	
-	s_thing_pages_forThingID(id: string | null | undefined): S_Thing_Pages | null {
-		return !id ? null : u.assure_forKey_inDict(id, this.s_thing_pages_byThingID, () => new S_Thing_Pages(id));
+	s_thing_pages_forThingID(id: string | null | undefined): G_Thing_Pages | null {
+		return !id ? null : u.assure_forKey_inDict(id, this.s_thing_pages_byThingID, () => new G_Thing_Pages(id));
 	}
 
 	reset() {
@@ -46,7 +39,7 @@ export default class S_Radial_Graph {
 	createAll_thing_pages_fromDict(dict: Dictionary | null) {
 		if (!!dict) {
 			for (const sub_dict of Object.values(dict)) {
-				const s_thing_pages = S_Thing_Pages.create_fromDict(sub_dict);
+				const s_thing_pages = G_Thing_Pages.create_fromDict(sub_dict);
 				if (!!s_thing_pages) {
 					this.s_thing_pages_byThingID[s_thing_pages.thing_id] = s_thing_pages;
 				}
@@ -92,4 +85,4 @@ export default class S_Radial_Graph {
 
 }
 
-export const radial = new S_Radial_Graph();
+export const radial = new S_RadialGraph();

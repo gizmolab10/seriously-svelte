@@ -1,5 +1,5 @@
-import { w_s_paging, w_font_size, w_background_color, w_thing_fontFamily } from '../common/Stores';
-import { S_Paging, T_Graph, T_Details, T_Hierarchy, T_Preference } from '../common/Global_Imports';
+import { w_g_paging, w_font_size, w_background_color, w_thing_fontFamily } from '../common/Stores';
+import { G_Paging, T_Graph, T_Details, T_Hierarchy, T_Preference } from '../common/Global_Imports';
 import { c, k, u, ux, show, debug, radial, colors, Ancestry, databases } from '../common/Global_Imports';
 import { w_t_tree, w_t_graph, w_hierarchy, w_t_details, w_t_countDots } from '../common/Stores';
 import { w_t_database, w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
@@ -134,7 +134,7 @@ export class Preferences {
 		w_ring_rotation_radius.subscribe((radius: number) => {
 			this.write_key(T_Preference.ring_radius, radius);
 		});
-		w_s_paging.subscribe((s_paging: S_Paging) => {
+		w_g_paging.subscribe((g_paging: G_Paging) => {
 			this.writeDB_key(T_Preference.paging, radial.s_thing_pages_byThingID);
 		})
 		w_background_color.subscribe((color: string) => {

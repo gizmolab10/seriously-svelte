@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, ux, Rect, Point, debug, layout, signals } from '../../ts/common/Global_Imports';
-	import { w_s_paging, w_user_graph_offset, w_thing_fontFamily } from '../../ts/common/Stores';
+	import { w_g_paging, w_user_graph_offset, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { w_graph_rect, w_show_details, w_ancestry_focus } from '../../ts/common/Stores';
 	import { T_Tool, T_Layer, T_Signal, T_RingZone } from '../../ts/common/Global_Imports';
 	import Radial_Rings from './Radial_Rings.svelte';
@@ -45,8 +45,8 @@
 	});
 
 	$: {
-		const s_paging = $w_s_paging;
-		if (!!s_paging && !!$w_ancestry_focus.thing && $w_ancestry_focus.thing.id == s_paging.thing_id) {
+		const g_paging = $w_g_paging;
+		if (!!g_paging && !!$w_ancestry_focus.thing && $w_ancestry_focus.thing.id == g_paging.thing_id) {
 			necklace_reattachments += 1;
 		}
 	}

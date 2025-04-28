@@ -1106,8 +1106,8 @@ export class Hierarchy {
 				} else {
 					graph_needsRebuild = ancestry.becomeFocus();
 					if (!!childAncestry && !childAncestry.isVisible) {
-						const s_paging = ancestry.s_paging
-						s_paging?.ancestry_atIndex(ancestry.childAncestries).grab()
+						const g_paging = ancestry.g_paging
+						g_paging?.ancestry_atIndex(ancestry.childAncestries).grab()
 						graph_needsRebuild = true;
 					}
 				}

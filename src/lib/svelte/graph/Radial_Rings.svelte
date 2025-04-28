@@ -156,13 +156,13 @@
 					ring_reattachments += 1;									// reattach arc sliders
 				}
 			} else if (!!$w_g_paging_cluster) {
-				const s_paging_rotation = $w_g_paging_cluster.s_paging_rotation;
-				const basis_angle = s_paging_rotation.basis_angle;
-				const active_angle = s_paging_rotation.active_angle;
+				const g_paging_rotation = $w_g_paging_cluster.g_paging_rotation;
+				const basis_angle = g_paging_rotation.basis_angle;
+				const active_angle = g_paging_rotation.active_angle;
 				const delta_angle = (active_angle - mouse_angle).angle_normalized_aroundZero();
-				s_paging_rotation.active_angle = mouse_angle;
+				g_paging_rotation.active_angle = mouse_angle;
 				detect_hovering();
-				cursor = s_paging_rotation.cursor;
+				cursor = g_paging_rotation.cursor;
 				debug.log_radial(` page  ${delta_angle.asDegrees()}`);
 				if (!!basis_angle && !!active_angle && basis_angle != active_angle && $w_g_paging_cluster.adjust_paging_index_byAdding_angle(delta_angle)) {
 					layout.grand_build();
@@ -206,8 +206,8 @@
 						const g_cluster = layout.g_radialGraph.g_cluster_atMouseLocation;
 						if (!!g_cluster) {
 							debug.log_radial(` begin paging  ${angle_ofPage.asDegrees()}`);
-							g_cluster.s_paging_rotation.active_angle = angle_ofPage;
-							g_cluster.s_paging_rotation.basis_angle = angle_ofPage;
+							g_cluster.g_paging_rotation.active_angle = angle_ofPage;
+							g_cluster.g_paging_rotation.basis_angle = angle_ofPage;
 							$w_g_paging_cluster = g_cluster;
 						}
 						break;

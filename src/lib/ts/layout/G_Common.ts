@@ -4,7 +4,7 @@ import { w_t_tree, w_t_graph, w_t_details, w_hierarchy, w_t_database } from '../
 import { w_show_related, w_ancestry_focus, w_ancestries_expanded } from '../common/Stores';
 import { get } from 'svelte/store';
 
-export default class Layout {
+export default class G_Common {
 	branches_visited: Array<string> = [];
 	tops_ofBanners: Array<number> = [];
 	tops_ofDetails: Array<number> = [];
@@ -164,4 +164,4 @@ export default class Layout {
 
 }
 
-export let layout = new Layout();
+export let layout = new G_Common();

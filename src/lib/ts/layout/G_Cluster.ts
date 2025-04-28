@@ -1,5 +1,5 @@
 import { k, w, Point, Angle, debug, colors, radial, Ancestry, Predicate } from '../common/Global_Imports';
-import { G_Widget, G_ArcSlider, S_Paging, S_Rotation } from '../common/Global_Imports';
+import { G_Widget, G_ArcSlider, G_Paging, S_Rotation } from '../common/Global_Imports';
 import { w_graph_rect, w_ancestry_focus } from '../common/Stores';
 import { w_ring_rotation_radius } from '../common/Stores';
 import { get } from 'svelte/store';
@@ -21,6 +21,7 @@ import { get } from 'svelte/store';
 
 export default class G_Cluster {
 	g_cluster_widgets: Array<G_Widget> = [];
+	ancestries_shown: Array<Ancestry> = [];
 	g_thumbArc = new G_ArcSlider(true);
 	ancestries: Array<Ancestry> = [];
 	color = colors.default_forThings;
@@ -51,16 +52,26 @@ export default class G_Cluster {
 		})
 	}
 
-	layout_cluster_forAncestries(total_widgets: number, ancestries: Array<Ancestry>) {
-		this.total_widgets = total_widgets;
+	setAncestries(ancestries: Array<Ancestry>) {
+		this.total_widgets = this.widgets_shown = ancestries.length;
 		this.ancestries = ancestries;
-		this.layout_cluster();
+	}
+
+	layout_forPaging() {
+		const g_paging = this.g_paging_forPredicate_toChildren(this.predicate, this.points_toChildren);
+		if (!!g_paging) {
+			const angle_ofCluster = this.predicate.angle_ofCluster_when(this.points_toChildren);
+			const points_right = new Angle(angle_ofCluster).angle_pointsRight;
+			const onePage_ofAncestries = g_paging.onePage_from(this.widgets_shown, this.ancestries);
+			this.ancestries_shown = points_right ? onePage_ofAncestries.reverse() : onePage_ofAncestries;	
+			this.layout_cluster();
+		}
 	}
 
 	layout_cluster() {
-		if (this.ancestries.length > 0) {
-			debug.log_build(`layout_cluster (${this.ancestries.length} shown)  ${this.direction_kind}`);
-			this.widgets_shown = this.ancestries.length;
+		if (this.ancestries_shown.length > 0) {
+			debug.log_build(`layout_cluster (${this.ancestries_shown.length} shown)  ${this.direction_kind}`);
+			this.widgets_shown = this.ancestries_shown.length;
 			this.isPaging = this.widgets_shown < this.total_widgets;
 			this.center = get(w_graph_rect).size.asPoint.dividedInHalf;
 			this.color = colors.opacitize(get(w_ancestry_focus).thing?.color ?? this.color, 0.2);
@@ -112,19 +123,24 @@ export default class G_Cluster {
 	
 	static readonly PAGING: unique symbol;
 
-	get s_paging_rotation():  S_Rotation { return radial.s_paging_rotation_forName(this.name); }
+	get g_paging_rotation():  S_Rotation { return radial.g_paging_rotation_forName(this.name); }
 	get maximum_paging_index()	: number { return this.total_widgets - this.widgets_shown; }	
-	get paging_index_ofFocus()	: number { return Math.round(this.s_focusPaging?.index ?? 0); }
-	get s_focusPaging(): S_Paging | null { return this.s_paging_forAncestry(get(w_ancestry_focus)); }
+	get paging_index_ofFocus()	: number { return Math.round(this.g_focusPaging?.index ?? 0); }
+	get g_focusPaging(): G_Paging | null { return this.g_paging_forAncestry(get(w_ancestry_focus)); }
 	get radial_ofFork():		   Point { return Point.fromPolar(get(w_ring_rotation_radius), this.angle_ofCluster); }
 
-	s_paging_forAncestry(ancestry: Ancestry): S_Paging | null {
+	g_paging_forPredicate_toChildren(predicate: Predicate, points_toChildren: boolean): G_Paging | null {
+		const s_thing_pages = radial.s_thing_pages_forThingID(get(w_ancestry_focus)?.thing?.id);
+		return s_thing_pages?.g_paging_forPredicate_toChildren(predicate, points_toChildren) ?? null;
+	}
+
+	g_paging_forAncestry(ancestry: Ancestry): G_Paging | null {
 		const s_thing_pages = radial.s_thing_pages_forThingID(ancestry.thing?.id);
-		return s_thing_pages?.s_paging_for(this) ?? null;
+		return s_thing_pages?.g_paging_for(this) ?? null;
 	}
 	
 	adjust_paging_index_byAdding_angle(delta_angle: number) {
-		const paging = this.s_focusPaging;
+		const paging = this.g_focusPaging;
 		if (!!paging) {
 			const spread_angle = (-this.g_arcSlider.spread_angle).angle_normalized();
 			const delta_fraction = (delta_angle / spread_angle);
@@ -143,7 +159,7 @@ export default class G_Cluster {
 	
 	get angle_ofCluster(): number { return this.predicate.angle_ofCluster_when(this.points_toChildren); }
 
-	private layout_arc_angles(index: number, max: number, child_angle: number) {
+	private update_arc_angles(index: number, max: number, child_angle: number) {
 		// index increases & angle decreases clockwise
 		if (index == max) {
 			this.g_arcSlider.start_angle = child_angle;
@@ -165,7 +181,7 @@ export default class G_Cluster {
 			while (index < this.widgets_shown) {
 				const adjusted_index = fork_pointsRight ? (this.widgets_shown - index - 1) : index;
 				const angle = this.angle_at_index(adjusted_index);
-				const ancestry = this.ancestries[adjusted_index];
+				const ancestry = this.ancestries_shown[adjusted_index];
 				const pointsRight = new Angle(angle).angle_pointsRight;
 				const rotated_origin = center.offsetBy(radial.rotate_by(angle));
 				ancestry.g_widget.layout_necklaceWidget(rotated_origin, pointsRight);
@@ -206,13 +222,13 @@ export default class G_Cluster {
 		if (y_isOutside == (radial.x > 0)) {				// counter-clockwise if (x is positive AND y is outside) OR (x is negative AND y is inside)
 			child_angle = Angle.half - child_angle			// otherwise it's clockwise, so invert it
 		}
-		this.layout_arc_angles(index, max, child_angle);
+		this.update_arc_angles(index, max, child_angle);
 		return child_angle;									// angle at index
 	}
 
 	private layout_thumb_angles() {
 
-		// very complex, because:
+		// a tad complex, because:
 		// 1. start & end are sometimes reversed (hasNegative_spread)
 		// 2. arc can straddle nadir when fork y is outside of ring
 
