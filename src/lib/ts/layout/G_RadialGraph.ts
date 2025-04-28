@@ -77,7 +77,7 @@ export default class G_RadialGraph {
 	}
 
 	private apportion_widgets_amongClusters() {
-		let remaining_toShow = Math.floor(get(w_ring_rotation_radius) * 4 / k.height.row)
+		let remaining_toShow = Math.floor((get(w_ring_rotation_radius) ** 1.27) / k.height.row);
 		if (this.total_ancestries > remaining_toShow) {
 			let clusters = this.g_clusters_forPaging;
 			clusters.sort((a, b) => a.total_widgets - b.total_widgets);		// sort clusters by widgets count, smallest first
