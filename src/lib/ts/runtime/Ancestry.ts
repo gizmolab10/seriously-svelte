@@ -618,9 +618,8 @@ export default class Ancestry extends Identifiable {
 	static readonly VISIBILITY: unique symbol;
 
 	assure_isVisible() {
-		const toChildren = this.points_toChildren;
 		if (!!this.predicate) {
-			const g_paging = layout.g_radialGraph.g_paging_forPredicate_toChildren(this.predicate, toChildren);
+			const g_paging = layout.g_radialGraph.g_paging_forPredicate_toChildren(this.predicate, this.points_toChildren);
 			if (!!g_paging && !g_paging.index_isVisible(this.siblingIndex)) {
 				return g_paging.update_index_toShow(this.order);		// change paging
 			}
@@ -730,8 +729,10 @@ export default class Ancestry extends Identifiable {
 	persistentMoveUp_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
 		if (this.points_toChildren) {													// trees and radials
 			return this.persistentMoveUp_forChild_maybe(up, SHIFT, OPTION, EXTREME);
+		} else if (this.isBidirectional) {												// radials
+			return this.persistentMoveUp_forBidirectional_maybe(up, SHIFT, OPTION, EXTREME);
 		} else {																		// parents
-			return this.persistentMoveUp_forOther_maybe(up, SHIFT, OPTION, EXTREME);
+			return this.persistentMoveUp_forParent_maybe(up, SHIFT, OPTION, EXTREME);
 		}
 	}
 
@@ -771,8 +772,8 @@ export default class Ancestry extends Identifiable {
 		return [needs_graphRebuild, needs_graphRelayout];
 	}
 
-	persistentMoveUp_forOther_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
-		const sibling_ancestries = get(w_ancestry_focus)?.thing?.uniqueAncestries_for(Predicate.contains);
+	persistentMoveUp_forParent_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
+		const sibling_ancestries = get(w_ancestry_focus)?.thing?.uniqueAncestries_for(this.predicate);
 		let needs_graphRelayout = false;
 		let needs_graphRebuild = false;
 		if (!!sibling_ancestries) {
@@ -796,6 +797,31 @@ export default class Ancestry extends Identifiable {
 		return [needs_graphRebuild, needs_graphRelayout];
 	}
 
+	persistentMoveUp_forBidirectional_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
+		const sibling_ancestries = get(w_ancestry_focus)?.thing?.uniqueAncestries_for(this.predicate) ?? [];
+		let needs_graphRelayout = false;
+		let needs_graphRebuild = false;
+		if (!!sibling_ancestries) {
+			let grabAncestry: Ancestry | null = this;
+			if (!OPTION) {
+				const fromOrder = u.indexOf_withMatchingThingID_in(this, sibling_ancestries);
+				const toOrder = fromOrder.increment(!up, sibling_ancestries.length);
+				grabAncestry = sibling_ancestries[toOrder];
+				if (!!grabAncestry) {
+					grabAncestry.grab_forShift(SHIFT);
+					needs_graphRelayout = true;
+				}
+			} else if (c.allow_GraphEditing) {
+				needs_graphRebuild = true;
+				this.reorder_within(sibling_ancestries, up);
+			}
+			if (!!grabAncestry && !!this.predicate) {
+				needs_graphRebuild = grabAncestry.assure_isVisible() ||needs_graphRebuild;
+			}
+		}
+		return [needs_graphRebuild, needs_graphRelayout];
+	}
+	
 	static readonly ORDER: unique symbol;
 	
 	get order(): number { return this.relationship?.order_forPointsTo(this.points_toChildren) ?? -12345; }

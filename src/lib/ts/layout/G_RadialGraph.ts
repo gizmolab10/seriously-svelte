@@ -1,7 +1,7 @@
-import { w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
+import { k, u, radial, Ancestry, Predicate } from '../common/Global_Imports';
 import { w_hierarchy, w_g_paging, w_ancestry_focus } from '../common/Stores';
 import { G_Widget, G_Cluster, G_Paging } from '../common/Global_Imports';
-import { k, u, Ancestry, Predicate } from '../common/Global_Imports';
+import { w_ring_rotation_radius } from '../common/Stores';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
 
@@ -97,6 +97,11 @@ export default class G_RadialGraph {
 		for (const cluster of this.g_clusters_forPaging) {
 			cluster.layout_forPaging();
 		}
+	}
+
+	g_paging_forPredicate_toChildren(predicate: Predicate, points_toChildren: boolean): G_Paging | null {
+		const s_thing_pages = radial.s_thing_pages_forThingID(get(w_ancestry_focus)?.thing?.id);
+		return s_thing_pages?.g_paging_forPredicate_toChildren(predicate, points_toChildren) ?? null;
 	}
 
 	private assignAncestries_toClusterFor(ancestries: Array<Ancestry>, predicate: Predicate | null, points_toChildren: boolean) {
