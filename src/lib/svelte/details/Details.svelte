@@ -8,6 +8,7 @@
 	import D_Tools from '../details/D_Tools.svelte';
 	import D_Info from '../details/D_Info.svelte';
 	const titles = [T_Details[T_Details.storage], T_Details[T_Details.tools], T_Details[T_Details.display], T_Details[T_Details.info]];
+	const separator_gap = k.height.separator;
 	
 	layout.layout_tops_forDetails();
 	let tops = layout.tops_ofDetails;
@@ -35,22 +36,22 @@
 		allow_multiple={true}
 		name='details-selector'
 		selected={$w_t_details}
-		origin={new Point(14, 1)}
+		origin={new Point(14, 0.5)}
 		selection_closure={selection_closure}/>
 	{#if showingDetails_ofType(T_Details.storage)}
-		<Separator add_wings={true} title='storage' top={tops[T_Details.storage] - 8}/>
+		<Separator add_wings={true} title='storage' top={tops[T_Details.storage] - separator_gap}/>
 		<D_Storage top={tops[T_Details.storage]}/>
 	{/if}
 	{#if showingDetails_ofType(T_Details.tools)}
-		<Separator add_wings={true} title='tools' top={tops[T_Details.tools] - 8}/>
+		<Separator add_wings={true} title='tools' top={tops[T_Details.tools] - separator_gap}/>
 		<D_Tools top={tops[T_Details.tools]}/>
 	{/if}
 	{#if showingDetails_ofType(T_Details.display)}
-		<Separator add_wings={true} title='display' top={tops[T_Details.display] - 8}/>
+		<Separator add_wings={true} title='display' top={tops[T_Details.display] - separator_gap}/>
 		<D_Display top={tops[T_Details.display]}/>
 	{/if}
 	{#if showingDetails_ofType(T_Details.info)}
-		<Separator add_wings={true} title='info' top={tops[T_Details.info] - 7}/>
+		<Separator add_wings={true} title='info' top={tops[T_Details.info] - separator_gap}/>
 		<D_Info top={tops[T_Details.info]}/>
 	{/if}
 </div>
