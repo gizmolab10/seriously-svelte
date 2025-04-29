@@ -21,13 +21,15 @@
 	let mouse_up_count = $w_count_mouse_up;
 	let cursor = k.cursor_default;
 	let ring_reattachments = 0;
-	let rotationPath;
-	let resizingPath;
-	let reticlePath;
 	let time = 0;
+
+	$: reticle_svgPath = debug.reticle ? svgPaths.t_cross(middle_radius * 2, -2) : '';
+	$: rotate_svgPath  = svgPaths.annulus(Point.square($w_ring_rotation_radius), middle_radius, ring_width, Point.square(ring_width));
+	$: resize_svgPath  = svgPaths.circle(Point.square($w_ring_rotation_radius).offsetEquallyBy(44), $w_ring_rotation_radius - 0.3, true);
+	$: resize_fill	   = (radial.s_ring_resizing.isHighlighted || radial.s_ring_resizing.isActive) ? colors.opacitize(color, radial.s_ring_resizing.fill_opacity) : 'transparent';
+	$: rotate_fill	   = (radial.s_ring_rotation.isHighlighted && !radial.s_ring_rotation.isActive) ? colors.opacitize(color, radial.s_ring_rotation.fill_opacity * (radial.s_ring_resizing.isActive ? 0 : 1)) : 'transparent';
 	
 	onMount(() => {
-		update_svgs();
 		cursor = radial.cursor_forRingZone;
 		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
 			ring_reattachments += 1;
@@ -63,31 +65,7 @@
 		radial.reset();
 	}
 
-	function update_svgs() {
-		const background = $w_background_color;
-		const center = Point.square($w_ring_rotation_radius);
-		if (!!reticlePath) {
-			reticlePath. setAttribute('stroke', 'green');
-			reticlePath. setAttribute('fill', 'transparent');
-			reticlePath. setAttribute('d', svgPaths.t_cross(middle_radius * 2, -2));
-		}
-		if (!!resizingPath) {
-			const isHighlighted = radial.s_ring_resizing.isHighlighted;
-			const fill = isHighlighted ? colors.opacitize(color, radial.s_ring_resizing.fill_opacity) : 'transparent';
-			resizingPath.setAttribute('fill', fill);
-			resizingPath.setAttribute('d', svgPaths.circle(center.offsetEquallyBy(44), $w_ring_rotation_radius - 0.3, true));
-		}
-		if (!!rotationPath) {
-			const isResizing = radial.s_ring_resizing.isActive;
-			const isHighlighted = radial.s_ring_rotation.isHighlighted;
-			const fill = isHighlighted ? colors.opacitize(color, radial.s_ring_rotation.fill_opacity * (isResizing ? 0 : 1)) : 'transparent';
-			rotationPath.setAttribute('fill', fill);
-			rotationPath.setAttribute('d', svgPaths.annulus(center, middle_radius, ring_width, Point.square(ring_width)));
-		}
-	}
-
 	function detect_hovering() {
-		let needs_toUpdate_svgs = false;
 		const isPaging = radial.isAny_paging_arc_active;
 		const isResizing = radial.s_ring_resizing.isActive;
 		const isRotating = radial.s_ring_rotation.isActive;
@@ -98,20 +76,14 @@
 		if (radial.s_ring_rotation.isHovering != inRotate) {
 			radial.s_ring_rotation.isHovering  = inRotate;
 			debug.log_hover(` hover rotate  ${inRotate}`);
-			needs_toUpdate_svgs = !isRotating;
 		}
 		if (radial.s_ring_resizing.isHovering != inResize) {
 			radial.s_ring_resizing.isHovering  = inResize;
 			debug.log_hover(` hover resize  ${inResize}`);
-			needs_toUpdate_svgs = true;
 		}
 		if (radial.s_cluster_rotation.isHovering != inPaging) {
 			radial.s_cluster_rotation.isHovering  = inPaging;
 			debug.log_hover(` hover paging  ${inPaging}`);
-			needs_toUpdate_svgs = true;
-		}
-		if (needs_toUpdate_svgs) {
-			update_svgs();
 		}
 	}
 
@@ -146,7 +118,6 @@
 					time = now;
 					debug.log_radial(` resize  D ${distance.asInt()}  R ${radius.asInt()}  + ${delta.toFixed(1)}`);
 					$w_ring_rotation_radius = radius;
-					update_svgs();
 					layout.grand_layout();
 				}
 			} else if (rotation_state.isActive) {								// rotate clusters
@@ -239,13 +210,17 @@
 				<svg class = 'rings-svg'
 					viewBox = {viewBox}>
 					<path class = 'resize-path'
-						bind:this = {resizingPath}/>
+						fill = {resize_fill}
+						d = {resize_svgPath}/>
 					{#if debug.reticle}
 						<path class = 'reticle-path'
-							bind:this = {reticlePath}/>
+							stroke = 'green'
+							fill = 'transparent'
+							d = {reticle_svgPath}/>
 					{/if}
 					<path class = 'rotate-path'
-						bind:this = {rotationPath}/>
+						fill = {rotate_fill}
+						d = {rotate_svgPath}/>
 				</svg>
 			</Mouse_Responder>
 		</div>
