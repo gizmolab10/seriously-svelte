@@ -64,11 +64,11 @@ export class G_Window {
 	}
 
 	graphRect_update() {
-		const x = get(w_show_details) ? k.width_details : 0;
+		const x = get(w_show_details) ? k.width_details + k.thickness.separator : 0;
 		const y = layout.top_ofBannerAt(T_Banner.graph);
-		const originOfGraph = new Point(x, y).offsetByX(k.thickness.separator);
-		const sizeOfGraph = this.windowSize.reducedBy(originOfGraph);	// account for origin
-		const rect = new Rect(originOfGraph, sizeOfGraph);
+		const origin_ofGraph = new Point(x, y);
+		const size_ofGraph = this.windowSize.reducedBy(origin_ofGraph);	// account for origin
+		const rect = new Rect(origin_ofGraph, size_ofGraph);
 		debug.log_mouse(`GRAPH ====> ${rect.description}`);
 		w_graph_rect.set(rect);											// used by Panel and Graph_Tree
 	}
