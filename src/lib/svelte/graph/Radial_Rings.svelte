@@ -29,6 +29,10 @@
 	onMount(() => {
 		update_svgs();
 		cursor = radial.cursor_forRingZone;
+		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
+			ring_reattachments += 1;
+		});
+		return () => { handle_reposition.disconnect(); };
 	});
 
 	function handle_mouse_state(s_mouse: S_Mouse): boolean { return true; }				// only for wrappers
@@ -142,7 +146,8 @@
 					time = now;
 					debug.log_radial(` resize  D ${distance.asInt()}  R ${radius.asInt()}  + ${delta.toFixed(1)}`);
 					$w_ring_rotation_radius = radius;
-					layout.grand_build();					// destroys this component (properties are in w_w_ring_resizing)
+					update_svgs();
+					layout.grand_layout();
 				}
 			} else if (rotation_state.isActive) {								// rotate clusters
 				if (!signals.signal_isInFlight && enoughTimeHasPassed) {		// 1 tenth second
@@ -153,7 +158,6 @@
 					detect_hovering();
 					cursor = radial.s_ring_rotation.cursor;
 					layout.grand_layout();										// reposition necklace widgets and arc sliders
-					ring_reattachments += 1;									// reattach arc sliders
 				}
 			} else if (!!$w_g_paging_cluster) {
 				const g_paging_rotation = $w_g_paging_cluster.g_paging_rotation;

@@ -44,6 +44,20 @@ export default class G_RadialGraph {
 		}
 	}
 
+	update_radial_positions() {
+		// Only update positions of existing elements without rebuilding structure
+		for (const cluster of Object.values(this.g_parent_clusters)) {
+			if (cluster.widgets_shown > 0) {
+				cluster.layout_widgets_inCluster();
+			}
+		}
+		for (const cluster of Object.values(this.g_child_clusters)) {
+			if (cluster.widgets_shown > 0) {
+				cluster.layout_widgets_inCluster();
+			}
+		}
+	}
+
 	get g_clusters(): Array<G_Cluster> {
 		return u.concatenateArrays(Object.values(this.g_parent_clusters), Object.values(this.g_child_clusters));
 	}

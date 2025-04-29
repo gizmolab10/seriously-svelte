@@ -41,7 +41,10 @@
 		const handle_recreate = signals.handle_reattach_widgets(0, (t_signal, ancestry) => {
 			necklace_reattachments += 1;		// triggers {#key} below
 		});
-		return () => { handle_recreate.disconnect() };
+		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
+			necklace_reattachments += 1;
+		});
+		return () => { handle_reposition.disconnect(); handle_recreate.disconnect() };
 	});
 
 	$: {

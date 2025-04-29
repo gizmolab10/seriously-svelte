@@ -168,7 +168,7 @@ export default class G_Cluster {
 		}
 	}
 
-	private layout_widgets_inCluster() {
+	layout_widgets_inCluster() {
 		this.g_cluster_widgets = [];
 		if (this.widgets_shown > 0 && !!this.predicate) {
 			const center = this.center.offsetByXY(2, -1.5);			// tweak so that drag dots are centered within the rotation ring
