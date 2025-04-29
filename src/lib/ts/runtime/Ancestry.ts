@@ -1,6 +1,6 @@
 import { Direction, Predicate, Hierarchy, databases, Relationship, Svelte_Wrapper, p } from '../common/Global_Imports';
 import { c, k, u, show, Rect, Size, Thing, debug, layout, wrappers, svgPaths } from '../common/Global_Imports';
-import { T_Graph, T_Element, T_Predicate, T_Alteration, T_SvelteComponent } from '../common/Global_Imports';
+import { T_Graph, T_Element, T_Kinship, T_Predicate, T_Alteration, T_SvelteComponent } from '../common/Global_Imports';
 import { w_hierarchy, w_ancestry_focus, w_ancestry_showing_tools } from '../common/Stores';
 import { w_ancestries_grabbed, w_ancestries_expanded, } from '../common/Stores';
 import { w_background_color, w_t_graph, w_t_database } from '../common/Stores';
@@ -772,8 +772,26 @@ export default class Ancestry extends Identifiable {
 		return [needs_graphRebuild, needs_graphRelayout];
 	}
 
+	kin_of(kinship: string): Array<Ancestry> | null {
+		switch (kinship) {
+			case T_Kinship.related:	return this.thing?.uniqueAncestries_for(Predicate.isRelated) ?? null;
+			case T_Kinship.parent:	return this.thing?.uniqueAncestries_for(Predicate.contains) ?? null;
+			case T_Kinship.child:	return this.childAncestries;
+			default:				return null;
+		}
+	}
+
+	siblings_of(kinship: string): Array<Ancestry> | null {
+		switch (kinship) {
+			case T_Kinship.related:	return this.parentAncestry?.kin_of(T_Kinship.related) ?? null;
+			case T_Kinship.child:	return this.sibling_ancestries ?? null;
+			case T_Kinship.parent:	return this.thing?.ancestries ?? null;
+			default:				return null;
+		}
+	}
+
 	persistentMoveUp_forParent_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
-		const sibling_ancestries = get(w_ancestry_focus)?.thing?.uniqueAncestries_for(this.predicate);
+		const sibling_ancestries = get(w_ancestry_focus)?.kin_of(T_Kinship.parent);
 		let needs_graphRelayout = false;
 		let needs_graphRebuild = false;
 		if (!!sibling_ancestries) {
@@ -798,7 +816,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	persistentMoveUp_forBidirectional_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
-		const sibling_ancestries = get(w_ancestry_focus)?.thing?.uniqueAncestries_for(this.predicate) ?? [];
+		const sibling_ancestries = get(w_ancestry_focus)?.kin_of(T_Kinship.related) ?? [];
 		let needs_graphRelayout = false;
 		let needs_graphRebuild = false;
 		if (!!sibling_ancestries) {

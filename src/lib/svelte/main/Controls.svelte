@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { c, k, p, u, ux, w, show, Point, colors, layout, svgPaths, signals, S_Element } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Graph, T_Banner, T_Element, T_Control, T_Hierarchy, T_Preference } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Graph, T_Banner, T_Element, T_Control, T_Kinship, T_Preference } from '../../ts/common/Global_Imports';
 	import { w_t_graph, w_t_tree, w_graph_rect, w_count_resize, w_hierarchy, w_popupView_id } from '../../ts/common/Stores';
 	import { w_show_details, w_show_related, w_device_isMobile, w_thing_fontFamily } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
@@ -142,7 +142,7 @@
 								origin={Point.x(110)}
 								allow_multiple={true}
 								name='tree-type-selector'
-								titles={[T_Hierarchy.children, T_Hierarchy.parents, T_Hierarchy.related]}
+								titles={[T_Kinship.child, T_Kinship.parent, T_Kinship.related]}
 								selection_closure={(titles) => layout.handle_mode_selection('tree', titles)}/>
 						{/key}
 					{/if}

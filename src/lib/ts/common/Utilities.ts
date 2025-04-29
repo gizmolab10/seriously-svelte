@@ -54,26 +54,32 @@ export class Utilities extends Testworthy_Utilities {
 	}
 
 	strip_identifiableDuplicates(identifiables: Array<Identifiable>): Array<Identifiable> {
-		let identifiablesByHID: {[hash: number]: Identifiable} = {};
 		let stripped: Array<Identifiable> = [];
 		for (const identifiable of identifiables) {
 			const hid = identifiable.hid;
-			if ((!!hid || hid == 0) && (!identifiablesByHID[hid])) {
-				identifiablesByHID[hid] = identifiable;
-				stripped.push(identifiable);
+			if ((!!hid || hid == 0)) {
+				const index = stripped.findIndex(i => i.hid === hid);
+				if (index == -1) {
+					stripped.push(identifiable);
+				} else if (stripped[index].hid < identifiable.hid) {
+					stripped[index] = identifiable;		// assure array content is repeatable
+				}
 			}
 		}
 		return stripped;
 	}
 
 	strip_thingDuplicates_from(ancestries: Array<Ancestry>): Array<Ancestry> {
-		let ancestriesByHID: {[hash: number]: Ancestry} = {};
 		let stripped: Array<Ancestry> = [];
 		for (const ancestry of ancestries) {
-			const hid = ancestry.thing?.id.hash();
-			if ((!!hid || hid == 0) && !ancestriesByHID[hid]) {
-				ancestriesByHID[hid] = ancestry;
-				stripped.push(ancestry);
+			const hid = ancestry.thing?.hid;
+			if ((!!hid || hid == 0)) {
+				const index = stripped.findIndex(a => a.thing?.hid === hid);
+				if (index == -1) {
+					stripped.push(ancestry);
+				} else if (stripped[index].depth < ancestry.depth) {
+					stripped[index] = ancestry;		// assure array content is repeatable
+				}
 			}
 		}
 		return stripped;
@@ -176,6 +182,26 @@ export class Utilities extends Testworthy_Utilities {
 			}
 		}
 		return low;
+	}
+
+	remove_fromArray<T extends Identifiable>(item: T, array: Array<T>): Array<T> {
+		if (!item) return array;
+		return array.filter(element => element.id !== item.id);
+	}
+
+	remove_fromArray_byReference<T>(item: T, array: Array<T>): Array<T> {
+		if (!item) return array;
+		return array.filter(element => element !== item);
+	}
+
+	indexOf_inArray<T extends Identifiable>(item: T, array: Array<T>): number {
+		if (!item) return -1;
+		return array.findIndex(element => element.id === item.id);
+	}
+
+	indexOf_inArray_byReference<T>(item: T, array: Array<T>): number {
+		if (!item) return -1;
+		return array.findIndex(element => element === item);
 	}
 
 }

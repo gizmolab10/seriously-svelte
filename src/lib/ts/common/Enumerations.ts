@@ -69,10 +69,10 @@ export enum T_Alteration {
 	adding	 = 'adding',
 }
 
-export enum T_Hierarchy {
-	children = 'children',
-	parents	 = 'parents',
-	related  = 'related',
+export enum T_Kinship {
+	related	= 'related',
+	parent	= 'parent',
+	child	= 'child',
 }
 
 export enum T_Widget {

@@ -574,8 +574,8 @@ export default class DBFirebase extends DBCommon {
 		if (changed) {
 			relationship.idChild = remote.child.id;
 			relationship.idParent = remote.parent.id;
-			relationship.hidChild = remote.child.id.hash();
-			relationship.hidParent = remote.parent.id.hash();
+			relationship.hidChild = remote.child.hid;
+			relationship.hidParent = remote.parent.hid;
 			relationship.persistence.already_persisted = true;
 			relationship.kind = remote.kind;
 			relationship.order_setTo(remote.orders.map(o => o + k.halfIncrement));

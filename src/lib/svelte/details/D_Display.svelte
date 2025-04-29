@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { w_t_countDots, w_background_color } from '../../ts/common/Stores';
-	import { k, Point, T_Hierarchy } from '../../ts/common/Global_Imports';
+	import { k, Point, T_Kinship } from '../../ts/common/Global_Imports';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
 	import Color from '../kit/Color.svelte';
@@ -11,11 +11,11 @@
 	const font_size = `${k.size.smaller_font}px`;
 	const color_origin = new Point(color_left, 41);
 	const separator_font_size = `${k.size.smallest_font}px`;
-	const titles = [T_Hierarchy[T_Hierarchy.children], T_Hierarchy[T_Hierarchy.parents], T_Hierarchy[T_Hierarchy.related]];
+	const titles = [T_Kinship[T_Kinship.child], T_Kinship[T_Kinship.parent], T_Kinship[T_Kinship.related]];
 	let color = $w_background_color;
 	
 	function selection_closure(t_counts: Array<string>) {
-		$w_t_countDots = t_counts as Array<T_Hierarchy>;
+		$w_t_countDots = t_counts as Array<T_Kinship>;
 	}
 
 	function handle_colors(result: string) {

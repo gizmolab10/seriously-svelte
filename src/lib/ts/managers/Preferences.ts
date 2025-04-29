@@ -1,5 +1,5 @@
 import { w_g_paging, w_font_size, w_background_color, w_thing_fontFamily } from '../common/Stores';
-import { G_Paging, T_Graph, T_Details, T_Hierarchy, T_Preference } from '../common/Global_Imports';
+import { G_Paging, T_Graph, T_Details, T_Kinship, T_Preference } from '../common/Global_Imports';
 import { c, k, u, ux, show, debug, radial, colors, Ancestry, databases } from '../common/Global_Imports';
 import { w_t_tree, w_t_graph, w_hierarchy, w_t_details, w_t_countDots } from '../common/Stores';
 import { w_t_database, w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
@@ -151,10 +151,10 @@ export class Preferences {
 		w_font_size.set(this.read_key(T_Preference.font_size) ?? 14);
 		w_ring_rotation_angle.set(this.read_key(T_Preference.ring_angle) ?? 0);
 		w_t_graph.set(this.read_key(T_Preference.graph) ?? T_Graph.tree);
-		w_t_tree.set(this.read_key(T_Preference.tree) ?? T_Hierarchy.children);
+		w_t_tree.set(this.read_key(T_Preference.tree) ?? T_Kinship.child);
 		w_thing_fontFamily.set(this.read_key(T_Preference.font) ?? 'Times New Roman');
 		w_t_details.set(this.read_key(T_Preference.detail_types) ?? [T_Details.storage]);
-		w_t_countDots.set(this.read_key(T_Preference.countDots) ?? [T_Hierarchy.children]);
+		w_t_countDots.set(this.read_key(T_Preference.countDots) ?? [T_Kinship.child]);
 		w_background_color.set(this.read_key(T_Preference.background) ?? colors.background);
 		w_ring_rotation_radius.set(Math.max(this.read_key(T_Preference.ring_radius) ?? 0, k.radius.ring_center));
 		this.reactivity_subscribe()
