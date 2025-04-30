@@ -93,19 +93,20 @@ export default class G_RadialGraph {
 
 	private apportion_widgets_amongClusters() {
 		let remaining_toShow = Math.ceil((get(w_ring_rotation_radius) ** 1.27) / k.height.row);
-		if (this.total_ancestries > remaining_toShow) {
+		// Limit show so arc spread never exceeds 180 degrees
+		const widget_arc_length = 42;
+		const angle_per_widget = widget_arc_length / get(w_ring_rotation_radius);
+		const maximum_portion = Math.floor(Math.PI / angle_per_widget) + 1;
+		if (this.total_ancestries > remaining_toShow || this.total_ancestries > maximum_portion) {
 			let clusters = this.g_clusters_forPaging;
 			clusters.sort((a, b) => a.total_widgets - b.total_widgets);		// sort clusters by widgets count, smallest first
 			while (clusters.length > 0 && remaining_toShow > 0) {
-				const portion = Math.ceil(remaining_toShow / clusters.length);			// divide total by three to get the portion
+				const portion = Math.min(Math.ceil(remaining_toShow / clusters.length), maximum_portion);
 				const cluster = clusters[0];
-				let show = portion;						// remove these unless...
-				if (cluster.total_widgets < portion) {
-					show = cluster.total_widgets;		// show all its widgets and subtract from remaining
-				}
+				const show = Math.min(portion, cluster.total_widgets);
 				remaining_toShow -= show;
 				cluster.widgets_shown = show;
-				clusters.shift();						// Remove this cluster from consideration
+				clusters.shift();
 			}
 		}
 		for (const cluster of this.g_clusters_forPaging) {
