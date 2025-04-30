@@ -10,22 +10,21 @@
 	import Radial_ArcSlider from './Radial_ArcSlider.svelte';
 	import { onMount } from 'svelte';
 	const ring_width = k.thickness.ring_rotation;
-	const middle_radius = $w_ring_rotation_radius + k.thickness.ring_rotation;
-	const middle_diameter = middle_radius * 2;
-	const outer_radius = middle_radius + ring_width;
-	const outer_diameter = outer_radius * 2;
 	const name = 'rings';
 	const mouse_timer = ux.mouse_timer_forName(name);	// persist across destroy/recreate
-	const viewBox = `${-ring_width}, ${-ring_width}, ${outer_diameter}, ${outer_diameter}`;
 	let color = $w_ancestry_focus?.thing?.color ?? colors.default_forThings;
 	let mouse_up_count = $w_count_mouse_up;
 	let cursor = k.cursor_default;
 	let ring_reattachments = 0;
-	let time = 0;
+	let last_action = 0;
 
-	$: reticle_svgPath = debug.reticle ? svgPaths.t_cross(middle_radius * 2, -2) : '';
-	$: rotate_svgPath  = svgPaths.annulus(Point.square($w_ring_rotation_radius), middle_radius, ring_width, Point.square(ring_width));
+	$: middle_radius   = $w_ring_rotation_radius + k.thickness.ring_rotation;
+	$: outer_radius	   = middle_radius + ring_width;
+	$: outer_diameter  = outer_radius * 2;
+	$: viewBox		   = `${-ring_width}, ${-ring_width}, ${outer_diameter}, ${outer_diameter}`;
+	$: reticle_svgPath = debug.reticle ? svgPaths.t_cross(outer_diameter, -2) : '';
 	$: resize_svgPath  = svgPaths.circle(Point.square($w_ring_rotation_radius).offsetEquallyBy(44), $w_ring_rotation_radius - 0.3, true);
+	$: rotate_svgPath  = svgPaths.annulus(Point.square($w_ring_rotation_radius), middle_radius, ring_width, Point.square(ring_width));
 	$: resize_fill	   = (radial.s_ring_resizing.isHighlighted || radial.s_ring_resizing.isActive) ? colors.opacitize(color, radial.s_ring_resizing.fill_opacity) : 'transparent';
 	$: rotate_fill	   = (radial.s_ring_rotation.isHighlighted && !radial.s_ring_rotation.isActive) ? colors.opacitize(color, radial.s_ring_rotation.fill_opacity * (radial.s_ring_resizing.isActive ? 0 : 1)) : 'transparent';
 	
@@ -100,7 +99,7 @@
 			const mouse_angle = mouse_vector.angle;
 			const rotation_state = radial.s_ring_rotation;
 			const resizing_state = radial.s_ring_resizing;
-			function enoughTimeHasPassed(duration: number) { return (now - time) > duration; }		// must not overload DOM refresh
+			function enoughTimeHasPassed(duration: number) { return (now - last_action) > duration; }		// must not overload DOM refresh
 
 			// check if one of the three ring zones is active (already dragging)
 
@@ -115,14 +114,14 @@
 				detect_hovering();
 				cursor = radial.s_ring_resizing.cursor;
 				if (Math.abs(delta) > 1 && enoughTimeHasPassed(500)) {				// granularity of 1 pixel & 1 tenth second
-					time = now;
+					last_action = now;
 					debug.log_radial(` resize  D ${distance.asInt()}  R ${radius.asInt()}  + ${delta.toFixed(1)}`);
 					$w_ring_rotation_radius = radius;
 					layout.grand_layout();
 				}
 			} else if (rotation_state.isActive) {								// rotate clusters
 				if (!signals.signal_isInFlight && enoughTimeHasPassed(75)) {		// 1 tenth second
-					time = now;
+					last_action = now;
 					$w_ring_rotation_angle = mouse_angle.add_angle_normalized(-rotation_state.basis_angle);
 					debug.log_radial(` rotate ${$w_ring_rotation_angle.asDegrees()}`);
 					rotation_state.active_angle = mouse_angle;
