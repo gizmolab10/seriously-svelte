@@ -151,6 +151,11 @@ export default class Thing extends Persistable {
 
 	static readonly ANCESTRIES: unique symbol;
 
+	get ancestry(): Ancestry | null {
+		const ancestries = get(w_hierarchy).ancestries_forThing(this);
+		return ancestries.length > 0 ? ancestries[0] : null;
+	}
+
 	uniqueAncestries_for(predicate: Predicate | null): Array<Ancestry> {
 		let ancestries: Array<Ancestry> = [];
 		if (!!predicate){

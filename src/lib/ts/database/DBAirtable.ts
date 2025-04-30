@@ -176,7 +176,7 @@ export default class DBAirtable extends DBCommon {
 				const order = record.fields.order as number;
 				const parents = record.fields.parent as (Array<string>);
 				const children = record.fields.child as (Array<string>);
-				const kind = record.fields.kind as T_Predicate;
+				const kind = record.fields.kindPredicate as T_Predicate;
 				this.hierarchy.relationship_remember_runtimeCreateUnique(k.empty, id, kind, parents[0], children[0], order, 0, T_Create.isFromPersistent);
 			}
 		} catch (error) {
@@ -236,7 +236,6 @@ export default class DBAirtable extends DBCommon {
 	async access_fetch_all() {
 		try {
 			const records = await this.access_table.select().all()
-
 			for (const record of records) {
 				const id = record.id as string; // do not yet need this
 				const kind = record.fields.kind as string;

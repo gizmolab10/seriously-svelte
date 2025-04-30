@@ -13,6 +13,7 @@ export default class Relationship extends Persistable {
 	idParent: string;
 	idChild: string;
 	orders = [0, 0];
+	order = 0;
 
 	constructor(idBase: string, id: string, kind: T_Predicate, idParent: string, idChild: string, order = 0, parentOrder: number = 0, already_persisted: boolean = false) {
 		super(databases.db_now.t_database, idBase, T_Persistable.relationships, id, already_persisted);
@@ -21,6 +22,7 @@ export default class Relationship extends Persistable {
 		this.hidChild = idChild.hash();
 		this.idParent = idParent;
 		this.idChild = idChild;
+		this.order = order;				// temporary backwards compatibility
 		this.kind = kind;
 	}
 
@@ -28,7 +30,7 @@ export default class Relationship extends Persistable {
 	get parent(): Thing | null { return this.thing(false); }
 	get isValid(): boolean { return !!this.kind && !!this.parent && !!this.child; }
 	get predicate(): Predicate | null { return get(w_hierarchy).predicate_forKind(this.kind); }
-	get fields(): Airtable.FieldSet { return { kind: this.kind, parent: [this.idParent], child: [this.idChild], orders: this.orders }; }
+	get fields(): Airtable.FieldSet { return { kind: this.kind, parent: [this.idParent], child: [this.idChild], order: this.order }; }
 
 	get verbose(): string {
 		const persisted = this.persistence.already_persisted ? 'STORED' : 'DIRTY';
@@ -51,7 +53,7 @@ export default class Relationship extends Persistable {
 
 	orders_setTo(newOrders: Array<number>, persist: boolean = false) {
 		this.order_setTo(newOrders[T_Order.child]);	// don't persist or signal, yet
-		this.order_setTo(newOrders[T_Order.other], T_Order.other, persist, true);
+		this.order_setTo(newOrders[T_Order.other], T_Order.other, persist);
 	}
 
 	thing(child: boolean): Thing | null {

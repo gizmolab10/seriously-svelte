@@ -17,19 +17,30 @@ export class Testworthy_Utilities {
 	subtract_arrayFrom(a: Array<any>, b: Array<any>):		  Array<any> { return b.filter(c => a.filter(d => c != d)); }
 	uniquely_concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return this.strip_invalid(this.concatenateArrays(a, b)); }
 	strip_invalid(array: Array<any>):						  Array<any> { return this.strip_identifiableDuplicates(this.strip_falsies(array)); }
+	private orderedKeysCache = new WeakMap<object, string[]>();
 
-	copyObject(obj: any): any {
-		const copiedObject = Object.create(Object.getPrototypeOf(obj));
-		Object.assign(copiedObject, obj);
-		return copiedObject;
-	}
-
-	valueFrom_atIndex<T extends Record<string, number>>(object: T, index: number): number {
-		const propNames = Object.keys(object) as Array<keyof T>;
+	// remove item from a dictionary (with string keys and number values) at the index
+	valueFrom_atIndex<T extends Record<string, number>>(dictionary: T, index: number): number {
+		const propNames = Object.keys(dictionary) as Array<keyof T>;
 		if (index < 0 || index >= propNames.length) {
 			throw new Error(`Index ${index} is out of bounds`);
 		}
-		return object[propNames[index]];
+		return dictionary[propNames[index]];
+	}
+
+
+	valueFrom_atIndex_usingMap<T extends Record<string, number>>(dictionary: T, index: number): number {
+		// Get or create the ordered keys for this dictionary
+		let orderedKeys = this.orderedKeysCache.get(dictionary);
+		if (!orderedKeys) {
+			orderedKeys = Object.keys(dictionary);
+			this.orderedKeysCache.set(dictionary, orderedKeys);
+		}
+
+		if (index < 0 || index >= orderedKeys.length) {
+			throw new Error(`Index ${index} is out of bounds`);
+		}
+		return dictionary[orderedKeys[index] as keyof T];
 	}
 
 	remove<T>(from: Array<T>, item: T): Array<T> {
@@ -50,6 +61,12 @@ export class Testworthy_Utilities {
 			}
 		}
 		return result;
+	}
+
+	copyObject(obj: any): any {
+		const copiedObject = Object.create(Object.getPrototypeOf(obj));
+		Object.assign(copiedObject, obj);
+		return copiedObject;
 	}
 
 	strip_identifiableDuplicates(identifiables: Array<Identifiable>): Array<Identifiable> {

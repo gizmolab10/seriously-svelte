@@ -36,13 +36,6 @@
 		});
 		return () => { handle_reposition.disconnect(); };
 	});
-
-	function handle_mouse_state(s_mouse: S_Mouse): boolean { return true; }				// only for wrappers
-
-	function handle_isHit(): boolean {
-		const zone = radial.ring_zone_atMouseLocation;
-		return [T_RingZone.resize, T_RingZone.rotate].includes(zone);
-	}
 		
 	$: {
 		if (!!$w_ancestry_focus.thing && $w_ancestry_focus.thing.id == $w_thing_color?.split(k.separator.generic)[0]) {
@@ -55,6 +48,13 @@
 			mouse_up_count = $w_count_mouse_up;
 			s_reset();			// mouse up ... end all (rotation, resizing, paging)
 		}
+	}
+
+	function handle_mouse_state(s_mouse: S_Mouse): boolean { return true; }				// only for wrappers
+
+	function handle_isHit(): boolean {
+		const zone = radial.ring_zone_atMouseLocation;
+		return [T_RingZone.resize, T_RingZone.rotate].includes(zone);
 	}
 
 	function s_reset() {
@@ -100,7 +100,7 @@
 			const mouse_angle = mouse_vector.angle;
 			const rotation_state = radial.s_ring_rotation;
 			const resizing_state = radial.s_ring_resizing;
-			const enoughTimeHasPassed = (now - time) > 75;		// must not overload DOM refresh
+			function enoughTimeHasPassed(duration: number) { return (now - time) > duration; }		// must not overload DOM refresh
 
 			// check if one of the three ring zones is active (already dragging)
 
@@ -114,14 +114,14 @@
 				resizing_state.active_angle = mouse_angle + Angle.quarter;
 				detect_hovering();
 				cursor = radial.s_ring_resizing.cursor;
-				if (Math.abs(delta) > 1 && enoughTimeHasPassed) {				// granularity of 1 pixel & 1 tenth second
+				if (Math.abs(delta) > 1 && enoughTimeHasPassed(500)) {				// granularity of 1 pixel & 1 tenth second
 					time = now;
 					debug.log_radial(` resize  D ${distance.asInt()}  R ${radius.asInt()}  + ${delta.toFixed(1)}`);
 					$w_ring_rotation_radius = radius;
 					layout.grand_layout();
 				}
 			} else if (rotation_state.isActive) {								// rotate clusters
-				if (!signals.signal_isInFlight && enoughTimeHasPassed) {		// 1 tenth second
+				if (!signals.signal_isInFlight && enoughTimeHasPassed(75)) {		// 1 tenth second
 					time = now;
 					$w_ring_rotation_angle = mouse_angle.add_angle_normalized(-rotation_state.basis_angle);
 					debug.log_radial(` rotate ${$w_ring_rotation_angle.asDegrees()}`);

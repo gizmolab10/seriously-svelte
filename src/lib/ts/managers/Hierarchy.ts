@@ -16,6 +16,7 @@ export class Hierarchy {
 	private predicate_byDirection: { [direction: number]: Array<Predicate> } = {};
 	private relationships_byKind: { [kind: string]: Array<Relationship> } = {};
 	private ancestry_byKind_andHID: { [kind: string]: Ancestries_ByHID } = {};					// for uniqueness
+	private ancestries_byThingHID:{ [hid: Integer]: Array<Ancestry> } = {};
 	private traits_byOwnerHID: { [ownerHID: Integer]: Array<Trait> } = {};
 	private relationship_byHID: { [hid: Integer]: Relationship } = {};
 	private predicate_byKind: { [kind: string]: Predicate } = {};
@@ -295,7 +296,7 @@ export class Hierarchy {
 		const thing = ancestry.thing;
 		if (!!thing && parent && parentAncestry) {
 			const order = ancestry.order + (below ? k.halfIncrement : -k.halfIncrement);
-			const child = this.thing_runtimeCreate(thing.idBase, Identifiable.newID(), k.title.line, parent.color, T_Thing.generic);
+			const child = this.thing_runtimeCreate(thing.idBase, Identifiable.newID(), k.title.separator, parent.color, T_Thing.generic);
 			await this.ancestry_edit_persistentAddAsChild(parentAncestry, child, order, false);
 		}
 	}
@@ -586,8 +587,9 @@ export class Hierarchy {
 		for (const thing of this.things) {
 			if (!thing.isRoot && !this.relationship_whereHID_isChild(thing.hid) && thing.idBase == idBase && !!this.idRoot) {			// add orphaned things to root
 				const lost_and_found = await this.thing_lost_and_found_persistentCreateUnique();
+				const parentOrder = lost_and_found.ancestry?.childAncestries?.length ?? 0;
 				await this.relationship_remember_persistentCreateUnique(idBase, Identifiable.newID(),
-					T_Predicate.contains, lost_and_found.id, thing.id, 0, T_Create.getPersistentID);
+					T_Predicate.contains, lost_and_found.id, thing.id, 0, parentOrder, T_Create.getPersistentID);
 			}
 		}
 	}
@@ -703,12 +705,12 @@ export class Hierarchy {
 	}
 
 	async relationship_remember_persistentCreateUnique(idBase: string, idRelationship: string, kind: T_Predicate, idParent: string, idChild: string,
-		order: number, creationOptions: T_Create = T_Create.isFromPersistent): Promise<any> {
+		order: number, parentOrder: number = 0, creationOptions: T_Create = T_Create.isFromPersistent): Promise<any> {
 		let relationship = this.relationship_forPredicateKind_parent_child(kind, idParent.hash(), idChild.hash());
 		if (!!relationship) {
-			relationship.order_setTo(order, true);
+			relationship.order_setTo(order, T_Order.child, true);
 		} else {
-			relationship = new Relationship(idBase, idRelationship, kind, idParent, idChild, order, creationOptions == T_Create.isFromPersistent);
+			relationship = new Relationship(idBase, idRelationship, kind, idParent, idChild, order, parentOrder, creationOptions == T_Create.isFromPersistent);
 			await this.db.relationship_remember_persistentCreate(relationship);
 		}
 		return relationship;
@@ -799,6 +801,7 @@ export class Hierarchy {
 
 	ancestries_forget_all() {
 		this.ancestry_byHID = {};
+		this.ancestries_byThingHID = {};
 		this.ancestry_byKind_andHID = {};
 	}
 
@@ -840,6 +843,7 @@ export class Hierarchy {
 	static readonly ANCESTRY: unique symbol;
 	
 	ancestry_forHID(hid: Integer): Ancestry | null { return this.ancestry_byHID[hid] ?? null; }
+	ancestries_forThing(thing: Thing): Array<Ancestry> { return this.ancestries_byThingHID[thing.hid] ?? []; }	
 
 	ancestry_remember(ancestry: Ancestry) {
 		const hid = ancestry.hid;
@@ -847,8 +851,9 @@ export class Hierarchy {
 		this.ancestry_byHID[hid] = ancestry;
 		dict[hid] = ancestry;
 		this.ancestry_byKind_andHID[ancestry.kind] = dict;
+		this.ancestry_remember_forThingOfAncestry(ancestry);
 	}
-
+	
 	ancestry_forget(ancestry: Ancestry | null) {
 		if (!!ancestry) {
 			const hid = ancestry.hid;
@@ -856,6 +861,32 @@ export class Hierarchy {
 			delete this.ancestry_byHID[hid];
 			delete dict[hid];
 			this.ancestry_byKind_andHID[ancestry.kind] = dict;
+			this.ancestry_forget_forThingOfAncestry(ancestry);
+		}
+	}
+
+	ancestry_remember_forThingOfAncestry(ancestry: Ancestry) {
+		const thing = ancestry.thing;
+		if (!!thing) {
+			let ancestries = this.ancestries_byThingHID[thing.hid] ?? [];
+			if (!ancestries.includes(ancestry)) {
+				ancestries.push(ancestry);
+				this.ancestries_byThingHID[thing.hid] = ancestries;
+			}
+		}
+	}
+
+	ancestry_forget_forThingOfAncestry(ancestry: Ancestry) {
+		const thing = ancestry.thing;
+		if (!!thing) {
+			let ancestries = this.ancestries_byThingHID[thing.hid];
+			if (!!ancestries) {
+				const index = ancestries.indexOf(ancestry);
+				if (index !== -1) {
+					ancestries.splice(index, 1);
+					this.ancestries_byThingHID[thing.hid] = ancestries;
+				}
+			}
 		}
 	}
 
@@ -1002,7 +1033,8 @@ export class Hierarchy {
 			if (!child.persistence.already_persisted) {
 				await this.db.thing_remember_persistentCreate(child);				// for everything below, need to await child.id fetched from databases
 			}
-			const relationship = await this.relationship_remember_persistentCreateUnique(idBase, Identifiable.newID(), kind, parent.idBridging, child.id, 0, T_Create.getPersistentID);
+			const parentOrder = ancestry.childAncestries?.length ?? 0;
+			const relationship = await this.relationship_remember_persistentCreateUnique(idBase, Identifiable.newID(), kind, parent.idBridging, child.id, 0, parentOrder, T_Create.getPersistentID);
 			const childAncestry = ancestry.uniquelyAppend_relationshipID(relationship.id);
 			u.ancestries_orders_normalize(ancestry.childAncestries, true);			// write new order values for relationships
 			return childAncestry;
@@ -1056,6 +1088,7 @@ export class Hierarchy {
 		}
 	}
 
+	// won't work for relateds
 	ancestry_rebuild_persistentRelocateRight(ancestry: Ancestry, RIGHT: boolean, EXTREME: boolean) {
 		const parentAncestry = RIGHT ? ancestry.ancestry_ofNextSibling(false) : ancestry.stripBack(2);
 		const parentThing = parentAncestry?.thing;
@@ -1066,11 +1099,12 @@ export class Hierarchy {
 			} else {
 				const relationship = ancestry.relationship;
 				if (!!relationship) {
-					const order = RIGHT ? relationship.order : 0;
+					// move ancestry to a different parent
+					const order = RIGHT ? relationship.orders[T_Order.child] : 0;
 					this.relationship_forget(relationship);
 					relationship.idParent = parentThing.id;			// point at parent into which thing is being relocated
 					relationship.hidParent = parentThing.hid;
-					relationship.order_setTo(order + k.halfIncrement, true);
+					relationship.order_setTo(order + k.halfIncrement, T_Order.child, true);
 					this.relationship_remember(relationship);
 					debug.log_move(`relocate ${relationship.description}`)
 					const childAncestry = parentAncestry.uniquelyAppend_relationshipID(relationship!.id);
