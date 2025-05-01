@@ -1,6 +1,8 @@
 import { k, Rect, Point, Angle, svgPaths } from '../common/Global_Imports';
 import { w_ring_rotation_radius } from '../common/Stores';
 import { get } from 'svelte/store';
+// import * as d3 from 'd3';
+// import Two from 'two.js';
 
 // create svg paths for generic arcs
 // arc radii are smaller than ring radii
@@ -118,6 +120,31 @@ export default class G_ArcSlider {
 		];
 		return paths.join(k.space);
 	}
+
+	// get two_svgPathFor_arcSlider(): string {
+	// 	const width = get(w_ring_rotation_radius) + k.radial_widget_inset;
+	// 	const height = width;
+	// 	const two = new Two({ width, height });
+	// 	const arc = two.makeArcSegment(
+	// 		this.clusters_center.x,
+	// 		this.clusters_center.y,
+	// 		this.inside_arc_radius,
+	// 		this.outside_arc_radius,
+	// 		this.start_angle,
+	// 		this.end_angle
+	// 	);
+	// 	return '';
+	// }
+
+	// get d3_svgPathFor_arcSlider(): string {
+	// 	const path = d3.arc()({
+	// 		innerRadius: this.inside_arc_radius,
+	// 		outerRadius: this.outside_arc_radius,
+	// 		startAngle: this.start_angle,
+	// 		endAngle: this.end_angle
+	// 	});
+	// 	return path || '';
+	// }
 
 	svgPathFor_start(start_angle: number, radius: number) {
 		return svgPaths.startOutAt(this.clusters_center, radius, start_angle);
