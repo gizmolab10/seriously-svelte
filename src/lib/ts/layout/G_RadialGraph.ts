@@ -90,8 +90,8 @@ export default class G_RadialGraph {
 	}
 
 	private apportion_widgets_amongClusters() {
-		let remaining_toShow = Math.ceil((get(w_ring_rotation_radius) ** 1.27) / k.height.row);
-		const angle_per_widget = 50 / get(w_ring_rotation_radius);			// Limit show so arc spread never exceeds 180°
+		let remaining_toShow = Math.ceil((get(w_ring_rotation_radius) ** 1.5) / k.height.row);
+		const angle_per_widget = 40 / get(w_ring_rotation_radius);			// Limit show so arc spread never exceeds 180°
 		const maximum_portion = Math.floor(Math.PI / angle_per_widget);
 		if (this.total_ancestries > remaining_toShow || this.total_ancestries > maximum_portion) {
 			let clusters = this.g_clusters_forPaging;

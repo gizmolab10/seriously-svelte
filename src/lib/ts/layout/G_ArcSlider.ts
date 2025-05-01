@@ -110,7 +110,10 @@ export default class G_ArcSlider {
 
 	get svgPathFor_arcSlider(): string {
 		const start = this.start_angle;
-		const end = this.end_angle;
+		let end = this.end_angle;
+		while (end < start) {
+			end += Math.PI * 2;
+		}
 		const paths = [
 			this.svgPathFor_start(start, this.outside_arc_radius),
 			this.svgPathFor_arcSliderEdge(end, this.outside_arc_radius, false),

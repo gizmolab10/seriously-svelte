@@ -1,11 +1,17 @@
 <script lang="ts">
     import { Point } from './src/lib/ts/common/Geometry';
+    import './src/lib/ts/common/Extensions';
+
     // Parameters
-    let startAngle = Math.PI / -3;
-    let endAngle = Math.PI / 1.2;
+    let startAngle = Math.PI * 1.8;
+    let endAngle = startAngle - Math.PI * 0.2;
     let innerRadius = 100;
     let outerRadius = 140;
     let thickness = (outerRadius - innerRadius);
+
+    while (endAngle < startAngle) {
+        endAngle += Math.PI * 2;
+    }
 
     // Points using Point.polarTo
     $: outerStart = Point.polarTo(startAngle, outerRadius);

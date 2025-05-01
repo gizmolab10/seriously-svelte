@@ -8,6 +8,7 @@
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Angled_Text from '../kit/Angled_Text.svelte';
 	import Gull_Wings from '../kit/Gull_Wings.svelte';
+	import Arc from '../kit/Arc.svelte';
 	export let color = 'red';
 	export let g_cluster!: G_Cluster;
 	const offset = k.radial_widget_inset;

@@ -37,7 +37,8 @@ export class Point {
 	yMultipliedBy(multiplier: number): Point { return new Point(this.x, this.y * multiplier) }
 	dividedBy(divisor: number):		   Point { return new Point(this.x / divisor, this.y / divisor) }
 	multipliedBy(multiplier: number):  Point { return new Point(this.x * multiplier, this.y * multiplier) }
-	static polarTo(phi: number, r: number)   { return new Point(Math.cos(phi - Math.PI / 2) * r, Math.sin(phi - Math.PI / 2) * r); }
+	static polarToo(phi: number, r: number)  { return new Point(Math.cos(phi) * r, Math.sin(phi) * r); }
+	static polarTo(phi: number, r: number)   { return Point.x(r).rotate_by(-phi); }
 	static fromPolar(r: number, phi: number) { return Point.x(r).rotate_by(phi); }
 	static fromDOMRect(rect: DOMRect): Point { return new Point(rect.left, rect.top); }
 	static square(length: number):	   Point { return new Point(length, length); }
