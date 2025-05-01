@@ -1,46 +1,41 @@
 <script lang="ts">
-    import * as d3 from 'd3';
-
-    // Restore previous filled arc segment (donut slice) example
-    let startAngle = 0;
-    let endAngle = Math.PI / 3; // 60 degrees
-    let innerRadius = 60;
+    import { Point } from './src/lib/ts/common/Geometry';
+    // Parameters
+    let startAngle = Math.PI / -3;
+    let endAngle = Math.PI / 1.2;
+    let innerRadius = 100;
     let outerRadius = 140;
-    let thickness = (outerRadius - innerRadius) / 2;
-    let circleRadius = thickness;
+    let thickness = (outerRadius - innerRadius);
 
-    $: rawPath = d3.arc()({
-        innerRadius,
-        outerRadius,
-        startAngle,
-        endAngle
-    }) || '';
+    // Points using Point.polarTo
+    $: outerStart = Point.polarTo(startAngle, outerRadius);
+    $: outerEnd = Point.polarTo(endAngle, outerRadius);
+    $: innerEnd = Point.polarTo(endAngle, innerRadius);
+    $: innerStart = Point.polarTo(startAngle, innerRadius);
 
-    // Calculate the center points for the circles at the arc ends (on the arc's midline)
-    function polarToCartesian(angle, radius) {
-        return {
-            x: Math.cos(angle - Math.PI / 2) * radius,
-            y: Math.sin(angle - Math.PI / 2) * radius
-        };
-    }
+    // Large arc flag
+    $: arcSweep = (endAngle - startAngle) <= Math.PI ? 0 : 1;
 
-    $: midRadius = (innerRadius + outerRadius) / 2;
-    $: start = polarToCartesian(startAngle, midRadius);
-    $: end = polarToCartesian(endAngle, midRadius);
+    // Path for the bean
+    $: beanPath = `
+        M ${outerStart.x} ${outerStart.y}
+        A ${outerRadius} ${outerRadius} 0 ${arcSweep} 1 ${outerEnd.x} ${outerEnd.y}
+        A ${thickness/2} ${thickness/2} 0 0 1 ${innerEnd.x} ${innerEnd.y}
+        A ${innerRadius} ${innerRadius} 0 ${arcSweep} 0 ${innerStart.x} ${innerStart.y}
+        A ${thickness/2} ${thickness/2} 0 0 1 ${outerStart.x} ${outerStart.y}
+        Z
+    `;
 </script>
 
 <main>
     <svg width="400" height="400" viewBox="0 0 400 400">
         <g transform="translate(200,200)">
             <path 
-                d={rawPath}
+                d={beanPath}
                 fill="#b3cbe6"
                 stroke="#99b8d8"
                 stroke-width="5"
-                stroke-linecap="round"
             />
-            <circle cx={start.x} cy={start.y} r={circleRadius} fill="#b3cbe6" stroke="#99b8d8" stroke-width="5" />
-            <circle cx={end.x} cy={end.y} r={circleRadius} fill="#b3cbe6" stroke="#99b8d8" stroke-width="5" />
             <circle cx="0" cy="0" r="12" fill="#9b6b8e" />
         </g>
     </svg>
