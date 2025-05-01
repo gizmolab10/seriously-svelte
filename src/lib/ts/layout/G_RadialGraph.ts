@@ -1,4 +1,4 @@
-import { k, u, radial, Ancestry, Predicate } from '../common/Global_Imports';
+import { k, u, radial, Ancestry, Predicate, T_Kinship } from '../common/Global_Imports';
 import { w_hierarchy, w_g_paging, w_ancestry_focus } from '../common/Stores';
 import { G_Widget, G_Cluster, G_Paging } from '../common/Global_Imports';
 import { w_ring_rotation_radius } from '../common/Stores';
@@ -11,8 +11,11 @@ export default class G_RadialGraph {
 	ancestry_focus!: Ancestry;
 
 	constructor() {
-		w_g_paging.subscribe((state: G_Paging) => {
-			this.layout_forPaging_state(state);
+		w_g_paging.subscribe((g_paging: G_Paging | null) => {
+			if (!!g_paging) {
+				this.layout_forPoints_toChildren(g_paging.points_toChildren);
+				this.apportion_widgets_amongClusters();
+			}
 		});
 	}
 
@@ -29,33 +32,9 @@ export default class G_RadialGraph {
 
 	grand_layout_radial() {
 		this.destructor();
-		const focus_ancestry = get(w_ancestry_focus);
-		if (!!focus_ancestry) {
-			const focus_thing = focus_ancestry.thing;
-			let childAncestries = focus_ancestry.childAncestries;
-			this.assignAncestries_toClusterFor(childAncestries, Predicate.contains, true);
-			if (!!focus_thing) {
-				for (const predicate of get(w_hierarchy).predicates) {
-					const ancestries = focus_thing.uniqueAncestries_for(predicate);
-					this.assignAncestries_toClusterFor(ancestries, predicate, false);
-				}
-			}
-			this.apportion_widgets_amongClusters();
-		}
-	}
-
-	update_radial_positions() {
-		// Only update positions of existing elements without rebuilding structure
-		for (const cluster of Object.values(this.g_parent_clusters)) {
-			if (cluster.widgets_shown > 0) {
-				cluster.layout_widgets_inCluster();
-			}
-		}
-		for (const cluster of Object.values(this.g_child_clusters)) {
-			if (cluster.widgets_shown > 0) {
-				cluster.layout_widgets_inCluster();
-			}
-		}
+		this.layout_forPoints_toChildren(true);
+		this.layout_forPoints_toChildren(false);
+		this.apportion_widgets_amongClusters();
 	}
 
 	get g_clusters(): Array<G_Cluster> {
@@ -91,12 +70,29 @@ export default class G_RadialGraph {
 		return array;
 	}
 
+	g_paging_forPredicate_toChildren(predicate: Predicate, points_toChildren: boolean): G_Paging | null {
+		const s_thing_pages = radial.s_thing_pages_forThingID(get(w_ancestry_focus)?.thing?.id);
+		return s_thing_pages?.g_paging_forPredicate_toChildren(predicate, points_toChildren) ?? null;
+	}
+
+	update_radial_positions() {
+		// Only update positions of existing elements without rebuilding structure
+		for (const cluster of Object.values(this.g_parent_clusters)) {
+			if (cluster.widgets_shown > 0) {
+				cluster.layout_widgets_inCluster();
+			}
+		}
+		for (const cluster of Object.values(this.g_child_clusters)) {
+			if (cluster.widgets_shown > 0) {
+				cluster.layout_widgets_inCluster();
+			}
+		}
+	}
+
 	private apportion_widgets_amongClusters() {
 		let remaining_toShow = Math.ceil((get(w_ring_rotation_radius) ** 1.27) / k.height.row);
-		// Limit show so arc spread never exceeds 180 degrees
-		const widget_arc_length = 42;
-		const angle_per_widget = widget_arc_length / get(w_ring_rotation_radius);
-		const maximum_portion = Math.floor(Math.PI / angle_per_widget) + 1;
+		const angle_per_widget = 50 / get(w_ring_rotation_radius);			// Limit show so arc spread never exceeds 180°
+		const maximum_portion = Math.floor(Math.PI / angle_per_widget);
 		if (this.total_ancestries > remaining_toShow || this.total_ancestries > maximum_portion) {
 			let clusters = this.g_clusters_forPaging;
 			clusters.sort((a, b) => a.total_widgets - b.total_widgets);		// sort clusters by widgets count, smallest first
@@ -114,13 +110,8 @@ export default class G_RadialGraph {
 		}
 	}
 
-	g_paging_forPredicate_toChildren(predicate: Predicate, points_toChildren: boolean): G_Paging | null {
-		const s_thing_pages = radial.s_thing_pages_forThingID(get(w_ancestry_focus)?.thing?.id);
-		return s_thing_pages?.g_paging_forPredicate_toChildren(predicate, points_toChildren) ?? null;
-	}
-
-	private assignAncestries_toClusterFor(ancestries: Array<Ancestry>, predicate: Predicate | null, points_toChildren: boolean) {
-		if (!!predicate) {
+	private assignAncestries_toClusterFor(ancestries: Array<Ancestry> | null, predicate: Predicate | null, points_toChildren: boolean) {
+		if (!!predicate && !!ancestries) {
 			const g_cluster = this.g_cluster_forPredicate_toChild(predicate, points_toChildren);
 			g_cluster.setAncestries(ancestries);
 		}
@@ -136,22 +127,18 @@ export default class G_RadialGraph {
 		return g_cluster;
 	}
 
-	private layout_forPaging_state(g_paging: G_Paging) {
+	private layout_forPoints_toChildren(points_toChildren: boolean) {
 		const focus_ancestry = get(w_ancestry_focus);
 		if (!!focus_ancestry) {
-			if (!!g_paging && g_paging.points_toChildren) {
-				let childAncestries = focus_ancestry.childAncestries;
+			if (points_toChildren) {
+				let childAncestries = focus_ancestry.kin_of(T_Kinship.child);
 				this.assignAncestries_toClusterFor(childAncestries, Predicate.contains, true);
 			} else {
-				const focus_thing = focus_ancestry.thing;
-				if (!!focus_thing) {
-					for (const predicate of get(w_hierarchy).predicates) {
-						const ancestries = focus_thing.uniqueAncestries_for(predicate) ?? [];
-						this.assignAncestries_toClusterFor(ancestries, predicate, false);
-					}
+				for (const predicate of get(w_hierarchy).predicates) {
+					const ancestries = focus_ancestry.kin_of(predicate.kinship(false));
+					this.assignAncestries_toClusterFor(ancestries, predicate, false);
 				}
 			}
-			this.apportion_widgets_amongClusters();
 		}	
 	}
 

@@ -325,6 +325,30 @@ export default class Ancestry extends Identifiable {
 		return get(w_background_color);
 	}
 
+	kin_of(kinship: string | null): Array<Ancestry> | null {
+		if (!!kinship) {
+			switch (kinship) {
+				case T_Kinship.related:	return this.thing?.uniqueAncestries_for(Predicate.isRelated) ?? null;
+				case T_Kinship.parent:	return this.thing?.uniqueAncestries_for(Predicate.contains) ?? null;
+				case T_Kinship.child:	return this.childAncestries;
+				default:				return null;
+			}
+		}
+		return null;
+	}
+
+	siblings_of(kinship: string | null): Array<Ancestry> | null {
+		if (!!kinship) {
+			switch (kinship) {
+				case T_Kinship.related:	return this.parentAncestry?.kin_of(T_Kinship.related) ?? null;
+				case T_Kinship.child:	return this.sibling_ancestries ?? null;
+				case T_Kinship.parent:	return this.thing?.ancestries ?? null;
+				default:				return null;
+			}
+		}
+		return null;
+	}
+
 	progeny_count(visited: Array<number> = []): number {
 		let sum = 0;
 		const hid = this.thing?.hid;
@@ -770,24 +794,6 @@ export default class Ancestry extends Identifiable {
 			}
 		}
 		return [needs_graphRebuild, needs_graphRelayout];
-	}
-
-	kin_of(kinship: string): Array<Ancestry> | null {
-		switch (kinship) {
-			case T_Kinship.related:	return this.thing?.uniqueAncestries_for(Predicate.isRelated) ?? null;
-			case T_Kinship.parent:	return this.thing?.uniqueAncestries_for(Predicate.contains) ?? null;
-			case T_Kinship.child:	return this.childAncestries;
-			default:				return null;
-		}
-	}
-
-	siblings_of(kinship: string): Array<Ancestry> | null {
-		switch (kinship) {
-			case T_Kinship.related:	return this.parentAncestry?.kin_of(T_Kinship.related) ?? null;
-			case T_Kinship.child:	return this.sibling_ancestries ?? null;
-			case T_Kinship.parent:	return this.thing?.ancestries ?? null;
-			default:				return null;
-		}
 	}
 
 	persistentMoveUp_forParent_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {

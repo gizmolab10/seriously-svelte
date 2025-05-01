@@ -1,4 +1,4 @@
-import { k, debug, T_Debug, databases, T_Predicate } from '../common/Global_Imports';
+import { k, debug, T_Debug, databases, T_Kinship, T_Predicate } from '../common/Global_Imports';
 import { w_hierarchy, w_ring_rotation_angle } from '../common/Stores';
 import Persistable from '../persistable/Persistable';
 import { T_Persistable } from '../database/DBCommon';
@@ -24,6 +24,14 @@ export default class Predicate extends Persistable {
 	static get isRelated():				    Predicate | null { return this.predicate_forKind(T_Predicate.isRelated); }
 	static get appreciates():			  	Predicate | null { return this.predicate_forKind(T_Predicate.appreciates); }
 	static predicate_forKind(kind: string): Predicate | null { return get(w_hierarchy).predicate_forKind(kind) ?? null; }
+
+	kinship(points_toChildren: boolean): T_Kinship | null {
+		switch (this.kind) {
+			case T_Predicate.contains:	return points_toChildren ? T_Kinship.child : T_Kinship.parent;
+			case T_Predicate.isRelated:	return T_Kinship.related;
+			default:					return null;
+		}
+	}
 
 	async persistent_create_orUpdate(already_persisted: boolean) {
 		if (already_persisted) {

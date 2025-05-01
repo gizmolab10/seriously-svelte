@@ -13,10 +13,7 @@
 	const offset = k.radial_widget_inset;
 	const g_arcSlider = g_cluster.g_arcSlider;
 	const thumb_name = `thumb-${g_cluster.name}`;
-	const radius = $w_ring_rotation_radius + offset;
 	const g_paging_rotation = g_cluster.g_paging_rotation;
-	const viewBox=`${-offset} ${-offset} ${radius * 2} ${radius * 2}`;
-	let origin = w.center_ofGraphSize.offsetBy(Point.square(-radius));
 	let mouse_up_count = $w_count_mouse_up;
 	let textBackground = 'transparent';
 	let thumbFill = 'transparent';
@@ -35,8 +32,11 @@
 	$: $w_g_paging_cluster, thumbFill = colors.specialBlend(color, $w_background_color, radial.s_ring_rotation.isHighlighted ? k.opacity.thumb : g_paging_rotation.thumb_opacity);
 	$: textBackground = radial.s_ring_rotation.isHighlighted ? $w_background_color : colors.specialBlend(color, $w_background_color, radial.s_ring_resizing.fill_opacity);
 	$: thumbPath = g_cluster.isPaging && g_cluster.widgets_shown > 1 ? g_cluster.g_thumbArc.svgPathFor_arcSlider : '';
+	$: origin = w.center_ofGraphSize.offsetBy(Point.square(-radius));
+	$: viewBox=`${-offset} ${-offset} ${radius * 2} ${radius * 2}`;
 	$: arcSliderPath = g_arcSlider.svgPathFor_arcSlider;
 	$: forkPath = g_arcSlider.svgPathFor_radialFork;
+	$: radius = $w_ring_rotation_radius + offset;
 	$: labelAngle = g_arcSlider.label_text_angle;
 	$: forkDirection = g_arcSlider.angle_ofFork;
 	$: labelCenter = g_cluster.label_center;
