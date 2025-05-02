@@ -1,7 +1,7 @@
 import { k, u, radial, Ancestry, Predicate, T_Kinship } from '../common/Global_Imports';
+import { w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
 import { w_hierarchy, w_g_paging, w_ancestry_focus } from '../common/Stores';
 import { G_Widget, G_Cluster, G_Paging } from '../common/Global_Imports';
-import { w_ring_rotation_radius } from '../common/Stores';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
 
@@ -14,7 +14,7 @@ export default class G_RadialGraph {
 		w_g_paging.subscribe((g_paging: G_Paging | null) => {
 			if (!!g_paging) {
 				this.layout_forPoints_toChildren(g_paging.points_toChildren);
-				this.apportion_widgets_amongClusters();
+				this.layout_forPaging();
 			}
 		});
 	}
@@ -34,7 +34,7 @@ export default class G_RadialGraph {
 		this.destructor();
 		this.layout_forPoints_toChildren(true);
 		this.layout_forPoints_toChildren(false);
-		this.apportion_widgets_amongClusters();
+		this.layout_forPaging();
 	}
 
 	get g_clusters(): Array<G_Cluster> {
@@ -105,9 +105,30 @@ export default class G_RadialGraph {
 				clusters.shift();
 			}
 		}
-		for (const cluster of this.g_clusters_forPaging) {
-			cluster.layout_forPaging();
+	}
+
+	private layout_forPaging() {
+		this.apportion_widgets_amongClusters()
+		let angle = get(w_ring_rotation_angle);
+		const g_clusters = this.g_clusters_forPaging;
+		const total_shown = g_clusters.reduce((sum, g_cluster) => sum + g_cluster.widgets_shown, 0);
+		const angles = g_clusters.map(g_cluster => g_cluster.widgets_shown / total_shown * Math.PI * 2);
+		for (const [index, g_cluster] of this.g_clusters_forPaging.entries()) {
+			const a = this.angle_ofCluster(g_cluster);
+			g_cluster.layout_forPaging(a);
+			angle -= angles[index];
 		}
+	}
+	
+	private angle_ofCluster(g_cluster: G_Cluster): number {
+		// returns one of three angles: 1) children_angle 2) opposite+tweak 3) opposite-tweak
+		const tweak = 2 * Math.PI / 3;					// equilateral distribution
+		const children_angle = get(w_ring_rotation_angle);
+		const raw = g_cluster.predicate.isBidirectional ?
+			children_angle + tweak :
+			g_cluster.points_toChildren ? children_angle :		// one directional, use global
+			children_angle - tweak;
+		return raw.angle_normalized() ?? 0;
 	}
 
 	private assignAncestries_toClusterFor(ancestries: Array<Ancestry> | null, predicate: Predicate | null, points_toChildren: boolean) {

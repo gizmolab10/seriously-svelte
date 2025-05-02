@@ -1,7 +1,7 @@
 import { k, w, Point, Angle, debug, colors, radial, Ancestry, Predicate } from '../common/Global_Imports';
 import { G_Widget, G_ArcSlider, G_Paging, S_Rotation } from '../common/Global_Imports';
+import { w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
 import { w_graph_rect, w_ancestry_focus } from '../common/Stores';
-import { w_ring_rotation_radius } from '../common/Stores';
 import { get } from 'svelte/store';
 
 //////////////////////////////////////////
@@ -34,6 +34,7 @@ export default class G_Cluster {
 	cluster_title = k.empty;
 	predicate: Predicate;
 	center = Point.zero;
+	angle_ofCluster = 0;
 	widgets_shown = 0;
 	total_widgets = 0;
 	isPaging = false;
@@ -57,14 +58,21 @@ export default class G_Cluster {
 		this.ancestries = ancestries;
 	}
 
-	layout_forPaging() {
+	layout_forPaging(angle_ofCluster: number) {
 		const g_paging = this.g_paging_forPredicate_toChildren(this.predicate, this.points_toChildren);
 		if (!!g_paging) {
-			const points_right = new Angle(this.angle_ofCluster).angle_pointsRight;
+			this.angle_ofCluster = angle_ofCluster;
+			const points_right = new Angle(angle_ofCluster).angle_pointsRight;
 			const onePage_ofAncestries = g_paging.onePage_from(this.widgets_shown, this.ancestries);
 			this.ancestries_shown = points_right ? onePage_ofAncestries.reverse() : onePage_ofAncestries;	
 			this.layout_cluster();
+			let angle = this.g_arcSlider.spread_angle;
+			if (angle < 0) {
+				angle = -angle;
+			}
+			return angle;// - Math.PI / 3;
 		}
+		return 0;
 	}
 
 	layout_cluster() {
@@ -104,8 +112,8 @@ export default class G_Cluster {
 
 	private layout_label() {		// rotate text tangent to arc, at center of arc
 		const angle = this.g_arcSlider.angle_ofFork;
-		const ortho = this.arc_in_lower_half ? Angle.quarter : Angle.three_quarters;
-		const label_radius = get(w_ring_rotation_radius) + (this.arc_in_lower_half ? 5 : 0) - 22.4;
+		const ortho = this.arc_in_lower_half ? Angle.three_quarters : Angle.quarter;
+		const label_radius = get(w_ring_rotation_radius) + (this.arc_in_lower_half ? 0 : 5) - 22.4;
 		this.label_center = this.center.offsetBy(Point.fromPolar(label_radius, angle));
 		this.g_arcSlider.label_text_angle = ortho - angle;
 	}
@@ -156,7 +164,7 @@ export default class G_Cluster {
 
 	static readonly ANGLES: unique symbol;
 	
-	get angle_ofCluster(): number { return this.predicate.angle_ofCluster_when(this.points_toChildren); }
+	get xangle_ofCluster(): number { return this.predicate.angle_ofCluster_when(this.points_toChildren); }
 
 	private update_arc_angles(index: number, max: number, child_angle: number) {
 		// index increases & angle decreases clockwise
@@ -217,8 +225,8 @@ export default class G_Cluster {
 			y_isOutside = true;								// y is outside rotation ring
 			y = radius * (y / absY) - (y % radius);			// swing around (bottom | top) --> back inside rotation
 		}
-		let child_angle = -Math.asin(y / radius);			// arc-sin only defined (-90 to 90) [ALSO: negate angles so things advance clockwise]
-		if (y_isOutside == (radial.x > 0)) {				// counter-clockwise if (x is positive AND y is outside) OR (x is negative AND y is inside)
+		let child_angle = Math.asin(y / radius);			// arc-sin only defined (-90 to 90) [ALSO: negate angles so things advance clockwise]
+		if (y_isOutside != (radial.x > 0)) {				// counter-clockwise if (x is positive AND y is outside) OR (x is negative AND y is inside)
 			child_angle = Angle.half - child_angle			// otherwise it's clockwise, so invert it
 		}
 		this.update_arc_angles(index, max, child_angle);

@@ -99,9 +99,7 @@ export default class G_ArcSlider {
 
 	finalize_angles() {
 		if (!this.fork_pointsRight) {
-			const saved = this.start_angle;
-			this.start_angle = this.end_angle;
-			this.end_angle = saved;
+			[this.start_angle, this.end_angle] = [this.end_angle, this.start_angle];
 		}
 		this.arc_rect = this.computed_arc_rect;
 	}
