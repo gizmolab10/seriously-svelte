@@ -89,7 +89,7 @@ export default class G_RadialGraph {
 		}
 	}
 
-	private apportion_widgets_amongClusters() {
+	private layout_forPaging() {
 		let remaining_toShow = Math.ceil((get(w_ring_rotation_radius) ** 1.5) / k.height.row);
 		const angle_per_widget = 40 / get(w_ring_rotation_radius);			// Limit show so arc spread never exceeds 180°
 		const maximum_portion = Math.floor(Math.PI / angle_per_widget);
@@ -105,19 +105,8 @@ export default class G_RadialGraph {
 				clusters.shift();
 			}
 		}
-	}
-
-	private layout_forPaging() {
-		this.apportion_widgets_amongClusters()
-		const clusters = this.g_clusters_forPaging;
-		const start_angle = get(w_ring_rotation_angle);
-		let angle = start_angle;
-		for (const [index, g_cluster] of clusters.entries()) {
+		for (const g_cluster of this.g_clusters_forPaging) {
 			g_cluster.layout_forPaging(this.angle_ofCluster(g_cluster));
-			// g_cluster.layout_forPaging(angle.angle_normalized());
-			const spread = g_cluster.g_arcSlider.spread_angle + Math.PI / 9;
-			angle += spread;
-			console.log(`${index} ${spread.asDegrees()} ${angle.asDegrees()}`);
 		}
 	}
 	
