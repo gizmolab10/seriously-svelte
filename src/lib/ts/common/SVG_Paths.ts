@@ -82,18 +82,6 @@ export default class SVG_Paths {
 		return `\nM ${start.x} ${start.y} \nA ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} \n${end.x} ${end.y}`;
 	}
 
-	arrow_head(tip: Point, angle: number, length: number = 5): string {
-		return '';
-	}
-
-	arrowed_arc(center: Point, radius: number, angle: number, size: number = 32): string {
-		return this.arc(center, radius, 1, 0, 0);
-	}
-
-	arrowed_line(angle: number, size: number = 32): string {
-		return '';
-	}
-
 	arc_partial(center: Point, radius: number, largeArcFlag: number, sweepFlag: number, endAngle: number): string {
 		const end = center.offsetBy(Point.fromPolar(radius, endAngle));
 		return `\nA ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} \n${end.x} ${end.y}`;

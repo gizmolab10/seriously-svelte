@@ -159,7 +159,7 @@ export default class G_ArcSlider {
 	svgPathFor_cap(arc_angle: number, clockwise: boolean) {
 		const radial = this.radial_forAngle(arc_angle);
 		const center = this.clusters_center.offsetBy(radial);
-		const end_angle = clockwise ? arc_angle : (arc_angle + Math.PI).angle_normalized();
+		const end_angle = arc_angle + (clockwise ? 0 : Math.PI);
 		return svgPaths.arc_partial(center, this.cap_radius, 0, 1, end_angle);
 	}
 

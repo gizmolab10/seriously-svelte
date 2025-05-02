@@ -62,7 +62,7 @@ export default class G_RadialGraph {
 		let array: Array<G_Widget> = [];
 		for (const g_cluster of this.g_clusters) {
 			if (!!g_cluster) {
-				for (const g_cluster_widget of g_cluster.g_cluster_widgets) {
+				for (const g_cluster_widget of g_cluster.g_widgets_inCluster) {
 					array.push(g_cluster_widget);
 				}
 			}
@@ -109,14 +109,15 @@ export default class G_RadialGraph {
 
 	private layout_forPaging() {
 		this.apportion_widgets_amongClusters()
-		let angle = get(w_ring_rotation_angle);
-		const g_clusters = this.g_clusters_forPaging;
-		const total_shown = g_clusters.reduce((sum, g_cluster) => sum + g_cluster.widgets_shown, 0);
-		const angles = g_clusters.map(g_cluster => g_cluster.widgets_shown / total_shown * Math.PI * 2);
-		for (const [index, g_cluster] of this.g_clusters_forPaging.entries()) {
-			const a = this.angle_ofCluster(g_cluster);
-			g_cluster.layout_forPaging(a);
-			angle -= angles[index];
+		const clusters = this.g_clusters_forPaging;
+		const start_angle = get(w_ring_rotation_angle);
+		let angle = start_angle;
+		for (const [index, g_cluster] of clusters.entries()) {
+			g_cluster.layout_forPaging(this.angle_ofCluster(g_cluster));
+			// g_cluster.layout_forPaging(angle.angle_normalized());
+			const spread = g_cluster.g_arcSlider.spread_angle + Math.PI / 9;
+			angle += spread;
+			console.log(`${index} ${spread.asDegrees()} ${angle.asDegrees()}`);
 		}
 	}
 	
@@ -128,7 +129,7 @@ export default class G_RadialGraph {
 			children_angle + tweak :
 			g_cluster.points_toChildren ? children_angle :		// one directional, use global
 			children_angle - tweak;
-		return raw.angle_normalized() ?? 0;
+		return raw ?? 0;
 	}
 
 	private assignAncestries_toClusterFor(ancestries: Array<Ancestry> | null, predicate: Predicate | null, points_toChildren: boolean) {

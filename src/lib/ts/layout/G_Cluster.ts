@@ -20,15 +20,13 @@ import { get } from 'svelte/store';
 //////////////////////////////////////////
 
 export default class G_Cluster {
-	g_cluster_widgets: Array<G_Widget> = [];
+	g_widgets_inCluster: Array<G_Widget> = [];
 	ancestries_shown: Array<Ancestry> = [];
 	g_thumbArc = new G_ArcSlider(true);
 	ancestries: Array<Ancestry> = [];
 	color = colors.default_forThings;
 	g_arcSlider = new G_ArcSlider();
-	arc_straddles_nadir = false;
 	points_toChildren: boolean;
-	arc_straddles_zero = false;
 	arc_in_lower_half = false;
 	label_center = Point.zero;
 	cluster_title = k.empty;
@@ -149,7 +147,7 @@ export default class G_Cluster {
 	adjust_paging_index_byAdding_angle(delta_angle: number) {
 		const paging = this.g_focusPaging;
 		if (!!paging) {
-			const spread_angle = (-this.g_arcSlider.spread_angle).angle_normalized();
+			const spread_angle = -this.g_arcSlider.spread_angle;
 			const delta_fraction = (delta_angle / spread_angle);
 			const delta_index = delta_fraction * this.maximum_paging_index;			// convert rotation delta to index delta
 			const adjusted = paging.addTo_paging_index_for(delta_index) ?? false;	// add index delta to index
@@ -177,7 +175,7 @@ export default class G_Cluster {
 	}
 
 	layout_widgets_inCluster() {
-		this.g_cluster_widgets = [];
+		this.g_widgets_inCluster = [];
 		if (this.widgets_shown > 0 && !!this.predicate) {
 			const center = this.center.offsetByXY(2, -1.5);			// tweak so that drag dots are centered within the rotation ring
 			const radial = Point.x(get(w_ring_rotation_radius) + k.radial_widget_inset);
@@ -193,13 +191,11 @@ export default class G_Cluster {
 				const rotated_origin = center.offsetBy(radial.rotate_by(angle));
 				ancestry.g_widget.layout_necklaceWidget(rotated_origin, pointsRight);
 				ancestry.g_widget.g_cluster = this;
-				this.g_cluster_widgets.push(ancestry.g_widget);
+				this.g_widgets_inCluster.push(ancestry.g_widget);
 				index += 1;
 			}
 			this.g_arcSlider.finalize_angles();
 			this.arc_in_lower_half = fork_pointsDown;
-			this.arc_straddles_zero = this.g_arcSlider.arc_straddles(0);
-			this.arc_straddles_nadir = this.g_arcSlider.arc_straddles(Angle.three_quarters);
 		}
 	}
 
@@ -243,8 +239,8 @@ export default class G_Cluster {
 			const spread_angle = this.g_arcSlider.spread_angle;
 			const hasNegative_spread = spread_angle < 0
 			const inverter = hasNegative_spread ? 1 : -1;
-			const otherInverter = (hasNegative_spread == this.arc_straddles_nadir) ? -1 : 1;
-			const arc_spread = this.arc_straddles_nadir ? (-spread_angle).angle_normalized() : spread_angle;
+			const otherInverter = (hasNegative_spread == this.g_arcSlider.arc_straddles_nadir) ? -1 : 1;
+			const arc_spread = this.g_arcSlider.arc_straddles_nadir ? (-spread_angle).angle_normalized() : spread_angle;
 			const increment = arc_spread / this.total_widgets * inverter;
 			const arc_start = this.g_arcSlider.start_angle * otherInverter;
 			const start = arc_start + (increment * this.paging_index_ofFocus);
