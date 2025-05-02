@@ -60,6 +60,8 @@ export default class G_Widget {
 	get absolute_center_ofReveal(): Point { return this.center_ofReveal.offsetBy(this.origin); }
 	get showingReveal(): boolean { return this.ancestry.showsReveal_forPointingToChild(this.points_toChild) ?? false; }
 
+	// get gg_cluster(): G_Cluster { return this.ancestry.g_cluster; }
+
 	get t_widget(): T_Widget {
 		const isFocus = this.ancestry?.isFocus ?? false;
 		return layout.inTreeMode ? isFocus ? T_Widget.focus : T_Widget.tree : T_Widget.radial;

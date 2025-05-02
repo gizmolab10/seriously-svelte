@@ -104,7 +104,7 @@ export default class Ancestry extends Identifiable {
 	get children():			 	 Array		 <Thing> { return this.hierarchy.things_forAncestries(this.childAncestries); }
 	get parents():			 	 Array		 <Thing> { return this.thing?.parents ?? []; }
 	get ancestors():		 	 Array		 <Thing> { return this.hierarchy.things_forAncestry(this); }
-	get childAncestries():	 	 Array	  <Ancestry> { return this.childAncestries_ofKind(this.kind); }
+	get childAncestries():	 	 Array	  <Ancestry> { return this.kin_of(T_Kinship.child) ?? []; }
 	get sibling_ancestries(): 	 Array	  <Ancestry> { return this.parentAncestry?.childAncestries ?? []; }
 	get branchAncestries():		 Array	  <Ancestry> { return layout.branches_areChildren ? this.childAncestries : this.parentAncestries; }
 	get childRelationships():	 Array<Relationship> { return this.relationships_ofKind_forParents(this.kind, false); }
@@ -330,7 +330,7 @@ export default class Ancestry extends Identifiable {
 			switch (kinship) {
 				case T_Kinship.related:	return this.thing?.uniqueAncestries_for(Predicate.isRelated) ?? null;
 				case T_Kinship.parent:	return this.thing?.uniqueAncestries_for(Predicate.contains) ?? null;
-				case T_Kinship.child:	return this.childAncestries;
+				case T_Kinship.child:	return this.childAncestries_ofKind(this.kind);
 				default:				return null;
 			}
 		}
@@ -340,10 +340,8 @@ export default class Ancestry extends Identifiable {
 	siblings_of(kinship: string | null): Array<Ancestry> | null {
 		if (!!kinship) {
 			switch (kinship) {
-				case T_Kinship.related:	return this.parentAncestry?.kin_of(T_Kinship.related) ?? null;
-				case T_Kinship.child:	return this.sibling_ancestries ?? null;
 				case T_Kinship.parent:	return this.thing?.ancestries ?? null;
-				default:				return null;
+				default:				return this.parentAncestry?.kin_of(kinship) ?? null;
 			}
 		}
 		return null;
@@ -641,11 +639,12 @@ export default class Ancestry extends Identifiable {
 
 	static readonly VISIBILITY: unique symbol;
 
-	assure_isVisible() {
+	assure_isVisible_within(ancestries: Array<Ancestry>) {
 		if (!!this.predicate) {
-			const g_paging = layout.g_radialGraph.g_paging_forPredicate_toChildren(this.predicate, this.points_toChildren);
-			if (!!g_paging && !g_paging.index_isVisible(this.siblingIndex)) {
-				return g_paging.update_index_toShow(this.order);		// change paging
+			const index = u.indexOf_withMatchingThingID_in(this, ancestries);
+			const g_paging = this.g_cluster?.g_paging;
+			if (!!g_paging && !g_paging.index_isVisible(index)) {
+				return g_paging.update_index_toShow(index);		// change paging
 			}
 		}
 		return false;
@@ -786,7 +785,7 @@ export default class Ancestry extends Identifiable {
 				}
 				if (!!grabAncestry) {
 					if (layout.inRadialMode) {
-						needs_graphRebuild = grabAncestry.assure_isVisible() || needs_graphRebuild;	// change paging
+						needs_graphRebuild = grabAncestry.assure_isVisible_within(this.sibling_ancestries) || needs_graphRebuild;	// change paging
 					} else if (!parentAncestry.isFocus && !grabAncestry.isVisible) {
 						needs_graphRebuild = parentAncestry.becomeFocus() || needs_graphRebuild;
 					}
@@ -815,7 +814,7 @@ export default class Ancestry extends Identifiable {
 				this.reorder_within(sibling_ancestries, up);
 			}
 			if (!!grabAncestry) {
-				needs_graphRebuild = grabAncestry.assure_isVisible() || needs_graphRebuild;
+				needs_graphRebuild = grabAncestry.assure_isVisible_within(sibling_ancestries) || needs_graphRebuild;
 			}
 		}
 		return [needs_graphRebuild, needs_graphRelayout];
@@ -840,7 +839,7 @@ export default class Ancestry extends Identifiable {
 				this.reorder_within(sibling_ancestries, up);
 			}
 			if (!!grabAncestry && !!this.predicate) {
-				needs_graphRebuild = grabAncestry.assure_isVisible() ||needs_graphRebuild;
+				needs_graphRebuild = grabAncestry.assure_isVisible_within(sibling_ancestries) || needs_graphRebuild;
 			}
 		}
 		return [needs_graphRebuild, needs_graphRelayout];

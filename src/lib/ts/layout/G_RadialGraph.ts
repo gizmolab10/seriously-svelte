@@ -125,6 +125,9 @@ export default class G_RadialGraph {
 		if (!!predicate && !!ancestries) {
 			const g_cluster = this.g_cluster_forPredicate_toChild(predicate, points_toChildren);
 			g_cluster.setAncestries(ancestries);
+			for (const ancestry of ancestries) {
+				ancestry.g_widget.g_cluster = g_cluster;
+			}
 		}
 	}
 

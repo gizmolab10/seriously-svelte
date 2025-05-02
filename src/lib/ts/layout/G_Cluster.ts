@@ -57,7 +57,7 @@ export default class G_Cluster {
 	}
 
 	layout_forPaging(angle_ofCluster: number) {
-		const g_paging = this.g_paging_forPredicate_toChildren(this.predicate, this.points_toChildren);
+		const g_paging = this.g_paging;
 		if (!!g_paging) {
 			this.angle_ofCluster = angle_ofCluster;
 			const points_right = new Angle(angle_ofCluster).angle_pointsRight;
@@ -68,7 +68,7 @@ export default class G_Cluster {
 			if (angle < 0) {
 				angle = -angle;
 			}
-			return angle;// - Math.PI / 3;
+			return angle;
 		}
 		return 0;
 	}
@@ -89,6 +89,7 @@ export default class G_Cluster {
 		}
 	}
 
+	get g_paging(): G_Paging | null { return this.g_paging_forPredicate_toChildren(this.predicate, this.points_toChildren); }
 	get titles(): string { return this.ancestries.map(a => a.title).join(', '); }
 	get description(): string { return `(${this.cluster_title}) ${this.titles}`; }
 	get kind(): string { return this.predicate?.kind.unCamelCase().lastWord() ?? k.empty; }
@@ -190,7 +191,7 @@ export default class G_Cluster {
 				const pointsRight = new Angle(angle).angle_pointsRight;
 				const rotated_origin = center.offsetBy(radial.rotate_by(angle));
 				ancestry.g_widget.layout_necklaceWidget(rotated_origin, pointsRight);
-				ancestry.g_widget.g_cluster = this;
+				// ancestry.g_widget.g_cluster = this;
 				this.g_widgets_inCluster.push(ancestry.g_widget);
 				index += 1;
 			}
