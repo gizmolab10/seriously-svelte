@@ -2,22 +2,23 @@
 	import { k, u, ux, Rect, Point, colors, T_Layer } from '../../ts/common/Global_Imports';
 	import { w_thing_fontFamily, w_background_color } from '../../ts/common/Stores';
 	import { S_Element, Svelte_Wrapper } from '../../ts/common/Global_Imports';
-	import Identifiable from '../../ts/runtime/Identifiable';
 	import type { Handle_Result } from '../../ts/common/Types';
+	import Identifiable from '../../ts/runtime/Identifiable';
 	import Mouse_Responder from './Mouse_Responder.svelte';
-	import { onMount } from 'svelte';
+	export let es_button: S_Element = S_Element.empty();
 	export let background_color = $w_background_color;
-	export let closure = Handle_Result<S_Mouse>;
+	export let closure: Handle_Result<S_Mouse>;
 	export let border_color = colors.default;
+	export let font_size = k.font_size.thing;
+	export let origin: Point | null = null;
+	export let center: Point | null = null;
+	export let padding = '0px 6px 1px 6px';
+	export let border_thickness = 0.5;
+	export let color = colors.default;
 	export let height = k.size.button;
 	export let width = k.size.button;
-	export let padding = '0px 6px 1px 6px';
-	export let color = colors.default;
 	export let position = 'absolute';
 	export let zindex = T_Layer.dots;
-	export let es_button: S_Element;
-	export let border_thickness = 1;
-	export let center = Point.zero;
 	export let isToggle = false;
 	export let style = k.empty;
 	export let name = k.empty;
@@ -49,13 +50,18 @@
 			border = border_thickness == 0 ? 'none' : `${border_thickness}px solid ${border_color}`;
 			currentStyle=`
 				left:0px;
+				display: flex;
 				color:${color};
 				width:${width}px;
 				border:${border};
 				z-index:${zindex};
 				padding:${padding};
 				height:${height}px;
+				text-align: center;
+				align-items: center;
 				position:${position};
+				justify-content: center;
+				font-size:${font_size}px;
 				cursor:${es_button.cursor};
 				border-radius:${height / 2}px;
 				font-family:${$w_thing_fontFamily};
@@ -65,7 +71,9 @@
 	}
 
 	function button_closure(s_mouse: S_Mouse) {
-		closure(s_mouse);		// so container can adjust behavior or appearance
+		if (!!closure) {
+			closure(s_mouse);		// so container can adjust behavior or appearance
+		}
 		if (s_mouse.isHover) {	// NOT the same as isHovering
 			update_currentStyle();
 		}
@@ -79,10 +87,14 @@
 		width={width}
 		height={height}
 		zindex={zindex}
+		origin={origin}
 		center={center}
 		detect_longClick={true}
 		handle_mouse_state={button_closure}>
-		<button class='button' id={'button-for-' + name} style={currentStyle}>
+		<button
+			class='button'
+			style={currentStyle}
+			id={'button-for-' + name}>
 			<slot></slot>
 		</button>
 	</Mouse_Responder>

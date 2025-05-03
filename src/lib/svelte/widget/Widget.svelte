@@ -159,7 +159,7 @@
 			ancestry = {ancestry}
 			name = {es_title.name}
 			origin = {origin_ofTitle}
-			fontSize = {k.size.font}px/>
+			fontSize = {k.font_size.thing}px/>
 		{#if ancestry?.showsReveal_forPointingToChild(points_toChild)}
 			<Widget_Reveal
 				ancestry = {ancestry}

@@ -104,4 +104,4 @@
     text={g_cluster.cluster_title}
     background_color={textBackground}
     font_family={$w_thing_fontFamily}
-    font_size={k.size.smaller_font}px/>
+    font_size={k.font_size.smaller}px/>

@@ -66,8 +66,9 @@
 			selection_closure={selection_closure}
 			titles={[T_Database.local, T_Database.firebase, T_Database.airtable, T_Database.test]}/>
 		<div class='data-information'
-			style='font-size:0.8em;
-				width:{k.width_details}px;'>
+			style='
+				width:{k.width_details}px;
+				font-size:{k.font_size.smaller}px;'>
 			<Table top={top + 22} array={information}/>
 		</div>
 		<Button name='import'

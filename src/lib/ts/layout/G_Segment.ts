@@ -2,8 +2,8 @@ import { k, u, ux, Rect, Size, Point, svgPaths, T_Oblong } from '../common/Globa
 import type { Integer } from '../common/Types';
 
 export default class G_Segment {
-	numerical_font_size = k.size.small_font;
-	font_size = `${k.size.small_font}px`;
+	numerical_font_size = k.font_size.small;
+	font_size = `${k.font_size.small}px`;
 	title_origin = Point.x(8);
 	part = T_Oblong.right;
 	origin = Point.zero;

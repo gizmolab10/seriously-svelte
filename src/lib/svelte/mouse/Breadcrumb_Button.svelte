@@ -56,7 +56,7 @@
 			border:${border};
 			border-radius: 1em;
 			padding:0px 6px 2px 6px;
-			font: ${k.size.font}px ${$w_thing_fontFamily};
+			font: ${k.font_size.thing}px ${$w_thing_fontFamily};
 		`.removeWhiteSpace();
 	}
 

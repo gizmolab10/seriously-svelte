@@ -4,7 +4,7 @@
 	import type { Handle_Result } from '../../ts/common/Types';
 	import Segment from './Segment.svelte';
 	export let selection_closure = Handle_Result<string>;
-	export let font_size = `${k.size.small_font}px`;
+	export let font_size = `${k.font_size.small}px`;
 	export let height = k.height.segmented;
 	export let selected: Array<string> = [];
 	export let titles: Array<string> = [];

@@ -3,7 +3,7 @@
 	import { k, u, Point, colors } from '../../ts/common/Global_Imports';
 	import { w_background_color } from '../../ts/common/Stores';
 	import Gull_Wings from '../kit/Gull_Wings.svelte';
-	export let title_font_size = `${k.size.smaller_font}px`;
+	export let title_font_size = `${k.font_size.smaller}px`;
 	export let thickness = k.thickness.separator;
 	export let title: string | null = null;
 	export let width = k.width_details;

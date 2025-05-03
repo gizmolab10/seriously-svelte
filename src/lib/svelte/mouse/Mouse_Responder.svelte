@@ -6,7 +6,7 @@
 	import { onMount } from 'svelte';
 	export let handle_isHit: () => {flag: boolean} | null = null;
 	export let handle_mouse_state = Handle_Result<S_Mouse>;
-	export let font_size = `${k.size.small_font}px`;
+	export let font_size = `${k.font_size.small}px`;
 	export let origin: Point | null = null;
 	export let center: Point | null = null;
 	export let detect_doubleClick = false;

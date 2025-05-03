@@ -8,9 +8,9 @@
 	const color_left = 10
 	const picker_offset = `-88px`;
 	const info_width = k.width_details - 30;
-	const font_size = `${k.size.smaller_font}px`;
+	const font_size = `${k.font_size.smaller}px`;
 	const color_origin = new Point(color_left, 41);
-	const separator_font_size = `${k.size.smallest_font}px`;
+	const separator_font_size = `${k.font_size.smallest}px`;
 	const titles = [T_Kinship[T_Kinship.child], T_Kinship[T_Kinship.parent], T_Kinship[T_Kinship.related]];
 	let color = $w_background_color;
 	
@@ -31,7 +31,7 @@
 		top:{top + 3}px;
 		position:absolute;
 		width:{k.width_details}px;
-		font-size:{k.size.small_font}px;'>
+		font-size:{k.font_size.small}px;'>
 	<Separator title='show tiny dots for' top=2 left=5 width={info_width} title_font_size={separator_font_size} thickness={k.thickness.thin}/>
 	<Segmented
 		titles={titles}

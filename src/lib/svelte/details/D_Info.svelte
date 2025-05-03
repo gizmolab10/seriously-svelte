@@ -17,7 +17,7 @@
 	const margin = 10;
 	const text_top = top + 52;
 	const info_width = k.width_details - 30;
-	const separator_font_size = `${k.size.smallest_font}px`;
+	const separator_font_size = `${k.font_size.smallest}px`;
 	const traits_center = new Point(122, text_top - 20);
 	const traits_width = k.width_details - (margin * 2);
 	const traits_size = new Size(info_width - 58, k.size.button + 4);
@@ -132,13 +132,13 @@
 			left:{margin}px;
 			position:absolute;
 			width:{traits_width}px;
-			font-size:{k.size.small_font}px;'>
+			font-size:{k.font_size.small}px;'>
 		{#if information.length != 0}
 			<Segmented
 				name='info-type'
 				height={k.height.small}
 				selected={[show.t_info]}
-				font_size={k.size.smaller_font}px
+				font_size={k.font_size.smaller}px
 				selection_closure={selection_closure}
 				titles={[T_Report.focus, T_Report.selection]}
 				origin={new Point(45, layout.top_ofInfoAt(T_Info.segments))}/>

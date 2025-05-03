@@ -3,7 +3,7 @@
 	import { T_Layer, T_Oblong, G_Segment } from '../../ts/common/Global_Imports';
 	import { w_background_color } from '../../ts/common/Stores';
 	import Mouse_Responder from './Mouse_Responder.svelte';
-	export let font_size = `${k.size.small_font}px`;
+	export let font_size = `${k.font_size.small}px`;
 	export let hit_closure = (title, shift) => {};
 	export let fill = $w_background_color;
 	export let stroke = colors.separator;

@@ -90,10 +90,10 @@
 	<div style='
 		top: -8px;
 		color: gray;
-		font-size: 0.9em;
 		padding: 0px 3px;
 		position: absolute;
 		left: {label_left}px;
+		font-size: {k.font_size.small}px;
 		background-color: {$w_background_color}'>
 		{label}
 	</div>

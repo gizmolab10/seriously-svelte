@@ -43,6 +43,11 @@ export default class Constants {
 		zoom_out: 0.9,
 		zoom_in:  1.1 };
 
+	size = {
+		button:	dot_size + 3,
+		line:	row_height + 2,
+		dot:	dot_size, };
+
 	radius = {
 		arcSlider_cap: 7.5,
 		ring_center:   55,
@@ -52,6 +57,12 @@ export default class Constants {
 		generic: '::',
 		small:	 ':::',
 		big:	 '::::', };
+
+	font_size = {
+		smallest: dot_size - 4,
+		smaller:  dot_size - 2,
+		small:	  dot_size,
+		thing:	  dot_size + 1, };
 
 	opacity = {
 		none:	0,
@@ -67,15 +78,6 @@ export default class Constants {
 		fork:		   2.5,
 		thin:		   2, };
 
-	size = {
-		smallest_font: dot_size - 4,
-		smaller_font:  dot_size - 2,
-		small_font:	   dot_size,
-		button:		   dot_size + 3,
-		line:		   row_height + 2,
-		font:		   dot_size + 1,
-		dot:		   dot_size, };
-
 	height = {
 		separator: 8.5,
 		segmented: row_height + 1,
@@ -88,7 +90,7 @@ export default class Constants {
 		},
 		detail: {
 			storage: 122,
-			tools:	  40,
+			tools:	  74,
 			display:  76,
 			info:	   0,
 		},
