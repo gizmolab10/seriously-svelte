@@ -38,16 +38,9 @@
 	layout.layout_tops_forInfo(1);
 	layout_forColor();	// must call layout_tops_forInfo first
 	es_info.set_forHovering(colors.default, 'pointer');
-	
-	$: {
-		const _ = `${$w_ancestries_grabbed} ${$w_ancestry_focus} ${$w_thing_title}`;
-		update_forKind();
-	}
 
-	$: {
-		const _ = $w_relationship_order;
-		update_forAncestry();
-	}
+	$: $w_relationship_order, update_forAncestry();
+	$: $w_ancestries_grabbed, $w_ancestry_focus, $w_thing_title, update_forKind();
 
 	function hasGrabs(): boolean {
 		grabs = $w_ancestries_grabbed;

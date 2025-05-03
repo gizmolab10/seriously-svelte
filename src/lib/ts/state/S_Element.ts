@@ -17,16 +17,14 @@ export default class S_Element {
 	name = k.empty;
 	isOut = true;
 
-	//////////////////////////////////////////////////
-	//												//
-	//	state of html elements persists				//
-	//		while the element itself is replaced	//
-	//		thus preserving:						//
-	//			stroke, fill, cursor & border		//
-	//												//
-	//		used by buttons & widgets & editors		//
-	//												//
-	//////////////////////////////////////////////////
+	//////////////////////////////////////////
+	//										//
+	//	used by buttons & segments, to		//
+	//	preserve state across reattachment	//
+	//										//
+	//	   stroke, fill, cursor & border	//
+	//										//
+	//////////////////////////////////////////
 
 	constructor(identifiable: Identifiable, type: T_Element, subtype: string) {
 		this.name = ux.name_from(identifiable, type, subtype);
@@ -43,11 +41,8 @@ export default class S_Element {
 	get invertColor(): boolean { return this.isInverted || this.isHovering; }
 	get cursor(): string { return this.isHovering ? this.hoverCursor : this.defaultCursor; }
 	get stroke(): string { return this.invertColor ? this.color_background : this.hoverColor; }
+	get fill(): string { return this.invertColor ? this.hoverColor : this.isSelected ? 'lightblue' : this.color_background; }
 	get isHovering(): boolean { return this.hoverIgnore ? false : this.isOut == this.identifiable.isHoverInverted(this.type); }
-
-	get fill(): string {
-		return this.invertColor ? this.hoverColor : this.isSelected ? 'lightblue' : this.color_background;
-	}
 
 	set_forHovering(hoverColor: string, hoverCursor: string) {
 		this.hoverCursor = hoverCursor;

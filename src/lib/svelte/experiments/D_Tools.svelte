@@ -10,8 +10,8 @@
 	import Triangle_Button from '../mouse/Triangle_Button.svelte';
 	import { w_background_color } from '../../ts/common/Stores';
 	import Widget_Reveal from '../widget/Widget_Reveal.svelte';
-	import Button from '../mouse/Button.svelte';
 	import Buttons_Grid from '../mouse/Buttons_Grid.svelte';
+	import Button from '../mouse/Button.svelte';
 	import Trash from '../kit/Trash.svelte';
 	import { onMount } from 'svelte';
 	export let top = 0;

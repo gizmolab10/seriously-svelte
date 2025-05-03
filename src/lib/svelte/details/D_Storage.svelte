@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { k, ux, Point, S_Element, databases, Hierarchy, T_Storage } from '../../ts/common/Global_Imports';
-	import { w_storage_updated, w_thing_fontFamily } from '../../ts/common/Stores';
+	import { k, ux, Point, colors, S_Element, databases, Hierarchy, T_Storage } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Element, T_Preference } from '../../ts/common/Global_Imports';
+	import { w_storage_updated, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { w_t_database, w_hierarchy } from '../../ts/common/Stores';
 	import { T_Database } from '../../ts/database/DBCommon';
 	import Segmented from '../mouse/Segmented.svelte';
@@ -36,7 +36,7 @@
 		const ids = [T_Storage.export, T_Storage.import];
 		for (const id of ids) {
 			const es_storage = ux.s_element_for(null, T_Element.storage, id);
-			es_storage.set_forHovering('black', 'pointer');
+			es_storage.set_forHovering(colors.default, 'pointer');
 			s_element_byStorageType[id] = es_storage;
 		}
 	}
@@ -74,8 +74,8 @@
 		<Button name='import'
 			width=42
 			zindex=T_Layer.frontmost
-			center={new Point(74, buttons_top)}
 			height={k.size.button - 4}
+			center={new Point(74, buttons_top)}
 			es_button={s_element_byStorageType[T_Storage.import]}
 			closure={(s_mouse) => button_closure_forStorage_Type(s_mouse, T_Storage.import)}>
 			<span style={button_style}>import</span>
@@ -83,8 +83,8 @@
 		<Button name='export'
 			width=42
 			zindex=T_Layer.frontmost
-			center={new Point(122, buttons_top)}
 			height={k.size.button - 4}
+			center={new Point(122, buttons_top)}
 			es_button={s_element_byStorageType[T_Storage.export]}
 			closure={(s_mouse) => button_closure_forStorage_Type(s_mouse, T_Storage.export)}>
 			<span style={button_style}>export</span>

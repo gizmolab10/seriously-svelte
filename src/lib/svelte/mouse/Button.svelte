@@ -6,7 +6,6 @@
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Mouse_Responder from './Mouse_Responder.svelte';
 	export let es_button: S_Element = S_Element.empty();
-	export let background_color = $w_background_color;
 	export let closure: Handle_Result<S_Mouse>;
 	export let border_color = colors.default;
 	export let font_size = k.font_size.thing;
@@ -23,8 +22,8 @@
 	export let style = k.empty;
 	export let name = k.empty;
 	let border = k.empty;
-	let currentStyle = style;
 	let element: HTMLElement;
+	let computedStyletyle = style;
 	let buttonWrapper: Svelte_Wrapper;
 
 	//////////////////////////////////////
@@ -41,14 +40,14 @@
 	//									//
 	//////////////////////////////////////
 
-	update_currentStyle();	// call during instantiate
+	update_computedStyletyle();
+	$: $w_background_color, es_button.fill, update_computedStyletyle();
 	
-	function update_currentStyle() {
+	function update_computedStyletyle() {
 		color = es_button.stroke;
-		background_color = es_button.fill;
 		if (style.length == 0) {
 			border = border_thickness == 0 ? 'none' : `${border_thickness}px solid ${border_color}`;
-			currentStyle=`
+			computedStyletyle=`
 				left:0px;
 				display: flex;
 				color:${color};
@@ -65,17 +64,17 @@
 				cursor:${es_button.cursor};
 				border-radius:${height / 2}px;
 				font-family:${$w_thing_fontFamily};
-				background-color:${background_color};
+				background-color:${es_button.fill};
 			`.removeWhiteSpace();
 		}
 	}
 
-	function button_closure(s_mouse: S_Mouse) {
+	function handle_mouse_state(s_mouse: S_Mouse) {
 		if (!!closure) {
 			closure(s_mouse);		// so container can adjust behavior or appearance
 		}
 		if (s_mouse.isHover) {	// NOT the same as isHovering
-			update_currentStyle();
+			update_computedStyletyle();
 		}
 	}
 
@@ -90,11 +89,11 @@
 		origin={origin}
 		center={center}
 		detect_longClick={true}
-		handle_mouse_state={button_closure}>
+		handle_mouse_state={handle_mouse_state}>
 		<button
 			class='button'
-			style={currentStyle}
-			id={'button-for-' + name}>
+			id={'button-for-' + name}
+			style={computedStyletyle}>
 			<slot></slot>
 		</button>
 	</Mouse_Responder>

@@ -17,14 +17,11 @@
 	let fillColor = $w_background_color;
 	let extraColor = $w_background_color;
 	let trianglePath = svgPaths.fat_polygon(size, angle);
+
+	$: $w_ancestries_grabbed, setFillColor(false);
 	
 	$: {
 		trianglePath = svgPaths.fat_polygon(size, angle);
-		setFillColor(false);
-	}
-
-	$: {
-		const _ = $w_ancestries_grabbed;
 		setFillColor(false);
 	}
 

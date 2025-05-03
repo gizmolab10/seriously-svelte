@@ -52,10 +52,7 @@
 		}
 	});
 
-	$: {
-		const _ = `${origin?.description ?? k.empty} ${center?.description ?? k.empty}`;
-		setupStyle();
-	}
+	$: origin?.description, center?.description, setupStyle();
 	
 	$: {	// hover
 		const mouse_location = $w_mouse_location;

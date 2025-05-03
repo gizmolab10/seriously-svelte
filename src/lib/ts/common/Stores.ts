@@ -1,7 +1,7 @@
 import { Rect, Point, colors, Ancestry, Hierarchy, G_Cluster } from '../common/Global_Imports';
 import { T_Graph, T_Kinship, T_Details, T_Startup } from '../common/Global_Imports';
 import { G_Paging, S_Title_Edit, S_Alteration } from '../common/Global_Imports';
-import { get, writable } from 'svelte/store';
+import { writable } from 'svelte/store';
 
 export const w_ancestry_showing_tools = writable<Ancestry | null>();
 export const w_ancestries_expanded	  = writable<Array<Ancestry>>();
@@ -48,18 +48,16 @@ export const w_show_details			  = writable<boolean>();
 export const w_device_isMobile		  = writable<boolean>();
 
 class Stores {
-	
 	setup_defaults() {
-		w_t_startup.set(T_Startup.start);
-		w_thing_color.set(null);
-		w_count_mouse_up.set(0);
-		w_count_rebuild.set(0);
 		w_count_resize.set(0);
+		w_count_rebuild.set(0);
+		w_count_mouse_up.set(0);
+		w_thing_color.set(null);
+		w_t_startup.set(T_Startup.start);
 		w_background_color.subscribe((color: string) => {
 			colors.separator = colors.separatorFor(color);
 		});
 	}
-
 }
 
 export const stores = new Stores();
