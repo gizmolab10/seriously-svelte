@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, Point, T_Layer } from '../../ts/common/Global_Imports';
+	import { k, Size, T_Layer } from '../../ts/common/Global_Imports';
 	import { w_background_color } from '../../ts/common/Stores';
 	import Buttons_Grid from '../mouse/Buttons_Grid.svelte';
 	export let top = 0;
@@ -7,10 +7,10 @@
 	let thing;
 
 	const button_titles=[
-		['browse', 'left', 'right', 'up', 'down'],
-		['relocate', 'left', 'right', 'up', 'down'],
-		['add', 'child', 'parent', 'related', 'sibling'],
-		['delete', 'selected', 'parent', 'related']];
+		['browse', 'down', 'up', 'right', 'left'],
+		['relocate', 'down', 'up', 'right', 'left'],
+		['add', 'child', 'sibling', 'parent', 'related'],
+		['delete', 'selection', 'parent', 'related']];
 
 </script>
 
@@ -21,9 +21,8 @@
 		position:absolute;
 		z-index: {T_Layer.tools}'>
 	<Buttons_Grid
-		rows=4
 		columns=5
-		gap={new Point(3, 2)}
+		gap={new Size(2, 3)}
 		width={k.width_details}
 		button_height={k.size.dot}
 		button_titles={button_titles}

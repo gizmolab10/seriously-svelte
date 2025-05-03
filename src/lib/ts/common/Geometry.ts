@@ -31,6 +31,7 @@ export class Point {
 	offsetByY(y: number):			   Point { return this.offsetByXY(0, y); }
 	offsetEquallyBy(offset: number):   Point { return this.offsetByXY(offset, offset); }
 	offsetByXY(x: number, y: number):  Point { return new Point(this.x + x, this.y + y); }
+	spreadByXY(x: number, y: number):  Point { return new Point(this.x * x, this.y * y); }
 	offsetBy(point: Point):			   Point { return new Point(this.x + point.x, this.y + point.y); }
 	vector_to(point: Point):		   Point { return point.offsetBy(this.negated); }
 	xMultipliedBy(multiplier: number): Point { return new Point(this.x * multiplier, this.y) }
