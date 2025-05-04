@@ -1,6 +1,9 @@
 <script lang='ts'>
 	import { k, T_Layer } from '../../ts/common/Global_Imports';
 	import type { Integer } from '../../ts/common/Types';
+	export let font_size = k.font_size.small;
+	export let row_height = 12;
+	export let name = k.empty;
 	export let width = 180;
 	export let top = 0;
 	export let array;
@@ -24,31 +27,30 @@
 </script>
 
 <style>
-	.first {
+	.first-column {
 		border-right: 1px solid transparent;
 		text-align: right;
-		line-height:12px;
 		color:black;
 		width: 30%;
 	}
-	.second {
-		line-height:12px;
+	.second-column {
 	}
 </style>
 
 {#if array}
-	<div class='ancestry-info'
+	<div class={name}
 		bind:this={table}
 		style='
 			left:10px;
 			top:{top}px;
 			position:absolute;
+			font-size:{font_size}px;
 			z-index: {T_Layer.details};'>
 		<table style='width: {width}px; left:12px; color:black;'>
 			{#each array as [key, value]}
 				<tr>
-					<td class='first'>{key}:</td>
-					<td class='second'>{value}</td>
+					<td class='first-column' style='line-height:{row_height}px;'>{key}:</td>
+					<td class='second-column' style='line-height:{row_height}px;'>{value}</td>
 				</tr>
 			{/each}
 		</table>

@@ -1,19 +1,23 @@
 <script lang='ts'>
 	import { k, Size, T_Layer } from '../../ts/common/Global_Imports';
-	import { w_hierarchy, w_background_color } from '../../ts/common/Stores';
 	import Buttons_Grid from '../mouse/Buttons_Grid.svelte';
+	import { w_hierarchy } from '../../ts/common/Stores';
 	export let top = 0;
-	const ancestry = $w_hierarchy.grabs_latest_ancestry;
 
 	const button_titles=[
 		['browse', 'down', 'up', 'right', 'left'],
 		['add', 'child', 'sibling', 'parent', 'related'],
-		['relocate', 'down', 'up', 'right', 'left'],
-		['delete', 'selection', 'parent', 'related']];
+		['delete', 'selection', 'parent', 'related'],
+		['relocate', 'down', 'up', 'right', 'left']];
 
-	function closure(s_mouse, row_index, col_index) {
-		if (s_mouse.isHover && !s_mouse.isOut) {
-			// console.log(s_mouse.description, row_index, col_index);
+	function name_for(row, column) {
+		const titles = button_titles[row];
+		return `${titles[0]} ${titles[column]}`;
+	}
+
+	function closure(s_mouse, row, column) {
+		if (!s_mouse.isHover && s_mouse.isDown) {
+			$w_hierarchy.handle_tool_clicked_at(row, column, s_mouse, name_for(row, column));
 		}
 	}
 

@@ -59,8 +59,8 @@ export default class Constants {
 		big:	 '::::', };
 
 	font_size = {
-		smallest: dot_size - 4,
-		smaller:  dot_size - 2,
+		smallest: dot_size - 3,
+		smaller:  dot_size - 0.7,
 		small:	  dot_size,
 		thing:	  dot_size + 1, };
 
@@ -89,17 +89,17 @@ export default class Constants {
 			graph:	  0,
 		},
 		detail: {
-			storage: 122,
+			storage: 116,
 			tools:	  75,
 			display:  76,
 			info:	   0,
 		},
 		info: {
 			segments:	  21,
-			before_title:  4,
-			title:		  17,
+			before_title:  3,
+			title:		  22,
 			after_title:   4,
-			table:		 142,
+			table:		 126,
 			color:		  20,
 			traits:		   2,
 			consequence:  50,

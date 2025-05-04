@@ -47,7 +47,6 @@
         const s_element = s_element_byRowColumn[key];
         if (!!s_element && s_mouse.isHover) {
             s_element.isOut = s_mouse.isOut;
-            console.log('grid  ', s_element.description);
         }
         closure(s_mouse, row, column);
     }

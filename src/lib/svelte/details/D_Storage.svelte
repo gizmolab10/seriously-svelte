@@ -8,7 +8,7 @@
 	import Button from '../mouse/Button.svelte';
 	import Table from '../kit/Table.svelte';
 	export let top = 0;
-	const buttons_top = 136;
+	const buttons_top = 128;
 	const button_style = `font-family: ${$w_thing_fontFamily}; font-size:0.85em; left: 5px; top: -2px; position: absolute;`;
 	let s_element_byStorageType: { [id: string]: S_Element } = {};
 	let information: Array<Dictionary> = [];
@@ -69,7 +69,11 @@
 			style='
 				width:{k.width_details}px;
 				font-size:{k.font_size.smaller}px;'>
-			<Table top={top + 22} array={information}/>
+			<Table
+				top={top + 22}
+				row_height={11}
+				array={information}
+				font_size={k.font_size.small - 1}/>
 		</div>
 		<Button name='import'
 			width=42

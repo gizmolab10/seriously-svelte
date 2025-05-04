@@ -18,7 +18,7 @@ export enum T_Details {
 	info,
 }
 
-export enum T_Info {
+export enum T_Info {		// identical to k.info
 	segments,
 	before_title,
 	title,

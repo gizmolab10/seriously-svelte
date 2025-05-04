@@ -124,14 +124,13 @@
 			top:{top}px;
 			left:{margin}px;
 			position:absolute;
-			width:{traits_width}px;
-			font-size:{k.font_size.small}px;'>
+			width:{traits_width}px;'>
 		{#if information.length != 0}
 			<Segmented
 				name='info-type'
 				height={k.height.small}
 				selected={[show.t_info]}
-				font_size={k.font_size.smaller}px
+				font_size={k.font_size.small}px
 				selection_closure={selection_closure}
 				titles={[T_Report.focus, T_Report.selection]}
 				origin={new Point(45, layout.top_ofInfoAt(T_Info.segments))}/>
@@ -156,8 +155,11 @@
 				thickness={k.thickness.thin}
 				top={layout.top_ofInfoAt(T_Info.after_title)}/>
 			<Table
+				row_height={11}
 				array={information}
+				name='information-table'
 				width = {k.width_details - 20}
+				font_size={k.font_size.smaller}
 				top = {layout.top_ofInfoAt(T_Info.table)}/>
 		{/if}
 		{#if !!ancestry && ancestry.isEditable}
