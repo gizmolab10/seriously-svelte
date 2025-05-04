@@ -1,7 +1,7 @@
 <script lang='ts'>
     import { k, Point, colors, T_Tool, T_Element, S_Element } from '../../ts/common/Global_Imports';
     import { w_background_color } from '../../ts/common/Stores';
-    import Buttons_Row from './Buttons_Row.svelte';
+    import Buttons_Box from './Buttons_Box.svelte';
     export let closure: (s_mouse: S_Mouse, row: number, column: number) => void;
     export let button_titles: string[][];
     export let button_height = 15;
@@ -24,7 +24,7 @@
         position:absolute;
         height: {(rows * button_height) + ((rows - 1) * gap)}px;'>
     {#each button_titles as titles, row}
-        <Buttons_Row
+        <Buttons_Box
             gap={gap}
             width={width}
             font_size={font_size}
