@@ -12,8 +12,8 @@
 		['delete', 'selection', 'parent', 'related']];
 
 	function closure(s_mouse, row_index, col_index) {
-		if (!s_mouse.isOut) {
-			console.log(s_mouse.description, row_index, col_index);
+		if (s_mouse.isHover && !s_mouse.isOut) {
+			// console.log(s_mouse.description, row_index, col_index);
 		}
 	}
 
@@ -28,7 +28,6 @@
 	<Buttons_Grid
 		columns=5
 		closure={closure}
-		ancestry={ancestry}
 		gap={new Size(2, 3)}
 		width={k.width_details}
 		button_height={k.size.dot}

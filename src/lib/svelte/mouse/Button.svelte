@@ -41,9 +41,10 @@
 	//////////////////////////////////////
 
 	update_computedStyletyle();
-	$: $w_background_color, es_button.fill, update_computedStyletyle();
+	$: es_button.fill, es_button.isOut, $w_background_color, update_computedStyletyle();
 	
 	function update_computedStyletyle() {
+		// console.log(`button ${es_button.description}`);
 		color = es_button.stroke;
 		if (style.length == 0) {
 			border = border_thickness == 0 ? 'none' : `${border_thickness}px solid ${border_color}`;
@@ -73,7 +74,7 @@
 		if (!!closure) {
 			closure(s_mouse);		// so container can adjust behavior or appearance
 		}
-		if (s_mouse.isHover) {	// NOT the same as isHovering
+		if (s_mouse.isHover) {		// NOT the same as isHovering
 			update_computedStyletyle();
 		}
 	}

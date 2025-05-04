@@ -66,7 +66,7 @@
 				const es_tool = ux.s_element_for(ancestry, T_Element.tool, id);
 				es_tool.color_background = isDismiss ? $w_background_color : 'transparent';
 				es_tool.set_forHovering(color, 'pointer');
-				es_tool.hoverIgnore = !isDismiss;
+				es_tool.ignore_hover = !isDismiss;
 				s_element_byToolType[id] = es_tool;
 			}		
 		}

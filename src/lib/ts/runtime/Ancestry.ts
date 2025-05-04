@@ -308,10 +308,10 @@ export default class Ancestry extends Identifiable {
 	}
 
 	isHoverInverted(type: string): boolean {
-		const shouldInvert = this.isGrabbed || this.isEditing;
+		const isInverted = this.isGrabbed || this.isEditing;
 		switch (type) {
-			case T_Element.reveal: return this.isExpanded == shouldInvert;
-			default: return shouldInvert;
+			case T_Element.reveal: return layout.inTreeMode && this.isExpanded == isInverted;
+			default: return isInverted;
 		}
 	}
 

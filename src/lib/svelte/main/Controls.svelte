@@ -3,8 +3,8 @@
 	import { T_Layer, T_Graph, T_Banner, T_Element, T_Control, T_Kinship, T_Preference } from '../../ts/common/Global_Imports';
 	import { w_t_graph, w_t_tree, w_graph_rect, w_count_resize, w_hierarchy, w_popupView_id } from '../../ts/common/Stores';
 	import { w_show_details, w_show_related, w_device_isMobile, w_thing_fontFamily } from '../../ts/common/Stores';
-	import Identifiable from '../../ts/runtime/Identifiable';
 	import { w_background_color } from '../../ts/common/Stores';
+	import Identifiable from '../../ts/runtime/Identifiable';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Button from '../mouse/Button.svelte';
 	import SVG_D3 from '../kit/SVG_D3.svelte';
@@ -15,8 +15,8 @@
 	const size_big = size_small + 4;
 	const lefts = [10, 55, 117, 278];
 	const resize_viewBox = `0, 0, ${size_big}, ${size_big}`;
-	let elementShown_byControlType: {[t_control: string]: boolean} = {};
 	let es_control_byType: { [t_control: string]: S_Element } = {};
+	let isVisible_forType: {[t_control: string]: boolean} = {};
 	let related_prefix = $w_show_related ? 'hide' : 'show'
 	let width = w.windowSize.width - 20;
 	let displayName = k.empty;
@@ -65,11 +65,11 @@
 		for (const t_control of t_controls) {
 			total -= u.getWidthOf(t_control);
 			const es_control = ux.s_element_for(new Identifiable(t_control), T_Element.control, t_control);
-			es_control.hoverIgnore = [T_Control.details, T_Control.related].includes(t_control);
+			es_control.ignore_hover = [T_Control.details, T_Control.related].includes(t_control);
 			es_control.isSelected = (t_control == T_Control.related) && $w_show_related;
 			es_control.set_forHovering(colors.default, 'pointer');
-			elementShown_byControlType[t_control] = total > 0;
 			es_control_byType[t_control] = es_control;
+			isVisible_forType[t_control] = total > 0;
 		}
 	}
 
@@ -87,23 +87,6 @@
 			}
 		}
 	}
-
-							// {#key $w_show_related}
-							// 	<Button
-							// 		width=82
-							// 		isToggle={true}
-							// 		height={size_big}
-							// 		name='show-related'
-							// 		color='transparent'
-							// 		border_thickness=0.5
-							// 		center={new Point(lefts[3], details_top + 3.5)}
-							// 		es_button={es_control_byType[T_Control.related]}
-							// 		closure={(s_mouse) => handle_mouse_state_forControl_Type(s_mouse, T_Control.related)}>
-							// 		<span style='font-family: {$w_thing_fontFamily};'>
-							// 			{related_prefix} related
-							// 		</span>
-							// 	</Button>
-							// {/key}
 
 </script>
 
@@ -158,7 +141,7 @@
 			{/if}
 			{#key $w_device_isMobile}
 				{#if $w_device_isMobile}
-					{#if elementShown_byControlType[T_Control.smaller]}
+					{#if isVisible_forType[T_Control.smaller]}
 						<Button
 							width={size_big}
 							height={size_big}
@@ -177,7 +160,7 @@
 							</svg>
 						</Button>
 					{/if}
-					{#if elementShown_byControlType[T_Control.bigger]}
+					{#if isVisible_forType[T_Control.bigger]}
 						<Button
 							width={size_big}
 							height={size_big}
@@ -199,35 +182,31 @@
 				{/if}
 			{/key}
 			{#key $w_background_color}
-				{#if elementShown_byControlType[T_Control.builds]}
-					<Button name={T_Control.builds}
-						width=75
-						height={size_big}
-						border_thickness=0.5
-						center={new Point(width - 55, y_center)}
-						es_button={es_control_byType[T_Control.builds]}
-						closure={(s_mouse) => handle_mouse_state_forControl_Type(s_mouse, T_Control.builds)}>
-						<span style='font-family: {$w_thing_fontFamily};'>
-							{'build ' + k.build_number}
-						</span>
-					</Button>
-				{/if}
-				{#if elementShown_byControlType[T_Control.help]}
-					<Button name={T_Control.help}
-						width={size_big}
-						height={size_big}
-						border_thickness=0.5
-						center={new Point(width, y_center)}
-						es_button={es_control_byType[T_Control.help]}
-						closure={(s_mouse) => handle_mouse_state_forControl_Type(s_mouse, T_Control.help)}>
-						<span
-							style='top:2px;
-								left:5.5px;
-								position:absolute;'>
-							?
-						</span>
-					</Button>
-				{/if}
+				<Button name={T_Control.builds}
+					width=75
+					height={size_big}
+					border_thickness=0.5
+					center={new Point(width - 55, y_center)}
+					es_button={es_control_byType[T_Control.builds]}
+					closure={(s_mouse) => handle_mouse_state_forControl_Type(s_mouse, T_Control.builds)}>
+					<span style='font-family: {$w_thing_fontFamily};'>
+						{'build ' + k.build_number}
+					</span>
+				</Button>
+				<Button name={T_Control.help}
+					width={size_big}
+					height={size_big}
+					border_thickness=0.5
+					center={new Point(width, y_center)}
+					es_button={es_control_byType[T_Control.help]}
+					closure={(s_mouse) => handle_mouse_state_forControl_Type(s_mouse, T_Control.help)}>
+					<span
+						style='top:2px;
+							left:5.5px;
+							position:absolute;'>
+						?
+					</span>
+				</Button>
 			{/key}
 		</div>
 	{/key}

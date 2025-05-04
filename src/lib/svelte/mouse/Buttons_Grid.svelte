@@ -1,20 +1,20 @@
 <script lang='ts'>
     import { k, ux, Size, Point, colors, T_Tool, T_Element, S_Element } from '../../ts/common/Global_Imports';
     import { w_background_color } from '../../ts/common/Stores';
+	import Identifiable from '../../ts/runtime/Identifiable';
     import Button from './Button.svelte';
     export let width: number;
     export let columns: number;
     export let font_size: number;
-    export let ancestry: Ancestry;
     export let button_height = 15;
     export let gap = new Size(2, 3);
     export let button_titles: string[][];
     export let closure: (s_mouse: S_Mouse, row: number, column: number) => void;
 	const s_element_byRowColumn: { [key: string]: S_Element } = {};
-    const rows = button_titles.length;    // first dimension of button_titles
+    const rows = button_titles.length;    // first dimension of 2
 
-    reset_all_s_elements_for_ancestry_change();
-    function key_for(row: number, column: number): string { return `${row},${column}`; }
+    setup_s_elements();
+    function key_for(row: number, column: number): string { return `${row}:${column}`; }
     function columns_inRow(row: number): number { return button_titles[row].length - 1; }
 
     function button_width_for(row: number, column: number): number {
@@ -31,20 +31,24 @@
         return new Point(x, y);
     }
 
-	function reset_all_s_elements_for_ancestry_change() {
-		if (!!ancestry) {
-            for (let row = 0; row < rows; row++) {
-                for (let column = 1; column <= columns_inRow(row); column++) {
-                    const key = key_for(row, column);
-                    const es_tool = ux.s_element_for(ancestry, T_Element.tool, key);
-                    es_tool.set_forHovering(colors.default, 'pointer');
-                    s_element_byRowColumn[key] = es_tool;
-                }
+	function setup_s_elements() {
+        for (let row = 0; row < rows; row++) {
+            for (let column = 1; column <= columns_inRow(row); column++) {
+                const key = key_for(row, column);
+                const es_tool = ux.s_element_for(new Identifiable(key), T_Element.tool, key);
+                es_tool.set_forHovering(colors.default, 'pointer');
+                s_element_byRowColumn[key] = es_tool;
             }
         }
 	}
 
     function intercept_closure(s_mouse: S_Mouse, row: number, column: number) {
+        const key = key_for(row, column);
+        const s_element = s_element_byRowColumn[key];
+        if (!!s_element && s_mouse.isHover) {
+            s_element.isOut = s_mouse.isOut;
+            console.log('grid  ', s_element.description);
+        }
         closure(s_mouse, row, column);
     }
 
@@ -76,9 +80,10 @@
                     font_size={font_size}
                     height={button_height}
                     width={button_width_for(row, column)}
+                    name={`button-${key_for(row, column)}`}
                     origin={button_origin_for(row, column)}
                     es_button={s_element_byRowColumn[key_for(row, column)]}
-                    closure={(s_mouse) => intercept_closure(s_mouse, row, column - 1)}>
+                    closure={(s_mouse) => intercept_closure(s_mouse, row, column)}>
                     {title}
                 </Button>
             {/if}
