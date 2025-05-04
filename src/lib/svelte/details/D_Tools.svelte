@@ -5,10 +5,11 @@
 	export let top = 0;
 
 	const button_titles=[
-		['browse', 'down', 'up', 'right', 'left'],
+		['browse', 'after', 'before', 'in', 'out'],
+		['list', 'conceal', 'reveal'],
 		['add', 'child', 'sibling', 'parent', 'related'],
 		['delete', 'selection', 'parent', 'related'],
-		['relocate', 'down', 'up', 'right', 'left']];
+		['move', 'after', 'before', 'in', 'out']];
 
 	function name_for(row, column) {
 		const titles = button_titles[row];
@@ -26,7 +27,7 @@
 <div
 	class='editing-tools'
 	style='
-		top:{top}px;
+		top:{top + 1}px;
 		position:absolute;
 		z-index: {T_Layer.tools}'>
 	<Buttons_Grid
