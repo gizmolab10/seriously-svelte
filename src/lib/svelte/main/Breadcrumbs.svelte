@@ -3,7 +3,7 @@
 	import { w_s_title_edit, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { signals, svgPaths, Ancestry, databases } from '../../ts/common/Global_Imports';
 	import { w_hierarchy, w_graph_rect, w_thing_color } from '../../ts/common/Stores';
-	import Breadcrumb_Button from '../mouse/Breadcrumb_Button.svelte';
+	import Breadcrumb_Button from '../buttons/Breadcrumb_Button.svelte';
 	import SVG_D3 from '../kit/SVG_D3.svelte';
 	import { onMount } from 'svelte';
 	let breadcrumb_reattachments = 0;

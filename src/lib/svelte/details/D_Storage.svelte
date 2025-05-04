@@ -5,8 +5,8 @@
 	import { w_t_database, w_hierarchy } from '../../ts/common/Stores';
 	import { T_Database } from '../../ts/database/DBCommon';
 	import Segmented from '../mouse/Segmented.svelte';
-	import Button from '../mouse/Button.svelte';
-	import Table from '../kit/Table.svelte';
+	import Text_Table from '../kit/Text_Table.svelte';
+	import Button from '../buttons/Button.svelte';
 	export let top = 0;
 	const buttons_top = 128;
 	const button_style = `font-family: ${$w_thing_fontFamily}; font-size:0.85em; left: 5px; top: -2px; position: absolute;`;
@@ -69,7 +69,7 @@
 			style='
 				width:{k.width_details}px;
 				font-size:{k.font_size.smaller}px;'>
-			<Table
+			<Text_Table
 				top={top + 22}
 				row_height={11}
 				array={information}

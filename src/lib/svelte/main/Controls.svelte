@@ -6,7 +6,7 @@
 	import { w_background_color } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Segmented from '../mouse/Segmented.svelte';
-	import Button from '../mouse/Button.svelte';
+	import Button from '../buttons/Button.svelte';
 	import SVG_D3 from '../kit/SVG_D3.svelte';
 	import { onMount } from 'svelte';
 	const size_small = k.size.button;

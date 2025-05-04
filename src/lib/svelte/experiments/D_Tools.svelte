@@ -1,17 +1,17 @@
 <script lang='ts'>
 	import { c, k, u, ux, w, show, Rect, Size, Point, debug, colors, signals } from '../../ts/common/Global_Imports';
-	import { T_Tool, T_Graph, T_Layer, T_Element, T_Alteration } from '../../ts/common/Global_Imports';
 	import { layout, svgPaths, databases, Direction, Svelte_Wrapper } from '../../ts/common/Global_Imports';
+	import { T_Tool, T_Graph, T_Layer, T_Element, T_Alteration } from '../../ts/common/Global_Imports';
 	import { S_Mouse, S_Element, S_Alteration } from '../../ts/common/Global_Imports';
 	import { w_s_alteration, w_ancestry_showing_tools } from '../../ts/common/Stores';
 	import { w_hierarchy, w_graph_rect } from '../../ts/common/Stores';
 	import Transparent_Circle from '../kit/Transparent_Circle.svelte';
+	import Triangle_Button from '../buttons/Triangle_Button.svelte';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import Triangle_Button from '../mouse/Triangle_Button.svelte';
 	import { w_background_color } from '../../ts/common/Stores';
 	import Widget_Reveal from '../widget/Widget_Reveal.svelte';
-	import Buttons_Grid from '../mouse/Buttons_Grid.svelte';
-	import Button from '../mouse/Button.svelte';
+	import Buttons_Grid from '../buttons/Buttons_Grid.svelte';
+	import Button from '../buttons/Button.svelte';
 	import Trash from '../kit/Trash.svelte';
 	import { onMount } from 'svelte';
 	export let top = 0;

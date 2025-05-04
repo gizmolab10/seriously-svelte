@@ -10,7 +10,7 @@
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
 	import Color from '../kit/Color.svelte';
-	import Table from '../kit/Table.svelte';
+	import Text_Table from '../kit/Text_Table.svelte';
 	import { onMount } from 'svelte';
 	export let top = 0;
 	const id = 'info';
@@ -154,7 +154,7 @@
 				width={info_width}
 				thickness={k.thickness.thin}
 				top={layout.top_ofInfoAt(T_Info.after_title)}/>
-			<Table
+			<Text_Table
 				row_height={11}
 				array={information}
 				name='information-table'

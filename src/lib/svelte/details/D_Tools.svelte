@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, Size, T_Layer } from '../../ts/common/Global_Imports';
-	import Buttons_Grid from '../mouse/Buttons_Grid.svelte';
+	import Buttons_Grid from '../buttons/Buttons_Grid.svelte';
 	import { w_hierarchy } from '../../ts/common/Stores';
 	export let top = 0;
 
@@ -31,9 +31,9 @@
 		position:absolute;
 		z-index: {T_Layer.tools}'>
 	<Buttons_Grid
-		columns=5
+		gap={3}
+		columns={5}
 		closure={closure}
-		gap={new Size(2, 3)}
 		width={k.width_details}
 		button_height={k.size.dot}
 		button_titles={button_titles}

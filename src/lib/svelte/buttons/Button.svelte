@@ -2,9 +2,9 @@
 	import { k, u, ux, Rect, Point, colors, T_Layer } from '../../ts/common/Global_Imports';
 	import { w_thing_fontFamily, w_background_color } from '../../ts/common/Stores';
 	import { S_Element, Svelte_Wrapper } from '../../ts/common/Global_Imports';
+	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import type { Handle_Result } from '../../ts/common/Types';
 	import Identifiable from '../../ts/runtime/Identifiable';
-	import Mouse_Responder from './Mouse_Responder.svelte';
 	export let es_button: S_Element = S_Element.empty();
 	export let closure: Handle_Result<S_Mouse>;
 	export let border_color = colors.default;
