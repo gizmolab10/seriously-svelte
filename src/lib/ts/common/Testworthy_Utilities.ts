@@ -1,4 +1,4 @@
-// N.B., do not import these from Global Imports --> avoid dependency issues when importing Utilities class
+// N.B., do not import these from Global Imports --> avoid dependency issues when importing Utilities class into test code
 
 import Identifiable from '../runtime/Identifiable';
 import { T_Browser } from './Enumerations';
@@ -8,6 +8,8 @@ import { Point } from './Geometry';
 import Angle from './Angle';
 
 export class Testworthy_Utilities {
+	private orderedKeysCache = new WeakMap<object, string[]>();
+
 	ignore(event: Event)												 {}
 	onNextCycle_apply(closure: () => {})								 { setTimeout(() => { closure(); }, 0); }
 	location_ofMouseEvent(event: MouseEvent):					   Point { return new Point(event.clientX, event.clientY); }
@@ -17,7 +19,6 @@ export class Testworthy_Utilities {
 	subtract_arrayFrom(a: Array<any>, b: Array<any>):		  Array<any> { return b.filter(c => a.filter(d => c != d)); }
 	uniquely_concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return this.strip_invalid(this.concatenateArrays(a, b)); }
 	strip_invalid(array: Array<any>):						  Array<any> { return this.strip_identifiableDuplicates(this.strip_falsies(array)); }
-	private orderedKeysCache = new WeakMap<object, string[]>();
 
 	// remove item from a dictionary (with string keys and number values) at the index
 	valueFrom_atIndex<T extends Record<string, number>>(dictionary: T, index: number): number {
@@ -27,7 +28,6 @@ export class Testworthy_Utilities {
 		}
 		return dictionary[propNames[index]];
 	}
-
 
 	valueFrom_atIndex_usingMap<T extends Record<string, number>>(dictionary: T, index: number): number {
 		// Get or create the ordered keys for this dictionary

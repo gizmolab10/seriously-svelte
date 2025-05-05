@@ -8,11 +8,11 @@
 
 	const button_titles=[
 		['graph', 'reveal selection', 'center'],
-		['browse', 'after', 'before', 'in', 'out'],
+		['browse', 'before', 'after', 'in', 'out'],
 		['list', 'conceal', 'reveal'],
 		['add', 'child', 'sibling', 'line', 'parent', 'related'],
 		['delete', 'selection', 'parent', 'related'],
-		['move', 'after', 'before', 'in', 'out']];
+		['move', 'before', 'after', 'in', 'out']];
 
 	function name_for(row, column) {
 		const titles = button_titles[row];

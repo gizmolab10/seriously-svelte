@@ -78,10 +78,10 @@ export class Hierarchy {
 				case 1:	w.user_graph_offset_setTo(Point.zero); return; // 'center';
 			} break;
 			case 1: switch (column) { // 'browse';
-				case 0:	this.grabs_latest_rebuild_persistentMoveUp_maybe(false, false, false, false); return; // 'down';
-				case 1:	this.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, false, false); return; // 'up';
-				case 2:	await this.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, false, false, false); return; // 'right';
-				case 3:	await this.ancestry_rebuild_persistentMoveRight(ancestry, false, false, false, false, false); return; // 'left';
+				case 1:	this.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, false, false); return; // 'before';
+				case 0:	this.grabs_latest_rebuild_persistentMoveUp_maybe(false, false, false, false); return; // 'after';
+				case 2:	await this.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, false, false, false); return; // 'in';
+				case 3:	await this.ancestry_rebuild_persistentMoveRight(ancestry, false, false, false, false, false); return; // 'out';
 			} break;
 			case 2: switch (column) { // 'list';
 				case 0:	if (ancestry.collapse()) { layout.grand_build(); } return; // 'conceal';
@@ -100,10 +100,10 @@ export class Hierarchy {
 				case 2:	break; // 'related';
 			} break;
 			case 5: switch (column) { // 'move';
-				case 0:	this.grabs_latest_rebuild_persistentMoveUp_maybe(false, false, true, false); return; // 'down';
-				case 1:	this.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, true, false); return; // 'up';
-				case 2:	await this.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, true, false, false); return; // 'right';
-				case 3:	await this.ancestry_rebuild_persistentMoveRight(ancestry, false, false, true, false, false); return; // 'left';
+				case 1:	this.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, true, false); return; // 'before';
+				case 0:	this.grabs_latest_rebuild_persistentMoveUp_maybe(false, false, true, false); return; // 'after';
+				case 2:	await this.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, true, false, false); return; // 'in';
+				case 3:	await this.ancestry_rebuild_persistentMoveRight(ancestry, false, false, true, false, false); return; // 'out';
 			} break;
 		}
 		alert(`needed: ${name}`);
