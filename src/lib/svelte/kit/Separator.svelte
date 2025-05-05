@@ -5,14 +5,19 @@
 	import Gull_Wings from '../kit/Gull_Wings.svelte';
 	export let title_font_size = `${k.font_size.smaller}px`;
 	export let thickness = k.thickness.separator;
+	export let title_left: number | null= null;
 	export let title: string | null = null;
 	export let width = k.width_details;
 	export let add_wings = false;
+	export let margin = 0;
 	export let left = 0;
 	export let top = 0;
 	const title_width = u.getWidth_ofString_withSize(title ?? k.empty, title_font_size);
-	const title_left = (width + (left * 2.1) - title_width - 12) / 2;
 	let separator_color = colors.separator;
+
+	if (!title_left) {
+		title_left = (width + (left * 2.1) - title_width - 12) / 2;
+	}
 
 	$: {
 		const _ = $w_background_color;
@@ -46,9 +51,9 @@
 {/if}
 {#if add_wings}
 	<Gull_Wings
-		center={new Point(width, top).offsetEquallyBy(k.thickness.separator / 2)}
-		thickness={k.thickness.separator}
-		radius={k.radius.gull_wings}
+		center={new Point(width, top).offsetEquallyBy(thickness / 2)}
 		direction={Direction.left}
-		color={separator_color}/>
+		color={separator_color}
+		radius={thickness * 2}
+		thickness={thickness}/>
 {/if}

@@ -69,46 +69,6 @@ export class Hierarchy {
 
 	static readonly EVENTS: unique symbol;
 
-	async handle_tool_clicked_at(row: number, column: number, s_mouse: S_Mouse, name: string) {
-		// as each is implemented add return to the case
-		const ancestry = this.latest_grabbed_upward(true);
-		switch (row) {
-			case 0: switch (column) { // 'graph';
-				case 0:	break; // 'reveal selection';
-				case 1:	w.user_graph_offset_setTo(Point.zero); return; // 'center';
-			} break;
-			case 1: switch (column) { // 'browse';
-				case 1:	this.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, false, false); return; // 'before';
-				case 0:	this.grabs_latest_rebuild_persistentMoveUp_maybe(false, false, false, false); return; // 'after';
-				case 2:	await this.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, false, false, false); return; // 'in';
-				case 3:	await this.ancestry_rebuild_persistentMoveRight(ancestry, false, false, false, false, false); return; // 'out';
-			} break;
-			case 2: switch (column) { // 'list';
-				case 0:	if (ancestry.collapse()) { layout.grand_build(); } return; // 'conceal';
-				case 1:	if (ancestry.expand()) { layout.grand_build(); } return; // 'reveal';
-			} break;
-			case 3: switch (column) { // 'add';
-				case 0:	await this.ancestry_edit_persistentCreateChildOf(ancestry); return; // 'child';
-				case 1:	await this.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); return; // 'sibling';
-				case 2:	await this.thing_edit_persistentAddLine(ancestry); return; // 'line';
-				case 3:	this.toggleAlteration(T_Alteration.adding, s_mouse.isLong); return; // 'parent';
-				case 4:	break; // 'related';
-			} break;
-			case 4: switch (column) { // 'delete';
-				case 0:	await this.ancestries_rebuild_traverse_persistentDelete(get(w_ancestries_grabbed)); return// 'selection';
-				case 1:	this.toggleAlteration(T_Alteration.deleting, s_mouse.isLong); return; // 'parent';
-				case 2:	break; // 'related';
-			} break;
-			case 5: switch (column) { // 'move';
-				case 1:	this.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, true, false); return; // 'before';
-				case 0:	this.grabs_latest_rebuild_persistentMoveUp_maybe(false, false, true, false); return; // 'after';
-				case 2:	await this.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, true, false, false); return; // 'in';
-				case 3:	await this.ancestry_rebuild_persistentMoveRight(ancestry, false, false, true, false, false); return; // 'out';
-			} break;
-		}
-		alert(`needed: ${name}`);
-	}
-
 	async handle_key_down(event: KeyboardEvent) {
 
 		///////////////////////
@@ -165,6 +125,46 @@ export class Hierarchy {
 				}, 1);
 			}
 		}
+	}
+
+	async handle_tool_clicked_at(row: number, column: number, s_mouse: S_Mouse, name: string) {
+		// as each is implemented add return to the case
+		const ancestry = this.latest_grabbed_upward(true);
+		switch (row) {
+			case 0: switch (column) { // 'graph';
+				case 0:	break; // 'reveal selection';
+				case 1:	w.user_graph_offset_setTo(Point.zero); return; // 'center';
+			} break;
+			case 1: switch (column) { // 'browse';
+				case 1:	this.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, false, false); return; // 'before';
+				case 0:	this.grabs_latest_rebuild_persistentMoveUp_maybe(false, false, false, false); return; // 'after';
+				case 2:	await this.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, false, false, false); return; // 'in';
+				case 3:	await this.ancestry_rebuild_persistentMoveRight(ancestry, false, false, false, false, false); return; // 'out';
+			} break;
+			case 2: switch (column) { // 'list';
+				case 0:	if (ancestry.collapse()) { layout.grand_build(); } return; // 'conceal';
+				case 1:	if (ancestry.expand()) { layout.grand_build(); } return; // 'reveal';
+			} break;
+			case 3: switch (column) { // 'add';
+				case 0:	await this.ancestry_edit_persistentCreateChildOf(ancestry); return; // 'child';
+				case 1:	await this.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); return; // 'sibling';
+				case 2:	await this.thing_edit_persistentAddLine(ancestry); return; // 'line';
+				case 3:	this.toggleAlteration(T_Alteration.adding, s_mouse.isLong); return; // 'parent';
+				case 4:	break; // 'related';
+			} break;
+			case 4: switch (column) { // 'delete';
+				case 0:	await this.ancestries_rebuild_traverse_persistentDelete(get(w_ancestries_grabbed)); return// 'selection';
+				case 1:	this.toggleAlteration(T_Alteration.deleting, s_mouse.isLong); return; // 'parent';
+				case 2:	break; // 'related';
+			} break;
+			case 5: switch (column) { // 'move';
+				case 1:	this.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, true, false); return; // 'before';
+				case 0:	this.grabs_latest_rebuild_persistentMoveUp_maybe(false, false, true, false); return; // 'after';
+				case 2:	await this.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, true, false, false); return; // 'in';
+				case 3:	await this.ancestry_rebuild_persistentMoveRight(ancestry, false, false, true, false, false); return; // 'out';
+			} break;
+		}
+		alert(`needed: ${name}`);
 	}
 
 	static readonly GRABS: unique symbol;

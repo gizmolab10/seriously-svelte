@@ -32,7 +32,7 @@
 		position:absolute;
 		width:{k.width_details}px;
 		font-size:{k.font_size.small}px;'>
-	<Separator title='show tiny dots for' top=2 left=5 width={info_width} title_font_size={separator_font_size} thickness={k.thickness.thin}/>
+	<Separator title_left={50} title='show tiny dots for' top=2 left=5 width={info_width} title_font_size={separator_font_size} thickness={k.thickness.thin}/>
 	<Segmented
 		titles={titles}
 		allow_multiple={true}

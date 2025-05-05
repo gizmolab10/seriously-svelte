@@ -1,9 +1,9 @@
 <script lang='ts'>
-	import { k, Size, T_Layer } from '../../ts/common/Global_Imports';
+	import { k, show, Size, T_Layer } from '../../ts/common/Global_Imports';
 	import Buttons_Grid from '../buttons/Buttons_Grid.svelte';
 	import { w_hierarchy } from '../../ts/common/Stores';
 	export let top = 0;
-	const show_boxes = false;
+	const show_boxes = show.tool_boxes;
 	const font_size = show_boxes ? k.font_size.smaller : k.font_size.smallest;
 
 	const button_titles=[

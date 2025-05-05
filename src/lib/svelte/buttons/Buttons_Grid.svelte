@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import { k, Point, colors, T_Element, S_Element } from '../../ts/common/Global_Imports';
+    import { k, show, Point, colors, T_Element, S_Element } from '../../ts/common/Global_Imports';
     import { w_background_color } from '../../ts/common/Stores';
     import Buttons_Box from './Buttons_Box.svelte';
     export let closure: (s_mouse: S_Mouse, row: number, column: number) => void;
@@ -9,10 +9,11 @@
     export let font_size: number;
     export let width: number;
     export let gap = 2;
+    const box_top = show_boxes ? 8 : 0;
 	const rows = button_titles.length;
 
     function button_origin_for(row: number): Point {
-        return Point.y(row * (button_height + gap));
+        return Point.y(row * (button_height + gap + box_top));
     }
 
 </script>
@@ -28,6 +29,7 @@
         <Buttons_Box
             gap={gap}
             width={width}
+            box_top={box_top}
             show_box={show_boxes}
             font_size={font_size}
             button_titles={titles}

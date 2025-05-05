@@ -1,3 +1,4 @@
+import { show } from '../managers/Visibility';
 import { builds } from './Builds';
 
 const dot_size = 13;
@@ -90,7 +91,7 @@ export default class Constants {
 		},
 		detail: {
 			storage: 116,
-			tools:	 108,
+			tools:	 show.tool_boxes ? 157 : 108,
 			display:  76,
 			info:	   0,
 		},

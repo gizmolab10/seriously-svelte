@@ -5,6 +5,7 @@ import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
 
 export class Visibility {
+	tool_boxes	 = true;
 	debug_cursor = false;
 	traits		 = false;
 	t_info		 = T_Report.focus;
@@ -30,7 +31,7 @@ export class Visibility {
 					break;
 				case 'parents':
 					const mode = flag ? T_Kinship.parent : T_Kinship.child;
-					layout.set_t_tree(mode);
+					layout.set_t_tree([mode]);
 					break;
 			}
 		}
