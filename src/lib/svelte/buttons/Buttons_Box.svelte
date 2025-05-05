@@ -8,11 +8,14 @@
     export let button_titles: string[];
     export let button_height = 15;
     export let font_size: number;
+    export let show_box = false;
 	export let name = k.empty;
     export let width: number;
     export let gap = 2;
     const title_width = 34;
-    const origin_of_box = Point.x(origin.x + title_width);
+    const x_offset = show_box ? gap : title_width;
+    const origin_of_box = Point.x(origin.x + x_offset);
+    const row_width = width - gap - x_offset;
 
 </script>
 
@@ -23,22 +26,24 @@
         left:{origin.x}px;
         position:absolute;
         height: {button_height}px;'>
-    <div
-        class='box-title'
-        style='
+    {#if !show_box}
+        <div
+            class='box-title'
+            style='
             text-align: right;
             position:absolute;
             width:{title_width - gap}px;
             font-size:{font_size}px;'>
-        {button_titles[0]}
-    </div>
+            {button_titles[0]}
+        </div>
+    {/if}
     <Buttons_Row
         gap={gap}
         name={name}
         closure={closure}
+        width={row_width}
         font_size={font_size}
         origin={origin_of_box}
-        width={width - title_width - gap}
         button_height={button_height}
         button_titles={button_titles.slice(1)}/>
 </div>

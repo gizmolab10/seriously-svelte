@@ -3,8 +3,11 @@
 	import Buttons_Grid from '../buttons/Buttons_Grid.svelte';
 	import { w_hierarchy } from '../../ts/common/Stores';
 	export let top = 0;
+	const show_boxes = false;
+	const font_size = show_boxes ? k.font_size.smaller : k.font_size.smallest;
 
 	const button_titles=[
+		['graph', 'reveal selection', 'center'],
 		['browse', 'after', 'before', 'in', 'out'],
 		['list', 'conceal', 'reveal'],
 		['add', 'child', 'sibling', 'parent', 'related'],
@@ -18,7 +21,7 @@
 
 	function closure(s_mouse, row, column) {
 		if (!s_mouse.isHover && s_mouse.isDown) {
-			$w_hierarchy.handle_tool_clicked_at(row, column, s_mouse, name_for(row, column));
+			$w_hierarchy.handle_tool_clicked_at(row, column, s_mouse, name_for(row, column + 1));
 		}
 	}
 
@@ -34,9 +37,10 @@
 		gap={3}
 		columns={5}
 		closure={closure}
+		font_size={font_size}
+		show_boxes={show_boxes}
 		width={k.width_details}
 		button_height={k.size.dot}
 		button_titles={button_titles}
-		font_size={k.font_size.smallest}
 	/>
 </div>

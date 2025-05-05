@@ -90,7 +90,7 @@ export default class Constants {
 		},
 		detail: {
 			storage: 116,
-			tools:	  92,
+			tools:	 108,
 			display:  76,
 			info:	   0,
 		},

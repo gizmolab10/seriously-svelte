@@ -5,6 +5,7 @@
     export let closure: (s_mouse: S_Mouse, row: number, column: number) => void;
     export let button_titles: string[][];
     export let button_height = 15;
+    export let show_boxes = true;
     export let font_size: number;
     export let width: number;
     export let gap = 2;
@@ -27,6 +28,7 @@
         <Buttons_Box
             gap={gap}
             width={width}
+            show_box={show_boxes}
             font_size={font_size}
             button_titles={titles}
             name={`buttons-box-${row}`}
