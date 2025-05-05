@@ -10,7 +10,7 @@
 		['graph', 'reveal selection', 'center'],
 		['browse', 'after', 'before', 'in', 'out'],
 		['list', 'conceal', 'reveal'],
-		['add', 'child', 'sibling', 'parent', 'related'],
+		['add', 'child', 'sibling', 'line', 'parent', 'related'],
 		['delete', 'selection', 'parent', 'related'],
 		['move', 'after', 'before', 'in', 'out']];
 

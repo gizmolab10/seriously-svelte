@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import { k, Point, colors, T_Tool, T_Element, S_Element } from '../../ts/common/Global_Imports';
+    import { k, Point, colors, T_Element, S_Element } from '../../ts/common/Global_Imports';
     import { w_background_color } from '../../ts/common/Stores';
     import Buttons_Box from './Buttons_Box.svelte';
     export let closure: (s_mouse: S_Mouse, row: number, column: number) => void;

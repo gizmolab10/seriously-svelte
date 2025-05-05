@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { c, k, u, ux, w, show, Rect, Size, Point, debug, colors, signals } from '../../ts/common/Global_Imports';
 	import { layout, svgPaths, databases, Direction, Svelte_Wrapper } from '../../ts/common/Global_Imports';
-	import { T_Tool, T_Graph, T_Layer, T_Element, T_Alteration } from '../../ts/common/Global_Imports';
+	import { T_Graph, T_Layer, T_Element, T_Alteration } from '../../ts/common/Global_Imports';
 	import { S_Mouse, S_Element, S_Alteration } from '../../ts/common/Global_Imports';
 	import { w_s_alteration, w_ancestry_showing_tools } from '../../ts/common/Stores';
 	import { w_hierarchy, w_graph_rect } from '../../ts/common/Stores';
@@ -37,6 +37,20 @@
 	function getC(id: string) { return centers_byID[id] ?? Point.zero; }
 	function setC(id: string, center: Point) { return centers_byID[id] = center; }
 	function alteration_forID(id: string) { return (id == T_Tool.add_parent) ? T_Alteration.adding : T_Alteration.deleting; }
+
+	export enum T_Tool {
+		delete_confirm = 'delete_confirm',
+		delete_cancel  = 'delete_cancel',
+		delete_parent  = 'delete_parent',
+		confirmation   = 'confirmation',
+		add_parent	   = 'add_parent',
+		dismiss		   = 'dismiss',
+		delete		   = 'delete',
+		create    	   = 'create',
+		next		   = 'next',
+		more		   = 'more',
+		none		   = 'none',
+	}
 
 	debug.log_tools('mount tools')
 	setTimeout(() => { layout_tools_forceRedraw(); }, 20);
@@ -154,6 +168,35 @@
 			tool_reattachments += 1;
 		} else if (force) {
 			tool_reattachments += 1;
+		}
+	}
+
+	// from Hierarchy.ts
+	async handle_tool_clicked(idControl: string, s_mouse: S_Mouse) {
+		const event: MouseEvent | null = s_mouse.event as MouseEvent;
+        const ancestry = get(w_ancestry_showing_tools);
+		if (!!ancestry) {
+			switch (idControl) {
+				case T_Tool.more: debug.log_tools('needs more'); break;
+				case T_Tool.create: await this.ancestry_edit_persistentCreateChildOf(ancestry); break;
+				case T_Tool.add_parent: this.toggleAlteration(T_Alteration.adding, s_mouse.isLong); return;
+				case T_Tool.next: this.ancestry_relayout_toolCluster_nextParent(event?.altKey ?? false); return;
+				case T_Tool.delete_parent: this.toggleAlteration(T_Alteration.deleting, s_mouse.isLong); return;
+				case T_Tool.delete_confirm: await this.ancestries_rebuild_traverse_persistentDelete([ancestry]); break;
+				default: break;
+			}
+			w_ancestry_showing_tools.set(null);
+			layout.grand_layout();
+		}
+	}
+
+	ancestry_relayout_toolCluster_nextParent(force: boolean = false) {
+		const toolsAncestry = get(w_ancestry_showing_tools);
+		if (!!toolsAncestry) {
+			let ancestry = toolsAncestry;
+			ancestry.grabOnly();
+			layout.grand_layout();
+			w_ancestry_showing_tools.set(ancestry);
 		}
 	}
 

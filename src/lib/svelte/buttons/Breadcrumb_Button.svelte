@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { w_thing_color, w_background_color, w_thing_fontFamily, w_ancestry_focus } from '../../ts/common/Stores';
 	import { k, u, ux, Point, Thing, colors, layout, signals, databases } from '../../ts/common/Global_Imports';
-	import { T_Tool, T_Banner, S_Element } from '../../ts/common/Global_Imports';
+	import { T_Banner, S_Element } from '../../ts/common/Global_Imports';
 	import Button from './Button.svelte';
 	import { onMount } from 'svelte';
     export let thing;

@@ -179,20 +179,6 @@ export enum T_Element {
 	tool		 = 'tool',
 }
 
-export enum T_Tool {
-	delete_confirm = 'delete_confirm',
-	delete_cancel  = 'delete_cancel',
-	delete_parent  = 'delete_parent',
-	confirmation   = 'confirmation',
-	add_parent	   = 'add_parent',
-	dismiss		   = 'dismiss',
-	delete		   = 'delete',
-	create    	   = 'create',
-	next		   = 'next',
-	more		   = 'more',
-	none		   = 'none',
-}
-
 export enum T_SvelteComponent {
 	widget	= 'widget',		// *
 	title	= 'title',

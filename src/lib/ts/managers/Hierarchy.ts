@@ -1,6 +1,6 @@
-import { T_Tool, T_Thing, T_Trait, T_Order, T_Create, T_Report, T_Control, T_Predicate, T_Alteration } from '../common/Global_Imports';
-import { c, k, p, u, ux, show, User, Thing, Trait, debug, files, colors, signals, layout, Access } from '../common/Global_Imports';
-import { Ancestry, Predicate, Relationship, S_Mouse, S_Alteration, S_Title_Edit } from '../common/Global_Imports';
+import { c, k, p, u, ux, w, show, User, Thing, Trait, Point, debug, files, colors, signals, layout } from '../common/Global_Imports';
+import { T_Thing, T_Trait, T_Order, T_Create, T_Report, T_Control, T_Predicate, T_Alteration } from '../common/Global_Imports';
+import { Access, Ancestry, Predicate, Relationship, S_Mouse, S_Alteration, S_Title_Edit } from '../common/Global_Imports';
 import { w_storage_updated, w_ancestry_showing_tools, w_ancestries_grabbed } from '../common/Stores';
 import { w_popupView_id, w_ancestry_focus, w_s_title_edit, w_s_alteration } from '../common/Stores';
 import type { Integer, Dictionary } from '../common/Types';
@@ -69,31 +69,13 @@ export class Hierarchy {
 
 	static readonly EVENTS: unique symbol;
 
-	async handle_tool_clicked(idControl: string, s_mouse: S_Mouse) {
-		const event: MouseEvent | null = s_mouse.event as MouseEvent;
-        const ancestry = get(w_ancestry_showing_tools);
-		if (!!ancestry) {
-			switch (idControl) {
-				case T_Tool.more: debug.log_tools('needs more'); break;
-				case T_Tool.create: await this.ancestry_edit_persistentCreateChildOf(ancestry); break;
-				case T_Tool.add_parent: this.toggleAlteration(T_Alteration.adding, s_mouse.isLong); return;
-				case T_Tool.next: this.ancestry_relayout_toolCluster_nextParent(event?.altKey ?? false); return;
-				case T_Tool.delete_parent: this.toggleAlteration(T_Alteration.deleting, s_mouse.isLong); return;
-				case T_Tool.delete_confirm: await this.ancestries_rebuild_traverse_persistentDelete([ancestry]); break;
-				default: break;
-			}
-			w_ancestry_showing_tools.set(null);
-			layout.grand_layout();
-		}
-	}
-
 	async handle_tool_clicked_at(row: number, column: number, s_mouse: S_Mouse, name: string) {
 		// as each is implemented add return to the case
 		const ancestry = this.latest_grabbed_upward(true);
 		switch (row) {
 			case 0: switch (column) { // 'graph';
 				case 0:	break; // 'reveal selection';
-				case 1:	break; // 'center';
+				case 1:	w.user_graph_offset_setTo(Point.zero); return; // 'center';
 			} break;
 			case 1: switch (column) { // 'browse';
 				case 0:	this.grabs_latest_rebuild_persistentMoveUp_maybe(false, false, false, false); return; // 'down';
@@ -102,14 +84,15 @@ export class Hierarchy {
 				case 3:	await this.ancestry_rebuild_persistentMoveRight(ancestry, false, false, false, false, false); return; // 'left';
 			} break;
 			case 2: switch (column) { // 'list';
-				case 0:	break; // 'conceal';
-				case 1:	break; // 'reveal';
+				case 0:	if (ancestry.collapse()) { layout.grand_build(); } return; // 'conceal';
+				case 1:	if (ancestry.expand()) { layout.grand_build(); } return; // 'reveal';
 			} break;
 			case 3: switch (column) { // 'add';
 				case 0:	await this.ancestry_edit_persistentCreateChildOf(ancestry); return; // 'child';
 				case 1:	await this.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); return; // 'sibling';
-				case 2:	this.toggleAlteration(T_Alteration.adding, s_mouse.isLong); return; // 'parent';
-				case 3:	break; // 'related';
+				case 2:	await this.thing_edit_persistentAddLine(ancestry); return; // 'line';
+				case 3:	this.toggleAlteration(T_Alteration.adding, s_mouse.isLong); return; // 'parent';
+				case 4:	break; // 'related';
 			} break;
 			case 4: switch (column) { // 'delete';
 				case 0:	await this.ancestries_rebuild_traverse_persistentDelete(get(w_ancestries_grabbed)); return// 'selection';
@@ -964,16 +947,6 @@ export class Hierarchy {
 			child.title = 'idea';
 			parentAncestry.expand();
 			await this.ancestry_edit_persistentAddAsChild(parentAncestry, child, 0);
-		}
-	}
-
-	ancestry_relayout_toolCluster_nextParent(force: boolean = false) {
-		const toolsAncestry = get(w_ancestry_showing_tools);
-		if (!!toolsAncestry) {
-			let ancestry = toolsAncestry;
-			ancestry.grabOnly();
-			layout.grand_layout();
-			w_ancestry_showing_tools.set(ancestry);
 		}
 	}
 

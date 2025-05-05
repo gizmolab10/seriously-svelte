@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import { k, ux, Size, Point, colors, T_Tool, T_Element, S_Element } from '../../ts/common/Global_Imports';
+    import { k, ux, Size, Point, colors, T_Element, S_Element } from '../../ts/common/Global_Imports';
     import { w_background_color } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
     import Button from './Button.svelte';

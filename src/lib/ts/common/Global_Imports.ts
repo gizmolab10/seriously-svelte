@@ -13,8 +13,8 @@ import { G_Paging, G_Thing_Pages } from '../layout/G_Paging';
 import { T_Create, T_Browser, T_Alteration } from './Enumerations';
 import { T_Oblong, T_Element, T_SvelteComponent } from './Enumerations';
 import { T_Curve, T_Layer, T_Thing, T_Trait, T_Predicate } from './Enumerations';
+import { T_Info, T_Banner, T_Control, T_Details, T_Report, T_Storage } from './Enumerations';
 import { T_Graph, T_Order, T_Widget, T_RingZone, T_Startup, T_Kinship } from './Enumerations';
-import { T_Info, T_Tool, T_Banner, T_Control, T_Details, T_Report, T_Storage } from './Enumerations';
 
 import S_Title_Edit from '../state/S_Title_Edit';
 import S_Alteration from '../state/S_Alteration';
@@ -79,11 +79,11 @@ export {
 	S_Common, S_Rotation, S_Resizing, G_Thing_Pages,
 	G_Widget, G_Segment, G_TreeLine, G_TreeBranches,
 	G_Paging, G_Cluster, G_RadialGraph, G_ArcSlider,
+	T_Order, T_Banner, T_Details, T_Startup, T_Graph,
 	show, files, builds, colors, layout, radial, signals,
-	T_Layer, T_Create, T_RingZone, T_Oblong, T_Alteration,
 	S_Mouse, S_Widget, S_Element, S_Alteration, S_Title_Edit,
-	T_Tool, T_Order, T_Banner, T_Details, T_Startup, T_Graph,
-	T_Thing, T_Trait, T_Curve, T_Widget, T_Predicate, T_Kinship,
+	T_Info, T_Control, T_Browser, T_Signal, T_Report, T_Storage,
+	T_Layer, T_Curve, T_Create, T_RingZone, T_Oblong, T_Alteration,
+	T_Thing, T_Trait, T_Widget, T_Predicate, T_Kinship, T_Preference,
 	User, Persistable, Thing, Trait, Access, Predicate, Relationship,
-	T_Info, T_Control, T_Browser, T_Signal, T_Report, T_Storage, T_Preference,
 };
