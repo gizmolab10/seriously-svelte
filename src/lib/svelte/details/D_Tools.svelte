@@ -40,7 +40,7 @@
 		font_size={font_size}
 		show_boxes={show_boxes}
 		width={k.width_details}
-		button_height={k.size.dot}
+		button_height={k.size.dot + 2}
 		button_titles={button_titles}
 	/>
 </div>

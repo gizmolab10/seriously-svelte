@@ -5,7 +5,7 @@ import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
 
 export class Visibility {
-	tool_boxes	 = true;
+	tool_boxes	 = false;
 	debug_cursor = false;
 	traits		 = false;
 	t_info		 = T_Report.focus;

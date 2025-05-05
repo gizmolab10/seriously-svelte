@@ -9,7 +9,7 @@
     export let font_size: number;
     export let width: number;
     export let gap = 2;
-    const box_top = show_boxes ? 8 : 0;
+    const box_top = show_boxes ? 9 : 0;
 	const rows = button_titles.length;
 
     function button_origin_for(row: number): Point {

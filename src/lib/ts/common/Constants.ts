@@ -11,7 +11,7 @@ export default class Constants {
 	halfIncrement = 0.5;
 	width_details = 200;
 	radial_widget_inset = 26;
-	separator_title_left = 30;
+	separator_title_left = 40;
 	editingTools_diameter = 64;
 	hid_unknown = 1000000000000;
 	build_number = builds.latest;
@@ -93,7 +93,7 @@ export default class Constants {
 		},
 		detail: {
 			storage: 116,
-			tools:	 show.tool_boxes ? 157 : 108,
+			tools:	 show.tool_boxes ? 174 : 120,
 			display:  76,
 			info:	   0,
 		},

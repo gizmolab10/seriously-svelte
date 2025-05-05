@@ -29,19 +29,9 @@
         left:{origin.x}px;
         position:absolute;
         height: {button_height}px;'>
-    {#if !show_box}
-        <div
-            class='box-title'
-            style='
-                text-align: right;
-                position:absolute;
-                width:{title_width - gap}px;
-                font-size:{font_size}px;'>
-            {button_titles[0]}
-        </div>
-    {:else}
+    {#if show_box}
         <Separator
-            top=2
+            top={3}
             width={width}
             add_wings={true}
             title={button_titles[0]}
@@ -49,6 +39,17 @@
             thickness={k.thickness.thin}
             title_left={k.separator_title_left}
             title_font_size={separator_font_size}/>
+    {:else}
+        <div
+            class='box-title'
+            style='
+                top: 1.5px;
+                text-align: right;
+                position:absolute;
+                width:{title_width - gap}px;
+                font-size:{font_size}px;'>
+            {button_titles[0]}
+        </div>
     {/if}
     <Buttons_Row
         gap={gap}

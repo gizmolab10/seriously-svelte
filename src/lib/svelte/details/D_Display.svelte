@@ -47,11 +47,11 @@
 		font_size={font_size}
 		name='counts-selector'
 		height={k.height.small}
-		origin={new Point(19, 9)}
+		origin={new Point(36, 9)}
 		selected={$w_t_countDots}
 		selection_closure={selection_closure}/>
 	<Separator
-		top=32
+		top={32}
 		title='color'
 		add_wings={true}
 		width={k.width_details}
