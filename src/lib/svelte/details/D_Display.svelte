@@ -26,13 +26,21 @@
 
 <div class='display'
 	style='
-		left:10px;
+		left:0px;
 		color:black;
 		top:{top + 3}px;
 		position:absolute;
 		width:{k.width_details}px;
 		font-size:{k.font_size.small}px;'>
-	<Separator title_left={50} title='show tiny dots for' top=2 left=5 width={info_width} title_font_size={separator_font_size} thickness={k.thickness.thin}/>
+	<Separator
+		top={2}
+		add_wings={true}
+		width={k.width_details}
+		margin={k.details_margin}
+		title='show tiny dots for'
+		thickness={k.thickness.thin}
+		title_left={k.separator_title_left}
+		title_font_size={separator_font_size}/>
 	<Segmented
 		titles={titles}
 		allow_multiple={true}
@@ -42,7 +50,15 @@
 		origin={new Point(19, 9)}
 		selected={$w_t_countDots}
 		selection_closure={selection_closure}/>
-	<Separator title='color' top=32 left=5 width={info_width} title_font_size={separator_font_size} thickness={k.thickness.thin}/>
+	<Separator
+		top=32
+		title='color'
+		add_wings={true}
+		width={k.width_details}
+		margin={k.details_margin}
+		thickness={k.thickness.thin}
+		title_left={k.separator_title_left}
+		title_font_size={separator_font_size}/>
 	<div 
 		class= 'background'
 		style='

@@ -7,9 +7,11 @@ const banner_height = 18;
 const separator_thickness = 4;
 
 export default class Constants {
+	details_margin = 0;
 	halfIncrement = 0.5;
 	width_details = 200;
 	radial_widget_inset = 26;
+	separator_title_left = 30;
 	editingTools_diameter = 64;
 	hid_unknown = 1000000000000;
 	build_number = builds.latest;
@@ -77,7 +79,7 @@ export default class Constants {
 		paging_arc:	   15,
 		separator: 	   separator_thickness,
 		fork:		   2.5,
-		thin:		   2, };
+		thin:		   1, };
 
 	height = {
 		separator: 8.5,

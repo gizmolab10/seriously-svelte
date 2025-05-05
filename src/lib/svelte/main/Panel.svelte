@@ -18,6 +18,7 @@
 	import Import from './Import.svelte';
 	import { onMount } from 'svelte';
 	const offset_toIntersection = new Point(-4, 8);
+	const separator_thickness = k.thickness.separator;
 	let separator_color = colors.separator;
 	let tops = layout.tops_ofBanners;
 	let panel_reattachments = 0;
@@ -98,14 +99,14 @@
 					<div class='separator-above-crumbs' style='
 						top: {tops[T_Banner.crumbs] - 3}px;
 						background-color:{separator_color};
-						height: {k.thickness.separator}px;
+						height: {separator_thickness}px;
 						z-index: {T_Layer.lines};'>
 					</div>
 				</div>
 				<div class='separator-above-graph' style='
 					top: {tops[T_Banner.graph]}px;
 					background-color: {separator_color};
-					height: {k.thickness.separator}px;
+					height: {separator_thickness}px;
 					width: {w.windowSize.width}px;
 					z-index: {T_Layer.lines};
 					position: absolute;
@@ -118,15 +119,15 @@
 							position: absolute;
 							z-index: {T_Layer.lines};
 							left: {k.width_details}px;
+							width: {separator_thickness}px;
 							top: {$w_graph_rect.origin.y}px;
-							width: {k.thickness.separator}px;
 							background-color: {separator_color};
 							height: {$w_graph_rect.size.height}px;'>
 					</div>
 					<Gull_Wings
-						center={$w_graph_rect.origin.offsetEquallyBy(k.thickness.separator / -2)}
-						thickness={k.thickness.separator}
-						radius={k.radius.gull_wings}
+						center={$w_graph_rect.origin.offsetEquallyBy(separator_thickness / -2)}
+						radius={separator_thickness * 3}
+						thickness={separator_thickness}
 						direction={Direction.down}
 						color='{separator_color}'/>
 				{/if}

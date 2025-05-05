@@ -13,6 +13,7 @@
 	export let left = 0;
 	export let top = 0;
 	const title_width = u.getWidth_ofString_withSize(title ?? k.empty, title_font_size);
+	const line_left = left + margin;
 	let separator_color = colors.separator;
 
 	if (!title_left) {
@@ -29,11 +30,11 @@
 <div class='separator-line'
 	style='
 		top:{top}px;
-		left:{left}px;
-		width:{width}px;
 		position:absolute;
+		left:{line_left}px;
 		height:{thickness}px;
 		z-index:{T_Layer.details};
+		width:{width - margin * 2}px;
 		background-color:{separator_color};'>
 </div>
 {#if !!title}
@@ -49,11 +50,11 @@
 		{title}
 	</div>
 {/if}
-{#if add_wings}
+{#if add_wings && !margin}
 	<Gull_Wings
 		center={new Point(width, top).offsetEquallyBy(thickness / 2)}
 		direction={Direction.left}
 		color={separator_color}
-		radius={thickness * 2}
+		radius={thickness * 3}
 		thickness={thickness}/>
 {/if}

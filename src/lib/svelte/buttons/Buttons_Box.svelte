@@ -42,11 +42,12 @@
     {:else}
         <Separator
             top=2
-            left=14
-            title_left={50}
-            width={width - 28}
+            width={width}
+            add_wings={true}
             title={button_titles[0]}
+            margin={k.details_margin}
             thickness={k.thickness.thin}
+            title_left={k.separator_title_left}
             title_font_size={separator_font_size}/>
     {/if}
     <Buttons_Row

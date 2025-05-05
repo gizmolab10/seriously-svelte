@@ -39,19 +39,31 @@
 		origin={new Point(14, 0.5)}
 		selection_closure={selection_closure}/>
 	{#if showingDetails_ofType(T_Details.storage)}
-		<Separator add_wings={true} title='storage' top={tops[T_Details.storage] - separator_gap}/>
+		<Separator
+			title='storage'
+			add_wings={true}
+			top={tops[T_Details.storage] - separator_gap}/>
 		<D_Storage top={tops[T_Details.storage]}/>
 	{/if}
 	{#if showingDetails_ofType(T_Details.tools)}
-		<Separator add_wings={true} title='tools' top={tops[T_Details.tools] - separator_gap}/>
+		<Separator
+			title='tools'
+			add_wings={true}
+			top={tops[T_Details.tools] - separator_gap}/>
 		<D_Tools top={tops[T_Details.tools]}/>
 	{/if}
 	{#if showingDetails_ofType(T_Details.display)}
-		<Separator add_wings={true} title='display' top={tops[T_Details.display] - separator_gap}/>
+		<Separator
+			title='display'
+			add_wings={true}
+			top={tops[T_Details.display] - separator_gap}/>
 		<D_Display top={tops[T_Details.display]}/>
 	{/if}
 	{#if showingDetails_ofType(T_Details.info)}
-		<Separator add_wings={true} title='info' top={tops[T_Details.info] - separator_gap}/>
+		<Separator
+			title='info'
+			add_wings={true}
+			top={tops[T_Details.info] - separator_gap}/>
 		<D_Info top={tops[T_Details.info]}/>
 	{/if}
 </div>

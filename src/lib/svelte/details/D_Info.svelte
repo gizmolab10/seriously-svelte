@@ -14,11 +14,10 @@
 	import { onMount } from 'svelte';
 	export let top = 0;
 	const id = 'info';
-	const margin = 10;
 	const text_top = top + 52;
 	const info_width = k.width_details - 30;
+	const traits_width = k.width_details - 20;
 	const traits_center = new Point(122, text_top - 20);
-	const traits_width = k.width_details - (margin * 2);
 	const separator_font_size = `${k.font_size.smallest}px`;
 	const traits_size = new Size(info_width - 58, k.size.button + 4);
 	const traits_rect = Rect.createCenterRect(traits_center, traits_size);
@@ -122,7 +121,6 @@
 		style='
 			color:black;
 			top:{top}px;
-			left:{margin}px;
 			position:absolute;
 			width:{traits_width}px;'>
 		{#if information.length != 0}
@@ -135,10 +133,12 @@
 				titles={[T_Report.focus, T_Report.selection]}
 				origin={new Point(45, layout.top_ofInfoAt(T_Info.segments))}/>
 			<Separator
-				left=5
 				title='title'
-				width={info_width}
+				add_wings={true}
+				width={k.width_details}
+				margin={k.details_margin}
 				thickness={k.thickness.thin}
+				title_left={k.separator_title_left}
 				title_font_size={separator_font_size}
 				top={layout.top_ofInfoAt(T_Info.before_title)}/>
 			<div style='
@@ -150,9 +150,11 @@
 				{thing_title.clipWithEllipsisAt(30)}
 			</div>
 			<Separator
-				left=5
-				width={info_width}
+				add_wings={true}
+				width={k.width_details}
+				margin={k.details_margin}
 				thickness={k.thickness.thin}
+				title_left={k.separator_title_left}
 				top={layout.top_ofInfoAt(T_Info.after_title)}/>
 			<Text_Table
 				row_height={11}
@@ -172,7 +174,7 @@
 		{#if show.traits}
 			<div class='horizontal-line'
 				style='
-					left:{-margin}px;
+					left:-10px;
 					position:absolute;
 					width:{k.width_details}px;
 					z-index:{T_Layer.frontmost};
