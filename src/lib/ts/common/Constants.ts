@@ -11,7 +11,7 @@ export default class Constants {
 	halfIncrement = 0.5;
 	width_details = 200;
 	radial_widget_inset = 26;
-	separator_title_left = 40;
+	separator_title_left = 0;
 	editingTools_diameter = 64;
 	hid_unknown = 1000000000000;
 	build_number = builds.latest;
@@ -65,7 +65,7 @@ export default class Constants {
 		smallest: dot_size - 3,
 		smaller:  dot_size - 0.7,
 		small:	  dot_size,
-		thing:	  dot_size + 1, };
+		common:	  dot_size + 1, };
 
 	opacity = {
 		none:	0,
@@ -92,8 +92,8 @@ export default class Constants {
 			graph:	  0,
 		},
 		detail: {
-			storage: 116,
-			tools:	 show.tool_boxes ? 174 : 120,
+			storage: 113,
+			tools:	 show.tool_boxes ? 191 : 120,
 			display:  76,
 			info:	   0,
 		},

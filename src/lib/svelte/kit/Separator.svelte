@@ -13,6 +13,7 @@
 	export let left = 0;
 	export let top = 0;
 	const title_width = u.getWidth_ofString_withSize(title ?? k.empty, title_font_size);
+	const title_top = top - 8 + thickness * 0.7;
 	const line_left = left + margin;
 	let separator_color = colors.separator;
 
@@ -42,7 +43,7 @@
 		style='
 			padding: 0px 5px;
 			position:absolute;
-			top:{top - 5.3}px;
+			top:{title_top}px;
 			left:{title_left}px;
 			z-index:{T_Layer.frontmost};
 			font-size:{title_font_size};

@@ -6,9 +6,9 @@
     import Buttons_Row from './Buttons_Row.svelte';
     export let closure: (s_mouse: S_Mouse, column: number) => void;
 	export let origin: Point | null = null;
+    export let font_sizes: Array<number>;
     export let button_titles: string[];
     export let button_height = 15;
-    export let font_size: number;
     export let show_box = false;
 	export let name = k.empty;
     export let width: number;
@@ -16,7 +16,6 @@
     export let gap = 2;
     const title_width = 34;
     const x_offset = show_box ? gap : title_width;
-	const separator_font_size = `${k.font_size.smallest}px`;
     const origin_of_box = new Point(origin.x + x_offset, show_box ? box_top : 0);
     const row_width = width - gap - x_offset;
 
@@ -38,7 +37,7 @@
             margin={k.details_margin}
             thickness={k.thickness.thin}
             title_left={k.separator_title_left}
-            title_font_size={separator_font_size}/>
+            title_font_size={`${font_sizes[0]}px`}/>
     {:else}
         <div
             class='box-title'
@@ -47,7 +46,7 @@
                 text-align: right;
                 position:absolute;
                 width:{title_width - gap}px;
-                font-size:{font_size}px;'>
+                font-size:{font_sizes[0]}px;'>
             {button_titles[0]}
         </div>
     {/if}
@@ -56,8 +55,8 @@
         name={name}
         closure={closure}
         width={row_width}
-        font_size={font_size}
         origin={origin_of_box}
+        font_size={font_sizes[1]}
         button_height={button_height}
         button_titles={button_titles.slice(1)}/>
 </div>

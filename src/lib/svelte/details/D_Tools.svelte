@@ -5,6 +5,7 @@
 	export let top = 0;
 	const show_boxes = show.tool_boxes;
 	const font_size = show_boxes ? k.font_size.smaller : k.font_size.smallest;
+    const font_sizes = [font_size, font_size + (show_boxes ? -1 : 0)];
 
 	const button_titles=[
 		['graph', 'reveal selection', 'center'],
@@ -37,10 +38,10 @@
 		gap={3}
 		columns={5}
 		closure={closure}
-		font_size={font_size}
+		font_sizes={font_sizes}
 		show_boxes={show_boxes}
 		width={k.width_details}
-		button_height={k.size.dot + 2}
 		button_titles={button_titles}
+		button_height={k.size.dot + 2}
 	/>
 </div>

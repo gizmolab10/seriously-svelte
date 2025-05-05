@@ -4,17 +4,15 @@
     import Buttons_Box from './Buttons_Box.svelte';
     export let closure: (s_mouse: S_Mouse, row: number, column: number) => void;
     export let button_titles: string[][];
+    export let font_sizes: Array<number>;
     export let button_height = 15;
     export let show_boxes = true;
     export let font_size: number;
     export let width: number;
     export let gap = 2;
-    const box_top = show_boxes ? 9 : 0;
 	const rows = button_titles.length;
-
-    function button_origin_for(row: number): Point {
-        return Point.y(row * (button_height + gap + box_top));
-    }
+    const box_top = show_boxes ? 10 : 0;
+    function button_origin_for(row: number): Point { return Point.y(row * (button_height + gap + box_top + (show_boxes ? 2 : 0))); }
 
 </script>
 
@@ -31,8 +29,8 @@
             width={width}
             box_top={box_top}
             show_box={show_boxes}
-            font_size={font_size}
             button_titles={titles}
+            font_sizes={font_sizes}
             name={`buttons-box-${row}`}
             button_height={button_height}
             origin={button_origin_for(row)}
