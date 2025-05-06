@@ -1,8 +1,8 @@
 import { c, k, p, u, ux, w, show, User, Thing, Trait, Point, debug, files, colors, signals, layout } from '../common/Global_Imports';
 import { T_Thing, T_Trait, T_Order, T_Create, T_Report, T_Control, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { Access, Ancestry, Predicate, Relationship, S_Mouse, S_Alteration, S_Title_Edit } from '../common/Global_Imports';
+import { w_popupView_id, w_ancestry_focus, w_s_title_edit, w_s_alteration, w_user_graph_offset } from '../common/Stores';
 import { w_storage_updated, w_ancestry_showing_tools, w_ancestries_grabbed } from '../common/Stores';
-import { w_popupView_id, w_ancestry_focus, w_s_title_edit, w_s_alteration } from '../common/Stores';
 import type { Integer, Dictionary } from '../common/Types';
 import { T_Persistable } from '../../ts/database/DBCommon';
 import Identifiable from '../runtime/Identifiable';
@@ -164,6 +164,9 @@ export class Hierarchy {
 				case 2:	await this.ancestry_rebuild_persistentMoveRight(ancestry, false, false, true, false, false); return; // 'out';
 				case 3:	await this.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, true, false, false); return; // 'in';
 			} break;
+			case 6: switch (column) { // 'graph';
+				case 0:	w.user_graph_offset_setTo(Point.zero); return; // 'center';
+			} break;
 		}
 		alert(`needed: ${name}`);
 	}
@@ -204,6 +207,9 @@ export class Hierarchy {
 				case 1:	return !ancestry.hasSiblings; // 'after';
 				case 2:	return ancestry.isRoot; // 'out';
 				case 3:	return !ancestry.hasChildren; // 'in';
+			} break;
+			case 6: switch (column) { // 'graph';
+				case 0:	return get(w_user_graph_offset).isZero; // 'center';
 			} break;
 		}
 		return true;
@@ -881,15 +887,15 @@ export class Hierarchy {
 			for (const ancestry of ancestries) {
 				const thing = ancestry.thing;
 				const parentAncestry = ancestry.parentAncestry;
-				const grandParentAncestry = parentAncestry?.parentAncestry;
-				if (!!grandParentAncestry && !!thing && !thing.isBulkAlias) {
+				if (!!parentAncestry && !!thing && !thing.isBulkAlias) {
+					const grandParentAncestry = parentAncestry?.parentAncestry;
 					const siblings = parentAncestry.children;
 					let index = siblings.indexOf(thing);
 					siblings.splice(index, 1);
 					parentAncestry.grabOnly();
 					if (siblings.length == 0) {
 						parentAncestry.collapse();
-						if (!grandParentAncestry.isVisible) {
+						if (!!grandParentAncestry && !grandParentAncestry.isVisible) {
 							grandParentAncestry.becomeFocus();	// call become focus before applying
 						}
 					}

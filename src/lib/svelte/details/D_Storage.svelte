@@ -9,7 +9,7 @@
 	import Separator from '../kit/Separator.svelte';
 	import Button from '../buttons/Button.svelte';
 	export let top = 0;
-	const buttons_top = 133;
+	const buttons_top = 138;
 	const button_style = `font-family: ${$w_thing_fontFamily}; font-size:0.85em; left: 5px; top: -2px; position: absolute;`;
 	let s_element_byStorageType: { [id: string]: S_Element } = {};
 	let information: Array<Dictionary> = [];
@@ -77,7 +77,7 @@
 				font_size={k.font_size.small - 1}/>
 		</div>
 		<Separator
-			top={buttons_top - 14}
+			top={buttons_top - 15}
 			add_wings={true}
 			width={k.width_details}
 			margin={k.details_margin}

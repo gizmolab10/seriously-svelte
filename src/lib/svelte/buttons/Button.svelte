@@ -1,6 +1,7 @@
 <script lang='ts'>
-	import { w_ancestries_grabbed, w_thing_fontFamily, w_background_color } from '../../ts/common/Stores';
 	import { k, u, ux, Rect, Point, colors, T_Layer } from '../../ts/common/Global_Imports';
+	import { w_ancestries_grabbed, w_thing_fontFamily } from '../../ts/common/Stores';
+	import { w_background_color, w_user_graph_offset } from '../../ts/common/Stores';
 	import { S_Element, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import type { Handle_Result } from '../../ts/common/Types';
@@ -41,7 +42,7 @@
 	//////////////////////////////////////
 
 	recompute_style();
-	$: es_button.fill, es_button.isOut, es_button.isDisabled, $w_background_color, $w_ancestries_grabbed, recompute_style();
+	$: es_button.fill, es_button.isOut, es_button.isDisabled, $w_background_color, $w_ancestries_grabbed, $w_user_graph_offset, recompute_style();
 	
 	function recompute_style() {
 		color = es_button.stroke;

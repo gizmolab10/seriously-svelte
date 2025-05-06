@@ -34,7 +34,7 @@
 	let picker_offset = k.empty;
 	let info;
 
-	layout.layout_tops_forInfo(1);
+	layout.layout_tops_forInfo(3);
 	layout_forColor();	// must call layout_tops_forInfo first
 	es_info.set_forHovering(colors.default, 'pointer');
 

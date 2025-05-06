@@ -4,7 +4,7 @@
 	import { w_hierarchy } from '../../ts/common/Stores';
 	export let top = 0;
 	const show_boxes = show.tool_boxes;
-    const font_sizes = [show_boxes ? k.font_size.smallest : k.font_size.smaller, k.font_size.smallest];
+    const font_sizes = [show_boxes ? k.font_size.smallest : k.font_size.smaller, show_boxes ? k.font_size.smaller : k.font_size.smallest];
 
 	// knows all the tools
 	// hierarchy knows what each tool does ... handle_tool_request_at
@@ -15,12 +15,13 @@
 	// grid adds row:
 
 	const button_titles=[
-		['graph', 'show selection', 'show root', 'center'],
+		['show', 'selection', 'root'],
 		['browse', 'before', 'after', 'out', 'in'],
 		['list', 'conceal', 'reveal'],
 		['add', 'child', 'sibling', 'line', 'parent', 'related'],
 		['delete', 'selection', 'parent', 'related'],
-		['move', 'before', 'after', 'out', 'in']];
+		['move', 'before', 'after', 'out', 'in'],
+		['graph', 'center']];
 
 	function name_for(row, column) {
 		const titles = button_titles[row];
@@ -51,7 +52,6 @@
 		font_sizes={font_sizes}
 		show_boxes={show_boxes}
 		width={k.width_details}
-		button_titles={button_titles}
-		button_height={k.size.dot + 2}
-	/>
+		button_height={k.size.button}
+		button_titles={button_titles}/>
 </div>
