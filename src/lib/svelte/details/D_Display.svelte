@@ -10,7 +10,7 @@
 	const info_width = k.width_details - 30;
 	const font_size = `${k.font_size.smaller}px`;
 	const color_origin = new Point(color_left, 41);
-	const separator_font_size = `${k.font_size.smallest}px`;
+	const separator_font_size = k.font_size.smallest;
 	const titles = [T_Kinship[T_Kinship.child], T_Kinship[T_Kinship.parent], T_Kinship[T_Kinship.related]];
 	let color = $w_background_color;
 	
@@ -33,7 +33,7 @@
 		width:{k.width_details}px;
 		font-size:{k.font_size.small}px;'>
 	<Separator
-		top={2}
+		top={4}
 		add_wings={true}
 		width={k.width_details}
 		margin={k.details_margin}
@@ -47,11 +47,11 @@
 		font_size={font_size}
 		name='counts-selector'
 		height={k.height.small}
-		origin={new Point(36, 9)}
+		origin={new Point(36, 12)}
 		selected={$w_t_countDots}
 		selection_closure={selection_closure}/>
 	<Separator
-		top={32}
+		top={33}
 		title='color'
 		add_wings={true}
 		width={k.width_details}

@@ -3,7 +3,7 @@
 	import { k, u, Point, colors } from '../../ts/common/Global_Imports';
 	import { w_background_color } from '../../ts/common/Stores';
 	import Gull_Wings from '../kit/Gull_Wings.svelte';
-	export let title_font_size = `${k.font_size.smaller}px`;
+	export let title_font_size = k.font_size.smaller;;
 	export let thickness = k.thickness.separator;
 	export let title_left: number | null= null;
 	export let title: string | null = null;
@@ -12,8 +12,8 @@
 	export let margin = 0;
 	export let left = 0;
 	export let top = 0;
-	const title_width = u.getWidth_ofString_withSize(title ?? k.empty, title_font_size);
-	const title_top = top - 8 + thickness * 0.7;
+	const title_width = u.getWidth_ofString_withSize(title ?? k.empty, `${title_font_size}px`);
+	const title_top = top - 4 + thickness * 0.2 - title_font_size * 0.1;
 	const line_left = left + margin;
 	let separator_color = colors.separator;
 
@@ -46,7 +46,7 @@
 			top:{title_top}px;
 			left:{title_left}px;
 			z-index:{T_Layer.frontmost};
-			font-size:{title_font_size};
+			font-size:{title_font_size}px;
 			background-color:{$w_background_color};'>
 		{title}
 	</div>

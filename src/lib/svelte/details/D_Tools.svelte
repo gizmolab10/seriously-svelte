@@ -4,8 +4,7 @@
 	import { w_hierarchy } from '../../ts/common/Stores';
 	export let top = 0;
 	const show_boxes = show.tool_boxes;
-	const font_size = show_boxes ? k.font_size.smaller : k.font_size.smallest;
-    const font_sizes = [font_size, font_size + (show_boxes ? -1 : 0)];
+    const font_sizes = [show_boxes ? k.font_size.smallest : k.font_size.smaller, k.font_size.smallest];
 
 	// knows all the tools
 	// hierarchy knows what each tool does ... handle_tool_request_at

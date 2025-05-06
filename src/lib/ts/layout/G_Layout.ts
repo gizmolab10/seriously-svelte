@@ -85,7 +85,7 @@ export default class G_Layout {
 	}
 	
 	layout_tops_forDetails() {
-		let top = this.top_ofBannerAt(T_Banner.crumbs) + k.height.separator - 1;
+		let top = this.top_ofBannerAt(T_Banner.crumbs) + k.height.separator - 2;
 		const heights = Object.values(k.height.detail);
 		let index = 0;
 		let indices = get(w_t_details);

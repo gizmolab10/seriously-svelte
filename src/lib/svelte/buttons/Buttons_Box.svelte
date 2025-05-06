@@ -36,8 +36,8 @@
             title={button_titles[0]}
             margin={k.details_margin}
             thickness={k.thickness.thin}
-            title_left={k.separator_title_left}
-            title_font_size={`${font_sizes[0]}px`}/>
+            title_font_size={font_sizes[0]}
+            title_left={k.separator_title_left}/>
     {:else}
         <div
             class='box-title'

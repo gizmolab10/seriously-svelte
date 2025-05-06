@@ -17,8 +17,8 @@
 	const text_top = top + 52;
 	const info_width = k.width_details - 30;
 	const traits_width = k.width_details - 20;
+	const separator_font_size = k.font_size.smallest;
 	const traits_center = new Point(122, text_top - 20);
-	const separator_font_size = `${k.font_size.smallest}px`;
 	const traits_size = new Size(info_width - 58, k.size.button + 4);
 	const traits_rect = Rect.createCenterRect(traits_center, traits_size);
 	const es_info = ux.s_element_for(new Identifiable(id), T_Element.info, id);

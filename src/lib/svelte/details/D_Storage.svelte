@@ -6,9 +6,10 @@
 	import { T_Database } from '../../ts/database/DBCommon';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Text_Table from '../kit/Text_Table.svelte';
+	import Separator from '../kit/Separator.svelte';
 	import Button from '../buttons/Button.svelte';
 	export let top = 0;
-	const buttons_top = 128;
+	const buttons_top = 133;
 	const button_style = `font-family: ${$w_thing_fontFamily}; font-size:0.85em; left: 5px; top: -2px; position: absolute;`;
 	let s_element_byStorageType: { [id: string]: S_Element } = {};
 	let information: Array<Dictionary> = [];
@@ -62,7 +63,7 @@
 		<Segmented
 			name='db'
 			selected={[$w_t_database]}
-			origin={new Point(12, top)}
+			origin={new Point(12, top + 3)}
 			selection_closure={selection_closure}
 			titles={[T_Database.local, T_Database.firebase, T_Database.airtable, T_Database.test]}/>
 		<div class='data-information'
@@ -70,11 +71,20 @@
 				width:{k.width_details}px;
 				font-size:{k.font_size.smaller}px;'>
 			<Text_Table
-				top={top + 22}
+				top={top + 23}
 				row_height={11}
 				array={information}
 				font_size={k.font_size.small - 1}/>
 		</div>
+		<Separator
+			top={buttons_top - 14}
+			add_wings={true}
+			width={k.width_details}
+			margin={k.details_margin}
+			title='local file'
+			thickness={k.thickness.thin}
+			title_left={k.separator_title_left}
+			title_font_size={k.font_size.smallest}/>
 		<Button name='import'
 			width=42
 			zindex=T_Layer.frontmost

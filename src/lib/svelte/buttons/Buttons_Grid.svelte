@@ -11,8 +11,8 @@
     export let width: number;
     export let gap = 2;
 	const rows = button_titles.length;
-    const box_top = show_boxes ? 10 : 0;
-    function button_origin_for(row: number): Point { return Point.y(row * (button_height + gap + box_top + (show_boxes ? 2 : 0))); }
+    const box_top = show_boxes ? 12 : 0;
+    function button_origin_for(row: number): Point { return Point.y(row * (button_height + gap + box_top)); }
 
 </script>
 
