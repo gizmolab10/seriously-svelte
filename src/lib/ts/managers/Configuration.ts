@@ -58,15 +58,17 @@ export class Configuration {
 	}
 
 	get siteTitle(): string {
-		const t_database = databases.db_now.t_database;
 		const idBase = databases.db_now.idBase;
+		const t_database = databases.db_now.t_database;
 		const host = this.isServerLocal ? 'local' : 'remote';
-		const db_name = t_database ? (t_database! + ', ') : k.empty;
-		const base_name = idBase ? (idBase! + ', ') : k.empty;
+		const base_name = idBase ? (idBase + ', ') : k.empty;
+		const db_name = t_database ? (t_database + ', ') : k.empty;
 		return `Seriously (${host}, ${db_name}${base_name}${u.browserType}, α)`;
 	}
 
-	get device_isMobile(): boolean {
+	get device_isMobile(): boolean { return ('ontouchstart' in window || navigator.maxTouchPoints > 0); }
+
+	get xdevice_isMobile(): boolean {
 		const userAgent = navigator.userAgent;
 		if (/iPhone|iPad|iPod/i.test(userAgent) ||
 			/Windows Phone/i.test(userAgent) ||

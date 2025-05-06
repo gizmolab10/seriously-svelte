@@ -1,6 +1,6 @@
 <script lang='ts'>
+	import { w_ancestries_grabbed, w_ancestries_expanded, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { k, u, ux, Rect, Point, colors, T_Layer } from '../../ts/common/Global_Imports';
-	import { w_ancestries_grabbed, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { w_background_color, w_user_graph_offset } from '../../ts/common/Stores';
 	import { S_Element, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
@@ -8,7 +8,6 @@
 	import Identifiable from '../../ts/runtime/Identifiable';
 	export let es_button: S_Element = S_Element.empty();
 	export let closure: Handle_Result<S_Mouse>;
-	export let border_color = colors.default;
 	export let font_size = k.font_size.thing;
 	export let origin: Point | null = null;
 	export let center: Point | null = null;
@@ -42,12 +41,19 @@
 	//////////////////////////////////////
 
 	recompute_style();
-	$: es_button.fill, es_button.isOut, es_button.isDisabled, $w_background_color, $w_ancestries_grabbed, $w_user_graph_offset, recompute_style();
+	$:	es_button.fill,
+		es_button.isOut,
+		$w_background_color,
+		es_button.isDisabled,
+		$w_user_graph_offset,
+		$w_ancestries_grabbed,
+		$w_ancestries_expanded,
+		recompute_style();
 	
 	function recompute_style() {
 		color = es_button.stroke;
 		if (style.length == 0) {
-			border = border_thickness == 0 ? 'none' : `${border_thickness}px solid ${border_color}`;
+			border = border_thickness == 0 ? 'none' : `${border_thickness}px solid ${es_button.stroke}`;
 			computedStyletyle=`
 				left:0px;
 				display: flex;

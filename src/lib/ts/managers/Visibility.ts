@@ -5,10 +5,10 @@ import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
 
 export class Visibility {
-	tool_boxes	 = false;
 	debug_cursor = false;
 	traits		 = false;
 	t_info		 = T_Report.focus;
+	tool_boxes	 = !(get(w_device_isMobile) ?? false);
 
 	queryStrings_apply() {
 		const queryStrings = c.queryStrings;

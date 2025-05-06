@@ -1,7 +1,7 @@
 <script lang='ts'>
+	import { w_t_details, w_background_color } from '../../ts/common/Stores';
 	import { T_Layer, Direction,  } from '../../ts/common/Global_Imports';
 	import { k, u, Point, colors } from '../../ts/common/Global_Imports';
-	import { w_background_color } from '../../ts/common/Stores';
 	import Gull_Wings from '../kit/Gull_Wings.svelte';
 	export let title_font_size = k.font_size.smaller;;
 	export let thickness = k.thickness.separator;
@@ -15,8 +15,9 @@
 	const line_left = left + margin;
 	const title_width = u.getWidth_ofString_withSize(title ?? k.empty, `${title_font_size}px`);
 	let separator_color = colors.separator;
+	let title_top = 0;
 
-	function title_top() { return top - 4 + thickness * 0.2 - title_font_size * 0.1; }
+	$: $w_t_details, title_top = top - 4 + thickness * 0.2 - title_font_size * 0.1;
 
 	if (!title_left) {
 		title_left = (width + (left * 2.1) - title_width - 12) / 2;
@@ -41,7 +42,7 @@
 		style='
 			padding: 0px 5px;
 			position:absolute;
-			top:{title_top()}px;
+			top:{title_top}px;
 			left:{title_left}px;
 			z-index:{T_Layer.frontmost};
 			font-size:{title_font_size}px;

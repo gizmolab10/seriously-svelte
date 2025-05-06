@@ -1,6 +1,7 @@
 <script lang='ts'>
-    import { w_t_graph, w_background_color, w_ancestries_grabbed, w_user_graph_offset } from '../../ts/common/Stores';
     import { k, u, ux, Point, colors, T_Request, T_Element, S_Element } from '../../ts/common/Global_Imports';
+    import { w_t_graph, w_background_color, w_user_graph_offset } from '../../ts/common/Stores';
+    import { w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
     import Button from './Button.svelte';
     export let closure: (t_request: T_Request, s_mouse: S_Mouse, column: number) => boolean;
@@ -21,7 +22,11 @@
     
     setup_es_tools();
 
-    $: $w_t_graph, $w_ancestries_grabbed, $w_user_graph_offset, setup_es_tools();    // detect when graph mode changes
+    $:  $w_t_graph,
+        $w_user_graph_offset,
+        $w_ancestries_grabbed,
+        $w_ancestries_expanded,
+        setup_es_tools();    // detect when graph mode changes
 
     function button_width_for(column: number): number {
         return button_portion + title_widths[column];

@@ -97,6 +97,7 @@ export default class G_Layout {
 			}
 			index += 1;
 		}
+		return this.tops_ofDetails;
 	}
 
 	set_t_tree(t_trees: Array<T_Kinship>) {

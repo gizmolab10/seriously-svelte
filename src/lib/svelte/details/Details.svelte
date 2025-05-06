@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { c, k, u, show, Point, debug, layout, T_Layer, T_Details } from '../../ts/common/Global_Imports';
-	import { w_graph_rect, w_t_details } from '../../ts/common/Stores';
+	import { w_graph_rect, w_t_details, w_device_isMobile } from '../../ts/common/Stores';
 	import D_Display from '../details/D_Display.svelte';
 	import D_Storage from '../details/D_Storage.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
@@ -9,24 +9,22 @@
 	import D_Info from '../details/D_Info.svelte';
 	const titles = [T_Details[T_Details.storage], T_Details[T_Details.tools], T_Details[T_Details.display], T_Details[T_Details.info]];
 	const separator_gap = k.height.separator;
-	
-	layout.layout_tops_forDetails();
-	let tops = layout.tops_ofDetails;
+	let tops = layout.layout_tops_forDetails();
 
+	$: $w_device_isMobile, tops = layout.layout_tops_forDetails();
+	$: showingDetails_ofType = (t_details: T_Details) => $w_t_details.includes(T_Details[t_details]);
+	
 	function selection_closure(t_details: Array<string>) {
 		$w_t_details = t_details as Array<T_Details>;
-		layout.layout_tops_forDetails();
-		tops = layout.tops_ofDetails;
+		tops = layout.layout_tops_forDetails();
 	}
-
-	$: showingDetails_ofType = (t_details: T_Details) => $w_t_details.includes(T_Details[t_details]);
 
 </script>
 
 <div class='details'
 	style='
 		left:0px;
-		position:fixed;
+		position:absolute;
 		z-index:{T_Layer.details};
 		width:{k.width_details}px;
 		top:{$w_graph_rect.origin.y}px;

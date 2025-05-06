@@ -132,10 +132,9 @@ export class Hierarchy {
 			// as each is implemented add return to the case
 			const ancestry = this.latest_grabbed_upward(true);
 			switch (row) {
-				case 0: switch (column) { // 'graph';
-					case 0:	break; // 'show selection';
-					case 1:	break; // 'show root';
-					case 2:	w.user_graph_offset_setTo(Point.zero); return; // 'center';
+				case 0: switch (column) { // 'show';
+					case 0:	break; // 'selection';
+					case 1:	break; // 'root';
 				} break;
 				case 1: switch (column) { // 'browse';
 					case 0:	this.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, false, false); return; // 'before';
@@ -173,24 +172,26 @@ export class Hierarchy {
 		}
 	}
 
-	isTool_disabledAt(row: number, column: number): boolean {
+	isTool_disabledAt(row: number, column: number): boolean {		// true means disabled
 		const ancestry = this.latest_grabbed_upward(true);
+		const hasChildren = ancestry.hasChildren;
+		const hasSiblings = ancestry.hasSiblings;
+		const isExpanded = ancestry.isExpanded;
 		switch (row) {
-			case 0: switch (column) { // 'graph';
-				case 0:	break; // 'show selection';
-				case 1:	break; // 'show root';
-				case 2:	return false; // 'center';
+			case 0: switch (column) { // 'show';
+				case 0:	break; // 'selection';
+				case 1:	break; // 'root';
 			} break;
 			case 1: switch (column) { // 'browse';
-				case 0:	return !ancestry.hasSiblings; // 'before';
-				case 1:	return !ancestry.hasSiblings; // 'after';
+				case 0:	return !hasSiblings; // 'before';
+				case 1:	return !hasSiblings; // 'after';
 				case 2:	return ancestry.isRoot; // 'out';
-				case 3:	return !ancestry.hasChildren; // 'in';
+				case 3:	return !hasChildren; // 'in';
 			} break;
 			case 2:
 				switch (column) { // 'list';
-					case 0:	return false; // 'conceal';
-					case 1:	return !ancestry.hasChildren; // 'reveal';
+					case 0:	return !hasChildren || !isExpanded; // 'conceal';
+					case 1:	return !hasChildren ||  isExpanded; // 'reveal';
 				} break;
 			case 3: switch (column) { // 'add';
 				case 0:	return false; // 'child';
@@ -205,10 +206,10 @@ export class Hierarchy {
 				case 2:	break; // 'related';
 			} break;
 			case 5: switch (column) { // 'move';
-				case 0:	return !ancestry.hasSiblings; // 'before';
-				case 1:	return !ancestry.hasSiblings; // 'after';
+				case 0:	return !hasSiblings; // 'before';
+				case 1:	return !hasSiblings; // 'after';
 				case 2:	return ancestry.isRoot; // 'out';
-				case 3:	return !ancestry.hasChildren; // 'in';
+				case 3:	return !hasChildren; // 'in';
 			} break;
 			case 6: switch (column) { // 'graph';
 				case 0:	return get(w_user_graph_offset).isZero; // 'center';
