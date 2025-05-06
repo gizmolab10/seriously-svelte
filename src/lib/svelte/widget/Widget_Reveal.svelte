@@ -87,7 +87,7 @@
 		return false
 	}
 
-	function handle_mouse_state(s_mouse: S_Mouse): boolean {
+	function handle_s_mouse(s_mouse: S_Mouse): boolean {
 		return false;
 	}
 
@@ -101,7 +101,7 @@
 		height={k.size.dot}
 		name={es_reveal.name}
 		bind:this={dotReveal}
-		handle_mouse_state={up_hover_closure}>
+		handle_s_mouse={up_hover_closure}>
 		<div class='reveal-dot'
 			on:contextmenu={handle_context_menu}
 			style='

@@ -34,11 +34,11 @@
 		return () => { handle_reposition.disconnect(); };
 	});
 
-	function handle_mouse_state(s_mouse: S_Mouse): boolean { return false; }
+	function handle_s_mouse(s_mouse: S_Mouse): boolean { return false; }
 	
 	$: {
 		if (!!focus) {
-			new Svelte_Wrapper(focus, handle_mouse_state, $w_ancestry_focus.hid, T_SvelteComponent.widget);
+			new Svelte_Wrapper(focus, handle_s_mouse, $w_ancestry_focus.hid, T_SvelteComponent.widget);
 		}
 	}
 
@@ -100,7 +100,7 @@
 			width = {width_ofTitle + 15}
 			name = 'radial-focus-border'
 			handle_isHit = {() => false}
-			handle_mouse_state = {debug_closure}>
+			handle_s_mouse = {debug_closure}>
 			<svg
 				class='radial-focus-svg'
 				style='

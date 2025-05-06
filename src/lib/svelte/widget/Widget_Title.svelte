@@ -168,7 +168,7 @@
 		}
 	}
 
-	function handle_mouse_state(s_mouse: S_Mouse) {
+	function handle_s_mouse(s_mouse: S_Mouse) {
 		if (!!ancestry && !s_mouse.notRelevant) {
 			if (ancestry_isEditing()) {
 				extractRange_fromInput_toThing();
@@ -298,7 +298,7 @@
 	width={title_width}
 	name={es_title.name}
 	height={k.height.row}
-	handle_mouse_state={handle_mouse_state}>
+	handle_s_mouse={handle_s_mouse}>
 	<span class="ghost"
 		bind:this={ghost}
 		style='left:-9999px;

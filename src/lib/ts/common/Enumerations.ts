@@ -69,6 +69,12 @@ export enum T_Alteration {
 	adding	 = 'adding',
 }
 
+export enum T_Request {
+	isDisabled = 'isDisabled',
+	action	   = 'action',
+	isHit	   = 'isHit',
+}
+
 export enum T_Kinship {
 	related	= 'related',
 	parent	= 'parent',
@@ -91,6 +97,12 @@ export enum T_Create {
 	isFromPersistent = 'isFrom',
 	getPersistentID	 = 'getID',
 	none			 = '',
+}
+
+export enum T_SvelteComponent {
+	widget	= 'widget',		// *
+	title	= 'title',
+	app		= 'app',
 }
 
 export enum T_Startup {
@@ -177,12 +189,6 @@ export enum T_Element {
 	info		 = 'info',
 	none		 = 'none',
 	tool		 = 'tool',
-}
-
-export enum T_SvelteComponent {
-	widget	= 'widget',		// *
-	title	= 'title',
-	app		= 'app',
 }
 
 export enum T_Preference {

@@ -68,7 +68,7 @@
 
 	$: {
 		if (!!widget) {
-			widgetWrapper = new Svelte_Wrapper(widget, handle_mouse_state, ancestry.hid, T_SvelteComponent.widget);
+			widgetWrapper = new Svelte_Wrapper(widget, handle_s_mouse, ancestry.hid, T_SvelteComponent.widget);
 		}
 	}
 
@@ -87,7 +87,7 @@
 	}
  
 	function isHit(): boolean { return false; }
-	function handle_mouse_state(s_mouse: S_Mouse): boolean { return false; }
+	function handle_s_mouse(s_mouse: S_Mouse): boolean { return false; }
 
 	function setup_fromAncestry() {
 		s_widget.update_forStateChange;

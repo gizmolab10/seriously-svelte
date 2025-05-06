@@ -72,7 +72,7 @@
 		cursor = {k.cursor_default}
 		handle_isHit = {handle_isHit}
 		center = {w.center_ofGraphSize}
-		handle_mouse_state = {hover_closure}>
+		handle_s_mouse = {hover_closure}>
         <svg class='svg-arc-slider' viewBox={viewBox}>
             <path
                 d={arcSliderPath}

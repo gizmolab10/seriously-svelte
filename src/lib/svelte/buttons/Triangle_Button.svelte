@@ -5,7 +5,7 @@
 	import type { Handle_Result } from '../../ts/common/Types';
 	import SVG_D3 from '../kit/SVG_D3.svelte';
 	import Button from './Button.svelte';
-	export let handle_mouse_state = Handle_Result<S_Mouse>;
+	export let handle_s_mouse = Handle_Result<S_Mouse>;
 	export let hover_closure = Handle_Result<boolean>;
 	export let es_triangle = S_Element.empty();
 	export let extraPath = null;
@@ -35,7 +35,7 @@
 		if (s_mouse.isHover) {
 			setFillColor(!s_mouse.isOut);
 		} else {
-			handle_mouse_state(s_mouse);
+			handle_s_mouse(s_mouse);
 		}
 	}
 

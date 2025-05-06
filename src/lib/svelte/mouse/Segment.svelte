@@ -42,7 +42,7 @@
 	font_size={font_size}
 	origin={g_segment.origin}
 	zindex={T_Layer.frontmost}
-	handle_mouse_state={up_hover_closure}>
+	handle_s_mouse={up_hover_closure}>
 	<svg
 		id={`${name}`}
 		class='segment-svg'

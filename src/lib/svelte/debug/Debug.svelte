@@ -57,7 +57,7 @@
 		zindex = {T_Layer.common}
 		width={w.windowSize.width}
 		height={w.windowSize.height}
-		handle_mouse_state={hover_closure}>
+		handle_s_mouse={hover_closure}>
 		<Box
 			color = 'red'
 			cross = {true}

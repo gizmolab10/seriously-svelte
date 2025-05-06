@@ -360,7 +360,7 @@
 				<Triangle_Button
 					strokeColor={isDisabledFor(T_Tool.next) ? colors.disabled : parentSensitiveColor}
 					hover_closure={(isHovering) => { return fillColorsFor(T_Tool.next, isHovering) }}
-					handle_mouse_state={(s_mouse) => handle_mouse_data(s_mouse, T_Tool.next)}
+					handle_s_mouse={(s_mouse) => handle_mouse_data(s_mouse, T_Tool.next)}
 					extraPath={svgPaths.circle_atOffset(toolDiameter, 4)}
 					center={getC(T_Tool.next)}
 					angle={Direction.up}
@@ -369,7 +369,7 @@
 				<Triangle_Button
 					strokeColor={isDisabledFor(T_Tool.delete_parent) ? colors.disabled : parentSensitiveColor}
 					hover_closure={(isHovering) => { return fillColorsFor(T_Tool.delete_parent, isHovering) }}
-					handle_mouse_state={(s_mouse) => handle_mouse_data(s_mouse, T_Tool.delete_parent)}
+					handle_s_mouse={(s_mouse) => handle_mouse_data(s_mouse, T_Tool.delete_parent)}
 					extraPath={svgPaths.dash(toolDiameter, 4)}
 					center={getC(T_Tool.delete_parent)}
 					angle={Direction.left}
@@ -377,7 +377,7 @@
 					size={toolDiameter}/>
 				<Triangle_Button
 					hover_closure={(isHovering) => { return fillColorsFor(T_Tool.add_parent, isHovering) }}
-					handle_mouse_state={(s_mouse) => handle_mouse_data(s_mouse, T_Tool.add_parent)}
+					handle_s_mouse={(s_mouse) => handle_mouse_data(s_mouse, T_Tool.add_parent)}
 					strokeColor={isDisabledFor(T_Tool.add_parent) ? colors.disabled : color}
 					extraPath={svgPaths.t_cross(toolDiameter, 3)}
 					center={getC(T_Tool.add_parent)}
@@ -386,7 +386,7 @@
 					name='add_parent'/>
 				<Triangle_Button
 					hover_closure={(isHovering) => { return fillColorsFor(T_Tool.create, isHovering) }}
-					handle_mouse_state={(s_mouse) => handle_mouse_data(s_mouse, T_Tool.create)}
+					handle_s_mouse={(s_mouse) => handle_mouse_data(s_mouse, T_Tool.create)}
 					extraPath={svgPaths.t_cross(toolDiameter, 3)}
 					center={getC(T_Tool.create)}
 					angle={Direction.right}

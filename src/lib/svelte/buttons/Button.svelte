@@ -70,7 +70,7 @@
 		}
 	}
 
-	function handle_mouse_state(s_mouse: S_Mouse) {
+	function handle_s_mouse(s_mouse: S_Mouse) {
 		if (!!closure) {
 			closure(s_mouse);		// so container can adjust behavior or appearance
 		}
@@ -90,7 +90,7 @@
 		origin={origin}
 		center={center}
 		detect_longClick={true}
-		handle_mouse_state={handle_mouse_state}>
+		handle_s_mouse={handle_s_mouse}>
 		<button
 			class='button'
 			id={'button-for-' + name}

@@ -26,7 +26,7 @@
 	height={size}
 	align_left={false}
 	origin={new Point(8, size / 2)}
-	handle_mouse_state={hover_up_closure}>
+	handle_s_mouse={hover_up_closure}>
     <SVG_D3 name='close'
 		fill={fill}
 		width={size}

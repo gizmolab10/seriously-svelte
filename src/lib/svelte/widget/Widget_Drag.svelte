@@ -57,7 +57,7 @@
 		updateColors_forHovering();
 	}
 
-	function handle_mouse_state(s_mouse: S_Mouse): boolean {
+	function handle_s_mouse(s_mouse: S_Mouse): boolean {
 		return false;
 	}
 
@@ -119,7 +119,7 @@
 		width={capture_size}
 		height={capture_size}
 		detect_longClick={true}
-		handle_mouse_state={handle_up_long_hover}>
+		handle_s_mouse={handle_up_long_hover}>
 		<button class={name}
 			bind:this={dotDrag}
 			id={name}

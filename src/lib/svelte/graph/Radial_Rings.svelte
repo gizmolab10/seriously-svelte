@@ -49,7 +49,7 @@
 		}
 	}
 
-	function handle_mouse_state(s_mouse: S_Mouse): boolean { return true; }				// only for wrappers
+	function handle_s_mouse(s_mouse: S_Mouse): boolean { return true; }				// only for wrappers
 
 	function handle_isHit(): boolean {
 		const zone = radial.ring_zone_atMouseLocation;
@@ -205,7 +205,7 @@
 				zindex = {T_Layer.rings}
 				handle_isHit = {handle_isHit}
 				center = {w.center_ofGraphSize}
-				handle_mouse_state = {up_down_closure}>
+				handle_s_mouse = {up_down_closure}>
 				<svg class = 'rings-svg'
 					viewBox = {viewBox}>
 					<path class = 'resize-path'

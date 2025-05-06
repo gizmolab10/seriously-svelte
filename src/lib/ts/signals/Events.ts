@@ -8,7 +8,7 @@ export class Events {
 	interval: NodeJS.Timeout | null = null;
 
 	setup() {
-		w_s_alteration.subscribe((state: S_Alteration | null) => { this.handle_alteration_state(state); });
+		w_s_alteration.subscribe((s_alteration: S_Alteration | null) => { this.handle_s_alteration(s_alteration); });
 		w_device_isMobile.subscribe((isMobile: boolean) => { this.subscribeTo_events(); });
 		this.subscribeTo_events();
 	}
@@ -87,15 +87,15 @@ export class Events {
 		}
 	}
 
-	handle_alteration_state(state: S_Alteration | null) {
+	handle_s_alteration(s_alteration: S_Alteration | null) {
 		if (!!this.interval) {
 			clearInterval(this.interval);
 			this.interval = null;
 		}
-		if (!!state) {
+		if (!!s_alteration) {
 			let blink = true;
 			this.interval = setInterval(() => {
-				signals.signal_altering(blink ? state : null);
+				signals.signal_altering(blink ? s_alteration : null);
 				blink = !blink;
 			}, 500)
 		} else {

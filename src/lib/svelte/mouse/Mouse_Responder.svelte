@@ -5,7 +5,7 @@
 	import type { Handle_Result } from '../../ts/common/Types';
 	import { onMount } from 'svelte';
 	export let handle_isHit: () => {flag: boolean} | null = null;
-	export let handle_mouse_state = Handle_Result<S_Mouse>;
+	export let handle_s_mouse = Handle_Result<S_Mouse>;
 	export let font_size = `${k.font_size.small}px`;
 	export let origin: Point | null = null;
 	export let center: Point | null = null;
@@ -30,12 +30,12 @@
 	//////////////////////////////////////////////////////////////
 	//															//
 	//	required: width, height, name,							//
-	//		handle_mouse_state closure (*),						//
+	//		handle_s_mouse closure (*),						//
 	//  	center or origin (one must remain null)				//
 	//  optional: handle_isHit closure (*)						//
 	//															//
 	//  (*)	handle_isHit: override for hit geometry & logic		//
-	//	(*)	handle_mouse_state: mouse info relevant to caller:	//
+	//	(*)	handle_s_mouse: mouse info relevant to caller:	//
 	//		down, up, double, long & hover						//
 	//															//
 	//////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@
 			if (s_mouse.isHover != isHit) {
 				s_mouse.isHover  = isHit;
 				s_mouse.isOut   = !isHit;
-				handle_mouse_state(S_Mouse.hover(null, bound_element, isHit));					// pass a null event
+				handle_s_mouse(S_Mouse.hover(null, bound_element, isHit));					// pass a null event
 			}
 		}
 	}
@@ -76,7 +76,7 @@
 		mouse_timer.reset();
 	}
 
-	function create_state(isDown: boolean, isDouble: boolean = false, isLong: boolean = false): S_Mouse {
+	function create_s_mouse(isDown: boolean, isDouble: boolean = false, isLong: boolean = false): S_Mouse {
 		const state = u.copyObject(s_mouse);
 		state.isUp = !isDown && !isDouble && !isLong;
 		state.element = bound_element;
@@ -92,21 +92,21 @@
 	function handle_pointerUp(event) {
 		if (detect_mouseUp) {
 			reset();
-			handle_mouse_state(S_Mouse.up(event, bound_element));
+			handle_s_mouse(S_Mouse.up(event, bound_element));
 			debug.log_action(` up ${mouse_responder_number} RESPONDER`);
 		}
 	}
 	
 	function handle_pointerDown(event) {
 		if (detect_mouseDown && s_mouse.clicks == 0) {
-			handle_mouse_state(create_state(true));
+			handle_s_mouse(create_s_mouse(true));
 		}
 		s_mouse.clicks += 1;
 		if (detect_doubleClick) {
 			mouse_timer.setTimeout(T_Timer.double, () => {
 				if (mouse_timer.hasTimer && s_mouse.clicks == 2) {
 					reset();
-					handle_mouse_state(create_state(false, true, false));
+					handle_s_mouse(create_s_mouse(false, true, false));
 				}
 			});
 		}
@@ -114,7 +114,7 @@
 			mouse_timer.setTimeout(T_Timer.long, () => {
 				if (mouse_timer.hasTimer) {
 					reset();
-					handle_mouse_state(create_state(false, false, true));
+					handle_s_mouse(create_s_mouse(false, false, true));
 					debug.log_action(` long ${mouse_responder_number} RESPONDER`);
 				}
 			});

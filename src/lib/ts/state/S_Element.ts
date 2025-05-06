@@ -1,16 +1,19 @@
-import { k, ux, debug, Ancestry, T_Element } from '../common/Global_Imports';
+import { k, ux, debug, colors, Ancestry, T_Element } from '../common/Global_Imports';
 import { w_background_color } from '../../ts/common/Stores';
 import Identifiable from '../runtime/Identifiable';
 	
 export default class S_Element {
 	responder: HTMLElement | null = null;
+	defaultDisabledColor = '#cccccc';
 	defaultCursor = k.cursor_default;
 	hoverCursor = k.cursor_default;
+	disabledTextColor = '#777777';
 	identifiable!: Identifiable;
 	color_background = k.empty;
 	hoverColor = 'transparent';
 	type = T_Element.none;
 	ignore_hover = false;
+	isDisabled = false;
 	isSelected = false;
 	isInverted = false;
 	subtype = k.empty;
@@ -40,10 +43,11 @@ export default class S_Element {
 	get ancestry(): Ancestry { return this.identifiable as Ancestry; }
 	get invertColor(): boolean { return this.isInverted || this.isHovering; }
 	get description(): string { return `${this.isOut ? 'out' : 'in '} '${this.name}'`; }
-	get cursor(): string { return this.isHovering ? this.hoverCursor : this.defaultCursor; }
-	get stroke(): string { return this.invertColor ? this.color_background : this.hoverColor; }
-	get fill(): string { return this.invertColor ? this.hoverColor : this.isSelected ? 'lightblue' : this.color_background; }
+	get cursor(): string { return (this.isHovering && !this.isDisabled) ? this.hoverCursor : this.defaultCursor; }
 	get isHovering(): boolean { return this.ignore_hover ? false : this.isOut == this.identifiable.isHoverInverted(this.type); }
+	get stroke(): string { return this.isDisabled ? this.disabledTextColor : this.invertColor ? this.color_background : this.hoverColor; }
+	get disabledColor(): string { return colors.specialBlend(this.color_background, this.defaultDisabledColor, 0.5) ?? this.defaultDisabledColor; }
+	get fill(): string { return this.isDisabled ? this.disabledColor : this.invertColor ? this.hoverColor : this.isSelected ? 'lightblue' : this.color_background; }
 
 	set_forHovering(hoverColor: string, hoverCursor: string) {
 		this.hoverCursor = hoverCursor;

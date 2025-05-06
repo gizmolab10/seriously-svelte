@@ -11,7 +11,7 @@
         return [isHovering ? colors.default : $w_background_color, k.empty];
     }
 
-	function handle_mouse_state(s_mouse: S_Mouse): boolean {
+	function handle_s_mouse(s_mouse: S_Mouse): boolean {
         const target = s_mouse.element;
         if (!s_mouse.isHover && !!target && (s_mouse.isUp || s_mouse.isLong)) {
             const pointsUp = target.id == 'up';
@@ -24,7 +24,7 @@
 <div class='directionals'>
     {#if $w_visibility_ofNotes[0]}
         <Triangle_Button
-            handle_mouse_state={handle_mouse_state}
+            handle_s_mouse={handle_s_mouse}
             center={origin.offsetByY(-offsetY)}
             hover_closure={hover_closure}
             strokeColor={colors.default}
@@ -35,7 +35,7 @@
     {/if}
     {#if $w_visibility_ofNotes[1]}
         <Triangle_Button
-            handle_mouse_state={handle_mouse_state}
+            handle_s_mouse={handle_s_mouse}
             center={origin.offsetByY(offsetY)}
             hover_closure={hover_closure}
             strokeColor={colors.default}

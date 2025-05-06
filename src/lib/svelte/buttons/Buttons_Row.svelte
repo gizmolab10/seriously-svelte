@@ -29,10 +29,15 @@
         return title_widths.slice(0, column).reduce((acc, width) => acc + gap + width + button_portion, 0);
     }
 
+    function button_disabled_for(column: number): boolean {
+        return column == 1;
+    }
+
 	function setup_s_elements() {
         for (let column = 0; column < columns; column++) {
             const es_tool = ux.s_element_for(new Identifiable(`${column}`), T_Element.tool, column);
             es_tool.set_forHovering(colors.default, 'pointer');
+            es_tool.isDisabled = button_disabled_for(column);
             s_element_byColumn[column] = es_tool;
         }
 	}
@@ -49,7 +54,7 @@
 
 <div class='buttons-row'
     style='
-        width: {width}px;
+        width:{width}px;
         top:{origin.y}px;
         left:{origin.x}px;
         position:absolute;

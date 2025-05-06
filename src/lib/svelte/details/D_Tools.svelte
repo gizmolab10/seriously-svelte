@@ -7,6 +7,10 @@
 	const font_size = show_boxes ? k.font_size.smaller : k.font_size.smallest;
     const font_sizes = [font_size, font_size + (show_boxes ? -1 : 0)];
 
+	// knows all the tools
+	// hierarchy knows what each tool does
+	// hierarchy knows what is disabled ?
+
 	const button_titles=[
 		['graph', 'reveal selection', 'center'],
 		['browse', 'before', 'after', 'in', 'out'],
