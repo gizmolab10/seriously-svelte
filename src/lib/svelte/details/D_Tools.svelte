@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, show, Size, T_Layer } from '../../ts/common/Global_Imports';
+	import { k, show, Size, T_Layer, T_Request } from '../../ts/common/Global_Imports';
 	import Buttons_Grid from '../buttons/Buttons_Grid.svelte';
 	import { w_hierarchy } from '../../ts/common/Stores';
 	export let top = 0;
@@ -8,26 +8,33 @@
     const font_sizes = [font_size, font_size + (show_boxes ? -1 : 0)];
 
 	// knows all the tools
-	// hierarchy knows what each tool does
-	// hierarchy knows what is disabled ?
+	// hierarchy knows what each tool does ... handle_tool_request_at
+	// hierarchy knows what is disabled ... " "
+	// button row sends column and T_Request:
+	// 	query_disabled		based on grabbed ancestry
+	//	handle_click		or long press generates many calls
+	// grid adds row:
 
 	const button_titles=[
-		['graph', 'reveal selection', 'center'],
-		['browse', 'before', 'after', 'in', 'out'],
+		['graph', 'show selection', 'show root', 'center'],
+		['browse', 'before', 'after', 'out', 'in'],
 		['list', 'conceal', 'reveal'],
 		['add', 'child', 'sibling', 'line', 'parent', 'related'],
 		['delete', 'selection', 'parent', 'related'],
-		['move', 'before', 'after', 'in', 'out']];
+		['move', 'before', 'after', 'out', 'in']];
 
 	function name_for(row, column) {
 		const titles = button_titles[row];
 		return `${titles[0]} ${titles[column]}`;
 	}
 
-	function closure(s_mouse, row, column) {
-		if (!s_mouse.isHover && s_mouse.isDown) {
-			$w_hierarchy.handle_tool_clicked_at(row, column, s_mouse, name_for(row, column + 1));
+	function closure(t_request, s_mouse, row, column): boolean {
+		if (t_request == T_Request.query_disabled) {
+			return $w_hierarchy.handle_tool_disabled_at(row, column);
+		} else if (!s_mouse.isHover && s_mouse.isDown) {
+			return $w_hierarchy.handle_tool_clicked_at(row, column, s_mouse, name_for(row, column + 1));
 		}
+		return false;
 	}
 
 </script>

@@ -1,8 +1,8 @@
 <script lang='ts'>
-    import { k, show, Point, colors, T_Element, S_Element } from '../../ts/common/Global_Imports';
+    import { k, show, Point, colors, T_Request, T_Element, S_Element } from '../../ts/common/Global_Imports';
     import { w_background_color } from '../../ts/common/Stores';
     import Buttons_Box from './Buttons_Box.svelte';
-    export let closure: (s_mouse: S_Mouse, row: number, column: number) => void;
+    export let closure: (t_request: T_Request, s_mouse: S_Mouse, row: number, column: number) => boolean;
     export let button_titles: string[][];
     export let font_sizes: Array<number>;
     export let button_height = 15;
@@ -34,6 +34,6 @@
             name={`buttons-box-${row}`}
             button_height={button_height}
             origin={button_origin_for(row)}
-            closure={(s_mouse, column) => closure(s_mouse, row, column)}/>
+            closure={(t_request, s_mouse, column) => closure(t_request, s_mouse, row, column)}/>
     {/each}
 </div>

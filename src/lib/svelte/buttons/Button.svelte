@@ -1,6 +1,6 @@
 <script lang='ts'>
+	import { w_ancestries_grabbed, w_thing_fontFamily, w_background_color } from '../../ts/common/Stores';
 	import { k, u, ux, Rect, Point, colors, T_Layer } from '../../ts/common/Global_Imports';
-	import { w_thing_fontFamily, w_background_color } from '../../ts/common/Stores';
 	import { S_Element, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import type { Handle_Result } from '../../ts/common/Types';
@@ -40,11 +40,10 @@
 	//									//
 	//////////////////////////////////////
 
-	update_computedStyletyle();
-	$: es_button.fill, es_button.isOut, $w_background_color, update_computedStyletyle();
+	recompute_style();
+	$: es_button.fill, es_button.isOut, es_button.isDisabled, $w_background_color, $w_ancestries_grabbed, recompute_style();
 	
-	function update_computedStyletyle() {
-		// console.log(`button ${es_button.description}`);
+	function recompute_style() {
 		color = es_button.stroke;
 		if (style.length == 0) {
 			border = border_thickness == 0 ? 'none' : `${border_thickness}px solid ${border_color}`;
@@ -71,12 +70,15 @@
 	}
 
 	function handle_s_mouse(s_mouse: S_Mouse) {
+		if (s_mouse.isHover) {		// NOT the same as isHovering
+			if (!!es_button) {
+				es_button.isOut = s_mouse.isOut;
+			}
+		}
 		if (!!closure) {
 			closure(s_mouse);		// so container can adjust behavior or appearance
 		}
-		if (s_mouse.isHover) {		// NOT the same as isHovering
-			update_computedStyletyle();
-		}
+		recompute_style();
 	}
 
 </script>

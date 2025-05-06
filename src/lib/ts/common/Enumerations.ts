@@ -70,9 +70,9 @@ export enum T_Alteration {
 }
 
 export enum T_Request {
-	isDisabled = 'isDisabled',
-	action	   = 'action',
-	isHit	   = 'isHit',
+	query_disabled = 'query_disabled',
+	handle_click   = 'handle_click',
+	query_hit	   = 'query_hit',
 }
 
 export enum T_Kinship {

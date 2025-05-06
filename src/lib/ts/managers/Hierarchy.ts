@@ -132,14 +132,15 @@ export class Hierarchy {
 		const ancestry = this.latest_grabbed_upward(true);
 		switch (row) {
 			case 0: switch (column) { // 'graph';
-				case 0:	break; // 'reveal selection';
-				case 1:	w.user_graph_offset_setTo(Point.zero); return; // 'center';
+				case 0:	break; // 'show selection';
+				case 1:	break; // 'show root';
+				case 2:	w.user_graph_offset_setTo(Point.zero); return; // 'center';
 			} break;
 			case 1: switch (column) { // 'browse';
-				case 1:	this.grabs_latest_rebuild_persistentMoveUp_maybe(false, false, false, false); return; // 'before';
-				case 0:	this.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, false, false); return; // 'after';
-				case 2:	await this.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, false, false, false); return; // 'in';
-				case 3:	await this.ancestry_rebuild_persistentMoveRight(ancestry, false, false, false, false, false); return; // 'out';
+				case 0:	this.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, false, false); return; // 'before';
+				case 1:	this.grabs_latest_rebuild_persistentMoveUp_maybe(false, false, false, false); return; // 'after';
+				case 2:	await this.ancestry_rebuild_persistentMoveRight(ancestry, false, false, false, false, false); return; // 'out';
+				case 3:	await this.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, false, false, false); return; // 'in';
 			} break;
 			case 2: switch (column) { // 'list';
 				case 0:	if (ancestry.collapse()) { layout.grand_build(); } return; // 'conceal';
@@ -153,18 +154,63 @@ export class Hierarchy {
 				case 4:	break; // 'related';
 			} break;
 			case 4: switch (column) { // 'delete';
-				case 0:	await this.ancestries_rebuild_traverse_persistentDelete(get(w_ancestries_grabbed)); return// 'selection';
+				case 0:	await this.ancestries_rebuild_traverse_persistentDelete(get(w_ancestries_grabbed)); return; // 'selection';
 				case 1:	this.toggleAlteration(T_Alteration.deleting, s_mouse.isLong); return; // 'parent';
 				case 2:	break; // 'related';
 			} break;
 			case 5: switch (column) { // 'move';
-				case 1:	this.grabs_latest_rebuild_persistentMoveUp_maybe(false, false, true, false); return; // 'before';
-				case 0:	this.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, true, false); return; // 'after';
-				case 2:	await this.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, true, false, false); return; // 'in';
-				case 3:	await this.ancestry_rebuild_persistentMoveRight(ancestry, false, false, true, false, false); return; // 'out';
+				case 0:	this.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, true, false); return; // 'before';
+				case 1:	this.grabs_latest_rebuild_persistentMoveUp_maybe(false, false, true, false); return; // 'after';
+				case 2:	await this.ancestry_rebuild_persistentMoveRight(ancestry, false, false, true, false, false); return; // 'out';
+				case 3:	await this.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, true, false, false); return; // 'in';
 			} break;
 		}
 		alert(`needed: ${name}`);
+	}
+
+	handle_tool_disabled_at(row: number, column: number): boolean {
+		const ancestry = this.latest_grabbed_upward(true);
+		switch (row) {
+			case 0: switch (column) { // 'graph';
+				case 0:	break; // 'show selection';
+				case 1:	break; // 'show root';
+				case 2:	return false; // 'center';
+			} break;
+			case 1: switch (column) { // 'browse';
+				case 0:	return false; // 'before';
+				case 1:	return false; // 'after';
+				case 2:	return ancestry.isRoot; // 'out';
+				case 3:	return !ancestry.hasChildren; // 'in';
+			} break;
+			case 2:
+				if (layout.inRadialMode) {
+					return true;
+				} else {
+					switch (column) { // 'list';
+						case 0:	return false; // 'conceal';
+						case 1:	return !ancestry.hasChildren; // 'reveal';
+					}
+				} break;
+			case 3: switch (column) { // 'add';
+				case 0:	return false; // 'child';
+				case 1:	return false; // 'sibling';
+				case 2:	return false; // 'line';
+				case 3:	return false; // 'parent';
+				case 4:	break; // 'related';
+			} break;
+			case 4: switch (column) { // 'delete';
+				case 0:	return false; // 'selection';
+				case 1:	return false; // 'parent';
+				case 2:	break; // 'related';
+			} break;
+			case 5: switch (column) { // 'move';
+				case 0:	return false; // 'before';
+				case 1:	return false; // 'after';
+				case 2:	return ancestry.isRoot; // 'out';
+				case 3:	return !ancestry.hasChildren; // 'in';
+			} break;
+		}
+		return true;
 	}
 
 	static readonly GRABS: unique symbol;
