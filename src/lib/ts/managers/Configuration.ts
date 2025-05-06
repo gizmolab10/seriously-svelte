@@ -68,10 +68,16 @@ export class Configuration {
 
 	get device_isMobile(): boolean {
 		const userAgent = navigator.userAgent;
-		if (/android/i.test(userAgent) || /iPhone|iPad|iPod/i.test(userAgent)) {    // Check for phones
-			return true;
-		}
-		if (/iPad|Android|Touch/i.test(userAgent) && !(window as any).MSStream) {    // Check for tablets
+		if (/iPhone|iPad|iPod/i.test(userAgent) ||
+			/Windows Phone/i.test(userAgent) ||
+			/BlackBerry/i.test(userAgent) ||
+			/Opera Mini/i.test(userAgent) ||
+			/IEMobile/i.test(userAgent) ||
+			/android/i.test(userAgent) ||
+			/Mobile/i.test(userAgent) ||
+			/Tablet/i.test(userAgent) ||
+			/webOS/i.test(userAgent) ||
+			/Touch/i.test(userAgent)) {    // Check for phones and tablets
 			return true;
 		}
 		return false;

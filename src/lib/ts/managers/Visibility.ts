@@ -1,11 +1,11 @@
-import { w_t_countDots, w_show_details, w_show_related } from '../common/Stores';
+import { w_t_countDots, w_show_details, w_show_related, w_device_isMobile } from '../common/Stores';
 import { c, k, p, w, layout, T_Preference } from '../common/Global_Imports';
 import { T_Report, T_Kinship } from '../common/Enumerations';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
 
 export class Visibility {
-	tool_boxes	 = true;
+	tool_boxes	 = false;
 	debug_cursor = false;
 	traits		 = false;
 	t_info		 = T_Report.focus;
@@ -50,6 +50,9 @@ export class Visibility {
 	}
 
 	reactivity_subscribe() {
+		w_device_isMobile.subscribe((flag: boolean) => {
+			this.tool_boxes = !flag;
+		});
 		w_show_details.subscribe((flag: boolean) => {
 			p.write_key(T_Preference.show_details, flag);
 			w.restore_state();
