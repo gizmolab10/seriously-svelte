@@ -4,7 +4,7 @@
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Separator from '../kit/Separator.svelte';
     import Buttons_Row from './Buttons_Row.svelte';
-    export let closure: (s_mouse: S_Mouse, t_request: T_Request, column: number) => boolean;
+    export let closure: (t_request: T_Request, s_mouse: S_Mouse, column: number) => boolean;
 	export let origin: Point | null = null;
     export let font_sizes: Array<number>;
     export let button_titles: string[];

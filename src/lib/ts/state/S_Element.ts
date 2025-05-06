@@ -4,10 +4,9 @@ import Identifiable from '../runtime/Identifiable';
 	
 export default class S_Element {
 	responder: HTMLElement | null = null;
-	defaultDisabledColor = '#cccccc';
+	defaultDisabledColor = '#666666';
 	defaultCursor = k.cursor_default;
 	hoverCursor = k.cursor_default;
-	disabledTextColor = '#777777';
 	identifiable!: Identifiable;
 	color_background = k.empty;
 	hoverColor = 'transparent';
@@ -41,13 +40,13 @@ export default class S_Element {
 
 	static empty() { return {}; }
 	get ancestry(): Ancestry { return this.identifiable as Ancestry; }
-	get invertColor(): boolean { return this.isInverted || this.isHovering; }
+	get color_isInverted(): boolean { return this.isInverted || this.isHovering; }
 	get description(): string { return `${this.isOut ? 'out' : 'in '} '${this.name}'`; }
 	get cursor(): string { return (this.isHovering && !this.isDisabled) ? this.hoverCursor : this.defaultCursor; }
 	get isHovering(): boolean { return this.ignore_hover ? false : this.isOut == this.identifiable.isHoverInverted(this.type); }
-	get stroke(): string { return this.isDisabled ? this.disabledTextColor : this.invertColor ? this.color_background : this.hoverColor; }
-	get disabledColor(): string { return colors.specialBlend(this.color_background, this.defaultDisabledColor, 0.5) ?? this.defaultDisabledColor; }
-	get fill(): string { return this.isDisabled ? this.disabledColor : this.invertColor ? this.hoverColor : this.isSelected ? 'lightblue' : this.color_background; }
+	get stroke(): string { return this.isDisabled ? this.disabledTextColor : this.color_isInverted ? this.color_background : this.hoverColor; }
+	get disabledTextColor(): string { return colors.specialBlend(this.color_background, this.defaultDisabledColor, 0.5) ?? this.defaultDisabledColor; }
+	get fill(): string { return this.isDisabled ? 'transparent' : this.color_isInverted ? this.hoverColor : this.isSelected ? 'lightblue' : this.color_background; }
 
 	set_forHovering(hoverColor: string, hoverCursor: string) {
 		this.hoverCursor = hoverCursor;

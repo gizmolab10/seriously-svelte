@@ -30,9 +30,9 @@
 
 	function closure(t_request, s_mouse, row, column): boolean {
 		if (t_request == T_Request.query_disabled) {
-			return $w_hierarchy.handle_tool_disabled_at(row, column);
+			return $w_hierarchy.isTool_disabledAt(row, column);
 		} else if (!s_mouse.isHover && s_mouse.isDown) {
-			return $w_hierarchy.handle_tool_clicked_at(row, column, s_mouse, name_for(row, column + 1));
+			return $w_hierarchy.handle_tool_clickedAt(row, column, s_mouse, name_for(row, column + 1));
 		}
 		return false;
 	}
