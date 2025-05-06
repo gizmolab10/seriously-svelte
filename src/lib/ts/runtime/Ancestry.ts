@@ -61,6 +61,7 @@ export default class Ancestry extends Identifiable {
 	get isUnidirectional():					 boolean { return !this.isBidirectional; }
 	get hasChildren():						 boolean { return this.hasChildRelationships; }
 	get isRoot():							 boolean { return this.pathString == k.root_path; }
+	get hasSiblings():						 boolean { return this.sibling_ancestries.length > 1; }
 	get hasChildRelationships():			 boolean { return this.childRelationships.length > 0; }
 	get hasParentRelationships():			 boolean { return this.parentRelationships.length > 0; }
 	get isFocus():							 boolean { return this.matchesStore(w_ancestry_focus); }

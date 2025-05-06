@@ -12,19 +12,17 @@
 	export let margin = 0;
 	export let left = 0;
 	export let top = 0;
-	const title_width = u.getWidth_ofString_withSize(title ?? k.empty, `${title_font_size}px`);
-	const title_top = top - 4 + thickness * 0.2 - title_font_size * 0.1;
 	const line_left = left + margin;
+	const title_width = u.getWidth_ofString_withSize(title ?? k.empty, `${title_font_size}px`);
 	let separator_color = colors.separator;
+
+	function title_top() { return top - 4 + thickness * 0.2 - title_font_size * 0.1; }
 
 	if (!title_left) {
 		title_left = (width + (left * 2.1) - title_width - 12) / 2;
 	}
 
-	$: {
-		const _ = $w_background_color;
-		separator_color = colors.separator;
-	}
+	$: $w_background_color, separator_color = colors.separator;
 
 </script>
 
@@ -43,7 +41,7 @@
 		style='
 			padding: 0px 5px;
 			position:absolute;
-			top:{title_top}px;
+			top:{title_top()}px;
 			left:{title_left}px;
 			z-index:{T_Layer.frontmost};
 			font-size:{title_font_size}px;

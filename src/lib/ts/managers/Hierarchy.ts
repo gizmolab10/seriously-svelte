@@ -177,19 +177,15 @@ export class Hierarchy {
 				case 2:	return false; // 'center';
 			} break;
 			case 1: switch (column) { // 'browse';
-				case 0:	return false; // 'before';
-				case 1:	return false; // 'after';
+				case 0:	return !ancestry.hasSiblings; // 'before';
+				case 1:	return !ancestry.hasSiblings; // 'after';
 				case 2:	return ancestry.isRoot; // 'out';
 				case 3:	return !ancestry.hasChildren; // 'in';
 			} break;
 			case 2:
-				if (layout.inRadialMode) {
-					return true;
-				} else {
-					switch (column) { // 'list';
-						case 0:	return false; // 'conceal';
-						case 1:	return !ancestry.hasChildren; // 'reveal';
-					}
+				switch (column) { // 'list';
+					case 0:	return false; // 'conceal';
+					case 1:	return !ancestry.hasChildren; // 'reveal';
 				} break;
 			case 3: switch (column) { // 'add';
 				case 0:	return false; // 'child';
@@ -200,12 +196,12 @@ export class Hierarchy {
 			} break;
 			case 4: switch (column) { // 'delete';
 				case 0:	return false; // 'selection';
-				case 1:	return false; // 'parent';
+				case 1:	return !ancestry.hasParentRelationships; // 'parent';
 				case 2:	break; // 'related';
 			} break;
 			case 5: switch (column) { // 'move';
-				case 0:	return false; // 'before';
-				case 1:	return false; // 'after';
+				case 0:	return !ancestry.hasSiblings; // 'before';
+				case 1:	return !ancestry.hasSiblings; // 'after';
 				case 2:	return ancestry.isRoot; // 'out';
 				case 3:	return !ancestry.hasChildren; // 'in';
 			} break;
