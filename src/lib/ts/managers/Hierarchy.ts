@@ -62,7 +62,7 @@ export class Hierarchy {
 	handle_s_mouse(s_mouse: S_Mouse, from: string): S_Mouse { return s_mouse; }			// for dots and buttons
 
 	async handle_key_down(event: KeyboardEvent) {
-		let ancestry = this.latest_grabbed_upward(true);
+		let ancestry = this.grabs_latest_upward(true);
 		if (event.type == 'keydown' && !ux.isEditing_text) {
 			const OPTION = event.altKey;
 			const SHIFT = event.shiftKey;
@@ -117,11 +117,11 @@ export class Hierarchy {
 	async handle_tool_clickedAt(row: number, column: number, s_mouse: S_Mouse, name: string) {
 		if (!this.isTool_disabledAt(row, column)) {
 			// as each is implemented add return to the case
-			const ancestry = this.latest_grabbed_upward(true);
+			const ancestry = this.grabs_latest_upward(true);
 			switch (row) {
 				case 0: switch (column) { // 'show';
-					case 0:	break; // 'selection';
-					case 1:	break; // 'root';
+					case 0:	this.grabs_latest_assureIsVisible(); return; // 'selection';
+					case 1:	this.rootAncestry.becomeFocus(); return; // 'root';
 				} break;
 				case 1: switch (column) { // 'browse';
 					case 0:	this.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, false, false); return; // 'up';
@@ -155,16 +155,15 @@ export class Hierarchy {
 	}
 
 	isTool_disabledAt(row: number, column: number): boolean {		// true means disabled
-		const ancestry = this.latest_grabbed_upward(true);
-		const no_children = !ancestry.hasChildRelationships;
+		const ancestry = this.grabs_latest_upward(true);
+		const no_children = !ancestry.hasChildren;
 		const no_siblings = !ancestry.hasSiblings;
 		const is_root = ancestry.isRoot;
-		const focus_is_root = is_root && ancestry.isFocus;
 		const disable_revealConceal = no_children || is_root || (layout.inRadialMode && ancestry.isFocus);
 		switch (row) {
 			case 0: switch (column) { // 'show';
-				case 0:	focus_is_root || ancestry.isVisible; // 'selection';
-				case 1:	break; // 'root';
+				case 0:	return ancestry.isVisible; // 'selection';
+				case 1:	return this.rootAncestry.isVisible; // 'root';
 			} break;
 			case 1: switch (column) { // 'browse';
 				case 0:	return no_siblings; // 'up';
@@ -182,7 +181,7 @@ export class Hierarchy {
 			} break;
 			case 4: switch (column) { // 'delete';
 				case 0:	return is_root; // 'selection';
-				case 1:	return true || !ancestry.hasParentRelationships; // 'parent';
+				case 1:	return true || !ancestry.hasMultipleParents; // 'parent';
 				case 2:	break; // 'related';
 			} break;
 			case 5: switch (column) { // 'move';
@@ -229,7 +228,7 @@ export class Hierarchy {
 	}
 
 	get grabs_latest_ancestry(): Ancestry | null {
-		const ancestry = this.latest_grabbed_upward(false);
+		const ancestry = this.grabs_latest_upward(false);
 		const relationshipHID = ancestry?.relationship?.hid;
 		if (!!relationshipHID && !!this.relationship_forHID(relationshipHID)) {
 			return ancestry;
@@ -237,7 +236,31 @@ export class Hierarchy {
 		return null;
 	}
 
-	latest_grabbed_upward(up: boolean): Ancestry {	// does not alter array
+	grabs_latest_rebuild_persistentMoveUp_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
+		const ancestry = this.grabs_latest_upward(up);
+		this.ancestry_rebuild_persistentMoveUp_maybe(ancestry, up, SHIFT, OPTION, EXTREME);
+	}
+
+	grabs_latest_toggleEditingTools(up: boolean = true) {
+		const ancestry = this.grabs_latest_upward(up);
+		if (!ancestry.isRoot) {
+			w_ancestry_showing_tools.set(ancestry.toolsGrabbed ? null : ancestry);
+			layout.grand_build();
+		}
+	}
+
+	grabs_latest_assureIsVisible() {
+		const ancestry = this.grabs_latest_ancestry;
+		if (!!ancestry && !ancestry.isVisible) {
+			if (layout.inTreeMode) {
+				ancestry.reveal_toFocus();
+			} else {
+				ancestry.parentAncestry?.becomeFocus();
+			}
+		}
+	}
+
+	grabs_latest_upward(up: boolean): Ancestry {	// does not alter array
 		const ancestries = get(w_ancestries_grabbed) ?? [];
 		if (ancestries.length > 0) {
 			if (up) {
@@ -247,19 +270,6 @@ export class Hierarchy {
 			}
 		}
 		return this.rootAncestry;
-	}
-
-	grabs_latest_rebuild_persistentMoveUp_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
-		const ancestry = this.latest_grabbed_upward(up);
-		this.ancestry_rebuild_persistentMoveUp_maybe(ancestry, up, SHIFT, OPTION, EXTREME);
-	}
-
-	grabs_latest_toggleEditingTools(up: boolean = true) {
-		const ancestry = this.latest_grabbed_upward(up);
-		if (!ancestry.isRoot) {
-			w_ancestry_showing_tools.set(ancestry.toolsGrabbed ? null : ancestry);
-			layout.grand_build();
-		}
 	}
 	
 	static readonly THINGS: unique symbol;
@@ -833,7 +843,7 @@ export class Hierarchy {
 		const relationship = this.relationship_forPredicateKind_parent_child(kind, otherAncestry.id_thing.hash(), ancestry.id_thing.hash());
 		if (!!parentAncestry && !!relationship && (thing?.hasParents ?? false)) {
 			this.relationship_forget(relationship);
-			if (otherAncestry.hasChildRelationships) {
+			if (otherAncestry.hasChildren) {
 				parentAncestry.order_normalizeRecursive(true);
 			} else {
 				otherAncestry.collapse();
@@ -1145,7 +1155,7 @@ export class Hierarchy {
 				}
 			}
 		} else if (c.allow_GraphEditing) {
-			const grab = this.latest_grabbed_upward(true);
+			const grab = this.grabs_latest_upward(true);
 			this.ancestry_rebuild_persistentRelocateRight(grab, RIGHT, EXTREME);
 		}
 	}

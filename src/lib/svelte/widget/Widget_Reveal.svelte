@@ -77,7 +77,7 @@
 	function up_hover_closure(s_mouse) {
 		if (s_mouse.isHover) {
 			set_isHovering(!s_mouse.isOut);
-		} else if (s_mouse.isUp && (ancestry.hasChildRelationships || ancestry.thing.isBulkAlias)) {
+		} else if (s_mouse.isUp && (ancestry.hasChildren || ancestry.thing.isBulkAlias)) {
 			const RIGHT = !ancestry.isExpanded || layout.inRadialMode;
 			$w_hierarchy.ancestry_rebuild_persistentMoveRight(ancestry, RIGHT, false, false, false, true);
 		}

@@ -5,7 +5,7 @@
 	export let top = 0;
 	const show_boxes = show.tool_boxes;
     const font_sizes = [k.font_size.smallest, show_boxes ? k.font_size.smaller : k.font_size.smallest];
-	let ancestry = $w_hierarchy.latest_grabbed_upward(true);
+	let ancestry = $w_hierarchy.grabs_latest_upward(true);
 	let list_title = ancestry.isExpanded && layout.inTreeMode ? 'conceal' : 'reveal';
 	let button_titles = updated_button_titles;
 
@@ -35,7 +35,7 @@
 	}
 
 	function update_button_titles() {
-		ancestry = $w_hierarchy.latest_grabbed_upward(true);
+		ancestry = $w_hierarchy.grabs_latest_upward(true);
 		list_title = ancestry.isExpanded && layout.inTreeMode ? 'conceal' : 'reveal';
 		button_titles = updated_button_titles();
 	}

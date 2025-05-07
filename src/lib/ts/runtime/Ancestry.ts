@@ -61,18 +61,19 @@ export default class Ancestry extends Identifiable {
 	get isUnidirectional():					 boolean { return !this.isBidirectional; }
 	get isRoot():							 boolean { return this.pathString == k.root_path; }
 	get hasSiblings():						 boolean { return this.sibling_ancestries.length > 1; }
-	get hasChildRelationships():			 boolean { return this.childRelationships.length > 0; }
-	get hasParentRelationships():			 boolean { return this.parentRelationships.length > 0; }
+	get hasChildren():			 boolean { return this.childRelationships.length > 0; }
+	get hasParents():						 boolean { return this.parentRelationships.length > 0; }
+	get hasMultipleParents():				 boolean { return this.parentRelationships.length > 1; }
 	get isFocus():							 boolean { return this.matchesStore(w_ancestry_focus); }
 	get hasRelevantRelationships():			 boolean { return this.relevantRelationships_count > 0; }
 	get points_toChildren():				 boolean { return this.g_cluster?.points_toChildren ?? true }
 	get isBidirectional():					 boolean { return this.predicate?.isBidirectional ?? false; }
 	get shows_reveal():						 boolean { return this.showsReveal_forPointingToChild(true); }
 	get toolsGrabbed():						 boolean { return this.matchesStore(w_ancestry_showing_tools); }
-	get shows_children():					 boolean { return this.isExpanded && this.hasChildRelationships; }
+	get shows_children():					 boolean { return this.isExpanded && this.hasChildren; }
 	get isGrabbed():						 boolean { return this.includedInStore_ofAncestries(w_ancestries_grabbed); }
 	get isInvalid():						 boolean { return this.containsReciprocals || this.containsMixedPredicates; }
-	get hasRelationships():					 boolean { return this.hasParentRelationships || this.hasChildRelationships; }
+	get hasRelationships():					 boolean { return this.hasParents || this.hasChildren; }
 	get shows_branches():					 boolean { return layout.branches_areChildren ? this.shows_children : !this.isRoot; }
 	get isEditing():						 boolean { return get(w_s_title_edit)?.isAncestry_inState(this, T_Edit.editing) ?? false; }
 	get isExpanded():						 boolean { return this.isRoot || this.includedInStore_ofAncestries(w_ancestries_expanded); }
@@ -125,7 +126,7 @@ export default class Ancestry extends Identifiable {
 
 	get points_right(): boolean {
 		const radial_points_right = this.g_widget?.widget_pointsRight ?? true;
-		const hasVisibleChildren = this.isExpanded && this.hasChildRelationships;
+		const hasVisibleChildren = this.isExpanded && this.hasChildren;
 		return layout.inRadialMode ? radial_points_right : !hasVisibleChildren;
 	}
 
@@ -164,20 +165,22 @@ export default class Ancestry extends Identifiable {
 	}
 
 	get isVisible(): boolean {
+		const parent = this.parentAncestry;
 		if (layout.inTreeMode) {
 			const focus = get(w_ancestry_focus);
 			const incorporates = this.incorporates(focus);
 			const expanded = this.isAllExpandedFrom(focus);
 			return (incorporates && expanded);
-		} else {
-			return this.parentAncestry?.g_paging?.index_isVisible(this.siblingIndex) ?? false;
+		} else if (!!parent) {
+			return parent.isFocus && (parent.g_paging?.index_isVisible(this.siblingIndex) ?? false);
 		}
+		return this.isFocus;
 	}
 
 	get hasGrandChildren(): boolean {
-		if (this.hasChildRelationships) {
+		if (this.hasChildren) {
 			for (const childAncestry of this.childAncestries) {
-				if (childAncestry.hasChildRelationships) {
+				if (childAncestry.hasChildren) {
 					return true;
 				}
 			}
@@ -546,8 +549,8 @@ export default class Ancestry extends Identifiable {
 
 	svgPathFor_tinyDots_outsideReveal(points_toChild: boolean): string | null {
 		const in_radial_mode = layout.inRadialMode;
-		const isVisible_forChild = this.hasChildRelationships && show.children_dots && (in_radial_mode ? true : !this.isExpanded);
-		const isVisible_inRadial = points_toChild ? isVisible_forChild : this.hasParentRelationships && (this.isUnidirectional ? show.parent_dots : show.related_dots);
+		const isVisible_forChild = this.hasChildren && show.children_dots && (in_radial_mode ? true : !this.isExpanded);
+		const isVisible_inRadial = points_toChild ? isVisible_forChild : this.hasParents && (this.isUnidirectional ? show.parent_dots : show.related_dots);
 		const show_outside_tinyDots = in_radial_mode ? isVisible_inRadial : isVisible_forChild;
 		const outside_tinyDots_count = this.relationships_count_forChildren(points_toChild);
 		return !show_outside_tinyDots ? null : svgPaths.tinyDots_circular(k.diameterOf_outer_tinyDots + 4, outside_tinyDots_count as Integer, this.points_right);
@@ -885,6 +888,14 @@ export default class Ancestry extends Identifiable {
 	remove_fromGrabbed_andExpanded() {
 		this.collapse();
 		this.ungrab();
+	}
+
+	reveal_toFocus() {
+		const parentAncestry = this.parentAncestry;
+		if (!!parentAncestry && !parentAncestry.isFocus) {
+			parentAncestry.reveal_toFocus();
+			parentAncestry.expand();
+		}
 	}
 	
 	expanded_setTo(expand: boolean) {

@@ -72,7 +72,7 @@
 
 	function updateColors_forHovering() {
 		if (!ux.isAny_rotation_active && !!es_drag && !!thing) {
-			const usePointer = (!ancestry.isGrabbed || layout.inRadialMode) && ancestry.hasChildRelationships;
+			const usePointer = (!ancestry.isGrabbed || layout.inRadialMode) && ancestry.hasChildren;
 			const cursor = usePointer ? 'pointer' : 'normal';
 			es_drag.set_forHovering(thing.color, cursor);
 			es_drag.isOut = !isHovering;

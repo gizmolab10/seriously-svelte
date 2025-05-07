@@ -68,7 +68,7 @@
 				} else {
 					border = `${borderStyle} ${thing.color}`;
 				}
-				const cursor = !ancestry.isGrabbed && ancestry.hasChildRelationships ? 'pointer' : k.cursor_default;
+				const cursor = !ancestry.isGrabbed && ancestry.hasChildren ? 'pointer' : k.cursor_default;
 				es_breadcrumb.set_forHovering(thing.color, cursor);
 				es_breadcrumb.isOut = s_mouse.isOut;
 				updateStyle();
