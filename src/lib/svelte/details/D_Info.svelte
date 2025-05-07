@@ -130,7 +130,7 @@
 				font_size={k.font_size.small}px
 				selection_closure={selection_closure}
 				titles={[T_Report.focus, T_Report.selection]}
-				origin={new Point(49, layout.top_ofInfoAt(T_Info.segments))}/>
+				origin={new Point(54, layout.top_ofInfoAt(T_Info.segments))}/>
 			<Separator
 				title='title'
 				add_wings={true}

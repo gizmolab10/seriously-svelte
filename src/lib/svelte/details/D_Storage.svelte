@@ -63,7 +63,7 @@
 		<Segmented
 			name='db'
 			selected={[$w_t_database]}
-			origin={new Point(12, top + 3)}
+			origin={new Point(17, top + 3)}
 			selection_closure={selection_closure}
 			titles={[T_Database.local, T_Database.firebase, T_Database.airtable, T_Database.test]}/>
 		<div class='data-information'

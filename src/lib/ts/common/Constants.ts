@@ -9,7 +9,7 @@ const separator_thickness = 4;
 export default class Constants {
 	details_margin = 0;
 	halfIncrement = 0.5;
-	width_details = 200;
+	width_details = 210;
 	radial_widget_inset = 26;
 	separator_title_left = 20;
 	editingTools_diameter = 64;

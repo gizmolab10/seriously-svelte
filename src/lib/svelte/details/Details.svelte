@@ -34,7 +34,7 @@
 		allow_multiple={true}
 		name='details-selector'
 		selected={$w_t_details}
-		origin={new Point(14, 0.5)}
+		origin={new Point(19, 0.5)}
 		selection_closure={selection_closure}/>
 	{#if showingDetails_ofType(T_Details.storage)}
 		<Separator

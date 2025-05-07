@@ -14,6 +14,17 @@
 	//	handle_click		handle_tool_clickedA ... n.b., long press generates multiple calls
 	// buttons grid adds row
 
+	function updated_button_titles() {
+		return [
+			['show', 'selection', 'root'],
+			['browse', 'up', 'down', 'left', 'right'],
+			['list', `${list_title}`],
+			['add', 'child', 'sibling', 'line', 'parent', 'related'],
+			['delete', 'selection', 'parent', 'related'],
+			['move', 'up', 'down', 'left', 'right'],
+			['graph', 'center']];
+	}
+
 	$:	w_ancestries_grabbed,
 		$w_ancestries_expanded,
 		update_button_titles();
@@ -36,17 +47,6 @@
 			return $w_hierarchy.handle_tool_clickedAt(row, column, s_mouse, name_for(row, column + 1));
 		}
 		return false;
-	}
-
-	function updated_button_titles() {
-		return [
-			['show', 'selection', 'root'],
-			['browse', 'before', 'after', 'out', 'in'],
-			['list', `${list_title}`],
-			['add', 'child', 'sibling', 'line', 'parent', 'related'],
-			['delete', 'selection', 'parent', 'related'],
-			['move', 'before', 'after', 'out', 'in'],
-			['graph', 'center']];
 	}
 
 </script>

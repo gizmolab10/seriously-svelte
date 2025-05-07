@@ -12,6 +12,24 @@ export enum T_Signal {
 	alterState = 'alterState',
 }
 
+export enum T_Signal_From {
+	keyboard = 'keyboard',
+	mouse = 'mouse',
+	tool = 'tool',
+}
+
+// T_Signal
+// priority
+// value
+
+	// for each of the T_Signal values, this array contains the highest requested priority
+	// for each signal sent, a signal is emitted for each priority separately, in increasing priority from 0 to highest
+	// each handler has a type and a priority, and ignores all emitted signals except the one matching its priority
+
+// move to store
+//  w_s_signal (soon to be this class)		// this will not support multiple simultaneous signals
+//  w_signals_inFlight
+
 export class Signals {
 	signals_inFlight: Dictionary<boolean> = {}
 

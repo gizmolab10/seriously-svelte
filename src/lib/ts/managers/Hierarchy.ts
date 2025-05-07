@@ -49,32 +49,19 @@ export class Hierarchy {
 		this.db = db;
 	}
 
-	static readonly ROOT: unique symbol;
-
-	get hasRoot(): boolean { return !!this.root; }
-	get idRoot(): string | null { return this.root?.id ?? null; };
-
-	assure_root_andAncestry() {
-		let rootAncestry = this.rootAncestry;
-		if (!rootAncestry) {
-			rootAncestry = this.ancestry_remember_createUnique();
-			this.rootAncestry = rootAncestry;
-		}
-		const root = rootAncestry.thing;
-		w_s_title_edit.set(new S_Title_Edit(rootAncestry));
-		if (!!root) {
-			this.root = root;
-		}
-	}
-
 	static readonly EVENTS: unique symbol;
 
+	//////////////////////////////////////////////////////
+	//			four? main dispatch handlers			//
+	//				mouse_state		  (???)				//
+	//				key_down							//
+	//				tool_clickedAt						//
+	//				isTool_disabledAt					//
+	//////////////////////////////////////////////////////
+
+	handle_s_mouse(s_mouse: S_Mouse, from: string): S_Mouse { return s_mouse; }			// for dots and buttons
+
 	async handle_key_down(event: KeyboardEvent) {
-
-		///////////////////////
-		// main key dispatch //
-		///////////////////////
-
 		let ancestry = this.latest_grabbed_upward(true);
 		if (event.type == 'keydown' && !ux.isEditing_text) {
 			const OPTION = event.altKey;
@@ -137,12 +124,12 @@ export class Hierarchy {
 					case 1:	break; // 'root';
 				} break;
 				case 1: switch (column) { // 'browse';
-					case 0:	this.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, false, false); return; // 'before';
-					case 1:	this.grabs_latest_rebuild_persistentMoveUp_maybe(false, false, false, false); return; // 'after';
-					case 2:	await this.ancestry_rebuild_persistentMoveRight(ancestry, false, false, false, false, false); return; // 'out';
-					case 3:	await this.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, false, false, false); return; // 'in';
+					case 0:	this.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, false, false); return; // 'up';
+					case 1:	this.grabs_latest_rebuild_persistentMoveUp_maybe(false, false, false, false); return; // 'down';
+					case 2:	await this.ancestry_rebuild_persistentMoveRight(ancestry, false, false, false, false, false); return; // 'left';
+					case 3:	await this.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, false, false, false); return; // 'right';
 				} break;
-				case 2: this.handle_expansionOf(ancestry); return; // 'conceal | reveal';
+				case 2: await this.ancestry_toggle_expansion(ancestry); return; // 'conceal | reveal';
 				case 3: switch (column) { // 'add';
 					case 0:	await this.ancestry_edit_persistentCreateChildOf(ancestry); return; // 'child';
 					case 1:	await this.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); return; // 'sibling';
@@ -156,10 +143,10 @@ export class Hierarchy {
 					case 2:	break; // 'related';
 				} break;
 				case 5: switch (column) { // 'move';
-					case 0:	this.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, true, false); return; // 'before';
-					case 1:	this.grabs_latest_rebuild_persistentMoveUp_maybe(false, false, true, false); return; // 'after';
-					case 2:	await this.ancestry_rebuild_persistentMoveRight(ancestry, false, false, true, false, false); return; // 'out';
-					case 3:	await this.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, true, false, false); return; // 'in';
+					case 0:	this.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, true, false); return; // 'up';
+					case 1:	this.grabs_latest_rebuild_persistentMoveUp_maybe(false, false, true, false); return; // 'down';
+					case 2:	await this.ancestry_rebuild_persistentMoveRight(ancestry, false, false, true, false, false); return; // 'left';
+					case 3:	await this.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, true, false, false); return; // 'right';
 				} break;
 				case 6: w.user_graph_offset_setTo(Point.zero); return; // 'center';
 			}
@@ -167,53 +154,64 @@ export class Hierarchy {
 		}
 	}
 
-	async handle_expansionOf(ancestry: Ancestry) {
-		if (layout.inRadialMode) {
-			await this.ancestry_rebuild_persistentMoveRight(ancestry, !ancestry.isExpanded, false, false, false, false);
-			layout.grand_build();
-		} else if (ancestry.toggleExpanded()) {
-			layout.grand_build();
-		}
-	}
-
 	isTool_disabledAt(row: number, column: number): boolean {		// true means disabled
 		const ancestry = this.latest_grabbed_upward(true);
 		const no_children = !ancestry.hasChildRelationships;
 		const no_siblings = !ancestry.hasSiblings;
-		const disable_revealConceal = no_children || (layout.inRadialMode && ancestry.isFocus);
+		const is_root = ancestry.isRoot;
+		const focus_is_root = is_root && ancestry.isFocus;
+		const disable_revealConceal = no_children || is_root || (layout.inRadialMode && ancestry.isFocus);
 		switch (row) {
 			case 0: switch (column) { // 'show';
-				case 0:	break; // 'selection';
+				case 0:	focus_is_root || ancestry.isVisible; // 'selection';
 				case 1:	break; // 'root';
 			} break;
 			case 1: switch (column) { // 'browse';
-				case 0:	return no_siblings; // 'before';
-				case 1:	return no_siblings; // 'after';
-				case 2:	return ancestry.isRoot; // 'out';
-				case 3:	return no_children; // 'in';
+				case 0:	return no_siblings; // 'up';
+				case 1:	return no_siblings; // 'down';
+				case 2:	return is_root; // 'left';
+				case 3:	return no_children; // 'right';
 			} break;
 			case 2: return disable_revealConceal; // 'conceal | reveal';
 			case 3: switch (column) { // 'add';
 				case 0:	return false; // 'child';
-				case 1:	return false; // 'sibling';
+				case 1:	return no_siblings; // 'sibling';
 				case 2:	return false; // 'line';
-				case 3:	return false; // 'parent';
+				case 3:	return true || is_root; // 'parent';
 				case 4:	break; // 'related';
 			} break;
 			case 4: switch (column) { // 'delete';
-				case 0:	return false; // 'selection';
-				case 1:	return !ancestry.hasParentRelationships; // 'parent';
+				case 0:	return is_root; // 'selection';
+				case 1:	return true || !ancestry.hasParentRelationships; // 'parent';
 				case 2:	break; // 'related';
 			} break;
 			case 5: switch (column) { // 'move';
-				case 0:	return no_siblings; // 'before';
-				case 1:	return no_siblings; // 'after';
-				case 2:	return ancestry.isRoot; // 'out';
-				case 3:	return no_children; // 'in';
+				case 0:	return no_siblings; // 'up';
+				case 1:	return no_siblings; // 'down';
+				case 2:	return is_root; // 'left';
+				case 3:	return is_root; // 'right';
 			} break;
 			case 6: return get(w_user_graph_offset).isZero; // 'center';
 		}
 		return true;
+	}
+
+	static readonly ROOT: unique symbol;
+
+	get hasRoot(): boolean { return !!this.root; }
+	get idRoot(): string | null { return this.root?.id ?? null; };
+
+	assure_root_andAncestry() {
+		let rootAncestry = this.rootAncestry;
+		if (!rootAncestry) {
+			rootAncestry = this.ancestry_remember_createUnique();
+			this.rootAncestry = rootAncestry;
+		}
+		const root = rootAncestry.thing;
+		w_s_title_edit.set(new S_Title_Edit(rootAncestry));
+		if (!!root) {
+			this.root = root;
+		}
 	}
 
 	static readonly GRABS: unique symbol;
@@ -989,16 +987,6 @@ export class Hierarchy {
 		}
 	}
 
-	async ancestry_edit_persistentCreateChildOf(parentAncestry: Ancestry | null) {
-		const thing = parentAncestry?.thing;
-		if (!!thing && !!parentAncestry) {
-			const child = await this.thing_remember_runtimeCopy(thing.idBase, thing);
-			child.title = 'idea';
-			parentAncestry.expand();
-			await this.ancestry_edit_persistentAddAsChild(parentAncestry, child, 0);
-		}
-	}
-
 	async ancestry_remember_bulk_persistentRelocateRight(ancestry: Ancestry, parentAncestry: Ancestry) {
 		const newThingAncestry = await this.bulkAlias_remember_recursive_persistentRelocateRight(ancestry, parentAncestry);
 		if (!!newThingAncestry) {
@@ -1022,7 +1010,29 @@ export class Hierarchy {
 		return ancestry;
 	}
 
+	async ancestry_toggle_expansion(ancestry: Ancestry) {
+		if (layout.inRadialMode) {
+			// kludge for now? in radial mode we need to do a bit extra for our user
+			await this.ancestry_rebuild_persistentMoveRight(ancestry, !ancestry.isExpanded, false, false, false, false);
+			layout.grand_build();
+		} else if (ancestry.toggleExpanded()) {
+			layout.grand_build();
+		}
+	}
+
+	async ancestry_edit_persistentCreateChildOf(parentAncestry: Ancestry | null) {
+		const thing = parentAncestry?.thing;
+		if (!!thing && !!parentAncestry) {
+			const child = await this.thing_remember_runtimeCopy(thing.idBase, thing);
+			child.title = 'idea';
+			parentAncestry.expand();
+			await this.ancestry_edit_persistentAddAsChild(parentAncestry, child, 0);
+		}
+	}
+
+	// called in three places
 	async ancestry_edit_persistentAddAsChild(parentAncestry: Ancestry, child: Thing, order: number, shouldStartEdit: boolean = true) {
+		w_s_title_edit.set(null);
 		await this.ancestry_extended_byAddingThing_toAncestry_remember_persistentCreate_relationship(child, parentAncestry)
 		.then((childAncestry) => {
 			if (!!childAncestry) {
