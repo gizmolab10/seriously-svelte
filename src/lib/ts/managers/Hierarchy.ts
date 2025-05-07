@@ -75,7 +75,7 @@ export class Hierarchy {
 		// main key dispatch //
 		///////////////////////
 
-		let ancestryGrab = this.latest_grabbed_upward(true);
+		let ancestry = this.latest_grabbed_upward(true);
 		if (event.type == 'keydown' && !ux.isEditing_text) {
 			const OPTION = event.altKey;
 			const SHIFT = event.shiftKey;
@@ -87,13 +87,13 @@ export class Hierarchy {
 			let graph_needsRebuild = false;
 			if (!modifiers.includes(key)) {		// ignore modifier-key-only events
 				if (c.allow_GraphEditing) {
-					if (!!ancestryGrab && c.allow_TitleEditing) {
+					if (!!ancestry && c.allow_TitleEditing) {
 						switch (key) {
-							case k.space:	await this.ancestry_edit_persistentCreateChildOf(ancestryGrab); break;
-							case 'd':		await this.thing_edit_persistentDuplicate(ancestryGrab); break;
-							case '-':		if (!COMMAND) { await this.thing_edit_persistentAddLine(ancestryGrab); } break;
-							case 'tab':		await this.ancestry_edit_persistentCreateChildOf(ancestryGrab.parentAncestry); break; // S_Title_Edit editor also makes this call
-							case 'enter':	ancestryGrab.startEdit(); break;
+							case k.space:	await this.ancestry_edit_persistentCreateChildOf(ancestry); break;
+							case 'd':		await this.thing_edit_persistentDuplicate(ancestry); break;
+							case '-':		if (!COMMAND) { await this.thing_edit_persistentAddLine(ancestry); } break;
+							case 'tab':		await this.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break; // S_Title_Edit editor also makes this call
+							case 'enter':	ancestry.startEdit(); break;
 						}
 					}
 					switch (key) {
@@ -101,11 +101,11 @@ export class Hierarchy {
 						case 'backspace':	await this.ancestries_rebuild_traverse_persistentDelete(get(w_ancestries_grabbed)); break;
 					}
 				}
-				if (!!ancestryGrab) {
+				if (!!ancestry) {
 					switch (key) {
-						case '/':			graph_needsRebuild = ancestryGrab.becomeFocus(); break;
-						case 'arrowright':	event.preventDefault(); await this.ancestry_rebuild_persistentMoveRight(ancestryGrab,  true, SHIFT, OPTION, EXTREME, false); break;
-						case 'arrowleft':	event.preventDefault(); await this.ancestry_rebuild_persistentMoveRight(ancestryGrab, false, SHIFT, OPTION, EXTREME, false); break;
+						case '/':			graph_needsRebuild = ancestry.becomeFocus(); break;
+						case 'arrowright':	event.preventDefault(); await this.ancestry_rebuild_persistentMoveRight(ancestry,  true, SHIFT, OPTION, EXTREME, false); break;
+						case 'arrowleft':	event.preventDefault(); await this.ancestry_rebuild_persistentMoveRight(ancestry, false, SHIFT, OPTION, EXTREME, false); break;
 					}
 				}
 				switch (key) {
@@ -142,10 +142,7 @@ export class Hierarchy {
 					case 2:	await this.ancestry_rebuild_persistentMoveRight(ancestry, false, false, false, false, false); return; // 'out';
 					case 3:	await this.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, false, false, false); return; // 'in';
 				} break;
-				case 2: switch (column) { // 'list';
-					case 0:	if (ancestry.collapse()) { layout.grand_build(); } return; // 'conceal';
-					case 1:	if (ancestry.expand()) { layout.grand_build(); } return; // 'reveal';
-				} break;
+				case 2: this.handle_expansionOf(ancestry); return; // 'conceal | reveal';
 				case 3: switch (column) { // 'add';
 					case 0:	await this.ancestry_edit_persistentCreateChildOf(ancestry); return; // 'child';
 					case 1:	await this.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); return; // 'sibling';
@@ -164,35 +161,38 @@ export class Hierarchy {
 					case 2:	await this.ancestry_rebuild_persistentMoveRight(ancestry, false, false, true, false, false); return; // 'out';
 					case 3:	await this.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, true, false, false); return; // 'in';
 				} break;
-				case 6: switch (column) { // 'graph';
-					case 0:	w.user_graph_offset_setTo(Point.zero); return; // 'center';
-				} break;
+				case 6: w.user_graph_offset_setTo(Point.zero); return; // 'center';
 			}
 			alert(`needed: ${name}`);
 		}
 	}
 
+	async handle_expansionOf(ancestry: Ancestry) {
+		if (layout.inRadialMode) {
+			await this.ancestry_rebuild_persistentMoveRight(ancestry, !ancestry.isExpanded, false, false, false, false);
+			layout.grand_build();
+		} else if (ancestry.toggleExpanded()) {
+			layout.grand_build();
+		}
+	}
+
 	isTool_disabledAt(row: number, column: number): boolean {		// true means disabled
 		const ancestry = this.latest_grabbed_upward(true);
-		const hasChildren = ancestry.hasChildren;
-		const hasSiblings = ancestry.hasSiblings;
-		const isExpanded = ancestry.isExpanded;
+		const no_children = !ancestry.hasChildRelationships;
+		const no_siblings = !ancestry.hasSiblings;
+		const disable_revealConceal = no_children || (layout.inRadialMode && ancestry.isFocus);
 		switch (row) {
 			case 0: switch (column) { // 'show';
 				case 0:	break; // 'selection';
 				case 1:	break; // 'root';
 			} break;
 			case 1: switch (column) { // 'browse';
-				case 0:	return !hasSiblings; // 'before';
-				case 1:	return !hasSiblings; // 'after';
+				case 0:	return no_siblings; // 'before';
+				case 1:	return no_siblings; // 'after';
 				case 2:	return ancestry.isRoot; // 'out';
-				case 3:	return !hasChildren; // 'in';
+				case 3:	return no_children; // 'in';
 			} break;
-			case 2:
-				switch (column) { // 'list';
-					case 0:	return !hasChildren || !isExpanded; // 'conceal';
-					case 1:	return !hasChildren ||  isExpanded; // 'reveal';
-				} break;
+			case 2: return disable_revealConceal; // 'conceal | reveal';
 			case 3: switch (column) { // 'add';
 				case 0:	return false; // 'child';
 				case 1:	return false; // 'sibling';
@@ -206,14 +206,12 @@ export class Hierarchy {
 				case 2:	break; // 'related';
 			} break;
 			case 5: switch (column) { // 'move';
-				case 0:	return !hasSiblings; // 'before';
-				case 1:	return !hasSiblings; // 'after';
+				case 0:	return no_siblings; // 'before';
+				case 1:	return no_siblings; // 'after';
 				case 2:	return ancestry.isRoot; // 'out';
-				case 3:	return !hasChildren; // 'in';
+				case 3:	return no_children; // 'in';
 			} break;
-			case 6: switch (column) { // 'graph';
-				case 0:	return get(w_user_graph_offset).isZero; // 'center';
-			} break;
+			case 6: return get(w_user_graph_offset).isZero; // 'center';
 		}
 		return true;
 	}

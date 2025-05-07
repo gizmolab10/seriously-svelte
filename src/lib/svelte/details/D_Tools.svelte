@@ -1,31 +1,32 @@
 <script lang='ts'>
-	import { k, show, Size, T_Layer, T_Request } from '../../ts/common/Global_Imports';
+	import { w_hierarchy, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
+	import { k, show, Size, layout, T_Layer, T_Request } from '../../ts/common/Global_Imports';
 	import Buttons_Grid from '../buttons/Buttons_Grid.svelte';
-	import { w_hierarchy } from '../../ts/common/Stores';
 	export let top = 0;
 	const show_boxes = show.tool_boxes;
     const font_sizes = [k.font_size.smallest, show_boxes ? k.font_size.smaller : k.font_size.smallest];
+	let ancestry = $w_hierarchy.latest_grabbed_upward(true);
+	let list_title = ancestry.isExpanded && layout.inTreeMode ? 'conceal' : 'reveal';
+	let button_titles = updated_button_titles;
 
-	// knows all the tools
-	// hierarchy knows what each tool does ... handle_tool_request_at
-	// hierarchy knows what is disabled ... " "
-	// button row sends column and T_Request:
-	// 	query_disabled		based on grabbed ancestry
-	//	handle_click		or long press generates many calls
-	// grid adds row:
+	// buttons row sends column & T_Request:
+	// 	query_disabled		isTool_disabledAt
+	//	handle_click		handle_tool_clickedA ... n.b., long press generates multiple calls
+	// buttons grid adds row
 
-	const button_titles=[
-		['show', 'selection', 'root'],
-		['browse', 'before', 'after', 'out', 'in'],
-		['list', 'conceal', 'reveal'],
-		['add', 'child', 'sibling', 'line', 'parent', 'related'],
-		['delete', 'selection', 'parent', 'related'],
-		['move', 'before', 'after', 'out', 'in'],
-		['graph', 'center']];
+	$:	w_ancestries_grabbed,
+		$w_ancestries_expanded,
+		update_button_titles();
 
 	function name_for(row, column) {
 		const titles = button_titles[row];
 		return `${titles[0]} ${titles[column]}`;
+	}
+
+	function update_button_titles() {
+		ancestry = $w_hierarchy.latest_grabbed_upward(true);
+		list_title = ancestry.isExpanded && layout.inTreeMode ? 'conceal' : 'reveal';
+		button_titles = updated_button_titles();
 	}
 
 	function closure(t_request, s_mouse, row, column): boolean {
@@ -35,6 +36,17 @@
 			return $w_hierarchy.handle_tool_clickedAt(row, column, s_mouse, name_for(row, column + 1));
 		}
 		return false;
+	}
+
+	function updated_button_titles() {
+		return [
+			['show', 'selection', 'root'],
+			['browse', 'before', 'after', 'out', 'in'],
+			['list', `${list_title}`],
+			['add', 'child', 'sibling', 'line', 'parent', 'related'],
+			['delete', 'selection', 'parent', 'related'],
+			['move', 'before', 'after', 'out', 'in'],
+			['graph', 'center']];
 	}
 
 </script>

@@ -59,7 +59,6 @@ export default class Ancestry extends Identifiable {
 	static readonly PROPERTIES: unique symbol;
 	
 	get isUnidirectional():					 boolean { return !this.isBidirectional; }
-	get hasChildren():						 boolean { return this.hasChildRelationships; }
 	get isRoot():							 boolean { return this.pathString == k.root_path; }
 	get hasSiblings():						 boolean { return this.sibling_ancestries.length > 1; }
 	get hasChildRelationships():			 boolean { return this.childRelationships.length > 0; }

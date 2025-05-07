@@ -32,7 +32,6 @@
 	let thing_title = thing?.title;
 	let color_origin = Point.zero;
 	let picker_offset = k.empty;
-	let info;
 
 	layout.layout_tops_forInfo(3);
 	layout_forColor();	// must call layout_tops_forInfo first
