@@ -218,10 +218,9 @@ export default class Ancestry extends Identifiable {
 	
 	relationships_count_forChildren(forChildren: boolean):			 number { return this.relationships_forChildren(forChildren).length; }
 	sharesAnID(ancestry: Ancestry | null):							boolean { return !ancestry ? false : this.relationship_ids.some(id => ancestry.relationship_ids.includes(id)); }
-	showsCluster_forPredicate(predicate: Predicate):				boolean { return this.includesPredicate_ofKind(predicate.kind) && this.hasThings(predicate); }
+	showsCluster_forPredicate(predicate: Predicate):				boolean { return this.hasParents_ofKind(predicate.kind) && this.hasThings(predicate); }
 	equals(ancestry: Ancestry | null | undefined):					boolean { return super.equals(ancestry) && this.t_database == ancestry?.t_database; }
-	hasMultipleParents_ofKind(kind: string):						boolean { return this.thing?.hasMultipleParents_ofKind(kind) ?? false; }
-	includesPredicate_ofKind(kind: string):							boolean { return this.thing?.hasParents_ofKind(kind) ?? false; }
+	hasParents_ofKind(kind: string):								boolean { return this.thing?.hasParents_ofKind(kind) ?? false; }
 	includedInStore_ofAncestries(store: Writable<Array<Ancestry>>): boolean { return this.includedInAncestries(get(store)); }
 	isChildOf(other: Ancestry):										boolean { return this.id_thing == other.thingAt(2)?.id; }
 	matchesStore(store: Writable<Ancestry | null>):					boolean { return get(store)?.equals(this) ?? false; }

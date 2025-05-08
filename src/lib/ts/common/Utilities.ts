@@ -13,13 +13,13 @@ import Angle from './Angle';
 
 export class Utilities extends Testworthy_Utilities {
 	
-	getWidthOf(s: string):								number { return this.getWidth_ofString_withSize(s, `${k.font_size.thing}px`); }
+	getWidthOf(s: string):								number { return this.getWidth_ofString_withSize(s, `${k.font_size.common}px`); }
 	sort_byOrder(ancestries: Array<Ancestry>): Array<Ancestry> { return ancestries.sort( (a: Ancestry, b: Ancestry) => { return a.order - b.order; }); }
 
 	getFontOf(element: HTMLElement): string {
-		const computedStyle: CSSStyleDeclaration = window.getComputedStyle(element);
-		const fontFamily: string = computedStyle.fontFamily;
-		const fontSize: string = computedStyle.fontSize;
+		const style: CSSStyleDeclaration = window.getComputedStyle(element);
+		const fontFamily: string = style.fontFamily;
+		const fontSize: string = style.fontSize;
 		return `${fontSize} ${fontFamily}`;
 	}
 

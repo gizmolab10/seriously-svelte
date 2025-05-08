@@ -44,7 +44,6 @@
 	$: forkTip = g_arcSlider.tip_ofFork;
 
 	function handle_isHit(s_mouse: S_Mouse): boolean { return g_cluster.isMouse_insideThumb; }
-	function computed_mouse_angle(): number | null { return w.mouse_angle_fromGraphCenter ?? null }
 
 	function hover_closure(s_mouse) {
 		if (s_mouse.isHover) {

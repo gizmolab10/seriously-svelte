@@ -57,7 +57,7 @@ export default class G_ArcSlider {
 	get arc_origin():			 Point { return this.arc_rect.origin; }
 	get arc_center():			 Point { return this.arc_rect.center; }
 
-	get computed_arc_rect(): Rect {
+	get compute_arc_rect(): Rect {
 		let origin = Point.zero;
 		let extent = Point.zero;
 		const end_radial = this.radial_forAngle(this.end_angle);								// for each of start and end radials,
@@ -101,7 +101,7 @@ export default class G_ArcSlider {
 		if (!this.fork_pointsRight) {
 			[this.start_angle, this.end_angle] = [this.end_angle, this.start_angle];
 		}
-		this.arc_rect = this.computed_arc_rect;
+		this.arc_rect = this.compute_arc_rect;
 	}
 
 	static readonly SVG_PATHS: unique symbol;

@@ -9,7 +9,7 @@
     const font_sizes = [k.font_size.smallest, show_boxes ? k.font_size.smaller : k.font_size.smallest];
 	let ancestry = $w_hierarchy.grabs_latest_upward(true);
 	let list_title = ancestry.isExpanded && layout.inTreeMode ? 'conceal' : 'reveal';
-	let button_titles = updated_button_titles;
+	let button_titles = compute_button_titles;
     let reattachments = 0;
 
 	// buttons row sends column & T_Request:
@@ -17,7 +17,7 @@
 	//	handle_click		handle_tool_clickedA ... n.b., long press generates multiple calls
 	// buttons grid adds row (here it becomest_tool)
 
-	function updated_button_titles() {
+	function compute_button_titles() {
 		return [
 			['browse', 'up', 'down', 'left', 'right'],
 			['add', 'child', 'sibling', 'line', 'parent', 'related'],
@@ -44,7 +44,7 @@
 	function update_button_titles() {
 		ancestry = $w_hierarchy.grabs_latest_upward(true);
 		list_title = ancestry.isExpanded && layout.inTreeMode ? 'conceal' : 'reveal';
-		button_titles = updated_button_titles();
+		button_titles = compute_button_titles();
 	}
 
 	function isTool_invertedAt(t_tool: number, column: number): boolean {

@@ -23,7 +23,7 @@
 	export let name = k.empty;
 	let border = k.empty;
 	let element: HTMLElement;
-	let computedStyletyle = style;
+	let computed_style = style;
 	let buttonWrapper: Svelte_Wrapper;
 
 	//////////////////////////////////////
@@ -66,7 +66,7 @@
 		color = es_button.stroke;
 		if (style.length == 0) {
 			border = border_thickness == 0 ? 'none' : `${border_thickness}px solid ${es_button.stroke}`;
-			computedStyletyle=`
+			computed_style=`
 				left:0px;
 				display: flex;
 				color:${color};
@@ -102,8 +102,8 @@
 		handle_s_mouse={handle_s_mouse}>
 		<button
 			class='button'
-			id={'button-for-' + name}
-			style={computedStyletyle}>
+			style={computed_style}
+			id={'button-for-' + name}>
 			<slot></slot>
 		</button>
 	</Mouse_Responder>
