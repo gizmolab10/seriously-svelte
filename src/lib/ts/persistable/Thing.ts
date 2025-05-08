@@ -22,7 +22,7 @@ export default class Thing extends Persistable {
 		this.color = color;
 	};
 	
-	get parents():				Array		 <Thing> { return this.parents_forKind(T_Predicate.contains); }
+	get parents():				Array		 <Thing> { return this.parents_ofKind(T_Predicate.contains); }
 	get traits():				Array		 <Trait> { return get(w_hierarchy).traits_forOwnerHID(this.hid) ?? []; }
 	get parentIDs():			Array		<string> { return this.parents.map(t => t.id); }
 	get ancestries():		 	Array	  <Ancestry> { return this.ancestries_for(Predicate.contains); }
@@ -38,15 +38,14 @@ export default class Thing extends Persistable {
 	get isBulkAlias():						 boolean { return this.t_thing == T_Thing.bulk; }
 	get isExternals():						 boolean { return this.t_thing == T_Thing.externals; }
 	get isAcrossBulk():						 boolean { return this.idBase != get(w_hierarchy).db.idBase; }
-	get hasMultipleParents():				 boolean { return this.ancestries.length > 1; }
-	get hasParents():						 boolean { return this.hasParents_forKind(T_Predicate.contains); }
+	get hasParents():						 boolean { return this.hasParents_ofKind(T_Predicate.contains); }
 	get isFocus():							 boolean { return (get(w_ancestry_focus).thing?.id ?? k.empty) == this.id; }
 	get hasRelated():						 boolean { return this.relatedRelationships.length > 0; }
 
 	get parents_ofAllKinds(): Array<Thing> {
 		let parents: Array<Thing> = [];
 		for (const predicate of get(w_hierarchy).predicates) {
-			const more = this.parents_forKind(predicate.kind)
+			const more = this.parents_ofKind(predicate.kind)
 			parents = u.uniquely_concatenateArrays(parents, more);
 		}
 		return parents;
@@ -67,8 +66,9 @@ export default class Thing extends Persistable {
 	}
 
 	debugLog(message: string) { this.log(T_Debug.things, message); }
+	hasParents_ofKind(kind: string): boolean { return this.parents_ofKind(kind).length > 0; }
+	hasMultipleParents_ofKind(kind: string): boolean { return this.parents_ofKind(kind).length > 1; }
 	log(option: T_Debug, message: string) { debug.log_maybe(option, message + k.space + this.description); }
-	hasParents_forKind(kind: string): boolean { return this.parents_forKind(kind).length > 0; }
 	setTraitText_forType(text: string, t_thing: T_Trait) { get(w_hierarchy).trait_setText_forType_ownerHID(text, t_thing, this.id); }
 
 	override isInDifferentBulkThan(other: Thing): boolean {
@@ -111,7 +111,7 @@ export default class Thing extends Persistable {
 		}
 	}
 
-	parentRelationships_for(predicate: Predicate): Array<Relationship> {
+	parent_relationships_ofKind(predicate: Predicate): Array<Relationship> {
 		let relationships: Array<Relationship> = [] 
 		if (predicate.isBidirectional) {
 			relationships = this.relationships_inBothDirections_forKind(predicate.kind);
@@ -135,7 +135,7 @@ export default class Thing extends Persistable {
 		}
 	}
 
-	parents_forKind(kind: string): Array<Thing> {
+	parents_ofKind(kind: string): Array<Thing> {
 		let parents: Array<Thing> = [];
 		if (!this.isRoot) {
 			const relationships = this.relationships_ofKind_forParents(kind, true);
@@ -162,7 +162,7 @@ export default class Thing extends Persistable {
 			if (predicate.isBidirectional) {
 				ancestries = this.ancestries_for(predicate);
 			} else {
-				let parents = this.parents_forKind(predicate.kind) ?? [];
+				let parents = this.parents_ofKind(predicate.kind) ?? [];
 				for (const parent of parents) {
 					const parentAncestries = parent.isRoot ? [get(w_hierarchy).rootAncestry] : parent.ancestries_for(predicate);
 					ancestries = u.concatenateArrays(ancestries, parentAncestries);
@@ -182,7 +182,7 @@ export default class Thing extends Persistable {
 					ancestries.push(ancestry);
 				}
 			}
-			const parentRelationships = this.parentRelationships_for(predicate);
+			const parentRelationships = this.parent_relationships_ofKind(predicate);
 			for (const parentRelationship of parentRelationships) {
 				if (predicate.isBidirectional) {
 					const child = parentRelationship.child;

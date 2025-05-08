@@ -62,7 +62,6 @@ export default class Ancestry extends Identifiable {
 	get hasSiblings():						 boolean { return this.sibling_ancestries.length > 1; }
 	get hasChildren():						 boolean { return this.childRelationships.length > 0; }
 	get hasParents():						 boolean { return this.parentRelationships.length > 0; }
-	get hasMultipleParents():				 boolean { return this.parentRelationships.length > 1; }
 	get shows_children():					 boolean { return this.isExpanded && this.hasChildren; }
 	get isFocus():							 boolean { return this.matchesStore(w_ancestry_focus); }
 	get hasRelevantRelationships():			 boolean { return this.relevantRelationships_count > 0; }
@@ -218,13 +217,14 @@ export default class Ancestry extends Identifiable {
 	}
 	
 	relationships_count_forChildren(forChildren: boolean):			 number { return this.relationships_forChildren(forChildren).length; }
-	isChildOf(other: Ancestry):										boolean { return this.id_thing == other.thingAt(2)?.id; }
-	includedInStore_ofAncestries(store: Writable<Array<Ancestry>>): boolean { return this.includedInAncestries(get(store)); }
-	includesPredicate_ofKind(kind: string):							boolean { return this.thing?.hasParents_forKind(kind) ?? false; }
-	matchesStore(store: Writable<Ancestry | null>):					boolean { return get(store)?.equals(this) ?? false; }
 	sharesAnID(ancestry: Ancestry | null):							boolean { return !ancestry ? false : this.relationship_ids.some(id => ancestry.relationship_ids.includes(id)); }
 	showsCluster_forPredicate(predicate: Predicate):				boolean { return this.includesPredicate_ofKind(predicate.kind) && this.hasThings(predicate); }
 	equals(ancestry: Ancestry | null | undefined):					boolean { return super.equals(ancestry) && this.t_database == ancestry?.t_database; }
+	hasMultipleParents_ofKind(kind: string):						boolean { return this.thing?.hasMultipleParents_ofKind(kind) ?? false; }
+	includesPredicate_ofKind(kind: string):							boolean { return this.thing?.hasParents_ofKind(kind) ?? false; }
+	includedInStore_ofAncestries(store: Writable<Array<Ancestry>>): boolean { return this.includedInAncestries(get(store)); }
+	isChildOf(other: Ancestry):										boolean { return this.id_thing == other.thingAt(2)?.id; }
+	matchesStore(store: Writable<Ancestry | null>):					boolean { return get(store)?.equals(this) ?? false; }
 	relationships_forChildren(forChildren: boolean):	Array<Relationship> { return forChildren ? this.childRelationships : this.parentRelationships; }
 	relationshipAt(back: number = 1):					Relationship | null { return this.hierarchy.relationship_forHID(this.idAt(back).hash()) ?? null; }
 	rect_ofWrapper(wrapper: Svelte_Wrapper | null):				Rect | null { return wrapper?.boundingRect ?? null; }
@@ -248,7 +248,7 @@ export default class Ancestry extends Identifiable {
 	thing_isImmediateParentOf(ancestry: Ancestry, kind: string): boolean {
 		const id_thing = this.id_thing;
 		if (id_thing != k.unknown) {
-			const parents = ancestry.thing?.parents_forKind(kind);
+			const parents = ancestry.thing?.parents_ofKind(kind);
 			return parents?.map(t => t.id).includes(id_thing) ?? false;
 		}
 		return false;
@@ -263,7 +263,7 @@ export default class Ancestry extends Identifiable {
 
 	hasThings(predicate: Predicate): boolean {
 		switch (predicate.kind) {
-			case T_Predicate.contains:  return this.thing?.hasParents_forKind(predicate.kind) ?? false;
+			case T_Predicate.contains:  return this.thing?.hasParents_ofKind(predicate.kind) ?? false;
 			case T_Predicate.isRelated: return this.hasRelationships;
 			default:					return false;
 		}

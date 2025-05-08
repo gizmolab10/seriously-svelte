@@ -180,8 +180,8 @@ export class Hierarchy {
 			}								break;
 			case T_Tool.delete:				switch (column) {
 				case k.tools.delete.selection: return is_root;
-				case k.tools.delete.parent:	   return !ancestry.hasMultipleParents;
-				case k.tools.delete.related:   break;
+				case k.tools.delete.parent:	   return !ancestry.hasMultipleParents_ofKind(T_Predicate.contains);
+				case k.tools.delete.related:   return !ancestry.hasMultipleParents_ofKind(T_Predicate.isRelated);
 			}								break;
 			case T_Tool.move:				switch (column) {
 				case k.tools.move.up:		   return no_siblings;

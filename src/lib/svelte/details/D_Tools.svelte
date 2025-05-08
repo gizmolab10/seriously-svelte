@@ -1,6 +1,6 @@
 <script lang='ts'>
+	import { T_Tool, T_Layer, T_Request, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
 	import { w_hierarchy, w_s_alteration, w_count_button_restyle } from '../../ts/common/Stores';
-	import { T_Tool, T_Layer, T_Request, T_Alteration } from '../../ts/common/Global_Imports';
 	import { w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
 	import { k, show, Size, layout, S_Mouse } from '../../ts/common/Global_Imports';
 	import Buttons_Grid from '../buttons/Buttons_Grid.svelte';
@@ -49,9 +49,13 @@
 
 	function isTool_invertedAt(t_tool: number, column: number): boolean {
 		const s_alteration = $w_s_alteration;
-		return !!s_alteration
-			&& ((t_tool == T_Tool.add    && s_alteration.t_alteration == T_Alteration.adding   && column > 2)
-			||  (t_tool == T_Tool.delete && s_alteration.t_alteration == T_Alteration.deleting && column > 0));
+		const t_alteration = s_alteration?.t_alteration;
+		const kind_ofAPredicate = s_alteration?.predicate?.kind;
+		const target_ofAlteration = kind_ofAPredicate == T_Predicate.contains ? 'parent' : kind_ofAPredicate == T_Predicate.isRelated ? 'related' : null;
+		const kind_ofTool = Object.keys(k.tools[T_Tool[t_tool]])[column];
+		return !!t_alteration && !!target_ofAlteration && target_ofAlteration == kind_ofTool
+			&& ((t_tool == T_Tool.add    && t_alteration == T_Alteration.adding)
+			||  (t_tool == T_Tool.delete && t_alteration == T_Alteration.deleting));
 	}
 
 	function closure(t_request: T_Request, s_mouse: S_Mouse, t_tool: number, column: number): boolean {
