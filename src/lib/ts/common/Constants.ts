@@ -81,6 +81,7 @@ export default class Constants {
 		fork:		   2.5,
 		thin:		   1, };
 
+
 	height = {
 		separator: 7,
 		segmented: row_height + 1,
@@ -108,7 +109,44 @@ export default class Constants {
 			consequence:  50,
 			quest:		  50,
 		},
-	 };
+	};
+
+	tools = {
+		browse: {
+			up: 0,
+			down: 1,
+			left: 2,
+			right: 3,
+		},
+		add: {
+			child: 0,
+			sibling: 1,
+			line: 2,
+			parent: 3,
+			related: 4,
+		},
+		delete: {
+			selection: 0,
+			parent: 1,
+			related: 2,
+		},
+		move: {
+			up: 0,
+			down: 1,
+			left: 2,
+			right: 3,
+		},
+		list: {
+			expand: 0,
+		},
+		show: {
+			selection: 0,
+			root: 1,
+		},
+		graph: {
+			center: 0,
+		},
+	};
 
 }
 

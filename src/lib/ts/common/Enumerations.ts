@@ -69,13 +69,6 @@ export enum T_Alteration {
 	adding	 = 'adding',
 }
 
-export enum T_Request {
-	query_visibility = 'query_visibility',
-	query_disabled	 = 'query_disabled',
-	handle_click	 = 'handle_click',
-	query_hit		 = 'query_hit',
-}
-
 export enum T_Kinship {
 	related	= 'related',
 	parent	= 'parent',
@@ -127,12 +120,29 @@ export enum T_Oblong {
 	full   = 'full',
 }
 
+export enum T_Request {
+	query_visibility = 'query_visibility',
+	query_disabled	 = 'query_disabled',
+	query_inverted	 = 'query_inverted',
+	handle_click	 = 'handle_click',
+	query_hit		 = 'query_hit',
+}
+
 export enum T_Thing {
 	externals = '^',	// list of bulks
 	generic	  = '',
 	found	  = '?',
 	root	  = '!',
 	bulk	  = '~',	// bulk alias
+}
+
+export enum T_Predicate {
+	appreciates = 'appreciates',
+	isRelated	= 'isRelated',
+	contains	= 'contains',
+	explains	= 'explains',
+	requires	= 'requires',
+	supports	= 'supports',
 }
 
 export enum T_Tool {
@@ -143,15 +153,6 @@ export enum T_Tool {
 	list,
 	show,
 	graph,
-}
-
-export enum T_Predicate {
-	appreciates = 'appreciates',
-	isRelated	= 'isRelated',
-	contains	= 'contains',
-	explains	= 'explains',
-	requires	= 'requires',
-	supports	= 'supports',
 }
 
 export enum T_Control {
@@ -194,8 +195,9 @@ export enum T_Element {
 	control		 = 'control',
 	storage		 = 'storage',
 	reveal		 = 'reveal',
-	title		 = 'title',
 	widget		 = 'widget',
+	button		 = 'button',
+	title		 = 'title',
 	drag		 = 'drag',
 	info		 = 'info',
 	none		 = 'none',

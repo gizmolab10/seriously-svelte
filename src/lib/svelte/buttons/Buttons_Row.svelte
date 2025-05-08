@@ -1,7 +1,6 @@
 <script lang='ts'>
     import { k, u, ux, Point, colors, T_Request, T_Element, S_Element } from '../../ts/common/Global_Imports';
-    import { w_t_graph, w_background_color, w_user_graph_offset } from '../../ts/common/Stores';
-    import { w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
+    import { w_count_button_restyle } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
     import Button from './Button.svelte';
     export let closure: (t_request: T_Request, s_mouse: S_Mouse, column: number) => boolean;
@@ -17,26 +16,25 @@
     const button_width = Math.floor((width + 2) / columns) - gap;
     const title_widths = button_titles.map((title) => u.getWidth_ofString_withSize(title, `${font_size}px`));
     const total_width = title_widths.reduce((acc, width) => acc + width + gap, 0);
-	const es_tool_byColumn: { [key: number]: S_Element } = {};
+	const es_button_byColumn: { [key: number]: S_Element } = {};
     const button_portion = (width - total_width) / columns;
     
-    setup_es_tools();
+    setup_es_buttons();
     function button_width_for(column: number): number { return button_portion + title_widths[column]; }
     function button_disabled_for(column: number): boolean { return closure(T_Request.query_disabled, null, column); }
+    function button_inverted_for(column: number): boolean { return closure(T_Request.query_inverted, null, column); }
     function button_left_for(column: number): number { return title_widths.slice(0, column).reduce((acc, width) => acc + gap + width + button_portion, 0); }
 
-    $:  $w_t_graph,
-        $w_user_graph_offset,
-        $w_ancestries_grabbed,
-        $w_ancestries_expanded,
-        setup_es_tools();
+    $:  $w_count_button_restyle,
+        setup_es_buttons();
 
-	function setup_es_tools() {
+	function setup_es_buttons() {
         for (let column = 0; column < columns; column++) {
-            const es_tool = ux.s_element_for(new Identifiable(`${name}x${column}`), T_Element.tool, column);
-            es_tool.set_forHovering(colors.default, 'pointer');
-            es_tool.isDisabled = button_disabled_for(column);
-            es_tool_byColumn[column] = es_tool;
+            const es_button = ux.s_element_for(new Identifiable(`${name}x${column}`), T_Element.button, column);
+            es_button.set_forHovering(colors.default, 'pointer');
+            es_button.isDisabled = button_disabled_for(column);
+            es_button.isInverted = button_inverted_for(column);
+            es_button_byColumn[column] = es_button;
         }
 	}
 
@@ -55,7 +53,7 @@
             height={button_height}
             name={`${name}-${column}`}
             width={button_width_for(column)}
-            es_button={es_tool_byColumn[column]}
+            es_button={es_button_byColumn[column]}
             origin={Point.x(button_left_for(column))}
             closure={(s_mouse) => closure(T_Request.handle_click, s_mouse, column)}>
             {title}

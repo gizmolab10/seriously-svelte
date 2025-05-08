@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { w_ancestries_grabbed, w_ancestries_expanded, w_thing_fontFamily } from '../../ts/common/Stores';
+	import { w_background_color, w_user_graph_offset, w_count_button_restyle } from '../../ts/common/Stores';
 	import { k, u, ux, Rect, Point, colors, T_Layer } from '../../ts/common/Global_Imports';
-	import { w_background_color, w_user_graph_offset } from '../../ts/common/Stores';
 	import { S_Element, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import type { Handle_Result } from '../../ts/common/Types';
@@ -47,8 +47,7 @@
 		$w_background_color,
 		es_button.isDisabled,
 		$w_user_graph_offset,
-		$w_ancestries_grabbed,
-		$w_ancestries_expanded,
+		$w_count_button_restyle,
 		recompute_style();
 
 	function handle_s_mouse(s_mouse: S_Mouse) {

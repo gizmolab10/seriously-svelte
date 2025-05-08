@@ -1,6 +1,5 @@
 <script lang='ts'>
     import { k, ux, show, Point, colors, T_Request, T_Element, S_Element } from '../../ts/common/Global_Imports';
-    import { w_background_color } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Separator from '../kit/Separator.svelte';
     import Buttons_Row from './Buttons_Row.svelte';
