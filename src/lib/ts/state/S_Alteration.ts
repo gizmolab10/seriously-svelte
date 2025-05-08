@@ -1,13 +1,14 @@
-import { Predicate, T_Alteration } from '../common/Global_Imports';
+import { Ancestry, Predicate, T_Alteration } from '../common/Global_Imports';
 
 export default class S_Alteration {
-	type: T_Alteration;
+	t_alteration: T_Alteration;
 	predicate: Predicate | null;
+	ancestry!: Ancestry;
 
-	constructor(type: T_Alteration, predicate: Predicate | null) {
+	constructor(t_alteration: T_Alteration, predicate: Predicate | null) {
 		this.predicate = predicate ?? Predicate.contains;
-		this.type = type;
+		this.t_alteration = t_alteration;
 	}
 
-	get description(): string { return `${this.type} ${this.predicate?.description ?? 'unpredicated'}`; }
+	get description(): string { return `${this.t_alteration} ${this.predicate?.description ?? 'unpredicated'}`; }
 }

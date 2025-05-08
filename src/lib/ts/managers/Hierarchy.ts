@@ -1,8 +1,8 @@
 import { c, k, p, u, ux, w, show, User, Thing, Trait, Point, debug, files, colors, signals, layout } from '../common/Global_Imports';
 import { T_Thing, T_Trait, T_Order, T_Create, T_Report, T_Control, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { Access, Ancestry, Predicate, Relationship, S_Mouse, S_Alteration, S_Title_Edit } from '../common/Global_Imports';
-import { w_popupView_id, w_ancestry_focus, w_s_title_edit, w_s_alteration, w_user_graph_offset } from '../common/Stores';
-import { w_storage_updated, w_ancestry_showing_tools, w_ancestries_grabbed } from '../common/Stores';
+import { w_popupView_id, w_ancestry_focus, w_s_title_edit, w_user_graph_offset } from '../common/Stores';
+import { w_storage_updated, w_s_alteration, w_ancestries_grabbed } from '../common/Stores';
 import type { Integer, Dictionary } from '../common/Types';
 import { T_Persistable } from '../../ts/database/DBCommon';
 import Identifiable from '../runtime/Identifiable';
@@ -19,9 +19,9 @@ export class Hierarchy {
 	private ancestries_byThingHID:{ [hid: Integer]: Array<Ancestry> } = {};
 	private traits_byOwnerHID: { [ownerHID: Integer]: Array<Trait> } = {};
 	private relationship_byHID: { [hid: Integer]: Relationship } = {};
+	private things_byType: { [t_thing: string]: Array<Thing> } = {};
+	private traits_byType: { [t_trait: string]: Array<Trait> } = {};
 	private predicate_byKind: { [kind: string]: Predicate } = {};
-	private things_byType: { [type: string]: Array<Thing> } = {};
-	private traits_byType: { [type: string]: Array<Trait> } = {};
 	private thing_byAncestryHID: { [hid: Integer]: Thing } = {};
 	private relationships_byParentHID: Relationships_ByHID = {};
 	private relationships_byChildHID: Relationships_ByHID = {};
@@ -39,7 +39,7 @@ export class Hierarchy {
 	traits: Array<Trait> = [];
 	rootAncestry!: Ancestry;
 
-	persistent_dataTypes = [T_Persistable.predicates, T_Persistable.relationships, T_Persistable.traits, T_Persistable.things];
+	t_persistables = [T_Persistable.predicates, T_Persistable.relationships, T_Persistable.traits, T_Persistable.things];
 	replace_rootID: string | null = k.empty;		// required for DBLocal at launch
 	isAssembled = false;
 	root!: Thing;
@@ -97,10 +97,9 @@ export class Hierarchy {
 				}
 				switch (key) {
 					case '!':				graph_needsRebuild = this.rootAncestry?.becomeFocus(); break;
-					case '`':               event.preventDefault(); this.grabs_latest_toggleEditingTools(); break;
 					case 'arrowup':			this.grabs_latest_rebuild_persistentMoveUp_maybe(true, SHIFT, OPTION, EXTREME); break;
 					case 'arrowdown':		this.grabs_latest_rebuild_persistentMoveUp_maybe(false, SHIFT, OPTION, EXTREME); break;
-					case 'escape':			if (!!get(w_ancestry_showing_tools)) { this.clear_editingTools(); }
+					case 'escape':			if (!!get(w_s_alteration)) { this.stop_alteration(); }
 				}
 				if (graph_needsRebuild) {
 					layout.grand_build();
@@ -134,13 +133,13 @@ export class Hierarchy {
 					case 0:	await this.ancestry_edit_persistentCreateChildOf(ancestry); return; // 'child';
 					case 1:	await this.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); return; // 'sibling';
 					case 2:	await this.thing_edit_persistentAddLine(ancestry); return; // 'line';
-					case 3:	this.toggleAlteration(T_Alteration.adding, s_mouse.isLong); return; // 'parent';
-					case 4:	break; // 'related';
+					case 3:	this.ancestry_toggle_alteration(T_Alteration.adding, Predicate.contains); return; // 'parent';
+					case 4:	this.ancestry_toggle_alteration(T_Alteration.adding, Predicate.isRelated); return; // 'related';
 				} break;
 				case 4: switch (column) { // 'delete';
 					case 0:	await this.ancestries_rebuild_traverse_persistentDelete(get(w_ancestries_grabbed)); return; // 'selection';
-					case 1:	this.toggleAlteration(T_Alteration.deleting, s_mouse.isLong); return; // 'parent';
-					case 2:	break; // 'related';
+					case 1:	this.ancestry_toggle_alteration(T_Alteration.deleting, Predicate.contains); return; // 'parent';
+					case 2:	this.ancestry_toggle_alteration(T_Alteration.deleting, Predicate.isRelated); return; // 'related';
 				} break;
 				case 5: switch (column) { // 'move';
 					case 0:	this.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, true, false); return; // 'up';
@@ -176,12 +175,12 @@ export class Hierarchy {
 				case 0:	return false; // 'child';
 				case 1:	return no_siblings; // 'sibling';
 				case 2:	return false; // 'line';
-				case 3:	return true || is_root; // 'parent';
+				case 3:	return is_root; // 'parent';
 				case 4:	break; // 'related';
 			} break;
 			case 4: switch (column) { // 'delete';
 				case 0:	return is_root; // 'selection';
-				case 1:	return true || !ancestry.hasMultipleParents; // 'parent';
+				case 1:	return !ancestry.hasMultipleParents; // 'parent';
 				case 2:	break; // 'related';
 			} break;
 			case 5: switch (column) { // 'move';
@@ -236,19 +235,6 @@ export class Hierarchy {
 		return null;
 	}
 
-	grabs_latest_rebuild_persistentMoveUp_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
-		const ancestry = this.grabs_latest_upward(up);
-		this.ancestry_rebuild_persistentMoveUp_maybe(ancestry, up, SHIFT, OPTION, EXTREME);
-	}
-
-	grabs_latest_toggleEditingTools(up: boolean = true) {
-		const ancestry = this.grabs_latest_upward(up);
-		if (!ancestry.isRoot) {
-			w_ancestry_showing_tools.set(ancestry.toolsGrabbed ? null : ancestry);
-			layout.grand_build();
-		}
-	}
-
 	grabs_latest_assureIsVisible() {
 		const ancestry = this.grabs_latest_ancestry;
 		if (!!ancestry && !ancestry.isVisible) {
@@ -270,6 +256,11 @@ export class Hierarchy {
 			}
 		}
 		return this.rootAncestry;
+	}
+
+	grabs_latest_rebuild_persistentMoveUp_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
+		const ancestry = this.grabs_latest_upward(up);
+		this.ancestry_rebuild_persistentMoveUp_maybe(ancestry, up, SHIFT, OPTION, EXTREME);
 	}
 	
 	static readonly THINGS: unique symbol;
@@ -340,18 +331,18 @@ export class Hierarchy {
 		this.relationships_translate_idsFromTo_forParents(idFrom, idTo, false);
 	}
 
-	thing_remember_runtimeCreateUnique(idBase: string, id: string, title: string, color: string, type: T_Thing = T_Thing.generic,
+	thing_remember_runtimeCreateUnique(idBase: string, id: string, title: string, color: string, t_thing: T_Thing = T_Thing.generic,
 		already_persisted: boolean = false): Thing {
 		let thing = this.thing_forHID(id?.hash() ?? null);
 		if (!thing) {
-			thing = this.thing_remember_runtimeCreate(idBase, id, title, color, type, already_persisted);
+			thing = this.thing_remember_runtimeCreate(idBase, id, title, color, t_thing, already_persisted);
 		}
 		return thing;
 	}
 
-	thing_remember_runtimeCreate(idBase: string, id: string, title: string, color: string, type: T_Thing = T_Thing.generic,
+	thing_remember_runtimeCreate(idBase: string, id: string, title: string, color: string, t_thing: T_Thing = T_Thing.generic,
 		already_persisted: boolean = false, needs_upgrade: boolean = false): Thing {
-		const thing = this.thing_runtimeCreate(idBase, id, title, color, type, already_persisted);
+		const thing = this.thing_runtimeCreate(idBase, id, title, color, t_thing, already_persisted);
 		this.thing_remember(thing);
 		if (needs_upgrade) {
 			thing.set_isDirty();	// add type and remove trait fields
@@ -360,10 +351,10 @@ export class Hierarchy {
 	}
 
 	async thing_remember_runtimeCopy(idBase: string, original: Thing) {
-		const copiedThing = new Thing(idBase, Identifiable.newID(), original.title, original.color, original.type);
+		const copiedThing = new Thing(idBase, Identifiable.newID(), original.title, original.color, original.t_thing);
 		const prohibitedTraits: Array<string> = [T_Thing.externals, T_Thing.root, T_Thing.bulk];
-		if (prohibitedTraits.includes(original.type)) {
-			copiedThing.type = T_Thing.generic;
+		if (prohibitedTraits.includes(original.t_thing)) {
+			copiedThing.t_thing = T_Thing.generic;
 		}
 		this.thing_remember(copiedThing);
 		return copiedThing;
@@ -420,17 +411,17 @@ export class Hierarchy {
 	}
 
 	thing_forget(thing: Thing) {
-		const type = thing.type;
-		if (type != T_Thing.root) {		// do NOT forget root
-			const thingsOfType = this.things_byType[type];
+		const t_thing = thing.t_thing;
+		if (t_thing != T_Thing.root) {		// do NOT forget root
+			const thingsOfType = this.things_byType[t_thing];
 			delete this.thing_byHID[thing.hid];
 			this.things = Identifiable.remove_byHID<Thing>(this.things, thing);
 			if (!!thingsOfType) {
 				const validated = u.strip_invalid(thingsOfType);
 				if (validated.length == 0) {
-					delete this.things_byType[type];
+					delete this.things_byType[t_thing];
 				} else {
-					this.things_byType[type] = validated;
+					this.things_byType[t_thing] = validated;
 				}
 			}
 		}
@@ -439,10 +430,10 @@ export class Hierarchy {
 	thing_remember(thing: Thing) {
 		if (!!thing && !this.thing_forHID(thing.hid)) {
 			this.thing_byHID[thing.hid] = thing;
-			let things = this.things_byType[thing.type] ?? [];
+			let things = this.things_byType[thing.t_thing] ?? [];
 			if (!things.map(t => t.id).includes(thing.id)) {
 				things.push(thing);
-				this.things_byType[thing.type] = things;
+				this.things_byType[thing.t_thing] = things;
 			}
 			if (!this.things.map(t => t.id).includes(thing.id)) {
 				this.things.push(thing);
@@ -453,13 +444,13 @@ export class Hierarchy {
 		}
 	}
 
-	thing_runtimeCreate(idBase: string, id: string, title: string, color: string, type: T_Thing,
+	thing_runtimeCreate(idBase: string, id: string, title: string, color: string, t_thing: T_Thing,
 		already_persisted: boolean = false): Thing {
 		let thing: Thing | null = null;
-		if (id && type == T_Thing.root && idBase != this.db.idBase) {			// other bulks have their own root & id
+		if (id && t_thing == T_Thing.root && idBase != this.db.idBase) {			// other bulks have their own root & id
 			thing = this.bulkAlias_remember_forRootID_create(idBase, id, color);		// which our thing needs to adopt
 		} else {
-			thing = new Thing(idBase, id, title, color, type, already_persisted);
+			thing = new Thing(idBase, id, title, color, t_thing, already_persisted);
 			if (thing.isBulkAlias) {
 				thing.persistence.needsBulkFetch = true;
 				if (title.includes('@')) {
@@ -473,14 +464,14 @@ export class Hierarchy {
 	}
 
 	thing_extract_fromDict(dict: Dictionary) {
-		let type = dict.type;
+		let t_thing = dict.t_thing;
 		const root = this.root;
-		const isRootDict = type == T_Thing.root;
+		const isRootDict = t_thing == T_Thing.root;
 		if ((!root && isRootDict) || (this.replace_rootID != dict.id)) {
 			if (!!root && isRootDict) {
-				type = k.empty;			// prevent multiple roots
+				t_thing = k.empty;			// prevent multiple roots
 			}
-			this.thing_remember_runtimeCreateUnique(this.db.idBase, dict.id, dict.title, dict.color, type);
+			this.thing_remember_runtimeCreateUnique(this.db.idBase, dict.id, dict.title, dict.color, t_thing);
 		} else if (!!root && isRootDict && !this.db.isRemote) {
 			root.title = dict.title;	// new title for root (only in local or test)
 		}
@@ -587,49 +578,49 @@ export class Hierarchy {
 
 	trait_forHID(hid: Integer): Trait | null { return this.trait_byHID[hid ?? undefined]; }
 
-	trait_runtimeCreate(idBase: string, id: string, ownerID: string, type: T_Trait, text: string, already_persisted: boolean = false): Trait {
-		return new Trait(idBase, id, ownerID, type, text, already_persisted);
+	trait_runtimeCreate(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string, already_persisted: boolean = false): Trait {
+		return new Trait(idBase, id, ownerID, t_trait, text, already_persisted);
 	}
 
-	trait_remember_runtimeCreateUnique(idBase: string, id: string, ownerID: string, type: T_Trait, text: string, already_persisted: boolean = false): Trait {
-		return this.trait_forHID(id?.hash()) ?? this.trait_remember_runtimeCreate(idBase, id, ownerID, type, text, already_persisted);
+	trait_remember_runtimeCreateUnique(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string, already_persisted: boolean = false): Trait {
+		return this.trait_forHID(id?.hash()) ?? this.trait_remember_runtimeCreate(idBase, id, ownerID, t_trait, text, already_persisted);
 	}
 
-	trait_forType_ownerHID(type: T_Trait | null, ownerHID: Integer | null): Trait| null {
-		const traits = this.traits_forOwnerHID(ownerHID)?.filter(t => t.type == type);
+	trait_forType_ownerHID(t_trait: T_Trait | null, ownerHID: Integer | null): Trait| null {
+		const traits = this.traits_forOwnerHID(ownerHID)?.filter(t => t.t_trait == t_trait);
 		return !traits ? null : traits[0]
 	}
 
 	trait_extract_fromDict(dict: Dictionary) {
-		this.trait_remember_runtimeCreateUnique(this.db.idBase, dict.id, dict.ownerID, dict.type, dict.text);
+		this.trait_remember_runtimeCreateUnique(this.db.idBase, dict.id, dict.ownerID, dict.t_trait, dict.text);
 	}
 
 	trait_forget(trait: Trait) {
 		delete this.trait_byHID[trait.hid];
 		delete this.traits_byOwnerHID[trait.ownerID.hash()];
 		this.traits = Identifiable.remove_byHID<Trait>(this.traits, trait);
-		this.traits_byType[trait.type] = Identifiable.remove_byHID<Trait>(this.traits_byType[trait.type], trait);;
+		this.traits_byType[trait.t_trait] = Identifiable.remove_byHID<Trait>(this.traits_byType[trait.t_trait], trait);;
 	}
 
 	trait_remember(trait: Trait) {
 		const hid = trait.ownerID.hash();
 		this.trait_byHID[trait.hid] = trait;
 		(this.traits_byOwnerHID[hid] = this.traits_byOwnerHID[hid] || []).push(trait);
-		(this.traits_byType[trait.type] = this.traits_byType[trait.type] || []).push(trait);
+		(this.traits_byType[trait.t_trait] = this.traits_byType[trait.t_trait] || []).push(trait);
 		this.traits.push(trait);
 	}
 
-	trait_remember_runtimeCreate(idBase: string, id: string, ownerID: string, type: T_Trait, text: string,
+	trait_remember_runtimeCreate(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string,
 		already_persisted: boolean = false): Trait {
-		const trait = this.trait_runtimeCreate(idBase, id, ownerID, type, text, already_persisted);
+		const trait = this.trait_runtimeCreate(idBase, id, ownerID, t_trait, text, already_persisted);
 		this.trait_remember(trait);
 		return trait;
 	}
 
-	trait_setText_forType_ownerHID(text: string, type: T_Trait, ownerID: string) {
-		let trait = this.trait_forType_ownerHID(type, ownerID.hash());
+	trait_setText_forType_ownerHID(text: string, t_trait: T_Trait, ownerID: string) {
+		let trait = this.trait_forType_ownerHID(t_trait, ownerID.hash());
 		if (!trait) {
-			trait = this.trait_remember_runtimeCreate(this.db.idBase, Identifiable.newID(), ownerID, type, text);
+			trait = this.trait_remember_runtimeCreate(this.db.idBase, Identifiable.newID(), ownerID, t_trait, text);
 		} else {
 			trait.text = text;
 		}
@@ -1030,6 +1021,12 @@ export class Hierarchy {
 		}
 	}
 
+	ancestry_toggle_alteration(target_t_alteration: T_Alteration, predicate: Predicate | null) {
+		const isAltering = get(w_s_alteration)?.t_alteration == target_t_alteration;
+		const actual_t_alteration = isAltering ? null : new S_Alteration(target_t_alteration, predicate);
+		w_s_alteration.set(actual_t_alteration);
+	}
+
 	async ancestry_edit_persistentCreateChildOf(parentAncestry: Ancestry | null) {
 		const thing = parentAncestry?.thing;
 		if (!!thing && !!parentAncestry) {
@@ -1098,7 +1095,7 @@ export class Hierarchy {
 				await externalsThing.persist();
 				await this.ancestry_extended_byAddingThing_toAncestry_remember_persistentCreate_relationship(externalsThing, rootAncestry)
 				.then((ancestry) => {
-					console.log(`externalsAncestry is wrong type: "${ancestry?.thing?.type ?? 'unknown'}" (should be "^")`)
+					console.log(`externalsAncestry is wrong type: "${ancestry?.thing?.t_thing ?? 'unknown'}" (should be "^")`)
 					// externalsAncestry = ancestry;
 				});
 			}
@@ -1403,12 +1400,12 @@ export class Hierarchy {
 		let data: Dictionary = { 
 			'title' : root.title,
 			'idRoot' : root.id};
-		for (const type of this.persistent_dataTypes) {
-			switch(type) {
-				case T_Persistable.things:		data[type] = this.things; break;
-				case T_Persistable.traits:		data[type] = this.traits; break;
-				case T_Persistable.predicates:	data[type] = this.predicates; break;
-				case T_Persistable.relationships: data[type] = this.relationships; break;
+		for (const t_persistable of this.t_persistables) {
+			switch(t_persistable) {
+				case T_Persistable.things:		  data[t_persistable] = this.things; break;
+				case T_Persistable.traits:		  data[t_persistable] = this.traits; break;
+				case T_Persistable.predicates:	  data[t_persistable] = this.predicates; break;
+				case T_Persistable.relationships: data[t_persistable] = this.relationships; break;
 			}
 		}
 		return data;
@@ -1449,8 +1446,7 @@ export class Hierarchy {
 	static readonly BUILD: unique symbol;
 
 	restore_fromPreferences() {
-		w_ancestry_showing_tools.set(null);
-		w_s_title_edit.set(null);
+		this.stop_alteration();
 		p.restore_grabbed();	// must precede restore_focus (which alters grabbed and expanded)
 		p.restore_paging();
 		layout.restore_expanded();
@@ -1485,14 +1481,14 @@ export class Hierarchy {
 	}
 
 	objects_ofAllTypes_extract_fromDict(dict: Dictionary) {
-		for (const type of this.persistent_dataTypes) {
-			const subdicts = dict[type] as Array<Dictionary>;
+		for (const t_persistable of this.t_persistables) {
+			const subdicts = dict[t_persistable] as Array<Dictionary>;
 			for (const subdict of subdicts) {
-				switch(type) {
-					case T_Persistable.predicates:	this.predicate_extract_fromDict(subdict); break;
+				switch(t_persistable) {
 					case T_Persistable.relationships: this.relationship_extract_fromDict(subdict); break;
-					case T_Persistable.traits:		this.trait_extract_fromDict(subdict); break;
-					case T_Persistable.things:		this.thing_extract_fromDict(subdict); break;
+					case T_Persistable.predicates:	  this.predicate_extract_fromDict(subdict); break;
+					case T_Persistable.traits:		  this.trait_extract_fromDict(subdict); break;
+					case T_Persistable.things:		  this.thing_extract_fromDict(subdict); break;
 				}
 			}
 		}
@@ -1525,10 +1521,7 @@ export class Hierarchy {
 		return !ancestry ? this.root : ancestry.thing;
 	}
 
-	clear_editingTools() {
-		w_s_alteration.set(null);
-		w_ancestry_showing_tools.set(null);
-	}
+	stop_alteration() { w_s_alteration.set(null); }
 
 	signal_storage_redraw(after: number = 100) {
 		setTimeout(() => {			// depth is not immediately updated
@@ -1547,18 +1540,6 @@ export class Hierarchy {
 			}
 		}
 		return maximum;
-	}
-
-	toggleAlteration(wantsAlteration: T_Alteration, isRelated: boolean) {
-		const isAltering = get(w_s_alteration)?.type;
-		const predicate = isRelated ? Predicate.isRelated : Predicate.contains;
-		const nextAltering = wantsAlteration == isAltering ? null : new S_Alteration(wantsAlteration, predicate);
-		if (!!nextAltering) {
-			debug.log_tools(`needs ${wantsAlteration} ${predicate?.kind} alteration`)
-		} else {
-			debug.log_tools(`end ${wantsAlteration} alteration`)
-		}
-		w_s_alteration.set(nextAltering);
 	}
 
 }

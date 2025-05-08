@@ -2,9 +2,8 @@
 	import { c, k, u, ux, w, show, Rect, Size, Point, debug, colors, signals } from '../../ts/common/Global_Imports';
 	import { layout, svgPaths, databases, Direction, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { T_Graph, T_Layer, T_Element, T_Alteration } from '../../ts/common/Global_Imports';
+	import { w_hierarchy, w_graph_rect, w_s_alteration } from '../../ts/common/Stores';
 	import { S_Mouse, S_Element, S_Alteration } from '../../ts/common/Global_Imports';
-	import { w_s_alteration, w_ancestry_showing_tools } from '../../ts/common/Stores';
-	import { w_hierarchy, w_graph_rect } from '../../ts/common/Stores';
 	import Transparent_Circle from '../kit/Transparent_Circle.svelte';
 	import Triangle_Button from '../buttons/Triangle_Button.svelte';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
@@ -94,8 +93,8 @@
 	}
 
 	$: {
-		if (!ancestry || !ancestry.equals($w_ancestry_showing_tools)) {
-			ancestry = $w_ancestry_showing_tools;
+		if (!ancestry || !ancestry.equals($w_s_alteration)) {
+			ancestry = $w_s_alteration;
 			if (!!ancestry) {
 				thing = ancestry.thing;
 				color = thing?.color ?? k.empty;
@@ -174,7 +173,7 @@
 	// from Hierarchy.ts
 	async handle_tool_clicked(idControl: string, s_mouse: S_Mouse) {
 		const event: MouseEvent | null = s_mouse.event as MouseEvent;
-        const ancestry = get(w_ancestry_showing_tools);
+        const ancestry = get(w_s_alteration);
 		if (!!ancestry) {
 			switch (idControl) {
 				case T_Tool.more: debug.log_tools('needs more'); break;
@@ -185,18 +184,18 @@
 				case T_Tool.delete_confirm: await this.ancestries_rebuild_traverse_persistentDelete([ancestry]); break;
 				default: break;
 			}
-			w_ancestry_showing_tools.set(null);
+			w_s_alteration.set(null);
 			layout.grand_layout();
 		}
 	}
 
 	ancestry_relayout_toolCluster_nextParent(force: boolean = false) {
-		const toolsAncestry = get(w_ancestry_showing_tools);
+		const toolsAncestry = get(w_s_alteration);
 		if (!!toolsAncestry) {
 			let ancestry = toolsAncestry;
 			ancestry.grabOnly();
 			layout.grand_layout();
-			w_ancestry_showing_tools.set(ancestry);
+			w_s_alteration.set(ancestry);
 		}
 	}
 
@@ -220,7 +219,7 @@
 </style>
 
 {#key tool_reattachments}
-	{#if !!$w_ancestry_showing_tools}
+	{#if !!$w_s_alteration}
 		<div class='editing-tools' style='
 			position:absolute;
 			z-index: {T_Layer.tools}'>
@@ -353,7 +352,7 @@
 				</Button>
 				<Widget_Reveal
 					name={s_element_byToolType[T_Tool.dismiss].name}
-					ancestry={$w_ancestry_showing_tools}
+					ancestry={$w_s_alteration}
 					center={getC(T_Tool.dismiss)}
 					zindex={T_Layer.tool_buttons}
 					hover_isReversed=true/>

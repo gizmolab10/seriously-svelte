@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { c, u, w, Rect, Size, Point, debug, T_Layer } from '../../ts/common/Global_Imports';
-	import { w_user_graph_center, w_ancestry_showing_tools } from '../../ts/common/Stores';
+	import { w_user_graph_center, w_s_alteration } from '../../ts/common/Stores';
 	import { w_graph_rect, w_mouse_location_scaled } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Box from './Box.svelte';
@@ -43,12 +43,12 @@
 		zindex = {T_Layer.common}
 		rect = {$w_graph_rect}/>
 {/if}
-{#if debug.tools && !!$w_ancestry_showing_tools}
+{#if debug.tools && !!$w_s_alteration}
 	<Box
 		name = 'tools'
 		color = 'purple'
 		zindex = {T_Layer.frontmost}
-		rect = {$w_ancestry_showing_tools.titleRect}/>
+		rect = {$w_s_alteration.ancestry.titleRect}/>
 {/if}
 {#if debug.cursor}
 	<Mouse_Responder

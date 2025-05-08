@@ -346,9 +346,9 @@ export default class DBFirebase extends DBCommon {
 	thing_extractChangesFromPersistent(thing: Thing, from: PersistentThing) {
 		const changed = !from.isEqualTo(thing);
 		if (changed) {
-			thing.title		  = from.virginTitle;
-			thing.color		  = from.color;
-			thing.type		  = from.type;
+			thing.title	  = from.virginTitle;
+			thing.color	  = from.color;
+			thing.t_thing = from.t_thing;
 		}
 		return changed;
 	}
@@ -362,10 +362,10 @@ export default class DBFirebase extends DBCommon {
 		} else {
 			switch (change.type) {
 				case 'added':
-					if (!!thing || remoteThing.isEqualTo(this.addedThing) || remoteThing.type == T_Thing.root) {
+					if (!!thing || remoteThing.isEqualTo(this.addedThing) || remoteThing.t_thing == T_Thing.root) {
 						return false;			// do not invoke rebuild because nothing has changed
 					}
-					thing = h.thing_remember_runtimeCreate(idBase, id, remoteThing.title, remoteThing.color, remoteThing.type, true);
+					thing = h.thing_remember_runtimeCreate(idBase, id, remoteThing.title, remoteThing.color, remoteThing.t_thing, true);
 					break;
 				case 'removed':
 					if (!!thing) {
@@ -392,8 +392,8 @@ export default class DBFirebase extends DBCommon {
 	trait_extractChangesFromPersistent(trait: Trait, from: PersistentTrait) {
 		const changed = !from.isEqualTo(trait);
 		if (changed) {
+			trait.t_trait = from.t_trait;
 			trait.ownerID = from.ownerID;
-			trait.type	  = from.type;
 			trait.text	  = from.text;
 		}
 		return changed;
@@ -463,7 +463,7 @@ export default class DBFirebase extends DBCommon {
 					if (!!trait || remoteTrait.isEqualTo(this.addedTrait)) {
 						return false;		// do not invoke signal because nothing has changed
 					}
-					trait = h.trait_remember_runtimeCreate(idBase, id, remoteTrait.ownerID, remoteTrait.type, remoteTrait.text, true);
+					trait = h.trait_remember_runtimeCreate(idBase, id, remoteTrait.ownerID, remoteTrait.t_trait, remoteTrait.text, true);
 					break;
 				case 'removed':
 					if (!!trait) {
@@ -578,7 +578,7 @@ export default class DBFirebase extends DBCommon {
 			relationship.hidParent = remote.parent.hid;
 			relationship.persistence.already_persisted = true;
 			relationship.kind = remote.kind;
-			relationship.order_setTo(remote.orders.map(o => o + k.halfIncrement));
+			relationship.order_setTo(remote.orders[0] + k.halfIncrement);
 		}
 		return changed;
 	}
@@ -618,7 +618,7 @@ export default class DBFirebase extends DBCommon {
 					if (!!relationship) {
 						return false;
 					}
-					relationship = h.relationship_remember_runtimeCreateUnique(idBase, id, remoteRelationship.kind, remoteRelationship.parent.id, remoteRelationship.child.id, remoteRelationship.order, 0, T_Create.isFromPersistent);
+					relationship = h.relationship_remember_runtimeCreateUnique(idBase, id, remoteRelationship.kind, remoteRelationship.parent.id, remoteRelationship.child.id, remoteRelationship.orders[0], 0, T_Create.isFromPersistent);
 					break;
 				default:
 					if (!relationship) {
@@ -735,18 +735,18 @@ export class SnapshotDeferal {
 }
 
 export class PersistentThing {
+	t_thing: T_Thing;
 	title: string;
 	color: string;
-	type: T_Thing;
 
 	constructor(data: DocumentData) {
 		const remote = data as PersistentThing;
+		this.t_thing = remote.t_thing;
 		this.title	 = remote.title;
-		this.type	 = remote.type;
 		this.color	 = remote.color;
 	}
 
-	get hasNoData(): boolean { return !this.title && !this.color && !this.type; }
+	get hasNoData(): boolean { return !this.title && !this.color && !this.t_thing; }
 
 	get virginTitle(): string {
 		const title = this.title;
@@ -759,30 +759,30 @@ export class PersistentThing {
 
 	isEqualTo(thing: Thing | null) {
 		return !!thing &&
+		thing.t_thing == this.t_thing &&
 		thing.title == this.title &&
-		thing.type == this.type &&
 		thing.color == this.color;
 	}
 }
 
 export class PersistentTrait {
+	t_trait: T_Trait;
 	ownerID: string;
-	type: T_Trait;
 	text: string;
 
 	constructor(data: DocumentData) {
 		const remote = data as PersistentTrait;
 		this.ownerID = remote.ownerID;
-		this.type	 = remote.type;
+		this.t_trait = remote.t_trait;
 		this.text	 = remote.text;
 	}
 	
-	get hasNoData(): boolean { return !this.ownerID && !this.type && !this.type; }
+	get hasNoData(): boolean { return !this.ownerID && !this.t_trait; }
 
 	isEqualTo(trait: Trait | null) {
 		return !!trait &&
 		trait.ownerID == this.ownerID &&
-		trait.type	  == this.type &&
+		trait.t_trait == this.t_trait &&
 		trait.text	  == this.text;
 	}
 }
@@ -808,13 +808,13 @@ export class PersistentRelationship implements PersistentRelationship {
 	predicate!: DocumentReference<Predicate, DocumentData>;
 	parent!: DocumentReference<Thing, DocumentData>;
 	child!: DocumentReference<Thing, DocumentData>;
+	orders: Array<number>;
 	kind!: T_Predicate;
-	order: number;
 
 	constructor(data: DocumentData | Relationship) {
 		const things = dbFirebase.bulk_forID(dbFirebase.idBase)?.thingsCollection;
 		const predicates = dbFirebase.predicatesCollection;
-		this.order = data.order;
+		this.orders = data.orders;
 		if (!!things && !!predicates) {
 			try {
 				if (data instanceof Relationship) {
@@ -844,7 +844,7 @@ export class PersistentRelationship implements PersistentRelationship {
 		relationship.kind == await this.kind &&
 		relationship.idParent == this.parent.id &&
 		relationship.idChild == this.child.id &&
-		relationship.order == this.order;
+		relationship.orders == this.orders;
 	}
 
 }

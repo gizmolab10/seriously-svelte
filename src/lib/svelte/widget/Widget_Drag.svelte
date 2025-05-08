@@ -34,9 +34,9 @@
 
     onMount(() => {
 		es_drag.set_forHovering(thing?.color, 'pointer');
-        const handle_altering = signals.handle_altering((blink_flag) => {
-			const invert_flag = blink_flag && !!ancestry && ancestry.canConnect_toToolsAncestry;
-			es_drag.isInverted = invert_flag;
+        const handle_altering = signals.handle_altering((s_alteration) => {
+			const isInverted = s_alteration && !!ancestry && ancestry.ancestry_canAlter_connectionTo;
+			es_drag.isInverted = isInverted;
 			svgPaths_updateExtra();
         });
 		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {

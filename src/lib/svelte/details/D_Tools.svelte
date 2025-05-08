@@ -1,6 +1,7 @@
 <script lang='ts'>
-	import { w_hierarchy, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
 	import { k, show, Size, layout, T_Layer, T_Request } from '../../ts/common/Global_Imports';
+	import { w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
+	import { w_hierarchy, w_s_alteration } from '../../ts/common/Stores';
 	import Buttons_Grid from '../buttons/Buttons_Grid.svelte';
 	export let top = 0;
 	const show_boxes = show.tool_boxes;
@@ -49,6 +50,14 @@
 		return false;
 	}
 
+	function visibility_closure(row: number): boolean {
+		if (!$w_s_alteration) {
+			return true;
+		} else {
+			return [3, 4].includes(row);
+		}
+	}
+
 </script>
 
 <div
@@ -65,5 +74,6 @@
 		show_boxes={show_boxes}
 		width={k.width_details}
 		button_height={k.size.button}
-		button_titles={button_titles}/>
+		button_titles={button_titles}
+		visibility_closure={visibility_closure}/>
 </div>
