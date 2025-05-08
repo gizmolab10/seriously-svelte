@@ -21,24 +21,15 @@
     const button_portion = (width - total_width) / columns;
     
     setup_es_tools();
+    function button_width_for(column: number): number { return button_portion + title_widths[column]; }
+    function button_disabled_for(column: number): boolean { return closure(T_Request.query_disabled, null, column); }
+    function button_left_for(column: number): number { return title_widths.slice(0, column).reduce((acc, width) => acc + gap + width + button_portion, 0); }
 
     $:  $w_t_graph,
         $w_user_graph_offset,
         $w_ancestries_grabbed,
         $w_ancestries_expanded,
-        setup_es_tools();    // detect when graph mode changes
-
-    function button_width_for(column: number): number {
-        return button_portion + title_widths[column];
-    }
-
-    function button_left_for(column: number): number {
-        return title_widths.slice(0, column).reduce((acc, width) => acc + gap + width + button_portion, 0);
-    }
-
-    function button_disabled_for(column: number): boolean {
-        return closure(T_Request.query_disabled, null, column);
-    }
+        setup_es_tools();
 
 	function setup_es_tools() {
         for (let column = 0; column < columns; column++) {

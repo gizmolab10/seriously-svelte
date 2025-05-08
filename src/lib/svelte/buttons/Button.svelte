@@ -41,6 +41,7 @@
 	//////////////////////////////////////
 
 	recompute_style();
+
 	$:	es_button.fill,
 		es_button.isOut,
 		$w_background_color,
@@ -49,6 +50,18 @@
 		$w_ancestries_grabbed,
 		$w_ancestries_expanded,
 		recompute_style();
+
+	function handle_s_mouse(s_mouse: S_Mouse) {
+		if (s_mouse.isHover) {		// NOT the same as isHovering
+			if (!!es_button) {
+				es_button.isOut = s_mouse.isOut;
+			}
+		}
+		if (!!closure) {
+			closure(s_mouse);		// so container can adjust behavior or appearance
+		}
+		recompute_style();
+	}
 	
 	function recompute_style() {
 		color = es_button.stroke;
@@ -74,18 +87,6 @@
 				background-color:${es_button.fill};
 			`.removeWhiteSpace();
 		}
-	}
-
-	function handle_s_mouse(s_mouse: S_Mouse) {
-		if (s_mouse.isHover) {		// NOT the same as isHovering
-			if (!!es_button) {
-				es_button.isOut = s_mouse.isOut;
-			}
-		}
-		if (!!closure) {
-			closure(s_mouse);		// so container can adjust behavior or appearance
-		}
-		recompute_style();
 	}
 
 </script>

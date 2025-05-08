@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, show, Size, layout, T_Layer, T_Request } from '../../ts/common/Global_Imports';
+	import { k, show, Size, layout, S_Mouse, T_Tool, T_Layer, T_Request } from '../../ts/common/Global_Imports';
 	import { w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
 	import { w_hierarchy, w_s_alteration } from '../../ts/common/Stores';
 	import Buttons_Grid from '../buttons/Buttons_Grid.svelte';
@@ -9,6 +9,7 @@
 	let ancestry = $w_hierarchy.grabs_latest_upward(true);
 	let list_title = ancestry.isExpanded && layout.inTreeMode ? 'conceal' : 'reveal';
 	let button_titles = updated_button_titles;
+    let reattachments = 0;
 
 	// buttons row sends column & T_Request:
 	// 	query_disabled		isTool_disabledAt
@@ -17,14 +18,17 @@
 
 	function updated_button_titles() {
 		return [
-			['show', 'selection', 'root'],
 			['browse', 'up', 'down', 'left', 'right'],
-			['list', `${list_title}`],
 			['add', 'child', 'sibling', 'line', 'parent', 'related'],
 			['delete', 'selection', 'parent', 'related'],
 			['move', 'up', 'down', 'left', 'right'],
-			['graph', 'center']];
+			['list', `${list_title}`],
+			['show', 'selection', 'root'],
+			['graph', 'center'],
+		];
 	}
+	
+    $: $w_s_alteration, reattachments += 1;
 
 	$:	w_ancestries_grabbed,
 		$w_ancestries_expanded,
@@ -41,21 +45,18 @@
 		button_titles = updated_button_titles();
 	}
 
-	function closure(t_request, s_mouse, row, column): boolean {
-		if (t_request == T_Request.query_disabled) {
-			return $w_hierarchy.isTool_disabledAt(row, column);
-		} else if (!s_mouse.isHover && s_mouse.isDown) {
-			return $w_hierarchy.handle_tool_clickedAt(row, column, s_mouse, name_for(row, column + 1));
+	function closure(t_request: T_Request, s_mouse: S_Mouse, row: number, column: number): boolean {
+		switch (t_request) {
+			case T_Request.query_disabled:
+				return $w_hierarchy.isTool_disabledAt(row, column);
+			case T_Request.query_visibility:
+				return !$w_s_alteration ? true : [T_Tool.add, T_Tool.delete].includes(row);
+			case T_Request.handle_click:
+				if (s_mouse.isDown) {
+					return $w_hierarchy.handle_tool_clickedAt(row, column, s_mouse, name_for(row, column + 1));
+				}
 		}
 		return false;
-	}
-
-	function visibility_closure(row: number): boolean {
-		if (!$w_s_alteration) {
-			return true;
-		} else {
-			return [3, 4].includes(row);
-		}
 	}
 
 </script>
@@ -66,14 +67,15 @@
 		top:{top + 1}px;
 		position:absolute;
 		z-index: {T_Layer.tools}'>
-	<Buttons_Grid
-		gap={3}
-		columns={5}
-		closure={closure}
-		font_sizes={font_sizes}
-		show_boxes={show_boxes}
-		width={k.width_details}
-		button_height={k.size.button}
-		button_titles={button_titles}
-		visibility_closure={visibility_closure}/>
+    {#key reattachments}
+		<Buttons_Grid
+			gap={3}
+			columns={5}
+			closure={closure}
+			font_sizes={font_sizes}
+			show_boxes={show_boxes}
+			width={k.width_details}
+			button_height={k.size.button}
+			button_titles={button_titles}/>
+    {/key}
 </div>

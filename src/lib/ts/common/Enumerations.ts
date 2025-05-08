@@ -70,9 +70,10 @@ export enum T_Alteration {
 }
 
 export enum T_Request {
-	query_disabled = 'query_disabled',
-	handle_click   = 'handle_click',
-	query_hit	   = 'query_hit',
+	query_visibility = 'query_visibility',
+	query_disabled	 = 'query_disabled',
+	handle_click	 = 'handle_click',
+	query_hit		 = 'query_hit',
 }
 
 export enum T_Kinship {
@@ -132,6 +133,16 @@ export enum T_Thing {
 	found	  = '?',
 	root	  = '!',
 	bulk	  = '~',	// bulk alias
+}
+
+export enum T_Tool {
+	browse,
+	add,
+	delete,
+	move,
+	list,
+	show,
+	graph,
 }
 
 export enum T_Predicate {

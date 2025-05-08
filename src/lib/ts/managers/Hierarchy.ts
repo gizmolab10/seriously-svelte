@@ -1,5 +1,5 @@
+import { T_Tool, T_Thing, T_Trait, T_Order, T_Create, T_Report, T_Control, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { c, k, p, u, ux, w, show, User, Thing, Trait, Point, debug, files, colors, signals, layout } from '../common/Global_Imports';
-import { T_Thing, T_Trait, T_Order, T_Create, T_Report, T_Control, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { Access, Ancestry, Predicate, Relationship, S_Mouse, S_Alteration, S_Title_Edit } from '../common/Global_Imports';
 import { w_popupView_id, w_ancestry_focus, w_s_title_edit, w_user_graph_offset } from '../common/Stores';
 import { w_storage_updated, w_s_alteration, w_ancestries_grabbed } from '../common/Stores';
@@ -113,83 +113,83 @@ export class Hierarchy {
 		}
 	}
 
-	async handle_tool_clickedAt(row: number, column: number, s_mouse: S_Mouse, name: string) {
-		if (!this.isTool_disabledAt(row, column)) {
+	async handle_tool_clickedAt(t_tool: number, column: number, s_mouse: S_Mouse, name: string) {
+		if (!this.isTool_disabledAt(t_tool, column)) {
 			// as each is implemented add return to the case
 			const ancestry = this.grabs_latest_upward(true);
-			switch (row) {
-				case 0: switch (column) { // 'show';
+			switch (t_tool) {
+				case T_Tool.show: switch (column) { // 'show';
 					case 0:	this.grabs_latest_assureIsVisible(); return; // 'selection';
 					case 1:	this.rootAncestry.becomeFocus(); return; // 'root';
 				} break;
-				case 1: switch (column) { // 'browse';
+				case T_Tool.browse: switch (column) { // 'browse';
 					case 0:	this.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, false, false); return; // 'up';
 					case 1:	this.grabs_latest_rebuild_persistentMoveUp_maybe(false, false, false, false); return; // 'down';
 					case 2:	await this.ancestry_rebuild_persistentMoveRight(ancestry, false, false, false, false, false); return; // 'left';
 					case 3:	await this.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, false, false, false); return; // 'right';
 				} break;
-				case 2: await this.ancestry_toggle_expansion(ancestry); return; // 'conceal | reveal';
-				case 3: switch (column) { // 'add';
+				case T_Tool.list: await this.ancestry_toggle_expansion(ancestry); return; // 'conceal | reveal';
+				case T_Tool.add: switch (column) { // 'add';
 					case 0:	await this.ancestry_edit_persistentCreateChildOf(ancestry); return; // 'child';
 					case 1:	await this.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); return; // 'sibling';
 					case 2:	await this.thing_edit_persistentAddLine(ancestry); return; // 'line';
 					case 3:	this.ancestry_toggle_alteration(T_Alteration.adding, Predicate.contains); return; // 'parent';
 					case 4:	this.ancestry_toggle_alteration(T_Alteration.adding, Predicate.isRelated); return; // 'related';
 				} break;
-				case 4: switch (column) { // 'delete';
+				case T_Tool.delete: switch (column) { // 'delete';
 					case 0:	await this.ancestries_rebuild_traverse_persistentDelete(get(w_ancestries_grabbed)); return; // 'selection';
 					case 1:	this.ancestry_toggle_alteration(T_Alteration.deleting, Predicate.contains); return; // 'parent';
 					case 2:	this.ancestry_toggle_alteration(T_Alteration.deleting, Predicate.isRelated); return; // 'related';
 				} break;
-				case 5: switch (column) { // 'move';
+				case T_Tool.move: switch (column) { // 'move';
 					case 0:	this.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, true, false); return; // 'up';
 					case 1:	this.grabs_latest_rebuild_persistentMoveUp_maybe(false, false, true, false); return; // 'down';
 					case 2:	await this.ancestry_rebuild_persistentMoveRight(ancestry, false, false, true, false, false); return; // 'left';
 					case 3:	await this.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, true, false, false); return; // 'right';
 				} break;
-				case 6: w.user_graph_offset_setTo(Point.zero); return; // 'center';
+				case T_Tool.graph: w.user_graph_offset_setTo(Point.zero); return; // 'center';
 			}
 			alert(`needed: ${name}`);
 		}
 	}
 
-	isTool_disabledAt(row: number, column: number): boolean {		// true means disabled
+	isTool_disabledAt(t_tool: number, column: number): boolean {		// true means disabled
 		const ancestry = this.grabs_latest_upward(true);
 		const no_children = !ancestry.hasChildren;
 		const no_siblings = !ancestry.hasSiblings;
 		const is_root = ancestry.isRoot;
 		const disable_revealConceal = no_children || is_root || (layout.inRadialMode && ancestry.isFocus);
-		switch (row) {
-			case 0: switch (column) { // 'show';
+		switch (t_tool) {
+			case T_Tool.show: switch (column) { // 'show';
 				case 0:	return ancestry.isVisible; // 'selection';
 				case 1:	return this.rootAncestry.isVisible; // 'root';
 			} break;
-			case 1: switch (column) { // 'browse';
+			case T_Tool.browse: switch (column) { // 'browse';
 				case 0:	return no_siblings; // 'up';
 				case 1:	return no_siblings; // 'down';
 				case 2:	return is_root; // 'left';
 				case 3:	return no_children; // 'right';
 			} break;
-			case 2: return disable_revealConceal; // 'conceal | reveal';
-			case 3: switch (column) { // 'add';
+			case T_Tool.list: return disable_revealConceal; // 'conceal | reveal';
+			case T_Tool.add: switch (column) { // 'add';
 				case 0:	return false; // 'child';
 				case 1:	return no_siblings; // 'sibling';
 				case 2:	return false; // 'line';
 				case 3:	return is_root; // 'parent';
 				case 4:	break; // 'related';
 			} break;
-			case 4: switch (column) { // 'delete';
+			case T_Tool.delete: switch (column) { // 'delete';
 				case 0:	return is_root; // 'selection';
 				case 1:	return !ancestry.hasMultipleParents; // 'parent';
 				case 2:	break; // 'related';
 			} break;
-			case 5: switch (column) { // 'move';
+			case T_Tool.move: switch (column) { // 'move';
 				case 0:	return no_siblings; // 'up';
 				case 1:	return no_siblings; // 'down';
 				case 2:	return is_root; // 'left';
 				case 3:	return is_root; // 'right';
 			} break;
-			case 6: return get(w_user_graph_offset).isZero; // 'center';
+			case T_Tool.graph: return get(w_user_graph_offset).isZero; // 'center';
 		}
 		return true;
 	}
