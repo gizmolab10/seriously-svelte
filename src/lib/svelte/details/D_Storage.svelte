@@ -88,7 +88,7 @@
 		<Button name='import'
 			width=42
 			zindex=T_Layer.frontmost
-			height={k.size.button - 4}
+			height={k.height.button - 4}
 			center={new Point(74, buttons_top)}
 			es_button={s_element_byStorageType[T_Storage.import]}
 			closure={(s_mouse) => button_closure_forStorage_Type(s_mouse, T_Storage.import)}>
@@ -97,7 +97,7 @@
 		<Button name='export'
 			width=42
 			zindex=T_Layer.frontmost
-			height={k.size.button - 4}
+			height={k.height.button - 4}
 			center={new Point(122, buttons_top)}
 			es_button={s_element_byStorageType[T_Storage.export]}
 			closure={(s_mouse) => button_closure_forStorage_Type(s_mouse, T_Storage.export)}>

@@ -19,7 +19,7 @@
 	const traits_width = k.width_details - 20;
 	const separator_font_size = k.font_size.smallest;
 	const traits_center = new Point(122, text_top - 20);
-	const traits_size = new Size(info_width - 58, k.size.button + 4);
+	const traits_size = new Size(info_width - 58, k.height.button + 4);
 	const traits_rect = Rect.createCenterRect(traits_center, traits_size);
 	const es_info = ux.s_element_for(new Identifiable(id), T_Element.info, id);
 	let ancestry: Ancestry | null = $w_ancestry_focus;
@@ -125,7 +125,7 @@
 		{#if information.length != 0}
 			<Segmented
 				name='info-type'
-				height={k.height.small}
+				height={k.height.button}
 				selected={[show.t_info]}
 				font_size={k.font_size.small}px
 				selection_closure={selection_closure}

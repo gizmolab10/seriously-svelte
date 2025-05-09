@@ -7,7 +7,7 @@
 	export let picker_offset = k.empty;
 	export let color = colors.default_forThings;
 	export let color_closure = (color: string) => {};
-	const selectorSize = k.size.dot + 1;
+	const selectorSize = k.height.dot + 1;
 	const pickerSize = 122;
 
 	async function handleColorChange(event) {

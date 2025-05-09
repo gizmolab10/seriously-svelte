@@ -128,13 +128,13 @@ export class Hierarchy {
 					case k.tools.add.child:		   await this.ancestry_edit_persistentCreateChildOf(ancestry); return;
 					case k.tools.add.sibling:	   await this.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); return;
 					case k.tools.add.line:		   await this.thing_edit_persistentAddLine(ancestry); return;
-					case k.tools.add.parent:	   this.ancestry_toggle_alteration(T_Alteration.adding, Predicate.contains); return;
-					case k.tools.add.related:	   this.ancestry_toggle_alteration(T_Alteration.adding, Predicate.isRelated); return;
+					case k.tools.add.parent:	   this.ancestry_toggle_alteration(T_Alteration.add, Predicate.contains); return;
+					case k.tools.add.related:	   this.ancestry_toggle_alteration(T_Alteration.add, Predicate.isRelated); return;
 				}								break;
 				case T_Tool.delete:				switch (column) {
 					case k.tools.delete.selection: await this.ancestries_rebuild_traverse_persistentDelete(get(w_ancestries_grabbed)); return;
-					case k.tools.delete.parent:	   this.ancestry_toggle_alteration(T_Alteration.deleting, Predicate.contains); return;
-					case k.tools.delete.related:   this.ancestry_toggle_alteration(T_Alteration.deleting, Predicate.isRelated); return;
+					case k.tools.delete.parent:	   this.ancestry_toggle_alteration(T_Alteration.delete, Predicate.contains); return;
+					case k.tools.delete.related:   this.ancestry_toggle_alteration(T_Alteration.delete, Predicate.isRelated); return;
 				}								break;
 				case T_Tool.move:				switch (column) {
 					case k.tools.move.up:		   this.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, true, false); return;
@@ -367,7 +367,7 @@ export class Hierarchy {
 		const thing = ancestry.thing;
 		if (!!thing && parent && parentAncestry) {
 			const order = ancestry.order + (below ? k.halfIncrement : -k.halfIncrement);
-			const child = this.thing_runtimeCreate(thing.idBase, Identifiable.newID(), k.title.separator, parent.color, T_Thing.generic);
+			const child = this.thing_runtimeCreate(thing.idBase, Identifiable.newID(), k.title.line, parent.color, T_Thing.generic);
 			await this.ancestry_edit_persistentAddAsChild(parentAncestry, child, order, false);
 		}
 	}

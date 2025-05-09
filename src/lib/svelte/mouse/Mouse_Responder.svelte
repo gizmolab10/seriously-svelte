@@ -12,8 +12,8 @@
 	export let detect_doubleClick = false;
 	export let detect_longClick = false;
 	export let detect_mouseDown = true;
-	export let height = k.size.button;
-	export let width = k.size.button;
+	export let height = k.height.button;
+	export let width = k.height.button;
 	export let detect_mouseUp = true;
 	export let position = 'absolute';
 	export let zindex = T_Layer.dots;

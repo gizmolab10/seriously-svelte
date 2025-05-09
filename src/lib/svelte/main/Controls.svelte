@@ -9,8 +9,8 @@
 	import Button from '../buttons/Button.svelte';
 	import SVG_D3 from '../kit/SVG_D3.svelte';
 	import { onMount } from 'svelte';
-	const size_small = k.size.button;
-	const details_top = k.size.dot / 2;
+	const size_small = k.height.button;
+	const details_top = k.height.dot / 2;
 	const y_center = details_top + 3.5;
 	const size_big = size_small + 4;
 	const lefts = [10, 55, 117, 278];

@@ -39,17 +39,12 @@ export default class Constants {
 		long_click:	  800, };
 
 	title = {
-		separator: '------------------------',
-		default: 'Please, enter a title', };
+		default: 'Please, enter a title',
+		line:	 '------------------------', };
 
 	ratio = {
 		zoom_out: 0.9,
 		zoom_in:  1.1 };
-
-	size = {
-		button:	dot_size + 3,
-		line:	row_height + 2,
-		dot:	dot_size, };
 
 	radius = {
 		arcSlider_cap: 7.5,
@@ -81,12 +76,13 @@ export default class Constants {
 		fork:		   2.5,
 		thin:		   1, };
 
-
 	height = {
 		separator: 7,
+		line:	   row_height + 2,
 		segmented: row_height + 1,
-		small:	   dot_size + 3,
 		row:	   row_height,
+		button:	   dot_size + 3,
+		dot:	   dot_size,
 		banner: {
 			controls: banner_height,
 			crumbs:	  banner_height,

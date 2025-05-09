@@ -7,7 +7,7 @@
 	import SVG_D3 from '../kit/SVG_D3.svelte';
 	import { onMount } from 'svelte';
 	let breadcrumb_reattachments = 0;
-	let size = k.size.button;
+	let size = k.height.button;
 	let lefts: Array<string> = [];
 	let things: Array<Thing> = [];
 	let ancestry: Ancestry;

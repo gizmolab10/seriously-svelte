@@ -103,7 +103,7 @@ export default class G_Widget {
 			if (forGraphMode == get(w_t_graph)) {	// assure modes match
 				const subtree_height = this.ancestry.visibleSubtree_height();
 				const branches_height = height + subtree_height / 2;
-				const branches_rect = new Rect(origin, new Size(k.size.line, branches_height - 1));
+				const branches_rect = new Rect(origin, new Size(k.height.line, branches_height - 1));
 				const branching_widget_origin = this.origin_forAncestry_inRect(this.ancestry, branches_rect);
 				this.g_line.rect = branches_rect;
 				this.forGraphMode = forGraphMode;
@@ -131,7 +131,7 @@ export default class G_Widget {
 		let x, y = 0;
 		if (!!branch) {
 			y = rect.extent.y - ancestry.visibleSubtree_halfHeight;
-			x = rect.origin.x + branch.width_ofTitle + k.size.dot + k.size.line;
+			x = rect.origin.x + branch.width_ofTitle + k.height.dot + k.height.line;
 		}
 		return new Point(x, y);
 	}
@@ -169,7 +169,7 @@ export default class G_Widget {
 			const subtree_size = ancestry.visibleSubtree_size;
 			const x_offset_ofReveal = focus?.width_ofTitle / 2 - 2;
 			const x_offset_forDetails = (get(w_show_details) ? -k.width_details : 0);
-			const x_offset = 15 + x_offset_forDetails - (subtree_size.width / 2) - (k.size.dot / 2.5) + x_offset_ofReveal;
+			const x_offset = 15 + x_offset_forDetails - (subtree_size.width / 2) - (k.height.dot / 2.5) + x_offset_ofReveal;
 			const origin_ofReveal = graph_rect.center.offsetByXY(x_offset, offset_y);
 			this.origin_ofWidget = origin_ofReveal.offsetByXY(-21.5 - x_offset_ofReveal, -5);
 		}
@@ -181,9 +181,9 @@ export default class G_Widget {
 			const offsetY = graphRect.origin.y + 1;
 			const subtree_size = this.ancestry.visibleSubtree_size;
 			const offsetX_ofFirstReveal = (this.ancestry.thing?.width_ofTitle ?? 0) / 2 - 2;
-			const branches_offsetY = (k.size.dot / 2) -(subtree_size.height / 2) - 4;
-			const branches_offsetX = -37 + k.size.line - (k.size.dot / 2) + offsetX_ofFirstReveal;
-			const offsetX = (get(w_show_details) ? -k.width_details : 0) + 15 + offsetX_ofFirstReveal - (subtree_size.width / 2) - (k.size.dot / 2.5);
+			const branches_offsetY = (k.height.dot / 2) -(subtree_size.height / 2) - 4;
+			const branches_offsetX = -37 + k.height.line - (k.height.dot / 2) + offsetX_ofFirstReveal;
+			const offsetX = (get(w_show_details) ? -k.width_details : 0) + 15 + offsetX_ofFirstReveal - (subtree_size.width / 2) - (k.height.dot / 2.5);
 			const origin_ofFocusReveal = graphRect.center.offsetByXY(offsetX, -offsetY);
 			if (get(w_device_isMobile)) {
 				origin_ofFocusReveal.x = 25;
@@ -209,7 +209,7 @@ export default class G_Widget {
 	private layout_treeLine() {
 		const ancestry = this.ancestry;
 		if (!!ancestry.thing && layout.inTreeMode) {
-			const dot_size = k.size.dot;
+			const dot_size = k.height.dot;
 			const offset_ofBranch = new Point(dot_size * 1.3, -(7 + dot_size / 15));
 			this.origin_ofTrunk = this.g_line.rect.extent.offsetBy(offset_ofBranch);
 			this.g_line.update_svg_andName();
@@ -219,7 +219,7 @@ export default class G_Widget {
 	private layout_widget() {
 		const ancestry = this.ancestry;
 		if (!!ancestry.thing) {		// short-circuit mismatched graph mode
-			const dot_size = k.size.dot;
+			const dot_size = k.height.dot;
 			const show_reveal = this.showingReveal;
 			const widget_pointsRight = this.widget_pointsRight;
 			const width_ofReveal = show_reveal ? dot_size : 0;

@@ -25,7 +25,7 @@
 	let origin_ofTitle = g_widget.origin_ofTitle;
 	let width_ofWidget = g_widget.width_ofWidget;
 	let widgetWrapper!: Svelte_Wrapper;
-	let border_radius = k.size.dot / 2;
+	let border_radius = k.height.dot / 2;
 	let center_ofDrag = Point.zero;
 	let revealCenter = Point.zero;
 	let border = es_widget.border;

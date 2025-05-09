@@ -10,7 +10,7 @@
 	export let points_right = true;
 	export let name = k.empty;
     export let ancestry;
-	const size = k.size.dot;
+	const size = k.height.dot;
 	const capture_size = size;
 	const es_drag = ux.s_element_forName(name);		// survives onDestroy, created by widget
 	let fill_color = debug.lines ? 'transparent' : es_drag.fill;

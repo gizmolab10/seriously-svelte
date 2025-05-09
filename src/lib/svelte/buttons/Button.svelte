@@ -12,10 +12,10 @@
 	export let origin: Point | null = null;
 	export let center: Point | null = null;
 	export let padding = '0px 6px 1px 6px';
+	export let height = k.height.button;
+	export let width = k.height.button;
 	export let border_thickness = 0.5;
 	export let color = colors.default;
-	export let height = k.size.button;
-	export let width = k.size.button;
 	export let position = 'absolute';
 	export let zindex = T_Layer.dots;
 	export let isToggle = false;

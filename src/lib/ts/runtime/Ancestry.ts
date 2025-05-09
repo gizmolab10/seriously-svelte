@@ -143,9 +143,9 @@ export default class Ancestry extends Identifiable {
 
 	get svgPathFor_revealDot(): string {
 		if (this.shows_reveal) {
-			return svgPaths.fat_polygon(k.size.dot, this.direction_ofReveal);
+			return svgPaths.fat_polygon(k.height.dot, this.direction_ofReveal);
 		}
-		return svgPaths.circle_atOffset(k.size.dot, k.size.dot - 1);
+		return svgPaths.circle_atOffset(k.height.dot, k.height.dot - 1);
 	}
 
 	get firstVisibleChildAncestry(): Ancestry {
@@ -565,7 +565,7 @@ export default class Ancestry extends Identifiable {
 	g_line_toOther(other: Ancestry) : G_TreeLine {
 		const offset_y = 0.5;
 		const g_line = new G_TreeLine(this, other, true);
-		const offset_x = -(k.size.line + k.size.dot / 2);
+		const offset_x = -(k.height.line + k.height.dot / 2);
 		const extent = other.g_widget.absolute_center_ofDrag;
 		const origin = this.g_widget.absolute_center_ofReveal.offsetByY(-2.5);
 		const rect = Rect.createExtentRect(origin, extent).offsetByXY(offset_x, offset_y);
@@ -656,7 +656,7 @@ export default class Ancestry extends Identifiable {
 						subtreeWidth = branchWidth;
 					}
 				}
-				width += subtreeWidth + k.size.line + k.size.dot;
+				width += subtreeWidth + k.height.line + k.height.dot;
 			}
 			return width;
 		}
@@ -705,7 +705,7 @@ export default class Ancestry extends Identifiable {
 					const toolIsAnAncestor = isBidirectional ? false : thing.parentIDs.includes(toolThing.id);
 					const isParentOfTool = this.thing_isImmediateParentOf(ancestry_being_altered, predicate.kind);
 					const isProgenyOfTool = this.isABranchOf(ancestry_being_altered);
-					const isDeleting = s_alteration.t_alteration == T_Alteration.deleting;
+					const isDeleting = s_alteration.t_alteration == T_Alteration.delete;
 					const doNotAlter_forIsNotDeleting = isParentOfTool || isProgenyOfTool || toolIsAnAncestor;
 					const canAlter = isDeleting ? isParentOfTool : !doNotAlter_forIsNotDeleting;
 					return canAlter
@@ -723,10 +723,10 @@ export default class Ancestry extends Identifiable {
 			if (!!alteration && !!ancestry_being_altered && !!kind) {
 				this.hierarchy.stop_alteration();
 				switch (alteration.t_alteration) {
-					case T_Alteration.deleting:
+					case T_Alteration.delete:
 						await this.hierarchy.relationship_forget_persistentDelete(ancestry_being_altered, ancestry, kind);
 						break;
-					case T_Alteration.adding:
+					case T_Alteration.add:
 						const toolsThing = ancestry_being_altered.thing;
 						if (!!toolsThing) {
 							await this.hierarchy.ancestry_extended_byAddingThing_toAncestry_remember_persistentCreate_relationship(toolsThing, ancestry, kind);

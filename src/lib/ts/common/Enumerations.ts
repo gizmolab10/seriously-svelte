@@ -65,8 +65,8 @@ export enum T_Storage {
 }
 
 export enum T_Alteration {
-	deleting = 'deleting',
-	adding	 = 'adding',
+	delete = 'delete',
+	add	   = 'add',
 }
 
 export enum T_Kinship {

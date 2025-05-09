@@ -41,7 +41,7 @@
 		allow_multiple={true}
 		font_size={font_size}
 		name='counts-selector'
-		height={k.height.small}
+		height={k.height.button}
 		origin={new Point(41, 13)}
 		selected={$w_t_countDots}
 		selection_closure={selection_closure}/>
