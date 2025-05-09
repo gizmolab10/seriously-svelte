@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { T_Tool, T_Layer, T_Request, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
-	import { w_hierarchy, w_s_alteration, w_count_button_restyle } from '../../ts/common/Stores';
+	import { w_hierarchy, w_user_graph_offset, w_s_alteration } from '../../ts/common/Stores';
+	import { k, show, Size, Point, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
 	import { w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
-	import { k, show, Size, Point, layout, S_Mouse } from '../../ts/common/Global_Imports';
 	import Buttons_Grid from '../buttons/Buttons_Grid.svelte';
 	import Button from '../buttons/Button.svelte';
 	export let top = 0;
@@ -32,10 +32,10 @@
 	
     $: $w_s_alteration, reattachments += 1;
 
-	$:	$w_ancestries_grabbed,
+	$:	$w_user_graph_offset,
+		$w_ancestries_grabbed,
 		$w_ancestries_expanded,
 		update_button_titles();
-		$w_count_button_restyle += 1
 
 	function name_for(t_tool: number, column: number) {
 		const titles = button_titles[t_tool];
@@ -46,6 +46,7 @@
 		ancestry = $w_hierarchy.grabs_latest_upward(true);
 		list_title = ancestry.isExpanded && layout.inTreeMode ? 'conceal' : 'reveal';
 		button_titles = compute_button_titles();
+		signals.signal_tool_update();
 	}
 
 	function target_ofAlteration(): string | null {
@@ -54,18 +55,21 @@
 		return kind_ofAPredicate == T_Predicate.contains ? 'parent' : kind_ofAPredicate == T_Predicate.isRelated ? 'related' : null;
 	}
 
+	function name_ofToolAt(t_tool: number, column: number): string { return Object.keys(k.tools[T_Tool[t_tool]])[column]; }
+
 	function isTool_invertedAt(t_tool: number, column: number): boolean {
 		const action = target_ofAlteration();
 		const s_alteration = $w_s_alteration;
 		const t_alteration = s_alteration?.t_alteration;
-		const kind_ofTool = Object.keys(k.tools[T_Tool[t_tool]])[column];
-		return !!t_alteration && !!action && action == kind_ofTool
+		return !!t_alteration && !!action && action == name_ofToolAt(t_tool, column)
 			&& ((t_tool == T_Tool.add    && t_alteration == T_Alteration.add)
 			||  (t_tool == T_Tool.delete && t_alteration == T_Alteration.delete));
 	}
 
-	function tool_closure(t_request: T_Request, s_mouse: S_Mouse, t_tool: number, column: number): boolean {
+	function tool_closure(t_request: T_Request, s_mouse: S_Mouse, t_tool: number, column: number): any {
 		switch (t_request) {
+			case T_Request.query_name:
+				return name_ofToolAt(t_tool, column);
 			case T_Request.query_disabled:
 				return $w_hierarchy.isTool_disabledAt(t_tool, column);
 			case T_Request.query_inverted:
@@ -77,13 +81,13 @@
 					return $w_hierarchy.handle_tool_clickedAt(t_tool, column, s_mouse, name_for(t_tool, column + 1));
 				}
 		}
-		return false;
+		return null;
 	}
 
 </script>
 
 <div
-	class='editing-tools'
+	class='tools'
 	style='
 		top:{top + 1}px;
 		position:absolute;
@@ -92,27 +96,28 @@
 		<Buttons_Grid
 			gap={3}
 			columns={5}
+			name='tools'
 			closure={tool_closure}
 			font_sizes={font_sizes}
 			show_boxes={show_boxes}
 			width={k.width_details}
-			button_height={k.height.button}
-			button_titles={button_titles}/>
+			button_titles={button_titles}
+			button_height={k.height.button}/>
 		{#if $w_s_alteration}
 			<div
 				class='alteration-tools'
 				style='
-					top:110px;
+					top:120px;
 					display:block;
 					position:absolute;
 					text-align:center;
 					width:{k.width_details}px;
 					z-index:{T_Layer.tools + 1};
-					font-size:{k.font_size.smaller}px;'>
-				To <strong>{$w_s_alteration.t_alteration}</strong> an item <strong>{target_ofAlteration() ?? k.unknown}</strong>
-				<br> to <em>{ancestry.title}</em>
-				<br> choose the item's <strong>blinking</strong> dot
-				<br><br> Or to <strong>cancel</strong>,
+					font-size:{k.font_size.smallest}px;'>
+				To <em>{$w_s_alteration.t_alteration}</em> an item <em>{target_ofAlteration() ?? k.unknown}</em>
+				<br> to <strong>{ancestry.title}</strong>
+				<br> choose the item's <em>blinking</em> dot
+				<br><br> When you are <em>done</em>,
 				<br> click any enabled button (above)
 			</div>
 		{/if}

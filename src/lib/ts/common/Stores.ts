@@ -30,7 +30,6 @@ export const w_device_isMobile		  = writable<boolean>();
 export const w_thing_fontFamily		  = writable<string>();
 export const w_background_color		  = writable<string>();
 export const w_ring_rotation_radius	  = writable<number>();
-export const w_count_button_restyle   = writable<number>();
 export const w_ring_rotation_angle	  = writable<number>();
 export const w_relationship_order	  = writable<number>();
 export const w_storage_updated		  = writable<number>();

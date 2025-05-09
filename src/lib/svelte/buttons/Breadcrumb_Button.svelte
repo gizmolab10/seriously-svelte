@@ -12,8 +12,8 @@
 	let borderColor = $w_background_color;
 	let title = thing.breadcrumb_title ?? k.empty;
 	let height = layout.height_ofBannerAt(T_Banner.crumbs);
-	let name = `crumb (for ${title ?? 'unknown'})`;
 	let border = `${borderStyle} ${borderColor}`;
+	let name = `crumb: ${title ?? 'unknown'}`;
 	let ancestry = es_breadcrumb.ancestry;
 	let width = u.getWidthOf(title) + 15;
 	let breadcrumb_reattachments = 0;

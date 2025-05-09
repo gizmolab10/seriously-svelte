@@ -5,11 +5,12 @@ import { Signal } from 'typed-signals';
 import { get } from 'svelte/store';
 
 export enum T_Signal {
-	thing	   = 'thing',
-	rebuild	   = 'rebuild',
-	reattach   = 'reattach',
-	reposition = 'reposition',
-	alterState = 'alterState',
+	thing		= 'thing',
+	rebuild		= 'rebuild',
+	reattach	= 'reattach',
+	reposition	= 'reposition',
+	alteration	= 'alteration',
+	tool_update	= 'tool_update',
 }
 
 export enum T_Signal_From {
@@ -37,7 +38,8 @@ export class Signals {
 
 	conduit = new Signal<(t_signal: T_Signal, priority: number, value: any) => void>();
 	
-	signal_altering(value: any = null) { this.signal(T_Signal.alterState, value); }
+	signal_altering(value: any = null) { this.signal(T_Signal.alteration, value); }
+	signal_tool_update(value: any = null) { this.signal(T_Signal.tool_update, value); }
 	signal_rebuildGraph_from(value: any = null) { this.signal(T_Signal.rebuild, value); }	// N.B., widget whatches this to reveal tools
 	signal_rebuildGraph_fromFocus() { this.signal_rebuildGraph_from(get(w_ancestry_focus)); }
 	signal_reattach_widgets_from(value: any = null) { this.signal(T_Signal.reattach, value); }
@@ -81,8 +83,12 @@ export class Signals {
 		return this.handle_signal_atPriority(T_Signal.reposition, priority, onSignal);
 	}
 
+	handle_tool_update(priority: number, onSignal: (value: any | null) => any ) {
+		return this.handle_signal_atPriority(T_Signal.tool_update, priority, onSignal);
+	}
+
 	handle_altering(onSignal: (value: any | null) => any ) {
-		return this.handle_signal_atPriority(T_Signal.alterState, 0, onSignal);
+		return this.handle_signal_atPriority(T_Signal.alteration, 0, onSignal);
 	}
 
 	handle_signal_atPriority(t_signal: T_Signal, priority: number, onSignal: (value: any | null) => any ) {
@@ -133,7 +139,7 @@ export class Signals {
 	}
 
 	adjust_highestPriority_forAllSignals(priority: number) {
-		const all_t_signals = [T_Signal.thing, T_Signal.rebuild, T_Signal.reposition, T_Signal.alterState];
+		const all_t_signals = [T_Signal.thing, T_Signal.rebuild, T_Signal.reposition, T_Signal.alteration];
 		for (const t_signal of all_t_signals) {
 			this.adjust_highestPriority_forSignal(priority, t_signal);
 		}

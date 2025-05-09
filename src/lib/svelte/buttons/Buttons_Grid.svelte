@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import {T_Request, T_Element, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
+    import {S_Mouse, S_Element, T_Element, T_Request, T_Tool } from '../../ts/common/Global_Imports';
     import { w_background_color, w_s_alteration } from '../../ts/common/Stores';
     import { k, show, Point, colors } from '../../ts/common/Global_Imports';
     import Buttons_Box from './Buttons_Box.svelte';
@@ -9,6 +9,7 @@
     export let button_height = 15;
     export let show_boxes = true;
     export let font_size: number;
+	export let name = k.empty;
     export let width: number;
     export let gap = 2;
 	const rows = button_titles.length;
@@ -34,9 +35,9 @@
                 show_box={show_boxes}
                 button_titles={titles}
                 font_sizes={font_sizes}
-                name={`buttons-box-${row}`}
                 button_height={button_height}
                 origin={button_origin_for(row)}
+                name={`${name}-grid-${T_Tool[row]}`}
                 closure={(t_request, s_mouse, column) => closure(t_request, s_mouse, row, column)}/>
         {/if}
     {/each}

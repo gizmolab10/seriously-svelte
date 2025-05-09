@@ -125,6 +125,7 @@ export enum T_Request {
 	query_disabled	 = 'query_disabled',
 	query_inverted	 = 'query_inverted',
 	handle_click	 = 'handle_click',
+	query_name		 = 'query_name',
 	query_hit		 = 'query_hit',
 }
 

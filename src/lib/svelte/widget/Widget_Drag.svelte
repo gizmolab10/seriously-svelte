@@ -3,8 +3,8 @@
 	import { T_Layer, T_Graph, T_Alteration, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_t_countDots, w_thing_color, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { layout, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
+	import { w_s_alteration, w_background_color } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import { w_background_color } from '../../ts/common/Stores';
 	import SVG_D3 from '../kit/SVG_D3.svelte';
 	import { onMount } from 'svelte';
 	export let points_right = true;
