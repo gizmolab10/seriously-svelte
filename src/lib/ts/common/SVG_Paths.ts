@@ -1,4 +1,4 @@
-import { k, u, Size, Point, T_Oblong, Direction } from '../common/Global_Imports';
+import { k, u, Size, Point, E_Oblong, Direction } from '../common/Global_Imports';
 import type { Integer } from '../common/Types';
 
 export default class SVG_Paths {
@@ -20,7 +20,7 @@ export default class SVG_Paths {
         return `M ${start} ${start} L ${end} ${end} M ${start} ${end} L ${end} ${start}`;
     }
 
-    t_cross(diameter: number, margin: number): string {
+    e_cross(diameter: number, margin: number): string {
 		const radius = diameter / 2;
 		const length = (radius - margin) * 2;
         return `M ${margin + 2} ${radius} L ${length + 1} ${radius} M ${radius} ${margin + 2} L ${radius} ${diameter - margin - 2}`;
@@ -177,9 +177,9 @@ export default class SVG_Paths {
 		return path;
 	}
 
-	oblong(center: Point, size: Size, part: T_Oblong = T_Oblong.full) {
-		const bumpRight = [T_Oblong.full, T_Oblong.right].includes(part);
-		const bumpLeft = [T_Oblong.full, T_Oblong.left].includes(part);
+	oblong(center: Point, size: Size, part: E_Oblong = E_Oblong.full) {
+		const bumpRight = [E_Oblong.full, E_Oblong.right].includes(part);
+		const bumpLeft = [E_Oblong.full, E_Oblong.left].includes(part);
 		const radius = size.height / 2;
 		const half = size.width / 2;
 		const cx = center.x;
@@ -194,10 +194,10 @@ export default class SVG_Paths {
 		const BL = `${L}, ${B}`;
 		const cap = `${radius}, ${radius} 0 0 1`;
 		switch(part) {
-			case T_Oblong.middle: return `M ${TL} L ${TR} L ${BR} L ${BL} L ${TL} Z`;
-			case T_Oblong.right:  return `M ${TL} L ${TR} A ${cap} ${BR} L ${BL} L ${TL} Z`;
-			case T_Oblong.left:	 return `M ${TL} L ${TR} L ${BR} L ${BL} A ${cap} ${TL} Z`;
-			case T_Oblong.full:	 return `M ${TL} L ${TR} A ${cap} ${BR} L ${BL} A ${cap} ${TL} Z`;
+			case E_Oblong.middle: return `M ${TL} L ${TR} L ${BR} L ${BL} L ${TL} Z`;
+			case E_Oblong.right:  return `M ${TL} L ${TR} A ${cap} ${BR} L ${BL} L ${TL} Z`;
+			case E_Oblong.left:	 return `M ${TL} L ${TR} L ${BR} L ${BL} A ${cap} ${TL} Z`;
+			case E_Oblong.full:	 return `M ${TL} L ${TR} A ${cap} ${BR} L ${BL} A ${cap} ${TL} Z`;
 		}
 		
 	}

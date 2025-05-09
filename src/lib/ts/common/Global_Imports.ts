@@ -6,15 +6,15 @@ import G_Cluster from '../layout/G_Cluster';
 import G_Segment from '../layout/G_Segment';
 import G_Widget from '../layout/G_Widget';
 
-import { T_Preference } from './Enumerations';
-import { T_Timer } from '../signals/Mouse_Timer';
-import { T_Quadrant, T_Orientation } from './Angle';
+import { E_Preference } from './Enumerations';
+import { E_Timer } from '../signals/Mouse_Timer';
+import { E_Quadrant, E_Orientation } from './Angle';
 import { G_Paging, G_Thing_Pages } from '../layout/G_Paging';
-import { T_Create, T_Browser, T_Alteration } from './Enumerations';
-import { T_Oblong, T_Element, T_SvelteComponent } from './Enumerations';
-import { T_Curve, T_Layer, T_Thing, T_Trait, T_Predicate } from './Enumerations';
-import { T_Graph, T_Order, T_Widget, T_RingZone, T_Startup, T_Kinship } from './Enumerations';
-import { T_Info, T_Tool, T_Banner, T_Control, T_Details, T_Report, T_Request, T_Storage } from './Enumerations';
+import { E_Create, E_Browser, E_Alteration } from './Enumerations';
+import { E_Oblong, E_Element, E_SvelteComponent } from './Enumerations';
+import { E_Curve, E_Layer, E_Thing, E_Trait, E_Predicate } from './Enumerations';
+import { E_Graph, E_Order, E_Widget, E_RingZone, E_Startup, E_Kinship } from './Enumerations';
+import { E_Info, E_Tool, E_Banner, E_Control, E_Details, E_Report, E_Request, E_Storage } from './Enumerations';
 
 import S_Title_Edit from '../state/S_Title_Edit';
 import S_Alteration from '../state/S_Alteration';
@@ -39,8 +39,8 @@ import { ErrorTrace } from '../debug/ErrorTrace';
 import { Hierarchy } from '../managers/Hierarchy';
 import { databases } from '../database/Databases';
 import { Seriously_Range } from './Seriously_Range';
-import { signals, T_Signal } from '../signals/Signals';
-import { debug, Debug, T_Debug } from '../debug/Debug';
+import { signals, E_Signal } from '../signals/Signals';
+import { debug, Debug, E_Debug } from '../debug/Debug';
 
 import Relationship from '../persistable/Relationship';
 import Persistable from '../persistable/Persistable';
@@ -68,22 +68,22 @@ import interact from 'interactjs';
 
 export {
 	e, c, k, p, u, ux, w,
-	T_Timer, Mouse_Timer,
+	E_Timer, Mouse_Timer,
 	interact, transparentize,
 	wrappers, Seriously_Range,
 	Rect, Size, Point, svgPaths,
 	Ancestry, Hierarchy, databases,
-	debug, Debug, T_Debug, ErrorTrace,
-	Angle, Direction, T_Quadrant, T_Orientation,
-	T_Element, Svelte_Wrapper, T_SvelteComponent,
+	debug, Debug, E_Debug, ErrorTrace,
+	Angle, Direction, E_Quadrant, E_Orientation,
+	E_Element, Svelte_Wrapper, E_SvelteComponent,
 	S_Common, S_Rotation, S_Resizing, G_Thing_Pages,
 	G_Widget, G_Segment, G_TreeLine, G_TreeBranches,
 	G_Paging, G_Cluster, G_RadialGraph, G_ArcSlider,
-	T_Order, T_Banner, T_Details, T_Startup, T_Graph,
+	E_Order, E_Banner, E_Details, E_Startup, E_Graph,
 	show, files, builds, colors, layout, radial, signals,
 	S_Mouse, S_Widget, S_Element, S_Alteration, S_Title_Edit,
-	T_Layer, T_Curve, T_Create, T_RingZone, T_Oblong, T_Alteration,
+	E_Layer, E_Curve, E_Create, E_RingZone, E_Oblong, E_Alteration,
 	User, Persistable, Thing, Trait, Access, Predicate, Relationship,
-	T_Thing, T_Trait, T_Widget, T_Predicate, T_Kinship, T_Preference,
-	T_Info, T_Tool, T_Control, T_Browser, T_Signal, T_Report, T_Request, T_Storage,
+	E_Thing, E_Trait, E_Widget, E_Predicate, E_Kinship, E_Preference,
+	E_Info, E_Tool, E_Control, E_Browser, E_Signal, E_Report, E_Request, E_Storage,
 };

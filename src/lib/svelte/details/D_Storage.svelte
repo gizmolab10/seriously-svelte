@@ -1,9 +1,9 @@
 <script lang='ts'>
-	import { k, ux, Point, colors, S_Element, databases, Hierarchy, T_Storage } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Element, T_Preference } from '../../ts/common/Global_Imports';
+	import { k, ux, Point, colors, S_Element, databases, Hierarchy, E_Storage } from '../../ts/common/Global_Imports';
+	import { E_Layer, E_Element, E_Preference } from '../../ts/common/Global_Imports';
 	import { w_storage_updated, w_thing_fontFamily } from '../../ts/common/Stores';
-	import { w_t_database, w_hierarchy } from '../../ts/common/Stores';
-	import { T_Database } from '../../ts/database/DBCommon';
+	import { w_e_database, w_hierarchy } from '../../ts/common/Stores';
+	import { E_Database } from '../../ts/database/DBCommon';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Text_Table from '../kit/Text_Table.svelte';
 	import Separator from '../kit/Separator.svelte';
@@ -29,27 +29,27 @@
 	}
 
 	function selection_closure(titles: Array<string>) {
-		const t_database = titles[0] as T_Database;	// only ever contains one title
-		w_t_database.set(t_database);
+		const e_database = titles[0] as E_Database;	// only ever contains one title
+		w_e_database.set(e_database);
 	}
 	
 	function setup_s_elements() {
-		const ids = [T_Storage.export, T_Storage.import];
+		const ids = [E_Storage.export, E_Storage.import];
 		for (const id of ids) {
-			const es_storage = ux.s_element_for(null, T_Element.storage, id);
+			const es_storage = ux.s_element_for(null, E_Element.storage, id);
 			es_storage.set_forHovering(colors.default, 'pointer');
 			s_element_byStorageType[id] = es_storage;
 		}
 	}
 	
-	function button_closure_forStorage_Type(s_mouse, t_storage) {
+	function button_closure_forStorage_Type(s_mouse, e_storage) {
 		if (s_mouse.isHover) {
-			s_element_byStorageType[t_storage].isOut = s_mouse.isOut;
+			s_element_byStorageType[e_storage].isOut = s_mouse.isOut;
 		} else if (s_mouse.isUp) {
 			const h = $w_hierarchy;
-			switch (t_storage) {
-				case T_Storage.export: h.persist_toFile(); break;
-				case T_Storage.import: h.select_file_toUpload(s_mouse.event.shiftKey); break;
+			switch (e_storage) {
+				case E_Storage.export: h.persist_toFile(); break;
+				case E_Storage.import: h.select_file_toUpload(s_mouse.event.shiftKey); break;
 			}
 		}
 	}
@@ -62,10 +62,10 @@
 			padding:5px;'>
 		<Segmented
 			name='db'
-			selected={[$w_t_database]}
+			selected={[$w_e_database]}
 			origin={new Point(17, top + 3)}
 			selection_closure={selection_closure}
-			titles={[T_Database.local, T_Database.firebase, T_Database.airtable, T_Database.test]}/>
+			titles={[E_Database.local, E_Database.firebase, E_Database.airtable, E_Database.test]}/>
 		<div class='data-information'
 			style='
 				width:{k.width_details}px;
@@ -87,20 +87,20 @@
 			title_font_size={k.font_size.smallest}/>
 		<Button name='import'
 			width=42
-			zindex=T_Layer.frontmost
+			zindex=E_Layer.frontmost
 			height={k.height.button - 4}
 			center={new Point(74, buttons_top)}
-			es_button={s_element_byStorageType[T_Storage.import]}
-			closure={(s_mouse) => button_closure_forStorage_Type(s_mouse, T_Storage.import)}>
+			es_button={s_element_byStorageType[E_Storage.import]}
+			closure={(s_mouse) => button_closure_forStorage_Type(s_mouse, E_Storage.import)}>
 			<span style={button_style}>import</span>
 		</Button>
 		<Button name='export'
 			width=42
-			zindex=T_Layer.frontmost
+			zindex=E_Layer.frontmost
 			height={k.height.button - 4}
 			center={new Point(122, buttons_top)}
-			es_button={s_element_byStorageType[T_Storage.export]}
-			closure={(s_mouse) => button_closure_forStorage_Type(s_mouse, T_Storage.export)}>
+			es_button={s_element_byStorageType[E_Storage.export]}
+			closure={(s_mouse) => button_closure_forStorage_Type(s_mouse, E_Storage.export)}>
 			<span style={button_style}>export</span>
 		</Button>
 	</div>

@@ -1,14 +1,14 @@
 import { w_g_paging, w_font_size, w_background_color, w_thing_fontFamily } from '../common/Stores';
-import { G_Paging, T_Graph, T_Details, T_Kinship, T_Preference } from '../common/Global_Imports';
+import { G_Paging, E_Graph, E_Details, E_Kinship, E_Preference } from '../common/Global_Imports';
 import { c, k, u, ux, show, debug, radial, colors, Ancestry, databases } from '../common/Global_Imports';
-import { w_t_tree, w_t_graph, w_hierarchy, w_t_details, w_t_countDots } from '../common/Stores';
-import { w_t_database, w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
+import { w_e_tree, w_e_graph, w_hierarchy, w_e_details, w_e_countDots } from '../common/Stores';
+import { w_e_database, w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
 import { w_ancestries_grabbed } from '../common/Stores';
 import { get } from 'svelte/store';
 
 export class Preferences {
 	// for backwards compatibility with {focus, grabbed, expanded} which were stored as relationship ids (not as ancestry string)
-	usesRelationships = localStorage[T_Preference.relationships];
+	usesRelationships = localStorage[E_Preference.relationships];
 	ignoreAncestries  = !this.usesRelationships || this.usesRelationships == 'undefined';
 	
 	static readonly READ_WRITE: unique symbol;
@@ -51,14 +51,14 @@ export class Preferences {
 			c.eraseDB -= 1;
 			w_ancestries_grabbed.set([get(w_hierarchy).rootAncestry]);
 		} else {
-			w_ancestries_grabbed.set(this.ancestries_readDB_key(T_Preference.grabbed));
-			debug.log_grab(`  READ (${get(w_t_database)}): "${ids_forDB(get(w_ancestries_grabbed))}"`);
+			w_ancestries_grabbed.set(this.ancestries_readDB_key(E_Preference.grabbed));
+			debug.log_grab(`  READ (${get(w_e_database)}): "${ids_forDB(get(w_ancestries_grabbed))}"`);
 		}
 		setTimeout(() => {
 			w_ancestries_grabbed.subscribe((array: Array<Ancestry>) => {
 				if (array.length > 0) {
-					this.ancestries_writeDB_key(array, T_Preference.grabbed);
-					debug.log_grab(`  WRITING (${get(w_t_database)}): "${ids_forDB(array)}"`);
+					this.ancestries_writeDB_key(array, E_Preference.grabbed);
+					debug.log_grab(`  WRITING (${get(w_e_database)}): "${ids_forDB(array)}"`);
 				}
 			});
 		}, 100);
@@ -89,7 +89,7 @@ export class Preferences {
 	
 	static readonly PRIMITIVES: unique symbol;
 
-	db_keyFor	(key: string):					string { return this.keyPair_for(databases.db_now.t_database, key); }
+	db_keyFor	(key: string):					string { return this.keyPair_for(databases.db_now.e_database, key); }
 	keyPair_for	(key: string, sub_key: string):	string { return `${key}${k.separator.generic}${sub_key}`; }
 
 	parse(key: string | null | undefined): any | null {
@@ -100,9 +100,9 @@ export class Preferences {
 	}
 
 	preferences_reset() {
-		const ids = Object.keys(T_Preference)
+		const ids = Object.keys(E_Preference)
 			.filter(key => isNaN(Number(key))) // Exclude numeric keys
-			.map(key => T_Preference[key as keyof typeof T_Preference]);
+			.map(key => E_Preference[key as keyof typeof E_Preference]);
 		for (const id of ids) {
 			if (id != 'local') {
 				this.write_key(id, null);
@@ -113,50 +113,50 @@ export class Preferences {
 	
 	static readonly SUBSCRIBE_AND_RESTORE: unique symbol;
 
-	restore_paging() { radial.createAll_thing_pages_fromDict(this.readDB_key(T_Preference.paging)); }
+	restore_paging() { radial.createAll_thing_pages_fromDict(this.readDB_key(E_Preference.paging)); }
 
 	reactivity_subscribe() {
-		w_t_tree.subscribe((value) => {
-			this.write_key(T_Preference.tree, value);
+		w_e_tree.subscribe((value) => {
+			this.write_key(E_Preference.tree, value);
 		});
-		w_t_graph.subscribe((value) => {
-			this.write_key(T_Preference.graph, value);
+		w_e_graph.subscribe((value) => {
+			this.write_key(E_Preference.graph, value);
 		});
-		w_t_countDots.subscribe((value) => {
-			this.write_key(T_Preference.countDots, value);
+		w_e_countDots.subscribe((value) => {
+			this.write_key(E_Preference.countDots, value);
 		});
 		w_ring_rotation_angle.subscribe((angle: number) => {
-			this.write_key(T_Preference.ring_angle, angle);
+			this.write_key(E_Preference.ring_angle, angle);
 		});
-		w_t_details.subscribe((value) => {
-			this.write_key(T_Preference.detail_types, value);
+		w_e_details.subscribe((value) => {
+			this.write_key(E_Preference.detail_types, value);
 		});
 		w_ring_rotation_radius.subscribe((radius: number) => {
-			this.write_key(T_Preference.ring_radius, radius);
+			this.write_key(E_Preference.ring_radius, radius);
 		});
 		w_g_paging.subscribe((g_paging: G_Paging) => {
-			this.writeDB_key(T_Preference.paging, radial.s_thing_pages_byThingID);
+			this.writeDB_key(E_Preference.paging, radial.s_thing_pages_byThingID);
 		})
 		w_background_color.subscribe((color: string) => {
 			document.documentElement.style.setProperty('--css-background-color', color);
-			this.write_key(T_Preference.background, color);
+			this.write_key(E_Preference.background, color);
 		})
 		show.reactivity_subscribe();
 	}
 
 	restore_defaults() {
 		if (this.ignoreAncestries) {
-			this.write_key(T_Preference.relationships, true);
+			this.write_key(E_Preference.relationships, true);
 		}
-		w_font_size.set(this.read_key(T_Preference.font_size) ?? 14);
-		w_ring_rotation_angle.set(this.read_key(T_Preference.ring_angle) ?? 0);
-		w_t_graph.set(this.read_key(T_Preference.graph) ?? T_Graph.tree);
-		w_t_tree.set(this.read_key(T_Preference.tree) ?? T_Kinship.child);
-		w_thing_fontFamily.set(this.read_key(T_Preference.font) ?? 'Times New Roman');
-		w_t_details.set(this.read_key(T_Preference.detail_types) ?? [T_Details.storage]);
-		w_t_countDots.set(this.read_key(T_Preference.countDots) ?? [T_Kinship.child]);
-		w_background_color.set(this.read_key(T_Preference.background) ?? colors.background);
-		w_ring_rotation_radius.set(Math.max(this.read_key(T_Preference.ring_radius) ?? 0, k.radius.ring_center));
+		w_font_size.set(this.read_key(E_Preference.font_size) ?? 14);
+		w_ring_rotation_angle.set(this.read_key(E_Preference.ring_angle) ?? 0);
+		w_e_graph.set(this.read_key(E_Preference.graph) ?? E_Graph.tree);
+		w_e_tree.set(this.read_key(E_Preference.tree) ?? E_Kinship.child);
+		w_thing_fontFamily.set(this.read_key(E_Preference.font) ?? 'Times New Roman');
+		w_e_details.set(this.read_key(E_Preference.detail_types) ?? [E_Details.storage]);
+		w_e_countDots.set(this.read_key(E_Preference.countDots) ?? [E_Kinship.child]);
+		w_background_color.set(this.read_key(E_Preference.background) ?? colors.background);
+		w_ring_rotation_radius.set(Math.max(this.read_key(E_Preference.ring_radius) ?? 0, k.radius.ring_center));
 		this.reactivity_subscribe()
 	}
 

@@ -1,12 +1,12 @@
 <script lang='ts'>
 	import { c, k, u, ux, w, show, Rect, Size, Point, Thing, colors, layout } from '../../ts/common/Global_Imports';
-	import { w_t_database, w_graph_rect, w_hierarchy, w_background_color } from '../../ts/common/Stores';
-	import { debug, T_Layer, T_Banner, Ancestry, T_Startup } from '../../ts/common/Global_Imports';
+	import { w_e_database, w_graph_rect, w_hierarchy, w_background_color } from '../../ts/common/Stores';
+	import { debug, E_Layer, E_Banner, Ancestry, E_Startup } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_show_details, w_device_isMobile, } from '../../ts/common/Stores';
-	import { T_Control, Hierarchy, databases, Direction } from '../../ts/common/Global_Imports';
-	import { w_t_startup, w_popupView_id, w_ancestry_focus } from '../../ts/common/Stores';
+	import { E_Control, Hierarchy, databases, Direction } from '../../ts/common/Global_Imports';
+	import { w_e_startup, w_popupView_id, w_ancestry_focus } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import { T_Database } from '../../ts/database/DBCommon';
+	import { E_Database } from '../../ts/database/DBCommon';
 	import Gull_Wings from '../kit/Gull_Wings.svelte';
 	import Details from '../details/Details.svelte';
 	import Breadcrumbs from './Breadcrumbs.svelte';
@@ -27,7 +27,7 @@
 	function ignore_wheel(event) { event.preventDefault(); }
 
 	$: {
-		const _ = $w_t_database + $w_t_startup + $w_popupView_id + $w_graph_rect;
+		const _ = $w_e_database + $w_e_startup + $w_popupView_id + $w_graph_rect;
 		panel_reattachments += 1;
 	}
 
@@ -78,37 +78,37 @@
 		pointer-events: auto;
 		{k.prevent_selection_style};'
 		on:wheel={ignore_wheel}>
-		{#if [T_Startup.start, T_Startup.fetch].includes($w_t_startup) && databases.db_now.isPersistent}
+		{#if [E_Startup.start, E_Startup.fetch].includes($w_e_startup) && databases.db_now.isPersistent}
 			<p>Welcome to Seriously</p>
-			{#if $w_t_startup == T_Startup.fetch}
+			{#if $w_e_startup == E_Startup.fetch}
 				<p>{databases.startupExplanation}</p>
 			{/if}
-		{:else if $w_t_startup == T_Startup.empty}
+		{:else if $w_e_startup == E_Startup.empty}
 			<p>Nothing is available.</p>
-		{:else if $w_t_startup == T_Startup.ready}
+		{:else if $w_e_startup == E_Startup.ready}
 			<Controls/>
 			{#if !$w_popupView_id}
 				<div class='breadcrumbs'
 					style='left:0px;
 						position: absolute;
-						z-index: {T_Layer.frontmost};
+						z-index: {E_Layer.frontmost};
 						width:{w.windowSize.width}px;
-						top:{tops[T_Banner.crumbs] - 2}px;
-						height:{layout.height_ofBannerAt(T_Banner.crumbs)}px;'>
+						top:{tops[E_Banner.crumbs] - 2}px;
+						height:{layout.height_ofBannerAt(E_Banner.crumbs)}px;'>
 					<Breadcrumbs/>
 					<div class='separator-above-crumbs' style='
-						top: {tops[T_Banner.crumbs] - 3}px;
+						top: {tops[E_Banner.crumbs] - 3}px;
 						background-color:{separator_color};
 						height: {separator_thickness}px;
-						z-index: {T_Layer.lines};'>
+						z-index: {E_Layer.lines};'>
 					</div>
 				</div>
 				<div class='separator-above-graph' style='
-					top: {tops[T_Banner.graph]}px;
+					top: {tops[E_Banner.graph]}px;
 					background-color: {separator_color};
 					height: {separator_thickness}px;
 					width: {w.windowSize.width}px;
-					z-index: {T_Layer.lines};
+					z-index: {E_Layer.lines};
 					position: absolute;
 					left: 0px;'>
 				</div>
@@ -117,7 +117,7 @@
 					<div class='details-separator'
 						style='
 							position: absolute;
-							z-index: {T_Layer.lines};
+							z-index: {E_Layer.lines};
 							left: {k.width_details}px;
 							width: {separator_thickness}px;
 							top: {$w_graph_rect.origin.y}px;
@@ -136,13 +136,13 @@
 				style='
 					height: 100%;
 					position: fixed;
-					z-index: {T_Layer.common};
+					z-index: {E_Layer.common};
 					top: 0px;
 					left: {$w_graph_rect.origin.x}px;'>
 				{#key $w_popupView_id}
-					{#if $w_popupView_id == T_Control.builds}
+					{#if $w_popupView_id == E_Control.builds}
 						<BuildNotes/>
-					{:else if $w_popupView_id == T_Control.import}
+					{:else if $w_popupView_id == E_Control.import}
 						<Import accept='.json'/>
 					{:else if !$w_popupView_id}
 						<Graph/>

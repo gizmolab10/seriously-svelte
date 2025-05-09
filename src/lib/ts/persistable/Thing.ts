@@ -1,44 +1,44 @@
 import { Predicate, Persistable, Relationship, Seriously_Range } from '../common/Global_Imports';
 import { k, u, debug, colors, Trait, Ancestry, databases } from '../common/Global_Imports';
-import { T_Thing, T_Trait, T_Debug, T_Predicate } from '../common/Global_Imports';
+import { E_Thing, E_Trait, E_Debug, E_Predicate } from '../common/Global_Imports';
 import { w_hierarchy, w_thing_color, w_count_rebuild } from '../common/Stores';
 import { w_ancestry_focus, w_ancestries_expanded } from '../common/Stores';
 import type { Dictionary } from '../common/Types';
-import { T_Persistable } from '../database/DBCommon';
+import { E_Persistable } from '../database/DBCommon';
 import { get } from 'svelte/store';
 
 export default class Thing extends Persistable {
 	selectionRange = new Seriously_Range(0, 0);
 	bulkRootID: string = k.empty;
-	t_thing: T_Thing;
+	e_thing: E_Thing;
 	title: string;
 	color: string;
 
-	constructor(idBase: string, id: string, title = k.title.default, color = colors.default_forThings, t_thing = T_Thing.generic, already_persisted: boolean = false) {
-		super(databases.db_now.t_database, idBase, T_Persistable.things, id, already_persisted);
+	constructor(idBase: string, id: string, title = k.title.default, color = colors.default_forThings, e_thing = E_Thing.generic, already_persisted: boolean = false) {
+		super(databases.db_now.e_database, idBase, E_Persistable.things, id, already_persisted);
 		this.selectionRange = new Seriously_Range(0, title.length);
-		this.t_thing = t_thing;
+		this.e_thing = e_thing;
 		this.title = title;
 		this.color = color;
 	};
 	
-	get parents():				Array		 <Thing> { return this.parents_ofKind(T_Predicate.contains); }
+	get parents():				Array		 <Thing> { return this.parents_ofKind(E_Predicate.contains); }
 	get traits():				Array		 <Trait> { return get(w_hierarchy).traits_forOwnerHID(this.hid) ?? []; }
 	get parentIDs():			Array		<string> { return this.parents.map(t => t.id); }
 	get ancestries():		 	Array	  <Ancestry> { return this.ancestries_for(Predicate.contains); }
-	get relatedRelationships(): Array <Relationship> { return this.relationships_ofKind_forParents(T_Predicate.isRelated, false); }
-	get fields():		  		Dictionary  <string> { return { title: this.title, color: this.color, type: this.t_thing }; }
-	get quest():					   string | null { return get(w_hierarchy).trait_forType_ownerHID(T_Trait.quest, this.hid)?.text ?? null; }
-	get consequence():				   string | null { return get(w_hierarchy).trait_forType_ownerHID(T_Trait.consequence, this.hid)?.text ?? null; }
+	get relatedRelationships(): Array <Relationship> { return this.relationships_ofKind_forParents(E_Predicate.isRelated, false); }
+	get fields():		  		Dictionary  <string> { return { title: this.title, color: this.color, type: this.e_thing }; }
+	get quest():					   string | null { return get(w_hierarchy).trait_forType_ownerHID(E_Trait.quest, this.hid)?.text ?? null; }
+	get consequence():				   string | null { return get(w_hierarchy).trait_forType_ownerHID(E_Trait.consequence, this.hid)?.text ?? null; }
 	get idBridging():						  string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get description():						  string { return this.id + ' "' + this.title + '"'; }
 	get breadcrumb_title():					  string { return this.title.clipWithEllipsisAt(15); }
 	get width_ofTitle():					  number { return u.getWidthOf(this.title); }
-	get isRoot():							 boolean { return this.t_thing == T_Thing.root; }
-	get isBulkAlias():						 boolean { return this.t_thing == T_Thing.bulk; }
-	get isExternals():						 boolean { return this.t_thing == T_Thing.externals; }
+	get isRoot():							 boolean { return this.e_thing == E_Thing.root; }
+	get isBulkAlias():						 boolean { return this.e_thing == E_Thing.bulk; }
+	get isExternals():						 boolean { return this.e_thing == E_Thing.externals; }
 	get isAcrossBulk():						 boolean { return this.idBase != get(w_hierarchy).db.idBase; }
-	get hasParents():						 boolean { return this.hasParents_ofKind(T_Predicate.contains); }
+	get hasParents():						 boolean { return this.hasParents_ofKind(E_Predicate.contains); }
 	get isFocus():							 boolean { return (get(w_ancestry_focus).thing?.id ?? k.empty) == this.id; }
 	get hasRelated():						 boolean { return this.relatedRelationships.length > 0; }
 
@@ -65,11 +65,11 @@ export default class Thing extends Persistable {
 		return false;
 	}
 
-	debugLog(message: string) { this.log(T_Debug.things, message); }
+	debugLog(message: string) { this.log(E_Debug.things, message); }
 	hasParents_ofKind(kind: string): boolean { return this.parents_ofKind(kind).length > 0; }
 	hasMultipleParents_ofKind(kind: string): boolean { return this.parents_ofKind(kind).length > 1; }
-	log(option: T_Debug, message: string) { debug.log_maybe(option, message + k.space + this.description); }
-	setTraitText_forType(text: string, t_thing: T_Trait) { get(w_hierarchy).trait_setText_forType_ownerHID(text, t_thing, this.id); }
+	log(option: E_Debug, message: string) { debug.log_maybe(option, message + k.space + this.description); }
+	setTraitText_forType(text: string, e_thing: E_Trait) { get(w_hierarchy).trait_setText_forType_ownerHID(text, e_thing, this.id); }
 
 	override isInDifferentBulkThan(other: Thing): boolean {
 		return super.isInDifferentBulkThan(other) || (other.isBulkAlias && !this.isBulkAlias && this.idBase != other.title);

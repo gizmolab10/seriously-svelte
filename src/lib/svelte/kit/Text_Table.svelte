@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, T_Layer } from '../../ts/common/Global_Imports';
+	import { k, E_Layer } from '../../ts/common/Global_Imports';
 	import type { Integer } from '../../ts/common/Types';
 	export let font_size = k.font_size.small;
 	export let row_height = 12;
@@ -45,7 +45,7 @@
 			top:{top}px;
 			position:absolute;
 			font-size:{font_size}px;
-			z-index: {T_Layer.details};'>
+			z-index: {E_Layer.details};'>
 		<table style='width: {width}px; left:12px; color:black;'>
 			{#each array as [key, value]}
 				<tr>

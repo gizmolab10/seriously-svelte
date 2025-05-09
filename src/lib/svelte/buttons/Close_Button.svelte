@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, Size, Point, colors, T_Layer, svgPaths } from '../../ts/common/Global_Imports';
+	import { k, u, Size, Point, colors, E_Layer, svgPaths } from '../../ts/common/Global_Imports';
     import { w_popupView_id, w_background_color } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVG_D3 from '../kit/SVG_D3.svelte';

@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, Rect, Size, Point, debug, colors, svgPaths } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Oblong, G_Segment } from '../../ts/common/Global_Imports';
+	import { E_Layer, E_Oblong, G_Segment } from '../../ts/common/Global_Imports';
 	import { w_background_color } from '../../ts/common/Stores';
 	import Mouse_Responder from './Mouse_Responder.svelte';
 	export let font_size = `${k.font_size.small}px`;
@@ -41,7 +41,7 @@
 	height={size.height}
 	font_size={font_size}
 	origin={g_segment.origin}
-	zindex={T_Layer.frontmost}
+	zindex={E_Layer.frontmost}
 	handle_s_mouse={up_hover_closure}>
 	<svg
 		id={`${name}`}

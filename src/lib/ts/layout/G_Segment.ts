@@ -1,11 +1,11 @@
-import { k, u, ux, Rect, Size, Point, svgPaths, T_Oblong } from '../common/Global_Imports';
+import { k, u, ux, Rect, Size, Point, svgPaths, E_Oblong } from '../common/Global_Imports';
 import type { Integer } from '../common/Types';
 
 export default class G_Segment {
 	numerical_font_size = k.font_size.small;
 	font_size = `${k.font_size.small}px`;
 	title_origin = Point.x(8);
-	part = T_Oblong.right;
+	part = E_Oblong.right;
 	origin = Point.zero;
 	isSelected = false;
 	viewBox = k.empty;
@@ -52,22 +52,22 @@ export default class G_Segment {
 		const size = this.size.expandedEquallyBy(-2);
 		const center = this.size.asPoint.dividedInHalf;
 		const title_y = (this.height - this.numerical_font_size) / 4;
-		const isNormal = (this.height == k.height.segmented) || (this.part === T_Oblong.right);
+		const isNormal = (this.height == k.height.segmented) || (this.part === E_Oblong.right);
 		const xOffset = isFirst ? 10 : isNormal ? -10 : -8;
 		const path_center = center.offsetByXY(xOffset, -1);
 		const title_x = (isFirst ? 3 : 0) + this.numerical_font_size / 2;
 		this.path = svgPaths.oblong(path_center, size, this.part);
-		const viewBoxSize = this.part === T_Oblong.right ? size.expandedByX(1) : size;
+		const viewBoxSize = this.part === E_Oblong.right ? size.expandedByX(1) : size;
 		this.viewBox = Rect.createSizeRect(viewBoxSize).viewBox;
 		this.title_origin = new Point(title_x, title_y);
 		this.origin = Point.x(this.left);
 	}
 
-	part_forIndex(index: Integer, max_index: Integer): T_Oblong {
+	part_forIndex(index: Integer, max_index: Integer): E_Oblong {
 		switch (index) {
-			case 0:			return T_Oblong.left;
-			case max_index: return T_Oblong.right;
-			default:		return T_Oblong.middle;
+			case 0:			return E_Oblong.left;
+			case max_index: return E_Oblong.right;
+			default:		return E_Oblong.middle;
 		}
 	}
 

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, k, u, ux, w, Size, Point, Thing, T_Layer, T_Element } from '../../ts/common/Global_Imports';
+	import { c, k, u, ux, w, Size, Point, Thing, E_Layer, E_Element } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { debug, signals, svgPaths, Ancestry, databases } from '../../ts/common/Global_Imports';
 	import { w_hierarchy, w_graph_rect, w_thing_color } from '../../ts/common/Stores';
@@ -39,7 +39,7 @@
 	}
 
 	function es_breadcrumb(index: number, thing: Thing): S_Element {
-		return ux.s_element_for(ancestry?.stripBack(things.length - index - 1), T_Element.breadcrumb, k.space);
+		return ux.s_element_for(ancestry?.stripBack(things.length - index - 1), E_Element.breadcrumb, k.space);
 	}
 
 </script>

@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { w_popupView_id, w_background_color, w_visibility_ofNotes } from '../../ts/common/Stores';
 	import Directional_Buttons from '../buttons/Directional_Buttons.svelte';
-	import { k, builds, T_Layer } from '../../ts/common/Global_Imports';
+	import { k, builds, E_Layer } from '../../ts/common/Global_Imports';
 	import Close_Button from '../buttons/Close_Button.svelte';
 	import { onMount } from 'svelte';
 	const notesIndexed = Object.entries(builds.notes).reverse();

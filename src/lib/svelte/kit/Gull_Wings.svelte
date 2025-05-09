@@ -1,9 +1,9 @@
 <script lang="ts">
-    import { k, Point, Angle, T_Layer, Direction, svgPaths } from '../../ts/common/Global_Imports';
+    import { k, Point, Angle, E_Layer, Direction, svgPaths } from '../../ts/common/Global_Imports';
     export let thickness = k.thickness.separator;
     export let radius = k.radius.gull_wings;
     export let direction = Direction.down;
-    export let zindex = T_Layer.lines;
+    export let zindex = E_Layer.lines;
     export let center = Point.zero;
     export let color = 'black';
     const diameter = radius * 2;

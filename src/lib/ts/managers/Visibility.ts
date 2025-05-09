@@ -1,13 +1,13 @@
-import { w_t_countDots, w_show_details, w_show_related, w_device_isMobile } from '../common/Stores';
-import { c, k, p, w, layout, T_Preference } from '../common/Global_Imports';
-import { T_Report, T_Kinship } from '../common/Enumerations';
+import { w_e_countDots, w_show_details, w_show_related, w_device_isMobile } from '../common/Stores';
+import { c, k, p, w, layout, E_Preference } from '../common/Global_Imports';
+import { E_Report, E_Kinship } from '../common/Enumerations';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
 
 export class Visibility {
 	debug_cursor	= false;
 	traits			= false;
-	t_info			= T_Report.focus;
+	e_info			= E_Report.focus;
 	tool_separators	= !(get(w_device_isMobile) ?? false);
 
 	queryStrings_apply() {
@@ -27,26 +27,26 @@ export class Visibility {
 					break;
 				case 'traits':
 					this.traits = flag;
-					p.write_key(T_Preference.traits, flag);
+					p.write_key(E_Preference.traits, flag);
 					break;
 				case 'parents':
-					const mode = flag ? T_Kinship.parent : T_Kinship.child;
+					const mode = flag ? E_Kinship.parent : E_Kinship.child;
 					layout.set_t_tree([mode]);
 					break;
 			}
 		}
 	}
 
-	showing_countDots_ofType(t_counts: T_Kinship): boolean { return get(w_t_countDots).includes(T_Kinship[t_counts]) }
-	get children_dots(): boolean { return  this.showing_countDots_ofType(T_Kinship.child); }
-	get related_dots(): boolean { return  this.showing_countDots_ofType(T_Kinship.related); }
-	get parent_dots(): boolean { return  this.showing_countDots_ofType(T_Kinship.parent); }
+	showing_countDots_ofType(e_counts: E_Kinship): boolean { return get(w_e_countDots).includes(E_Kinship[e_counts]) }
+	get children_dots(): boolean { return  this.showing_countDots_ofType(E_Kinship.child); }
+	get related_dots(): boolean { return  this.showing_countDots_ofType(E_Kinship.related); }
+	get parent_dots(): boolean { return  this.showing_countDots_ofType(E_Kinship.parent); }
 	
 	restore_state() {
-		this.traits = p.read_key(T_Preference.traits) ?? false;
-		this.t_info = p.read_key(T_Preference.info) ?? T_Report.focus;
-		w_show_details.set(p.read_key(T_Preference.show_details) ?? false);
-		w_show_related.set(p.read_key(T_Preference.show_related) ?? false);
+		this.traits = p.read_key(E_Preference.traits) ?? false;
+		this.e_info = p.read_key(E_Preference.info) ?? E_Report.focus;
+		w_show_details.set(p.read_key(E_Preference.show_details) ?? false);
+		w_show_related.set(p.read_key(E_Preference.show_related) ?? false);
 	}
 
 	reactivity_subscribe() {
@@ -54,12 +54,12 @@ export class Visibility {
 			this.tool_separators = !flag;
 		});
 		w_show_details.subscribe((flag: boolean) => {
-			p.write_key(T_Preference.show_details, flag);
+			p.write_key(E_Preference.show_details, flag);
 			w.restore_state();
 			layout.grand_layout();
 		});
 		w_show_related.subscribe((flag: boolean) => {
-			p.write_key(T_Preference.show_related, flag);
+			p.write_key(E_Preference.show_related, flag);
 			w.restore_state();
 			layout.grand_layout();
 		});

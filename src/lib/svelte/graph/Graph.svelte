@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { c, k, w, Rect, Point, debug, layout, T_Layer, signals, T_Graph } from '../../ts/common/Global_Imports';
-	import { w_graph_rect, w_t_graph, w_ancestry_focus } from '../../ts/common/Stores';
+	import { c, k, w, Rect, Point, debug, layout, E_Layer, signals, E_Graph } from '../../ts/common/Global_Imports';
+	import { w_graph_rect, w_e_graph, w_ancestry_focus } from '../../ts/common/Stores';
 	import { w_device_isMobile, w_user_graph_offset } from '../../ts/common/Stores';
 	import Radial_Graph from '../graph/Radial_Graph.svelte';
 	import Tree_Graph from '../graph/Tree_Graph.svelte';
@@ -52,7 +52,7 @@
 	}
 	
 	$: {
-		const _ = $w_graph_rect + $w_ancestry_focus + $w_device_isMobile + $w_t_graph;
+		const _ = $w_graph_rect + $w_ancestry_focus + $w_device_isMobile + $w_e_graph;
 		layout.grand_layout();
 	}
 	
@@ -62,7 +62,7 @@
 			position: absolute;
 			touch-action: none;
 			pointer-events: auto;
-			z-index: ${T_Layer.common};
+			z-index: ${E_Layer.common};
 			top:${draggableRect.origin.y}px;
 			width: ${draggableRect.size.width}px;
 			height: ${draggableRect.size.height}px;
@@ -76,7 +76,7 @@
 		style={style}
 		class='draggable'
 		bind:this={draggable}>
-		{#if $w_t_graph == T_Graph.radial}
+		{#if $w_e_graph == E_Graph.radial}
 			<Radial_Graph/>
 		{:else}
 			<Tree_Graph/>

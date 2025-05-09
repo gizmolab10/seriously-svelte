@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { w_ancestry_focus, w_ancestries_grabbed, w_thing_fontFamily, w_relationship_order } from '../../ts/common/Stores';
-	import { T_Info, T_Trait, T_Layer, T_Element, T_Report, T_Preference } from '../../ts/common/Global_Imports';
+	import { E_Info, E_Trait, E_Layer, E_Element, E_Report, E_Preference } from '../../ts/common/Global_Imports';
 	import { w_hierarchy, w_thing_color, w_thing_title, w_background_color } from '../../ts/common/Stores';
 	import { c, k, p, ux, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
 	import { debug, colors, signals, layout, Ancestry } from '../../ts/common/Global_Imports';
@@ -21,7 +21,7 @@
 	const traits_center = new Point(122, text_top - 20);
 	const traits_size = new Size(info_width - 58, k.height.button + 4);
 	const traits_rect = Rect.createCenterRect(traits_center, traits_size);
-	const es_info = ux.s_element_for(new Identifiable(id), T_Element.info, id);
+	const es_info = ux.s_element_for(new Identifiable(id), E_Element.info, id);
 	let ancestry: Ancestry | null = $w_ancestry_focus;
 	let thing: Thing | null = ancestry?.thing ?? null;
 	let text_box_size = new Size(info_width - 4, 68);
@@ -45,21 +45,21 @@
 		return !!grabs && (grabs.length > 1 || !$w_ancestry_focus.isGrabbed);
 	}
 
-	function selection_closure(t_infos: Array<string>) {
-		const t_info = t_infos[0];
-		p.write_key(T_Preference.info, t_info);
-		show.t_info = t_info;
+	function selection_closure(e_infos: Array<string>) {
+		const e_info = e_infos[0];
+		p.write_key(E_Preference.info, e_info);
+		show.e_info = e_info;
 		update_forKind();
 	}
 	
 	function layout_forColor() {
 		const color_left = 61
-		color_origin = new Point(color_left, layout.top_ofInfoAt(T_Info.color));
+		color_origin = new Point(color_left, layout.top_ofInfoAt(E_Info.color));
 		picker_offset = `${-color_left - 10}px`;
 	}
 
 	function update_forKind() {
-		if (show.t_info == T_Report.focus || !hasGrabs()) {
+		if (show.e_info == E_Report.focus || !hasGrabs()) {
 			ancestry = $w_ancestry_focus;
 		} else {
 			grabs = $w_ancestries_grabbed;
@@ -95,8 +95,8 @@
 	function handle_textChange(label: string, text: string | null) {
 		if (!!thing && (!!text || text == k.empty)) {
 			switch (label) {
-				case 'quest':		thing.setTraitText_forType(text, T_Trait.quest);	   break;
-				case 'consequence':	thing.setTraitText_forType(text, T_Trait.consequence); break;
+				case 'quest':		thing.setTraitText_forType(text, E_Trait.quest);	   break;
+				case 'consequence':	thing.setTraitText_forType(text, E_Trait.consequence); break;
 			}
 		} else if (!text) {		// do after test for k.empty, which also is interpreted as falsey
 			(async () => {
@@ -126,11 +126,11 @@
 			<Segmented
 				name='info-type'
 				height={k.height.button}
-				selected={[show.t_info]}
+				selected={[show.e_info]}
 				font_size={k.font_size.small}px
 				selection_closure={selection_closure}
-				titles={[T_Report.focus, T_Report.selection]}
-				origin={new Point(54, layout.top_ofInfoAt(T_Info.segments))}/>
+				titles={[E_Report.focus, E_Report.selection]}
+				origin={new Point(54, layout.top_ofInfoAt(E_Info.segments))}/>
 			<Separator
 				title='title'
 				add_wings={true}
@@ -139,13 +139,13 @@
 				thickness={k.thickness.thin}
 				title_left={k.separator_title_left}
 				title_font_size={separator_font_size}
-				top={layout.top_ofInfoAt(T_Info.before_title)}/>
+				top={layout.top_ofInfoAt(E_Info.before_title)}/>
 			<div style='
 				white-space:pre;
 				position:absolute;
 				text-align:center;
 				width:{traits_width}px;
-				top:{layout.top_ofInfoAt(T_Info.title)}px;'>
+				top:{layout.top_ofInfoAt(E_Info.title)}px;'>
 				{thing_title.clipWithEllipsisAt(30)}
 			</div>
 			<Separator
@@ -154,14 +154,14 @@
 				margin={k.details_margin}
 				thickness={k.thickness.thin}
 				title_left={k.separator_title_left}
-				top={layout.top_ofInfoAt(T_Info.after_title)}/>
+				top={layout.top_ofInfoAt(E_Info.after_title)}/>
 			<Text_Table
 				row_height={11}
 				array={information}
 				name='information-table'
 				width = {k.width_details - 20}
 				font_size={k.font_size.smaller}
-				top = {layout.top_ofInfoAt(T_Info.table)}/>
+				top = {layout.top_ofInfoAt(E_Info.table)}/>
 		{/if}
 		{#if !!ancestry && ancestry.isEditable}
 			<Color
@@ -176,7 +176,7 @@
 					left:-10px;
 					position:absolute;
 					width:{k.width_details}px;
-					z-index:{T_Layer.frontmost};
+					z-index:{E_Layer.frontmost};
 					height:{k.thickness.thin}px;
 					background-color:{colors.separator};'>
 			</div>
@@ -187,7 +187,7 @@
 				height={text_box_size.height}
 				original_text={thing.consequence}
 				handle_textChange={handle_textChange}
-				top={layout.top_ofInfoAt(T_Info.consequence)}/>
+				top={layout.top_ofInfoAt(E_Info.consequence)}/>
 			<Text_Editor
 				label='quest'
 				color=colors.default
@@ -195,7 +195,7 @@
 				width={text_box_size.width}
 				height={text_box_size.height}
 				handle_textChange={handle_textChange}
-				top={layout.top_ofInfoAt(T_Info.quest)}/>
+				top={layout.top_ofInfoAt(E_Info.quest)}/>
 		{/if}
 	</div>
 {/if}

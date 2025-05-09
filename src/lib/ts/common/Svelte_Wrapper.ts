@@ -1,4 +1,4 @@
-import { w, Rect, Point, wrappers, T_SvelteComponent } from './Global_Imports';
+import { w, Rect, Point, wrappers, E_SvelteComponent } from './Global_Imports';
 import { Handle_S_Mouse, Create_S_Mouse } from './Types';
 import type { Integer } from './Types';
 
@@ -7,10 +7,10 @@ import type { Integer } from './Types';
 export default class Svelte_Wrapper {
 	hid: Integer;
     handle_s_mouse: Handle_S_Mouse;
-    type: T_SvelteComponent;
+    type: E_SvelteComponent;
     element: HTMLElement;
 
-    constructor(element: HTMLElement, handle_s_mouse: Handle_S_Mouse, hid: Integer, type: T_SvelteComponent, parentTypes: Array<T_SvelteComponent> = []) {
+    constructor(element: HTMLElement, handle_s_mouse: Handle_S_Mouse, hid: Integer, type: E_SvelteComponent, parentTypes: Array<E_SvelteComponent> = []) {
         this.hid = hid;
         this.type = type;
         this.element = element;

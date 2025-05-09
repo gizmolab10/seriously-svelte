@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { c, k, u, ux, show, Rect, Size, Point, Thing, debug } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Graph, T_Alteration, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { w_t_countDots, w_thing_color, w_ancestries_grabbed } from '../../ts/common/Stores';
+	import { E_Layer, E_Graph, E_Alteration, E_SvelteComponent } from '../../ts/common/Global_Imports';
+	import { w_e_countDots, w_thing_color, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { layout, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
 	import { w_s_alteration, w_background_color } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
@@ -48,7 +48,7 @@
 	});
 	
 	$: {
-		const _ = $w_t_countDots;
+		const _ = $w_e_countDots;
 		svgPaths_update();
 	}
 
@@ -130,7 +130,7 @@
 				height:{size}px;
 				color:transparent;
 				position:absolute;
-				z-index:{T_Layer.dots};
+				z-index:{E_Layer.dots};
 				background-color:transparent;'>
 			<div id={'div-for-' + name}
 				style='
@@ -140,7 +140,7 @@
 					height:{size}px;
 					color:transparent;
 					position:absolute;
-					z-index:{T_Layer.dots};'>
+					z-index:{E_Layer.dots};'>
 				<SVG_D3 name={'svg-' + name}
 					width={size}
 					height={size}

@@ -1,9 +1,9 @@
 import { c, k, p, u, Thing, Trait, debug, layout, Predicate, Relationship } from '../common/Global_Imports';
-import { T_Thing, T_Trait, T_Debug, T_Create, T_Predicate, T_Preference } from '../common/Global_Imports';
+import { E_Thing, E_Trait, E_Debug, E_Create, E_Predicate, E_Preference } from '../common/Global_Imports';
 import { QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
 import { onSnapshot, deleteField, getFirestore, DocumentData, DocumentChange } from 'firebase/firestore';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
-import { T_Persistable, T_Database, T_Persistence } from './DBCommon';
+import { E_Persistable, E_Database, E_Persistence } from './DBCommon';
 import type { Dictionary } from '../common/Types';
 import Identifiable from '../runtime/Identifiable';
 import { initializeApp } from 'firebase/app';
@@ -26,10 +26,10 @@ export default class DBFirebase extends DBCommon {
 	bulksName = 'Bulks';
 	deferSnapshots = false;
 	bulks: Dictionary<Bulk> = {};
-	t_database = T_Database.firebase;
+	e_database = E_Database.firebase;
 	app = initializeApp(this.config);
 	firestore = getFirestore(this.app);
-	kind_persistence = T_Persistence.remote;
+	kind_persistence = E_Persistence.remote;
 	predicatesCollection!: CollectionReference;
 	deferredSnapshots: Array<SnapshotDeferal> = [];
 
@@ -37,9 +37,9 @@ export default class DBFirebase extends DBCommon {
 	get displayName(): string { return this.idBase; }
 
 	queryStrings_apply() {
-		const persistedID = p.read_key(T_Preference.base_id);
+		const persistedID = p.read_key(E_Preference.base_id);
 		const id = c.queryStrings.get('name') ?? c.queryStrings.get('dbid') ?? persistedID ?? 'Public';
-		p.write_key(T_Preference.base_id, id);
+		p.write_key(E_Preference.base_id, id);
 		this.idBase = id;
 	}
 
@@ -58,34 +58,34 @@ export default class DBFirebase extends DBCommon {
 
 	async fetch_all() {
 		await this.recordLoginIP();
-		await this.documents_fetch_ofType(T_Persistable.predicates);
+		await this.documents_fetch_ofType(E_Persistable.predicates);
 		await this.hierarchy_fetch_forID(this.idBase);
 		await this.setup_remote_handlers();
 		await this.fetch_bulkAliases();		// TODO: assumes all ancestries are already created, including h.rootAncestry
 	}
 
 	async hierarchy_fetch_forID(idBase: string) {
-		await this.documents_fetch_ofType(T_Persistable.things, idBase);
-		await this.documents_fetch_ofType(T_Persistable.traits, idBase);
-		await this.documents_fetch_ofType(T_Persistable.relationships, idBase);
+		await this.documents_fetch_ofType(E_Persistable.things, idBase);
+		await this.documents_fetch_ofType(E_Persistable.traits, idBase);
+		await this.documents_fetch_ofType(E_Persistable.relationships, idBase);
 	}
 		
-	async documents_fetch_ofType(t_persistable: T_Persistable, idBase: string | null = null) {
+	async documents_fetch_ofType(e_persistable: E_Persistable, idBase: string | null = null) {
 		try {
-			const collectionRef = !idBase ? collection(this.firestore, t_persistable) : collection(this.firestore, this.bulksName, idBase, t_persistable);
+			const collectionRef = !idBase ? collection(this.firestore, e_persistable) : collection(this.firestore, this.bulksName, idBase, e_persistable);
 			let querySnapshot = await getDocs(collectionRef);
 			if (!!idBase) {
 				if (querySnapshot.empty) {
-					await this.document_defaults_ofType_persistentCreateIn(t_persistable, idBase, collectionRef);
+					await this.document_defaults_ofType_persistentCreateIn(e_persistable, idBase, collectionRef);
 					querySnapshot = await getDocs(collectionRef);
 				}
 			}
 			const docs = querySnapshot.docs;
-			debug.log_remote('READ ' + docs.length + ' from ' + idBase + ':' + t_persistable);
+			debug.log_remote('READ ' + docs.length + ' from ' + idBase + ':' + e_persistable);
 			for (const docSnapshot of docs) {
 				const id = docSnapshot.id;
 				const data = docSnapshot.data();
-				await this.document_ofType_remember_validated(t_persistable, id, data, idBase ?? this.idBase);
+				await this.document_ofType_remember_validated(e_persistable, id, data, idBase ?? this.idBase);
 			}
 		} catch (error) {
 			this.reportError(error);
@@ -120,7 +120,7 @@ export default class DBFirebase extends DBCommon {
 						if (idBulk != this.idBase) {
 							let thing = h.bulkAlias_forTitle(idBulk);
 							if (!thing) {								// create a thing for each bulk
-								thing = h.thing_runtimeCreate(this.idBase, Identifiable.newID(), idBulk, 'red', T_Thing.bulk);
+								thing = h.thing_runtimeCreate(this.idBase, Identifiable.newID(), idBulk, 'red', E_Thing.bulk);
 								await h.ancestry_extended_byAddingThing_toAncestry_remember_persistentCreate_relationship(thing, externalsAncestry);
 							} else if (thing.thing_isBulk_expanded) {
 								await h.ancestry_redraw_persistentFetchBulk_browseRight(thing);		// preload
@@ -137,8 +137,8 @@ export default class DBFirebase extends DBCommon {
 
 	static readonly REMOTE: unique symbol;
 	
-	snapshot_deferOne(idBase: string, t_persistable: T_Persistable, snapshot: QuerySnapshot) {
-		const deferral = new SnapshotDeferal(idBase, t_persistable, snapshot);
+	snapshot_deferOne(idBase: string, e_persistable: E_Persistable, snapshot: QuerySnapshot) {
+		const deferral = new SnapshotDeferal(idBase, e_persistable, snapshot);
 		this.deferredSnapshots.push(deferral);
 	}
 
@@ -150,8 +150,8 @@ export default class DBFirebase extends DBCommon {
 			const deferral = this.deferredSnapshots.pop();
 			if (!!deferral) {
 				for (const change of deferral.snapshot.docChanges()) {	// convert and remember
-					if (await this.handle_docChanges(deferral.idBase, deferral.t_persistable, change)) {
-						if (deferral.t_persistable == T_Persistable.relationships) {
+					if (await this.handle_docChanges(deferral.idBase, deferral.e_persistable, change)) {
+						if (deferral.e_persistable == E_Persistable.relationships) {
 							relationships_haveChanged = true;
 						}
 						needsRebuild = true;
@@ -167,29 +167,29 @@ export default class DBFirebase extends DBCommon {
 	async setup_remote_handlers() {
 		let rebuildScheduled = false;
 		let relationships_haveChanged = false;
-		for (const t_persistable of this.hierarchy.persistent_dataTypes) {
-			if (t_persistable == T_Persistable.predicates) {
-				this.predicatesCollection = collection(this.firestore, t_persistable);
+		for (const e_persistable of this.hierarchy.persistent_dataTypes) {
+			if (e_persistable == E_Persistable.predicates) {
+				this.predicatesCollection = collection(this.firestore, e_persistable);
 			} else {
 				const idBase = this.idBase;
 				const bulk = this.bulk_forID(idBase);
-				const collectionRef = collection(this.firestore, this.bulksName, idBase, t_persistable);
+				const collectionRef = collection(this.firestore, this.bulksName, idBase, e_persistable);
 				if (!!bulk) {
-					switch (t_persistable) {
-						case T_Persistable.things:		  bulk.thingsCollection = collectionRef; break;
-						case T_Persistable.traits:		  bulk.traitsCollection = collectionRef; break;
-						case T_Persistable.relationships: bulk.relationshipsCollection = collectionRef; break;
+					switch (e_persistable) {
+						case E_Persistable.things:		  bulk.thingsCollection = collectionRef; break;
+						case E_Persistable.traits:		  bulk.traitsCollection = collectionRef; break;
+						case E_Persistable.relationships: bulk.relationshipsCollection = collectionRef; break;
 					}
 				}
 				onSnapshot(collectionRef, async (snapshot) => {
 					if (this.hierarchy.isAssembled) {		// u.ignore snapshots caused by data written to server
 						if (this.deferSnapshots) {
-							this.snapshot_deferOne(idBase, t_persistable, snapshot);
+							this.snapshot_deferOne(idBase, e_persistable, snapshot);
 							return;
 						} else {
 							for (const change of snapshot.docChanges()) {	// convert and remember
-								if (await this.handle_docChanges(idBase, t_persistable, change)) {
-									if (t_persistable == T_Persistable.relationships) {
+								if (await this.handle_docChanges(idBase, e_persistable, change)) {
+									if (e_persistable == E_Persistable.relationships) {
 										relationships_haveChanged = true;
 									}
 									if (!rebuildScheduled) {
@@ -221,11 +221,11 @@ export default class DBFirebase extends DBCommon {
 		this.hierarchy.signal_storage_redraw(10);
 	}
 
-	async handle_docChanges(idBase: string, t_persistable: T_Persistable, change: DocumentChange): Promise<boolean> {
+	async handle_docChanges(idBase: string, e_persistable: E_Persistable, change: DocumentChange): Promise<boolean> {
 		const doc = change.doc;
 		const data = doc.data();
 		let needsRebuild = false;
-		if (DBFirebase.data_isValidOfKind(t_persistable, data)) {
+		if (DBFirebase.data_isValidOfKind(e_persistable, data)) {
 			const id = doc.id;
 
 			//////////////////////////////
@@ -233,41 +233,41 @@ export default class DBFirebase extends DBCommon {
 			//////////////////////////////
 
 			try {
-				switch (t_persistable) {
-					case T_Persistable.things:		  needsRebuild = this.thing_handle_docChanges(idBase, id, change, data); break;
-					case T_Persistable.traits:		  needsRebuild = this.trait_handle_docChanges(idBase, id, change, data); break;
-					case T_Persistable.relationships: needsRebuild = this.relationship_handle_docChanges(idBase, id, change, data); break;
+				switch (e_persistable) {
+					case E_Persistable.things:		  needsRebuild = this.thing_handle_docChanges(idBase, id, change, data); break;
+					case E_Persistable.traits:		  needsRebuild = this.trait_handle_docChanges(idBase, id, change, data); break;
+					case E_Persistable.relationships: needsRebuild = this.relationship_handle_docChanges(idBase, id, change, data); break;
 				}
 			} catch (error) {
 				this.reportError(error);
 			}
-			debug.log_remote('HANDLE ' + idBase + ':' + t_persistable + k.space + change.type);
+			debug.log_remote('HANDLE ' + idBase + ':' + e_persistable + k.space + change.type);
 		}
 		return needsRebuild;
 	}
 
 	static readonly SUBCOLLECTIONS: unique symbol;
 
-	async document_defaults_ofType_persistentCreateIn(t_persistable: T_Persistable, idBase: string, collectionRef: CollectionReference) {
+	async document_defaults_ofType_persistentCreateIn(e_persistable: E_Persistable, idBase: string, collectionRef: CollectionReference) {
 		if (!!idBase) {
 			const docRef = doc(this.firestore, this.bulksName, idBase);
 			await setDoc(docRef, { isReal: true }, { merge: true });
 			await updateDoc(docRef, { isReal: deleteField() });
 		}
-		switch (t_persistable) {
-			case T_Persistable.predicates: this.hierarchy.predicate_defaults_remember_runtimeCreate(); break;
-			case T_Persistable.things:	   await this.root_default_remember_persistentCreateIn(collectionRef); break;
+		switch (e_persistable) {
+			case E_Persistable.predicates: this.hierarchy.predicate_defaults_remember_runtimeCreate(); break;
+			case E_Persistable.things:	   await this.root_default_remember_persistentCreateIn(collectionRef); break;
 		}
 	}
 
-	async document_ofType_remember_validated(t_persistable: T_Persistable, id: string, data: DocumentData, idBase: string) {
-		if (DBFirebase.data_isValidOfKind(t_persistable, data)) {
+	async document_ofType_remember_validated(e_persistable: E_Persistable, id: string, data: DocumentData, idBase: string) {
+		if (DBFirebase.data_isValidOfKind(e_persistable, data)) {
 			const h = this.hierarchy;
-			switch (t_persistable) {
-				case T_Persistable.predicates:	  h.predicate_remember_runtimeCreate(id, data.kind, data.isBidirectional); break;
-				case T_Persistable.traits:		  h.trait_remember_runtimeCreate(idBase, id, data.ownerID, data.type, data.text, true); break;
-				case T_Persistable.things:		  h.thing_remember_runtimeCreate(idBase, id, data.title, data.color, data.type ?? data.trait, true, !data.type); break;
-				case T_Persistable.relationships: h.relationship_remember_runtimeCreateUnique(idBase, id, data.predicate.id, data.parent.id, data.child.id, data.order, 0, T_Create.isFromPersistent); break;
+			switch (e_persistable) {
+				case E_Persistable.predicates:	  h.predicate_remember_runtimeCreate(id, data.kind, data.isBidirectional); break;
+				case E_Persistable.traits:		  h.trait_remember_runtimeCreate(idBase, id, data.ownerID, data.type, data.text, true); break;
+				case E_Persistable.things:		  h.thing_remember_runtimeCreate(idBase, id, data.title, data.color, data.type ?? data.trait, true, !data.type); break;
+				case E_Persistable.relationships: h.relationship_remember_runtimeCreateUnique(idBase, id, data.predicate.id, data.parent.id, data.child.id, data.order, 0, E_Create.isFromPersistent); break;
 			}
 		}
 	}
@@ -302,15 +302,15 @@ export default class DBFirebase extends DBCommon {
 			thing.persistence.awaitingCreation = false;
 			thing.persistence.already_persisted = true;
 			await this.handle_deferredSnapshots();
-			thing.log(T_Debug.remote, 'CREATE T');
+			thing.log(E_Debug.remote, 'CREATE T');
 		}
 	}
 
 	async root_default_remember_persistentCreateIn(collectionRef: CollectionReference) {
 		const fields = ['title', 'color', 'type'];
-		const root = new Thing(this.idBase, Identifiable.newID(), this.idBase, 'coral', T_Thing.root, true);
+		const root = new Thing(this.idBase, Identifiable.newID(), this.idBase, 'coral', E_Thing.root, true);
 		const rootRef = await addDoc(collectionRef, u.convertToObject(root, fields));		// no need to remember now
-		root.log(T_Debug.remote, 'CREATE T');
+		root.log(E_Debug.remote, 'CREATE T');
 		this.hierarchy.root = root;
 		root.setID(rootRef.id);
 	}
@@ -323,7 +323,7 @@ export default class DBFirebase extends DBCommon {
 			const jsThing = { ...remoteThing };
 			try {
 				await setDoc(ref, jsThing);
-				thing.log(T_Debug.remote, 'UPDATE T');
+				thing.log(E_Debug.remote, 'UPDATE T');
 			} catch (error) {
 				this.reportError(error);
 			}
@@ -336,7 +336,7 @@ export default class DBFirebase extends DBCommon {
 			try {
 				const ref = doc(thingsCollection, thing.id) as DocumentReference<Thing>;
 				await deleteDoc(ref);
-				thing.log(T_Debug.remote, 'DELETE T');
+				thing.log(E_Debug.remote, 'DELETE T');
 			} catch (error) {
 				this.reportError(error);
 			}
@@ -348,7 +348,7 @@ export default class DBFirebase extends DBCommon {
 		if (changed) {
 			thing.title	  = from.virginTitle;
 			thing.color	  = from.color;
-			thing.t_thing = from.t_thing;
+			thing.e_thing = from.e_thing;
 		}
 		return changed;
 	}
@@ -362,10 +362,10 @@ export default class DBFirebase extends DBCommon {
 		} else {
 			switch (change.type) {
 				case 'added':
-					if (!!thing || remoteThing.isEqualTo(this.addedThing) || remoteThing.t_thing == T_Thing.root) {
+					if (!!thing || remoteThing.isEqualTo(this.addedThing) || remoteThing.e_thing == E_Thing.root) {
 						return false;			// do not invoke rebuild because nothing has changed
 					}
-					thing = h.thing_remember_runtimeCreate(idBase, id, remoteThing.title, remoteThing.color, remoteThing.t_thing, true);
+					thing = h.thing_remember_runtimeCreate(idBase, id, remoteThing.title, remoteThing.color, remoteThing.e_thing, true);
 					break;
 				case 'removed':
 					if (!!thing) {
@@ -392,7 +392,7 @@ export default class DBFirebase extends DBCommon {
 	trait_extractChangesFromPersistent(trait: Trait, from: PersistentTrait) {
 		const changed = !from.isEqualTo(trait);
 		if (changed) {
-			trait.t_trait = from.t_trait;
+			trait.e_trait = from.e_trait;
 			trait.ownerID = from.ownerID;
 			trait.text	  = from.text;
 		}
@@ -405,7 +405,7 @@ export default class DBFirebase extends DBCommon {
 			try {
 				const ref = doc(traitsCollection, trait.id) as DocumentReference<Trait>;
 				await deleteDoc(ref);
-				trait.log(T_Debug.remote, 'DELETE T');
+				trait.log(E_Debug.remote, 'DELETE T');
 			} catch (error) {
 				this.reportError(error);
 			}
@@ -420,7 +420,7 @@ export default class DBFirebase extends DBCommon {
 			const jsTrait = { ...remoteTrait };
 			try {
 				await setDoc(ref, jsTrait);
-				trait.log(T_Debug.remote, 'UPDATE T');
+				trait.log(E_Debug.remote, 'UPDATE T');
 			} catch (error) {
 				this.reportError(error);
 			}
@@ -444,7 +444,7 @@ export default class DBFirebase extends DBCommon {
 				trait.setID(ref.id);
 				h.trait_remember(trait);
 				await this.handle_deferredSnapshots();
-				trait.log(T_Debug.remote, 'CREATE T');
+				trait.log(E_Debug.remote, 'CREATE T');
 			} catch (error) {
 				this.reportError(error);
 			}
@@ -463,7 +463,7 @@ export default class DBFirebase extends DBCommon {
 					if (!!trait || remoteTrait.isEqualTo(this.addedTrait)) {
 						return false;		// do not invoke signal because nothing has changed
 					}
-					trait = h.trait_remember_runtimeCreate(idBase, id, remoteTrait.ownerID, remoteTrait.t_trait, remoteTrait.text, true);
+					trait = h.trait_remember_runtimeCreate(idBase, id, remoteTrait.ownerID, remoteTrait.e_trait, remoteTrait.text, true);
 					break;
 				case 'removed':
 					if (!!trait) {
@@ -494,7 +494,7 @@ export default class DBFirebase extends DBCommon {
 				const remotePredicate = new PersistentPredicate(predicate);
 				const jsPredicate = { ...remotePredicate };
 				await setDoc(ref, jsPredicate);
-				predicate.log(T_Debug.remote, 'UPDATE P');
+				predicate.log(E_Debug.remote, 'UPDATE P');
 			} catch (error) {
 				this.reportError(error);
 			}
@@ -507,7 +507,7 @@ export default class DBFirebase extends DBCommon {
 			try {
 				const ref = doc(predicatesCollection, predicate.id) as DocumentReference<PersistentPredicate>;
 				await deleteDoc(ref);
-				predicate.log(T_Debug.remote, 'DELETE P');
+				predicate.log(E_Debug.remote, 'DELETE P');
 			} catch (error) {
 				this.reportError(error);
 			}
@@ -529,7 +529,7 @@ export default class DBFirebase extends DBCommon {
 				predicate.setID(ref.id);
 				h.predicate_remember(predicate);
 				await this.handle_deferredSnapshots();
-				predicate.log(T_Debug.remote, 'CREATE P');
+				predicate.log(E_Debug.remote, 'CREATE P');
 			} catch (error) {
 				this.reportError(error);
 			}
@@ -544,7 +544,7 @@ export default class DBFirebase extends DBCommon {
 			try {
 				const ref = doc(relationshipsCollection, relationship.id) as DocumentReference<PersistentRelationship>;
 				await deleteDoc(ref);
-				relationship.log(T_Debug.remote, 'DELETE R');
+				relationship.log(E_Debug.remote, 'DELETE R');
 			} catch (error) {
 				this.reportError(error);
 			}
@@ -559,7 +559,7 @@ export default class DBFirebase extends DBCommon {
 				const remoteRelationship = new PersistentRelationship(relationship);
 				const jsRelationship = { ...remoteRelationship };
 				await setDoc(ref, jsRelationship);
-				relationship.log(T_Debug.remote, 'UPDATE R');
+				relationship.log(E_Debug.remote, 'UPDATE R');
 			} catch (error) {
 				this.reportError(error);
 			}
@@ -602,7 +602,7 @@ export default class DBFirebase extends DBCommon {
 			relationship.persistence.awaitingCreation = false;
 			relationship.persistence.already_persisted = true;
 			await this.handle_deferredSnapshots();
-			relationship.log(T_Debug.remote, 'CREATE R');
+			relationship.log(E_Debug.remote, 'CREATE R');
 		}
 	}
 
@@ -618,7 +618,7 @@ export default class DBFirebase extends DBCommon {
 					if (!!relationship) {
 						return false;
 					}
-					relationship = h.relationship_remember_runtimeCreateUnique(idBase, id, remoteRelationship.kind, remoteRelationship.parent.id, remoteRelationship.child.id, remoteRelationship.orders[0], 0, T_Create.isFromPersistent);
+					relationship = h.relationship_remember_runtimeCreateUnique(idBase, id, remoteRelationship.kind, remoteRelationship.parent.id, remoteRelationship.child.id, remoteRelationship.orders[0], 0, E_Create.isFromPersistent);
 					break;
 				default:
 					if (!relationship) {
@@ -643,26 +643,26 @@ export default class DBFirebase extends DBCommon {
 
 	static readonly VALIDATION: unique symbol;
 
-	static data_isValidOfKind(t_persistable: T_Persistable, data: DocumentData) {
-		switch (t_persistable) {
-			case T_Persistable.things:		
+	static data_isValidOfKind(e_persistable: E_Persistable, data: DocumentData) {
+		switch (e_persistable) {
+			case E_Persistable.things:		
 				const thing = data as PersistentThing;	
 				if (thing.hasNoData) {
 					return false;
 				}
 				break;
-			case T_Persistable.traits:		
+			case E_Persistable.traits:		
 				const trait = data as PersistentTrait;	
 				if (trait.hasNoData) {
 					return false;
 				}
 				break;
-			case T_Persistable.predicates:
+			case E_Persistable.predicates:
 				if (!data.kind) {
 					return false;
 				}
 				break;
-			case T_Persistable.relationships:
+			case E_Persistable.relationships:
 				const relationship = data as PersistentRelationship;
 				if (!relationship.predicate || !relationship.parent || !relationship.child) {
 					return false;
@@ -724,29 +724,29 @@ export class Bulk {
 
 export class SnapshotDeferal {
 	idBase: string;
-	t_persistable: T_Persistable;
+	e_persistable: E_Persistable;
 	snapshot: QuerySnapshot;
 
-	constructor(idBase: string, t_persistable: T_Persistable, snapshot: QuerySnapshot) {
+	constructor(idBase: string, e_persistable: E_Persistable, snapshot: QuerySnapshot) {
 		this.idBase = idBase;
 		this.snapshot = snapshot;
-		this.t_persistable = t_persistable;
+		this.e_persistable = e_persistable;
 	}
 }
 
 export class PersistentThing {
-	t_thing: T_Thing;
+	e_thing: E_Thing;
 	title: string;
 	color: string;
 
 	constructor(data: DocumentData) {
 		const remote = data as PersistentThing;
-		this.t_thing = remote.t_thing;
+		this.e_thing = remote.e_thing;
 		this.title	 = remote.title;
 		this.color	 = remote.color;
 	}
 
-	get hasNoData(): boolean { return !this.title && !this.color && !this.t_thing; }
+	get hasNoData(): boolean { return !this.title && !this.color && !this.e_thing; }
 
 	get virginTitle(): string {
 		const title = this.title;
@@ -759,37 +759,37 @@ export class PersistentThing {
 
 	isEqualTo(thing: Thing | null) {
 		return !!thing &&
-		thing.t_thing == this.t_thing &&
+		thing.e_thing == this.e_thing &&
 		thing.title == this.title &&
 		thing.color == this.color;
 	}
 }
 
 export class PersistentTrait {
-	t_trait: T_Trait;
+	e_trait: E_Trait;
 	ownerID: string;
 	text: string;
 
 	constructor(data: DocumentData) {
 		const remote = data as PersistentTrait;
 		this.ownerID = remote.ownerID;
-		this.t_trait = remote.t_trait;
+		this.e_trait = remote.e_trait;
 		this.text	 = remote.text;
 	}
 	
-	get hasNoData(): boolean { return !this.ownerID && !this.t_trait; }
+	get hasNoData(): boolean { return !this.ownerID && !this.e_trait; }
 
 	isEqualTo(trait: Trait | null) {
 		return !!trait &&
 		trait.ownerID == this.ownerID &&
-		trait.t_trait == this.t_trait &&
+		trait.e_trait == this.e_trait &&
 		trait.text	  == this.text;
 	}
 }
 
 export class PersistentPredicate {
 	isBidirectional: boolean;
-	kind: T_Predicate;
+	kind: E_Predicate;
 
 	constructor(data: DocumentData) {
 		const remote		 = data as PersistentPredicate;
@@ -809,7 +809,7 @@ export class PersistentRelationship implements PersistentRelationship {
 	parent!: DocumentReference<Thing, DocumentData>;
 	child!: DocumentReference<Thing, DocumentData>;
 	orders: Array<number>;
-	kind!: T_Predicate;
+	kind!: E_Predicate;
 
 	constructor(data: DocumentData | Relationship) {
 		const things = dbFirebase.bulk_forID(dbFirebase.idBase)?.thingsCollection;
@@ -826,7 +826,7 @@ export class PersistentRelationship implements PersistentRelationship {
 					}
 				} else {
 					const remote = data as PersistentRelationship;
-					if (DBFirebase.data_isValidOfKind(T_Persistable.relationships, data)) {
+					if (DBFirebase.data_isValidOfKind(E_Persistable.relationships, data)) {
 						this.kind = data.kind;
 						this.child = doc(things, remote.child.id) as DocumentReference<Thing>;
 						this.parent = doc(things, remote.parent.id) as DocumentReference<Thing>;

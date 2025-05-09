@@ -1,4 +1,4 @@
-import { k, u, radial, Ancestry, Predicate, T_Kinship } from '../common/Global_Imports';
+import { k, u, radial, Ancestry, Predicate, E_Kinship } from '../common/Global_Imports';
 import { w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
 import { w_hierarchy, w_g_paging, w_ancestry_focus } from '../common/Stores';
 import { G_Widget, G_Cluster, G_Paging } from '../common/Global_Imports';
@@ -145,7 +145,7 @@ export default class G_RadialGraph {
 		const focus_ancestry = get(w_ancestry_focus);
 		if (!!focus_ancestry) {
 			if (points_toChildren) {
-				let childAncestries = focus_ancestry.kin_of(T_Kinship.child);
+				let childAncestries = focus_ancestry.kin_of(E_Kinship.child);
 				this.assignAncestries_toClusterFor(childAncestries, Predicate.contains, true);
 			} else {
 				for (const predicate of get(w_hierarchy).predicates) {

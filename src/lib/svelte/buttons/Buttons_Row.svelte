@@ -1,11 +1,11 @@
 <script lang='ts'>
-    import { k, u, ux, Point, colors, signals, T_Request, T_Element, S_Element } from '../../ts/common/Global_Imports';
+    import { k, u, ux, Point, colors, signals, E_Request, E_Element, S_Element } from '../../ts/common/Global_Imports';
     import { w_count_button_restyle } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Separator from '../kit/Separator.svelte';
     import Button from './Button.svelte';
 	import { onMount } from 'svelte';
-    export let closure: (t_request: T_Request, s_mouse: S_Mouse, column: number) => boolean;
+    export let closure: (e_request: E_Request, s_mouse: S_Mouse, column: number) => boolean;
     export let titles_are_separated = true;
 	export let origin: Point | null = null;
     export let row_titles: Array<string>;
@@ -37,16 +37,16 @@
     });
 
     function button_left_for(column: number): number { return title_widths.slice(0, column).reduce((acc, width) => acc + horizontal_gap + width + button_portion, horizontal_gap / 2); }
-    function button_disabled_for(column: number): boolean { return closure(T_Request.query_disabled, null, column); }
-    function button_inverted_for(column: number): boolean { return closure(T_Request.query_inverted, null, column); }
-    function button_name_for(column: number): string { return closure(T_Request.query_name, null, column); }
+    function button_disabled_for(column: number): boolean { return closure(E_Request.query_disabled, null, column); }
+    function button_inverted_for(column: number): boolean { return closure(E_Request.query_inverted, null, column); }
+    function button_name_for(column: number): string { return closure(E_Request.query_name, null, column); }
     function button_width_for(column: number): number { return button_portion + title_widths[column]; }
 
 	function update_es_buttons() {
         for (let column = 0; column < columns; column++) {
             let es_button = es_button_byColumn[column];
             if (!es_button) {
-                es_button = ux.s_element_for(new Identifiable(`${name}-${button_name_for(column)}`), T_Element.button, column);
+                es_button = ux.s_element_for(new Identifiable(`${name}-${button_name_for(column)}`), E_Element.button, column);
                 es_button_byColumn[column] = es_button;
             }
             es_button.set_forHovering(colors.default, 'pointer');
@@ -102,7 +102,7 @@
                 es_button={es_button_byColumn[column]}
                 origin={Point.x(button_left_for(column))}
                 name={`${name}-${button_name_for(column)}`}
-                closure={(s_mouse) => closure(T_Request.handle_click, s_mouse, column)}>
+                closure={(s_mouse) => closure(E_Request.handle_click, s_mouse, column)}>
                 {title}
             </Button>
         {/each}

@@ -1,6 +1,6 @@
 import { k, Thing, Ancestry, Seriously_Range } from '../common/Global_Imports';
 
-export enum T_Edit {
+export enum E_Edit {
 	percolating	= 'percolating',
 	stopping	= 'stopping',
 	editing		= 'editing',
@@ -8,19 +8,19 @@ export enum T_Edit {
 }
 
 export default class S_Title_Edit {
-	t_edit = T_Edit.editing;
+	e_edit = E_Edit.editing;
 	ancestry: Ancestry;
 	title = k.empty
 	
 	// singleton (store)
-	// t_edit is source of truth for all editing
+	// e_edit is source of truth for all editing
 	// ancestry.thing is source of truth for selection range
 	
-	stop_editing() { this.t_edit = T_Edit.done; }
+	stop_editing() { this.e_edit = E_Edit.done; }
 	get thing(): Thing | null { return this.ancestry.thing; }
 	constructor(ancestry: Ancestry) { this.ancestry = ancestry; }
-	get isActive(): boolean { return this.t_edit != T_Edit.done; }
-	get description(): string { return `${this.t_edit} ${this.thing?.title}`; }
+	get isActive(): boolean { return this.e_edit != E_Edit.done; }
+	get description(): string { return `${this.e_edit} ${this.thing?.title}`; }
 	get thing_selectionRange(): Seriously_Range | undefined { return this.thing?.selectionRange; }
 	refersTo(ancestry: Ancestry): boolean { return this.ancestry.equals(ancestry); }
 	actively_refersTo(ancestry: Ancestry): boolean { return this.refersTo(ancestry) && this.isActive; }
@@ -45,19 +45,19 @@ export default class S_Title_Edit {
 	// ancestry props that reference this object: {isEditing, isEditStopping, isEditPercolating}
 
 	startEditing(ancestry: Ancestry) {
-		this.t_edit = T_Edit.editing;
+		this.e_edit = E_Edit.editing;
 		this.ancestry = ancestry;
 	}
 
-	isAncestry_inState(ancestry: Ancestry | null, t_edit: string) {
-		return (!ancestry || (!this.ancestry.equals(ancestry))) ? false : (this.t_edit == t_edit);
+	isAncestry_inState(ancestry: Ancestry | null, e_edit: string) {
+		return (!ancestry || (!this.ancestry.equals(ancestry))) ? false : (this.e_edit == e_edit);
 	}
 
-	setState_temporarilyTo_whileApplying(t_edit: T_Edit, apply: () => void) {
-		const saved = this.t_edit;
-		this.t_edit = t_edit;
+	setState_temporarilyTo_whileApplying(e_edit: E_Edit, apply: () => void) {
+		const saved = this.e_edit;
+		this.e_edit = e_edit;
 		apply();
-		this.t_edit = saved;
+		this.e_edit = saved;
 	}
 
 }

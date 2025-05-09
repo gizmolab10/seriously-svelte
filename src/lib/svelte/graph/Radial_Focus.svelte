@@ -2,13 +2,13 @@
 	import { c, k, ux, w, Size, Point, debug, colors, signals, svgPaths, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { w_background_color, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { w_thing_color, w_s_title_edit, w_thing_fontFamily } from '../../ts/common/Stores';
-	import { T_Layer, T_Element, T_SvelteComponent } from '../../ts/common/Enumerations';
+	import { E_Layer, E_Element, E_SvelteComponent } from '../../ts/common/Enumerations';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Widget_Title from '../widget/Widget_Title.svelte';
 	import { onMount } from 'svelte';
 	const height = k.height.row + 1;
 	const fontSize = `{k.font_size.thing}px`;
-	const es_title = ux.s_element_for($w_ancestry_focus, T_Element.radial_focus, k.empty);
+	const es_title = ux.s_element_for($w_ancestry_focus, E_Element.radial_focus, k.empty);
 	let svg_strokeColor = 'transparent';
 	let svg_fillColor = 'transparent';
 	let color = colors.default_forThings;
@@ -38,7 +38,7 @@
 	
 	$: {
 		if (!!focus) {
-			new Svelte_Wrapper(focus, handle_s_mouse, $w_ancestry_focus.hid, T_SvelteComponent.widget);
+			new Svelte_Wrapper(focus, handle_s_mouse, $w_ancestry_focus.hid, E_SvelteComponent.widget);
 		}
 	}
 
@@ -90,12 +90,12 @@
 		height : {height}px;
 		width : {width_ofTitle + 15}px;
 		top : {origin_ofWidget.y}px;
-		z-index : {T_Layer.widgets};
+		z-index : {E_Layer.widgets};
 		left : {origin_ofWidget.x}px;'>
 		<Mouse_Responder
 			height = {height}
 			center = {center_ofBorder}
-			zindex = {T_Layer.widgets}
+			zindex = {E_Layer.widgets}
 			cursor = {k.cursor_default}
 			width = {width_ofTitle + 15}
 			name = 'radial-focus-border'

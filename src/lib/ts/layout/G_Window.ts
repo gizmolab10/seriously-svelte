@@ -1,4 +1,4 @@
-import { k, p, Rect, Size, Point, debug, layout, T_Banner, T_Preference } from '../common/Global_Imports';
+import { k, p, Rect, Size, Point, debug, layout, E_Banner, E_Preference } from '../common/Global_Imports';
 import { w_graph_rect, w_show_details, w_mouse_location_scaled } from '../common/Stores';
 import { w_user_graph_offset, w_user_graph_center } from '../common/Stores';
 import { get } from 'svelte/store';
@@ -13,7 +13,7 @@ export class G_Window {
 	get mouse_angle_fromGraphCenter(): number | null { return this.mouse_vector_ofOffset_fromGraphCenter()?.angle ?? null; }
 
 	get persisted_user_offset(): Point {
-		const point = p.read_key(T_Preference.user_offset) ?? {x:0, y:0};
+		const point = p.read_key(E_Preference.user_offset) ?? {x:0, y:0};
 		return new Point(point.x, point.y);
 	}
 
@@ -24,7 +24,7 @@ export class G_Window {
 
 	restore_state() {
 		this.graphRect_update();	// needed for applyScale
-		this.applyScale(p.read_key(T_Preference.scale) ?? 1);
+		this.applyScale(p.read_key(E_Preference.scale) ?? 1);
 		this.renormalize_user_graph_offset();	// must be called after apply scale (which fubars offset)
 	}
 
@@ -53,7 +53,7 @@ export class G_Window {
 		let changed = false;
 		const current_offset = get(w_user_graph_offset);
 		if (!!current_offset && current_offset.vector_to(user_offset).magnitude > .001) {
-			p.write_key(T_Preference.user_offset, user_offset);
+			p.write_key(E_Preference.user_offset, user_offset);
 			changed = true;
 		}
 		const center_offset = get(w_graph_rect).center.offsetBy(user_offset);
@@ -65,7 +65,7 @@ export class G_Window {
 
 	graphRect_update() {
 		const x = get(w_show_details) ? k.width_details + k.thickness.separator : 0;
-		const y = layout.top_ofBannerAt(T_Banner.graph);
+		const y = layout.top_ofBannerAt(E_Banner.graph);
 		const origin_ofGraph = new Point(x, y);
 		const size_ofGraph = this.windowSize.reducedBy(origin_ofGraph);	// account for origin
 		const rect = new Rect(origin_ofGraph, size_ofGraph);
@@ -83,7 +83,7 @@ export class G_Window {
 
 	applyScale(scale: number) {
 		this.scale_factor = scale;
-		p.write_key(T_Preference.scale, scale);
+		p.write_key(E_Preference.scale, scale);
 		const zoomContainer = document.documentElement;
 		zoomContainer.style.setProperty('zoom', scale.toString());
 		zoomContainer.style.transform = `scale(var(zoom))`;

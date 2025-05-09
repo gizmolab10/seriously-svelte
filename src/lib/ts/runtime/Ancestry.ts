@@ -1,20 +1,20 @@
 import { Direction, Predicate, Hierarchy, databases, Relationship, Svelte_Wrapper, p } from '../common/Global_Imports';
-import { T_Graph, T_Element, T_Kinship, T_Predicate, T_Alteration, T_SvelteComponent } from '../common/Global_Imports';
+import { E_Graph, E_Element, E_Kinship, E_Predicate, E_Alteration, E_SvelteComponent } from '../common/Global_Imports';
 import { c, k, u, show, Rect, Size, Thing, debug, layout, wrappers, svgPaths } from '../common/Global_Imports';
 import { w_hierarchy, w_ancestry_focus, w_s_alteration, w_s_title_edit } from '../common/Stores';
 import { w_ancestries_grabbed, w_ancestries_expanded, } from '../common/Stores';
-import { w_background_color, w_t_graph, w_t_database } from '../common/Stores';
+import { w_background_color, w_e_graph, w_e_database } from '../common/Stores';
 import { G_Widget, G_Cluster, G_TreeLine } from '../common/Global_Imports';
 import { G_Paging, S_Title_Edit } from '../common/Global_Imports';
 import type { Dictionary, Integer } from '../common/Types';
-import { T_Database } from '../database/DBCommon';
-import { T_Edit } from '../state/S_Title_Edit';
+import { E_Database } from '../database/DBCommon';
+import { E_Edit } from '../state/S_Title_Edit';
 import { get, Writable } from 'svelte/store';
 import Identifiable from './Identifiable';
 
 export default class Ancestry extends Identifiable {
 	g_widgets: Dictionary<G_Widget> = {};
-	t_database: string;
+	e_database: string;
 	kind: string;
 
 
@@ -24,10 +24,10 @@ export default class Ancestry extends Identifiable {
 	//   "   kind is from the last relationship
 	//  	 all children are of that kind of predicate
 
-	constructor(t_database: string, path: string = k.root_path, kind: string = T_Predicate.contains) {
+	constructor(e_database: string, path: string = k.root_path, kind: string = E_Predicate.contains) {
 		super(path);
 		this.kind = kind;
-		this.t_database = t_database;
+		this.e_database = e_database;
 		this.hierarchy.signal_storage_redraw(0);
 	}
 	
@@ -72,9 +72,9 @@ export default class Ancestry extends Identifiable {
 	get isInvalid():						 boolean { return this.containsReciprocals || this.containsMixedPredicates; }
 	get hasRelationships():					 boolean { return this.hasParents || this.hasChildren; }
 	get shows_branches():					 boolean { return layout.branches_areChildren ? this.shows_children : !this.isRoot; }
-	get isEditing():						 boolean { return get(w_s_title_edit)?.isAncestry_inState(this, T_Edit.editing) ?? false; }
+	get isEditing():						 boolean { return get(w_s_title_edit)?.isAncestry_inState(this, E_Edit.editing) ?? false; }
 	get isExpanded():						 boolean { return this.isRoot || this.includedInStore_ofAncestries(w_ancestries_expanded); }
-	get description():					   	  string { return `${this.kind} "${this.thing?.t_thing ?? '-'}" ${this.titles.join(':')}`; }
+	get description():					   	  string { return `${this.kind} "${this.thing?.e_thing ?? '-'}" ${this.titles.join(':')}`; }
 	get title():						   	  string { return this.thing?.title ?? 'missing title'; }
 	get pathString():						  string { return this.id; }
 	get depth():							  number { return this.relationship_ids.length; }
@@ -86,7 +86,7 @@ export default class Ancestry extends Identifiable {
 	get visibleSubtree_halfSize():				Size { return this.visibleSubtree_size.dividedInHalf; }
 	get lastChild():						   Thing { return this.children.slice(-1)[0]; }
 	get firstChild():						   Thing { return this.children[0]; }
-	get g_widget():							G_Widget { return this.g_widget_forGraphMode(get(w_t_graph)); }
+	get g_widget():							G_Widget { return this.g_widget_forGraphMode(get(w_e_graph)); }
 	get hierarchy():					   Hierarchy { return get(w_hierarchy); }
 	get titleRect():					 Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
 	get thing():						Thing | null { return this.hierarchy.thing_forAncestry(this); }
@@ -96,14 +96,14 @@ export default class Ancestry extends Identifiable {
 	get g_paging():					 G_Paging | null { return this.g_cluster?.g_paging_forAncestry(this) ?? null; }
 	get predicate():				Predicate | null { return this.hierarchy.predicate_forKind(this.kind) }
 	get relationship():			 Relationship | null { return this.relationshipAt(); }
-	get titleWrapper():		   Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.hid, T_SvelteComponent.title); }
+	get titleWrapper():		   Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.hid, E_SvelteComponent.title); }
 	get relationship_hids():	 Array	   <Integer> { return this.relationship_ids.map(i => i.hash()); }
 	get relationship_ids():	 	 Array		<string> { return this.isRoot ? [] : this.pathString.split(k.separator.generic); }
 	get titles():			 	 Array		<string> { return this.ancestors?.map(a => `${!a ? 'null' : a.title}`) ?? []; }
 	get children():			 	 Array		 <Thing> { return this.hierarchy.things_forAncestries(this.childAncestries); }
 	get parents():			 	 Array		 <Thing> { return this.thing?.parents ?? []; }
 	get ancestors():		 	 Array		 <Thing> { return this.hierarchy.things_forAncestry(this); }
-	get childAncestries():	 	 Array	  <Ancestry> { return this.kin_of(T_Kinship.child) ?? []; }
+	get childAncestries():	 	 Array	  <Ancestry> { return this.kin_of(E_Kinship.child) ?? []; }
 	get sibling_ancestries(): 	 Array	  <Ancestry> { return this.parentAncestry?.childAncestries ?? []; }
 	get branchAncestries():		 Array	  <Ancestry> { return layout.branches_areChildren ? this.childAncestries : this.parentAncestries; }
 	get childRelationships():	 Array<Relationship> { return this.relationships_ofKind_forParents(this.kind, false); }
@@ -130,7 +130,7 @@ export default class Ancestry extends Identifiable {
 	get isEditable(): boolean {
 		const isExternals = this.thing?.isExternals ?? true;
 		const isBulkAlias = this.thing?.isBulkAlias ?? true;	// missing thing, return not editable
-		const canEdit = !this.isRoot || databases.db_now.t_database == T_Database.local;
+		const canEdit = !this.isRoot || databases.db_now.e_database == E_Database.local;
 		return canEdit && c.allow_TitleEditing && !isExternals && !isBulkAlias;
 	}
 
@@ -219,7 +219,7 @@ export default class Ancestry extends Identifiable {
 	relationships_count_forChildren(forChildren: boolean):			 number { return this.relationships_forChildren(forChildren).length; }
 	sharesAnID(ancestry: Ancestry | null):							boolean { return !ancestry ? false : this.relationship_ids.some(id => ancestry.relationship_ids.includes(id)); }
 	showsCluster_forPredicate(predicate: Predicate):				boolean { return this.hasParents_ofKind(predicate.kind) && this.hasThings(predicate); }
-	equals(ancestry: Ancestry | null | undefined):					boolean { return super.equals(ancestry) && this.t_database == ancestry?.t_database; }
+	equals(ancestry: Ancestry | null | undefined):					boolean { return super.equals(ancestry) && this.e_database == ancestry?.e_database; }
 	hasParents_ofKind(kind: string):								boolean { return this.thing?.hasParents_ofKind(kind) ?? false; }
 	includedInStore_ofAncestries(store: Writable<Array<Ancestry>>): boolean { return this.includedInAncestries(get(store)); }
 	isChildOf(other: Ancestry):										boolean { return this.id_thing == other.thingAt(2)?.id; }
@@ -262,8 +262,8 @@ export default class Ancestry extends Identifiable {
 
 	hasThings(predicate: Predicate): boolean {
 		switch (predicate.kind) {
-			case T_Predicate.contains:  return this.thing?.hasParents_ofKind(predicate.kind) ?? false;
-			case T_Predicate.isRelated: return this.hasRelationships;
+			case E_Predicate.contains:  return this.thing?.hasParents_ofKind(predicate.kind) ?? false;
+			case E_Predicate.isRelated: return this.hasRelationships;
 			default:					return false;
 		}
 	}
@@ -276,11 +276,11 @@ export default class Ancestry extends Identifiable {
 		return ids.slice(-(Math.max(1, back)))[0];
 	}
 
-	g_widget_forGraphMode(t_graph: T_Graph) {
-		let g_widget = this.g_widgets[t_graph];
+	g_widget_forGraphMode(e_graph: E_Graph) {
+		let g_widget = this.g_widgets[e_graph];
 		if (!g_widget) {
 			g_widget = G_Widget.empty(this);
-			this.g_widgets[t_graph] = g_widget;
+			this.g_widgets[e_graph] = g_widget;
 		}
 		return g_widget;
 	}
@@ -288,7 +288,7 @@ export default class Ancestry extends Identifiable {
 	isHoverInverted(type: string): boolean {
 		const isInverted = this.isGrabbed || this.isEditing;
 		switch (type) {
-			case T_Element.reveal: return layout.inTreeMode && this.isExpanded == isInverted;
+			case E_Element.reveal: return layout.inTreeMode && this.isExpanded == isInverted;
 			default: return isInverted;
 		}
 	}
@@ -306,9 +306,9 @@ export default class Ancestry extends Identifiable {
 	kin_of(kinship: string | null): Array<Ancestry> | null {
 		if (!!kinship) {
 			switch (kinship) {
-				case T_Kinship.related:	return this.thing?.uniqueAncestries_for(Predicate.isRelated) ?? null;
-				case T_Kinship.parent:	return this.thing?.uniqueAncestries_for(Predicate.contains) ?? null;
-				case T_Kinship.child:	return this.childAncestries_ofKind(this.kind);
+				case E_Kinship.related:	return this.thing?.uniqueAncestries_for(Predicate.isRelated) ?? null;
+				case E_Kinship.parent:	return this.thing?.uniqueAncestries_for(Predicate.contains) ?? null;
+				case E_Kinship.child:	return this.childAncestries_ofKind(this.kind);
 				default:				return null;
 			}
 		}
@@ -318,7 +318,7 @@ export default class Ancestry extends Identifiable {
 	siblings_of(kinship: string | null): Array<Ancestry> | null {
 		if (!!kinship) {
 			switch (kinship) {
-				case T_Kinship.parent:	return this.thing?.ancestries ?? null;
+				case E_Kinship.parent:	return this.thing?.ancestries ?? null;
 				default:				return this.parentAncestry?.kin_of(kinship) ?? null;
 			}
 		}
@@ -367,7 +367,7 @@ export default class Ancestry extends Identifiable {
 	extendUniquely_withChild(child: Thing | null): Ancestry | null {
 		const hidParent = this.thing?.idBridging.hash();
 		if (!!child && !!hidParent) {
-			const relationship = this.hierarchy.relationship_forPredicateKind_parent_child(T_Predicate.contains, hidParent, child.hid);
+			const relationship = this.hierarchy.relationship_forPredicateKind_parent_child(E_Predicate.contains, hidParent, child.hid);
 			if (!!relationship) {
 				return this.uniquelyAppend_relationshipID(relationship.id);
 			}
@@ -469,7 +469,7 @@ export default class Ancestry extends Identifiable {
 	childAncestries_ofKind(kind: string): Array<Ancestry> {
 		let ancestries: Array<Ancestry> = [];
 		const childRelationships = this.childRelationships;
-		const isContains = kind == T_Predicate.contains;
+		const isContains = kind == E_Predicate.contains;
 		if (childRelationships.length > 0) {
 			for (const childRelationship of childRelationships) {					// loop through all child relationships
 				if (childRelationship.kind == kind) {
@@ -705,7 +705,7 @@ export default class Ancestry extends Identifiable {
 					const toolIsAnAncestor = isBidirectional ? false : thing.parentIDs.includes(toolThing.id);
 					const isParentOfTool = this.thing_isImmediateParentOf(ancestry_being_altered, predicate.kind);
 					const isProgenyOfTool = this.isABranchOf(ancestry_being_altered);
-					const isDeleting = s_alteration.t_alteration == T_Alteration.delete;
+					const isDeleting = s_alteration.e_alteration == E_Alteration.delete;
 					const doNotAlter_forIsNotDeleting = isParentOfTool || isProgenyOfTool || toolIsAnAncestor;
 					const canAlter = isDeleting ? isParentOfTool : !doNotAlter_forIsNotDeleting;
 					return canAlter
@@ -722,11 +722,11 @@ export default class Ancestry extends Identifiable {
 			const kind = alteration?.predicate?.kind;
 			if (!!alteration && !!ancestry_being_altered && !!kind) {
 				this.hierarchy.stop_alteration();
-				switch (alteration.t_alteration) {
-					case T_Alteration.delete:
+				switch (alteration.e_alteration) {
+					case E_Alteration.delete:
 						await this.hierarchy.relationship_forget_persistentDelete(ancestry_being_altered, ancestry, kind);
 						break;
-					case T_Alteration.add:
+					case E_Alteration.add:
 						const toolsThing = ancestry_being_altered.thing;
 						if (!!toolsThing) {
 							await this.hierarchy.ancestry_extended_byAddingThing_toAncestry_remember_persistentCreate_relationship(toolsThing, ancestry, kind);
@@ -787,7 +787,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	persistentMoveUp_forParent_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
-		const sibling_ancestries = get(w_ancestry_focus)?.kin_of(T_Kinship.parent);
+		const sibling_ancestries = get(w_ancestry_focus)?.kin_of(E_Kinship.parent);
 		let needs_graphRelayout = false;
 		let needs_graphRebuild = false;
 		if (!!sibling_ancestries) {
@@ -812,7 +812,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	persistentMoveUp_forBidirectional_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
-		const sibling_ancestries = get(w_ancestry_focus)?.kin_of(T_Kinship.related) ?? [];
+		const sibling_ancestries = get(w_ancestry_focus)?.kin_of(E_Kinship.related) ?? [];
 		let needs_graphRelayout = false;
 		let needs_graphRebuild = false;
 		if (!!sibling_ancestries) {
@@ -887,7 +887,7 @@ export default class Ancestry extends Identifiable {
 	
 	expanded_setTo(expand: boolean) {
 		let mutated = false;
-		const matchesDB = this.t_database == get(w_t_database);
+		const matchesDB = this.e_database == get(w_e_database);
 		if (matchesDB && (!this.isRoot || expand)) {
 			w_ancestries_expanded.update((a) => {
 				let array = a ?? [];

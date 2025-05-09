@@ -1,11 +1,11 @@
-import { k, T_Thing, Predicate, T_Predicate } from '../common/Global_Imports';
-import { T_Database, T_Persistence } from './DBCommon';
+import { k, E_Thing, Predicate, E_Predicate } from '../common/Global_Imports';
+import { E_Database, E_Persistence } from './DBCommon';
 import type { Dictionary } from '../common/Types';
 import DBCommon from './DBCommon';
 
 export default class DBTest extends DBCommon {
-	kind_persistence = T_Persistence.none;
-	t_database = T_Database.test;
+	kind_persistence = E_Persistence.none;
+	e_database = E_Database.test;
 	idBase = k.id_base.test;
 	
 	get dict_forStorageDetails(): Dictionary { return {'data' : 'recreated on launch'} }
@@ -19,8 +19,8 @@ export default class DBTest extends DBCommon {
 		const idTf = 'f';
 		const idTr = 'r';
 		const h = this.hierarchy;
-		const kindC = T_Predicate.contains;
-		const kindR = T_Predicate.isRelated;
+		const kindC = E_Predicate.contains;
+		const kindR = E_Predicate.isRelated;
 		h.predicate_defaults_remember_runtimeCreate();
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTa, 'Active', 'green');
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTb, 'Big', 'blue');
@@ -28,7 +28,7 @@ export default class DBTest extends DBCommon {
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTd, 'Diligent', 'mediumvioletred');
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTe, 'Energy', 'purple');
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTf, 'Friends', 'coral');
-		h.thing_remember_runtimeCreateUnique(this.idBase, idTr, 'Life', 'limegreen', T_Thing.root);
+		h.thing_remember_runtimeCreateUnique(this.idBase, idTr, 'Life', 'limegreen', E_Thing.root);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cra', kindC, idTr, idTa, 0, 0);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'crb', kindC, idTr, idTb, 1, 0);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'crc', kindC, idTr, idTc, 2, 0);
@@ -55,7 +55,7 @@ export default class DBTest extends DBCommon {
 		// this.makeMore(2, 'c', kindC, idTb, false);	// parents of  "
 	}
 
-	makeMore(count: number, first: string, kind: T_Predicate, idRef: string, asChild: boolean, order: number = 0) {
+	makeMore(count: number, first: string, kind: E_Predicate, idRef: string, asChild: boolean, order: number = 0) {
 		const isBidirectional = Predicate.isBidirectional(kind);
 		const prefix = isBidirectional ? 'r' : 'c';
 		const charCode = first.charCodeAt(0);
