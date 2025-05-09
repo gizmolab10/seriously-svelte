@@ -6,8 +6,10 @@
 	import Buttons_Grid from '../buttons/Buttons_Grid.svelte';
 	import Button from '../buttons/Button.svelte';
 	export let top = 0;
-	const show_boxes = show.tool_boxes;
-    const font_sizes = [k.font_size.smallest, show_boxes ? k.font_size.smaller : k.font_size.smallest];
+	const titles_are_separated = true;
+	const show_separators = show.tool_separators;
+	const tools_top = top + (titles_are_separated ? 1 : -13);
+    const font_sizes = [k.font_size.smallest, show_separators ? k.font_size.smaller : k.font_size.smallest];
 	let ancestry = $w_hierarchy.grabs_latest_upward(true);
 	let list_title = ancestry.isExpanded && layout.inTreeMode ? 'conceal' : 'reveal';
 	let button_titles = compute_button_titles;
@@ -89,9 +91,9 @@
 <div
 	class='tools'
 	style='
-		top:{top + 1}px;
+		top:{tools_top}px;
 		position:absolute;
-		z-index: {T_Layer.tools}'>
+		z-index:{T_Layer.tools}'>
     {#key reattachments}
 		<Buttons_Grid
 			gap={3}
@@ -99,13 +101,14 @@
 			name='tools'
 			closure={tool_closure}
 			font_sizes={font_sizes}
-			show_boxes={show_boxes}
+			show_separators={show_separators}
 			width={k.width_details}
 			button_titles={button_titles}
-			button_height={k.height.button}/>
+			button_height={k.height.button}
+			titles_are_separated={titles_are_separated}/>
 		{#if $w_s_alteration}
 			<div
-				class='alteration-tools'
+				class='alteration-instructions'
 				style='
 					top:120px;
 					display:block;

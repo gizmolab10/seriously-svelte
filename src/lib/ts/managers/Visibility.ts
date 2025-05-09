@@ -5,10 +5,10 @@ import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
 
 export class Visibility {
-	debug_cursor = false;
-	traits		 = false;
-	t_info		 = T_Report.focus;
-	tool_boxes	 = !(get(w_device_isMobile) ?? false);
+	debug_cursor	= false;
+	traits			= false;
+	t_info			= T_Report.focus;
+	tool_separators	= !(get(w_device_isMobile) ?? false);
 
 	queryStrings_apply() {
 		const queryStrings = c.queryStrings;
@@ -51,7 +51,7 @@ export class Visibility {
 
 	reactivity_subscribe() {
 		w_device_isMobile.subscribe((flag: boolean) => {
-			this.tool_boxes = !flag;
+			this.tool_separators = !flag;
 		});
 		w_show_details.subscribe((flag: boolean) => {
 			p.write_key(T_Preference.show_details, flag);

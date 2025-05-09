@@ -6,6 +6,7 @@
     import Button from './Button.svelte';
 	import { onMount } from 'svelte';
     export let closure: (t_request: T_Request, s_mouse: S_Mouse, column: number) => boolean;
+    export let titles_are_separated = true;
 	export let origin: Point | null = null;
     export let row_titles: Array<string>;
     export let font_sizes: Array<number>;
@@ -16,7 +17,7 @@
 	export let name = k.empty;
     export let width: number;
     const title_width = 34;
-    const button_titles = row_titles.slice(1);
+    const button_titles = titles_are_separated ? row_titles.slice(1) : row_titles;
     const columns = button_titles.length;
     const title_widths = button_titles.map((title) => u.getWidth_ofString_withSize(title, `${font_sizes[0]}px`));
     const total_width = title_widths.reduce((acc, width) => acc + width + horizontal_gap, 0);
@@ -53,15 +54,6 @@
             es_button.isInverted = button_inverted_for(column);
         }
 	}
-    // <Buttons_Row
-    //     gap={gap}
-    //     name={name}
-    //     closure={closure}
-    //     width={row_width}
-    //     origin={origin_of_box}
-    //     font_size={font_sizes[1]}
-    //     button_height={button_height}
-    //     button_titles={button_titles.slice(1)}/>
 
 </script>
 
@@ -71,27 +63,29 @@
         top:{origin.y}px;
         position:absolute;
         height:{button_height}px;'>
-    {#if show_box}
-        <Separator
-            top={3}
-            width={width}
-            add_wings={true}
-            title={button_titles[0]}
-            margin={k.details_margin}
-            thickness={k.thickness.thin}
-            title_font_size={font_sizes[0]}
-            title_left={k.separator_title_left}/>
-    {:else}
-        <div
-            class='box-title'
-            style='
-                top: 1.5px;
-                text-align: right;
-                position:absolute;
-                font-size:{font_sizes[0]}px;
-                width:{title_width - horizontal_gap}px;'>
-            {row_titles[0]}
-        </div>
+    {#if titles_are_separated}
+        {#if show_box}
+            <Separator
+                top={3}
+                width={width}
+                add_wings={true}
+                title={button_titles[0]}
+                margin={k.details_margin}
+                thickness={k.thickness.thin}
+                title_font_size={font_sizes[0]}
+                title_left={k.separator_title_left}/>
+        {:else}
+            <div
+                class='box-title'
+                style='
+                    top: 1.5px;
+                    text-align: right;
+                    position:absolute;
+                    font-size:{font_sizes[0]}px;
+                    width:{title_width - horizontal_gap}px;'>
+                {row_titles[0]}
+            </div>
+        {/if}
     {/if}
     <div class='buttons-array'
         style='
