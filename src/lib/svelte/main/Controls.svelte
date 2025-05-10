@@ -35,10 +35,7 @@
 	onMount(() => { setup_forIDs(); });
 	function togglePopupID(id) { $w_popupView_id = ($w_popupView_id == id) ? null : id; }
 
-	$: {
-		const _ = `${$w_count_resize} ${$w_graph_rect}`;
-		width = w.windowSize.width - 20;
-	}
+	$: $w_count_resize, $w_graph_rect, width = w.windowSize.width - 20;
 
 	$: {
 		const show_related = $w_show_related;

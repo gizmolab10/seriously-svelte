@@ -33,10 +33,8 @@
 		return () => { handle_rebuild.disconnect(); };
 	});
 
-	$: {
-		const _ = $w_ancestry_focus;
-		graph_reattachments += 1;
-	}
+	$: $w_ancestry_focus, graph_reattachments += 1;
+	$: $w_graph_rect, $w_ancestry_focus, $w_device_isMobile, $w_e_graph, layout.grand_layout();
 
 	$: {
 		draggableRect = $w_graph_rect;
@@ -44,18 +42,11 @@
 		graph_reattachments += 1;
 	}
 
-	$: {
-		const _ = $w_device_isMobile;
+	$: $w_device_isMobile,
 		setTimeout(() => {
 			update_style();
 		}, 1);
-	}
-	
-	$: {
-		const _ = $w_graph_rect + $w_ancestry_focus + $w_device_isMobile + $w_e_graph;
-		layout.grand_layout();
-	}
-	
+		
 	function update_style() {
 		style=`
 			overflow: hidden;

@@ -66,15 +66,12 @@
 		};
 	});
 
+	$: $w_thing_color, $w_ancestries_grabbed, border = es_widget.border;
+
 	$: {
 		if (!!widget) {
 			widgetWrapper = new Svelte_Wrapper(widget, handle_s_mouse, ancestry.hid, E_SvelteComponent.widget);
 		}
-	}
-
-	$: {
-		const _ = $w_thing_color + $w_ancestries_grabbed;
-		border = es_widget.border;
 	}
 
 	$: {

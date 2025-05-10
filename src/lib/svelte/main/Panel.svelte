@@ -24,53 +24,13 @@
 	let panel_reattachments = 0;
 	let chain = ['Panel'];
 
+	$: $w_e_database, $w_e_startup, $w_popupView_id, $w_graph_rect, panel_reattachments += 1;
+	$: $w_background_color, separator_color = colors.separator;
 	function ignore_wheel(event) { event.preventDefault(); }
-
-	$: {
-		const _ = $w_e_database + $w_e_startup + $w_popupView_id + $w_graph_rect;
-		panel_reattachments += 1;
-	}
-
-	$: {
-		const _ = $w_background_color;
-		separator_color = colors.separator;
-	}
-	
-	async function handle_key_down(event) {
-		if (event.type == 'keydown') {
-			const key = event.key.toLowerCase();
-			if (key == undefined) {
-				alert('No key for ' + event.type);
-			} else if (!$w_s_title_edit && !ux.isEditing_text) {			// let title editor (when active) consume the events
-				const h = $w_hierarchy;
-				switch (key) {
-					case 'o': h.select_file_toUpload(event.shiftKey); break;
-					case 'c': w.user_graph_offset_setTo(Point.zero); break;
-					case 'm': layout.toggle_t_graph(); break;
-					case 's': h.persist_toFile(); break;
-					case '?': c.showHelp(); break;
-					default:  await e.handle_key_down(event); return;	// let e consume the events
-				}
-				debug.log_key(`PANEL  ${key}`);
-			}
-		}
-	}
 
 </script>
 
-<style>
-	p {
-		text-align: center;
-		font-size: 3em;
-	}
-	.horizontal-line {
-		position: fixed;
-		width: 110%;
-		left: 0px;
-	}
-</style>
-
-<svelte:document on:keydown={handle_key_down}/>
+<svelte:document on:keydown={e.handle_key_down}/>
 {#key panel_reattachments}
 	<Debug/>
 	<div style='
@@ -152,3 +112,15 @@
 		{/if}
 	</div>
 {/key}
+
+<style>
+	p {
+		text-align: center;
+		font-size: 3em;
+	}
+	.horizontal-line {
+		position: fixed;
+		width: 110%;
+		left: 0px;
+	}
+</style>

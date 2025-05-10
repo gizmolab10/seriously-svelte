@@ -39,10 +39,7 @@
 		return () => { handle_reposition.disconnect(); };
 	});
 
-	$: {
-		const _ = $w_ancestries_expanded + $w_e_countDots + ancestry.title;
-		svgPath_update();
-	}
+	$: $w_ancestries_expanded, $w_e_countDots, ancestry.title, svgPath_update();
 
 	$: {
 		const _ = $w_ancestries_expanded + $w_background_color + $w_thing_color;

@@ -13,14 +13,9 @@
 	let ancestry: Ancestry;
 	let trigger = 0;
 
-	signals.handle_rebuild_andReattach(1, (ancestry) => {
-		breadcrumb_reattachments += 1;
-	});
-
-	$: {
-		const _ = $w_s_title_edit + $w_thing_color + $w_ancestries_grabbed;
-		breadcrumb_reattachments += 1;
-	}
+	signals.handle_rebuild_andReattach(1, (ancestry) => { breadcrumb_reattachments += 1; });
+	
+	$: $w_s_title_edit, $w_thing_color, $w_ancestries_grabbed, breadcrumb_reattachments += 1;
 
 	$: {
 		const h = $w_hierarchy;

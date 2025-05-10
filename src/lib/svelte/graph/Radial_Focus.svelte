@@ -34,7 +34,11 @@
 		return () => { handle_reposition.disconnect(); };
 	});
 
+	function debug_closure(s_mouse) { debug.log_radial(` ${s_mouse.descriptionFor('FOCUS')}`); }
 	function handle_s_mouse(s_mouse: S_Mouse): boolean { return false; }
+
+	$: $w_ancestry_focus, $w_s_title_edit, $w_ancestries_grabbed, update_svg();
+	$: $w_ancestry_focus, layout();
 	
 	$: {
 		if (!!focus) {
@@ -43,23 +47,9 @@
 	}
 
 	$: {
-		const _ = $w_ancestry_focus + $w_s_title_edit + $w_ancestries_grabbed;
-		update_svg();
-	}
-
-	$: {
-		const _ = $w_ancestry_focus;
-		layout();
-	}
-
-	$: {
 		const _ = $w_thing_color;
 		color = $w_ancestry_focus?.thing?.color;
 		update_svg();
-	}
-
-	function debug_closure(s_mouse) {
-		debug.log_radial(` ${s_mouse.descriptionFor('FOCUS')}`);
 	}
 
 	function layout() {

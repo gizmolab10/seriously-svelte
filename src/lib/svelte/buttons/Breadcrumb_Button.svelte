@@ -21,17 +21,13 @@
 	let style = k.empty;
 
 	center = new Point(left + width / 2, height / 2 + 3.1);
+	$: $w_background_color, updateColors();
 	updateColors();
 
 	$: {
 		if (!!thing && thing.id == $w_thing_color?.split(k.separator.generic)[0]) {
 			updateColors();
 		}
-	}
-
-	$: {
-		const _ = $w_background_color;
-		updateColors();
 	}
 	
 	function updateColors() {

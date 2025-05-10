@@ -16,7 +16,7 @@
     let reattachments = 0;
 
 	// buttons row sends column & E_ToolRequest:
-	// 	 is_disabled calls:	isTool_disabledAt
+	// 	 is_disabled calls:	handle_isTool_disabledAt
 	//	 handle_click calls:	handle_tool_clickedAt ... n.b., long press generates multiple calls
 	// buttons grid adds row (here it becomest_tool)
 	
@@ -75,7 +75,7 @@
 		const isAltering = !!$w_s_alteration;
 		switch (e_toolRequest) {
 			case E_ToolRequest.name:		 return name_ofToolAt(e_tool, column);
-			case E_ToolRequest.is_disabled:	 return e.isTool_disabledAt(e_tool, column);
+			case E_ToolRequest.is_disabled:	 return e.handle_isTool_disabledAt(e_tool, column);
 			case E_ToolRequest.is_inverted:	 return !isAltering ? false : isTool_invertedAt(e_tool, column);
 			case E_ToolRequest.is_visible:	 return !isAltering ? true : [E_Tool.add, E_Tool.delete].includes(e_tool);
 			case E_ToolRequest.handle_click: return e.handle_tool_autorepeatAt(s_mouse, e_tool, column, name_for(e_tool, column + 1));

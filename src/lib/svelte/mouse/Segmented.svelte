@@ -16,10 +16,7 @@
 	let g_segments: Array<G_Segment> = [];
 	let width = height / 2;
 
-	$: {
-		const _ = selected;
-		update_g_segments_andWidth();
-	}
+	$: selected, update_g_segments_andWidth();
 
 	update_g_segments_andWidth();
 	function isSelected(title: string) { return selected.includes(title); }
