@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { E_Tool, E_Layer, E_ToolRequest, E_Predicate, E_Alteration } from '../../ts/common/Global_Imports';
 	import { w_hierarchy, w_e_details, w_user_graph_offset, w_s_alteration } from '../../ts/common/Stores';
-	import { k, show, Size, Point, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
+	import { e, k, show, Size, Point, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
 	import { w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
 	import Buttons_Grid from '../buttons/Buttons_Grid.svelte';
 	import Button from '../buttons/Button.svelte';
@@ -33,7 +33,7 @@
 
 	function name_for(e_tool: number, column: number) {
 		const titles = button_titles[e_tool];
-		return `${titles[0]} ${titles[column]}`;
+		return `${titles[0]}.${titles[column]}`;
 	}
 
 	function target_ofAlteration(): string | null {
@@ -71,26 +71,14 @@
 		];
 	}
 
-	function tool_closure(e_toolRequest: E_ToolRequest, s_mouse: S_Mouse, e_tool: number, column: number): any {
+	function handle_toolRequest(e_toolRequest: E_ToolRequest, s_mouse: S_Mouse, e_tool: number, column: number): any {
 		const isAltering = !!$w_s_alteration;
-		const hierarchy = $w_hierarchy;
 		switch (e_toolRequest) {
-			case E_ToolRequest.name:
-				return name_ofToolAt(e_tool, column);
-			case E_ToolRequest.is_disabled:
-				return hierarchy.isTool_disabledAt(e_tool, column);
-			case E_ToolRequest.is_inverted:
-				return !isAltering ? false : isTool_invertedAt(e_tool, column);
-			case E_ToolRequest.is_visible:
-				return !isAltering ? true : [E_Tool.add, E_Tool.delete].includes(e_tool);
-			case E_ToolRequest.handle_click:
-				if (s_mouse.isDown) {
-					return hierarchy.handle_tool_clickedAt(e_tool, column, s_mouse, name_for(e_tool, column + 1));
-				} else if (s_mouse.isLong) {
-					// start interval
-				} else if (s_mouse.isUp) {
-					// stop interval
-				}
+			case E_ToolRequest.name:		 return name_ofToolAt(e_tool, column);
+			case E_ToolRequest.is_disabled:	 return e.isTool_disabledAt(e_tool, column);
+			case E_ToolRequest.is_inverted:	 return !isAltering ? false : isTool_invertedAt(e_tool, column);
+			case E_ToolRequest.is_visible:	 return !isAltering ? true : [E_Tool.add, E_Tool.delete].includes(e_tool);
+			case E_ToolRequest.handle_click: return e.handle_tool_autorepeatAt(s_mouse, e_tool, column, name_for(e_tool, column + 1));
 		}
 		return null;
 	}
@@ -110,9 +98,9 @@
 			name='tools'
 			show_box={show_box}
 			has_title={has_title}
-			closure={tool_closure}
 			font_sizes={font_sizes}
 			width={k.width_details}
+			closure={handle_toolRequest}
 			button_titles={button_titles}
 			button_height={k.height.button}/>
 		{#if $w_s_alteration}

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, k, u, ux, w, show, Rect, Size, Point, Thing, colors, layout } from '../../ts/common/Global_Imports';
+	import { c, e, k, u, ux, w, show, Rect, Size, Point, Thing, colors, layout } from '../../ts/common/Global_Imports';
 	import { w_e_database, w_graph_rect, w_hierarchy, w_background_color } from '../../ts/common/Stores';
 	import { debug, E_Layer, E_Banner, Ancestry, E_Startup } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_show_details, w_device_isMobile, } from '../../ts/common/Stores';
@@ -49,7 +49,7 @@
 					case 'm': layout.toggle_t_graph(); break;
 					case 's': h.persist_toFile(); break;
 					case '?': c.showHelp(); break;
-					default:  await h.handle_key_down(event); return;	// let hierarchy consume the events
+					default:  await e.handle_key_down(event); return;	// let e consume the events
 				}
 				debug.log_key(`PANEL  ${key}`);
 			}
