@@ -35,9 +35,9 @@
     onMount(() => {
 		es_drag.set_forHovering(thing?.color, 'pointer');
         const handle_altering = signals.handle_altering((s_alteration) => {
-			const isInverted = s_alteration && !!ancestry && ancestry.ancestry_canAlter_connectionTo;
+			const isInverted = !!s_alteration && !!ancestry && ancestry.alteration_isAllowed;
 			es_drag.isInverted = isInverted;
-			svgPaths_updateExtra();
+			updateColors_forHovering();
         });
 		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
 			if (!!dotDrag) {
@@ -145,8 +145,8 @@
 					width={size}
 					height={size}
 					stroke={color}
-					svgPath={svgPathFor_dragDot}
-					fill={fill_color}/>
+					fill={fill_color}
+					svgPath={svgPathFor_dragDot}/>
 				{#if svgPathFor_ellipses}
 					<SVG_D3 name={'svg-inside-' + name}
 						width={size}

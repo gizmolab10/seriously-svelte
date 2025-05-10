@@ -4,11 +4,13 @@ import { E_Report, E_Kinship } from '../common/Enumerations';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
 
+const force_tool_boxes = true;		// true means that the tool boxes are never shown
+
 export class Visibility {
-	debug_cursor	= false;
-	traits			= false;
-	e_info			= E_Report.focus;
-	tool_separators	= !(get(w_device_isMobile) ?? false);
+	debug_cursor = false;
+	traits		 = false;
+	e_info		 = E_Report.focus;
+	tool_boxes	 = !(get(w_device_isMobile) ?? false) && !force_tool_boxes;
 
 	queryStrings_apply() {
 		const queryStrings = c.queryStrings;
@@ -51,7 +53,7 @@ export class Visibility {
 
 	reactivity_subscribe() {
 		w_device_isMobile.subscribe((flag: boolean) => {
-			this.tool_separators = !flag;
+			this.tool_boxes = !flag && !force_tool_boxes;
 		});
 		w_show_details.subscribe((flag: boolean) => {
 			p.write_key(E_Preference.show_details, flag);

@@ -107,8 +107,8 @@
 			if (Rect.rect_forElement_containsPoint(input, location)) {
 				const offset = u.convert_windowOffset_toCharacterOffset_in(location.x, input);
 				debug.log_edit(`CURSOR OFFSET ${offset}`);
-				$w_s_title_edit.thing_setSelectionRange_fromOffset(offset);
-				$w_s_title_edit.e_edit = E_Edit.editing;
+				$w_s_title_edit?.thing_setSelectionRange_fromOffset(offset);
+				$w_s_title_edit?.e_edit = E_Edit.editing;
 			}
 		}
 	}
@@ -173,8 +173,8 @@
 			if (ancestry_isEditing()) {
 				extractRange_fromInput_toThing();
 			} else if (s_mouse.isDown) {
-				if (!!$w_s_title_edit && $w_s_title_edit.isActive) {
-					$w_s_title_edit.e_edit = E_Edit.stopping;		// stop prior edit, wait for it to percolate (below with setTimeout)
+				if (!!$w_s_title_edit && $w_s_title_edit?.isActive) {
+					$w_s_title_edit?.e_edit = E_Edit.stopping;		// stop prior edit, wait for it to percolate (below with setTimeout)
 				}
 				if (!ancestry.isGrabbed) {
 					ancestry.grab_forShift(event.shiftKey);
@@ -228,11 +228,11 @@
 			extractRange_fromInput_toThing();
 			$w_thing_title = title;		// tell Info to update it's selection's title
 			debug.log_edit(`TITLE ${title}`);
-			$w_s_title_edit.title = title;
-			$w_s_title_edit.setState_temporarilyTo_whileApplying(E_Edit.percolating, () => {
+			$w_s_title_edit?.title = title;
+			$w_s_title_edit?.setState_temporarilyTo_whileApplying(E_Edit.percolating, () => {
 				layout.grand_layout();
 			});
-			debug.log_edit(`UPDATED ${$w_s_title_edit.description}`);
+			debug.log_edit(`UPDATED ${$w_s_title_edit?.description}`);
 		}
 	}
 
@@ -246,9 +246,9 @@
 				title_prior = thing?.title;			// so hasChanges will be correct next time
 			}
 			u.onNextCycle_apply(() => {		// prevent Panel's enter key handler call to start edit from actually starting
-				if (!!$w_s_title_edit && $w_s_title_edit.actively_refersTo(ancestry)) {
+				if (!!$w_s_title_edit && $w_s_title_edit?.actively_refersTo(ancestry)) {
 					debug.log_edit(`STOPPING ${ancestry.title}`);
-					$w_s_title_edit.e_edit = E_Edit.stopping;	// inform Widget
+					$w_s_title_edit?.e_edit = E_Edit.stopping;	// inform Widget
 				}
 			});
 		}

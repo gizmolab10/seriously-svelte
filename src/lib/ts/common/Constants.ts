@@ -90,7 +90,7 @@ export default class Constants {
 		},
 		detail: {
 			storage: 125,
-			tools:	 show.tool_separators ? 229 : 120,
+			tools: () => { return show.tool_boxes ? 229 : 145; },
 			display:  77,
 			info:	   0,
 		},

@@ -11,12 +11,11 @@
 	const separator_gap = k.height.separator;
 	let tops = layout.layout_tops_forDetails();
 
-	$: $w_device_isMobile, tops = layout.layout_tops_forDetails();
+	$: $w_e_details, $w_device_isMobile, tops = layout.layout_tops_forDetails();
 	$: showingDetails_ofType = (e_details: E_Details) => $w_e_details.includes(E_Details[e_details]);
 	
 	function selection_closure(e_details: Array<string>) {
 		$w_e_details = e_details as Array<E_Details>;
-		tops = layout.layout_tops_forDetails();
 	}
 
 </script>

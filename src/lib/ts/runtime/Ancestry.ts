@@ -599,9 +599,12 @@ export default class Ancestry extends Identifiable {
 				alert(`${this.title} refuses focus`);
 			}
 		} else {
+			const s_alteration = get(w_s_alteration);
 			w_s_title_edit?.set(null);
-			if (!!get(w_s_alteration)) {
-				this.ancestry_alterMaybe(this);
+			if (!!s_alteration) {
+				s_alteration.ancestry.alter_connectionTo_maybe(this);
+				layout.grand_build();
+				return;
 			} else if (!shiftKey && layout.inRadialMode) {
 				this.becomeFocus();
 				layout.grand_build();
@@ -684,7 +687,7 @@ export default class Ancestry extends Identifiable {
 
 	startEdit() {
 		if (this.isEditable && !get(w_s_title_edit)) {
-			w_s_title_edit.set(new S_Title_Edit(this));
+			w_s_title_edit?.set(new S_Title_Edit(this));
 			debug.log_edit(`SETUP ${this.title}`);
 			this.grabOnly();
 		}
@@ -692,42 +695,40 @@ export default class Ancestry extends Identifiable {
 
 	static readonly ALTERATION: unique symbol;
 
-	get ancestry_canAlter_connectionTo(): boolean {
+	get alteration_isAllowed(): boolean {
 		const s_alteration = get(w_s_alteration);
 		const predicate = s_alteration?.predicate;
 		if (!!s_alteration && !!predicate) {
-			const ancestry_being_altered = get(w_s_alteration)?.ancestry;
-			const toolThing = ancestry_being_altered?.thing;
-			const thing = this.thing;
-			if (!!thing && !!toolThing && !!ancestry_being_altered) {
-				if (thing.hid != toolThing.hid && !ancestry_being_altered.equals(this)) {
-					const isBidirectional = predicate.isBidirectional;
-					const toolIsAnAncestor = isBidirectional ? false : thing.parentIDs.includes(toolThing.id);
-					const isParentOfTool = this.thing_isImmediateParentOf(ancestry_being_altered, predicate.kind);
-					const isProgenyOfTool = this.isABranchOf(ancestry_being_altered);
-					const isDeleting = s_alteration.e_alteration == E_Alteration.delete;
-					const doNotAlter_forIsNotDeleting = isParentOfTool || isProgenyOfTool || toolIsAnAncestor;
-					const canAlter = isDeleting ? isParentOfTool : !doNotAlter_forIsNotDeleting;
-					return canAlter
-				}
+			const from_ancestry = s_alteration.ancestry;
+			const from_thing = from_ancestry?.thing;
+			const to_thing = this.thing;
+			if (!!to_thing && !!from_thing && to_thing.hid != from_thing.hid && !from_ancestry.equals(this)) {
+				const isBidirectional = predicate.isBidirectional;
+				const isFrom_anAncestor = isBidirectional ? false : to_thing.parentIDs.includes(from_thing.id);
+				const isParent_ofFrom = this.thing_isImmediateParentOf(from_ancestry, predicate.kind);
+				const isProgeny_ofFrom = this.isABranchOf(from_ancestry);
+				const isAdding = s_alteration.e_alteration == E_Alteration.add;
+				const doNotAdd = isParent_ofFrom || isProgeny_ofFrom || isFrom_anAncestor;
+				const canAlter = isAdding ? !doNotAdd : isParent_ofFrom;
+				return canAlter
 			}
 		}
 		return false;
 	}
 
-	async ancestry_alterMaybe(ancestry: Ancestry) {
-		if (ancestry.ancestry_canAlter_connectionTo) {
+	async alter_connectionTo_maybe(ancestry: Ancestry) {
+		if (ancestry.alteration_isAllowed) {
 			const alteration = get(w_s_alteration);
-			const ancestry_being_altered = get(w_s_alteration)?.ancestry;
+			const from_ancestry = get(w_s_alteration)?.ancestry;
 			const kind = alteration?.predicate?.kind;
-			if (!!alteration && !!ancestry_being_altered && !!kind) {
+			if (!!alteration && !!from_ancestry && !!kind) {
 				this.hierarchy.stop_alteration();
 				switch (alteration.e_alteration) {
 					case E_Alteration.delete:
-						await this.hierarchy.relationship_forget_persistentDelete(ancestry_being_altered, ancestry, kind);
+						await this.hierarchy.relationship_forget_persistentDelete(from_ancestry, ancestry, kind);
 						break;
 					case E_Alteration.add:
-						const toolsThing = ancestry_being_altered.thing;
+						const toolsThing = from_ancestry.thing;
 						if (!!toolsThing) {
 							await this.hierarchy.ancestry_extended_byAddingThing_toAncestry_remember_persistentCreate_relationship(toolsThing, ancestry, kind);
 							layout.grand_build();
@@ -948,7 +949,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	ungrab() {
-		w_s_title_edit.set(null);
+		w_s_title_edit?.set(null);
 		const rootAncestry = this.hierarchy.rootAncestry;
 		w_ancestries_grabbed.update((a) => {
 			let array = a ?? [];

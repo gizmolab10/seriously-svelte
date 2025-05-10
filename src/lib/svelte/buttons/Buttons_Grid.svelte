@@ -4,16 +4,16 @@
     import { k, show, Point, colors } from '../../ts/common/Global_Imports';
     import Buttons_Row from './Buttons_Row.svelte';
     export let closure: (e_request: E_Request, s_mouse: S_Mouse, row: number, column: number) => boolean;
-    export let titles_are_separated = true;    // false means row titles are plain buttons
     export let button_titles: string[][];
     export let font_sizes: Array<number>;
-    export let show_separators = true;         // false means row titles precede buttons
+    export let has_title = true;        // false means all titles are buttons, true means first one is row title
+    export let show_box = true;         // false means row titles precede buttons
     export let button_height = 15;
 	export let name = k.empty;
     export let width: number;
     export let gap = 2;
 	const rows = button_titles.length;
-    const box_top = (titles_are_separated && show_separators) ? 12 : 0;
+    const box_top = (has_title && show_box) ? 12 : 0;
     
     function button_origin_for(row: number): Point { return Point.y(row * (button_height + gap + box_top)); }
 
@@ -32,12 +32,12 @@
                 width={width}
                 box_top={box_top}
                 row_titles={titles}
-                show_box={show_separators}
+                show_box={show_box}
                 font_sizes={font_sizes}
                 button_height={button_height}
                 origin={button_origin_for(row)}
                 name={`${name}-grid-${E_Tool[row]}`}
-                titles_are_separated={titles_are_separated}
+                has_title={has_title}
                 closure={(e_request, s_mouse, column) => closure(e_request, s_mouse, row, column)}/>
         {/if}
     {/each}

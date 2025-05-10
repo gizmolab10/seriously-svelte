@@ -128,13 +128,13 @@ export class Hierarchy {
 					case k.tools.add.child:			await this.ancestry_edit_persistentCreateChildOf(ancestry); return;
 					case k.tools.add.sibling:		await this.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); return;
 					case k.tools.add.line:			await this.thing_edit_persistentAddLine(ancestry); return;
-					case k.tools.add.parent:		this.ancestry_toggle_alteration(E_Alteration.add, Predicate.contains); return;
-					case k.tools.add.related:		this.ancestry_toggle_alteration(E_Alteration.add, Predicate.isRelated); return;
+					case k.tools.add.parent:		this.ancestry_toggle_alteration(ancestry, E_Alteration.add, Predicate.contains); return;
+					case k.tools.add.related:		this.ancestry_toggle_alteration(ancestry, E_Alteration.add, Predicate.isRelated); return;
 				}								break;
 				case E_Tool.delete:				switch (column) {
 					case k.tools.delete.selection:	await this.ancestries_rebuild_traverse_persistentDelete(get(w_ancestries_grabbed)); return;
-					case k.tools.delete.parent:		this.ancestry_toggle_alteration(E_Alteration.delete, Predicate.contains); return;
-					case k.tools.delete.related:	this.ancestry_toggle_alteration(E_Alteration.delete, Predicate.isRelated); return;
+					case k.tools.delete.parent:		this.ancestry_toggle_alteration(ancestry, E_Alteration.delete, Predicate.contains); return;
+					case k.tools.delete.related:	this.ancestry_toggle_alteration(ancestry, E_Alteration.delete, Predicate.isRelated); return;
 				}								break;
 				case E_Tool.move:				switch (column) {
 					case k.tools.move.up:			this.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, true, false); return;
@@ -207,7 +207,6 @@ export class Hierarchy {
 			this.rootAncestry = rootAncestry;
 		}
 		const root = rootAncestry.thing;
-		w_s_title_edit.set(new S_Title_Edit(rootAncestry));
 		if (!!root) {
 			this.root = root;
 		}
@@ -1022,9 +1021,9 @@ export class Hierarchy {
 		}
 	}
 
-	ancestry_toggle_alteration(e_alteration: E_Alteration, predicate: Predicate | null) {
-		const isAltering = get(w_s_alteration)?.e_alteration == e_alteration;
-		const s_alteration = isAltering ? null : new S_Alteration(e_alteration, predicate);
+	ancestry_toggle_alteration(ancestry: Ancestry, e_alteration: E_Alteration, predicate: Predicate | null) {
+		const isAltering = !!get(w_s_alteration);
+		const s_alteration = isAltering ? null : new S_Alteration(ancestry, e_alteration, predicate);
 		w_s_alteration.set(s_alteration);
 	}
 
@@ -1040,7 +1039,7 @@ export class Hierarchy {
 
 	// called in three places
 	async ancestry_edit_persistentAddAsChild(parentAncestry: Ancestry, child: Thing, order: number, shouldStartEdit: boolean = true) {
-		w_s_title_edit.set(null);
+		w_s_title_edit?.set(null);
 		await this.ancestry_extended_byAddingThing_toAncestry_remember_persistentCreate_relationship(child, parentAncestry)
 		.then((childAncestry) => {
 			if (!!childAncestry) {
@@ -1246,7 +1245,7 @@ export class Hierarchy {
 				}
 			}
 		}
-		w_s_title_edit.set(null);
+		w_s_title_edit?.set(null);
 		if (!!newGrabAncestry) {
 			newGrabAncestry.grabOnly();
 			if (!RIGHT && !!newFocusAncestry) {
