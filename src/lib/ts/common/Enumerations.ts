@@ -120,15 +120,6 @@ export enum E_Oblong {
 	full   = 'full',
 }
 
-export enum E_Request {
-	query_visibility = 'query_visibility',
-	query_disabled	 = 'query_disabled',
-	query_inverted	 = 'query_inverted',
-	handle_click	 = 'handle_click',
-	query_name		 = 'query_name',
-	query_hit		 = 'query_hit',
-}
-
 export enum E_Thing {
 	externals = '^',	// list of bulks
 	generic	  = '',
@@ -144,6 +135,15 @@ export enum E_Predicate {
 	explains	= 'explains',
 	requires	= 'requires',
 	supports	= 'supports',
+}
+
+export enum E_ToolRequest {
+	handle_click = 'handle_click',
+	is_disabled	 = 'is_disabled',
+	is_inverted	 = 'is_inverted',
+	is_visible	 = 'is_visible',
+	is_hit		 = 'is_hit',
+	name		 = 'name',
 }
 
 export enum E_Tool {

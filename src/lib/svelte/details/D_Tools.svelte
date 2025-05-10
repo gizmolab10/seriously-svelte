@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { E_Tool, E_Layer, E_Request, E_Predicate, E_Alteration } from '../../ts/common/Global_Imports';
+	import { E_Tool, E_Layer, E_ToolRequest, E_Predicate, E_Alteration } from '../../ts/common/Global_Imports';
 	import { w_hierarchy, w_e_details, w_user_graph_offset, w_s_alteration } from '../../ts/common/Stores';
 	import { k, show, Size, Point, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
 	import { w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
@@ -15,9 +15,9 @@
 	let tools_top = top + (has_title ? 3 : -13);
     let reattachments = 0;
 
-	// buttons row sends column & E_Request:
-	// 	query_disabled		isTool_disabledAt
-	//	handle_click		handle_tool_clickedA ... n.b., long press generates multiple calls
+	// buttons row sends column & E_ToolRequest:
+	// 	 is_disabled calls:	isTool_disabledAt
+	//	 handle_click calls:	handle_tool_clickedAt ... n.b., long press generates multiple calls
 	// buttons grid adds row (here it becomest_tool)
 	
     $: top, tools_top = top + (has_title ? 3 : -13);
@@ -71,19 +71,25 @@
 		];
 	}
 
-	function tool_closure(e_request: E_Request, s_mouse: S_Mouse, e_tool: number, column: number): any {
-		switch (e_request) {
-			case E_Request.query_name:
+	function tool_closure(e_toolRequest: E_ToolRequest, s_mouse: S_Mouse, e_tool: number, column: number): any {
+		const isAltering = !!$w_s_alteration;
+		const hierarchy = $w_hierarchy;
+		switch (e_toolRequest) {
+			case E_ToolRequest.name:
 				return name_ofToolAt(e_tool, column);
-			case E_Request.query_disabled:
-				return $w_hierarchy.isTool_disabledAt(e_tool, column);
-			case E_Request.query_inverted:
-				return !$w_s_alteration ? false : isTool_invertedAt(e_tool, column);
-			case E_Request.query_visibility:
-				return !$w_s_alteration ? true : [E_Tool.add, E_Tool.delete].includes(e_tool);
-			case E_Request.handle_click:
+			case E_ToolRequest.is_disabled:
+				return hierarchy.isTool_disabledAt(e_tool, column);
+			case E_ToolRequest.is_inverted:
+				return !isAltering ? false : isTool_invertedAt(e_tool, column);
+			case E_ToolRequest.is_visible:
+				return !isAltering ? true : [E_Tool.add, E_Tool.delete].includes(e_tool);
+			case E_ToolRequest.handle_click:
 				if (s_mouse.isDown) {
-					return $w_hierarchy.handle_tool_clickedAt(e_tool, column, s_mouse, name_for(e_tool, column + 1));
+					return hierarchy.handle_tool_clickedAt(e_tool, column, s_mouse, name_for(e_tool, column + 1));
+				} else if (s_mouse.isLong) {
+					// start interval
+				} else if (s_mouse.isUp) {
+					// stop interval
 				}
 		}
 		return null;

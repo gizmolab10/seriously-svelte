@@ -12,7 +12,7 @@
     export let ancestry;
 	const size = k.height.dot;
 	const capture_size = size;
-	const es_drag = ux.s_element_forName(name);		// survives onDestroy, created by widget
+	const es_drag = ux.s_element_forName(name);		// created by widget
 	let fill_color = debug.lines ? 'transparent' : es_drag.fill;
 	let center = ancestry.g_widget.center_ofDrag;
 	let ellipsis_color = es_drag.stroke;
@@ -28,16 +28,19 @@
 	let dotDrag;
 
 	svgPaths_update();
-	updateColors_forHovering();
-
+	colors_update();
 	function handle_context_menu(event) { event.preventDefault(); }		// no default context menu on right-click
+	function handle_s_mouse(s_mouse: S_Mouse): boolean { return false; }
+
+	$: $w_e_countDots, svgPaths_update();
+	$: $w_background_color, $w_thing_color, $w_ancestries_grabbed, colors_update();
 
     onMount(() => {
 		es_drag.set_forHovering(thing?.color, 'pointer');
         const handle_altering = signals.handle_altering((s_alteration) => {
 			const isInverted = !!s_alteration && !!ancestry && ancestry.alteration_isAllowed;
 			es_drag.isInverted = isInverted;
-			updateColors_forHovering();
+			colors_update();
         });
 		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
 			if (!!dotDrag) {
@@ -46,20 +49,6 @@
 		});
 		return () => { handle_reposition.disconnect(); handle_altering.disconnect(); };
 	});
-	
-	$: {
-		const _ = $w_e_countDots;
-		svgPaths_update();
-	}
-
-	$: {
-		const _ = $w_background_color + $w_thing_color + $w_ancestries_grabbed;
-		updateColors_forHovering();
-	}
-
-	function handle_s_mouse(s_mouse: S_Mouse): boolean {
-		return false;
-	}
 
 	function svgPaths_update() {
 		if (layout.inRadialMode) {
@@ -70,7 +59,7 @@
 		svgPaths_updateExtra();
 	}
 
-	function updateColors_forHovering() {
+	function colors_update() {
 		if (!ux.isAny_rotation_active && !!es_drag && !!thing) {
 			const usePointer = (!ancestry.isGrabbed || layout.inRadialMode) && ancestry.hasChildren;
 			const cursor = usePointer ? 'pointer' : 'normal';
@@ -100,7 +89,7 @@
 		if (!ux.isAny_rotation_active) {
 			if (s_mouse.isHover) {
 				isHovering = !s_mouse.isOut;
-				updateColors_forHovering();
+				colors_update();
 			} else if (s_mouse.isLong) {
 				ancestry?.becomeFocus();
 			} else if (s_mouse.isUp) {

@@ -14,7 +14,7 @@ import { E_Create, E_Browser, E_Alteration } from './Enumerations';
 import { E_Oblong, E_Element, E_SvelteComponent } from './Enumerations';
 import { E_Curve, E_Layer, E_Thing, E_Trait, E_Predicate } from './Enumerations';
 import { E_Graph, E_Order, E_Widget, E_RingZone, E_Startup, E_Kinship } from './Enumerations';
-import { E_Info, E_Tool, E_Banner, E_Control, E_Details, E_Report, E_Request, E_Storage } from './Enumerations';
+import { E_Info, E_Tool, E_Banner, E_Control, E_Details, E_Report, E_ToolRequest, E_Storage } from './Enumerations';
 
 import S_Title_Edit from '../state/S_Title_Edit';
 import S_Alteration from '../state/S_Alteration';
@@ -85,5 +85,5 @@ export {
 	E_Layer, E_Curve, E_Create, E_RingZone, E_Oblong, E_Alteration,
 	User, Persistable, Thing, Trait, Access, Predicate, Relationship,
 	E_Thing, E_Trait, E_Widget, E_Predicate, E_Kinship, E_Preference,
-	E_Info, E_Tool, E_Control, E_Browser, E_Signal, E_Report, E_Request, E_Storage,
+	E_Info, E_Tool, E_Control, E_Browser, E_Signal, E_Report, E_ToolRequest, E_Storage,
 };

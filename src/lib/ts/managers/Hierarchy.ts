@@ -115,41 +115,40 @@ export class Hierarchy {
 
 	async handle_tool_clickedAt(e_tool: number, column: number, s_mouse: S_Mouse, name: string) {
 		if (!this.isTool_disabledAt(e_tool, column)) {
-			// as each is implemented add return to the case
+			const isLongClick = s_mouse.isLong;
 			const ancestry = this.grabs_latest_upward(true);
 			switch (e_tool) {
 				case E_Tool.browse:				switch (column) {
-					case k.tools.browse.up:			this.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, false, false); return;
-					case k.tools.browse.down:		this.grabs_latest_rebuild_persistentMoveUp_maybe(false, false, false, false); return;
-					case k.tools.browse.left:		await this.ancestry_rebuild_persistentMoveRight(ancestry, false, false, false, false, false); return;
-					case k.tools.browse.right:		await this.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, false, false, false); return;
+					case k.tools.browse.up:			this.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, false, false); break;
+					case k.tools.browse.down:		this.grabs_latest_rebuild_persistentMoveUp_maybe(false, false, false, false); break;
+					case k.tools.browse.left:		await this.ancestry_rebuild_persistentMoveRight(ancestry, false, false, false, false, false); break;
+					case k.tools.browse.right:		await this.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, false, false, false); break;
 				}								break;
 				case E_Tool.add:				switch (column) {
-					case k.tools.add.child:			await this.ancestry_edit_persistentCreateChildOf(ancestry); return;
-					case k.tools.add.sibling:		await this.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); return;
-					case k.tools.add.line:			await this.thing_edit_persistentAddLine(ancestry); return;
-					case k.tools.add.parent:		this.ancestry_toggle_alteration(ancestry, E_Alteration.add, Predicate.contains); return;
-					case k.tools.add.related:		this.ancestry_toggle_alteration(ancestry, E_Alteration.add, Predicate.isRelated); return;
+					case k.tools.add.child:			await this.ancestry_edit_persistentCreateChildOf(ancestry); break;
+					case k.tools.add.sibling:		await this.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break;
+					case k.tools.add.line:			await this.thing_edit_persistentAddLine(ancestry); break;
+					case k.tools.add.parent:		this.ancestry_toggle_alteration(ancestry, E_Alteration.add, Predicate.contains); break;
+					case k.tools.add.related:		this.ancestry_toggle_alteration(ancestry, E_Alteration.add, Predicate.isRelated); break;
 				}								break;
 				case E_Tool.delete:				switch (column) {
-					case k.tools.delete.selection:	await this.ancestries_rebuild_traverse_persistentDelete(get(w_ancestries_grabbed)); return;
-					case k.tools.delete.parent:		this.ancestry_toggle_alteration(ancestry, E_Alteration.delete, Predicate.contains); return;
-					case k.tools.delete.related:	this.ancestry_toggle_alteration(ancestry, E_Alteration.delete, Predicate.isRelated); return;
+					case k.tools.delete.selection:	await this.ancestries_rebuild_traverse_persistentDelete(get(w_ancestries_grabbed)); break;
+					case k.tools.delete.parent:		this.ancestry_toggle_alteration(ancestry, E_Alteration.delete, Predicate.contains); break;
+					case k.tools.delete.related:	this.ancestry_toggle_alteration(ancestry, E_Alteration.delete, Predicate.isRelated); break;
 				}								break;
 				case E_Tool.move:				switch (column) {
-					case k.tools.move.up:			this.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, true, false); return;
-					case k.tools.move.down:			this.grabs_latest_rebuild_persistentMoveUp_maybe(false, false, true, false); return;
-					case k.tools.move.left:			await this.ancestry_rebuild_persistentMoveRight(ancestry, false, false, true, false, false); return;
-					case k.tools.move.right:		await this.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, true, false, false); return;
+					case k.tools.move.up:			this.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, true, false); break;
+					case k.tools.move.down:			this.grabs_latest_rebuild_persistentMoveUp_maybe(false, false, true, false); break;
+					case k.tools.move.left:			await this.ancestry_rebuild_persistentMoveRight(ancestry, false, false, true, false, false); break;
+					case k.tools.move.right:		await this.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, true, false, false); break;
 				}								break;
-				case E_Tool.list:					await this.ancestry_toggle_expansion(ancestry); return;
+				case E_Tool.list:					await this.ancestry_toggle_expansion(ancestry); break;
 				case E_Tool.show:				switch (column) {
-					case k.tools.show.selection:	this.grabs_latest_assureIsVisible(); return;
-					case k.tools.show.root:			this.rootAncestry.becomeFocus(); return;
+					case k.tools.show.selection:	this.grabs_latest_assureIsVisible(); break;
+					case k.tools.show.root:			this.rootAncestry.becomeFocus(); break;
 				}								break;
-				case E_Tool.graph:					w.user_graph_offset_setTo(Point.zero); return;
+				case E_Tool.graph:					w.user_graph_offset_setTo(Point.zero); break;
 			}
-			alert(`needed: ${name}`);
 		}
 	}
 
