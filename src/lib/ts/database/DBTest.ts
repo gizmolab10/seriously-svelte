@@ -56,7 +56,7 @@ export default class DBTest extends DBCommon {
 	}
 
 	makeMore(count: number, first: string, kind: E_Predicate, idRef: string, asChild: boolean, order: number = 0) {
-		const isBidirectional = Predicate.isBidirectional(kind);
+		const isBidirectional = Predicate.isBidirectional_for(kind);
 		const prefix = isBidirectional ? 'r' : 'c';
 		const charCode = first.charCodeAt(0);
 		const h = this.hierarchy;

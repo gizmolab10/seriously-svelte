@@ -167,7 +167,7 @@ export default class DBFirebase extends DBCommon {
 	async setup_remote_handlers() {
 		let rebuildScheduled = false;
 		let relationships_haveChanged = false;
-		for (const e_persistable of this.hierarchy.persistent_dataTypes) {
+		for (const e_persistable of this.hierarchy.e_persistables) {
 			if (e_persistable == E_Persistable.predicates) {
 				this.predicatesCollection = collection(this.firestore, e_persistable);
 			} else {
@@ -572,12 +572,12 @@ export default class DBFirebase extends DBCommon {
 			relationship.idChild != remote.child.id ||
 			relationship.orders != remote.orders)
 		if (changed) {
+			relationship.kind = remote.kind;
 			relationship.idChild = remote.child.id;
 			relationship.idParent = remote.parent.id;
-			relationship.hidChild = remote.child.hid;
-			relationship.hidParent = remote.parent.hid;
+			relationship.hidChild = remote.child.id.hash();
+			relationship.hidParent = remote.parent.id.hash();
 			relationship.persistence.already_persisted = true;
-			relationship.kind = remote.kind;
 			relationship.order_setTo(remote.orders[0] + k.halfIncrement);
 		}
 		return changed;

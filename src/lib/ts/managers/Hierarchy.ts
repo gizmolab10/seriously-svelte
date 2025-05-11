@@ -672,7 +672,7 @@ export class Hierarchy {
 		if (!!idFrom && !!idTo) {
 			let idChild = dict.idChild;
 			let idParent = dict.idParent;
-			const isBidirectional = this.predicate_forKind(dict.kind)?.isBidirectional ?? false
+			const isBidirectional = Predicate.isBidirectional_for(dict.kind);
 			if (idParent == idFrom) {
 				dict.idParent = idTo;
 			}
@@ -682,10 +682,24 @@ export class Hierarchy {
 		}
 	}
 
-	async relationship_forget_persistentDelete(ancestry: Ancestry, otherAncestry: Ancestry, kind: E_Predicate) {
+	async relationship_xforget_persistentDelete(ancestry: Ancestry) {
+		const relationship = ancestry.relationship;
+		if (!!relationship) {
+			this.relationship_forget(ancestry.relationship);
+			if (ancestry.hasChildren) {
+				ancestry.parentAncestry?.order_normalizeRecursive(true);
+			} else {
+				ancestry.collapse();
+			}
+			await this.db.relationship_persistentDelete(relationship);
+		}
+	}
+
+	async relationship_forget_persistentDelete(ancestry: Ancestry, otherAncestry: Ancestry, predicate: Predicate) {
 		const thing = ancestry.thing;
 		const parentAncestry = ancestry.parentAncestry;
-		const relationship = this.relationship_forPredicateKind_parent_child(kind, otherAncestry.id_thing.hash(), ancestry.id_thing.hash());
+		const isBidirectional = predicate?.isBidirectional;
+		const relationship = this.relationship_forPredicateKind_parent_child(predicate.kind, otherAncestry.id_thing.hash(), ancestry.id_thing.hash());
 		if (!!parentAncestry && !!relationship && (thing?.hasParents ?? false)) {
 			this.relationship_forget(relationship);
 			if (otherAncestry.hasChildren) {
@@ -699,17 +713,15 @@ export class Hierarchy {
 
 	relationship_remember_runtimeCreateUnique(idBase: string, id: string, kind: E_Predicate, idParent: string, idChild: string,
 		order: number, parentOrder: number = 0, creationOptions: E_Create = E_Create.none): Relationship {
-		let reversed = this.relationship_forPredicateKind_parent_child(kind, idChild.hash(), idParent.hash());
 		let relationship = this.relationship_forPredicateKind_parent_child(kind, idParent.hash(), idChild.hash());
-		const isBidirectional = this.predicate_forKind(kind)?.isBidirectional ?? false;
 		const already_persisted = creationOptions == E_Create.isFromPersistent;
 		if (!relationship) {
 			relationship = new Relationship(idBase, id, kind, idParent, idChild, order, parentOrder, already_persisted);
 			this.relationship_remember(relationship);
 		}
-		if (isBidirectional && !reversed) {
-			reversed = new Relationship(idBase, Identifiable.id_inReverseOrder(id), kind, idChild, idParent, parentOrder, order, already_persisted);
-			this.relationship_remember(reversed);
+		let reversed = relationship?.reversed;
+		if (Predicate.isBidirectional_for(kind) && !reversed) {
+			reversed = relationship.reversed_remember_createUnique;
 		}
 		relationship?.order_setTo(parentOrder, E_Order.other);
 		reversed?.order_setTo(parentOrder);
@@ -814,6 +826,32 @@ export class Hierarchy {
 		}
 	}
 
+	async ancestry_alter_connectionTo_maybe(ancestry: Ancestry) {
+		// called for parent and related
+		// if related, must handle two relationships
+
+		if (ancestry.alteration_isAllowed) {
+			const alteration = get(w_s_alteration);
+			const from_ancestry = alteration?.ancestry;
+			const predicate = alteration?.predicate;
+			if (!!alteration && !!from_ancestry && !!predicate) {
+				this.stop_alteration();
+				switch (alteration.e_alteration) {
+					case E_Alteration.delete:
+						await this.relationship_forget_persistentDelete(from_ancestry, ancestry, predicate);
+						break;
+					case E_Alteration.add:
+						const from_thing = from_ancestry.thing;
+						if (!!from_thing) {
+							await this.ancestry_extended_byAddingThing_toAncestry_remember_persistentCreate_relationship(from_thing, ancestry, predicate.kind);
+						}
+						break;
+				}
+				layout.grand_build();
+			}
+		}
+	}
+
 	get ancestry_forBreadcrumbs(): Ancestry {
 		const focus = get(w_ancestry_focus);
 		const grab = this.grabs_latest_ancestry;
@@ -835,7 +873,6 @@ export class Hierarchy {
 
 	async ancestry_forget_persistentUpdate(ancestry: Ancestry) {
 		const thing = ancestry.thing;
-		ancestry.childAncestries.map(c => this.ancestry_forget_persistentUpdate(c));
 		this.ancestry_forget(ancestry);
 		if (!!thing) {
 			await this.thing_forget_persistentDelete(thing);

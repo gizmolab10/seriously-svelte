@@ -57,7 +57,6 @@ export default class Ancestry extends Identifiable {
 	
 	static readonly PROPERTIES: unique symbol;
 	
-	get isUnidirectional():					 boolean { return !this.isBidirectional; }
 	get isRoot():							 boolean { return this.pathString == k.root_path; }
 	get hasSiblings():						 boolean { return this.sibling_ancestries.length > 1; }
 	get hasChildren():						 boolean { return this.childRelationships.length > 0; }
@@ -404,7 +403,7 @@ export default class Ancestry extends Identifiable {
 
 	isABranchOf(ancestry: Ancestry): boolean {
 		let isABranch = false;
-		if (ancestry.isUnidirectional) {
+		if (!ancestry.isBidirectional) {
 			ancestry.traverse((progenyAncestry: Ancestry) => {
 				if (this.equals(progenyAncestry)) {
 					isABranch = true;
@@ -524,7 +523,7 @@ export default class Ancestry extends Identifiable {
 	svgPathFor_tinyDots_outsideReveal(points_toChild: boolean): string | null {
 		const in_radial_mode = layout.inRadialMode;
 		const isVisible_forChild = this.hasChildren && show.children_dots && (in_radial_mode ? true : !this.isExpanded);
-		const isVisible_inRadial = points_toChild ? isVisible_forChild : this.hasParents && (this.isUnidirectional ? show.parent_dots : show.related_dots);
+		const isVisible_inRadial = points_toChild ? isVisible_forChild : this.hasParents && (this.isBidirectional ? show.related_dots : show.parent_dots);
 		const show_outside_tinyDots = in_radial_mode ? isVisible_inRadial : isVisible_forChild;
 		const outside_tinyDots_count = this.relationships_count_forChildren(points_toChild);
 		return !show_outside_tinyDots ? null : svgPaths.tinyDots_circular(k.diameterOf_outer_tinyDots + 4, outside_tinyDots_count as Integer, this.points_right);
@@ -599,16 +598,16 @@ export default class Ancestry extends Identifiable {
 				alert(`${this.title} refuses focus`);
 			}
 		} else {
-			const s_alteration = get(w_s_alteration);
 			w_s_title_edit?.set(null);
-			if (!!s_alteration) {
-				s_alteration.ancestry.alter_connectionTo_maybe(this);
+			if (!!get(w_s_alteration)) {
+				this.hierarchy.ancestry_alter_connectionTo_maybe(this);
 				layout.grand_build();
 				return;
 			} else if (!shiftKey && layout.inRadialMode) {
-				this.becomeFocus();
-				layout.grand_build();
-				return;
+				if (this.becomeFocus()) {
+					layout.grand_build();
+					return;
+				}
 			} else if (shiftKey || this.isGrabbed) {
 				this.toggleGrab();
 			} else {
@@ -708,35 +707,13 @@ export default class Ancestry extends Identifiable {
 				const isParent_ofFrom = this.thing_isImmediateParentOf(from_ancestry, predicate.kind);
 				const isProgeny_ofFrom = this.isABranchOf(from_ancestry);
 				const isAdding = s_alteration.e_alteration == E_Alteration.add;
-				const doNotAdd = isParent_ofFrom || isProgeny_ofFrom || isFrom_anAncestor;
-				const canAlter = isAdding ? !doNotAdd : isParent_ofFrom;
+				const creates_cycle = isParent_ofFrom || isProgeny_ofFrom || isFrom_anAncestor;
+				const canAlter = isAdding ? !creates_cycle : isParent_ofFrom;
+				console.log(`can ${canAlter ? '': 'not '}alter ${this.id} --> ${from_ancestry.id}`);
 				return canAlter
 			}
 		}
 		return false;
-	}
-
-	async alter_connectionTo_maybe(ancestry: Ancestry) {
-		if (ancestry.alteration_isAllowed) {
-			const alteration = get(w_s_alteration);
-			const from_ancestry = get(w_s_alteration)?.ancestry;
-			const kind = alteration?.predicate?.kind;
-			if (!!alteration && !!from_ancestry && !!kind) {
-				this.hierarchy.stop_alteration();
-				switch (alteration.e_alteration) {
-					case E_Alteration.delete:
-						await this.hierarchy.relationship_forget_persistentDelete(from_ancestry, ancestry, kind);
-						break;
-					case E_Alteration.add:
-						const toolsThing = from_ancestry.thing;
-						if (!!toolsThing) {
-							await this.hierarchy.ancestry_extended_byAddingThing_toAncestry_remember_persistentCreate_relationship(toolsThing, ancestry, kind);
-							layout.grand_build();
-						}
-						break;
-				}
-			}
-		}
 	}
 
 	static readonly MOVE_UP: unique symbol;

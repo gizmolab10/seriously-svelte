@@ -1,12 +1,14 @@
 import { Thing, debug, E_Debug, E_Order, databases, Predicate, E_Predicate } from '../common/Global_Imports';
 import { w_hierarchy, w_relationship_order } from '../common/Stores';
 import Persistable from '../persistable/Persistable';
-import type { Integer } from '../common/Types';
 import { E_Persistable } from '../database/DBCommon';
+import Identifiable from '../runtime/Identifiable';
+import type { Integer } from '../common/Types';
 import { get } from 'svelte/store';
 import Airtable from 'airtable';
 
 export default class Relationship extends Persistable {
+	isReversed = false;
 	hidParent: Integer;
 	hidChild: Integer;
 	kind: E_Predicate;
@@ -31,6 +33,7 @@ export default class Relationship extends Persistable {
 	get isValid(): boolean { return !!this.kind && !!this.parent && !!this.child; }
 	get predicate(): Predicate | null { return get(w_hierarchy).predicate_forKind(this.kind); }
 	get fields(): Airtable.FieldSet { return { kind: this.kind, parent: [this.idParent], child: [this.idChild], order: this.order }; }
+	get reversed(): Relationship | null { return get(w_hierarchy).relationship_forPredicateKind_parent_child(this.kind, this.idChild.hash(), this.idParent.hash()); }
 
 	get verbose(): string {
 		const persisted = this.persistence.already_persisted ? 'STORED' : 'DIRTY';
@@ -41,6 +44,16 @@ export default class Relationship extends Persistable {
 		const child = this.child ? this.child.description : this.idChild;
 		const parent = this.parent ? this.parent.description : this.idParent;
 		return `${parent} ${this.predicate?.kind} ${child}`;
+	}
+
+	get reversed_remember_createUnique(): Relationship {
+		let reversed = this.reversed;
+		if (!reversed) {
+			reversed = new Relationship(this.idBase, Identifiable.id_inReverseOrder(this.id), this.kind, this.idChild, this.idParent, this.orders[1], this.orders[0]);
+			reversed.isReversed = true;
+			get(w_hierarchy).relationship_remember(reversed);
+		}
+		return reversed;
 	}
 
 	order_forPointsTo(pointsToChildren: boolean): number {

@@ -37,9 +37,8 @@
 
     onMount(() => {
 		es_drag.set_forHovering(thing?.color, 'pointer');
-        const handle_altering = signals.handle_altering((s_alteration) => {
-			const isInverted = !!s_alteration && !!ancestry && ancestry.alteration_isAllowed;
-			es_drag.isInverted = isInverted;
+        const handle_altering = signals.handle_blink_forAlteration((invert) => {
+			es_drag.isInverted = !!invert && !!ancestry && ancestry.alteration_isAllowed;
 			colors_update();
         });
 		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {

@@ -145,77 +145,19 @@ export class Events {
 			this.alteration_interval = null;
 		}
 		if (!!s_alteration) {
-			let blink = true;
+			let invert = true;
 			this.alteration_interval = setInterval(() => {
-				signals.signal_altering(blink ? s_alteration : null);
-				blink = !blink;
+				signals.signal_blink_forAlteration(invert);
+				invert = !invert;
 			}, 500)
 		} else {
-			signals.signal_altering(null);
+			signals.signal_blink_forAlteration(false);
 		}
 	}
 	
-	static readonly PUBLIC_EVENTS: unique symbol;
+	static readonly MAIN_EVENT_HANDLERS: unique symbol;
 
 	handle_s_mouse(s_mouse: S_Mouse, from: string): S_Mouse { return s_mouse; }			// for dots and buttons
-
-	async handle_key_down(event: KeyboardEvent) {
-		if (event.type == 'keydown' && !ux.isEditing_text) {
-			const h = get(w_hierarchy);
-			const OPTION = event.altKey;
-			const SHIFT = event.shiftKey;
-			const COMMAND = event.metaKey;
-			const EXTREME = SHIFT && OPTION;
-			const time = new Date().getTime();
-			const key = event.key.toLowerCase();
-			const ancestry = h?.grabs_latest_upward(true);
-			const modifiers = ['alt', 'meta', 'shift', 'control'];
-			let graph_needsRebuild = false;
-			if (!!h && !!ancestry && !modifiers.includes(key)) {		// ignore modifier-key-only events
-				if (c.allow_GraphEditing) {
-					if (!!ancestry && c.allow_TitleEditing) {
-						switch (key) {
-							case 'enter':	ancestry.startEdit(); break;
-							case 'd':		await h.thing_edit_persistentDuplicate(ancestry); break;
-							case ' ':		await h.ancestry_edit_persistentCreateChildOf(ancestry); break;
-							case '-':		if (!COMMAND) { await h.thing_edit_persistentAddLine(ancestry); } break;
-							case 'tab':		await h.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break; // S_Title_Edit editor also makes this call
-						}
-					}
-					switch (key) {
-						case 'delete':
-						case 'backspace':	await h.ancestries_rebuild_traverse_persistentDelete(get(w_ancestries_grabbed)); break;
-					}
-				}
-				if (!!ancestry) {
-					switch (key) {
-						case '/':			graph_needsRebuild = ancestry.becomeFocus(); break;
-						case 'arrowright':	event.preventDefault(); await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, SHIFT, OPTION, EXTREME, false); break;
-						case 'arrowleft':	event.preventDefault(); await h.ancestry_rebuild_persistentMoveRight(ancestry, false, SHIFT, OPTION, EXTREME, false); break;
-					}
-				}
-				switch (key) {
-					case '?':				c.showHelp(); break;
-					case 's':				h.persist_toFile(); break;
-					case 'm':				layout.toggle_t_graph(); break;
-					case 'c':				w.user_graph_offset_setTo(Point.zero); break;
-					case 'o':				h.select_file_toUpload(event.shiftKey); break;
-					case '!':				graph_needsRebuild = h.rootAncestry?.becomeFocus(); break;
-					case 'escape':			if (!!get(w_s_alteration)) { h.stop_alteration(); }; break;
-					case 'arrowup':			h.grabs_latest_rebuild_persistentMoveUp_maybe( true, SHIFT, OPTION, EXTREME); break;
-					case 'arrowdown':		h.grabs_latest_rebuild_persistentMoveUp_maybe(false, SHIFT, OPTION, EXTREME); break;
-				}
-				if (graph_needsRebuild) {
-					layout.grand_build();
-				}
-				const duration = ((new Date().getTime()) - time).toFixed(1);
-				debug.log_key(`H  (${duration}) ${key}`);
-				setTimeout( async () => {
-					await h.db.persist_all();
-				}, 1);
-			}
-		}
-	}
 
 	async handle_tool_autorepeatAt(s_mouse: S_Mouse, e_tool: number, column: number, name: string) {
 		if (s_mouse.isDown) {
@@ -310,6 +252,65 @@ export class Events {
 		}
 		return true;
 	}
+
+	async handle_key_down(event: KeyboardEvent) {
+		if (event.type == 'keydown' && !ux.isEditing_text) {
+			const h = get(w_hierarchy);
+			const OPTION = event.altKey;
+			const SHIFT = event.shiftKey;
+			const COMMAND = event.metaKey;
+			const EXTREME = SHIFT && OPTION;
+			const time = new Date().getTime();
+			const key = event.key.toLowerCase();
+			const ancestry = h?.grabs_latest_upward(true);
+			const modifiers = ['alt', 'meta', 'shift', 'control'];
+			let graph_needsRebuild = false;
+			if (!!h && !!ancestry && !modifiers.includes(key)) {		// ignore modifier-key-only events
+				if (c.allow_GraphEditing) {
+					if (!!ancestry && c.allow_TitleEditing) {
+						switch (key) {
+							case 'enter':	ancestry.startEdit(); break;
+							case 'd':		await h.thing_edit_persistentDuplicate(ancestry); break;
+							case ' ':		await h.ancestry_edit_persistentCreateChildOf(ancestry); break;
+							case '-':		if (!COMMAND) { await h.thing_edit_persistentAddLine(ancestry); } break;
+							case 'tab':		await h.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break; // S_Title_Edit editor also makes this call
+						}
+					}
+					switch (key) {
+						case 'delete':
+						case 'backspace':	await h.ancestries_rebuild_traverse_persistentDelete(get(w_ancestries_grabbed)); break;
+					}
+				}
+				if (!!ancestry) {
+					switch (key) {
+						case '/':			graph_needsRebuild = ancestry.becomeFocus(); break;
+						case 'arrowright':	event.preventDefault(); await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, SHIFT, OPTION, EXTREME, false); break;
+						case 'arrowleft':	event.preventDefault(); await h.ancestry_rebuild_persistentMoveRight(ancestry, false, SHIFT, OPTION, EXTREME, false); break;
+					}
+				}
+				switch (key) {
+					case '?':				c.showHelp(); break;
+					case 's':				h.persist_toFile(); break;
+					case 'm':				layout.toggle_t_graph(); break;
+					case 'c':				w.user_graph_offset_setTo(Point.zero); break;
+					case 'o':				h.select_file_toUpload(event.shiftKey); break;
+					case '!':				graph_needsRebuild = h.rootAncestry?.becomeFocus(); break;
+					case 'escape':			if (!!get(w_s_alteration)) { h.stop_alteration(); }; break;
+					case 'arrowup':			h.grabs_latest_rebuild_persistentMoveUp_maybe( true, SHIFT, OPTION, EXTREME); break;
+					case 'arrowdown':		h.grabs_latest_rebuild_persistentMoveUp_maybe(false, SHIFT, OPTION, EXTREME); break;
+				}
+				if (graph_needsRebuild) {
+					layout.grand_build();
+				}
+				const duration = ((new Date().getTime()) - time).toFixed(1);
+				debug.log_key(`H  (${duration}) ${key}`);
+				setTimeout( async () => {
+					await h.db.persist_all();
+				}, 1);
+			}
+		}
+	}
+
 }
 
 export let e = new Events();

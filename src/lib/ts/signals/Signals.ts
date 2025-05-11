@@ -38,7 +38,7 @@ export class Signals {
 
 	conduit = new Signal<(e_signal: E_Signal, priority: number, value: any) => void>();
 	
-	signal_altering(value: any = null) { this.signal(E_Signal.alteration, value); }
+	signal_blink_forAlteration(value: any = null) { this.signal(E_Signal.alteration, value); }
 	signal_tool_update(value: any = null) { this.signal(E_Signal.tool_update, value); }
 	signal_rebuildGraph_from(value: any = null) { this.signal(E_Signal.rebuild, value); }	// N.B., widget whatches this to reveal tools
 	signal_rebuildGraph_fromFocus() { this.signal_rebuildGraph_from(get(w_ancestry_focus)); }
@@ -87,7 +87,7 @@ export class Signals {
 		return this.handle_signal_atPriority(E_Signal.tool_update, priority, onSignal);
 	}
 
-	handle_altering(onSignal: (value: any | null) => any ) {
+	handle_blink_forAlteration(onSignal: (value: any | null) => any ) {
 		return this.handle_signal_atPriority(E_Signal.alteration, 0, onSignal);
 	}
 
