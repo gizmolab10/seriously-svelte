@@ -29,6 +29,7 @@
 				[things, widths, lefts, parent_widths] = ancestry.layout_breadcrumbs_within(windowWidth);
 				trigger = parent_widths * 10000 + breadcrumb_reattachments * 100 + lefts[0];		// re-render HTML when this value changes
 				debug.log_crumbs(`ALL ${widths} ${things.map(t => t.title)}`);
+				breadcrumb_reattachments += 1;
 			}
 		}
 	}

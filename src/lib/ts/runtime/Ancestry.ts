@@ -162,16 +162,16 @@ export default class Ancestry extends Identifiable {
 	}
 
 	get isVisible(): boolean {
-		const parent = this.parentAncestry;
-		if (layout.inTreeMode) {
+		if (layout.inRadialMode) {
+			const parent = this.parentAncestry;
+			const g_paging = parent?.g_paging;
+			return this.isFocus || (!!parent && parent.isFocus && (g_paging?.index_isVisible(this.siblingIndex) ?? true));
+		} else {
 			const focus = get(w_ancestry_focus);
 			const incorporates = this.incorporates(focus);
 			const expanded = this.isAllExpandedFrom(focus);
 			return (incorporates && expanded);
-		} else if (!!parent) {
-			return parent.isFocus && (parent.g_paging?.index_isVisible(this.siblingIndex) ?? false);
 		}
-		return this.isFocus;
 	}
 
 	get hasGrandChildren(): boolean {
@@ -553,7 +553,7 @@ export default class Ancestry extends Identifiable {
 			if (!!others) {
 				for (const other of others) {
 					if (other.isVisible && other.depth > depth && other.pathString != bidirectional.pathString) {
-						const g_line = this.g_line_toOther(other);
+						const g_line = this.g_line_bidirectionaTo(other);
 						found.push(g_line);
 					}
 				}
@@ -562,12 +562,12 @@ export default class Ancestry extends Identifiable {
 		return found;
 	}
 
-	g_line_toOther(other: Ancestry) : G_TreeLine {
+	g_line_bidirectionaTo(other: Ancestry) : G_TreeLine {
 		const offset_y = 0.5;
 		const g_line = new G_TreeLine(this, other, true);
 		const offset_x = -(k.height.line + k.height.dot / 2);
 		const extent = other.g_widget.absolute_center_ofDrag;
-		const origin = this.g_widget.absolute_center_ofReveal.offsetByY(-2.5);
+		const origin = this.g_widget.absolute_center_ofReveal.offsetByXY(2, -2.5);
 		const rect = Rect.createExtentRect(origin, extent).offsetByXY(offset_x, offset_y);
 		g_line.set_t_curve_forHeight(rect.height);
 		g_line.rect = rect;

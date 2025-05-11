@@ -11,8 +11,8 @@ export default class Constants {
 	halfIncrement = 0.5;
 	width_details = 210;
 	radial_widget_inset = 26;
+	autorepeat_interval = 50;
 	separator_title_left = 20;
-	autorepeat_interval = 200;
 	editingTools_diameter = 64;
 	hid_unknown = 1000000000000;
 	build_number = builds.latest;
@@ -110,9 +110,9 @@ export default class Constants {
 
 	tools = {
 		browse: {
-			up: 0,
-			down: 1,
-			left: 2,
+			left: 0,
+			up: 1,
+			down: 2,
 			right: 3,
 		},
 		add: {
@@ -128,9 +128,9 @@ export default class Constants {
 			related: 2,
 		},
 		move: {
-			up: 0,
-			down: 1,
-			left: 2,
+			left: 0,
+			up: 1,
+			down: 2,
 			right: 3,
 		},
 		list: {

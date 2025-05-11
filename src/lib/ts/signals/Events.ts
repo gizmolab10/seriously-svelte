@@ -1,4 +1,4 @@
-import { c, k, ux, w, Point, debug, layout, signals, Hierarchy, Predicate } from '../common/Global_Imports';
+import { c, k, ux, w, Point, debug, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
 import { E_Tool, E_Predicate, E_Alteration, S_Mouse, S_Alteration } from '../common/Global_Imports';
 import { w_device_isMobile, w_ancestries_grabbed, w_user_graph_offset } from '../common/Stores';
 import { w_count_mouse_up, w_mouse_location, w_mouse_location_scaled } from '../common/Stores';
@@ -10,24 +10,29 @@ export class Events {
 	alteration_interval: NodeJS.Timeout | null = null;
 	autorepeat_interval: NodeJS.Timeout | null = null;
 
-	handle_touch_end(event: TouchEvent) { this.initialTouch = null; }
-	handle_s_mouse(s_mouse: S_Mouse, from: string): S_Mouse { return s_mouse; }			// for dots and buttons
-	get autorepeaters(): number[] { return [E_Tool.browse, E_Tool.list, E_Tool.move]; }
-	
-	static readonly SETUP: unique symbol;
-
-	update_event_listener(name: string, handler: EventListenerOrEventListenerObject) {
-		window.removeEventListener(name, handler);
-		window.addEventListener(name, handler, { passive: false });
-	}
-
 	setup() {
 		w_s_alteration.subscribe((s_alteration: S_Alteration | null) => { this.handle_s_alteration(s_alteration); });
 		w_device_isMobile.subscribe((isMobile: boolean) => { this.subscribeTo_events(); });
 		this.subscribeTo_events();
 	}
+	
+	static readonly INTERNALS: unique symbol;
 
-	clear_event_subscriptions() {
+	private handle_touch_end(event: TouchEvent) { this.initialTouch = null; }
+	private get autorepeaters(): number[] { return [E_Tool.browse, E_Tool.list, E_Tool.move]; }
+
+	private ancestry_toggle_alteration(ancestry: Ancestry, e_alteration: E_Alteration, predicate: Predicate | null) {
+		const isAltering = !!get(w_s_alteration);
+		const s_alteration = isAltering ? null : new S_Alteration(ancestry, e_alteration, predicate);
+		w_s_alteration.set(s_alteration);
+	}
+
+	private update_event_listener(name: string, handler: EventListenerOrEventListenerObject) {
+		window.removeEventListener(name, handler);
+		window.addEventListener(name, handler, { passive: false });
+	}
+
+	private clear_event_subscriptions() {
 		window.removeEventListener('mouseup',	 this.handle_mouse_up);
 		window.removeEventListener('mousemove',	 this.handle_mouse_move);
 		window.removeEventListener('touchend',	 this.handle_touch_end);
@@ -35,7 +40,7 @@ export class Events {
 		window.removeEventListener('touchstart', this.handle_touch_start);
 	}
 
-	subscribeTo_events() {
+	private subscribeTo_events() {
 		this.clear_event_subscriptions();
 		this.update_event_listener('wheel', this.handle_wheel);
 		this.update_event_listener('keydown', this.handle_zoom);
@@ -51,23 +56,21 @@ export class Events {
 			window.addEventListener('mousemove', this.handle_mouse_move, { passive: false });
 		}
 	}
-	
-	static readonly EVENT_HANDLERS: unique symbol;
 
-	handle_mouse_up(event: MouseEvent) {
+	private handle_mouse_up(event: MouseEvent) {
 		event.preventDefault();
 		event.stopPropagation();
 		w_count_mouse_up.update(n => n + 1);
 	}
 
-	handle_orientation_change(event: Event) {
+	private handle_orientation_change(event: Event) {
 		const isMobile = c.device_isMobile;
 		debug.log_action(` orientation change [is${isMobile ? '' : ' not'} mobile] STATE`);
 		w_device_isMobile.set(isMobile);
 		w.restore_state();
 	}
 
-	handle_touch_start(event: TouchEvent) {
+	private handle_touch_start(event: TouchEvent) {
 		if (event.touches.length == 2) {
 			const touch = event.touches[0];
 			this.initialTouch = new Point(touch.clientX, touch.clientY);
@@ -75,7 +78,7 @@ export class Events {
 		}
 	}
 
-	handle_mouse_move(event: MouseEvent) {
+	private handle_mouse_move(event: MouseEvent) {
 		event.preventDefault();
 		event.stopPropagation();
 		const location = new Point(event.clientX, event.clientY);
@@ -83,7 +86,7 @@ export class Events {
 		w_mouse_location_scaled.set(location.dividedBy(w.scale_factor));
 	}
 
-	handle_resize(event: Event) {
+	private handle_resize(event: Event) {
 		// called when simulator switches platform (e.c., desktop <--> iphone)
 		const isMobile = c.device_isMobile;
 		debug.log_action(` resize [is${isMobile ? '' : ' not'} mobile] STATE`);
@@ -92,7 +95,7 @@ export class Events {
 		w.restore_state();
 	}
 
-	handle_wheel(event: Event) {
+	private handle_wheel(event: Event) {
 		event.preventDefault();
 		event.stopPropagation();
 		if (!c.device_isMobile) {
@@ -106,7 +109,7 @@ export class Events {
 		}
 	}
 
-	handle_touch_move(event: TouchEvent) {
+	private handle_touch_move(event: TouchEvent) {
 		if (event.touches.length == 2) {
 			event.preventDefault();
 			event.stopPropagation();
@@ -120,20 +123,7 @@ export class Events {
 		}
 	}
 
-	async handle_tool_autorepeatAt(s_mouse: S_Mouse, e_tool: number, column: number, name: string) {
-		if (s_mouse.isDown) {
-			return this.handle_tool_clickedAt(s_mouse, e_tool, column, name);
-		} else if (s_mouse.isLong && this.autorepeaters.includes(e_tool)) {
-			this.autorepeat_interval = setInterval(() => {			// begin autorepeating
-				this.handle_tool_clickedAt(s_mouse, e_tool, column, name);
-			}, k.autorepeat_interval);
-		} else if (s_mouse.isUp && !!this.autorepeat_interval) {	// stop autorepeating
-			clearInterval(this.autorepeat_interval);
-			this.autorepeat_interval = null;
-		}
-	}
-
-	handle_zoom(e: Event) {
+	private handle_zoom(e: Event) {
 		const event = e as KeyboardEvent;
 		const key = event.key;
 		if (event.metaKey && ['+', '=', '-', '0'].includes(key)) {
@@ -149,7 +139,7 @@ export class Events {
 		}
 	}
 
-	handle_s_alteration(s_alteration: S_Alteration | null) {
+	private handle_s_alteration(s_alteration: S_Alteration | null) {
 		if (!!this.alteration_interval) {
 			clearInterval(this.alteration_interval);
 			this.alteration_interval = null;
@@ -164,6 +154,10 @@ export class Events {
 			signals.signal_altering(null);
 		}
 	}
+	
+	static readonly PUBLIC_EVENTS: unique symbol;
+
+	handle_s_mouse(s_mouse: S_Mouse, from: string): S_Mouse { return s_mouse; }			// for dots and buttons
 
 	async handle_key_down(event: KeyboardEvent) {
 		if (event.type == 'keydown' && !ux.isEditing_text) {
@@ -183,7 +177,7 @@ export class Events {
 						switch (key) {
 							case 'enter':	ancestry.startEdit(); break;
 							case 'd':		await h.thing_edit_persistentDuplicate(ancestry); break;
-							case k.space:	await h.ancestry_edit_persistentCreateChildOf(ancestry); break;
+							case ' ':		await h.ancestry_edit_persistentCreateChildOf(ancestry); break;
 							case '-':		if (!COMMAND) { await h.thing_edit_persistentAddLine(ancestry); } break;
 							case 'tab':		await h.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break; // S_Title_Edit editor also makes this call
 						}
@@ -223,6 +217,19 @@ export class Events {
 		}
 	}
 
+	async handle_tool_autorepeatAt(s_mouse: S_Mouse, e_tool: number, column: number, name: string) {
+		if (s_mouse.isDown) {
+			return this.handle_tool_clickedAt(s_mouse, e_tool, column, name);
+		} else if (s_mouse.isLong && this.autorepeaters.includes(e_tool)) {
+			this.autorepeat_interval = setInterval(() => {			// begin autorepeating
+				this.handle_tool_clickedAt(s_mouse, e_tool, column, name);
+			}, k.autorepeat_interval);
+		} else if (s_mouse.isUp && !!this.autorepeat_interval) {	// stop autorepeating
+			clearInterval(this.autorepeat_interval);
+			this.autorepeat_interval = null;
+		}
+	}
+
 	async handle_tool_clickedAt(s_mouse: S_Mouse, e_tool: number, column: number, name: string) {
 		if (!this.handle_isTool_disabledAt(e_tool, column)) {
 			const h = get(w_hierarchy);
@@ -238,13 +245,13 @@ export class Events {
 					case k.tools.add.child:				await h.ancestry_edit_persistentCreateChildOf(ancestry); break;
 					case k.tools.add.sibling:			await h.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break;
 					case k.tools.add.line:				await h.thing_edit_persistentAddLine(ancestry); break;
-					case k.tools.add.parent:			h.ancestry_toggle_alteration(ancestry, E_Alteration.add, Predicate.contains); break;
-					case k.tools.add.related:			h.ancestry_toggle_alteration(ancestry, E_Alteration.add, Predicate.isRelated); break;
+					case k.tools.add.parent:			this.ancestry_toggle_alteration(ancestry, E_Alteration.add, Predicate.contains); break;
+					case k.tools.add.related:			this.ancestry_toggle_alteration(ancestry, E_Alteration.add, Predicate.isRelated); break;
 				}									break;
 				case E_Tool.delete:					switch (column) {
 					case k.tools.delete.selection:		await h.ancestries_rebuild_traverse_persistentDelete(get(w_ancestries_grabbed)); break;
-					case k.tools.delete.parent:			h.ancestry_toggle_alteration(ancestry, E_Alteration.delete, Predicate.contains); break;
-					case k.tools.delete.related:		h.ancestry_toggle_alteration(ancestry, E_Alteration.delete, Predicate.isRelated); break;
+					case k.tools.delete.parent:			this.ancestry_toggle_alteration(ancestry, E_Alteration.delete, Predicate.contains); break;
+					case k.tools.delete.related:		this.ancestry_toggle_alteration(ancestry, E_Alteration.delete, Predicate.isRelated); break;
 				}									break;
 				case E_Tool.move:					switch (column) {
 					case k.tools.move.up:				h.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, true, false); break;
@@ -271,9 +278,9 @@ export class Events {
 		const disable_revealConceal = no_children || is_root || (layout.inRadialMode && ancestry.isFocus);
 		switch (e_tool) {
 			case E_Tool.browse:					switch (column) {
+				case k.tools.browse.left:			return is_root;
 				case k.tools.browse.up:				return no_siblings;
 				case k.tools.browse.down:			return no_siblings;
-				case k.tools.browse.left:			return is_root;
 				case k.tools.browse.right:			return no_children;
 			}									break;
 			case E_Tool.add:					switch (column) {
@@ -289,9 +296,9 @@ export class Events {
 				case k.tools.delete.related:		return !ancestry.hasParents_ofKind(E_Predicate.isRelated);
 			}									break;
 			case E_Tool.move:					switch (column) {
+				case k.tools.move.left:				return is_root;
 				case k.tools.move.up:				return no_siblings;
 				case k.tools.move.down:				return no_siblings;
-				case k.tools.move.left:				return is_root;
 				case k.tools.move.right:			return is_root;
 			}									break;
 			case E_Tool.list:						return disable_revealConceal;

@@ -1,5 +1,6 @@
 import { e, k, p, u, w, show, debug, layout, databases } from '../common/Global_Imports';
 import { stores, w_device_isMobile } from '../common/Stores';
+import MobileDetect from 'mobile-detect';
 
 export class Configuration {
 
@@ -57,6 +58,11 @@ export class Configuration {
 		return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "0.0.0.0";
 	}
 
+	get device_isMobile(): boolean {
+		const md = new MobileDetect(window.navigator.userAgent);
+		return !!md.mobile();
+	}
+
 	get siteTitle(): string {
 		const idBase = databases.db_now.idBase;
 		const e_database = databases.db_now.e_database;
@@ -64,25 +70,6 @@ export class Configuration {
 		const base_name = idBase ? (idBase + ', ') : k.empty;
 		const db_name = e_database ? (e_database + ', ') : k.empty;
 		return `Seriously (${host}, ${db_name}${base_name}${u.browserType}, α)`;
-	}
-
-	get device_isMobile(): boolean { return ('ontouchstart' in window || navigator.maxTouchPoints > 0); }
-
-	get xdevice_isMobile(): boolean {
-		const userAgent = navigator.userAgent;
-		if (/iPhone|iPad|iPod/i.test(userAgent) ||
-			/Windows Phone/i.test(userAgent) ||
-			/BlackBerry/i.test(userAgent) ||
-			/Opera Mini/i.test(userAgent) ||
-			/IEMobile/i.test(userAgent) ||
-			/android/i.test(userAgent) ||
-			/Mobile/i.test(userAgent) ||
-			/Tablet/i.test(userAgent) ||
-			/webOS/i.test(userAgent) ||
-			/Touch/i.test(userAgent)) {    // Check for phones and tablets
-			return true;
-		}
-		return false;
 	}
 
 	open_tabFor(url: string) { window.open(url, 'help-webseriously')?.focus(); }

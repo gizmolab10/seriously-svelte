@@ -55,6 +55,9 @@
 
 	export const REACTIVES: unique symbol = Symbol('REACTIVES');
 
+	$: $w_ancestries_grabbed,
+		origin_ofInput = ancestry?.isGrabbed ?? false ? Point.x(0.1) : Point.y(0.8);
+
 	$: {
 		const _ = $w_s_title_edit;
 		if (!!input) {
@@ -72,12 +75,6 @@
 		if (!!thing && thing.id == $w_thing_color?.split(k.separator.generic)[0]) {
 			color = thing?.color;
 		}
-	}
-
-	$: {
-		const _ = $w_ancestries_grabbed;
-		const isGrabbed = ancestry?.isGrabbed ?? false;
-		origin_ofInput = isGrabbed ? Point.x(0.1) : Point.y(0.8);
 	}
 
 	export const RANGE: unique symbol = Symbol('RANGE');

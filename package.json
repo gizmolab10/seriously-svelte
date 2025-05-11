@@ -73,6 +73,7 @@
         "framework7": "^8.3.4",
         "framework7-svelte": "^8.3.4",
         "interactjs": "^1.10.27",
+        "mobile-detect": "^1.4.5",
         "pg": "^8.11.3",
         "pg-promise": "^11.5.4",
         "pg-query-stream": "4.7.0",

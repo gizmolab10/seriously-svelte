@@ -61,10 +61,10 @@
 
 	function compute_button_titles() {
 		return [
-			['browse', 'up', 'down', 'left', 'right'],
+			['browse', 'left', 'up', 'down', 'right'],
 			['add', 'child', 'sibling', 'line', 'parent', 'related'],
 			['delete', 'selection', 'parent', 'related'],
-			['move', 'up', 'down', 'left', 'right'],
+			['move', 'left', 'up', 'down', 'right'],
 			['list', `${list_title}`],
 			['show', 'selection', 'root'],
 			['graph', 'center'],

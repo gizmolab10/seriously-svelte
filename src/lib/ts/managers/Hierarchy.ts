@@ -818,7 +818,7 @@ export class Hierarchy {
 		const focus = get(w_ancestry_focus);
 		const grab = this.grabs_latest_ancestry;
 		const grab_containsFocus = !!grab && focus.isABranchOf(grab)
-		return (!!grab && grab.isVisible && !grab_containsFocus) ? grab : focus;
+		return (!!grab && !grab_containsFocus) ? grab : focus;
 	}
 
 	ancestry_isAssured_valid_forPath(path: string): Ancestry | null {
@@ -873,12 +873,6 @@ export class Hierarchy {
 		} else if (ancestry.toggleExpanded()) {
 			layout.grand_build();
 		}
-	}
-
-	ancestry_toggle_alteration(ancestry: Ancestry, e_alteration: E_Alteration, predicate: Predicate | null) {
-		const isAltering = !!get(w_s_alteration);
-		const s_alteration = isAltering ? null : new S_Alteration(ancestry, e_alteration, predicate);
-		w_s_alteration.set(s_alteration);
 	}
 
 	async ancestry_edit_persistentCreateChildOf(parentAncestry: Ancestry | null) {
