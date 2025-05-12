@@ -36,7 +36,7 @@ export default class Ancestry extends Identifiable {
 	traverse(apply_closureTo: (ancestry: Ancestry) => boolean, e_kinship: E_Kinship = E_Kinship.child, visited: Array<string> = []) {
 		const id = this.thing?.id;
 		if (!!id && !visited.includes(id) && !apply_closureTo(this)) {
-			for (const progeny of this.ancestries_unique_byKinship(e_kinship)) {
+			for (const progeny of this.ancestries_createUnique_byKinship(e_kinship)) {
 				progeny.traverse(apply_closureTo, e_kinship, [...visited, id]);
 			}
 		}
@@ -47,7 +47,7 @@ export default class Ancestry extends Identifiable {
 		if (!!id && !visited.includes(id)) {
 			try {
 				if (!await apply_closureTo(this)) {
-					for (const progeny of this.ancestries_unique_byKinship(e_kinship)) {
+					for (const progeny of this.ancestries_createUnique_byKinship(e_kinship)) {
 						await progeny.async_traverse(apply_closureTo, e_kinship, [...visited, id]);
 					}
 				}
@@ -330,7 +330,7 @@ export default class Ancestry extends Identifiable {
 				const fromOrder = siblings.indexOf(thing);
 				const toOrder = fromOrder.increment(!up, length);
 				if (!OPTION) {
-					grabAncestry = parentAncestry.ancestry_unique_byAddingThing(siblings[toOrder]);
+					grabAncestry = parentAncestry.ancestry_createUnique_byAddingThing(siblings[toOrder]);
 					if (!!grabAncestry) {
 						grabAncestry.grab_forShift(SHIFT);
 						needs_graphRelayout = true;
@@ -352,7 +352,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	persistentMoveUp_forParent_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
-		const sibling_ancestries = get(w_ancestry_focus)?.ancestries_unique_byKinship(E_Kinship.parent);
+		const sibling_ancestries = get(w_ancestry_focus)?.ancestries_createUnique_byKinship(E_Kinship.parent);
 		let needs_graphRelayout = false;
 		let needs_graphRebuild = false;
 		if (!!sibling_ancestries) {
@@ -377,7 +377,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	persistentMoveUp_forBidirectional_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
-		const sibling_ancestries = get(w_ancestry_focus)?.ancestries_unique_byKinship(E_Kinship.related) ?? [];
+		const sibling_ancestries = get(w_ancestry_focus)?.ancestries_createUnique_byKinship(E_Kinship.related) ?? [];
 		let needs_graphRelayout = false;
 		let needs_graphRebuild = false;
 		if (!!sibling_ancestries) {
@@ -575,9 +575,9 @@ export default class Ancestry extends Identifiable {
 
 	static readonly _____OTHER_ANCESTRIES: unique symbol;
 
-	get parentAncestry():	  Ancestry | null { return this.ancestry_unique_byStrippingBack(); }
+	get parentAncestry():	  Ancestry | null { return this.ancestry_createUnique_byStrippingBack(); }
 	get sibling_ancestries(): Array<Ancestry> { return this.parentAncestry?.childAncestries ?? []; }
-	get childAncestries():	  Array<Ancestry> { return this.ancestries_unique_byKinship(E_Kinship.child) ?? []; }
+	get childAncestries():	  Array<Ancestry> { return this.ancestries_createUnique_byKinship(E_Kinship.child) ?? []; }
 	get branchAncestries():	  Array<Ancestry> { return layout.branches_areChildren ? this.childAncestries : this.parentAncestries; }
 
 	get parentAncestries(): Array<Ancestry> {
@@ -603,7 +603,7 @@ export default class Ancestry extends Identifiable {
 		const ancestries: Array<Ancestry> = [];
 		const parents = this.parentAncestries;
 		for (const parent of parents) {
-			const ancestor = parent.ancestry_unique_byStrippingBack(back);
+			const ancestor = parent.ancestry_createUnique_byStrippingBack(back);
 			if (!!ancestor && ancestor.isVisible) {
 				ancestries.push(parent);
 			}
@@ -624,7 +624,18 @@ export default class Ancestry extends Identifiable {
 		return null;
 	}
 
-	ancestry_unique_byStrippingBack(back: number = 1): Ancestry | null {
+	ancestry_createUnique_byAddingThing(thing: Thing | null): Ancestry | null {
+		const hidParent = this.thing?.idBridging.hash();
+		if (!!thing && !!hidParent) {
+			const relationship = this.hierarchy.relationship_forPredicateKind_parent_child(E_Predicate.contains, hidParent, thing.hid);
+			if (!!relationship) {
+				return this.ancestry_createUnique_byAppending_relationshipID(relationship.id);
+			}
+		}
+		return null;
+	}
+
+	ancestry_createUnique_byStrippingBack(back: number = 1): Ancestry | null {
 		const ids = this.relationship_ids;
 		if (back == 0) {
 			return this;
@@ -639,7 +650,7 @@ export default class Ancestry extends Identifiable {
 		}
 	}
 
-	ancestry_unique_byAppending_relationshipID(id: string): Ancestry | null {
+	ancestry_createUnique_byAppending_relationshipID(id: string): Ancestry | null {
 		if (this.isRoot) {
 			return this.hierarchy.ancestry_remember_createUnique(id);
 		} else {
@@ -660,18 +671,7 @@ export default class Ancestry extends Identifiable {
 		}
 	}
 
-	ancestry_unique_byAddingThing(thing: Thing | null): Ancestry | null {
-		const hidParent = this.thing?.idBridging.hash();
-		if (!!thing && !!hidParent) {
-			const relationship = this.hierarchy.relationship_forPredicateKind_parent_child(E_Predicate.contains, hidParent, thing.hid);
-			if (!!relationship) {
-				return this.ancestry_unique_byAppending_relationshipID(relationship.id);
-			}
-		}
-		return null;
-	}
-
-	async ancestry_unique_persistent_byAddingThing(thing: Thing | null, kind: E_Predicate = E_Predicate.contains): Promise<Ancestry | null | undefined> {
+	async ancestry_persistentCreateUnique_byAddingThing(thing: Thing | null, kind: E_Predicate = E_Predicate.contains): Promise<Ancestry | null | undefined> {
 		const h = this.hierarchy;
 		const parent = this.thing;
 		let ancestry: Ancestry | null = null;
@@ -683,30 +683,30 @@ export default class Ancestry extends Identifiable {
 			}
 			const parentOrder = this.childAncestries?.length ?? 0;
 			const relationship = await h.relationship_remember_persistentCreateUnique(idBase, Identifiable.newID(), kind, parent.idBridging, thing.id, 0, parentOrder, E_Create.getPersistentID);
-			ancestry = this.ancestry_unique_byAppending_relationshipID(relationship.id);
+			ancestry = this.ancestry_createUnique_byAppending_relationshipID(relationship.id);
 			u.ancestries_orders_normalize(this.childAncestries, true);			// write new order values for relationships
 			if (kind != E_Predicate.contains) {									// if isBidirectional, we need to create the reversed relationship
 				const reversed = relationship?.reversed_remember_createUnique;	// do not persist, it is automatically recreated on all subsequennt launches
 				if (!!reversed) {												// use relationship's id alone, since it is an isRelated kind
-					const _ = h.ancestry_remember_createUnique(relationship.id, kind);			
+					h.ancestry_remember_createUnique(relationship.id, kind);			
 				}
 			}
 		}
 		return ancestry;
 	}
 
-	ancestries_unique_byKinship(kinship: string | null): Array<Ancestry> {
+	ancestries_createUnique_byKinship(kinship: string | null): Array<Ancestry> {
 		if (!!kinship) {
 			switch (kinship) {
 				case E_Kinship.related: return this.thing?.uniqueAncestries_for(Predicate.isRelated) ?? [];
-				case E_Kinship.parent: return this.thing?.uniqueAncestries_for(Predicate.contains) ?? [];
-				case E_Kinship.child:  return this.ancestries_unique_forPredicate(Predicate.contains);
+				case E_Kinship.parent:  return this.thing?.uniqueAncestries_for(Predicate.contains) ?? [];
+				case E_Kinship.child:   return this.ancestries_createUnique_forPredicate(Predicate.contains);
 			}
 		}
 		return [];
 	}
 
-	ancestries_unique_forPredicate(predicate: Predicate | null): Array<Ancestry> {
+	ancestries_createUnique_forPredicate(predicate: Predicate | null): Array<Ancestry> {
 		let ancestries: Array<Ancestry> = [];
 		if (!!predicate) {
 			const relationships = this.relationships_ofKind_forParents(predicate.kind, false);
@@ -716,7 +716,7 @@ export default class Ancestry extends Identifiable {
 					if (relationship.kind == predicate.kind) {
 						let ancestry: Ancestry | null;
 						if (isContains) {
-							ancestry = this.ancestry_unique_byAppending_relationshipID(relationship.id); 	// add each relationship's id
+							ancestry = this.ancestry_createUnique_byAppending_relationshipID(relationship.id); 	// add each relationship's id
 						} else {
 							ancestry = this.hierarchy.ancestry_remember_createUnique(relationship.id, predicate.kind);
 						}

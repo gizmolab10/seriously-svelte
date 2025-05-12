@@ -195,9 +195,9 @@ export default class Thing extends Persistable {
 						const id_parentRelationship = parentRelationship.id;		// TODO, this is the wrong relationship; needs the next one
 						const parentAncestries = parent.ancestries_forPredicate(predicate, [...visited, parent.id]) ?? [];
 						if (parentAncestries.length == 0) {
-							addAncestry(get(w_hierarchy).rootAncestry.ancestry_unique_byAppending_relationshipID(id_parentRelationship));
+							addAncestry(get(w_hierarchy).rootAncestry.ancestry_createUnique_byAppending_relationshipID(id_parentRelationship));
 						} else {
-							parentAncestries.map((p: Ancestry) => addAncestry(p.ancestry_unique_byAppending_relationshipID(id_parentRelationship)));
+							parentAncestries.map((p: Ancestry) => addAncestry(p.ancestry_createUnique_byAppending_relationshipID(id_parentRelationship)));
 						}
 					}
 				}
