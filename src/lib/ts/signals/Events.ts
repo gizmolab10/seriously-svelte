@@ -2,7 +2,7 @@ import { c, k, ux, w, Point, debug, layout, signals, Ancestry, Predicate } from 
 import { E_Tool, E_Predicate, E_Alteration, S_Mouse, S_Alteration } from '../common/Global_Imports';
 import { w_device_isMobile, w_ancestries_grabbed, w_user_graph_offset } from '../common/Stores';
 import { w_count_mouse_up, w_mouse_location, w_mouse_location_scaled } from '../common/Stores';
-import { w_hierarchy, w_s_alteration, w_count_resize } from '../common/Stores';
+import { w_hierarchy, w_s_alteration, w_count_resize, w_s_title_edit } from '../common/Stores';
 import { get } from 'svelte/store';
 
 export class Events {
@@ -227,7 +227,7 @@ export class Events {
 			}									break;
 			case E_Tool.add:					switch (column) {
 				case k.tools.add.child:				return is_altering;
-				case k.tools.add.sibling:			return is_altering || no_siblings;
+				case k.tools.add.sibling:			return is_altering;
 				case k.tools.add.line:				return is_altering || is_root;
 				case k.tools.add.parent:			return is_root;
 				case k.tools.add.related:			return false;
@@ -254,7 +254,8 @@ export class Events {
 	}
 
 	async handle_key_down(event: KeyboardEvent) {
-		if (event.type == 'keydown' && !ux.isEditing_text) {
+		const isEditing = get(w_s_title_edit)?.isActive ?? false;
+		if (event.type == 'keydown' && !isEditing) {
 			const h = get(w_hierarchy);
 			const OPTION = event.altKey;
 			const SHIFT = event.shiftKey;

@@ -9,7 +9,6 @@ export default class S_Common {
 	s_element_byName: { [name: string]: S_Element } = {};
 	s_mouse_byName: { [name: string]: S_Mouse } = {};
 	mouse_responder_number = 0;
-	isEditing_text = false;
 
 	//////////////////////////////////////
 	//									//

@@ -172,7 +172,7 @@ export class Hierarchy {
 			return founds[0];
 		}
 		const lost_and_found = this.thing_remember_runtimeCreateUnique(this.db.idBase, Identifiable.newID(), 'lost and found', colors.default, E_Thing.found);
-		await this.rootAncestry.ancestry_unique_byAddingThing(lost_and_found);
+		await this.rootAncestry.ancestry_unique_persistent_byAddingThing(lost_and_found);
 		return lost_and_found;
 	}
 
@@ -388,9 +388,9 @@ export class Hierarchy {
 		if (!!thing && parent) {
 			const idBase = parent.isBulkAlias ? parent.title : parent.idBase;
 			const newThing = await this.thing_remember_runtimeCopy(idBase, thing);
-			newThingAncestry = parentAncestry.ancestry_unique_byExtending_withChild(newThing);
+			newThingAncestry = parentAncestry.ancestry_unique_byAddingThing(newThing);
 			if (!!newThingAncestry) {
-				await parentAncestry.ancestry_unique_byAddingThing(newThing);
+				await parentAncestry.ancestry_unique_persistent_byAddingThing(newThing);
 				for (const childAncestry of ancestry.childAncestries) {
 					this.bulkAlias_remember_recursive_persistentRelocateRight(childAncestry, newThingAncestry);
 				}
@@ -630,12 +630,19 @@ export class Hierarchy {
 
 	async relationship_remember_persistentCreateUnique(idBase: string, idRelationship: string, kind: E_Predicate, idParent: string, idChild: string,
 		order: number, parentOrder: number = 0, creationOptions: E_Create = E_Create.isFromPersistent): Promise<any> {
+		const relationship = this.relationship_remember_createUnique(idBase, idRelationship, kind, idParent, idChild, order, parentOrder, creationOptions);
+		await this.db.relationship_remember_persistentCreate(relationship);
+		return relationship;
+	}
+
+	relationship_remember_createUnique(idBase: string, idRelationship: string, kind: E_Predicate, idParent: string, idChild: string,
+		order: number, parentOrder: number = 0, creationOptions: E_Create = E_Create.isFromPersistent): Relationship {
 		let relationship = this.relationship_forPredicateKind_parent_child(kind, idParent.hash(), idChild.hash());
 		if (!!relationship) {
 			relationship.order_setTo(order, E_Order.child, true);
 		} else {
 			relationship = new Relationship(idBase, idRelationship, kind, idParent, idChild, order, parentOrder, creationOptions == E_Create.isFromPersistent);
-			await this.db.relationship_remember_persistentCreate(relationship);
+			
 		}
 		return relationship;
 	}
@@ -779,9 +786,6 @@ export class Hierarchy {
 	static readonly _____ALTERATION: unique symbol;
 
 	async ancestry_alter_connectionTo_maybe(ancestry: Ancestry) {
-		// called for parent and related
-		// if related, must handle two relationships
-
 		if (ancestry.alteration_isAllowed) {
 			const alteration = get(w_s_alteration);
 			const from_ancestry = alteration?.ancestry;
@@ -794,15 +798,7 @@ export class Hierarchy {
 					case E_Alteration.add:
 						const from_thing = from_ancestry.thing;
 						if (!!from_thing) {
-							const added_ancestry = await ancestry.ancestry_unique_byAddingThing(from_thing, predicate.kind);
-							if (!added_ancestry) {
-								return;			// do not stop alteration
-							} else if (predicate.isBidirectional) {
-								const reversed = added_ancestry.relationship?.reversed;
-								if (!!reversed) {
-									const _ = this.ancestry_remember_createUnique(reversed.id, reversed.kind);
-								}
-							}
+							await ancestry.ancestry_unique_persistent_byAddingThing(from_thing, predicate.kind);
 						}
 						break;
 				}
@@ -935,7 +931,7 @@ export class Hierarchy {
 	// called in three places
 	async ancestry_edit_persistentAddAsChild(parentAncestry: Ancestry, child: Thing, order: number, shouldStartEdit: boolean = true) {
 		w_s_title_edit?.set(null);
-		await parentAncestry.ancestry_unique_byAddingThing(child)
+		await parentAncestry.ancestry_unique_persistent_byAddingThing(child)
 		.then((childAncestry) => {
 			if (!!childAncestry) {
 				childAncestry.grabOnly();
@@ -979,7 +975,7 @@ export class Hierarchy {
 				} else {
 					for (const externalsThing of externalsArray) {				// add to the root ancestry
 						if  (externalsThing.title == 'externals') {
-							return rootAncestry.ancestry_unique_byExtending_withChild(externalsThing) ?? null;
+							return rootAncestry.ancestry_unique_byAddingThing(externalsThing) ?? null;
 						}
 					}
 				}
@@ -988,7 +984,7 @@ export class Hierarchy {
 				// VITAL: the following code has problems
 
 				await externalsThing.persist();
-				await rootAncestry.ancestry_unique_byAddingThing(externalsThing)
+				await rootAncestry.ancestry_unique_persistent_byAddingThing(externalsThing)
 				.then((ancestry) => {
 					console.log(`externalsAncestry is wrong type: "${ancestry?.thing?.e_thing ?? 'unknown'}" (should be "^")`)
 					// externalsAncestry = ancestry;
@@ -1346,7 +1342,7 @@ export class Hierarchy {
 		if (this.replace_rootID == null) {
 			this.objects_ofAllTypes_extract_fromDict(dict);			// extract
 			const child = this.thing_forHID(idRoot.hash());			// relationship: adds it as child to the grab or focus
-			await this.user_selected_ancestry.ancestry_unique_byAddingThing(child);
+			await this.user_selected_ancestry.ancestry_unique_persistent_byAddingThing(child);
 		} else {													// on launch or import with SHIFT-O
 			this.forget_all();										// retain predicates: same across all dbs
 			await this.db.remove_all();								// firebase deletes document (called dbid/name)
