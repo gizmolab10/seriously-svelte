@@ -34,19 +34,21 @@ export default class Ancestry extends Identifiable {
 	static readonly _____TRAVERSE: unique symbol;
 
 	traverse(apply_closureTo: (ancestry: Ancestry) => boolean, e_kinship: E_Kinship = E_Kinship.child, visited: Array<string> = []) {
-		if (!visited.includes(this.id) && !apply_closureTo(this)) {
+		const id = this.thing?.id;
+		if (!!id && !visited.includes(id) && !apply_closureTo(this)) {
 			for (const progeny of this.ancestries_unique_byKinship(e_kinship)) {
-				progeny.traverse(apply_closureTo, e_kinship, [...visited, this.id]);
+				progeny.traverse(apply_closureTo, e_kinship, [...visited, id]);
 			}
 		}
 	}
 
 	async async_traverse(apply_closureTo: (ancestry: Ancestry) => Promise<boolean>, e_kinship: E_Kinship = E_Kinship.child, visited: Array<string> = []) {
-		if (!visited.includes(this.id)) {
+		const id = this.thing?.id;
+		if (!!id && !visited.includes(id)) {
 			try {
 				if (!await apply_closureTo(this)) {
 					for (const progeny of this.ancestries_unique_byKinship(e_kinship)) {
-						await progeny.async_traverse(apply_closureTo, e_kinship, [...visited, this.id]);
+						await progeny.async_traverse(apply_closureTo, e_kinship, [...visited, id]);
 					}
 				}
 			} catch (error) {
