@@ -122,7 +122,7 @@
 								origin={Point.x(110)}
 								allow_multiple={true}
 								name='tree-type-selector'
-								titles={[E_Kinship.child, E_Kinship.parent, E_Kinship.equals]}
+								titles={[E_Kinship.child, E_Kinship.parent, E_Kinship.related]}
 								selection_closure={(titles) => layout.handle_mode_selection('tree', titles)}/>
 						{/key}
 					{/if}

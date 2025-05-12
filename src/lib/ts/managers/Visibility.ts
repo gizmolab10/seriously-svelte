@@ -41,7 +41,7 @@ export class Visibility {
 
 	showing_countDots_ofType(e_counts: E_Kinship): boolean { return get(w_e_countDots).includes(E_Kinship[e_counts]) }
 	get children_dots(): boolean { return  this.showing_countDots_ofType(E_Kinship.child); }
-	get related_dots(): boolean { return  this.showing_countDots_ofType(E_Kinship.equals); }
+	get related_dots(): boolean { return  this.showing_countDots_ofType(E_Kinship.related); }
 	get parent_dots(): boolean { return  this.showing_countDots_ofType(E_Kinship.parent); }
 	
 	restore_state() {

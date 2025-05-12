@@ -34,7 +34,7 @@ export default class Relationship extends Persistable {
 	get predicate(): Predicate | null { return get(w_hierarchy).predicate_forKind(this.kind); }
 	get fields(): Airtable.FieldSet { return { kind: this.kind, parent: [this.idParent], child: [this.idChild], order: this.order }; }
 	get reversed(): Relationship | null { return get(w_hierarchy).relationship_forPredicateKind_parent_child(this.kind, this.idChild.hash(), this.idParent.hash()); }
-
+	
 	get verbose(): string {
 		const persisted = this.persistence.already_persisted ? 'STORED' : 'DIRTY';
 		return `BASE ${this.idBase} ${persisted} [${this.orders}] ${this.id} ${this.description}`;

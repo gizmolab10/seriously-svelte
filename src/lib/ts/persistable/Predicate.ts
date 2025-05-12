@@ -28,7 +28,7 @@ export default class Predicate extends Persistable {
 	kinship_forPoints_toChildren(points_toChildren: boolean): E_Kinship | null {
 		switch (this.kind) {
 			case E_Predicate.contains:	return points_toChildren ? E_Kinship.child : E_Kinship.parent;
-			case E_Predicate.isRelated:	return E_Kinship.equals;
+			case E_Predicate.isRelated:	return E_Kinship.related;
 			default:					return null;
 		}
 	}

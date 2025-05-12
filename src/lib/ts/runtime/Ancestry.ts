@@ -1,5 +1,5 @@
+import { E_Graph, E_Create, E_Element, E_Kinship, E_Predicate, E_Alteration, E_SvelteComponent } from '../common/Global_Imports';
 import { Direction, Predicate, Hierarchy, databases, Relationship, Svelte_Wrapper, p } from '../common/Global_Imports';
-import { E_Graph, E_Element, E_Kinship, E_Predicate, E_Alteration, E_SvelteComponent } from '../common/Global_Imports';
 import { c, k, u, show, Rect, Size, Thing, debug, layout, wrappers, svgPaths } from '../common/Global_Imports';
 import { w_hierarchy, w_ancestry_focus, w_s_alteration, w_s_title_edit } from '../common/Stores';
 import { w_ancestries_grabbed, w_ancestries_expanded, } from '../common/Stores';
@@ -303,30 +303,6 @@ export default class Ancestry extends Identifiable {
 		}
 	}
 
-	static readonly _____ALTERATION: unique symbol;
-
-	get alteration_isAllowed(): boolean {
-		const s_alteration = get(w_s_alteration);
-		const predicate = s_alteration?.predicate;
-		if (!!s_alteration && !!predicate) {
-			const from_ancestry = s_alteration.ancestry;
-			const from_thing = from_ancestry?.thing;
-			const to_thing = this.thing;
-			if (!!to_thing && !!from_thing && to_thing.hid != from_thing.hid && !from_ancestry.equals(this)) {
-				const isBidirectional = predicate.isBidirectional;
-				const isFrom_anAncestor = isBidirectional ? false : to_thing.parentIDs.includes(from_thing.id);
-				const isParent_ofFrom = this.thing_isImmediateParentOf(from_ancestry, predicate.kind);
-				const isProgeny_ofFrom = this.isAProgenyOf(from_ancestry);
-				const isAdding = s_alteration.e_alteration == E_Alteration.add;
-				const creates_cycle = isParent_ofFrom || isProgeny_ofFrom || isFrom_anAncestor;
-				const canAlter = isAdding ? !creates_cycle : isParent_ofFrom;
-				console.log(`can ${canAlter ? '': 'not '}alter ${this.id} --> ${from_ancestry.id}`);
-				return canAlter
-			}
-		}
-		return false;
-	}
-
 	static readonly _____MOVE_UP: unique symbol;
 
 	persistentMoveUp_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
@@ -401,7 +377,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	persistentMoveUp_forBidirectional_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
-		const sibling_ancestries = get(w_ancestry_focus)?.ancestries_unique_byKinship(E_Kinship.equals) ?? [];
+		const sibling_ancestries = get(w_ancestry_focus)?.ancestries_unique_byKinship(E_Kinship.related) ?? [];
 		let needs_graphRelayout = false;
 		let needs_graphRebuild = false;
 		if (!!sibling_ancestries) {
@@ -574,6 +550,30 @@ export default class Ancestry extends Identifiable {
 		debug.log_grab(`  UNGRAB "${this.title}"`);
 	}
 
+	static readonly _____ALTERATION: unique symbol;
+
+	get alteration_isAllowed(): boolean {
+		const s_alteration = get(w_s_alteration);
+		const predicate = s_alteration?.predicate;
+		if (!!s_alteration && !!predicate) {
+			const from_ancestry = s_alteration.ancestry;
+			const from_thing = from_ancestry?.thing;
+			const to_thing = this.thing;
+			if (!!to_thing && !!from_thing && to_thing.hid != from_thing.hid && !from_ancestry.equals(this)) {
+				const isBidirectional = predicate.isBidirectional;
+				const isFrom_anAncestor = isBidirectional ? false : to_thing.parentIDs.includes(from_thing.id);
+				const isParent_ofFrom = this.thing_isImmediateParentOf(from_ancestry, predicate.kind);
+				const isProgeny_ofFrom = this.isAProgenyOf(from_ancestry);
+				const isAdding = s_alteration.e_alteration == E_Alteration.add;
+				const creates_cycle = isParent_ofFrom || isProgeny_ofFrom || isFrom_anAncestor;
+				const canAlter = isAdding ? !creates_cycle : isParent_ofFrom;
+				console.log(`can ${canAlter ? '': 'not '}alter ${this.id} --> ${from_ancestry.id}`);
+				return canAlter
+			}
+		}
+		return false;
+	}
+
 	static readonly _____OTHER_ANCESTRIES: unique symbol;
 
 	get parentAncestry():	  Ancestry | null { return this.ancestry_unique_byStrippingBack(); }
@@ -672,10 +672,31 @@ export default class Ancestry extends Identifiable {
 		}
 	}
 
+	// if isBidirectional, we need to create the reversed relationship
+	// using its id, but reversing the last two characters
+
+	async ancestry_unique_byAddingThing(thing: Thing | null, kind: E_Predicate = E_Predicate.contains): Promise<Ancestry | null | undefined> {
+		const h = this.hierarchy;
+		const parent = this.thing;
+		let ancestry: Ancestry | null = null;
+		if (!!thing && !!parent) {
+			const changingBulk = parent.isBulkAlias || thing.idBase != h.db.idBase;
+			const idBase = changingBulk ? thing.idBase : parent.idBase;
+			if (!thing.persistence.already_persisted) {
+				await h.db.thing_remember_persistentCreate(thing);				// for everything below, need to await thing.id fetched from databases
+			}
+			const parentOrder = this.childAncestries?.length ?? 0;
+			const relationship = await h.relationship_remember_persistentCreateUnique(idBase, Identifiable.newID(), kind, parent.idBridging, thing.id, 0, parentOrder, E_Create.getPersistentID);
+			ancestry = this.ancestry_unique_byAppending_relationshipID(relationship.id);
+			u.ancestries_orders_normalize(this.childAncestries, true);			// write new order values for relationships
+		}
+		return ancestry;
+	}
+
 	ancestries_unique_byKinship(kinship: string | null): Array<Ancestry> {
 		if (!!kinship) {
 			switch (kinship) {
-				case E_Kinship.equals: return this.thing?.uniqueAncestries_for(Predicate.isRelated) ?? [];
+				case E_Kinship.related: return this.thing?.uniqueAncestries_for(Predicate.isRelated) ?? [];
 				case E_Kinship.parent: return this.thing?.uniqueAncestries_for(Predicate.contains) ?? [];
 				case E_Kinship.child:  return this.ancestries_unique_forPredicate(Predicate.contains);
 			}
