@@ -32,7 +32,7 @@ export class Colors {
 		return this.multiply_saturationOf_by(blendedHex, 1+ ratio);
 	}
 
-	static readonly CONTRAST: unique symbol;
+	static readonly _____CONTRAST: unique symbol;
 
 	private maximumContrast(color: string): string | null {
 		const luminance = this.luminance_ofColor(color);
@@ -42,7 +42,7 @@ export class Colors {
 		return this.set_darkness_toColor(color, targetDarkness);
 	}
 
-	static readonly SATURATION: unique symbol;
+	static readonly _____SATURATION: unique symbol;
 
 	private multiply_saturationOf_by(color: string, ratio: number): string | null {
 		let hsba = this.color_toHSBA(color);
@@ -54,7 +54,7 @@ export class Colors {
 		return null
 	}
 
-	static readonly LUMINANCE: unique symbol;
+	static readonly _____LUMINANCE: unique symbol;
 	
 	private darkerBy(color: string, ratio: number): string | null {
 		return this.adjust_luminance_byApplying(color, (lume => {
@@ -103,7 +103,7 @@ export class Colors {
 		return null;
 	}
 
-	static readonly DARKNESS: unique symbol;
+	static readonly _____DARKNESS: unique symbol;
 
 	private set_darkness_toColor(color: string, darkness: number): string | null {
 		const rgba = this.color_toRGBA(color);
@@ -185,7 +185,7 @@ export class Colors {
 		return {result: new RGBA(R_new, G_new, B_new, a), error: null};
 	}
 
-	static readonly CONVERSIONS: unique symbol;
+	static readonly _____CONVERSIONS: unique symbol;
 
 	private colors_areIdentical(a: string, b: string): boolean {
 		const aHex = this.color_toHex(a);

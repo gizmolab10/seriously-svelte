@@ -49,7 +49,7 @@ export class Hierarchy {
 		this.db = db;
 	}
 
-	static readonly ROOT: unique symbol;
+	static readonly _____ROOT: unique symbol;
 
 	get hasRoot(): boolean { return !!this.root; }
 	get idRoot(): string | null { return this.root?.id ?? null; };
@@ -66,7 +66,7 @@ export class Hierarchy {
 		}
 	}
 
-	static readonly GRABS: unique symbol;
+	static readonly _____GRABS: unique symbol;
 
 	get grabs_latest_thing(): Thing | null { return this.grabs_latest_ancestry?.thing || null; }
 
@@ -117,7 +117,7 @@ export class Hierarchy {
 		this.ancestry_rebuild_persistentMoveUp_maybe(ancestry, up, SHIFT, OPTION, EXTREME);
 	}
 	
-	static readonly THINGS: unique symbol;
+	static readonly _____THINGS: unique symbol;
 
 	things_refreshKnowns() {
 		const saved = this.things;
@@ -162,7 +162,7 @@ export class Hierarchy {
 		return things;
 	}
 
-	static readonly THING: unique symbol;
+	static readonly _____THING: unique symbol;
 	
 	thing_forHID(hid: Integer): Thing | null { return this.thing_byHID[hid ?? undefined]; }
 
@@ -352,7 +352,7 @@ export class Hierarchy {
 		}
 	}
 
-	static readonly BULKS: unique symbol;
+	static readonly _____BULKS: unique symbol;
 
 	bulkAlias_forTitle(title: string | null) {
 		if (!!title) {
@@ -388,7 +388,7 @@ export class Hierarchy {
 		if (!!thing && parent) {
 			const idBase = parent.isBulkAlias ? parent.title : parent.idBase;
 			const newThing = await this.thing_remember_runtimeCopy(idBase, thing);
-			newThingAncestry = parentAncestry.extendUniquely_withChild(newThing);
+			newThingAncestry = parentAncestry.ancestry_unique_byExtending_withChild(newThing);
 			if (!!newThingAncestry) {
 				await this.ancestry_extended_byAddingThing_toAncestry_remember_persistentCreate_relationship(newThing, parentAncestry);
 				for (const childAncestry of ancestry.childAncestries) {
@@ -408,7 +408,7 @@ export class Hierarchy {
 		return newThingAncestry;
 	}
 
-	static readonly TRAITS: unique symbol;
+	static readonly _____TRAITS: unique symbol;
 
 	traits_forOwnerHID(hid: Integer | null): Array<Trait> | null {
 		const value = !!hid ? this.traits_byOwnerHID?.[hid] : null;
@@ -428,7 +428,7 @@ export class Hierarchy {
 		this.traits = [];
 	}
 
-	static readonly TRAIT: unique symbol;
+	static readonly _____TRAIT: unique symbol;
 
 	trait_forHID(hid: Integer): Trait | null { return this.trait_byHID[hid ?? undefined]; }
 
@@ -481,7 +481,7 @@ export class Hierarchy {
 		trait.set_isDirty();
 	}
 
-	static readonly RELATIONSHIPS: unique symbol;
+	static readonly _____RELATIONSHIPS: unique symbol;
 
 	relationships_forKind(kind: E_Predicate): Array<Relationship> { return this.relationships_byKind[kind] ?? [];; }
 
@@ -569,7 +569,7 @@ export class Hierarchy {
 		}
 	}
 
-	static readonly RELATIONSHIP: unique symbol;
+	static readonly _____RELATIONSHIP: unique symbol;
 
 	relationship_forHID(hid: Integer): Relationship | null { return this.relationship_byHID[hid ?? undefined]; }
 
@@ -729,7 +729,7 @@ export class Hierarchy {
 		return relationship;
 	}
 
-	static readonly ANCESTRIES: unique symbol;
+	static readonly _____ANCESTRIES: unique symbol;
 
 	get ancestries(): Array<Ancestry> { return Object.values(this.ancestry_byHID); }
 	ancestries_byHID_forKind(kind: string) { return this.ancestry_byKind_andHID[kind] ?? {}; }
@@ -765,7 +765,7 @@ export class Hierarchy {
 							grandParentAncestry.becomeFocus();	// call become focus before applying
 						}
 					}
-					await ancestry.traverse_async(async (progenyAncestry: Ancestry): Promise<boolean> => {
+					await ancestry.async_traverse(async (progenyAncestry: Ancestry): Promise<boolean> => {
 						await this.ancestry_forget_persistentUpdate(progenyAncestry);
 						return false; // continue the traversal
 					});
@@ -776,7 +776,7 @@ export class Hierarchy {
 		}
 	}
 
-	static readonly ANCESTRY: unique symbol;
+	static readonly _____ANCESTRY: unique symbol;
 	
 	ancestry_forHID(hid: Integer): Ancestry | null { return this.ancestry_byHID[hid] ?? null; }
 	ancestries_forThing(thing: Thing): Array<Ancestry> { return this.ancestries_byThingHID[thing.hid] ?? []; }	
@@ -855,7 +855,7 @@ export class Hierarchy {
 	get ancestry_forBreadcrumbs(): Ancestry {
 		const focus = get(w_ancestry_focus);
 		const grab = this.grabs_latest_ancestry;
-		const grab_containsFocus = !!grab && focus.isABranchOf(grab)
+		const grab_containsFocus = !!grab && focus.isAProgenyOf(grab)
 		return (!!grab && !grab_containsFocus) ? grab : focus;
 	}
 
@@ -969,7 +969,7 @@ export class Hierarchy {
 				} else {
 					for (const externalsThing of externalsArray) {				// add to the root ancestry
 						if  (externalsThing.title == 'externals') {
-							return rootAncestry.extendUniquely_withChild(externalsThing) ?? null;
+							return rootAncestry.ancestry_unique_byExtending_withChild(externalsThing) ?? null;
 						}
 					}
 				}
@@ -998,7 +998,7 @@ export class Hierarchy {
 			}
 			const parentOrder = ancestry.childAncestries?.length ?? 0;
 			const relationship = await this.relationship_remember_persistentCreateUnique(idBase, Identifiable.newID(), kind, parent.idBridging, child.id, 0, parentOrder, E_Create.getPersistentID);
-			const childAncestry = ancestry.uniquelyAppend_relationshipID(relationship.id);
+			const childAncestry = ancestry.ancestry_unique_byAppending_relationshipID(relationship.id);
 			u.ancestries_orders_normalize(ancestry.childAncestries, true);			// write new order values for relationships
 			return childAncestry;
 		}
@@ -1053,7 +1053,7 @@ export class Hierarchy {
 
 	// won't work for relateds
 	ancestry_rebuild_persistentRelocateRight(ancestry: Ancestry, RIGHT: boolean, EXTREME: boolean) {
-		const parentAncestry = RIGHT ? ancestry.ancestry_ofNextSibling(false) : ancestry.stripBack(2);
+		const parentAncestry = RIGHT ? ancestry.ancestry_ofNextSibling(false) : ancestry.ancestry_unique_byStrippingBack(2);
 		const parentThing = parentAncestry?.thing;
 		const thing = ancestry.thing;
 		if (!!thing && !!parentThing && !!parentAncestry) {
@@ -1070,7 +1070,7 @@ export class Hierarchy {
 					relationship.order_setTo(order + k.halfIncrement, E_Order.child, true);
 					this.relationship_remember(relationship);
 					debug.log_move(`relocate ${relationship.description}`)
-					const childAncestry = parentAncestry.uniquelyAppend_relationshipID(relationship!.id);
+					const childAncestry = parentAncestry.ancestry_unique_byAppending_relationshipID(relationship!.id);
 					childAncestry?.grabOnly();
 				}
 				this.rootAncestry.order_normalizeRecursive(true);
@@ -1087,7 +1087,7 @@ export class Hierarchy {
 
 	ancestry_rebuild_runtimeBrowseRight(ancestry: Ancestry, RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, fromReveal: boolean) {
 		const newFocusAncestry = ancestry.parentAncestry;
-		const childAncestry = ancestry.firstVisibleChildAncestry;
+		const childAncestry = ancestry.ancestry_ofFirst_visibleChild;
 		let newGrabAncestry: Ancestry | null = RIGHT ? childAncestry : newFocusAncestry;
 		const newGrabIsNotFocus = !newGrabAncestry?.isFocus;
 		let graph_needsRebuild = false;
@@ -1150,7 +1150,7 @@ export class Hierarchy {
 		}
 	}
 
-	static readonly PREDICATES: unique symbol;
+	static readonly _____PREDICATES: unique symbol;
 
 	predicates_byDirection(isBidirectional: boolean) { return this.predicate_byDirection[isBidirectional ? 1 : 0]; }
 
@@ -1165,7 +1165,7 @@ export class Hierarchy {
 		saved.map(p => this.predicate_remember(p));
 	}
 
-	static readonly PREDICATE: unique symbol;
+	static readonly _____PREDICATE: unique symbol;
 
 	predicate_forKind(kind: string | null): Predicate | null { return !kind ? null : this.predicate_byKind[kind]; }
 
@@ -1225,7 +1225,7 @@ export class Hierarchy {
 		return predicate;
 	}
 
-	static readonly ANCILLARY: unique symbol;
+	static readonly _____ANCILLARY: unique symbol;
 
 	access_runtimeCreate(idAccess: string, kind: string) {
 		const access = new Access(this.db.e_database, E_Persistable.access, idAccess, kind);
@@ -1238,7 +1238,7 @@ export class Hierarchy {
 		this.user_byHID[id.hash()] = user;
 	}
 
-	static readonly FILES: unique symbol;
+	static readonly _____FILES: unique symbol;
 
 	select_file_toUpload(SHIFT: boolean) {
 		w_popupView_id.set(E_Control.import);				// extract_fromDict
@@ -1328,7 +1328,7 @@ export class Hierarchy {
 		return data;
 	}
 
-	static readonly BUILD: unique symbol;
+	static readonly _____BUILD: unique symbol;
 
 	restore_fromPreferences() {
 		this.stop_alteration();
@@ -1379,7 +1379,7 @@ export class Hierarchy {
 		}
 	}
 
-	static readonly REMEMBER: unique symbol;
+	static readonly _____REMEMBER: unique symbol;
 
 	forget_all() {
 		this.things_forget_all();
@@ -1397,7 +1397,7 @@ export class Hierarchy {
 		this.relationships_refreshKnowns();
 	}
 
-	static readonly OTHER: unique symbol;
+	static readonly _____OTHER: unique symbol;
 
 	get data_count(): number { return this.things.length + this.relationships.length }
 

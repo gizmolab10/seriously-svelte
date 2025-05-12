@@ -84,7 +84,7 @@ export default class DBAirtable extends DBCommon {
 		}
 	}
 
-	static readonly THING: unique symbol;
+	static readonly _____THING: unique symbol;
 	
 	async thing_remember_persistentCreate(thing: Thing) {
 		try {
@@ -113,7 +113,7 @@ export default class DBAirtable extends DBCommon {
 		}
 	}
 
-	static readonly TRAIT: unique symbol;
+	static readonly _____TRAIT: unique symbol;
 
 	//////////////////////////////
 	//			TRAITS			//
@@ -164,7 +164,7 @@ export default class DBAirtable extends DBCommon {
 		}
 	}
 
-	static readonly RELATIONSHIPS: unique symbol;
+	static readonly _____RELATIONSHIPS: unique symbol;
 
 	async relationships_fetch_all() {
 		this.hierarchy.relationships_forget_all();
@@ -184,7 +184,7 @@ export default class DBAirtable extends DBCommon {
 		}
 	}
 
-	static readonly RELATIONSHIP: unique symbol;
+	static readonly _____RELATIONSHIP: unique symbol;
 
 	async relationship_remember_persistentCreate(relationship: Relationship) {
 		if (!!relationship && !relationship.persistence.already_persisted) {
@@ -214,7 +214,7 @@ export default class DBAirtable extends DBCommon {
 		}
 	}
 
-	static readonly ANCILLARY: unique symbol;
+	static readonly _____ANCILLARY: unique symbol;
 
 	async predicates_fetch_all() {
 		try {

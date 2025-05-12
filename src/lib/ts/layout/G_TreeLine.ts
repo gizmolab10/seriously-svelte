@@ -41,7 +41,7 @@ export default class G_TreeLine {
 		}
 	}
 
-	static readonly INTERNAL: unique symbol;
+	static readonly _____INTERNAL: unique symbol;
 
 	private update_name() {
 		if (!!this.ancestry && !this.ancestry.equals(this.other_ancestry)) {

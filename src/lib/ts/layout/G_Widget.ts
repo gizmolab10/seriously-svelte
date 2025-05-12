@@ -75,7 +75,7 @@ export default class G_Widget {
 		}
 	}
 
-	static readonly LAYOUT: unique symbol;
+	static readonly _____LAYOUT: unique symbol;
 
 	layout_entireTree() {		// misses every Widget.layout
 		this.layout_focus_ofTree()
@@ -116,7 +116,7 @@ export default class G_Widget {
 			}
 	}
 
-	static readonly INTERNAL: unique symbol;
+	static readonly _____INTERNAL: unique symbol;
 
 	private layout_widget_andChildren() {
 		this.g_parentBranches.layout_branches();	// noop if radial, parentless or collapsed

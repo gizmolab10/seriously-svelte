@@ -43,7 +43,7 @@ export default class G_ArcSlider {
 		tweak_forThumb() {
 	}
 
-	static readonly PRIMITIVES: unique symbol;
+	static readonly _____PRIMITIVES: unique symbol;
 
 	get spread_angle():			number { return this.end_angle - this.start_angle; }
 	get angle_ofFork():			number { return (this.end_angle + this.start_angle) / 2 - this.offset_ofNadir; }
@@ -104,7 +104,7 @@ export default class G_ArcSlider {
 		this.arc_rect = this.compute_arc_rect;
 	}
 
-	static readonly SVG_PATHS: unique symbol;
+	static readonly _____SVG_PATHS: unique symbol;
 
 	get svgPathFor_arcSlider(): string {
 		const start = this.start_angle;

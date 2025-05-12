@@ -54,7 +54,7 @@ export default class DBFirebase extends DBCommon {
 		}
 	}
 
-	static readonly FETCH: unique symbol;
+	static readonly _____FETCH: unique symbol;
 
 	async fetch_all() {
 		await this.recordLoginIP();
@@ -92,7 +92,7 @@ export default class DBFirebase extends DBCommon {
 		}
 	}
 
-	static readonly BULKS: unique symbol;
+	static readonly _____BULKS: unique symbol;
 
 	bulk_forID(idBase: string | null) {
 		if (!idBase) {
@@ -135,7 +135,7 @@ export default class DBFirebase extends DBCommon {
 		}
 	}
 
-	static readonly REMOTE: unique symbol;
+	static readonly _____REMOTE: unique symbol;
 	
 	snapshot_deferOne(idBase: string, e_persistable: E_Persistable, snapshot: QuerySnapshot) {
 		const deferral = new SnapshotDeferal(idBase, e_persistable, snapshot);
@@ -246,7 +246,7 @@ export default class DBFirebase extends DBCommon {
 		return needsRebuild;
 	}
 
-	static readonly SUBCOLLECTIONS: unique symbol;
+	static readonly _____SUBCOLLECTIONS: unique symbol;
 
 	async document_defaults_ofType_persistentCreateIn(e_persistable: E_Persistable, idBase: string, collectionRef: CollectionReference) {
 		if (!!idBase) {
@@ -283,7 +283,7 @@ export default class DBFirebase extends DBCommon {
 		}
 	}
 
-	static readonly THING: unique symbol;
+	static readonly _____THING: unique symbol;
 
 	async thing_remember_persistentCreate(thing: Thing) {
 		const thingsCollection = this.bulk_forID(thing.idBase)?.thingsCollection;
@@ -387,7 +387,7 @@ export default class DBFirebase extends DBCommon {
 		return true;
 	}
 
-	static readonly TRAIT: unique symbol;
+	static readonly _____TRAIT: unique symbol;
 
 	trait_extractChangesFromPersistent(trait: Trait, from: PersistentTrait) {
 		const changed = !from.isEqualTo(trait);
@@ -484,7 +484,7 @@ export default class DBFirebase extends DBCommon {
 		return true;
 	}
 	
-	static readonly PREDICATE: unique symbol;
+	static readonly _____PREDICATE: unique symbol;
 
 	async predicate_persistentUpdate(predicate: Predicate) {
 		const predicatesCollection = this.predicatesCollection;
@@ -536,7 +536,7 @@ export default class DBFirebase extends DBCommon {
 		}
 	}
 
-	static readonly RELATIONSHIP: unique symbol;
+	static readonly _____RELATIONSHIP: unique symbol;
 
 	async relationship_persistentDelete(relationship: Relationship) {
 		const relationshipsCollection = this.bulk_forID(relationship.idBase)?.relationshipsCollection;
@@ -641,7 +641,7 @@ export default class DBFirebase extends DBCommon {
 		return true;
 	}
 
-	static readonly VALIDATION: unique symbol;
+	static readonly _____VALIDATION: unique symbol;
 
 	static data_isValidOfKind(e_persistable: E_Persistable, data: DocumentData) {
 		switch (e_persistable) {

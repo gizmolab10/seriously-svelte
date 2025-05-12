@@ -35,7 +35,7 @@
 	}
 
 	function es_breadcrumb(index: number, thing: Thing): S_Element {
-		return ux.s_element_for(ancestry?.stripBack(things.length - index - 1), E_Element.breadcrumb, k.space);
+		return ux.s_element_for(ancestry?.ancestry_unique_byStrippingBack(things.length - index - 1), E_Element.breadcrumb, k.space);
 	}
 
 </script>

@@ -11,7 +11,7 @@ export class Preferences {
 	usesRelationships = localStorage[E_Preference.relationships];
 	ignoreAncestries  = !this.usesRelationships || this.usesRelationships == 'undefined';
 	
-	static readonly READ_WRITE: unique symbol;
+	static readonly _____READ_WRITE: unique symbol;
 
 	dump() 									 { console.log(localStorage); }
 	read_key	   (key: string): any | null { return this.parse(localStorage[key]); }
@@ -43,7 +43,7 @@ export class Preferences {
 		return values;
 	}
 	
-	static readonly ANCESTRIES: unique symbol;
+	static readonly _____ANCESTRIES: unique symbol;
 
 	restore_grabbed() {
 		function ids_forDB(array: Array<Ancestry>): string { return u.ids_forDB(array).join(', '); }
@@ -87,7 +87,7 @@ export class Preferences {
 		return ancestries;
 	}
 	
-	static readonly PRIMITIVES: unique symbol;
+	static readonly _____PRIMITIVES: unique symbol;
 
 	db_keyFor	(key: string):					string { return this.keyPair_for(databases.db_now.e_database, key); }
 	keyPair_for	(key: string, sub_key: string):	string { return `${key}${k.separator.generic}${sub_key}`; }
@@ -111,7 +111,7 @@ export class Preferences {
 
 	}
 	
-	static readonly SUBSCRIBE_AND_RESTORE: unique symbol;
+	static readonly _____SUBSCRIBE_AND_RESTORE: unique symbol;
 
 	restore_paging() { radial.createAll_thing_pages_fromDict(this.readDB_key(E_Preference.paging)); }
 

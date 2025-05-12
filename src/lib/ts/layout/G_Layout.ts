@@ -118,7 +118,7 @@ export default class G_Layout {
 			this.focus_ancestry = focus_ancestry;
 			focus_ancestry = this.parents_focus_ancestry ?? get(w_hierarchy).grabs_latest_ancestry;
 		}
-		w_show_related.set(e_trees.includes(E_Kinship.related));
+		w_show_related.set(e_trees.includes(E_Kinship.equals));
 		focus_ancestry?.becomeFocus();
 		this.restore_expanded();
 		this.grand_build();

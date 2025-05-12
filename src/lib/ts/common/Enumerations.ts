@@ -70,9 +70,9 @@ export enum E_Alteration {
 }
 
 export enum E_Kinship {
-	related	= 'related',
-	parent	= 'parent',
-	child	= 'child',
+	equals = 'equals',
+	parent = 'parent',
+	child  = 'child',
 }
 
 export enum E_Widget {

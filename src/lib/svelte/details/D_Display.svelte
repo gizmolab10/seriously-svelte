@@ -11,7 +11,7 @@
 	const font_size = `${k.font_size.smaller}px`;
 	const color_origin = new Point(color_left, 43);
 	const separator_font_size = k.font_size.smallest;
-	const titles = [E_Kinship[E_Kinship.child], E_Kinship[E_Kinship.parent], E_Kinship[E_Kinship.related]];
+	const titles = [E_Kinship[E_Kinship.child], E_Kinship[E_Kinship.parent], E_Kinship[E_Kinship.equals]];
 	let color = $w_background_color;
 	
 	function selection_closure(e_counts: Array<string>) { $w_e_countDots = e_counts as Array<E_Kinship>; }

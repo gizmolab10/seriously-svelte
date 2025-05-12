@@ -107,7 +107,7 @@ export default class G_Cluster {
 		return isParental ? isSingular ? 'parent' : 'parents' : this.points_toChildren ? isSingular ? 'child' : 'children' : this.kind;
 	}
 
-	static readonly LABEL: unique symbol;
+	static readonly _____LABEL: unique symbol;
 
 	private layout_label() {		// rotate text tangent to arc, at center of arc
 		const angle = this.g_arcSlider.angle_ofFork;
@@ -127,7 +127,7 @@ export default class G_Cluster {
 		this.cluster_title = cluster_title;
 	}
 	
-	static readonly PAGING: unique symbol;
+	static readonly _____PAGING: unique symbol;
 
 	get g_paging_rotation():  S_Rotation { return radial.g_paging_rotation_forName(this.name); }
 	get maximum_paging_index()	: number { return this.total_widgets - this.widgets_shown; }	
@@ -161,7 +161,7 @@ export default class G_Cluster {
 		return false;
 	}
 
-	static readonly ANGLES: unique symbol;
+	static readonly _____ANGLES: unique symbol;
 	
 	get xangle_ofCluster(): number { return this.predicate.angle_ofCluster_when(this.points_toChildren); }
 

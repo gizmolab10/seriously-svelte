@@ -16,7 +16,7 @@ export class Events {
 		this.subscribeTo_events();
 	}
 	
-	static readonly INTERNALS: unique symbol;
+	static readonly _____INTERNALS: unique symbol;
 
 	private handle_touch_end(event: TouchEvent) { this.initialTouch = null; }
 	private get autorepeaters(): number[] { return [E_Tool.browse, E_Tool.list, E_Tool.move]; }
@@ -155,7 +155,7 @@ export class Events {
 		}
 	}
 	
-	static readonly MAIN_EVENT_HANDLERS: unique symbol;
+	static readonly _____MAIN_EVENT_HANDLERS: unique symbol;
 
 	handle_s_mouse(s_mouse: S_Mouse, from: string): S_Mouse { return s_mouse; }			// for dots and buttons
 

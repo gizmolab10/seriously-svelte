@@ -53,7 +53,7 @@
 		};
 	});
 
-	export const REACTIVES: unique symbol = Symbol('REACTIVES');
+	export const _____REACTIVES: unique symbol = Symbol('_____REACTIVES');
 
 	$: $w_ancestries_grabbed,
 		origin_ofInput = ancestry?.isGrabbed ?? false ? Point.x(0.1) : Point.y(0.8);
@@ -77,7 +77,38 @@
 		}
 	}
 
-	export const RANGE: unique symbol = Symbol('RANGE');
+	$: {
+		const s_title_edit = $w_s_title_edit;
+		if (hasFocus() && !s_title_edit) {
+			stopEdit();
+		} else if (!!input && !!s_title_edit) {
+			if (s_title_edit.ancestry.id_thing == ancestry.id_thing) {
+				input.value = ancestry.title;	// consistently update titles of widgets of things with multiple parents
+			}
+			if (s_title_edit.ancestry.equals(ancestry)) {
+
+				//////////////////////////////////////////////////////
+				//													//
+				//			handle w_s_title_edit state				//
+				//													//
+				//////////////////////////////////////////////////////
+
+				switch (s_title_edit.e_edit) {
+					case E_Edit.stopping:
+						stopEdit();
+						break;
+					case E_Edit.editing:
+						if (!hasFocus()) {
+							input.focus();
+							applyRange_fromThing_toInput();
+						}
+						break;
+				}
+			}
+		}
+	}
+
+	export const _____RANGE: unique symbol = Symbol('_____RANGE');
 
 	function extractRange_fromInput_toThing() {
 		if (!!input) {
@@ -110,7 +141,7 @@
 		}
 	}
 
-	export const UPDATE: unique symbol = Symbol('UPDATE');
+	export const _____UPDATE: unique symbol = Symbol('_____UPDATE');
 	
 	function update_cursorStyle() {
 		const noCursor = (ancestry_isEditing() || ancestry.isGrabbed) && layout.inTreeMode && ancestry.isEditable;
@@ -118,7 +149,7 @@
 		cursor_style = noCursor ? k.empty : `cursor: ${useTextCursor ? 'text' : 'pointer'}`;
 	}
 
-	export const HANDLERS: unique symbol = Symbol('HANDLERS');
+	export const _____HANDLERS: unique symbol = Symbol('_____HANDLERS');
 
 	function handle_forWrapper(s_mouse: S_Mouse): boolean { return false; }
 	
@@ -187,7 +218,7 @@
 		}
 	}
 
-	export const EDIT: unique symbol = Symbol('EDIT');
+	export const _____EDIT: unique symbol = Symbol('_____EDIT');
 
 	function stopEdit() {
 		debug.log_edit(`STOP ${title_binded}`);
@@ -248,37 +279,6 @@
 					$w_s_title_edit?.e_edit = E_Edit.stopping;	// inform Widget
 				}
 			});
-		}
-	}
-
-	$: {
-		const s_title_edit = $w_s_title_edit;
-		if (hasFocus() && !s_title_edit) {
-			stopEdit();
-		} else if (!!input && !!s_title_edit) {
-			if (s_title_edit.ancestry.id_thing == ancestry.id_thing) {
-				input.value = ancestry.title;	// consistently update titles of widgets of things with multiple parents
-			}
-			if (s_title_edit.ancestry.equals(ancestry)) {
-
-				//////////////////////////////////////////////////////
-				//													//
-				//			handle w_s_title_edit state				//
-				//													//
-				//////////////////////////////////////////////////////
-
-				switch (s_title_edit.e_edit) {
-					case E_Edit.stopping:
-						stopEdit();
-						break;
-					case E_Edit.editing:
-						if (!hasFocus()) {
-							input.focus();
-							applyRange_fromThing_toInput();
-						}
-						break;
-				}
-			}
 		}
 	}
 

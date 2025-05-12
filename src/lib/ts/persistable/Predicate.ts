@@ -25,10 +25,10 @@ export default class Predicate extends Persistable {
 	static get appreciates():			  	Predicate | null { return this.predicate_forKind(E_Predicate.appreciates); }
 	static predicate_forKind(kind: string): Predicate | null { return get(w_hierarchy).predicate_forKind(kind) ?? null; }
 
-	kinship(points_toChildren: boolean): E_Kinship | null {
+	kinship_forPoints_toChildren(points_toChildren: boolean): E_Kinship | null {
 		switch (this.kind) {
 			case E_Predicate.contains:	return points_toChildren ? E_Kinship.child : E_Kinship.parent;
-			case E_Predicate.isRelated:	return E_Kinship.related;
+			case E_Predicate.isRelated:	return E_Kinship.equals;
 			default:					return null;
 		}
 	}

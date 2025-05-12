@@ -34,7 +34,7 @@ export enum E_Signal_From {
 export class Signals {
 	signals_inFlight: Dictionary<boolean> = {}
 
-	static readonly SENDING: unique symbol;
+	static readonly _____SENDING: unique symbol;
 
 	conduit = new Signal<(e_signal: E_Signal, priority: number, value: any) => void>();
 	
@@ -65,7 +65,7 @@ export class Signals {
 		}
 	}
 
-	static readonly RECEIVING: unique symbol;
+	static readonly _____RECEIVING: unique symbol;
 
 	handle_rebuild_andReattach(priority: number, onSignal: (value: any | null) => any) {
 		return this.handle_signals_atPriority([E_Signal.rebuild, E_Signal.reattach], priority, onSignal);
@@ -117,7 +117,7 @@ export class Signals {
 		});
 	}
 
-	static readonly PRIORITY: unique symbol;
+	static readonly _____PRIORITY: unique symbol;
 
 	// for each signal type, this array contains the highest requested priority
 	// for each signal sent, a signal is emitted for each priority separately, in increasing priority from 0 to highest

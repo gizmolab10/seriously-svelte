@@ -128,7 +128,7 @@ export class Testworthy_Utilities {
 		}
 	}
 
-	static readonly JSON: unique symbol;
+	static readonly _____JSON: unique symbol;
 
 	stringify_object(object: Object): string {
 		const ignored = [

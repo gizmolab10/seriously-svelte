@@ -145,11 +145,11 @@ export default class G_RadialGraph {
 		const focus_ancestry = get(w_ancestry_focus);
 		if (!!focus_ancestry) {
 			if (points_toChildren) {
-				let childAncestries = focus_ancestry.kin_of(E_Kinship.child);
+				let childAncestries = focus_ancestry.ancestries_unique_byKinship(E_Kinship.child);
 				this.assignAncestries_toClusterFor(childAncestries, Predicate.contains, true);
 			} else {
 				for (const predicate of get(w_hierarchy).predicates) {
-					const ancestries = focus_ancestry.kin_of(predicate.kinship(false));
+					const ancestries = focus_ancestry.ancestries_unique_byKinship(predicate.kinship_forPoints_toChildren(false));
 					this.assignAncestries_toClusterFor(ancestries, predicate, false);
 				}
 			}
