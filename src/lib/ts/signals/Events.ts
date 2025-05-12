@@ -205,6 +205,7 @@ export class Events {
 				case E_Tool.show:					switch (column) {
 					case k.tools.show.selection:		h.grabs_latest_assureIsVisible(); break;
 					case k.tools.show.root:				h.rootAncestry.becomeFocus(); break;
+					case k.tools.show.all:				layout.expandAll(); layout.grand_build(); break;
 				}									break;
 				case E_Tool.graph:						w.user_graph_offset_setTo(Point.zero); break;
 			}
@@ -247,6 +248,7 @@ export class Events {
 			case E_Tool.show:					switch (column) {
 				case k.tools.show.selection:		return ancestry.isVisible;
 				case k.tools.show.root:				return get(w_hierarchy).rootAncestry.isVisible;
+				case k.tools.show.all:				return layout.isAllExpanded;
 			}									break;
 			case E_Tool.graph:						return get(w_user_graph_offset).isZero;
 		}

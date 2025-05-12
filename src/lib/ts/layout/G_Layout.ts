@@ -19,10 +19,13 @@ export default class G_Layout {
 	get inRadialMode(): boolean { return get(w_e_graph) == E_Graph.radial; }
 	height_ofBannerAt(index: number) { return Object.values(k.height.banner)[index]; }
 	ids_forDB(array: Array<Ancestry>): string { return u.ids_forDB(array).join(', '); }
+	expandAll() { get(w_hierarchy).rootAncestry.traverse(ancestry => ancestry.expand()); }
 	top_ofBannerAt(index: number) { return this.tops_ofBanners[index] + k.thickness.separator; }
+	get isAllExpanded(): boolean { return get(w_hierarchy).rootAncestry.isAllProgeny_expanded; }
 	get g_radialGraph() { let g = this._g_radialGraph; if (!g) { g = new G_RadialGraph(); this._g_radialGraph = g }; return g; }
 	get focus_key(): string { return this.branches_areChildren ? E_Preference.focus_forChildren : E_Preference.focus_forParents; }
 	get expanded_key(): string { return this.branches_areChildren ? E_Preference.expanded_children : E_Preference.expanded_parents; }
+	
 
 	grand_build() {
 		this.grand_layout();
@@ -134,8 +137,8 @@ export default class G_Layout {
 			w_ancestries_expanded.set(expanded);
 		}
 		setTimeout(() => {
-			w_ancestries_expanded.subscribe((array: Array<Ancestry>) => {
-				if (array.length > 0) {
+			w_ancestries_expanded.subscribe((array: Array<Ancestry> | null) => {
+				if (!!array && array.length > 0) {
 					debug.log_expand(`  WRITING (${get(w_e_database)}): "${this.ids_forDB(array)}"`);
 					p.ancestries_writeDB_key(array, this.expanded_key);
 				}

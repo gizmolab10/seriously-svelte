@@ -66,7 +66,7 @@
 			['delete', 'selection', 'parent', 'related'],
 			['move', 'left', 'up', 'down', 'right'],
 			['list', `${list_title}`],
-			['show', 'selection', 'root'],
+			['show', 'selection', 'root', 'all'],
 			['graph', 'center'],
 		];
 	}

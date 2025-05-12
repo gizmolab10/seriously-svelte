@@ -436,6 +436,9 @@ export default class Ancestry extends Identifiable {
 	expand() { return this.expanded_setTo(true); }
 	collapse() { return this.expanded_setTo(false); }
 	toggleExpanded() { return this.expanded_setTo(!this.isExpanded); }
+	get shows_children(): boolean { return this.isExpanded && this.hasChildren; }
+	get shows_branches(): boolean { return layout.branches_areChildren ? this.shows_children : !this.isRoot; }
+	get isExpanded(): boolean { return this.isRoot || !get(w_ancestries_expanded) || this.includedInStore_ofAncestries(w_ancestries_expanded); }
 
 	remove_fromGrabbed_andExpanded() {
 		this.collapse();
@@ -449,14 +452,26 @@ export default class Ancestry extends Identifiable {
 			parentAncestry.expand();
 		}
 	}
+	
+	get isAllProgeny_expanded(): boolean {
+		let allExpanded = true;
+		this.traverse(ancestry => {
+			if (!ancestry.isExpanded) {
+				allExpanded = false;
+				return true;
+			}
+			return false;
+		});
+		return allExpanded;
+	}
 
-	isAllExpandedFrom(targetAncestry: Ancestry | null): boolean {
+	isAllExpanded_fromRootTo(targetAncestry: Ancestry | null): boolean {
 		// visit ancestors until encountering either {targetAncestry, an unexpanded parent}
 		if (!!targetAncestry && !this.equals(targetAncestry)) {
 			const parentAncestry = this.parentAncestry;			// visit parent of ancestry
 			if (!parentAncestry || !parentAncestry.isExpanded) {
 				return false;	// stop when no ancestor [root] or not expanded
-			} else if (!!parentAncestry && !parentAncestry.isAllExpandedFrom(targetAncestry)) {
+			} else if (!!parentAncestry && !parentAncestry.isAllExpanded_fromRootTo(targetAncestry)) {
 				return false;
 			}
 		}
@@ -467,6 +482,9 @@ export default class Ancestry extends Identifiable {
 		let mutated = false;
 		const matchesDB = this.e_database == get(w_e_database);
 		if (matchesDB && (!this.isRoot || expand)) {
+			if (!get(w_ancestries_expanded)) {
+				w_ancestries_expanded.set([]);
+			}
 			w_ancestries_expanded.update((a) => {
 				let array = a ?? [];
 				if (!!array) {
@@ -726,7 +744,7 @@ export default class Ancestry extends Identifiable {
 					}
 				}
 				if (isContains) {
-					u.ancestries_orders_normalize(ancestries, true);							// normalize order of children only
+					u.ancestries_orders_normalize(ancestries, true);					// normalize order of children only
 				}
 			}
 		}
@@ -739,7 +757,6 @@ export default class Ancestry extends Identifiable {
 	get hasSiblings():					 boolean { return this.sibling_ancestries.length > 1; }
 	get hasChildren():					 boolean { return this.childRelationships.length > 0; }
 	get hasParents():					 boolean { return this.parentRelationships.length > 0; }
-	get shows_children():				 boolean { return this.isExpanded && this.hasChildren; }
 	get isFocus():						 boolean { return this.matchesStore(w_ancestry_focus); }
 	get hasRelevantRelationships():		 boolean { return this.relevantRelationships_count > 0; }
 	get points_toChildren():			 boolean { return this.g_cluster?.points_toChildren ?? true }
@@ -748,9 +765,7 @@ export default class Ancestry extends Identifiable {
 	get isGrabbed():					 boolean { return this.includedInStore_ofAncestries(w_ancestries_grabbed); }
 	get isInvalid():					 boolean { return this.containsReciprocals || this.containsMixedPredicates; }
 	get hasRelationships():				 boolean { return this.hasParents || this.hasChildren; }
-	get shows_branches():				 boolean { return layout.branches_areChildren ? this.shows_children : !this.isRoot; }
 	get isEditing():					 boolean { return get(w_s_title_edit)?.isAncestry_inState(this, E_Edit.editing) ?? false; }
-	get isExpanded():					 boolean { return this.isRoot || this.includedInStore_ofAncestries(w_ancestries_expanded); }
 	get description():				   	  string { return `${this.kind} "${this.thing?.e_thing ?? '-'}" ${this.titles.join(':')}`; }
 	get title():					   	  string { return this.thing?.title ?? 'missing title'; }
 	get pathString():					  string { return this.id; }
@@ -810,7 +825,7 @@ export default class Ancestry extends Identifiable {
 		} else {
 			const focus = get(w_ancestry_focus);
 			const incorporates = this.incorporates(focus);
-			const expanded = this.isAllExpandedFrom(focus);
+			const expanded = this.isAllExpanded_fromRootTo(focus);
 			return (incorporates && expanded);
 		}
 	}
@@ -857,15 +872,15 @@ export default class Ancestry extends Identifiable {
 		return false;
 	}
 	
-	relationships_count_forChildren(forChildren: boolean):			 number { return this.relationships_forChildren(forChildren).length; }
-	sharesAnID(ancestry: Ancestry | null):							boolean { return !ancestry ? false : this.relationship_ids.some(id => ancestry.relationship_ids.includes(id)); }
-	showsCluster_forPredicate(predicate: Predicate):				boolean { return this.hasParents_ofKind(predicate.kind) && this.hasThings(predicate); }
-	equals(ancestry: Ancestry | null | undefined):					boolean { return super.equals(ancestry) && this.e_database == ancestry?.e_database; }
-	hasParents_ofKind(kind: string):								boolean { return this.thing?.hasParents_ofKind(kind) ?? false; }
-	includedInStore_ofAncestries(store: Writable<Array<Ancestry>>): boolean { return this.includedInAncestries(get(store)); }
-	isChildOf(other: Ancestry):										boolean { return this.id_thing == other.thingAt(2)?.id; }
-	matchesStore(store: Writable<Ancestry | null>):					boolean { return get(store)?.equals(this) ?? false; }
-	rect_ofWrapper(wrapper: Svelte_Wrapper | null):				Rect | null { return wrapper?.boundingRect ?? null; }
+	relationships_count_forChildren(forChildren: boolean):					number { return this.relationships_forChildren(forChildren).length; }
+	sharesAnID(ancestry: Ancestry | null):								   boolean { return !ancestry ? false : this.relationship_ids.some(id => ancestry.relationship_ids.includes(id)); }
+	showsCluster_forPredicate(predicate: Predicate):					   boolean { return this.hasParents_ofKind(predicate.kind) && this.hasThings(predicate); }
+	equals(ancestry: Ancestry | null | undefined):						   boolean { return super.equals(ancestry) && this.e_database == ancestry?.e_database; }
+	includedInStore_ofAncestries(store: Writable<Array<Ancestry> | null>): boolean { return !!get(store) && this.includedInAncestries(get(store)!); }
+	hasParents_ofKind(kind: string):									   boolean { return this.thing?.hasParents_ofKind(kind) ?? false; }
+	isChildOf(other: Ancestry):											   boolean { return this.id_thing == other.thingAt(2)?.id; }
+	matchesStore(store: Writable<Ancestry | null>):						   boolean { return get(store)?.equals(this) ?? false; }
+	rect_ofWrapper(wrapper: Svelte_Wrapper | null):					   Rect | null { return wrapper?.boundingRect ?? null; }
 
 	showsReveal_forPointingToChild(points_toChild: boolean): boolean {
 		return !(this.predicate?.isBidirectional ?? true) && ((this.relationships_count_forChildren(points_toChild) > 0) || (this.thing?.isBulkAlias ?? false));

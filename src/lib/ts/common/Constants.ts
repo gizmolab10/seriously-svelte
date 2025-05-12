@@ -139,6 +139,7 @@ export default class Constants {
 		show: {
 			selection: 0,
 			root: 1,
+			all: 2,
 		},
 		graph: {
 			center: 0,
