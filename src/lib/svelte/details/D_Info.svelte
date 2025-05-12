@@ -53,7 +53,7 @@
 	}
 	
 	function layout_forColor() {
-		const color_left = 61
+		const color_left = 63
 		color_origin = new Point(color_left, layout.top_ofInfoAt(E_Info.color));
 		picker_offset = `${-color_left - 10}px`;
 	}

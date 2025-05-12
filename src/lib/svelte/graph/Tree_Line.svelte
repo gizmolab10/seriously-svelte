@@ -1,8 +1,9 @@
 <script lang='ts'>
-	import { k, Point, debug, colors, E_Layer } from '../../ts/common/Global_Imports';
+	import { k, Point, debug, colors, signals, E_Layer } from '../../ts/common/Global_Imports';
 	import { w_thing_color } from '../../ts/common/Stores';
 	import Circle from '../kit/Circle.svelte';
 	import Box from '../debug/Box.svelte';
+	import { onMount } from 'svelte';
 	export let g_line!: G_TreeLine;
 	const e_curve = g_line.e_curve;
 	const ancestry = g_line.branchAncestry;
@@ -22,6 +23,13 @@
 	//////////////////////////////
  
 	function isHit(): boolean { return false }
+
+	onMount(() => {
+		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
+			line_reattachments += 1;
+		});
+		return () => { handle_reposition.disconnect(); }
+	});
 
 	if (g_line.isBidirectional) {
 		stroke_color = colors.opacitize(ancestry.thing.color, 0.2);

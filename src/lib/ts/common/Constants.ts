@@ -100,7 +100,7 @@ export default class Constants {
 			before_title:  5,
 			title:		  22,
 			after_title:   4,
-			table:		 132,
+			table:		 128,
 			color:		  20,
 			traits:		   2,
 			consequence:  50,
