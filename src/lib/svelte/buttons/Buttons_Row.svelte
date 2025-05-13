@@ -7,22 +7,26 @@
 	import { onMount } from 'svelte';
 	export let closure: (e_toolRequest: E_ToolRequest, s_mouse: S_Mouse, column: number) => boolean;
 	export let origin: Point | null = null;
+	export let center: Point | null = null;
 	export let row_titles: Array<string>;	// first one is optional row title, rest are button titles
 	export let font_sizes: Array<number>;
 	export let horizontal_gap = 2;
 	export let button_height = 15;
+	export let align_left = true;
 	export let has_title = true;	// true means first row_titles is the title of the row
 	export let show_box = false;
 	export let name = k.empty;
 	export let width: number;
-	const title_width = 34;
+	export let margin = 0;
+	const solo_title_width = 34;
 	const button_titles = has_title ? row_titles.slice(1) : row_titles;
 	const title_widths = button_titles.map((title) => u.getWidth_ofString_withSize(title, `${font_sizes[0]}px`));
 	const total_width = title_widths.reduce((acc, width) => acc + width + horizontal_gap, 0);
 	const es_button_byColumn: { [key: number]: S_Element } = {};
 	const columns = button_titles.length;
-	const button_portion = (width - total_width - horizontal_gap - (show_box ? 0 : title_width)) / columns;
+	const button_portion = (width - (margin * 2) - total_width - horizontal_gap - (show_box ? 0 : solo_title_width)) / columns;
 	const row_title = row_titles[0];
+	let style = k.empty;
 
 	//////////////////////////////////////////////////////////////////
 	//			 	one row of buttons, plus options				//
@@ -64,16 +68,22 @@
 			es_button.isDisabled = button_disabled_for(column);
 			es_button.isInverted = button_inverted_for(column);
 		}
+		if (!!origin || !!center) {
+			const x = origin?.x ?? center?.x - width / 2;
+			const y = origin?.y ?? center?.y - height / 2;
+			const alignment = align_left ? 'left: ' : 'right: ';
+			style = `${alignment}${x}px; top: ${y}px;`;
+		}
 	}
 
 </script>
 
 <div class='buttons-row'
-	style='
-		width:{width}px;
+	style='{style}
 		top:{origin.y}px;
 		position:absolute;
-		height:{button_height}px;'>
+		height:{button_height}px;
+		width:{width - (margin * 2)}px;'>
 	{#if has_title}
 		{#if show_box}
 			<Separator
@@ -90,29 +100,30 @@
 				class='box-title'
 				style='
 					top: 1.5px;
+					left:{margin}px;
 					text-align: right;
 					position:absolute;
 					font-size:{font_sizes[0]}px;
-					width:{title_width - horizontal_gap}px;'>
+					width:{solo_title_width - horizontal_gap}px;'>
 				{row_title}
 			</div>
 		{/if}
 	{/if}
 	<div class='buttons-array'
 		style='
-			width:{width}px;
 			position:absolute;
 			height:{button_height}px;
 			top:{show_box ? 12 : 0}px;
-			left:{show_box ? 0 : title_width}px;'>
+			width:{width - margin * 2}px;
+			left:{margin + (show_box ? 0 : solo_title_width)}px;'>
 		{#each button_titles as title, column}
 			<Button
 				height={button_height}
 				font_size={font_sizes[1]}
 				width={button_width_for(column)}
 				es_button={es_button_byColumn[column]}
-				origin={Point.x(button_left_for(column))}
 				name={`${name}-${button_name_for(column)}`}
+				origin={Point.x(button_left_for(column))}
 				closure={(s_mouse) => closure(E_ToolRequest.handle_click, s_mouse, column)}>
 				{title}
 			</Button>

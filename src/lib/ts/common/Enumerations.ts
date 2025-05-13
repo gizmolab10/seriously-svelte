@@ -59,19 +59,20 @@ export enum E_Report {
 	focus	  = 'focus',
 }
 
-export enum E_Storage {
-	import = 'import',
-	export = 'export',
-}
-
 export enum E_Alteration {
 	delete = 'delete',
 	add	   = 'add',
 }
 
+export enum E_Storage {
+	import = 'import',
+	export = 'export',
+}
+
 export enum E_Format {
-	json = 'json',
-	csv = 'csv'
+	cancel = 'cancel',
+	json   = 'json',
+	csv	   = 'csv'
 }
 
 export enum E_Kinship {

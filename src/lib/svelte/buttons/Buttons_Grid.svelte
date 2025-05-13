@@ -33,11 +33,11 @@
                 box_top={box_top}
                 row_titles={titles}
                 show_box={show_box}
+                has_title={has_title}
                 font_sizes={font_sizes}
                 button_height={button_height}
                 origin={button_origin_for(row)}
                 name={`${name}-grid-${E_Tool[row]}`}
-                has_title={has_title}
                 closure={(e_toolRequest, s_mouse, column) => closure(e_toolRequest, s_mouse, row, column)}/>
         {/if}
     {/each}
