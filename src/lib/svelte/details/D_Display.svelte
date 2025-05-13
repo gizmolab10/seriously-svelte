@@ -9,7 +9,7 @@
 	const picker_offset = `-88px`;
 	const info_width = k.width_details - 30;
 	const font_size = `${k.font_size.smaller}px`;
-	const color_origin = new Point(color_left, 43);
+	const color_origin = new Point(color_left, 45);
 	const separator_font_size = k.font_size.smallest;
 	const titles = [E_Kinship[E_Kinship.child], E_Kinship[E_Kinship.parent], E_Kinship[E_Kinship.related]];
 	let color = $w_background_color;

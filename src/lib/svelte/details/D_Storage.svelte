@@ -107,7 +107,7 @@
 				horizontal_gap={4}
 				font_sizes={font_sizes}
 				width={k.width_details}
-				origin={Point.y(top + 91)}
+				origin={Point.y(top + 89)}
 				closure={handle_toolRequest}
 				button_height={k.height.button}
 				margin={choosing_storage ? 50 : 40}

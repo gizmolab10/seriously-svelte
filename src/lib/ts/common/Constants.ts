@@ -12,7 +12,7 @@ export default class Constants {
 	width_details = 210;
 	radial_widget_inset = 26;
 	autorepeat_interval = 50;
-	separator_title_left = 20;
+	separator_title_left = 0;
 	editingTools_diameter = 64;
 	hid_unknown = 1000000000000;
 	build_number = builds.latest;
@@ -90,7 +90,7 @@ export default class Constants {
 			graph:	  0,
 		},
 		detail: {
-			storage: 132,
+			storage: 130,
 			tools: () => { return show.tool_boxes ? 229 : 146; },
 			display:  77,
 			info:	   0,

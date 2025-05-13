@@ -44,6 +44,7 @@
 			position:absolute;
 			top:{title_top}px;
 			left:{title_left}px;
+			white-space: nowrap;
 			z-index:{E_Layer.frontmost};
 			font-size:{title_font_size}px;
 			background-color:{$w_background_color};'>

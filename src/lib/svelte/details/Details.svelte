@@ -26,7 +26,7 @@
 		position:absolute;
 		z-index:{E_Layer.details};
 		width:{k.width_details}px;
-		top:{$w_graph_rect.origin.y}px;
+		top:{$w_graph_rect.origin.y + 4}px;
 		height:{$w_graph_rect.size.height}px;'>
 	<Segmented
 		titles={titles}
