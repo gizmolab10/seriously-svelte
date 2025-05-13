@@ -14,9 +14,9 @@ export default class Predicate extends Persistable {
 		this.kind			 = kind;
 	}
 	
-	log(option: E_Debug, message: string)					 { debug.log_maybe(option, message + k.space + this.description); }
+	log(option: E_Debug, message: string)					 { debug.log_alert(option, message + k.space + this.description); }
 	get description():					  			  string { return this.kind.unCamelCase().lastWord(); }
-	static isBidirectional_for(kind: E_Predicate):		 boolean { return kind != E_Predicate.contains; }
+	static isBidirectional_for(kind: E_Predicate):	 boolean { return kind != E_Predicate.contains; }
 	static get contains():				    Predicate | null { return this.predicate_forKind(E_Predicate.contains); }
 	static get explains():				    Predicate | null { return this.predicate_forKind(E_Predicate.explains); }
 	static get requires():				    Predicate | null { return this.predicate_forKind(E_Predicate.requires); }

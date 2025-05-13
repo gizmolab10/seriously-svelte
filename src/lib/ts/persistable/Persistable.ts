@@ -20,7 +20,7 @@ export default class Persistable extends Identifiable {
 
 	async persistent_create_orUpdate(already_persisted: boolean) {}
 	set_isDirty() { this.persistence.isDirty = true; }		// TODO: set global
-	log(option: E_Debug, message: string) {}
+	log(option: E_Debug, message: string) { alert(message); }
 	isInDifferentBulkThan(other: Persistable) { return this.idBase != other.idBase; }
 
 	async persist() {

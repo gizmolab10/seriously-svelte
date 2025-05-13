@@ -670,7 +670,7 @@ export class Hierarchy {
 			this.relationship_remember_byKnown(relationship, relationship.hidChild, this.relationships_byChildHID);
 			this.relationship_remember_byKnown(relationship, relationship.hidParent, this.relationships_byParentHID);
 			if (relationship.idBase != this.db.idBase) {
-				debug.log_error(`relationship crossing dbs: ${relationship.description}`);
+				alert(`relationship crossing dbs: ${relationship.description}`);
 			}
 		}
 	}

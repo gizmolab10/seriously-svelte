@@ -16,8 +16,11 @@ import Airtable from 'airtable';
 
 export default class DBAirtable extends DBCommon {
 	personalAccessToken = 'patGTiWbebGZTw0fh.dd17a194aea98f9e4e918d333babde7bcd39903b4179b139ac8866a5f3cfe5b6';
+	tryPersonalAccessToken = 'patHLy6SzBPcbjtCM.c032a929620e4c2906a59bec5c6aa955c1cac78875ca8f5d5398ae1ee058ebc8';
+	baseMarianne = new Airtable({ apiKey: this.personalAccessToken }).base('appopcsTBwET2o3RU');
 	baseCatalist = new Airtable({ apiKey: this.personalAccessToken }).base('apphGUCbYIEJLvRrR');
 	basePublic = new Airtable({ apiKey: this.personalAccessToken }).base('appq1IjzmiRdlZi3H');
+	baseWendy = new Airtable({ apiKey: this.personalAccessToken }).base('appuDpzaPN3at9jRL');
 	base = this.basePublic;
 	relationships_table = this.base(E_Persistable.relationships);
 	predicates_table = this.base(E_Persistable.predicates);
@@ -71,16 +74,14 @@ export default class DBAirtable extends DBCommon {
 
 		try {
 			const select = this.things_table.select();
-			await select.all().then((records) => {
-				const remoteThings = records;
-				for (const remoteThing of remoteThings) {
-					const id = remoteThing.id;
-					const fields = remoteThing.fields;
-					this.hierarchy.thing_remember_runtimeCreate(k.empty, id, fields.title as string, fields.color as string, (fields.type as E_Thing) ?? fields.trait as string, true, !fields.type);
-				}
-			})
+			const remoteThings = await select.all()
+			for (const remoteThing of remoteThings) {
+				const id = remoteThing.id;
+				const fields = remoteThing.fields;
+				this.hierarchy.thing_remember_runtimeCreate(k.empty, id, fields.title as string, fields.color as string, (fields.type as E_Thing) ?? fields.trait as string, true, !fields.type);
+			}
 		} catch (error) {
-			debug.log_error(this.things_errorMessage + ' (things_fetch_all) ' + error);
+			alert(this.things_errorMessage + ' (things_fetch_all) ' + error);
 		}
 	}
 
@@ -132,7 +133,7 @@ export default class DBAirtable extends DBCommon {
 				this.hierarchy.trait_remember_runtimeCreateUnique(k.empty, id, ownerIDs[0], type, text, true);
 			}
 		} catch (error) {
-			debug.log_error(this.traits_errorMessage + error);
+			alert(this.traits_errorMessage + error);
 		}
 	}
 
@@ -180,7 +181,7 @@ export default class DBAirtable extends DBCommon {
 				this.hierarchy.relationship_remember_runtimeCreateUnique(k.empty, id, kind, parents[0], children[0], order, 0, E_Create.isFromPersistent);
 			}
 		} catch (error) {
-			debug.log_error(this.relationships_errorMessage + error);
+			alert(this.relationships_errorMessage + error);
 		}
 	}
 
@@ -229,7 +230,7 @@ export default class DBAirtable extends DBCommon {
 			}
 
 		} catch (error) {
-			debug.log_error('Error in Predicates:' + error);
+			alert('Error in Predicates:' + error);
 		}
 	}
 
@@ -243,7 +244,7 @@ export default class DBAirtable extends DBCommon {
 			}
 
 		} catch (error) {
-			debug.log_error('Error in Access:' + error);
+			alert('Error in Access:' + error);
 		}
 	}
 
@@ -257,7 +258,7 @@ export default class DBAirtable extends DBCommon {
 			}
 
 		} catch (error) {
-			debug.log_error('Error in Users:' + error);
+			alert('Error in Users:' + error);
 		}
 	}
 

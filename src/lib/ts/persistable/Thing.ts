@@ -68,7 +68,7 @@ export default class Thing extends Persistable {
 	debugLog(message: string) { this.log(E_Debug.things, message); }
 	hasParents_ofKind(kind: string): boolean { return this.parents_ofKind(kind).length > 0; }
 	hasMultipleParents_ofKind(kind: string): boolean { return this.parents_ofKind(kind).length > 1; }
-	log(option: E_Debug, message: string) { debug.log_maybe(option, message + k.space + this.description); }
+	log(option: E_Debug, message: string) { debug.log_alert(option, message + k.space + this.description); }
 	setTraitText_forType(text: string, e_thing: E_Trait) { get(w_hierarchy).trait_setText_forType_ownerHID(text, e_thing, this.id); }
 
 	override isInDifferentBulkThan(other: Thing): boolean {
