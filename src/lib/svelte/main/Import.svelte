@@ -4,7 +4,7 @@
 	import { files } from '../../ts/managers/Files';
 	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';
-	export let accept: string = k.empty;
+	export let accept: string = files.format_preference;
 	export let multiple = k.empty;		// can be set to 'multiple'
 	let file_input: HTMLInputElement;
 	

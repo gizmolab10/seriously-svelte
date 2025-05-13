@@ -1,22 +1,9 @@
 import type { Handle_Result } from '../common/Types';
 import { tu } from '../common/Testworthy_Utilities';
-import { E_Format, E_Storage } from '../common/Enumerations';
+import { E_Format } from '../common/Enumerations';
 
 export default class Files {
-	
-	static readonly ____PUBLIC: unique symbol;
-
-	private readonly e_format_ids = [E_Format.json, E_Format.csv, 'cancel'];
-	private readonly e_storage_ids = [E_Storage.export, E_Storage.import];
-	private readonly ids = [...this.e_storage_ids, ...this.e_format_ids];
-
-	async fetch_csv_records_fromFile(fileName: string, onSuccess: Handle_Result, onFailure: Handle_Result)  {
-		return await this.fetch_e_format_fromFile(fileName, E_Format.csv, onSuccess, onFailure);
-	}
-
-	async fetch_json_object_fromFile(fileName: string, onSuccess: Handle_Result, onFailure: Handle_Result)  {
-		return await this.fetch_e_format_fromFile(fileName, E_Format.json, onSuccess, onFailure);
-	}
+	format_preference: E_Format = E_Format.json;
 	
 	static readonly _____WRITE: unique symbol;
 
@@ -31,8 +18,17 @@ export default class Files {
 	}
 	
 	static readonly _____READ: unique symbol;
+
+	async fetch_fromFile(file: File, onSuccess: Handle_Result, onFailure: Handle_Result) {
+		const format = this.format_preference;
+		switch (format) {
+			case E_Format.json:	return await this.extract_json_object_fromFile(file, onSuccess, onFailure);
+			case E_Format.csv:	return await this.extract_csv_records_fromFile(file, onSuccess, onFailure);
+			default:			onFailure(`Unsupported format: ${format}`); return;
+		}
+	}
 		
-	extract_json_object_fromFile(file: File, onSuccess: Handle_Result, onFailure: Handle_Result = (() => {})) {
+	private async extract_json_object_fromFile(file: File, onSuccess: Handle_Result, onFailure: Handle_Result = (() => {})) {
 		return new Promise((resolve, reject) => {
 			const reader = new FileReader();
 			let object = new Object();
@@ -95,15 +91,6 @@ export default class Files {
 	}
 	
 	static readonly _____FORMAT: unique symbol;
-
-	private async fetch_e_format_fromFile(fileName: string, e_format: E_Format, onSuccess: Handle_Result, onFailure: Handle_Result) {
-		const file = new File([], fileName, {});
-		switch (e_format) {
-			case E_Format.json:	return await this.extract_json_object_fromFile(file, onSuccess, onFailure);
-			case E_Format.csv:	return await this.extract_csv_records_fromFile(file, onSuccess, onFailure);
-			default:			onFailure(`Unsupported format: ${e_format}`); return;
-		}
-	}
 
 }
 

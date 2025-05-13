@@ -1,10 +1,12 @@
-import { E_Tool, E_Thing, E_Trait, E_Order, E_Create, E_Report, E_Control, E_Predicate, E_Alteration } from '../common/Global_Imports';
-import { c, k, p, u, ux, w, show, User, Thing, Trait, Point, debug, files, colors, signals, layout } from '../common/Global_Imports';
-import { Access, Ancestry, Predicate, Relationship, S_Mouse, S_Alteration, S_Title_Edit } from '../common/Global_Imports';
-import { w_popupView_id, w_ancestry_focus, w_s_title_edit, w_user_graph_offset } from '../common/Stores';
 import { w_storage_updated, w_s_alteration, w_ancestries_grabbed } from '../common/Stores';
-import type { Integer, Dictionary } from '../common/Types';
+import { E_Report, E_Control, E_Predicate, E_Alteration } from '../common/Global_Imports';
+import { E_Thing, E_Trait, E_Order, E_Create, E_Format } from '../common/Global_Imports';
+import { Access, Ancestry, Predicate, Relationship } from '../common/Global_Imports';
+import { w_popupView_id, w_ancestry_focus, w_s_title_edit } from '../common/Stores';
+import { debug, files, colors, signals, layout } from '../common/Global_Imports';
+import { c, k, p, u, show, User, Thing, Trait } from '../common/Global_Imports';
 import { E_Persistable } from '../../ts/database/DBCommon';
+import type { Integer, Dictionary } from '../common/Types';
 import Identifiable from '../runtime/Identifiable';
 import DBCommon from '../database/DBCommon';
 import { get } from 'svelte/store';
@@ -1236,30 +1238,45 @@ export class Hierarchy {
 
 	static readonly _____FILES: unique symbol;
 
-	select_file_toUpload(SHIFT: boolean) {
-		w_popupView_id.set(E_Control.import);				// extract_fromDict
-		this.replace_rootID = SHIFT ? k.empty : null;		// prime it to be updated from file (after user choses it)
-	}
-
 	get data_toSave(): Dictionary {
 		const ancestry = this.user_selected_ancestry;
 		return ancestry.isRoot ? this.all_data : this.progeny_dataFor(ancestry);
 	}
 
-	persist_toFile() {
-		const data = this.data_toSave;
-		const filename = `${data.title.toLowerCase()}.json`;
-		files.persist_json_object_toFile(data, filename);
+	select_file_toUpload(format: E_Format, SHIFT: boolean) {
+		files.format_preference = format;
+		w_popupView_id.set(E_Control.import);				// extract_fromDict
+		this.replace_rootID = SHIFT ? k.empty : null;		// flag it to be updated from file (after user choses it)
+	}
+
+	persist_toFile(format: E_Format) {
+		switch (format) {
+			case E_Format.csv:
+				alert('saving as CSV is not yet implemented');
+				break;
+			case E_Format.json:
+				const data = this.data_toSave;
+				const filename = `${data.title.toLowerCase()}.${format}`;
+				files.persist_json_object_toFile(data, filename);
+				break;
+		}
 	}
 
 	async fetch_fromFile(file: File) {
-		await files.extract_json_object_fromFile(file, async (result) => {
-			const dict = result as Dictionary;
-			if (!!dict) {
-				await this.extract_fromDict(dict);
-				this.db.persist_all(true);
+		await files.fetch_fromFile(file, async (result) => {
+			switch (files.format_preference) {
+				case E_Format.csv:
+					alert('loading from CSV is not yet implemented');
+					break;
+				case E_Format.json:
+					const dict = result as Dictionary;
+					if (!!dict) {
+						await this.extract_fromDict(dict);
+						this.db.persist_all(true);
+					}
+					break;
 			}
-		});
+		}, async (error) => {});
 	}
 
 	get user_selected_ancestry(): Ancestry {

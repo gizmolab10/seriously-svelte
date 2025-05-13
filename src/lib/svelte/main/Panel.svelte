@@ -103,7 +103,7 @@
 					{#if $w_popupView_id == E_Control.builds}
 						<BuildNotes/>
 					{:else if $w_popupView_id == E_Control.import}
-						<Import accept='.json'/>
+						<Import/>
 					{:else if !$w_popupView_id}
 						<Graph/>
 					{/if}

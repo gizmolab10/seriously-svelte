@@ -12,7 +12,7 @@
 	export let top = 0;
 	const buttons_top = 138;
 	const button_style = `font-family: ${$w_thing_fontFamily}; font-size:0.85em; left: 5px; top: -2px; position: absolute;`;
-	const format_ids = [E_Format.cancel, E_Format.json, E_Format.csv];
+	const format_ids = [E_Format.csv, E_Format.json, E_Format.cancel];
     const font_sizes = [k.font_size.smallest, k.font_size.smaller];
 	const storage_ids = [E_Storage.import, E_Storage.export];
 	let s_element_byStorageType: { [id: string]: S_Element } = {};
@@ -68,10 +68,11 @@
 			if (choosing_storage) {
 				storage_choice = choice;
 			} else if (choice != E_Format.cancel) {
+				const format = choice as E_Format;
 				const h = $w_hierarchy;
 				switch (storage_choice) {
-					case E_Storage.export: h.persist_toFile(); break;
-					case E_Storage.import: h.select_file_toUpload(s_mouse.event.shiftKey); break;
+					case E_Storage.export: h.persist_toFile(format); break;
+					case E_Storage.import: h.select_file_toUpload(format, s_mouse.event.shiftKey); break;
 				}
 			}
 			choosing_storage = !choosing_storage;
