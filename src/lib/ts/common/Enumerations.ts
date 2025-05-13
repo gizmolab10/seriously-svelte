@@ -69,6 +69,11 @@ export enum E_Alteration {
 	add	   = 'add',
 }
 
+export enum E_Format {
+	json = 'json',
+	csv = 'csv'
+}
+
 export enum E_Kinship {
 	related = 'related',
 	parent  = 'parent',

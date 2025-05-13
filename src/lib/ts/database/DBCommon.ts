@@ -1,9 +1,10 @@
 import { Trait, Thing, Hierarchy, Predicate, Relationship } from '../common/Global_Imports';
 import { E_Thing, E_Startup, E_Preference } from '../common/Global_Imports';
-import { c, k, p, u, debug, layout } from '../common/Global_Imports';
+import { c, p, u, debug, layout } from '../common/Global_Imports';
 import { w_hierarchy, w_e_startup } from '../common/Stores';
-import type { Dictionary } from '../common/Types';
 import Persistable from '../persistable/Persistable';
+import type { Dictionary } from '../common/Types';
+import { k } from '../common/Constants';
 
 export enum E_Persistence {
 	remote = 'remote',
@@ -31,8 +32,8 @@ export enum E_Persistable {
 }
 
 export default class DBCommon {
-	kind_persistence!: E_Persistence;
 	loadTime: string | null = null;
+	e_persistence!: E_Persistence;
 	hierarchy!: Hierarchy;
 	e_database = k.empty;
 	idBase = k.empty;
@@ -41,8 +42,8 @@ export default class DBCommon {
 	setup_remote_handlers() {}
 	get displayName(): string { return this.e_database; }
 	get dict_forStorageDetails(): Dictionary { return {'fetch took' : this.loadTime} }
-	get isRemote(): boolean { return this.kind_persistence == E_Persistence.remote; }
-	get isPersistent(): boolean { return this.kind_persistence != E_Persistence.none; }
+	get isRemote(): boolean { return this.e_persistence == E_Persistence.remote; }
+	get isPersistent(): boolean { return this.e_persistence != E_Persistence.none; }
 	async hierarchy_fetch_forID(idBase: string) {}	// support for browsing multiple firebase bulks
 	
 	async fetch_all() { this.fetch_all_fromLocal(); }

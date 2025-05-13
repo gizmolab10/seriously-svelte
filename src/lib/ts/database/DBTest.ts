@@ -4,7 +4,7 @@ import type { Dictionary } from '../common/Types';
 import DBCommon from './DBCommon';
 
 export default class DBTest extends DBCommon {
-	kind_persistence = E_Persistence.none;
+	e_persistence = E_Persistence.none;
 	e_database = E_Database.test;
 	idBase = k.id_base.test;
 	

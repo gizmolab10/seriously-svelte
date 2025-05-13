@@ -28,7 +28,7 @@ export default class DBAirtable extends DBCommon {
 	traits_table = this.base(E_Persistable.traits);
 	access_table = this.base(E_Persistable.access);
 	users_table = this.base(E_Persistable.users);
-	kind_persistence = E_Persistence.remote;
+	e_persistence = E_Persistence.remote;
 	e_database = E_Database.airtable;
 	idBase = k.empty;
 

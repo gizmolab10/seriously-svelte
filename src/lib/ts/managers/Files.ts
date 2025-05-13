@@ -1,10 +1,23 @@
 import type { Handle_Result } from '../common/Types';
-import { u } from '../common/Utilities';
+import { tu } from '../common/Testworthy_Utilities';
+import { E_Format } from '../common/Enumerations';
 
 export default class Files {
+	
+	static readonly ____PUBLIC: unique symbol;
+
+	async fetch_csv_records_fromFile(fileName: string, onSuccess: Handle_Result, onFailure: Handle_Result)  {
+		return await this.fetch_e_format_fromFile(fileName, E_Format.csv, onSuccess, onFailure);
+	}
+
+	async fetch_json_object_fromFile(fileName: string, onSuccess: Handle_Result, onFailure: Handle_Result)  {
+		return await this.fetch_e_format_fromFile(fileName, E_Format.json, onSuccess, onFailure);
+	}
+	
+	static readonly _____WRITE: unique symbol;
 
 	persist_json_object_toFile(object: Object, fileName: string): void {
-		const content = u.stringify_object(object);
+		const content = tu.stringify_object(object);
 		const blob = new Blob([content], { type: 'application/json' });
 		const link = document.createElement('a');
 		link.href = URL.createObjectURL(blob);
@@ -12,8 +25,10 @@ export default class Files {
 		link.click();
 		URL.revokeObjectURL(link.href);
 	}
+	
+	static readonly _____READ: unique symbol;
 		
-	async extract_json_object_fromFile(file: File, onSuccess: Handle_Result, onFailure: Handle_Result = (() => {})) {
+	extract_json_object_fromFile(file: File, onSuccess: Handle_Result, onFailure: Handle_Result = (() => {})) {
 		return new Promise((resolve, reject) => {
 			const reader = new FileReader();
 			let object = new Object();
@@ -38,11 +53,54 @@ export default class Files {
 		});
 	}
 
-	async fetch_json_object_fromFile(fileName: string, onSuccess: Handle_Result, onFailure: Handle_Result)  {
-		const file = new File([], fileName, {});
-		return await files.extract_json_object_fromFile(file, onSuccess, onFailure);
+	private async extract_csv_records_fromFile(file: File, onSuccess: Handle_Result, onFailure: Handle_Result = (() => {})) {
+		return new Promise((resolve, reject) => {
+			const reader = new FileReader();
+			reader.onload = function (e) {
+				const result = (e.target?.result as string);
+				if (!result || result.length == 0) {
+					onFailure('Empty file.');
+					return;
+				}
+				try {
+					const lines = result.split('\n').filter(line => line.trim().length > 0);	// Split the CSV content into lines and remove empty lines
+					if (lines.length === 0) {
+						onFailure('No data found in CSV file.');
+						return;
+					}
+					const headers = lines[0].split(',').map(header => header.trim());			// Get headers from first line0
+					const records = lines.slice(1).map(line => {								// Parse remaining lines into records
+						const values = line.split(',').map(value => value.trim());
+						const record: Record<string, string> = {};
+						headers.forEach((header, index) => {
+							record[header] = values[index] || '';
+						});
+						return record;
+					});
+					onSuccess(records);
+					return { success: records };
+				} catch (error) {
+					onFailure(`Error parsing CSV: ${(error as Error).message}`);
+				}
+			};
+			reader.onerror = function () {
+				onFailure('Error reading file.');
+			};
+			reader.readAsText(file);
+		});
 	}
 	
+	static readonly _____FORMAT: unique symbol;
+
+	private async fetch_e_format_fromFile(fileName: string, e_format: E_Format, onSuccess: Handle_Result, onFailure: Handle_Result) {
+		const file = new File([], fileName, {});
+		switch (e_format) {
+			case E_Format.json:	return await this.extract_json_object_fromFile(file, onSuccess, onFailure);
+			case E_Format.csv:	return await this.extract_csv_records_fromFile(file, onSuccess, onFailure);
+			default:			onFailure(`Unsupported format: ${e_format}`); return;
+		}
+	}
+
 }
 
 export let files = new Files();

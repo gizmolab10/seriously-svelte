@@ -41,8 +41,8 @@ export default class Databases {
 
 	db_set_accordingToType(type: string) { this.db_now = this.db_forType(type); }
 	db_change_toNext(forward: boolean) { w_e_database.set(this.db_next_get(forward)); }
-	isRemote(kind_persistence: E_Persistence): boolean { return kind_persistence == E_Persistence.remote; }
-	isPersistent(kind_persistence: E_Persistence): boolean { return kind_persistence != E_Persistence.none; }
+	isRemote(e_persistence: E_Persistence): boolean { return e_persistence == E_Persistence.remote; }
+	isPersistent(e_persistence: E_Persistence): boolean { return e_persistence != E_Persistence.none; }
 
 	restore_db() {
 		let type = p.read_key(E_Preference.db) ?? 'firebase';

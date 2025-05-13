@@ -29,7 +29,7 @@ export default class DBFirebase extends DBCommon {
 	e_database = E_Database.firebase;
 	app = initializeApp(this.config);
 	firestore = getFirestore(this.app);
-	kind_persistence = E_Persistence.remote;
+	e_persistence = E_Persistence.remote;
 	predicatesCollection!: CollectionReference;
 	deferredSnapshots: Array<SnapshotDeferal> = [];
 

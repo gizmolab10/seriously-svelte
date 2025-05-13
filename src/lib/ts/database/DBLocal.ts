@@ -4,7 +4,7 @@ import { k } from '../common/Global_Imports';
 import DBCommon from './DBCommon';
 
 export default class DBLocal extends DBCommon {
-	kind_persistence = E_Persistence.local;
+	e_persistence = E_Persistence.local;
 	e_database = E_Database.local;
 	idBase = k.id_base.local;
 	

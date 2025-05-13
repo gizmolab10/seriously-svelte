@@ -6,15 +6,16 @@ import G_Cluster from '../layout/G_Cluster';
 import G_Segment from '../layout/G_Segment';
 import G_Widget from '../layout/G_Widget';
 
-import { E_Preference } from './Enumerations';
 import { E_Timer } from '../signals/Mouse_Timer';
 import { E_Quadrant, E_Orientation } from './Angle';
 import { G_Paging, G_Thing_Pages } from '../layout/G_Paging';
+import { E_Graph, E_Banner, E_Control } from './Enumerations';
+import { E_Thing, E_Trait, E_Predicate } from './Enumerations';
 import { E_Create, E_Browser, E_Alteration } from './Enumerations';
+import { E_Curve, E_Order, E_Widget, E_Layer } from './Enumerations';
 import { E_Oblong, E_Element, E_SvelteComponent } from './Enumerations';
-import { E_Curve, E_Layer, E_Thing, E_Trait, E_Predicate } from './Enumerations';
-import { E_Graph, E_Order, E_Widget, E_RingZone, E_Startup, E_Kinship } from './Enumerations';
-import { E_Info, E_Tool, E_Banner, E_Control, E_Details, E_Report, E_ToolRequest, E_Storage } from './Enumerations';
+import { E_Format, E_Startup, E_Kinship, E_RingZone, E_Preference } from './Enumerations';
+import { E_Info, E_Tool, E_Report, E_Details, E_ToolRequest, E_Storage } from './Enumerations';
 
 import S_Title_Edit from '../state/S_Title_Edit';
 import S_Alteration from '../state/S_Alteration';
@@ -79,9 +80,9 @@ export {
 	S_Common, S_Rotation, S_Resizing, G_Thing_Pages,
 	G_Widget, G_Segment, G_TreeLine, G_TreeBranches,
 	G_Paging, G_Cluster, G_RadialGraph, G_ArcSlider,
-	E_Order, E_Banner, E_Details, E_Startup, E_Graph,
 	show, files, builds, colors, layout, radial, signals,
 	S_Mouse, S_Widget, S_Element, S_Alteration, S_Title_Edit,
+	E_Order, E_Format, E_Banner, E_Details, E_Startup, E_Graph,
 	E_Layer, E_Curve, E_Create, E_RingZone, E_Oblong, E_Alteration,
 	User, Persistable, Thing, Trait, Access, Predicate, Relationship,
 	E_Thing, E_Trait, E_Widget, E_Predicate, E_Kinship, E_Preference,

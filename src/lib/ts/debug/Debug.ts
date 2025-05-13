@@ -54,6 +54,7 @@ export class Debug {
 	get fast_load(): boolean { return this.hasOption(E_Debug.fast_load); }
 	get hide_rings(): boolean { return this.hasOption(E_Debug.hide_rings); }
 
+	log_alert(option: E_Debug, message: string) { alert(message); }
 	log_key(message: string) { this.log_maybe(E_Debug.key, message); }
 	log_edit(message: string) { this.log_maybe(E_Debug.edit, message); }
 	log_grab(message: string) { this.log_maybe(E_Debug.grab, message); }
