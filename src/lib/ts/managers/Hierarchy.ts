@@ -21,14 +21,15 @@ export class Hierarchy {
 	private ancestries_byThingHID:{ [hid: Integer]: Array<Ancestry> } = {};
 	private traits_byOwnerHID: { [ownerHID: Integer]: Array<Trait> } = {};
 	private relationship_byHID: { [hid: Integer]: Relationship } = {};
-	private things_byType: { [e_thing: string]: Array<Thing> } = {};
 	private traits_byType: { [e_trait: string]: Array<Trait> } = {};
+	private things_byType: { [e_thing: string]: Array<Thing> } = {};
 	private predicate_byKind: { [kind: string]: Predicate } = {};
 	private thing_byAncestryHID: { [hid: Integer]: Thing } = {};
 	private relationships_byParentHID: Relationships_ByHID = {};
 	private relationships_byChildHID: Relationships_ByHID = {};
 	private ancestry_byHID:{ [hid: Integer]: Ancestry } = {};
 	private access_byKind: { [kind: string]: Access } = {};
+	private thing_byTitle: { [title: string]: Thing } = {};
 	private access_byHID: { [hid: Integer]: Access } = {};
 	private thing_byHID: { [hid: Integer]: Thing } = {};
 	private trait_byHID: { [hid: Integer]: Trait } = {};
@@ -1266,16 +1267,20 @@ export class Hierarchy {
 		await files.fetch_fromFile(file, async (result) => {
 			switch (files.format_preference) {
 				case E_Format.csv:
-					alert('loading from CSV is not yet implemented');
+					const array = result as Array<Dictionary>;
+					for (const dict of array) {
+						await this.extract_fromCSV_Dict(dict);
+					}
+					await this.create_relationship_forAllTraits();
 					break;
 				case E_Format.json:
 					const dict = result as Dictionary;
 					if (!!dict) {
 						await this.extract_fromDict(dict);
-						this.db.persist_all(true);
 					}
 					break;
-			}
+				}
+			this.db.persist_all(true);
 		}, async (error) => {});
 	}
 
@@ -1358,6 +1363,33 @@ export class Hierarchy {
 		// await this.relationships_removeHavingNullReferences();
 		this.restore_fromPreferences();
 		this.signal_storage_redraw();
+	}
+
+	async create_relationship_forAllTraits() {
+		// for each trait that has a dict containing a parent 1 link
+		for (const trait of this.traits) {
+			const dict = trait.dict;
+			if (!!dict) {
+				const title = dict['parent 1 link'];
+				if (!!title) {
+					const parent = this.thing_byTitle[title] ?? this.root;
+					const relationship = this.relationship_remember_runtimeCreateUnique(this.db.idBase, Identifiable.newID(), E_Predicate.contains, parent.id, trait.ownerID, 0);
+					relationship.set_isDirty();
+				}
+			}
+		}
+	}
+
+	async extract_fromCSV_Dict(dict: Dictionary) {
+		// each dict represents a Thing, which has a title, name, description and parent 1 link
+		// later, create a Relationship for each trait that has a dict containing a parent 1 link
+		// TODO: what is the parent 2 link?
+		const thing_id = Identifiable.newID();
+		const title = dict['Title'];
+		const trait = this.trait_remember_runtimeCreate(this.db.idBase, Identifiable.newID(), thing_id, E_Trait.csv, dict['Description']);
+		const thing = this.thing_remember_runtimeCreate(this.db.idBase, thing_id, title, 'black');		// create a Thing for each dict
+		this.thing_byTitle[title] = thing;
+		trait.dict = dict;																		// save the rest of the dict (including parent 1 link) in the new Trait
 	}
 
 	async extract_fromDict(dict: Dictionary) {

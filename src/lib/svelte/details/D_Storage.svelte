@@ -12,6 +12,7 @@
 	export let top = 0;
 	const buttons_top = 138;
 	const button_style = `font-family: ${$w_thing_fontFamily}; font-size:0.85em; left: 5px; top: -2px; position: absolute;`;
+	const db_ids = [E_Database.local, E_Database.firebase, E_Database.airtable, E_Database.test];
 	const format_ids = [E_Format.csv, E_Format.json, E_Format.cancel];
     const font_sizes = [k.font_size.smallest, k.font_size.smaller];
 	const storage_ids = [E_Storage.import, E_Storage.export];
@@ -88,10 +89,10 @@
 			padding:5px;'>
 		<Segmented
 			name='db'
+			titles={db_ids}
 			selected={[$w_e_database]}
 			origin={new Point(17, top + 3)}
-			selection_closure={selection_closure}
-			titles={[E_Database.local, E_Database.firebase, E_Database.airtable, E_Database.test]}/>
+			selection_closure={selection_closure}/>
 		<div class='data-information'
 			style='
 				width:{k.width_details}px;

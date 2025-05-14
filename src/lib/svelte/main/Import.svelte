@@ -1,6 +1,6 @@
 <script lang='ts'>
+	import { k, ux, Point, layout } from '../../ts/common/Global_Imports';
 	import { w_hierarchy, w_popupView_id } from '../../ts/common/Stores';
-	import { k, ux, Point } from '../../ts/common/Global_Imports';
 	import { files } from '../../ts/managers/Files';
 	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';
@@ -25,6 +25,7 @@
 			$w_hierarchy.fetch_fromFile(files[0]);
 		}
 		target.value = k.empty;		// allow re-selection of the same file, MUST do this AFTER fetch
+		layout.grand_build();
 		dismiss_popup();
 	}
 

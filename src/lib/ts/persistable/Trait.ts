@@ -1,6 +1,7 @@
 import { k, Persistable, Thing, databases, E_Trait } from '../common/Global_Imports';
-import { w_hierarchy } from '../common/Stores';
 import { E_Persistable } from '../database/DBCommon';
+import type { Dictionary } from '../common/Types';
+import { w_hierarchy } from '../common/Stores';
 import { get } from 'svelte/store';
 import Airtable from 'airtable';
 
@@ -8,6 +9,7 @@ export default class Trait extends Persistable {
 	e_trait: E_Trait = E_Trait.generic;
 	ownerID: string = k.empty;
 	text: string = k.empty;
+	dict: Dictionary = {};
 
 	constructor(idBase: string, id: string, ownerID: string, e_trait: E_Trait, text: string = k.empty, already_persisted: boolean = false) {
 		super(databases.db_now.e_database, idBase, E_Persistable.traits, id, already_persisted);

@@ -193,6 +193,7 @@ export enum E_Trait {
 	quest		= 'quest',
 	note		= 'note',
 	date		= 'date',
+	csv			= 'csv',
 	sum			= 'sum',
 }
 
