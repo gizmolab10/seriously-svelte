@@ -133,15 +133,33 @@ export default class SVG_Paths {
 	}
 
 	tinyDots_circular(diameter: number, count: Integer, points_right: boolean ): string {
+		const halfCircular = (count: Integer, dot_size: number, isBig: boolean = false): string => {
+			return this.tinyDots_halfCircular(diameter, count, points_right, dot_size, isBig);
+		};
 		if (count < 10) {
 			return this.tinyDots_fullCircular(diameter, count, points_right);
 		} else {
-			const small = count % 10 as Integer;
-			const big = (count - small) / 10 as Integer;
-			if (small == 0) {
-				return this.tinyDots_fullCircular(diameter, big, points_right, 4);
+			const hundreds = Math.floor(count / 100) as Integer;
+			const tens = Math.floor((count - hundreds * 100) / 10) as Integer;
+			const ones = count % 10 as Integer;
+			const small = 1.25;
+			const huge = 5;
+			const big = 2.5;
+			if (ones == 0) {
+				if (tens == 0) {
+					return this.tinyDots_fullCircular(diameter, hundreds, points_right, huge);
+				} else if (hundreds == 0) {
+					return this.tinyDots_fullCircular(diameter, tens, points_right, big);
+				} else {
+					return halfCircular(tens, big) + halfCircular(hundreds, huge, true);
+				}
+			} else if (tens == 0) {
+				return halfCircular(ones, small) + halfCircular(hundreds, huge, true);
+			} else if (hundreds == 0) {
+				return halfCircular(ones, small) + halfCircular(tens, big, true);
+			} else {
+				return halfCircular(tens, big) + halfCircular(hundreds, huge, true);
 			}
-			return this.tinyDots_halfCircular(diameter, small, points_right, false) + this.tinyDots_halfCircular(diameter, big, points_right, true);
 		}
 	}
 
@@ -152,18 +170,17 @@ export default class SVG_Paths {
 		const radius = diameter / 3;
 		const isOdd = (count % 2) != 0;
 		const increment = Math.PI * 2 / count;
-		const radial = new Point(isOdd ? radius : 0, isOdd ? 0 : radius).rotate_by(points_right ? 0 : Math.PI);
+		const radial = (isOdd ?  Point.y(radius) : Point.x(radius)).rotate_by(points_right ? 0 : Math.PI);
 		return this.tinyDots(diameter, dot_size, increment, count, radial);
 	}
 
-	tinyDots_halfCircular(diameter: number, count: Integer, points_right: boolean, isBig: boolean): string {
+	tinyDots_halfCircular(diameter: number, count: Integer, points_right: boolean, dot_size: number, isBig: boolean = false): string {
 		if (count == 0) {
 			return k.empty;
 		}
 		const radius = diameter / 3;
-		const dot_size = isBig ? 4 : 2;
 		const increment = Math.PI / count;
-		let radial = new Point(0, (isBig == points_right) ? -radius : radius).rotate_by(increment / 2);
+		let radial = Point.y((isBig == points_right) ? -radius : radius).rotate_by(increment / 2);
 		return this.tinyDots(diameter, dot_size, increment, count, radial);
 	}
 

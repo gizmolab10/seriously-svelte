@@ -125,8 +125,8 @@ export default class Ancestry extends Identifiable {
 		const isVisible_forChild = this.hasChildren && show.children_dots && (in_radial_mode ? true : !this.isExpanded);
 		const isVisible_inRadial = points_toChild ? isVisible_forChild : this.hasParents && (this.isBidirectional ? show.related_dots : show.parent_dots);
 		const show_outside_tinyDots = in_radial_mode ? isVisible_inRadial : isVisible_forChild;
-		const outside_tinyDots_count = this.relationships_count_forChildren(points_toChild);
-		return !show_outside_tinyDots ? null : svgPaths.tinyDots_circular(k.diameterOf_outer_tinyDots + 4, outside_tinyDots_count as Integer, this.points_right);
+		const tinyDots_count = this.relationships_count_forChildren(points_toChild);
+		return !show_outside_tinyDots ? null : svgPaths.tinyDots_circular(k.diameterOf_outer_tinyDots + 4, tinyDots_count as Integer, this.points_right);
 	}
 
 	static readonly _____BIDIRECTIONALS: unique symbol;

@@ -1394,26 +1394,25 @@ export class Hierarchy {
 		const trait = this.trait_remember_runtimeCreate(this.db.idBase, Identifiable.newID(), thing_id, E_Trait.csv, dict['Description']);
 		if (['TEAM LIBRARY', 'MEMBER LIBRARY'].includes(title)) {		// these two things are roots in airtable, directly add them to our root
 			this.relationship_remember_runtimeCreateUnique(this.db.idBase, Identifiable.newID(), E_Predicate.contains, this.root.id, thing_id, 0);
-		} else {
-			this.thing_byTitle[title] = thing;
-			trait.dict = dict;											// save the rest of the dict (including parent 1 link) in the new Trait																	// save the rest of the dict (including parent 1 link) in the new Trait
 		}
+		this.thing_byTitle[title] = thing;
+		trait.dict = dict;												// save the rest of the dict (including parent 1 link) in the new Trait																	// save the rest of the dict (including parent 1 link) in the new Trait
 	}
 
 	async extract_fromDict(dict: Dictionary) {
-		const idRoot = dict.id ?? dict.hid ?? dict.idRoot;			// cheapo backwards compatibility
-		if (this.replace_rootID == null) {
-			this.objects_ofAllTypes_extract_fromDict(dict);			// extract
-			const child = this.thing_forHID(idRoot.hash());			// relationship: adds it as child to the grab or focus
+		const idRoot = dict.id ?? dict.hid ?? dict.idRoot;				// cheapo backwards compatibility
+		if (this.replace_rootID == null) {	
+			this.objects_ofAllTypes_extract_fromDict(dict);				// extract
+			const child = this.thing_forHID(idRoot.hash());				// relationship: adds it as child to the grab or focus
 			await this.user_selected_ancestry.ancestry_persistentCreateUnique_byAddingThing(child);
-		} else {													// on launch or import with SHIFT-O
-			this.forget_all();										// retain predicates: same across all dbs
-			await this.db.remove_all();								// firebase deletes document (called dbid/name)
-			this.thing_remember(this.root);							// retain root (note: only db local replaces it's title)
-			this.replace_rootID = idRoot;
-			this.objects_ofAllTypes_extract_fromDict(dict);
-			await this.wrapUp_data_forUX();
-			await this.db.persist_all(true);						// true means force (overrides isDirty) persists all of what was retained
+		} else {														// on launch or import with SHIFT-O
+			this.forget_all();											// retain predicates: same across all dbs
+			await this.db.remove_all();									// firebase deletes document (called dbid/name)
+			this.thing_remember(this.root);								// retain root (note: only db local replaces it's title)
+			this.replace_rootID = idRoot;	
+			this.objects_ofAllTypes_extract_fromDict(dict);	
+			await this.wrapUp_data_forUX();	
+			await this.db.persist_all(true);							// true means force (overrides isDirty) persists all of what was retained
 		}
 		layout.grand_build();
 	}
@@ -1512,7 +1511,7 @@ export class Hierarchy {
 				}
 			}
 		}
-		await this.cleanup_lost_and_found();  // Make sure we await this
+		// await this.cleanup_lost_and_found();  // Make sure we await this
 	}
 
 }
