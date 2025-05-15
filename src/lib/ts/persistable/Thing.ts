@@ -26,6 +26,7 @@ export default class Thing extends Persistable {
 	get traits():				Array		 <Trait> { return get(w_hierarchy).traits_forOwnerHID(this.hid) ?? []; }
 	get parentIDs():			Array		<string> { return this.parents.map(t => t.id); }
 	get ancestries():		 	Array	  <Ancestry> { return this.ancestries_forPredicate(Predicate.contains); }
+	get childRelationships():	Array <Relationship> { return this.relationships_ofKind_forParents(E_Predicate.contains, false); }
 	get relatedRelationships(): Array <Relationship> { return this.relationships_ofKind_forParents(E_Predicate.isRelated, false); }
 	get fields():		  		Dictionary  <string> { return { title: this.title, color: this.color, type: this.e_thing }; }
 	get quest():					   string | null { return get(w_hierarchy).trait_forType_ownerHID(E_Trait.quest, this.hid)?.text ?? null; }
@@ -151,7 +152,9 @@ export default class Thing extends Persistable {
 
 	static readonly _____ANCESTRIES: unique symbol;
 
-	get ancestry(): Ancestry | null {
+	get ancestry(): Ancestry { return this.ancestries[0]; }
+
+	get ancestry_maybe(): Ancestry | null {
 		const ancestries = get(w_hierarchy).ancestries_forThing(this);
 		return ancestries.length > 0 ? ancestries[0] : null;
 	}

@@ -8,7 +8,7 @@
 	import Identifiable from '../../ts/runtime/Identifiable';
 	export let es_button: S_Element = S_Element.empty();
 	export let closure: Handle_Result<S_Mouse>;
-	export let font_size = k.font_size.thing;
+	export let font_size = k.font_size.common;
 	export let origin: Point | null = null;
 	export let center: Point | null = null;
 	export let padding = '0px 6px 1px 6px';

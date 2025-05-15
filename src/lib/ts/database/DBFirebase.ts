@@ -292,14 +292,14 @@ export default class DBFirebase extends DBCommon {
 			const jsThing = { ...remoteThing };
 			this.addedThing = thing;
 			this.deferSnapshots = true;
-			thing.persistence.awaitingCreation = true;
+			thing.persistence.awaiting_remoteCreation = true;
 			try {
 				const ref = await addDoc(thingsCollection, jsThing);
 				this.hierarchy.thing_remember_updateID_to(thing, ref.id);
 			} catch (error) {
 				this.reportError(error);
 			}
-			thing.persistence.awaitingCreation = false;
+			thing.persistence.awaiting_remoteCreation = false;
 			thing.persistence.already_persisted = true;
 			await this.handle_deferredSnapshots();
 			thing.log(E_Debug.remote, 'CREATE T');
@@ -435,9 +435,9 @@ export default class DBFirebase extends DBCommon {
 			this.addedTrait = trait;
 			try {
 				this.deferSnapshots = true;
-				trait.persistence.awaitingCreation = true;
+				trait.persistence.awaiting_remoteCreation = true;
 				const ref = await addDoc(traitsCollection, jsTrait)
-				trait.persistence.awaitingCreation = false;
+				trait.persistence.awaiting_remoteCreation = false;
 				trait.persistence.already_persisted = true;
 				const h = this.hierarchy;
 				h.trait_forget(trait);
@@ -520,9 +520,9 @@ export default class DBFirebase extends DBCommon {
 			const jsPredicate = { ...remotePredicate };
 			try {
 				this.deferSnapshots = true;
-				predicate.persistence.awaitingCreation = true;
+				predicate.persistence.awaiting_remoteCreation = true;
 				const ref = await addDoc(predicatesCollection, jsPredicate);
-				predicate.persistence.awaitingCreation = false;
+				predicate.persistence.awaiting_remoteCreation = false;
 				predicate.persistence.already_persisted = true;
 				const h = this.hierarchy;
 				h.predicate_forget(predicate);
@@ -590,7 +590,7 @@ export default class DBFirebase extends DBCommon {
 			const jsRelationship = { ...remoteRelationship };
 			const h = this.hierarchy;
 			this.deferSnapshots = true;
-			relationship.persistence.awaitingCreation = true;
+			relationship.persistence.awaiting_remoteCreation = true;
 			try {
 				const ref = await addDoc(relationshipsCollection, jsRelationship);
 				h.relationship_forget(relationship);
@@ -599,7 +599,7 @@ export default class DBFirebase extends DBCommon {
 			} catch (error) {
 				this.reportError(error);
 			}
-			relationship.persistence.awaitingCreation = false;
+			relationship.persistence.awaiting_remoteCreation = false;
 			relationship.persistence.already_persisted = true;
 			await this.handle_deferredSnapshots();
 			relationship.log(E_Debug.remote, 'CREATE R');

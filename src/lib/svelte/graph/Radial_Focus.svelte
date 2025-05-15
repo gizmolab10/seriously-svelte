@@ -7,7 +7,6 @@
 	import Widget_Title from '../widget/Widget_Title.svelte';
 	import { onMount } from 'svelte';
 	const height = k.height.row + 1;
-	const fontSize = `{k.font_size.thing}px`;
 	const es_title = ux.s_element_for($w_ancestry_focus, E_Element.radial_focus, k.empty);
 	let svg_strokeColor = 'transparent';
 	let svg_fillColor = 'transparent';
@@ -113,9 +112,9 @@
 			position : absolute;
 			background-color : {$w_background_color};'>
 		<Widget_Title
+			fontSize = {k.font_size.common}px
 			ancestry = {$w_ancestry_focus}
 			origin = {origin_ofTitle}
-			name = {es_title.name}
-			fontSize = {fontSize}/>
+			name = {es_title.name}/>
 	</div>
 </div>

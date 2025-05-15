@@ -7,9 +7,12 @@ declare global {
 		html_encode(): string;
 		unCamelCase(): string;
 		removeWhiteSpace(): string;
+		encode_as_property(): string;
+		decode_from_property(): string;
 		injectEllipsisAt(at: number): string;
 		clipWithEllipsisAt(at: number): string;
 		fontSize_relativeTo(base: number): number;
+		removeOccurencesOf(characters: string): string;
 		beginWithEllipsis_forLength(length: number): string;
 	}
 }
@@ -25,7 +28,37 @@ Object.defineProperty(String.prototype, 'unCamelCase', {
 
 Object.defineProperty(String.prototype, 'removeWhiteSpace', {
 	value: function(): string {
-		return this.split('\n').join(' ').split('\t').join('');
+		return this.split('\n').join(' ').split('\t').join('').trim();
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
+});
+
+Object.defineProperty(String.prototype, 'encode_as_property', {
+	value: function(): string {
+		// in ts, hyphens and parentheses are not allowed in property names
+		return this.removeWhiteSpace().split('-').join('$$$').split('(').join('$$').split(')').join('$');
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
+});
+
+Object.defineProperty(String.prototype, 'decode_from_property', {
+	value: function(): string {
+		return this.split('$$$').join('-').split('$$').join('(').split('$').join(')');
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
+});
+
+Object.defineProperty(String.prototype, 'removeOccurencesOf', {
+	value: function(characters: string): string {
+		if (!characters) return this;
+		const pattern = new RegExp(`^[${characters}]+|[${characters}]+$`, 'g');
+		return this.replace(pattern, '').trim();
 	},
 	writable: false,
 	enumerable: false,

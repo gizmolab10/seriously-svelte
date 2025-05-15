@@ -1,6 +1,6 @@
 import { Trait, Thing, Hierarchy, Predicate, Relationship } from '../common/Global_Imports';
+import { c, p, u, debug, layout, databases } from '../common/Global_Imports';
 import { E_Thing, E_Startup, E_Preference } from '../common/Global_Imports';
-import { c, p, u, debug, layout } from '../common/Global_Imports';
 import { w_hierarchy, w_e_startup } from '../common/Stores';
 import Persistable from '../persistable/Persistable';
 import type { Dictionary } from '../common/Types';
@@ -75,7 +75,9 @@ export default class DBCommon {
 			await this.persist_maybe_all_identifiables(force, h.predicates);
 			await this.persist_maybe_all_identifiables(force, h.relationships);
 		}
-		this.persist_all_toLocal();
+		if (!databases.defer_persistence) {
+			this.persist_all_toLocal();
+		}
 	}
 
 	async persist_maybe_all_identifiables(force: boolean = false, identifiables: Array<Persistable>) {

@@ -4,7 +4,7 @@
 	import { files } from '../../ts/managers/Files';
 	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';
-	export let accept: string = files.format_preference;
+	export let accept: string = '.' + files.format_preference;
 	export let multiple = k.empty;		// can be set to 'multiple'
 	let file_input: HTMLInputElement;
 	
@@ -22,7 +22,7 @@
 		const target = event.target as HTMLInputElement;
 		const files = target?.files;
 		if (!!files && files.length > 0) {
-			$w_hierarchy.fetch_fromFile(files[0]);
+			$w_hierarchy.fetch_andBuild_fromFile(files[0]);
 		}
 		target.value = k.empty;		// allow re-selection of the same file, MUST do this AFTER fetch
 		layout.grand_build();

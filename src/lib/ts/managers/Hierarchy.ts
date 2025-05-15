@@ -1,5 +1,5 @@
 import { w_storage_updated, w_s_alteration, w_ancestries_grabbed } from '../common/Stores';
-import { E_Report, E_Control, E_Predicate, E_Alteration } from '../common/Global_Imports';
+import { E_Report, E_Control, E_Predicate, E_Alteration, databases } from '../common/Global_Imports';
 import { E_Thing, E_Trait, E_Order, E_Create, E_Format } from '../common/Global_Imports';
 import { Access, Ancestry, Predicate, Relationship } from '../common/Global_Imports';
 import { w_popupView_id, w_ancestry_focus, w_s_title_edit } from '../common/Stores';
@@ -29,8 +29,8 @@ export class Hierarchy {
 	private relationships_byChildHID: Relationships_ByHID = {};
 	private ancestry_byHID:{ [hid: Integer]: Ancestry } = {};
 	private access_byKind: { [kind: string]: Access } = {};
-	private thing_byTitle: { [title: string]: Thing } = {};
 	private access_byHID: { [hid: Integer]: Access } = {};
+	private thing_byTitle: { [name: string]: Thing } = {};
 	private thing_byHID: { [hid: Integer]: Thing } = {};
 	private trait_byHID: { [hid: Integer]: Trait } = {};
 	private user_byHID: { [hid: Integer]: User } = {};
@@ -168,16 +168,6 @@ export class Hierarchy {
 	static readonly _____THING: unique symbol;
 	
 	thing_forHID(hid: Integer): Thing | null { return this.thing_byHID[hid ?? undefined]; }
-
-	async thing_lost_and_found_persistentCreateUnique(): Promise<Thing> {
-		const founds = this.things_byType[E_Thing.found];
-		if (!!founds && founds.length > 0) {
-			return founds[0];
-		}
-		const lost_and_found = this.thing_remember_runtimeCreateUnique(this.db.idBase, Identifiable.newID(), 'lost and found', colors.default, E_Thing.found);
-		await this.rootAncestry.ancestry_persistentCreateUnique_byAddingThing(lost_and_found);
-		return lost_and_found;
-	}
 
 	thing_remember_updateID_to(thing: Thing, idTo: string) {
 		const idFrom = thing.id;
@@ -510,17 +500,6 @@ export class Hierarchy {
 		return true;
 	}
 
-	async relationships_lostAndFound_persistentCreate(idBase: string) {
-		for (const thing of this.things) {
-			if (!thing.isRoot && !this.relationship_whereHID_isChild(thing.hid) && thing.idBase == idBase && !!this.idRoot) {			// add orphaned things to root
-				const lost_and_found = await this.thing_lost_and_found_persistentCreateUnique();
-				const parentOrder = lost_and_found.ancestry?.childAncestries?.length ?? 0;
-				await this.relationship_remember_persistentCreateUnique(idBase, Identifiable.newID(),
-					E_Predicate.contains, lost_and_found.id, thing.id, 0, parentOrder, E_Create.getPersistentID);
-			}
-		}
-	}
-
 	relationships_forKindPredicate_hid_thing_isChild(kind: string, hid: Integer, forParents: boolean): Array<Relationship> {
 		const dict = forParents ? this.relationships_byChildHID : this.relationships_byParentHID;
 		const matches = dict[hid] as Array<Relationship>; // filter out bad values (dunno what this does)
@@ -820,7 +799,13 @@ export class Hierarchy {
 	static readonly _____ANCESTRY: unique symbol;
 	
 	ancestry_forHID(hid: Integer): Ancestry | null { return this.ancestry_byHID[hid] ?? null; }
-	ancestries_forThing(thing: Thing): Array<Ancestry> { return this.ancestries_byThingHID[thing.hid] ?? []; }	
+	ancestries_forThing(thing: Thing): Array<Ancestry> { return this.ancestries_byThingHID[thing.hid] ?? []; }
+
+	async ancestry_persistentCreateUnique(name: string, parent: Ancestry, e_thing: E_Thing): Promise<Ancestry | null> {
+		const thing = this.thing_remember_runtimeCreateUnique(this.db.idBase, name, name, colors.default, e_thing);
+		const ancestry = await parent.ancestry_persistentCreateUnique_byAddingThing(thing);
+		return ancestry ?? null;
+	}
 
 	ancestry_remember(ancestry: Ancestry) {
 		const hid = ancestry.hid;
@@ -1263,8 +1248,10 @@ export class Hierarchy {
 		}
 	}
 
-	async fetch_fromFile(file: File) {
-		await files.fetch_fromFile(file, async (result) => {
+	async fetch_andBuild_fromFile(file: File) {
+		databases.defer_persistence = true;
+		try {
+			const result = await files.fetch_fromFile(file);
 			switch (files.format_preference) {
 				case E_Format.csv:
 					const array = result as Array<Dictionary>;
@@ -1279,9 +1266,11 @@ export class Hierarchy {
 						await this.extract_fromDict(dict);
 					}
 					break;
-				}
-			this.db.persist_all(true);
-		}, async (error) => {});
+			}
+		} finally {
+			databases.defer_persistence = false;					// assure we can now write anything dirty to the db
+			await this.db.persist_all(true);
+		}
 	}
 
 	get user_selected_ancestry(): Ancestry {
@@ -1346,35 +1335,49 @@ export class Hierarchy {
 		return data;
 	}
 
-	static readonly _____BUILD: unique symbol;
+	static readonly _____LOST_AND_FOUND: unique symbol;
 
-	restore_fromPreferences() {
-		this.stop_alteration();
-		p.restore_grabbed();	// must precede restore_focus (which alters grabbed and expanded)
-		p.restore_paging();
-		layout.restore_expanded();
-		layout.restore_focus();
-		this.isAssembled = true;
+	async lost_and_found(): Promise<Thing | null> {
+		const ancestry = await this.ancestry_lost_and_found();
+		return ancestry?.thing ?? null;
 	}
 
-	async wrapUp_data_forUX() {
-		this.assure_root_andAncestry();
-		// await this.relationships_lostAndFound_persistentCreate(this.db.idBase);
-		// await this.relationships_removeHavingNullReferences();
-		this.restore_fromPreferences();
-		this.signal_storage_redraw();
+	async ancestry_lost_and_found(): Promise<Ancestry | null> {
+		const found = this.things_byType[E_Thing.found];
+		if (!!found && found.length > 0) {
+			return found[0].ancestry;		// force creation
+		}
+		return await this.ancestry_persistentCreateUnique('lost and found', this.rootAncestry, E_Thing.found);
 	}
 
-	async create_relationship_forAllTraits() {
-		// for each trait that has a dict containing a parent 1 link
-		for (const trait of this.traits) {
-			const dict = trait.dict;
-			if (!!dict) {
-				const title = dict['parent 1 link'];
-				if (!!title) {
-					const parent = this.thing_byTitle[title] ?? this.root;
-					const relationship = this.relationship_remember_runtimeCreateUnique(this.db.idBase, Identifiable.newID(), E_Predicate.contains, parent.id, trait.ownerID, 0);
-					relationship.set_isDirty();
+	async relationships_lostAndFound_persistentCreate(idBase: string) {
+		for (const thing of this.things) {			// add orphaned things to lost_and_found
+			if (!thing.isRoot && !this.relationship_whereHID_isChild(thing.hid) && thing.idBase == idBase && !!this.idRoot) {
+				const lost_and_found = await this.lost_and_found();
+				if (!!lost_and_found) {
+					const parentOrder = lost_and_found.ancestry?.childAncestries?.length ?? 0;
+					await this.relationship_remember_persistentCreateUnique(idBase, Identifiable.newID(),
+						E_Predicate.contains, lost_and_found.id, thing.id, 0, parentOrder, E_Create.getPersistentID);
+				}
+			}
+		}
+	}
+
+	async cleanup_lost_and_found() {
+		const lost_and_found = await this.lost_and_found();
+		if (!!lost_and_found) {
+			const lost_and_found_ancestry = lost_and_found.ancestry;
+			for (const child_zncestry of lost_and_found_ancestry.childAncestries) {
+				const grandChildren_count = child_zncestry.childRelationships.length ?? 0;
+				const child_relationship = child_zncestry.relationship;
+				if (!!child_relationship) {
+					const clump_name = grandChildren_count == 0 ? 'leaves' : 'crowds';
+					const clump_ancestry = await this.ancestry_persistentCreateUnique(clump_name, lost_and_found_ancestry, E_Thing.generic);
+					const idParent = clump_ancestry?.thing?.id;
+					if (!!idParent) {
+						child_relationship.idParent = idParent;
+						child_relationship.set_isDirty();
+					}
 				}
 			}
 		}
@@ -1382,14 +1385,19 @@ export class Hierarchy {
 
 	async extract_fromCSV_Dict(dict: Dictionary) {
 		// each dict represents a Thing, which has a title, name, description and parent 1 link
-		// later, create a Relationship for each trait that has a dict containing a parent 1 link
+		// later, in create_relationship_forAllTraits, above ...
+		// ... create a Relationship for each trait that has a dict containing a parent 1 link
 		// TODO: what is the parent 2 link?
 		const thing_id = Identifiable.newID();
-		const title = dict['Title'];
-		const trait = this.trait_remember_runtimeCreate(this.db.idBase, Identifiable.newID(), thing_id, E_Trait.csv, dict['Description']);
+		const title = dict['Title'].removeWhiteSpace();					// TODO: for remote db we need the thing id from the server
 		const thing = this.thing_remember_runtimeCreate(this.db.idBase, thing_id, title, 'black');		// create a Thing for each dict
-		this.thing_byTitle[title] = thing;
-		trait.dict = dict;																		// save the rest of the dict (including parent 1 link) in the new Trait
+		const trait = this.trait_remember_runtimeCreate(this.db.idBase, Identifiable.newID(), thing_id, E_Trait.csv, dict['Description']);
+		if (['TEAM LIBRARY', 'MEMBER LIBRARY'].includes(title)) {		// these two things are roots in airtable, directly add them to our root
+			this.relationship_remember_runtimeCreateUnique(this.db.idBase, Identifiable.newID(), E_Predicate.contains, this.root.id, thing_id, 0);
+		} else {
+			this.thing_byTitle[title] = thing;
+			trait.dict = dict;											// save the rest of the dict (including parent 1 link) in the new Trait																	// save the rest of the dict (including parent 1 link) in the new Trait
+		}
 	}
 
 	async extract_fromDict(dict: Dictionary) {
@@ -1470,6 +1478,41 @@ export class Hierarchy {
 			}
 		}
 		return maximum;
+	}
+
+	static readonly _____BUILD: unique symbol;
+
+	restore_fromPreferences() {
+		this.stop_alteration();
+		p.restore_grabbed();	// must precede restore_focus (which alters grabbed and expanded)
+		p.restore_paging();
+		layout.restore_expanded();
+		layout.restore_focus();
+		this.isAssembled = true;
+	}
+
+	async wrapUp_data_forUX() {
+		this.assure_root_andAncestry();
+		// await this.relationships_lostAndFound_persistentCreate(this.db.idBase);
+		// await this.relationships_removeHavingNullReferences();
+		this.restore_fromPreferences();
+		this.signal_storage_redraw();
+	}
+
+	async create_relationship_forAllTraits() {
+		// for each trait that has a dict containing a parent 1 link
+		for (const trait of this.traits) {
+			const dict = trait.dict;
+			if (!!dict) {
+				const title = dict['parent 1 link'];
+				if (!!title) {
+					const lost_and_found = await this.lost_and_found();
+					const parent = this.thing_byTitle[title.removeWhiteSpace()] ?? lost_and_found;
+					this.relationship_remember_runtimeCreateUnique(this.db.idBase, Identifiable.newID(), E_Predicate.contains, parent.id, trait.ownerID, 0);
+				}
+			}
+		}
+		await this.cleanup_lost_and_found();  // Make sure we await this
 	}
 
 }

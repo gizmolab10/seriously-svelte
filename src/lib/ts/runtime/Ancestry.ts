@@ -689,6 +689,27 @@ export default class Ancestry extends Identifiable {
 		}
 	}
 
+	ancestry_remember_createUnique_byAddingThing(thing: Thing | null, kind: E_Predicate = E_Predicate.contains): Ancestry | null {
+		const h = this.hierarchy;
+		const parent = this.thing;
+		let ancestry: Ancestry | null = null;
+		if (!!thing && !!parent) {
+			const changingBulk = parent.isBulkAlias || thing.idBase != h.db.idBase;
+			const idBase = changingBulk ? thing.idBase : parent.idBase;
+			const parentOrder = this.childAncestries?.length ?? 0;
+			const relationship = h.relationship_remember_createUnique(idBase, Identifiable.newID(), kind, parent.idBridging, thing.id, 0, parentOrder, E_Create.getPersistentID);
+			ancestry = this.ancestry_createUnique_byAppending_relationshipID(relationship.id);
+			u.ancestries_orders_normalize(this.childAncestries, true);			// write new order values for relationships
+			if (kind != E_Predicate.contains) {									// if isBidirectional, we need to create the reversed relationship
+				const reversed = relationship?.reversed_remember_createUnique;	// do not persist, it is automatically recreated on all subsequennt launches
+				if (!!reversed) {												// use relationship's id alone, since it is an isRelated kind
+					h.ancestry_remember_createUnique(relationship.id, kind);			
+				}
+			}
+		}
+		return ancestry;
+	}
+
 	async ancestry_persistentCreateUnique_byAddingThing(thing: Thing | null, kind: E_Predicate = E_Predicate.contains): Promise<Ancestry | null | undefined> {
 		const h = this.hierarchy;
 		const parent = this.thing;

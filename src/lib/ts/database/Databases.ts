@@ -12,6 +12,7 @@ import DBCommon from '../database/DBCommon';
 // w_hierarchy is set to its hierarchy
 
 export default class Databases {
+	defer_persistence: boolean = false;
 	db_now: DBCommon;
 
 	queryStrings_apply() {

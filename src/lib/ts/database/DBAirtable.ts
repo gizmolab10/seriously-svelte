@@ -91,7 +91,7 @@ export default class DBAirtable extends DBCommon {
 		try {
 			const dict = await this.things_table.create(thing.fields);
 			thing.persistence.already_persisted = true;		// was saved by create (the line above)
-			thing.persistence.awaitingCreation = false;
+			thing.persistence.awaiting_remoteCreation = false;
 			this.hierarchy.thing_remember_updateID_to(thing, dict['id']);
 		} catch (error) {
 			thing.log(E_Debug.remote, this.things_errorMessage + error);

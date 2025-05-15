@@ -7,7 +7,7 @@ export default class S_Persistence {
 	e_persistable: E_Persistable;
 	lastModifyDate = new Date();
 	already_persisted = false;
-	awaitingCreation = false;
+	awaiting_remoteCreation = false;
 	needsBulkFetch = false;
 	e_database: string;
 	isDirty = false;
@@ -17,9 +17,9 @@ export default class S_Persistence {
 	get isPersistent(): boolean { return this.db?.isPersistent ?? false; }
 	get db(): DBCommon | null { return databases.db_forType(this.e_database); }
 
-	constructor(e_database: string, e_persistable: E_Persistable, id: string, already_persisted: boolean = false, awaitingCreation: boolean = false) {
+	constructor(e_database: string, e_persistable: E_Persistable, id: string, already_persisted: boolean = false, awaiting_remoteCreation: boolean = false) {
 		this.already_persisted = already_persisted;
-		this.awaitingCreation  = awaitingCreation;
+		this.awaiting_remoteCreation  = awaiting_remoteCreation;
 		this.e_persistable	   = e_persistable;
 		this.e_database		   = e_database;			// needed for this.isPersistent, used next
 		this.isDirty		   = this.isPersistent && !already_persisted;
@@ -37,7 +37,7 @@ export default class S_Persistence {
 
 	async persist_withClosure(closure: Async_Handle_Boolean) {
 		if (this.isPersistent) {
-			if (this.awaitingCreation) {
+			if (this.awaiting_remoteCreation) {
 				console.log(`awaiting creation ${this.e_persistable} ${this.id}`);
 			} else {
 				this.updateModifyDate();

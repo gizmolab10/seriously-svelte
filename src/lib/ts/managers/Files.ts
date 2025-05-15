@@ -19,57 +19,55 @@ export default class Files {
 	
 	static readonly _____READ: unique symbol;
 
-	async fetch_fromFile(file: File, onSuccess: Handle_Result, onFailure: Handle_Result) {
+	async fetch_fromFile(file: File): Promise<any> {
 		const format = this.format_preference;
 		switch (format) {
-			case E_Format.json:	return await this.extract_json_object_fromFile(file, onSuccess, onFailure);
-			case E_Format.csv:	return await this.extract_csv_records_fromFile(file, onSuccess, onFailure);
-			default:			onFailure(`Unsupported format: ${format}`); return;
+			case E_Format.json:	return await this.extract_json_object_fromFile(file);
+			case E_Format.csv:	return await this.extract_csv_records_fromFile(file);
+			default:			throw new Error(`Unsupported format: ${format}`);
 		}
 	}
 		
-	private async extract_json_object_fromFile(file: File, onSuccess: Handle_Result, onFailure: Handle_Result = (() => {})) {
+	private async extract_json_object_fromFile(file: File): Promise<any> {
 		return new Promise((resolve, reject) => {
 			const reader = new FileReader();
-			let object = new Object();
 			reader.onload = function (e) {
 				const result = (e.target?.result as string);
 				if (!result || result.length == 0) {
-					onFailure('Empty file.');
+					reject('Empty file.');
 				} else {
 					try {
-						object = JSON.parse(result);
-						onSuccess(object);
-						return { success: object };
+						const object = JSON.parse(result);
+						resolve(object);
 					} catch (error) {
-						onFailure(`Error parsing JSON: '${result}' ${(error as Error).message}`);
+						reject(`Error parsing JSON: '${result}' ${(error as Error).message}`);
 					}
 				}
 			};
 			reader.onerror = function () {
-				onFailure('Error reading file.');
+				reject('Error reading file.');
 			};
 			reader.readAsText(file);
 		});
 	}
 
-	private async extract_csv_records_fromFile(file: File, onSuccess: Handle_Result, onFailure: Handle_Result = (() => {})) {
+	private async extract_csv_records_fromFile(file: File): Promise<any> {
 		return new Promise((resolve, reject) => {
 			const reader = new FileReader();
 			reader.onload = function (e) {
 				const result = (e.target?.result as string);
 				if (!result || result.length == 0) {
-					onFailure('Empty file.');
+					reject('Empty file.');
 					return;
 				}
 				try {
-					const lines = result.split('\n').filter(line => line.trim().length > 0);	// Split the CSV content into lines and remove empty lines
+					const lines = result.split('\n').filter(line => line.trim().length > 0);
 					if (lines.length === 0) {
-						onFailure('No data found in CSV file.');
+						reject('No data found in CSV file.');
 						return;
 					}
-					const headers = lines[0].split(',').map(header => header.trim());			// Get headers from first line0
-					const records = lines.slice(1).map(line => {								// Parse remaining lines into records
+					const headers = lines[0].split(',').map(header => header.trim());
+					const records = lines.slice(1).map(line => {
 						const values = line.split(',').map(value => value.trim());
 						const record: Record<string, string> = {};
 						headers.forEach((header, index) => {
@@ -77,14 +75,13 @@ export default class Files {
 						});
 						return record;
 					});
-					onSuccess(records);
-					return { success: records };
+					resolve(records);
 				} catch (error) {
-					onFailure(`Error parsing CSV: ${(error as Error).message}`);
+					reject(`Error parsing CSV: ${(error as Error).message}`);
 				}
 			};
 			reader.onerror = function () {
-				onFailure('Error reading file.');
+				reject('Error reading file.');
 			};
 			reader.readAsText(file);
 		});
