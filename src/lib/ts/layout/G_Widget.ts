@@ -224,7 +224,7 @@ export default class G_Widget {
 			const widget_pointsRight = this.widget_pointsRight;
 			const width_ofReveal = show_reveal ? dot_size : 0;
 			const width_ofDrag = (dot_size * 2) + (layout.inTreeMode ? -4 : 2);
-			const width_ofWidget = ancestry.thing.width_ofTitle + width_ofDrag + width_ofReveal;
+			const width_ofWidget = ancestry.thing.width_ofTitle + width_ofDrag + width_ofReveal + (layout.inRadialMode ? 0 : 4);
 			const x_ofDrag_forPointsLeft = width_ofWidget - dot_size - 3 + (show_reveal ? 0.5 : 0);
 			const x_ofDrag = widget_pointsRight ? (layout.inRadialMode ? 3 : 2) : x_ofDrag_forPointsLeft;
 			const y_ofDrag = 2.7 + (layout.inRadialMode ? 0.1 : 0);
@@ -240,7 +240,7 @@ export default class G_Widget {
 			this.width_ofWidget = width_ofWidget;
 			if (show_reveal) {
 				const y_ofReveal = dot_size * 0.7;
-				const x_offset_forPointsRight = (layout.inRadialMode ? 0 : 1) + width_ofWidget - dot_size - 10;
+				const x_offset_forPointsRight = width_ofWidget - dot_size - 10;
 				const x_ofReveal = dot_size + (widget_pointsRight ? x_offset_forPointsRight : -3);
 				this.center_ofReveal = new Point(x_ofReveal, y_ofReveal);
 			}

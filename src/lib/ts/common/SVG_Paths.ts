@@ -142,9 +142,9 @@ export default class SVG_Paths {
 			const hundreds = Math.floor(count / 100) as Integer;
 			const tens = Math.floor((count - hundreds * 100) / 10) as Integer;
 			const ones = count % 10 as Integer;
-			const small = 1.25;
-			const huge = 5;
-			const big = 2.5;
+			const small = 1.5;
+			const big = small * 2;
+			const huge = small * 4;
 			if (ones == 0) {
 				if (tens == 0) {
 					return this.tinyDots_fullCircular(diameter, hundreds, points_right, huge);
@@ -168,9 +168,8 @@ export default class SVG_Paths {
 			return k.empty;
 		}
 		const radius = diameter / 3;
-		const isOdd = (count % 2) != 0;
 		const increment = Math.PI * 2 / count;
-		const radial = (isOdd ?  Point.y(radius) : Point.x(radius)).rotate_by(points_right ? 0 : Math.PI);
+		const radial = Point.x(radius).rotate_by(points_right ? 0 : Math.PI);
 		return this.tinyDots(diameter, dot_size, increment, count, radial);
 	}
 

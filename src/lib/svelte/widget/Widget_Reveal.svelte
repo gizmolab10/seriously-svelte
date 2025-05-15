@@ -11,7 +11,7 @@
     export let zindex = E_Layer.dots;
 	export let points_toChild = true;
     export let hover_isReversed = false;
-	const tinyDotsOffset = new Point(-5, -2.6);
+	const tinyDotsOffset = new Point(-5.4, -2.9);
 	const es_reveal = ux.s_element_forName(name);
 	const outer_diameter = k.diameterOf_outer_tinyDots;
 	const size_ofTinyDots = Size.width(3).expandedEquallyBy(outer_diameter)
