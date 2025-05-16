@@ -32,6 +32,7 @@
 	let thing_title = thing?.title;
 	let color_origin = Point.zero;
 	let picker_offset = k.empty;
+	let info_table: any;
 
 	layout.layout_tops_forInfo(3);
 	layout_forColor();	// must call layout_tops_forInfo first
@@ -39,6 +40,7 @@
 
 	$: $w_relationship_order, update_forAncestry();
 	$: $w_ancestries_grabbed, $w_ancestry_focus, $w_thing_title, update_forKind();
+	$: info_table, layout_forColor();
 
 	function hasGrabs(): boolean {
 		grabs = $w_ancestries_grabbed;
@@ -53,13 +55,11 @@
 	}
 	
 	function layout_forColor() {
-
-		// color origin is based on k.height.info.table
-		// needs to be computed from the cell's rect's origin
-
-		const color_left = 63
-		color_origin = new Point(color_left, layout.top_ofInfoAt(E_Info.color));
-		picker_offset = `${-color_left - 10}px`;
+		if (!!info_table) {
+			const row = Math.max(0, information.findIndex(([key]) => key === 'color'));
+			color_origin = info_table.location_ofCellAt(row, 1).offsetByXY(-9, 4 - layout.top_ofInfoAt(E_Info.title) - top);
+			picker_offset = `${4 - color_origin.x}px`;
+		}
 	}
 
 	function update_forKind() {
@@ -93,6 +93,7 @@
 				'color'	   : ancestry.isEditable ? k.empty : 'not editable',
 			};
 			information = Object.entries(dict);
+			layout_forColor();
 		}
 	}
 
@@ -162,6 +163,7 @@
 			<Text_Table
 				row_height={11}
 				array={information}
+				bind:this={info_table}
 				name='information-table'
 				width = {k.width_details - 20}
 				font_size={k.font_size.smaller}
