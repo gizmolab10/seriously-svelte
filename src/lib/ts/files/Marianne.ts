@@ -36,7 +36,8 @@ class Marianne {
 			if (!!dict) {
 				const parent_title = dict['parent 1 link']?.removeWhiteSpace();
 				if (!!parent_title) {
-					const parent = h.thing_forTitle(parent_title) ?? await h.lost_and_found();
+					const parents = h.things_forTitle(parent_title);
+					const parent = parents?.[0] ?? await h.lost_and_found();
 					if (!!parent) {
 						h.relationship_remember_runtimeCreateUnique(h.db.idBase, Identifiable.newID(), T_Predicate.contains, parent.id, trait.ownerID, 0);
 					}

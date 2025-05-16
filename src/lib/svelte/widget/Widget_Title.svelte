@@ -27,12 +27,14 @@
 	let cursor_style = k.empty;
 	let ghost = null;
 	let input = null;
+
 	
 	function isHit():					   boolean { return false }
 	function hasFocus():				   boolean { return document.activeElement === input; }
 	function ancestry_isEditing():		   boolean { return $w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.editing) ?? false; }
 	function ancestry_isEditStopping():	   boolean { return $w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.stopping) ?? false; }
 	function ancestry_isEditPercolating(): boolean { return $w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.percolating) ?? false; }
+	function border_bottom():				string { return (thing?.isFolder || thing?.isBookmark) ? `${thing?.isBookmark ? '1px dashed' : '1.5px solid'} ${color}` : k.empty; }
 	function title_extra():					number { return (layout.inTreeMode && ancestry_isEditing()) ? 2 : 0; }
 	function hasChanges()						   { return title_prior != title_binded; };
 	function handle_mouse_up()					   { clearClicks(); }
@@ -336,5 +338,6 @@
 			left : {origin_ofInput.x}px;
 			{k.prevent_selection_style};
 			background-color : transparent;
+			border-bottom: {border_bottom()};
 			font-family : {$w_thing_fontFamily};'/>
 </Mouse_Responder>

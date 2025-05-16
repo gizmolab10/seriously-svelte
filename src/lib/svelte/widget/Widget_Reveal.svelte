@@ -64,7 +64,7 @@
 
 	function svgPath_update() {
 		const thing = ancestry.thing;
-		const has_innerDot = thing.isBulkAlias | thing.isFolder;
+		const has_innerDot = thing.isBulkAlias;
 		offsetFor_innerDot = has_innerDot ? 0 : -1;
 		svgPathFor_revealDot = ancestry.svgPathFor_revealDot;
 		svgPathFor_outer_tinyDots = ancestry.svgPathFor_tinyDots_outsideReveal(points_toChild);

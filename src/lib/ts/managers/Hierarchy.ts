@@ -24,6 +24,7 @@ export class Hierarchy {
 	private relationship_byHID: { [hid: Integer]: Relationship } = {};
 	private traits_byType: { [t_trait: string]: Array<Trait> } = {};
 	private things_byType: { [t_thing: string]: Array<Thing> } = {};
+	private things_byTitle: { [title: string]: Array<Thing> } = {};
 	private predicate_byKind: { [kind: string]: Predicate } = {};
 	private thing_byAncestryHID: { [hid: Integer]: Thing } = {};
 	private relationships_byParentHID: Relationships_ByHID = {};
@@ -31,7 +32,6 @@ export class Hierarchy {
 	private ancestry_byHID:{ [hid: Integer]: Ancestry } = {};
 	private access_byKind: { [kind: string]: Access } = {};
 	private access_byHID: { [hid: Integer]: Access } = {};
-	private thing_byTitle: { [name: string]: Thing } = {};
 	private thing_byHID: { [hid: Integer]: Thing } = {};
 	private trait_byHID: { [hid: Integer]: Trait } = {};
 	private user_byHID: { [hid: Integer]: User } = {};
@@ -123,7 +123,7 @@ export class Hierarchy {
 	
 	static readonly _____THINGS: unique symbol;
 
-	thing_forTitle(title: string): Thing | null { return this.thing_byTitle[title] ?? null; }
+	things_forTitle(title: string): Array<Thing> | null { return this.things_byTitle[title] ?? null; }
 
 	things_refreshKnowns() {
 		const saved = this.things;
@@ -262,34 +262,38 @@ export class Hierarchy {
 
 	thing_forget(thing: Thing) {
 		const t_thing = thing.t_thing;
-		if (t_thing != T_Thing.root) {		// do NOT forget root
-			const thingsOfType = this.things_byType[t_thing];
+		if (t_thing != T_Thing.root) {		// must NOT forget root
+			const typed_things = this.things_byType[t_thing];
+			const titled_things = this.things_byTitle[thing.title];
 			delete this.thing_byHID[thing.hid];
 			this.things = Identifiable.remove_byHID<Thing>(this.things, thing);
-			if (!!thingsOfType) {
-				const validated = u.strip_invalid(thingsOfType);
-				if (validated.length == 0) {
-					delete this.things_byType[t_thing];
-				} else {
-					this.things_byType[t_thing] = validated;
-				}
+			if (!!typed_things) {
+				delete this.things_byType[t_thing];
+			}
+			if (!!titled_things) {
+				delete this.things_byTitle[thing.title];
 			}
 		}
 	}
 
 	thing_remember(thing: Thing) {
 		if (!!thing && !this.thing_forHID(thing.hid)) {
+			const typed_things = this.things_byType[thing.t_thing] ?? [];
+			const titled_things = this.things_byTitle[thing.title] ?? [];
 			this.thing_byHID[thing.hid] = thing;
-			let things = this.things_byType[thing.t_thing] ?? [];
-			if (!things.map(t => t.id).includes(thing.id)) {
-				things.push(thing);
-				this.things_byType[thing.t_thing] = things;
-			}
 			if (!this.things.map(t => t.id).includes(thing.id)) {
 				this.things.push(thing);
 			}
 			if (thing.isRoot && (!thing.idBase || [k.empty, this.db.idBase].includes(this.db.idBase))) {
 				this.root = thing;
+			}
+			if (!typed_things.map(t => t.id).includes(thing.id)) {
+				typed_things.push(thing);
+				this.things_byType[thing.t_thing] = typed_things;
+			}
+			if (!titled_things?.includes(thing)) {
+				titled_things.push(thing);
+				this.things_byTitle[thing.title] = titled_things;
 			}
 		}
 	}
@@ -1366,43 +1370,6 @@ export class Hierarchy {
 		}
 	}
 
-	async extract_fromCSV_Dict(dict: Dictionary) {
-		const thing = await marianne.extract_fromDict(dict);
-		this.thing_byTitle[thing.title] = thing;
-	}
-
-	async extract_fromDict(dict: Dictionary) {
-		const idRoot = dict.id ?? dict.hid ?? dict.idRoot;				// cheapo backwards compatibility
-		if (this.replace_rootID == null) {	
-			this.objects_ofAllTypes_extract_fromDict(dict);				// extract
-			const child = this.thing_forHID(idRoot.hash());				// relationship: adds it as child to the grab or focus
-			await this.user_selected_ancestry.ancestry_persistentCreateUnique_byAddingThing(child);
-		} else {														// on launch or import with SHIFT-O
-			this.forget_all();											// retain predicates: same across all dbs
-			await this.db.remove_all();									// firebase deletes document (called dbid/name)
-			this.thing_remember(this.root);								// retain root (note: only db local replaces it's title)
-			this.replace_rootID = idRoot;	
-			this.objects_ofAllTypes_extract_fromDict(dict);	
-			await this.wrapUp_data_forUX();	
-			await this.db.persist_all(true);							// true means force (overrides isDirty) persists all of what was retained
-		}
-		layout.grand_build();
-	}
-
-	objects_ofAllTypes_extract_fromDict(dict: Dictionary) {
-		for (const t_persistable of this.t_persistables) {
-			const subdicts = dict[t_persistable] as Array<Dictionary>;
-			for (const subdict of subdicts) {
-				switch(t_persistable) {
-					case T_Persistable.relationships: this.relationship_extract_fromDict(subdict); break;
-					case T_Persistable.predicates:	  this.predicate_extract_fromDict(subdict); break;
-					case T_Persistable.traits:		  this.trait_extract_fromDict(subdict); break;
-					case T_Persistable.things:		  this.thing_extract_fromDict(subdict); break;
-				}
-			}
-		}
-	}
-
 	static readonly _____REMEMBER: unique symbol;
 
 	forget_all() {
@@ -1452,6 +1419,40 @@ export class Hierarchy {
 	}
 
 	static readonly _____BUILD: unique symbol;
+
+	async extract_fromCSV_Dict(dict: Dictionary) { const thing = await marianne.extract_fromDict(dict); }
+
+	async extract_fromDict(dict: Dictionary) {
+		const idRoot = dict.id ?? dict.hid ?? dict.idRoot;				// cheapo backwards compatibility
+		if (this.replace_rootID == null) {	
+			this.extract_allTypes_ofObjects_fromDict(dict);				// extract
+			const child = this.thing_forHID(idRoot.hash());				// relationship: adds it as child to the grab or focus
+			await this.user_selected_ancestry.ancestry_persistentCreateUnique_byAddingThing(child);
+		} else {														// on launch or import with SHIFT-O
+			this.forget_all();											// retain predicates: same across all dbs
+			await this.db.remove_all();									// firebase deletes document (called dbid/name)
+			this.thing_remember(this.root);								// retain root (note: only db local replaces it's title)
+			this.replace_rootID = idRoot;	
+			this.extract_allTypes_ofObjects_fromDict(dict);	
+			await this.wrapUp_data_forUX();	
+			await this.db.persist_all(true);							// true means force (overrides isDirty) persists all of what was retained
+		}
+		layout.grand_build();
+	}
+
+	extract_allTypes_ofObjects_fromDict(dict: Dictionary) {
+		for (const t_persistable of this.t_persistables) {
+			const subdicts = dict[t_persistable] as Array<Dictionary>;
+			for (const subdict of subdicts) {
+				switch(t_persistable) {
+					case T_Persistable.relationships: this.relationship_extract_fromDict(subdict); break;
+					case T_Persistable.predicates:	  this.predicate_extract_fromDict(subdict); break;
+					case T_Persistable.traits:		  this.trait_extract_fromDict(subdict); break;
+					case T_Persistable.things:		  this.thing_extract_fromDict(subdict); break;
+				}
+			}
+		}
+	}
 
 	restore_fromPreferences() {
 		this.stop_alteration();
