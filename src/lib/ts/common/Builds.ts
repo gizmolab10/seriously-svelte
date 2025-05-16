@@ -110,7 +110,7 @@ export class Builds {
 		28 : ['August 21, 2023', 'synchronize title edits'],
 		27 : ['August 20, 2023', 'firebase relationships'],
 		26 : ['August 17, 2023', 'cloud abstraction layer'],
-		25 : ['August 15, 2023', 'switch between db E_Signal'],
+		25 : ['August 15, 2023', 'switch between db T_Signal'],
 		24 : ['August 15, 2023', 'bulk for private/public, shared predicates'],
 		23 : ['August 14, 2023', 'synchronization works, a goal 8 years long'],
 		22 : ['August 13, 2023', 'locally persist db type'],

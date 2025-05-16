@@ -1,7 +1,7 @@
-import { Thing, debug, E_Debug, E_Order, databases, Predicate, E_Predicate } from '../common/Global_Imports';
+import { Thing, debug, T_Debug, T_Order, databases, Predicate, T_Predicate } from '../common/Global_Imports';
 import { w_hierarchy, w_relationship_order } from '../common/Stores';
 import Persistable from '../persistable/Persistable';
-import { E_Persistable } from '../database/DBCommon';
+import { T_Persistable } from '../database/DBCommon';
 import Identifiable from '../runtime/Identifiable';
 import type { Integer } from '../common/Types';
 import { get } from 'svelte/store';
@@ -11,14 +11,14 @@ export default class Relationship extends Persistable {
 	isReversed = false;
 	hidParent: Integer;
 	hidChild: Integer;
-	kind: E_Predicate;
+	kind: T_Predicate;
 	idParent: string;
 	idChild: string;
 	orders = [0, 0];
 	order = 0;
 
-	constructor(idBase: string, id: string, kind: E_Predicate, idParent: string, idChild: string, order = 0, parentOrder: number = 0, already_persisted: boolean = false) {
-		super(databases.db_now.e_database, idBase, E_Persistable.relationships, id, already_persisted);
+	constructor(idBase: string, id: string, kind: T_Predicate, idParent: string, idChild: string, order = 0, parentOrder: number = 0, already_persisted: boolean = false) {
+		super(databases.db_now.t_database, idBase, T_Persistable.relationships, id, already_persisted);
 		this.orders = [order, parentOrder];
 		this.hidParent = idParent.hash();
 		this.hidChild = idChild.hash();
@@ -57,7 +57,7 @@ export default class Relationship extends Persistable {
 	}
 
 	order_forPointsTo(pointsToChildren: boolean): number {
-		return pointsToChildren ? this.orders[E_Order.child] : this.orders[E_Order.other];
+		return pointsToChildren ? this.orders[T_Order.child] : this.orders[T_Order.other];
 	}
 
 	remove_from(relationships: Array<Relationship>) {
@@ -65,8 +65,8 @@ export default class Relationship extends Persistable {
 	}
 
 	orders_setTo(newOrders: Array<number>, persist: boolean = false) {
-		this.order_setTo(newOrders[E_Order.child]);	// don't persist or signal, yet
-		this.order_setTo(newOrders[E_Order.other], E_Order.other, persist);
+		this.order_setTo(newOrders[T_Order.child]);	// don't persist or signal, yet
+		this.order_setTo(newOrders[T_Order.other], T_Order.other, persist);
 	}
 
 	thing(child: boolean): Thing | null {
@@ -83,14 +83,14 @@ export default class Relationship extends Persistable {
 	}
 
 	order_setTo_forPointsTo(order: number, toChildren: boolean = true, persist: boolean = false) {
-		const e_order = toChildren ? E_Order.child : E_Order.other;
-		this.order_setTo(order, e_order, persist);
+		const t_order = toChildren ? T_Order.child : T_Order.other;
+		this.order_setTo(order, t_order, persist);
 	}
 
-	order_setTo(newOrder: number, e_order: E_Order = E_Order.child, persist: boolean = false) {
-		const order = this.orders[e_order];
+	order_setTo(newOrder: number, t_order: T_Order = T_Order.child, persist: boolean = false) {
+		const order = this.orders[t_order];
 		if (Math.abs(order - newOrder) > 0.001) {
-			this.orders[e_order] = newOrder;
+			this.orders[t_order] = newOrder;
 			w_relationship_order.set(Date.now());
 			if (persist) {
 				this.set_isDirty();

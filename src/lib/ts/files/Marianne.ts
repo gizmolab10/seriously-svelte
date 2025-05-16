@@ -1,4 +1,4 @@
-import { Thing, E_Trait, E_Thing, E_Predicate } from '../common/Global_Imports';
+import { Thing, T_Trait, T_Thing, T_Predicate } from '../common/Global_Imports';
 import type { Dictionary } from '../common/Types';
 import Identifiable from '../runtime/Identifiable';
 import { w_hierarchy } from '../common/Stores';
@@ -14,16 +14,16 @@ class Marianne {
 		const h = get(w_hierarchy)
 		const idBase = h.db.idBase;
 		const thing_id = Identifiable.newID();
-		const e_thing = { folder: E_Thing.folder, bookmark: E_Thing.bookmark }[dict['data types import'] as 'folder' | 'bookmark'] ?? E_Thing.generic;
+		const t_thing = { folder: T_Thing.folder, bookmark: T_Thing.bookmark }[dict['data types import'] as 'folder' | 'bookmark'] ?? T_Thing.generic;
 		const title = dict['Title'].removeWhiteSpace();					// TODO: for remote db we need the thing id from the server
 		const thing = h.thing_remember_runtimeCreate(idBase, thing_id, title, 'blue');		// create a Thing for each dict
-		const trait = h.trait_remember_runtimeCreate(idBase, Identifiable.newID(), thing_id, E_Trait.csv, dict['Description']);
+		const trait = h.trait_remember_runtimeCreate(idBase, Identifiable.newID(), thing_id, T_Trait.csv, dict['Description']);
 		trait.dict = dict;												// save the rest of the dict (including parent 1 link) in the new Trait	
 		if (['TEAM LIBRARY', 'MEMBER LIBRARY'].includes(title)) {		// these two things are roots in airtable, directly add them to our root
-			h.relationship_remember_runtimeCreateUnique(idBase, Identifiable.newID(), E_Predicate.contains, h.root.id, thing_id, 0);
+			h.relationship_remember_runtimeCreateUnique(idBase, Identifiable.newID(), T_Predicate.contains, h.root.id, thing_id, 0);
 		}
-		if (!!e_thing) {
-			thing.e_thing = e_thing;
+		if (!!t_thing) {
+			thing.t_thing = t_thing;
 		}
 		return thing;
 	}
@@ -38,7 +38,7 @@ class Marianne {
 				if (!!parent_title) {
 					const parent = h.thing_forTitle(parent_title) ?? await h.lost_and_found();
 					if (!!parent) {
-						h.relationship_remember_runtimeCreateUnique(h.db.idBase, Identifiable.newID(), E_Predicate.contains, parent.id, trait.ownerID, 0);
+						h.relationship_remember_runtimeCreateUnique(h.db.idBase, Identifiable.newID(), T_Predicate.contains, parent.id, trait.ownerID, 0);
 					}
 				}
 			}
@@ -56,7 +56,7 @@ class Marianne {
 				const child_relationship = child_zncestry.relationship;
 				if (!!child_relationship) {
 					const clump_name = grandChildren_count == 0 ? 'leaves' : 'crowds';
-					const clump_ancestry = await h.ancestry_persistentCreateUnique(clump_name, lost_and_found_ancestry, E_Thing.generic);
+					const clump_ancestry = await h.ancestry_persistentCreateUnique(clump_name, lost_and_found_ancestry, T_Thing.generic);
 					const idParent = clump_ancestry?.thing?.id;
 					if (!!idParent) {
 						child_relationship.idParent = idParent;
@@ -71,7 +71,7 @@ class Marianne {
 
 export const marianne = new Marianne();
 
-enum E_Marianne_Fields {
+enum T_Marianne_Fields {
 	Title,
 	parent_1_link,
 	Custom_Tags_$$Local$,

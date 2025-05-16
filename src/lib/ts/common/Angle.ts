@@ -1,14 +1,14 @@
 import { tu } from './Testworthy_Utilities';
 import '../common/Extensions';
 
-export enum E_Quadrant {
+export enum T_Quadrant {
 	upperRight = 'ur',	// 				0 ... quarter
 	upperLeft  = 'ul',	//		  quarter ... half
 	lowerLeft  = 'll',	//			 half ... three_quarters
 	lowerRight = 'lr',	// three_quarters ... full
 }
 
-export enum E_Orientation {
+export enum T_Orientation {
 	right = 'right',
 	left  = 'left',
 	down  = 'down',
@@ -31,44 +31,44 @@ export default class Angle {
 	static eighth = Angle.full / 8;
 
 	static radians_from_degrees(degrees: number): number { return Math.PI / 180 * degrees; }
-	get angle_orientsDown(): boolean { return this.orientation_ofAngle == E_Orientation.down; }
+	get angle_orientsDown(): boolean { return this.orientation_ofAngle == T_Orientation.down; }
 	get quadrant_basis_angle(): number { return tu.basis_angle_ofType_Quadrant(this.quadrant_ofAngle); }
 
 	get angle_slantsForward(): boolean {
 		const quadrant = this.quadrant_ofAngle;
-		return [E_Quadrant.lowerRight, E_Quadrant.upperLeft].includes(quadrant);
+		return [T_Quadrant.lowerRight, T_Quadrant.upperLeft].includes(quadrant);
 	}
 
 	get angle_pointsRight(): boolean {
 		switch(this.quadrant_ofAngle) {
-			case E_Quadrant.lowerRight: return true;
-			case E_Quadrant.upperRight: return true;
+			case T_Quadrant.lowerRight: return true;
+			case T_Quadrant.upperRight: return true;
 			default: return false;
 		}
 	}
 
-	get orientation_ofAngle(): E_Orientation {
+	get orientation_ofAngle(): T_Orientation {
 		let quadrant = this.quadrant_ofAngle;
 		// isFirstEighth first of two half quadrants, counting counter-clockwise
 		const isFirstEighth = this.angle.normalize_between_zeroAnd(Angle.quarter) < (Angle.quarter / 2);
 		switch (quadrant) {		// going counter-clockwise
-			case E_Quadrant.upperRight: return isFirstEighth ? E_Orientation.right : E_Orientation.up;
-			case E_Quadrant.upperLeft:  return isFirstEighth ? E_Orientation.up    : E_Orientation.left;
-			case E_Quadrant.lowerLeft:  return isFirstEighth ? E_Orientation.left  : E_Orientation.down;
-			case E_Quadrant.lowerRight: return isFirstEighth ? E_Orientation.down  : E_Orientation.right;
+			case T_Quadrant.upperRight: return isFirstEighth ? T_Orientation.right : T_Orientation.up;
+			case T_Quadrant.upperLeft:  return isFirstEighth ? T_Orientation.up    : T_Orientation.left;
+			case T_Quadrant.lowerLeft:  return isFirstEighth ? T_Orientation.left  : T_Orientation.down;
+			case T_Quadrant.lowerRight: return isFirstEighth ? T_Orientation.down  : T_Orientation.right;
 		}
 	}
 
-	get quadrant_ofAngle(): E_Quadrant {
+	get quadrant_ofAngle(): T_Quadrant {
 	
 		// angles begin at 3 o'clock & rotate up (counter-clockwise)
 		// ending in lowerRight quadrant (this is also the default)
 	
 		const normalized = this.angle.angle_normalized();
-		let quadrant = E_Quadrant.lowerRight;
-		if (normalized.isBetween(0,				Angle.quarter,		  true)) { quadrant = E_Quadrant.upperRight; }
-		if (normalized.isBetween(Angle.quarter, Angle.half,			  true)) { quadrant = E_Quadrant.upperLeft; }
-		if (normalized.isBetween(Angle.half,	Angle.three_quarters, true)) { quadrant = E_Quadrant.lowerLeft; }
+		let quadrant = T_Quadrant.lowerRight;
+		if (normalized.isBetween(0,				Angle.quarter,		  true)) { quadrant = T_Quadrant.upperRight; }
+		if (normalized.isBetween(Angle.quarter, Angle.half,			  true)) { quadrant = T_Quadrant.upperLeft; }
+		if (normalized.isBetween(Angle.half,	Angle.three_quarters, true)) { quadrant = T_Quadrant.lowerLeft; }
 		return quadrant;
 	}
 

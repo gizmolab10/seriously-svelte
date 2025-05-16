@@ -109,7 +109,7 @@ export class Utilities extends Testworthy_Utilities {
 	}
 
 	ids_forDB(array: Array<Ancestry>): Array<string> {
-		return array.filter(a => a.e_database == get(w_e_database)).map(a => a.id);
+		return array.filter(a => a.t_database == get(w_e_database)).map(a => a.id);
 	}
 
 	ancestries_orders_normalize(ancestries: Array<Ancestry>, persist: boolean = false): void {

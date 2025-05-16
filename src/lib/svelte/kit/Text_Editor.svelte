@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { w_thing_fontFamily, w_background_color, w_s_title_edit } from '../../ts/common/Stores';
-	import { k, u, ux, debug, colors, E_Layer, databases } from '../../ts/common/Global_Imports';
+	import { k, u, ux, debug, colors, T_Layer, databases } from '../../ts/common/Global_Imports';
 	export let handle_textChange = (label: string, text: string) => {};
 	export let color = colors.default_forThings;
 	export let width = k.width_details - 40;
@@ -19,7 +19,7 @@
 	
 	function handle_focus(event: Event) {
 		if (!!$w_s_title_edit) {
-			$w_s_title_edit.e_edit = E_Edit.editing;
+			$w_s_title_edit.t_edit = T_Edit.editing;
 		}
 	}
 
@@ -89,7 +89,7 @@
 			overflow-x: hidden;
 			vertical-align: top;
 			white-space: normal;
-			z-index: {E_Layer.text};
+			z-index: {T_Layer.text};
 			overflow-wrap: break-word;
 			{k.prevent_selection_style};
 			font-family: {$w_thing_fontFamily};

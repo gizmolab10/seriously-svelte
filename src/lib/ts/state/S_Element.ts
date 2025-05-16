@@ -1,4 +1,4 @@
-import { k, ux, debug, colors, Ancestry, E_Element } from '../common/Global_Imports';
+import { k, ux, debug, colors, Ancestry, T_Element } from '../common/Global_Imports';
 import { w_background_color } from '../../ts/common/Stores';
 import Identifiable from '../runtime/Identifiable';
 	
@@ -10,7 +10,7 @@ export default class S_Element {
 	identifiable!: Identifiable;
 	color_background = k.empty;
 	hoverColor = 'transparent';
-	type = E_Element.none;
+	type = T_Element.none;
 	ignore_hover = false;
 	isDisabled = false;
 	isSelected = false;
@@ -28,7 +28,7 @@ export default class S_Element {
 	//										//
 	//////////////////////////////////////////
 
-	constructor(identifiable: Identifiable, type: E_Element, subtype: string) {
+	constructor(identifiable: Identifiable, type: T_Element, subtype: string) {
 		this.name = ux.name_from(identifiable, type, subtype);
 		this.identifiable = identifiable;
 		this.subtype = subtype;
@@ -55,7 +55,7 @@ export default class S_Element {
 	
 	get border(): string {
 		let color = this.ancestry.thing?.color;
-		if (this.type == E_Element.widget) {
+		if (this.type == T_Element.widget) {
 			debug.log_colors(`  WIDGET S_Element "${this.ancestry.thing?.type}" "${color}" "${this.ancestry.title}"`);
 		}
 		if (!!color) {

@@ -5,7 +5,7 @@
 	import { w_thing_color, w_background_color, w_ancestry_focus } from '../../ts/common/Stores';
 	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/common/Stores';
 	import { w_graph_rect, w_mouse_location_scaled } from '../../ts/common/Stores';
-	import { E_Layer, E_RingZone } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_RingZone } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Radial_ArcSlider from './Radial_ArcSlider.svelte';
 	import { onMount } from 'svelte';
@@ -22,7 +22,7 @@
 	$: outer_radius	   = middle_radius + ring_width;
 	$: outer_diameter  = outer_radius * 2;
 	$: viewBox		   = `${-ring_width}, ${-ring_width}, ${outer_diameter}, ${outer_diameter}`;
-	$: reticle_svgPath = debug.reticle ? svgPaths.e_cross(outer_diameter, -2) : '';
+	$: reticle_svgPath = debug.reticle ? svgPaths.t_cross(outer_diameter, -2) : '';
 	$: resize_svgPath  = svgPaths.circle(Point.square($w_ring_rotation_radius).offsetEquallyBy(44), $w_ring_rotation_radius - 0.3, true);
 	$: rotate_svgPath  = svgPaths.annulus(Point.square($w_ring_rotation_radius), middle_radius, ring_width, Point.square(ring_width));
 	$: resize_fill	   = (radial.s_ring_resizing.isHighlighted || radial.s_ring_resizing.isActive) ? colors.opacitize(color, radial.s_ring_resizing.fill_opacity) : 'transparent';
@@ -53,7 +53,7 @@
 
 	function handle_isHit(): boolean {
 		const zone = radial.ring_zone_atMouseLocation;
-		return [E_RingZone.resize, E_RingZone.rotate].includes(zone);
+		return [T_RingZone.resize, T_RingZone.rotate].includes(zone);
 	}
 
 	function s_reset() {
@@ -69,9 +69,9 @@
 		const isResizing = radial.s_ring_resizing.isActive;
 		const isRotating = radial.s_ring_rotation.isActive;
 		const ring_zone = radial.ring_zone_atMouseLocation;
-		const inRotate = ring_zone == E_RingZone.rotate && !isPaging && !isResizing;
-		const inResize = ring_zone == E_RingZone.resize && !isPaging && !isRotating;
-		const inPaging = ring_zone == E_RingZone.paging && !isRotating && !isResizing;
+		const inRotate = ring_zone == T_RingZone.rotate && !isPaging && !isResizing;
+		const inResize = ring_zone == T_RingZone.resize && !isPaging && !isRotating;
+		const inPaging = ring_zone == T_RingZone.paging && !isRotating && !isResizing;
 		if (radial.s_ring_rotation.isHovering != inRotate) {
 			radial.s_ring_rotation.isHovering  = inRotate;
 			debug.log_hover(` hover rotate  ${inRotate}`);
@@ -163,19 +163,19 @@
 				const zone = radial.ring_zone_atMouseLocation;
 				$w_s_title_edit?.stop_editing();
 				switch (zone) {
-					case E_RingZone.rotate:
+					case T_RingZone.rotate:
 						debug.log_radial(` begin rotate  ${angle_ofRotation.asDegrees()}`);
 						radial.s_ring_rotation.active_angle = angle_ofMouseDown;
 						radial.s_ring_rotation.basis_angle = angle_ofRotation;
 						break;
-					case E_RingZone.resize:
+					case T_RingZone.resize:
 						const change_ofRadius = w.mouse_distance_fromGraphCenter - $w_ring_rotation_radius;
 						debug.log_radial(` begin resize  ${change_ofRadius.asInt()}`);
 						radial.s_ring_rotation.active_angle = angle_ofMouseDown + Angle.quarter;	// needed for cursor
 						radial.s_ring_rotation.basis_angle = angle_ofRotation + Angle.quarter;		// "
 						radial.s_ring_resizing.basis_radius = change_ofRadius;
 						break;
-					case E_RingZone.paging: 
+					case T_RingZone.paging: 
 						const angle_ofPage = angle_ofMouseDown.angle_normalized();
 						const g_cluster = layout.g_radialGraph.g_cluster_atMouseLocation;
 						if (!!g_cluster) {
@@ -197,12 +197,12 @@
 {#key ring_reattachments}
 	{#if !debug.hide_rings}
 		<div class = 'rings'
-			style = 'z-index:{E_Layer.rings};'>
+			style = 'z-index:{T_Layer.rings};'>
 			<Mouse_Responder name = 'rings'
 				cursor = {cursor}
 				width = {outer_diameter}
 				height = {outer_diameter}
-				zindex = {E_Layer.rings}
+				zindex = {T_Layer.rings}
 				handle_isHit = {handle_isHit}
 				center = {w.center_ofGraphSize}
 				handle_s_mouse = {up_down_closure}>
@@ -226,7 +226,7 @@
 	{/if}
 	<div
 		class = 'paging-arcs'
-		style = 'z-index:{E_Layer.paging};'>
+		style = 'z-index:{T_Layer.paging};'>
 		{#each layout.g_radialGraph.g_clusters as g_cluster}
 			{#if !!g_cluster && (g_cluster.widgets_shown > 0)}
 				<Radial_ArcSlider

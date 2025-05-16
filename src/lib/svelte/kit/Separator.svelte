@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { w_e_details, w_background_color } from '../../ts/common/Stores';
-	import { E_Layer, Direction,  } from '../../ts/common/Global_Imports';
+	import { T_Layer, Direction,  } from '../../ts/common/Global_Imports';
 	import { k, u, Point, colors } from '../../ts/common/Global_Imports';
 	import Gull_Wings from '../kit/Gull_Wings.svelte';
 	export let title_font_size = k.font_size.smaller;;
@@ -33,7 +33,7 @@
 		position:absolute;
 		left:{line_left}px;
 		height:{thickness}px;
-		z-index:{E_Layer.details};
+		z-index:{T_Layer.details};
 		width:{width - margin * 2}px;
 		background-color:{separator_color};'>
 </div>
@@ -45,7 +45,7 @@
 			top:{title_top}px;
 			left:{title_left}px;
 			white-space: nowrap;
-			z-index:{E_Layer.frontmost};
+			z-index:{T_Layer.frontmost};
 			font-size:{title_font_size}px;
 			background-color:{$w_background_color};'>
 		{title}

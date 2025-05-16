@@ -65,10 +65,10 @@ export class Configuration {
 
 	get siteTitle(): string {
 		const idBase = databases.db_now.idBase;
-		const e_database = databases.db_now.e_database;
+		const t_database = databases.db_now.t_database;
 		const host = this.isServerLocal ? 'local' : 'remote';
 		const base_name = idBase ? (idBase + ', ') : k.empty;
-		const db_name = e_database ? (e_database + ', ') : k.empty;
+		const db_name = t_database ? (t_database + ', ') : k.empty;
 		return `Seriously (${host}, ${db_name}${base_name}${u.browserType}, α)`;
 	}
 

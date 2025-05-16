@@ -1,4 +1,4 @@
-import { E_Graph, E_Create, E_Element, E_Kinship, E_Predicate, E_Alteration, E_SvelteComponent } from '../common/Global_Imports';
+import { T_Graph, T_Create, T_Element, T_Kinship, T_Predicate, T_Alteration, T_SvelteComponent } from '../common/Global_Imports';
 import { Direction, Predicate, Hierarchy, databases, Relationship, Svelte_Wrapper, p } from '../common/Global_Imports';
 import { c, k, u, show, Rect, Size, Thing, debug, layout, wrappers, svgPaths } from '../common/Global_Imports';
 import { w_hierarchy, w_ancestry_focus, w_s_alteration, w_s_title_edit } from '../common/Stores';
@@ -7,14 +7,14 @@ import { w_background_color, w_e_graph, w_e_database } from '../common/Stores';
 import { G_Widget, G_Cluster, G_TreeLine } from '../common/Global_Imports';
 import { G_Paging, S_Title_Edit } from '../common/Global_Imports';
 import type { Dictionary, Integer } from '../common/Types';
-import { E_Database } from '../database/DBCommon';
-import { E_Edit } from '../state/S_Title_Edit';
+import { T_Database } from '../database/DBCommon';
+import { T_Edit } from '../state/S_Title_Edit';
 import { get, Writable } from 'svelte/store';
 import Identifiable from './Identifiable';
 
 export default class Ancestry extends Identifiable {
 	g_widgets: Dictionary<G_Widget> = {};
-	e_database: string;
+	t_database: string;
 	kind: string;
 
 
@@ -24,31 +24,31 @@ export default class Ancestry extends Identifiable {
 	//   "   kind is from the last relationship
 	//  	 all children are of that kind of predicate
 
-	constructor(e_database: string, path: string = k.root_path, kind: string = E_Predicate.contains) {
+	constructor(t_database: string, path: string = k.root_path, kind: string = T_Predicate.contains) {
 		super(path);
 		this.kind = kind;
-		this.e_database = e_database;
+		this.t_database = t_database;
 		this.hierarchy.signal_storage_redraw(0);
 	}
 	
 	static readonly _____TRAVERSE: unique symbol;
 
-	traverse(apply_closureTo: (ancestry: Ancestry) => boolean, e_kinship: E_Kinship = E_Kinship.child, visited: Array<string> = []) {
+	traverse(apply_closureTo: (ancestry: Ancestry) => boolean, t_kinship: T_Kinship = T_Kinship.child, visited: Array<string> = []) {
 		const id = this.thing?.id;
 		if (!!id && !visited.includes(id) && !apply_closureTo(this)) {
-			for (const progeny of this.ancestries_createUnique_byKinship(e_kinship)) {
-				progeny.traverse(apply_closureTo, e_kinship, [...visited, id]);
+			for (const progeny of this.ancestries_createUnique_byKinship(t_kinship)) {
+				progeny.traverse(apply_closureTo, t_kinship, [...visited, id]);
 			}
 		}
 	}
 
-	async async_traverse(apply_closureTo: (ancestry: Ancestry) => Promise<boolean>, e_kinship: E_Kinship = E_Kinship.child, visited: Array<string> = []) {
+	async async_traverse(apply_closureTo: (ancestry: Ancestry) => Promise<boolean>, t_kinship: T_Kinship = T_Kinship.child, visited: Array<string> = []) {
 		const id = this.thing?.id;
 		if (!!id && !visited.includes(id)) {
 			try {
 				if (!await apply_closureTo(this)) {
-					for (const progeny of this.ancestries_createUnique_byKinship(e_kinship)) {
-						await progeny.async_traverse(apply_closureTo, e_kinship, [...visited, id]);
+					for (const progeny of this.ancestries_createUnique_byKinship(t_kinship)) {
+						await progeny.async_traverse(apply_closureTo, t_kinship, [...visited, id]);
 					}
 				}
 			} catch (error) {
@@ -352,7 +352,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	persistentMoveUp_forParent_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
-		const sibling_ancestries = get(w_ancestry_focus)?.ancestries_createUnique_byKinship(E_Kinship.parent);
+		const sibling_ancestries = get(w_ancestry_focus)?.ancestries_createUnique_byKinship(T_Kinship.parent);
 		let needs_graphRelayout = false;
 		let needs_graphRebuild = false;
 		if (!!sibling_ancestries) {
@@ -377,7 +377,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	persistentMoveUp_forBidirectional_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
-		const sibling_ancestries = get(w_ancestry_focus)?.ancestries_createUnique_byKinship(E_Kinship.related) ?? [];
+		const sibling_ancestries = get(w_ancestry_focus)?.ancestries_createUnique_byKinship(T_Kinship.related) ?? [];
 		let needs_graphRelayout = false;
 		let needs_graphRebuild = false;
 		if (!!sibling_ancestries) {
@@ -480,7 +480,7 @@ export default class Ancestry extends Identifiable {
 	
 	expanded_setTo(expand: boolean) {
 		let mutated = false;
-		const matchesDB = this.e_database == get(w_e_database);
+		const matchesDB = this.t_database == get(w_e_database);
 		if (matchesDB && (!this.isRoot || expand)) {
 			if (!get(w_ancestries_expanded)) {
 				w_ancestries_expanded.set([]);
@@ -582,7 +582,7 @@ export default class Ancestry extends Identifiable {
 				const isFrom_anAncestor = isBidirectional ? false : to_thing.parentIDs.includes(from_thing.id);
 				const isParent_ofFrom = this.thing_isImmediateParentOf(from_ancestry, predicate.kind);
 				const isProgeny_ofFrom = this.isAProgenyOf(from_ancestry);
-				const isAdding = s_alteration.e_alteration == E_Alteration.add;
+				const isAdding = s_alteration.t_alteration == T_Alteration.add;
 				const creates_cycle = isParent_ofFrom || isProgeny_ofFrom || isFrom_anAncestor;
 				const canAlter = isAdding ? !creates_cycle : isParent_ofFrom;
 				return canAlter
@@ -595,7 +595,7 @@ export default class Ancestry extends Identifiable {
 
 	get parentAncestry():	  Ancestry | null { return this.ancestry_createUnique_byStrippingBack(); }
 	get sibling_ancestries(): Array<Ancestry> { return this.parentAncestry?.childAncestries ?? []; }
-	get childAncestries():	  Array<Ancestry> { return this.ancestries_createUnique_byKinship(E_Kinship.child) ?? []; }
+	get childAncestries():	  Array<Ancestry> { return this.ancestries_createUnique_byKinship(T_Kinship.child) ?? []; }
 	get branchAncestries():	  Array<Ancestry> { return layout.branches_areChildren ? this.childAncestries : this.parentAncestries; }
 
 	get parentAncestries(): Array<Ancestry> {
@@ -645,7 +645,7 @@ export default class Ancestry extends Identifiable {
 	ancestry_createUnique_byAddingThing(thing: Thing | null): Ancestry | null {
 		const hidParent = this.thing?.idBridging.hash();
 		if (!!thing && !!hidParent) {
-			const relationship = this.hierarchy.relationship_forPredicateKind_parent_child(E_Predicate.contains, hidParent, thing.hid);
+			const relationship = this.hierarchy.relationship_forPredicateKind_parent_child(T_Predicate.contains, hidParent, thing.hid);
 			if (!!relationship) {
 				return this.ancestry_createUnique_byAppending_relationshipID(relationship.id);
 			}
@@ -689,7 +689,7 @@ export default class Ancestry extends Identifiable {
 		}
 	}
 
-	ancestry_remember_createUnique_byAddingThing(thing: Thing | null, kind: E_Predicate = E_Predicate.contains): Ancestry | null {
+	ancestry_remember_createUnique_byAddingThing(thing: Thing | null, kind: T_Predicate = T_Predicate.contains): Ancestry | null {
 		const h = this.hierarchy;
 		const parent = this.thing;
 		let ancestry: Ancestry | null = null;
@@ -697,10 +697,10 @@ export default class Ancestry extends Identifiable {
 			const changingBulk = parent.isBulkAlias || thing.idBase != h.db.idBase;
 			const idBase = changingBulk ? thing.idBase : parent.idBase;
 			const parentOrder = this.childAncestries?.length ?? 0;
-			const relationship = h.relationship_remember_createUnique(idBase, Identifiable.newID(), kind, parent.idBridging, thing.id, 0, parentOrder, E_Create.getPersistentID);
+			const relationship = h.relationship_remember_createUnique(idBase, Identifiable.newID(), kind, parent.idBridging, thing.id, 0, parentOrder, T_Create.getPersistentID);
 			ancestry = this.ancestry_createUnique_byAppending_relationshipID(relationship.id);
 			u.ancestries_orders_normalize(this.childAncestries, true);			// write new order values for relationships
-			if (kind != E_Predicate.contains) {									// if isBidirectional, we need to create the reversed relationship
+			if (kind != T_Predicate.contains) {									// if isBidirectional, we need to create the reversed relationship
 				const reversed = relationship?.reversed_remember_createUnique;	// do not persist, it is automatically recreated on all subsequennt launches
 				if (!!reversed) {												// use relationship's id alone, since it is an isRelated kind
 					h.ancestry_remember_createUnique(relationship.id, kind);			
@@ -710,7 +710,7 @@ export default class Ancestry extends Identifiable {
 		return ancestry;
 	}
 
-	async ancestry_persistentCreateUnique_byAddingThing(thing: Thing | null, kind: E_Predicate = E_Predicate.contains): Promise<Ancestry | null | undefined> {
+	async ancestry_persistentCreateUnique_byAddingThing(thing: Thing | null, kind: T_Predicate = T_Predicate.contains): Promise<Ancestry | null | undefined> {
 		const h = this.hierarchy;
 		const parent = this.thing;
 		let ancestry: Ancestry | null = null;
@@ -721,10 +721,10 @@ export default class Ancestry extends Identifiable {
 				await h.db.thing_remember_persistentCreate(thing);				// for everything below, need to await while thing.id is fetched from remote database
 			}
 			const parentOrder = this.childAncestries?.length ?? 0;
-			const relationship = await h.relationship_remember_persistentCreateUnique(idBase, Identifiable.newID(), kind, parent.idBridging, thing.id, 0, parentOrder, E_Create.getPersistentID);
+			const relationship = await h.relationship_remember_persistentCreateUnique(idBase, Identifiable.newID(), kind, parent.idBridging, thing.id, 0, parentOrder, T_Create.getPersistentID);
 			ancestry = this.ancestry_createUnique_byAppending_relationshipID(relationship.id);
 			u.ancestries_orders_normalize(this.childAncestries, true);			// write new order values for relationships
-			if (kind != E_Predicate.contains) {									// if isBidirectional, we need to create the reversed relationship
+			if (kind != T_Predicate.contains) {									// if isBidirectional, we need to create the reversed relationship
 				const reversed = relationship?.reversed_remember_createUnique;	// do not persist, it is automatically recreated on all subsequennt launches
 				if (!!reversed) {												// use relationship's id alone, since it is an isRelated kind
 					h.ancestry_remember_createUnique(relationship.id, kind);			
@@ -737,9 +737,9 @@ export default class Ancestry extends Identifiable {
 	ancestries_createUnique_byKinship(kinship: string | null): Array<Ancestry> {
 		if (!!kinship) {
 			switch (kinship) {
-				case E_Kinship.related: return this.thing?.uniqueAncestries_for(Predicate.isRelated) ?? [];
-				case E_Kinship.parent:  return this.thing?.uniqueAncestries_for(Predicate.contains) ?? [];
-				case E_Kinship.child:   return this.ancestries_createUnique_forPredicate(Predicate.contains);
+				case T_Kinship.related: return this.thing?.uniqueAncestries_for(Predicate.isRelated) ?? [];
+				case T_Kinship.parent:  return this.thing?.uniqueAncestries_for(Predicate.contains) ?? [];
+				case T_Kinship.child:   return this.ancestries_createUnique_forPredicate(Predicate.contains);
 			}
 		}
 		return [];
@@ -749,7 +749,7 @@ export default class Ancestry extends Identifiable {
 		let ancestries: Array<Ancestry> = [];
 		if (!!predicate) {
 			const relationships = this.relationships_ofKind_forParents(predicate.kind, false);
-			const isContains = predicate.kind == E_Predicate.contains;
+			const isContains = predicate.kind == T_Predicate.contains;
 			if (relationships.length > 0) {
 				for (const relationship of relationships) {
 					if (relationship.kind == predicate.kind) {
@@ -786,8 +786,8 @@ export default class Ancestry extends Identifiable {
 	get isGrabbed():					 boolean { return this.includedInStore_ofAncestries(w_ancestries_grabbed); }
 	get isInvalid():					 boolean { return this.containsReciprocals || this.containsMixedPredicates; }
 	get hasRelationships():				 boolean { return this.hasParents || this.hasChildren; }
-	get isEditing():					 boolean { return get(w_s_title_edit)?.isAncestry_inState(this, E_Edit.editing) ?? false; }
-	get description():				   	  string { return `${this.kind} "${this.thing?.e_thing ?? '-'}" ${this.titles.join(':')}`; }
+	get isEditing():					 boolean { return get(w_s_title_edit)?.isAncestry_inState(this, T_Edit.editing) ?? false; }
+	get description():				   	  string { return `${this.kind} "${this.thing?.t_thing ?? '-'}" ${this.titles.join(':')}`; }
 	get title():					   	  string { return this.thing?.title ?? 'missing title'; }
 	get pathString():					  string { return this.id; }
 	get depth():						  number { return this.relationship_ids.length; }
@@ -806,7 +806,7 @@ export default class Ancestry extends Identifiable {
 	get g_cluster():			G_Cluster | null { return this.g_widget.g_cluster ?? null; }
 	get g_paging():				 G_Paging | null { return this.g_cluster?.g_paging_forAncestry(this) ?? null; }
 	get predicate():			Predicate | null { return this.hierarchy.predicate_forKind(this.kind) }
-	get titleWrapper():	   Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.hid, E_SvelteComponent.title); }
+	get titleWrapper():	   Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.hid, T_SvelteComponent.title); }
 	get relationship_hids():	  Array<Integer> { return this.relationship_ids.map(i => i.hash()); }
 	get relationship_ids():		  Array <string> { return this.isRoot ? [] : this.pathString.split(k.separator.generic); }
 	get titles():			  	  Array <string> { return this.ancestors?.map(a => `${!a ? 'null' : a.title}`) ?? []; }
@@ -820,7 +820,7 @@ export default class Ancestry extends Identifiable {
 	get isEditable(): boolean {
 		const isExternals = this.thing?.isExternals ?? true;
 		const isBulkAlias = this.thing?.isBulkAlias ?? true;	// missing thing, return not editable
-		const canEdit = !this.isRoot || databases.db_now.e_database == E_Database.local;
+		const canEdit = !this.isRoot || databases.db_now.t_database == T_Database.local;
 		return canEdit && c.allow_TitleEditing && !isExternals && !isBulkAlias;
 	}
 
@@ -896,7 +896,7 @@ export default class Ancestry extends Identifiable {
 	relationships_count_forChildren(forChildren: boolean):					number { return this.relationships_forChildren(forChildren).length; }
 	sharesAnID(ancestry: Ancestry | null):								   boolean { return !ancestry ? false : this.relationship_ids.some(id => ancestry.relationship_ids.includes(id)); }
 	showsCluster_forPredicate(predicate: Predicate):					   boolean { return this.hasParents_ofKind(predicate.kind) && this.hasThings(predicate); }
-	equals(ancestry: Ancestry | null | undefined):						   boolean { return super.equals(ancestry) && this.e_database == ancestry?.e_database; }
+	equals(ancestry: Ancestry | null | undefined):						   boolean { return super.equals(ancestry) && this.t_database == ancestry?.t_database; }
 	includedInStore_ofAncestries(store: Writable<Array<Ancestry> | null>): boolean { return !!get(store) && this.includedInAncestries(get(store)!); }
 	hasParents_ofKind(kind: string):									   boolean { return this.thing?.hasParents_ofKind(kind) ?? false; }
 	isChildOf(other: Ancestry):											   boolean { return this.id_thing == other.thingAt(2)?.id; }
@@ -925,8 +925,8 @@ export default class Ancestry extends Identifiable {
 
 	hasThings(predicate: Predicate): boolean {
 		switch (predicate.kind) {
-			case E_Predicate.contains:  return this.thing?.hasParents_ofKind(predicate.kind) ?? false;
-			case E_Predicate.isRelated: return this.hasRelationships;
+			case T_Predicate.contains:  return this.thing?.hasParents_ofKind(predicate.kind) ?? false;
+			case T_Predicate.isRelated: return this.hasRelationships;
 			default:					return false;
 		}
 	}
@@ -939,11 +939,11 @@ export default class Ancestry extends Identifiable {
 		return ids.slice(-(Math.max(1, back)))[0];
 	}
 
-	g_widget_forGraphMode(e_graph: E_Graph) {
-		let g_widget = this.g_widgets[e_graph];
+	g_widget_forGraphMode(t_graph: T_Graph) {
+		let g_widget = this.g_widgets[t_graph];
 		if (!g_widget) {
 			g_widget = G_Widget.empty(this);
-			this.g_widgets[e_graph] = g_widget;
+			this.g_widgets[t_graph] = g_widget;
 		}
 		return g_widget;
 	}
@@ -951,7 +951,7 @@ export default class Ancestry extends Identifiable {
 	isHoverInverted(type: string): boolean {
 		const isInverted = this.isGrabbed || this.isEditing;
 		switch (type) {
-			case E_Element.reveal: return layout.inTreeMode && this.isExpanded == isInverted;
+			case T_Element.reveal: return layout.inTreeMode && this.isExpanded == isInverted;
 			default: return isInverted;
 		}
 	}

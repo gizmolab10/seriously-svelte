@@ -1,12 +1,12 @@
 <script lang='ts'>
 	import { c, k, u, ux, Thing, Point, Angle, debug, layout } from '../../ts/common/Global_Imports';
-	import { E_Layer, E_Graph, E_Widget, E_Signal, E_Element } from '../../ts/common/Global_Imports';
-	import { G_Widget, S_Element, E_SvelteComponent } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Graph, T_Widget, T_Signal, T_Element } from '../../ts/common/Global_Imports';
+	import { G_Widget, S_Element, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { signals, Ancestry, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { w_thing_color, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { w_show_related, w_background_color } from '../../ts/common/Stores';
-	import { E_Edit } from '../../ts/state/S_Title_Edit';
+	import { T_Edit } from '../../ts/state/S_Title_Edit';
 	import Widget_Reveal from './Widget_Reveal.svelte';
 	import Tree_Line from '../graph/Tree_Line.svelte';
 	import Widget_Title from './Widget_Title.svelte';
@@ -19,9 +19,9 @@
 	const points_toChild = g_widget.points_toChild;
     const points_right = g_widget.widget_pointsRight;
 	const s_widget = ux.s_widget_forAncestry(ancestry);
-	const es_drag = ux.s_element_for(ancestry, E_Element.drag, k.empty);
-	const es_title = ux.s_element_for(ancestry, E_Element.title, k.empty);
-	const es_reveal = ux.s_element_for(ancestry, E_Element.reveal, k.empty);
+	const es_drag = ux.s_element_for(ancestry, T_Element.drag, k.empty);
+	const es_title = ux.s_element_for(ancestry, T_Element.title, k.empty);
+	const es_reveal = ux.s_element_for(ancestry, T_Element.reveal, k.empty);
 	let origin_ofTitle = g_widget.origin_ofTitle;
 	let width_ofWidget = g_widget.width_ofWidget;
 	let widgetWrapper!: Svelte_Wrapper;
@@ -48,14 +48,14 @@
 	layout_maybe();
 
 	onMount(() => {
-		const handle_anySignal = signals.handle_anySignal_atPriority(1, (e_signal, received_ancestry) => {
+		const handle_anySignal = signals.handle_anySignal_atPriority(1, (t_signal, received_ancestry) => {
 			if (!!widget) {
-				debug.log_handle(`(ANY as: ${e_signal}) WIDGET "${thing?.title}"`);
-				switch (e_signal) {
-					case E_Signal.reattach:
+				debug.log_handle(`(ANY as: ${t_signal}) WIDGET "${thing?.title}"`);
+				switch (t_signal) {
+					case T_Signal.reattach:
 						layout_maybe();
 						break;
-					case E_Signal.reposition:
+					case T_Signal.reposition:
 						final_layout();
 						break;
 				}
@@ -70,7 +70,7 @@
 
 	$: {
 		if (!!widget) {
-			widgetWrapper = new Svelte_Wrapper(widget, handle_s_mouse, ancestry.hid, E_SvelteComponent.widget);
+			widgetWrapper = new Svelte_Wrapper(widget, handle_s_mouse, ancestry.hid, T_SvelteComponent.widget);
 		}
 	}
 
@@ -110,7 +110,7 @@
 
 	function layout_maybe() {
 		if (!!ancestry && s_widget.update_forStateChange) {
-			const showBorder = ancestry.isGrabbed || ($w_s_title_edit?.isAncestry_inState(ancestry, E_Edit.editing) ?? false);
+			const showBorder = ancestry.isGrabbed || ($w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.editing) ?? false);
 			const showBackground = showBorder || layout.inRadialMode;
 			background = showBackground ? `background-color: ${$w_background_color}` : k.empty
 			final_layout();
@@ -144,7 +144,7 @@
 			height : {height}px;
 			position :  absolute;
 			width : {width_ofWidget}px;
-			z-index : {E_Layer.widgets};
+			z-index : {T_Layer.widgets};
 			border-radius : {border_radius}px;
 			background-color : {ancestry.isGrabbed || layout.inRadialMode ? $w_background_color : 'transparent'};
 		'>

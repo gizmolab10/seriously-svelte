@@ -1,34 +1,34 @@
-import { k, debug, E_Debug, databases, E_Kinship, E_Predicate } from '../common/Global_Imports';
+import { k, debug, T_Debug, databases, T_Kinship, T_Predicate } from '../common/Global_Imports';
 import { w_hierarchy, w_ring_rotation_angle } from '../common/Stores';
 import Persistable from '../persistable/Persistable';
-import { E_Persistable } from '../database/DBCommon';
+import { T_Persistable } from '../database/DBCommon';
 import { get } from 'svelte/store';
 
 export default class Predicate extends Persistable {
 	isBidirectional: boolean;
-	kind: E_Predicate;
+	kind: T_Predicate;
 
-	constructor(id: string, kind: E_Predicate, isBidirectional: boolean, already_persisted: boolean = false) {
-		super(databases.db_now.e_database, k.empty, E_Persistable.predicates, id, already_persisted);
+	constructor(id: string, kind: T_Predicate, isBidirectional: boolean, already_persisted: boolean = false) {
+		super(databases.db_now.t_database, k.empty, T_Persistable.predicates, id, already_persisted);
 		this.isBidirectional = isBidirectional;
 		this.kind			 = kind;
 	}
 	
-	log(option: E_Debug, message: string)					 { debug.log_alert(option, message + k.space + this.description); }
+	log(option: T_Debug, message: string)					 { debug.log_alert(option, message + k.space + this.description); }
 	get description():					  			  string { return this.kind.unCamelCase().lastWord(); }
-	static isBidirectional_for(kind: E_Predicate):	 boolean { return kind != E_Predicate.contains; }
-	static get contains():				    Predicate | null { return this.predicate_forKind(E_Predicate.contains); }
-	static get explains():				    Predicate | null { return this.predicate_forKind(E_Predicate.explains); }
-	static get requires():				    Predicate | null { return this.predicate_forKind(E_Predicate.requires); }
-	static get supports():				    Predicate | null { return this.predicate_forKind(E_Predicate.supports); }
-	static get isRelated():				    Predicate | null { return this.predicate_forKind(E_Predicate.isRelated); }
-	static get appreciates():			  	Predicate | null { return this.predicate_forKind(E_Predicate.appreciates); }
+	static isBidirectional_for(kind: T_Predicate):	 boolean { return kind != T_Predicate.contains; }
+	static get contains():				    Predicate | null { return this.predicate_forKind(T_Predicate.contains); }
+	static get explains():				    Predicate | null { return this.predicate_forKind(T_Predicate.explains); }
+	static get requires():				    Predicate | null { return this.predicate_forKind(T_Predicate.requires); }
+	static get supports():				    Predicate | null { return this.predicate_forKind(T_Predicate.supports); }
+	static get isRelated():				    Predicate | null { return this.predicate_forKind(T_Predicate.isRelated); }
+	static get appreciates():			  	Predicate | null { return this.predicate_forKind(T_Predicate.appreciates); }
 	static predicate_forKind(kind: string): Predicate | null { return get(w_hierarchy).predicate_forKind(kind) ?? null; }
 
-	kinship_forPoints_toChildren(points_toChildren: boolean): E_Kinship | null {
+	kinship_forPoints_toChildren(points_toChildren: boolean): T_Kinship | null {
 		switch (this.kind) {
-			case E_Predicate.contains:	return points_toChildren ? E_Kinship.child : E_Kinship.parent;
-			case E_Predicate.isRelated:	return E_Kinship.related;
+			case T_Predicate.contains:	return points_toChildren ? T_Kinship.child : T_Kinship.parent;
+			case T_Predicate.isRelated:	return T_Kinship.related;
 			default:					return null;
 		}
 	}

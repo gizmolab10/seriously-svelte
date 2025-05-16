@@ -1,6 +1,6 @@
 import { S_Rotation, S_Resizing, G_Thing_Pages } from '../common/Global_Imports';
 import { k, u, w, debug, layout, wrappers } from '../common/Global_Imports';
-import { E_RingZone, E_SvelteComponent } from '../common/Global_Imports';
+import { T_RingZone, T_SvelteComponent } from '../common/Global_Imports';
 import { w_ring_rotation_radius } from '../common/Stores';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
@@ -17,7 +17,7 @@ export default class S_RadialGraph {
 	s_cluster_rotation = new S_Rotation();
 	s_ring_resizing	= new S_Resizing();
 	s_ring_rotation	= new S_Rotation();
-	zone = E_RingZone.miss;
+	zone = T_RingZone.miss;
 
 	reset_paging() { this.g_paging_rotations.map(s => s.reset()); }
 	get g_paging_rotations(): Array<S_Rotation> { return Object.values(this.g_paging_rotation_byName); }
@@ -49,17 +49,17 @@ export default class S_RadialGraph {
 
 	get cursor_forRingZone(): string {
 		switch (this.ring_zone_atMouseLocation) {
-			case E_RingZone.paging: return this.s_cluster_rotation.cursor;
-			case E_RingZone.resize: return this.s_ring_resizing.cursor;
-			case E_RingZone.rotate: return this.s_ring_rotation.cursor;
+			case T_RingZone.paging: return this.s_cluster_rotation.cursor;
+			case T_RingZone.resize: return this.s_ring_resizing.cursor;
+			case T_RingZone.rotate: return this.s_ring_rotation.cursor;
 			default:				return 'default';
 		}
 	}
 
-	get ring_zone_atMouseLocation(): E_RingZone {
-		let ring_zone = E_RingZone.miss;
+	get ring_zone_atMouseLocation(): T_RingZone {
+		let ring_zone = T_RingZone.miss;
 		const mouse_vector = w.mouse_vector_ofOffset_fromGraphCenter();
-		const widgets = wrappers.wrappers_ofType_atMouseLocation(E_SvelteComponent.widget);
+		const widgets = wrappers.wrappers_ofType_atMouseLocation(T_SvelteComponent.widget);
 		if (!!mouse_vector && widgets.length == 0) {
 			const g_cluster = layout.g_radialGraph.g_cluster_atMouseLocation;
 			const inner = get(w_ring_rotation_radius);
@@ -70,11 +70,11 @@ export default class S_RadialGraph {
 			const thumb = inner + thin;
 			if (!!distance && distance <= rotate) {
 				if (distance < inner) {
-					ring_zone = E_RingZone.resize;
+					ring_zone = T_RingZone.resize;
 				} else if (distance < thumb && !!g_cluster && g_cluster.isMouse_insideThumb) {
-					ring_zone = E_RingZone.paging;
+					ring_zone = T_RingZone.paging;
 				} else {
-					ring_zone = E_RingZone.rotate;
+					ring_zone = T_RingZone.rotate;
 				}
 			}
 			debug.log_mouse(` ring zone ${ring_zone} ${distance.asInt()}`);

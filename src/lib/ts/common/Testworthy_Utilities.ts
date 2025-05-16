@@ -1,9 +1,9 @@
 // N.B., do not import these from Global Imports --> avoid dependency issues when importing Utilities class into test code
 
 import Identifiable from '../runtime/Identifiable';
-import { E_Browser } from './Enumerations';
+import { T_Browser } from './Enumerations';
 import type { Dictionary } from './Types';
-import { E_Quadrant } from './Angle';
+import { T_Quadrant } from './Angle';
 import { Point } from './Geometry';
 import Angle from './Angle';
 
@@ -13,7 +13,7 @@ export class Testworthy_Utilities {
 	ignore(event: Event)												 {}
 	onNextCycle_apply(closure: () => {})								 { setTimeout(() => { closure(); }, 0); }
 	location_ofMouseEvent(event: MouseEvent):					   Point { return new Point(event.clientX, event.clientY); }
-	quadrant_ofAngle(angle: number):						  E_Quadrant { return new Angle(angle).quadrant_ofAngle; }
+	quadrant_ofAngle(angle: number):						  T_Quadrant { return new Angle(angle).quadrant_ofAngle; }
 	concatenateArrays(a: Array<any>, b: Array<any>):		  Array<any> { return [...a, ...b]; }
 	strip_falsies(array: Array<any>):						  Array<any> { return array.filter(a => !!a); }
 	subtract_arrayFrom(a: Array<any>, b: Array<any>):		  Array<any> { return b.filter(c => a.filter(d => c != d)); }
@@ -82,11 +82,11 @@ export class Testworthy_Utilities {
 		return stripped;
 	}
 
-	basis_angle_ofType_Quadrant(quadrant: E_Quadrant): number {
+	basis_angle_ofType_Quadrant(quadrant: T_Quadrant): number {
 		switch (quadrant) {
-			case E_Quadrant.upperRight: return Angle.three_quarters;
-			case E_Quadrant.lowerLeft:  return Angle.quarter;
-			case E_Quadrant.upperLeft:  return Angle.half;
+			case T_Quadrant.upperRight: return Angle.three_quarters;
+			case T_Quadrant.lowerLeft:  return Angle.quarter;
+			case T_Quadrant.upperLeft:  return Angle.half;
 			default:					return 0;
 		}
 	}
@@ -114,17 +114,17 @@ export class Testworthy_Utilities {
 		return points;
 	}
 
-	get browserType(): E_Browser {
+	get browserType(): T_Browser {
 		const userAgent: string = navigator.userAgent;
 		switch (true) {
 			case /msie (\d+)/i.test(userAgent) ||
-				/trident\/.*; rv:(\d+)/i.test(userAgent):  return E_Browser.explorer;
-			case /(chrome|crios)\/(\d+)/i.test(userAgent): return E_Browser.chrome;
-			case /firefox\/(\d+)/i.test(userAgent):		   return E_Browser.firefox;
-			case /opr\/(\d+)/i.test(userAgent):			   return E_Browser.opera;
-			case /orion\/(\d+)/i.test(userAgent):		   return E_Browser.orion;
-			case /safari\/(\d+)/i.test(userAgent):		   return E_Browser.safari;
-			default:									   return E_Browser.unknown
+				/trident\/.*; rv:(\d+)/i.test(userAgent):  return T_Browser.explorer;
+			case /(chrome|crios)\/(\d+)/i.test(userAgent): return T_Browser.chrome;
+			case /firefox\/(\d+)/i.test(userAgent):		   return T_Browser.firefox;
+			case /opr\/(\d+)/i.test(userAgent):			   return T_Browser.opera;
+			case /orion\/(\d+)/i.test(userAgent):		   return T_Browser.orion;
+			case /safari\/(\d+)/i.test(userAgent):		   return T_Browser.safari;
+			default:									   return T_Browser.unknown
 		}
 	}
 
@@ -139,7 +139,7 @@ export class Testworthy_Utilities {
 			'hidParent',
 			'isGrabbed',
 			'bulkRootID',
-			'e_database',
+			't_database',
 			'persistence',
 			'selectionRange',
 		];

@@ -1,11 +1,11 @@
 <script lang='ts'>
-	import { k, Point, debug, colors, signals, E_Layer } from '../../ts/common/Global_Imports';
+	import { k, Point, debug, colors, signals, T_Layer } from '../../ts/common/Global_Imports';
 	import { w_thing_color } from '../../ts/common/Stores';
 	import Circle from '../kit/Circle.svelte';
 	import Box from '../debug/Box.svelte';
 	import { onMount } from 'svelte';
 	export let g_line!: G_TreeLine;
-	const e_curve = g_line.e_curve;
+	const t_curve = g_line.t_curve;
 	const ancestry = g_line.branchAncestry;
 	const debugOffset = new Point(k.height.line - 2.4, 2.5);
 	let stroke_color = ancestry?.thing?.color;
@@ -57,7 +57,7 @@
 				left: {g_line.origin.x + 142 + stroke_width / 2}px;
 				height: {g_line.size.height + stroke_width * 2}px;
 				width: {g_line.size.width + stroke_width * 2}px;
-				z-index: {E_Layer.lines};
+				z-index: {T_Layer.lines};
 				position: absolute;'>
 			<path
 				fill = 'none'

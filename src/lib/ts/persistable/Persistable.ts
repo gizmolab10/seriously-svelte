@@ -1,26 +1,26 @@
-import { E_Persistable } from '../database/DBCommon';
+import { T_Persistable } from '../database/DBCommon';
 import S_Persistence from '../state/S_Persistence';
 import Identifiable from '../runtime/Identifiable';
 import { w_hierarchy } from '../common/Stores';
-import { E_Debug } from '../debug/Debug';
+import { T_Debug } from '../debug/Debug';
 import { get } from 'svelte/store';
 
 export default class Persistable extends Identifiable {
-	e_persistable: E_Persistable;
+	t_persistable: T_Persistable;
 	persistence!: S_Persistence;
 	idBase: string;
 
-	constructor(e_database: string, idBase: string, e_persistable: E_Persistable, id: string, already_persisted: boolean = false) {
+	constructor(t_database: string, idBase: string, t_persistable: T_Persistable, id: string, already_persisted: boolean = false) {
 		super(id);
-		this.persistence = new S_Persistence(e_database, e_persistable, id, already_persisted, false);
-		this.e_persistable = e_persistable;
+		this.persistence = new S_Persistence(t_database, t_persistable, id, already_persisted, false);
+		this.t_persistable = t_persistable;
 		this.idBase = idBase;
 		get(w_hierarchy).signal_storage_redraw();
 	}
 
 	async persistent_create_orUpdate(already_persisted: boolean) {}
 	set_isDirty() { this.persistence.isDirty = true; }		// TODO: set global
-	log(option: E_Debug, message: string) { alert(message); }
+	log(option: T_Debug, message: string) { alert(message); }
 	isInDifferentBulkThan(other: Persistable) { return this.idBase != other.idBase; }
 
 	async persist() {

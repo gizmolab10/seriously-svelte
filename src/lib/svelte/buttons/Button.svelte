@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { w_ancestries_grabbed, w_ancestries_expanded, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { w_background_color, w_graph_rect, w_user_graph_offset } from '../../ts/common/Stores';
-	import { k, u, ux, Rect, Point, colors, E_Layer } from '../../ts/common/Global_Imports';
+	import { k, u, ux, Rect, Point, colors, T_Layer } from '../../ts/common/Global_Imports';
 	import { S_Element, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import type { Handle_Result } from '../../ts/common/Types';
@@ -18,7 +18,7 @@
 	export let border_thickness = 0.5;
 	export let color = colors.default;
 	export let position = 'absolute';
-	export let zindex = E_Layer.dots;
+	export let zindex = T_Layer.dots;
 	export let isToggle = false;
 	export let style = k.empty;
 	export let name = k.empty;

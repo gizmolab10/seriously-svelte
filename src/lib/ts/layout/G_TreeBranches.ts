@@ -1,4 +1,4 @@
-import { debug, Point, layout, Ancestry, E_Graph } from '../common/Global_Imports';
+import { debug, Point, layout, Ancestry, T_Graph } from '../common/Global_Imports';
 
 export default class G_TreeBranches {
 	show_child_branches = true;
@@ -23,7 +23,7 @@ export default class G_TreeBranches {
 			for (const branchAncestry of branchAncestries) {
 				if (branchAncestry.depth > ancestry.depth) {
 					const g_widget = branchAncestry.g_widget;
-					g_widget.layout_widget_forBranches(height, origin_ofWidget, E_Graph.tree)
+					g_widget.layout_widget_forBranches(height, origin_ofWidget, T_Graph.tree)
 					height += g_widget.subtree_height;
 				}
 			}

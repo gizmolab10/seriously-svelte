@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { E_Layer, E_Timer, Mouse_Timer, S_Mouse } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Timer, Mouse_Timer, S_Mouse } from '../../ts/common/Global_Imports';
 	import { k, c, u, ux, Rect, Size, Point, debug } from '../../ts/common/Global_Imports';
 	import { w_mouse_location, w_thing_fontFamily } from '../../ts/common/Stores';
 	import type { Handle_Result } from '../../ts/common/Types';
@@ -16,7 +16,7 @@
 	export let width = k.height.button;
 	export let detect_mouseUp = true;
 	export let position = 'absolute';
-	export let zindex = E_Layer.dots;
+	export let zindex = T_Layer.dots;
 	export let cursor = 'pointer';
 	export let align_left = true;
 	export let name = 'generic';
@@ -103,7 +103,7 @@
 		}
 		s_mouse.clicks += 1;
 		if (detect_doubleClick) {
-			mouse_timer.setTimeout(E_Timer.double, () => {
+			mouse_timer.setTimeout(T_Timer.double, () => {
 				if (mouse_timer.hasTimer && s_mouse.clicks == 2) {
 					reset();
 					handle_s_mouse(create_s_mouse(false, true, false));
@@ -111,7 +111,7 @@
 			});
 		}
 		if (detect_longClick) {
-			mouse_timer.setTimeout(E_Timer.long, () => {
+			mouse_timer.setTimeout(T_Timer.long, () => {
 				if (mouse_timer.hasTimer) {
 					reset();
 					handle_s_mouse(create_s_mouse(false, false, true));

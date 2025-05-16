@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, ux, Point, Thing, E_Layer, colors, signals } from '../../ts/common/Global_Imports';
+	import { k, ux, Point, Thing, T_Layer, colors, signals } from '../../ts/common/Global_Imports';
 	import ColorPicker from 'svelte-awesome-color-picker';
 	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';
@@ -26,14 +26,14 @@
 		top: {origin.y}px;
 		left: {origin.x}px;
 		position: absolute;
-		z-index: {E_Layer.frontmost};
+		z-index: {T_Layer.frontmost};
 		--picker_offset: {picker_offset};'>
 	<ColorPicker
 		label=''
 		on:input={handleColorChange}
 		hex={colors.color_toHex(color)}
 		--picker-indicator-size='{selectorSize}px'
-		--picker-z-index='{E_Layer.frontmost}'
+		--picker-z-index='{T_Layer.frontmost}'
 		--slider-width='{selectorSize}px'
 		--picker-height='{pickerSize}px'
 		--picker-width='{pickerSize}px'

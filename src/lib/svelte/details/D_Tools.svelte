@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { E_Tool, E_Layer, E_ToolRequest, E_Predicate, E_Alteration } from '../../ts/common/Global_Imports';
+	import { T_Tool, T_Layer, T_ToolRequest, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
 	import { w_hierarchy, w_e_details, w_user_graph_offset, w_s_alteration } from '../../ts/common/Stores';
 	import { e, k, show, Size, Point, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
 	import { w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
@@ -15,7 +15,7 @@
 	let tools_top = top + (has_title ? 3 : -13);
     let reattachments = 0;
 
-	// buttons row sends column & E_ToolRequest:
+	// buttons row sends column & T_ToolRequest:
 	// 	 is_disabled calls:	handle_isTool_disabledAt
 	//	 handle_click calls:	handle_tool_clickedAt ... n.b., long press generates multiple calls
 	// buttons grid adds row (here it becomest_tool)
@@ -29,17 +29,17 @@
 		$w_ancestries_expanded,
 		update_button_titles();
 
-	function name_ofToolAt(e_tool: number, column: number): string { return Object.keys(k.tools[E_Tool[e_tool]])[column]; }
+	function name_ofToolAt(t_tool: number, column: number): string { return Object.keys(k.tools[T_Tool[t_tool]])[column]; }
 
-	function name_for(e_tool: number, column: number) {
-		const titles = button_titles[e_tool];
+	function name_for(t_tool: number, column: number) {
+		const titles = button_titles[t_tool];
 		return `${titles[0]}.${titles[column]}`;
 	}
 
 	function target_ofAlteration(): string | null {
 		const s_alteration = $w_s_alteration;
 		const kind_ofAPredicate = s_alteration?.predicate?.kind;
-		return kind_ofAPredicate == E_Predicate.contains ? 'parent' : kind_ofAPredicate == E_Predicate.isRelated ? 'related' : null;
+		return kind_ofAPredicate == T_Predicate.contains ? 'parent' : kind_ofAPredicate == T_Predicate.isRelated ? 'related' : null;
 	}
 
 	function update_button_titles() {
@@ -50,13 +50,13 @@
 		reattachments += 1;
 	}
 
-	function isTool_invertedAt(e_tool: number, column: number): boolean {
+	function isTool_invertedAt(t_tool: number, column: number): boolean {
 		const action = target_ofAlteration();
 		const s_alteration = $w_s_alteration;
-		const e_alteration = s_alteration?.e_alteration;
-		return !!e_alteration && !!action && action == name_ofToolAt(e_tool, column)
-			&& ((e_tool == E_Tool.add    && e_alteration == E_Alteration.add)
-			||  (e_tool == E_Tool.delete && e_alteration == E_Alteration.delete));
+		const t_alteration = s_alteration?.t_alteration;
+		return !!t_alteration && !!action && action == name_ofToolAt(t_tool, column)
+			&& ((t_tool == T_Tool.add    && t_alteration == T_Alteration.add)
+			||  (t_tool == T_Tool.delete && t_alteration == T_Alteration.delete));
 	}
 
 	function compute_button_titles() {
@@ -71,14 +71,14 @@
 		];
 	}
 
-	function handle_toolRequest(e_toolRequest: E_ToolRequest, s_mouse: S_Mouse, e_tool: number, column: number): any {
+	function handle_toolRequest(t_toolRequest: T_ToolRequest, s_mouse: S_Mouse, t_tool: number, column: number): any {
 		const isAltering = !!$w_s_alteration;
-		switch (e_toolRequest) {
-			case E_ToolRequest.name:		 return name_ofToolAt(e_tool, column);
-			case E_ToolRequest.is_disabled:	 return e.handle_isTool_disabledAt(e_tool, column);
-			case E_ToolRequest.is_inverted:	 return !isAltering ? false : isTool_invertedAt(e_tool, column);
-			case E_ToolRequest.is_visible:	 return !isAltering ? true : [E_Tool.add, E_Tool.delete].includes(e_tool);
-			case E_ToolRequest.handle_click: return e.handle_tool_autorepeatAt(s_mouse, e_tool, column, name_for(e_tool, column + 1));
+		switch (t_toolRequest) {
+			case T_ToolRequest.name:		 return name_ofToolAt(t_tool, column);
+			case T_ToolRequest.is_disabled:	 return e.handle_isTool_disabledAt(t_tool, column);
+			case T_ToolRequest.is_inverted:	 return !isAltering ? false : isTool_invertedAt(t_tool, column);
+			case T_ToolRequest.is_visible:	 return !isAltering ? true : [T_Tool.add, T_Tool.delete].includes(t_tool);
+			case T_ToolRequest.handle_click: return e.handle_tool_autorepeatAt(s_mouse, t_tool, column, name_for(t_tool, column + 1));
 		}
 		return null;
 	}
@@ -91,7 +91,7 @@
 		style='
 			top:{tools_top}px;
 			position:absolute;
-			z-index:{E_Layer.tools}'>
+			z-index:{T_Layer.tools}'>
 		<Buttons_Grid
 			gap={3}
 			columns={5}
@@ -112,9 +112,9 @@
 					text-align:center;
 					width:{k.width_details}px;
 					top:{show_box ? 120 : 58}px;
-					z-index:{E_Layer.tools + 1};
+					z-index:{T_Layer.tools + 1};
 					font-size:{k.font_size.smallest}px;'>
-				To <em>{$w_s_alteration.e_alteration}</em> an item as <em>{target_ofAlteration() ?? k.unknown}</em>
+				To <em>{$w_s_alteration.t_alteration}</em> an item as <em>{target_ofAlteration() ?? k.unknown}</em>
 				<br> to <strong>{ancestry.title}</strong>
 				<br> choose that item's <em>blinking</em> dot
 				<br><br> When you are <em>done</em>,

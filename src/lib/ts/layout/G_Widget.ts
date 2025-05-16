@@ -1,7 +1,7 @@
 import { k, ux, Rect, Size, Point, layout, Ancestry } from '../common/Global_Imports';
 import { S_Element, G_Cluster, G_TreeLine, G_TreeBranches } from '../common/Global_Imports';
 import { w_graph_rect, w_e_graph, w_device_isMobile} from '../common/Stores';
-import { E_Widget, E_Element, E_Graph } from '../common/Global_Imports';
+import { T_Widget, T_Element, T_Graph } from '../common/Global_Imports';
 import { w_show_details, w_show_related } from '../common/Stores';
 import { get } from 'svelte/store';
 
@@ -17,7 +17,7 @@ export default class G_Widget {
 	origin_ofTitle = Point.zero;
 	center_ofDrag = Point.zero;
 	widget_pointsRight = true;
-	forGraphMode: E_Graph;
+	forGraphMode: T_Graph;
 	points_toChild = true;
 	es_widget!: S_Element;
 	g_cluster!: G_Cluster;
@@ -43,7 +43,7 @@ export default class G_Widget {
 	//		radial origin, angles and orientations (in/out, right/left)
 
 	constructor(ancestry: Ancestry) {
-		this.es_widget = ux.s_element_for(ancestry, E_Element.widget, k.empty);
+		this.es_widget = ux.s_element_for(ancestry, T_Element.widget, k.empty);
 		this.g_line = new G_TreeLine(ancestry.parentAncestry, ancestry);
 		this.g_parentBranches = new G_TreeBranches(ancestry, false);
 		this.g_childBranches = new G_TreeBranches(ancestry);
@@ -62,15 +62,15 @@ export default class G_Widget {
 
 	// get gg_cluster(): G_Cluster { return this.ancestry.g_cluster; }
 
-	get e_widget(): E_Widget {
+	get t_widget(): T_Widget {
 		const isFocus = this.ancestry?.isFocus ?? false;
-		return layout.inTreeMode ? isFocus ? E_Widget.focus : E_Widget.tree : E_Widget.radial;
+		return layout.inTreeMode ? isFocus ? T_Widget.focus : T_Widget.tree : T_Widget.radial;
 	}
 	
 	get origin(): Point {
-		switch (this.e_widget) {
-			case E_Widget.radial: return this.origin_ofRadial;
-			case E_Widget.focus:  return this.origin_ofWidget;	// tree focus
+		switch (this.t_widget) {
+			case T_Widget.radial: return this.origin_ofRadial;
+			case T_Widget.focus:  return this.origin_ofWidget;	// tree focus
 			default:			  return this.origin_ofTrunk;
 		}
 	}
@@ -87,7 +87,7 @@ export default class G_Widget {
 		rotated_origin: Point,
 		widget_pointsRight: boolean) {
 			if (layout.inRadialMode) {
-				this.forGraphMode = E_Graph.radial;
+				this.forGraphMode = T_Graph.radial;
 				this.origin_ofWidget = rotated_origin;
 				this.widget_pointsRight = widget_pointsRight;
 				this.layout_widget();
@@ -97,7 +97,7 @@ export default class G_Widget {
 	layout_widget_forBranches(
 		height: number = 0,
 		origin: Point = Point.zero,
-		forGraphMode = E_Graph.radial,
+		forGraphMode = T_Graph.radial,
 		points_toChild: boolean = true,
 		widget_pointsRight: boolean = true) {
 			if (forGraphMode == get(w_e_graph)) {	// assure modes match

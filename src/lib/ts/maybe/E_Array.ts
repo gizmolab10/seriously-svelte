@@ -1,13 +1,13 @@
 import type { Dictionary } from './Types';
 
-export default class E_Array<T, D extends Dictionary<T>> {
+export default class T_Array<T, D extends Dictionary<T>> {
 	private enums: Dictionary<T>;
 	private array: T[];
 	private changeListeners: Set<(key: string, oldValue: T, newValue: T) => void>;
 
 	static create<D extends Dictionary<T>>(dictionary: D) {
 		// Proxy handler to intercept property access
-		return new Proxy(new E_Array(dictionary), {
+		return new Proxy(new T_Array(dictionary), {
 			get: (target, prop) => {
 				return target.get(target, prop as string);
 			},
@@ -85,7 +85,7 @@ export default class E_Array<T, D extends Dictionary<T>> {
 //	 third: 'cherry',
 // };
 
-// const eArray = E_Array.create(myDict);
+// const eArray = T_Array.create(myDict);
 
 // // Add a change listener
 // eArray.onChange((key, oldValue, newValue) => {

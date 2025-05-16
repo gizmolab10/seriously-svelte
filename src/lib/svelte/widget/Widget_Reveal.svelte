@@ -1,14 +1,14 @@
 <script lang='ts'>
 	import { c, k, u, ux, debug, layout, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
 	import { w_hierarchy, w_e_countDots, w_thing_color, w_background_color } from '../../ts/common/Stores';
-	import { Size, Thing, Point, Predicate, E_Layer, E_Graph } from '../../ts/common/Global_Imports';
+	import { Size, Thing, Point, Predicate, T_Layer, T_Graph } from '../../ts/common/Global_Imports';
 	import { w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVG_D3 from '../kit/SVG_D3.svelte';
 	import { onMount } from 'svelte';
     export let ancestry;
 	export let name = k.empty;
-    export let zindex = E_Layer.dots;
+    export let zindex = T_Layer.dots;
 	export let points_toChild = true;
     export let hover_isReversed = false;
 	const tinyDotsOffset = new Point(-5.4, -2.9);

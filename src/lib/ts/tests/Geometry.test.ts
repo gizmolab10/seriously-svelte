@@ -1,4 +1,4 @@
-import { E_Quadrant, E_Orientation } from '../common/Angle';
+import { T_Quadrant, T_Orientation } from '../common/Angle';
 import { Point } from '../common/Geometry';
 import Angle from '../common/Angle';
 
@@ -47,14 +47,14 @@ describe('Angle', () => {
 	});
 
 	it('quadrant', () => {
-		expect(new Angle(Math.PI / 3).quadrant_ofAngle).toBe(E_Quadrant.upperRight);	// 60° is in upper right quadrant
+		expect(new Angle(Math.PI / 3).quadrant_ofAngle).toBe(T_Quadrant.upperRight);	// 60° is in upper right quadrant
 	});
 
 	it('orientation', () => {
-		expect(new Angle(Math.PI / 3).orientation_ofAngle).toBe(E_Orientation.up);		//	60° orients up
-		expect(new Angle(Math.PI / 2).orientation_ofAngle).toBe(E_Orientation.up);		//	90° orients up
-		expect(new Angle(Math.PI / 6).orientation_ofAngle).toBe(E_Orientation.right);	//	30° orients right
-		expect(new Angle(Math.PI * 1.25).orientation_ofAngle).toBe(E_Orientation.down);	// 205° orients down
+		expect(new Angle(Math.PI / 3).orientation_ofAngle).toBe(T_Orientation.up);		//	60° orients up
+		expect(new Angle(Math.PI / 2).orientation_ofAngle).toBe(T_Orientation.up);		//	90° orients up
+		expect(new Angle(Math.PI / 6).orientation_ofAngle).toBe(T_Orientation.right);	//	30° orients right
+		expect(new Angle(Math.PI * 1.25).orientation_ofAngle).toBe(T_Orientation.down);	// 205° orients down
 	});
 
 });

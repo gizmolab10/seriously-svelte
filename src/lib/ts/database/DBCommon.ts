@@ -1,18 +1,18 @@
 import { Trait, Thing, Hierarchy, Predicate, Relationship } from '../common/Global_Imports';
 import { c, p, u, debug, layout, databases } from '../common/Global_Imports';
-import { E_Thing, E_Startup, E_Preference } from '../common/Global_Imports';
+import { T_Thing, T_Startup, T_Preference } from '../common/Global_Imports';
 import { w_hierarchy, w_e_startup } from '../common/Stores';
 import Persistable from '../persistable/Persistable';
 import type { Dictionary } from '../common/Types';
 import { k } from '../common/Constants';
 
-export enum E_Persistence {
+export enum T_Persistence {
 	remote = 'remote',
 	local  = 'local',
 	none   = 'none',
 }
 
-export enum E_Database {
+export enum T_Database {
 	airtable = 'airtable',
 	firebase = 'firebase',
 	plugin	 = 'plugin',
@@ -20,7 +20,7 @@ export enum E_Database {
 	test	 = 'test',
 }
 
-export enum E_Persistable {
+export enum T_Persistable {
 	relationships = 'Relationships',
 	predicates	  = 'Predicates',
 	hierarchy	  = 'Hierarchy',	// includes parent contains and relateds
@@ -33,23 +33,23 @@ export enum E_Persistable {
 
 export default class DBCommon {
 	loadTime: string | null = null;
-	e_persistence!: E_Persistence;
+	t_persistence!: T_Persistence;
 	hierarchy!: Hierarchy;
-	e_database = k.empty;
+	t_database = k.empty;
 	idBase = k.empty;
 	
 	queryStrings_apply() {}
 	setup_remote_handlers() {}
-	get displayName(): string { return this.e_database; }
+	get displayName(): string { return this.t_database; }
 	get dict_forStorageDetails(): Dictionary { return {'fetch took' : this.loadTime} }
-	get isRemote(): boolean { return this.e_persistence == E_Persistence.remote; }
-	get isPersistent(): boolean { return this.e_persistence != E_Persistence.none; }
+	get isRemote(): boolean { return this.t_persistence == T_Persistence.remote; }
+	get isPersistent(): boolean { return this.t_persistence != T_Persistence.none; }
 	async hierarchy_fetch_forID(idBase: string) {}	// support for browsing multiple firebase bulks
 	
 	async fetch_all() { this.fetch_all_fromLocal(); }
 	async remove_all() { this.remove_all_fromLocal(); }
-	remove_all_fromLocal() { if (this.isPersistent) { p.writeDB_key(E_Preference.local, null); } }
-	persist_all_toLocal() { if (this.isPersistent) { p.writeDB_key(E_Preference.local, u.stringify_object(this.hierarchy.all_data)); } }
+	remove_all_fromLocal() { if (this.isPersistent) { p.writeDB_key(T_Preference.local, null); } }
+	persist_all_toLocal() { if (this.isPersistent) { p.writeDB_key(T_Preference.local, u.stringify_object(this.hierarchy.all_data)); } }
 
 	async thing_persistentUpdate(thing: Thing) { this.persist_all(); }
 	async thing_persistentDelete(thing: Thing) { this.persist_all(); }
@@ -90,14 +90,14 @@ export default class DBCommon {
 	}
 
 	async fetch_all_fromLocal() {
-		const json = p.readDB_key(E_Preference.local);
+		const json = p.readDB_key(T_Preference.local);
 		const h = this.hierarchy;
 		if (!!json) {
 			const dict = JSON.parse(json) as Dictionary;
 			await h.extract_fromDict(dict);
 		} else if (!this.isRemote) {			// no such preference, create empty hierarchy
 			h.predicate_defaults_remember_runtimeCreate();
-			h.thing_remember_runtimeCreateUnique(this.idBase, Thing.newID(), 'click here to edit this title', 'limegreen', E_Thing.root);
+			h.thing_remember_runtimeCreateUnique(this.idBase, Thing.newID(), 'click here to edit this title', 'limegreen', T_Thing.root);
 		}
 	}
 	
@@ -109,11 +109,11 @@ export default class DBCommon {
 		if (h.hasRoot) {
 			h.restore_fromPreferences();
 		} else {
-			w_e_startup.set(E_Startup.fetch);
+			w_e_startup.set(T_Startup.fetch);
 			await this.hierarchy_create_fastLoad_or_fetch_andBuild();
 		}
 		setTimeout( () => {
-			w_e_startup.set(E_Startup.ready);
+			w_e_startup.set(T_Startup.ready);
 			layout.grand_build();
 		}, 1);
 	}

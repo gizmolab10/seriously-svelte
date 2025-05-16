@@ -1,4 +1,4 @@
-import { E_Tool, E_Format, E_Predicate, E_Alteration, S_Mouse, S_Alteration } from '../common/Global_Imports';
+import { T_Tool, T_Format, T_Predicate, T_Alteration, S_Mouse, S_Alteration } from '../common/Global_Imports';
 import { c, k, w, Point, debug, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
 import { w_device_isMobile, w_ancestries_grabbed, w_user_graph_offset } from '../common/Stores';
 import { w_count_mouse_up, w_mouse_location, w_mouse_location_scaled } from '../common/Stores';
@@ -19,11 +19,11 @@ export class Events {
 	static readonly _____INTERNALS: unique symbol;
 
 	private handle_touch_end(event: TouchEvent) { this.initialTouch = null; }
-	private get autorepeaters(): number[] { return [E_Tool.browse, E_Tool.list, E_Tool.move]; }
+	private get autorepeaters(): number[] { return [T_Tool.browse, T_Tool.list, T_Tool.move]; }
 
-	private ancestry_toggle_alteration(ancestry: Ancestry, e_alteration: E_Alteration, predicate: Predicate | null) {
+	private ancestry_toggle_alteration(ancestry: Ancestry, t_alteration: T_Alteration, predicate: Predicate | null) {
 		const isAltering = !!get(w_s_alteration);
-		const s_alteration = isAltering ? null : new S_Alteration(ancestry, e_alteration, predicate);
+		const s_alteration = isAltering ? null : new S_Alteration(ancestry, t_alteration, predicate);
 		w_s_alteration.set(s_alteration);
 	}
 
@@ -159,12 +159,12 @@ export class Events {
 
 	handle_s_mouse(s_mouse: S_Mouse, from: string): S_Mouse { return s_mouse; }			// for dots and buttons
 
-	async handle_tool_autorepeatAt(s_mouse: S_Mouse, e_tool: number, column: number, name: string) {
+	async handle_tool_autorepeatAt(s_mouse: S_Mouse, t_tool: number, column: number, name: string) {
 		if (s_mouse.isDown) {
-			return this.handle_tool_clickedAt(s_mouse, e_tool, column, name);
-		} else if (s_mouse.isLong && this.autorepeaters.includes(e_tool)) {
+			return this.handle_tool_clickedAt(s_mouse, t_tool, column, name);
+		} else if (s_mouse.isLong && this.autorepeaters.includes(t_tool)) {
 			this.autorepeat_interval = setInterval(() => {			// begin autorepeating
-				this.handle_tool_clickedAt(s_mouse, e_tool, column, name);
+				this.handle_tool_clickedAt(s_mouse, t_tool, column, name);
 			}, k.autorepeat_interval);
 		} else if (s_mouse.isUp && !!this.autorepeat_interval) {	// stop autorepeating
 			clearInterval(this.autorepeat_interval);
@@ -172,85 +172,85 @@ export class Events {
 		}
 	}
 
-	async handle_tool_clickedAt(s_mouse: S_Mouse, e_tool: number, column: number, name: string) {
-		if (!this.handle_isTool_disabledAt(e_tool, column)) {
+	async handle_tool_clickedAt(s_mouse: S_Mouse, t_tool: number, column: number, name: string) {
+		if (!this.handle_isTool_disabledAt(t_tool, column)) {
 			const h = get(w_hierarchy);
 			const ancestry = h.grabs_latest_upward(true);
-			switch (e_tool) {
-				case E_Tool.browse:					switch (column) {
+			switch (t_tool) {
+				case T_Tool.browse:					switch (column) {
 					case k.tools.browse.up:				h.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, false, false); break;
 					case k.tools.browse.down:			h.grabs_latest_rebuild_persistentMoveUp_maybe(false, false, false, false); break;
 					case k.tools.browse.left:			await h.ancestry_rebuild_persistentMoveRight(ancestry, false, false, false, false, false); break;
 					case k.tools.browse.right:			await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, false, false, false); break;
 				}									break;
-				case E_Tool.add:					switch (column) {
+				case T_Tool.add:					switch (column) {
 					case k.tools.add.child:				await h.ancestry_edit_persistentCreateChildOf(ancestry); break;
 					case k.tools.add.sibling:			await h.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break;
 					case k.tools.add.line:				await h.thing_edit_persistentAddLine(ancestry); break;
-					case k.tools.add.parent:			this.ancestry_toggle_alteration(ancestry, E_Alteration.add, Predicate.contains); break;
-					case k.tools.add.related:			this.ancestry_toggle_alteration(ancestry, E_Alteration.add, Predicate.isRelated); break;
+					case k.tools.add.parent:			this.ancestry_toggle_alteration(ancestry, T_Alteration.add, Predicate.contains); break;
+					case k.tools.add.related:			this.ancestry_toggle_alteration(ancestry, T_Alteration.add, Predicate.isRelated); break;
 				}									break;
-				case E_Tool.delete:					switch (column) {
+				case T_Tool.delete:					switch (column) {
 					case k.tools.delete.selection:		await h.ancestries_rebuild_traverse_persistentDelete(get(w_ancestries_grabbed)); break;
-					case k.tools.delete.parent:			this.ancestry_toggle_alteration(ancestry, E_Alteration.delete, Predicate.contains); break;
-					case k.tools.delete.related:		this.ancestry_toggle_alteration(ancestry, E_Alteration.delete, Predicate.isRelated); break;
+					case k.tools.delete.parent:			this.ancestry_toggle_alteration(ancestry, T_Alteration.delete, Predicate.contains); break;
+					case k.tools.delete.related:		this.ancestry_toggle_alteration(ancestry, T_Alteration.delete, Predicate.isRelated); break;
 				}									break;
-				case E_Tool.move:					switch (column) {
+				case T_Tool.move:					switch (column) {
 					case k.tools.move.up:				h.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, true, false); break;
 					case k.tools.move.down:				h.grabs_latest_rebuild_persistentMoveUp_maybe(false, false, true, false); break;
 					case k.tools.move.left:				await h.ancestry_rebuild_persistentMoveRight(ancestry, false, false, true, false, false); break;
 					case k.tools.move.right:			await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, true, false, false); break;
 				}									break;
-				case E_Tool.list:						await h.ancestry_toggle_expansion(ancestry); break;
-				case E_Tool.show:					switch (column) {
+				case T_Tool.list:						await h.ancestry_toggle_expansion(ancestry); break;
+				case T_Tool.show:					switch (column) {
 					case k.tools.show.selection:		h.grabs_latest_assureIsVisible(); break;
 					case k.tools.show.root:				h.rootAncestry.becomeFocus(); break;
 					case k.tools.show.all:				layout.expandAll(); layout.grand_build(); break;
 				}									break;
-				case E_Tool.graph:						w.user_graph_offset_setTo(Point.zero); break;
+				case T_Tool.graph:						w.user_graph_offset_setTo(Point.zero); break;
 			}
 		}
 	}
 
-	handle_isTool_disabledAt(e_tool: number, column: number): boolean {		// true means disabled
+	handle_isTool_disabledAt(t_tool: number, column: number): boolean {		// true means disabled
 		const ancestry = get(w_hierarchy).grabs_latest_upward(true);
 		const is_altering = !!get(w_s_alteration);
 		const no_children = !ancestry.hasChildren;
 		const no_siblings = !ancestry.hasSiblings;
 		const is_root = ancestry.isRoot;
 		const disable_revealConceal = no_children || is_root || (layout.inRadialMode && ancestry.isFocus);
-		switch (e_tool) {
-			case E_Tool.browse:					switch (column) {
+		switch (t_tool) {
+			case T_Tool.browse:					switch (column) {
 				case k.tools.browse.left:			return is_root;
 				case k.tools.browse.up:				return no_siblings;
 				case k.tools.browse.down:			return no_siblings;
 				case k.tools.browse.right:			return no_children;
 			}									break;
-			case E_Tool.add:					switch (column) {
+			case T_Tool.add:					switch (column) {
 				case k.tools.add.child:				return is_altering;
 				case k.tools.add.sibling:			return is_altering;
 				case k.tools.add.line:				return is_altering || is_root;
 				case k.tools.add.parent:			return is_root;
 				case k.tools.add.related:			return false;
 			}									break;
-			case E_Tool.delete:					switch (column) {
+			case T_Tool.delete:					switch (column) {
 				case k.tools.delete.selection:		return is_altering || is_root;
-				case k.tools.delete.parent:			return !ancestry.hasParents_ofKind(E_Predicate.contains);
-				case k.tools.delete.related:		return !ancestry.hasParents_ofKind(E_Predicate.isRelated);
+				case k.tools.delete.parent:			return !ancestry.hasParents_ofKind(T_Predicate.contains);
+				case k.tools.delete.related:		return !ancestry.hasParents_ofKind(T_Predicate.isRelated);
 			}									break;
-			case E_Tool.move:					switch (column) {
+			case T_Tool.move:					switch (column) {
 				case k.tools.move.left:				return is_root;
 				case k.tools.move.up:				return no_siblings;
 				case k.tools.move.down:				return no_siblings;
 				case k.tools.move.right:			return is_root;
 			}									break;
-			case E_Tool.list:						return disable_revealConceal;
-			case E_Tool.show:					switch (column) {
+			case T_Tool.list:						return disable_revealConceal;
+			case T_Tool.show:					switch (column) {
 				case k.tools.show.selection:		return ancestry.isVisible;
 				case k.tools.show.root:				return get(w_hierarchy).rootAncestry.isVisible;
 				case k.tools.show.all:				return layout.isAllExpanded;
 			}									break;
-			case E_Tool.graph:						return get(w_user_graph_offset).isZero;
+			case T_Tool.graph:						return get(w_user_graph_offset).isZero;
 		}
 		return true;
 	}
@@ -293,10 +293,10 @@ export class Events {
 				}
 				switch (key) {
 					case '?':				c.showHelp(); break;
-					case 's':				h.persist_toFile(E_Format.json); break;
+					case 's':				h.persist_toFile(T_Format.json); break;
 					case 'm':				layout.toggle_t_graph(); break;
 					case 'c':				w.user_graph_offset_setTo(Point.zero); break;
-					case 'o':				h.select_file_toUpload(E_Format.json, event.shiftKey); break;
+					case 'o':				h.select_file_toUpload(T_Format.json, event.shiftKey); break;
 					case '!':				graph_needsRebuild = h.rootAncestry?.becomeFocus(); break;
 					case 'escape':			if (!!get(w_s_alteration)) { h.stop_alteration(); }; break;
 					case 'arrowup':			h.grabs_latest_rebuild_persistentMoveUp_maybe( true, SHIFT, OPTION, EXTREME); break;

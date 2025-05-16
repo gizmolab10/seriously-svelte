@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, Point, E_Layer } from '../../ts/common/Global_Imports';
+	import { k, Point, T_Layer } from '../../ts/common/Global_Imports';
 	import type { Integer } from '../../ts/common/Types';
 	export let font_size = k.font_size.small;
 	export let row_height = 12;
@@ -33,7 +33,7 @@
 			top:{top}px;
 			position:absolute;
 			font-size:{font_size}px;
-			z-index: {E_Layer.details};'>
+			z-index: {T_Layer.details};'>
 		<table 
 			bind:this={table}
 			style='width: {width}px; left:12px; color:black;'>

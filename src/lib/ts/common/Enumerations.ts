@@ -1,24 +1,24 @@
 // DO NOT change the order of the following
 
-export enum E_Order {	
+export enum T_Order {	
 	child,
 	other,
 }
 
-export enum E_Banner {
+export enum T_Banner {
 	controls,
 	crumbs,
 	graph,
 }
 
-export enum E_Details {
+export enum T_Details {
 	storage,
 	tools,
 	display,
 	info,
 }
 
-export enum E_Info {		// identical to k.info
+export enum T_Info {		// identical to k.info
 	segments,
 	before_title,
 	title,
@@ -30,7 +30,7 @@ export enum E_Info {		// identical to k.info
 	quest
 }
 
-export enum E_Layer {
+export enum T_Layer {
 	common,
 	paging,
 	rings,
@@ -49,84 +49,84 @@ export enum E_Layer {
 
 // the order of the following is unimportant
 
-export enum E_Graph {
+export enum T_Graph {
 	radial = 'radial',
 	tree   = 'tree',
 }
 
-export enum E_Report {
+export enum T_Report {
 	selection = 'selection',
 	focus	  = 'focus',
 }
 
-export enum E_Alteration {
+export enum T_Alteration {
 	delete = 'delete',
 	add	   = 'add',
 }
 
-export enum E_Storage {
+export enum T_Storage {
 	import = 'import',
 	export = 'export',
 }
 
-export enum E_Format {
+export enum T_Format {
 	cancel = 'cancel',
 	json   = 'json',
 	csv	   = 'csv'
 }
 
-export enum E_Kinship {
+export enum T_Kinship {
 	related = 'related',
 	parent  = 'parent',
 	child   = 'child',
 }
 
-export enum E_Widget {
+export enum T_Widget {
 	radial = 'radial',
 	focus  = 'focus',
 	tree   = 'tree',
 }
 
-export enum E_Curve {
+export enum T_Curve {
 	flat = 'flat',
 	down = 'down',
 	up	 = 'up',
 }
 
-export enum E_Create {
+export enum T_Create {
 	isFromPersistent = 'isFrom',
 	getPersistentID	 = 'getID',
 	none			 = '',
 }
 
-export enum E_SvelteComponent {
+export enum T_SvelteComponent {
 	widget	= 'widget',		// *
 	title	= 'title',
 	app		= 'app',
 }
 
-export enum E_Startup {
+export enum T_Startup {
 	start = 'start',
 	fetch = 'fetch',
 	empty = 'empty',
 	ready = 'ready',
 }
 
-export enum E_RingZone {
+export enum T_RingZone {
 	resize = 'resize',
 	paging = 'paging',
 	rotate = 'rotate',
 	miss   = 'miss',
 }
 
-export enum E_Oblong {
+export enum T_Oblong {
 	middle = 'middle',
 	right  = 'right',
 	left   = 'left',
 	full   = 'full',
 }
 
-export enum E_Predicate {
+export enum T_Predicate {
 	appreciates = 'appreciates',
 	isRelated	= 'isRelated',
 	contains	= 'contains',
@@ -135,7 +135,7 @@ export enum E_Predicate {
 	supports	= 'supports',
 }
 
-export enum E_ToolRequest {
+export enum T_ToolRequest {
 	handle_click = 'handle_click',
 	is_disabled	 = 'is_disabled',
 	is_inverted	 = 'is_inverted',
@@ -144,7 +144,7 @@ export enum E_ToolRequest {
 	name		 = 'name',
 }
 
-export enum E_Tool {
+export enum T_Tool {
 	browse,
 	add,
 	delete,
@@ -154,7 +154,7 @@ export enum E_Tool {
 	graph,
 }
 
-export enum E_Control {
+export enum T_Control {
 	details	 = 'show details view',
 	builds	 = 'show build notes',
 	related	 = 'show related',
@@ -164,7 +164,7 @@ export enum E_Control {
 	help	 = '?',
 }
 
-export enum E_Thing {
+export enum T_Thing {
 	externals = '^',	// list of bulks
 	bookmark  = 'b',
 	generic	  = '',
@@ -174,7 +174,7 @@ export enum E_Thing {
 	bulk	  = '~',	// bulk alias
 }
 
-export enum E_Browser  {
+export enum T_Browser  {
 	explorer = 'explorer',
 	unknown  = 'unknown',
 	firefox	 = 'firefox',
@@ -184,7 +184,7 @@ export enum E_Browser  {
 	orion	 = 'orion',
 }
 
-export enum E_Trait {
+export enum T_Trait {
 	consequence = 'consequence',
 	hyperlink	= 'hyperlink',
 	citation	= 'citation',
@@ -199,7 +199,7 @@ export enum E_Trait {
 	sum			= 'sum',
 }
 
-export enum E_Element {
+export enum T_Element {
 	radial_focus = 'radial_focus',
 	breadcrumb 	 = 'breadcrumb',
 	control		 = 'control',
@@ -214,7 +214,7 @@ export enum E_Element {
 	tool		 = 'tool',
 }
 
-export enum E_Preference {
+export enum T_Preference {
 	expanded_children = 'expanded_children',
 	focus_forChildren = 'focus_forChildren',
 	expanded_parents  = 'expanded_parents',

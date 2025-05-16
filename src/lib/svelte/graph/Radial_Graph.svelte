@@ -2,7 +2,7 @@
 	import { k, u, ux, Rect, Point, debug, layout, signals } from '../../ts/common/Global_Imports';
 	import { w_g_paging, w_user_graph_offset, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { w_graph_rect, w_show_details, w_ancestry_focus } from '../../ts/common/Stores';
-	import { E_Layer, E_Signal, E_RingZone } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Signal, T_RingZone } from '../../ts/common/Global_Imports';
 	import Radial_Rings from './Radial_Rings.svelte';
 	import Radial_Focus from './Radial_Focus.svelte';
 	import Widget from '../widget/Widget.svelte';
@@ -38,7 +38,7 @@
 	debug.log_tools(` CLUSTERS`);
 
 	onMount(() => {
-		const handle_recreate = signals.handle_reattach_widgets(0, (e_signal, ancestry) => {
+		const handle_recreate = signals.handle_reattach_widgets(0, (t_signal, ancestry) => {
 			necklace_reattachments += 1;		// triggers {#key} below
 		});
 		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
@@ -58,7 +58,7 @@
 
 <div class = 'radial-graph'
 	style = '
-		z-index : {E_Layer.common};
+		z-index : {T_Layer.common};
 		width : {$w_graph_rect.size.width}px;
 		height : {$w_graph_rect.size.height}px;
 		transform : translate({$w_user_graph_offset.x}px, {$w_user_graph_offset.y}px);'>
@@ -67,7 +67,7 @@
 	{#key necklace_reattachments}
 		<div
 			class = 'necklace-widgets'
-			style = 'z-index : {E_Layer.necklace};'>
+			style = 'z-index : {T_Layer.necklace};'>
 			{#each layout.g_radialGraph.g_necklace_widgets as g_necklace_widget}
 				<Widget ancestry = {g_necklace_widget.ancestry}/>
 			{/each}

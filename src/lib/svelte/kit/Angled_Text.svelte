@@ -1,10 +1,10 @@
 <script>
-	import { k, u, Point, debug, E_Layer } from '../../ts/common/Global_Imports';
+	import { k, u, Point, debug, T_Layer } from '../../ts/common/Global_Imports';
 	import { w_thing_fontFamily } from '../../ts/common/Stores';
 	import { onMount } from 'svelte';
 	export let background_color = colors.background;
 	export let font_family = $w_thing_fontFamily;
-	export let zindex = E_Layer.paging;
+	export let zindex = T_Layer.paging;
 	export let center = Point.zero;
 	export let font_size = '0.7em';
 	export let text = k.space;

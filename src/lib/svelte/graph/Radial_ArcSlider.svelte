@@ -2,7 +2,7 @@
 	import { c, k, w, show, Rect, Size, Point, debug, Angle, colors, radial, signals } from '../../ts/common/Global_Imports';
 	import { w_ring_rotation_radius, w_ring_rotation_angle, w_g_paging_cluster } from '../../ts/common/Stores';
 	import { w_background_color, w_thing_color, w_thing_fontFamily } from '../../ts/common/Stores';
-	import { E_Layer, G_Cluster, Direction } from '../../ts/common/Global_Imports';
+	import { T_Layer, G_Cluster, Direction } from '../../ts/common/Global_Imports';
 	import { w_ancestry_focus, w_count_mouse_up } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/runtime/Identifiable';
@@ -56,18 +56,18 @@
 {#if g_cluster.widgets_shown > 1}
 	<Gull_Wings
 		center={forkTip}
-		zindex={E_Layer.paging}
+		zindex={T_Layer.paging}
 		direction={forkDirection}
 		thickness={k.thickness.fork}
 		radius={k.thickness.fork * 3}
 		color={colors.specialBlend(color, $w_background_color, k.opacity.least)}/>
 {/if}
-<div class='arc-slider' style='z-index:{E_Layer.paging};'>
+<div class='arc-slider' style='z-index:{T_Layer.paging};'>
     <Mouse_Responder
 		width = {radius * 2}
 		height = {radius * 2}
 		name = {g_cluster.name}
-		zindex = {E_Layer.paging}
+		zindex = {T_Layer.paging}
 		cursor = {k.cursor_default}
 		handle_isHit = {handle_isHit}
 		center = {w.center_ofGraphSize}
@@ -99,7 +99,7 @@
     color={color}
     angle={labelAngle}
     center={labelCenter}
-    zindex={E_Layer.paging}
+    zindex={T_Layer.paging}
     text={g_cluster.cluster_title}
     background_color={textBackground}
     font_family={$w_thing_fontFamily}
