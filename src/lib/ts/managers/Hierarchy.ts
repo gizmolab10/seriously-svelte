@@ -1,5 +1,5 @@
-import { w_storage_updated, w_s_alteration, w_ancestries_grabbed } from '../common/Stores';
 import { E_Report, E_Control, E_Predicate, E_Alteration, databases } from '../common/Global_Imports';
+import { w_storage_updated, w_s_alteration, w_ancestries_grabbed } from '../common/Stores';
 import { E_Thing, E_Trait, E_Order, E_Create, E_Format } from '../common/Global_Imports';
 import { Access, Ancestry, Predicate, Relationship } from '../common/Global_Imports';
 import { w_popupView_id, w_ancestry_focus, w_s_title_edit } from '../common/Stores';
@@ -8,6 +8,7 @@ import { c, k, p, u, show, User, Thing, Trait } from '../common/Global_Imports';
 import { E_Persistable } from '../../ts/database/DBCommon';
 import type { Integer, Dictionary } from '../common/Types';
 import Identifiable from '../runtime/Identifiable';
+import { marianne } from '../files/Marianne';
 import DBCommon from '../database/DBCommon';
 import { get } from 'svelte/store';
 
@@ -121,6 +122,8 @@ export class Hierarchy {
 	}
 	
 	static readonly _____THINGS: unique symbol;
+
+	thing_forTitle(title: string): Thing | null { return this.thing_byTitle[title] ?? null; }
 
 	things_refreshKnowns() {
 		const saved = this.things;
@@ -1258,7 +1261,7 @@ export class Hierarchy {
 					for (const dict of array) {
 						await this.extract_fromCSV_Dict(dict);
 					}
-					await this.create_relationship_forAllTraits();
+					await marianne.create_relationship_forAllTraits();
 					break;
 				case E_Format.json:
 					const dict = result as Dictionary;
@@ -1363,40 +1366,9 @@ export class Hierarchy {
 		}
 	}
 
-	async cleanup_lost_and_found() {
-		const lost_and_found = await this.lost_and_found();
-		if (!!lost_and_found) {
-			const lost_and_found_ancestry = lost_and_found.ancestry;
-			for (const child_zncestry of lost_and_found_ancestry.childAncestries) {
-				const grandChildren_count = child_zncestry.childRelationships.length ?? 0;
-				const child_relationship = child_zncestry.relationship;
-				if (!!child_relationship) {
-					const clump_name = grandChildren_count == 0 ? 'leaves' : 'crowds';
-					const clump_ancestry = await this.ancestry_persistentCreateUnique(clump_name, lost_and_found_ancestry, E_Thing.generic);
-					const idParent = clump_ancestry?.thing?.id;
-					if (!!idParent) {
-						child_relationship.idParent = idParent;
-						child_relationship.set_isDirty();
-					}
-				}
-			}
-		}
-	}
-
 	async extract_fromCSV_Dict(dict: Dictionary) {
-		// each dict represents a Thing, which has a title, name, description and parent 1 link
-		// later, in create_relationship_forAllTraits, above ...
-		// ... create a Relationship for each trait that has a dict containing a parent 1 link
-		// TODO: what is the parent 2 link?
-		const thing_id = Identifiable.newID();
-		const title = dict['Title'].removeWhiteSpace();					// TODO: for remote db we need the thing id from the server
-		const thing = this.thing_remember_runtimeCreate(this.db.idBase, thing_id, title, 'black');		// create a Thing for each dict
-		const trait = this.trait_remember_runtimeCreate(this.db.idBase, Identifiable.newID(), thing_id, E_Trait.csv, dict['Description']);
-		if (['TEAM LIBRARY', 'MEMBER LIBRARY'].includes(title)) {		// these two things are roots in airtable, directly add them to our root
-			this.relationship_remember_runtimeCreateUnique(this.db.idBase, Identifiable.newID(), E_Predicate.contains, this.root.id, thing_id, 0);
-		}
-		this.thing_byTitle[title] = thing;
-		trait.dict = dict;												// save the rest of the dict (including parent 1 link) in the new Trait																	// save the rest of the dict (including parent 1 link) in the new Trait
+		const thing = await marianne.extract_fromDict(dict);
+		this.thing_byTitle[thing.title] = thing;
 	}
 
 	async extract_fromDict(dict: Dictionary) {
@@ -1496,22 +1468,6 @@ export class Hierarchy {
 		// await this.relationships_removeHavingNullReferences();
 		this.restore_fromPreferences();
 		this.signal_storage_redraw();
-	}
-
-	async create_relationship_forAllTraits() {
-		// for each trait that has a dict containing a parent 1 link
-		for (const trait of this.traits) {
-			const dict = trait.dict;
-			if (!!dict) {
-				const title = dict['parent 1 link'];
-				if (!!title) {
-					const lost_and_found = await this.lost_and_found();
-					const parent = this.thing_byTitle[title.removeWhiteSpace()] ?? lost_and_found;
-					this.relationship_remember_runtimeCreateUnique(this.db.idBase, Identifiable.newID(), E_Predicate.contains, parent.id, trait.ownerID, 0);
-				}
-			}
-		}
-		// await this.cleanup_lost_and_found();  // Make sure we await this
 	}
 
 }

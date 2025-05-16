@@ -30,7 +30,7 @@ import { builds } from './Builds';
 import { colors } from './Colors';
 import { Direction } from './Angle';
 import { svgPaths } from './SVG_Paths';
-import { files } from '../managers/Files';
+import { files } from '../files/Files';
 import { layout } from '../layout/G_Layout';
 import { show } from '../managers/Visibility';
 import { Rect, Size, Point } from './Geometry';

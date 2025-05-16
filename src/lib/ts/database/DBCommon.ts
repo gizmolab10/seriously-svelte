@@ -93,8 +93,9 @@ export default class DBCommon {
 		const json = p.readDB_key(E_Preference.local);
 		const h = this.hierarchy;
 		if (!!json) {
-			await h.extract_fromDict(JSON.parse(json) as Dictionary);
-		} else if (!this.isRemote) {
+			const dict = JSON.parse(json) as Dictionary;
+			await h.extract_fromDict(dict);
+		} else if (!this.isRemote) {			// no such preference, create empty hierarchy
 			h.predicate_defaults_remember_runtimeCreate();
 			h.thing_remember_runtimeCreateUnique(this.idBase, Thing.newID(), 'click here to edit this title', 'limegreen', E_Thing.root);
 		}

@@ -61,14 +61,23 @@ export default class Files {
 					return;
 				}
 				try {
-					const lines = result.split('\n').filter(line => line.trim().length > 0);
+					// Replace commas inside quotes with a temporary marker
+					let inQuotes = false;
+					let processed = '';
+					for (let i = 0; i < result.length; i++) {
+						if (result[i] === '"') inQuotes = !inQuotes;
+						else if (result[i] === ',' && inQuotes) processed += '$$$$$$';
+						else processed += result[i];
+					}
+					
+					const lines = processed.split('\n').filter(line => line.trim().length > 0);
 					if (lines.length === 0) {
 						reject('No data found in CSV file.');
 						return;
 					}
 					const headers = lines[0].split(',').map(header => header.trim());
 					const records = lines.slice(1).map(line => {
-						const values = line.split(',').map(value => value.trim());
+						const values = line.split(',').map(value => value.trim().replace(/\$\$\$\$\$\$/g, ','));
 						const record: Record<string, string> = {};
 						headers.forEach((header, index) => {
 							record[header] = values[index] || '';

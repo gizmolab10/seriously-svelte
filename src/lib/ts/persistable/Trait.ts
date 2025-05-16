@@ -17,9 +17,8 @@ export default class Trait extends Persistable {
 		this.e_trait = e_trait;
 		this.text = text;
 	}
-
 	get owner():	   Thing | null { return get(w_hierarchy).thing_forHID(this.ownerID.hash()); }
-	get fields(): Airtable.FieldSet { return { type: this.e_trait, ownerID: [this.ownerID], text: this.text }; }
+	get fields(): Airtable.FieldSet { return { type: this.e_trait, ownerID: [this.ownerID], text: this.text, dict: JSON.stringify(this.dict) }; }
 
 	async persistent_create_orUpdate(already_persisted: boolean) {
 		if (already_persisted) {
