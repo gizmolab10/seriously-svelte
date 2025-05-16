@@ -126,16 +126,6 @@ export enum E_Oblong {
 	full   = 'full',
 }
 
-export enum E_Thing {
-	externals = '^',	// list of bulks
-	bookmark  = 'b',
-	generic	  = '',
-	folder	  = 'f',
-	found	  = '?',
-	root	  = '!',
-	bulk	  = '~',	// bulk alias
-}
-
 export enum E_Predicate {
 	appreciates = 'appreciates',
 	isRelated	= 'isRelated',
@@ -172,6 +162,16 @@ export enum E_Control {
 	bigger	 = 'bigger',
 	import	 = 'import',
 	help	 = '?',
+}
+
+export enum E_Thing {
+	externals = '^',	// list of bulks
+	bookmark  = 'b',
+	generic	  = '',
+	folder	  = 'f',
+	found	  = '?',
+	root	  = '!',
+	bulk	  = '~',	// bulk alias
 }
 
 export enum E_Browser  {

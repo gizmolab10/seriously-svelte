@@ -36,13 +36,15 @@ export default class Thing extends Persistable {
 	get breadcrumb_title():					  string { return this.title.clipWithEllipsisAt(15); }
 	get width_ofTitle():					  number { return u.getWidthOf(this.title); }
 	get isRoot():							 boolean { return this.e_thing == E_Thing.root; }
+	get isFolder():							 boolean { return this.e_thing == E_Thing.folder; }
+	get isBookmark():						 boolean { return this.e_thing == E_Thing.bookmark; }
 	get isBulkAlias():						 boolean { return this.e_thing == E_Thing.bulk; }
 	get isExternals():						 boolean { return this.e_thing == E_Thing.externals; }
+	get hasRelated():						 boolean { return this.relatedRelationships.length > 0; }
 	get isAcrossBulk():						 boolean { return this.idBase != get(w_hierarchy).db.idBase; }
 	get hasParents():						 boolean { return this.hasParents_ofKind(E_Predicate.contains); }
 	get isFocus():							 boolean { return (get(w_ancestry_focus).thing?.id ?? k.empty) == this.id; }
-	get hasRelated():						 boolean { return this.relatedRelationships.length > 0; }
-
+	
 	get parents_ofAllKinds(): Array<Thing> {
 		let parents: Array<Thing> = [];
 		for (const predicate of get(w_hierarchy).predicates) {

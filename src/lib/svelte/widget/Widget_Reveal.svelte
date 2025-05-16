@@ -18,12 +18,12 @@
 	const viewBox = `0.5 2.35 ${outer_diameter} ${outer_diameter}`;
 	let fill_color = debug.lines ? 'transparent' : es_reveal.fill;
 	let svgPathFor_outer_tinyDots: string | null = null;
-	let svgPathFor_bulkAlias: string | null = null;
+	let svgPathFor_innerDot: string | null = null;
 	let center = ancestry.g_widget.center_ofReveal;
 	let bulkAlias_color = es_reveal.stroke;
 	let svgPathFor_revealDot = k.empty;
 	let color = ancestry.thing?.color;
-	let bulkAliasOffset = 0;
+	let offsetFor_innerDot = 0;
 	let dotReveal = null;
 	
 	function handle_context_menu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
@@ -64,10 +64,11 @@
 
 	function svgPath_update() {
 		const thing = ancestry.thing;
-		bulkAliasOffset = thing.isBulkAlias ? 0 : -1;
+		const has_innerDot = thing.isBulkAlias | thing.isFolder;
+		offsetFor_innerDot = has_innerDot ? 0 : -1;
 		svgPathFor_revealDot = ancestry.svgPathFor_revealDot;
 		svgPathFor_outer_tinyDots = ancestry.svgPathFor_tinyDots_outsideReveal(points_toChild);
-		svgPathFor_bulkAlias = thing.isBulkAlias ? svgPaths.circle_atOffset(k.height.dot, 3) : null;
+		svgPathFor_innerDot = has_innerDot ? svgPaths.circle_atOffset(k.height.dot, 3) : null;
 	}
 
 	function up_hover_closure(s_mouse) {
@@ -109,15 +110,15 @@
 				width={k.height.dot}
 				fill={fill_color}
 				stroke={color}/>
-			{#if !!svgPathFor_bulkAlias}
+			{#if !!svgPathFor_innerDot}
 				<div class='bulk-alias-dot' style='
-					left:{bulkAliasOffset}px;
-					top:{bulkAliasOffset}px;
+					left:{offsetFor_innerDot}px;
+					top:{offsetFor_innerDot}px;
 					height:{k.height.dot}px;
 					width:{k.height.dot}px;
 					position:absolute;'>
 					<SVG_D3 name='bulk-alias-dot-svg'
-						svgPath={svgPathFor_bulkAlias}
+						svgPath={svgPathFor_innerDot}
 						stroke={bulkAlias_color}
 						fill={bulkAlias_color}
 						height={k.height.dot}
