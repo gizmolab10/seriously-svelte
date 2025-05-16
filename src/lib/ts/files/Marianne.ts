@@ -47,12 +47,16 @@ class Marianne {
 		const h = get(w_hierarchy)
 		const idBase = h.db.idBase;
 		const thing_id = Identifiable.newID();
+		const e_thing = { folder: E_Thing.folder, bookmark: E_Thing.bookmark }[dict['data types import'] as 'folder' | 'bookmark'] ?? E_Thing.generic;
 		const title = dict['Title'].removeWhiteSpace();					// TODO: for remote db we need the thing id from the server
-		const thing = h.thing_remember_runtimeCreate(idBase, thing_id, title, 'black');		// create a Thing for each dict
+		const thing = h.thing_remember_runtimeCreate(idBase, thing_id, title, 'blue');		// create a Thing for each dict
 		const trait = h.trait_remember_runtimeCreate(idBase, Identifiable.newID(), thing_id, E_Trait.csv, dict['Description']);
 		trait.dict = dict;												// save the rest of the dict (including parent 1 link) in the new Trait	
 		if (['TEAM LIBRARY', 'MEMBER LIBRARY'].includes(title)) {		// these two things are roots in airtable, directly add them to our root
 			h.relationship_remember_runtimeCreateUnique(idBase, Identifiable.newID(), E_Predicate.contains, h.root.id, thing_id, 0);
+		}
+		if (!!e_thing) {
+			thing.e_thing = e_thing;
 		}
 		return thing;
 	}
@@ -63,14 +67,11 @@ class Marianne {
 		for (const trait of h.traits) {
 			const dict = trait.dict;
 			if (!!dict) {
-				const title = dict['parent 1 link'];
-				if (!!title) {
-					const lost_and_found = await h.lost_and_found();
-					if (!!lost_and_found) {
-						const parent = h.thing_forTitle(title.removeWhiteSpace()) ?? lost_and_found;
-						if (!!parent) {
-							h.relationship_remember_runtimeCreateUnique(h.db.idBase, Identifiable.newID(), E_Predicate.contains, parent.id, trait.ownerID, 0);
-						}
+				const parent_title = dict['parent 1 link']?.removeWhiteSpace();
+				if (!!parent_title) {
+					const parent = h.thing_forTitle(parent_title) ?? await h.lost_and_found();
+					if (!!parent) {
+						h.relationship_remember_runtimeCreateUnique(h.db.idBase, Identifiable.newID(), E_Predicate.contains, parent.id, trait.ownerID, 0);
 					}
 				}
 			}

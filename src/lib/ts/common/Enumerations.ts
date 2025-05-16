@@ -128,7 +128,9 @@ export enum E_Oblong {
 
 export enum E_Thing {
 	externals = '^',	// list of bulks
+	bookmark  = 'b',
 	generic	  = '',
+	folder	  = 'f',
 	found	  = '?',
 	root	  = '!',
 	bulk	  = '~',	// bulk alias

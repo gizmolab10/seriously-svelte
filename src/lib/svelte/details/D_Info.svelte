@@ -53,6 +53,10 @@
 	}
 	
 	function layout_forColor() {
+
+		// color origin is based on k.height.info.table
+		// needs to be computed from the cell's rect's origin
+
 		const color_left = 63
 		color_origin = new Point(color_left, layout.top_ofInfoAt(E_Info.color));
 		picker_offset = `${-color_left - 10}px`;
