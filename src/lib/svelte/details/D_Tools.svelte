@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { T_Tool, T_Layer, T_ToolRequest, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
-	import { w_hierarchy, w_e_details, w_user_graph_offset, w_s_alteration } from '../../ts/common/Stores';
+	import { w_hierarchy, w_t_details, w_user_graph_offset, w_s_alteration } from '../../ts/common/Stores';
 	import { e, k, show, Size, Point, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
 	import { w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
 	import Buttons_Grid from '../buttons/Buttons_Grid.svelte';
@@ -23,7 +23,7 @@
     $: top, tools_top = top + (has_title ? 3 : -13);
     $: $w_s_alteration, reattachments += 1;
 
-	$:	$w_e_details,
+	$:	$w_t_details,
 		$w_user_graph_offset,
 		$w_ancestries_grabbed,
 		$w_ancestries_expanded,

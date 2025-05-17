@@ -11,11 +11,12 @@ export default class Trait extends Persistable {
 	text: string = k.empty;
 	dict: Dictionary = {};
 
-	constructor(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string = k.empty, already_persisted: boolean = false) {
+	constructor(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string = k.empty, dict: Dictionary = {}, already_persisted: boolean = false) {
 		super(databases.db_now.t_database, idBase, T_Persistable.traits, id, already_persisted);
 		this.ownerID = ownerID;
 		this.t_trait = t_trait;
 		this.text = text;
+		this.dict = dict;
 	}
 	get owner():	   Thing | null { return get(w_hierarchy).thing_forHID(this.ownerID.hash()); }
 	get fields(): Airtable.FieldSet { return { type: this.t_trait, ownerID: [this.ownerID], text: this.text, dict: JSON.stringify(this.dict) }; }

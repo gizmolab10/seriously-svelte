@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { c, k, u, show, Point, debug, layout, T_Layer, T_Details } from '../../ts/common/Global_Imports';
-	import { w_graph_rect, w_e_details, w_device_isMobile } from '../../ts/common/Stores';
+	import { w_graph_rect, w_t_details, w_device_isMobile } from '../../ts/common/Stores';
 	import D_Display from '../details/D_Display.svelte';
 	import D_Storage from '../details/D_Storage.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
@@ -10,12 +10,14 @@
 	const titles = [T_Details[T_Details.storage], T_Details[T_Details.tools], T_Details[T_Details.display], T_Details[T_Details.info]];
 	const separator_gap = k.height.separator;
 	let tops = layout.layout_tops_forDetails();
+	let number_ofDetails = $w_t_details.length - 1;
 
-	$: $w_e_details, $w_device_isMobile, tops = layout.layout_tops_forDetails();
-	$: showingDetails_ofType = (t_details: T_Details) => $w_e_details.includes(T_Details[t_details]);
+	$: $w_t_details, $w_device_isMobile, tops = layout.layout_tops_forDetails();
+	$: showingDetails_ofType = (t_details: T_Details) => $w_t_details.includes(T_Details[t_details]);
 	
 	function selection_closure(t_details: Array<string>) {
-		$w_e_details = t_details as Array<T_Details>;
+		$w_t_details = t_details as Array<T_Details>;
+		number_ofDetails = $w_t_details.length - 1;
 	}
 
 </script>
@@ -32,7 +34,7 @@
 		titles={titles}
 		allow_multiple={true}
 		name='details-selector'
-		selected={$w_e_details}
+		selected={$w_t_details}
 		origin={new Point(19, 0.5)}
 		selection_closure={selection_closure}/>
 	{#if showingDetails_ofType(T_Details.storage)}
@@ -59,8 +61,8 @@
 	{#if showingDetails_ofType(T_Details.info)}
 		<Separator
 			title='info'
-			add_wings={true}
+			add_wings={true}			
 			top={tops[T_Details.info] - separator_gap}/>
-		<D_Info top={tops[T_Details.info]}/>
+		<D_Info top={tops[T_Details.info]} number_ofDetails={number_ofDetails}/>
 	{/if}
 </div>

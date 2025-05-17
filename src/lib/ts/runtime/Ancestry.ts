@@ -1,9 +1,9 @@
 import { T_Graph, T_Create, T_Element, T_Kinship, T_Predicate, T_Alteration, T_SvelteComponent } from '../common/Global_Imports';
-import { Direction, Predicate, Hierarchy, databases, Relationship, Svelte_Wrapper, p } from '../common/Global_Imports';
-import { c, k, u, show, Rect, Size, Thing, debug, layout, wrappers, svgPaths } from '../common/Global_Imports';
+import { Direction, Predicate, Hierarchy, databases, Relationship, Svelte_Wrapper } from '../common/Global_Imports';
+import { c, k, p, u, show, Rect, Size, Thing, debug, layout, wrappers, svgPaths } from '../common/Global_Imports';
 import { w_hierarchy, w_ancestry_focus, w_s_alteration, w_s_title_edit } from '../common/Stores';
 import { w_ancestries_grabbed, w_ancestries_expanded, } from '../common/Stores';
-import { w_background_color, w_e_graph, w_e_database } from '../common/Stores';
+import { w_background_color, w_t_graph, w_t_database } from '../common/Stores';
 import { G_Widget, G_Cluster, G_TreeLine } from '../common/Global_Imports';
 import { G_Paging, S_Title_Edit } from '../common/Global_Imports';
 import type { Dictionary, Integer } from '../common/Types';
@@ -16,7 +16,6 @@ export default class Ancestry extends Identifiable {
 	g_widgets: Dictionary<G_Widget> = {};
 	t_database: string;
 	kind: string;
-
 
 	// id => ancestry (path) string 
 	//   "   composed of ids of each relationship
@@ -437,7 +436,7 @@ export default class Ancestry extends Identifiable {
 	collapse() { return this.expanded_setTo(false); }
 	toggleExpanded() { return this.expanded_setTo(!this.isExpanded); }
 	get shows_children(): boolean { return this.isExpanded && this.hasChildren; }
-	get shows_branches(): boolean { return layout.branches_areChildren ? this.shows_children : !this.isRoot; }
+	get shows_branches(): boolean { return p.branches_areChildren ? this.shows_children : !this.isRoot; }
 	get isExpanded(): boolean { return this.isRoot || !get(w_ancestries_expanded) || this.includedInStore_ofAncestries(w_ancestries_expanded); }
 
 	remove_fromGrabbed_andExpanded() {
@@ -480,7 +479,7 @@ export default class Ancestry extends Identifiable {
 	
 	expanded_setTo(expand: boolean) {
 		let mutated = false;
-		const matchesDB = this.t_database == get(w_e_database);
+		const matchesDB = this.t_database == get(w_t_database);
 		if (matchesDB && (!this.isRoot || expand)) {
 			if (!get(w_ancestries_expanded)) {
 				w_ancestries_expanded.set([]);
@@ -596,7 +595,7 @@ export default class Ancestry extends Identifiable {
 	get parentAncestry():	  Ancestry | null { return this.ancestry_createUnique_byStrippingBack(); }
 	get sibling_ancestries(): Array<Ancestry> { return this.parentAncestry?.childAncestries ?? []; }
 	get childAncestries():	  Array<Ancestry> { return this.ancestries_createUnique_byKinship(T_Kinship.child) ?? []; }
-	get branchAncestries():	  Array<Ancestry> { return layout.branches_areChildren ? this.childAncestries : this.parentAncestries; }
+	get branchAncestries():	  Array<Ancestry> { return p.branches_areChildren ? this.childAncestries : this.parentAncestries; }
 
 	get parentAncestries(): Array<Ancestry> {
 		let ancestries = this.thing?.ancestries ?? [];
@@ -799,7 +798,7 @@ export default class Ancestry extends Identifiable {
 	get visibleSubtree_halfSize():			Size { return this.visibleSubtree_size.dividedInHalf; }
 	get lastChild():					   Thing { return this.children.slice(-1)[0]; }
 	get firstChild():					   Thing { return this.children[0]; }
-	get g_widget():						G_Widget { return this.g_widget_forGraphMode(get(w_e_graph)); }
+	get g_widget():						G_Widget { return this.g_widget_forGraphMode(get(w_t_graph)); }
 	get hierarchy():				   Hierarchy { return get(w_hierarchy); }
 	get titleRect():				 Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
 	get idBridging():			   string | null { return this.thing?.idBridging ?? null; }

@@ -432,12 +432,12 @@ export class Hierarchy {
 
 	trait_forHID(hid: Integer): Trait | null { return this.trait_byHID[hid ?? undefined]; }
 
-	trait_runtimeCreate(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string, already_persisted: boolean = false): Trait {
-		return new Trait(idBase, id, ownerID, t_trait, text, already_persisted);
+	trait_runtimeCreate(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string, dict: Dictionary = {}, already_persisted: boolean = false): Trait {
+		return new Trait(idBase, id, ownerID, t_trait, text, dict, already_persisted);
 	}
 
-	trait_remember_runtimeCreateUnique(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string, already_persisted: boolean = false): Trait {
-		return this.trait_forHID(id?.hash()) ?? this.trait_remember_runtimeCreate(idBase, id, ownerID, t_trait, text, already_persisted);
+	trait_remember_runtimeCreateUnique(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string, dict: Dictionary = {}, already_persisted: boolean = false): Trait {
+		return this.trait_forHID(id?.hash()) ?? this.trait_remember_runtimeCreate(idBase, id, ownerID, t_trait, text, dict, already_persisted);
 	}
 
 	trait_forType_ownerHID(t_trait: T_Trait | null, ownerHID: Integer | null): Trait| null {
@@ -446,7 +446,7 @@ export class Hierarchy {
 	}
 
 	trait_extract_fromDict(dict: Dictionary) {
-		this.trait_remember_runtimeCreateUnique(this.db.idBase, dict.id, dict.ownerID, dict.t_trait, dict.text);
+		this.trait_remember_runtimeCreateUnique(this.db.idBase, dict.id, dict.ownerID, dict.t_trait, dict.text, dict);
 	}
 
 	trait_forget(trait: Trait) {
@@ -464,9 +464,8 @@ export class Hierarchy {
 		this.traits.push(trait);
 	}
 
-	trait_remember_runtimeCreate(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string,
-		already_persisted: boolean = false): Trait {
-		const trait = this.trait_runtimeCreate(idBase, id, ownerID, t_trait, text, already_persisted);
+	trait_remember_runtimeCreate(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string, dict: Dictionary = {}, already_persisted: boolean = false): Trait {
+		const trait = this.trait_runtimeCreate(idBase, id, ownerID, t_trait, text, dict, already_persisted);
 		this.trait_remember(trait);
 		return trait;
 	}
@@ -971,9 +970,7 @@ export class Hierarchy {
 			if (!!rootAncestry) {
 				const externalsArray = this.things_byType[T_Thing.externals] ?? [];		// there should only be one
 				const length = externalsArray.length;
-				if (!length) {				// might have zero or more than one ==
-					console.log(`externals does not exist`)
-				} else {
+				if (!!length) {
 					for (const externalsThing of externalsArray) {				// add to the root ancestry
 						if  (externalsThing.title == 'externals') {
 							return rootAncestry.ancestry_createUnique_byAddingThing(externalsThing) ?? null;
@@ -1458,8 +1455,8 @@ export class Hierarchy {
 		this.stop_alteration();
 		p.restore_grabbed();	// must precede restore_focus (which alters grabbed and expanded)
 		p.restore_paging();
-		layout.restore_expanded();
-		layout.restore_focus();
+		p.restore_expanded();
+		p.restore_focus();
 		this.isAssembled = true;
 	}
 

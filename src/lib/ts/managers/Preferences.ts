@@ -1,16 +1,19 @@
+import { c, k, u, show, debug, radial, colors, layout, Ancestry, databases } from '../common/Global_Imports';
 import { w_g_paging, w_font_size, w_background_color, w_thing_fontFamily } from '../common/Stores';
+import { w_ancestry_focus, w_ancestries_grabbed, w_ancestries_expanded } from '../common/Stores';
 import { G_Paging, T_Graph, T_Details, T_Kinship, T_Preference } from '../common/Global_Imports';
-import { c, k, u, ux, show, debug, radial, colors, Ancestry, databases } from '../common/Global_Imports';
-import { w_e_tree, w_e_graph, w_hierarchy, w_e_details, w_e_countDots } from '../common/Stores';
-import { w_e_database, w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
-import { w_ancestries_grabbed } from '../common/Stores';
+import { w_t_tree, w_t_graph, w_hierarchy, w_t_details, w_t_countDots } from '../common/Stores';
+import { w_t_database, w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
 import { get } from 'svelte/store';
 
 export class Preferences {
 	// for backwards compatibility with {focus, grabbed, expanded} which were stored as relationship ids (not as ancestry string)
+	branches_areChildren = true;
 	usesRelationships = localStorage[T_Preference.relationships];
 	ignoreAncestries  = !this.usesRelationships || this.usesRelationships == 'undefined';
-	
+	get focus_key(): string { return this.branches_areChildren ? T_Preference.focus_forChildren : T_Preference.focus_forParents; }
+	get expanded_key(): string { return this.branches_areChildren ? T_Preference.expanded_children : T_Preference.expanded_parents; }
+
 	static readonly _____READ_WRITE: unique symbol;
 
 	dump() 									 { console.log(localStorage); }
@@ -43,7 +46,7 @@ export class Preferences {
 		return values;
 	}
 	
-	static readonly _____ANCESTRIES: unique symbol;
+	static readonly _____RESTORE: unique symbol;
 
 	restore_grabbed() {
 		function ids_forDB(array: Array<Ancestry>): string { return u.ids_forDB(array).join(', '); }
@@ -52,17 +55,65 @@ export class Preferences {
 			w_ancestries_grabbed.set([get(w_hierarchy).rootAncestry]);
 		} else {
 			w_ancestries_grabbed.set(this.ancestries_readDB_key(T_Preference.grabbed));
-			debug.log_grab(`  READ (${get(w_e_database)}): "${ids_forDB(get(w_ancestries_grabbed))}"`);
+			debug.log_grab(`  READ (${get(w_t_database)}): "${ids_forDB(get(w_ancestries_grabbed))}"`);
 		}
 		setTimeout(() => {
 			w_ancestries_grabbed.subscribe((array: Array<Ancestry>) => {
 				if (array.length > 0) {
 					this.ancestries_writeDB_key(array, T_Preference.grabbed);
-					debug.log_grab(`  WRITING (${get(w_e_database)}): "${ids_forDB(array)}"`);
+					debug.log_grab(`  WRITING (${get(w_t_database)}): "${ids_forDB(array)}"`);
 				}
 			});
 		}, 100);
 	}
+		
+	restore_expanded() {
+		if (c.eraseDB > 0) {
+			c.eraseDB -= 1;
+			w_ancestries_expanded.set([]);
+		} else {
+			const expanded = p.ancestries_readDB_key(this.expanded_key) ?? p.ancestries_readDB_key('expanded');	// backwards compatible with 'expanded' key
+			debug.log_expand(`  READ (${get(w_t_database)}): "${layout.ids_forDB(expanded)}"`);
+			w_ancestries_expanded.set(expanded);
+		}
+		setTimeout(() => {
+			w_ancestries_expanded.subscribe((array: Array<Ancestry> | null) => {
+				if (!!array && array.length > 0) {
+					debug.log_expand(`  WRITING (${get(w_t_database)}): "${layout.ids_forDB(array)}"`);
+					p.ancestries_writeDB_key(array, this.expanded_key);
+				}
+			});
+		}, 100);
+	}
+
+	restore_focus() {
+		const h = get(w_hierarchy);
+		let ancestryToFocus = h.rootAncestry;
+		if (c.eraseDB > 0) {
+			c.eraseDB -= 1;
+			w_ancestry_focus.set(ancestryToFocus);
+		} else if (!p.ignoreAncestries && !c.eraseDB) {
+			const focusPath = p.readDB_key(this.focus_key) ?? p.readDB_key('focus');
+			if (!!focusPath) {
+				const focusAncestry = h.ancestry_remember_createUnique(focusPath);
+				if (!!focusAncestry) {
+					ancestryToFocus = focusAncestry;
+				}
+			}
+		}
+		if (!ancestryToFocus.thing) {
+			const lastGrabbedAncestry = h.grabs_latest_ancestry?.parentAncestry;
+			if (lastGrabbedAncestry) {
+				ancestryToFocus = lastGrabbedAncestry;
+			}
+		}
+		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
+			p.writeDB_key(this.focus_key, !ancestry ? null : ancestry.pathString);
+		});
+		ancestryToFocus.becomeFocus(true);
+	}
+	
+	static readonly _____ANCESTRIES: unique symbol;
 
 	ancestries_writeDB_key(ancestries: Array<Ancestry>, key: string) {	// 2 keys use this {grabbed, expanded}
 		const pathStrings = ancestries.map(a => a.pathString);			// array of pathStrings (of Relationship ids)
@@ -116,19 +167,19 @@ export class Preferences {
 	restore_paging() { radial.createAll_thing_pages_fromDict(this.readDB_key(T_Preference.paging)); }
 
 	reactivity_subscribe() {
-		w_e_tree.subscribe((value) => {
+		w_t_tree.subscribe((value) => {
 			this.write_key(T_Preference.tree, value);
 		});
-		w_e_graph.subscribe((value) => {
+		w_t_graph.subscribe((value) => {
 			this.write_key(T_Preference.graph, value);
 		});
-		w_e_countDots.subscribe((value) => {
+		w_t_countDots.subscribe((value) => {
 			this.write_key(T_Preference.countDots, value);
 		});
 		w_ring_rotation_angle.subscribe((angle: number) => {
 			this.write_key(T_Preference.ring_angle, angle);
 		});
-		w_e_details.subscribe((value) => {
+		w_t_details.subscribe((value) => {
 			this.write_key(T_Preference.detail_types, value);
 		});
 		w_ring_rotation_radius.subscribe((radius: number) => {
@@ -150,11 +201,11 @@ export class Preferences {
 		}
 		w_font_size.set(this.read_key(T_Preference.font_size) ?? 14);
 		w_ring_rotation_angle.set(this.read_key(T_Preference.ring_angle) ?? 0);
-		w_e_graph.set(this.read_key(T_Preference.graph) ?? T_Graph.tree);
-		w_e_tree.set(this.read_key(T_Preference.tree) ?? T_Kinship.child);
+		w_t_graph.set(this.read_key(T_Preference.graph) ?? T_Graph.tree);
+		w_t_tree.set(this.read_key(T_Preference.tree) ?? T_Kinship.child);
 		w_thing_fontFamily.set(this.read_key(T_Preference.font) ?? 'Times New Roman');
-		w_e_details.set(this.read_key(T_Preference.detail_types) ?? [T_Details.storage]);
-		w_e_countDots.set(this.read_key(T_Preference.countDots) ?? [T_Kinship.child]);
+		w_t_details.set(this.read_key(T_Preference.detail_types) ?? [T_Details.storage]);
+		w_t_countDots.set(this.read_key(T_Preference.countDots) ?? [T_Kinship.child]);
 		w_background_color.set(this.read_key(T_Preference.background) ?? colors.background);
 		w_ring_rotation_radius.set(Math.max(this.read_key(T_Preference.ring_radius) ?? 0, k.radius.ring_center));
 		this.reactivity_subscribe()

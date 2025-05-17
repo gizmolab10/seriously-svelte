@@ -2,7 +2,7 @@ import { c, k, T_Preference, p } from '../common/Global_Imports';
 import { T_Database, T_Persistence } from '../database/DBCommon';
 import { dbAirtable } from '../database/DBAirtable';
 import { dbFirebase } from '../database/DBFirebase';
-import { w_e_database } from '../common/Stores';
+import { w_t_database } from '../common/Stores';
 import { dbLocal } from '../database/DBLocal';
 import { dbTest } from '../database/DBTest';
 import DBCommon from '../database/DBCommon';
@@ -20,7 +20,7 @@ export default class Databases {
 		const type = queryStrings.get('db');
 		if (!!type) {
 			this.db_set_accordingToType(type);
-			w_e_database.set(type);
+			w_t_database.set(type);
 		}
 		this.db_now.queryStrings_apply();
 	}
@@ -28,7 +28,7 @@ export default class Databases {
 	constructor() {
 		let done = false;
 		this.db_now = dbFirebase;
-		w_e_database.subscribe((type: string) => {
+		w_t_database.subscribe((type: string) => {
 			if (!!type && (!done || (type && this.db_now.t_database != type))) {
 				done = true;
 				setTimeout( async () => {
@@ -41,14 +41,14 @@ export default class Databases {
 	}
 
 	db_set_accordingToType(type: string) { this.db_now = this.db_forType(type); }
-	db_change_toNext(forward: boolean) { w_e_database.set(this.db_next_get(forward)); }
+	db_change_toNext(forward: boolean) { w_t_database.set(this.db_next_get(forward)); }
 	isRemote(t_persistence: T_Persistence): boolean { return t_persistence == T_Persistence.remote; }
 	isPersistent(t_persistence: T_Persistence): boolean { return t_persistence != T_Persistence.none; }
 
 	restore_db() {
 		let type = p.read_key(T_Preference.db) ?? 'firebase';
 		if (type == 'file') { type = 'local'; }
-		w_e_database.set(type);
+		w_t_database.set(type);
 	}
 
 	db_next_get(forward: boolean): T_Database {

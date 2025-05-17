@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { c, k, p, u, ux, w, show, Point, colors, layout, svgPaths, signals, S_Element } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Banner, T_Element, T_Control, T_Kinship, T_Preference } from '../../ts/common/Global_Imports';
-	import { w_e_graph, w_e_tree, w_graph_rect, w_count_resize, w_hierarchy, w_popupView_id } from '../../ts/common/Stores';
+	import { w_t_graph, w_t_tree, w_graph_rect, w_count_resize, w_hierarchy, w_popupView_id } from '../../ts/common/Stores';
 	import { w_show_details, w_show_related, w_device_isMobile, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { w_background_color } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
@@ -47,7 +47,7 @@
 	}
 
 	$: {
-		const _ = $w_e_graph;
+		const _ = $w_t_graph;
 		const db = $w_hierarchy.db;
 		if (!!db) {
 			const extra = layout.inTreeMode ? 84 : 0;
@@ -108,17 +108,17 @@
 						<img src='settings.svg' alt='circular button' width={size_small}px height={size_small}px/>
 					</Button>
 				{/key}
-				{#key $w_e_graph}
+				{#key $w_t_graph}
 					<Segmented
 						origin={Point.x(30)}
-						selected={[$w_e_graph]}
+						selected={[$w_t_graph]}
 						name='graph-type-selector'
 						titles={[T_Graph.tree, T_Graph.radial]}
 						selection_closure={(titles) => layout.handle_mode_selection('graph', titles)}/>
 					{#if layout.inTreeMode}
-						{#key $w_e_tree}
+						{#key $w_t_tree}
 							<Segmented
-								selected={$w_e_tree}
+								selected={$w_t_tree}
 								origin={Point.x(110)}
 								allow_multiple={true}
 								name='tree-type-selector'

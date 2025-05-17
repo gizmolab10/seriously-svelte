@@ -47,7 +47,7 @@ export class Configuration {
 		}
 		for (const eraseOption of eraseOptions) {
 			switch (eraseOption) {
-				case 'data':	 this.eraseDB = 2;			break;
+				case 'data':	 this.eraseDB = 3;			break;
 				case 'settings': this.erasePreferences = 2; break;
 			}
 		}

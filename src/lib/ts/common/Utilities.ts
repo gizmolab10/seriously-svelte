@@ -1,7 +1,7 @@
 // N.B., do not import these from Global Imports --> avoid dependency issues when importing Utilities class
 
 import { Testworthy_Utilities } from './Testworthy_Utilities';
-import { w_e_database, w_thing_fontFamily } from './Stores';
+import { w_t_database, w_thing_fontFamily } from './Stores';
 import Identifiable from '../runtime/Identifiable';
 import Ancestry from '../runtime/Ancestry';
 import type { Dictionary } from './Types';
@@ -109,7 +109,7 @@ export class Utilities extends Testworthy_Utilities {
 	}
 
 	ids_forDB(array: Array<Ancestry>): Array<string> {
-		return array.filter(a => a.t_database == get(w_e_database)).map(a => a.id);
+		return array.filter(a => a.t_database == get(w_t_database)).map(a => a.id);
 	}
 
 	ancestries_orders_normalize(ancestries: Array<Ancestry>, persist: boolean = false): void {

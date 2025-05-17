@@ -14,7 +14,7 @@ export default class Predicate extends Persistable {
 		this.kind			 = kind;
 	}
 	
-	log(option: T_Debug, message: string)					 { debug.log_alert(option, message + k.space + this.description); }
+	log(option: T_Debug, message: string)					 { debug.log_maybe(option, message + k.space + this.description); }
 	get description():					  			  string { return this.kind.unCamelCase().lastWord(); }
 	static isBidirectional_for(kind: T_Predicate):	 boolean { return kind != T_Predicate.contains; }
 	static get contains():				    Predicate | null { return this.predicate_forKind(T_Predicate.contains); }

@@ -1,4 +1,4 @@
-import { w_e_countDots, w_show_details, w_show_related, w_device_isMobile } from '../common/Stores';
+import { w_t_countDots, w_show_details, w_show_related, w_device_isMobile } from '../common/Stores';
 import { c, k, p, w, layout, T_Preference } from '../common/Global_Imports';
 import { T_Report, T_Kinship } from '../common/Enumerations';
 import type { Dictionary } from '../common/Types';
@@ -39,7 +39,7 @@ export class Visibility {
 		}
 	}
 
-	showing_countDots_ofType(t_counts: T_Kinship): boolean { return get(w_e_countDots).includes(T_Kinship[t_counts]) }
+	showing_countDots_ofType(t_counts: T_Kinship): boolean { return get(w_t_countDots).includes(T_Kinship[t_counts]) }
 	get children_dots(): boolean { return  this.showing_countDots_ofType(T_Kinship.child); }
 	get related_dots(): boolean { return  this.showing_countDots_ofType(T_Kinship.related); }
 	get parent_dots(): boolean { return  this.showing_countDots_ofType(T_Kinship.parent); }

@@ -1,7 +1,7 @@
 import { Trait, Thing, Hierarchy, Predicate, Relationship } from '../common/Global_Imports';
 import { c, p, u, debug, layout, databases } from '../common/Global_Imports';
 import { T_Thing, T_Startup, T_Preference } from '../common/Global_Imports';
-import { w_hierarchy, w_e_startup } from '../common/Stores';
+import { w_hierarchy, w_t_startup } from '../common/Stores';
 import Persistable from '../persistable/Persistable';
 import type { Dictionary } from '../common/Types';
 import { k } from '../common/Constants';
@@ -109,11 +109,11 @@ export default class DBCommon {
 		if (h.hasRoot) {
 			h.restore_fromPreferences();
 		} else {
-			w_e_startup.set(T_Startup.fetch);
+			w_t_startup.set(T_Startup.fetch);
 			await this.hierarchy_create_fastLoad_or_fetch_andBuild();
 		}
 		setTimeout( () => {
-			w_e_startup.set(T_Startup.ready);
+			w_t_startup.set(T_Startup.ready);
 			layout.grand_build();
 		}, 1);
 	}

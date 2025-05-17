@@ -292,10 +292,10 @@ export class Events {
 					}
 				}
 				switch (key) {
-					case '?':				c.showHelp(); break;
-					case 's':				h.persist_toFile(T_Format.json); break;
+					case '?':				c.showHelp(); return;
+					case 's':				h.persist_toFile(T_Format.json); return;
 					case 'm':				layout.toggle_t_graph(); break;
-					case 'c':				w.user_graph_offset_setTo(Point.zero); break;
+					case 'c':				w.user_graph_offset_setTo(Point.zero); return;
 					case 'o':				h.select_file_toUpload(T_Format.json, event.shiftKey); break;
 					case '!':				graph_needsRebuild = h.rootAncestry?.becomeFocus(); break;
 					case 'escape':			if (!!get(w_s_alteration)) { h.stop_alteration(); }; break;

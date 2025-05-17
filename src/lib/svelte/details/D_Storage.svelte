@@ -2,7 +2,7 @@
 	import { T_Layer, T_Format, T_Storage, T_Element, T_Preference, T_ToolRequest } from '../../ts/common/Global_Imports';
 	import { k, ux, Point, colors, S_Element, databases, Hierarchy } from '../../ts/common/Global_Imports';
 	import { w_storage_updated, w_thing_fontFamily } from '../../ts/common/Stores';
-	import { w_e_database, w_hierarchy } from '../../ts/common/Stores';
+	import { w_t_database, w_hierarchy } from '../../ts/common/Stores';
 	import { T_Database } from '../../ts/database/DBCommon';
     import Buttons_Row from '../buttons/Buttons_Row.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
@@ -37,7 +37,7 @@
 
 	function selection_closure(titles: Array<string>) {
 		const t_database = titles[0] as T_Database;	// only ever contains one title
-		w_e_database.set(t_database);
+		w_t_database.set(t_database);
 	}
 	
 	function setup_s_elements() {
@@ -90,7 +90,7 @@
 		<Segmented
 			name='db'
 			titles={db_ids}
-			selected={[$w_e_database]}
+			selected={[$w_t_database]}
 			origin={new Point(17, top + 3)}
 			selection_closure={selection_closure}/>
 		<div class='data-information'

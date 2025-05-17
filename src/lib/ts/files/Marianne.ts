@@ -17,7 +17,7 @@ class Marianne {
 		const t_thing = { folder: T_Thing.folder, bookmark: T_Thing.bookmark }[dict['data types import'] as 'folder' | 'bookmark'] ?? T_Thing.generic;
 		const title = dict['Title'].removeWhiteSpace();					// TODO: for remote db we need the thing id from the server
 		const thing = h.thing_remember_runtimeCreate(idBase, thing_id, title, 'blue');		// create a Thing for each dict
-		const trait = h.trait_remember_runtimeCreate(idBase, Identifiable.newID(), thing_id, T_Trait.csv, dict['Description']);
+		const trait = h.trait_remember_runtimeCreate(idBase, Identifiable.newID(), thing_id, T_Trait.csv, dict['Description'], dict);
 		trait.dict = dict;												// save the rest of the dict (including parent 1 link) in the new Trait	
 		if (['TEAM LIBRARY', 'MEMBER LIBRARY'].includes(title)) {		// these two things are roots in airtable, directly add them to our root
 			h.relationship_remember_runtimeCreateUnique(idBase, Identifiable.newID(), T_Predicate.contains, h.root.id, thing_id, 0);

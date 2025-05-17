@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { c, k, u, ux, show, Rect, Size, Point, Thing, debug } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Alteration, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { w_e_countDots, w_thing_color, w_ancestries_grabbed } from '../../ts/common/Stores';
+	import { w_t_countDots, w_thing_color, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { layout, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
 	import { w_s_alteration, w_background_color } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
@@ -32,7 +32,7 @@
 	function handle_context_menu(event) { event.preventDefault(); }		// no default context menu on right-click
 	function handle_s_mouse(s_mouse: S_Mouse): boolean { return false; }
 
-	$: $w_e_countDots, svgPaths_update();
+	$: $w_t_countDots, svgPaths_update();
 	$: $w_background_color, $w_thing_color, $w_ancestries_grabbed, colors_update();
 
     onMount(() => {

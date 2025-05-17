@@ -12,6 +12,7 @@
 	import Separator from '../kit/Separator.svelte';
 	import Color from '../kit/Color.svelte';
 	import { onMount } from 'svelte';
+	export let number_ofDetails = 0;
 	export let top = 0;
 	const id = 'info';
 	const text_top = top + 52;
@@ -56,8 +57,9 @@
 	
 	function layout_forColor() {
 		if (!!info_table) {
+			const offsetY = number_ofDetails * 5.7 + 34 - layout.top_ofInfoAt(T_Info.title) - top;
 			const row = Math.max(0, information.findIndex(([key]) => key === 'color'));
-			color_origin = info_table.location_ofCellAt(row, 1).offsetByXY(-9, 4 - layout.top_ofInfoAt(T_Info.title) - top);
+			color_origin = info_table.location_ofCellAt(row, 1).offsetByXY(-2, offsetY);
 			picker_offset = `${4 - color_origin.x}px`;
 		}
 	}

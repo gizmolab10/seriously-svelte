@@ -265,8 +265,8 @@ export default class DBFirebase extends DBCommon {
 			const h = this.hierarchy;
 			switch (t_persistable) {
 				case T_Persistable.predicates:	  h.predicate_remember_runtimeCreate(id, data.kind, data.isBidirectional); break;
-				case T_Persistable.traits:		  h.trait_remember_runtimeCreate(idBase, id, data.ownerID, data.type, data.text, true); break;
-				case T_Persistable.things:		  h.thing_remember_runtimeCreate(idBase, id, data.title, data.color, data.type ?? data.trait, true, !data.type); break;
+				case T_Persistable.traits:		  h.trait_remember_runtimeCreate(idBase, id, data.ownerID, data.t_trait, data.text, data.dict, true); break;
+				case T_Persistable.things:		  h.thing_remember_runtimeCreate(idBase, id, data.title, data.color, data.t_thing, true); break;
 				case T_Persistable.relationships: h.relationship_remember_runtimeCreateUnique(idBase, id, data.predicate.id, data.parent.id, data.child.id, data.order, 0, T_Create.isFromPersistent); break;
 			}
 		}
@@ -463,7 +463,7 @@ export default class DBFirebase extends DBCommon {
 					if (!!trait || remoteTrait.isEqualTo(this.addedTrait)) {
 						return false;		// do not invoke signal because nothing has changed
 					}
-					trait = h.trait_remember_runtimeCreate(idBase, id, remoteTrait.ownerID, remoteTrait.t_trait, remoteTrait.text, true);
+					trait = h.trait_remember_runtimeCreate(idBase, id, remoteTrait.ownerID, remoteTrait.t_trait, remoteTrait.text, remoteTrait.dict, true);
 					break;
 				case 'removed':
 					if (!!trait) {
@@ -769,12 +769,14 @@ export class PersistentTrait {
 	t_trait: T_Trait;
 	ownerID: string;
 	text: string;
+	dict: Dictionary;
 
 	constructor(data: DocumentData) {
 		const remote = data as PersistentTrait;
 		this.ownerID = remote.ownerID;
 		this.t_trait = remote.t_trait;
 		this.text	 = remote.text;
+		this.dict	 = remote.dict;
 	}
 	
 	get hasNoData(): boolean { return !this.ownerID && !this.t_trait; }
