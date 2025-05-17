@@ -307,7 +307,7 @@ export default class DBFirebase extends DBCommon {
 	}
 
 	async root_default_remember_persistentCreateIn(collectionRef: CollectionReference) {
-		const fields = ['title', 'color', 'type'];
+		const fields = ['title', 'color', 't_thing'];
 		const root = new Thing(this.idBase, Identifiable.newID(), this.idBase, 'coral', T_Thing.root, true);
 		const rootRef = await addDoc(collectionRef, u.convertToObject(root, fields));		// no need to remember now
 		root.log(T_Debug.remote, 'CREATE T');

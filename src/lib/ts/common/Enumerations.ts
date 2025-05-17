@@ -105,6 +105,12 @@ export enum T_SvelteComponent {
 	app		= 'app',
 }
 
+export enum T_Storage {
+	direction = 'direction',
+	working	  = 'working',
+	format	  = 'format',
+}
+
 export enum T_Startup {
 	start = 'start',
 	fetch = 'fetch',

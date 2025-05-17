@@ -70,17 +70,17 @@ export default class DBCommon {
 	async persist_all(force: boolean = false) {
 		if (this.isRemote) {
 			const h = this.hierarchy;
-			await this.persist_maybe_all_identifiables(force, h.things);
-			await this.persist_maybe_all_identifiables(force, h.traits);
-			await this.persist_maybe_all_identifiables(force, h.predicates);
-			await this.persist_maybe_all_identifiables(force, h.relationships);
+			await this.persistAll_identifiables_maybe(force, h.things);
+			await this.persistAll_identifiables_maybe(force, h.traits);
+			await this.persistAll_identifiables_maybe(force, h.predicates);
+			await this.persistAll_identifiables_maybe(force, h.relationships);
 		}
 		if (!databases.defer_persistence) {
 			this.persist_all_toLocal();
 		}
 	}
 
-	async persist_maybe_all_identifiables(force: boolean = false, identifiables: Array<Persistable>) {
+	async persistAll_identifiables_maybe(force: boolean = false, identifiables: Array<Persistable>) {
 		for (const identifiable of identifiables) {
 			if (identifiable.persistence.isDirty || force) {
 				await identifiable.persist();

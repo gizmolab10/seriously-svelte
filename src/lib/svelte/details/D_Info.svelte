@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { w_ancestry_focus, w_ancestries_grabbed, w_thing_fontFamily, w_relationship_order } from '../../ts/common/Stores';
-	import { T_Info, T_Trait, T_Layer, T_Element, T_Report, T_Preference } from '../../ts/common/Global_Imports';
+	import { T_Info, T_Thing, T_Trait, T_Layer, T_Element, T_Report, T_Preference } from '../../ts/common/Global_Imports';
 	import { w_hierarchy, w_thing_color, w_thing_title, w_background_color } from '../../ts/common/Stores';
 	import { c, k, p, ux, show, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
 	import { debug, colors, signals, layout, Ancestry } from '../../ts/common/Global_Imports';
@@ -91,6 +91,7 @@
 				'parents'  : thing.parents.length.expressZero_asHyphen(),
 				'related'  : thing.relatedRelationships.length.expressZero_asHyphen(),
 				'id'	   : thing.id.beginWithEllipsis_forLength(13),
+				'type'	   : Object.keys(T_Thing).find(k => T_Thing[k] === thing.t_thing),
 				'ancestry' : ancestry.id.beginWithEllipsis_forLength(13),
 				'color'	   : ancestry.isEditable ? k.empty : 'not editable',
 			};
