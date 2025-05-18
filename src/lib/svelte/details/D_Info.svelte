@@ -57,9 +57,9 @@
 	
 	function layout_forColor() {
 		if (!!info_table) {
-			const offsetY = number_ofDetails * 5.7 + 34 - layout.top_ofInfoAt(T_Info.title) - top;
+			const offsetY = number_ofDetails / 1.5 + 25 - layout.top_ofInfoAt(T_Info.title) - top;
 			const row = Math.max(0, information.findIndex(([key]) => key === 'color'));
-			color_origin = info_table.location_ofCellAt(row, 1).offsetByXY(-2, offsetY);
+			color_origin = info_table.location_ofCellAt(row, 1).offsetByXY(-4, offsetY);
 			picker_offset = `${4 - color_origin.x}px`;
 		}
 	}
