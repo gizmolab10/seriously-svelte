@@ -51,7 +51,7 @@ class Marianne {
 		const t_thing = dict['Type'] == 'bookmark' ? T_Thing.bookmark : T_Thing.generic;
 		const title = dict['Title'].removeWhiteSpace();					// TODO: for remote db we need the thing id from the server
 		h.thing_remember_runtimeCreate(idBase, thing_id, title, 'blue', t_thing);		// create a Thing for each dict
-		this.create_trait_forThingfromDict(thing_id, this.shrink_dict(dict));
+		this.create_trait_forThingfromDict(thing_id, dict);
 		if (['TEAM LIBRARY', 'MEMBER LIBRARY'].includes(title)) {		// these two things are roots in airtable, directly add them to our root
 			h.relationship_remember_runtimeCreateUnique(idBase, Identifiable.newID(), T_Predicate.contains, h.root.id, thing_id, 0);
 		}
@@ -68,7 +68,7 @@ class Marianne {
 
 	shrink_dict(dict: Dictionary): Dictionary {
 		const shrunk: Dictionary = {};
-		const keys_to_remove = ['Type', 'Title', 'data types import'];
+		const keys_to_remove = ['Type', 'Link', 'Title', 'Description', 'parent 1 link', 'data types import'];
 		for (const key in dict) {
 			if (!keys_to_remove.includes(key) && dict[key] != k.empty) {
 				const convertedKey = this.convert_key(key);
@@ -82,8 +82,8 @@ class Marianne {
 
 	create_trait_forThingfromDict(thing_id: string, dict: Dictionary): Trait {
 		const h = get(w_hierarchy)
-		const isBookmark = dict[this.convert_key('Type')] == 'bookmark' ? T_Thing.bookmark : T_Thing.generic;
-		const text = (isBookmark ? dict[this.convert_key('Link')] : dict[this.convert_key('Description')]) ?? k.unknown;
+		const isBookmark = dict['Type'] == 'bookmark' ? T_Thing.bookmark : T_Thing.generic;
+		const text = (isBookmark ? dict['Link'] : dict['Description']) ?? k.unknown;
 		const t_trait = isBookmark ? T_Trait.hyperlink : T_Trait.csv;
 		const trait = h.trait_remember_runtimeCreate(h.db.idBase, Identifiable.newID(),
 			thing_id, t_trait, text, dict);			// save the dict in the Trait, for further processing
@@ -96,7 +96,7 @@ class Marianne {
 		for (const trait of h.traits) {
 			const dict = trait.dict;
 			if (!!dict) {
-				const parent_title = dict[this.convert_key('parent 1 link')]?.removeWhiteSpace();
+				const parent_title = dict['parent 1 link']?.removeWhiteSpace();
 				if (!!parent_title) {
 					const parents = h.things_forTitle(parent_title);
 					const parent = parents?.[0] ?? await h.lost_and_found();
@@ -104,6 +104,7 @@ class Marianne {
 						h.relationship_remember_runtimeCreateUnique(h.db.idBase, Identifiable.newID(), T_Predicate.contains, parent.id, trait.ownerID, 0);
 					}
 				}
+				trait.dict = this.shrink_dict(dict);
 			}
 		}
 		// await this.cleanup_lost_and_found();  // Make sure we await this

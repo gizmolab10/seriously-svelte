@@ -49,7 +49,6 @@ export default class DBCommon {
 	async fetch_all() { this.fetch_all_fromLocal(); }
 	async remove_all() { this.remove_all_fromLocal(); }
 	remove_all_fromLocal() { if (this.isPersistent) { p.writeDB_key(T_Preference.local, null); } }
-	persist_all_toLocal() { if (this.isPersistent) { p.writeDB_key(T_Preference.local, this.hierarchy.all_data); } }
 
 	async thing_persistentUpdate(thing: Thing) { this.persist_all(); }
 	async thing_persistentDelete(thing: Thing) { this.persist_all(); }
@@ -86,17 +85,6 @@ export default class DBCommon {
 				await identifiable.persist();
 				identifiable.persistence.isDirty = false;
 			}
-		}
-	}
-
-	async fetch_all_fromLocal() {
-		const dict = p.readDB_key(T_Preference.local) as Dictionary;
-		const h = this.hierarchy;
-		if (!!dict) {
-			await h.extract_fromDict(dict);
-		} else if (!this.isRemote) {			// no such preference, create empty hierarchy
-			h.predicate_defaults_remember_runtimeCreate();
-			h.thing_remember_runtimeCreateUnique(this.idBase, Thing.newID(), 'click here to edit this title', 'limegreen', T_Thing.root);
 		}
 	}
 	
@@ -159,6 +147,23 @@ export default class DBCommon {
 			}
 		}
 		this.loadTime = null;
+	}
+
+	persist_all_toLocal() {
+		if (this.isPersistent) {
+			p.writeDB_key(T_Preference.local, this.hierarchy.all_data);
+		}
+	}
+
+	async fetch_all_fromLocal() {
+		const dict = p.readDB_key(T_Preference.local) as Dictionary;
+		const h = this.hierarchy;
+		if (!!dict) {
+			await h.extract_fromDict(dict);
+		} else if (!this.isRemote) {			// no such preference, create empty hierarchy
+			h.predicate_defaults_remember_runtimeCreate();
+			h.thing_remember_runtimeCreateUnique(this.idBase, Thing.newID(), 'click here to edit this title', 'limegreen', T_Thing.root);
+		}
 	}
 
 }

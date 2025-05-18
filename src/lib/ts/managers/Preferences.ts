@@ -20,7 +20,15 @@ export class Preferences {
 	read_key	   (key: string): any | null { return this.parse(localStorage[key]); }
 	readDB_key	   (key: string): any | null { return this.read_key(this.db_keyFor(key)); }
 	writeDB_key<T> (key: string, value: T)	 { this.write_key(this.db_keyFor(key), value); }
-	write_key<T>   (key: string, value: T)	 { localStorage[key] = u.stringify_object(value as object); }
+
+	write_key<T> (key: string, value: T) {
+		const object = u.stringify_object(value as object);
+		if (object.length > 2000000) {
+			console.log(`too large for localStorage: ${key} ${object.length} bytes`);
+		} else {
+			localStorage[key] = object;
+		}
+	}
 
 	writeDB_keyPairs_forKey<T>(key: string, sub_key: string, value: T): void {	// pair => key, sub_key
 		const dbKey = this.db_keyFor(key);
