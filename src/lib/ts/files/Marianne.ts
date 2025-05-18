@@ -1,12 +1,46 @@
-import { Thing, T_Trait, T_Thing, T_Predicate } from '../common/Global_Imports';
-import type { Dictionary } from '../common/Types';
+import { k, Trait, T_Thing, T_Trait, T_Predicate } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
+import type { Dictionary } from '../common/Types';
 import { w_hierarchy } from '../common/Stores';
 import { get } from 'svelte/store';
+import '../common/Extensions';
+
+enum T_Marianne_Fields {
+	Title,
+	parent_1_link,
+	Custom_Tags_$$Local$,
+	Societal_Sectors,
+	Wheel_of_Co$$$Creation_Sectors,
+	Data_Subtypes,
+	Main_Data_Type,
+	Link,
+	data_types_import,
+	name,
+	All_Local_Tags_$$folder_names$,
+	Description,
+	Parent_2_tags,
+	parent_2_link,
+	Parent_3_Tags,
+	Parent_3_link,
+	Parent_4_Tags,
+	Parent_Link_4,
+	Parent_5_Tags,
+	Parent_Link_5,
+	Parent_6_Tags,
+	Source_Created_Date,
+	Domain,
+	Custom_Tags,
+	Privacy_Field_of_record,
+	Type,
+	Ignore_for_Sync,
+	Ready_to_Sync,
+	Last_Synced,
+	User_Curators
+}
 
 class Marianne {
 
-	async extract_fromDict(dict: Dictionary): Promise<Thing> {
+	extract_fromDict(dict: Dictionary) {
 		// each dict represents a Thing, which has a title, name, description and parent 1 link
 		// later, in create_relationship_forAllTraits, above ...
 		// ... create a Relationship for each trait that has a dict containing a parent 1 link
@@ -14,18 +48,46 @@ class Marianne {
 		const h = get(w_hierarchy)
 		const idBase = h.db.idBase;
 		const thing_id = Identifiable.newID();
-		const t_thing = { folder: T_Thing.folder, bookmark: T_Thing.bookmark }[dict['data types import'] as 'folder' | 'bookmark'] ?? T_Thing.generic;
+		const t_thing = dict['Type'] == 'bookmark' ? T_Thing.bookmark : T_Thing.generic;
 		const title = dict['Title'].removeWhiteSpace();					// TODO: for remote db we need the thing id from the server
-		const thing = h.thing_remember_runtimeCreate(idBase, thing_id, title, 'blue');		// create a Thing for each dict
-		const trait = h.trait_remember_runtimeCreate(idBase, Identifiable.newID(), thing_id, T_Trait.csv, dict['Description'], dict);
-		trait.dict = dict;												// save the rest of the dict (including parent 1 link) in the new Trait	
+		h.thing_remember_runtimeCreate(idBase, thing_id, title, 'blue', t_thing);		// create a Thing for each dict
+		this.create_trait_forThingfromDict(thing_id, this.shrink_dict(dict));
 		if (['TEAM LIBRARY', 'MEMBER LIBRARY'].includes(title)) {		// these two things are roots in airtable, directly add them to our root
 			h.relationship_remember_runtimeCreateUnique(idBase, Identifiable.newID(), T_Predicate.contains, h.root.id, thing_id, 0);
 		}
-		if (!!t_thing) {
-			thing.t_thing = t_thing;
+	}
+
+	convert_key(key: string): number {
+		const encodedKey = key.encode_as_property();
+		if (!!encodedKey) {
+			const newkey = T_Marianne_Fields[encodedKey as keyof typeof T_Marianne_Fields];
+			return newkey;
 		}
-		return thing;
+		return -1;
+	}
+
+	shrink_dict(dict: Dictionary): Dictionary {
+		const shrunk: Dictionary = {};
+		const keys_to_remove = ['Type', 'Title', 'data types import'];
+		for (const key in dict) {
+			if (!keys_to_remove.includes(key) && dict[key] != k.empty) {
+				const convertedKey = this.convert_key(key);
+				if (convertedKey != -1) {
+					shrunk[convertedKey] = dict[key].removeWhiteSpace();
+				}
+			}
+		}
+		return shrunk;
+	}
+
+	create_trait_forThingfromDict(thing_id: string, dict: Dictionary): Trait {
+		const h = get(w_hierarchy)
+		const isBookmark = dict[this.convert_key('Type')] == 'bookmark' ? T_Thing.bookmark : T_Thing.generic;
+		const text = (isBookmark ? dict[this.convert_key('Link')] : dict[this.convert_key('Description')]) ?? k.unknown;
+		const t_trait = isBookmark ? T_Trait.hyperlink : T_Trait.csv;
+		const trait = h.trait_remember_runtimeCreate(h.db.idBase, Identifiable.newID(),
+			thing_id, t_trait, text, dict);			// save the dict in the Trait, for further processing
+		return trait;
 	}
 
 	async create_relationship_forAllTraits() {
@@ -34,7 +96,7 @@ class Marianne {
 		for (const trait of h.traits) {
 			const dict = trait.dict;
 			if (!!dict) {
-				const parent_title = dict['parent 1 link']?.removeWhiteSpace();
+				const parent_title = dict[this.convert_key('parent 1 link')]?.removeWhiteSpace();
 				if (!!parent_title) {
 					const parents = h.things_forTitle(parent_title);
 					const parent = parents?.[0] ?? await h.lost_and_found();
@@ -71,36 +133,3 @@ class Marianne {
 }
 
 export const marianne = new Marianne();
-
-enum T_Marianne_Fields {
-	Title,
-	parent_1_link,
-	Custom_Tags_$$Local$,
-	Societal_Sectors,
-	Wheel_of_Co$$$Creation_Sectors,
-	Data_Subtypes,
-	Main_Data_Type,
-	Link,
-	data_types_import,
-	name,
-	All_Local_Tags_$$folder_names$,
-	Description,
-	Parent_2_tags,
-	parent_2_link,
-	Parent_3_Tags,
-	Parent_3_link,
-	Parent_4_Tags,
-	Parent_Link_4,
-	Parent_5_Tags,
-	Parent_Link_5,
-	Parent_6_Tags,
-	Source_Created_Date,
-	Domain,
-	Custom_Tags,
-	Privacy_Field_of_record,
-	Type,
-	Ignore_for_Sync,
-	Ready_to_Sync,
-	Last_Synced,
-	User_Curators
-}

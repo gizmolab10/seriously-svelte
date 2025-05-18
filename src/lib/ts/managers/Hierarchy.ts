@@ -1417,7 +1417,7 @@ export class Hierarchy {
 
 	static readonly _____BUILD: unique symbol;
 
-	async extract_fromCSV_Dict(dict: Dictionary) { const thing = await marianne.extract_fromDict(dict); }
+	extract_fromCSV_Dict(dict: Dictionary) { marianne.extract_fromDict(dict); }
 
 	async extract_fromDict(dict: Dictionary) {
 		const idRoot = dict.id ?? dict.hid ?? dict.idRoot;				// cheapo backwards compatibility

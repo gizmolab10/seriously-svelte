@@ -49,7 +49,7 @@ export default class DBCommon {
 	async fetch_all() { this.fetch_all_fromLocal(); }
 	async remove_all() { this.remove_all_fromLocal(); }
 	remove_all_fromLocal() { if (this.isPersistent) { p.writeDB_key(T_Preference.local, null); } }
-	persist_all_toLocal() { if (this.isPersistent) { p.writeDB_key(T_Preference.local, u.stringify_object(this.hierarchy.all_data)); } }
+	persist_all_toLocal() { if (this.isPersistent) { p.writeDB_key(T_Preference.local, this.hierarchy.all_data); } }
 
 	async thing_persistentUpdate(thing: Thing) { this.persist_all(); }
 	async thing_persistentDelete(thing: Thing) { this.persist_all(); }
@@ -90,10 +90,9 @@ export default class DBCommon {
 	}
 
 	async fetch_all_fromLocal() {
-		const json = p.readDB_key(T_Preference.local);
+		const dict = p.readDB_key(T_Preference.local) as Dictionary;
 		const h = this.hierarchy;
-		if (!!json) {
-			const dict = JSON.parse(json) as Dictionary;
+		if (!!dict) {
 			await h.extract_fromDict(dict);
 		} else if (!this.isRemote) {			// no such preference, create empty hierarchy
 			h.predicate_defaults_remember_runtimeCreate();

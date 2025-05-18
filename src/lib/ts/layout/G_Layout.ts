@@ -1,7 +1,7 @@
-import { T_Info, T_Graph, T_Banner, T_Details, T_Kinship, T_Preference } from '../common/Global_Imports';
+import { T_Info, T_Graph, T_Banner, T_Details, T_Kinship } from '../common/Global_Imports';
 import { k, p, u, signals, Ancestry, G_RadialGraph } from '../common/Global_Imports';
-import { w_t_tree, w_t_graph, w_t_details, w_hierarchy, w_t_database } from '../common/Stores';
-import { w_show_related, w_ancestry_focus, w_ancestries_expanded } from '../common/Stores';
+import { w_t_tree, w_t_graph, w_t_details, w_hierarchy } from '../common/Stores';
+import { w_show_related, w_ancestry_focus } from '../common/Stores';
 import { get } from 'svelte/store';
 
 export default class G_Layout {

@@ -28,17 +28,17 @@
 	const row_title = row_titles[0];
 	let style = k.empty;
 
-	//////////////////////////////////////////////////////////////////
-	//			 	one row of buttons, plus options				//
-	//																//
-	//	has_title:	true means first one is row title	//
-	//	show_box:				true means line through row title	//
-	//																//
-	//	row_titles:				all									//
-	//	font_sizes:				[title_font_size, button_font_size] //
-	//	horizontal_gap:			between buttons						//
-	//																//
-	//////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+	//			 	one row of buttons, plus options					//
+	//																	//
+	//	has_title:	true means first one is row title					//
+	//	show_box:				true means line through row title		//
+	//																	//
+	//	row_titles				no buttons: if only one and has title	//
+	//	font_sizes:				[title_font_size, button_font_size] 	//
+	//	horizontal_gap:			between buttons							//
+	//																	//
+	//////////////////////////////////////////////////////////////////////
 
     update_es_buttons();
 
@@ -109,24 +109,26 @@
 			</div>
 		{/if}
 	{/if}
-	<div class='buttons-array'
-		style='
-			position:absolute;
-			height:{button_height}px;
-			top:{show_box ? 12 : 0}px;
-			width:{width - margin * 2}px;
-			left:{margin + (show_box ? 0 : solo_title_width)}px;'>
-		{#each button_titles as title, column}
-			<Button
-				height={button_height}
-				font_size={font_sizes[1]}
-				width={button_width_for(column)}
-				es_button={es_button_byColumn[column]}
-				name={`${name}-${button_name_for(column)}`}
-				origin={Point.x(button_left_for(column))}
-				closure={(s_mouse) => closure(T_ToolRequest.handle_click, s_mouse, column)}>
-				{title}
-			</Button>
-		{/each}
-	</div>
+	{#if button_titles.length > 0}
+		<div class='buttons-array'
+			style='
+				position:absolute;
+				height:{button_height}px;
+				top:{show_box ? 12 : 0}px;
+				width:{width - margin * 2}px;
+				left:{margin + (show_box ? 0 : solo_title_width)}px;'>
+			{#each button_titles as title, column}
+				<Button
+					height={button_height}
+					font_size={font_sizes[1]}
+					width={button_width_for(column)}
+					es_button={es_button_byColumn[column]}
+					name={`${name}-${button_name_for(column)}`}
+					origin={Point.x(button_left_for(column))}
+					closure={(s_mouse) => closure(T_ToolRequest.handle_click, s_mouse, column)}>
+					{title}
+				</Button>
+			{/each}
+		</div>
+	{/if}
 </div>

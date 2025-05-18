@@ -37,8 +37,8 @@ Object.defineProperty(String.prototype, 'removeWhiteSpace', {
 
 Object.defineProperty(String.prototype, 'encode_as_property', {
 	value: function(): string {
-		// in ts, hyphens and parentheses are not allowed in property names
-		return this.removeWhiteSpace().split('-').join('$$$').split('(').join('$$').split(')').join('$');
+		// in ts, hyphens, spaces and parentheses are not allowed in property names
+		return this.removeWhiteSpace().split(' ').join('_').split('-').join('$$$').split('(').join('$$').split(')').join('$');
 	},
 	writable: false,
 	enumerable: false,

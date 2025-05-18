@@ -273,7 +273,7 @@ export default class DBFirebase extends DBCommon {
 	}
 	
 	async subcollections_persistentDeleteIn(docRef: DocumentReference) {
-		const subcollectionNames = ['Things', 'Relationships'];
+		const subcollectionNames = ['Things', 'Traits', 'Relationships'];
 		for (const subcollectionName of subcollectionNames) {
 			const subcollectionRef = collection(docRef, subcollectionName);
 			const snapshot = await getDocs(subcollectionRef);

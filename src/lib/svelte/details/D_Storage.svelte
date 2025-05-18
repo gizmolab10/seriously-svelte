@@ -20,7 +20,6 @@
 	let s_element_byStorageType: { [id: string]: S_Element } = {};
 	let storage_choice: string | null = null;
 	let information: Array<Dictionary> = [];
-	let t_storage = T_Storage.direction;
 
 	setup_s_elements();
 	
@@ -32,6 +31,7 @@
 			dict['depth'] = h.depth;
 			dict['things'] = h.things.length;
 			dict['relationships'] = h.relationships.length.expressZero_asHyphen();
+			dict['traits'] = h.traits.length.expressZero_asHyphen();
 			information = Object.entries(dict);
 		}
 	}
@@ -39,6 +39,14 @@
 	function selection_closure(titles: Array<string>) {
 		const t_database = titles[0] as T_Database;	// only ever contains one title
 		w_t_database.set(t_database);
+	}
+
+	function row_titles() {
+		switch (ux.t_storage) {
+			case T_Storage.direction: return ['local file', ...storage_ids];
+			case T_Storage.format: return ['choose a file format', ...format_ids];
+			case T_Storage.working: return [`${storage_choice}ing...`];
+		}
 	}
 	
 	function setup_s_elements() {
@@ -51,7 +59,7 @@
 	}
 
 	function handle_toolRequest(t_toolRequest: T_ToolRequest, s_mouse: S_Mouse, column: number): any {
-		const ids = (t_storage == T_Storage.direction) ? storage_ids : format_ids;
+		const ids = (ux.t_storage == T_Storage.direction) ? storage_ids : format_ids;
 		switch (t_toolRequest) {
 			case T_ToolRequest.is_visible:	 return true;
 			case T_ToolRequest.name:		 return ids[column];
@@ -62,22 +70,24 @@
 	}
 	
 	function handle_click_forColumn(s_mouse, column) {
-		const ids = (t_storage == T_Storage.direction) ? storage_ids : format_ids;
+		const ids = (ux.t_storage == T_Storage.direction) ? storage_ids : format_ids;
 		if (s_mouse.isHover) {
 			s_element_byStorageType[ids[column]].isOut = s_mouse.isOut;
 		} else if (s_mouse.isDown) {
 			const choice = ids[column];
-			if (t_storage == T_Storage.direction) {
+			if (choice == T_Format.cancel) {
+				ux.t_storage = T_Storage.direction;
+			} else if (ux.t_storage == T_Storage.direction) {
 				storage_choice = choice;
-				t_storage = T_Storage.format;
-			} else if (choice != T_Format.cancel) {
+				ux.t_storage = T_Storage.format;
+			} else {
 				const format = choice as T_Format;
 				const h = $w_hierarchy;
 				switch (storage_choice) {
 					case T_Storage.export: h.persist_toFile(format); break;
 					case T_Storage.import: h.select_file_toUpload(format, s_mouse.event.shiftKey); break;
 				}
-				t_storage = T_Storage.working;
+				ux.t_storage = T_Storage.working;
 			}
 		}
 		return null;
@@ -105,21 +115,17 @@
 				array={information}
 				font_size={k.font_size.small - 1}/>
 		</div>
-		{#key t_storage}
-			{#if t_storage == T_Storage.working}
-				importing...
-			{:else}
-				<Buttons_Row
-					show_box={true}
-					horizontal_gap={4}
-					font_sizes={font_sizes}
-					width={k.width_details}
-					origin={Point.y(top + 89)}
-					closure={handle_toolRequest}
-					button_height={k.height.button}
-					margin={(t_storage == T_Storage.direction) ? 50 : 40}
-					name={`storage-${(t_storage == T_Storage.direction) ? 'action' : 'format'}`}
-					row_titles={(t_storage == T_Storage.direction) ? ['local file', ...storage_ids] : ['choose a file format', ...format_ids]}/>
-			{/if}
+		{#key ux.t_storage}
+			<Buttons_Row
+				show_box={true}
+				horizontal_gap={4}
+				font_sizes={font_sizes}
+				width={k.width_details}
+				row_titles={row_titles()}
+				origin={Point.y(top + 102)}
+				closure={handle_toolRequest}
+				button_height={k.height.button}
+				margin={(ux.t_storage == T_Storage.direction) ? 50 : 40}
+				name={`storage-${(ux.t_storage == T_Storage.direction) ? 'action' : 'format'}`}/>
 		{/key}
 	</div>

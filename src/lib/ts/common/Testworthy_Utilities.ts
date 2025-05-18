@@ -20,7 +20,8 @@ export class Testworthy_Utilities {
 	uniquely_concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return this.strip_invalid(this.concatenateArrays(a, b)); }
 	strip_invalid(array: Array<any>):						  Array<any> { return this.strip_identifiableDuplicates(this.strip_falsies(array)); }
 
-	// remove item from a dictionary (with string keys and number values) at the index
+	// remove item from a dictionary at the index
+	// assuming it has string keys and number values
 	valueFrom_atIndex<T extends Record<string, number>>(dictionary: T, index: number): number {
 		const propNames = Object.keys(dictionary) as Array<keyof T>;
 		if (index < 0 || index >= propNames.length) {
@@ -149,7 +150,7 @@ export class Testworthy_Utilities {
 			}
 			return value;
 		}
-		return JSON.stringify(object, removeExtras, 2);
+		return JSON.stringify(object, removeExtras, 0);
 	}
 
 	

@@ -19,8 +19,8 @@ export class Preferences {
 	dump() 									 { console.log(localStorage); }
 	read_key	   (key: string): any | null { return this.parse(localStorage[key]); }
 	readDB_key	   (key: string): any | null { return this.read_key(this.db_keyFor(key)); }
-	write_key<T>   (key: string, value: T)	 { localStorage[key] = JSON.stringify(value); }
 	writeDB_key<T> (key: string, value: T)	 { this.write_key(this.db_keyFor(key), value); }
+	write_key<T>   (key: string, value: T)	 { localStorage[key] = u.stringify_object(value as object); }
 
 	writeDB_keyPairs_forKey<T>(key: string, sub_key: string, value: T): void {	// pair => key, sub_key
 		const dbKey = this.db_keyFor(key);
@@ -92,7 +92,7 @@ export class Preferences {
 		if (c.eraseDB > 0) {
 			c.eraseDB -= 1;
 			w_ancestry_focus.set(ancestryToFocus);
-		} else if (!p.ignoreAncestries && !c.eraseDB) {
+		} else if (!p.ignoreAncestries) {
 			const focusPath = p.readDB_key(this.focus_key) ?? p.readDB_key('focus');
 			if (!!focusPath) {
 				const focusAncestry = h.ancestry_remember_createUnique(focusPath);
@@ -159,7 +159,6 @@ export class Preferences {
 				this.write_key(id, null);
 			}
 		}
-
 	}
 	
 	static readonly _____SUBSCRIBE_AND_RESTORE: unique symbol;
