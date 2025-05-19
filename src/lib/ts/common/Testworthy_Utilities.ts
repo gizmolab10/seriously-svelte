@@ -150,7 +150,7 @@ export class Testworthy_Utilities {
 			}
 			return value;
 		}
-		return JSON.stringify(object, removeExtras, 0);
+		return JSON.stringify(object, removeExtras, 1);
 	}
 
 	

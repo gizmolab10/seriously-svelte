@@ -16,6 +16,17 @@ export enum T_Details {
 	tools,
 	display,
 	info,
+	traits,
+}
+
+export enum T_Tool {
+	browse,
+	add,
+	delete,
+	move,
+	list,
+	show,
+	graph,
 }
 
 export enum T_Info {		// identical to k.info
@@ -163,16 +174,6 @@ export enum T_ToolRequest {
 	is_visible	 = 'is_visible',
 	is_hit		 = 'is_hit',
 	name		 = 'name',
-}
-
-export enum T_Tool {
-	browse,
-	add,
-	delete,
-	move,
-	list,
-	show,
-	graph,
 }
 
 export enum T_Control {

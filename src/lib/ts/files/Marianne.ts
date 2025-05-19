@@ -68,13 +68,10 @@ class Marianne {
 
 	shrink_dict(dict: Dictionary): Dictionary {
 		const shrunk: Dictionary = {};
-		const keys_to_remove = ['Type', 'Link', 'Title', 'Description', 'parent 1 link', 'data types import'];
+		const keys_to_remove = ['Type', 'Link', 'Description', 'parent 1 link', 'data types import'];
 		for (const key in dict) {
 			if (!keys_to_remove.includes(key) && dict[key] != k.empty) {
-				const convertedKey = this.convert_key(key);
-				if (convertedKey != -1) {
-					shrunk[convertedKey] = dict[key].removeWhiteSpace();
-				}
+				shrunk[key] = dict[key].removeWhiteSpace();
 			}
 		}
 		return shrunk;

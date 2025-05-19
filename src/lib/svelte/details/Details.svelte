@@ -7,7 +7,7 @@
 	import Separator from '../kit/Separator.svelte';
 	import D_Tools from '../details/D_Tools.svelte';
 	import D_Info from '../details/D_Info.svelte';
-	const titles = [T_Details[T_Details.storage], T_Details[T_Details.tools], T_Details[T_Details.display], T_Details[T_Details.info]];
+	const titles = [T_Details[T_Details.storage], T_Details[T_Details.tools], T_Details[T_Details.display], T_Details[T_Details.info], T_Details[T_Details.traits]];
 	const separator_gap = k.height.separator;
 	let tops = layout.layout_tops_forDetails();
 	let number_ofDetails = $w_t_details.length - 1;
@@ -35,7 +35,7 @@
 		allow_multiple={true}
 		name='details-selector'
 		selected={$w_t_details}
-		origin={new Point(19, 0.5)}
+		origin={new Point(2, 0.5)}
 		selection_closure={selection_closure}/>
 	{#if showingDetails_ofType(T_Details.storage)}
 		<Separator

@@ -74,7 +74,7 @@ export default class DBCommon {
 					identifiable.persistence.isDirty = false;
 				}
 			}
-		} else if (this.isPersistent && t_persistable != T_Persistable.traits) {
+		} else if (this.isPersistent) {		//  && t_persistable != T_Persistable.traits
 			p.writeDB_key(t_persistable, identifiables);
 		}
 	}

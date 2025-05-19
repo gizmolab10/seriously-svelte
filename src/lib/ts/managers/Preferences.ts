@@ -23,7 +23,7 @@ export class Preferences {
 
 	write_key<T> (key: string, value: T) {
 		const object = u.stringify_object(value as object);
-		if (object.length > 2000000) {
+		if (object.length > 2600000) {
 			console.log(`too large for localStorage: ${key} ${object.length} bytes`);
 		} else {
 			localStorage[key] = object;
