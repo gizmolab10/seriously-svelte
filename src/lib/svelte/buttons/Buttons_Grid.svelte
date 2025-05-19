@@ -1,9 +1,9 @@
 <script lang='ts'>
-    import {S_Mouse, S_Element, T_Element, T_ToolRequest, T_Tool } from '../../ts/common/Global_Imports';
+    import {S_Mouse, S_Element, T_Element, T_ButtonRequest, T_Tool } from '../../ts/common/Global_Imports';
     import { w_background_color, w_s_alteration } from '../../ts/common/Stores';
     import { k, show, Point, colors } from '../../ts/common/Global_Imports';
     import Buttons_Row from './Buttons_Row.svelte';
-    export let closure: (t_toolRequest: T_ToolRequest, s_mouse: S_Mouse, row: number, column: number) => boolean;
+    export let closure: (t_buttonRequest: T_ButtonRequest, s_mouse: S_Mouse, row: number, column: number) => boolean;
     export let button_titles: string[][];
     export let font_sizes: Array<number>;
     export let has_title = true;        // false means all titles are buttons, true means first one is row title
@@ -26,7 +26,7 @@
         position:absolute;
         height:{(rows * button_height) + ((rows - 1) * gap)}px;'>
     {#each button_titles as titles, row}
-        {#if closure(T_ToolRequest.is_visible, S_Mouse.empty, row, -1)}
+        {#if closure(T_ButtonRequest.is_visible, S_Mouse.empty, row, -1)}
             <Buttons_Row
                 gap={gap}
                 width={width}
@@ -38,7 +38,7 @@
                 button_height={button_height}
                 origin={button_origin_for(row)}
                 name={`${name}-grid-${T_Tool[row]}`}
-                closure={(t_toolRequest, s_mouse, column) => closure(t_toolRequest, s_mouse, row, column)}/>
+                closure={(t_buttonRequest, s_mouse, column) => closure(t_buttonRequest, s_mouse, row, column)}/>
         {/if}
     {/each}
 </div>

@@ -374,7 +374,8 @@ Object.defineProperty(Number.prototype, 'toFixed', {
 		const formatter = new Intl.NumberFormat('en-US', {
 			style: 'decimal',
 			maximumFractionDigits: precision,
-			minimumFractionDigits: precision
+			minimumFractionDigits: precision,
+			useGrouping: false
 		});
 		return formatter.format(this);
 	},

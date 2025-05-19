@@ -3,6 +3,7 @@
 	import { w_graph_rect, w_t_details, w_device_isMobile } from '../../ts/common/Stores';
 	import D_Display from '../details/D_Display.svelte';
 	import D_Storage from '../details/D_Storage.svelte';
+	import D_Traits from '../details/D_Traits.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
 	import D_Tools from '../details/D_Tools.svelte';
@@ -35,7 +36,7 @@
 		allow_multiple={true}
 		name='details-selector'
 		selected={$w_t_details}
-		origin={new Point(2, 0.5)}
+		origin={new Point(4, 0.5)}
 		selection_closure={selection_closure}/>
 	{#if showingDetails_ofType(T_Details.storage)}
 		<Separator
@@ -64,5 +65,12 @@
 			add_wings={true}			
 			top={tops[T_Details.info] - separator_gap}/>
 		<D_Info top={tops[T_Details.info]} number_ofDetails={number_ofDetails}/>
+	{/if}
+	{#if showingDetails_ofType(T_Details.traits)}
+		<Separator
+			title='traits'
+			add_wings={true}			
+			top={tops[T_Details.traits] - separator_gap}/>
+		<D_Traits top={tops[T_Details.traits]}/>
 	{/if}
 </div>

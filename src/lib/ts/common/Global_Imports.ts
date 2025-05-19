@@ -16,13 +16,14 @@ import { T_Create, T_Browser, T_Alteration } from './Enumerations';
 import { T_Curve, T_Order, T_Widget, T_Layer } from './Enumerations';
 import { T_Oblong, T_Element, T_SvelteComponent } from './Enumerations';
 import { T_Format, T_Startup, T_Kinship, T_RingZone, T_Preference } from './Enumerations';
-import { T_Info, T_Tool, T_Report, T_Details, T_ToolRequest, T_Storage } from './Enumerations';
+import { T_Info, T_Tool, T_Report, T_Details, T_ButtonRequest, T_Storage } from './Enumerations';
 
 import S_Title_Edit from '../state/S_Title_Edit';
 import S_Alteration from '../state/S_Alteration';
 import S_Resizing from '../state/S_Resizing';
 import S_Rotation from '../state/S_Rotation';
 import S_Element from '../state/S_Element';
+import S_Traits from '../state/S_Traits';
 import S_Widget from '../state/S_Widget';
 import S_Common from '../state/S_Common';
 import S_Mouse from '../state/S_Mouse';
@@ -76,15 +77,15 @@ export {
 	Rect, Size, Point, svgPaths,
 	Ancestry, Hierarchy, databases,
 	debug, Debug, T_Debug, ErrorTrace,
+	S_Common, S_Traits, S_Rotation, S_Resizing,
 	Angle, Direction, T_Quadrant, T_Orientation,
-	T_Persistable, T_Persistence, T_ToolRequest,
+	T_Persistable, T_Persistence, T_ButtonRequest,
 	T_Element, Svelte_Wrapper, T_SvelteComponent,
-	S_Common, S_Rotation, S_Resizing, G_Thing_Pages,
 	G_Widget, G_Segment, G_TreeLine, G_TreeBranches,
-	G_Paging, G_Cluster, G_RadialGraph, G_ArcSlider,
 	show, files, builds, colors, layout, radial, signals,
 	S_Mouse, S_Widget, S_Element, S_Alteration, S_Title_Edit,
 	T_Order, T_Format, T_Banner, T_Details, T_Startup, T_Graph,
+	G_Paging, G_Cluster, G_RadialGraph, G_Thing_Pages, G_ArcSlider,
 	T_Layer, T_Curve, T_Create, T_RingZone, T_Oblong, T_Alteration,
 	User, Persistable, Thing, Trait, Access, Predicate, Relationship,
 	T_Thing, T_Trait, T_Widget, T_Predicate, T_Kinship, T_Preference,

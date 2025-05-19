@@ -142,7 +142,6 @@
 						<Button
 							width={size_big}
 							height={size_big}
-							border_thickness=0.5
 							name={T_Control.smaller}
 							center={new Point(width - 110, y_center)}
 							es_button={es_control_byType[T_Control.smaller]}
@@ -161,7 +160,6 @@
 						<Button
 							width={size_big}
 							height={size_big}
-							border_thickness=0.5
 							name={T_Control.bigger}
 							center={new Point(width - 140, y_center)}
 							es_button={es_control_byType[T_Control.bigger]}
@@ -182,7 +180,6 @@
 				<Button name={T_Control.builds}
 					width=75
 					height={size_big}
-					border_thickness=0.5
 					center={new Point(width - 55, y_center)}
 					es_button={es_control_byType[T_Control.builds]}
 					closure={(s_mouse) => handle_s_mouse_forControl_Type(s_mouse, T_Control.builds)}>
@@ -193,7 +190,6 @@
 				<Button name={T_Control.help}
 					width={size_big}
 					height={size_big}
-					border_thickness=0.5
 					center={new Point(width, y_center)}
 					es_button={es_control_byType[T_Control.help]}
 					closure={(s_mouse) => handle_s_mouse_forControl_Type(s_mouse, T_Control.help)}>

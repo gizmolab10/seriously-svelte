@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { T_Layer, T_Format, T_Storage, T_Element, T_Preference, T_ToolRequest } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Format, T_Storage, T_Element, T_Preference, T_ButtonRequest } from '../../ts/common/Global_Imports';
 	import { k, ux, Point, colors, S_Element, databases, Hierarchy } from '../../ts/common/Global_Imports';
 	import { w_storage_updated, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { w_t_database, w_hierarchy } from '../../ts/common/Stores';
@@ -58,13 +58,13 @@
 		}
 	}
 
-	function handle_toolRequest(t_toolRequest: T_ToolRequest, s_mouse: S_Mouse, column: number): any {
+	function handle_toolRequest(t_buttonRequest: T_ButtonRequest, s_mouse: S_Mouse, column: number): any {
 		const ids = (ux.t_storage == T_Storage.direction) ? storage_ids : format_ids;
-		switch (t_toolRequest) {
-			case T_ToolRequest.is_visible:	 return true;
-			case T_ToolRequest.name:		 return ids[column];
-			case T_ToolRequest.handle_click: return handle_click_forColumn(s_mouse, column);
-			default:						 return false;
+		switch (t_buttonRequest) {
+			case T_ButtonRequest.is_visible:   return true;
+			case T_ButtonRequest.name:		   return ids[column];
+			case T_ButtonRequest.handle_click: return handle_click_forColumn(s_mouse, column);
+			default:						   return false;
 		}
 		return null;
 	}

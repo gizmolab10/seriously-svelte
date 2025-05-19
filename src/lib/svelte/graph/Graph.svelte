@@ -49,7 +49,7 @@
 		
 	function update_style() {
 		style=`
-			overflow: hidden;
+			overflow: auto;
 			position: absolute;
 			touch-action: none;
 			pointer-events: auto;

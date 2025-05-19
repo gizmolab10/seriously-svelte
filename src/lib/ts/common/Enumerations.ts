@@ -35,10 +35,7 @@ export enum T_Info {		// identical to k.info
 	title,
 	after_title,
 	table,
-	color,
-	traits,
-	consequence,
-	quest
+	color
 }
 
 export enum T_Layer {
@@ -167,7 +164,7 @@ export enum T_Predicate {
 	supports	= 'supports',
 }
 
-export enum T_ToolRequest {
+export enum T_ButtonRequest {
 	handle_click = 'handle_click',
 	is_disabled	 = 'is_disabled',
 	is_inverted	 = 'is_inverted',

@@ -6,7 +6,6 @@
 	import { debug, colors, signals, layout, Ancestry } from '../../ts/common/Global_Imports';
 	import type { Integer, Dictionary } from '../../ts/common/Types';
 	import Identifiable from '../../ts/runtime/Identifiable';
-	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Text_Table from '../kit/Text_Table.svelte';
 	import Separator from '../kit/Separator.svelte';
@@ -25,7 +24,6 @@
 	const es_info = ux.s_element_for(new Identifiable(id), T_Element.info, id);
 	let ancestry: Ancestry | null = $w_ancestry_focus;
 	let thing: Thing | null = ancestry?.thing ?? null;
-	let text_box_size = new Size(info_width - 4, 68);
 	let thingHID: Integer | null = thing?.hid;
 	let information: Array<Dictionary> = [];
 	let color = colors.default_forThings;
@@ -178,33 +176,6 @@
 				origin={color_origin}
 				color_closure={handle_colors}
 				picker_offset={picker_offset}/>
-		{/if}
-		{#if show.traits}
-			<div class='horizontal-line'
-				style='
-					left:-10px;
-					position:absolute;
-					width:{k.width_details}px;
-					z-index:{T_Layer.frontmost};
-					height:{k.thickness.thin}px;
-					background-color:{colors.separator};'>
-			</div>
-			<Text_Editor
-				label='consequence'
-				color=colors.default
-				width={text_box_size.width}
-				height={text_box_size.height}
-				original_text={thing.consequence}
-				handle_textChange={handle_textChange}
-				top={layout.top_ofInfoAt(T_Info.consequence)}/>
-			<Text_Editor
-				label='quest'
-				color=colors.default
-				original_text={thing.quest}
-				width={text_box_size.width}
-				height={text_box_size.height}
-				handle_textChange={handle_textChange}
-				top={layout.top_ofInfoAt(T_Info.quest)}/>
 		{/if}
 	</div>
 {/if}

@@ -9,7 +9,7 @@ const separator_thickness = 4;
 export default class Constants {
 	details_margin = 0;
 	halfIncrement = 0.5;
-	width_details = 216;
+	width_details = 220;
 	radial_widget_inset = 26;
 	autorepeat_interval = 50;
 	separator_title_left = 0;
@@ -91,9 +91,9 @@ export default class Constants {
 		},
 		detail: {
 			storage: 142,
-			tools: () => { return show.tool_boxes ? 229 : 146; },
+			tools:	  () => { return show.tool_boxes ? 229 : 146; },
 			display:  77,
-			info:	 160,
+			info:	 230,
 			traits:	   0,
 		},
 		info: {

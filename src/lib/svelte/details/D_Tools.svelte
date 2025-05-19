@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { T_Tool, T_Layer, T_ToolRequest, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
+	import { T_Tool, T_Layer, T_ButtonRequest, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
 	import { w_hierarchy, w_t_details, w_user_graph_offset, w_s_alteration } from '../../ts/common/Stores';
 	import { e, k, show, Size, Point, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
 	import { w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
@@ -15,7 +15,7 @@
 	let tools_top = top + (has_title ? 3 : -13);
     let reattachments = 0;
 
-	// buttons row sends column & T_ToolRequest:
+	// buttons row sends column & T_ButtonRequest:
 	// 	 is_disabled calls:	handle_isTool_disabledAt
 	//	 handle_click calls:	handle_tool_clickedAt ... n.b., long press generates multiple calls
 	// buttons grid adds row (here it becomest_tool)
@@ -71,14 +71,14 @@
 		];
 	}
 
-	function handle_toolRequest(t_toolRequest: T_ToolRequest, s_mouse: S_Mouse, t_tool: number, column: number): any {
+	function handle_toolRequest(t_buttonRequest: T_ButtonRequest, s_mouse: S_Mouse, t_tool: number, column: number): any {
 		const isAltering = !!$w_s_alteration;
-		switch (t_toolRequest) {
-			case T_ToolRequest.name:		 return name_ofToolAt(t_tool, column);
-			case T_ToolRequest.is_disabled:	 return e.handle_isTool_disabledAt(t_tool, column);
-			case T_ToolRequest.is_inverted:	 return !isAltering ? false : isTool_invertedAt(t_tool, column);
-			case T_ToolRequest.is_visible:	 return !isAltering ? true : [T_Tool.add, T_Tool.delete].includes(t_tool);
-			case T_ToolRequest.handle_click: return e.handle_tool_autorepeatAt(s_mouse, t_tool, column, name_for(t_tool, column + 1));
+		switch (t_buttonRequest) {
+			case T_ButtonRequest.name:		   return name_ofToolAt(t_tool, column);
+			case T_ButtonRequest.is_disabled:  return e.handle_isTool_disabledAt(t_tool, column);
+			case T_ButtonRequest.is_inverted:  return !isAltering ? false : isTool_invertedAt(t_tool, column);
+			case T_ButtonRequest.is_visible:   return !isAltering ? true : [T_Tool.add, T_Tool.delete].includes(t_tool);
+			case T_ButtonRequest.handle_click: return e.handle_tool_autorepeatAt(s_mouse, t_tool, column, name_for(t_tool, column + 1));
 		}
 		return null;
 	}

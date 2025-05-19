@@ -89,11 +89,12 @@ export default class G_Layout {
 			k.height.detail.storage,
 			k.height.detail.tools(),
 			k.height.detail.display,
-			k.height.detail.info
+			k.height.detail.info,
+			k.height.detail.traits
 		];
 		let index = 0;
 		let indices = get(w_t_details);
-		while (index <= T_Details.info) {
+		while (index <= T_Details.traits) {
 			this.tops_ofDetails[index] = top;
 			const t_detail = T_Details[index] as unknown as T_Details;
 			if (indices.includes(t_detail)) {

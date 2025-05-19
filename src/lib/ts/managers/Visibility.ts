@@ -7,8 +7,8 @@ import { get } from 'svelte/store';
 const force_tool_boxes = true;		// true means that the tool boxes are never shown
 
 export class Visibility {
+	traits		 = true;
 	debug_cursor = false;
-	traits		 = false;
 	t_info		 = T_Report.focus;
 	tool_boxes	 = !(get(w_device_isMobile) ?? false) && !force_tool_boxes;
 

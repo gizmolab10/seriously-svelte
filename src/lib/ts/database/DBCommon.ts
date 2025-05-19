@@ -51,7 +51,7 @@ export default class DBCommon {
 	remove_all_fromLocal() {
 		if (this.isPersistent) {
 			for (const t_persistable of Persistable.t_persistables) {
-				p.writeDB_key(t_persistable, null);
+				p.writeDB_key(t_persistable.toLowerCase(), null);
 			}
 		}
 	}
@@ -75,14 +75,14 @@ export default class DBCommon {
 				}
 			}
 		} else if (this.isPersistent) {		//  && t_persistable != T_Persistable.traits
-			p.writeDB_key(t_persistable, identifiables);
+			p.writeDB_key(t_persistable.toLowerCase(), identifiables);
 		}
 	}
 
 	fetch_all_fromLocal() {
 		const h = this.hierarchy;
 		for (const t_persistable of Persistable.t_persistables) {
-			const array = p.readDB_key(t_persistable) as Array<Dictionary>;
+			const array = p.readDB_key(t_persistable.toLowerCase()) as Array<Dictionary>;
 			if (!!array) {
 				for (const dict of array) {
 					h.extract_objects_ofType_fromDict(t_persistable, dict);

@@ -1,9 +1,9 @@
 <script lang='ts'>
-    import { k, ux, show, Point, colors, T_ToolRequest, T_Element, S_Element } from '../../ts/common/Global_Imports';
+    import { k, ux, show, Point, colors, T_ButtonRequest, T_Element, S_Element } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Separator from '../kit/Separator.svelte';
     import Buttons_Row from './Buttons_Row.svelte';
-    export let closure: (t_toolRequest: T_ToolRequest, s_mouse: S_Mouse, column: number) => boolean;
+    export let closure: (t_buttonRequest: T_ButtonRequest, s_mouse: S_Mouse, column: number) => boolean;
 	export let origin: Point | null = null;
     export let font_sizes: Array<number>;
     export let button_titles: string[];
