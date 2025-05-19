@@ -3,7 +3,7 @@ import type { Integer } from '../common/Types';
 
 export default class G_Segment {
 	numerical_font_size = k.font_size.small;
-	font_size = `${k.font_size.small}px`;
+	font_size = k.font_size.small;
 	title_origin = Point.x(8);
 	part = T_Oblong.right;
 	origin = Point.zero;
@@ -21,8 +21,8 @@ export default class G_Segment {
 	static segment_gap = 14;
 	get description(): string { return `${this.title} ${this.part} ${this.path}`; }
 
-	constructor(name: string, title: string, font_size: string, isSelected: boolean, index: Integer, max_index: Integer, left: number, height: number) {
-		this.width = u.getWidth_ofString_withSize(title, font_size) + this.numerical_font_size;
+	constructor(name: string, title: string, font_size: number, isSelected: boolean, index: Integer, max_index: Integer, left: number, height: number) {
+		this.width = u.getWidth_ofString_withSize(title, `${font_size}px`) + this.numerical_font_size;
 		this.part = this.part_forIndex(index, max_index);
 		this.size = new Size(this.width, height);
 		this.isSelected = isSelected;
@@ -35,7 +35,7 @@ export default class G_Segment {
 		this.setup_path();
 	}
 
-	static grab_g_segment(name: string, title: string, font_size: string, isSelected: boolean, index: Integer, max_index: Integer, left: number, height: number) : G_Segment {
+	static create_g_segment(name: string, title: string, font_size: number, isSelected: boolean, index: Integer, max_index: Integer, left: number, height: number) : G_Segment {
 		let g_segment_name = `${title}-${name}-at-${index}`;
 		let g_segment = ux.g_segment_forName(g_segment_name);
 		if (!!g_segment) {

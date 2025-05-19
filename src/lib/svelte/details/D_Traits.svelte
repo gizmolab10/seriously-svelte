@@ -26,6 +26,14 @@
 		console.log('selection_closure', titles);
 	}
 
+	function box_label_for(trait: Trait) {
+		return `activate ${trait.t_trait}`;
+	}
+
+	function handle_label_click(trait: Trait) {
+		window.open(trait.text, '_blank');
+	}
+
 	function handle_textChange(text: string, trait: Trait) {
 		$w_hierarchy.trait_setText_forType_ownerHID(text, trait, thing.hid);
 	}
@@ -81,7 +89,7 @@
 		selected={[0]}
 		name='hierarchy_traits'
 		origin={new Point(3, 3)}
-		font_size={k.font_size.smallest};
+		font_size={k.font_size.smaller}
 		titles={['all', 'csv', 'hyperlink']}
 		selection_closure={selection_closure}/>
 	<Buttons_Row
@@ -111,11 +119,14 @@
 					<Text_Editor
 						top={47}
 						left={10}
+						label={trait.t_trait}
 						color={colors.default}
-						label='{trait.t_trait}'
 						original_text={trait.text}
 						width={text_box_size.width}
 						height={text_box_size.height}
+						onLabelClick={() => handle_label_click(trait)}
+						label_underline={trait.t_trait == 'hyperlink'}
+						label_color={trait.t_trait == 'hyperlink' ? 'blue' : 'gray'}
 						handle_textChange={(label, text) => handle_textChange(label, text, trait)}/>
 				{/if}
 			{/each}

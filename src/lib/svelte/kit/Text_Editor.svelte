@@ -5,10 +5,13 @@
 	export let color = colors.default_forThings;
 	export let width = k.width_details - 40;
 	export let original_text = k.empty;
+	export let label_color = 'gray';
+	export let label_underline = false;
 	export let label = k.empty;
 	export let height = 200;
 	export let left = 0;
 	export let top = 0;
+	export let onLabelClick = () => {};
 	let textarea = null;
 	let bound_text = original_text;
 	let cursorStyle = 'cursor: text';
@@ -97,12 +100,15 @@
 		'/>
 	<div style='
 		top: -8px;
-		color: gray;
+		cursor: pointer;
 		padding: 0px 3px;
 		position: absolute;
+		color: {label_color};
 		left: {label_left}px;
 		font-size: {k.font_size.small}px;
-		background-color: {$w_background_color}'>
+		text-decoration: {label_underline ? 'underline' : 'none'};
+		background-color: {$w_background_color};'
+		on:click={onLabelClick}>
 		{label}
 	</div>
 </div>

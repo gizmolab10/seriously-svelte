@@ -4,9 +4,9 @@
 	import type { Handle_Result } from '../../ts/common/Types';
 	import Segment from './Segment.svelte';
 	export let selection_closure = Handle_Result<string>;
-	export let font_size = `${k.font_size.small}px`;
-	export let height = k.height.segmented;
+	export let font_size = k.font_size.small;
 	export let selected: Array<string> = [];
+	export let height = k.height.segmented;
 	export let titles: Array<string> = [];
 	export let fill = $w_background_color;
 	export let stroke = colors.default;
@@ -33,7 +33,7 @@
 		let x = 0;
 		reset_g_segments_andWidth();
 		for (const title of titles) {
-			const g_segment = G_Segment.grab_g_segment(name, title, font_size, isSelected(title), index, max_index, x, height);
+			const g_segment = G_Segment.create_g_segment(name, title, font_size, isSelected(title), index, max_index, x, height);
 			g_segments.push(g_segment);
 			x += g_segment.width;
 			index += 1;
