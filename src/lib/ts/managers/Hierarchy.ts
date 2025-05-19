@@ -1,11 +1,11 @@
-import { T_Report, T_Control, T_Predicate, T_Alteration, databases } from '../common/Global_Imports';
+import { T_Thing, T_Trait, T_Order, T_Create, T_Format, T_Control } from '../common/Global_Imports';
+import { Access, Ancestry, Predicate, Relationship, Persistable } from '../common/Global_Imports';
+import { debug, files, colors, signals, layout, databases } from '../common/Global_Imports';
 import { w_storage_updated, w_s_alteration, w_ancestries_grabbed } from '../common/Stores';
-import { T_Thing, T_Trait, T_Order, T_Create, T_Format } from '../common/Global_Imports';
-import { Access, Ancestry, Predicate, Relationship } from '../common/Global_Imports';
 import { w_popupView_id, w_ancestry_focus, w_s_title_edit } from '../common/Stores';
-import { debug, files, colors, signals, layout } from '../common/Global_Imports';
 import { c, k, p, u, show, User, Thing, Trait } from '../common/Global_Imports';
-import { T_Persistable } from '../../ts/database/DBCommon';
+import { T_Report, T_Alteration, T_Predicate } from '../common/Global_Imports';
+import { T_Persistable } from '../common/Global_Imports';
 import type { Integer, Dictionary } from '../common/Types';
 import Identifiable from '../runtime/Identifiable';
 import { marianne } from '../files/Marianne';
@@ -43,7 +43,6 @@ export class Hierarchy {
 	traits: Array<Trait> = [];
 	rootAncestry!: Ancestry;
 
-	t_persistables = [T_Persistable.predicates, T_Persistable.relationships, T_Persistable.traits, T_Persistable.things];
 	replace_rootID: string | null = k.empty;		// required for DBLocal at launch
 	isAssembled = false;
 	root!: Thing;
@@ -51,6 +50,16 @@ export class Hierarchy {
 
 	constructor(db: DBCommon) {
 		this.db = db;
+	}
+
+	persistables_forKey(t_persistable: T_Persistable): Array<Persistable> {
+		switch (t_persistable) {
+			case T_Persistable.relationships: return this.relationships;
+			case T_Persistable.predicates:	  return this.predicates;
+			case T_Persistable.things:		  return this.things;
+			case T_Persistable.traits:		  return this.traits;
+			default: return [];
+		}
 	}
 
 	static readonly _____ROOT: unique symbol;
@@ -1296,7 +1305,7 @@ export class Hierarchy {
 		let data: Dictionary = { 
 			'title' : root.title,
 			'idRoot' : root.id};
-		for (const t_persistable of this.t_persistables) {
+			for (const t_persistable of Persistable.t_persistables) {
 			switch(t_persistable) {
 				case T_Persistable.things:		  data[t_persistable] = this.things; break;
 				case T_Persistable.traits:		  data[t_persistable] = this.traits; break;
@@ -1438,7 +1447,7 @@ export class Hierarchy {
 	}
 
 	extract_allTypes_ofObjects_fromDict(dict: Dictionary) {
-		for (const t_persistable of this.t_persistables) {
+		for (const t_persistable of Persistable.t_persistables) {
 			const subdicts = dict[t_persistable] as Array<Dictionary>;
 			for (const subdict of subdicts) {
 				switch(t_persistable) {
@@ -1448,6 +1457,15 @@ export class Hierarchy {
 					case T_Persistable.things:		  this.thing_extract_fromDict(subdict); break;
 				}
 			}
+		}
+	}
+
+	extract_objects_ofType_fromDict(t_persistable: T_Persistable, dict: Dictionary) {
+		switch(t_persistable) {
+			case T_Persistable.relationships: this.relationship_extract_fromDict(dict); break;
+			case T_Persistable.predicates:	  this.predicate_extract_fromDict(dict); break;
+			case T_Persistable.traits:		  this.trait_extract_fromDict(dict); break;
+			case T_Persistable.things:		  this.thing_extract_fromDict(dict); break;
 		}
 	}
 

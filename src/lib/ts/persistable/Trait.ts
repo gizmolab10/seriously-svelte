@@ -1,5 +1,5 @@
-import { k, u, Persistable, Thing, databases, T_Trait } from '../common/Global_Imports';
-import { T_Persistable } from '../database/DBCommon';
+import { k, u, Thing, databases, T_Trait } from '../common/Global_Imports';
+import { Persistable, T_Persistable } from '../common/Global_Imports';
 import type { Dictionary } from '../common/Types';
 import { w_hierarchy } from '../common/Stores';
 import { get } from 'svelte/store';

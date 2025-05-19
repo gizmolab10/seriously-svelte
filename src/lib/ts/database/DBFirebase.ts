@@ -1,12 +1,13 @@
-import { c, k, p, u, Thing, Trait, debug, layout, Predicate, Relationship } from '../common/Global_Imports';
-import { T_Thing, T_Trait, T_Debug, T_Create, T_Predicate, T_Preference } from '../common/Global_Imports';
+import { c, k, p, u, Thing, Trait, debug, layout, Predicate, Relationship, Persistable, databases } from '../common/Global_Imports';
 import { QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
+import { T_Thing, T_Trait, T_Debug, T_Create, T_Predicate, T_Preference } from '../common/Global_Imports';
 import { onSnapshot, deleteField, getFirestore, DocumentData, DocumentChange } from 'firebase/firestore';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
-import { T_Persistable, T_Database, T_Persistence } from './DBCommon';
+import { T_Persistable, T_Persistence } from '../common/Global_Imports';
 import type { Dictionary } from '../common/Types';
 import Identifiable from '../runtime/Identifiable';
 import { initializeApp } from 'firebase/app';
+import { T_Database } from './DBCommon';
 import DBCommon from './DBCommon';
 
 export default class DBFirebase extends DBCommon {
@@ -167,7 +168,7 @@ export default class DBFirebase extends DBCommon {
 	async setup_remote_handlers() {
 		let rebuildScheduled = false;
 		let relationships_haveChanged = false;
-		for (const t_persistable of this.hierarchy.t_persistables) {
+		for (const t_persistable of Persistable.t_persistables) {
 			if (t_persistable == T_Persistable.predicates) {
 				this.predicatesCollection = collection(this.firestore, t_persistable);
 			} else {
@@ -814,6 +815,7 @@ export class PersistentRelationship implements PersistentRelationship {
 	kind!: T_Predicate;
 
 	constructor(data: DocumentData | Relationship) {
+		const dbFirebase = databases.db_forType(T_Database.firebase) as DBFirebase;
 		const things = dbFirebase.bulk_forID(dbFirebase.idBase)?.thingsCollection;
 		const predicates = dbFirebase.predicatesCollection;
 		this.orders = data.orders;
@@ -850,5 +852,3 @@ export class PersistentRelationship implements PersistentRelationship {
 	}
 
 }
-
-export const dbFirebase = new DBFirebase();

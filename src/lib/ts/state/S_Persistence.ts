@@ -1,29 +1,27 @@
 import type { Async_Handle_Boolean } from '../common/Types';
-import { T_Persistable } from '../database/DBCommon';
+import { T_Persistable } from '../common/Enumerations';
 import { databases } from '../database/Databases';
-import DBCommon from '../database/DBCommon';
 
 export default class S_Persistence {
+	awaiting_remoteCreation = false;
 	t_persistable: T_Persistable;
 	lastModifyDate = new Date();
 	already_persisted = false;
-	awaiting_remoteCreation = false;
 	needsBulkFetch = false;
 	t_database: string;
 	isDirty = false;
 	id: string;
 
+	get isPersistent(): boolean { return databases.db_forType(this.t_database)?.isPersistent ?? false; }
 	updateModifyDate() { this.lastModifyDate = new Date(); }
-	get isPersistent(): boolean { return this.db?.isPersistent ?? false; }
-	get db(): DBCommon | null { return databases.db_forType(this.t_database); }
 
 	constructor(t_database: string, t_persistable: T_Persistable, id: string, already_persisted: boolean = false, awaiting_remoteCreation: boolean = false) {
-		this.already_persisted = already_persisted;
-		this.awaiting_remoteCreation  = awaiting_remoteCreation;
-		this.t_persistable	   = t_persistable;
-		this.t_database		   = t_database;			// needed for this.isPersistent, used next
-		this.isDirty		   = this.isPersistent && !already_persisted;
-		this.id				   = id;
+		this.awaiting_remoteCreation = awaiting_remoteCreation;
+		this.already_persisted		 = already_persisted;
+		this.t_persistable	  		 = t_persistable;
+		this.t_database		  		 = t_database;			// needed for this.isPersistent, used next
+		this.isDirty		  		 = this.isPersistent && !already_persisted;
+		this.id				  		 = id;
 	}
 
 	wasModifiedWithinMS(threshold: number): boolean {

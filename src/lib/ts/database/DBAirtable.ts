@@ -1,6 +1,7 @@
 import { T_Thing, T_Trait, T_Debug, T_Create, T_Predicate } from '../common/Global_Imports';
-import { c, k, u, debug, Thing, Trait, Relationship } from '../common/Global_Imports';
-import { T_Persistable, T_Database, T_Persistence } from './DBCommon';
+import { c, k, u, Thing, Trait, Relationship } from '../common/Global_Imports';
+import { T_Persistable, T_Persistence } from '../common/Global_Imports';
+import { T_Database } from './DBCommon';
 import DBCommon from './DBCommon';
 import Airtable from 'airtable';
 
@@ -130,7 +131,7 @@ export default class DBAirtable extends DBCommon {
 				const text = record.fields.text as string;
 				const type = record.fields.type as T_Trait;
 				const ownerIDs = record.fields.ownerID as (Array<string>);
-				this.hierarchy.trait_remember_runtimeCreateUnique(k.empty, id, ownerIDs[0], type, text, true);
+				this.hierarchy.trait_remember_runtimeCreateUnique(k.empty, id, ownerIDs[0], type, text, {}, true);
 			}
 		} catch (error) {
 			alert(this.traits_errorMessage + error);
@@ -263,5 +264,3 @@ export default class DBAirtable extends DBCommon {
 	}
 
 }
-
-export const dbAirtable = new DBAirtable();

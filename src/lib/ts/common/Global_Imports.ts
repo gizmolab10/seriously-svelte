@@ -10,6 +10,7 @@ import { T_Timer } from '../signals/Mouse_Timer';
 import { T_Quadrant, T_Orientation } from './Angle';
 import { G_Paging, G_Thing_Pages } from '../layout/G_Paging';
 import { T_Graph, T_Banner, T_Control } from './Enumerations';
+import { T_Persistable, T_Persistence } from './Enumerations';
 import { T_Thing, T_Trait, T_Predicate } from './Enumerations';
 import { T_Create, T_Browser, T_Alteration } from './Enumerations';
 import { T_Curve, T_Order, T_Widget, T_Layer } from './Enumerations';
@@ -76,6 +77,7 @@ export {
 	Ancestry, Hierarchy, databases,
 	debug, Debug, T_Debug, ErrorTrace,
 	Angle, Direction, T_Quadrant, T_Orientation,
+	T_Persistable, T_Persistence, T_ToolRequest,
 	T_Element, Svelte_Wrapper, T_SvelteComponent,
 	S_Common, S_Rotation, S_Resizing, G_Thing_Pages,
 	G_Widget, G_Segment, G_TreeLine, G_TreeBranches,
@@ -86,5 +88,5 @@ export {
 	T_Layer, T_Curve, T_Create, T_RingZone, T_Oblong, T_Alteration,
 	User, Persistable, Thing, Trait, Access, Predicate, Relationship,
 	T_Thing, T_Trait, T_Widget, T_Predicate, T_Kinship, T_Preference,
-	T_Info, T_Tool, T_Control, T_Browser, T_Signal, T_Report, T_ToolRequest, T_Storage,
+	T_Info, T_Tool, T_Control, T_Browser, T_Signal, T_Report, T_Storage,
 };

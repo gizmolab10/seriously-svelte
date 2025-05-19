@@ -1,6 +1,7 @@
 import { k, T_Thing, Predicate, T_Predicate } from '../common/Global_Imports';
-import { T_Database, T_Persistence } from './DBCommon';
+import { T_Persistence } from '../common/Global_Imports';
 import type { Dictionary } from '../common/Types';
+import { T_Database } from './DBCommon';
 import DBCommon from './DBCommon';
 
 export default class DBTest extends DBCommon {
@@ -73,5 +74,3 @@ export default class DBTest extends DBCommon {
 	}
 
 }
-
-export const dbTest = new DBTest();

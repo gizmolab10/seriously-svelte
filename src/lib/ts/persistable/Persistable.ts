@@ -1,4 +1,4 @@
-import { T_Persistable } from '../database/DBCommon';
+import { T_Persistable } from '../common/Enumerations';
 import S_Persistence from '../state/S_Persistence';
 import Identifiable from '../runtime/Identifiable';
 import { debug, T_Debug } from '../debug/Debug';
@@ -28,5 +28,7 @@ export default class Persistable extends Identifiable {
 			await this.persistent_create_orUpdate(already_persisted);
 		});
 	}
+
+	static get t_persistables(): Array<T_Persistable> { return [T_Persistable.things, T_Persistable.traits, T_Persistable.predicates, T_Persistable.relationships]; }
 
 }

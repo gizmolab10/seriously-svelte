@@ -111,6 +111,12 @@ export enum T_Storage {
 	format	  = 'format',
 }
 
+export enum T_Persistence {
+	remote = 'remote',
+	local  = 'local',
+	none   = 'none',
+}
+
 export enum T_Startup {
 	start = 'start',
 	fetch = 'fetch',
@@ -130,6 +136,15 @@ export enum T_Oblong {
 	right  = 'right',
 	left   = 'left',
 	full   = 'full',
+}
+
+export enum T_Persistable {
+	relationships = 'Relationships',
+	predicates	  = 'Predicates',
+	things		  = 'Things',
+	traits		  = 'Traits',
+	access		  = 'Access',
+	users		  = 'Users',
 }
 
 export enum T_Predicate {
@@ -231,7 +246,6 @@ export enum T_Preference {
 	show_related	  = 'show_related',
 	ring_radius		  = 'ring_radius',
 	user_offset		  = 'user_offset',
-	predicates		  = 'predicates',
 	background		  = 'background',
 	ring_angle  	  = 'ring_angle',
 	countDots		  = 'countDots',
@@ -240,7 +254,6 @@ export enum T_Preference {
 	grabbed			  = 'grabbed',
 	paging 			  = 'paging',
 	traits			  = 'traits',
-	things			  = 'things',
 	graph			  = 'graph',
 	scale			  = 'scale',
 	focus			  = 'focus',

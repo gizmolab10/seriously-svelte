@@ -1,5 +1,4 @@
-import Persistable from '../persistable/Persistable';
-import { T_Persistable } from '../database/DBCommon';
+import { Persistable, T_Persistable } from '../common/Global_Imports';
 
 export default class User extends Persistable {
 	email: string;

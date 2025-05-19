@@ -1,10 +1,10 @@
-import { Predicate, Persistable, Relationship, Seriously_Range } from '../common/Global_Imports';
 import { k, u, debug, colors, Trait, Ancestry, databases } from '../common/Global_Imports';
+import { Predicate, Relationship, Seriously_Range } from '../common/Global_Imports';
 import { T_Thing, T_Trait, T_Debug, T_Predicate } from '../common/Global_Imports';
 import { w_hierarchy, w_thing_color, w_count_rebuild } from '../common/Stores';
 import { w_ancestry_focus, w_ancestries_expanded } from '../common/Stores';
+import { Persistable, T_Persistable } from '../common/Global_Imports';
 import type { Dictionary } from '../common/Types';
-import { T_Persistable } from '../database/DBCommon';
 import { get } from 'svelte/store';
 
 export default class Thing extends Persistable {
