@@ -7,8 +7,8 @@
 	export let top = 0;
 	const color_left = 10
 	const picker_offset = `-88px`;
+	const font_size = k.font_size.smaller;
 	const info_width = k.width_details - 30;
-	const font_size = `${k.font_size.smaller}px`;
 	const color_origin = new Point(color_left, 45);
 	const separator_font_size = k.font_size.smallest;
 	const titles = [T_Kinship[T_Kinship.child], T_Kinship[T_Kinship.parent], T_Kinship[T_Kinship.related]];

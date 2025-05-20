@@ -4,9 +4,9 @@
 	export let handle_textChange = (label: string, text: string) => {};
 	export let color = colors.default_forThings;
 	export let width = k.width_details - 40;
+	export let label_underline = false;
 	export let original_text = k.empty;
 	export let label_color = 'gray';
-	export let label_underline = false;
 	export let label = k.empty;
 	export let height = 200;
 	export let left = 0;

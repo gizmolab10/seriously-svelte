@@ -1,19 +1,16 @@
-import { T_Info, T_Graph, T_Banner, T_Details, T_Kinship } from '../common/Global_Imports';
 import { k, p, u, signals, Ancestry, G_RadialGraph } from '../common/Global_Imports';
-import { w_t_tree, w_t_graph, w_t_details, w_hierarchy } from '../common/Stores';
+import { T_Graph, T_Banner, T_Kinship } from '../common/Global_Imports';
+import { w_t_tree, w_t_graph, w_hierarchy } from '../common/Stores';
 import { w_show_related, w_ancestry_focus } from '../common/Stores';
 import { get } from 'svelte/store';
 
 export default class G_Layout {
 	branches_visited: Array<string> = [];
 	tops_ofBanners: Array<number> = [];
-	tops_ofDetails: Array<number> = [];
 	parents_focus_ancestry!: Ancestry;
-	tops_ofInfo: Array<number> = [];
 	_g_radialGraph!: G_RadialGraph;
 	focus_ancestry!: Ancestry;
 
-	top_ofInfoAt(index: number) { return this.tops_ofInfo[index]; }
 	get inTreeMode(): boolean { return get(w_t_graph) == T_Graph.tree; }
 	get inRadialMode(): boolean { return get(w_t_graph) == T_Graph.radial; }
 	height_ofBannerAt(index: number) { return Object.values(k.height.banner)[index]; }
@@ -62,15 +59,6 @@ export default class G_Layout {
 		}
 		this.grand_build();
 	}
-		
-	layout_tops_forInfo(start: number) {
-		let top = start;
-		for (let i = 0; i <= T_Info.color; i++) {
-			const height = u.valueFrom_atIndex(k.height.info, i);
-			this.tops_ofInfo[i] = top;
-			top += height;
-		}
-	}
 	
 	layout_tops_forPanelBanners() {
 		const heights = Object.values(k.height.banner);
@@ -81,28 +69,6 @@ export default class G_Layout {
 			top += heights[index] + 4;
 			index += 1;
 		}
-	}
-	
-	layout_tops_forDetails() {
-		let top = this.top_ofBannerAt(T_Banner.crumbs) + k.height.separator - 2;
-		const heights = [
-			k.height.detail.storage,
-			k.height.detail.tools(),
-			k.height.detail.display,
-			k.height.detail.info,
-			k.height.detail.traits
-		];
-		let index = 0;
-		let indices = get(w_t_details);
-		while (index <= T_Details.traits) {
-			this.tops_ofDetails[index] = top;
-			const t_detail = T_Details[index] as unknown as T_Details;
-			if (indices.includes(t_detail)) {
-				top += heights[index];
-			}
-			index += 1;
-		}
-		return this.tops_ofDetails;
 	}
 
 	set_t_tree(t_trees: Array<T_Kinship>) {

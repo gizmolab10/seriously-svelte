@@ -1,5 +1,5 @@
 import { u, G_Segment, T_Element, Mouse_Timer, Ancestry } from '../common/Global_Imports';
-import { S_Mouse, S_Widget, S_Element, S_Traits } from '../common/Global_Imports';
+import { S_Mouse, S_Widget, S_Element } from '../common/Global_Imports';
 import { T_Storage } from '../../ts/common/Enumerations';
 import Identifiable from '../runtime/Identifiable';
 
@@ -10,7 +10,6 @@ export default class S_Common {
 	s_element_byName: { [name: string]: S_Element } = {};
 	s_mouse_byName: { [name: string]: S_Mouse } = {};
 	t_storage = T_Storage.direction;
-	s_traits = new S_Traits(0);
 	mouse_responder_number = 0;
 
 	//////////////////////////////////////

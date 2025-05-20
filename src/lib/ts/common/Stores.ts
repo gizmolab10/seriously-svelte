@@ -1,10 +1,10 @@
+import { T_Info, T_Graph, T_Trait, T_Kinship, T_Details, T_Startup } from '../common/Global_Imports';
 import { Rect, Point, colors, Ancestry, Hierarchy, G_Cluster } from '../common/Global_Imports';
-import { T_Graph, T_Trait, T_Kinship, T_Details, T_Startup } from '../common/Global_Imports';
 import { G_Paging, S_Title_Edit, S_Alteration } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
 
-export const w_t_countDots			  = writable<Array<T_Kinship>>();
 export const w_t_tree				  = writable<Array<T_Kinship>>();
+export const w_t_countDots			  = writable<Array<T_Kinship>>();
 export const w_t_details			  = writable<Array<T_Details>>();
 export const w_ancestries_expanded	  = writable<Array<Ancestry>>();
 export const w_ancestries_grabbed	  = writable<Array<Ancestry>>();
@@ -23,6 +23,7 @@ export const w_hierarchy			  = writable<Hierarchy>();
 export const w_t_startup			  = writable<T_Startup>();
 export const w_g_paging				  = writable<G_Paging>();
 export const w_t_graph				  = writable<T_Graph>();
+export const w_t_info				  = writable<T_Info>();
 export const w_t_database			  = writable<string>();
 
 export const w_show_related			  = writable<boolean>();

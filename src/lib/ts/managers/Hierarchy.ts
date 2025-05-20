@@ -2,9 +2,9 @@ import { T_Thing, T_Trait, T_Order, T_Create, T_Format, T_Control } from '../com
 import { Access, Ancestry, Predicate, Relationship, Persistable } from '../common/Global_Imports';
 import { debug, files, colors, signals, layout, databases } from '../common/Global_Imports';
 import { w_storage_updated, w_s_alteration, w_ancestries_grabbed } from '../common/Stores';
+import { T_Alteration, T_Predicate, T_Persistable } from '../common/Global_Imports';
 import { w_popupView_id, w_ancestry_focus, w_s_title_edit } from '../common/Stores';
 import { c, k, p, u, show, User, Thing, Trait } from '../common/Global_Imports';
-import { T_Report, T_Alteration, T_Predicate, T_Persistable } from '../common/Global_Imports';
 import type { Integer, Dictionary } from '../common/Types';
 import Identifiable from '../runtime/Identifiable';
 import { marianne } from '../files/Marianne';
@@ -1288,7 +1288,7 @@ export class Hierarchy {
 	get user_selected_ancestry(): Ancestry {
 		const focus = get(w_ancestry_focus);
 		let grabbed = this.grabs_latest_ancestry;
-		if (!!focus && show.t_info == T_Report.focus) {
+		if (!!focus && (show.shows_focus)) {
 			return focus;
 		} else if (!!grabbed) {
 			return grabbed;

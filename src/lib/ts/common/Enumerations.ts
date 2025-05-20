@@ -12,6 +12,7 @@ export enum T_Banner {
 }
 
 export enum T_Details {
+	header,
 	storage,
 	tools,
 	display,
@@ -27,15 +28,6 @@ export enum T_Tool {
 	list,
 	show,
 	graph,
-}
-
-export enum T_Info {		// identical to k.info
-	segments,
-	before_title,
-	title,
-	after_title,
-	table,
-	color
 }
 
 export enum T_Layer {
@@ -62,7 +54,7 @@ export enum T_Graph {
 	tree   = 'tree',
 }
 
-export enum T_Report {
+export enum T_Info {
 	selection = 'selection',
 	focus	  = 'focus',
 }
@@ -205,16 +197,15 @@ export enum T_Browser  {
 
 export enum T_Trait {
 	consequence = 'consequence',
-	hyperlink	= 'hyperlink',
 	citation	= 'citation',
-	generic		= 'generic',
 	comment		= 'comment',
 	money		= 'money',
 	phone		= 'phone',
 	quest		= 'quest',
-	note		= 'note',
+	usual		= 'usual',
 	date		= 'date',
-	csv			= 'csv',
+	link		= 'link',
+	note		= 'note',
 	sum			= 'sum',
 }
 

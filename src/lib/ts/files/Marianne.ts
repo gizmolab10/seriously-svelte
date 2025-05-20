@@ -81,9 +81,9 @@ class Marianne {
 		const h = get(w_hierarchy)
 		const isBookmark = dict['Type'] == 'bookmark' ? T_Thing.bookmark : T_Thing.generic;
 		const text = (isBookmark ? dict['Link'] : dict['Description']) ?? k.unknown;
-		const t_trait = isBookmark ? T_Trait.hyperlink : T_Trait.csv;
+		const t_trait = isBookmark ? T_Trait.link : T_Trait.usual;
 		const trait = h.trait_remember_runtimeCreate(h.db.idBase, Identifiable.newID(),
-			thing_id, t_trait, text, dict);			// save the dict in the Trait, for further processing
+			thing_id, t_trait, text, dict);			// save the dict in the Trait for further processing, then discard
 		return trait;
 	}
 
@@ -101,7 +101,7 @@ class Marianne {
 						h.relationship_remember_runtimeCreateUnique(h.db.idBase, Identifiable.newID(), T_Predicate.contains, parent.id, trait.ownerID, 0);
 					}
 				}
-				trait.dict = this.shrink_dict(dict);
+				trait.dict = {};//this.shrink_dict(dict);
 			}
 		}
 		// await this.cleanup_lost_and_found();  // Make sure we await this

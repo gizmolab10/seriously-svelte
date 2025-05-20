@@ -3,7 +3,6 @@
 	import { k, u, ux, Point, Thing, colors, layout, signals, databases } from '../../ts/common/Global_Imports';
 	import { T_Banner, S_Element } from '../../ts/common/Global_Imports';
 	import Button from './Button.svelte';
-	import { onMount } from 'svelte';
     export let thing;
 	export let left = 0;
 	export let es_breadcrumb;

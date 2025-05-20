@@ -1,24 +1,47 @@
 <script lang='ts'>
-	import { c, k, u, show, Point, debug, layout, T_Layer, T_Details } from '../../ts/common/Global_Imports';
-	import { w_graph_rect, w_t_details, w_device_isMobile } from '../../ts/common/Stores';
+	import { c, k, u, show, Point, debug, layout, T_Layer, T_Details, T_Info, T_Banner } from '../../ts/common/Global_Imports';
+	import { w_graph_rect, w_t_details, w_device_isMobile, w_ancestries_grabbed, w_ancestry_focus } from '../../ts/common/Stores';
+	import { s_details } from '../../ts/state/S_Details';
 	import D_Display from '../details/D_Display.svelte';
 	import D_Storage from '../details/D_Storage.svelte';
+	import D_Header from '../details/D_Header.svelte';
 	import D_Traits from '../details/D_Traits.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
 	import D_Tools from '../details/D_Tools.svelte';
 	import D_Info from '../details/D_Info.svelte';
-	const titles = [T_Details[T_Details.storage], T_Details[T_Details.tools], T_Details[T_Details.display], T_Details[T_Details.info], T_Details[T_Details.traits]];
 	const separator_gap = k.height.separator;
-	let tops = layout.layout_tops_forDetails();
+	const titles = [T_Details[T_Details.storage], T_Details[T_Details.tools], T_Details[T_Details.display], T_Details[T_Details.info], T_Details[T_Details.traits]];
+	let ancestry: Ancestry | null = s_details.ancestry;
+	let thing: Thing | null = ancestry?.thing ?? null;
 	let number_ofDetails = $w_t_details.length - 1;
+	let tops = layout_tops_forDetails();
+	let thing_title = thing?.title;
 
-	$: $w_t_details, $w_device_isMobile, tops = layout.layout_tops_forDetails();
+	$: $w_t_details, $w_device_isMobile, tops = layout_tops_forDetails();
 	$: showingDetails_ofType = (t_details: T_Details) => $w_t_details.includes(T_Details[t_details]);
-	
-	function selection_closure(t_details: Array<string>) {
-		$w_t_details = t_details as Array<T_Details>;
-		number_ofDetails = $w_t_details.length - 1;
+		
+	function layout_tops_forDetails() {
+		let top = layout.top_ofBannerAt(T_Banner.crumbs) + k.height.separator - 2;
+		const tops_ofDetails: Array<number> = [];
+		const visible_indices = $w_t_details;
+		const heights: Array<number> = [];
+		let index = 0;
+		heights[T_Details.header]  = 40;
+		heights[T_Details.storage] = 142;
+		heights[T_Details.tools]   = show.tool_boxes ? 229 : 146;
+		heights[T_Details.display] = 77;
+		heights[T_Details.info]	   = 230;
+		heights[T_Details.traits]  = 0;
+		while (index <= T_Details.traits) {
+			tops_ofDetails[index] = top;
+			const t_detail = T_Details[index] as unknown as T_Details;
+			if (visible_indices.includes(t_detail) || index == T_Details.header) {
+				top += heights[index];
+			}
+			index += 1;
+		}
+		return tops_ofDetails;
 	}
 
 </script>
@@ -31,13 +54,10 @@
 		width:{k.width_details}px;
 		top:{$w_graph_rect.origin.y + 4}px;
 		height:{$w_graph_rect.size.height}px;'>
-	<Segmented
-		titles={titles}
-		allow_multiple={true}
-		name='details-selector'
-		selected={$w_t_details}
-		origin={new Point(4, 0.5)}
-		selection_closure={selection_closure}/>
+	<D_Header
+		style='
+			top:0px;
+			position:absolute;'/>
 	{#if showingDetails_ofType(T_Details.storage)}
 		<Separator
 			title='storage'

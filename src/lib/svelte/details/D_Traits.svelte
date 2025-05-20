@@ -4,12 +4,12 @@
 	import { w_hierarchy, w_traits_shown, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
     import Buttons_Row from '../buttons/Buttons_Row.svelte';
+	import { s_details } from '../../ts/state/S_Details';
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
 	import Button from '../buttons/Button.svelte';
 	export let top = 0;
-	const s_traits = ux.s_traits;
 	const es_button = ux.s_element_for(new Identifiable('trait'), T_Element.button, 'trait');
 	let ancestry: Ancestry | null = $w_hierarchy.grabs_latest_ancestry;
 	let text_box_size = new Size(k.width_details - 34, 68);
@@ -27,6 +27,19 @@
 	function selection_closure(titles: Array<T_Trait>) {
 		$w_traits_shown = titles;
 		update_hierarchy_traits();
+	}
+
+	function handle_textChange_wasInD_Info(label: string, text: string | null) {
+		if (!!thing && (!!text || text == k.empty)) {
+			switch (label) {
+				case 'quest':		thing.setTraitText_forType(text, T_Trait.quest);	   break;
+				case 'consequence':	thing.setTraitText_forType(text, T_Trait.consequence); break;
+			}
+		} else if (!text) {		// do after test for k.empty, which also is interpreted as falsey
+			(async () => {
+				await $w_hierarchy.db.persist_all();
+			})();
+		}
 	}
 
 	function handle_buttonRequest(t_buttonRequest: T_ButtonRequest, s_mouse: S_Mouse, column: number): any {
@@ -48,7 +61,7 @@
 		} else {
 			hierarchy_traits = h.traits_byType[titles[0]] ?? [];
 		}
-		s_traits.total = hierarchy_traits.length;
+		s_details.total_traits = hierarchy_traits.length;
 	}
 
 	function update_traits() {
@@ -59,20 +72,20 @@
 		if (!!thing_traits && thing_traits.length > 0) {
 			const thing_trait = thing_traits[0];
 			const index = hierarchy_traits.findIndex(t => t.ownerID == thing.id);
-			s_traits.index = Math.max(0, index);
+			s_details.index_ofTrait = Math.max(0, index);
 		}
 	}
 	
 	function handle_click_forColumn(s_mouse: S_Mouse, column: number): boolean {
 		if (s_mouse.isDown) {
 			if (column == 0) {
-				s_traits.grab_previous();
+				s_details.grab_previous_trait();
 			} else {
-				s_traits.grab_next();
+				s_details.grab_next_trait();
 			}
 			const h = $w_hierarchy;
-			hierarchy_traits[s_traits.index]?.owner?.ancestry?.grabOnly();
-			console.log('grabbed', s_traits.index, h.grabs_latest_ancestry?.title);
+			hierarchy_traits[s_details.index_ofTrait]?.owner?.ancestry?.grabOnly();
+			console.log('grabbed', s_details.index_ofTrait, h.grabs_latest_ancestry?.title);
 			h.grabs_latest_assureIsVisible();
 			w_hierarchy.set(h);
 		}
@@ -92,7 +105,7 @@
 		name='hierarchy_traits'
 		origin={new Point(10, 3)}
 		selected={$w_traits_shown}
-		titles={['csv', 'hyperlink']}
+		titles={['usual', 'link']}
 		font_size={k.font_size.smaller}
 		selection_closure={selection_closure}/>
 	<Buttons_Row
@@ -113,8 +126,8 @@
 		text-align:center;
 		width:{k.width_details}px;
 		font-size:{k.font_size.smaller}px;'>
-		{#if s_traits.total > 0}
-			trait {s_traits.index + 1} of {s_traits.total}
+		{#if s_details.total_traits > 0}
+			trait {s_details.index_ofTrait + 1} of {s_details.total_traits}
 		{:else}
 			no traits
 		{/if}
@@ -131,9 +144,9 @@
 						original_text={trait.text}
 						width={text_box_size.width}
 						height={text_box_size.height}
+						label_underline={trait.t_trait == 'link'}
 						onLabelClick={() => handle_label_click(trait)}
-						label_underline={trait.t_trait == 'hyperlink'}
-						label_color={trait.t_trait == 'hyperlink' ? 'blue' : 'gray'}
+						label_color={trait.t_trait == 'link' ? 'blue' : 'gray'}
 						handle_textChange={(label, text) => handle_textChange(label, text, trait)}/>
 				{:else}
 					<div style='

@@ -90,6 +90,7 @@ export default class Constants {
 			graph:	  0,
 		},
 		detail: {
+			header:	  50,
 			storage: 142,
 			tools:	  () => { return show.tool_boxes ? 229 : 146; },
 			display:  77,
