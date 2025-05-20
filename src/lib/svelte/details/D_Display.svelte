@@ -38,6 +38,7 @@
 		title_font_size={separator_font_size}/>
 	<Segmented
 		titles={titles}
+		allow_none={true}
 		allow_multiple={true}
 		font_size={font_size}
 		name='counts-selector'

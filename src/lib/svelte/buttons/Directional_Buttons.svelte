@@ -1,6 +1,6 @@
 <script lang='ts'>
     import { k, Point, colors, Direction } from '../../ts/common/Global_Imports';
-	import { w_background_color, w_visibility_ofNotes } from '../../ts/common/Stores';
+	import { w_background_color, w_directionals_shown } from '../../ts/common/Stores';
     import Triangle_Button from './Triangle_Button.svelte';
     export let hit_closure;
     const buttonSize = 20;
@@ -22,7 +22,7 @@
 </script>
 
 <div class='directionals'>
-    {#if $w_visibility_ofNotes[0]}
+    {#if $w_directionals_shown[0]}
         <Triangle_Button
             handle_s_mouse={handle_s_mouse}
             center={origin.offsetByY(-offsetY)}
@@ -33,7 +33,7 @@
             name='up'
         />
     {/if}
-    {#if $w_visibility_ofNotes[1]}
+    {#if $w_directionals_shown[1]}
         <Triangle_Button
             handle_s_mouse={handle_s_mouse}
             center={origin.offsetByY(offsetY)}

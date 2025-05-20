@@ -133,7 +133,7 @@
 				name='info-type'
 				height={k.height.button}
 				selected={[show.t_info]}
-				font_size={k.font_size.small}px
+				font_size={k.font_size.smaller}
 				selection_closure={selection_closure}
 				titles={[T_Report.focus, T_Report.selection]}
 				origin={new Point(54, layout.top_ofInfoAt(T_Info.segments))}/>
@@ -151,6 +151,7 @@
 				position:absolute;
 				text-align:center;
 				width:{traits_width}px;
+				font-size:{k.font_size.common}px;
 				top:{layout.top_ofInfoAt(T_Info.title)}px;'>
 				{thing_title.clipWithEllipsisAt(30)}
 			</div>

@@ -65,7 +65,7 @@ export default class G_Layout {
 		
 	layout_tops_forInfo(start: number) {
 		let top = start;
-		for (let i = 0; i <= T_Info.quest; i++) {
+		for (let i = 0; i <= T_Info.color; i++) {
 			const height = u.valueFrom_atIndex(k.height.info, i);
 			this.tops_ofInfo[i] = top;
 			top += height;

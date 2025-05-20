@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { w_popupView_id, w_background_color, w_visibility_ofNotes } from '../../ts/common/Stores';
+	import { w_popupView_id, w_background_color, w_directionals_shown } from '../../ts/common/Stores';
 	import Directional_Buttons from '../buttons/Directional_Buttons.svelte';
 	import { k, builds, T_Layer } from '../../ts/common/Global_Imports';
 	import Close_Button from '../buttons/Close_Button.svelte';
@@ -11,7 +11,7 @@
 	let notes = [];
 	
 	updateNotes();
-	$w_visibility_ofNotes = [false, true];
+	$w_directionals_shown = [false, true];
 
 	function updateNotes() {
 		const end = Math.min(notesLimit, notesIndex + 10);
@@ -34,7 +34,7 @@
 			const nextIndex = notesIndex + (10 * (pointsUp ? -1 : 1));
 			notesIndex = nextIndex.force_between(0, notesLimit - 10);
 		}
-		$w_visibility_ofNotes = [notesIndex > 0, notesIndex < notesLimit - 10];
+		$w_directionals_shown = [notesIndex > 0, notesIndex < notesLimit - 10];
 		updateNotes();
 	}
 

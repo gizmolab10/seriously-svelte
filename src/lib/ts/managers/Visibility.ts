@@ -7,7 +7,6 @@ import { get } from 'svelte/store';
 const force_tool_boxes = true;		// true means that the tool boxes are never shown
 
 export class Visibility {
-	traits		 = true;
 	debug_cursor = false;
 	t_info		 = T_Report.focus;
 	tool_boxes	 = !(get(w_device_isMobile) ?? false) && !force_tool_boxes;
@@ -27,10 +26,6 @@ export class Visibility {
 				case 'related':
 					w_show_related.set(flag);
 					break;
-				case 'traits':
-					this.traits = flag;
-					p.write_key(T_Preference.traits, flag);
-					break;
 				case 'parents':
 					const mode = flag ? T_Kinship.parent : T_Kinship.child;
 					layout.set_t_tree([mode]);
@@ -45,7 +40,6 @@ export class Visibility {
 	get parent_dots(): boolean { return  this.showing_countDots_ofType(T_Kinship.parent); }
 	
 	restore_state() {
-		this.traits = p.read_key(T_Preference.traits) ?? false;
 		this.t_info = p.read_key(T_Preference.info) ?? T_Report.focus;
 		w_show_details.set(p.read_key(T_Preference.show_details) ?? false);
 		w_show_related.set(p.read_key(T_Preference.show_related) ?? false);

@@ -19,21 +19,6 @@ export default class G_Segment {
 	left = 0;
 
 	static segment_gap = 14;
-	get description(): string { return `${this.title} ${this.part} ${this.path}`; }
-
-	constructor(name: string, title: string, font_size: number, isSelected: boolean, index: Integer, max_index: Integer, left: number, height: number) {
-		this.width = u.getWidth_ofString_withSize(title, `${font_size}px`) + this.numerical_font_size;
-		this.part = this.part_forIndex(index, max_index);
-		this.size = new Size(this.width, height);
-		this.isSelected = isSelected;
-		this.font_size = font_size;
-		this.height = height;
-		this.title = title;
-		this.index = index;
-		this.left = left;
-		this.name = name;
-		this.setup_path();
-	}
 
 	static create_g_segment(name: string, title: string, font_size: number, isSelected: boolean, index: Integer, max_index: Integer, left: number, height: number) : G_Segment {
 		let g_segment_name = `${title}-${name}-at-${index}`;
@@ -47,21 +32,21 @@ export default class G_Segment {
 		return g_segment;
 	}
 
-	setup_path() {
-		const isFirst = this.index == 0;
-		const size = this.size.expandedEquallyBy(-2);
-		const center = this.size.asPoint.dividedInHalf;
-		const title_y = (this.height - this.numerical_font_size) / 4;
-		const isNormal = (this.height == k.height.segmented) || (this.part === T_Oblong.right);
-		const xOffset = isFirst ? 10 : isNormal ? -10 : -8;
-		const path_center = center.offsetByXY(xOffset, -1);
-		const title_x = (isFirst ? 3 : 0) + this.numerical_font_size / 2;
-		this.path = svgPaths.oblong(path_center, size, this.part);
-		const viewBoxSize = this.part === T_Oblong.right ? size.expandedByX(1) : size;
-		this.viewBox = Rect.createSizeRect(viewBoxSize).viewBox;
-		this.title_origin = new Point(title_x, title_y);
-		this.origin = Point.x(this.left);
+	constructor(name: string, title: string, font_size: number, isSelected: boolean, index: Integer, max_index: Integer, left: number, height: number) {
+		this.width = u.getWidth_ofString_withSize(title, `${font_size}px`) + font_size;
+		this.part = this.part_forIndex(index, max_index);
+		this.size = new Size(this.width, height);
+		this.isSelected = isSelected;
+		this.font_size = font_size;
+		this.height = height;
+		this.title = title;
+		this.index = index;
+		this.left = left;
+		this.name = name;
+		this.setup_path();
 	}
+
+	get description(): string { return `${this.title} ${this.part} ${this.path}`; }
 
 	part_forIndex(index: Integer, max_index: Integer): T_Oblong {
 		switch (index) {
@@ -69,6 +54,22 @@ export default class G_Segment {
 			case max_index: return T_Oblong.right;
 			default:		return T_Oblong.middle;
 		}
+	}
+
+	setup_path() {
+		const isFirst = this.index == 0;
+		const size = this.size.expandedEquallyBy(-2);
+		const center = this.size.asPoint.dividedInHalf;
+		const title_y = (this.height - this.font_size) / 4;
+		const isNormal = (this.height == k.height.segmented) || (this.part === T_Oblong.right);
+		const xOffset = isFirst ? 10 : isNormal ? -10 : -8;
+		const path_center = center.offsetByXY(xOffset, -1);
+		const title_x = (isFirst ? 3 : 0) + this.font_size / 2;
+		this.path = svgPaths.oblong(path_center, size, this.part);
+		const viewBoxSize = this.part === T_Oblong.right ? size.expandedByX(1) : size;
+		this.viewBox = Rect.createSizeRect(viewBoxSize).viewBox;
+		this.title_origin = new Point(title_x, title_y);
+		this.origin = Point.x(this.left);
 	}
 
 }

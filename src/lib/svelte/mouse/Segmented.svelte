@@ -12,6 +12,7 @@
 	export let stroke = colors.default;
 	export let allow_multiple = false;
 	export let origin = Point.zero;
+	export let allow_none = false;
     export let name = k.empty;
 	let g_segments: Array<G_Segment> = [];
 	let width = height / 2;
@@ -48,7 +49,7 @@
 			selected = notSelected ? [title] : [nextAfter(title)];
 		} else if (notSelected) {
 			selected.push(title);
-		} else {
+		} else if (allow_none || selected.length > 1) {
 			selected = selected.filter(t => t != title);
 		}
 		selection_closure(selected);
