@@ -3,6 +3,7 @@ import { c, k, w, Point, debug, layout, signals, Ancestry, Predicate } from '../
 import { w_device_isMobile, w_ancestries_grabbed, w_user_graph_offset } from '../common/Stores';
 import { w_count_mouse_up, w_mouse_location, w_mouse_location_scaled } from '../common/Stores';
 import { w_hierarchy, w_s_alteration, w_count_resize, w_s_title_edit } from '../common/Stores';
+import { s_details } from '../state/S_Details';
 import { get } from 'svelte/store';
 
 export class Events {
@@ -173,9 +174,9 @@ export class Events {
 	}
 
 	async handle_tool_clickedAt(s_mouse: S_Mouse, t_tool: number, column: number, name: string) {
-		if (!this.handle_isTool_disabledAt(t_tool, column)) {
+		const ancestry = s_details.ancestry;
+		if (!!ancestry && !this.handle_isTool_disabledAt(t_tool, column)) {
 			const h = get(w_hierarchy);
-			const ancestry = h.grabs_latest_upward(true);
 			switch (t_tool) {
 				case T_Tool.browse:					switch (column) {
 					case k.tools.browse.up:				h.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, false, false); break;
@@ -213,44 +214,46 @@ export class Events {
 	}
 
 	handle_isTool_disabledAt(t_tool: number, column: number): boolean {		// true means disabled
-		const ancestry = get(w_hierarchy).grabs_latest_upward(true);
-		const is_altering = !!get(w_s_alteration);
-		const no_children = !ancestry.hasChildren;
-		const no_siblings = !ancestry.hasSiblings;
-		const is_root = ancestry.isRoot;
-		const disable_revealConceal = no_children || is_root || (layout.inRadialMode && ancestry.isFocus);
-		switch (t_tool) {
-			case T_Tool.browse:					switch (column) {
-				case k.tools.browse.left:			return is_root;
-				case k.tools.browse.up:				return no_siblings;
-				case k.tools.browse.down:			return no_siblings;
-				case k.tools.browse.right:			return no_children;
-			}									break;
-			case T_Tool.add:					switch (column) {
-				case k.tools.add.child:				return is_altering;
-				case k.tools.add.sibling:			return is_altering;
-				case k.tools.add.line:				return is_altering || is_root;
-				case k.tools.add.parent:			return is_root;
-				case k.tools.add.related:			return false;
-			}									break;
-			case T_Tool.delete:					switch (column) {
-				case k.tools.delete.selection:		return is_altering || is_root;
-				case k.tools.delete.parent:			return !ancestry.hasParents_ofKind(T_Predicate.contains);
-				case k.tools.delete.related:		return !ancestry.hasParents_ofKind(T_Predicate.isRelated);
-			}									break;
-			case T_Tool.move:					switch (column) {
-				case k.tools.move.left:				return is_root;
-				case k.tools.move.up:				return no_siblings;
-				case k.tools.move.down:				return no_siblings;
-				case k.tools.move.right:			return is_root;
-			}									break;
-			case T_Tool.list:						return disable_revealConceal;
-			case T_Tool.show:					switch (column) {
-				case k.tools.show.selection:		return ancestry.isVisible;
-				case k.tools.show.root:				return get(w_hierarchy).rootAncestry.isVisible;
-				case k.tools.show.all:				return layout.isAllExpanded;
-			}									break;
-			case T_Tool.graph:						return get(w_user_graph_offset).isZero;
+		const ancestry = s_details.ancestry;
+		if (!!ancestry) {
+			const is_altering = !!get(w_s_alteration);
+			const no_children = !ancestry.hasChildren;
+			const no_siblings = !ancestry.hasSiblings;
+			const is_root = ancestry.isRoot;
+			const disable_revealConceal = no_children || is_root || (layout.inRadialMode && ancestry.isFocus);
+			switch (t_tool) {
+				case T_Tool.browse:					switch (column) {
+					case k.tools.browse.left:			return is_root;
+					case k.tools.browse.up:				return no_siblings;
+					case k.tools.browse.down:			return no_siblings;
+					case k.tools.browse.right:			return no_children;
+				}									break;
+				case T_Tool.add:					switch (column) {
+					case k.tools.add.child:				return is_altering;
+					case k.tools.add.sibling:			return is_altering;
+					case k.tools.add.line:				return is_altering || is_root;
+					case k.tools.add.parent:			return is_root;
+					case k.tools.add.related:			return false;
+				}									break;
+				case T_Tool.delete:					switch (column) {
+					case k.tools.delete.selection:		return is_altering || is_root;
+					case k.tools.delete.parent:			return !ancestry.hasParents_ofKind(T_Predicate.contains);
+					case k.tools.delete.related:		return !ancestry.hasParents_ofKind(T_Predicate.isRelated);
+				}									break;
+				case T_Tool.move:					switch (column) {
+					case k.tools.move.left:				return is_root;
+					case k.tools.move.up:				return no_siblings;
+					case k.tools.move.down:				return no_siblings;
+					case k.tools.move.right:			return is_root;
+				}									break;
+				case T_Tool.list:						return disable_revealConceal;
+				case T_Tool.show:					switch (column) {
+					case k.tools.show.selection:		return ancestry.isVisible;
+					case k.tools.show.root:				return get(w_hierarchy).rootAncestry.isVisible;
+					case k.tools.show.all:				return layout.isAllExpanded;
+				}									break;
+				case T_Tool.graph:						return get(w_user_graph_offset).isZero;
+			}
 		}
 		return true;
 	}

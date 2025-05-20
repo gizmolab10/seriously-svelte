@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { T_Layer, T_Details, T_Info, T_Preference } from '../../ts/common/Global_Imports';
-	import { c, k, p, u, ux, Point, debug, layout } from '../../ts/common/Global_Imports';
 	import { w_t_info, w_graph_rect, w_t_details, w_device_isMobile } from '../../ts/common/Stores';
+	import { c, k, u, ux, Point, debug, layout } from '../../ts/common/Global_Imports';
 	import { w_ancestries_grabbed, w_ancestry_focus } from '../../ts/common/Stores';
+	import { T_Layer, T_Details, T_Info } from '../../ts/common/Global_Imports';
 	import { s_details } from '../../ts/state/S_Details';
 	import Segmented from '../mouse/Segmented.svelte';
 	const titles_ofDetails = [T_Details[T_Details.storage], T_Details[T_Details.tools], T_Details[T_Details.display], T_Details[T_Details.info], T_Details[T_Details.traits]];
@@ -18,9 +18,7 @@
 	}
 
 	function info_selection_closure(t_infos: Array<string>) {
-		const t_info = t_infos[0];
-		p.write_key(T_Preference.info, t_info);
-		w_t_info.set(t_info as T_Info);
+		$w_t_info = t_infos[0] as T_Info;
 		s_details.update_forKind();
 		ancestry = s_details.ancestry;
 		thing = ancestry?.thing ?? null;
@@ -55,9 +53,9 @@
 	</div>
 	<Segmented
 		name='info-type'
+		selected={[$w_t_info]}
 		height={k.height.button}
 		origin={new Point(54, 44)}
-		selected={[s_details.t_info]}
 		font_size={k.font_size.smaller}
 		titles={[T_Info.focus, T_Info.selection]}
 		selection_closure={info_selection_closure}/>

@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, ux, Point, colors, signals, T_ButtonRequest, T_Element, S_Element } from '../../ts/common/Global_Imports';
-	import { w_count_button_restyle } from '../../ts/common/Stores';
+	import { w_t_info, w_count_button_restyle } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Separator from '../kit/Separator.svelte';
 	import Button from './Button.svelte';
@@ -26,6 +26,7 @@
 	const columns = button_titles.length;
 	const button_portion = (width - (margin * 2) - total_width - horizontal_gap - (show_box ? 0 : solo_title_width)) / columns;
 	const row_title = row_titles[0];
+	let reattachments = 0;
 	let style = k.empty;
 
 	//////////////////////////////////////////////////////////////////////
@@ -41,6 +42,7 @@
 	//////////////////////////////////////////////////////////////////////
 
     update_es_buttons();
+	$: $w_t_info, update_es_buttons();
 
 	onMount(() => {
 		const handle_tool_update = signals.handle_tool_update(0, () => {
@@ -74,6 +76,7 @@
 			const alignment = align_left ? 'left: ' : 'right: ';
 			style = `${alignment}${x}px; top: ${y}px;`;
 		}
+		reattachments += 1;
 	}
 
 </script>
@@ -109,26 +112,28 @@
 			</div>
 		{/if}
 	{/if}
-	{#if button_titles.length > 0}
-		<div class='buttons-array'
-			style='
-				position:absolute;
-				height:{button_height}px;
-				top:{show_box ? 12 : 0}px;
-				width:{width - margin * 2}px;
-				left:{margin + (show_box ? 0 : solo_title_width)}px;'>
-			{#each button_titles as title, column}
-				<Button
-					height={button_height}
-					font_size={font_sizes[1]}
-					width={button_width_for(column)}
-					es_button={es_button_byColumn[column]}
-					name={`${name}-${button_name_for(column)}`}
-					origin={Point.x(button_left_for(column))}
-					closure={(s_mouse) => closure(T_ButtonRequest.handle_click, s_mouse, column)}>
-					{title}
-				</Button>
-			{/each}
-		</div>
-	{/if}
+	{#key reattachments}
+		{#if button_titles.length > 0}
+			<div class='buttons-array'
+				style='
+					position:absolute;
+					height:{button_height}px;
+					top:{show_box ? 12 : 0}px;
+					width:{width - margin * 2}px;
+					left:{margin + (show_box ? 0 : solo_title_width)}px;'>
+				{#each button_titles as title, column}
+					<Button
+						height={button_height}
+						font_size={font_sizes[1]}
+						width={button_width_for(column)}
+						es_button={es_button_byColumn[column]}
+						origin={Point.x(button_left_for(column))}
+						name={`${name}-${button_name_for(column)}`}
+						closure={(s_mouse) => closure(T_ButtonRequest.handle_click, s_mouse, column)}>
+						{title}
+					</Button>
+				{/each}
+			</div>
+		{/if}
+	{/key}
 </div>

@@ -1,16 +1,17 @@
 <script lang='ts'>
 	import { T_Tool, T_Layer, T_ButtonRequest, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
-	import { w_hierarchy, w_t_details, w_user_graph_offset, w_s_alteration } from '../../ts/common/Stores';
+	import { w_s_alteration, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
 	import { e, k, show, Size, Point, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
-	import { w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
+	import { w_t_info, w_hierarchy, w_t_details, w_user_graph_offset } from '../../ts/common/Stores';
 	import Buttons_Grid from '../buttons/Buttons_Grid.svelte';
+	import { s_details } from '../../ts/state/S_Details';
 	import Button from '../buttons/Button.svelte';
 	export let top = 0;
 	const has_title = true;
 	const show_box = show.tool_boxes;
     const font_sizes = [k.font_size.smallest, show_box ? k.font_size.smaller : k.font_size.smallest];
-	let ancestry = $w_hierarchy.grabs_latest_upward(true);
-	let list_title = ancestry.isExpanded && layout.inTreeMode ? 'conceal' : 'reveal';
+	let ancestry = s_details.ancestry;
+	let list_title = ancestry?.isExpanded && layout.inTreeMode ? 'conceal' : 'reveal';
 	let button_titles = compute_button_titles();
 	let tools_top = top + (has_title ? 3 : -13);
     let reattachments = 0;
@@ -23,7 +24,8 @@
     $: top, tools_top = top + (has_title ? 3 : -13);
     $: $w_s_alteration, reattachments += 1;
 
-	$:	$w_t_details,
+	$:	w_t_info,
+		$w_t_details,
 		$w_user_graph_offset,
 		$w_ancestries_grabbed,
 		$w_ancestries_expanded,
@@ -43,8 +45,8 @@
 	}
 
 	function update_button_titles() {
-		ancestry = $w_hierarchy.grabs_latest_upward(true);
-		list_title = ancestry.isExpanded && layout.inTreeMode ? 'conceal' : 'reveal';
+		ancestry = s_details.ancestry;
+		list_title = ancestry?.isExpanded && layout.inTreeMode ? 'conceal' : 'reveal';
 		button_titles = compute_button_titles();
 		signals.signal_tool_update();
 		reattachments += 1;

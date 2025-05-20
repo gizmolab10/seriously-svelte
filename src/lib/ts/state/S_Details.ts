@@ -1,20 +1,28 @@
-import { w_t_details, w_ancestry_focus, w_ancestries_grabbed } from '../common/Stores';
+import { w_t_details, w_hierarchy, w_ancestry_focus, w_ancestries_grabbed } from '../common/Stores';
 import { show, Ancestry } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
 class S_Details {
 	number_ofDetails = (get(w_t_details)?.length ?? 1) - 1;
-	ancestry!: Ancestry;
+	ancestry: Ancestry = get(w_hierarchy)?.rootAncestry;
 	index_ofTrait = 0;
 	total_traits = 0;
 	
-	constructor(total_traits: number) { this.total_traits = total_traits; }
 	grab_next_trait() { this.index_ofTrait = this.index_ofTrait.increment(true, this.total_traits); }
 	grab_previous_trait() { this.index_ofTrait = this.index_ofTrait.increment(false, this.total_traits); }
 
+	constructor() {
+		w_ancestries_grabbed.subscribe((array: Array<Ancestry>) => {
+			this.update_forKind();
+		});
+		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
+			this.update_forKind();
+		});
+	}
+
 	get hasGrabs(): boolean {
 		const grabs = get(w_ancestries_grabbed);
-		return !!grabs && (grabs.length > 1 || !get(w_ancestry_focus).isGrabbed);
+		return !!grabs && (grabs.length > 0 || !get(w_ancestry_focus).isGrabbed);
 	}
 
 	update_forKind() {
@@ -30,4 +38,4 @@ class S_Details {
 
 }
 
-export const s_details = new S_Details(0);
+export const s_details = new S_Details();

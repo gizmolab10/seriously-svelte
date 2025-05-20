@@ -180,6 +180,9 @@ export class Preferences {
 		w_t_graph.subscribe((value) => {
 			this.write_key(T_Preference.graph, value);
 		});
+		w_t_info.subscribe((t_info: T_Info) => {
+			this.write_key(T_Preference.info, t_info);
+		})
 		w_t_countDots.subscribe((value) => {
 			this.write_key(T_Preference.countDots, value);
 		});
@@ -192,11 +195,11 @@ export class Preferences {
 		w_ring_rotation_radius.subscribe((radius: number) => {
 			this.write_key(T_Preference.ring_radius, radius);
 		});
-		w_g_paging.subscribe((g_paging: G_Paging) => {
-			this.writeDB_key(T_Preference.paging, radial.s_thing_pages_byThingID);
-		})
 		w_traits_shown.subscribe((traits: Array<T_Trait>) => {
 			this.write_key(T_Preference.traits, traits);
+		})
+		w_g_paging.subscribe((g_paging: G_Paging) => {
+			this.writeDB_key(T_Preference.paging, radial.s_thing_pages_byThingID);
 		})
 		w_background_color.subscribe((color: string) => {
 			document.documentElement.style.setProperty('--css-background-color', color);
