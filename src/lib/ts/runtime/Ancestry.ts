@@ -523,47 +523,42 @@ export default class Ancestry extends Identifiable {
 	}
 
 	grab() {
-		w_ancestries_grabbed.update((a) => {
-			let array = a ?? [];
-			if (!!array) {
-				const index = array.indexOf(this);
-				if (array.length == 0) {
-					array.push(this);
-				} else if (index != array.length - 1) {	// not already last?
-					if (index != -1) {					// found: remove
-						array.splice(index, 1);
-					}
-					array.push(this);					// always add last
+		let grabs = get(w_ancestries_grabbed) ?? [];
+		if (!!grabs) {
+			const index = grabs.indexOf(this);
+			if (grabs.length == 0) {
+				grabs.push(this);
+			} else if (index != grabs.length - 1) {	// not already last?
+				if (index != -1) {					// found: remove
+					grabs.splice(index, 1);
 				}
+				grabs.push(this);					// always add last
 			}
-			return array;
-		});
+		}
+		w_ancestries_grabbed.set(grabs);
 		debug.log_grab(`  GRAB "${this.title}"`);
 		this.hierarchy.stop_alteration();
 	}
 
 	ungrab() {
 		w_s_title_edit?.set(null);
+		let grabs = get(w_ancestries_grabbed) ?? [];
 		const rootAncestry = this.hierarchy.rootAncestry;
-		w_ancestries_grabbed.update((a) => {
-			let array = a ?? [];
-			if (!!array) {
-				const index = array.indexOf(this);
-				if (index != -1) {				// only splice array when item is found
-					array.splice(index, 1);		// 2nd parameter means remove one item only
-				}
-				if (array.length == 0) {
-					array.push(rootAncestry);
-				}
+		if (!!grabs) {
+			const index = grabs.indexOf(this);
+			if (index != -1) {				// only splice grabs when item is found
+				grabs.splice(index, 1);		// 2nd parameter means remove one item only
 			}
-			return array;
-		});
-		let ancestries = get(w_ancestries_grabbed) ?? [];
-		if (ancestries.length == 0 && layout.inTreeMode) {
-			rootAncestry.grabOnly();
+			if (grabs.length == 0) {
+				grabs.push(rootAncestry);
+			}
+		}
+		if (grabs.length == 0 && layout.inTreeMode) {
+			grabs = [rootAncestry];
 		} else {
 			this.hierarchy.stop_alteration(); // do not show editingTools for root
 		}
+		w_ancestries_grabbed.set(grabs);
 		debug.log_grab(`  UNGRAB "${this.title}"`);
 	}
 

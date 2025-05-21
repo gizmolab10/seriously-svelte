@@ -9,20 +9,23 @@
 	let ancestry: Ancestry | null = $w_ancestry_focus;
 	let thing: Thing | null = ancestry?.thing ?? null;
 	let thing_title = thing?.title;
+    let reattachments = 0;
 
 	$: showingDetails_ofType = (t_details: T_Details) => $w_t_details.includes(T_Details[t_details]);
+	function info_selection_closure(t_infos: Array<string>) { $w_t_info = t_infos[0] as T_Info; }
+	$: $w_t_info, $w_ancestry_focus, $w_ancestries_grabbed, update_forKind();
 	
 	function details_selection_closure(t_details: Array<string>) {
 		s_details.number_ofDetails = t_details.length - 1;
 		$w_t_details = t_details as Array<T_Details>;
 	}
 
-	function info_selection_closure(t_infos: Array<string>) {
-		$w_t_info = t_infos[0] as T_Info;
+	function update_forKind() {
 		s_details.update_forKind();
 		ancestry = s_details.ancestry;
 		thing = ancestry?.thing ?? null;
 		thing_title = thing?.title;
+		reattachments += 1;
 	}
 
 </script>
@@ -42,21 +45,23 @@
 		titles={titles_ofDetails}
 		origin={new Point(4, 0.5)}
 		selection_closure={details_selection_closure}/>
-	<div style='
-		top:24px;
-		white-space:pre;
-		position:absolute;
-		text-align:center;
-		width:{k.width_details}px;
-		font-size:{k.font_size.common}px;'>
-		{thing_title.clipWithEllipsisAt(30)}
-	</div>
-	<Segmented
-		name='info-type'
-		selected={[$w_t_info]}
-		height={k.height.button}
-		origin={new Point(54, 44)}
-		font_size={k.font_size.smaller}
-		titles={[T_Info.focus, T_Info.selection]}
-		selection_closure={info_selection_closure}/>
+	{#key reattachments}
+		<div style='
+			top:24px;
+			white-space:pre;
+			position:absolute;
+			text-align:center;
+			width:{k.width_details}px;
+			font-size:{k.font_size.common}px;'>
+			{thing_title.clipWithEllipsisAt(30)}
+		</div>
+		<Segmented
+			name='info-type'
+			selected={[$w_t_info]}
+			height={k.height.button}
+			origin={new Point(54, 44)}
+			font_size={k.font_size.smaller}
+			titles={[T_Info.focus, T_Info.selection]}
+			selection_closure={info_selection_closure}/>
+	{/key}
 </div>
