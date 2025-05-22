@@ -14,7 +14,7 @@
 	const titles = [T_Details[T_Details.storage], T_Details[T_Details.tools], T_Details[T_Details.display], T_Details[T_Details.info], T_Details[T_Details.traits]];
 	let ancestry: Ancestry | null = s_details.ancestry;
 	let thing: Thing | null = ancestry?.thing ?? null;
-	let number_ofDetails = $w_t_details.length - 1;
+	let number_ofDetails = $w_t_details.length;
 	let tops = layout_tops_forDetails();
 	let thing_title = thing?.title;
 

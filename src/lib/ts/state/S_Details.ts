@@ -1,15 +1,12 @@
 import { w_t_details, w_hierarchy, w_ancestry_focus, w_ancestries_grabbed } from '../common/Stores';
-import { show, Ancestry } from '../common/Global_Imports';
+import { show, Ancestry, T_Details } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
 class S_Details {
-	number_ofDetails = (get(w_t_details)?.length ?? 1) - 1;
 	ancestry: Ancestry = get(w_hierarchy)?.rootAncestry;
+	number_ofDetails = 0;
 	index_ofTrait = 0;
 	total_traits = 0;
-	
-	grab_next_trait() { this.index_ofTrait = this.index_ofTrait.increment(true, this.total_traits); }
-	grab_previous_trait() { this.index_ofTrait = this.index_ofTrait.increment(false, this.total_traits); }
 
 	constructor() {
 		w_ancestries_grabbed.subscribe((array: Array<Ancestry>) => {
@@ -18,6 +15,21 @@ class S_Details {
 		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
 			this.update_forKind();
 		});
+		w_t_details.subscribe((t_details: Array<T_Details>) => {
+			this.number_ofDetails = t_details?.length ?? 0;
+		});
+	}
+	
+	grab_next_trait() {
+		do {
+			this.index_ofTrait = this.index_ofTrait.increment(true, this.total_traits);
+		} while (this.index_ofTrait < this.total_traits);
+	}
+
+	grab_previous_trait() {
+		do {
+			this.index_ofTrait = this.index_ofTrait.increment(false, this.total_traits);
+		} while (this.index_ofTrait < this.total_traits);
 	}
 
 	get hasGrabs(): boolean {

@@ -85,7 +85,6 @@
 			}
 			const h = $w_hierarchy;
 			hierarchy_traits[s_details.index_ofTrait]?.owner?.ancestry?.grabOnly();
-			console.log('grabbed', s_details.index_ofTrait, h.grabs_latest_ancestry?.title);
 			h.grabs_latest_assureIsVisible();
 			w_hierarchy.set(h);
 		}
