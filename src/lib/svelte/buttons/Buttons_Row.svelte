@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, ux, Point, colors, signals, T_ButtonRequest, T_Element, S_Element } from '../../ts/common/Global_Imports';
-	import { w_t_info, w_count_button_restyle } from '../../ts/common/Stores';
+	import { w_show_info_ofType, w_count_button_restyle } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Separator from '../kit/Separator.svelte';
 	import Button from './Button.svelte';
@@ -42,7 +42,7 @@
 	//////////////////////////////////////////////////////////////////////
 
     update_es_buttons();
-	$: $w_t_info, update_es_buttons();
+	$: $w_show_info_ofType, update_es_buttons();
 
 	onMount(() => {
 		const handle_tool_update = signals.handle_tool_update(0, () => {

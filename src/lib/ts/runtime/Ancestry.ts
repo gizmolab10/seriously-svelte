@@ -3,7 +3,7 @@ import { Direction, Predicate, Hierarchy, databases, Relationship, Svelte_Wrappe
 import { c, k, p, u, show, Rect, Size, Thing, debug, layout, wrappers, svgPaths } from '../common/Global_Imports';
 import { w_hierarchy, w_ancestry_focus, w_s_alteration, w_s_title_edit } from '../common/Stores';
 import { w_ancestries_grabbed, w_ancestries_expanded, } from '../common/Stores';
-import { w_background_color, w_t_graph, w_t_database } from '../common/Stores';
+import { w_background_color, w_show_graph_ofType, w_t_database } from '../common/Stores';
 import { G_Widget, G_Cluster, G_TreeLine } from '../common/Global_Imports';
 import { G_Paging, S_Title_Edit } from '../common/Global_Imports';
 import type { Dictionary, Integer } from '../common/Types';
@@ -793,7 +793,7 @@ export default class Ancestry extends Identifiable {
 	get visibleSubtree_halfSize():			Size { return this.visibleSubtree_size.dividedInHalf; }
 	get lastChild():					   Thing { return this.children.slice(-1)[0]; }
 	get firstChild():					   Thing { return this.children[0]; }
-	get g_widget():						G_Widget { return this.g_widget_forGraphMode(get(w_t_graph)); }
+	get g_widget():						G_Widget { return this.g_widget_forGraphMode(get(w_show_graph_ofType)); }
 	get hierarchy():				   Hierarchy { return get(w_hierarchy); }
 	get titleRect():				 Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
 	get idBridging():			   string | null { return this.thing?.idBridging ?? null; }

@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { c, k, u, show, Point, debug, layout, T_Layer, T_Details, T_Info, T_Banner } from '../../ts/common/Global_Imports';
-	import { w_graph_rect, w_t_details, w_device_isMobile, w_ancestries_grabbed, w_ancestry_focus } from '../../ts/common/Stores';
+	import { w_graph_rect, w_show_details_ofType, w_device_isMobile, w_ancestries_grabbed, w_ancestry_focus } from '../../ts/common/Stores';
 	import { s_details } from '../../ts/state/S_Details';
 	import D_Display from '../details/D_Display.svelte';
 	import D_Storage from '../details/D_Storage.svelte';
@@ -14,24 +14,24 @@
 	const titles = [T_Details[T_Details.storage], T_Details[T_Details.tools], T_Details[T_Details.display], T_Details[T_Details.info], T_Details[T_Details.traits]];
 	let ancestry: Ancestry | null = s_details.ancestry;
 	let thing: Thing | null = ancestry?.thing ?? null;
-	let number_ofDetails = $w_t_details.length;
+	let number_ofDetails = $w_show_details_ofType.length;
 	let tops = layout_tops_forDetails();
 	let thing_title = thing?.title;
 
-	$: $w_t_details, $w_device_isMobile, tops = layout_tops_forDetails();
-	$: showingDetails_ofType = (t_details: T_Details) => $w_t_details.includes(T_Details[t_details]);
+	$: $w_show_details_ofType, $w_device_isMobile, tops = layout_tops_forDetails();
+	$: showingDetails_ofType = (t_details: T_Details) => $w_show_details_ofType.includes(T_Details[t_details]);
 		
 	function layout_tops_forDetails() {
 		let top = layout.top_ofBannerAt(T_Banner.crumbs) + k.height.separator - 2;
 		const tops_ofDetails: Array<number> = [];
-		const visible_indices = $w_t_details;
+		const visible_indices = $w_show_details_ofType;
 		const heights: Array<number> = [];
 		let index = 0;
 		heights[T_Details.header]  = 40;
 		heights[T_Details.storage] = 142;
 		heights[T_Details.tools]   = show.tool_boxes ? 229 : 146;
 		heights[T_Details.display] = 77;
-		heights[T_Details.info]	   = 230;
+		heights[T_Details.info]	   = 174;
 		heights[T_Details.traits]  = 0;
 		while (index <= T_Details.traits) {
 			tops_ofDetails[index] = top;

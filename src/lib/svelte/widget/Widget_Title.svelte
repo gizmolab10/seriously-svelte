@@ -34,7 +34,7 @@
 	function ancestry_isEditing():		   boolean { return $w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.editing) ?? false; }
 	function ancestry_isEditStopping():	   boolean { return $w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.stopping) ?? false; }
 	function ancestry_isEditPercolating(): boolean { return $w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.percolating) ?? false; }
-	function border_bottom():				string { return thing?.isBookmark ? `1.5px dashed' ${color}` : k.empty; }
+	function border_bottom():				string { return thing?.isBookmark ? `1.5px dashed ${color}` : k.empty; }
 	function title_extra():					number { return (layout.inTreeMode && ancestry_isEditing()) ? 2 : 0; }
 	function hasChanges()						   { return title_prior != title_binded; };
 	function handle_mouse_up()					   { clearClicks(); }

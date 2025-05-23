@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { w_popupView_id, w_background_color, w_directionals_shown } from '../../ts/common/Stores';
+	import { w_popupView_id, w_background_color, w_show_directionals_ofType } from '../../ts/common/Stores';
 	import Directional_Buttons from '../buttons/Directional_Buttons.svelte';
 	import { k, builds, T_Layer } from '../../ts/common/Global_Imports';
 	import Close_Button from '../buttons/Close_Button.svelte';
@@ -11,7 +11,7 @@
 	let notes = [];
 	
 	updateNotes();
-	$w_directionals_shown = [false, true];
+	$w_show_directionals_ofType = [false, true];
 
 	function updateNotes() {
 		const end = Math.min(notesLimit, notesIndex + 10);
@@ -34,7 +34,7 @@
 			const nextIndex = notesIndex + (10 * (pointsUp ? -1 : 1));
 			notesIndex = nextIndex.force_between(0, notesLimit - 10);
 		}
-		$w_directionals_shown = [notesIndex > 0, notesIndex < notesLimit - 10];
+		$w_show_directionals_ofType = [notesIndex > 0, notesIndex < notesLimit - 10];
 		updateNotes();
 	}
 
@@ -74,7 +74,7 @@
 		background-color: rgba(0, 0, 0, 0.1);
 		justify-content: center;
 		align-items: center;
-		position: fixed;
+		position: absolute;
 		display: flex;
 		height: 100%;
 		width: 100%;
@@ -85,7 +85,7 @@
 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 		background-color: #fff;
 		border-radius: 4px;
-		position: relative;
+		position: absolute;
 		font-size: 0.8em;
 		padding: 20px;
 		width: 500px;

@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { w_ancestry_focus, w_ancestries_grabbed, w_thing_fontFamily, w_relationship_order } from '../../ts/common/Stores';
 	import { T_Thing, T_Trait, T_Layer, T_Element, T_Info, T_Preference } from '../../ts/common/Global_Imports';
-	import { w_t_info, w_hierarchy, w_thing_color, w_thing_title, w_background_color } from '../../ts/common/Stores';
+	import { w_show_info_ofType, w_hierarchy, w_thing_color, w_thing_title, w_background_color } from '../../ts/common/Stores';
 	import { debug, colors, signals, layout, Ancestry } from '../../ts/common/Global_Imports';
 	import { c, k, p, ux, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
 	import type { Integer, Dictionary } from '../../ts/common/Types';
@@ -27,7 +27,7 @@
 	let info_table: any;
 
 	$: $w_relationship_order, update_forAncestry();
-	$: $w_t_info, $w_ancestries_grabbed, $w_ancestry_focus, $w_thing_title, update_forKind();
+	$: $w_show_info_ofType, $w_ancestries_grabbed, $w_ancestry_focus, $w_thing_title, update_forKind();
 
 	onMount(() => {
 		update_forKind();

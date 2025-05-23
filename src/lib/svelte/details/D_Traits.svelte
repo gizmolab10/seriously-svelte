@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { k, ux, show, colors, Size, Thing, Trait, Point, Ancestry } from '../../ts/common/Global_Imports';
 	import { S_Mouse, T_Trait, T_Tool, T_Element, T_ButtonRequest } from '../../ts/common/Global_Imports';
-	import { w_hierarchy, w_traits_shown, w_ancestries_grabbed } from '../../ts/common/Stores';
+	import { k, ux, show, colors, Size, Thing, Trait, Point } from '../../ts/common/Global_Imports';
+	import { w_hierarchy, w_show_traits_ofType, w_ancestries_grabbed, w_thing_traits } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
     import Buttons_Row from '../buttons/Buttons_Row.svelte';
 	import { s_details } from '../../ts/state/S_Details';
@@ -11,35 +11,24 @@
 	import Button from '../buttons/Button.svelte';
 	export let top = 0;
 	const es_button = ux.s_element_for(new Identifiable('trait'), T_Element.button, 'trait');
-	let ancestry: Ancestry | null = $w_hierarchy.grabs_latest_ancestry;
 	let text_box_size = new Size(k.width_details - 34, 68);
-	let thing: Thing | null = ancestry?.thing ?? null;
-	let hierarchy_traits = $w_hierarchy.traits ?? [];
-	let thing_traits = thing?.traits ?? [];
 
-	update_traits();
-	$: $w_ancestries_grabbed, update_traits();
+	s_details.update_traits();
 	es_button.set_forHovering(colors.default, 'pointer');
 	function box_label_for(trait: Trait) { return `activate ${trait.t_trait}`; }
 	function handle_label_click(trait: Trait) { window.open(trait.text, '_blank'); }
-	function handle_textChange(text: string, trait: Trait) { $w_hierarchy.trait_setText_forType_ownerHID(text, trait, thing.hid); }
+	function handle_textChange(text: string, trait: Trait) { $w_hierarchy.trait_setText_forType_ownerHID(text, trait, s_details.ancestry?.thing?.hid ?? null); }
 	
 	function selection_closure(titles: Array<T_Trait>) {
-		$w_traits_shown = titles;
-		update_hierarchy_traits();
+		$w_show_traits_ofType = titles;
+		s_details.update_hierarchy_traits();
 	}
-
-	function handle_textChange_wasInD_Info(label: string, text: string | null) {
-		if (!!thing && (!!text || text == k.empty)) {
-			switch (label) {
-				case 'quest':		thing.setTraitText_forType(text, T_Trait.quest);	   break;
-				case 'consequence':	thing.setTraitText_forType(text, T_Trait.consequence); break;
-			}
-		} else if (!text) {		// do after test for k.empty, which also is interpreted as falsey
-			(async () => {
-				await $w_hierarchy.db.persist_all();
-			})();
+	
+	function handle_click_forColumn(s_mouse: S_Mouse, column: number): boolean {
+		if (s_mouse.isDown) {
+			s_details.update_trait_forColumn(column);
 		}
+		return false;
 	}
 
 	function handle_buttonRequest(t_buttonRequest: T_ButtonRequest, s_mouse: S_Mouse, column: number): any {
@@ -53,42 +42,18 @@
 		return null;
 	}
 
-	function update_hierarchy_traits() {
-		const h = $w_hierarchy;
-		const titles = $w_traits_shown;
-		if (titles.length > 1) {
-			hierarchy_traits = h.traits ?? [];
-		} else {
-			hierarchy_traits = h.traits_byType[titles[0]] ?? [];
-		}
-		s_details.total_traits = hierarchy_traits.length;
-	}
-
-	function update_traits() {
-		update_hierarchy_traits();
-		ancestry = $w_hierarchy.grabs_latest_ancestry;
-		thing = ancestry?.thing ?? null;
-		thing_traits = thing?.traits ?? [];
-		if (!!thing_traits && thing_traits.length > 0) {
-			const thing_trait = thing_traits[0];
-			const index = hierarchy_traits.findIndex(t => t.ownerID == thing.id);
-			s_details.index_ofTrait = Math.max(0, index);
-		}
-	}
-	
-	function handle_click_forColumn(s_mouse: S_Mouse, column: number): boolean {
-		if (s_mouse.isDown) {
-			if (column == 0) {
-				s_details.grab_previous_trait();
-			} else {
-				s_details.grab_next_trait();
+	function handle_textChange_wasInD_Info(label: string, text: string | null) {
+		if (!!thing && (!!text || text == k.empty)) {
+			switch (label) {
+				case 'link':		thing.setTraitText_forType(text, T_Trait.link);		   break;
+				case 'quest':		thing.setTraitText_forType(text, T_Trait.quest);	   break;
+				case 'consequence':	thing.setTraitText_forType(text, T_Trait.consequence); break;
 			}
-			const h = $w_hierarchy;
-			hierarchy_traits[s_details.index_ofTrait]?.owner?.ancestry?.grabOnly();
-			h.grabs_latest_assureIsVisible();
-			w_hierarchy.set(h);
+		} else if (!text) {		// do after test for k.empty, which also is interpreted as falsey
+			(async () => {
+				await $w_hierarchy.db.persist_all();
+			})();
 		}
-		return false;
 	}
 
 </script>
@@ -103,8 +68,8 @@
 		allow_multiple={true}
 		name='hierarchy_traits'
 		origin={new Point(10, 3)}
-		selected={$w_traits_shown}
-		titles={['usual', 'link']}
+		selected={$w_show_traits_ofType}
+		titles={['text', 'link']}
 		font_size={k.font_size.smaller}
 		selection_closure={selection_closure}/>
 	<Buttons_Row
@@ -119,21 +84,21 @@
 		closure={handle_buttonRequest}
 		row_titles={['previous', 'next']}
 		font_sizes={[k.font_size.smallest, k.font_size.smaller]}/>
-	<div style='
-		top:26px;
-		position:absolute;
-		text-align:center;
-		width:{k.width_details}px;
-		font-size:{k.font_size.smaller}px;'>
-		{#if s_details.total_traits > 0}
-			trait {s_details.index_ofTrait + 1} of {s_details.total_traits}
-		{:else}
-			no traits
-		{/if}
-	</div>
-	{#key thing_traits}
-		{#if !!thing_traits && thing_traits.length > 0}
-			{#each thing_traits as trait}
+	{#key $w_thing_traits}
+		<div style='
+			top:26px;
+			position:absolute;
+			text-align:center;
+			width:{k.width_details}px;
+			font-size:{k.font_size.smaller}px;'>
+			{#if s_details.total_traits > 0}
+				trait {s_details.index_ofTrait + 1} of {s_details.total_traits}
+			{:else}
+				no traits
+			{/if}
+		</div>
+		{#if !!$w_thing_traits && $w_thing_traits.length > 0}
+			{#each $w_thing_traits as trait}
 				{#if trait.text.length > 0}
 					<Text_Editor
 						top={47}

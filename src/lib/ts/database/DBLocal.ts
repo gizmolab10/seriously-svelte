@@ -8,6 +8,4 @@ export default class DBLocal extends DBCommon {
 	t_persistence = T_Persistence.local;
 	t_database = T_Database.local;
 	idBase = k.id_base.local;
-	
-	get dict_forStorageDetails(): Dictionary { return {'data' : 'fast and local'} }
 }

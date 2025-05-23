@@ -149,16 +149,11 @@ export default class DBCommon {
 			const duration = (new Date().getTime()) - startTime;
 			const adjusted = Math.trunc(duration / 100) / 10;
 			const isInteger = adjusted == Math.trunc(adjusted);
-			const suffix = (isInteger && (adjusted != 1)) ? '' : 's';
+			const suffix = (isInteger && (adjusted == 1)) ? '' : 's';
 			const places = isInteger ? 0 : 1;
 			const time = (duration / 1000).toFixed(places);
-			if (time != '0') {
-				const loadTime = `${time} second${suffix}`
-				this.loadTime = loadTime;
-				return;
-			}
+			this.loadTime = `${time} second${suffix}`;
 		}
-		this.loadTime = null;
 	}
 
 }

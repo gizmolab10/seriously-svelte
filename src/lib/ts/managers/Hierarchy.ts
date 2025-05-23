@@ -438,6 +438,7 @@ export class Hierarchy {
 
 	static readonly _____TRAIT: unique symbol;
 
+	traits_forType(t_trait: T_Trait): Array<Trait> | null { return this.traits_byType[t_trait]; }
 	trait_forHID(hid: Integer): Trait | null { return this.trait_byHID[hid ?? undefined]; }
 
 	trait_runtimeCreate(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string, dict: Dictionary = {}, already_persisted: boolean = false): Trait {

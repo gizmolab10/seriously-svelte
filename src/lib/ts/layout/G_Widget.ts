@@ -1,6 +1,6 @@
 import { S_Element, G_Cluster, G_TreeLine, G_TreeBranches } from '../common/Global_Imports';
 import { k, ux, Rect, Size, Point, layout, Ancestry } from '../common/Global_Imports';
-import { w_graph_rect, w_t_graph, w_device_isMobile} from '../common/Stores';
+import { w_graph_rect, w_show_graph_ofType, w_device_isMobile} from '../common/Stores';
 import { T_Widget, T_Element, T_Graph } from '../common/Global_Imports';
 import { w_show_details, w_show_related } from '../common/Stores';
 import { get } from 'svelte/store';
@@ -47,7 +47,7 @@ export default class G_Widget {
 		this.g_line = new G_TreeLine(ancestry.parentAncestry, ancestry);
 		this.g_parentBranches = new G_TreeBranches(ancestry, false);
 		this.g_childBranches = new G_TreeBranches(ancestry);
-		this.forGraphMode = get(w_t_graph);
+		this.forGraphMode = get(w_show_graph_ofType);
 		this.ancestry = ancestry;
 		if (!ancestry) {
 			console.log(`G_Widget ... ancestry is null`);
@@ -102,7 +102,7 @@ export default class G_Widget {
 		forGraphMode = T_Graph.radial,
 		points_toChild: boolean = true,
 		widget_pointsRight: boolean = true) {
-			if (forGraphMode == get(w_t_graph)) {	// assure modes match
+			if (forGraphMode == get(w_show_graph_ofType)) {	// assure modes match
 				const subtree_height = this.ancestry.visibleSubtree_height();
 				const branches_height = height + subtree_height / 2;
 				const branches_rect = new Rect(origin, new Size(k.height.line, branches_height - 1));

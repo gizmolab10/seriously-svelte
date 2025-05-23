@@ -81,7 +81,7 @@ class Marianne {
 		const h = get(w_hierarchy)
 		const isBookmark = dict['Type'] == 'bookmark' ? T_Thing.bookmark : T_Thing.generic;
 		const text = (isBookmark ? dict['Link'] : dict['Description']) ?? k.unknown;
-		const t_trait = isBookmark ? T_Trait.link : T_Trait.usual;
+		const t_trait = isBookmark ? T_Trait.link : T_Trait.text;
 		const trait = h.trait_remember_runtimeCreate(h.db.idBase, Identifiable.newID(),
 			thing_id, t_trait, text, dict);			// save the dict in the Trait for further processing, then discard
 		return trait;
@@ -107,7 +107,7 @@ class Marianne {
 		// await this.cleanup_lost_and_found();  // Make sure we await this
 	}
 
-	async cleanup_lost_and_found() {
+	async cleanup_lost_and_found() {		// not currently in use
 		const h = get(w_hierarchy)
 		const lost_and_found = await h.lost_and_found();
 		if (!!lost_and_found) {

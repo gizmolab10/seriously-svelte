@@ -29,53 +29,63 @@ export default class Constants {
 
 	id_base = {
 		test:  'handcrafted',
-		local: 'data', };
+		local: 'data',
+	};
 
 	help_url = {
 		local:  'http://localhost:8000/README.html',
-		remote: 'https://help.webseriously.org', };
+		remote: 'https://help.webseriously.org',
+	};
 
 	threshold = {
 		double_click: 700,
-		long_click:	  800, };
+		long_click:	  800,
+	};
 
 	title = {
 		default: 'Please, enter a title',
-		line:	 '------------------------', };
+		line:	 '------------------------',
+	};
 
 	ratio = {
 		zoom_out: 0.9,
-		zoom_in:  1.1 };
+		zoom_in:  1.1
+	};
 
 	radius = {
 		arcSlider_cap: 7.5,
 		ring_center:   55,
-		gull_wings:	   separator_thickness * 3, };
+		gull_wings:	   separator_thickness * 3,
+	};
 
 	separator = {
 		generic: '::',
 		small:	 ':::',
-		big:	 '::::', };
+		big:	 '::::',
+	};
 
 	font_size = {
 		smallest: dot_size - 3,
 		smaller:  dot_size - 0.7,
 		small:	  dot_size,
-		common:	  dot_size + 1, };
+		common:	  dot_size + 1,
+	}; 
 
 	opacity = {
 		none:	0,
 		least:  0.1,
 		thumb:	0.13,
 		hover:	0.2,
-		active:	0.3 };
+		active:	0.3
+	};
 
 	thickness = {
 		ring_rotation: 44,
 		paging_arc:	   15,
 		separator: 	   separator_thickness,
 		fork:		   2.5,
-		thin:		   1, };
+		thin:		   separator_thickness / 3,
+	};
 
 	height = {
 		separator: 7,

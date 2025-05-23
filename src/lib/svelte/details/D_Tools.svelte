@@ -2,7 +2,7 @@
 	import { T_Tool, T_Layer, T_ButtonRequest, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
 	import { w_s_alteration, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
 	import { e, k, show, Size, Point, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
-	import { w_t_info, w_hierarchy, w_t_details, w_user_graph_offset } from '../../ts/common/Stores';
+	import { w_show_info_ofType, w_hierarchy, w_show_details_ofType, w_user_graph_offset } from '../../ts/common/Stores';
 	import Buttons_Grid from '../buttons/Buttons_Grid.svelte';
 	import { s_details } from '../../ts/state/S_Details';
 	import Button from '../buttons/Button.svelte';
@@ -24,8 +24,8 @@
     $: top, tools_top = top + (has_title ? 3 : -13);
     $: $w_s_alteration, reattachments += 1;
 
-	$:	w_t_info,
-		$w_t_details,
+	$:	w_show_info_ofType,
+		$w_show_details_ofType,
 		$w_user_graph_offset,
 		$w_ancestries_grabbed,
 		$w_ancestries_expanded,

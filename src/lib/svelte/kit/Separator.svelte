@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { w_t_details, w_background_color } from '../../ts/common/Stores';
+	import { w_show_details_ofType, w_background_color } from '../../ts/common/Stores';
 	import { T_Layer, Direction,  } from '../../ts/common/Global_Imports';
 	import { k, u, Point, colors } from '../../ts/common/Global_Imports';
 	import Gull_Wings from '../kit/Gull_Wings.svelte';
@@ -17,7 +17,7 @@
 	let separator_color = colors.separator;
 	let title_top = 0;
 
-	$: $w_t_details, title_top = top - 4 + thickness * 0.2 - title_font_size * 0.1;
+	$: $w_show_details_ofType, title_top = top - 4 + thickness * 0.2 - title_font_size * 0.1;
 
 	if (!title_left) {
 		title_left = (width + (left * 2.1) - title_width - 12) / 2;

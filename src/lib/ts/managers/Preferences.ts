@@ -1,7 +1,7 @@
-import { w_g_paging, w_font_size, w_background_color, w_thing_fontFamily, w_traits_shown } from '../common/Stores';
+import { w_g_paging, w_font_size, w_background_color, w_thing_fontFamily, w_show_traits_ofType } from '../common/Stores';
 import { G_Paging, T_Graph, T_Trait, T_Details, T_Kinship, T_Preference, T_Info } from '../common/Global_Imports';
 import { c, k, u, show, debug, radial, colors, layout, Ancestry, databases } from '../common/Global_Imports';
-import { w_t_tree, w_t_graph, w_t_info, w_hierarchy, w_t_details, w_t_countDots } from '../common/Stores';
+import { w_show_tree_ofType, w_show_graph_ofType, w_show_info_ofType, w_hierarchy, w_show_details_ofType, w_show_countDots_ofType } from '../common/Stores';
 import { w_ancestry_focus, w_ancestries_grabbed, w_ancestries_expanded } from '../common/Stores';
 import { w_t_database, w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
 import { get } from 'svelte/store';
@@ -174,28 +174,28 @@ export class Preferences {
 	restore_paging() { radial.createAll_thing_pages_fromDict(this.readDB_key(T_Preference.paging)); }
 
 	reactivity_subscribe() {
-		w_t_tree.subscribe((value) => {
+		w_show_tree_ofType.subscribe((value) => {
 			this.write_key(T_Preference.tree, value);
 		});
-		w_t_graph.subscribe((value) => {
+		w_show_graph_ofType.subscribe((value) => {
 			this.write_key(T_Preference.graph, value);
 		});
-		w_t_info.subscribe((t_info: T_Info) => {
+		w_show_info_ofType.subscribe((t_info: T_Info) => {
 			this.write_key(T_Preference.info, t_info);
 		})
-		w_t_countDots.subscribe((value) => {
+		w_show_countDots_ofType.subscribe((value) => {
 			this.write_key(T_Preference.countDots, value);
 		});
 		w_ring_rotation_angle.subscribe((angle: number) => {
 			this.write_key(T_Preference.ring_angle, angle);
 		});
-		w_t_details.subscribe((value) => {
+		w_show_details_ofType.subscribe((value) => {
 			this.write_key(T_Preference.detail_types, value);
 		});
 		w_ring_rotation_radius.subscribe((radius: number) => {
 			this.write_key(T_Preference.ring_radius, radius);
 		});
-		w_traits_shown.subscribe((traits: Array<T_Trait>) => {
+		w_show_traits_ofType.subscribe((traits: Array<T_Trait>) => {
 			this.write_key(T_Preference.traits, traits);
 		})
 		w_g_paging.subscribe((g_paging: G_Paging) => {
@@ -212,15 +212,15 @@ export class Preferences {
 		if (this.ignoreAncestries) {
 			this.write_key(T_Preference.relationships, true);
 		}
-		w_t_info.set(p.read_key(T_Preference.info) ?? T_Info.focus);
+		w_show_info_ofType.set(p.read_key(T_Preference.info) ?? T_Info.focus);
 		w_font_size.set(this.read_key(T_Preference.font_size) ?? 14);
-		w_t_graph.set(this.read_key(T_Preference.graph) ?? T_Graph.tree);
-		w_t_tree.set(this.read_key(T_Preference.tree) ?? T_Kinship.child);
+		w_show_graph_ofType.set(this.read_key(T_Preference.graph) ?? T_Graph.tree);
+		w_show_tree_ofType.set(this.read_key(T_Preference.tree) ?? T_Kinship.child);
 		w_ring_rotation_angle.set(this.read_key(T_Preference.ring_angle) ?? 0);
-		w_traits_shown.set([T_Trait.usual]);	// this.read_key(T_Preference.traits) ?? 
+		w_show_traits_ofType.set([T_Trait.text]);	// this.read_key(T_Preference.traits) ?? 
 		w_thing_fontFamily.set(this.read_key(T_Preference.font) ?? 'Times New Roman');
-		w_t_details.set(this.read_key(T_Preference.detail_types) ?? [T_Details.storage]);
-		w_t_countDots.set(this.read_key(T_Preference.countDots) ?? [T_Kinship.child]);
+		w_show_details_ofType.set(this.read_key(T_Preference.detail_types) ?? [T_Details.storage]);
+		w_show_countDots_ofType.set(this.read_key(T_Preference.countDots) ?? [T_Kinship.child]);
 		w_background_color.set(this.read_key(T_Preference.background) ?? colors.background);
 		w_ring_rotation_radius.set(Math.max(this.read_key(T_Preference.ring_radius) ?? 0, k.radius.ring_center));
 		this.reactivity_subscribe()

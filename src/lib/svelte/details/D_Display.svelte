@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { w_t_countDots, w_background_color } from '../../ts/common/Stores';
+	import { w_show_countDots_ofType, w_background_color } from '../../ts/common/Stores';
 	import { k, Point, T_Kinship } from '../../ts/common/Global_Imports';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
@@ -14,7 +14,7 @@
 	const titles = [T_Kinship[T_Kinship.child], T_Kinship[T_Kinship.parent], T_Kinship[T_Kinship.related]];
 	let color = $w_background_color;
 	
-	function selection_closure(t_counts: Array<string>) { $w_t_countDots = t_counts as Array<T_Kinship>; }
+	function selection_closure(t_counts: Array<string>) { $w_show_countDots_ofType = t_counts as Array<T_Kinship>; }
 	function handle_colors(result: string) { $w_background_color = color = result; }
 
 	</script>
@@ -44,7 +44,7 @@
 		name='counts-selector'
 		height={k.height.button}
 		origin={new Point(41, 13)}
-		selected={$w_t_countDots}
+		selected={$w_show_countDots_ofType}
 		selection_closure={selection_closure}/>
 	<Separator
 		top={36}

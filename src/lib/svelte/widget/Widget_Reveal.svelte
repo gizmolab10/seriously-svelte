@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { c, k, u, ux, debug, layout, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
-	import { w_hierarchy, w_t_countDots, w_thing_color, w_background_color } from '../../ts/common/Stores';
+	import { w_hierarchy, w_show_countDots_ofType, w_thing_color, w_background_color } from '../../ts/common/Stores';
 	import { Size, Thing, Point, Predicate, T_Layer, T_Graph } from '../../ts/common/Global_Imports';
 	import { w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
@@ -39,7 +39,7 @@
 		return () => { handle_reposition.disconnect(); };
 	});
 
-	$: $w_ancestries_expanded, $w_t_countDots, ancestry.title, svgPath_update();
+	$: $w_ancestries_expanded, $w_show_countDots_ofType, ancestry.title, svgPath_update();
 
 	$: {
 		const _ = $w_ancestries_expanded + $w_background_color + $w_thing_color;

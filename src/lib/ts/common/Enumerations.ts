@@ -202,7 +202,7 @@ export enum T_Trait {
 	money		= 'money',
 	phone		= 'phone',
 	quest		= 'quest',
-	usual		= 'usual',
+	text		= 'text',
 	date		= 'date',
 	link		= 'link',
 	note		= 'note',

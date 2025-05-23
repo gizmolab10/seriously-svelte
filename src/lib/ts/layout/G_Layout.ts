@@ -1,6 +1,6 @@
 import { k, p, u, signals, Ancestry, G_RadialGraph } from '../common/Global_Imports';
 import { T_Graph, T_Banner, T_Kinship } from '../common/Global_Imports';
-import { w_t_tree, w_t_graph, w_hierarchy } from '../common/Stores';
+import { w_show_tree_ofType, w_show_graph_ofType, w_hierarchy } from '../common/Stores';
 import { w_show_related, w_ancestry_focus } from '../common/Stores';
 import { get } from 'svelte/store';
 
@@ -11,8 +11,8 @@ export default class G_Layout {
 	_g_radialGraph!: G_RadialGraph;
 	focus_ancestry!: Ancestry;
 
-	get inTreeMode(): boolean { return get(w_t_graph) == T_Graph.tree; }
-	get inRadialMode(): boolean { return get(w_t_graph) == T_Graph.radial; }
+	get inTreeMode(): boolean { return get(w_show_graph_ofType) == T_Graph.tree; }
+	get inRadialMode(): boolean { return get(w_show_graph_ofType) == T_Graph.radial; }
 	height_ofBannerAt(index: number) { return Object.values(k.height.banner)[index]; }
 	ids_forDB(array: Array<Ancestry>): string { return u.ids_forDB(array).join(', '); }
 	expandAll() { get(w_hierarchy).rootAncestry.traverse(ancestry => ancestry.expand()); }
@@ -36,7 +36,7 @@ export default class G_Layout {
 	
 	handle_mode_selection(name: string, types: Array<string>) {
 		switch (name) {
-			case 'graph': w_t_graph.set(types[0] as T_Graph); break;
+			case 'graph': w_show_graph_ofType.set(types[0] as T_Graph); break;
 			case 'tree': this.set_t_tree(types as Array<T_Kinship>); break;
 		}
 	}
@@ -53,9 +53,9 @@ export default class G_Layout {
 	}
 	
 	toggle_t_graph() {
-		switch (get(w_t_graph)) {
-			case T_Graph.tree: w_t_graph.set(T_Graph.radial); break;
-			case T_Graph.radial: w_t_graph.set(T_Graph.tree); break;
+		switch (get(w_show_graph_ofType)) {
+			case T_Graph.tree: w_show_graph_ofType.set(T_Graph.radial); break;
+			case T_Graph.radial: w_show_graph_ofType.set(T_Graph.tree); break;
 		}
 		this.grand_build();
 	}
@@ -75,7 +75,7 @@ export default class G_Layout {
 		if (t_trees.length == 0) {
 			t_trees = [T_Kinship.child];
 		}
-		w_t_tree.set(t_trees);
+		w_show_tree_ofType.set(t_trees);
 		let focus_ancestry = get(w_ancestry_focus);
 		if (p.branches_areChildren) {
 			this.parents_focus_ancestry = focus_ancestry;
