@@ -74,7 +74,7 @@
 		background-color: rgba(0, 0, 0, 0.1);
 		justify-content: center;
 		align-items: center;
-		position: absolute;
+		position: fixed;
 		display: flex;
 		height: 100%;
 		width: 100%;

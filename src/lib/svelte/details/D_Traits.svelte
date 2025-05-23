@@ -1,7 +1,7 @@
 <script lang='ts'>
+	import { w_hierarchy, w_show_traits_ofType, w_ancestries_grabbed, w_thing_traits } from '../../ts/common/Stores';
 	import { S_Mouse, T_Trait, T_Tool, T_Element, T_ButtonRequest } from '../../ts/common/Global_Imports';
 	import { k, ux, show, colors, Size, Thing, Trait, Point } from '../../ts/common/Global_Imports';
-	import { w_hierarchy, w_show_traits_ofType, w_ancestries_grabbed, w_thing_traits } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
     import Buttons_Row from '../buttons/Buttons_Row.svelte';
 	import { s_details } from '../../ts/state/S_Details';
@@ -15,45 +15,20 @@
 
 	s_details.update_traits();
 	es_button.set_forHovering(colors.default, 'pointer');
-	function box_label_for(trait: Trait) { return `activate ${trait.t_trait}`; }
-	function handle_label_click(trait: Trait) { window.open(trait.text, '_blank'); }
-	function handle_textChange(text: string, trait: Trait) { $w_hierarchy.trait_setText_forType_ownerHID(text, trait, s_details.ancestry?.thing?.hid ?? null); }
 	
 	function selection_closure(titles: Array<T_Trait>) {
 		$w_show_traits_ofType = titles;
-		s_details.update_hierarchy_traits();
-	}
-	
-	function handle_click_forColumn(s_mouse: S_Mouse, column: number): boolean {
-		if (s_mouse.isDown) {
-			s_details.update_trait_forColumn(column);
-		}
-		return false;
+		s_details.update_traits();
 	}
 
-	function handle_buttonRequest(t_buttonRequest: T_ButtonRequest, s_mouse: S_Mouse, column: number): any {
+	function handleClick_onColumn(t_buttonRequest: T_ButtonRequest, s_mouse: S_Mouse, column: number): any {
 		const ids = ['previous', 'next'];
 		switch (t_buttonRequest) {
 			case T_ButtonRequest.is_visible:   return true;
 			case T_ButtonRequest.name:		   return ids[column];
-			case T_ButtonRequest.handle_click: return handle_click_forColumn(s_mouse, column);
-			default:						   return false;
+			case T_ButtonRequest.handle_click: if (s_mouse.isDown) { s_details.select_nextTrait(column == 1); }
 		}
-		return null;
-	}
-
-	function handle_textChange_wasInD_Info(label: string, text: string | null) {
-		if (!!thing && (!!text || text == k.empty)) {
-			switch (label) {
-				case 'link':		thing.setTraitText_forType(text, T_Trait.link);		   break;
-				case 'quest':		thing.setTraitText_forType(text, T_Trait.quest);	   break;
-				case 'consequence':	thing.setTraitText_forType(text, T_Trait.consequence); break;
-			}
-		} else if (!text) {		// do after test for k.empty, which also is interpreted as falsey
-			(async () => {
-				await $w_hierarchy.db.persist_all();
-			})();
-		}
+		return false;
 	}
 
 </script>
@@ -79,9 +54,9 @@
 		has_title={false}
 		button_height={18}
 		horizontal_gap={6}
-		name='hierarchy_traits'
+		name='previous-next'
 		origin={new Point(70, 4)}
-		closure={handle_buttonRequest}
+		closure={handleClick_onColumn}
 		row_titles={['previous', 'next']}
 		font_sizes={[k.font_size.smallest, k.font_size.smaller]}/>
 	{#key $w_thing_traits}
@@ -99,29 +74,18 @@
 		</div>
 		{#if !!$w_thing_traits && $w_thing_traits.length > 0}
 			{#each $w_thing_traits as trait}
-				{#if trait.text.length > 0}
-					<Text_Editor
-						top={47}
-						left={10}
-						label={trait.t_trait}
-						color={colors.default}
-						original_text={trait.text}
-						width={text_box_size.width}
-						height={text_box_size.height}
-						label_underline={trait.t_trait == 'link'}
-						onLabelClick={() => handle_label_click(trait)}
-						label_color={trait.t_trait == 'link' ? 'blue' : 'gray'}
-						handle_textChange={(label, text) => handle_textChange(label, text, trait)}/>
-				{:else}
-					<div style='
-						top:40px;
-						position:absolute;
-						text-align:center;
-						width:{k.width_details}px;
-						font-size:{k.font_size.smaller}px;'>
-						is empty
-					</div>
-				{/if}
+				<Text_Editor
+					top={47}
+					left={10}
+					label={trait.t_trait}
+					color={colors.default}
+					original_text={trait.text}
+					width={text_box_size.width}
+					height={text_box_size.height}
+					label_underline={trait.t_trait == 'link'}
+					onLabelClick={() => window.open(trait.text, '_blank')}
+					label_color={trait.t_trait == 'link' ? 'blue' : 'gray'}
+					handle_textChange={async (label, text) => await $w_hierarchy.trait_setText_forTrait(text, trait)}/>
 			{/each}
 		{/if}
 	{/key}

@@ -19,12 +19,14 @@ export default class Databases {
 
 	queryStrings_apply() {
 		const queryStrings = c.queryStrings;
-		const type = queryStrings.get('db');
+		let type = queryStrings.get('db');
 		if (!!type) {
 			this.db_set_accordingToType(type);
-			w_t_database.set(type);
+		} else {
+			type = p.read_key(T_Preference.db) ?? 'firebase';
+			if (type == 'file') { type = 'local'; }
 		}
-		this.db_now.queryStrings_apply();
+		w_t_database.set(type!);
 	}
 
 	constructor() {
@@ -46,12 +48,6 @@ export default class Databases {
 	db_change_toNext(forward: boolean) { w_t_database.set(this.db_next_get(forward)); }
 	isRemote(t_persistence: T_Persistence): boolean { return t_persistence == T_Persistence.remote; }
 	isPersistent(t_persistence: T_Persistence): boolean { return t_persistence != T_Persistence.none; }
-
-	restore_db() {
-		let type = p.read_key(T_Preference.db) ?? 'firebase';
-		if (type == 'file') { type = 'local'; }
-		w_t_database.set(type);
-	}
 
 	db_next_get(forward: boolean): T_Database {
 		switch (this.db_now.t_database) {

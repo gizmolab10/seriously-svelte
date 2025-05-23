@@ -101,7 +101,7 @@ class Marianne {
 						h.relationship_remember_runtimeCreateUnique(h.db.idBase, Identifiable.newID(), T_Predicate.contains, parent.id, trait.ownerID, 0);
 					}
 				}
-				trait.dict = {};//this.shrink_dict(dict);
+				trait.dict = {};			// not save dict, too big. was: this.shrink_dict(dict);
 			}
 		}
 		// await this.cleanup_lost_and_found();  // Make sure we await this

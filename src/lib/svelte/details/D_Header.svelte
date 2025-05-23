@@ -6,14 +6,11 @@
 	import { s_details } from '../../ts/state/S_Details';
 	import Segmented from '../mouse/Segmented.svelte';
 	const titles_ofDetails = [T_Details[T_Details.storage], T_Details[T_Details.tools], T_Details[T_Details.display], T_Details[T_Details.info], T_Details[T_Details.traits]];
-	let ancestry: Ancestry | null = $w_ancestry_focus;
-	let thing: Thing | null = ancestry?.thing ?? null;
-	let thing_title = thing?.title;
     let reattachments = 0;
 
 	$: showingDetails_ofType = (t_details: T_Details) => $w_show_details_ofType.includes(T_Details[t_details]);
 	function info_selection_closure(t_infos: Array<string>) { $w_show_info_ofType = t_infos[0] as T_Info; }
-	$: $w_show_info_ofType, $w_ancestry_focus, $w_ancestries_grabbed, update_forKind();
+	$: $w_show_info_ofType, $w_ancestry_focus, $w_ancestries_grabbed, update_forKind_ofInfo();
 	
 	function details_selection_closure(t_details: Array<string>) {
 		s_details.number_ofDetails = t_details.length;
@@ -21,11 +18,8 @@
 		reattachments += 1;
 	}
 
-	function update_forKind() {
-		s_details.update_forKind();
-		ancestry = s_details.ancestry;
-		thing = ancestry?.thing ?? null;
-		thing_title = thing?.title;
+	function update_forKind_ofInfo() {
+		s_details.update_forKind_ofInfo();
 		reattachments += 1;
 	}
 
@@ -55,7 +49,7 @@
 				text-align:center;
 				width:{k.width_details}px;
 				font-size:{k.font_size.common}px;'>
-				{thing_title.clipWithEllipsisAt(30)}
+				{s_details.ancestry?.thing?.title.clipWithEllipsisAt(30)}
 			</div>
 			<Segmented
 				name='info-type'

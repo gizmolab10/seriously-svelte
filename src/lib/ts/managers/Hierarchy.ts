@@ -455,7 +455,7 @@ export class Hierarchy {
 	}
 
 	trait_extract_fromDict(dict: Dictionary) {
-		this.trait_remember_runtimeCreateUnique(this.db.idBase, dict.id, dict.ownerID, dict.t_trait, dict.text, dict);
+		this.trait_remember_runtimeCreateUnique(this.db.idBase, dict.id, dict.ownerID, dict.t_trait, dict.text, dict.dict);
 	}
 
 	trait_forget(trait: Trait) {
@@ -479,14 +479,13 @@ export class Hierarchy {
 		return trait;
 	}
 
-	trait_setText_forType_ownerHID(text: string, t_trait: T_Trait, ownerID: string) {
-		let trait = this.trait_forType_ownerHID(t_trait, ownerID.hash());
-		if (!trait) {
-			trait = this.trait_remember_runtimeCreate(this.db.idBase, Identifiable.newID(), ownerID, t_trait, text);
+	async trait_setText_forTrait(text: string | null, trait: Trait) {
+		if (text == null) {
+			await this.db.persist_all(true);
 		} else {
 			trait.text = text;
+			trait.set_isDirty();
 		}
-		trait.set_isDirty();
 	}
 
 	static readonly _____RELATIONSHIPS: unique symbol;

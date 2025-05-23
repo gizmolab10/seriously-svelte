@@ -28,7 +28,7 @@ export class Configuration {
 		layout.layout_tops_forPanelBanners();
 		w.restore_state();
 		this.queryStrings_apply();						// must call before prefs and db
-		databases.restore_db();
+		databases.queryStrings_apply();
 		p.restore_defaults();
 		show.queryStrings_apply();
 		e.setup();

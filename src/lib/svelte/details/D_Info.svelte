@@ -27,16 +27,16 @@
 	let info_table: any;
 
 	$: $w_relationship_order, update_forAncestry();
-	$: $w_show_info_ofType, $w_ancestries_grabbed, $w_ancestry_focus, $w_thing_title, update_forKind();
+	$: $w_show_info_ofType, $w_ancestries_grabbed, $w_ancestry_focus, $w_thing_title, update_forKind_ofInfo();
 
 	onMount(() => {
-		update_forKind();
+		update_forKind_ofInfo();
 		layout_forColor();
 		es_info.set_forHovering(colors.default, 'pointer');
 	});
 
-	function update_forKind() {
-		s_details.update_forKind()
+	function update_forKind_ofInfo() {
+		s_details.update_forKind_ofInfo()
 		update_forAncestry();
 	}
 
