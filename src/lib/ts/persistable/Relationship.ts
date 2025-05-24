@@ -98,4 +98,13 @@ export default class Relationship extends Persistable {
 		}
 	}
 
+	assign_idParent(idParent: string) {
+		const h = get(w_hierarchy);
+		h.relationship_forget(this);
+		this.idParent = idParent;
+		this.hidParent = idParent.hash();
+		this.set_isDirty();
+		h.relationship_remember(this);
+	}
+
 }

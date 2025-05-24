@@ -1,4 +1,4 @@
-import { w_show_details_ofType, w_show_traits_ofType, w_ancestries_grabbed } from '../common/Stores';
+import { w_show_info_ofType, w_show_details_ofType, w_show_traits_ofType, w_ancestries_grabbed } from '../common/Stores';
 import { w_hierarchy, w_t_database, w_thing_traits, w_ancestry_focus } from '../common/Stores';
 import { show, Ancestry, T_Details, Trait, T_Trait } from '../common/Global_Imports';
 import { get } from 'svelte/store';
@@ -12,16 +12,13 @@ class S_Details {
 
 	constructor() {
 		w_t_database.subscribe((db: string) => {
-			this.update_forKind_ofInfo();
-			this.update_traits();
+			this.update();
 		});
 		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
-			this.update_forKind_ofInfo();
-			this.update_traits();
+			this.update();
 		});
 		w_ancestries_grabbed.subscribe((array: Array<Ancestry>) => {
-			this.update_forKind_ofInfo();
-			this.update_traits();
+			this.update();
 		});
 		w_show_details_ofType.subscribe((t_details: Array<T_Details>) => {
 			this.number_ofDetails = t_details?.length ?? 0;
@@ -33,6 +30,11 @@ class S_Details {
 	get hasGrabs(): boolean {
 		const grabs = get(w_ancestries_grabbed);
 		return !!grabs && (grabs.length > 0 || !get(w_ancestry_focus).isGrabbed);
+	}
+
+	update() {
+		this.update_forKind_ofInfo();
+		this.update_traits();
 	}
 
 	update_forKind_ofInfo() {

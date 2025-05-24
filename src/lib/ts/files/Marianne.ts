@@ -1,4 +1,4 @@
-import { k, Tag, Thing, Trait, T_Thing, T_Trait, T_Predicate, Hierarchy } from '../common/Global_Imports';
+import { k, Tag, Trait, T_Thing, T_Trait, T_Create, T_Predicate } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
 import type { Dictionary } from '../common/Types';
 import { w_hierarchy } from '../common/Stores';
@@ -63,6 +63,7 @@ class Marianne {
 			}
 			trait.dict = {};			// not save dict, too big. was: this.shrink_dict(dict);
 		}
+		while (this.assure_small_families()) {}			// repeat until no changes
 		// await this.cleanup_lost_and_found();  // Make sure we await this
 	}
 
@@ -78,15 +79,39 @@ class Marianne {
 		}
 	}
 
-	private foo() {
+	private assure_small_families(): boolean {
+		let changed = false;
 		const h = get(w_hierarchy);
-		const a = h.root;
-		if (!!a) {
-			const c = a.childRelationships;
-			if (c.length > 25) {
-				console.log(c.length);
+		const rootAncestry = h.rootAncestry;
+		rootAncestry.traverse((ancestry) => {
+			const ancestry_title = ancestry.abbreviated_title;
+			const ancestry_thing_id = ancestry.thing?.id;
+			const child_ancestries = ancestry.childAncestries;
+			if (!!ancestry_thing_id && child_ancestries.length > 25) {
+				changed = true;
+				const chunks = [];
+				for (let i = 0; i < child_ancestries.length; i += 25) {
+					chunks.push(child_ancestries.slice(i, i + 25));
+				}
+				for (const [index, chunk] of chunks.entries()) {
+					const chunk_thing_id = Identifiable.newID();
+					const chunk_thing = h.thing_remember_runtimeCreateUnique(h.db.idBase, chunk_thing_id, ancestry_title + '.' + (index + 1), 'blue', T_Thing.generic);
+					h.relationship_remember_runtimeCreateUnique(h.db.idBase, Identifiable.newID(), T_Predicate.contains, ancestry_thing_id, chunk_thing.id, 0, 0, T_Create.getPersistentID);
+					for (const child_ancestry of chunk) {
+						const child_relationship = child_ancestry.relationship;
+						if (!!child_relationship) {
+							child_relationship.assign_idParent(chunk_thing_id);
+						}
+					}
+				}
 			}
+			return false;	// continue
+		});
+		if (changed) {
+			h.ancestries_forget_all();
+			h.ancestry_remember(rootAncestry);
 		}
+		return changed;
 	}
 	
 	static readonly _____ABANDONED: unique symbol;
@@ -124,8 +149,7 @@ class Marianne {
 					const clump_ancestry = await h.ancestry_persistentCreateUnique(clump_name, lost_and_found_ancestry, T_Thing.generic);
 					const idParent = clump_ancestry?.thing?.id;
 					if (!!idParent) {
-						child_relationship.idParent = idParent;
-						child_relationship.set_isDirty();
+						child_relationship.assign_idParent(idParent);
 					}
 				}
 			}

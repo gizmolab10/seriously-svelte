@@ -32,7 +32,6 @@
 		T_Control.builds,
 	];
 
-	console.log($w_show_tree_ofType);
 	onMount(() => { setup_forIDs(); });
 	function togglePopupID(id) { $w_popupView_id = ($w_popupView_id == id) ? null : id; }
 

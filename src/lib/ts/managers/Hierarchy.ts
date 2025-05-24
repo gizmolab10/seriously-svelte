@@ -246,11 +246,8 @@ export class Hierarchy {
 	async thing_remember_persistentRelocateChild(child: Thing, fromParent: Thing, toParent: Thing): Promise<any> {
 		let relationship = this.relationship_whereHID_isChild(child.hid);
 		if (!!relationship && relationship.idParent == fromParent.id) {
-			this.relationship_forget(relationship);
-			relationship.hidParent = toParent.hid;
-			relationship.idParent = toParent.id;
+			relationship.assign_idParent(toParent.id);
 			if (relationship.isValid) {
-				this.relationship_remember(relationship);
 				await relationship.persist();
 			}
 		}
@@ -479,11 +476,7 @@ export class Hierarchy {
 			const relationships = this.relationships_forKindPredicate_hid_thing_isChild(predicate.kind, idFrom.hash(), forParents);
 			for (const relationship of relationships) {
 				if (!forParents && relationship.idParent != idTo) {
-					this.relationship_forget(relationship);
-					relationship.hidParent = idTo.hash();
-					relationship.idParent = idTo;
-					relationship.set_isDirty();
-					this.relationship_remember(relationship);
+					relationship.assign_idParent(idTo);
 				}
 				if (forParents && relationship.idChild != idTo) {
 					this.relationship_forget(relationship);
@@ -991,11 +984,8 @@ export class Hierarchy {
 				if (!!relationship) {
 					// move ancestry to a different parent
 					const order = RIGHT ? relationship.orders[T_Order.child] : 0;
-					this.relationship_forget(relationship);
-					relationship.idParent = parentThing.id;			// point at parent into which thing is being relocated
-					relationship.hidParent = parentThing.hid;
+					relationship.assign_idParent(parentThing.id);
 					relationship.order_setTo(order + k.halfIncrement, T_Order.child, true);
-					this.relationship_remember(relationship);
 					debug.log_move(`relocate ${relationship.description}`)
 					const childAncestry = parentAncestry.ancestry_createUnique_byAppending_relationshipID(relationship!.id);
 					childAncestry?.grabOnly();

@@ -783,6 +783,7 @@ export default class Ancestry extends Identifiable {
 	get isEditing():					 boolean { return get(w_s_title_edit)?.isAncestry_inState(this, T_Edit.editing) ?? false; }
 	get description():				   	  string { return `${this.kind} "${this.thing?.t_thing ?? '-'}" ${this.titles.join(':')}`; }
 	get title():					   	  string { return this.thing?.title ?? 'missing title'; }
+	get abbreviated_title():			  string { return this.thing?.abbreviated_title ?? '?'; }
 	get pathString():					  string { return this.id; }
 	get depth():						  number { return this.relationship_ids.length; }
 	get visibleSubtree_halfHeight():   	  number { return this.visibleSubtree_height() / 2; }

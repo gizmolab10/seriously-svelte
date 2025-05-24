@@ -1,6 +1,6 @@
 import { Tag, Trait, Ancestry, Predicate, Persistable, Relationship } from '../common/Global_Imports';
+import { T_Thing, T_Debug, T_Kinship, T_Predicate, T_Persistable } from '../common/Global_Imports';
 import { k, u, debug, colors, databases, Seriously_Range } from '../common/Global_Imports';
-import { T_Thing, T_Debug, T_Predicate, T_Persistable } from '../common/Global_Imports';
 import { w_hierarchy, w_thing_color, w_count_rebuild } from '../common/Stores';
 import { w_ancestry_focus, w_ancestries_expanded } from '../common/Stores';
 import type { Dictionary } from '../common/Types';
@@ -29,6 +29,7 @@ export default class Thing extends Persistable {
 	get childRelationships():	Array <Relationship> { return this.relationships_ofKind_forParents(T_Predicate.contains, false); }
 	get relatedRelationships(): Array <Relationship> { return this.relationships_ofKind_forParents(T_Predicate.isRelated, false); }
 	get fields():		  		Dictionary  <string> { return { title: this.title, color: this.color, type: this.t_thing }; }
+	get abbreviated_title():				  string { return this.title.split(' ').map(word => word[0]).join('').toLowerCase(); }
 	get idBridging():						  string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get description():						  string { return this.id + ' "' + this.title + '"'; }
 	get breadcrumb_title():					  string { return this.title.clipWithEllipsisAt(15); }
