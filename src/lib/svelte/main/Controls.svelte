@@ -1,17 +1,17 @@
 <script lang='ts'>
 	import { c, k, p, u, ux, w, show, Point, colors, layout, svgPaths, signals, S_Element } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Banner, T_Element, T_Control, T_Kinship, T_Preference } from '../../ts/common/Global_Imports';
-	import { w_show_graph_ofType, w_show_tree_ofType, w_graph_rect, w_count_resize, w_hierarchy, w_popupView_id } from '../../ts/common/Stores';
-	import { w_show_details, w_show_related, w_device_isMobile, w_thing_fontFamily } from '../../ts/common/Stores';
-	import { w_background_color } from '../../ts/common/Stores';
+	import { w_show_details, w_show_related, w_show_graph_ofType, w_show_tree_ofType } from '../../ts/common/Stores';
+	import { w_graph_rect, w_count_resize, w_hierarchy, w_popupView_id } from '../../ts/common/Stores';
+	import { w_background_color, w_device_isMobile, w_thing_fontFamily } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Button from '../buttons/Button.svelte';
 	import SVG_D3 from '../kit/SVG_D3.svelte';
 	import { onMount } from 'svelte';
-	const size_small = k.height.button;
 	const details_top = k.height.dot / 2;
 	const y_center = details_top + 3.5;
+	const size_small = k.height.button;
 	const size_big = size_small + 4;
 	const lefts = [10, 55, 117, 278];
 	const resize_viewBox = `0, 0, ${size_big}, ${size_big}`;
@@ -32,6 +32,7 @@
 		T_Control.builds,
 	];
 
+	console.log($w_show_tree_ofType);
 	onMount(() => { setup_forIDs(); });
 	function togglePopupID(id) { $w_popupView_id = ($w_popupView_id == id) ? null : id; }
 
@@ -118,11 +119,11 @@
 					{#if layout.inTreeMode}
 						{#key $w_show_tree_ofType}
 							<Segmented
-								selected={$w_show_tree_ofType}
 								origin={Point.x(110)}
 								allow_multiple={true}
 								name='tree-type-selector'
-								titles={[T_Kinship.child, T_Kinship.parent, T_Kinship.related]}
+								selected={$w_show_tree_ofType}
+								titles={[T_Kinship.child, T_Kinship.parent, T_Kinship.related, T_Kinship.tags]}
 								selection_closure={(titles) => layout.handle_mode_selection('tree', titles)}/>
 						{/key}
 					{/if}

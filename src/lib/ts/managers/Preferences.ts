@@ -1,16 +1,14 @@
-import { w_g_paging, w_font_size, w_background_color, w_thing_fontFamily, w_show_traits_ofType } from '../common/Stores';
 import { G_Paging, T_Graph, T_Trait, T_Details, T_Kinship, T_Preference, T_Info } from '../common/Global_Imports';
+import { w_g_paging, w_hierarchy, w_font_size, w_background_color, w_thing_fontFamily } from '../common/Stores';
 import { c, k, u, show, debug, radial, colors, layout, Ancestry, databases } from '../common/Global_Imports';
-import { w_show_tree_ofType, w_show_graph_ofType, w_show_info_ofType, w_hierarchy, w_show_details_ofType, w_show_countDots_ofType } from '../common/Stores';
+import { w_show_info_ofType, w_show_details_ofType, w_show_countDots_ofType } from '../common/Stores';
+import { w_show_tree_ofType, w_show_graph_ofType, w_show_traits_ofType } from '../common/Stores';
 import { w_ancestry_focus, w_ancestries_grabbed, w_ancestries_expanded } from '../common/Stores';
 import { w_t_database, w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
 import { get } from 'svelte/store';
 
 export class Preferences {
-	// for backwards compatibility with {focus, grabbed, expanded} which were stored as relationship ids (not as ancestry string)
 	branches_areChildren = true;
-	usesRelationships = localStorage[T_Preference.relationships];
-	ignoreAncestries  = !this.usesRelationships || this.usesRelationships == 'undefined';
 	get focus_key(): string { return this.branches_areChildren ? T_Preference.focus_forChildren : T_Preference.focus_forParents; }
 	get expanded_key(): string { return this.branches_areChildren ? T_Preference.expanded_children : T_Preference.expanded_parents; }
 
@@ -18,7 +16,7 @@ export class Preferences {
 
 	dump() 									 { console.log(localStorage); }
 	read_key	   (key: string): any | null { return this.parse(localStorage[key]); }
-	readDB_key	   (key: string): any | null { return 					this.read_key(this.db_keyFor(key)); }
+	readDB_key	   (key: string): any | null { return this.read_key(this.db_keyFor(key)); }
 	writeDB_key<T> (key: string, value: T)	 { this.write_key(this.db_keyFor(key), value); }
 
 	write_key<T> (key: string, value: T) {
@@ -100,7 +98,7 @@ export class Preferences {
 		if (c.eraseDB > 0) {
 			c.eraseDB -= 1;
 			w_ancestry_focus.set(ancestryToFocus);
-		} else if (!p.ignoreAncestries) {
+		} else {
 			const focusPath = p.readDB_key(this.focus_key) ?? p.readDB_key('focus');
 			if (!!focusPath) {
 				const focusAncestry = h.ancestry_remember_createUnique(focusPath);
@@ -133,7 +131,7 @@ export class Preferences {
 		const pathStrings = this.readDB_key(key);
 		const length = pathStrings?.length ?? 0;
 		let ancestries: Array<Ancestry> = [];
-		if (!this.ignoreAncestries && length > 0) {
+		if (length > 0) {
 			let h = get(w_hierarchy);
 			for (const pathString of pathStrings) {
 				const ancestry = h.ancestry_isAssured_valid_forPath(pathString);
@@ -219,9 +217,6 @@ export class Preferences {
 	}
 
 	restore_defaults() {
-		if (this.ignoreAncestries) {
-			this.write_key(T_Preference.relationships, true);
-		}
 
 		// radial
 		w_ring_rotation_angle			.set( this.read_key(T_Preference.ring_angle)		   ?? 0);

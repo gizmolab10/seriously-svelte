@@ -14,10 +14,14 @@
 	export let origin = Point.zero;
 	export let allow_none = false;
     export let name = k.empty;
-	let g_segments: Array<G_Segment> = [];
 	let width = height / 2;
+	let g_segments: Array<G_Segment> = [];
 
 	$: selected, update_g_segments_andWidth();
+
+	if (!Array.isArray(selected)) {
+		selected = [selected];		// some preferences which should be an array, are not
+	}
 
 	update_g_segments_andWidth();
 	function isSelected(title: string) { return selected.includes(title); }

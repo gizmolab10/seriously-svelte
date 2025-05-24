@@ -136,31 +136,39 @@ export default class SVG_Paths {
 		const halfCircular = (count: Integer, dot_size: number, isBig: boolean = false): string => {
 			return this.tinyDots_halfCircular(diameter, count, points_right, dot_size, isBig);
 		};
-		if (count < 10) {
-			return this.tinyDots_fullCircular(diameter, count, points_right);
-		} else {
-			const hundreds = Math.floor(count / 100) as Integer;
-			const tens = Math.floor((count - hundreds * 100) / 10) as Integer;
-			const ones = count % 10 as Integer;
-			const small = 1.5;
-			const big = small * 2;
-			const huge = small * 4;
-			if (ones == 0) {
-				if (tens == 0) {
-					return this.tinyDots_fullCircular(diameter, hundreds, points_right, huge);
-				} else if (hundreds == 0) {
-					return this.tinyDots_fullCircular(diameter, tens, points_right, big);
-				} else {
-					return halfCircular(tens, big) + halfCircular(hundreds, huge, true);
-				}
-			} else if (tens == 0) {
-				return halfCircular(ones, small) + halfCircular(hundreds, huge, true);
-			} else if (hundreds == 0) {
-				return halfCircular(ones, small) + halfCircular(tens, big, true);
-			} else {
-				return halfCircular(tens, big) + halfCircular(hundreds, huge, true);
+		const thousands = Math.floor(count / 1000) as Integer;
+		const hundreds = Math.floor((count - thousands * 1000) / 100) as Integer;
+		const tens = Math.floor((count - thousands * 1000 - hundreds * 100) / 10) as Integer;
+		const ones = count % 10 as Integer;
+		const small = 1.5;
+		const big = small * 1.3;
+		const huge = big * 1.3;
+		const gigantic = huge * 1.3;
+		if (thousands > 0) {
+			if (hundreds > 0) {
+				return halfCircular(hundreds, huge) + halfCircular(thousands, gigantic, true);
+			} else if (tens > 0) {
+				return halfCircular(tens, big) + halfCircular(thousands, gigantic, true);
+			} else if (ones > 0) {
+				return halfCircular(ones, small) + halfCircular(thousands, gigantic, true);
 			}
+			return this.tinyDots_fullCircular(diameter, thousands, points_right, gigantic);
+		} else if (hundreds > 0) {
+			if (tens > 0) {
+				return halfCircular(tens, big) + halfCircular(hundreds, huge, true);
+			} else if (ones > 0) {
+				return halfCircular(ones, small) + halfCircular(hundreds, huge, true);
+			}
+			return this.tinyDots_fullCircular(diameter, hundreds, points_right, huge);
+		} else if (tens > 0) {
+			if (ones > 0) {
+				return halfCircular(ones, small) + halfCircular(tens, big, true);
+			}
+			return this.tinyDots_fullCircular(diameter, tens, points_right, big);
+		} else if (ones > 0) {
+			return this.tinyDots_fullCircular(diameter, ones, points_right, small);
 		}
+		return this.tinyDots_fullCircular(diameter, count, points_right);
 	}
 
 	tinyDots_fullCircular(diameter: number, count: Integer, points_right: boolean, dot_size: number = 2): string {

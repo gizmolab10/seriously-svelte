@@ -70,12 +70,6 @@ export enum T_Storage {
 	export = 'export',
 }
 
-export enum T_Kinship {
-	related = 'related',
-	parent  = 'parent',
-	child   = 'child',
-}
-
 export enum T_Widget {
 	radial = 'radial',
 	focus  = 'focus',
@@ -110,6 +104,13 @@ export enum T_Persistence {
 	remote = 'remote',
 	local  = 'local',
 	none   = 'none',
+}
+
+export enum T_Kinship {
+	related = 'related',
+	parent  = 'parent',
+	child   = 'child',
+	tags    = 'tags',
 }
 
 export enum T_Startup {

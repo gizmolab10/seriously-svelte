@@ -1312,7 +1312,7 @@ export class Hierarchy {
 					for (const dict of array) {
 						await this.extract_fromCSV_Dict(dict);
 					}
-					await marianne.create_relationship_forAllTraits();
+					await marianne.create_relationships_fromAllTraits();
 					break;
 				case T_File.json:
 					const dict = result as Dictionary;
