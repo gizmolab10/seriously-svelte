@@ -1,4 +1,4 @@
-import { k, Trait, T_Thing, T_Trait, T_Predicate } from '../common/Global_Imports';
+import { k, Tag, Thing, Trait, T_Thing, T_Trait, T_Predicate } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
 import type { Dictionary } from '../common/Types';
 import { w_hierarchy } from '../common/Stores';
@@ -52,6 +52,7 @@ class Marianne {
 		const title = dict['Title'].removeWhiteSpace();					// TODO: for remote db we need the thing id from the server
 		h.thing_remember_runtimeCreate(idBase, thing_id, title, 'blue', t_thing);		// create a Thing for each dict
 		this.create_trait_forThingfromDict(thing_id, dict);
+		this.create_tags_forThing_fromDict(thing_id, dict);
 		if (['TEAM LIBRARY', 'MEMBER LIBRARY'].includes(title)) {		// these two things are roots in airtable, directly add them to our root
 			h.relationship_remember_runtimeCreateUnique(idBase, Identifiable.newID(), T_Predicate.contains, h.root.id, thing_id, 0);
 		}
@@ -75,6 +76,25 @@ class Marianne {
 			}
 		}
 		return shrunk;
+	}
+
+	create_tag_forThing_andKey_fromDict(thingID: string, key: string, dict: Dictionary): Tag | null {
+		const h = get(w_hierarchy)
+		const tag_types = dict[key];
+		if (!!tag_types) {
+			for (const tag_type of tag_types.split(', ')) {
+				const tag = h.tag_remember_runtimeAddTo_orCreateUnique(h.db.idBase, Identifiable.newID(), tag_type, thingID.hash());
+				return tag;
+			}
+		}
+		return null;
+	}
+
+	create_tags_forThing_fromDict(thingID: string, dict: Dictionary) {
+		const keys = ['Custom Tags', 'Custom Tags (Local)'];
+		for (const key of keys) {
+			this.create_tag_forThing_andKey_fromDict(thingID, key, dict);
+		}
 	}
 
 	create_trait_forThingfromDict(thing_id: string, dict: Dictionary): Trait {

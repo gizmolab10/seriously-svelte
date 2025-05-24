@@ -1,5 +1,5 @@
+import { Tag, Access, Ancestry, Predicate, Relationship, Persistable } from '../common/Global_Imports';
 import { T_Thing, T_Trait, T_Order, T_Create, T_File, T_Control } from '../common/Global_Imports';
-import { Access, Ancestry, Predicate, Relationship, Persistable } from '../common/Global_Imports';
 import { debug, files, colors, signals, layout, databases } from '../common/Global_Imports';
 import { w_storage_updated, w_s_alteration, w_ancestries_grabbed } from '../common/Stores';
 import { T_Alteration, T_Predicate, T_Persistable } from '../common/Global_Imports';
@@ -9,7 +9,6 @@ import type { Integer, Dictionary } from '../common/Types';
 import Identifiable from '../runtime/Identifiable';
 import { marianne } from '../files/Marianne';
 import DBCommon from '../database/DBCommon';
-import Tag from '../persistable/Tag';
 import { get } from 'svelte/store';
 
 export type Ancestries_ByHID = { [hid: Integer]: Ancestry }
@@ -27,6 +26,7 @@ export class Hierarchy {
 	private things_byTitle: { [title: string]: Array<Thing> } = {};
 	private predicate_byKind: { [kind: string]: Predicate } = {};
 	private thing_byAncestryHID: { [hid: Integer]: Thing } = {};
+	private tags_byThingHID:{ [hid: Integer]: Array<Tag> } = {};
 	private relationships_byParentHID: Relationships_ByHID = {};
 	private relationships_byChildHID: Relationships_ByHID = {};
 	private ancestry_byHID:{ [hid: Integer]: Ancestry } = {};
@@ -35,6 +35,7 @@ export class Hierarchy {
 	private thing_byHID: { [hid: Integer]: Thing } = {};
 	private trait_byHID: { [hid: Integer]: Trait } = {};
 	private user_byHID: { [hid: Integer]: User } = {};
+	private tag_byType: { [type: string]: Tag } = {};
 	ids_translated: { [prior: string]: string } = {};
 	replace_rootID: string | null = k.empty;		// required for DBLocal at launch
 	relationships: Array<Relationship> = [];
@@ -58,6 +59,7 @@ export class Hierarchy {
 			case T_Persistable.predicates:	  return this.predicates;
 			case T_Persistable.things:		  return this.things;
 			case T_Persistable.traits:		  return this.traits;
+			case T_Persistable.tags:		  return this.tags;
 			default: return [];
 		}
 	}
@@ -415,78 +417,6 @@ export class Hierarchy {
 			}
 		}
 		return newThingAncestry;
-	}
-
-	static readonly _____TRAITS: unique symbol;
-
-	traits_forOwnerHID(hid: Integer | null): Array<Trait> | null {
-		const value = !!hid ? this.traits_byOwnerHID?.[hid] : null;
-		return (value instanceof Array) ? value : null;
-	}
-
-	traits_refreshKnowns() {
-		const saved = this.traits;
-		this.traits_forget_all();
-		saved.map(t => this.trait_remember(t));
-	}
-
-	traits_forget_all() {
-		this.traits_byOwnerHID = {};
-		this.traits_byType = {};
-		this.trait_byHID = {};
-		this.traits = [];
-	}
-
-	static readonly _____TRAIT: unique symbol;
-
-	traits_forType(t_trait: T_Trait): Array<Trait> | null { return this.traits_byType[t_trait]; }
-	trait_forHID(hid: Integer): Trait | null { return this.trait_byHID[hid ?? undefined]; }
-
-	trait_runtimeCreate(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string, dict: Dictionary = {}, already_persisted: boolean = false): Trait {
-		return new Trait(idBase, id, ownerID, t_trait, text, dict, already_persisted);
-	}
-
-	trait_remember_runtimeCreateUnique(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string, dict: Dictionary = {}, already_persisted: boolean = false): Trait {
-		return this.trait_forHID(id?.hash()) ?? this.trait_remember_runtimeCreate(idBase, id, ownerID, t_trait, text, dict, already_persisted);
-	}
-
-	trait_forType_ownerHID(t_trait: T_Trait | null, ownerHID: Integer | null): Trait| null {
-		const traits = this.traits_forOwnerHID(ownerHID)?.filter(t => t.t_trait == t_trait);
-		return !traits ? null : traits[0]
-	}
-
-	trait_extract_fromDict(dict: Dictionary) {
-		this.trait_remember_runtimeCreateUnique(this.db.idBase, dict.id, dict.ownerID, dict.t_trait, dict.text, dict.dict);
-	}
-
-	trait_forget(trait: Trait) {
-		delete this.trait_byHID[trait.hid];
-		delete this.traits_byOwnerHID[trait.ownerID.hash()];
-		this.traits = Identifiable.remove_byHID<Trait>(this.traits, trait);
-		this.traits_byType[trait.t_trait] = Identifiable.remove_byHID<Trait>(this.traits_byType[trait.t_trait], trait);;
-	}
-
-	trait_remember(trait: Trait) {
-		const hid = trait.ownerID.hash();
-		this.trait_byHID[trait.hid] = trait;
-		(this.traits_byOwnerHID[hid] = this.traits_byOwnerHID[hid] || []).push(trait);
-		(this.traits_byType[trait.t_trait] = this.traits_byType[trait.t_trait] || []).push(trait);
-		this.traits.push(trait);
-	}
-
-	trait_remember_runtimeCreate(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string, dict: Dictionary = {}, already_persisted: boolean = false): Trait {
-		const trait = this.trait_runtimeCreate(idBase, id, ownerID, t_trait, text, dict, already_persisted);
-		this.trait_remember(trait);
-		return trait;
-	}
-
-	async trait_setText_forTrait(text: string | null, trait: Trait) {
-		if (text == null) {
-			await this.db.persist_all(true);
-		} else {
-			trait.text = text;
-			trait.set_isDirty();
-		}
 	}
 
 	static readonly _____RELATIONSHIPS: unique symbol;
@@ -1222,6 +1152,117 @@ export class Hierarchy {
 		return predicate;
 	}
 
+	static readonly _____TRAITS: unique symbol;
+
+	traits_forOwnerHID(hid: Integer | null): Array<Trait> | null {
+		const value = !!hid ? this.traits_byOwnerHID?.[hid] : null;
+		return (value instanceof Array) ? value : null;
+	}
+
+	traits_refreshKnowns() {
+		const saved = this.traits;
+		this.traits_forget_all();
+		saved.map(t => this.trait_remember(t));
+	}
+
+	traits_forget_all() {
+		this.traits_byOwnerHID = {};
+		this.traits_byType = {};
+		this.trait_byHID = {};
+		this.traits = [];
+	}
+
+	static readonly _____TRAIT: unique symbol;
+
+	traits_forType(t_trait: T_Trait): Array<Trait> | null { return this.traits_byType[t_trait]; }
+	trait_forHID(hid: Integer): Trait | null { return this.trait_byHID[hid ?? undefined]; }
+
+	trait_runtimeCreate(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string, dict: Dictionary = {}, already_persisted: boolean = false): Trait {
+		return new Trait(idBase, id, ownerID, t_trait, text, dict, already_persisted);
+	}
+
+	trait_remember_runtimeCreateUnique(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string, dict: Dictionary = {}, already_persisted: boolean = false): Trait {
+		return this.trait_forHID(id?.hash()) ?? this.trait_remember_runtimeCreate(idBase, id, ownerID, t_trait, text, dict, already_persisted);
+	}
+
+	trait_forType_ownerHID(t_trait: T_Trait | null, ownerHID: Integer | null): Trait| null {
+		const traits = this.traits_forOwnerHID(ownerHID)?.filter(t => t.t_trait == t_trait);
+		return !traits ? null : traits[0]
+	}
+
+	trait_extract_fromDict(dict: Dictionary) {
+		this.trait_remember_runtimeCreateUnique(this.db.idBase, dict.id, dict.ownerID, dict.t_trait, dict.text, dict.dict);
+	}
+
+	trait_forget(trait: Trait) {
+		delete this.trait_byHID[trait.hid];
+		delete this.traits_byOwnerHID[trait.ownerID.hash()];
+		this.traits = Identifiable.remove_byHID<Trait>(this.traits, trait);
+		this.traits_byType[trait.t_trait] = Identifiable.remove_byHID<Trait>(this.traits_byType[trait.t_trait], trait);;
+	}
+
+	trait_remember(trait: Trait) {
+		const hid = trait.ownerID.hash();
+		this.trait_byHID[trait.hid] = trait;
+		(this.traits_byOwnerHID[hid] = this.traits_byOwnerHID[hid] || []).push(trait);
+		(this.traits_byType[trait.t_trait] = this.traits_byType[trait.t_trait] || []).push(trait);
+		this.traits.push(trait);
+	}
+
+	trait_remember_runtimeCreate(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string, dict: Dictionary = {}, already_persisted: boolean = false): Trait {
+		const trait = this.trait_runtimeCreate(idBase, id, ownerID, t_trait, text, dict, already_persisted);
+		this.trait_remember(trait);
+		return trait;
+	}
+
+	async trait_setText_forTrait(text: string | null, trait: Trait) {
+		if (text == null) {
+			await this.db.persist_all(true);
+		} else {
+			trait.text = text;
+			trait.set_isDirty();
+		}
+	}
+
+	static readonly _____TAGS: unique symbol;
+
+	tag_forType(type: string): Tag | null { return this.tag_byType[type] ?? null; }
+	tags_forThingHID(hid: Integer): Array<Tag> { return this.tags_byThingHID[hid]; }
+
+	tag_extract_fromDict(dict: Dictionary) {
+		this.tag_remember_runtimeAddTo_orCreateUnique(this.db.idBase, dict.id, dict.type, dict.thingHID, dict.already_persisted);
+	}
+
+	tag_remember(tag: Tag) {
+		this.tags.push(tag);
+		this.tag_byType[tag.type] = tag;
+		for (const hid of tag.thingHIDs) {
+			const tags: Array<Tag> = this.tags_byThingHID[hid] ?? [];
+			if (!tags.includes(tag)) {
+				tags.push(tag)
+				this.tags_byThingHID[hid] = tags;
+			}
+		}
+	}
+
+	tag_remember_runtimeAddTo_orCreateUnique(idBase: string, id: string, type: string, thingHID: Integer, already_persisted: boolean = false): Tag {
+		let tag = this.tag_forType(type);
+		if (!tag) {
+			tag = this.tag_remember_runtimeCreate(idBase, id, type, thingHID, already_persisted);
+		} else if (!tag.thingHIDs.includes(thingHID)) {
+			tag.thingHIDs.push(thingHID);
+		}
+		tag.set_isDirty();
+		return tag;
+	}
+
+	tag_remember_runtimeCreate(idBase: string, id: string, type: string, thingHID: Integer, already_persisted: boolean = false): Tag {
+		const tag = new Tag(idBase, id, type, thingHID, already_persisted);
+		this.tag_remember(tag);
+		tag.set_isDirty();
+		return tag;
+	}
+
 	static readonly _____ANCILLARY: unique symbol;
 
 	access_runtimeCreate(idAccess: string, kind: string) {
@@ -1311,6 +1352,7 @@ export class Hierarchy {
 				case T_Persistable.traits:		  data[t_persistable] = this.traits; break;
 				case T_Persistable.predicates:	  data[t_persistable] = this.predicates; break;
 				case T_Persistable.relationships: data[t_persistable] = this.relationships; break;
+				case T_Persistable.tags:		  data[t_persistable] = this.tags; break;
 			}
 		}
 		return data;
@@ -1325,13 +1367,18 @@ export class Hierarchy {
 		let relationships: Array<Relationship> = [];
 		let things: Array<Thing> = [];
 		let traits: Array<Trait> = [];
+		let tags: Array<Tag> = [];
 		data[T_Persistable.predicates] = this.predicates;
 		ancestry.traverse((ancestry: Ancestry) => {
 			const thing = ancestry.thing;
 			const thingTraits = thing?.traits;
+			const thingTags = thing?.tags;
 			const relationship = ancestry.relationship;
 			if (!!thingTraits) {
 				traits = u.uniquely_concatenateArrays(traits, thingTraits);
+			}
+			if (!!thingTags) {
+				tags = u.uniquely_concatenateArrays(tags, thingTags);
 			}
 			if (!!thing && things.filter(t => t.id == thing.id).length == 0) {
 				things.push(thing);
@@ -1345,6 +1392,7 @@ export class Hierarchy {
 		data[T_Persistable.relationships] = relationships;
 		data[T_Persistable.things] = things;
 		data[T_Persistable.traits] = traits;
+		data[T_Persistable.tags] = tags;
 		return data;
 	}
 
@@ -1450,12 +1498,7 @@ export class Hierarchy {
 		for (const t_persistable of Persistable.t_persistables) {
 			const subdicts = dict[t_persistable] as Array<Dictionary>;
 			for (const subdict of subdicts) {
-				switch(t_persistable) {
-					case T_Persistable.relationships: this.relationship_extract_fromDict(subdict); break;
-					case T_Persistable.predicates:	  this.predicate_extract_fromDict(subdict); break;
-					case T_Persistable.traits:		  this.trait_extract_fromDict(subdict); break;
-					case T_Persistable.things:		  this.thing_extract_fromDict(subdict); break;
-				}
+				this.extract_objects_ofType_fromDict(t_persistable, subdict);
 			}
 		}
 	}
@@ -1466,6 +1509,7 @@ export class Hierarchy {
 			case T_Persistable.predicates:	  this.predicate_extract_fromDict(dict); break;
 			case T_Persistable.traits:		  this.trait_extract_fromDict(dict); break;
 			case T_Persistable.things:		  this.thing_extract_fromDict(dict); break;
+			case T_Persistable.tags:		  this.tag_extract_fromDict(dict); break;
 		}
 	}
 

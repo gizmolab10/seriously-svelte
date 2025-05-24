@@ -6,7 +6,7 @@ import { get } from 'svelte/store';
 import Airtable from 'airtable';
 
 export default class Trait extends Persistable {
-	t_trait: T_Trait = T_Trait.generic;
+	t_trait: T_Trait = T_Trait.text;
 	ownerID: string = k.empty;
 	text: string = k.empty;
 	dict: Dictionary = {};

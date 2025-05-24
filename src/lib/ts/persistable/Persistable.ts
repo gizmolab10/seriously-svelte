@@ -29,6 +29,11 @@ export default class Persistable extends Identifiable {
 		});
 	}
 
-	static get t_persistables(): Array<T_Persistable> { return [T_Persistable.things, T_Persistable.traits, T_Persistable.predicates, T_Persistable.relationships]; }
+	static get t_persistables(): Array<T_Persistable> {
+		return [T_Persistable.things,
+			T_Persistable.traits,
+			T_Persistable.predicates,
+			T_Persistable.relationships,
+			T_Persistable.tags]; }
 
 }

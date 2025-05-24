@@ -54,6 +54,7 @@ import Access from '../persistable/Access';
 import Thing from '../persistable/Thing';
 import Trait from '../persistable/Trait';
 import User from '../persistable/User';
+import Tag from '../persistable/Tag';
 import Angle from './Angle';
 
 import './Extensions';
@@ -87,6 +88,6 @@ export {
 	T_Tool, T_Control, T_Browser, T_Signal, T_Info, T_Storage,
 	G_Paging, G_Cluster, G_RadialGraph, G_Thing_Pages, G_ArcSlider,
 	T_Layer, T_Curve, T_Create, T_RingZone, T_Oblong, T_Alteration,
-	User, Persistable, Thing, Trait, Access, Predicate, Relationship,
 	T_Thing, T_Trait, T_Widget, T_Predicate, T_Kinship, T_Preference,
+	Tag, User, Persistable, Thing, Trait, Access, Predicate, Relationship,
 };

@@ -28,7 +28,7 @@
 		const heights: Array<number> = [];
 		let index = 0;
 		heights[T_Details.header]  = 40;
-		heights[T_Details.storage] = 142;
+		heights[T_Details.storage] = 156;
 		heights[T_Details.tools]   = show.tool_boxes ? 229 : 146;
 		heights[T_Details.display] = 77;
 		heights[T_Details.info]	   = 174;

@@ -1,9 +1,8 @@
-import { k, u, debug, colors, Trait, Ancestry, databases } from '../common/Global_Imports';
-import { Predicate, Relationship, Seriously_Range } from '../common/Global_Imports';
-import { T_Thing, T_Trait, T_Debug, T_Predicate } from '../common/Global_Imports';
+import { Tag, Trait, Ancestry, Predicate, Persistable, Relationship } from '../common/Global_Imports';
+import { k, u, debug, colors, databases, Seriously_Range } from '../common/Global_Imports';
+import { T_Thing, T_Debug, T_Predicate, T_Persistable } from '../common/Global_Imports';
 import { w_hierarchy, w_thing_color, w_count_rebuild } from '../common/Stores';
 import { w_ancestry_focus, w_ancestries_expanded } from '../common/Stores';
-import { Persistable, T_Persistable } from '../common/Global_Imports';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
 
@@ -22,6 +21,7 @@ export default class Thing extends Persistable {
 		this.color = color;
 	};
 	
+	get tags():					Array		   <Tag> { return get(w_hierarchy).tags_forThingHID(this.hid) ?? []; }
 	get parents():				Array		 <Thing> { return this.parents_ofKind(T_Predicate.contains); }
 	get traits():				Array		 <Trait> { return get(w_hierarchy).traits_forOwnerHID(this.hid) ?? []; }
 	get parentIDs():			Array		<string> { return this.parents.map(t => t.id); }

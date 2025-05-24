@@ -1,7 +1,6 @@
-import { Trait, Thing, Hierarchy, Predicate, Relationship, Persistable } from '../common/Global_Imports';
-import { T_Thing, T_Startup, T_Preference } from '../common/Global_Imports';
-import { c, p, debug, layout, databases } from '../common/Global_Imports';
-import { T_Persistence, T_Persistable } from '../common/Global_Imports';
+import { Tag, Trait, Thing, Predicate, Relationship, Persistable } from '../common/Global_Imports';
+import { T_Thing, T_Startup, T_Persistence, T_Persistable } from '../common/Global_Imports';
+import { c, p, debug, layout, Hierarchy, databases } from '../common/Global_Imports';
 import { w_hierarchy, w_t_startup } from '../common/Stores';
 import type { Dictionary } from '../common/Types';
 import { k } from '../common/Constants';
@@ -35,10 +34,6 @@ export default class DBCommon {
 	async thing_persistentUpdate(thing: Thing) { this.persist_all(); }
 	async thing_persistentDelete(thing: Thing) { this.persist_all(); }
 	async thing_remember_persistentCreate(thing: Thing) { this.hierarchy.thing_remember(thing); this.persist_all(); }
-
-	async trait_persistentUpdate(trait: Trait) { this.persist_all(); }
-	async trait_persistentDelete(trait: Trait) { this.persist_all(); }
-	async trait_remember_persistentCreate(trait: Trait) { this.hierarchy.trait_remember(trait); this.persist_all(); }
 	
 	async predicate_persistentUpdate(predicate: Predicate) { this.persist_all(); }
 	async predicate_persistentDelete(predicate: Predicate) { this.persist_all(); }
@@ -47,6 +42,14 @@ export default class DBCommon {
 	async relationship_persistentUpdate(relationship: Relationship) { this.persist_all(); }
 	async relationship_persistentDelete(relationship: Relationship) { this.persist_all(); }
 	async relationship_remember_persistentCreate(relationship: Relationship) { this.hierarchy.relationship_remember_ifValid(relationship); this.persist_all(); }
+
+	async trait_persistentUpdate(trait: Trait) { this.persist_all(); }
+	async trait_persistentDelete(trait: Trait) { this.persist_all(); }
+	async trait_remember_persistentCreate(trait: Trait) { this.hierarchy.trait_remember(trait); this.persist_all(); }
+
+	async tag_persistentUpdate(tag: Tag) { this.persist_all(); }
+	async tag_persistentDelete(tag: Tag) { this.persist_all(); }
+	async tag_remember_persistentCreate(tag: Tag) { this.hierarchy.tag_remember(tag); this.persist_all(); }
 	
 	remove_all_fromLocal() {
 		if (this.isPersistent) {
@@ -87,7 +90,7 @@ export default class DBCommon {
 				for (const dict of array) {
 					h.extract_objects_ofType_fromDict(t_persistable, dict);
 				}
-			} else if (!this.isRemote) {			// no such preference, create empty hierarchy
+			} else if (!this.isRemote) {			// no such persistable, create empty hierarchy
 				switch (t_persistable) {
 					case T_Persistable.predicates:
 						h.predicate_defaults_remember_runtimeCreate();

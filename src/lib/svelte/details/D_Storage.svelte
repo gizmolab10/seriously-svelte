@@ -32,6 +32,7 @@
 			dict['things'] = h.things.length;
 			dict['relationships'] = h.relationships.length.expressZero_asHyphen();
 			dict['traits'] = h.traits.length.expressZero_asHyphen();
+			dict['tags'] = h.tags.length.expressZero_asHyphen();
 			information = Object.entries(dict);
 		}
 	}
@@ -122,7 +123,7 @@
 				font_sizes={font_sizes}
 				width={k.width_details}
 				row_titles={row_titles()}
-				origin={Point.y(top + 102)}
+				origin={Point.y(top + 115)}
 				closure={handle_toolRequest}
 				button_height={k.height.button}
 				margin={(ux.t_storage == T_Storage.direction) ? 50 : 40}
