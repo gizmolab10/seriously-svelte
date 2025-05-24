@@ -1,4 +1,4 @@
-import { T_Tool, T_Format, T_Predicate, T_Alteration, S_Mouse, S_Alteration } from '../common/Global_Imports';
+import { T_Tool, T_File, T_Predicate, T_Alteration, S_Mouse, S_Alteration } from '../common/Global_Imports';
 import { c, k, w, Point, debug, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
 import { w_device_isMobile, w_ancestries_grabbed, w_user_graph_offset } from '../common/Stores';
 import { w_count_mouse_up, w_mouse_location, w_mouse_location_scaled } from '../common/Stores';
@@ -296,10 +296,10 @@ export class Events {
 				}
 				switch (key) {
 					case '?':				c.showHelp(); return;
-					case 's':				h.persist_toFile(T_Format.json); return;
+					case 's':				h.persist_toFile(T_File.json); return;
 					case 'm':				layout.toggle_t_graph(); break;
 					case 'c':				w.user_graph_offset_setTo(Point.zero); return;
-					case 'o':				h.select_file_toUpload(T_Format.json, event.shiftKey); break;
+					case 'o':				h.select_file_toUpload(T_File.json, event.shiftKey); break;
 					case '!':				graph_needsRebuild = h.rootAncestry?.becomeFocus(); break;
 					case 'escape':			if (!!get(w_s_alteration)) { h.stop_alteration(); }; break;
 					case 'arrowup':			h.grabs_latest_rebuild_persistentMoveUp_maybe( true, SHIFT, OPTION, EXTREME); break;

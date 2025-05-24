@@ -17,6 +17,7 @@ export enum T_Details {
 	tools,
 	display,
 	info,
+	tags,
 	traits,
 }
 
@@ -67,12 +68,6 @@ export enum T_Alteration {
 export enum T_Storage {
 	import = 'import',
 	export = 'export',
-}
-
-export enum T_Format {
-	cancel = 'cancel',
-	json   = 'json',
-	csv	   = 'csv'
 }
 
 export enum T_Kinship {
@@ -138,6 +133,13 @@ export enum T_Oblong {
 	full   = 'full',
 }
 
+export enum T_File {
+	seriously = 'seriously',
+	cancel	  = 'cancel',
+	json	  = 'json',
+	csv		  = 'csv',
+}
+
 export enum T_Persistable {
 	relationships = 'Relationships',
 	predicates	  = 'Predicates',
@@ -145,6 +147,7 @@ export enum T_Persistable {
 	traits		  = 'Traits',
 	access		  = 'Access',
 	users		  = 'Users',
+	tags		  = 'Tags',
 }
 
 export enum T_Predicate {

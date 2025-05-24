@@ -1,4 +1,4 @@
-import { T_Thing, T_Trait, T_Order, T_Create, T_Format, T_Control } from '../common/Global_Imports';
+import { T_Thing, T_Trait, T_Order, T_Create, T_File, T_Control } from '../common/Global_Imports';
 import { Access, Ancestry, Predicate, Relationship, Persistable } from '../common/Global_Imports';
 import { debug, files, colors, signals, layout, databases } from '../common/Global_Imports';
 import { w_storage_updated, w_s_alteration, w_ancestries_grabbed } from '../common/Stores';
@@ -9,6 +9,7 @@ import type { Integer, Dictionary } from '../common/Types';
 import Identifiable from '../runtime/Identifiable';
 import { marianne } from '../files/Marianne';
 import DBCommon from '../database/DBCommon';
+import Tag from '../persistable/Tag';
 import { get } from 'svelte/store';
 
 export type Ancestries_ByHID = { [hid: Integer]: Ancestry }
@@ -35,14 +36,14 @@ export class Hierarchy {
 	private trait_byHID: { [hid: Integer]: Trait } = {};
 	private user_byHID: { [hid: Integer]: User } = {};
 	ids_translated: { [prior: string]: string } = {};
+	replace_rootID: string | null = k.empty;		// required for DBLocal at launch
 	relationships: Array<Relationship> = [];
 	predicates: Array<Predicate> = [];
 	externalsAncestry!: Ancestry;
 	things: Array<Thing> = [];
 	traits: Array<Trait> = [];
 	rootAncestry!: Ancestry;
-
-	replace_rootID: string | null = k.empty;		// required for DBLocal at launch
+	tags: Array<Tag> = [];
 	isAssembled = false;
 	root!: Thing;
 	db: DBCommon;
@@ -1241,18 +1242,18 @@ export class Hierarchy {
 		return ancestry.isRoot ? this.all_data : this.progeny_dataFor(ancestry);
 	}
 
-	select_file_toUpload(format: T_Format, SHIFT: boolean) {
+	select_file_toUpload(format: T_File, SHIFT: boolean) {
 		files.format_preference = format;
 		w_popupView_id.set(T_Control.import);				// extract_fromDict
 		this.replace_rootID = SHIFT ? k.empty : null;		// flag it to be updated from file (after user choses it)
 	}
 
-	persist_toFile(format: T_Format) {
+	persist_toFile(format: T_File) {
 		switch (format) {
-			case T_Format.csv:
+			case T_File.csv:
 				alert('saving as CSV is not yet implemented');
 				break;
-			case T_Format.json:
+			case T_File.json:
 				const data = this.data_toSave;
 				const filename = `${data.title.toLowerCase()}.${format}`;
 				files.persist_json_object_toFile(data, filename);
@@ -1265,14 +1266,14 @@ export class Hierarchy {
 		try {
 			const result = await files.fetch_fromFile(file);
 			switch (files.format_preference) {
-				case T_Format.csv:
+				case T_File.csv:
 					const array = result as Array<Dictionary>;
 					for (const dict of array) {
 						await this.extract_fromCSV_Dict(dict);
 					}
 					await marianne.create_relationship_forAllTraits();
 					break;
-				case T_Format.json:
+				case T_File.json:
 					const dict = result as Dictionary;
 					if (!!dict) {
 						await this.extract_fromDict(dict);

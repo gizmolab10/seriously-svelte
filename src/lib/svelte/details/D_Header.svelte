@@ -5,13 +5,21 @@
 	import { T_Layer, T_Details, T_Info } from '../../ts/common/Global_Imports';
 	import { s_details } from '../../ts/state/S_Details';
 	import Segmented from '../mouse/Segmented.svelte';
-	const titles_ofDetails = [T_Details[T_Details.storage], T_Details[T_Details.tools], T_Details[T_Details.display], T_Details[T_Details.info], T_Details[T_Details.traits]];
     let reattachments = 0;
+	
+	const titles_ofDetails = [
+		T_Details[T_Details.storage],
+		T_Details[T_Details.tools],
+		T_Details[T_Details.display],
+		T_Details[T_Details.info],
+		T_Details[T_Details.tags],
+		T_Details[T_Details.traits]
+	];
 
 	$: showingDetails_ofType = (t_details: T_Details) => $w_show_details_ofType.includes(T_Details[t_details]);
 	function info_selection_closure(t_infos: Array<string>) { $w_show_info_ofType = t_infos[0] as T_Info; }
 	$: $w_show_info_ofType, $w_ancestry_focus, $w_ancestries_grabbed, update_forKind_ofInfo();
-	
+
 	function details_selection_closure(t_details: Array<string>) {
 		s_details.number_ofDetails = t_details.length;
 		$w_show_details_ofType = t_details as Array<T_Details>;
@@ -54,7 +62,7 @@
 			<Segmented
 				name='info-type'
 				height={k.height.button}
-				origin={new Point(61, 44)}
+				origin={new Point(79, 44)}
 				font_size={k.font_size.smaller}
 				selected={[$w_show_info_ofType]}
 				titles={[T_Info.focus, T_Info.selection]}

@@ -10,14 +10,14 @@
 	import Separator from '../kit/Separator.svelte';
 	import D_Tools from '../details/D_Tools.svelte';
 	import D_Info from '../details/D_Info.svelte';
+	import D_Tags from '../details/D_Tags.svelte';
 	const separator_gap = k.height.separator;
-	const titles = [T_Details[T_Details.storage], T_Details[T_Details.tools], T_Details[T_Details.display], T_Details[T_Details.info], T_Details[T_Details.traits]];
 	let ancestry: Ancestry | null = s_details.ancestry;
 	let thing: Thing | null = ancestry?.thing ?? null;
 	let number_ofDetails = $w_show_details_ofType.length;
 	let tops = layout_tops_forDetails();
 	let thing_title = thing?.title;
-
+	
 	$: $w_show_details_ofType, $w_device_isMobile, tops = layout_tops_forDetails();
 	$: showingDetails_ofType = (t_details: T_Details) => $w_show_details_ofType.includes(T_Details[t_details]);
 		
@@ -32,6 +32,7 @@
 		heights[T_Details.tools]   = show.tool_boxes ? 229 : 146;
 		heights[T_Details.display] = 77;
 		heights[T_Details.info]	   = 174;
+		heights[T_Details.tags]    = 100;
 		heights[T_Details.traits]  = 0;
 		while (index <= T_Details.traits) {
 			tops_ofDetails[index] = top;
@@ -85,6 +86,13 @@
 			add_wings={true}			
 			top={tops[T_Details.info] - separator_gap}/>
 		<D_Info top={tops[T_Details.info]} number_ofDetails={number_ofDetails}/>
+	{/if}
+	{#if showingDetails_ofType(T_Details.tags)}
+		<Separator
+			title='tags'
+			add_wings={true}			
+			top={tops[T_Details.tags] - separator_gap}/>
+		<D_Tags top={tops[T_Details.tags]}/>
 	{/if}
 	{#if showingDetails_ofType(T_Details.traits)}
 		<Separator

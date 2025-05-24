@@ -16,12 +16,12 @@
 	s_details.update_traits();
 	es_button.set_forHovering(colors.default, 'pointer');
 	
-	function selection_closure(titles: Array<T_Trait>) {
-		$w_show_traits_ofType = titles;
+	function handleClick_onTraitTypes(types: Array<T_Trait>) {
+		$w_show_traits_ofType = types;
 		s_details.update_traits();
 	}
 
-	function handleClick_onColumn(t_buttonRequest: T_ButtonRequest, s_mouse: S_Mouse, column: number): any {
+	function handleClick_onNextPrevious(t_buttonRequest: T_ButtonRequest, s_mouse: S_Mouse, column: number): any {
 		const ids = ['previous', 'next'];
 		switch (t_buttonRequest) {
 			case T_ButtonRequest.is_visible:   return true;
@@ -40,13 +40,13 @@
 		font-size:{k.font_size.smaller}px;'>
 	<Segmented
 		height={20}
+		name='trait-types'
 		allow_multiple={true}
-		name='hierarchy_traits'
 		origin={new Point(10, 3)}
-		selected={$w_show_traits_ofType}
 		titles={['text', 'link']}
 		font_size={k.font_size.smaller}
-		selection_closure={selection_closure}/>
+		selected={$w_show_traits_ofType}
+		selection_closure={handleClick_onTraitTypes}/>
 	<Buttons_Row
 		margin=0
 		width=149
@@ -55,27 +55,15 @@
 		button_height={18}
 		horizontal_gap={6}
 		name='previous-next'
-		origin={new Point(70, 4)}
-		closure={handleClick_onColumn}
+		origin={new Point(104, 4)}
 		row_titles={['previous', 'next']}
+		closure={handleClick_onNextPrevious}
 		font_sizes={[k.font_size.smallest, k.font_size.smaller]}/>
 	{#key $w_thing_traits}
-		<div style='
-			top:26px;
-			position:absolute;
-			text-align:center;
-			width:{k.width_details}px;
-			font-size:{k.font_size.smaller}px;'>
-			{#if s_details.total_traits > 0}
-				trait {s_details.index_ofTrait + 1} of {s_details.total_traits}
-			{:else}
-				no traits
-			{/if}
-		</div>
 		{#if !!$w_thing_traits && $w_thing_traits.length > 0}
 			{#each $w_thing_traits as trait}
 				<Text_Editor
-					top={47}
+					top={30}
 					left={10}
 					label={trait.t_trait}
 					color={colors.default}

@@ -43,7 +43,7 @@
 		font_size={font_size}
 		name='counts-selector'
 		height={k.height.button}
-		origin={new Point(41, 13)}
+		origin={new Point(61, 13)}
 		selected={$w_show_countDots_ofType}
 		selection_closure={selection_closure}/>
 	<Separator

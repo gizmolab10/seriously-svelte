@@ -18,7 +18,7 @@ export class Preferences {
 
 	dump() 									 { console.log(localStorage); }
 	read_key	   (key: string): any | null { return this.parse(localStorage[key]); }
-	readDB_key	   (key: string): any | null { return this.read_key(this.db_keyFor(key)); }
+	readDB_key	   (key: string): any | null { return 					this.read_key(this.db_keyFor(key)); }
 	writeDB_key<T> (key: string, value: T)	 { this.write_key(this.db_keyFor(key), value); }
 
 	write_key<T> (key: string, value: T) {
@@ -32,7 +32,7 @@ export class Preferences {
 
 	writeDB_keyPairs_forKey<T>(key: string, sub_key: string, value: T): void {	// pair => key, sub_key
 		const dbKey = this.db_keyFor(key);
-		const sub_keys: Array<string> = this.read_key(dbKey) ?? [];
+		const sub_keys: Array<string> = 					this.read_key(dbKey) ?? [];
 		const pair = this.keyPair_for(dbKey, sub_key);
 		this.write_key(pair, value);			// first store the value by key pair
 		if (sub_keys.length == 0 || !sub_keys.includes(sub_key)) {
@@ -44,9 +44,9 @@ export class Preferences {
 	readDB_keyPairs_forKey(key: string): Array<any> {
 		let values: Array<any> = [];
 		const dbKey = this.db_keyFor(key);
-		const sub_keys: Array<string> = this.read_key(dbKey) ?? [];
+		const sub_keys: Array<string> = 					this.read_key(dbKey) ?? [];
 		for (const sub_key of sub_keys) {
-			const value = this.read_key(this.keyPair_for(dbKey, sub_key));
+			const value = 					this.read_key(this.keyPair_for(dbKey, sub_key));
 			if (!!value) {												// ignore undefined or null
 				values.push(value);
 			}
@@ -174,6 +174,28 @@ export class Preferences {
 	restore_paging() { radial.createAll_thing_pages_fromDict(this.readDB_key(T_Preference.paging)); }
 
 	reactivity_subscribe() {
+
+		// color
+
+		w_background_color.subscribe((color: string) => {
+			document.documentElement.style.setProperty('--css-background-color', color);
+			this.write_key(T_Preference.background, color);
+		})
+
+		// radial
+
+		w_ring_rotation_angle.subscribe((angle: number) => {
+			this.write_key(T_Preference.ring_angle, angle);
+		});
+		w_ring_rotation_radius.subscribe((radius: number) => {
+			this.write_key(T_Preference.ring_radius, radius);
+		});
+		w_g_paging.subscribe((g_paging: G_Paging) => {
+			this.writeDB_key(T_Preference.paging, radial.s_thing_pages_byThingID);
+		})
+
+		// visibility
+
 		w_show_tree_ofType.subscribe((value) => {
 			this.write_key(T_Preference.tree, value);
 		});
@@ -186,25 +208,13 @@ export class Preferences {
 		w_show_countDots_ofType.subscribe((value) => {
 			this.write_key(T_Preference.countDots, value);
 		});
-		w_ring_rotation_angle.subscribe((angle: number) => {
-			this.write_key(T_Preference.ring_angle, angle);
-		});
 		w_show_details_ofType.subscribe((value) => {
 			this.write_key(T_Preference.detail_types, value);
-		});
-		w_ring_rotation_radius.subscribe((radius: number) => {
-			this.write_key(T_Preference.ring_radius, radius);
 		});
 		w_show_traits_ofType.subscribe((traits: Array<T_Trait>) => {
 			this.write_key(T_Preference.traits, traits);
 		})
-		w_g_paging.subscribe((g_paging: G_Paging) => {
-			this.writeDB_key(T_Preference.paging, radial.s_thing_pages_byThingID);
-		})
-		w_background_color.subscribe((color: string) => {
-			document.documentElement.style.setProperty('--css-background-color', color);
-			this.write_key(T_Preference.background, color);
-		})
+		
 		show.reactivity_subscribe();
 	}
 
@@ -212,17 +222,23 @@ export class Preferences {
 		if (this.ignoreAncestries) {
 			this.write_key(T_Preference.relationships, true);
 		}
-		w_show_info_ofType.set(p.read_key(T_Preference.info) ?? T_Info.focus);
-		w_font_size.set(this.read_key(T_Preference.font_size) ?? 14);
-		w_show_graph_ofType.set(this.read_key(T_Preference.graph) ?? T_Graph.tree);
-		w_show_tree_ofType.set(this.read_key(T_Preference.tree) ?? T_Kinship.child);
-		w_ring_rotation_angle.set(this.read_key(T_Preference.ring_angle) ?? 0);
-		w_show_traits_ofType.set([T_Trait.text]);	// this.read_key(T_Preference.traits) ?? 
-		w_thing_fontFamily.set(this.read_key(T_Preference.font) ?? 'Times New Roman');
-		w_show_details_ofType.set(this.read_key(T_Preference.detail_types) ?? [T_Details.storage]);
-		w_show_countDots_ofType.set(this.read_key(T_Preference.countDots) ?? [T_Kinship.child]);
-		w_background_color.set(this.read_key(T_Preference.background) ?? colors.background);
-		w_ring_rotation_radius.set(Math.max(this.read_key(T_Preference.ring_radius) ?? 0, k.radius.ring_center));
+
+		// radial
+		w_ring_rotation_angle			.set( this.read_key(T_Preference.ring_angle)		   ?? 0);
+		w_ring_rotation_radius			.set(Math.max( this.read_key(T_Preference.ring_radius) ?? 0, k.radius.ring_center));
+
+		// other
+		w_font_size						.set( this.read_key(T_Preference.font_size)			   ?? 14);
+		w_thing_fontFamily				.set( this.read_key(T_Preference.font)				   ?? 'Times New Roman');
+		w_background_color				.set( this.read_key(T_Preference.background)		   ?? colors.background);
+
+		// visibility
+		w_show_info_ofType				.set( this.read_key(T_Preference.info)				   ?? T_Info.focus);
+		w_show_tree_ofType				.set( this.read_key(T_Preference.tree)				   ?? T_Kinship.child);
+		w_show_graph_ofType				.set( this.read_key(T_Preference.graph)				   ?? T_Graph.tree);
+		w_show_traits_ofType			.set( this.read_key(T_Preference.traits)			   ?? [T_Trait.text]);
+		w_show_details_ofType			.set( this.read_key(T_Preference.detail_types)		   ?? [T_Details.tools, T_Details.storage]);
+		w_show_countDots_ofType			.set( this.read_key(T_Preference.countDots)			   ?? [T_Kinship.child]);
 		this.reactivity_subscribe()
 	}
 

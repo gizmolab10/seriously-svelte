@@ -1,8 +1,8 @@
 import { tu } from '../common/Testworthy_Utilities';
-import { T_Format } from '../common/Enumerations';
+import { T_File } from '../common/Enumerations';
 
 export default class Files {
-	format_preference: T_Format = T_Format.json;
+	format_preference: T_File = T_File.json;
 	
 	static readonly _____WRITE: unique symbol;
 
@@ -21,8 +21,8 @@ export default class Files {
 	async fetch_fromFile(file: File): Promise<any> {
 		const format = this.format_preference;
 		switch (format) {
-			case T_Format.json:	return await this.extract_json_object_fromFile(file);
-			case T_Format.csv:	return await this.extract_csv_records_fromFile(file);
+			case T_File.json:	return await this.extract_json_object_fromFile(file);
+			case T_File.csv:	return await this.extract_csv_records_fromFile(file);
 			default:			throw new Error(`Unsupported format: ${format}`);
 		}
 	}

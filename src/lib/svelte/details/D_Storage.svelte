@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { T_Layer, T_Format, T_Storage, T_Element, T_Preference, T_ButtonRequest } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_File, T_Storage, T_Element, T_Preference, T_ButtonRequest } from '../../ts/common/Global_Imports';
 	import { k, ux, Point, colors, S_Element, databases, Hierarchy } from '../../ts/common/Global_Imports';
 	import { w_storage_updated, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { w_t_database, w_hierarchy } from '../../ts/common/Stores';
@@ -14,7 +14,7 @@
 	const buttons_top = 138;
 	const storage_ids = [T_Storage.import, T_Storage.export];
     const font_sizes = [k.font_size.smallest, k.font_size.smaller];
-	const format_ids = [T_Format.csv, T_Format.json, T_Format.cancel];
+	const format_ids = [T_File.csv, T_File.json, T_File.cancel];
 	const db_ids = [T_Database.local, T_Database.firebase, T_Database.airtable, T_Database.test];
 	const button_style = `font-family: ${$w_thing_fontFamily}; font-size:0.85em; left: 5px; top: -2px; position: absolute;`;
 	let s_element_byStorageType: { [id: string]: S_Element } = {};
@@ -75,13 +75,13 @@
 			s_element_byStorageType[ids[column]].isOut = s_mouse.isOut;
 		} else if (s_mouse.isDown) {
 			const choice = ids[column];
-			if (choice == T_Format.cancel) {
+			if (choice == T_File.cancel) {
 				ux.t_storage = T_Storage.direction;
 			} else if (ux.t_storage == T_Storage.direction) {
 				storage_choice = choice;
 				ux.t_storage = T_Storage.format;
 			} else {
-				const format = choice as T_Format;
+				const format = choice as T_File;
 				const h = $w_hierarchy;
 				switch (storage_choice) {
 					case T_Storage.export: h.persist_toFile(format); break;
@@ -103,7 +103,7 @@
 			name='db'
 			titles={db_ids}
 			selected={[$w_t_database]}
-			origin={new Point(17, top + 3)}
+			origin={new Point(38, top + 3)}
 			selection_closure={selection_closure}/>
 		<div class='data-information'
 			style='
