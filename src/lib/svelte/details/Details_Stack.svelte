@@ -6,11 +6,11 @@
 </script>
 
 <Vertical_Stack origin={Point.y(30)} width={width}>
-	<Hideable title="first" width={width} isHidden={false}>
+	<Hideable title='storage' width={width} isHidden={false}>
 		<h2>First Section</h2>
 		<p>Any <b>Svelte</b> or HTML content here!</p>
 	</Hideable>
-	<Hideable title="second" width={width} isHidden={false}>
+	<Hideable title='tools' width={width} isHidden={false}>
 		<h2>Second Section</h2>
 		<p>More <i>arbitrary</i> content here.</p>
 	</Hideable>

@@ -1,6 +1,6 @@
 <script lang='ts'>
     import { k, Point } from '../../ts/common/Global_Imports';
-    import { createEventDispatcher } from 'svelte';
+    import { createEventDispatcher, tick } from 'svelte';
     export let origin: Point | null = null;
     export let isHidden = false;
     export let title = k.empty;
@@ -12,9 +12,12 @@
     
     $: dispatch('heightChange', { height });
     
-    $: if (element) {
-        height = banner_height + (isHidden ? 0 : element.scrollHeight);
-    }
+    $: (async () => {
+        if (element) {
+            await tick();
+            height = banner_height + (isHidden ? 0 : element.scrollHeight - banner_height);
+        }
+    })();
 
     function toggleExpanded() {
         isHidden = !isHidden;
