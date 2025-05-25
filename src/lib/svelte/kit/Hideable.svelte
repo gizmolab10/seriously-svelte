@@ -1,13 +1,16 @@
 <script lang='ts'>
-    import { k, Point } from '../../ts/common/Global_Imports';
+    import { k, Point, T_Details } from '../../ts/common/Global_Imports';
+    import { w_show_details_ofType } from '../../ts/common/Stores';
     import { createEventDispatcher, tick } from 'svelte';
+    import Separator from '../kit/Separator.svelte';
     export let origin: Point | null = null;
+    export let t_details: T_Details;
+    export let detect_click = true;
     export let isHidden = false;
     export let title = k.empty;
     export let height = 0;
     export let width = 0;
-    export let detect_click = true;
-    const banner_height = 20;
+    const banner_height = 14;
     const dispatch = createEventDispatcher();
     let element: HTMLElement;
     
@@ -20,9 +23,19 @@
         }
     })();
 
+    $: if (t_details === T_Details.header) {
+        isHidden = $w_show_details_ofType.length === 0;
+    }
+
     function toggle_hidden() {
         isHidden = !isHidden;
+        if (isHidden) {
+            $w_show_details_ofType = $w_show_details_ofType.filter(d => d !== t_details);
+        } else if (!$w_show_details_ofType.includes(t_details)) {
+            $w_show_details_ofType = [...$w_show_details_ofType, t_details];
+        }
     }
+
 </script>
 
 <div
@@ -46,7 +59,11 @@
             position: absolute;
             align-items: center;
             height: {banner_height}px;'>
-        {title}
+        <Separator
+            top={4.5}
+            title={title}
+            add_wings={true}
+            title_font_size={k.font_size.small}/>
     </div>
     <div class={'slot-' + title} style='display: {isHidden ? "none" : "block"}; position: relative; top: {banner_height}px;'>
         <slot/>

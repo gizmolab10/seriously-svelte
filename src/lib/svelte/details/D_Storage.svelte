@@ -96,37 +96,37 @@
 
 </script>
 
-	<div class='storage-information'
+<div class='storage-information'
+	style='
+		height:40px;
+		padding:5px;'>
+	<Segmented
+		name='db'
+		titles={db_ids}
+		selected={[$w_t_database]}
+		origin={new Point(38, top + 3)}
+		selection_closure={selection_closure}/>
+	<div class='data-information'
 		style='
-			height:40px;
-			padding:5px;'>
-		<Segmented
-			name='db'
-			titles={db_ids}
-			selected={[$w_t_database]}
-			origin={new Point(38, top + 3)}
-			selection_closure={selection_closure}/>
-		<div class='data-information'
-			style='
-				width:{k.width_details}px;
-				font-size:{k.font_size.smaller}px;'>
-			<Text_Table
-				top={top + 26}
-				row_height={11}
-				array={information}
-				font_size={k.font_size.small - 1}/>
-		</div>
-		{#key ux.t_storage}
-			<Buttons_Row
-				show_box={true}
-				horizontal_gap={4}
-				font_sizes={font_sizes}
-				width={k.width_details}
-				row_titles={row_titles()}
-				origin={Point.y(top + 115)}
-				closure={handle_toolRequest}
-				button_height={k.height.button}
-				margin={(ux.t_storage == T_Storage.direction) ? 50 : 40}
-				name={`storage-${(ux.t_storage == T_Storage.direction) ? 'action' : 'format'}`}/>
-		{/key}
+			width:{k.width_details}px;
+			font-size:{k.font_size.smaller}px;'>
+		<Text_Table
+			top={top + 26}
+			row_height={11}
+			array={information}
+			font_size={k.font_size.small - 1}/>
 	</div>
+	{#key ux.t_storage}
+		<Buttons_Row
+			show_box={true}
+			horizontal_gap={4}
+			font_sizes={font_sizes}
+			width={k.width_details}
+			row_titles={row_titles()}
+			origin={Point.y(top + 115)}
+			closure={handle_toolRequest}
+			button_height={k.height.button}
+			margin={(ux.t_storage == T_Storage.direction) ? 50 : 40}
+			name={`storage-${(ux.t_storage == T_Storage.direction) ? 'action' : 'format'}`}/>
+	{/key}
+</div>

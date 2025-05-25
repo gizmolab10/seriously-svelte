@@ -61,25 +61,25 @@
 		height:{$w_graph_rect.size.height}px;'>
 	{#if $w_show_details_asStack}
 		<Vertical_Stack width={width}>
-			<Hideable title='header' width={width} isHidden={false} detect_click={false}>
+			<Hideable title='header' t_details={T_Details.header} width={width} isHidden={false} detect_click={false}>
 				<D_Header/>
 			</Hideable>
-			<Hideable title='storage' width={width} isHidden={true}>
+			<Hideable title='storage' t_details={T_Details.storage} width={width} isHidden={true}>
 				<D_Storage/>
 			</Hideable>
-			<Hideable title='tools' width={width} isHidden={true}>
+			<Hideable title='tools' t_details={T_Details.tools} width={width} isHidden={true}>
 				<D_Tools/>
 			</Hideable>
-			<Hideable title='display' width={width} isHidden={true}>
+			<Hideable title='display' t_details={T_Details.display} width={width} isHidden={true}>
 				<D_Display/>
 			</Hideable>
-			<Hideable title='info' width={width} isHidden={true}>
+			<Hideable title='info' t_details={T_Details.info} width={width} isHidden={true}>
 				<D_Info/>
 			</Hideable>
-			<Hideable title='tags' width={width} isHidden={true}>
+			<Hideable title='tags' t_details={T_Details.tags} width={width} isHidden={true}>
 				<D_Tags/>
 			</Hideable>
-			<Hideable title='traits' width={width} isHidden={true}>
+			<Hideable title='traits' t_details={T_Details.traits} width={width} isHidden={true}>
 				<D_Traits/>
 			</Hideable>
 		</Vertical_Stack>
