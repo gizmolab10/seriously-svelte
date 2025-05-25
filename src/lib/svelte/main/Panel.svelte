@@ -5,7 +5,9 @@
 	import { w_s_title_edit, w_show_details, w_device_isMobile, } from '../../ts/common/Stores';
 	import { T_Control, Hierarchy, databases, Direction } from '../../ts/common/Global_Imports';
 	import { w_t_startup, w_popupView_id, w_ancestry_focus } from '../../ts/common/Stores';
+	import { w_show_details_asStack } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
+	import Details_Stack from '../details/Details_Stack.svelte';
 	import { T_Database } from '../../ts/database/DBCommon';
 	import Gull_Wings from '../kit/Gull_Wings.svelte';
 	import Details from '../details/Details.svelte';
@@ -73,7 +75,11 @@
 					left: 0px;'>
 				</div>
 				{#if $w_show_details}
-					<Details/>
+					{#if $w_show_details_asStack}
+						<Details_Stack/>
+					{:else}
+						<Details/>
+					{/if}
 					<div class='details-separator'
 						style='
 							position: absolute;

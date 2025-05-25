@@ -2,7 +2,6 @@
     import {S_Mouse, S_Element, T_Element, T_Request, T_Tool } from '../../ts/common/Global_Imports';
     import { w_background_color, w_s_alteration } from '../../ts/common/Stores';
     import { k, show, Point, colors } from '../../ts/common/Global_Imports';
-    import Buttons_Row from './Buttons_Row.svelte';
     export let closure: (t_request: T_Request, s_mouse: S_Mouse, row: number, column: number) => boolean;
     export let button_titles: string[][];
     export let font_sizes: Array<number>;
@@ -12,6 +11,7 @@
 	export let name = k.empty;
     export let width: number;
     export let gap = 2;
+    export let components: Array<{ component: any, props: any }> = [];
 	const rows = button_titles.length;
     const box_top = (has_title && show_box) ? 12 : 0;
     
@@ -25,13 +25,15 @@
         width:{width}px;
         position:absolute;
         height:{(rows * button_height) + ((rows - 1) * gap)}px;'>
-    {#each button_titles as titles, row}
+    {#each components as { component, props }, row}
         {#if closure(T_Request.is_visible, S_Mouse.empty, row, -1)}
-            <Buttons_Row
+            <svelte:component
+                this={component}
+                {...props}
                 gap={gap}
                 width={width}
                 box_top={box_top}
-                row_titles={titles}
+                row_titles={button_titles[row]}
                 show_box={show_box}
                 has_title={has_title}
                 font_sizes={font_sizes}

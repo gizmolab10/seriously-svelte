@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { w_hierarchy, w_show_traits_ofType, w_ancestries_grabbed, w_thing_traits } from '../../ts/common/Stores';
-	import { S_Mouse, T_Trait, T_Tool, T_Element, T_ButtonRequest } from '../../ts/common/Global_Imports';
+	import { S_Mouse, T_Trait, T_Tool, T_Element, T_Request } from '../../ts/common/Global_Imports';
 	import { k, ux, show, colors, Size, Thing, Trait, Point } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/runtime/Identifiable';
     import Buttons_Row from '../buttons/Buttons_Row.svelte';
@@ -21,12 +21,12 @@
 		s_details.update_traits();
 	}
 
-	function handleClick_onNextPrevious(t_buttonRequest: T_ButtonRequest, s_mouse: S_Mouse, column: number): any {
+	function handleClick_onNextPrevious(t_request: T_Request, s_mouse: S_Mouse, column: number): any {
 		const ids = ['previous', 'next'];
-		switch (t_buttonRequest) {
-			case T_ButtonRequest.is_visible:   return true;
-			case T_ButtonRequest.name:		   return ids[column];
-			case T_ButtonRequest.handle_click: if (s_mouse.isDown) { s_details.select_nextTrait(column == 1); }
+		switch (t_request) {
+			case T_Request.is_visible:   return true;
+			case T_Request.name:		   return ids[column];
+			case T_Request.handle_click: if (s_mouse.isDown) { s_details.select_nextTrait(column == 1); }
 		}
 		return false;
 	}

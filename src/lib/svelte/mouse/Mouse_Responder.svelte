@@ -146,5 +146,5 @@
 <div class='mouse-responder' id={name}
 	bind:this={bound_element}
 	style={style}>
-	<slot></slot>
+	<slot/>
 </div>

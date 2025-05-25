@@ -9,11 +9,12 @@ export const w_show_tree_ofType			 = writable<Array<T_Kinship>>();
 export const w_show_countDots_ofType	 = writable<Array<T_Kinship>>();
 export const w_show_details_ofType		 = writable<Array<T_Details>>();
 export const w_show_traits_ofType		 = writable<Array<T_Trait>>();
+export const w_show_directionals_ofType	 = writable<Array<string>>();
 export const w_show_graph_ofType		 = writable<T_Graph>();
 export const w_show_info_ofType			 = writable<T_Info>();
+export const w_show_details_asStack		 = writable<boolean>();
 export const w_show_related				 = writable<boolean>();
 export const w_show_details				 = writable<boolean>();
-export const w_show_directionals_ofType	 = writable<Array<string>>();
 
 const _____THING: unique symbol = Symbol('THING');
 
@@ -72,6 +73,7 @@ class Stores {
 		w_count_rebuild.set(0);
 		w_count_mouse_up.set(0);
 		w_thing_color.set(null);
+		w_show_details_asStack.set(false);
 		w_t_startup.set(T_Startup.start);
 		w_background_color.subscribe((color: string) => {
 			colors.separator = colors.separatorFor(color);

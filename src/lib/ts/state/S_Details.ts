@@ -1,4 +1,4 @@
-import { w_show_info_ofType, w_show_details_ofType, w_show_traits_ofType, w_ancestries_grabbed } from '../common/Stores';
+import { w_show_details_ofType, w_show_traits_ofType, w_ancestries_grabbed } from '../common/Stores';
 import { w_hierarchy, w_t_database, w_thing_traits, w_ancestry_focus } from '../common/Stores';
 import { show, Ancestry, T_Details, Trait, T_Trait } from '../common/Global_Imports';
 import { get } from 'svelte/store';
@@ -29,7 +29,8 @@ class S_Details {
 
 	get hasGrabs(): boolean {
 		const grabs = get(w_ancestries_grabbed);
-		return !!grabs && (grabs.length > 0 || !get(w_ancestry_focus).isGrabbed);
+		if (!grabs || grabs.length === 0) { return false; }
+		return !(get(w_ancestry_focus)?.isGrabbed ?? true);
 	}
 
 	update() {

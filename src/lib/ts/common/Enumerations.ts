@@ -160,7 +160,7 @@ export enum T_Predicate {
 	supports	= 'supports',
 }
 
-export enum T_ButtonRequest {
+export enum T_Request {
 	handle_click = 'handle_click',
 	is_disabled	 = 'is_disabled',
 	is_inverted	 = 'is_inverted',
@@ -172,7 +172,6 @@ export enum T_ButtonRequest {
 export enum T_Control {
 	details	 = 'show details view',
 	builds	 = 'show build notes',
-	related	 = 'show related',
 	smaller	 = 'smaller',
 	bigger	 = 'bigger',
 	import	 = 'import',
@@ -234,8 +233,8 @@ export enum T_Preference {
 	expanded_parents  = 'expanded_parents',
 	focus_forParents  = 'focus_forParents',
 	relationships	  = 'relationships',
-	detail_types	  = 'detail_types',
-	show_details	  = 'show_details',
+	detail_types	  = 'detail_types',			// vertical stack
+	show_details	  = 'show_details',			// left side
 	show_related	  = 'show_related',
 	ring_radius		  = 'ring_radius',
 	user_offset		  = 'user_offset',

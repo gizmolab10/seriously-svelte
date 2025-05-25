@@ -3,7 +3,6 @@
 	import { w_show_info_ofType, w_count_button_restyle } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Separator from '../kit/Separator.svelte';
-	import Button from './Button.svelte';
 	import { onMount } from 'svelte';
 	export let closure: (t_request: T_Request, s_mouse: S_Mouse, column: number) => boolean;
 	export let origin: Point | null = null;
@@ -18,6 +17,7 @@
 	export let name = k.empty;
 	export let width: number;
 	export let margin = 0;
+	export let components: Array<{ component: any, props: any }> = [];
 	const solo_title_width = 34;
 	const button_titles = has_title ? row_titles.slice(1) : row_titles;
 	const title_widths = button_titles.map((title) => u.getWidth_ofString_withSize(title, `${font_sizes[0]}px`));
@@ -121,8 +121,10 @@
 					top:{show_box ? 12 : 0}px;
 					width:{width - margin * 2}px;
 					left:{margin + (show_box ? 0 : solo_title_width)}px;'>
-				{#each button_titles as title, column}
-					<Button
+				{#each components as { component, props }, column}
+					<svelte:component 
+						this={component}
+						{...props}
 						height={button_height}
 						font_size={font_sizes[1]}
 						width={button_width_for(column)}
@@ -130,8 +132,8 @@
 						origin={Point.x(button_left_for(column))}
 						name={`${name}-${button_name_for(column)}`}
 						closure={(s_mouse) => closure(T_Request.handle_click, s_mouse, column)}>
-						{title}
-					</Button>
+						{button_titles[column]}
+					</svelte:component>
 				{/each}
 			</div>
 		{/if}

@@ -65,5 +65,5 @@
 			width={size}
 		/>
 	{/if}
-	<slot></slot>
+	<slot/>
 </Button>

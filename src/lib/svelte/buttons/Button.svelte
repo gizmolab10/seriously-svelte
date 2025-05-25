@@ -106,7 +106,7 @@
 			class='button'
 			style={computed_style}
 			id={'button-for-' + name}>
-			<slot></slot>
+			<slot/>
 		</button>
 	</Mouse_Responder>
 {/key}

@@ -15,7 +15,7 @@ import { T_Thing, T_Trait, T_Predicate } from './Enumerations';
 import { T_Create, T_Browser, T_Alteration } from './Enumerations';
 import { T_Curve, T_Order, T_Widget, T_Layer } from './Enumerations';
 import { T_Oblong, T_Element, T_SvelteComponent } from './Enumerations';
-import { T_Tool, T_Info, T_Details, T_ButtonRequest, T_Storage } from './Enumerations';
+import { T_Tool, T_Info, T_Details, T_Request, T_Storage } from './Enumerations';
 import { T_File, T_Startup, T_Kinship, T_RingZone, T_Preference } from './Enumerations';
 
 import S_Title_Edit from '../state/S_Title_Edit';
@@ -79,7 +79,7 @@ export {
 	S_Common, S_Rotation, S_Resizing,
 	debug, Debug, T_Debug, ErrorTrace,
 	Angle, Direction, T_Quadrant, T_Orientation,
-	T_Persistable, T_Persistence, T_ButtonRequest,
+	T_Persistable, T_Persistence, T_Request,
 	T_Element, Svelte_Wrapper, T_SvelteComponent,
 	G_Widget, G_Segment, G_TreeLine, G_TreeBranches,
 	show, files, builds, colors, layout, radial, signals,

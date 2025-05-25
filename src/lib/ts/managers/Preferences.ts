@@ -173,7 +173,7 @@ export class Preferences {
 
 	reactivity_subscribe() {
 
-		// color
+		// other
 
 		w_background_color.subscribe((color: string) => {
 			document.documentElement.style.setProperty('--css-background-color', color);
@@ -219,21 +219,22 @@ export class Preferences {
 	restore_defaults() {
 
 		// radial
-		w_ring_rotation_angle			.set( this.read_key(T_Preference.ring_angle)		   ?? 0);
-		w_ring_rotation_radius			.set(Math.max( this.read_key(T_Preference.ring_radius) ?? 0, k.radius.ring_center));
+		w_ring_rotation_angle	.set( this.read_key(T_Preference.ring_angle)		   ?? 0);
+		w_ring_rotation_radius	.set(Math.max( this.read_key(T_Preference.ring_radius) ?? 0, k.radius.ring_center));
 
 		// other
-		w_font_size						.set( this.read_key(T_Preference.font_size)			   ?? 14);
-		w_thing_fontFamily				.set( this.read_key(T_Preference.font)				   ?? 'Times New Roman');
-		w_background_color				.set( this.read_key(T_Preference.background)		   ?? colors.background);
+		w_font_size				.set( this.read_key(T_Preference.font_size)			   ?? 14);
+		w_thing_fontFamily		.set( this.read_key(T_Preference.font)				   ?? 'Times New Roman');
+		w_background_color		.set( this.read_key(T_Preference.background)		   ?? colors.background);
 
 		// visibility
-		w_show_info_ofType				.set( this.read_key(T_Preference.info)				   ?? T_Info.focus);
-		w_show_tree_ofType				.set( this.read_key(T_Preference.tree)				   ?? T_Kinship.child);
-		w_show_graph_ofType				.set( this.read_key(T_Preference.graph)				   ?? T_Graph.tree);
-		w_show_traits_ofType			.set( this.read_key(T_Preference.traits)			   ?? [T_Trait.text]);
-		w_show_details_ofType			.set( this.read_key(T_Preference.detail_types)		   ?? [T_Details.tools, T_Details.storage]);
-		w_show_countDots_ofType			.set( this.read_key(T_Preference.countDots)			   ?? [T_Kinship.child]);
+		w_show_info_ofType		.set( this.read_key(T_Preference.info)				   ?? T_Info.focus);
+		w_show_tree_ofType		.set( this.read_key(T_Preference.tree)				   ?? T_Kinship.child);
+		w_show_graph_ofType		.set( this.read_key(T_Preference.graph)				   ?? T_Graph.tree);
+		w_show_traits_ofType	.set( this.read_key(T_Preference.traits)			   ?? [T_Trait.text]);
+		w_show_details_ofType	.set( this.read_key(T_Preference.detail_types)		   ?? [T_Details.tools, T_Details.storage]);
+		w_show_countDots_ofType	.set( this.read_key(T_Preference.countDots)			   ?? [T_Kinship.child]);
+
 		this.reactivity_subscribe()
 	}
 
