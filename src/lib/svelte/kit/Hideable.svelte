@@ -15,16 +15,17 @@
     $: (async () => {
         if (element) {
             await tick();
-            height = banner_height + (isHidden ? 0 : element.scrollHeight - banner_height);
+            height = isHidden ? banner_height : element.scrollHeight;
         }
     })();
 
-    function toggleExpanded() {
+    function toggle_hidden() {
         isHidden = !isHidden;
     }
 </script>
 
 <div
+    class='hideable'
     bind:this={element}
     style='
         display: flex;
@@ -33,11 +34,10 @@
         position: relative;
         flex-direction: column;
         {origin ? `left: ${origin.x}px; top: ${origin.y}px;` : k.empty}'>
-    <div 
-        on:click={toggleExpanded}
+    <div
+        class='banner'
+        on:click={toggle_hidden}
         style='
-            top: 0px;
-            left: 0px;
             width: 100%;
             display: flex;
             cursor: pointer;
@@ -47,7 +47,7 @@
             height: {banner_height}px;'>
         {title}
     </div>
-    <div style='display: {isHidden ? "none" : "block"};'>
+    <div class={'slot-' + title} style='display: {isHidden ? "none" : "block"}; position: relative; top: {banner_height}px;'>
         <slot/>
     </div>
 </div>

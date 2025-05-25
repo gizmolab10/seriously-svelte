@@ -61,13 +61,14 @@
 		height:{$w_graph_rect.size.height}px;'>
 	{#if $w_show_details_asStack}
 		<Vertical_Stack width={width}>
+			<Hideable title='header' width={width} isHidden={true}>
+				<D_Header/>
+			</Hideable>
 			<Hideable title='storage' width={width} isHidden={true}>
-				<h2>First Section</h2>
-				<p>Any <b>Svelte</b> or HTML content here!</p>
+				<D_Storage/>
 			</Hideable>
 			<Hideable title='tools' width={width} isHidden={true}>
-				<h2>Second Section</h2>
-				<p>More <i>arbitrary</i> content here.</p>
+				<D_Tools/>
 			</Hideable>
 		</Vertical_Stack>
 	{:else}

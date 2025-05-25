@@ -33,20 +33,14 @@
 
 </script>
 
-<div class='details'
-	style='
-		top:0px;
-		left:0px;
-		position:absolute;
-		width:{k.width_details}px;
-		height:{$w_graph_rect.size.height}px;'>
+<div class='header'>
 	<Segmented
 		allow_none={true}
 		allow_multiple={true}
 		name='details-selector'
-		selected={$w_show_details_ofType}
 		titles={titles_ofDetails}
 		origin={new Point(4, 0.5)}
+		selected={$w_show_details_ofType}
 		selection_closure={details_selection_closure}/>
 	{#key reattachments}
 		{#if s_details.number_ofDetails > 0}
