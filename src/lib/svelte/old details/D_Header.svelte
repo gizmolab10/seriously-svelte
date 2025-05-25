@@ -33,32 +33,34 @@
 
 </script>
 
-<Segmented
-	allow_none={true}
-	allow_multiple={true}
-	name='details-selector'
-	titles={titles_ofDetails}
-	origin={new Point(4, 0.5)}
-	selected={$w_show_details_ofType}
-	selection_closure={details_selection_closure}/>
-{#key reattachments}
-	{#if s_details.number_ofDetails > 0}
-		<div style='
-			top:24px;
-			white-space:pre;
-			position:absolute;
-			text-align:center;
-			width:{k.width_details}px;
-			font-size:{k.font_size.common}px;'>
-			{s_details.ancestry?.thing?.title.clipWithEllipsisAt(30)}
-		</div>
-		<Segmented
-			name='info-type'
-			height={k.height.button}
-			origin={new Point(79, 44)}
-			font_size={k.font_size.smaller}
-			selected={[$w_show_info_ofType]}
-			titles={[T_Info.focus, T_Info.selection]}
-			selection_closure={info_selection_closure}/>
-	{/if}
-{/key}
+<div class='header'>
+	<Segmented
+		allow_none={true}
+		allow_multiple={true}
+		name='details-selector'
+		titles={titles_ofDetails}
+		origin={new Point(4, 0.5)}
+		selected={$w_show_details_ofType}
+		selection_closure={details_selection_closure}/>
+	{#key reattachments}
+		{#if s_details.number_ofDetails > 0}
+			<div style='
+				top:24px;
+				white-space:pre;
+				position:absolute;
+				text-align:center;
+				width:{k.width_details}px;
+				font-size:{k.font_size.common}px;'>
+				{s_details.ancestry?.thing?.title.clipWithEllipsisAt(30)}
+			</div>
+			<Segmented
+				name='info-type'
+				height={k.height.button}
+				origin={new Point(79, 44)}
+				font_size={k.font_size.smaller}
+				selected={[$w_show_info_ofType]}
+				titles={[T_Info.focus, T_Info.selection]}
+				selection_closure={info_selection_closure}/>
+		{/if}
+	{/key}
+</div>

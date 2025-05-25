@@ -61,7 +61,7 @@
 		height:{$w_graph_rect.size.height}px;'>
 	{#if $w_show_details_asStack}
 		<Vertical_Stack width={width}>
-			<Hideable title='header' width={width} isHidden={false} detect_click={false}>
+			<Hideable title='header' width={width} isHidden={true}>
 				<D_Header/>
 			</Hideable>
 			<Hideable title='storage' width={width} isHidden={true}>
@@ -69,18 +69,6 @@
 			</Hideable>
 			<Hideable title='tools' width={width} isHidden={true}>
 				<D_Tools/>
-			</Hideable>
-			<Hideable title='display' width={width} isHidden={true}>
-				<D_Display/>
-			</Hideable>
-			<Hideable title='info' width={width} isHidden={true}>
-				<D_Info/>
-			</Hideable>
-			<Hideable title='tags' width={width} isHidden={true}>
-				<D_Tags/>
-			</Hideable>
-			<Hideable title='traits' width={width} isHidden={true}>
-				<D_Traits/>
 			</Hideable>
 		</Vertical_Stack>
 	{:else}

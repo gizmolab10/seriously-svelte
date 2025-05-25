@@ -6,6 +6,7 @@
     export let title = k.empty;
     export let height = 0;
     export let width = 0;
+    export let detect_click = true;
     const banner_height = 20;
     const dispatch = createEventDispatcher();
     let element: HTMLElement;
@@ -36,7 +37,7 @@
         {origin ? `left: ${origin.x}px; top: ${origin.y}px;` : k.empty}'>
     <div
         class='banner'
-        on:click={toggle_hidden}
+        on:click={detect_click ? toggle_hidden : undefined}
         style='
             width: 100%;
             display: flex;
