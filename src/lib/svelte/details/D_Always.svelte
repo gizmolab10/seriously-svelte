@@ -23,7 +23,8 @@
 		<p style='
 			top:-6px;
 			position:relative;
-			text-align: center;'>
+			text-align: center;
+			font-size:{k.font_size.smaller}px;'>
 			click on a line below to see its details
 		</p>
 	{:else}

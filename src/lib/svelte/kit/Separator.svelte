@@ -37,6 +37,14 @@
 		height:{thickness}px;
 		width:{width - margin * 2}px;
 		background-color:{separator_color};'>
+	{#if add_wings && !margin}
+		<Gull_Wings
+			center={new Point(width, 0.3).offsetEquallyBy(thickness / 2)}
+			direction={Direction.left}
+			color={separator_color}
+			radius={thickness * 3}
+			thickness={thickness}/>
+	{/if}
 </div>
 {#if !!title}
 	<div
@@ -51,12 +59,4 @@
 			background-color:{$w_background_color};'>
 		{title}
 	</div>
-{/if}
-{#if add_wings && !margin}
-	<Gull_Wings
-		center={new Point(width, top).offsetEquallyBy(thickness / 2)}
-		direction={Direction.left}
-		color={separator_color}
-		radius={thickness * 3}
-		thickness={thickness}/>
 {/if}

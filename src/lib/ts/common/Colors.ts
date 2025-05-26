@@ -3,16 +3,18 @@ import { parseToRgba, transparentize } from 'color2k';
 export class Colors {
 	default = 'black';
 	background = 'white';
+	banner = '#f8f8f8';
     disabled = 'lightGray';
-	separator = '#eeeeeee0';
+	separator = '#eeeee0';
     default_forThings = 'blue';
 
 	opacitize(color: string, amount: number): string { return transparentize(color, 1 - amount); }
+	separatorFor(background: string): string { return this.blend('#eeeee0', background);}
+	bannerFor(background: string): string { return this.blend('#f8f8f8', background, 1.5);}
 
-	separatorFor(background: string): string {
-		let color = '#eeeeeee0';
+	blend(color: string, background: string, saturation: number = 5): string {
 		if (!this.colors_areIdentical(background, this.background)) {
-			const separator = this.multiply_saturationOf_by(background, 5);
+			const separator = this.multiply_saturationOf_by(background, saturation);
 			if (!!separator) {
 				color = separator;
 			}

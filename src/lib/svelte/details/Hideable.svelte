@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import { k, u, Point, T_Details } from '../../ts/common/Global_Imports';
+    import { k, u, Point, colors, T_Details } from '../../ts/common/Global_Imports';
     import { w_show_details_ofType } from '../../ts/common/Stores';
     import { createEventDispatcher, tick } from 'svelte';
     import Separator from '../kit/Separator.svelte';
@@ -42,8 +42,8 @@
     class='hideable'
     bind:this={element}
     style='
-        display: flex;
 		width: 100%;
+        display: flex;
         height: {height}px;
         position: relative;
         flex-direction: column;
@@ -56,18 +56,37 @@
                 width: 100%;
                 display: flex;
                 cursor: pointer;
-                padding-left: 8px;
+                padding-left: 0;
                 position: absolute;
-                align-items: center;
+                align-items: stretch;
                 height: {banner_height}px;'>
             <Separator
-                top={4.5}
-                title={title}
+                top={0}
+                thickness={1}
+                add_wings={true}/>
+            <div
+                class='title'
+                style='
+                    margin: 0;
+                    padding: 0;
+                    width: 100%;
+                    text-align: center;
+                    background-color: {colors.banner};
+                    font-size: {k.font_size.smaller}px;
+                    line-height: {banner_height}px;'>
+                {title}
+            </div>
+            <Separator
+                thickness={1}
                 add_wings={true}
-                title_font_size={k.font_size.small}/>
+                top={banner_height}/>
         </div>
     {/if}
-    <div class={'slot-' + title} style='display: {isHidden ? "none" : "block"}; position: relative; top: {has_banner ? banner_height : 0}px;'>
+    <div class={'slot-' + title}
+        style='
+            position: relative;
+            display: {isHidden ? "none" : "block"};
+            top: {1 + (has_banner ? banner_height : 0)}px;'>
         <slot/>
     </div>
 </div>
