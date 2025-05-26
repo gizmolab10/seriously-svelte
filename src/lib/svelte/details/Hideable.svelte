@@ -1,6 +1,6 @@
 <script lang='ts'>
     import { k, u, Rect, Size, Point, colors, svgPaths, T_Details, T_Layer } from '../../ts/common/Global_Imports';
-    import { w_show_details_ofType } from '../../ts/common/Stores';
+    import { w_background_color, w_show_details_ofType } from '../../ts/common/Stores';
     import SVG_Gradient from '../kit/SVG_Gradient.svelte';
     import { createEventDispatcher, tick } from 'svelte';
     import Separator from '../kit/Separator.svelte';
@@ -12,10 +12,12 @@
     const title = T_Details[t_details];
     const dispatch = createEventDispatcher();
     const banner_rect = new Rect(Point.zero, new Size(k.width_details, banner_height));
-    let element: HTMLElement;
+    let banner_color = colors.bannerFor($w_background_color);
     let isHidden = !show_slot();
+    let element: HTMLElement;
 
     $: dispatch('heightChange', { height });
+    $: $w_background_color, banner_color = colors.bannerFor($w_background_color);
     function show_slot(): boolean { return has_banner ? $w_show_details_ofType.includes(t_details) : true; }
     
     $: (async () => {
@@ -67,7 +69,7 @@
                 thickness={1}
                 add_wings={true}/>
             <SVG_Gradient
-                color={colors.banner}
+                color={banner_color}
                 size={banner_rect.size}
                 zindex={T_Layer.frontmost}
                 path={svgPaths.rectangle(banner_rect)}/>

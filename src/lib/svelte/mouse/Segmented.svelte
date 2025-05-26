@@ -14,6 +14,7 @@
 	export let origin = Point.zero;
 	export let allow_none = false;
     export let name = k.empty;
+	export let zindex = 0;
 	let width = height / 2;
 	let g_segments: Array<G_Segment> = [];
 
@@ -74,6 +75,7 @@
 		<Segment
 			fill={fill}
 			stroke={stroke}
+			zindex={zindex}
 			font_size={font_size}
 			g_segment={g_segment}
 			segmented_name={name}

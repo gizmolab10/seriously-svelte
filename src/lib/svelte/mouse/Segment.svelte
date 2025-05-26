@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, Rect, Size, Point, debug, colors, svgPaths } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Oblong, G_Segment } from '../../ts/common/Global_Imports';
+	import { T_Oblong, G_Segment } from '../../ts/common/Global_Imports';
 	import { w_background_color } from '../../ts/common/Stores';
 	import Mouse_Responder from './Mouse_Responder.svelte';
 	export let hit_closure = (title, shift) => {};
@@ -9,6 +9,7 @@
 	export let stroke = colors.separator;
 	export let segmented_name = k.empty;
 	export let g_segment!: G_Segment;
+	export let zindex = 0;
     const name = g_segment.title;
 	const segment_name = `${segmented_name}-${name}-segment`;
 	let title_color = colors.default;
@@ -35,13 +36,13 @@
 </script>
 
 <Mouse_Responder
+	zindex={zindex}
 	cursor='pointer'
 	width={size.width}
 	name={segment_name}
 	height={size.height}
 	font_size={font_size+'px'}
 	origin={g_segment.origin}
-	zindex={T_Layer.frontmost}
 	handle_s_mouse={up_hover_closure}>
 	<svg
 		id={`${name}`}
