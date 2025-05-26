@@ -7,6 +7,7 @@
 	export let thickness = k.thickness.separator;
 	export let title_left: number | null= null;
 	export let title: string | null = null;
+	export let zindex = T_Layer.details;
 	export let width = k.width_details;
 	export let add_wings = false;
 	export let margin = 0;
@@ -30,22 +31,22 @@
 <div class='separator-line'
 	style='
 		top:{top}px;
+		z-index:{zindex};
 		position:absolute;
 		left:{line_left}px;
 		height:{thickness}px;
-		z-index:{T_Layer.details};
 		width:{width - margin * 2}px;
 		background-color:{separator_color};'>
 </div>
 {#if !!title}
 	<div
 		style='
+			z-index:{zindex};
 			padding: 0px 5px;
 			position:absolute;
 			top:{title_top}px;
 			left:{title_left}px;
 			white-space: nowrap;
-			z-index:{T_Layer.frontmost};
 			font-size:{title_font_size}px;
 			background-color:{$w_background_color};'>
 		{title}

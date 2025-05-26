@@ -10,18 +10,22 @@
 	let table;
 
 	export function location_ofCellAt(x: Integer, y: Integer): Point {
+		const origin0 = _location_ofCellAt(0, y);
+		const originY = _location_ofCellAt(x, y);
+		return originY.offsetByY(-origin0.y);
+	}
+
+	function _location_ofCellAt(x: Integer, y: Integer): Point {
 		const rows = table.rows;
+		const row = rows[x];
+		const cells = row.cells;
 		if (x >= rows.length) {
 			console.error('Row index out of bounds');
 		}
-		const row = rows[x];
-		const cells = row.cells;
 		if (y >= cells.length) {
 			console.error('Column index out of bounds');
 		}
-		const cell = cells[y];
-		const origin = Rect.createFromDOMRect(cell.getBoundingClientRect()).origin.multipliedBy(1 / w.scale_factor);
-		return origin.offsetByY(-top);
+		return Rect.createFromDOMRect(cells[y].getBoundingClientRect()).origin.multipliedBy(1 / w.scale_factor);
 	}
 
 </script>
