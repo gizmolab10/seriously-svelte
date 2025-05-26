@@ -1,15 +1,17 @@
 <script lang='ts'>
-    import { k, u, Point, colors, T_Details } from '../../ts/common/Global_Imports';
+    import { k, u, Rect, Size, Point, colors, svgPaths, T_Details, T_Layer } from '../../ts/common/Global_Imports';
     import { w_show_details_ofType } from '../../ts/common/Stores';
+    import SVG_Gradient from '../kit/SVG_Gradient.svelte';
     import { createEventDispatcher, tick } from 'svelte';
     import Separator from '../kit/Separator.svelte';
-    export let height = 0;
-    export let has_banner = true;
-    export let t_details: T_Details;
     export let origin: Point | null = null;
-    const dispatch = createEventDispatcher();
-    const title = T_Details[t_details];
+    export let t_details: T_Details;
+    export let has_banner = true;
+    export let height = 0;
     const banner_height = 14;
+    const title = T_Details[t_details];
+    const dispatch = createEventDispatcher();
+    const banner_rect = new Rect(Point.zero, new Size(k.width_details, banner_height));
     let element: HTMLElement;
     let isHidden = !show_slot();
 
@@ -64,6 +66,11 @@
                 top={0}
                 thickness={1}
                 add_wings={true}/>
+            <SVG_Gradient
+                color={colors.banner}
+                size={banner_rect.size}
+                zindex={T_Layer.frontmost}
+                path={svgPaths.rectangle(banner_rect)}/>
             <div
                 class='title'
                 style='
@@ -71,9 +78,10 @@
                     padding: 0;
                     width: 100%;
                     text-align: center;
-                    background-color: {colors.banner};
-                    font-size: {k.font_size.smaller}px;
-                    line-height: {banner_height}px;'>
+                    position: absolute;
+                    background-color: transparent;
+                    line-height: {banner_height}px;
+                    font-size: {k.font_size.smaller}px;'>
                 {title}
             </div>
             <Separator

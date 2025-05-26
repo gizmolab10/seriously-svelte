@@ -1,4 +1,4 @@
-import { k, u, Size, Point, T_Oblong, Direction } from '../common/Global_Imports';
+import { k, u, Size, Point, T_Oblong, Direction, Rect } from '../common/Global_Imports';
 import type { Integer } from '../common/Types';
 
 export default class SVG_Paths {
@@ -7,6 +7,10 @@ export default class SVG_Paths {
 
 	line_atAngle(start: Point, radius: number, angle: number) {
 		return this.line_connecting(start, Point.fromPolar(radius, angle).offsetBy(start))
+	}
+
+	rectangle(rect: Rect): string {
+		return `M ${rect.x} ${rect.y} L ${rect.right} ${rect.y} L ${rect.right} ${rect.bottom} L ${rect.x} ${rect.bottom} Z`;
 	}
 
     dash(diameter: number, margin: number): string {

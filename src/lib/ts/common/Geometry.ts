@@ -159,6 +159,8 @@ export class Rect {
 	get y():						 number { return this.origin.y; }
 	get width():					 number { return this.size.width; }
 	get height():					 number { return this.size.height; }
+	get right():					 number { return this.origin.x + this.size.width; }
+	get bottom():					 number { return this.origin.y + this.size.height; }
 	get isZero():					boolean { return this.origin.isZero && this.size.isZero; }
 	get description():				 string { return `${this.origin.verbose}, ${this.size.verbose}`; }
 	get viewBox():					 string { return `${this.origin.description} ${this.size.description}`; }

@@ -2,7 +2,7 @@
 	import { w_show_info_ofType, w_show_details_ofType } from '../../ts/common/Stores';
 	import { c, k, u, ux, Point, debug, layout } from '../../ts/common/Global_Imports';
 	import { w_ancestries_grabbed, w_ancestry_focus } from '../../ts/common/Stores';
-	import { T_Layer, T_Details, T_Info } from '../../ts/common/Global_Imports';
+	import { T_Details, T_Info } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_device_isMobile } from '../../ts/common/Stores';
 	import { s_details } from '../../ts/state/S_Details';
 	import Segmented from '../mouse/Segmented.svelte';
@@ -29,7 +29,7 @@
 		</p>
 	{:else}
 		<div style='
-			top:0px;
+			top:-2px;
 			white-space:pre;
 			position:absolute;
 			text-align:center;
@@ -40,7 +40,7 @@
 		<Segmented
 			name='info-type'
 			height={k.height.button}
-			origin={new Point(79, 20)}
+			origin={new Point(79, 18)}
 			font_size={k.font_size.smaller}
 			selected={[$w_show_info_ofType]}
 			titles={[T_Info.focus, T_Info.selection]}
