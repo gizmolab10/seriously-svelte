@@ -1,10 +1,10 @@
-import { c, k, p, u, Thing, Trait, debug, layout, Predicate, Relationship, Persistable, databases } from '../common/Global_Imports';
+import { c, k, p, u, Thing, Trait, debug, layout, Predicate, Relationship, Persistable, databases, Tag } from '../common/Global_Imports';
 import { QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
 import { T_Thing, T_Trait, T_Debug, T_Create, T_Predicate, T_Preference } from '../common/Global_Imports';
 import { onSnapshot, deleteField, getFirestore, DocumentData, DocumentChange } from 'firebase/firestore';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
 import { T_Persistable, T_Persistence } from '../common/Global_Imports';
-import type { Dictionary } from '../common/Types';
+import type { Dictionary, Integer } from '../common/Types';
 import Identifiable from '../runtime/Identifiable';
 import { initializeApp } from 'firebase/app';
 import { T_Database } from './DBCommon';
@@ -22,6 +22,7 @@ export default class DBFirebase extends DBCommon {
 	};
 
 	idBase = 'Public';
+	addedTag!: Tag;
 	addedThing!: Thing;
 	addedTrait!: Trait;
 	bulksName = 'Bulks';
@@ -177,6 +178,7 @@ export default class DBFirebase extends DBCommon {
 				const collectionRef = collection(this.firestore, this.bulksName, idBase, t_persistable);
 				if (!!bulk) {
 					switch (t_persistable) {
+						case T_Persistable.tags:		  bulk.tagsCollection = collectionRef; break;
 						case T_Persistable.things:		  bulk.thingsCollection = collectionRef; break;
 						case T_Persistable.traits:		  bulk.traitsCollection = collectionRef; break;
 						case T_Persistable.relationships: bulk.relationshipsCollection = collectionRef; break;
@@ -484,6 +486,102 @@ export default class DBFirebase extends DBCommon {
 		}
 		return true;
 	}
+
+	static readonly _____TAG: unique symbol;
+
+	tag_extractChangesFromPersistent(tag: Tag, from: PersistentTag) {
+		const changed = !from.isEqualTo(tag);
+		if (changed) {
+			tag.thingHIDs = from.thingHIDs;
+			tag.type	  = from.type;
+		}
+		return changed;
+	}
+
+	async tag_persistentDelete(tag: Tag) {
+		const tagsCollection = this.bulk_forID(tag.idBase)?.tagsCollection;
+		if (!!tagsCollection) {
+			try {
+				const ref = doc(tagsCollection, tag.id) as DocumentReference<Tag>;
+				await deleteDoc(ref);
+				tag.log(T_Debug.remote, 'DELETE T');
+			} catch (error) {
+				this.reportError(error);
+			}
+		}
+	}
+
+	async tag_persistentUpdate(tag: Tag) {
+		const tagsCollection = this.bulk_forID(tag.idBase)?.tagsCollection;
+		if (!!tagsCollection) {
+			const ref = doc(tagsCollection, tag.id) as DocumentReference<Tag>;
+			const remoteTag = new PersistentTag(tag);
+			const jsTag = { ...remoteTag };
+			try {
+				await setDoc(ref, jsTag);
+				tag.log(T_Debug.remote, 'UPDATE T');
+			} catch (error) {
+				this.reportError(error);
+			}
+		}
+	}
+
+	async tag_remember_persistentCreate(tag: Tag) {
+		const tagsCollection = this.bulk_forID(tag.idBase)?.tagsCollection;
+		if (!!tagsCollection) {
+			const remoteTag = new PersistentTag(tag);
+			const jsTag = { ...remoteTag };
+			this.addedTag = tag;
+			try {
+				this.deferSnapshots = true;
+				tag.persistence.awaiting_remoteCreation = true;
+				const ref = await addDoc(tagsCollection, jsTag)
+				tag.persistence.awaiting_remoteCreation = false;
+				tag.persistence.already_persisted = true;
+				const h = this.hierarchy;
+				h.tag_forget(tag);
+				tag.setID(ref.id);
+				h.tag_remember(tag);
+				await this.handle_deferredSnapshots();
+				tag.log(T_Debug.remote, 'CREATE T');
+			} catch (error) {
+				this.reportError(error);
+			}
+		}
+	}
+
+	tag_handle_docChanges(idBase: string, id: string, change: DocumentChange, data: DocumentData): boolean {
+		const remoteTag = new PersistentTag(data);
+		if (!remoteTag) {
+			return false;
+		} else {
+			const h = this.hierarchy;
+			let tag = h.tag_forHID(id.hash());
+			switch (change.type) {
+				case 'added':
+					if (!!tag || remoteTag.isEqualTo(this.addedTag)) {
+						return false;		// do not invoke signal because nothing has changed
+					}
+					tag = h.tag_remember_runtimeCreate(idBase, id, remoteTag.type, remoteTag.thingHIDs, true);
+					break;
+				case 'removed':
+					if (!!tag) {
+						h.tag_forget(tag);
+					}
+					break;
+				case 'modified':
+					if (!tag || tag.persistence.wasModifiedWithinMS(800) || !this.tag_extractChangesFromPersistent(tag, remoteTag)) {
+						return false;		// do not invoke signal because nothing has changed
+					}
+					break;
+			}
+			setTimeout(() => { // wait in case a thing involved in this tag arrives in the data
+				h.tags_refreshKnowns();
+				layout.grand_build();
+			}, 20);
+		}
+		return true;
+	}
 	
 	static readonly _____PREDICATE: unique symbol;
 
@@ -715,6 +813,7 @@ export default class DBFirebase extends DBCommon {
 
 export class Bulk {
 	idBase: string = k.empty;
+	tagsCollection: CollectionReference | null = null;
 	thingsCollection: CollectionReference | null = null;
 	traitsCollection: CollectionReference | null = null;
 	relationshipsCollection: CollectionReference | null = null;
@@ -787,6 +886,20 @@ export class PersistentTrait {
 		trait.ownerID == this.ownerID &&
 		trait.t_trait == this.t_trait &&
 		trait.text	  == this.text;
+	}
+}
+
+export class PersistentTag {
+	thingHIDs: Array<Integer>;
+	type: string;
+	
+	isEqualTo(tag: Tag | null) { return !!tag && tag.thingHIDs == this.thingHIDs; }
+	get hasNoData(): boolean { return !this.thingHIDs && !this.type; }
+
+	constructor(data: DocumentData) {
+		const remote = data as PersistentTag;
+		this.thingHIDs = remote.thingHIDs;
+		this.type = remote.type;
 	}
 }
 

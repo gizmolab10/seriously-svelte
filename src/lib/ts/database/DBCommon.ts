@@ -70,14 +70,14 @@ export default class DBCommon {
 	async persistAll_identifiables_maybe(t_persistable: T_Persistable, force: boolean = false) {
 		const h = this.hierarchy;
 		const identifiables = h.persistables_forKey(t_persistable);
-		if (this.isRemote) {
+		if (this.isRemote) {				// db firebase and airtable
 			for (const identifiable of identifiables) {
 				if (identifiable.persistence.isDirty || force) {
 					await identifiable.persist();
 					identifiable.persistence.isDirty = false;
 				}
 			}
-		} else if (this.isPersistent) {		//  && t_persistable != T_Persistable.traits
+		} else if (this.isPersistent) {		// db local only, db test is not persistent
 			p.writeDB_key(t_persistable.toLowerCase(), identifiables);
 		}
 	}

@@ -184,18 +184,6 @@ export class Utilities extends Testworthy_Utilities {
 		return low;
 	}
 
-	static readonly _____ARRAYS: unique symbol;
-
-	remove_fromArray<T extends Identifiable>(item: T, array: Array<T>): Array<T> {
-		if (!item) return array;
-		return array.filter(element => element.id !== item.id);
-	}
-
-	indexOf_inArray<T extends Identifiable>(item: T, array: Array<T>): number {
-		if (!item) return -1;
-		return array.findIndex(element => element.id === item.id);
-	}
-
 }
 
 export const u = new Utilities();

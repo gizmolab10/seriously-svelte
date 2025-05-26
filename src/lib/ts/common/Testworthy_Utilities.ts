@@ -14,11 +14,6 @@ export class Testworthy_Utilities {
 	onNextCycle_apply(closure: () => {})								 { setTimeout(() => { closure(); }, 0); }
 	location_ofMouseEvent(event: MouseEvent):					   Point { return new Point(event.clientX, event.clientY); }
 	quadrant_ofAngle(angle: number):						  T_Quadrant { return new Angle(angle).quadrant_ofAngle; }
-	concatenateArrays(a: Array<any>, b: Array<any>):		  Array<any> { return [...a, ...b]; }
-	strip_falsies(array: Array<any>):						  Array<any> { return array.filter(a => !!a); }
-	subtract_arrayFrom(a: Array<any>, b: Array<any>):		  Array<any> { return b.filter(c => a.filter(d => c != d)); }
-	uniquely_concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return this.strip_invalid(this.concatenateArrays(a, b)); }
-	strip_invalid(array: Array<any>):						  Array<any> { return this.strip_identifiableDuplicates(this.strip_falsies(array)); }
 
 	// remove item from a dictionary at the index
 	// assuming it has string keys and number values
@@ -70,19 +65,6 @@ export class Testworthy_Utilities {
 		return copiedObject;
 	}
 
-	strip_identifiableDuplicates(identifiables: Array<Identifiable>): Array<Identifiable> {
-		let identifiablesByHID: {[hash: number]: Identifiable} = {};
-		let stripped: Array<Identifiable> = [];
-		for (const identifiable of identifiables) {
-			const hid = identifiable.hid;
-			if ((!!hid || hid == 0) && (!identifiablesByHID[hid])) {
-				identifiablesByHID[hid] = identifiable;
-				stripped.push(identifiable);
-			}
-		}
-		return stripped;
-	}
-
 	basis_angle_ofType_Quadrant(quadrant: T_Quadrant): number {
 		switch (quadrant) {
 			case T_Quadrant.upperRight: return Angle.three_quarters;
@@ -129,7 +111,13 @@ export class Testworthy_Utilities {
 		}
 	}
 
-	static readonly _____ARRAYS_BY_REFERENCE: unique symbol;
+	static readonly _____ARRAYS: unique symbol;
+
+	concatenateArrays(a: Array<any>, b: Array<any>):  Array<any> { return [...a, ...b]; }
+	strip_falsies(array: Array<any>):				  Array<any> { return array.filter(a => !!a); }
+	subtract_arrayFrom(a: Array<any>, b: Array<any>): Array<any> { return b.filter(c => a.filter(d => c != d)); }
+	strip_invalid(array: Array<any>):				  Array<any> { return this.strip_duplicates(this.strip_falsies(array)); }
+	uniquely_concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return this.strip_duplicates(this.concatenateArrays(a, b)); }
 
 	remove_fromArray_byReference<T>(item: T, array: Array<T>): Array<T> {
 		if (!item) return array;
@@ -139,6 +127,44 @@ export class Testworthy_Utilities {
 	indexOf_inArray_byReference<T>(item: T, array: Array<T>): number {
 		if (!item) return -1;
 		return array.findIndex(element => element === item);
+	}
+
+	strip_duplicates(array: Array<any>): Array<any> {
+		let stripped: Array<any> = [];
+		for (const item of array) {
+			if (!stripped.includes(item)) {
+				stripped.push(item);
+			}
+		}
+		return stripped;
+	}
+
+	static readonly _____ARRAYS_OF_IDENTIFIABLES: unique symbol;
+
+	strip_invalid_Identifiables(array: Array<Identifiable>): Array<Identifiable> { return this.strip_identifiableDuplicates(this.strip_falsies(array)); }
+	uniquely_concatenateArrays_ofIdentifiables(a: Array<Identifiable>, b: Array<Identifiable>): Array<Identifiable> { return this.strip_invalid_Identifiables(this.concatenateArrays(a, b)); }
+
+	remove_fromArray<T extends Identifiable>(item: T, array: Array<T>): Array<T> {
+		if (!item) return array;
+		return array.filter(element => element.id !== item.id);
+	}
+
+	indexOf_inArray<T extends Identifiable>(item: T, array: Array<T>): number {
+		if (!item) return -1;
+		return array.findIndex(element => element.id === item.id);
+	}
+
+	strip_identifiableDuplicates(identifiables: Array<Identifiable>): Array<Identifiable> {
+		let identifiablesByHID: {[hash: number]: Identifiable} = {};
+		let stripped: Array<Identifiable> = [];
+		for (const identifiable of identifiables) {
+			const hid = identifiable.hid;
+			if ((!!hid || hid == 0) && (!identifiablesByHID[hid])) {
+				identifiablesByHID[hid] = identifiable;
+				stripped.push(identifiable);
+			}
+		}
+		return stripped;
 	}
 
 	static readonly _____JSON: unique symbol;

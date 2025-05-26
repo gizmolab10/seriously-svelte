@@ -1,14 +1,12 @@
 <script lang='ts'>
-	import { w_hierarchy, w_show_traits_ofType, w_ancestries_grabbed, w_thing_traits } from '../../ts/common/Stores';
-	import { S_Mouse, T_Trait, T_Tool, T_Element, T_Request } from '../../ts/common/Global_Imports';
-	import { k, ux, show, colors, Size, Thing, Trait, Point } from '../../ts/common/Global_Imports';
+	import { w_hierarchy, w_show_traits_ofType, w_thing_traits } from '../../ts/common/Stores';
+	import { S_Mouse, T_Trait, T_Element, T_Request } from '../../ts/common/Global_Imports';
+	import { k, ux, colors, Size, Point } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/runtime/Identifiable';
-    import Buttons_Row from '../buttons/Buttons_Row.svelte';
+    import Next_Previous from '../kit/Next_Previous.svelte';
 	import { s_details } from '../../ts/state/S_Details';
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
-	import Separator from '../kit/Separator.svelte';
-	import Button from '../buttons/Button.svelte';
 	export let top = 0;
 	const es_button = ux.s_element_for(new Identifiable('trait'), T_Element.button, 'trait');
 	let text_box_size = new Size(k.width_details - 34, 68);
@@ -47,18 +45,9 @@
 		font_size={k.font_size.smaller}
 		selected={$w_show_traits_ofType}
 		selection_closure={handleClick_onTraitTypes}/>
-	<Buttons_Row
-		margin=0
-		width=149
-		show_box={false}
-		has_title={false}
-		button_height={18}
-		horizontal_gap={6}
-		name='previous-next'
+	<Next_Previous
 		origin={new Point(104, 4)}
-		row_titles={['previous', 'next']}
-		closure={handleClick_onNextPrevious}
-		font_sizes={[k.font_size.smallest, k.font_size.smaller]}/>
+		closure={handleClick_onNextPrevious}/>
 	{#key $w_thing_traits}
 		{#if !!$w_thing_traits && $w_thing_traits.length > 0}
 			{#each $w_thing_traits as trait}

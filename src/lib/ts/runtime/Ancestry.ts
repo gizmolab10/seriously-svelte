@@ -106,8 +106,8 @@ export default class Ancestry extends Identifiable {
 	get childRelationships():	 Array<Relationship> { return this.relationships_ofKind_forParents(this.kind, false); }
 
 	get relationships(): Array<Relationship> {
-		const relationships = this.relationship_hids.map(hid => this.hierarchy.relationship_forHID(hid)) ?? [];
-		return u.strip_invalid(relationships);
+		const relationshipHIDs = this.relationship_hids.map(hid => this.hierarchy.relationship_forHID(hid)) ?? [];
+		return u.strip_invalid(relationshipHIDs);
 	}
 	
 	relationships_ofKind_forParents(kind: string, forParents: boolean): Array<Relationship> {
@@ -136,7 +136,7 @@ export default class Ancestry extends Identifiable {
 			if (predicate.isBidirectional) {
 				const parents = this.thing?.ancestries_forPredicate(predicate);
 				if (!!parents) {	// each of the parents is bidirectional TO this ancestry's thing
-					ancestries = u.uniquely_concatenateArrays(ancestries, parents);
+					ancestries = u.uniquely_concatenateArrays_ofIdentifiables(ancestries, parents) as Array<Ancestry>;
 				}
 			}
 		}

@@ -1,14 +1,39 @@
-import { w_show_details_ofType, w_show_traits_ofType, w_ancestries_grabbed } from '../common/Stores';
-import { w_hierarchy, w_t_database, w_thing_traits, w_ancestry_focus } from '../common/Stores';
-import { show, Ancestry, T_Details, Trait, T_Trait } from '../common/Global_Imports';
+import { show, Ancestry, T_Details, Tag, Trait, T_Trait } from '../common/Global_Imports';
+import { w_hierarchy, w_t_database, w_ancestries_grabbed } from '../common/Stores';
+import { w_thing_traits, w_thing_tags, w_ancestry_focus } from '../common/Stores';
+import { w_show_details_ofType, w_show_traits_ofType } from '../common/Stores';
 import { get } from 'svelte/store';
+
+class S_Identifiables<T> {
+	items: Array<T> = [];
+	index_ofItem = 0;
+	total_items = 0;
+
+	get item(): T | null { return this.items[this.index_ofItem] ?? null; }
+
+	constructor(items: Array<T>) {
+		this.total_items = items.length;
+		this.items = items;
+	}
+
+	find_next_item(next: boolean): boolean {
+		let index = this.items.length;
+		while (index > 0) {		// prevent infinite loop if no item is found
+			this.index_ofItem = this.index_ofItem.increment(next, this.total_items);
+			if (!!this.item) {
+				return true;
+			}
+			index--;
+		}
+		return false;
+	}
+}
 
 class S_Details {
 	ancestry: Ancestry = get(w_hierarchy)?.rootAncestry;
-	hierarchy_traits: Array<Trait> = [];
+	s_traits = new S_Identifiables<Trait>([]);
+	s_tags = new S_Identifiables<Tag>([]);
 	number_ofDetails = 0;
-	index_ofTrait = 0;
-	total_traits = 0;
 
 	constructor() {
 		w_t_database.subscribe((db: string) => {
@@ -25,7 +50,8 @@ class S_Details {
 		});
 	}
 
-	get trait(): Trait | null { return this.hierarchy_traits[this.index_ofTrait] ?? null; }
+	get tag(): Tag | null { return (this.s_tags.item as Tag) ?? null; }
+	get trait(): Trait | null { return (this.s_traits.item as Trait) ?? null; }
 
 	get hasGrabs(): boolean {
 		const grabs = get(w_ancestries_grabbed);
@@ -36,6 +62,7 @@ class S_Details {
 	update() {
 		this.update_forKind_ofInfo();
 		this.update_traits();
+		this.update_tags();
 	}
 
 	update_forKind_ofInfo() {
@@ -48,20 +75,22 @@ class S_Details {
 			}
 		}
 	}
+	
+	static readonly _____TRAITS: unique symbol;
 
 	update_traits() {
 		this.update_hierarchy_traits();
 		const thing = this.ancestry?.thing ?? null;
 		const thing_traits = thing?.traits ?? [];
 		if (!!thing && !!thing_traits && thing_traits.length > 0) {
-			const index = this.hierarchy_traits.findIndex(t => t.ownerID == thing.id);
-			this.index_ofTrait = Math.max(0, index);
+			const index = this.s_traits.items.findIndex(t => t.ownerID == thing.id);
+			this.s_traits.index_ofItem = Math.max(0, index);
 			w_thing_traits.set(thing_traits);
 		}
 	}
 	
 	select_nextTrait(next: boolean) {
-		if (this.find_next_trait(next)) {
+		if (this.s_traits.find_next_item(next)) {
 			const h = get(w_hierarchy);
 			this.trait?.owner?.ancestry?.grabOnly();
 			h.grabs_latest_assureIsVisible();
@@ -69,29 +98,48 @@ class S_Details {
 		}
 	}
 
-	private find_next_trait(next: boolean): boolean {
-		let index = this.hierarchy_traits.length;
-		while (index > 0) {		// prevent infinite loop if no trait is found
-			this.index_ofTrait = this.index_ofTrait.increment(next, this.total_traits);
-			if (!!this.trait?.owner) {
-				return true;
-			}
-			index--;
-		}
-		return false;
-	}
-
 	update_hierarchy_traits() {
 		const h = get(w_hierarchy);
 		const titles = get(w_show_traits_ofType);
 		if (!!h && !!titles) {
 			if (titles.length > 1) {
-				this.hierarchy_traits = h.traits ?? [];
+				this.s_traits.items = h.traits ?? [];
 			} else {
-				this.hierarchy_traits = h.traits_forType(titles[0] as T_Trait) ?? [];
+				this.s_traits.items = h.traits_forType(titles[0] as T_Trait) ?? [];
 			}
-			this.total_traits = this.hierarchy_traits.length;
+			this.s_traits.total_items = this.s_traits.items.length;
 		}
+	}
+	
+	static readonly _____TAGS: unique symbol;
+
+	update_tags() {
+		this.update_hierarchy_tags();
+		const thing = this.ancestry?.thing ?? null;
+		const thing_tags = thing?.tags ?? [];
+		if (!!thing && !!thing_tags && thing_tags.length > 0) {
+			const index = this.s_tags.items.findIndex(t => t.thingHIDs.includes(thing.hid));
+			this.s_tags.index_ofItem = Math.max(0, index);
+			w_thing_tags.set(thing_tags);
+		}
+	}
+	
+	select_nextTag(next: boolean) {
+		if (this.s_tags.find_next_item(next)) {
+			const ancestry = this.tag?.ownerAt(0)?.ancestry;
+			if (!!ancestry) {
+				const h = get(w_hierarchy);
+				ancestry.grabOnly();
+				h.grabs_latest_assureIsVisible();
+				w_hierarchy.set(h);
+			}
+		}
+	}
+
+	update_hierarchy_tags() {
+		const tags = get(w_hierarchy)?.tags ?? [];
+		this.s_tags.items = tags;
+		this.s_tags.total_items = tags.length;
 	}
 
 }

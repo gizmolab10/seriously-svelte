@@ -18,7 +18,7 @@ export class Hierarchy {
 	private predicate_byDirection: { [direction: number]: Array<Predicate> } = {};
 	private relationships_byKind: { [kind: string]: Array<Relationship> } = {};
 	private ancestry_byKind_andHID: { [kind: string]: Ancestries_ByHID } = {};					// for uniqueness
-	private ancestries_byThingHID:{ [hid: Integer]: Array<Ancestry> } = {};
+	private ancestries_byThingHID: { [hid: Integer]: Array<Ancestry> } = {};
 	private traits_byOwnerHID: { [ownerHID: Integer]: Array<Trait> } = {};
 	private relationship_byHID: { [hid: Integer]: Relationship } = {};
 	private traits_byType: { [t_trait: string]: Array<Trait> } = {};
@@ -26,16 +26,17 @@ export class Hierarchy {
 	private things_byTitle: { [title: string]: Array<Thing> } = {};
 	private predicate_byKind: { [kind: string]: Predicate } = {};
 	private thing_byAncestryHID: { [hid: Integer]: Thing } = {};
-	private tags_byThingHID:{ [hid: Integer]: Array<Tag> } = {};
+	private tags_byThingHID: { [hid: Integer]: Array<Tag> } = {};
 	private relationships_byParentHID: Relationships_ByHID = {};
 	private relationships_byChildHID: Relationships_ByHID = {};
-	private ancestry_byHID:{ [hid: Integer]: Ancestry } = {};
+	private ancestry_byHID: { [hid: Integer]: Ancestry } = {};
 	private access_byKind: { [kind: string]: Access } = {};
 	private access_byHID: { [hid: Integer]: Access } = {};
 	private thing_byHID: { [hid: Integer]: Thing } = {};
 	private trait_byHID: { [hid: Integer]: Trait } = {};
 	private user_byHID: { [hid: Integer]: User } = {};
 	private tag_byType: { [type: string]: Tag } = {};
+	private tag_byHID: { [hid: Integer]: Tag } = {};
 	ids_translated: { [prior: string]: string } = {};
 	replace_rootID: string | null = k.empty;		// required for DBLocal at launch
 	relationships: Array<Relationship> = [];
@@ -340,10 +341,10 @@ export class Hierarchy {
 	}
 
 	async thing_forget_persistentDelete(thing: Thing) {
-		const relationships = u.uniquely_concatenateArrays(
+		const relationships = u.uniquely_concatenateArrays_ofIdentifiables(
 			this.relationships_byChildHID[thing.hid] ?? [],
 			this.relationships_byParentHID[thing.hid] ?? []
-		)
+		) as Array<Relationship>;
 		thing.remove_fromGrabbed_andExpanded_andResolveFocus();
 		this.thing_forget(thing);				// forget so onSnapshot logic will not signal children, do first so UX updates quickly
 		await this.db.thing_persistentDelete(thing);
@@ -1144,15 +1145,18 @@ export class Hierarchy {
 
 	static readonly _____TRAITS: unique symbol;
 
+	traits_forType(t_trait: T_Trait): Array<Trait> | null { return this.traits_byType[t_trait]; }
+
 	traits_forOwnerHID(hid: Integer | null): Array<Trait> | null {
 		const value = !!hid ? this.traits_byOwnerHID?.[hid] : null;
 		return (value instanceof Array) ? value : null;
 	}
 
 	traits_refreshKnowns() {
-		const saved = this.traits;
+		const traits = this.traits;
 		this.traits_forget_all();
-		saved.map(t => this.trait_remember(t));
+		traits.map(t => this.trait_remember(t));
+		this.traits = traits;
 	}
 
 	traits_forget_all() {
@@ -1164,7 +1168,6 @@ export class Hierarchy {
 
 	static readonly _____TRAIT: unique symbol;
 
-	traits_forType(t_trait: T_Trait): Array<Trait> | null { return this.traits_byType[t_trait]; }
 	trait_forHID(hid: Integer): Trait | null { return this.trait_byHID[hid ?? undefined]; }
 
 	trait_runtimeCreate(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string, dict: Dictionary = {}, already_persisted: boolean = false): Trait {
@@ -1216,15 +1219,42 @@ export class Hierarchy {
 
 	static readonly _____TAGS: unique symbol;
 
-	tag_forType(type: string): Tag | null { return this.tag_byType[type] ?? null; }
 	tags_forThingHID(hid: Integer): Array<Tag> { return this.tags_byThingHID[hid]; }
 
+	tags_refreshKnowns() {
+		const tags = this.tags;
+		this.tags_forget_all();
+		tags.map(t => this.tag_remember(t));
+		this.tags = tags;
+	}
+
+	tags_forget_all() {
+		this.tags_byThingHID = {};
+		this.tag_byType = {};
+		this.tags = [];
+	}
+
+	static readonly _____TAG: unique symbol;
+
+	tag_forType(type: string): Tag | null { return this.tag_byType[type] ?? null; }
+	tag_forHID(hid: Integer): Tag | null { return this.tag_byHID[hid ?? undefined]; }
+
 	tag_extract_fromDict(dict: Dictionary) {
-		this.tag_remember_runtimeAddTo_orCreateUnique(this.db.idBase, dict.id, dict.type, dict.thingHID, dict.already_persisted);
+		this.tag_remember_runtimeAddTo_orCreateUnique(this.db.idBase, dict.id, dict.type, dict.thingHIDs, dict.already_persisted);
+	}
+
+	tag_forget(tag: Tag) {
+		delete this.tag_byHID[tag.hid];
+		delete this.tag_byType[tag.type];
+		for (const hid of tag.thingHIDs) {
+			const tags: Array<Tag> = this.tags_byThingHID[hid] ?? [];
+			this.tags_byThingHID[hid] = tags.filter(t => t != tag);
+		}
 	}
 
 	tag_remember(tag: Tag) {
 		this.tags.push(tag);
+		this.tag_byHID[tag.hid] = tag;
 		this.tag_byType[tag.type] = tag;
 		for (const hid of tag.thingHIDs) {
 			const tags: Array<Tag> = this.tags_byThingHID[hid] ?? [];
@@ -1235,19 +1265,19 @@ export class Hierarchy {
 		}
 	}
 
-	tag_remember_runtimeAddTo_orCreateUnique(idBase: string, id: string, type: string, thingHID: Integer, already_persisted: boolean = false): Tag {
+	tag_remember_runtimeAddTo_orCreateUnique(idBase: string, id: string, type: string, thingHIDs: Array<Integer>, already_persisted: boolean = false): Tag {
 		let tag = this.tag_forType(type);
 		if (!tag) {
-			tag = this.tag_remember_runtimeCreate(idBase, id, type, thingHID, already_persisted);
-		} else if (!tag.thingHIDs.includes(thingHID)) {
-			tag.thingHIDs.push(thingHID);
+			tag = this.tag_remember_runtimeCreate(idBase, id, type, thingHIDs, already_persisted);
+		} else {
+			tag.thingHIDs = u.uniquely_concatenateArrays(tag.thingHIDs, thingHIDs);
 		}
 		tag.set_isDirty();
 		return tag;
 	}
 
-	tag_remember_runtimeCreate(idBase: string, id: string, type: string, thingHID: Integer, already_persisted: boolean = false): Tag {
-		const tag = new Tag(idBase, id, type, thingHID, already_persisted);
+	tag_remember_runtimeCreate(idBase: string, id: string, type: string, thingHIDs: Array<Integer>, already_persisted: boolean = false): Tag {
+		const tag = new Tag(idBase, id, type, thingHIDs, already_persisted);
 		this.tag_remember(tag);
 		tag.set_isDirty();
 		return tag;
@@ -1365,10 +1395,10 @@ export class Hierarchy {
 			const thingTags = thing?.tags;
 			const relationship = ancestry.relationship;
 			if (!!thingTraits) {
-				traits = u.uniquely_concatenateArrays(traits, thingTraits);
+				traits = u.uniquely_concatenateArrays_ofIdentifiables(traits, thingTraits) as Array<Trait>;
 			}
 			if (!!thingTags) {
-				tags = u.uniquely_concatenateArrays(tags, thingTags);
+				tags = u.uniquely_concatenateArrays_ofIdentifiables(tags, thingTags) as Array<Tag>;
 			}
 			if (!!thing && things.filter(t => t.id == thing.id).length == 0) {
 				things.push(thing);

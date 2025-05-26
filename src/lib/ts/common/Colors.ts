@@ -2,10 +2,10 @@ import { parseToRgba, transparentize } from 'color2k';
 
 export class Colors {
 	default = 'black';
-	background = 'white';
 	banner = '#f8f8f8';
-    disabled = 'lightGray';
+	background = 'white';
 	separator = '#eeeee0';
+    disabled = 'lightGray';
     default_forThings = 'blue';
 
 	opacitize(color: string, amount: number): string { return transparentize(color, 1 - amount); }

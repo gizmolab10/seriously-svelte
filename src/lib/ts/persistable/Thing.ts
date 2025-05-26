@@ -48,7 +48,7 @@ export default class Thing extends Persistable {
 		let parents: Array<Thing> = [];
 		for (const predicate of get(w_hierarchy).predicates) {
 			const more = this.parents_ofKind(predicate.kind)
-			parents = u.uniquely_concatenateArrays(parents, more);
+			parents = u.uniquely_concatenateArrays_ofIdentifiables(parents, more) as Array<Thing>;
 		}
 		return parents;
 	}
@@ -84,7 +84,7 @@ export default class Thing extends Persistable {
 	relationships_inBothDirections_forKind(kind: string): Array<Relationship> {
 		const childrenRelationships = this.relationships_ofKind_forParents(kind, false);
 		const parentsRelationships = this.relationships_ofKind_forParents(kind, true);
-		return u.uniquely_concatenateArrays(parentsRelationships, childrenRelationships);
+		return u.uniquely_concatenateArrays_ofIdentifiables(parentsRelationships, childrenRelationships) as Array<Relationship>;
 	}
 
 	async persistent_create_orUpdate(already_persisted: boolean) {

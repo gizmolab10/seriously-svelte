@@ -208,7 +208,7 @@ export default class DBAirtable extends DBCommon {
 
 	async relationship_persistentDelete(relationship: Relationship) {
 		try {
-			this.hierarchy.relationships = u.strip_invalid(this.hierarchy.relationships);
+			this.hierarchy.relationships = u.strip_invalid_Identifiables(this.hierarchy.relationships);
 			this.hierarchy.relationships_refreshKnowns(); // do first so UX updates quickly
 			await this.relationships_table.destroy(relationship.id);
 		} catch (error) {

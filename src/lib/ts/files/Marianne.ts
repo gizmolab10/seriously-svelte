@@ -24,6 +24,8 @@ class Marianne {
 			h.relationship_remember_runtimeCreateUnique(idBase, Identifiable.newID(), T_Predicate.contains, h.root.id, thing_id, 0);
 		}
 	}
+	
+	static readonly _____TRAITS: unique symbol;
 
 	create_trait_forThingfromDict(thing_id: string, dict: Dictionary): Trait {
 		const h = get(w_hierarchy)
@@ -33,24 +35,25 @@ class Marianne {
 		const trait = h.trait_remember_runtimeCreate(h.db.idBase, Identifiable.newID(), thing_id, t_trait, text, dict);			// save dict in memory, but do not persist it
 		return trait;
 	}
-
-	create_tag_forThing_andKey_fromDict(thingID: string, key: string, dict: Dictionary): Tag | null {
-		const h = get(w_hierarchy)
-		const tag_types = dict[key];
-		if (!!tag_types) {
-			for (const tag_type of tag_types.split(', ')) {
-				const tag = h.tag_remember_runtimeAddTo_orCreateUnique(h.db.idBase, Identifiable.newID(), tag_type, thingID.hash());
-				return tag;
-			}
-		}
-		return null;
-	}
+	
+	static readonly _____TAGS: unique symbol;
 
 	create_tags_forThing_fromDict(thingID: string, dict: Dictionary) {
 		const keys = ['Custom Tags', 'Custom Tags (Local)'];
 		for (const key of keys) {
-			this.create_tag_forThing_andKey_fromDict(thingID, key, dict);
+			this.create_tag_forThing_andKey_fromDict(thingID, dict[key]);
 		}
+	}
+
+	create_tag_forThing_andKey_fromDict(thingID: string, tag_types: string): Tag | null {
+		const h = get(w_hierarchy)
+		if (!!tag_types) {
+			for (const tag_type of tag_types.split(',')) {
+				const tag = h.tag_remember_runtimeAddTo_orCreateUnique(h.db.idBase, Identifiable.newID(), tag_type.trim(), [thingID.hash()]);
+				return tag;
+			}
+		}
+		return null;
 	}
 	
 	static readonly _____RELATIONSHIPS: unique symbol;
@@ -78,6 +81,8 @@ class Marianne {
 			}
 		}
 	}
+	
+	static readonly _____CHUNKING: unique symbol;
 
 	private assure_small_families(): boolean {
 		let changed = false;
@@ -114,7 +119,7 @@ class Marianne {
 		return changed;
 	}
 	
-	static readonly _____ABANDONED: unique symbol;
+	static readonly _____DEPRECATED: unique symbol;
 
 	convert_key(key: string): number {
 		const encodedKey = key.encode_as_property();
