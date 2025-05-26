@@ -4,26 +4,24 @@
     import { createEventDispatcher, tick } from 'svelte';
     import Separator from '../kit/Separator.svelte';
     export let height = 0;
-    export let title = k.empty;
     export let has_banner = true;
     export let t_details: T_Details;
     export let origin: Point | null = null;
     const dispatch = createEventDispatcher();
+    const title = T_Details[t_details];
     const banner_height = 14;
     let element: HTMLElement;
     let isHidden = !show_slot();
+
     $: dispatch('heightChange', { height });
+    function show_slot(): boolean { return has_banner ? $w_show_details_ofType.includes(t_details) : true; }
     
     $: (async () => {
-        if (element) {
+        if (element && has_banner) {
             await tick();
             height = isHidden ? banner_height : element.scrollHeight;
         }
     })();
-
-    function show_slot(): boolean {
-        return has_banner ? $w_show_details_ofType.includes(t_details) : $w_show_details_ofType.length !== 0;
-    }
 
     function toggle_hidden() {
         if (has_banner) {

@@ -1,24 +1,16 @@
 <script lang='ts'>
-	import { w_show_info_ofType, w_graph_rect, w_show_details_ofType, w_device_isMobile } from '../../ts/common/Stores';
+	import { w_show_info_ofType, w_show_details_ofType } from '../../ts/common/Stores';
 	import { c, k, u, ux, Point, debug, layout } from '../../ts/common/Global_Imports';
 	import { w_ancestries_grabbed, w_ancestry_focus } from '../../ts/common/Stores';
 	import { T_Layer, T_Details, T_Info } from '../../ts/common/Global_Imports';
+	import { w_graph_rect, w_device_isMobile } from '../../ts/common/Stores';
 	import { s_details } from '../../ts/state/S_Details';
 	import Segmented from '../mouse/Segmented.svelte';
     let reattachments = 0;
-	
-	const titles_ofDetails = [
-		T_Details[T_Details.storage],
-		T_Details[T_Details.tools],
-		T_Details[T_Details.display],
-		T_Details[T_Details.info],
-		T_Details[T_Details.tags],
-		T_Details[T_Details.traits]
-	];
 
 	function info_selection_closure(t_infos: Array<string>) { $w_show_info_ofType = t_infos[0] as T_Info; }
-	$: $w_show_info_ofType, $w_ancestry_focus, $w_ancestries_grabbed, update_forKind_ofInfo();
-
+	$: $w_ancestry_focus, $w_show_info_ofType, $w_ancestries_grabbed, update_forKind_ofInfo();
+	
 	function update_forKind_ofInfo() {
 		s_details.update_forKind_ofInfo();
 		reattachments += 1;
@@ -27,7 +19,14 @@
 </script>
 
 {#key reattachments}
-	{#if s_details.number_ofDetails > 0}
+	{#if !$w_show_details_ofType || $w_show_details_ofType.length == 0}
+		<p style='
+			top:-6px;
+			position:relative;
+			text-align: center;'>
+			click on a line below to see its details
+		</p>
+	{:else}
 		<div style='
 			top:0px;
 			white-space:pre;
