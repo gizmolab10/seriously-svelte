@@ -249,7 +249,7 @@ export class Events {
 				case T_Tool.list:						return disable_revealConceal;
 				case T_Tool.show:					switch (column) {
 					case k.tools.show.selection:		return ancestry.isVisible;
-					case k.tools.show.root:				return get(w_hierarchy).rootAncestry.isVisible;
+					case k.tools.show.root:				return get(w_hierarchy)?.rootAncestry?.isVisible ?? false;
 					case k.tools.show.all:				return layout.isAllExpanded;
 				}									break;
 				case T_Tool.graph:						return get(w_user_graph_offset).isZero;

@@ -74,7 +74,7 @@ class Stores {
 		w_count_mouse_up.set(0);
 		w_thing_color.set(null);
 		w_t_startup.set(T_Startup.start);
-		w_show_details_asStack.set(false);
+		w_show_details_asStack.set(true);
 		w_background_color.subscribe((color: string) => {
 			colors.separator = colors.separatorFor(color);
 		});

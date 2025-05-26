@@ -42,7 +42,7 @@
 
 	function layout_forColor() {
 		if (!!info_table) {
-			const offsetY = s_details.number_ofDetails / 1.5 - 61 - top;
+			const offsetY = s_details.number_ofDetails / 1.5 - 82 - top;
 			const row = Math.max(0, information.findIndex(([key]) => key === 'color'));
 			color_origin = info_table.location_ofCellAt(row, 1).offsetByXY(-4, offsetY);
 			picker_offset = `${4 - color_origin.x}px`;

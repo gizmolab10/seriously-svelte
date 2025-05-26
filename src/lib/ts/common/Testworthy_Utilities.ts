@@ -129,6 +129,18 @@ export class Testworthy_Utilities {
 		}
 	}
 
+	static readonly _____ARRAYS_BY_REFERENCE: unique symbol;
+
+	remove_fromArray_byReference<T>(item: T, array: Array<T>): Array<T> {
+		if (!item) return array;
+		return array.filter(element => element !== item);
+	}
+
+	indexOf_inArray_byReference<T>(item: T, array: Array<T>): number {
+		if (!item) return -1;
+		return array.findIndex(element => element === item);
+	}
+
 	static readonly _____JSON: unique symbol;
 
 	stringify_object(object: Object): string {

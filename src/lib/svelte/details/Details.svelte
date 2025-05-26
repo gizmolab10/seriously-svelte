@@ -9,6 +9,7 @@
 	import Hideable from '../kit/Hideable.svelte';
 	import D_Display from './D_Display.svelte';
 	import D_Storage from './D_Storage.svelte';
+	import D_Always from './D_Always.svelte';
 	import D_Header from './D_Header.svelte';
 	import D_Traits from './D_Traits.svelte';
 	import D_Tools from './D_Tools.svelte';
@@ -60,29 +61,35 @@
 		top:{$w_graph_rect.origin.y + 4}px;
 		height:{$w_graph_rect.size.height}px;'>
 	{#if $w_show_details_asStack}
-		<Vertical_Stack width={width}>
-			<Hideable title='header' t_details={T_Details.header} width={width} isHidden={false} detect_click={false}>
-				<D_Header/>
+		<div class='vertical-stack'
+			style='
+				gap: 2px;
+				display: flex;
+				width: {width}px;
+				position: absolute;
+				flex-direction: column;'>
+			<Hideable title='header' t_details={T_Details.header} has_banner={false}>
+				<D_Always/>
 			</Hideable>
-			<Hideable title='storage' t_details={T_Details.storage} width={width} isHidden={true}>
+			<Hideable title='storage' t_details={T_Details.storage}>
 				<D_Storage/>
 			</Hideable>
-			<Hideable title='tools' t_details={T_Details.tools} width={width} isHidden={true}>
+			<Hideable title='tools' t_details={T_Details.tools}>
 				<D_Tools/>
 			</Hideable>
-			<Hideable title='display' t_details={T_Details.display} width={width} isHidden={true}>
+			<Hideable title='display' t_details={T_Details.display}>
 				<D_Display/>
 			</Hideable>
-			<Hideable title='info' t_details={T_Details.info} width={width} isHidden={true}>
+			<Hideable title='info' t_details={T_Details.info}>
 				<D_Info/>
 			</Hideable>
-			<Hideable title='tags' t_details={T_Details.tags} width={width} isHidden={true}>
+			<Hideable title='tags' t_details={T_Details.tags}>
 				<D_Tags/>
 			</Hideable>
-			<Hideable title='traits' t_details={T_Details.traits} width={width} isHidden={true}>
+			<Hideable title='traits' t_details={T_Details.traits}>
 				<D_Traits/>
 			</Hideable>
-		</Vertical_Stack>
+		</div>
 	{:else}
 		<D_Header
 			style='

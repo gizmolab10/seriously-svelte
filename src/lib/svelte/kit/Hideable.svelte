@@ -1,19 +1,17 @@
 <script lang='ts'>
-    import { k, Point, T_Details } from '../../ts/common/Global_Imports';
+    import { k, u, Point, T_Details } from '../../ts/common/Global_Imports';
     import { w_show_details_ofType } from '../../ts/common/Stores';
     import { createEventDispatcher, tick } from 'svelte';
     import Separator from '../kit/Separator.svelte';
-    export let origin: Point | null = null;
-    export let t_details: T_Details;
-    export let detect_click = true;
-    export let isHidden = false;
-    export let title = k.empty;
     export let height = 0;
-    export let width = 0;
-    const banner_height = 14;
+    export let title = k.empty;
+    export let has_banner = true;
+    export let t_details: T_Details;
+    export let origin: Point | null = null;
     const dispatch = createEventDispatcher();
+    const banner_height = 14;
     let element: HTMLElement;
-    
+    let isHidden = !show_slot();
     $: dispatch('heightChange', { height });
     
     $: (async () => {
@@ -23,16 +21,20 @@
         }
     })();
 
-    $: if (t_details === T_Details.header) {
-        isHidden = $w_show_details_ofType.length === 0;
+    function show_slot(): boolean {
+        return has_banner ? $w_show_details_ofType.includes(t_details) : $w_show_details_ofType.length !== 0;
     }
 
     function toggle_hidden() {
-        isHidden = !isHidden;
-        if (isHidden) {
-            $w_show_details_ofType = $w_show_details_ofType.filter(d => d !== t_details);
-        } else if (!$w_show_details_ofType.includes(t_details)) {
-            $w_show_details_ofType = [...$w_show_details_ofType, t_details];
+        if (has_banner) {
+            let t_details_array = $w_show_details_ofType.filter(item => !!item);
+            if (t_details_array.includes(t_details)) {
+                t_details_array = u.remove_fromArray_byReference(t_details, t_details_array);
+            } else {
+                t_details_array.push(t_details);
+            }
+            $w_show_details_ofType = t_details_array;
+            isHidden = !show_slot();
         }
     }
 
@@ -43,29 +45,31 @@
     bind:this={element}
     style='
         display: flex;
-		width: {width}px;
+		width: 100%;
         height: {height}px;
         position: relative;
         flex-direction: column;
         {origin ? `left: ${origin.x}px; top: ${origin.y}px;` : k.empty}'>
-    <div
-        class='banner'
-        on:click={detect_click ? toggle_hidden : undefined}
-        style='
-            width: 100%;
-            display: flex;
-            cursor: pointer;
-            padding-left: 8px;
-            position: absolute;
-            align-items: center;
-            height: {banner_height}px;'>
-        <Separator
-            top={4.5}
-            title={title}
-            add_wings={true}
-            title_font_size={k.font_size.small}/>
-    </div>
-    <div class={'slot-' + title} style='display: {isHidden ? "none" : "block"}; position: relative; top: {banner_height}px;'>
+    {#if has_banner}
+        <div
+            class='banner'
+            on:click={toggle_hidden}
+            style='
+                width: 100%;
+                display: flex;
+                cursor: pointer;
+                padding-left: 8px;
+                position: absolute;
+                align-items: center;
+                height: {banner_height}px;'>
+            <Separator
+                top={4.5}
+                title={title}
+                add_wings={true}
+                title_font_size={k.font_size.small}/>
+        </div>
+    {/if}
+    <div class={'slot-' + title} style='display: {isHidden ? "none" : "block"}; position: relative; top: {has_banner ? banner_height : 0}px;'>
         <slot/>
     </div>
 </div>
