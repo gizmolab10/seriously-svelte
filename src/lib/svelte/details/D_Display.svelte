@@ -5,8 +5,8 @@
 	import Separator from '../kit/Separator.svelte';
 	import Color from '../kit/Color.svelte';
 	export let top = 0;
-	const color_left = 10
-	const picker_offset = `-51px`;
+	const color_left = 123
+	const picker_offset = `-180px`;
 	const font_size = k.font_size.smaller;
 	const info_width = k.width_details - 30;
 	const color_origin = new Point(color_left, 45);
@@ -17,7 +17,7 @@
 	function selection_closure(t_counts: Array<string>) { $w_show_countDots_ofType = t_counts as Array<T_Kinship>; }
 	function handle_colors(result: string) { $w_background_color = color = result; }
 
-	</script>
+</script>
 
 <div class='display'
 	style='
@@ -42,7 +42,7 @@
 		font_size={font_size}
 		name='counts-selector'
 		height={k.height.button}
-		origin={new Point(61, 13)}
+		origin={new Point(89, 13)}
 		selected={$w_show_countDots_ofType}
 		selection_closure={selection_closure}/>
 	<Separator

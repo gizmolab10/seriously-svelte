@@ -7,7 +7,6 @@
 	import { s_details } from '../../ts/state/S_Details';
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
-	export let top = 0;
 	const es_button = ux.s_element_for(new Identifiable('trait'), T_Element.button, 'trait');
 	let text_box_size = new Size(k.width_details - 34, 68);
 
@@ -33,28 +32,28 @@
 
 <div class='hierarchy_traits'
 	style='
-		top:{top}px;
+		top:2px;
 		position:absolute;
 		font-size:{k.font_size.smaller}px;'>
 	<Segmented
-		height={20}
 		name='trait-types'
 		allow_multiple={true}
-		origin={new Point(10, 3)}
+		origin={new Point(6, 0)}
 		titles={['text', 'link']}
+		height={k.height.controls}
 		font_size={k.font_size.smaller}
 		selected={$w_show_traits_ofType}
 		selection_closure={handleClick_onTraitTypes}/>
 	<Next_Previous
-		width={144}
+		width={136}
 		name='traits'
-		origin={new Point(110, 4)}
+		origin={new Point(85, 0)}
 		closure={handleClick_onNextPrevious}/>
 	{#key $w_thing_traits}
 		{#if !!$w_thing_traits && $w_thing_traits.length > 0}
 			{#each $w_thing_traits as trait}
 				<Text_Editor
-					top={30}
+					top={24}
 					left={10}
 					label={trait.t_trait}
 					color={colors.default}

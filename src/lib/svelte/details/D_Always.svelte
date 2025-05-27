@@ -24,7 +24,7 @@
 			position:relative;
 			text-align: center;
 			font-size:{k.font_size.smaller}px;'>
-			click on a line below to see or hide its details
+			click on a line below to see its details
 		</p>
 	{:else}
 		<div style='
@@ -39,7 +39,7 @@
 		<Segmented
 			name='info-type'
 			height={k.height.button}
-			origin={new Point(79, 18)}
+			origin={new Point(119, 18)}
 			font_size={k.font_size.smaller}
 			selected={[$w_show_info_ofType]}
 			titles={[T_Info.focus, T_Info.selection]}

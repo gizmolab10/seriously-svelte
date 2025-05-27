@@ -44,7 +44,7 @@
 			const row = Math.max(0, information.findIndex(([key]) => key === 'color'));
 			const offsetRow = info_table.location_ofCellAt(row, 1);
 			color_origin = offsetRow.offsetByXY(-4, -4);
-			picker_offset = `${28 - color_origin.x}px`;
+			picker_offset = `${9 - color_origin.x}px`;
 		}
 	}
 

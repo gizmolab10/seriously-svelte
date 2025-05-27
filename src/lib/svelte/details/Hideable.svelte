@@ -8,9 +8,9 @@
     export let t_details: T_Details;
     export let has_banner = true;
     export let height = 0;
-    const banner_height = 14;
     const title = T_Details[t_details];
     const dispatch = createEventDispatcher();
+    const banner_height = k.height.banner.details;
     const banner_rect = new Rect(Point.zero, new Size(k.width_details, banner_height));
     let banner_color = colors.bannerFor($w_background_color);
     let isHidden = !show_slot();
@@ -23,7 +23,7 @@
     $: (async () => {
         if (element && has_banner) {
             await tick();
-            height = isHidden ? banner_height : element.scrollHeight + 3;
+            height = isHidden ? banner_height - 2 : element.scrollHeight + 3;
         }
     })();
 
@@ -67,7 +67,7 @@
                 height: {banner_height}px;'>
             <Separator
                 top={0}
-                thickness={1}/>
+                thickness={0.5}/>
             <SVG_Gradient
                 color={banner_color}
                 size={banner_rect.size}
@@ -78,6 +78,7 @@
                 style='
                     margin: 0;
                     padding: 0;
+                    top:-0.5px;
                     width: 100%;
                     text-align: center;
                     position: absolute;
@@ -87,7 +88,7 @@
                 {title}
             </div>
             <Separator
-                thickness={1}
+                thickness={0.5}
                 top={banner_height}/>
         </div>
     {/if}

@@ -9,7 +9,7 @@ const separator_thickness = 4;
 export default class Constants {
 	details_margin = 0;
 	halfIncrement = 0.5;
-	width_details = 256;
+	width_details = 220;
 	radial_widget_inset = 26;
 	autorepeat_interval = 50;
 	separator_title_left = 0;
@@ -92,11 +92,13 @@ export default class Constants {
 		line:	   row_height + 2,
 		segmented: row_height + 1,
 		row:	   row_height,
+		controls:  18,
 		button:	   dot_size + 3,
 		dot:	   dot_size,
 		banner: {
 			controls: banner_height,
 			crumbs:	  banner_height,
+			details:  12,
 			graph:	  0,
 		},
 		detail: {
