@@ -1,4 +1,4 @@
-import { show, Ancestry, T_Details, Tag, Trait, T_Trait } from '../common/Global_Imports';
+import { show, Ancestry, T_Details, Tag, Trait, T_Trait, Thing } from '../common/Global_Imports';
 import { w_hierarchy, w_t_database, w_ancestries_grabbed } from '../common/Stores';
 import { w_thing_traits, w_thing_tags, w_ancestry_focus } from '../common/Stores';
 import { w_show_details_ofType, w_show_traits_ofType } from '../common/Stores';
@@ -9,11 +9,13 @@ class S_Identifiables<T> {
 	index_ofItem = 0;
 	total_items = 0;
 
+	constructor(items: Array<T>) { this.set_items(items); }
 	get item(): T | null { return this.items[this.index_ofItem] ?? null; }
 
-	constructor(items: Array<T>) {
-		this.total_items = items.length;
+	set_items(items: Array<T>) {
 		this.items = items;
+		this.total_items = items.length;
+		this.index_ofItem = 0;
 	}
 
 	find_next_item(next: boolean): boolean {
@@ -31,8 +33,9 @@ class S_Identifiables<T> {
 
 class S_Details {
 	ancestry: Ancestry = get(w_hierarchy)?.rootAncestry;
-	s_traits = new S_Identifiables<Trait>([]);
-	s_tags = new S_Identifiables<Tag>([]);
+	private s_things = new S_Identifiables<Thing>([]);
+	private s_traits = new S_Identifiables<Trait>([]);
+	private s_tags = new S_Identifiables<Tag>([]);
 	number_ofDetails = 0;
 
 	constructor() {
@@ -50,19 +53,17 @@ class S_Details {
 		});
 	}
 
-	get tag(): Tag | null { return (this.s_tags.item as Tag) ?? null; }
-	get trait(): Trait | null { return (this.s_traits.item as Trait) ?? null; }
-
-	get hasGrabs(): boolean {
-		const grabs = get(w_ancestries_grabbed);
-		if (!grabs || grabs.length === 0) { return false; }
-		return !(get(w_ancestry_focus)?.isGrabbed ?? true);
-	}
-
-	update() {
+	private update() {
 		this.update_forKind_ofInfo();
 		this.update_traits();
 		this.update_tags();
+		this.update_things();
+	}
+
+	private get hasGrabs(): boolean {
+		const grabs = get(w_ancestries_grabbed);
+		if (!grabs || grabs.length === 0) { return false; }
+		return !(get(w_ancestry_focus)?.isGrabbed ?? true);
 	}
 
 	update_forKind_ofInfo() {
@@ -78,7 +79,18 @@ class S_Details {
 	
 	static readonly _____TRAITS: unique symbol;
 
-	update_traits() {
+	private get trait(): Trait | null { return (this.s_traits.item as Trait) ?? null; }
+
+	private update_hierarchy_traits() {
+		const h = get(w_hierarchy);
+		const titles = get(w_show_traits_ofType);
+		if (!!h && !!titles) {
+			const traits = (titles.length > 1 ? h.traits : h.traits_forType(titles[0] as T_Trait)) ?? [];
+			this.s_traits.set_items(traits);
+		}
+	}
+
+	private update_traits() {
 		this.update_hierarchy_traits();
 		const thing = this.ancestry?.thing ?? null;
 		const thing_traits = thing?.traits ?? [];
@@ -97,23 +109,39 @@ class S_Details {
 			w_hierarchy.set(h);
 		}
 	}
+	
+	static readonly _____THINGS: unique symbol;
 
-	update_hierarchy_traits() {
+	private get thing(): Thing | null { return (this.s_things.item as Thing) ?? null; }
+
+	private update_things() {
 		const h = get(w_hierarchy);
-		const titles = get(w_show_traits_ofType);
-		if (!!h && !!titles) {
-			if (titles.length > 1) {
-				this.s_traits.items = h.traits ?? [];
-			} else {
-				this.s_traits.items = h.traits_forType(titles[0] as T_Trait) ?? [];
-			}
-			this.s_traits.total_items = this.s_traits.items.length;
-		}
+		const things = this.tag?.things ?? [];
+		this.s_things.items = things;
+		this.s_things.total_items = things.length;
+		this.s_things.index_ofItem = 0;
 	}
 	
+	select_nextThing(next: boolean) {
+		if (this.s_things.find_next_item(next)) {
+			const h = get(w_hierarchy);
+			this.thing?.ancestry?.grabOnly();
+			h.grabs_latest_assureIsVisible();
+			w_hierarchy.set(h);
+		}
+	}
+
 	static readonly _____TAGS: unique symbol;
 
-	update_tags() {
+	private get tag(): Tag | null { return (this.s_tags.item as Tag) ?? null; }
+
+	private update_hierarchy_tags() {
+		const tags = get(w_hierarchy)?.tags ?? [];
+		this.s_tags.items = tags;
+		this.s_tags.total_items = tags.length;
+	}
+
+	private update_tags() {
 		this.update_hierarchy_tags();
 		const thing = this.ancestry?.thing ?? null;
 		const thing_tags = thing?.tags ?? [];
@@ -132,14 +160,9 @@ class S_Details {
 				ancestry.grabOnly();
 				h.grabs_latest_assureIsVisible();
 				w_hierarchy.set(h);
+				this.update_things();
 			}
 		}
-	}
-
-	update_hierarchy_tags() {
-		const tags = get(w_hierarchy)?.tags ?? [];
-		this.s_tags.items = tags;
-		this.s_tags.total_items = tags.length;
 	}
 
 }

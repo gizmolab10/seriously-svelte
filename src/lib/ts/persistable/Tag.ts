@@ -8,7 +8,17 @@ export default class Tag extends Persistable {
 	thingHIDs: Array<Integer> = [];
 	type: string = '';
 
-	ownerAt(index: number): Thing | null { return this.thingHIDs[index] ? get(w_hierarchy)?.thing_forHID(this.thingHIDs[index]) : null; }
+	get things(): Array<Thing> {
+		return this.thingHIDs.map(hid => get(w_hierarchy)?.thing_forHID(hid)).filter(thing => !!thing) as Array<Thing>;
+	}
+
+	ownerAt(index: number): Thing | null {
+		const things = this.things;
+		if (index < things.length) {
+			return things[index];
+		}
+		return null;
+	}
 	
 	constructor(idBase: string, id: string, type: string, thingHIDs: Array<Integer>, already_persisted: boolean = false) {
 		super(databases.db_now.t_database, idBase, T_Persistable.tags, id, already_persisted);

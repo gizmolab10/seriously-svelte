@@ -13,6 +13,7 @@
 	export let horizontal_gap = 2;
 	export let button_height = 15;
 	export let align_left = true;
+	export let add_wings = true;
 	export let has_title = true;	// true means first row_titles is the title of the row
 	export let show_box = false;
 	export let name = k.empty;
@@ -92,8 +93,8 @@
 			<Separator
 				top={3}
 				width={width}
-				add_wings={true}
 				title={row_title}
+				add_wings={add_wings}
 				margin={k.details_margin}
 				thickness={k.thickness.thin}
 				title_font_size={font_sizes[0]}

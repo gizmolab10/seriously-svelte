@@ -23,14 +23,13 @@
 	style='
 		left:0px;
 		color:black;
+		width: 100%;
 		top:{top + 3}px;
 		position:absolute;
-		width:{k.width_details}px;
 		font-size:{k.font_size.small}px;'>
 	<Separator
 		top={4}
-		add_wings={true}
-		width={k.width_details}
+		width: 100%;
 		margin={k.details_margin}
 		title='show tiny dots for'
 		thickness={k.thickness.thin}
@@ -48,9 +47,8 @@
 		selection_closure={selection_closure}/>
 	<Separator
 		top={36}
+		width: 100%;
 		title='color'
-		add_wings={true}
-		width={k.width_details}
 		margin={k.details_margin}
 		thickness={k.thickness.thin}
 		title_left={k.separator_title_left}

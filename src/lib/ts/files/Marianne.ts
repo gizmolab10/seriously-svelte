@@ -39,7 +39,7 @@ class Marianne {
 	static readonly _____TAGS: unique symbol;
 
 	create_tags_forThing_fromDict(thingID: string, dict: Dictionary) {
-		const keys = ['Custom Tags', 'Custom Tags (Local)'];
+		const keys = ['Custom Tags', 'Custom Tags (Local)', 'All Local Tags (folder names)'];
 		for (const key of keys) {
 			this.create_tag_forThing_andKey_fromDict(thingID, dict[key]);
 		}

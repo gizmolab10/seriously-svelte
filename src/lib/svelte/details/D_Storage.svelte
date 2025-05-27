@@ -108,7 +108,7 @@
 		selection_closure={selection_closure}/>
 	<div class='data-information'
 		style='
-			width:{k.width_details}px;
+			width: 100%;
 			font-size:{k.font_size.smaller}px;'>
 		<Text_Table
 			top={top + 26}

@@ -91,8 +91,9 @@
 	<div
 		class='tools'
 		style='
+			width: 100%;
 			top:{tools_top}px;
-			position:absolute;
+			position:relative;
 			z-index:{T_Layer.tools}'>
 		<Buttons_Grid
 			gap={3}
@@ -109,10 +110,10 @@
 			<div
 				class='alteration-instructions'
 				style='
+					width: 100%;
 					display:block;
-					position:absolute;
+					position:relative;
 					text-align:center;
-					width:{k.width_details}px;
 					top:{show_box ? 120 : 58}px;
 					z-index:{T_Layer.tools + 1};
 					font-size:{k.font_size.smallest}px;'>

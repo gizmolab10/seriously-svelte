@@ -8,34 +8,72 @@
 
     $: $w_thing_tags, tags = $w_thing_tags ?? [];
 
-	function handleClick_onNextPrevious(t_request: T_Request, s_mouse: S_Mouse, column: number): any {
+	function handleClick_onNextPrevious(kind: E_NextPrevious, t_request: T_Request, s_mouse: S_Mouse, column: number): any {
 		const ids = ['previous', 'next'];
 		switch (t_request) {
-			case T_Request.is_visible:   return true;
-			case T_Request.name:		 return ids[column];
-			case T_Request.handle_click: if (s_mouse.isDown) { s_details.select_nextTag(column == 1); }
+            case T_Request.name:	   return ids[column];
+			case T_Request.is_visible: return true;
+			case T_Request.handle_click:
+                const next = column == 1;
+                if (s_mouse.isDown) {
+                    switch (kind) {
+                        case E_NextPrevious.tag:   s_details.select_nextTag(next);   break;
+                        case E_NextPrevious.thing: s_details.select_nextThing(next); break;
+                    }
+                }
 		}
 		return false;
 	}
 
+    enum E_NextPrevious {
+        tag = 'tag',
+        thing = 'thing'
+    }
+
 </script>
 
-<div class='tags' style='text-align: center;'>
+<div
+    class='tags'
+    style='
+        width: 100%;
+        position:relative;
+        text-align: center;'>
 	<Next_Previous
-		origin={new Point(104, 4)}
-		closure={handleClick_onNextPrevious}/>
+        width={110}
+        show_box={true}
+        has_title={true}
+        add_wings={false}
+		origin={new Point(8, 2)}
+        name={E_NextPrevious.thing}
+		closure={(t_request, s_mouse, column) => handleClick_onNextPrevious(E_NextPrevious.thing, t_request, s_mouse, column)}/>
+	<Next_Previous
+        width={110}
+        show_box={true}
+        has_title={true}
+        name={E_NextPrevious.tag}
+		origin={new Point(146, 2)}
+		closure={(t_request, s_mouse, column) => handleClick_onNextPrevious(E_NextPrevious.tag, t_request, s_mouse, column)   }/>
     <div
         class='tags-list'
         style='
-            top:25px;
-            width:100%;
-            position:absolute;
-            text-align: center;
+            top:35px;
+            display: flex;
+            padding: 0 20px;
+            position:relative;
+            width:{k.width_details - 40}px;
+            justify-content: space-between;
             font-size:{k.font_size.smaller}px;'>
-        {#if !!tags && tags.length > 0}
-            {tags.map(t => t.type).join(', ')}
+        {#if !tags || tags.length == 0}
+            <span style='text-align: center;'>
+                no tags
+            </span>
         {:else}
-            no tags
+            <span style='text-align: left;'>
+                thing {s_details.s_things.index_ofItem + 1} of {s_details.s_things.total_items}
+            </span>
+            <span style='text-align: right;'>
+                {tags.map(t => t.type).join(', ')}
+            </span>
         {/if}
     </div>
 </div>

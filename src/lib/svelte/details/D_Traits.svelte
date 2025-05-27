@@ -46,7 +46,9 @@
 		selected={$w_show_traits_ofType}
 		selection_closure={handleClick_onTraitTypes}/>
 	<Next_Previous
-		origin={new Point(104, 4)}
+		width={144}
+		name='traits'
+		origin={new Point(110, 4)}
 		closure={handleClick_onNextPrevious}/>
 	{#key $w_thing_traits}
 		{#if !!$w_thing_traits && $w_thing_traits.length > 0}

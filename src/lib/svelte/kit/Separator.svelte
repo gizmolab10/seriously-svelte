@@ -9,7 +9,7 @@
 	export let title: string | null = null;
 	export let zindex = T_Layer.details;
 	export let width = k.width_details;
-	export let add_wings = false;
+	export let add_wings = true;
 	export let margin = 0;
 	export let left = 0;
 	export let top = 0;

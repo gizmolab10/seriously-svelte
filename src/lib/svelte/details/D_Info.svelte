@@ -91,8 +91,8 @@
 		style='
 			color:black;
 			top:{top}px;
-			position:absolute;
-			width:{k.width_details - 20}px;'>
+			width: 100%;
+			position:absolute;'>
 		{#if information.length != 0}
 			<Text_Table
 				top = 0
@@ -100,7 +100,6 @@
 				array={information}
 				bind:this={info_table}
 				name='information-table'
-				width = {k.width_details - 20}
 				font_size={k.font_size.smaller}/>
 		{/if}
 		{#if !!ancestry && ancestry.isEditable}

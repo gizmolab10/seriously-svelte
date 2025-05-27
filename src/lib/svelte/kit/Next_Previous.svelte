@@ -2,18 +2,24 @@
 	import { k, Point, T_Request, S_Mouse } from '../../ts/common/Global_Imports';
 	import Buttons_Row from '../buttons/Buttons_Row.svelte';
 	export let closure: (t_request: T_Request, s_mouse: S_Mouse, column: number) => any;
+	export let has_title = false;
+	export let show_box = false;
+	export let add_wings = true;
+	export let name = k.empty;
 	export let origin: Point;
+	export let width = 144;
 </script>
 
 <Buttons_Row
 	margin=0
-	width=149
+	width={width}
 	origin={origin}
-	show_box={false}
 	closure={closure}
-	has_title={false}
 	button_height={18}
 	horizontal_gap={6}
-	name='previous-next'
-	row_titles={['previous', 'next']}
+	show_box={show_box}
+	has_title={has_title}
+	add_wings={add_wings}
+	name={'previous-next-' + name}
+	row_titles={has_title ? [name, 'previous', 'next'] : ['previous', 'next']}
 	font_sizes={[k.font_size.smallest, k.font_size.smaller]}/>

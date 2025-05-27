@@ -48,6 +48,7 @@
     style='
 		width: 100%;
         display: flex;
+        flex-shrink: 0;
         height: {height}px;
         position: relative;
         flex-direction: column;
@@ -66,8 +67,7 @@
                 height: {banner_height}px;'>
             <Separator
                 top={0}
-                thickness={1}
-                add_wings={true}/>
+                thickness={1}/>
             <SVG_Gradient
                 color={banner_color}
                 size={banner_rect.size}
@@ -88,7 +88,6 @@
             </div>
             <Separator
                 thickness={1}
-                add_wings={true}
                 top={banner_height}/>
         </div>
     {/if}

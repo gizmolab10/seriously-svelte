@@ -15,15 +15,10 @@
 
 <div class='details'
 	style='
-		gap:2px;
-		left:0px;
-		display:flex;
 		width:{width}px;
-		position:absolute;
-		flex-direction:column;
 		z-index:{T_Layer.details};
 		top:{$w_graph_rect.origin.y + 4}px;
-		height:{$w_graph_rect.size.height}px;'>
+		height:{$w_graph_rect.size.height - 4}px;'>
 	<Hideable t_details={T_Details.header} has_banner={false} height={36}>
 		<D_Always/>
 	</Hideable>
@@ -46,3 +41,22 @@
 		<D_Traits/>
 	</Hideable>
 </div>
+
+<style>
+	.details {
+		gap:2px;
+		left:0px;
+		width: 100%;
+		display:flex;
+		overflow-y: auto;
+		position:absolute;
+		scrollbar-width: none;          /* Firefox */
+		flex-direction:column;
+		-ms-overflow-style: none;       /* IE and Edge */
+	}
+
+	.details::-webkit-scrollbar {
+		display: none;                /* Chrome, Safari, Opera */
+	}
+
+</style>
