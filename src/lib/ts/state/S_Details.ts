@@ -31,10 +31,11 @@ class S_Identifiables<T> {
 }
 
 class S_Details {
-	ancestry: Ancestry = get(w_hierarchy)?.rootAncestry;
+	ancestry_forInfo: Ancestry = get(w_hierarchy)?.rootAncestry;
 	private s_things = new S_Identifiables<Thing>([]);
 	private s_traits = new S_Identifiables<Trait>([]);
 	private s_tags = new S_Identifiables<Tag>([]);
+	get latest_grab(): Ancestry | null { return get(w_hierarchy)?.grabs_latest_upward(true); }
 	number_ofDetails = 0;
 
 	constructor() {
@@ -68,11 +69,11 @@ class S_Details {
 
 	update_forKind_ofInfo() {
 		if (show.shows_focus || !this.hasGrabs) {
-			this.ancestry = get(w_ancestry_focus);
+			this.ancestry_forInfo = get(w_ancestry_focus);
 		} else {
-			const grabs = get(w_ancestries_grabbed);
-			if (!!grabs && grabs.length > 0) {
-				this.ancestry = grabs[0];
+			const latest_grab = this.latest_grab;
+			if (!!latest_grab) {
+				this.ancestry_forInfo = latest_grab;
 			}
 		}
 	}
@@ -94,7 +95,7 @@ class S_Details {
 		// when grab changes, traits must also change
 		// also, which trait [index] corresponds to the grab
 		this.update_hierarchy_traits();
-		const thing = this.ancestry?.thing ?? null;
+		const thing = this.latest_grab?.thing ?? null;
 		const thing_traits = thing?.traits ?? [];
 		if (!!thing && !!thing_traits && thing_traits.length > 0) {
 			const index = this.s_traits.items.findIndex(t => t.ownerID == thing.id);
@@ -118,7 +119,7 @@ class S_Details {
 
 	private update_things() {
 		const things = this.tag?.things ?? [];
-		const ancestry = this.ancestry;
+		const ancestry = this.latest_grab;
 		this.s_things.items = things;
 		this.s_things.total_items = things.length;
 		const index = Math.max(0, things.findIndex(t => t.hid == ancestry?.thing?.hid));
@@ -148,7 +149,7 @@ class S_Details {
 
 	private update_tags() {
 		this.update_hierarchy_tags();
-		const thing = this.ancestry?.thing ?? null;
+		const thing = this.latest_grab?.thing ?? null;
 		const thing_tags = thing?.tags ?? [];
 		if (!!thing && !!thing_tags && thing_tags.length > 0) {
 			const index = Math.max(0, this.s_tags.items.findIndex(t => t.thingHIDs.includes(thing.hid)));

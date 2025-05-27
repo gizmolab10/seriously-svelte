@@ -35,7 +35,7 @@
 			text-align:center;
 			width:{k.width_details}px;
 			font-size:{k.font_size.common}px;'>
-			{s_details.ancestry?.thing?.title.clipWithEllipsisAt(30)}
+			{s_details.latest_grab?.thing?.title.clipWithEllipsisAt(30)}
 		</div>
 		<Segmented
 			name='info-type'

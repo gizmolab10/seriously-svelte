@@ -17,7 +17,7 @@
 	const id = 'info';
 	const separator_font_size = k.font_size.smallest;
 	const es_info = ux.s_element_for(new Identifiable(id), T_Element.info, id);
-	let ancestry: Ancestry | null = s_details.ancestry;
+	let ancestry: Ancestry | null = s_details.ancestry_forInfo;
 	let thing: Thing | null = ancestry?.thing ?? null;
 	let thingHID: Integer | null = thing?.hid;
 	let information: Array<Dictionary> = [];
@@ -52,7 +52,7 @@
 	}
 
 	function update_forAncestry() {
-		ancestry = s_details.ancestry;
+		ancestry = s_details.ancestry_forInfo;
 		thing = ancestry?.thing;
 		if (!!thing) {
 			thing_title = thing.title;
