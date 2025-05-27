@@ -23,7 +23,7 @@
     $: (async () => {
         if (element && has_banner) {
             await tick();
-            height = isHidden ? banner_height - 2 : element.scrollHeight + 3;
+            height = isHidden ? banner_height : element.scrollHeight + 3;
         }
     })();
 

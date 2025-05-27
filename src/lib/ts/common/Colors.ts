@@ -10,7 +10,7 @@ export class Colors {
 
 	opacitize(color: string, amount: number): string { return transparentize(color, 1 - amount); }
 	separatorFor(background: string): string { return this.blend('#eeeee0', background);}
-	bannerFor(background: string): string { return this.blend('#f8f8f8', background, 2);}
+	bannerFor(background: string): string { return this.blend('#f8f8f8', background, 3);}
 
 	blend(color: string, background: string, saturation: number = 5): string {
 		if (!this.colors_areIdentical(background, this.background)) {

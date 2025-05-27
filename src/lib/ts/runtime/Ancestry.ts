@@ -1,6 +1,6 @@
 import { T_Graph, T_Create, T_Element, T_Kinship, T_Predicate, T_Alteration, T_SvelteComponent } from '../common/Global_Imports';
 import { Direction, Predicate, Hierarchy, databases, Relationship, Svelte_Wrapper } from '../common/Global_Imports';
-import { c, k, p, u, show, Rect, Size, Thing, debug, layout, wrappers, svgPaths } from '../common/Global_Imports';
+import { c, k, p, u, show, Rect, Size, Thing, grabs, debug, layout, wrappers, svgPaths } from '../common/Global_Imports';
 import { w_hierarchy, w_ancestry_focus, w_s_alteration, w_s_title_edit } from '../common/Stores';
 import { w_ancestries_grabbed, w_ancestries_expanded, } from '../common/Stores';
 import { w_background_color, w_show_graph_ofType, w_t_database } from '../common/Stores';
@@ -199,17 +199,6 @@ export default class Ancestry extends Identifiable {
 
 	static readonly _____VISIBILITY: unique symbol;
 
-	assure_isVisible_within(ancestries: Array<Ancestry>) {
-		if (!!this.predicate) {
-			const index = u.indexOf_withMatchingThingID_in(this, ancestries);
-			const g_paging = this.g_cluster?.g_paging;
-			if (!!g_paging && !g_paging.index_isVisible(index)) {
-				return g_paging.update_index_toShow(index);		// change paging
-			}
-		}
-		return false;
-	}
-
 	visibleSubtree_height(visited: Array<string> = []): number {
 		const thing = this.thing;
 		if (!!thing && !visited.includes(this.pathString)) {
@@ -340,7 +329,7 @@ export default class Ancestry extends Identifiable {
 				}
 				if (!!grabAncestry) {
 					if (layout.inRadialMode) {
-						needs_graphRebuild = grabAncestry.assure_isVisible_within(this.sibling_ancestries) || needs_graphRebuild;	// change paging
+						needs_graphRebuild = grabs.assure_ancestry_isVisible_within(grabAncestry, this.sibling_ancestries) || needs_graphRebuild;	// change paging
 					} else if (!parentAncestry.isFocus && !grabAncestry.isVisible) {
 						needs_graphRebuild = parentAncestry.becomeFocus() || needs_graphRebuild;
 					}
@@ -369,7 +358,7 @@ export default class Ancestry extends Identifiable {
 				this.reorder_within(sibling_ancestries, up);
 			}
 			if (!!grabAncestry) {
-				needs_graphRebuild = grabAncestry.assure_isVisible_within(sibling_ancestries) || needs_graphRebuild;
+				needs_graphRebuild = grabs.assure_ancestry_isVisible_within(grabAncestry, sibling_ancestries) || needs_graphRebuild;
 			}
 		}
 		return [needs_graphRebuild, needs_graphRelayout];
@@ -394,7 +383,7 @@ export default class Ancestry extends Identifiable {
 				this.reorder_within(sibling_ancestries, up);
 			}
 			if (!!grabAncestry && !!this.predicate) {
-				needs_graphRebuild = grabAncestry.assure_isVisible_within(sibling_ancestries) || needs_graphRebuild;
+				needs_graphRebuild = grabs.assure_ancestry_isVisible_within(grabAncestry, sibling_ancestries) || needs_graphRebuild;
 			}
 		}
 		return [needs_graphRebuild, needs_graphRelayout];
@@ -447,6 +436,10 @@ export default class Ancestry extends Identifiable {
 	reveal_toFocus() {
 		const parentAncestry = this.parentAncestry;
 		if (!!parentAncestry && !parentAncestry.isFocus) {
+			if (!this.ancestors.some(a => a.isFocus)) {
+				// if focus is not among ancestors, change the focus to parent
+				parentAncestry.becomeFocus();
+			}
 			parentAncestry.reveal_toFocus();
 			parentAncestry.expand();
 		}
@@ -523,42 +516,42 @@ export default class Ancestry extends Identifiable {
 	}
 
 	grab() {
-		let grabs = get(w_ancestries_grabbed) ?? [];
-		if (!!grabs) {
-			const index = grabs.indexOf(this);
-			if (grabs.length == 0) {
-				grabs.push(this);
-			} else if (index != grabs.length - 1) {	// not already last?
+		let grabbed = get(w_ancestries_grabbed) ?? [];
+		if (!!grabbed) {
+			const index = grabbed.indexOf(this);
+			if (grabbed.length == 0) {
+				grabbed.push(this);
+			} else if (index != grabbed.length - 1) {	// not already last?
 				if (index != -1) {					// found: remove
-					grabs.splice(index, 1);
+					grabbed.splice(index, 1);
 				}
-				grabs.push(this);					// always add last
+				grabbed.push(this);					// always add last
 			}
 		}
-		w_ancestries_grabbed.set(grabs);
+		w_ancestries_grabbed.set(grabbed);
 		debug.log_grab(`  GRAB "${this.title}"`);
 		this.hierarchy.stop_alteration();
 	}
 
 	ungrab() {
 		w_s_title_edit?.set(null);
-		let grabs = get(w_ancestries_grabbed) ?? [];
+		let grabbed = get(w_ancestries_grabbed) ?? [];
 		const rootAncestry = this.hierarchy.rootAncestry;
-		if (!!grabs) {
-			const index = grabs.indexOf(this);
-			if (index != -1) {				// only splice grabs when item is found
-				grabs.splice(index, 1);		// 2nd parameter means remove one item only
+		if (!!grabbed) {
+			const index = grabbed.indexOf(this);
+			if (index != -1) {				// only splice grabbed when item is found
+				grabbed.splice(index, 1);		// 2nd parameter means remove one item only
 			}
-			if (grabs.length == 0) {
-				grabs.push(rootAncestry);
+			if (grabbed.length == 0) {
+				grabbed.push(rootAncestry);
 			}
 		}
-		if (grabs.length == 0 && layout.inTreeMode) {
-			grabs = [rootAncestry];
+		if (grabbed.length == 0 && layout.inTreeMode) {
+			grabbed = [rootAncestry];
 		} else {
 			this.hierarchy.stop_alteration(); // do not show editingTools for root
 		}
-		w_ancestries_grabbed.set(grabs);
+		w_ancestries_grabbed.set(grabbed);
 		debug.log_grab(`  UNGRAB "${this.title}"`);
 	}
 
@@ -836,7 +829,7 @@ export default class Ancestry extends Identifiable {
 	get isVisible(): boolean {
 		if (layout.inRadialMode) {
 			const parent = this.parentAncestry;
-			const g_paging = parent?.g_paging;
+			const g_paging = this.g_paging;
 			return this.isFocus || (!!parent && parent.isFocus && (g_paging?.index_isVisible(this.siblingIndex) ?? true));
 		} else {
 			const focus = get(w_ancestry_focus);

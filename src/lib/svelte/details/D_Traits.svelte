@@ -7,6 +7,7 @@
 	import { s_details } from '../../ts/state/S_Details';
 	import Text_Editor from '../kit/Text_Editor.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
+	import Hideable from './Hideable.svelte';
 	const es_button = ux.s_element_for(new Identifiable('trait'), T_Element.button, 'trait');
 	let text_box_size = new Size(k.width_details - 34, 68);
 
@@ -33,8 +34,11 @@
 <div class='hierarchy_traits'
 	style='
 		top:2px;
+		display:flex;
 		position:absolute;
-		font-size:{k.font_size.smaller}px;'>
+		scrollbar-width: none;          /* Firefox */
+		flex-direction:column;
+		-ms-overflow-style: none;'>
 	<Segmented
 		name='trait-types'
 		allow_multiple={true}
@@ -45,9 +49,9 @@
 		selected={$w_show_traits_ofType}
 		selection_closure={handleClick_onTraitTypes}/>
 	<Next_Previous
-		width={136}
+		width={140}
 		name='traits'
-		origin={new Point(85, 0)}
+		origin={new Point(k.width_details - 141, 0)}
 		closure={handleClick_onNextPrevious}/>
 	{#key $w_thing_traits}
 		{#if !!$w_thing_traits && $w_thing_traits.length > 0}
@@ -55,11 +59,11 @@
 				<Text_Editor
 					top={24}
 					left={10}
+					height={78}
 					label={trait.t_trait}
 					color={colors.default}
 					original_text={trait.text}
-					width={text_box_size.width}
-					height={text_box_size.height}
+					width={k.width_details - 34}
 					label_underline={trait.t_trait == 'link'}
 					onLabelClick={() => window.open(trait.text, '_blank')}
 					label_color={trait.t_trait == 'link' ? 'blue' : 'gray'}

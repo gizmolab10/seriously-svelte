@@ -24,7 +24,7 @@
 			position:relative;
 			text-align: center;
 			font-size:{k.font_size.smaller}px;'>
-			click on a line below to see its details
+			click a line below to view / hide its details
 		</p>
 	{:else}
 		<div style='

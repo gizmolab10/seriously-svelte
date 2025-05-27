@@ -743,7 +743,7 @@ export class Hierarchy {
 
 	get ancestry_forBreadcrumbs(): Ancestry {
 		const focus = get(w_ancestry_focus);
-		const grab = grabs.latest_ancestry;
+		const grab = grabs.latest;
 		const grab_containsFocus = !!grab && focus.isAProgenyOf(grab)
 		return (!!grab && !grab_containsFocus) ? grab : focus;
 	}
@@ -1301,7 +1301,7 @@ export class Hierarchy {
 
 	get user_selected_ancestry(): Ancestry {
 		const focus = get(w_ancestry_focus);
-		let grabbed = grabs.latest_ancestry;
+		let grabbed = grabs.latest;
 		if (!!focus && (show.shows_focus)) {
 			return focus;
 		} else if (!!grabbed) {

@@ -37,19 +37,19 @@
         position:relative;
         text-align: center;'>
 	<Next_Previous
-        width={100}
+        width={106}
         show_box={true}
         has_title={true}
         add_wings={false}
-		origin={new Point(5, 2)}
+		origin={new Point(7, 2)}
         name={E_NextPrevious.thing}
 		closure={(t_request, s_mouse, column) => handleClick_onNextPrevious(E_NextPrevious.thing, t_request, s_mouse, column)}/>
 	<Next_Previous
-        width={100}
+        width={106}
         show_box={true}
         has_title={true}
         name={E_NextPrevious.tag}
-		origin={new Point(120, 2)}
+		origin={new Point(k.width_details - 107, 2)}
 		closure={(t_request, s_mouse, column) => handleClick_onNextPrevious(E_NextPrevious.tag, t_request, s_mouse, column)   }/>
     <div
         class='tags-list'

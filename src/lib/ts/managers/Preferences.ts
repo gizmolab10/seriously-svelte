@@ -74,6 +74,7 @@ export class Preferences {
 	}
 		
 	restore_expanded() {
+		w_ancestries_expanded.set([]);
 		if (c.eraseDB > 0) {
 			c.eraseDB -= 1;
 			w_ancestries_expanded.set([]);
@@ -108,7 +109,7 @@ export class Preferences {
 			}
 		}
 		if (!ancestryToFocus.thing) {
-			const lastGrabbedAncestry = grabs.latest_ancestry?.parentAncestry;
+			const lastGrabbedAncestry = grabs.latest?.parentAncestry;
 			if (lastGrabbedAncestry) {
 				ancestryToFocus = lastGrabbedAncestry;
 			}

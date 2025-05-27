@@ -1,6 +1,6 @@
 import { S_Element, G_Cluster, G_TreeLine, G_TreeBranches } from '../common/Global_Imports';
-import { k, ux, Rect, Size, Point, layout, Ancestry } from '../common/Global_Imports';
 import { w_graph_rect, w_show_graph_ofType, w_device_isMobile} from '../common/Stores';
+import { k, ux, Rect, Size, Point, layout, Ancestry } from '../common/Global_Imports';
 import { T_Widget, T_Element, T_Graph } from '../common/Global_Imports';
 import { w_show_details, w_show_related } from '../common/Stores';
 import { get } from 'svelte/store';

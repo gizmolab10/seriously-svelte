@@ -15,7 +15,15 @@
 
 <div class='details'
 	style='
+		left:0px;
+		width: 100%;
+		display:flex;
 		width:{width}px;
+		overflow-y: auto;
+		position:absolute;
+		scrollbar-width: none;          /* Firefox */
+		flex-direction:column;
+		-ms-overflow-style: none;  
 		z-index:{T_Layer.details};
 		top:{$w_graph_rect.origin.y + 4}px;
 		height:{$w_graph_rect.size.height - 4}px;'>
@@ -43,17 +51,6 @@
 </div>
 
 <style>
-	.details {
-		gap:2px;
-		left:0px;
-		width: 100%;
-		display:flex;
-		overflow-y: auto;
-		position:absolute;
-		scrollbar-width: none;          /* Firefox */
-		flex-direction:column;
-		-ms-overflow-style: none;       /* IE and Edge */
-	}
 
 	.details::-webkit-scrollbar {
 		display: none;                /* Chrome, Safari, Opera */
