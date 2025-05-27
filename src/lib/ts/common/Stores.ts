@@ -1,5 +1,5 @@
+import { Tag, Rect, Point, Thing, Trait, colors, Ancestry, Hierarchy } from '../common/Global_Imports';
 import { T_Info, T_Graph, T_Trait, T_Kinship, T_Details, T_Startup } from '../common/Global_Imports';
-import { Tag, Rect, Point, Trait, colors, Ancestry, Hierarchy } from '../common/Global_Imports';
 import { G_Paging, G_Cluster, S_Title_Edit, S_Alteration } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
 
@@ -19,10 +19,12 @@ export const w_show_details				 = writable<boolean>();
 const _____THING: unique symbol = Symbol('THING');
 
 export const w_thing_tags				 = writable<Array<Tag>>();
+export const w_tag_things				 = writable<Array<Thing>>();
 export const w_thing_traits				 = writable<Array<Trait>>();
 export const w_thing_title				 = writable<string | null>();
 export const w_thing_color				 = writable<string | null>();
 export const w_thing_fontFamily			 = writable<string>();
+export const w_tag_thing_index			 = writable<number>();
 export const w_relationship_order		 = writable<number>();
 export const w_s_title_edit				 = writable<S_Title_Edit | null>();
 export const w_s_alteration				 = writable<S_Alteration | null>();

@@ -1,12 +1,10 @@
 <script lang='ts'>
-    import { w_hierarchy, w_thing_tags, w_ancestries_grabbed } from '../../ts/common/Stores';
+    import { w_tag_things, w_thing_tags, w_thing_traits, w_tag_thing_index } from '../../ts/common/Stores';
     import { k, T_Request, S_Mouse, Point } from '../../ts/common/Global_Imports';
+    import { w_hierarchy, w_ancestries_grabbed } from '../../ts/common/Stores';
     import Next_Previous from '../kit/Next_Previous.svelte';
 	import { s_details } from '../../ts/state/S_Details';
     const ancestry = s_details.ancestry;
-    let tags = ancestry.tags;
-
-    $: $w_thing_tags, tags = $w_thing_tags ?? [];
 
 	function handleClick_onNextPrevious(kind: E_NextPrevious, t_request: T_Request, s_mouse: S_Mouse, column: number): any {
 		const ids = ['previous', 'next'];
@@ -63,16 +61,16 @@
             width:{k.width_details - 40}px;
             justify-content: space-between;
             font-size:{k.font_size.smaller}px;'>
-        {#if !tags || tags.length == 0}
+        {#if !$w_thing_tags || $w_thing_tags.length == 0}
             <span style='text-align: center;'>
                 no tags
             </span>
         {:else}
             <span style='text-align: left;'>
-                thing {s_details.s_things.index_ofItem + 1} of {s_details.s_things.total_items}
+                thing {$w_tag_thing_index + 1} of {$w_tag_things.length}
             </span>
             <span style='text-align: right;'>
-                {tags.map(t => t.type).join(', ')}
+                {$w_thing_tags.map(t => t.type).join(', ')}
             </span>
         {/if}
     </div>
