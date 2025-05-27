@@ -1,6 +1,6 @@
-import { w_hierarchy, w_t_database, w_ancestry_focus, w_ancestries_grabbed } from '../common/Stores';
+import { w_t_database, w_ancestry_focus, w_ancestries_grabbed, w_hierarchy } from '../common/Stores';
 import { w_tag_things, w_thing_tags, w_thing_traits, w_tag_thing_index } from '../common/Stores';
-import { show, Ancestry, T_Details, Tag, Trait, T_Trait, Thing } from '../common/Global_Imports';
+import { h, show, grabs, Ancestry, T_Details, Tag, Trait, T_Trait, Thing } from '../common/Global_Imports';
 import { w_show_details_ofType, w_show_traits_ofType } from '../common/Stores';
 import { get } from 'svelte/store';
 
@@ -31,11 +31,9 @@ class S_Identifiables<T> {
 }
 
 class S_Details {
-	ancestry_forInfo: Ancestry = get(w_hierarchy)?.rootAncestry;
 	private s_things = new S_Identifiables<Thing>([]);
 	private s_traits = new S_Identifiables<Trait>([]);
 	private s_tags = new S_Identifiables<Tag>([]);
-	get latest_grab(): Ancestry | null { return get(w_hierarchy)?.grabs_latest_upward(true); }
 	number_ofDetails = 0;
 
 	constructor() {
@@ -55,27 +53,10 @@ class S_Details {
 	}
 
 	private update() {
-		this.update_forKind_ofInfo();
+		grabs.update_forKind_ofInfo();
 		this.update_traits();
 		this.update_tags();
 		this.update_things();
-	}
-
-	private get hasGrabs(): boolean {
-		const grabs = get(w_ancestries_grabbed);
-		if (!grabs || grabs.length === 0) { return false; }
-		return !(get(w_ancestry_focus)?.isGrabbed ?? true);
-	}
-
-	update_forKind_ofInfo() {
-		if (show.shows_focus || !this.hasGrabs) {
-			this.ancestry_forInfo = get(w_ancestry_focus);
-		} else {
-			const latest_grab = this.latest_grab;
-			if (!!latest_grab) {
-				this.ancestry_forInfo = latest_grab;
-			}
-		}
 	}
 	
 	static readonly _____TRAITS: unique symbol;
@@ -83,7 +64,6 @@ class S_Details {
 	private get trait(): Trait | null { return (this.s_traits.item as Trait) ?? null; }
 
 	private update_hierarchy_traits() {
-		const h = get(w_hierarchy);
 		const t_traits = get(w_show_traits_ofType);
 		if (!!h && !!t_traits) {
 			const traits = (t_traits.length > 1 ? h.traits : h.traits_forType(t_traits[0] as T_Trait)) ?? [];
@@ -95,7 +75,7 @@ class S_Details {
 		// when grab changes, traits must also change
 		// also, which trait [index] corresponds to the grab
 		this.update_hierarchy_traits();
-		const thing = this.latest_grab?.thing ?? null;
+		const thing = grabs.ancestry_forInfo?.thing ?? null;
 		const thing_traits = thing?.traits ?? [];
 		if (!!thing && !!thing_traits && thing_traits.length > 0) {
 			const index = this.s_traits.items.findIndex(t => t.ownerID == thing.id);
@@ -105,10 +85,9 @@ class S_Details {
 	}
 	
 	select_nextTrait(next: boolean) {
-		if (this.s_traits.find_next_item(next)) {
-			const h = get(w_hierarchy);
+		if (!!h && this.s_traits.find_next_item(next)) {
 			this.trait?.owner?.ancestry?.grabOnly();	// causes reaction (invoking update())
-			h.grabs_latest_assureIsVisible();
+			grabs.grabs_latest_assureIsVisible();
 			w_hierarchy.set(h);
 		}
 	}
@@ -119,7 +98,7 @@ class S_Details {
 
 	private update_things() {
 		const things = this.tag?.things ?? [];
-		const ancestry = this.latest_grab;
+		const ancestry = grabs.ancestry_forInfo;
 		this.s_things.items = things;
 		this.s_things.total_items = things.length;
 		const index = Math.max(0, things.findIndex(t => t.hid == ancestry?.thing?.hid));
@@ -129,10 +108,9 @@ class S_Details {
 	}
 	
 	select_nextThing(next: boolean) {
-		if (this.s_things.find_next_item(next)) {	// alters thing, and index_ofItem, both are used below
-			const h = get(w_hierarchy);
+		if (!!h && this.s_things.find_next_item(next)) {	// alters thing, and index_ofItem, both are used below
 			this.thing?.ancestry?.grabOnly();		// causes reaction (invoking update())
-			h.grabs_latest_assureIsVisible();
+			grabs.grabs_latest_assureIsVisible();
 			w_hierarchy.set(h);
 		}
 	}
@@ -142,14 +120,14 @@ class S_Details {
 	private get tag(): Tag | null { return (this.s_tags.item as Tag) ?? null; }
 
 	private update_hierarchy_tags() {
-		const tags = get(w_hierarchy)?.tags ?? [];
+		const tags = h?.tags ?? [];
 		this.s_tags.items = tags;
 		this.s_tags.total_items = tags.length;
 	}
 
 	private update_tags() {
 		this.update_hierarchy_tags();
-		const thing = this.latest_grab?.thing ?? null;
+		const thing = grabs.ancestry_forInfo?.thing ?? null;
 		const thing_tags = thing?.tags ?? [];
 		if (!!thing && !!thing_tags && thing_tags.length > 0) {
 			const index = Math.max(0, this.s_tags.items.findIndex(t => t.thingHIDs.includes(thing.hid)));
@@ -161,10 +139,9 @@ class S_Details {
 	select_nextTag(next: boolean) {
 		if (this.s_tags.find_next_item(next)) {
 			const ancestry = this.tag?.ownerAt(0)?.ancestry;
-			if (!!ancestry) {
-				const h = get(w_hierarchy);
+			if (!!h && !!ancestry) {
 				ancestry.grabOnly();
-				h.grabs_latest_assureIsVisible();
+				grabs.grabs_latest_assureIsVisible();
 				w_hierarchy.set(h);
 			}
 		}

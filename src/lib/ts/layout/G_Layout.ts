@@ -1,4 +1,4 @@
-import { k, p, u, signals, Ancestry, G_RadialGraph } from '../common/Global_Imports';
+import { k, p, u, grabs, signals, Ancestry, G_RadialGraph } from '../common/Global_Imports';
 import { T_Graph, T_Banner, T_Kinship } from '../common/Global_Imports';
 import { w_show_tree_ofType, w_show_graph_ofType, w_hierarchy } from '../common/Stores';
 import { w_show_related, w_ancestry_focus } from '../common/Stores';
@@ -82,7 +82,7 @@ export default class G_Layout {
 			focus_ancestry = this.focus_ancestry;
 		} else {
 			this.focus_ancestry = focus_ancestry;
-			focus_ancestry = this.parents_focus_ancestry ?? get(w_hierarchy).grabs_latest_ancestry;
+			focus_ancestry = this.parents_focus_ancestry ?? grabs.grabs_latest_ancestry;
 		}
 		w_show_related.set(t_trees.includes(T_Kinship.related));
 		focus_ancestry?.becomeFocus();

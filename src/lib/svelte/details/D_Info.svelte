@@ -3,21 +3,18 @@
 	import { w_background_color, w_show_info_ofType, w_show_details_ofType } from '../../ts/common/Stores';
 	import { w_ancestry_focus, w_ancestries_grabbed, w_relationship_order } from '../../ts/common/Stores';
 	import { w_hierarchy, w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/common/Stores';
-	import { debug, colors, signals, layout, Ancestry } from '../../ts/common/Global_Imports';
+	import { grabs, debug, colors, signals, layout, Ancestry } from '../../ts/common/Global_Imports';
 	import { c, k, p, ux, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
 	import type { Integer, Dictionary } from '../../ts/common/Types';
 	import Identifiable from '../../ts/runtime/Identifiable';
-	import { s_details } from '../../ts/state/S_Details';
-	import Segmented from '../mouse/Segmented.svelte';
 	import Text_Table from '../kit/Text_Table.svelte';
-	import Separator from '../kit/Separator.svelte';
 	import Color from '../kit/Color.svelte';
 	import { onMount } from 'svelte';
 	export let top = 0;
 	const id = 'info';
 	const separator_font_size = k.font_size.smallest;
 	const es_info = ux.s_element_for(new Identifiable(id), T_Element.info, id);
-	let ancestry: Ancestry | null = s_details.ancestry_forInfo;
+	let ancestry: Ancestry | null = grabs.ancestry_forInfo;
 	let thing: Thing | null = ancestry?.thing ?? null;
 	let thingHID: Integer | null = thing?.hid;
 	let information: Array<Dictionary> = [];
@@ -38,7 +35,7 @@
 	});
 
 	function update_forKind_ofInfo() {
-		s_details.update_forKind_ofInfo()
+		grabs.update_forKind_ofInfo()
 		update_forAncestry();
 	}
 
@@ -52,7 +49,7 @@
 	}
 
 	function update_forAncestry() {
-		ancestry = s_details.ancestry_forInfo;
+		ancestry = grabs.ancestry_forInfo;
 		thing = ancestry?.thing;
 		if (!!thing) {
 			thing_title = thing.title;

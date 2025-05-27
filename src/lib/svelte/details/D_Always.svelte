@@ -1,10 +1,9 @@
 <script lang='ts'>
+	import { c, k, u, ux, Point, debug, layout, grabs } from '../../ts/common/Global_Imports';
 	import { w_show_info_ofType, w_show_details_ofType } from '../../ts/common/Stores';
-	import { c, k, u, ux, Point, debug, layout } from '../../ts/common/Global_Imports';
 	import { w_ancestries_grabbed, w_ancestry_focus } from '../../ts/common/Stores';
-	import { T_Details, T_Info } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_device_isMobile } from '../../ts/common/Stores';
-	import { s_details } from '../../ts/state/S_Details';
+	import { T_Details, T_Info } from '../../ts/common/Global_Imports';
 	import Segmented from '../mouse/Segmented.svelte';
     let reattachments = 0;
 
@@ -12,7 +11,7 @@
 	$: $w_ancestry_focus, $w_show_info_ofType, $w_ancestries_grabbed, update_forKind_ofInfo();
 	
 	function update_forKind_ofInfo() {
-		s_details.update_forKind_ofInfo();
+		grabs.update_forKind_ofInfo();
 		reattachments += 1;
 	}
 
@@ -35,7 +34,7 @@
 			text-align:center;
 			width:{k.width_details}px;
 			font-size:{k.font_size.common}px;'>
-			{s_details.latest_grab?.thing?.title.clipWithEllipsisAt(30)}
+			{grabs.latest_grab?.thing?.title.clipWithEllipsisAt(30)}
 		</div>
 		<Segmented
 			name='info-type'

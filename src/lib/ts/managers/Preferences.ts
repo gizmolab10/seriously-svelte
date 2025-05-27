@@ -1,6 +1,6 @@
+import { c, k, u, show, grabs, debug, radial, colors, layout, Ancestry, databases } from '../common/Global_Imports';
 import { G_Paging, T_Graph, T_Trait, T_Details, T_Kinship, T_Preference, T_Info } from '../common/Global_Imports';
 import { w_g_paging, w_hierarchy, w_font_size, w_background_color, w_thing_fontFamily } from '../common/Stores';
-import { c, k, u, show, debug, radial, colors, layout, Ancestry, databases } from '../common/Global_Imports';
 import { w_show_info_ofType, w_show_details_ofType, w_show_countDots_ofType } from '../common/Stores';
 import { w_show_tree_ofType, w_show_graph_ofType, w_show_traits_ofType } from '../common/Stores';
 import { w_ancestry_focus, w_ancestries_grabbed, w_ancestries_expanded } from '../common/Stores';
@@ -108,7 +108,7 @@ export class Preferences {
 			}
 		}
 		if (!ancestryToFocus.thing) {
-			const lastGrabbedAncestry = h.grabs_latest_ancestry?.parentAncestry;
+			const lastGrabbedAncestry = grabs.grabs_latest_ancestry?.parentAncestry;
 			if (lastGrabbedAncestry) {
 				ancestryToFocus = lastGrabbedAncestry;
 			}

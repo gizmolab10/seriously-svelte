@@ -32,6 +32,7 @@ import { colors } from './Colors';
 import { Direction } from './Angle';
 import { svgPaths } from './SVG_Paths';
 import { files } from '../files/Files';
+import { grabs } from '../managers/Grabs';
 import { layout } from '../layout/G_Layout';
 import { show } from '../managers/Visibility';
 import { Rect, Size, Point } from './Geometry';
@@ -63,6 +64,7 @@ import { u } from './Utilities';
 import { e } from '../signals/Events';
 import { ux } from '../state/S_Common';
 import { w } from '../layout/G_Window';
+import { h } from '../managers/Hierarchy';
 import { p } from '../managers/Preferences';
 import { c } from '../managers/Configuration';
 
@@ -70,22 +72,22 @@ import { transparentize } from 'color2k';
 import interact from 'interactjs';
 
 export {
-	e, c, k, p, u, ux, w,
 	T_Timer, Mouse_Timer,
+	e, c, h, k, p, u, ux, w,
 	interact, transparentize,
 	wrappers, Seriously_Range,
 	Rect, Size, Point, svgPaths,
 	Ancestry, Hierarchy, databases,
 	S_Common, S_Rotation, S_Resizing,
 	debug, Debug, T_Debug, ErrorTrace,
-	Angle, Direction, T_Quadrant, T_Orientation,
 	T_Persistable, T_Persistence, T_Request,
+	Angle, Direction, T_Quadrant, T_Orientation,
 	T_Element, Svelte_Wrapper, T_SvelteComponent,
 	G_Widget, G_Segment, G_TreeLine, G_TreeBranches,
-	show, files, builds, colors, layout, radial, signals,
 	S_Mouse, S_Widget, S_Element, S_Alteration, S_Title_Edit,
 	T_Order, T_File, T_Banner, T_Details, T_Startup, T_Graph,
 	T_Tool, T_Control, T_Browser, T_Signal, T_Info, T_Storage,
+	show, files, grabs, builds, colors, layout, radial, signals,
 	G_Paging, G_Cluster, G_RadialGraph, G_Thing_Pages, G_ArcSlider,
 	T_Layer, T_Curve, T_Create, T_RingZone, T_Oblong, T_Alteration,
 	T_Thing, T_Trait, T_Widget, T_Predicate, T_Kinship, T_Preference,

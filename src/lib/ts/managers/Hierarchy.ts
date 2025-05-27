@@ -1,15 +1,16 @@
 import { Tag, Access, Ancestry, Predicate, Relationship, Persistable } from '../common/Global_Imports';
+import { debug, grabs, files, colors, signals, layout, databases } from '../common/Global_Imports';
 import { T_Thing, T_Trait, T_Order, T_Create, T_File, T_Control } from '../common/Global_Imports';
-import { debug, files, colors, signals, layout, databases } from '../common/Global_Imports';
-import { w_storage_updated, w_s_alteration, w_ancestries_grabbed } from '../common/Stores';
 import { T_Alteration, T_Predicate, T_Persistable } from '../common/Global_Imports';
 import { w_popupView_id, w_ancestry_focus, w_s_title_edit } from '../common/Stores';
+import { w_storage_updated, w_s_alteration, w_hierarchy } from '../common/Stores';
 import { c, k, p, u, show, User, Thing, Trait } from '../common/Global_Imports';
 import type { Integer, Dictionary } from '../common/Types';
 import Identifiable from '../runtime/Identifiable';
 import { marianne } from '../files/Marianne';
 import DBCommon from '../database/DBCommon';
 import { get } from 'svelte/store';
+import { derived } from 'svelte/store';
 
 export type Ancestries_ByHID = { [hid: Integer]: Ancestry }
 export type Relationships_ByHID = { [hid: Integer]: Array<Relationship> }
@@ -80,57 +81,6 @@ export class Hierarchy {
 		if (!!root) {
 			this.root = root;
 		}
-	}
-
-	static readonly _____GRABS: unique symbol;
-
-	get grabs_latest_thing(): Thing | null { return this.grabs_latest_ancestry?.thing || null; }
-
-	get grabs_areInvisible(): boolean {
-		const ancestries = get(w_ancestries_grabbed) ?? [];
-		for (const ancestry of ancestries) {
-			if (!ancestry.isVisible) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	get grabs_latest_ancestry(): Ancestry | null {
-		const ancestry = this.grabs_latest_upward(false);
-		const relationshipHID = ancestry?.relationship?.hid;
-		if (!!relationshipHID && !!this.relationship_forHID(relationshipHID)) {
-			return ancestry;
-		}
-		return null;
-	}
-
-	grabs_latest_assureIsVisible() {
-		const ancestry = this.grabs_latest_ancestry;
-		if (!!ancestry && !ancestry.isVisible) {
-			if (layout.inTreeMode) {
-				ancestry.reveal_toFocus();
-			} else {
-				ancestry.parentAncestry?.becomeFocus();
-			}
-		}
-	}
-
-	grabs_latest_upward(up: boolean): Ancestry {	// does not alter array
-		const ancestries = get(w_ancestries_grabbed) ?? [];
-		if (ancestries.length > 0) {
-			if (up) {
-				return ancestries[0];
-			} else {
-				return ancestries.slice(-1)[0];
-			}
-		}
-		return this.rootAncestry;
-	}
-
-	grabs_latest_rebuild_persistentMoveUp_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
-		const ancestry = this.grabs_latest_upward(up);
-		this.ancestry_rebuild_persistentMoveUp_maybe(ancestry, up, SHIFT, OPTION, EXTREME);
 	}
 	
 	static readonly _____THINGS: unique symbol;
@@ -793,7 +743,7 @@ export class Hierarchy {
 
 	get ancestry_forBreadcrumbs(): Ancestry {
 		const focus = get(w_ancestry_focus);
-		const grab = this.grabs_latest_ancestry;
+		const grab = grabs.grabs_latest_ancestry;
 		const grab_containsFocus = !!grab && focus.isAProgenyOf(grab)
 		return (!!grab && !grab_containsFocus) ? grab : focus;
 	}
@@ -958,8 +908,10 @@ export class Hierarchy {
 				}
 			}
 		} else if (c.allow_GraphEditing) {
-			const grab = this.grabs_latest_upward(true);
-			this.ancestry_rebuild_persistentRelocateRight(grab, RIGHT, EXTREME);
+			const grab = grabs.grabs_latest_upward(true);
+			if (!!grab) {
+				this.ancestry_rebuild_persistentRelocateRight(grab, RIGHT, EXTREME);
+			}
 		}
 	}
 
@@ -1041,7 +993,7 @@ export class Hierarchy {
 				} else if (!!newGrabAncestry) { 
 					if (ancestry.isExpanded) {
 						graph_needsRebuild = ancestry.collapse();
-						newGrabAncestry = this.grabs_areInvisible ? ancestry : null;
+						newGrabAncestry = grabs.grabs_areInvisible ? ancestry : null;
 					} else if (newGrabAncestry.isExpanded || (!!rootAncestry && !rootAncestry.equals(newGrabAncestry))) {
 						graph_needsRebuild = newGrabAncestry.collapse();
 					}
@@ -1349,7 +1301,7 @@ export class Hierarchy {
 
 	get user_selected_ancestry(): Ancestry {
 		const focus = get(w_ancestry_focus);
-		let grabbed = this.grabs_latest_ancestry;
+		let grabbed = grabs.grabs_latest_ancestry;
 		if (!!focus && (show.shows_focus)) {
 			return focus;
 		} else if (!!grabbed) {
@@ -1551,3 +1503,6 @@ export class Hierarchy {
 	}
 
 }
+
+export let h: Hierarchy | null = null;
+w_hierarchy.subscribe(value => h = value);

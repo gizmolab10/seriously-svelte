@@ -1,8 +1,8 @@
 import { T_Tool, T_File, T_Predicate, T_Alteration, S_Mouse, S_Alteration } from '../common/Global_Imports';
-import { c, k, w, Point, debug, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
+import { c, h, k, w, grabs, Point, debug, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
 import { w_device_isMobile, w_ancestries_grabbed, w_user_graph_offset } from '../common/Stores';
 import { w_count_mouse_up, w_mouse_location, w_mouse_location_scaled } from '../common/Stores';
-import { w_hierarchy, w_s_alteration, w_count_resize, w_s_title_edit } from '../common/Stores';
+import { w_s_alteration, w_count_resize, w_s_title_edit } from '../common/Stores';
 import { s_details } from '../state/S_Details';
 import { get } from 'svelte/store';
 
@@ -174,13 +174,12 @@ export class Events {
 	}
 
 	async handle_tool_clickedAt(s_mouse: S_Mouse, t_tool: number, column: number, name: string) {
-		const ancestry = s_details.ancestry;
-		if (!!ancestry && !this.handle_isTool_disabledAt(t_tool, column)) {
-			const h = get(w_hierarchy);
+		const ancestry = grabs.ancestry_forInfo;
+		if (!!ancestry && !this.handle_isTool_disabledAt(t_tool, column) && !!h) {
 			switch (t_tool) {
 				case T_Tool.browse:					switch (column) {
-					case k.tools.browse.up:				h.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, false, false); break;
-					case k.tools.browse.down:			h.grabs_latest_rebuild_persistentMoveUp_maybe(false, false, false, false); break;
+					case k.tools.browse.up:				grabs.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, false, false); break;
+					case k.tools.browse.down:			grabs.grabs_latest_rebuild_persistentMoveUp_maybe(false, false, false, false); break;
 					case k.tools.browse.left:			await h.ancestry_rebuild_persistentMoveRight(ancestry, false, false, false, false, false); break;
 					case k.tools.browse.right:			await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, false, false, false); break;
 				}									break;
@@ -197,14 +196,14 @@ export class Events {
 					case k.tools.delete.related:		this.ancestry_toggle_alteration(ancestry, T_Alteration.delete, Predicate.isRelated); break;
 				}									break;
 				case T_Tool.move:					switch (column) {
-					case k.tools.move.up:				h.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, true, false); break;
-					case k.tools.move.down:				h.grabs_latest_rebuild_persistentMoveUp_maybe(false, false, true, false); break;
+					case k.tools.move.up:				grabs.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, true, false); break;
+					case k.tools.move.down:				grabs.grabs_latest_rebuild_persistentMoveUp_maybe(false, false, true, false); break;
 					case k.tools.move.left:				await h.ancestry_rebuild_persistentMoveRight(ancestry, false, false, true, false, false); break;
 					case k.tools.move.right:			await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, true, false, false); break;
 				}									break;
 				case T_Tool.list:						await h.ancestry_toggle_expansion(ancestry); break;
 				case T_Tool.show:					switch (column) {
-					case k.tools.show.selection:		h.grabs_latest_assureIsVisible(); break;
+					case k.tools.show.selection:		grabs.grabs_latest_assureIsVisible(); break;
 					case k.tools.show.root:				h.rootAncestry.becomeFocus(); break;
 					case k.tools.show.all:				layout.expandAll(); layout.grand_build(); break;
 				}									break;
@@ -214,7 +213,7 @@ export class Events {
 	}
 
 	handle_isTool_disabledAt(t_tool: number, column: number): boolean {		// true means disabled
-		const ancestry = s_details.ancestry;
+		const ancestry = grabs.ancestry_forInfo;
 		if (!!ancestry) {
 			const is_altering = !!get(w_s_alteration);
 			const no_children = !ancestry.hasChildren;
@@ -249,7 +248,7 @@ export class Events {
 				case T_Tool.list:						return disable_revealConceal;
 				case T_Tool.show:					switch (column) {
 					case k.tools.show.selection:		return ancestry.isVisible;
-					case k.tools.show.root:				return get(w_hierarchy)?.rootAncestry?.isVisible ?? false;
+					case k.tools.show.root:				return h?.rootAncestry?.isVisible ?? false;
 					case k.tools.show.all:				return layout.isAllExpanded;
 				}									break;
 				case T_Tool.graph:						return get(w_user_graph_offset).isZero;
@@ -261,14 +260,13 @@ export class Events {
 	async handle_key_down(event: KeyboardEvent) {
 		const isEditing = get(w_s_title_edit)?.isActive ?? false;
 		if (event.type == 'keydown' && !isEditing) {
-			const h = get(w_hierarchy);
 			const OPTION = event.altKey;
 			const SHIFT = event.shiftKey;
 			const COMMAND = event.metaKey;
 			const EXTREME = SHIFT && OPTION;
 			const time = new Date().getTime();
 			const key = event.key.toLowerCase();
-			const ancestry = h?.grabs_latest_upward(true);
+			const ancestry = grabs.grabs_latest_upward(true);
 			const modifiers = ['alt', 'meta', 'shift', 'control'];
 			let graph_needsRebuild = false;
 			if (!!h && !!ancestry && !modifiers.includes(key)) {		// ignore modifier-key-only events
@@ -302,8 +300,8 @@ export class Events {
 					case 'o':				h.select_file_toUpload(T_File.json, event.shiftKey); break;
 					case '!':				graph_needsRebuild = h.rootAncestry?.becomeFocus(); break;
 					case 'escape':			if (!!get(w_s_alteration)) { h.stop_alteration(); }; break;
-					case 'arrowup':			h.grabs_latest_rebuild_persistentMoveUp_maybe( true, SHIFT, OPTION, EXTREME); break;
-					case 'arrowdown':		h.grabs_latest_rebuild_persistentMoveUp_maybe(false, SHIFT, OPTION, EXTREME); break;
+					case 'arrowup':			grabs.grabs_latest_rebuild_persistentMoveUp_maybe( true, SHIFT, OPTION, EXTREME); break;
+					case 'arrowdown':		grabs.grabs_latest_rebuild_persistentMoveUp_maybe(false, SHIFT, OPTION, EXTREME); break;
 				}
 				if (graph_needsRebuild) {
 					layout.grand_build();
@@ -311,7 +309,7 @@ export class Events {
 				const duration = ((new Date().getTime()) - time).toFixed(1);
 				debug.log_key(`H  (${duration}) ${key}`);
 				setTimeout( async () => {
-					await h.db.persist_all();
+					await h?.db.persist_all();
 				}, 1);
 			}
 		}
