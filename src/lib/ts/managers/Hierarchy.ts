@@ -743,7 +743,7 @@ export class Hierarchy {
 
 	get ancestry_forBreadcrumbs(): Ancestry {
 		const focus = get(w_ancestry_focus);
-		const grab = grabs.grabs_latest_ancestry;
+		const grab = grabs.latest_ancestry;
 		const grab_containsFocus = !!grab && focus.isAProgenyOf(grab)
 		return (!!grab && !grab_containsFocus) ? grab : focus;
 	}
@@ -908,7 +908,7 @@ export class Hierarchy {
 				}
 			}
 		} else if (c.allow_GraphEditing) {
-			const grab = grabs.grabs_latest_upward(true);
+			const grab = grabs.latest_upward(true);
 			if (!!grab) {
 				this.ancestry_rebuild_persistentRelocateRight(grab, RIGHT, EXTREME);
 			}
@@ -993,7 +993,7 @@ export class Hierarchy {
 				} else if (!!newGrabAncestry) { 
 					if (ancestry.isExpanded) {
 						graph_needsRebuild = ancestry.collapse();
-						newGrabAncestry = grabs.grabs_areInvisible ? ancestry : null;
+						newGrabAncestry = grabs.areInvisible ? ancestry : null;
 					} else if (newGrabAncestry.isExpanded || (!!rootAncestry && !rootAncestry.equals(newGrabAncestry))) {
 						graph_needsRebuild = newGrabAncestry.collapse();
 					}
@@ -1301,7 +1301,7 @@ export class Hierarchy {
 
 	get user_selected_ancestry(): Ancestry {
 		const focus = get(w_ancestry_focus);
-		let grabbed = grabs.grabs_latest_ancestry;
+		let grabbed = grabs.latest_ancestry;
 		if (!!focus && (show.shows_focus)) {
 			return focus;
 		} else if (!!grabbed) {

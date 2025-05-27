@@ -87,7 +87,7 @@ class S_Details {
 	select_nextTrait(next: boolean) {
 		if (!!h && this.s_traits.find_next_item(next)) {
 			this.trait?.owner?.ancestry?.grabOnly();	// causes reaction (invoking update())
-			grabs.grabs_latest_assureIsVisible();
+			grabs.latest_assureIsVisible();
 			w_hierarchy.set(h);
 		}
 	}
@@ -110,7 +110,7 @@ class S_Details {
 	select_nextThing(next: boolean) {
 		if (!!h && this.s_things.find_next_item(next)) {	// alters thing, and index_ofItem, both are used below
 			this.thing?.ancestry?.grabOnly();		// causes reaction (invoking update())
-			grabs.grabs_latest_assureIsVisible();
+			grabs.latest_assureIsVisible();
 			w_hierarchy.set(h);
 		}
 	}
@@ -141,7 +141,7 @@ class S_Details {
 			const ancestry = this.tag?.ownerAt(0)?.ancestry;
 			if (!!h && !!ancestry) {
 				ancestry.grabOnly();
-				grabs.grabs_latest_assureIsVisible();
+				grabs.latest_assureIsVisible();
 				w_hierarchy.set(h);
 			}
 		}

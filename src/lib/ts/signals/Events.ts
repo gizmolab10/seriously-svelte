@@ -178,8 +178,8 @@ export class Events {
 		if (!!ancestry && !this.handle_isTool_disabledAt(t_tool, column) && !!h) {
 			switch (t_tool) {
 				case T_Tool.browse:					switch (column) {
-					case k.tools.browse.up:				grabs.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, false, false); break;
-					case k.tools.browse.down:			grabs.grabs_latest_rebuild_persistentMoveUp_maybe(false, false, false, false); break;
+					case k.tools.browse.up:				grabs.latest_rebuild_persistentMoveUp_maybe( true, false, false, false); break;
+					case k.tools.browse.down:			grabs.latest_rebuild_persistentMoveUp_maybe(false, false, false, false); break;
 					case k.tools.browse.left:			await h.ancestry_rebuild_persistentMoveRight(ancestry, false, false, false, false, false); break;
 					case k.tools.browse.right:			await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, false, false, false); break;
 				}									break;
@@ -196,14 +196,14 @@ export class Events {
 					case k.tools.delete.related:		this.ancestry_toggle_alteration(ancestry, T_Alteration.delete, Predicate.isRelated); break;
 				}									break;
 				case T_Tool.move:					switch (column) {
-					case k.tools.move.up:				grabs.grabs_latest_rebuild_persistentMoveUp_maybe( true, false, true, false); break;
-					case k.tools.move.down:				grabs.grabs_latest_rebuild_persistentMoveUp_maybe(false, false, true, false); break;
+					case k.tools.move.up:				grabs.latest_rebuild_persistentMoveUp_maybe( true, false, true, false); break;
+					case k.tools.move.down:				grabs.latest_rebuild_persistentMoveUp_maybe(false, false, true, false); break;
 					case k.tools.move.left:				await h.ancestry_rebuild_persistentMoveRight(ancestry, false, false, true, false, false); break;
 					case k.tools.move.right:			await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, true, false, false); break;
 				}									break;
 				case T_Tool.list:						await h.ancestry_toggle_expansion(ancestry); break;
 				case T_Tool.show:					switch (column) {
-					case k.tools.show.selection:		grabs.grabs_latest_assureIsVisible(); break;
+					case k.tools.show.selection:		grabs.latest_assureIsVisible(); break;
 					case k.tools.show.root:				h.rootAncestry.becomeFocus(); break;
 					case k.tools.show.all:				layout.expandAll(); layout.grand_build(); break;
 				}									break;
@@ -266,7 +266,7 @@ export class Events {
 			const EXTREME = SHIFT && OPTION;
 			const time = new Date().getTime();
 			const key = event.key.toLowerCase();
-			const ancestry = grabs.grabs_latest_upward(true);
+			const ancestry = grabs.latest_upward(true);
 			const modifiers = ['alt', 'meta', 'shift', 'control'];
 			let graph_needsRebuild = false;
 			if (!!h && !!ancestry && !modifiers.includes(key)) {		// ignore modifier-key-only events
@@ -300,8 +300,8 @@ export class Events {
 					case 'o':				h.select_file_toUpload(T_File.json, event.shiftKey); break;
 					case '!':				graph_needsRebuild = h.rootAncestry?.becomeFocus(); break;
 					case 'escape':			if (!!get(w_s_alteration)) { h.stop_alteration(); }; break;
-					case 'arrowup':			grabs.grabs_latest_rebuild_persistentMoveUp_maybe( true, SHIFT, OPTION, EXTREME); break;
-					case 'arrowdown':		grabs.grabs_latest_rebuild_persistentMoveUp_maybe(false, SHIFT, OPTION, EXTREME); break;
+					case 'arrowup':			grabs.latest_rebuild_persistentMoveUp_maybe( true, SHIFT, OPTION, EXTREME); break;
+					case 'arrowdown':		grabs.latest_rebuild_persistentMoveUp_maybe(false, SHIFT, OPTION, EXTREME); break;
 				}
 				if (graph_needsRebuild) {
 					layout.grand_build();

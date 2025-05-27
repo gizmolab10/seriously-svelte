@@ -108,7 +108,7 @@ export class Preferences {
 			}
 		}
 		if (!ancestryToFocus.thing) {
-			const lastGrabbedAncestry = grabs.grabs_latest_ancestry?.parentAncestry;
+			const lastGrabbedAncestry = grabs.latest_ancestry?.parentAncestry;
 			if (lastGrabbedAncestry) {
 				ancestryToFocus = lastGrabbedAncestry;
 			}
