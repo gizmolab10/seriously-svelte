@@ -499,12 +499,16 @@ export default class Ancestry extends Identifiable {
 
 	static readonly _____GRAB: unique symbol;
 	
-	toggleGrab() { if (this.isGrabbed) { this.ungrab(); } else { this.grab(); } }
-
-	grabOnly() {
-		debug.log_grab(`  GRAB ONLY "${this.title}"`);
-		w_ancestries_grabbed.set([this]);
-		this.hierarchy.stop_alteration();
+	grab() { grabs.grab(this); }
+	ungrab() { grabs.ungrab(this); }
+	grabOnly() { grabs.grabOnly(this); }
+	
+	toggleGrab() {
+		if (this.isGrabbed) {
+			this.ungrab();
+		} else {
+			this.grab();
+		}
 	}
 
 	grab_forShift(SHIFT: boolean) {
@@ -513,46 +517,6 @@ export default class Ancestry extends Identifiable {
 		} else {
 			this.grabOnly();
 		}
-	}
-
-	grab() {
-		let grabbed = get(w_ancestries_grabbed) ?? [];
-		if (!!grabbed) {
-			const index = grabbed.indexOf(this);
-			if (grabbed.length == 0) {
-				grabbed.push(this);
-			} else if (index != grabbed.length - 1) {	// not already last?
-				if (index != -1) {					// found: remove
-					grabbed.splice(index, 1);
-				}
-				grabbed.push(this);					// always add last
-			}
-		}
-		w_ancestries_grabbed.set(grabbed);
-		debug.log_grab(`  GRAB "${this.title}"`);
-		this.hierarchy.stop_alteration();
-	}
-
-	ungrab() {
-		w_s_title_edit?.set(null);
-		let grabbed = get(w_ancestries_grabbed) ?? [];
-		const rootAncestry = this.hierarchy.rootAncestry;
-		if (!!grabbed) {
-			const index = grabbed.indexOf(this);
-			if (index != -1) {				// only splice grabbed when item is found
-				grabbed.splice(index, 1);		// 2nd parameter means remove one item only
-			}
-			if (grabbed.length == 0) {
-				grabbed.push(rootAncestry);
-			}
-		}
-		if (grabbed.length == 0 && layout.inTreeMode) {
-			grabbed = [rootAncestry];
-		} else {
-			this.hierarchy.stop_alteration(); // do not show editingTools for root
-		}
-		w_ancestries_grabbed.set(grabbed);
-		debug.log_grab(`  UNGRAB "${this.title}"`);
 	}
 
 	static readonly _____ALTERATION: unique symbol;

@@ -273,7 +273,7 @@ export default class DBFirebase extends DBCommon {
 				case T_Persistable.traits:		  h.trait_remember_runtimeCreate(idBase, id, data.ownerID, data.t_trait, data.text, data.dict, true); break;
 				case T_Persistable.things:		  h.thing_remember_runtimeCreate(idBase, id, data.title, data.color, data.t_thing, true); break;
 				case T_Persistable.relationships: h.relationship_remember_runtimeCreateUnique(idBase, id, data.predicate.id, data.parent.id, data.child.id, data.order, 0, T_Create.isFromPersistent); break;
-				case T_Persistable.tags:		  h.tag_remember_runtimeCreate(idBase, id, data.thingHIDs, data.type, true); break;
+				case T_Persistable.tags:		  h.tag_remember_runtimeCreate(idBase, id, data.type, data.thingHIDs, true); break;
 			}
 		}
 	}

@@ -1,5 +1,5 @@
-import { w_hierarchy, w_ancestry_focus, w_ancestries_grabbed } from "../common/Stores";
-import { u, show, Thing, layout, Ancestry } from "../common/Global_Imports";
+import { w_hierarchy, w_s_title_edit, w_ancestry_focus, w_ancestries_grabbed } from "../common/Stores";
+import { u, show, Thing, debug, layout, Ancestry } from "../common/Global_Imports";
 import { get } from "svelte/store";
 
 export class Grabs {
@@ -89,6 +89,54 @@ export class Grabs {
 		return !(get(w_ancestry_focus)?.isGrabbed ?? true);
 	}
 	
+	static readonly _____GRAB: unique symbol;
+
+	grabOnly(ancestry: Ancestry) {
+		debug.log_grab(`  GRAB ONLY "${ancestry.title}"`);
+		w_ancestries_grabbed.set([ancestry]);
+		get(w_hierarchy)?.stop_alteration();
+	}
+
+	grab(ancestry: Ancestry) {
+		let grabbed = get(w_ancestries_grabbed) ?? [];
+		if (!!grabbed) {
+			const index = grabbed.indexOf(ancestry);
+			if (grabbed.length == 0) {
+				grabbed.push(ancestry);
+			} else if (index != grabbed.length - 1) {	// not already last?
+				if (index != -1) {					// found: remove
+					grabbed.splice(index, 1);
+				}
+				grabbed.push(ancestry);					// always add last
+			}
+		}
+		w_ancestries_grabbed.set(grabbed);
+		debug.log_grab(`  GRAB "${ancestry.title}"`);
+		get(w_hierarchy)?.stop_alteration();
+	}
+
+	ungrab(ancestry: Ancestry) {
+		w_s_title_edit?.set(null);
+		let grabbed = get(w_ancestries_grabbed) ?? [];
+		const rootAncestry = get(w_hierarchy)?.rootAncestry;
+		if (!!grabbed) {
+			const index = grabbed.indexOf(ancestry);
+			if (index != -1) {				// only splice grabbed when item is found
+				grabbed.splice(index, 1);		// 2nd parameter means remove one item only
+			}
+			if (grabbed.length == 0) {
+				grabbed.push(rootAncestry);
+			}
+		}
+		if (grabbed.length == 0 && layout.inTreeMode) {
+			grabbed = [rootAncestry];
+		} else {
+			get(w_hierarchy)?.stop_alteration(); // do not show editingTools for root
+		}
+		w_ancestries_grabbed.set(grabbed);
+		debug.log_grab(`  UNGRAB "${ancestry.title}"`);
+	}
+
 }
 
 export const grabs = new Grabs();
