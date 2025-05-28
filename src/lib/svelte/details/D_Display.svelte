@@ -5,7 +5,7 @@
 	import Separator from '../kit/Separator.svelte';
 	import Color from '../kit/Color.svelte';
 	export let top = 0;
-	const color_left = 123
+	const color_left = 60
 	const picker_offset = `-180px`;
 	const font_size = k.font_size.smaller;
 	const info_width = k.width_details - 30;
@@ -42,7 +42,7 @@
 		font_size={font_size}
 		name='counts-selector'
 		height={k.height.button}
-		origin={new Point(89, 13)}
+		origin={new Point(47, 13)}
 		selected={$w_show_countDots_ofType}
 		selection_closure={selection_closure}/>
 	<Separator

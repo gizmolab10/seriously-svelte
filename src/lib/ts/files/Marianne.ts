@@ -61,7 +61,7 @@ class Marianne {
 	async create_relationships_fromAllTraits() {
 		// for each trait that has a dict containing a parent <x> link
 		for (const trait of get(w_hierarchy).traits) {
-			for (const key of ['parent 1 link', 'parent 2 link', 'Parent 3 link', 'Parent 4 link', 'Parent 5 link', 'Parent 6 link']) {
+			for (const key of ['parent 1 link']) {
 				await this.create_relationship_fromTrait(trait, key);
 			}
 			trait.dict = {};			// not save dict, too big. was: this.shrink_dict(dict);
@@ -86,17 +86,18 @@ class Marianne {
 
 	private assure_small_families(): boolean {
 		let changed = false;
+		const max_children = 35;
 		const h = get(w_hierarchy);
 		const rootAncestry = h.rootAncestry;
 		rootAncestry.traverse((ancestry) => {
 			const ancestry_title = ancestry.abbreviated_title;
 			const ancestry_thing_id = ancestry.thing?.id;
 			const child_ancestries = ancestry.childAncestries;
-			if (!!ancestry_thing_id && child_ancestries.length > 25) {
+			if (!!ancestry_thing_id && child_ancestries.length > max_children) {
 				changed = true;
 				const chunks = [];
-				for (let i = 0; i < child_ancestries.length; i += 25) {
-					chunks.push(child_ancestries.slice(i, i + 25));
+				for (let i = 0; i < child_ancestries.length; i += max_children) {
+					chunks.push(child_ancestries.slice(i, i + max_children));
 				}
 				for (const [index, chunk] of chunks.entries()) {
 					const chunk_thing_id = Identifiable.newID();

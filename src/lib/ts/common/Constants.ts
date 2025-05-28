@@ -92,13 +92,13 @@ export default class Constants {
 		line:	   row_height + 2,
 		segmented: row_height + 1,
 		row:	   row_height,
-		controls:  18,
+		controls:  16,
 		button:	   dot_size + 3,
 		dot:	   dot_size,
 		banner: {
 			controls: banner_height,
 			crumbs:	  banner_height,
-			details:  12,
+			details:  banner_height,
 			graph:	  0,
 		},
 		detail: {

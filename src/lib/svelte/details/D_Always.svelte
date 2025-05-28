@@ -38,11 +38,11 @@
 		</div>
 		<Segmented
 			name='info-type'
-			height={k.height.button}
-			origin={new Point(119, 18)}
+			height={k.height.controls}
 			font_size={k.font_size.smaller}
 			selected={[$w_show_info_ofType]}
 			titles={[T_Info.focus, T_Info.selection]}
-			selection_closure={info_selection_closure}/>
+			selection_closure={info_selection_closure}
+			origin={new Point((k.width_details - 100) / 2, k.height.banner.details - 2)}/>
 	{/if}
 {/key}

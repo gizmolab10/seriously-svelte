@@ -54,20 +54,20 @@
     <div
         class='tags-list'
         style='
-            top:35px;
+            top:33px;
             display: flex;
-            padding: 0 20px;
+            padding: 0 10px;
             position:relative;
-            width:{k.width_details - 40}px;
+            width:{k.width_details - 20}px;
             justify-content: space-between;
-            font-size:{k.font_size.smaller}px;'>
+            font-size:{k.font_size.smallest}px;'>
         {#if !$w_thing_tags || $w_thing_tags.length == 0}
             <span style='text-align: center;'>
                 no tags
             </span>
         {:else}
             <span style='text-align: left;'>
-                thing {$w_tag_thing_index + 1} of {$w_tag_things.length}
+                thing {$w_tag_thing_index + 1} (of {$w_tag_things.length})
             </span>
             <span style='text-align: right;'>
                 {$w_thing_tags.map(t => t.type).join(', ')}

@@ -104,7 +104,7 @@
 		name='db'
 		titles={db_ids}
 		selected={[$w_t_database]}
-		origin={new Point(38, top + 3)}
+		origin={new Point(22, top + 3)}
 		selection_closure={selection_closure}/>
 	<div class='data-information'
 		style='

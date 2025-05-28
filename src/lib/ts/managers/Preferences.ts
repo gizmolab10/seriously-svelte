@@ -74,7 +74,7 @@ export class Preferences {
 	}
 		
 	restore_expanded() {
-		w_ancestries_expanded.set([]);
+		// w_ancestries_expanded.set([]);
 		if (c.eraseDB > 0) {
 			c.eraseDB -= 1;
 			w_ancestries_expanded.set([]);

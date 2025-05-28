@@ -1352,10 +1352,10 @@ export class Hierarchy {
 			if (!!thingTags) {
 				tags = u.uniquely_concatenateArrays_ofIdentifiables(tags, thingTags) as Array<Tag>;
 			}
-			if (!!thing && things.filter(t => t.id == thing.id).length == 0) {
+			if (!!thing && !things.some(t => t.id == thing.id)) {
 				things.push(thing);
 			}
-			if (!isFirst && !!relationship && relationships.filter(r => r.id == relationship.id).length == 0) {
+			if (!isFirst && !!relationship && !relationships.some(r => r.id == relationship.id)) {
 				relationships.push(relationship);
 			}
 			isFirst = false;
