@@ -67,10 +67,10 @@ export default class DBFirebase extends DBCommon {
 	}
 
 	async hierarchy_fetch_forID(idBase: string) {
-		await this.documents_fetch_ofType(T_Persistable.things, idBase);
-		await this.documents_fetch_ofType(T_Persistable.traits, idBase);
 		await this.documents_fetch_ofType(T_Persistable.relationships, idBase);
-		await this.documents_fetch_ofType(T_Persistable.tags, idBase);
+		await this.documents_fetch_ofType(T_Persistable.traits,		   idBase);
+		await this.documents_fetch_ofType(T_Persistable.tags,		   idBase);
+		await this.documents_fetch_ofType(T_Persistable.things,		   idBase);		// do this last so can translate ids in all others above
 	}
 		
 	async documents_fetch_ofType(t_persistable: T_Persistable, idBase: string | null = null) {
@@ -269,11 +269,11 @@ export default class DBFirebase extends DBCommon {
 		if (DBFirebase.data_isValidOfKind(t_persistable, data)) {
 			const h = this.hierarchy;
 			switch (t_persistable) {
-				case T_Persistable.predicates:	  h.predicate_remember_runtimeCreate(id, data.kind, data.isBidirectional); break;
-				case T_Persistable.traits:		  h.trait_remember_runtimeCreate(idBase, id, data.ownerID, data.t_trait, data.text, data.dict, true); break;
-				case T_Persistable.things:		  h.thing_remember_runtimeCreate(idBase, id, data.title, data.color, data.t_thing, true); break;
-				case T_Persistable.relationships: h.relationship_remember_runtimeCreateUnique(idBase, id, data.predicate.id, data.parent.id, data.child.id, data.order, 0, T_Create.isFromPersistent); break;
-				case T_Persistable.tags:		  h.tag_remember_runtimeCreate(idBase, id, data.type, data.thingHIDs, true); break;
+				case T_Persistable.predicates:	  h   .predicate_remember_runtimeCreateUnique(		  id, data.kind,		 data.isBidirectional ); break;
+				case T_Persistable.things:		  h       .thing_remember_runtimeCreateUnique(idBase, id, data.title,		 data.color,		  data.t_thing, true); break;
+				case T_Persistable.relationships: h.relationship_remember_runtimeCreateUnique(idBase, id, data.predicate.id, data.parent.id,	  data.child.id, data.order, 0, T_Create.isFromPersistent); break;
+				case T_Persistable.traits:		  h       .trait_remember_runtimeCreateUnique(idBase, id, data.ownerID,		 data.t_trait,		  data.text, data.dict, true); break;
+				case T_Persistable.tags:		  h         .tag_remember_runtimeCreateUnique(idBase, id, data.type,		 data.thingHIDs,	  true); break;
 			}
 		}
 	}
@@ -759,8 +759,9 @@ export default class DBFirebase extends DBCommon {
 					return false;
 				}
 				break;
-			case T_Persistable.predicates:
-				if (!data.kind) {
+			case T_Persistable.tags:
+				const tag = data as PersistentTag;
+				if (!tag.thingHIDs || !tag.type) {
 					return false;
 				}
 				break;
@@ -770,9 +771,8 @@ export default class DBFirebase extends DBCommon {
 					return false;
 				}
 				break;
-			case T_Persistable.tags:
-				const tag = data as PersistentTag;
-				if (!tag.thingHIDs || !tag.type) {
+			case T_Persistable.predicates:
+				if (!data.kind) {
 					return false;
 				}
 				break;

@@ -49,7 +49,7 @@ class Pivot {
 		const h = get(w_hierarchy)
 		if (!!tag_types) {
 			for (const tag_type of tag_types.split(',')) {
-				const tag = h.tag_remember_runtimeAddTo_orCreateUnique(h.db.idBase, Identifiable.newID(), tag_type.trim(), [thingID.hash()]);
+				const tag = h.tag_remember_runtimeCreateUnique(h.db.idBase, Identifiable.newID(), tag_type.trim(), [thingID.hash()]);
 				return tag;
 			}
 		}
@@ -164,7 +164,7 @@ class Pivot {
 
 }
 
-export const marianne = new Pivot();
+export const pivot = new Pivot();
 
 enum T_Pivot_Fields {
 	Title,

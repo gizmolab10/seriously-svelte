@@ -7,10 +7,9 @@ import { w_storage_updated, w_s_alteration, w_hierarchy } from '../common/Stores
 import { c, k, p, u, show, User, Thing, Trait } from '../common/Global_Imports';
 import type { Integer, Dictionary } from '../common/Types';
 import Identifiable from '../runtime/Identifiable';
-import { marianne } from '../files/Pivot';
 import DBCommon from '../database/DBCommon';
+import { pivot } from '../files/Pivot';
 import { get } from 'svelte/store';
-import { derived } from 'svelte/store';
 
 export type Ancestries_ByHID = { [hid: Integer]: Ancestry }
 export type Relationships_ByHID = { [hid: Integer]: Array<Relationship> }
@@ -1118,6 +1117,16 @@ export class Hierarchy {
 		this.traits = [];
 	}
 
+	traits_translate_idsFromTo_forParents(idFrom: string, idTo: string, forParents: boolean) {
+		for (const trait of this.traits) {
+			if (trait.ownerID == idFrom) {
+				trait.ownerID = idTo;	// fuck! cannot reverse from hash to id
+				trait.set_isDirty();
+				this.trait_remember(trait);
+			}
+		}
+	}
+
 	static readonly _____TRAIT: unique symbol;
 
 	trait_forHID(hid: Integer): Trait | null { return this.trait_byHID[hid ?? undefined]; }
@@ -1173,6 +1182,12 @@ export class Hierarchy {
 
 	tags_forThingHID(hid: Integer): Array<Tag> { return this.tags_byThingHID[hid]; }
 
+	tags_forget_all() {
+		this.tags_byThingHID = {};
+		this.tag_byType = {};
+		this.tags = [];
+	}
+
 	tags_refreshKnowns() {
 		const tags = this.tags;
 		this.tags_forget_all();
@@ -1180,10 +1195,17 @@ export class Hierarchy {
 		this.tags = tags;
 	}
 
-	tags_forget_all() {
-		this.tags_byThingHID = {};
-		this.tag_byType = {};
-		this.tags = [];
+	tags_translate_idsFromTo_forParents(idFrom: string, idTo: string, forParents: boolean) {
+		for (const tag of this.tags) {
+			for (const hid of tag.thingHIDs) {
+				if (hid == idFrom.hash()) {
+					const replacementHID = idTo.hash();
+					const index = tag.thingHIDs.indexOf(hid);
+					tag.thingHIDs[index] = replacementHID;
+					this.tag_remember(tag);
+				}
+			}
+		}
 	}
 
 	static readonly _____TAG: unique symbol;
@@ -1192,7 +1214,7 @@ export class Hierarchy {
 	tag_forHID(hid: Integer): Tag | null { return this.tag_byHID[hid ?? undefined]; }
 
 	tag_extract_fromDict(dict: Dictionary) {
-		this.tag_remember_runtimeAddTo_orCreateUnique(this.db.idBase, dict.id, dict.type, dict.thingHIDs, dict.already_persisted);
+		this.tag_remember_runtimeCreateUnique(this.db.idBase, dict.id, dict.type, dict.thingHIDs, dict.already_persisted);
 	}
 
 	tag_forget(tag: Tag) {
@@ -1217,8 +1239,8 @@ export class Hierarchy {
 		}
 	}
 
-	tag_remember_runtimeAddTo_orCreateUnique(idBase: string, id: string, type: string, thingHIDs: Array<Integer>, already_persisted: boolean = false): Tag {
-		let tag = this.tag_forType(type);
+	tag_remember_runtimeCreateUnique(idBase: string, id: string, type: string, thingHIDs: Array<Integer>, already_persisted: boolean = false): Tag {
+		let tag = this.tag_forHID(id?.hash());
 		if (!tag) {
 			tag = this.tag_remember_runtimeCreate(idBase, id, type, thingHIDs, already_persisted);
 		} else {
@@ -1284,7 +1306,7 @@ export class Hierarchy {
 					for (const dict of array) {
 						await this.extract_fromCSV_Dict(dict);
 					}
-					await marianne.create_relationships_fromAllTraits();
+					await pivot.create_relationships_fromAllTraits();
 					break;
 				case T_File.json:
 					const dict = result as Dictionary;
@@ -1446,7 +1468,7 @@ export class Hierarchy {
 
 	static readonly _____BUILD: unique symbol;
 
-	extract_fromCSV_Dict(dict: Dictionary) { marianne.extract_fromDict(dict); }
+	extract_fromCSV_Dict(dict: Dictionary) { pivot.extract_fromDict(dict); }
 
 	async extract_fromDict(dict: Dictionary) {
 		const idRoot = dict.id ?? dict.hid ?? dict.idRoot;				// cheapo backwards compatibility
