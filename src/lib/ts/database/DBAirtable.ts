@@ -18,7 +18,7 @@ import Airtable from 'airtable';
 export default class DBAirtable extends DBCommon {
 	personalAccessToken = 'patGTiWbebGZTw0fh.dd17a194aea98f9e4e918d333babde7bcd39903b4179b139ac8866a5f3cfe5b6';
 	tryPersonalAccessToken = 'patHLy6SzBPcbjtCM.c032a929620e4c2906a59bec5c6aa955c1cac78875ca8f5d5398ae1ee058ebc8';
-	baseMarianne = new Airtable({ apiKey: this.personalAccessToken }).base('appopcsTBwET2o3RU');
+	basePivot = new Airtable({ apiKey: this.personalAccessToken }).base('appopcsTBwET2o3RU');
 	baseCatalist = new Airtable({ apiKey: this.personalAccessToken }).base('apphGUCbYIEJLvRrR');
 	basePublic = new Airtable({ apiKey: this.personalAccessToken }).base('appq1IjzmiRdlZi3H');
 	baseWendy = new Airtable({ apiKey: this.personalAccessToken }).base('appuDpzaPN3at9jRL');

@@ -7,7 +7,7 @@ import { w_storage_updated, w_s_alteration, w_hierarchy } from '../common/Stores
 import { c, k, p, u, show, User, Thing, Trait } from '../common/Global_Imports';
 import type { Integer, Dictionary } from '../common/Types';
 import Identifiable from '../runtime/Identifiable';
-import { marianne } from '../files/Marianne';
+import { marianne } from '../files/Pivot';
 import DBCommon from '../database/DBCommon';
 import { get } from 'svelte/store';
 import { derived } from 'svelte/store';

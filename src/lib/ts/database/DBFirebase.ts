@@ -70,6 +70,7 @@ export default class DBFirebase extends DBCommon {
 		await this.documents_fetch_ofType(T_Persistable.things, idBase);
 		await this.documents_fetch_ofType(T_Persistable.traits, idBase);
 		await this.documents_fetch_ofType(T_Persistable.relationships, idBase);
+		await this.documents_fetch_ofType(T_Persistable.tags, idBase);
 	}
 		
 	async documents_fetch_ofType(t_persistable: T_Persistable, idBase: string | null = null) {
@@ -237,6 +238,7 @@ export default class DBFirebase extends DBCommon {
 
 			try {
 				switch (t_persistable) {
+					case T_Persistable.tags:		  needsRebuild = this.tag_handle_docChanges(idBase, id, change, data); break;
 					case T_Persistable.things:		  needsRebuild = this.thing_handle_docChanges(idBase, id, change, data); break;
 					case T_Persistable.traits:		  needsRebuild = this.trait_handle_docChanges(idBase, id, change, data); break;
 					case T_Persistable.relationships: needsRebuild = this.relationship_handle_docChanges(idBase, id, change, data); break;
@@ -271,6 +273,7 @@ export default class DBFirebase extends DBCommon {
 				case T_Persistable.traits:		  h.trait_remember_runtimeCreate(idBase, id, data.ownerID, data.t_trait, data.text, data.dict, true); break;
 				case T_Persistable.things:		  h.thing_remember_runtimeCreate(idBase, id, data.title, data.color, data.t_thing, true); break;
 				case T_Persistable.relationships: h.relationship_remember_runtimeCreateUnique(idBase, id, data.predicate.id, data.parent.id, data.child.id, data.order, 0, T_Create.isFromPersistent); break;
+				case T_Persistable.tags:		  h.tag_remember_runtimeCreate(idBase, id, data.thingHIDs, data.type, true); break;
 			}
 		}
 	}
@@ -764,6 +767,12 @@ export default class DBFirebase extends DBCommon {
 			case T_Persistable.relationships:
 				const relationship = data as PersistentRelationship;
 				if (!relationship.predicate || !relationship.parent || !relationship.child) {
+					return false;
+				}
+				break;
+			case T_Persistable.tags:
+				const tag = data as PersistentTag;
+				if (!tag.thingHIDs || !tag.type) {
 					return false;
 				}
 				break;

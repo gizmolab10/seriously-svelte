@@ -104,6 +104,7 @@
 		name='db'
 		titles={db_ids}
 		selected={[$w_t_database]}
+		height={k.height.controls}
 		origin={new Point(22, top + 3)}
 		selection_closure={selection_closure}/>
 	<div class='data-information'
@@ -111,7 +112,7 @@
 			width: 100%;
 			font-size:{k.font_size.smaller}px;'>
 		<Text_Table
-			top={top + 26}
+			top={top + 21}
 			row_height={11}
 			array={information}
 			font_size={k.font_size.small - 1}/>
@@ -123,7 +124,7 @@
 			font_sizes={font_sizes}
 			width={k.width_details}
 			row_titles={row_titles()}
-			origin={Point.y(top + 115)}
+			origin={Point.y(top + 111)}
 			closure={handle_toolRequest}
 			button_height={k.height.button}
 			margin={(ux.t_storage == T_Storage.direction) ? 50 : 40}

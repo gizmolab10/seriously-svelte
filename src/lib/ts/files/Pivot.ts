@@ -5,7 +5,7 @@ import { w_hierarchy } from '../common/Stores';
 import { get } from 'svelte/store';
 import '../common/Extensions';
 
-class Marianne {
+class Pivot {
 
 	extract_fromDict(dict: Dictionary) {
 		// each dict represents a Thing, which has a title, name, description and parent 1 link
@@ -125,7 +125,7 @@ class Marianne {
 	convert_key(key: string): number {
 		const encodedKey = key.encode_as_property();
 		if (!!encodedKey) {
-			const newkey = T_Marianne_Fields[encodedKey as keyof typeof T_Marianne_Fields];
+			const newkey = T_Pivot_Fields[encodedKey as keyof typeof T_Pivot_Fields];
 			return newkey;
 		}
 		return -1;
@@ -164,9 +164,9 @@ class Marianne {
 
 }
 
-export const marianne = new Marianne();
+export const marianne = new Pivot();
 
-enum T_Marianne_Fields {
+enum T_Pivot_Fields {
 	Title,
 	parent_1_link,
 	Custom_Tags_$$Local$,
