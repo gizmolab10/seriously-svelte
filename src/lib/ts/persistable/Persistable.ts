@@ -36,4 +36,8 @@ export default class Persistable extends Identifiable {
 			T_Persistable.relationships,
 			T_Persistable.tags]; }
 
+	static dirty_count(persistables: Array<Persistable> ): number {
+		return persistables.filter(p => p.persistence.isDirty).length;
+	}
+
 }

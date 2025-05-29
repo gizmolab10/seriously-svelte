@@ -2,6 +2,7 @@
 	import { k, w, Rect, Point, T_Layer } from '../../ts/common/Global_Imports';
 	import type { Integer } from '../../ts/common/Types';
 	export let font_size = k.font_size.small;
+	export let number_of_columns = 2;
 	export let row_height = 12;
 	export let name = k.empty;
 	export let width = 180;
@@ -10,12 +11,12 @@
 	let table;
 
 	export function location_ofCellAt(x: Integer, y: Integer): Point {
-		const origin0 = _location_ofCellAt(0, y);
-		const originY = _location_ofCellAt(x, y);
+		const origin0 = absolute_location_ofCellAt(0, y);
+		const originY = absolute_location_ofCellAt(x, y);
 		return originY.offsetByY(-origin0.y);
 	}
 
-	function _location_ofCellAt(x: Integer, y: Integer): Point {
+	function absolute_location_ofCellAt(x: Integer, y: Integer): Point {
 		const rows = table.rows;
 		const row = rows[x];
 		const cells = row.cells;

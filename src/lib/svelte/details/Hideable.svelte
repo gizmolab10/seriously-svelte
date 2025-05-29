@@ -23,7 +23,7 @@
     $: (async () => {
         if (element && has_banner) {
             await tick();
-            height = isHidden ? banner_height : element.scrollHeight + 3;
+            height = isHidden ? banner_height : element.scrollHeight + 5;
         }
     })();
 
@@ -96,7 +96,7 @@
         style='
             position: relative;
             display: {isHidden ? "none" : "block"};
-            top: {1 + (has_banner ? banner_height : 0)}px;'>
+            top: {4 + (has_banner ? banner_height : 0)}px;'>
         <slot/>
     </div>
 </div>

@@ -3,7 +3,6 @@
 	import { k, ux, Point, colors, S_Element, databases, Hierarchy } from '../../ts/common/Global_Imports';
 	import { w_storage_updated, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { w_t_database, w_hierarchy } from '../../ts/common/Stores';
-	import { T_Storage } from '../../ts/common/Enumerations';
 	import { T_Database } from '../../ts/database/DBCommon';
     import Buttons_Row from '../buttons/Buttons_Row.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
@@ -19,7 +18,7 @@
 	const button_style = `font-family: ${$w_thing_fontFamily}; font-size:0.85em; left: 5px; top: -2px; position: absolute;`;
 	let s_element_byStorageType: { [id: string]: S_Element } = {};
 	let storage_choice: string | null = null;
-	let information: Array<Dictionary> = [];
+	let storage_details: Array<Object> = [];
 
 	setup_s_elements();
 	
@@ -27,13 +26,13 @@
 		const trigger = $w_storage_updated;
 		const h = $w_hierarchy;
 		if (!!h) {
-			const dict = h.db.dict_forStorageDetails;
-			dict['depth'] = h.depth;
-			dict['things'] = h.things.length;
-			dict['relationships'] = h.relationships.length.expressZero_asHyphen();
-			dict['traits'] = h.traits.length.expressZero_asHyphen();
-			dict['tags'] = h.tags.length.expressZero_asHyphen();
-			information = Object.entries(dict);
+			storage_details = [h.db.details_forStorage,
+			['depth', h.depth.expressZero_asHyphen()],
+			['things', h.things.length.expressZero_asHyphen()],
+			['relationships', h.relationships.length.expressZero_asHyphen()],
+			['traits', h.traits.length.expressZero_asHyphen()],
+			['tags', h.tags.length.expressZero_asHyphen()],
+			['dirty', h.total_dirty_count.expressZero_asHyphen()]];
 		}
 	}
 
@@ -96,7 +95,7 @@
 
 </script>
 
-<div class='storage-information'
+<div class='storage-details'
 	style='
 		height:40px;
 		padding:5px;'>
@@ -107,14 +106,14 @@
 		height={k.height.controls}
 		origin={new Point(22, top + 3)}
 		selection_closure={selection_closure}/>
-	<div class='data-information'
+	<div class='data-details'
 		style='
 			width: 100%;
 			font-size:{k.font_size.smaller}px;'>
 		<Text_Table
 			top={top + 21}
 			row_height={11}
-			array={information}
+			array={storage_details}
 			font_size={k.font_size.small - 1}/>
 	</div>
 	{#key ux.t_storage}
@@ -124,7 +123,7 @@
 			font_sizes={font_sizes}
 			width={k.width_details}
 			row_titles={row_titles()}
-			origin={Point.y(top + 111)}
+			origin={Point.y(top + 129)}
 			closure={handle_toolRequest}
 			button_height={k.height.button}
 			margin={(ux.t_storage == T_Storage.direction) ? 50 : 40}

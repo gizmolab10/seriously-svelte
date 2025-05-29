@@ -54,16 +54,16 @@ class S_Details {
 
 	private update() {
 		grabs.update_forKind_ofInfo();
+		this.update_things();
 		this.update_traits();
 		this.update_tags();
-		this.update_things();
 	}
 	
 	static readonly _____TRAITS: unique symbol;
 
 	private get trait(): Trait | null { return (this.s_traits.item as Trait) ?? null; }
 
-	private update_hierarchy_traits() {
+	private update_s_traits() {
 		const t_traits = get(w_show_traits_ofType);
 		if (!!h && !!t_traits) {
 			const traits = (t_traits.length > 1 ? h.traits : h.traits_forType(t_traits[0] as T_Trait)) ?? [];
@@ -74,10 +74,12 @@ class S_Details {
 	private update_traits() {
 		// when grab changes, traits must also change
 		// also, which trait [index] corresponds to the grab
-		this.update_hierarchy_traits();
+		this.update_s_traits();
 		const thing = grabs.ancestry_forInfo?.thing ?? null;
 		const thing_traits = thing?.traits ?? [];
-		if (!!thing && !!thing_traits && thing_traits.length > 0) {
+		if (!thing || thing_traits.length == 0) {
+			w_thing_traits.set([]);
+		} else {
 			const index = this.s_traits.items.findIndex(t => t.ownerID == thing.id);
 			this.s_traits.index_ofItem = Math.max(0, index);
 			w_thing_traits.set(thing_traits);
@@ -119,17 +121,19 @@ class S_Details {
 
 	private get tag(): Tag | null { return (this.s_tags.item as Tag) ?? null; }
 
-	private update_hierarchy_tags() {
+	private update_s_tags() {
 		const tags = h?.tags ?? [];
 		this.s_tags.items = tags;
 		this.s_tags.total_items = tags.length;
 	}
 
 	private update_tags() {
-		this.update_hierarchy_tags();
+		this.update_s_tags();
 		const thing = grabs.ancestry_forInfo?.thing ?? null;
 		const thing_tags = thing?.tags ?? [];
-		if (!!thing && !!thing_tags && thing_tags.length > 0) {
+		if (!thing || thing_tags.length == 0) {
+			w_thing_tags.set([]);
+		} else {
 			const index = Math.max(0, this.s_tags.items.findIndex(t => t.thingHIDs.includes(thing.hid)));
 			this.s_tags.index_ofItem = index;
 			w_thing_tags.set(thing_tags);

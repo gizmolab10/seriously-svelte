@@ -14,6 +14,7 @@ export enum T_Database {
 }
 
 export default class DBCommon {
+	isPersistence_inProgress: boolean = false;
 	t_persistence = T_Persistence.none;
 	loadTime: string | null = null;
 	hierarchy!: Hierarchy;
@@ -23,9 +24,9 @@ export default class DBCommon {
 	queryStrings_apply() {}
 	setup_remote_handlers() {}
 	get displayName(): string { return this.t_database; }
+	get details_forStorage(): Object { return ['fetch took', this.loadTime]; }
 	get isRemote(): boolean { return this.t_persistence == T_Persistence.remote; }
 	get isPersistent(): boolean { return this.t_persistence != T_Persistence.none; }
-	get dict_forStorageDetails(): Dictionary { return {'fetch took' : this.loadTime} }
 	async hierarchy_fetch_forID(idBase: string) {}	// support for browsing multiple firebase bulks
 	
 	async fetch_all() { this.fetch_all_fromLocal(); }
@@ -60,11 +61,13 @@ export default class DBCommon {
 	}
 
 	async persist_all(force: boolean = false) {
+		this.isPersistence_inProgress = true;
 		if (!databases.defer_persistence) {
 			for (const t_persistable of Persistable.t_persistables) {
 				await this.persistAll_identifiables_maybe(t_persistable, force);
 			}
 		}
+		this.isPersistence_inProgress = false;
 	}
 
 	async persistAll_identifiables_maybe(t_persistable: T_Persistable, force: boolean = false) {

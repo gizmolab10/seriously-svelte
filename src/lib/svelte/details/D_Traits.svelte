@@ -11,12 +11,12 @@
 	const es_button = ux.s_element_for(new Identifiable('trait'), T_Element.button, 'trait');
 	let text_box_size = new Size(k.width_details - 34, 68);
 
-	s_details.update_traits();
+	s_details.update();
 	es_button.set_forHovering(colors.default, 'pointer');
 	
 	function handleClick_onTraitTypes(types: Array<T_Trait>) {
 		$w_show_traits_ofType = types;
-		s_details.update_traits();
+		s_details.update();
 	}
 
 	function handleClick_onNextPrevious(t_request: T_Request, s_mouse: S_Mouse, column: number): any {
@@ -34,27 +34,38 @@
 <div class='hierarchy_traits'
 	style='
 		top:2px;
+		width: 100%;
 		display:flex;
 		position:absolute;
 		scrollbar-width: none;          /* Firefox */
 		flex-direction:column;
 		-ms-overflow-style: none;'>
-	<Segmented
-		name='trait-types'
-		allow_multiple={true}
-		origin={new Point(6, 0)}
-		titles={['text', 'link']}
-		height={k.height.controls}
-		font_size={k.font_size.smaller}
-		selected={$w_show_traits_ofType}
-		selection_closure={handleClick_onTraitTypes}/>
-	<Next_Previous
-		width={140}
-		name='traits'
-		origin={new Point(k.width_details - 141, 0)}
-		closure={handleClick_onNextPrevious}/>
 	{#key $w_thing_traits}
-		{#if !!$w_thing_traits && $w_thing_traits.length > 0}
+		{#if !$w_thing_traits || $w_thing_traits.length == 0}
+			<div
+				class='no-traits'
+				style='
+					display: flex;
+					text-align: center;
+					width: 100%;
+					justify-content: center;'>
+				no traits
+			</div>
+		{:else}
+			<Segmented
+				name='trait-types'
+				allow_multiple={true}
+				origin={new Point(6, 0)}
+				titles={['text', 'link']}
+				height={k.height.controls}
+				font_size={k.font_size.smaller}
+				selected={$w_show_traits_ofType}
+				selection_closure={handleClick_onTraitTypes}/>
+			<Next_Previous
+				width={140}
+				name='traits'
+				origin={new Point(k.width_details - 141, 0)}
+				closure={handleClick_onNextPrevious}/>
 			{#each $w_thing_traits as trait}
 				<Text_Editor
 					top={24}

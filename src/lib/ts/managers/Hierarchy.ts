@@ -138,8 +138,10 @@ export class Hierarchy {
 		this.thing_forget(thing);
 		thing.setID(idTo);
 		this.thing_remember(thing);
-		this.relationships_translate_idsFromTo_forParents(idFrom, idTo, true);
 		this.relationships_translate_idsFromTo_forParents(idFrom, idTo, false);
+		this.relationships_translate_idsFromTo_forParents(idFrom, idTo, true);
+		this.traits_translate_idsFromTo_forThings(idFrom, idTo);
+		this.tags_translate_idsFromTo_forThings(idFrom, idTo);
 	}
 
 	thing_remember_runtimeCreateUnique(idBase: string, id: string, title: string, color: string, t_thing: T_Thing = T_Thing.generic,
@@ -1117,7 +1119,7 @@ export class Hierarchy {
 		this.traits = [];
 	}
 
-	traits_translate_idsFromTo_forParents(idFrom: string, idTo: string, forParents: boolean) {
+	traits_translate_idsFromTo_forThings(idFrom: string, idTo: string) {
 		for (const trait of this.traits) {
 			if (trait.ownerID == idFrom) {
 				trait.ownerID = idTo;	// fuck! cannot reverse from hash to id
@@ -1195,7 +1197,7 @@ export class Hierarchy {
 		this.tags = tags;
 	}
 
-	tags_translate_idsFromTo_forParents(idFrom: string, idTo: string, forParents: boolean) {
+	tags_translate_idsFromTo_forThings(idFrom: string, idTo: string) {
 		for (const tag of this.tags) {
 			for (const hid of tag.thingHIDs) {
 				if (hid == idFrom.hash()) {
@@ -1467,6 +1469,18 @@ export class Hierarchy {
 	}
 
 	static readonly _____BUILD: unique symbol;
+
+	get total_dirty_count(): number {
+		let sum = 0;
+		for (const t_persistable of Persistable.t_persistables) {
+			const identifiables = this.persistables_forKey(t_persistable);
+			const count = Persistable.dirty_count(identifiables);
+			if (count > 0) {
+				sum += count;
+			}
+		}
+		return sum;
+	}
 
 	extract_fromCSV_Dict(dict: Dictionary) { pivot.extract_fromDict(dict); }
 

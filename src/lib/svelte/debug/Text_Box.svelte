@@ -10,22 +10,22 @@
 
 <style>
 	b {
-		color: blue;
 		font-weight: normal;
+		color: blue;
 	}
 	.container {
-		display: flex;
 		justify-content: center;
 		align-items: center;
+		display: flex;
 		height: 100h;
 	}
 
 	.text-box {
-		width: 97%;
 		border: 1px solid #333;
 		border-radius: 7px;
 		text-align: center;
 		color: '#e4f6c9';
 		padding: 5px;
+		width: 97%;
 	}
 </style>

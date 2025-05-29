@@ -1,6 +1,5 @@
 import { k, T_Thing, Predicate, T_Predicate } from '../common/Global_Imports';
 import { T_Persistence } from '../common/Global_Imports';
-import type { Dictionary } from '../common/Types';
 import { T_Database } from './DBCommon';
 import DBCommon from './DBCommon';
 
@@ -9,7 +8,7 @@ export default class DBTest extends DBCommon {
 	t_database = T_Database.test;
 	idBase = k.id_base.test;
 	
-	get dict_forStorageDetails(): Dictionary { return {'data' : 'recreated on launch'} }
+	get details_forStorage(): Object { return ['data', 'recreated on launch'] }
 
 	async fetch_all_fromLocal() {
 		const idTa = 'a';
