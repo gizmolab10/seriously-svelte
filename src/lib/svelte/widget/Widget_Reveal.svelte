@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { c, k, u, ux, debug, layout, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
-	import { w_hierarchy, w_show_countDots_ofType, w_thing_color, w_background_color } from '../../ts/common/Stores';
+	import { w_show_countDots_ofType, w_thing_color, w_background_color } from '../../ts/common/Stores';
+	import { c, h, k, u, ux, debug, layout, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import { Size, Thing, Point, Predicate, T_Layer, T_Graph } from '../../ts/common/Global_Imports';
 	import { w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
@@ -76,7 +76,7 @@
 			set_isHovering(!s_mouse.isOut);
 		} else if (s_mouse.isUp && (ancestry.hasChildren || ancestry.thing.isBulkAlias)) {
 			const RIGHT = !ancestry.isExpanded || layout.inRadialMode;
-			$w_hierarchy.ancestry_rebuild_persistentMoveRight(ancestry, RIGHT, false, false, false, true);
+			h.ancestry_rebuild_persistentMoveRight(ancestry, RIGHT, false, false, false, true);
 		}
 	}
  

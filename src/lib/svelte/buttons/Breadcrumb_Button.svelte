@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { w_thing_color, w_background_color, w_thing_fontFamily, w_ancestry_focus } from '../../ts/common/Stores';
-	import { k, u, ux, Point, Thing, colors, layout, signals, databases } from '../../ts/common/Global_Imports';
+	import { h, k, u, ux, Point, Thing, colors, layout, signals } from '../../ts/common/Global_Imports';
 	import { T_Banner, S_Element } from '../../ts/common/Global_Imports';
 	import Button from './Button.svelte';
     export let thing;
@@ -56,7 +56,7 @@
 	}
 
 	function closure(s_mouse) {
-		if (!!databases.db_now.hierarchy && databases.db_now.hierarchy.hasRoot) {
+		if (!!h && h.hasRoot) {
 			if (s_mouse.isHover) {
 				if (s_mouse.isOut) {
 					border = `${borderStyle} ${borderColor}`;

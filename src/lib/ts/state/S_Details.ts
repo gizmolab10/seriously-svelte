@@ -1,6 +1,6 @@
+import { h, grabs, Ancestry, T_Details, Tag, Trait, T_Trait, Thing } from '../common/Global_Imports';
 import { w_t_database, w_ancestry_focus, w_ancestries_grabbed, w_hierarchy } from '../common/Stores';
 import { w_tag_things, w_thing_tags, w_thing_traits, w_tag_thing_index } from '../common/Stores';
-import { h, show, grabs, Ancestry, T_Details, Tag, Trait, T_Trait, Thing } from '../common/Global_Imports';
 import { w_show_details_ofType, w_show_traits_ofType } from '../common/Stores';
 import { get } from 'svelte/store';
 
@@ -44,6 +44,9 @@ class S_Details {
 			this.update();
 		});
 		w_ancestries_grabbed.subscribe((array: Array<Ancestry>) => {
+			this.update();
+		});
+		w_show_traits_ofType.subscribe((t_traits: Array<T_Trait>) => {
 			this.update();
 		});
 		w_show_details_ofType.subscribe((t_details: Array<T_Details>) => {
@@ -122,9 +125,11 @@ class S_Details {
 	private get tag(): Tag | null { return (this.s_tags.item as Tag) ?? null; }
 
 	private update_s_tags() {
-		const tags = h?.tags ?? [];
-		this.s_tags.items = tags;
-		this.s_tags.total_items = tags.length;
+		if (!!h) {
+			const tags = h.tags;
+			this.s_tags.items = tags;
+			this.s_tags.total_items = tags.length;
+		}
 	}
 
 	private update_tags() {

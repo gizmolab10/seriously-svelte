@@ -12,7 +12,7 @@
 	let lineWrapper: Svelte_Wrapper;
 	let svg_dasharray = k.empty;
 	let line_reattachments = 0;
-	let stroke_width = 1;
+	let stroke_width = 0.5;
 	let line;
 
 	//////////////////////////////

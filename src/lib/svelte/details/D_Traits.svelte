@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { w_hierarchy, w_show_traits_ofType, w_thing_traits } from '../../ts/common/Stores';
+	import { w_show_traits_ofType, w_thing_traits } from '../../ts/common/Stores';
 	import { S_Mouse, T_Trait, T_Element, T_Request } from '../../ts/common/Global_Imports';
 	import { k, ux, colors, Size, Point } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/runtime/Identifiable';
@@ -78,7 +78,7 @@
 					label_underline={trait.t_trait == 'link'}
 					onLabelClick={() => window.open(trait.text, '_blank')}
 					label_color={trait.t_trait == 'link' ? 'blue' : 'gray'}
-					handle_textChange={async (label, text) => await $w_hierarchy.trait_setText_forTrait(text, trait)}/>
+					handle_textChange={async (label, text) => await h.trait_setText_forTrait(text, trait)}/>
 			{/each}
 		{/if}
 	{/key}

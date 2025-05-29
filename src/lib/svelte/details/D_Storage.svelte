@@ -1,8 +1,9 @@
 <script lang='ts'>
 	import { T_Layer, T_File, T_Storage, T_Element, T_Preference, T_Request } from '../../ts/common/Global_Imports';
-	import { k, ux, Point, colors, S_Element, databases, Hierarchy } from '../../ts/common/Global_Imports';
+	import { h, k, ux, Point, colors, S_Element, databases, Hierarchy } from '../../ts/common/Global_Imports';
 	import { w_storage_updated, w_thing_fontFamily } from '../../ts/common/Stores';
-	import { w_t_database, w_hierarchy } from '../../ts/common/Stores';
+	import { w_t_database } from '../../ts/common/Stores';
+	import Identifiable from '../../ts/runtime/Identifiable';
 	import { T_Database } from '../../ts/database/DBCommon';
     import Buttons_Row from '../buttons/Buttons_Row.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
@@ -11,9 +12,11 @@
 	import Button from '../buttons/Button.svelte';
 	export let top = 0;
 	const buttons_top = 138;
+	const border = '1px solid black';
 	const storage_ids = [T_Storage.import, T_Storage.export];
     const font_sizes = [k.font_size.smallest, k.font_size.smaller];
 	const format_ids = [T_File.csv, T_File.json, T_File.cancel];
+	const es_save = ux.s_element_for(new Identifiable('save'), T_Element.button, 'save');
 	const db_ids = [T_Database.local, T_Database.firebase, T_Database.airtable, T_Database.test];
 	const button_style = `font-family: ${$w_thing_fontFamily}; font-size:0.85em; left: 5px; top: -2px; position: absolute;`;
 	let s_element_byStorageType: { [id: string]: S_Element } = {};
@@ -21,10 +24,10 @@
 	let storage_details: Array<Object> = [];
 
 	setup_s_elements();
-	
+	es_save.set_forHovering('black', 'pointer');
+
 	$: {
 		const trigger = $w_storage_updated;
-		const h = $w_hierarchy;
 		if (!!h) {
 			storage_details = [h.db.details_forStorage,
 			['depth', h.depth.expressZero_asHyphen()],
@@ -58,6 +61,12 @@
 		}
 	}
 
+	function handle_save(s_mouse) {
+		if (!!h && h.hasRoot && s_mouse.isUp) {
+			h.persist_toFile(T_File.json);
+		}
+	}
+
 	function handle_toolRequest(t_request: T_Request, s_mouse: S_Mouse, column: number): any {
 		const ids = (ux.t_storage == T_Storage.direction) ? storage_ids : format_ids;
 		switch (t_request) {
@@ -82,7 +91,6 @@
 				ux.t_storage = T_Storage.format;
 			} else {
 				const format = choice as T_File;
-				const h = $w_hierarchy;
 				switch (storage_choice) {
 					case T_Storage.export: h.persist_toFile(format); break;
 					case T_Storage.import: h.select_file_toUpload(format, s_mouse.event.shiftKey); break;
@@ -115,6 +123,18 @@
 			row_height={11}
 			array={storage_details}
 			font_size={k.font_size.small - 1}/>
+		{#if h.total_dirty_count.length != 0}
+			<Button
+				width=48
+				name='save'
+				border = {border}
+				es_button = {es_save}
+				closure={handle_save}
+				zindex={T_Layer.frontmost}
+				origin={new Point(163, top + 110)}>
+				save
+			</Button>
+		{/if}
 	</div>
 	{#key ux.t_storage}
 		<Buttons_Row

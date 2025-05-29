@@ -1,9 +1,9 @@
 import { T_Graph, T_Create, T_Element, T_Kinship, T_Predicate, T_Alteration, T_SvelteComponent } from '../common/Global_Imports';
+import { c, h, k, p, u, show, Rect, Size, Thing, grabs, debug, layout, wrappers, svgPaths } from '../common/Global_Imports';
 import { Direction, Predicate, Hierarchy, databases, Relationship, Svelte_Wrapper } from '../common/Global_Imports';
-import { c, k, p, u, show, Rect, Size, Thing, grabs, debug, layout, wrappers, svgPaths } from '../common/Global_Imports';
-import { w_hierarchy, w_ancestry_focus, w_s_alteration, w_s_title_edit } from '../common/Stores';
-import { w_ancestries_grabbed, w_ancestries_expanded, } from '../common/Stores';
 import { w_background_color, w_show_graph_ofType, w_t_database } from '../common/Stores';
+import { w_ancestry_focus, w_s_alteration, w_s_title_edit } from '../common/Stores';
+import { w_ancestries_grabbed, w_ancestries_expanded, } from '../common/Stores';
 import { G_Widget, G_Cluster, G_TreeLine } from '../common/Global_Imports';
 import { G_Paging, S_Title_Edit } from '../common/Global_Imports';
 import type { Dictionary, Integer } from '../common/Types';
@@ -27,7 +27,7 @@ export default class Ancestry extends Identifiable {
 		super(path);
 		this.kind = kind;
 		this.t_database = t_database;
-		this.hierarchy.signal_storage_redraw(0);
+		h?.signal_storage_redraw(0);
 	}
 	
 	static readonly _____TRAVERSE: unique symbol;
@@ -71,9 +71,9 @@ export default class Ancestry extends Identifiable {
 
 	static readonly _____THINGS: unique symbol;
 
-	get thing():	 Thing | null { return this.hierarchy.thing_forAncestry(this); }
-	get children():	 Array<Thing> { return this.hierarchy.things_forAncestries(this.childAncestries); }
-	get ancestors(): Array<Thing> { return this.hierarchy.things_forAncestry(this); }
+	get thing():	 Thing | null { return h?.thing_forAncestry(this) ?? null; }
+	get children():	 Array<Thing> { return h?.things_forAncestries(this.childAncestries) ?? []; }
+	get ancestors(): Array<Thing> { return h?.things_forAncestry(this) ?? []; }
 	get parents():	 Array<Thing> { return this.thing?.parents ?? []; }
 
 	thingAt(back: number): Thing | null {			// 1 == last
@@ -81,7 +81,7 @@ export default class Ancestry extends Identifiable {
 		if (!!relationship && !this.isRoot) {
 			return relationship.child;
 		}
-		return this.hierarchy.root;	// N.B., this.hierarchy.root is wrong immediately after switching db type
+		return h.root;	// N.B., h.root is wrong immediately after switching db type
 	}
 
 	things_childrenFor(kind: string): Array<Thing> {
@@ -106,7 +106,7 @@ export default class Ancestry extends Identifiable {
 	get childRelationships():	 Array<Relationship> { return this.relationships_ofKind_forParents(this.kind, false); }
 
 	get relationships(): Array<Relationship> {
-		const relationshipHIDs = this.relationship_hids.map(hid => this.hierarchy.relationship_forHID(hid)) ?? [];
+		const relationshipHIDs = this.relationship_hids.map(hid => h.relationship_forHID(hid)) ?? [];
 		return u.strip_invalid(relationshipHIDs);
 	}
 	
@@ -115,7 +115,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	relationships_forChildren(forChildren: boolean): Array<Relationship> { return forChildren ? this.childRelationships : this.parentRelationships; }
-	relationshipAt(back: number = 1):				 Relationship | null { return this.hierarchy.relationship_forHID(this.idAt(back).hash()) ?? null; }
+	relationshipAt(back: number = 1):				 Relationship | null { return h.relationship_forHID(this.idAt(back).hash()) ?? null; }
 
 	static readonly _____SVG: unique symbol;
 
@@ -132,11 +132,13 @@ export default class Ancestry extends Identifiable {
 	
 	get bidirectional_ancestries(): Array<Ancestry> {
 		let ancestries: Array<Ancestry> = []
-		for (const predicate of get(w_hierarchy).predicates) {
-			if (predicate.isBidirectional) {
-				const parents = this.thing?.ancestries_forPredicate(predicate);
-				if (!!parents) {	// each of the parents is bidirectional TO this ancestry's thing
-					ancestries = u.uniquely_concatenateArrays_ofIdentifiables(ancestries, parents) as Array<Ancestry>;
+		if (!!h) {
+			for (const predicate of h.predicates) {
+				if (predicate.isBidirectional) {
+					const parents = this.thing?.ancestries_forPredicate(predicate);
+					if (!!parents) {	// each of the parents is bidirectional TO this ancestry's thing
+						ancestries = u.uniquely_concatenateArrays_ofIdentifiables(ancestries, parents) as Array<Ancestry>;
+					}
 				}
 			}
 		}
@@ -176,11 +178,11 @@ export default class Ancestry extends Identifiable {
 
 	handle_singleClick_onDragDot(shiftKey: boolean) {
 		if (this.isBidirectional && this.thing?.isRoot) {
-			this.hierarchy.rootAncestry.handle_singleClick_onDragDot(shiftKey);
+			h.rootAncestry.handle_singleClick_onDragDot(shiftKey);
 		} else {
 			w_s_title_edit?.set(null);
 			if (!!get(w_s_alteration)) {
-				this.hierarchy.ancestry_alter_connectionTo_maybe(this);
+				h.ancestry_alter_connectionTo_maybe(this);
 				layout.grand_build();
 				return;
 			} else if (!shiftKey && layout.inRadialMode) {
@@ -312,7 +314,7 @@ export default class Ancestry extends Identifiable {
 			const length = siblings.length;
 			const thing = this?.thing;
 			if (length == 0) {		// friendly for first-time users
-				this.hierarchy.ancestry_rebuild_runtimeBrowseRight(this, up, SHIFT, EXTREME, true);
+				h.ancestry_rebuild_runtimeBrowseRight(this, up, SHIFT, EXTREME, true);
 			} else if (!!thing) {
 				let grabAncestry: Ancestry | null = this;
 				const fromOrder = siblings.indexOf(thing);
@@ -596,7 +598,7 @@ export default class Ancestry extends Identifiable {
 	ancestry_createUnique_byAddingThing(thing: Thing | null): Ancestry | null {
 		const hidParent = this.thing?.idBridging.hash();
 		if (!!thing && !!hidParent) {
-			const relationship = this.hierarchy.relationship_forPredicateKind_parent_child(T_Predicate.contains, hidParent, thing.hid);
+			const relationship = h.relationship_forPredicateKind_parent_child(T_Predicate.contains, hidParent, thing.hid);
 			if (!!relationship) {
 				return this.ancestry_createUnique_byAppending_relationshipID(relationship.id);
 			}
@@ -613,26 +615,26 @@ export default class Ancestry extends Identifiable {
 		}
 		const stripped_ids = ids.slice(0, -back);
 		if (stripped_ids.length == 0) {
-			return this.hierarchy.rootAncestry;
+			return h.rootAncestry;
 		} else {
-			return this.hierarchy.ancestry_remember_createUnique(stripped_ids.join(k.separator.generic));
+			return h.ancestry_remember_createUnique(stripped_ids.join(k.separator.generic));
 		}
 	}
 
 	ancestry_createUnique_byAppending_relationshipID(id: string): Ancestry | null {
 		if (this.isRoot) {
-			return this.hierarchy.ancestry_remember_createUnique(id);
+			return h.ancestry_remember_createUnique(id);
 		} else {
 			let ids = this.relationship_ids;
 			ids.push(id);
-			const ancestry = this.hierarchy.ancestry_remember_createUnique(ids.join(k.separator.generic));
+			const ancestry = h.ancestry_remember_createUnique(ids.join(k.separator.generic));
 			if (!!ancestry) {
 				if (ancestry.containsMixedPredicates) {
-					this.hierarchy.ancestry_forget(ancestry);
+					h.ancestry_forget(ancestry);
 					return null;
 				}
 				if (ancestry.containsReciprocals) {
-					this.hierarchy.ancestry_forget(ancestry);
+					h.ancestry_forget(ancestry);
 					return null;
 				}
 			}
@@ -641,7 +643,6 @@ export default class Ancestry extends Identifiable {
 	}
 
 	ancestry_remember_createUnique_byAddingThing(thing: Thing | null, kind: T_Predicate = T_Predicate.contains): Ancestry | null {
-		const h = this.hierarchy;
 		const parent = this.thing;
 		let ancestry: Ancestry | null = null;
 		if (!!thing && !!parent) {
@@ -662,7 +663,6 @@ export default class Ancestry extends Identifiable {
 	}
 
 	async ancestry_persistentCreateUnique_byAddingThing(thing: Thing | null, kind: T_Predicate = T_Predicate.contains): Promise<Ancestry | null | undefined> {
-		const h = this.hierarchy;
 		const parent = this.thing;
 		let ancestry: Ancestry | null = null;
 		if (!!thing && !!parent) {
@@ -708,7 +708,7 @@ export default class Ancestry extends Identifiable {
 						if (isContains) {
 							ancestry = this.ancestry_createUnique_byAppending_relationshipID(relationship.id); 	// add each relationship's id
 						} else {
-							ancestry = this.hierarchy.ancestry_remember_createUnique(relationship.id, predicate.kind);
+							ancestry = h.ancestry_remember_createUnique(relationship.id, predicate.kind);
 						}
 						if (!!ancestry) {
 							ancestries.push(ancestry);									// and push onto the ancestries
@@ -752,12 +752,12 @@ export default class Ancestry extends Identifiable {
 	get lastChild():					   Thing { return this.children.slice(-1)[0]; }
 	get firstChild():					   Thing { return this.children[0]; }
 	get g_widget():						G_Widget { return this.g_widget_forGraphMode(get(w_show_graph_ofType)); }
-	get hierarchy():				   Hierarchy { return get(w_hierarchy); }
+	get hierarchy():				   Hierarchy { return h; }
 	get titleRect():				 Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
 	get idBridging():			   string | null { return this.thing?.idBridging ?? null; }
 	get g_cluster():			G_Cluster | null { return this.g_widget.g_cluster ?? null; }
+	get predicate():			Predicate | null { return h?.predicate_forKind(this.kind) ?? null; }
 	get g_paging():				 G_Paging | null { return this.g_cluster?.g_paging_forAncestry(this) ?? null; }
-	get predicate():			Predicate | null { return this.hierarchy.predicate_forKind(this.kind) }
 	get titleWrapper():	   Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.hid, T_SvelteComponent.title); }
 	get relationship_hids():	  Array<Integer> { return this.relationship_ids.map(i => i.hash()); }
 	get relationship_ids():		  Array <string> { return this.isRoot ? [] : this.pathString.split(k.separator.generic); }
@@ -778,7 +778,7 @@ export default class Ancestry extends Identifiable {
 
 	get id_thing(): string {
 		if (this.isRoot) {
-			return this.hierarchy.idRoot ?? k.unknown;
+			return h?.idRoot ?? k.unknown;
 		}
 		return this.relationship?.idChild ?? k.unknown;
 	}

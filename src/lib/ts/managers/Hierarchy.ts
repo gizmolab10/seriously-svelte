@@ -1,10 +1,10 @@
 import { Tag, Access, Ancestry, Predicate, Relationship, Persistable } from '../common/Global_Imports';
 import { debug, grabs, files, colors, signals, layout, databases } from '../common/Global_Imports';
 import { T_Thing, T_Trait, T_Order, T_Create, T_File, T_Control } from '../common/Global_Imports';
+import { w_popupView_id, w_ancestry_focus, w_s_title_edit, w_hierarchy } from '../common/Stores';
 import { T_Alteration, T_Predicate, T_Persistable } from '../common/Global_Imports';
-import { w_popupView_id, w_ancestry_focus, w_s_title_edit } from '../common/Stores';
-import { w_storage_updated, w_s_alteration, w_hierarchy } from '../common/Stores';
 import { c, k, p, u, show, User, Thing, Trait } from '../common/Global_Imports';
+import { w_storage_updated, w_s_alteration } from '../common/Stores';
 import type { Integer, Dictionary } from '../common/Types';
 import Identifiable from '../runtime/Identifiable';
 import DBCommon from '../database/DBCommon';
@@ -1540,5 +1540,5 @@ export class Hierarchy {
 
 }
 
-export let h: Hierarchy | null = null;
+export let h!: Hierarchy;
 w_hierarchy.subscribe(value => h = value);

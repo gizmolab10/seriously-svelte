@@ -1,4 +1,4 @@
-import { w_hierarchy, w_g_paging, w_ring_rotation_radius } from '../common/Stores';
+import { w_g_paging, w_ring_rotation_radius } from '../common/Stores';
 import { k, Thing, Predicate, Ancestry, G_Cluster } from '../common/Global_Imports';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
@@ -30,7 +30,7 @@ export class G_Thing_Pages {
 		return s_pages;
 	}
 
-	get thing(): Thing | null { return get(w_hierarchy).thing_forHID(this.thing_id.hash()) ?? null; }
+	get thing(): Thing | null { return h.thing_forHID(this.thing_id.hash()) ?? null; }
 	g_paging_for(g_cluster: G_Cluster): G_Paging { return this.g_paging_forPredicate_toChildren(g_cluster.predicate, g_cluster.points_toChildren); }
 	g_pagings_dict_forChildren(points_toChildren: boolean): Dictionary<G_Paging> { return points_toChildren ? this.child_pagings_dict : this.parent_pagings_dict; }
 
@@ -77,8 +77,8 @@ export class G_Paging {
 	get isPaging(): boolean { return this.widgets_shown < this.total_widgets; }
 	get indexOf_followingPage(): number { return this.index + this.widgets_shown; }
 	get maximum_paging_index(): number { return this.total_widgets - this.widgets_shown; }
-	get thing(): Thing | null { return get(w_hierarchy).thing_forHID(this.thing_id.hash()) ?? null; }
-	get predicate(): Predicate | null { return get(w_hierarchy).predicate_forKind(this.kind) ?? null; }
+	get thing(): Thing | null { return h.thing_forHID(this.thing_id.hash()) ?? null; }
+	get predicate(): Predicate | null { return h.predicate_forKind(this.kind) ?? null; }
 	get sub_key(): string { return `${this.thing_id}${k.separator.generic}${this.kind}${k.separator.generic}${this.points_toChildren}`; }
 	ancestry_atIndex(ancestries: Array<Ancestry>): Ancestry { return ancestries[Math.round(this.index)]; }
 	

@@ -1,15 +1,13 @@
-import { databases, T_Persistable, Thing } from '../common/Global_Imports';
-import { w_hierarchy } from '../common/Stores';
+import { databases, h, T_Persistable, Thing } from '../common/Global_Imports';
 import type { Integer } from '../common/Types';
 import Persistable from './Persistable';
-import { get } from 'svelte/store';
 
 export default class Tag extends Persistable {
 	thingHIDs: Array<Integer> = [];
 	type: string = '';
 
 	get things(): Array<Thing> {
-		return this.thingHIDs.map(hid => get(w_hierarchy)?.thing_forHID(hid)).filter(thing => !!thing) as Array<Thing>;
+		return this.thingHIDs.map(hid => h.thing_forHID(hid)).filter(thing => !!thing) as Array<Thing>;
 	}
 
 	ownerAt(index: number): Thing | null {

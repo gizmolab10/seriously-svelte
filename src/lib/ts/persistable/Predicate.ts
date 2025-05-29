@@ -1,6 +1,6 @@
-import { k, debug, T_Debug, databases, T_Kinship, T_Predicate } from '../common/Global_Imports';
-import { Persistable, T_Persistable } from '../common/Global_Imports';
-import { w_hierarchy, w_ring_rotation_angle } from '../common/Stores';
+import { h, k, debug, T_Debug, databases, Persistable } from '../common/Global_Imports';
+import { T_Kinship, T_Predicate, T_Persistable } from '../common/Global_Imports';
+import { w_ring_rotation_angle } from '../common/Stores';
 import { get } from 'svelte/store';
 
 export default class Predicate extends Persistable {
@@ -22,7 +22,7 @@ export default class Predicate extends Persistable {
 	static get supports():				    Predicate | null { return this.predicate_forKind(T_Predicate.supports); }
 	static get isRelated():				    Predicate | null { return this.predicate_forKind(T_Predicate.isRelated); }
 	static get appreciates():			  	Predicate | null { return this.predicate_forKind(T_Predicate.appreciates); }
-	static predicate_forKind(kind: string): Predicate | null { return get(w_hierarchy).predicate_forKind(kind) ?? null; }
+	static predicate_forKind(kind: string): Predicate | null { return h.predicate_forKind(kind) ?? null; }
 
 	kinship_forPoints_toChildren(points_toChildren: boolean): T_Kinship | null {
 		switch (this.kind) {

@@ -1,6 +1,6 @@
-import { k, p, u, grabs, signals, Ancestry, G_RadialGraph } from '../common/Global_Imports';
+import { h, k, p, u, grabs, signals, Ancestry, G_RadialGraph } from '../common/Global_Imports';
 import { T_Graph, T_Banner, T_Kinship } from '../common/Global_Imports';
-import { w_show_tree_ofType, w_show_graph_ofType, w_hierarchy } from '../common/Stores';
+import { w_show_tree_ofType, w_show_graph_ofType } from '../common/Stores';
 import { w_show_related, w_ancestry_focus } from '../common/Stores';
 import { get } from 'svelte/store';
 
@@ -15,9 +15,9 @@ export default class G_Layout {
 	get inRadialMode(): boolean { return get(w_show_graph_ofType) == T_Graph.radial; }
 	height_ofBannerAt(index: number) { return Object.values(k.height.banner)[index]; }
 	ids_forDB(array: Array<Ancestry>): string { return u.ids_forDB(array).join(', '); }
-	expandAll() { get(w_hierarchy).rootAncestry.traverse(ancestry => ancestry.expand()); }
+	expandAll() { h.rootAncestry.traverse(ancestry => ancestry.expand()); }
 	top_ofBannerAt(index: number) { return this.tops_ofBanners[index] + k.thickness.separator; }
-	get isAllExpanded(): boolean { return get(w_hierarchy).rootAncestry.isAllProgeny_expanded; }
+	get isAllExpanded(): boolean { return h.rootAncestry.isAllProgeny_expanded; }
 	get g_radialGraph() { let g = this._g_radialGraph; if (!g) { g = new G_RadialGraph(); this._g_radialGraph = g }; return g; }
 
 	grand_build() {

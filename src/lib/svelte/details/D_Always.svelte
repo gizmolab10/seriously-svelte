@@ -28,7 +28,7 @@
 		</p>
 	{:else}
 		<div style='
-			top:-2px;
+			top:-7px;
 			white-space:pre;
 			position:absolute;
 			text-align:center;
@@ -43,6 +43,6 @@
 			selected={[$w_show_info_ofType]}
 			titles={[T_Info.focus, T_Info.selection]}
 			selection_closure={info_selection_closure}
-			origin={new Point((k.width_details - 100) / 2, k.height.banner.details - 2)}/>
+			origin={new Point((k.width_details - 100) / 2, k.height.banner.details - 7)}/>
 	{/if}
 {/key}

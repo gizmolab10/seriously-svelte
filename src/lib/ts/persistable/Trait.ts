@@ -1,8 +1,6 @@
-import { k, u, Thing, databases, T_Trait } from '../common/Global_Imports';
+import { k, u, Thing, databases, T_Trait, h } from '../common/Global_Imports';
 import { Persistable, T_Persistable } from '../common/Global_Imports';
 import type { Dictionary } from '../common/Types';
-import { w_hierarchy } from '../common/Stores';
-import { get } from 'svelte/store';
 import Airtable from 'airtable';
 
 export default class Trait extends Persistable {
@@ -18,7 +16,7 @@ export default class Trait extends Persistable {
 		this.text = text;
 		this.dict = dict;
 	}
-	get owner():	   Thing | null { return get(w_hierarchy).thing_forHID(this.ownerID.hash()); }
+	get owner():	   Thing | null { return h.thing_forHID(this.ownerID.hash()); }
 	get fields(): Airtable.FieldSet { return { type: this.t_trait, ownerID: [this.ownerID], text: this.text, dict: u.stringify_object(this.dict) }; }
 
 	async persistent_create_orUpdate(already_persisted: boolean) {

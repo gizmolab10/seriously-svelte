@@ -1,8 +1,6 @@
-import { k, Tag, Trait, T_Thing, T_Trait, T_Create, T_Predicate } from '../common/Global_Imports';
+import { h, k, Tag, Trait, T_Thing, T_Trait, T_Create, T_Predicate } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
 import type { Dictionary } from '../common/Types';
-import { w_hierarchy } from '../common/Stores';
-import { get } from 'svelte/store';
 import '../common/Extensions';
 
 class Pivot {
@@ -12,7 +10,6 @@ class Pivot {
 		// later, in create_relationships_fromAllTraits, above ...
 		// ... create a Relationship for each trait that has a dict containing a parent 1 link
 		// TODO: what is the parent 2 link?
-		const h = get(w_hierarchy)
 		const idBase = h.db.idBase;
 		const thing_id = Identifiable.newID();
 		const t_thing = dict['Type'] == 'bookmark' ? T_Thing.bookmark : T_Thing.generic;
@@ -28,7 +25,6 @@ class Pivot {
 	static readonly _____TRAITS: unique symbol;
 
 	create_trait_forThingfromDict(thing_id: string, dict: Dictionary): Trait {
-		const h = get(w_hierarchy)
 		const isBookmark = dict['Type'] == 'bookmark' ? T_Thing.bookmark : T_Thing.generic;
 		const text = (isBookmark ? dict['Link'] : dict['Description']) ?? k.unknown;
 		const t_trait = isBookmark ? T_Trait.link : T_Trait.text;
@@ -46,7 +42,7 @@ class Pivot {
 	}
 
 	create_tag_forThing_andKey_fromDict(thingID: string, tag_types: string): Tag | null {
-		const h = get(w_hierarchy)
+		
 		if (!!tag_types) {
 			for (const tag_type of tag_types.split(',')) {
 				const tag = h.tag_remember_runtimeCreateUnique(h.db.idBase, Identifiable.newID(), tag_type.trim(), [thingID.hash()]);
@@ -60,7 +56,7 @@ class Pivot {
 
 	async create_relationships_fromAllTraits() {
 		// for each trait that has a dict containing a parent <x> link
-		for (const trait of get(w_hierarchy).traits) {
+		for (const trait of h.traits) {
 			for (const key of ['parent 1 link']) {
 				await this.create_relationship_fromTrait(trait, key);
 			}
@@ -73,7 +69,7 @@ class Pivot {
 	private async create_relationship_fromTrait(trait: Trait, key: string) {
 		const parent_title = trait.dict[key]?.removeWhiteSpace();
 		if (!!parent_title) {
-			const h = get(w_hierarchy);
+			;
 			const parents = h.things_forTitle(parent_title);
 			const parent = parents?.[0] ?? await h.lost_and_found();
 			if (!!parent) {
@@ -87,7 +83,7 @@ class Pivot {
 	private assure_small_families(): boolean {
 		let changed = false;
 		const max_children = 35;
-		const h = get(w_hierarchy);
+		;
 		const rootAncestry = h.rootAncestry;
 		rootAncestry.traverse((ancestry) => {
 			const ancestry_title = ancestry.abbreviated_title;
@@ -143,7 +139,7 @@ class Pivot {
 	}
 
 	async cleanup_lost_and_found() {		// not currently in use
-		const h = get(w_hierarchy)
+		
 		const lost_and_found = await h.lost_and_found();
 		if (!!lost_and_found) {
 			const lost_and_found_ancestry = lost_and_found.ancestry;

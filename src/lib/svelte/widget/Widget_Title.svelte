@@ -1,12 +1,10 @@
 <script lang='ts'>
 	import { layout, signals, databases, Seriously_Range, Svelte_Wrapper } from '../../ts/common/Global_Imports';
-	import { c, k, u, ux, w, Rect, Size, Point, Thing, debug, Angle } from '../../ts/common/Global_Imports';
+	import { c, h, k, u, ux, w, Rect, Size, Point, Thing, debug, Angle } from '../../ts/common/Global_Imports';
 	import { T_Graph, T_Layer, S_Title_Edit, T_SvelteComponent } from '../../ts/common/Global_Imports';
+	import { w_s_title_edit, w_ancestries_grabbed, w_mouse_location } from '../../ts/common/Stores';
 	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/common/Stores';
-	import { w_hierarchy, w_ancestries_grabbed } from '../../ts/common/Stores';
-	import { w_s_title_edit, w_mouse_location } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import { w_background_color } from '../../ts/common/Stores';
 	import { T_Edit } from '../../ts/state/S_Title_Edit';
 	import { onMount, onDestroy } from 'svelte';
 	export let fontSize = '1em';
@@ -34,7 +32,7 @@
 	function ancestry_isEditing():		   boolean { return $w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.editing) ?? false; }
 	function ancestry_isEditStopping():	   boolean { return $w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.stopping) ?? false; }
 	function ancestry_isEditPercolating(): boolean { return $w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.percolating) ?? false; }
-	function border_bottom():				string { return thing?.isBookmark ? `1.5px dashed ${color}` : k.empty; }
+	// function border_bottom():				string { return thing?.isBookmark ? `1.5px dashed ${color}` : k.empty; }
 	function title_extra():					number { return (layout.inTreeMode && ancestry_isEditing()) ? 2 : 0; }
 	function hasChanges()						   { return title_prior != title_binded; };
 	function handle_mouse_up()					   { clearClicks(); }
@@ -192,7 +190,7 @@
 				case 'arrowleft':
 				case 'arrowright': break;
 				case 'enter': event.preventDefault(); stop_andPersist(); break;
-				case 'tab':	  event.preventDefault(); stop_andPersist(); $w_hierarchy.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break;
+				case 'tab':	  event.preventDefault(); stop_andPersist(); h.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break;
 			}
 			extractRange_fromInput_toThing();
 		}
@@ -338,6 +336,5 @@
 			left : {origin_ofInput.x}px;
 			{k.prevent_selection_style};
 			background-color : transparent;
-			border-bottom: {border_bottom()};
 			font-family : {$w_thing_fontFamily};'/>
 </Mouse_Responder>

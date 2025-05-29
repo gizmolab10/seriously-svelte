@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { k, ux, Point, layout } from '../../ts/common/Global_Imports';
-	import { w_hierarchy, w_popupView_id } from '../../ts/common/Stores';
+	import { h, k, ux, Point, layout } from '../../ts/common/Global_Imports';
 	import { T_Storage } from '../../ts/common/Enumerations';
+	import { w_popupView_id } from '../../ts/common/Stores';
 	import { files } from '../../ts/files/Files';
 	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';
@@ -23,7 +23,7 @@
 		const target = event.target as HTMLInputElement;
 		const files = target?.files;
 		if (!!files && files.length > 0) {
-			$w_hierarchy.fetch_andBuild_fromFile(files[0]);
+			h.fetch_andBuild_fromFile(files[0]);
 		}
 		target.value = k.empty;		// allow re-selection of the same file, MUST do this AFTER fetch
 		layout.grand_build();

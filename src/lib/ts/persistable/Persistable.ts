@@ -2,8 +2,7 @@ import { T_Persistable } from '../common/Enumerations';
 import S_Persistence from '../state/S_Persistence';
 import Identifiable from '../runtime/Identifiable';
 import { debug, T_Debug } from '../debug/Debug';
-import { w_hierarchy } from '../common/Stores';
-import { get } from 'svelte/store';
+import { h } from '../managers/Hierarchy';
 
 export default class Persistable extends Identifiable {
 	t_persistable: T_Persistable;
@@ -15,7 +14,7 @@ export default class Persistable extends Identifiable {
 		this.persistence = new S_Persistence(t_database, t_persistable, id, already_persisted, false);
 		this.t_persistable = t_persistable;
 		this.idBase = idBase;
-		get(w_hierarchy).signal_storage_redraw();
+		h?.signal_storage_redraw();
 	}
 
 	async persistent_create_orUpdate(already_persisted: boolean) {}

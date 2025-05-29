@@ -1,8 +1,8 @@
 import { Tag, Trait, Ancestry, Predicate, Persistable, Relationship } from '../common/Global_Imports';
 import { T_Thing, T_Debug, T_Kinship, T_Predicate, T_Persistable } from '../common/Global_Imports';
-import { k, u, debug, colors, databases, Seriously_Range } from '../common/Global_Imports';
-import { w_hierarchy, w_thing_color, w_count_rebuild } from '../common/Stores';
+import { h, k, u, debug, colors, databases, Seriously_Range } from '../common/Global_Imports';
 import { w_ancestry_focus, w_ancestries_expanded } from '../common/Stores';
+import { w_thing_color, w_count_rebuild } from '../common/Stores';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
 
@@ -21,9 +21,9 @@ export default class Thing extends Persistable {
 		this.color = color;
 	};
 	
-	get tags():					Array		   <Tag> { return get(w_hierarchy).tags_forThingHID(this.hid) ?? []; }
+	get tags():					Array		   <Tag> { return h.tags_forThingHID(this.hid) ?? []; }
 	get parents():				Array		 <Thing> { return this.parents_ofKind(T_Predicate.contains); }
-	get traits():				Array		 <Trait> { return get(w_hierarchy).traits_forOwnerHID(this.hid) ?? []; }
+	get traits():				Array		 <Trait> { return h.traits_forOwnerHID(this.hid) ?? []; }
 	get parentIDs():			Array		<string> { return this.parents.map(t => t.id); }
 	get ancestries():		 	Array	  <Ancestry> { return this.ancestries_forPredicate(Predicate.contains); }
 	get childRelationships():	Array <Relationship> { return this.relationships_ofKind_forParents(T_Predicate.contains, false); }
@@ -40,13 +40,13 @@ export default class Thing extends Persistable {
 	get isBulkAlias():						 boolean { return this.t_thing == T_Thing.bulk; }
 	get isExternals():						 boolean { return this.t_thing == T_Thing.externals; }
 	get hasRelated():						 boolean { return this.relatedRelationships.length > 0; }
-	get isAcrossBulk():						 boolean { return this.idBase != get(w_hierarchy).db.idBase; }
+	get isAcrossBulk():						 boolean { return this.idBase != h.db.idBase; }
 	get hasParents():						 boolean { return this.hasParents_ofKind(T_Predicate.contains); }
 	get isFocus():							 boolean { return (get(w_ancestry_focus).thing?.id ?? k.empty) == this.id; }
 	
 	get parents_ofAllKinds(): Array<Thing> {
 		let parents: Array<Thing> = [];
-		for (const predicate of get(w_hierarchy).predicates) {
+		for (const predicate of h.predicates) {
 			const more = this.parents_ofKind(predicate.kind)
 			parents = u.uniquely_concatenateArrays_ofIdentifiables(parents, more) as Array<Thing>;
 		}
@@ -98,7 +98,7 @@ export default class Thing extends Persistable {
 	relationships_ofKind_forParents(kind: string, forParents: boolean): Array<Relationship> {
 		const id = forParents ? this.id : this.idBridging;		//  use idBridging for children, in case thing is a bulk alias
 		if ((!!id || id == k.empty) && id != k.unknown) {
-			return get(w_hierarchy).relationships_forKindPredicate_hid_thing_isChild(kind, id.hash(), forParents);
+			return h.relationships_forKindPredicate_hid_thing_isChild(kind, id.hash(), forParents);
 		}
 		return [];
 	}
@@ -132,7 +132,7 @@ export default class Thing extends Persistable {
 		}
 		const focus = get(w_ancestry_focus);
 		if (focus.thing?.hid == this.hid) {
-			get(w_hierarchy).rootAncestry.becomeFocus();
+			h.rootAncestry.becomeFocus();
 		}
 	}
 
@@ -155,7 +155,7 @@ export default class Thing extends Persistable {
 	get ancestry(): Ancestry { return this.ancestries[0]; }
 
 	get ancestry_maybe(): Ancestry | null {
-		const ancestries = get(w_hierarchy).ancestries_forThing(this);
+		const ancestries = h.ancestries_forThing(this);
 		return ancestries.length > 0 ? ancestries[0] : null;
 	}
 
@@ -167,7 +167,7 @@ export default class Thing extends Persistable {
 			} else {
 				let parents = this.parents_ofKind(predicate.kind) ?? [];
 				for (const parent of parents) {
-					const parentAncestries = parent.isRoot ? [get(w_hierarchy).rootAncestry] : parent.ancestries_forPredicate(predicate);
+					const parentAncestries = parent.isRoot ? [h.rootAncestry] : parent.ancestries_forPredicate(predicate);
 					ancestries = u.concatenateArrays(ancestries, parentAncestries);
 				}
 			}
@@ -190,7 +190,7 @@ export default class Thing extends Persistable {
 				if (predicate.isBidirectional) {
 					const child = parentRelationship.child;
 					if (!!child && child.id != this.id) {
-						addAncestry(get(w_hierarchy).ancestry_remember_createUnique(parentRelationship.id, predicate.kind));
+						addAncestry(h.ancestry_remember_createUnique(parentRelationship.id, predicate.kind));
 					}
 				} else {
 					const parent = parentRelationship.parent;
@@ -198,7 +198,7 @@ export default class Thing extends Persistable {
 						const id_parentRelationship = parentRelationship.id;		// TODO, this is the wrong relationship; needs the next one
 						const parentAncestries = parent.ancestries_forPredicate(predicate, [...visited, parent.id]) ?? [];
 						if (parentAncestries.length == 0) {
-							addAncestry(get(w_hierarchy).rootAncestry.ancestry_createUnique_byAppending_relationshipID(id_parentRelationship));
+							addAncestry(h.rootAncestry.ancestry_createUnique_byAppending_relationshipID(id_parentRelationship));
 						} else {
 							parentAncestries.map((p: Ancestry) => addAncestry(p.ancestry_createUnique_byAppending_relationshipID(id_parentRelationship)));
 						}

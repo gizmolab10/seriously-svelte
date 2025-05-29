@@ -2,7 +2,7 @@
 	import { T_Tool, T_Layer, T_Request, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
 	import { w_s_alteration, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
 	import { e, k, show, Size, Point, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
-	import { w_show_info_ofType, w_hierarchy, w_show_details_ofType, w_user_graph_offset } from '../../ts/common/Stores';
+	import { w_show_info_ofType, w_show_details_ofType, w_user_graph_offset } from '../../ts/common/Stores';
 	import Buttons_Grid from '../buttons/Buttons_Grid.svelte';
 	import { s_details } from '../../ts/state/S_Details';
 	import Button from '../buttons/Button.svelte';

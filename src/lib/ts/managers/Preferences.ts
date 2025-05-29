@@ -1,6 +1,6 @@
-import { c, k, u, show, grabs, debug, radial, colors, layout, Ancestry, databases } from '../common/Global_Imports';
+import { c, h, k, u, show, grabs, debug, radial, colors, layout, Ancestry, databases } from '../common/Global_Imports';
 import { G_Paging, T_Graph, T_Trait, T_Details, T_Kinship, T_Preference, T_Info } from '../common/Global_Imports';
-import { w_g_paging, w_hierarchy, w_font_size, w_background_color, w_thing_fontFamily } from '../common/Stores';
+import { w_g_paging, w_font_size, w_background_color, w_thing_fontFamily } from '../common/Stores';
 import { w_show_info_ofType, w_show_details_ofType, w_show_countDots_ofType } from '../common/Stores';
 import { w_show_tree_ofType, w_show_graph_ofType, w_show_traits_ofType } from '../common/Stores';
 import { w_ancestry_focus, w_ancestries_grabbed, w_ancestries_expanded } from '../common/Stores';
@@ -58,7 +58,7 @@ export class Preferences {
 		function ids_forDB(array: Array<Ancestry>): string { return u.ids_forDB(array).join(', '); }
 		if (c.eraseDB > 0) {
 			c.eraseDB -= 1;
-			w_ancestries_grabbed.set([get(w_hierarchy).rootAncestry]);
+			w_ancestries_grabbed.set([h.rootAncestry]);
 		} else {
 			w_ancestries_grabbed.set(this.ancestries_readDB_key(T_Preference.grabbed));
 			debug.log_grab(`  READ (${get(w_t_database)}): "${ids_forDB(get(w_ancestries_grabbed))}"`);
@@ -74,7 +74,6 @@ export class Preferences {
 	}
 		
 	restore_expanded() {
-		// w_ancestries_expanded.set([]);
 		if (c.eraseDB > 0) {
 			c.eraseDB -= 1;
 			w_ancestries_expanded.set([]);
@@ -94,30 +93,31 @@ export class Preferences {
 	}
 
 	restore_focus() {
-		const h = get(w_hierarchy);
-		let ancestryToFocus = h.rootAncestry;
+		let ancestryToFocus = h?.rootAncestry ?? null;
 		if (c.eraseDB > 0) {
 			c.eraseDB -= 1;
 			w_ancestry_focus.set(ancestryToFocus);
 		} else {
 			const focusPath = p.readDB_key(this.focus_key) ?? p.readDB_key('focus');
 			if (!!focusPath) {
-				const focusAncestry = h.ancestry_remember_createUnique(focusPath);
+				const focusAncestry = h?.ancestry_remember_createUnique(focusPath) ?? null;
 				if (!!focusAncestry) {
 					ancestryToFocus = focusAncestry;
 				}
 			}
 		}
-		if (!ancestryToFocus.thing) {
-			const lastGrabbedAncestry = grabs.latest?.parentAncestry;
-			if (lastGrabbedAncestry) {
-				ancestryToFocus = lastGrabbedAncestry;
+		if (!!ancestryToFocus) {
+			if (!ancestryToFocus.thing) {
+				const lastGrabbedAncestry = grabs.latest?.parentAncestry;
+				if (lastGrabbedAncestry) {
+					ancestryToFocus = lastGrabbedAncestry;
+				}
 			}
+			ancestryToFocus.becomeFocus(true);
 		}
 		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
 			p.writeDB_key(this.focus_key, !ancestry ? null : ancestry.pathString);
 		});
-		ancestryToFocus.becomeFocus(true);
 	}
 	
 	static readonly _____ANCESTRIES: unique symbol;
@@ -133,9 +133,8 @@ export class Preferences {
 		const length = pathStrings?.length ?? 0;
 		let ancestries: Array<Ancestry> = [];
 		if (length > 0) {
-			let h = get(w_hierarchy);
 			for (const pathString of pathStrings) {
-				const ancestry = h.ancestry_isAssured_valid_forPath(pathString);
+				const ancestry = h?.ancestry_isAssured_valid_forPath(pathString);
 				if (!!ancestry) {
 					ancestries.push(ancestry);
 				}

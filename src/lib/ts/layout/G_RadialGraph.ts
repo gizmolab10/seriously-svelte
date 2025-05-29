@@ -1,6 +1,6 @@
 import { k, u, radial, Ancestry, Predicate, T_Kinship } from '../common/Global_Imports';
 import { w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
-import { w_hierarchy, w_g_paging, w_ancestry_focus } from '../common/Stores';
+import { w_g_paging, w_ancestry_focus } from '../common/Stores';
 import { G_Widget, G_Cluster, G_Paging } from '../common/Global_Imports';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
@@ -148,7 +148,7 @@ export default class G_RadialGraph {
 				let childAncestries = focus_ancestry.ancestries_createUnique_byKinship(T_Kinship.child);
 				this.assignAncestries_toClusterFor(childAncestries, Predicate.contains, true);
 			} else {
-				for (const predicate of get(w_hierarchy).predicates) {
+				for (const predicate of h.predicates) {
 					const ancestries = focus_ancestry.ancestries_createUnique_byKinship(predicate.kinship_forPoints_toChildren(false));
 					this.assignAncestries_toClusterFor(ancestries, predicate, false);
 				}

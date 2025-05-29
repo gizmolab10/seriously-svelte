@@ -1,10 +1,9 @@
-import { Thing, T_Order, databases, Predicate } from '../common/Global_Imports';
+import { h, Thing, T_Order, databases, Predicate } from '../common/Global_Imports';
 import { T_Persistable, T_Predicate } from '../common/Global_Imports';
-import { w_hierarchy, w_relationship_order } from '../common/Stores';
+import { w_relationship_order } from '../common/Stores';
 import Identifiable from '../runtime/Identifiable';
 import type { Integer } from '../common/Types';
 import Persistable from './Persistable';
-import { get } from 'svelte/store';
 import Airtable from 'airtable';
 
 export default class Relationship extends Persistable {
@@ -31,9 +30,9 @@ export default class Relationship extends Persistable {
 	get child(): Thing | null { return this.thing(true); }
 	get parent(): Thing | null { return this.thing(false); }
 	get isValid(): boolean { return !!this.kind && !!this.parent && !!this.child; }
-	get predicate(): Predicate | null { return get(w_hierarchy).predicate_forKind(this.kind); }
+	get predicate(): Predicate | null { return h.predicate_forKind(this.kind); }
 	get fields(): Airtable.FieldSet { return { kind: this.kind, parent: [this.idParent], child: [this.idChild], order: this.order }; }
-	get reversed(): Relationship | null { return get(w_hierarchy).relationship_forPredicateKind_parent_child(this.kind, this.idChild.hash(), this.idParent.hash()); }
+	get reversed(): Relationship | null { return h?.relationship_forPredicateKind_parent_child(this.kind, this.idChild.hash(), this.idParent.hash()) ?? null; }
 	
 	get verbose(): string {
 		const persisted = this.persistence.already_persisted ? 'STORED' : 'DIRTY';
@@ -51,7 +50,7 @@ export default class Relationship extends Persistable {
 		if (!reversed) {
 			reversed = new Relationship(this.idBase, Identifiable.id_inReverseOrder(this.id), this.kind, this.idChild, this.idParent, this.orders[1], this.orders[0]);
 			reversed.isReversed = true;
-			get(w_hierarchy).relationship_remember(reversed);
+			h.relationship_remember(reversed);
 		}
 		return reversed;
 	}
@@ -71,7 +70,7 @@ export default class Relationship extends Persistable {
 
 	thing(child: boolean): Thing | null {
 		const id = child ? this.idChild : this.idParent;
-		return get(w_hierarchy).thing_forHID(id.hash()) ?? null
+		return h.thing_forHID(id.hash()) ?? null
 	}
 
 	async persistent_create_orUpdate(already_persisted: boolean) {
@@ -99,7 +98,6 @@ export default class Relationship extends Persistable {
 	}
 
 	assign_idParent(idParent: string) {
-		const h = get(w_hierarchy);
 		h.relationship_forget(this);
 		this.idParent = idParent;
 		this.hidParent = idParent.hash();
