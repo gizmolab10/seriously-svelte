@@ -91,9 +91,8 @@
 
 	function handle_pointerUp(event) {
 		if (detect_mouseUp) {
-			reset();
 			handle_s_mouse(S_Mouse.up(event, bound_element));
-			debug.log_action(` up ${mouse_responder_number} RESPONDER`);
+			reset();
 		}
 	}
 	

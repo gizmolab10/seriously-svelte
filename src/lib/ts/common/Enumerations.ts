@@ -65,11 +65,6 @@ export enum T_Alteration {
 	add	   = 'add',
 }
 
-export enum T_Storage {
-	import = 'import',
-	export = 'export',
-}
-
 export enum T_Widget {
 	radial = 'radial',
 	focus  = 'focus',
@@ -94,10 +89,29 @@ export enum T_SvelteComponent {
 	app		= 'app',
 }
 
-export enum T_Storage {
+export enum T_File_Operation {
+	import = 'import',	// persist
+	export = 'export',	// fetch
+}
+
+export enum T_Storage_Need {
 	direction = 'direction',
-	working	  = 'working',
 	format	  = 'format',
+	busy	  = 'busy',
+}
+
+export enum T_Startup {
+	start = 'start',
+	fetch = 'fetch',
+	empty = 'empty',
+	ready = 'ready',
+}
+
+export enum T_File_Format {
+	seriously = 'seriously',
+	cancel	  = 'cancel',
+	json	  = 'json',
+	csv		  = 'csv',
 }
 
 export enum T_Persistence {
@@ -113,13 +127,6 @@ export enum T_Kinship {
 	tags    = 'tags',
 }
 
-export enum T_Startup {
-	start = 'start',
-	fetch = 'fetch',
-	empty = 'empty',
-	ready = 'ready',
-}
-
 export enum T_RingZone {
 	resize = 'resize',
 	paging = 'paging',
@@ -132,13 +139,6 @@ export enum T_Oblong {
 	right  = 'right',
 	left   = 'left',
 	full   = 'full',
-}
-
-export enum T_File {
-	seriously = 'seriously',
-	cancel	  = 'cancel',
-	json	  = 'json',
-	csv		  = 'csv',
 }
 
 export enum T_Persistable {

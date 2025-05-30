@@ -6,7 +6,7 @@
 	import Color from '../kit/Color.svelte';
 	export let top = 0;
 	const color_left = 60
-	const picker_offset = `-180px`;
+	const picker_offset = `-117px`;
 	const font_size = k.font_size.smaller;
 	const info_width = k.width_details - 30;
 	const color_origin = new Point(color_left, 45);

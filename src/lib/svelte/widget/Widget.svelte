@@ -1,11 +1,10 @@
 <script lang='ts'>
 	import { c, k, u, ux, Thing, Point, Angle, debug, layout } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Widget, T_Signal, T_Element } from '../../ts/common/Global_Imports';
+	import { w_show_related, w_thing_color, w_background_color } from '../../ts/common/Stores';
 	import { G_Widget, S_Element, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { signals, Ancestry, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_ancestries_grabbed } from '../../ts/common/Stores';
-	import { w_thing_color, w_thing_fontFamily } from '../../ts/common/Stores';
-	import { w_show_related, w_background_color } from '../../ts/common/Stores';
 	import { T_Edit } from '../../ts/state/S_Title_Edit';
 	import Widget_Reveal from './Widget_Reveal.svelte';
 	import Tree_Line from '../graph/Tree_Line.svelte';
@@ -42,7 +41,7 @@
     let widget;
 	let thing;
 
-	setup_fromAncestry();
+	setup_fromAncestry();		// this fails if ancestry's thing id is invalid
 	debug.log_build(`WIDGET (grabbed: ${ancestry.isGrabbed}) "${ancestry.title}"`);
 	final_layout();
 	layout_maybe();
@@ -90,16 +89,13 @@
 		s_widget.update_forStateChange;
 		thing = ancestry?.thing;
 		if (!ancestry) {
-			console.log('bad ancestry');
+			console.log('widget is missing an ancestry');
 		} else if (!thing) {
-			console.log(`bad thing for "${ancestry?.id ?? k.unknown}"`);
+			console.log(`widget is missing a thing for "${ancestry?.id ?? k.unknown}"`);
 		} else {
 			const title = thing.title ?? thing.id ?? k.unknown;
 			widgetName = `widget ${title}`;
 			revealName = `reveal ${title}`;
-			if (ancestry.isFocus) {
-				debug.log_grab(`  FOCUS (grabbed: ${ancestry.isGrabbed}) "${ancestry.title}"`);
-			}
 		}
 	}
 

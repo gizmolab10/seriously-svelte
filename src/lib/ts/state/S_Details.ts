@@ -37,7 +37,8 @@ class S_Details {
 	number_ofDetails = 0;
 
 	constructor() {
-		w_t_database.subscribe((db: string) => {
+		w_t_database.subscribe((type: string) => {
+			console.log('s details', h?.db.t_database, type);
 			this.update();
 		});
 		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
@@ -126,7 +127,7 @@ class S_Details {
 
 	private update_s_tags() {
 		if (!!h) {
-			const tags = h.tags;
+			const tags = h?.tags ?? [];
 			this.s_tags.items = tags;
 			this.s_tags.total_items = tags.length;
 		}

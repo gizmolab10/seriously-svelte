@@ -1,21 +1,23 @@
 <script lang='ts'>
-	import { T_Layer, T_File, T_Storage, T_Element, T_Preference, T_Request } from '../../ts/common/Global_Imports';
-	import { h, k, ux, Point, colors, S_Element, databases, Hierarchy } from '../../ts/common/Global_Imports';
+	import { h, k, ux, busy, Point, colors, S_Element, databases, Hierarchy } from '../../ts/common/Global_Imports';
+	import { T_File_Format, T_File_Operation, T_Storage_Need, T_Signal } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Element, T_Preference, T_Request } from '../../ts/common/Global_Imports';
 	import { w_storage_updated, w_thing_fontFamily } from '../../ts/common/Stores';
-	import { w_t_database } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import { T_Database } from '../../ts/database/DBCommon';
     import Buttons_Row from '../buttons/Buttons_Row.svelte';
+	import { w_t_database } from '../../ts/common/Stores';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Text_Table from '../kit/Text_Table.svelte';
 	import Separator from '../kit/Separator.svelte';
 	import Button from '../buttons/Button.svelte';
+	import Spinner from '../kit/Spinner.svelte';
 	export let top = 0;
 	const buttons_top = 138;
 	const border = '1px solid black';
-	const storage_ids = [T_Storage.import, T_Storage.export];
     const font_sizes = [k.font_size.smallest, k.font_size.smaller];
-	const format_ids = [T_File.csv, T_File.json, T_File.cancel];
+	const storage_ids = [T_File_Operation.import, T_File_Operation.export];
+	const format_ids = [T_File_Format.csv, T_File_Format.json, T_File_Format.cancel];
 	const es_save = ux.s_element_for(new Identifiable('save'), T_Element.button, 'save');
 	const db_ids = [T_Database.local, T_Database.firebase, T_Database.airtable, T_Database.test];
 	const button_style = `font-family: ${$w_thing_fontFamily}; font-size:0.85em; left: 5px; top: -2px; position: absolute;`;
@@ -26,8 +28,10 @@
 	setup_s_elements();
 	es_save.set_forHovering('black', 'pointer');
 
-	$: {
-		const trigger = $w_storage_updated;
+	$: $w_storage_updated, $w_t_database, update_storage_details();
+
+	function update_storage_details() {
+		console.log('storage', h.db.t_database, $w_t_database);
 		if (!!h) {
 			storage_details = [h.db.details_forStorage,
 			['depth', h.depth.expressZero_asHyphen()],
@@ -39,16 +43,11 @@
 		}
 	}
 
-	function selection_closure(titles: Array<string>) {
-		const t_database = titles[0] as T_Database;	// only ever contains one title
-		w_t_database.set(t_database);
-	}
-
 	function row_titles() {
-		switch (ux.t_storage) {
-			case T_Storage.direction: return ['local file', ...storage_ids];
-			case T_Storage.format: return ['choose a file format', ...format_ids];
-			case T_Storage.working: return [`${storage_choice}ing...`];
+		switch (ux.T_Storage_Need) {
+			case T_Storage_Need.direction: return ['local file', ...storage_ids];
+			case T_Storage_Need.format: return ['choose a file format', ...format_ids];
+			case T_Storage_Need.busy: return [`${storage_choice}ing...`];
 		}
 	}
 	
@@ -61,41 +60,46 @@
 		}
 	}
 
-	function handle_save(s_mouse) {
+	function handle_db_selection(titles: Array<string>) {
+		const t_database = titles[0] as T_Database;	// only ever contains one title
+		databases.grand_change_database(t_database);
+	}
+
+	async function handle_save(s_mouse) {
 		if (!!h && h.hasRoot && s_mouse.isUp) {
-			h.persist_toFile(T_File.json);
+			await h.db.persist_all(true);
 		}
 	}
 
 	function handle_toolRequest(t_request: T_Request, s_mouse: S_Mouse, column: number): any {
-		const ids = (ux.t_storage == T_Storage.direction) ? storage_ids : format_ids;
+		const ids = (ux.T_Storage_Need == T_Storage_Need.direction) ? storage_ids : format_ids;
 		switch (t_request) {
-			case T_Request.is_visible:   return true;
-			case T_Request.name:		   return ids[column];
 			case T_Request.handle_click: return handle_click_forColumn(s_mouse, column);
-			default:						   return false;
+			case T_Request.name:		 return ids[column];
+			case T_Request.is_visible:   return true;
+			default:					 return false;
 		}
 		return null;
 	}
 	
 	function handle_click_forColumn(s_mouse, column) {
-		const ids = (ux.t_storage == T_Storage.direction) ? storage_ids : format_ids;
+		const ids = (ux.T_Storage_Need == T_Storage_Need.direction) ? storage_ids : format_ids;
 		if (s_mouse.isHover) {
 			s_element_byStorageType[ids[column]].isOut = s_mouse.isOut;
 		} else if (s_mouse.isDown) {
 			const choice = ids[column];
-			if (choice == T_File.cancel) {
-				ux.t_storage = T_Storage.direction;
-			} else if (ux.t_storage == T_Storage.direction) {
+			if (choice == T_File_Format.cancel) {
+				ux.T_Storage_Need = T_Storage_Need.direction;
+			} else if (ux.T_Storage_Need == T_Storage_Need.direction) {
 				storage_choice = choice;
-				ux.t_storage = T_Storage.format;
+				ux.T_Storage_Need = T_Storage_Need.format;
 			} else {
-				const format = choice as T_File;
+				const format = choice as T_File_Format;
 				switch (storage_choice) {
-					case T_Storage.export: h.persist_toFile(format); break;
-					case T_Storage.import: h.select_file_toUpload(format, s_mouse.event.shiftKey); break;
+					case T_File_Operation.export: h.persist_toFile(format); break;
+					case T_File_Operation.import: h.select_file_toUpload(format, s_mouse.event.shiftKey); break;
 				}
-				ux.t_storage = T_Storage.working;
+				ux.T_Storage_Need = T_Storage_Need.busy;
 			}
 		}
 		return null;
@@ -112,41 +116,51 @@
 		titles={db_ids}
 		selected={[$w_t_database]}
 		height={k.height.controls}
-		origin={new Point(22, top + 3)}
-		selection_closure={selection_closure}/>
-	<div class='data-details'
+		origin={new Point(22, top + 2)}
+		selection_closure={handle_db_selection}/>
+	<div class='storage-details'
 		style='
 			width: 100%;
 			font-size:{k.font_size.smaller}px;'>
 		<Text_Table
 			top={top + 21}
 			row_height={11}
+			name='storage-table'
 			array={storage_details}
 			font_size={k.font_size.small - 1}/>
-		{#if h.total_dirty_count.length != 0}
-			<Button
-				width=48
-				name='save'
-				border = {border}
-				es_button = {es_save}
-				closure={handle_save}
-				zindex={T_Layer.frontmost}
-				origin={new Point(163, top + 110)}>
-				save
-			</Button>
-		{/if}
+		{#key $w_storage_updated}
+			{#if h.total_dirty_count.length != 0}
+				{#if h.db.isPersistence_inProgress}
+					<div class='storage-spinner'
+						style="position: absolute; left: 163px; top: 107px;">
+						<Spinner />
+					</div>
+				{:else}
+					<Button
+						width=72
+						name='save'
+						border = {border}
+						es_button = {es_save}
+						closure={handle_save}
+						zindex={T_Layer.frontmost}
+						origin={new Point(138, top + 109)}>
+						save to db
+					</Button>
+				{/if}
+			{/if}
+		{/key}
 	</div>
-	{#key ux.t_storage}
+	{#key ux.T_Storage_Need}
 		<Buttons_Row
 			show_box={true}
 			horizontal_gap={4}
 			font_sizes={font_sizes}
 			width={k.width_details}
 			row_titles={row_titles()}
-			origin={Point.y(top + 129)}
+			origin={Point.y(top + 126)}
 			closure={handle_toolRequest}
 			button_height={k.height.button}
-			margin={(ux.t_storage == T_Storage.direction) ? 50 : 40}
-			name={`storage-${(ux.t_storage == T_Storage.direction) ? 'action' : 'format'}`}/>
+			margin={(ux.T_Storage_Need == T_Storage_Need.direction) ? 50 : 40}
+			name={`storage-${(ux.T_Storage_Need == T_Storage_Need.direction) ? 'action' : 'format'}`}/>
 	{/key}
 </div>

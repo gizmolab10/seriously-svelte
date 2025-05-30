@@ -1,9 +1,10 @@
 import { Tag, Trait, Thing, Predicate, Relationship, Persistable } from '../common/Global_Imports';
+import { c, h, p, busy, debug, layout, Hierarchy, databases } from '../common/Global_Imports';
 import { T_Thing, T_Startup, T_Persistence, T_Persistable } from '../common/Global_Imports';
-import { c, p, debug, layout, Hierarchy, databases } from '../common/Global_Imports';
 import { w_hierarchy, w_t_startup } from '../common/Stores';
 import type { Dictionary } from '../common/Types';
 import { k } from '../common/Constants';
+import { get } from 'svelte/store';
 
 export enum T_Database {
 	airtable = 'airtable',
@@ -13,8 +14,9 @@ export enum T_Database {
 	test	 = 'test',
 }
 
+// CRUD API --> for all databases
+
 export default class DBCommon {
-	isPersistence_inProgress: boolean = false;
 	t_persistence = T_Persistence.none;
 	loadTime: string | null = null;
 	hierarchy!: Hierarchy;
@@ -34,23 +36,23 @@ export default class DBCommon {
 
 	async thing_persistentUpdate(thing: Thing) { this.persist_all(); }
 	async thing_persistentDelete(thing: Thing) { this.persist_all(); }
-	async thing_remember_persistentCreate(thing: Thing) { this.hierarchy.thing_remember(thing); this.persist_all(); }
+	async thing_remember_persistentCreate(thing: Thing) { h.thing_remember(thing); this.persist_all(); }
 	
 	async predicate_persistentUpdate(predicate: Predicate) { this.persist_all(); }
 	async predicate_persistentDelete(predicate: Predicate) { this.persist_all(); }
-	async predicate_remember_persistentCreate(predicate: Predicate) { this.hierarchy.predicate_remember(predicate); this.persist_all(); }
+	async predicate_remember_persistentCreate(predicate: Predicate) { h.predicate_remember(predicate); this.persist_all(); }
 
 	async relationship_persistentUpdate(relationship: Relationship) { this.persist_all(); }
 	async relationship_persistentDelete(relationship: Relationship) { this.persist_all(); }
-	async relationship_remember_persistentCreate(relationship: Relationship) { this.hierarchy.relationship_remember_ifValid(relationship); this.persist_all(); }
+	async relationship_remember_persistentCreate(relationship: Relationship) { h.relationship_remember_ifValid(relationship); this.persist_all(); }
 
 	async trait_persistentUpdate(trait: Trait) { this.persist_all(); }
 	async trait_persistentDelete(trait: Trait) { this.persist_all(); }
-	async trait_remember_persistentCreate(trait: Trait) { this.hierarchy.trait_remember(trait); this.persist_all(); }
+	async trait_remember_persistentCreate(trait: Trait) { h.trait_remember(trait); this.persist_all(); }
 
 	async tag_persistentUpdate(tag: Tag) { this.persist_all(); }
 	async tag_persistentDelete(tag: Tag) { this.persist_all(); }
-	async tag_remember_persistentCreate(tag: Tag) { this.hierarchy.tag_remember(tag); this.persist_all(); }
+	async tag_remember_persistentCreate(tag: Tag) { h.tag_remember(tag); this.persist_all(); }
 	
 	remove_all_fromLocal() {
 		if (this.isPersistent) {
@@ -61,19 +63,21 @@ export default class DBCommon {
 	}
 
 	async persist_all(force: boolean = false) {
-		this.isPersistence_inProgress = true;
-		if (!databases.defer_persistence) {
-			for (const t_persistable of Persistable.t_persistables) {
-				await this.persistAll_identifiables_maybe(t_persistable, force);
+		busy.temporarily_set_isPersisting_while(async () => {
+			if (!databases.defer_persistence) {
+				h.signal_storage_redraw();
+				for (const t_persistable of Persistable.t_persistables) {
+					await this.persistAll_identifiables_ofType_maybe(t_persistable, force);
+					h.signal_storage_redraw();
+				}
 			}
-		}
-		this.isPersistence_inProgress = false;
+		});
 	}
 
-	async persistAll_identifiables_maybe(t_persistable: T_Persistable, force: boolean = false) {
-		const h = this.hierarchy;
+	// code common to all persisting actions
+	async persistAll_identifiables_ofType_maybe(t_persistable: T_Persistable, force: boolean = false) {
 		const identifiables = h.persistables_forKey(t_persistable);
-		if (this.isRemote) {				// db firebase and airtable
+		if (this.isRemote) {				// db firebase and airtable, both are persistent
 			for (const identifiable of identifiables) {
 				if (identifiable.persistence.isDirty || force) {
 					await identifiable.persist();
@@ -82,39 +86,45 @@ export default class DBCommon {
 			}
 		} else if (this.isPersistent) {		// db local only, db test is not persistent
 			p.writeDB_key(t_persistable.toLowerCase(), identifiables);
-		}
-	}
-
-	fetch_all_fromLocal() {
-		const h = this.hierarchy;
-		for (const t_persistable of Persistable.t_persistables) {
-			const array = p.readDB_key(t_persistable.toLowerCase()) as Array<Dictionary>;
-			if (!!array) {
-				for (const dict of array) {
-					h.extract_objects_ofType_fromDict(t_persistable, dict);
-				}
-			} else if (!this.isRemote) {			// no such persistable, create empty hierarchy
-				switch (t_persistable) {
-					case T_Persistable.predicates:
-						h.predicate_defaults_remember_runtimeCreate();
-						break;
-					case T_Persistable.things:
-						h.thing_remember_runtimeCreateUnique(this.idBase, Thing.newID(), 'click here to edit this title', 'limegreen', T_Thing.root);
-						break;
-				}
+			for (const identifiable of identifiables) {
+				identifiable.persistence.isDirty = false;
 			}
 		}
 	}
 
+	fetch_all_fromLocal() {
+		busy.temporarily_set_isFetching_while(async () => {
+			for (const t_persistable of Persistable.t_persistables) {
+				const array = p.readDB_key(t_persistable.toLowerCase()) as Array<Dictionary>;
+				if (!!array) {
+					for (const dict of array) {
+						h.extract_objects_ofType_fromDict(t_persistable, dict);
+					}
+				} else if (!this.isRemote) {			// no such persistable, create empty hierarchy
+					switch (t_persistable) {
+						case T_Persistable.predicates:
+							h.predicate_defaults_remember_runtimeCreate();
+							break;
+						case T_Persistable.things:
+							h.thing_remember_runtimeCreateUnique(this.idBase, Thing.newID(), 'click here to edit this title', 'limegreen', T_Thing.root);
+							break;
+					}
+				}
+			}
+		});
+	}
+
 	async hierarchy_setup_fetch_andBuild() {
 		this.queryStrings_apply();
-		const h = this.hierarchy ?? new Hierarchy(this);
-		this.hierarchy = h;
-		w_hierarchy.set(h);
+		if (!h) {
+			w_hierarchy.set(new Hierarchy(this));
+		}
 		if (h.hasRoot) {
 			h.restore_fromPreferences();
 		} else {
-			w_t_startup.set(T_Startup.fetch);
+			if (get(w_t_startup) != T_Startup.ready) {
+				w_t_startup.set(T_Startup.fetch);
+			}
 			await this.hierarchy_create_fastLoad_or_fetch_andBuild();
 		}
 		setTimeout( () => {
@@ -124,7 +134,6 @@ export default class DBCommon {
 	}
 	
 	async hierarchy_create_fastLoad_or_fetch_andBuild() {
-		const h = this.hierarchy;
 		if (c.eraseDB > 0) {
 			c.eraseDB -= 1;
 			await this.remove_all();	// start fresh

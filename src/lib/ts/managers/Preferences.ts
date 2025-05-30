@@ -125,7 +125,6 @@ export class Preferences {
 	ancestries_writeDB_key(ancestries: Array<Ancestry>, key: string) {	// 2 keys use this {grabbed, expanded}
 		const pathStrings = ancestries.map(a => a.pathString);			// array of pathStrings (of Relationship ids)
 		this.writeDB_key(key, ancestries.length == 0 ? null : pathStrings);
-		debug.log_preferences(`! ${key.toUpperCase()} ${ancestries.length} pathStrings "${pathStrings}" titles "${ancestries.map(a => a.title)}"`);
 	}
 
 	ancestries_readDB_key(key: string): Array<Ancestry> {				// 2 keys use this {grabbed, expanded}

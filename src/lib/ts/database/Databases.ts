@@ -1,7 +1,7 @@
-import { c, k, p, T_Preference } from '../common/Global_Imports';
+import { c, Hierarchy, k, p, T_Preference } from '../common/Global_Imports';
+import { w_hierarchy, w_t_database } from '../common/Stores';
 import { T_Persistence } from '../common/Global_Imports';
 import { T_Database } from '../database/DBCommon';
-import { w_t_database } from '../common/Stores';
 import DBCommon from '../database/DBCommon';
 import DBFirebase from './DBFirebase';
 import DBAirtable from './DBAirtable';
@@ -21,7 +21,7 @@ export default class Databases {
 		const queryStrings = c.queryStrings;
 		let type = queryStrings.get('db');
 		if (!!type) {
-			this.db_set_accordingToType(type);
+			this.db_now = this.db_forType(type);
 		} else {
 			type = p.read_key(T_Preference.db) ?? 'firebase';
 			if (type == 'file') { type = 'local'; }
@@ -35,16 +35,28 @@ export default class Databases {
 		w_t_database.subscribe((type: string) => {
 			if (!!type && (!done || (type && this.db_now.t_database != type))) {
 				done = true;
-				setTimeout( async () => {
-					this.db_set_accordingToType(type);
-					p.write_key(T_Preference.db, type);
-					await this.db_now.hierarchy_setup_fetch_andBuild();
+				setTimeout( async () => {	// wait for hierarchy to be created
+					console.log('databases', this.db_now.t_database, type);
+					await this.grand_change_database(type);
 				}, 0);
 			}
 		});
 	}
 
-	db_set_accordingToType(type: string) { this.db_now = this.db_forType(type); }
+	async grand_change_database(type: string) {
+		this.db_now = this.db_forType(type);
+		let h = this.db_now.hierarchy;
+		if (!h) {
+			this.db_now.hierarchy = h;
+			h = new Hierarchy(this.db_now);
+		}
+		p.write_key(T_Preference.db, type);
+		console.log('grand change', h.db.t_database, type);
+		w_hierarchy.set(h);
+		w_t_database.set(type);
+		await this.db_now.hierarchy_setup_fetch_andBuild();
+	}
+
 	db_change_toNext(forward: boolean) { w_t_database.set(this.db_next_get(forward)); }
 	isRemote(t_persistence: T_Persistence): boolean { return t_persistence == T_Persistence.remote; }
 	isPersistent(t_persistence: T_Persistence): boolean { return t_persistence != T_Persistence.none; }

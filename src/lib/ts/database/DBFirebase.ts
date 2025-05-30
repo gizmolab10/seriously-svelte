@@ -1,9 +1,11 @@
-import { c, k, p, u, Thing, Trait, debug, layout, Predicate, Relationship, Persistable, databases, Tag } from '../common/Global_Imports';
-import { QuerySnapshot, serverTimestamp, DocumentReference, CollectionReference } from 'firebase/firestore';
-import { T_Thing, T_Trait, T_Debug, T_Create, T_Predicate, T_Preference } from '../common/Global_Imports';
-import { onSnapshot, deleteField, getFirestore, DocumentData, DocumentChange } from 'firebase/firestore';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
-import { T_Persistable, T_Persistence } from '../common/Global_Imports';
+import { c, h, k, p, u, busy, Tag, Thing, Trait, debug, layout } from '../common/Global_Imports';
+import { T_Thing, T_Trait, T_Debug, T_Create, T_Predicate } from '../common/Global_Imports';
+import { onSnapshot, deleteField, getFirestore, serverTimestamp } from 'firebase/firestore';
+import { databases, Predicate, Relationship, Persistable } from '../common/Global_Imports';
+import { T_Preference, T_Persistable, T_Persistence } from '../common/Global_Imports';
+import { DocumentData, DocumentChange, DocumentReference } from 'firebase/firestore';
+import { QuerySnapshot, CollectionReference } from 'firebase/firestore';
 import type { Dictionary, Integer } from '../common/Types';
 import Identifiable from '../runtime/Identifiable';
 import { initializeApp } from 'firebase/app';
@@ -59,11 +61,13 @@ export default class DBFirebase extends DBCommon {
 	static readonly _____FETCH: unique symbol;
 
 	async fetch_all() {
-		await this.recordLoginIP();
-		await this.documents_fetch_ofType(T_Persistable.predicates);
-		await this.hierarchy_fetch_forID(this.idBase);
-		await this.setup_remote_handlers();
-		await this.fetch_bulkAliases();		// TODO: assumes all ancestries are already created, including h.rootAncestry
+		busy.temporarily_set_isFetching_while(async () => {
+			await this.recordLoginIP();
+			await this.documents_fetch_ofType(T_Persistable.predicates);
+			await this.hierarchy_fetch_forID(this.idBase);
+			await this.setup_remote_handlers();
+			await this.fetch_bulkAliases();		// TODO: assumes all ancestries are already created, including h.rootAncestry
+		});
 	}
 
 	async hierarchy_fetch_forID(idBase: string) {
@@ -110,7 +114,6 @@ export default class DBFirebase extends DBCommon {
 	}
 	
 	async fetch_bulkAliases() {
-		const h = this.hierarchy;
 		const root = h.root;
 		if (!!root && this.idBase == k.name_bulkAdmin) {
 			const externalsAncestry = await h.ancestry_externals;		// TODO: assumes all ancestries created
@@ -186,7 +189,7 @@ export default class DBFirebase extends DBCommon {
 					}
 				}
 				onSnapshot(collectionRef, async (snapshot) => {
-					if (this.hierarchy.isAssembled) {		// u.ignore snapshots caused by data written to server
+					if (h.isAssembled) {		// u.ignore snapshots caused by data written to server
 						if (this.deferSnapshots) {
 							this.snapshot_deferOne(idBase, t_persistable, snapshot);
 							return;
@@ -216,13 +219,13 @@ export default class DBFirebase extends DBCommon {
 	signal_docHandled(relationships_haveChanged: boolean) {
 		if (relationships_haveChanged) {
 			setTimeout(() => { // wait in case a thing involved in this relationship arrives in the data
-				this.hierarchy.relationships_refreshKnowns();
-				this.hierarchy.rootAncestry.order_normalizeRecursive(true);
+				h.relationships_refreshKnowns();
+				h.rootAncestry.order_normalizeRecursive(true);
 				layout.grand_build();
 			}, 20);
 		}
-		this.hierarchy.ancestries_fullRebuild();		// first recreate ancestries
-		this.hierarchy.signal_storage_redraw(10);
+		h.ancestries_fullRebuild();		// first recreate ancestries
+		h.signal_storage_redraw(10);
 	}
 
 	async handle_docChanges(idBase: string, t_persistable: T_Persistable, change: DocumentChange): Promise<boolean> {
@@ -260,14 +263,13 @@ export default class DBFirebase extends DBCommon {
 			await updateDoc(docRef, { isReal: deleteField() });
 		}
 		switch (t_persistable) {
-			case T_Persistable.predicates: this.hierarchy.predicate_defaults_remember_runtimeCreate(); break;
+			case T_Persistable.predicates: h.predicate_defaults_remember_runtimeCreate(); break;
 			case T_Persistable.things:	   await this.root_default_remember_persistentCreateIn(collectionRef); break;
 		}
 	}
 
 	async document_ofType_remember_validated(t_persistable: T_Persistable, id: string, data: DocumentData, idBase: string) {
 		if (DBFirebase.data_isValidOfKind(t_persistable, data)) {
-			const h = this.hierarchy;
 			switch (t_persistable) {
 				case T_Persistable.predicates:	  h   .predicate_remember_runtimeCreateUnique(		  id, data.kind,		 data.isBidirectional ); break;
 				case T_Persistable.things:		  h       .thing_remember_runtimeCreateUnique(idBase, id, data.title,		 data.color,		  data.t_thing, true); break;
@@ -301,7 +303,7 @@ export default class DBFirebase extends DBCommon {
 			thing.persistence.awaiting_remoteCreation = true;
 			try {
 				const ref = await addDoc(thingsCollection, jsThing);
-				this.hierarchy.thing_remember_updateID_to(thing, ref.id);
+				h.thing_remember_updateID_to(thing, ref.id);
 			} catch (error) {
 				this.reportError(error);
 			}
@@ -317,7 +319,7 @@ export default class DBFirebase extends DBCommon {
 		const root = new Thing(this.idBase, Identifiable.newID(), this.idBase, 'coral', T_Thing.root, true);
 		const rootRef = await addDoc(collectionRef, u.convertToObject(root, fields));		// no need to remember now
 		root.log(T_Debug.remote, 'CREATE T');
-		this.hierarchy.root = root;
+		h.root = root;
 		root.setID(rootRef.id);
 	}
 
@@ -361,7 +363,6 @@ export default class DBFirebase extends DBCommon {
 
 	thing_handle_docChanges(idBase: string, id: string, change: DocumentChange, data: DocumentData): boolean {
 		const remoteThing = new PersistentThing(data);
-		const h = this.hierarchy;
 		let thing = h.thing_forHID(id.hash());
 		if (!remoteThing) {
 			return false;
@@ -376,7 +377,7 @@ export default class DBFirebase extends DBCommon {
 				case 'removed':
 					if (!!thing) {
 						if (thing.isRoot) {
-							thing.set_isDirty();
+							thing.set_isDirty(true);
 							return false;			// do not invoke rebuild
 						}
 						thing.remove_fromGrabbed_andExpanded_andResolveFocus();
@@ -445,7 +446,6 @@ export default class DBFirebase extends DBCommon {
 				const ref = await addDoc(traitsCollection, jsTrait)
 				trait.persistence.awaiting_remoteCreation = false;
 				trait.persistence.already_persisted = true;
-				const h = this.hierarchy;
 				h.trait_forget(trait);
 				trait.setID(ref.id);
 				h.trait_remember(trait);
@@ -462,7 +462,6 @@ export default class DBFirebase extends DBCommon {
 		if (!remoteTrait) {
 			return false;
 		} else {
-			const h = this.hierarchy;
 			let trait = h.trait_forHID(id.hash());
 			switch (change.type) {
 				case 'added':
@@ -541,7 +540,6 @@ export default class DBFirebase extends DBCommon {
 				const ref = await addDoc(tagsCollection, jsTag)
 				tag.persistence.awaiting_remoteCreation = false;
 				tag.persistence.already_persisted = true;
-				const h = this.hierarchy;
 				h.tag_forget(tag);
 				tag.setID(ref.id);
 				h.tag_remember(tag);
@@ -558,7 +556,6 @@ export default class DBFirebase extends DBCommon {
 		if (!remoteTag) {
 			return false;
 		} else {
-			const h = this.hierarchy;
 			let tag = h.tag_forHID(id.hash());
 			switch (change.type) {
 				case 'added':
@@ -626,7 +623,6 @@ export default class DBFirebase extends DBCommon {
 				const ref = await addDoc(predicatesCollection, jsPredicate);
 				predicate.persistence.awaiting_remoteCreation = false;
 				predicate.persistence.already_persisted = true;
-				const h = this.hierarchy;
 				h.predicate_forget(predicate);
 				predicate.setID(ref.id);
 				h.predicate_remember(predicate);
@@ -690,7 +686,6 @@ export default class DBFirebase extends DBCommon {
 		if (!!relationshipsCollection) {
 			const remoteRelationship = new PersistentRelationship(relationship);
 			const jsRelationship = { ...remoteRelationship };
-			const h = this.hierarchy;
 			this.deferSnapshots = true;
 			relationship.persistence.awaiting_remoteCreation = true;
 			try {
@@ -713,7 +708,6 @@ export default class DBFirebase extends DBCommon {
 		if (!remoteRelationship) {
 			return false;
 		} else {
-			const h = this.hierarchy;
 			let relationship = h.relationship_forHID(id.hash());
 			switch (change.type) {
 				case 'added':

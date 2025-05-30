@@ -29,6 +29,20 @@ export class Grabs {
 		return null;
 	}
 
+	get user_selected_ancestry(): Ancestry {
+		const focus = get(w_ancestry_focus);
+		let grabbed = grabs.latest;
+		if (!!focus && (show.shows_focus)) {
+			return focus;
+		} else if (!!grabbed) {
+			return grabbed;
+		} else if (!!focus) {
+			return focus;
+		} else {
+			return get(w_hierarchy)?.rootAncestry;
+		}
+	}
+
 	latest_assureIsVisible() {
 		const ancestry = this.latest;
 		if (!!ancestry && !ancestry.isVisible) {

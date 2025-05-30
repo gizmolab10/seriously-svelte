@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { c, e, k, u, ux, w, show, Rect, Size, Point, Thing, colors, layout } from '../../ts/common/Global_Imports';
-	import { w_t_database, w_graph_rect, w_background_color } from '../../ts/common/Stores';
+	import { c, e, h, k, u, ux, w, show, Rect, Size, Point, Thing, colors, layout } from '../../ts/common/Global_Imports';
+	import { w_t_database, w_graph_rect, w_hierarchy, w_background_color } from '../../ts/common/Stores';
 	import { debug, T_Layer, T_Banner, Ancestry, T_Startup } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_show_details, w_device_isMobile, } from '../../ts/common/Stores';
 	import { T_Control, Hierarchy, databases, Direction } from '../../ts/common/Global_Imports';
@@ -24,9 +24,17 @@
 	let panel_reattachments = 0;
 	let chain = ['Panel'];
 
-	$: $w_t_database, $w_t_startup, $w_popupView_id, $w_graph_rect, panel_reattachments += 1;
+	$: $w_t_database, $w_t_startup, $w_popupView_id, $w_graph_rect, update_panel();
 	$: $w_background_color, separator_color = colors.separator;
 	function ignore_wheel(event) { event.preventDefault(); }
+
+	function update_panel() {
+		setTimeout(() => {
+			if (!!h && h.isAssembled) {
+				panel_reattachments += 1;
+			}
+		}, 0);
+	}
 
 </script>
 

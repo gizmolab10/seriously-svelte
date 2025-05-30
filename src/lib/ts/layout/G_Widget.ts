@@ -50,9 +50,9 @@ export default class G_Widget {
 		this.forGraphMode = get(w_show_graph_ofType);
 		this.ancestry = ancestry;
 		if (!ancestry) {
-			console.log(`G_Widget ... ancestry is null`);
+			console.log(`G_Widget is missing an ancestry`);
 		} else if (!ancestry.thing) {
-			console.log(`G_Widget ... ancestry has no thing for "${ancestry.id}"`);
+			console.log(`G_Widget is missing a thing for "${ancestry.id}"`);
 		}
 	}
 

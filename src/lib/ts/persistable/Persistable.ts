@@ -3,6 +3,7 @@ import S_Persistence from '../state/S_Persistence';
 import Identifiable from '../runtime/Identifiable';
 import { debug, T_Debug } from '../debug/Debug';
 import { h } from '../managers/Hierarchy';
+import { busy } from '../state/S_Busy';
 
 export default class Persistable extends Identifiable {
 	t_persistable: T_Persistable;
@@ -18,9 +19,14 @@ export default class Persistable extends Identifiable {
 	}
 
 	async persistent_create_orUpdate(already_persisted: boolean) {}
-	set_isDirty() { this.persistence.isDirty = true; }		// TODO: set global
 	log(option: T_Debug, message: string) { debug.log_maybe(option, message); }
 	isInDifferentBulkThan(other: Persistable) { return this.idBase != other.idBase; }
+
+	set_isDirty(force: boolean = false) {
+		if (force || !busy.isFetching) {
+			this.persistence.isDirty = true;
+		}
+	}
 
 	async persist() {
 		await this.persistence.persist_withClosure(async (already_persisted: boolean) => {

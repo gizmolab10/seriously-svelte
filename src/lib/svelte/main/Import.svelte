@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { h, k, ux, Point, layout } from '../../ts/common/Global_Imports';
-	import { T_Storage } from '../../ts/common/Enumerations';
+	import { T_Storage_Need } from '../../ts/common/Enumerations';
 	import { w_popupView_id } from '../../ts/common/Stores';
 	import { files } from '../../ts/files/Files';
 	import { get } from 'svelte/store';
@@ -27,7 +27,7 @@
 		}
 		target.value = k.empty;		// allow re-selection of the same file, MUST do this AFTER fetch
 		layout.grand_build();
-		ux.t_storage = T_Storage.direction;
+		ux.T_Storage_Need = T_Storage_Need.direction;
 		dismiss_popup();
 	}
 

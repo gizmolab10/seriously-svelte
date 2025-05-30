@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, ux, w, Thing, Point, Angle, debug, colors } from '../../ts/common/Global_Imports';
+	import { k, u, ux, w, busy, Thing, Point, Angle, debug, colors } from '../../ts/common/Global_Imports';
 	import { layout, radial, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
 	import { w_count_mouse_up, w_s_title_edit, w_g_paging_cluster } from '../../ts/common/Stores';
 	import { w_thing_color, w_background_color, w_ancestry_focus } from '../../ts/common/Stores';
@@ -120,7 +120,7 @@
 					layout.grand_layout();
 				}
 			} else if (rotation_state.isActive) {								// rotate clusters
-				if (!signals.signal_isInFlight && enoughTimeHasPassed(75)) {		// 1 tenth second
+				if (!busy.anySignal_isInFlight && enoughTimeHasPassed(75)) {		// 1 tenth second
 					last_action = now;
 					$w_ring_rotation_angle = mouse_angle.add_angle_normalized(-rotation_state.basis_angle);
 					debug.log_radial(` rotate ${$w_ring_rotation_angle.asDegrees()}`);

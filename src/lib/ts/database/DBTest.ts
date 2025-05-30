@@ -1,4 +1,4 @@
-import { k, T_Thing, Predicate, T_Predicate } from '../common/Global_Imports';
+import { h, k, T_Thing, Predicate, T_Predicate } from '../common/Global_Imports';
 import { T_Persistence } from '../common/Global_Imports';
 import { T_Database } from './DBCommon';
 import DBCommon from './DBCommon';
@@ -18,7 +18,6 @@ export default class DBTest extends DBCommon {
 		const idTe = 'e';
 		const idTf = 'f';
 		const idTr = 'r';
-		const h = this.hierarchy;
 		const kindC = T_Predicate.contains;
 		const kindR = T_Predicate.isRelated;
 		h.predicate_defaults_remember_runtimeCreate();
@@ -59,7 +58,6 @@ export default class DBTest extends DBCommon {
 		const isBidirectional = Predicate.isBidirectional_for(kind);
 		const prefix = isBidirectional ? 'r' : 'c';
 		const charCode = first.charCodeAt(0);
-		const h = this.hierarchy;
 		for (let i = 0; i < count; i++) {
 			const idCode = String.fromCharCode(charCode + i);
 			const id_thing = asChild ? idRef + idCode : idCode + idRef;

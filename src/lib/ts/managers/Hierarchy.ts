@@ -1,9 +1,9 @@
-import { Tag, Access, Ancestry, Predicate, Relationship, Persistable } from '../common/Global_Imports';
-import { debug, grabs, files, colors, signals, layout, databases } from '../common/Global_Imports';
-import { T_Thing, T_Trait, T_Order, T_Create, T_File, T_Control } from '../common/Global_Imports';
+import { c, k, p, u, debug, grabs, files, Tag, User, Thing, Trait } from '../common/Global_Imports';
+import { Access, Ancestry, Predicate, Relationship, Persistable } from '../common/Global_Imports';
 import { w_popupView_id, w_ancestry_focus, w_s_title_edit, w_hierarchy } from '../common/Stores';
-import { T_Alteration, T_Predicate, T_Persistable } from '../common/Global_Imports';
-import { c, k, p, u, show, User, Thing, Trait } from '../common/Global_Imports';
+import { T_Create, T_Alteration, T_File_Format, T_Persistable } from '../common/Global_Imports';
+import { T_Thing, T_Trait, T_Order, T_Control, T_Predicate } from '../common/Global_Imports';
+import { colors, signals, layout, databases } from '../common/Global_Imports';
 import { w_storage_updated, w_s_alteration } from '../common/Stores';
 import type { Integer, Dictionary } from '../common/Types';
 import Identifiable from '../runtime/Identifiable';
@@ -11,6 +11,8 @@ import DBCommon from '../database/DBCommon';
 import { pivot } from '../files/Pivot';
 import { get } from 'svelte/store';
 
+export let h!: Hierarchy;
+w_hierarchy.subscribe(value => h = value);
 export type Ancestries_ByHID = { [hid: Integer]: Ancestry }
 export type Relationships_ByHID = { [hid: Integer]: Array<Relationship> }
 
@@ -212,9 +214,9 @@ export class Hierarchy {
 				thing = this.root;
 			} else {
 				thing = ancestry.thingAt(1) ?? null;	// always recompute
-				if (!!thing) {
-					this.thing_byAncestryHID[ancestry.hid] = thing;
-				}
+			}
+			if (!!thing) {
+				this.thing_byAncestryHID[ancestry.hid] = thing;
 			}
 		}
 		return thing;
@@ -626,7 +628,7 @@ export class Hierarchy {
 		this.ancestry_byKind_andHID = {};
 	}
 
-	ancestries_fullRebuild() {
+	ancestries_fullRebuild() {		// for Firebase only
 		const rootAncestry = this.rootAncestry;
 		this.ancestries_forget_all();
 		this.ancestry_remember(rootAncestry);
@@ -1274,66 +1276,29 @@ export class Hierarchy {
 
 	static readonly _____FILES: unique symbol;
 
-	get data_toSave(): Dictionary {
-		const ancestry = this.user_selected_ancestry;
+	persistRoot_toFile(format: T_File_Format) { this.persist_fromAncestry_toFile(this.rootAncestry, format); }
+	persist_toFile(format: T_File_Format) { this.persist_fromAncestry_toFile(grabs.user_selected_ancestry, format); }
+
+	data_fromAncestry_toSave(ancestry: Ancestry): Dictionary {
 		return ancestry.isRoot ? this.all_data : this.progeny_dataFor(ancestry);
 	}
 
-	select_file_toUpload(format: T_File, SHIFT: boolean) {
+	select_file_toUpload(format: T_File_Format, SHIFT: boolean) {
 		files.format_preference = format;
 		w_popupView_id.set(T_Control.import);				// extract_fromDict
 		this.replace_rootID = SHIFT ? k.empty : null;		// flag it to be updated from file (after user choses it)
 	}
 
-	persist_toFile(format: T_File) {
+	persist_fromAncestry_toFile(ancestry: Ancestry, format: T_File_Format) {
 		switch (format) {
-			case T_File.csv:
+			case T_File_Format.csv:
 				alert('saving as CSV is not yet implemented');
 				break;
-			case T_File.json:
-				const data = this.data_toSave;
+			case T_File_Format.json:
+				const data = this.data_fromAncestry_toSave(ancestry);
 				const filename = `${data.title.toLowerCase()}.${format}`;
 				files.persist_json_object_toFile(data, filename);
 				break;
-		}
-	}
-
-	async fetch_andBuild_fromFile(file: File) {
-		databases.defer_persistence = true;
-		try {
-			const result = await files.fetch_fromFile(file);
-			switch (files.format_preference) {
-				case T_File.csv:
-					const array = result as Array<Dictionary>;
-					for (const dict of array) {
-						await this.extract_fromCSV_Dict(dict);
-					}
-					await pivot.create_relationships_fromAllTraits();
-					break;
-				case T_File.json:
-					const dict = result as Dictionary;
-					if (!!dict) {
-						await this.extract_fromDict(dict);
-					}
-					break;
-			}
-		} finally {
-			databases.defer_persistence = false;					// assure we can now write anything dirty to the db
-			await this.db.persist_all(true);
-		}
-	}
-
-	get user_selected_ancestry(): Ancestry {
-		const focus = get(w_ancestry_focus);
-		let grabbed = grabs.latest;
-		if (!!focus && (show.shows_focus)) {
-			return focus;
-		} else if (!!grabbed) {
-			return grabbed;
-		} else if (!!focus) {
-			return focus;
-		} else {
-			return this.rootAncestry;
 		}
 	}
 
@@ -1352,6 +1317,31 @@ export class Hierarchy {
 			}
 		}
 		return data;
+	}
+
+	async fetch_andBuild_fromFile(file: File) {
+		databases.defer_persistence = true;
+		try {
+			const result = await files.fetch_fromFile(file);
+			switch (files.format_preference) {
+				case T_File_Format.csv:
+					const array = result as Array<Dictionary>;
+					for (const dict of array) {
+						await this.extract_fromCSV_Dict(dict);
+					}
+					await pivot.create_relationships_fromAllTraits();
+					break;
+				case T_File_Format.json:
+					const dict = result as Dictionary;
+					if (!!dict) {
+						await this.extract_fromDict(dict);
+					}
+					break;
+			}
+		} finally {
+			databases.defer_persistence = false;					// assure we can now write anything dirty to the db
+			await this.db.persist_all(true);
+		}
 	}
 
 	progeny_dataFor(ancestry: Ancestry): Dictionary {
@@ -1440,7 +1430,13 @@ export class Hierarchy {
 
 	static readonly _____OTHER: unique symbol;
 
-	get data_count(): number { return this.things.length + this.relationships.length }
+	get data_count(): number {
+		return this.relationships.length + 
+			   this.predicates.length + 
+			   this.traits.length + 
+			   this.things.length +
+			   this.tags.length;
+	}
 
 	get focus(): Thing | null {
 		const ancestry = get(w_ancestry_focus);
@@ -1450,8 +1446,8 @@ export class Hierarchy {
 	stop_alteration() { w_s_alteration.set(null); }
 
 	signal_storage_redraw(after: number = 100) {
-		setTimeout(() => {			// depth is not immediately updated
-			const update = this.data_count * 100 + this.depth;
+		setTimeout(() => {
+			const update = this.total_dirty_count * 100000 + this.data_count * 100 + this.depth;
 			w_storage_updated.set(update);
 		}, after);
 	}
@@ -1489,7 +1485,7 @@ export class Hierarchy {
 		if (this.replace_rootID == null) {	
 			this.extract_allTypes_ofObjects_fromDict(dict);				// extract
 			const child = this.thing_forHID(idRoot.hash());				// relationship: adds it as child to the grab or focus
-			await this.user_selected_ancestry.ancestry_persistentCreateUnique_byAddingThing(child);
+			await grabs.user_selected_ancestry.ancestry_persistentCreateUnique_byAddingThing(child);
 		} else {														// on launch or import with SHIFT-O
 			this.forget_all();											// retain predicates: same across all dbs
 			await this.db.remove_all();									// firebase deletes document (called dbid/name)
@@ -1539,6 +1535,3 @@ export class Hierarchy {
 	}
 
 }
-
-export let h!: Hierarchy;
-w_hierarchy.subscribe(value => h = value);

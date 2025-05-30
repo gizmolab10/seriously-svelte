@@ -13,12 +13,12 @@ export default class G_Layout {
 
 	get inTreeMode(): boolean { return get(w_show_graph_ofType) == T_Graph.tree; }
 	get inRadialMode(): boolean { return get(w_show_graph_ofType) == T_Graph.radial; }
-	height_ofBannerAt(index: number) { return Object.values(k.height.banner)[index]; }
-	ids_forDB(array: Array<Ancestry>): string { return u.ids_forDB(array).join(', '); }
-	expandAll() { h.rootAncestry.traverse(ancestry => ancestry.expand()); }
-	top_ofBannerAt(index: number) { return this.tops_ofBanners[index] + k.thickness.separator; }
-	get isAllExpanded(): boolean { return h.rootAncestry.isAllProgeny_expanded; }
+	get isAllExpanded(): boolean { return h.rootAncestry?.isAllProgeny_expanded ?? false; }
 	get g_radialGraph() { let g = this._g_radialGraph; if (!g) { g = new G_RadialGraph(); this._g_radialGraph = g }; return g; }
+	top_ofBannerAt(index: number) { return this.tops_ofBanners[index] + k.thickness.separator; }
+	ids_forDB(array: Array<Ancestry>): string { return u.ids_forDB(array).join(', '); }
+	height_ofBannerAt(index: number) { return Object.values(k.height.banner)[index]; }
+	expandAll() { h.rootAncestry.traverse(ancestry => ancestry.expand()); }
 
 	grand_build() {
 		this.grand_layout();
