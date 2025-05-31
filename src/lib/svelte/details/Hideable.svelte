@@ -8,6 +8,7 @@
     export let t_details: T_Details;
     export let has_banner = true;
     export let height = 0;
+    const separator_thickness = 2;
     const title = T_Details[t_details];
     const dispatch = createEventDispatcher();
     const banner_height = k.height.banner.details;
@@ -67,7 +68,8 @@
                 height: {banner_height}px;'>
             <Separator
                 top={0}
-                thickness={1}/>
+                thickness={separator_thickness}
+                corner_radius={k.radius.gull_wings.hideable}/>
             <SVG_Gradient
                 color={banner_color}
                 size={banner_rect.size}
@@ -88,8 +90,9 @@
                 {title}
             </div>
             <Separator
-                thickness={1}
-                top={banner_height}/>
+                top={banner_height}
+                thickness={separator_thickness}
+                corner_radius={k.radius.gull_wings.hideable}/>
         </div>
     {/if}
     <div class={'slot-' + title}

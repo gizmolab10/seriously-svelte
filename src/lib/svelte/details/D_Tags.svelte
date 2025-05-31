@@ -55,9 +55,11 @@
                 origin={new Point(k.width_details - 107, 2)}
                 closure={(t_request, s_mouse, column) => handleClick_onNextPrevious(E_NextPrevious.tag, t_request, s_mouse, column)}/>
 			<Separator
-				top={3}
-				height={4}
+				top={5}
+                left={110}
+				height={30}
 				add_wings={true}
+                isHorizontal={false}
 				margin={k.details_margin}
 				thickness={k.thickness.thin}/>
             <div

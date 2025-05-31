@@ -55,7 +55,11 @@ export default class Constants {
 	radius = {
 		arcSlider_cap: 7.5,
 		ring_center:   55,
-		gull_wings:	   9,
+		gull_wings: {
+			common:    14,
+			hideable:  12,
+			tiny:	    8,
+		},
 	};
 
 	separator = {

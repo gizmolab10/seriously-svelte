@@ -34,14 +34,14 @@
 {#if array}
 	<div class={name}
 		style='
-			left:10px;
+			width:97%;
 			top:{top}px;
 			position:absolute;
 			font-size:{font_size}px;
 			z-index: {T_Layer.details};'>
 		<table 
 			bind:this={table}
-			style='width: {width}px; left:12px; color:black;'>
+			style='color:black;'>
 			{#each array as [key, value]}
 				<tr>
 					<td class='first-column' style='line-height:{row_height}px;'>{key}:</td>
@@ -57,7 +57,7 @@
 		border-right: 1px solid transparent;
 		text-align: right;
 		color:black;
-		width: 30%;
+		width: 28%;
 	}
 	.second-column {
 	}

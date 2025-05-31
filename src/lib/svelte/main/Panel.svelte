@@ -8,6 +8,7 @@
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { T_Database } from '../../ts/database/DBCommon';
 	import Gull_Wings from '../kit/Gull_Wings.svelte';
+	import Separator from '../kit/Separator.svelte';
 	import Details from '../details/Details.svelte';
 	import Breadcrumbs from './Breadcrumbs.svelte';
 	import BuildNotes from './BuildNotes.svelte';
@@ -72,31 +73,25 @@
 					</div>
 				</div>
 				<div class='separator-below-crumbs' style='
-					top: {tops[T_Banner.graph]}px;
 					background-color: {separator_color};
 					height: {separator_thickness}px;
 					width: {w.windowSize.width}px;
+					top: {tops[T_Banner.graph]}px;
 					z-index: {T_Layer.lines};
 					position: absolute;
 					left: 0px;'>
 				</div>
 				{#if $w_show_details}
 					<Details/>
-					<div class='details-separator'
-						style='
-							position: absolute;
-							z-index: {T_Layer.lines};
-							left: {k.width_details}px;
-							width: {separator_thickness}px;
-							top: {$w_graph_rect.origin.y}px;
-							background-color: {separator_color};
-							height: {$w_graph_rect.size.height}px;'>
-					</div>
-					<Gull_Wings
-						center={$w_graph_rect.origin.offsetByXY(separator_thickness / -2, 0)}
-						radius={k.radius.gull_wings}
-						direction={Direction.down}
-						color='{separator_color}'/>
+					<Separator
+						add_wings={true}
+						isHorizontal={false}
+						left={k.width_details}
+						margin={k.details_margin}
+						top={tops[T_Banner.graph] + 1}
+						thickness={k.thickness.normal}
+						height={$w_graph_rect.size.height + 7}
+						corner_radius={k.radius.gull_wings.common}/>
 				{/if}
 			{/if}
 			<div class='right-side'

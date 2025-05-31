@@ -64,8 +64,8 @@
 				['order', ancestry.order.expressZero_asHyphen()],
 				['parent', ancestry.predicate.kind],
 				['type', Object.keys(T_Thing).find(k => T_Thing[k] === thing.t_thing)],
-				['id', thing.id.beginWithEllipsis_forLength(13)],
-				['ancestry', ancestry.id.beginWithEllipsis_forLength(13)],
+				['id', thing.id.beginWithEllipsis_forLength(19)],
+				['ancestry', ancestry.id.beginWithEllipsis_forLength(19)],
 				['color', ancestry.isEditable ? k.empty : 'not editable'],
 			];
 			layout_forColor();
@@ -85,13 +85,13 @@
 {#if !!thing}
 	<div class='info'
 		style='
+			width:100%;
 			color:black;
 			top:{top}px;
-			width: 100%;
 			position:absolute;'>
 		{#if info_details.length != 0}
 			<Text_Table
-				top = 0
+				top={0}
 				row_height={11}
 				array={info_details}
 				bind:this={info_table}
