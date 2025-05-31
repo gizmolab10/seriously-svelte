@@ -44,7 +44,7 @@
 
 	function row_titles() {
 		switch (ux.T_Storage_Need) {
-			case T_Storage_Need.direction: return ['browser cache', ...storage_ids];
+			case T_Storage_Need.direction: return ['from or to a local file', ...storage_ids];
 			case T_Storage_Need.format: return ['choose a file format', ...format_ids];
 			case T_Storage_Need.busy: return [`${storage_choice}ing...`];
 		}
@@ -122,7 +122,7 @@
 			width: 100%;
 			font-size:{k.font_size.smaller}px;'>
 		<Text_Table
-			top={top + 21}
+			top={top + 19}
 			row_height={11}
 			name='storage-table'
 			array={storage_details}

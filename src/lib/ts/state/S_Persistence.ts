@@ -1,6 +1,7 @@
 import type { Async_Handle_Boolean } from '../common/Types';
 import { T_Persistable } from '../common/Enumerations';
 import { databases } from '../database/Databases';
+import { busy } from '../state/S_Busy';
 
 export default class S_Persistence {
 	awaiting_remoteCreation = false;
@@ -20,7 +21,7 @@ export default class S_Persistence {
 		this.already_persisted		 = already_persisted;
 		this.t_persistable	  		 = t_persistable;
 		this.t_database		  		 = t_database;			// needed for this.isPersistent, used next
-		this.isDirty		  		 = this.isPersistent && !already_persisted;
+		this.isDirty		  		 = this.isPersistent && !already_persisted && !busy.isFetching;
 		this.id				  		 = id;
 	}
 

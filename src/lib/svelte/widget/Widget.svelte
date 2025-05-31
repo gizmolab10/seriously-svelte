@@ -74,7 +74,6 @@
 
 	$: {
 		const _ = $w_s_text_edit + $w_ancestries_grabbed;
-		console.log('  WIDGET S_Widget update forStateChange');
 		if (!!ancestry && !!widget && s_widget.update_forStateChange) {
 			border = es_widget.border;
 			g_widget.layout_widget();

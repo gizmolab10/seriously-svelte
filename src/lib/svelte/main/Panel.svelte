@@ -25,7 +25,7 @@
 	let panel_reattachments = 0;
 	let chain = ['Panel'];
 
-	$: $w_t_database, $w_t_startup, $w_popupView_id, $w_graph_rect, update_panel();
+	$: $w_t_database, $w_t_startup, $w_graph_rect, update_panel();
 	$: $w_background_color, separator_color = colors.separator;
 	function ignore_wheel(event) { event.preventDefault(); }
 

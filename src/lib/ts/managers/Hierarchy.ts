@@ -1284,9 +1284,9 @@ export class Hierarchy {
 	}
 
 	select_file_toUpload(format: T_File_Format, SHIFT: boolean) {
+		this.replace_rootID = SHIFT ? k.empty : null;		// to replace (or not) the root id extracted from file
 		files.format_preference = format;
-		w_popupView_id.set(T_Control.import);				// extract_fromDict
-		this.replace_rootID = SHIFT ? k.empty : null;		// flag it to be updated from file (after user choses it)
+		w_popupView_id.set(T_Control.import);
 	}
 
 	persist_fromAncestry_toFile(ancestry: Ancestry, format: T_File_Format) {
