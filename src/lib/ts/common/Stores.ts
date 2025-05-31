@@ -1,6 +1,6 @@
 import { Tag, Rect, Point, Thing, Trait, colors, Ancestry, Hierarchy } from '../common/Global_Imports';
 import { T_Info, T_Graph, T_Trait, T_Kinship, T_Details, T_Startup } from '../common/Global_Imports';
-import { G_Paging, G_Cluster, S_Title_Edit, S_Alteration } from '../common/Global_Imports';
+import { G_Paging, G_Cluster, S_Text_Edit, S_Alteration } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
 
 const _____VISIBILITY: unique symbol = Symbol('VISIBILITY');
@@ -26,7 +26,7 @@ export const w_thing_color				 = writable<string | null>();
 export const w_thing_fontFamily			 = writable<string>();
 export const w_tag_thing_index			 = writable<number>();
 export const w_relationship_order		 = writable<number>();
-export const w_s_title_edit				 = writable<S_Title_Edit | null>();
+export const w_s_text_edit				 = writable<S_Text_Edit | null>();
 export const w_s_alteration				 = writable<S_Alteration | null>();
 
 const _____ANCESTRY: unique symbol = Symbol('ANCESTRY');

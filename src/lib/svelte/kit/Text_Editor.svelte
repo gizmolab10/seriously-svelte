@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { w_thing_fontFamily, w_background_color, w_s_title_edit } from '../../ts/common/Stores';
+	import { w_thing_fontFamily, w_background_color, w_s_text_edit } from '../../ts/common/Stores';
 	import { k, u, ux, debug, colors, T_Layer, databases } from '../../ts/common/Global_Imports';
 	export let handle_textChange = (label: string, text: string) => {};
 	export let color = colors.default_forThings;
@@ -21,15 +21,16 @@
 	function handle_keyup(event: KeyboardEvent) { handle_key(false, event); }
 	
 	function handle_focus(event: Event) {
-		if (!!$w_s_title_edit) {
-			$w_s_title_edit.t_edit = T_Edit.editing;
+		if (!!$w_s_text_edit) {
+			$w_s_text_edit.start_editing();
 		}
 	}
 
 	function handle_blur(event: Event) {
 		handle_textChange(label, null);
-		if (!!$w_s_title_edit) {
-			$w_s_title_edit.stop_editing();
+		if (!!$w_s_text_edit) {
+			$w_s_text_edit.stop_editing();
+			$w_s_text_edit = null;		// so widget will react
 		}
 	}
 

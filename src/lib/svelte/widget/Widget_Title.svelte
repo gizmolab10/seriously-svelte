@@ -1,11 +1,11 @@
 <script lang='ts'>
 	import { layout, signals, databases, Seriously_Range, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { c, h, k, u, ux, w, Rect, Size, Point, Thing, debug, Angle } from '../../ts/common/Global_Imports';
-	import { T_Graph, T_Layer, S_Title_Edit, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { w_s_title_edit, w_ancestries_grabbed, w_mouse_location } from '../../ts/common/Stores';
+	import { w_s_text_edit, w_ancestries_grabbed, w_mouse_location } from '../../ts/common/Stores';
 	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/common/Stores';
+	import { T_Graph, T_Layer, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import { T_Edit } from '../../ts/state/S_Title_Edit';
+	import { T_Edit } from '../../ts/state/S_Text_Edit';
 	import { onMount, onDestroy } from 'svelte';
 	export let fontSize = '1em';
     export let name = k.empty;
@@ -28,15 +28,14 @@
 	let input = null;
 
 	
-	function isHit():					   boolean { return false }
-	function hasFocus():				   boolean { return document.activeElement === input; }
-	function ancestry_isEditing():		   boolean { return $w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.editing) ?? false; }
-	function ancestry_isEditStopping():	   boolean { return $w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.stopping) ?? false; }
-	function ancestry_isEditPercolating(): boolean { return $w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.percolating) ?? false; }
-	// function border_bottom():				string { return thing?.isBookmark ? `1.5px dashed ${color}` : k.empty; }
-	function title_extra():					number { return (layout.inTreeMode && ancestry_isEditing()) ? 2 : 0; }
-	function hasChanges()						   { return title_prior != title_binded; };
-	function handle_mouse_up()					   { clearClicks(); }
+	function isHit():		  boolean { return false }
+	function hasFocus():	  boolean { return document.activeElement === input; }
+	function isEditing():	  boolean { return $w_s_text_edit?.ancestry_isEditing(ancestry) ?? false; }
+	function isStopping():	  boolean { return $w_s_text_edit?.ancestry_isStopping(ancestry) ?? false; }
+	function isPercolating(): boolean { return $w_s_text_edit?.ancestry_isPercolating(ancestry) ?? false; }
+	function title_extra():	   number { return (layout.inTreeMode && isEditing()) ? 2 : 0; }
+	function hasChanges()	 		  { return title_prior != title_binded; }
+	function handle_mouse_up() 		  { clearClicks(); }
 
 	onMount(() => {
 		debug.log_build(`TITLE ${ancestry?.title}`);
@@ -45,7 +44,7 @@
 		});
 		setTimeout(() => {
 			updateInputWidth();
-			if (ancestry_isEditing()) {
+			if (isEditing()) {
 				applyRange_fromThing_toInput();
 			}
 		}, 100);
@@ -60,7 +59,7 @@
 		origin_ofInput = ancestry?.isGrabbed ?? false ? Point.x(0.1) : Point.y(0.8);
 
 	$: {
-		const _ = $w_s_title_edit;
+		const _ = $w_s_text_edit;
 		if (!!input) {
 			title_width = (thing?.width_ofTitle ?? 0) + title_extra();
 		}
@@ -79,22 +78,22 @@
 	}
 
 	$: {
-		const s_title_edit = $w_s_title_edit;
-		if (hasFocus() && !s_title_edit) {
+		const s_text_edit = $w_s_text_edit;
+		if (hasFocus() && !s_text_edit) {
 			stopEdit();
-		} else if (!!input && !!s_title_edit) {
-			if (s_title_edit.ancestry.id_thing == ancestry.id_thing) {
+		} else if (!!input && !!s_text_edit) {
+			if (s_text_edit.ancestry.id_thing == ancestry.id_thing) {
 				input.value = ancestry.title;	// consistently update titles of widgets of things with multiple parents
 			}
-			if (s_title_edit.ancestry.equals(ancestry)) {
+			if (s_text_edit.ancestry.equals(ancestry)) {
 
 				//////////////////////////////////////////////////////
 				//													//
-				//			handle w_s_title_edit state				//
+				//			handle w_s_text_edit state				//
 				//													//
 				//////////////////////////////////////////////////////
 
-				switch (s_title_edit.t_edit) {
+				switch (s_text_edit.t_edit) {
 					case T_Edit.stopping:
 						stopEdit();
 						break;
@@ -109,6 +108,43 @@
 		}
 	}
 
+	export const _____EDIT: unique symbol = Symbol('_____EDIT');
+
+	function stopEdit() {
+		debug.log_edit(`STOP ${title_binded}`);
+		w_s_text_edit.set(null);
+		input?.blur();
+		update_cursorStyle();
+		layout.grand_layout();
+	}
+
+	function startEditMaybe() {
+		if (ancestry.isEditable) {
+			ancestry?.startEdit();
+			title_updatedTo(thing.title);
+			input?.focus();
+		}
+	}
+
+	async function stop_andPersist() {
+		if (!!thing && !!input && !!ancestry && isEditing() && !isPercolating()) {
+			debug.log_edit(`INVOKING BLUR ${ancestry.title}`);
+			input.blur();
+			if (hasChanges()) {
+				debug.log_edit(`PERSISTING ${thing?.title}`);
+				await databases.db_now.thing_persistentUpdate(thing);
+				title_prior = thing?.title;			// so hasChanges will be correct next time
+			}
+			u.onNextCycle_apply(() => {		// prevent Panel's enter key handler call to start edit from actually starting
+				if (!!$w_s_text_edit && $w_s_text_edit?.actively_refersTo(ancestry)) {
+					debug.log_edit(`STOPPING ${ancestry.title}`);
+					$w_s_text_edit?.stop_editing();
+					$w_s_text_edit = null;	// inform Widget
+				}
+			});
+		}
+	}
+
 	export const _____RANGE: unique symbol = Symbol('_____RANGE');
 
 	function extractRange_fromInput_toThing() {
@@ -116,12 +152,12 @@
 			const end = input.selectionEnd;
 			const start = input.selectionStart;
 			debug.log_edit(`EXTRACT RANGE ${start} ${end}`);
-			$w_s_title_edit?.thing_setSelectionRange(new Seriously_Range(start, end));
+			$w_s_text_edit?.thing_setSelectionRange(new Seriously_Range(start, end));
 		}
 	}
 
 	function applyRange_fromThing_toInput() {
-		const range = $w_s_title_edit?.thing_selectionRange;
+		const range = $w_s_text_edit?.thing_selectionRange;
 		if (!!range && !!input) {
 			const end = range.end;
 			const start = range.start;
@@ -131,13 +167,13 @@
 	}
 
 	function thing_setSelectionRange_fromMouseLocation() {
-		if (!!input && !!$w_s_title_edit && !ancestry_isEditPercolating()) {
+		if (!!input && !!$w_s_text_edit && !isPercolating()) {
 			const location = $w_mouse_location;
 			if (Rect.rect_forElement_containsPoint(input, location)) {
 				const offset = u.convert_windowOffset_toCharacterOffset_in(location.x, input);
 				debug.log_edit(`CURSOR OFFSET ${offset}`);
-				$w_s_title_edit?.thing_setSelectionRange_fromOffset(offset);
-				$w_s_title_edit?.t_edit = T_Edit.editing;
+				$w_s_text_edit?.thing_setSelectionRange_fromOffset(offset);
+				$w_s_text_edit?.start_editing();
 			}
 		}
 	}
@@ -145,8 +181,8 @@
 	export const _____UPDATE: unique symbol = Symbol('_____UPDATE');
 	
 	function update_cursorStyle() {
-		const noCursor = (ancestry_isEditing() || ancestry.isGrabbed) && layout.inTreeMode && ancestry.isEditable;
-		const useTextCursor = ancestry_isEditing() || ancestry.isGrabbed || !(layout.inRadialMode || ancestry.isEditable);
+		const noCursor = (isEditing() || ancestry.isGrabbed) && layout.inTreeMode && ancestry.isEditable;
+		const useTextCursor = isEditing() || ancestry.isGrabbed || !(layout.inRadialMode || ancestry.isEditable);
 		cursor_style = noCursor ? k.empty : `cursor: ${useTextCursor ? 'text' : 'pointer'}`;
 	}
 
@@ -160,13 +196,13 @@
 
 	function handle_focus(event) {
 		event.preventDefault();
-		if (!ancestry_isEditing()) {
+		if (!isEditing()) {
 			input.blur();
 		}
 	}
 
 	function handle_blur(event) {
-		if (!!ancestry && !ancestry_isEditing() && hasFocus()) {
+		if (!!ancestry && !isEditing() && hasFocus()) {
 			stop_andPersist();
 			debug.log_edit(`H BLUR ${title_binded}`);
 			updateInputWidth();
@@ -182,7 +218,7 @@
 	};
 
 	function handle_key_down(event) {
-		if (!!thing && !!ancestry && ancestry_isEditing() && canAlterTitle(event)) {
+		if (!!thing && !!ancestry && isEditing() && canAlterTitle(event)) {
 			const key = event.key.toLowerCase();
 			debug.log_key(`H KEY ${key}`);
 			switch (key) {	
@@ -199,11 +235,12 @@
 
 	function handle_s_mouse(s_mouse: S_Mouse) {
 		if (!!ancestry && !s_mouse.notRelevant) {
-			if (ancestry_isEditing()) {
+			if (isEditing()) {
 				extractRange_fromInput_toThing();
 			} else if (s_mouse.isDown) {
-				if (!!$w_s_title_edit && $w_s_title_edit?.isActive) {
-					$w_s_title_edit?.t_edit = T_Edit.stopping;		// stop prior edit, wait for it to percolate (below with setTimeout)
+				if (!!$w_s_text_edit && $w_s_text_edit?.isActive) {
+					$w_s_text_edit?.stop_editing();		// stop prior edit, wait for it to percolate (below with setTimeout)
+					$w_s_text_edit = null;
 				}
 				if (!ancestry.isGrabbed) {
 					ancestry.grab_forShift(event.shiftKey);
@@ -219,23 +256,7 @@
 		}
 	}
 
-	export const _____EDIT: unique symbol = Symbol('_____EDIT');
-
-	function stopEdit() {
-		debug.log_edit(`STOP ${title_binded}`);
-		$w_s_title_edit = null;
-		input?.blur();
-		update_cursorStyle();
-		layout.grand_layout();
-	}
-
-	function startEditMaybe() {
-		if (ancestry.isEditable) {
-			ancestry?.startEdit();
-			title_updatedTo(thing.title);
-			input?.focus();
-		}
-	}
+	export const _____TITLE: unique symbol = Symbol('_____TITLE');
 
 	function canAlterTitle(event) {
 		let canAlter = (event instanceof KeyboardEvent) && !event.altKey && !event.shiftKey && !event.code.startsWith("Cluster_Label");
@@ -253,33 +274,15 @@
 
 	function title_updatedTo(title: string | null) {
 		const prior = $w_thing_title;
-		if (prior != title && !!$w_s_title_edit) {
+		if (prior != title && !!$w_s_text_edit) {
 			extractRange_fromInput_toThing();
 			$w_thing_title = title;		// tell Info to update it's selection's title
 			debug.log_edit(`TITLE ${title}`);
-			$w_s_title_edit?.title = title;
-			$w_s_title_edit?.setState_temporarilyTo_whileApplying(T_Edit.percolating, () => {
+			$w_s_text_edit?.title = title;
+			$w_s_text_edit?.setState_temporarilyTo_whileApplying(T_Edit.percolating, () => {
 				layout.grand_layout();
 			});
-			debug.log_edit(`UPDATED ${$w_s_title_edit?.description}`);
-		}
-	}
-
-	async function stop_andPersist() {
-		if (!!thing && !!input && !!ancestry && ancestry_isEditing() && !ancestry_isEditPercolating()) {
-			debug.log_edit(`INVOKING BLUR ${ancestry.title}`);
-			input.blur();
-			if (hasChanges()) {
-				debug.log_edit(`PERSISTING ${thing?.title}`);
-				await databases.db_now.thing_persistentUpdate(thing);
-				title_prior = thing?.title;			// so hasChanges will be correct next time
-			}
-			u.onNextCycle_apply(() => {		// prevent Panel's enter key handler call to start edit from actually starting
-				if (!!$w_s_title_edit && $w_s_title_edit?.actively_refersTo(ancestry)) {
-					debug.log_edit(`STOPPING ${ancestry.title}`);
-					$w_s_title_edit?.t_edit = T_Edit.stopping;	// inform Widget
-				}
-			});
+			debug.log_edit(`UPDATED ${$w_s_text_edit?.description}`);
 		}
 	}
 

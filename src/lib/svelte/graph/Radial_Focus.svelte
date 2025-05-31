@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { c, k, ux, w, Size, Point, debug, colors, signals, svgPaths, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { w_background_color, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
-	import { w_thing_color, w_s_title_edit, w_thing_fontFamily } from '../../ts/common/Stores';
+	import { w_thing_color, w_s_text_edit, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { T_Layer, T_Element, T_SvelteComponent } from '../../ts/common/Enumerations';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Widget_Title from '../widget/Widget_Title.svelte';
@@ -36,7 +36,7 @@
 	function debug_closure(s_mouse) { debug.log_radial(` ${s_mouse.descriptionFor('FOCUS')}`); }
 	function handle_s_mouse(s_mouse: S_Mouse): boolean { return false; }
 
-	$: $w_ancestry_focus, $w_s_title_edit, $w_ancestries_grabbed, update_svg();
+	$: $w_ancestry_focus, $w_s_text_edit, $w_ancestries_grabbed, update_svg();
 	$: $w_ancestry_focus, layout();
 	
 	$: {

@@ -25,6 +25,7 @@ export default class Persistable extends Identifiable {
 	set_isDirty(force: boolean = false) {
 		if (force || !busy.isFetching) {
 			this.persistence.isDirty = true;
+			h?.signal_storage_redraw();
 		}
 	}
 

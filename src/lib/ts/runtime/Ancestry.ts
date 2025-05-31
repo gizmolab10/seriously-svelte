@@ -2,13 +2,13 @@ import { T_Graph, T_Create, T_Element, T_Kinship, T_Predicate, T_Alteration, T_S
 import { c, h, k, p, u, show, Rect, Size, Thing, grabs, debug, layout, wrappers, svgPaths } from '../common/Global_Imports';
 import { Direction, Predicate, Hierarchy, databases, Relationship, Svelte_Wrapper } from '../common/Global_Imports';
 import { w_background_color, w_show_graph_ofType, w_t_database } from '../common/Stores';
-import { w_ancestry_focus, w_s_alteration, w_s_title_edit } from '../common/Stores';
+import { w_ancestry_focus, w_s_alteration, w_s_text_edit } from '../common/Stores';
 import { w_ancestries_grabbed, w_ancestries_expanded, } from '../common/Stores';
 import { G_Widget, G_Cluster, G_TreeLine } from '../common/Global_Imports';
-import { G_Paging, S_Title_Edit } from '../common/Global_Imports';
+import { G_Paging, S_Text_Edit } from '../common/Global_Imports';
 import type { Dictionary, Integer } from '../common/Types';
 import { T_Database } from '../database/DBCommon';
-import { T_Edit } from '../state/S_Title_Edit';
+import { T_Edit } from '../state/S_Text_Edit';
 import { get, Writable } from 'svelte/store';
 import Identifiable from './Identifiable';
 
@@ -180,7 +180,7 @@ export default class Ancestry extends Identifiable {
 		if (this.isBidirectional && this.thing?.isRoot) {
 			h.rootAncestry.handle_singleClick_onDragDot(shiftKey);
 		} else {
-			w_s_title_edit?.set(null);
+			w_s_text_edit?.set(null);
 			if (!!get(w_s_alteration)) {
 				h.ancestry_alter_connectionTo_maybe(this);
 				layout.grand_build();
@@ -286,11 +286,12 @@ export default class Ancestry extends Identifiable {
 	static readonly _____EDIT: unique symbol;
 
 	startEdit() {
-		if (this.isEditable && !get(w_s_title_edit)) {
-			w_s_title_edit?.set(new S_Title_Edit(this));
+		const s_text_edit = get(w_s_text_edit);
+		if (this.isEditable && (!s_text_edit || !s_text_edit.ancestry_isEditing(this))) {
+			w_s_text_edit?.set(new S_Text_Edit(this));
 			debug.log_edit(`SETUP ${this.title}`);
-			this.grabOnly();
 		}
+		this.grabOnly();
 	}
 
 	static readonly _____MOVE_UP: unique symbol;
@@ -730,14 +731,14 @@ export default class Ancestry extends Identifiable {
 	get hasChildren():					 boolean { return this.childRelationships.length > 0; }
 	get hasParents():					 boolean { return this.parentRelationships.length > 0; }
 	get isFocus():						 boolean { return this.matchesStore(w_ancestry_focus); }
+	get hasRelationships():				 boolean { return this.hasParents || this.hasChildren; }
 	get hasRelevantRelationships():		 boolean { return this.relevantRelationships_count > 0; }
 	get points_toChildren():			 boolean { return this.g_cluster?.points_toChildren ?? true }
 	get isBidirectional():				 boolean { return this.predicate?.isBidirectional ?? false; }
 	get shows_reveal():					 boolean { return this.showsReveal_forPointingToChild(true); }
+	get isEditing():					 boolean { return get(w_s_text_edit)?.ancestry_isEditing(this) ?? false; }
 	get isGrabbed():					 boolean { return this.includedInStore_ofAncestries(w_ancestries_grabbed); }
 	get isInvalid():					 boolean { return this.containsReciprocals || this.containsMixedPredicates; }
-	get hasRelationships():				 boolean { return this.hasParents || this.hasChildren; }
-	get isEditing():					 boolean { return get(w_s_title_edit)?.isAncestry_inState(this, T_Edit.editing) ?? false; }
 	get description():				   	  string { return `${this.kind} "${this.thing?.t_thing ?? '-'}" ${this.titles.join(':')}`; }
 	get title():					   	  string { return this.thing?.title ?? 'missing title'; }
 	get abbreviated_title():			  string { return this.thing?.abbreviated_title ?? '?'; }

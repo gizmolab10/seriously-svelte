@@ -7,7 +7,7 @@ export enum T_Edit {
 	done		= 'done',
 }
 
-export default class S_Title_Edit {
+export default class S_Text_Edit {
 	t_edit = T_Edit.editing;
 	ancestry: Ancestry;
 	title = k.empty
@@ -16,15 +16,19 @@ export default class S_Title_Edit {
 	// t_edit is source of truth for all editing
 	// ancestry.thing is source of truth for selection range
 	
-	stop_editing() { this.t_edit = T_Edit.done; }
+	start_editing() { this.t_edit = T_Edit.editing; }
 	get thing(): Thing | null { return this.ancestry.thing; }
 	constructor(ancestry: Ancestry) { this.ancestry = ancestry; }
 	get isActive(): boolean { return this.t_edit != T_Edit.done; }
+	stop_editing() { this.t_edit = T_Edit.done; this.thing?.set_isDirty(); }
 	get description(): string { return `${this.t_edit} ${this.thing?.title}`; }
-	get thing_selectionRange(): Seriously_Range | undefined { return this.thing?.selectionRange; }
 	refersTo(ancestry: Ancestry): boolean { return this.ancestry.equals(ancestry); }
+	get thing_selectionRange(): Seriously_Range | undefined { return this.thing?.selectionRange; }
 	actively_refersTo(ancestry: Ancestry): boolean { return this.refersTo(ancestry) && this.isActive; }
 	inactively_refersTo(ancestry: Ancestry): boolean { return this.refersTo(ancestry) && !this.isActive; }
+	ancestry_isEditing(ancestry: Ancestry | null): boolean { return this.isAncestry_inState(ancestry, T_Edit.editing); }
+	ancestry_isStopping(ancestry: Ancestry | null): boolean { return this.isAncestry_inState(ancestry, T_Edit.stopping); }
+	ancestry_isPercolating(ancestry: Ancestry | null): boolean { return this.isAncestry_inState(ancestry, T_Edit.percolating); }
 	thing_setSelectionRange_fromOffset(offset: number) { this.thing_setSelectionRange(new Seriously_Range(offset, offset)); }
 
 	thing_setSelectionRange(range: Seriously_Range) {
@@ -45,8 +49,8 @@ export default class S_Title_Edit {
 	// ancestry props that reference this object: {isEditing, isEditStopping, isEditPercolating}
 
 	startEditing(ancestry: Ancestry) {
-		this.t_edit = T_Edit.editing;
 		this.ancestry = ancestry;
+		this.start_editing();
 	}
 
 	isAncestry_inState(ancestry: Ancestry | null, t_edit: string) {

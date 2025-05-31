@@ -4,8 +4,7 @@
 	import { w_show_related, w_thing_color, w_background_color } from '../../ts/common/Stores';
 	import { G_Widget, S_Element, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { signals, Ancestry, Svelte_Wrapper } from '../../ts/common/Global_Imports';
-	import { w_s_title_edit, w_ancestries_grabbed } from '../../ts/common/Stores';
-	import { T_Edit } from '../../ts/state/S_Title_Edit';
+	import { w_s_text_edit, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import Widget_Reveal from './Widget_Reveal.svelte';
 	import Tree_Line from '../graph/Tree_Line.svelte';
 	import Widget_Title from './Widget_Title.svelte';
@@ -74,7 +73,8 @@
 	}
 
 	$: {
-		const _ = $w_s_title_edit + $w_ancestries_grabbed;
+		const _ = $w_s_text_edit + $w_ancestries_grabbed;
+		console.log('  WIDGET S_Widget update forStateChange');
 		if (!!ancestry && !!widget && s_widget.update_forStateChange) {
 			border = es_widget.border;
 			g_widget.layout_widget();
@@ -106,7 +106,7 @@
 
 	function layout_maybe() {
 		if (!!ancestry && s_widget.update_forStateChange) {
-			const showBorder = ancestry.isGrabbed || ($w_s_title_edit?.isAncestry_inState(ancestry, T_Edit.editing) ?? false);
+			const showBorder = ancestry.isGrabbed || ($w_s_text_edit?.ancestry_isEditing(ancestry) ?? false);
 			const showBackground = showBorder || layout.inRadialMode;
 			background = showBackground ? `background-color: ${$w_background_color}` : k.empty
 			final_layout();

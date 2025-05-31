@@ -2,7 +2,7 @@
 	import { c, e, h, k, u, ux, w, show, Rect, Size, Point, Thing, colors, layout } from '../../ts/common/Global_Imports';
 	import { w_t_database, w_graph_rect, w_hierarchy, w_background_color } from '../../ts/common/Stores';
 	import { debug, T_Layer, T_Banner, Ancestry, T_Startup } from '../../ts/common/Global_Imports';
-	import { w_s_title_edit, w_show_details, w_device_isMobile, } from '../../ts/common/Stores';
+	import { w_s_text_edit, w_show_details, w_device_isMobile, } from '../../ts/common/Stores';
 	import { T_Control, Hierarchy, databases, Direction } from '../../ts/common/Global_Imports';
 	import { w_t_startup, w_popupView_id, w_ancestry_focus } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';

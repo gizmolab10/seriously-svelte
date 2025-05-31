@@ -18,8 +18,8 @@ import { T_Oblong, T_Element, T_SvelteComponent } from './Enumerations';
 import { T_Tool, T_Info, T_Details, T_Request, T_Storage_Need } from './Enumerations';
 import { T_File_Format, T_File_Operation, T_Startup, T_Kinship, T_RingZone, T_Preference } from './Enumerations';
 
-import S_Title_Edit from '../state/S_Title_Edit';
 import S_Alteration from '../state/S_Alteration';
+import S_Text_Edit from '../state/S_Text_Edit';
 import S_Resizing from '../state/S_Resizing';
 import S_Rotation from '../state/S_Rotation';
 import S_Element from '../state/S_Element';
@@ -85,7 +85,7 @@ export {
 	Angle, Direction, T_Quadrant, T_Orientation,
 	T_Element, Svelte_Wrapper, T_SvelteComponent,
 	G_Widget, G_Segment, G_TreeLine, G_TreeBranches,
-	S_Mouse, S_Widget, S_Element, S_Alteration, S_Title_Edit,
+	S_Mouse, S_Widget, S_Element, S_Alteration, S_Text_Edit,
 	G_Paging, G_Cluster, G_RadialGraph, G_Thing_Pages, G_ArcSlider,
 	T_Layer, T_Curve, T_Create, T_RingZone, T_Oblong, T_Alteration,
 	T_Tool, T_Control, T_Browser, T_Signal, T_Info, T_Storage_Need,

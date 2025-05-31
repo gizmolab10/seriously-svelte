@@ -1,6 +1,6 @@
 import { c, k, p, u, debug, grabs, files, Tag, User, Thing, Trait } from '../common/Global_Imports';
 import { Access, Ancestry, Predicate, Relationship, Persistable } from '../common/Global_Imports';
-import { w_popupView_id, w_ancestry_focus, w_s_title_edit, w_hierarchy } from '../common/Stores';
+import { w_popupView_id, w_ancestry_focus, w_s_text_edit, w_hierarchy } from '../common/Stores';
 import { T_Create, T_Alteration, T_File_Format, T_Persistable } from '../common/Global_Imports';
 import { T_Thing, T_Trait, T_Order, T_Control, T_Predicate } from '../common/Global_Imports';
 import { colors, signals, layout, databases } from '../common/Global_Imports';
@@ -816,7 +816,7 @@ export class Hierarchy {
 
 	// called in three places
 	async ancestry_edit_persistentAddAsChild(parentAncestry: Ancestry, child: Thing, order: number, shouldStartEdit: boolean = true) {
-		w_s_title_edit?.set(null);
+		w_s_text_edit?.set(null);
 		await parentAncestry.ancestry_persistentCreateUnique_byAddingThing(child)
 		.then((childAncestry) => {
 			if (!!childAncestry) {
@@ -1003,7 +1003,7 @@ export class Hierarchy {
 				}
 			}
 		}
-		w_s_title_edit?.set(null);
+		w_s_text_edit?.set(null);
 		if (!!newGrabAncestry) {
 			newGrabAncestry.grabOnly();
 			if (!RIGHT && !!newFocusAncestry) {

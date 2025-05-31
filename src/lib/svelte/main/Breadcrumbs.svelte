@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { c, h, k, u, ux, w, Size, Point, Thing, T_Layer, T_Element } from '../../ts/common/Global_Imports';
-	import { w_s_title_edit, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
+	import { w_s_text_edit, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { debug, signals, svgPaths, Ancestry } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_thing_color } from '../../ts/common/Stores';
 	import Breadcrumb_Button from '../buttons/Breadcrumb_Button.svelte';
@@ -15,7 +15,7 @@
 
 	signals.handle_rebuild_andReattach(1, (ancestry) => { breadcrumb_reattachments += 1; });
 	
-	$: $w_s_title_edit, $w_thing_color, $w_ancestries_grabbed, breadcrumb_reattachments += 1;
+	$: $w_s_text_edit, $w_thing_color, $w_ancestries_grabbed, breadcrumb_reattachments += 1;
 
 	$: {
 		const needsUpdate = ($w_ancestry_focus?.title ?? k.empty) + $w_graph_rect + ($w_ancestries_grabbed?.length ?? 0);

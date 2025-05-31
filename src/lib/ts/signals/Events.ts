@@ -2,7 +2,7 @@ import { T_Tool, T_File_Format, T_Predicate, T_Alteration, S_Mouse, S_Alteration
 import { c, h, k, w, grabs, Point, debug, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
 import { w_device_isMobile, w_ancestries_grabbed, w_user_graph_offset } from '../common/Stores';
 import { w_count_mouse_up, w_mouse_location, w_mouse_location_scaled } from '../common/Stores';
-import { w_s_alteration, w_count_resize, w_s_title_edit } from '../common/Stores';
+import { w_s_alteration, w_count_resize, w_s_text_edit } from '../common/Stores';
 import { s_details } from '../state/S_Details';
 import { get } from 'svelte/store';
 
@@ -258,7 +258,7 @@ export class Events {
 	}
 
 	async handle_key_down(event: KeyboardEvent) {
-		const isEditing = get(w_s_title_edit)?.isActive ?? false;
+		const isEditing = get(w_s_text_edit)?.isActive ?? false;
 		if (event.type == 'keydown' && !isEditing) {
 			const OPTION = event.altKey;
 			const SHIFT = event.shiftKey;
@@ -277,7 +277,7 @@ export class Events {
 							case 'd':		await h.thing_edit_persistentDuplicate(ancestry); break;
 							case ' ':		await h.ancestry_edit_persistentCreateChildOf(ancestry); break;
 							case '-':		if (!COMMAND) { await h.thing_edit_persistentAddLine(ancestry); } break;
-							case 'tab':		await h.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break; // S_Title_Edit editor also makes this call
+							case 'tab':		await h.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break; // S_Text_Edit editor also makes this call
 						}
 					}
 					switch (key) {

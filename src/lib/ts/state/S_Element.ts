@@ -56,10 +56,11 @@ export default class S_Element {
 	get border(): string {
 		let color = this.ancestry.thing?.color;
 		if (this.type == T_Element.widget) {
-			debug.log_colors(`  WIDGET S_Element "${this.ancestry.thing?.type}" "${color}" "${this.ancestry.title}"`);
+			debug.log_colors(`  WIDGET S_Element "${this.ancestry.thing?.t_thing}" "${color}" "${this.ancestry.title}"`);
 		}
 		if (!!color) {
 			if (this.ancestry.isEditing) {
+				console.log('  S_Element isEditing');
 				return `dashed ${color} 1px`;
 			}
 			if (this.ancestry.isGrabbed) {

@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, u, ux, w, busy, Thing, Point, Angle, debug, colors } from '../../ts/common/Global_Imports';
 	import { layout, radial, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
-	import { w_count_mouse_up, w_s_title_edit, w_g_paging_cluster } from '../../ts/common/Stores';
+	import { w_count_mouse_up, w_s_text_edit, w_g_paging_cluster } from '../../ts/common/Stores';
 	import { w_thing_color, w_background_color, w_ancestry_focus } from '../../ts/common/Stores';
 	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/common/Stores';
 	import { w_graph_rect, w_mouse_location_scaled } from '../../ts/common/Stores';
@@ -161,7 +161,8 @@
 				const angle_ofMouseDown = w.mouse_angle_fromGraphCenter;
 				const angle_ofRotation = angle_ofMouseDown.add_angle_normalized(-$w_ring_rotation_angle);
 				const zone = radial.ring_zone_atMouseLocation;
-				$w_s_title_edit?.stop_editing();
+				$w_s_text_edit?.stop_editing();
+				$w_s_text_edit = null;		// so widget will react
 				switch (zone) {
 					case T_RingZone.rotate:
 						debug.log_radial(` begin rotate  ${angle_ofRotation.asDegrees()}`);
