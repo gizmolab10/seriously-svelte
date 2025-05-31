@@ -4,7 +4,7 @@
 	import D_Display from './D_Display.svelte';
 	import D_Storage from './D_Storage.svelte';
 	import Hideable from './Hideable.svelte';
-	import D_Always from './D_Always.svelte';
+	import D_Header from './D_Header.svelte';
 	import D_Traits from './D_Traits.svelte';
 	import D_Tools from './D_Tools.svelte';
 	import D_Info from './D_Info.svelte';
@@ -27,8 +27,8 @@
 		z-index:{T_Layer.details};
 		top:{$w_graph_rect.origin.y + 4}px;
 		height:{$w_graph_rect.size.height - 4}px;'>
-	<Hideable t_details={T_Details.header} has_banner={false} height={36}>
-		<D_Always/>
+	<Hideable t_details={T_Details.header} has_banner={false} height={48}>
+		<D_Header/>
 	</Hideable>
 	<Hideable t_details={T_Details.storage}>
 		<D_Storage/>

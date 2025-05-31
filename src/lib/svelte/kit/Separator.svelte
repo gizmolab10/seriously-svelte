@@ -6,12 +6,12 @@
 	export let title_font_size = k.font_size.smaller;;
 	export let thickness = k.thickness.separator;
 	export let title_left: number | null= null;
-	export let radius = k.radius.gull_wings;
 	export let title: string | null = null;
 	export let zindex = T_Layer.details;
 	export let width = k.width_details;
 	export let add_wings = true;
 	export let margin = 0;
+	export let radius = 7;
 	export let left = 0;
 	export let top = 0;
 	const line_left = left + margin;

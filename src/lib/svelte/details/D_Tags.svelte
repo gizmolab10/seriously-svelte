@@ -3,6 +3,7 @@
     import { k, grabs, T_Request, S_Mouse, Point } from '../../ts/common/Global_Imports';
     import Next_Previous from '../kit/Next_Previous.svelte';
 	import { s_details } from '../../ts/state/S_Details';
+	import Separator from '../kit/Separator.svelte';
 
     enum E_NextPrevious {
         tag = 'tag',
@@ -52,7 +53,13 @@
                 has_title={true}
                 name={E_NextPrevious.tag}
                 origin={new Point(k.width_details - 107, 2)}
-                closure={(t_request, s_mouse, column) => handleClick_onNextPrevious(E_NextPrevious.tag, t_request, s_mouse, column)   }/>
+                closure={(t_request, s_mouse, column) => handleClick_onNextPrevious(E_NextPrevious.tag, t_request, s_mouse, column)}/>
+			<Separator
+				top={3}
+				height={4}
+				add_wings={true}
+				margin={k.details_margin}
+				thickness={k.thickness.thin}/>
             <div
                 class='tags-list'
                 style='

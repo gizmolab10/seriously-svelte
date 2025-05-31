@@ -28,7 +28,7 @@
 		position:absolute;
 		font-size:{k.font_size.small}px;'>
 	<Separator
-		top={4}
+		top={1}
 		width: 100%;
 		margin={k.details_margin}
 		title='show tiny dots for'
@@ -42,7 +42,7 @@
 		font_size={font_size}
 		name='counts-selector'
 		height={k.height.button}
-		origin={new Point(47, 13)}
+		origin={new Point(47, 12)}
 		selected={$w_show_countDots_ofType}
 		selection_closure={selection_closure}/>
 	<Separator
