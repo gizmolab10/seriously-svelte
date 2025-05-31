@@ -38,7 +38,6 @@ class S_Details {
 
 	constructor() {
 		w_t_database.subscribe((type: string) => {
-			console.log('s details', h?.db.t_database, type);
 			this.update();
 		});
 		w_ancestry_focus.subscribe((ancestry: Ancestry) => {

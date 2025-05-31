@@ -14,6 +14,7 @@
 	const thing = ancestry?.thing;
 	const padding = `0.5px 0px 0px 0px`;
 	const input_height = k.height.dot + 2;
+	const id = `title of ${ancestry?.title}`;
 	const es_title = ux.s_element_forName(name);
 	const showingReveal = ancestry?.shows_reveal ?? false;
 	let title_width = (thing?.width_ofTitle ?? 0) + title_extra();
@@ -308,6 +309,7 @@
 		{title_binded}
 	</span>
 	<input
+		id={id}
 		type='text'
 		name='title'
 		class='title'

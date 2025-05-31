@@ -6,6 +6,7 @@
 	export let title_font_size = k.font_size.smaller;;
 	export let thickness = k.thickness.separator;
 	export let title_left: number | null= null;
+	export let radius = k.radius.gull_wings;
 	export let title: string | null = null;
 	export let zindex = T_Layer.details;
 	export let width = k.width_details;
@@ -42,8 +43,8 @@
 			center={new Point(width, 0.3).offsetEquallyBy(thickness / 2)}
 			direction={Direction.left}
 			color={separator_color}
-			radius={thickness * 3}
-			thickness={thickness}/>
+			radius={radius}
+			thickness={1}/>
 	{/if}
 </div>
 {#if !!title}

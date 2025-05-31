@@ -7,7 +7,7 @@
 	export let ancestry: Ancestry;
 	export let show_child_branches = true;
 	const g_childBranches = ancestry.g_widget.g_childBranches;
-	// console.log(`${ancestry.id}\n     { ${ancestry.branchAncestries.map(a => a.id).join(',\n       ')} }`)
+
 </script>
 
 {#if debug.lines}

@@ -31,7 +31,6 @@
 	$: $w_storage_updated, $w_t_database, update_storage_details();
 
 	function update_storage_details() {
-		console.log('storage', h.db.t_database, $w_t_database);
 		if (!!h) {
 			storage_details = [h.db.details_forStorage,
 			['depth', h.depth.expressZero_asHyphen()],
@@ -45,7 +44,7 @@
 
 	function row_titles() {
 		switch (ux.T_Storage_Need) {
-			case T_Storage_Need.direction: return ['local file', ...storage_ids];
+			case T_Storage_Need.direction: return ['browser cache', ...storage_ids];
 			case T_Storage_Need.format: return ['choose a file format', ...format_ids];
 			case T_Storage_Need.busy: return [`${storage_choice}ing...`];
 		}
@@ -129,8 +128,8 @@
 			array={storage_details}
 			font_size={k.font_size.small - 1}/>
 		{#key $w_storage_updated}
-			{#if h.total_dirty_count.length != 0}
-				{#if h.db.isPersistence_inProgress}
+			{#if h.total_dirty_count != 0}
+				{#if busy.isDatabaseBusy}
 					<div class='storage-spinner'
 						style="position: absolute; left: 163px; top: 107px;">
 						<Spinner />

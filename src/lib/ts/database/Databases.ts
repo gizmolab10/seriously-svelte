@@ -36,7 +36,6 @@ export default class Databases {
 			if (!!type && (!done || (type && this.db_now.t_database != type))) {
 				done = true;
 				setTimeout( async () => {	// wait for hierarchy to be created
-					console.log('databases', this.db_now.t_database, type);
 					await this.grand_change_database(type);
 				}, 0);
 			}
@@ -51,7 +50,6 @@ export default class Databases {
 			h = new Hierarchy(this.db_now);
 		}
 		p.write_key(T_Preference.db, type);
-		console.log('grand change', h.db.t_database, type);
 		w_hierarchy.set(h);
 		w_t_database.set(type);
 		await this.db_now.hierarchy_setup_fetch_andBuild();

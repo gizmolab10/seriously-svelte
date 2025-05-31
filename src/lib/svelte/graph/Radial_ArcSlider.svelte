@@ -58,7 +58,6 @@
 		center={forkTip}
 		zindex={T_Layer.paging}
 		direction={forkDirection}
-		thickness={k.thickness.fork}
 		radius={k.thickness.fork * 3}
 		color={colors.specialBlend(color, $w_background_color, k.opacity.least)}/>
 {/if}

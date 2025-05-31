@@ -67,7 +67,7 @@
                 height: {banner_height}px;'>
             <Separator
                 top={0}
-                thickness={0.5}/>
+                thickness={1}/>
             <SVG_Gradient
                 color={banner_color}
                 size={banner_rect.size}
@@ -88,7 +88,7 @@
                 {title}
             </div>
             <Separator
-                thickness={0.5}
+                thickness={1}
                 top={banner_height}/>
         </div>
     {/if}

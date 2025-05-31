@@ -93,9 +93,8 @@
 							height: {$w_graph_rect.size.height}px;'>
 					</div>
 					<Gull_Wings
-						center={$w_graph_rect.origin.offsetEquallyBy(separator_thickness / -2)}
-						radius={separator_thickness * 3}
-						thickness={separator_thickness}
+						center={$w_graph_rect.origin.offsetByXY(separator_thickness / -2, 0)}
+						radius={k.radius.gull_wings}
 						direction={Direction.down}
 						color='{separator_color}'/>
 				{/if}

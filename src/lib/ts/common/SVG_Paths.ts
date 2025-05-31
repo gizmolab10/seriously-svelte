@@ -1,4 +1,4 @@
-import { k, u, Size, Point, T_Oblong, Direction, Rect } from '../common/Global_Imports';
+import { k, u, Rect, Size, Point, Angle, T_Oblong, Direction } from '../common/Global_Imports';
 import type { Integer } from '../common/Types';
 
 export default class SVG_Paths {
@@ -29,30 +29,6 @@ export default class SVG_Paths {
 		const length = (radius - margin) * 2;
         return `M ${margin + 2} ${radius} L ${length + 1} ${radius} M ${radius} ${margin + 2} L ${radius} ${diameter - margin - 2}`;
     }
-
-	gull_wings(thickness: number, radius: number, direction: Direction): string {
-		const center = Point.square(radius);
-		const halfThickness = thickness / 2;
-		
-		// For direction Down, we start at the bottom center and create two arcs
-		if (direction === Direction.down) {
-			const start = center.offsetByY(radius);
-			const leftEnd = center.offsetByX(-radius);
-			const rightEnd = center.offsetByX(radius);
-			
-			// Create left arc (from bottom center to left)
-			const leftArc = this.arc(center, radius, 1, Math.PI, Math.PI * 1.5);
-			
-			// Create right arc (from bottom center to right)
-			const rightArc = this.arc(center, radius, 0, Math.PI, Math.PI * 0.5);
-			
-			return `${leftArc} ${rightArc}`;
-		}
-		
-		// For other directions, we'll need to implement similar logic
-		// but for now we'll just return an empty string
-		return '';
-	}
 
     circle_atOffset(width: number, diameter: number, offset: Point = Point.zero): string {
         const center = offset.offsetEquallyBy(width / 2);
@@ -109,6 +85,45 @@ export default class SVG_Paths {
 				A ${radius} ${radius} 0 0 1 ${radius} ${left ? (radius * 2) : 0}`;
 		}
     }
+
+	gull_wings(center: Point, radius: number, direction: Direction): string {
+		const baseAngle = direction + Angle.half;
+		const leftEndAngle = baseAngle + Angle.quarter;
+		const rightEndAngle = baseAngle - Angle.quarter;
+
+		// Calculate arc endpoints
+		const a_start = center.offsetBy(Point.fromPolar(radius, leftEndAngle));
+		const a_end = center.offsetBy(Point.fromPolar(radius, baseAngle));
+		const b_end = center.offsetBy(Point.fromPolar(radius, rightEndAngle));
+
+		// Arc path commands (without the initial M for the second arc)
+		const leftArc = `A ${radius} ${radius} 0 0 0 ${a_end.x} ${a_end.y}`;
+		const rightArc = `A ${radius} ${radius} 0 0 0 ${b_end.x} ${b_end.y}`;
+
+		// Build the path: move to a_start, left arc to a_end, right arc to b_end, line back to a_start, close
+		return `M ${a_start.x} ${a_start.y} ${leftArc} ${rightArc} L ${a_start.x} ${a_start.y} Z`;
+	}
+
+	xgull_wings(center: Point, radius: number, direction: Direction): string {
+		switch (direction) {
+			case Direction.down:
+				const a = this.arc(center, radius, 1, Math.PI, Math.PI * 1.5);
+				const b = this.arc(center, radius, 0, Math.PI * 0.5, Math.PI);
+				return a + b;
+			case Direction.up:
+				const c = this.arc(center, radius, 0, Math.PI * 0.5, Math.PI);
+				const d = this.arc(center, radius, 1, Math.PI, Math.PI * 1.5);
+				return c + d;
+			case Direction.right:
+				const e = this.arc(center, radius, 1, Math.PI, Math.PI * 1.5);
+				const f = this.arc(center, radius, 0, Math.PI * 0.5, Math.PI);
+				return e + f;
+			case Direction.left:
+				const g = this.arc(center, radius, 0, Math.PI * 0.5, Math.PI);
+				const h = this.arc(center, radius, 1, Math.PI, Math.PI * 1.5);
+				return g + h;
+		}
+	}
 
 	line(vector: Point, offset: Point = Point.zero): string {
 		const x = vector.x + offset.x;

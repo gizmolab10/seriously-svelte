@@ -6,6 +6,8 @@ export class S_Busy {
 	isPersisting = false;
 	isFetching = false;
 
+	get isDatabaseBusy(): boolean { return this.isPersisting || this.isFetching; }
+
 	get anySignal_isInFlight(): boolean {
 		return Object.values(this.signals_inFlight_byT_Signal).some(flag => !!flag);
 	}

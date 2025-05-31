@@ -912,7 +912,6 @@ export default class Ancestry extends Identifiable {
 		const thing = this.thing;
 		const showBorder = this.isGrabbed || this.isEditing;
 		if (!!thing && (isInverted != showBorder)) {
-			console.log(thing.title)
 			return thing.color;
 		}
 		return get(w_background_color);

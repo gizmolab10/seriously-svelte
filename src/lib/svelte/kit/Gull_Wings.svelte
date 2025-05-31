@@ -1,23 +1,13 @@
 <script lang="ts">
     import { k, Point, Angle, T_Layer, Direction, svgPaths } from '../../ts/common/Global_Imports';
-    export let thickness = k.thickness.separator;
     export let radius = k.radius.gull_wings;
     export let direction = Direction.down;
     export let zindex = T_Layer.lines;
     export let center = Point.zero;
     export let color = 'black';
+    export let thickness = 1;
     const diameter = radius * 2;
-    let leftArcPath: string = k.empty;
-    let rightArcPath: string = k.empty;
-
-    $: {
-        const origin = Point.zero;
-        const baseAngle = direction + Angle.half;
-        const leftEndAngle = baseAngle + Angle.quarter;
-        const rightEndAngle = baseAngle - Angle.quarter;
-        leftArcPath = svgPaths.arc(origin, radius, 0, leftEndAngle, baseAngle);
-        rightArcPath = svgPaths.arc(origin, radius, 0, baseAngle, rightEndAngle);
-    }
+    let gullWingsPath = svgPaths.gull_wings(Point.zero, radius, direction);
 
 </script>
 
@@ -33,13 +23,8 @@
     height={diameter}
     viewBox={`${-radius} ${-radius} ${diameter} ${diameter}`}> 
     <path 
+        fill={color}
         stroke={color}
-        d={leftArcPath}
-        fill='transparent'
-        stroke-width={thickness}/>
-    <path 
-        stroke={color}
-        d={rightArcPath}
-        fill='transparent'
-        stroke-width={thickness} />
+        d={gullWingsPath}
+        stroke-width={1}/>
 </svg>
