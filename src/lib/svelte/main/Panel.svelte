@@ -83,15 +83,6 @@
 				</div>
 				{#if $w_show_details}
 					<Details/>
-					<Separator
-						add_wings={true}
-						isHorizontal={false}
-						left={k.width_details}
-						margin={k.details_margin}
-						top={tops[T_Banner.graph] + 1}
-						thickness={k.thickness.normal}
-						height={$w_graph_rect.size.height + 7}
-						corner_radius={k.radius.gull_wings.common}/>
 				{/if}
 			{/if}
 			<div class='right-side'

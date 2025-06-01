@@ -78,6 +78,7 @@
         "interactjs": "^1.10.27",
         "mobile-detect": "^1.4.5",
         "pako": "^2.1.0",
+        "pandoc-bin": "^0.2.0",
         "pg": "^8.11.3",
         "pg-promise": "^11.5.4",
         "pg-query-stream": "4.7.0",

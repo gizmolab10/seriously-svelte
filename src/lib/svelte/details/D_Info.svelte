@@ -85,6 +85,7 @@
 {#if !!thing}
 	<div class='info'
 		style='
+			left:4px;
 			width:100%;
 			color:black;
 			top:{top}px;
