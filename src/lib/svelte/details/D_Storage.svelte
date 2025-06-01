@@ -134,7 +134,7 @@
 						style="position: absolute; left: 163px; top: 107px;">
 						<Spinner />
 					</div>
-				{:else}
+				{:else if h.db.isPersistent}
 					<Button
 						width=72
 						name='save'

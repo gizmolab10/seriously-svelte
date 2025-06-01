@@ -1,4 +1,4 @@
-import { c, k, p, u, debug, grabs, files, Tag, User, Thing, Trait } from '../common/Global_Imports';
+import { c, k, p, u, busy, debug, grabs, files, Tag, User, Thing, Trait } from '../common/Global_Imports';
 import { Access, Ancestry, Predicate, Relationship, Persistable } from '../common/Global_Imports';
 import { w_popupView_id, w_ancestry_focus, w_s_text_edit, w_hierarchy } from '../common/Stores';
 import { T_Create, T_Alteration, T_File_Format, T_Persistable } from '../common/Global_Imports';
@@ -515,7 +515,7 @@ export class Hierarchy {
 		if (!!relationship) {
 			relationship.order_setTo(order, T_Order.child, true);
 		} else {
-			relationship = new Relationship(idBase, idRelationship, kind, idParent, idChild, order, parentOrder, creationOptions == T_Create.isFromPersistent);
+			relationship = new Relationship(idBase, idRelationship, kind, idParent, idChild, [order, parentOrder], creationOptions == T_Create.isFromPersistent);
 			
 		}
 		return relationship;
@@ -603,7 +603,7 @@ export class Hierarchy {
 		let relationship = this.relationship_forPredicateKind_parent_child(kind, idParent.hash(), idChild.hash());
 		const already_persisted = creationOptions == T_Create.isFromPersistent;
 		if (!relationship) {
-			relationship = new Relationship(idBase, id, kind, idParent, idChild, order, parentOrder, already_persisted);
+			relationship = new Relationship(idBase, id, kind, idParent, idChild, [order, parentOrder], already_persisted);
 			this.relationship_remember(relationship);
 		}
 		let reversed = relationship?.reversed;
@@ -1218,7 +1218,7 @@ export class Hierarchy {
 	tag_forHID(hid: Integer): Tag | null { return this.tag_byHID[hid ?? undefined]; }
 
 	tag_extract_fromDict(dict: Dictionary) {
-		this.tag_remember_runtimeCreateUnique(this.db.idBase, dict.id, dict.type, dict.thingHIDs, dict.already_persisted);
+		this.tag_remember_runtimeCreateUnique(this.db.idBase, dict.id, dict.type, dict.thingHIDs, busy.isFetching);
 	}
 
 	tag_forget(tag: Tag) {
@@ -1243,21 +1243,38 @@ export class Hierarchy {
 		}
 	}
 
+	tag_remember_runtimeCreateUnique_byType(idBase: string, type: string, thingHIDs: Array<Integer>, already_persisted: boolean = false): Tag {
+		let tag = this.tag_forType(type);
+		if (!tag) {
+			tag = this.tag_remember_runtimeCreate(idBase, Identifiable.newID(), type, thingHIDs, already_persisted);
+		} else {
+			tag.thingHIDs = u.uniquely_concatenateArrays(tag.thingHIDs, thingHIDs);
+			if (!already_persisted) {
+				tag.set_isDirty();
+			}
+		}
+		return tag;
+	}
+
 	tag_remember_runtimeCreateUnique(idBase: string, id: string, type: string, thingHIDs: Array<Integer>, already_persisted: boolean = false): Tag {
 		let tag = this.tag_forHID(id?.hash());
 		if (!tag) {
 			tag = this.tag_remember_runtimeCreate(idBase, id, type, thingHIDs, already_persisted);
 		} else {
 			tag.thingHIDs = u.uniquely_concatenateArrays(tag.thingHIDs, thingHIDs);
+			if (!already_persisted) {
+				tag.set_isDirty();
+			}
 		}
-		tag.set_isDirty();
 		return tag;
 	}
 
 	tag_remember_runtimeCreate(idBase: string, id: string, type: string, thingHIDs: Array<Integer>, already_persisted: boolean = false): Tag {
 		const tag = new Tag(idBase, id, type, thingHIDs, already_persisted);
 		this.tag_remember(tag);
-		tag.set_isDirty();
+		if (!already_persisted) {
+			tag.set_isDirty();
+		}
 		return tag;
 	}
 

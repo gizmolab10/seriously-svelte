@@ -154,6 +154,7 @@ export enum T_Persistable {
 export enum T_Predicate {
 	appreciates = 'appreciates',
 	isRelated	= 'isRelated',
+	isAllyOf	= 'isAllyOf',	// steve melville's term
 	contains	= 'contains',
 	explains	= 'explains',
 	requires	= 'requires',

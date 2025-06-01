@@ -14,24 +14,22 @@ export default class Relationship extends Persistable {
 	idParent: string;
 	idChild: string;
 	orders = [0, 0];
-	order = 0;
 
-	constructor(idBase: string, id: string, kind: T_Predicate, idParent: string, idChild: string, order = 0, parentOrder: number = 0, already_persisted: boolean = false) {
+	constructor(idBase: string, id: string, kind: T_Predicate, idParent: string, idChild: string, orders: Array<number>, already_persisted: boolean = false) {
 		super(databases.db_now.t_database, idBase, T_Persistable.relationships, id, already_persisted);
-		this.orders = [order, parentOrder];
 		this.hidParent = idParent.hash();
 		this.hidChild = idChild.hash();
 		this.idParent = idParent;
 		this.idChild = idChild;
-		this.order = order;				// temporary backwards compatibility
+		this.orders = orders;
 		this.kind = kind;
 	}
 
 	get child(): Thing | null { return this.thing(true); }
 	get parent(): Thing | null { return this.thing(false); }
-	get isValid(): boolean { return !!this.kind && !!this.parent && !!this.child; }
 	get predicate(): Predicate | null { return h.predicate_forKind(this.kind); }
-	get fields(): Airtable.FieldSet { return { kind: this.kind, parent: [this.idParent], child: [this.idChild], order: this.order }; }
+	get isValid(): boolean { return !!this.kind && !!this.parent && !!this.child; }
+	get fields(): Airtable.FieldSet { return { kind: this.kind, parent: [this.idParent], child: [this.idChild], orders: this.orders.map(String) }; }
 	get reversed(): Relationship | null { return h?.relationship_forPredicateKind_parent_child(this.kind, this.idChild.hash(), this.idParent.hash()) ?? null; }
 	
 	get verbose(): string {
@@ -48,7 +46,7 @@ export default class Relationship extends Persistable {
 	get reversed_remember_createUnique(): Relationship {
 		let reversed = this.reversed;
 		if (!reversed) {
-			reversed = new Relationship(this.idBase, Identifiable.id_inReverseOrder(this.id), this.kind, this.idChild, this.idParent, this.orders[1], this.orders[0]);
+			reversed = new Relationship(this.idBase, Identifiable.id_inReverseOrder(this.id), this.kind, this.idChild, this.idParent, [this.orders[1], this.orders[0]]);
 			reversed.isReversed = true;
 			h.relationship_remember(reversed);
 		}
@@ -88,7 +86,9 @@ export default class Relationship extends Persistable {
 
 	order_setTo(newOrder: number, t_order: T_Order = T_Order.child, persist: boolean = false) {
 		const order = this.orders[t_order];
-		if (Math.abs(order - newOrder) > 0.001) {
+		const difference = Math.abs(order - newOrder);	
+		if (difference > 0.001) {
+			console.log(`  RELATIONSHIP order "${this.parent?.title}" "${this.child?.title}"`, order, newOrder);
 			this.orders[t_order] = newOrder;
 			w_relationship_order.set(Date.now());
 			if (persist) {
