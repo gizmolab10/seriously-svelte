@@ -33,7 +33,7 @@ export default class G_ArcSlider {
 		this.cap_radius = k.radius.arcSlider_cap;
 		this.inside_arc_radius = radius + 1;
 		if (forThumb) {
-			const delta = k.thickness.separator / 3;
+			const delta = k.thickness.separator.thick / 3;
 			this.outside_arc_radius -= delta;
 			this.inside_arc_radius += delta;
 			this.cap_radius -= delta;		

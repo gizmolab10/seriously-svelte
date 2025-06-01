@@ -28,13 +28,13 @@
 		position:absolute;
 		font-size:{k.font_size.small}px;'>
 	<Separator
-		top={1}
-		width: 100%;
+		origin={Point.y(2)}
+		length={k.width_details}
 		margin={k.details_margin}
 		title='show tiny dots for'
-		thickness={k.thickness.thin}
 		title_left={k.separator_title_left}
-		title_font_size={separator_font_size}/>
+		title_font_size={separator_font_size}
+		thickness={k.thickness.separator.ultra_thin}/>
 	<Segmented
 		titles={titles}
 		allow_none={true}
@@ -46,13 +46,13 @@
 		selected={$w_show_countDots_ofType}
 		selection_closure={selection_closure}/>
 	<Separator
-		top={36}
-		width: 100%;
 		title='color'
+		origin={Point.y(36)}
+		length={k.width_details}
 		margin={k.details_margin}
-		thickness={k.thickness.thin}
 		title_left={k.separator_title_left}
-		title_font_size={separator_font_size}/>
+		title_font_size={separator_font_size}
+		thickness={k.thickness.separator.ultra_thin}/>
 	<div 
 		class= 'background'
 		style='

@@ -6,12 +6,13 @@
 	import Button from './Button.svelte';
 	import { onMount } from 'svelte';
 	export let closure: (t_request: T_Request, s_mouse: S_Mouse, column: number) => boolean;
+	export let separator_thickness = k.thickness.separator.thick;
 	export let origin: Point | null = null;
 	export let center: Point | null = null;
 	export let row_titles: Array<string>;	// first one is optional row title, rest are button titles
 	export let font_sizes: Array<number>;
 	export let horizontal_gap = 2;
-	export let button_height = 15;
+	export let button_height = 13;
 	export let align_left = true;
 	export let add_wings = true;
 	export let has_title = true;	// true means first row_titles is the title of the row
@@ -30,17 +31,17 @@
 	let reattachments = 0;
 	let style = k.empty;
 
-	//////////////////////////////////////////////////////////////////////
-	//			 	one row of buttons, plus options					//
-	//																	//
-	//	has_title:	true means first one is row title					//
-	//	show_box:				true means line through row title		//
-	//																	//
-	//	row_titles				no buttons: if only one and has title	//
-	//	font_sizes:				[title_font_size, button_font_size] 	//
-	//	horizontal_gap:			between buttons							//
-	//																	//
-	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////
+	//			 one row of buttons, plus options				//
+	//															//
+	//	has_title:		true means first one is row title		//
+	//	show_box:		true means line through row title		//
+	//															//
+	//	row_titles		no buttons: if only one and has title	//
+	//	font_sizes:		[title_font_size, button_font_size] 	//
+	//	horizontal_gap:	between buttons							//
+	//															//
+	//////////////////////////////////////////////////////////////
 
     update_es_buttons();
 	$: $w_show_info_ofType, update_es_buttons();
@@ -91,12 +92,10 @@
 	{#if has_title}
 		{#if show_box}
 			<Separator
-				top={3}
-				width={width}
+				length={width}
 				title={row_title}
 				add_wings={add_wings}
-				margin={k.details_margin}
-				thickness={k.thickness.thin}
+				thickness={separator_thickness}
 				title_font_size={font_sizes[0]}
 				title_left={k.separator_title_left}/>
 		{:else}
@@ -118,9 +117,7 @@
 			<div class='buttons-array'
 				style='
 					position:absolute;
-					height:{button_height}px;
-					top:{show_box ? 12 : 0}px;
-					width:{width - margin * 2}px;
+					top:{show_box ? 9 : 0}px;
 					left:{margin + (show_box ? 0 : solo_title_width)}px;'>
 				{#each button_titles as title, column}
 					<Button

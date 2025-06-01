@@ -44,24 +44,27 @@
                 show_box={true}
                 has_title={true}
                 add_wings={false}
-                origin={new Point(7, 2)}
+                origin={new Point(3, 2)}
                 name={E_NextPrevious.thing}
+                separator_thickness={k.thickness.separator.ultra_thin}
                 closure={(t_request, s_mouse, column) => handleClick_onNextPrevious(E_NextPrevious.thing, t_request, s_mouse, column)}/>
             <Next_Previous
                 width={106}
                 show_box={true}
                 has_title={true}
+                add_wings={false}
+                hasBothEnds={false}
                 name={E_NextPrevious.tag}
-                origin={new Point(k.width_details - 107, 2)}
+                origin={new Point(k.width_details - 111, 2)}
+                separator_thickness={k.thickness.separator.ultra_thin}
                 closure={(t_request, s_mouse, column) => handleClick_onNextPrevious(E_NextPrevious.tag, t_request, s_mouse, column)}/>
 			<Separator
-				top={5}
-                left={110}
-				height={30}
-				add_wings={true}
+				length={28}
+                hasBothEnds={false}
                 isHorizontal={false}
 				margin={k.details_margin}
-				thickness={k.thickness.thin}/>
+                origin={new Point(106, 3)}
+				thickness={k.thickness.separator.ultra_thin}/>
             <div
                 class='tags-list'
                 style='

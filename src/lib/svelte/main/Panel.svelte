@@ -19,7 +19,7 @@
 	import Import from './Import.svelte';
 	import { onMount } from 'svelte';
 	const offset_toIntersection = new Point(-4, 8);
-	const separator_thickness = k.thickness.separator;
+	const separator_thickness = k.thickness.separator.thick;
 	let separator_color = colors.separator;
 	let tops = layout.tops_ofBanners;
 	let panel_reattachments = 0;

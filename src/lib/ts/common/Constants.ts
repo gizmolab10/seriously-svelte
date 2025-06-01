@@ -4,12 +4,11 @@ import { builds } from './Builds';
 const dot_size = 13;
 const row_height = 20;
 const banner_height = 18;
-const separator_thickness = 4;
 
 export default class Constants {
 	details_margin = 0;
 	halfIncrement = 0.5;
-	width_details = 225;
+	width_details = 220;
 	radial_widget_inset = 26;
 	autorepeat_interval = 50;
 	separator_title_left = 0;
@@ -57,8 +56,8 @@ export default class Constants {
 		ring_center:   55,
 		gull_wings: {
 			common:    14,
-			hideable:  12,
-			tiny:	    8,
+			hideable:   9,
+			tiny:	    6,
 		},
 	};
 
@@ -86,9 +85,12 @@ export default class Constants {
 	thickness = {
 		ring_rotation: 44,
 		paging_arc:	   15,
-		separator: 	   separator_thickness,
-		fork:		   2.5,
-		thin:		   separator_thickness / 3,
+		fork:		    2.5,
+		separator: {
+			thick:		4,
+			thin:		2,
+			ultra_thin:	1,
+		},
 	};
 
 	height = {

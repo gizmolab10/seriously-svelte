@@ -9,7 +9,6 @@
     export let t_details: T_Details;
     export let has_banner = true;
     export let height = 0;
-    const separator_thickness = 2;
     const title = T_Details[t_details];
     const dispatch = createEventDispatcher();
     const banner_height = k.height.banner.details;
@@ -68,16 +67,16 @@
                 align-items: stretch;
                 height: {banner_height}px;'>
             <Separator
-                top={0}
-                thickness={separator_thickness}
+                origin={Point.y(0)}
+                thickness={k.thickness.separator.ultra_thin}
                 corner_radius={k.radius.gull_wings.hideable}/>
             <Glow_Button
                 title={title}
                 height={banner_height}
                 width={k.width_details}/>
             <Separator
-                top={banner_height}
-                thickness={separator_thickness}
+                origin={Point.y(banner_height)}
+                thickness={k.thickness.separator.ultra_thin}
                 corner_radius={k.radius.gull_wings.hideable}/>
         </div>
     {/if}

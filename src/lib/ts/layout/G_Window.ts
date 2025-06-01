@@ -64,7 +64,7 @@ export class G_Window {
 	}
 
 	graphRect_update() {
-		const x = get(w_show_details) ? k.width_details + k.thickness.separator : 0;
+		const x = get(w_show_details) ? k.width_details + k.thickness.separator.thick : 0;
 		const y = layout.top_ofBannerAt(T_Banner.graph);
 		const origin_ofGraph = new Point(x, y);
 		const size_ofGraph = this.windowSize.reducedBy(origin_ofGraph);	// account for origin

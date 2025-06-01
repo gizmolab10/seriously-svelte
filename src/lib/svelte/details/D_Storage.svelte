@@ -138,11 +138,11 @@
 					<Button
 						width=72
 						name='save'
-						border = {border}
-						es_button = {es_save}
+						border={border}
+						es_button={es_save}
 						closure={handle_save}
 						zindex={T_Layer.frontmost}
-						origin={new Point(138, top + 109)}>
+						origin={new Point(132, top + 105)}>
 						save to db
 					</Button>
 				{/if}
@@ -151,15 +151,16 @@
 	</div>
 	{#key ux.T_Storage_Need}
 		<Buttons_Row
+			margin={10}
 			show_box={true}
 			horizontal_gap={4}
 			font_sizes={font_sizes}
 			width={k.width_details}
 			row_titles={row_titles()}
-			origin={Point.y(top + 126)}
+			origin={Point.y(top + 128)}
 			closure={handle_toolRequest}
 			button_height={k.height.button}
-			margin={(ux.T_Storage_Need == T_Storage_Need.direction) ? 50 : 40}
+			separator_thickness={k.thickness.separator.ultra_thin}
 			name={`storage-${(ux.T_Storage_Need == T_Storage_Need.direction) ? 'action' : 'format'}`}/>
 	{/key}
 </div>

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, T_Layer, T_Details } from '../../ts/common/Global_Imports';
+	import { k, Point, T_Layer, T_Details } from '../../ts/common/Global_Imports';
 	import { w_graph_rect } from '../../ts/common/Stores';
 	import Separator from '../kit/Separator.svelte';
 	import D_Display from './D_Display.svelte';
@@ -11,6 +11,7 @@
 	import D_Info from './D_Info.svelte';
 	import D_Tags from './D_Tags.svelte';
 	const width = k.width_details;
+	const separator_top = $w_graph_rect.origin.y - 3;
 
 </script>
 
@@ -25,9 +26,9 @@
 		-ms-overflow-style: none;  
 		z-index:{T_Layer.details};
 		width:{k.width_details - 6}px;
-		top:{$w_graph_rect.origin.y + 4}px;
-		height:{$w_graph_rect.size.height - 4}px;'>
-	<Hideable t_details={T_Details.header} has_banner={false} height={48}>
+		top:{$w_graph_rect.origin.y}px;
+		height:{$w_graph_rect.size.height}px;'>
+	<Hideable t_details={T_Details.header} has_banner={false} height={52}>
 		<D_Header/>
 	</Hideable>
 	<Hideable t_details={T_Details.storage}>
@@ -50,24 +51,22 @@
 	</Hideable>
 </div>
 <Separator
-	left={2}
-	add_wings={true}
+	hasBothEnds={false}
 	isHorizontal={false}
 	margin={k.details_margin}
 	zindex={T_Layer.frontmost}
-	thickness={k.thickness.normal}
-	top={$w_graph_rect.origin.y - 3}
-	height={$w_graph_rect.size.height + 83}
+	thickness={k.thickness.separator.thick}
+	origin={new Point(2, separator_top)}
+	length={$w_graph_rect.size.height + 83}
 	corner_radius={k.radius.gull_wings.common}/>
 <Separator
-	add_wings={true}
+	hasBothEnds={false}
 	isHorizontal={false}
-	left={k.width_details}
 	margin={k.details_margin}
-	thickness={k.thickness.normal}
-	top={$w_graph_rect.origin.y - 3}
-	height={$w_graph_rect.size.height + 3}
-	corner_radius={k.radius.gull_wings.common}/>
+	thickness={k.thickness.separator.thick}
+	length={$w_graph_rect.size.height + 3}
+	corner_radius={k.radius.gull_wings.common}
+	origin={new Point(k.width_details, separator_top)}/>
 
 <style>
 

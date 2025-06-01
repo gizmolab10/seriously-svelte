@@ -15,7 +15,7 @@ export default class G_Layout {
 	get inRadialMode(): boolean { return get(w_show_graph_ofType) == T_Graph.radial; }
 	get isAllExpanded(): boolean { return h.rootAncestry?.isAllProgeny_expanded ?? false; }
 	get g_radialGraph() { let g = this._g_radialGraph; if (!g) { g = new G_RadialGraph(); this._g_radialGraph = g }; return g; }
-	top_ofBannerAt(index: number) { return this.tops_ofBanners[index] + k.thickness.separator; }
+	top_ofBannerAt(index: number) { return this.tops_ofBanners[index] + k.thickness.separator.thick; }
 	ids_forDB(array: Array<Ancestry>): string { return u.ids_forDB(array).join(', '); }
 	height_ofBannerAt(index: number) { return Object.values(k.height.banner)[index]; }
 	expandAll() { h.rootAncestry.traverse(ancestry => ancestry.expand()); }

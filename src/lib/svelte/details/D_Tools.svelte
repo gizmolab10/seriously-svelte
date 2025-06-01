@@ -102,7 +102,7 @@
 			show_box={show_box}
 			has_title={has_title}
 			font_sizes={font_sizes}
-			width={k.width_details}
+			width={k.width_details - 6}
 			closure={handle_toolRequest}
 			button_titles={button_titles}
 			button_height={k.height.button}/>
