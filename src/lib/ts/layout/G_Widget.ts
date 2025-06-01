@@ -138,7 +138,7 @@ export default class G_Widget {
 		return new Point(x, y);
 	}
 
-	private recursively_layout_subtree(visited: Array<number> = []) {
+	private recursively_layout_subtree(visited: number[] = []) {
 		const ancestry = this.ancestry;	
 		if (!visited.includes(ancestry.hid) && ancestry.shows_branches) {
 			const branchAncestries = ancestry.branchAncestries;
@@ -149,7 +149,7 @@ export default class G_Widget {
 		this.layout_widget_andChildren();
 	}
 
-	private recursively_layout_bidirectionals(visited: Array<number> = []) {
+	private recursively_layout_bidirectionals(visited: number[] = []) {
 		if (layout.inTreeMode && get(w_show_related)) {
 			this.layout_bidirectional_lines();
 			const ancestry = this.ancestry;	

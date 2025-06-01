@@ -5,9 +5,9 @@
 	import Segment from './Segment.svelte';
 	export let selection_closure = Handle_Result<string>;
 	export let font_size = k.font_size.small;
-	export let selected: Array<string> = [];
+	export let selected: string[] = [];
 	export let height = k.height.segmented;
-	export let titles: Array<string> = [];
+	export let titles: string[] = [];
 	export let fill = $w_background_color;
 	export let stroke = colors.default;
 	export let allow_multiple = false;

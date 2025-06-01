@@ -132,7 +132,7 @@ export default class DBAirtable extends DBCommon {
 				const id = record.id as string;
 				const text = record.fields.text as string;
 				const type = record.fields.type as T_Trait;
-				const ownerIDs = record.fields.ownerID as (Array<string>);
+				const ownerIDs = record.fields.ownerID as (string[]);
 				h.trait_remember_runtimeCreateUnique(k.empty, id, ownerIDs[0], type, text, {}, true);
 			}
 		} catch (error) {
@@ -178,8 +178,8 @@ export default class DBAirtable extends DBCommon {
 			for (const record of records) {
 				const id = record.id as string;
 				const order = record.fields.order as number;
-				const parents = record.fields.parent as (Array<string>);
-				const children = record.fields.child as (Array<string>);
+				const parents = record.fields.parent as (string[]);
+				const children = record.fields.child as (string[]);
 				const kind = record.fields.kindPredicate as T_Predicate;
 				h.relationship_remember_runtimeCreateUnique(k.empty, id, kind, parents[0], children[0], [order, 0], T_Create.isFromPersistent);
 			}

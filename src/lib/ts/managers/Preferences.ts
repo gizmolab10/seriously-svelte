@@ -30,7 +30,7 @@ export class Preferences {
 
 	writeDB_keyPairs_forKey<T>(key: string, sub_key: string, value: T): void {	// pair => key, sub_key
 		const dbKey = this.db_keyFor(key);
-		const sub_keys: Array<string> = 					this.read_key(dbKey) ?? [];
+		const sub_keys: string[] = 					this.read_key(dbKey) ?? [];
 		const pair = this.keyPair_for(dbKey, sub_key);
 		this.write_key(pair, value);			// first store the value by key pair
 		if (sub_keys.length == 0 || !sub_keys.includes(sub_key)) {
@@ -42,7 +42,7 @@ export class Preferences {
 	readDB_keyPairs_forKey(key: string): Array<any> {
 		let values: Array<any> = [];
 		const dbKey = this.db_keyFor(key);
-		const sub_keys: Array<string> = 					this.read_key(dbKey) ?? [];
+		const sub_keys: string[] = 					this.read_key(dbKey) ?? [];
 		for (const sub_key of sub_keys) {
 			const value = 					this.read_key(this.keyPair_for(dbKey, sub_key));
 			if (!!value) {												// ignore undefined or null

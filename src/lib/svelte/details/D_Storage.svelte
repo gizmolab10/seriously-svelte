@@ -59,7 +59,7 @@
 		}
 	}
 
-	function handle_db_selection(titles: Array<string>) {
+	function handle_db_selection(titles: string[]) {
 		const t_database = titles[0] as T_Database;	// only ever contains one title
 		databases.grand_change_database(t_database);
 	}

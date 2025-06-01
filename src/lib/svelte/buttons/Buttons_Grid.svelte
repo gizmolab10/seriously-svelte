@@ -5,7 +5,7 @@
     import Buttons_Row from './Buttons_Row.svelte';
     export let closure: (t_request: T_Request, s_mouse: S_Mouse, row: number, column: number) => boolean;
     export let button_titles: string[][];
-    export let font_sizes: Array<number>;
+    export let font_sizes: number[];
     export let has_title = true;        // false means all titles are buttons, true means first one is row title
     export let show_box = true;         // false means row titles precede buttons
     export let button_height = 15;

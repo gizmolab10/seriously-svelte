@@ -74,7 +74,7 @@ export class Testworthy_Utilities {
 		}
 	}
 
-	convertToObject(instance: any, fields: Array<string>): object {
+	convertToObject(instance: any, fields: string[]): object {
 		const o: Dictionary = {};
 		for (const field of fields) {
 			if (instance.hasOwnProperty(field)) {

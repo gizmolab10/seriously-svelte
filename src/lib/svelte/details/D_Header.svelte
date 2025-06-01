@@ -8,7 +8,7 @@
 	import Separator from '../kit/Separator.svelte';
     let reattachments = 0;
 	const segmented_top = 20;
-	function info_selection_closure(t_infos: Array<string>) { $w_show_info_ofType = t_infos[0] as T_Info; }
+	function info_selection_closure(t_infos: string[]) { $w_show_info_ofType = t_infos[0] as T_Info; }
 	$: $w_ancestry_focus, $w_show_info_ofType, $w_ancestries_grabbed, update_forKind_ofInfo();
 	
 	function update_forKind_ofInfo() {

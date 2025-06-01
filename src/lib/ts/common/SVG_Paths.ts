@@ -135,7 +135,7 @@ export default class SVG_Paths {
 		}
 	}
 
-	polygon(radius: number, angle: number, count: number = 3, skip: Array<number>): string {
+	polygon(radius: number, angle: number, count: number = 3, skip: number[]): string {
 		const points = u.polygonPoints(radius, count, angle);
 		const center = Point.square(radius);
 		let index = count;
@@ -250,8 +250,8 @@ export default class SVG_Paths {
 		const gap = stretch / (max - 1) - tiny;
 		let a = 2.5 + ((max > 2) ? 0 : k.halfIncrement);
 		let i = 0;
-		let paths: Array<string> = [];
-		const pairs: Array<Array<number>> = [[a]];
+		let paths: string[] = [];
+		const pairs: Array<number[]> = [[a]];
 		while (i < max) {
 			const b = a + tiny * 2;
 			pairs[i][1] = b;

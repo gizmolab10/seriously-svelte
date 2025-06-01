@@ -14,7 +14,7 @@
 	const titles = [T_Kinship[T_Kinship.child], T_Kinship[T_Kinship.parent], T_Kinship[T_Kinship.related]];
 	let color = $w_background_color;
 	
-	function selection_closure(t_counts: Array<string>) { $w_show_countDots_ofType = t_counts as Array<T_Kinship>; }
+	function selection_closure(t_counts: string[]) { $w_show_countDots_ofType = t_counts as Array<T_Kinship>; }
 	function handle_colors(result: string) { $w_background_color = color = result; }
 
 </script>

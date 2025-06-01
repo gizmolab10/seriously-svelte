@@ -9,7 +9,7 @@
 	import { onMount } from 'svelte';
 	let breadcrumb_reattachments = 0;
 	let size = k.height.button;
-	let lefts: Array<string> = [];
+	let lefts: string[] = [];
 	let things: Array<Thing> = [];
 	let ancestry: Ancestry;
 	let trigger = 0;
@@ -23,7 +23,7 @@
 		if (!ancestry || needsUpdate || things.length == 0) {
 			ancestry = h.ancestry_forBreadcrumbs;		// assure we have an ancestry
 			if (!!ancestry) {				
-				let widths: Array<number> = [];
+				let widths: number[] = [];
 				const windowWidth = w.windowSize.width;
 				let parent_widths = 0;	// encoded as one parent count per 2 digits (base 10)
 				[things, widths, lefts, parent_widths] = ancestry.layout_breadcrumbs_within(windowWidth);

@@ -32,7 +32,7 @@ export default class Ancestry extends Identifiable {
 	
 	static readonly _____TRAVERSE: unique symbol;
 
-	traverse(apply_closureTo: (ancestry: Ancestry) => boolean, t_kinship: T_Kinship = T_Kinship.child, visited: Array<string> = []) {
+	traverse(apply_closureTo: (ancestry: Ancestry) => boolean, t_kinship: T_Kinship = T_Kinship.child, visited: string[] = []) {
 		const id = this.thing?.id;
 		if (!!id && !visited.includes(id) && !apply_closureTo(this)) {
 			for (const progeny of this.ancestries_createUnique_byKinship(t_kinship)) {
@@ -41,7 +41,7 @@ export default class Ancestry extends Identifiable {
 		}
 	}
 
-	async async_traverse(apply_closureTo: (ancestry: Ancestry) => Promise<boolean>, t_kinship: T_Kinship = T_Kinship.child, visited: Array<string> = []) {
+	async async_traverse(apply_closureTo: (ancestry: Ancestry) => Promise<boolean>, t_kinship: T_Kinship = T_Kinship.child, visited: string[] = []) {
 		const id = this.thing?.id;
 		if (!!id && !visited.includes(id)) {
 			try {
@@ -201,7 +201,7 @@ export default class Ancestry extends Identifiable {
 
 	static readonly _____VISIBILITY: unique symbol;
 
-	visibleSubtree_height(visited: Array<string> = []): number {
+	visibleSubtree_height(visited: string[] = []): number {
 		const thing = this.thing;
 		if (!!thing && !visited.includes(this.pathString)) {
 			if (this.shows_branches) {
@@ -216,7 +216,7 @@ export default class Ancestry extends Identifiable {
 		return 0;
 	}
 
-	visibleSubtree_width(visited: Array<string> = []): number {
+	visibleSubtree_width(visited: string[] = []): number {
 		const thing = this.thing;
 		if (!!thing) {
 			const id = this.id;
@@ -236,7 +236,7 @@ export default class Ancestry extends Identifiable {
 		return 0;
 	}
 
-	visibleSubtree_ancestries(visited: Array<string> = []): Array<Ancestry> {
+	visibleSubtree_ancestries(visited: string[] = []): Array<Ancestry> {
 		let ancestries: Array<Ancestry> = [];
 		if (this.isVisible) {
 			ancestries.push(this);
@@ -255,9 +255,9 @@ export default class Ancestry extends Identifiable {
 
 	static readonly _____LAYOUT: unique symbol;
 
-	layout_breadcrumbs_within(thresholdWidth: number): [Array<Thing>, Array<number>, Array<number>, number] {
+	layout_breadcrumbs_within(thresholdWidth: number): [Array<Thing>, number[], number[], number] {
 		const crumb_things: Array<Thing> = [];
-		const widths: Array<number> = [];
+		const widths: number[] = [];
 		let parent_widths = 0;						// encoded as one parent count per 2 digits (base 10) ... for triggering redraw
 		let total = 0;								// determine how many crumbs will fit
 		const things = this.ancestors ?? [];
@@ -411,7 +411,7 @@ export default class Ancestry extends Identifiable {
 		u.ancestries_orders_normalize(ancestries, true);
 	}
 
-	order_normalizeRecursive(persist: boolean, visited: Array<number> = []) {
+	order_normalizeRecursive(persist: boolean, visited: number[] = []) {
 		const hid = this.hid;
 		const childAncestries = this.childAncestries;
 		if (!visited.includes(hid) && childAncestries && childAncestries.length > 1) {
@@ -918,7 +918,7 @@ export default class Ancestry extends Identifiable {
 		return get(w_background_color);
 	}
 
-	progeny_count(visited: Array<number> = []): number {
+	progeny_count(visited: number[] = []): number {
 		let sum = 0;
 		const hid = this.thing?.hid;
 		if (!!hid && !visited.includes(hid)) {

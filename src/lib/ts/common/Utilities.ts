@@ -85,7 +85,7 @@ export class Utilities extends Testworthy_Utilities {
 		return stripped;
 	}
 
-	convertToObject(instance: any, fields: Array<string>): object {
+	convertToObject(instance: any, fields: string[]): object {
 		const o: Dictionary = {};
 		for (const field of fields) {
 			if (instance.hasOwnProperty(field)) {
@@ -108,7 +108,7 @@ export class Utilities extends Testworthy_Utilities {
 		return points;
 	}
 
-	ids_forDB(array: Array<Ancestry>): Array<string> {
+	ids_forDB(array: Array<Ancestry>): string[] {
 		return array.filter(a => a.t_database == get(w_t_database)).map(a => a.id);
 	}
 

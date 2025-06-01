@@ -927,7 +927,7 @@ export class PersistentRelationship implements PersistentRelationship {
 	predicate!: DocumentReference<Predicate, DocumentData>;
 	parent!: DocumentReference<Thing, DocumentData>;
 	child!: DocumentReference<Thing, DocumentData>;
-	orders: Array<number>;
+	orders: number[];
 	kind!: T_Predicate;
 
 	constructor(data: DocumentData | Relationship) {

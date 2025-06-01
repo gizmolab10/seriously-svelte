@@ -176,7 +176,7 @@ export default class Thing extends Persistable {
 		return ancestries;
 	}
 
-	ancestries_forPredicate(predicate: Predicate | null, visited: Array<string> = []): Array<Ancestry> {
+	ancestries_forPredicate(predicate: Predicate | null, visited: string[] = []): Array<Ancestry> {
 		// the ancestry of each parent [of this thing]
 		let ancestries: Array<Ancestry> = [];
 		if (!!predicate) {

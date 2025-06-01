@@ -37,7 +37,7 @@ export default class S_Mouse {
 	get notRelevant():	boolean { return !this.isHover && !this.isOut && !this.isDown && !this.isUp && !this.isDouble && !this.isLong && !this.isMove && !this.isHit; }
 
 	get description(): string {
-		let states: Array<string> = [];
+		let states: string[] = [];
 		if (this.isUp) { states.push('up'); }
 		if (this.isHit) { states.push('hit'); }
 		if (this.isOut) { states.push('out'); }

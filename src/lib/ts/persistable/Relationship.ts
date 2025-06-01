@@ -15,7 +15,7 @@ export default class Relationship extends Persistable {
 	idChild: string;
 	orders = [0, 0];
 
-	constructor(idBase: string, id: string, kind: T_Predicate, idParent: string, idChild: string, orders: Array<number>, already_persisted: boolean = false) {
+	constructor(idBase: string, id: string, kind: T_Predicate, idParent: string, idChild: string, orders: number[], already_persisted: boolean = false) {
 		super(databases.db_now.t_database, idBase, T_Persistable.relationships, id, already_persisted);
 		this.hidParent = idParent.hash();
 		this.hidChild = idChild.hash();
@@ -61,7 +61,7 @@ export default class Relationship extends Persistable {
 		relationships.filter(t => t.kind != this.kind)
 	}
 
-	orders_setTo(newOrders: Array<number>, persist: boolean = false) {
+	orders_setTo(newOrders: number[], persist: boolean = false) {
 		this.order_setTo(newOrders[T_Order.child]);	// don't persist or signal, yet
 		this.order_setTo(newOrders[T_Order.other], T_Order.other, persist);
 	}

@@ -5,8 +5,8 @@ import { w_show_related, w_ancestry_focus } from '../common/Stores';
 import { get } from 'svelte/store';
 
 export default class G_Layout {
-	branches_visited: Array<string> = [];
-	tops_ofBanners: Array<number> = [];
+	branches_visited: string[] = [];
+	tops_ofBanners: number[] = [];
 	parents_focus_ancestry!: Ancestry;
 	_g_radialGraph!: G_RadialGraph;
 	focus_ancestry!: Ancestry;
@@ -34,7 +34,7 @@ export default class G_Layout {
 		signals.signal_reposition_widgets_fromFocus();
 	}
 	
-	handle_mode_selection(name: string, types: Array<string>) {
+	handle_mode_selection(name: string, types: string[]) {
 		switch (name) {
 			case 'graph': w_show_graph_ofType.set(types[0] as T_Graph); break;
 			case 'tree': this.set_t_tree(types as Array<T_Kinship>); break;

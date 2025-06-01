@@ -1,15 +1,15 @@
 <script lang='ts'>
     import { k, u, Rect, Size, Point, colors, svgPaths, T_Details, T_Layer } from '../../ts/common/Global_Imports';
     import { w_background_color, w_show_details_ofType } from '../../ts/common/Stores';
-    import Glow_Button from '../buttons/Glow_Button.svelte';
-    import SVG_Gradient from '../kit/SVG_Gradient.svelte';
+    import Banner_Buttons from '../buttons/Banner_Buttons.svelte';
     import { createEventDispatcher, tick } from 'svelte';
-    import Separator from '../kit/Separator.svelte';
+    export let extra_titles: string[] = [];
     export let origin: Point | null = null;
     export let t_details: T_Details;
     export let has_banner = true;
     export let height = 0;
     const title = T_Details[t_details];
+    const titles = [title, ...extra_titles];
     const dispatch = createEventDispatcher();
     const banner_height = k.height.banner.details;
     const banner_rect = new Rect(Point.zero, new Size(k.width_details, banner_height));
@@ -66,21 +66,13 @@
                 position: absolute;
                 align-items: stretch;
                 height: {banner_height}px;'>
-            <Separator
-                origin={Point.y(0)}
-                corner_radius={k.radius.gull_wings.thin}
-                thickness={k.thickness.separator.ultra_thin}/>
-            <Glow_Button
-                title={title}
+            <Banner_Buttons
+                titles={titles}
                 height={banner_height}
                 width={k.width_details}/>
-            <Separator
-                origin={Point.y(banner_height)}
-                corner_radius={k.radius.gull_wings.thin}
-                thickness={k.thickness.separator.ultra_thin}/>
         </div>
     {/if}
-    <div class={'slot-' + title}
+    <div class={'hideable-content-' + title}
         style='
             position: relative;
             display: {isHidden ? "none" : "block"};

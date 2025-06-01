@@ -2,6 +2,7 @@
 	import { k, u, ux, Point, colors, signals, T_Request, T_Element, S_Element } from '../../ts/common/Global_Imports';
 	import { w_show_info_ofType, w_count_button_restyle } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
+    import G_Repeater from '../../ts/layout/G_Repeater';
 	import Separator from '../kit/Separator.svelte';
 	import Button from './Button.svelte';
 	import { onMount } from 'svelte';
@@ -9,8 +10,8 @@
 	export let separator_thickness = k.thickness.separator.thick;
 	export let origin: Point | null = null;
 	export let center: Point | null = null;
-	export let row_titles: Array<string>;	// first one is optional row title, rest are button titles
-	export let font_sizes: Array<number>;
+	export let row_titles: string[];	// first one is optional row title, rest are button titles
+	export let font_sizes: number[];
 	export let horizontal_gap = 2;
 	export let button_height = 13;
 	export let align_left = true;
@@ -27,6 +28,7 @@
 	const es_button_byColumn: { [key: number]: S_Element } = {};
 	const columns = button_titles.length;
 	const button_portion = (width - (margin * 2) - total_width - horizontal_gap - (show_box ? 0 : solo_title_width)) / columns;
+	const g_repeater = new G_Repeater(button_titles, button_height, width, font_sizes[0]);
 	const row_title = row_titles[0];
 	let reattachments = 0;
 	let style = k.empty;

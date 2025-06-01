@@ -1,5 +1,5 @@
 export class Builds {
-	notes: { [id: number]: Array<string> } = {
+	notes: { [id: number]: string[] } = {
 		142 : ['May 25, 2025', 'should now read tags table from firebase'],
 		141 : ['May 25, 2025', 'brand new details view'],
 		140 : ['May 24, 2025', 'begin work on tags'],

@@ -167,7 +167,7 @@ export class Hierarchy {
 
 	async thing_remember_runtimeCopy(idBase: string, original: Thing) {
 		const copiedThing = new Thing(idBase, Identifiable.newID(), original.title, original.color, original.t_thing);
-		const prohibitedTraits: Array<string> = [T_Thing.externals, T_Thing.root, T_Thing.bulk];
+		const prohibitedTraits: string[] = [T_Thing.externals, T_Thing.root, T_Thing.bulk];
 		if (prohibitedTraits.includes(original.t_thing)) {
 			copiedThing.t_thing = T_Thing.generic;
 		}
@@ -387,7 +387,7 @@ export class Hierarchy {
 		this.relationships = [];
 	}
 
-	relationships_areAllValid_forIDs(ids: Array<string>) {
+	relationships_areAllValid_forIDs(ids: string[]) {
 		for (const id of ids) {		// ignore empty id (root placeholder)
 			if (id != k.empty && !this.relationship_forHID(id.hash())) {
 				return false;
@@ -599,7 +599,7 @@ export class Hierarchy {
 	}
 
 	relationship_remember_runtimeCreateUnique(idBase: string, id: string, kind: T_Predicate, idParent: string, idChild: string,
-		orders: Array<number>, creationOptions: T_Create = T_Create.none): Relationship {
+		orders: number[], creationOptions: T_Create = T_Create.none): Relationship {
 		let relationship = this.relationship_forPredicateKind_parent_child(kind, idParent.hash(), idChild.hash());
 		const already_persisted = creationOptions == T_Create.isFromPersistent;
 		if (!relationship) {
