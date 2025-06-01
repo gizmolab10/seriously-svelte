@@ -46,7 +46,7 @@ export default class Relationship extends Persistable {
 	get reversed_remember_createUnique(): Relationship {
 		let reversed = this.reversed;
 		if (!reversed) {
-			reversed = new Relationship(this.idBase, Identifiable.id_inReverseOrder(this.id), this.kind, this.idChild, this.idParent, [this.orders[1], this.orders[0]]);
+			reversed = new Relationship(this.idBase, Identifiable.id_inReverseOrder(this.id), this.kind, this.idChild, this.idParent, [...this.orders].reverse());
 			reversed.isReversed = true;
 			h.relationship_remember(reversed);
 		}
@@ -85,7 +85,7 @@ export default class Relationship extends Persistable {
 	}
 
 	order_setTo(newOrder: number, t_order: T_Order = T_Order.child, persist: boolean = false) {
-		const order = this.orders[t_order];
+		const order = this.orders[t_order] ?? 0;
 		const difference = Math.abs(order - newOrder);	
 		if (difference > 0.001) {
 			console.log(`  RELATIONSHIP order "${this.parent?.title}" "${this.child?.title}"`, order, newOrder);

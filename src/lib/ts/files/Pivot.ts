@@ -18,7 +18,7 @@ class Pivot {
 		this.create_trait_forThingfromDict(thing_id, dict);
 		this.create_tags_forThing_fromDict(thing_id, dict);
 		if (['TEAM LIBRARY', 'MEMBER LIBRARY'].includes(title)) {		// these two things are roots in airtable, directly add them to our root
-			h.relationship_remember_runtimeCreateUnique(idBase, Identifiable.newID(), T_Predicate.contains, h.root.id, thing_id, 0);
+			h.relationship_remember_runtimeCreateUnique(idBase, Identifiable.newID(), T_Predicate.contains, h.root.id, thing_id, [0, 0]);
 		}
 	}
 	
@@ -72,7 +72,7 @@ class Pivot {
 			const parents = h.things_forTitle(parent_title);
 			const parent = parents?.[0] ?? await h.lost_and_found();
 			if (!!parent) {
-				h.relationship_remember_runtimeCreateUnique(h.db.idBase, Identifiable.newID(), T_Predicate.contains, parent.id, trait.ownerID, 0);
+				h.relationship_remember_runtimeCreateUnique(h.db.idBase, Identifiable.newID(), T_Predicate.contains, parent.id, trait.ownerID, [0, 0]);
 			}
 		}
 	}
@@ -97,7 +97,7 @@ class Pivot {
 				for (const [index, chunk] of chunks.entries()) {
 					const chunk_thing_id = Identifiable.newID();
 					const chunk_thing = h.thing_remember_runtimeCreateUnique(h.db.idBase, chunk_thing_id, ancestry_title + '.' + (index + 1), 'blue', T_Thing.generic);
-					h.relationship_remember_runtimeCreateUnique(h.db.idBase, Identifiable.newID(), T_Predicate.contains, ancestry_thing_id, chunk_thing.id, 0, 0, T_Create.getPersistentID);
+					h.relationship_remember_runtimeCreateUnique(h.db.idBase, Identifiable.newID(), T_Predicate.contains, ancestry_thing_id, chunk_thing.id, [0, 0], T_Create.getPersistentID);
 					for (const child_ancestry of chunk) {
 						const child_relationship = child_ancestry.relationship;
 						if (!!child_relationship) {

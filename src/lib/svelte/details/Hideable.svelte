@@ -1,6 +1,7 @@
 <script lang='ts'>
     import { k, u, Rect, Size, Point, colors, svgPaths, T_Details, T_Layer } from '../../ts/common/Global_Imports';
     import { w_background_color, w_show_details_ofType } from '../../ts/common/Stores';
+    import Glow_Button from '../buttons/Glow_Button.svelte';
     import SVG_Gradient from '../kit/SVG_Gradient.svelte';
     import { createEventDispatcher, tick } from 'svelte';
     import Separator from '../kit/Separator.svelte';
@@ -70,25 +71,10 @@
                 top={0}
                 thickness={separator_thickness}
                 corner_radius={k.radius.gull_wings.hideable}/>
-            <SVG_Gradient
-                color={banner_color}
-                size={banner_rect.size}
-                zindex={T_Layer.frontmost}
-                path={svgPaths.rectangle(banner_rect)}/>
-            <div
-                class='title'
-                style='
-                    margin: 0;
-                    padding: 0;
-                    top:-0.5px;
-                    width: 100%;
-                    text-align: center;
-                    position: absolute;
-                    background-color: transparent;
-                    line-height: {banner_height}px;
-                    font-size: {k.font_size.smaller}px;'>
-                {title}
-            </div>
+            <Glow_Button
+                title={title}
+                height={banner_height}
+                width={k.width_details}/>
             <Separator
                 top={banner_height}
                 thickness={separator_thickness}

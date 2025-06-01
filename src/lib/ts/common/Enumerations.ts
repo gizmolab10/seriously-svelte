@@ -179,16 +179,6 @@ export enum T_Control {
 	help	 = '?',
 }
 
-export enum T_Thing {
-	externals = '^',	// list of bulks
-	bookmark  = 'b',
-	generic	  = '',
-	folder	  = 'f',
-	found	  = '?',
-	root	  = '!',
-	bulk	  = '~',	// bulk alias
-}
-
 export enum T_Browser  {
 	explorer = 'explorer',
 	unknown  = 'unknown',
@@ -199,8 +189,22 @@ export enum T_Browser  {
 	orion	 = 'orion',
 }
 
+export enum T_Thing {
+	organization = 'o',
+	externals	 = '^',	// list of bulks
+	bookmark	 = 'b',
+	generic		 = '',
+	person		 = 'p',
+	folder		 = 'f',
+	found		 = '?',
+	root		 = '!',
+	bulk		 = '~',
+	meme		 = '*',
+}
+
 export enum T_Trait {
 	consequence = 'consequence',
+	location	= 'location',
 	citation	= 'citation',
 	comment		= 'comment',
 	money		= 'money',

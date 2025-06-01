@@ -1,9 +1,9 @@
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
 import { c, h, k, p, u, busy, Tag, Thing, Trait, debug, layout } from '../common/Global_Imports';
-import { T_Thing, T_Trait, T_Debug, T_Create, T_Predicate } from '../common/Global_Imports';
+import { T_Create, T_Preference, T_Persistable, T_Persistence } from '../common/Global_Imports';
 import { onSnapshot, deleteField, getFirestore, serverTimestamp } from 'firebase/firestore';
+import { T_Thing, T_Trait, T_Debug, T_Order, T_Predicate } from '../common/Global_Imports';
 import { databases, Predicate, Relationship, Persistable } from '../common/Global_Imports';
-import { T_Preference, T_Persistable, T_Persistence } from '../common/Global_Imports';
 import { DocumentData, DocumentChange, DocumentReference } from 'firebase/firestore';
 import { QuerySnapshot, CollectionReference } from 'firebase/firestore';
 import type { Dictionary, Integer } from '../common/Types';
@@ -273,7 +273,7 @@ export default class DBFirebase extends DBCommon {
 			switch (t_persistable) {
 				case T_Persistable.predicates:	  h   .predicate_remember_runtimeCreateUnique(		  id, data.kind,		 data.isBidirectional ); break;
 				case T_Persistable.things:		  h       .thing_remember_runtimeCreateUnique(idBase, id, data.title,		 data.color,		  data.t_thing, true); break;
-				case T_Persistable.relationships: h.relationship_remember_runtimeCreateUnique(idBase, id, data.predicate.id, data.parent.id,	  data.child.id, data.order, 0, T_Create.isFromPersistent); break;
+				case T_Persistable.relationships: h.relationship_remember_runtimeCreateUnique(idBase, id, data.predicate.id, data.parent.id,	  data.child.id, data.orders, T_Create.isFromPersistent); break;
 				case T_Persistable.traits:		  h       .trait_remember_runtimeCreateUnique(idBase, id, data.ownerID,		 data.t_trait,		  data.text, data.dict, true); break;
 				case T_Persistable.tags:		  h         .tag_remember_runtimeCreateUnique(idBase, id, data.type,		 data.thingHIDs,	  true); break;
 			}
@@ -676,7 +676,7 @@ export default class DBFirebase extends DBCommon {
 			relationship.hidChild = remote.child.id.hash();
 			relationship.hidParent = remote.parent.id.hash();
 			relationship.persistence.already_persisted = true;
-			relationship.order_setTo(remote.orders[0] + k.halfIncrement);
+			relationship.order_setTo(remote.orders[T_Order.child] ?? 0 + k.halfIncrement);
 		}
 		return changed;
 	}
@@ -714,7 +714,7 @@ export default class DBFirebase extends DBCommon {
 					if (!!relationship) {
 						return false;
 					}
-					relationship = h.relationship_remember_runtimeCreateUnique(idBase, id, remoteRelationship.kind, remoteRelationship.parent.id, remoteRelationship.child.id, remoteRelationship.orders[0], 0, T_Create.isFromPersistent);
+					relationship = h.relationship_remember_runtimeCreateUnique(idBase, id, remoteRelationship.kind, remoteRelationship.parent.id, remoteRelationship.child.id, remoteRelationship.orders, T_Create.isFromPersistent);
 					break;
 				default:
 					if (!relationship) {

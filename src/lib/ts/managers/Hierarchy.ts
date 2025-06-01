@@ -477,7 +477,7 @@ export class Hierarchy {
 			if (idParent == dict.idChild) {
 				console.log('preventing infinite recursion')
 			} else {
-				this.relationship_remember_runtimeCreateUnique(this.db.idBase, dict.id, dict.kind, idParent, dict.idChild, dict.order);
+				this.relationship_remember_runtimeCreateUnique(this.db.idBase, dict.id, dict.kind, idParent, dict.idChild, dict.orders);
 			}
 		}
 	}
@@ -599,20 +599,20 @@ export class Hierarchy {
 	}
 
 	relationship_remember_runtimeCreateUnique(idBase: string, id: string, kind: T_Predicate, idParent: string, idChild: string,
-		order: number, parentOrder: number = 0, creationOptions: T_Create = T_Create.none): Relationship {
+		orders: Array<number>, creationOptions: T_Create = T_Create.none): Relationship {
 		let relationship = this.relationship_forPredicateKind_parent_child(kind, idParent.hash(), idChild.hash());
 		const already_persisted = creationOptions == T_Create.isFromPersistent;
 		if (!relationship) {
-			relationship = new Relationship(idBase, id, kind, idParent, idChild, [order, parentOrder], already_persisted);
+			relationship = new Relationship(idBase, id, kind, idParent, idChild, orders, already_persisted);
 			this.relationship_remember(relationship);
 		}
 		let reversed = relationship?.reversed;
 		if (Predicate.isBidirectional_for(kind) && !reversed) {
 			reversed = relationship.reversed_remember_createUnique;
 		}
-		relationship?.order_setTo(parentOrder, T_Order.other);
-		reversed?.order_setTo(parentOrder);
-		relationship?.order_setTo(order);
+		relationship?.order_setTo(orders[T_Order.other], T_Order.other);
+		reversed?.order_setTo(orders[T_Order.other]);
+		relationship?.order_setTo(orders[T_Order.child]);
 		return relationship;
 	}
 
@@ -939,7 +939,7 @@ export class Hierarchy {
 				const relationship = ancestry.relationship;
 				if (!!relationship) {
 					// move ancestry to a different parent
-					const order = RIGHT ? relationship.orders[T_Order.child] : 0;
+					const order = !RIGHT ? 0 : relationship.orders[T_Order.child] ?? 0;
 					relationship.assign_idParent(parentThing.id);
 					relationship.order_setTo(order + k.halfIncrement, T_Order.child, true);
 					debug.log_move(`relocate ${relationship.description}`)

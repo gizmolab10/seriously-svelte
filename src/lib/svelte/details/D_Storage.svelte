@@ -122,7 +122,7 @@
 			width: 100%;
 			font-size:{k.font_size.smaller}px;'>
 		<Text_Table
-			top={top + 19}
+			top={top + 18}
 			row_height={11}
 			name='storage-table'
 			array={storage_details}
