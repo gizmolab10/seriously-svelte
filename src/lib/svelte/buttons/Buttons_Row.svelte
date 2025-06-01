@@ -2,7 +2,7 @@
 	import { k, u, ux, Point, colors, signals, T_Request, T_Element, S_Element } from '../../ts/common/Global_Imports';
 	import { w_show_info_ofType, w_count_button_restyle } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
-    import G_Repeater from '../../ts/layout/G_Repeater';
+    import G_Titles from '../../ts/layout/G_Titles';
 	import Separator from '../kit/Separator.svelte';
 	import Button from './Button.svelte';
 	import { onMount } from 'svelte';
@@ -12,7 +12,6 @@
 	export let center: Point | null = null;
 	export let row_titles: string[];	// first one is optional row title, rest are button titles
 	export let font_sizes: number[];
-	export let horizontal_gap = 2;
 	export let button_height = 13;
 	export let align_left = true;
 	export let add_wings = true;
@@ -21,14 +20,14 @@
 	export let name = k.empty;
 	export let width: number;
 	export let margin = 0;
+	export let gap = 2;
 	const solo_title_width = 34;
+	const front_margin = show_box ? 0 : solo_title_width;
 	const button_titles = has_title ? row_titles.slice(1) : row_titles;
-	const title_widths = button_titles.map((title) => u.getWidth_ofString_withSize(title, `${font_sizes[0]}px`));
-	const total_width = title_widths.reduce((acc, width) => acc + width + horizontal_gap, 0);
+	const g_titles = new G_Titles(button_titles, button_height, width - front_margin, margin, gap, true, font_sizes[0]);
 	const es_button_byColumn: { [key: number]: S_Element } = {};
+	const button_portion = g_titles.button_portion;
 	const columns = button_titles.length;
-	const button_portion = (width - (margin * 2) - total_width - horizontal_gap - (show_box ? 0 : solo_title_width)) / columns;
-	const g_repeater = new G_Repeater(button_titles, button_height, width, font_sizes[0]);
 	const row_title = row_titles[0];
 	let reattachments = 0;
 	let style = k.empty;
@@ -41,7 +40,7 @@
 	//															//
 	//	row_titles		no buttons: if only one and has title	//
 	//	font_sizes:		[title_font_size, button_font_size] 	//
-	//	horizontal_gap:	between buttons							//
+	//	gap:	between buttons							//
 	//															//
 	//////////////////////////////////////////////////////////////
 
@@ -57,11 +56,9 @@
 		};
 	});
 
-	function button_left_for(column: number): number { return title_widths.slice(0, column).reduce((acc, width) => acc + horizontal_gap + width + button_portion, horizontal_gap / 2); }
 	function button_disabled_for(column: number): boolean { return closure(T_Request.is_disabled, null, column); }
 	function button_inverted_for(column: number): boolean { return closure(T_Request.is_inverted, null, column); }
 	function button_name_for(column: number): string { return closure(T_Request.name, null, column); }
-	function button_width_for(column: number): number { return button_portion + title_widths[column]; }
 
 	function update_es_buttons() {
 		for (let column = 0; column < columns; column++) {
@@ -109,7 +106,7 @@
 					text-align: right;
 					position:absolute;
 					font-size:{font_sizes[0]}px;
-					width:{solo_title_width - horizontal_gap}px;'>
+					width:{solo_title_width - gap}px;'>
 				{row_title}
 			</div>
 		{/if}
@@ -125,10 +122,10 @@
 					<Button
 						height={button_height}
 						font_size={font_sizes[1]}
-						width={button_width_for(column)}
+						width={g_titles.button_width_for(column)}
 						es_button={es_button_byColumn[column]}
-						origin={Point.x(button_left_for(column))}
 						name={`${name}-${button_name_for(column)}`}
+						origin={Point.x(g_titles.button_left_for(column))}
 						closure={(s_mouse) => closure(T_Request.handle_click, s_mouse, column)}>
 						{title}
 					</Button>

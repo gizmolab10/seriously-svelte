@@ -18,7 +18,7 @@
 	width={width}
 	origin={origin}
 	closure={closure}
-	horizontal_gap={6}
+	gap={6}
 	show_box={show_box}
 	has_title={has_title}
 	add_wings={add_wings}

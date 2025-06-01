@@ -1,7 +1,7 @@
 import G_TreeBranches from '../layout/G_TreeBranches';
 import G_RadialGraph from '../layout/G_RadialGraph';
 import G_ArcSlider from '../layout/G_ArcSlider';
-import G_Repeater from '../layout/G_Repeater';
+import G_Titles from '../layout/G_Titles';
 import G_TreeLine from '../layout/G_TreeLine';
 import G_Cluster from '../layout/G_Cluster';
 import G_Segment from '../layout/G_Segment';
@@ -86,7 +86,7 @@ export {
 	Angle, Direction, T_Quadrant, T_Orientation,
 	T_Element, Svelte_Wrapper, T_SvelteComponent,
 	S_Mouse, S_Widget, S_Element, S_Alteration, S_Text_Edit,
-	G_Widget, G_Segment, G_TreeLine, G_TreeBranches, G_Repeater,
+	G_Widget, G_Segment, G_TreeLine, G_TreeBranches, G_Titles,
 	G_Paging, G_Cluster, G_RadialGraph, G_Thing_Pages, G_ArcSlider,
 	T_Layer, T_Curve, T_Create, T_RingZone, T_Oblong, T_Alteration,
 	T_Tool, T_Control, T_Browser, T_Signal, T_Info, T_Storage_Need,

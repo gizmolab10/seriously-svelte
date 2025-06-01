@@ -76,10 +76,10 @@
 	function handle_toolRequest(t_request: T_Request, s_mouse: S_Mouse, t_tool: number, column: number): any {
 		const isAltering = !!$w_s_alteration;
 		switch (t_request) {
-			case T_Request.name:		   return name_ofToolAt(t_tool, column);
+			case T_Request.name:		 return name_ofToolAt(t_tool, column);
 			case T_Request.is_disabled:  return e.handle_isTool_disabledAt(t_tool, column);
 			case T_Request.is_inverted:  return !isAltering ? false : isTool_invertedAt(t_tool, column);
-			case T_Request.is_visible:   return !isAltering ? true : [T_Tool.add, T_Tool.delete].includes(t_tool);
+			case T_Request.is_visible:	 return !isAltering ? true : [T_Tool.add, T_Tool.delete].includes(t_tool);
 			case T_Request.handle_click: return e.handle_tool_autorepeatAt(s_mouse, t_tool, column, name_for(t_tool, column + 1));
 		}
 		return null;
@@ -102,7 +102,7 @@
 			show_box={show_box}
 			has_title={has_title}
 			font_sizes={font_sizes}
-			width={k.width_details - 6}
+			width={k.width_details - 12}
 			closure={handle_toolRequest}
 			button_titles={button_titles}
 			button_height={k.height.button}/>

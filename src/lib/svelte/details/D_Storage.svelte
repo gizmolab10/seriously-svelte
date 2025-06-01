@@ -153,7 +153,7 @@
 		<Buttons_Row
 			margin={10}
 			show_box={true}
-			horizontal_gap={4}
+			gap={4}
 			font_sizes={font_sizes}
 			width={k.width_details}
 			row_titles={row_titles()}

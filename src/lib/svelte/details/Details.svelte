@@ -28,7 +28,7 @@
 		width:{k.width_details - 6}px;
 		top:{$w_graph_rect.origin.y}px;
 		height:{$w_graph_rect.size.height}px;'>
-	<Hideable t_details={T_Details.header} has_banner={false} height={52}>
+	<Hideable t_details={T_Details.header} has_banner={false} height={26}>
 		<D_Header/>
 	</Hideable>
 	<Hideable t_details={T_Details.storage}>
@@ -40,7 +40,7 @@
 	<Hideable t_details={T_Details.display}>
 		<D_Display/>
 	</Hideable>
-	<Hideable t_details={T_Details.info}>
+	<Hideable t_details={T_Details.info} extra_titles={['focus', 'selection']}>
 		<D_Info/>
 	</Hideable>
 	<Hideable t_details={T_Details.tags}>
