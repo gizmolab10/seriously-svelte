@@ -11,7 +11,7 @@
 	import D_Info from './D_Info.svelte';
 	import D_Tags from './D_Tags.svelte';
 	const width = k.width_details;
-	const separator_top = $w_graph_rect.origin.y - 3;
+	const separator_top = $w_graph_rect.origin.y - 2;
 
 </script>
 
@@ -58,14 +58,14 @@
 	thickness={k.thickness.separator.thick}
 	origin={new Point(2, separator_top)}
 	length={$w_graph_rect.size.height + 83}
-	corner_radius={k.radius.gull_wings.common}/>
+	corner_radius={k.radius.gull_wings.thick}/>
 <Separator
 	hasBothEnds={false}
 	isHorizontal={false}
 	margin={k.details_margin}
 	thickness={k.thickness.separator.thick}
 	length={$w_graph_rect.size.height + 3}
-	corner_radius={k.radius.gull_wings.common}
+	corner_radius={k.radius.gull_wings.thick}
 	origin={new Point(k.width_details, separator_top)}/>
 
 <style>

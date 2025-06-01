@@ -1,6 +1,6 @@
 <script lang="ts">
     import { k, Point, Angle, T_Layer, Direction, svgPaths } from '../../ts/common/Global_Imports';
-    export let radius = k.radius.gull_wings.tiny;
+    export let radius = k.radius.gull_wings.ultra_thin;
     export let direction = Direction.down;
     export let zindex = T_Layer.lines;
     export let center = Point.zero;
@@ -26,5 +26,5 @@
         fill={color}
         stroke={color}
         d={gullWingsPath}
-        stroke-width={1}/>
+        stroke-width={thickness}/>
 </svg>

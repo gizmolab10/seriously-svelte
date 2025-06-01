@@ -4,6 +4,7 @@
 	import { debug, signals, svgPaths, Ancestry } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_thing_color } from '../../ts/common/Stores';
 	import Breadcrumb_Button from '../buttons/Breadcrumb_Button.svelte';
+	import Separator from '../kit/Separator.svelte';
 	import SVG_D3 from '../kit/SVG_D3.svelte';
 	import { onMount } from 'svelte';
 	let breadcrumb_reattachments = 0;
@@ -57,3 +58,18 @@
 			es_breadcrumb={es_breadcrumb(index, thing)}/>
 	{/each}
 {/key}
+<Separator
+	isHorizontal={false}
+	origin={new Point(2, 2)}
+	margin={k.details_margin}
+	zindex={T_Layer.frontmost}
+	length={k.height.banner.crumbs + 12}
+	thickness={k.thickness.separator.thick}
+	corner_radius={k.radius.gull_wings.thick}/>
+<Separator
+	isHorizontal={false}
+	margin={k.details_margin}
+	length={k.height.banner.crumbs + 12}
+	thickness={k.thickness.separator.thick}
+	corner_radius={k.radius.gull_wings.thick}
+	origin={new Point(w.windowSize.width - 2, 2)}/>

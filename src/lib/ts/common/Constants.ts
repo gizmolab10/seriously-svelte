@@ -51,16 +51,6 @@ export default class Constants {
 		zoom_in:  1.1
 	};
 
-	radius = {
-		arcSlider_cap: 7.5,
-		ring_center:   55,
-		gull_wings: {
-			common:    14,
-			hideable:   9,
-			tiny:	    6,
-		},
-	};
-
 	separator = {
 		generic: '::',
 		small:	 ':::',
@@ -80,6 +70,16 @@ export default class Constants {
 		thumb:	0.13,
 		hover:	0.2,
 		active:	0.3
+	};
+
+	radius = {
+		arcSlider_cap: 7.5,
+		ring_center:   55,
+		gull_wings: {
+			thick:	   14,
+			thin:		8,
+			ultra_thin: 5,
+		},
 	};
 
 	thickness = {

@@ -3,7 +3,7 @@
 	import { T_Layer, Direction,  } from '../../ts/common/Global_Imports';
 	import { k, u, Point, colors } from '../../ts/common/Global_Imports';
 	import Gull_Wings from '../kit/Gull_Wings.svelte';
-	export let corner_radius = k.radius.gull_wings.tiny;
+	export let corner_radius = k.radius.gull_wings.ultra_thin;
 	export let thickness = k.thickness.separator.thick;
 	export let title_font_size = k.font_size.smaller;
 	export let title_left: number | null= null;
@@ -39,8 +39,8 @@
 
 	function style_for(isHorizontal: boolean, line_left: number, zindex: number, top: number, origin_y: number, margin: number, thickness: number, length: number, separator_color: string): string {
 		return isHorizontal
-			? `top:${origin.y}px; z-index:${zindex}; position:absolute; left:${line_left}px; height:${thickness}px; width:${length - margin * 2}px; background-color:${separator_color};`
-			: `left:${line_left}px; z-index:${zindex}; position:absolute; top:${origin.y + margin}px; width:${thickness}px; height:${length ? length : length - margin * 2}px; background-color:${separator_color};`;
+			? `top:${origin_y}px; z-index:${zindex}; position:absolute; left:${line_left}px; height:${thickness}px; width:${length - margin * 2}px; background-color:${separator_color};`
+			: `left:${line_left}px; z-index:${zindex}; position:absolute; top:${origin_y + margin}px; width:${thickness}px; height:${length - 6 - margin * 2}px; background-color:${separator_color};`;
 	}
 
 	function wingsCenter_for(isHorizontal: boolean, length: number, thickness: number, forOtherEnd: boolean): Point {
@@ -54,18 +54,18 @@
 <div class='separator-line' style={separatorStyle}>
 	{#if add_wings && !margin}
 		<Gull_Wings
-			thickness={k.thickness.separator.ultra_thin}
 			direction={wingsDirection_single}
 			center={wingsCenter_single}
 			color={separator_color}
-			radius={corner_radius}/>
+			radius={corner_radius}
+			thickness={thickness}/>
 		{#if hasBothEnds}
 			<Gull_Wings
-				thickness={k.thickness.separator.ultra_thin}
 				direction={wingsDirection_dual}
 				center={wingsCenter_dual}
 				color={separator_color}
-				radius={corner_radius}/>
+				radius={corner_radius}
+				thickness={thickness}/>
 		{/if}
 	{/if}
 </div>

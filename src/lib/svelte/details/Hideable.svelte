@@ -68,16 +68,16 @@
                 height: {banner_height}px;'>
             <Separator
                 origin={Point.y(0)}
-                thickness={k.thickness.separator.ultra_thin}
-                corner_radius={k.radius.gull_wings.hideable}/>
+                corner_radius={k.radius.gull_wings.thin}
+                thickness={k.thickness.separator.ultra_thin}/>
             <Glow_Button
                 title={title}
                 height={banner_height}
                 width={k.width_details}/>
             <Separator
                 origin={Point.y(banner_height)}
-                thickness={k.thickness.separator.ultra_thin}
-                corner_radius={k.radius.gull_wings.hideable}/>
+                corner_radius={k.radius.gull_wings.thin}
+                thickness={k.thickness.separator.ultra_thin}/>
         </div>
     {/if}
     <div class={'slot-' + title}
