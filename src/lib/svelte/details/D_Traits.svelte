@@ -34,12 +34,14 @@
 <div class='hierarchy_traits'
 	style='
 		top:2px;
+		left:10px;
 		width: 100%;
 		display:flex;
 		position:absolute;
 		scrollbar-width: none;          /* Firefox */
 		flex-direction:column;
-		-ms-overflow-style: none;'>
+		-ms-overflow-style: none;
+		font-size:{k.font_size.smaller}px;'>
 	{#key $w_thing_traits}
 		{#if !$w_thing_traits || $w_thing_traits.length == 0}
 			<div
@@ -52,29 +54,24 @@
 				no traits
 			</div>
 		{:else}
+			show these trait types:
 			<Segmented
 				name='trait-types'
 				allow_multiple={true}
-				origin={new Point(6, 0)}
 				titles={['text', 'link']}
 				height={k.height.controls}
 				font_size={k.font_size.smaller}
 				selected={$w_show_traits_ofType}
+				origin={new Point(k.width_details - 86, 0)}
 				selection_closure={handleClick_onTraitTypes}/>
-			<Next_Previous
-				width={140}
-				name='traits'
-				origin={new Point(k.width_details - 141, 0)}
-				closure={handleClick_onNextPrevious}/>
 			{#each $w_thing_traits as trait}
 				<Text_Editor
 					top={24}
-					left={10}
 					height={78}
 					label={trait.t_trait}
 					color={colors.default}
 					original_text={trait.text}
-					width={k.width_details - 34}
+					width={k.width_details - 40}
 					label_underline={trait.t_trait == 'link'}
 					onLabelClick={() => window.open(trait.text, '_blank')}
 					label_color={trait.t_trait == 'link' ? 'blue' : 'gray'}

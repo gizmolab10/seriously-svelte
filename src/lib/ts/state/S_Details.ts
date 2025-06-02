@@ -2,7 +2,7 @@ import { h, grabs, Ancestry, T_Details, Tag, Trait, T_Trait, Thing, T_Info } fro
 import { w_t_database, w_ancestry_focus, w_ancestries_grabbed, w_hierarchy } from '../common/Stores';
 import { w_show_details_ofType, w_show_traits_ofType, w_show_info_ofType } from '../common/Stores';
 import { w_tag_things, w_thing_tags, w_thing_traits, w_tag_thing_index } from '../common/Stores';
-import { w_glow_button_click } from '../common/Stores';
+import { T_Direction } from '../common/Enumerations';
 import { get } from 'svelte/store';
 
 class S_Identifiables<T> {
@@ -62,19 +62,28 @@ class S_Details {
 		this.update_traits();
 		this.update_tags();
 	}
+
+	update_forBanner(banner_title: string, selected_title: string) {
+		const next = T_Direction.next === selected_title as unknown as T_Direction;
+		const t_details = T_Details[banner_title as keyof typeof T_Details];
+		switch (t_details) {
+			case T_Details.tools:  this.update_forInfoType(selected_title); break;
+			case T_Details.traits: this.select_nextTrait(next); break;
+			case T_Details.tags:   this.select_nextTag(next); break;
+		}
+	}
 	
 	static readonly _____INFO: unique symbol;
 
 	update_forInfoType(title: string) {
 		let t_info = get(w_show_info_ofType);
-		const same = title === t_info;
-		console.log(`S_Details: update_forInfoType: ${title} same: ${same}`);
-		if (!same) {
+		if (title != t_info) {
 			t_info = title as T_Info;
-		} else if (title === 'focus') {	
-			t_info = T_Info.selection;
-		} else if (title === 'selection') {
-			t_info = T_Info.focus;
+		} else {
+			switch (title) {
+				case T_Info.focus:	   t_info = T_Info.selection; break;
+				case T_Info.selection: t_info = T_Info.focus;	  break;
+			}
 		}
 		w_show_info_ofType.set(t_info);
 	}

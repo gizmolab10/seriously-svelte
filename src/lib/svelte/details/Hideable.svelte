@@ -1,8 +1,8 @@
 <script lang='ts'>
     import { k, u, Rect, Size, Point, colors, svgPaths, T_Details, T_Layer } from '../../ts/common/Global_Imports';
-    import { w_background_color, w_show_details_ofType, w_glow_button_click } from '../../ts/common/Stores';
-    import Glows_Banner from '../buttons/Glows_Banner.svelte';
+    import { w_background_color, w_show_details_ofType } from '../../ts/common/Stores';
     import { createEventDispatcher, tick, setContext } from 'svelte';
+    import Glows_Banner from '../buttons/Glows_Banner.svelte';
     export let extra_titles: string[] = [];
     export let origin: Point | null = null;
     export let t_details: T_Details;
@@ -18,7 +18,7 @@
     let element: HTMLElement;
 
     $: dispatch('heightChange', { height });
-    setContext('handle_banner_click', handle_click);
+    setContext('handle_banner_click', toggle_hidden);
     $: $w_background_color, banner_color = colors.bannerFor($w_background_color);
     function show_slot(): boolean { return has_banner ? $w_show_details_ofType.includes(t_details) : true; }
     function callSlottedMethod(methodName: string, ...args: any[]) { dispatch('callMethod', { methodName, args }); }
@@ -30,17 +30,8 @@
         }
     })();
 
-    function handle_click(button_title: string) {
-        if (button_title === title) {
-            toggle_hidden();
-        } else {
-            $w_glow_button_click = button_title;
-        }
-        return true;
-    }
-
-    function toggle_hidden() {
-        if (has_banner) {
+    function toggle_hidden(button_title: string) {
+        if (has_banner && button_title === title) {
             let t_details_array = $w_show_details_ofType.filter(item => !!item);
             if (t_details_array.includes(t_details)) {
                 t_details_array = u.remove_fromArray_byReference(t_details, t_details_array);
@@ -80,7 +71,7 @@
                 titles={titles}
                 height={banner_height}
                 width={k.width_details}
-                handle_click={handle_click}/>
+                toggle_hidden={toggle_hidden}/>
         </div>
     {/if}
     <div class={'hideable-content-' + title}

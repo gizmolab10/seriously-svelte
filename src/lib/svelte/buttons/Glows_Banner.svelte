@@ -1,12 +1,12 @@
 <script lang='ts'>
+    import { k, Rect, Size, Point, colors, T_Info } from '../../ts/common/Global_Imports';
     import { w_show_info_ofType, w_background_color } from '../../ts/common/Stores';
-	import { colors, svgPaths, T_Layer } from '../../ts/common/Global_Imports';
-	import { k, Rect, Size, Point } from '../../ts/common/Global_Imports';
 	import { s_details } from '../../ts/state/S_Details';
     import Separator from '../kit/Separator.svelte';
     import G_Titles from '../../ts/layout/G_Titles';
     import Glow_Button from './Glow_Button.svelte';
-	export let handle_click: (title: string) => boolean;
+	export let toggle_hidden: (title: string) => boolean;
+    export let isToggle = false;
     export let titles: string[];
     export let height: number;
     export let width: number;
@@ -23,9 +23,12 @@
     $: $w_background_color, banner_color = colors.bannerFor($w_background_color);
     $: selected_title = $w_show_info_ofType;
 
-    function intercept_click(title: string) {
-        s_details.update_forInfoType(title);
-        return handle_click(title); // this is the click handler for the banner
+    function intercept_click(title: string): boolean {
+        if (title === titles[0]) {
+            return toggle_hidden(title);
+        } else {
+            s_details.update_forBanner(titles[0], title);
+        }
     }
 
 </script>

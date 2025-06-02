@@ -55,6 +55,11 @@ export enum T_Graph {
 	tree   = 'tree',
 }
 
+export enum T_Direction {
+	previous = 'previous',
+	next	 = 'next',
+}
+
 export enum T_Info {
 	selection = 'selection',
 	focus	  = 'focus',

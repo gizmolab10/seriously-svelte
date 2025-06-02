@@ -12,26 +12,20 @@
 
     $: $w_background_color, banner_color = colors.bannerFor($w_background_color);
 
-    $: {
-        console.log(`Glow button "${title}" selection state changed to:`, isSelected);
-    }
-
-    function intercept_click(title: string) {
-        // console.log(`Glow button "${title}" clicked`);
-        handle_click(title);
-    }
 </script>
 
 <div
 	class='glow'
 	style='position: relative;'>
     <SVG_Gradient
+        name={title}
         color={banner_color}
         size={glow_rect.size}
+        isInverted={!isSelected}
         zindex={T_Layer.frontmost}
         path={svgPaths.rectangle(glow_rect)}/>
     <div class='title'
-        on:click={() => intercept_click(title)}
+        on:click={() => handle_click(title)}
         style='
             top: 50%;
             left: 50%;
@@ -42,8 +36,7 @@
             position: absolute;
             background-color: transparent;
             transform: translate(-50%, -50%);
-            font-size: {k.font_size.smaller}px;
-            color: {isSelected ? 'white' : 'black'};'>
+            font-size: {k.font_size.smaller}px;'>
         {title}
     </div>
 </div> 
