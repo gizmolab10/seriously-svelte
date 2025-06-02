@@ -10,7 +10,6 @@
 	$: $w_ancestry_focus, $w_ancestries_grabbed, $w_show_info_ofType, update_forKind_ofInfo();
 
 	function update_forKind_ofInfo() {
-		console.log('update_forKind_ofInfo');
 		grabs.update_forKind_ofInfo();
 		reattachments += 1;
 	}

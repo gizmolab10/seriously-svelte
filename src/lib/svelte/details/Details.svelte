@@ -28,7 +28,7 @@
 
 <div class='details-stack'
 	style='
-		left:4px;
+		left:3px;
 		display:flex;
 		overflow-y: auto;
 		position:absolute;
@@ -77,7 +77,7 @@
 	thickness={k.thickness.separator.thick}
 	length={$w_graph_rect.size.height + 3}
 	corner_radius={k.radius.gull_wings.thick}
-	origin={new Point(k.width_details, separator_top)}/>
+	origin={new Point(k.width_details - 2, separator_top)}/>
 
 <style>
 

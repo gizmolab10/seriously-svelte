@@ -30,7 +30,7 @@
         flex-direction: row;
         align-items: stretch;'>
     <Separator
-        origin={Point.y(0)}
+        origin={Point.zero}
         corner_radius={k.radius.gull_wings.thin}
         thickness={k.thickness.separator.ultra_thin}/>
     {#each g_titles.titles as title, index}
@@ -43,11 +43,11 @@
             position={index === 0 ? 'absolute' : 'relative'}/>
         {#if index > 0}
             <Separator
-				length={height + 7}
+				length={height + 5}
 				isHorizontal={false}
                 corner_radius={k.radius.gull_wings.thin}
                 thickness={k.thickness.separator.ultra_thin}
-                origin={Point.x(g_titles.button_left_for(index))}/>
+                origin={new Point(g_titles.button_left_for(index), 1)}/>
         {/if}
     {/each}
     <Separator

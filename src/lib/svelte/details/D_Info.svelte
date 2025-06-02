@@ -51,6 +51,24 @@
 		}
 	}
 
+	function handle_colors(result: string) {
+		thing.color = color = result;
+		thing.signal_color_change();
+		(async () => {
+			await thing.persist();
+		})();
+	}
+
+	function handle_button_click(button_title: string | undefined) {
+		if (!!button_title) {
+			if (button_title === 'focus') {
+				$w_show_info_ofType = T_Info.focus;
+			} else if (button_title === 'selection') {
+				$w_show_info_ofType = T_Info.selection;
+			}
+		}
+	}
+
 	function update_forAncestry() {
 		ancestry = grabs.ancestry_forInfo;
 		thing = ancestry?.thing;
@@ -72,25 +90,6 @@
 				['color', ancestry.isEditable ? k.empty : 'not editable'],
 			];
 			layout_forColor();
-		}
-	}
-
-	function handle_colors(result: string) {
-		thing.color = color = result;
-		thing.signal_color_change();
-		(async () => {
-			await thing.persist();
-		})();
-	}
-
-	function handle_button_click(button_title: string | undefined) {
-		if (!!button_title) {
-			console.log('D_Info received click:', button_title);
-			if (button_title === 'focus') {
-				$w_show_info_ofType = T_Info.focus;
-			} else if (button_title === 'selection') {
-				$w_show_info_ofType = T_Info.selection;
-			}
 		}
 	}
 
