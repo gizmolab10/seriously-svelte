@@ -45,8 +45,8 @@
             <Separator
 				length={height + 5}
 				isHorizontal={false}
-                corner_radius={k.radius.gull_wings.thin}
                 thickness={k.thickness.separator.ultra_thin}
+                corner_radius={k.radius.gull_wings.ultra_thin}
                 origin={new Point(g_titles.button_left_for(index), 1)}/>
         {/if}
     {/each}

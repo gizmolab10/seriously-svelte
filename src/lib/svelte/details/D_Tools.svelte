@@ -1,11 +1,12 @@
 <script lang='ts'>
-	import { T_Tool, T_Layer, T_Request, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
-	import { w_s_alteration, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
+	import { T_Tool, T_Layer, T_Request, T_Predicate, T_Alteration, T_Info } from '../../ts/common/Global_Imports';
+	import { w_s_alteration, w_ancestries_grabbed, w_ancestries_expanded, w_glow_button_click } from '../../ts/common/Stores';
 	import { e, k, show, Size, Point, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
 	import { w_show_info_ofType, w_show_details_ofType, w_user_graph_offset } from '../../ts/common/Stores';
 	import Buttons_Grid from '../buttons/Buttons_Grid.svelte';
 	import { s_details } from '../../ts/state/S_Details';
 	import Button from '../buttons/Button.svelte';
+	import { getContext } from 'svelte';
 	export let top = 0;
 	const has_title = true;
 	const show_box = show.tool_boxes;
@@ -15,6 +16,7 @@
 	let button_titles = compute_button_titles();
 	let tools_top = top + (has_title ? 3 : -13);
     let reattachments = 0;
+	const handle_banner_click = getContext('handle_banner_click');
 
 	// buttons row sends column & T_Request:
 	// 	 is_disabled calls:	handle_isTool_disabledAt
@@ -23,6 +25,7 @@
 	
     $: top, tools_top = top + (has_title ? 3 : -13);
     $: $w_s_alteration, reattachments += 1;
+    $: $w_glow_button_click, handle_button_click($w_glow_button_click);
 
 	$:	w_show_info_ofType,
 		$w_show_details_ofType,
@@ -83,6 +86,16 @@
 			case T_Request.handle_click: return e.handle_tool_autorepeatAt(s_mouse, t_tool, column, name_for(t_tool, column + 1));
 		}
 		return null;
+	}
+
+	function handle_button_click(button_title: string | undefined) {
+		if (!!button_title) {
+			if (button_title === 'focus') {
+				$w_show_info_ofType = T_Info.focus;
+			} else if (button_title === 'selection') {
+				$w_show_info_ofType = T_Info.selection;
+			}
+		}
 	}
 
 </script>

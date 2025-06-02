@@ -18,7 +18,7 @@
     let element: HTMLElement;
 
     $: dispatch('heightChange', { height });
-    setContext('handle_clicking', handle_click);
+    setContext('handle_banner_click', handle_click);
     $: $w_background_color, banner_color = colors.bannerFor($w_background_color);
     function show_slot(): boolean { return has_banner ? $w_show_details_ofType.includes(t_details) : true; }
     function callSlottedMethod(methodName: string, ...args: any[]) { dispatch('callMethod', { methodName, args }); }

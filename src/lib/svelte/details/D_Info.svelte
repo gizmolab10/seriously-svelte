@@ -1,21 +1,19 @@
 <script lang='ts'>
+	import { w_background_color, w_show_info_ofType, w_show_details_ofType } from '../../ts/common/Stores';
 	import { T_Thing, T_Trait, T_Layer, T_Element, T_Info, T_Preference } from '../../ts/common/Global_Imports';
-	import { w_background_color, w_show_info_ofType, w_show_details_ofType, w_glow_button_click } from '../../ts/common/Stores';
 	import { w_ancestry_focus, w_ancestries_grabbed, w_relationship_order } from '../../ts/common/Stores';
-	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { grabs, debug, colors, signals, layout, Ancestry } from '../../ts/common/Global_Imports';
+	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { c, k, p, ux, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import type { Integer } from '../../ts/common/Types';
 	import Text_Table from '../kit/Text_Table.svelte';
 	import Color from '../kit/Color.svelte';
-	import { onMount, createEventDispatcher, getContext } from 'svelte';
+	import { onMount } from 'svelte';
 	export let top = 0;
-	export let on_button_click: (button_title: string) => void;
 	const id = 'info';
 	const separator_font_size = k.font_size.smallest;
 	const es_info = ux.s_element_for(new Identifiable(id), T_Element.info, id);
-	const handle_clicking = getContext('handle_clicking');
 	let ancestry: Ancestry | null = grabs.ancestry_forInfo;
 	let thing: Thing | null = ancestry?.thing ?? null;
 	let thingHID: Integer | null = thing?.hid;
@@ -26,7 +24,6 @@
 	let picker_offset = k.empty;
 	let info_table: any;
 
-	$: $w_glow_button_click, handle_button_click($w_glow_button_click);
 	$: $w_show_details_ofType, layout_forColor();
 	$: $w_relationship_order, update_forAncestry();
 	$: $w_show_info_ofType, $w_ancestries_grabbed, $w_ancestry_focus, $w_thing_title, update_forKind_ofInfo();
@@ -46,8 +43,8 @@
 		if (!!info_table) {
 			const row = Math.max(0, info_details.findIndex(([key]) => key === 'color'));
 			const offsetRow = info_table.location_ofCellAt(row, 1);
-			color_origin = offsetRow.offsetByXY(-4, -4);
-			picker_offset = `${9 - color_origin.x}px`;
+			color_origin = offsetRow.offsetByXY(-12, -4);
+			picker_offset = `${color_origin.x}px`;
 		}
 	}
 
@@ -57,16 +54,6 @@
 		(async () => {
 			await thing.persist();
 		})();
-	}
-
-	function handle_button_click(button_title: string | undefined) {
-		if (!!button_title) {
-			if (button_title === 'focus') {
-				$w_show_info_ofType = T_Info.focus;
-			} else if (button_title === 'selection') {
-				$w_show_info_ofType = T_Info.selection;
-			}
-		}
 	}
 
 	function update_forAncestry() {
@@ -97,7 +84,6 @@
 
 {#if !!thing}
 	<div class='info' 
-		on:handle_click={handle_button_click}
 		style='
 			left:4px;
 			width:100%;
