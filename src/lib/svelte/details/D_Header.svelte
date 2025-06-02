@@ -7,7 +7,7 @@
     let reattachments = 0;
 	const segmented_top = 20;
 
-	// $: $w_ancestry_focus, $w_ancestries_grabbed, update_forKind_ofInfo();
+	$: $w_ancestry_focus, $w_ancestries_grabbed, reattachments += 1;
 
 	// function info_selection_closure(t_infos: string[]) { $w_show_info_ofType = t_infos[0] as T_Info; }
 	
@@ -19,27 +19,13 @@
 </script>
 
 {#key reattachments}
-	{#if !$w_show_details_ofType || $w_show_details_ofType.length == 0}
-		<p style='
-			top:-22px;
-			height: 100%;
-			display: flex;
-			position:relative;
-			text-align: center;
-			align-items: center;
-			justify-content: center;
-			font-size:{k.font_size.smaller}px;'>
-			click a line below to view / hide its details
-		</p>
-	{:else}
-		<div style='
-			top:0px;
-			white-space:pre;
-			position:absolute;
-			text-align:center;
-			width:{k.width_details}px;
-			font-size:{k.font_size.common}px;'>
-			{grabs.latest_grab?.thing?.title.clipWithEllipsisAt(30)}
-		</div>
-	{/if}
+	<div style='
+		top:0px;
+		white-space:pre;
+		position:absolute;
+		text-align:center;
+		width:{k.width_details}px;
+		font-size:{k.font_size.common}px;'>
+		{grabs.latest_grab?.thing?.title.clipWithEllipsisAt(30)}
+	</div>
 {/key}

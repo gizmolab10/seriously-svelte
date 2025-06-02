@@ -28,6 +28,11 @@
         }
     })();
 
+    function handle_click(title: string) {
+        toggle_hidden();
+        return true;
+    }
+
     function toggle_hidden() {
         if (has_banner) {
             let t_details_array = $w_show_details_ofType.filter(item => !!item);
@@ -57,7 +62,6 @@
     {#if has_banner}
         <div
             class='banner'
-            on:click={toggle_hidden}
             style='
                 width: 100%;
                 display: flex;
@@ -69,7 +73,8 @@
             <Buttons_Banner
                 titles={titles}
                 height={banner_height}
-                width={k.width_details}/>
+                width={k.width_details}
+                handle_click={handle_click}/>
         </div>
     {/if}
     <div class={'hideable-content-' + title}

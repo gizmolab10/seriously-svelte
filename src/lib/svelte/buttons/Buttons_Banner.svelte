@@ -5,6 +5,7 @@
     import Separator from '../kit/Separator.svelte';
     import G_Titles from '../../ts/layout/G_Titles';
     import Glow_Button from './Glow_Button.svelte';
+	export let handle_click: (title: string) => boolean;
     export let titles: string[];
     export let height: number;
     export let width: number;
@@ -36,6 +37,7 @@
         <Glow_Button
             title={title}
             height={height}
+            handle_click={handle_click}
             style={index === 0 ? 'left: 0;' : ''}
             width={g_titles.button_width_for(index)}
             position={index === 0 ? 'absolute' : 'relative'}/>

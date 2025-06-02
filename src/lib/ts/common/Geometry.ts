@@ -222,6 +222,10 @@ export class Rect {
 		return this;
 	}
 
+	static createWHRect(width: number, height: number): Rect {
+		return new Rect(Point.zero, new Size(width, height));
+	}
+	
 	static createExtentRect(origin: Point, extent: Point): Rect {
 		return new Rect(origin, origin.vector_to(extent).asSize);
 	}

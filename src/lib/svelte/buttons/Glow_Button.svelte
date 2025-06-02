@@ -1,14 +1,16 @@
 <script lang='ts'>
     import { k, Rect, Size, Point, colors, svgPaths, T_Layer } from '../../ts/common/Global_Imports';
-    import { w_background_color } from '../../ts/common/Stores';
+	import { w_background_color } from '../../ts/common/Stores';
     import SVG_Gradient from '../kit/SVG_Gradient.svelte';
-    export let title: string;
+    export let handle_click: (title: string) => boolean;
     export let height: number;
+    export let title: string;
     export let width: number;
-    const glow_rect = new Rect(Point.zero, new Size(width, height));
+    const glow_rect = Rect.createWHRect(width, height);
     let banner_color = colors.bannerFor($w_background_color);
 
     $: $w_background_color, banner_color = colors.bannerFor($w_background_color);
+
 </script>
 
 <div
@@ -19,8 +21,8 @@
         size={glow_rect.size}
         zindex={T_Layer.frontmost}
         path={svgPaths.rectangle(glow_rect)}/>
-    <div
-        class='title'
+    <div class='title'
+        on:click={() => handle_click(title)}
         style='
             margin: 0;
             padding: 0;
