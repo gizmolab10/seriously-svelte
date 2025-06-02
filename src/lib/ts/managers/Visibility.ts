@@ -33,12 +33,13 @@ export class Visibility {
 		}
 	}
 
-	showing_countDots_ofType(t_counts: T_Kinship): boolean { return get(w_show_countDots_ofType).includes(T_Kinship[t_counts]) }
-	get related_dots(): boolean { return  this.showing_countDots_ofType(T_Kinship.related); }
-	get children_dots(): boolean { return  this.showing_countDots_ofType(T_Kinship.child); }
-	get parent_dots(): boolean { return  this.showing_countDots_ofType(T_Kinship.parent); }
-	get shows_focus(): boolean { return get(w_show_info_ofType) == T_Info.focus; }
-	
+	isSelected_forTitle(title: string): boolean { return title === get(w_show_info_ofType); }
+	isShowing_countDots_ofType(t_counts: T_Kinship): boolean { return get(w_show_countDots_ofType).includes(T_Kinship[t_counts]) }
+	get related_dots(): boolean { return  this.isShowing_countDots_ofType(T_Kinship.related); }
+	get children_dots(): boolean { return  this.isShowing_countDots_ofType(T_Kinship.child); }
+	get parent_dots(): boolean { return  this.isShowing_countDots_ofType(T_Kinship.parent); }
+	get isShowing_FocusInfo(): boolean { return get(w_show_info_ofType) == T_Info.focus; }
+
 	restore_state() {
 		w_show_details.set(p.read_key(T_Preference.show_details) ?? false);
 		w_show_related.set(p.read_key(T_Preference.show_related) ?? false);

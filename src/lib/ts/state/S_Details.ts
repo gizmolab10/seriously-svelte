@@ -1,7 +1,8 @@
-import { h, grabs, Ancestry, T_Details, Tag, Trait, T_Trait, Thing } from '../common/Global_Imports';
+import { h, grabs, Ancestry, T_Details, Tag, Trait, T_Trait, Thing, T_Info } from '../common/Global_Imports';
 import { w_t_database, w_ancestry_focus, w_ancestries_grabbed, w_hierarchy } from '../common/Stores';
+import { w_show_details_ofType, w_show_traits_ofType, w_show_info_ofType } from '../common/Stores';
 import { w_tag_things, w_thing_tags, w_thing_traits, w_tag_thing_index } from '../common/Stores';
-import { w_show_details_ofType, w_show_traits_ofType } from '../common/Stores';
+import { w_glow_button_click } from '../common/Stores';
 import { get } from 'svelte/store';
 
 class S_Identifiables<T> {
@@ -52,6 +53,9 @@ class S_Details {
 		w_show_details_ofType.subscribe((t_details: Array<T_Details>) => {
 			this.number_ofDetails = t_details?.length ?? 0;
 		});
+		w_glow_button_click.subscribe((title: string) => {
+			this.update_forInfoType(title);
+		});
 		this.update();
 	}
 
@@ -60,6 +64,16 @@ class S_Details {
 		this.update_things();
 		this.update_traits();
 		this.update_tags();
+	}
+	
+	static readonly _____INFO: unique symbol;
+
+	private update_forInfoType(title: string) {
+		if (title === 'focus') {
+			w_show_info_ofType.set(T_Info.focus);
+		} else if (title === 'selection') {
+			w_show_info_ofType.set(T_Info.selection);
+		}
 	}
 	
 	static readonly _____TRAITS: unique symbol;

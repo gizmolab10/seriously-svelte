@@ -32,7 +32,7 @@ export class Grabs {
 	get user_selected_ancestry(): Ancestry {
 		const focus = get(w_ancestry_focus);
 		let grabbed = grabs.latest;
-		if (!!focus && (show.shows_focus)) {
+		if (!!focus && (show.isShowing_FocusInfo)) {
 			return focus;
 		} else if (!!grabbed) {
 			return grabbed;
@@ -87,7 +87,7 @@ export class Grabs {
 	}
 
 	update_forKind_ofInfo() {
-		if (show.shows_focus || !this.hasGrabs) {
+		if (show.isShowing_FocusInfo || !this.hasGrabs) {
 			this.ancestry_forInfo = get(w_ancestry_focus);
 		} else {
 			const latest_grab = this.latest_upward(true);

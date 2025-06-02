@@ -22,6 +22,19 @@ export class Colors {
 		return color;
 	}
 
+	contrast_of(color: string): string | null {
+		const hsba = this.color_toHSBA(color);
+		if (!!hsba) {
+			const h = hsba.h;
+			/// convert h to a contrasting color
+			const h_new = (h + 180) % 360;
+			const hsba_new = new HSBA(h_new, hsba.s, hsba.b, hsba.a);
+			const rgba_new = this.HSBA_toRGBA(hsba_new);
+			return this.RGBA_toHex(rgba_new);
+		}
+		return null;
+	}
+
 	specialBlend(color: string, background: string, ratio: number): string | null {
 		const rgbaA = this.color_toRGBA(color);
 		const rgbaB = this.color_toRGBA(background);		

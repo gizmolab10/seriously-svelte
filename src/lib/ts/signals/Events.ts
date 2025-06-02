@@ -3,7 +3,6 @@ import { c, h, k, w, grabs, Point, debug, layout, signals, Ancestry, Predicate }
 import { w_device_isMobile, w_ancestries_grabbed, w_user_graph_offset } from '../common/Stores';
 import { w_count_mouse_up, w_mouse_location, w_mouse_location_scaled } from '../common/Stores';
 import { w_s_alteration, w_count_resize, w_s_text_edit } from '../common/Stores';
-import { s_details } from '../state/S_Details';
 import { get } from 'svelte/store';
 
 export class Events {
