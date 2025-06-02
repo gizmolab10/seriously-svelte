@@ -88,7 +88,6 @@ export default class Relationship extends Persistable {
 		const order = this.orders[t_order] ?? 0;
 		const difference = Math.abs(order - newOrder);	
 		if (difference > 0.001) {
-			console.log(`  RELATIONSHIP order "${this.parent?.title}" "${this.child?.title}"`, order, newOrder);
 			this.orders[t_order] = newOrder;
 			w_relationship_order.set(Date.now());
 			if (persist) {

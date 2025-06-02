@@ -1,8 +1,8 @@
 <script lang='ts'>
     import { k, u, Rect, Size, Point, colors, svgPaths, T_Details, T_Layer } from '../../ts/common/Global_Imports';
-    import { w_background_color, w_show_details_ofType } from '../../ts/common/Stores';
+    import { w_background_color, w_show_details_ofType, w_glow_button_click } from '../../ts/common/Stores';
     import Buttons_Banner from '../buttons/Buttons_Banner.svelte';
-    import { createEventDispatcher, tick } from 'svelte';
+    import { createEventDispatcher, tick, setContext } from 'svelte';
     export let extra_titles: string[] = [];
     export let origin: Point | null = null;
     export let t_details: T_Details;
@@ -20,6 +20,7 @@
     $: dispatch('heightChange', { height });
     $: $w_background_color, banner_color = colors.bannerFor($w_background_color);
     function show_slot(): boolean { return has_banner ? $w_show_details_ofType.includes(t_details) : true; }
+    function callSlottedMethod(methodName: string, ...args: any[]) { dispatch('callMethod', { methodName, args }); }
     
     $: (async () => {
         if (element && has_banner) {
@@ -28,8 +29,12 @@
         }
     })();
 
-    function handle_click(title: string) {
-        toggle_hidden();
+    function handle_click(button_title: string) {
+        if (button_title === title) {
+            toggle_hidden();
+        } else {
+            $w_glow_button_click = button_title;
+        }
         return true;
     }
 
@@ -45,6 +50,8 @@
             isHidden = !show_slot();
         }
     }
+
+    setContext('handle_clicking', handle_click);
 
 </script>
 

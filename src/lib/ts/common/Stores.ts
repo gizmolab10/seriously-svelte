@@ -68,6 +68,7 @@ export const w_popupView_id				 = writable<string | null>();
 export const w_t_startup				 = writable<T_Startup>();
 export const w_device_isMobile			 = writable<boolean>();
 export const w_background_color			 = writable<string>();
+export const w_glow_button_click		 = writable<string>();
 export const w_font_size				 = writable<number>();
 
 class Stores {

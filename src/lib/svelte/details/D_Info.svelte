@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { T_Thing, T_Trait, T_Layer, T_Element, T_Info, T_Preference } from '../../ts/common/Global_Imports';
-	import { w_background_color, w_show_info_ofType, w_show_details_ofType } from '../../ts/common/Stores';
+	import { w_background_color, w_show_info_ofType, w_show_details_ofType, w_glow_button_click } from '../../ts/common/Stores';
 	import { w_ancestry_focus, w_ancestries_grabbed, w_relationship_order } from '../../ts/common/Stores';
 	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { grabs, debug, colors, signals, layout, Ancestry } from '../../ts/common/Global_Imports';
@@ -9,11 +9,13 @@
 	import type { Integer } from '../../ts/common/Types';
 	import Text_Table from '../kit/Text_Table.svelte';
 	import Color from '../kit/Color.svelte';
-	import { onMount } from 'svelte';
+	import { onMount, createEventDispatcher, getContext } from 'svelte';
 	export let top = 0;
+	export let on_button_click: (button_title: string) => void;
 	const id = 'info';
 	const separator_font_size = k.font_size.smallest;
 	const es_info = ux.s_element_for(new Identifiable(id), T_Element.info, id);
+	const handle_clicking = getContext('handle_clicking');
 	let ancestry: Ancestry | null = grabs.ancestry_forInfo;
 	let thing: Thing | null = ancestry?.thing ?? null;
 	let thingHID: Integer | null = thing?.hid;
@@ -24,6 +26,7 @@
 	let picker_offset = k.empty;
 	let info_table: any;
 
+	$: $w_glow_button_click, handle_button_click($w_glow_button_click);
 	$: $w_show_details_ofType, layout_forColor();
 	$: $w_relationship_order, update_forAncestry();
 	$: $w_show_info_ofType, $w_ancestries_grabbed, $w_ancestry_focus, $w_thing_title, update_forKind_ofInfo();
@@ -80,10 +83,22 @@
 		})();
 	}
 
+	function handle_button_click(button_title: string | undefined) {
+		if (!!button_title) {
+			console.log('D_Info received click:', button_title);
+			if (button_title === 'focus') {
+				$w_show_info_ofType = T_Info.focus;
+			} else if (button_title === 'selection') {
+				$w_show_info_ofType = T_Info.selection;
+			}
+		}
+	}
+
 </script>
 
 {#if !!thing}
-	<div class='info'
+	<div class='info' 
+		on:handle_click={handle_button_click}
 		style='
 			left:4px;
 			width:100%;

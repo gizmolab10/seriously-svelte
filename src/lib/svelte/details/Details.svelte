@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { k, Point, T_Layer, T_Details } from '../../ts/common/Global_Imports';
-	import { w_graph_rect } from '../../ts/common/Stores';
+	import { k, Point, T_Layer, T_Details, T_Info } from '../../ts/common/Global_Imports';
+	import { w_graph_rect, w_show_info_ofType } from '../../ts/common/Stores';
 	import Separator from '../kit/Separator.svelte';
 	import D_Display from './D_Display.svelte';
 	import D_Storage from './D_Storage.svelte';
@@ -12,6 +12,17 @@
 	import D_Tags from './D_Tags.svelte';
 	const width = k.width_details;
 	const separator_top = $w_graph_rect.origin.y - 2;
+
+	function handle_info_click(button_title: string) {
+		console.log('Details handling info click:', button_title);
+		if (button_title === 'focus') {
+			console.log('Setting info type to focus');
+			$w_show_info_ofType = T_Info.focus;
+		} else if (button_title === 'selection') {
+			console.log('Setting info type to selection');
+			$w_show_info_ofType = T_Info.selection;
+		}
+	}
 
 </script>
 
@@ -41,7 +52,7 @@
 		<D_Display/>
 	</Hideable>
 	<Hideable t_details={T_Details.info} extra_titles={['focus', 'selection']}>
-		<D_Info/>
+		<D_Info on_button_click={handle_info_click}/>
 	</Hideable>
 	<Hideable t_details={T_Details.tags}>
 		<D_Tags/>
