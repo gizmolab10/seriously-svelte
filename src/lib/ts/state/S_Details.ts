@@ -53,9 +53,6 @@ class S_Details {
 		w_show_details_ofType.subscribe((t_details: Array<T_Details>) => {
 			this.number_ofDetails = t_details?.length ?? 0;
 		});
-		w_glow_button_click.subscribe((title: string) => {
-			this.update_forInfoType(title);
-		});
 		this.update();
 	}
 
@@ -68,12 +65,18 @@ class S_Details {
 	
 	static readonly _____INFO: unique symbol;
 
-	private update_forInfoType(title: string) {
-		if (title === 'focus') {
-			w_show_info_ofType.set(T_Info.focus);
+	update_forInfoType(title: string) {
+		let t_info = get(w_show_info_ofType);
+		const same = title === t_info;
+		console.log(`S_Details: update_forInfoType: ${title} same: ${same}`);
+		if (!same) {
+			t_info = title as T_Info;
+		} else if (title === 'focus') {	
+			t_info = T_Info.selection;
 		} else if (title === 'selection') {
-			w_show_info_ofType.set(T_Info.selection);
+			t_info = T_Info.focus;
 		}
+		w_show_info_ofType.set(t_info);
 	}
 	
 	static readonly _____TRAITS: unique symbol;

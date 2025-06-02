@@ -6,17 +6,20 @@
     export let height: number;
     export let title: string;
     export let width: number;
+    export let isSelected: boolean = false;
     const glow_rect = Rect.createWHRect(width, height);
     let banner_color = colors.bannerFor($w_background_color);
-    let isSelected = show.isSelected_forTitle(title);
 
     $: $w_background_color, banner_color = colors.bannerFor($w_background_color);
 
-    function intercept_click(title: string) {
-        handle_click(title);
-        isSelected = show.isSelected_forTitle(title);
+    $: {
+        console.log(`Glow button "${title}" selection state changed to:`, isSelected);
     }
 
+    function intercept_click(title: string) {
+        // console.log(`Glow button "${title}" clicked`);
+        handle_click(title);
+    }
 </script>
 
 <div

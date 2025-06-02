@@ -1,7 +1,7 @@
 <script lang='ts'>
     import { k, u, Rect, Size, Point, colors, svgPaths, T_Details, T_Layer } from '../../ts/common/Global_Imports';
     import { w_background_color, w_show_details_ofType, w_glow_button_click } from '../../ts/common/Stores';
-    import Buttons_Banner from '../buttons/Buttons_Banner.svelte';
+    import Glows_Banner from '../buttons/Glows_Banner.svelte';
     import { createEventDispatcher, tick, setContext } from 'svelte';
     export let extra_titles: string[] = [];
     export let origin: Point | null = null;
@@ -76,7 +76,7 @@
                 position: absolute;
                 align-items: stretch;
                 height: {banner_height}px;'>
-            <Buttons_Banner
+            <Glows_Banner
                 titles={titles}
                 height={banner_height}
                 width={k.width_details}

@@ -1,7 +1,8 @@
 <script lang='ts'>
+    import { w_show_info_ofType, w_background_color } from '../../ts/common/Stores';
 	import { colors, svgPaths, T_Layer } from '../../ts/common/Global_Imports';
 	import { k, Rect, Size, Point } from '../../ts/common/Global_Imports';
-    import { w_background_color } from '../../ts/common/Stores';
+	import { s_details } from '../../ts/state/S_Details';
     import Separator from '../kit/Separator.svelte';
     import G_Titles from '../../ts/layout/G_Titles';
     import Glow_Button from './Glow_Button.svelte';
@@ -11,6 +12,7 @@
     export let width: number;
     const g_titles = new G_Titles(titles, height, width, 0, 0, false, k.font_size.small);
     let banner_color = colors.bannerFor($w_background_color);
+    let selected_title: string | null = null;
 
     // height	is of the banner
     // width	is overall width of the banner
@@ -19,6 +21,12 @@
     //  first	button is the widest, at the left
 
     $: $w_background_color, banner_color = colors.bannerFor($w_background_color);
+    $: selected_title = $w_show_info_ofType;
+
+    function intercept_click(title: string) {
+        s_details.update_forInfoType(title);
+        return handle_click(title); // this is the click handler for the banner
+    }
 
 </script>
 
@@ -37,7 +45,8 @@
         <Glow_Button
             title={title}
             height={height}
-            handle_click={handle_click}
+            handle_click={intercept_click}
+            isSelected={title === selected_title}
             style={index === 0 ? 'left: 0;' : ''}
             width={g_titles.button_width_for(index)}
             position={index === 0 ? 'absolute' : 'relative'}/>
