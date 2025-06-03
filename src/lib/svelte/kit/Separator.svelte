@@ -18,6 +18,7 @@
 	export let margin = 0;
 	const line_left = isHorizontal ? origin.x + margin : origin.x - thickness / 2;
 	const title_width = u.getWidth_ofString_withSize(title ?? k.empty, `${title_font_size}px`);
+	let thin_line_color = colors.separatorFor('brown');
 	let separator_color = colors.separator;
 	let title_top = 0;
 
@@ -55,23 +56,45 @@
 <div class='separator-line' style={separatorStyle}>
 	{#if add_wings && !margin}
 		<Gull_Wings
-			direction={wingsDirection_single}
-			center={wingsCenter_single}
-			color={separator_color}
+			thickness={thickness}
 			radius={corner_radius}
-			thickness={thickness}/>
+			color={separator_color}
+			center={wingsCenter_single}
+			direction={wingsDirection_single}/>
 		{#if hasBothEnds}
 			<Gull_Wings
-				direction={wingsDirection_dual}
-				center={wingsCenter_dual}
-				color={separator_color}
+				thickness={thickness}
 				radius={corner_radius}
-				thickness={thickness}/>
+				color={separator_color}
+				center={wingsCenter_dual}
+				direction={wingsDirection_dual}/>
 		{/if}
 	{/if}
 </div>
 {#if has_thin_divider}
-	<div class='thin-divider' style='z-index:{zindex + 1}; position:absolute; top:${origin.y + thickness / 2}px; left:{line_left}px; height:${k.thickness.separator.ultra_thin}px; width:${length - margin * 2}px; background-color:black;'></div>
+	{#if isHorizontal}
+		<div class='thin-horizontal-divider'
+			style='
+				height:{0.05}px;
+				position:absolute;
+				z-index:{zindex + 1};
+				width:{length - 21}px;
+				left:{line_left + 8}px;
+				top:{origin.y + thickness / 2}px;
+				background-color:{thin_line_color};'>
+		</div>
+	{:else}
+		<div class='thin-vertical-divider'
+			style='
+				width:{0.05}px;
+				top:{origin.y}px;
+				position:absolute;
+				z-index:{zindex + 1};
+				height:{length - 6}px;
+				left:{origin.x - 0.05}px;
+				background-color:{thin_line_color};'>
+		</div>
+	{/if}
 {/if}
 {#if !!title}
 	<div
@@ -82,6 +105,7 @@
 			top:{title_top}px;
 			left:{title_left}px;
 			white-space: nowrap;
+			z-index:{zindex + 2};
 			font-size:{title_font_size}px;
 			background-color:{$w_background_color};'>
 		{title}

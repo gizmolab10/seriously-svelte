@@ -1,6 +1,6 @@
 import { u } from '../common/Global_Imports';
 
-export default class G_Titles {
+export default class G_Repeater {
 	proportionate: boolean;
 	title_widths: number[];
 	font_size: number;

@@ -151,9 +151,9 @@
 	</div>
 	{#key ux.T_Storage_Need}
 		<Buttons_Row
+			gap={4}
 			margin={10}
 			show_box={true}
-			gap={4}
 			font_sizes={font_sizes}
 			width={k.width_details}
 			row_titles={row_titles()}

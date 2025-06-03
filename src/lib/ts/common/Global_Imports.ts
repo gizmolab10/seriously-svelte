@@ -1,7 +1,7 @@
 import G_TreeBranches from '../layout/G_TreeBranches';
 import G_RadialGraph from '../layout/G_RadialGraph';
 import G_ArcSlider from '../layout/G_ArcSlider';
-import G_Titles from '../layout/G_Titles';
+import G_Repeater from '../layout/G_Repeater';
 import G_TreeLine from '../layout/G_TreeLine';
 import G_Cluster from '../layout/G_Cluster';
 import G_Segment from '../layout/G_Segment';
@@ -91,7 +91,7 @@ export {
 	S_Common, S_Rotation, S_Resizing,
 	S_Mouse, S_Widget, S_Element, S_Alteration, S_Text_Edit,
 	
-	G_Widget, G_Segment, G_TreeLine, G_TreeBranches, G_Titles,
+	G_Widget, G_Segment, G_TreeLine, G_TreeBranches, G_Repeater,
 	G_Paging, G_Cluster, G_RadialGraph, G_Thing_Pages, G_ArcSlider,
 	
 	T_Debug, T_Timer, T_Signal,

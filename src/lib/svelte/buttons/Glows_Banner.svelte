@@ -3,7 +3,7 @@
     import { w_show_info_ofType, w_background_color } from '../../ts/common/Stores';
 	import { s_details } from '../../ts/state/S_Details';
     import Separator from '../kit/Separator.svelte';
-    import G_Titles from '../../ts/layout/G_Titles';
+    import G_Repeater from '../../ts/layout/G_Repeater';
     import Glow_Button from './Glow_Button.svelte';
 	export let toggle_hidden: (title: string) => boolean;
     export let font_size = s_details.font_size;
@@ -11,7 +11,7 @@
     export let titles: string[];
     export let height: number;
     export let width: number;
-    const g_titles = new G_Titles(titles, height, width, 0, 0, false, font_size);
+    const g_repeater = new G_Repeater(titles, height, width, 0, 0, false, font_size);
     let banner_color = colors.bannerFor($w_background_color);
     let selected_title: string | null = null;
 
@@ -45,7 +45,7 @@
         origin={Point.zero}
         corner_radius={k.radius.gull_wings.thin}
         thickness={k.thickness.separator.ultra_thin}/>
-    {#each g_titles.titles as title, index}
+    {#each g_repeater.titles as title, index}
         <Glow_Button
             title={title}
             height={height}
@@ -53,15 +53,15 @@
             handle_click={intercept_click}
             isSelected={title === selected_title}
             style={index === 0 ? 'left: 0;' : ''}
-            width={g_titles.button_width_for(index)}
+            width={g_repeater.button_width_for(index)}
             position={index === 0 ? 'absolute' : 'relative'}/>
         {#if index > 0}
             <Separator
 				length={height + 5}
 				isHorizontal={false}
-                thickness={k.thickness.separator.ultra_thin}
+            thickness={k.thickness.separator.ultra_thin}
                 corner_radius={k.radius.gull_wings.ultra_thin}
-                origin={new Point(g_titles.button_left_for(index), 1)}/>
+                origin={new Point(g_repeater.button_left_for(index), 1)}/>
         {/if}
     {/each}
     <Separator

@@ -55,6 +55,7 @@
 <Separator
 	hasBothEnds={false}
 	isHorizontal={false}
+	has_thin_divider={false}
 	margin={k.details_margin}
 	zindex={T_Layer.frontmost}
 	thickness={k.thickness.separator.thick}
@@ -64,6 +65,7 @@
 <Separator
 	hasBothEnds={false}
 	isHorizontal={false}
+	has_thin_divider={false}
 	margin={k.details_margin}
 	thickness={k.thickness.separator.thick}
 	length={$w_graph_rect.size.height + 8}

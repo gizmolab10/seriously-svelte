@@ -29,6 +29,7 @@
 		font-size:{k.font_size.small}px;'>
 	<Separator
 		origin={Point.y(2)}
+		has_thin_divider={false}
 		length={k.width_details}
 		margin={k.details_margin}
 		title='show tiny dots for'
@@ -48,6 +49,7 @@
 	<Separator
 		title='color'
 		origin={Point.y(36)}
+		has_thin_divider={false}
 		length={k.width_details}
 		margin={k.details_margin}
 		title_left={k.separator_title_left}

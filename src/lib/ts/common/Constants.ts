@@ -90,7 +90,7 @@ export default class Constants {
 		separator: {
 			thick:		4,
 			thin:		2,
-			ultra_thin:	1,
+			ultra_thin:	2,
 		},
 	};
 

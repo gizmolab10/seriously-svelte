@@ -2,7 +2,7 @@
 	import { k, u, ux, Point, colors, signals, T_Request, T_Element, S_Element } from '../../ts/common/Global_Imports';
 	import { w_show_info_ofType, w_count_button_restyle } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
-    import G_Titles from '../../ts/layout/G_Titles';
+    import G_Repeater from '../../ts/layout/G_Repeater';
 	import Separator from '../kit/Separator.svelte';
 	import Button from './Button.svelte';
 	import { onMount } from 'svelte';
@@ -24,9 +24,9 @@
 	const solo_title_width = 34;
 	const front_margin = show_box ? 0 : solo_title_width;
 	const button_titles = has_title ? row_titles.slice(1) : row_titles;
-	const g_titles = new G_Titles(button_titles, button_height, width - front_margin, margin, gap, true, font_sizes[0]);
+	const g_repeater = new G_Repeater(button_titles, button_height, width - front_margin, margin, gap, true, font_sizes[0]);
 	const es_button_byColumn: { [key: number]: S_Element } = {};
-	const button_portion = g_titles.button_portion;
+	const button_portion = g_repeater.button_portion;
 	const columns = button_titles.length;
 	const row_title = row_titles[0];
 	let reattachments = 0;
@@ -95,6 +95,7 @@
 				length={width}
 				title={row_title}
 				add_wings={add_wings}
+				has_thin_divider={false}
 				thickness={separator_thickness}
 				title_font_size={font_sizes[0]}
 				title_left={k.separator_title_left}/>
@@ -123,10 +124,10 @@
 					<Button
 						height={button_height}
 						font_size={font_sizes[1]}
-						width={g_titles.button_width_for(column)}
+						width={g_repeater.button_width_for(column)}
 						es_button={es_button_byColumn[column]}
 						name={`${name}-${button_name_for(column)}`}
-						origin={Point.x(g_titles.button_left_for(column))}
+						origin={Point.x(g_repeater.button_left_for(column))}
 						closure={(s_mouse) => closure(T_Request.handle_click, s_mouse, column)}>
 						{title}
 					</Button>
