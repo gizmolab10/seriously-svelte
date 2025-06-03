@@ -104,7 +104,7 @@ class S_Details {
 		// when grab changes, traits must also change
 		// also, which trait [index] corresponds to the grab
 		this.update_s_traits();
-		const thing = grabs.ancestry_forInfo?.thing ?? null;
+		const thing = grabs.latest_grab?.thing ?? null;
 		const thing_traits = thing?.traits ?? [];
 		if (!thing || thing_traits.length == 0) {
 			w_thing_traits.set([]);
@@ -129,7 +129,7 @@ class S_Details {
 
 	private update_things() {
 		const things = this.tag?.things ?? [];
-		const ancestry = grabs.ancestry_forInfo;
+		const ancestry = grabs.latest_grab;
 		this.s_things.items = things;
 		this.s_things.total_items = things.length;
 		const index = Math.max(0, things.findIndex(t => t.hid == ancestry?.thing?.hid));
@@ -161,12 +161,13 @@ class S_Details {
 
 	private update_tags() {
 		this.update_s_tags();
-		const thing = grabs.ancestry_forInfo?.thing ?? null;
+		const thing = grabs.latest_grab?.thing ?? null;
 		const thing_tags = thing?.tags ?? [];
 		if (!thing || thing_tags.length == 0) {
 			w_thing_tags.set([]);
 		} else {
-			const index = Math.max(0, this.s_tags.items.findIndex(t => t.thingHIDs.includes(thing.hid)));
+			const next_index = this.s_tags.items.findIndex(t => t.thingHIDs.includes(thing.hid));
+			const index = Math.max(0, next_index);
 			this.s_tags.index_ofItem = index;
 			w_thing_tags.set(thing_tags);
 		}
@@ -179,6 +180,7 @@ class S_Details {
 			if (!!h && !!ancestry) {
 				ancestry.grabOnly();
 				grabs.latest_assureIsVisible();
+				this.s_things.index_ofItem = 0;
 				w_hierarchy.set(h);
 			}
 		}
