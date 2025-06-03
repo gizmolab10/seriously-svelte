@@ -6,7 +6,8 @@
     export let extra_titles: string[] = [];
     export let origin: Point | null = null;
     export let t_details: T_Details;
-    export let has_banner = true;
+    export let hasBanner = true;
+    export let isBottom = false;
     export let height = 0;
     const title = T_Details[t_details];
     const titles = [title, ...extra_titles];
@@ -17,21 +18,30 @@
     let isHidden = !show_slot();
     let element: HTMLElement;
 
+    //////////////////////////////////////////////////////
+    //													//
+    //	hasBanner:		some hideables have no banner	//
+    //	t_details:		title in banner     			//
+    //	extra_titles:	extra titles added into banner	//
+    //	isHidden:		whether slot is hidden			//
+    //													//
+    //////////////////////////////////////////////////////
+
     $: dispatch('heightChange', { height });
     setContext('handle_banner_click', toggle_hidden);
     $: $w_background_color, banner_color = colors.bannerFor($w_background_color);
-    function show_slot(): boolean { return has_banner ? $w_show_details_ofType.includes(t_details) : true; }
+    function show_slot(): boolean { return hasBanner ? $w_show_details_ofType.includes(t_details) : true; }
     function callSlottedMethod(methodName: string, ...args: any[]) { dispatch('callMethod', { methodName, args }); }
     
     $: (async () => {
-        if (element && has_banner) {
+        if (element && hasBanner) {
             await tick();
             height = isHidden ? banner_height : element.scrollHeight + 5;
         }
     })();
 
     function toggle_hidden(button_title: string) {
-        if (has_banner && button_title === title) {
+        if (hasBanner && button_title === title) {
             let t_details_array = $w_show_details_ofType.filter(item => !!item);
             if (t_details_array.includes(t_details)) {
                 t_details_array = u.remove_fromArray_byReference(t_details, t_details_array);
@@ -56,7 +66,7 @@
         position: relative;
         flex-direction: column;
         {origin ? `left: ${origin.x}px; top: ${origin.y}px;` : k.empty}'>
-    {#if has_banner}
+    {#if hasBanner}
         <div
             class='banner'
             style='
@@ -78,7 +88,7 @@
         style='
             position: relative;
             display: {isHidden ? "none" : "block"};
-            top: {4 + (has_banner ? banner_height : 0)}px;'>
+            top: {4 + (hasBanner ? banner_height : 0)}px;'>
         <slot/>
     </div>
 </div>

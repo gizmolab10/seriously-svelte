@@ -6,11 +6,12 @@
     import G_Titles from '../../ts/layout/G_Titles';
     import Glow_Button from './Glow_Button.svelte';
 	export let toggle_hidden: (title: string) => boolean;
+    export let font_size = s_details.font_size;
     export let isToggle = false;
     export let titles: string[];
     export let height: number;
     export let width: number;
-    const g_titles = new G_Titles(titles, height, width, 0, 0, false, k.font_size.small);
+    const g_titles = new G_Titles(titles, height, width, 0, 0, false, font_size);
     let banner_color = colors.bannerFor($w_background_color);
     let selected_title: string | null = null;
 
@@ -48,6 +49,7 @@
         <Glow_Button
             title={title}
             height={height}
+            font_size={font_size}
             handle_click={intercept_click}
             isSelected={title === selected_title}
             style={index === 0 ? 'left: 0;' : ''}

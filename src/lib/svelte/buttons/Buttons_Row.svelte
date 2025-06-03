@@ -40,7 +40,8 @@
 	//															//
 	//	row_titles		no buttons: if only one and has title	//
 	//	font_sizes:		[title_font_size, button_font_size] 	//
-	//	gap:	between buttons							//
+	//	gap:			between buttons							//
+	//	margin:			around buttons							//
 	//															//
 	//////////////////////////////////////////////////////////////
 

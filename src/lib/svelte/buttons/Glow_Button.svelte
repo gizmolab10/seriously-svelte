@@ -7,6 +7,7 @@
     export let title: string;
     export let width: number;
     export let isSelected: boolean = false;
+    export let font_size: number = k.font_size.smaller;
     const glow_rect = Rect.createWHRect(width, height);
     let banner_color = colors.bannerFor($w_background_color);
 
@@ -34,9 +35,9 @@
             width: 100%;
             text-align: center;
             position: absolute;
+            font-size: {font_size}px;
             background-color: transparent;
-            transform: translate(-50%, -50%);
-            font-size: {k.font_size.smaller}px;'>
+            transform: translate(-50%, -50%);'>
         {title}
     </div>
 </div> 

@@ -10,6 +10,7 @@
 	export let title: string | null = null;
 	export let zindex = T_Layer.details;
 	export let length = k.width_details;
+	export let has_thin_divider = true;
 	export let origin = Point.zero;
 	export let isHorizontal = true;
 	export let hasBothEnds = true;
@@ -69,6 +70,9 @@
 		{/if}
 	{/if}
 </div>
+{#if has_thin_divider}
+	<div class='thin-divider' style='z-index:{zindex + 1}; position:absolute; top:${origin.y + thickness / 2}px; left:{line_left}px; height:${k.thickness.separator.ultra_thin}px; width:${length - margin * 2}px; background-color:black;'></div>
+{/if}
 {#if !!title}
 	<div
 		style='

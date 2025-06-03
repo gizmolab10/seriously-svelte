@@ -1,7 +1,7 @@
 import { w_t_database, w_ancestry_focus, w_ancestries_grabbed, w_hierarchy } from '../common/Stores';
 import { w_show_details_ofType, w_show_traits_ofType, w_show_info_ofType } from '../common/Stores';
 import { w_tag_things, w_thing_tags, w_thing_traits, w_tag_thing_index } from '../common/Stores';
-import { T_Info, T_Trait, T_Details, T_Direction } from '../common/Global_Imports';
+import { T_Info, T_Trait, T_Details, T_Direction, k } from '../common/Global_Imports';
 import { h, Tag, grabs, Trait, Thing, Ancestry } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
@@ -35,6 +35,7 @@ class S_Details {
 	private s_things = new S_Identifiables<Thing>([]);
 	private s_traits = new S_Identifiables<Trait>([]);
 	private s_tags = new S_Identifiables<Tag>([]);
+	font_size = k.font_size.smaller;
 	number_ofDetails = 0;
 
 	constructor() {

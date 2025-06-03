@@ -30,7 +30,7 @@
 		width:{k.width_details - 6}px;
 		top:{$w_graph_rect.origin.y}px;
 		height:{$w_graph_rect.size.height}px;'>
-	<Hideable t_details={T_Details.header} has_banner={false} height={26}>
+	<Hideable t_details={T_Details.header} hasBanner={false} height={26}>
 		<D_Header/>
 	</Hideable>
 	<Hideable t_details={T_Details.go} extra_titles={info_titles} isToggle={true}>
@@ -48,7 +48,7 @@
 	<Hideable t_details={T_Details.storage}>
 		<D_Storage/>
 	</Hideable>
-	<Hideable t_details={T_Details.display}>
+	<Hideable t_details={T_Details.display} isBottom={true}>
 		<D_Display/>
 	</Hideable>
 </div>

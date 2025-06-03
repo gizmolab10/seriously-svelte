@@ -29,7 +29,7 @@
             width: 100%;
             position:relative;
             text-align: center;
-            font-size:{k.font_size.ultra_small}px;'>
+            font-size:{s_details.font_size}px;'>
         {#if !$w_thing_tags || $w_thing_tags.length == 0}
             <p style='text-align: center;'>no tags</p>
         {:else}
@@ -50,8 +50,8 @@
                 show_box={true}
                 has_title={true}
                 add_wings={false}
-                origin={new Point(23, 22)}
-                width={k.width_details - 60}
+                origin={new Point(53, 22)}
+                width={k.width_details - 120}
                 closure={handleClick_onNextPrevious}
                 separator_thickness={k.thickness.separator.ultra_thin}/>
         {/if}
