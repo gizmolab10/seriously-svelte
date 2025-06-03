@@ -200,7 +200,7 @@ export class Preferences {
 			this.write_key(T_Preference.graph, value);
 		});
 		w_show_info_ofType.subscribe((t_info: T_Info) => {
-			this.write_key(T_Preference.info, t_info);
+			this.write_key(T_Preference.thing, t_info);
 		})
 		w_show_countDots_ofType.subscribe((value) => {
 			this.write_key(T_Preference.countDots, value);
@@ -227,11 +227,11 @@ export class Preferences {
 		w_background_color		.set( this.read_key(T_Preference.background)		   ?? colors.background);
 
 		// visibility
-		w_show_info_ofType		.set( this.read_key(T_Preference.info)				   ?? T_Info.focus);
+		w_show_info_ofType		.set( this.read_key(T_Preference.thing)				   ?? T_Info.focus);
 		w_show_tree_ofType		.set( this.read_key(T_Preference.tree)				   ?? T_Kinship.child);
 		w_show_graph_ofType		.set( this.read_key(T_Preference.graph)				   ?? T_Graph.tree);
 		w_show_traits_ofType	.set( this.read_key(T_Preference.traits)			   ?? [T_Trait.text]);
-		w_show_details_ofType	.set( this.read_key(T_Preference.detail_types)		   ?? [T_Details.tools, T_Details.storage]);
+		w_show_details_ofType	.set( this.read_key(T_Preference.detail_types)		   ?? [T_Details.go, T_Details.storage]);
 		w_show_countDots_ofType	.set( this.read_key(T_Preference.countDots)			   ?? [T_Kinship.child]);
 
 		this.reactivity_subscribe()

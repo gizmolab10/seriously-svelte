@@ -29,10 +29,10 @@ export enum T_Debug {
 	hover			= 'hover',
 	order			= 'order',		// observe relocating
 	trace			= 'trace',
-	tools			= 'tools',		// state logic of add parent tool
+	go			= 'go',		// state logic of add parent tool
 	edit			= 'edit',		// state machine for editing
 	grab			= 'grab',
-	info			= 'info',
+	thing			= 'thing',
 	move			= 'move',
 	key				= 'key',		// keyboard input
 }
@@ -43,10 +43,10 @@ export class Debug {
 	hasOption(option: T_Debug) { return this.flags.includes(option); }
 	captureStackTrace(): string | undefined { return new Error().stack; }
 
-	get info(): boolean { return this.hasOption(T_Debug.info); }
+	get thing(): boolean { return this.hasOption(T_Debug.thing); }
 	get graph(): boolean { return this.hasOption(T_Debug.graph); }
 	get lines(): boolean { return this.hasOption(T_Debug.lines); }
-	get tools(): boolean { return this.hasOption(T_Debug.tools); }
+	get go(): boolean { return this.hasOption(T_Debug.go); }
 	get trace(): boolean { return this.hasOption(T_Debug.trace); }
 	get cursor(): boolean { return this.hasOption(T_Debug.cursor); }
 	get radial(): boolean { return this.hasOption(T_Debug.radial); }
@@ -58,14 +58,14 @@ export class Debug {
 	log_key(message: string) { this.log_maybe(T_Debug.key, message); }
 	log_edit(message: string) { this.log_maybe(T_Debug.edit, message); }
 	log_grab(message: string) { this.log_maybe(T_Debug.grab, message); }
-	log_info(message: string) { this.log_maybe(T_Debug.info, message); }
+	log_info(message: string) { this.log_maybe(T_Debug.thing, message); }
 	log_move(message: string) { this.log_maybe(T_Debug.move, message); }
 	log_build(message: string) { this.log_maybe(T_Debug.build, message); }
 	log_error(message: string) { this.log_maybe(T_Debug.error, message); }
 	log_hover(message: string) { this.log_maybe(T_Debug.hover, message); }
 	log_lines(message: string) { this.log_maybe(T_Debug.lines, message); }
 	log_mouse(message: string) { this.log_maybe(T_Debug.mouse, message); }
-	log_tools(message: string) { this.log_maybe(T_Debug.tools, message); }
+	log_tools(message: string) { this.log_maybe(T_Debug.go, message); }
 	log_action(message: string) { this.log_maybe(T_Debug.action, message); }
 	log_colors(message: string) { this.log_maybe(T_Debug.colors, message); }
 	log_crumbs(message: string) { this.log_maybe(T_Debug.crumbs, message); }
@@ -122,11 +122,11 @@ export class Debug {
 					case 'lines': this.flags.push(T_Debug.lines); break;
 					case 'mouse': this.flags.push(T_Debug.mouse); break;
 					case 'order': this.flags.push(T_Debug.order); break;
-					case 'tools': this.flags.push(T_Debug.tools); break;
+					case 'go': this.flags.push(T_Debug.go); break;
 					case 'trace': this.flags.push(T_Debug.trace); break;
 					case 'edit': this.flags.push(T_Debug.edit); break;
 					case 'grab': this.flags.push(T_Debug.grab); break;
-					case 'info': this.flags.push(T_Debug.info); break;
+					case 'thing': this.flags.push(T_Debug.thing); break;
 					case 'move': this.flags.push(T_Debug.move); break;
 					case 'key': this.flags.push(T_Debug.key); break;
 				}

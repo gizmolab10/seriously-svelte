@@ -14,9 +14,9 @@ export enum T_Banner {
 export enum T_Details {
 	header,
 	storage,
-	tools,
+	go,
 	display,
-	info,
+	thing,
 	tags,
 	traits,
 }
@@ -42,7 +42,7 @@ export enum T_Layer {
 	widgets,
 	dots,
 	text,
-	tools,
+	go,
 	tool_buttons,
 	details,
 	frontmost,
@@ -232,7 +232,7 @@ export enum T_Element {
 	button		 = 'button',
 	title		 = 'title',
 	drag		 = 'drag',
-	info		 = 'info',
+	thing		 = 'thing',
 	none		 = 'none',
 	tool		 = 'tool',
 }
@@ -260,7 +260,7 @@ export enum T_Preference {
 	scale			  = 'scale',
 	focus			  = 'focus',
 	local			  = 'local',
-	info	    	  = 'info',
+	thing	    	  = 'thing',
 	font			  = 'font',
 	tree			  = 'tree',
 	db				  = 'db',

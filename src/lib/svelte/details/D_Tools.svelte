@@ -34,7 +34,7 @@
 		$w_ancestries_expanded,
 		update_button_titles();
 
-	function name_ofToolAt(t_tool: number, column: number): string { return Object.keys(k.tools[T_Tool[t_tool]])[column]; }
+	function name_ofToolAt(t_tool: number, column: number): string { return Object.keys(k.go[T_Tool[t_tool]])[column]; }
 
 	function name_for(t_tool: number, column: number) {
 		const titles = button_titles[t_tool];
@@ -92,16 +92,16 @@
 
 {#key reattachments}
 	<div
-		class='tools'
+		class='go'
 		style='
 			width: 100%;
 			top:{tools_top}px;
 			position:relative;
-			z-index:{T_Layer.tools}'>
+			z-index:{T_Layer.go}'>
 		<Buttons_Grid
 			gap={3}
 			columns={5}
-			name='tools'
+			name='go'
 			show_box={show_box}
 			has_title={has_title}
 			font_sizes={font_sizes}
@@ -118,7 +118,7 @@
 					position:relative;
 					text-align:center;
 					top:{show_box ? 120 : 58}px;
-					z-index:{T_Layer.tools + 1};
+					z-index:{T_Layer.go + 1};
 					font-size:{k.font_size.smallest}px;'>
 				To <em>{$w_s_alteration.t_alteration}</em> an item as <em>{target_ofAlteration() ?? k.unknown}</em>
 				<br> to <strong>{ancestry.title}</strong>

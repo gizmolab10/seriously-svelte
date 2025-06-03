@@ -31,7 +31,7 @@
 	// needs:
 	//	handle keys
 	//	edit titles (keydown terminates edit) BROKEN
-	//	displays editing tools when asked by user
+	//	displays editing go when asked by user
 	
 	layout.grand_layout();
 	debug.log_tools(` CLUSTERS`);

@@ -43,9 +43,9 @@
 		zindex = {T_Layer.common}
 		rect = {$w_graph_rect}/>
 {/if}
-{#if debug.tools && !!$w_s_alteration}
+{#if debug.go && !!$w_s_alteration}
 	<Box
-		name = 'tools'
+		name = 'go'
 		color = 'purple'
 		zindex = {T_Layer.frontmost}
 		rect = {$w_s_alteration.ancestry.titleRect}/>

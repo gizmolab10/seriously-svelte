@@ -111,12 +111,12 @@ export default class Constants {
 		detail: {
 			header:	  50,
 			storage: 142,
-			tools:	  () => { return show.tool_boxes ? 229 : 146; },
+			go:	  () => { return show.tool_boxes ? 229 : 146; },
 			display:  77,
-			info:	 230,
+			thing:	 230,
 			traits:	   0,
 		},
-		info: {
+		thing: {
 			segments:	  22,
 			before_title:  5,
 			title:		  22,
@@ -129,7 +129,7 @@ export default class Constants {
 		},
 	};
 
-	tools = {
+	go = {
 		browse: {
 			left: 0,
 			up: 1,

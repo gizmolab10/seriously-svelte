@@ -38,7 +38,7 @@ export class Signals {
 	conduit = new Signal<(t_signal: T_Signal, priority: number, value: any) => void>();
 	
 	signal_tool_update(value: any = null) { this.signal(T_Signal.tool_update, value); }
-	signal_rebuildGraph_from(value: any = null) { this.signal(T_Signal.rebuild, value); }	// N.B., widget whatches this to reveal tools
+	signal_rebuildGraph_from(value: any = null) { this.signal(T_Signal.rebuild, value); }	// N.B., widget whatches this to reveal go
 	signal_rebuildGraph_fromFocus() { this.signal_rebuildGraph_from(get(w_ancestry_focus)); }
 	signal_blink_forAlteration(value: any = null) { this.signal(T_Signal.alteration, value); }
 	signal_reattach_widgets_from(value: any = null) { this.signal(T_Signal.reattach, value); }

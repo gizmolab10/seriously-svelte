@@ -11,9 +11,9 @@
 	import Color from '../kit/Color.svelte';
 	import { onMount } from 'svelte';
 	export let top = 0;
-	const id = 'info';
+	const id = 'thing';
 	const separator_font_size = k.font_size.smallest;
-	const es_info = ux.s_element_for(new Identifiable(id), T_Element.info, id);
+	const es_info = ux.s_element_for(new Identifiable(id), T_Element.thing, id);
 	let ancestry: Ancestry | null = grabs.ancestry_forInfo;
 	let thing: Thing | null = ancestry?.thing ?? null;
 	let thingHID: Integer | null = thing?.hid;
@@ -83,7 +83,7 @@
 </script>
 
 {#if !!thing}
-	<div class='info' 
+	<div class='thing' 
 		style='
 			left:4px;
 			width:100%;

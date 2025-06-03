@@ -67,7 +67,7 @@ class S_Details {
 		const next = T_Direction.next === selected_title as unknown as T_Direction;
 		const t_details = T_Details[banner_title as keyof typeof T_Details];
 		switch (t_details) {
-			case T_Details.tools:  this.update_forInfoType(selected_title); break;
+			case T_Details.go:  this.update_forInfoType(selected_title); break;
 			case T_Details.traits: this.select_nextTrait(next); break;
 			case T_Details.tags:   this.select_nextTag(next); break;
 		}

@@ -177,34 +177,34 @@ export class Events {
 		if (!!ancestry && !this.handle_isTool_disabledAt(t_tool, column) && !!h) {
 			switch (t_tool) {
 				case T_Tool.browse:					switch (column) {
-					case k.tools.browse.up:				grabs.latest_rebuild_persistentMoveUp_maybe( true, false, false, false); break;
-					case k.tools.browse.down:			grabs.latest_rebuild_persistentMoveUp_maybe(false, false, false, false); break;
-					case k.tools.browse.left:			await h.ancestry_rebuild_persistentMoveRight(ancestry, false, false, false, false, false); break;
-					case k.tools.browse.right:			await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, false, false, false); break;
+					case k.go.browse.up:				grabs.latest_rebuild_persistentMoveUp_maybe( true, false, false, false); break;
+					case k.go.browse.down:			grabs.latest_rebuild_persistentMoveUp_maybe(false, false, false, false); break;
+					case k.go.browse.left:			await h.ancestry_rebuild_persistentMoveRight(ancestry, false, false, false, false, false); break;
+					case k.go.browse.right:			await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, false, false, false); break;
 				}									break;
 				case T_Tool.add:					switch (column) {
-					case k.tools.add.child:				await h.ancestry_edit_persistentCreateChildOf(ancestry); break;
-					case k.tools.add.sibling:			await h.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break;
-					case k.tools.add.line:				await h.thing_edit_persistentAddLine(ancestry); break;
-					case k.tools.add.parent:			this.ancestry_toggle_alteration(ancestry, T_Alteration.add, Predicate.contains); break;
-					case k.tools.add.related:			this.ancestry_toggle_alteration(ancestry, T_Alteration.add, Predicate.isRelated); break;
+					case k.go.add.child:				await h.ancestry_edit_persistentCreateChildOf(ancestry); break;
+					case k.go.add.sibling:			await h.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break;
+					case k.go.add.line:				await h.thing_edit_persistentAddLine(ancestry); break;
+					case k.go.add.parent:			this.ancestry_toggle_alteration(ancestry, T_Alteration.add, Predicate.contains); break;
+					case k.go.add.related:			this.ancestry_toggle_alteration(ancestry, T_Alteration.add, Predicate.isRelated); break;
 				}									break;
 				case T_Tool.delete:					switch (column) {
-					case k.tools.delete.selection:		await h.ancestries_rebuild_traverse_persistentDelete(get(w_ancestries_grabbed)); break;
-					case k.tools.delete.parent:			this.ancestry_toggle_alteration(ancestry, T_Alteration.delete, Predicate.contains); break;
-					case k.tools.delete.related:		this.ancestry_toggle_alteration(ancestry, T_Alteration.delete, Predicate.isRelated); break;
+					case k.go.delete.selection:		await h.ancestries_rebuild_traverse_persistentDelete(get(w_ancestries_grabbed)); break;
+					case k.go.delete.parent:			this.ancestry_toggle_alteration(ancestry, T_Alteration.delete, Predicate.contains); break;
+					case k.go.delete.related:		this.ancestry_toggle_alteration(ancestry, T_Alteration.delete, Predicate.isRelated); break;
 				}									break;
 				case T_Tool.move:					switch (column) {
-					case k.tools.move.up:				grabs.latest_rebuild_persistentMoveUp_maybe( true, false, true, false); break;
-					case k.tools.move.down:				grabs.latest_rebuild_persistentMoveUp_maybe(false, false, true, false); break;
-					case k.tools.move.left:				await h.ancestry_rebuild_persistentMoveRight(ancestry, false, false, true, false, false); break;
-					case k.tools.move.right:			await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, true, false, false); break;
+					case k.go.move.up:				grabs.latest_rebuild_persistentMoveUp_maybe( true, false, true, false); break;
+					case k.go.move.down:				grabs.latest_rebuild_persistentMoveUp_maybe(false, false, true, false); break;
+					case k.go.move.left:				await h.ancestry_rebuild_persistentMoveRight(ancestry, false, false, true, false, false); break;
+					case k.go.move.right:			await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, true, false, false); break;
 				}									break;
 				case T_Tool.list:						await h.ancestry_toggle_expansion(ancestry); break;
 				case T_Tool.show:					switch (column) {
-					case k.tools.show.selection:		grabs.latest_assureIsVisible(); break;
-					case k.tools.show.root:				h.rootAncestry.becomeFocus(); break;
-					case k.tools.show.all:				layout.expandAll(); layout.grand_build(); break;
+					case k.go.show.selection:		grabs.latest_assureIsVisible(); break;
+					case k.go.show.root:				h.rootAncestry.becomeFocus(); break;
+					case k.go.show.all:				layout.expandAll(); layout.grand_build(); break;
 				}									break;
 				case T_Tool.graph:						w.user_graph_offset_setTo(Point.zero); break;
 			}
@@ -221,34 +221,34 @@ export class Events {
 			const disable_revealConceal = no_children || is_root || (layout.inRadialMode && ancestry.isFocus);
 			switch (t_tool) {
 				case T_Tool.browse:					switch (column) {
-					case k.tools.browse.left:			return is_root;
-					case k.tools.browse.up:				return no_siblings;
-					case k.tools.browse.down:			return no_siblings;
-					case k.tools.browse.right:			return no_children;
+					case k.go.browse.left:			return is_root;
+					case k.go.browse.up:				return no_siblings;
+					case k.go.browse.down:			return no_siblings;
+					case k.go.browse.right:			return no_children;
 				}									break;
 				case T_Tool.add:					switch (column) {
-					case k.tools.add.child:				return is_altering;
-					case k.tools.add.sibling:			return is_altering;
-					case k.tools.add.line:				return is_altering || is_root;
-					case k.tools.add.parent:			return is_root;
-					case k.tools.add.related:			return false;
+					case k.go.add.child:				return is_altering;
+					case k.go.add.sibling:			return is_altering;
+					case k.go.add.line:				return is_altering || is_root;
+					case k.go.add.parent:			return is_root;
+					case k.go.add.related:			return false;
 				}									break;
 				case T_Tool.delete:					switch (column) {
-					case k.tools.delete.selection:		return is_altering || is_root;
-					case k.tools.delete.parent:			return !ancestry.hasParents_ofKind(T_Predicate.contains);
-					case k.tools.delete.related:		return !ancestry.hasParents_ofKind(T_Predicate.isRelated);
+					case k.go.delete.selection:		return is_altering || is_root;
+					case k.go.delete.parent:			return !ancestry.hasParents_ofKind(T_Predicate.contains);
+					case k.go.delete.related:		return !ancestry.hasParents_ofKind(T_Predicate.isRelated);
 				}									break;
 				case T_Tool.move:					switch (column) {
-					case k.tools.move.left:				return is_root;
-					case k.tools.move.up:				return no_siblings;
-					case k.tools.move.down:				return no_siblings;
-					case k.tools.move.right:			return is_root;
+					case k.go.move.left:				return is_root;
+					case k.go.move.up:				return no_siblings;
+					case k.go.move.down:				return no_siblings;
+					case k.go.move.right:			return is_root;
 				}									break;
 				case T_Tool.list:						return disable_revealConceal;
 				case T_Tool.show:					switch (column) {
-					case k.tools.show.selection:		return ancestry.isVisible;
-					case k.tools.show.root:				return h.rootAncestry?.isVisible ?? false;
-					case k.tools.show.all:				return layout.isAllExpanded;
+					case k.go.show.selection:		return ancestry.isVisible;
+					case k.go.show.root:				return h.rootAncestry?.isVisible ?? false;
+					case k.go.show.all:				return layout.isAllExpanded;
 				}									break;
 				case T_Tool.graph:						return get(w_user_graph_offset).isZero;
 			}
