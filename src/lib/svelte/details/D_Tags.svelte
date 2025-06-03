@@ -1,27 +1,20 @@
 <script lang='ts'>
+    import { k, grabs, T_Request, S_Mouse, Point, T_Direction } from '../../ts/common/Global_Imports';
     import { w_tag_things, w_thing_tags, w_tag_thing_index } from '../../ts/common/Stores';
-    import { k, grabs, T_Request, S_Mouse, Point } from '../../ts/common/Global_Imports';
     import Next_Previous from '../kit/Next_Previous.svelte';
 	import { s_details } from '../../ts/state/S_Details';
 	import Separator from '../kit/Separator.svelte';
+    
+    $: name = `thing ${$w_tag_thing_index + 1} (of ${$w_tag_things.length})`;
 
-    enum E_NextPrevious {
-        tag = 'tag',
-        thing = 'thing'
-    }
-
-	function handleClick_onNextPrevious(kind: E_NextPrevious, t_request: T_Request, s_mouse: S_Mouse, column: number): any {
-		const ids = ['previous', 'next'];
+	function handleClick_onNextPrevious(t_request: T_Request, s_mouse: S_Mouse, column: number): any {
 		switch (t_request) {
-            case T_Request.name:	   return ids[column];
+            case T_Request.name:	   return T_Direction[column];
 			case T_Request.is_visible: return true;
 			case T_Request.handle_click:
                 const next = column == 1;
                 if (s_mouse.isDown) {
-                    switch (kind) {
-                        case E_NextPrevious.tag:   s_details.select_nextTag(next);   break;
-                        case E_NextPrevious.thing: s_details.select_nextThing(next); break;
-                    }
+                    s_details.select_nextThing(next);
                 }
 		}
 		return false;
@@ -35,37 +28,32 @@
         style='
             width: 100%;
             position:relative;
-            text-align: center;'>
+            text-align: center;
+            font-size:{k.font_size.ultra_small}px;'>
         {#if !$w_thing_tags || $w_thing_tags.length == 0}
             <p style='text-align: center;'>no tags</p>
         {:else}
-            <Next_Previous
-                show_box={false}
-                has_title={true}
-                add_wings={false}
-                origin={new Point(3, 2)}
-                name={E_NextPrevious.thing}
-                width={k.width_details - 20}
-                separator_thickness={k.thickness.separator.ultra_thin}
-                closure={(t_request, s_mouse, column) => handleClick_onNextPrevious(E_NextPrevious.thing, t_request, s_mouse, column)}/>
             <div
                 class='tags-list'
                 style='
-                    top:20px;
+                    top:3px;
                     margin: 0;
                     display: flex;
                     padding: 0 10px;
                     position:relative;
-                    width:{k.width_details - 20}px;
-                    justify-content: space-between;
-                    font-size:{k.font_size.smallest}px;'>
-                <span style='text-align: left;'>
-                    {$w_tag_thing_index + 1} (of {$w_tag_things.length})
-                </span>
-                <span style='text-align: right;'>
-                    {$w_thing_tags.map(t => t.type).join(', ')}
-                </span>
+                    justify-content: center;
+                    width:{k.width_details - 30}px;'>
+                {$w_thing_tags.map(t => t.type).join(', ')}
             </div>
+            <Next_Previous
+                name={name}
+                show_box={true}
+                has_title={true}
+                add_wings={false}
+                origin={new Point(23, 22)}
+                width={k.width_details - 60}
+                closure={handleClick_onNextPrevious}
+                separator_thickness={k.thickness.separator.ultra_thin}/>
         {/if}
     </div>
 {/key}

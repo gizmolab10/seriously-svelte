@@ -1,7 +1,7 @@
 import { show } from '../managers/Visibility';
 import { builds } from './Builds';
 
-const dot_size = 13;
+const dot_size = 14;
 const row_height = 20;
 const banner_height = 18;
 
@@ -58,10 +58,11 @@ export default class Constants {
 	};
 
 	font_size = {
-		smallest: dot_size - 3,
-		smaller:  dot_size - 0.7,
-		small:	  dot_size,
-		common:	  dot_size + 1,
+		ultra_small: dot_size - 5,
+		smallest:	 dot_size - 4,
+		smaller:	 dot_size - 1.7,
+		small:		 dot_size - 1,
+		common:		 dot_size,
 	}; 
 
 	opacity = {

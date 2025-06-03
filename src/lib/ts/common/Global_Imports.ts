@@ -7,6 +7,7 @@ import G_Cluster from '../layout/G_Cluster';
 import G_Segment from '../layout/G_Segment';
 import G_Widget from '../layout/G_Widget';
 
+import { T_Direction } from './Enumerations';
 import { T_Timer } from '../signals/Mouse_Timer';
 import { T_Quadrant, T_Orientation } from './Angle';
 import { G_Paging, G_Thing_Pages } from '../layout/G_Paging';
@@ -74,24 +75,32 @@ import { transparentize } from 'color2k';
 import interact from 'interactjs';
 
 export {
-	T_Timer, Mouse_Timer,
+	Mouse_Timer,
+	Angle, Direction, 
 	e, c, h, k, p, u, ux, w,
 	interact, transparentize,
+	debug, Debug, ErrorTrace,
 	wrappers, Seriously_Range,
 	Rect, Size, Point, svgPaths,
 	Ancestry, Hierarchy, databases,
+	Access, Predicate, Relationship,
+	colors, layout, radial, signals,
+	busy, show, files, grabs, builds, 
+	Tag, User, Persistable, Thing, Trait,
+	
 	S_Common, S_Rotation, S_Resizing,
-	debug, Debug, T_Debug, ErrorTrace,
-	T_Persistable, T_Persistence, T_Request,
-	Angle, Direction, T_Quadrant, T_Orientation,
-	T_Element, Svelte_Wrapper, T_SvelteComponent,
 	S_Mouse, S_Widget, S_Element, S_Alteration, S_Text_Edit,
+	
 	G_Widget, G_Segment, G_TreeLine, G_TreeBranches, G_Titles,
 	G_Paging, G_Cluster, G_RadialGraph, G_Thing_Pages, G_ArcSlider,
+	
+	T_Debug, T_Timer, T_Signal,
+	T_Quadrant, T_Orientation, T_Direction,
+	T_Banner, T_Details, T_Startup, T_Graph,
+	T_Persistable, T_Persistence, T_Request,
+	T_Order, T_File_Format, T_File_Operation,
+	T_Element, Svelte_Wrapper, T_SvelteComponent,
+	T_Tool, T_Control, T_Browser, T_Info, T_Storage_Need,
 	T_Layer, T_Curve, T_Create, T_RingZone, T_Oblong, T_Alteration,
-	T_Tool, T_Control, T_Browser, T_Signal, T_Info, T_Storage_Need,
 	T_Thing, T_Trait, T_Widget, T_Predicate, T_Kinship, T_Preference,
-	busy, show, files, grabs, builds, colors, layout, radial, signals,
-	Tag, User, Persistable, Thing, Trait, Access, Predicate, Relationship,
-	T_Order, T_File_Format, T_File_Operation, T_Banner, T_Details, T_Startup, T_Graph,
 };

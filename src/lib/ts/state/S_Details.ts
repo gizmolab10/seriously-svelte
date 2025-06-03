@@ -1,8 +1,8 @@
-import { h, grabs, Ancestry, T_Details, Tag, Trait, T_Trait, Thing, T_Info } from '../common/Global_Imports';
 import { w_t_database, w_ancestry_focus, w_ancestries_grabbed, w_hierarchy } from '../common/Stores';
 import { w_show_details_ofType, w_show_traits_ofType, w_show_info_ofType } from '../common/Stores';
 import { w_tag_things, w_thing_tags, w_thing_traits, w_tag_thing_index } from '../common/Stores';
-import { T_Direction } from '../common/Enumerations';
+import { T_Info, T_Trait, T_Details, T_Direction } from '../common/Global_Imports';
+import { h, Tag, grabs, Trait, Thing, Ancestry } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
 class S_Identifiables<T> {
@@ -38,6 +38,7 @@ class S_Details {
 	number_ofDetails = 0;
 
 	constructor() {
+		this.update();
 		w_t_database.subscribe((type: string) => {
 			this.update();
 		});
@@ -53,7 +54,6 @@ class S_Details {
 		w_show_details_ofType.subscribe((t_details: Array<T_Details>) => {
 			this.number_ofDetails = t_details?.length ?? 0;
 		});
-		this.update();
 	}
 
 	private update() {
@@ -140,6 +140,7 @@ class S_Details {
 	
 	select_nextThing(next: boolean) {
 		if (!!h && this.s_things.find_next_item(next)) {	// alters thing, and index_ofItem, both are used below
+			// this.update();
 			this.thing?.ancestry?.grabOnly();		// causes reaction (invoking update())
 			grabs.latest_assureIsVisible();
 			w_hierarchy.set(h);
@@ -173,7 +174,8 @@ class S_Details {
 	
 	select_nextTag(next: boolean) {
 		if (this.s_tags.find_next_item(next)) {
-			const ancestry = this.tag?.ownerAt(0)?.ancestry;
+			this.update();
+			const ancestry = this.thing?.ancestry;
 			if (!!h && !!ancestry) {
 				ancestry.grabOnly();
 				grabs.latest_assureIsVisible();

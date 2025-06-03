@@ -1,6 +1,5 @@
 <script lang='ts'>
-	import { k, Point, T_Request, S_Mouse } from '../../ts/common/Global_Imports';
-	import { T_Direction } from '../../ts/common/Enumerations';
+	import { k, Point, S_Mouse, T_Request, T_Direction } from '../../ts/common/Global_Imports';
 	import Buttons_Row from '../buttons/Buttons_Row.svelte';
 	export let closure: (t_request: T_Request, s_mouse: S_Mouse, column: number) => any;
 	export let separator_thickness = k.thickness.separator.thick;

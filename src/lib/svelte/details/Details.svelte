@@ -1,7 +1,6 @@
 <script lang='ts'>
-	import { k, Point, T_Layer, T_Details, T_Info } from '../../ts/common/Global_Imports';
-	import { w_graph_rect, w_show_info_ofType } from '../../ts/common/Stores';
-	import { T_Direction } from '../../ts/common/Enumerations';
+	import { k, Point, T_Layer, T_Details, T_Info, T_Direction } from '../../ts/common/Global_Imports';
+	import { w_graph_rect } from '../../ts/common/Stores';
 	import Separator from '../kit/Separator.svelte';
 	import D_Display from './D_Display.svelte';
 	import D_Storage from './D_Storage.svelte';
