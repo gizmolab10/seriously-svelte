@@ -33,17 +33,17 @@
 	<Hideable t_details={T_Details.header} has_banner={false} height={26}>
 		<D_Header/>
 	</Hideable>
-	<Hideable t_details={T_Details.storage}>
-		<D_Storage/>
-	</Hideable>
 	<Hideable t_details={T_Details.tools} extra_titles={info_titles} isToggle={true}>
 		<D_Tools/>
+	</Hideable>
+	<Hideable t_details={T_Details.info}>
+		<D_Info/>
 	</Hideable>
 	<Hideable t_details={T_Details.display}>
 		<D_Display/>
 	</Hideable>
-	<Hideable t_details={T_Details.info}>
-		<D_Info/>
+	<Hideable t_details={T_Details.storage}>
+		<D_Storage/>
 	</Hideable>
 	<Hideable t_details={T_Details.tags} extra_titles={next_previous_titles}>
 		<D_Tags/>
