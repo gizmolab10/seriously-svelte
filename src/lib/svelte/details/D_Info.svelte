@@ -1,10 +1,10 @@
 <script lang='ts'>
-	import { w_background_color, w_show_info_ofType, w_show_details_ofType } from '../../ts/common/Stores';
 	import { T_Thing, T_Trait, T_Layer, T_Element, T_Info, T_Preference } from '../../ts/common/Global_Imports';
 	import { w_ancestry_focus, w_ancestries_grabbed, w_relationship_order } from '../../ts/common/Stores';
 	import { grabs, debug, colors, signals, layout, Ancestry } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { c, k, p, ux, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
+	import { w_background_color, w_show_details_ofType } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import type { Integer } from '../../ts/common/Types';
 	import Text_Table from '../kit/Text_Table.svelte';
@@ -26,7 +26,7 @@
 
 	$: $w_show_details_ofType, layout_forColor();
 	$: $w_relationship_order, update_forAncestry();
-	$: $w_show_info_ofType, $w_ancestries_grabbed, $w_ancestry_focus, $w_thing_title, update_forKind_ofInfo();
+	$: $w_ancestries_grabbed, $w_ancestry_focus, $w_thing_title, update_forKind_ofInfo();
 
 	onMount(() => {
 		update_forKind_ofInfo();

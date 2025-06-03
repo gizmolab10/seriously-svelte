@@ -1,8 +1,8 @@
 import { w_t_database, w_ancestry_focus, w_ancestries_grabbed, w_hierarchy } from '../common/Stores';
-import { w_show_details_ofType, w_show_traits_ofType, w_show_info_ofType } from '../common/Stores';
 import { w_tag_things, w_thing_tags, w_thing_traits, w_tag_thing_index } from '../common/Stores';
 import { T_Info, T_Trait, T_Details, T_Direction, k } from '../common/Global_Imports';
 import { h, Tag, grabs, Trait, Thing, Ancestry } from '../common/Global_Imports';
+import { w_show_details_ofType, w_show_traits_ofType } from '../common/Stores';
 import { get } from 'svelte/store';
 
 class S_Identifiables<T> {
@@ -68,25 +68,9 @@ class S_Details {
 		const next = T_Direction.next === selected_title as unknown as T_Direction;
 		const t_details = T_Details[banner_title as keyof typeof T_Details];
 		switch (t_details) {
-			case T_Details.go:  this.update_forInfoType(selected_title); break;
 			case T_Details.traits: this.select_nextTrait(next); break;
 			case T_Details.tags:   this.select_nextTag(next); break;
 		}
-	}
-	
-	static readonly _____INFO: unique symbol;
-
-	update_forInfoType(title: string) {
-		let t_info = get(w_show_info_ofType);
-		if (title != t_info) {
-			t_info = title as T_Info;
-		} else {
-			switch (title) {
-				case T_Info.focus:	   t_info = T_Info.selection; break;
-				case T_Info.selection: t_info = T_Info.focus;	  break;
-			}
-		}
-		w_show_info_ofType.set(t_info);
 	}
 	
 	static readonly _____TRAITS: unique symbol;

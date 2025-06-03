@@ -18,7 +18,7 @@
 	export let margin = 0;
 	const line_left = isHorizontal ? origin.x + margin : origin.x - thickness / 2;
 	const title_width = u.getWidth_ofString_withSize(title ?? k.empty, `${title_font_size}px`);
-	let thin_line_color = colors.separatorFor('brown');
+	let thin_line_color = colors.separatorFor('#aaaaaa');
 	let separator_color = colors.separator;
 	let title_top = 0;
 

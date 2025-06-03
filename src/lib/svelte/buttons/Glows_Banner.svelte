@@ -1,13 +1,12 @@
 <script lang='ts'>
     import { k, Rect, Size, Point, colors, T_Info } from '../../ts/common/Global_Imports';
-    import { w_show_info_ofType, w_background_color } from '../../ts/common/Stores';
+    import { w_background_color } from '../../ts/common/Stores';
 	import { s_details } from '../../ts/state/S_Details';
     import Separator from '../kit/Separator.svelte';
     import G_Repeater from '../../ts/layout/G_Repeater';
     import Glow_Button from './Glow_Button.svelte';
 	export let toggle_hidden: (title: string) => boolean;
     export let font_size = s_details.font_size;
-    export let isToggle = false;
     export let titles: string[];
     export let height: number;
     export let width: number;
@@ -22,7 +21,6 @@
     //  first	button is the widest, at the left
 
     $: $w_background_color, banner_color = colors.bannerFor($w_background_color);
-    $: selected_title = $w_show_info_ofType;
 
     function intercept_click(title: string): boolean {
         if (title === titles[0]) {
@@ -57,7 +55,7 @@
             position={index === 0 ? 'absolute' : 'relative'}/>
         {#if index > 0}
             <Separator
-				length={height + 5}
+				length={height + 6}
 				isHorizontal={false}
             thickness={k.thickness.separator.ultra_thin}
                 corner_radius={k.radius.gull_wings.ultra_thin}

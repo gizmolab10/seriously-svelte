@@ -2,7 +2,7 @@
 	import { T_Tool, T_Layer, T_Request, T_Predicate, T_Alteration, T_Info } from '../../ts/common/Global_Imports';
 	import { w_s_alteration, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
 	import { e, k, show, Size, Point, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
-	import { w_show_info_ofType, w_show_details_ofType } from '../../ts/common/Stores';
+	import { w_show_details_ofType } from '../../ts/common/Stores';
 	import { w_user_graph_offset } from '../../ts/common/Stores';
 	import Buttons_Grid from '../buttons/Buttons_Grid.svelte';
 	import { s_details } from '../../ts/state/S_Details';
@@ -27,14 +27,13 @@
     $: top, tools_top = top + (has_title ? 3 : -13);
     $: $w_s_alteration, reattachments += 1;
 
-	$:	w_show_info_ofType,
-		$w_show_details_ofType,
+	$:	$w_show_details_ofType,
 		$w_user_graph_offset,
 		$w_ancestries_grabbed,
 		$w_ancestries_expanded,
 		update_button_titles();
 
-	function name_ofToolAt(t_tool: number, column: number): string { return Object.keys(k.go[T_Tool[t_tool]])[column]; }
+	function name_ofToolAt(t_tool: number, column: number): string { return Object.keys(k.actions[T_Tool[t_tool]])[column]; }
 
 	function name_for(t_tool: number, column: number) {
 		const titles = button_titles[t_tool];
@@ -92,16 +91,16 @@
 
 {#key reattachments}
 	<div
-		class='go'
+		class='actions'
 		style='
 			width: 100%;
 			top:{tools_top}px;
 			position:relative;
-			z-index:{T_Layer.go}'>
+			z-index:{T_Layer.actions}'>
 		<Buttons_Grid
 			gap={3}
 			columns={5}
-			name='go'
+			name='actions'
 			show_box={show_box}
 			has_title={has_title}
 			font_sizes={font_sizes}
@@ -118,7 +117,7 @@
 					position:relative;
 					text-align:center;
 					top:{show_box ? 120 : 58}px;
-					z-index:{T_Layer.go + 1};
+					z-index:{T_Layer.actions + 1};
 					font-size:{k.font_size.smallest}px;'>
 				To <em>{$w_s_alteration.t_alteration}</em> an item as <em>{target_ofAlteration() ?? k.unknown}</em>
 				<br> to <strong>{ancestry.title}</strong>

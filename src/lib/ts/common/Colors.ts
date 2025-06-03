@@ -9,10 +9,10 @@ export class Colors {
     default_forThings = 'blue';
 
 	opacitize(color: string, amount: number): string { return transparentize(color, 1 - amount); }
-	separatorFor(background: string): string { return this.blend('#eeeee0', background);}
-	bannerFor(background: string): string { return this.blend('#f8f8f8', background, 3.3);}
+	separatorFor(background: string): string { return this.blend('#dedede', background);}
+	bannerFor(background: string): string { return this.blend('#ffffff', background, 4);}
 
-	blend(color: string, background: string, saturation: number = 5): string {
+	blend(color: string, background: string, saturation: number = 7): string {
 		if (!this.colors_areIdentical(background, this.background)) {
 			const separator = this.multiply_saturationOf_by(background, saturation);
 			if (!!separator) {
@@ -70,6 +70,17 @@ export class Colors {
 	}
 
 	static readonly _____LUMINANCE: unique symbol;
+
+	private limit_luminance_to(color: string, maximum: number): string | null {
+		const rgba = this.color_toRGBA(color);
+		if (!!rgba) {
+			const lume = this.luminance_ofRGBA(rgba);
+			if (!!lume) {
+				return this.set_darkness_toRGBA(rgba, 1 - Math.min(maximum, lume));
+			}
+		}
+		return null;
+	}
 	
 	private darkerBy(color: string, ratio: number): string | null {
 		return this.adjust_luminance_byApplying(color, (lume => {
@@ -139,17 +150,20 @@ export class Colors {
 
 	private adjust_RGBA_forDarkness(rgba: RGBA, targetDarkness: number): {result: RGBA | null, error: Error | null} {
 		
-		///////////////////////////////////////////////////////////////////////////////////
-		// Adjusts an RGBA color so that its "perceived darkness" 
-		//		equals the given target darkness.
-		// returns an Error if a valid adjustment cannot be computed.
-		//  Darkness is defined here as:
-		// 	 darkness = 1 - (a * Y + (1 - a) * 1)
-		//  where Y is the relative luminance computed from the linearized sRGB values.
-		// 
-		//  The function scales the color channels (preserving hue/saturation) such that:
-		// 	 Y_new = 1 - (targetDarkness / a)
-		///////////////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////////////////
+		//																				//
+		// Adjusts an RGBA color so that its "perceived darkness"						//
+		//		equals the given target darkness.										//
+		// returns an Error if a valid adjustment cannot be computed.					//
+		//																				//
+		//  Darkness is defined here as:												//
+		// 	 darkness = 1 - (a * Y + (1 - a) * 1)										//
+		//  where Y is the relative luminance computed from the linearized sRGB values.	//
+		//																				//
+		//  scales the color channels (preserving hue/saturation) such that:			//
+		// 	 Y_new = 1 - (targetDarkness / a)											//
+		//																				//
+		//////////////////////////////////////////////////////////////////////////////////
 
 		const r = rgba.r;
 		const g = rgba.g;

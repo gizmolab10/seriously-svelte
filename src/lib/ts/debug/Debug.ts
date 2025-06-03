@@ -29,7 +29,7 @@ export enum T_Debug {
 	hover			= 'hover',
 	order			= 'order',		// observe relocating
 	trace			= 'trace',
-	go			= 'go',		// state logic of add parent tool
+	actions			= 'actions',		// state logic of add parent tool
 	edit			= 'edit',		// state machine for editing
 	grab			= 'grab',
 	thing			= 'thing',
@@ -46,7 +46,7 @@ export class Debug {
 	get thing(): boolean { return this.hasOption(T_Debug.thing); }
 	get graph(): boolean { return this.hasOption(T_Debug.graph); }
 	get lines(): boolean { return this.hasOption(T_Debug.lines); }
-	get go(): boolean { return this.hasOption(T_Debug.go); }
+	get actions(): boolean { return this.hasOption(T_Debug.actions); }
 	get trace(): boolean { return this.hasOption(T_Debug.trace); }
 	get cursor(): boolean { return this.hasOption(T_Debug.cursor); }
 	get radial(): boolean { return this.hasOption(T_Debug.radial); }
@@ -65,7 +65,7 @@ export class Debug {
 	log_hover(message: string) { this.log_maybe(T_Debug.hover, message); }
 	log_lines(message: string) { this.log_maybe(T_Debug.lines, message); }
 	log_mouse(message: string) { this.log_maybe(T_Debug.mouse, message); }
-	log_tools(message: string) { this.log_maybe(T_Debug.go, message); }
+	log_tools(message: string) { this.log_maybe(T_Debug.actions, message); }
 	log_action(message: string) { this.log_maybe(T_Debug.action, message); }
 	log_colors(message: string) { this.log_maybe(T_Debug.colors, message); }
 	log_crumbs(message: string) { this.log_maybe(T_Debug.crumbs, message); }
@@ -122,7 +122,7 @@ export class Debug {
 					case 'lines': this.flags.push(T_Debug.lines); break;
 					case 'mouse': this.flags.push(T_Debug.mouse); break;
 					case 'order': this.flags.push(T_Debug.order); break;
-					case 'go': this.flags.push(T_Debug.go); break;
+					case 'actions': this.flags.push(T_Debug.actions); break;
 					case 'trace': this.flags.push(T_Debug.trace); break;
 					case 'edit': this.flags.push(T_Debug.edit); break;
 					case 'grab': this.flags.push(T_Debug.grab); break;

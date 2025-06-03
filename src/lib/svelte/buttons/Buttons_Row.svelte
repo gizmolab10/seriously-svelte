@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, ux, Point, colors, signals, T_Request, T_Element, S_Element } from '../../ts/common/Global_Imports';
-	import { w_show_info_ofType, w_count_button_restyle } from '../../ts/common/Stores';
+	import { w_count_button_restyle } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
     import G_Repeater from '../../ts/layout/G_Repeater';
 	import Separator from '../kit/Separator.svelte';
@@ -46,7 +46,6 @@
 	//////////////////////////////////////////////////////////////
 
     update_es_buttons();
-	$: $w_show_info_ofType, update_es_buttons();
 
 	onMount(() => {
 		const handle_tool_update = signals.handle_tool_update(0, () => {

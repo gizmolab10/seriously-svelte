@@ -1,5 +1,5 @@
 import { Tag, Rect, Point, Thing, Trait, colors, Ancestry, Hierarchy } from '../common/Global_Imports';
-import { T_Info, T_Graph, T_Trait, T_Kinship, T_Details, T_Startup } from '../common/Global_Imports';
+import { T_Graph, T_Trait, T_Kinship, T_Details, T_Startup } from '../common/Global_Imports';
 import { G_Paging, G_Cluster, S_Text_Edit, S_Alteration } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
 
@@ -11,7 +11,6 @@ export const w_show_details_ofType		 = writable<Array<T_Details>>();
 export const w_show_traits_ofType		 = writable<Array<T_Trait>>();
 export const w_show_directionals_ofType	 = writable<string[]>();
 export const w_show_graph_ofType		 = writable<T_Graph>();
-export const w_show_info_ofType			 = writable<T_Info>();
 export const w_show_details_asStack		 = writable<boolean>();
 export const w_show_related				 = writable<boolean>();
 export const w_show_details				 = writable<boolean>();

@@ -19,7 +19,6 @@
 	export let color = colors.default;
 	export let position = 'absolute';
 	export let zindex = T_Layer.dots;
-	export let isToggle = false;
 	export let style = k.empty;
 	export let name = k.empty;
 	let border = k.empty;

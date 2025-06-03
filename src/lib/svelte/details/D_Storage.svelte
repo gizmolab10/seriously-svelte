@@ -53,7 +53,7 @@
 	function setup_s_elements() {
 		const ids = [...storage_ids, ...format_ids];
 		for (const id of ids) {
-			const es_storage = ux.s_element_for(null, T_Element.storage, id);
+			const es_storage = ux.s_element_for(null, T_Element.data, id);
 			es_storage.set_forHovering(colors.default, 'pointer');
 			s_element_byStorageType[id] = es_storage;
 		}
@@ -106,7 +106,7 @@
 
 </script>
 
-<div class='storage-details'
+<div class='data-details'
 	style='
 		height:40px;
 		padding:5px;'>
@@ -117,20 +117,20 @@
 		height={k.height.controls}
 		origin={new Point(22, top + 2)}
 		selection_closure={handle_db_selection}/>
-	<div class='storage-details'
+	<div class='data-details'
 		style='
 			width: 100%;
 			font-size:{k.font_size.smaller}px;'>
 		<Text_Table
 			top={top + 18}
 			row_height={11}
-			name='storage-table'
+			name='data-table'
 			array={storage_details}
 			font_size={k.font_size.small - 1}/>
 		{#key $w_storage_updated}
 			{#if h.total_dirty_count != 0}
 				{#if busy.isDatabaseBusy}
-					<div class='storage-spinner'
+					<div class='data-spinner'
 						style="position: absolute; left: 163px; top: 107px;">
 						<Spinner />
 					</div>
@@ -161,6 +161,6 @@
 			closure={handle_toolRequest}
 			button_height={k.height.button}
 			separator_thickness={k.thickness.separator.ultra_thin}
-			name={`storage-${(ux.T_Storage_Need == T_Storage_Need.direction) ? 'action' : 'format'}`}/>
+			name={`data-${(ux.T_Storage_Need == T_Storage_Need.direction) ? 'action' : 'format'}`}/>
 	{/key}
 </div>

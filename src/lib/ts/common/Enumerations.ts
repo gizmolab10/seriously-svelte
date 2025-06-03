@@ -13,8 +13,8 @@ export enum T_Banner {
 
 export enum T_Details {
 	header,
-	storage,
-	go,
+	data,
+	actions,
 	display,
 	thing,
 	tags,
@@ -42,7 +42,7 @@ export enum T_Layer {
 	widgets,
 	dots,
 	text,
-	go,
+	actions,
 	tool_buttons,
 	details,
 	frontmost,
@@ -226,7 +226,7 @@ export enum T_Element {
 	radial_focus = 'radial_focus',
 	breadcrumb 	 = 'breadcrumb',
 	control		 = 'control',
-	storage		 = 'storage',
+	data		 = 'data',
 	reveal		 = 'reveal',
 	widget		 = 'widget',
 	button		 = 'button',

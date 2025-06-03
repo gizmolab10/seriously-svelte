@@ -33,7 +33,7 @@
 	<Hideable t_details={T_Details.header} hasBanner={false} height={26}>
 		<D_Header/>
 	</Hideable>
-	<Hideable t_details={T_Details.go} extra_titles={info_titles} isToggle={true}>
+	<Hideable t_details={T_Details.actions}>
 		<D_Tools/>
 	</Hideable>
 	<Hideable t_details={T_Details.thing}>
@@ -45,7 +45,7 @@
 	<Hideable t_details={T_Details.traits} extra_titles={next_previous_titles}>
 		<D_Traits/>
 	</Hideable>
-	<Hideable t_details={T_Details.storage}>
+	<Hideable t_details={T_Details.data}>
 		<D_Storage/>
 	</Hideable>
 	<Hideable t_details={T_Details.display} isBottom={true}>

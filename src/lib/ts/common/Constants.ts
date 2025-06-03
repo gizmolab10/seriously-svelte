@@ -110,8 +110,8 @@ export default class Constants {
 		},
 		detail: {
 			header:	  50,
-			storage: 142,
-			go:	  () => { return show.tool_boxes ? 229 : 146; },
+			data: 142,
+			actions:	  () => { return show.tool_boxes ? 229 : 146; },
 			display:  77,
 			thing:	 230,
 			traits:	   0,
@@ -129,7 +129,7 @@ export default class Constants {
 		},
 	};
 
-	go = {
+	actions = {
 		browse: {
 			left: 0,
 			up: 1,
