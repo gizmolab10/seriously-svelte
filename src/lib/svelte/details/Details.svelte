@@ -3,12 +3,12 @@
 	import { w_graph_rect } from '../../ts/common/Stores';
 	import Separator from '../kit/Separator.svelte';
 	import D_Display from './D_Display.svelte';
-	import D_Storage from './D_Storage.svelte';
+	import D_Databases from './D_Databases.svelte';
 	import Hideable from './Hideable.svelte';
 	import D_Header from './D_Header.svelte';
 	import D_Traits from './D_Traits.svelte';
-	import D_Tools from './D_Tools.svelte';
-	import D_Info from './D_Info.svelte';
+	import D_Actions from './D_Actions.svelte';
+	import D_Thing from './D_Thing.svelte';
 	import D_Tags from './D_Tags.svelte';
 	const width = k.width_details;
 	const separator_top = $w_graph_rect.origin.y - 2;
@@ -33,10 +33,10 @@
 		<D_Header/>
 	</Hideable>
 	<Hideable t_details={T_Details.actions}>
-		<D_Tools/>
+		<D_Actions/>
 	</Hideable>
 	<Hideable t_details={T_Details.thing}>
-		<D_Info/>
+		<D_Thing/>
 	</Hideable>
 	<Hideable t_details={T_Details.tags} extra_titles={next_previous_titles}>
 		<D_Tags/>
@@ -45,7 +45,7 @@
 		<D_Traits/>
 	</Hideable>
 	<Hideable t_details={T_Details.database}>
-		<D_Storage/>
+		<D_Databases/>
 	</Hideable>
 	<Hideable t_details={T_Details.display} isBottom={true}>
 		<D_Display/>
