@@ -64,11 +64,13 @@
 
 	function svgPath_update() {
 		const thing = ancestry.thing;
-		const has_innerDot = thing.isBulkAlias;
-		offsetFor_innerDot = has_innerDot ? 0 : -1;
-		svgPathFor_revealDot = ancestry.svgPathFor_revealDot;
-		svgPathFor_outer_tinyDots = ancestry.svgPathFor_tinyDots_outsideReveal(points_toChild);
-		svgPathFor_innerDot = has_innerDot ? svgPaths.circle_atOffset(k.height.dot, 3) : null;
+		if (!!thing) {
+			const has_innerDot = thing.isBulkAlias;
+			offsetFor_innerDot = has_innerDot ? 0 : -1;
+			svgPathFor_revealDot = ancestry.svgPathFor_revealDot;
+			svgPathFor_innerDot = has_innerDot ? svgPaths.circle_atOffset(k.height.dot, 3) : null;
+			svgPathFor_outer_tinyDots = ancestry.svgPathFor_tinyDots_outsideReveal(points_toChild);
+		}
 	}
 
 	function up_hover_closure(s_mouse) {

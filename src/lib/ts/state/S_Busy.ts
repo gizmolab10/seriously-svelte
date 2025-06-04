@@ -27,10 +27,10 @@ export class S_Busy {
 		this.isPersisting = wasPersisting;
 	}
 
-	temporarily_set_isFetching_while(closure: () => void) {
+	async temporarily_set_isFetching_while(closure: () => Promise<void>) {
 		const wasFetching = this.isFetching;
 		this.isFetching = true;
-		closure();
+		await closure();
 		this.isFetching = wasFetching;
 	}
 

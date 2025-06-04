@@ -92,8 +92,8 @@ export default class DBCommon {
 		}
 	}
 
-	fetch_all_fromLocal() {
-		busy.temporarily_set_isFetching_while(async () => {
+	async fetch_all_fromLocal() {
+		await busy.temporarily_set_isFetching_while(async () => {
 			for (const t_persistable of Persistable.t_persistables) {
 				const array = p.readDB_key(t_persistable.toLowerCase()) as Array<Dictionary>;
 				if (!!array) {

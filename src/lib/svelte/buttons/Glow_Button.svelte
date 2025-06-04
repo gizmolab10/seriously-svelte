@@ -9,6 +9,7 @@
     export let isSelected: boolean = false;
     export let font_size: number = k.font_size.smaller;
     const glow_rect = Rect.createWHRect(width, height);
+    const gradient_name = 'glow-' + title;
     let banner_color = colors.bannerFor($w_background_color);
 
     $: $w_background_color, banner_color = colors.bannerFor($w_background_color);
@@ -19,7 +20,7 @@
 	class='glow'
 	style='position: relative;'>
     <SVG_Gradient
-        name={title}
+        name={gradient_name}
         color={banner_color}
         size={glow_rect.size}
         isInverted={!isSelected}

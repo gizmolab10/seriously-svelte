@@ -41,7 +41,7 @@ export default class DBAirtable extends DBCommon {
 	// async remove_all() {}	// only remove json from localStorage
 
 	async fetch_all() {
-		busy.temporarily_set_isFetching_while(async () => {
+		await busy.temporarily_set_isFetching_while(async () => {
 			await this.things_fetch_all();
 			await this.traits_fetch_all();
 			await this.predicates_fetch_all();

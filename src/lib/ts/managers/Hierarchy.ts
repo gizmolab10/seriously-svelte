@@ -1351,7 +1351,7 @@ export class Hierarchy {
 				case T_File_Format.json:
 					const dict = result as Dictionary;
 					if (!!dict) {
-						await this.extract_fromDict(dict);
+						await this.extract_fromJSONDict(dict);
 					}
 					break;
 			}
@@ -1497,7 +1497,7 @@ export class Hierarchy {
 
 	extract_fromCSV_Dict(dict: Dictionary) { pivot.extract_fromDict(dict); }
 
-	async extract_fromDict(dict: Dictionary) {
+	async extract_fromJSONDict(dict: Dictionary) {
 		const idRoot = dict.id ?? dict.hid ?? dict.idRoot;				// cheapo backwards compatibility
 		if (this.replace_rootID == null) {	
 			this.extract_allTypes_ofObjects_fromDict(dict);				// extract

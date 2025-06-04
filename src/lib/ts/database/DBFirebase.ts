@@ -61,7 +61,7 @@ export default class DBFirebase extends DBCommon {
 	static readonly _____FETCH: unique symbol;
 
 	async fetch_all() {
-		busy.temporarily_set_isFetching_while(async () => {
+		await busy.temporarily_set_isFetching_while(async () => {
 			await this.recordLoginIP();
 			await this.documents_fetch_ofType(T_Persistable.predicates);
 			await this.hierarchy_fetch_forID(this.idBase);
