@@ -16,15 +16,15 @@
 	export let align_left = true;
 	export let add_wings = true;
 	export let has_title = true;	// true means first row_titles is the title of the row
-	export let show_box = false;
+	export let has_seperator = false;
 	export let name = k.empty;
 	export let width: number;
 	export let margin = 0;
 	export let gap = 2;
 	const solo_title_width = 34;
-	const front_margin = show_box ? 0 : solo_title_width;
+	const front_margin = has_seperator ? 0 : solo_title_width;
 	const button_titles = has_title ? row_titles.slice(1) : row_titles;
-	const g_repeater = new G_Repeater(button_titles, button_height, width - front_margin, margin, gap, true, font_sizes[0]);
+	const g_repeater = new G_Repeater(button_titles, button_height, width - front_margin, margin, gap, 8, true, font_sizes[0]);
 	const es_button_byColumn: { [key: number]: S_Element } = {};
 	const button_portion = g_repeater.button_portion;
 	const columns = button_titles.length;
@@ -36,7 +36,7 @@
 	//			 one row of buttons, plus options				//
 	//															//
 	//	has_title:		true means first one is row title		//
-	//	show_box:		true means line through row title		//
+	//	has_seperator:		true means line through row title		//
 	//															//
 	//	row_titles		no buttons: if only one and has title	//
 	//	font_sizes:		[title_font_size, button_font_size] 	//
@@ -89,7 +89,7 @@
 		height:{button_height}px;
 		width:{width - (margin * 2)}px;'>
 	{#if has_title}
-		{#if show_box}
+		{#if has_seperator}
 			<Separator
 				length={width}
 				title={row_title}
@@ -117,8 +117,8 @@
 			<div class='buttons-array'
 				style='
 					position:absolute;
-					top:{show_box ? 9 : 0}px;
-					left:{margin + (show_box ? 0 : solo_title_width)}px;'>
+					top:{has_seperator ? 10 : 0}px;
+					left:{margin + (has_seperator ? 0 : solo_title_width)}px;'>
 				{#each button_titles as title, column}
 					<Button
 						height={button_height}

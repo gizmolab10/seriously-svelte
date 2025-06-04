@@ -3,7 +3,7 @@
 	import { w_show_details_ofType } from '../../ts/common/Stores';
 	import { w_ancestries_grabbed, w_ancestry_focus } from '../../ts/common/Stores';
 	import { w_graph_rect, w_device_isMobile } from '../../ts/common/Stores';
-	import { T_Details, T_Info } from '../../ts/common/Global_Imports';
+	import { T_Details } from '../../ts/common/Global_Imports';
 	const segmented_top = 20;
     let reattachments = 0;
 

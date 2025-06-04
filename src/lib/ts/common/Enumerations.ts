@@ -13,7 +13,7 @@ export enum T_Banner {
 
 export enum T_Details {
 	header,
-	data,
+	database,
 	actions,
 	display,
 	thing,
@@ -56,13 +56,8 @@ export enum T_Graph {
 }
 
 export enum T_Direction {
-	previous = 'previous',
-	next	 = 'next',
-}
-
-export enum T_Info {
-	selection = 'selection',
-	focus	  = 'focus',
+	previous = '<',
+	next	 = '>',
 }
 
 export enum T_Alteration {
@@ -225,8 +220,8 @@ export enum T_Trait {
 export enum T_Element {
 	radial_focus = 'radial_focus',
 	breadcrumb 	 = 'breadcrumb',
+	database	 = 'database',
 	control		 = 'control',
-	data		 = 'data',
 	reveal		 = 'reveal',
 	widget		 = 'widget',
 	button		 = 'button',

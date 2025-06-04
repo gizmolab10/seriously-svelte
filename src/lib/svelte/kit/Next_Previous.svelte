@@ -6,27 +6,28 @@
 	export let height = k.height.controls;
 	export let hasBothEnds = true;
 	export let has_title = false;
-	export let show_box = false;
+	export let has_seperator = false;
 	export let add_wings = true;
 	export let name = k.empty;
 	export let origin: Point;
 	export let width = 144;
+	export let margin = 0;
 	const base_titles = [T_Direction.previous, T_Direction.next];
 	const row_titles = has_title ? [name, ...base_titles] : base_titles;
 </script>
 
 <Buttons_Row
-	margin=0
+	gap={4}
 	width={width}
+	margin={margin}
 	origin={origin}
 	closure={closure}
-	gap={6}
-	show_box={show_box}
 	has_title={has_title}
 	add_wings={add_wings}
 	button_height={height}
 	row_titles={row_titles}
 	hasBothEnds={hasBothEnds}
+	has_seperator={has_seperator}
 	name={'previous-next-' + name}
 	separator_thickness={separator_thickness}
 	font_sizes={[k.font_size.smallest, k.font_size.smaller]}/>

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { T_Thing, T_Trait, T_Layer, T_Element, T_Info, T_Preference } from '../../ts/common/Global_Imports';
+	import { T_Thing, T_Trait, T_Layer, T_Element, T_Preference } from '../../ts/common/Global_Imports';
 	import { w_ancestry_focus, w_ancestries_grabbed, w_relationship_order } from '../../ts/common/Stores';
 	import { grabs, debug, colors, signals, layout, Ancestry } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/common/Stores';

@@ -23,10 +23,11 @@ export default class G_Repeater {
 	//															//
 	//////////////////////////////////////////////////////////////
 
-	constructor(titles: string[], height: number, width: number, margin: number, gap: number, proportionate: boolean, font_size: number) {
+	constructor(titles: string[], height: number, width: number, margin: number, gap: number, padding: number, proportionate: boolean, font_size: number) {
 		this.proportionate = proportionate;
 		this.columns = titles.length;
 		this.font_size = font_size;
+		this.padding = padding;
 		this.titles = titles;
 		this.height = height;
 		this.margin = margin;
@@ -41,7 +42,7 @@ export default class G_Repeater {
 		}
 		if (column === 0) {			// first button: add up all the title widths and adjust
 			const other_buttons_width = this.title_widths.slice(1).reduce((acc, width) => acc + width + this.padding * 2, 0);
-			return this.width - other_buttons_width - this.margin * 2 - this.gap - this.padding + 2;
+			return this.width - other_buttons_width - this.margin * 2 - this.gap - this.padding;
 		}
 		return this.title_widths[column] + this.padding * 2;
 	}

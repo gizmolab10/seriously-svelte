@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { T_Tool, T_Layer, T_Request, T_Predicate, T_Alteration, T_Info } from '../../ts/common/Global_Imports';
+	import { T_Tool, T_Layer, T_Request, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
 	import { w_s_alteration, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
 	import { e, k, show, Size, Point, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
 	import { w_show_details_ofType } from '../../ts/common/Stores';
@@ -10,8 +10,8 @@
 	import { getContext } from 'svelte';
 	export let top = 0;
 	const has_title = true;
-	const show_box = show.tool_boxes;
-    const font_sizes = [k.font_size.smallest, show_box ? k.font_size.smaller : k.font_size.smallest];
+	const has_seperator = show.tool_boxes;
+    const font_sizes = [k.font_size.smallest, has_seperator ? k.font_size.smaller : k.font_size.smallest];
 	let ancestry = s_details.ancestry;
 	let list_title = ancestry?.isExpanded && layout.inTreeMode ? 'conceal' : 'reveal';
 	let button_titles = compute_button_titles();
@@ -101,11 +101,11 @@
 			gap={3}
 			columns={5}
 			name='actions'
-			show_box={show_box}
 			has_title={has_title}
 			font_sizes={font_sizes}
-			width={k.width_details - 12}
+			width={k.width_details - 14}
 			closure={handle_toolRequest}
+			has_seperator={has_seperator}
 			button_titles={button_titles}
 			button_height={k.height.button}/>
 		{#if $w_s_alteration}
@@ -116,7 +116,7 @@
 					display:block;
 					position:relative;
 					text-align:center;
-					top:{show_box ? 120 : 58}px;
+					top:{has_seperator ? 120 : 58}px;
 					z-index:{T_Layer.actions + 1};
 					font-size:{k.font_size.smallest}px;'>
 				To <em>{$w_s_alteration.t_alteration}</em> an item as <em>{target_ofAlteration() ?? k.unknown}</em>

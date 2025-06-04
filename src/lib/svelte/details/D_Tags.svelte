@@ -4,6 +4,8 @@
     import Next_Previous from '../kit/Next_Previous.svelte';
 	import { s_details } from '../../ts/state/S_Details';
 	import Separator from '../kit/Separator.svelte';
+    const padding = 10;
+    const width = 100;
     
     $: name = `thing ${$w_tag_thing_index + 1} (of ${$w_tag_things.length})`;
 
@@ -39,21 +41,22 @@
                     top:3px;
                     margin: 0;
                     display: flex;
-                    padding: 0 10px;
                     position:relative;
+                    padding: 0 {padding}px;
                     justify-content: center;
                     width:{k.width_details - 30}px;'>
                 {$w_thing_tags.map(t => t.type).join(', ')}
             </div>
             <Next_Previous
                 name={name}
-                show_box={true}
+                margin={28}
+                width={width}
                 has_title={true}
                 add_wings={false}
-                origin={new Point(53, 22)}
-                width={k.width_details - 120}
+                has_seperator={true}
                 closure={handleClick_onNextPrevious}
-                separator_thickness={k.thickness.separator.ultra_thin}/>
+                separator_thickness={k.thickness.separator.ultra_thin}
+                origin={new Point((k.width_details - width - padding) / 2, 24)}/>
         {/if}
     </div>
 {/key}

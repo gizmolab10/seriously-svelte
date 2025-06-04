@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, Point, T_Layer, T_Details, T_Info, T_Direction } from '../../ts/common/Global_Imports';
+	import { k, Point, T_Layer, T_Details, T_Direction } from '../../ts/common/Global_Imports';
 	import { w_graph_rect } from '../../ts/common/Stores';
 	import Separator from '../kit/Separator.svelte';
 	import D_Display from './D_Display.svelte';
@@ -12,7 +12,6 @@
 	import D_Tags from './D_Tags.svelte';
 	const width = k.width_details;
 	const separator_top = $w_graph_rect.origin.y - 2;
-	const info_titles = [T_Info.focus, T_Info.selection];
 	const next_previous_titles = [T_Direction.previous, T_Direction.next];
 
 </script>
@@ -45,7 +44,7 @@
 	<Hideable t_details={T_Details.traits} extra_titles={next_previous_titles}>
 		<D_Traits/>
 	</Hideable>
-	<Hideable t_details={T_Details.data}>
+	<Hideable t_details={T_Details.database}>
 		<D_Storage/>
 	</Hideable>
 	<Hideable t_details={T_Details.display} isBottom={true}>

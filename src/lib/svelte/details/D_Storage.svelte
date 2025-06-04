@@ -45,15 +45,15 @@
 	function row_titles() {
 		switch (ux.T_Storage_Need) {
 			case T_Storage_Need.direction: return ['from or to a local file', ...storage_ids];
-			case T_Storage_Need.format: return ['choose a file format', ...format_ids];
-			case T_Storage_Need.busy: return [`${storage_choice}ing...`];
+			case T_Storage_Need.format:	   return ['choose a file format', ...format_ids];
+			case T_Storage_Need.busy:	   return [`${storage_choice}ing...`];
 		}
 	}
 	
 	function setup_s_elements() {
 		const ids = [...storage_ids, ...format_ids];
 		for (const id of ids) {
-			const es_storage = ux.s_element_for(null, T_Element.data, id);
+			const es_storage = ux.s_element_for(null, T_Element.database, id);
 			es_storage.set_forHovering(colors.default, 'pointer');
 			s_element_byStorageType[id] = es_storage;
 		}
@@ -152,8 +152,8 @@
 	{#key ux.T_Storage_Need}
 		<Buttons_Row
 			gap={4}
-			margin={10}
-			show_box={true}
+			margin={60}
+			has_seperator={true}
 			font_sizes={font_sizes}
 			width={k.width_details}
 			row_titles={row_titles()}

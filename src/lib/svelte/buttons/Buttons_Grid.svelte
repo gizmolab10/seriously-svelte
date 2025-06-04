@@ -7,13 +7,13 @@
     export let button_titles: string[][];
     export let font_sizes: number[];
     export let has_title = true;        // false means all titles are buttons, true means first one is row title
-    export let show_box = true;         // false means row titles precede buttons
+    export let has_seperator = true;         // false means row titles precede buttons
     export let button_height = 15;
 	export let name = k.empty;
     export let width: number;
     export let gap = 2;
 	const rows = button_titles.length;
-    const box_top = (has_title && show_box) ? 12 : 0;
+    const box_top = (has_title && has_seperator) ? 12 : 0;
     
     function button_origin_for(row: number): Point { return Point.y(row * (button_height + gap + box_top)); }
 
@@ -32,9 +32,9 @@
                 width={width}
                 box_top={box_top}
                 row_titles={titles}
-                show_box={show_box}
                 has_title={has_title}
                 font_sizes={font_sizes}
+                has_seperator={has_seperator}
                 button_height={button_height}
                 origin={button_origin_for(row)}
                 name={`${name}-grid-${T_Tool[row]}`}

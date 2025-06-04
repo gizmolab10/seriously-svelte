@@ -1,6 +1,6 @@
 import { w_show_countDots_ofType, w_show_details, w_show_related, w_device_isMobile } from '../common/Stores';
 import { c, k, p, w, layout, T_Preference } from '../common/Global_Imports';
-import { T_Info, T_Kinship } from '../common/Enumerations';
+import { T_Kinship } from '../common/Enumerations';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
 
