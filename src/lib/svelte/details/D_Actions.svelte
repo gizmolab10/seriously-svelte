@@ -71,7 +71,7 @@
 			['move', 'left', 'up', 'down', 'right'],
 			['list', `${list_title}`],
 			['show', 'selection', 'root', 'all'],
-			['graph', 'center'],
+			['graph', 'center', 'go to root', 'one list'],
 		];
 	}
 

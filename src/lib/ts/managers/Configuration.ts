@@ -1,6 +1,5 @@
 import { e, k, p, u, w, show, debug, layout, databases } from '../common/Global_Imports';
 import { stores, w_device_isMobile } from '../common/Stores';
-import MobileDetect from 'mobile-detect';
 
 export class Configuration {
 
@@ -21,7 +20,7 @@ export class Configuration {
 		//												//
 		//////////////////////////////////////////////////
 
-		w_device_isMobile.set(this.device_isMobile);
+		w_device_isMobile.set(u.device_isMobile);
 		debug.queryStrings_apply();						// debugging
 		stores.setup_defaults();
 		show.restore_state();							// local persistance
@@ -56,11 +55,6 @@ export class Configuration {
 	get isServerLocal(): boolean {
 		const hostname = window.location.hostname;
 		return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "0.0.0.0";
-	}
-
-	get device_isMobile(): boolean {
-		const md = new MobileDetect(window.navigator.userAgent);
-		return !!md.mobile();
 	}
 
 	get siteTitle(): string {

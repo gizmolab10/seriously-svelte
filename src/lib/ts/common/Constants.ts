@@ -1,9 +1,10 @@
 import { show } from '../managers/Visibility';
+import { tu } from './Testworthy_Utilities';
 import { builds } from './Builds';
 
 const dot_size = 14;
 const row_height = 20;
-const banner_height = 18;
+const banner_height = tu.device_isMobile ? 32 : 20;
 
 export default class Constants {
 	details_margin = 0;
@@ -164,6 +165,8 @@ export default class Constants {
 		},
 		graph: {
 			center: 0,
+			root: 1,
+			one_list: 2,
 		},
 	};
 

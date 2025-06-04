@@ -43,7 +43,7 @@
 {#key trigger}
 	{#each things as thing, index}
 		{#if index > 0}
-			<div class='crumb-separator'
+			<div class='crumb-tweener'
 				style='
 					top:3.5px;
 					position:absolute;
@@ -60,6 +60,7 @@
 {/key}
 <Separator
 	isHorizontal={false}
+	has_thin_divider={false}
 	origin={new Point(2, 2)}
 	margin={k.details_margin}
 	zindex={T_Layer.frontmost}
@@ -68,6 +69,7 @@
 	corner_radius={k.radius.gull_wings.thick}/>
 <Separator
 	isHorizontal={false}
+	has_thin_divider={false}
 	margin={k.details_margin}
 	length={k.height.banner.crumbs + 12}
 	thickness={k.thickness.separator.thick}

@@ -3,6 +3,7 @@
 import Identifiable from '../runtime/Identifiable';
 import { T_Browser } from './Enumerations';
 import type { Dictionary } from './Types';
+import MobileDetect from 'mobile-detect';
 import { T_Quadrant } from './Angle';
 import { Point } from './Geometry';
 import Angle from './Angle';
@@ -14,6 +15,11 @@ export class Testworthy_Utilities {
 	onNextCycle_apply(closure: () => {})								 { setTimeout(() => { closure(); }, 0); }
 	location_ofMouseEvent(event: MouseEvent):					   Point { return new Point(event.clientX, event.clientY); }
 	quadrant_ofAngle(angle: number):						  T_Quadrant { return new Angle(angle).quadrant_ofAngle; }
+
+	get device_isMobile(): boolean {
+		const md = new MobileDetect(window.navigator.userAgent);
+		return !!md.mobile();
+	}
 
 	// remove item from a dictionary at the index
 	// assuming it has string keys and number values
