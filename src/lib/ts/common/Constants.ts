@@ -15,8 +15,8 @@ export default class Constants {
 	separator_title_left = 0;
 	editingTools_diameter = 64;
 	hid_unknown = 1000000000000;
-	build_number = builds.latest;
 	diameterOf_outer_tinyDots = 19;
+	build_number = builds.build_number;
 	prevent_selection_style = '-webkit-user-select: none; user-select: none; -moz-user-select: none';
 	name_bulkAdmin = 'Jonathan Sand';
 	cursor_default = 'default';
@@ -108,65 +108,6 @@ export default class Constants {
 			crumbs:	  banner_height,
 			details:  banner_height,
 			graph:	  0,
-		},
-		detail: {
-			header:	  50,
-			data: 142,
-			actions:	  () => { return show.tool_boxes ? 229 : 146; },
-			display:  77,
-			thing:	 230,
-			traits:	   0,
-		},
-		thing: {
-			segments:	  22,
-			before_title:  5,
-			title:		  22,
-			after_title:   4,
-			table:		 130,
-			color:		  20,
-			traits:		   2,
-			consequence:  50,
-			quest:		  50,
-		},
-	};
-
-	actions = {
-		browse: {
-			left: 0,
-			up: 1,
-			down: 2,
-			right: 3,
-		},
-		add: {
-			child: 0,
-			sibling: 1,
-			line: 2,
-			parent: 3,
-			related: 4,
-		},
-		delete: {
-			selection: 0,
-			parent: 1,
-			related: 2,
-		},
-		move: {
-			left: 0,
-			up: 1,
-			down: 2,
-			right: 3,
-		},
-		list: {
-			expand: 0,
-		},
-		show: {
-			selection: 0,
-			root: 1,
-			all: 2,
-		},
-		graph: {
-			center: 0,
-			root: 1,
-			one_list: 2,
 		},
 	};
 

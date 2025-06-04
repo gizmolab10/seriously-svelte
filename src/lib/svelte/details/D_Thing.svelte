@@ -14,7 +14,7 @@
 	const id = 'thing';
 	const separator_font_size = k.font_size.smallest;
 	const es_info = ux.s_element_for(new Identifiable(id), T_Element.thing, id);
-	let ancestry: Ancestry | null = grabs.ancestry_forInfo;
+	let ancestry: Ancestry | null = grabs.latest;
 	let thing: Thing | null = ancestry?.thing ?? null;
 	let thingHID: Integer | null = thing?.hid;
 	let color = colors.default_forThings;
@@ -26,18 +26,13 @@
 
 	$: $w_show_details_ofType, layout_forColor();
 	$: $w_relationship_order, update_forAncestry();
-	$: $w_ancestries_grabbed, $w_ancestry_focus, $w_thing_title, update_forKind_ofInfo();
+	$: $w_ancestries_grabbed, $w_ancestry_focus, $w_thing_title, update_forAncestry();
 
 	onMount(() => {
-		update_forKind_ofInfo();
+		update_forAncestry();
 		layout_forColor();
 		es_info.set_forHovering(colors.default, 'pointer');
 	});
-
-	function update_forKind_ofInfo() {
-		grabs.update_forKind_ofInfo()
-		update_forAncestry();
-	}
 
 	function layout_forColor() {
 		if (!!info_table) {
@@ -57,7 +52,7 @@
 	}
 
 	function update_forAncestry() {
-		ancestry = grabs.ancestry_forInfo;
+		ancestry = grabs.latest;
 		thing = ancestry?.thing;
 		if (!!thing) {
 			thing_title = thing.title;

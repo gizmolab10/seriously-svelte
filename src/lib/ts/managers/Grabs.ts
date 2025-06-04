@@ -6,9 +6,8 @@ export class Grabs {
 
 	// hierarchy depends on grabs, so we can't use h here
 
-	ancestry_forInfo: Ancestry | null = get(w_hierarchy)?.rootAncestry ?? null;
-	get latest_grab(): Ancestry | null { return this.latest_upward(true); }
 	get latest_thing(): Thing | null { return this.latest?.thing || null; }
+	get latest(): Ancestry | null { return this.latest_upward(true); }
 
 	get areInvisible(): boolean {
 		const ancestries = get(w_ancestries_grabbed) ?? [];
@@ -20,21 +19,10 @@ export class Grabs {
 		return false;
 	}
 
-	get latest(): Ancestry | null {
-		const ancestry = this.latest_upward(false);
-		const relationshipHID = ancestry?.relationship?.hid;
-		if (!!relationshipHID && !!get(w_hierarchy).relationship_forHID(relationshipHID)) {
-			return ancestry;
-		}
-		return null;
-	}
-
-	get user_selected_ancestry(): Ancestry {
+	get ancestry_forFile(): Ancestry {
 		const focus = get(w_ancestry_focus);
 		let grabbed = grabs.latest;
-		if (!!focus && (show.isShowing_FocusInfo)) {
-			return focus;
-		} else if (!!grabbed) {
+		if (!!grabbed) {
 			return grabbed;
 		} else if (!!focus) {
 			return focus;
@@ -84,23 +72,6 @@ export class Grabs {
 		if (!!ancestry) {
 			get(w_hierarchy).ancestry_rebuild_persistentMoveUp_maybe(ancestry, up, SHIFT, OPTION, EXTREME);
 		}
-	}
-
-	update_forKind_ofInfo() {
-		if (show.isShowing_FocusInfo || !this.hasGrabs) {
-			this.ancestry_forInfo = get(w_ancestry_focus);
-		} else {
-			const latest_grab = this.latest_upward(true);
-			if (!!latest_grab) {
-				this.ancestry_forInfo = latest_grab;
-			}
-		}
-	}
-
-	private get hasGrabs(): boolean {
-		const grabbed = get(w_ancestries_grabbed);
-		if (!grabbed || grabbed.length === 0) { return false; }
-		return !(get(w_ancestry_focus)?.isGrabbed ?? true);
 	}
 	
 	static readonly _____GRAB: unique symbol;

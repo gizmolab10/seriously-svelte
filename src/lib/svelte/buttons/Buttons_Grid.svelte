@@ -6,8 +6,8 @@
     export let closure: (t_request: T_Request, s_mouse: S_Mouse, row: number, column: number) => boolean;
     export let button_titles: string[][];
     export let font_sizes: number[];
-    export let has_title = true;        // false means all titles are buttons, true means first one is row title
-    export let has_seperator = true;         // false means row titles precede buttons
+    export let has_title = true;              // false means all titles are buttons, true means first one is row title
+    export let has_seperator = false;         // false means row titles precede buttons
     export let button_height = 15;
 	export let name = k.empty;
     export let width: number;

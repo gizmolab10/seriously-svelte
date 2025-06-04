@@ -16,19 +16,19 @@ export enum T_Details {
 	database,
 	actions,
 	display,
-	thing,
+	selection,
 	tags,
 	traits,
 }
 
 export enum T_Tool {
 	browse,
+	focus,
+	reveal,
 	add,
 	delete,
 	move,
-	list,
-	show,
-	graph,
+	center,
 }
 
 export enum T_Layer {

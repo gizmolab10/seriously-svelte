@@ -1294,7 +1294,7 @@ export class Hierarchy {
 	static readonly _____FILES: unique symbol;
 
 	persistRoot_toFile(format: T_File_Format) { this.persist_fromAncestry_toFile(this.rootAncestry, format); }
-	persist_toFile(format: T_File_Format) { this.persist_fromAncestry_toFile(grabs.user_selected_ancestry, format); }
+	persist_toFile(format: T_File_Format) { this.persist_fromAncestry_toFile(grabs.latest_forFile, format); }
 
 	data_fromAncestry_toSave(ancestry: Ancestry): Dictionary {
 		return ancestry.isRoot ? this.all_data : this.progeny_dataFor(ancestry);
@@ -1502,7 +1502,7 @@ export class Hierarchy {
 		if (this.replace_rootID == null) {	
 			this.extract_allTypes_ofObjects_fromDict(dict);				// extract
 			const child = this.thing_forHID(idRoot.hash());				// relationship: adds it as child to the grab or focus
-			await grabs.user_selected_ancestry.ancestry_persistentCreateUnique_byAddingThing(child);
+			await grabs.latest_forFile.ancestry_persistentCreateUnique_byAddingThing(child);
 		} else {														// on launch or import with SHIFT-O
 			this.forget_all();											// retain predicates: same across all dbs
 			await this.db.remove_all();									// firebase deletes document (called dbid/name)

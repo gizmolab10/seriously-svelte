@@ -128,7 +128,7 @@ export class Builds {
 		11 : ['August 8, 2023', 'display build number'],
 		10 : ['August 2, 2023', 'refactor Panel into Startup'],
 	}
-	latest: string = Object.keys(this.notes).slice(-1)[0];		// needed for builds button. grab the keys, then grab the last of them
+	build_number: string = Object.keys(this.notes).slice(-1)[0];		// needed for builds button. grab the keys, then grab the last of them
 
 }
 

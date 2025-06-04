@@ -7,12 +7,7 @@
 	const segmented_top = 20;
     let reattachments = 0;
 
-	$: $w_ancestry_focus, $w_ancestries_grabbed, update_forKind_ofInfo();
-
-	function update_forKind_ofInfo() {
-		grabs.update_forKind_ofInfo();
-		reattachments += 1;
-	}
+	$: $w_ancestry_focus, $w_ancestries_grabbed, reattachments += 1;
 
 </script>
 
@@ -24,6 +19,6 @@
 		text-align:center;
 		width:{k.width_details}px;
 		font-size:{k.font_size.common}px;'>
-		{grabs.ancestry_forInfo?.thing?.title.clipWithEllipsisAt(30)}
+		{grabs.latest_thing?.title.clipWithEllipsisAt(30)}
 	</div>
 {/key}
