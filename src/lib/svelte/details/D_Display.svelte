@@ -4,6 +4,7 @@
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
 	import Color from '../kit/Color.svelte';
+	import Foo from '../kit/Foo.svelte';
 	export let top = 0;
 	const color_left = 60
 	const picker_offset = `-117px`;
@@ -36,7 +37,7 @@
 		title_left={k.separator_title_left}
 		title_font_size={separator_font_size}
 		thickness={k.thickness.separator.ultra_thin}/>
-	<Segmented
+	<Foo
 		titles={titles}
 		allow_none={true}
 		allow_multiple={true}
