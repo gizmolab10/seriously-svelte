@@ -67,13 +67,14 @@
 				es_breadcrumb={es_breadcrumb(index, thing)}/>
 		{/each}
 	{/key}
-	<div class='separator-above-crumbs' style='
-		height: {k.thickness.separator.thick}px;
-		background-color:{separator_color};
-		position: absolute;
-		width:100%;
-		top: 0px;'>
-	</div>
+	<Separator
+		add_wings={false}
+		isHorizontal={true}
+		has_thin_divider={false}
+		origin={new Point(0, 0)}
+		length={w.windowSize.width}
+		thickness={k.thickness.separator.thick}
+		corner_radius={k.radius.gull_wings.thick}/>
 	<Separator
 		isHorizontal={false}
 		has_thin_divider={false}
@@ -90,11 +91,12 @@
 		thickness={k.thickness.separator.thick}
 		corner_radius={k.radius.gull_wings.thick}
 		origin={new Point(w.windowSize.width - 2, 2)}/>
-	<div class='separator-below-crumbs' style='
-		height: {k.thickness.separator.thick}px;
-		top:{layout.breadcrumbs_height - 4}px;
-		background-color:{separator_color};
-		position: absolute;
-		width:100%;'>
-	</div>
+	<Separator
+		add_wings={false}
+		isHorizontal={true}
+		has_thin_divider={false}
+		origin={new Point(0, layout.breadcrumbs_height - 4)}
+		length={w.windowSize.width}
+		thickness={k.thickness.separator.thick}
+		corner_radius={k.radius.gull_wings.thick}/>
 </div>
