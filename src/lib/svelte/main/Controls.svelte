@@ -9,11 +9,12 @@
 	import Segmented from '../mouse/Segmented.svelte';
 	import Button from '../buttons/Button.svelte';
 	import SVG_D3 from '../kit/SVG_D3.svelte';
+	import Box from '../kit/Box.svelte';
 	import { onMount } from 'svelte';
 	const details_top = k.height.dot / 2;
 	const y_center = details_top + 3.5;
 	const size_small = k.height.button;
-	const rights = [0, 55, 110, 140];
+	const rights = [1, 56, 110, 140];
 	const size_big = size_small + 4;
 	const lefts = [18, 30, 110];
 	const resize_viewBox = `0, 0, ${size_big}, ${size_big}`;
@@ -80,119 +81,127 @@
 
 {#if Object.values(es_control_byType).length > 0}
 	{#key width}
-		<div id='controls'
-			style='
-				top: 0.7px;
-				left: 0px;
+		<Box
+			name='controls'
+			color={colors.separator}
+			width={w.windowSize.width}
+			height={layout.graph_top - 2}
+			thickness={k.thickness.separator.thick}
+			corner_radius={k.radius.gull_wings.thick}>
+			<div style='
 				position: absolute;
-				z-index: {T_Layer.frontmost};
-				height: `${layout.height_ofBannerAt(T_Banner.controls) - 2}px`;'>
-			{#if !$w_popupView_id}
+				top: 5px;
+				left: 6px;
+				width: 100%;
+				height: 100%;
+				z-index: {T_Layer.frontmost};'>
+				{#if !$w_popupView_id}
+					{#key $w_background_color}
+						<Button
+							border_thickness=0
+							color='transparent'
+							name='details-toggle'
+							detect_longClick={true}
+							center={new Point(lefts[0], details_top + 5)}
+							es_button={es_control_byType[T_Control.details]}
+							closure={(s_mouse) => handle_s_mouse_forControl_Type(s_mouse, T_Control.details)}>
+							<img src='settings.svg' alt='circular button' width={size_small}px height={size_small}px/>
+						</Button>
+					{/key}
+					{#key $w_show_graph_ofType}
+						<Segmented
+							origin={Point.x(lefts[1])}
+							selected={[$w_show_graph_ofType]}
+							name='graph-type-selector'
+							titles={[T_Graph.tree, T_Graph.radial]}
+							selection_closure={(titles) => layout.handle_mode_selection('graph', titles)}/>
+						{#if layout.inTreeMode}
+							{#key $w_show_tree_ofType}
+								<Segmented
+									origin={Point.x(lefts[2])}
+									allow_multiple={true}
+									name='tree-type-selector'
+									selected={$w_show_tree_ofType}
+									titles={[T_Kinship.child, T_Kinship.parent, T_Kinship.related, T_Kinship.tags]}
+									selection_closure={(titles) => layout.handle_mode_selection('tree', titles)}/>
+							{/key}
+						{/if}
+					{/key}
+					{#key displayName}
+						<div style='
+							width:{displayName_width + 20}px;
+							left:{displayName_x}px;
+							position:absolute;'>
+							{displayName}
+						</div>
+					{/key}
+				{/if}
+				{#key $w_device_isMobile}
+					{#if $w_device_isMobile}
+						{#if isVisible_forType[T_Control.smaller]}
+							<Button
+								width={size_big}
+								height={size_big}
+								name={T_Control.smaller}
+								center={new Point(width - rights[2], y_center)}
+								es_button={es_control_byType[T_Control.smaller]}
+								closure={(s_mouse) => handle_s_mouse_forControl_Type(s_mouse, T_Control.smaller)}>
+								<svg
+									id='shrink-svg'>
+									<path
+										stroke=colors.default
+										fill=transparent
+										id='shrink-path'
+										d={svgPaths.dash(size_big, 2)}/>
+								</svg>
+							</Button>
+						{/if}
+						{#if isVisible_forType[T_Control.bigger]}
+							<Button
+								width={size_big}
+								height={size_big}
+								name={T_Control.bigger}
+								center={new Point(width - rights[3], y_center)}
+								es_button={es_control_byType[T_Control.bigger]}
+								closure={(s_mouse) => handle_s_mouse_forControl_Type(s_mouse, T_Control.bigger)}>
+								<svg
+									id='enlarge-svg'>
+									<path
+										stroke=colors.default
+										fill=transparent
+										id='enlarge-path'
+										d={svgPaths.t_cross(size_big, 2)}/>
+								</svg>
+							</Button>
+						{/if}
+					{/if}
+				{/key}
 				{#key $w_background_color}
-					<Button
-						border_thickness=0
-						color='transparent'
-						name='details-toggle'
-						detect_longClick={true}
-						center={new Point(lefts[0], details_top + 5)}
-						es_button={es_control_byType[T_Control.details]}
-						closure={(s_mouse) => handle_s_mouse_forControl_Type(s_mouse, T_Control.details)}>
-						<img src='settings.svg' alt='circular button' width={size_small}px height={size_small}px/>
+					<Button name={T_Control.builds}
+						width=75
+						height={size_big}
+						center={new Point(width - rights[1], y_center)}
+						es_button={es_control_byType[T_Control.builds]}
+						closure={(s_mouse) => handle_s_mouse_forControl_Type(s_mouse, T_Control.builds)}>
+						<span style='font-family: {$w_thing_fontFamily};'>
+							{'build ' + k.build_number}
+						</span>
+					</Button>
+					<Button name={T_Control.help}
+						width={size_big}
+						height={size_big}
+						center={new Point(width - rights[0], y_center)}
+						es_button={es_control_byType[T_Control.help]}
+						closure={(s_mouse) => handle_s_mouse_forControl_Type(s_mouse, T_Control.help)}>
+						<span
+							style='top:2px;
+								left:5.5px;
+								position:absolute;'>
+							?
+						</span>
 					</Button>
 				{/key}
-				{#key $w_show_graph_ofType}
-					<Segmented
-						origin={Point.x(lefts[1])}
-						selected={[$w_show_graph_ofType]}
-						name='graph-type-selector'
-						titles={[T_Graph.tree, T_Graph.radial]}
-						selection_closure={(titles) => layout.handle_mode_selection('graph', titles)}/>
-					{#if layout.inTreeMode}
-						{#key $w_show_tree_ofType}
-							<Segmented
-								origin={Point.x(lefts[2])}
-								allow_multiple={true}
-								name='tree-type-selector'
-								selected={$w_show_tree_ofType}
-								titles={[T_Kinship.child, T_Kinship.parent, T_Kinship.related, T_Kinship.tags]}
-								selection_closure={(titles) => layout.handle_mode_selection('tree', titles)}/>
-						{/key}
-					{/if}
-				{/key}
-				{#key displayName}
-					<div style='
-						width:{displayName_width + 20}px;
-						left:{displayName_x}px;
-						position:absolute;'>
-						{displayName}
-					</div>
-				{/key}
-			{/if}
-			{#key $w_device_isMobile}
-				{#if $w_device_isMobile}
-					{#if isVisible_forType[T_Control.smaller]}
-						<Button
-							width={size_big}
-							height={size_big}
-							name={T_Control.smaller}
-							center={new Point(width - rights[2], y_center)}
-							es_button={es_control_byType[T_Control.smaller]}
-							closure={(s_mouse) => handle_s_mouse_forControl_Type(s_mouse, T_Control.smaller)}>
-							<svg
-								id='shrink-svg'>
-								<path
-									stroke=colors.default
-									fill=transparent
-									id='shrink-path'
-									d={svgPaths.dash(size_big, 2)}/>
-							</svg>
-						</Button>
-					{/if}
-					{#if isVisible_forType[T_Control.bigger]}
-						<Button
-							width={size_big}
-							height={size_big}
-							name={T_Control.bigger}
-							center={new Point(width - rights[3], y_center)}
-							es_button={es_control_byType[T_Control.bigger]}
-							closure={(s_mouse) => handle_s_mouse_forControl_Type(s_mouse, T_Control.bigger)}>
-							<svg
-								id='enlarge-svg'>
-								<path
-									stroke=colors.default
-									fill=transparent
-									id='enlarge-path'
-									d={svgPaths.t_cross(size_big, 2)}/>
-							</svg>
-						</Button>
-					{/if}
-				{/if}
-			{/key}
-			{#key $w_background_color}
-				<Button name={T_Control.builds}
-					width=75
-					height={size_big}
-					center={new Point(width - rights[1], y_center)}
-					es_button={es_control_byType[T_Control.builds]}
-					closure={(s_mouse) => handle_s_mouse_forControl_Type(s_mouse, T_Control.builds)}>
-					<span style='font-family: {$w_thing_fontFamily};'>
-						{'build ' + k.build_number}
-					</span>
-				</Button>
-				<Button name={T_Control.help}
-					width={size_big}
-					height={size_big}
-					center={new Point(width - rights[0], y_center)}
-					es_button={es_control_byType[T_Control.help]}
-					closure={(s_mouse) => handle_s_mouse_forControl_Type(s_mouse, T_Control.help)}>
-					<span
-						style='top:2px;
-							left:5.5px;
-							position:absolute;'>
-						?
-					</span>
-				</Button>
-			{/key}
-		</div>
+			</div>
+		</Box>
 	{/key}
 {/if}

@@ -13,7 +13,7 @@ export default class G_Layout {
 	tops_ofBanners: number[] = [];
 	focus_ancestry!: Ancestry;
 
-	get graph_top(): number { return this.banner_height + 10; }
+	get graph_top(): number { return this.banner_height + 17; }
 	get banner_height(): number { return u.device_isMobile ? 32 : 16; }
 	get breadcrumbs_height(): number { return this.banner_height + 14; }
 	get inTreeMode(): boolean { return get(w_show_graph_ofType) == T_Graph.tree; }

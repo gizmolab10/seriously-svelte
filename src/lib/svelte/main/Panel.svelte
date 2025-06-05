@@ -55,15 +55,6 @@
 		{:else if $w_t_startup == T_Startup.ready}
 			<Controls/>
 			{#if !$w_popupView_id}
-				<div class='separator-below-controls' style='
-					height: {k.thickness.separator.thick}px;
-					background-color: {separator_color};
-					top: {layout.graph_top - 4}px;
-					width: {w.windowSize.width}px;
-					z-index: {T_Layer.lines};
-					position: absolute;
-					left: 0px;'>
-				</div>
 				{#if $w_show_details}
 					<Details/>
 				{/if}
