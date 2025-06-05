@@ -11,7 +11,7 @@
 	import D_Thing from './D_Thing.svelte';
 	import D_Tags from './D_Tags.svelte';
 	const width = k.width_details;
-	const separator_top = layout.graph_top - 2;
+	const separator_top = layout.graph_top - 4;
 	const next_previous_titles = [T_Direction.previous, T_Direction.next];
 
 </script>
@@ -58,18 +58,18 @@
 	margin={k.details_margin}
 	zindex={T_Layer.frontmost}
 	thickness={k.thickness.separator.thick}
-	origin={new Point(2, separator_top)}
-	length={$w_graph_rect.size.height + 10}
-	corner_radius={k.radius.gull_wings.thick}/>
+	length={$w_graph_rect.size.height + 12}
+	corner_radius={k.radius.gull_wings.thick}
+	origin={new Point(2, layout.graph_top - 4)}/>
 <Separator
 	hasBothEnds={true}
 	isHorizontal={false}
 	has_thin_divider={false}
 	margin={k.details_margin}
 	thickness={k.thickness.separator.thick}
-	length={$w_graph_rect.size.height + 10}
+	length={$w_graph_rect.size.height + 12}
 	corner_radius={k.radius.gull_wings.thick}
-	origin={new Point(k.width_details - 2, separator_top)}/>
+	origin={new Point(k.width_details - 2, layout.graph_top - 4)}/>
 
 <style>
 
