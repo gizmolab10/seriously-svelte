@@ -1,14 +1,14 @@
-import { h, k, p, u, grabs, signals, Ancestry, G_RadialGraph } from '../common/Global_Imports';
-import { T_Graph, T_Banner, T_Kinship } from '../common/Global_Imports';
+import { T_Graph, T_Banner, T_Kinship, G_RadialGraph } from '../common/Global_Imports';
+import { h, k, p, u, w, grabs, signals, Ancestry } from '../common/Global_Imports';
 import { w_show_tree_ofType, w_show_graph_ofType } from '../common/Stores';
 import { w_show_related, w_ancestry_focus } from '../common/Stores';
 import { get } from 'svelte/store';
 
 export default class G_Layout {
-	branches_visited: string[] = [];
-	tops_ofBanners: number[] = [];
 	parents_focus_ancestry!: Ancestry;
+	branches_visited: string[] = [];
 	_g_radialGraph!: G_RadialGraph;
+	tops_ofBanners: number[] = [];
 	focus_ancestry!: Ancestry;
 
 	get inTreeMode(): boolean { return get(w_show_graph_ofType) == T_Graph.tree; }
@@ -19,6 +19,18 @@ export default class G_Layout {
 	ids_forDB(array: Array<Ancestry>): string { return u.ids_forDB(array).join(', '); }
 	height_ofBannerAt(index: number) { return Object.values(k.height.banner)[index]; }
 	expandAll() { h.rootAncestry.traverse(ancestry => ancestry.expand()); }
+
+	ancestry_place_atCenter(ancestry: Ancestry | null) {
+		if (!ancestry) {	
+			ancestry = h.rootAncestry;
+		}
+		const wrapper = ancestry.titleWrapper;
+		if (!!wrapper) {
+			const rect = wrapper.boundingRect;
+			const center = rect.center;
+			// w.user_graph_offset_setTo(center);
+		}
+	}
 
 	grand_build() {
 		this.grand_layout();

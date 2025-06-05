@@ -12,6 +12,7 @@ export enum T_Database {
 	plugin	 = 'plugin',
 	local	 = 'local',
 	test	 = 'test',
+	dgraph   = 'dgraph'
 }
 
 // CRUD API --> for all databases

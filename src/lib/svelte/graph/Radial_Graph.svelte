@@ -7,7 +7,7 @@
 	import Radial_Focus from './Radial_Focus.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import { onMount } from 'svelte';
-	let toolsOffset = new Point(31, -173.5).offsetBy($w_user_graph_offset.negated);
+	let actionsOffset = new Point(31, -173.5).offsetBy($w_user_graph_offset.negated);
 	let necklace_reattachments = 0;
 
 	//////////////////////////////////////////////
@@ -34,7 +34,7 @@
 	//	displays editing go when asked by user
 	
 	layout.grand_layout();
-	debug.log_tools(` CLUSTERS`);
+	debug.log_actions(` CLUSTERS`);
 
 	onMount(() => {
 		const handle_recreate = signals.handle_reattach_widgets(0, (t_signal, ancestry) => {

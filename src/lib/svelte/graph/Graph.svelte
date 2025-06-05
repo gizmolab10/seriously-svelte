@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { c, k, w, Rect, Point, debug, layout, T_Layer, signals, T_Graph } from '../../ts/common/Global_Imports';
+	import { c, k, Rect, debug, layout, T_Layer, signals, T_Graph } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_show_graph_ofType, w_ancestry_focus } from '../../ts/common/Stores';
-	import { w_device_isMobile, w_user_graph_offset } from '../../ts/common/Stores';
+	import { w_device_isMobile } from '../../ts/common/Stores';
 	import Radial_Graph from '../graph/Radial_Graph.svelte';
 	import Tree_Graph from '../graph/Tree_Graph.svelte';
 	import { onMount } from 'svelte';

@@ -1,7 +1,7 @@
-import { T_Tool, T_File_Format, T_Predicate, T_Alteration, S_Mouse, S_Alteration } from '../common/Global_Imports';
 import { c, h, k, u, w, grabs, Point, debug, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
+import { T_Action, T_File_Format, T_Predicate, T_Alteration, S_Mouse, S_Alteration } from '../common/Global_Imports';
+import { w_ancestry_focus, w_count_mouse_up, w_mouse_location, w_mouse_location_scaled } from '../common/Stores';
 import { w_device_isMobile, w_ancestries_grabbed, w_user_graph_offset } from '../common/Stores';
-import { w_count_mouse_up, w_mouse_location, w_mouse_location_scaled } from '../common/Stores';
 import { w_s_alteration, w_count_resize, w_s_text_edit } from '../common/Stores';
 import { get } from 'svelte/store';
 
@@ -19,7 +19,7 @@ export class Events {
 	static readonly _____INTERNALS: unique symbol;
 
 	private handle_touch_end(event: TouchEvent) { this.initialTouch = null; }
-	private get autorepeaters(): number[] { return [T_Tool.browse, T_Tool.move]; }
+	private get autorepeaters(): number[] { return [T_Action.browse, T_Action.move]; }
 
 	private ancestry_toggle_alteration(ancestry: Ancestry, t_alteration: T_Alteration, predicate: Predicate | null) {
 		const isAltering = !!get(w_s_alteration);
@@ -159,12 +159,12 @@ export class Events {
 
 	handle_s_mouse(s_mouse: S_Mouse, from: string): S_Mouse { return s_mouse; }			// for dots and buttons
 
-	async handle_tool_autorepeatAt(s_mouse: S_Mouse, t_tool: number, column: number, name: string) {
+	async handle_action_autorepeatAt(s_mouse: S_Mouse, t_action: number, column: number, name: string) {
 		if (s_mouse.isDown) {
-			return this.handle_tool_clickedAt(s_mouse, t_tool, column, name);
-		} else if (s_mouse.isLong && this.autorepeaters.includes(t_tool)) {
+			return this.handle_action_clickedAt(s_mouse, t_action, column, name);
+		} else if (s_mouse.isLong && this.autorepeaters.includes(t_action)) {
 			this.autorepeat_interval = setInterval(() => {			// begin autorepeating
-				this.handle_tool_clickedAt(s_mouse, t_tool, column, name);
+				this.handle_action_clickedAt(s_mouse, t_action, column, name);
 			}, k.autorepeat_interval);
 		} else if (s_mouse.isUp && !!this.autorepeat_interval) {	// stop autorepeating
 			clearInterval(this.autorepeat_interval);
@@ -212,9 +212,9 @@ export class Events {
 		},
 	};
 
-	// T_Tool and actions must be in sync
+	// T_Action and actions must be in sync
 
-	handle_isTool_disabledAt(t_tool: number, column: number): boolean {		// true means disabled
+	handle_isAction_disabledAt(t_action: number, column: number): boolean {		// true means disabled
 		const ancestry = grabs.latest;
 		if (!!ancestry) {
 			const is_altering = !!get(w_s_alteration);
@@ -222,42 +222,42 @@ export class Events {
 			const no_siblings = !ancestry.hasSiblings;
 			const is_root = ancestry.isRoot;
 			const disable_revealConceal = no_children || is_root || (layout.inRadialMode && ancestry.isFocus);
-			switch (t_tool) {
-				case T_Tool.browse:							switch (column) {
+			switch (t_action) {
+				case T_Action.browse:							switch (column) {
 					case this.actions.browse.left:				return is_root;
 					case this.actions.browse.up:				return no_siblings;
 					case this.actions.browse.down:				return no_siblings;
 					case this.actions.browse.right:				return no_children;
 				}											break;
-				case T_Tool.focus:							switch (column) {
+				case T_Action.focus:							switch (column) {
 					case this.actions.focus.selection:			return ancestry.isFocus;
 					case this.actions.focus.parent:				return !ancestry.parentAncestry || ancestry.parentAncestry.isFocus;
 				}											break;
-				case T_Tool.reveal:							switch (column) {
+				case T_Action.reveal:							switch (column) {
 					case this.actions.reveal.list:				return disable_revealConceal;
 				}											break;
-				case T_Tool.add:							switch (column) {
+				case T_Action.add:							switch (column) {
 					case this.actions.add.child:				return is_altering;
 					case this.actions.add.sibling:				return is_altering;
 					case this.actions.add.line:					return is_altering || is_root;
 					case this.actions.add.parent:				return is_root;
 					case this.actions.add.related:				return false;
 				}											break;
-				case T_Tool.delete:							switch (column) {
+				case T_Action.delete:							switch (column) {
 					case this.actions.delete.selection:			return is_altering || is_root;
 					case this.actions.delete.parent:			return !ancestry.hasParents_ofKind(T_Predicate.contains);
 					case this.actions.delete.related:			return !ancestry.hasParents_ofKind(T_Predicate.isRelated);
 				}											break;
-				case T_Tool.move:							switch (column) {
+				case T_Action.move:							switch (column) {
 					case this.actions.move.left:				return is_root;
 					case this.actions.move.up:					return no_siblings;
 					case this.actions.move.down:				return no_siblings;
 					case this.actions.move.right:				return is_root;
 				}											break;										break;
-				case T_Tool.center:							switch (column) {
-					case this.actions.center.focus:				return ancestry.isVisible;
-					case this.actions.center.selection:			return ancestry.isVisible;
-					case this.actions.center.root:				return h.rootAncestry?.isVisible ?? false;
+				case T_Action.center:							switch (column) {
+					case this.actions.center.focus:				return get(w_ancestry_focus)?.isCentered ?? false;
+					case this.actions.center.selection:			return ancestry.isCentered;
+					case this.actions.center.root:				return h.rootAncestry?.isCentered ?? false;
 					case this.actions.center.graph:				return get(w_user_graph_offset).isZero;;
 				}											break;
 			}
@@ -265,45 +265,45 @@ export class Events {
 		return true;
 	}
 
-	async handle_tool_clickedAt(s_mouse: S_Mouse, t_tool: number, column: number, name: string) {
+	async handle_action_clickedAt(s_mouse: S_Mouse, t_action: number, column: number, name: string) {
 		const ancestry = grabs.latest;
-		if (!!ancestry && !this.handle_isTool_disabledAt(t_tool, column) && !!h) {
-			switch (t_tool) {
-				case T_Tool.browse:							switch (column) {
+		if (!!ancestry && !this.handle_isAction_disabledAt(t_action, column) && !!h) {
+			switch (t_action) {
+				case T_Action.browse:							switch (column) {
 					case this.actions.browse.up:				grabs.latest_rebuild_persistentMoveUp_maybe( true, false, false, false); break;
 					case this.actions.browse.down:				grabs.latest_rebuild_persistentMoveUp_maybe(false, false, false, false); break;
 					case this.actions.browse.left:				await h.ancestry_rebuild_persistentMoveRight(ancestry, false, false, false, false, false); break;
 					case this.actions.browse.right:				await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, false, false, false); break;
 				}											break;										break;
-				case T_Tool.focus:							switch (column) {
+				case T_Action.focus:							switch (column) {
 					case this.actions.focus.selection:			ancestry.becomeFocus(); break;
 					case this.actions.focus.parent:				ancestry.collapse(); ancestry.parentAncestry?.becomeFocus(); break;
 				}											break;
-				case T_Tool.reveal:							switch (column) {
+				case T_Action.reveal:							switch (column) {
 					case this.actions.reveal.list:				await h.ancestry_toggle_expansion(ancestry); break;
 				}											break;
-				case T_Tool.add:							switch (column) {
+				case T_Action.add:							switch (column) {
 					case this.actions.add.child:				await h.ancestry_edit_persistentCreateChildOf(ancestry); break;
 					case this.actions.add.sibling:				await h.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break;
 					case this.actions.add.line:					await h.thing_edit_persistentAddLine(ancestry); break;
 					case this.actions.add.parent:				this.ancestry_toggle_alteration(ancestry, T_Alteration.add, Predicate.contains); break;
 					case this.actions.add.related:				this.ancestry_toggle_alteration(ancestry, T_Alteration.add, Predicate.isRelated); break;
 				}											break;
-				case T_Tool.delete:							switch (column) {
+				case T_Action.delete:							switch (column) {
 					case this.actions.delete.selection:			await h.ancestries_rebuild_traverse_persistentDelete(get(w_ancestries_grabbed)); break;
 					case this.actions.delete.parent:			this.ancestry_toggle_alteration(ancestry, T_Alteration.delete, Predicate.contains); break;
 					case this.actions.delete.related		:	this.ancestry_toggle_alteration(ancestry, T_Alteration.delete, Predicate.isRelated); break;
 				}											break;
-				case T_Tool.move:							switch (column) {
+				case T_Action.move:							switch (column) {
 					case this.actions.move.up:					grabs.latest_rebuild_persistentMoveUp_maybe( true, false, true, false); break;
 					case this.actions.move.down:				grabs.latest_rebuild_persistentMoveUp_maybe(false, false, true, false); break;
 					case this.actions.move.left:				await h.ancestry_rebuild_persistentMoveRight(ancestry, false, false, true, false, false); break;
 					case this.actions.move.right:				await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, true, false, false); break;
 				}											break;
-				case T_Tool.center:							switch (column) {
-					case this.actions.center.focus:				grabs.latest_assureIsVisible(); break;
-					case this.actions.center.selection:			grabs.latest_assureIsVisible(); break;
-					case this.actions.center.root:				h.rootAncestry.becomeFocus(); break;
+				case T_Action.center:							switch (column) {
+					case this.actions.center.focus:				layout.ancestry_place_atCenter(get(w_ancestry_focus)); break;
+					case this.actions.center.selection:			layout.ancestry_place_atCenter(ancestry); break;
+					case this.actions.center.root:				layout.ancestry_place_atCenter(h.rootAncestry); break;
 					case this.actions.center.graph:				w.user_graph_offset_setTo(Point.zero); break;
 				}											break;
 			}
@@ -322,8 +322,8 @@ export class Events {
 		}
 	}
 
-	name_ofToolAt(t_tool: number, column: number): string {
-		return Object.keys(this.actions[T_Tool[t_tool]])[column];
+	name_ofActionAt(t_action: number, column: number): string {
+		return Object.keys(this.actions[T_Action[t_action]])[column];
 	}
 
 	async handle_key_down(event: KeyboardEvent) {

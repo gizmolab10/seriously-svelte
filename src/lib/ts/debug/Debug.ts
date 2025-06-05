@@ -29,7 +29,7 @@ export enum T_Debug {
 	hover			= 'hover',
 	order			= 'order',		// observe relocating
 	trace			= 'trace',
-	actions			= 'actions',		// state logic of add parent tool
+	actions			= 'actions',		// state logic of add parent action
 	edit			= 'edit',		// state machine for editing
 	grab			= 'grab',
 	thing			= 'thing',
@@ -65,7 +65,7 @@ export class Debug {
 	log_hover(message: string) { this.log_maybe(T_Debug.hover, message); }
 	log_lines(message: string) { this.log_maybe(T_Debug.lines, message); }
 	log_mouse(message: string) { this.log_maybe(T_Debug.mouse, message); }
-	log_tools(message: string) { this.log_maybe(T_Debug.actions, message); }
+	log_actions(message: string) { this.log_maybe(T_Debug.actions, message); }
 	log_action(message: string) { this.log_maybe(T_Debug.action, message); }
 	log_colors(message: string) { this.log_maybe(T_Debug.colors, message); }
 	log_crumbs(message: string) { this.log_maybe(T_Debug.crumbs, message); }

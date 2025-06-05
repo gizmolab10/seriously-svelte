@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { e, k, show, Size, Point, grabs, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
-	import { T_Tool, T_Layer, T_Request, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
+	import { T_Action, T_Layer, T_Request, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
 	import { w_s_alteration, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
 	import { w_show_details_ofType } from '../../ts/common/Stores';
 	import { w_user_graph_offset } from '../../ts/common/Stores';
@@ -11,30 +11,30 @@
 	const has_title = true;
     const font_sizes = [k.font_size.smallest, k.font_size.smallest];
 	let list_title = grabs.latest?.isExpanded && layout.inTreeMode ? 'hide list' : 'list';
+	let actions_top = top + (has_title ? 3 : -13);
 	let button_titles = compute_button_titles();
-	let tools_top = top + (has_title ? 3 : -13);
     let reattachments = 0;
 	const handle_banner_click = getContext('handle_banner_click');
 
 	////////////////////////////////////////////////////////////
 	// buttons row sends column & T_Request:
-	// 	 is_disabled calls:	 handle_isTool_disabledAt
-	//	 handle_click calls: handle_tool_clickedAt ...
+	// 	 is_disabled calls:	 handle_isAction_disabledAt
+	//	 handle_click calls: handle_action_clickedAt ...
 	//   n.b., long press generates multiple calls
-	// buttons grid adds row (here it becomes t_tool)
+	// buttons grid adds row (here it becomes t_action)
 	////////////////////////////////////////////////////////////
 	
-    $: top, tools_top = top + (has_title ? 3 : -13);
+    $: top, actions_top = top + (has_title ? 3 : -13);
     $: $w_s_alteration, reattachments += 1;
 
 	$:	$w_show_details_ofType,
-		$w_user_graph_offset,
+		// $w_user_graph_offset,
 		$w_ancestries_grabbed,
 		$w_ancestries_expanded,
 		update_button_titles();
 
-	function name_for(t_tool: number, column: number) {
-		const titles = button_titles[t_tool];
+	function name_for(t_action: number, column: number) {
+		const titles = button_titles[t_action];
 		return `${titles[0]}.${titles[column]}`;
 	}
 
@@ -49,17 +49,17 @@
 		list_title = layout.inTreeMode && !!ancestry && ancestry.isExpanded ? 'hide list' : 'list';
 		const new_titles = compute_button_titles();
 		button_titles = new_titles;
-		signals.signal_tool_update();
+		// signals.signal_action_update();
 		setTimeout(() => reattachments += 1, 0);
 	}
 
-	function isTool_invertedAt(t_tool: number, column: number): boolean {
+	function isAction_invertedAt(t_action: number, column: number): boolean {
 		const action = target_ofAlteration();
 		const s_alteration = $w_s_alteration;
 		const t_alteration = s_alteration?.t_alteration;
-		return !!t_alteration && !!action && action == e.name_ofToolAt(t_tool, column)
-			&& ((t_tool == T_Tool.add    && t_alteration == T_Alteration.add)
-			||  (t_tool == T_Tool.delete && t_alteration == T_Alteration.delete));
+		return !!t_alteration && !!action && action == e.name_ofActionAt(t_action, column)
+			&& ((t_action == T_Action.add    && t_alteration == T_Alteration.add)
+			||  (t_action == T_Action.delete && t_alteration == T_Alteration.delete));
 	}
 
 	function compute_button_titles() {
@@ -74,14 +74,14 @@
 		];
 	}
 
-	function handle_toolRequest(t_request: T_Request, s_mouse: S_Mouse, t_tool: number, column: number): any {
+	function handle_actionRequest(t_request: T_Request, s_mouse: S_Mouse, t_action: number, column: number): any {
 		const isAltering = !!$w_s_alteration;
 		switch (t_request) {
-			case T_Request.name:		 return e.name_ofToolAt(t_tool, column);
-			case T_Request.is_disabled:  return e.handle_isTool_disabledAt(t_tool, column);
-			case T_Request.is_inverted:  return !isAltering ? false : isTool_invertedAt(t_tool, column);
-			case T_Request.is_visible:	 return !isAltering ? true : [T_Tool.add, T_Tool.delete].includes(t_tool);
-			case T_Request.handle_click: return e.handle_tool_autorepeatAt(s_mouse, t_tool, column, name_for(t_tool, column + 1));
+			case T_Request.name:		 return e.name_ofActionAt(t_action, column);
+			case T_Request.is_disabled:  return e.handle_isAction_disabledAt(t_action, column);
+			case T_Request.is_inverted:  return !isAltering ? false : isAction_invertedAt(t_action, column);
+			case T_Request.is_visible:	 return !isAltering ? true : [T_Action.add, T_Action.delete].includes(t_action);
+			case T_Request.handle_click: return e.handle_action_autorepeatAt(s_mouse, t_action, column, name_for(t_action, column + 1));
 		}
 		return null;
 	}
@@ -93,7 +93,7 @@
 		class='actions'
 		style='
 			width: 100%;
-			top:{tools_top}px;
+			top:{actions_top}px;
 			position:relative;
 			z-index:{T_Layer.actions}'>
 		<Buttons_Grid
@@ -103,7 +103,7 @@
 			has_title={has_title}
 			font_sizes={font_sizes}
 			width={k.width_details - 14}
-			closure={handle_toolRequest}
+			closure={handle_actionRequest}
 			button_titles={button_titles}
 			button_height={k.height.button}/>
 		{#if $w_s_alteration}

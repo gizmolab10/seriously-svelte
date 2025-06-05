@@ -21,7 +21,7 @@ export enum T_Details {
 	traits,
 }
 
-export enum T_Tool {
+export enum T_Action {
 	browse,
 	focus,
 	reveal,
@@ -43,7 +43,7 @@ export enum T_Layer {
 	dots,
 	text,
 	actions,
-	tool_buttons,
+	action_buttons,
 	details,
 	frontmost,
 }
@@ -84,7 +84,8 @@ export enum T_Create {
 }
 
 export enum T_SvelteComponent {
-	widget	= 'widget',		// *
+	widget	= 'widget',
+	reveal	= 'reveal',
 	title	= 'title',
 	app		= 'app',
 }
@@ -229,7 +230,7 @@ export enum T_Element {
 	drag		 = 'drag',
 	thing		 = 'thing',
 	none		 = 'none',
-	tool		 = 'tool',
+	action		 = 'action',
 }
 
 export enum T_Preference {

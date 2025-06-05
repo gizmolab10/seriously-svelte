@@ -116,7 +116,7 @@ export class Grabs {
 		if (grabbed.length == 0 && layout.inTreeMode) {
 			grabbed = [rootAncestry];
 		} else {
-			get(w_hierarchy)?.stop_alteration(); // do not show editingTools for root
+			get(w_hierarchy)?.stop_alteration(); // do not show editingActions for root
 		}
 		w_ancestries_grabbed.set(grabbed);
 		debug.log_grab(`  UNGRAB "${ancestry.title}"`);

@@ -7,6 +7,7 @@ import DBFirebase from './DBFirebase';
 import DBAirtable from './DBAirtable';
 import DBLocal from './DBLocal';
 import DBTest from './DBTest';
+// import DBDGraph from './DBDGraph';
 
 // each db has its own hierarchy
 // when switching to another db
@@ -61,10 +62,11 @@ export default class Databases {
 
 	db_next_get(forward: boolean): T_Database {
 		switch (this.db_now.t_database) {
-			case T_Database.local:	  return forward ? T_Database.firebase : T_Database.test;
+			case T_Database.local:    return forward ? T_Database.firebase : T_Database.test;
 			case T_Database.firebase: return forward ? T_Database.airtable : T_Database.local;
-			case T_Database.airtable: return forward ? T_Database.test	   : T_Database.firebase;
-			default:				  return forward ? T_Database.local	   : T_Database.airtable;
+			case T_Database.airtable: return forward ? T_Database.dgraph   : T_Database.firebase;
+			case T_Database.dgraph:   return forward ? T_Database.test     : T_Database.airtable;
+			default:                  return forward ? T_Database.local     : T_Database.dgraph;
 		}
 	}
 
@@ -73,8 +75,9 @@ export default class Databases {
 			switch (t_database) {
 				case T_Database.firebase: this.dbCache[t_database] = new DBFirebase(); break;
 				case T_Database.airtable: this.dbCache[t_database] = new DBAirtable(); break;
-				case T_Database.local:	  this.dbCache[t_database] = new DBLocal(); break;
-				default:				  this.dbCache[t_database] = new DBTest(); break;
+				case T_Database.local:    this.dbCache[t_database] = new DBLocal(); break;
+				// case T_Database.dgraph:   this.dbCache[t_database] = new DBDGraph(); break;
+				default:                  this.dbCache[t_database] = new DBTest(); break;
 			}
 		}
 		return this.dbCache[t_database];

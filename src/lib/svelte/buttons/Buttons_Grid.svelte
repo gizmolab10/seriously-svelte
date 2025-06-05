@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import {S_Mouse, S_Element, T_Element, T_Request, T_Tool } from '../../ts/common/Global_Imports';
+    import {S_Mouse, S_Element, T_Element, T_Request, T_Action } from '../../ts/common/Global_Imports';
     import { w_background_color, w_s_alteration } from '../../ts/common/Stores';
     import { k, show, Point, colors } from '../../ts/common/Global_Imports';
     import Buttons_Row from './Buttons_Row.svelte';
@@ -37,7 +37,7 @@
                 has_seperator={has_seperator}
                 button_height={button_height}
                 origin={button_origin_for(row)}
-                name={`${name}-grid-${T_Tool[row]}`}
+                name={`${name}-grid-${T_Action[row]}`}
                 closure={(t_request, s_mouse, column) => closure(t_request, s_mouse, row, column)}/>
         {/if}
     {/each}

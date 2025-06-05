@@ -48,11 +48,11 @@
     update_es_buttons();
 
 	onMount(() => {
-		const handle_tool_update = signals.handle_tool_update(0, () => {
+		const handle_action_update = signals.handle_action_update(0, () => {
 			update_es_buttons();
 		});
 		return () => {
-			handle_tool_update.disconnect();
+			handle_action_update.disconnect();
 		};
 	});
 

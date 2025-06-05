@@ -13,7 +13,6 @@ export default class Constants {
 	radial_widget_inset = 26;
 	autorepeat_interval = 50;
 	separator_title_left = 0;
-	editingTools_diameter = 64;
 	hid_unknown = 1000000000000;
 	diameterOf_outer_tinyDots = 19;
 	build_number = builds.build_number;

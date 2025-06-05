@@ -70,7 +70,7 @@
 		}
 	}
 
-	function handle_toolRequest(t_request: T_Request, s_mouse: S_Mouse, column: number): any {
+	function handle_actionRequest(t_request: T_Request, s_mouse: S_Mouse, column: number): any {
 		const ids = (ux.T_Storage_Need == T_Storage_Need.direction) ? storage_ids : format_ids;
 		switch (t_request) {
 			case T_Request.handle_click: return handle_click_forColumn(s_mouse, column);
@@ -158,7 +158,7 @@
 			width={k.width_details}
 			row_titles={row_titles()}
 			origin={Point.y(top + 128)}
-			closure={handle_toolRequest}
+			closure={handle_actionRequest}
 			button_height={k.height.button}
 			separator_thickness={k.thickness.separator.ultra_thin}
 			name={`data-${(ux.T_Storage_Need == T_Storage_Need.direction) ? 'action' : 'format'}`}/>
