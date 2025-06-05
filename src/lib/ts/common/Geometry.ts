@@ -128,6 +128,7 @@ export class Size {
 	get swap():							Size { return new Size(this.height, this.width); }
 	get negated():						Size { return this.multipliedBy(-1); }
 	get dividedInHalf():				Size { return this.dividedBy(2); }
+	reducedByXY(x: number, y: number):	Size { return this.expandedByXY(-x, -y); }
 	reducedBy(delta: Point):			Size { return this.expandedBy(delta.negated); }
 	expandedByX(x: number):				Size { return new Size(this.width + x, this.height); }
 	expandedByY(y: number):				Size { return new Size(this.width, this.height + y); }

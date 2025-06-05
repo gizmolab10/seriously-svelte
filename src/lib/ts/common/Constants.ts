@@ -1,4 +1,3 @@
-import { show } from '../managers/Visibility';
 import { tu } from './Testworthy_Utilities';
 import { builds } from './Builds';
 
@@ -104,9 +103,9 @@ export default class Constants {
 		dot:	   dot_size,
 		banner: {
 			controls: banner_height,
-			crumbs:	  banner_height,
 			details:  banner_height,
 			graph:	  0,
+			crumbs:	  banner_height,
 		},
 	};
 

@@ -16,6 +16,7 @@
 	export let hasBothEnds = true;
 	export let add_wings = true;
 	export let margin = 0;
+	const name = `${isHorizontal ? 'horizontal' : 'vertical'}-separator-line`;
 	const line_left = isHorizontal ? origin.x + margin : origin.x - thickness / 2;
 	const title_width = u.getWidth_ofString_withSize(title ?? k.empty, `${title_font_size}px`);
 	let thin_line_color = colors.separatorFor('#aaaaaa');
@@ -53,7 +54,7 @@
 
 </script>
 
-<div class='separator-line' style={separatorStyle}>
+<div class={name} style={separatorStyle}>
 	{#if add_wings && !margin}
 		<Gull_Wings
 			thickness={thickness}

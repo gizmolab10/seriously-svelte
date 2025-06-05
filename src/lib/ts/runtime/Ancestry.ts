@@ -766,7 +766,6 @@ export default class Ancestry extends Identifiable {
 		const wrapper = this.titleWrapper;
 		if (!!wrapper) {
 			const center = wrapper.boundingRect.center;
-			// w.user_graph_offset_setTo(center);
 		}
 		return false;
 	}

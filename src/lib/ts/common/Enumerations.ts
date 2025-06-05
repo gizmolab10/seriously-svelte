@@ -7,8 +7,8 @@ export enum T_Order {
 
 export enum T_Banner {
 	controls,
-	crumbs,
 	graph,
+	crumbs,
 }
 
 export enum T_Details {

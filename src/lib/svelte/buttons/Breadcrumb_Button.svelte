@@ -10,7 +10,6 @@
 	const borderStyle = '1px solid';
 	let borderColor = $w_background_color;
 	let title = thing.breadcrumb_title ?? k.empty;
-	let height = layout.height_ofBannerAt(T_Banner.crumbs);
 	let border = `${borderStyle} ${borderColor}`;
 	let name = `crumb: ${title ?? 'unknown'}`;
 	let ancestry = es_breadcrumb.ancestry;
@@ -19,7 +18,7 @@
 	let colorStyles = k.empty;
 	let style = k.empty;
 
-	center = new Point(left + width / 2, height / 2 + 3.1);
+	center = new Point(left + width / 2, 14);
 	$: $w_background_color, updateColors();
 	updateColors();
 

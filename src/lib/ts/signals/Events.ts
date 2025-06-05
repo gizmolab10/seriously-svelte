@@ -104,7 +104,7 @@ export class Events {
 			const delta = new Point(-e.deltaX, -e.deltaY);
 			if (!!userOffset && c.allow_HorizontalScrolling && delta.magnitude > 1) {
 				debug.log_action(` wheel GRAPH`);
-				w.user_graph_offset_setTo(userOffset.offsetBy(delta));
+				layout.user_graph_offset_setTo(userOffset.offsetBy(delta));
 			}
 		}
 	}
@@ -117,7 +117,7 @@ export class Events {
 				const touch = event.touches[0];
 				const deltaX = touch.clientX - this.initialTouch.x;
 				const deltaY = touch.clientY - this.initialTouch.y;
-				w.user_graph_offset_setTo(new Point(deltaX, deltaY));
+				layout.user_graph_offset_setTo(new Point(deltaX, deltaY));
 				debug.log_action(` two-finger touch move GRAPH`);
 			}
 		}
@@ -304,7 +304,7 @@ export class Events {
 					case this.actions.center.focus:				layout.ancestry_place_atCenter(get(w_ancestry_focus)); break;
 					case this.actions.center.selection:			layout.ancestry_place_atCenter(ancestry); break;
 					case this.actions.center.root:				layout.ancestry_place_atCenter(h.rootAncestry); break;
-					case this.actions.center.graph:				w.user_graph_offset_setTo(Point.zero); break;
+					case this.actions.center.graph:				layout.user_graph_offset_setTo(Point.zero); break;
 				}											break;
 			}
 		}
@@ -365,7 +365,7 @@ export class Events {
 					case '?':				c.showHelp(); return;
 					case 's':				h.persist_toFile(T_File_Format.json); return;
 					case 'm':				layout.toggle_t_graph(); break;
-					case 'c':				w.user_graph_offset_setTo(Point.zero); return;
+					case 'c':				layout.user_graph_offset_setTo(Point.zero); return;
 					case 'o':				h.select_file_toUpload(T_File_Format.json, event.shiftKey); break;
 					case '!':				graph_needsRebuild = h.rootAncestry?.becomeFocus(); break;
 					case 'escape':			if (!!get(w_s_alteration)) { h.stop_alteration(); }; break;

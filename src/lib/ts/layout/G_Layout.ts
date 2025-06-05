@@ -1,7 +1,9 @@
-import { T_Graph, T_Banner, T_Kinship, G_RadialGraph } from '../common/Global_Imports';
-import { h, k, p, u, w, grabs, signals, Ancestry } from '../common/Global_Imports';
+import { h, k, p, u, w, grabs, Rect, Point, debug, signals, Ancestry } from '../common/Global_Imports';
+import { T_Graph, T_Banner, T_Kinship, T_Preference, G_RadialGraph } from '../common/Global_Imports';
+import { w_user_graph_offset, w_user_graph_center } from '../common/Stores';
 import { w_show_tree_ofType, w_show_graph_ofType } from '../common/Stores';
 import { w_show_related, w_ancestry_focus } from '../common/Stores';
+import { w_graph_rect, w_show_details } from '../common/Stores';
 import { get } from 'svelte/store';
 
 export default class G_Layout {
@@ -11,11 +13,16 @@ export default class G_Layout {
 	tops_ofBanners: number[] = [];
 	focus_ancestry!: Ancestry;
 
+	get banner_height(): number { return u.device_isMobile ? 32 : 16; }
+	get breadcrumbs_height(): number { return this.banner_height + 14; }
 	get inTreeMode(): boolean { return get(w_show_graph_ofType) == T_Graph.tree; }
 	get inRadialMode(): boolean { return get(w_show_graph_ofType) == T_Graph.radial; }
+	get breadcrumbs_top(): number { return w.windowSize.height - this.breadcrumbs_height; }
 	get isAllExpanded(): boolean { return h.rootAncestry?.isAllProgeny_expanded ?? false; }
 	get g_radialGraph() { let g = this._g_radialGraph; if (!g) { g = new G_RadialGraph(); this._g_radialGraph = g }; return g; }
+	get center_ofGraphSize(): Point { return get(w_graph_rect).size.asPoint.dividedInHalf; }
 	top_ofBannerAt(index: number) { return this.tops_ofBanners[index] + k.thickness.separator.thick; }
+	renormalize_user_graph_offset() { this.user_graph_offset_setTo(this.persisted_user_offset); }
 	ids_forDB(array: Array<Ancestry>): string { return u.ids_forDB(array).join(', '); }
 	height_ofBannerAt(index: number) { return Object.values(k.height.banner)[index]; }
 	expandAll() { h.rootAncestry.traverse(ancestry => ancestry.expand()); }
@@ -28,7 +35,6 @@ export default class G_Layout {
 		if (!!wrapper) {
 			const rect = wrapper.boundingRect;
 			const center = rect.center;
-			// w.user_graph_offset_setTo(center);
 		}
 	}
 
@@ -73,14 +79,17 @@ export default class G_Layout {
 	}
 	
 	layout_tops_forPanelBanners() {
-		const heights = Object.values(k.height.banner);
+		const banner_height = u.device_isMobile ? 32 : 16;
+		const banner_height_crumbs = banner_height + 12;
+		const crumbs_top = w.windowSize.height - banner_height_crumbs - 600;
 		let index = 0;
 		let top = 2;
 		while (index <= T_Banner.graph) {
 			this.tops_ofBanners[index] = top;
-			top += heights[index] + 4;
+			top += banner_height + 4;
 			index += 1;
 		}
+		this.tops_ofBanners[T_Banner.crumbs] = crumbs_top;
 	}
 
 	set_t_tree(t_trees: Array<T_Kinship>) {
@@ -100,6 +109,35 @@ export default class G_Layout {
 		focus_ancestry?.becomeFocus();
 		p.restore_expanded();
 		this.grand_build();
+	}
+
+	get persisted_user_offset(): Point {
+		const point = p.read_key(T_Preference.user_offset) ?? {x:0, y:0};
+		return new Point(point.x, point.y);
+	}
+
+	user_graph_offset_setTo(user_offset: Point): boolean {
+		let changed = false;
+		const current_offset = get(w_user_graph_offset);
+		if (!!current_offset && current_offset.vector_to(user_offset).magnitude > .001) {
+			p.write_key(T_Preference.user_offset, user_offset);
+			changed = true;
+		}
+		const center_offset = get(w_graph_rect).center.offsetBy(user_offset);
+		w_user_graph_center.set(center_offset);
+		w_user_graph_offset.set(user_offset);
+		debug.log_mouse(`USER ====> ${user_offset.verbose}  ${center_offset.verbose}`);
+		return changed;
+	}
+
+	graphRect_update() {
+		const x = get(w_show_details) ? k.width_details : 0;
+		const y = this.top_ofBannerAt(T_Banner.graph);
+		const origin_ofGraph = new Point(x, y);
+		const size_ofGraph = w.windowSize.reducedBy(origin_ofGraph).reducedByXY(0, this.breadcrumbs_height);	// account for origin and crumbs
+		const rect = new Rect(origin_ofGraph, size_ofGraph);
+		debug.log_mouse(`GRAPH ====> ${rect.description}`);
+		w_graph_rect.set(rect);											// used by Panel and Graph_Tree
 	}
 
 }

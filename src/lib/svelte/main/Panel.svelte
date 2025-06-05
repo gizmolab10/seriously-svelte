@@ -19,7 +19,6 @@
 	import Import from './Import.svelte';
 	import { onMount } from 'svelte';
 	const offset_toIntersection = new Point(-4, 8);
-	const separator_thickness = k.thickness.separator.thick;
 	let separator_color = colors.separator;
 	let tops = layout.tops_ofBanners;
 	let panel_reattachments = 0;
@@ -57,24 +56,9 @@
 		{:else if $w_t_startup == T_Startup.ready}
 			<Controls/>
 			{#if !$w_popupView_id}
-				<div class='breadcrumbs'
-					style='left:0px;
-						position: absolute;
-						z-index: {T_Layer.frontmost};
-						width:{w.windowSize.width}px;
-						top:{tops[T_Banner.crumbs] - 2}px;
-						height:{layout.height_ofBannerAt(T_Banner.crumbs)}px;'>
-					<Breadcrumbs/>
-					<div class='separator-above-crumbs' style='
-						top: {tops[T_Banner.crumbs] - 3}px;
-						background-color:{separator_color};
-						height: {separator_thickness}px;
-						z-index: {T_Layer.lines};'>
-					</div>
-				</div>
-				<div class='separator-below-crumbs' style='
+				<div class='separator-below-controls' style='
+					height: {k.thickness.separator.thick}px;
 					background-color: {separator_color};
-					height: {separator_thickness}px;
 					width: {w.windowSize.width}px;
 					top: {tops[T_Banner.graph]}px;
 					z-index: {T_Layer.lines};
@@ -102,6 +86,9 @@
 					{/if}
 				{/key}
 			</div>
+			{#if !$w_popupView_id}
+				<Breadcrumbs/>
+			{/if}
 		{/if}
 	</div>
 {/key}
