@@ -20,7 +20,6 @@
 	import { onMount } from 'svelte';
 	const offset_toIntersection = new Point(-4, 8);
 	let separator_color = colors.separator;
-	let tops = layout.tops_ofBanners;
 	let panel_reattachments = 0;
 	let chain = ['Panel'];
 
@@ -59,8 +58,8 @@
 				<div class='separator-below-controls' style='
 					height: {k.thickness.separator.thick}px;
 					background-color: {separator_color};
+					top: {layout.graph_top - 4}px;
 					width: {w.windowSize.width}px;
-					top: {tops[T_Banner.graph]}px;
 					z-index: {T_Layer.lines};
 					position: absolute;
 					left: 0px;'>

@@ -13,6 +13,7 @@ export default class G_Layout {
 	tops_ofBanners: number[] = [];
 	focus_ancestry!: Ancestry;
 
+	get graph_top(): number { return this.banner_height + 10; }
 	get banner_height(): number { return u.device_isMobile ? 32 : 16; }
 	get breadcrumbs_height(): number { return this.banner_height + 14; }
 	get inTreeMode(): boolean { return get(w_show_graph_ofType) == T_Graph.tree; }
@@ -131,8 +132,8 @@ export default class G_Layout {
 	}
 
 	graphRect_update() {
+		const y = this.graph_top;
 		const x = get(w_show_details) ? k.width_details : 0;
-		const y = this.top_ofBannerAt(T_Banner.graph);
 		const origin_ofGraph = new Point(x, y);
 		const size_ofGraph = w.windowSize.reducedBy(origin_ofGraph).reducedByXY(0, this.breadcrumbs_height);	// account for origin and crumbs
 		const rect = new Rect(origin_ofGraph, size_ofGraph);

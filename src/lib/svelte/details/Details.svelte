@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, Point, T_Layer, T_Details, T_Direction } from '../../ts/common/Global_Imports';
+	import { k, Point, layout, T_Layer, T_Details, T_Direction } from '../../ts/common/Global_Imports';
 	import { w_graph_rect } from '../../ts/common/Stores';
 	import Separator from '../kit/Separator.svelte';
 	import D_Display from './D_Display.svelte';
@@ -11,7 +11,7 @@
 	import D_Thing from './D_Thing.svelte';
 	import D_Tags from './D_Tags.svelte';
 	const width = k.width_details;
-	const separator_top = $w_graph_rect.origin.y - 2;
+	const separator_top = layout.graph_top - 2;
 	const next_previous_titles = [T_Direction.previous, T_Direction.next];
 
 </script>
@@ -25,9 +25,9 @@
 		scrollbar-width: none;          /* Firefox */
 		flex-direction:column;
 		-ms-overflow-style: none;  
+		top:{layout.graph_top}px;
 		z-index:{T_Layer.details};
 		width:{k.width_details - 6}px;
-		top:{$w_graph_rect.origin.y}px;
 		height:{$w_graph_rect.size.height}px;'>
 	<Hideable t_details={T_Details.header} hasBanner={false} height={26}>
 		<D_Header/>
