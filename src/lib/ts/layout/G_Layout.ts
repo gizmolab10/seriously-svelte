@@ -1,4 +1,4 @@
-import { h, k, p, u, w, grabs, Rect, Point, debug, signals, Ancestry } from '../common/Global_Imports';
+import { h, k, p, u, w, grabs, Rect, Point, debug, signals, Ancestry, Thing } from '../common/Global_Imports';
 import { T_Graph, T_Banner, T_Kinship, T_Preference, G_RadialGraph } from '../common/Global_Imports';
 import { w_user_graph_offset, w_user_graph_center } from '../common/Stores';
 import { w_show_tree_ofType, w_show_graph_ofType } from '../common/Stores';
@@ -10,7 +10,6 @@ export default class G_Layout {
 	parents_focus_ancestry!: Ancestry;
 	branches_visited: string[] = [];
 	_g_radialGraph!: G_RadialGraph;
-	tops_ofBanners: number[] = [];
 	focus_ancestry!: Ancestry;
 
 	get graph_top(): number { return this.banner_height + 17; }
@@ -20,13 +19,42 @@ export default class G_Layout {
 	get inRadialMode(): boolean { return get(w_show_graph_ofType) == T_Graph.radial; }
 	get breadcrumbs_top(): number { return w.windowSize.height - this.breadcrumbs_height; }
 	get isAllExpanded(): boolean { return h.rootAncestry?.isAllProgeny_expanded ?? false; }
-	get g_radialGraph() { let g = this._g_radialGraph; if (!g) { g = new G_RadialGraph(); this._g_radialGraph = g }; return g; }
 	get center_ofGraphSize(): Point { return get(w_graph_rect).size.asPoint.dividedInHalf; }
-	top_ofBannerAt(index: number) { return this.tops_ofBanners[index] + k.thickness.separator.thick; }
+	get g_radialGraph() { let g = this._g_radialGraph; if (!g) { g = new G_RadialGraph(); this._g_radialGraph = g }; return g; }
 	renormalize_user_graph_offset() { this.user_graph_offset_setTo(this.persisted_user_offset); }
 	ids_forDB(array: Array<Ancestry>): string { return u.ids_forDB(array).join(', '); }
 	height_ofBannerAt(index: number) { return Object.values(k.height.banner)[index]; }
 	expandAll() { h.rootAncestry.traverse(ancestry => ancestry.expand()); }
+
+	static readonly _____ANCESTRIES: unique symbol;
+
+	layout_breadcrumbs_forAncestry_within(ancestry: Ancestry, thresholdWidth: number): [Array<Thing>, number[], number[], number] {
+		const crumb_things: Array<Thing> = [];
+		const widths: number[] = [];
+		let parent_widths = 0;						// encoded as one parent count per 2 digits (base 10) ... for triggering redraw
+		let total = 0;								// determine how many crumbs will fit
+		const things = ancestry.ancestors ?? [];
+		for (const thing of things) {
+			if (!!thing) {
+				const width = u.getWidthOf(thing.breadcrumb_title) + 29;
+				if ((total + width) > thresholdWidth) {
+					break;
+				}
+				total += width;
+				widths.push(width);
+				crumb_things.push(thing);
+				debug.log_crumbs(`ONE ${width} ${thing.title}`);
+				parent_widths = parent_widths * 100 + width;
+			}
+		}
+		let left = (thresholdWidth - total) / 2;	// position of first crumb
+		let lefts = [left];
+		for (const width of widths) {
+			left += width;							// position of next crumb
+			lefts.push(left);
+		}
+		return [crumb_things, widths, lefts, parent_widths];
+	}
 
 	ancestry_place_atCenter(ancestry: Ancestry | null) {
 		if (!ancestry) {	
@@ -38,6 +66,8 @@ export default class G_Layout {
 			const center = rect.center;
 		}
 	}
+
+	static readonly _____LAYOUT_AND_BUILD: unique symbol;
 
 	grand_build() {
 		this.grand_layout();
@@ -56,7 +86,7 @@ export default class G_Layout {
 	handle_mode_selection(name: string, types: string[]) {
 		switch (name) {
 			case 'graph': w_show_graph_ofType.set(types[0] as T_Graph); break;
-			case 'tree': this.set_t_tree(types as Array<T_Kinship>); break;
+			case 'tree': this.set_tree_type(types as Array<T_Kinship>); break;
 		}
 	}
 
@@ -71,29 +101,7 @@ export default class G_Layout {
 		return visited;
 	}
 	
-	toggle_t_graph() {
-		switch (get(w_show_graph_ofType)) {
-			case T_Graph.tree: w_show_graph_ofType.set(T_Graph.radial); break;
-			case T_Graph.radial: w_show_graph_ofType.set(T_Graph.tree); break;
-		}
-		this.grand_build();
-	}
-	
-	layout_tops_forPanelBanners() {
-		const banner_height = u.device_isMobile ? 32 : 16;
-		const banner_height_crumbs = banner_height + 12;
-		const crumbs_top = w.windowSize.height - banner_height_crumbs - 600;
-		let index = 0;
-		let top = 2;
-		while (index <= T_Banner.graph) {
-			this.tops_ofBanners[index] = top;
-			top += banner_height + 4;
-			index += 1;
-		}
-		this.tops_ofBanners[T_Banner.crumbs] = crumbs_top;
-	}
-
-	set_t_tree(t_trees: Array<T_Kinship>) {
+	set_tree_type(t_trees: Array<T_Kinship>) {
 		if (t_trees.length == 0) {
 			t_trees = [T_Kinship.child];
 		}
@@ -115,6 +123,16 @@ export default class G_Layout {
 	get persisted_user_offset(): Point {
 		const point = p.read_key(T_Preference.user_offset) ?? {x:0, y:0};
 		return new Point(point.x, point.y);
+	}
+
+	static readonly _____GRAPH: unique symbol;
+
+	toggle_graph_type() {
+		switch (get(w_show_graph_ofType)) {
+			case T_Graph.tree: w_show_graph_ofType.set(T_Graph.radial); break;
+			case T_Graph.radial: w_show_graph_ofType.set(T_Graph.tree); break;
+		}
+		this.grand_build();
 	}
 
 	user_graph_offset_setTo(user_offset: Point): boolean {

@@ -134,7 +134,7 @@ export class Events {
 				case '=': w.zoomBy(k.ratio.zoom_in); break;
 				default: w.zoomBy(k.ratio.zoom_out); break;
 			}
-			w.renormalize_user_graph_offset();
+			layout.renormalize_user_graph_offset();
 			layout.grand_build();
 		}
 	}
@@ -364,7 +364,7 @@ export class Events {
 				switch (key) {
 					case '?':				c.showHelp(); return;
 					case 's':				h.persist_toFile(T_File_Format.json); return;
-					case 'm':				layout.toggle_t_graph(); break;
+					case 'm':				layout.toggle_graph_type(); break;
 					case 'c':				layout.user_graph_offset_setTo(Point.zero); return;
 					case 'o':				h.select_file_toUpload(T_File_Format.json, event.shiftKey); break;
 					case '!':				graph_needsRebuild = h.rootAncestry?.becomeFocus(); break;

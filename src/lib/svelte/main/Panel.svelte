@@ -43,7 +43,9 @@
 	<div style='
 		touch-action: none;
 		pointer-events: auto;
-		{k.prevent_selection_style};'
+		{k.prevent_selection_style};
+		width: {w.windowSize.width}px;
+		height: {w.windowSize.height}px;'
 		on:wheel={ignore_wheel}>
 		{#if [T_Startup.start, T_Startup.fetch].includes($w_t_startup) && databases.db_now.isPersistent}
 			<p>Welcome to Seriously</p>
@@ -86,7 +88,7 @@
 <style>
 	p {
 		text-align: center;
-		font-size: 3em;
+		font-size: 1.3em;
 	}
 	.horizontal-line {
 		position: fixed;

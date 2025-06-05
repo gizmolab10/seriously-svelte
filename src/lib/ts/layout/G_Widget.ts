@@ -113,7 +113,7 @@ export default class G_Widget {
 				this.points_toChild = points_toChild;
 				this.widget_pointsRight = widget_pointsRight;
 				this.origin_ofWidget = branching_widget_origin;
-				this.g_line.set_t_curve_forHeight(branches_height);
+				this.g_line.set_curve_type_forHeight(branches_height);
 				this.layout_widget_andChildren();
 			}
 	}

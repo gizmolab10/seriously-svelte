@@ -31,7 +31,7 @@ export default class G_TreeLine {
 		this.update_name();
 	}
 
-	set_t_curve_forHeight(height: number) {
+	set_curve_type_forHeight(height: number) {
 		if (height > 1) {
 			this.t_curve = T_Curve.down;
 		} else if (height < -1) {

@@ -1,5 +1,6 @@
 export class Builds {
 	notes: { [id: number]: string[] } = {
+		144 : ['June 5, 2025', 'new panel layout'],
 		143 : ['June 2, 2025', 'details banners now have glowing buttons'],
 		142 : ['May 25, 2025', 'should now read tags table from firebase'],
 		141 : ['May 25, 2025', 'brand new details view'],

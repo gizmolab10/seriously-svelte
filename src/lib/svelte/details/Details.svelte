@@ -11,7 +11,6 @@
 	import D_Thing from './D_Thing.svelte';
 	import D_Tags from './D_Tags.svelte';
 	const width = k.width_details;
-	const separator_top = layout.graph_top - 4;
 	const next_previous_titles = [T_Direction.previous, T_Direction.next];
 
 </script>

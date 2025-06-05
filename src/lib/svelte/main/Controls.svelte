@@ -14,7 +14,7 @@
 	const details_top = k.height.dot / 2;
 	const y_center = details_top + 3.5;
 	const size_small = k.height.button;
-	const rights = [1, 56, 110, 140];
+	const rights = [12, 67, 110, 140];
 	const size_big = size_small + 4;
 	const lefts = [18, 30, 110];
 	const resize_viewBox = `0, 0, ${size_big}, ${size_big}`;

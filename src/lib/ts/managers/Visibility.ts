@@ -24,7 +24,7 @@ export class Visibility {
 					break;
 				case 'parents':
 					const mode = flag ? T_Kinship.parent : T_Kinship.child;
-					layout.set_t_tree([mode]);
+					layout.set_tree_type([mode]);
 					break;
 			}
 		}

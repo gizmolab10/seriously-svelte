@@ -168,7 +168,7 @@ export default class Ancestry extends Identifiable {
 		const extent = other.g_widget.absolute_center_ofDrag;
 		const origin = this.g_widget.absolute_center_ofReveal.offsetByXY(2, -2.5);
 		const rect = Rect.createExtentRect(origin, extent).offsetByXY(offset_x, offset_y);
-		g_line.set_t_curve_forHeight(rect.height);
+		g_line.set_curve_type_forHeight(rect.height);
 		g_line.rect = rect;
 		return g_line;
 	}
@@ -250,36 +250,6 @@ export default class Ancestry extends Identifiable {
 			}
 		}
 		return ancestries;
-	}
-
-	static readonly _____LAYOUT: unique symbol;
-
-	layout_breadcrumbs_within(thresholdWidth: number): [Array<Thing>, number[], number[], number] {
-		const crumb_things: Array<Thing> = [];
-		const widths: number[] = [];
-		let parent_widths = 0;						// encoded as one parent count per 2 digits (base 10) ... for triggering redraw
-		let total = 0;								// determine how many crumbs will fit
-		const things = this.ancestors ?? [];
-		for (const thing of things) {
-			if (!!thing) {
-				const width = u.getWidthOf(thing.breadcrumb_title) + 29;
-				if ((total + width) > thresholdWidth) {
-					break;
-				}
-				total += width;
-				widths.push(width);
-				crumb_things.push(thing);
-				debug.log_crumbs(`ONE ${width} ${thing.title}`);
-				parent_widths = parent_widths * 100 + width;
-			}
-		}
-		let left = (thresholdWidth - total) / 2;	// position of first crumb
-		let lefts = [left];
-		for (const width of widths) {
-			left += width;							// position of next crumb
-			lefts.push(left);
-		}
-		return [crumb_things, widths, lefts, parent_widths];
 	}
 
 	static readonly _____EDIT: unique symbol;

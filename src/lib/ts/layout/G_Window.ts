@@ -6,14 +6,11 @@ import { get } from 'svelte/store';
 export class G_Window {
 	scale_factor = 1;
 	
-	get windowScroll(): Point { return new Point(window.scrollX, window.scrollY); }
 	get mouse_distance_fromGraphCenter(): number { return this.mouse_vector_ofOffset_fromGraphCenter()?.magnitude ?? 0; }
 	get mouse_angle_fromGraphCenter(): number | null { return this.mouse_vector_ofOffset_fromGraphCenter()?.angle ?? null; }
-
-	get windowSize(): Size {
-		const ratio = this.scale_factor;
-		return new Size(window.innerWidth / ratio, window.innerHeight / ratio);
-	}
+	get raw_windowSize(): Size { return new Size(window.innerWidth, window.innerHeight); }
+	get windowSize(): Size { return this.raw_windowSize.dividedBy(this.scale_factor); }
+	get windowScroll(): Point { return new Point(window.scrollX, window.scrollY); }
 
 	restore_state() {
 		layout.graphRect_update();	// needed for applyScale
@@ -55,7 +52,6 @@ export class G_Window {
 		p.write_key(T_Preference.scale, scale);
 		const zoomContainer = document.documentElement;
 		zoomContainer.style.setProperty('zoom', scale.toString());
-		zoomContainer.style.transform = `scale(var(zoom))`;
 		zoomContainer.style.height = `${100 / scale}%`;
 		zoomContainer.style.width = `${100 / scale}%`;
 		layout.graphRect_update();
