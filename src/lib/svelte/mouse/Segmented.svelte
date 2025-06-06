@@ -1,84 +1,114 @@
 <script lang='ts'>
-	import { k, u, ux, Rect, Size, Point, colors, G_Segment } from '../../ts/common/Global_Imports';
-	import { w_background_color } from '../../ts/common/Stores';
-	import type { Handle_Result } from '../../ts/common/Types';
-	import Segment from './Segment.svelte';
-	export let selection_closure = Handle_Result<string>;
+	import { k, Point } from '../../ts/common/Global_Imports';
+	export let handle_selection: ((types: string[]) => void) | null = null;
+	export let height: number = k.button_height;
+	export let allow_multiple: boolean = false;
 	export let font_size = k.font_size.small;
-	export let selected: string[] = [];
-	export let height = k.height.segmented;
+	export let allow_none: boolean = false;
+	export let origin: Point = Point.zero;
+	export let name: string = k.empty;
 	export let titles: string[] = [];
-	export let fill = $w_background_color;
-	export let stroke = colors.default;
-	export let allow_multiple = false;
-	export let origin = Point.zero;
-	export let allow_none = false;
-    export let name = k.empty;
-	export let zindex = 0;
-	let width = height / 2;
-	let g_segments: Array<G_Segment> = [];
+	export let selected: string[];
+	export let width = 0;
 
-	$: selected, update_g_segments_andWidth();
-
-	if (!Array.isArray(selected)) {
-		selected = [selected];		// some preferences which should be an array, are not
-	}
-
-	update_g_segments_andWidth();
 	function isSelected(title: string) { return selected.includes(title); }
-	function nextAfter(title: string): string { return titles[titles.indexOf(title).increment(true, titles.length)]; }		// next one after title
+	function button_name(title: string) { return `pill-${name}-${title.replace(/\s+/g, '-').toLowerCase()}`; }
 
-	function reset_g_segments_andWidth() {
-		width = height / 2;
-		g_segments = [];
-	}
+	$: selected, setSelected(selected);
 
-	function update_g_segments_andWidth() {
-		const max_index = titles.length - 1;
-		let index = 0;
-		let x = 0;
-		reset_g_segments_andWidth();
-		for (const title of titles) {
-			const g_segment = G_Segment.create_g_segment(name, title, font_size, isSelected(title), index, max_index, x, height);
-			g_segments.push(g_segment);
-			x += g_segment.width;
-			index += 1;
-		}
-		width = x;
-	}
-
-	function hit_closure(title: string, shift: boolean) {
-		// if allow_multiple, merely toggle title, including none selected
-		const notSelected = !isSelected(title)
+	function select(title: string) {
+		let titles = [...selected];
 		if (!allow_multiple) {
-			selected = notSelected ? [title] : [nextAfter(title)];
-		} else if (notSelected) {
-			selected.push(title);
-		} else if (allow_none || selected.length > 1) {
-			selected = selected.filter(t => t != title);
+			titles = [title];
+		} else if (isSelected(title)) {
+			titles = selected.filter(i => i !== title);
+		} else {
+			titles = [...selected, title];
 		}
-		selection_closure(selected);
+		handle_selection?.(titles);
+	}
+
+	function setSelected(turnTheseOn: string[]) {
+		for (const title of titles) {
+			const element = document.getElementById(button_name(title));
+			if (element) {
+				const flag = turnTheseOn.includes(title);
+				if (flag) {
+					element.classList.add('selected');
+				} else {
+					element.classList.remove('selected');
+				}
+			}
+		}
 	}
 
 </script>
 
+<div style='left:{origin.x}px; width:{width}px; position:absolute;'>
 <div
-	class='segmented'
-	id={name}
+	class='pill-group'
 	style='
-		width:{width}px;
-		top:{origin.y}px;
-		left:{origin.x}px;
-		position:absolute;
-		height:{height}px;'>
-	{#each g_segments as g_segment}
-		<Segment
-			fill={fill}
-			stroke={stroke}
-			zindex={zindex}
-			font_size={font_size}
-			g_segment={g_segment}
-			segmented_name={name}
-			hit_closure={hit_closure}/>
+		transform: translateX(-50%);
+		height: {height}px;
+		position: absolute;
+		top: {origin.y}px;
+		left: 50%;'>
+	{#each titles as title}
+		<button
+			class:selected={isSelected(title)}
+			style='font-size:{font_size}px;'
+			on:click={() => select(title)}
+			id={button_name(title)}
+			type='button'
+			class='pill'>
+			{title}
+		</button>
 	{/each}
 </div>
+</div>
+
+<style>
+
+	.pill-group {
+		border: 0.5px solid black;
+		background: transparent;
+		border-radius: 999px;
+		overflow: hidden;
+		display: flex;
+	}
+
+	.pill {
+		justify-content: center;
+		background: transparent;
+		font-family: inherit;
+		white-space: nowrap;
+		padding-bottom: 2px;
+		position: relative;
+		width: fit-content;
+		padding-right: 8px;
+		padding-left: 8px;
+		max-width: none;
+		cursor: pointer;
+		outline: none;
+		display: flex;
+		min-width: 0;
+		height: 100%;
+		border: none;
+		color: #222;
+		flex: none;
+	}
+
+	.pill.selected {
+		background: #b7d6e7 !important;
+	}
+
+	.pill:not(:last-child) {
+		border-right: 0.5px solid black;
+	}
+
+	.pill:hover {
+		background: black;
+		color: white;
+	}
+
+</style>

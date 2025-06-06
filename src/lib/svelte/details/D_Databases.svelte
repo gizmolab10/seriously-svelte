@@ -7,7 +7,7 @@
 	import { T_Database } from '../../ts/database/DBCommon';
     import Buttons_Row from '../buttons/Buttons_Row.svelte';
 	import { w_t_database } from '../../ts/common/Stores';
-	import Foo from '../mouse/Foo.svelte';
+	import Segmented from '../mouse/Segmented.svelte';
 	import Text_Table from '../kit/Text_Table.svelte';
 	import Separator from '../kit/Separator.svelte';
 	import Button from '../buttons/Button.svelte';
@@ -110,19 +110,20 @@
 	style='
 		height:40px;
 		padding:5px;'>
-	<Foo
+	<Segmented
 		name='db'
 		titles={db_ids}
+		width={k.width_details - 7}
 		selected={[$w_t_database]}
 		height={k.height.controls}
-		origin={new Point(22, top + 2)}
+		origin={new Point(0, top - 2)}
 		handle_selection={handle_db_selection}/>
 	<div class='data-details'
 		style='
 			width: 100%;
 			font-size:{k.font_size.smaller}px;'>
 		<Text_Table
-			top={top + 18}
+			top={top + 22}
 			row_height={11}
 			name='data-table'
 			array={storage_details}
@@ -142,7 +143,7 @@
 						es_button={es_save}
 						closure={handle_save}
 						zindex={T_Layer.frontmost}
-						origin={new Point(132, top + 105)}>
+						origin={new Point(32, top + 102)}>
 						save to db
 					</Button>
 				{/if}
@@ -157,7 +158,7 @@
 			font_sizes={font_sizes}
 			width={k.width_details}
 			row_titles={row_titles()}
-			origin={Point.y(top + 128)}
+			origin={Point.y(top + 132)}
 			closure={handle_actionRequest}
 			button_height={k.height.button}
 			separator_thickness={k.thickness.separator.ultra_thin}

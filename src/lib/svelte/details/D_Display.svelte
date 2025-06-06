@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { w_show_countDots_ofType, w_background_color } from '../../ts/common/Stores';
 	import { k, Point, T_Kinship } from '../../ts/common/Global_Imports';
+	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
 	import Color from '../kit/Color.svelte';
-	import Foo from '../mouse/Foo.svelte';
 	export let top = 0;
 	const color_left = 60
 	const picker_offset = `-117px`;
@@ -41,17 +41,16 @@
 		title_left={k.separator_title_left}
 		title_font_size={separator_font_size}
 		thickness={k.thickness.separator.ultra_thin}/>
-	<Foo
+	<Segmented
 		top={11}
 		left={9}
+		name='counts'
 		titles={titles}
 		allow_none={true}
 		allow_multiple={true}
-		font_size={font_size}
-		name='counts-selector'
 		width={k.width_details}
 		height={k.height.button}
-		origin={new Point(47, 12)}
+		origin={new Point(0, 12)}
 		selected={$w_show_countDots_ofType}
 		handle_selection={handle_count_dots}/>
 

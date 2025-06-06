@@ -32,7 +32,7 @@
 
 <div class='hierarchy_traits'
 	style='
-		top:2px;
+		top:3px;
 		left:10px;
 		width: 100%;
 		display:flex;
@@ -61,11 +61,11 @@
 				height={k.height.controls}
 				font_size={k.font_size.smaller}
 				selected={$w_show_traits_ofType}
-				origin={new Point(k.width_details - 86, 0)}
-				selection_closure={handleClick_onTraitTypes}/>
+				origin={new Point(k.width_details - 64, 0)}
+				handle_selection={handleClick_onTraitTypes}/>
 			{#each $w_thing_traits as trait}
 				<Text_Editor
-					top={24}
+					top={26}
 					height={78}
 					label={trait.t_trait}
 					color={colors.default}

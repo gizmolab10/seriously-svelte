@@ -16,7 +16,7 @@
 	const size_small = k.height.button;
 	const rights = [12, 67, 110, 140];
 	const size_big = size_small + 4;
-	const lefts = [18, 30, 110];
+	const lefts = [18, 35, 130];
 	const resize_viewBox = `0, 0, ${size_big}, ${size_big}`;
 	let es_control_byType: { [t_control: string]: S_Element } = {};
 	let isVisible_forType: {[t_control: string]: boolean} = {};
@@ -89,11 +89,11 @@
 			thickness={k.thickness.separator.thick}
 			corner_radius={k.radius.gull_wings.thick}>
 			<div style='
-				position: absolute;
-				top: 5px;
+				top: 6px;
 				left: 6px;
 				width: 100%;
 				height: 100%;
+				position: absolute;
 				z-index: {T_Layer.frontmost};'>
 				{#if !$w_popupView_id}
 					{#key $w_background_color}
@@ -102,7 +102,7 @@
 							color='transparent'
 							name='details-toggle'
 							detect_longClick={true}
-							center={new Point(lefts[0], details_top + 5)}
+							center={new Point(lefts[0], details_top + 3)}
 							es_button={es_control_byType[T_Control.details]}
 							closure={(s_mouse) => handle_s_mouse_forControl_Type(s_mouse, T_Control.details)}>
 							<img src='settings.svg' alt='circular button' width={size_small}px height={size_small}px/>
@@ -110,20 +110,22 @@
 					{/key}
 					{#key $w_show_graph_ofType}
 						<Segmented
+							width={80}
+							name='graph'
 							origin={Point.x(lefts[1])}
 							selected={[$w_show_graph_ofType]}
-							name='graph-type-selector'
 							titles={[T_Graph.tree, T_Graph.radial]}
-							selection_closure={(titles) => layout.handle_mode_selection('graph', titles)}/>
+							handle_selection={(titles) => layout.handle_mode_selection('graph', titles)}/>
 						{#if layout.inTreeMode}
 							{#key $w_show_tree_ofType}
 								<Segmented
-									origin={Point.x(lefts[2])}
+									width={180}
+									name='tree'
 									allow_multiple={true}
-									name='tree-type-selector'
+									origin={Point.x(lefts[2])}
 									selected={$w_show_tree_ofType}
 									titles={[T_Kinship.child, T_Kinship.parent, T_Kinship.related, T_Kinship.tags]}
-									selection_closure={(titles) => layout.handle_mode_selection('tree', titles)}/>
+									handle_selection={(titles) => layout.handle_mode_selection('tree', titles)}/>
 							{/key}
 						{/if}
 					{/key}
