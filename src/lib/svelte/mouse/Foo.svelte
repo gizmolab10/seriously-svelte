@@ -1,7 +1,6 @@
 <script lang='ts'>
-	import type { Handle_Result } from '../../ts/common/Types';
 	import k from '../../ts/common/Constants';
-	export let handle_selection = Handle_Result<string> | null;
+	export let handle_selection: ((types: string[]) => void) | null = null;
 	export let allow_multiple: boolean = false;
 	export let allow_none: boolean = false;
 	export let name: string = k.empty;

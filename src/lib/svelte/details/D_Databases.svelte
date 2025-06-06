@@ -7,7 +7,7 @@
 	import { T_Database } from '../../ts/database/DBCommon';
     import Buttons_Row from '../buttons/Buttons_Row.svelte';
 	import { w_t_database } from '../../ts/common/Stores';
-	import Segmented from '../mouse/Segmented.svelte';
+	import Foo from '../mouse/Foo.svelte';
 	import Text_Table from '../kit/Text_Table.svelte';
 	import Separator from '../kit/Separator.svelte';
 	import Button from '../buttons/Button.svelte';
@@ -110,13 +110,13 @@
 	style='
 		height:40px;
 		padding:5px;'>
-	<Segmented
+	<Foo
 		name='db'
 		titles={db_ids}
 		selected={[$w_t_database]}
 		height={k.height.controls}
 		origin={new Point(22, top + 2)}
-		selection_closure={handle_db_selection}/>
+		handle_selection={handle_db_selection}/>
 	<div class='data-details'
 		style='
 			width: 100%;

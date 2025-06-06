@@ -1,10 +1,9 @@
 <script lang='ts'>
 	import { w_show_countDots_ofType, w_background_color } from '../../ts/common/Stores';
 	import { k, Point, T_Kinship } from '../../ts/common/Global_Imports';
-	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
 	import Color from '../kit/Color.svelte';
-	import Foo from '../kit/Foo.svelte';
+	import Foo from '../mouse/Foo.svelte';
 	export let top = 0;
 	const color_left = 60
 	const picker_offset = `-117px`;
