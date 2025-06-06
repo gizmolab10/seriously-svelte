@@ -1,54 +1,85 @@
-<script lang="ts">
-	export let items: string[] = ['child', 'parent', 'related'];
-	export let selected: string = items[0];
-	export let height: number = 20;
-	export let width: number = 190;
-	export let left: number = 9;
-	export let top: number = 9;
+<script lang='ts'>
+	import type { Handle_Result } from '../../ts/common/Types';
+	import k from '../../ts/common/Constants';
+	export let handle_selection = Handle_Result<string> | null;
+	export let allow_multiple: boolean = false;
+	export let allow_none: boolean = false;
+	export let name: string = k.empty;
+	export let titles: string[] = [];
+	export let selected: string[];
+	export let height: number = 0;
+	export let width: number = 0;
+	export let left: number = 0;
+	export let top: number = 0;
 
-	function select(item: string) {
-		selected = item;
-		console.log('selected', selected);
-		// Optionally, dispatch an event here if you want to notify parent
+	function isSelected(title: string) { return selected.includes(title); }
+	function button_name(title: string) { return `pill-${name}-${title.replace(/\s+/g, '-').toLowerCase()}`; }
+
+	$: selected, setSelected(selected);
+
+	function select(title: string) {
+		let titles = [...selected];
+		if (!allow_multiple) {
+			titles = [title];
+		} else if (isSelected(title)) {
+			titles = selected.filter(i => i !== title);
+		} else {
+			titles = [...selected, title];
+		}
+		handle_selection?.(titles);
 	}
+
+	function setSelected(turnTheseOn: string[]) {
+		for (const title of titles) {
+			const element = document.getElementById(button_name(title));
+			if (element) {
+				const flag = turnTheseOn.includes(title);
+				if (flag) {
+					element.classList.add('selected');
+				} else {
+					element.classList.remove('selected');
+				}
+			}
+		}
+	}
+
 </script>
 
 <div
-	class="pill-group"
-	style="
+	class='pill-group'
+	style='
 		transform: translateX(-50%);
 		height: {height}px;
 		position: absolute;
 		top: {top}px;
-		left: 50%;
-	"
->
-	{#each items as item, idx}
+		left: 50%;'>
+	{#each titles as title}
 		<button
-			class="pill {selected === item ? 'selected' : ''} {idx === 0 ? 'left' : idx === items.length - 1 ? 'right' : ''}"
-			on:click={() => select(item)}
-			type="button"
-		>
-			{item}
+			class:selected={isSelected(title)}
+			on:click={() => select(title)}
+			id={button_name(title)}
+			type='button'
+			class='pill'>
+			{title}
 		</button>
 	{/each}
 </div>
 
 <style>
+
 	.pill-group {
-		border: 2px solid #ccc;
-		background: #f8f1e3;
+		border: 0.5px solid black;
+		background: transparent;
 		border-radius: 999px;
-		display: inline-flex;
 		overflow: hidden;
+		display: flex;
 	}
 
 	.pill {
-		transition: background 0.2s, color 0.2s;
 		justify-content: center;
 		background: transparent;
 		font-family: inherit;
-		align-items: center;
+		align-titles: center;
 		white-space: nowrap;
 		position: relative;
 		width: fit-content;
@@ -63,11 +94,11 @@
 		border: none;
 		color: #222;
 		flex: none;
-		top: -1px;
+		top: -0.5px;
 	}
 
 	.pill.selected {
-		background: #b7d6e7;
+		background: #b7d6e7 !important;
 	}
 
 	.pill:not(:last-child) {
@@ -78,4 +109,5 @@
 		background: black;
 		color: white;
 	}
+
 </style>

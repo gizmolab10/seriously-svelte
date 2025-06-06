@@ -14,9 +14,14 @@
 	const separator_font_size = k.font_size.smallest;
 	const titles = [T_Kinship[T_Kinship.child], T_Kinship[T_Kinship.parent], T_Kinship[T_Kinship.related]];
 	let color = $w_background_color;
-	
-	function selection_closure(t_counts: string[]) { $w_show_countDots_ofType = t_counts as Array<T_Kinship>; }
-	function handle_colors(result: string) { $w_background_color = color = result; }
+
+	function handle_colors(result: string) {
+		$w_background_color = color = result;
+	}
+
+	function handle_count_dots(types: string[]) {
+		$w_show_countDots_ofType = types as Array<T_Kinship>;
+	}
 
 </script>
 
@@ -38,15 +43,19 @@
 		title_font_size={separator_font_size}
 		thickness={k.thickness.separator.ultra_thin}/>
 	<Foo
+		top={11}
+		left={9}
 		titles={titles}
 		allow_none={true}
 		allow_multiple={true}
 		font_size={font_size}
 		name='counts-selector'
+		width={k.width_details}
 		height={k.height.button}
 		origin={new Point(47, 12)}
 		selected={$w_show_countDots_ofType}
-		selection_closure={selection_closure}/>
+		handle_selection={handle_count_dots}/>
+
 	<Separator
 		title='color'
 		origin={Point.y(36)}

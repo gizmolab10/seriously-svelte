@@ -2,16 +2,12 @@
 	background-color: var(--css-background-color);
 }
 
-html, body {
-	overflow: hidden;
-    height: 100%;
-    width: 100%;
-    padding: 0;
-    margin: 0;
-}
-
 svg {
 	display: block;		/* override inline to eliminate unwanted vertical displacements */
+}
+
+div, svg, span, input {
+	background-color: transparent;
 }
 
 button, svg {
@@ -20,6 +16,10 @@ button, svg {
 	}
 }
 
-div, svg, span, input {
-	background-color: transparent;
+html, body {
+	overflow: hidden;
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
 }
