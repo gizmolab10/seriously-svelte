@@ -7,7 +7,12 @@
 	const focus = $w_ancestry_focus;
 	let reattachments = 0;
 
-	$: $w_depth_limit, reattachments++;
+	$: $w_depth_limit, update_layout_andReattach();
+
+	function update_layout_andReattach() {
+		layout.grand_layout();
+		reattachments++;
+	}
 
 </script>
 

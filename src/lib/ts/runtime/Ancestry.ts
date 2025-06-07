@@ -1,7 +1,7 @@
 import { T_Graph, T_Create, T_Element, T_Kinship, T_Predicate, T_Alteration, T_SvelteComponent } from '../common/Global_Imports';
 import { c, h, k, p, u, w, show, Rect, Size, Thing, grabs, debug, layout, wrappers, svgPaths } from '../common/Global_Imports';
 import { Direction, Predicate, Hierarchy, databases, Relationship, Svelte_Wrapper } from '../common/Global_Imports';
-import { w_background_color, w_show_graph_ofType, w_t_database } from '../common/Stores';
+import { w_background_color, w_depth_limit, w_show_graph_ofType, w_t_database } from '../common/Stores';
 import { w_ancestry_focus, w_s_alteration, w_s_text_edit } from '../common/Stores';
 import { w_ancestries_grabbed, w_ancestries_expanded, } from '../common/Stores';
 import { G_Widget, G_Cluster, G_TreeLine } from '../common/Global_Imports';
@@ -202,11 +202,11 @@ export default class Ancestry extends Identifiable {
 
 	visibleSubtree_height(visited: string[] = []): number {
 		const thing = this.thing;
-		if (!!thing && !visited.includes(this.pathString)) {
+		if (!!thing && !visited.includes(this.id)) {
 			if (this.shows_branches) {
 				let height = 0;
 				for (const branchAncestry of this.branchAncestries) {
-					height += branchAncestry.visibleSubtree_height([...visited, this.pathString]);
+					height += branchAncestry.visibleSubtree_height([...visited, this.id]);
 				}
 				return Math.max(height, k.height.row);
 			}
@@ -396,13 +396,29 @@ export default class Ancestry extends Identifiable {
 	expand() { return this.expanded_setTo(true); }
 	collapse() { return this.expanded_setTo(false); }
 	toggleExpanded() { return this.expanded_setTo(!this.isExpanded); }
-	get shows_children(): boolean { return this.isExpanded && this.hasChildren; }
 	get shows_branches(): boolean { return p.branches_areChildren ? this.shows_children : !this.isRoot; }
+	get shows_children(): boolean { return this.isExpanded && this.hasChildren && this.hasVisible_depth_ofFocus; }
 	get isExpanded(): boolean { return this.isRoot || !get(w_ancestries_expanded) || this.includedInStore_ofAncestries(w_ancestries_expanded); }
 
 	remove_fromGrabbed_andExpanded() {
 		this.collapse();
 		this.ungrab();
+	}
+
+	get depth_ofFocus(): number {
+		const focus = get(w_ancestry_focus);
+		if (!!focus) {
+			return Math.abs(this.depth - focus.depth);
+		}
+		return 0;
+	}
+
+	get hasVisible_depth_ofFocus(): boolean {
+		const depth = get(w_depth_limit);
+		if (!!depth) {
+			return this.depth_ofFocus < depth;
+		}
+		return true;
 	}
 
 	reveal_toFocus() {
