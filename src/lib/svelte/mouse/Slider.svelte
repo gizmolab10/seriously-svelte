@@ -10,12 +10,12 @@
 	export let max: number = 20;
 	const x = Math.log10(max) / divisions;
 	let slider_value = value <= 1 ? 0 : (Math.log10(value) / x);
-	$: value = Math.round(Math.pow(10, slider_value * x));
 
-	function handle_input(event: Event) {
-		if (!!value && value > 0) {
-			handle_value_change(value);
-		}
+	$: slider_value, compute_andPush();
+
+	function compute_andPush() {
+		value = Math.round(Math.pow(10, slider_value * x));
+		handle_value_change(value);
 	}
 	
 </script>
@@ -26,7 +26,6 @@
 		step='1'
 		type='range'
 		max={divisions}
-		on:input={handle_input}
 		bind:value={slider_value}
 		style='flex: 1 1 auto; position: relative; min-width: 0;'
 	/>
