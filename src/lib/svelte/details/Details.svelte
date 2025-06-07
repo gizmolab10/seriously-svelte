@@ -43,11 +43,11 @@
 	<Hideable t_details={T_Details.traits} extra_titles={next_previous_titles}>
 		<D_Traits/>
 	</Hideable>
-	<Hideable t_details={T_Details.database}>
-		<D_Databases/>
-	</Hideable>
 	<Hideable t_details={T_Details.display} isBottom={true}>
 		<D_Display/>
+	</Hideable>
+	<Hideable t_details={T_Details.database}>
+		<D_Databases/>
 	</Hideable>
 </div>
 <Separator

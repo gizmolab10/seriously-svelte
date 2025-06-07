@@ -79,8 +79,6 @@ export class Events {
 	}
 
 	private handle_mouse_move(event: MouseEvent) {
-		event.preventDefault();
-		event.stopPropagation();
 		const location = new Point(event.clientX, event.clientY);
 		w_mouse_location.set(location);
 		w_mouse_location_scaled.set(location.dividedBy(w.scale_factor));

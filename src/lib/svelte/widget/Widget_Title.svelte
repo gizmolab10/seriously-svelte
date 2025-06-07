@@ -112,7 +112,7 @@
 
 	function stopEdit() {
 		debug.log_edit(`STOP ${title_binded}`);
-		w_s_text_edit.set(null);
+		$w_s_text_edit = null;
 		input?.blur();
 		update_cursorStyle();
 		layout.grand_layout();
@@ -136,9 +136,9 @@
 				title_prior = thing?.title;			// so hasChanges will be correct next time
 			}
 			u.onNextCycle_apply(() => {		// prevent Panel's enter key handler call to start edit from actually starting
-				if (!!$w_s_text_edit && $w_s_text_edit?.actively_refersTo(ancestry)) {
+				if (!!$w_s_text_edit && $w_s_text_edit.actively_refersTo(ancestry)) {
 					debug.log_edit(`STOPPING ${ancestry.title}`);
-					$w_s_text_edit?.stop_editing();
+					$w_s_text_edit.stop_editing();
 					$w_s_text_edit = null;	// inform Widget
 				}
 			});
@@ -148,16 +148,16 @@
 	export const _____RANGE: unique symbol = Symbol('_____RANGE');
 
 	function extractRange_fromInput_toThing() {
-		if (!!input) {
+		if (!!input && !!$w_s_text_edit) {
 			const end = input.selectionEnd;
 			const start = input.selectionStart;
 			debug.log_edit(`EXTRACT RANGE ${start} ${end}`);
-			$w_s_text_edit?.thing_setSelectionRange(new Seriously_Range(start, end));
+			$w_s_text_edit.thing_setSelectionRange(new Seriously_Range(start, end));
 		}
 	}
 
 	function applyRange_fromThing_toInput() {
-		const range = $w_s_text_edit?.thing_selectionRange;
+		const range = $w_s_text_edit.thing_selectionRange;
 		if (!!range && !!input) {
 			const end = range.end;
 			const start = range.start;
@@ -172,8 +172,8 @@
 			if (Rect.rect_forElement_containsPoint(input, location)) {
 				const offset = u.convert_windowOffset_toCharacterOffset_in(location.x, input);
 				debug.log_edit(`CURSOR OFFSET ${offset}`);
-				$w_s_text_edit?.thing_setSelectionRange_fromOffset(offset);
-				$w_s_text_edit?.start_editing();
+				$w_s_text_edit.thing_setSelectionRange_fromOffset(offset);
+				$w_s_text_edit.start_editing();
 			}
 		}
 	}
@@ -238,8 +238,8 @@
 			if (isEditing()) {
 				extractRange_fromInput_toThing();
 			} else if (s_mouse.isDown) {
-				if (!!$w_s_text_edit && $w_s_text_edit?.isActive) {
-					$w_s_text_edit?.stop_editing();		// stop prior edit, wait for it to percolate (below with setTimeout)
+				if (!!$w_s_text_edit && $w_s_text_edit.isActive) {
+					$w_s_text_edit.stop_editing();		// stop prior edit, wait for it to percolate (below with setTimeout)
 					$w_s_text_edit = null;
 				}
 				if (!ancestry.isGrabbed) {
@@ -278,11 +278,11 @@
 			extractRange_fromInput_toThing();
 			$w_thing_title = title;		// tell Info to update it's selection's title
 			debug.log_edit(`TITLE ${title}`);
-			$w_s_text_edit?.title = title;
-			$w_s_text_edit?.setState_temporarilyTo_whileApplying(T_Edit.percolating, () => {
+			$w_s_text_edit.title = title;
+			$w_s_text_edit.setState_temporarilyTo_whileApplying(T_Edit.percolating, () => {
 				layout.grand_layout();
 			});
-			debug.log_edit(`UPDATED ${$w_s_text_edit?.description}`);
+			debug.log_edit(`UPDATED ${$w_s_text_edit.description}`);
 		}
 	}
 

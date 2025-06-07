@@ -197,7 +197,19 @@ export class Testworthy_Utilities {
 		return JSON.stringify(object, removeExtras, 1);
 	}
 
-	
+	/**
+	 * Returns the cumulative sum (prefix sum) array for the input array.
+	 * Example: [10, 20, 30] => [10, 30, 60]
+	 */
+	cumulativeSum(array: number[]): number[] {
+		const result: number[] = [];
+		array.reduce((acc, val) => {
+			const sum = acc + val;
+			result.push(sum);
+			return sum;
+		}, 0);
+		return result;
+	}
 
 }
 

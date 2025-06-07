@@ -82,7 +82,7 @@
 		background: transparent;
 		font-family: inherit;
 		white-space: nowrap;
-		padding-bottom: 2px;
+		padding-bottom: 2.2px;
 		position: relative;
 		width: fit-content;
 		padding-right: 8px;

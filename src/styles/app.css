@@ -1,4 +1,4 @@
-* {
+body {
 	background-color: var(--css-background-color);
 }
 
@@ -22,4 +22,9 @@ html, body {
     width: 100%;
     padding: 0;
     margin: 0;
+}
+
+input[type="range"] {
+	user-select: auto !important;
+	touch-action: auto !important;
 }
