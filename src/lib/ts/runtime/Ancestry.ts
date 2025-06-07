@@ -162,12 +162,11 @@ export default class Ancestry extends Identifiable {
 	}
 
 	g_line_bidirectionaTo(other: Ancestry) : G_TreeLine {
-		const offset_y = 0.5;
 		const g_line = new G_TreeLine(this, other, true);
 		const offset_x = -(k.height.line + k.height.dot / 2);
 		const extent = other.g_widget.absolute_center_ofDrag;
-		const origin = this.g_widget.absolute_center_ofReveal.offsetByXY(2, -2.5);
-		const rect = Rect.createExtentRect(origin, extent).offsetByXY(offset_x, offset_y);
+		const origin = this.g_widget.absolute_center_ofReveal;
+		const rect = Rect.createExtentRect(origin, extent).offsetByX(offset_x).offsetEquallyBy(-1);
 		g_line.set_curve_type_forHeight(rect.height);
 		g_line.rect = rect;
 		return g_line;

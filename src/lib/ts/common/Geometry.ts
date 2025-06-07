@@ -180,6 +180,7 @@ export class Rect {
 	get atZero():					   Rect { return new Rect(Point.zero, this.size); }
 	static get zero():				   Rect { return new Rect(Point.zero, Size.zero); }
 	static createSizeRect(size: Size): Rect { return new Rect(Point.zero, size); }
+	offsetEquallyBy(offset: number):   Rect { return this.offsetByXY(offset, offset); }
 	offsetByX(x: number):			   Rect { return new Rect(this.origin.offsetByX(x), this.size); }
 	offsetByY(y: number):			   Rect { return new Rect(this.origin.offsetByY(y), this.size); }
 	offsetBy(delta: Point):			   Rect { return new Rect(this.origin.offsetBy(delta), this.size); }
