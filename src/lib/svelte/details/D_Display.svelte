@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { w_show_countDots_ofType, w_background_color, w_list_depth } from '../../ts/common/Stores';
+	import { w_show_countDots_ofType, w_background_color, w_depth_limit } from '../../ts/common/Stores';
 	import { k, u, Point, T_Kinship } from '../../ts/common/Global_Imports';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
@@ -26,7 +26,7 @@
 	}
 	
 	function handle_list_depth(value: number) {
-		$w_list_depth = value;
+		$w_depth_limit = value;
 	}
 
 </script>
@@ -73,7 +73,9 @@
 		title_font_size={font_size}
 		length={k.width_details - 26}
 		origin={new Point(10, tops[3])}
-		title_left={k.separator_title_left}/>
+		inital_log_value={$w_depth_limit}
+		title_left={k.separator_title_left}
+		handle_value_change={handle_list_depth}/>
 	<Separator
 		title='color'
 		has_thin_divider={false}

@@ -3,9 +3,10 @@
 	export let handle_value_change: (value: number) => void = () => {};
 	export let origin: Point = { x: 0, y: 0 };
 	export let title_font_size: number = 18;
+	export let inital_log_value: number = 0;
 	export let title_left: number = 0;
 	export let length: number = 100;
-	let sliderValue = 0; // Linear value (0-100)
+	let sliderValue = inital_log_value > 0 ? (Math.log10(inital_log_value) / 2) * 100 : 0; // Linear value (0-100) based on initial_log_value
 	$: logValue = Math.round(Math.pow(10, sliderValue / 100 * 2)); // 10^0 to 10^2
 
 	function onSliderInput(event: Event) {

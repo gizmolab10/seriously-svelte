@@ -252,6 +252,7 @@ export enum T_Preference {
 	grabbed			  = 'grabbed',
 	paging 			  = 'paging',
 	traits			  = 'traits',
+	levels			  = 'levels',
 	graph			  = 'graph',
 	scale			  = 'scale',
 	focus			  = 'focus',

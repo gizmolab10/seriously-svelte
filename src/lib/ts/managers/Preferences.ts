@@ -1,6 +1,6 @@
 import { c, h, k, u, show, grabs, debug, radial, colors, layout, Ancestry, databases } from '../common/Global_Imports';
+import { w_g_paging, w_font_size, w_background_color, w_thing_fontFamily, w_depth_limit } from '../common/Stores';
 import { G_Paging, T_Graph, T_Trait, T_Details, T_Kinship, T_Preference } from '../common/Global_Imports';
-import { w_g_paging, w_font_size, w_background_color, w_thing_fontFamily } from '../common/Stores';
 import { w_show_tree_ofType, w_show_graph_ofType, w_show_traits_ofType } from '../common/Stores';
 import { w_ancestry_focus, w_ancestries_grabbed, w_ancestries_expanded } from '../common/Stores';
 import { w_t_database, w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
@@ -174,6 +174,10 @@ export class Preferences {
 
 		// other
 
+		w_depth_limit.subscribe((depth: number) => {
+			this.write_key(T_Preference.levels, depth);
+		});
+
 		w_background_color.subscribe((color: string) => {
 			document.documentElement.style.setProperty('--css-background-color', color);
 			this.write_key(T_Preference.background, color);
@@ -219,6 +223,7 @@ export class Preferences {
 		w_ring_rotation_radius	.set(Math.max( this.read_key(T_Preference.ring_radius) ?? 0, k.radius.ring_center));
 
 		// other
+		w_depth_limit			.set( this.read_key(T_Preference.levels)			   ?? 2);
 		w_font_size				.set( this.read_key(T_Preference.font_size)			   ?? 14);
 		w_thing_fontFamily		.set( this.read_key(T_Preference.font)				   ?? 'Times New Roman');
 		w_background_color		.set( this.read_key(T_Preference.background)		   ?? colors.background);
