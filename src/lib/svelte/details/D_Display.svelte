@@ -20,13 +20,13 @@
 	function handle_colors(result: string) {
 		$w_background_color = color = result;
 	}
+	
+	function handle_depth_limit(value: number) {
+		$w_depth_limit = value;
+	}
 
 	function handle_count_dots(types: string[]) {
 		$w_show_countDots_ofType = types as Array<T_Kinship>;
-	}
-	
-	function handle_list_depth(value: number) {
-		$w_depth_limit = value;
 	}
 
 </script>
@@ -70,12 +70,13 @@
 		title='limit graph to this many levels'
 		thickness={k.thickness.separator.ultra_thin}/>
 	<Slider
+		max={20}
+		value={$w_depth_limit}
 		title_font_size={font_size}
-		length={k.width_details - 26}
+		width={k.width_details - 26}
 		origin={new Point(10, tops[3])}
-		inital_log_value={$w_depth_limit}
 		title_left={k.separator_title_left}
-		handle_value_change={handle_list_depth}/>
+		handle_value_change={handle_depth_limit}/>
 	<Separator
 		title='color'
 		has_thin_divider={false}

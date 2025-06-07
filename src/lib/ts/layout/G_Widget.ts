@@ -1,8 +1,8 @@
 import { S_Element, G_Cluster, G_TreeLine, G_TreeBranches } from '../common/Global_Imports';
 import { w_graph_rect, w_show_graph_ofType, w_device_isMobile} from '../common/Stores';
 import { k, ux, Rect, Size, Point, layout, Ancestry } from '../common/Global_Imports';
+import { w_depth_limit, w_show_details, w_show_related } from '../common/Stores';
 import { T_Widget, T_Element, T_Graph } from '../common/Global_Imports';
-import { w_show_details, w_show_related } from '../common/Stores';
 import { get } from 'svelte/store';
 
 export default class G_Widget {
@@ -80,9 +80,10 @@ export default class G_Widget {
 	static readonly _____LAYOUT: unique symbol;
 
 	layout_entireTree() {		// misses every Widget.layout
-		this.layout_focus_ofTree()
-		this.recursively_layout_subtree();
-		this.recursively_layout_bidirectionals();
+		const depth_limit = get(w_depth_limit);
+		this.layout_focus_ofTree();
+		this.recursively_layout_subtree(depth_limit);
+		this.recursively_layout_bidirectionals(depth_limit);
 	}
 
 	layout_necklaceWidget(
@@ -138,25 +139,27 @@ export default class G_Widget {
 		return new Point(x, y);
 	}
 
-	private recursively_layout_subtree(visited: number[] = []) {
-		const ancestry = this.ancestry;	
-		if (!visited.includes(ancestry.hid) && ancestry.shows_branches) {
-			const branchAncestries = ancestry.branchAncestries;
-			for (const branchAncestry of branchAncestries) {
-				branchAncestry.g_widget.recursively_layout_subtree([...visited, branchAncestry.hid]);		// layout progeny first
+	private recursively_layout_subtree(depth: number, visited: number[] = []) {
+		if (depth > 0) {
+			const ancestry = this.ancestry;	
+			if (!visited.includes(ancestry.hid) && ancestry.shows_branches && depth > 0) {
+				const branchAncestries = ancestry.branchAncestries;
+				for (const branchAncestry of branchAncestries) {
+					branchAncestry.g_widget.recursively_layout_subtree(depth - 1, [...visited, branchAncestry.hid]);		// layout progeny first
+				}
 			}
+			this.layout_widget_andChildren();
 		}
-		this.layout_widget_andChildren();
 	}
 
-	private recursively_layout_bidirectionals(visited: number[] = []) {
-		if (layout.inTreeMode && get(w_show_related)) {
+	private recursively_layout_bidirectionals(depth: number, visited: number[] = []) {
+		if (layout.inTreeMode && get(w_show_related) && depth > 0) {
 			this.layout_bidirectional_lines();
 			const ancestry = this.ancestry;	
 			if (!visited.includes(ancestry.hid) && ancestry.shows_branches) {
 				const childAncestries = ancestry.childAncestries;
 				for (const childAncestry of childAncestries) {
-					childAncestry.g_widget.recursively_layout_bidirectionals([...visited, childAncestry.hid]);		// layout progeny first
+					childAncestry.g_widget.recursively_layout_bidirectionals(depth - 1, [...visited, childAncestry.hid]);		// layout progeny first
 				}
 			}
 		}
@@ -196,14 +199,12 @@ export default class G_Widget {
 	}
 
 	private layout_bidirectional_lines() {
-		if (layout.inTreeMode) {
+		if (layout.inTreeMode && get(w_show_related)) {
 			this.g_bidirectionalLines = [];
-			if (get(w_show_related)) {
-				const g_lines = this.ancestry.g_lines_forBidirectionals;
-				for (const [index, g_line] of g_lines.entries()) {
-					this.g_bidirectionalLines[index] = g_line;
-					g_line.update_svg_andName();
-				}
+			const g_lines = this.ancestry.g_lines_forBidirectionals;
+			for (const [index, g_line] of g_lines.entries()) {
+				this.g_bidirectionalLines[index] = g_line;
+				g_line.update_svg_andName();
 			}
 		}
 	}

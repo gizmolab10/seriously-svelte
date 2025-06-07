@@ -79,13 +79,13 @@
 
 	.pill {
 		justify-content: center;
-		background: transparent;
 		font-family: inherit;
 		white-space: nowrap;
 		padding-bottom: 2.2px;
 		position: relative;
 		width: fit-content;
 		padding-right: 8px;
+		background: white;
 		padding-left: 8px;
 		max-width: none;
 		cursor: pointer;

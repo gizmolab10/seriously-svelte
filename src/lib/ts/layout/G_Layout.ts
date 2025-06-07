@@ -1,5 +1,5 @@
 import { h, k, p, u, w, grabs, Rect, Point, debug, signals, Ancestry, Thing } from '../common/Global_Imports';
-import { T_Graph, T_Banner, T_Kinship, T_Preference, G_RadialGraph } from '../common/Global_Imports';
+import { T_Graph, T_Kinship, T_Preference, G_RadialGraph } from '../common/Global_Imports';
 import { w_user_graph_offset, w_user_graph_center } from '../common/Stores';
 import { w_show_tree_ofType, w_show_graph_ofType } from '../common/Stores';
 import { w_show_related, w_ancestry_focus } from '../common/Stores';
@@ -69,10 +69,7 @@ export default class G_Layout {
 
 	static readonly _____LAYOUT_AND_BUILD: unique symbol;
 
-	grand_build() {
-		this.grand_layout();
-		signals.signal_rebuildGraph_fromFocus();
-	}
+	grand_build() { signals.signal_rebuildGraph_fromFocus(); }
 
 	grand_layout() {
 		if (this.inRadialMode) {

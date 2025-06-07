@@ -1,44 +1,49 @@
 <script lang='ts'>
 	import type { Point } from '../../ts/common/Global_Imports';
 	export let handle_value_change: (value: number) => void = () => {};
-	export let origin: Point = { x: 0, y: 0 };
 	export let title_font_size: number = 18;
-	export let inital_log_value: number = 0;
+	export let origin: Point = Point.zero;
+	export let divisions: number = 100;
 	export let title_left: number = 0;
-	export let length: number = 100;
-	let sliderValue = inital_log_value > 0 ? (Math.log10(inital_log_value) / 2) * 100 : 0; // Linear value (0-100) based on initial_log_value
-	$: logValue = Math.round(Math.pow(10, sliderValue / 100 * 2)); // 10^0 to 10^2
+	export let width: number = 200;
+	export let value: number = 1;
+	export let max: number = 20;
+	const x = Math.log10(max) / divisions;
+	let slider_value = value <= 1 ? 0 : (Math.log10(value) / x);
+	$: value = Math.round(Math.pow(10, slider_value * x));
 
-	function onSliderInput(event: Event) {
-		handle_value_change(logValue);
+	function handle_input(event: Event) {
+		if (!!value && value > 0) {
+			handle_value_change(value);
+		}
 	}
 	
 </script>
 
-<div style='position: relative; left: {origin.x}px; top: {origin.y}px; width: {length}px; display: flex; align-items: center;'>
+<div style='position: relative; left: {origin.x}px; top: {origin.y}px; width: {width}px; display: flex; align-items: center;'>
 	<input
 		min='0'
 		step='1'
-		max='100'
 		type='range'
-		bind:value={sliderValue}
-		on:input={onSliderInput}
+		max={divisions}
+		on:input={handle_input}
+		bind:value={slider_value}
 		style='flex: 1 1 auto; position: relative; min-width: 0;'
 	/>
-	<span style='font-size: {title_font_size}px; margin-left: -20px; display: inline-block; width: 3.5em; text-align: right;'>
-		{logValue}
+	<span style='font-size: {title_font_size}px; margin-left: -26px; display: inline-block; width: 3.5em; text-align: right;'>
+		{value}
 	</span>
 </div>
 
 <style>
 	input[type="range"] {
-		height: 14px; /* match thumb diameter */
+		height: 14.5px; /* match thumb diameter */
 		appearance: none;
 		-webkit-appearance: none;
 		background: transparent;
 	}
 	input[type="range"]::-webkit-slider-runnable-track {
-		height: 14px;
+		height: 14.5px;
 		background: white;
 		border-radius: 16px;
 		border: 0.5px solid black;
@@ -49,7 +54,7 @@
 		width: 14px;
 		border-radius: 50%;
 		background: #007aff;
-		border: 2px solid #aaa;
+		border: 2px solid #007aff;
 		margin-top: 0px;
 	}
 	input[type="range"]::-moz-range-thumb {
@@ -57,7 +62,7 @@
 		width: 14px;
 		border-radius: 50%;
 		background: #007aff;
-		border: 2px solid #aaa;
+		border: 2px solid #007aff;
 	}
 	input[type="range"]::-moz-range-track {
 		height: 14px;
@@ -76,7 +81,7 @@
 		width: 14px;
 		border-radius: 50%;
 		background: #007aff;
-		border: 2px solid #aaa;
+		border: 2px solid #007aff;
 	}
 	input[type="range"]:focus {
 		outline: none;
