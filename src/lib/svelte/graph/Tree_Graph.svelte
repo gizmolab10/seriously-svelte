@@ -8,6 +8,7 @@
 	let reattachments = 0;
 
 	$: $w_depth_limit, reattachments++;
+
 </script>
 
 {#key reattachments}

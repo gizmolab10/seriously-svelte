@@ -58,8 +58,6 @@ export class Events {
 	}
 
 	private handle_mouse_up(event: MouseEvent) {
-		event.preventDefault();
-		event.stopPropagation();
 		w_count_mouse_up.update(n => n + 1);
 	}
 

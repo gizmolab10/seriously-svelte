@@ -1,5 +1,6 @@
 <script lang=ts>
 	import { debug, layout, Ancestry } from '../../ts/common/Global_Imports';
+	import { w_show_related } from '../../ts/common/Stores';
 	import Tree_Branches from './Tree_Branches.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import Tree_Line from './Tree_Line.svelte';
@@ -25,6 +26,13 @@
 			<Widget ancestry = {branchAncestry}/>
 			{#if branchAncestry.shows_branches && !layout.was_visited(branchAncestry)}
 				<Tree_Branches ancestry = {branchAncestry} depth = {depth - 1}/>
+			{/if}
+			{#if $w_show_related && depth > 1}
+				{#each ancestry.g_widget.g_bidirectionalLines as g_line}
+					{#if g_line.depth_difference < (depth + 2)}
+						<Tree_Line g_line = {g_line}/>
+					{/if}
+				{/each}
 			{/if}
 		{/each}
 	{/if}

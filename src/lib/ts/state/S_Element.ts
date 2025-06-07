@@ -60,7 +60,6 @@ export default class S_Element {
 		}
 		if (!!color) {
 			if (this.ancestry.isEditing) {
-				console.log('  S_Element isEditing');
 				return `dashed ${color} 1px`;
 			}
 			if (this.ancestry.isGrabbed) {
