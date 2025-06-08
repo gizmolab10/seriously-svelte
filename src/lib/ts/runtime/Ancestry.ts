@@ -166,7 +166,7 @@ export default class Ancestry extends Identifiable {
 		const offset_x = -(k.height.line + k.height.dot / 2);
 		const extent = other.g_widget.absolute_center_ofDrag;
 		const origin = this.g_widget.absolute_center_ofReveal;
-		const rect = Rect.createExtentRect(origin, extent).offsetByX(offset_x).offsetEquallyBy(-1);
+		const rect = Rect.createExtentRect(origin, extent).offsetByX(offset_x).offsetByXY(-0.5, -1.5);
 		g_line.set_curve_type_forHeight(rect.height);
 		g_line.rect = rect;
 		return g_line;
@@ -379,13 +379,13 @@ export default class Ancestry extends Identifiable {
 		u.ancestries_orders_normalize(ancestries, true);
 	}
 
-	order_normalizeRecursive(persist: boolean, visited: number[] = []) {
-		const hid = this.hid;
+	order_normalizeRecursive(persist: boolean, visited: string[] = []) {
+		const id = this.id;
 		const childAncestries = this.childAncestries;
-		if (!visited.includes(hid) && childAncestries && childAncestries.length > 1) {
+		if (!visited.includes(id) && childAncestries && childAncestries.length > 1) {
 			u.ancestries_orders_normalize(childAncestries, persist);
 			for (const childAncestry of childAncestries) {
-				childAncestry.order_normalizeRecursive(persist, [...visited, hid]);
+				childAncestry.order_normalizeRecursive(persist, [...visited, id]);
 			}
 		}
 	}
@@ -909,13 +909,13 @@ export default class Ancestry extends Identifiable {
 		return get(w_background_color);
 	}
 
-	progeny_count(visited: number[] = []): number {
+	progeny_count(visited: string[] = []): number {
 		let sum = 0;
-		const hid = this.thing?.hid;
-		if (!!hid && !visited.includes(hid)) {
+		const id = this.thing?.id;
+		if (!!id && !visited.includes(id)) {
 			const children = this.childAncestries;
 			for (const child of children) {
-				sum += child.progeny_count([...visited, hid]) + 1;
+				sum += child.progeny_count([...visited, id]) + 1;
 			}
 		}
 		return sum;

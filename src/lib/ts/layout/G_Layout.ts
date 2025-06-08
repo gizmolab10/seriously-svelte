@@ -47,10 +47,10 @@ export default class G_Layout {
 				parent_widths = parent_widths * 100 + width;
 			}
 		}
-		let left = (thresholdWidth - total) / 2;	// position of first crumb
+		let left = 8;					// position of first crumb... was (thresholdWidth - total) / 2
 		let lefts = [left];
 		for (const width of widths) {
-			left += width;							// position of next crumb
+			left += width;				// position of next crumb
 			lefts.push(left);
 		}
 		return [crumb_things, widths, lefts, parent_widths];

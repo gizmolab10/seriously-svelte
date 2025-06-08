@@ -1,12 +1,12 @@
 import { S_Element, G_Cluster, G_TreeLine, G_TreeBranches } from '../common/Global_Imports';
 import { w_graph_rect, w_show_graph_ofType, w_device_isMobile} from '../common/Stores';
-import { k, ux, Rect, Size, Point, layout, Ancestry } from '../common/Global_Imports';
+import { k, u, ux, Rect, Size, Point, layout, Ancestry } from '../common/Global_Imports';
 import { w_depth_limit, w_show_details, w_show_related } from '../common/Stores';
 import { T_Widget, T_Element, T_Graph } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
 export default class G_Widget {
-	g_bidirectionalLines: Array<G_TreeLine> = [];
+	g_bidirectionalLines: G_TreeLine[] = [];
 	g_parentBranches: G_TreeBranches;
 	g_childBranches: G_TreeBranches;
 	center_ofReveal = Point.zero;
@@ -139,30 +139,45 @@ export default class G_Widget {
 		return new Point(x, y);
 	}
 
-	private recursively_layout_subtree(depth: number, visited: number[] = []) {
+	private recursively_layout_subtree(depth: number, visited: string[] = []) {
 		if (depth > 0) {
 			const ancestry = this.ancestry;	
-			if (!visited.includes(ancestry.hid) && ancestry.shows_branches && depth > 0) {
+			if (!visited.includes(ancestry.id) && ancestry.shows_branches && depth > 0) {
 				const branchAncestries = ancestry.branchAncestries;
 				for (const branchAncestry of branchAncestries) {
-					branchAncestry.g_widget.recursively_layout_subtree(depth - 1, [...visited, branchAncestry.hid]);		// layout progeny first
+					branchAncestry.g_widget.recursively_layout_subtree(depth - 1, [...visited, branchAncestry.id]);		// layout progeny first
 				}
 			}
 			this.layout_widget_andChildren();
 		}
 	}
 
-	private recursively_layout_bidirectionals(depth: number, visited: number[] = []) {
+	private recursively_layout_bidirectionals(depth: number, visited: string[] = [], bidirectionals: G_TreeLine[] = []) {
 		if (layout.inTreeMode && get(w_show_related) && depth > 0) {
-			this.layout_bidirectional_lines();
+			this.g_bidirectionalLines = [];
+			const more = this.layout_bidirectional_lines(bidirectionals);
 			const ancestry = this.ancestry;	
-			if (!visited.includes(ancestry.hid) && ancestry.shows_branches) {
+			if (!visited.includes(ancestry.id) && ancestry.shows_branches) {
 				const childAncestries = ancestry.childAncestries;
 				for (const childAncestry of childAncestries) {
-					childAncestry.g_widget.recursively_layout_bidirectionals(depth - 1, [...visited, childAncestry.hid]);		// layout progeny first
+					childAncestry.g_widget.recursively_layout_bidirectionals(		// layout progeny first
+						depth - 1,
+						[...visited, childAncestry.id],
+						[...bidirectionals, ...more]);
 				}
 			}
 		}
+	}
+
+	private layout_bidirectional_lines(bidirectionals: G_TreeLine[]) {
+		const g_lines = this.ancestry.g_lines_forBidirectionals;
+		for (const g_line of g_lines) {
+			if (!u.hasMatching_bidirectional(bidirectionals, g_line)) {
+				this.g_bidirectionalLines.push(g_line);
+				g_line.update_svg_andName();
+			}
+		}
+		return this.g_bidirectionalLines;
 	}
 
 	private layout_focus() {
@@ -195,17 +210,6 @@ export default class G_Widget {
 			}
 			const origin_ofChildren = origin_ofFocusReveal.offsetByXY(branches_offsetX, branches_offsetY);
 			this.origin_ofWidget = origin_ofChildren;
-		}
-	}
-
-	private layout_bidirectional_lines() {
-		if (layout.inTreeMode && get(w_show_related)) {
-			this.g_bidirectionalLines = [];
-			const g_lines = this.ancestry.g_lines_forBidirectionals;
-			for (const [index, g_line] of g_lines.entries()) {
-				this.g_bidirectionalLines[index] = g_line;
-				g_line.update_svg_andName();
-			}
 		}
 	}
 

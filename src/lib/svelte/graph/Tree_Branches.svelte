@@ -27,13 +27,13 @@
 			{#if branchAncestry.shows_branches && !layout.was_visited(branchAncestry)}
 				<Tree_Branches ancestry = {branchAncestry} depth = {depth - 1}/>
 			{/if}
-			{#if $w_show_related && depth > 1}
-				{#each ancestry.g_widget.g_bidirectionalLines as g_line}
-					{#if g_line.depth_difference < (depth + 2)}
-						<Tree_Line g_line = {g_line}/>
-					{/if}
-				{/each}
-			{/if}
 		{/each}
+		{#if $w_show_related && depth > 1}
+			{#each ancestry.g_widget.g_bidirectionalLines as g_line}
+				{#if g_line.depth_ofLine < (depth + 2)}
+					<Tree_Line g_line = {g_line}/>
+				{/if}
+			{/each}
+		{/if}
 	{/if}
 {/if}

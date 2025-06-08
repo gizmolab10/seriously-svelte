@@ -10,6 +10,7 @@ import { Point } from './Geometry';
 import { get } from 'svelte/store';
 import { k } from './Constants';
 import Angle from './Angle';
+import G_TreeLine from '../layout/G_TreeLine';
 
 export class Utilities extends Testworthy_Utilities {
 	
@@ -83,6 +84,16 @@ export class Utilities extends Testworthy_Utilities {
 			}
 		}
 		return stripped;
+	}
+
+	hasMatching_bidirectional(bidirectionals: G_TreeLine[], g_line: G_TreeLine): boolean {
+		return bidirectionals.some(b => 
+			!!b.ancestry &&
+			!!g_line.ancestry &&
+			((b.ancestry.id == g_line.ancestry.id &&
+			b.other_ancestry.id == g_line.other_ancestry.id) ||
+			(b.ancestry.id == g_line.other_ancestry.id &&
+			b.other_ancestry.id == g_line.ancestry.id)));
 	}
 
 	convertToObject(instance: any, fields: string[]): object {

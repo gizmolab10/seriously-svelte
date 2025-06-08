@@ -25,7 +25,7 @@ export default class G_TreeLine {
 	}
 
 	get branchAncestry(): Ancestry | null { return this.points_atOther ? this.other_ancestry : this.ancestry; }
-	get depth_difference(): number { return Math.max(this.ancestry?.depth ?? 0, this.other_ancestry.depth); }
+	get depth_ofLine(): number { return Math.max(this.ancestry?.depth ?? 0, this.other_ancestry.depth); }
 		
 	update_svg_andName() {
 		this.layout_svgPaths();

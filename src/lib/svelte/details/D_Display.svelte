@@ -65,9 +65,9 @@
 		length={k.width_details}
 		margin={k.details_margin}
 		origin={Point.y(tops[2])}
+		title='maximum visible levels'
 		title_left={k.separator_title_left}
 		title_font_size={separator_font_size}
-		title='limit graph to this many levels'
 		thickness={k.thickness.separator.ultra_thin}/>
 	<Slider
 		max={12}
