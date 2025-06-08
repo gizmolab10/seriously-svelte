@@ -2,7 +2,7 @@
     import { k, u, Rect, Size, Point, colors, svgPaths, T_Details, T_Layer } from '../../ts/common/Global_Imports';
     import { w_background_color, w_show_details_ofType } from '../../ts/common/Stores';
     import { createEventDispatcher, tick, setContext } from 'svelte';
-    import Glows_Banner from '../buttons/Glows_Banner.svelte';
+    import Glows_Banner from './Glows_Banner.svelte';
     export let extra_titles: string[] = [];
     export let origin: Point | null = null;
     export let t_details: T_Details;
@@ -14,7 +14,7 @@
     const dispatch = createEventDispatcher();
     const banner_height = k.height.banner.details;
     const banner_rect = new Rect(Point.zero, new Size(k.width_details, banner_height));
-    let banner_color = colors.bannerFor($w_background_color);
+    let banner_color = colors.ofBannerFor($w_background_color);
     let isHidden = !show_slot();
     let element: HTMLElement;
 
@@ -29,7 +29,7 @@
 
     $: dispatch('heightChange', { height });
     setContext('handle_banner_click', toggle_hidden);
-    $: $w_background_color, banner_color = colors.bannerFor($w_background_color);
+    $: $w_background_color, banner_color = colors.ofBannerFor($w_background_color);
     function show_slot(): boolean { return hasBanner ? $w_show_details_ofType.includes(t_details) : true; }
     function callSlottedMethod(methodName: string, ...args: any[]) { dispatch('callMethod', { methodName, args }); }
     

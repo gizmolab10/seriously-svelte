@@ -9,15 +9,20 @@ export class Colors {
     default_forThings = 'blue';
 
 	opacitize(color: string, amount: number): string { return transparentize(color, 1 - amount); }
-	separatorFor(background: string): string { return this.blend('#dedede', background);}
-	bannerFor(background: string): string { return this.blend('#ffffff', background, 4);}
+	ofSeparatorFor(background: string): string { return this.blend('#dedede', background);}
+	ofBannerFor(background: string): string { return this.blend('#ffffff', background, 4);}
 
 	blend(color: string, background: string, saturation: number = 7): string {
+		let blended: string | null = 'lightgray';
 		if (!this.colors_areIdentical(background, this.background)) {
-			const separator = this.multiply_saturationOf_by(background, saturation);
-			if (!!separator) {
-				color = separator;
+			if (this.isGray(background)) {
+				blended = this.darkerBy(background, 1 / saturation);
+			} else {
+				blended = this.multiply_saturationOf_by(background, saturation);
 			}
+		}
+		if (!!blended) {
+			color = blended;
 		}
 		return color;
 	}
@@ -126,7 +131,7 @@ export class Colors {
 				return this.set_darkness_toRGBA(rgba, dark);
 			}
 		}
-		return null;
+		return 'null';
 	}
 
 	static readonly _____DARKNESS: unique symbol;
@@ -248,6 +253,14 @@ export class Colors {
 		} catch {
 			return null;
 		}
+	}
+
+	private isGray(color: string): boolean {
+		const rgba = this.color_toRGBA(color);
+		if (!!rgba) {
+			return rgba.r === rgba.g && rgba.g === rgba.b;
+		}
+		return false;
 	}
 
 	private RGBA_toHex(rgba: RGBA, omitAlpha: boolean = true): string {

@@ -79,8 +79,8 @@ class Stores {
 		w_t_startup.set(T_Startup.start);
 		w_show_details_asStack.set(true);
 		w_background_color.subscribe((color: string) => {
-			colors.banner = colors.bannerFor(color);
-			colors.separator = colors.separatorFor(color);
+			colors.banner = colors.ofBannerFor(color);
+			colors.separator = colors.ofSeparatorFor(color);
 		});
 	}
 }

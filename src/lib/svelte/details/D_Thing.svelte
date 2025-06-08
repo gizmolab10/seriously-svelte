@@ -39,7 +39,7 @@
 			const row = Math.max(0, info_details.findIndex(([key]) => key === 'color'));
 			const offsetRow = info_table.location_ofCellAt(row, 1);
 			color_origin = offsetRow.offsetByXY(-12, -4);
-			picker_offset = `${color_origin.x}px`;
+			picker_offset = `${color_origin.x - 90}px`;
 		}
 	}
 
@@ -84,7 +84,8 @@
 			width:100%;
 			color:black;
 			top:{top}px;
-			position:absolute;'>
+			position:absolute;
+			z-index:{T_Layer.frontmost};'>
 		{#if info_details.length != 0}
 			<Text_Table
 				top={0}

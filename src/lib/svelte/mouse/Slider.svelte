@@ -1,6 +1,7 @@
 <script lang='ts'>
 	import type { Point } from '../../ts/common/Global_Imports';
 	export let handle_value_change: (value: number) => void = () => {};
+	export let thumb_color: string = '#007aff';
 	export let isLogarithmic: boolean = false;
 	export let title_font_size: number = 18;
 	export let origin: Point = Point.zero;
@@ -9,6 +10,7 @@
 	export let width: number = 200;
 	export let value: number = 1;
 	export let max: number = 20;
+	const border = '0.5px solid black';
 	const x = isLogarithmic ? Math.log10(max) / divisions : max / divisions;
 	let slider_value = value <= 1 ? 0 : (isLogarithmic ? Math.log10(value) / x : value / x);
 
@@ -21,7 +23,7 @@
 	
 </script>
 
-<div style='position: relative; left: {origin.x}px; top: {origin.y}px; width: {width}px; display: flex; align-items: center;'>
+<div style='position: relative; left: {origin.x}px; top: {origin.y}px; width: {width}px; display: flex; align-items: center; --thumb-color: {thumb_color}; --border: {border};'>
 	<input
 		min='0'
 		step='1'
@@ -39,49 +41,49 @@
 	input[type="range"] {
 		height: 14.5px; /* match thumb diameter */
 		appearance: none;
-		-webkit-appearance: none;
 		background: transparent;
+		-webkit-appearance: none;
 	}
 	input[type="range"]::-webkit-slider-runnable-track {
 		height: 14.5px;
 		background: white;
 		border-radius: 16px;
-		border: 0.5px solid black;
+		border: var(--border);
 	}
 	input[type="range"]::-webkit-slider-thumb {
-		-webkit-appearance: none;
-		height: 14px;
 		width: 14px;
-		border-radius: 50%;
-		background: #007aff;
-		border: 2px solid #007aff;
+		height: 14px;
 		margin-top: 0px;
+		border-radius: 50%;
+		border: var(--border);
+		-webkit-appearance: none;
+		background: var(--thumb-color);
 	}
 	input[type="range"]::-moz-range-thumb {
 		height: 14px;
 		width: 14px;
 		border-radius: 50%;
-		background: #007aff;
-		border: 2px solid #007aff;
+		border: var(--border);
+		background: var(--thumb-color);
 	}
 	input[type="range"]::-moz-range-track {
 		height: 14px;
 		background: white;
 		border-radius: 16px;
-		border: 0.5px solid black;
+		border: var(--border);
 	}
 	input[type="range"]::-ms-fill-lower,
 	input[type="range"]::-ms-fill-upper {
 		background: white;
 		border-radius: 16px;
-		border: 0.5px solid black;
+		border: var(--border);
 	}
 	input[type="range"]::-ms-thumb {
-		height: 14px;
 		width: 14px;
+		height: 14px;
 		border-radius: 50%;
-		background: #007aff;
-		border: 2px solid #007aff;
+		border: var(--border);
+		background: var(--thumb-color);
 	}
 	input[type="range"]:focus {
 		outline: none;

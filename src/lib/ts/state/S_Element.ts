@@ -7,8 +7,9 @@ export default class S_Element {
 	defaultDisabledColor = '#999999';
 	defaultCursor = k.cursor_default;
 	hoverCursor = k.cursor_default;
+	uses_background_color = false;
 	identifiable!: Identifiable;
-	color_background = k.empty;
+	color_background = 'white';
 	hoverColor = 'transparent';
 	type = T_Element.none;
 	ignore_hover = false;
@@ -33,9 +34,11 @@ export default class S_Element {
 		this.identifiable = identifiable;
 		this.subtype = subtype;
 		this.type = type;
-		w_background_color.subscribe((color: string) => {
-			this.color_background = color;
-		})
+		if (this.uses_background_color) {
+			w_background_color.subscribe((color: string) => {
+				this.color_background = color;
+			})
+		}
 	}
 
 	static empty() { return {}; }

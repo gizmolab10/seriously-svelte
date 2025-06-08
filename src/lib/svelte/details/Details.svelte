@@ -34,7 +34,7 @@
 	<Hideable t_details={T_Details.actions}>
 		<D_Actions/>
 	</Hideable>
-	<Hideable t_details={T_Details.selection}>
+	<Hideable t_details={T_Details.thing}>
 		<D_Thing/>
 	</Hideable>
 	<Hideable t_details={T_Details.tags} extra_titles={next_previous_titles}>

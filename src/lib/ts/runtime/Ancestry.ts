@@ -789,9 +789,11 @@ export default class Ancestry extends Identifiable {
 			return this.isFocus || (!!parent && parent.isFocus && (g_paging?.index_isVisible(this.siblingIndex) ?? true));
 		} else {
 			const focus = get(w_ancestry_focus);
+			const depth = get(w_depth_limit) ?? 0;
+			const visible = this.depth_ofFocus <= depth;
 			const incorporates = this.incorporates(focus);
 			const expanded = this.isAllExpanded_fromRootTo(focus);
-			return (incorporates && expanded);
+			return (incorporates && expanded && visible);
 		}
 	}
 

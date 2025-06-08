@@ -10,9 +10,9 @@
     export let font_size: number = k.font_size.smaller;
     const glow_rect = Rect.createWHRect(width, height);
     const gradient_name = 'glow-' + title;
-    let banner_color = colors.bannerFor($w_background_color);
+    let banner_color = colors.ofBannerFor($w_background_color);
 
-    $: $w_background_color, banner_color = colors.bannerFor($w_background_color);
+    $: $w_background_color, banner_color = colors.ofBannerFor($w_background_color);
 
 </script>
 

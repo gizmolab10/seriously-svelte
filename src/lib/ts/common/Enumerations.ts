@@ -13,18 +13,18 @@ export enum T_Banner {
 
 export enum T_Details {
 	header,
-	database,
 	actions,
-	display,
-	selection,
+	thing,
 	tags,
 	traits,
+	display,
+	database,
 }
 
 export enum T_Action {
 	browse,
 	focus,
-	reveal,
+	show,
 	add,
 	delete,
 	move,
@@ -42,9 +42,9 @@ export enum T_Layer {
 	widgets,
 	dots,
 	text,
+	details,
 	actions,
 	action_buttons,
-	details,
 	frontmost,
 }
 

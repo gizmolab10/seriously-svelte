@@ -179,8 +179,9 @@ export class Events {
 			selection: 0,
 			parent: 1,
 		},
-		reveal: {
+		show: {
 			list: 0,
+			selection: 1,
 		},
 		add: {
 			child: 0,
@@ -229,8 +230,9 @@ export class Events {
 					case this.actions.focus.selection:			return ancestry.isFocus;
 					case this.actions.focus.parent:				return !ancestry.parentAncestry || ancestry.parentAncestry.isFocus;
 				}											break;
-				case T_Action.reveal:							switch (column) {
-					case this.actions.reveal.list:				return disable_revealConceal;
+				case T_Action.show:							switch (column) {
+					case this.actions.show.list:				return disable_revealConceal;
+					case this.actions.show.selection:			return ancestry.isVisible;
 				}											break;
 				case T_Action.add:							switch (column) {
 					case this.actions.add.child:				return is_altering;
@@ -275,8 +277,9 @@ export class Events {
 					case this.actions.focus.selection:			ancestry.becomeFocus(); break;
 					case this.actions.focus.parent:				ancestry.collapse(); ancestry.parentAncestry?.becomeFocus(); break;
 				}											break;
-				case T_Action.reveal:							switch (column) {
-					case this.actions.reveal.list:				await h.ancestry_toggle_expansion(ancestry); break;
+				case T_Action.show:							switch (column) {
+					case this.actions.show.list:				await h.ancestry_toggle_expansion(ancestry); break;
+					case this.actions.show.selection:			break;
 				}											break;
 				case T_Action.add:							switch (column) {
 					case this.actions.add.child:				await h.ancestry_edit_persistentCreateChildOf(ancestry); break;

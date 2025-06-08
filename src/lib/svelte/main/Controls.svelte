@@ -137,6 +137,19 @@
 							{displayName}
 						</div>
 					{/key}
+					<Button name={T_Control.help}
+						width={size_big}
+						height={size_big}
+						center={new Point(width - rights[0], y_center)}
+						es_button={es_control_byType[T_Control.help]}
+						closure={(s_mouse) => handle_s_mouse_forControl_Type(s_mouse, T_Control.help)}>
+						<span
+							style='top:2px;
+								left:5.5px;
+								position:absolute;'>
+							?
+						</span>
+					</Button>
 				{/if}
 				{#key $w_device_isMobile}
 					{#if $w_device_isMobile}
@@ -187,19 +200,6 @@
 						closure={(s_mouse) => handle_s_mouse_forControl_Type(s_mouse, T_Control.builds)}>
 						<span style='font-family: {$w_thing_fontFamily};'>
 							{'build ' + k.build_number}
-						</span>
-					</Button>
-					<Button name={T_Control.help}
-						width={size_big}
-						height={size_big}
-						center={new Point(width - rights[0], y_center)}
-						es_button={es_control_byType[T_Control.help]}
-						closure={(s_mouse) => handle_s_mouse_forControl_Type(s_mouse, T_Control.help)}>
-						<span
-							style='top:2px;
-								left:5.5px;
-								position:absolute;'>
-							?
 						</span>
 					</Button>
 				{/key}

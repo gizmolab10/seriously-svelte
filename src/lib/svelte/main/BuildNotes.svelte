@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { w_popupView_id, w_background_color, w_show_directionals_ofType } from '../../ts/common/Stores';
-	import Directional_Buttons from '../buttons/Directional_Buttons.svelte';
+	import Steppers from '../buttons/Steppers.svelte';
 	import { k, builds, T_Layer } from '../../ts/common/Global_Imports';
 	import Close_Button from '../buttons/Close_Button.svelte';
 	import { onMount } from 'svelte';
@@ -45,7 +45,7 @@
 	<div class='notes-modal-content'
 		style='background-color:{$w_background_color}'>
 		<div class='top-bar'>
-			<Directional_Buttons hit_closure={hit_closure}/>
+			<Steppers hit_closure={hit_closure}/>
 			<div class='title'>{title}</div>
 		</div>
 		<Close_Button name='builds-close' size={k.height.dot * 1.5}/>

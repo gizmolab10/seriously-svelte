@@ -1,17 +1,17 @@
 <script lang='ts'>
 	import { k, Rect, Size, Point, colors } from '../../ts/common/Global_Imports';
 	import { w_background_color } from '../../ts/common/Stores';
+	import Glow_Button from '../buttons/Glow_Button.svelte';
 	import { s_details } from '../../ts/state/S_Details';
 	import G_Repeater from '../../ts/layout/G_Repeater';
 	import Separator from '../kit/Separator.svelte';
-	import Glow_Button from './Glow_Button.svelte';
 	export let toggle_hidden: (title: string) => boolean;
 	export let font_size = s_details.font_size;
 	export let titles: string[];
 	export let height: number;
 	export let width: number;
 	const g_repeater = new G_Repeater(titles, height, width, 0, 0, 7, false, font_size);
-	let banner_color = colors.bannerFor($w_background_color);
+	let banner_color = colors.ofBannerFor($w_background_color);
 	let selected_title: string | null = null;
 
 	//////////////////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@
 	//																				//
 	//////////////////////////////////////////////////////////////////////////////////
 
-	$: $w_background_color, banner_color = colors.bannerFor($w_background_color);
+	$: $w_background_color, banner_color = colors.ofBannerFor($w_background_color);
 
 	function intercept_click(title: string): boolean {
 		if (title === titles[0]) {

@@ -3,7 +3,7 @@
 	import { T_Action, T_Layer, T_Request, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
 	import { w_s_alteration, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
 	import { w_show_countDots_ofType, w_background_color, w_depth_limit } from '../../ts/common/Stores';
-	import { k, u, Point, T_Kinship } from '../../ts/common/Global_Imports';
+	import { k, u, Point, T_Kinship, colors } from '../../ts/common/Global_Imports';
 	import Buttons_Grid from '../buttons/Buttons_Grid.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
@@ -29,7 +29,7 @@
 	////////////////////////////////////////////////////////////
 	
     $: top, actions_top = top + (has_title ? 3 : -13);
-    $: $w_s_alteration, reattachments += 1;
+    $: $w_depth_limit, $w_s_alteration, $w_background_color, reattachments += 1;
 
 	$:	$w_ancestries_grabbed,
 		$w_ancestries_expanded,
@@ -73,7 +73,7 @@
 		return [
 			['browse', 'left', 'up', 'down', 'right'],
 			['focus', 'on the selection', 'on its parent'],
-			['show', `${list_title}`],
+			['show', `${list_title}`, 'selection'],
 			['add', 'child', 'sibling', 'line', 'parent', 'related'],
 			['delete', 'selection', 'parent', 'related'],
 			['move', 'left', 'up', 'down', 'right'],
@@ -155,6 +155,7 @@
 			isLogarithmic={true}
 			value={$w_depth_limit}
 			width={k.width_details - 26}
+			thumb_color={colors.separator}
 			title_left={k.separator_title_left}
 			title_font_size={separator_font_size}
 			handle_value_change={handle_depth_limit}
