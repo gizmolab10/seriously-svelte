@@ -10,18 +10,18 @@
 	export let separator_thickness = k.thickness.separator.thick;
 	export let origin: Point | null = null;
 	export let center: Point | null = null;
+	export let has_seperator = false;
 	export let row_titles: string[];	// first one is optional row title, rest are button titles
 	export let font_sizes: number[];
 	export let button_height = 13;
 	export let align_left = true;
 	export let add_wings = true;
 	export let has_title = true;	// true means first row_titles is the title of the row
-	export let has_seperator = false;
 	export let name = k.empty;
 	export let width: number;
 	export let margin = 0;
 	export let gap = 2;
-	const solo_title_width = 34;
+	const solo_title_width = 38;
 	const front_margin = has_seperator ? 0 : solo_title_width;
 	const button_titles = has_title ? row_titles.slice(1) : row_titles;
 	const g_repeater = new G_Repeater(button_titles, button_height, width - front_margin, margin, gap, 8, true, font_sizes[0]);
@@ -36,12 +36,12 @@
 	//			 one row of buttons, plus options				//
 	//															//
 	//	has_title:		true means first one is row title		//
-	//	has_seperator:		true means line through row title		//
+	//	has_seperator:	true means line through row title		//
 	//															//
 	//	row_titles		no buttons: if only one and has title	//
 	//	font_sizes:		[title_font_size, button_font_size] 	//
 	//	gap:			between buttons							//
-	//	margin:			around buttons							//
+	//	margin:			at start and end of row					//
 	//															//
 	//////////////////////////////////////////////////////////////
 
@@ -103,11 +103,10 @@
 				class='box-title'
 				style='
 					top: 1.5px;
-					left:{margin}px;
 					text-align: right;
 					position:absolute;
 					font-size:{font_sizes[0]}px;
-					width:{solo_title_width - gap}px;'>
+					width:{solo_title_width - gap - 2.5}px;'>
 				{row_title}
 			</div>
 		{/if}

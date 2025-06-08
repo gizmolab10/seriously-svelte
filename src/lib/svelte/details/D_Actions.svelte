@@ -15,8 +15,8 @@
     const font_sizes = [k.font_size.smallest, k.font_size.smallest];
 	let list_title = grabs.latest?.isExpanded && layout.inTreeMode ? 'hide list' : 'list';
 	let actions_top = top + (has_title ? 3 : -13);
-	let actions_height = 140;
 	let button_titles = compute_button_titles();
+	let actions_height = 139;
     let reattachments = 0;
 	const handle_banner_click = getContext('handle_banner_click');
 
@@ -134,6 +134,13 @@
 				</div>
 			</div>
 		{/if}
+		<Separator
+			isHorizontal={false}
+			has_thin_divider={false}
+			margin={k.details_margin}
+			origin={new Point(37, -6)}
+			length={actions_height + 15.8}
+			thickness={k.thickness.separator.ultra_thin}/>
 		<Separator
 			has_thin_divider={false}
 			length={k.width_details}

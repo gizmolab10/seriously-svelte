@@ -63,7 +63,7 @@
 			<Separator
 				length={height + 6}
 				isHorizontal={false}
-			thickness={k.thickness.separator.ultra_thin}
+				thickness={k.thickness.separator.ultra_thin}
 				corner_radius={k.radius.gull_wings.ultra_thin}
 				origin={new Point(g_repeater.button_left_for(index), 1)}/>
 		{/if}
