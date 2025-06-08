@@ -2,16 +2,20 @@
 	import { e, k, show, Size, Point, grabs, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
 	import { T_Action, T_Layer, T_Request, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
 	import { w_s_alteration, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
-	import { w_show_details_ofType } from '../../ts/common/Stores';
-	import { w_user_graph_offset } from '../../ts/common/Stores';
+	import { w_show_countDots_ofType, w_background_color, w_depth_limit } from '../../ts/common/Stores';
+	import { k, u, Point, T_Kinship } from '../../ts/common/Global_Imports';
 	import Buttons_Grid from '../buttons/Buttons_Grid.svelte';
-	import Button from '../buttons/Button.svelte';
+	import Segmented from '../mouse/Segmented.svelte';
+	import Separator from '../kit/Separator.svelte';
+	import Slider from '../mouse/Slider.svelte';
 	import { getContext } from 'svelte';
 	export let top = 0;
 	const has_title = true;
+	const separator_font_size = k.font_size.smallest;
     const font_sizes = [k.font_size.smallest, k.font_size.smallest];
 	let list_title = grabs.latest?.isExpanded && layout.inTreeMode ? 'hide list' : 'list';
 	let actions_top = top + (has_title ? 3 : -13);
+	let actions_height = 140;
 	let button_titles = compute_button_titles();
     let reattachments = 0;
 	const handle_banner_click = getContext('handle_banner_click');
@@ -27,11 +31,14 @@
     $: top, actions_top = top + (has_title ? 3 : -13);
     $: $w_s_alteration, reattachments += 1;
 
-	$:	$w_show_details_ofType,
-		// $w_user_graph_offset,
-		$w_ancestries_grabbed,
+	$:	$w_ancestries_grabbed,
 		$w_ancestries_expanded,
 		update_button_titles();
+	
+	function handle_depth_limit(value: number) {
+		$w_depth_limit = value;
+		layout.grand_layout();
+	}
 
 	function name_for(t_action: number, column: number) {
 		const titles = button_titles[t_action];
@@ -127,5 +134,23 @@
 				</div>
 			</div>
 		{/if}
+		<Separator
+			has_thin_divider={false}
+			length={k.width_details}
+			margin={k.details_margin}
+			title='maximum visible levels'
+			title_left={k.separator_title_left}
+			title_font_size={separator_font_size}
+			thickness={k.thickness.separator.ultra_thin}
+			origin={Point.y(actions_top + actions_height)}/>
+		<Slider
+			max={12}
+			isLogarithmic={true}
+			value={$w_depth_limit}
+			width={k.width_details - 26}
+			title_left={k.separator_title_left}
+			title_font_size={separator_font_size}
+			handle_value_change={handle_depth_limit}
+			origin={new Point(10, actions_top + actions_height + 7)}/>
 	</div>
 {/key}
