@@ -70,7 +70,8 @@
 		title='limit graph to this many levels'
 		thickness={k.thickness.separator.ultra_thin}/>
 	<Slider
-		max={10}
+		max={12}
+		isLogarithmic={true}
 		value={$w_depth_limit}
 		title_font_size={font_size}
 		width={k.width_details - 26}

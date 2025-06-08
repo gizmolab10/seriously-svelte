@@ -1,6 +1,7 @@
 <script lang='ts'>
 	import type { Point } from '../../ts/common/Global_Imports';
 	export let handle_value_change: (value: number) => void = () => {};
+	export let isLogarithmic: boolean = false;
 	export let title_font_size: number = 18;
 	export let origin: Point = Point.zero;
 	export let divisions: number = 100;
@@ -8,13 +9,13 @@
 	export let width: number = 200;
 	export let value: number = 1;
 	export let max: number = 20;
-	const x = Math.log10(max) / divisions;
-	let slider_value = value <= 1 ? 0 : (Math.log10(value) / x);
+	const x = isLogarithmic ? Math.log10(max) / divisions : max / divisions;
+	let slider_value = value <= 1 ? 0 : (isLogarithmic ? Math.log10(value) / x : value / x);
 
 	$: slider_value, compute_andPush();
 
 	function compute_andPush() {
-		value = Math.round(Math.pow(10, slider_value * x));
+		value = isLogarithmic ? Math.round(Math.pow(10, slider_value * x)) : Math.round(slider_value * x);
 		handle_value_change(value);
 	}
 	
