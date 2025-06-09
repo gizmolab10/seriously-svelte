@@ -56,10 +56,8 @@
 			<p>Nothing is available.</p>
 		{:else if $w_t_startup == T_Startup.ready}
 			<Controls/>
-			{#if !$w_popupView_id}
-				{#if $w_show_details}
-					<Details/>
-				{/if}
+			{#if !$w_popupView_id && $w_show_details}
+				<Details/>
 			{/if}
 			<div class='right-side'
 				style='

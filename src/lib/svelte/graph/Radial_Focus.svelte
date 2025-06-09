@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, k, ux, w, Size, Point, debug, colors, signals, svgPaths, Svelte_Wrapper } from '../../ts/common/Global_Imports';
+	import { c, k, ux, w, Size, Point, debug, colors, layout, signals, svgPaths, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { w_background_color, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { w_thing_color, w_s_text_edit, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { T_Layer, T_Element, T_SvelteComponent } from '../../ts/common/Enumerations';
@@ -28,7 +28,7 @@
 
 	onMount(() => {
 		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
-			layout();
+			layout_focus();
 		});
 		return () => { handle_reposition.disconnect(); };
 	});
@@ -37,7 +37,7 @@
 	function handle_s_mouse(s_mouse: S_Mouse): boolean { return false; }
 
 	$: $w_ancestry_focus, $w_s_text_edit, $w_ancestries_grabbed, update_svg();
-	$: $w_ancestry_focus, layout();
+	$: $w_ancestry_focus, layout_focus();
 	
 	$: {
 		if (!!focus) {
@@ -51,12 +51,12 @@
 		update_svg();
 	}
 
-	function layout() {
+	function layout_focus() {
 		width_ofTitle = ($w_ancestry_focus?.thing?.width_ofTitle ?? 0);
 		const x = -7.5 - (width_ofTitle / 2);
 		const y = -11;
 		origin_ofTitle = new Point(19, -2);
-		origin_ofWidget = w.center_ofGraphSize.offsetByXY(x, y);
+		origin_ofWidget = layout.center_ofGraphSize.offsetByXY(x, y);
 		size_ofBorder = new Size(width_ofTitle - 6, k.height.row);
 		center_ofBorder = new Point(width_ofTitle + 15, height).dividedInHalf;
 	}

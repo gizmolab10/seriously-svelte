@@ -1,6 +1,6 @@
 import { h, k, p, u, w, grabs, Rect, Point, debug, signals, Ancestry, Thing } from '../common/Global_Imports';
 import { T_Graph, T_Kinship, T_Preference, G_RadialGraph } from '../common/Global_Imports';
-import { w_user_graph_offset, w_user_graph_center } from '../common/Stores';
+import { w_user_graph_offset, w_user_graph_center, w_mouse_location_scaled } from '../common/Stores';
 import { w_show_tree_ofType, w_show_graph_ofType } from '../common/Stores';
 import { w_show_related, w_ancestry_focus } from '../common/Stores';
 import { w_graph_rect, w_show_details } from '../common/Stores';
@@ -21,7 +21,7 @@ export default class G_Layout {
 	get isAllExpanded(): boolean { return h.rootAncestry?.isAllProgeny_expanded ?? false; }
 	get center_ofGraphSize(): Point { return get(w_graph_rect).size.asPoint.dividedInHalf; }
 	get g_radialGraph() { let g = this._g_radialGraph; if (!g) { g = new G_RadialGraph(); this._g_radialGraph = g }; return g; }
-	renormalize_user_graph_offset() { this.user_graph_offset_setTo(this.persisted_user_offset); }
+	renormalize_user_graph_offset() { this.set_user_graph_offsetTo(this.persisted_user_offset); }
 	ids_forDB(array: Array<Ancestry>): string { return u.ids_forDB(array).join(', '); }
 	height_ofBannerAt(index: number) { return Object.values(k.height.banner)[index]; }
 	expandAll() { h.rootAncestry.traverse(ancestry => ancestry.expand()); }
@@ -54,17 +54,6 @@ export default class G_Layout {
 			lefts.push(left);
 		}
 		return [crumb_things, widths, lefts, parent_widths];
-	}
-
-	ancestry_place_atCenter(ancestry: Ancestry | null) {
-		if (!ancestry) {	
-			ancestry = h.rootAncestry;
-		}
-		const wrapper = ancestry.titleWrapper;
-		if (!!wrapper) {
-			const rect = wrapper.boundingRect;
-			const center = rect.center;
-		}
 	}
 
 	static readonly _____LAYOUT_AND_BUILD: unique symbol;
@@ -123,7 +112,10 @@ export default class G_Layout {
 	}
 
 	static readonly _____GRAPH: unique symbol;
-
+	
+	get mouse_distance_fromGraphCenter(): number { return this.mouse_vector_ofOffset_fromGraphCenter()?.magnitude ?? 0; }
+	get mouse_angle_fromGraphCenter(): number | null { return this.mouse_vector_ofOffset_fromGraphCenter()?.angle ?? null; }
+	
 	toggle_graph_type() {
 		switch (get(w_show_graph_ofType)) {
 			case T_Graph.tree: w_show_graph_ofType.set(T_Graph.radial); break;
@@ -132,28 +124,56 @@ export default class G_Layout {
 		this.grand_build();
 	}
 
-	user_graph_offset_setTo(user_offset: Point): boolean {
+	mouse_vector_ofOffset_fromGraphCenter(offset: Point = Point.zero): Point | null {
+		const mouse_location = get(w_mouse_location_scaled);
+		if (!!mouse_location) {
+			const center_offset = get(w_user_graph_center).offsetBy(offset);
+			const mouse_vector = center_offset.vector_to(mouse_location);
+			debug.log_mouse(`offset  ${get(w_user_graph_offset).verbose}  ${mouse_vector.verbose}`);
+			return mouse_vector;
+		}
+		return null
+	}
+
+	place_ancestry_atCenter(ancestry: Ancestry | null) {
+		// change the user graph offset to place
+		// the ancestry at the center of the graph
+		if (!ancestry) {	
+			ancestry = h.rootAncestry;
+		}
+		const wrapper = ancestry.titleWrapper;
+		if (!!wrapper) {			
+			const rect = wrapper.boundingRect;
+			const center = get(w_user_graph_center);
+			const offset = center.offsetBy(rect.center.negated);		// distance between centers: from graph to ancestry's widget's title
+			this.set_user_graph_offsetTo(offset);
+		}
+	}
+
+	set_user_graph_offsetTo(user_offset: Point): boolean {
+		// user_offset of zero centers the graph
 		let changed = false;
 		const current_offset = get(w_user_graph_offset);
 		if (!!current_offset && current_offset.vector_to(user_offset).magnitude > .001) {
-			p.write_key(T_Preference.user_offset, user_offset);
+			p.write_key(T_Preference.user_offset, user_offset);		// persist the property user_offset
 			changed = true;
 		}
-		const center_offset = get(w_graph_rect).center.offsetBy(user_offset);
-		w_user_graph_center.set(center_offset);
-		w_user_graph_offset.set(user_offset);
+		const center_offset = get(w_graph_rect).center.offsetBy(user_offset);	// center of the graph in window coordinates
+		w_user_graph_center.set(center_offset);									// w_user_graph_center: a signal change
+		w_user_graph_offset.set(user_offset);									// w_user_graph_offset: a signal change
 		debug.log_mouse(`USER ====> ${user_offset.verbose}  ${center_offset.verbose}`);
 		return changed;
 	}
 
 	graphRect_update() {
-		const y = this.graph_top;
+		// respond to changes in: window size & details visibility
+		const y = this.graph_top + this.breadcrumbs_height;			// account for origin at top and crumbs at bottom
 		const x = get(w_show_details) ? k.width_details : 0;
 		const origin_ofGraph = new Point(x, y);
-		const size_ofGraph = w.windowSize.reducedBy(origin_ofGraph).reducedByXY(0, this.breadcrumbs_height);	// account for origin and crumbs
+		const size_ofGraph = w.windowSize.reducedBy(origin_ofGraph);
 		const rect = new Rect(origin_ofGraph, size_ofGraph);
 		debug.log_mouse(`GRAPH ====> ${rect.description}`);
-		w_graph_rect.set(rect);											// used by Panel and Graph_Tree
+		w_graph_rect.set(rect);										// used by Panel and Graph
 	}
 
 }

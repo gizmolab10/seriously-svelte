@@ -58,7 +58,7 @@ export default class S_RadialGraph {
 
 	get ring_zone_atMouseLocation(): T_RingZone {
 		let ring_zone = T_RingZone.miss;
-		const mouse_vector = w.mouse_vector_ofOffset_fromGraphCenter();
+		const mouse_vector = layout.mouse_vector_ofOffset_fromGraphCenter();
 		const widgets = wrappers.wrappers_ofType_atMouseLocation(T_SvelteComponent.widget);
 		if (!!mouse_vector && widgets.length == 0) {
 			const g_cluster = layout.g_radialGraph.g_cluster_atMouseLocation;

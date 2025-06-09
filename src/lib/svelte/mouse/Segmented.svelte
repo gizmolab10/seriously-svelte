@@ -17,15 +17,19 @@
 	$: selected, setSelected(selected);
 
 	function select(title: string) {
-		let titles = [...selected];
+		let selection = [...selected];
 		if (!allow_multiple) {
-			titles = [title];
+			if (isSelected(title)) {
+				selection = [titles[0]];		// select the first one
+			} else {
+				selection = [title];
+			}
 		} else if (isSelected(title)) {
-			titles = selected.filter(i => i !== title);
+			selection = selected.filter(i => i !== title);
 		} else {
-			titles = [...selected, title];
+			selection = [...selected, title];
 		}
-		handle_selection?.(titles);
+		handle_selection?.(selection);
 	}
 
 	function setSelected(turnTheseOn: string[]) {

@@ -2,8 +2,9 @@
 	import { e, k, show, Size, Point, grabs, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
 	import { T_Action, T_Layer, T_Request, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
 	import { w_s_alteration, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
-	import { w_show_countDots_ofType, w_background_color, w_depth_limit } from '../../ts/common/Stores';
+	import { w_show_countDots_ofType, w_background_color } from '../../ts/common/Stores';
 	import { k, u, Point, T_Kinship, colors } from '../../ts/common/Global_Imports';
+	import { w_depth_limit, w_user_graph_offset } from '../../ts/common/Stores';
 	import Buttons_Grid from '../buttons/Buttons_Grid.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
@@ -29,7 +30,11 @@
 	////////////////////////////////////////////////////////////
 	
     $: top, actions_top = top + (has_title ? 3 : -13);
-    $: $w_depth_limit, $w_s_alteration, $w_background_color, reattachments += 1;
+    $: $w_depth_limit,
+		$w_s_alteration,
+		$w_background_color,
+		$w_user_graph_offset,
+		reattachments += 1;
 
 	$:	$w_ancestries_grabbed,
 		$w_ancestries_expanded,
@@ -73,7 +78,7 @@
 		return [
 			['browse', 'left', 'up', 'down', 'right'],
 			['focus', 'on the selection', 'on its parent'],
-			['show', `${list_title}`, 'selection'],
+			['show', 'selection', `${list_title}`],
 			['add', 'child', 'sibling', 'line', 'parent', 'related'],
 			['delete', 'selection', 'parent', 'related'],
 			['move', 'left', 'up', 'down', 'right'],
@@ -145,7 +150,7 @@
 			has_thin_divider={false}
 			length={k.width_details}
 			margin={k.details_margin}
-			title='maximum visible levels'
+			title='maximum visible tree levels'
 			title_left={k.separator_title_left}
 			title_font_size={separator_font_size}
 			thickness={k.thickness.separator.ultra_thin}

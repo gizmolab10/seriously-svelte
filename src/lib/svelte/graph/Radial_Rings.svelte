@@ -93,7 +93,7 @@
 		////////////////////////////////////
 
 		const _ = $w_mouse_location_scaled;
-		const mouse_vector = w.mouse_vector_ofOffset_fromGraphCenter();
+		const mouse_vector = layout.mouse_vector_ofOffset_fromGraphCenter();
 		if (!!mouse_vector) {
 			const now = new Date().getTime();
 			const mouse_angle = mouse_vector.angle;
@@ -158,7 +158,7 @@
 			if (s_mouse.isUp) {
 				s_reset();
 			} else if (s_mouse.isDown) {
-				const angle_ofMouseDown = w.mouse_angle_fromGraphCenter;
+				const angle_ofMouseDown = layout.mouse_angle_fromGraphCenter;
 				const angle_ofRotation = angle_ofMouseDown.add_angle_normalized(-$w_ring_rotation_angle);
 				const zone = radial.ring_zone_atMouseLocation;
 				$w_s_text_edit?.stop_editing();
@@ -170,7 +170,7 @@
 						radial.s_ring_rotation.basis_angle = angle_ofRotation;
 						break;
 					case T_RingZone.resize:
-						const change_ofRadius = w.mouse_distance_fromGraphCenter - $w_ring_rotation_radius;
+						const change_ofRadius = layout.mouse_distance_fromGraphCenter - $w_ring_rotation_radius;
 						debug.log_radial(` begin resize  ${change_ofRadius.asInt()}`);
 						radial.s_ring_rotation.active_angle = angle_ofMouseDown + Angle.quarter;	// needed for cursor
 						radial.s_ring_rotation.basis_angle = angle_ofRotation + Angle.quarter;		// "
@@ -205,7 +205,7 @@
 				height = {outer_diameter}
 				zindex = {T_Layer.rings}
 				handle_isHit = {handle_isHit}
-				center = {w.center_ofGraphSize}
+				center = {layout.center_ofGraphSize}
 				handle_s_mouse = {up_down_closure}>
 				<svg class = 'rings-svg'
 					viewBox = {viewBox}>

@@ -1,7 +1,6 @@
-import { k, w, Point, Angle, debug, colors, radial, Ancestry, Predicate } from '../common/Global_Imports';
+import { k, w, Point, Angle, debug, colors, radial, layout, Ancestry, Predicate } from '../common/Global_Imports';
+import { w_graph_rect, w_ancestry_focus, w_ring_rotation_radius } from '../common/Stores';
 import { G_Widget, G_ArcSlider, G_Paging, S_Rotation } from '../common/Global_Imports';
-import { w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
-import { w_graph_rect, w_ancestry_focus } from '../common/Stores';
 import { get } from 'svelte/store';
 
 //////////////////////////////////////////
@@ -97,7 +96,7 @@ export default class G_Cluster {
 
 	get isMouse_insideThumb(): boolean {
 		const offset = Point.square(-get(w_ring_rotation_radius));
-		const mouse_vector = w.mouse_vector_ofOffset_fromGraphCenter(offset);
+		const mouse_vector = layout.mouse_vector_ofOffset_fromGraphCenter(offset);
 		return this.isPaging && !!mouse_vector && mouse_vector.isContainedBy_path(this.g_thumbArc.svgPathFor_arcSlider);
 	}
 

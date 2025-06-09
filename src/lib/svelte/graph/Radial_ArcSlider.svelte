@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, k, w, show, Rect, Size, Point, debug, Angle, colors, radial, signals } from '../../ts/common/Global_Imports';
+	import { c, k, w, show, Rect, Size, Point, debug, Angle, colors, radial, layout, signals } from '../../ts/common/Global_Imports';
 	import { w_ring_rotation_radius, w_ring_rotation_angle, w_g_paging_cluster } from '../../ts/common/Stores';
 	import { w_background_color, w_thing_color, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { T_Layer, G_Cluster, Direction } from '../../ts/common/Global_Imports';
@@ -33,7 +33,7 @@
 	$: $w_g_paging_cluster, thumbFill = colors.specialBlend(color, $w_background_color, radial.s_ring_rotation.isHighlighted ? k.opacity.thumb : g_paging_rotation.thumb_opacity);
 	$: textBackground = radial.s_ring_rotation.isHighlighted ? $w_background_color : colors.specialBlend(color, $w_background_color, radial.s_ring_resizing.fill_opacity);
 	$: thumbPath = g_cluster.isPaging && g_cluster.widgets_shown > 1 ? g_cluster.g_thumbArc.svgPathFor_arcSlider : '';
-	$: origin = w.center_ofGraphSize.offsetBy(Point.square(-radius));
+	$: origin = layout.center_ofGraphSize.offsetBy(Point.square(-radius));
 	$: viewBox=`${-offset} ${-offset} ${radius * 2} ${radius * 2}`;
 	$: arcSliderPath = g_arcSlider.svgPathFor_arcSlider;
 	$: forkPath = g_arcSlider.svgPathFor_radialFork;
@@ -69,7 +69,7 @@
 		zindex = {T_Layer.paging}
 		cursor = {k.cursor_default}
 		handle_isHit = {handle_isHit}
-		center = {w.center_ofGraphSize}
+		center = {layout.center_ofGraphSize}
 		handle_s_mouse = {hover_closure}>
         <svg class='svg-arc-slider' viewBox={viewBox}>
             <path
