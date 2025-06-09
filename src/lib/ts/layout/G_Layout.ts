@@ -167,10 +167,10 @@ export default class G_Layout {
 
 	graphRect_update() {
 		// respond to changes in: window size & details visibility
-		const y = this.graph_top + this.breadcrumbs_height;			// account for origin at top and crumbs at bottom
+		const y = this.graph_top - 2;			// account for origin at top
 		const x = get(w_show_details) ? k.width_details : 0;
 		const origin_ofGraph = new Point(x, y);
-		const size_ofGraph = w.windowSize.reducedBy(origin_ofGraph);
+		const size_ofGraph = w.windowSize.reducedBy(origin_ofGraph).reducedByY(this.breadcrumbs_height);
 		const rect = new Rect(origin_ofGraph, size_ofGraph);
 		debug.log_mouse(`GRAPH ====> ${rect.description}`);
 		w_graph_rect.set(rect);										// used by Panel and Graph

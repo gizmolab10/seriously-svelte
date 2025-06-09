@@ -61,10 +61,10 @@
 			{/if}
 			<div class='right-side'
 				style='
+					top: 0px;
 					height: 100%;
 					position: fixed;
 					z-index: {T_Layer.common};
-					top: 0px;
 					left: {$w_graph_rect.origin.x}px;'>
 				{#key $w_popupView_id}
 					{#if $w_popupView_id == T_Control.builds}

@@ -168,47 +168,6 @@ export class Events {
 		}
 	}
 
-	actions: { [key: string]: { [key: string]: number } } = {
-		browse: {
-			left: 0,
-			up: 1,
-			down: 2,
-			right: 3,
-		},
-		focus: {
-			selection: 0,
-			parent: 1,
-		},
-		show: {
-			list: 0,
-			selection: 1,
-		},
-		add: {
-			child: 0,
-			sibling: 1,
-			line: 2,
-			parent: 3,
-			related: 4,
-		},
-		delete: {
-			selection: 0,
-			parent: 1,
-			related: 2,
-		},
-		move: {
-			left: 0,
-			up: 1,
-			down: 2,
-			right: 3,
-		},
-		center: {
-			focus: 0,
-			selection: 1,
-			root: 2,
-			graph: 3,
-		},
-	};
-
 	// T_Action and actions must be in sync
 
 	async handle_key_down(event: KeyboardEvent) {
@@ -382,6 +341,47 @@ export class Events {
 		}
 		return true;
 	}
+
+	actions: { [key: string]: { [key: string]: number } } = {
+		browse: {
+			left: 0,
+			up: 1,
+			down: 2,
+			right: 3,
+		},
+		focus: {
+			selection: 0,
+			parent: 1,
+		},
+		show: {
+			selection: 0,
+			list: 1,
+		},
+		add: {
+			child: 0,
+			sibling: 1,
+			line: 2,
+			parent: 3,
+			related: 4,
+		},
+		delete: {
+			selection: 0,
+			parent: 1,
+			related: 2,
+		},
+		move: {
+			left: 0,
+			up: 1,
+			down: 2,
+			right: 3,
+		},
+		center: {
+			focus: 0,
+			selection: 1,
+			root: 2,
+			graph: 3,
+		},
+	};
 
 }
 

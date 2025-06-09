@@ -66,6 +66,13 @@
         position: relative;
         flex-direction: column;
         {origin ? `left: ${origin.x}px; top: ${origin.y}px;` : k.empty}'>
+    <div class={'hideable-content-' + title}
+        style='
+            position: relative;
+            display: {isHidden ? "none" : "block"};
+            top: {4 + (hasBanner ? banner_height : 0)}px;'>
+        <slot/>
+    </div>
     {#if hasBanner}
         <div
             class='banner'
@@ -84,11 +91,4 @@
                 toggle_hidden={toggle_hidden}/>
         </div>
     {/if}
-    <div class={'hideable-content-' + title}
-        style='
-            position: relative;
-            display: {isHidden ? "none" : "block"};
-            top: {4 + (hasBanner ? banner_height : 0)}px;'>
-        <slot/>
-    </div>
 </div>
