@@ -5,13 +5,14 @@
     import Buttons_Row from './Buttons_Row.svelte';
     export let closure: (t_request: T_Request, s_mouse: S_Mouse, row: number, column: number) => boolean;
     export let button_titles: string[][];
-    export let font_sizes: number[];
-    export let has_title = true;              // false means all titles are buttons, true means first one is row title
     export let has_seperator = false;         // false means row titles precede buttons
+    export let font_sizes: number[];
     export let button_height = 15;
+    export let has_title = true;              // false means all titles are buttons, true means first one is row title
 	export let name = k.empty;
     export let width: number;
     export let gap = 2;
+    export let top = 0;
 	const rows = button_titles.length;
     const box_top = (has_title && has_seperator) ? 12 : 0;
     
@@ -22,6 +23,7 @@
 <div class='buttons-grid'
     style='
         left:1px;
+        top:{top}px;
         width:{width}px;
         position:absolute;
         height:{(rows * button_height) + ((rows - 1) * gap)}px;'>

@@ -246,6 +246,12 @@ export class Events {
 					case this.actions.show.selection:			break;
 					case this.actions.show.list:				await h.ancestry_toggle_expansion(ancestry); break;
 				}											break;
+				case T_Action.center:							switch (column) {
+					case this.actions.center.focus:				layout.place_ancestry_atCenter(get(w_ancestry_focus)); break;
+					case this.actions.center.selection:			layout.place_ancestry_atCenter(ancestry); break;
+					case this.actions.center.root:				layout.place_ancestry_atCenter(h.rootAncestry); break;
+					case this.actions.center.graph:				layout.set_user_graph_offsetTo(Point.zero); break;
+				}											break;
 				case T_Action.add:							switch (column) {
 					case this.actions.add.child:				await h.ancestry_edit_persistentCreateChildOf(ancestry); break;
 					case this.actions.add.sibling:				await h.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break;
@@ -263,12 +269,6 @@ export class Events {
 					case this.actions.move.down:				grabs.latest_rebuild_persistentMoveUp_maybe(false, false, true, false); break;
 					case this.actions.move.left:				await h.ancestry_rebuild_persistentMoveRight(ancestry, false, false, true, false, false); break;
 					case this.actions.move.right:				await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, true, false, false); break;
-				}											break;
-				case T_Action.center:							switch (column) {
-					case this.actions.center.focus:				layout.place_ancestry_atCenter(get(w_ancestry_focus)); break;
-					case this.actions.center.selection:			layout.place_ancestry_atCenter(ancestry); break;
-					case this.actions.center.root:				layout.place_ancestry_atCenter(h.rootAncestry); break;
-					case this.actions.center.graph:				layout.set_user_graph_offsetTo(Point.zero); break;
 				}											break;
 			}
 		}
@@ -313,6 +313,12 @@ export class Events {
 					case this.actions.show.selection:			return ancestry.isVisible;
 					case this.actions.show.list:				return disable_revealConceal;
 				}											break;
+				case T_Action.center:							switch (column) {
+					case this.actions.center.focus:				return get(w_ancestry_focus)?.isCentered ?? false;
+					case this.actions.center.selection:			return ancestry.isCentered;
+					case this.actions.center.root:				return h.rootAncestry?.isCentered ?? false;
+					case this.actions.center.graph:				return get(w_user_graph_offset).isZero;;
+				}											break;
 				case T_Action.add:							switch (column) {
 					case this.actions.add.child:				return is_altering;
 					case this.actions.add.sibling:				return is_altering;
@@ -330,12 +336,6 @@ export class Events {
 					case this.actions.move.up:					return no_siblings;
 					case this.actions.move.down:				return no_siblings;
 					case this.actions.move.right:				return is_root;
-				}											break;										break;
-				case T_Action.center:							switch (column) {
-					case this.actions.center.focus:				return get(w_ancestry_focus)?.isCentered ?? false;
-					case this.actions.center.selection:			return ancestry.isCentered;
-					case this.actions.center.root:				return h.rootAncestry?.isCentered ?? false;
-					case this.actions.center.graph:				return get(w_user_graph_offset).isZero;;
 				}											break;
 			}
 		}
@@ -357,6 +357,12 @@ export class Events {
 			selection: 0,
 			list: 1,
 		},
+		center: {
+			focus: 0,
+			selection: 1,
+			root: 2,
+			graph: 3,
+		},
 		add: {
 			child: 0,
 			sibling: 1,
@@ -374,12 +380,6 @@ export class Events {
 			up: 1,
 			down: 2,
 			right: 3,
-		},
-		center: {
-			focus: 0,
-			selection: 1,
-			root: 2,
-			graph: 3,
 		},
 	};
 

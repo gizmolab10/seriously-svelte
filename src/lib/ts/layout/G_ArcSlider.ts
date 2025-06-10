@@ -1,4 +1,4 @@
-import { k, Rect, Point, Angle, svgPaths } from '../common/Global_Imports';
+import { k, Rect, Point, Angle, svgPaths, T_ArcSlider } from '../common/Global_Imports';
 import { w_ring_rotation_radius } from '../common/Stores';
 import { get } from 'svelte/store';
 // import * as d3 from 'd3';
@@ -25,22 +25,27 @@ export default class G_ArcSlider {
 	cap_radius = 0;
 	end_angle = 0;
 
-	constructor(forThumb: boolean = false) {
-		const thickness = k.thickness.paging_arc;
+	constructor(type: T_ArcSlider = T_ArcSlider.slider) {
 		const radius = get(w_ring_rotation_radius);
-		this.outside_arc_radius = radius + thickness + 1;
 		this.clusters_center = Point.square(radius);
-		this.cap_radius = k.radius.arcSlider_cap;
-		this.inside_arc_radius = radius + 1;
-		if (forThumb) {
-			const delta = k.thickness.separator.thick / 3;
-			this.outside_arc_radius -= delta;
-			this.inside_arc_radius += delta;
-			this.cap_radius -= delta;		
+		switch (type) {
+			case T_ArcSlider.slider:
+				this.outside_arc_radius = radius + k.thickness.paging_arc + 1;
+				this.cap_radius = k.radius.arcSlider_cap;
+				this.inside_arc_radius = radius + 1;
+				break;
+			case T_ArcSlider.big:
+				this.outside_arc_radius = radius + k.thickness.ring_rotation + 1;
+				this.cap_radius = k.thickness.ring_rotation / 2;
+				this.inside_arc_radius = radius + 1;
+				break;
+			case T_ArcSlider.thumb:
+				const delta = k.thickness.separator.thick / 3;
+				this.outside_arc_radius = radius + k.thickness.paging_arc - delta + 1;
+				this.cap_radius = k.radius.arcSlider_cap - delta;
+				this.inside_arc_radius = radius + delta + 1;
+				break;
 		}
-	}
-
-		tweak_forThumb() {
 	}
 
 	static readonly _____PRIMITIVES: unique symbol;
@@ -49,9 +54,9 @@ export default class G_ArcSlider {
 	get angle_ofFork():			number { return (this.end_angle + this.start_angle) / 2 - this.offset_ofNadir; }
 	get offset_ofNadir():		number { return (this.arc_straddles_nadir && !this.arc_straddles_zero) ? Angle.half : 0; }
 	get fork_slantsForward():  boolean { return new Angle(this.angle_ofCluster).angle_slantsForward; }
-	get straddles_zero():	   boolean { return this.end_angle.straddles_zero(this.start_angle); }
 	get fork_orientsDown():	   boolean { return new Angle(this.angle_ofCluster).angle_orientsDown; }
 	get fork_pointsRight():	   boolean { return new Angle(this.angle_ofCluster).angle_pointsRight; }
+	get straddles_zero():	   boolean { return this.end_angle.straddles_zero(this.start_angle); }
 	get arc_straddles_nadir(): boolean { return this.arc_straddles(Angle.three_quarters); }
 	get arc_straddles_zero():  boolean { return this.arc_straddles(0); }
 	get arc_origin():			 Point { return this.arc_rect.origin; }
@@ -73,6 +78,11 @@ export default class G_ArcSlider {
 
 	arc_straddles(angle: number): boolean { return (this.start_angle.angle_normalized() > angle && this.end_angle.angle_normalized() < angle); }
 
+	layout_forkTip(center: Point) {
+		const radial = Point.fromPolar(this.inside_arc_radius, this.angle_ofFork);
+		this.tip_ofFork = center.offsetBy(radial);
+	}
+
 	radial_forAngle(angle: number): Point {
 		const middle_radius = this.inside_arc_radius + this.cap_radius;
 		return Point.fromPolar(middle_radius, angle);
@@ -83,11 +93,6 @@ export default class G_ArcSlider {
 		const fork_backoff = this.fork_adjustment(fork_raw_radius, this.inside_arc_radius);
 		this.fork_radius = fork_raw_radius - fork_backoff;
 		this.angle_ofCluster = angle_ofCluster;
-	}
-
-	layout_forkTip(center: Point) {
-		const radial = Point.fromPolar(this.inside_arc_radius, this.angle_ofFork);
-		this.tip_ofFork = center.offsetBy(radial);
 	}
 
 	fork_adjustment(fork_radius: number, inside_arc_radius: number): number {
@@ -106,49 +111,12 @@ export default class G_ArcSlider {
 
 	static readonly _____SVG_PATHS: unique symbol;
 
-	get svgPathFor_arcSlider(): string {
-		const start = this.start_angle;
-		let end = this.end_angle;
-		while (end < start) {
-			end += Math.PI * 2;
-		}
-		const paths = [
-			this.svgPathFor_start(start, this.outside_arc_radius),
-			this.svgPathFor_arcSliderEdge(end, this.outside_arc_radius, false),
-			this.svgPathFor_cap(end, false),
-			this.svgPathFor_arcSliderEdge(start, this.inside_arc_radius, true),
-			this.svgPathFor_cap(start, true),
-		];
-		return paths.join(k.space);
-	}
-
-	// get two_svgPathFor_arcSlider(): string {
-	// 	const width = get(w_ring_rotation_radius) + k.radial_widget_inset;
-	// 	const height = width;
-	// 	const two = new Two({ width, height });
-	// 	const arc = two.makeArcSegment(
-	// 		this.clusters_center.x,
-	// 		this.clusters_center.y,
-	// 		this.inside_arc_radius,
-	// 		this.outside_arc_radius,
-	// 		this.start_angle,
-	// 		this.end_angle
-	// 	);
-	// 	return '';
-	// }
-
-	// get d3_svgPathFor_arcSlider(): string {
-	// 	const path = d3.arc()({
-	// 		innerRadius: this.inside_arc_radius,
-	// 		outerRadius: this.outside_arc_radius,
-	// 		startAngle: this.start_angle,
-	// 		endAngle: this.end_angle
-	// 	});
-	// 	return path || '';
-	// }
-
 	svgPathFor_start(start_angle: number, radius: number) {
 		return svgPaths.startOutAt(this.clusters_center, radius, start_angle);
+	}
+
+	get svgPathFor_radialFork(): string {
+		return svgPaths.line_atAngle(this.clusters_center, this.inside_arc_radius, this.angle_ofFork);
 	}
 
 	svgPathFor_arcSliderEdge(end_angle: number, radius: number, clockwise: boolean) {
@@ -163,8 +131,20 @@ export default class G_ArcSlider {
 		return svgPaths.arc_partial(center, this.cap_radius, 0, 1, end_angle);
 	}
 
-	get svgPathFor_radialFork(): string {
-		return svgPaths.line_atAngle(this.clusters_center, this.inside_arc_radius, this.angle_ofFork);
+	get svgPathFor_arcSlider(): string {
+		const start = this.start_angle;
+		let end = this.end_angle;
+		while (end < start) {
+			end += Math.PI * 2;
+		}
+		const paths = [
+			this.svgPathFor_start(start, this.outside_arc_radius),
+			this.svgPathFor_arcSliderEdge(end, this.outside_arc_radius, false),
+			this.svgPathFor_cap(end, false),
+			this.svgPathFor_arcSliderEdge(start, this.inside_arc_radius, true),
+			this.svgPathFor_cap(start, true),
+		];
+		return paths.join(k.space);
 	}
 
 }

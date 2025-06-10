@@ -1,6 +1,4 @@
-import G_ArcSlider from './G_ArcSlider';
-import { get } from 'svelte/store';
-import { w_ring_rotation_radius } from '../common/Stores';
+import { G_ArcSlider } from '../common/Global_Imports';
 
 export class ArcSliderTester {
     private slider: G_ArcSlider;

@@ -83,6 +83,12 @@ export enum T_Create {
 	none			 = '',
 }
 
+export enum T_ArcSlider {
+	slider = 'slider',
+	thumb = 'thumb',
+	big   = 'big',
+}
+
 export enum T_SvelteComponent {
 	widget	= 'widget',
 	reveal	= 'reveal',

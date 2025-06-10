@@ -12,7 +12,7 @@
 	export let color = 'red';
 	export let g_cluster!: G_Cluster;
 	const offset = k.radial_widget_inset;
-	const g_arcSlider = g_cluster.g_arcSlider;
+	const g_sliderArc = g_cluster.g_sliderArc;
 	const thumb_name = `thumb-${g_cluster.name}`;
 	const g_paging_rotation = g_cluster.g_paging_rotation;
 	let mouse_up_count = $w_count_mouse_up;
@@ -26,22 +26,23 @@
 	//	radial graph => radial rings => this		//
 	//	ignores signals: {rebuild, recreate}		//
 	//	uses g_cluster => {geometry, text}			//
-	//	& {g_arcSlider, g_thumbArc} => svg paths	//
+	//	& {g_sliderArc, g_thumbArc} => svg paths	//
 	//												//
 	//////////////////////////////////////////////////
 	
 	$: $w_g_paging_cluster, thumbFill = colors.specialBlend(color, $w_background_color, radial.s_ring_rotation.isHighlighted ? k.opacity.thumb : g_paging_rotation.thumb_opacity);
 	$: textBackground = radial.s_ring_rotation.isHighlighted ? $w_background_color : colors.specialBlend(color, $w_background_color, radial.s_ring_resizing.fill_opacity);
-	$: thumbPath = g_cluster.isPaging && g_cluster.widgets_shown > 1 ? g_cluster.g_thumbArc.svgPathFor_arcSlider : '';
 	$: origin = layout.center_ofGraphSize.offsetBy(Point.square(-radius));
 	$: viewBox=`${-offset} ${-offset} ${radius * 2} ${radius * 2}`;
-	$: arcSliderPath = g_arcSlider.svgPathFor_arcSlider;
-	$: forkPath = g_arcSlider.svgPathFor_radialFork;
+	$: thumbPath = g_cluster.g_thumbArc.svgPathFor_arcSlider;
+	$: bigPath = g_cluster.g_bigArc.svgPathFor_arcSlider;
+	$: arcSliderPath = g_sliderArc.svgPathFor_arcSlider;
+	$: forkPath = g_sliderArc.svgPathFor_radialFork;
 	$: radius = $w_ring_rotation_radius + offset;
-	$: labelAngle = g_arcSlider.label_text_angle;
-	$: forkDirection = g_arcSlider.angle_ofFork;
+	$: labelAngle = g_sliderArc.label_text_angle;
+	$: forkDirection = g_sliderArc.angle_ofFork;
 	$: labelCenter = g_cluster.label_center;
-	$: forkTip = g_arcSlider.tip_ofFork;
+	$: forkTip = g_sliderArc.tip_ofFork;
 
 	function handle_isHit(s_mouse: S_Mouse): boolean { return g_cluster.isMouse_insideThumb; }
 
@@ -72,6 +73,12 @@
 		center = {layout.center_ofGraphSize}
 		handle_s_mouse = {hover_closure}>
         <svg class='svg-arc-slider' viewBox={viewBox}>
+            <path
+                d={bigPath}
+                class='path-big'
+                fill={$w_background_color}
+                stroke-width={k.thickness.fork}
+                stroke={colors.specialBlend('transparent', $w_background_color, k.opacity.least)}/>
             <path
                 d={arcSliderPath}
                 class='path-arc-slider'

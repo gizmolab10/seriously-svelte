@@ -239,9 +239,8 @@ export default class G_Widget {
 			const x_ofRadial = widget_pointsRight ? -4 : -dot_size;
 			const x_offset_ofWidget = widget_pointsRight ? -7 : 6 + dot_size - width_ofWidget;
 			const x_ofRadial_title = (widget_pointsRight ? 20 : (show_reveal ? 20 : 6));
-			const show_border = !ancestry ? false : (ancestry.isGrabbed || ancestry.isEditing);
 			this.origin_ofTitle = Point.x(layout.inRadialMode ? x_ofRadial_title : dot_size + 5);
-			this.offset_ofWidget = Point.square(show_border ? 0 : 1).offsetByX(x_offset_ofWidget);
+			this.offset_ofWidget = Point.square(1).offsetByX(x_offset_ofWidget);
 			this.origin_ofRadial = this.origin_ofWidget.offsetByXY(x_ofRadial, 4 - dot_size);
 			this.center_ofDrag = origin_ofDrag.offsetEquallyBy(dot_size / 2);
 			this.width_ofWidget = width_ofWidget;

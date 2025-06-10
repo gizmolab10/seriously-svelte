@@ -18,13 +18,14 @@
 	export let add_wings = true;
 	export let has_title = true;	// true means first row_titles is the title of the row
 	export let name = k.empty;
+	export let title_gap = 8;
 	export let width: number;
 	export let margin = 0;
-	export let gap = 2;
+	export let gap = 1;
 	const solo_title_width = 38;
 	const front_margin = has_seperator ? 0 : solo_title_width;
 	const button_titles = has_title ? row_titles.slice(1) : row_titles;
-	const g_repeater = new G_Repeater(button_titles, button_height, width - front_margin, margin, gap, 8, true, font_sizes[0]);
+	const g_repeater = new G_Repeater(button_titles, button_height, width - front_margin, margin, gap, 8, title_gap, true, font_sizes[0]);
 	const es_button_byColumn: { [key: number]: S_Element } = {};
 	const button_portion = g_repeater.button_portion;
 	const columns = button_titles.length;

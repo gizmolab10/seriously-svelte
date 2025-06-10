@@ -17,7 +17,7 @@
 	let list_title = grabs.latest?.isExpanded && layout.inTreeMode ? 'hide list' : 'list';
 	let actions_top = top + (has_title ? 3 : -13);
 	let button_titles = compute_button_titles();
-	let actions_height = 139;
+	let actions_height = 144;
     let reattachments = 0;
 	const handle_banner_click = getContext('handle_banner_click');
 
@@ -59,9 +59,7 @@
 	function update_button_titles() {
 		const ancestry = grabs.latest;
 		list_title = layout.inTreeMode && !!ancestry && ancestry.isExpanded ? 'hide list' : 'list';
-		const new_titles = compute_button_titles();
-		button_titles = new_titles;
-		// signals.signal_action_update();
+		button_titles = compute_button_titles();
 		setTimeout(() => reattachments += 1, 0);
 	}
 
@@ -76,13 +74,13 @@
 
 	function compute_button_titles() {
 		return [
-			['browse', 'left', 'up', 'down', 'right'],
+			[['browse', 'left', 'up', 'down', 'right'],
 			['focus', 'on the selection', 'on its parent'],
 			['show', 'selection', `${list_title}`],
-			['add', 'child', 'sibling', 'line', 'parent', 'related'],
+			['center', 'focus', 'selection', 'root', 'graph']],
+			[['add', 'child', 'sibling', 'line', 'parent', 'related'],
 			['delete', 'selection', 'parent', 'related'],
-			['move', 'left', 'up', 'down', 'right'],
-			['center', 'focus', 'selection', 'root', 'graph'],
+			['move', 'left', 'up', 'down', 'right']],
 		];
 	}
 
@@ -109,15 +107,69 @@
 			position:relative;
 			z-index:{T_Layer.actions}'>
 		<Buttons_Grid
-			gap={3}
+			gap={2}
+			top={0}
 			columns={5}
 			name='actions'
 			has_title={has_title}
 			font_sizes={font_sizes}
-			width={k.width_details - 14}
+			width={k.width_details - 12}
 			closure={handle_actionRequest}
-			button_titles={button_titles}
+			button_titles={button_titles[0]}
 			button_height={k.height.button}/>
+		<Buttons_Grid
+			gap={2}
+			top={87}
+			columns={5}
+			name='actions'
+			has_title={has_title}
+			font_sizes={font_sizes}
+			width={k.width_details - 12}
+			closure={handle_actionRequest}
+			button_titles={button_titles[1]}
+			button_height={k.height.button}/>
+		<Separator
+			length={92}
+			isHorizontal={false}
+			has_thin_divider={false}
+			margin={k.details_margin}
+			origin={new Point(37, -6)}
+			thickness={k.thickness.separator.ultra_thin}/>
+		<Separator
+			origin={Point.y(79)}
+			has_thin_divider={false}
+			length={k.width_details}
+			margin={k.details_margin}
+			title='edit the hierarchy'
+			title_left={k.separator_title_left}
+			title_font_size={separator_font_size}
+			thickness={k.thickness.separator.ultra_thin}/>
+		<Separator
+			length={74}
+			isHorizontal={false}
+			has_thin_divider={false}
+			margin={k.details_margin}
+			origin={new Point(37, 80)}
+			thickness={k.thickness.separator.ultra_thin}/>
+		<Separator
+			has_thin_divider={false}
+			length={k.width_details}
+			margin={k.details_margin}
+			title='maximum visible tree levels'
+			title_left={k.separator_title_left}
+			title_font_size={separator_font_size}
+			thickness={k.thickness.separator.ultra_thin}
+			origin={Point.y(actions_top + actions_height)}/>
+		<Slider
+			max={12}
+			isLogarithmic={true}
+			value={$w_depth_limit}
+			width={k.width_details - 26}
+			thumb_color={colors.separator}
+			title_left={k.separator_title_left}
+			title_font_size={k.font_size.small}
+			handle_value_change={handle_depth_limit}
+			origin={new Point(10, actions_top + actions_height + 7)}/>
 		{#if $w_s_alteration}
 			<div
 				class='alteration-instructions'
@@ -139,31 +191,5 @@
 				</div>
 			</div>
 		{/if}
-		<Separator
-			isHorizontal={false}
-			has_thin_divider={false}
-			margin={k.details_margin}
-			origin={new Point(37, -6)}
-			length={actions_height + 15.8}
-			thickness={k.thickness.separator.ultra_thin}/>
-		<Separator
-			has_thin_divider={false}
-			length={k.width_details}
-			margin={k.details_margin}
-			title='maximum visible tree levels'
-			title_left={k.separator_title_left}
-			title_font_size={separator_font_size}
-			thickness={k.thickness.separator.ultra_thin}
-			origin={Point.y(actions_top + actions_height)}/>
-		<Slider
-			max={12}
-			isLogarithmic={true}
-			value={$w_depth_limit}
-			width={k.width_details - 26}
-			thumb_color={colors.separator}
-			title_left={k.separator_title_left}
-			title_font_size={separator_font_size}
-			handle_value_change={handle_depth_limit}
-			origin={new Point(10, actions_top + actions_height + 7)}/>
 	</div>
 {/key}

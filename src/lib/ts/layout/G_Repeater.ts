@@ -3,6 +3,7 @@ import { u } from '../common/Global_Imports';
 export default class G_Repeater {
 	proportionate: boolean;
 	title_widths: number[];
+	title_gap: number = 8;
 	font_size: number;
 	columns: number;
     titles: string[];
@@ -23,10 +24,11 @@ export default class G_Repeater {
 	//															//
 	//////////////////////////////////////////////////////////////
 
-	constructor(titles: string[], height: number, width: number, margin: number, gap: number, padding: number, proportionate: boolean, font_size: number) {
+	constructor(titles: string[], height: number, width: number, margin: number, gap: number, padding: number, title_gap: number, proportionate: boolean, font_size: number) {
 		this.proportionate = proportionate;
 		this.columns = titles.length;
 		this.font_size = font_size;
+		this.title_gap = title_gap;
 		this.padding = padding;
 		this.titles = titles;
 		this.height = height;

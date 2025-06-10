@@ -69,7 +69,7 @@ export default class S_Element {
 				return `solid ${color} 1px`;
 			}
 		}
-		return 'none';
+		return 'solid transparent 1px';
 	}
 
 }

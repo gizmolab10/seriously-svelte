@@ -1,4 +1,4 @@
-import { k, w, Point, Angle, debug, colors, radial, layout, Ancestry, Predicate } from '../common/Global_Imports';
+import { k, Point, Angle, debug, colors, radial, layout, Ancestry, Predicate, T_ArcSlider } from '../common/Global_Imports';
 import { w_graph_rect, w_ancestry_focus, w_ring_rotation_radius } from '../common/Stores';
 import { G_Widget, G_ArcSlider, G_Paging, S_Rotation } from '../common/Global_Imports';
 import { get } from 'svelte/store';
@@ -19,12 +19,13 @@ import { get } from 'svelte/store';
 //////////////////////////////////////////
 
 export default class G_Cluster {
+	g_sliderArc = new G_ArcSlider(T_ArcSlider.slider);
+	g_thumbArc = new G_ArcSlider(T_ArcSlider.thumb);
+	g_bigArc = new G_ArcSlider(T_ArcSlider.big);
 	g_widgets_inCluster: Array<G_Widget> = [];
 	ancestries_shown: Array<Ancestry> = [];
-	g_thumbArc = new G_ArcSlider(true);
 	ancestries: Array<Ancestry> = [];
 	color = colors.default_forThings;
-	g_arcSlider = new G_ArcSlider();
 	points_toChildren: boolean;
 	arc_in_lower_half = false;
 	label_center = Point.zero;
@@ -44,7 +45,7 @@ export default class G_Cluster {
 		this.points_toChildren = points_toChildren;
 		this.predicate = predicate;
 		w_ring_rotation_radius.subscribe((radius: number) => {
-			if (this.g_arcSlider.outside_arc_radius != radius) {
+			if (this.g_sliderArc.outside_arc_radius != radius) {
 				this.layout_cluster();		// do not set_paging_index (else expand will hang)
 			}
 		})
@@ -63,7 +64,7 @@ export default class G_Cluster {
 			const onePage_ofAncestries = g_paging.onePage_from(this.widgets_shown, this.ancestries);
 			this.ancestries_shown = points_right ? onePage_ofAncestries.reverse() : onePage_ofAncestries;	
 			this.layout_cluster();
-			let angle = this.g_arcSlider.spread_angle;
+			let angle = this.g_sliderArc.spread_angle;
 			if (angle < 0) {
 				angle = -angle;
 			}
@@ -79,9 +80,9 @@ export default class G_Cluster {
 			this.isPaging = this.widgets_shown < this.total_widgets;
 			this.center = get(w_graph_rect).size.asPoint.dividedInHalf;
 			this.color = colors.opacitize(get(w_ancestry_focus).thing?.color ?? this.color, 0.2);
-			this.g_arcSlider.layout_fork(this.angle_ofCluster);
+			this.g_sliderArc.layout_fork(this.angle_ofCluster);
 			this.layout_widgets_inCluster();
-			this.g_arcSlider.layout_forkTip(this.center);
+			this.g_sliderArc.layout_forkTip(this.center);
 			this.layout_label();
 			this.layout_thumb_angles();
 			this.update_label_forIndex();
@@ -109,11 +110,11 @@ export default class G_Cluster {
 	static readonly _____LABEL: unique symbol;
 
 	private layout_label() {		// rotate text tangent to arc, at center of arc
-		const angle = this.g_arcSlider.angle_ofFork;
+		const angle = this.g_sliderArc.angle_ofFork;
 		const ortho = this.arc_in_lower_half ? Angle.three_quarters : Angle.quarter;
 		const label_radius = get(w_ring_rotation_radius) + (this.arc_in_lower_half ? 0 : 5) - 22.4;
 		this.label_center = this.center.offsetBy(Point.fromPolar(label_radius, angle));
-		this.g_arcSlider.label_text_angle = ortho - angle;
+		this.g_sliderArc.label_text_angle = ortho - angle;
 	}
 	
 	private update_label_forIndex() {
@@ -147,7 +148,7 @@ export default class G_Cluster {
 	adjust_paging_index_byAdding_angle(delta_angle: number) {
 		const paging = this.g_focusPaging;
 		if (!!paging) {
-			const spread_angle = -this.g_arcSlider.spread_angle;
+			const spread_angle = -this.g_sliderArc.spread_angle;
 			const delta_fraction = (delta_angle / spread_angle);
 			const delta_index = delta_fraction * this.maximum_paging_index;			// convert rotation delta to index delta
 			const adjusted = paging.addTo_paging_index_for(delta_index) ?? false;	// add index delta to index
@@ -167,10 +168,10 @@ export default class G_Cluster {
 	private update_arc_angles(index: number, max: number, child_angle: number) {
 		// index increases & angle decreases clockwise
 		if (index == max) {
-			this.g_arcSlider.start_angle = child_angle;
+			this.g_sliderArc.start_angle = child_angle;
 		}
 		if (index == 0) {
-			this.g_arcSlider.end_angle = child_angle;
+			this.g_sliderArc.end_angle = child_angle;
 		}
 	}
 
@@ -194,7 +195,7 @@ export default class G_Cluster {
 				this.g_widgets_inCluster.push(ancestry.g_widget);
 				index += 1;
 			}
-			this.g_arcSlider.finalize_angles();
+			this.g_sliderArc.finalize_angles();
 			this.arc_in_lower_half = fork_pointsDown;
 		}
 	}
@@ -236,13 +237,13 @@ export default class G_Cluster {
 		// 2. arc can straddle nadir when fork y is outside of ring
 
 		if (this.total_widgets > 0) {	// avoid division by zero
-			const spread_angle = this.g_arcSlider.spread_angle;
+			const spread_angle = this.g_sliderArc.spread_angle;
 			const hasNegative_spread = spread_angle < 0
 			const inverter = hasNegative_spread ? 1 : -1;
-			const otherInverter = (hasNegative_spread == this.g_arcSlider.arc_straddles_nadir) ? -1 : 1;
-			const arc_spread = this.g_arcSlider.arc_straddles_nadir ? (-spread_angle).angle_normalized() : spread_angle;
+			const otherInverter = (hasNegative_spread == this.g_sliderArc.arc_straddles_nadir) ? -1 : 1;
+			const arc_spread = this.g_sliderArc.arc_straddles_nadir ? (-spread_angle).angle_normalized() : spread_angle;
 			const increment = arc_spread / this.total_widgets * inverter;
-			const arc_start = this.g_arcSlider.start_angle * otherInverter;
+			const arc_start = this.g_sliderArc.start_angle * otherInverter;
 			const start = arc_start + (increment * this.paging_index_ofFocus);
 			const end = start + (increment * this.widgets_shown);
 			this.g_thumbArc.layout_fork((start + end) / 2);
