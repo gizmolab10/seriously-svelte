@@ -12,9 +12,9 @@ export default class G_Layout {
 	_g_radialGraph!: G_RadialGraph;
 	focus_ancestry!: Ancestry;
 
-	get graph_top(): number { return this.banner_height + 17; }
+	get graph_top(): number { return this.banner_height + 25; }
 	get banner_height(): number { return u.device_isMobile ? 32 : 16; }
-	get breadcrumbs_height(): number { return this.banner_height + 14; }
+	get breadcrumbs_height(): number { return this.banner_height + 21; }
 	get inTreeMode(): boolean { return get(w_show_graph_ofType) == T_Graph.tree; }
 	get inRadialMode(): boolean { return get(w_show_graph_ofType) == T_Graph.radial; }
 	get breadcrumbs_top(): number { return w.windowSize.height - this.breadcrumbs_height; }

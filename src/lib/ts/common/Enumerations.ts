@@ -25,10 +25,10 @@ export enum T_Action {
 	browse,
 	focus,
 	show,
+	center,
 	add,
 	delete,
 	move,
-	center,
 }
 
 export enum T_Layer {

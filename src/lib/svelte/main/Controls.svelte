@@ -89,7 +89,7 @@
 			thickness={k.thickness.separator.thick}
 			corner_radius={k.radius.gull_wings.thick}>
 			<div style='
-				top: 6px;
+				top: 10px;
 				left: 6px;
 				width: 100%;
 				height: 100%;

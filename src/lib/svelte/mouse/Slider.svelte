@@ -14,12 +14,17 @@
 	const border = '0.5px solid black';
 	const x = isLogarithmic ? Math.log10(max) / divisions : max / divisions;
 	let slider_value = value <= 1 ? 0 : (isLogarithmic ? Math.log10(value) / x : value / x);
+	let prior_value = value;
 
 	$: slider_value, compute_andPush();
 
 	function compute_andPush() {
-		value = isLogarithmic ? Math.round(Math.pow(10, slider_value * x)) : Math.round(slider_value * x);
-		handle_value_change(value);
+		const newValue = isLogarithmic ? Math.round(Math.pow(10, slider_value * x)) : Math.round(slider_value * x);
+		if (newValue !== prior_value) {
+			value = newValue;
+			prior_value = value;
+			handle_value_change(value);
+		}
 	}
 	
 </script>

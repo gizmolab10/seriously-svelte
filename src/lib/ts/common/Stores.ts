@@ -59,6 +59,7 @@ const _____COUNTS: unique symbol = Symbol('COUNTS');
 
 export const w_count_mouse_up			 = writable<number>();
 export const w_count_rebuild			 = writable<number>();
+export const w_count_details			 = writable<number>();	
 export const w_count_resize				 = writable<number>();
 
 const _____OTHER: unique symbol = Symbol('OTHER');
@@ -67,13 +68,14 @@ export const w_popupView_id				 = writable<string | null>();
 export const w_t_startup				 = writable<T_Startup>();
 export const w_device_isMobile			 = writable<boolean>();
 export const w_background_color			 = writable<string>();
-export const w_depth_limit			 = writable<number>();
+export const w_depth_limit				 = writable<number>();
 export const w_font_size				 = writable<number>();
 
 class Stores {
 	setup_defaults() {
 		w_count_resize.set(0);
 		w_count_rebuild.set(0);
+		w_count_details.set(0);
 		w_count_mouse_up.set(0);
 		w_thing_color.set(null);
 		w_t_startup.set(T_Startup.start);

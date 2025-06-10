@@ -62,17 +62,22 @@
 				{#if index > 0}
 					<div class='crumb-tweener'
 						style='
-							top:5px;
+							top:9px;
 							position:absolute;
 							color:{thing.color};
 							left:{lefts[index] - size + 3}px;'>
 						>
 					</div>
 				{/if}
-				<Breadcrumb_Button
-					thing={thing}
-					left={lefts[index]}
-					es_breadcrumb={es_breadcrumb(index, thing)}/>
+				<div class='crumb-tweener'
+					style='
+						top:4px;
+						position:absolute;'>
+					<Breadcrumb_Button
+						thing={thing}
+						left={lefts[index]}
+						es_breadcrumb={es_breadcrumb(index, thing)}/>
+				</div>
 			{/each}
 		</Box>
 	{/key}
