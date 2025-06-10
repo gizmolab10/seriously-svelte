@@ -2,9 +2,9 @@
 	import { e, k, show, Size, Point, grabs, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
 	import { T_Action, T_Layer, T_Request, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
 	import { w_s_alteration, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
+	import { w_depth_limit, w_user_graph_offset, w_show_graph_ofType } from '../../ts/common/Stores';
 	import { w_show_countDots_ofType, w_background_color } from '../../ts/common/Stores';
 	import { k, u, Point, T_Kinship, colors } from '../../ts/common/Global_Imports';
-	import { w_depth_limit, w_user_graph_offset } from '../../ts/common/Stores';
 	import Buttons_Grid from '../buttons/Buttons_Grid.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
@@ -34,6 +34,7 @@
 		$w_s_alteration,
 		$w_background_color,
 		$w_user_graph_offset,
+		$w_show_graph_ofType,
 		reattachments += 1;
 
 	$:	$w_ancestries_grabbed,
@@ -45,9 +46,13 @@
 		layout.grand_layout();
 	}
 
-	function name_for(t_action: number, column: number) {
-		const titles = button_titles[t_action];
-		return `${titles[0]}.${titles[column]}`;
+	function name_for(t_action: number, column: number): string {
+		const [group, index] = group_andIndex(t_action);
+		const titles = button_titles[group];
+		if (!!titles && titles.length > column) {
+			return `${titles[0]}.${titles[column]}`;
+		}
+		return k.empty;
 	}
 
 	function target_ofAlteration(): string | null {
@@ -56,11 +61,18 @@
 		return kind_ofAPredicate == T_Predicate.contains ? 'parent' : kind_ofAPredicate == T_Predicate.isRelated ? 'related' : null;
 	}
 
-	function update_button_titles() {
+	function update_button_titles(): void {
 		const ancestry = grabs.latest;
 		list_title = layout.inTreeMode && !!ancestry && ancestry.isExpanded ? 'hide list' : 'list';
 		button_titles = compute_button_titles();
 		setTimeout(() => reattachments += 1, 0);
+	}
+
+	function group_andIndex(t_action: number): [number, number] {
+		const index = t_action;
+		const group = index < 5 ? 0 : 1;
+		const index_withinGroup = index % 5;
+		return [group, index_withinGroup];
 	}
 
 	function isAction_invertedAt(t_action: number, column: number): boolean {
@@ -110,7 +122,7 @@
 			gap={2}
 			top={0}
 			columns={5}
-			name='actions'
+			name='top-actions'
 			has_title={has_title}
 			font_sizes={font_sizes}
 			width={k.width_details - 12}
@@ -155,16 +167,17 @@
 			has_thin_divider={false}
 			length={k.width_details}
 			margin={k.details_margin}
-			title='maximum visible tree levels'
 			title_left={k.separator_title_left}
 			title_font_size={separator_font_size}
 			thickness={k.thickness.separator.ultra_thin}
-			origin={Point.y(actions_top + actions_height)}/>
+			origin={Point.y(actions_top + actions_height)}
+			title={layout.inTreeMode ? 'maximum visible tree levels' : k.empty}/>
 		<Slider
 			max={12}
 			isLogarithmic={true}
 			value={$w_depth_limit}
 			width={k.width_details - 26}
+			isVisible={layout.inTreeMode}
 			thumb_color={colors.separator}
 			title_left={k.separator_title_left}
 			title_font_size={k.font_size.small}

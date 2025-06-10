@@ -35,12 +35,12 @@
 	$: origin = layout.center_ofGraphSize.offsetBy(Point.square(-radius));
 	$: viewBox=`${-offset} ${-offset} ${radius * 2} ${radius * 2}`;
 	$: thumbPath = g_cluster.g_thumbArc.svgPathFor_arcSlider;
-	$: bigPath = g_cluster.g_bigArc.svgPathFor_arcSlider;
 	$: arcSliderPath = g_sliderArc.svgPathFor_arcSlider;
 	$: forkPath = g_sliderArc.svgPathFor_radialFork;
 	$: radius = $w_ring_rotation_radius + offset;
 	$: labelAngle = g_sliderArc.label_text_angle;
 	$: forkDirection = g_sliderArc.angle_ofFork;
+	$: bigPath = g_sliderArc.svgPathFor_bigArc;
 	$: labelCenter = g_cluster.label_center;
 	$: forkTip = g_sliderArc.tip_ofFork;
 
@@ -75,7 +75,7 @@
         <svg class='svg-arc-slider' viewBox={viewBox}>
             <path
                 d={bigPath}
-                class='path-big'
+                class='path-fat'
                 fill={$w_background_color}
                 stroke-width={k.thickness.fork}
                 stroke={colors.specialBlend('transparent', $w_background_color, k.opacity.least)}/>

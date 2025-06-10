@@ -1,4 +1,4 @@
-import { k, Point, Angle, debug, colors, radial, layout, Ancestry, Predicate, T_ArcSlider } from '../common/Global_Imports';
+import { k, Point, Angle, debug, colors, radial, layout, Ancestry, Predicate } from '../common/Global_Imports';
 import { w_graph_rect, w_ancestry_focus, w_ring_rotation_radius } from '../common/Stores';
 import { G_Widget, G_ArcSlider, G_Paging, S_Rotation } from '../common/Global_Imports';
 import { get } from 'svelte/store';
@@ -19,11 +19,10 @@ import { get } from 'svelte/store';
 //////////////////////////////////////////
 
 export default class G_Cluster {
-	g_sliderArc = new G_ArcSlider(T_ArcSlider.slider);
-	g_thumbArc = new G_ArcSlider(T_ArcSlider.thumb);
-	g_bigArc = new G_ArcSlider(T_ArcSlider.big);
 	g_widgets_inCluster: Array<G_Widget> = [];
 	ancestries_shown: Array<Ancestry> = [];
+	g_sliderArc = new G_ArcSlider(false);
+	g_thumbArc = new G_ArcSlider(true);
 	ancestries: Array<Ancestry> = [];
 	color = colors.default_forThings;
 	points_toChildren: boolean;
@@ -178,7 +177,7 @@ export default class G_Cluster {
 	layout_widgets_inCluster() {
 		this.g_widgets_inCluster = [];
 		if (this.widgets_shown > 0 && !!this.predicate) {
-			const center = this.center.offsetByXY(2, -1.5);			// tweak so that drag dots are centered within the rotation ring
+			const center = this.center.offsetByXY(0.5, -1);			// tweak so that drag dots are centered within the rotation ring
 			const radial = Point.x(get(w_ring_rotation_radius) + k.radial_widget_inset);
 			const radial_ofFork = this.radial_ofFork;	// points at middle widget
 			const fork_pointsRight = radial_ofFork.x > 0;

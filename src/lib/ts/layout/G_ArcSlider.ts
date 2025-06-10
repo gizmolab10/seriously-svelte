@@ -1,4 +1,4 @@
-import { k, Rect, Point, Angle, svgPaths, T_ArcSlider } from '../common/Global_Imports';
+import { k, Rect, Point, Angle, svgPaths } from '../common/Global_Imports';
 import { w_ring_rotation_radius } from '../common/Stores';
 import { get } from 'svelte/store';
 // import * as d3 from 'd3';
@@ -20,31 +20,25 @@ export default class G_ArcSlider {
 	label_text_angle = 0;
 	arc_rect = Rect.zero;
 	angle_ofCluster = 0;
+	isThumb = false;
 	fork_radius = 0;
 	start_angle = 0;
 	cap_radius = 0;
 	end_angle = 0;
 
-	constructor(type: T_ArcSlider = T_ArcSlider.slider) {
+	constructor(isThumb: boolean) {
 		const radius = get(w_ring_rotation_radius);
 		this.clusters_center = Point.square(radius);
-		switch (type) {
-			case T_ArcSlider.slider:
-				this.outside_arc_radius = radius + k.thickness.paging_arc + 1;
-				this.cap_radius = k.radius.arcSlider_cap;
-				this.inside_arc_radius = radius + 1;
-				break;
-			case T_ArcSlider.big:
-				this.outside_arc_radius = radius + k.thickness.ring_rotation + 1;
-				this.cap_radius = k.thickness.ring_rotation / 2;
-				this.inside_arc_radius = radius + 1;
-				break;
-			case T_ArcSlider.thumb:
-				const delta = k.thickness.separator.thick / 3;
-				this.outside_arc_radius = radius + k.thickness.paging_arc - delta + 1;
-				this.cap_radius = k.radius.arcSlider_cap - delta;
-				this.inside_arc_radius = radius + delta + 1;
-				break;
+		this.isThumb = isThumb;
+		if (isThumb) {
+			const delta = k.thickness.separator.thick / 3;
+			this.outside_arc_radius = radius + k.thickness.paging_arc - delta + 1;
+			this.cap_radius = k.radius.arcSlider_cap - delta;
+			this.inside_arc_radius = radius + delta + 1;
+		} else {
+			this.outside_arc_radius = radius + k.thickness.paging_arc + 1;
+			this.cap_radius = k.radius.arcSlider_cap;
+			this.inside_arc_radius = radius + 1;
 		}
 	}
 
@@ -111,6 +105,10 @@ export default class G_ArcSlider {
 
 	static readonly _____SVG_PATHS: unique symbol;
 
+	get svgPathFor_arcSlider(): string {
+		return this.svgPathFor_arcSlider_using(this.inside_arc_radius, this.outside_arc_radius, this.cap_radius);
+	}
+
 	svgPathFor_start(start_angle: number, radius: number) {
 		return svgPaths.startOutAt(this.clusters_center, radius, start_angle);
 	}
@@ -124,25 +122,32 @@ export default class G_ArcSlider {
 		return svgPaths.arc_partial(this.clusters_center, radius, 0, sweep_flag, end_angle);
 	}
 
-	svgPathFor_cap(arc_angle: number, clockwise: boolean) {
+	svgPathFor_cap(arc_angle: number, clockwise: boolean, cap_radius: number) {
 		const radial = this.radial_forAngle(arc_angle);
 		const center = this.clusters_center.offsetBy(radial);
 		const end_angle = arc_angle + (clockwise ? 0 : Math.PI);
-		return svgPaths.arc_partial(center, this.cap_radius, 0, 1, end_angle);
+		return svgPaths.arc_partial(center, cap_radius, 0, 1, end_angle);
 	}
 
-	get svgPathFor_arcSlider(): string {
+	get svgPathFor_bigArc(): string {
+		const capRadius = k.thickness.ring_rotation / 2;
+		const smallRadius = get(w_ring_rotation_radius) + 1;
+		const bigRadius = smallRadius + k.thickness.ring_rotation;
+		return this.svgPathFor_arcSlider_using(smallRadius, bigRadius, capRadius);
+	}
+
+	svgPathFor_arcSlider_using(small_radius: number, big_radius: number, cap_radius: number): string {
 		const start = this.start_angle;
 		let end = this.end_angle;
 		while (end < start) {
 			end += Math.PI * 2;
 		}
 		const paths = [
-			this.svgPathFor_start(start, this.outside_arc_radius),
-			this.svgPathFor_arcSliderEdge(end, this.outside_arc_radius, false),
-			this.svgPathFor_cap(end, false),
-			this.svgPathFor_arcSliderEdge(start, this.inside_arc_radius, true),
-			this.svgPathFor_cap(start, true),
+			this.svgPathFor_start(start, big_radius),
+			this.svgPathFor_arcSliderEdge(end, big_radius, false),
+			this.svgPathFor_cap(end, false, cap_radius),
+			this.svgPathFor_arcSliderEdge(start, small_radius, true),
+			this.svgPathFor_cap(start, true, cap_radius),
 		];
 		return paths.join(k.space);
 	}

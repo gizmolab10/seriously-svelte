@@ -5,6 +5,7 @@
 	export let isLogarithmic: boolean = false;
 	export let title_font_size: number = 18;
 	export let origin: Point = Point.zero;
+	export let isVisible: boolean = true;
 	export let divisions: number = 100;
 	export let title_left: number = 0;
 	export let width: number = 200;
@@ -23,7 +24,15 @@
 	
 </script>
 
-<div style='position: relative; left: {origin.x}px; top: {origin.y}px; width: {width}px; display: flex; align-items: center; --thumb-color: {thumb_color}; --border: {border};'>
+<div style='
+	width: {width}px;
+	top: {origin.y}px;
+	position: relative;
+	left: {origin.x}px;
+	--border: {border};
+	align-items: center;
+	--thumb-color: {thumb_color};
+	display: {isVisible ? "flex" : "none"};'>
 	<input
 		min='0'
 		step='1'
