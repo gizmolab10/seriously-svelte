@@ -7,15 +7,18 @@
 	import Widget_Title from '../widget/Widget_Title.svelte';
 	import { onMount } from 'svelte';
 	const height = k.height.row + 1;
-	const es_title = ux.s_element_for($w_ancestry_focus, T_Element.radial_focus, k.empty);
+	let ancestry = $w_ancestry_focus;
+	let es_title = ux.s_element_for(ancestry, T_Element.radial_focus, k.empty);
+	let s_widget = ux.s_widget_forAncestry(ancestry);
+	let background_color = s_widget.background_color;
 	let svg_strokeColor = 'transparent';
 	let svg_fillColor = 'transparent';
-	let color = colors.default_forThings;
 	let origin_ofWidget = Point.zero;
 	let center_ofBorder = Point.zero;
 	let origin_ofTitle = Point.zero;
 	let size_ofBorder = Size.zero;
 	let svg_dasharray = k.empty;
+	let color = s_widget.color;
 	let width_ofTitle = 0;
 	let focus;
 
@@ -36,8 +39,7 @@
 	function debug_closure(s_mouse) { debug.log_radial(` ${s_mouse.descriptionFor('FOCUS')}`); }
 	function handle_s_mouse(s_mouse: S_Mouse): boolean { return false; }
 
-	$: $w_ancestry_focus, $w_s_text_edit, $w_ancestries_grabbed, update_svg();
-	$: $w_ancestry_focus, layout_focus();
+	$: { const _ = $w_ancestry_focus; layout_focus();}
 	
 	$: {
 		if (!!focus) {
@@ -46,9 +48,18 @@
 	}
 
 	$: {
-		const _ = $w_thing_color;
-		color = $w_ancestry_focus?.thing?.color;
+		const _ = `${$w_thing_color} ${$w_ancestry_focus} ${$w_s_text_edit} ${$w_ancestries_grabbed.join(',')}`;
+		update_colors();
 		update_svg();
+	}
+
+	function update_colors() {
+		ancestry = $w_ancestry_focus;
+		s_widget = ux.s_widget_forAncestry(ancestry);
+		background_color = s_widget.background_color;
+		color = s_widget.color;
+		svg_strokeColor = s_widget.shows_border ? color : 'transparent';
+		svg_fillColor = s_widget.shows_border ? $w_background_color : 'transparent';
 	}
 
 	function layout_focus() {
@@ -97,10 +108,10 @@
 					position : absolute;
 					width : {width_ofTitle + 15}px;'>
 				<path
+					stroke = {color}
 					stroke-width = '0.8'
-					stroke = {svg_strokeColor}
+					fill = {background_color}
 					class = 'radial-focus-path'
-					fill = {$w_background_color}
 					stroke-dasharray = {svg_dasharray}
 					d = {svgPaths.oblong(center_ofBorder, size_ofBorder)}/>
 			</svg>
@@ -110,7 +121,7 @@
 			top : 3px;
 			left : -11px;
 			position : absolute;
-			background-color : {$w_background_color};'>
+			background-color : {background_color};'>
 		<Widget_Title
 			fontSize = {k.font_size.common}px
 			ancestry = {$w_ancestry_focus}

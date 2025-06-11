@@ -36,8 +36,9 @@
 		}
 	}
 
-	function es_breadcrumb(index: number, thing: Thing): S_Element {
-		return ux.s_element_for(ancestry?.ancestry_createUnique_byStrippingBack(things.length - index - 1), T_Element.breadcrumb, k.space);
+	function es_breadcrumb(index: number, thing: Thing): S_Widget {
+		const crumb_ancestry = ancestry?.ancestry_createUnique_byStrippingBack(things.length - index - 1);
+		return ux.s_widget_forAncestry(crumb_ancestry);
 	}
 
 </script>
@@ -52,33 +53,39 @@
 		<Box
 			top={0}
 			left={0}
-			name='breadcrumbs'
+			name='breadcrumbs-box'
 			color={separator_color}
 			width={w.windowSize.width}
 			height={layout.breadcrumbs_height}
 			thickness={k.thickness.separator.thick}
 			corner_radius={k.radius.gull_wings.thick}>
-			{#each things as thing, index}
-				{#if index > 0}
-					<div class='crumb-tweener'
+			<div class='breadcrumbs'
+				style='
+					top:4px;
+					left:7px;
+					position:absolute;'>
+				{#each things as thing, index}
+					{#if index > 0}
+						<div class='crumb-tweener'
+							style='
+								top:5px;
+								position:absolute;
+								color:{thing.color};
+								left:{lefts[index] - size + 3}px;'>
+							>
+						</div>
+					{/if}
+					<div class='breadcrumb'
 						style='
-							top:9px;
-							position:absolute;
-							color:{thing.color};
-							left:{lefts[index] - size + 3}px;'>
-						>
+							top:0px;
+							position:absolute;'>
+						<Breadcrumb_Button
+							thing={thing}
+							left={lefts[index]}
+							es_breadcrumb={es_breadcrumb(index, thing)}/>
 					</div>
-				{/if}
-				<div class='crumb-tweener'
-					style='
-						top:4px;
-						position:absolute;'>
-					<Breadcrumb_Button
-						thing={thing}
-						left={lefts[index]}
-						es_breadcrumb={es_breadcrumb(index, thing)}/>
-				</div>
-			{/each}
+				{/each}
+			</div>
 		</Box>
 	{/key}
 </div>

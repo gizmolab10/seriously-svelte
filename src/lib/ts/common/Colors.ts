@@ -1,3 +1,4 @@
+import {hex, hsl} from 'color-convert';
 import { parseToRgba, transparentize } from 'color2k';
 
 export class Colors {
@@ -27,19 +28,6 @@ export class Colors {
 		return color;
 	}
 
-	contrast_of(color: string): string | null {
-		const hsba = this.color_toHSBA(color);
-		if (!!hsba) {
-			const h = hsba.h;
-			/// convert h to a contrasting color
-			const h_new = (h + 180) % 360;
-			const hsba_new = new HSBA(h_new, hsba.s, hsba.b, hsba.a);
-			const rgba_new = this.HSBA_toRGBA(hsba_new);
-			return this.RGBA_toHex(rgba_new);
-		}
-		return null;
-	}
-
 	specialBlend(color: string, background: string, ratio: number): string | null {
 		const rgbaA = this.color_toRGBA(color);
 		const rgbaB = this.color_toRGBA(background);		
@@ -52,31 +40,33 @@ export class Colors {
 		return this.multiply_saturationOf_by(blendedHex, 1+ ratio);
 	}
 
-	static readonly _____CONTRAST: unique symbol;
-
-	private maximumContrast(color: string): string | null {
-		const luminance = this.luminance_ofColor(color);
-		if (luminance === null) return null;
-		const darkness = 1 - luminance;
-		const targetDarkness = darkness < 0.5 ? 0.8 : 0.2;
-		return this.set_darkness_toColor(color, targetDarkness);
-	}
-
 	static readonly _____SATURATION: unique symbol;
 
-	private multiply_saturationOf_by(color: string, ratio: number): string | null {
+	private multiply_saturationOf_by(color: string, ratio: number): string {
 		let hsba = this.color_toHSBA(color);
 		if (!!hsba) {
 			hsba.s = Math.min(255, hsba.s * ratio);
 			const rgba = this.HSBA_toRGBA(hsba);
 			return this.RGBA_toHex(rgba)
 		}
-		return null
+		return color
 	}
 
 	static readonly _____LUMINANCE: unique symbol;
+	
+	darkerBy(color: string, ratio: number): string {
+		return this.adjust_luminance_byApplying(color, (lume => {
+			return (1 - lume) * (1 + ratio);
+		}));
+	}
 
-	private limit_luminance_to(color: string, maximum: number): string | null {
+	lighterBy(color: string, ratio: number): string {
+		return this.adjust_luminance_byApplying(color, (lume => {
+			return Math.max(0, (1 - lume) - ratio);
+		}));
+	}
+
+	private limit_luminance_to(color: string, maximum: number): string {
 		const rgba = this.color_toRGBA(color);
 		if (!!rgba) {
 			const lume = this.luminance_ofRGBA(rgba);
@@ -84,30 +74,18 @@ export class Colors {
 				return this.set_darkness_toRGBA(rgba, 1 - Math.min(maximum, lume));
 			}
 		}
-		return null;
-	}
-	
-	private darkerBy(color: string, ratio: number): string | null {
-		return this.adjust_luminance_byApplying(color, (lume => {
-			return (1 - lume) * (1 + ratio);
-		}));
+		return color;
 	}
 
-	private lighterBy(color: string, ratio: number): string | null {
-		return this.adjust_luminance_byApplying(color, (lume => {
-			return Math.max(0, (1 - lume) - ratio);
-		}));
-	}
-
-	private luminance_ofColor(color: string): number | null {
+	luminance_ofColor(color: string): number {
 		const rgba = this.color_toRGBA(color);
 		if (!!rgba) {
 			return this.luminance_ofRGBA(rgba);
 		}
-		return null
+		return 0
 	}
 
-	private luminance_ofRGBA(rgba: RGBA): number | null {
+	private luminance_ofRGBA(rgba: RGBA): number {
 		if (!!rgba) {
 			const linearize = (c: number) => {
 				const s = c / 255;
@@ -119,38 +97,40 @@ export class Colors {
 			const relative = 0.2126 * R + 0.7152 * G + 0.0722 * B;		// according to WCAG
 			return rgba.a * relative + (1 - rgba.a) * 1;				// assume white background with luminance = 1
 		}
-		return null;
+		return 0;
 	}
 
-	private adjust_luminance_byApplying(color: string, closure: (lume: number) => number): string | null {
+	private adjust_luminance_byApplying(color: string, closure: (lume: number) => number): string {
+		let result = 'null';
 		const rgba = this.color_toRGBA(color);
 		if (!!rgba) {
 			const lume = this.luminance_ofRGBA(rgba);
 			if (!!lume) {
 				const dark = closure(lume);
-				return this.set_darkness_toRGBA(rgba, dark);
+				const adjusted = this.set_darkness_toRGBA(rgba, dark);
+				result = adjusted ?? result;
 			}
 		}
-		return 'null';
+		return result;
 	}
 
 	static readonly _____DARKNESS: unique symbol;
 
-	private set_darkness_toColor(color: string, darkness: number): string | null {
+	private set_darkness_toColor(color: string, darkness: number): string {
 		const rgba = this.color_toRGBA(color);
 		if (!!rgba	) {
 			return this.set_darkness_toRGBA(rgba, darkness);
 		}
-		return null;
+		return color;
 	}
 
-	private set_darkness_toRGBA(rgba: RGBA, darkness: number): string | null {
+	private set_darkness_toRGBA(rgba: RGBA, darkness: number): string {
 		const adjusted = this.adjust_RGBA_forDarkness(rgba, darkness);
 		const rgba_new = adjusted.result;
 		if (!adjusted.error && !!rgba_new) {
 			return this.RGBA_toHex(rgba_new);
 		}
-		return null
+		return this.RGBA_toHex(rgba);
 	}
 
 	private adjust_RGBA_forDarkness(rgba: RGBA, targetDarkness: number): {result: RGBA | null, error: Error | null} {
@@ -230,12 +210,12 @@ export class Colors {
 		return false;
 	}
 
-	private color_toHex(color: string): string | null {
+	private color_toHex(color: string): string {
 		const rgba = this.color_toRGBA(color);
 		if (!!rgba) {
 			return this.RGBA_toHex(rgba);
 		}
-		return null;
+		return color;
 	}
 
 	private color_toHSBA(color: string): HSBA | null {

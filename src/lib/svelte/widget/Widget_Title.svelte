@@ -1,8 +1,8 @@
 <script lang='ts'>
+	import { w_thing_color, w_background_color, w_thing_title, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { layout, signals, databases, Seriously_Range, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { c, h, k, u, ux, w, Rect, Size, Point, Thing, debug, Angle } from '../../ts/common/Global_Imports';
 	import { w_s_text_edit, w_ancestries_grabbed, w_mouse_location } from '../../ts/common/Stores';
-	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { T_Graph, T_Layer, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { T_Edit } from '../../ts/state/S_Text_Edit';
@@ -15,15 +15,16 @@
 	const padding = `0.5px 0px 0px 0px`;
 	const input_height = k.height.dot + 2;
 	const es_title = ux.s_element_forName(name);
+	const s_widget = ux.s_widget_forAncestry(ancestry);
 	const id = `title of ${ancestry?.title} ${ancestry?.kind}`;
 	const showingReveal = ancestry?.shows_reveal ?? false;
 	let title_width = (thing?.width_ofTitle ?? 0) + title_extra();
 	let title_binded = thing?.title ?? k.empty;
-	let color = thing?.color ?? k.empty;
 	let title_wrapper: Svelte_Wrapper;
 	let origin_ofInput = Point.zero;
 	let title_prior = thing?.title;
 	let cursor_style = k.empty;
+	let reattachments = 0;
 	let ghost = null;
 	let input = null;
 
@@ -55,8 +56,11 @@
 
 	export const _____REACTIVES: unique symbol = Symbol('_____REACTIVES');
 
-	$: $w_ancestries_grabbed,
+	$: {
+		const _ = $w_ancestries_grabbed;
 		origin_ofInput = ancestry?.isGrabbed ?? false ? Point.x(0.1) : Point.y(0.8);
+		// reattachments += 1;
+	}
 
 	$: {
 		const _ = $w_s_text_edit;
@@ -68,12 +72,6 @@
 	$: {
 		if (!!input && !title_wrapper) {
 			title_wrapper = new Svelte_Wrapper(input, handle_forWrapper, ancestry.hid, T_SvelteComponent.title);
-		}
-	}
-
-	$: {
-		if (!!thing && thing.id == $w_thing_color?.split(k.separator.generic)[0]) {
-			color = thing?.color;
 		}
 	}
 
@@ -294,52 +292,54 @@
 	}
 </style>
 
-<Mouse_Responder
-	origin={origin}
-	width={title_width}
-	name={es_title.name}
-	height={k.height.row}
-	handle_s_mouse={handle_s_mouse}>
-	<span class="ghost"
-		bind:this={ghost}
-		style='left:-9999px;
-			white-space: pre;					/* Preserve whitespace to accurately measure the width */
-			padding: {padding};
-			position: absolute;
-			visibility: hidden;
-			font-size: {fontSize};
-			font-family: {$w_thing_fontFamily};'>
-		{title_binded}
-	</span>
-	<input
-		id={id}
-		type='text'
-		name='title'
-		class='title'
-		bind:this={input}
-		on:blur={handle_blur}
-		on:focus={handle_focus}
-		on:input={handle_input}
-		bind:value={title_binded}
-		on:cut={handle_cut_paste}
-		on:paste={handle_cut_paste}
-		on:keydown={handle_key_down}
-		on:mouseover={(event) => { event.preventDefault(); }}
-		style='
-			border : none;
-			{cursor_style};
-			outline : none;
-			color : {color};
-			white-space : pre;
-			position : absolute;
-			padding : {padding};
-			font-size : {fontSize};
-			width : {title_width}px;
-			z-index : {T_Layer.text};
-			height : {input_height}px;
-			top : {origin_ofInput.y}px;
-			left : {origin_ofInput.x}px;
-			{k.prevent_selection_style};
-			background-color : transparent;
-			font-family : {$w_thing_fontFamily};'/>
-</Mouse_Responder>
+{#key reattachments}
+	<Mouse_Responder
+		origin={origin}
+		width={title_width}
+		name={es_title.name}
+		height={k.height.row}
+		handle_s_mouse={handle_s_mouse}>
+		<span class="ghost"
+			bind:this={ghost}
+			style='left:-9999px;
+				white-space: pre;					/* Preserve whitespace to accurately measure the width */
+				padding: {padding};
+				position: absolute;
+				visibility: hidden;
+				font-size: {fontSize};
+				font-family: {$w_thing_fontFamily};'>
+			{title_binded}
+		</span>
+		<input
+			id={id}
+			type='text'
+			name='title'
+			class='title'
+			bind:this={input}
+			on:blur={handle_blur}
+			on:focus={handle_focus}
+			on:input={handle_input}
+			bind:value={title_binded}
+			on:cut={handle_cut_paste}
+			on:paste={handle_cut_paste}
+			on:keydown={handle_key_down}
+			on:mouseover={(event) => { event.preventDefault(); }}
+			style='
+				border : none;
+				{cursor_style};
+				outline : none;
+				white-space : pre;
+				position : absolute;
+				padding : {padding};
+				font-size : {fontSize};
+				width : {title_width}px;
+				color : {s_widget.color};
+				z-index : {T_Layer.text};
+				height : {input_height}px;
+				top : {origin_ofInput.y}px;
+				left : {origin_ofInput.x}px;
+				{k.prevent_selection_style};
+				background-color : transparent;
+				font-family : {$w_thing_fontFamily};'/>
+	</Mouse_Responder>
+{/key}

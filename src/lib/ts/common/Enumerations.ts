@@ -223,14 +223,14 @@ export enum T_Element {
 	breadcrumb 	 = 'breadcrumb',
 	database	 = 'database',
 	control		 = 'control',
+	action		 = 'action',
+	button		 = 'button',
 	reveal		 = 'reveal',
 	widget		 = 'widget',
-	button		 = 'button',
+	thing		 = 'thing',
 	title		 = 'title',
 	drag		 = 'drag',
-	thing		 = 'thing',
 	none		 = 'none',
-	action		 = 'action',
 }
 
 export enum T_Preference {

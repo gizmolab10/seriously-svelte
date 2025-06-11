@@ -22,8 +22,8 @@
 	const es_reveal = ux.s_element_for(ancestry, T_Element.reveal, k.empty);
 	let origin_ofTitle = g_widget.origin_ofTitle;
 	let width_ofWidget = g_widget.width_ofWidget;
-	let widgetWrapper!: Svelte_Wrapper;
 	let border_radius = k.height.dot / 2;
+	let widgetWrapper!: Svelte_Wrapper;
 	let center_ofDrag = Point.zero;
 	let revealCenter = Point.zero;
 	let border = es_widget.border;
@@ -105,7 +105,7 @@
 
 	function layout_maybe() {
 		if (!!ancestry && s_widget.update_forStateChange) {
-			const showBorder = ancestry.isGrabbed || ($w_s_text_edit?.ancestry_isEditing(ancestry) ?? false);
+			const showBorder = ancestry.isGrabbed || ancestry.isEditing;
 			const showBackground = showBorder || layout.inRadialMode;
 			background = showBackground ? `background-color: ${$w_background_color}` : k.empty
 			final_layout();
@@ -141,7 +141,7 @@
 			width : {width_ofWidget}px;
 			z-index : {T_Layer.widgets};
 			border-radius : {border_radius}px;
-			background-color : {ancestry.isGrabbed || layout.inRadialMode ? $w_background_color : 'transparent'};
+			background-color : {s_widget.background_color};
 		'>
 		<Widget_Drag
 			name = {es_drag.name}

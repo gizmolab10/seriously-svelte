@@ -29,8 +29,8 @@
 	// buttons grid adds row (here it becomes t_action)
 	////////////////////////////////////////////////////////////
 	
-    $: top, actions_top = top + (has_title ? 3 : -13);
-    $: $w_depth_limit,
+    $:	top, actions_top = top + (has_title ? 3 : -13);
+    $:	$w_depth_limit,
 		$w_s_alteration,
 		$w_background_color,
 		$w_user_graph_offset,
@@ -63,7 +63,7 @@
 
 	function update_button_titles(): void {
 		const ancestry = grabs.latest;
-		list_title = layout.inTreeMode && !!ancestry && ancestry.isExpanded ? 'hide list' : 'list';
+		list_title = layout.inTreeMode && !!ancestry && ancestry.isExpanded ? 'hide list' : 'show list';
 		button_titles = compute_button_titles();
 		setTimeout(() => reattachments += 1, 0);
 	}
@@ -148,6 +148,13 @@
 			origin={new Point(37, -6)}
 			thickness={k.thickness.separator.ultra_thin}/>
 		<Separator
+			length={74}
+			isHorizontal={false}
+			has_thin_divider={false}
+			margin={k.details_margin}
+			origin={new Point(37, 80)}
+			thickness={k.thickness.separator.ultra_thin}/>
+		<Separator
 			origin={Point.y(79)}
 			has_thin_divider={false}
 			length={k.width_details}
@@ -156,33 +163,28 @@
 			title_left={k.separator_title_left}
 			title_font_size={separator_font_size}
 			thickness={k.thickness.separator.ultra_thin}/>
-		<Separator
-			length={74}
-			isHorizontal={false}
-			has_thin_divider={false}
-			margin={k.details_margin}
-			origin={new Point(37, 80)}
-			thickness={k.thickness.separator.ultra_thin}/>
-		<Separator
-			has_thin_divider={false}
-			length={k.width_details}
-			margin={k.details_margin}
-			title_left={k.separator_title_left}
-			title_font_size={separator_font_size}
-			thickness={k.thickness.separator.ultra_thin}
-			origin={Point.y(actions_top + actions_height)}
-			title={layout.inTreeMode ? 'maximum visible tree levels' : k.empty}/>
-		<Slider
-			max={12}
-			isLogarithmic={true}
-			value={$w_depth_limit}
-			width={k.width_details - 26}
-			isVisible={layout.inTreeMode}
-			thumb_color={colors.separator}
-			title_left={k.separator_title_left}
-			title_font_size={k.font_size.small}
-			handle_value_change={handle_depth_limit}
-			origin={new Point(10, actions_top + actions_height + 7)}/>
+		{#if layout.inTreeMode}
+			<Separator
+				has_thin_divider={false}
+				length={k.width_details}
+				margin={k.details_margin}
+				title_left={k.separator_title_left}
+				title_font_size={separator_font_size}
+				thickness={k.thickness.separator.ultra_thin}
+				origin={Point.y(actions_top + actions_height)}
+				title={layout.inTreeMode ? 'maximum visible tree levels' : k.empty}/>
+			<Slider
+				max={12}
+				isLogarithmic={true}
+				value={$w_depth_limit}
+				width={k.width_details - 26}
+				isVisible={layout.inTreeMode}
+				thumb_color={colors.separator}
+				title_left={k.separator_title_left}
+				title_font_size={k.font_size.small}
+				handle_value_change={handle_depth_limit}
+				origin={new Point(10, actions_top + actions_height + 7)}/>
+		{/if}
 		{#if $w_s_alteration}
 			<div
 				class='alteration-instructions'
