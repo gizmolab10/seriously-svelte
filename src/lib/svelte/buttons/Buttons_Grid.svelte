@@ -3,7 +3,7 @@
     import { w_background_color, w_s_alteration } from '../../ts/common/Stores';
     import { k, show, Point, colors } from '../../ts/common/Global_Imports';
     import Buttons_Row from './Buttons_Row.svelte';
-    export let closure: (t_request: T_Request, s_mouse: S_Mouse, row: number, column: number) => boolean;
+    export let closure: (t_request: T_Request, s_mouse: S_Mouse, name: string, row: number, column: number) => boolean;
     export let button_titles: string[][];
     export let has_seperator = false;         // false means row titles precede buttons
     export let font_sizes: number[];
@@ -40,7 +40,7 @@
                 button_height={button_height}
                 origin={button_origin_for(row)}
                 name={`${name}-grid-${T_Action[row]}`}
-                closure={(t_request, s_mouse, column) => closure(t_request, s_mouse, row, column)}/>
+                closure={(t_request, s_mouse, column) => closure(t_request, s_mouse, name, row, column)}/>
         {/if}
     {/each}
 </div>

@@ -96,8 +96,11 @@
 		];
 	}
 
-	function handle_actionRequest(t_request: T_Request, s_mouse: S_Mouse, t_action: number, column: number): any {
+	function handle_actionRequest(t_request: T_Request, s_mouse: S_Mouse, name: string, t_action: number, column: number): any {
 		const isAltering = !!$w_s_alteration;
+		if (name == 'bottom-actions') {
+			t_action += 4;
+		}
 		switch (t_request) {
 			case T_Request.name:		 return e.name_ofActionAt(t_action, column);
 			case T_Request.is_disabled:  return e.handle_isAction_disabledAt(t_action, column);
@@ -133,7 +136,7 @@
 			gap={2}
 			top={87}
 			columns={5}
-			name='actions'
+			name='bottom-actions'
 			has_title={has_title}
 			font_sizes={font_sizes}
 			width={k.width_details - 12}

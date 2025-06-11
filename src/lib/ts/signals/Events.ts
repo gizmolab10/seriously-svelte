@@ -335,7 +335,7 @@ export class Events {
 					case this.actions.move.left:				return is_root;
 					case this.actions.move.up:					return no_siblings;
 					case this.actions.move.down:				return no_siblings;
-					case this.actions.move.right:				return is_root;
+					case this.actions.move.right:				return no_children;
 				}											break;
 			}
 		}
