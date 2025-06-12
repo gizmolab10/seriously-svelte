@@ -10,17 +10,18 @@
 	const borderStyle = '1px solid';
 	let borderColor = $w_background_color;
 	let title = thing.breadcrumb_title ?? k.empty;
-	let border = `${borderStyle} ${borderColor}`;
+	let colorStyles = es_breadcrumb.background;
 	let name = `crumb: ${title ?? 'unknown'}`;
 	let ancestry = es_breadcrumb.ancestry;
 	let width = u.getWidthOf(title) + 15;
+	let border = es_breadcrumb.border;;
 	let breadcrumb_reattachments = 0;
-	let colorStyles = k.empty;
+	let color = es_breadcrumb.color;
 	let style = k.empty;
 
 	center = new Point(left + width / 2, 14);
-	$: $w_background_color, updateColors();
 	updateColors();
+	$: { const _ = $w_background_color; updateColors(); }
 
 	$: {
 		if (!!thing && thing.id == $w_thing_color?.split(k.separator.generic)[0]) {
@@ -30,13 +31,9 @@
 	
 	function updateColors() {
 		if (!!thing) {
-			if ($w_ancestry_focus.id_thing == thing.id) {
-				colorStyles = `background-color: ${colors.opacitize(thing.color, 0.85)}; color: ${$w_background_color}`;
-			} else {
-				colorStyles = `background-color: ${$w_background_color}; color: ${thing.color}`;
-			}
-			borderColor = ancestry.isGrabbed ? thing.color : $w_background_color;
-			border = `${borderStyle} ${borderColor}`;
+			colorStyles = es_breadcrumb.background;
+			border = es_breadcrumb.border;
+			color = es_breadcrumb.color;
 			updateStyle();
 		}
 		breadcrumb_reattachments += 1;
@@ -46,6 +43,7 @@
 		style=`
 			${colorStyles};
 			cursor:pointer;
+			color:${color};
 			white-space:pre;
 			border:${border};
 			border-radius: 1em;
@@ -58,7 +56,7 @@
 		if (!!h && h.hasRoot) {
 			if (s_mouse.isHover) {
 				if (s_mouse.isOut) {
-					border = `${borderStyle} ${borderColor}`;
+					border = es_breadcrumb.border;
 				} else {
 					border = `${borderStyle} ${thing.color}`;
 				}

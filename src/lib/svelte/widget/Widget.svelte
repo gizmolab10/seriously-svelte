@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { c, k, u, ux, Thing, Point, Angle, debug, layout } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Widget, T_Signal, T_Element } from '../../ts/common/Global_Imports';
+	import { w_s_text_edit, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { G_Widget, S_Element, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { signals, Ancestry, Svelte_Wrapper } from '../../ts/common/Global_Imports';
-	import { w_s_text_edit, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { w_thing_color, w_background_color } from '../../ts/common/Stores';
 	import Widget_Reveal from './Widget_Reveal.svelte';
 	import Tree_Line from '../graph/Tree_Line.svelte';
@@ -41,7 +41,6 @@
 	let thing;
 
 	setup_fromAncestry();		// this fails if ancestry's thing id is invalid
-	debug.log_build(`WIDGET (grabbed: ${ancestry.isGrabbed}) "${ancestry.title}"`);
 	final_layout();
 	layout_maybe();
 
@@ -64,8 +63,6 @@
 		};
 	});
 
-	$: $w_thing_color, $w_ancestries_grabbed, border = es_widget.border;
-
 	$: {
 		if (!!widget) {
 			widgetWrapper = new Svelte_Wrapper(widget, handle_s_mouse, ancestry.hid, T_SvelteComponent.widget);
@@ -73,10 +70,15 @@
 	}
 
 	$: {
-		const _ = $w_s_text_edit + $w_ancestries_grabbed;
-		if (!!ancestry && !!widget && s_widget.update_forStateChange) {
-			border = es_widget.border;
+		const _ = `${$w_thing_color} ${$w_ancestry_focus.id}`;
+		update_colors();
+	}
+
+	$: {
+		const _ = $w_s_text_edit + $w_ancestries_grabbed.join(',');
+		if (!!ancestry && !!widget && s_widget.state_didChange) {
 			g_widget.layout_widget();
+			update_colors();
 			final_layout();
 		}
 	}
@@ -84,18 +86,9 @@
 	function isHit(): boolean { return false; }
 	function handle_s_mouse(s_mouse: S_Mouse): boolean { return false; }
 
-	function setup_fromAncestry() {
-		s_widget.update_forStateChange;
-		thing = ancestry?.thing;
-		if (!ancestry) {
-			console.log('widget is missing an ancestry');
-		} else if (!thing) {
-			console.log(`widget is missing a thing for "${ancestry?.id ?? k.unknown}"`);
-		} else {
-			const title = thing.title ?? thing.id ?? k.unknown;
-			widgetName = `widget ${title}`;
-			revealName = `reveal ${title}`;
-		}
+	function update_colors() {
+		background = s_widget.background;
+		border = es_widget.border;
 	}
 
 	async function handle_click_event(event) {
@@ -104,10 +97,8 @@
 	}
 
 	function layout_maybe() {
-		if (!!ancestry && s_widget.update_forStateChange) {
-			const showBorder = ancestry.isGrabbed || ancestry.isEditing;
-			const showBackground = showBorder || layout.inRadialMode;
-			background = showBackground ? `background-color: ${$w_background_color}` : k.empty
+		if (s_widget.state_didChange) {
+			update_colors();
 			final_layout();
 		}
 	}
@@ -123,16 +114,31 @@
 		origin_ofTitle = g_widget.origin_ofTitle;
 	}
 
+	function setup_fromAncestry() {
+		s_widget.state_didChange;
+		thing = ancestry?.thing;
+		if (!ancestry) {
+			console.log('widget is missing an ancestry');
+		} else if (!thing) {
+			console.log(`widget is missing a thing for "${ancestry?.id ?? k.unknown}"`);
+		} else {
+			const title = thing.title ?? thing.id ?? k.unknown;
+			widgetName = `widget ${title}`;
+			revealName = `reveal ${title}`;
+		}
+	}
+
 </script>
 
 {#if es_widget}
 	<div class = 'widget'
 		id = '{widgetName}'
-		on:keyup={u.ignore}
+		on:keyup = {u.ignore}
 		bind:this = {widget}
-		on:keydown={u.ignore}
-		on:click={handle_click_event}
+		on:keydown = {u.ignore}
+		on:click = {handle_click_event}
 		style = '
+			{background};
 			top : {top}px;
 			left : {left}px;
 			border : {border};
@@ -140,8 +146,7 @@
 			position :  absolute;
 			width : {width_ofWidget}px;
 			z-index : {T_Layer.widgets};
-			border-radius : {border_radius}px;
-			background-color : {s_widget.background_color};
+			border-radius : {border_radius}px;;
 		'>
 		<Widget_Drag
 			name = {es_drag.name}

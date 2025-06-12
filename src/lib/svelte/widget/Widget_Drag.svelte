@@ -27,19 +27,26 @@
 	let top = 0;
 	let dotDrag;
 
-	svgPaths_update();
-	colors_update();
+	update_svgPaths();
+	update_colors();
 	function handle_context_menu(event) { event.preventDefault(); }		// no default context menu on right-click
 	function handle_s_mouse(s_mouse: S_Mouse): boolean { return false; }
 
-	$: $w_show_countDots_ofType, svgPaths_update();
-	$: $w_background_color, $w_thing_color, $w_ancestries_grabbed, colors_update();
+	$: {
+		const _ = $w_show_countDots_ofType;
+		update_svgPaths();
+	}
 
-    onMount(() => {
+	$: {
+		const _ = `${$w_thing_color}${$w_background_color}${$w_ancestries_grabbed.join(',')}`;
+		update_colors();
+	}
+
+	onMount(() => {
 		es_drag.set_forHovering(thing?.color, 'pointer');
         const handle_altering = signals.handle_blink_forAlteration((invert) => {
 			es_drag.isInverted = !!invert && !!ancestry && ancestry.alteration_isAllowed;
-			colors_update();
+			update_colors();
         });
 		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
 			if (!!dotDrag) {
@@ -49,28 +56,28 @@
 		return () => { handle_reposition.disconnect(); handle_altering.disconnect(); };
 	});
 
-	function svgPaths_update() {
+	function update_svgPaths() {
 		if (layout.inRadialMode) {
 			svgPathFor_dragDot = svgPaths.circle_atOffset(size, size - 1);
 		} else {
 			svgPathFor_dragDot = svgPaths.oval(size, false);
 		}
-		svgPaths_updateExtra();
+		update_svgPathsExtra();
 	}
 
-	function colors_update() {
+	function update_colors() {
 		if (!ux.isAny_rotation_active && !!es_drag && !!thing) {
 			const usePointer = (!ancestry.isGrabbed || layout.inRadialMode) && ancestry.hasChildren;
 			const cursor = usePointer ? 'pointer' : 'normal';
 			es_drag.set_forHovering(thing.color, cursor);
-			es_drag.isOut = !isHovering;
+			es_drag.isOut = !isHovering != ancestry.isGrabbed;
 			color = thing.color;
 			ellipsis_color = es_drag.stroke;
 			fill_color = debug.lines ? 'transparent' : es_drag.fill;
 		}
 	}
 
-	function svgPaths_updateExtra() {
+	function update_svgPathsExtra() {
 		svgPathFor_related = svgPathFor_ellipses = null;
 		if (!!thing) {
 			const count = thing.parents.length;		
@@ -88,7 +95,7 @@
 		if (!ux.isAny_rotation_active) {
 			if (s_mouse.isHover) {
 				isHovering = !s_mouse.isOut;
-				colors_update();
+				update_colors();
 			} else if (s_mouse.isLong) {
 				ancestry?.becomeFocus();
 			} else if (s_mouse.isUp) {

@@ -71,7 +71,7 @@
 								top:5px;
 								position:absolute;
 								color:{thing.color};
-								left:{lefts[index] - size + 3}px;'>
+								left:{lefts[index] - size + 5.5}px;'>
 							>
 						</div>
 					{/if}

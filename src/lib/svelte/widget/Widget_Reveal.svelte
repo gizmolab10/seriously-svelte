@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { w_show_countDots_ofType, w_thing_color, w_background_color } from '../../ts/common/Stores';
+	import { w_show_countDots_ofType, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
 	import { c, h, k, u, ux, debug, layout, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import { Size, Thing, Point, Predicate, T_Layer, T_Graph } from '../../ts/common/Global_Imports';
-	import { w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
+	import { w_thing_title, w_thing_color, w_background_color } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVG_D3 from '../kit/SVG_D3.svelte';
 	import { onMount } from 'svelte';
@@ -29,7 +29,7 @@
 	function handle_context_menu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
 
 	onMount(() => {
-		svgPath_update();
+		update_svgPaths();
 		set_isHovering(false);
 		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
 			if (!!dotReveal) {
@@ -38,15 +38,11 @@
 		});
 		return () => { handle_reposition.disconnect(); };
 	});
-
-	$: $w_ancestries_expanded, $w_show_countDots_ofType, ancestry.title, svgPath_update();
-
+	
 	$: {
-		const _ = $w_ancestries_expanded + $w_background_color + $w_thing_color;
-		fill_color = debug.lines ? 'transparent' : es_reveal.fill;
-		es_reveal.set_forHovering(color, 'pointer');
-		bulkAlias_color = es_reveal.stroke;
-		color = ancestry.thing?.color;
+		const _ = `${$w_ancestries_expanded.join(',')}${$w_show_countDots_ofType}${$w_thing_title}${$w_background_color}${$w_thing_color}`;
+		update_svgPaths();
+		update_colors();
 	}
 
 	$: {
@@ -55,14 +51,22 @@
 		}
 	}
 
+	function update_colors() {
+		fill_color = debug.lines ? 'transparent' : es_reveal.fill;
+		es_reveal.set_forHovering(color, 'pointer');
+		bulkAlias_color = es_reveal.stroke;
+		color = ancestry.thing?.color;
+	}
+
 	function set_isHovering(hovering) {
-		const corrected = hover_isReversed ? !hovering : hovering;
+		const corrected = (hover_isReversed != ancestry.isGrabbed) ? !hovering : hovering;
 		if (!!es_reveal && es_reveal.isOut == corrected) {
-			es_reveal.isOut = !corrected;
+			es_reveal.isOut = !corrected
+			update_colors();
 		}
 	}
 
-	function svgPath_update() {
+	function update_svgPaths() {
 		const thing = ancestry.thing;
 		if (!!thing) {
 			const has_innerDot = thing.isBulkAlias;

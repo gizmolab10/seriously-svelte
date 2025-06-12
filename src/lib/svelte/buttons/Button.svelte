@@ -42,14 +42,15 @@
 
 	recompute_style();
 
-	$:	$w_graph_rect,
-		es_button.fill,
-		es_button.isOut,
-		$w_background_color,
-		es_button.isDisabled,
-		es_button.isInverted,
-		$w_user_graph_offset,
+	$: {
+		const _ = `${$w_graph_rect}${$w_background_color}${$w_user_graph_offset}`;
 		recompute_style();
+	}
+
+	$: {
+		const _ = `${es_button.fill}${es_button.isOut}${es_button.isDisabled}${es_button.isInverted}${es_button.isGrabbed}${es_button.isEditing}`;
+		recompute_style();
+	}
 
 	function handle_s_mouse(s_mouse: S_Mouse) {
 		if (s_mouse.isHover) {		// NOT the same as isHovering

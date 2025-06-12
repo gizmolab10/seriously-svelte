@@ -65,7 +65,7 @@ export default class S_Element {
 			if (this.ancestry.isEditing) {
 				return `dashed ${color} 1px`;
 			}
-			if (this.ancestry.isGrabbed) {
+			if (this.ancestry.isFocus) {
 				return `solid ${color} 1px`;
 			}
 		}
