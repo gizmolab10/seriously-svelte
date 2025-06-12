@@ -9,7 +9,6 @@
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
 	import Slider from '../mouse/Slider.svelte';
-	import { getContext } from 'svelte';
 	export let top = 0;
 	const has_title = true;
 	const separator_font_size = k.font_size.smallest;
@@ -19,7 +18,6 @@
 	let button_titles = compute_button_titles();
 	let actions_height = 144;
     let reattachments = 0;
-	const handle_banner_click = getContext('handle_banner_click');
 
 	////////////////////////////////////////////////////////////
 	// buttons row sends column & T_Request:
@@ -97,10 +95,10 @@
 	}
 
 	function handle_actionRequest(t_request: T_Request, s_mouse: S_Mouse, name: string, t_action: number, column: number): any {
-		const isAltering = !!$w_s_alteration;
 		if (name == 'bottom-actions') {
 			t_action += 4;
 		}
+		const isAltering = !!$w_s_alteration;
 		switch (t_request) {
 			case T_Request.name:		 return e.name_ofActionAt(t_action, column);
 			case T_Request.is_disabled:  return e.handle_isAction_disabledAt(t_action, column);
@@ -118,76 +116,9 @@
 		class='actions'
 		style='
 			width: 100%;
+			position:absolute;
 			top:{actions_top}px;
-			position:relative;
 			z-index:{T_Layer.actions}'>
-		<Buttons_Grid
-			gap={2}
-			top={0}
-			columns={5}
-			name='top-actions'
-			has_title={has_title}
-			font_sizes={font_sizes}
-			width={k.width_details - 12}
-			closure={handle_actionRequest}
-			button_titles={button_titles[0]}
-			button_height={k.height.button}/>
-		<Buttons_Grid
-			gap={2}
-			top={87}
-			columns={5}
-			name='bottom-actions'
-			has_title={has_title}
-			font_sizes={font_sizes}
-			width={k.width_details - 12}
-			closure={handle_actionRequest}
-			button_titles={button_titles[1]}
-			button_height={k.height.button}/>
-		<Separator
-			length={92}
-			isHorizontal={false}
-			has_thin_divider={false}
-			margin={k.details_margin}
-			origin={new Point(37, -6)}
-			thickness={k.thickness.separator.ultra_thin}/>
-		<Separator
-			length={74}
-			isHorizontal={false}
-			has_thin_divider={false}
-			margin={k.details_margin}
-			origin={new Point(37, 80)}
-			thickness={k.thickness.separator.ultra_thin}/>
-		<Separator
-			origin={Point.y(79)}
-			has_thin_divider={false}
-			length={k.width_details}
-			margin={k.details_margin}
-			title='edit the hierarchy'
-			title_left={k.separator_title_left}
-			title_font_size={separator_font_size}
-			thickness={k.thickness.separator.ultra_thin}/>
-		{#if layout.inTreeMode}
-			<Separator
-				has_thin_divider={false}
-				length={k.width_details}
-				margin={k.details_margin}
-				title_left={k.separator_title_left}
-				title_font_size={separator_font_size}
-				thickness={k.thickness.separator.ultra_thin}
-				origin={Point.y(actions_top + actions_height)}
-				title={layout.inTreeMode ? 'maximum visible tree levels' : k.empty}/>
-			<Slider
-				max={12}
-				isLogarithmic={true}
-				value={$w_depth_limit}
-				width={k.width_details - 26}
-				isVisible={layout.inTreeMode}
-				thumb_color={colors.separator}
-				title_left={k.separator_title_left}
-				title_font_size={k.font_size.small}
-				handle_value_change={handle_depth_limit}
-				origin={new Point(10, actions_top + actions_height + 7)}/>
-		{/if}
 		{#if $w_s_alteration}
 			<div
 				class='alteration-instructions'
@@ -208,6 +139,74 @@
 					<br> click any enabled button (above)
 				</div>
 			</div>
+		{:else}
+			<Buttons_Grid
+				gap={2}
+				top={0}
+				columns={5}
+				name='top-actions'
+				has_title={has_title}
+				font_sizes={font_sizes}
+				width={k.width_details - 12}
+				closure={handle_actionRequest}
+				button_titles={button_titles[0]}
+				button_height={k.height.button}/>
+			<Buttons_Grid
+				gap={2}
+				top={87}
+				columns={5}
+				name='bottom-actions'
+				has_title={has_title}
+				font_sizes={font_sizes}
+				width={k.width_details - 12}
+				closure={handle_actionRequest}
+				button_titles={button_titles[1]}
+				button_height={k.height.button}/>
+			<Separator
+				length={92}
+				isHorizontal={false}
+				has_thin_divider={false}
+				margin={k.details_margin}
+				origin={new Point(37, -6)}
+				thickness={k.thickness.separator.ultra_thin}/>
+			<Separator
+				length={74}
+				isHorizontal={false}
+				has_thin_divider={false}
+				margin={k.details_margin}
+				origin={new Point(37, 80)}
+				thickness={k.thickness.separator.ultra_thin}/>
+			<Separator
+				origin={Point.y(79)}
+				has_thin_divider={false}
+				length={k.width_details}
+				margin={k.details_margin}
+				title='edit the hierarchy'
+				title_left={k.separator_title_left}
+				title_font_size={separator_font_size}
+				thickness={k.thickness.separator.ultra_thin}/>
+			{#if layout.inTreeMode}
+				<Separator
+					has_thin_divider={false}
+					length={k.width_details}
+					margin={k.details_margin}
+					title_left={k.separator_title_left}
+					title_font_size={separator_font_size}
+					thickness={k.thickness.separator.ultra_thin}
+					origin={Point.y(actions_top + actions_height)}
+					title={layout.inTreeMode ? 'maximum visible tree levels' : k.empty}/>
+				<Slider
+					max={12}
+					isLogarithmic={true}
+					value={$w_depth_limit}
+					width={k.width_details - 26}
+					isVisible={layout.inTreeMode}
+					thumb_color={colors.separator}
+					title_left={k.separator_title_left}
+					title_font_size={k.font_size.small}
+					handle_value_change={handle_depth_limit}
+					origin={new Point(10, actions_top + actions_height + 7)}/>
+			{/if}
 		{/if}
 	</div>
 {/key}

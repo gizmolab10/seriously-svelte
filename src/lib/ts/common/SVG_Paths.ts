@@ -90,39 +90,12 @@ export default class SVG_Paths {
 		const baseAngle = direction + Angle.half;
 		const leftEndAngle = baseAngle + Angle.quarter;
 		const rightEndAngle = baseAngle - Angle.quarter;
-
-		// Calculate arc endpoints
 		const a_start = center.offsetBy(Point.fromPolar(radius, leftEndAngle));
 		const a_end = center.offsetBy(Point.fromPolar(radius, baseAngle));
 		const b_end = center.offsetBy(Point.fromPolar(radius, rightEndAngle));
-
-		// Arc path commands (without the initial M for the second arc)
 		const leftArc = `A ${radius} ${radius} 0 0 0 ${a_end.x} ${a_end.y}`;
 		const rightArc = `A ${radius} ${radius} 0 0 0 ${b_end.x} ${b_end.y}`;
-
-		// Build the path: move to a_start, left arc to a_end, right arc to b_end, line back to a_start, close
 		return `M ${a_start.x} ${a_start.y} ${leftArc} ${rightArc} L ${a_start.x} ${a_start.y} Z`;
-	}
-
-	xgull_wings(center: Point, radius: number, direction: Direction): string {
-		switch (direction) {
-			case Direction.down:
-				const a = this.arc(center, radius, 1, Math.PI, Math.PI * 1.5);
-				const b = this.arc(center, radius, 0, Math.PI * 0.5, Math.PI);
-				return a + b;
-			case Direction.up:
-				const c = this.arc(center, radius, 0, Math.PI * 0.5, Math.PI);
-				const d = this.arc(center, radius, 1, Math.PI, Math.PI * 1.5);
-				return c + d;
-			case Direction.right:
-				const e = this.arc(center, radius, 1, Math.PI, Math.PI * 1.5);
-				const f = this.arc(center, radius, 0, Math.PI * 0.5, Math.PI);
-				return e + f;
-			case Direction.left:
-				const g = this.arc(center, radius, 0, Math.PI * 0.5, Math.PI);
-				const h = this.arc(center, radius, 1, Math.PI, Math.PI * 1.5);
-				return g + h;
-		}
 	}
 
 	line(vector: Point, offset: Point = Point.zero): string {
