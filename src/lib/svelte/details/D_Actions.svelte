@@ -11,12 +11,15 @@
 	import Slider from '../mouse/Slider.svelte';
 	export let top = 0;
 	const has_title = true;
+	const middle_left = 37;
+	const actions_height = 143;
+	const grid_width = k.width_details - 12;
 	const separator_font_size = k.font_size.smallest;
     const font_sizes = [k.font_size.smallest, k.font_size.smallest];
 	let list_title = grabs.latest?.isExpanded && layout.inTreeMode ? 'hide list' : 'list';
 	let actions_top = top + (has_title ? 3 : -13);
+	let slider_top = actions_top + actions_height + 7
 	let button_titles = compute_button_titles();
-	let actions_height = 144;
     let reattachments = 0;
 
 	////////////////////////////////////////////////////////////
@@ -145,9 +148,9 @@
 				top={0}
 				columns={5}
 				name='top-actions'
+				width={grid_width}
 				has_title={has_title}
 				font_sizes={font_sizes}
-				width={k.width_details - 12}
 				closure={handle_actionRequest}
 				button_titles={button_titles[0]}
 				button_height={k.height.button}/>
@@ -155,10 +158,10 @@
 				gap={2}
 				top={87}
 				columns={5}
+				width={grid_width}
 				name='bottom-actions'
 				has_title={has_title}
 				font_sizes={font_sizes}
-				width={k.width_details - 12}
 				closure={handle_actionRequest}
 				button_titles={button_titles[1]}
 				button_height={k.height.button}/>
@@ -167,14 +170,14 @@
 				isHorizontal={false}
 				has_thin_divider={false}
 				margin={k.details_margin}
-				origin={new Point(37, -6)}
+				origin={new Point(middle_left, -6)}
 				thickness={k.thickness.separator.ultra_thin}/>
 			<Separator
-				length={74}
 				isHorizontal={false}
 				has_thin_divider={false}
 				margin={k.details_margin}
-				origin={new Point(37, 80)}
+				length={actions_height - 69}
+				origin={new Point(middle_left, 80)}
 				thickness={k.thickness.separator.ultra_thin}/>
 			<Separator
 				origin={Point.y(79)}
@@ -190,10 +193,10 @@
 					has_thin_divider={false}
 					length={k.width_details}
 					margin={k.details_margin}
+					origin={Point.y(slider_top - 6)}
 					title_left={k.separator_title_left}
 					title_font_size={separator_font_size}
 					thickness={k.thickness.separator.ultra_thin}
-					origin={Point.y(actions_top + actions_height)}
 					title={layout.inTreeMode ? 'maximum visible tree levels' : k.empty}/>
 				<Slider
 					max={12}
@@ -202,10 +205,10 @@
 					width={k.width_details - 26}
 					isVisible={layout.inTreeMode}
 					thumb_color={colors.separator}
+					origin={new Point(10, slider_top)}
 					title_left={k.separator_title_left}
 					title_font_size={k.font_size.small}
-					handle_value_change={handle_depth_limit}
-					origin={new Point(10, actions_top + actions_height + 7)}/>
+					handle_value_change={handle_depth_limit}/>
 			{/if}
 		{/if}
 	</div>

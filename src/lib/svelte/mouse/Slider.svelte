@@ -8,6 +8,7 @@
 	export let isVisible: boolean = true;
 	export let divisions: number = 100;
 	export let title_left: number = 0;
+	export let height: number = 22;
 	export let width: number = 200;
 	export let value: number = 1;
 	export let max: number = 20;
@@ -29,11 +30,10 @@
 	
 </script>
 
+<div style='position: relative; height: {height}px; top: {origin.y}px; left: {origin.x}px;'>
 <div style='
 	width: {width}px;
-	top: {origin.y}px;
 	position: relative;
-	left: {origin.x}px;
 	--border: {border};
 	align-items: center;
 	--thumb-color: {thumb_color};
@@ -49,6 +49,7 @@
 	<span style='font-size: {title_font_size}px; margin-left: -26px; display: inline-block; width: 3.5em; text-align: right;'>
 		{value}
 	</span>
+</div>
 </div>
 
 <style>
