@@ -56,6 +56,26 @@
 			<p>Nothing is available.</p>
 		{:else if $w_t_startup == T_Startup.ready}
 			<Controls/>
+			<Separator
+				hasBothEnds={true}
+				isHorizontal={false}
+				has_thin_divider={false}
+				margin={k.details_margin}
+				zindex={T_Layer.frontmost}
+				thickness={k.thickness.separator.thick}
+				length={$w_graph_rect.size.height + 10}
+				corner_radius={k.radius.gull_wings.thick}
+				origin={new Point(2, layout.graph_top - 4)}/>
+			<Separator
+				hasBothEnds={true}
+				isHorizontal={false}
+				has_thin_divider={false}
+				margin={k.details_margin}
+				zindex={T_Layer.frontmost}
+				thickness={k.thickness.separator.thick}
+				length={$w_graph_rect.size.height + 10}
+				corner_radius={k.radius.gull_wings.thick}
+				origin={new Point(w.windowSize.width - 2, layout.graph_top - 4)}/>
 			{#if !$w_popupView_id && $w_show_details}
 				<Details/>
 			{/if}

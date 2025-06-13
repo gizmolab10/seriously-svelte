@@ -22,7 +22,7 @@
 	export let width: number;
 	export let margin = 0;
 	export let gap = 1;
-	const solo_title_width = 38;
+	const solo_title_width = 42;
 	const front_margin = has_seperator ? 0 : solo_title_width;
 	const button_titles = has_title ? row_titles.slice(1) : row_titles;
 	const g_repeater = new G_Repeater(button_titles, button_height, width - front_margin, margin, gap, 8, title_gap, true, font_sizes[0]);
@@ -107,7 +107,7 @@
 					text-align: right;
 					position:absolute;
 					font-size:{font_sizes[0]}px;
-					width:{solo_title_width - gap - 2.5}px;'>
+					width:{solo_title_width - gap - 7}px;'>
 				{row_title}
 			</div>
 		{/if}

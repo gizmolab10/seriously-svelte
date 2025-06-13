@@ -11,14 +11,16 @@
 	import Slider from '../mouse/Slider.svelte';
 	export let top = 0;
 	const has_title = true;
-	const middle_left = 37;
-	const actions_height = 143;
+	const middle_left = 40;
+	const actions_height = 150;
+	const top_separatorLength = 95;
+	const bottom_separatorLength = 78;
 	const grid_width = k.width_details - 12;
 	const separator_font_size = k.font_size.smallest;
     const font_sizes = [k.font_size.smallest, k.font_size.smallest];
 	let list_title = grabs.latest?.isExpanded && layout.inTreeMode ? 'hide list' : 'list';
 	let actions_top = top + (has_title ? 3 : -13);
-	let slider_top = actions_top + actions_height + 7
+	let slider_top = actions_top + actions_height + 7;
 	let button_titles = compute_button_titles();
     let reattachments = 0;
 
@@ -30,30 +32,24 @@
 	// buttons grid adds row (here it becomes t_action)
 	////////////////////////////////////////////////////////////
 	
-    $:	top, actions_top = top + (has_title ? 3 : -13);
-    $:	$w_depth_limit,
-		$w_s_alteration,
-		$w_background_color,
-		$w_user_graph_offset,
-		$w_show_graph_ofType,
-		reattachments += 1;
+    $:	{
+		const _ = top;
+		actions_top = top + (has_title ? 3 : -13);
+	}
 
-	$:	$w_ancestries_grabbed,
-		$w_ancestries_expanded,
+	$: {
+		const _ = `${$w_depth_limit}${$w_background_color}${$w_user_graph_offset}${$w_show_graph_ofType}${$w_s_alteration}`;
+		reattachments += 1;
+	}
+
+	$: {
+		const _ = `${$w_ancestries_expanded.join(',')}${$w_ancestries_grabbed.join(',')}`;
 		update_button_titles();
+	}
 	
 	function handle_depth_limit(value: number) {
 		$w_depth_limit = value;
 		layout.grand_layout();
-	}
-
-	function name_for(t_action: number, column: number): string {
-		const [group, index] = group_andIndex(t_action);
-		const titles = button_titles[group];
-		if (!!titles && titles.length > column) {
-			return `${titles[0]}.${titles[column]}`;
-		}
-		return k.empty;
 	}
 
 	function target_ofAlteration(): string | null {
@@ -74,6 +70,15 @@
 		const group = index < 5 ? 0 : 1;
 		const index_withinGroup = index % 5;
 		return [group, index_withinGroup];
+	}
+
+	function name_for(t_action: number, column: number): string {
+		const [group, index] = group_andIndex(t_action);
+		const titles = button_titles[group];
+		if (!!titles && titles.length > column) {
+			return `${titles[0]}.${titles[column]}`;
+		}
+		return k.empty;
 	}
 
 	function isAction_invertedAt(t_action: number, column: number): boolean {
@@ -144,49 +149,49 @@
 			</div>
 		{:else}
 			<Buttons_Grid
+				top={1}
 				gap={2}
-				top={0}
 				columns={5}
 				name='top-actions'
 				width={grid_width}
 				has_title={has_title}
 				font_sizes={font_sizes}
 				closure={handle_actionRequest}
-				button_titles={button_titles[0]}
-				button_height={k.height.button}/>
+				button_height={k.height.button}
+				button_titles={button_titles[0]}/>
 			<Buttons_Grid
 				gap={2}
-				top={87}
 				columns={5}
 				width={grid_width}
 				name='bottom-actions'
 				has_title={has_title}
 				font_sizes={font_sizes}
+				top={top_separatorLength - 3}
 				closure={handle_actionRequest}
-				button_titles={button_titles[1]}
-				button_height={k.height.button}/>
+				button_height={k.height.button}
+				button_titles={button_titles[1]}/>
 			<Separator
-				length={92}
 				isHorizontal={false}
 				has_thin_divider={false}
 				margin={k.details_margin}
+				length={top_separatorLength}
 				origin={new Point(middle_left, -6)}
 				thickness={k.thickness.separator.ultra_thin}/>
 			<Separator
 				isHorizontal={false}
 				has_thin_divider={false}
 				margin={k.details_margin}
-				length={actions_height - 69}
-				origin={new Point(middle_left, 80)}
-				thickness={k.thickness.separator.ultra_thin}/>
+				length={bottom_separatorLength}
+				thickness={k.thickness.separator.ultra_thin}
+				origin={new Point(middle_left, top_separatorLength - 12)}/>
 			<Separator
-				origin={Point.y(79)}
 				has_thin_divider={false}
 				length={k.width_details}
 				margin={k.details_margin}
 				title='edit the hierarchy'
 				title_left={k.separator_title_left}
 				title_font_size={separator_font_size}
+				origin={Point.y(top_separatorLength - 13)}
 				thickness={k.thickness.separator.ultra_thin}/>
 			{#if layout.inTreeMode}
 				<Separator
