@@ -47,6 +47,8 @@
 		align-items: stretch;'>
 	<Separator
 		origin={Point.zero}
+		isHorizontal={true}
+		has_thin_divider={true}
 		corner_radius={k.radius.gull_wings.thin}
 		thickness={k.thickness.separator.ultra_thin}/>
 	{#each g_repeater.titles as title, index}
@@ -69,6 +71,7 @@
 		{/if}
 	{/each}
 	<Separator
+		isHorizontal={true}
 		origin={Point.y(height)}
 		corner_radius={k.radius.gull_wings.thin}
 		thickness={k.thickness.separator.ultra_thin}/>

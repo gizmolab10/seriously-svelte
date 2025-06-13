@@ -149,8 +149,7 @@
 			border-radius : {border_radius}px;;
 		'>
 		<Widget_Drag
-			name = {es_drag.name}
-			ancestry = {ancestry}
+			es_drag = {es_drag}
 			points_right = {points_right}/>
 		<Widget_Title
 			ancestry = {ancestry}
@@ -159,8 +158,7 @@
 			fontSize = {k.font_size.common}px/>
 		{#if ancestry?.showsReveal_forPointingToChild(points_toChild)}
 			<Widget_Reveal
-				ancestry = {ancestry}
-				name = {es_reveal.name}
+				es_reveal = {es_reveal}
 				points_toChild = {points_toChild}/>
 		{/if}
 	</div>

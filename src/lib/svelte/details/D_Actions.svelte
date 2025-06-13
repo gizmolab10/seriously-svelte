@@ -172,20 +172,21 @@
 				button_titles={button_titles[1]}/>
 			<Separator
 				isHorizontal={false}
-				has_thin_divider={false}
+				has_thin_divider={true}
 				margin={k.details_margin}
 				length={top_separatorLength}
 				origin={new Point(middle_left, -6)}
 				thickness={k.thickness.separator.ultra_thin}/>
 			<Separator
 				isHorizontal={false}
-				has_thin_divider={false}
+				has_thin_divider={true}
 				margin={k.details_margin}
 				length={bottom_separatorLength}
 				thickness={k.thickness.separator.ultra_thin}
 				origin={new Point(middle_left, top_separatorLength - 12)}/>
 			<Separator
-				has_thin_divider={false}
+				isHorizontal={true}
+				has_thin_divider={true}
 				length={k.width_details}
 				margin={k.details_margin}
 				title='edit the hierarchy'
@@ -195,7 +196,8 @@
 				thickness={k.thickness.separator.ultra_thin}/>
 			{#if layout.inTreeMode}
 				<Separator
-					has_thin_divider={false}
+					isHorizontal={true}
+					has_thin_divider={true}
 					length={k.width_details}
 					margin={k.details_margin}
 					origin={Point.y(slider_top - 6)}

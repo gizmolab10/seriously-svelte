@@ -88,13 +88,13 @@
 			height={layout.graph_top - 2}
 			thickness={k.thickness.separator.thick}
 			corner_radius={k.radius.gull_wings.thick}>
-			<div style='
+			<div class='controls-themselves' style='
 				top: 10px;
 				left: 6px;
-				width: 100%;
-				height: 100%;
 				position: absolute;
-				z-index: {T_Layer.frontmost};'>
+				height: {size_big}px;
+				z-index: {T_Layer.frontmost};
+				width: {w.windowSize.width - 20}px;'>
 				{#if !$w_popupView_id}
 					{#key $w_background_color}
 						<Button

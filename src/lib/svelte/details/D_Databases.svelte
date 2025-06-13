@@ -165,6 +165,7 @@
 			name={`data-${(ux.T_Storage_Need == T_Storage_Need.direction) ? 'action' : 'format'}`}/>
 	{/key}
 	<Separator
+		isHorizontal={true}
 		origin={Point.y(top + 166)}
 		thickness={k.thickness.separator.thick}
 		corner_radius={k.radius.gull_wings.thick}/>

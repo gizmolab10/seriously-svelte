@@ -94,6 +94,7 @@
 			<Separator
 				length={width}
 				title={row_title}
+				isHorizontal={true}
 				add_wings={add_wings}
 				has_thin_divider={false}
 				thickness={separator_thickness}

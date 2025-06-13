@@ -894,23 +894,6 @@ export default class Ancestry extends Identifiable {
 		return g_widget;
 	}
 
-	isHoverInverted(type: string): boolean {
-		const isInverted = this.isGrabbed || this.isEditing;
-		switch (type) {
-			case T_Element.reveal: return layout.inTreeMode && this.isExpanded == isInverted;
-			default: return isInverted;
-		}
-	}
-
-	dotColor(isInverted: boolean = false): string {
-		const thing = this.thing;
-		const showBorder = this.isGrabbed || this.isEditing;
-		if (!!thing && (isInverted != showBorder)) {
-			return thing.color;
-		}
-		return get(w_background_color);
-	}
-
 	progeny_count(visited: string[] = []): number {
 		let sum = 0;
 		const id = this.thing?.id;

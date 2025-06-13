@@ -1,18 +1,17 @@
 <script lang='ts'>
-	import { c, k, u, ux, show, Rect, Size, Point, Thing, debug } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Graph, T_Alteration, T_SvelteComponent } from '../../ts/common/Global_Imports';
+	import { S_Element, T_Layer, T_Graph, T_Alteration, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_show_countDots_ofType, w_thing_color, w_ancestries_grabbed } from '../../ts/common/Stores';
+	import { c, k, u, ux, show, Rect, Size, Point, Thing, debug } from '../../ts/common/Global_Imports';
 	import { layout, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
 	import { w_s_alteration, w_background_color } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVG_D3 from '../kit/SVG_D3.svelte';
 	import { onMount } from 'svelte';
+	export let es_drag!: S_Element;
 	export let points_right = true;
-	export let name = k.empty;
-    export let ancestry;
 	const size = k.height.dot;
 	const capture_size = size;
-	const es_drag = ux.s_element_forName(name);		// created by widget
+    const ancestry = es_drag.ancestry;
 	let fill_color = debug.lines ? 'transparent' : es_drag.fill;
 	let center = ancestry.g_widget.center_ofDrag;
 	let ellipsis_color = es_drag.stroke;

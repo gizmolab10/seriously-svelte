@@ -1,18 +1,18 @@
 <script lang='ts'>
 	import { w_show_countDots_ofType, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
 	import { c, h, k, u, ux, debug, layout, signals, svgPaths } from '../../ts/common/Global_Imports';
-	import { Size, Thing, Point, Predicate, T_Layer, T_Graph } from '../../ts/common/Global_Imports';
 	import { w_thing_title, w_thing_color, w_background_color } from '../../ts/common/Stores';
+	import { Size, Thing, Point, Predicate } from '../../ts/common/Global_Imports';
+	import { S_Element, T_Layer, T_Graph } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVG_D3 from '../kit/SVG_D3.svelte';
 	import { onMount } from 'svelte';
-    export let ancestry;
-	export let name = k.empty;
     export let zindex = T_Layer.dots;
 	export let points_toChild = true;
+	export let es_reveal!: S_Element;
     export let hover_isReversed = false;
+	const ancestry = es_reveal.ancestry;
 	const tinyDotsOffset = new Point(-5.4, -2.9);
-	const es_reveal = ux.s_element_forName(name);
 	const outer_diameter = k.diameterOf_outer_tinyDots;
 	const size_ofTinyDots = Size.width(3).expandedEquallyBy(outer_diameter)
 	const viewBox = `0.5 2.35 ${outer_diameter} ${outer_diameter}`;

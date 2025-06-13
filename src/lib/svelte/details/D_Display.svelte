@@ -36,7 +36,8 @@
 		position:relative;
 		font-size:{k.font_size.small}px;'>
 	<Separator
-		has_thin_divider={false}
+		isHorizontal={true}
+		has_thin_divider={true}
 		length={k.width_details}
 		margin={k.details_margin}
 		origin={Point.y(tops[0])}
@@ -58,7 +59,8 @@
 		handle_selection={handle_count_dots}/>
 	<Separator
 		title='color'
-		has_thin_divider={false}
+		isHorizontal={true}
+		has_thin_divider={true}
 		length={k.width_details}
 		margin={k.details_margin}
 		origin={Point.y(tops[2])}

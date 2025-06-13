@@ -13,7 +13,6 @@ export default class Identifiable {
 
 	static newID(prefix: string = 'NEW'): string { return prefix + Identifiable.removeAll('-', uuid()).slice(10, 24); } // use last, most-unique bytes of uuid
 	equals(other: Identifiable | null | undefined): boolean { return !!other && this.hid == other.hid; }
-	isHoverInverted(type: string): boolean { return false; }
 
 	static removeAll(item: string, from: string): string {
 		let to = from;
