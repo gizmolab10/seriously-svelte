@@ -13,6 +13,7 @@
 	const capture_size = size;
     const ancestry = es_drag.ancestry;
 	let fill_color = debug.lines ? 'transparent' : es_drag.fill;
+	let svg_outline_color = es_drag.svg_outline_color;
 	let center = ancestry.g_widget.center_ofDrag;
 	let ellipsis_color = es_drag.stroke;
 	let svgPathFor_ellipses = k.empty;
@@ -68,10 +69,11 @@
 		if (!ux.isAny_rotation_active && !!es_drag && !!thing) {
 			const usePointer = (!ancestry.isGrabbed || layout.inRadialMode) && ancestry.hasChildren;
 			const cursor = usePointer ? 'pointer' : 'normal';
-			es_drag.set_forHovering(thing.color, cursor);
 			es_drag.isOut = !isHovering != ancestry.isGrabbed;
+			es_drag.set_forHovering(thing.color, cursor);
 			color = thing.color;
 			ellipsis_color = es_drag.stroke;
+			svg_outline_color = es_drag.svg_outline_color;
 			fill_color = debug.lines ? 'transparent' : es_drag.fill;
 		}
 	}
@@ -81,7 +83,7 @@
 		if (!!thing) {
 			const count = thing.parents.length;		
 			if (count > 1 && show.parent_dots) {
-				svgPathFor_ellipses = svgPaths.ellipses(6, 0.5, false, count, size / 2);
+				svgPathFor_ellipses = svgPaths.ellipses(6, 0.8, false, count, size / 2);
 			}
 			if (thing.hasRelated && show.related_dots) {
 				const x = (layout.inRadialMode ? 5.2 : 4.5) * (points_right ? -1 : 1);
@@ -138,11 +140,11 @@
 				<SVG_D3 name={'svg-' + name}
 					width={size}
 					height={size}
-					stroke={color}
 					fill={fill_color}
+					stroke={svg_outline_color}
 					svgPath={svgPathFor_dragDot}/>
 				{#if svgPathFor_ellipses}
-					<SVG_D3 name={'svg-inside-' + name}
+					<SVG_D3 name={'svg-ellipsis-' + name}
 						width={size}
 						height={size}
 						fill={ellipsis_color}

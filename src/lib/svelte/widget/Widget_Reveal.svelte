@@ -12,11 +12,12 @@
 	export let es_reveal!: S_Element;
     export let hover_isReversed = false;
 	const ancestry = es_reveal.ancestry;
-	const tinyDotsOffset = new Point(-5.4, -2.9);
+	const tinyDotsOffset = new Point(-4.9, -2.45);
 	const outer_diameter = k.diameterOf_outer_tinyDots;
 	const size_ofTinyDots = Size.width(3).expandedEquallyBy(outer_diameter)
 	const viewBox = `0.5 2.35 ${outer_diameter} ${outer_diameter}`;
 	let fill_color = debug.lines ? 'transparent' : es_reveal.fill;
+	let svg_outline_color = es_reveal.svg_outline_color;
 	let svgPathFor_outer_tinyDots: string | null = null;
 	let svgPathFor_innerDot: string | null = null;
 	let center = ancestry.g_widget.center_ofReveal;
@@ -40,7 +41,7 @@
 	});
 	
 	$: {
-		const _ = `${$w_ancestries_expanded.join(',')}${$w_show_countDots_ofType}${$w_thing_title}${$w_background_color}${$w_thing_color}`;
+		const _ = `${$w_ancestries_grabbed.join(',')}${$w_ancestries_expanded.join(',')}${$w_show_countDots_ofType}${$w_thing_title}${$w_background_color}${$w_thing_color}`;
 		update_svgPaths();
 		update_colors();
 	}
@@ -52,8 +53,9 @@
 	}
 
 	function update_colors() {
-		fill_color = debug.lines ? 'transparent' : es_reveal.fill;
 		es_reveal.set_forHovering(color, 'pointer');
+		fill_color = debug.lines ? 'transparent' : es_reveal.fill;
+		svg_outline_color = es_reveal.svg_outline_color;
 		bulkAlias_color = es_reveal.stroke;
 		color = ancestry.thing?.color;
 	}
@@ -112,10 +114,10 @@
 				height: {k.height.dot}px;'>
 			<SVG_D3 name='reveal-dot-svg'
 				svgPath={svgPathFor_revealDot}
+				stroke={svg_outline_color}
 				height={k.height.dot}
 				width={k.height.dot}
-				fill={fill_color}
-				stroke={color}/>
+				fill={fill_color}/>
 			{#if !!svgPathFor_innerDot}
 				<div class='bulk-alias-dot' style='
 					left:{offsetFor_innerDot}px;
@@ -149,7 +151,7 @@
 							position: absolute;'>
 						<path
 							d={svgPathFor_outer_tinyDots}
-							stroke={color}
+							stroke={svg_outline_color}
 							fill={color}/>
 					</svg>
 				</div>

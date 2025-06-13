@@ -47,7 +47,7 @@
 	function update_style() {
 		draggableRect = $w_graph_rect;
 		style=`
-			overflow: auto;
+			overflow: hidden;
 			touch-action: none;
 			position: absolute;
 			pointer-events: auto;

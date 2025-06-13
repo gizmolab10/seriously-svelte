@@ -1,5 +1,5 @@
-import { k, ux, debug, colors, Ancestry, T_Element, layout } from '../common/Global_Imports';
-import { w_background_color } from '../../ts/common/Stores';
+import { k, ux, colors, Ancestry, T_Element, layout } from '../common/Global_Imports';
+import { w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
 import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
 
@@ -16,11 +16,9 @@ import { get } from 'svelte/store';
 
 export default class S_Element {
 	responder: HTMLElement | null = null;
-	dot_outline_color = 'transparent';
 	defaultDisabledColor = '#999999';
 	defaultCursor = k.cursor_default;
 	hoverCursor = k.cursor_default;
-	uses_background_color = false;
 	identifiable!: Identifiable;
 	color_background = 'white';
 	hoverColor = 'transparent';
@@ -32,15 +30,16 @@ export default class S_Element {
 	subtype = k.empty;
 	name = k.empty;
 	isOut = true;
+
 	constructor(identifiable: Identifiable, type: T_Element, subtype: string) {
 		this.name = ux.name_from(identifiable, type, subtype);
 		this.identifiable = identifiable;
 		this.subtype = subtype;
 		this.type = type;
-		if (this.uses_background_color) {
-			w_background_color.subscribe((background_color: string) => {
-				this.color_background = background_color;
-			})
+		if (this.isADot) {
+			w_ancestries_grabbed.subscribe((grabbed) => {
+				this.isInverted = grabbed.includes(this.ancestry);
+			});
 		}
 	}
 
@@ -48,7 +47,9 @@ export default class S_Element {
 	get ancestry(): Ancestry { return this.identifiable as Ancestry; }
 	get color_isInverted(): boolean { return this.isInverted || this.isHovering; }
 	get description(): string { return `${this.isOut ? 'out' : 'in '} '${this.name}'`; }
+	get isADot(): boolean { return this.type == T_Element.drag || this.type == T_Element.reveal; }
 	get isHovering(): boolean { return this.ignore_hover ? false : this.isOut == this.isHoverInverted; }
+	get svg_outline_color(): string { return this.ancestry.isGrabbed ? this.color_background : this.hoverColor; }
 	get cursor(): string { return (this.isHovering && !this.isDisabled) ? this.hoverCursor : this.defaultCursor; }
 	get stroke(): string { return this.isDisabled ? this.disabledTextColor : this.color_isInverted ? this.color_background : this.hoverColor; }
 	get disabledTextColor(): string { return colors.specialBlend(this.color_background, this.defaultDisabledColor, 0.3) ?? this.defaultDisabledColor; }
