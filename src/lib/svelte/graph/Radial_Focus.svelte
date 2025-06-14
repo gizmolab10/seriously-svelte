@@ -9,8 +9,8 @@
 	const height = k.height.row + 1;
 	let ancestry = $w_ancestry_focus;
 	let es_title = ux.s_element_for(ancestry, T_Element.radial_focus, k.empty);
-	let s_widget = ux.s_widget_forAncestry(ancestry);
-	let background_color = s_widget.background_color;
+	let es_widget = ux.s_widget_forAncestry(ancestry);
+	let background_color = es_widget.background_color;
 	let svg_strokeColor = 'transparent';
 	let svg_fillColor = 'transparent';
 	let origin_ofWidget = Point.zero;
@@ -18,7 +18,7 @@
 	let origin_ofTitle = Point.zero;
 	let size_ofBorder = Size.zero;
 	let svg_dasharray = k.empty;
-	let color = s_widget.color;
+	let color = es_widget.color;
 	let width_ofTitle = 0;
 	let focus;
 
@@ -55,11 +55,11 @@
 
 	function update_colors() {
 		ancestry = $w_ancestry_focus;
-		s_widget = ux.s_widget_forAncestry(ancestry);
-		background_color = s_widget.background_color;
-		color = s_widget.color;
-		svg_strokeColor = s_widget.shows_border ? color : 'transparent';
-		svg_fillColor = s_widget.shows_border ? $w_background_color : 'transparent';
+		es_widget = ux.s_widget_forAncestry(ancestry);
+		background_color = es_widget.background_color;
+		color = es_widget.color;
+		svg_strokeColor = es_widget.shows_border ? color : 'transparent';
+		svg_fillColor = es_widget.shows_border ? $w_background_color : 'transparent';
 	}
 
 	function layout_focus() {
@@ -124,8 +124,6 @@
 			background-color : {background_color};'>
 		<Widget_Title
 			fontSize = {k.font_size.common}px
-			ancestry = {$w_ancestry_focus}
-			origin = {origin_ofTitle}
-			name = {es_title.name}/>
+			es_title = {es_title}/>
 	</div>
 </div>

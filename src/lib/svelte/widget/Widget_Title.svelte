@@ -59,8 +59,12 @@
 
 	$: {
 		const _ = `${$w_ancestries_grabbed.join(',')}${$w_ancestries_expanded.join(',')}${$w_thing_color}`;
-		const y_origin = ancestry?.isGrabbed ?? false ? 0.4 : 0;
-		origin_ofInput = new Point(0.8, y_origin);
+		const isFocus = ancestry?.isFocus ?? false;
+		const adjust = layout.inRadialMode && isFocus;
+		const isGrabbed = ancestry?.isGrabbed ?? false;
+		const x_origin = adjust ? (title_width / 20 - 3) : 0.8;
+		const y_origin = (isGrabbed ? 0.4 : 0) - (adjust ? isGrabbed ? 2.5 : 2 : 0);
+		origin_ofInput = new Point(x_origin, y_origin);
 		color = s_widget.color;
 	}
 
