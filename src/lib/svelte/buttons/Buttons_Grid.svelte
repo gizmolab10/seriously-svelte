@@ -28,7 +28,7 @@
         position:absolute;
         height:{(rows * button_height) + ((rows - 1) * gap)}px;'>
     {#each button_titles as titles, row}
-        {#if closure(T_Request.is_visible, S_Mouse.empty, row, -1)}
+        {#if closure(T_Request.is_visible, S_Mouse.empty, name, row, -1)}
             <Buttons_Row
                 gap={gap}
                 width={width}

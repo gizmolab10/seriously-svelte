@@ -114,8 +114,8 @@
 					<Button
 						height={button_height}
 						font_size={font_sizes[1]}
-						width={g_repeater.button_width_for(column)}
 						es_button={es_button_byColumn[column]}
+						width={g_repeater.button_width_for(column)}
 						name={`${name}-${button_name_for(column)}`}
 						origin={Point.x(g_repeater.button_left_for(column))}
 						closure={(s_mouse) => closure(T_Request.handle_click, s_mouse, column)}>
