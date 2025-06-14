@@ -220,7 +220,7 @@ export default class DBFirebase extends DBCommon {
 		if (relationships_haveChanged) {
 			setTimeout(() => { // wait in case a thing involved in this relationship arrives in the data
 				h.relationships_refreshKnowns();
-				h.rootAncestry.order_normalizeRecursive(true);
+				h.rootAncestry.order_normalizeRecursive();
 				layout.grand_build();
 			}, 20);
 		}
@@ -377,7 +377,7 @@ export default class DBFirebase extends DBCommon {
 				case 'removed':
 					if (!!thing) {
 						if (thing.isRoot) {
-							thing.set_isDirty(true);
+							thing.set_isDirty();
 							return false;			// do not invoke rebuild
 						}
 						thing.remove_fromGrabbed_andExpanded_andResolveFocus();

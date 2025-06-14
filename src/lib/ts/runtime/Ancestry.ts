@@ -364,8 +364,8 @@ export default class Ancestry extends Identifiable {
 	
 	get order(): number { return this.relationship?.order_forPointsTo(this.points_toChildren) ?? -12345; }
 	
-	order_setTo(order: number, persist: boolean = false) {
-		this.relationship?.order_setTo_forPointsTo(order, this.points_toChildren, persist);
+	order_setTo(order: number) {
+		this.relationship?.order_setTo_forPointsTo(order, this.points_toChildren);
 	}
 
 	reorder_within(ancestries: Array<Ancestry>, up: boolean) {
@@ -376,16 +376,16 @@ export default class Ancestry extends Identifiable {
 		const wrapped = up ? (fromOrder == 0) : (fromOrder + 1 == length);
 		const nudge = ((wrapped == up) ? 1 : -1) * k.halfIncrement;		// avoid duplicated orders
 		this.order_setTo(toOrder + nudge);
-		u.ancestries_orders_normalize(ancestries, true);
+		u.ancestries_orders_normalize(ancestries);
 	}
 
-	order_normalizeRecursive(persist: boolean, visited: string[] = []) {
+	order_normalizeRecursive(visited: string[] = []) {
 		const id = this.id;
 		const childAncestries = this.childAncestries;
 		if (!visited.includes(id) && childAncestries && childAncestries.length > 1) {
-			u.ancestries_orders_normalize(childAncestries, persist);
+			u.ancestries_orders_normalize(childAncestries);
 			for (const childAncestry of childAncestries) {
-				childAncestry.order_normalizeRecursive(persist, [...visited, id]);
+				childAncestry.order_normalizeRecursive([...visited, id]);
 			}
 		}
 	}
@@ -636,7 +636,7 @@ export default class Ancestry extends Identifiable {
 			const parentOrder = this.childAncestries?.length ?? 0;
 			const relationship = h.relationship_remember_createUnique(idBase, Identifiable.newID(), kind, parent.idBridging, thing.id, 0, parentOrder, T_Create.getPersistentID);
 			ancestry = this.ancestry_createUnique_byAppending_relationshipID(relationship.id);
-			u.ancestries_orders_normalize(this.childAncestries, true);			// write new order values for relationships
+			u.ancestries_orders_normalize(this.childAncestries);				// write new order values for relationships
 			if (kind != T_Predicate.contains) {									// if isBidirectional, we need to create the reversed relationship
 				const reversed = relationship?.reversed_remember_createUnique;	// do not persist, it is automatically recreated on all subsequennt launches
 				if (!!reversed) {												// use relationship's id alone, since it is an isRelated kind
@@ -659,7 +659,7 @@ export default class Ancestry extends Identifiable {
 			const parentOrder = this.childAncestries?.length ?? 0;
 			const relationship = await h.relationship_remember_persistentCreateUnique(idBase, Identifiable.newID(), kind, parent.idBridging, thing.id, 0, parentOrder, T_Create.getPersistentID);
 			ancestry = this.ancestry_createUnique_byAppending_relationshipID(relationship.id);
-			u.ancestries_orders_normalize(this.childAncestries, true);			// write new order values for relationships
+			u.ancestries_orders_normalize(this.childAncestries);				// write new order values for relationships
 			if (kind != T_Predicate.contains) {									// if isBidirectional, we need to create the reversed relationship
 				const reversed = relationship?.reversed_remember_createUnique;	// do not persist, it is automatically recreated on all subsequennt launches
 				if (!!reversed) {												// use relationship's id alone, since it is an isRelated kind
@@ -701,7 +701,7 @@ export default class Ancestry extends Identifiable {
 					}
 				}
 				if (isContains) {
-					u.ancestries_orders_normalize(ancestries, true);					// normalize order of children only
+					u.ancestries_orders_normalize(ancestries);						// normalize order of children only
 				}
 			}
 		}

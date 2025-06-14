@@ -143,7 +143,7 @@
 						es_button={es_save}
 						closure={handle_save}
 						zindex={T_Layer.frontmost}
-						origin={new Point(32, top + 102)}>
+						origin={new Point(130, top + 110)}>
 						save to db
 					</Button>
 				{/if}

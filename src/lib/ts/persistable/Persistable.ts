@@ -22,8 +22,8 @@ export default class Persistable extends Identifiable {
 	log(option: T_Debug, message: string) { debug.log_maybe(option, message); }
 	isInDifferentBulkThan(other: Persistable) { return this.idBase != other.idBase; }
 
-	set_isDirty(force: boolean = false) {
-		if (force || !busy.isFetching) {
+	set_isDirty() {
+		if (!busy.isFetching || h?.db.isPersistent) {
 			this.persistence.isDirty = true;
 			h?.signal_storage_redraw();
 		}

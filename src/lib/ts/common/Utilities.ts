@@ -123,12 +123,12 @@ export class Utilities extends Testworthy_Utilities {
 		return array.filter(a => a.t_database == get(w_t_database)).map(a => a.id);
 	}
 
-	ancestries_orders_normalize(ancestries: Array<Ancestry>, persist: boolean = false): void {
+	ancestries_orders_normalize(ancestries: Array<Ancestry>): void {
 		const length = ancestries.length;
 		if (length > 1) {
 			this.sort_byOrder(ancestries);
 			for (let index = 0; index < length; index++) {
-				ancestries[index].order_setTo(index, persist);
+				ancestries[index].order_setTo(index);
 			}
 		}
 	}

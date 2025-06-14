@@ -61,9 +61,9 @@ export default class Relationship extends Persistable {
 		relationships.filter(t => t.kind != this.kind)
 	}
 
-	orders_setTo(newOrders: number[], persist: boolean = false) {
+	orders_setTo(newOrders: number[]) {
 		this.order_setTo(newOrders[T_Order.child]);	// don't persist or signal, yet
-		this.order_setTo(newOrders[T_Order.other], T_Order.other, persist);
+		this.order_setTo(newOrders[T_Order.other], T_Order.other);
 	}
 
 	thing(child: boolean): Thing | null {
@@ -79,20 +79,18 @@ export default class Relationship extends Persistable {
 		}
 	}
 
-	order_setTo_forPointsTo(order: number, toChildren: boolean = true, persist: boolean = false) {
+	order_setTo_forPointsTo(order: number, toChildren: boolean = true) {
 		const t_order = toChildren ? T_Order.child : T_Order.other;
-		this.order_setTo(order, t_order, persist);
+		this.order_setTo(order, t_order);
 	}
 
-	order_setTo(newOrder: number, t_order: T_Order = T_Order.child, persist: boolean = false) {
+	order_setTo(newOrder: number, t_order: T_Order = T_Order.child) {
 		const order = this.orders[t_order] ?? 0;
 		const difference = Math.abs(order - newOrder);	
 		if (difference > 0.001) {
 			this.orders[t_order] = newOrder;
 			w_relationship_order.set(Date.now());
-			if (persist) {
-				this.set_isDirty();
-			}
+			this.set_isDirty();
 		}
 	}
 

@@ -513,7 +513,7 @@ export class Hierarchy {
 		order: number, parentOrder: number = 0, creationOptions: T_Create = T_Create.isFromPersistent): Relationship {
 		let relationship = this.relationship_forPredicateKind_parent_child(kind, idParent.hash(), idChild.hash());
 		if (!!relationship) {
-			relationship.order_setTo(order, T_Order.child, true);
+			relationship.order_setTo(order, T_Order.child);
 		} else {
 			relationship = new Relationship(idBase, idRelationship, kind, idParent, idChild, [order, parentOrder], creationOptions == T_Create.isFromPersistent);
 			
@@ -568,7 +568,7 @@ export class Hierarchy {
 		if (!!relationship) {
 			this.relationship_forget(ancestry.relationship);
 			if (ancestry.hasChildren) {
-				ancestry.parentAncestry?.order_normalizeRecursive(true);
+				ancestry.parentAncestry?.order_normalizeRecursive();
 			} else {
 				ancestry.collapse();
 			}
@@ -583,7 +583,7 @@ export class Hierarchy {
 		if (!!parentAncestry && !!relationship && (thing?.hasParents ?? false)) {
 			this.relationship_forget(relationship);
 			if (otherAncestry.hasChildren) {
-				parentAncestry.order_normalizeRecursive(true);
+				parentAncestry.order_normalizeRecursive();
 			} else {
 				otherAncestry.collapse();
 			}
@@ -941,12 +941,12 @@ export class Hierarchy {
 					// move ancestry to a different parent
 					const order = !RIGHT ? 0 : relationship.orders[T_Order.child] ?? 0;
 					relationship.assign_idParent(parentThing.id);
-					relationship.order_setTo(order + k.halfIncrement, T_Order.child, true);
+					relationship.order_setTo(order + k.halfIncrement, T_Order.child);
 					debug.log_move(`relocate ${relationship.description}`)
 					const childAncestry = parentAncestry.ancestry_createUnique_byAppending_relationshipID(relationship!.id);
 					childAncestry?.grabOnly();
 				}
-				this.rootAncestry.order_normalizeRecursive(true);
+				this.rootAncestry.order_normalizeRecursive();
 				if (!parentAncestry.isExpanded) {
 					parentAncestry.expand();
 				}
@@ -1294,7 +1294,7 @@ export class Hierarchy {
 	static readonly _____FILES: unique symbol;
 
 	persistRoot_toFile(format: T_File_Format) { this.persist_fromAncestry_toFile(this.rootAncestry, format); }
-	persist_toFile(format: T_File_Format) { this.persist_fromAncestry_toFile(grabs.latest_forFile, format); }
+	persist_toFile(format: T_File_Format) { this.persist_fromAncestry_toFile(grabs.ancestry_forFile, format); }
 
 	data_fromAncestry_toSave(ancestry: Ancestry): Dictionary {
 		return ancestry.isRoot ? this.all_data : this.progeny_dataFor(ancestry);
@@ -1502,7 +1502,7 @@ export class Hierarchy {
 		if (this.replace_rootID == null) {	
 			this.extract_allTypes_ofObjects_fromDict(dict);				// extract
 			const child = this.thing_forHID(idRoot.hash());				// relationship: adds it as child to the grab or focus
-			await grabs.latest_forFile.ancestry_persistentCreateUnique_byAddingThing(child);
+			await grabs.ancestry_forFile.ancestry_persistentCreateUnique_byAddingThing(child);
 		} else {														// on launch or import with SHIFT-O
 			this.forget_all();											// retain predicates: same across all dbs
 			await this.db.remove_all();									// firebase deletes document (called dbid/name)
