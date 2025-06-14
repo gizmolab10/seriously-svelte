@@ -1,11 +1,10 @@
 <script lang='ts'>
-	import { k, u, ux, Point, colors, signals, T_Request, T_Element, S_Element } from '../../ts/common/Global_Imports';
+	import { k, u, ux, Point, colors, S_Element, T_Element, T_Request } from '../../ts/common/Global_Imports';
 	import { w_count_button_restyle } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
     import G_Repeater from '../../ts/layout/G_Repeater';
 	import Separator from '../kit/Separator.svelte';
 	import Button from './Button.svelte';
-	import { onMount } from 'svelte';
 	export let closure: (t_request: T_Request, s_mouse: S_Mouse, column: number) => boolean;
 	export let separator_thickness = k.thickness.separator.thick;
 	export let origin: Point | null = null;
@@ -47,15 +46,6 @@
 	//////////////////////////////////////////////////////////////
 
     update_es_buttons();
-
-	onMount(() => {
-		const handle_action_update = signals.handle_action_update(0, () => {
-			update_es_buttons();
-		});
-		return () => {
-			handle_action_update.disconnect();
-		};
-	});
 
 	function button_disabled_for(column: number): boolean { return closure(T_Request.is_disabled, null, column); }
 	function button_inverted_for(column: number): boolean { return closure(T_Request.is_inverted, null, column); }

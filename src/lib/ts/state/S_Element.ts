@@ -56,16 +56,19 @@ export default class S_Element {
 	get fill(): string { return this.isDisabled ? 'transparent' : this.color_isInverted ? this.hoverColor : this.isSelected ? 'lightblue' : this.color_background; }
 
 	set_forHovering(hoverColor: string, hoverCursor: string) {
-		console.log(`set_forHovering "${this.name}" "${hoverColor}" "${hoverCursor}"`);
 		this.hoverCursor = hoverCursor;
 		this.hoverColor = hoverColor;
 	}
 
 	get isHoverInverted(): boolean {
-		const a = this.ancestry;
-		switch (this.type) {
-			case T_Element.reveal: return layout.inTreeMode && a.isExpanded == a.isEditing;
-			default:			   return a.isEditing;
+		if (this.isADot) {
+			const a = this.ancestry;
+			switch (this.type) {
+				case T_Element.reveal: return layout.inTreeMode && a.isExpanded == a.isEditing;
+				default:			   return a.isEditing;
+			}
+		} else {
+			return this.isInverted;
 		}
 	}
 	

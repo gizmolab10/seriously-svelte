@@ -86,8 +86,8 @@
 		const s_alteration = $w_s_alteration;
 		const t_alteration = s_alteration?.t_alteration;
 		return !!t_alteration && !!action && action == e.name_ofActionAt(t_action, column)
-			&& ((t_action == T_Action.add    && t_alteration == T_Alteration.add)
-			||  (t_action == T_Action.delete && t_alteration == T_Alteration.delete));
+			&& ((t_action == T_Action.delete && t_alteration == T_Alteration.delete)
+			||  (t_action == T_Action.add    && t_alteration == T_Alteration.add));
 	}
 
 	function compute_button_titles() {

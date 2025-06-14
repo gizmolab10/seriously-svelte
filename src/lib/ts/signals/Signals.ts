@@ -10,7 +10,6 @@ export enum T_Signal {
 	reattach	= 'reattach',
 	reposition	= 'reposition',
 	alteration	= 'alteration',
-	action_update	= 'action_update',
 }
 
 export enum T_Signal_From {
@@ -37,7 +36,6 @@ export class Signals {
 
 	conduit = new Signal<(t_signal: T_Signal, priority: number, value: any) => void>();
 	
-	signal_action_update(value: any = null) { this.signal(T_Signal.action_update, value); }
 	signal_rebuildGraph_from(value: any = null) { this.signal(T_Signal.rebuild, value); }	// N.B., widget whatches this to reveal go
 	signal_rebuildGraph_fromFocus() { this.signal_rebuildGraph_from(get(w_ancestry_focus)); }
 	signal_blink_forAlteration(value: any = null) { this.signal(T_Signal.alteration, value); }
@@ -77,10 +75,6 @@ export class Signals {
 
 	handle_reposition_widgets(priority: number, onSignal: (value: any | null) => any ) {
 		return this.handle_signal_atPriority(T_Signal.reposition, priority, onSignal);
-	}
-
-	handle_action_update(priority: number, onSignal: (value: any | null) => any ) {
-		return this.handle_signal_atPriority(T_Signal.action_update, priority, onSignal);
 	}
 
 	handle_blink_forAlteration(onSignal: (value: any | null) => any ) {
