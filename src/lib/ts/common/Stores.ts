@@ -11,7 +11,6 @@ export const w_show_details_ofType		 = writable<Array<T_Details>>();
 export const w_show_traits_ofType		 = writable<Array<T_Trait>>();
 export const w_show_directionals_ofType	 = writable<string[]>();
 export const w_show_graph_ofType		 = writable<T_Graph>();
-export const w_show_details_asStack		 = writable<boolean>();
 export const w_show_related				 = writable<boolean>();
 export const w_show_details				 = writable<boolean>();
 
@@ -80,7 +79,6 @@ class Stores {
 		w_count_mouse_up.set(0);
 		w_thing_color.set(null);
 		w_t_startup.set(T_Startup.start);
-		w_show_details_asStack.set(true);
 		w_background_color.subscribe((color: string) => {
 			colors.banner = colors.ofBannerFor(color);
 			colors.separator = colors.ofSeparatorFor(color);

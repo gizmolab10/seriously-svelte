@@ -135,17 +135,29 @@ export default class G_Layout {
 		return null
 	}
 
+	ancestry_isCentered(ancestry: Ancestry | null): boolean {
+		const title_center = ancestry?.center_ofTitle;
+		if (!!title_center) {
+			const center = get(w_user_graph_center);
+			const offset = center.offsetBy(title_center.negated);
+			const user_offset = get(w_user_graph_offset);
+			const delta = offset.offsetBy(user_offset.negated).magnitude;
+			// console.log('wrapper', title_center.description, 'delta', delta, ancestry?.title)
+			return delta < 0.001;
+		}
+		return false;
+	}
+
 	place_ancestry_atCenter(ancestry: Ancestry | null) {
 		// change the user graph offset to place
 		// the ancestry at the center of the graph
 		if (!ancestry) {	
 			ancestry = h.rootAncestry;
 		}
-		const wrapper = ancestry.titleWrapper;
-		if (!!wrapper) {			
-			const rect = wrapper.boundingRect;
+		const title_center = ancestry?.center_ofTitle;
+		if (!!title_center) {
 			const center = get(w_user_graph_center);
-			const offset = center.offsetBy(rect.center.negated);		// distance between centers: from graph to ancestry's widget's title
+			const offset = center.offsetBy(title_center.negated);		// distance between centers: from graph to ancestry's widget's title
 			this.set_user_graph_offsetTo(offset);
 		}
 	}

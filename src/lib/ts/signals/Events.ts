@@ -21,6 +21,25 @@ export class Events {
 	private handle_touch_end(event: TouchEvent) { this.initialTouch = null; }
 	private get autorepeaters(): number[] { return [T_Action.browse, T_Action.move]; }
 
+	name_ofActionAt(t_action: number, column: number): string {
+		return Object.keys(this.actions[T_Action[t_action]])[column];
+	}
+
+	private isCentered_invisible_orNull(ancestry: Ancestry | null): boolean {
+		const isCentered = layout.ancestry_isCentered(ancestry);
+		const flag = !ancestry || !ancestry.isVisible || isCentered;
+		if (flag) {
+			console.log(`center --> ${ancestry?.isGrabbed ? 'grab' : 'focus'}`);
+		}
+		return flag;
+	}
+
+	private showHelpFor(t_action: number, column: number) { 
+		const page = this.help_page_forActionAt(t_action, column);
+		const url = `${k.help_url.remote}/user_guide/${page}`;
+		c.open_tabFor(url);
+	}
+
 	private ancestry_toggle_alteration(ancestry: Ancestry, t_alteration: T_Alteration, predicate: Predicate | null) {
 		const isAltering = !!get(w_s_alteration);
 		const s_alteration = isAltering ? null : new S_Alteration(ancestry, t_alteration, predicate);
@@ -60,6 +79,13 @@ export class Events {
 
 	private handle_mouse_up(event: MouseEvent) {
 		w_count_mouse_up.update(n => n + 1);
+	}
+
+	private handle_key_up(e: Event) {
+		const event = e as KeyboardEvent;
+		if (!!event && event.type == 'keyup') {
+			w_control_key_down.set(event.ctrlKey);
+		}
 	}
 
 	private handle_orientation_change(event: Event) {
@@ -138,45 +164,6 @@ export class Events {
 	
 	static readonly _____MAIN_EVENT_HANDLERS: unique symbol;
 
-	handle_s_mouse(s_mouse: S_Mouse, from: string): S_Mouse { return s_mouse; }			// for dots and buttons
-
-	async handle_key_up(e: Event) {
-		const event = e as KeyboardEvent;
-		if (!!event && event.type == 'keyup') {
-			w_control_key_down.set(event.ctrlKey);
-		}
-	}
-
-	name_ofActionAt(t_action: number, column: number): string {
-		return Object.keys(this.actions[T_Action[t_action]])[column];
-	}
-
-	showHelpFor(t_action: number, column: number) { 
-		const page = this.help_page_forActionAt(t_action, column);
-		const url = `${k.help_url.remote}/user_guide/${page}`;
-		c.open_tabFor(url);
-	}
-
-	help_page_forActionAt(t_action: number, column: number) {
-		switch (t_action) {
-			case T_Action.browse: 						return 'actions/browse';
-			case T_Action.focus: 						return 'actions/focus';
-			case T_Action.show:
-				switch (column) {
-					case this.actions.show.selection:	return 'actions/select';
-					case this.actions.show.list:		return 'actions/dots';
-				}										break;
-			case T_Action.center:
-				switch (column) {
-					case this.actions.center.focus:		return 'actions/focus';
-					case this.actions.center.selection:	return 'actions/select';
-					case this.actions.center.graph:		return 'looks/graph';
-				}										break;
-			default:									return 'actions/organize';
-		}
-		return k.empty;
-	}
-
 	async handle_action_autorepeatAt(s_mouse: S_Mouse, t_action: number, column: number, name: string) {
 		if (s_mouse.isDown) {
 			return this.handle_action_clickedAt(s_mouse, t_action, column, name);
@@ -250,63 +237,52 @@ export class Events {
 		}
 	}
 
-	async handle_action_clickedAt(s_mouse: S_Mouse, t_action: number, column: number, name: string) {
+	private async handle_action_clickedAt(s_mouse: S_Mouse, t_action: number, column: number, name: string) {
 		const ancestry = grabs.latest;
 		if (get(w_control_key_down)) {
 			this.showHelpFor(t_action, column);
 		} else if (!!ancestry && !this.handle_isAction_disabledAt(t_action, column) && !!h) {
+			const a = this.actions;
 			switch (t_action) {
-				case T_Action.browse:							switch (column) {
-					case this.actions.browse.up:				grabs.latest_rebuild_persistentMoveUp_maybe( true, false, false, false); break;
-					case this.actions.browse.down:				grabs.latest_rebuild_persistentMoveUp_maybe(false, false, false, false); break;
-					case this.actions.browse.left:				await h.ancestry_rebuild_persistentMoveRight(ancestry, false, false, false, false, false); break;
-					case this.actions.browse.right:				await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, false, false, false); break;
-				}											break;										break;
-				case T_Action.focus:							switch (column) {
-					case this.actions.focus.selection:			ancestry.becomeFocus(); break;
-					case this.actions.focus.parent:				ancestry.collapse(); ancestry.parentAncestry?.becomeFocus(); break;
-				}											break;
-				case T_Action.show:							switch (column) {
-					case this.actions.show.selection:			break;
-					case this.actions.show.list:				await h.ancestry_toggle_expansion(ancestry); break;
-				}											break;
-				case T_Action.center:							switch (column) {
-					case this.actions.center.focus:				layout.place_ancestry_atCenter(get(w_ancestry_focus)); break;
-					case this.actions.center.selection:			layout.place_ancestry_atCenter(ancestry); break;
-					case this.actions.center.root:				layout.place_ancestry_atCenter(h.rootAncestry); break;
-					case this.actions.center.graph:				layout.set_user_graph_offsetTo(Point.zero); break;
-				}											break;
-				case T_Action.add:							switch (column) {
-					case this.actions.add.child:				await h.ancestry_edit_persistentCreateChildOf(ancestry); break;
-					case this.actions.add.sibling:				await h.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break;
-					case this.actions.add.line:					await h.thing_edit_persistentAddLine(ancestry); break;
-					case this.actions.add.parent:				this.ancestry_toggle_alteration(ancestry, T_Alteration.add, Predicate.contains); break;
-					case this.actions.add.related:				this.ancestry_toggle_alteration(ancestry, T_Alteration.add, Predicate.isRelated); break;
-				}											break;
-				case T_Action.delete:							switch (column) {
-					case this.actions.delete.selection:			await h.ancestries_rebuild_traverse_persistentDelete(get(w_ancestries_grabbed)); break;
-					case this.actions.delete.parent:			this.ancestry_toggle_alteration(ancestry, T_Alteration.delete, Predicate.contains); break;
-					case this.actions.delete.related		:	this.ancestry_toggle_alteration(ancestry, T_Alteration.delete, Predicate.isRelated); break;
-				}											break;
-				case T_Action.move:							switch (column) {
-					case this.actions.move.up:					grabs.latest_rebuild_persistentMoveUp_maybe( true, false, true, false); break;
-					case this.actions.move.down:				grabs.latest_rebuild_persistentMoveUp_maybe(false, false, true, false); break;
-					case this.actions.move.left:				await h.ancestry_rebuild_persistentMoveRight(ancestry, false, false, true, false, false); break;
-					case this.actions.move.right:				await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, true, false, false); break;
-				}											break;
+				case T_Action.browse:			switch (column) {
+					case a.browse.up:				grabs.latest_rebuild_persistentMoveUp_maybe( true, false, false, false); break;
+					case a.browse.down:				grabs.latest_rebuild_persistentMoveUp_maybe(false, false, false, false); break;
+					case a.browse.left:				await h.ancestry_rebuild_persistentMoveRight(ancestry, false, false, false, false, false); break;
+					case a.browse.right:			await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, false, false, false); break;
+				}								break;
+				case T_Action.focus:			switch (column) {
+					case a.focus.selection:			ancestry.becomeFocus(); break;
+					case a.focus.parent:			ancestry.collapse(); ancestry.parentAncestry?.becomeFocus(); break;
+				}								break;
+				case T_Action.show:				switch (column) {
+					case a.show.selection:			break;
+					case a.show.list:				await h.ancestry_toggle_expansion(ancestry); break;
+				}								break;
+				case T_Action.center:			switch (column) {
+					case a.center.focus:			layout.place_ancestry_atCenter(get(w_ancestry_focus)); break;
+					case a.center.selection:		layout.place_ancestry_atCenter(ancestry); break;
+					case a.center.root:				layout.place_ancestry_atCenter(h.rootAncestry); break;
+					case a.center.graph:			layout.set_user_graph_offsetTo(Point.zero); break;
+				}								break;
+				case T_Action.add:				switch (column) {
+					case a.add.child:				await h.ancestry_edit_persistentCreateChildOf(ancestry); break;
+					case a.add.sibling:				await h.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break;
+					case a.add.line:				await h.thing_edit_persistentAddLine(ancestry); break;
+					case a.add.parent:				this.ancestry_toggle_alteration(ancestry, T_Alteration.add, Predicate.contains); break;
+					case a.add.related:				this.ancestry_toggle_alteration(ancestry, T_Alteration.add, Predicate.isRelated); break;
+				}								break;
+				case T_Action.delete:			switch (column) {
+					case a.delete.selection:		await h.ancestries_rebuild_traverse_persistentDelete(get(w_ancestries_grabbed)); break;
+					case a.delete.parent:			this.ancestry_toggle_alteration(ancestry, T_Alteration.delete, Predicate.contains); break;
+					case a.delete.related:			this.ancestry_toggle_alteration(ancestry, T_Alteration.delete, Predicate.isRelated); break;
+				}								break;
+				case T_Action.move:				switch (column) {
+					case a.move.up:					grabs.latest_rebuild_persistentMoveUp_maybe( true, false, true, false); break;
+					case a.move.down:				grabs.latest_rebuild_persistentMoveUp_maybe(false, false, true, false); break;
+					case a.move.left:				await h.ancestry_rebuild_persistentMoveRight(ancestry, false, false, true, false, false); break;
+					case a.move.right:				await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, true, false, false); break;
+				}								break;
 			}
-		}
-	}
-
-	private go_to_root() {
-		const root = h.rootAncestry;
-		if (!!root) {
-			for (const childAncestry of root.childAncestries) {
-				childAncestry.collapse();
-			}
-			// root.expand();
-			root.becomeFocus();
-			layout.grand_build();
 		}
 	}
 
@@ -317,52 +293,74 @@ export class Events {
 			const no_children = !ancestry.hasChildren;
 			const no_siblings = !ancestry.hasSiblings;
 			const is_root = ancestry.isRoot;
+			const a = this.actions;
 			const disable_revealConceal = no_children || is_root || (layout.inRadialMode && ancestry.isFocus);
 			switch (t_action) {
-				case T_Action.browse:							switch (column) {
-					case this.actions.browse.left:				return is_root;
-					case this.actions.browse.up:				return no_siblings;
-					case this.actions.browse.down:				return no_siblings;
-					case this.actions.browse.right:				return no_children;
-				}											break;
-				case T_Action.focus:							switch (column) {
-					case this.actions.focus.selection:			return ancestry.isFocus;
-					case this.actions.focus.parent:				return !ancestry.parentAncestry || ancestry.parentAncestry.isFocus;
-				}											break;
-				case T_Action.show:							switch (column) {
-					case this.actions.show.selection:			return ancestry.isVisible;
-					case this.actions.show.list:				return disable_revealConceal;
-				}											break;
-				case T_Action.center:							switch (column) {
-					case this.actions.center.focus:				return get(w_ancestry_focus)?.isCentered ?? false;
-					case this.actions.center.selection:			return ancestry.isCentered;
-					case this.actions.center.root:				return h.rootAncestry?.isCentered ?? false;
-					case this.actions.center.graph:				return get(w_user_graph_offset).isZero;;
-				}											break;
-				case T_Action.add:							switch (column) {
-					case this.actions.add.child:				return is_altering;
-					case this.actions.add.sibling:				return is_altering;
-					case this.actions.add.line:					return is_altering || is_root;
-					case this.actions.add.parent:				return is_root;
-					case this.actions.add.related:				return false;
-				}											break;
-				case T_Action.delete:							switch (column) {
-					case this.actions.delete.selection:			return is_altering || is_root;
-					case this.actions.delete.parent:			return !ancestry.hasParents_ofKind(T_Predicate.contains);
-					case this.actions.delete.related:			return !ancestry.hasParents_ofKind(T_Predicate.isRelated);
-				}											break;
-				case T_Action.move:							switch (column) {
-					case this.actions.move.left:				return is_root;
-					case this.actions.move.up:					return no_siblings;
-					case this.actions.move.down:				return no_siblings;
-					case this.actions.move.right:				return no_children;
-				}											break;
+				case T_Action.browse:			switch (column) {
+					case a.browse.left:				return is_root;
+					case a.browse.up:				return no_siblings;
+					case a.browse.down:				return no_siblings;
+					case a.browse.right:			return no_children;
+				}								break;
+				case T_Action.focus:			switch (column) {
+					case a.focus.selection:			return ancestry.isFocus;
+					case a.focus.parent:			return !ancestry.parentAncestry || ancestry.parentAncestry.isFocus;
+				}								break;
+				case T_Action.show:				switch (column) {
+					case a.show.selection:			return ancestry.isVisible;
+					case a.show.list:				return disable_revealConceal;
+				}								break;
+				case T_Action.center:			switch (column) {
+					case a.center.focus:			return this.isCentered_invisible_orNull(get(w_ancestry_focus));
+					case a.center.selection:		return this.isCentered_invisible_orNull(ancestry);
+					case a.center.root:				return this.isCentered_invisible_orNull(h.rootAncestry);
+					case a.center.graph:			return get(w_user_graph_offset).magnitude < 0.001;
+				}								break;
+				case T_Action.add:				switch (column) {
+					case a.add.child:				return is_altering;
+					case a.add.sibling:				return is_altering;
+					case a.add.line:				return is_altering || is_root;
+					case a.add.parent:				return is_root;
+					case a.add.related:				return false;
+				}								break;
+				case T_Action.delete:			switch (column) {
+					case a.delete.selection:		return is_altering || is_root;
+					case a.delete.parent:			return !ancestry.hasParents_ofKind(T_Predicate.contains);
+					case a.delete.related:			return !ancestry.hasParents_ofKind(T_Predicate.isRelated);
+				}								break;
+				case T_Action.move:				switch (column) {
+					case a.move.left:				return is_root;
+					case a.move.up:					return no_siblings;
+					case a.move.down:				return no_siblings;
+					case a.move.right:				return no_children;
+				}								break;
 			}
 		}
 		return true;
 	}
 
-	actions: { [key: string]: { [key: string]: number } } = {
+	private help_page_forActionAt(t_action: number, column: number): string {
+		const a = this.actions;
+		switch (t_action) {
+			case T_Action.browse: 				return 'actions/browse';
+			case T_Action.focus: 				return 'actions/focus';
+			case T_Action.show:
+				switch (column) {
+					case a.show.selection:		return 'actions/select';
+					case a.show.list:			return 'actions/dots';
+				}							break;
+			case T_Action.center:
+				switch (column) {
+					case a.center.focus:		return 'actions/focus';
+					case a.center.selection:	return 'actions/select';
+					case a.center.graph:		return 'looks/graph';
+				}							break;
+			default:							return 'actions/organize';
+		}
+		return k.empty;
+	}
+
+	private actions: { [key: string]: { [key: string]: number } } = {
 		browse: {
 			left: 0,
 			up: 1,

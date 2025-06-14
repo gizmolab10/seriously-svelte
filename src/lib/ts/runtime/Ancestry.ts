@@ -1,12 +1,11 @@
-import { T_Graph, T_Create, T_Element, T_Kinship, T_Predicate, T_Alteration, T_SvelteComponent } from '../common/Global_Imports';
-import { c, h, k, p, u, w, show, Rect, Size, Thing, grabs, debug, layout, wrappers, svgPaths } from '../common/Global_Imports';
-import { Direction, Predicate, Hierarchy, databases, Relationship, Svelte_Wrapper } from '../common/Global_Imports';
-import { w_background_color, w_depth_limit, w_show_graph_ofType, w_t_database } from '../common/Stores';
-import { w_ancestry_focus, w_s_alteration, w_s_text_edit } from '../common/Stores';
-import { w_ancestries_grabbed, w_ancestries_expanded, } from '../common/Stores';
-import { G_Widget, G_Cluster, G_TreeLine } from '../common/Global_Imports';
-import { G_Paging, S_Text_Edit } from '../common/Global_Imports';
+import { c, h, k, p, u, w, show, Rect, Size, Point, Thing, grabs, debug, layout, wrappers, svgPaths } from '../common/Global_Imports';
+import { T_Graph, T_Create, T_Kinship, T_Predicate, T_Alteration, T_SvelteComponent } from '../common/Global_Imports';
+import { Direction, Predicate, databases, Relationship, Svelte_Wrapper } from '../common/Global_Imports';
+import { G_Widget, G_Paging, G_Cluster, G_TreeLine, S_Text_Edit } from '../common/Global_Imports';
+import { w_ancestry_focus, w_ancestries_grabbed, w_ancestries_expanded, } from '../common/Stores';
+import { w_t_database, w_depth_limit, w_s_text_edit, w_s_alteration } from '../common/Stores';
 import type { Dictionary, Integer } from '../common/Types';
+import { w_show_graph_ofType } from '../common/Stores';
 import { T_Database } from '../database/DBCommon';
 import { get, Writable } from 'svelte/store';
 import Identifiable from './Identifiable';
@@ -747,12 +746,12 @@ export default class Ancestry extends Identifiable {
 	get relationship_ids():	   Array <string> { return this.isRoot ? [] : this.pathString.split(k.separator.generic); }
 	get titles():		   	   Array <string> { return this.ancestors?.map(a => `${!a ? 'null' : a.title}`) ?? []; }
 
-	get isCentered(): boolean {
+	get center_ofTitle(): Point | null {
 		const wrapper = this.titleWrapper;
 		if (!!wrapper) {
-			const center = wrapper.boundingRect.center;
+			return wrapper.boundingRect.center;
 		}
-		return false;
+		return null;
 	}
 
 	get points_right(): boolean {

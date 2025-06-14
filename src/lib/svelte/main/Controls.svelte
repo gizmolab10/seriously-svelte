@@ -4,7 +4,6 @@
 	import { w_background_color, w_device_isMobile, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { w_show_details, w_show_graph_ofType, w_show_tree_ofType } from '../../ts/common/Stores';
 	import { w_graph_rect, w_count_resize, w_popupView_id } from '../../ts/common/Stores';
-	import { w_show_details_asStack } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Button from '../buttons/Button.svelte';
@@ -64,8 +63,6 @@
 	function handle_s_mouse_forControl_Type(s_mouse, t_control) {
 		if (s_mouse.isHover) {
 			es_control_byType[t_control].isOut = s_mouse.isOut;
-		} else if (s_mouse.isLong) {
-			$w_show_details_asStack = !$w_show_details_asStack;
 		} else if (s_mouse.isUp) {
 			switch (t_control) {
 				case T_Control.help: c.showHelp(); break;

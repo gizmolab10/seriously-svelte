@@ -11,10 +11,10 @@ import Angle from './Angle';
 export class Testworthy_Utilities {
 	private orderedKeysCache = new WeakMap<object, string[]>();
 
-	ignore(event: Event)												 {}
-	onNextCycle_apply(closure: () => {})								 { setTimeout(() => { closure(); }, 0); }
-	location_ofMouseEvent(event: MouseEvent):					   Point { return new Point(event.clientX, event.clientY); }
-	quadrant_ofAngle(angle: number):						  T_Quadrant { return new Angle(angle).quadrant_ofAngle; }
+	ignore(event: Event)							{}
+	onNextCycle_apply(closure: () => {})			{ setTimeout(() => { closure(); }, 0); }
+	quadrant_ofAngle(angle: number):	 T_Quadrant { return new Angle(angle).quadrant_ofAngle; }
+	location_ofMouseEvent(event: MouseEvent): Point { return new Point(event.clientX, event.clientY); }
 
 	get device_isMobile(): boolean {
 		const md = new MobileDetect(window.navigator.userAgent);
