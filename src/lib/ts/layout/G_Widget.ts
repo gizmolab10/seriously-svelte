@@ -217,7 +217,7 @@ export default class G_Widget {
 		const ancestry = this.ancestry;
 		if (!!ancestry.thing && layout.inTreeMode) {
 			const dot_size = k.height.dot;
-			const offset_ofBranch = new Point(dot_size * 1.3, -(7 + dot_size / 15));
+			const offset_ofBranch = new Point(dot_size * 1.3, -(8.2 + dot_size / 15));
 			this.origin_ofTrunk = this.g_line.rect.extent.offsetBy(offset_ofBranch);
 			this.g_line.update_svg_andName();
 		}

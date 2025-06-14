@@ -26,6 +26,7 @@
 	let color = ancestry.thing?.color;
 	let offsetFor_innerDot = 0;
 	let dotReveal = null;
+	update_colors();
 	
 	function handle_context_menu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
 

@@ -45,7 +45,7 @@ export default class S_Element {
 
 	static empty() { return {}; }
 	get ancestry(): Ancestry { return this.identifiable as Ancestry; }
-	get color_isInverted(): boolean { return this.isInverted || this.isHovering; }
+	get color_isInverted(): boolean { return this.isInverted != this.isHovering; }
 	get description(): string { return `${this.isOut ? 'out' : 'in '} '${this.name}'`; }
 	get isADot(): boolean { return this.type == T_Element.drag || this.type == T_Element.reveal; }
 	get isHovering(): boolean { return this.ignore_hover ? false : this.isOut == this.isHoverInverted; }
@@ -63,10 +63,9 @@ export default class S_Element {
 
 	get isHoverInverted(): boolean {
 		const a = this.ancestry;
-		const isInverted = a.isGrabbed || a.isEditing;
 		switch (this.type) {
-			case T_Element.reveal: return layout.inTreeMode && a.isExpanded == isInverted;
-			default: return isInverted;
+			case T_Element.reveal: return layout.inTreeMode && a.isExpanded == a.isEditing;
+			default:			   return a.isEditing;
 		}
 	}
 	
