@@ -30,9 +30,7 @@ export default class S_Widget extends S_Element {
 
 	get color(): string {
 		const luminance = colors.luminance_ofColor(this.thing_color);
-		const color = (this.isFilled) ? (luminance > 0.5 ? 'black' : 'white') : this.thing_color;
-		// console.log(`edi: ${this.ancestry.isEditing}  foc: ${this.ancestry.isFocus}  fil: ${this.isFilled}  col: ${color}  bor: ${this.shows_border}  bak: "${this.background}"  "${this.ancestry.title}"`);
-		return color;
+		return (this.isFilled) ? (luminance > 0.5 ? 'black' : 'white') : this.thing_color;
 	}
 
 	get state_didChange(): boolean {

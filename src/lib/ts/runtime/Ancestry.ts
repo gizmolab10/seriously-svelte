@@ -165,7 +165,7 @@ export default class Ancestry extends Identifiable {
 		const offset_x = -(k.height.line + k.height.dot / 2);
 		const extent = other.g_widget.absolute_center_ofDrag;
 		const origin = this.g_widget.absolute_center_ofReveal;
-		const rect = Rect.createExtentRect(origin, extent).offsetByX(offset_x).offsetByXY(-0.5, -1.5);
+		const rect = Rect.createExtentRect(origin, extent).offsetByX(offset_x).offsetByXY(-0.5, 0);
 		g_line.set_curve_type_forHeight(rect.height);
 		g_line.rect = rect;
 		return g_line;

@@ -20,7 +20,6 @@
 	const es_drag = ux.s_element_for(ancestry, T_Element.drag, k.empty);
 	const es_title = ux.s_element_for(ancestry, T_Element.title, k.empty);
 	const es_reveal = ux.s_element_for(ancestry, T_Element.reveal, k.empty);
-	let origin_ofTitle = g_widget.origin_ofTitle;
 	let width_ofWidget = g_widget.width_ofWidget;
 	let border_radius = k.height.dot / 2;
 	let widgetWrapper!: Svelte_Wrapper;
@@ -111,7 +110,6 @@
 		height = k.height.row - 1.5;
 		border_radius = k.height.row / 2;
 		width_ofWidget = g_widget.width_ofWidget;
-		origin_ofTitle = g_widget.origin_ofTitle;
 	}
 
 	function setup_fromAncestry() {
@@ -152,9 +150,7 @@
 			es_drag = {es_drag}
 			points_right = {points_right}/>
 		<Widget_Title
-			ancestry = {ancestry}
-			name = {es_title.name}
-			origin = {origin_ofTitle}
+			es_title = {es_title}
 			fontSize = {k.font_size.common}px/>
 		{#if ancestry?.showsReveal_forPointingToChild(points_toChild)}
 			<Widget_Reveal

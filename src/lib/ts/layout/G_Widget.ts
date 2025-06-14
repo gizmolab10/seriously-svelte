@@ -228,24 +228,25 @@ export default class G_Widget {
 		if (!!ancestry.thing) {		// short-circuit mismatched graph mode
 			const dot_size = k.height.dot;
 			const show_reveal = this.showingReveal;
+			const radial_mode = layout.inRadialMode;
 			const widget_pointsRight = this.widget_pointsRight;
 			const width_ofReveal = show_reveal ? dot_size : 0;
-			const width_ofDrag = (dot_size * 2) + (layout.inTreeMode ? -4 : 2);
-			const width_ofWidget = ancestry.thing.width_ofTitle + width_ofDrag + width_ofReveal + (layout.inRadialMode ? 0 : 4);
+			const width_ofDrag = (dot_size * 2) + (radial_mode ? 2 : -4);
+			const width_ofWidget = ancestry.thing.width_ofTitle + width_ofDrag + width_ofReveal + (radial_mode ? 0 : 4);
 			const x_ofDrag_forPointsLeft = width_ofWidget - dot_size - 3 + (show_reveal ? 0.5 : 0);
-			const x_ofDrag = widget_pointsRight ? (layout.inRadialMode ? 3 : 2) : x_ofDrag_forPointsLeft;
-			const y_ofDrag = 2.7 + (layout.inRadialMode ? 0.1 : 0);
+			const x_ofDrag = widget_pointsRight ? (radial_mode ? 3 : 2) : x_ofDrag_forPointsLeft;
+			const y_ofDrag = 2.5 + (radial_mode ? 0.1 : 0);
 			const origin_ofDrag = new Point(x_ofDrag, y_ofDrag);
 			const x_ofRadial = widget_pointsRight ? -4 : -dot_size;
-			const x_offset_ofWidget = widget_pointsRight ? -7 : 6 + dot_size - width_ofWidget;
 			const x_ofRadial_title = (widget_pointsRight ? 20 : (show_reveal ? 20 : 6));
-			this.origin_ofTitle = Point.x(layout.inRadialMode ? x_ofRadial_title : dot_size + 5);
-			this.offset_ofWidget = Point.square(1).offsetByX(x_offset_ofWidget);
+			const x_offset_ofWidget = widget_pointsRight ? -7 : 6 + dot_size - width_ofWidget;
+			this.origin_ofTitle = Point.x(radial_mode ? x_ofRadial_title : dot_size + 5);
 			this.origin_ofRadial = this.origin_ofWidget.offsetByXY(x_ofRadial, 4 - dot_size);
 			this.center_ofDrag = origin_ofDrag.offsetEquallyBy(dot_size / 2);
+			this.offset_ofWidget = new Point(x_offset_ofWidget, 1);
 			this.width_ofWidget = width_ofWidget;
 			if (show_reveal) {
-				const y_ofReveal = dot_size * 0.7;
+				const y_ofReveal = dot_size * 0.7 - 0.5;
 				const x_offset_forPointsRight = width_ofWidget - dot_size - 10;
 				const x_ofReveal = dot_size + (widget_pointsRight ? x_offset_forPointsRight : -3);
 				this.center_ofReveal = new Point(x_ofReveal, y_ofReveal);

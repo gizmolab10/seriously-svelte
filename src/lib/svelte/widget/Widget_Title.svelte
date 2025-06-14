@@ -3,23 +3,23 @@
 	import { layout, signals, databases, Seriously_Range, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { c, h, k, u, ux, w, Rect, Size, Point, Thing, debug, Angle } from '../../ts/common/Global_Imports';
 	import { w_s_text_edit, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
-	import { T_Graph, T_Layer, T_SvelteComponent } from '../../ts/common/Global_Imports';
+	import { S_Element, T_Graph, T_Layer, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { w_mouse_location } from '../../ts/common/Stores';
 	import { T_Edit } from '../../ts/state/S_Text_Edit';
 	import { onMount, onDestroy } from 'svelte';
+	export let es_title!: S_Element;
 	export let fontSize = '1em';
-    export let name = k.empty;
-	export let ancestry;
-	export let origin;
+    const name = es_title.name;
+	const ancestry = es_title.ancestry;
 	const thing = ancestry?.thing;
 	const padding = `0.5px 0px 0px 0px`;
 	const input_height = k.height.dot + 2;
-	const es_title = ux.s_element_forName(name);
 	const s_widget = ux.s_widget_forAncestry(ancestry);
 	const id = `title of ${ancestry?.title} ${ancestry?.kind}`;
 	const showingReveal = ancestry?.shows_reveal ?? false;
 	let title_width = (thing?.width_ofTitle ?? 0) + title_extra();
+	let origin = ancestry.g_widget.origin_ofTitle;
 	let title_binded = thing?.title ?? k.empty;
 	let title_wrapper: Svelte_Wrapper;
 	let origin_ofInput = Point.zero;
@@ -29,7 +29,6 @@
 	let reattachments = 0;
 	let ghost = null;
 	let input = null;
-
 	
 	function isHit():		  boolean { return false }
 	function hasFocus():	  boolean { return document.activeElement === input; }
@@ -60,9 +59,9 @@
 
 	$: {
 		const _ = `${$w_ancestries_grabbed.join(',')}${$w_ancestries_expanded.join(',')}${$w_thing_color}`;
-		origin_ofInput = ancestry?.isGrabbed ?? false ? Point.x(0.1) : Point.y(0.8);
+		const y_origin = ancestry?.isGrabbed ?? false ? 0.4 : 0;
+		origin_ofInput = new Point(0.8, y_origin);
 		color = s_widget.color;
-		// reattachments += 1;
 	}
 
 	$: {
