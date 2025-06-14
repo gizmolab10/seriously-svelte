@@ -19,7 +19,7 @@
 	const grid_width = k.width_details - 12;
 	const separator_font_size = k.font_size.smallest;
     const font_sizes = [k.font_size.smallest, k.font_size.smallest];
-	const es_cancel = ux.s_element_for(grabs.latest, T_Element.button, k.empty);
+	const es_cancel = ux.s_element_for(grabs.latest, T_Element.cancel, k.empty);
 	let list_title = grabs.latest?.isExpanded && layout.inTreeMode ? 'hide list' : 'list';
 	let actions_top = top + (has_title ? 3 : -13);
 	let slider_top = actions_top + actions_height + 7;
@@ -51,10 +51,20 @@
 		const _ = `${$w_ancestries_expanded.join(',')}${$w_ancestries_grabbed.join(',')}`;
 		update_button_titles();
 	}
+
+	function row_isAltering(row: number): boolean {
+		return [T_Action.add, T_Action.delete].includes(row);
+	}
 	
 	function handle_depth_limit(value: number) {
 		$w_depth_limit = value;
 		layout.grand_layout();
+	}
+
+	function handle_alteration_state(s_mouse: S_Mouse) {
+		if (s_mouse.isDown) {
+			h.stop_alteration();
+		}
 	}
 
 	function target_ofAlteration(): string | null {
@@ -107,10 +117,6 @@
 		];
 	}
 
-	function row_isAltering(row: number): boolean {
-		return [T_Action.add, T_Action.delete].includes(row);
-	}
-
 	function handle_actionRequest(t_request: T_Request, s_mouse: S_Mouse, name: string, row: number, column: number): any {
 		if (name == 'bottom-actions') {
 			row += 4;
@@ -124,12 +130,6 @@
 			case T_Request.handle_click: return e.handle_action_autorepeatAt(s_mouse, row, column, name_for(row, column + 1));
 		}
 		return null;
-	}
-
-	function alteration_closure(s_mouse: S_Mouse) {
-		if (s_mouse.isDown) {
-			h.stop_alteration();
-		}
 	}
 
 </script>
@@ -160,7 +160,7 @@
 				<Button
 					center={new Point(k.width_details / 2, 60)}
 					font_size={k.font_size.smallest}
-					closure={alteration_closure}
+					closure={handle_alteration_state}
 					zindex={T_Layer.frontmost}
 					name='cancel-alteration'
 					height={k.height.button}
@@ -179,6 +179,7 @@
 				name='top-actions'
 				width={grid_width}
 				has_title={has_title}
+				type={T_Element.action}
 				font_sizes={font_sizes}
 				closure={handle_actionRequest}
 				button_height={k.height.button}
@@ -197,6 +198,7 @@
 			width={grid_width}
 			name='bottom-actions'
 			has_title={has_title}
+			type={T_Element.action}
 			font_sizes={font_sizes}
 			top={top_separatorLength - 3}
 			closure={handle_actionRequest}

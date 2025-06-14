@@ -5,6 +5,7 @@
     import Buttons_Row from './Buttons_Row.svelte';
     export let closure: (t_request: T_Request, s_mouse: S_Mouse, name: string, row: number, column: number) => boolean;
     export let button_titles: string[][];
+    export let type = T_Element.button;
     export let has_seperator = false;         // false means row titles precede buttons
     export let font_sizes: number[];
     export let button_height = 15;
@@ -31,6 +32,7 @@
         {#if closure(T_Request.is_visible, S_Mouse.empty, name, row, -1)}
             <Buttons_Row
                 gap={gap}
+                type={type}
                 width={width}
                 box_top={box_top}
                 row_titles={titles}

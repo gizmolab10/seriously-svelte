@@ -1,8 +1,8 @@
-import { c, h, k, u, w, grabs, Point, debug, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
 import { T_Action, T_File_Format, T_Predicate, T_Alteration, S_Mouse, S_Alteration } from '../common/Global_Imports';
+import { c, h, k, u, w, grabs, Point, debug, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
 import { w_ancestry_focus, w_count_mouse_up, w_mouse_location, w_mouse_location_scaled } from '../common/Stores';
+import { w_s_alteration, w_count_resize, w_s_text_edit, w_control_key_down } from '../common/Stores';
 import { w_device_isMobile, w_ancestries_grabbed, w_user_graph_offset } from '../common/Stores';
-import { w_s_alteration, w_count_resize, w_s_text_edit } from '../common/Stores';
 import { get } from 'svelte/store';
 
 export class Events {
@@ -43,8 +43,9 @@ export class Events {
 	private subscribeTo_events() {
 		this.clear_event_subscriptions();
 		this.update_event_listener('wheel', this.handle_wheel);
-		this.update_event_listener('keydown', this.handle_zoom);
+		this.update_event_listener('keyup', this.handle_key_up);
 		this.update_event_listener('resize', this.handle_resize);
+		this.update_event_listener('keydown', this.handle_key_down);
 		this.update_event_listener('orientationchange', this.handle_orientation_change);
 		if (u.device_isMobile) {
 			debug.log_action(`  mobile subscribe GRAPH`);
@@ -119,22 +120,6 @@ export class Events {
 		}
 	}
 
-	private handle_zoom(e: Event) {
-		const event = e as KeyboardEvent;
-		const key = event.key;
-		if (event.metaKey && ['+', '=', '-', '0'].includes(key)) {
-			event.preventDefault();
-			event.stopPropagation();
-			switch (key) {
-				case '0': w.applyScale(1); break;
-				case '=': w.zoomBy(k.ratio.zoom_in); break;
-				default: w.zoomBy(k.ratio.zoom_out); break;
-			}
-			layout.renormalize_user_graph_offset();
-			layout.grand_build();
-		}
-	}
-
 	private handle_s_alteration(s_alteration: S_Alteration | null) {
 		if (!!this.alteration_interval) {
 			clearInterval(this.alteration_interval);
@@ -155,6 +140,43 @@ export class Events {
 
 	handle_s_mouse(s_mouse: S_Mouse, from: string): S_Mouse { return s_mouse; }			// for dots and buttons
 
+	async handle_key_up(e: Event) {
+		const event = e as KeyboardEvent;
+		if (!!event && event.type == 'keyup') {
+			w_control_key_down.set(event.ctrlKey);
+		}
+	}
+
+	name_ofActionAt(t_action: number, column: number): string {
+		return Object.keys(this.actions[T_Action[t_action]])[column];
+	}
+
+	showHelpFor(t_action: number, column: number) { 
+		const page = this.help_page_forActionAt(t_action, column);
+		const url = `${k.help_url.remote}/user_guide/${page}`;
+		c.open_tabFor(url);
+	}
+
+	help_page_forActionAt(t_action: number, column: number) {
+		switch (t_action) {
+			case T_Action.browse: 						return 'actions/browse';
+			case T_Action.focus: 						return 'actions/focus';
+			case T_Action.show:
+				switch (column) {
+					case this.actions.show.selection:	return 'actions/select';
+					case this.actions.show.list:		return 'actions/dots';
+				}										break;
+			case T_Action.center:
+				switch (column) {
+					case this.actions.center.focus:		return 'actions/focus';
+					case this.actions.center.selection:	return 'actions/select';
+					case this.actions.center.graph:		return 'looks/graph';
+				}										break;
+			default:									return 'actions/organize';
+		}
+		return k.empty;
+	}
+
 	async handle_action_autorepeatAt(s_mouse: S_Mouse, t_action: number, column: number, name: string) {
 		if (s_mouse.isDown) {
 			return this.handle_action_clickedAt(s_mouse, t_action, column, name);
@@ -168,11 +190,10 @@ export class Events {
 		}
 	}
 
-	// T_Action and actions must be in sync
-
-	async handle_key_down(event: KeyboardEvent) {
+	async handle_key_down(e: Event) {
+		const event = e as KeyboardEvent;
 		const isEditing = get(w_s_text_edit)?.isActive ?? false;
-		if (event.type == 'keydown' && !isEditing) {
+		if (!!event && event.type == 'keydown' && !isEditing) {
 			const OPTION = event.altKey;
 			const SHIFT = event.shiftKey;
 			const COMMAND = event.metaKey;
@@ -182,6 +203,7 @@ export class Events {
 			const ancestry = grabs.latest_upward(true);
 			const modifiers = ['alt', 'meta', 'shift', 'control'];
 			let graph_needsRebuild = false;
+			w_control_key_down.set(event.ctrlKey);
 			if (!!h && !!ancestry && !modifiers.includes(key)) {		// ignore modifier-key-only events
 				if (c.allow_GraphEditing) {
 					if (!!ancestry && c.allow_TitleEditing) {
@@ -230,7 +252,9 @@ export class Events {
 
 	async handle_action_clickedAt(s_mouse: S_Mouse, t_action: number, column: number, name: string) {
 		const ancestry = grabs.latest;
-		if (!!ancestry && !this.handle_isAction_disabledAt(t_action, column) && !!h) {
+		if (get(w_control_key_down)) {
+			this.showHelpFor(t_action, column);
+		} else if (!!ancestry && !this.handle_isAction_disabledAt(t_action, column) && !!h) {
 			switch (t_action) {
 				case T_Action.browse:							switch (column) {
 					case this.actions.browse.up:				grabs.latest_rebuild_persistentMoveUp_maybe( true, false, false, false); break;
@@ -284,10 +308,6 @@ export class Events {
 			root.becomeFocus();
 			layout.grand_build();
 		}
-	}
-
-	name_ofActionAt(t_action: number, column: number): string {
-		return Object.keys(this.actions[T_Action[t_action]])[column];
 	}
 
 	handle_isAction_disabledAt(t_action: number, column: number): boolean {		// true means disabled

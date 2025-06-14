@@ -1,5 +1,5 @@
 import { k, ux, colors, Ancestry, T_Element, layout } from '../common/Global_Imports';
-import { w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
+import { w_ancestries_grabbed, w_control_key_down } from '../../ts/common/Stores';
 import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
 
@@ -48,10 +48,11 @@ export default class S_Element {
 	get color_isInverted(): boolean { return this.isInverted != this.isHovering; }
 	get description(): string { return `${this.isOut ? 'out' : 'in '} '${this.name}'`; }
 	get isADot(): boolean { return this.type == T_Element.drag || this.type == T_Element.reveal; }
+	get show_help_cursor(): boolean { return get(w_control_key_down) && this.type == T_Element.action; }
 	get isHovering(): boolean { return this.ignore_hover ? false : this.isOut == this.isHoverInverted; }
 	get svg_outline_color(): string { return this.ancestry.isGrabbed ? this.color_background : this.hoverColor; }
-	get cursor(): string { return (this.isHovering && !this.isDisabled) ? this.hoverCursor : this.defaultCursor; }
 	get stroke(): string { return this.isDisabled ? this.disabledTextColor : this.color_isInverted ? this.color_background : this.hoverColor; }
+	get cursor(): string { return (this.isHovering && !this.isDisabled) ? this.show_help_cursor ? 'help' : this.hoverCursor : this.defaultCursor; }
 	get disabledTextColor(): string { return colors.specialBlend(this.color_background, this.defaultDisabledColor, 0.3) ?? this.defaultDisabledColor; }
 	get fill(): string { return this.isDisabled ? 'transparent' : this.color_isInverted ? this.hoverColor : this.isSelected ? 'lightblue' : this.color_background; }
 

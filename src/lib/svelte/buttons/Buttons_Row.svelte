@@ -9,6 +9,7 @@
 	export let separator_thickness = k.thickness.separator.thick;
 	export let origin: Point | null = null;
 	export let center: Point | null = null;
+    export let type = T_Element.button;
 	export let has_seperator = false;
 	export let row_titles: string[];	// first one is optional row title, rest are button titles
 	export let font_sizes: number[];
@@ -55,7 +56,7 @@
 		for (let column = 0; column < columns; column++) {
 			let es_button = es_button_byColumn[column];
 			if (!es_button) {
-				es_button = ux.s_element_for(new Identifiable(`${name}-${button_name_for(column)}`), T_Element.button, column);
+				es_button = ux.s_element_for(new Identifiable(`${name}-${button_name_for(column)}`), type, column);
 				es_button_byColumn[column] = es_button;
 			}
 			es_button.set_forHovering(colors.default, 'pointer');

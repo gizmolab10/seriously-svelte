@@ -225,6 +225,7 @@ export enum T_Element {
 	control		 = 'control',
 	action		 = 'action',
 	button		 = 'button',
+	cancel		 = 'cancel',
 	reveal		 = 'reveal',
 	widget		 = 'widget',
 	thing		 = 'thing',

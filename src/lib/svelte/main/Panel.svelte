@@ -37,7 +37,6 @@
 
 </script>
 
-<svelte:document on:keydown={e.handle_key_down}/>
 {#key panel_reattachments}
 	<Debug/>
 	<div style='
