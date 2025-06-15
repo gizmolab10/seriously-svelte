@@ -8,7 +8,6 @@ import { get } from 'svelte/store';
 export default class G_RadialGraph {
 	g_parent_clusters: Dictionary<G_Cluster> = {};		// includes related
 	g_child_clusters: Dictionary<G_Cluster> = {};
-	ancestry_focus!: Ancestry;
 
 	constructor() {
 		w_g_paging.subscribe((g_paging: G_Paging | null) => {
@@ -32,10 +31,13 @@ export default class G_RadialGraph {
 
 	grand_layout_radial() {
 		this.destructor();
+		this.ancestry_focus?.g_widget.layout_widget()
 		this.layout_forPoints_toChildren(true);
 		this.layout_forPoints_toChildren(false);
 		this.layout_forPaging();
 	}
+
+	get ancestry_focus(): Ancestry { return get(w_ancestry_focus); }
 
 	get g_clusters(): Array<G_Cluster> {
 		return u.concatenateArrays(Object.values(this.g_parent_clusters), Object.values(this.g_child_clusters));
@@ -71,7 +73,7 @@ export default class G_RadialGraph {
 	}
 
 	g_paging_forPredicate_toChildren(predicate: Predicate, points_toChildren: boolean): G_Paging | null {
-		const s_thing_pages = radial.s_thing_pages_forThingID(get(w_ancestry_focus)?.thing?.id);
+		const s_thing_pages = radial.s_thing_pages_forThingID(this.ancestry_focus?.thing?.id);
 		return s_thing_pages?.g_paging_forPredicate_toChildren(predicate, points_toChildren) ?? null;
 	}
 

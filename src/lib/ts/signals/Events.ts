@@ -25,13 +25,17 @@ export class Events {
 		return Object.keys(this.actions[T_Action[t_action]])[column];
 	}
 
+	private handle_mouse_up(event: MouseEvent) {
+		w_count_mouse_up.update(n => n + 1);
+	}
+
 	private isCentered_invisible_orNull(ancestry: Ancestry | null): boolean {
-		const isCentered = layout.ancestry_isCentered(ancestry);
-		const flag = !ancestry || !ancestry.isVisible || isCentered;
-		if (flag) {
-			console.log(`center --> ${ancestry?.isGrabbed ? 'grab' : 'focus'}`);
-		}
-		return flag;
+		return !ancestry || !ancestry.isVisible || layout.ancestry_isCentered(ancestry);
+	}
+
+	private update_event_listener(name: string, handler: EventListenerOrEventListenerObject) {
+		window.removeEventListener(name, handler);
+		window.addEventListener(name, handler, { passive: false });
 	}
 
 	private showHelpFor(t_action: number, column: number) { 
@@ -46,39 +50,10 @@ export class Events {
 		w_s_alteration.set(s_alteration);
 	}
 
-	private update_event_listener(name: string, handler: EventListenerOrEventListenerObject) {
-		window.removeEventListener(name, handler);
-		window.addEventListener(name, handler, { passive: false });
-	}
-
-	private clear_event_subscriptions() {
-		window.removeEventListener('mouseup',	 this.handle_mouse_up);
-		window.removeEventListener('mousemove',	 this.handle_mouse_move);
-		window.removeEventListener('touchend',	 this.handle_touch_end);
-		window.removeEventListener('touchmove',	 this.handle_touch_move);
-		window.removeEventListener('touchstart', this.handle_touch_start);
-	}
-
-	private subscribeTo_events() {
-		this.clear_event_subscriptions();
-		this.update_event_listener('wheel', this.handle_wheel);
-		this.update_event_listener('keyup', this.handle_key_up);
-		this.update_event_listener('resize', this.handle_resize);
-		this.update_event_listener('keydown', this.handle_key_down);
-		this.update_event_listener('orientationchange', this.handle_orientation_change);
-		if (u.device_isMobile) {
-			debug.log_action(`  mobile subscribe GRAPH`);
-			window.addEventListener('touchend', this.handle_touch_end, { passive: false });
-			window.addEventListener('touchmove', this.handle_touch_move, { passive: false });
-			window.addEventListener('touchstart', this.handle_touch_start, { passive: false });
-		} else {
-			window.addEventListener('mouseup', this.handle_mouse_up, { passive: false });
-			window.addEventListener('mousemove', this.handle_mouse_move, { passive: false });
-		}
-	}
-
-	private handle_mouse_up(event: MouseEvent) {
-		w_count_mouse_up.update(n => n + 1);
+	private handle_mouse_move(event: MouseEvent) {
+		const location = new Point(event.clientX, event.clientY);
+		w_mouse_location.set(location);
+		w_mouse_location_scaled.set(location.dividedBy(w.scale_factor));
 	}
 
 	private handle_key_up(e: Event) {
@@ -103,10 +78,12 @@ export class Events {
 		}
 	}
 
-	private handle_mouse_move(event: MouseEvent) {
-		const location = new Point(event.clientX, event.clientY);
-		w_mouse_location.set(location);
-		w_mouse_location_scaled.set(location.dividedBy(w.scale_factor));
+	private clear_event_subscriptions() {
+		window.removeEventListener('mouseup',	 this.handle_mouse_up);
+		window.removeEventListener('mousemove',	 this.handle_mouse_move);
+		window.removeEventListener('touchend',	 this.handle_touch_end);
+		window.removeEventListener('touchmove',	 this.handle_touch_move);
+		window.removeEventListener('touchstart', this.handle_touch_start);
 	}
 
 	private handle_resize(event: Event) {
@@ -159,6 +136,24 @@ export class Events {
 			}, 500)
 		} else {
 			signals.signal_blink_forAlteration(false);
+		}
+	}
+
+	private subscribeTo_events() {
+		this.clear_event_subscriptions();
+		this.update_event_listener('wheel', this.handle_wheel);
+		this.update_event_listener('keyup', this.handle_key_up);
+		this.update_event_listener('resize', this.handle_resize);
+		this.update_event_listener('keydown', this.handle_key_down);
+		this.update_event_listener('orientationchange', this.handle_orientation_change);
+		if (u.device_isMobile) {
+			debug.log_action(`  mobile subscribe GRAPH`);
+			window.addEventListener('touchend', this.handle_touch_end, { passive: false });
+			window.addEventListener('touchmove', this.handle_touch_move, { passive: false });
+			window.addEventListener('touchstart', this.handle_touch_start, { passive: false });
+		} else {
+			window.addEventListener('mouseup', this.handle_mouse_up, { passive: false });
+			window.addEventListener('mousemove', this.handle_mouse_move, { passive: false });
 		}
 	}
 	

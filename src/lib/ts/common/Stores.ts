@@ -78,6 +78,7 @@ class Stores {
 		w_count_details.set(0);
 		w_count_mouse_up.set(0);
 		w_thing_color.set(null);
+		w_s_text_edit?.set(null);
 		w_t_startup.set(T_Startup.start);
 		w_background_color.subscribe((color: string) => {
 			colors.banner = colors.ofBannerFor(color);

@@ -56,18 +56,12 @@ export default class G_Widget {
 		}
 	}
 
+	static readonly _____PRIMITIVES: unique symbol;
+
 	static empty(ancestry: Ancestry) { return new G_Widget(ancestry); }
 	get absolute_center_ofDrag(): Point { return this.center_ofDrag.offsetBy(this.origin); }
-	get absolute_origin_ofTitle(): Point { return this.origin_ofTitle.offsetBy(this.origin); }
 	get absolute_center_ofReveal(): Point { return this.center_ofReveal.offsetBy(this.origin); }
 	get showingReveal(): boolean { return this.ancestry.showsReveal_forPointingToChild(this.points_toChild) ?? false; }
-
-	// get gg_cluster(): G_Cluster { return this.ancestry.g_cluster; }
-
-	get t_widget(): T_Widget {
-		const isFocus = this.ancestry?.isFocus ?? false;
-		return layout.inTreeMode ? isFocus ? T_Widget.focus : T_Widget.tree : T_Widget.radial;
-	}
 	
 	get origin(): Point {
 		switch (this.t_widget) {
@@ -81,7 +75,7 @@ export default class G_Widget {
 
 	layout_entireTree() {		// misses every Widget.layout
 		const depth_limit = get(w_depth_limit);
-		this.layout_focus_ofTree();
+		this.layout_focus_ofTree_ofTree();
 		this.recursively_layout_subtree(depth_limit);
 		this.recursively_layout_bidirectionals(depth_limit);
 	}
@@ -119,14 +113,63 @@ export default class G_Widget {
 			}
 	}
 
-	static readonly _____INTERNAL: unique symbol;
+	layout_widget() {
+		const ancestry = this.ancestry;
+		if (!!ancestry.thing) {		// short-circuit mismatched graph mode
+			const dot_size = k.height.dot;
+			const show_reveal = this.showingReveal;
+			const radial_mode = layout.inRadialMode;
+			const widget_pointsRight = this.widget_pointsRight;
+			const width_ofReveal = show_reveal ? dot_size : 0;
+			const width_ofDrag = (dot_size * 2) + (radial_mode ? 2 : -4);
+			const width_ofWidget = ancestry.thing.width_ofTitle + width_ofDrag + width_ofReveal + (radial_mode ? 0 : 4);
+			const x_ofDrag_forPointsLeft = width_ofWidget - dot_size - 3 + (show_reveal ? 0.5 : 0);
+			const x_ofDrag = widget_pointsRight ? (radial_mode ? 3 : 2) : x_ofDrag_forPointsLeft;
+			const y_ofDrag = 2.5 + (radial_mode ? 0.1 : 0);
+			const x_ofRadial = widget_pointsRight ? -4 : -dot_size;
+			const x_ofWidget = widget_pointsRight ? -7 : 6 + dot_size - width_ofWidget;
+			const x_ofRadial_title = (widget_pointsRight ? 20 : (show_reveal ? 20 : 6));
+			const origin_ofDrag = new Point(x_ofDrag, y_ofDrag).offsetEquallyBy(dot_size / 2);
+			this.origin_ofRadial = this.origin_ofWidget.offsetByXY(x_ofRadial, 4 - dot_size);
+			this.origin_ofTitle = Point.x(radial_mode ? x_ofRadial_title : dot_size + 5);
+			this.offset_ofWidget = new Point(x_ofWidget, 1);
+			this.width_ofWidget = width_ofWidget;
+			this.center_ofDrag = origin_ofDrag;
+			if (show_reveal) {
+				const y_ofReveal = dot_size * 0.7 - 0.5;
+				const x_offset_forPointsRight = width_ofWidget - dot_size - 10;
+				const x_ofReveal = dot_size + (widget_pointsRight ? x_offset_forPointsRight : -3);
+				this.center_ofReveal = new Point(x_ofReveal, y_ofReveal);
+			}
+			if (ancestry.isFocus) {
+				console.log('left of focus --> ', this.origin_ofTitle.x, ancestry.title);
+			}
+		}
+	}
+
+	static readonly _____PRIVATE: unique symbol;
+
+	private get t_widget(): T_Widget {
+		const isFocus = this.ancestry?.isFocus ?? false;
+		return layout.inTreeMode ? isFocus ? T_Widget.focus : T_Widget.tree : T_Widget.radial;
+	}
 
 	private layout_widget_andChildren() {
 		this.g_parentBranches.layout_branches();	// noop if radial, parentless or collapsed
 		this.g_childBranches.layout_branches();		// noop if radial, childless or collapsed
 		this.layout_widget();						// assumes all children's subtrees are laid out (needed for progeny size)
 		this.layout_treeLine();
-		this.layout_focus();
+		this.layout_focus_ofTree();
+	}
+
+	private layout_treeLine() {
+		const ancestry = this.ancestry;
+		if (!!ancestry.thing && layout.inTreeMode) {
+			const dot_size = k.height.dot;
+			const offset_ofBranch = new Point(dot_size * 1.3, -(8.2 + dot_size / 15));
+			this.origin_ofTrunk = this.g_line.rect.extent.offsetBy(offset_ofBranch);
+			this.g_line.update_svg_andName();
+		}
 	}
 
 	private origin_forAncestry_inRect(ancestry: Ancestry, rect: Rect): Point {
@@ -137,6 +180,17 @@ export default class G_Widget {
 			x = rect.origin.x + branch.width_ofTitle + k.height.dot + k.height.line;
 		}
 		return new Point(x, y);
+	}
+
+	private layout_bidirectional_lines(bidirectionals: G_TreeLine[]) {
+		const g_lines = this.ancestry.g_lines_forBidirectionals;
+		for (const g_line of g_lines) {
+			if (!u.hasMatching_bidirectional(bidirectionals, g_line)) {
+				this.g_bidirectionalLines.push(g_line);
+				g_line.update_svg_andName();
+			}
+		}
+		return this.g_bidirectionalLines;
 	}
 
 	private recursively_layout_subtree(depth: number, visited: string[] = []) {
@@ -169,18 +223,7 @@ export default class G_Widget {
 		}
 	}
 
-	private layout_bidirectional_lines(bidirectionals: G_TreeLine[]) {
-		const g_lines = this.ancestry.g_lines_forBidirectionals;
-		for (const g_line of g_lines) {
-			if (!u.hasMatching_bidirectional(bidirectionals, g_line)) {
-				this.g_bidirectionalLines.push(g_line);
-				g_line.update_svg_andName();
-			}
-		}
-		return this.g_bidirectionalLines;
-	}
-
-	private layout_focus() {
+	private layout_focus_ofTree() {
 		const ancestry = this.ancestry;
 		const focus = ancestry.thing;
 		if (!!focus && layout.inTreeMode && ancestry.isFocus) {
@@ -195,7 +238,7 @@ export default class G_Widget {
 		}
 	}
 
-	private layout_focus_ofTree() {
+	private layout_focus_ofTree_ofTree() {
 		const graphRect = get(w_graph_rect);
 		if (!!graphRect && layout.inTreeMode) {
 			const offsetY = graphRect.origin.y + 1;
@@ -210,47 +253,6 @@ export default class G_Widget {
 			}
 			const origin_ofChildren = origin_ofFocusReveal.offsetByXY(branches_offsetX, branches_offsetY);
 			this.origin_ofWidget = origin_ofChildren;
-		}
-	}
-
-	private layout_treeLine() {
-		const ancestry = this.ancestry;
-		if (!!ancestry.thing && layout.inTreeMode) {
-			const dot_size = k.height.dot;
-			const offset_ofBranch = new Point(dot_size * 1.3, -(8.2 + dot_size / 15));
-			this.origin_ofTrunk = this.g_line.rect.extent.offsetBy(offset_ofBranch);
-			this.g_line.update_svg_andName();
-		}
-	}
-
-	private layout_widget() {
-		const ancestry = this.ancestry;
-		if (!!ancestry.thing) {		// short-circuit mismatched graph mode
-			const dot_size = k.height.dot;
-			const show_reveal = this.showingReveal;
-			const radial_mode = layout.inRadialMode;
-			const widget_pointsRight = this.widget_pointsRight;
-			const width_ofReveal = show_reveal ? dot_size : 0;
-			const width_ofDrag = (dot_size * 2) + (radial_mode ? 2 : -4);
-			const width_ofWidget = ancestry.thing.width_ofTitle + width_ofDrag + width_ofReveal + (radial_mode ? 0 : 4);
-			const x_ofDrag_forPointsLeft = width_ofWidget - dot_size - 3 + (show_reveal ? 0.5 : 0);
-			const x_ofDrag = widget_pointsRight ? (radial_mode ? 3 : 2) : x_ofDrag_forPointsLeft;
-			const y_ofDrag = 2.5 + (radial_mode ? 0.1 : 0);
-			const origin_ofDrag = new Point(x_ofDrag, y_ofDrag);
-			const x_ofRadial = widget_pointsRight ? -4 : -dot_size;
-			const x_ofRadial_title = (widget_pointsRight ? 20 : (show_reveal ? 20 : 6));
-			const x_offset_ofWidget = widget_pointsRight ? -7 : 6 + dot_size - width_ofWidget;
-			this.origin_ofTitle = Point.x(radial_mode ? x_ofRadial_title : dot_size + 5);
-			this.origin_ofRadial = this.origin_ofWidget.offsetByXY(x_ofRadial, 4 - dot_size);
-			this.center_ofDrag = origin_ofDrag.offsetEquallyBy(dot_size / 2);
-			this.offset_ofWidget = new Point(x_offset_ofWidget, 1);
-			this.width_ofWidget = width_ofWidget;
-			if (show_reveal) {
-				const y_ofReveal = dot_size * 0.7 - 0.5;
-				const x_offset_forPointsRight = width_ofWidget - dot_size - 10;
-				const x_ofReveal = dot_size + (widget_pointsRight ? x_offset_forPointsRight : -3);
-				this.center_ofReveal = new Point(x_ofReveal, y_ofReveal);
-			}
 		}
 	}
 	

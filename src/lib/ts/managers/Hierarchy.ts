@@ -996,7 +996,7 @@ export class Hierarchy {
 				} else if (!!newGrabAncestry) { 
 					if (ancestry.isExpanded) {
 						graph_needsRebuild = ancestry.collapse();
-						newGrabAncestry = grabs.areInvisible ? ancestry : null;
+						newGrabAncestry = !ancestry.isVisible ? ancestry : null;
 					} else if (newGrabAncestry.isExpanded || (!!rootAncestry && !rootAncestry.equals(newGrabAncestry))) {
 						graph_needsRebuild = newGrabAncestry.collapse();
 					}
@@ -1294,7 +1294,7 @@ export class Hierarchy {
 	static readonly _____FILES: unique symbol;
 
 	persistRoot_toFile(format: T_File_Format) { this.persist_fromAncestry_toFile(this.rootAncestry, format); }
-	persist_toFile(format: T_File_Format) { this.persist_fromAncestry_toFile(grabs.ancestry_forFile, format); }
+	persist_toFile(format: T_File_Format) { this.persist_fromAncestry_toFile(this.ancestry_forFile, format); }
 
 	data_fromAncestry_toSave(ancestry: Ancestry): Dictionary {
 		return ancestry.isRoot ? this.all_data : this.progeny_dataFor(ancestry);
@@ -1316,6 +1316,18 @@ export class Hierarchy {
 				const filename = `${data.title.toLowerCase()}.${format}`;
 				files.persist_json_object_toFile(data, filename);
 				break;
+		}
+	}
+
+	private get ancestry_forFile(): Ancestry {
+		const focus = get(w_ancestry_focus);
+		let grabbed = grabs.latest;
+		if (!!grabbed) {
+			return grabbed;
+		} else if (!!focus) {
+			return focus;
+		} else {
+			return get(w_hierarchy)?.rootAncestry;
 		}
 	}
 
@@ -1502,7 +1514,7 @@ export class Hierarchy {
 		if (this.replace_rootID == null) {	
 			this.extract_allTypes_ofObjects_fromDict(dict);				// extract
 			const child = this.thing_forHID(idRoot.hash());				// relationship: adds it as child to the grab or focus
-			await grabs.ancestry_forFile.ancestry_persistentCreateUnique_byAddingThing(child);
+			await this.ancestry_forFile.ancestry_persistentCreateUnique_byAddingThing(child);
 		} else {														// on launch or import with SHIFT-O
 			this.forget_all();											// retain predicates: same across all dbs
 			await this.db.remove_all();									// firebase deletes document (called dbid/name)

@@ -16,19 +16,20 @@
 	const padding = `0.5px 0px 0px 0px`;
 	const input_height = k.height.dot + 2;
 	const s_widget = ux.s_widget_forAncestry(ancestry);
-	const id = `title of ${ancestry?.title} ${ancestry?.kind}`;
 	const showingReveal = ancestry?.shows_reveal ?? false;
+	const id = `title of ${ancestry?.title} ${ancestry?.kind}`;
 	let title_width = (thing?.width_ofTitle ?? 0) + title_extra();
 	let origin = ancestry.g_widget.origin_ofTitle;
 	let title_binded = thing?.title ?? k.empty;
 	let title_wrapper: Svelte_Wrapper;
-	let origin_ofInput = Point.zero;
 	let title_prior = thing?.title;
 	let color = s_widget.color;
 	let cursor_style = k.empty;
 	let reattachments = 0;
 	let ghost = null;
 	let input = null;
+	let left = 0;
+	let top = 0;
 	
 	function isHit():		  boolean { return false }
 	function hasFocus():	  boolean { return document.activeElement === input; }
@@ -62,9 +63,8 @@
 		const isFocus = ancestry?.isFocus ?? false;
 		const adjust = layout.inRadialMode && isFocus;
 		const isGrabbed = ancestry?.isGrabbed ?? false;
-		const x_origin = adjust ? (title_width / 20 - 3) : 0.8;
-		const y_origin = (isGrabbed ? 0.4 : 0) - (adjust ? isGrabbed ? 2.5 : 2 : 0);
-		origin_ofInput = new Point(x_origin, y_origin);
+		top = (isGrabbed ? 0.4 : 0) - (adjust ? isGrabbed ? 2.5 : 2 : 0);
+		left = adjust ? (title_width / 20 - 3) : 0.8;
 		color = s_widget.color;
 	}
 
@@ -111,6 +111,14 @@
 				}
 			}
 		}
+	}
+
+	export const _____CURSOR: unique symbol = Symbol('_____CURSOR');
+	
+	function update_cursorStyle() {
+		const noCursor = (isEditing() || ancestry.isGrabbed) && layout.inTreeMode && ancestry.isEditable;
+		const useTextCursor = isEditing() || ancestry.isGrabbed || !(layout.inRadialMode || ancestry.isEditable);
+		cursor_style = noCursor ? k.empty : `cursor: ${useTextCursor ? 'text' : 'pointer'}`;
 	}
 
 	export const _____EDIT: unique symbol = Symbol('_____EDIT');
@@ -181,14 +189,6 @@
 				$w_s_text_edit.start_editing();
 			}
 		}
-	}
-
-	export const _____UPDATE: unique symbol = Symbol('_____UPDATE');
-	
-	function update_cursorStyle() {
-		const noCursor = (isEditing() || ancestry.isGrabbed) && layout.inTreeMode && ancestry.isEditable;
-		const useTextCursor = isEditing() || ancestry.isGrabbed || !(layout.inRadialMode || ancestry.isEditable);
-		cursor_style = noCursor ? k.empty : `cursor: ${useTextCursor ? 'text' : 'pointer'}`;
 	}
 
 	export const _____HANDLERS: unique symbol = Symbol('_____HANDLERS');
@@ -263,18 +263,18 @@
 
 	export const _____TITLE: unique symbol = Symbol('_____TITLE');
 
+	function updateInputWidth() {
+		if (!!input && !!ghost) { // ghost only exists to provide its width (in pixels)
+			title_width = ghost.scrollWidth + title_extra();
+		}
+	}
+
 	function canAlterTitle(event) {
 		let canAlter = (event instanceof KeyboardEvent) && !event.altKey && !event.shiftKey && !event.code.startsWith("Cluster_Label");
 		if (canAlter && event.metaKey) {
 			canAlter = false;
 		}
 		return canAlter;
-	}
-
-	function updateInputWidth() {
-		if (!!input && !!ghost) { // ghost only exists to provide its width (in pixels)
-			title_width = ghost.scrollWidth + title_extra();
-		}
 	}
 
 	function title_updatedTo(title: string | null) {
@@ -333,8 +333,10 @@
 			on:mouseover={(event) => { event.preventDefault(); }}
 			style='
 				border : none;
+				top : {top}px;
 				{cursor_style};
 				outline : none;
+				left : {left}px;
 				color : {color};
 				white-space : pre;
 				position : absolute;
@@ -343,8 +345,6 @@
 				width : {title_width}px;
 				z-index : {T_Layer.text};
 				height : {input_height}px;
-				top : {origin_ofInput.y}px;
-				left : {origin_ofInput.x}px;
 				{k.prevent_selection_style};
 				background-color : transparent;
 				font-family : {$w_thing_fontFamily};'/>

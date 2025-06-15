@@ -198,6 +198,17 @@ export default class Ancestry extends Identifiable {
 
 	static readonly _____VISIBILITY: unique symbol;
 
+	assure_isVisible_within(ancestries: Array<Ancestry>) {
+		if (!!this.predicate && layout.inRadialMode) {
+			const index = u.indexOf_withMatchingThingID_in(this, ancestries);
+			const g_paging = this.g_cluster?.g_paging;
+			if (!!g_paging && !g_paging.index_isVisible(index)) {
+				return g_paging.update_index_toShow(index);		// change paging
+			}
+		}
+		return false;
+	}
+
 	visibleSubtree_height(visited: string[] = []): number {
 		const thing = this.thing;
 		if (!!thing && !visited.includes(this.id)) {
@@ -299,7 +310,7 @@ export default class Ancestry extends Identifiable {
 				}
 				if (!!grabAncestry) {
 					if (layout.inRadialMode) {
-						needs_graphRebuild = grabs.assure_ancestry_isVisible_within(grabAncestry, this.sibling_ancestries) || needs_graphRebuild;	// change paging
+						needs_graphRebuild = grabAncestry.assure_isVisible_within(this.sibling_ancestries) || needs_graphRebuild;	// change paging
 					} else if (!parentAncestry.isFocus && !grabAncestry.isVisible) {
 						needs_graphRebuild = parentAncestry.becomeFocus() || needs_graphRebuild;
 					}
@@ -328,7 +339,7 @@ export default class Ancestry extends Identifiable {
 				this.reorder_within(sibling_ancestries, up);
 			}
 			if (!!grabAncestry) {
-				needs_graphRebuild = grabs.assure_ancestry_isVisible_within(grabAncestry, sibling_ancestries) || needs_graphRebuild;
+				needs_graphRebuild = grabAncestry.assure_isVisible_within(sibling_ancestries) || needs_graphRebuild;
 			}
 		}
 		return [needs_graphRebuild, needs_graphRelayout];
@@ -353,7 +364,7 @@ export default class Ancestry extends Identifiable {
 				this.reorder_within(sibling_ancestries, up);
 			}
 			if (!!grabAncestry && !!this.predicate) {
-				needs_graphRebuild = grabs.assure_ancestry_isVisible_within(grabAncestry, sibling_ancestries) || needs_graphRebuild;
+				needs_graphRebuild = grabAncestry.assure_isVisible_within(sibling_ancestries) || needs_graphRebuild;
 			}
 		}
 		return [needs_graphRebuild, needs_graphRelayout];

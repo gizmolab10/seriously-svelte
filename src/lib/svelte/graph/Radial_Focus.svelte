@@ -15,7 +15,6 @@
 	let svg_fillColor = 'transparent';
 	let origin_ofWidget = Point.zero;
 	let center_ofBorder = Point.zero;
-	let origin_ofTitle = Point.zero;
 	let size_ofBorder = Size.zero;
 	let svg_dasharray = k.empty;
 	let color = es_widget.color;
@@ -66,7 +65,6 @@
 		width_ofTitle = ($w_ancestry_focus?.thing?.width_ofTitle ?? 0);
 		const x = -7.5 - (width_ofTitle / 2);
 		const y = -11;
-		origin_ofTitle = new Point(19, -2);
 		origin_ofWidget = layout.center_ofGraphSize.offsetByXY(x, y);
 		size_ofBorder = new Size(width_ofTitle - 6, k.height.row);
 		center_ofBorder = new Point(width_ofTitle + 15, height).dividedInHalf;
