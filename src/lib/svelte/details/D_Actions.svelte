@@ -10,7 +10,7 @@
 	import Separator from '../kit/Separator.svelte';
 	import Button from '../buttons/Button.svelte';
 	import Slider from '../mouse/Slider.svelte';
-	export let top = 0;
+	export let top = 4;
 	const has_title = true;
 	const middle_left = 40;
 	const actions_height = 150;
@@ -22,7 +22,7 @@
 	const es_cancel = ux.s_element_for(grabs.latest, T_Element.cancel, k.empty);
 	let list_title = grabs.latest?.isExpanded && layout.inTreeMode ? 'hide list' : 'list';
 	let actions_top = top + (has_title ? 3 : -13);
-	let slider_top = actions_top + actions_height + 7;
+	let slider_top = actions_top + actions_height + 3;
 	let button_titles = compute_button_titles();
     let reattachments = 0;
 	es_cancel.set_forHovering(colors.default, 'pointer');

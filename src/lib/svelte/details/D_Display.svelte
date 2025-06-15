@@ -5,7 +5,7 @@
 	import Separator from '../kit/Separator.svelte';
 	import Slider from '../mouse/Slider.svelte';
 	import Color from '../kit/Color.svelte';
-	export let top = 0;
+	export let top = 4;
 	const color_left = 60
 	const picker_offset = `-124px`;
 	const font_size = k.font_size.smaller;

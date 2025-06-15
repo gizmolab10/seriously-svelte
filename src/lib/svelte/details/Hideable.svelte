@@ -59,7 +59,8 @@
     class='hideable'
     bind:this={element}
     style='
-		width: 100%;
+		top: 0px;
+        width: 100%;
         display: flex;
         flex-shrink: 0;
         height: {height}px;
@@ -68,19 +69,20 @@
         {origin ? `left: ${origin.x}px; top: ${origin.y}px;` : k.empty}'>
     <div class={'hideable-content-' + title}
         style='
+            height: {height}px;
             position: relative;
             display: {isHidden ? "none" : "block"};
-            top: {4 + (hasBanner ? banner_height : 0)}px;'>
+            top: {hasBanner ? banner_height : 0}px;'>
         <slot/>
     </div>
     {#if hasBanner}
         <div
             class='banner'
             style='
+                top: 0px;
                 width: 100%;
                 display: flex;
                 cursor: pointer;
-                padding-left: 0;
                 position: absolute;
                 align-items: stretch;
                 height: {banner_height}px;'>

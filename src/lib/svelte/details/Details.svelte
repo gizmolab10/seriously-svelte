@@ -2,12 +2,12 @@
 	import { k, Point, layout, T_Layer, T_Details, T_Direction } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_count_details, w_show_graph_ofType } from '../../ts/common/Stores';
 	import Separator from '../kit/Separator.svelte';
-	import D_Display from './D_Display.svelte';
 	import D_Databases from './D_Databases.svelte';
+	import D_Display from './D_Display.svelte';
+	import D_Actions from './D_Actions.svelte';
 	import Hideable from './Hideable.svelte';
 	import D_Header from './D_Header.svelte';
 	import D_Traits from './D_Traits.svelte';
-	import D_Actions from './D_Actions.svelte';
 	import D_Thing from './D_Thing.svelte';
 	import D_Tags from './D_Tags.svelte';
 	const width = k.width_details;
@@ -31,17 +31,17 @@
 			scrollbar-width: none;          /* Firefox */
 			flex-direction:column;
 			-ms-overflow-style: none;  
-			top:{layout.graph_top}px;
 			z-index:{T_Layer.details};
+			top:{layout.graph_top - 2}px;
 			width:{k.width_details - 6}px;
 			height:{$w_graph_rect.size.height}px;'>
-		<Hideable t_details={T_Details.header} hasBanner={false} height={26}>
+		<Hideable t_details={T_Details.header} hasBanner={false} height={30}>
 			<D_Header/>
 		</Hideable>
 		<Hideable t_details={T_Details.actions}>
 			<D_Actions/>
 		</Hideable>
-		<Hideable t_details={T_Details.thing}>
+		<Hideable t_details={T_Details.selection}>
 			<D_Thing/>
 		</Hideable>
 		<Hideable t_details={T_Details.tags} extra_titles={next_previous_titles}>

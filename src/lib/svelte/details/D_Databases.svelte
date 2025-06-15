@@ -12,7 +12,7 @@
 	import Separator from '../kit/Separator.svelte';
 	import Button from '../buttons/Button.svelte';
 	import Spinner from '../kit/Spinner.svelte';
-	export let top = 0;
+	export let top = 4;
 	const buttons_top = 138;
 	const border = '1px solid black';
     const font_sizes = [k.font_size.smallest, k.font_size.smaller];

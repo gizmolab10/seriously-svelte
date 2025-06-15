@@ -1,7 +1,7 @@
-import { u, Thing, debug, layout, Ancestry } from "../common/Global_Imports";
-import { w_ancestry_focus, w_ancestries_grabbed } from "../common/Stores";
-import { w_hierarchy, w_s_text_edit } from "../common/Stores";
-import { get } from "svelte/store";
+import { Thing, debug, layout, Ancestry } from '../common/Global_Imports';
+import { w_hierarchy, w_s_text_edit } from '../common/Stores';
+import { w_ancestries_grabbed } from '../common/Stores';
+import { get } from 'svelte/store';
 
 export class Grabs {
 
@@ -10,7 +10,7 @@ export class Grabs {
 	static readonly _____GRAB: unique symbol;
 
 	grabOnly(ancestry: Ancestry) {
-		debug.log_grab(`  GRAB ONLY "${ancestry.title}"`);
+		debug.log_grab(`  GRAB ONLY '${ancestry.title}'`);
 		w_ancestries_grabbed.set([ancestry]);
 		get(w_hierarchy)?.stop_alteration();
 	}
@@ -29,7 +29,7 @@ export class Grabs {
 			}
 		}
 		w_ancestries_grabbed.set(grabbed);
-		debug.log_grab(`  GRAB "${ancestry.title}"`);
+		debug.log_grab(`  GRAB '${ancestry.title}'`);
 		get(w_hierarchy)?.stop_alteration();
 	}
 
@@ -52,7 +52,7 @@ export class Grabs {
 			get(w_hierarchy)?.stop_alteration(); // do not show editingActions for root
 		}
 		w_ancestries_grabbed.set(grabbed);
-		debug.log_grab(`  UNGRAB "${ancestry.title}"`);
+		debug.log_grab(`  UNGRAB '${ancestry.title}'`);
 	}
 	
 	static readonly _____LATEST: unique symbol;
