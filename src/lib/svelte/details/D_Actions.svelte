@@ -44,7 +44,7 @@
 
 	$: {
 		const _ = `${$w_depth_limit}${$w_background_color}${$w_user_graph_offset}${$w_show_graph_ofType}${$w_s_alteration}`;
-		reattachments += 1;
+		reattachments++;
 	}
 
 	$: {
@@ -77,7 +77,7 @@
 		const ancestry = grabs.latest;
 		list_title = ux.inTreeMode && !!ancestry && ancestry.isExpanded ? 'hide list' : 'show list';
 		button_titles = compute_button_titles();
-		setTimeout(() => reattachments += 1, 0);
+		setTimeout(() => reattachments++, 0);
 	}
 
 	function group_andIndex(row: number): [number, number] {

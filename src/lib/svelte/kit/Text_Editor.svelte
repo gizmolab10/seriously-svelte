@@ -70,7 +70,7 @@
 	style='
 		top: {top}px;
 		left: {left}px;
-		position: absolute;'>
+		position: relative;'>
 	<textarea
 		id={label}
 		type='text'

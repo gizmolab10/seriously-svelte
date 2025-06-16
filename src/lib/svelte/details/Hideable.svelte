@@ -60,21 +60,13 @@
     bind:this={element}
     style='
 		top: 0px;
-        width: 100%;
+        width: {k.width_details - 12}px;
         display: flex;
         flex-shrink: 0;
         height: {height}px;
         position: relative;
         flex-direction: column;
         {origin ? `left: ${origin.x}px; top: ${origin.y}px;` : k.empty}'>
-    <div class={'hideable-content-' + title}
-        style='
-            height: {height}px;
-            position: relative;
-            display: {isHidden ? "none" : "block"};
-            top: {hasBanner ? banner_height : 0}px;'>
-        <slot/>
-    </div>
     {#if hasBanner}
         <div
             class='banner'
@@ -93,4 +85,13 @@
                 toggle_hidden={toggle_hidden}/>
         </div>
     {/if}
+    <div class={'hideable-content-' + title}
+        style='
+            position: relative;
+            height: {height}px;
+            padding-bottom: 9px;
+            display: {isHidden ? 'none' : 'block'};
+            top: {hasBanner ? banner_height : 0}px;'>
+        <slot/>
+    </div>
 </div>

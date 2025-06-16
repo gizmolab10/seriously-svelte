@@ -30,53 +30,55 @@
 
 </script>
 
-<div class='hierarchy_traits'
-	style='
-		top:3px;
-		left:10px;
-		width: 100%;
-		display:flex;
-		padding: 4px;
-		position:absolute;
-		scrollbar-width: none;          /* Firefox */
-		flex-direction:column;
-		-ms-overflow-style: none;
-		font-size:{k.font_size.smaller}px;'>
-	{#key $w_thing_traits}
+{#key `${$w_thing_traits.map(t => t.t_trait).join(', ')} ${$w_show_traits_ofType.join(', ')}`}
+	<div class='hierarchy_traits'
+		style='
+			width: 100%;
+			padding: 4px;
+			display: flex;
+			position: relative;
+			padding-bottom: 18px;
+			scrollbar-width: none;          /* Firefox */
+			flex-direction: column;
+			-ms-overflow-style: none;
+			font-size:{k.font_size.smaller}px;'>
 		{#if !$w_thing_traits || $w_thing_traits.length == 0}
-			<div
-				class='no-traits'
-				style='
-					display: flex;
-					text-align: center;
-					width: 100%;
-					justify-content: center;'>
-				no traits
-			</div>
+			<p class='no-traits' style='
+                margin: 0;
+                width: 100%;
+                height: 48px;
+                display: flex;
+                text-align: center;
+                align-items: center;
+                justify-content: center;'>
+                no traits
+            </p>
 		{:else}
-			show these trait types:
-			<Segmented
-				name='trait-types'
-				allow_multiple={true}
-				titles={['text', 'link']}
-				height={k.height.controls}
-				font_size={k.font_size.smaller}
-				selected={$w_show_traits_ofType}
-				origin={new Point(k.width_details - 64, 0)}
-				handle_selection={handleClick_onTraitTypes}/>
-			{#each $w_thing_traits as trait}
-				<Text_Editor
-					top={26}
-					height={78}
-					label={trait.t_trait}
-					color={colors.default}
-					original_text={trait.text}
-					width={k.width_details - 40}
-					label_underline={trait.t_trait == 'link'}
-					onLabelClick={() => window.open(trait.text, '_blank')}
-					label_color={trait.t_trait == 'link' ? 'blue' : 'gray'}
-					handle_textChange={async (label, text) => await h.trait_setText_forTrait(text, trait)}/>
-			{/each}
+			<div style='left: 6px; top: 4px; position: relative;'>
+				show these trait types:
+				<Segmented
+					name='trait-types'
+					allow_multiple={true}
+					titles={['text', 'link']}
+					height={k.height.controls}
+					font_size={k.font_size.smaller}
+					selected={$w_show_traits_ofType}
+					origin={new Point(k.width_details - 64, -15)}
+					handle_selection={handleClick_onTraitTypes}/>
+				{#each $w_thing_traits as trait}
+					<Text_Editor
+						top={8}
+						height={78}
+						label={trait.t_trait}
+						color={colors.default}
+						original_text={trait.text}
+						width={k.width_details - 40}
+						label_underline={trait.t_trait == 'link'}
+						onLabelClick={() => window.open(trait.text, '_blank')}
+						label_color={trait.t_trait == 'link' ? 'blue' : 'gray'}
+						handle_textChange={async (label, text) => await h.trait_setText_forTrait(text, trait)}/>
+				{/each}
+			</div>
 		{/if}
-	{/key}
-</div>
+	</div>
+{/key}

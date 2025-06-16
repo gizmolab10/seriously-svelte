@@ -124,7 +124,6 @@ class S_Details {
 	
 	select_nextThing(next: boolean) {
 		if (!!h && this.s_things.find_next_item(next)) {	// alters thing, and index_ofItem, both are used below
-			// this.update();
 			this.thing?.ancestry?.grabOnly();		// causes reaction (invoking update())
 			grabs.latest_assureIsVisible();
 			w_hierarchy.set(h);

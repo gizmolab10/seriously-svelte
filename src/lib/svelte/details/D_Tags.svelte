@@ -6,8 +6,9 @@
 	import Separator from '../kit/Separator.svelte';
     const padding = 10;
     const width = 100;
-    
-    $: name = `thing ${$w_tag_thing_index + 1} (of ${$w_tag_things.length})`;
+    let reattachments = 0;
+
+    $: name = `thing ${$w_tag_thing_index + 1} (of ${$w_tag_things.length})`; reattachments++;
 
 	function handleClick_onNextPrevious(t_request: T_Request, s_mouse: S_Mouse, column: number): any {
 		switch (t_request) {
@@ -17,6 +18,7 @@
                 if (s_mouse.isDown) {
                     s_details.select_nextThing(column == 1);
                     name = `thing ${$w_tag_thing_index + 1} (of ${$w_tag_things.length})`;
+                    reattachments++;
                 }
 		}
 		return false;
@@ -24,18 +26,28 @@
 
 </script>
 
-{#key grabs.latest}
+{#key `${grabs.latest.id} ${name} ${$w_thing_tags} ${reattachments}`}
     <div
         class='tags'
         style='
             width: 100%;
             padding: 4px;
-            position:relative;
+            height: 46px;
+            position: relative;
             text-align: center;
             padding-bottom: 9px;
             font-size:{s_details.font_size}px;'>
         {#if !$w_thing_tags || $w_thing_tags.length == 0}
-            <p style='text-align: center;'>no tags</p>
+            <p style='
+                margin: 0;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                text-align: center;
+                align-items: center;
+                justify-content: center;'>
+                no tags
+            </p>
         {:else}
             <div
                 class='tags-list'
