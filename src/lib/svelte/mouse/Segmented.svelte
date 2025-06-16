@@ -1,8 +1,12 @@
 <script lang='ts'>
-	import { k, Point } from '../../ts/common/Global_Imports';
+	import { k, Point, colors } from '../../ts/common/Global_Imports';
+	import { w_background_color } from '../../ts/common/Stores';
 	export let handle_selection: ((types: string[]) => void) | null = null;
+	export let border_color: string = colors.separator;
+	export let selected_color: string = '#b7d6e7';
 	export let height: number = k.button_height;
 	export let allow_multiple: boolean = false;
+	export let hover_color: string = 'black';
 	export let font_size = k.font_size.small;
 	export let allow_none: boolean = false;
 	export let origin: Point = Point.zero;
@@ -14,6 +18,7 @@
 	function isSelected(title: string) { return selected.includes(title); }
 	function button_name(title: string) { return `pill-${name}-${title.replace(/\s+/g, '-').toLowerCase()}`; }
 
+	$: $w_background_color, border_color = colors.separator;
 	$: selected, setSelected(selected);
 
 	function select(title: string) {
@@ -48,33 +53,39 @@
 
 </script>
 
-<div style='left:{origin.x}px; width:{width}px; position:absolute;'>
-<div
-	class='pill-group'
-	style='
-		transform: translateX(-50%);
-		height: {height}px;
-		position: absolute;
-		top: {origin.y}px;
-		left: 50%;'>
-	{#each titles as title}
-		<button
-			class:selected={isSelected(title)}
-			style='font-size:{font_size}px;'
-			on:click={() => select(title)}
-			id={button_name(title)}
-			type='button'
-			class='pill'>
-			{title}
-		</button>
-	{/each}
-</div>
+<div style='
+	position:absolute;
+	left:{origin.x}px;
+	width:{width}px;'>
+	<div
+		class='pill-group'
+		style='
+			--selected-color: {selected_color};
+			--border-color: {border_color};
+			--hover-color: {hover_color};
+			transform: translateX(-50%);
+			height: {height}px;
+			position: absolute;
+			top: {origin.y}px;
+			left: 50%;'>
+		{#each titles as title}
+			<button
+				class:selected={isSelected(title)}
+				style='font-size:{font_size}px;'
+				on:click={() => select(title)}
+				id={button_name(title)}
+				type='button'
+				class='pill'>
+				{title}
+			</button>
+		{/each}
+	</div>
 </div>
 
 <style>
 
 	.pill-group {
-		border: 0.5px solid black;
+		border: 0.5px solid var(--border-color);
 		background: transparent;
 		border-radius: 999px;
 		overflow: hidden;
@@ -83,9 +94,9 @@
 
 	.pill {
 		justify-content: center;
+		padding-bottom: 2.2px;
 		font-family: inherit;
 		white-space: nowrap;
-		padding-bottom: 2.2px;
 		position: relative;
 		width: fit-content;
 		padding-right: 8px;
@@ -103,11 +114,11 @@
 	}
 
 	.pill.selected {
-		background: #b7d6e7 !important;
+		background: var(--selected-color) !important;
 	}
 
 	.pill:not(:last-child) {
-		border-right: 0.5px solid black;
+		border-right: 0.5px solid var(--border-color);
 	}
 
 	.pill:hover {

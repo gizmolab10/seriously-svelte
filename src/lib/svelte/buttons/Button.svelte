@@ -9,6 +9,7 @@
 	import Identifiable from '../../ts/runtime/Identifiable';
 	export let es_button: S_Element = S_Element.empty();
 	export let closure: Handle_Result<S_Mouse>;
+	export let border_color = colors.separator;
 	export let font_size = k.font_size.common;
 	export let origin: Point | null = null;
 	export let center: Point | null = null;
@@ -72,7 +73,7 @@
 	function recompute_style() {
 		color = es_button.stroke;
 		if (style.length == 0) {
-			border = border_thickness == 0 ? 'none' : `${border_thickness}px solid ${es_button.stroke}`;
+			border = border_thickness == 0 ? 'none' : `${border_thickness}px solid ${border_color}`;
 			computed_style=`
 				left:0px;
 				display: flex;

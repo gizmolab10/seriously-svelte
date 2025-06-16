@@ -14,9 +14,9 @@
             case T_Request.name:	   return T_Direction[column];
 			case T_Request.is_visible: return true;
 			case T_Request.handle_click:
-                const next = column == 1;
                 if (s_mouse.isDown) {
-                    s_details.select_nextThing(next);
+                    s_details.select_nextThing(column == 1);
+                    name = `thing ${$w_tag_thing_index + 1} (of ${$w_tag_things.length})`;
                 }
 		}
 		return false;
@@ -29,8 +29,10 @@
         class='tags'
         style='
             width: 100%;
+            padding: 4px;
             position:relative;
             text-align: center;
+            padding-bottom: 9px;
             font-size:{s_details.font_size}px;'>
         {#if !$w_thing_tags || $w_thing_tags.length == 0}
             <p style='text-align: center;'>no tags</p>
@@ -56,7 +58,7 @@
                 has_seperator={true}
                 closure={handleClick_onNextPrevious}
                 separator_thickness={k.thickness.separator.ultra_thin}
-                origin={new Point((k.width_details - width - padding) / 2, 24)}/>
+                origin={new Point((k.width_details - width - padding) / 2, 28)}/>
         {/if}
     </div>
 {/key}

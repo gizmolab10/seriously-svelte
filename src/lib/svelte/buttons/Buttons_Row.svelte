@@ -29,9 +29,9 @@
 	const es_button_byColumn: { [key: number]: S_Element } = {};
 	const button_portion = g_repeater.button_portion;
 	const columns = button_titles.length;
-	const row_title = row_titles[0];
 	let reattachments = 0;
 	let style = k.empty;
+	$: row_title = row_titles[0];
 
 	//////////////////////////////////////////////////////////////
 	//			 one row of buttons, plus options				//

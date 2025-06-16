@@ -36,6 +36,7 @@
 		left:10px;
 		width: 100%;
 		display:flex;
+		padding: 4px;
 		position:absolute;
 		scrollbar-width: none;          /* Firefox */
 		flex-direction:column;
