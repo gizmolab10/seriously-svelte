@@ -75,7 +75,7 @@ export default class G_Widget {
 
 	layout_entireTree() {		// misses every Widget.layout
 		const depth_limit = get(w_depth_limit);
-		this.layout_focus_ofTree_ofTree();
+		this.layout_focus_ofTree();
 		this.recursively_layout_subtree(depth_limit);
 		this.recursively_layout_bidirectionals(depth_limit);
 	}
@@ -141,9 +141,6 @@ export default class G_Widget {
 				const x_ofReveal = dot_size + (widget_pointsRight ? x_offset_forPointsRight : -3);
 				this.center_ofReveal = new Point(x_ofReveal, y_ofReveal);
 			}
-			if (ancestry.isFocus) {
-				console.log('left of focus --> ', this.origin_ofTitle.x, ancestry.title);
-			}
 		}
 	}
 
@@ -158,11 +155,11 @@ export default class G_Widget {
 		this.g_parentBranches.layout_branches();	// noop if radial, parentless or collapsed
 		this.g_childBranches.layout_branches();		// noop if radial, childless or collapsed
 		this.layout_widget();						// assumes all children's subtrees are laid out (needed for progeny size)
-		this.layout_treeLine();
-		this.layout_focus_ofTree();
+		this.layout_incoming_treeLine();
+		this.layout_focus();
 	}
 
-	private layout_treeLine() {
+	private layout_incoming_treeLine() {
 		const ancestry = this.ancestry;
 		if (!!ancestry.thing && layout.inTreeMode) {
 			const dot_size = k.height.dot;
@@ -223,7 +220,7 @@ export default class G_Widget {
 		}
 	}
 
-	private layout_focus_ofTree() {
+	private layout_focus() {
 		const ancestry = this.ancestry;
 		const focus = ancestry.thing;
 		if (!!focus && layout.inTreeMode && ancestry.isFocus) {
@@ -238,7 +235,7 @@ export default class G_Widget {
 		}
 	}
 
-	private layout_focus_ofTree_ofTree() {
+	private layout_focus_ofTree() {
 		const graphRect = get(w_graph_rect);
 		if (!!graphRect && layout.inTreeMode) {
 			const offsetY = graphRect.origin.y + 1;

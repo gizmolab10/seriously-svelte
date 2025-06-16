@@ -5,9 +5,10 @@ import { get } from 'svelte/store';
 	//////////////////////////////////////////
 	//										//
 	// widgets, titles, dots & breadcrumbs	//
-	//	 use this to						//
-	//	 preserve state across reattachment	//
-	//	 compute color, background, border	//
+	//	 use this to preserve state			//
+	//	 across reattachment				//
+	//										//
+	// computes color, background, border	//
 	// influenced by grab, edit, focus		//	
 	//										//
 	//	no hover & no expanded				//
@@ -18,7 +19,7 @@ export default class S_Widget extends S_Element {
 	isGrabbed = false;		// NOT a source of truth
 	isEditing = false;		// ... only needed for detecting state changes
 	isFocus	  = false;
-
+	
 	get stroke(): string { return this.color; }
 	get fill(): string { return this.background_color; }
 	get thing_color(): string { return this.ancestry.thing?.color ?? k.empty; }

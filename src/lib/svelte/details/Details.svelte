@@ -35,7 +35,7 @@
 			top:{layout.graph_top - 2}px;
 			width:{k.width_details - 6}px;
 			height:{$w_graph_rect.size.height}px;'>
-		<Hideable t_details={T_Details.header} hasBanner={false} height={30}>
+		<Hideable t_details={T_Details.header} hasBanner={false} height={20}>
 			<D_Header/>
 		</Hideable>
 		<Hideable t_details={T_Details.actions}>

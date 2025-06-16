@@ -11,7 +11,7 @@ export class Colors {
 
 	opacitize(color: string, amount: number): string { return transparentize(color, 1 - amount); }
 	ofSeparatorFor(background: string): string { return this.blend('#dedede', background);}
-	ofBannerFor(background: string): string { return this.blend('#ffffff', background, 4);}
+	ofBannerFor(background: string): string { return this.blend('white', background, 4);}
 
 	blend(color: string, background: string, saturation: number = 7): string {
 		let blended: string | null = 'lightgray';
@@ -66,13 +66,12 @@ export class Colors {
 		}));
 	}
 
-	private limit_luminance_to(color: string, maximum: number): string {
-		const rgba = this.color_toRGBA(color);
-		if (!!rgba) {
-			const lume = this.luminance_ofRGBA(rgba);
-			if (!!lume) {
-				return this.set_darkness_toRGBA(rgba, 1 - Math.min(maximum, lume));
-			}
+	luminance_driven_desaturation(color: string): string {
+		const lume = this.luminance_ofColor(color);
+		if (lume > 0.5) {
+			color = this.blend(color, 'black') ?? color;
+		} else {
+			color = this.blend(color, color) ?? color;
 		}
 		return color;
 	}
