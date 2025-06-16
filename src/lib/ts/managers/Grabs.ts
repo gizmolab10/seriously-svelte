@@ -46,7 +46,7 @@ export class Grabs {
 				grabbed.push(rootAncestry);
 			}
 		}
-		if (grabbed.length == 0 && layout.inTreeMode) {
+		if (grabbed.length == 0 && ux.inTreeMode) {
 			grabbed = [rootAncestry];
 		} else {
 			get(w_hierarchy)?.stop_alteration(); // do not show editingActions for root
@@ -82,7 +82,7 @@ export class Grabs {
 	latest_assureIsVisible() {
 		const ancestry = this.latest;
 		if (!!ancestry && !ancestry.isVisible) {
-			if (layout.inTreeMode) {
+			if (ux.inTreeMode) {
 				ancestry.reveal_toFocus();
 			} else {
 				ancestry.grab();

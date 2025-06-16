@@ -1,4 +1,4 @@
-import { k, colors, Ancestry, S_Element, T_Element, layout } from '../common/Global_Imports';
+import { k, colors, Ancestry, S_Element, T_Element } from '../common/Global_Imports';
 import { w_background_color } from '../common/Stores';
 import { get } from 'svelte/store';
 

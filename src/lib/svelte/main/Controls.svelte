@@ -41,7 +41,7 @@
 		const _ = $w_show_graph_ofType;
 		const db = h.db;
 		if (!!db) {
-			const extra = layout.inTreeMode ? 84 : 0;
+			const extra = ux.inTreeMode ? 84 : 0;
 			displayName = db.displayName;
 			displayName_width = u.getWidthOf(displayName);
 			displayName_x = extra + (width - displayName_width) / 2;
@@ -113,7 +113,7 @@
 							selected={[$w_show_graph_ofType]}
 							titles={[T_Graph.tree, T_Graph.radial]}
 							handle_selection={(titles) => layout.handle_mode_selection('graph', titles)}/>
-						{#if layout.inTreeMode}
+						{#if ux.inTreeMode}
 							{#key $w_show_tree_ofType}
 								<Segmented
 									width={180}

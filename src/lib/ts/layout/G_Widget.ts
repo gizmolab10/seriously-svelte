@@ -83,7 +83,7 @@ export default class G_Widget {
 	layout_necklaceWidget(
 		rotated_origin: Point,
 		widget_pointsRight: boolean) {
-			if (layout.inRadialMode) {
+			if (ux.inRadialMode) {
 				this.forGraphMode = T_Graph.radial;
 				this.origin_ofWidget = rotated_origin;
 				this.widget_pointsRight = widget_pointsRight;
@@ -118,7 +118,7 @@ export default class G_Widget {
 		if (!!ancestry.thing) {		// short-circuit mismatched graph mode
 			const dot_size = k.height.dot;
 			const show_reveal = this.showingReveal;
-			const radial_mode = layout.inRadialMode;
+			const radial_mode = ux.inRadialMode;
 			const widget_pointsRight = this.widget_pointsRight;
 			const width_ofReveal = show_reveal ? dot_size : 0;
 			const width_ofDrag = (dot_size * 2) + (radial_mode ? 2 : -4);
@@ -148,7 +148,7 @@ export default class G_Widget {
 
 	private get t_widget(): T_Widget {
 		const isFocus = this.ancestry?.isFocus ?? false;
-		return layout.inTreeMode ? isFocus ? T_Widget.focus : T_Widget.tree : T_Widget.radial;
+		return ux.inTreeMode ? isFocus ? T_Widget.focus : T_Widget.tree : T_Widget.radial;
 	}
 
 	private layout_widget_andChildren() {
@@ -161,7 +161,7 @@ export default class G_Widget {
 
 	private layout_incoming_treeLine() {
 		const ancestry = this.ancestry;
-		if (!!ancestry.thing && layout.inTreeMode) {
+		if (!!ancestry.thing && ux.inTreeMode) {
 			const dot_size = k.height.dot;
 			const offset_ofBranch = new Point(dot_size * 1.3, -(8.2 + dot_size / 15));
 			this.origin_ofTrunk = this.g_line.rect.extent.offsetBy(offset_ofBranch);
@@ -204,7 +204,7 @@ export default class G_Widget {
 	}
 
 	private recursively_layout_bidirectionals(depth: number, visited: string[] = [], bidirectionals: G_TreeLine[] = []) {
-		if (layout.inTreeMode && get(w_show_related) && depth > 0) {
+		if (ux.inTreeMode && get(w_show_related) && depth > 0) {
 			this.g_bidirectionalLines = [];
 			const more = this.layout_bidirectional_lines(bidirectionals);
 			const ancestry = this.ancestry;	
@@ -223,7 +223,7 @@ export default class G_Widget {
 	private layout_focus() {
 		const ancestry = this.ancestry;
 		const focus = ancestry.thing;
-		if (!!focus && layout.inTreeMode && ancestry.isFocus) {
+		if (!!focus && ux.inTreeMode && ancestry.isFocus) {
 			const graph_rect = get(w_graph_rect);
 			const offset_y = -1 - graph_rect.origin.y;
 			const subtree_size = ancestry.visibleSubtree_size;
@@ -237,7 +237,7 @@ export default class G_Widget {
 
 	private layout_focus_ofTree() {
 		const graphRect = get(w_graph_rect);
-		if (!!graphRect && layout.inTreeMode) {
+		if (!!graphRect && ux.inTreeMode) {
 			const offsetY = graphRect.origin.y + 1;
 			const subtree_size = this.ancestry.visibleSubtree_size;
 			const offsetX_ofFirstReveal = (this.ancestry.thing?.width_ofTitle ?? 0) / 2 - 2;

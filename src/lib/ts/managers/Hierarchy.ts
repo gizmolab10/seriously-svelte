@@ -795,7 +795,7 @@ export class Hierarchy {
 	}
 
 	async ancestry_toggle_expansion(ancestry: Ancestry) {
-		if (layout.inRadialMode) {
+		if (ux.inRadialMode) {
 			// kludge for now? in radial mode we need to do a bit extra for our user
 			await this.ancestry_rebuild_persistentMoveRight(ancestry, !ancestry.isExpanded, false, false, false, false);
 			layout.grand_build();
@@ -822,7 +822,7 @@ export class Hierarchy {
 			if (!!childAncestry) {
 				childAncestry.grabOnly();
 				childAncestry.order_setTo(order);
-				if (!parentAncestry.isRoot && layout.inRadialMode) {
+				if (!parentAncestry.isRoot && ux.inRadialMode) {
 					parentAncestry.becomeFocus();
 				}
 				layout.grand_build();
@@ -883,7 +883,7 @@ export class Hierarchy {
 			await this.db.hierarchy_fetch_forID(thing.title)
 			this.relationships_refreshKnowns();
 			const childAncestries = ancestry?.childAncestries;
-			const isRadialMode = layout.inRadialMode;
+			const isRadialMode = ux.inRadialMode;
 			if (!!childAncestries && childAncestries.length > 0) {
 				if (!!grab) {
 					childAncestries[0].grabOnly()
@@ -965,13 +965,13 @@ export class Hierarchy {
 		const newGrabIsNotFocus = !newGrabAncestry?.isFocus;
 		let graph_needsRebuild = false;
 		if (RIGHT) {
-			if (!ancestry.hasRelevantRelationships && layout.inTreeMode) {
+			if (!ancestry.hasRelevantRelationships && ux.inTreeMode) {
 				return;
 			} else {
 				if (SHIFT) {
 					newGrabAncestry = null;
 				}
-				if (layout.inTreeMode) {
+				if (ux.inTreeMode) {
 					graph_needsRebuild = ancestry.expand();
 				} else {
 					graph_needsRebuild = ancestry.becomeFocus();
@@ -1009,7 +1009,7 @@ export class Hierarchy {
 			if (!RIGHT && !!newFocusAncestry) {
 				const newFocusIsGrabbed = newFocusAncestry.equals(newGrabAncestry);
 				const canBecomeFocus = (!SHIFT || newFocusIsGrabbed) && newGrabIsNotFocus;
-				const shouldBecomeFocus = newFocusAncestry.isRoot || !newFocusAncestry.isVisible || layout.inRadialMode;
+				const shouldBecomeFocus = newFocusAncestry.isRoot || !newFocusAncestry.isVisible || ux.inRadialMode;
 				const becomeFocus = canBecomeFocus && shouldBecomeFocus;
 				if (becomeFocus && newFocusAncestry.becomeFocus()) {
 					graph_needsRebuild = true;

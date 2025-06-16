@@ -84,7 +84,7 @@
 		if (s_mouse.isHover) {
 			set_isHovering(!s_mouse.isOut);
 		} else if (s_mouse.isUp && (ancestry.hasChildren || ancestry.thing.isBulkAlias)) {
-			const RIGHT = !ancestry.isExpanded || layout.inRadialMode;
+			const RIGHT = !ancestry.isExpanded || ux.inRadialMode;
 			h.ancestry_rebuild_persistentMoveRight(ancestry, RIGHT, false, false, false, true);
 		}
 	}

@@ -1,4 +1,4 @@
-import { c, h, k, p, u, w, show, Rect, Size, Point, Thing, grabs, debug, layout, wrappers, svgPaths } from '../common/Global_Imports';
+import { c, h, k, p, u, ux, show, Rect, Size, Point, Thing, grabs, debug, layout, wrappers, svgPaths } from '../common/Global_Imports';
 import { T_Graph, T_Create, T_Kinship, T_Predicate, T_Alteration, T_SvelteComponent } from '../common/Global_Imports';
 import { Direction, Predicate, databases, Relationship, Svelte_Wrapper } from '../common/Global_Imports';
 import { G_Widget, G_Paging, G_Cluster, G_TreeLine, S_Text_Edit } from '../common/Global_Imports';
@@ -118,7 +118,7 @@ export default class Ancestry extends Identifiable {
 	static readonly _____SVG: unique symbol;
 
 	svgPathFor_tinyDots_outsideReveal(points_toChild: boolean): string | null {
-		const in_radial_mode = layout.inRadialMode;
+		const in_radial_mode = ux.inRadialMode;
 		const isVisible_forChild = this.hasChildren && show.children_dots && (in_radial_mode ? true : !this.isExpanded);
 		const isVisible_inRadial = points_toChild ? isVisible_forChild : this.hasParents && (this.isBidirectional ? show.related_dots : show.parent_dots);
 		const show_outside_tinyDots = in_radial_mode ? isVisible_inRadial : isVisible_forChild;
@@ -182,7 +182,7 @@ export default class Ancestry extends Identifiable {
 				h.ancestry_alter_connectionTo_maybe(this);
 				layout.grand_build();
 				return;
-			} else if (!shiftKey && layout.inRadialMode) {
+			} else if (!shiftKey && ux.inRadialMode) {
 				if (this.becomeFocus()) {
 					layout.grand_build();
 					return;
@@ -199,7 +199,7 @@ export default class Ancestry extends Identifiable {
 	static readonly _____VISIBILITY: unique symbol;
 
 	assure_isVisible_within(ancestries: Array<Ancestry>) {
-		if (!!this.predicate && layout.inRadialMode) {
+		if (!!this.predicate && ux.inRadialMode) {
 			const index = u.indexOf_withMatchingThingID_in(this, ancestries);
 			const g_paging = this.g_cluster?.g_paging;
 			if (!!g_paging && !g_paging.index_isVisible(index)) {
@@ -309,7 +309,7 @@ export default class Ancestry extends Identifiable {
 					this.reorder_within(this.sibling_ancestries, up);
 				}
 				if (!!grabAncestry) {
-					if (layout.inRadialMode) {
+					if (ux.inRadialMode) {
 						needs_graphRebuild = grabAncestry.assure_isVisible_within(this.sibling_ancestries) || needs_graphRebuild;	// change paging
 					} else if (!parentAncestry.isFocus && !grabAncestry.isVisible) {
 						needs_graphRebuild = parentAncestry.becomeFocus() || needs_graphRebuild;
@@ -555,7 +555,7 @@ export default class Ancestry extends Identifiable {
 	get ancestry_ofFirst_visibleChild(): Ancestry {
 		const childAncestries = this.childAncestries;
 		const first = childAncestries[0]
-		if (layout.inRadialMode) {
+		if (ux.inRadialMode) {
 			const g_paging = this.g_paging
 			const maybe = g_paging?.ancestry_atIndex(childAncestries);
 			if (!!maybe) {
@@ -768,7 +768,7 @@ export default class Ancestry extends Identifiable {
 	get points_right(): boolean {
 		const hasVisibleChildren = this.isExpanded && this.hasChildren;
 		const radial_points_right = this.g_widget?.widget_pointsRight ?? true;
-		return layout.inRadialMode ? radial_points_right : !hasVisibleChildren;
+		return ux.inRadialMode ? radial_points_right : !hasVisibleChildren;
 	}
 
 	get isEditable(): boolean {
@@ -793,7 +793,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	get isVisible(): boolean {
-		if (layout.inRadialMode) {
+		if (ux.inRadialMode) {
 			const parent = this.parentAncestry;
 			const g_paging = this.g_paging;
 			return this.isFocus || (!!parent && parent.isFocus && (g_paging?.index_isVisible(this.siblingIndex) ?? true));

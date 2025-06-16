@@ -289,7 +289,7 @@ export class Events {
 			const no_siblings = !ancestry.hasSiblings;
 			const is_root = ancestry.isRoot;
 			const a = this.actions;
-			const disable_revealConceal = no_children || is_root || (layout.inRadialMode && ancestry.isFocus);
+			const disable_revealConceal = no_children || is_root || (ux.inRadialMode && ancestry.isFocus);
 			switch (t_action) {
 				case T_Action.browse:			switch (column) {
 					case a.browse.left:				return is_root;

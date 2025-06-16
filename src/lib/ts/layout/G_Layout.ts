@@ -1,6 +1,6 @@
-import { h, k, p, u, w, grabs, Rect, Point, debug, signals, Ancestry, Thing } from '../common/Global_Imports';
-import { T_Graph, T_Kinship, T_Preference, G_RadialGraph } from '../common/Global_Imports';
+import { h, k, p, u, ux, w, grabs, Rect, Point, debug, signals, Ancestry, Thing } from '../common/Global_Imports';
 import { w_user_graph_offset, w_user_graph_center, w_mouse_location_scaled } from '../common/Stores';
+import { T_Graph, T_Kinship, T_Preference, G_RadialGraph } from '../common/Global_Imports';
 import { w_show_tree_ofType, w_show_graph_ofType } from '../common/Stores';
 import { w_show_related, w_ancestry_focus } from '../common/Stores';
 import { w_graph_rect, w_show_details } from '../common/Stores';
@@ -15,8 +15,6 @@ export default class G_Layout {
 	get graph_top(): number { return this.banner_height + 25; }
 	get banner_height(): number { return u.device_isMobile ? 32 : 16; }
 	get breadcrumbs_height(): number { return this.banner_height + 21; }
-	get inTreeMode(): boolean { return get(w_show_graph_ofType) == T_Graph.tree; }
-	get inRadialMode(): boolean { return get(w_show_graph_ofType) == T_Graph.radial; }
 	get breadcrumbs_top(): number { return w.windowSize.height - this.breadcrumbs_height; }
 	get isAllExpanded(): boolean { return h.rootAncestry?.isAllProgeny_expanded ?? false; }
 	get center_ofGraphSize(): Point { return get(w_graph_rect).size.asPoint.dividedInHalf; }
@@ -61,7 +59,7 @@ export default class G_Layout {
 	grand_build() { signals.signal_rebuildGraph_fromFocus(); }
 
 	grand_layout() {
-		if (this.inRadialMode) {
+		if (ux.inRadialMode) {
 			this.g_radialGraph.grand_layout_radial();
 		} else {
 			get(w_ancestry_focus)?.g_widget.layout_entireTree();

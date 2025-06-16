@@ -36,7 +36,7 @@
 	function isEditing():	  boolean { return $w_s_text_edit?.ancestry_isEditing(ancestry) ?? false; }
 	function isStopping():	  boolean { return $w_s_text_edit?.ancestry_isStopping(ancestry) ?? false; }
 	function isPercolating(): boolean { return $w_s_text_edit?.ancestry_isPercolating(ancestry) ?? false; }
-	function title_extra():	   number { return (layout.inTreeMode && isEditing()) ? 2 : 0; }
+	function title_extra():	   number { return (ux.inTreeMode && isEditing()) ? 2 : 0; }
 	function hasChanges()	 		  { return title_prior != title_binded; }
 	function handle_mouse_up() 		  { clearClicks(); }
 
@@ -61,7 +61,7 @@
 	$: {
 		const _ = `${$w_ancestries_grabbed.join(',')}${$w_ancestries_expanded.join(',')}${$w_thing_color}`;
 		const isFocus = ancestry?.isFocus ?? false;
-		const adjust = layout.inRadialMode && isFocus;
+		const adjust = ux.inRadialMode && isFocus;
 		const isGrabbed = ancestry?.isGrabbed ?? false;
 		top = (isGrabbed ? 0.4 : 0) - (adjust ? isGrabbed ? 2.5 : 2 : 0);
 		left = adjust ? (title_width / 20 - 3) : 0.8;
@@ -116,8 +116,8 @@
 	export const _____CURSOR: unique symbol = Symbol('_____CURSOR');
 	
 	function update_cursorStyle() {
-		const noCursor = (isEditing() || ancestry.isGrabbed) && layout.inTreeMode && ancestry.isEditable;
-		const useTextCursor = isEditing() || ancestry.isGrabbed || !(layout.inRadialMode || ancestry.isEditable);
+		const noCursor = (isEditing() || ancestry.isGrabbed) && ux.inTreeMode && ancestry.isEditable;
+		const useTextCursor = isEditing() || ancestry.isGrabbed || !(ux.inRadialMode || ancestry.isEditable);
 		cursor_style = noCursor ? k.empty : `cursor: ${useTextCursor ? 'text' : 'pointer'}`;
 	}
 

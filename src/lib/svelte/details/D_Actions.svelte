@@ -20,7 +20,7 @@
 	const separator_font_size = k.font_size.smallest;
     const font_sizes = [k.font_size.smallest, k.font_size.smallest];
 	const es_cancel = ux.s_element_for(grabs.latest, T_Element.cancel, k.empty);
-	let list_title = grabs.latest?.isExpanded && layout.inTreeMode ? 'hide list' : 'list';
+	let list_title = grabs.latest?.isExpanded && ux.inTreeMode ? 'hide list' : 'list';
 	let actions_top = top + (has_title ? 3 : -13);
 	let slider_top = actions_top + actions_height + 3;
 	let button_titles = compute_button_titles();
@@ -75,7 +75,7 @@
 
 	function update_button_titles(): void {
 		const ancestry = grabs.latest;
-		list_title = layout.inTreeMode && !!ancestry && ancestry.isExpanded ? 'hide list' : 'show list';
+		list_title = ux.inTreeMode && !!ancestry && ancestry.isExpanded ? 'hide list' : 'show list';
 		button_titles = compute_button_titles();
 		setTimeout(() => reattachments += 1, 0);
 	}
@@ -221,7 +221,7 @@
 			title_font_size={separator_font_size}
 			origin={Point.y(top_separatorLength - 13)}
 			thickness={k.thickness.separator.ultra_thin}/>
-		{#if layout.inTreeMode}
+		{#if ux.inTreeMode}
 			<Separator
 				isHorizontal={true}
 				has_thin_divider={true}
@@ -231,13 +231,13 @@
 				title_left={k.separator_title_left}
 				title_font_size={separator_font_size}
 				thickness={k.thickness.separator.ultra_thin}
-				title={layout.inTreeMode ? 'maximum visible tree levels' : k.empty}/>
+				title={ux.inTreeMode ? 'maximum visible tree levels' : k.empty}/>
 			<Slider
 				max={12}
 				isLogarithmic={true}
 				value={$w_depth_limit}
 				width={k.width_details - 26}
-				isVisible={layout.inTreeMode}
+				isVisible={ux.inTreeMode}
 				thumb_color={colors.separator}
 				origin={new Point(10, slider_top)}
 				title_left={k.separator_title_left}

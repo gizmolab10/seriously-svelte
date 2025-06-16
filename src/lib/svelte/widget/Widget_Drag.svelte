@@ -57,7 +57,7 @@
 	});
 
 	function update_svgPaths() {
-		if (layout.inRadialMode) {
+		if (ux.inRadialMode) {
 			svgPathFor_dragDot = svgPaths.circle_atOffset(size, size - 1);
 		} else {
 			svgPathFor_dragDot = svgPaths.oval(size, false);
@@ -67,7 +67,7 @@
 
 	function update_colors() {
 		if (!ux.isAny_rotation_active && !!es_drag && !!thing) {
-			const usePointer = (!ancestry.isGrabbed || layout.inRadialMode) && ancestry.hasChildren;
+			const usePointer = (!ancestry.isGrabbed || ux.inRadialMode) && ancestry.hasChildren;
 			const cursor = usePointer ? 'pointer' : 'normal';
 			es_drag.isOut = !isHovering != ancestry.isGrabbed;
 			es_drag.set_forHovering(thing.color, cursor);
@@ -86,7 +86,7 @@
 				svgPathFor_ellipses = svgPaths.ellipses(6, 0.8, false, count, size / 2);
 			}
 			if (thing.hasRelated && show.related_dots) {
-				const x = (layout.inRadialMode ? 5.2 : 4.5) * (points_right ? -1 : 1);
+				const x = (ux.inRadialMode ? 5.2 : 4.5) * (points_right ? -1 : 1);
 				svgPathFor_related = svgPaths.circle_atOffset(size, 3, Point.x(x));
 			}
 		}
