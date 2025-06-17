@@ -986,7 +986,7 @@ export class Hierarchy {
 						newFocusAncestry = null;
 					}
 				} else {
-					graph_needsRebuild = ancestry.becomeFocus();
+					newFocusAncestry = ancestry;
 					if (!!childAncestry && !childAncestry.isVisible) {
 						const g_paging = ancestry.g_paging
 						g_paging?.ancestry_atIndex(ancestry.childAncestries).grab()
@@ -998,20 +998,18 @@ export class Hierarchy {
 			const rootAncestry = this.rootAncestry;
 			if (EXTREME) {
 				graph_needsRebuild = rootAncestry?.becomeFocus();	// tells graph to update line rects
-			} else {
-				if (!SHIFT) {
-					if (fromReveal) {
-						graph_needsRebuild = ancestry.toggleExpanded();
-					} else if (newGrabIsNotFocus && !!newGrabAncestry && !newGrabAncestry.isExpanded) {
-						graph_needsRebuild = newGrabAncestry.expand();
-					}
-				} else if (!!newGrabAncestry) { 
-					if (ancestry.isExpanded) {
-						graph_needsRebuild = ancestry.collapse();
-						newGrabAncestry = !ancestry.isVisible ? ancestry : null;
-					} else if (newGrabAncestry.isExpanded || (!!rootAncestry && !rootAncestry.equals(newGrabAncestry))) {
-						graph_needsRebuild = newGrabAncestry.collapse();
-					}
+			} else if (!SHIFT) {
+				if (fromReveal) {
+					graph_needsRebuild = ancestry.toggleExpanded();
+				} else if (newGrabIsNotFocus && !!newGrabAncestry && !newGrabAncestry.isExpanded) {
+					graph_needsRebuild = newGrabAncestry.expand();
+				}
+			} else if (!!newGrabAncestry) { 
+				if (ancestry.isExpanded) {
+					graph_needsRebuild = ancestry.collapse();
+					newGrabAncestry = !ancestry.isVisible ? ancestry : null;
+				} else if (newGrabAncestry.isExpanded || (!!rootAncestry && !rootAncestry.equals(newGrabAncestry))) {
+					graph_needsRebuild = newGrabAncestry.collapse();
 				}
 			}
 		}
