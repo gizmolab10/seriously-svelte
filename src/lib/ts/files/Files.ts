@@ -21,12 +21,13 @@ export default class Files {
 	async fetch_fromFile(file: File): Promise<any> {
 		const format = this.format_preference;
 		switch (format) {
-			case T_File_Format.json:	return await this.extract_json_object_fromFile(file);
-			case T_File_Format.csv:	return await this.extract_csv_records_fromFile(file);
-			default:			throw new Error(`Unsupported format: ${format}`);
+			case T_File_Format.seriously: return await this.extract_json_object_fromFile(file);
+			case T_File_Format.json:	  return await this.extract_json_object_fromFile(file);
+			case T_File_Format.csv:		  return await this.extract_csv_records_fromFile(file);
+			default:					  throw new Error(`Unsupported format: ${format}`);
 		}
 	}
-		
+
 	private async extract_json_object_fromFile(file: File): Promise<any> {
 		return new Promise((resolve, reject) => {
 			const reader = new FileReader();

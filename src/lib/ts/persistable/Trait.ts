@@ -16,6 +16,7 @@ export default class Trait extends Persistable {
 		this.text = text;
 		this.dict = dict;
 	}
+
 	get owner():	   Thing | null { return h.thing_forHID(this.ownerID.hash()); }
 	get fields(): Airtable.FieldSet { return { type: this.t_trait, ownerID: [this.ownerID], text: this.text, dict: u.stringify_object(this.dict) }; }
 
@@ -25,6 +26,18 @@ export default class Trait extends Persistable {
 		} else {
 			await databases.db_now.trait_remember_persistentCreate(this);
 		}
+	}
+	
+	static type_fromSeriously(type: string): T_Trait {
+		switch (type) {
+			case 'n': return T_Trait.note;
+			case 'd': return T_Trait.date;
+			case 'h': return T_Trait.link;
+			case 'c': return T_Trait.citation;
+			case '$': return T_Trait.money;
+			case '#': return T_Trait.phone;
+		}
+		return T_Trait.text;
 	}
 
 }

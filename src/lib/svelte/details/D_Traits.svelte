@@ -37,7 +37,7 @@
 			padding: 4px;
 			display: flex;
 			position: relative;
-			padding-bottom: 18px;
+			padding-bottom: 12px;
 			scrollbar-width: none;          /* Firefox */
 			flex-direction: column;
 			-ms-overflow-style: none;

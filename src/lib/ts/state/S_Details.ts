@@ -1,35 +1,10 @@
 import { w_t_database, w_ancestry_focus, w_ancestries_grabbed, w_hierarchy } from '../common/Stores';
 import { w_tag_things, w_thing_tags, w_thing_traits, w_tag_thing_index } from '../common/Stores';
-import { T_Trait, T_Details, T_Direction, k } from '../common/Global_Imports';
 import { h, Tag, grabs, Trait, Thing, Ancestry } from '../common/Global_Imports';
 import { w_show_details_ofType, w_show_traits_ofType } from '../common/Stores';
+import { T_Trait, T_Details, T_Direction, k } from '../common/Global_Imports';
+import { S_Identifiables } from './S_Identifiables';
 import { get } from 'svelte/store';
-
-class S_Identifiables<T> {
-	items: Array<T> = [];
-	index_ofItem = 0;
-	total_items = 0;
-
-	constructor(items: Array<T>) { this.set_items(items); }
-	get item(): T | null { return this.items[this.index_ofItem] ?? null; }
-
-	set_items(items: Array<T>) {
-		this.items = items;
-		this.total_items = items.length;
-	}
-
-	find_next_item(next: boolean): boolean {
-		let index = this.items.length;
-		while (index > 0) {		// prevent infinite loop if no item is found
-			this.index_ofItem = this.index_ofItem.increment(next, this.total_items);
-			if (!!this.item) {
-				return true;
-			}
-			index--;
-		}
-		return false;
-	}
-}
 
 class S_Details {
 	private s_things = new S_Identifiables<Thing>([]);

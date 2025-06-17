@@ -1,4 +1,3 @@
-import {hex, hsl} from 'color-convert';
 import { parseToRgba, transparentize } from 'color2k';
 
 // single source of truth for colors?????
@@ -10,6 +9,33 @@ export class Colors {
 	separator = '#eeeee0';
     disabled = 'lightGray';
     default_forThings = 'blue';
+
+	color_fromSeriously(color: string | undefined): string {
+		if (!!color) {			
+			const parts = color.split(',');				// "red:0.7073394146162211,green:0.0,blue:0.0,alpha:1.0"
+			const rgba = new RGBA();
+			for (const part of parts) {
+				const [key, value] = part.split(':');
+				const numValue = parseFloat(value);
+				switch (key) {
+					case 'red':
+						rgba.r = Math.round(numValue * 255);
+						break;
+					case 'green':
+						rgba.g = Math.round(numValue * 255);
+						break;
+					case 'blue':
+						rgba.b = Math.round(numValue * 255);
+						break;
+					case 'alpha':
+						rgba.a = numValue;
+						break;
+				}
+			}
+			return this.RGBA_toHex(rgba);
+		}
+		return this.default_forThings;
+	}
 
 	opacitize(color: string, amount: number): string { return transparentize(color, 1 - amount); }
 	ofSeparatorFor(background: string): string { return this.blend('#dedede', background);}

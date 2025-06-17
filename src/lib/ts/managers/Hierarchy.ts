@@ -1359,20 +1359,22 @@ export class Hierarchy {
 	async fetch_andBuild_fromFile(file: File) {
 		databases.defer_persistence = true;
 		try {
+			const format = files.format_preference;
 			const result = await files.fetch_fromFile(file);
-			switch (files.format_preference) {
+			const dict = result as Dictionary;
+			switch (format) {
 				case T_File_Format.csv:
 					const array = result as Array<Dictionary>;
 					for (const dict of array) {
-						await this.extract_fromCSV_Dict(dict);
+						pivot.extract_fromDict(dict);
 					}
 					await pivot.create_relationships_fromAllTraits();
 					break;
 				case T_File_Format.json:
-					const dict = result as Dictionary;
-					if (!!dict) {
-						await this.extract_fromJSONDict(dict);
-					}
+					await this.extractJSON_fromDict(dict);
+					break;
+				case T_File_Format.seriously:
+					this.extractSeriously_fromDict(dict, grabs.latest ?? this.rootAncestry);
 					break;
 			}
 		} finally {
@@ -1515,9 +1517,41 @@ export class Hierarchy {
 		return sum;
 	}
 
-	extract_fromCSV_Dict(dict: Dictionary) { pivot.extract_fromDict(dict); }
+	async extractSeriously_fromDict(dict: Dictionary, into: Ancestry) {
+		const name = dict.name;
+		const date = dict.date;
+		const order	 = dict.order;
+		const id = dict.recordName;
+		const color = colors.color_fromSeriously(dict.color);
+		const thing = this.thing_remember_runtimeCreate(this.db.idBase, id, name, color, T_Thing.generic);
+		const thingAncestry = await into.ancestry_persistentCreateUnique_byAddingThing(thing);
+		thing.persistence.setDate_fromSeriously(date);
+		if (!!thingAncestry) {
+			const traits = dict.traits as Array<Dictionary>;
+			const children = dict.children as Array<Dictionary>;
+			const relationship = thingAncestry.relationship;
+			if (!!relationship) {
+				relationship.orders = [order];
+			}
+			if (!!children) {
+				for (const child of children) {
+					await this.extractSeriously_fromDict(child, thingAncestry);
+				}
+			}
+			if (!!traits) {
+				for (const traitDict of traits) {
+					const date = traitDict.date;
+					const text = traitDict.text;
+					const id = traitDict.recordName;
+					const type = Trait.type_fromSeriously(traitDict.type);
+					const trait = this.trait_remember_runtimeCreateUnique(this.db.idBase, id, thing.id, type, text);
+					trait.persistence.setDate_fromSeriously(date);
+				}
+			}
+		}
+	}
 
-	async extract_fromJSONDict(dict: Dictionary) {
+	async extractJSON_fromDict(dict: Dictionary) {
 		const idRoot = dict.id ?? dict.hid ?? dict.idRoot;				// cheapo backwards compatibility
 		if (this.replace_rootID == null) {	
 			this.extract_allTypes_ofObjects_fromDict(dict);				// extract

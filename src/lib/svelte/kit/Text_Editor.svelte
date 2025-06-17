@@ -70,6 +70,7 @@
 	style='
 		top: {top}px;
 		left: {left}px;
+		padding-bottom: 8px;
 		position: relative;'>
 	<textarea
 		id={label}

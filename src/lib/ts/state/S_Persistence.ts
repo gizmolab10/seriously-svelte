@@ -45,4 +45,11 @@ export default class S_Persistence {
 		}
 	}
 
+	setDate_fromSeriously(seriously_date: string) {
+		const timestamp = parseFloat(seriously_date.split(':')[1]);
+		const date = new Date(timestamp * 1000);
+		const year = date.getFullYear() - 1994 + 2025;		// add (2025 - 1994) to convert from mac seriously's time interval to the current year
+		this.lastModifyDate = new Date(year, date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds());
+	}
+
 }

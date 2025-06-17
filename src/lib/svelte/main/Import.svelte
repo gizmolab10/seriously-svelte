@@ -19,16 +19,16 @@
 		$w_popupView_id = null;
 	}
 
-	function handle_selection(event: Event) {
+	async function handle_selection(event: Event) {
 		const target = event.target as HTMLInputElement;
 		const files = target?.files;
 		if (!!files && files.length > 0) {
-			h.fetch_andBuild_fromFile(files[0]);
+			await h.fetch_andBuild_fromFile(files[0]);
 		}
 		target.value = k.empty;		// allow re-selection of the same file, MUST do this AFTER fetch
-		layout.grand_build();
 		ux.T_Storage_Need = T_Storage_Need.direction;
 		dismiss_popup();
+		layout.grand_build();
 	}
 
 </script>
