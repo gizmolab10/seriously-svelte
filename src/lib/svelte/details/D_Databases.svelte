@@ -25,6 +25,7 @@
 	let s_element_byStorageType: { [id: string]: S_Element } = {};
 	let storage_choice: string | null = null;
 	let storage_details: Array<Object> = [];
+	let width = k.width_details - 7;
 
 	setup_s_elements();
 	es_save.set_forHovering('black', 'pointer');
@@ -45,8 +46,8 @@
 
 	function row_titles() {
 		switch (ux.T_Storage_Need) {
-			case T_Storage_Need.direction: return ['from or to a local file', ...storage_ids];
-			case T_Storage_Need.format:	   return ['choose a file format', ...format_ids()];
+			case T_Storage_Need.direction: return ['local file', ...storage_ids];
+			case T_Storage_Need.format:	   return ['file type', ...format_ids()];
 			case T_Storage_Need.busy:	   return [`${storage_choice}ing...`];
 		}
 	}
@@ -117,8 +118,8 @@
 		padding:5px;'>
 	<Segmented
 		name='db'
+		width={width}
 		titles={db_ids}
-		width={k.width_details - 7}
 		selected={[$w_t_database]}
 		height={k.height.controls}
 		origin={new Point(0, top - 2)}
@@ -158,14 +159,14 @@
 	{#key ux.T_Storage_Need}
 		<Buttons_Row
 			gap={4}
-			margin={60}
+			margin={20}
+			width={width}
 			has_seperator={true}
 			font_sizes={font_sizes}
-			width={k.width_details}
 			row_titles={row_titles()}
-			origin={Point.y(top + 132)}
 			closure={handle_actionRequest}
 			button_height={k.height.button}
+			center={new Point(width / 2, top + 140)}
 			separator_thickness={k.thickness.separator.ultra_thin}
 			name={`data-${(ux.T_Storage_Need == T_Storage_Need.direction) ? 'action' : 'format'}`}/>
 	{/key}

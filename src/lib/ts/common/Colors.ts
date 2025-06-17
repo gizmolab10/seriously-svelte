@@ -1,6 +1,8 @@
 import {hex, hsl} from 'color-convert';
 import { parseToRgba, transparentize } from 'color2k';
 
+// single source of truth for colors?????
+
 export class Colors {
 	default = 'black';
 	banner = '#f8f8f8';

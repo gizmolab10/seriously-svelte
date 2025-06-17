@@ -14,7 +14,7 @@ export enum T_Banner {
 export enum T_Details {
 	header,
 	actions,
-	info,
+	details,
 	tags,
 	traits,
 	display,
@@ -101,6 +101,12 @@ export enum T_Storage_Need {
 	busy	  = 'busy',
 }
 
+export enum T_Persistence {
+	remote = 'remote',
+	local  = 'local',
+	none   = 'none',
+}
+
 export enum T_Startup {
 	start = 'start',
 	fetch = 'fetch',
@@ -113,12 +119,6 @@ export enum T_File_Format {
 	cancel	  = 'cancel',
 	json	  = 'json',
 	csv		  = 'csv',
-}
-
-export enum T_Persistence {
-	remote = 'remote',
-	local  = 'local',
-	none   = 'none',
 }
 
 export enum T_Kinship {

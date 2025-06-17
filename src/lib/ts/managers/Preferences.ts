@@ -172,30 +172,7 @@ export class Preferences {
 
 	reactivity_subscribe() {
 
-		// other
-
-		w_depth_limit.subscribe((depth: number) => {
-			this.write_key(T_Preference.levels, depth);
-		});
-
-		w_background_color.subscribe((color: string) => {
-			document.documentElement.style.setProperty('--css-background-color', color);
-			this.write_key(T_Preference.background, color);
-		})
-
-		// radial
-
-		w_ring_rotation_angle.subscribe((angle: number) => {
-			this.write_key(T_Preference.ring_angle, angle);
-		});
-		w_ring_rotation_radius.subscribe((radius: number) => {
-			this.write_key(T_Preference.ring_radius, radius);
-		});
-		w_g_paging.subscribe((g_paging: G_Paging) => {
-			this.writeDB_key(T_Preference.paging, radial.s_thing_pages_byThingID);
-		})
-
-		// visibility
+		// VISIBILITY
 
 		w_show_tree_ofType.subscribe((value) => {
 			this.write_key(T_Preference.tree, value);
@@ -212,30 +189,56 @@ export class Preferences {
 		w_show_traits_ofType.subscribe((traits: Array<T_Trait>) => {
 			this.write_key(T_Preference.traits, traits);
 		})
+
+		// RADIAL
+
+		w_ring_rotation_angle.subscribe((angle: number) => {
+			this.write_key(T_Preference.ring_angle, angle);
+		});
+		w_ring_rotation_radius.subscribe((radius: number) => {
+			this.write_key(T_Preference.ring_radius, radius);
+		});
+		w_g_paging.subscribe((g_paging: G_Paging) => {
+			this.writeDB_key(T_Preference.paging, radial.s_thing_pages_byThingID);
+		})
 		
+		// OTHER
+
+		w_depth_limit.subscribe((depth: number) => {
+			this.write_key(T_Preference.levels, depth);
+		});
+		w_background_color.subscribe((color: string) => {
+			document.documentElement.style.setProperty('--css-background-color', color);
+			this.write_key(T_Preference.background, color);
+			// colors.background = color;	// uncommenting this turns the glow buttons gray
+		})
+
 		show.reactivity_subscribe();
 	}
 
 	restore_defaults() {
+		this.restore_stores();
+		this.reactivity_subscribe()
+	}
 
-		// radial
-		w_ring_rotation_angle	.set( this.read_key(T_Preference.ring_angle)		   ?? 0);
-		w_ring_rotation_radius	.set(Math.max( this.read_key(T_Preference.ring_radius) ?? 0, k.radius.ring_center));
+	restore_stores() {
 
-		// other
-		w_depth_limit			.set( this.read_key(T_Preference.levels)			   ?? 2);
-		w_font_size				.set( this.read_key(T_Preference.font_size)			   ?? 14);
-		w_thing_fontFamily		.set( this.read_key(T_Preference.font)				   ?? 'Times New Roman');
-		w_background_color		.set( this.read_key(T_Preference.background)		   ?? colors.background);
-
-		// visibility
+		// VISIBILITY
 		w_show_tree_ofType		.set( this.read_key(T_Preference.tree)				   ?? T_Kinship.child);
 		w_show_graph_ofType		.set( this.read_key(T_Preference.graph)				   ?? T_Graph.tree);
 		w_show_traits_ofType	.set( this.read_key(T_Preference.traits)			   ?? [T_Trait.text]);
 		w_show_details_ofType	.set( this.read_key(T_Preference.detail_types)		   ?? [T_Details.actions, T_Details.database]);
 		w_show_countDots_ofType	.set( this.read_key(T_Preference.countDots)			   ?? [T_Kinship.child]);
 
-		this.reactivity_subscribe()
+		// RADIAL
+		w_ring_rotation_angle	.set( this.read_key(T_Preference.ring_angle)		   ?? 0);
+		w_ring_rotation_radius	.set(Math.max( this.read_key(T_Preference.ring_radius) ?? 0, k.radius.ring_center));
+
+		// OTHER
+		w_depth_limit			.set( this.read_key(T_Preference.levels)			   ?? 2);
+		w_font_size				.set( this.read_key(T_Preference.font_size)			   ?? 14);
+		w_thing_fontFamily		.set( this.read_key(T_Preference.font)				   ?? 'Times New Roman');
+		w_background_color		.set( this.read_key(T_Preference.background)		   ?? colors.background);
 	}
 
 }

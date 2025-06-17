@@ -1,4 +1,4 @@
 import SeriouslyApp from './lib/svelte/main/SeriouslyApp.svelte';
-import './styles/app.css';
+import './styles/webseriously.css';
 
 new SeriouslyApp({ target: document.body });

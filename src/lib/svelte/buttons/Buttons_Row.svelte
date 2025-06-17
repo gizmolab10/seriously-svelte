@@ -31,6 +31,7 @@
 	const columns = button_titles.length;
 	let reattachments = 0;
 	let style = k.empty;
+	let top = origin?.y ?? center?.y - button_height / 2;
 	$: row_title = row_titles[0];
 
 	//////////////////////////////////////////////////////////////
@@ -65,7 +66,7 @@
 		}
 		if (!!origin || !!center) {
 			const x = origin?.x ?? center?.x - width / 2;
-			const y = origin?.y ?? center?.y - height / 2;
+			const y = origin?.y ?? center?.y - button_height / 2;
 			const alignment = align_left ? 'left: ' : 'right: ';
 			style = `${alignment}${x}px; top: ${y}px;`;
 		}
@@ -76,7 +77,7 @@
 
 <div class='buttons-row'
 	style='{style}
-		top:{origin.y}px;
+		top:{top}px;
 		position:absolute;
 		height:{button_height}px;
 		width:{width - (margin * 2)}px;'>

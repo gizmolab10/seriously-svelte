@@ -22,11 +22,11 @@ export default class DBTest extends DBCommon {
 		const kindR = T_Predicate.isRelated;
 		h.predicate_defaults_remember_runtimeCreate();
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTa, 'Active', 'green');
-		h.thing_remember_runtimeCreateUnique(this.idBase, idTb, 'Big', 'blue');
-		h.thing_remember_runtimeCreateUnique(this.idBase, idTc, 'Curiosity', '#d96726');
+		h.thing_remember_runtimeCreateUnique(this.idBase, idTb, 'Brilliant', 'blue');
+		h.thing_remember_runtimeCreateUnique(this.idBase, idTc, 'Curious', '#d96726');
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTd, 'Diligent', 'mediumvioletred');
-		h.thing_remember_runtimeCreateUnique(this.idBase, idTe, 'Energy', 'purple');
-		h.thing_remember_runtimeCreateUnique(this.idBase, idTf, 'Friends', 'coral');
+		h.thing_remember_runtimeCreateUnique(this.idBase, idTe, 'Excellent', 'purple');
+		h.thing_remember_runtimeCreateUnique(this.idBase, idTf, 'Friendly', 'coral');
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTr, 'Life', 'limegreen', T_Thing.root);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cra', kindC, idTr, idTa, [0, 0]);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'crb', kindC, idTr, idTb, [1, 0]);
@@ -48,8 +48,8 @@ export default class DBTest extends DBCommon {
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'rac', kindR, idTa, idTc, [0, 0]);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'raf', kindR, idTa, idTf, [0, 1]);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'rce', kindR, idTc, idTe, [0, 1]);
-		// this.makeMore(3, 'c', kindC, idTf, true);	// children of Friends
-		this.makeMore(2, 'g', kindC, idTb, true, 4);	// children of Big
+		// this.makeMore(3, 'c', kindC, idTf, true);	// children of Friendly
+		this.makeMore(2, 'g', kindC, idTb, true, 4);	// children of Brilliant
 		this.makeMore(4, 'e', kindR, idTb, true, 2);	// related to  "
 		// this.makeMore(2, 'c', kindC, idTb, false);	// parents of  "
 	}

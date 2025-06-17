@@ -21,7 +21,6 @@
 	const offset_toIntersection = new Point(-4, 8);
 	let separator_color = colors.separator;
 	let panel_reattachments = 0;
-	let chain = ['Panel'];
 
 	$: $w_t_database, $w_t_startup, $w_graph_rect, update_panel();
 	$: $w_background_color, separator_color = colors.separator;

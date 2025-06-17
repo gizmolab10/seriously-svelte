@@ -1,13 +1,19 @@
-body {
-	background-color: var(--css-background-color);
-}
-
 svg {
 	display: block;		/* override inline to eliminate unwanted vertical displacements */
 }
 
 div, svg, span, input {
 	background-color: transparent;
+}
+
+body {
+	background-color: var(--css-background-color);
+    width: var(--css-body-width, 100%);
+}
+
+input[type="range"] {
+	user-select: auto !important;
+	touch-action: auto !important;
 }
 
 button, svg {
@@ -18,13 +24,6 @@ button, svg {
 
 html, body {
 	overflow: hidden;
-    height: 100%;
-    width: 100%;
     padding: 0;
     margin: 0;
-}
-
-input[type="range"] {
-	user-select: auto !important;
-	touch-action: auto !important;
 }

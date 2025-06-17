@@ -14,6 +14,7 @@ export class G_Window {
 		layout.graphRect_update();	// needed for applyScale
 		this.applyScale(p.read_key(T_Preference.scale) ?? 1);
 		layout.renormalize_user_graph_offset();	// must be called after apply scale (which fubars offset)
+		document.documentElement.style.setProperty('--css-body-width', this.windowSize.width.toString() + 'px');
 	}
 
 	zoomBy(factor: number): number {
