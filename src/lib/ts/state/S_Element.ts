@@ -1,5 +1,5 @@
-import { k, ux, colors, Ancestry, T_Element, layout } from '../common/Global_Imports';
-import { w_ancestries_grabbed, w_control_key_down } from '../../ts/common/Stores';
+import { w_ancestries_grabbed, w_control_key_down, w_background_color } from '../../ts/common/Stores';
+import { k, ux, colors, Ancestry, T_Element } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
 
@@ -15,12 +15,12 @@ import { get } from 'svelte/store';
 	//////////////////////////////////////////
 
 export default class S_Element {
+	color_background = get(w_background_color);
 	responder: HTMLElement | null = null;
 	defaultDisabledColor = '#999999';
 	defaultCursor = k.cursor_default;
 	hoverCursor = k.cursor_default;
 	identifiable!: Identifiable;
-	color_background = 'white';
 	hoverColor = 'transparent';
 	type = T_Element.none;
 	ignore_hover = false;

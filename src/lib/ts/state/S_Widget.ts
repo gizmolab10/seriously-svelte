@@ -9,9 +9,9 @@ import { get } from 'svelte/store';
 	//	 across reattachment				//
 	//										//
 	// computes color, background, border	//
-	// influenced by grab, edit, focus		//	
 	//										//
-	//	no hover & no expanded				//
+	//	responds to grab, edit, focus,		//	
+	//	hover & expand						//
 	//										//
 	//////////////////////////////////////////
 
