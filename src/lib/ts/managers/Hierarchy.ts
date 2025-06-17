@@ -929,13 +929,15 @@ export class Hierarchy {
 
 	// won't work for relateds
 	ancestry_rebuild_persistentRelocateRight(ancestry: Ancestry, RIGHT: boolean, EXTREME: boolean) {
-		const parentAncestry = RIGHT ? ancestry.ancestry_ofNextSibling(false) : ancestry.ancestry_createUnique_byStrippingBack(2);
+		let parentAncestry = RIGHT ? ancestry.ancestry_ofNextSibling(false) : ancestry.ancestry_createUnique_byStrippingBack(2);
+		let relocatedAncestry: Ancestry | null = null;
 		const parentThing = parentAncestry?.thing;
 		const thing = ancestry.thing;
 		if (!!thing && !!parentThing && !!parentAncestry) {
 			if (thing.isInDifferentBulkThan(parentThing)) {		// should move across bulks
 				this.ancestry_remember_bulk_persistentRelocateRight(ancestry, parentAncestry);
 			} else {
+				const depth_limit = get(w_depth_limit);
 				const relationship = ancestry.relationship;
 				if (!!relationship) {
 					// move ancestry to a different parent
@@ -943,15 +945,19 @@ export class Hierarchy {
 					relationship.assign_idParent(parentThing.id);
 					relationship.order_setTo(order + k.halfIncrement, T_Order.child);
 					debug.log_move(`relocate ${relationship.description}`)
-					const childAncestry = parentAncestry.ancestry_createUnique_byAppending_relationshipID(relationship!.id);
-					childAncestry?.grabOnly();
+					relocatedAncestry = parentAncestry.ancestry_createUnique_byAppending_relationshipID(relationship!.id);
+					relocatedAncestry?.grabOnly();
 				}
 				this.rootAncestry.order_normalizeRecursive();
 				if (!parentAncestry.isExpanded) {
 					parentAncestry.expand();
 				}
-				if (!parentAncestry.isVisible) {
-					parentAncestry.becomeFocus();
+				const needsRefocus = RIGHT && !!relocatedAncestry && relocatedAncestry.depth_ofFocus >= depth_limit;
+				if (!parentAncestry.isVisible || needsRefocus) {
+					if (needsRefocus && !!relocatedAncestry) {
+						parentAncestry = relocatedAncestry.ancestry_createUnique_byStrippingBack(depth_limit);
+					}
+					parentAncestry?.becomeFocus();
 				}
 			}
 			layout.grand_build();			// so Tree_Branches component will update
