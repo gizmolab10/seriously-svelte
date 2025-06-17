@@ -14,7 +14,7 @@ export enum T_Banner {
 export enum T_Details {
 	header,
 	actions,
-	selection,
+	info,
 	tags,
 	traits,
 	display,

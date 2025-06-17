@@ -3,8 +3,8 @@ import { Access, Ancestry, Predicate, Relationship, Persistable } from '../commo
 import { w_popupView_id, w_ancestry_focus, w_s_text_edit, w_hierarchy } from '../common/Stores';
 import { T_Create, T_Alteration, T_File_Format, T_Persistable } from '../common/Global_Imports';
 import { T_Thing, T_Trait, T_Order, T_Control, T_Predicate } from '../common/Global_Imports';
+import { w_depth_limit, w_storage_updated, w_s_alteration } from '../common/Stores';
 import { colors, signals, layout, databases } from '../common/Global_Imports';
-import { w_storage_updated, w_s_alteration } from '../common/Stores';
 import type { Integer, Dictionary } from '../common/Types';
 import Identifiable from '../runtime/Identifiable';
 import DBCommon from '../database/DBCommon';
@@ -959,7 +959,7 @@ export class Hierarchy {
 	}
 
 	ancestry_rebuild_runtimeBrowseRight(ancestry: Ancestry, RIGHT: boolean, SHIFT: boolean, EXTREME: boolean, fromReveal: boolean) {
-		const newFocusAncestry = ancestry.parentAncestry;
+		let newFocusAncestry = ancestry.parentAncestry;
 		const childAncestry = ancestry.ancestry_ofFirst_visibleChild;
 		let newGrabAncestry: Ancestry | null = RIGHT ? childAncestry : newFocusAncestry;
 		const newGrabIsNotFocus = !newGrabAncestry?.isFocus;
@@ -972,7 +972,13 @@ export class Hierarchy {
 					newGrabAncestry = null;
 				}
 				if (ux.inTreeMode) {
+					const depth_limit = get(w_depth_limit);
 					graph_needsRebuild = ancestry.expand();
+					if (!!newGrabAncestry && newGrabAncestry.depth_ofFocus >= depth_limit) {
+						newFocusAncestry = newGrabAncestry.ancestry_createUnique_byStrippingBack(depth_limit);
+					} else {
+						newFocusAncestry = null;
+					}
 				} else {
 					graph_needsRebuild = ancestry.becomeFocus();
 					if (!!childAncestry && !childAncestry.isVisible) {
@@ -1006,11 +1012,9 @@ export class Hierarchy {
 		w_s_text_edit?.set(null);
 		if (!!newGrabAncestry) {
 			newGrabAncestry.grabOnly();
-			if (!RIGHT && !!newFocusAncestry) {
+			if (!!newFocusAncestry) {
 				const newFocusIsGrabbed = newFocusAncestry.equals(newGrabAncestry);
-				const canBecomeFocus = (!SHIFT || newFocusIsGrabbed) && newGrabIsNotFocus;
-				const shouldBecomeFocus = newFocusAncestry.isRoot || !newFocusAncestry.isVisible || ux.inRadialMode;
-				const becomeFocus = canBecomeFocus && shouldBecomeFocus;
+				const becomeFocus = newGrabIsNotFocus && (!SHIFT || newFocusIsGrabbed) && (RIGHT || !newFocusAncestry.isVisible);
 				if (becomeFocus && newFocusAncestry.becomeFocus()) {
 					graph_needsRebuild = true;
 				}

@@ -17,9 +17,10 @@
 	const border = '1px solid black';
     const font_sizes = [k.font_size.smallest, k.font_size.smaller];
 	const storage_ids = [T_File_Operation.import, T_File_Operation.export];
-	const format_ids = [T_File_Format.csv, T_File_Format.json, T_File_Format.cancel];
+	const output_format_ids = [T_File_Format.csv, T_File_Format.json, T_File_Format.cancel];
 	const es_save = ux.s_element_for(new Identifiable('save'), T_Element.button, 'save');
 	const db_ids = [T_Database.local, T_Database.firebase, T_Database.airtable, T_Database.test];
+	const input_format_ids = [T_File_Format.csv, T_File_Format.json, T_File_Format.seriously, T_File_Format.cancel];
 	const button_style = `font-family: ${$w_thing_fontFamily}; font-size:0.85em; left: 5px; top: -2px; position: absolute;`;
 	let s_element_byStorageType: { [id: string]: S_Element } = {};
 	let storage_choice: string | null = null;
@@ -45,13 +46,13 @@
 	function row_titles() {
 		switch (ux.T_Storage_Need) {
 			case T_Storage_Need.direction: return ['from or to a local file', ...storage_ids];
-			case T_Storage_Need.format:	   return ['choose a file format', ...format_ids];
+			case T_Storage_Need.format:	   return ['choose a file format', ...format_ids()];
 			case T_Storage_Need.busy:	   return [`${storage_choice}ing...`];
 		}
 	}
 	
 	function setup_s_elements() {
-		const ids = [...storage_ids, ...format_ids];
+		const ids = [...storage_ids, ...input_format_ids];
 		for (const id of ids) {
 			const es_storage = ux.s_element_for(null, T_Element.database, id);
 			es_storage.set_forHovering(colors.default, 'pointer');
@@ -70,8 +71,12 @@
 		}
 	}
 
+	function format_ids(): T_File_Format[] {
+		return (ux.T_Storage_Need == T_Storage_Need.format) ? input_format_ids : output_format_ids;
+	}
+
 	function handle_actionRequest(t_request: T_Request, s_mouse: S_Mouse, column: number): any {
-		const ids = (ux.T_Storage_Need == T_Storage_Need.direction) ? storage_ids : format_ids;
+		const ids = (ux.T_Storage_Need == T_Storage_Need.direction) ? storage_ids : format_ids();
 		switch (t_request) {
 			case T_Request.handle_click: return handle_click_forColumn(s_mouse, column);
 			case T_Request.name:		 return ids[column];
@@ -82,7 +87,7 @@
 	}
 	
 	function handle_click_forColumn(s_mouse, column) {
-		const ids = (ux.T_Storage_Need == T_Storage_Need.direction) ? storage_ids : format_ids;
+		const ids = (ux.T_Storage_Need == T_Storage_Need.direction) ? storage_ids : format_ids();
 		if (s_mouse.isHover) {
 			s_element_byStorageType[ids[column]].isOut = s_mouse.isOut;
 		} else if (s_mouse.isDown) {

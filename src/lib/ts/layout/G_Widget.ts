@@ -152,9 +152,9 @@ export default class G_Widget {
 	}
 
 	private layout_widget_andChildren() {
-		this.g_parentBranches.layout_branches();	// noop if radial, parentless or collapsed
-		this.g_childBranches.layout_branches();		// noop if radial, childless or collapsed
-		this.layout_widget();						// assumes all children's subtrees are laid out (needed for progeny size)
+		this.g_parentBranches.layout_branches();	// noop if parentless, radial or collapsed
+		this.g_childBranches.layout_branches();		//   ...   childless,    ...  
+		this.layout_widget();						// assumes full progeny subtrees are laid out (needed for progeny size)
 		this.layout_incoming_treeLine();
 		this.layout_focus();
 	}
