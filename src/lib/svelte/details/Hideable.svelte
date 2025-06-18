@@ -1,6 +1,6 @@
 <script lang='ts'>
     import { k, u, Rect, Size, Point, colors, svgPaths, T_Details, T_Layer } from '../../ts/common/Global_Imports';
-    import { w_background_color, w_show_details_ofType } from '../../ts/common/Stores';
+    import { w_background_color, w_show_details_ofType, w_count_resize_hideables } from '../../ts/common/Stores';
     import { createEventDispatcher, tick, setContext } from 'svelte';
     import Glows_Banner from './Glows_Banner.svelte';
     export let extra_titles: string[] = [];
@@ -8,35 +8,33 @@
     export let t_details: T_Details;
     export let hasBanner = true;
     export let isBottom = false;
-    export let height = 0;
     const title = T_Details[t_details];
     const titles = [title, ...extra_titles];
     const dispatch = createEventDispatcher();
     const banner_height = k.height.banner.details;
     const banner_rect = new Rect(Point.zero, new Size(k.width_details, banner_height));
+    let slot_isVisible = hasBanner ? $w_show_details_ofType.includes(t_details) : true;;
     let banner_color = colors.ofBannerFor($w_background_color);
-    let isHidden = !show_slot();
     let element: HTMLElement;
+    let height = 22;
 
     //////////////////////////////////////////////////////
     //													//
     //	hasBanner:		some hideables have no banner	//
     //	t_details:		title in banner     			//
     //	extra_titles:	extra titles added into banner	//
-    //	isHidden:		whether slot is hidden			//
+    //	slot_isVisible:	whether slot is visible			//
     //													//
     //////////////////////////////////////////////////////
 
     $: dispatch('heightChange', { height });
     setContext('handle_banner_click', toggle_hidden);
     $: $w_background_color, banner_color = colors.ofBannerFor($w_background_color);
-    function show_slot(): boolean { return hasBanner ? $w_show_details_ofType.includes(t_details) : true; }
-    function callSlottedMethod(methodName: string, ...args: any[]) { dispatch('callMethod', { methodName, args }); }
     
     $: (async () => {
         if (element && hasBanner) {
             await tick();
-            height = isHidden ? banner_height : element.scrollHeight - 1;
+            height = slot_isVisible ?  element.scrollHeight - 1 : banner_height;
         }
     })();
 
@@ -49,7 +47,7 @@
                 t_details_array.push(t_details);
             }
             $w_show_details_ofType = t_details_array;
-            isHidden = !show_slot();
+            slot_isVisible = hasBanner ? $w_show_details_ofType.includes(t_details) : true;
         }
     }
 
@@ -60,12 +58,12 @@
     bind:this={element}
     style='
 		top: 0px;
-        width: {k.width_details - 12}px;
         display: flex;
         flex-shrink: 0;
         height: {height}px;
         position: relative;
         flex-direction: column;
+        width: {k.width_details - 12}px;
         {origin ? `left: ${origin.x}px; top: ${origin.y}px;` : k.empty}'>
     {#if hasBanner}
         <div
@@ -90,8 +88,8 @@
             position: relative;
             height: {height}px;
             padding-bottom: 9px;
-            display: {isHidden ? 'none' : 'block'};
-            top: {hasBanner ? banner_height : 0}px;'>
+            top: {hasBanner ? banner_height : 0}px;
+            display: {slot_isVisible ? 'block' : 'none'};'>
         <slot/>
     </div>
 </div>

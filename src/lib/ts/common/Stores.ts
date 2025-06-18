@@ -55,6 +55,7 @@ export const w_storage_updated			 = writable<number>();
 
 const _____COUNTS: unique symbol = Symbol('COUNTS');
 
+export const w_count_resize_hideables	 = writable<number>();
 export const w_count_mouse_up			 = writable<number>();
 export const w_count_rebuild			 = writable<number>();
 export const w_count_details			 = writable<number>();	
@@ -78,6 +79,7 @@ class Stores {
 		w_count_mouse_up.set(0);
 		w_thing_color.set(null);
 		w_s_text_edit?.set(null);
+		w_count_resize_hideables.set(0);
 		w_t_startup.set(T_Startup.start);
 		w_background_color.subscribe((color: string) => {
 			colors.banner = colors.ofBannerFor(color);

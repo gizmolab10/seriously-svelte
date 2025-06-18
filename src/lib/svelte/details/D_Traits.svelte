@@ -1,18 +1,28 @@
 <script lang='ts'>
-	import { S_Mouse, T_Trait, T_Element, T_Request, T_Direction } from '../../ts/common/Global_Imports';
-	import { k, ux, colors, Size, Point } from '../../ts/common/Global_Imports';
+	import { w_thing_traits, w_ancestries_grabbed, w_count_resize_hideables } from '../../ts/common/Stores';
+	import { T_Trait, T_Element, T_Request, T_Direction } from '../../ts/common/Global_Imports';
+	import { k, ux, colors, Size, Point, S_Mouse } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/runtime/Identifiable';
-	import { w_thing_traits } from '../../ts/common/Stores';
-    import Next_Previous from '../kit/Next_Previous.svelte';
 	import { s_details } from '../../ts/state/S_Details';
 	import Text_Editor from '../kit/Text_Editor.svelte';
-	import Segmented from '../mouse/Segmented.svelte';
-	import Hideable from './Hideable.svelte';
 	const es_button = ux.s_element_for(new Identifiable('trait'), T_Element.button, 'trait');
 	let text_box_size = new Size(k.width_details - 34, 68);
+	let prior_trigger = k.empty;
+	let reattachments = 0;
 
 	s_details.update();
 	es_button.set_forHovering(colors.default, 'pointer');
+
+	$: {
+		const trigger = `${$w_thing_traits.map(t => t.text).join(', ')} ${$w_ancestries_grabbed.map(a => a.id).join(', ')}`;
+		if (trigger !== prior_trigger) {
+			prior_trigger = trigger;
+			reattachments++;
+			setTimeout(() => {
+				$w_count_resize_hideables++;
+			}, 1);
+		}
+	}
 
 	function handleClick_onNextPrevious(t_request: T_Request, s_mouse: S_Mouse, column: number): any {
 		switch (t_request) {
@@ -25,7 +35,7 @@
 
 </script>
 
-{#key `${$w_thing_traits.map(t => t.t_trait).join(', ')}`}
+{#key reattachments}
 	<div class='hierarchy_traits'
 		style='
 			width: 100%;
