@@ -1,5 +1,5 @@
 import { Tag, Rect, Point, Thing, Trait, colors, Ancestry, Hierarchy } from '../common/Global_Imports';
-import { T_Graph, T_Trait, T_Kinship, T_Details, T_Startup } from '../common/Global_Imports';
+import { T_Graph, T_Trait, T_Kinship, T_Detail, T_Startup } from '../common/Global_Imports';
 import { G_Paging, G_Cluster, S_Text_Edit, S_Alteration } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
 
@@ -7,7 +7,7 @@ const _____VISIBILITY: unique symbol = Symbol('VISIBILITY');
 
 export const w_show_tree_ofType			 = writable<Array<T_Kinship>>();
 export const w_show_countDots_ofType	 = writable<Array<T_Kinship>>();
-export const w_show_details_ofType		 = writable<Array<T_Details>>();
+export const w_show_details_ofType		 = writable<Array<T_Detail>>();
 export const w_show_directionals_ofType	 = writable<string[]>();
 export const w_show_graph_ofType		 = writable<T_Graph>();
 export const w_show_related				 = writable<boolean>();
@@ -79,6 +79,7 @@ class Stores {
 		w_count_mouse_up.set(0);
 		w_thing_color.set(null);
 		w_s_text_edit?.set(null);
+		w_show_details_ofType.set([]);
 		w_count_resize_hideables.set(0);
 		w_t_startup.set(T_Startup.start);
 		w_background_color.subscribe((color: string) => {

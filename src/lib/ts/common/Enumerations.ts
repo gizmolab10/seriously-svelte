@@ -11,7 +11,7 @@ export enum T_Banner {
 	crumbs,
 }
 
-export enum T_Details {
+export enum T_Detail {
 	header,
 	actions,
 	details,

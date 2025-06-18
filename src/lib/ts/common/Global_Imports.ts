@@ -17,7 +17,7 @@ import { T_Thing, T_Trait, T_Predicate } from './Enumerations';
 import { T_Create, T_Browser, T_Alteration } from './Enumerations';
 import { T_Curve, T_Order, T_Widget, T_Layer } from './Enumerations';
 import { T_Oblong, T_Element, T_SvelteComponent } from './Enumerations';
-import { T_Action, T_Details, T_Request, T_Storage_Need } from './Enumerations';
+import { T_Action, T_Detail, T_Request, T_Storage_Need } from './Enumerations';
 import { T_File_Format, T_File_Operation, T_Startup, T_Kinship, T_RingZone, T_Preference } from './Enumerations';
 
 import S_Alteration from '../state/S_Alteration';
@@ -96,7 +96,7 @@ export {
 	
 	T_Debug, T_Timer, T_Signal,
 	T_Quadrant, T_Orientation, T_Direction,
-	T_Banner, T_Details, T_Startup, T_Graph,
+	T_Banner, T_Detail, T_Startup, T_Graph,
 	T_Persistable, T_Persistence, T_Request,
 	T_Order, T_File_Format, T_File_Operation,
 	T_Element, Svelte_Wrapper, T_SvelteComponent,

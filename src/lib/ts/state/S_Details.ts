@@ -1,11 +1,13 @@
 import { w_t_database, w_ancestry_focus, w_ancestries_grabbed, w_hierarchy } from '../common/Stores';
 import { w_tag_things, w_thing_tags, w_thing_traits, w_tag_thing_index } from '../common/Stores';
 import { h, Tag, grabs, Trait, Thing, Ancestry } from '../common/Global_Imports';
-import { T_Details, T_Direction, k } from '../common/Global_Imports';
+import { T_Detail, T_Direction, k } from '../common/Global_Imports';
 import { w_show_details_ofType } from '../common/Stores';
 import { S_Identifiables } from './S_Identifiables';
+import { S_Hideable } from './S_Hideable';
 
 class S_Details {
+	private s_hideables_byType: { [t_detail: string]: S_Hideable } = {};
 	private s_things = new S_Identifiables<Thing>([]);
 	private s_traits = new S_Identifiables<Trait>([]);
 	private s_tags = new S_Identifiables<Tag>([]);
@@ -23,9 +25,12 @@ class S_Details {
 		w_ancestries_grabbed.subscribe((array: Array<Ancestry>) => {
 			this.update();
 		});
-		w_show_details_ofType.subscribe((t_details: Array<T_Details>) => {
-			this.number_ofDetails = t_details?.length ?? 0;
+		w_show_details_ofType.subscribe((t_detail: Array<T_Detail>) => {
+			this.number_ofDetails = t_detail?.length ?? 0;
 		});
+		for (const t_detail of Object.values(T_Detail) as T_Detail[]) {
+			this.s_hideables_byType[t_detail] = new S_Hideable(t_detail);
+		}
 	}
 
 	private update() {
@@ -36,10 +41,10 @@ class S_Details {
 
 	update_forBanner(banner_title: string, selected_title: string) {
 		const next = T_Direction.next === selected_title as unknown as T_Direction;
-		const t_details = T_Details[banner_title as keyof typeof T_Details];
-		switch (t_details) {
-			case T_Details.traits: this.select_nextTrait(next); break;
-			case T_Details.tags:   this.select_nextTag(next); break;
+		const t_detail = T_Detail[banner_title as keyof typeof T_Detail];
+		switch (t_detail) {
+			case T_Detail.traits: this.select_nextTrait(next); break;
+			case T_Detail.tags:   this.select_nextTag(next); break;
 		}
 	}
 	

@@ -2,7 +2,7 @@
 	import { c, k, u, ux, Point, debug, colors, layout, grabs, Ancestry } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { w_graph_rect, w_device_isMobile } from '../../ts/common/Stores';
-	import { T_Details, S_Widget } from '../../ts/common/Global_Imports';
+	import { T_Detail, S_Widget } from '../../ts/common/Global_Imports';
 	import { w_show_details_ofType } from '../../ts/common/Stores';
 	let ancestry: Ancestry | null = null;
 	let background_color = 'transparent';

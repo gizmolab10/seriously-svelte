@@ -5,7 +5,7 @@
 	import { s_details } from '../../ts/state/S_Details';
 	import G_Repeater from '../../ts/layout/G_Repeater';
 	import Separator from '../kit/Separator.svelte';
-	export let toggle_hidden: (title: string) => boolean;
+	export let toggle_hidden: (title: string) => void;
 	export let font_size = s_details.font_size;
 	export let titles: string[];
 	export let height: number;
@@ -16,8 +16,6 @@
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//																				//
-	//	height:	is of the banner													//
-	//	width:	is overall width of the banner									 	//
 	//	titles:	one for each buttons, separated by a vertical separator with wings	//
 	//																				//
 	//	g_repeater computes layout													//
@@ -28,9 +26,9 @@
 
 	$: $w_background_color, banner_color = colors.ofBannerFor($w_background_color);
 
-	function intercept_click(title: string): boolean {
+	function intercept_click(title: string) {
 		if (title === titles[0]) {
-			return toggle_hidden(title);
+			toggle_hidden(title);
 		} else {
 			s_details.update_forBanner(titles[0], title);
 		}

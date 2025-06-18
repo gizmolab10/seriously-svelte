@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, Point, layout, T_Layer, T_Details, T_Direction } from '../../ts/common/Global_Imports';
+	import { k, Point, layout, T_Layer, T_Detail, T_Direction } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_count_details, w_show_graph_ofType } from '../../ts/common/Stores';
 	import Separator from '../kit/Separator.svelte';
 	import D_Databases from './D_Databases.svelte';
@@ -35,25 +35,25 @@
 			top:{layout.graph_top - 2}px;
 			width:{k.width_details - 6}px;
 			height:{$w_graph_rect.size.height}px;'>
-		<Hideable t_details={T_Details.header} hasBanner={false} height={20}>
+		<Hideable t_detail={T_Detail.header}>
 			<D_Header/>
 		</Hideable>
-		<Hideable t_details={T_Details.actions}>
+		<Hideable t_detail={T_Detail.actions}>
 			<D_Actions/>
 		</Hideable>
-		<Hideable t_details={T_Details.details}>
+		<Hideable t_detail={T_Detail.details}>
 			<D_Thing/>
 		</Hideable>
-		<Hideable t_details={T_Details.tags} extra_titles={next_previous_titles}>
+		<Hideable t_detail={T_Detail.tags} extra_titles={next_previous_titles}>
 			<D_Tags/>
 		</Hideable>
-		<Hideable t_details={T_Details.traits} extra_titles={next_previous_titles}>
+		<Hideable t_detail={T_Detail.traits} extra_titles={next_previous_titles}>
 			<D_Traits/>
 		</Hideable>
-		<Hideable t_details={T_Details.display} isBottom={true}>
+		<Hideable t_detail={T_Detail.display}>
 			<D_Display/>
 		</Hideable>
-		<Hideable t_details={T_Details.database}>
+		<Hideable t_detail={T_Detail.database} isBottom={true}>
 			<D_Databases/>
 		</Hideable>
 	</div>
