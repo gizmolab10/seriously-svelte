@@ -120,12 +120,12 @@
 
 	textarea:focus {
 		outline: none;
-		border: 0.5px dashed black;
+		border: 1px dashed blue;
 	}
 
 	textarea:blur {
 		outline: none;
-		border: 0.5px solid black;
+		border: 1px solid black;
 	}
 
 </style>

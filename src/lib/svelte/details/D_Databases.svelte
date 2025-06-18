@@ -1,12 +1,13 @@
 <script lang='ts'>
 	import { h, k, ux, busy, Point, colors, S_Element, databases, Hierarchy } from '../../ts/common/Global_Imports';
 	import { T_File_Format, T_File_Operation, T_Storage_Need, T_Signal } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Element, T_Preference, T_Request } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Detail, T_Element, T_Preference, T_Request } from '../../ts/common/Global_Imports';
 	import { w_storage_updated, w_thing_fontFamily } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import { T_Database } from '../../ts/database/DBCommon';
     import Buttons_Row from '../buttons/Buttons_Row.svelte';
 	import { w_t_database } from '../../ts/common/Stores';
+    import { s_details } from '../../ts/state/S_Details';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Text_Table from '../kit/Text_Table.svelte';
 	import Separator from '../kit/Separator.svelte';
@@ -16,6 +17,7 @@
 	const buttons_top = 138;
 	const border = '1px solid black';
     const font_sizes = [k.font_size.smallest, k.font_size.smaller];
+    const s_hideable = s_details.s_hideables_byType[T_Detail.database];
 	const storage_ids = [T_File_Operation.import, T_File_Operation.export];
 	const output_format_ids = [T_File_Format.csv, T_File_Format.json, T_File_Format.cancel];
 	const es_save = ux.s_element_for(new Identifiable('save'), T_Element.button, 'save');
@@ -32,15 +34,18 @@
 
 	$: $w_storage_updated, $w_t_database, update_storage_details();
 
-	function update_storage_details() {
-		if (!!h) {
-			storage_details = [h.db.details_forStorage,
-			['depth', h.depth.expressZero_asHyphen()],
-			['things', h.things.length.expressZero_asHyphen()],
-			['relationships', h.relationships.length.expressZero_asHyphen()],
-			['traits', h.traits.length.expressZero_asHyphen()],
-			['tags', h.tags.length.expressZero_asHyphen()],
-			['dirty', h.total_dirty_count.expressZero_asHyphen()]];
+	function format_ids(): T_File_Format[] {
+		return (ux.T_Storage_Need == T_Storage_Need.format) ? input_format_ids : output_format_ids;
+	}
+
+	function handle_db_selection(titles: string[]) {
+		const t_database = titles[0] as T_Database;	// only ever contains one title
+		databases.grand_change_database(t_database);
+	}
+
+	async function handle_save(s_mouse) {
+		if (!!h && h.hasRoot && s_mouse.isUp) {
+			await h.db.persist_all(true);
 		}
 	}
 
@@ -61,21 +66,6 @@
 		}
 	}
 
-	function handle_db_selection(titles: string[]) {
-		const t_database = titles[0] as T_Database;	// only ever contains one title
-		databases.grand_change_database(t_database);
-	}
-
-	async function handle_save(s_mouse) {
-		if (!!h && h.hasRoot && s_mouse.isUp) {
-			await h.db.persist_all(true);
-		}
-	}
-
-	function format_ids(): T_File_Format[] {
-		return (ux.T_Storage_Need == T_Storage_Need.format) ? input_format_ids : output_format_ids;
-	}
-
 	function handle_actionRequest(t_request: T_Request, s_mouse: S_Mouse, column: number): any {
 		const ids = (ux.T_Storage_Need == T_Storage_Need.direction) ? storage_ids : format_ids();
 		switch (t_request) {
@@ -85,6 +75,18 @@
 			default:					 return false;
 		}
 		return null;
+	}
+
+	function update_storage_details() {
+		if (!!h) {
+			storage_details = [h.db.details_forStorage,
+			['depth', h.depth.expressZero_asHyphen()],
+			['things', h.things.length.expressZero_asHyphen()],
+			['relationships', h.relationships.length.expressZero_asHyphen()],
+			['traits', h.traits.length.expressZero_asHyphen()],
+			['tags', h.tags.length.expressZero_asHyphen()],
+			['dirty', h.total_dirty_count.expressZero_asHyphen()]];
+		}
 	}
 	
 	function handle_click_forColumn(s_mouse, column) {
@@ -107,7 +109,6 @@
 				ux.T_Storage_Need = T_Storage_Need.busy;
 			}
 		}
-		return null;
 	}
 
 </script>

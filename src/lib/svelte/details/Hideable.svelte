@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import { k, u, Rect, Size, Point, colors, svgPaths, T_Detail, T_Layer } from '../../ts/common/Global_Imports';
+    import { k, u, Rect, Size, Point, colors, svgPaths, T_Layer, T_Detail } from '../../ts/common/Global_Imports';
     import { w_background_color, w_show_details_ofType, w_count_resize_hideables } from '../../ts/common/Stores';
     import { createEventDispatcher, tick, setContext } from 'svelte';
     import { s_details } from '../../ts/state/S_Details';
@@ -16,6 +16,7 @@
     let banner_color = colors.ofBannerFor($w_background_color);
 	let slot_isVisible = compute_slot_isVisible();
     let element: HTMLElement;
+    let prior_height = 22;
     let height = 22;
 
     $: dispatch('heightChange', { height });
@@ -54,7 +55,7 @@
     class='hideable'
     bind:this={element}
     style='
-		top: 0px;
+        top: 0px;
         display: flex;
         flex-shrink: 0;
         height: {height}px;

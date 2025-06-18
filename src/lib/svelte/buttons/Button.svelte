@@ -73,6 +73,7 @@
 	function recompute_style() {
 		color = es_button.stroke;
 		if (style.length == 0) {
+			border_color = colors.separator;
 			border = border_thickness == 0 ? 'none' : `${border_thickness}px solid ${border_color}`;
 			computed_style=`
 				left:0px;

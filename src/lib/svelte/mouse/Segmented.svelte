@@ -85,7 +85,7 @@
 <style>
 
 	.pill-group {
-		border: 0.5px solid var(--border-color);
+		border: 1px solid var(--border-color);
 		background: transparent;
 		border-radius: 999px;
 		overflow: hidden;
@@ -118,7 +118,7 @@
 	}
 
 	.pill:not(:last-child) {
-		border-right: 0.5px solid var(--border-color);
+		border-right: 1px solid var(--border-color);
 	}
 
 	.pill:hover {

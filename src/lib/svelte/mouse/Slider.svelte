@@ -12,7 +12,7 @@
 	export let width: number = 200;
 	export let value: number = 1;
 	export let max: number = 20;
-	const border = '0.5px solid black';
+	const border = '1px solid black';
 	const x = isLogarithmic ? Math.log10(max) / divisions : max / divisions;
 	let slider_value = value <= 1 ? 0 : (isLogarithmic ? Math.log10(value) / x : value / x);
 	let prior_value = value;

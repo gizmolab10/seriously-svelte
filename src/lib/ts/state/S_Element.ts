@@ -15,12 +15,12 @@ import { get } from 'svelte/store';
 	//////////////////////////////////////////
 
 export default class S_Element {
-	color_background = get(w_background_color);
 	responder: HTMLElement | null = null;
 	defaultDisabledColor = '#999999';
 	defaultCursor = k.cursor_default;
 	hoverCursor = k.cursor_default;
 	identifiable!: Identifiable;
+	color_background = 'white';
 	hoverColor = 'transparent';
 	type = T_Element.none;
 	ignore_hover = false;
@@ -40,6 +40,7 @@ export default class S_Element {
 			w_ancestries_grabbed.subscribe((grabbed) => {
 				this.isInverted = grabbed.includes(this.ancestry);
 			});
+			this.color_background = get(w_background_color);
 		}
 	}
 

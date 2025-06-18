@@ -13,7 +13,7 @@
     const name = es_title.name;
 	const ancestry = es_title.ancestry;
 	const thing = ancestry?.thing;
-	const padding = `0.5px 0px 0px 0px`;
+	const padding = `1px 0px 0px 0px`;
 	const input_height = k.height.dot + 2;
 	const s_widget = ux.s_widget_forAncestry(ancestry);
 	const showingReveal = ancestry?.shows_reveal ?? false;

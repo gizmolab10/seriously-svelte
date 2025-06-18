@@ -1,11 +1,11 @@
 <script lang='ts'>
-	import { T_Action, T_Layer, T_Element, T_Request, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
-	import { e, h, k, show, Size, Point, grabs, signals, layout, S_Mouse, ux } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Detail, T_Action, T_Element, T_Kinship, T_Request, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
+	import { e, h, k, u, ux, show, Size, Point, grabs, colors, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
 	import { w_s_alteration, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
 	import { w_depth_limit, w_user_graph_offset, w_show_graph_ofType } from '../../ts/common/Stores';
-	import { w_show_countDots_ofType, w_background_color } from '../../ts/common/Stores';
-	import { k, u, Point, T_Kinship, colors } from '../../ts/common/Global_Imports';
+	import { w_background_color } from '../../ts/common/Stores';
 	import Buttons_Grid from '../buttons/Buttons_Grid.svelte';
+    import { s_details } from '../../ts/state/S_Details';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
 	import Button from '../buttons/Button.svelte';
@@ -19,6 +19,7 @@
 	const grid_width = k.width_details - 12;
 	const separator_font_size = k.font_size.smallest;
     const font_sizes = [k.font_size.smallest, k.font_size.smallest];
+    const s_hideable = s_details.s_hideables_byType[T_Detail.actions];
 	const es_cancel = ux.s_element_for(grabs.latest, T_Element.cancel, k.empty);
 	let list_title = grabs.latest?.isExpanded && ux.inTreeMode ? 'hide list' : 'list';
 	let actions_top = top + (has_title ? 3 : -13);
