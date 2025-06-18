@@ -72,11 +72,11 @@
 						label={trait.t_trait}
 						color={colors.default}
 						original_text={trait.text}
-						width={k.width_details - 40}
+						width={k.width_details - 25}
 						label_underline={trait.t_trait == 'link'}
-						onLabelClick={() => window.open(trait.text, '_blank')}
-						label_color={trait.t_trait == 'link' ? 'blue' : 'gray'}
-						handle_textChange={async (label, text) => await h.trait_setText_forTrait(text, trait)}/>
+						label_color={trait.t_trait == 'link' ? 'blue' : 'black'}
+						handle_textChange={async (label, text) => await h.trait_setText_forTrait(text, trait)}
+						handleClick_onLabel={trait.t_trait == 'link' ? (event) => window.open(trait.text, '_blank') : null}/>
 				{/each}
 			</div>
 		{/if}
