@@ -39,11 +39,11 @@
             font-size: {font_size}px;
             background-color: transparent;
             transform: translate(-50%, -50%);'>
-        {#if !!svgPaths.path_for(title)}
+        {#if !!svgPaths.hasPath_for(title)}
             <svg
                 viewBox='-2 -3 20 20'
                 class='svg-glow-button-path'>
-                <path d={svgPaths.path_for(title)} stroke='black' fill='white' stroke-width='0.5'/>
+                <path d={svgPaths.path_for(title)} stroke={colors.border} fill='white' stroke-width='0.75'/>
             </svg>
         {:else}
             {title}

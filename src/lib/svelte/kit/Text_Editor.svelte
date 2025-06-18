@@ -123,9 +123,9 @@
 		border: 1px dashed blue;
 	}
 
-	textarea:blur {
+	textarea:not(:focus) {
 		outline: none;
-		border: 1px solid black;
+		border: 1px solid darkgray;
 	}
 
 </style>

@@ -242,8 +242,11 @@ export default class SVG_Paths {
 		return paths.join(k.space);
 	}
 
-	path_for(title: string): string | null {
-		const size = 16;
+	hasPath_for(title: string): boolean {
+		return !!this.path_for(title);
+	}
+
+	path_for(title: string, size: number = 16): string | null {
 		switch (title) {
 			case 'down':		return this.fat_polygon(size, -Math.PI / 2);
 			case 'up':			return this.fat_polygon(size, Math.PI / 2);

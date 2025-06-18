@@ -2,7 +2,7 @@
 	import { k, Point, colors } from '../../ts/common/Global_Imports';
 	import { w_background_color } from '../../ts/common/Stores';
 	export let handle_selection: ((types: string[]) => void) | null = null;
-	export let border_color: string = colors.separator;
+	export let border_color: string = colors.border;
 	export let selected_color: string = '#b7d6e7';
 	export let height: number = k.button_height;
 	export let allow_multiple: boolean = false;
@@ -18,7 +18,7 @@
 	function isSelected(title: string) { return selected.includes(title); }
 	function button_name(title: string) { return `pill-${name}-${title.replace(/\s+/g, '-').toLowerCase()}`; }
 
-	$: $w_background_color, border_color = colors.separator;
+	$: $w_background_color, border_color = colors.border;
 	$: selected, setSelected(selected);
 
 	function select(title: string) {

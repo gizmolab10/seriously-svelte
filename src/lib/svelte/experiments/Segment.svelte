@@ -6,8 +6,8 @@
 	export let hit_closure = (title, shift) => {};
 	export let font_size = k.font_size.small;
 	export let fill = $w_background_color;
-	export let stroke = colors.separator;
 	export let segmented_name = k.empty;
+	export let stroke = colors.border;
 	export let g_segment!: G_Segment;
 	export let zindex = 0;
     const name = g_segment.title;
