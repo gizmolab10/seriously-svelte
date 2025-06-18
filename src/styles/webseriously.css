@@ -2,7 +2,7 @@ svg {
 	display: block;		/* override inline to eliminate unwanted vertical displacements */
 }
 
-div, svg, span, input {
+div, span, input {
 	background-color: transparent;
 }
 

@@ -1,12 +1,12 @@
 <script lang='ts'>
-	import { k, Point, S_Mouse, T_Request, T_Direction } from '../../ts/common/Global_Imports';
+	import { k, Point, svgPaths, S_Mouse, T_Request, T_Direction } from '../../ts/common/Global_Imports';
 	import Buttons_Row from '../buttons/Buttons_Row.svelte';
 	export let closure: (t_request: T_Request, s_mouse: S_Mouse, column: number) => any;
 	export let separator_thickness = k.thickness.separator.thick;
 	export let height = k.height.controls;
+	export let has_seperator = false;
 	export let hasBothEnds = true;
 	export let has_title = false;
-	export let has_seperator = false;
 	export let add_wings = true;
 	export let name = k.empty;
 	export let origin: Point;
@@ -14,6 +14,7 @@
 	export let margin = 0;
 	const base_titles = [T_Direction.previous, T_Direction.next];
 	$: row_titles = has_title ? [name, ...base_titles] : base_titles;
+	let trianglePath = svgPaths.fat_polygon(20, 0);
 
 </script>
 
@@ -21,6 +22,7 @@
 	<Buttons_Row
 		gap={4}
 		width={width}
+		has_svg={true}
 		margin={margin}
 		origin={origin}
 		closure={closure}

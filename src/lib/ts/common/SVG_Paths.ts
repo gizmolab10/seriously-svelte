@@ -193,7 +193,7 @@ export default class SVG_Paths {
 		return path;
 	}
 
-	oblong(center: Point, size: Size, part: T_Oblong = T_Oblong.full) {
+	oblong(center: Point, size: Size, part: T_Oblong = T_Oblong.full): string {
 		const bumpRight = [T_Oblong.full, T_Oblong.right].includes(part);
 		const bumpLeft = [T_Oblong.full, T_Oblong.left].includes(part);
 		const radius = size.height / 2;
@@ -209,13 +209,13 @@ export default class SVG_Paths {
 		const BR = `${R}, ${B}`;
 		const BL = `${L}, ${B}`;
 		const cap = `${radius}, ${radius} 0 0 1`;
-		switch(part) {
+		switch (part) {
 			case T_Oblong.middle: return `M ${TL} L ${TR} L ${BR} L ${BL} L ${TL} Z`;
 			case T_Oblong.right:  return `M ${TL} L ${TR} A ${cap} ${BR} L ${BL} L ${TL} Z`;
 			case T_Oblong.left:	 return `M ${TL} L ${TR} L ${BR} L ${BL} A ${cap} ${TL} Z`;
 			case T_Oblong.full:	 return `M ${TL} L ${TR} A ${cap} ${BR} L ${BL} A ${cap} ${TL} Z`;
 		}
-		
+		return k.empty;
 	}
 
 	ellipses(stretch: number, tiny: number, horizontal: boolean = true, count: number = 3, other: number = 6): string {
@@ -240,6 +240,19 @@ export default class SVG_Paths {
 			paths = pairs.map(p => `M ${other} ${p[0]} A ${tiny} ${tiny} 0 1 1 ${other} ${p[1]} A ${tiny} ${tiny} 0 1 1 ${other} ${p[0]}`);
 		}
 		return paths.join(k.space);
+	}
+
+	path_for(title: string): string | null {
+		const size = 16;
+		switch (title) {
+			case 'down':		return this.fat_polygon(size, -Math.PI / 2);
+			case 'up':			return this.fat_polygon(size, Math.PI / 2);
+			case '>':
+			case 'right':		return this.fat_polygon(size, Math.PI);
+			case '<':
+			case 'left':		return this.fat_polygon(size, 0);
+		}
+		return null;
 	}
 
 	// TODO: this only works for the default number of vertices (3)

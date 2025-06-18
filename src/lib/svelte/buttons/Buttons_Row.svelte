@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, ux, Point, colors, S_Element, T_Element, T_Request } from '../../ts/common/Global_Imports';
+	import { k, u, ux, Point, colors, svgPaths, S_Element, T_Element, T_Request } from '../../ts/common/Global_Imports';
 	import { w_count_button_restyle } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
     import G_Repeater from '../../ts/layout/G_Repeater';
@@ -17,6 +17,7 @@
 	export let align_left = true;
 	export let add_wings = true;
 	export let has_title = true;	// true means first row_titles is the title of the row
+	export let has_svg = false;
 	export let name = k.empty;
 	export let title_gap = 8;
 	export let width: number;
@@ -121,7 +122,14 @@
 						name={`${name}-${button_name_for(column)}`}
 						origin={Point.x(g_repeater.button_left_for(column))}
 						closure={(s_mouse) => closure(T_Request.handle_click, s_mouse, column)}>
-						{title}
+						{#if has_svg && !!svgPaths.path_for(title)}
+							<svg
+								class='svg-button-path'>
+							<path d={svgPaths.path_for(title)} fill='white'/>
+							</svg>
+						{:else}
+							{title}
+						{/if}
 					</Button>
 				{/each}
 			</div>
