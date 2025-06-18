@@ -98,7 +98,7 @@
 			overflow-wrap: break-word;
 			{k.prevent_selection_style};
 			font-family: {$w_thing_fontFamily};
-			border-radius: {k.height.row / 2}px;
+			border-radius: {k.thickness.separator.thick * 1.7}px;
 		'/>
 	<div style='width: 100%; display: flex; justify-content: center;'>
 		<div style='

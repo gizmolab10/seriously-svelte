@@ -1,10 +1,10 @@
 import { c, h, k, u, show, grabs, debug, radial, colors, layout, Ancestry, databases } from '../common/Global_Imports';
 import { w_g_paging, w_font_size, w_background_color, w_thing_fontFamily, w_depth_limit } from '../common/Stores';
 import { G_Paging, T_Graph, T_Trait, T_Details, T_Kinship, T_Preference } from '../common/Global_Imports';
-import { w_show_tree_ofType, w_show_graph_ofType, w_show_traits_ofType } from '../common/Stores';
 import { w_ancestry_focus, w_ancestries_grabbed, w_ancestries_expanded } from '../common/Stores';
 import { w_t_database, w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
 import { w_show_details_ofType, w_show_countDots_ofType } from '../common/Stores';
+import { w_show_tree_ofType, w_show_graph_ofType } from '../common/Stores';
 import { get } from 'svelte/store';
 
 export class Preferences {
@@ -186,9 +186,6 @@ export class Preferences {
 		w_show_details_ofType.subscribe((value) => {
 			this.write_key(T_Preference.detail_types, value);
 		});
-		w_show_traits_ofType.subscribe((traits: Array<T_Trait>) => {
-			this.write_key(T_Preference.traits, traits);
-		})
 
 		// RADIAL
 
@@ -226,7 +223,6 @@ export class Preferences {
 		// VISIBILITY
 		w_show_tree_ofType		.set( this.read_key(T_Preference.tree)				   ?? T_Kinship.child);
 		w_show_graph_ofType		.set( this.read_key(T_Preference.graph)				   ?? T_Graph.tree);
-		w_show_traits_ofType	.set( this.read_key(T_Preference.traits)			   ?? [T_Trait.text]);
 		w_show_details_ofType	.set( this.read_key(T_Preference.detail_types)		   ?? [T_Details.actions, T_Details.database]);
 		w_show_countDots_ofType	.set( this.read_key(T_Preference.countDots)			   ?? [T_Kinship.child]);
 

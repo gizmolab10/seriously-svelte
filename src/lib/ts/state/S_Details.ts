@@ -1,8 +1,8 @@
 import { w_t_database, w_ancestry_focus, w_ancestries_grabbed, w_hierarchy } from '../common/Stores';
 import { w_tag_things, w_thing_tags, w_thing_traits, w_tag_thing_index } from '../common/Stores';
 import { h, Tag, grabs, Trait, Thing, Ancestry } from '../common/Global_Imports';
-import { w_show_details_ofType, w_show_traits_ofType } from '../common/Stores';
 import { T_Trait, T_Details, T_Direction, k } from '../common/Global_Imports';
+import { w_show_details_ofType } from '../common/Stores';
 import { S_Identifiables } from './S_Identifiables';
 import { get } from 'svelte/store';
 
@@ -22,9 +22,6 @@ class S_Details {
 			this.update();
 		});
 		w_ancestries_grabbed.subscribe((array: Array<Ancestry>) => {
-			this.update();
-		});
-		w_show_traits_ofType.subscribe((t_traits: Array<T_Trait>) => {
 			this.update();
 		});
 		w_show_details_ofType.subscribe((t_details: Array<T_Details>) => {
@@ -51,18 +48,9 @@ class S_Details {
 
 	private get trait(): Trait | null { return (this.s_traits.item as Trait) ?? null; }
 
-	private update_s_traits() {
-		const t_traits = get(w_show_traits_ofType);
-		if (!!h && !!t_traits) {
-			const traits = (t_traits.length > 1 ? h.traits : h.traits_forType(t_traits[0] as T_Trait)) ?? [];
-			this.s_traits.set_items(traits);
-		}
-	}
-
 	private update_traits() {
 		// when grab changes, traits must also change
 		// also, which trait [index] corresponds to the grab
-		this.update_s_traits();
 		const thing = grabs.latest_thing;
 		const thing_traits = thing?.traits ?? [];
 		if (!thing || thing_traits.length == 0) {

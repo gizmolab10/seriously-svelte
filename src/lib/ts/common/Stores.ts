@@ -8,7 +8,6 @@ const _____VISIBILITY: unique symbol = Symbol('VISIBILITY');
 export const w_show_tree_ofType			 = writable<Array<T_Kinship>>();
 export const w_show_countDots_ofType	 = writable<Array<T_Kinship>>();
 export const w_show_details_ofType		 = writable<Array<T_Details>>();
-export const w_show_traits_ofType		 = writable<Array<T_Trait>>();
 export const w_show_directionals_ofType	 = writable<string[]>();
 export const w_show_graph_ofType		 = writable<T_Graph>();
 export const w_show_related				 = writable<boolean>();
