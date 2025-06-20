@@ -12,15 +12,15 @@
 	export let origin: Point;
 	export let width = 144;
 	export let margin = 0;
+	export let gap = 4;
 	const base_titles = [T_Direction.previous, T_Direction.next];
 	$: row_titles = has_title ? [name, ...base_titles] : base_titles;
-	let trianglePath = svgPaths.fat_polygon(20, 0);
 
 </script>
 
-<div class='next-previous' style='margin-bottom: 32px;'>
+<div class='next-previous'>
 	<Buttons_Row
-		gap={4}
+		gap={gap}
 		width={width}
 		has_svg={true}
 		margin={margin}

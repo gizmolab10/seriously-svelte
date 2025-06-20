@@ -21,6 +21,7 @@
 	export let name = k.empty;
 	export let title_gap = 8;
 	export let width: number;
+	export let svg_size = 16;
 	export let margin = 0;
 	export let gap = 1;
 	const solo_title_width = 42;
@@ -124,8 +125,8 @@
 						closure={(s_mouse) => closure(T_Request.handle_click, s_mouse, column)}>
 						{#if has_svg && !!svgPaths.path_for(title)}
 							<svg
-								class='svg-button-path'>
-							<path d={svgPaths.path_for(title)} fill='white'/>
+								class='svg-button-path-for-{title}'>
+								<path d={svgPaths.path_for(title, svg_size)} fill='white'/>
 							</svg>
 						{:else}
 							{title}

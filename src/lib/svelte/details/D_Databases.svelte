@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { h, k, ux, busy, Point, colors, S_Element, databases, Hierarchy } from '../../ts/common/Global_Imports';
 	import { T_File_Format, T_File_Operation, T_Storage_Need, T_Signal } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Detail, T_Element, T_Preference, T_Request } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Details, T_Element, T_Preference, T_Request } from '../../ts/common/Global_Imports';
 	import { w_storage_updated, w_thing_fontFamily } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import { T_Database } from '../../ts/database/DBCommon';
@@ -17,7 +17,7 @@
 	const buttons_top = 138;
 	const border = '1px solid black';
     const font_sizes = [k.font_size.smallest, k.font_size.smaller];
-    const s_hideable = s_details.s_hideables_byType[T_Detail.database];
+    const s_hideable = s_details.s_hideables_byType[T_Details.database];
 	const storage_ids = [T_File_Operation.import, T_File_Operation.export];
 	const output_format_ids = [T_File_Format.csv, T_File_Format.json, T_File_Format.cancel];
 	const es_save = ux.s_element_for(new Identifiable('save'), T_Element.button, 'save');

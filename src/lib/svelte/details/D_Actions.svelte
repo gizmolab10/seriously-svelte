@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { T_Layer, T_Detail, T_Action, T_Element, T_Kinship, T_Request, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Details, T_Action, T_Element, T_Kinship, T_Request, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
 	import { e, h, k, u, ux, show, Size, Point, grabs, colors, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
 	import { w_s_alteration, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
 	import { w_depth_limit, w_user_graph_offset, w_show_graph_ofType } from '../../ts/common/Stores';
@@ -14,12 +14,12 @@
 	const has_title = true;
 	const middle_left = 40;
 	const actions_height = 150;
-	const top_separatorLength = 95;
-	const bottom_separatorLength = 78;
+	const top_gridHeight = 95;
+	const bottom_gridHeight = 78;
 	const grid_width = k.width_details - 12;
 	const separator_font_size = k.font_size.smallest;
     const font_sizes = [k.font_size.smallest, k.font_size.smallest];
-    const s_hideable = s_details.s_hideables_byType[T_Detail.actions];
+    const s_hideable = s_details.s_hideables_byType[T_Details.actions];
 	const es_cancel = ux.s_element_for(grabs.latest, T_Element.cancel, k.empty);
 	let list_title = grabs.latest?.isExpanded && ux.inTreeMode ? 'hide list' : 'list';
 	let actions_top = top + (has_title ? 3 : -13);
@@ -109,7 +109,7 @@
 	function compute_button_titles() {
 		return [
 			[['browse', 'left', 'up', 'down', 'right'],
-			['focus', 'on the selection', 'on its parent'],
+			['focus', 'selection', 'parent of selection'],
 			['show', 'selection', `${list_title}`],
 			['center', 'focus', 'selection', 'root', 'graph']],
 			[['add', 'child', 'sibling', 'line', 'parent', 'related'],
@@ -188,8 +188,8 @@
 			<Separator
 				isHorizontal={false}
 				has_thin_divider={true}
+				length={top_gridHeight}
 				margin={k.details_margin}
-				length={top_separatorLength}
 				origin={new Point(middle_left, -6)}
 				thickness={k.thickness.separator.ultra_thin}/>
 		{/if}
@@ -201,7 +201,7 @@
 			has_title={has_title}
 			type={T_Element.action}
 			font_sizes={font_sizes}
-			top={top_separatorLength - 3}
+			top={top_gridHeight - 3}
 			closure={handle_actionRequest}
 			button_height={k.height.button}
 			button_titles={button_titles[1]}/>
@@ -209,18 +209,18 @@
 			isHorizontal={false}
 			has_thin_divider={true}
 			margin={k.details_margin}
-			length={bottom_separatorLength}
+			length={bottom_gridHeight}
 			thickness={k.thickness.separator.ultra_thin}
-			origin={new Point(middle_left, top_separatorLength - 12)}/>
+			origin={new Point(middle_left, top_gridHeight - 12)}/>
 		<Separator
 			isHorizontal={true}
 			has_thin_divider={true}
 			length={k.width_details}
 			margin={k.details_margin}
-			title='edit the hierarchy'
+			title='edit your hierarchy'
 			title_left={k.separator_title_left}
 			title_font_size={separator_font_size}
-			origin={Point.y(top_separatorLength - 13)}
+			origin={Point.y(top_gridHeight - 13)}
 			thickness={k.thickness.separator.ultra_thin}/>
 		{#if ux.inTreeMode}
 			<Separator
@@ -232,13 +232,13 @@
 				title_left={k.separator_title_left}
 				title_font_size={separator_font_size}
 				thickness={k.thickness.separator.ultra_thin}
-				title={ux.inTreeMode ? 'maximum visible tree levels' : k.empty}/>
+				title={ux.inTreeMode ? 'depth of tree' : k.empty}/>
 			<Slider
 				max={12}
 				isLogarithmic={true}
 				value={$w_depth_limit}
-				width={k.width_details - 26}
 				isVisible={ux.inTreeMode}
+				width={k.width_details - 26}
 				thumb_color={colors.separator}
 				origin={new Point(10, slider_top)}
 				title_left={k.separator_title_left}

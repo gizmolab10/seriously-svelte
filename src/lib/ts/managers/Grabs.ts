@@ -1,5 +1,5 @@
-import { ux, Thing, debug, Ancestry } from '../common/Global_Imports';
-import { w_hierarchy, w_s_text_edit } from '../common/Stores';
+import { ux, Thing, debug, layout, Ancestry } from '../common/Global_Imports';
+import { w_hierarchy, w_s_text_edit, w_depth_limit } from '../common/Stores';
 import { w_ancestries_grabbed } from '../common/Stores';
 import { get } from 'svelte/store';
 
@@ -82,13 +82,15 @@ export class Grabs {
 	latest_assureIsVisible() {
 		const ancestry = this.latest;
 		if (!!ancestry && !ancestry.isVisible) {
+			ancestry.grab();
 			if (ux.inTreeMode) {
-				ancestry.reveal_toFocus();
+				const focusAncestry = ancestry.ancestry_createUnique_byStrippingBack(get(w_depth_limit));
+				focusAncestry?.becomeFocus();
 			} else {
-				ancestry.grab();
 				ancestry.parentAncestry?.becomeFocus();
 				ancestry.assure_isVisible_within(ancestry.sibling_ancestries);
 			}
+			layout.grand_build();
 		}
 	}
 

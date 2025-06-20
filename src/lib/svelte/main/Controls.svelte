@@ -1,21 +1,23 @@
 <script lang='ts'>
 	import { c, h, k, p, u, ux, w, show, Point, colors, layout, svgPaths, signals, S_Element } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Graph, T_Banner, T_Element, T_Control, T_Kinship, T_Preference } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Graph, T_Element, T_Control, T_Kinship, T_Request } from '../../ts/common/Global_Imports';
 	import { w_background_color, w_device_isMobile, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { w_show_details, w_show_graph_ofType, w_show_tree_ofType } from '../../ts/common/Stores';
 	import { w_graph_rect, w_count_resize, w_popupView_id } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
+	import Next_Previous from '../kit/Next_Previous.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Button from '../buttons/Button.svelte';
 	import SVG_D3 from '../kit/SVG_D3.svelte';
 	import Box from '../kit/Box.svelte';
 	import { onMount } from 'svelte';
+	const widths = [18, -56, 125, 27, 64];	// 73 == 125
+	const lefts = u.cumulativeSum(widths);
 	const details_top = k.height.dot / 2;
 	const y_center = details_top + 3.5;
 	const size_small = k.height.button;
 	const rights = [12, 67, 110, 140];
 	const size_big = size_small + 4;
-	const lefts = [18, 35, 130];
 	const resize_viewBox = `0, 0, ${size_big}, ${size_big}`;
 	let es_control_byType: { [t_control: string]: S_Element } = {};
 	let isVisible_forType: {[t_control: string]: boolean} = {};
@@ -41,11 +43,23 @@
 		const _ = $w_show_graph_ofType;
 		const db = h.db;
 		if (!!db) {
-			const extra = ux.inTreeMode ? 84 : 0;
+			const extra = ux.inTreeMode ? lefts[3] : 0;
 			displayName = db.displayName;
 			displayName_width = u.getWidthOf(displayName);
 			displayName_x = extra + (width - displayName_width) / 2;
 		}
+	}
+
+	function handle_s_mouse_forRecents(t_request, s_mouse, column) {
+		console.log('recents', t_request, !!s_mouse ? s_mouse.isOut : 'no mouse', column);
+		switch (t_request) {
+			case T_Request.name:		 return 'recents';
+			case T_Request.is_visible:	 return true;
+			case T_Request.is_disabled:  return false;
+			case T_Request.is_inverted:  return false;
+			case T_Request.handle_click: break;
+		}
+		return null;
 	}
 
 	function setup_forIDs() {
@@ -99,17 +113,30 @@
 							color='transparent'
 							name='details-toggle'
 							detect_longClick={true}
-							center={new Point(lefts[0], details_top + 3)}
+							center={new Point(lefts[0], details_top + 4)}
 							es_button={es_control_byType[T_Control.details]}
 							closure={(s_mouse) => handle_s_mouse_forControl_Type(s_mouse, T_Control.details)}>
 							<img src='settings.svg' alt='circular button' width={size_small}px height={size_small}px/>
 						</Button>
 					{/key}
+					{#if true}
+					<Next_Previous
+						gap={2}
+						margin={28}
+						name='recents'
+						height={size_big}
+						has_title={false}
+						add_wings={false}
+						svg_size={size_big}
+						has_seperator={false}
+						origin={Point.x(lefts[1])}
+						closure={(t_request, s_mouse, column) => handle_s_mouse_forRecents(t_request, s_mouse, column)}/>
+					{/if}
 					{#key $w_show_graph_ofType}
 						<Segmented
 							width={80}
 							name='graph'
-							origin={Point.x(lefts[1])}
+							origin={Point.x(lefts[2])}
 							selected={[$w_show_graph_ofType]}
 							titles={[T_Graph.tree, T_Graph.radial]}
 							handle_selection={(titles) => layout.handle_mode_selection('graph', titles)}/>
@@ -119,7 +146,7 @@
 									width={180}
 									name='tree'
 									allow_multiple={true}
-									origin={Point.x(lefts[2])}
+									origin={Point.x(lefts[4])}
 									selected={$w_show_tree_ofType}
 									titles={[T_Kinship.child, T_Kinship.parent, T_Kinship.related, T_Kinship.tags]}
 									handle_selection={(titles) => layout.handle_mode_selection('tree', titles)}/>

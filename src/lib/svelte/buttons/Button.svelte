@@ -107,8 +107,8 @@
 		zindex={zindex}
 		origin={origin}
 		center={center}
-		detect_longClick={true}
-		handle_s_mouse={handle_s_mouse}>
+		handle_s_mouse={handle_s_mouse}
+		detect_longClick={detect_longClick}>
 		<button
 			class='button'
 			style={computed_style}

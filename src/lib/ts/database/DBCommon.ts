@@ -9,10 +9,10 @@ import { get } from 'svelte/store';
 export enum T_Database {
 	airtable = 'airtable',
 	firebase = 'firebase',
+	dgraph   = 'dgraph',
 	plugin	 = 'plugin',
 	local	 = 'local',
 	test	 = 'test',
-	dgraph   = 'dgraph'
 }
 
 // CRUD API --> for all databases

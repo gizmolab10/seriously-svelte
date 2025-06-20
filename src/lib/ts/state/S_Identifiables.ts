@@ -15,7 +15,7 @@ export class S_Identifiables<T> {
 	}
 
 	find_next_item(next: boolean): boolean {
-		let index = this.items.length;
+		let index = this.total_items;
 		while (index > 0) {		// prevent infinite loop if no item is found
 			this.index_ofItem = this.index_ofItem.increment(next, this.total_items);
 			if (!!this.item) {

@@ -12,7 +12,7 @@
 	export let width: number = 200;
 	export let value: number = 1;
 	export let max: number = 20;
-	const border = '1px solid black';
+	const border = '1px solid darkgray';
 	const x = isLogarithmic ? Math.log10(max) / divisions : max / divisions;
 	let slider_value = value <= 1 ? 0 : (isLogarithmic ? Math.log10(value) / x : value / x);
 	let prior_value = value;
@@ -54,13 +54,13 @@
 
 <style>
 	input[type="range"] {
-		height: 14.5px; /* match thumb diameter */
+		height: 14px;
 		appearance: none;
 		background: transparent;
 		-webkit-appearance: none;
 	}
 	input[type="range"]::-webkit-slider-runnable-track {
-		height: 14.5px;
+		height: 14px;
 		background: white;
 		border-radius: 16px;
 		border: var(--border);
@@ -68,7 +68,7 @@
 	input[type="range"]::-webkit-slider-thumb {
 		width: 14px;
 		height: 14px;
-		margin-top: 0px;
+		margin-top: -0.75px;
 		border-radius: 50%;
 		border: var(--border);
 		-webkit-appearance: none;
@@ -84,13 +84,13 @@
 	input[type="range"]::-moz-range-track {
 		height: 14px;
 		background: white;
-		border-radius: 16px;
+		border-radius: 50%;
 		border: var(--border);
 	}
 	input[type="range"]::-ms-fill-lower,
 	input[type="range"]::-ms-fill-upper {
 		background: white;
-		border-radius: 16px;
+		border-radius: 50%;
 		border: var(--border);
 	}
 	input[type="range"]::-ms-thumb {

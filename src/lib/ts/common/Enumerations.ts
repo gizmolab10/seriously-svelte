@@ -11,10 +11,10 @@ export enum T_Banner {
 	crumbs,
 }
 
-export enum T_Detail {
+export enum T_Details {
 	header,
 	actions,
-	details,
+	properties,
 	tags,
 	traits,
 	display,
@@ -174,6 +174,7 @@ export enum T_Request {
 export enum T_Control {
 	details	 = 'show details view',
 	builds	 = 'show build notes',
+	recents	 = 'recents',
 	smaller	 = 'smaller',
 	bigger	 = 'bigger',
 	import	 = 'import',

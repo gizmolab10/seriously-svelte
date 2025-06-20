@@ -1,6 +1,6 @@
 import { c, h, k, u, show, grabs, debug, radial, colors, layout, Ancestry, databases } from '../common/Global_Imports';
 import { w_g_paging, w_font_size, w_background_color, w_thing_fontFamily, w_depth_limit } from '../common/Stores';
-import { G_Paging, T_Graph, T_Trait, T_Detail, T_Kinship, T_Preference } from '../common/Global_Imports';
+import { G_Paging, T_Graph, T_Trait, T_Details, T_Kinship, T_Preference } from '../common/Global_Imports';
 import { w_ancestry_focus, w_ancestries_grabbed, w_ancestries_expanded } from '../common/Stores';
 import { w_t_database, w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
 import { w_show_details_ofType, w_show_countDots_ofType } from '../common/Stores';
@@ -223,7 +223,7 @@ export class Preferences {
 		// VISIBILITY
 		w_show_tree_ofType		.set( this.read_key(T_Preference.tree)				   ?? T_Kinship.child);
 		w_show_graph_ofType		.set( this.read_key(T_Preference.graph)				   ?? T_Graph.tree);
-		w_show_details_ofType	.set( this.read_key(T_Preference.detail_types)		   ?? [T_Detail.actions, T_Detail.database]);
+		w_show_details_ofType	.set( this.read_key(T_Preference.detail_types)		   ?? [T_Details.actions, T_Details.database]);
 		w_show_countDots_ofType	.set( this.read_key(T_Preference.countDots)			   ?? [T_Kinship.child]);
 
 		// RADIAL

@@ -1,8 +1,8 @@
-import { w_t_database, w_ancestry_focus, w_ancestries_grabbed, w_hierarchy } from '../common/Stores';
 import { w_tag_things, w_thing_tags, w_thing_traits, w_tag_thing_index } from '../common/Stores';
+import { w_ancestry_focus, w_ancestries_grabbed, w_hierarchy } from '../common/Stores';
 import { h, Tag, grabs, Trait, Thing, Ancestry } from '../common/Global_Imports';
-import { T_Detail, T_Direction, k } from '../common/Global_Imports';
-import { w_show_details_ofType } from '../common/Stores';
+import { w_storage_updated, w_show_details_ofType } from '../common/Stores';
+import { T_Details, T_Direction, k } from '../common/Global_Imports';
 import { S_Identifiables } from './S_Identifiables';
 import { S_Hideable } from './S_Hideable';
 
@@ -11,13 +11,11 @@ class S_Details {
 	private s_things = new S_Identifiables<Thing>([]);
 	private s_traits = new S_Identifiables<Trait>([]);
 	private s_tags = new S_Identifiables<Tag>([]);
-	font_size = k.font_size.smaller;
 	number_ofDetails = 0;
 
 	constructor() {
-		this.update();
-		w_t_database.subscribe((type: string) => {
-			this.update();
+		w_storage_updated.subscribe((count: number) => {
+			this.setup();
 		});
 		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
 			this.update();
@@ -25,11 +23,20 @@ class S_Details {
 		w_ancestries_grabbed.subscribe((array: Array<Ancestry>) => {
 			this.update();
 		});
-		w_show_details_ofType.subscribe((t_detail: Array<T_Detail>) => {
-			this.number_ofDetails = t_detail?.length ?? 0;
+		w_show_details_ofType.subscribe((t_details: Array<T_Details>) => {
+			this.number_ofDetails = t_details?.length ?? 0;
+			this.update();
 		});
-		for (const t_detail of Object.values(T_Detail) as T_Detail[]) {
+		for (const t_detail of Object.values(T_Details) as T_Details[]) {
 			this.s_hideables_byType[t_detail] = new S_Hideable(t_detail);
+		}
+	}
+
+	private setup() {
+		if (!!h) {
+			this.s_traits.set_items(h.traits);
+			this.s_tags.set_items(h.tags);
+			this.update();
 		}
 	}
 
@@ -40,11 +47,11 @@ class S_Details {
 	}
 
 	update_forBanner(banner_title: string, selected_title: string) {
-		const next = T_Direction.next === selected_title as unknown as T_Direction;
-		const t_detail = T_Detail[banner_title as keyof typeof T_Detail];
+		const next = T_Direction.next === selected_title as unknown as T_Direction;	// unknown defeats ts
+		const t_detail = T_Details[banner_title as keyof typeof T_Details];
 		switch (t_detail) {
-			case T_Detail.traits: this.select_nextTrait(next); break;
-			case T_Detail.tags:   this.select_nextTag(next); break;
+			case T_Details.traits: this.select_nextTrait(next); break;
+			case T_Details.tags:   this.select_nextTag(next); break;
 		}
 	}
 	
@@ -53,8 +60,8 @@ class S_Details {
 	private get trait(): Trait | null { return (this.s_traits.item as Trait) ?? null; }
 
 	private update_traits() {
-		// when grab changes, traits must also change
-		// also, which trait [index] corresponds to the grab
+		// when grab changes, must also change
+		// which trait [index] corresponds to the grab
 		const thing = grabs.latest_thing;
 		const thing_traits = thing?.traits ?? [];
 		if (!thing || thing_traits.length == 0) {
@@ -67,10 +74,13 @@ class S_Details {
 	}
 	
 	select_nextTrait(next: boolean) {
-		if (!!h && this.s_traits.find_next_item(next)) {
-			this.trait?.owner?.ancestry?.grabOnly();	// causes reaction (invoking update())
-			grabs.latest_assureIsVisible();
-			w_hierarchy.set(h);
+		if (this.s_traits.find_next_item(next)) {
+			const ancestry = this.trait?.owner?.ancestry;
+			if (!!ancestry) {
+				ancestry.grabOnly();	// causes reaction (invoking update())
+				grabs.latest_assureIsVisible();
+				console.log('trait', ancestry?.title);
+			}
 		}
 	}
 	
@@ -90,10 +100,9 @@ class S_Details {
 	}
 	
 	select_nextThing(next: boolean) {
-		if (!!h && this.s_things.find_next_item(next)) {	// alters thing, and index_ofItem, both are used below
+		if (this.s_things.find_next_item(next)) {	// alters thing, and index_ofItem, both are used below
 			this.thing?.ancestry?.grabOnly();		// causes reaction (invoking update())
 			grabs.latest_assureIsVisible();
-			w_hierarchy.set(h);
 		}
 	}
 
@@ -127,11 +136,10 @@ class S_Details {
 		if (this.s_tags.find_next_item(next)) {
 			this.update();
 			const ancestry = this.thing?.ancestry;
-			if (!!h && !!ancestry) {
+			if (!!ancestry) {
 				ancestry.grabOnly();
 				grabs.latest_assureIsVisible();
 				this.s_things.index_ofItem = 0;
-				w_hierarchy.set(h);
 			}
 		}
 	}

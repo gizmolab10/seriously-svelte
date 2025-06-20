@@ -1,13 +1,13 @@
 <script lang='ts'>
-    import { k, u, Rect, Size, Point, colors, svgPaths, T_Layer, T_Detail } from '../../ts/common/Global_Imports';
+    import { k, u, Rect, Size, Point, colors, svgPaths, T_Layer, T_Details } from '../../ts/common/Global_Imports';
     import { w_background_color, w_show_details_ofType, w_count_resize_hideables } from '../../ts/common/Stores';
     import { createEventDispatcher, tick, setContext } from 'svelte';
     import { s_details } from '../../ts/state/S_Details';
     import Glows_Banner from './Glows_Banner.svelte';
     import { tick } from 'svelte';
     export let extra_titles: string[] = [];    // extra titles added into banner
-    export let t_detail: T_Detail;
-    const title = T_Detail[t_detail];
+    export let t_detail: T_Details;
+    const title = T_Details[t_detail];
     const titles = [title, ...extra_titles];
     const dispatch = createEventDispatcher();
     const banner_height = k.height.banner.details;
@@ -23,15 +23,15 @@
     $: $w_background_color, banner_color = colors.ofBannerFor($w_background_color);
     
     $: (async () => {
-        if (!!element && s_hideable.hasBanner) {
+        if (!!element && !!s_hideable) {
             await tick();
             height = slot_isVisible ? element.scrollHeight - 1 : s_hideable.hasBanner ? banner_height : 0;
         }
     })();
 
 	function compute_slot_isVisible() {
-        if (s_hideable.hasBanner) {
-            const type = T_Detail[s_hideable.t_detail];
+        if (!!s_hideable && s_hideable.hasBanner) {
+            const type = T_Details[s_hideable.t_detail];
             return $w_show_details_ofType?.includes(type) ?? false;
         }
         return true;
@@ -46,7 +46,7 @@
 		}
 		$w_show_details_ofType = t_details;
 		slot_isVisible = compute_slot_isVisible();
-        height = slot_isVisible ? element.scrollHeight - 1 : s_hideable.hasBanner ? banner_height : 0;
+        height = slot_isVisible ? element.scrollHeight - 1 : (!!s_hideable && s_hideable.hasBanner) ? banner_height : 0;
 	}
 
 </script>
@@ -62,7 +62,7 @@
         position: relative;
         flex-direction: column;
         width: {k.width_details - 12}px;'>
-    {#if s_hideable.hasBanner}
+    {#if !!s_hideable && s_hideable.hasBanner}
         <div
             class='banner'
             style='
@@ -86,7 +86,7 @@
                 height: {height}px;
                 position: relative;
                 padding-bottom: 9px;
-                top: {s_hideable.hasBanner ? banner_height : 0}px;'>
+                top: {(!!s_hideable && s_hideable.hasBanner) ? banner_height : 0}px;'>
             <slot/>
         </div>
     {/if}
