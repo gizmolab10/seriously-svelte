@@ -29,7 +29,7 @@
 		switch (t_request) {
 			case T_Request.is_visible:    return true;
 			case T_Request.name:		  return T_Direction[column];
-			case T_Request.handle_click:  if (s_mouse.isDown) { s_details.select_nextTrait(column == 1); }
+			case T_Request.handle_click:  if (s_mouse.isDown) { s_details.selectNext_traitThing(column == 1); }
 		}
 		return false;
 	}

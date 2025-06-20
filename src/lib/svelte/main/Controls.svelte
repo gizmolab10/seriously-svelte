@@ -51,7 +51,7 @@
 	}
 
 	function handle_s_mouse_forRecents(t_request, s_mouse, column) {
-		console.log('recents', t_request, !!s_mouse ? s_mouse.isOut : 'no mouse', column);
+		// console.log('recents', t_request, !!s_mouse ? s_mouse.isOut : 'no mouse', column);
 		switch (t_request) {
 			case T_Request.name:		 return 'recents';
 			case T_Request.is_visible:	 return true;

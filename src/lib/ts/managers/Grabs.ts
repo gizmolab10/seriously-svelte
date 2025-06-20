@@ -86,6 +86,7 @@ export class Grabs {
 			if (ux.inTreeMode) {
 				const focusAncestry = ancestry.ancestry_createUnique_byStrippingBack(get(w_depth_limit));
 				focusAncestry?.becomeFocus();
+				ancestry.reveal_toFocus();
 			} else {
 				ancestry.parentAncestry?.becomeFocus();
 				ancestry.assure_isVisible_within(ancestry.sibling_ancestries);

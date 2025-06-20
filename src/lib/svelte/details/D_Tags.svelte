@@ -16,7 +16,7 @@
 			case T_Request.is_visible: return true;
 			case T_Request.handle_click:
                 if (s_mouse.isDown) {
-                    s_details.select_nextThing(column == 1);
+                    s_details.selectNext_thing(column == 1);
                     name = `thing ${$w_tag_thing_index + 1} (of ${$w_tag_things.length})`;
                     reattachments++;
                 }

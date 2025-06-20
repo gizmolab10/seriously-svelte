@@ -8,8 +8,8 @@ import { S_Hideable } from './S_Hideable';
 
 class S_Details {
 	private s_hideables_byType: { [t_detail: string]: S_Hideable } = {};
+	private s_trait_things = new S_Identifiables<Thing>([]);
 	private s_things = new S_Identifiables<Thing>([]);
-	private s_traits = new S_Identifiables<Trait>([]);
 	private s_tags = new S_Identifiables<Tag>([]);
 	number_ofDetails = 0;
 
@@ -34,7 +34,7 @@ class S_Details {
 
 	private setup() {
 		if (!!h) {
-			this.s_traits.set_items(h.traits);
+			this.s_trait_things.set_items(h.things_unique_havingTraits());
 			this.s_tags.set_items(h.tags);
 			this.update();
 		}
@@ -42,7 +42,7 @@ class S_Details {
 
 	private update() {
 		this.update_things();
-		this.update_traits();
+		this.update_traitThings();
 		this.update_tags();
 	}
 
@@ -50,16 +50,16 @@ class S_Details {
 		const next = T_Direction.next === selected_title as unknown as T_Direction;	// unknown defeats ts
 		const t_detail = T_Details[banner_title as keyof typeof T_Details];
 		switch (t_detail) {
-			case T_Details.traits: this.select_nextTrait(next); break;
-			case T_Details.tags:   this.select_nextTag(next); break;
+			case T_Details.traits: this.selectNext_traitThing(next); break;
+			case T_Details.tags:   this.selectNext_tag(next); break;
 		}
 	}
 	
 	static readonly _____TRAITS: unique symbol;
 
-	private get trait(): Trait | null { return (this.s_traits.item as Trait) ?? null; }
+	private get traitThing(): Thing | null { return (this.s_trait_things.item as Thing) ?? null; }
 
-	private update_traits() {
+	private update_traitThings() {
 		// when grab changes, must also change
 		// which trait [index] corresponds to the grab
 		const thing = grabs.latest_thing;
@@ -67,19 +67,18 @@ class S_Details {
 		if (!thing || thing_traits.length == 0) {
 			w_thing_traits.set([]);
 		} else {
-			const index = this.s_traits.items.findIndex(t => t.ownerID == thing.id);
-			this.s_traits.index_ofItem = Math.max(0, index);
+			const index = this.s_trait_things.items.findIndex(t => t.id == thing.id);
+			this.s_trait_things.index_ofItem = Math.max(0, index);
 			w_thing_traits.set(thing_traits);
 		}
 	}
 	
-	select_nextTrait(next: boolean) {
-		if (this.s_traits.find_next_item(next)) {
-			const ancestry = this.trait?.owner?.ancestry;
+	selectNext_traitThing(next: boolean) {
+		if (this.s_trait_things.find_next_item(next)) {
+			const ancestry = this.traitThing?.ancestry;
 			if (!!ancestry) {
 				ancestry.grabOnly();	// causes reaction (invoking update())
 				grabs.latest_assureIsVisible();
-				console.log('trait', ancestry?.title);
 			}
 		}
 	}
@@ -99,7 +98,7 @@ class S_Details {
 		w_tag_things.set(things);
 	}
 	
-	select_nextThing(next: boolean) {
+	selectNext_thing(next: boolean) {
 		if (this.s_things.find_next_item(next)) {	// alters thing, and index_ofItem, both are used below
 			this.thing?.ancestry?.grabOnly();		// causes reaction (invoking update())
 			grabs.latest_assureIsVisible();
@@ -132,7 +131,7 @@ class S_Details {
 		}
 	}
 	
-	select_nextTag(next: boolean) {
+	selectNext_tag(next: boolean) {
 		if (this.s_tags.find_next_item(next)) {
 			this.update();
 			const ancestry = this.thing?.ancestry;

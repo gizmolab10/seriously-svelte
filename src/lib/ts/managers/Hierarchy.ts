@@ -22,6 +22,7 @@ export class Hierarchy {
 	private ancestry_byKind_andHID: { [kind: string]: Ancestries_ByHID } = {};					// for uniqueness
 	private ancestries_byThingHID: { [hid: Integer]: Array<Ancestry> } = {};
 	private traits_byOwnerHID: { [ownerHID: Integer]: Array<Trait> } = {};
+	private things_byT_Trait: { [t_trait: string]: Array<Thing> } = {};
 	private relationship_byHID: { [hid: Integer]: Relationship } = {};
 	private traits_byType: { [t_trait: string]: Array<Trait> } = {};
 	private things_byType: { [t_thing: string]: Array<Thing> } = {};
@@ -87,6 +88,8 @@ export class Hierarchy {
 	static readonly _____THINGS: unique symbol;
 
 	things_forTitle(title: string): Array<Thing> | null { return this.things_byTitle[title] ?? null; }
+	things_forT_Trait(t_trait: T_Trait): Array<Thing> { return this.things_byT_Trait[t_trait] ?? []; }
+	things_unique_havingTraits() { return u.strip_duplicates(Object.values(this.things_byT_Trait).flat()); }
 
 	things_refreshKnowns() {
 		const saved = this.things;
@@ -1164,12 +1167,20 @@ export class Hierarchy {
 		delete this.trait_byHID[trait.hid];
 		delete this.traits_byOwnerHID[trait.ownerID.hash()];
 		this.traits = Identifiable.remove_byHID<Trait>(this.traits, trait);
-		this.traits_byType[trait.t_trait] = Identifiable.remove_byHID<Trait>(this.traits_byType[trait.t_trait], trait);;
+		this.traits_byType[trait.t_trait] = Identifiable.remove_byHID<Trait>(this.traits_byType[trait.t_trait], trait);
+		if (!!trait.owner) {
+			this.things_byT_Trait[trait.t_trait] = Identifiable.remove_byHID<Thing>(this.things_byT_Trait[trait.t_trait], trait.owner);
+		}
 	}
 
 	trait_remember(trait: Trait) {
 		const hid = trait.ownerID.hash();
 		this.trait_byHID[trait.hid] = trait;
+		if (!!trait.owner) {
+			let things = this.things_byT_Trait[trait.t_trait] ?? [];
+			things.push(trait.owner);
+			this.things_byT_Trait[trait.t_trait] = things;
+		}
 		(this.traits_byOwnerHID[hid] = this.traits_byOwnerHID[hid] || []).push(trait);
 		(this.traits_byType[trait.t_trait] = this.traits_byType[trait.t_trait] || []).push(trait);
 		this.traits.push(trait);
