@@ -5,10 +5,8 @@
 	import { w_thing_fontFamily, w_control_key_down } from '../../ts/common/Stores';
 	import { S_Element, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import type { Handle_Result } from '../../ts/common/Types';
-	import Identifiable from '../../ts/runtime/Identifiable';
 	export let es_button: S_Element = S_Element.empty();
-	export let closure: Handle_Result<S_Mouse>;
+	export let closure: (result: S_Mouse) => boolean;
 	export let font_size = k.font_size.common;
 	export let border_color = colors.border;
 	export let origin: Point | null = null;

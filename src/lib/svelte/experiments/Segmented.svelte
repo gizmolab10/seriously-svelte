@@ -1,9 +1,8 @@
 <script lang='ts'>
 	import { k, u, ux, Rect, Size, Point, colors, G_Segment } from '../../ts/common/Global_Imports';
 	import { w_background_color } from '../../ts/common/Stores';
-	import type { Handle_Result } from '../../ts/common/Types';
 	import Segment from './Segment.svelte';
-	export let selection_closure = Handle_Result<string>;
+	export let selection_closure: (selection: string) => boolean;
 	export let font_size = k.font_size.small;
 	export let selected: string[] = [];
 	export let height = k.height.segmented;
