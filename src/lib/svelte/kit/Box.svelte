@@ -31,9 +31,9 @@
         flex: 1;
         display: flex;'>
         {#if showLeft}
-            <Separator 
+            <Separator
                 color={color}
-                class='left-{name}'
+                name='left-{name}'
                 length={height + 2}
                 isHorizontal={false}
                 thickness={thickness}
@@ -48,12 +48,12 @@
             <Separator
                 color={color}
                 length={height + 2}
-                class='right-{name}'
+                name='right-{name}'
                 isHorizontal={false}
                 thickness={thickness}
 				has_thin_divider={false}
                 corner_radius={corner_radius}
-                origin={new Point(width - 2, 2)}/>
+                origin={new Point(width - 1.5, 2)}/>
         {/if}
     </div>
     {#if showTop}

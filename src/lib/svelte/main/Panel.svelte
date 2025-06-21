@@ -38,13 +38,15 @@
 
 {#key panel_reattachments}
 	<Debug/>
-	<div style='
-		touch-action: none;
-		pointer-events: auto;
-		{k.prevent_selection_style};
-		width: {w.windowSize.width}px;
-		height: {w.windowSize.height}px;'
-		on:wheel={ignore_wheel}>
+	<div
+		class='panel'
+		style='
+			touch-action: none;
+			pointer-events: auto;
+			{k.prevent_selection_style};
+			width: {w.windowSize.width}px;
+			height: {w.windowSize.height}px;'
+			on:wheel={ignore_wheel}>
 		{#if [T_Startup.start, T_Startup.fetch].includes($w_t_startup) && databases.db_now.isPersistent}
 			<p>Welcome to Seriously</p>
 			{#if $w_t_startup == T_Startup.fetch}
@@ -54,28 +56,27 @@
 			<p>Nothing is available.</p>
 		{:else if $w_t_startup == T_Startup.ready}
 			<Controls/>
-			{#if !$w_popupView_id && $w_show_details}
-				<Details/>
-			{/if}
-			<div class='right-side'
-				style='
-					top: 0px;
-					height: 100%;
-					position: fixed;
-					z-index: {T_Layer.common};
-					left: {$w_graph_rect.origin.x}px;'>
-				{#key $w_popupView_id}
-					{#if $w_popupView_id == T_Control.builds}
-						<BuildNotes/>
-					{:else if $w_popupView_id == T_Control.import}
-						<Import/>
-					{:else if !$w_popupView_id}
-						<Graph/>
-					{/if}
-				{/key}
-			</div>
-			{#if !$w_popupView_id}
+			{#if !!$w_popupView_id}
+				{#if $w_popupView_id == T_Control.builds}
+					<BuildNotes/>
+				{:else if $w_popupView_id == T_Control.import}
+					<Import/>
+				{/if}
+			{:else}
+				{#if !$w_popupView_id && $w_show_details}
+					<Details/>
+				{/if}
+				<div class='right-side'
+					style='
+						top: 0px;
+						height: 100%;
+						position: fixed;
+						z-index: {T_Layer.common};
+						left: {$w_graph_rect.origin.x}px;'>
+					<Graph/>
+				</div>
 				<Separator
+					name='panel-left'
 					hasBothEnds={true}
 					isHorizontal={false}
 					has_thin_divider={false}
@@ -86,6 +87,7 @@
 					corner_radius={k.radius.gull_wings.thick}
 					origin={new Point(2, layout.graph_top - 4)}/>
 				<Separator
+					name='panel-right'
 					hasBothEnds={true}
 					isHorizontal={false}
 					has_thin_divider={false}
@@ -94,7 +96,7 @@
 					thickness={k.thickness.separator.thick}
 					length={$w_graph_rect.size.height + 10}
 					corner_radius={k.radius.gull_wings.thick}
-					origin={new Point(w.windowSize.width - 2, layout.graph_top - 4)}/>
+					origin={new Point(w.windowSize.width - 1.5, layout.graph_top - 4)}/>
 				<Breadcrumbs/>
 			{/if}
 		{/if}
