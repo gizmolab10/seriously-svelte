@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, h, k, p, u, ux, w, show, Point, colors, layout, svgPaths, signals, S_Element } from '../../ts/common/Global_Imports';
+	import { c, h, k, p, u, ux, w, show, grabs, Point, colors, layout, svgPaths, signals, S_Element } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Element, T_Control, T_Kinship, T_Request } from '../../ts/common/Global_Imports';
 	import { w_background_color, w_device_isMobile, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { w_show_details, w_show_graph_ofType, w_show_tree_ofType } from '../../ts/common/Stores';
@@ -35,9 +35,9 @@
 	];
 
 	onMount(() => { setup_forIDs(); });
-	function togglePopupID(id) { $w_popupView_id = ($w_popupView_id == id) ? null : id; }
-
 	$: $w_count_resize, $w_graph_rect, width = w.windowSize.width - 20;
+	function togglePopupID(id) { $w_popupView_id = ($w_popupView_id == id) ? null : id; }
+	function handle_recents_mouseClick(column: number) { grabs.focus_onNext(column == 1); }
 
 	$: {
 		const _ = $w_show_graph_ofType;
@@ -48,18 +48,6 @@
 			displayName_width = u.getWidthOf(displayName);
 			displayName_x = extra + (width - displayName_width) / 2 + 11;
 		}
-	}
-
-	function handle_s_mouse_forRecents(t_request, s_mouse, column) {
-		// console.log('recents', t_request, !!s_mouse ? s_mouse.isOut : 'no mouse', column);
-		switch (t_request) {
-			case T_Request.name:		 return 'recents';
-			case T_Request.is_visible:	 return true;
-			case T_Request.is_disabled:  return false;
-			case T_Request.is_inverted:  return false;
-			case T_Request.handle_click: break;
-		}
-		return null;
 	}
 
 	function setup_forIDs() {
@@ -131,7 +119,7 @@
 						add_wings={false}
 						has_seperator={false}
 						origin={Point.x(lefts[1])}
-						closure={(t_request, s_mouse, column) => handle_s_mouse_forRecents(t_request, s_mouse, column)}/>
+						closure={handle_recents_mouseClick}/>
 					{/if}
 					{#key $w_show_graph_ofType}
 						<Segmented

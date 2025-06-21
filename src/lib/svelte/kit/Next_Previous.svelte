@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { k, Point, colors, svgPaths, S_Mouse, T_Request, T_Direction } from '../../ts/common/Global_Imports';
 	import Buttons_Row from '../buttons/Buttons_Row.svelte';
-	export let closure: (t_request: T_Request, s_mouse: S_Mouse, column: number) => any;
 	export let separator_thickness = k.thickness.separator.thick;
+	export let closure: (column: number) => any;
 	export let height = k.height.controls;
 	export let has_seperator = false;
 	export let origin = Point.zero;
@@ -32,10 +32,11 @@
 			style='
 				padding: 0;
 				border: none;
+				position:relative;
 				width: {size - 5}px;
 				height: {size + 5}px;
-				position:relative;
 				background-color: transparent;'
+			on:click={() => closure(index)}
 			on:mouseleave={() => hoveredIndex = -1}
 			on:mouseenter={() => hoveredIndex = index}>
 			<svg

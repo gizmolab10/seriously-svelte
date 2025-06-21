@@ -20,6 +20,7 @@ import { T_Oblong, T_Element, T_SvelteComponent } from './Enumerations';
 import { T_Action, T_Details, T_Request, T_Storage_Need } from './Enumerations';
 import { T_File_Format, T_File_Operation, T_Startup, T_Kinship, T_RingZone, T_Preference } from './Enumerations';
 
+import S_Identifiables from '../state/S_Identifiables';
 import S_Alteration from '../state/S_Alteration';
 import S_Text_Edit from '../state/S_Text_Edit';
 import S_Resizing from '../state/S_Resizing';
@@ -88,7 +89,7 @@ export {
 	busy, show, files, grabs, builds, 
 	Tag, User, Persistable, Thing, Trait,
 	
-	S_Common, S_Rotation, S_Resizing,
+	S_Common, S_Rotation, S_Resizing, S_Identifiables,
 	S_Mouse, S_Widget, S_Element, S_Alteration, S_Text_Edit,
 	
 	G_Widget, G_Segment, G_TreeLine, G_TreeBranches, G_Repeater,

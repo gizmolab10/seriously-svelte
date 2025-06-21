@@ -1,11 +1,20 @@
-import { ux, Thing, debug, layout, Ancestry } from '../common/Global_Imports';
-import { w_hierarchy, w_s_text_edit, w_depth_limit } from '../common/Stores';
-import { w_ancestries_grabbed } from '../common/Stores';
+import { ux, Thing, debug, layout, Ancestry, S_Identifiables } from '../common/Global_Imports';
+import { w_hierarchy, w_ancestry_focus, w_ancestries_grabbed } from '../common/Stores';
+import { w_s_text_edit, w_depth_limit } from '../common/Stores';
 import { get } from 'svelte/store';
 
 export class Grabs {
-
 	// N.B. hierarchy depends on grabs, so we can't use h here
+	recents = new S_Identifiables<Ancestry>([]);
+	
+	focus_onNext(next: boolean) {
+		this.recents.find_next_item(next);
+		const ancestry = this.recents.item;
+		if (!!ancestry) {
+			w_ancestry_focus.set(ancestry);
+			ancestry.expand();
+		}
+	}
 	
 	static readonly _____GRAB: unique symbol;
 

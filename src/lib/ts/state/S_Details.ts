@@ -1,9 +1,8 @@
-import { w_tag_things, w_thing_tags, w_thing_traits, w_tag_thing_index } from '../common/Stores';
-import { w_ancestry_focus, w_ancestries_grabbed, w_hierarchy } from '../common/Stores';
-import { h, Tag, grabs, Trait, Thing, Ancestry } from '../common/Global_Imports';
-import { w_storage_updated, w_show_details_ofType } from '../common/Stores';
-import { T_Details, T_Direction, k } from '../common/Global_Imports';
-import { S_Identifiables } from './S_Identifiables';
+import { w_thing_traits, w_storage_updated, w_show_details_ofType } from '../common/Stores';
+import { T_Details, T_Direction, S_Identifiables } from '../common/Global_Imports';
+import { w_tag_things, w_thing_tags, w_tag_thing_index } from '../common/Stores';
+import { h, Tag, grabs, Thing, Ancestry } from '../common/Global_Imports';
+import { w_ancestry_focus, w_ancestries_grabbed } from '../common/Stores';
 import { S_Hideable } from './S_Hideable';
 
 class S_Details {
@@ -90,8 +89,7 @@ class S_Details {
 	private update_things() {
 		const things = this.tag?.things ?? [];
 		const ancestry = grabs.latest;
-		this.s_things.items = things;
-		this.s_things.total_items = things.length;
+		this.s_things.set_items(things);
 		const index = Math.max(0, things.findIndex(t => t.hid == ancestry?.thing?.hid));
 		this.s_things.index_ofItem = index;
 		w_tag_thing_index.set(index);
@@ -112,8 +110,7 @@ class S_Details {
 	private update_s_tags() {
 		if (!!h) {
 			const tags = h?.tags ?? [];
-			this.s_tags.items = tags;
-			this.s_tags.total_items = tags.length;
+			this.s_tags.set_items(tags);
 		}
 	}
 
