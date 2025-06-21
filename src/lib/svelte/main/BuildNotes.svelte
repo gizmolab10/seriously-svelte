@@ -41,9 +41,10 @@
 </script>
 
 <svelte:document on:keydown={handle_key_down} />
-<div class='notes-modal-overlay'>
+<div class='notes-modal-overlay' on:click={() => $w_popupView_id = null}>
 	<div class='notes-modal-content'
-		style='background-color:{$w_background_color}'>
+		style='background-color:{$w_background_color}'
+		on:click|stopPropagation>
 		<div class='top-bar'>
 			<Steppers hit_closure={hit_closure}/>
 			<div class='title'>{title}</div>

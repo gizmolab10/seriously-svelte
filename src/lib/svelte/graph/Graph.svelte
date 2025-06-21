@@ -26,6 +26,7 @@
 	
 	onMount(() => {
 		update_style();
+		console.log('Graph mounted');
 		const handle_rebuild = signals.handle_rebuildGraph(1, (ancestry) => {
 			layoutAnd_reattach();
 		});

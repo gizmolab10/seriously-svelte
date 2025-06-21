@@ -43,10 +43,10 @@
 		style='
 			touch-action: none;
 			pointer-events: auto;
+			on:wheel={ignore_wheel}
 			{k.prevent_selection_style};
 			width: {w.windowSize.width}px;
-			height: {w.windowSize.height}px;'
-			on:wheel={ignore_wheel}>
+			height: {w.windowSize.height}px;'>
 		{#if [T_Startup.start, T_Startup.fetch].includes($w_t_startup) && databases.db_now.isPersistent}
 			<p>Welcome to Seriously</p>
 			{#if $w_t_startup == T_Startup.fetch}
@@ -55,18 +55,16 @@
 		{:else if $w_t_startup == T_Startup.empty}
 			<p>Nothing is available.</p>
 		{:else if $w_t_startup == T_Startup.ready}
-			<Controls/>
-			{#if !!$w_popupView_id}
-				{#if $w_popupView_id == T_Control.builds}
-					<BuildNotes/>
-				{:else if $w_popupView_id == T_Control.import}
-					<Import/>
-				{/if}
+			{#if $w_popupView_id == T_Control.builds}
+				<BuildNotes/>
+			{:else if $w_popupView_id == T_Control.import}
+				<Import/>
 			{:else}
-				{#if !$w_popupView_id && $w_show_details}
+				<Controls/>
+				{#if $w_show_details}
 					<Details/>
 				{/if}
-				<div class='right-side'
+				<div class='graph-container'
 					style='
 						top: 0px;
 						height: 100%;
