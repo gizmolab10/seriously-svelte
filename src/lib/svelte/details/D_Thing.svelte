@@ -67,7 +67,7 @@
 				['order', ancestry.order.expressZero_asHyphen()],
 				['parent', ancestry.predicate.kind],
 				['type', Object.keys(T_Thing).find(k => T_Thing[k] === thing.t_thing)],
-				['id', thing.id.beginWithEllipsis_forLength(19)],
+				['id', thing.id.beginWithEllipsis_forLength(17)],
 				['ancestry', ancestry.id.beginWithEllipsis_forLength(19)],
 				['modified', thing.persistence.lastModifyDate.toLocaleString()],
 				['color', ancestry.isEditable ? k.empty : 'not editable'],
