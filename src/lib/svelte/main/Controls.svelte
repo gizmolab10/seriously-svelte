@@ -11,7 +11,7 @@
 	import SVG_D3 from '../kit/SVG_D3.svelte';
 	import Box from '../kit/Box.svelte';
 	import { onMount } from 'svelte';
-	const widths = [18, -56, 125, 27, 64];	// 73 == 125
+	const widths = [18, 14, 56, 27, 64];	// 73 == 125
 	const lefts = u.cumulativeSum(widths);
 	const details_top = k.height.dot / 2;
 	const y_center = details_top + 3.5;
@@ -24,7 +24,7 @@
 	let width = w.windowSize.width - 20;
 	let displayName = k.empty;
 	let displayName_width = 0;
-	let displayName_x = 220;
+	let displayName_x = 230;
 
 	const t_controls = [	// in order of importance on mobile
 		T_Control.details,
@@ -46,7 +46,7 @@
 			const extra = ux.inTreeMode ? lefts[3] : 0;
 			displayName = db.displayName;
 			displayName_width = u.getWidthOf(displayName);
-			displayName_x = extra + (width - displayName_width) / 2;
+			displayName_x = extra + (width - displayName_width) / 2 + 11;
 		}
 	}
 
@@ -99,13 +99,15 @@
 			height={layout.graph_top - 2}
 			thickness={k.thickness.separator.thick}
 			corner_radius={k.radius.gull_wings.thick}>
-			<div class='controls-themselves' style='
-				top: 10px;
-				left: 6px;
-				position: absolute;
-				height: {size_big}px;
-				z-index: {T_Layer.frontmost};
-				width: {w.windowSize.width - 20}px;'>
+			<div
+				class='controls-themselves'
+				style='
+					left: 6px;
+					top: 9.5px;
+					position: absolute;
+					height: {size_big}px;
+					z-index: {T_Layer.frontmost};
+					width: {w.windowSize.width - 20}px;'>
 				{#if !$w_popupView_id}
 					{#key $w_background_color}
 						<Button
@@ -122,12 +124,11 @@
 					{#if true}
 					<Next_Previous
 						gap={2}
-						margin={28}
+						size={28}
 						name='recents'
 						height={size_big}
 						has_title={false}
 						add_wings={false}
-						svg_size={size_big}
 						has_seperator={false}
 						origin={Point.x(lefts[1])}
 						closure={(t_request, s_mouse, column) => handle_s_mouse_forRecents(t_request, s_mouse, column)}/>

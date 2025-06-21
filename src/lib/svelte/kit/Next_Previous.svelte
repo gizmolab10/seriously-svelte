@@ -1,38 +1,52 @@
 <script lang='ts'>
-	import { k, Point, svgPaths, S_Mouse, T_Request, T_Direction } from '../../ts/common/Global_Imports';
+	import { k, Point, colors, svgPaths, S_Mouse, T_Request, T_Direction } from '../../ts/common/Global_Imports';
 	import Buttons_Row from '../buttons/Buttons_Row.svelte';
 	export let closure: (t_request: T_Request, s_mouse: S_Mouse, column: number) => any;
 	export let separator_thickness = k.thickness.separator.thick;
 	export let height = k.height.controls;
 	export let has_seperator = false;
+	export let origin = Point.zero;
 	export let hasBothEnds = true;
 	export let has_title = false;
 	export let add_wings = true;
 	export let name = k.empty;
-	export let origin: Point;
-	export let width = 144;
-	export let margin = 0;
-	export let gap = 4;
+	export let size = 24;
 	const base_titles = [T_Direction.previous, T_Direction.next];
 	$: row_titles = has_title ? [name, ...base_titles] : base_titles;
+	let hoveredIndex = -1;
 
 </script>
 
-<div class='next-previous'>
-	<Buttons_Row
-		gap={gap}
-		width={width}
-		has_svg={true}
-		margin={margin}
-		origin={origin}
-		closure={closure}
-		has_title={has_title}
-		add_wings={add_wings}
-		button_height={height}
-		row_titles={row_titles}
-		hasBothEnds={hasBothEnds}
-		has_seperator={has_seperator}
-		name={'previous-next-' + name}
-		separator_thickness={separator_thickness}
-		font_sizes={[k.font_size.smallest, k.font_size.smaller]}/>
+<div
+	class='{name}-next-previous'
+	style='
+		top: -7.5px;
+		display:flex;
+		position:absolute;
+		left: {origin.x}px;
+		flex-direction:row;
+		align-items:center;'>
+	{#each row_titles as title, index}
+		<button
+			class='{name}-{title}-button'
+			style='
+				padding: 0;
+				border: none;
+				width: {size - 5}px;
+				height: {size + 5}px;
+				position:relative;
+				background-color: transparent;'
+			on:mouseleave={() => hoveredIndex = -1}
+			on:mouseenter={() => hoveredIndex = index}>
+			<svg
+				class='svg-glow-button-path'
+				viewBox='0 0 {size} {size}'>
+				<path
+					stroke-width='0.75'
+					stroke={colors.border}
+					d={svgPaths.path_for(title, size + 3)}
+					fill={hoveredIndex === index ? 'black' : 'white'}/>
+			</svg>
+		</button>
+	{/each}
 </div>
