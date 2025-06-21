@@ -1,5 +1,7 @@
 <script lang='ts'>
-	import { k, Point, colors, T_Layer } from '../../ts/common/Global_Imports';
+	import { k, Rect, Point, colors, T_Layer, svgPaths } from '../../ts/common/Global_Imports';
+    import { w_background_color } from '../../ts/common/Stores';
+    import SVG_Gradient from './SVG_Gradient.svelte';
 	import Separator from './Separator.svelte';
     export let corner_radius: number = k.radius.gull_wings.thick;
     export let thickness: number = k.thickness.separator.thick;
@@ -14,7 +16,12 @@
     export let width: number = 0;
     export let left: number = 0;
     export let top: number = 0;
-</script>
+    const box_rect = Rect.createWHRect(width, height);
+    let banner_color = colors.ofBannerFor($w_background_color);
+
+    $: $w_background_color, banner_color = colors.ofBannerFor($w_background_color);
+
+    </script>
 
 <div class='box-{name}'
     style='
@@ -40,7 +47,14 @@
                 origin={new Point(2, 2)}
 				has_thin_divider={false}
                 corner_radius={corner_radius}/>
-        {/if}        
+        {/if}
+        <SVG_Gradient
+            isInverted={true}
+            color={banner_color}
+            size={box_rect.size}
+            name={`gradient-${name}`}
+            zindex={T_Layer.frontmost}
+            path={svgPaths.rectangle(box_rect)}/>
         <div class='box-content-{name}' style='flex: 1;'>
             <slot />
         </div>

@@ -56,6 +56,7 @@
 			total -= u.getWidthOf(t_control);
 			const es_control = ux.s_element_for(new Identifiable(t_control), T_Element.control, t_control);
 			es_control.ignore_hover = t_control == T_Control.details;
+			es_control.isDisabled = T_Control.details == t_control;
 			es_control.set_forHovering(colors.default, 'pointer');
 			es_control_byType[t_control] = es_control;
 			isVisible_forType[t_control] = total > 0;

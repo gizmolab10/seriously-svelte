@@ -25,11 +25,13 @@
         name={gradient_name}
         color={banner_color}
         size={glow_rect.size}
-        isInverted={!isSelected}
         zindex={T_Layer.frontmost}
-        path={svgPaths.rectangle(glow_rect)}/>
+        path={svgPaths.rectangle(glow_rect)}
+        isInverted={!isHovering || svgPaths.hasPath_for(title)}/>
     <div class='title'
         on:click={() => handle_click(title)}
+        on:mouseenter={() => isHovering = true}
+        on:mouseleave={() => isHovering = false}
         style='
             top: 50%;
             left: 50%;
@@ -41,12 +43,10 @@
             font-size: {font_size}px;
             background-color: transparent;
             transform: translate(-50%, -50%);'>
-        {#if !!svgPaths.hasPath_for(title)}
+        {#if svgPaths.hasPath_for(title)}
             <svg
                 viewBox='-2 -3 20 20'
-                class='svg-glow-button-path'
-                on:mouseenter={() => isHovering = true}
-                on:mouseleave={() => isHovering = false}>
+                class='svg-glow-button-path'>
                 <path d={svgPaths.path_for(title)} stroke={colors.border} fill={isHovering ? 'black' : 'white'} stroke-width='0.75'/>
             </svg>
         {:else}
