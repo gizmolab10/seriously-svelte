@@ -56,17 +56,7 @@ export default class Ancestry extends Identifiable {
 	
 	static readonly _____FOCUS: unique symbol;
 
-	becomeFocus(force: boolean = false): boolean {
-		const priorFocus = get(w_ancestry_focus);
-		const changed = force || !priorFocus || !this.equals(priorFocus!);
-		if (changed) {
-			grabs.recents.push(this);
-			w_s_alteration.set(null);
-			w_ancestry_focus.set(this);
-		}
-		this.expand();
-		return changed;
-	}
+	becomeFocus(force: boolean = false): boolean { return grabs.focusOn_ancestry(this, force); }
 
 	static readonly _____THINGS: unique symbol;
 

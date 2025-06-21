@@ -1,19 +1,41 @@
 import { ux, Thing, debug, layout, Ancestry, S_Identifiables } from '../common/Global_Imports';
-import { w_hierarchy, w_ancestry_focus, w_ancestries_grabbed } from '../common/Stores';
+import { w_hierarchy, w_ancestry_focus, w_ancestries_grabbed, w_s_alteration } from '../common/Stores';
 import { w_s_text_edit, w_depth_limit } from '../common/Stores';
 import { get } from 'svelte/store';
 
+type Ancestry_Pair = [Ancestry, Ancestry | null];
+
 export class Grabs {
 	// N.B. hierarchy depends on grabs, so we can't use h here
-	recents = new S_Identifiables<Ancestry>([]);
+
+	recents = new S_Identifiables<Ancestry_Pair>([]);
 	
 	focus_onNext(next: boolean) {
 		this.recents.find_next_item(next);
-		const ancestry = this.recents.item;
-		if (!!ancestry) {
-			w_ancestry_focus.set(ancestry);
-			ancestry.expand();
+		const item = this.recents.item;
+		if (!!item && Array.isArray(item) && item.length >= 2) {
+			const [ancestry, grabbed] = item;
+			if (!!ancestry) {
+				w_ancestry_focus.set(ancestry);
+				ancestry.expand();
+			}
+			if (!!grabbed) {
+				this.grabOnly(grabbed);
+			}
 		}
+	}
+
+	focusOn_ancestry(ancestry: Ancestry, force: boolean = false): boolean {
+		const priorFocus = get(w_ancestry_focus);
+		const changed = force || !priorFocus || !ancestry.equals(priorFocus!);
+		if (changed) {
+			const pair: Ancestry_Pair = [ancestry, this.latest];
+			grabs.recents.push(pair);
+			w_s_alteration.set(null);
+			w_ancestry_focus.set(ancestry);
+		}
+		ancestry.expand();
+		return changed;
 	}
 	
 	static readonly _____GRAB: unique symbol;
