@@ -3,20 +3,20 @@
   
   let showSlot = true;
 
-  function handleDogClick() {
+  function handleClick_onVisibility() {
     showSlot = !showSlot;
   }
 </script>
 
 <div style="position: relative; min-height: {showSlot ? '0' : '2.5rem'};">
-  <button class="dog-button" on:click={handleDogClick}>{showSlot ? 'hide' : 'show'}</button>
+  <button class="visibility-button" on:click={handleClick_onVisibility}>{showSlot ? 'hide' : 'show'}</button>
   
   {#if showSlot}
     <Motion
       initial={{ opacity: 0, height: 0 }}
       animate={{ opacity: 1, height: "auto" }}
       exit={{ opacity: 0, height: 0 }}
-      transition={{ duration: 0.3, ease: 'easeInOut' }}
+      transition={{ duration: 0.1, ease: 'easeInOut' }}
       let:motion
     >
       <div use:motion style="overflow: hidden;">
@@ -43,7 +43,7 @@
     padding: 1rem; /* Added padding for content */
   }
   
-  .dog-button {
+  .visibility-button {
     position: absolute;
     top: 0.5rem;
     right: 0.5rem;
@@ -57,7 +57,7 @@
     cursor: pointer;
   }
   
-  .dog-button:hover {
+  .visibility-button:hover {
     background-color: #0056b3;
   }
 </style> 
