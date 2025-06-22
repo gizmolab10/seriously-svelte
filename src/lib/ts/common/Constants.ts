@@ -73,17 +73,18 @@ export default class Constants {
 	};
 
 	radius = {
-		arcSlider_cap: 7.5,
-		ring_center:   55,
-		gull_wings: {
-			thick:	   14,
-			thin:		8,
-			ultra_thin: 5,
+		text_area_border:  7,
+		arcSlider_cap: 	   7.5,
+		ring_center:   	  55,
+		gull_wings: { 
+			thick:	   	  14,
+			thin:		   8,
+			ultra_thin:	   5,
 		},
 	};
 
 	thickness = {
-		ring_rotation: 44,
+		rotation_ring: 44,
 		paging_arc:	   15,
 		fork:		    2.5,
 		separator: {

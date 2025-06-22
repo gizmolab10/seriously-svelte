@@ -67,7 +67,7 @@
 						label={trait.t_trait}
 						color={colors.default}
 						original_text={trait.text}
-						width={k.width_details - 21}
+						width={k.width_details - 20}
 						label_underline={trait.t_trait == 'link'}
 						label_color={trait.t_trait == 'link' ? 'blue' : 'black'}
 						handle_textChange={async (label, text) => await h.trait_setText_forTrait(text, trait)}

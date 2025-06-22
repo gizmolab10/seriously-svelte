@@ -67,11 +67,11 @@
 
 <div class={label}
 	style='
-		top: {top}px;
+		top: {top - 0.5}px;
 		left: {left}px;
 		width: {width}px;
-		padding-bottom: 8px;
-		position: relative;'>
+		position: relative;
+		padding-bottom: 8px;'>
 	<textarea
 		id={label}
 		type='text'
@@ -98,7 +98,7 @@
 			overflow-wrap: break-word;
 			{k.prevent_selection_style};
 			font-family: {$w_thing_fontFamily};
-			border-radius: {k.thickness.separator.thick * 1.7}px;
+			border-radius: {k.radius.text_area_border}px;
 		'/>
 	<div style='width: 100%; display: flex; justify-content: center;'>
 		<div style='

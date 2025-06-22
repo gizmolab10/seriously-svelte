@@ -161,13 +161,13 @@
 		<Buttons_Row
 			gap={4}
 			margin={20}
-			width={width}
+			width={width + 6}
 			has_seperator={true}
 			font_sizes={font_sizes}
 			row_titles={row_titles()}
 			closure={handle_actionRequest}
 			button_height={k.height.button}
-			center={new Point(width / 2, top + 140)}
+			center={new Point(width / 2 + 3, top + 140)}
 			separator_thickness={k.thickness.separator.ultra_thin}
 			name={`data-${(ux.T_Storage_Need == T_Storage_Need.direction) ? 'action' : 'format'}`}/>
 	{/key}

@@ -1,31 +1,29 @@
 <script lang='ts'>
     import { k, u, Rect, Size, Point, colors, svgPaths, T_Layer, T_Details } from '../../ts/common/Global_Imports';
     import { w_background_color, w_show_details_ofType, w_count_resize_hideables } from '../../ts/common/Stores';
-    import { createEventDispatcher, tick, setContext } from 'svelte';
     import { s_details } from '../../ts/state/S_Details';
     import Glows_Banner from './Glows_Banner.svelte';
     import { tick } from 'svelte';
-    export let extra_titles: string[] = [];    // extra titles added into banner
+    export let extra_titles: string[] = [];
     export let t_detail: T_Details;
     const title = T_Details[t_detail];
     const titles = [title, ...extra_titles];
-    const dispatch = createEventDispatcher();
     const banner_height = k.height.banner.details;
     const s_hideable = s_details.s_hideables_byType[t_detail];
     const banner_rect = new Rect(Point.zero, new Size(k.width_details, banner_height));
     let banner_color = colors.ofBannerFor($w_background_color);
-	let slot_isVisible = compute_slot_isVisible();
-    let element: HTMLElement;
-    let prior_height = 22;
+    let entire: HTMLElement;
+    let slot: HTMLElement;
+    let slot_height = 0;
     let height = 22;
 
-    $: dispatch('heightChange', { height });
-    $: $w_background_color, banner_color = colors.ofBannerFor($w_background_color);
+    $: slot_isVisible = compute_slot_isVisible();
+    $: banner_color = colors.ofBannerFor($w_background_color);
     
     $: (async () => {
-        if (!!element && !!s_hideable) {
+        if (!!entire && !!s_hideable) {
             await tick();
-            height = slot_isVisible ? element.scrollHeight - 1 : s_hideable.hasBanner ? banner_height : 0;
+            height = slot_isVisible ? entire.scrollHeight - 1 : s_hideable.hasBanner ? banner_height : 0;
         }
     })();
 
@@ -46,14 +44,14 @@
 		}
 		$w_show_details_ofType = t_details;
 		slot_isVisible = compute_slot_isVisible();
-        height = slot_isVisible ? element.scrollHeight - 1 : (!!s_hideable && s_hideable.hasBanner) ? banner_height : 0;
+        height = slot_isVisible ? entire.scrollHeight - 1 : (!!s_hideable && s_hideable.hasBanner) ? banner_height : 0;
 	}
 
 </script>
 
 <div
     class='hideable'
-    bind:this={element}
+    bind:this={entire}
     style='
         top: 0px;
         display: flex;
@@ -81,11 +79,12 @@
         </div>
     {/if}
     {#if slot_isVisible}
-        <div class={'hideable-content-' + title}
+        <div
+            bind:this={slot}
+            class={'hideable-slot-' + title}
             style='
                 height: {height}px;
                 position: relative;
-                padding-bottom: 9px;
                 top: {(!!s_hideable && s_hideable.hasBanner) ? banner_height : 0}px;'>
             <slot/>
         </div>

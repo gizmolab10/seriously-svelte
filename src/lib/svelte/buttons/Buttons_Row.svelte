@@ -113,7 +113,7 @@
 				style='
 					position:absolute;
 					top:{has_seperator ? 10 : 0}px;
-					left:{margin + (has_seperator ? 0 : solo_title_width)}px;'>
+					left:{margin - 4 + (has_seperator ? 0 : solo_title_width)}px;'>
 				{#each button_titles as title, column}
 					<Button
 						height={button_height}

@@ -64,7 +64,7 @@ export default class S_RadialGraph {
 			const g_cluster = layout.g_radialGraph.g_cluster_atMouseLocation;
 			const inner = get(w_ring_rotation_radius);
 			const distance = mouse_vector.magnitude;
-			const thick = k.thickness.ring_rotation;
+			const thick = k.thickness.rotation_ring;
 			const thin = k.thickness.paging_arc;
 			const rotate = inner + thick;
 			const thumb = inner + thin;

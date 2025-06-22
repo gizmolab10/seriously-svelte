@@ -83,7 +83,7 @@ export default class G_ArcSlider {
 	}
 
 	layout_fork(angle_ofCluster: number) {
-		const fork_raw_radius = k.thickness.ring_rotation * 0.6;
+		const fork_raw_radius = k.thickness.rotation_ring * 0.6;
 		const fork_backoff = this.fork_adjustment(fork_raw_radius, this.inside_arc_radius);
 		this.fork_radius = fork_raw_radius - fork_backoff;
 		this.angle_ofCluster = angle_ofCluster;
@@ -130,9 +130,9 @@ export default class G_ArcSlider {
 	}
 
 	get svgPathFor_bigArc(): string {
-		const capRadius = k.thickness.ring_rotation / 2;
+		const capRadius = k.thickness.rotation_ring / 2;
 		const smallRadius = get(w_ring_rotation_radius) + 1;
-		const bigRadius = smallRadius + k.thickness.ring_rotation;
+		const bigRadius = smallRadius + k.thickness.rotation_ring;
 		return this.svgPathFor_arcSlider_using(smallRadius, bigRadius, capRadius);
 	}
 

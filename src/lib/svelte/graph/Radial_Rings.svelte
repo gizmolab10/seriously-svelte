@@ -9,7 +9,7 @@
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Radial_ArcSlider from './Radial_ArcSlider.svelte';
 	import { onMount } from 'svelte';
-	const ring_width = k.thickness.ring_rotation;
+	const ring_width = k.thickness.rotation_ring;
 	const name = 'rings';
 	const mouse_timer = ux.mouse_timer_forName(name);	// persist across destroy/recreate
 	let color = $w_ancestry_focus?.thing?.color ?? colors.default_forThings;
@@ -18,7 +18,7 @@
 	let ring_reattachments = 0;
 	let last_action = 0;
 
-	$: middle_radius   = $w_ring_rotation_radius + k.thickness.ring_rotation;
+	$: middle_radius   = $w_ring_rotation_radius + k.thickness.rotation_ring;
 	$: outer_radius	   = middle_radius + ring_width;
 	$: outer_diameter  = outer_radius * 2;
 	$: viewBox		   = `${-ring_width}, ${-ring_width}, ${outer_diameter}, ${outer_diameter}`;
