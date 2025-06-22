@@ -23,7 +23,7 @@
   }
 </script>
 
-<div class="demo-container">
+<div class="demo-container" style="position:absolute; top:10; left:0; width:100%; height:100%;">
   <h2>Dynamic Stack Demo</h2>
   <p>Click the buttons below to toggle content and see how the stack adjusts automatically:</p>
   
