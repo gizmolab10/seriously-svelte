@@ -23,6 +23,7 @@
     $: (async () => {
         if (!!entire && !!s_hideable) {
             await tick();
+            slot_height = slot?.scrollHeight ?? 0;
             height = slot_isVisible ? entire.scrollHeight - 1 : s_hideable.hasBanner ? banner_height : 0;
         }
     })();
@@ -83,7 +84,7 @@
             bind:this={slot}
             class={'hideable-slot-' + title}
             style='
-                height: {height}px;
+                height: 22px;
                 position: relative;
                 top: {(!!s_hideable && s_hideable.hasBanner) ? banner_height : 0}px;'>
             <slot/>
