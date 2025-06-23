@@ -1,7 +1,6 @@
 <script lang='ts'>
+	import { k, u, Point, colors, T_Layer, Direction } from '../../ts/common/Global_Imports';
 	import { w_show_details_ofType, w_background_color } from '../../ts/common/Stores';
-	import { T_Layer, Direction,  } from '../../ts/common/Global_Imports';
-	import { k, u, Point, colors } from '../../ts/common/Global_Imports';
 	import Gull_Wings from '../kit/Gull_Wings.svelte';
 	export let corner_radius = k.radius.gull_wings.ultra_thin;
 	export let thickness = k.thickness.separator.thick;
@@ -11,6 +10,7 @@
 	export let zindex = T_Layer.details;
 	export let length = k.width_details;
 	export let has_thin_divider = true;
+	export let position = 'absolute';
 	export let origin = Point.zero;
 	export let isHorizontal = true;
 	export let hasBothEnds = true;
@@ -43,8 +43,8 @@
 
 	function style_for(isHorizontal: boolean, line_left: number, zindex: number, top: number, origin_y: number, margin: number, thickness: number, length: number, separator_color: string): string {
 		return isHorizontal
-			? `top:${origin_y}px; z-index:${zindex}; position:absolute; left:${line_left}px; height:${thickness}px; width:${length - margin * 2}px; background-color:${separator_color};`
-			: `left:${line_left}px; z-index:${zindex}; position:absolute; top:${origin_y + margin}px; width:${thickness}px; height:${length - 6 - margin * 2}px; background-color:${separator_color};`;
+			? `top:${origin_y}px; z-index:${zindex}; position:${position}; left:${line_left}px; height:${thickness}px; width:${length - margin * 2}px; background-color:${separator_color};`
+			: `left:${line_left}px; z-index:${zindex}; position:${position}; top:${origin_y + margin}px; width:${thickness}px; height:${length - 6 - margin * 2}px; background-color:${separator_color};`;
 	}
 
 	function wingsCenter_for(isHorizontal: boolean, length: number, thickness: number, forOtherEnd: boolean): Point {
@@ -78,7 +78,7 @@
 		<div class='thin-horizontal-divider'
 			style='
 				height:{0.05}px;
-				position:absolute;
+				position:{position};
 				z-index:{zindex + 1};
 				width:{length - 21}px;
 				left:{line_left + 8}px;
@@ -90,7 +90,7 @@
 			style='
 				width:{0.05}px;
 				top:{origin.y}px;
-				position:absolute;
+				position:{position};
 				z-index:{zindex + 1};
 				height:{length - 6}px;
 				left:{origin.x - 0.05}px;
@@ -103,9 +103,9 @@
 		style='
 			z-index:{zindex};
 			padding: 0px 5px;
-			position:absolute;
 			top:{title_top}px;
 			left:{title_left}px;
+			position:{position};
 			white-space: nowrap;
 			z-index:{zindex + 2};
 			font-size:{title_font_size}px;

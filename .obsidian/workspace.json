@@ -169,5 +169,7 @@
     }
   },
   "active": "9968854d61be5eec",
-  "lastOpenFiles": []
+  "lastOpenFiles": [
+    "src/lib/svelte/details/Dynamic.svelte"
+  ]
 }

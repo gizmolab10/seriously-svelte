@@ -140,7 +140,7 @@
 		class='actions'
 		style='
 			width: 100%;
-			position:absolute;
+			position:relative;
 			top:{actions_top}px;
 			z-index:{T_Layer.actions}'>
 		{#if $w_s_alteration}
@@ -149,11 +149,11 @@
 				style='
 					width: 100%;
 					display:block;
-					position:absolute;
+					position:relative;
 					text-align:center;
 					z-index:{T_Layer.actions + 1};
 					font-size:{k.font_size.smallest}px;'>
-				<div style='top:9px; width: 100%; position:absolute;'>
+				<div style='top:9px; width: 100%; position:relative;'>
 					To <em>{$w_s_alteration.t_alteration}</em> an item as <em>{target_ofAlteration() ?? k.unknown}</em>
 					<br> to <strong>{grabs.latest.title}</strong>
 					<br> choose that item's <em>blinking</em> dot
@@ -167,7 +167,7 @@
 					height={k.height.button}
 					color = colors.default
 					es_button={es_cancel}
-					position='absolute'
+					position='relative'
 					width={40}>
 					cancel
 				</Button>
@@ -176,7 +176,6 @@
 			<Buttons_Grid
 				top={1}
 				gap={2}
-				columns={5}
 				name='top-actions'
 				width={grid_width}
 				has_title={has_title}
@@ -195,13 +194,12 @@
 		{/if}
 		<Buttons_Grid
 			gap={2}
-			columns={5}
 			width={grid_width}
 			name='bottom-actions'
 			has_title={has_title}
 			type={T_Element.action}
 			font_sizes={font_sizes}
-			top={top_gridHeight - 3}
+			top={17}
 			closure={handle_actionRequest}
 			button_height={k.height.button}
 			button_titles={button_titles[1]}/>

@@ -79,13 +79,15 @@
 </script>
 
 {#if !!thing}
-	<div class='selection' 
+	<div class='properties-container' 
 		style='
 			left:4px;
 			width:100%;
 			color:black;
 			top:{top}px;
-			position:absolute;
+			height:auto;
+			position:relative;
+			padding-bottom:8px;
 			z-index:{T_Layer.frontmost};'>
 		{#if info_details.length != 0}
 			<Text_Table
@@ -93,7 +95,7 @@
 				row_height={11}
 				array={info_details}
 				bind:this={info_table}
-				name='information-table'
+				name='propertie-table'
 				font_size={k.font_size.smaller}/>
 		{/if}
 		{#if !!ancestry && ancestry.isEditable}

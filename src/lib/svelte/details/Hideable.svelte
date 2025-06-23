@@ -69,7 +69,7 @@
                 width: 100%;
                 display: flex;
                 cursor: pointer;
-                position: absolute;
+                position: relative;
                 align-items: stretch;
                 height: {banner_height}px;'>
             <Glows_Banner

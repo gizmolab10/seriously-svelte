@@ -37,7 +37,7 @@
 </script>
 
 {#key reattachments}
-	<div class='hierarchy_traits'
+	<div class='traits'
 		style='
 			width: 100%;
 			padding: 2px;

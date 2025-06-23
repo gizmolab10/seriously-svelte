@@ -113,9 +113,8 @@
 
 </script>
 
-<div class='data-details'
+<div class='database-container'
 	style='
-		height:40px;
 		padding:5px;'>
 	<Segmented
 		name='db'
@@ -125,14 +124,14 @@
 		height={k.height.controls}
 		origin={new Point(0, top - 2)}
 		handle_selection={handle_db_selection}/>
-	<div class='data-details'
+	<div class='database-information'
 		style='
 			width: 100%;
 			font-size:{k.font_size.smaller}px;'>
 		<Text_Table
 			top={top + 22}
 			row_height={11}
-			name='data-table'
+			name='database-table'
 			array={storage_details}
 			font_size={k.font_size.small - 1}/>
 		{#key $w_storage_updated}

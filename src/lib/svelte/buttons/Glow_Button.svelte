@@ -20,7 +20,10 @@
 
 <div
 	class='glow'
-	style='position: relative;'>
+	style='
+        width: {width}px;
+        height: {height}px;
+        position: relative;'>
     <SVG_Gradient
         name={gradient_name}
         color={banner_color}

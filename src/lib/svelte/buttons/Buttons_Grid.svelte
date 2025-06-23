@@ -26,7 +26,7 @@
         left:1px;
         top:{top}px;
         width:{width}px;
-        position:absolute;
+        position:relative;
         height:{(rows * button_height) + ((rows - 1) * gap)}px;'>
     {#each button_titles as titles, row}
         {#if closure(T_Request.is_visible, S_Mouse.empty, name, row, -1)}
@@ -34,7 +34,6 @@
                 gap={gap}
                 type={type}
                 width={width}
-                box_top={box_top}
                 row_titles={titles}
                 has_title={has_title}
                 font_sizes={font_sizes}

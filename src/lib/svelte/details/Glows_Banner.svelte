@@ -40,7 +40,7 @@
 	style='
 		display: flex;
 		width: {width}px;
-		position: absolute;
+		position: relative;
 		flex-direction: row;
 		align-items: stretch;'>
 	<Separator
@@ -56,9 +56,7 @@
 			font_size={font_size}
 			handle_click={intercept_click}
 			isSelected={title === selected_title}
-			style={index === 0 ? 'left: 0;' : ''}
-			width={g_repeater.button_width_for(index)}
-			position={index === 0 ? 'absolute' : 'relative'}/>
+			width={g_repeater.button_width_for(index)}/>
 		{#if index > 0}
 			<Separator
 				length={height + 6}

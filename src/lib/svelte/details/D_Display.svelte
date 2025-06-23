@@ -7,13 +7,14 @@
 	import Color from '../kit/Color.svelte';
 	export let top = 4;
 	const color_left = 60
+	const position = 'relative';
 	const picker_offset = `-124px`;
 	const font_size = k.font_size.smaller;
 	const info_width = k.width_details - 30;
 	const color_origin = new Point(color_left, 84);
 	const separator_font_size = k.font_size.smallest;
 	const titles = [T_Kinship[T_Kinship.child], T_Kinship[T_Kinship.parent], T_Kinship[T_Kinship.related]];
-	const heights = [5, 9, 25, 9, 0];
+	const heights = [5, -1, 25, 9, 0];
 	const tops = u.cumulativeSum(heights);
 	let color = $w_background_color;
 
@@ -33,10 +34,11 @@
 		color:black;
 		width: 100%;
 		top:{top}px;
-		position:relative;
+		position:{position};
 		font-size:{k.font_size.small}px;'>
 	<Separator
 		isHorizontal={true}
+		position={position}
 		has_thin_divider={true}
 		length={k.width_details}
 		margin={k.details_margin}
@@ -46,9 +48,7 @@
 		title_font_size={separator_font_size}
 		thickness={k.thickness.separator.ultra_thin}/>
 	<Segmented
-		left={9}
 		name='counts'
-		top={tops[1]}
 		titles={titles}
 		allow_none={true}
 		allow_multiple={true}
@@ -59,6 +59,7 @@
 		handle_selection={handle_count_dots}/>
 	<Separator
 		title='color'
+		position={position}
 		isHorizontal={true}
 		has_thin_divider={true}
 		length={k.width_details}
@@ -73,7 +74,7 @@
 			width: 15px;
 			height: 15px;
 			top: {tops[3]}px;
-			position: absolute;;
+			position: {position};
 			border: 1.5px solid black;
 			left: {color_origin.x + 70}px;
 			background-color: {$w_background_color}'>
@@ -87,7 +88,7 @@
 		class= 'background'
 		style='
 			top: {tops[4]}px;
-			position: absolute;;
+			position: {position};
 			left: {color_origin.x}px;'>
 		background:
 	</div>

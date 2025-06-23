@@ -112,7 +112,6 @@
 					{/key}
 					{#if true}
 					<Next_Previous
-						gap={2}
 						size={28}
 						name='recents'
 						height={size_big}

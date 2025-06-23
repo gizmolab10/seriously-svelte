@@ -3,6 +3,7 @@
 	import type { Integer } from '../../ts/common/Types';
 	export let font_size = k.font_size.small;
 	export let number_of_columns = 2;
+	export let position = 'relative';
 	export let row_height = 12;
 	export let name = k.empty;
 	export let width = 180;
@@ -36,7 +37,7 @@
 		style='
 			width:97%;
 			top:{top}px;
-			position:absolute;
+			position:{position};
 			font-size:{font_size}px;
 			z-index: {T_Layer.details};'>
 		<table 

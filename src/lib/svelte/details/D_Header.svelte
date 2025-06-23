@@ -24,11 +24,11 @@
 {#key reattachments}
 	<div style='
 		top:0px;
-		height:100%;
+		height:20px;
 		display:flex;
 		color:{color};
 		white-space:pre;
-		position:absolute;
+		position:relative;
 		text-align:center;
 		align-items:center;
 		justify-content:center;

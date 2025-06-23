@@ -39,7 +39,6 @@
         display: flex;'>
         {#if showLeft}
             <Separator
-                color={color}
                 name='left-{name}'
                 length={height + 2}
                 isHorizontal={false}
@@ -60,7 +59,6 @@
         </div>
         {#if showRight}
             <Separator
-                color={color}
                 length={height + 2}
                 name='right-{name}'
                 isHorizontal={false}
@@ -72,10 +70,9 @@
     </div>
     {#if showTop}
         <Separator 
-            color={color}
             length={width}
+            name='top-{name}'
 			add_wings={false}
-            class='top-{name}'
             origin={Point.zero}
             isHorizontal={true}
             thickness={thickness}
@@ -84,11 +81,10 @@
     {/if}
     {#if showBottom}
         <Separator
-            color={color}
             length={width}
 			add_wings={false}
             isHorizontal={true}
-            class='bottom-{name}'
+            name='bottom-{name}'
             thickness={thickness}
 			has_thin_divider={false}
             corner_radius={corner_radius}
