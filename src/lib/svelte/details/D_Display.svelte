@@ -1,5 +1,4 @@
 <script lang='ts'>
-	console.log('D_Display.svelte loaded');
 	import { w_show_countDots_ofType, w_background_color, w_depth_limit } from '../../ts/common/Stores';
 	import { k, u, ux, colors, Point, T_Layer, T_Kinship, layout } from '../../ts/common/Global_Imports';
 	import Segmented from '../mouse/Segmented.svelte';
@@ -23,12 +22,10 @@
 	let color_wrapper: HTMLDivElement | null = null;
 
 	onMount(() => {
-		console.log('onMount backgroundColorDiv:', color_wrapper);
 		updateColorOrigin();
 	});
 
 	$: if (color_wrapper) {
-		console.log('Reactive statement triggered', color_wrapper);
 		updateColorOrigin();
 	}
 
@@ -46,11 +43,9 @@
 	}
 
 	function updateColorOrigin() {
-		console.log('updateColorOrigin called');
 		if (color_wrapper) {
 			const rect = color_wrapper.getBoundingClientRect();
 			colorOrigin = new Point(rect.left, rect.top);
-			console.log('updateColorOrigin', colorOrigin.description);
 		}
 	}
 
