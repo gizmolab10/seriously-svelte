@@ -43,8 +43,9 @@ export enum T_Layer {
 	dots,
 	text,
 	details,
-	actions,
-	action_buttons,
+	detailsPlus_1,
+	detailsPlus_2,
+	detailsPlus_3,
 	frontmost,
 }
 

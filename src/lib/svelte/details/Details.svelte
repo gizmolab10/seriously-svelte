@@ -74,4 +74,8 @@
 		display: none;                /* Chrome, Safari, Opera */
 	}
 
+	.details-stack > :global(*) {
+		flex-shrink: 0;
+	}
+
 </style>

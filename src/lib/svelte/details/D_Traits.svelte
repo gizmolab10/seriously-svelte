@@ -43,6 +43,7 @@
 			padding: 2px;
 			display: flex;
 			position: relative;
+			padding-bottom:6px;
 			scrollbar-width: none;          /* Firefox */
 			flex-direction: column;
 			-ms-overflow-style: none;

@@ -33,7 +33,7 @@
 	// zindex
 
 	$: separatorStyle = style_for(isHorizontal, line_left, zindex, top, origin.y, margin, thickness, length, separator_color);
-	$: $w_show_details_ofType, title_top = origin.y - 4 + thickness * 0.2 - title_font_size * 0.1;
+	$: $w_show_details_ofType, title_top = origin.y - 5.5 - title_font_size / 30;
 	$: wingsCenter_single = wingsCenter_for(isHorizontal, length, thickness, false);
 	$: wingsCenter_dual = wingsCenter_for(isHorizontal, length, thickness, true);
 	$: wingsDirection_single = isHorizontal ? Direction.right : Direction.down;
@@ -108,6 +108,7 @@
 			position:{position};
 			white-space: nowrap;
 			z-index:{zindex + 2};
+			width:{title_width}px;
 			font-size:{title_font_size}px;
 			background-color:{$w_background_color};'>
 		{title}

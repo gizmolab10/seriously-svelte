@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, T_Details } from '../../ts/common/Global_Imports';
+	import { k, u, T_Layer, T_Details } from '../../ts/common/Global_Imports';
 	import { w_show_details_ofType } from '../../ts/common/Stores';
 	import { s_details } from '../../ts/state/S_Details';
 	import Glows_Banner from './Glows_Banner.svelte';
@@ -38,11 +38,11 @@
 		width: 100%;
 		height: auto;
 		display: flex;
-		overflow: hidden;
 		position: relative;
 		flex-direction: column;
-		background-color: transparent;'>
-	{#if s_hideable.hasBanner}
+		background-color: transparent;
+		z-index:{T_Layer.detailsPlus_1};'>
+	{#if s_hideable?.hasBanner}
 		<div
 			class='banner'
 			style='
@@ -60,15 +60,10 @@
 		</div>
 	{/if}
 	{#if slot_isVisible}
-		<Motion
-			initial={{ opacity: 0, height: 0 }}
-			animate={{ opacity: 1, height: 'auto' }}
-			exit={{ opacity: 0, height: 0 }}
-			transition={{ duration: 0.01, ease: 'easeInOut' }}
-			let:motion>
-			<div use:motion style='overflow: hidden;'>
-				<slot />
-			</div>
-		</Motion>
+		<div
+			style='
+				z-index:{T_Layer.detailsPlus_2};'>
+			<slot />
+		</div>
 	{/if}
 </div>

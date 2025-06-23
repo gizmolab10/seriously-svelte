@@ -16,14 +16,13 @@
 	const actions_height = 150;
 	const top_gridHeight = 95;
 	const bottom_gridHeight = 78;
-	const grid_width = k.width_details - 12;
+	const grid_width = k.width_details - 8;
 	const separator_font_size = k.font_size.smallest;
     const font_sizes = [k.font_size.smallest, k.font_size.smallest];
     const s_hideable = s_details.s_hideables_byType[T_Details.actions];
 	const es_cancel = ux.s_element_for(grabs.latest, T_Element.cancel, k.empty);
 	let list_title = grabs.latest?.isExpanded && ux.inTreeMode ? 'hide list' : 'list';
 	let actions_top = top + (has_title ? 3 : -13);
-	let slider_top = actions_top + actions_height + 3;
 	let button_titles = compute_button_titles();
     let reattachments = 0;
 	es_cancel.set_forHovering(colors.default, 'pointer');
@@ -55,11 +54,6 @@
 
 	function row_isAltering(row: number): boolean {
 		return [T_Action.add, T_Action.delete].includes(row);
-	}
-	
-	function handle_depth_limit(value: number) {
-		$w_depth_limit = value;
-		layout.grand_layout();
 	}
 
 	function handle_alteration_state(s_mouse: S_Mouse) {
@@ -142,7 +136,8 @@
 			width: 100%;
 			position:relative;
 			top:{actions_top}px;
-			z-index:{T_Layer.actions}'>
+			padding-bottom:30px;
+			z-index:{T_Layer.detailsPlus_2}'>
 		{#if $w_s_alteration}
 			<div
 				class='alteration-instructions'
@@ -151,7 +146,7 @@
 					display:block;
 					position:relative;
 					text-align:center;
-					z-index:{T_Layer.actions + 1};
+					z-index:{T_Layer.detailsPlus_2 + 1};
 					font-size:{k.font_size.smallest}px;'>
 				<div style='top:9px; width: 100%; position:relative;'>
 					To <em>{$w_s_alteration.t_alteration}</em> an item as <em>{target_ofAlteration() ?? k.unknown}</em>
@@ -194,12 +189,12 @@
 		{/if}
 		<Buttons_Grid
 			gap={2}
+			top={17}
 			width={grid_width}
 			name='bottom-actions'
 			has_title={has_title}
 			type={T_Element.action}
 			font_sizes={font_sizes}
-			top={17}
 			closure={handle_actionRequest}
 			button_height={k.height.button}
 			button_titles={button_titles[1]}/>
@@ -220,28 +215,5 @@
 			title_font_size={separator_font_size}
 			origin={Point.y(top_gridHeight - 13)}
 			thickness={k.thickness.separator.ultra_thin}/>
-		{#if ux.inTreeMode}
-			<Separator
-				isHorizontal={true}
-				has_thin_divider={true}
-				length={k.width_details}
-				margin={k.details_margin}
-				origin={Point.y(slider_top - 6)}
-				title_left={k.separator_title_left}
-				title_font_size={separator_font_size}
-				thickness={k.thickness.separator.ultra_thin}
-				title={ux.inTreeMode ? 'depth of tree' : k.empty}/>
-			<Slider
-				max={12}
-				isLogarithmic={true}
-				value={$w_depth_limit}
-				isVisible={ux.inTreeMode}
-				width={k.width_details - 26}
-				thumb_color={colors.separator}
-				origin={new Point(10, slider_top)}
-				title_left={k.separator_title_left}
-				title_font_size={k.font_size.small}
-				handle_value_change={handle_depth_limit}/>
-		{/if}
 	</div>
 {/key}
