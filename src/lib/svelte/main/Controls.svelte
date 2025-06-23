@@ -146,7 +146,8 @@
 						<div style='
 							width:{displayName_width + 20}px;
 							left:{displayName_x}px;
-							position:absolute;'>
+							position:absolute;
+							top:1px;'>
 							{displayName}
 						</div>
 					{/key}

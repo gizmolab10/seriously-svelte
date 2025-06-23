@@ -39,7 +39,7 @@
 		if (!!info_table) {
 			const row = Math.max(0, info_details.findIndex(([key]) => key === 'color'));
 			const offsetRow = info_table.absolute_location_ofCellAt(row, 1);
-			color_origin = offsetRow.offsetByXY(-6, -7);
+			color_origin = offsetRow.offsetByXY(-6, -6);
 			picker_offset = `${color_origin.x - 103}px`;
 		}
 	}

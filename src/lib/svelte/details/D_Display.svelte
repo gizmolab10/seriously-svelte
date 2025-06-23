@@ -1,12 +1,13 @@
 <script lang='ts'>
+	import { k, u, ux, w, Rect, Point, colors, layout, T_Layer, T_Kinship } from '../../ts/common/Global_Imports';
 	import { w_show_countDots_ofType, w_background_color, w_depth_limit } from '../../ts/common/Stores';
-	import { k, u, ux, colors, Point, T_Layer, T_Kinship, layout } from '../../ts/common/Global_Imports';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
 	import Slider from '../mouse/Slider.svelte';
 	import Color from '../kit/Color.svelte';
 	import Portal from 'svelte-portal';
 	import { onMount } from 'svelte';
+	import { w_show_details_ofType } from '../../ts/common/Stores';
 	export let top = 0;
 	const position = 'relative';
 	const picker_offset = `-88px`;
@@ -29,6 +30,9 @@
 		updateColorOrigin();
 	}
 
+	// React to layout changes when Dynamic components above show/hide
+	$: $w_show_details_ofType, setTimeout(() => updateColorOrigin(), 0);
+
 	function handle_colors(result: string) {
 		$w_background_color = color = result;
 	}
@@ -44,8 +48,8 @@
 
 	function updateColorOrigin() {
 		if (color_wrapper) {
-			const rect = color_wrapper.getBoundingClientRect();
-			colorOrigin = new Point(rect.left, rect.top);
+			const origin = Rect.createFromDOMRect(color_wrapper.getBoundingClientRect()).origin.multipliedBy(1 / w.scale_factor);
+			colorOrigin = origin.offsetByXY(-3, -4);
 		}
 	}
 

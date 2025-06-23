@@ -11,12 +11,6 @@
 	export let array;
 	let table;
 
-	export function location_ofCellAt(x: Integer, y: Integer): Point {
-		const origin0 = absolute_location_ofCellAt(0, y);
-		const originY = absolute_location_ofCellAt(x, y);
-		return originY.offsetByY(-origin0.y);
-	}
-
 	export function absolute_location_ofCellAt(x: Integer, y: Integer): Point {
 		const rows = table.rows;
 		const row = rows[x];
