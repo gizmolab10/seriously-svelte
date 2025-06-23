@@ -5,6 +5,7 @@
 	import { onMount } from 'svelte';
 	export let origin = Point.zero;
 	export let picker_offset = k.empty;
+	export let zindex = T_Layer.frontmost;
 	export let color = colors.default_forThings;
 	export let color_closure = (color: string) => {};
 	const selectorSize = k.height.dot + 1;
@@ -23,21 +24,21 @@
 
 <div class='color'
 	style='
+		z-index: {zindex};
 		top: {origin.y}px;
 		left: {origin.x}px;
 		position: absolute;
-		z-index: {T_Layer.frontmost};
 		--picker_offset: {picker_offset};'>
 	<ColorPicker
 		label=''
 		on:input={handleColorChange}
 		hex={colors.color_toHex(color)}
 		--picker-indicator-size='{selectorSize}px'
-		--picker-z-index='{T_Layer.frontmost}'
 		--slider-width='{selectorSize}px'
 		--picker-height='{pickerSize}px'
 		--picker-width='{pickerSize}px'
 		--input-size='{selectorSize}px'
+		--picker-z-index='{zindex}'
 		--cp-border-color=black/>
 </div>
 

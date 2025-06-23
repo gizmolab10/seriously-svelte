@@ -68,6 +68,7 @@
 
 	function handle_actionRequest(t_request: T_Request, s_mouse: S_Mouse, column: number): any {
 		const ids = (ux.T_Storage_Need == T_Storage_Need.direction) ? storage_ids : format_ids();
+		console.log('request', t_request, s_mouse?.isDown, column);
 		switch (t_request) {
 			case T_Request.handle_click: return handle_click_forColumn(s_mouse, column);
 			case T_Request.name:		 return ids[column];
@@ -94,6 +95,7 @@
 		if (s_mouse.isHover) {
 			s_element_byStorageType[ids[column]].isOut = s_mouse.isOut;
 		} else if (s_mouse.isDown) {
+			console.log('click', ids[column]);
 			const choice = ids[column];
 			if (choice == T_File_Format.cancel) {
 				ux.T_Storage_Need = T_Storage_Need.direction;
@@ -166,13 +168,13 @@
 			row_titles={row_titles()}
 			closure={handle_actionRequest}
 			button_height={k.height.button}
-			center={new Point(width / 2 + 3, top + 140)}
+			center={new Point(width / 2 + 3, top + 164)}
 			separator_thickness={k.thickness.separator.ultra_thin}
 			name={`data-${(ux.T_Storage_Need == T_Storage_Need.direction) ? 'action' : 'format'}`}/>
 	{/key}
 	<Separator
 		isHorizontal={true}
-		origin={Point.y(top + 166)}
+		origin={Point.y(top + 189)}
 		thickness={k.thickness.separator.thick}
 		corner_radius={k.radius.gull_wings.thick}/>
 </div>

@@ -170,6 +170,17 @@
   },
   "active": "9968854d61be5eec",
   "lastOpenFiles": [
-    "src/lib/svelte/details/Dynamic.svelte"
+    "vite.config.js.timestamp-1750713698686-4503cbd8eec32.mjs",
+    "node_modules/svelte-portal/test/TestPortalWrapper.svelte",
+    "node_modules/svelte-portal/test/TestLifecycle.svelte",
+    "node_modules/svelte-portal/test/Portal.test.js",
+    "node_modules/svelte-portal/src/main.es.js",
+    "node_modules/svelte-portal/jest.config.js",
+    "node_modules/svelte-portal/src/Portal.svelte",
+    "node_modules/svelte-portal/src/Portal.svelte.d.ts",
+    "node_modules/svelte-portal/src/main.cjs.js",
+    "node_modules/svelte-portal/README.md",
+    "node_modules/svelte-portal/package.json",
+    "node_modules/svelte-portal/LICENSE"
   ]
 }

@@ -93,6 +93,7 @@
         "svelte-awesome-color-picker": "3.x",
         "svelte-icons": "^2.1.0",
         "svelte-motion": "^0.12.2",
+        "svelte-portal": "^2.2.1",
         "svelte-ux": "^0.74.9",
         "tcs": "^10.0.2",
         "ts-node": "^10.2.1",

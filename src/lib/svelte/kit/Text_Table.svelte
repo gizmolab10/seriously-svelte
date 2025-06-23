@@ -17,7 +17,7 @@
 		return originY.offsetByY(-origin0.y);
 	}
 
-	function absolute_location_ofCellAt(x: Integer, y: Integer): Point {
+	export function absolute_location_ofCellAt(x: Integer, y: Integer): Point {
 		const rows = table.rows;
 		const row = rows[x];
 		const cells = row.cells;

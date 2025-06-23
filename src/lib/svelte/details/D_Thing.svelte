@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { T_Thing, T_Trait, T_Layer, T_Element, T_Preference } from '../../ts/common/Global_Imports';
 	import { w_ancestry_focus, w_ancestries_grabbed, w_relationship_order } from '../../ts/common/Stores';
+	import { T_Thing, T_Trait, T_Layer, T_Element, T_Preference } from '../../ts/common/Global_Imports';
 	import { grabs, debug, colors, signals, layout, Ancestry } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { c, k, p, ux, Rect, Size, Point, Thing } from '../../ts/common/Global_Imports';
@@ -9,6 +9,7 @@
 	import type { Integer } from '../../ts/common/Types';
 	import Text_Table from '../kit/Text_Table.svelte';
 	import Color from '../kit/Color.svelte';
+	import Portal from 'svelte-portal';
 	import { onMount } from 'svelte';
 	export let top = 4;
 	const id = 'selection';
@@ -37,9 +38,9 @@
 	function layout_forColor() {
 		if (!!info_table) {
 			const row = Math.max(0, info_details.findIndex(([key]) => key === 'color'));
-			const offsetRow = info_table.location_ofCellAt(row, 1);
-			color_origin = offsetRow.offsetByXY(-12, -4);
-			picker_offset = `${color_origin.x - 90}px`;
+			const offsetRow = info_table.absolute_location_ofCellAt(row, 1);
+			color_origin = offsetRow.offsetByXY(-6, -7);
+			picker_offset = `${color_origin.x - 103}px`;
 		}
 	}
 
@@ -99,11 +100,13 @@
 				font_size={k.font_size.smaller}/>
 		{/if}
 		{#if !!ancestry && ancestry.isEditable}
-			<Color
-				color={color}
-				origin={color_origin}
-				color_closure={handle_colors}
-				picker_offset={picker_offset}/>
+			<Portal>
+				<Color
+					color={color}
+					origin={color_origin}
+					color_closure={handle_colors}
+					picker_offset={picker_offset}/>
+			</Portal>
 		{/if}
 	</div>
 {/if}
