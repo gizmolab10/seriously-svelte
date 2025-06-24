@@ -15,7 +15,6 @@
 	export let selected: string[];
 	export let width = 0;
 
-	function isSelected(title: string) { return selected.includes(title); }
 	function button_name(title: string) { return `pill-${name}-${title.replace(/\s+/g, '-').toLowerCase()}`; }
 
 	$: $w_background_color, border_color = colors.border;
@@ -23,13 +22,15 @@
 
 	function select(title: string) {
 		let selection = [...selected];
+		const isSelected = selected.includes(title);
 		if (!allow_multiple) {
-			if (isSelected(title)) {
-				selection = [titles[0]];		// select the first one
-			} else {
+			if (!isSelected) {
 				selection = [title];
+			} else {
+				const index = titles.indexOf(title).increment(true, titles.length);
+				selection = [titles[index]];
 			}
-		} else if (isSelected(title)) {
+		} else if (isSelected) {
 			selection = selected.filter(i => i !== title);
 		} else {
 			selection = [...selected, title];
@@ -70,7 +71,7 @@
 			left: 50%;'>
 		{#each titles as title}
 			<button
-				class:selected={isSelected(title)}
+				class:selected={selected.includes(title)}
 				style='font-size:{font_size}px;'
 				on:click={() => select(title)}
 				id={button_name(title)}

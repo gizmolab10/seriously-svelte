@@ -17,7 +17,7 @@ export enum T_Details {
 	properties,
 	tags,
 	traits,
-	display,
+	graph,
 	database,
 }
 
@@ -66,6 +66,16 @@ export enum T_Alteration {
 	add	   = 'add',
 }
 
+export enum T_File_Operation {
+	import = 'import',	// persist
+	export = 'export',	// fetch
+}
+
+export enum T_Auto_Fit {
+	always = 'always do it for me',
+	manual = 'I will do it',
+}
+
 export enum T_Widget {
 	radial = 'radial',
 	focus  = 'focus',
@@ -84,18 +94,6 @@ export enum T_Create {
 	none			 = '',
 }
 
-export enum T_SvelteComponent {
-	widget	= 'widget',
-	reveal	= 'reveal',
-	title	= 'title',
-	app		= 'app',
-}
-
-export enum T_File_Operation {
-	import = 'import',	// persist
-	export = 'export',	// fetch
-}
-
 export enum T_Storage_Need {
 	direction = 'direction',
 	format	  = 'format',
@@ -106,6 +104,13 @@ export enum T_Persistence {
 	remote = 'remote',
 	local  = 'local',
 	none   = 'none',
+}
+
+export enum T_SvelteComponent {
+	widget	= 'widget',
+	reveal	= 'reveal',
+	title	= 'title',
+	app		= 'app',
 }
 
 export enum T_Startup {
@@ -251,6 +256,7 @@ export enum T_Preference {
 	ring_angle  	  = 'ring_angle',
 	countDots		  = 'countDots',
 	font_size		  = 'font_size',
+	auto_fit		  = 'auto_fit',
 	base_id			  = 'base_id',
 	grabbed			  = 'grabbed',
 	paging 			  = 'paging',

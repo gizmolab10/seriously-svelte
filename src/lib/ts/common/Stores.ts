@@ -65,6 +65,7 @@ const _____OTHER: unique symbol = Symbol('OTHER');
 
 export const w_popupView_id				 = writable<string | null>();
 export const w_t_startup				 = writable<T_Startup>();
+export const w_auto_fit_graph			 = writable<boolean>();
 export const w_device_isMobile			 = writable<boolean>();
 export const w_control_key_down			 = writable<boolean>();
 export const w_background_color			 = writable<string>();

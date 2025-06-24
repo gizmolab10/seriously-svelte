@@ -66,6 +66,14 @@ export default class G_Layout {
 		}
 		signals.signal_reposition_widgets_fromFocus();
 	}
+
+	grand_adjust_toFit() {
+		// measure width of progeny / necklace
+		// compare with graph width
+		// adjust scale factor to make them the same
+		// adjust user_offset to center the graph
+		this.grand_layout();
+	}
 	
 	handle_mode_selection(name: string, types: string[]) {
 		switch (name) {

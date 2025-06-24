@@ -50,7 +50,7 @@
 		<Dynamic t_detail={T_Details.traits} extra_titles={next_previous_titles}>
 			<D_Traits/>
 		</Dynamic>
-		<Dynamic t_detail={T_Details.display}>
+		<Dynamic t_detail={T_Details.graph}>
 			<D_Display/>
 		</Dynamic>
 		<Dynamic t_detail={T_Details.database}>
