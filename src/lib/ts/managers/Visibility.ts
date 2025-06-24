@@ -1,5 +1,5 @@
 import { w_show_countDots_ofType, w_show_details, w_show_related, w_device_isMobile } from '../common/Stores';
-import { c, k, p, w, layout, T_Preference } from '../common/Global_Imports';
+import { c, k, p, layout, T_Preference } from '../common/Global_Imports';
 import { T_Kinship } from '../common/Enumerations';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
@@ -24,7 +24,7 @@ export class Visibility {
 					break;
 				case 'parents':
 					const mode = flag ? T_Kinship.parent : T_Kinship.child;
-					layout.set_tree_type([mode]);
+					layout.set_tree_types([mode]);
 					break;
 			}
 		}
@@ -43,12 +43,12 @@ export class Visibility {
 	reactivity_subscribe() {
 		w_show_details.subscribe((flag: boolean) => {
 			p.write_key(T_Preference.show_details, flag);
-			w.restore_state();
+			layout.restore_state();
 			layout.grand_layout();
 		});
 		w_show_related.subscribe((flag: boolean) => {
 			p.write_key(T_Preference.show_related, flag);
-			w.restore_state();
+			layout.restore_state();
 			layout.grand_layout();
 		});
     }

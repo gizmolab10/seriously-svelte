@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, u, w, Rect, Size, Point, debug, T_Layer, layout } from '../../ts/common/Global_Imports';
+	import { c, u, Rect, Size, Point, debug, T_Layer, layout } from '../../ts/common/Global_Imports';
 	import { w_user_graph_center, w_s_alteration } from '../../ts/common/Stores';
 	import { w_graph_rect, w_mouse_location_scaled } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
@@ -55,8 +55,8 @@
 		name='debug-cursor'
 		origin={Point.zero}
 		zindex = {T_Layer.common}
-		width={w.windowSize.width}
-		height={w.windowSize.height}
+		width={layout.windowSize.width}
+		height={layout.windowSize.height}
 		handle_s_mouse={hover_closure}>
 		<Box
 			color = 'red'

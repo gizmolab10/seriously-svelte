@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, w, Rect, Point, T_Layer } from '../../ts/common/Global_Imports';
+	import { k, Rect, Point, T_Layer } from '../../ts/common/Global_Imports';
 	import type { Integer } from '../../ts/common/Types';
 	export let font_size = k.font_size.small;
 	export let number_of_columns = 2;
@@ -21,7 +21,7 @@
 		if (y >= cells.length) {
 			console.error('Column index out of bounds');
 		}
-		return Rect.createFromDOMRect(cells[y].getBoundingClientRect()).origin.multipliedBy(1 / w.scale_factor);
+		return Rect.createFromDOMRect(cells[y].getBoundingClientRect()).origin.multipliedBy(1 / layout.scale_factor);
 	}
 
 </script>

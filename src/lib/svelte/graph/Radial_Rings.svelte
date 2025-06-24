@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, ux, w, busy, Thing, Point, Angle, debug, colors } from '../../ts/common/Global_Imports';
+	import { k, u, ux, busy, Thing, Point, Angle, debug, colors } from '../../ts/common/Global_Imports';
 	import { layout, radial, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
 	import { w_count_mouse_up, w_s_text_edit, w_g_paging_cluster } from '../../ts/common/Stores';
 	import { w_thing_color, w_background_color, w_ancestry_focus } from '../../ts/common/Stores';

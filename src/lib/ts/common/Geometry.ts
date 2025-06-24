@@ -141,6 +141,7 @@ export class Size {
 	multipliedBy(multiplier: number):	Size { return new Size(this.width * multiplier, this.height * multiplier); }
 	unionWith(size: Size):				Size { return new Size(Math.max(this.width, size.width), Math.max(this.height, size.height)); }
 	subtracting(size: Size):		   Point { return new Point(this.width - size.width, this.height - size.height); }
+	best_ratio_to(size: Size):		  number { return Math.min(this.width / size.width, this.height / size.height); }
 	static fromDOMRect(rect: DOMRect):	Size { return new Size(rect.width, rect.height); }
 	static square(length: number):		Size { return new Size(length, length); }
 	static get zero():					Size { return new Size(); }

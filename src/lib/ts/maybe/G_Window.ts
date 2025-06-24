@@ -1,7 +1,4 @@
-import { k, p, Rect, Size, Point, debug, layout, T_Banner, T_Preference } from '../common/Global_Imports';
-import { w_graph_rect, w_show_details, w_mouse_location_scaled } from '../common/Stores';
-import { w_user_graph_offset, w_user_graph_center } from '../common/Stores';
-import { get } from 'svelte/store';
+import { p, Size, Point, layout, T_Preference } from '../common/Global_Imports';
 
 export class G_Window {
 	scale_factor = 1;
@@ -17,7 +14,7 @@ export class G_Window {
 		document.documentElement.style.setProperty('--css-body-width', this.windowSize.width.toString() + 'px');
 	}
 
-	zoomBy(factor: number): number {
+	scaleBy(factor: number): number {
 		const zoomContainer = document.documentElement;
 		const currentScale = parseFloat(getComputedStyle(zoomContainer).getPropertyValue('zoom')) || 1;
 		const scale = currentScale * factor;

@@ -3,9 +3,9 @@
 import { Testworthy_Utilities } from './Testworthy_Utilities';
 import { w_t_database, w_thing_fontFamily } from './Stores';
 import Identifiable from '../runtime/Identifiable';
+import { layout } from '../layout/G_Layout';
 import Ancestry from '../runtime/Ancestry';
 import type { Dictionary } from './Types';
-import { w } from '../layout/G_Window';
 import { Point } from './Geometry';
 import { get } from 'svelte/store';
 import { k } from './Constants';
@@ -143,7 +143,7 @@ export class Utilities extends Testworthy_Utilities {
 		element.style.whiteSpace = 'pre';
 		element.textContent = s;
 		document.body.appendChild(element);
-		const width: number = element.getBoundingClientRect().width / w.scale_factor;
+		const width: number = element.getBoundingClientRect().width / layout.scale_factor;
 		document.body.removeChild(element);
 		return width;
 	}
@@ -158,7 +158,7 @@ export class Utilities extends Testworthy_Utilities {
 		if (relativeX < 0) {
 			relativeX = 0;
 		}
-		const effectiveX = (relativeX + input.scrollLeft) / w.scale_factor;
+		const effectiveX = (relativeX + input.scrollLeft) / layout.scale_factor;
 		// Create a canvas context for measuring text.
 		const canvas = document.createElement('canvas');
 		const context = canvas.getContext('2d');

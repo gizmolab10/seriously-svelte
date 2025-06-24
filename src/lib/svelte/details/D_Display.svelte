@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, ux, w, Rect, Point, colors, layout, T_Layer, T_Kinship, T_Auto_Fit } from '../../ts/common/Global_Imports';
+	import { k, u, ux, Rect, Point, colors, layout, T_Layer, T_Kinship, T_Auto_Fit } from '../../ts/common/Global_Imports';
 	import { w_depth_limit, w_background_color, w_auto_fit_graph } from '../../ts/common/Stores';
 	import { w_show_details_ofType, w_show_countDots_ofType } from '../../ts/common/Stores';
 	import Segmented from '../mouse/Segmented.svelte';
@@ -46,7 +46,7 @@
 
 	function updateColorOrigin() {
 		if (color_wrapper) {
-			const origin = Rect.createFromDOMRect(color_wrapper.getBoundingClientRect()).origin.multipliedBy(1 / w.scale_factor);
+			const origin = Rect.createFromDOMRect(color_wrapper.getBoundingClientRect()).origin.multipliedBy(1 / layout.scale_factor);
 			colorOrigin = origin.offsetByXY(-3, -4);
 		}
 	}

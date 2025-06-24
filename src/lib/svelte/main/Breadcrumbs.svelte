@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, h, k, u, ux, w, Size, Point, Thing, T_Layer, T_Element } from '../../ts/common/Global_Imports';
+	import { c, h, k, u, ux, Size, Point, Thing, T_Layer, T_Element } from '../../ts/common/Global_Imports';
 	import { debug, colors, signals, svgPaths, Ancestry, layout } from '../../ts/common/Global_Imports';
 	import { w_s_text_edit, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { w_graph_rect, w_thing_color, w_background_color } from '../../ts/common/Stores';
@@ -26,7 +26,7 @@
 			ancestry = h.ancestry_forBreadcrumbs;		// assure we have an ancestry
 			if (!!ancestry) {				
 				let widths: number[] = [];
-				const windowWidth = w.windowSize.width;
+				const windowWidth = layout.windowSize.width;
 				let parent_widths = 0;	// encoded as one parent count per 2 digits (base 10)
 				[things, widths, lefts, parent_widths] = layout.layout_breadcrumbs_forAncestry_within(ancestry, windowWidth);
 				trigger = parent_widths * 10000 + breadcrumb_reattachments * 100 + lefts[0];		// re-render HTML when this value changes
@@ -55,7 +55,7 @@
 			left={0}
 			name='breadcrumbs-box'
 			color={separator_color}
-			width={w.windowSize.width}
+			width={layout.windowSize.width}
 			height={layout.breadcrumbs_height}
 			thickness={k.thickness.separator.thick}
 			corner_radius={k.radius.gull_wings.thick}>

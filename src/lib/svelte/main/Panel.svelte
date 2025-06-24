@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, e, h, k, u, ux, w, show, Rect, Size, Point, Thing, colors, layout } from '../../ts/common/Global_Imports';
+	import { c, e, h, k, u, ux, show, Rect, Size, Point, Thing, colors, layout } from '../../ts/common/Global_Imports';
 	import { w_t_database, w_graph_rect, w_hierarchy, w_background_color } from '../../ts/common/Stores';
 	import { debug, T_Layer, T_Banner, Ancestry, T_Startup } from '../../ts/common/Global_Imports';
 	import { T_Control, Hierarchy, databases, Direction } from '../../ts/common/Global_Imports';
@@ -47,8 +47,8 @@
 			pointer-events: auto;
 			on:wheel={ignore_wheel}
 			{k.prevent_selection_style};
-			width: {w.windowSize.width}px;
-			height: {w.windowSize.height}px;'>
+			width: {layout.windowSize.width}px;
+			height: {layout.windowSize.height}px;'>
 		{#if [T_Startup.start, T_Startup.fetch].includes($w_t_startup) && databases.db_now.isPersistent}
 			<p>Welcome to Seriously</p>
 			{#if $w_t_startup == T_Startup.fetch}
@@ -97,7 +97,7 @@
 					thickness={k.thickness.separator.thick}
 					length={$w_graph_rect.size.height + 10}
 					corner_radius={k.radius.gull_wings.thick}
-					origin={new Point(w.windowSize.width - 0.5, layout.graph_top - 4)}/>
+					origin={new Point(layout.windowSize.width - 0.5, layout.graph_top - 4)}/>
 			{/if}
 		{/if}
 	</div>
@@ -107,10 +107,5 @@
 	p {
 		text-align: center;
 		font-size: 1.3em;
-	}
-	.horizontal-line {
-		position: fixed;
-		width: 110%;
-		left: 0px;
 	}
 </style>

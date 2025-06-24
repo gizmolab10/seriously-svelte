@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { w_thing_color, w_background_color, w_thing_title, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { layout, signals, databases, Seriously_Range, Svelte_Wrapper } from '../../ts/common/Global_Imports';
-	import { c, h, k, u, ux, w, Rect, Size, Point, Thing, debug, Angle } from '../../ts/common/Global_Imports';
+	import { c, h, k, u, ux, Rect, Size, Point, Thing, debug, Angle } from '../../ts/common/Global_Imports';
 	import { w_s_text_edit, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
 	import { S_Element, T_Graph, T_Layer, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';

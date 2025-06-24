@@ -1,4 +1,4 @@
-import { w, Rect, Point, wrappers, T_SvelteComponent } from './Global_Imports';
+import { Rect, Point, layout, wrappers, T_SvelteComponent } from './Global_Imports';
 import { Handle_S_Mouse, Create_S_Mouse } from './Types';
 import type { Integer } from './Types';
 
@@ -20,7 +20,7 @@ export default class Svelte_Wrapper {
 
     get boundingRect(): Rect {
         const rect = Rect.boundingRectFor(this.element);
-        const unscale_factor = 1 / w.scale_factor;
+        const unscale_factor = 1 / layout.scale_factor;
         return rect?.multipliedBy(unscale_factor) ?? Rect.zero;
     }
 

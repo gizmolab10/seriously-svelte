@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, k, ux, w, Size, Point, debug, colors, layout, signals, svgPaths, Svelte_Wrapper } from '../../ts/common/Global_Imports';
+	import { c, k, ux, Size, Point, debug, colors, layout, signals, svgPaths, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { w_background_color, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { w_thing_color, w_s_text_edit, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { T_Layer, T_Element, T_SvelteComponent } from '../../ts/common/Enumerations';

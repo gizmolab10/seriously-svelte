@@ -1,5 +1,5 @@
 import { T_Action, T_File_Format, T_Predicate, T_Alteration, S_Mouse, S_Alteration } from '../common/Global_Imports';
-import { c, h, k, u, ux, w, grabs, Point, debug, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
+import { c, h, k, u, ux, grabs, Point, debug, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
 import { w_ancestry_focus, w_count_mouse_up, w_mouse_location, w_mouse_location_scaled } from '../common/Stores';
 import { w_s_alteration, w_count_resize, w_s_text_edit, w_control_key_down } from '../common/Stores';
 import { w_device_isMobile, w_ancestries_grabbed, w_user_graph_offset } from '../common/Stores';
@@ -53,7 +53,7 @@ export class Events {
 	private handle_mouse_move(event: MouseEvent) {
 		const location = new Point(event.clientX, event.clientY);
 		w_mouse_location.set(location);
-		w_mouse_location_scaled.set(location.dividedBy(w.scale_factor));
+		w_mouse_location_scaled.set(location.dividedBy(layout.scale_factor));
 	}
 
 	private handle_key_up(e: Event) {
@@ -67,7 +67,7 @@ export class Events {
 		const isMobile = u.device_isMobile;
 		debug.log_action(` orientation change [is${isMobile ? '' : ' not'} mobile] STATE`);
 		w_device_isMobile.set(isMobile);
-		w.restore_state();
+		layout.restore_state();
 	}
 
 	private handle_touch_start(event: TouchEvent) {
@@ -92,7 +92,7 @@ export class Events {
 		debug.log_action(` resize [is${isMobile ? '' : ' not'} mobile] STATE`);
 		w_count_resize.update(n => n + 1);
 		w_device_isMobile.set(isMobile);
-		w.restore_state();
+		layout.restore_state();
 	}
 
 	private handle_wheel(event: Event) {

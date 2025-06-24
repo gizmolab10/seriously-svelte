@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, h, k, p, u, ux, w, show, grabs, Point, colors, layout, svgPaths, signals, S_Element } from '../../ts/common/Global_Imports';
+	import { c, h, k, p, u, ux, show, grabs, Point, colors, layout, svgPaths, signals, S_Element } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Element, T_Control, T_Kinship, T_Request } from '../../ts/common/Global_Imports';
 	import { w_background_color, w_device_isMobile, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { w_show_details, w_show_graph_ofType, w_show_tree_ofType } from '../../ts/common/Stores';
@@ -21,7 +21,7 @@
 	const resize_viewBox = `0, 0, ${size_big}, ${size_big}`;
 	let es_control_byType: { [t_control: string]: S_Element } = {};
 	let isVisible_forType: {[t_control: string]: boolean} = {};
-	let width = w.windowSize.width - 20;
+	let width = layout.windowSize.width - 20;
 	let displayName = k.empty;
 	let displayName_width = 0;
 	let displayName_x = 230;
@@ -35,7 +35,7 @@
 	];
 
 	onMount(() => { setup_forIDs(); });
-	$: $w_count_resize, $w_graph_rect, width = w.windowSize.width - 20;
+	$: $w_count_resize, $w_graph_rect, width = layout.windowSize.width - 20;
 	function togglePopupID(id) { $w_popupView_id = ($w_popupView_id == id) ? null : id; }
 	function handle_recents_mouseClick(column: number) { grabs.focus_onNext(column == 1); }
 
@@ -51,7 +51,7 @@
 	}
 
 	function setup_forIDs() {
-		let total = w.windowSize.width + 50;
+		let total = layout.windowSize.width + 50;
 		for (const t_control of t_controls) {
 			total -= u.getWidthOf(t_control);
 			const es_control = ux.s_element_for(new Identifiable(t_control), T_Element.control, t_control);
@@ -70,10 +70,17 @@
 			switch (t_control) {
 				case T_Control.help: c.showHelp(); break;
 				case T_Control.details: $w_show_details = !$w_show_details; break;
-				case T_Control.bigger: width = w.zoomBy(k.ratio.zoom_in) - 20; break;	// mobile only
-				case T_Control.smaller: width = w.zoomBy(k.ratio.zoom_out) - 20; break;	//   "     "
+				case T_Control.bigger: width = layout.scaleBy(k.ratio.zoom_in) - 20; break;	// mobile only
+				case T_Control.smaller: width = layout.scaleBy(k.ratio.zoom_out) - 20; break;	//   "     "
 				default: togglePopupID(t_control); break;
 			}
+		}
+	}
+	
+	function handle_mode_selection(name: string, types: string[]) {
+		switch (name) {
+			case 'graph': w_show_graph_ofType.set(types[0] as T_Graph); break;
+			case 'tree': layout.set_tree_types(types as Array<T_Kinship>); break;
 		}
 	}
 
@@ -84,7 +91,7 @@
 		<Box
 			name='controls'
 			color={colors.separator}
-			width={w.windowSize.width}
+			width={layout.windowSize.width}
 			height={layout.graph_top - 2}
 			thickness={k.thickness.separator.thick}
 			corner_radius={k.radius.gull_wings.thick}>
@@ -96,7 +103,7 @@
 					position: absolute;
 					height: {size_big}px;
 					z-index: {T_Layer.frontmost};
-					width: {w.windowSize.width - 20}px;'>
+					width: {layout.windowSize.width - 20}px;'>
 				{#if !$w_popupView_id}
 					{#key $w_background_color}
 						<Button
@@ -128,7 +135,7 @@
 							origin={Point.x(lefts[2])}
 							selected={[$w_show_graph_ofType]}
 							titles={[T_Graph.tree, T_Graph.radial]}
-							handle_selection={(titles) => layout.handle_mode_selection('graph', titles)}/>
+							handle_selection={(titles) => handle_mode_selection('graph', titles)}/>
 						{#if ux.inTreeMode}
 							{#key $w_show_tree_ofType}
 								<Segmented

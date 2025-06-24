@@ -67,7 +67,6 @@ import { k } from './Constants';
 import { u } from './Utilities';
 import { e } from '../signals/Events';
 import { ux } from '../state/S_Common';
-import { w } from '../layout/G_Window';
 import { h } from '../managers/Hierarchy';
 import { p } from '../managers/Preferences';
 import { c } from '../managers/Configuration';
@@ -78,9 +77,9 @@ import interact from 'interactjs';
 export {
 	Mouse_Timer,
 	Angle, Direction, 
-	e, c, h, k, p, u, ux, w,
-	interact, transparentize,
+	e, c, h, k, p, u, ux,
 	debug, Debug, ErrorTrace,
+	interact, transparentize,
 	wrappers, Seriously_Range,
 	Rect, Size, Point, svgPaths,
 	Ancestry, Hierarchy, databases,
