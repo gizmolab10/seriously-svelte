@@ -36,6 +36,7 @@
 	position: relative;
 	--border: {border};
 	align-items: center;
+	--height: {height}px;
 	--thumb-color: {thumb_color};
 	display: {isVisible ? "flex" : "none"};'>
 	<input
@@ -54,37 +55,37 @@
 
 <style>
 	input[type="range"] {
-		height: 14px;
 		appearance: none;
+		height: var(--height);
 		background: transparent;
 		-webkit-appearance: none;
 	}
 	input[type="range"]::-webkit-slider-runnable-track {
-		height: 14px;
 		background: white;
 		border-radius: 16px;
+		height: var(--height);
 		border: var(--border);
 	}
 	input[type="range"]::-webkit-slider-thumb {
-		width: 14px;
-		height: 14px;
-		margin-top: -0.75px;
 		border-radius: 50%;
+		margin-top: -0.75px;
+		width: var(--height);
+		height: var(--height);
 		border: var(--border);
 		-webkit-appearance: none;
 		background: var(--thumb-color);
 	}
 	input[type="range"]::-moz-range-thumb {
-		height: 14px;
-		width: 14px;
 		border-radius: 50%;
+		width: var(--height);
+		height: var(--height);
 		border: var(--border);
 		background: var(--thumb-color);
 	}
 	input[type="range"]::-moz-range-track {
-		height: 14px;
 		background: white;
 		border-radius: 50%;
+		height: var(--height);
 		border: var(--border);
 	}
 	input[type="range"]::-ms-fill-lower,
@@ -94,9 +95,9 @@
 		border: var(--border);
 	}
 	input[type="range"]::-ms-thumb {
-		width: 14px;
-		height: 14px;
 		border-radius: 50%;
+		width: var(--height);
+		height: var(--height);
 		border: var(--border);
 		background: var(--thumb-color);
 	}

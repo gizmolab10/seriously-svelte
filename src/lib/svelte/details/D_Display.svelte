@@ -9,15 +9,17 @@
 	import Portal from 'svelte-portal';
 	import { onMount } from 'svelte';
 	export let top = 0;
+	const height_gap = -2;
 	const position = 'relative';
 	const picker_offset = `-88px`;
 	const font_size = k.font_size.smaller;
-	const info_width = k.width_details - 30;
-	const color_left = info_width / 2 + 2;
+	const color_left = k.width_details / 2 - 13;
+	const segmented_width = k.width_details - 6;
+	const segmented_height = k.height.button + 11;
 	const separator_font_size = k.font_size.smallest;
 	const fit_titles = [T_Auto_Fit.manual, T_Auto_Fit.always];
 	const titles = [T_Kinship[T_Kinship.child], T_Kinship[T_Kinship.parent], T_Kinship[T_Kinship.related]];
-	const heights = [10, 8, 2, -2, 28, -2, 28, -1];
+	const heights = [10, 8, k.height.button - 6, height_gap, segmented_height, height_gap, segmented_height, height_gap, 6];
 	const tops = u.cumulativeSum(heights);
 	let color = $w_background_color;
 	let colorOrigin = Point.square(-3.5);
@@ -60,7 +62,7 @@
 		width: 100%;
 		top:{top}px;
 		position:{position};
-		padding-bottom:77px;
+		padding-bottom:{tops[8]}px;
 		font-size:{k.font_size.small}px;'>
 	<Separator
 		isHorizontal={true}
@@ -77,6 +79,7 @@
 			max={12}
 			isLogarithmic={true}
 			value={$w_depth_limit}
+			height={k.height.button}
 			width={k.width_details - 26}
 			thumb_color={colors.separator}
 			origin={new Point(10, tops[1])}
@@ -111,7 +114,7 @@
 		allow_none={true}
 		titles={fit_titles}
 		allow_multiple={false}
-		width={k.width_details}
+		width={segmented_width}
 		height={k.height.button}
 		origin={new Point(0, tops[3])}
 		handle_selection={handle_auto_fit}
@@ -132,7 +135,7 @@
 		titles={titles}
 		allow_none={true}
 		allow_multiple={true}
-		width={k.width_details}
+		width={segmented_width}
 		height={k.height.button}
 		origin={new Point(0, tops[5])}
 		selected={$w_show_countDots_ofType}
@@ -152,12 +155,13 @@
 		class= 'background-color'
 		bind:this={color_wrapper}
 		style='
-			width: 15px;
-			height: 15px;
+			width: 16px;
+			height: 16px;
 			top: {tops[7]}px;
 			left: {color_left}px;
 			position: {position};
-			border: 1.5px solid black;
+			border: 1px solid black;
+			border-radius: 50%;
 			z-index: {T_Layer.detailsPlus_3};
 			background-color: {$w_background_color}'>
 		<Portal>

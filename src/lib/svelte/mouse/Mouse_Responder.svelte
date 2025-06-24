@@ -67,6 +67,9 @@
 				s_mouse.isHover  = isHit;
 				s_mouse.isOut   = !isHit;
 				handle_s_mouse(S_Mouse.hover(null, bound_element, isHit));					// pass a null event
+				if (isHit) {
+					reset();
+				}
 			}
 		}
 	}

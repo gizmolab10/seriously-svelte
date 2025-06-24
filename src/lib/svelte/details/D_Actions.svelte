@@ -56,7 +56,7 @@
 		return [T_Action.add, T_Action.delete].includes(row);
 	}
 
-	function handle_alteration_state(s_mouse: S_Mouse) {
+	function handle_cancel(s_mouse: S_Mouse) {
 		if (s_mouse.isDown) {
 			h.stop_alteration();
 		}
@@ -104,8 +104,8 @@
 		return [
 			[['browse', 'left', 'up', 'down', 'right'],
 			['focus', 'selection', 'parent of selection'],
-			['show', 'selection', `${list_title}`],
-			['center', 'focus', 'selection', 'root', 'graph', 'fit']],
+			['show', 'selection', `${list_title}`, 'entire graph'],
+			['center', 'focus', 'selection', 'root', 'graph']],
 			[['add', 'child', 'sibling', 'line', 'parent', 'related'],
 			['delete', 'selection', 'parent', 'related'],
 			['move', 'left', 'up', 'down', 'right']],
@@ -154,12 +154,12 @@
 					<br> choose that item's <em>blinking</em> dot
 				</div>
 				<Button
-					center={new Point(k.width_details / 2, 60)}
+					center={new Point(k.width_details / 2, 22)}
 					font_size={k.font_size.smallest}
-					closure={handle_alteration_state}
 					zindex={T_Layer.frontmost}
 					name='cancel-alteration'
 					height={k.height.button}
+					closure={handle_cancel}
 					color = colors.default
 					es_button={es_cancel}
 					position='relative'
@@ -187,35 +187,35 @@
 				margin={k.details_margin}
 				origin={new Point(left_afterTitle, -4)}
 				thickness={k.thickness.separator.ultra_thin}/>
+			<Buttons_Table
+				gap={2}
+				top={14}
+				width={grid_width}
+				name='bottom-actions'
+				has_title={has_title}
+				title_gap={title_gap}
+				type={T_Element.action}
+				font_sizes={font_sizes}
+				closure={handle_actionRequest}
+				button_height={k.height.button}
+				button_titles={button_titles[1]}/>
+			<Separator
+				isHorizontal={false}
+				has_thin_divider={true}
+				margin={k.details_margin}
+				length={bottom_gridHeight}
+				thickness={k.thickness.separator.ultra_thin}
+				origin={new Point(left_afterTitle, top_gridHeight - 10)}/>
+			<Separator
+				isHorizontal={true}
+				has_thin_divider={true}
+				length={k.width_details}
+				margin={k.details_margin}
+				title='edit your hierarchy'
+				title_left={k.separator_title_left}
+				title_font_size={separator_font_size}
+				origin={Point.y(top_gridHeight - 11)}
+				thickness={k.thickness.separator.ultra_thin}/>
 		{/if}
-		<Buttons_Table
-			gap={2}
-			top={14}
-			width={grid_width}
-			name='bottom-actions'
-			has_title={has_title}
-			title_gap={title_gap}
-			type={T_Element.action}
-			font_sizes={font_sizes}
-			closure={handle_actionRequest}
-			button_height={k.height.button}
-			button_titles={button_titles[1]}/>
-		<Separator
-			isHorizontal={false}
-			has_thin_divider={true}
-			margin={k.details_margin}
-			length={bottom_gridHeight}
-			thickness={k.thickness.separator.ultra_thin}
-			origin={new Point(left_afterTitle, top_gridHeight - 10)}/>
-		<Separator
-			isHorizontal={true}
-			has_thin_divider={true}
-			length={k.width_details}
-			margin={k.details_margin}
-			title='edit your hierarchy'
-			title_left={k.separator_title_left}
-			title_font_size={separator_font_size}
-			origin={Point.y(top_gridHeight - 11)}
-			thickness={k.thickness.separator.ultra_thin}/>
 	</div>
 {/key}

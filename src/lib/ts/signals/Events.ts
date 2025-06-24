@@ -252,13 +252,13 @@ export class Events {
 				case T_Action.show:				switch (column) {
 					case a.show.selection:			break;
 					case a.show.list:				await h.ancestry_toggle_expansion(ancestry); break;
+					case a.center.graph:			layout.grand_adjust_toFit(); break;
 				}								break;
 				case T_Action.center:			switch (column) {
 					case a.center.focus:			layout.place_ancestry_atCenter(get(w_ancestry_focus)); break;
 					case a.center.selection:		layout.place_ancestry_atCenter(ancestry); break;
 					case a.center.root:				layout.place_ancestry_atCenter(h.rootAncestry); break;
 					case a.center.graph:			layout.set_user_graph_offsetTo(Point.zero); break;
-					case a.center.fit:				layout.grand_adjust_toFit(); break;
 				}								break;
 				case T_Action.add:				switch (column) {
 					case a.add.child:				await h.ancestry_edit_persistentCreateChildOf(ancestry); break;
@@ -305,13 +305,13 @@ export class Events {
 				case T_Action.show:				switch (column) {
 					case a.show.selection:			return ancestry.isVisible;
 					case a.show.list:				return disable_revealConceal;
+					case a.show.graph:				return false;
 				}								break;
 				case T_Action.center:			switch (column) {
 					case a.center.focus:			return this.isCentered_invisible_orNull(get(w_ancestry_focus));
 					case a.center.selection:		return this.isCentered_invisible_orNull(ancestry);
 					case a.center.root:				return this.isCentered_invisible_orNull(h.rootAncestry);
 					case a.center.graph:			return get(w_user_graph_offset).magnitude < 0.001;
-					case a.center.fit:				return false;
 				}								break;
 				case T_Action.add:				switch (column) {
 					case a.add.child:				return is_altering;
@@ -371,13 +371,13 @@ export class Events {
 		show: {
 			selection: 0,
 			list: 1,
+			graph: 2,
 		},
 		center: {
 			focus: 0,
 			selection: 1,
 			root: 2,
 			graph: 3,
-			fit: 4,
 		},
 		add: {
 			child: 0,
