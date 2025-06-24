@@ -10,13 +10,12 @@
 	import Separator from '../kit/Separator.svelte';
 	import Button from '../buttons/Button.svelte';
 	import Slider from '../mouse/Slider.svelte';
-	export let top = 4;
-	const title_gap = 12;
+	export let top = 2;
+	const title_gap = 4;
 	const has_title = true;
-	const middle_left = 40;
-	const actions_height = 150;
-	const top_gridHeight = 95;
-	const bottom_gridHeight = 78;
+	const top_gridHeight = 92;
+	const left_afterTitle = 39.5;
+	const bottom_gridHeight = 71;
 	const grid_width = k.width_details - 8;
 	const separator_font_size = k.font_size.smallest;
     const font_sizes = [k.font_size.smallest, k.font_size.smallest];
@@ -137,7 +136,7 @@
 			width: 100%;
 			position:relative;
 			top:{actions_top}px;
-			padding-bottom:30px;
+			padding-bottom:22.4px;
 			z-index:{T_Layer.detailsPlus_2}'>
 		{#if $w_s_alteration}
 			<div
@@ -186,12 +185,12 @@
 				has_thin_divider={true}
 				length={top_gridHeight}
 				margin={k.details_margin}
-				origin={new Point(middle_left, -6)}
+				origin={new Point(left_afterTitle, -4)}
 				thickness={k.thickness.separator.ultra_thin}/>
 		{/if}
 		<Buttons_Table
 			gap={2}
-			top={17}
+			top={14}
 			width={grid_width}
 			name='bottom-actions'
 			has_title={has_title}
@@ -207,7 +206,7 @@
 			margin={k.details_margin}
 			length={bottom_gridHeight}
 			thickness={k.thickness.separator.ultra_thin}
-			origin={new Point(middle_left, top_gridHeight - 12)}/>
+			origin={new Point(left_afterTitle, top_gridHeight - 10)}/>
 		<Separator
 			isHorizontal={true}
 			has_thin_divider={true}
@@ -216,7 +215,7 @@
 			title='edit your hierarchy'
 			title_left={k.separator_title_left}
 			title_font_size={separator_font_size}
-			origin={Point.y(top_gridHeight - 13)}
+			origin={Point.y(top_gridHeight - 11)}
 			thickness={k.thickness.separator.ultra_thin}/>
 	</div>
 {/key}

@@ -4,6 +4,7 @@ export default class G_Repeater {
 	proportionate: boolean;
 	title_widths: number[];
 	title_gap: number = 8;
+	widths: number[] = [];
 	lefts: number[] = [];
 	font_size: number;
 	columns: number;
@@ -38,34 +39,26 @@ export default class G_Repeater {
 		this.width = width;
 		this.gap = gap;
 		this.title_widths = this.titles.map((title) => u.getWidth_ofString_withSize(title, `${font_size}px`));
-		this.lefts = this.title_widths.reduce((acc, width) => acc.concat(acc[acc.length - 1] + width + this.gap), [0]);
+		this.widths = this.title_widths.map((w, i) => this.gap + this.button_width_for(i));
 	}
 
 	button_width_for(column: number): number { 
+		const total_width = this.title_widths.reduce((acc, width) => acc + width, 0);	// sum of title widths
 		if (this.proportionate) {
-			return this.button_adjust + this.title_widths[column]; 
+			const margin_and_gaps = this.margin * 2 + this.title_gap + this.gap * (this.columns - 1);
+			const approportionment = (this.width - total_width - margin_and_gaps) / this.columns;
+			return this.title_widths[column] + approportionment; 
 		}
-		if (column === 0) {			// first button: add up all the title widths and adjust
+		if (column === 0) {			// first button: add up all the other title widths and adjust
 			const other_buttons_width = this.title_widths.slice(1).reduce((acc, width) => acc + width + this.padding * 2, 0);
 			return this.width - other_buttons_width - this.margin * 2 - this.gap - this.padding;
 		}
 		return this.title_widths[column] + this.padding * 2;
 	}
 
-	 get button_adjust(): number {
-		if (this.proportionate) {
-			const total_width = this.title_widths.reduce((acc, width) => acc + width, 0);							// sum of all title widths
-			return (this.width - this.margin * 2 - total_width - this.gap * (this.columns - 1)) / this.columns;		// adjust for margin and gap
-		} else {
-			const other_buttons_width = this.title_widths.slice(1).reduce((acc, width) => acc + width + this.padding, 0);	// sum of all title widths
-			const button_width = this.width - this.margin * 2 - other_buttons_width - this.gap * (this.columns - 1);			// adjust for margin and gap
-			return button_width;
-		}
-	}
-
 	button_left_for(column: number): number {
 		if (this.proportionate) {
-			return this.title_widths.slice(0, column).reduce((sum, title_width) => sum + this.gap + title_width + this.button_adjust, this.gap / 2);
+			return this.widths.slice(0, column).reduce((sum, width) => sum + width, this.title_gap + this.gap / 2);
 		}
 		let x = 0;
 		for (let i = 0; i < column; i++) {
