@@ -60,12 +60,12 @@
 			thingHID = thing.hid;
 			color = thing.color;
 			info_details = [	
-				['children', ancestry.children.length.expressZero_asHyphen()],
-				['progeny', ancestry.progeny_count().expressZero_asHyphen()],
-				['parents', thing.parents.length.expressZero_asHyphen()],
-				['related', thing.relatedRelationships.length.expressZero_asHyphen()],
-				['depth', ancestry.depth.expressZero_asHyphen()],
-				['order', ancestry.order.expressZero_asHyphen()],
+				['children', ancestry.children.length.supressZero()],
+				['progeny', ancestry.progeny_count().supressZero()],
+				['parents', thing.parents.length.supressZero()],
+				['related', thing.relatedRelationships.length.supressZero()],
+				['depth', ancestry.depth.supressZero()],
+				['order', ancestry.order.supressZero()],
 				['parent', ancestry.predicate.kind],
 				['type', Object.keys(T_Thing).find(k => T_Thing[k] === thing.t_thing)],
 				['id', thing.id.beginWithEllipsis_forLength(17)],

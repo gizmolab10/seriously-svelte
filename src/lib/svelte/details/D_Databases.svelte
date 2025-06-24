@@ -81,12 +81,12 @@
 	function update_storage_details() {
 		if (!!h) {
 			storage_details = [h.db.details_forStorage,
-			['depth', h.depth.expressZero_asHyphen()],
-			['things', h.things.length.expressZero_asHyphen()],
-			['relationships', h.relationships.length.expressZero_asHyphen()],
-			['traits', h.traits.length.expressZero_asHyphen()],
-			['tags', h.tags.length.expressZero_asHyphen()],
-			['dirty', h.total_dirty_count.expressZero_asHyphen()]];
+			['depth', h.depth.supressZero()],
+			['things', h.things.length.supressZero()],
+			['relationships', h.relationships.length.supressZero()],
+			['traits', h.traits.length.supressZero()],
+			['tags', h.tags.length.supressZero()],
+			['dirty', h.total_dirty_count.supressZero()]];
 		}
 	}
 	

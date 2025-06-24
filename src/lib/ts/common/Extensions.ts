@@ -183,8 +183,8 @@ declare global {
 		asInt(): string;
 		asDegrees(): string;
 		roundToEven(): number;
+		supressZero(): string;
 		angle_normalized(): number;
-		expressZero_asHyphen(): string;
 		toFixed(precision: number): string;
 		angle_normalized_aroundZero(): number;
 		degrees_of(precision: number): string;
@@ -351,9 +351,9 @@ Object.defineProperty(Number.prototype, 'isClocklyAlmost', {
 	configurable: false
 });
 
-Object.defineProperty(Number.prototype, 'expressZero_asHyphen', {
+Object.defineProperty(Number.prototype, 'supressZero', {
 	value: function(): string | number {
-		return this == 0 ? '-' : this;
+		return this == 0 ? '' : this;
 	},
 	writable: false,
 	enumerable: false,

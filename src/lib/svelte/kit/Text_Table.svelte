@@ -39,7 +39,7 @@
 			style='color:black;'>
 			{#each array as [key, value]}
 				<tr>
-					<td class='first-column' style='line-height:{row_height}px;'>{key}:</td>
+					<td class='first-column' style='line-height:{row_height}px;'>{key}&nbsp;</td>
 					<td class='second-column' style='line-height:{row_height}px;'>{value}</td>
 				</tr>
 			{/each}
