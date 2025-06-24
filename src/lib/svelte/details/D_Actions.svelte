@@ -105,7 +105,7 @@
 			[['browse', 'left', 'up', 'down', 'right'],
 			['focus', 'selection', 'parent of selection'],
 			['show', 'selection', `${list_title}`],
-			['center', 'focus', 'selection', 'root', 'graph']],
+			['center', 'focus', 'selection', 'root', 'graph', 'fit']],
 			[['add', 'child', 'sibling', 'line', 'parent', 'related'],
 			['delete', 'selection', 'parent', 'related'],
 			['move', 'left', 'up', 'down', 'right']],

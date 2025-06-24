@@ -28,10 +28,10 @@
         top: {top}px;
         display: flex;
         left: {left}px;
-        width: {width}px;
         z-index: {zindex};
         height: {height}px;
         position: absolute;
+        width: {width + 2}px;
         box-sizing: border-box;
         flex-direction: column;'>
     <div class='box-central-{name}' style='
@@ -65,14 +65,14 @@
                 thickness={thickness}
 				has_thin_divider={false}
                 corner_radius={corner_radius}
-                origin={new Point(width - 1.5, 2)}/>
+                origin={new Point(width - 0.5, 2)}/>
         {/if}
     </div>
     {#if showTop}
         <Separator 
-            length={width}
             name='top-{name}'
 			add_wings={false}
+            length={width + 2}
             origin={Point.zero}
             isHorizontal={true}
             thickness={thickness}
@@ -81,8 +81,8 @@
     {/if}
     {#if showBottom}
         <Separator
-            length={width}
 			add_wings={false}
+            length={width + 2}
             isHorizontal={true}
             name='bottom-{name}'
             thickness={thickness}

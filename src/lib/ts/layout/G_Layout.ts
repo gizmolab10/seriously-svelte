@@ -68,13 +68,15 @@ export default class G_Layout {
 	}
 
 	grand_adjust_toFit() {
-		const size = ux.inRadialMode ? this.radial_size : this.tree_size;
+		const layout_size = ux.inRadialMode ? this.radial_size : this.tree_size;
 		const graph_size = get(w_graph_rect).size;
-		const scale_factor = graph_size.width / size.width;
-		const new_size = size.scaledBy(scale_factor);
-		const new_offset = get(w_user_graph_offset).scaledBy(scale_factor);
-		w_user_graph_offset.set(new_offset);
+		const scale_factor = layout_size.width / graph_size.width;
+		const new_size = layout_size.dividedBy(scale_factor);
+		const new_offset = get(w_user_graph_offset).dividedBy(scale_factor);
+		// also detect if layout is really needed by difference from prior center and offset
 		w_user_graph_center.set(new_size.asPoint.dividedInHalf);
+		w_user_graph_offset.set(new_offset);
+		w.set_scale_factor(scale_factor);
 		this.grand_layout();
 	}
 

@@ -11,8 +11,8 @@ export class G_Window {
 	get windowScroll(): Point { return new Point(window.scrollX, window.scrollY); }
 
 	restore_state() {
-		layout.graphRect_update();	// needed for applyScale
-		this.applyScale(p.read_key(T_Preference.scale) ?? 1);
+		layout.graphRect_update();	// needed for set_scale_factor
+		this.set_scale_factor(p.read_key(T_Preference.scale) ?? 1);
 		layout.renormalize_user_graph_offset();	// must be called after apply scale (which fubars offset)
 		document.documentElement.style.setProperty('--css-body-width', this.windowSize.width.toString() + 'px');
 	}
@@ -21,17 +21,17 @@ export class G_Window {
 		const zoomContainer = document.documentElement;
 		const currentScale = parseFloat(getComputedStyle(zoomContainer).getPropertyValue('zoom')) || 1;
 		const scale = currentScale * factor;
-		this.applyScale(scale);
+		this.set_scale_factor(scale);
 		return this.windowSize.width;
 	}
 
-	applyScale(scale: number) {
-		this.scale_factor = scale;
-		p.write_key(T_Preference.scale, scale);
+	set_scale_factor(scale_factor: number) {
+		this.scale_factor = scale_factor;
+		p.write_key(T_Preference.scale, scale_factor);
 		const zoomContainer = document.documentElement;
-		zoomContainer.style.setProperty('zoom', scale.toString());
-		zoomContainer.style.height = `${100 / scale}%`;
-		zoomContainer.style.width = `${100 / scale}%`;
+		zoomContainer.style.setProperty('zoom', scale_factor.toString());
+		zoomContainer.style.height = `${100 / scale_factor}%`;
+		zoomContainer.style.width = `${100 / scale_factor}%`;
 		layout.graphRect_update();
 	}
 

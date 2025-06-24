@@ -15,6 +15,11 @@
     let isHovering = false;
 
     $: $w_background_color, banner_color = colors.ofBannerFor($w_background_color);
+    
+    function intercept_click() {
+        isHovering = false;        // suppress distracting inversion from hover
+        handle_click(title);
+    }
 
 </script>
 
@@ -32,7 +37,7 @@
         path={svgPaths.rectangle(glow_rect)}
         isInverted={!isHovering || svgPaths.hasPath_for(title)}/>
     <div class='title'
-        on:click={() => handle_click(title)}
+        on:click={intercept_click}
         on:mouseenter={() => isHovering = true}
         on:mouseleave={() => isHovering = false}
         style='
