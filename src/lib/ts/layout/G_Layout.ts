@@ -1,4 +1,4 @@
-import { h, k, p, u, ux, w, grabs, Rect, Point, debug, signals, Ancestry, Thing } from '../common/Global_Imports';
+import { h, k, p, u, ux, w, grabs, Rect, Point, debug, signals, Ancestry, Thing, Size } from '../common/Global_Imports';
 import { w_user_graph_offset, w_user_graph_center, w_mouse_location_scaled } from '../common/Stores';
 import { T_Graph, T_Kinship, T_Preference, G_RadialGraph } from '../common/Global_Imports';
 import { w_show_tree_ofType, w_show_graph_ofType } from '../common/Stores';
@@ -68,11 +68,24 @@ export default class G_Layout {
 	}
 
 	grand_adjust_toFit() {
-		// measure width of progeny / necklace
-		// compare with graph width
-		// adjust scale factor to make them the same
-		// adjust user_offset to center the graph
+		const size = ux.inRadialMode ? this.radial_size : this.tree_size;
+		const graph_size = get(w_graph_rect).size;
+		const scale_factor = graph_size.width / size.width;
+		const new_size = size.scaledBy(scale_factor);
+		const new_offset = get(w_user_graph_offset).scaledBy(scale_factor);
+		w_user_graph_offset.set(new_offset);
+		w_user_graph_center.set(new_size.asPoint.dividedInHalf);
 		this.grand_layout();
+	}
+
+	get radial_size(): Size {
+		return this.g_radialGraph.radial_size;
+	}
+
+	get tree_size(): Size {
+		const root = h.rootAncestry;
+		const size = new Size(root.visibleSubtree_width(), root.visibleSubtree_height());
+		return size;
 	}
 	
 	handle_mode_selection(name: string, types: string[]) {
@@ -112,15 +125,15 @@ export default class G_Layout {
 		this.grand_build();
 	}
 
-	get persisted_user_offset(): Point {
-		const point = p.read_key(T_Preference.user_offset) ?? {x:0, y:0};
-		return new Point(point.x, point.y);
-	}
-
 	static readonly _____GRAPH: unique symbol;
 	
 	get mouse_distance_fromGraphCenter(): number { return this.mouse_vector_ofOffset_fromGraphCenter()?.magnitude ?? 0; }
 	get mouse_angle_fromGraphCenter(): number | null { return this.mouse_vector_ofOffset_fromGraphCenter()?.angle ?? null; }
+
+	get persisted_user_offset(): Point {
+		const point = p.read_key(T_Preference.user_offset) ?? {x:0, y:0};
+		return new Point(point.x, point.y);
+	}
 	
 	toggle_graph_type() {
 		switch (get(w_show_graph_ofType)) {

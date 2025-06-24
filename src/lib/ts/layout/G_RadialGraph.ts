@@ -1,4 +1,4 @@
-import { h, k, u, radial, Ancestry, Predicate, T_Kinship } from '../common/Global_Imports';
+import { h, k, u, radial, Ancestry, Predicate, T_Kinship, Size, Point, Rect } from '../common/Global_Imports';
 import { w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
 import { w_g_paging, w_ancestry_focus } from '../common/Stores';
 import { G_Widget, G_Cluster, G_Paging } from '../common/Global_Imports';
@@ -70,6 +70,33 @@ export default class G_RadialGraph {
 			}
 		}
 		return array;
+	}
+
+	get radial_size(): Size {
+		const widgets = this.g_necklace_widgets;
+		if (widgets.length === 0) {
+			return Size.zero;
+		}
+		let minX = Infinity;
+		let minY = Infinity;
+		let maxX = -Infinity;
+		let maxY = -Infinity;
+		for (const widget of widgets) {
+			const widgetOrigin = widget.origin_ofWidget.offsetBy(widget.offset_ofWidget);
+			const widgetWidth = widget.width_ofWidget;
+			const widgetHeight = k.height.row - 1.5;
+			const widgetMinX = widgetOrigin.x;
+			const widgetMinY = widgetOrigin.y;
+			const widgetMaxX = widgetOrigin.x + widgetWidth;
+			const widgetMaxY = widgetOrigin.y + widgetHeight;
+			minX = Math.min(minX, widgetMinX);
+			minY = Math.min(minY, widgetMinY);
+			maxX = Math.max(maxX, widgetMaxX);
+			maxY = Math.max(maxY, widgetMaxY);
+		}
+		const width = maxX - minX;
+		const height = maxY - minY;
+		return new Size(width, height);
 	}
 
 	g_paging_forPredicate_toChildren(predicate: Predicate, points_toChildren: boolean): G_Paging | null {

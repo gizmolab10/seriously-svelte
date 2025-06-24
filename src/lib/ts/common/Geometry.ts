@@ -38,6 +38,7 @@ export class Point {
 	yMultipliedBy(multiplier: number): Point { return new Point(this.x, this.y * multiplier) }
 	dividedBy(divisor: number):		   Point { return new Point(this.x / divisor, this.y / divisor) }
 	multipliedBy(multiplier: number):  Point { return new Point(this.x * multiplier, this.y * multiplier) }
+	scaledBy(scale_factor: number):	   Point { return new Point(this.x * scale_factor, this.y * scale_factor); }
 	static polarToo(phi: number, r: number)  { return new Point(Math.cos(phi) * r, Math.sin(phi) * r); }
 	static polarTo(phi: number, r: number)   { return Point.x(r).rotate_by(-phi); }
 	static fromPolar(r: number, phi: number) { return Point.x(r).rotate_by(phi); }
@@ -139,6 +140,7 @@ export class Size {
 	expandedBy(delta: Point):			Size { return new Size(this.width + delta.x, this.height + delta.y); }
 	dividedBy(divisor: number):			Size { return new Size(this.width / divisor, this.height / divisor); }
 	multipliedBy(multiplier: number):	Size { return new Size(this.width * multiplier, this.height * multiplier); }
+	scaledBy(scale_factor: number):		Size { return new Size(this.width * scale_factor, this.height * scale_factor); }
 	unionWith(size: Size):				Size { return new Size(Math.max(this.width, size.width), Math.max(this.height, size.height)); }
 	subtracting(size: Size):		   Point { return new Point(this.width - size.width, this.height - size.height); }
 	static fromDOMRect(rect: DOMRect):	Size { return new Size(rect.width, rect.height); }

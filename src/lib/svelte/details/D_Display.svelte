@@ -98,11 +98,11 @@
 	<Separator
 		isHorizontal={true}
 		position={position}
+		title='adjust to fit'
 		has_thin_divider={false}
 		length={k.width_details}
 		margin={k.details_margin}
 		origin={Point.y(tops[2])}
-		title='adjust to fit'
 		title_left={k.separator_title_left}
 		title_font_size={separator_font_size}
 		thickness={k.thickness.separator.ultra_thin}/>
