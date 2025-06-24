@@ -12,6 +12,7 @@
     export let has_title = true;              // false means all titles are buttons, true means first one is row title
 	export let name = k.empty;
     export let width: number;
+    export let title_gap = 8;
     export let gap = 2;
     export let top = 0;
 	const rows = button_titles.length;
@@ -21,7 +22,7 @@
 
 </script>
 
-<div class='buttons-grid'
+<div class='buttons-table'
     style='
         left:1px;
         top:{top}px;
@@ -36,6 +37,7 @@
                 width={width}
                 row_titles={titles}
                 has_title={has_title}
+                title_gap={title_gap}
                 font_sizes={font_sizes}
                 has_seperator={has_seperator}
                 button_height={button_height}

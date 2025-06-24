@@ -4,13 +4,14 @@
 	import { w_s_alteration, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
 	import { w_depth_limit, w_user_graph_offset, w_show_graph_ofType } from '../../ts/common/Stores';
 	import { w_background_color } from '../../ts/common/Stores';
-	import Buttons_Grid from '../buttons/Buttons_Grid.svelte';
+	import Buttons_Table from '../buttons/Buttons_Table.svelte';
     import { s_details } from '../../ts/state/S_Details';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
 	import Button from '../buttons/Button.svelte';
 	import Slider from '../mouse/Slider.svelte';
 	export let top = 4;
+	const title_gap = 12;
 	const has_title = true;
 	const middle_left = 40;
 	const actions_height = 150;
@@ -168,12 +169,13 @@
 				</Button>
 			</div>
 		{:else}
-			<Buttons_Grid
+			<Buttons_Table
 				top={1}
 				gap={2}
 				name='top-actions'
 				width={grid_width}
 				has_title={has_title}
+				title_gap={title_gap}
 				type={T_Element.action}
 				font_sizes={font_sizes}
 				closure={handle_actionRequest}
@@ -187,12 +189,13 @@
 				origin={new Point(middle_left, -6)}
 				thickness={k.thickness.separator.ultra_thin}/>
 		{/if}
-		<Buttons_Grid
+		<Buttons_Table
 			gap={2}
 			top={17}
 			width={grid_width}
 			name='bottom-actions'
 			has_title={has_title}
+			title_gap={title_gap}
 			type={T_Element.action}
 			font_sizes={font_sizes}
 			closure={handle_actionRequest}

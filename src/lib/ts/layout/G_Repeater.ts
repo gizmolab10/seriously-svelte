@@ -4,6 +4,7 @@ export default class G_Repeater {
 	proportionate: boolean;
 	title_widths: number[];
 	title_gap: number = 8;
+	lefts: number[] = [];
 	font_size: number;
 	columns: number;
     titles: string[];
@@ -20,7 +21,8 @@ export default class G_Repeater {
 	//	font_size:		needed to compute each title's width	//
 	//	gap:			between titles							//
 	//	padding:		around titles							//
-	//	margin:			around the whole thing					//
+	//	margin:			on right and left						//
+	//	title_gap:		after first title						//
 	//															//
 	//////////////////////////////////////////////////////////////
 
@@ -36,11 +38,12 @@ export default class G_Repeater {
 		this.width = width;
 		this.gap = gap;
 		this.title_widths = this.titles.map((title) => u.getWidth_ofString_withSize(title, `${font_size}px`));
+		this.lefts = this.title_widths.reduce((acc, width) => acc.concat(acc[acc.length - 1] + width + this.gap), [0]);
 	}
 
 	button_width_for(column: number): number { 
 		if (this.proportionate) {
-			return this.button_fluff + this.title_widths[column]; 
+			return this.button_adjust + this.title_widths[column]; 
 		}
 		if (column === 0) {			// first button: add up all the title widths and adjust
 			const other_buttons_width = this.title_widths.slice(1).reduce((acc, width) => acc + width + this.padding * 2, 0);
@@ -49,20 +52,20 @@ export default class G_Repeater {
 		return this.title_widths[column] + this.padding * 2;
 	}
 
-	 get button_fluff(): number {
+	 get button_adjust(): number {
 		if (this.proportionate) {
-			const total_width = this.title_widths.reduce((acc, width) => acc + width, 0);
-			return (this.width - this.margin * 2 - total_width - this.gap * (this.columns - 1)) / this.columns;
+			const total_width = this.title_widths.reduce((acc, width) => acc + width, 0);							// sum of all title widths
+			return (this.width - this.margin * 2 - total_width - this.gap * (this.columns - 1)) / this.columns;		// adjust for margin and gap
 		} else {
-			const other_buttons_width = this.title_widths.slice(1).reduce((acc, width) => acc + width + this.padding, 0);
-			const first_button_width = this.width - this.margin * 2 - other_buttons_width - this.gap * (this.columns - 1);
-			return first_button_width;
+			const other_buttons_width = this.title_widths.slice(1).reduce((acc, width) => acc + width + this.padding, 0);	// sum of all title widths
+			const button_width = this.width - this.margin * 2 - other_buttons_width - this.gap * (this.columns - 1);			// adjust for margin and gap
+			return button_width;
 		}
 	}
 
 	button_left_for(column: number): number {
 		if (this.proportionate) {
-			return this.title_widths.slice(0, column).reduce((sum, title_width) => sum + this.gap + title_width + this.button_fluff, this.gap / 2);
+			return this.title_widths.slice(0, column).reduce((sum, title_width) => sum + this.gap + title_width + this.button_adjust, this.gap / 2);
 		}
 		let x = 0;
 		for (let i = 0; i < column; i++) {

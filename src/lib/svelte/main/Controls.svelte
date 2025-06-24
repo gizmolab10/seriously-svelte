@@ -11,7 +11,7 @@
 	import SVG_D3 from '../kit/SVG_D3.svelte';
 	import Box from '../kit/Box.svelte';
 	import { onMount } from 'svelte';
-	const widths = [18, 14, 56, 27, 64];	// 73 == 125
+	const widths = [18, 14, 56, 27, 64];
 	const lefts = u.cumulativeSum(widths);
 	const details_top = k.height.dot / 2;
 	const y_center = details_top + 3.5;
