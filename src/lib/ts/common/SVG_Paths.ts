@@ -193,31 +193,6 @@ export default class SVG_Paths {
 		return path;
 	}
 
-	oblong(center: Point, size: Size, part: T_Oblong = T_Oblong.full): string {
-		const bumpRight = [T_Oblong.full, T_Oblong.right].includes(part);
-		const bumpLeft = [T_Oblong.full, T_Oblong.left].includes(part);
-		const radius = size.height / 2;
-		const half = size.width / 2;
-		const cx = center.x;
-		const cy = center.y;
-		const L = cx - half + (bumpLeft ? 0 : radius);
-		const R = cx + half + (bumpRight ? 0 : radius);
-		const T = cy - radius;
-		const B = cy + radius;
-		const TL = `${L}, ${T}`;
-		const TR = `${R}, ${T}`;
-		const BR = `${R}, ${B}`;
-		const BL = `${L}, ${B}`;
-		const cap = `${radius}, ${radius} 0 0 1`;
-		switch (part) {
-			case T_Oblong.middle: return `M ${TL} L ${TR} L ${BR} L ${BL} L ${TL} Z`;
-			case T_Oblong.right:  return `M ${TL} L ${TR} A ${cap} ${BR} L ${BL} L ${TL} Z`;
-			case T_Oblong.left:	 return `M ${TL} L ${TR} L ${BR} L ${BL} A ${cap} ${TL} Z`;
-			case T_Oblong.full:	 return `M ${TL} L ${TR} A ${cap} ${BR} L ${BL} A ${cap} ${TL} Z`;
-		}
-		return k.empty;
-	}
-
 	ellipses(stretch: number, tiny: number, horizontal: boolean = true, count: number = 3, other: number = 6): string {
 		const max = Math.min(4, count);
 		const gap = stretch / (max - 1) - tiny;
@@ -394,6 +369,43 @@ export default class SVG_Paths {
 		return new Size(maxX - minX, maxY - minY);
 	}
 
+	oblong(center: Point, size: Size, part: T_Oblong = T_Oblong.full): string {
+		const bumpRight = [T_Oblong.full, T_Oblong.right].includes(part);
+		const bumpLeft = [T_Oblong.full, T_Oblong.left].includes(part);
+		const radius = size.height / 2;
+		const half = size.width / 2;
+		const cx = center.x;
+		const cy = center.y;
+		const L = cx - half + (bumpLeft ? 0 : radius);
+		const R = cx + half + (bumpRight ? 0 : radius);
+		const T = cy - radius;
+		const B = cy + radius;
+		const TL = `${L}, ${T}`;
+		const TR = `${R}, ${T}`;
+		const BR = `${R}, ${B}`;
+		const BL = `${L}, ${B}`;
+		const cap = `${radius}, ${radius} 0 0 1`;
+		switch (part) {
+			case T_Oblong.middle: return `M ${TL} L ${TR} L ${BR} L ${BL} L ${TL} Z`;
+			case T_Oblong.right:  return `M ${TL} L ${TR} A ${cap} ${BR} L ${BL} L ${TL} Z`;
+			case T_Oblong.left:	 return `M ${TL} L ${TR} L ${BR} L ${BL} A ${cap} ${TL} Z`;
+			case T_Oblong.full:	 return `M ${TL} L ${TR} A ${cap} ${BR} L ${BL} A ${cap} ${TL} Z`;
+		}
+		return k.empty;
+	}
+
+	pill(center: Point, size: Size): string {
+		const radius = size.height / 2;
+		const half = size.width / 2;
+		const cx = center.x;
+		const cy = center.y;
+		const L = cx - half;
+		const R = cx + half;
+		const T = cy - radius;
+		const B = cy + radius;
+		return `M ${L}, ${T} L ${R}, ${T} A ${radius}, ${radius} 0 0 1 ${R}, ${B} L ${L}, ${B} A ${radius}, ${radius} 0 0 1 ${L}, ${T} Z`;
+	}	
+
 	/**
 	 * Generates an SVG path that renders a settings icon with three horizontal bars
 	 * Each bar consists of a circle, rectangle, and circle
@@ -404,21 +416,11 @@ export default class SVG_Paths {
 	 */
 	hamburgerPath(size: number = 150): string {
 		const barHeight = size / 5;
-		const circleRadius = barHeight / 2;
-		const barY = [
-			barHeight / 2,
-			size / 2,
-			size - barHeight / 2
-		];
-
-		const createBar = (y: number): string => {
-			const leftCircle = this.circle(new Point(circleRadius, y), circleRadius);
-			const rightCircle = this.circle(new Point(size - circleRadius, y), circleRadius);
-			const rect = this.rectangle(new Rect(new Point(0, y - barHeight / 2), new Size(size, barHeight)));
-			return `${leftCircle} ${rect} ${rightCircle}`;
-		};
-
-		const path = `${createBar(barY[0])} ${createBar(barY[1])} ${createBar(barY[2])}`;
+		const barSize = new Size(size, barHeight);
+		const x = size / 2;
+		const ys = [barHeight / 2, size / 2, size - barHeight / 2];
+		const paths = ys.map(y => this.pill(new Point(x, y), barSize));
+		const path = paths.join(k.space);
 		const size_ofPath = this.sizeFrom_svgPath(path);
 		console.log(size_ofPath.description);
 		return path;

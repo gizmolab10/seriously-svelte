@@ -27,7 +27,6 @@
 		}
 		$w_show_details_ofType = t_details;
 		slot_isVisible = compute_slot_isVisible();
-		console.log('toggle_hidden', t_detail, slot_isVisible);
 	}
 
 </script>

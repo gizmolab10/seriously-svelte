@@ -71,7 +71,7 @@
 				case T_Control.help: c.showHelp(); break;
 				case T_Control.details: $w_show_details = !$w_show_details; break;
 				case T_Control.bigger: width = layout.scaleBy(k.ratio.zoom_in) - 20; break;	// mobile only
-				case T_Control.smaller: width = layout.scaleBy(k.ratio.zoom_out) - 20; break;	//   "     "
+				case T_Control.smaller: width = layout.scaleBy(k.ratio.zoom_out) - 20; break;	//   '     '
 				default: togglePopupID(t_control); break;
 			}
 		}
@@ -114,21 +114,9 @@
 							center={new Point(lefts[0], y_center)}
 							es_button={es_control_byType[T_Control.details]}
 							closure={(s_mouse) => handle_s_mouse_forControl_Type(s_mouse, T_Control.details)}>
-							{#if true}
-								<img src='settings.svg' alt='circular button' width={hamburger_size}px height={hamburger_size}px/>
-							{:else}
-								<svg
-									class='hamburger-svg'
-									viewBox={hamburger_viewBox}
-									width={`${hamburger_size}px`}
-									height={`${hamburger_size}px`}>
-									<path
-										fill='black'
-										stroke='black'
-										d={hamburger_path}
-										class='hamburger-path'/>
-								</svg>
-								{/if}
+							<svg class='hamburger-svg' style='width: 20.5px; height: 17px; position: absolute;' viewBox='-1 -1 19 19'>
+								<path class='hamburger-path' d={hamburger_path} fill='black' stroke='transparent'/>
+							</svg>
 						</Button>
 					{/key}
 					{#if true}
