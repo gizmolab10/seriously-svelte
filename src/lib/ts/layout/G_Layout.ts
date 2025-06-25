@@ -51,10 +51,10 @@ export default class G_Layout {
 
 	graphRect_update() {
 		// respond to changes in: window size & details visibility
-		const y = this.graph_top - 2;			// account for origin at top
+		const y = this.panel_boxHeight + 2;			// account for origin at top
 		const x = get(w_show_details) ? k.width_details : 0;
 		const origin_ofGraph = new Point(x, y);
-		const size_ofGraph = this.windowSize.reducedBy(origin_ofGraph).reducedByY(this.breadcrumbs_height);
+		const size_ofGraph = this.windowSize.reducedBy(origin_ofGraph).reducedByY(this.panel_boxHeight);
 		const rect = new Rect(origin_ofGraph, size_ofGraph);
 		debug.log_mouse(`GRAPH ====> ${rect.description}`);
 		w_graph_rect.set(rect);										// used by Panel and Graph
@@ -205,11 +205,10 @@ export default class G_Layout {
 
 	static readonly _____PRIMITIVES: unique symbol;
 
-	get graph_top(): number { return this.banner_height + 25; }
-	get banner_height(): number { return u.device_isMobile ? 32 : 16; }
-	get breadcrumbs_height(): number { return this.banner_height + 21; }
+	get glows_banner_height(): number { return u.device_isMobile ? 32 : 16; }
 	private get radial_size(): Size { return this.g_radialGraph.radial_size; }
-	get breadcrumbs_top(): number { return this.windowSize.height - this.breadcrumbs_height; }
+	get panel_boxHeight(): number { return this.glows_banner_height + k.height.segmented; }
+	get breadcrumbs_top(): number { return this.windowSize.height - this.panel_boxHeight; }
 	get isAllExpanded(): boolean { return h.rootAncestry?.isAllProgeny_expanded ?? false; }
 	get center_ofGraphSize(): Point { return get(w_graph_rect).size.asPoint.dividedInHalf; }
 	get g_radialGraph() { let g = this._g_radialGraph; if (!g) { g = new G_RadialGraph(); this._g_radialGraph = g }; return g; }

@@ -394,6 +394,35 @@ export default class SVG_Paths {
 		return new Size(maxX - minX, maxY - minY);
 	}
 
+	/**
+	 * Generates an SVG path that renders a settings icon with three horizontal bars
+	 * Each bar consists of a circle, rectangle, and circle
+	 * thickness of bars and gaps between bars are both 1/5 of the size
+	 * radius of circles is 1/10 of the size
+	 * @returns SVG path string that renders the settings icon
+	 */
+	hamburgerPath(size: number = 150): string {
+		const barHeight = size / 5;
+		const circleRadius = barHeight / 2;
+		const barY = [
+			barHeight / 2,
+			size / 2,
+			size - barHeight / 2
+		];
+
+		const createBar = (y: number): string => {
+			const leftCircle = this.circle(new Point(circleRadius, y), circleRadius);
+			const rightCircle = this.circle(new Point(size - circleRadius, y), circleRadius);
+			const rect = this.rectangle(new Rect(new Point(0, y - barHeight / 2), new Size(size, barHeight)));
+			return `${leftCircle} ${rect} ${rightCircle}`;
+		};
+
+		const path = `${createBar(barY[0])} ${createBar(barY[1])} ${createBar(barY[2])}`;
+		const size_ofPath = this.sizeFrom_svgPath(path);
+		console.log(size_ofPath.description);
+		return path;
+	}
+
 }
 
 export const svgPaths = new SVG_Paths();

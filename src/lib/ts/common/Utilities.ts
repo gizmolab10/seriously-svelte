@@ -96,29 +96,6 @@ export class Utilities extends Testworthy_Utilities {
 			b.other_ancestry.id == g_line.ancestry.id)));
 	}
 
-	convertToObject(instance: any, fields: string[]): object {
-		const o: Dictionary = {};
-		for (const field of fields) {
-			if (instance.hasOwnProperty(field)) {
-				o[field] = instance[field];
-			}
-		}
-		return o;
-	}
-
-	polygonPoints(radius: number, count: number, offset: number): Array<Point> {
-		const increment = Angle.full / count;
-		const points: Point[] = [];
-		let angle = offset;
-		let index = count;
-		do {
-			points.push(Point.fromPolar(radius, angle));
-			angle += increment;
-			index--;
-		} while (index > 0)
-		return points;
-	}
-
 	ids_forDB(array: Array<Ancestry>): string[] {
 		return array.filter(a => a.t_database == get(w_t_database)).map(a => a.id);
 	}

@@ -32,7 +32,7 @@
 			flex-direction:column;
 			-ms-overflow-style: none;  
 			z-index:{T_Layer.details};
-			top:{layout.graph_top - 2}px;
+			top:{layout.panel_boxHeight + 2}px;
 			width:{k.width_details - 6}px;
 			height:{$w_graph_rect.size.height}px;'>
 		<Dynamic t_detail={T_Details.header}>
@@ -66,7 +66,7 @@
 	thickness={k.thickness.separator.thick}
 	length={$w_graph_rect.size.height + 10}
 	corner_radius={k.radius.gull_wings.thick}
-	origin={new Point(k.width_details - 2, layout.graph_top - 4)}/>
+	origin={new Point(k.width_details - 2, layout.panel_boxHeight)}/>
 
 <style>
 

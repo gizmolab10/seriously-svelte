@@ -13,12 +13,12 @@
 	import { onMount } from 'svelte';
 	const widths = [18, 14, 56, 27, 64];
 	const lefts = u.cumulativeSum(widths);
-	const details_top = k.height.dot / 2;
-	const y_center = details_top + 3.5;
-	const size_small = k.height.button;
+	const size_big = k.height.button + 4;
+	const y_center = 10.5;
 	const rights = [12, 67, 110, 140];
-	const size_big = size_small + 4;
-	const resize_viewBox = `0, 0, ${size_big}, ${size_big}`;
+	const hamburger_size = k.height.button;
+	const hamburger_path = svgPaths.hamburgerPath(hamburger_size);
+	const hamburger_viewBox = `0 0 ${hamburger_size} ${hamburger_size}`;
 	let es_control_byType: { [t_control: string]: S_Element } = {};
 	let isVisible_forType: {[t_control: string]: boolean} = {};
 	let width = layout.windowSize.width - 20;
@@ -83,20 +83,21 @@
 			case 'tree': layout.set_tree_types(types as Array<T_Kinship>); break;
 		}
 	}
+							// <img src='settings.svg' alt='circular button' width={hamburger_size}px height={hamburger_size}px/>
 
 </script>
 
 {#if Object.values(es_control_byType).length > 0}
 	{#key width}
 		<Box
-			name='controls'
+			name='controls-box'
 			color={colors.separator}
 			width={layout.windowSize.width}
-			height={layout.graph_top - 2}
+			height={layout.panel_boxHeight + 2}
 			thickness={k.thickness.separator.thick}
 			corner_radius={k.radius.gull_wings.thick}>
 			<div
-				class='controls-themselves'
+				class='controls'
 				style='
 					left: 6px;
 					top: 9.5px;
@@ -110,11 +111,24 @@
 							border_thickness=0
 							color='transparent'
 							name='details-toggle'
-							detect_longClick={true}
-							center={new Point(lefts[0], details_top + 4)}
+							center={new Point(lefts[0], y_center)}
 							es_button={es_control_byType[T_Control.details]}
 							closure={(s_mouse) => handle_s_mouse_forControl_Type(s_mouse, T_Control.details)}>
-							<img src='settings.svg' alt='circular button' width={size_small}px height={size_small}px/>
+							{#if true}
+								<img src='settings.svg' alt='circular button' width={hamburger_size}px height={hamburger_size}px/>
+							{:else}
+								<svg
+									class='hamburger-svg'
+									viewBox={hamburger_viewBox}
+									width={`${hamburger_size}px`}
+									height={`${hamburger_size}px`}>
+									<path
+										fill='black'
+										stroke='black'
+										d={hamburger_path}
+										class='hamburger-path'/>
+								</svg>
+								{/if}
 						</Button>
 					{/key}
 					{#if true}

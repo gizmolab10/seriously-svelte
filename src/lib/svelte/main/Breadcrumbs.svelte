@@ -48,7 +48,7 @@
 		width:100%;
 		position: absolute;
 		top:{layout.breadcrumbs_top}px;
-		height:{layout.breadcrumbs_height}px;'>
+		height:{layout.panel_boxHeight}px;'>
 	{#key trigger}
 		<Box
 			top={0}
@@ -56,7 +56,7 @@
 			name='breadcrumbs-box'
 			color={separator_color}
 			width={layout.windowSize.width}
-			height={layout.breadcrumbs_height}
+			height={layout.panel_boxHeight}
 			thickness={k.thickness.separator.thick}
 			corner_radius={k.radius.gull_wings.thick}>
 			<div class='breadcrumbs'

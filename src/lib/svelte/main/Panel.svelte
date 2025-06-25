@@ -86,7 +86,7 @@
 					thickness={k.thickness.separator.thick}
 					length={$w_graph_rect.size.height + 10}
 					corner_radius={k.radius.gull_wings.thick}
-					origin={new Point(2, layout.graph_top - 4)}/>
+					origin={new Point(2, layout.panel_boxHeight)}/>
 				<Separator
 					name='panel-right'
 					hasBothEnds={true}
@@ -97,7 +97,7 @@
 					thickness={k.thickness.separator.thick}
 					length={$w_graph_rect.size.height + 10}
 					corner_radius={k.radius.gull_wings.thick}
-					origin={new Point(layout.windowSize.width - 0.5, layout.graph_top - 4)}/>
+					origin={new Point(layout.windowSize.width - 0.5, layout.panel_boxHeight)}/>
 			{/if}
 		{/if}
 	</div>

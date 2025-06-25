@@ -3,7 +3,7 @@ import { builds } from './Builds';
 
 const dot_size = 14;
 const row_height = 20;
-const banner_height = tu.device_isMobile ? 32 : 20;
+const glows_banner_height = tu.device_isMobile ? 32 : 20;
 
 export default class Constants {
 	details_margin = 0;
@@ -103,10 +103,10 @@ export default class Constants {
 		button:	   dot_size + 3,
 		dot:	   dot_size,
 		banner: {
-			controls: banner_height,
-			details:  banner_height,
+			controls: glows_banner_height,
+			details:  glows_banner_height,
 			graph:	  0,
-			crumbs:	  banner_height,
+			crumbs:	  glows_banner_height,
 		},
 	};
 

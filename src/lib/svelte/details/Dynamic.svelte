@@ -6,7 +6,7 @@
 	import { Motion } from 'svelte-motion';
     export let extra_titles: string[] = [];
     export let t_detail: T_Details;
-	const banner_height = k.height.banner.details;
+	const glows_banner_height = k.height.banner.details;
 	const titles = [T_Details[t_detail], ...extra_titles];
 	const s_hideable = s_details.s_hideables_byType[t_detail];
 	$: slot_isVisible = compute_slot_isVisible();
@@ -51,10 +51,10 @@
 				display: flex;
 				cursor: pointer;
 				align-items: stretch;
-				height: {banner_height}px;'>
+				height: {glows_banner_height}px;'>
 			<Glows_Banner
 				titles={titles}
-				height={banner_height}
+				height={glows_banner_height}
 					width={k.width_details}
 					toggle_hidden={toggle_hidden}/>
 		</div>

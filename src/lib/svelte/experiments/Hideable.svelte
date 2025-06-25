@@ -8,9 +8,9 @@
     export let t_detail: T_Details;
     const title = T_Details[t_detail];
     const titles = [title, ...extra_titles];
-    const banner_height = k.height.banner.details;
+    const glows_banner_height = k.height.banner.details;
     const s_hideable = s_details.s_hideables_byType[t_detail];
-    const banner_rect = new Rect(Point.zero, new Size(k.width_details, banner_height));
+    const banner_rect = new Rect(Point.zero, new Size(k.width_details, glows_banner_height));
     let banner_color = colors.ofBannerFor($w_background_color);
     let entire: HTMLElement;
     let slot: HTMLElement;
@@ -24,7 +24,7 @@
         if (!!entire && !!s_hideable) {
             await tick();
             slot_height = slot?.scrollHeight ?? 0;
-            height = slot_isVisible ? entire.scrollHeight - 1 : s_hideable.hasBanner ? banner_height : 0;
+            height = slot_isVisible ? entire.scrollHeight - 1 : s_hideable.hasBanner ? glows_banner_height : 0;
         }
     })();
 
@@ -45,7 +45,7 @@
 		}
 		$w_show_details_ofType = t_details;
 		slot_isVisible = compute_slot_isVisible();
-        height = slot_isVisible ? entire.scrollHeight - 1 : (!!s_hideable && s_hideable.hasBanner) ? banner_height : 0;
+        height = slot_isVisible ? entire.scrollHeight - 1 : (!!s_hideable && s_hideable.hasBanner) ? glows_banner_height : 0;
 	}
 
 </script>
@@ -71,10 +71,10 @@
                 cursor: pointer;
                 position: relative;
                 align-items: stretch;
-                height: {banner_height}px;'>
+                height: {glows_banner_height}px;'>
             <Glows_Banner
                 titles={titles}
-                height={banner_height}
+                height={glows_banner_height}
                 width={k.width_details}
                 toggle_hidden={toggle_hidden}/>
         </div>
@@ -86,7 +86,7 @@
             style='
                 height: 22px;
                 position: relative;
-                top: {(!!s_hideable && s_hideable.hasBanner) ? banner_height : 0}px;'>
+                top: {(!!s_hideable && s_hideable.hasBanner) ? glows_banner_height : 0}px;'>
             <slot/>
         </div>
     {/if}
