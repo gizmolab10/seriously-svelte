@@ -18,7 +18,6 @@
 	const rights = [12, 67, 110, 140];
 	const hamburger_size = k.height.button;
 	const hamburger_path = svgPaths.hamburgerPath(hamburger_size);
-	const hamburger_viewBox = `0 0 ${hamburger_size} ${hamburger_size}`;
 	let es_control_byType: { [t_control: string]: S_Element } = {};
 	let isVisible_forType: {[t_control: string]: boolean} = {};
 	let width = layout.windowSize.width - 20;
@@ -54,10 +53,11 @@
 		let total = layout.windowSize.width + 50;
 		for (const t_control of t_controls) {
 			total -= u.getWidthOf(t_control);
+			const hover_color = t_control == T_Control.details ? 'white' : colors.default;
 			const es_control = ux.s_element_for(new Identifiable(t_control), T_Element.control, t_control);
 			es_control.ignore_hover = t_control == T_Control.details;
 			es_control.isDisabled = T_Control.details == t_control;
-			es_control.set_forHovering(colors.default, 'pointer');
+			es_control.set_forHovering(hover_color, 'pointer');
 			es_control_byType[t_control] = es_control;
 			isVisible_forType[t_control] = total > 0;
 		}
@@ -114,8 +114,19 @@
 							center={new Point(lefts[0], y_center)}
 							es_button={es_control_byType[T_Control.details]}
 							closure={(s_mouse) => handle_s_mouse_forControl_Type(s_mouse, T_Control.details)}>
-							<svg class='hamburger-svg' style='width: 20.5px; height: 17px; position: absolute;' viewBox='-1 -1 19 19'>
-								<path class='hamburger-path' d={hamburger_path} fill='black' stroke='transparent'/>
+							<svg
+								class='hamburger-svg'
+								style='
+									height: 17px;
+									width: 20.5px;
+									position: absolute;'
+								viewBox='-1 -1 19 19'>
+								<path
+									d={hamburger_path}
+									stroke-width='0.75'
+									class='hamburger-path'
+									fill={es_control_byType[T_Control.details].isOut ? 'black' : 'white'}
+									stroke={es_control_byType[T_Control.details].isOut ? 'transparent' : 'darkgray'}/>
 							</svg>
 						</Button>
 					{/key}
