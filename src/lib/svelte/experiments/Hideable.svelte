@@ -9,7 +9,7 @@
     const title = T_Details[t_detail];
     const titles = [title, ...extra_titles];
     const glows_banner_height = k.height.banner.details;
-    const s_dynamic = s_details.s_hideables_byType[t_detail];
+    const s_banner_hideable = s_details.s_hideables_byType[t_detail];
     const banner_rect = new Rect(Point.zero, new Size(k.width_details, glows_banner_height));
     let banner_color = colors.ofBannerFor($w_background_color);
     let entire: HTMLElement;
@@ -21,16 +21,16 @@
     $: banner_color = colors.ofBannerFor($w_background_color);
     
     $: (async () => {
-        if (!!entire && !!s_dynamic) {
+        if (!!entire && !!s_banner_hideable) {
             await tick();
             slot_height = slot?.scrollHeight ?? 0;
-            height = slot_isVisible ? entire.scrollHeight - 1 : s_dynamic.hasBanner ? glows_banner_height : 0;
+            height = slot_isVisible ? entire.scrollHeight - 1 : s_banner_hideable.hasBanner ? glows_banner_height : 0;
         }
     })();
 
 	function compute_slot_isVisible() {
-        if (!!s_dynamic && s_dynamic.hasBanner) {
-            const type = T_Details[s_dynamic.t_detail];
+        if (!!s_banner_hideable && s_banner_hideable.hasBanner) {
+            const type = T_Details[s_banner_hideable.t_detail];
             return $w_show_details_ofType?.includes(type) ?? false;
         }
         return true;
@@ -45,7 +45,7 @@
 		}
 		$w_show_details_ofType = t_details;
 		slot_isVisible = compute_slot_isVisible();
-        height = slot_isVisible ? entire.scrollHeight - 1 : (!!s_dynamic && s_dynamic.hasBanner) ? glows_banner_height : 0;
+        height = slot_isVisible ? entire.scrollHeight - 1 : (!!s_banner_hideable && s_banner_hideable.hasBanner) ? glows_banner_height : 0;
 	}
 
 </script>
@@ -61,7 +61,7 @@
         position: relative;
         flex-direction: column;
         width: {k.width_details - 12}px;'>
-    {#if !!s_dynamic && s_dynamic.hasBanner}
+    {#if !!s_banner_hideable && s_banner_hideable.hasBanner}
         <div
             class='banner'
             style='
@@ -86,7 +86,7 @@
             style='
                 height: 22px;
                 position: relative;
-                top: {(!!s_dynamic && s_dynamic.hasBanner) ? glows_banner_height : 0}px;'>
+                top: {(!!s_banner_hideable && s_banner_hideable.hasBanner) ? glows_banner_height : 0}px;'>
             <slot/>
         </div>
     {/if}

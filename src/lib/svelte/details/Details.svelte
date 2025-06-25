@@ -7,7 +7,7 @@
 	import D_Actions from './D_Actions.svelte';
 	import D_Header from './D_Header.svelte';
 	import D_Traits from './D_Traits.svelte';
-	import Dynamic from './Dynamic.svelte';
+	import Banner_Hideable from './Banner_Hideable.svelte';
 	import D_Thing from './D_Thing.svelte';
 	import D_Tags from './D_Tags.svelte';
 	const width = k.width_details;
@@ -35,27 +35,27 @@
 			top:{layout.panel_boxHeight + 2}px;
 			width:{k.width_details - 6}px;
 			height:{$w_graph_rect.size.height}px;'>
-		<Dynamic t_detail={T_Details.header}>
+		<Banner_Hideable t_detail={T_Details.header}>
 			<D_Header/>
-		</Dynamic>
-		<Dynamic t_detail={T_Details.actions}>
+		</Banner_Hideable>
+		<Banner_Hideable t_detail={T_Details.actions}>
 			<D_Actions/>
-		</Dynamic>
-		<Dynamic t_detail={T_Details.properties}>
+		</Banner_Hideable>
+		<Banner_Hideable t_detail={T_Details.properties}>
 			<D_Thing/>
-		</Dynamic>
-		<Dynamic t_detail={T_Details.tags} extra_titles={next_previous_titles}>
+		</Banner_Hideable>
+		<Banner_Hideable t_detail={T_Details.tags} extra_titles={next_previous_titles}>
 			<D_Tags/>
-		</Dynamic>
-		<Dynamic t_detail={T_Details.traits} extra_titles={next_previous_titles}>
+		</Banner_Hideable>
+		<Banner_Hideable t_detail={T_Details.traits} extra_titles={next_previous_titles}>
 			<D_Traits/>
-		</Dynamic>
-		<Dynamic t_detail={T_Details.graph}>
+		</Banner_Hideable>
+		<Banner_Hideable t_detail={T_Details.graph}>
 			<D_Display/>
-		</Dynamic>
-		<Dynamic t_detail={T_Details.database}>
+		</Banner_Hideable>
+		<Banner_Hideable t_detail={T_Details.database}>
 			<D_Databases/>
-		</Dynamic>
+		</Banner_Hideable>
 	</div>
 {/key}
 <Separator

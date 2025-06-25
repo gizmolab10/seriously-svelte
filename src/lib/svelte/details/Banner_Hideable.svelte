@@ -8,11 +8,11 @@
     export let t_detail: T_Details;
 	const glows_banner_height = k.height.banner.details;
 	const titles = [T_Details[t_detail], ...extra_titles];
-	const s_dynamic = s_details.s_hideables_byType[t_detail];
+	const s_banner_hideable = s_details.s_banner_hideables_byType[t_detail];
 	$: slot_isVisible = compute_slot_isVisible();
 
 	function compute_slot_isVisible() {
-		if (s_dynamic?.hasBanner) {
+		if (s_banner_hideable?.hasBanner) {
 			return $w_show_details_ofType?.includes(T_Details[t_detail]) ?? false;
 		}
 		return true;
@@ -42,7 +42,7 @@
 		flex-direction: column;
 		background-color: transparent;
 		z-index:{T_Layer.detailsPlus_1};'>
-	{#if s_dynamic?.hasBanner}
+	{#if s_banner_hideable?.hasBanner}
 		<div
 			class='banner'
 			style='

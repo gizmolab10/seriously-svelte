@@ -3,7 +3,7 @@ import { T_Details } from '../common/Global_Imports';
 // one for each detail type
 // relatively useless
 
-export class S_Dynamic {
+export class S_Banner_Hideable {
 	slot_isVisible = false;
     t_detail!: T_Details;
 	hasBanner = false;

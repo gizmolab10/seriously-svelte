@@ -12,7 +12,6 @@
 	export let width: number;
 	const g_repeater = new G_Repeater(titles, height, width, 0, 0, 7, 0, false, font_size);
 	let banner_color = colors.ofBannerFor($w_background_color);
-	let selected_title: string | null = null;
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//																				//
@@ -55,7 +54,6 @@
 			height={height}
 			font_size={font_size}
 			handle_click={intercept_click}
-			isSelected={title === selected_title}
 			width={g_repeater.button_width_for(index)}/>
 		{#if index > 0}
 			<Separator

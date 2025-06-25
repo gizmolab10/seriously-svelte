@@ -19,7 +19,7 @@
 	const grid_width = k.width_details - 8;
 	const separator_font_size = k.font_size.smallest;
     const font_sizes = [k.font_size.smallest, k.font_size.smallest];
-    const s_dynamic = s_details.s_hideables_byType[T_Details.actions];
+    const s_banner_hideable = s_details.s_banner_hideables_byType[T_Details.actions];
 	const es_cancel = ux.s_element_for(grabs.latest, T_Element.cancel, k.empty);
 	let list_title = grabs.latest?.isExpanded && ux.inTreeMode ? 'hide list' : 'list';
 	let actions_top = top + (has_title ? 3 : -13);

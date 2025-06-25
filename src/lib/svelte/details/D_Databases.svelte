@@ -17,7 +17,7 @@
 	const buttons_top = 138;
 	const border = '1px solid black';
     const font_sizes = [k.font_size.smallest, k.font_size.smaller];
-    const s_dynamic = s_details.s_hideables_byType[T_Details.database];
+    const s_banner_hideable = s_details.s_banner_hideables_byType[T_Details.database];
 	const storage_ids = [T_File_Operation.import, T_File_Operation.export];
 	const output_format_ids = [T_File_Format.csv, T_File_Format.json, T_File_Format.cancel];
 	const es_save = ux.s_element_for(new Identifiable('save'), T_Element.button, 'save');

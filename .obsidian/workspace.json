@@ -170,7 +170,8 @@
   },
   "active": "9968854d61be5eec",
   "lastOpenFiles": [
-    "src/lib/ts/state/S_Dynamic.ts",
+    "src/lib/svelte/details/Banner_Hideable.svelte",
+    "src/lib/ts/state/S_Banner_Hideable.ts",
     "src/lib/ts/maybe/G_Window.ts",
     "src/lib/svelte/buttons/Buttons_Table.svelte",
     "src/lib/svelte/experiments/Hideable.svelte",
@@ -179,8 +180,6 @@
     "node_modules/svelte-portal/test/TestLifecycle.svelte",
     "node_modules/svelte-portal/test/Portal.test.js",
     "node_modules/svelte-portal/src/main.es.js",
-    "node_modules/svelte-portal/jest.config.js",
-    "node_modules/svelte-portal/src/Portal.svelte",
     "node_modules/svelte-portal/README.md"
   ]
 }
