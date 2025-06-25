@@ -7,6 +7,7 @@
 	import Separator from '../kit/Separator.svelte';
 	export let toggle_hidden: (title: string) => void;
 	export let font_size = s_details.font_size;
+    export let isSelected: boolean = false;
 	export let titles: string[];
 	export let height: number;
 	export let width: number;
@@ -53,6 +54,7 @@
 			title={title}
 			height={height}
 			font_size={font_size}
+			isSelected={isSelected}
 			handle_click={intercept_click}
 			width={g_repeater.button_width_for(index)}/>
 		{#if index > 0}

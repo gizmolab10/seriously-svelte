@@ -13,18 +13,25 @@
     const gradient_name = 'glow-' + title;
     let isHovering = false;
     let banner_color = colors.ofBannerFor($w_background_color);
+    let timeout: number | null = null;
 
     $: $w_background_color, banner_color = colors.ofBannerFor($w_background_color);
     
     function intercept_click() {
-        isHovering = false;        // suppress distracting inversion from hover
+        isHovering = false;                // suppress distraction from hover
         handle_click(title);
     }
-
+    
     function handle_mouse_enter(is_in: boolean) {
         isHovering = is_in;
-        if (isSelected) {
-            u.onNextTick(() => isHovering = false);
+        if (!!timeout) {
+            clearTimeout(timeout);
+            timeout = null;
+        }
+        if (isSelected && is_in) {
+            timeout = setTimeout(() => {
+                isHovering = false;        // suppress distraction from hover
+            }, 600);
         }
     }
 
