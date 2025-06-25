@@ -10,11 +10,11 @@
 	export let zindex = T_Layer.details;
 	export let length = k.width_details;
 	export let has_thin_divider = true;
+	export let has_gull_wings = true;
 	export let position = 'absolute';
+	export let has_both_ends = true;
 	export let origin = Point.zero;
 	export let isHorizontal = true;
-	export let hasBothEnds = true;
-	export let add_wings = true;
 	export let margin = 0;
 	export let name = 'separator';
 	const class_name = `${name}-line-${isHorizontal ? 'horizontal' : 'vertical'}`;
@@ -27,8 +27,8 @@
 	// origin is the center at the start of the separator
 	// length
 	// isHorizontal	true starts at origin.x, false starts at top
-	// add_wings	has gull wings at either one or both ends
-	// hasBothEnds	if add_wings is true, then has gull wings at both ends
+	// has_gull_wings	has gull wings at either one or both ends
+	// has_both_ends	if has_gull_wings is true, then has gull wings at both ends
 	// margin		
 	// zindex
 
@@ -56,14 +56,14 @@
 </script>
 
 <div class={class_name} style={separatorStyle}>
-	{#if add_wings && !margin}
+	{#if has_gull_wings && !margin}
 		<Gull_Wings
 			thickness={thickness}
 			radius={corner_radius}
 			color={separator_color}
 			center={wingsCenter_single}
 			direction={wingsDirection_single}/>
-		{#if hasBothEnds}
+		{#if has_both_ends}
 			<Gull_Wings
 				thickness={thickness}
 				radius={corner_radius}

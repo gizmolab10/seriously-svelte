@@ -6,9 +6,9 @@
 	export let height = k.height.controls;
 	export let has_seperator = false;
 	export let origin = Point.zero;
-	export let hasBothEnds = true;
+	export let has_both_ends = true;
 	export let has_title = false;
-	export let add_wings = true;
+	export let has_gull_wings = true;
 	export let name = k.empty;
 	export let size = 24;
 	const base_titles = [T_Direction.previous, T_Direction.next];

@@ -66,7 +66,7 @@
                 margin={28}
                 width={width}
                 has_title={true}
-                add_wings={false}
+                has_gull_wings={false}
                 has_seperator={true}
                 closure={handleClick_onNextPrevious}
                 separator_thickness={k.thickness.separator.ultra_thin}

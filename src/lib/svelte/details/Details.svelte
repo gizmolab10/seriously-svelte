@@ -59,9 +59,9 @@
 	</div>
 {/key}
 <Separator
-	hasBothEnds={true}
+	has_both_ends={true}
 	isHorizontal={false}
-	has_thin_divider={false}
+	
 	margin={k.details_margin}
 	thickness={k.thickness.separator.thick}
 	length={$w_graph_rect.size.height + 10}

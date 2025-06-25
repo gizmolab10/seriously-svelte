@@ -44,7 +44,7 @@
                 isHorizontal={false}
                 thickness={thickness}
                 origin={new Point(2, 2)}
-				has_thin_divider={false}
+				
                 corner_radius={corner_radius}/>
         {/if}
         <SVG_Gradient
@@ -63,7 +63,7 @@
                 name='right-{name}'
                 isHorizontal={false}
                 thickness={thickness}
-				has_thin_divider={false}
+				
                 corner_radius={corner_radius}
                 origin={new Point(width - 0.5, 2)}/>
         {/if}
@@ -71,22 +71,22 @@
     {#if showTop}
         <Separator 
             name='top-{name}'
-			add_wings={false}
+			has_gull_wings={false}
             length={width + 2}
             origin={Point.zero}
             isHorizontal={true}
             thickness={thickness}
-			has_thin_divider={false}
+			
             corner_radius={corner_radius}/>
     {/if}
     {#if showBottom}
         <Separator
-			add_wings={false}
+			has_gull_wings={false}
             length={width + 2}
             isHorizontal={true}
             name='bottom-{name}'
             thickness={thickness}
-			has_thin_divider={false}
+			
             corner_radius={corner_radius}
             origin={Point.y(height - thickness)}/>
     {/if}

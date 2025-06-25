@@ -10,6 +10,7 @@
 	import { onMount } from 'svelte';
 	export let top = 0;
 	const height_gap = -2;
+	const separator_left = 35;
 	const position = 'relative';
 	const picker_offset = `-88px`;
 	const font_size = k.font_size.smaller;
@@ -18,6 +19,7 @@
 	const segmented_height = k.height.button + 11;
 	const separator_font_size = k.font_size.smallest;
 	const fit_titles = [T_Auto_Fit.manual, T_Auto_Fit.always];
+	const separator_width = k.width_details - 5 - separator_left * 2;
 	const titles = [T_Kinship[T_Kinship.child], T_Kinship[T_Kinship.parent], T_Kinship[T_Kinship.related]];
 	const heights = [10, 8, k.height.button - 6, height_gap, segmented_height, height_gap, segmented_height, height_gap, 6];
 	const tops = u.cumulativeSum(heights);
@@ -66,12 +68,12 @@
 		font-size:{k.font_size.small}px;'>
 	<Separator
 		isHorizontal={true}
-		has_thin_divider={false}
-		length={k.width_details}
+		has_gull_wings={false}
+		length={separator_width}
 		margin={k.details_margin}
-		origin={Point.y(tops[0])}
 		title_left={k.separator_title_left}
 		title_font_size={separator_font_size}
+		origin={new Point(separator_left, tops[0])}
 		thickness={k.thickness.separator.ultra_thin}
 		title={'visible levels'}/>
 	{#if ux.inTreeMode}
@@ -102,12 +104,12 @@
 		isHorizontal={true}
 		position={position}
 		title='adjust to fit'
-		has_thin_divider={false}
-		length={k.width_details}
+		has_gull_wings={false}
+		length={separator_width}
 		margin={k.details_margin}
-		origin={Point.y(tops[2])}
 		title_left={k.separator_title_left}
 		title_font_size={separator_font_size}
+		origin={new Point(separator_left, tops[2])}
 		thickness={k.thickness.separator.ultra_thin}/>
 	<Segmented
 		name='fit'
@@ -122,13 +124,13 @@
 	<Separator
 		isHorizontal={true}
 		position={position}
-		has_thin_divider={false}
-		length={k.width_details}
+		has_gull_wings={false}
+		length={separator_width}
 		margin={k.details_margin}
-		origin={Point.y(tops[4])}
 		title='show tiny dots for'
 		title_left={k.separator_title_left}
 		title_font_size={separator_font_size}
+		origin={new Point(separator_left, tops[4])}
 		thickness={k.thickness.separator.ultra_thin}/>
 	<Segmented
 		name='counts'
@@ -143,8 +145,8 @@
 	<Separator
 		position={position}
 		isHorizontal={true}
+		has_gull_wings={true}
 		title='background color'
-		has_thin_divider={false}
 		length={k.width_details}
 		margin={k.details_margin}
 		origin={Point.y(tops[6])}

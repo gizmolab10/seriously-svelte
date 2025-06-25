@@ -136,8 +136,8 @@
 						name='recents'
 						height={size_big}
 						has_title={false}
-						add_wings={false}
 						has_seperator={false}
+						has_gull_wings={false}
 						origin={Point.x(lefts[1])}
 						closure={handle_recents_mouseClick}/>
 					{/if}

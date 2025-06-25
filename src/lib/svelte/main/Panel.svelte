@@ -78,9 +78,9 @@
 				</div>
 				<Separator
 					name='panel-left'
-					hasBothEnds={true}
+					has_both_ends={true}
 					isHorizontal={false}
-					has_thin_divider={false}
+					
 					margin={k.details_margin}
 					zindex={T_Layer.frontmost}
 					thickness={k.thickness.separator.thick}
@@ -89,9 +89,9 @@
 					origin={new Point(2, layout.panel_boxHeight)}/>
 				<Separator
 					name='panel-right'
-					hasBothEnds={true}
+					has_both_ends={true}
 					isHorizontal={false}
-					has_thin_divider={false}
+					
 					margin={k.details_margin}
 					zindex={T_Layer.frontmost}
 					thickness={k.thickness.separator.thick}

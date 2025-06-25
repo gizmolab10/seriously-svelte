@@ -15,7 +15,7 @@
 	export let font_sizes: number[];
 	export let button_height = 13;
 	export let align_left = true;
-	export let add_wings = true;
+	export let has_gull_wings = true;
 	export let has_title = true;	// true means first row_titles is the title of the row
 	export let has_svg = false;
 	export let name = k.empty;
@@ -89,8 +89,8 @@
 				length={width}
 				title={row_title}
 				isHorizontal={true}
-				add_wings={add_wings}
-				has_thin_divider={false}
+				has_gull_wings={has_gull_wings}
+				
 				thickness={separator_thickness}
 				title_font_size={font_sizes[0]}
 				title_left={k.separator_title_left}/>
