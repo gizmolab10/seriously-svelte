@@ -5,7 +5,7 @@
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import { s_details } from '../../ts/state/S_Details';
 	import Text_Editor from '../kit/Text_Editor.svelte';
-    const s_hideable = s_details.s_hideables_byType[T_Details.traits];
+    const s_dynamic = s_details.s_hideables_byType[T_Details.traits];
 	const es_button = ux.s_element_for(new Identifiable('trait'), T_Element.button, 'trait');
 	let text_box_size = new Size(k.width_details - 34, 68);
 	let prior_trigger = k.empty;

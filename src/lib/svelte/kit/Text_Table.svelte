@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, Rect, Point, T_Layer } from '../../ts/common/Global_Imports';
+	import { k, Rect, Point, layout, T_Layer } from '../../ts/common/Global_Imports';
 	import type { Integer } from '../../ts/common/Types';
 	export let font_size = k.font_size.small;
 	export let number_of_columns = 2;

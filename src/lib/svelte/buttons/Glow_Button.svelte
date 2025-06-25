@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import { k, show, Rect, Size, Point, colors, svgPaths, T_Layer } from '../../ts/common/Global_Imports';
+    import { k, u, show, Rect, Size, Point, colors, svgPaths, T_Layer } from '../../ts/common/Global_Imports';
 	import { w_background_color } from '../../ts/common/Stores';
     import SVG_Gradient from '../kit/SVG_Gradient.svelte';
     import Button from './Button.svelte';
@@ -11,14 +11,21 @@
     export let handle_click: (title: string) => boolean;
     const glow_rect = Rect.createWHRect(width, height);
     const gradient_name = 'glow-' + title;
-    let banner_color = colors.ofBannerFor($w_background_color);
     let isHovering = false;
+    let banner_color = colors.ofBannerFor($w_background_color);
 
     $: $w_background_color, banner_color = colors.ofBannerFor($w_background_color);
     
     function intercept_click() {
         isHovering = false;        // suppress distracting inversion from hover
         handle_click(title);
+    }
+
+    function handle_mouse_enter(is_in: boolean) {
+        isHovering = is_in;
+        if (isSelected) {
+            u.onNextTick(() => isHovering = false);
+        }
     }
 
 </script>
@@ -38,8 +45,8 @@
         isInverted={!isHovering || svgPaths.hasPath_for(title)}/>
     <div class='title'
         on:click={intercept_click}
-        on:mouseenter={() => isHovering = true}
-        on:mouseleave={() => isHovering = false}
+        on:mouseenter={() => handle_mouse_enter(true)}
+        on:mouseleave={() => handle_mouse_enter(false)}
         style='
             top: 50%;
             left: 50%;

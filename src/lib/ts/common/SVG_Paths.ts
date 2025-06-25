@@ -400,6 +400,7 @@ export default class SVG_Paths {
 	 * thickness of bars and gaps between bars are both 1/5 of the size
 	 * radius of circles is 1/10 of the size
 	 * @returns SVG path string that renders the settings icon
+	 * AI wrote this, but it's not quite right
 	 */
 	hamburgerPath(size: number = 150): string {
 		const barHeight = size / 5;

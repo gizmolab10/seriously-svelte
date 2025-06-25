@@ -148,7 +148,7 @@
 				await databases.db_now.thing_persistentUpdate(thing);
 				title_prior = thing?.title;			// so hasChanges will be correct next time
 			}
-			u.onNextCycle_apply(() => {		// prevent Panel's enter key handler call to start edit from actually starting
+			u.onNextTick(() => {		// prevent Panel's enter key handler call to start edit from actually starting
 				if (!!$w_s_text_edit && $w_s_text_edit.actively_refersTo(ancestry)) {
 					debug.log_edit(`STOPPING ${ancestry.title}`);
 					$w_s_text_edit.stop_editing();

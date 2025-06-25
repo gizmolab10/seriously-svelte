@@ -26,7 +26,7 @@
 	let color_wrapper: HTMLDivElement | null = null;
 
 	$: if (color_wrapper || $w_show_details_ofType) {
-		u.onNextCycle_apply(() => updateColorOrigin());
+		u.onNextTick(() => updateColorOrigin());
 	}
 
 	function handle_colors(result: string) {

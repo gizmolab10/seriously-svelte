@@ -3,10 +3,10 @@ import { T_Details, T_Direction, S_Identifiables } from '../common/Global_Import
 import { w_tag_things, w_thing_tags, w_tag_thing_index } from '../common/Stores';
 import { h, Tag, grabs, Thing, Ancestry } from '../common/Global_Imports';
 import { w_ancestry_focus, w_ancestries_grabbed } from '../common/Stores';
-import { S_Hideable } from './S_Hideable';
+import { S_Dynamic } from './S_Dynamic';
 
 class S_Details {
-	private s_hideables_byType: { [t_detail: string]: S_Hideable } = {};
+	private s_hideables_byType: { [t_detail: string]: S_Dynamic } = {};
 	private s_trait_things = new S_Identifiables<Thing>([]);
 	private s_things = new S_Identifiables<Thing>([]);
 	private s_tags = new S_Identifiables<Tag>([]);
@@ -27,7 +27,7 @@ class S_Details {
 			this.update();
 		});
 		for (const t_detail of Object.values(T_Details) as T_Details[]) {
-			this.s_hideables_byType[t_detail] = new S_Hideable(t_detail);
+			this.s_hideables_byType[t_detail] = new S_Dynamic(t_detail);
 		}
 	}
 

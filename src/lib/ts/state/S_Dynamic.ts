@@ -1,10 +1,13 @@
-import { T_Details } from '../../ts/common/Global_Imports';
+import { T_Details } from '../common/Global_Imports';
 
-export class S_Hideable {
+// one for each detail type
+// relatively useless
+
+export class S_Dynamic {
+	slot_isVisible = false;
     t_detail!: T_Details;
 	hasBanner = false;
 	isBottom = false;
-	height = 22;
 
 	constructor(t_detail: T_Details) {
 		this.isBottom = t_detail === T_Details.database;
