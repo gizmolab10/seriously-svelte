@@ -3,12 +3,12 @@
 	import { w_graph_rect, w_count_details, w_show_graph_ofType } from '../../ts/common/Stores';
 	import Separator from '../kit/Separator.svelte';
 	import D_Databases from './D_Databases.svelte';
-	import D_Display from './D_Display.svelte';
+	import D_Graph from './D_Graph.svelte';
 	import D_Actions from './D_Actions.svelte';
 	import D_Header from './D_Header.svelte';
 	import D_Traits from './D_Traits.svelte';
 	import Banner_Hideable from './Banner_Hideable.svelte';
-	import D_Thing from './D_Thing.svelte';
+	import D_Properties from './D_Properties.svelte';
 	import D_Tags from './D_Tags.svelte';
 	const width = k.width_details;
 	const next_previous_titles = [T_Direction.previous, T_Direction.next];
@@ -42,7 +42,7 @@
 			<D_Actions/>
 		</Banner_Hideable>
 		<Banner_Hideable t_detail={T_Details.properties}>
-			<D_Thing/>
+			<D_Properties/>
 		</Banner_Hideable>
 		<Banner_Hideable t_detail={T_Details.tags} extra_titles={next_previous_titles}>
 			<D_Tags/>
@@ -51,7 +51,7 @@
 			<D_Traits/>
 		</Banner_Hideable>
 		<Banner_Hideable t_detail={T_Details.graph}>
-			<D_Display/>
+			<D_Graph/>
 		</Banner_Hideable>
 		<Banner_Hideable t_detail={T_Details.database}>
 			<D_Databases/>

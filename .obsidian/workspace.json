@@ -170,16 +170,17 @@
   },
   "active": "9968854d61be5eec",
   "lastOpenFiles": [
+    "src/main.js",
+    "src/styles/main.js",
+    "src/lib/svelte/details/D_Graph.svelte",
+    "src/lib/svelte/details/D_Properties.svelte",
     "src/lib/svelte/details/Banner_Hideable.svelte",
     "src/lib/ts/state/S_Banner_Hideable.ts",
+    "src/lib/ts/state/S_Dynamic.ts",
     "src/lib/ts/maybe/G_Window.ts",
     "src/lib/svelte/buttons/Buttons_Table.svelte",
     "src/lib/svelte/experiments/Hideable.svelte",
     "vite.config.js.timestamp-1750713698686-4503cbd8eec32.mjs",
-    "node_modules/svelte-portal/test/TestPortalWrapper.svelte",
-    "node_modules/svelte-portal/test/TestLifecycle.svelte",
-    "node_modules/svelte-portal/test/Portal.test.js",
-    "node_modules/svelte-portal/src/main.es.js",
     "node_modules/svelte-portal/README.md"
   ]
 }
