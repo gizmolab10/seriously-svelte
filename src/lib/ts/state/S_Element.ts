@@ -83,6 +83,9 @@ export default class S_Element {
 			if (this.ancestry.isFocus) {
 				return `solid ${color} 1px`;
 			}
+			if (!this.isOut) {
+				return `solid ${color} 1px`;
+			}
 		}
 		return 'solid transparent 1px';
 	}

@@ -1,4 +1,4 @@
-import { S_Element, G_Cluster, G_TreeLine, G_TreeBranches } from '../common/Global_Imports';
+import { S_Widget, G_Cluster, G_TreeLine, G_TreeBranches } from '../common/Global_Imports';
 import { w_graph_rect, w_show_graph_ofType, w_device_isMobile} from '../common/Stores';
 import { k, u, ux, Rect, Size, Point, layout, Ancestry } from '../common/Global_Imports';
 import { w_depth_limit, w_show_details, w_show_related } from '../common/Stores';
@@ -19,8 +19,8 @@ export default class G_Widget {
 	widget_pointsRight = true;
 	forGraphMode: T_Graph;
 	points_toChild = true;
-	es_widget!: S_Element;
 	g_cluster!: G_Cluster;
+	s_widget!: S_Widget;
 	g_line!: G_TreeLine;
 	ancestry!: Ancestry;
 	subtree_height = 0;
@@ -29,7 +29,7 @@ export default class G_Widget {
 	// create a G_TreeLine as normal
 	// and one for each bidirectional
 
-	get responder(): HTMLElement | null { return this.es_widget.responder; }
+	get responder(): HTMLElement | null { return this.s_widget.responder; }
 
 	// single source of truth for widget's
 	//
@@ -43,10 +43,10 @@ export default class G_Widget {
 	//		radial origin, angles and orientations (in/out, right/left)
 
 	constructor(ancestry: Ancestry) {
-		this.es_widget = ux.s_element_for(ancestry, T_Element.widget, k.empty);
 		this.g_line = new G_TreeLine(ancestry.parentAncestry, ancestry);
 		this.g_parentBranches = new G_TreeBranches(ancestry, false);
 		this.g_childBranches = new G_TreeBranches(ancestry);
+		this.s_widget = ux.s_widget_forAncestry(ancestry);
 		this.forGraphMode = get(w_show_graph_ofType);
 		this.ancestry = ancestry;
 		if (!ancestry) {

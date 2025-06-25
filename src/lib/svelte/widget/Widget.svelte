@@ -12,11 +12,11 @@
 	import { onMount } from 'svelte';
 	export let ancestry!: Ancestry;
 	const g_widget = ancestry.g_widget;
-	const es_widget = g_widget.es_widget;
-	const name = g_widget.es_widget.name;
+	const s_widget = g_widget.s_widget;
+	const name = s_widget.name;
 	const points_toChild = g_widget.points_toChild;
     const points_right = g_widget.widget_pointsRight;
-	const s_widget = ux.s_widget_forAncestry(ancestry);
+	// const s_widget = ux.s_widget_forAncestry(ancestry);
 	const es_drag = ux.s_element_for(ancestry, T_Element.drag, k.empty);
 	const es_title = ux.s_element_for(ancestry, T_Element.title, k.empty);
 	const es_reveal = ux.s_element_for(ancestry, T_Element.reveal, k.empty);
@@ -25,12 +25,13 @@
 	let widgetWrapper!: Svelte_Wrapper;
 	let center_ofDrag = Point.zero;
 	let revealCenter = Point.zero;
-	let border = es_widget.border;
+	let border = s_widget.border;
 	let background = k.empty;
 	let widgetName = k.empty;
 	let revealName = k.empty;
 	let widgetData = k.empty;
 	let revealData = k.empty;
+	let isHovering = false;
 	let dragData = k.empty;
 	let padding = k.empty;
 	let height = 0;
@@ -85,9 +86,14 @@
 	function isHit(): boolean { return false; }
 	function handle_s_mouse(s_mouse: S_Mouse): boolean { return false; }
 
+	function handle_mouse_exit(isOut: boolean) {
+		s_widget.isOut = isOut;
+		update_colors();
+	}
+
 	function update_colors() {
 		background = s_widget.background;
-		border = es_widget.border;
+		border = s_widget.border;
 	}
 
 	async function handle_click_event(event) {
@@ -125,16 +131,18 @@
 			revealName = `reveal ${title}`;
 		}
 	}
-
+    
 </script>
 
-{#if es_widget}
+{#if s_widget}
 	<div class = 'widget'
 		id = '{widgetName}'
 		on:keyup = {u.ignore}
 		bind:this = {widget}
 		on:keydown = {u.ignore}
 		on:click = {handle_click_event}
+        on:mouseleave={() => handle_mouse_exit(true)}
+        on:mouseenter={() => handle_mouse_exit(false)}
 		style = '
 			{background};
 			top : {top}px;

@@ -26,7 +26,7 @@ export default class S_Widget extends S_Element {
 	constructor(ancestry: Ancestry) { super(ancestry, T_Element.widget, k.empty); }
 	get background(): string { return `background-color: ${this.background_color}`; }
 	get isFilled(): boolean { return this.ancestry.isGrabbed && !this.ancestry.isEditing; }
-	get shows_border(): boolean { return this.ancestry.isFocus || this.ancestry.isEditing; }
+	get shows_border(): boolean { return this.ancestry.isFocus || this.ancestry.isEditing || !this.isOut; }
 	get background_color(): string { return this.isFilled ? this.thing_color : this.shows_border ? get(w_background_color) : 'transparent'; }
 
 	get color(): string {
