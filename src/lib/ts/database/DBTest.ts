@@ -1,4 +1,4 @@
-import { h, k, T_Thing, Predicate, T_Predicate } from '../common/Global_Imports';
+import { h, k, T_Thing, T_Trait, Predicate, T_Predicate } from '../common/Global_Imports';
 import { T_Persistence } from '../common/Global_Imports';
 import { T_Database } from './DBCommon';
 import DBCommon from './DBCommon';
@@ -48,6 +48,12 @@ export default class DBTest extends DBCommon {
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'rac', kindR, idTa, idTc, [0, 0]);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'raf', kindR, idTa, idTf, [0, 1]);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'rce', kindR, idTc, idTe, [0, 1]);
+		h.trait_remember_runtimeCreateUnique(this.idBase, 'ttc', idTc, T_Trait.text, 'Carrumba Tinga!', {});
+		h.trait_remember_runtimeCreateUnique(this.idBase, 'tlb', idTb, T_Trait.link, 'http://www.webseriously.org', {});
+		h.trait_remember_runtimeCreateUnique(this.idBase, 'ttb', idTb, T_Trait.text, 'What a brilliant idea you have!', {});
+		h.tag_remember_runtimeCreateUnique_byType(this.idBase, 'Fruity', [idTd.hash(), idTc.hash()]);
+		h.tag_remember_runtimeCreateUnique_byType(this.idBase, 'Moody', [idTd.hash(), idTb.hash()]);
+		h.tag_remember_runtimeCreateUnique_byType(this.idBase, 'Study', [idTd.hash(), idTe.hash()]);
 		// this.makeMore(3, 'c', kindC, idTf, true);	// children of Friendly
 		this.makeMore(2, 'g', kindC, idTb, true, 4);	// children of Brilliant
 		this.makeMore(4, 'e', kindR, idTb, true, 2);	// related to  "

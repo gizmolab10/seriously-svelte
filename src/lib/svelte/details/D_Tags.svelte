@@ -32,7 +32,7 @@
         style='
             width: 100%;
             padding: 4px;
-            height: 46px;
+            height: 19px;
             position: relative;
             text-align: center;
             padding-bottom: 9px;
@@ -61,16 +61,6 @@
                     width:{k.width_details - 30}px;'>
                 {$w_thing_tags.map(t => t.type).join(', ')}
             </div>
-            <Next_Previous
-                name={name}
-                margin={28}
-                width={width}
-                has_title={true}
-                has_gull_wings={false}
-                has_seperator={true}
-                closure={handleClick_onNextPrevious}
-                separator_thickness={k.thickness.separator.ultra_thin}
-                origin={new Point((k.width_details - width - padding) / 2, 28)}/>
         {/if}
     </div>
 {/key}

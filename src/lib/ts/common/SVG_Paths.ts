@@ -258,6 +258,33 @@ export default class SVG_Paths {
 		return 'M' + start.description+ k.comma + arcs.join(k.space) + 'Z';
 	}
 
+	pill(center: Point, size: Size): string {
+		const radius = size.height / 2;
+		const half = size.width / 2;
+		const cx = center.x;
+		const cy = center.y;
+		const L = cx - half;
+		const R = cx + half;
+		const T = cy - radius;
+		const B = cy + radius;
+		return `M ${L}, ${T} L ${R}, ${T} A ${radius}, ${radius} 0 0 1 ${R}, ${B} L ${L}, ${B} A ${radius}, ${radius} 0 0 1 ${L}, ${T} Z`;
+	}
+
+	hamburgerPath(size: number = 150): string {
+
+		// @returns SVG path string that renders a hamburger icon
+		//	comprised of three horizontal pills
+		//	each is size long and 1/5 of the size thick
+		//	gaps between are 1/5 of the size
+
+		const barHeight = size / 5;
+		const barSize = new Size(size, barHeight);
+		const x = size / 2;
+		const threeYs = [barHeight / 2, size / 2, size - barHeight / 2];
+		const paths = threeYs.map(y => this.pill(new Point(x, y), barSize));
+		return paths.join(k.space);
+	}
+
 	get rotateSVG(): string {
 		return `<svg class='rotate-svg' width="48px" height="48px" viewBox="0 0 48 48">
 			<circle cx="24" cy="24" r="20" stroke="black" stroke-width="2" fill="none" />
@@ -338,6 +365,7 @@ export default class SVG_Paths {
 			maxX = Math.max(maxX, x);
 			maxY = Math.max(maxY, y);
 		}
+
 		function handleArcCommand(args: number[]): void {
 			const startX = x;
 			const startY = y;
@@ -367,63 +395,6 @@ export default class SVG_Paths {
 			maxY = Math.max(maxY, startY, endY, cy - ry, cy + ry);
 		}
 		return new Size(maxX - minX, maxY - minY);
-	}
-
-	oblong(center: Point, size: Size, part: T_Oblong = T_Oblong.full): string {
-		const bumpRight = [T_Oblong.full, T_Oblong.right].includes(part);
-		const bumpLeft = [T_Oblong.full, T_Oblong.left].includes(part);
-		const radius = size.height / 2;
-		const half = size.width / 2;
-		const cx = center.x;
-		const cy = center.y;
-		const L = cx - half + (bumpLeft ? 0 : radius);
-		const R = cx + half + (bumpRight ? 0 : radius);
-		const T = cy - radius;
-		const B = cy + radius;
-		const TL = `${L}, ${T}`;
-		const TR = `${R}, ${T}`;
-		const BR = `${R}, ${B}`;
-		const BL = `${L}, ${B}`;
-		const cap = `${radius}, ${radius} 0 0 1`;
-		switch (part) {
-			case T_Oblong.middle: return `M ${TL} L ${TR} L ${BR} L ${BL} L ${TL} Z`;
-			case T_Oblong.right:  return `M ${TL} L ${TR} A ${cap} ${BR} L ${BL} L ${TL} Z`;
-			case T_Oblong.left:	 return `M ${TL} L ${TR} L ${BR} L ${BL} A ${cap} ${TL} Z`;
-			case T_Oblong.full:	 return `M ${TL} L ${TR} A ${cap} ${BR} L ${BL} A ${cap} ${TL} Z`;
-		}
-		return k.empty;
-	}
-
-	pill(center: Point, size: Size): string {
-		const radius = size.height / 2;
-		const half = size.width / 2;
-		const cx = center.x;
-		const cy = center.y;
-		const L = cx - half;
-		const R = cx + half;
-		const T = cy - radius;
-		const B = cy + radius;
-		return `M ${L}, ${T} L ${R}, ${T} A ${radius}, ${radius} 0 0 1 ${R}, ${B} L ${L}, ${B} A ${radius}, ${radius} 0 0 1 ${L}, ${T} Z`;
-	}	
-
-	/**
-	 * Generates an SVG path that renders a settings icon with three horizontal bars
-	 * Each bar consists of a circle, rectangle, and circle
-	 * thickness of bars and gaps between bars are both 1/5 of the size
-	 * radius of circles is 1/10 of the size
-	 * @returns SVG path string that renders the settings icon
-	 * AI wrote this, but it's not quite right
-	 */
-	hamburgerPath(size: number = 150): string {
-		const barHeight = size / 5;
-		const barSize = new Size(size, barHeight);
-		const x = size / 2;
-		const ys = [barHeight / 2, size / 2, size - barHeight / 2];
-		const paths = ys.map(y => this.pill(new Point(x, y), barSize));
-		const path = paths.join(k.space);
-		const size_ofPath = this.sizeFrom_svgPath(path);
-		console.log(size_ofPath.description);
-		return path;
 	}
 
 }

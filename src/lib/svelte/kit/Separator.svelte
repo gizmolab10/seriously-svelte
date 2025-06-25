@@ -9,7 +9,7 @@
 	export let title: string | null = null;
 	export let zindex = T_Layer.details;
 	export let length = k.width_details;
-	export let has_thin_divider = true;
+	export let has_thin_divider = false;
 	export let has_gull_wings = true;
 	export let position = 'absolute';
 	export let has_both_ends = true;

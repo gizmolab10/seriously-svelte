@@ -90,23 +90,23 @@
 			handle_value_change={handle_depth_limit}/>
 	{:else}
 		<div style='
-			height:22px;
+			height:17px;
 			display:flex;
-			font-size:12px;
+			font-size:10px;
 			position:relative;
 			align-items:center;
-			top:{tops[1] - 2}px;
+			top:{tops[1] + 1}px;
 			justify-content:center;'>
-			radial graph only shows one level
+			(only one level is visible in the radial graph)
 		</div>
 	{/if}
 	<Separator
 		isHorizontal={true}
 		position={position}
-		title='adjust to fit'
 		has_gull_wings={false}
 		length={separator_width}
 		margin={k.details_margin}
+		title='adjust graph to fit'
 		title_left={k.separator_title_left}
 		title_font_size={separator_font_size}
 		origin={new Point(separator_left, tops[2])}
