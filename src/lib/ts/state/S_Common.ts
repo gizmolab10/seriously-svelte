@@ -1,5 +1,5 @@
-import { u, G_Segment, T_Element, Mouse_Timer, Ancestry } from '../common/Global_Imports';
 import { S_Mouse, S_Widget, S_Element, T_Graph } from '../common/Global_Imports';
+import { u, T_Element, Mouse_Timer, Ancestry } from '../common/Global_Imports';
 import { T_Storage_Need } from '../../ts/common/Enumerations';
 import { w_show_graph_ofType } from '../common/Stores';
 import Identifiable from '../runtime/Identifiable';
@@ -8,7 +8,6 @@ import { get } from 'svelte/store';
 export default class S_Common {
 	mouse_timer_byName: { [name: string]: Mouse_Timer } = {};
 	s_widget_byAncestryID: { [id: string]: S_Widget } = {};
-	g_segment_byName: { [name: string]: G_Segment } = {};
 	s_element_byName: { [name: string]: S_Element } = {};
 	s_mouse_byName: { [name: string]: S_Mouse } = {};
 	T_Storage_Need = T_Storage_Need.direction;
@@ -31,8 +30,6 @@ export default class S_Common {
 	s_widget_forID(id: string): S_Widget { return this.s_widget_byAncestryID[id]; }
 	get inRadialMode(): boolean { return get(w_show_graph_ofType) == T_Graph.radial; }
 	s_element_forName(name: string): S_Element { return this.s_element_byName[name]; }
-	g_segment_forName(name: string): G_Segment { return this.g_segment_byName[name]; }
-	set_g_segment_forName(g_segment: G_Segment, name: string) { return this.g_segment_byName[name] = g_segment; }
 	s_mouse_forName(name: string): S_Mouse { return u.assure_forKey_inDict(name, this.s_mouse_byName, () => S_Mouse.empty()); }
 	mouse_timer_forName(name: string): Mouse_Timer { return u.assure_forKey_inDict(name, this.mouse_timer_byName, () => new Mouse_Timer()); }
 	name_from(identifiable: Identifiable, type: T_Element, subtype: string): string { return `${type}(${subtype}) (id '${identifiable.id}')`; }
