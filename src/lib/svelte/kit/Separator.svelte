@@ -17,11 +17,11 @@
 	export let isHorizontal = true;
 	export let margin = 0;
 	export let name = 'separator';
+	const title_top = origin.y - 1 - title_font_size / 1.5 + (position == 'relative' ? 0 : 1);
+	const thin_line_color = colors.ofSeparatorFor('#aaaaaa');
 	const class_name = `${name}-line-${isHorizontal ? 'horizontal' : 'vertical'}`;
 	const line_left = isHorizontal ? origin.x + margin : origin.x - thickness / 2;
 	const title_width = u.getWidth_ofString_withSize(title ?? k.empty, `${title_font_size}px`);
-	let thin_line_color = colors.ofSeparatorFor('#aaaaaa');
-	let title_top = origin.y - 1 - title_font_size / 1.5;
 	let separator_color = colors.separator;
 
 	// origin is the center at the start of the separator

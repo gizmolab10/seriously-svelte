@@ -6,7 +6,7 @@
 	import G_Repeater from '../../ts/layout/G_Repeater';
 	import Separator from '../kit/Separator.svelte';
 	export let toggle_hidden: (title: string) => void;
-	export let font_size = s_details.font_size;
+	export let font_size = k.font_size.details;
     export let isSelected: boolean = false;
 	export let titles: string[];
 	export let height: number;

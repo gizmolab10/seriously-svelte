@@ -59,6 +59,7 @@ export default class Constants {
 		ultra_small: dot_size - 5,
 		separator:	 dot_size - 4,
 		smallest:	 dot_size - 4,
+		details:	 dot_size - 3,
 		smaller:	 dot_size - 1.7,
 		small:		 dot_size - 1,
 		common:		 dot_size,
@@ -96,6 +97,7 @@ export default class Constants {
 
 	height = {
 		separator: 7,
+		empty:	   22,
 		line:	   row_height + 2,
 		segmented: row_height + 1,
 		row:	   row_height,

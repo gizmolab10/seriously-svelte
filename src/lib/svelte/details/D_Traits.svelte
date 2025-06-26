@@ -37,44 +37,36 @@
 </script>
 
 {#key reattachments}
-	<div class='traits'
-		style='
-			width: 100%;
-			padding: 2px;
-			display: flex;
-			position: relative;
-			padding-bottom:6px;
-			scrollbar-width: none;          /* Firefox */
-			flex-direction: column;
-			-ms-overflow-style: none;
-			font-size:{k.font_size.smaller}px;'>
-		{#if !$w_thing_traits || $w_thing_traits.length == 0}
-			<p class='no-traits' style='
-                margin: 0;
-                width: 100%;
-                height: 48px;
-                display: flex;
-                text-align: center;
-                align-items: center;
-                justify-content: center;'>
-                no traits
-            </p>
-		{:else}
-			<div style='left: 6px; top: 0px; position: relative;'>
-				{#each $w_thing_traits as trait}
-					<Text_Editor
-						top={8}
-						height={78}
-						label={trait.t_trait}
-						color={colors.default}
-						original_text={trait.text}
-						width={k.width_details - 20}
-						label_underline={trait.t_trait == 'link'}
-						label_color={trait.t_trait == 'link' ? 'blue' : 'black'}
-						handle_textChange={async (label, text) => await h.trait_setText_forTrait(text, trait)}
-						handleClick_onLabel={trait.t_trait == 'link' ? (event) => window.open(trait.text, '_blank') : null}/>
-				{/each}
+	{#if !$w_thing_traits || $w_thing_traits.length == 0}
+		<div class='traits'
+			style='
+				width: 100%;
+				display: flex;
+				position: relative;
+				text-align: center;
+				align-items: center;
+				flex-direction: column;
+				justify-content: center;
+				-ms-overflow-style: none;
+				height:{k.height.empty}px;
+				font-size:{k.font_size.details}px;'>
+				no traits
 			</div>
-		{/if}
-	</div>
+	{:else}
+		<div style='padding: 6px'>
+			{#each $w_thing_traits as trait}
+				<Text_Editor
+					top={5}
+					height={78}
+					label={trait.t_trait}
+					color={colors.default}
+					original_text={trait.text}
+					width={k.width_details - 20}
+					label_underline={trait.t_trait == 'link'}
+					label_color={trait.t_trait == 'link' ? 'blue' : 'black'}
+					handle_textChange={async (label, text) => await h.trait_setText_forTrait(text, trait)}
+					handleClick_onLabel={trait.t_trait == 'link' ? (event) => window.open(trait.text, '_blank') : null}/>
+			{/each}
+		</div>
+	{/if}
 {/key}

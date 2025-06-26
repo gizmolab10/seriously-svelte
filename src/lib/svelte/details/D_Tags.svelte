@@ -31,33 +31,19 @@
         class='tags'
         style='
             width: 100%;
-            padding: 4px;
-            height: 19px;
+            display: flex;
             position: relative;
             text-align: center;
-            padding-bottom: 9px;
-            font-size:{s_details.font_size}px;'>
+            align-items: center;
+            justify-content: center;
+            height:{k.height.empty}px;
+            font-size:{k.font_size.details}px;'>
         {#if !$w_thing_tags || $w_thing_tags.length == 0}
-            <p style='
-                margin: 0;
-                width: 100%;
-                height: 100%;
-                display: flex;
-                text-align: center;
-                align-items: center;
-                justify-content: center;'>
-                no tags
-            </p>
+            no tags
         {:else}
             <div
                 class='tags-list'
                 style='
-                    top:3px;
-                    margin: 0;
-                    display: flex;
-                    position:relative;
-                    padding: 0 {padding}px;
-                    justify-content: center;
                     width:{k.width_details - 30}px;'>
                 {$w_thing_tags.map(t => t.type).join(', ')}
             </div>

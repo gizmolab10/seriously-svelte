@@ -10,7 +10,7 @@
 	export let label_color = 'gray';
 	export let label = k.empty;
 	export let height = 200;
-	export let left = 0;
+	export let left = 2;
 	export let top = 0;
 	let textarea = null;
 	let labelElement = null;
@@ -67,11 +67,11 @@
 
 <div class={label}
 	style='
-		top: {top - 0.5}px;
+		top: {top}px;
 		left: {left}px;
 		width: {width}px;
 		position: relative;
-		padding-bottom: 8px;'>
+		padding-bottom: 7px;'>
 	<textarea
 		id={label}
 		type='text'
@@ -94,6 +94,7 @@
 			vertical-align: top;
 			white-space: normal;
 			width: {width - 15}px;
+			scrollbar-width: none;          /* Firefox */
 			z-index: {T_Layer.text};
 			overflow-wrap: break-word;
 			{k.prevent_selection_style};
@@ -102,11 +103,10 @@
 		'/>
 	<div style='width: 100%; display: flex; justify-content: center;'>
 		<div style='
-			top: -8px;
-			padding: 0px 3px;
+			top: -7px;
 			position: absolute;
 			color: {label_color};
-			font-size: {k.font_size.small}px;
+			font-size: {k.font_size.details}px;
 			background-color: {$w_background_color};
 			cursor: {handleClick_onLabel ? 'pointer' : 'default'};
 			text-decoration: {label_underline ? 'underline' : 'none'};'

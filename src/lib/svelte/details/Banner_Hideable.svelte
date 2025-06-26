@@ -52,10 +52,11 @@
 				height: {layout.glows_banner_height}px;'>
 			<Glows_Banner
 				titles={titles}
+				width={k.width_details}
 				isSelected={slot_isVisible}
-				height={layout.glows_banner_height}
-					width={k.width_details}
-					toggle_hidden={toggle_hidden}/>
+				toggle_hidden={toggle_hidden}
+				font_size={k.font_size.details}
+				height={layout.glows_banner_height}/>
 		</div>
 	{/if}
 	{#if slot_isVisible}

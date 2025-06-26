@@ -17,12 +17,8 @@
 	const color_left = k.width_details / 2 - 13;
 	const segmented_width = k.width_details - 6;
 	const segmented_height = k.height.button + 8;
-	const fit_titles = [T_Auto_Fit.manual, T_Auto_Fit.always];
 	const separator_width = k.width_details - 5 - separator_left * 2;
 	const fourth_height = ux.inRadialMode ? -29 : k.height.button - 9;
-	const titles = [T_Kinship[T_Kinship.child], T_Kinship[T_Kinship.parent], T_Kinship[T_Kinship.related]];
-	const heights = [8, separator_gap, k.height.button + 25, -8, fourth_height, separator_gap, segmented_height, separator_gap, segmented_height, separator_gap, 4];
-	const tops = u.cumulativeSum(heights);
 	console.log(fourth_height);
 	let color = $w_background_color;
 	let colorOrigin = Point.square(-3.5);
@@ -56,6 +52,21 @@
 		}
 	}
 
+	const heights = [
+		8,
+		separator_gap,
+		k.height.button + 9,
+		-8,
+		fourth_height,
+		separator_gap,
+		segmented_height,
+		separator_gap,
+		segmented_height,
+		separator_gap,
+		4];
+
+	const tops = u.cumulativeSum(heights);
+
 </script>
 
 <div class='display'
@@ -86,13 +97,14 @@
 					allow_multiple={true}
 					selected={$w_show_tree_ofType}
 					origin={new Point(18, tops[1])}
-					titles={[T_Kinship.child, T_Kinship.parent, T_Kinship.related]}
+					titles={[T_Kinship.child, T_Kinship.related]}
 					handle_selection={(titles) => layout.handle_mode_selection('tree', titles)}/>
 			{/key}
 		{/key}
 		<Separator
 			title='tree levels'
 			isHorizontal={true}
+			position={position}
 			has_gull_wings={false}
 			length={separator_width}
 			title_left={k.separator_title_left}
@@ -123,12 +135,12 @@
 	<Segmented
 		name='fit'
 		allow_none={true}
-		titles={fit_titles}
 		allow_multiple={false}
 		width={segmented_width}
 		height={k.height.button}
 		origin={Point.y(tops[5])}
 		handle_selection={handle_auto_fit}
+		titles={[T_Auto_Fit.manual, T_Auto_Fit.always]}
 		selected={[$w_auto_fit_graph ? T_Auto_Fit.always : T_Auto_Fit.manual]}/>
 	<Separator
 		isHorizontal={true}
@@ -142,14 +154,14 @@
 		thickness={k.thickness.separator.ultra_thin}/>
 	<Segmented
 		name='counts'
-		titles={titles}
 		allow_none={true}
 		allow_multiple={true}
 		width={segmented_width}
 		height={k.height.button}
 		origin={Point.y(tops[7])}
 		selected={$w_show_countDots_ofType}
-		handle_selection={handle_count_dots}/>
+		handle_selection={handle_count_dots}
+		titles={[T_Kinship[T_Kinship.child], T_Kinship[T_Kinship.parent], T_Kinship[T_Kinship.related]]}/>
 	<Separator
 		position={position}
 		isHorizontal={true}
