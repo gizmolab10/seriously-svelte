@@ -56,7 +56,7 @@
                 justify-content: center;
                 min-height: {k.height.empty}px;
                 font-size:{k.font_size.details}px;'>
-                {$w_thing_tags.map(t => t.type).join(', ... ')}
+                {$w_thing_tags.map(t => t.type).join(', ')}
             </div>
         {/if}
 {/key}

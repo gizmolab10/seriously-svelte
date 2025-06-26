@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { k, u, ux, Rect, Point, colors, layout, T_Layer, T_Kinship, T_Auto_Fit, T_Graph } from '../../ts/common/Global_Imports';
+	import { k, u, ux, Rect, Point, colors, layout, T_Layer, T_Kinship, T_Auto_Adjust, T_Graph } from '../../ts/common/Global_Imports';
 	import { w_show_details_ofType, w_show_tree_ofType, w_show_countDots_ofType } from '../../ts/common/Stores';
-	import { w_depth_limit, w_background_color, w_auto_fit_graph } from '../../ts/common/Stores';
+	import { w_depth_limit, w_background_color, w_auto_adjust_graph } from '../../ts/common/Stores';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
 	import Slider from '../mouse/Slider.svelte';
@@ -18,8 +18,7 @@
 	const segmented_width = k.width_details - 6;
 	const segmented_height = k.height.button + 8;
 	const separator_width = k.width_details - 5 - separator_left * 2;
-	const fourth_height = ux.inRadialMode ? -29 : k.height.button - 9;
-	console.log(fourth_height);
+	const fourth_height = ux.inRadialMode ? -13 : k.height.button - 9;
 	let color = $w_background_color;
 	let colorOrigin = Point.square(-3.5);
 	let color_wrapper: HTMLDivElement | null = null;
@@ -32,8 +31,8 @@
 		$w_background_color = color = result;
 	}
 
-	function handle_auto_fit(types: string[]) {
-		$w_auto_fit_graph = types.includes(T_Auto_Fit.always);
+	function handle_auto_adjust(types: Array<T_Auto_Adjust | null>) {
+		$w_auto_adjust_graph = types.length > 0 ? types[0] : null;
 	}
 
 	function handle_count_dots(types: string[]) {
@@ -126,22 +125,22 @@
 		isHorizontal={true}
 		position={position}
 		has_gull_wings={false}
+		title='force graph to:'
 		length={separator_width}
 		margin={k.details_margin}
-		title='adjust graph to fit'
 		title_left={k.separator_title_left}
 		origin={new Point(separator_left, tops[4])}
 		thickness={k.thickness.separator.ultra_thin}/>
 	<Segmented
-		name='fit'
 		allow_none={true}
+		name='auto-adjust'
 		allow_multiple={false}
 		width={segmented_width}
 		height={k.height.button}
 		origin={Point.y(tops[5])}
-		handle_selection={handle_auto_fit}
-		titles={[T_Auto_Fit.manual, T_Auto_Fit.always]}
-		selected={[$w_auto_fit_graph ? T_Auto_Fit.always : T_Auto_Fit.manual]}/>
+		selected={[$w_auto_adjust_graph]}
+		handle_selection={handle_auto_adjust}
+		titles={[T_Auto_Adjust.selection, T_Auto_Adjust.fit]}/>
 	<Separator
 		isHorizontal={true}
 		position={position}

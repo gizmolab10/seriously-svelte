@@ -1,5 +1,5 @@
 import { Tag, Rect, Point, Thing, Trait, colors, Ancestry, Hierarchy } from '../common/Global_Imports';
-import { T_Graph, T_Trait, T_Kinship, T_Details, T_Startup } from '../common/Global_Imports';
+import { T_Graph, T_Kinship, T_Details, T_Startup, T_Auto_Adjust } from '../common/Global_Imports';
 import { G_Paging, G_Cluster, S_Text_Edit, S_Alteration } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
 
@@ -63,9 +63,9 @@ export const w_count_resize				 = writable<number>();
 
 const _____OTHER: unique symbol = Symbol('OTHER');
 
+export const w_auto_adjust_graph		 = writable<T_Auto_Adjust | null>();
 export const w_popupView_id				 = writable<string | null>();
 export const w_t_startup				 = writable<T_Startup>();
-export const w_auto_fit_graph			 = writable<boolean>();
 export const w_device_isMobile			 = writable<boolean>();
 export const w_control_key_down			 = writable<boolean>();
 export const w_background_color			 = writable<string>();

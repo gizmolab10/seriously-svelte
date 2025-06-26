@@ -76,7 +76,7 @@ export default class Constants {
 	radius = {
 		text_area_border:  7,
 		arcSlider_cap: 	   7.5,
-		ring_center:   	  55,
+		ring_minimum:  	  55,
 		gull_wings: { 
 			thick:	   	  14,
 			thin:		   8,

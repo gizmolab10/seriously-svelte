@@ -11,6 +11,13 @@ export enum T_Banner {
 	crumbs,
 }
 
+export enum T_Startup {
+	start,
+	fetch,
+	empty,
+	ready,
+}
+
 export enum T_Details {
 	header,
 	actions,
@@ -71,9 +78,9 @@ export enum T_File_Operation {
 	export = 'export',	// fetch
 }
 
-export enum T_Auto_Fit {
-	always = 'always do it for me',
-	manual = 'I will do it',
+export enum T_Auto_Adjust {
+	selection = 'center the selection',
+	fit		  = 'exactly fit',
 }
 
 export enum T_Widget {
@@ -111,13 +118,6 @@ export enum T_SvelteComponent {
 	reveal	= 'reveal',
 	title	= 'title',
 	app		= 'app',
-}
-
-export enum T_Startup {
-	start = 'start',
-	fetch = 'fetch',
-	empty = 'empty',
-	ready = 'ready',
 }
 
 export enum T_File_Format {
@@ -252,11 +252,11 @@ export enum T_Preference {
 	show_related	  = 'show_related',
 	ring_radius		  = 'ring_radius',
 	user_offset		  = 'user_offset',
+	auto_adjust		  = 'auto_adjust',
 	background		  = 'background',
 	ring_angle  	  = 'ring_angle',
 	countDots		  = 'countDots',
 	font_size		  = 'font_size',
-	auto_fit		  = 'auto_fit',
 	base_id			  = 'base_id',
 	grabbed			  = 'grabbed',
 	paging 			  = 'paging',

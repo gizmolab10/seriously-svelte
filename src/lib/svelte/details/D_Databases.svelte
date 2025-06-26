@@ -28,6 +28,7 @@
 	let storage_choice: string | null = null;
 	let storage_details: Array<Object> = [];
 	let width = k.width_details - 7;
+	let isDirty = false;
 
 	setup_s_elements();
 	es_save.set_forHovering('black', 'pointer');
@@ -49,7 +50,7 @@
 		}
 	}
 
-	function row_titles() {
+	function action_titles() {
 		switch (ux.T_Storage_Need) {
 			case T_Storage_Need.direction: return ['local file', ...storage_ids];
 			case T_Storage_Need.format:	   return ['file type', ...format_ids()];
@@ -79,6 +80,7 @@
 
 	function update_storage_details() {
 		if (!!h) {
+			isDirty = h.total_dirty_count != 0;
 			storage_details = [h.db.details_forStorage,
 			['depth', h.depth.supressZero()],
 			['things', h.things.length.supressZero()],
@@ -136,7 +138,7 @@
 			array={storage_details}
 			font_size={k.font_size.small - 1}/>
 		{#key $w_storage_updated}
-			{#if h.total_dirty_count != 0}
+			{#if isDirty}
 				{#if busy.isDatabaseBusy}
 					<div class='data-spinner'
 						style="position: absolute; left: 163px; top: 107px;">
@@ -164,7 +166,7 @@
 			width={width + 6}
 			has_seperator={true}
 			font_sizes={font_sizes}
-			row_titles={row_titles()}
+			row_titles={action_titles()}
 			closure={handle_actionRequest}
 			button_height={k.height.button}
 			center={new Point(width / 2 + 3, top + 164)}

@@ -62,7 +62,7 @@ export default class G_Layout {
 	
 	handle_mode_selection(name: string, types: string[]) {
 		switch (name) {
-			case 'graph': w_show_graph_ofType.set(types[0] as T_Graph); break;
+			case 'graph': w_show_graph_ofType.set(types[0] as unknown as T_Graph); break;
 			case 'tree': this.set_tree_types(types as Array<T_Kinship>); break;
 		}
 	}

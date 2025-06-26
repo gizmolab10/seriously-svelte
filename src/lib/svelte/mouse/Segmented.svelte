@@ -26,6 +26,8 @@
 		if (!allow_multiple) {
 			if (!isSelected) {
 				selection = [title];
+			} else if (allow_none) {
+				selection = [];
 			} else {
 				const index = titles.indexOf(title).increment(true, titles.length);
 				selection = [titles[index]];

@@ -1,9 +1,9 @@
 import { c, h, k, u, show, grabs, debug, radial, colors, layout, Ancestry, databases } from '../common/Global_Imports';
-import { G_Paging, T_Graph, T_Trait, T_Details, T_Kinship, T_Preference, T_Auto_Fit } from '../common/Global_Imports';
 import { w_g_paging, w_font_size, w_background_color, w_thing_fontFamily, w_depth_limit, } from '../common/Stores';
+import { G_Paging, T_Graph, T_Details, T_Kinship, T_Preference, T_Auto_Adjust } from '../common/Global_Imports';
 import { w_ancestry_focus, w_ancestries_grabbed, w_ancestries_expanded } from '../common/Stores';
 import { w_t_database, w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
-import { w_auto_fit_graph, w_show_tree_ofType, w_show_graph_ofType } from '../common/Stores';
+import { w_auto_adjust_graph, w_show_tree_ofType, w_show_graph_ofType } from '../common/Stores';
 import { w_show_details_ofType, w_show_countDots_ofType } from '../common/Stores';
 import { get } from 'svelte/store';
 
@@ -204,8 +204,8 @@ export class Preferences {
 		w_depth_limit.subscribe((depth: number) => {
 			this.write_key(T_Preference.levels, depth);
 		});
-		w_auto_fit_graph.subscribe((auto_fit: boolean) => {
-			this.write_key(T_Preference.auto_fit, auto_fit);
+		w_auto_adjust_graph.subscribe((auto_adjust: T_Auto_Adjust | null) => {
+			this.write_key(T_Preference.auto_adjust, auto_adjust);
 		});
 		w_background_color.subscribe((color: string) => {
 			document.documentElement.style.setProperty('--css-background-color', color);
@@ -224,21 +224,21 @@ export class Preferences {
 	restore_stores() {
 
 		// VISIBILITY
-		w_show_tree_ofType		.set( this.read_key(T_Preference.tree)				   ?? T_Kinship.child);
-		w_show_graph_ofType		.set( this.read_key(T_Preference.graph)				   ?? T_Graph.tree);
-		w_show_details_ofType	.set( this.read_key(T_Preference.detail_types)		   ?? [T_Details.actions, T_Details.database]);
-		w_show_countDots_ofType	.set( this.read_key(T_Preference.countDots)			   ?? [T_Kinship.child]);
+		w_show_tree_ofType		.set( this.read_key(T_Preference.tree)					?? T_Kinship.child);
+		w_show_graph_ofType		.set( this.read_key(T_Preference.graph)					?? T_Graph.tree);
+		w_show_countDots_ofType	.set( this.read_key(T_Preference.countDots)				?? [T_Kinship.child]);
+		w_show_details_ofType	.set( this.read_key(T_Preference.detail_types)			?? [T_Details.actions, T_Details.database]);
 
 		// RADIAL
-		w_ring_rotation_angle	.set( this.read_key(T_Preference.ring_angle)		   ?? 0);
-		w_ring_rotation_radius	.set(Math.max( this.read_key(T_Preference.ring_radius) ?? 0, k.radius.ring_center));
-
+		w_ring_rotation_angle	.set( this.read_key(T_Preference.ring_angle)			?? 0);
+		w_ring_rotation_radius	.set( Math.max( this.read_key(T_Preference.ring_radius) ?? 0, k.radius.ring_minimum));
+	
 		// OTHER
-		w_depth_limit			.set( this.read_key(T_Preference.levels)			   ?? 2);
-		w_font_size				.set( this.read_key(T_Preference.font_size)			   ?? 14);
-		w_thing_fontFamily		.set( this.read_key(T_Preference.font)				   ?? 'Times New Roman');
-		w_background_color		.set( this.read_key(T_Preference.background)		   ?? colors.background);
-		w_auto_fit_graph		.set( this.read_key(T_Preference.auto_fit)			   ?? T_Auto_Fit.manual);
+		w_depth_limit			.set( this.read_key(T_Preference.levels)				?? 2);
+		w_font_size				.set( this.read_key(T_Preference.font_size)				?? 14);
+		w_auto_adjust_graph		.set( this.read_key(T_Preference.auto_adjust)			?? null);
+		w_thing_fontFamily		.set( this.read_key(T_Preference.font)					?? 'Times New Roman');
+		w_background_color		.set( this.read_key(T_Preference.background)			?? colors.background);
 	}
 
 }
