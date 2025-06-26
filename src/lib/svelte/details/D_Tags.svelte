@@ -27,26 +27,36 @@
 </script>
 
 {#key `${grabs.latest.id} ${name} ${$w_thing_tags} ${reattachments}`}
-    <div
-        class='tags'
-        style='
-            width: 100%;
-            display: flex;
-            position: relative;
-            text-align: center;
-            align-items: center;
-            justify-content: center;
-            height:{k.height.empty}px;
-            font-size:{k.font_size.details}px;'>
-        {#if !$w_thing_tags || $w_thing_tags.length == 0}
-            no tags
-        {:else}
-            <div
-                class='tags-list'
-                style='
-                    width:{k.width_details - 30}px;'>
-                {$w_thing_tags.map(t => t.type).join(', ')}
+    {#if !$w_thing_tags || $w_thing_tags.length == 0}
+        <div
+            class='tags'
+            style='
+                width: 100%;
+                display: flex;
+                position: relative;
+                text-align: center;
+                align-items: center;
+                justify-content: center;
+                min-height:{k.height.empty}px;
+                font-size:{k.font_size.details}px;'>
+                no tags
+        </div>
+    {:else}
+        <div
+            class='tags-list'
+            style='
+                width:100%;
+                display: flex;
+                padding: 4px 0;
+                flex-wrap:wrap;
+                text-align: center;
+                align-items: center;
+                white-space:pre-line;
+                word-break:break-word;
+                justify-content: center;
+                min-height: {k.height.empty}px;
+                font-size:{k.font_size.details}px;'>
+                {$w_thing_tags.map(t => t.type).join(', ... ')}
             </div>
         {/if}
-    </div>
 {/key}

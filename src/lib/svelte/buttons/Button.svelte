@@ -72,13 +72,14 @@
 		color = es_button.stroke;
 		if (style.length == 0) {
 			border_color = colors.border;
-			border = border_thickness == 0 ? 'none' : `${border_thickness}px solid ${border_color}`;
+			const border_attributes = border_thickness == 0 ? 'none' : `${border_thickness}px solid ${border_color}`;
+			border = `border:${border_attributes}`;
 			computed_style=`
 				left:0px;
+				${border};
 				display: flex;
 				color:${color};
 				width:${width}px;
-				border:${border};
 				z-index:${zindex};
 				padding:${padding};
 				height:${height}px;

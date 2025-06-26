@@ -68,7 +68,6 @@
 
 	function handle_actionRequest(t_request: T_Request, s_mouse: S_Mouse, column: number): any {
 		const ids = (ux.T_Storage_Need == T_Storage_Need.direction) ? storage_ids : format_ids();
-		console.log('request', t_request, s_mouse?.isDown, column);
 		switch (t_request) {
 			case T_Request.handle_click: return handle_click_forColumn(s_mouse, column);
 			case T_Request.name:		 return ids[column];

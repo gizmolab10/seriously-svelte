@@ -166,11 +166,11 @@
 		position={position}
 		isHorizontal={true}
 		has_gull_wings={true}
+		has_thin_divider={true}
 		title='background color'
 		length={k.width_details}
 		margin={k.details_margin}
 		origin={Point.y(tops[8])}
-		has_ultra_thin_divider={true}
 		title_left={k.separator_title_left}
 		thickness={k.thickness.separator.ultra_thin}/>
 	<div 

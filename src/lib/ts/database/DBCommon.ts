@@ -27,7 +27,7 @@ export default class DBCommon {
 	queryStrings_apply() {}
 	setup_remote_handlers() {}
 	get displayName(): string { return this.t_database; }
-	get details_forStorage(): Object { return ['fetch took', this.loadTime]; }
+	get details_forStorage(): Object { return ['fetch', this.loadTime]; }
 	get isRemote(): boolean { return this.t_persistence == T_Persistence.remote; }
 	get isPersistent(): boolean { return this.t_persistence != T_Persistence.none; }
 	async hierarchy_fetch_forID(idBase: string) {}	// support for browsing multiple firebase bulks
@@ -163,12 +163,16 @@ export default class DBCommon {
 	set_loadTime_from(startTime: number | null = null) {
 		if (startTime != null) {
 			const duration = (new Date().getTime()) - startTime;
-			const adjusted = Math.trunc(duration / 100) / 10;
-			const isInteger = adjusted == Math.trunc(adjusted);
-			const suffix = (isInteger && (adjusted == 1)) ? '' : 's';
-			const places = isInteger ? 0 : 1;
-			const time = (duration / 1000).toFixed(places);
-			this.loadTime = `${time} second${suffix}`;
+			if (Math.abs(duration) < 100) {
+				this.loadTime = 'was instantaneous';
+			} else {
+				const adjusted = Math.trunc(duration / 100) / 10;
+				const isInteger = adjusted == Math.trunc(adjusted);
+				const suffix = (isInteger && (adjusted == 1)) ? '' : 's';
+				const places = isInteger ? 0 : 1;
+				const time = (duration / 1000).toFixed(places);
+				this.loadTime = `took ${time} second${suffix}`;
+			}
 		}
 	}
 
