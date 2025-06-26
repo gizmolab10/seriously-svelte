@@ -3,7 +3,6 @@ import { builds } from './Builds';
 
 const dot_size = 14;
 const row_height = 20;
-const glows_banner_height = tu.device_isMobile ? 32 : 20;
 
 export default class Constants {
 	details_margin = 0;
@@ -58,6 +57,7 @@ export default class Constants {
 
 	font_size = {
 		ultra_small: dot_size - 5,
+		separator:	 dot_size - 4,
 		smallest:	 dot_size - 4,
 		smaller:	 dot_size - 1.7,
 		small:		 dot_size - 1,
@@ -102,12 +102,6 @@ export default class Constants {
 		controls:  16,
 		button:	   dot_size + 3,
 		dot:	   dot_size,
-		banner: {
-			controls: glows_banner_height,
-			details:  glows_banner_height,
-			graph:	  0,
-			crumbs:	  glows_banner_height,
-		},
 	};
 
 }

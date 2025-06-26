@@ -13,7 +13,6 @@
 	import { onMount } from 'svelte';
 	export let top = 4;
 	const id = 'selection';
-	const separator_font_size = k.font_size.smallest;
 	const es_info = ux.s_element_for(new Identifiable(id), T_Element.thing, id);
 	let ancestry: Ancestry | null = grabs.latest;
 	let thing: Thing | null = ancestry?.thing ?? null;

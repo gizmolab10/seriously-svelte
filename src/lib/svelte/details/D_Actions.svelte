@@ -13,17 +13,17 @@
 	export let top = 2;
 	const title_gap = 4;
 	const has_title = true;
-	const top_gridHeight = 92;
+	const top_tableHeight = 94;
 	const left_afterTitle = 39.5;
-	const bottom_gridHeight = 71;
-	const grid_width = k.width_details - 8;
-	const separator_font_size = k.font_size.smallest;
+	const bottom_tableHeight = 71;
+	const table_width = k.width_details - 8;
+	const bottom_padding = bottom_tableHeight - 47;
     const font_sizes = [k.font_size.smallest, k.font_size.smallest];
     const s_banner_hideable = s_details.s_banner_hideables_byType[T_Details.actions];
 	const es_cancel = ux.s_element_for(grabs.latest, T_Element.cancel, k.empty);
 	let list_title = grabs.latest?.isExpanded && ux.inTreeMode ? 'hide list' : 'list';
-	let actions_top = top + (has_title ? 3 : -13);
 	let button_titles = compute_button_titles();
+	let actions_top = top + 3;
     let reattachments = 0;
 	es_cancel.set_forHovering(colors.default, 'pointer');
 
@@ -33,13 +33,13 @@
 	// 	  is_disabled calls:	handle_isAction_disabledAt		//
 	//	  handle_click calls:	handle_action_clickedAt ...		//
 	//    n.b., long press generates multiple calls				//
-	//  buttons grid adds row (here it becomes row)		//
+	//  buttons table adds row (here it becomes row)		//
 	//															//
 	//////////////////////////////////////////////////////////////
 	
     $:	{
 		const _ = top;
-		actions_top = top + (has_title ? 3 : -13);
+		actions_top = top + 3;
 	}
 
 	$: {
@@ -136,8 +136,8 @@
 			width: 100%;
 			position:relative;
 			top:{actions_top}px;
-			padding-bottom:22.4px;
-			z-index:{T_Layer.detailsPlus_2}'>
+			z-index:{T_Layer.detailsPlus_2};
+			padding-bottom:{bottom_padding}px;'>
 		{#if $w_s_alteration}
 			<div
 				class='alteration-instructions'
@@ -172,7 +172,7 @@
 				top={1}
 				gap={2}
 				name='top-actions'
-				width={grid_width}
+				width={table_width}
 				has_title={has_title}
 				title_gap={title_gap}
 				type={T_Element.action}
@@ -183,14 +183,14 @@
 			<Separator
 				isHorizontal={false}
 				has_thin_divider={true}
-				length={top_gridHeight}
+				length={top_tableHeight}
 				margin={k.details_margin}
 				origin={new Point(left_afterTitle, -4)}
 				thickness={k.thickness.separator.ultra_thin}/>
 			<Buttons_Table
 				gap={2}
-				top={14}
-				width={grid_width}
+				top={16}
+				width={table_width}
 				name='bottom-actions'
 				has_title={has_title}
 				title_gap={title_gap}
@@ -203,9 +203,9 @@
 				isHorizontal={false}
 				has_thin_divider={true}
 				margin={k.details_margin}
-				length={bottom_gridHeight}
+				length={bottom_tableHeight}
 				thickness={k.thickness.separator.ultra_thin}
-				origin={new Point(left_afterTitle, top_gridHeight - 10)}/>
+				origin={new Point(left_afterTitle, top_tableHeight - 10)}/>
 			<Separator
 				isHorizontal={true}
 				has_thin_divider={true}
@@ -213,8 +213,7 @@
 				margin={k.details_margin}
 				title='edit your hierarchy'
 				title_left={k.separator_title_left}
-				title_font_size={separator_font_size}
-				origin={Point.y(top_gridHeight - 11)}
+				origin={Point.y(top_tableHeight - 11)}
 				thickness={k.thickness.separator.ultra_thin}/>
 		{/if}
 	</div>

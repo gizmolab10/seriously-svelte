@@ -16,13 +16,14 @@
 	const font_size = k.font_size.smaller;
 	const color_left = k.width_details / 2 - 13;
 	const segmented_width = k.width_details - 6;
-	const segmented_height = k.height.button + 7;
-	const separator_font_size = k.font_size.smallest;
+	const segmented_height = k.height.button + 8;
 	const fit_titles = [T_Auto_Fit.manual, T_Auto_Fit.always];
 	const separator_width = k.width_details - 5 - separator_left * 2;
+	const fourth_height = ux.inRadialMode ? -29 : k.height.button - 9;
 	const titles = [T_Kinship[T_Kinship.child], T_Kinship[T_Kinship.parent], T_Kinship[T_Kinship.related]];
-	const heights = [8, separator_gap, k.height.button + 24, -8, k.height.button - 10, separator_gap, segmented_height, separator_gap, segmented_height, separator_gap, 4];
+	const heights = [8, separator_gap, k.height.button + 25, -8, fourth_height, separator_gap, segmented_height, separator_gap, segmented_height, separator_gap, 4];
 	const tops = u.cumulativeSum(heights);
+	console.log(fourth_height);
 	let color = $w_background_color;
 	let colorOrigin = Point.square(-3.5);
 	let color_wrapper: HTMLDivElement | null = null;
@@ -66,42 +67,37 @@
 		position:{position};
 		padding-bottom:{tops[10]}px;
 		font-size:{k.font_size.small}px;'>
-	<Separator
-		isHorizontal={true}
-		position={position}
-		has_gull_wings={false}
-		length={separator_width}
-		margin={k.details_margin}
-		title='visible relationships'
-		title_left={k.separator_title_left}
-		title_font_size={separator_font_size}
-		origin={new Point(separator_left, tops[0])}
-		thickness={k.thickness.separator.ultra_thin}/>
-	{#key $w_show_tree_ofType}
-		{#if ux.inTreeMode}
+	{#if ux.inTreeMode}
+		<Separator
+			isHorizontal={true}
+			position={position}
+			has_gull_wings={false}
+			length={separator_width}
+			margin={k.details_margin}
+			title='tree relationships'
+			title_left={k.separator_title_left}
+			origin={new Point(separator_left, tops[0])}
+			thickness={k.thickness.separator.ultra_thin}/>
+		{#key $w_show_tree_ofType}
 			{#key $w_show_tree_ofType}
 				<Segmented
 					width={180}
 					name='tree-types'
 					allow_multiple={true}
 					selected={$w_show_tree_ofType}
-					origin={new Point(20, tops[1])}
-					titles={[T_Kinship.child, T_Kinship.parent, T_Kinship.related, T_Kinship.tags]}
+					origin={new Point(18, tops[1])}
+					titles={[T_Kinship.child, T_Kinship.parent, T_Kinship.related]}
 					handle_selection={(titles) => layout.handle_mode_selection('tree', titles)}/>
 			{/key}
-		{/if}
-	{/key}
-	<Separator
-		isHorizontal={true}
-		has_gull_wings={false}
-		length={separator_width}
-		margin={k.details_margin}
-		title_left={k.separator_title_left}
-		title_font_size={separator_font_size}
-		origin={new Point(separator_left, tops[2])}
-		thickness={k.thickness.separator.ultra_thin}
-		title={'visible levels'}/>
-	{#if ux.inTreeMode}
+		{/key}
+		<Separator
+			title='tree levels'
+			isHorizontal={true}
+			has_gull_wings={false}
+			length={separator_width}
+			title_left={k.separator_title_left}
+			origin={new Point(separator_left, tops[2])}
+			thickness={k.thickness.separator.ultra_thin}/>
 		<Slider
 			max={12}
 			isLogarithmic={true}
@@ -111,19 +107,8 @@
 			thumb_color={colors.separator}
 			origin={new Point(10, tops[3])}
 			title_left={k.separator_title_left}
-			title_font_size={k.font_size.small}
+			title_font_size={k.font_size.smaller}
 			handle_value_change={handle_depth_limit}/>
-	{:else}
-		<div style='
-			height:17px;
-			display:flex;
-			font-size:10px;
-			position:relative;
-			align-items:center;
-			top:{tops[3] + 1}px;
-			justify-content:center;'>
-			(only one level is visible in the radial graph)
-		</div>
 	{/if}
 	<Separator
 		isHorizontal={true}
@@ -133,7 +118,6 @@
 		margin={k.details_margin}
 		title='adjust graph to fit'
 		title_left={k.separator_title_left}
-		title_font_size={separator_font_size}
 		origin={new Point(separator_left, tops[4])}
 		thickness={k.thickness.separator.ultra_thin}/>
 	<Segmented
@@ -154,7 +138,6 @@
 		margin={k.details_margin}
 		title='show tiny dots for'
 		title_left={k.separator_title_left}
-		title_font_size={separator_font_size}
 		origin={new Point(separator_left, tops[6])}
 		thickness={k.thickness.separator.ultra_thin}/>
 	<Segmented
@@ -175,8 +158,8 @@
 		length={k.width_details}
 		margin={k.details_margin}
 		origin={Point.y(tops[8])}
+		has_ultra_thin_divider={true}
 		title_left={k.separator_title_left}
-		title_font_size={separator_font_size}
 		thickness={k.thickness.separator.ultra_thin}/>
 	<div 
 		class= 'background-color'

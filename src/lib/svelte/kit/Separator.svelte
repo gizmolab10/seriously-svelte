@@ -4,7 +4,7 @@
 	import Gull_Wings from '../kit/Gull_Wings.svelte';
 	export let corner_radius = k.radius.gull_wings.ultra_thin;
 	export let thickness = k.thickness.separator.thick;
-	export let title_font_size = k.font_size.smaller;
+	export let title_font_size = k.font_size.separator;
 	export let title_left: number | null= null;
 	export let title: string | null = null;
 	export let zindex = T_Layer.details;
@@ -21,8 +21,8 @@
 	const line_left = isHorizontal ? origin.x + margin : origin.x - thickness / 2;
 	const title_width = u.getWidth_ofString_withSize(title ?? k.empty, `${title_font_size}px`);
 	let thin_line_color = colors.ofSeparatorFor('#aaaaaa');
+	let title_top = origin.y - 1 - title_font_size / 1.5;
 	let separator_color = colors.separator;
-	let title_top = 0;
 
 	// origin is the center at the start of the separator
 	// length
@@ -33,7 +33,6 @@
 	// zindex
 
 	$: separatorStyle = style_for(isHorizontal, line_left, zindex, top, origin.y, margin, thickness, length, separator_color);
-	$: $w_show_details_ofType, title_top = origin.y - 5.5 - title_font_size / 30;
 	$: wingsCenter_single = wingsCenter_for(isHorizontal, length, thickness, false);
 	$: wingsCenter_dual = wingsCenter_for(isHorizontal, length, thickness, true);
 	$: wingsDirection_single = isHorizontal ? Direction.right : Direction.down;

@@ -1,12 +1,11 @@
 <script lang='ts'>
-	import { k, u, T_Layer, T_Details } from '../../ts/common/Global_Imports';
+	import { k, u, T_Layer, T_Details, layout } from '../../ts/common/Global_Imports';
 	import { w_show_details_ofType } from '../../ts/common/Stores';
 	import { s_details } from '../../ts/state/S_Details';
 	import Glows_Banner from './Glows_Banner.svelte';
 	import { Motion } from 'svelte-motion';
     export let extra_titles: string[] = [];
     export let t_detail: T_Details;
-	const glows_banner_height = k.height.banner.details;
 	const titles = [T_Details[t_detail], ...extra_titles];
 	const s_banner_hideable = s_details.s_banner_hideables_byType[t_detail];
 	$: slot_isVisible = compute_slot_isVisible();
@@ -50,11 +49,11 @@
 				display: flex;
 				cursor: pointer;
 				align-items: stretch;
-				height: {glows_banner_height}px;'>
+				height: {layout.glows_banner_height}px;'>
 			<Glows_Banner
 				titles={titles}
 				isSelected={slot_isVisible}
-				height={glows_banner_height}
+				height={layout.glows_banner_height}
 					width={k.width_details}
 					toggle_hidden={toggle_hidden}/>
 		</div>

@@ -42,7 +42,7 @@
                 has_seperator={has_seperator}
                 button_height={button_height}
                 origin={button_origin_for(row)}
-                name={`${name}-grid-${T_Action[row]}`}
+                name={`${name}-table-${T_Action[row]}`}
                 closure={(t_request, s_mouse, column) => closure(t_request, s_mouse, name, row, column)}/>
         {/if}
     {/each}
