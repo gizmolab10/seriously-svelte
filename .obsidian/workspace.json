@@ -170,17 +170,17 @@
   },
   "active": "9968854d61be5eec",
   "lastOpenFiles": [
-    "src/main.js",
-    "src/styles/main.js",
-    "src/lib/svelte/details/D_Graph.svelte",
-    "src/lib/svelte/details/D_Properties.svelte",
-    "src/lib/svelte/details/Banner_Hideable.svelte",
-    "src/lib/ts/state/S_Banner_Hideable.ts",
-    "src/lib/ts/state/S_Dynamic.ts",
-    "src/lib/ts/maybe/G_Window.ts",
-    "src/lib/svelte/buttons/Buttons_Table.svelte",
-    "src/lib/svelte/experiments/Hideable.svelte",
-    "vite.config.js.timestamp-1750713698686-4503cbd8eec32.mjs",
+    "dist/lib/ts/tests/Geometry.test.js.map",
+    "dist/lib/ts/tests/Geometry.test.js",
+    "dist/lib/ts/tests/G_ArcSlider.test.js.map",
+    "dist/lib/ts/tests/G_ArcSlider.test.js",
+    "dist/lib/ts/tests/Colors.test.js.map",
+    "dist/lib/ts/tests/Colors.test.js",
+    "dist/lib/ts/tests",
+    "dist/lib/ts/maybe/G_Window.js.map",
+    "dist/lib/ts/maybe/G_Window.js",
+    "dist/lib/ts/maybe/Cursors.js.map",
+    "dist/lib/ts/maybe/Cursors.js",
     "node_modules/svelte-portal/README.md"
   ]
 }

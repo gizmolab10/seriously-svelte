@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { k, u, ux, Rect, Point, colors, layout, T_Layer, T_Kinship, T_Auto_Fit } from '../../ts/common/Global_Imports';
+	import { k, u, ux, Rect, Point, colors, layout, T_Layer, T_Kinship, T_Auto_Fit, T_Graph } from '../../ts/common/Global_Imports';
+	import { w_show_details_ofType, w_show_tree_ofType, w_show_countDots_ofType } from '../../ts/common/Stores';
 	import { w_depth_limit, w_background_color, w_auto_fit_graph } from '../../ts/common/Stores';
-	import { w_show_details_ofType, w_show_countDots_ofType } from '../../ts/common/Stores';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../kit/Separator.svelte';
 	import Slider from '../mouse/Slider.svelte';
@@ -9,19 +9,19 @@
 	import Portal from 'svelte-portal';
 	import { onMount } from 'svelte';
 	export let top = 0;
-	const height_gap = -2;
+	const separator_gap = -5;
 	const separator_left = 35;
 	const position = 'relative';
 	const picker_offset = `-88px`;
 	const font_size = k.font_size.smaller;
 	const color_left = k.width_details / 2 - 13;
 	const segmented_width = k.width_details - 6;
-	const segmented_height = k.height.button + 11;
+	const segmented_height = k.height.button + 7;
 	const separator_font_size = k.font_size.smallest;
 	const fit_titles = [T_Auto_Fit.manual, T_Auto_Fit.always];
 	const separator_width = k.width_details - 5 - separator_left * 2;
 	const titles = [T_Kinship[T_Kinship.child], T_Kinship[T_Kinship.parent], T_Kinship[T_Kinship.related]];
-	const heights = [10, 8, k.height.button - 6, height_gap, segmented_height, height_gap, segmented_height, height_gap, 6];
+	const heights = [8, separator_gap, k.height.button + 24, -8, k.height.button - 10, separator_gap, segmented_height, separator_gap, segmented_height, separator_gap, 4];
 	const tops = u.cumulativeSum(heights);
 	let color = $w_background_color;
 	let colorOrigin = Point.square(-3.5);
@@ -64,8 +64,33 @@
 		width: 100%;
 		top:{top}px;
 		position:{position};
-		padding-bottom:{tops[8]}px;
+		padding-bottom:{tops[10]}px;
 		font-size:{k.font_size.small}px;'>
+	<Separator
+		isHorizontal={true}
+		position={position}
+		has_gull_wings={false}
+		length={separator_width}
+		margin={k.details_margin}
+		title='visible relationships'
+		title_left={k.separator_title_left}
+		title_font_size={separator_font_size}
+		origin={new Point(separator_left, tops[0])}
+		thickness={k.thickness.separator.ultra_thin}/>
+	{#key $w_show_tree_ofType}
+		{#if ux.inTreeMode}
+			{#key $w_show_tree_ofType}
+				<Segmented
+					width={180}
+					name='tree-types'
+					allow_multiple={true}
+					selected={$w_show_tree_ofType}
+					origin={new Point(20, tops[1])}
+					titles={[T_Kinship.child, T_Kinship.parent, T_Kinship.related, T_Kinship.tags]}
+					handle_selection={(titles) => layout.handle_mode_selection('tree', titles)}/>
+			{/key}
+		{/if}
+	{/key}
 	<Separator
 		isHorizontal={true}
 		has_gull_wings={false}
@@ -73,7 +98,7 @@
 		margin={k.details_margin}
 		title_left={k.separator_title_left}
 		title_font_size={separator_font_size}
-		origin={new Point(separator_left, tops[0])}
+		origin={new Point(separator_left, tops[2])}
 		thickness={k.thickness.separator.ultra_thin}
 		title={'visible levels'}/>
 	{#if ux.inTreeMode}
@@ -84,7 +109,7 @@
 			height={k.height.button}
 			width={k.width_details - 26}
 			thumb_color={colors.separator}
-			origin={new Point(10, tops[1])}
+			origin={new Point(10, tops[3])}
 			title_left={k.separator_title_left}
 			title_font_size={k.font_size.small}
 			handle_value_change={handle_depth_limit}/>
@@ -95,7 +120,7 @@
 			font-size:10px;
 			position:relative;
 			align-items:center;
-			top:{tops[1] + 1}px;
+			top:{tops[3] + 1}px;
 			justify-content:center;'>
 			(only one level is visible in the radial graph)
 		</div>
@@ -109,7 +134,7 @@
 		title='adjust graph to fit'
 		title_left={k.separator_title_left}
 		title_font_size={separator_font_size}
-		origin={new Point(separator_left, tops[2])}
+		origin={new Point(separator_left, tops[4])}
 		thickness={k.thickness.separator.ultra_thin}/>
 	<Segmented
 		name='fit'
@@ -118,7 +143,7 @@
 		allow_multiple={false}
 		width={segmented_width}
 		height={k.height.button}
-		origin={new Point(0, tops[3])}
+		origin={Point.y(tops[5])}
 		handle_selection={handle_auto_fit}
 		selected={[$w_auto_fit_graph ? T_Auto_Fit.always : T_Auto_Fit.manual]}/>
 	<Separator
@@ -130,7 +155,7 @@
 		title='show tiny dots for'
 		title_left={k.separator_title_left}
 		title_font_size={separator_font_size}
-		origin={new Point(separator_left, tops[4])}
+		origin={new Point(separator_left, tops[6])}
 		thickness={k.thickness.separator.ultra_thin}/>
 	<Segmented
 		name='counts'
@@ -139,7 +164,7 @@
 		allow_multiple={true}
 		width={segmented_width}
 		height={k.height.button}
-		origin={new Point(0, tops[5])}
+		origin={Point.y(tops[7])}
 		selected={$w_show_countDots_ofType}
 		handle_selection={handle_count_dots}/>
 	<Separator
@@ -149,7 +174,7 @@
 		title='background color'
 		length={k.width_details}
 		margin={k.details_margin}
-		origin={Point.y(tops[6])}
+		origin={Point.y(tops[8])}
 		title_left={k.separator_title_left}
 		title_font_size={separator_font_size}
 		thickness={k.thickness.separator.ultra_thin}/>
@@ -159,11 +184,11 @@
 		style='
 			width: 16px;
 			height: 16px;
-			top: {tops[7]}px;
+			top: {tops[9]}px;
+			border-radius: 50%;
 			left: {color_left}px;
 			position: {position};
 			border: 1px solid black;
-			border-radius: 50%;
 			z-index: {T_Layer.detailsPlus_3};
 			background-color: {$w_background_color}'>
 		<Portal>

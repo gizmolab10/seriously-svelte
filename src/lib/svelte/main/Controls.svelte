@@ -77,14 +77,6 @@
 		}
 	}
 	
-	function handle_mode_selection(name: string, types: string[]) {
-		switch (name) {
-			case 'graph': w_show_graph_ofType.set(types[0] as T_Graph); break;
-			case 'tree': layout.set_tree_types(types as Array<T_Kinship>); break;
-		}
-	}
-							// <img src='settings.svg' alt='circular button' width={hamburger_size}px height={hamburger_size}px/>
-
 </script>
 
 {#if Object.values(es_control_byType).length > 0}
@@ -130,7 +122,6 @@
 							</svg>
 						</Button>
 					{/key}
-					{#if true}
 					<Next_Previous
 						size={28}
 						name='recents'
@@ -140,7 +131,6 @@
 						has_gull_wings={false}
 						origin={Point.x(lefts[1])}
 						closure={handle_recents_mouseClick}/>
-					{/if}
 					{#key $w_show_graph_ofType}
 						<Segmented
 							width={80}
@@ -148,19 +138,7 @@
 							origin={Point.x(lefts[2])}
 							selected={[$w_show_graph_ofType]}
 							titles={[T_Graph.tree, T_Graph.radial]}
-							handle_selection={(titles) => handle_mode_selection('graph', titles)}/>
-						{#if ux.inTreeMode}
-							{#key $w_show_tree_ofType}
-								<Segmented
-									width={180}
-									name='tree'
-									allow_multiple={true}
-									origin={Point.x(lefts[4])}
-									selected={$w_show_tree_ofType}
-									titles={[T_Kinship.child, T_Kinship.parent, T_Kinship.related, T_Kinship.tags]}
-									handle_selection={(titles) => layout.handle_mode_selection('tree', titles)}/>
-							{/key}
-						{/if}
+							handle_selection={(titles) => layout.handle_mode_selection('graph', titles)}/>
 					{/key}
 					{#key displayName}
 						<div style='

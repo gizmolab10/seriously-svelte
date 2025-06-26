@@ -111,7 +111,7 @@
 					fill = {background_color}
 					class = 'radial-focus-path'
 					stroke-dasharray = {svg_dasharray}
-					d = {svgPaths.oblong(center_ofBorder, size_ofBorder)}/>
+					d = {svgPaths.pill(center_ofBorder, size_ofBorder)}/>
 			</svg>
 		</Mouse_Responder>
 	<div class='radial-focus-title'

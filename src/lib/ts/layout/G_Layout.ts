@@ -60,6 +60,13 @@ export default class G_Layout {
 		w_graph_rect.set(rect);										// used by Panel and Graph
 	}
 	
+	handle_mode_selection(name: string, types: string[]) {
+		switch (name) {
+			case 'graph': w_show_graph_ofType.set(types[0] as T_Graph); break;
+			case 'tree': this.set_tree_types(types as Array<T_Kinship>); break;
+		}
+	}
+	
 	set_tree_types(t_trees: Array<T_Kinship>) {
 		if (t_trees.length == 0) {
 			t_trees = [T_Kinship.child];

@@ -258,6 +258,31 @@ export default class SVG_Paths {
 		return 'M' + start.description+ k.comma + arcs.join(k.space) + 'Z';
 	}
 
+	oblong(center: Point, size: Size, part: T_Oblong = T_Oblong.full): string {
+		const bumpRight = [T_Oblong.full, T_Oblong.right].includes(part);
+		const bumpLeft = [T_Oblong.full, T_Oblong.left].includes(part);
+		const radius = size.height / 2;
+		const half = size.width / 2;
+		const cx = center.x;
+		const cy = center.y;
+		const L = cx - half + (bumpLeft ? 0 : radius);
+		const R = cx + half + (bumpRight ? 0 : radius);
+		const T = cy - radius;
+		const B = cy + radius;
+		const TL = `${L}, ${T}`;
+		const TR = `${R}, ${T}`;
+		const BR = `${R}, ${B}`;
+		const BL = `${L}, ${B}`;
+		const cap = `${radius}, ${radius} 0 0 1`;
+		switch (part) {
+			case T_Oblong.middle: return `M ${TL} L ${TR} L ${BR} L ${BL} L ${TL} Z`;
+			case T_Oblong.right:  return `M ${TL} L ${TR} A ${cap} ${BR} L ${BL} L ${TL} Z`;
+			case T_Oblong.left:	 return `M ${TL} L ${TR} L ${BR} L ${BL} A ${cap} ${TL} Z`;
+			case T_Oblong.full:	 return `M ${TL} L ${TR} A ${cap} ${BR} L ${BL} A ${cap} ${TL} Z`;
+		}
+		return k.empty;
+	}
+
 	pill(center: Point, size: Size): string {
 		const radius = size.height / 2;
 		const half = size.width / 2;
