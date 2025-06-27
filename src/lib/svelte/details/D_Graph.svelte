@@ -13,12 +13,13 @@
 	const separator_left = 35;
 	const position = 'relative';
 	const picker_offset = `-88px`;
+	const width = k.width_details;
 	const font_size = k.font_size.smaller;
-	const color_left = k.width_details / 2 - 13;
-	const segmented_width = k.width_details - 6;
-	const segmented_height = k.height.button + 8;
-	const separator_width = k.width_details - 5 - separator_left * 2;
-	const fourth_height = ux.inRadialMode ? -13 : k.height.button - 9;
+	const element_height = k.height.button;
+	const color_left = width / 2 - 13;
+	const segmented_width = width - 6;
+	const separator_width = width - 5 - separator_left * 2;
+	const fourth_height = ux.inRadialMode ? -13 : element_height - 9;
 	let color = $w_background_color;
 	let colorOrigin = Point.square(-3.5);
 	let color_wrapper: HTMLDivElement | null = null;
@@ -54,13 +55,13 @@
 	const heights = [
 		8,
 		separator_gap,
-		k.height.button + 9,
+		element_height + 9,
 		-8,
 		fourth_height,
 		separator_gap,
-		segmented_height,
+		element_height + 8,
 		separator_gap,
-		segmented_height,
+		element_height + 8,
 		separator_gap,
 		4];
 
@@ -94,6 +95,7 @@
 					width={180}
 					name='tree-types'
 					allow_multiple={true}
+					height={element_height}
 					selected={$w_show_tree_ofType}
 					origin={new Point(18, tops[1])}
 					titles={[T_Kinship.child, T_Kinship.related]}
@@ -111,10 +113,10 @@
 			thickness={k.thickness.separator.ultra_thin}/>
 		<Slider
 			max={12}
+			width={width - 26}
 			isLogarithmic={true}
 			value={$w_depth_limit}
-			height={k.height.button}
-			width={k.width_details - 26}
+			height={element_height}
 			thumb_color={colors.separator}
 			origin={new Point(10, tops[3])}
 			title_left={k.separator_title_left}
@@ -136,7 +138,7 @@
 		name='auto-adjust'
 		allow_multiple={false}
 		width={segmented_width}
-		height={k.height.button}
+		height={element_height}
 		origin={Point.y(tops[5])}
 		selected={[$w_auto_adjust_graph]}
 		handle_selection={handle_auto_adjust}
@@ -156,18 +158,18 @@
 		allow_none={true}
 		allow_multiple={true}
 		width={segmented_width}
-		height={k.height.button}
+		height={element_height}
 		origin={Point.y(tops[7])}
 		selected={$w_show_countDots_ofType}
 		handle_selection={handle_count_dots}
 		titles={[T_Kinship[T_Kinship.child], T_Kinship[T_Kinship.parent], T_Kinship[T_Kinship.related]]}/>
 	<Separator
+		length={width}
 		position={position}
 		isHorizontal={true}
 		has_gull_wings={true}
 		has_thin_divider={true}
 		title='background color'
-		length={k.width_details}
 		margin={k.details_margin}
 		origin={Point.y(tops[8])}
 		title_left={k.separator_title_left}

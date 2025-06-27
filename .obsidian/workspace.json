@@ -170,6 +170,7 @@
   },
   "active": "9968854d61be5eec",
   "lastOpenFiles": [
+    "src/lib/svelte/details/D_Selection.svelte",
     "dist/lib/ts/tests/Geometry.test.js.map",
     "dist/lib/ts/tests/Geometry.test.js",
     "dist/lib/ts/tests/G_ArcSlider.test.js.map",
@@ -180,7 +181,6 @@
     "dist/lib/ts/maybe/G_Window.js.map",
     "dist/lib/ts/maybe/G_Window.js",
     "dist/lib/ts/maybe/Cursors.js.map",
-    "dist/lib/ts/maybe/Cursors.js",
     "node_modules/svelte-portal/README.md"
   ]
 }

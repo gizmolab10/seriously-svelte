@@ -8,7 +8,7 @@
 	import D_Header from './D_Header.svelte';
 	import D_Traits from './D_Traits.svelte';
 	import Banner_Hideable from './Banner_Hideable.svelte';
-	import D_Properties from './D_Properties.svelte';
+	import D_Selection from './D_Selection.svelte';
 	import D_Tags from './D_Tags.svelte';
 	const width = k.width_details;
 	const next_previous_titles = [T_Direction.previous, T_Direction.next];
@@ -41,17 +41,17 @@
 		<Banner_Hideable t_detail={T_Details.actions}>
 			<D_Actions/>
 		</Banner_Hideable>
-		<Banner_Hideable t_detail={T_Details.properties}>
-			<D_Properties/>
+		<Banner_Hideable t_detail={T_Details.graph}>
+			<D_Graph/>
+		</Banner_Hideable>
+		<Banner_Hideable t_detail={T_Details.selection}>
+			<D_Selection/>
 		</Banner_Hideable>
 		<Banner_Hideable t_detail={T_Details.tags} extra_titles={next_previous_titles}>
 			<D_Tags/>
 		</Banner_Hideable>
 		<Banner_Hideable t_detail={T_Details.traits} extra_titles={next_previous_titles}>
 			<D_Traits/>
-		</Banner_Hideable>
-		<Banner_Hideable t_detail={T_Details.graph}>
-			<D_Graph/>
 		</Banner_Hideable>
 		<Banner_Hideable t_detail={T_Details.database}>
 			<D_Databases/>

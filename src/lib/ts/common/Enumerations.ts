@@ -21,7 +21,7 @@ export enum T_Startup {
 export enum T_Details {
 	header,
 	actions,
-	properties,
+	selection,
 	tags,
 	traits,
 	graph,

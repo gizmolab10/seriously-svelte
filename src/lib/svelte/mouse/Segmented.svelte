@@ -15,7 +15,7 @@
 	export let selected: string[];
 	export let width = 0;
 
-	function button_name(title: string) { return `pill-${name}-${title.replace(/\s+/g, '-').toLowerCase()}`; }
+	function button_name(title: string) { return `segment-${name}-${title.replace(/\s+/g, '-').toLowerCase()}`; }
 
 	$: $w_background_color, border_color = colors.border;
 	$: selected, setSelected(selected);
@@ -56,29 +56,28 @@
 
 </script>
 
-<div style='
-	position:absolute;
-	left:{origin.x}px;
-	width:{width}px;'>
+<div
+	class='segmented'
+	style='
+		position:absolute;
+		left:{origin.x}px;
+		width:{width}px;'>
 	<div
-		class='pill-group'
+		class='group-of-segments'
 		style='
 			--selected-color: {selected_color};
 			--border-color: {border_color};
 			--hover-color: {hover_color};
-			transform: translateX(-50%);
 			height: {height}px;
-			position: absolute;
-			top: {origin.y}px;
-			left: 50%;'>
+			top: {origin.y}px;'>
 		{#each titles as title}
 			<button
 				class:selected={selected.includes(title)}
 				style='font-size:{font_size}px;'
 				on:click={() => select(title)}
 				id={button_name(title)}
-				type='button'
-				class='pill'>
+				class='segment'
+				type='button'>
 				{title}
 			</button>
 		{/each}
@@ -87,15 +86,18 @@
 
 <style>
 
-	.pill-group {
+	.group-of-segments {
 		border: 1px solid var(--border-color);
+		transform: translateX(-50%);
 		background: transparent;
 		border-radius: 999px;
+		position: absolute;
 		overflow: hidden;
 		display: flex;
+		left: 50%;
 	}
 
-	.pill {
+	.segment {
 		justify-content: center;
 		padding-bottom: 2.2px;
 		font-family: inherit;
@@ -116,15 +118,15 @@
 		flex: none;
 	}
 
-	.pill.selected {
+	.segment.selected {
 		background: var(--selected-color) !important;
 	}
 
-	.pill:not(:last-child) {
+	.segment:not(:last-child) {
 		border-right: 1px solid var(--border-color);
 	}
 
-	.pill:hover {
+	.segment:hover {
 		background: black;
 		color: white;
 	}
