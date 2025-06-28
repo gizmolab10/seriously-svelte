@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { h, k, ux, busy, Point, colors, S_Element, databases, Hierarchy } from '../../ts/common/Global_Imports';
+	import { h, k, u, ux, busy, Point, colors, S_Element, databases, Hierarchy } from '../../ts/common/Global_Imports';
 	import { T_File_Format, T_File_Operation, T_Storage_Need, T_Signal } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Details, T_Element, T_Preference, T_Request } from '../../ts/common/Global_Imports';
 	import { w_storage_updated, w_thing_fontFamily } from '../../ts/common/Stores';
@@ -22,12 +22,11 @@
 	const ids_forOutputFormat = [T_File_Format.csv, T_File_Format.json, T_File_Format.cancel];
 	const ids_forDatabase = [T_Database.local, T_Database.firebase, T_Database.airtable, T_Database.test];
 	const ids_forInputFormat = [T_File_Format.csv, T_File_Format.json, T_File_Format.seriously, T_File_Format.cancel];
-	const button_style = `font-family: ${$w_thing_fontFamily}; font-size:0.85em; left: 5px; top: -2px; position: absolute;`;
 	let s_element_byStorageType: { [id: string]: S_Element } = {};
 	let storage_choice: string | null = null;
 	let storage_details: Array<Object> = [];
 	let width = k.width_details - 7;
-	let isDirty = false;
+	let show_save_button = false;
 
 	setup_s_elements();
 	es_save.set_forHovering('black', 'pointer');
@@ -82,14 +81,14 @@
 
 	function update_storage_details() {
 		if (!!h) {
-			isDirty = h.total_dirty_count != 0;
+			show_save_button = h.db.isPersistent && h.total_dirty_count != 0;
 			storage_details = [h.db.details_forStorage,
 			['depth', h.depth.supressZero()],
 			['things', h.things.length.supressZero()],
 			['relationships', h.relationships.length.supressZero()],
 			['traits', h.traits.length.supressZero()],
 			['tags', h.tags.length.supressZero()],
-			['dirty', h.total_dirty_count.supressZero()]];
+			['must save', h.total_dirty_count.supressZero()]];
 		}
 	}
 	
@@ -116,6 +115,16 @@
 		}
 	}
 
+	const heights = [
+		22,
+		42,
+		28,
+		74,
+		26,
+	3];
+
+	const tops = u.cumulativeSum(heights);
+
 </script>
 
 <div class='database-container'
@@ -134,7 +143,7 @@
 			width: 100%;
 			font-size:{k.font_size.banners}px;'>
 		<Text_Table
-			top={top + 19}
+			top={tops[0]}
 			row_height={11}
 			name='database-table'
 			array={storage_details}
@@ -142,17 +151,17 @@
 		{#key $w_storage_updated}
 			{#if busy.isDatabaseBusy}
 				<div class='data-spinner'
-					style="position: absolute; left: 120px; top: 72px;">
+					style="position: absolute; left: 120px; top: {tops[1]}px;">
 					<Spinner size={72} stroke='lightgray' strokeWidth={8} speed='2s' />
 				</div>
-			{:else if isDirty && h.db.isPersistent}
+			{:else if show_save_button}
 				<Button
 					width=72
 					name='save'
 					es_button={es_save}
 					closure={handle_save}
 					zindex={T_Layer.frontmost}
-					origin={new Point(120, 92)}>
+					origin={new Point(120, tops[2])}>
 					save to db
 				</Button>
 			{/if}
@@ -168,13 +177,13 @@
 			row_titles={action_titles()}
 			closure={handle_actionRequest}
 			button_height={k.height.button}
-			center={new Point(width / 2 + 3, top + 160)}
+			center={new Point(width / 2 + 3, tops[3])}
 			separator_thickness={k.thickness.separator.ultra_thin}
 			name={`data-${(ux.T_Storage_Need == T_Storage_Need.direction) ? 'action' : 'format'}`}/>
 	{/key}
 	<Separator
 		isHorizontal={true}
-		origin={Point.y(top + 189)}
+		origin={Point.y(tops[4])}
 		thickness={k.thickness.separator.thick}
 		corner_radius={k.radius.gull_wings.thick}/>
 </div>

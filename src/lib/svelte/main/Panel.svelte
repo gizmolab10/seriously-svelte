@@ -21,6 +21,7 @@
 	import Import from './Import.svelte';
 	import { onMount } from 'svelte';
 	const offset_toIntersection = new Point(-4, 8);
+    const half_thickness: number = k.thickness.separator.thick / 2;
 	let separator_color = colors.separator;
 	let panel_reattachments = 0;
 
@@ -80,7 +81,6 @@
 				name='panel-left'
 				has_both_ends={true}
 				isHorizontal={false}
-				
 				margin={k.details_margin}
 				zindex={T_Layer.frontmost}
 				thickness={k.thickness.separator.thick}
@@ -91,13 +91,12 @@
 				name='panel-right'
 				has_both_ends={true}
 				isHorizontal={false}
-				
 				margin={k.details_margin}
 				zindex={T_Layer.frontmost}
 				thickness={k.thickness.separator.thick}
 				length={$w_graph_rect.size.height + 10}
 				corner_radius={k.radius.gull_wings.thick}
-				origin={new Point(layout.windowSize.width - 0.5, layout.panel_boxHeight)}/>
+				origin={new Point(layout.windowSize.width - half_thickness, layout.panel_boxHeight)}/>
 		{/if}
 	</div>
 {/key}

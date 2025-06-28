@@ -64,13 +64,22 @@ export default class DB_Common {
 	}
 
 	async persist_all(force: boolean = false) {
-		busy.temporarily_set_isPersisting_while(async () => {
-			if (!databases.defer_persistence) {
-				for (const t_persistable of Persistable.t_persistables) {
-					await this.persistAll_identifiables_ofType_maybe(t_persistable, force);
-				}
+		if (!databases.defer_persistence) {
+			busy.isPersisting = true;
+			busy.signal_storage_redraw();
+			for (const t_persistable of Persistable.t_persistables) {
+				await this.persistAll_identifiables_ofType_maybe(t_persistable, force);
 			}
-		});
+			const interval = setInterval(() => {
+				if (h.total_dirty_count == 0) {
+					busy.isPersisting = false;
+					clearInterval(interval)
+					setTimeout(() => {
+						busy.signal_storage_redraw();
+					}, 2000);
+				}
+			}, 10);
+		}
 	}
 
 	// code common to all persisting actions
@@ -80,13 +89,13 @@ export default class DB_Common {
 			for (const identifiable of identifiables) {
 				if (identifiable.persistence.isDirty || force) {
 					await identifiable.persist();
-					identifiable.persistence.isDirty = false;
+					identifiable.set_isDirty(false);
 				}
 			}
 		} else if (this.isPersistent) {		// db local only, db test is not persistent
 			p.writeDB_key(t_persistable.toLowerCase(), identifiables);
 			for (const identifiable of identifiables) {
-				identifiable.persistence.isDirty = false;
+				identifiable.set_isDirty(false);
 			}
 		}
 	}
