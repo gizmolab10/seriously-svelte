@@ -16,12 +16,12 @@
 	export let top = 3;
 	const buttons_top = 138;
     const font_sizes = [k.font_size.instructions, k.font_size.banners];
+	const ids_forDirection = [T_File_Operation.import, T_File_Operation.export];
     const s_banner_hideable = s_details.s_banner_hideables_byType[T_Details.database];
-	const storage_ids = [T_File_Operation.import, T_File_Operation.export];
-	const output_format_ids = [T_File_Format.csv, T_File_Format.json, T_File_Format.cancel];
 	const es_save = ux.s_element_for(new Identifiable('save'), T_Element.button, 'save');
-	const db_ids = [T_Database.local, T_Database.firebase, T_Database.airtable, T_Database.test];
-	const input_format_ids = [T_File_Format.csv, T_File_Format.json, T_File_Format.seriously, T_File_Format.cancel];
+	const ids_forOutputFormat = [T_File_Format.csv, T_File_Format.json, T_File_Format.cancel];
+	const ids_forDatabase = [T_Database.local, T_Database.firebase, T_Database.airtable, T_Database.test];
+	const ids_forInputFormat = [T_File_Format.csv, T_File_Format.json, T_File_Format.seriously, T_File_Format.cancel];
 	const button_style = `font-family: ${$w_thing_fontFamily}; font-size:0.85em; left: 5px; top: -2px; position: absolute;`;
 	let s_element_byStorageType: { [id: string]: S_Element } = {};
 	let storage_choice: string | null = null;
@@ -37,8 +37,8 @@
 		update_storage_details();
 	}
 
-	function format_ids(): T_File_Format[] {
-		return (ux.T_Storage_Need == T_Storage_Need.format) ? input_format_ids : output_format_ids;
+	function ids_forFormat(): T_File_Format[] {
+		return (ux.T_Storage_Need == T_Storage_Need.format) ? ids_forInputFormat : ids_forOutputFormat;
 	}
 
 	async function handle_save(s_mouse) {
@@ -48,21 +48,20 @@
 	}
 
 	function handle_db_selection(titles: string[]) {
-		const t_database = titles[0] as T_Database;	// only ever contains one title
-		console.log('handle_db_selection', t_database);
+		const t_database = titles[0] as T_Database;		// only ever contains one title
 		databases.grand_change_database(t_database);
 	}
 
 	function action_titles() {
 		switch (ux.T_Storage_Need) {
-			case T_Storage_Need.direction: return ['local file', ...storage_ids];
-			case T_Storage_Need.format:	   return ['file type', ...format_ids()];
+			case T_Storage_Need.direction: return ['local file', ...ids_forDirection];
+			case T_Storage_Need.format:	   return ['file type', ...ids_forFormat()];
 			case T_Storage_Need.busy:	   return [`${storage_choice}ing...`];
 		}
 	}
 	
 	function setup_s_elements() {
-		const ids = [...storage_ids, ...input_format_ids];
+		const ids = [...ids_forDirection, ...ids_forInputFormat];
 		for (const id of ids) {
 			const es_storage = ux.s_element_for(null, T_Element.database, id);
 			es_storage.set_forHovering(colors.default, 'pointer');
@@ -71,7 +70,7 @@
 	}
 
 	function handle_actionRequest(t_request: T_Request, s_mouse: S_Mouse, column: number): any {
-		const ids = (ux.T_Storage_Need == T_Storage_Need.direction) ? storage_ids : format_ids();
+		const ids = (ux.T_Storage_Need == T_Storage_Need.direction) ? ids_forDirection : ids_forFormat();
 		switch (t_request) {
 			case T_Request.handle_click: return handle_click_forColumn(s_mouse, column);
 			case T_Request.name:		 return ids[column];
@@ -83,7 +82,6 @@
 
 	function update_storage_details() {
 		if (!!h) {
-			console.log('update_storage_details', h.db.t_database, h.total_dirty_count, busy.isDatabaseBusy);
 			isDirty = h.total_dirty_count != 0;
 			storage_details = [h.db.details_forStorage,
 			['depth', h.depth.supressZero()],
@@ -96,7 +94,7 @@
 	}
 	
 	function handle_click_forColumn(s_mouse, column) {
-		const ids = (ux.T_Storage_Need == T_Storage_Need.direction) ? storage_ids : format_ids();
+		const ids = (ux.T_Storage_Need == T_Storage_Need.direction) ? ids_forDirection : ids_forFormat();
 		if (s_mouse.isHover) {
 			s_element_byStorageType[ids[column]].isOut = s_mouse.isOut;
 		} else if (s_mouse.isDown) {
@@ -126,7 +124,7 @@
 	<Segmented
 		name='db'
 		width={width}
-		titles={db_ids}
+		titles={ids_forDatabase}
 		selected={[$w_t_database]}
 		height={k.height.controls}
 		origin={new Point(0, top)}
@@ -144,7 +142,7 @@
 		{#key $w_storage_updated}
 			{#if busy.isDatabaseBusy}
 				<div class='data-spinner'
-					style="position: absolute; left: 123px; top: 67px;">
+					style="position: absolute; left: 120px; top: 72px;">
 					<Spinner size={72} stroke='lightgray' strokeWidth={8} speed='2s' />
 				</div>
 			{:else if isDirty && h.db.isPersistent}
@@ -153,9 +151,8 @@
 					name='save'
 					es_button={es_save}
 					closure={handle_save}
-					border='1px solid black'
 					zindex={T_Layer.frontmost}
-					origin={new Point(130, top + 110)}>
+					origin={new Point(120, 92)}>
 					save to db
 				</Button>
 			{/if}

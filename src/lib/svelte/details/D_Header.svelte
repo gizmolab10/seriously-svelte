@@ -12,11 +12,13 @@
 
 	$: {
 		ancestry = grabs.latest;
-		s_widget = ux.s_widget_forAncestry(ancestry);
-		const _ = `${$w_thing_color}${$w_ancestries_grabbed.join(',')}`;
-		background_color = s_widget?.background_color ?? 'transparent';
-		color = s_widget?.color ?? colors.default;
-		reattachments += 1;
+		if (!!ancestry) {
+			s_widget = ux.s_widget_forAncestry(ancestry);
+			const _ = `${$w_thing_color}${$w_ancestries_grabbed.join(',')}`;
+			background_color = s_widget?.background_color ?? 'transparent';
+			color = s_widget?.color ?? colors.default;
+			reattachments += 1;
+		}
 	}
 
 </script>

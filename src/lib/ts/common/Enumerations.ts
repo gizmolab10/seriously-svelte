@@ -25,7 +25,7 @@ export enum T_Details {
 	tags,
 	traits,
 	graph,
-	database,
+	data,
 }
 
 export enum T_Action {

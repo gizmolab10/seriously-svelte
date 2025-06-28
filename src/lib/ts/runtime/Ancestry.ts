@@ -25,7 +25,6 @@ export default class Ancestry extends Identifiable {
 		super(path);
 		this.kind = kind;
 		this.t_database = t_database;
-		// busy.signal_storage_redraw();
 	}
 	
 	static readonly _____TRAVERSE: unique symbol;

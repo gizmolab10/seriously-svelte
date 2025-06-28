@@ -15,7 +15,6 @@ export default class Persistable extends Identifiable {
 		this.persistence = new S_Persistence(t_database, t_persistable, id, already_persisted, false);
 		this.t_persistable = t_persistable;
 		this.idBase = idBase;
-		// busy.signal_storage_redraw();
 	}
 
 	async persistent_create_orUpdate(already_persisted: boolean) {}

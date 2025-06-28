@@ -23,7 +23,7 @@
 	$: {
 		const needsUpdate = ($w_ancestry_focus?.title ?? k.empty) + $w_graph_rect + ($w_ancestries_grabbed?.length ?? 0);
 		if (!ancestry || needsUpdate || things.length == 0) {
-			ancestry = h.ancestry_forBreadcrumbs;		// assure we have an ancestry
+			ancestry = h?.ancestry_forBreadcrumbs;		// assure we have an ancestry
 			if (!!ancestry) {				
 				let widths: number[] = [];
 				const windowWidth = layout.windowSize.width;

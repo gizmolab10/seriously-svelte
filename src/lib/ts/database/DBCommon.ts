@@ -66,10 +66,8 @@ export default class DBCommon {
 	async persist_all(force: boolean = false) {
 		busy.temporarily_set_isPersisting_while(async () => {
 			if (!databases.defer_persistence) {
-				busy.signal_storage_redraw();
 				for (const t_persistable of Persistable.t_persistables) {
 					await this.persistAll_identifiables_ofType_maybe(t_persistable, force);
-					busy.signal_storage_redraw();
 				}
 			}
 		});

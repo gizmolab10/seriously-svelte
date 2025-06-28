@@ -57,56 +57,47 @@
 			{k.prevent_selection_style};
 			width: {layout.windowSize.width}px;
 			height: {layout.windowSize.height}px;'>
-		{#if [T_Startup.start, T_Startup.fetch].includes($w_t_startup) && databases.db_now.isPersistent}
-			<p>Welcome to Seriously</p>
-			{#if $w_t_startup == T_Startup.fetch}
-				<p>{databases.startupExplanation}</p>
+		{#if $w_popupView_id == T_Control.builds}
+			<BuildNotes/>
+		{:else if $w_popupView_id == T_Control.import}
+			<Import/>
+		{:else}
+			<Controls/>
+			<Breadcrumbs/>
+			{#if $w_show_details}
+				<Details/>
 			{/if}
-		{:else if $w_t_startup == T_Startup.empty}
-			<p>Nothing is available.</p>
-		{:else if $w_t_startup == T_Startup.ready}
-			{#if $w_popupView_id == T_Control.builds}
-				<BuildNotes/>
-			{:else if $w_popupView_id == T_Control.import}
-				<Import/>
-			{:else}
-				<Controls/>
-				<Breadcrumbs/>
-				{#if $w_show_details}
-					<Details/>
-				{/if}
-				<div class='graph-container'
-					style='
-						top: 0px;
-						height: 100%;
-						position: fixed;
-						z-index: {T_Layer.common};
-						left: {$w_graph_rect.origin.x}px;'>
-					<Graph/>
-				</div>
-				<Separator
-					name='panel-left'
-					has_both_ends={true}
-					isHorizontal={false}
-					
-					margin={k.details_margin}
-					zindex={T_Layer.frontmost}
-					thickness={k.thickness.separator.thick}
-					length={$w_graph_rect.size.height + 10}
-					corner_radius={k.radius.gull_wings.thick}
-					origin={new Point(2, layout.panel_boxHeight)}/>
-				<Separator
-					name='panel-right'
-					has_both_ends={true}
-					isHorizontal={false}
-					
-					margin={k.details_margin}
-					zindex={T_Layer.frontmost}
-					thickness={k.thickness.separator.thick}
-					length={$w_graph_rect.size.height + 10}
-					corner_radius={k.radius.gull_wings.thick}
-					origin={new Point(layout.windowSize.width - 0.5, layout.panel_boxHeight)}/>
-			{/if}
+			<div class='graph-container'
+				style='
+					top: 0px;
+					height: 100%;
+					position: fixed;
+					z-index: {T_Layer.common};
+					left: {$w_graph_rect.origin.x}px;'>
+				<Graph/>
+			</div>
+			<Separator
+				name='panel-left'
+				has_both_ends={true}
+				isHorizontal={false}
+				
+				margin={k.details_margin}
+				zindex={T_Layer.frontmost}
+				thickness={k.thickness.separator.thick}
+				length={$w_graph_rect.size.height + 10}
+				corner_radius={k.radius.gull_wings.thick}
+				origin={new Point(2, layout.panel_boxHeight)}/>
+			<Separator
+				name='panel-right'
+				has_both_ends={true}
+				isHorizontal={false}
+				
+				margin={k.details_margin}
+				zindex={T_Layer.frontmost}
+				thickness={k.thickness.separator.thick}
+				length={$w_graph_rect.size.height + 10}
+				corner_radius={k.radius.gull_wings.thick}
+				origin={new Point(layout.windowSize.width - 0.5, layout.panel_boxHeight)}/>
 		{/if}
 	</div>
 {/key}

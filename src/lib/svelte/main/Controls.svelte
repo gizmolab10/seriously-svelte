@@ -44,7 +44,7 @@
 
 	$: {
 		const _ = $w_show_graph_ofType;
-		const db = h.db;
+		const db = h?.db;
 		if (!!db) {
 			displayName = db.displayName;
 			displayName_width = u.getWidthOf(displayName);

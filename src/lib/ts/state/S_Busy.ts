@@ -24,24 +24,23 @@ export class S_Busy {
 	temporarily_set_isPersisting_while(closure: () => void) {
 		const wasPersisting = this.isPersisting;
 		this.isPersisting = true;
-		// this.signal_storage_redraw();
+		this.signal_storage_redraw();
 		closure();
 		this.isPersisting = wasPersisting;
+		this.signal_storage_redraw();
 	}
 
 	async temporarily_set_isFetching_while(closure: () => Promise<void>) {
 		const wasFetching = this.isFetching;
 		this.isFetching = true;
-		console.log('temporarily_set_isFetching begun');
-		// this.signal_storage_redraw();
+		this.signal_storage_redraw();
 		await closure();
-		console.log('temporarily_set_isFetching done');
 		this.isFetching = wasFetching;
+		this.signal_storage_redraw();
 	}
 
 	signal_storage_redraw(after: number = 1) {
 		setTimeout(() => {
-			// console.log('signal_storage_redraw', after);
 			w_storage_updated.set(new Date().getTime());
 		}, after);
 	}

@@ -23,7 +23,6 @@ export default class Databases {
 		let type = queryStrings.get('db');
 		if (!!type) {
 			this.db_now = this.db_forType(type);
-			// busy.signal_storage_redraw();
 		} else {
 			type = p.read_key(T_Preference.db) ?? 'firebase';
 			if (type == 'file') { type = 'local'; }
@@ -34,7 +33,6 @@ export default class Databases {
 	constructor() {
 		let done = false;
 		this.db_now = this.db_forType(T_Database.firebase);
-		// busy.signal_storage_redraw();
 		w_t_database.subscribe((type: string) => {
 			if (!!type && (!done || (type && this.db_now.t_database != type))) {
 				done = true;

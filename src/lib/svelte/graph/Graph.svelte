@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { c, k, Rect, debug, layout, T_Layer, signals, T_Graph } from '../../ts/common/Global_Imports';
-	import { w_graph_rect, w_show_graph_ofType, w_ancestry_focus, w_user_graph_offset } from '../../ts/common/Stores';
-	import { w_device_isMobile } from '../../ts/common/Stores';
+	import { c, k, Rect, debug, layout, T_Layer, signals, T_Graph, T_Startup } from '../../ts/common/Global_Imports';
+	import { w_graph_rect, w_show_graph_ofType, w_user_graph_offset } from '../../ts/common/Stores';
+	import { w_t_startup, w_ancestry_focus, w_device_isMobile } from '../../ts/common/Stores';
 	import Radial_Graph from '../graph/Radial_Graph.svelte';
 	import Tree_Graph from '../graph/Tree_Graph.svelte';
 	import { onMount } from 'svelte';
@@ -61,15 +61,17 @@
 
 </script>
 
-{#key graph_reattachments}
-	<div
-		style={style}
-		class='draggable'
-		bind:this={draggable}>
-		{#if $w_show_graph_ofType == T_Graph.radial}
-			<Radial_Graph/>
-		{:else}
-			<Tree_Graph/>
-		{/if}
-	</div>
-{/key}
+{#if $w_t_startup == T_Startup.ready}
+	{#key graph_reattachments}
+		<div
+			style={style}
+			class='draggable'
+			bind:this={draggable}>
+			{#if $w_show_graph_ofType == T_Graph.radial}
+				<Radial_Graph/>
+			{:else}
+				<Tree_Graph/>
+			{/if}
+		</div>
+	{/key}
+{/if}

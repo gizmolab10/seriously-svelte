@@ -53,7 +53,7 @@
 		<Banner_Hideable t_detail={T_Details.traits} extra_titles={next_previous_titles}>
 			<D_Traits/>
 		</Banner_Hideable>
-		<Banner_Hideable t_detail={T_Details.database}>
+		<Banner_Hideable t_detail={T_Details.data}>
 			<D_Databases/>
 		</Banner_Hideable>
 	</div>

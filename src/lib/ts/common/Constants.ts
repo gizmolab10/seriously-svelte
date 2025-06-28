@@ -53,17 +53,6 @@ export default class Constants {
 		generic: '::',
 		small:	 ':::',
 		big:	 '::::',
-	};
-
-	font_size = {
-		instructions: dot_size - 4,
-		separator:	  dot_size - 4,
-		details:	  dot_size - 3,
-		banners:	  dot_size - 2,
-		arc_slider:	  dot_size - 1.7,
-		info:		  dot_size - 1,
-		common:		  dot_size,
-		segmented:	  dot_size + 1,
 	}; 
 
 	opacity = {
@@ -105,6 +94,17 @@ export default class Constants {
 		controls:  16,
 		button:	   dot_size + 3,
 		dot:	   dot_size,
+	};
+
+	font_size = {
+		instructions: dot_size - 4,
+		separator:	  dot_size - 4,
+		details:	  dot_size - 3,
+		banners:	  dot_size - 2,
+		arc_slider:	  dot_size - 1.7,
+		info:		  dot_size - 1,
+		common:		  dot_size,
+		segmented:	  dot_size + 1,
 	};
 
 }
