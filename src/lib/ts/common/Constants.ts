@@ -56,13 +56,14 @@ export default class Constants {
 	};
 
 	font_size = {
-		ultra_small: dot_size - 5,
-		separator:	 dot_size - 4,
-		smallest:	 dot_size - 4,
-		details:	 dot_size - 3,
-		smaller:	 dot_size - 1.7,
-		small:		 dot_size - 1,
-		common:		 dot_size,
+		instructions: dot_size - 4,
+		separator:	  dot_size - 4,
+		details:	  dot_size - 3,
+		banners:	  dot_size - 2,
+		arc_slider:	  dot_size - 1.7,
+		info:		  dot_size - 1,
+		common:		  dot_size,
+		segmented:	  dot_size + 1,
 	}; 
 
 	opacity = {

@@ -218,6 +218,7 @@ export default class DBFirebase extends DBCommon {
 
 	signal_docHandled(relationships_haveChanged: boolean) {
 		if (relationships_haveChanged) {
+			busy.signal_storage_redraw();
 			setTimeout(() => { // wait in case a thing involved in this relationship arrives in the data
 				h.relationships_refreshKnowns();
 				h.rootAncestry.order_normalizeRecursive();
@@ -225,7 +226,6 @@ export default class DBFirebase extends DBCommon {
 			}, 20);
 		}
 		h.ancestries_fullRebuild();		// first recreate ancestries
-		h.signal_storage_redraw(10);
 	}
 
 	async handle_docChanges(idBase: string, t_persistable: T_Persistable, change: DocumentChange): Promise<boolean> {

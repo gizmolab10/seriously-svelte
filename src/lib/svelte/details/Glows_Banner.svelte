@@ -24,7 +24,10 @@
 	//																				//
 	//////////////////////////////////////////////////////////////////////////////////
 
-	$: $w_background_color, banner_color = colors.ofBannerFor($w_background_color);
+	$: {
+		const _ = $w_background_color;
+		banner_color = colors.ofBannerFor($w_background_color);
+	}
 
 	function intercept_click(title: string) {
 		if (title === titles[0]) {

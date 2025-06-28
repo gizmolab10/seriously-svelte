@@ -38,7 +38,11 @@
 	$: wingsDirection_single = isHorizontal ? Direction.right : Direction.down;
 	$: wingsDirection_dual = isHorizontal ? Direction.left : Direction.up;
 	$: title_left = (length + (origin.x * 2.1) - title_width - 12) / 2;
-	$: $w_background_color, separator_color = colors.separator;
+
+	$: {
+		const _ = $w_background_color;
+		separator_color = colors.separator;
+	}
 
 	function style_for(isHorizontal: boolean, line_left: number, zindex: number, top: number, origin_y: number, margin: number, thickness: number, length: number, separator_color: string): string {
 		return isHorizontal

@@ -1,4 +1,4 @@
-import { c, Hierarchy, k, p, T_Preference } from '../common/Global_Imports';
+import { c, k, p, busy, Hierarchy, T_Preference } from '../common/Global_Imports';
 import { w_hierarchy, w_t_database } from '../common/Stores';
 import { T_Persistence } from '../common/Global_Imports';
 import { T_Database } from '../database/DBCommon';
@@ -23,6 +23,7 @@ export default class Databases {
 		let type = queryStrings.get('db');
 		if (!!type) {
 			this.db_now = this.db_forType(type);
+			// busy.signal_storage_redraw();
 		} else {
 			type = p.read_key(T_Preference.db) ?? 'firebase';
 			if (type == 'file') { type = 'local'; }
@@ -33,6 +34,7 @@ export default class Databases {
 	constructor() {
 		let done = false;
 		this.db_now = this.db_forType(T_Database.firebase);
+		// busy.signal_storage_redraw();
 		w_t_database.subscribe((type: string) => {
 			if (!!type && (!done || (type && this.db_now.t_database != type))) {
 				done = true;
@@ -45,10 +47,11 @@ export default class Databases {
 
 	async grand_change_database(type: string) {
 		this.db_now = this.db_forType(type);
+		busy.signal_storage_redraw();
 		let h = this.db_now.hierarchy;
 		if (!h) {
-			this.db_now.hierarchy = h;
 			h = new Hierarchy(this.db_now);
+			this.db_now.hierarchy = h;
 		}
 		p.write_key(T_Preference.db, type);
 		w_hierarchy.set(h);

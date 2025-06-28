@@ -2,12 +2,16 @@
 	import { k, Point, colors } from '../../ts/common/Global_Imports';
 	import { w_background_color } from '../../ts/common/Stores';
 	export let handle_selection: ((types: string[]) => void) | null = null;
+	export let selected_hover_text_color: string = 'black';
+	export let selected_color: string = colors.separator;
+	export let hover_background_color: string = 'black';
+	export let selected_hover_color: string = 'white';
+	export let selected_text_color: string = 'white';
 	export let border_color: string = colors.border;
-	export let selected_color: string = '#b7d6e7';
 	export let height: number = k.button_height;
 	export let allow_multiple: boolean = false;
-	export let hover_color: string = 'black';
-	export let font_size = k.font_size.small;
+	export let hover_color: string = 'white';
+	export let font_size = k.font_size.info;
 	export let allow_none: boolean = false;
 	export let origin: Point = Point.zero;
 	export let name: string = k.empty;
@@ -17,8 +21,23 @@
 
 	function button_name(title: string) { return `segment-${name}-${title.replace(/\s+/g, '-').toLowerCase()}`; }
 
-	$: $w_background_color, border_color = colors.border;
-	$: selected, setSelected(selected);
+	$: {
+		const _ = $w_background_color;
+		update_colors()
+	}
+
+	$: {
+		const _ = selected;
+		setSelected(selected);
+	}
+
+	function update_colors() {
+		const inverted = colors.luminance_ofColor(selected_color) > 0.5;
+		selected_hover_text_color = inverted ? 'white' : 'black';
+		selected_text_color = inverted ? 'black' : 'white';
+		selected_color = colors.separator;
+		border_color = colors.border;
+	}
 
 	function select(title: string) {
 		let selection = [...selected];
@@ -65,6 +84,9 @@
 	<div
 		class='group-of-segments'
 		style='
+			--selected-hover-text-color: {selected_hover_text_color};
+			--hover-background-color: {hover_background_color};
+			--selected-text-color: {selected_text_color};
 			--selected-color: {selected_color};
 			--border-color: {border_color};
 			--hover-color: {hover_color};
@@ -72,6 +94,7 @@
 			top: {origin.y}px;'>
 		{#each titles as title}
 			<button
+				color={selected.includes(title) ? 'black' : 'white'}
 				class:selected={selected.includes(title)}
 				style='font-size:{font_size}px;'
 				on:click={() => select(title)}
@@ -114,12 +137,16 @@
 		min-width: 0;
 		height: 100%;
 		border: none;
-		color: #222;
 		flex: none;
 	}
 
 	.segment.selected {
 		background: var(--selected-color) !important;
+		color: var(--selected-text-color);
+	}
+
+	.segment.selected:hover {
+		color: var(--selected-hover-text-color);
 	}
 
 	.segment:not(:last-child) {
@@ -127,8 +154,8 @@
 	}
 
 	.segment:hover {
-		background: black;
-		color: white;
+		background: darkgray !important;
+		color: var(--hover-color);
 	}
 
 </style>

@@ -7,7 +7,7 @@
     export let width: number;
     export let height: number;
     export let isSelected: boolean = false;
-    export let font_size: number = k.font_size.smaller;
+    export let font_size: number = k.font_size.banners;
     export let handle_click: (title: string) => boolean;
     const glow_rect = Rect.createWHRect(width, height);
     const gradient_name = 'glow-' + title;
@@ -15,8 +15,11 @@
     let banner_color = colors.ofBannerFor($w_background_color);
     let timeout: number | null = null;
 
-    $: $w_background_color, banner_color = colors.ofBannerFor($w_background_color);
-    
+	$: {
+		const _ = $w_background_color;
+		banner_color = colors.ofBannerFor($w_background_color);
+	}
+
     function intercept_click() {
         isHovering = false;                // suppress distraction from hover
         handle_click(title);

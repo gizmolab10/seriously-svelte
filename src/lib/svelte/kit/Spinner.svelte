@@ -5,7 +5,7 @@
     export let speed = "1s";
 </script>
 
-<div style="position: relative; width: {size}px; height: {size}px;">
+<div style="position: relative; width: {size}px; height: {size}px; --spinner-speed: {speed};">
     <svg width={size} height={size} viewBox="0 0 {size} {size}">
         <circle
             cx={size/2}
@@ -14,12 +14,17 @@
             fill="none"
             stroke={stroke}
             stroke-width={strokeWidth}
-            stroke-dasharray="30 100"
-            style="transform-origin: center; animation: spin {speed} linear infinite;"/>
+            stroke-dasharray="10 10"
+            class="spinner-circle"/>
     </svg>
 </div>
 
 <style>
+    .spinner-circle {
+        transform-origin: center;
+        animation: spin var(--spinner-speed) linear infinite;
+    }
+    
     @keyframes spin {
         from { transform: rotate(0deg); }
         to { transform: rotate(360deg); }

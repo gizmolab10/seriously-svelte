@@ -18,7 +18,7 @@
 	const bottom_tableHeight = 71;
 	const table_width = k.width_details - 8;
 	const bottom_padding = bottom_tableHeight - 47;
-    const font_sizes = [k.font_size.smallest, k.font_size.smallest];
+    const font_sizes = [k.font_size.instructions, k.font_size.instructions];
     const s_banner_hideable = s_details.s_banner_hideables_byType[T_Details.actions];
 	const es_cancel = ux.s_element_for(grabs.latest, T_Element.cancel, k.empty);
 	let list_title = grabs.latest?.isExpanded && ux.inTreeMode ? 'hide list' : 'list';
@@ -147,7 +147,7 @@
 					position:relative;
 					text-align:center;
 					z-index:{T_Layer.detailsPlus_2 + 1};
-					font-size:{k.font_size.smallest}px;'>
+					font-size:{k.font_size.instructions}px;'>
 				<div style='top:9px; width: 100%; position:relative;'>
 					To <em>{$w_s_alteration.t_alteration}</em> an item as <em>{target_ofAlteration() ?? k.unknown}</em>
 					<br> to <strong>{grabs.latest.title}</strong>
@@ -155,7 +155,7 @@
 				</div>
 				<Button
 					center={new Point(k.width_details / 2, 22)}
-					font_size={k.font_size.smallest}
+					font_size={k.font_size.instructions}
 					zindex={T_Layer.frontmost}
 					name='cancel-alteration'
 					height={k.height.button}

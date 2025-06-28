@@ -170,6 +170,8 @@
   },
   "active": "9968854d61be5eec",
   "lastOpenFiles": [
+    "vite.config.js.timestamp-1751053595097-716f456416de8.mjs",
+    "vite.config.js.timestamp-1751012713837-48b4c1f6acd54.mjs",
     "src/lib/svelte/details/D_Selection.svelte",
     "dist/lib/ts/tests/Geometry.test.js.map",
     "dist/lib/ts/tests/Geometry.test.js",
@@ -179,8 +181,6 @@
     "dist/lib/ts/tests/Colors.test.js",
     "dist/lib/ts/tests",
     "dist/lib/ts/maybe/G_Window.js.map",
-    "dist/lib/ts/maybe/G_Window.js",
-    "dist/lib/ts/maybe/Cursors.js.map",
     "node_modules/svelte-portal/README.md"
   ]
 }

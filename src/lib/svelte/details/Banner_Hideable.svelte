@@ -55,7 +55,7 @@
 				width={k.width_details}
 				isSelected={slot_isVisible}
 				toggle_hidden={toggle_hidden}
-				font_size={k.font_size.details}
+				font_size={k.font_size.banners}
 				height={layout.glows_banner_height}/>
 		</div>
 	{/if}

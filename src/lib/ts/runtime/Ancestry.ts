@@ -1,6 +1,6 @@
-import { c, h, k, p, u, ux, show, Rect, Size, Point, Thing, grabs, debug, layout, wrappers, svgPaths } from '../common/Global_Imports';
+import { c, h, k, p, u, ux, busy, show, Rect, Size, Point, grabs, debug, layout, wrappers, svgPaths } from '../common/Global_Imports';
 import { T_Graph, T_Create, T_Kinship, T_Predicate, T_Alteration, T_SvelteComponent } from '../common/Global_Imports';
-import { Direction, Predicate, databases, Relationship, Svelte_Wrapper } from '../common/Global_Imports';
+import { Thing, Direction, Predicate, databases, Relationship, Svelte_Wrapper } from '../common/Global_Imports';
 import { G_Widget, G_Paging, G_Cluster, G_TreeLine, S_Text_Edit } from '../common/Global_Imports';
 import { w_ancestry_focus, w_ancestries_grabbed, w_ancestries_expanded, } from '../common/Stores';
 import { w_t_database, w_depth_limit, w_s_text_edit, w_s_alteration } from '../common/Stores';
@@ -25,7 +25,7 @@ export default class Ancestry extends Identifiable {
 		super(path);
 		this.kind = kind;
 		this.t_database = t_database;
-		h?.signal_storage_redraw(0);
+		// busy.signal_storage_redraw();
 	}
 	
 	static readonly _____TRAVERSE: unique symbol;

@@ -15,7 +15,7 @@ export default class Persistable extends Identifiable {
 		this.persistence = new S_Persistence(t_database, t_persistable, id, already_persisted, false);
 		this.t_persistable = t_persistable;
 		this.idBase = idBase;
-		h?.signal_storage_redraw();
+		// busy.signal_storage_redraw();
 	}
 
 	async persistent_create_orUpdate(already_persisted: boolean) {}
@@ -25,7 +25,7 @@ export default class Persistable extends Identifiable {
 	set_isDirty() {
 		if (!busy.isFetching || h?.db.isPersistent) {
 			this.persistence.isDirty = true;
-			h?.signal_storage_redraw();
+			busy.signal_storage_redraw();
 		}
 	}
 

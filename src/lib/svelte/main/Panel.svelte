@@ -24,9 +24,17 @@
 	let separator_color = colors.separator;
 	let panel_reattachments = 0;
 
-	$: $w_t_database, $w_t_startup, $w_graph_rect, update_panel();
-	$: $w_background_color, separator_color = colors.separator;
 	function ignore_wheel(event) { event.preventDefault(); }
+
+	$: {
+		const _ = $w_t_database + $w_t_startup + $w_graph_rect.description;
+		update_panel();
+	}
+
+	$: {
+		const _ = $w_background_color;
+		separator_color = colors.separator;
+	}
 
 	function update_panel() {
 		setTimeout(() => {

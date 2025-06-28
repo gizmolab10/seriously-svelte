@@ -27,3 +27,14 @@ html, body {
     padding: 0;
     margin: 0;
 }
+
+/* Global spinner animation */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.spinner-circle {
+    transform-origin: center;
+    animation: spin var(--spinner-speed, 1s) linear infinite;
+}

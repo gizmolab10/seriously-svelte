@@ -14,7 +14,6 @@
 	const position = 'relative';
 	const picker_offset = `-88px`;
 	const width = k.width_details;
-	const font_size = k.font_size.smaller;
 	const element_height = k.height.button;
 	const color_left = width / 2 - 13;
 	const segmented_width = width - 6;
@@ -77,7 +76,7 @@
 		top:{top}px;
 		position:{position};
 		padding-bottom:{tops[10]}px;
-		font-size:{k.font_size.small}px;'>
+		font-size:{k.font_size.info}px;'>
 	{#if ux.inTreeMode}
 		<Separator
 			isHorizontal={true}
@@ -120,7 +119,7 @@
 			thumb_color={colors.separator}
 			origin={new Point(10, tops[3])}
 			title_left={k.separator_title_left}
-			title_font_size={k.font_size.smaller}
+			title_font_size={k.font_size.banners}
 			handle_value_change={handle_depth_limit}/>
 	{/if}
 	<Separator

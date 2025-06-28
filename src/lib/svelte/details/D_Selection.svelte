@@ -96,7 +96,7 @@
 				array={info_details}
 				bind:this={info_table}
 				name='propertie-table'
-				font_size={k.font_size.smaller}/>
+				font_size={k.font_size.info}/>
 		{/if}
 		{#if !!ancestry && ancestry.isEditable}
 			<Portal>

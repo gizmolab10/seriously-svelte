@@ -212,7 +212,7 @@ export default class G_Layout {
 
 	static readonly _____PRIMITIVES: unique symbol;
 
-	get glows_banner_height(): number { return u.device_isMobile ? 32 : 16; }
+	get glows_banner_height(): number { return u.device_isMobile ? 32 : 20; }
 	private get radial_size(): Size { return this.g_radialGraph.radial_size; }
 	get panel_boxHeight(): number { return this.glows_banner_height + k.height.segmented; }
 	get breadcrumbs_top(): number { return this.windowSize.height - this.panel_boxHeight; }

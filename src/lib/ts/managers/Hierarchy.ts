@@ -1495,13 +1495,6 @@ export class Hierarchy {
 
 	stop_alteration() { w_s_alteration.set(null); }
 
-	signal_storage_redraw(after: number = 100) {
-		setTimeout(() => {
-			const update = this.total_dirty_count * 100000 + this.data_count * 100 + this.depth;
-			w_storage_updated.set(update);
-		}, after);
-	}
-
 	get depth(): number {
 		let maximum = 1;
 		const ancestries = Object.values(this.ancestry_byHID);
@@ -1613,7 +1606,7 @@ export class Hierarchy {
 		// await this.relationships_lostAndFound_persistentCreate(this.db.idBase);
 		// await this.relationships_removeHavingNullReferences();
 		this.restore_fromPreferences();
-		this.signal_storage_redraw();
+		busy.signal_storage_redraw();
 	}
 
 }

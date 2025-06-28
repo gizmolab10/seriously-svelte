@@ -13,10 +13,9 @@
 	import Separator from '../kit/Separator.svelte';
 	import Button from '../buttons/Button.svelte';
 	import Spinner from '../kit/Spinner.svelte';
-	export let top = 4;
+	export let top = 3;
 	const buttons_top = 138;
-	const border = '1px solid black';
-    const font_sizes = [k.font_size.smallest, k.font_size.smaller];
+    const font_sizes = [k.font_size.instructions, k.font_size.banners];
     const s_banner_hideable = s_details.s_banner_hideables_byType[T_Details.database];
 	const storage_ids = [T_File_Operation.import, T_File_Operation.export];
 	const output_format_ids = [T_File_Format.csv, T_File_Format.json, T_File_Format.cancel];
@@ -33,21 +32,25 @@
 	setup_s_elements();
 	es_save.set_forHovering('black', 'pointer');
 
-	$: $w_storage_updated, $w_t_database, update_storage_details();
+	$: {
+		const _ = $w_storage_updated + $w_t_database;
+		update_storage_details();
+	}
 
 	function format_ids(): T_File_Format[] {
 		return (ux.T_Storage_Need == T_Storage_Need.format) ? input_format_ids : output_format_ids;
-	}
-
-	function handle_db_selection(titles: string[]) {
-		const t_database = titles[0] as T_Database;	// only ever contains one title
-		databases.grand_change_database(t_database);
 	}
 
 	async function handle_save(s_mouse) {
 		if (!!h && h.hasRoot && s_mouse.isUp) {
 			await h.db.persist_all(true);
 		}
+	}
+
+	function handle_db_selection(titles: string[]) {
+		const t_database = titles[0] as T_Database;	// only ever contains one title
+		console.log('handle_db_selection', t_database);
+		databases.grand_change_database(t_database);
 	}
 
 	function action_titles() {
@@ -80,6 +83,7 @@
 
 	function update_storage_details() {
 		if (!!h) {
+			console.log('update_storage_details', h.db.t_database, h.total_dirty_count, busy.isDatabaseBusy);
 			isDirty = h.total_dirty_count != 0;
 			storage_details = [h.db.details_forStorage,
 			['depth', h.depth.supressZero()],
@@ -125,37 +129,35 @@
 		titles={db_ids}
 		selected={[$w_t_database]}
 		height={k.height.controls}
-		origin={new Point(0, top - 2)}
+		origin={new Point(0, top)}
 		handle_selection={handle_db_selection}/>
 	<div class='database-information'
 		style='
 			width: 100%;
-			font-size:{k.font_size.smaller}px;'>
+			font-size:{k.font_size.banners}px;'>
 		<Text_Table
-			top={top + 22}
+			top={top + 19}
 			row_height={11}
 			name='database-table'
 			array={storage_details}
-			font_size={k.font_size.small - 1}/>
+			font_size={k.font_size.banners}/>
 		{#key $w_storage_updated}
-			{#if isDirty}
-				{#if busy.isDatabaseBusy}
-					<div class='data-spinner'
-						style="position: absolute; left: 163px; top: 107px;">
-						<Spinner />
-					</div>
-				{:else if h.db.isPersistent}
-					<Button
-						width=72
-						name='save'
-						border={border}
-						es_button={es_save}
-						closure={handle_save}
-						zindex={T_Layer.frontmost}
-						origin={new Point(130, top + 110)}>
-						save to db
-					</Button>
-				{/if}
+			{#if busy.isDatabaseBusy}
+				<div class='data-spinner'
+					style="position: absolute; left: 123px; top: 67px;">
+					<Spinner size={72} stroke='lightgray' strokeWidth={8} speed='2s' />
+				</div>
+			{:else if isDirty && h.db.isPersistent}
+				<Button
+					width=72
+					name='save'
+					es_button={es_save}
+					closure={handle_save}
+					border='1px solid black'
+					zindex={T_Layer.frontmost}
+					origin={new Point(130, top + 110)}>
+					save to db
+				</Button>
 			{/if}
 		{/key}
 	</div>
@@ -169,7 +171,7 @@
 			row_titles={action_titles()}
 			closure={handle_actionRequest}
 			button_height={k.height.button}
-			center={new Point(width / 2 + 3, top + 164)}
+			center={new Point(width / 2 + 3, top + 160)}
 			separator_thickness={k.thickness.separator.ultra_thin}
 			name={`data-${(ux.T_Storage_Need == T_Storage_Need.direction) ? 'action' : 'format'}`}/>
 	{/key}

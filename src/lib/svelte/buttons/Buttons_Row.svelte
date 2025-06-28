@@ -79,6 +79,7 @@
 
 <div class='buttons-row'
 	style='{style}
+		left:0px;
 		top:{top}px;
 		position:absolute;
 		height:{button_height}px;
@@ -113,7 +114,7 @@
 				style='
 					position:absolute;
 					top:{has_seperator ? 10 : 0}px;
-					left:{margin - 4 + (has_seperator ? 0 : solo_title_width)}px;'>
+					left:{margin - 8 + (has_seperator ? 0 : solo_title_width + 4)}px;'>
 				{#each button_titles as title, column}
 					<Button
 						height={button_height}

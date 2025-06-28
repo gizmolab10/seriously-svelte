@@ -11,7 +11,7 @@
 	import SVG_D3 from '../kit/SVG_D3.svelte';
 	import Box from '../kit/Box.svelte';
 	import { onMount } from 'svelte';
-	const widths = [18, 14, 56, 27, 64];
+	const widths = [18, 14, 56];
 	const lefts = u.cumulativeSum(widths);
 	const size_big = k.height.button + 4;
 	const y_center = 10.5;
@@ -23,7 +23,7 @@
 	let width = layout.windowSize.width - 20;
 	let displayName = k.empty;
 	let displayName_width = 0;
-	let displayName_x = 230;
+	let displayName_x = 150;
 
 	const t_controls = [	// in order of importance on mobile
 		T_Control.details,
@@ -34,18 +34,21 @@
 	];
 
 	onMount(() => { setup_forIDs(); });
-	$: $w_count_resize, $w_graph_rect, width = layout.windowSize.width - 20;
 	function togglePopupID(id) { $w_popupView_id = ($w_popupView_id == id) ? null : id; }
 	function handle_recents_mouseClick(column: number) { grabs.focus_onNext(column == 1); }
+
+	$: {
+		const _ = $w_graph_rect + $w_count_resize;
+		width = layout.windowSize.width - 20;
+	}
 
 	$: {
 		const _ = $w_show_graph_ofType;
 		const db = h.db;
 		if (!!db) {
-			const extra = ux.inTreeMode ? lefts[3] : 0;
 			displayName = db.displayName;
 			displayName_width = u.getWidthOf(displayName);
-			displayName_x = extra + (width - displayName_width) / 2 + 11;
+			displayName_x = lefts[1] + (width - displayName_width) / 2;
 		}
 	}
 
