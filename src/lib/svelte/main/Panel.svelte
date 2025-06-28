@@ -8,7 +8,7 @@
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Detail_Stack from '../details/Detail_Stack.svelte';
 	import StackDemo from '../experiments/StackDemo.svelte';
-	import { T_Database } from '../../ts/database/DBCommon';
+	import { T_Database } from '../../ts/database/DB_Common';
 	import Gull_Wings from '../kit/Gull_Wings.svelte';
 	import Separator from '../kit/Separator.svelte';
 	import Details from '../details/Details.svelte';

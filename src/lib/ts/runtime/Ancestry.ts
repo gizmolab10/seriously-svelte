@@ -6,7 +6,7 @@ import { w_ancestry_focus, w_ancestries_grabbed, w_ancestries_expanded, } from '
 import { w_t_database, w_depth_limit, w_s_text_edit, w_s_alteration } from '../common/Stores';
 import type { Dictionary, Integer } from '../common/Types';
 import { w_show_graph_ofType } from '../common/Stores';
-import { T_Database } from '../database/DBCommon';
+import { T_Database } from '../database/DB_Common';
 import { get, Writable } from 'svelte/store';
 import Identifiable from './Identifiable';
 

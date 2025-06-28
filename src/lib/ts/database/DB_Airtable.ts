@@ -1,8 +1,8 @@
 import { T_Thing, T_Trait, T_Debug, T_Create, T_Predicate, busy } from '../common/Global_Imports';
 import { c, h, k, u, Thing, Trait, Relationship } from '../common/Global_Imports';
 import { T_Persistable, T_Persistence } from '../common/Global_Imports';
-import { T_Database } from './DBCommon';
-import DBCommon from './DBCommon';
+import { T_Database } from './DB_Common';
+import DB_Common from './DB_Common';
 import Airtable from 'airtable';
 
 //////////////////////////////
@@ -15,7 +15,7 @@ import Airtable from 'airtable';
 //							//
 //////////////////////////////
 
-export default class DBAirtable extends DBCommon {
+export default class DB_Airtable extends DB_Common {
 	personalAccessToken = 'patGTiWbebGZTw0fh.dd17a194aea98f9e4e918d333babde7bcd39903b4179b139ac8866a5f3cfe5b6';
 	tryPersonalAccessToken = 'patHLy6SzBPcbjtCM.c032a929620e4c2906a59bec5c6aa955c1cac78875ca8f5d5398ae1ee058ebc8';
 	basePivot = new Airtable({ apiKey: this.personalAccessToken }).base('appopcsTBwET2o3RU');

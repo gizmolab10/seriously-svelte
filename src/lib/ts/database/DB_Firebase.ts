@@ -9,10 +9,10 @@ import { QuerySnapshot, CollectionReference } from 'firebase/firestore';
 import type { Dictionary, Integer } from '../common/Types';
 import Identifiable from '../runtime/Identifiable';
 import { initializeApp } from 'firebase/app';
-import { T_Database } from './DBCommon';
-import DBCommon from './DBCommon';
+import { T_Database } from './DB_Common';
+import DB_Common from './DB_Common';
 
-export default class DBFirebase extends DBCommon {
+export default class DB_Firebase extends DB_Common {
 	config = {
 		appId: "1:224721814373:web:0c60f394c056ef3decd78c",
 		apiKey: "AIzaSyAFy4H3Ej5zfI46fvCJpBfUxmyQco-dx9U",
@@ -232,7 +232,7 @@ export default class DBFirebase extends DBCommon {
 		const doc = change.doc;
 		const data = doc.data();
 		let needsRebuild = false;
-		if (DBFirebase.data_isValidOfKind(t_persistable, data)) {
+		if (DB_Firebase.data_isValidOfKind(t_persistable, data)) {
 			const id = doc.id;
 
 			//////////////////////////////
@@ -269,7 +269,7 @@ export default class DBFirebase extends DBCommon {
 	}
 
 	async document_ofType_remember_validated(t_persistable: T_Persistable, id: string, data: DocumentData, idBase: string) {
-		if (DBFirebase.data_isValidOfKind(t_persistable, data)) {
+		if (DB_Firebase.data_isValidOfKind(t_persistable, data)) {
 			switch (t_persistable) {
 				case T_Persistable.predicates:	  h   .predicate_remember_runtimeCreateUnique(		  id, data.kind,		 data.isBidirectional ); break;
 				case T_Persistable.things:		  h       .thing_remember_runtimeCreateUnique(idBase, id, data.title,		 data.color,		  data.t_thing, true); break;
@@ -931,7 +931,7 @@ export class PersistentRelationship implements PersistentRelationship {
 	kind!: T_Predicate;
 
 	constructor(data: DocumentData | Relationship) {
-		const dbFirebase = databases.db_forType(T_Database.firebase) as DBFirebase;
+		const dbFirebase = databases.db_forType(T_Database.firebase) as DB_Firebase;
 		const things = dbFirebase.bulk_forID(dbFirebase.idBase)?.thingsCollection;
 		const predicates = dbFirebase.predicatesCollection;
 		this.orders = data.orders;
@@ -946,7 +946,7 @@ export class PersistentRelationship implements PersistentRelationship {
 					}
 				} else {
 					const remote = data as PersistentRelationship;
-					if (DBFirebase.data_isValidOfKind(T_Persistable.relationships, data)) {
+					if (DB_Firebase.data_isValidOfKind(T_Persistable.relationships, data)) {
 						this.kind = data.kind;
 						this.child = doc(things, remote.child.id) as DocumentReference<Thing>;
 						this.parent = doc(things, remote.parent.id) as DocumentReference<Thing>;

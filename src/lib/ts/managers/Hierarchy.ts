@@ -7,7 +7,7 @@ import { T_Create, T_Alteration, T_File_Format, T_Persistable } from '../common/
 import { colors, signals, layout, databases } from '../common/Global_Imports';
 import type { Integer, Dictionary } from '../common/Types';
 import Identifiable from '../runtime/Identifiable';
-import DBCommon from '../database/DBCommon';
+import DB_Common from '../database/DB_Common';
 import { pivot } from '../files/Pivot';
 import { get } from 'svelte/store';
 
@@ -41,7 +41,7 @@ export class Hierarchy {
 	private tag_byType: { [type: string]: Tag } = {};
 	private tag_byHID: { [hid: Integer]: Tag } = {};
 	ids_translated: { [prior: string]: string } = {};
-	replace_rootID: string | null = k.empty;		// required for DBLocal at launch
+	replace_rootID: string | null = k.empty;		// required for DB_Local at launch
 	relationships: Array<Relationship> = [];
 	predicates: Array<Predicate> = [];
 	externalsAncestry!: Ancestry;
@@ -51,9 +51,9 @@ export class Hierarchy {
 	tags: Array<Tag> = [];
 	isAssembled = false;
 	root!: Thing;
-	db: DBCommon;
+	db: DB_Common;
 
-	constructor(db: DBCommon) {
+	constructor(db: DB_Common) {
 		this.db = db;
 	}
 

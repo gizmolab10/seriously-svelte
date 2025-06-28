@@ -1,14 +1,14 @@
 <script lang='ts'>
 	import { k, Point, layout, T_Layer, T_Details, T_Direction } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_count_details, w_show_graph_ofType } from '../../ts/common/Stores';
+	import Banner_Hideable from './Banner_Hideable.svelte';
 	import Separator from '../kit/Separator.svelte';
-	import D_Databases from './D_Databases.svelte';
+	import D_Selection from './D_Selection.svelte';
 	import D_Graph from './D_Graph.svelte';
 	import D_Actions from './D_Actions.svelte';
 	import D_Header from './D_Header.svelte';
 	import D_Traits from './D_Traits.svelte';
-	import Banner_Hideable from './Banner_Hideable.svelte';
-	import D_Selection from './D_Selection.svelte';
+	import D_Data from './D_Data.svelte';
 	import D_Tags from './D_Tags.svelte';
 	const width = k.width_details;
 	const next_previous_titles = [T_Direction.previous, T_Direction.next];
@@ -54,7 +54,7 @@
 			<D_Traits/>
 		</Banner_Hideable>
 		<Banner_Hideable t_detail={T_Details.data}>
-			<D_Databases/>
+			<D_Data/>
 		</Banner_Hideable>
 	</div>
 {/key}

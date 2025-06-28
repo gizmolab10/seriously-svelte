@@ -1,22 +1,22 @@
 import { c, k, p, busy, Hierarchy, T_Preference } from '../common/Global_Imports';
 import { w_hierarchy, w_t_database } from '../common/Stores';
 import { T_Persistence } from '../common/Global_Imports';
-import { T_Database } from '../database/DBCommon';
-import DBCommon from '../database/DBCommon';
-import DBFirebase from './DBFirebase';
-import DBAirtable from './DBAirtable';
-import DBLocal from './DBLocal';
-import DBTest from './DBTest';
-// import DBDGraph from './DBDGraph';
+import { T_Database } from '../database/DB_Common';
+import DB_Common from '../database/DB_Common';
+import DB_Firebase from './DB_Firebase';
+import DB_Airtable from './DB_Airtable';
+import DB_Local from './DB_Local';
+import DB_Test from './DB_Test';
+// import DB_DGraph from './DB_DGraph';
 
 // each db has its own hierarchy
 // when switching to another db
 // w_hierarchy is set to its hierarchy
 
 export default class Databases {
-	private dbCache: { [key: string]: DBCommon } = {};
+	private dbCache: { [key: string]: DB_Common } = {};
 	defer_persistence: boolean = false;
-	db_now: DBCommon;
+	db_now: DB_Common;
 
 	queryStrings_apply() {
 		const queryStrings = c.queryStrings;
@@ -71,14 +71,14 @@ export default class Databases {
 		}
 	}
 
-	db_forType(t_database: string): DBCommon {
+	db_forType(t_database: string): DB_Common {
 		if (!this.dbCache[t_database]) {
 			switch (t_database) {
-				case T_Database.firebase: this.dbCache[t_database] = new DBFirebase(); break;
-				case T_Database.airtable: this.dbCache[t_database] = new DBAirtable(); break;
-				case T_Database.local:    this.dbCache[t_database] = new DBLocal(); break;
-				// case T_Database.dgraph:   this.dbCache[t_database] = new DBDGraph(); break;
-				default:                  this.dbCache[t_database] = new DBTest(); break;
+				case T_Database.firebase: this.dbCache[t_database] = new DB_Firebase(); break;
+				case T_Database.airtable: this.dbCache[t_database] = new DB_Airtable(); break;
+				case T_Database.local:    this.dbCache[t_database] = new DB_Local(); break;
+				// case T_Database.dgraph:   this.dbCache[t_database] = new DB_DGraph(); break;
+				default:                  this.dbCache[t_database] = new DB_Test(); break;
 			}
 		}
 		return this.dbCache[t_database];

@@ -1,10 +1,10 @@
 import { T_Thing, T_Trait, T_Debug, T_Create, T_Predicate, T_Persistable, T_Persistence, busy } from '../common/Global_Imports';
 import { c, h, k, u, Thing, Trait, Relationship } from '../common/Global_Imports';
-import { T_Database } from './DBCommon';
-import DBCommon from './DBCommon';
+import { T_Database } from './DB_Common';
+import DB_Common from './DB_Common';
 import { DgraphClient, DgraphClientStub } from 'dgraph-js';
 
-export default class DBDGraph extends DBCommon {
+export default class DB_DGraph extends DB_Common {
     private client: DgraphClient;
     private endpoint: string;
     private apiKey: string;

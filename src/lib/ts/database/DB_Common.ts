@@ -17,7 +17,7 @@ export enum T_Database {
 
 // CRUD API --> for all databases
 
-export default class DBCommon {
+export default class DB_Common {
 	t_persistence = T_Persistence.none;
 	loadTime: string | null = null;
 	hierarchy!: Hierarchy;

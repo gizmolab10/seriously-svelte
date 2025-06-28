@@ -4,7 +4,7 @@
 	import { T_Layer, T_Details, T_Element, T_Preference, T_Request } from '../../ts/common/Global_Imports';
 	import { w_storage_updated, w_thing_fontFamily } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
-	import { T_Database } from '../../ts/database/DBCommon';
+	import { T_Database } from '../../ts/database/DB_Common';
     import Buttons_Row from '../buttons/Buttons_Row.svelte';
 	import { w_t_database } from '../../ts/common/Stores';
     import { s_details } from '../../ts/state/S_Details';

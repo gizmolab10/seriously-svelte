@@ -1,9 +1,9 @@
 import { h, k, T_Thing, T_Trait, Predicate, T_Predicate } from '../common/Global_Imports';
 import { T_Persistence } from '../common/Global_Imports';
-import { T_Database } from './DBCommon';
-import DBCommon from './DBCommon';
+import { T_Database } from './DB_Common';
+import DB_Common from './DB_Common';
 
-export default class DBTest extends DBCommon {
+export default class DB_Test extends DB_Common {
 	t_persistence = T_Persistence.none;
 	t_database = T_Database.test;
 	idBase = k.id_base.test;
