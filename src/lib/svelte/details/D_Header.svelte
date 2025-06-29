@@ -37,6 +37,6 @@
 		width:{k.width_details}px;
 		font-size:{k.font_size.common}px;
 		background-color:{background_color};'>
-		{grabs.latest_thing?.title.clipWithEllipsisAt(30)}
+		{grabs.latest_thing?.title.clipWithEllipsisAt(30) ?? k.empty}
 	</div>
 {/key}

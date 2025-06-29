@@ -19,9 +19,9 @@ export enum T_Database {
 
 export default class DB_Common {
 	t_persistence = T_Persistence.none;
-	loadTime: string | null = null;
 	hierarchy!: Hierarchy;
 	t_database = k.empty;
+	loadTime = 'busy...';
 	idBase = k.empty;
 	
 	queryStrings_apply() {}
@@ -166,7 +166,7 @@ export default class DB_Common {
 			}
 		}
 		const startTime = new Date().getTime();
-		this.loadTime = null;
+		this.loadTime = 'busy...';
 		await this.fetch_all();
 		await h.wrapUp_data_forUX();
 		// await this.persist_all();
