@@ -1,4 +1,4 @@
-import { w_storage_updated } from '../common/Stores';
+import { w_data_updated } from '../common/Stores';
 import type { Dictionary } from '../common/Types';
 import { T_Signal } from '../signals/Signals';
 
@@ -24,24 +24,24 @@ export class S_Busy {
 	temporarily_set_isPersisting_while(closure: () => void) {
 		const wasPersisting = this.isPersisting;
 		this.isPersisting = true;
-		this.signal_storage_redraw();
+		this.signal_data_redraw();
 		closure();
 		this.isPersisting = wasPersisting;
-		this.signal_storage_redraw();
+		this.signal_data_redraw();
 	}
 
 	async temporarily_set_isFetching_while(closure: () => Promise<void>) {
 		const wasFetching = this.isFetching;
 		this.isFetching = true;
-		this.signal_storage_redraw();
+		this.signal_data_redraw();
 		await closure();
 		this.isFetching = wasFetching;
-		this.signal_storage_redraw();
+		this.signal_data_redraw();
 	}
 
-	signal_storage_redraw(after: number = 1) {
+	signal_data_redraw(after: number = 1) {
 		setTimeout(() => {
-			w_storage_updated.set(new Date().getTime());
+			w_data_updated.set(new Date().getTime());
 		}, after);
 	}
 

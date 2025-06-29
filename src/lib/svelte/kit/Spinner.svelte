@@ -1,21 +1,28 @@
 <script lang='ts'>
-    export let size = 48;
+    export let angle = 0;
     export let speed = '1s';
-    export let stroke = 'black';
+    export let diameter = 48;
     export let strokeWidth = 2;
+    export let stroke = 'black';
+    export let number_of_dashes = 10;
+    const dash_width = Math.PI * (diameter - strokeWidth) / number_of_dashes / 2;
 </script>
 
-<div style='position: relative; width: {size}px; height: {size}px; --spinner-speed: {speed};'>
-    <svg width={size} height={size} viewBox='0 0 {size} {size}'>
+<div style='
+    position:relative;
+    width:{diameter}px;
+    height:{diameter}px;
+    --spinner-speed:{speed};'>
+    <svg width={diameter} height={diameter} viewBox={`0 0 ${diameter} ${diameter}`}>
         <circle
-            cx={size/2}
-            cy={size/2}
+            cx={diameter/2}
+            cy={diameter/2}
             stroke={stroke}
             fill='transparent'
             class='spinner-circle'
-            stroke-dasharray='10 10'
-            r={size/2 - strokeWidth}
-            stroke-width={strokeWidth}/>
+            stroke-width={strokeWidth}
+            r={(diameter - strokeWidth) / 2}
+            stroke-dasharray='{dash_width} {dash_width}'/>
     </svg>
 </div>
 
@@ -24,7 +31,6 @@
         transform-origin: center;
         animation: spin var(--spinner-speed) linear infinite;
     }
-    
     @keyframes spin {
         from { transform: rotate(0deg); }
         to { transform: rotate(360deg); }

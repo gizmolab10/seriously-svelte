@@ -2,7 +2,7 @@
 	import { h, k, u, ux, busy, Point, colors, S_Element, databases, Hierarchy } from '../../ts/common/Global_Imports';
 	import { T_File_Format, T_File_Operation, T_Storage_Need, T_Signal } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Details, T_Element, T_Preference, T_Request } from '../../ts/common/Global_Imports';
-	import { w_storage_updated, w_thing_fontFamily } from '../../ts/common/Stores';
+	import { w_data_updated, w_thing_fontFamily } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import { T_Database } from '../../ts/database/DB_Common';
     import Buttons_Row from '../buttons/Buttons_Row.svelte';
@@ -22,17 +22,21 @@
 	const ids_forOutputFormat = [T_File_Format.csv, T_File_Format.json, T_File_Format.cancel];
 	const ids_forDatabase = [T_Database.local, T_Database.firebase, T_Database.airtable, T_Database.test];
 	const ids_forInputFormat = [T_File_Format.csv, T_File_Format.json, T_File_Format.seriously, T_File_Format.cancel];
+	const heights = [22, 42, 28, 74, 26, 3];
+	const tops = u.cumulativeSum(heights);
 	let s_element_byStorageType: { [id: string]: S_Element } = {};
 	let storage_choice: string | null = null;
 	let storage_details: Array<Object> = [];
 	let width = k.width_details - 7;
 	let show_save_button = false;
+	let spinnerAngle = 0;
 
 	setup_s_elements();
 	es_save.set_forHovering('black', 'pointer');
+	function handle_spinner_angle(event) { spinnerAngle = event.detail.angle; }
 
 	$: {
-		const _ = $w_storage_updated + $w_t_database;
+		const _ = $w_data_updated + $w_t_database;
 		update_storage_details();
 	}
 
@@ -115,16 +119,6 @@
 		}
 	}
 
-	const heights = [
-		22,
-		42,
-		28,
-		74,
-		26,
-	3];
-
-	const tops = u.cumulativeSum(heights);
-
 </script>
 
 <div class='database-container'
@@ -148,11 +142,22 @@
 			name='database-table'
 			array={storage_details}
 			font_size={k.font_size.banners}/>
-		{#key $w_storage_updated}
+		{#key $w_data_updated}
 			{#if busy.isDatabaseBusy}
 				<div class='data-spinner'
-					style="position: absolute; left: 120px; top: {tops[1]}px;">
-					<Spinner size={72} stroke='lightgray' strokeWidth={8} speed='2s' />
+					style='
+						left: 120px;
+						opacity: 0.5;
+						top: {tops[1]}px;
+						position: absolute;'>
+					<Spinner
+						speed='3s'
+						diameter={72}
+						strokeWidth={8}
+						angle={spinnerAngle}
+						number_of_dashes={9}
+						stroke={colors.separator}
+						on:angle={handle_spinner_angle}/>
 				</div>
 			{:else if show_save_button}
 				<Button

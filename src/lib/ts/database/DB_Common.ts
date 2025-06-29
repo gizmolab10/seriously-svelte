@@ -66,20 +66,26 @@ export default class DB_Common {
 	async persist_all(force: boolean = false) {
 		if (!databases.defer_persistence) {
 			busy.isPersisting = true;
-			busy.signal_storage_redraw();
+			busy.signal_data_redraw();
 			for (const t_persistable of Persistable.t_persistables) {
 				await this.persistAll_identifiables_ofType_maybe(t_persistable, force);
 			}
-			const interval = setInterval(() => {
-				if (h.total_dirty_count == 0) {
-					busy.isPersisting = false;
-					clearInterval(interval)
-					setTimeout(() => {
-						busy.signal_storage_redraw();
-					}, 2000);
-				}
-			}, 10);
+			this.wait_forClean();
 		}
+	}
+
+	wait_forClean() {
+		let interval = setInterval(() => {
+			if (!h.isDirty) {
+				clearInterval(interval);
+				interval = setInterval(() => {	
+					if (!h.isDirty) {
+						busy.isPersisting = false;
+						busy.signal_data_redraw(0);
+					}
+				}, 1000);
+			}
+		}, 10);
 	}
 
 	// code common to all persisting actions

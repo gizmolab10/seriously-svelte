@@ -51,11 +51,10 @@ export const w_graph_rect				 = writable<Rect>();
 const _____DATABASE: unique symbol = Symbol('DATABASE');
 
 export const w_t_database				 = writable<string>();
-export const w_storage_updated			 = writable<number>();
+export const w_data_updated				 = writable<number>();
 
 const _____COUNTS: unique symbol = Symbol('COUNTS');
 
-export const w_count_resize_dynamics	 = writable<number>();
 export const w_count_mouse_up			 = writable<number>();
 export const w_count_rebuild			 = writable<number>();
 export const w_count_details			 = writable<number>();	
@@ -81,7 +80,6 @@ class Stores {
 		w_thing_color.set(null);
 		w_s_text_edit?.set(null);
 		w_show_details_ofType.set([]);
-		w_count_resize_dynamics.set(0);
 		w_t_startup.set(T_Startup.start);
 		w_background_color.subscribe((color: string) => {
 			colors.banner = colors.ofBannerFor(color);

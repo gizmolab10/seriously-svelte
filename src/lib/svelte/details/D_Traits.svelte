@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { w_thing_traits, w_ancestries_grabbed, w_count_resize_dynamics } from '../../ts/common/Stores';
 	import { T_Trait, T_Details, T_Element, T_Request, T_Direction } from '../../ts/common/Global_Imports';
 	import { h, k, ux, colors, Size, S_Mouse } from '../../ts/common/Global_Imports';
+	import { w_thing_traits, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import { s_details } from '../../ts/state/S_Details';
 	import Text_Editor from '../kit/Text_Editor.svelte';
@@ -19,9 +19,6 @@
 		if (trigger !== prior_trigger) {
 			prior_trigger = trigger;
 			reattachments++;
-			setTimeout(() => {
-				$w_count_resize_dynamics++;
-			}, 1);
 		}
 	}
 

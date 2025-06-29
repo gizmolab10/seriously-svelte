@@ -7,14 +7,13 @@
 	import { w_t_startup, w_popupView_id, w_ancestry_focus } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Detail_Stack from '../details/Detail_Stack.svelte';
-	import StackDemo from '../experiments/StackDemo.svelte';
 	import { T_Database } from '../../ts/database/DB_Common';
+	import StackDemo from '../experiments/StackDemo.svelte';
 	import Gull_Wings from '../kit/Gull_Wings.svelte';
 	import Separator from '../kit/Separator.svelte';
 	import Details from '../details/Details.svelte';
 	import Breadcrumbs from './Breadcrumbs.svelte';
 	import BuildNotes from './BuildNotes.svelte';
-	import Debug from '../debug/Debug.svelte';
 	import Graph from '../graph/Graph.svelte';
 	import Controls from './Controls.svelte';
 	import Box from '../debug/Box.svelte';
@@ -48,7 +47,6 @@
 </script>
 
 {#key panel_reattachments}
-	<Debug/>
 	<div
 		class='panel'
 		style='
@@ -100,10 +98,3 @@
 		{/if}
 	</div>
 {/key}
-
-<style>
-	p {
-		text-align: center;
-		font-size: 1.3em;
-	}
-</style>

@@ -45,7 +45,7 @@ export default class Databases {
 
 	async grand_change_database(type: string) {
 		this.db_now = this.db_forType(type);
-		busy.signal_storage_redraw();
+		busy.signal_data_redraw();
 		let h = this.db_now.hierarchy;
 		if (!h) {
 			h = new Hierarchy(this.db_now);

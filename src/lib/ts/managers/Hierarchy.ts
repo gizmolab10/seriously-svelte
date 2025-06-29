@@ -1,7 +1,7 @@
 import { c, k, p, u, ux, busy, debug, grabs, files, Tag, User, Thing, Trait } from '../common/Global_Imports';
 import { T_Thing, T_Trait, T_Order, T_Control, T_Predicate, T_Startup } from '../common/Global_Imports';
 import { Access, Ancestry, Predicate, Relationship, Persistable } from '../common/Global_Imports';
-import { w_t_startup, w_depth_limit, w_storage_updated, w_s_alteration } from '../common/Stores';
+import { w_t_startup, w_depth_limit, w_data_updated, w_s_alteration } from '../common/Stores';
 import { w_popupView_id, w_ancestry_focus, w_s_text_edit, w_hierarchy } from '../common/Stores';
 import { T_Create, T_Alteration, T_File_Format, T_Persistable } from '../common/Global_Imports';
 import { colors, signals, layout, databases } from '../common/Global_Imports';
@@ -1509,6 +1509,8 @@ export class Hierarchy {
 
 	static readonly _____BUILD: unique symbol;
 
+	get isDirty(): boolean { return this.total_dirty_count > 0; }
+
 	get total_dirty_count(): number {
 		let sum = 0;
 		for (const t_persistable of Persistable.t_persistables) {
@@ -1606,7 +1608,7 @@ export class Hierarchy {
 		// await this.relationships_lostAndFound_persistentCreate(this.db.idBase);
 		// await this.relationships_removeHavingNullReferences();
 		this.restore_fromPreferences();
-		busy.signal_storage_redraw();
+		busy.signal_data_redraw();
 	}
 
 }

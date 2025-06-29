@@ -1,4 +1,4 @@
-import { w_thing_traits, w_storage_updated, w_show_details_ofType } from '../common/Stores';
+import { w_thing_traits, w_data_updated, w_show_details_ofType } from '../common/Stores';
 import { T_Details, T_Direction, S_Identifiables } from '../common/Global_Imports';
 import { w_tag_things, w_thing_tags, w_tag_thing_index } from '../common/Stores';
 import { h, Tag, grabs, Thing, Ancestry } from '../common/Global_Imports';
@@ -13,7 +13,7 @@ class S_Details {
 	number_ofDetails = 0;
 
 	constructor() {
-		w_storage_updated.subscribe((count: number) => {
+		w_data_updated.subscribe((count: number) => {
 			this.setup();
 		});
 		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
