@@ -26,7 +26,7 @@
 			await h.fetch_andBuild_fromFile(files[0]);
 		}
 		target.value = k.empty;		// allow re-selection of the same file, MUST do this AFTER fetch
-		ux.T_Storage_Need = T_Storage_Need.direction;
+		ux.t_storage_need = T_Storage_Need.direction;
 		dismiss_popup();
 		layout.grand_build();
 	}

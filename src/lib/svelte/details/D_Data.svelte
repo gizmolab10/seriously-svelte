@@ -41,7 +41,7 @@
 	}
 
 	function ids_forFormat(): T_File_Format[] {
-		return (ux.T_Storage_Need == T_Storage_Need.format) ? ids_forInputFormat : ids_forOutputFormat;
+		return (storage_choice == T_File_Operation.import) ? ids_forInputFormat : ids_forOutputFormat;
 	}
 
 	async function handle_save(s_mouse) {
@@ -56,7 +56,7 @@
 	}
 
 	function action_titles() {
-		switch (ux.T_Storage_Need) {
+		switch (ux.t_storage_need) {
 			case T_Storage_Need.direction: return ['local file', ...ids_forDirection];
 			case T_Storage_Need.format:	   return ['file type', ...ids_forFormat()];
 			case T_Storage_Need.busy:	   return [`${storage_choice}ing...`];
@@ -73,7 +73,7 @@
 	}
 
 	function handle_actionRequest(t_request: T_Request, s_mouse: S_Mouse, column: number): any {
-		const ids = (ux.T_Storage_Need == T_Storage_Need.direction) ? ids_forDirection : ids_forFormat();
+		const ids = (ux.t_storage_need == T_Storage_Need.direction) ? ids_forDirection : ids_forFormat();
 		switch (t_request) {
 			case T_Request.handle_click: return handle_click_forColumn(s_mouse, column);
 			case T_Request.name:		 return ids[column];
@@ -97,24 +97,23 @@
 	}
 	
 	function handle_click_forColumn(s_mouse, column) {
-		const ids = (ux.T_Storage_Need == T_Storage_Need.direction) ? ids_forDirection : ids_forFormat();
+		const ids = (ux.t_storage_need == T_Storage_Need.direction) ? ids_forDirection : ids_forFormat();
 		if (s_mouse.isHover) {
 			s_element_byStorageType[ids[column]].isOut = s_mouse.isOut;
 		} else if (s_mouse.isDown) {
-			console.log('click', ids[column]);
 			const choice = ids[column];
 			if (choice == T_File_Format.cancel) {
-				ux.T_Storage_Need = T_Storage_Need.direction;
-			} else if (ux.T_Storage_Need == T_Storage_Need.direction) {
+				ux.t_storage_need = T_Storage_Need.direction;
+			} else if (ux.t_storage_need == T_Storage_Need.direction) {
 				storage_choice = choice;
-				ux.T_Storage_Need = T_Storage_Need.format;
+				ux.t_storage_need = T_Storage_Need.format;
 			} else {
 				const format = choice as T_File_Format;
 				switch (storage_choice) {
 					case T_File_Operation.export: h.persist_toFile(format); break;
 					case T_File_Operation.import: h.select_file_toUpload(format, s_mouse.event.shiftKey); break;
 				}
-				ux.T_Storage_Need = T_Storage_Need.busy;
+				ux.t_storage_need = T_Storage_Need.busy;
 			}
 		}
 	}
@@ -172,7 +171,7 @@
 			{/if}
 		{/key}
 	</div>
-	{#key ux.T_Storage_Need}
+	{#key ux.t_storage_need}
 		<Buttons_Row
 			gap={4}
 			margin={20}
@@ -184,7 +183,7 @@
 			button_height={k.height.button}
 			center={new Point(width / 2 + 3, tops[3])}
 			separator_thickness={k.thickness.separator.ultra_thin}
-			name={`data-${(ux.T_Storage_Need == T_Storage_Need.direction) ? 'action' : 'format'}`}/>
+			name={`data-${(ux.t_storage_need == T_Storage_Need.direction) ? 'action' : 'format'}`}/>
 	{/key}
 	<Separator
 		isHorizontal={true}

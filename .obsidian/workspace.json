@@ -170,6 +170,7 @@
   },
   "active": "9968854d61be5eec",
   "lastOpenFiles": [
+    "src/lib/ts/state/S_UX.ts",
     "src/lib/svelte/details/D_Data.svelte",
     "src/lib/ts/database/DB_Test.ts",
     "src/lib/ts/database/DB_Plugin.ts",
@@ -180,7 +181,6 @@
     "src/lib/ts/database/DB_Common.ts",
     "src/lib/ts/database/DB_Airtable.ts",
     "vite.config.js.timestamp-1751053595097-716f456416de8.mjs",
-    "vite.config.js.timestamp-1751012713837-48b4c1f6acd54.mjs",
     "node_modules/svelte-portal/README.md"
   ]
 }

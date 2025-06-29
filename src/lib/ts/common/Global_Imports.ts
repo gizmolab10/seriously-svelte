@@ -26,7 +26,7 @@ import S_Resizing from '../state/S_Resizing';
 import S_Rotation from '../state/S_Rotation';
 import S_Element from '../state/S_Element';
 import S_Widget from '../state/S_Widget';
-import S_Common from '../state/S_Common';
+import S_Common from '../state/S_UX';
 import S_Mouse from '../state/S_Mouse';
 
 import { builds } from './Builds';
@@ -65,7 +65,7 @@ import './Extensions';
 import { k } from './Constants';
 import { u } from './Utilities';
 import { e } from '../signals/Events';
-import { ux } from '../state/S_Common';
+import { ux } from '../state/S_UX';
 import { h } from '../managers/Hierarchy';
 import { p } from '../managers/Preferences';
 import { c } from '../managers/Configuration';
