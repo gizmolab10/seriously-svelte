@@ -89,7 +89,13 @@ export class Hierarchy {
 
 	things_forTitle(title: string): Array<Thing> | null { return this.things_byTitle[title] ?? null; }
 	things_forT_Trait(t_trait: T_Trait): Array<Thing> { return this.things_byT_Trait[t_trait] ?? []; }
-	things_unique_havingTraits() { return u.strip_duplicates(Object.values(this.things_byT_Trait).flat()); }
+	get things_unique_havingTraits(): Array<Thing> { return u.strip_duplicates(Object.values(this.things_byT_Trait).flat()); }
+
+	get things_unique_havingTags(): Array<Thing> {
+		const hids = Object.keys(this.tags_byThingHID);
+		const things = hids.map(hid => this.thing_forHID(parseInt(hid) as Integer));
+		return u.strip_duplicates(things);
+	}
 
 	things_refreshKnowns() {
 		const saved = this.things;

@@ -52,8 +52,8 @@ export default class DB_Test extends DB_Common {
 		h.trait_remember_runtimeCreateUnique(this.idBase, 'tlb', idTb, T_Trait.link, 'http://www.webseriously.org', {});
 		h.trait_remember_runtimeCreateUnique(this.idBase, 'ttb', idTb, T_Trait.text, 'What a brilliant idea you have!', {});
 		h.tag_remember_runtimeCreateUnique_byType(this.idBase, 'Fruity', [idTd.hash(), idTc.hash()]);
-		h.tag_remember_runtimeCreateUnique_byType(this.idBase, 'Moody', [idTd.hash(), idTb.hash()]);
-		h.tag_remember_runtimeCreateUnique_byType(this.idBase, 'Study', [idTd.hash(), idTe.hash()]);
+		h.tag_remember_runtimeCreateUnique_byType(this.idBase, 'Moody', [idTf.hash(), idTd.hash(), idTb.hash()]);
+		h.tag_remember_runtimeCreateUnique_byType(this.idBase, 'Study', [idTc.hash(), idTe.hash()]);
 		// this.makeMore(3, 'c', kindC, idTf, true);	// children of Friendly
 		this.makeMore(2, 'g', kindC, idTb, true, 4);	// children of Brilliant
 		this.makeMore(4, 'e', kindR, idTb, true, 2);	// related to  "

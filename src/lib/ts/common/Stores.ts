@@ -16,7 +16,6 @@ export const w_show_details				 = writable<boolean>();
 const _____THING: unique symbol = Symbol('THING');
 
 export const w_thing_tags				 = writable<Array<Tag>>();
-export const w_tag_things				 = writable<Array<Thing>>();
 export const w_thing_traits				 = writable<Array<Trait>>();
 export const w_thing_title				 = writable<string | null>();
 export const w_thing_color				 = writable<string | null>();

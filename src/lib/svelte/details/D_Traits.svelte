@@ -15,20 +15,11 @@
 	es_button.set_forHovering(colors.default, 'pointer');
 
 	$: {
-		const trigger = `${$w_thing_traits.map(t => t.text).join(', ')} ${$w_ancestries_grabbed.map(a => a.id).join(', ')}`;
+		const trigger = `${$w_thing_traits?.map(t => t.text)?.join(', ')} ${$w_ancestries_grabbed?.map(a => a.id)?.join(', ')}`;
 		if (trigger !== prior_trigger) {
 			prior_trigger = trigger;
 			reattachments++;
 		}
-	}
-
-	function handleClick_onNextPrevious(t_request: T_Request, s_mouse: S_Mouse, column: number): any {
-		switch (t_request) {
-			case T_Request.is_visible:    return true;
-			case T_Request.name:		  return T_Direction[column];
-			case T_Request.handle_click:  if (s_mouse.isDown) { s_details.selectNext_traitThing(column == 1); }
-		}
-		return false;
 	}
 
 </script>
