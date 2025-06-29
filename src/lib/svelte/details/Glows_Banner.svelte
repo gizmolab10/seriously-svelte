@@ -11,7 +11,7 @@
 	export let titles: string[];
 	export let height: number;
 	export let width: number;
-	const g_repeater = new G_Repeater(titles, height, width, 0, 0, 7, 0, false, font_size);
+	const g_repeater = new G_Repeater(titles, height, width, 0, 0, 7, 0, false, font_size, true);
 	let banner_color = colors.ofBannerFor($w_background_color);
 
 	//////////////////////////////////////////////////////////////////////////////////

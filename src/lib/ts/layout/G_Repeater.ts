@@ -6,6 +6,7 @@ export default class G_Repeater {
 	title_gap: number = 8;
 	widths: number[] = [];
 	lefts: number[] = [];
+	swap_title = false;
 	font_size: number;
 	columns: number;
     titles: string[];
@@ -18,6 +19,7 @@ export default class G_Repeater {
 	//////////////////////////////////////////////////////////////
 	//															//
 	//	titles:			strings to display						//
+	//	swap_title:		swap first and second titles			//
 	//	proportionate:	space titles according to their widths	//
 	//	font_size:		needed to compute each title's width	//
 	//	gap:			between titles							//
@@ -27,13 +29,23 @@ export default class G_Repeater {
 	//															//
 	//////////////////////////////////////////////////////////////
 
-	constructor(titles: string[], height: number, width: number, margin: number, gap: number, padding: number, title_gap: number, proportionate: boolean, font_size: number) {
+	constructor(titles: string[],
+		height: number,
+		width: number,
+		margin: number,
+		gap: number,
+		padding: number,
+		title_gap: number,
+		proportionate: boolean,
+		font_size: number,
+		swap_title: boolean = false) {
+		this.titles = G_Repeater.swap_titles(titles, swap_title);
 		this.proportionate = proportionate;
 		this.columns = titles.length;
-		this.font_size = font_size;
+		this.swap_title = swap_title;
 		this.title_gap = title_gap;
+		this.font_size = font_size;
 		this.padding = padding;
-		this.titles = titles;
 		this.height = height;
 		this.margin = margin;
 		this.width = width;
@@ -42,6 +54,12 @@ export default class G_Repeater {
 		this.widths = this.title_widths.map((w, i) => this.gap + this.button_width_for(i));
 	}
 
+	static swap_titles(titles: string[], swap_title: boolean): string[] {
+		return (!swap_title || titles.length < 2) ? titles : [titles[1], titles[0], ...titles.slice(2)];
+	}
+
+	should_swap_titles(): boolean { return this.swap_title && this.titles.length > 1; }
+
 	button_width_for(column: number): number { 
 		const total_width = this.title_widths.reduce((acc, width) => acc + width, 0);	// sum of title widths
 		if (this.proportionate) {
@@ -49,8 +67,9 @@ export default class G_Repeater {
 			const approportionment = (this.width - total_width - margin_and_gaps) / this.columns;
 			return this.title_widths[column] + approportionment; 
 		}
-		if (column === 0) {			// first button: add up all the other title widths and adjust
-			const other_buttons_width = this.title_widths.slice(1).reduce((acc, width) => acc + width + this.padding * 2, 0);
+		if (column === (this.should_swap_titles() ? 1 : 0)) {
+			const widths = this.title_widths.filter((_, i) => i !== column);
+			const other_buttons_width = widths.reduce((acc, width) => acc + width + this.padding * 2, 0);
 			return this.width - other_buttons_width - this.margin * 2 - this.gap - this.padding;
 		}
 		return this.title_widths[column] + this.padding * 2;
