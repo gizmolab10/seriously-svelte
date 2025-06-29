@@ -75,17 +75,23 @@ export default class DB_Common {
 	}
 
 	wait_forClean() {
-		let interval = setInterval(() => {
-			if (!h.isDirty) {
-				clearInterval(interval);
-				interval = setInterval(() => {	
-					if (!h.isDirty) {
-						busy.isPersisting = false;
-						busy.signal_data_redraw(0);
-					}
-				}, 1000);
-			}
-		}, 10);
+		if (!this.isRemote) {
+			busy.isPersisting = false;
+			busy.signal_data_redraw();
+		} else {
+			// kludge to wait for airtable to catch up
+			let interval = setInterval(() => {
+				if (!h.isDirty) {
+					clearInterval(interval);
+					interval = setInterval(() => {	
+						if (!h.isDirty) {
+							busy.isPersisting = false;
+							busy.signal_data_redraw();
+						}
+					}, 1000);
+				}
+			}, 10);
+		}
 	}
 
 	// code common to all persisting actions

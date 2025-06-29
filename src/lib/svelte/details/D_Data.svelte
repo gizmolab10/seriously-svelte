@@ -142,7 +142,7 @@
 			array={storage_details}
 			font_size={k.font_size.banners}/>
 		{#key $w_data_updated}
-			{#if busy.isDatabaseBusy}
+			{#if busy.isDatabaseBusy && h.db.isPersistent}
 				<div class='data-spinner'
 					style='
 						left: 120px;

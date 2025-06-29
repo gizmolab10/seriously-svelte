@@ -39,7 +39,7 @@ export class S_Busy {
 		this.signal_data_redraw();
 	}
 
-	signal_data_redraw(after: number = 1) {
+	signal_data_redraw(after: number = 0) {
 		setTimeout(() => {
 			w_data_updated.set(new Date().getTime());
 		}, after);
