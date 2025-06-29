@@ -86,6 +86,19 @@ export default class G_Layout {
 		this.grand_build();
 	}
 
+	static readonly _____WINDOW: unique symbol;
+	
+	get raw_windowSize(): Size { return new Size(window.innerWidth, window.innerHeight); }
+	get windowSize(): Size { return this.raw_windowSize.dividedBy(this.scale_factor); }
+	get windowScroll(): Point { return new Point(window.scrollX, window.scrollY); }
+
+	restore_state() {
+		this.graphRect_update();	// needed for set_scale_factor
+		this.set_scale_factor(p.read_key(T_Preference.scale) ?? 1);
+		this.renormalize_user_graph_offset();	// must be called after apply scale (which fubars offset)
+		document.documentElement.style.setProperty('--css-body-width', this.windowSize.width.toString() + 'px');
+	}
+
 	static readonly _____SCALE_FACTOR: unique symbol;
 
 	scaleBy(scale_factor: number): number {
@@ -95,13 +108,8 @@ export default class G_Layout {
 	}
 
 	set_scale_factor(scale_factor: number) {
-		this.scale_factor = scale_factor;
+		this.scale_factor = scale_factor;	// needed to edit things
 		p.write_key(T_Preference.scale, scale_factor);
-		const element = document.documentElement;
-		element.style.setProperty('zoom', scale_factor.toString());
-		element.style.height = `${100 / scale_factor}%`;
-		element.style.width = `${100 / scale_factor}%`;
-		this.graphRect_update();
 	}
 
 	static readonly _____USER_OFFSET: unique symbol;
@@ -195,19 +203,6 @@ export default class G_Layout {
 			lefts.push(left);
 		}
 		return [crumb_things, widths, lefts, parent_widths];
-	}
-
-	static readonly _____WINDOW: unique symbol;
-	
-	get raw_windowSize(): Size { return new Size(window.innerWidth, window.innerHeight); }
-	get windowSize(): Size { return this.raw_windowSize.dividedBy(this.scale_factor); }
-	get windowScroll(): Point { return new Point(window.scrollX, window.scrollY); }
-
-	restore_state() {
-		this.graphRect_update();	// needed for set_scale_factor
-		this.set_scale_factor(p.read_key(T_Preference.scale) ?? 1);
-		this.renormalize_user_graph_offset();	// must be called after apply scale (which fubars offset)
-		document.documentElement.style.setProperty('--css-body-width', this.windowSize.width.toString() + 'px');
 	}
 
 	static readonly _____PRIMITIVES: unique symbol;

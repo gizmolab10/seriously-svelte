@@ -87,9 +87,9 @@ export class Events {
 	}
 
 	private handle_resize(event: Event) {
-		// called when simulator switches platform (e.c., desktop <--> iphone)
+		// on COMMAND +/-
+		// and on simulator switches platform
 		const isMobile = u.device_isMobile;
-		debug.log_action(` resize [is${isMobile ? '' : ' not'} mobile] STATE`);
 		w_count_resize.update(n => n + 1);
 		w_device_isMobile.set(isMobile);
 		layout.restore_state();

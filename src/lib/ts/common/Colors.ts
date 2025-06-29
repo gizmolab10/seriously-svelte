@@ -6,7 +6,7 @@ export class Colors {
 	default = 'black';
 	banner = '#f8f8f8';
 	border = 'darkgray';
-	background = 'white';
+	background = 'white';   // #ebf0ff
 	separator = '#eeeee0';
     disabled = 'lightGray';
     default_forThings = 'blue';
