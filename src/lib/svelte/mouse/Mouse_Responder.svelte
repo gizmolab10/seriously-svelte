@@ -105,7 +105,7 @@
 		}
 		s_mouse.clicks += 1;
 		if (detect_doubleClick) {
-			mouse_timer.setTimeout(T_Timer.double, () => {
+			mouse_timer.timeout_start(T_Timer.double, () => {
 				if (mouse_timer.hasTimer && s_mouse.clicks == 2) {
 					reset();
 					handle_s_mouse(create_s_mouse(false, true, false));
@@ -113,7 +113,7 @@
 			});
 		}
 		if (detect_longClick) {
-			mouse_timer.setTimeout(T_Timer.long, () => {
+			mouse_timer.timeout_start(T_Timer.long, () => {
 				if (mouse_timer.hasTimer) {
 					reset();
 					handle_s_mouse(create_s_mouse(false, false, true));

@@ -1,36 +1,28 @@
 <script lang='ts'>
 	import { k, Point, colors, svgPaths, S_Mouse, T_Request, T_Direction, T_Action, e, ux } from '../../ts/common/Global_Imports';
 	import Buttons_Row from '../buttons/Buttons_Row.svelte';
+	import Mouse_Timer from '../../ts/signals/Mouse_Timer';
 	export let separator_thickness = k.thickness.separator.thick;
 	export let closure: (column: number) => any;
 	export let height = k.height.controls;
-	export let has_seperator = false;
-	export let origin = Point.zero;
-	export let has_both_ends = true;
-	export let has_title = false;
 	export let has_gull_wings = true;
+	export let has_seperator = false;
+	export let has_both_ends = true;
+	export let origin = Point.zero;
+	export let has_title = false;
 	export let name = k.empty;
 	export let size = 24;
 	const base_titles = [T_Direction.previous, T_Direction.next];
+	const mouseTimer = ux.mouse_timer_forName(`next-previous-${name}`);
 	$: row_titles = has_title ? [name, ...base_titles] : base_titles;
-	let hoveredIndex = -1;
-	
-	// Use the existing Events system for autorepeat
-	let heldButtonIndex = -1;
-	let autorepeatTimer: NodeJS.Timeout | null = null;
+	let index_forHover = -1;
 
-	function startAutorepeat(index: number) {
-		heldButtonIndex = index;
-		closure(index); // Immediate action
-		autorepeatTimer = setInterval(() => closure(index), k.autorepeat_interval);
+	function autorepeat_start(index: number) {
+		mouseTimer.autorepeat_start(index, () => closure(index));
 	}
 
-	function stopAutorepeat() {
-		if (autorepeatTimer) {
-			clearInterval(autorepeatTimer);
-			autorepeatTimer = null;
-		}
-		heldButtonIndex = -1;
+	function autorepeat_stop() {
+		mouseTimer.autorepeat_stop();
 	}
 
 </script>
@@ -47,7 +39,7 @@
 	{#each row_titles as title, index}
 		<button
 			class='{name}-{title}-button'
-			class:held={heldButtonIndex === index}
+			class:held={mouseTimer.isAutorepeating_forID(index)}
 			style='
 				padding: 0;
 				border: none;
@@ -55,10 +47,10 @@
 				width: {size - 5}px;
 				height: {size + 5}px;
 				background-color: transparent;'
-			on:mousedown={() => startAutorepeat(index)}
-			on:mouseup={stopAutorepeat}
-			on:mouseleave={stopAutorepeat}
-			on:mouseenter={() => hoveredIndex = index}>
+			on:mouseup={autorepeat_stop}
+			on:mouseleave={() => index_forHover = -1}
+			on:mousedown={() => autorepeat_start(index)}
+			on:mouseenter={() => index_forHover = index}>
 			<svg
 				class='svg-glow-button-path'
 				viewBox='0 0 {size} {size}'>
@@ -66,7 +58,7 @@
 					stroke-width='0.75'
 					stroke={colors.border}
 					d={svgPaths.path_for(title, size + 3)}
-					fill={hoveredIndex === index ? 'black' : 'white'}/>
+					fill={index_forHover === index ? 'black' : 'white'}/>
 			</svg>
 		</button>
 	{/each}
