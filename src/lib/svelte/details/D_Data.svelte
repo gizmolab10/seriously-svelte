@@ -56,7 +56,7 @@
 	}
 
 	function action_titles() {
-		switch (ux.t_storage_need) {
+		switch (s_details.t_storage_need) {
 			case T_Storage_Need.direction: return ['local file', ...ids_forDirection];
 			case T_Storage_Need.format:	   return ['file type', ...ids_forFormat()];
 			case T_Storage_Need.busy:	   return [`${storage_choice}ing...`];
@@ -73,7 +73,7 @@
 	}
 
 	function handle_actionRequest(t_request: T_Request, s_mouse: S_Mouse, column: number): any {
-		const ids = (ux.t_storage_need == T_Storage_Need.direction) ? ids_forDirection : ids_forFormat();
+		const ids = (s_details.t_storage_need == T_Storage_Need.direction) ? ids_forDirection : ids_forFormat();
 		switch (t_request) {
 			case T_Request.handle_click: return handle_click_forColumn(s_mouse, column);
 			case T_Request.name:		 return ids[column];
@@ -97,23 +97,23 @@
 	}
 	
 	function handle_click_forColumn(s_mouse, column) {
-		const ids = (ux.t_storage_need == T_Storage_Need.direction) ? ids_forDirection : ids_forFormat();
+		const ids = (s_details.t_storage_need == T_Storage_Need.direction) ? ids_forDirection : ids_forFormat();
 		if (s_mouse.isHover) {
 			s_element_byStorageType[ids[column]].isOut = s_mouse.isOut;
 		} else if (s_mouse.isDown) {
 			const choice = ids[column];
 			if (choice == T_File_Format.cancel) {
-				ux.t_storage_need = T_Storage_Need.direction;
-			} else if (ux.t_storage_need == T_Storage_Need.direction) {
+				s_details.t_storage_need = T_Storage_Need.direction;
+			} else if (s_details.t_storage_need == T_Storage_Need.direction) {
 				storage_choice = choice;
-				ux.t_storage_need = T_Storage_Need.format;
+				s_details.t_storage_need = T_Storage_Need.format;
 			} else {
 				const format = choice as T_File_Format;
 				switch (storage_choice) {
 					case T_File_Operation.export: h.persist_toFile(format); break;
 					case T_File_Operation.import: h.select_file_toUpload(format, s_mouse.event.shiftKey); break;
 				}
-				ux.t_storage_need = T_Storage_Need.busy;
+				s_details.t_storage_need = T_Storage_Need.busy;
 			}
 		}
 	}
@@ -171,7 +171,7 @@
 			{/if}
 		{/key}
 	</div>
-	{#key ux.t_storage_need}
+	{#key s_details.t_storage_need}
 		<Buttons_Row
 			gap={4}
 			margin={20}
@@ -183,7 +183,7 @@
 			button_height={k.height.button}
 			center={new Point(width / 2 + 3, tops[3])}
 			separator_thickness={k.thickness.separator.details}
-			name={`data-${(ux.t_storage_need == T_Storage_Need.direction) ? 'action' : 'format'}`}/>
+			name={`data-${(s_details.t_storage_need == T_Storage_Need.direction) ? 'action' : 'format'}`}/>
 	{/key}
 	<Separator
 		isHorizontal={true}

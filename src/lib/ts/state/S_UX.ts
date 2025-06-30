@@ -1,6 +1,5 @@
 import { S_Mouse, S_Widget, S_Element, T_Graph } from '../common/Global_Imports';
 import { u, T_Element, Mouse_Timer, Ancestry } from '../common/Global_Imports';
-import { T_Storage_Need } from '../common/Enumerations';
 import { w_show_graph_ofType } from '../common/Stores';
 import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
@@ -10,7 +9,6 @@ export default class S_Common {
 	s_widget_byAncestryID: { [id: string]: S_Widget } = {};
 	s_element_byName: { [name: string]: S_Element } = {};
 	s_mouse_byName: { [name: string]: S_Mouse } = {};
-	t_storage_need = T_Storage_Need.direction;
 	mouse_responder_number = 0;
 
 	//////////////////////////////////////

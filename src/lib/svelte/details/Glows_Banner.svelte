@@ -12,6 +12,7 @@
 	export let height: number;
 	export let width: number;
 	const g_repeater = new G_Repeater(titles, height, width, 0, 0, 7, 0, false, font_size, true);
+	function isMainTitle(title: string): boolean { return title === titles[0]; }
 	let banner_color = colors.ofBannerFor($w_background_color);
 
 	//////////////////////////////////////////////////////////////////////////////////
@@ -30,10 +31,10 @@
 	}
 
 	function intercept_click(title: string) {
-		if (title === titles[0]) {
+		if (isMainTitle(title)) {
 			toggle_hidden(title);
 		} else {
-			s_details.update_forBanner(titles[0], title);
+			s_details.update_forBanner(titles[0], title);		// main title is the banner title
 		}
 	}
 
@@ -59,6 +60,7 @@
 			font_size={font_size}
 			isSelected={isSelected}
 			handle_click={intercept_click}
+			performs_autorepeat={!isMainTitle(title)}
 			width={g_repeater.button_width_for(index)}/>
 		{#if index > 0}
 			<Separator

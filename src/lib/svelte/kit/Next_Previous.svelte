@@ -17,12 +17,19 @@
 	$: row_titles = has_title ? [name, ...base_titles] : base_titles;
 	let index_forHover = -1;
 
+	function autorepeat_stop() {
+		mouseTimer.autorepeat_stop();
+	}
+
 	function autorepeat_start(index: number) {
 		mouseTimer.autorepeat_start(index, () => closure(index));
 	}
 
-	function autorepeat_stop() {
-		mouseTimer.autorepeat_stop();
+	function update_index_forHover(index: number) {
+		index_forHover = index;
+		if (index === -1) {
+			mouseTimer.autorepeat_stop();	// if user drifts off button, won't get mouse up, so stop autorepeat
+		}
 	}
 
 </script>
@@ -48,9 +55,9 @@
 				height: {size + 5}px;
 				background-color: transparent;'
 			on:mouseup={autorepeat_stop}
-			on:mouseleave={() => index_forHover = -1}
 			on:mousedown={() => autorepeat_start(index)}
-			on:mouseenter={() => index_forHover = index}>
+			on:mouseleave={() => update_index_forHover(-1)}
+			on:mouseenter={() => update_index_forHover(index)}>
 			<svg
 				class='svg-glow-button-path'
 				viewBox='0 0 {size} {size}'>
