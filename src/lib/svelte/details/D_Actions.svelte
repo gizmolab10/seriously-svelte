@@ -33,7 +33,7 @@
 	// 	  is_disabled calls:	handle_isAction_disabledAt		//
 	//	  handle_click calls:	handle_action_clickedAt ...		//
 	//    n.b., long press generates multiple calls				//
-	//  buttons table adds row (here it becomes row)		//
+	//  buttons table adds row (here it becomes row)			//
 	//															//
 	//////////////////////////////////////////////////////////////
 	
@@ -48,7 +48,7 @@
 	}
 
 	$: {
-		const _ = `${$w_ancestries_expanded.join(',')}${$w_ancestries_grabbed.join(',')}`;
+		const _ = `${$w_ancestries_expanded?.join(',')}${$w_ancestries_grabbed?.join(',')}`;
 		update_button_titles();
 	}
 
@@ -177,6 +177,7 @@
 				title_gap={title_gap}
 				type={T_Element.action}
 				font_sizes={font_sizes}
+				detect_longClick={true}
 				closure={handle_actionRequest}
 				button_height={k.height.button}
 				button_titles={button_titles[0]}/>
@@ -196,6 +197,7 @@
 				title_gap={title_gap}
 				type={T_Element.action}
 				font_sizes={font_sizes}
+				detect_longClick={true}
 				closure={handle_actionRequest}
 				button_height={k.height.button}
 				button_titles={button_titles[1]}/>

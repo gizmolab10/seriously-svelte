@@ -4,11 +4,15 @@ import { w_ancestry_focus, w_count_mouse_up, w_mouse_location, w_mouse_location_
 import { w_s_alteration, w_count_resize, w_s_text_edit, w_control_key_down } from '../common/Stores';
 import { w_device_isMobile, w_ancestries_grabbed, w_user_graph_offset } from '../common/Stores';
 import { get } from 'svelte/store';
+import Mouse_Timer from './Mouse_Timer';
 
 export class Events {
 	initialTouch: Point | null = null;
-	alteration_interval: NodeJS.Timeout | null = null;
-	autorepeat_interval: NodeJS.Timeout | null = null;
+	mouseTimer: Mouse_Timer;
+
+	constructor() {
+		this.mouseTimer = new Mouse_Timer();
+	}
 
 	setup() {
 		w_s_alteration.subscribe((s_alteration: S_Alteration | null) => { this.handle_s_alteration(s_alteration); });
@@ -18,24 +22,12 @@ export class Events {
 	
 	static readonly _____INTERNALS: unique symbol;
 
-	private handle_touch_end(event: TouchEvent) { this.initialTouch = null; }
-	private get autorepeaters(): number[] { return [T_Action.browse, T_Action.move]; }
-
 	name_ofActionAt(t_action: number, column: number): string {
 		return Object.keys(this.actions[T_Action[t_action]])[column];
 	}
 
-	private handle_mouse_up(event: MouseEvent) {
-		w_count_mouse_up.update(n => n + 1);
-	}
-
 	private isCentered_invisible_orNull(ancestry: Ancestry | null): boolean {
 		return !ancestry || !ancestry.isVisible || layout.ancestry_isCentered(ancestry);
-	}
-
-	private update_event_listener(name: string, handler: EventListenerOrEventListenerObject) {
-		window.removeEventListener(name, handler);
-		window.addEventListener(name, handler, { passive: false });
 	}
 
 	private showHelpFor(t_action: number, column: number) { 
@@ -49,6 +41,44 @@ export class Events {
 		const s_alteration = isAltering ? null : new S_Alteration(ancestry, t_alteration, predicate);
 		w_s_alteration.set(s_alteration);
 	}
+
+	static readonly _____SUBSCRIPTIONS: unique symbol;
+
+	private update_event_listener(name: string, handler: EventListenerOrEventListenerObject) {
+		window.removeEventListener(name, handler);
+		window.addEventListener(name, handler, { passive: false });
+	}
+
+	private clear_event_subscriptions() {
+		window.removeEventListener('mouseup',	 this.handle_mouse_up);
+		window.removeEventListener('mousemove',	 this.handle_mouse_move);
+		window.removeEventListener('touchend',	 this.handle_touch_end);
+		window.removeEventListener('touchmove',	 this.handle_touch_move);
+		window.removeEventListener('touchstart', this.handle_touch_start);
+	}
+
+	private subscribeTo_events() {
+		this.clear_event_subscriptions();
+		this.update_event_listener('wheel', this.handle_wheel);
+		this.update_event_listener('keyup', this.handle_key_up);
+		this.update_event_listener('resize', this.handle_resize);
+		this.update_event_listener('keydown', this.handle_key_down);
+		this.update_event_listener('orientationchange', this.handle_orientation_change);
+		if (u.device_isMobile) {
+			debug.log_action(`  mobile subscribe GRAPH`);
+			window.addEventListener('touchend', this.handle_touch_end, { passive: false });
+			window.addEventListener('touchmove', this.handle_touch_move, { passive: false });
+			window.addEventListener('touchstart', this.handle_touch_start, { passive: false });
+		} else {
+			window.addEventListener('mouseup', this.handle_mouse_up, { passive: false });
+			window.addEventListener('mousemove', this.handle_mouse_move, { passive: false });
+		}
+	}
+	
+	static readonly _____EVENT_HANDLERS: unique symbol;
+
+	private handle_touch_end(event: TouchEvent) { this.initialTouch = null; }
+	private handle_mouse_up(event: MouseEvent) { w_count_mouse_up.update(n => n + 1); }
 
 	private handle_mouse_move(event: MouseEvent) {
 		const location = new Point(event.clientX, event.clientY);
@@ -76,14 +106,6 @@ export class Events {
 			this.initialTouch = new Point(touch.clientX, touch.clientY);
 			debug.log_action(` two-finger touches GRAPH`);
 		}
-	}
-
-	private clear_event_subscriptions() {
-		window.removeEventListener('mouseup',	 this.handle_mouse_up);
-		window.removeEventListener('mousemove',	 this.handle_mouse_move);
-		window.removeEventListener('touchend',	 this.handle_touch_end);
-		window.removeEventListener('touchmove',	 this.handle_touch_move);
-		window.removeEventListener('touchstart', this.handle_touch_start);
 	}
 
 	private handle_resize(event: Event) {
@@ -124,52 +146,34 @@ export class Events {
 	}
 
 	private handle_s_alteration(s_alteration: S_Alteration | null) {
-		if (!!this.alteration_interval) {
-			clearInterval(this.alteration_interval);
-			this.alteration_interval = null;
-		}
 		if (!!s_alteration) {
-			let invert = true;
-			this.alteration_interval = setInterval(() => {
+			this.mouseTimer.alteration_start((invert) => {
 				signals.signal_blink_forAlteration(invert);
-				invert = !invert;
-			}, 500)
+			});
 		} else {
+			this.mouseTimer.alteration_stop();
 			signals.signal_blink_forAlteration(false);
 		}
 	}
 
-	private subscribeTo_events() {
-		this.clear_event_subscriptions();
-		this.update_event_listener('wheel', this.handle_wheel);
-		this.update_event_listener('keyup', this.handle_key_up);
-		this.update_event_listener('resize', this.handle_resize);
-		this.update_event_listener('keydown', this.handle_key_down);
-		this.update_event_listener('orientationchange', this.handle_orientation_change);
-		if (u.device_isMobile) {
-			debug.log_action(`  mobile subscribe GRAPH`);
-			window.addEventListener('touchend', this.handle_touch_end, { passive: false });
-			window.addEventListener('touchmove', this.handle_touch_move, { passive: false });
-			window.addEventListener('touchstart', this.handle_touch_start, { passive: false });
-		} else {
-			window.addEventListener('mouseup', this.handle_mouse_up, { passive: false });
-			window.addEventListener('mousemove', this.handle_mouse_move, { passive: false });
-		}
-	}
-	
-	static readonly _____MAIN_EVENT_HANDLERS: unique symbol;
-
 	async handle_action_autorepeatAt(s_mouse: S_Mouse, t_action: number, column: number, name: string) {
-		if (s_mouse.isDown) {
-			return this.handle_action_clickedAt(s_mouse, t_action, column, name);
-		} else if (s_mouse.isLong && this.autorepeaters.includes(t_action)) {
-			this.autorepeat_interval = setInterval(() => {			// begin autorepeating
-				this.handle_action_clickedAt(s_mouse, t_action, column, name);
-			}, k.autorepeat_interval);
-		} else if (s_mouse.isUp && !!this.autorepeat_interval) {	// stop autorepeating
-			clearInterval(this.autorepeat_interval);
-			this.autorepeat_interval = null;
+		if (!s_mouse.isHover) {
+			const autorepeaters = [T_Action.browse, T_Action.move];
+			if (s_mouse.isDown) {
+				return this.handle_action_clickedAt(s_mouse, t_action, column, name);
+			} else if (s_mouse.isUp) {
+				this.mouseTimer.autorepeat_stop();
+			} else {
+				if (autorepeaters.includes(t_action)) {
+					if (s_mouse.isLong) {
+						this.mouseTimer.autorepeat_start(column, () => {
+							this.handle_action_clickedAt(s_mouse, t_action, column, name);
+						});
+					}
+				}
+			}
 		}
+		return null;
 	}
 
 	async handle_key_down(e: Event) {

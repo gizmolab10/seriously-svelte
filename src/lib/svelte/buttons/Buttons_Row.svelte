@@ -9,13 +9,14 @@
 	export let separator_thickness = k.thickness.separator.main;
 	export let origin: Point | null = null;
 	export let center: Point | null = null;
+	export let detect_longClick = false;
     export let type = T_Element.button;
+	export let has_gull_wings = true;
 	export let has_seperator = false;
 	export let row_titles: string[];	// first one is optional row title, rest are button titles
 	export let font_sizes: number[];
 	export let button_height = 13;
 	export let align_left = true;
-	export let has_gull_wings = true;
 	export let has_title = true;	// true means first row_titles is the title of the row
 	export let has_svg = false;
 	export let name = k.empty;
@@ -119,6 +120,7 @@
 					<Button
 						height={button_height}
 						font_size={font_sizes[1]}
+						detect_longClick={detect_longClick}
 						es_button={es_button_byColumn[column]}
 						width={g_repeater.button_width_for(column)}
 						name={`${name}-${button_name_for(column)}`}
