@@ -170,6 +170,9 @@
   },
   "active": "9968854d61be5eec",
   "lastOpenFiles": [
+    "src/lib/ts/state/S_Element copy.ts",
+    "node_modules/snowpack/node_modules/esbuild/bin/esbuild__",
+    "src/lib/svelte/kit/Portal.svelte",
     "src/lib/ts/state/S_UX.ts",
     "src/lib/svelte/details/D_Data.svelte",
     "src/lib/ts/database/DB_Test.ts",
@@ -178,9 +181,6 @@
     "src/lib/ts/database/DB_Holon.ts",
     "src/lib/ts/database/DB_Firebase.ts",
     "src/lib/ts/database/DB_DGraph.ts",
-    "src/lib/ts/database/DB_Common.ts",
-    "src/lib/ts/database/DB_Airtable.ts",
-    "vite.config.js.timestamp-1751053595097-716f456416de8.mjs",
     "node_modules/svelte-portal/README.md"
   ]
 }

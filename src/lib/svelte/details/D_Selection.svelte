@@ -8,8 +8,8 @@
 	import { s_details } from '../../ts/state/S_Details';
 	import type { Integer } from '../../ts/common/Types';
 	import Text_Table from '../kit/Text_Table.svelte';
+	import Portal from '../kit/Portal.svelte';
 	import Color from '../kit/Color.svelte';
-	import Portal from 'svelte-portal';
 	import { onMount } from 'svelte';
 	export let top = 4;
 	const id = 'selection';
@@ -37,9 +37,9 @@
 	function layout_forColor() {
 		if (!!info_table) {
 			const row = Math.max(0, info_details.findIndex(([key]) => key === 'color'));
-			const offsetRow = info_table.absolute_location_ofCellAt(row, 1);
-			color_origin = offsetRow.offsetByXY(-6, -6);
-			picker_offset = `${color_origin.x - 103}px`;
+			const offset_toRow = info_table.absolute_location_ofCellAt(row, 1);
+			color_origin = offset_toRow.offsetEquallyBy(-6);
+			picker_offset = `${color_origin.x - 112}px`;
 		}
 	}
 
@@ -99,7 +99,7 @@
 				font_size={k.font_size.info}/>
 		{/if}
 		{#if !!ancestry && ancestry.isEditable}
-			<Portal>
+			<Portal className='selection-color-portal'>
 				<Color
 					color={color}
 					origin={color_origin}

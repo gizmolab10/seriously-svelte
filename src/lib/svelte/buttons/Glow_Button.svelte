@@ -12,8 +12,9 @@
     const glow_rect = Rect.createWHRect(width, height);
     const gradient_name = 'glow-' + title;
     let isHovering = false;
-    let banner_color = colors.ofBannerFor($w_background_color);
     let timeout: number | null = null;
+    let banner_color = colors.ofBannerFor($w_background_color);
+    $: isInverted = !isHovering || svgPaths.hasPath_for(title);
 
 	$: {
 		const _ = $w_background_color;
@@ -27,15 +28,15 @@
     
     function handle_mouse_enter(is_in: boolean) {
         isHovering = is_in;
-        if (!!timeout) {
-            clearTimeout(timeout);
-            timeout = null;
-        }
-        if (isSelected && is_in) {
-            timeout = setTimeout(() => {
-                isHovering = false;        // suppress distraction from hover
-            }, 600);
-        }
+        // if (!!timeout) {
+        //     clearTimeout(timeout);
+        //     timeout = null;
+        // }
+        // if (isSelected && is_in) {
+        //     timeout = setTimeout(() => {
+        //         isHovering = false;        // suppress distraction from hover
+        //     }, 1000);
+        // }
     }
 
 </script>
@@ -46,13 +47,15 @@
         width: {width}px;
         height: {height}px;
         position: relative;'>
-    <SVG_Gradient
-        name={gradient_name}
-        color={banner_color}
-        size={glow_rect.size}
-        zindex={T_Layer.frontmost}
-        path={svgPaths.rectangle(glow_rect)}
-        isInverted={!isHovering || svgPaths.hasPath_for(title)}/>
+    {#if isInverted}
+        <SVG_Gradient
+            isInverted={true}
+            name={gradient_name}
+            color={banner_color}
+            size={glow_rect.size}
+            zindex={T_Layer.frontmost}
+            path={svgPaths.rectangle(glow_rect)}/>
+    {/if}
     <div class='title'
         on:click={intercept_click}
         on:mouseenter={() => handle_mouse_enter(true)}

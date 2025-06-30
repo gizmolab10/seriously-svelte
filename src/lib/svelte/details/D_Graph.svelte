@@ -6,7 +6,7 @@
 	import Separator from '../kit/Separator.svelte';
 	import Slider from '../mouse/Slider.svelte';
 	import Color from '../kit/Color.svelte';
-	import Portal from 'svelte-portal';
+	import Portal from '../kit/Portal.svelte';
 	import { onMount } from 'svelte';
 	export let top = 0;
 	const separator_gap = -5;
@@ -14,14 +14,29 @@
 	const position = 'relative';
 	const picker_offset = `-88px`;
 	const width = k.width_details;
-	const element_height = k.height.button;
 	const color_left = width / 2 - 13;
 	const segmented_width = width - 6;
+	const element_height = k.height.button;
 	const separator_width = width - 5 - separator_left * 2;
 	const fourth_height = ux.inRadialMode ? -13 : element_height - 9;
 	let color = $w_background_color;
 	let colorOrigin = Point.square(-3.5);
 	let color_wrapper: HTMLDivElement | null = null;
+
+	const heights = [
+		9,
+		separator_gap,
+		element_height + 9,
+		-8,
+		fourth_height + 1,
+		separator_gap,
+		element_height + 9,
+		separator_gap,
+		element_height + 9,
+		separator_gap,
+		4];
+
+	const tops = u.cumulativeSum(heights);
 
 	$: if (color_wrapper || $w_show_details_ofType) {
 		u.onNextTick(() => updateColorOrigin());
@@ -51,24 +66,9 @@
 		}
 	}
 
-	const heights = [
-		8,
-		separator_gap,
-		element_height + 9,
-		-8,
-		fourth_height,
-		separator_gap,
-		element_height + 8,
-		separator_gap,
-		element_height + 8,
-		separator_gap,
-		4];
-
-	const tops = u.cumulativeSum(heights);
-
 </script>
 
-<div class='display'
+<div class='graph-details'
 	style='
 		left:0px;
 		color:black;
@@ -79,15 +79,15 @@
 		font-size:{k.font_size.info}px;'>
 	{#if ux.inTreeMode}
 		<Separator
+			length={width}
 			isHorizontal={true}
 			position={position}
-			has_gull_wings={false}
-			length={separator_width}
+			has_gull_wings={true}
+			origin={Point.y(tops[0])}
 			margin={k.details_margin}
 			title='tree relationships'
 			title_left={k.separator_title_left}
-			origin={new Point(separator_left, tops[0])}
-			thickness={k.thickness.separator.ultra_thin}/>
+			thickness={k.thickness.separator.most_thin}/>
 		{#key $w_show_tree_ofType}
 			{#key $w_show_tree_ofType}
 				<Segmented
@@ -102,14 +102,14 @@
 			{/key}
 		{/key}
 		<Separator
+			length={width}
 			title='tree levels'
 			isHorizontal={true}
 			position={position}
-			has_gull_wings={false}
-			length={separator_width}
+			has_gull_wings={true}
+			origin={Point.y(tops[2])}
 			title_left={k.separator_title_left}
-			origin={new Point(separator_left, tops[2])}
-			thickness={k.thickness.separator.ultra_thin}/>
+			thickness={k.thickness.separator.most_thin}/>
 		<Slider
 			max={12}
 			width={width - 26}
@@ -123,15 +123,15 @@
 			handle_value_change={handle_depth_limit}/>
 	{/if}
 	<Separator
+		length={width}
 		isHorizontal={true}
 		position={position}
-		has_gull_wings={false}
+		has_gull_wings={true}
 		title='force graph to:'
-		length={separator_width}
 		margin={k.details_margin}
+		origin={Point.y(tops[4])}
 		title_left={k.separator_title_left}
-		origin={new Point(separator_left, tops[4])}
-		thickness={k.thickness.separator.ultra_thin}/>
+		thickness={k.thickness.separator.most_thin}/>
 	<Segmented
 		allow_none={true}
 		name='auto-adjust'
@@ -143,15 +143,15 @@
 		handle_selection={handle_auto_adjust}
 		titles={[T_Auto_Adjust.selection, T_Auto_Adjust.fit]}/>
 	<Separator
+		length={width}
 		isHorizontal={true}
 		position={position}
-		has_gull_wings={false}
-		length={separator_width}
+		has_gull_wings={true}
 		margin={k.details_margin}
+		origin={Point.y(tops[6])}
 		title='show tiny dots for'
 		title_left={k.separator_title_left}
-		origin={new Point(separator_left, tops[6])}
-		thickness={k.thickness.separator.ultra_thin}/>
+		thickness={k.thickness.separator.most_thin}/>
 	<Segmented
 		name='counts'
 		allow_none={true}
@@ -172,13 +172,13 @@
 		margin={k.details_margin}
 		origin={Point.y(tops[8])}
 		title_left={k.separator_title_left}
-		thickness={k.thickness.separator.ultra_thin}/>
+		thickness={k.thickness.separator.most_thin}/>
 	<div 
-		class= 'background-color'
+		class= 'background-color-dot'
 		bind:this={color_wrapper}
 		style='
-			width: 16px;
-			height: 16px;
+			width: 17px;
+			height: 17px;
 			top: {tops[9]}px;
 			border-radius: 50%;
 			left: {color_left}px;
@@ -186,7 +186,7 @@
 			border: 1px solid black;
 			z-index: {T_Layer.detailsPlus_3};
 			background-color: {$w_background_color}'>
-		<Portal>
+		<Portal className='graph-color-portal' id='graph'>
 			<Color
 				color={color}
 				origin={colorOrigin}

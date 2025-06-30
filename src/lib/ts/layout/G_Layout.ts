@@ -108,13 +108,13 @@ export default class G_Layout {
 	}
 
 	set_scale_factor(scale_factor: number) {
-		this.scale_factor = scale_factor;	// needed to edit things
-		p.write_key(T_Preference.scale, scale_factor);
-		const element = document.documentElement;
-		element.style.setProperty('zoom', scale_factor.toString());
-		element.style.height = `${100 / scale_factor}%`;
-		element.style.width = `${100 / scale_factor}%`;
-		this.graphRect_update();
+		// this.scale_factor = scale_factor;	// needed to edit things
+		// p.write_key(T_Preference.scale, scale_factor);
+		// const element = document.documentElement;
+		// element.style.setProperty('zoom', scale_factor.toString());
+		// element.style.height = `${100 / scale_factor}%`;
+		// element.style.width = `${100 / scale_factor}%`;
+		// this.graphRect_update();
 	}
 
 	static readonly _____USER_OFFSET: unique symbol;

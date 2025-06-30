@@ -40,7 +40,9 @@ export default class S_Element {
 			w_ancestries_grabbed.subscribe((grabbed) => {
 				this.isInverted = grabbed.includes(this.ancestry);
 			});
-			this.color_background = get(w_background_color);
+			const luminance = colors.luminance_ofColor(this.ancestry.thing?.color ?? k.empty);
+			const use_black = luminance > 0.5 && (this.ancestry.isGrabbed || this.ancestry.isEditing);
+			this.color_background = use_black ? 'black' : get(w_background_color);
 		}
 	}
 
@@ -53,20 +55,9 @@ export default class S_Element {
 	get isHovering(): boolean { return this.ignore_hover ? false : this.isOut == this.isHoverInverted; }
 	get stroke(): string { return this.isDisabled ? this.disabledTextColor : this.color_isInverted ? this.color_background : this.hoverColor; }
 	get cursor(): string { return (this.isHovering && !this.isDisabled) ? this.show_help_cursor ? 'help' : this.hoverCursor : this.defaultCursor; }
+	get svg_outline_color(): string { return this.ancestry.isEditing ? 'black' : this.ancestry.isGrabbed ? this.color_background : this.hoverColor; }
 	get disabledTextColor(): string { return colors.specialBlend(this.color_background, this.defaultDisabledColor, 0.3) ?? this.defaultDisabledColor; }
 	get fill(): string { return this.isDisabled ? 'transparent' : this.color_isInverted ? this.hoverColor : this.isSelected ? 'lightblue' : this.color_background; }
-
-	get svg_outline_color(): string {
-		const thing_color = this.ancestry.thing?.color ?? k.empty;
-		const isLight = colors.luminance_ofColor(thing_color) > 0.5;
-		return (!this.ancestry.isGrabbed && !this.ancestry.isEditing)
-			? thing_color
-			: (this.ancestry.isGrabbed && !this.ancestry.isEditing)
-			? this.color_background
-			: isLight
-			? 'black'
-			: this.hoverColor	;
-	}
 
 	set_forHovering(hoverColor: string, hoverCursor: string) {
 		this.hoverCursor = hoverCursor;

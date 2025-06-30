@@ -82,6 +82,7 @@ export default class Constants {
 			thick:		4,
 			thin:		2,
 			ultra_thin:	2,
+			most_thin:	0.75,
 		},
 	};
 
