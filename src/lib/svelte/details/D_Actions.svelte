@@ -186,7 +186,7 @@
 				length={top_tableHeight}
 				margin={k.details_margin}
 				origin={new Point(left_afterTitle, -4)}
-				thickness={k.thickness.separator.ultra_thin}/>
+				thickness={k.thickness.separator.banners}/>
 			<Buttons_Table
 				gap={2}
 				top={16}
@@ -204,7 +204,7 @@
 				has_thin_divider={true}
 				margin={k.details_margin}
 				length={bottom_tableHeight}
-				thickness={k.thickness.separator.ultra_thin}
+				thickness={k.thickness.separator.banners}
 				origin={new Point(left_afterTitle, top_tableHeight - 10)}/>
 			<Separator
 				isHorizontal={true}
@@ -214,7 +214,7 @@
 				title='edit your hierarchy'
 				title_left={k.separator_title_left}
 				origin={Point.y(top_tableHeight - 11)}
-				thickness={k.thickness.separator.ultra_thin}/>
+				thickness={k.thickness.separator.banners}/>
 		{/if}
 	</div>
 {/key}

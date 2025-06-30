@@ -70,7 +70,7 @@
 	isHorizontal={false}
 	
 	margin={k.details_margin}
-	thickness={k.thickness.separator.thick}
+	thickness={k.thickness.separator.main}
 	length={$w_graph_rect.size.height + 10}
 	corner_radius={k.radius.gull_wings.thick}
 	origin={new Point(k.width_details - 2, layout.panel_boxHeight)}/>

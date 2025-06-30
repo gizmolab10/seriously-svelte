@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, Point, colors, svgPaths, S_Mouse, T_Request, T_Direction } from '../../ts/common/Global_Imports';
+	import { k, Point, colors, svgPaths, S_Mouse, T_Request, T_Direction, T_Action, e, ux } from '../../ts/common/Global_Imports';
 	import Buttons_Row from '../buttons/Buttons_Row.svelte';
 	export let separator_thickness = k.thickness.separator.thick;
 	export let closure: (column: number) => any;
@@ -14,6 +14,24 @@
 	const base_titles = [T_Direction.previous, T_Direction.next];
 	$: row_titles = has_title ? [name, ...base_titles] : base_titles;
 	let hoveredIndex = -1;
+	
+	// Use the existing Events system for autorepeat
+	let heldButtonIndex = -1;
+	let autorepeatTimer: NodeJS.Timeout | null = null;
+
+	function startAutorepeat(index: number) {
+		heldButtonIndex = index;
+		closure(index); // Immediate action
+		autorepeatTimer = setInterval(() => closure(index), k.autorepeat_interval);
+	}
+
+	function stopAutorepeat() {
+		if (autorepeatTimer) {
+			clearInterval(autorepeatTimer);
+			autorepeatTimer = null;
+		}
+		heldButtonIndex = -1;
+	}
 
 </script>
 
@@ -29,6 +47,7 @@
 	{#each row_titles as title, index}
 		<button
 			class='{name}-{title}-button'
+			class:held={heldButtonIndex === index}
 			style='
 				padding: 0;
 				border: none;
@@ -36,8 +55,9 @@
 				width: {size - 5}px;
 				height: {size + 5}px;
 				background-color: transparent;'
-			on:click={() => closure(index)}
-			on:mouseleave={() => hoveredIndex = -1}
+			on:mousedown={() => startAutorepeat(index)}
+			on:mouseup={stopAutorepeat}
+			on:mouseleave={stopAutorepeat}
 			on:mouseenter={() => hoveredIndex = index}>
 			<svg
 				class='svg-glow-button-path'
@@ -51,3 +71,10 @@
 		</button>
 	{/each}
 </div>
+
+<style>
+	button.held {
+		transform: scale(0.95);
+		transition: transform 0.1s ease;
+	}
+</style>

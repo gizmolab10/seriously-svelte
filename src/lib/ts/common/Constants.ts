@@ -1,4 +1,3 @@
-import { tu } from './Testworthy_Utilities';
 import { builds } from './Builds';
 
 const dot_size = 14;
@@ -9,8 +8,8 @@ export default class Constants {
 	halfIncrement = 0.5;
 	width_details = 220;
 	radial_widget_inset = 28;
-	autorepeat_interval = 50;
 	separator_title_left = 0;
+	autorepeat_interval = 250;
 	hid_unknown = 1000000000000;
 	diameterOf_outer_tinyDots = 19;
 	build_number = builds.build_number;
@@ -79,10 +78,9 @@ export default class Constants {
 		paging_arc:	   15,
 		fork:		    2.5,
 		separator: {
-			thick:		4,
-			thin:		2,
-			ultra_thin:	2,
-			most_thin:	0.75,
+			main:		5,
+			banners:	2.5,
+			details:	0.75,
 		},
 	};
 

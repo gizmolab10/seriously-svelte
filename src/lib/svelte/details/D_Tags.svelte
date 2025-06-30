@@ -1,7 +1,6 @@
 <script lang='ts'>
     import { k, grabs, T_Request, S_Mouse, Point, T_Direction } from '../../ts/common/Global_Imports';
     import { w_thing_tags, w_tag_thing_index } from '../../ts/common/Stores';
-    import Next_Previous from '../kit/Next_Previous.svelte';
 	import { s_details } from '../../ts/state/S_Details';
 	import Separator from '../kit/Separator.svelte';
     const padding = 10;

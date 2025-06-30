@@ -31,7 +31,7 @@ export default class G_ArcSlider {
 		this.clusters_center = Point.square(radius);
 		this.isThumb = isThumb;
 		if (isThumb) {
-			const delta = k.thickness.separator.thick / 3;
+			const delta = k.thickness.separator.main / 3;
 			this.outside_arc_radius = radius + k.thickness.paging_arc - delta + 1;
 			this.cap_radius = k.radius.arcSlider_cap - delta;
 			this.inside_arc_radius = radius + delta + 1;

@@ -4,7 +4,7 @@
     import SVG_Gradient from './SVG_Gradient.svelte';
 	import Separator from './Separator.svelte';
     export let corner_radius: number = k.radius.gull_wings.thick;
-    export let thickness: number = k.thickness.separator.thick;
+    export let thickness: number = k.thickness.separator.main;
     export let color: string = colors.separator;
     export let showBottom: boolean = true;
     export let showRight: boolean = true;

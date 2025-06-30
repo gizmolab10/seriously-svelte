@@ -51,7 +51,7 @@
 		isHorizontal={true}
 		has_thin_divider={true}
 		corner_radius={k.radius.gull_wings.thin}
-		thickness={k.thickness.separator.ultra_thin}/>
+		thickness={k.thickness.separator.banners}/>
 	{#each g_repeater.titles as title, index}
 		<Glow_Button
 			title={title}
@@ -65,7 +65,7 @@
 				length={height + 6}
 				isHorizontal={false}
 				has_thin_divider={true}
-				thickness={k.thickness.separator.ultra_thin}
+				thickness={k.thickness.separator.banners}
 				corner_radius={k.radius.gull_wings.ultra_thin}
 				origin={new Point(g_repeater.button_left_for(index), 1)}/>
 		{/if}
@@ -74,5 +74,5 @@
 		isHorizontal={true}
 		origin={Point.y(height)}
 		corner_radius={k.radius.gull_wings.thin}
-		thickness={k.thickness.separator.ultra_thin}/>
+		thickness={k.thickness.separator.banners}/>
 </div> 

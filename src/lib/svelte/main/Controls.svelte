@@ -89,7 +89,7 @@
 			color={colors.separator}
 			width={layout.windowSize.width}
 			height={layout.panel_boxHeight + 2}
-			thickness={k.thickness.separator.thick}
+			thickness={k.thickness.separator.main}
 			corner_radius={k.radius.gull_wings.thick}>
 			<div
 				class='controls'

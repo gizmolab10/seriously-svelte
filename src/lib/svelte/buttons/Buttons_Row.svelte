@@ -6,7 +6,7 @@
 	import Separator from '../kit/Separator.svelte';
 	import Button from './Button.svelte';
 	export let closure: (t_request: T_Request, s_mouse: S_Mouse, column: number) => boolean;
-	export let separator_thickness = k.thickness.separator.thick;
+	export let separator_thickness = k.thickness.separator.main;
 	export let origin: Point | null = null;
 	export let center: Point | null = null;
     export let type = T_Element.button;

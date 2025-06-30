@@ -3,7 +3,7 @@
 	import { w_show_details_ofType, w_background_color } from '../../ts/common/Stores';
 	import Gull_Wings from '../kit/Gull_Wings.svelte';
 	export let corner_radius = k.radius.gull_wings.ultra_thin;
-	export let thickness = k.thickness.separator.thick;
+	export let thickness = k.thickness.separator.main;
 	export let title_font_size = k.font_size.separator;
 	export let title_left: number | null= null;
 	export let title: string | null = null;

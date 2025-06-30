@@ -182,12 +182,12 @@
 			closure={handle_actionRequest}
 			button_height={k.height.button}
 			center={new Point(width / 2 + 3, tops[3])}
-			separator_thickness={k.thickness.separator.most_thin}
+			separator_thickness={k.thickness.separator.details}
 			name={`data-${(ux.t_storage_need == T_Storage_Need.direction) ? 'action' : 'format'}`}/>
 	{/key}
 	<Separator
 		isHorizontal={true}
 		origin={Point.y(tops[4])}
-		thickness={k.thickness.separator.thick}
+		thickness={k.thickness.separator.main}
 		corner_radius={k.radius.gull_wings.thick}/>
 </div>

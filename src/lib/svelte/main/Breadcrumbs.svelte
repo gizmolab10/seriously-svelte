@@ -57,7 +57,7 @@
 			color={separator_color}
 			width={layout.windowSize.width}
 			height={layout.panel_boxHeight}
-			thickness={k.thickness.separator.thick}
+			thickness={k.thickness.separator.main}
 			corner_radius={k.radius.gull_wings.thick}>
 			<div class='breadcrumbs'
 				style='

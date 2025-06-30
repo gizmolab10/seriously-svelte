@@ -9,37 +9,38 @@
 	import Portal from '../kit/Portal.svelte';
 	import { onMount } from 'svelte';
 	export let top = 0;
-	const separator_gap = -5;
+	const back_up = -5;
 	const separator_left = 35;
 	const position = 'relative';
 	const picker_offset = `-88px`;
 	const width = k.width_details;
 	const color_left = width / 2 - 13;
 	const segmented_width = width - 6;
-	const element_height = k.height.button;
+	const segmented_height = k.height.button;
+	const separator_height = segmented_height + 9;
 	const separator_width = width - 5 - separator_left * 2;
-	const fourth_height = ux.inRadialMode ? -13 : element_height - 9;
+	const fourth_height = (ux.inTreeMode ? segmented_height : -4) - 8;
 	let color = $w_background_color;
-	let colorOrigin = Point.square(-3.5);
+	let color_origin = Point.square(-3.5);
 	let color_wrapper: HTMLDivElement | null = null;
 
 	const heights = [
-		9,
-		separator_gap,
-		element_height + 9,
-		-8,
-		fourth_height + 1,
-		separator_gap,
-		element_height + 9,
-		separator_gap,
-		element_height + 9,
-		separator_gap,
-		4];
+		11,
+		back_up,			// 1 child/related
+		separator_height,
+		back_up - 4,		// 3. tree levels
+		fourth_height,
+		back_up,			// 5. show tiny dots for
+		separator_height,
+		back_up,			// 7. force graph
+		separator_height,
+		back_up,			// 9. background color
+		5];
 
 	const tops = u.cumulativeSum(heights);
 
 	$: if (color_wrapper || $w_show_details_ofType) {
-		u.onNextTick(() => updateColorOrigin());
+		u.onNextTick(() => update_color_origin());
 	}
 
 	function handle_colors(result: string) {
@@ -59,10 +60,10 @@
 		layout.grand_layout();
 	}
 
-	function updateColorOrigin() {
+	function update_color_origin() {
 		if (color_wrapper) {
 			const origin = Rect.createFromDOMRect(color_wrapper.getBoundingClientRect()).origin.multipliedBy(1 / layout.scale_factor);
-			colorOrigin = origin.offsetByXY(-3, -4);
+			color_origin = origin.offsetByXY(-3, -4);
 		}
 	}
 
@@ -87,14 +88,14 @@
 			margin={k.details_margin}
 			title='tree relationships'
 			title_left={k.separator_title_left}
-			thickness={k.thickness.separator.most_thin}/>
+			thickness={k.thickness.separator.details}/>
 		{#key $w_show_tree_ofType}
 			{#key $w_show_tree_ofType}
 				<Segmented
 					width={180}
 					name='tree-types'
 					allow_multiple={true}
-					height={element_height}
+					height={segmented_height}
 					selected={$w_show_tree_ofType}
 					origin={new Point(18, tops[1])}
 					titles={[T_Kinship.child, T_Kinship.related]}
@@ -109,13 +110,13 @@
 			has_gull_wings={true}
 			origin={Point.y(tops[2])}
 			title_left={k.separator_title_left}
-			thickness={k.thickness.separator.most_thin}/>
+			thickness={k.thickness.separator.details}/>
 		<Slider
 			max={12}
 			width={width - 26}
 			isLogarithmic={true}
 			value={$w_depth_limit}
-			height={element_height}
+			height={segmented_height}
 			thumb_color={colors.separator}
 			origin={new Point(10, tops[3])}
 			title_left={k.separator_title_left}
@@ -131,13 +132,13 @@
 		margin={k.details_margin}
 		origin={Point.y(tops[4])}
 		title_left={k.separator_title_left}
-		thickness={k.thickness.separator.most_thin}/>
+		thickness={k.thickness.separator.details}/>
 	<Segmented
 		allow_none={true}
 		name='auto-adjust'
 		allow_multiple={false}
 		width={segmented_width}
-		height={element_height}
+		height={segmented_height}
 		origin={Point.y(tops[5])}
 		selected={[$w_auto_adjust_graph]}
 		handle_selection={handle_auto_adjust}
@@ -151,13 +152,13 @@
 		origin={Point.y(tops[6])}
 		title='show tiny dots for'
 		title_left={k.separator_title_left}
-		thickness={k.thickness.separator.most_thin}/>
+		thickness={k.thickness.separator.details}/>
 	<Segmented
 		name='counts'
 		allow_none={true}
 		allow_multiple={true}
 		width={segmented_width}
-		height={element_height}
+		height={segmented_height}
 		origin={Point.y(tops[7])}
 		selected={$w_show_countDots_ofType}
 		handle_selection={handle_count_dots}
@@ -172,7 +173,7 @@
 		margin={k.details_margin}
 		origin={Point.y(tops[8])}
 		title_left={k.separator_title_left}
-		thickness={k.thickness.separator.most_thin}/>
+		thickness={k.thickness.separator.details}/>
 	<div 
 		class= 'background-color-dot'
 		bind:this={color_wrapper}
@@ -189,7 +190,7 @@
 		<Portal className='graph-color-portal' id='graph'>
 			<Color
 				color={color}
-				origin={colorOrigin}
+				origin={color_origin}
 				color_closure={handle_colors}
 				picker_offset={picker_offset}/>
 		</Portal>
