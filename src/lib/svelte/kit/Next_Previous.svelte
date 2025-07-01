@@ -13,7 +13,7 @@
 	export let name = k.empty;
 	export let size = 24;
 	const base_titles = [T_Direction.previous, T_Direction.next];
-	const mouseTimer = ux.mouse_timer_forName(`next-previous-${name}`);
+	const mouseTimer = e.mouse_timer_forName(`next-previous-${name}`);
 	$: row_titles = has_title ? [name, ...base_titles] : base_titles;
 	let index_forHover = -1;
 

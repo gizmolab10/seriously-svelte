@@ -7,11 +7,14 @@ import { get } from 'svelte/store';
 import Mouse_Timer from './Mouse_Timer';
 
 export class Events {
+	mouse_timer_byName: { [name: string]: Mouse_Timer } = {};
 	initialTouch: Point | null = null;
 	mouseTimer: Mouse_Timer;
 
+	mouse_timer_forName(name: string): Mouse_Timer { return u.assure_forKey_inDict(name, this.mouse_timer_byName, () => new Mouse_Timer()); }
+
 	constructor() {
-		this.mouseTimer = new Mouse_Timer();
+		this.mouseTimer = this.mouse_timer_forName('events');
 	}
 
 	setup() {
@@ -19,7 +22,7 @@ export class Events {
 		w_device_isMobile.subscribe((isMobile: boolean) => { this.subscribeTo_events(); });
 		this.subscribeTo_events();
 	}
-	
+
 	static readonly _____INTERNALS: unique symbol;
 
 	name_ofActionAt(t_action: number, column: number): string {

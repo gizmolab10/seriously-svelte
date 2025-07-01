@@ -1,17 +1,17 @@
 import { w_thing_tags, w_thing_traits, w_data_updated, w_show_details_ofType } from '../common/Stores';
+import { T_Details, T_Direction, T_Storage_Need, S_Identifiables } from '../common/Global_Imports';
 import { w_count_details, w_ancestry_focus, w_ancestries_grabbed } from '../common/Stores';
-import { T_Details, T_Direction, S_Identifiables, T_Storage_Need } from '../common/Global_Imports';
 import { h, grabs, Thing, Trait, Ancestry } from '../common/Global_Imports';
 import { S_Banner_Hideable } from './S_Banner_Hideable';
 import { get } from 'svelte/store';
 
 class S_Details {
 	private s_banner_hideables_byType: { [t_detail: string]: S_Banner_Hideable } = {};
+	private s_selected_ancestries = new S_Identifiables<Ancestry>([]);
 	private s_trait_things = new S_Identifiables<Thing>([]);
-	private s_selected = new S_Identifiables<Ancestry>([]);
 	private s_tag_things = new S_Identifiables<Thing>([]);
-	number_ofDetails = 0;
 	t_storage_need = T_Storage_Need.direction;
+	number_ofDetails = 0;
 
 	constructor() {
 		w_data_updated.subscribe((count: number) => {
@@ -50,15 +50,15 @@ class S_Details {
 	
 	static readonly _____SELECTION: unique symbol;
 
-	private get ancestry(): Ancestry | null { return (this.s_selected.item as Ancestry) ?? grabs.latest; }
+	private get ancestry(): Ancestry | null { return (this.s_selected_ancestries.item as Ancestry) ?? grabs.latest; }
 
 	private update_selected() {
 		const grabbed = get(w_ancestries_grabbed) ?? [];
-		this.s_selected.set_items(grabbed);
+		this.s_selected_ancestries.set_items(grabbed);
 	}
 	
 	selectNext_selection(next: boolean) {
-		this.s_selected.find_next_item(next);
+		this.s_selected_ancestries.find_next_item(next);
 		w_count_details.update(n => n + 1);	// force re-render of details
 	}
 	
@@ -95,7 +95,7 @@ class S_Details {
 
 		////////////////////////////////////////////////////////////////
 		//															  //
-		//	s_trait_things				  ALL things that have traits //
+		//	trait_things				  ALL things that have traits //
 		//	w_thing_traits	JUST traits of the current ancestry.thing //
 		//															  //
 		////////////////////////////////////////////////////////////////

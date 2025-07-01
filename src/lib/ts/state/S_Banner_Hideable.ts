@@ -10,8 +10,8 @@ export class S_Banner_Hideable {
 	isBottom = false;
 
 	constructor(t_detail: T_Details) {
-		this.isBottom = t_detail === T_Details.database;
-        this.hasBanner = t_detail !== T_Details.header;
+		this.hasBanner = t_detail !== T_Details.header;
+		this.isBottom = t_detail === T_Details.data;
 		this.t_detail = t_detail;
     }
 

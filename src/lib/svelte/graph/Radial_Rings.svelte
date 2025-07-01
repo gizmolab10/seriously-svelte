@@ -11,7 +11,7 @@
 	import { onMount } from 'svelte';
 	const ring_width = k.thickness.rotation_ring;
 	const name = 'rings';
-	const mouse_timer = ux.mouse_timer_forName(name);	// persist across destroy/recreate
+	const mouse_timer = e.mouse_timer_forName(name);	// persist across destroy/recreate
 	let color = $w_ancestry_focus?.thing?.color ?? colors.default_forThings;
 	let mouse_up_count = $w_count_mouse_up;
 	let cursor = k.cursor_default;
@@ -58,7 +58,7 @@
 	}
 
 	function s_reset() {
-		ux.mouse_timer_forName(name).reset();
+		e.mouse_timer_forName(name).reset();
 		$w_g_paging_cluster = null;
 		mouse_timer.reset();
 		cursor = 'default';

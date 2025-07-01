@@ -5,7 +5,6 @@ import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
 
 export default class S_Common {
-	mouse_timer_byName: { [name: string]: Mouse_Timer } = {};
 	s_widget_byAncestryID: { [id: string]: S_Widget } = {};
 	s_element_byName: { [name: string]: S_Element } = {};
 	s_mouse_byName: { [name: string]: S_Mouse } = {};
@@ -29,7 +28,6 @@ export default class S_Common {
 	get inRadialMode(): boolean { return get(w_show_graph_ofType) == T_Graph.radial; }
 	s_element_forName(name: string): S_Element { return this.s_element_byName[name]; }
 	s_mouse_forName(name: string): S_Mouse { return u.assure_forKey_inDict(name, this.s_mouse_byName, () => S_Mouse.empty()); }
-	mouse_timer_forName(name: string): Mouse_Timer { return u.assure_forKey_inDict(name, this.mouse_timer_byName, () => new Mouse_Timer()); }
 	name_from(identifiable: Identifiable, type: T_Element, subtype: string): string { return `${type}(${subtype}) (id '${identifiable.id}')`; }
 	s_widget_forAncestry(ancestry: Ancestry): S_Widget { return u.assure_forKey_inDict(ancestry.pathString, this.s_widget_byAncestryID, () => new S_Widget(ancestry)); }
 

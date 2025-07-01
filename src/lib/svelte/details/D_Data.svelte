@@ -17,7 +17,6 @@
 	const buttons_top = 138;
     const font_sizes = [k.font_size.instructions, k.font_size.banners];
 	const ids_forDirection = [T_File_Operation.import, T_File_Operation.export];
-    const s_banner_hideable = s_details.s_banner_hideables_byType[T_Details.database];
 	const es_save = ux.s_element_for(new Identifiable('save'), T_Element.button, 'save');
 	const ids_forOutputFormat = [T_File_Format.csv, T_File_Format.json, T_File_Format.cancel];
 	const ids_forDatabase = [T_Database.local, T_Database.firebase, T_Database.airtable, T_Database.test];
