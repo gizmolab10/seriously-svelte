@@ -3,7 +3,7 @@
 	import { w_count_button_restyle } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
     import G_Repeater from '../../ts/layout/G_Repeater';
-	import Separator from '../kit/Separator.svelte';
+	import Separator from '../draw/Separator.svelte';
 	import Button from './Button.svelte';
 	export let closure: (t_request: T_Request, s_mouse: S_Mouse, column: number) => boolean;
 	export let separator_thickness = k.thickness.separator.main;

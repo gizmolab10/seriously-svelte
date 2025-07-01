@@ -3,8 +3,8 @@
 	import { h, k, ux, colors, Size, S_Mouse } from '../../ts/common/Global_Imports';
 	import { w_thing_traits, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
+	import Text_Editor from '../details/Text_Editor.svelte';
 	import { s_details } from '../../ts/state/S_Details';
-	import Text_Editor from '../kit/Text_Editor.svelte';
     const s_banner_hideable = s_details.s_banner_hideables_byType[T_Details.traits];
 	const es_button = ux.s_element_for(new Identifiable('trait'), T_Element.button, 'trait');
 	let text_box_size = new Size(k.width_details - 34, 68);

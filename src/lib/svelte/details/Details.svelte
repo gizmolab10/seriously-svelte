@@ -2,7 +2,7 @@
 	import { k, Point, layout, T_Layer, T_Details, T_Direction } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_count_details, w_show_graph_ofType, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import Banner_Hideable from './Banner_Hideable.svelte';
-	import Separator from '../kit/Separator.svelte';
+	import Separator from '../draw/Separator.svelte';
 	import D_Selection from './D_Selection.svelte';
 	import D_Graph from './D_Graph.svelte';
 	import D_Actions from './D_Actions.svelte';

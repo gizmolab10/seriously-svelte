@@ -7,12 +7,12 @@
 	import { T_Database } from '../../ts/database/DB_Common';
     import Buttons_Row from '../buttons/Buttons_Row.svelte';
 	import { w_t_database } from '../../ts/common/Stores';
+	import Text_Table from '../details/Text_Table.svelte';
     import { s_details } from '../../ts/state/S_Details';
 	import Segmented from '../mouse/Segmented.svelte';
-	import Text_Table from '../kit/Text_Table.svelte';
-	import Separator from '../kit/Separator.svelte';
+	import Separator from '../draw/Separator.svelte';
 	import Button from '../buttons/Button.svelte';
-	import Spinner from '../kit/Spinner.svelte';
+	import Spinner from '../draw/Spinner.svelte';
 	export let top = 3;
 	const buttons_top = 138;
     const font_sizes = [k.font_size.instructions, k.font_size.banners];

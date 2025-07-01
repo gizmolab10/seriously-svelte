@@ -5,7 +5,7 @@
 	import { layout, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
 	import { w_s_alteration, w_background_color } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import SVG_D3 from '../kit/SVG_D3.svelte';
+	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
 	export let es_drag!: S_Element;
 	export let points_right = true;

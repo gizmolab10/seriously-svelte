@@ -4,7 +4,7 @@
 	import Tree_Branches from './Tree_Branches.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import Tree_Line from './Tree_Line.svelte';
-	import Circle from '../kit/Circle.svelte';
+	import Circle from '../draw/Circle.svelte';
 	export let depth: number;
 	export let ancestry: Ancestry;
 	export let show_child_branches = true;

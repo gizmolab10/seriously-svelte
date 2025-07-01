@@ -4,7 +4,7 @@
 	import Glow_Button from '../buttons/Glow_Button.svelte';
 	import { s_details } from '../../ts/state/S_Details';
 	import G_Repeater from '../../ts/layout/G_Repeater';
-	import Separator from '../kit/Separator.svelte';
+	import Separator from '../draw/Separator.svelte';
 	export let toggle_hidden: (title: string) => void;
 	export let font_size = k.font_size.details;
     export let isSelected: boolean = false;

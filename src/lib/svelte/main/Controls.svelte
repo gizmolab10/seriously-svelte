@@ -4,12 +4,12 @@
 	import { w_background_color, w_device_isMobile, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { w_show_details, w_show_graph_ofType, w_show_tree_ofType } from '../../ts/common/Stores';
 	import { w_graph_rect, w_count_resize, w_popupView_id } from '../../ts/common/Stores';
+	import Next_Previous from '../mouse/Next_Previous.svelte';
 	import Identifiable from '../../ts/runtime/Identifiable';
-	import Next_Previous from '../kit/Next_Previous.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Button from '../buttons/Button.svelte';
-	import SVG_D3 from '../kit/SVG_D3.svelte';
-	import Box from '../kit/Box.svelte';
+	import SVG_D3 from '../draw/SVG_D3.svelte';
+	import Box from '../draw/Box.svelte';
 	import { onMount } from 'svelte';
 	const widths = [18, 14, 56];
 	const lefts = u.cumulativeSum(widths);

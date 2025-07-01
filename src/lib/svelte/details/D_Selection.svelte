@@ -5,11 +5,11 @@
 	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { w_background_color, w_show_details_ofType } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
+	import Text_Table from '../details/Text_Table.svelte';
 	import { s_details } from '../../ts/state/S_Details';
 	import type { Integer } from '../../ts/common/Types';
-	import Text_Table from '../kit/Text_Table.svelte';
-	import Portal from '../kit/Portal.svelte';
-	import Color from '../kit/Color.svelte';
+	import Color from '../details/Color.svelte';
+	import Portal from '../draw/Portal.svelte';
 	import { onMount } from 'svelte';
 	export let top = 4;
 	const id = 'selection';

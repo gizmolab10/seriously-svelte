@@ -7,7 +7,7 @@
 	import Buttons_Table from '../buttons/Buttons_Table.svelte';
     import { s_details } from '../../ts/state/S_Details';
 	import Segmented from '../mouse/Segmented.svelte';
-	import Separator from '../kit/Separator.svelte';
+	import Separator from '../draw/Separator.svelte';
 	import Button from '../buttons/Button.svelte';
 	import Slider from '../mouse/Slider.svelte';
 	export let top = 2;

@@ -4,8 +4,8 @@
 	import { w_s_text_edit, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { w_graph_rect, w_thing_color, w_background_color } from '../../ts/common/Stores';
 	import Breadcrumb_Button from '../buttons/Breadcrumb_Button.svelte';
-	import SVG_D3 from '../kit/SVG_D3.svelte';
-	import Box from '../kit/Box.svelte';
+	import SVG_D3 from '../draw/SVG_D3.svelte';
+	import Box from '../draw/Box.svelte';
 	import { onMount } from 'svelte';
 	let separator_color = colors.separator;
 	let breadcrumb_reattachments = 0;

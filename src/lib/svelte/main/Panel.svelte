@@ -9,8 +9,8 @@
 	import Detail_Stack from '../details/Detail_Stack.svelte';
 	import { T_Database } from '../../ts/database/DB_Common';
 	import StackDemo from '../experiments/StackDemo.svelte';
-	import Gull_Wings from '../kit/Gull_Wings.svelte';
-	import Separator from '../kit/Separator.svelte';
+	import Gull_Wings from '../draw/Gull_Wings.svelte';
+	import Separator from '../draw/Separator.svelte';
 	import Details from '../details/Details.svelte';
 	import Breadcrumbs from './Breadcrumbs.svelte';
 	import BuildNotes from './BuildNotes.svelte';

@@ -3,10 +3,10 @@
 	import { w_show_details_ofType, w_show_tree_ofType, w_show_countDots_ofType } from '../../ts/common/Stores';
 	import { w_depth_limit, w_background_color, w_auto_adjust_graph } from '../../ts/common/Stores';
 	import Segmented from '../mouse/Segmented.svelte';
-	import Separator from '../kit/Separator.svelte';
+	import Separator from '../draw/Separator.svelte';
 	import Slider from '../mouse/Slider.svelte';
-	import Color from '../kit/Color.svelte';
-	import Portal from '../kit/Portal.svelte';
+	import Color from '../details/Color.svelte';
+	import Portal from '../draw/Portal.svelte';
 	import { onMount } from 'svelte';
 	export let top = 0;
 	const back_up = -5;

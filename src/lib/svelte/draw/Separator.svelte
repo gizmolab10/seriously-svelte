@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, u, Point, colors, T_Layer, Direction } from '../../ts/common/Global_Imports';
 	import { w_show_details_ofType, w_background_color } from '../../ts/common/Stores';
-	import Gull_Wings from '../kit/Gull_Wings.svelte';
+	import Gull_Wings from '../draw/Gull_Wings.svelte';
 	export let corner_radius = k.radius.gull_wings.ultra_thin;
 	export let thickness = k.thickness.separator.main;
 	export let title_font_size = k.font_size.separator;

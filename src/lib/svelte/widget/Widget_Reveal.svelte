@@ -5,7 +5,7 @@
 	import { Size, Thing, Point, Predicate } from '../../ts/common/Global_Imports';
 	import { S_Element, T_Layer, T_Graph } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import SVG_D3 from '../kit/SVG_D3.svelte';
+	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
     export let zindex = T_Layer.dots;
 	export let points_toChild = true;

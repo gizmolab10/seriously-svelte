@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, Point, debug, colors, signals, T_Layer } from '../../ts/common/Global_Imports';
 	import { w_thing_color } from '../../ts/common/Stores';
-	import Circle from '../kit/Circle.svelte';
+	import Circle from '../draw/Circle.svelte';
 	import Box from '../debug/Box.svelte';
 	import { onMount } from 'svelte';
 	export let g_line!: G_TreeLine;

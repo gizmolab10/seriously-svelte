@@ -1,9 +1,8 @@
 <script lang='ts'>
     import { e, k, u, show, Rect, Size, Point, colors, svgPaths, T_Layer } from '../../ts/common/Global_Imports';
 	import { w_background_color } from '../../ts/common/Stores';
-    import SVG_Gradient from '../kit/SVG_Gradient.svelte';
+    import SVG_Gradient from '../draw/SVG_Gradient.svelte';
     import Button from './Button.svelte';
-    import Mouse_Timer from '../../ts/signals/Mouse_Timer';
     export let width: number;
     export let height: number;
     export let title = k.empty;
