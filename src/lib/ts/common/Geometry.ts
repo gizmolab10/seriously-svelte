@@ -239,15 +239,15 @@ export class Rect {
 		return new Rect(rightCenter.offsetByY(size.height / -2), size);
 	}
 
+	static rect_forElement_containsPoint(element: HTMLElement | null, point: Point): boolean {
+		const rect = Rect.boundingRectFor(element);
+		return rect?.contains(point) ?? false;
+	}
+
 	static createCenterRect(center: Point, size: Size): Rect {
 		const offset_fromOrigin = size.asPoint.dividedInHalf;
 		const origin = center.offsetBy(offset_fromOrigin.negated);
 		return new Rect(origin, size);
-	}
-
-	static rect_forElement_containsPoint(element: HTMLElement | null, point: Point): boolean {
-		const rect = Rect.boundingRectFor(element);
-		return rect?.contains(point) ?? false;
 	}
 
 	static rect_forElement_containsEvent(element: HTMLElement | null, event: MouseEvent): boolean {

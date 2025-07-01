@@ -1,6 +1,6 @@
 <script lang='ts'>
     import { e, k, u, show, Rect, Size, Point, colors, svgPaths, T_Layer } from '../../ts/common/Global_Imports';
-	import { w_background_color } from '../../ts/common/Stores';
+	import { w_background_color, w_mouse_location_scaled } from '../../ts/common/Stores';
     import SVG_Gradient from '../draw/SVG_Gradient.svelte';
     import Button from './Button.svelte';
     export let width: number;
@@ -10,22 +10,25 @@
     export let performs_autorepeat: boolean = false;
     export let font_size: number = k.font_size.banners;
     export let handle_click: (title: string) => boolean;
-    const mouseTimer = e.mouse_timer_forName(`glow-button-singleton`);
+    const mouseTimer = e.mouse_timer_forName(`glow-button-${title}`);
     const glow_rect = Rect.createWHRect(width, height);
     const gradient_name = 'glow-' + title;
-    let isHovering = false;
-    let timeout: number | null = null;
     let banner_color = colors.ofBannerFor($w_background_color);
-    $: isInverted = !isHovering || svgPaths.hasPath_for(title);
+    let glow_button: HTMLElement | null = null;
+    let isHovering = determine_isHovering();
 
 	$: {
 		const _ = $w_background_color;
 		banner_color = colors.ofBannerFor($w_background_color);
 	}
 
+    function determine_isHovering() {
+        return !$w_mouse_location_scaled ? false : Rect.rect_forElement_containsPoint(glow_button, $w_mouse_location_scaled);
+    }
+    
     function intercept_click() {
-        isHovering = false;                // suppress distraction from hover
         handle_click(title);
+        isHovering = determine_isHovering();
     }
 
     function handle_mouse_down() {
@@ -50,16 +53,7 @@
     function handle_mouse_enter(is_in: boolean) {
         const was_in = isHovering;
         isHovering = is_in;
-        if (!!timeout) {
-            clearTimeout(timeout);
-            timeout = null;
-        }
         if (is_in) {
-            if (isSelected) {
-                timeout = setTimeout(() => {
-                    isHovering = false;        // suppress distraction from hover
-                }, 1000);
-            }
             if (was_in) {
                 mouseTimer.autorepeat_stop();
             }
@@ -70,12 +64,13 @@
 
 <div
 	class='glow'
+    bind:this={glow_button}
 	class:autorepeating={performs_autorepeat && mouseTimer.isAutorepeating_forID(0)}
 	style='
         width: {width}px;
         height: {height}px;
         position: relative;'>
-    {#if isInverted}
+    {#if !isHovering}
         <SVG_Gradient
             isInverted={true}
             name={gradient_name}

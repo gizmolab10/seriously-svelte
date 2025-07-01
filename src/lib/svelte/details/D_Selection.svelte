@@ -58,7 +58,8 @@
 			thing_title = thing.title;
 			thingHID = thing.hid;
 			color = thing.color;
-			info_details = [	
+			info_details = [
+				['color', ancestry.isEditable ? k.empty : 'not editable'],
 				['children', ancestry.children.length.supressZero()],
 				['progeny', ancestry.progeny_count().supressZero()],
 				['parents', thing.parents.length.supressZero()],
@@ -70,7 +71,6 @@
 				['id', thing.id.beginWithEllipsis_forLength(17)],
 				['ancestry', ancestry.id.beginWithEllipsis_forLength(19)],
 				['modified', thing.persistence.lastModifyDate.toLocaleString()],
-				['color', ancestry.isEditable ? k.empty : 'not editable'],
 			];
 			layout_forColor();
 		}
