@@ -95,7 +95,7 @@
 				class='controls'
 				style='
 					left: 6px;
-					top: 9.5px;
+					top: 11.5px;
 					position: absolute;
 					height: {size_big}px;
 					z-index: {T_Layer.frontmost};
