@@ -60,6 +60,7 @@ export default class Mouse_Timer {
 			}
 			if (!this.longClick_timer) {
 				this.longClick_timer = setTimeout(() => {
+					this.longClick_timer = null;
 					callback();
 				}, k.threshold.long_click);
 			}
@@ -70,6 +71,7 @@ export default class Mouse_Timer {
 			}
 			if (!this.doubleClick_timer) {
 				this.doubleClick_timer = setTimeout(() => {
+					this.doubleClick_timer = null;
 					callback();
 				}, k.threshold.double_click);
 			}
