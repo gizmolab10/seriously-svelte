@@ -9,7 +9,6 @@ export default class Constants {
 	width_details = 220;
 	radial_widget_inset = 28;
 	separator_title_left = 0;
-	autorepeat_interval = 150;
 	hid_unknown = 1000000000000;
 	diameterOf_outer_tinyDots = 19;
 	build_number = builds.build_number;
@@ -34,8 +33,10 @@ export default class Constants {
 	};
 
 	threshold = {
-		double_click: 700,
+		double_click: 400,
 		long_click:	  800,
+		alteration:	  500,
+		autorepeat:	  150,
 	};
 
 	title = {

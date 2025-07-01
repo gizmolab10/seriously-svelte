@@ -11,8 +11,8 @@
 	export let center: Point | null = null;
 	export let detect_doubleClick = false;
 	export let detect_longClick = false;
-	export let detect_mouseDown = true;
 	export let height = k.height.button;
+	export let detect_mouseDown = true;
 	export let width = k.height.button;
 	export let detect_mouseUp = true;
 	export let position = 'absolute';
@@ -20,8 +20,8 @@
 	export let cursor = 'pointer';
 	export let align_left = true;
 	export let name = 'generic';
-	const s_mouse = ux.s_mouse_forName(name);	// persist across destroy/recreate
-	const mouse_timer = e.mouse_timer_forName(name);	// persist across destroy/recreate
+	const s_mouse = ux.s_mouse_forName(name);
+	const mouse_timer = e.mouse_timer_forName(name);
 	const mouse_responder_number = ux.next_mouse_responder_number;
 	let mouse_isDown = false;
 	let style = k.empty;

@@ -10,17 +10,20 @@
 	import type { Integer } from '../../ts/common/Types';
 	import Color from '../details/Color.svelte';
 	import Portal from '../draw/Portal.svelte';
+	import Button from '../buttons/Button.svelte';
 	import { onMount } from 'svelte';
-	export let top = 4;
+	export let top = 6;
 	const id = 'selection';
 	const es_info = ux.s_element_for(new Identifiable(id), T_Element.thing, id);
 	let ancestry: Ancestry | null = s_details.ancestry;
 	let thing: Thing | null = ancestry?.thing ?? null;
 	let thingHID: Integer | null = thing?.hid;
+	let characteristics: Array<Object> = [];
+	let more_details: Array<Object> = [];
 	let color = colors.default_forThings;
-	let info_details: Array<Object> = [];
 	let thing_title = thing?.title;
 	let color_origin = Point.zero;
+	let show_more_details = false;
 	let picker_offset = k.empty;
 	let info_table: any;
 
@@ -36,10 +39,16 @@
 
 	function layout_forColor() {
 		if (!!info_table) {
-			const row = Math.max(0, info_details.findIndex(([key]) => key === 'color'));
+			const row = Math.max(0, characteristics.findIndex(([key]) => key === 'color'));
 			const offset_toRow = info_table.absolute_location_ofCellAt(row, 1);
-			color_origin = offset_toRow.offsetEquallyBy(-6);
-			picker_offset = `${color_origin.x - 112}px`;
+			color_origin = offset_toRow.offsetEquallyBy(-5);
+			picker_offset = `-50px`;
+		}
+	}
+
+	function handle_toggle_more(s_mouse) {
+		if (!s_mouse.isHover && s_mouse.isDown) {
+			show_more_details = !show_more_details;
 		}
 	}
 
@@ -58,19 +67,21 @@
 			thing_title = thing.title;
 			thingHID = thing.hid;
 			color = thing.color;
-			info_details = [
+			characteristics = [
+				['modified', thing.persistence.lastModifyDate.toLocaleString()],
 				['color', ancestry.isEditable ? k.empty : 'not editable'],
 				['children', ancestry.children.length.supressZero()],
 				['progeny', ancestry.progeny_count().supressZero()],
 				['parents', thing.parents.length.supressZero()],
-				['related', thing.relatedRelationships.length.supressZero()],
-				['depth', ancestry.depth.supressZero()],
+				['relateds', thing.relatedRelationships.length.supressZero()],
 				['order', ancestry.order.supressZero()],
-				['parent', ancestry.predicate.kind],
+				['depth', ancestry.depth.supressZero()],
+			];
+			more_details = [
+				['kind', ancestry.predicate.kind],
 				['type', Object.keys(T_Thing).find(k => T_Thing[k] === thing.t_thing)],
 				['id', thing.id.beginWithEllipsis_forLength(17)],
 				['ancestry', ancestry.id.beginWithEllipsis_forLength(19)],
-				['modified', thing.persistence.lastModifyDate.toLocaleString()],
 			];
 			layout_forColor();
 		}
@@ -89,11 +100,11 @@
 			position:relative;
 			padding-bottom:8px;
 			z-index:{T_Layer.frontmost};'>
-		{#if info_details.length != 0}
+		{#if characteristics.length != 0}
 			<Text_Table
 				top={0}
 				row_height={11}
-				array={info_details}
+				array={characteristics}
 				bind:this={info_table}
 				name='propertie-table'
 				font_size={k.font_size.info}/>
@@ -107,5 +118,24 @@
 					picker_offset={picker_offset}/>
 			</Portal>
 		{/if}
+		{#if show_more_details}
+			<Text_Table
+				top={0}
+				row_height={11}
+				name='more-table'
+				array={more_details}
+				font_size={k.font_size.info}/>
+		{/if}
+		<Button
+			width={95}
+			height={17}
+			name='more-button'
+			es_button={es_info}
+			center={new Point(153, 111)}
+			closure={handle_toggle_more}
+			zindex={T_Layer.frontmost + 1}
+			font_size={k.font_size.details}>
+			always show {show_more_details ? 'less' : 'more'}
+		</Button>
 	</div>
 {/if}

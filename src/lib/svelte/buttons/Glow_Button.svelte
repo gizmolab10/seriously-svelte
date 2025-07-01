@@ -5,12 +5,13 @@
     import Button from './Button.svelte';
     export let width: number;
     export let height: number;
+    export let owner = k.empty;
     export let title = k.empty;
     export let isSelected: boolean = false;
     export let performs_autorepeat: boolean = false;
     export let font_size: number = k.font_size.banners;
     export let handle_click: (title: string) => boolean;
-    const mouseTimer = e.mouse_timer_forName(`glow-button-${title}`);
+    const mouseTimer = e.mouse_timer_forName(`glow-button-${owner}-${title}`);
     const glow_rect = Rect.createWHRect(width, height);
     const gradient_name = 'glow-' + title;
     let banner_color = colors.ofBannerFor($w_background_color);

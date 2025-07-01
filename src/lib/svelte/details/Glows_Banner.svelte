@@ -57,6 +57,7 @@
 		<Glow_Button
 			title={title}
 			height={height}
+			owner={main_title}
 			font_size={font_size}
 			isSelected={isSelected}
 			handle_click={intercept_click}

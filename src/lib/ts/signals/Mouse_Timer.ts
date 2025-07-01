@@ -20,10 +20,12 @@ export default class Mouse_Timer {
 	}
 
 	autorepeat_start(id: number, callback: () => void) {
-		this.autorepeat_stop();
-		this.autorepeat_ID = id;
-		callback(); // Immediate action
-		this.autorepeat_timer = setInterval(callback, k.autorepeat_interval);
+		this.timeout_start(T_Timer.double, () => {
+			this.autorepeat_stop();
+			this.autorepeat_ID = id;
+			callback();
+			this.autorepeat_timer = setInterval(callback, k.threshold.autorepeat);
+		}, true);
 	}
 
 	autorepeat_stop() {
@@ -40,7 +42,7 @@ export default class Mouse_Timer {
 		this.alteration_timer = setInterval(() => {
 			callback(invert);
 			invert = !invert;
-		}, 500);
+		}, k.threshold.alteration);
 	}
 
 	alteration_stop() {
@@ -50,15 +52,27 @@ export default class Mouse_Timer {
 		}
 	}
 	
-	timeout_start(type: T_Timer, callback: (args: void) => void, ms?: number) {
-		if (type == T_Timer.long && !this.longClick_timer) {
-			this.longClick_timer = setTimeout(() => {
-				callback();
-			}, k.threshold.long_click);
-		} else if (type == T_Timer.double && !this.doubleClick_timer) {
-			this.doubleClick_timer = setTimeout(() => {
-				callback();
-			}, k.threshold.double_click);
+	timeout_start(type: T_Timer, callback: (args: void) => void, force: boolean = false) {
+		if (type == T_Timer.long) {
+			if (force && !!this.longClick_timer) {
+				clearTimeout(this.longClick_timer);
+				this.longClick_timer = null;
+			}
+			if (!this.longClick_timer) {
+				this.longClick_timer = setTimeout(() => {
+					callback();
+				}, k.threshold.long_click);
+			}
+		} else if (type == T_Timer.double) {
+			if (force && !!this.doubleClick_timer) {
+				clearTimeout(this.doubleClick_timer);
+				this.doubleClick_timer = null;
+			}
+			if (!this.doubleClick_timer) {
+				this.doubleClick_timer = setTimeout(() => {
+					callback();
+				}, k.threshold.double_click);
+			}
 		}
 	}
 
