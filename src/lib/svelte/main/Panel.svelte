@@ -77,7 +77,7 @@
 			</div>
 			<Separator
 				name='panel-left'
-				has_both_ends={true}
+				has_both_wings={true}
 				isHorizontal={false}
 				margin={k.details_margin}
 				zindex={T_Layer.frontmost}
@@ -87,7 +87,7 @@
 				origin={new Point(2, layout.panel_boxHeight)}/>
 			<Separator
 				name='panel-right'
-				has_both_ends={true}
+				has_both_wings={true}
 				isHorizontal={false}
 				margin={k.details_margin}
 				zindex={T_Layer.frontmost}

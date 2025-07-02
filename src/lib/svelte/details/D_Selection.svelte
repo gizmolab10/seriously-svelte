@@ -8,13 +8,13 @@
 	import Text_Table from '../details/Text_Table.svelte';
 	import { s_details } from '../../ts/state/S_Details';
 	import type { Integer } from '../../ts/common/Types';
+	import Separator from '../draw/Separator.svelte';
 	import Color from '../details/Color.svelte';
 	import Portal from '../draw/Portal.svelte';
-	import Button from '../buttons/Button.svelte';
 	import { onMount } from 'svelte';
-	export let top = 6;
+	export let top = 9;
 	const id = 'selection';
-	const es_info = ux.s_element_for(new Identifiable(id), T_Element.thing, id);
+	const es_info = ux.s_element_for(new Identifiable(id), T_Element.details, id);
 	let ancestry: Ancestry | null = s_details.ancestry;
 	let thing: Thing | null = ancestry?.thing ?? null;
 	let thingHID: Integer | null = thing?.hid;
@@ -30,6 +30,7 @@
 	$: $w_show_details_ofType, layout_forColor();
 	$: $w_relationship_order, update_forAncestry();
 	$: $w_ancestries_grabbed, $w_ancestry_focus, $w_thing_title, update_forAncestry();
+	function handle_toggle_more(event: Event) { show_more_details = !show_more_details; }
 
 	onMount(() => {
 		update_forAncestry();
@@ -43,12 +44,6 @@
 			const offset_toRow = info_table.absolute_location_ofCellAt(row, 1);
 			color_origin = offset_toRow.offsetEquallyBy(-5);
 			picker_offset = `-50px`;
-		}
-	}
-
-	function handle_toggle_more(s_mouse) {
-		if (!s_mouse.isHover && s_mouse.isDown) {
-			show_more_details = !show_more_details;
 		}
 	}
 
@@ -92,13 +87,13 @@
 {#if !!thing}
 	<div class='properties-container' 
 		style='
-			left:4px;
+			left:8px;
 			width:100%;
 			color:black;
 			top:{top}px;
 			height:auto;
 			position:relative;
-			padding-bottom:8px;
+			padding-bottom:20px;
 			z-index:{T_Layer.frontmost};'>
 		{#if characteristics.length != 0}
 			<Text_Table
@@ -120,22 +115,21 @@
 		{/if}
 		{#if show_more_details}
 			<Text_Table
-				top={0}
+				top={8}
 				row_height={11}
 				name='more-table'
 				array={more_details}
 				font_size={k.font_size.info}/>
 		{/if}
-		<Button
-			width={95}
-			height={17}
-			name='more-button'
-			es_button={es_info}
-			center={new Point(153, 111)}
-			closure={handle_toggle_more}
-			zindex={T_Layer.frontmost + 1}
-			font_size={k.font_size.details}>
-			always show {show_more_details ? 'less' : 'more'}
-		</Button>
 	</div>
+	<Separator
+		has_gull_wings={true}
+		has_both_wings={true}
+		has_thin_divider={false}
+		origin={new Point(1, 152)}
+		zindex={T_Layer.frontmost + 1}
+		length={k.width_details - 2.5}
+		handle_click={handle_toggle_more}
+		thickness={k.thickness.separator.details}
+		title='show {show_more_details ? 'less' : 'more'}'/>
 {/if}

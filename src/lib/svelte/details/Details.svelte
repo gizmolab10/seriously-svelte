@@ -66,7 +66,7 @@
 	</div>
 {/key}
 <Separator
-	has_both_ends={true}
+	has_both_wings={true}
 	isHorizontal={false}
 	
 	margin={k.details_margin}

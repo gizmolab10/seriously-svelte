@@ -7,7 +7,7 @@
 	export let height = k.height.controls;
 	export let has_gull_wings = true;
 	export let has_seperator = false;
-	export let has_both_ends = true;
+	export let has_both_wings = true;
 	export let origin = Point.zero;
 	export let has_title = false;
 	export let name = k.empty;

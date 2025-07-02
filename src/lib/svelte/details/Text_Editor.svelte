@@ -1,6 +1,7 @@
 <script lang='ts'>
 	import { w_thing_fontFamily, w_background_color, w_s_text_edit } from '../../ts/common/Stores';
 	import { k, u, ux, debug, colors, T_Layer, databases } from '../../ts/common/Global_Imports';
+	import Clickable_Label from '../draw/Clickable_Label.svelte';
 	export let handle_textChange = (label: string, text: string) => {};
 	export let handleClick_onLabel: (event: Event) => {} | null = null;
 	export let color = colors.default_forThings;
@@ -13,22 +14,11 @@
 	export let left = 2;
 	export let top = 0;
 	let textarea = null;
-	let labelElement = null;
 	let bound_text = original_text;
 	let cursorStyle = 'cursor: text';
 
-	$: if (labelElement) {
-		labelElement.addEventListener('click', handleLabelClick);
-	}
-
 	function handle_keydown(event: KeyboardEvent) { handle_key(true, event); }
 	function handle_keyup(event: KeyboardEvent) { handle_key(false, event); }
-
-	function handleLabelClick(event: Event) {
-		if (!!handleClick_onLabel) {
-			handleClick_onLabel(event);
-		}
-	}
 	
 	function handle_focus(event: Event) {
 		if (!!$w_s_text_edit) {
@@ -101,18 +91,16 @@
 			font-family: {$w_thing_fontFamily};
 			border-radius: {k.radius.text_area_border}px;
 		'/>
-	<div style='width: 100%; display: flex; justify-content: center;'>
-		<div style='
-			top: -7px;
-			position: absolute;
-			color: {label_color};
-			font-size: {k.font_size.details}px;
-			background-color: {$w_background_color};
-			cursor: {handleClick_onLabel ? 'pointer' : 'default'};
-			text-decoration: {label_underline ? 'underline' : 'none'};'
-			bind:this={labelElement}>
-			{label}
-		</div>
+	<div
+		style='
+			width: 100%;
+			display: flex;
+			justify-content: center;'>
+		<Clickable_Label
+			label={label}
+			label_color={label_color}
+			label_underline={label_underline}
+			handle_click={handleClick_onLabel} />
 	</div>
 </div>
 

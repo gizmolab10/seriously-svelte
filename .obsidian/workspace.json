@@ -170,17 +170,17 @@
   },
   "active": "9968854d61be5eec",
   "lastOpenFiles": [
+    "src/lib/svelte/draw/Clickable_Label.svelte",
+    "src/lib/svelte/draw/Click_Label.svelte",
+    "src/lib/svelte/kit/Click_Label.svelte",
+    "src/lib/svelte/kit",
+    "src/lib/svelte/debug/Debug_Text.svelte",
+    "src/lib/svelte/debug/Debug_Box.svelte",
     "src/lib/svelte/details/Color.svelte",
     "src/lib/svelte/draw/Transparent_Circle.svelte",
     "src/lib/svelte/draw/Titled_Box.svelte",
     "src/lib/svelte/draw/Spinner.svelte",
     "src/lib/svelte/draw/Separator.svelte",
-    "src/lib/svelte/draw/SVG_Gradient.svelte",
-    "src/lib/svelte/draw/SVG_D3.svelte",
-    "src/lib/svelte/draw/Portal.svelte",
-    "src/lib/svelte/draw/Gull_Wings.svelte",
-    "src/lib/svelte/draw/Color.svelte",
-    "src/lib/svelte/draw/Circle.svelte",
     "node_modules/svelte-portal/README.md"
   ]
 }

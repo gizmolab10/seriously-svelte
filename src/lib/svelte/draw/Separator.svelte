@@ -2,21 +2,23 @@
 	import { k, u, Point, colors, T_Layer, Direction } from '../../ts/common/Global_Imports';
 	import { w_show_details_ofType, w_background_color } from '../../ts/common/Stores';
 	import Gull_Wings from '../draw/Gull_Wings.svelte';
+	import Clickable_Label from '../draw/Clickable_Label.svelte';
+	export let handle_click: (event: Event) => {} | null = null;
 	export let corner_radius = k.radius.gull_wings.ultra_thin;
-	export let thickness = k.thickness.separator.main;
 	export let title_font_size = k.font_size.separator;
+	export let thickness = k.thickness.separator.main;
 	export let title_left: number | null= null;
 	export let title: string | null = null;
 	export let zindex = T_Layer.details;
 	export let length = k.width_details;
 	export let has_thin_divider = false;
 	export let has_gull_wings = true;
+	export let has_both_wings = true;
 	export let position = 'absolute';
-	export let has_both_ends = true;
 	export let origin = Point.zero;
 	export let isHorizontal = true;
-	export let margin = 0;
 	export let name = 'separator';
+	export let margin = 0;
 	const title_top = origin.y - 1 - title_font_size / 1.5 + (position == 'relative' ? 0 : 1);
 	const thin_line_color = colors.ofSeparatorFor('#aaaaaa');
 	const class_name = `${name}-line-${isHorizontal ? 'horizontal' : 'vertical'}`;
@@ -24,11 +26,11 @@
 	const title_width = u.getWidth_ofString_withSize(title ?? k.empty, `${title_font_size}px`);
 	let separator_color = colors.separator;
 
-	// origin is the center at the start of the separator
-	// length
-	// isHorizontal	true starts at origin.x, false starts at top
+	// origin			is the center at the start of the separator
+	// isHorizontal		true -> starts at origin.x, false -> starts at top
 	// has_gull_wings	has gull wings at either one or both ends
-	// has_both_ends	if has_gull_wings is true, then has gull wings at both ends
+	// has_both_wings	if has_gull_wings is true, then has gull wings at both ends
+	// length			length of the separator
 	// margin		
 	// zindex
 
@@ -66,7 +68,7 @@
 			color={separator_color}
 			center={wingsCenter_single}
 			direction={wingsDirection_single}/>
-		{#if has_both_ends}
+		{#if has_both_wings}
 			<Gull_Wings
 				thickness={thickness}
 				radius={corner_radius}
@@ -102,18 +104,35 @@
 	{/if}
 {/if}
 {#if !!title}
-	<div
-		style='
-			z-index:{zindex};
-			padding: 0px 5px;
-			top:{title_top}px;
-			left:{title_left}px;
-			position:{position};
-			white-space: nowrap;
-			z-index:{zindex + 2};
-			width:{title_width}px;
-			font-size:{title_font_size}px;
-			background-color:{$w_background_color};'>
-		{title}
-	</div>
+	{#if handle_click}
+		<div
+			style='
+				width: 100%;
+				display: flex;
+				position:absolute;
+				top:{title_top + 6}px;
+				justify-content: center;'>
+			<Clickable_Label
+				label={title}
+				zindex={zindex + 1}
+				label_underline={true}
+				handle_click={handle_click}
+				font_size={title_font_size}/>
+		</div>
+	{:else}
+		<div
+			style='
+				z-index:{zindex};
+				padding: 0px 5px;
+				top:{title_top}px;
+				left:{title_left}px;
+				position:{position};
+				white-space: nowrap;
+				z-index:{zindex + 2};
+				width:{title_width}px;
+				font-size:{title_font_size}px;
+				background-color:{$w_background_color};'>
+			{title}
+		</div>
+	{/if}
 {/if}

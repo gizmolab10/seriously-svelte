@@ -93,7 +93,6 @@
 				title={row_title}
 				isHorizontal={true}
 				has_gull_wings={has_gull_wings}
-				
 				thickness={separator_thickness}
 				title_font_size={font_sizes[0]}
 				title_left={k.separator_title_left}/>
