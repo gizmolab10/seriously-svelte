@@ -16,20 +16,16 @@
     const gradient_name = 'glow-' + title;
     let banner_color = colors.ofBannerFor($w_background_color);
     let glow_button: HTMLElement | null = null;
-    let isHovering = determine_isHovering();
+    let isHovering = false;
 
 	$: {
 		const _ = $w_background_color;
 		banner_color = colors.ofBannerFor($w_background_color);
 	}
-
-    function determine_isHovering() {
-        return !$w_mouse_location_scaled ? false : Rect.rect_forElement_containsPoint(glow_button, $w_mouse_location_scaled);
-    }
     
     function intercept_click() {
         handle_click(title);
-        isHovering = determine_isHovering();
+        isHovering = false;
     }
 
     function handle_mouse_down() {
@@ -47,7 +43,7 @@
     function handle_mouse_enter(is_in: boolean) {
         const was_in = isHovering;
         isHovering = is_in;
-        if (is_in && was_in && detect_autorepeat) {
+        if (is_in && was_in && detect_autorepeat) {        // we get an extre mouse enter event when we click
             mouseTimer.autorepeat_stop();
         }
     }

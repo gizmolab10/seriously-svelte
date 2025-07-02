@@ -8,17 +8,18 @@ export enum T_Timer {
 }
 
 export default class Mouse_Timer {
+	autorepeat_start_timer: null | number | NodeJS.Timeout = null;
 	doubleClick_timer: null | number | NodeJS.Timeout = null;
 	autorepeat_timer: null | number | NodeJS.Timeout = null;
 	alteration_timer: null | number | NodeJS.Timeout = null;
 	longClick_timer: null | number | NodeJS.Timeout = null;
 	timer_ID: number = Mouse_Timer.get_next_ID();
-	static global_ID: number = 0;
+	static debug_ID: number = 0;
 	autorepeat_ID: number = -1;
 	name = k.empty;
 
 	constructor(name: string = k.empty) { this.name = name; }
-	static get_next_ID(): number { return Mouse_Timer.global_ID++; }
+	static get_next_ID(): number { return Mouse_Timer.debug_ID++; }
 	isAutorepeating_forID(id: number): boolean { return this.autorepeat_ID === id; }
 
 	hasTimer_forID(type: T_Timer): boolean {
@@ -32,13 +33,19 @@ export default class Mouse_Timer {
 
 	autorepeat_start(id: number, callback: () => void) {
 		this.autorepeat_stop();
-		setTimeout(() => {
-			this.autorepeat_ID = id;
+		this.autorepeat_ID = id;
+		callback();
+		this.autorepeat_start_timer = setTimeout(() => {
 			this.autorepeat_timer = setInterval(callback, k.threshold.autorepeat);
+			this.autorepeat_start_timer = null;
 		}, k.threshold.long_click);
 	}
 
 	autorepeat_stop() {
+		if (this.autorepeat_start_timer) {
+			clearTimeout(this.autorepeat_start_timer);
+			this.autorepeat_start_timer = null;
+		}
 		if (this.autorepeat_timer) {
 			clearInterval(this.autorepeat_timer);
 			this.autorepeat_timer = null;
