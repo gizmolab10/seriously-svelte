@@ -12,6 +12,7 @@
 	export let origin: Point | null = null;
 	export let center: Point | null = null;
 	export let padding = '0px 6px 1px 6px';
+	export let detect_autorepeat = false;
 	export let detect_longClick = false;
 	export let height = k.height.button;
 	export let width = k.height.button;
@@ -108,7 +109,8 @@
 		center={center}
 		position={position}
 		handle_s_mouse={handle_s_mouse}
-		detect_longClick={detect_longClick}>
+		detect_longClick={detect_longClick}
+		detect_autorepeat={detect_autorepeat}>
 		<button
 			class='button'
 			style={computed_style}

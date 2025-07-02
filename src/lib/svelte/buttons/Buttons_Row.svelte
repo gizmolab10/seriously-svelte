@@ -9,6 +9,7 @@
 	export let separator_thickness = k.thickness.separator.main;
 	export let origin: Point | null = null;
 	export let center: Point | null = null;
+	export let detect_autorepeat = false;
 	export let detect_longClick = false;
     export let type = T_Element.button;
 	export let has_gull_wings = true;
@@ -121,6 +122,7 @@
 						height={button_height}
 						font_size={font_sizes[1]}
 						detect_longClick={detect_longClick}
+						detect_autorepeat={detect_autorepeat}
 						es_button={es_button_byColumn[column]}
 						width={g_repeater.button_width_for(column)}
 						name={`${name}-${button_name_for(column)}`}

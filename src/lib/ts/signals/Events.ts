@@ -11,7 +11,7 @@ export class Events {
 	initialTouch: Point | null = null;
 	mouseTimer: Mouse_Timer;
 
-	mouse_timer_forName(name: string): Mouse_Timer { return u.assure_forKey_inDict(name, this.mouse_timer_byName, () => new Mouse_Timer()); }
+	mouse_timer_forName(name: string): Mouse_Timer { return u.assure_forKey_inDict(name, this.mouse_timer_byName, () => new Mouse_Timer(name)); }
 
 	constructor() {
 		this.mouseTimer = this.mouse_timer_forName('events');
@@ -157,26 +157,6 @@ export class Events {
 			this.mouseTimer.alteration_stop();
 			signals.signal_blink_forAlteration(false);
 		}
-	}
-
-	async handle_action_autorepeatAt(s_mouse: S_Mouse, t_action: number, column: number, name: string) {
-		if (!s_mouse.isHover) {
-			const autorepeaters = [T_Action.browse, T_Action.move];
-			if (s_mouse.isDown) {
-				return this.handle_action_clickedAt(s_mouse, t_action, column, name);
-			} else if (s_mouse.isUp) {
-				this.mouseTimer.autorepeat_stop();
-			} else {
-				if (autorepeaters.includes(t_action)) {
-					if (s_mouse.isLong) {
-						this.mouseTimer.autorepeat_start(column, () => {
-							this.handle_action_clickedAt(s_mouse, t_action, column, name);
-						});
-					}
-				}
-			}
-		}
-		return null;
 	}
 
 	async handle_key_down(e: Event) {

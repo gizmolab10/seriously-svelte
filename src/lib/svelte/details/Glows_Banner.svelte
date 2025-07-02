@@ -61,7 +61,7 @@
 			font_size={font_size}
 			isSelected={isSelected}
 			handle_click={intercept_click}
-			performs_autorepeat={title != main_title}
+			detect_autorepeat={title != main_title}
 			width={g_repeater.button_width_for(index)}/>
 		{#if index > 0}
 			<Separator

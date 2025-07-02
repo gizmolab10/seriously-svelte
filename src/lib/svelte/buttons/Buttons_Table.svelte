@@ -5,6 +5,7 @@
     import Buttons_Row from './Buttons_Row.svelte';
     export let closure: (t_request: T_Request, s_mouse: S_Mouse, name: string, row: number, column: number) => boolean;
     export let button_titles: string[][];
+	export let detect_autorepeat = false;
 	export let detect_longClick = false;
     export let type = T_Element.button;
     export let has_seperator = false;         // false means row titles precede buttons
@@ -44,6 +45,7 @@
                 button_height={button_height}
                 origin={button_origin_for(row)}
                 detect_longClick={detect_longClick}
+                detect_autorepeat={detect_autorepeat}
                 name={`${name}-table-${T_Action[row]}`}
                 closure={(t_request, s_mouse, column) => closure(t_request, s_mouse, name, row, column)}/>
         {/if}

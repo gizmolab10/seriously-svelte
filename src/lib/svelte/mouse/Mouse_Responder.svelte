@@ -10,6 +10,7 @@
 	export let origin: Point | null = null;
 	export let center: Point | null = null;
 	export let detect_doubleClick = false;
+	export let detect_autorepeat = false;
 	export let detect_longClick = false;
 	export let height = k.height.button;
 	export let detect_mouseDown = true;
@@ -23,7 +24,6 @@
 	const s_mouse = ux.s_mouse_forName(name);
 	const mouse_timer = e.mouse_timer_forName(name);
 	const mouse_responder_number = ux.next_mouse_responder_number;
-	let mouse_isDown = false;
 	let style = k.empty;
 	let bound_element;
 
@@ -68,7 +68,7 @@
 				s_mouse.isOut   = !isHit;
 				handle_s_mouse(S_Mouse.hover(null, bound_element, isHit));					// pass a null event
 				if (isHit) {
-					reset();
+					reset();	// to support double click
 				}
 			}
 		}
@@ -79,47 +79,58 @@
 		mouse_timer.reset();
 	}
 
-	function create_s_mouse(isDown: boolean, isDouble: boolean = false, isLong: boolean = false): S_Mouse {
+	function create_s_mouse(isDown: boolean, isDouble: boolean = false, isLong: boolean = false, isRepeat: boolean = false, event: MouseEvent | null = null): S_Mouse {
 		const state = u.copyObject(s_mouse);
-		state.isUp = !isDown && !isDouble && !isLong;
+		state.isUp = !isDown && !isDouble && !isLong && !isRepeat;
+		state.isDown = isDown && !isRepeat;
 		state.element = bound_element;
 		state.isDouble = isDouble;
+		state.isRepeat = isRepeat;
 		state.isLong = isLong;
 		state.isHover = false;
-		state.isDown = isDown;
-		mouse_isDown = isDown;
 		state.event = event;
 		return state;
 	}
 
 	function handle_pointerUp(event) {
 		if (detect_mouseUp) {
-			handle_s_mouse(S_Mouse.up(event, bound_element));
 			reset();
+			handle_s_mouse(S_Mouse.up(event, bound_element));
 		}
 	}
 	
 	function handle_pointerDown(event) {
-		if (detect_mouseDown && s_mouse.clicks == 0) {
-			handle_s_mouse(create_s_mouse(true));
-		}
-		s_mouse.clicks += 1;
-		if (detect_doubleClick) {
-			mouse_timer.timeout_start(T_Timer.double, () => {
-				if (mouse_timer.hasTimer && s_mouse.clicks == 2) {
-					reset();
-					handle_s_mouse(create_s_mouse(false, true, false));
+		if (detect_autorepeat) {
+
+			// autorepeat overrides all other clicks
+
+			mouse_timer.autorepeat_start(mouse_responder_number, () => {
+				if (mouse_timer.hasTimer_forID(T_Timer.repeat)) {
+					handle_s_mouse(create_s_mouse(false, false, false, true, event));
 				}
 			});
-		}
-		if (detect_longClick) {
-			mouse_timer.timeout_start(T_Timer.long, () => {
-				if (mouse_timer.hasTimer) {
-					reset();
-					handle_s_mouse(create_s_mouse(false, false, true));
-					debug.log_action(` long ${mouse_responder_number} RESPONDER`);
-				}
-			});
+		} else {
+			if (detect_mouseDown && s_mouse.clicks == 0) {
+				handle_s_mouse(create_s_mouse(true, false, false, false, event));
+			}
+			s_mouse.clicks += 1;
+			if (detect_doubleClick) {
+				mouse_timer.timeout_start(T_Timer.double, () => {
+					if (mouse_timer.hasTimer_forID(T_Timer.double) && s_mouse.clicks == 2) {
+						reset();
+						handle_s_mouse(create_s_mouse(false, true, false, false, event));
+					}
+				});
+			}
+			if (detect_longClick) {
+				mouse_timer.timeout_start(T_Timer.long, () => {
+					if (mouse_timer.hasTimer_forID(T_Timer.long)) {
+						reset();
+						s_mouse.clicks = 0;
+						handle_s_mouse(create_s_mouse(false, false, true, false, event));
+					}
+				});
+			}
 		}
 	}
 

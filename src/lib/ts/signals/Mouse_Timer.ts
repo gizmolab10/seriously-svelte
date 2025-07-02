@@ -3,8 +3,8 @@ import { k } from '../../ts/common/Global_Imports';
 export enum T_Timer {
 	repeat	= 'repeat',
 	double	= 'double',
+	alter	= 'alter',
 	long	= 'long',
-	alteration = 'alteration',
 }
 
 export default class Mouse_Timer {
@@ -12,20 +12,30 @@ export default class Mouse_Timer {
 	autorepeat_timer: null | number | NodeJS.Timeout = null;
 	alteration_timer: null | number | NodeJS.Timeout = null;
 	longClick_timer: null | number | NodeJS.Timeout = null;
+	timer_ID: number = Mouse_Timer.get_next_ID();
+	static global_ID: number = 0;
 	autorepeat_ID: number = -1;
+	name = k.empty;
 
+	constructor(name: string = k.empty) { this.name = name; }
+	static get_next_ID(): number { return Mouse_Timer.global_ID++; }
 	isAutorepeating_forID(id: number): boolean { return this.autorepeat_ID === id; }
-	get hasTimer(): boolean { 
-		return !!this.doubleClick_timer || !!this.longClick_timer || !!this.autorepeat_timer || !!this.alteration_timer; 
+
+	hasTimer_forID(type: T_Timer): boolean {
+		switch (type) {
+			case T_Timer.double: return !!this.doubleClick_timer;
+			case T_Timer.repeat: return !!this.autorepeat_timer;
+			case T_Timer.alter: return !!this.alteration_timer;
+			case T_Timer.long: return !!this.longClick_timer;
+		}
 	}
 
 	autorepeat_start(id: number, callback: () => void) {
-		this.timeout_start(T_Timer.double, () => {
-			this.autorepeat_stop();
+		this.autorepeat_stop();
+		setTimeout(() => {
 			this.autorepeat_ID = id;
-			callback();
 			this.autorepeat_timer = setInterval(callback, k.threshold.autorepeat);
-		}, true);
+		}, k.threshold.long_click);
 	}
 
 	autorepeat_stop() {
@@ -52,9 +62,9 @@ export default class Mouse_Timer {
 		}
 	}
 	
-	timeout_start(type: T_Timer, callback: (args: void) => void, force: boolean = false) {
+	timeout_start(type: T_Timer, callback: (args: void) => void, force_reset: boolean = false) {
 		if (type == T_Timer.long) {
-			if (force && !!this.longClick_timer) {
+			if (force_reset && !!this.longClick_timer) {
 				clearTimeout(this.longClick_timer);
 				this.longClick_timer = null;
 			}
@@ -65,7 +75,7 @@ export default class Mouse_Timer {
 				}, k.threshold.long_click);
 			}
 		} else if (type == T_Timer.double) {
-			if (force && !!this.doubleClick_timer) {
+			if (force_reset && !!this.doubleClick_timer) {
 				clearTimeout(this.doubleClick_timer);
 				this.doubleClick_timer = null;
 			}
@@ -87,15 +97,15 @@ export default class Mouse_Timer {
 			clearTimeout(this.longClick_timer);
 			this.longClick_timer = null;
 		}
-		if (!!this.autorepeat_timer) {
-			clearInterval(this.autorepeat_timer);
-			this.autorepeat_timer = null;
-		}
 		if (!!this.alteration_timer) {
 			clearInterval(this.alteration_timer);
 			this.alteration_timer = null;
 		}
-		this.autorepeat_ID = -1;
+		if (!!this.autorepeat_timer) {
+			clearInterval(this.autorepeat_timer);
+			this.autorepeat_timer = null;
+			this.autorepeat_ID = -1;
+		}
 	}
 
 }

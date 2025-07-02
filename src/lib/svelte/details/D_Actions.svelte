@@ -84,9 +84,9 @@
 
 	function name_for(row: number, column: number): string {
 		const [group, index] = group_andIndex(row);
-		const titles = button_titles[group];
+		const titles = button_titles[group][row];
 		if (!!titles && titles.length > column) {
-			return `${titles[0]}.${titles[column]}`;
+			return `${titles[0]}-${titles[column]}`;
 		}
 		return k.empty;
 	}
@@ -112,6 +112,16 @@
 		];
 	}
 
+	function handle_action_autorepeatAt(s_mouse: S_Mouse, t_action: number, column: number, name: string) {
+		if (!s_mouse.isHover) {
+			const valid_autorepeat = [T_Action.browse, T_Action.move].includes(t_action);
+			if (s_mouse.isDown || (s_mouse.isRepeat && valid_autorepeat)) {
+				e.handle_action_clickedAt(s_mouse, t_action, column, name);
+			}
+		}
+		return null;
+	}
+
 	function handle_actionRequest(t_request: T_Request, s_mouse: S_Mouse, name: string, row: number, column: number): any {
 		if (name == 'bottom-actions') {
 			row += 4;
@@ -122,7 +132,7 @@
 			case T_Request.is_visible:	 return !isAltering ? true : row_isAltering(row);
 			case T_Request.is_disabled:  return e.handle_isAction_disabledAt(row, column);
 			case T_Request.is_inverted:  return !isAltering ? false : isAction_invertedAt(row, column);
-			case T_Request.handle_click: return e.handle_action_autorepeatAt(s_mouse, row, column, name_for(row, column + 1));
+			case T_Request.handle_click: return handle_action_autorepeatAt(s_mouse, row, column, name_for(row, column + 1));
 		}
 		return null;
 	}
@@ -171,13 +181,13 @@
 			<Buttons_Table
 				top={1}
 				gap={2}
-				name='top-actions'
+				name='first'
 				width={table_width}
 				has_title={has_title}
 				title_gap={title_gap}
 				type={T_Element.action}
 				font_sizes={font_sizes}
-				detect_longClick={true}
+				detect_autorepeat={true}
 				closure={handle_actionRequest}
 				button_height={k.height.button}
 				button_titles={button_titles[0]}/>
@@ -191,13 +201,13 @@
 			<Buttons_Table
 				gap={2}
 				top={16}
+				name='second'
 				width={table_width}
-				name='bottom-actions'
 				has_title={has_title}
 				title_gap={title_gap}
 				type={T_Element.action}
 				font_sizes={font_sizes}
-				detect_longClick={true}
+				detect_autorepeat={true}
 				closure={handle_actionRequest}
 				button_height={k.height.button}
 				button_titles={button_titles[1]}/>

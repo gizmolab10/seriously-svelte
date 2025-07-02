@@ -1,5 +1,6 @@
 export class Builds {
 	notes: { [id: number]: string[] } = {
+		151 : ['July 1, 2025', 'autorepeat previous and next buttons'],
 		150 : ['June 29, 2025', 'support for multiple selected things'],
 		149 : ['June 25, 2025', 'hover logic applied everywhere'],
 		148 : ['June 20, 2025', 'wired up new recents buttons'],

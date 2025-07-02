@@ -8,7 +8,7 @@
     export let owner = k.empty;
     export let title = k.empty;
     export let isSelected: boolean = false;
-    export let performs_autorepeat: boolean = false;
+    export let detect_autorepeat: boolean = false;
     export let font_size: number = k.font_size.banners;
     export let handle_click: (title: string) => boolean;
     const mouseTimer = e.mouse_timer_forName(`glow-button-${owner}-${title}`);
@@ -33,20 +33,13 @@
     }
 
     function handle_mouse_down() {
-        if (performs_autorepeat) {
+        if (detect_autorepeat) {
             mouseTimer.autorepeat_start(0, () => handle_click(title));
         }
     }
 
     function handle_mouse_up() {
-        if (performs_autorepeat) {
-            mouseTimer.autorepeat_stop();
-        }
-    }
-
-    function handle_mouse_leave() {
-        isHovering = false;
-        if (performs_autorepeat) {
+        if (detect_autorepeat) {
             mouseTimer.autorepeat_stop();
         }
     }
@@ -54,10 +47,8 @@
     function handle_mouse_enter(is_in: boolean) {
         const was_in = isHovering;
         isHovering = is_in;
-        if (is_in) {
-            if (was_in) {
-                mouseTimer.autorepeat_stop();
-            }
+        if (is_in && was_in && detect_autorepeat) {
+            mouseTimer.autorepeat_stop();
         }
     }
     
@@ -66,7 +57,7 @@
 <div
 	class='glow'
     bind:this={glow_button}
-	class:autorepeating={performs_autorepeat && mouseTimer.isAutorepeating_forID(0)}
+	class:autorepeating={detect_autorepeat && mouseTimer.isAutorepeating_forID(0)}
 	style='
         width: {width}px;
         height: {height}px;
@@ -84,8 +75,8 @@
         on:click={intercept_click}
         on:mouseup={handle_mouse_up}
         on:mousedown={handle_mouse_down}
-        on:mouseleave={handle_mouse_leave}
         on:mouseenter={() => handle_mouse_enter(true)}
+        on:mouseleave={() => handle_mouse_enter(false)}
         style='
             top: 50%;
             left: 50%;
