@@ -32,13 +32,6 @@ export default class Constants {
 		remote: 'https://help.webseriously.org',
 	};
 
-	threshold = {
-		double_click: 400,
-		long_click:	  800,
-		alteration:	  500,
-		autorepeat:	  150,
-	};
-
 	title = {
 		default: 'Please, enter a title',
 		line:	 '------------------------',
@@ -53,7 +46,14 @@ export default class Constants {
 		generic: '::',
 		small:	 ':::',
 		big:	 '::::',
-	}; 
+	};
+
+	threshold = {
+		double_click: 400,
+		long_click:	  800,
+		alteration:	  500,
+		autorepeat:	  150,
+	};
 
 	opacity = {
 		none:	0,

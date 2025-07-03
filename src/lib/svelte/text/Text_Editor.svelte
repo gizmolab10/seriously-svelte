@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { w_thing_fontFamily, w_background_color, w_s_text_edit } from '../../ts/common/Stores';
 	import { k, u, ux, debug, colors, T_Layer, databases } from '../../ts/common/Global_Imports';
-	import Clickable_Label from '../draw/Clickable_Label.svelte';
+	import Clickable_Label from '../mouse/Clickable_Label.svelte';
 	export let handle_textChange = (label: string, text: string) => {};
 	export let handleClick_onLabel: (event: Event) => {} | null = null;
 	export let color = colors.default_forThings;

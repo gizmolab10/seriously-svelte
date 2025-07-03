@@ -6,7 +6,7 @@
 	import { w_ancestry_focus, w_count_mouse_up } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/runtime/Identifiable';
-	import Angled_Text from '../draw/Angled_Text.svelte';
+	import Angled_Text from '../text/Angled_Text.svelte';
 	import Gull_Wings from '../draw/Gull_Wings.svelte';
 	import Arc from '../draw/Arc.svelte';
 	export let color = 'red';

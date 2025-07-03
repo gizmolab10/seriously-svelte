@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { k, u, Point, colors, T_Layer, Direction } from '../../ts/common/Global_Imports';
 	import { w_show_details_ofType, w_background_color } from '../../ts/common/Stores';
+	import Clickable_Label from './Clickable_Label.svelte';
 	import Gull_Wings from '../draw/Gull_Wings.svelte';
-	import Clickable_Label from '../draw/Clickable_Label.svelte';
 	export let handle_click: (event: Event) => {} | null = null;
 	export let corner_radius = k.radius.gull_wings.ultra_thin;
 	export let title_font_size = k.font_size.separator;

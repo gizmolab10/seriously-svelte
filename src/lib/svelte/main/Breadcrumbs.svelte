@@ -5,7 +5,7 @@
 	import { w_graph_rect, w_thing_color, w_background_color } from '../../ts/common/Stores';
 	import Breadcrumb_Button from '../buttons/Breadcrumb_Button.svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
-	import Box from '../draw/Box.svelte';
+	import Box from '../mouse/Box.svelte';
 	import { onMount } from 'svelte';
 	let separator_color = colors.separator;
 	let breadcrumb_reattachments = 0;

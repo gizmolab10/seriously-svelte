@@ -5,12 +5,12 @@
 	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { w_background_color, w_show_details_ofType } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
-	import Text_Table from '../details/Text_Table.svelte';
 	import { s_details } from '../../ts/state/S_Details';
 	import type { Integer } from '../../ts/common/Types';
-	import Separator from '../draw/Separator.svelte';
-	import Color from '../details/Color.svelte';
+	import Text_Table from '../text/Text_Table.svelte';
+	import Separator from '../mouse/Separator.svelte';
 	import Portal from '../draw/Portal.svelte';
+	import Color from '../mouse/Color.svelte';
 	import { onMount } from 'svelte';
 	export let top = 9;
 	const id = 'selection';
@@ -131,5 +131,5 @@
 		length={k.width_details - 2.5}
 		handle_click={handle_toggle_more}
 		thickness={k.thickness.separator.details}
-		title='show {show_more_details ? 'less' : 'more'}'/>
+		title='click to show {show_more_details ? 'less' : 'more'}'/>
 {/if}

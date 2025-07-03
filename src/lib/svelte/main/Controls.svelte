@@ -9,7 +9,7 @@
 	import Segmented from '../mouse/Segmented.svelte';
 	import Button from '../buttons/Button.svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
-	import Box from '../draw/Box.svelte';
+	import Box from '../mouse/Box.svelte';
 	import { onMount } from 'svelte';
 	const widths = [18, 14, 56];
 	const lefts = u.cumulativeSum(widths);

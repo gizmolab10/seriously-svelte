@@ -10,7 +10,7 @@
 	import { T_Database } from '../../ts/database/DB_Common';
 	import StackDemo from '../experiments/StackDemo.svelte';
 	import Gull_Wings from '../draw/Gull_Wings.svelte';
-	import Separator from '../draw/Separator.svelte';
+	import Separator from '../mouse/Separator.svelte';
 	import Details from '../details/Details.svelte';
 	import Breadcrumbs from './Breadcrumbs.svelte';
 	import BuildNotes from './BuildNotes.svelte';

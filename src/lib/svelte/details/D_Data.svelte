@@ -7,10 +7,10 @@
 	import { T_Database } from '../../ts/database/DB_Common';
     import Buttons_Row from '../buttons/Buttons_Row.svelte';
 	import { w_t_database } from '../../ts/common/Stores';
-	import Text_Table from '../details/Text_Table.svelte';
     import { s_details } from '../../ts/state/S_Details';
+	import Text_Table from '../text/Text_Table.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
-	import Separator from '../draw/Separator.svelte';
+	import Separator from '../mouse/Separator.svelte';
 	import Button from '../buttons/Button.svelte';
 	import Spinner from '../draw/Spinner.svelte';
 	export let top = 3;

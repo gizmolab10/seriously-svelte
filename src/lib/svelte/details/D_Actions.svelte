@@ -7,7 +7,7 @@
 	import Buttons_Table from '../buttons/Buttons_Table.svelte';
     import { s_details } from '../../ts/state/S_Details';
 	import Segmented from '../mouse/Segmented.svelte';
-	import Separator from '../draw/Separator.svelte';
+	import Separator from '../mouse/Separator.svelte';
 	import Button from '../buttons/Button.svelte';
 	import Slider from '../mouse/Slider.svelte';
 	export let top = 2;
@@ -15,9 +15,9 @@
 	const has_title = true;
 	const top_tableHeight = 94;
 	const left_afterTitle = 39.5;
-	const bottom_tableHeight = 71;
+	const bottom_tableHeight = 73;
 	const table_width = k.width_details - 8;
-	const bottom_padding = bottom_tableHeight - 47;
+	const bottom_padding = bottom_tableHeight - 48;
     const font_sizes = [k.font_size.instructions, k.font_size.instructions];
     const s_banner_hideable = s_details.s_banner_hideables_byType[T_Details.actions];
 	const es_cancel = ux.s_element_for(grabs.latest, T_Element.cancel, k.empty);
@@ -197,10 +197,10 @@
 				length={top_tableHeight}
 				margin={k.details_margin}
 				origin={new Point(left_afterTitle, -4)}
-				thickness={k.thickness.separator.banners}/>
+				thickness={k.thickness.separator.details}/>
 			<Buttons_Table
 				gap={2}
-				top={16}
+				top={17}
 				name='second'
 				width={table_width}
 				has_title={has_title}
@@ -216,8 +216,8 @@
 				has_thin_divider={true}
 				margin={k.details_margin}
 				length={bottom_tableHeight}
-				thickness={k.thickness.separator.banners}
-				origin={new Point(left_afterTitle, top_tableHeight - 10)}/>
+				thickness={k.thickness.separator.details}
+				origin={new Point(left_afterTitle, top_tableHeight - 11)}/>
 			<Separator
 				isHorizontal={true}
 				has_thin_divider={true}
