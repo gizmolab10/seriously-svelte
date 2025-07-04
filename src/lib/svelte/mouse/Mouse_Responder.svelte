@@ -42,41 +42,23 @@
 
 	onMount(() => {
 		setupStyle();
-		if (!!bound_element) {
-			bound_element.addEventListener('pointerup', handle_pointerUp);
-			bound_element.addEventListener('pointerdown', handle_pointerDown);
-			return () => {
-				bound_element.removeEventListener('pointerup', handle_pointerUp);
-				bound_element.removeEventListener('pointerdown', handle_pointerDown);
-			}
-		}
 	});
 
-	$: origin?.description, center?.description, setupStyle();
-	
-	$: {	// hover
-		const mouse_location = $w_mouse_location;
-		if (!!bound_element && !!mouse_location) {
-			let isHit = false;
-			if (!!handle_isHit) {
-				isHit = handle_isHit();				// used when this element's hover shape is not its bounding rect
-			} else {					
-				isHit = Rect.rect_forElement_containsPoint(bound_element, mouse_location);		// use bounding rect
-			}
-			if (s_mouse.isHover != isHit) {
-				s_mouse.isHover  = isHit;
-				s_mouse.isOut   = !isHit;
-				handle_s_mouse(S_Mouse.hover(null, bound_element, isHit));					// pass a null event
-				if (isHit) {
-					reset();	// to support double click
-				}
-			}
-		}
+	$: {
+		const _ = origin?.description + center?.description;
+		setupStyle();
 	}
 
 	function reset() {	// tear down
 		s_mouse.clicks = 0;
 		mouse_timer.reset();
+	}
+
+	function handle_pointerUp(event: MouseEvent) {
+		if (detect_mouseUp) {
+			reset();
+			handle_s_mouse(S_Mouse.up(event, bound_element));
+		}
 	}
 
 	function create_s_mouse(isDown: boolean, isDouble: boolean = false, isLong: boolean = false, isRepeat: boolean = false, event: MouseEvent | null = null): S_Mouse {
@@ -92,11 +74,46 @@
 		return state;
 	}
 
-	function handle_pointerUp(event) {
-		if (detect_mouseUp) {
-			reset();
-			handle_s_mouse(S_Mouse.up(event, bound_element));
+	function setupStyle() {
+		style = `
+			width: ${width}px;
+			z-index: ${zindex};
+			height: ${height}px;
+			position: ${position};
+			font-size: ${font_size};
+			font-family: ${$w_thing_fontFamily};
+			`.removeWhiteSpace();
+		if (!!cursor) {
+			style = `${style} cursor: ${cursor};`;
 		}
+		if (!!origin || !!center) {
+			const x = origin?.x ?? center?.x - width / 2;
+			const y = origin?.y ?? center?.y - height / 2;
+			const alignment = align_left ? 'left: ' : 'right: ';
+			style = `${style} ${alignment}${x}px; top: ${y}px;`;
+		}
+	}
+
+	function handle_movement(event: MouseEvent) {
+		setTimeout(() => {
+			const mouse_location = $w_mouse_location;
+			if (!!bound_element && !!mouse_location) {
+				let isHit = false;
+				if (!!handle_isHit) {
+					isHit = handle_isHit();				// used when this element's hover shape is not its bounding rect
+				} else {					
+					isHit = Rect.rect_forElement_containsPoint(bound_element, mouse_location);		// use bounding rect
+				}
+				if (s_mouse.isHover != isHit) {
+					s_mouse.isHover  = isHit;
+					s_mouse.isOut   = !isHit;
+					handle_s_mouse(S_Mouse.hover(null, bound_element, isHit));					// pass a null event
+					if (isHit) {
+						reset();	// to support double click
+					}
+				}
+			}
+		}, 10);
 	}
 	
 	function handle_pointerDown(event) {
@@ -134,30 +151,14 @@
 		}
 	}
 
-	function setupStyle() {
-		style = `
-			width: ${width}px;
-			z-index: ${zindex};
-			height: ${height}px;
-			position: ${position};
-			font-size: ${font_size};
-			font-family: ${$w_thing_fontFamily};
-			`.removeWhiteSpace();
-		if (!!cursor) {
-			style = `${style} cursor: ${cursor};`;
-		}
-		if (!!origin || !!center) {
-			const x = origin?.x ?? center?.x - width / 2;
-			const y = origin?.y ?? center?.y - height / 2;
-			const alignment = align_left ? 'left: ' : 'right: ';
-			style = `${style} ${alignment}${x}px; top: ${y}px;`;
-		}
-	}
-
 </script>
 
 <div class='mouse-responder' id={name}
 	bind:this={bound_element}
+	on:mousemove={handle_movement}
+	on:pointerup={handle_pointerUp}
+	on:mouseleave={handle_movement}
+	on:pointerdown={handle_pointerDown}
 	style={style}>
 	<slot/>
 </div>

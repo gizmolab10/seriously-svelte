@@ -27,7 +27,8 @@
 	$: rotate_svgPath  = svgPaths.annulus(Point.square($w_ring_rotation_radius), middle_radius, ring_width, Point.square(ring_width));
 	$: resize_fill	   = (radial.s_ring_resizing.isHighlighted || radial.s_ring_resizing.isActive) ? colors.opacitize(color, radial.s_ring_resizing.fill_opacity) : 'transparent';
 	$: rotate_fill	   = (radial.s_ring_rotation.isHighlighted && !radial.s_ring_rotation.isActive) ? colors.opacitize(color, radial.s_ring_rotation.fill_opacity * (radial.s_ring_resizing.isActive ? 0 : 1)) : 'transparent';
-	
+	$: is_dragging	   = radial.s_ring_rotation.isActive || radial.s_ring_resizing.isActive || !!$w_g_paging_cluster;
+
 	onMount(() => {
 		cursor = radial.cursor_forRingZone;
 		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
@@ -86,14 +87,8 @@
 			debug.log_hover(` hover paging  ${inPaging}`);
 		}
 	}
-
-	$: {
-
-		////////////////////////////////////
-		// detect movement & adjust state //
-		////////////////////////////////////
-
-		const _ = $w_mouse_location_scaled;
+	
+	function detect_movement() {
 		const mouse_vector = layout.mouse_vector_ofOffset_fromGraphCenter();
 		if (!!mouse_vector) {
 			const now = new Date().getTime();
@@ -101,6 +96,9 @@
 			const rotation_state = radial.s_ring_rotation;
 			const resizing_state = radial.s_ring_resizing;
 			function enoughTimeHasPassed(duration: number) { return (now - last_action) > duration; }		// must not overload DOM refresh
+			if (is_dragging) {
+				window.getSelection()?.removeAllRanges();		// Prevent text selection during dragging
+			}
 
 			// check if one of the three ring zones is active (already dragging)
 
@@ -149,7 +147,7 @@
 		}
 	}
 
-	function up_down_closure(s_mouse) {
+	function handle_up_down(s_mouse) {
 
 		/////////////////////////////
 		// setup or teardown state //
@@ -199,15 +197,16 @@
 {#key ring_reattachments}
 	{#if !debug.hide_rings}
 		<div class = 'rings'
-			style = 'z-index:{T_Layer.rings};'>
+			on:mousemove={detect_movement}
+			style = 'z-index:{T_Layer.rings}; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;'>
 			<Mouse_Responder name = 'rings'
 				cursor = {cursor}
+				zindex = {T_Layer.rings}
 				width = {outer_diameter}
 				height = {outer_diameter}
-				zindex = {T_Layer.rings}
 				handle_isHit = {handle_isHit}
-				center = {layout.center_ofGraphSize}
-				handle_s_mouse = {up_down_closure}>
+				handle_s_mouse = {handle_up_down}
+				center = {layout.center_ofGraphSize}>
 				<svg class = 'rings-svg'
 					viewBox = {viewBox}>
 					<path class = 'resize-path'

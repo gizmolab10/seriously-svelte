@@ -99,9 +99,9 @@
 			<Text_Table
 				top={0}
 				row_height={11}
-				array={characteristics}
 				bind:this={info_table}
-				name='propertie-table'
+				array={characteristics}
+				name='characteristics-table'
 				font_size={k.font_size.info}/>
 		{/if}
 		{#if !!ancestry && ancestry.isEditable}
@@ -117,8 +117,8 @@
 			<Text_Table
 				top={8}
 				row_height={11}
-				name='more-table'
 				array={more_details}
+				name='more-details-table'
 				font_size={k.font_size.info}/>
 		{/if}
 	</div>

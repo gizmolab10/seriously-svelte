@@ -1,6 +1,6 @@
 <script lang='ts'>
     import { e, k, u, show, Rect, Size, Point, colors, svgPaths, T_Layer } from '../../ts/common/Global_Imports';
-	import { w_background_color, w_mouse_location_scaled } from '../../ts/common/Stores';
+	import { w_background_color } from '../../ts/common/Stores';
     import SVG_Gradient from '../draw/SVG_Gradient.svelte';
     import Button from './Button.svelte';
     export let width: number;
@@ -43,7 +43,7 @@
     function handle_mouse_enter(is_in: boolean) {
         const was_in = isHovering;
         isHovering = is_in;
-        if (is_in && was_in && detect_autorepeat) {        // we get an extre mouse enter event when we click
+        if (is_in && was_in && detect_autorepeat) {        // we get an extra mouse enter event when we click
             mouseTimer.autorepeat_stop();
         }
     }

@@ -3,14 +3,11 @@
 import { Testworthy_Utilities } from './Testworthy_Utilities';
 import { w_t_database, w_thing_fontFamily } from './Stores';
 import Identifiable from '../runtime/Identifiable';
+import G_TreeLine from '../layout/G_TreeLine';
 import { layout } from '../layout/G_Layout';
 import Ancestry from '../runtime/Ancestry';
-import type { Dictionary } from './Types';
-import { Point } from './Geometry';
 import { get } from 'svelte/store';
 import { k } from './Constants';
-import Angle from './Angle';
-import G_TreeLine from '../layout/G_TreeLine';
 
 export class Utilities extends Testworthy_Utilities {
 	
