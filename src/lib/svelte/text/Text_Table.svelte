@@ -7,6 +7,7 @@
 	export let row_height = 12;
 	export let name = k.empty;
 	export let width = 180;
+	export let left = 0;
 	export let top = 0;
 	export let array;
 	let table;
@@ -31,6 +32,7 @@
 		style='
 			width:97%;
 			top:{top}px;
+			left:{left}px;
 			position:{position};
 			font-size:{font_size}px;
 			z-index: {T_Layer.details};'>

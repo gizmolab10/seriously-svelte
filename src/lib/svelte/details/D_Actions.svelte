@@ -226,7 +226,7 @@
 				title='edit your hierarchy'
 				title_left={k.separator_title_left}
 				origin={Point.y(top_tableHeight - 11)}
-				thickness={k.thickness.separator.banners}/>
+				thickness={k.thickness.separator.details}/>
 		{/if}
 	</div>
 {/key}
