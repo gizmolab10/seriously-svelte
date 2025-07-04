@@ -170,6 +170,9 @@
   },
   "active": "9968854d61be5eec",
   "lastOpenFiles": [
+    "src/lib/svelte/shared/README_Title_Editor.md",
+    "src/lib/svelte/shared/Title_Editor.svelte",
+    "src/lib/svelte/shared",
     "src/lib/svelte/text/Angled_Text.svelte",
     "src/lib/svelte/text/Titled_Box.svelte",
     "src/lib/svelte/text/Text_Table.svelte",
@@ -178,9 +181,6 @@
     "src/lib/svelte/mouse/Box.svelte",
     "src/lib/svelte/draw/Text_Table.svelte",
     "src/lib/svelte/mouse/Separator.svelte",
-    "src/lib/svelte/mouse/Clickable_Label.svelte",
-    "src/lib/svelte/keyboard/Text_Editor.svelte",
-    "src/lib/svelte/keyboard/Text_Table.svelte",
     "node_modules/svelte-portal/README.md"
   ]
 }

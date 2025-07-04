@@ -47,7 +47,7 @@
 	}
 
 	$: {
-		const _ = `${$w_thing_color} ${$w_ancestry_focus} ${$w_s_text_edit} ${$w_ancestries_grabbed.join(',')}`;
+		const _ = `${$w_thing_color} ${$w_ancestry_focus} ${$w_s_text_edit} ${$w_ancestries_grabbed.join(',')} ${$w_ancestry_focus?.isGrabbed} ${$w_ancestry_focus?.isEditing}`;
 		update_colors();
 		update_svg();
 	}

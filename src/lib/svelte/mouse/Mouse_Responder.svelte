@@ -95,7 +95,7 @@
 	}
 
 	function handle_movement(event: MouseEvent) {
-		setTimeout(() => {
+		setTimeout(() => {		// in case event arrives before store is updated, wait 1/100 second
 			const mouse_location = $w_mouse_location;
 			if (!!bound_element && !!mouse_location) {
 				let isHit = false;

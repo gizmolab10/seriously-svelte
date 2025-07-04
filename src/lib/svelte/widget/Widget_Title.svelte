@@ -249,7 +249,7 @@
 				}
 				if (!ancestry.isGrabbed) {
 					ancestry.grab_forShift(event.shiftKey);
-				} else if (ancestry.isEditable) {
+				} else if (ancestry.isEditable && !!input) {
 					setTimeout(() => {
 						ancestry.startEdit();
 						thing_setSelectionRange_fromMouseLocation();
