@@ -140,5 +140,5 @@
 		length={k.width_details - 2.5}
 		handle_click={handle_toggle_properties}
 		thickness={k.thickness.separator.details}
-		title='click to show {show_properties ? 'less' : 'more'}'/>
+		title='click to {show_properties ? 'hide' : 'show more'}'/>
 {/if}

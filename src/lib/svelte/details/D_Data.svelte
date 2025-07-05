@@ -112,7 +112,7 @@
 					case T_File_Operation.export: h.persist_toFile(format); break;
 					case T_File_Operation.import: h.select_file_toUpload(format, s_mouse.event.shiftKey); break;
 				}
-				s_details.t_storage_need = T_Storage_Need.busy;
+				s_details.t_storage_need = T_Storage_Need.direction;
 			}
 		}
 	}
