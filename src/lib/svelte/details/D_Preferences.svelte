@@ -69,7 +69,7 @@
 
 </script>
 
-<div class='graph-details'
+<div class='preferences-details'
 	style='
 		left:0px;
 		color:black;
@@ -187,7 +187,7 @@
 			border: 1px solid black;
 			z-index: {T_Layer.detailsPlus_3};
 			background-color: {$w_background_color}'>
-		<Portal className='graph-color-portal' id='graph'>
+		<Portal className='preferences-color-portal' id='preferences'>
 			<Color
 				color={color}
 				origin={color_origin}

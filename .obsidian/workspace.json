@@ -170,6 +170,7 @@
   },
   "active": "9968854d61be5eec",
   "lastOpenFiles": [
+    "src/lib/svelte/details/D_Preferences.svelte",
     "src/lib/svelte/shared/README_Title_Editor.md",
     "src/lib/svelte/shared/Title_Editor.svelte",
     "src/lib/svelte/shared",

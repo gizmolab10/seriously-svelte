@@ -24,7 +24,7 @@ export enum T_Details {
 	selection,
 	tags,
 	traits,
-	graph,
+	preferences,
 	data,
 }
 
