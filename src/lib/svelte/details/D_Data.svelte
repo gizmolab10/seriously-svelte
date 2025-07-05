@@ -96,23 +96,22 @@
 	}
 	
 	function handle_click_forColumn(s_mouse, column) {
-		const ids = (s_details.t_storage_need == T_Storage_Need.direction) ? ids_forDirection : ids_forFormat();
+		const beginning = s_details.t_storage_need == T_Storage_Need.direction;
+		const ids = beginning ? ids_forDirection : ids_forFormat();
 		if (s_mouse.isHover) {
 			s_element_byStorageType[ids[column]].isOut = s_mouse.isOut;
 		} else if (s_mouse.isDown) {
 			const choice = ids[column];
-			if (choice == T_File_Format.cancel) {
-				s_details.t_storage_need = T_Storage_Need.direction;
-			} else if (s_details.t_storage_need == T_Storage_Need.direction) {
+			s_details.t_storage_need = T_Storage_Need.direction;	// reset by default
+			if (beginning) {
 				storage_choice = choice;
-				s_details.t_storage_need = T_Storage_Need.format;
-			} else {
+				s_details.t_storage_need = T_Storage_Need.format;	// not reset
+			} else if (choice != T_File_Format.cancel) {
 				const format = choice as T_File_Format;
 				switch (storage_choice) {
 					case T_File_Operation.export: h.persist_toFile(format); break;
 					case T_File_Operation.import: h.select_file_toUpload(format, s_mouse.event.shiftKey); break;
 				}
-				s_details.t_storage_need = T_Storage_Need.direction;
 			}
 		}
 	}

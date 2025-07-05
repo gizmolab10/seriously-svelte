@@ -26,5 +26,7 @@ export default defineConfig({
 			},
 			external: [/\/aside\//, /\/docs\//, /\/bubble\//]
 		},
+		sourcemap: true,
+		minify: false,
 	},
 });
