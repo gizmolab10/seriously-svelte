@@ -1,6 +1,6 @@
 export class Builds {
 	notes: { [id: number]: string[] } = {
-		152 : ['July 5, 2025', 'begin work on bubble.io plugin'],
+		152 : ['July 5, 2025', 'now loads as a bubble.io plugin'],
 		151 : ['July 1, 2025', 'autorepeat previous and next buttons'],
 		150 : ['June 29, 2025', 'support for multiple selected things'],
 		149 : ['June 25, 2025', 'hover logic applied everywhere'],
