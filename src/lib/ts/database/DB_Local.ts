@@ -1,5 +1,4 @@
 import { T_Persistence } from '../common/Global_Imports';
-import type { Dictionary } from '../common/Types';
 import { k } from '../common/Global_Imports';
 import { T_Database } from './DB_Common';
 import DB_Common from './DB_Common';

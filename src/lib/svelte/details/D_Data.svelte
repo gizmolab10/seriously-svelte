@@ -19,7 +19,7 @@
 	const ids_forDirection = [T_File_Operation.import, T_File_Operation.export];
 	const es_save = ux.s_element_for(new Identifiable('save'), T_Element.button, 'save');
 	const ids_forOutputFormat = [T_File_Format.csv, T_File_Format.json, T_File_Format.cancel];
-	const ids_forDatabase = [T_Database.local, T_Database.firebase, T_Database.airtable, T_Database.test];
+	const ids_forDatabase = [T_Database.local, T_Database.firebase, T_Database.airtable, T_Database.test, T_Database.bubble];
 	const ids_forInputFormat = [T_File_Format.csv, T_File_Format.json, T_File_Format.seriously, T_File_Format.cancel];
 	const heights = [22, 42, 28, 74, 26, 3];
 	const tops = u.cumulativeSum(heights);

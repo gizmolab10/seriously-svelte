@@ -170,6 +170,7 @@
   },
   "active": "9968854d61be5eec",
   "lastOpenFiles": [
+    "src/lib/ts/database/DB_Bubble.ts",
     "src/lib/svelte/details/D_Preferences.svelte",
     "src/lib/svelte/shared/README_Title_Editor.md",
     "src/lib/svelte/shared/Title_Editor.svelte",
@@ -181,7 +182,6 @@
     "src/lib/svelte/text",
     "src/lib/svelte/mouse/Box.svelte",
     "src/lib/svelte/draw/Text_Table.svelte",
-    "src/lib/svelte/mouse/Separator.svelte",
     "node_modules/svelte-portal/README.md"
   ]
 }

@@ -7,10 +7,10 @@ import { k } from '../common/Constants';
 import { get } from 'svelte/store';
 
 export enum T_Database {
-	airtable = 'airtable',
-	firebase = 'firebase',
+	airtable = 'air',
+	firebase = 'fire',
 	dgraph   = 'dgraph',
-	plugin	 = 'plugin',
+	bubble	 = 'bubble',
 	local	 = 'local',
 	test	 = 'test',
 }

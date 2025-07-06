@@ -5,6 +5,7 @@ import { T_Database } from '../database/DB_Common';
 import DB_Common from '../database/DB_Common';
 import DB_Firebase from './DB_Firebase';
 import DB_Airtable from './DB_Airtable';
+import DB_Bubble from './DB_Bubble';
 import DB_Local from './DB_Local';
 import DB_Test from './DB_Test';
 // import DB_DGraph from './DB_DGraph';
@@ -77,6 +78,7 @@ export default class Databases {
 				case T_Database.firebase: this.dbCache[t_database] = new DB_Firebase(); break;
 				case T_Database.airtable: this.dbCache[t_database] = new DB_Airtable(); break;
 				case T_Database.local:    this.dbCache[t_database] = new DB_Local(); break;
+				case T_Database.bubble:   this.dbCache[t_database] = new DB_Bubble(); break;
 				// case T_Database.dgraph:   this.dbCache[t_database] = new DB_DGraph(); break;
 				default:                  this.dbCache[t_database] = new DB_Test(); break;
 			}
