@@ -66,6 +66,7 @@ export class Events {
 		this.update_event_listener('keyup', this.handle_key_up);
 		this.update_event_listener('resize', this.handle_resize);
 		this.update_event_listener('keydown', this.handle_key_down);
+		this.update_event_listener("message", this.handle_bubble_message);
 		this.update_event_listener('orientationchange', this.handle_orientation_change);
 		if (u.device_isMobile) {
 			debug.log_action(`  mobile subscribe GRAPH`);
@@ -77,8 +78,8 @@ export class Events {
 			window.addEventListener('mousemove', this.handle_mouse_move, { passive: false });
 		}
 	}
-	
-	static readonly _____EVENT_HANDLERS: unique symbol;
+
+	static readonly EVENT_HANDLERS = Symbol('EVENT_HANDLERS');
 
 	private handle_touch_end(event: TouchEvent) { this.initialTouch = null; }
 	private handle_mouse_up(event: MouseEvent) { w_count_mouse_up.update(n => n + 1); }
@@ -158,6 +159,26 @@ export class Events {
 			signals.signal_blink_forAlteration(false);
 		}
 	}
+
+	private handle_bubble_message = (e: Event) => {
+		const event = e as MessageEvent;
+		if (event.data?.type === "update") {
+			console.log("Bubble sent config:", event.data);
+			const {
+				objectsTable,
+				relationshipsTable,
+				startingObject,
+				objectTitleField,
+				objectChildrenField,
+				objectIdField,
+				relationshipIdField,
+				objectColorField,
+				objectTypeField
+			} = event.data;
+
+			// store/use them however needed
+		}
+	};
 
 	async handle_key_down(e: Event) {
 		const event = e as KeyboardEvent;
