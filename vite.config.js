@@ -28,7 +28,7 @@ export default defineConfig({
 		sourcemap: true,
 		minify: false,
 		lib: {
-			entry: 'src/main.ts',
+			entry: 'src/main.js',
 			formats: ['iife'], // or 'umd'
 			name: 'WebSeriouslyBubblePluginApp',
 			fileName: 'bundle'
