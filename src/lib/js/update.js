@@ -11,10 +11,10 @@ function update(instance, context) {
 		objectColorField: context.object_color_field,
 		objectTypeField: context.object_type_field
 	};
-	console.log('UPDATE CALLED:', { instance, context });
-	setTimeout(() => {
-		if (instance.data.iframe?.contentWindow) {
-			instance.data.iframe.contentWindow.postMessage(message, "*");
-		}
-	}, 100);
+	if (instance.data.iframeReady && instance.data.iframe?.contentWindow) {
+		instance.data.iframe.contentWindow.postMessage(message, "*");
+	} else {
+		console.log("[PLUGIN] Iframe not ready, queuing message:", message);
+		instance.data.messageQueue.push(message);
+	}
 }

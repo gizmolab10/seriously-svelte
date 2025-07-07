@@ -15,13 +15,12 @@ export class Events {
 
 	constructor() {
 		this.mouseTimer = this.mouse_timer_forName('events');
-		console.log("[PLUGIN] is inside iframe?", window.self !== window.top);
 	}
 
 	setup() {
 		w_s_alteration.subscribe((s_alteration: S_Alteration | null) => { this.handle_s_alteration(s_alteration); });
 		w_device_isMobile.subscribe((isMobile: boolean) => { this.subscribeTo_events(); });
-		// this.subscribeTo_events();
+		window.parent.postMessage({ type: "ready" }, "*");	// tell bubble that we're ready
 	}
 
 	static readonly _____INTERNALS: unique symbol;
