@@ -66,7 +66,7 @@ export class Events {
 		this.update_event_listener('keyup', this.handle_key_up);
 		this.update_event_listener('resize', this.handle_resize);
 		this.update_event_listener('keydown', this.handle_key_down);
-		this.update_event_listener("message", this.handle_bubble_message);
+		window.addEventListener("message", this.handle_bubble_message);
 		this.update_event_listener('orientationchange', this.handle_orientation_change);
 		if (u.device_isMobile) {
 			debug.log_action(`  mobile subscribe GRAPH`);

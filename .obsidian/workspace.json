@@ -170,6 +170,7 @@
   },
   "active": "9968854d61be5eec",
   "lastOpenFiles": [
+    "src/lib/js/update.js",
     "Proposal_P_WindowResizePerformance.md",
     "Resize_Optimization_AI.md",
     "holons/api.md",
