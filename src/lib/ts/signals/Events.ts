@@ -20,7 +20,7 @@ export class Events {
 	setup() {
 		w_s_alteration.subscribe((s_alteration: S_Alteration | null) => { this.handle_s_alteration(s_alteration); });
 		w_device_isMobile.subscribe((isMobile: boolean) => { this.subscribeTo_events(); });
-		this.subscribeTo_events();
+		// this.subscribeTo_events();
 	}
 
 	static readonly _____INTERNALS: unique symbol;
@@ -66,7 +66,7 @@ export class Events {
 		this.update_event_listener('keyup', this.handle_key_up);
 		this.update_event_listener('resize', this.handle_resize);
 		this.update_event_listener('keydown', this.handle_key_down);
-		window.addEventListener("message", this.handle_bubble_message);
+		this.update_event_listener("message", this.handle_bubble_message);
 		this.update_event_listener('orientationchange', this.handle_orientation_change);
 		if (u.device_isMobile) {
 			debug.log_action(`  mobile subscribe GRAPH`);

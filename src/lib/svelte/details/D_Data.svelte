@@ -144,7 +144,6 @@
 			titles={ids_forDatabase}
 			selected={[$w_t_database]}
 			height={k.height.controls}
-			zindex={T_Layer.frontmost + 2}
 			origin={new Point(0, tops[0])}
 			handle_selection={handle_db_selection}/>
 	{/if}
