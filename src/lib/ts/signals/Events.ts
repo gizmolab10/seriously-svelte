@@ -15,6 +15,7 @@ export class Events {
 
 	constructor() {
 		this.mouseTimer = this.mouse_timer_forName('events');
+		console.log("[PLUGIN] is inside iframe?", window.self !== window.top);
 	}
 
 	setup() {
@@ -162,8 +163,8 @@ export class Events {
 
 	private handle_bubble_message = (e: Event) => {
 		const event = e as MessageEvent;
+		console.log("Bubble sent config:", event.data);
 		if (event.data?.type === "update") {
-			console.log("Bubble sent config:", event.data);
 			const {
 				objectsTable,
 				relationshipsTable,
