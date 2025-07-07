@@ -20,7 +20,6 @@ export class Events {
 	setup() {
 		w_s_alteration.subscribe((s_alteration: S_Alteration | null) => { this.handle_s_alteration(s_alteration); });
 		w_device_isMobile.subscribe((isMobile: boolean) => { this.subscribeTo_events(); });
-		window.parent.postMessage({ type: "ready" }, "*");	// tell bubble that we're ready
 	}
 
 	static readonly _____INTERNALS: unique symbol;
@@ -77,6 +76,7 @@ export class Events {
 			window.addEventListener('mouseup', this.handle_mouse_up, { passive: false });
 			window.addEventListener('mousemove', this.handle_mouse_move, { passive: false });
 		}
+		window.parent.postMessage({ type: "listening" }, "*");	// tell bubble that we're listening
 	}
 
 	static readonly EVENT_HANDLERS = Symbol('EVENT_HANDLERS');
