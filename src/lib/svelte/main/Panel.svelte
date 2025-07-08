@@ -14,6 +14,7 @@
 	import Details from '../details/Details.svelte';
 	import Breadcrumbs from './Breadcrumbs.svelte';
 	import BuildNotes from './BuildNotes.svelte';
+	import Bubble from '../debug/Bubble.svelte';
 	import Graph from '../graph/Graph.svelte';
 	import Controls from './Controls.svelte';
 	import Box from '../debug/Box.svelte';
@@ -98,3 +99,4 @@
 		{/if}
 	</div>
 {/key}
+<Bubble/>

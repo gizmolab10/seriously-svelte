@@ -170,6 +170,7 @@
   },
   "active": "9968854d61be5eec",
   "lastOpenFiles": [
+    "src/lib/svelte/debug/Bubble.svelte",
     "src/lib/js/initialize.js",
     "src/lib/js/update.js",
     "Proposal_P_WindowResizePerformance.md",
@@ -185,7 +186,6 @@
     "dist/goo.html",
     "dist",
     "vite.config.js.timestamp-1751765856998-7b356723f00cd.mjs",
-    "vite.config.js.timestamp-1751765766366-c5857bc56b59a.mjs",
     "src/lib/svelte/shared/README_Title_Editor.md",
     "node_modules/svelte-portal/README.md"
   ]
