@@ -163,24 +163,20 @@ export class Events {
 	private handle_bubble_message = (e: Event) => {
 		const event = e as MessageEvent;
 		console.log("Bubble sent config:", event.data);
-
 		if (event.data?.type === "update") {
 			let objectsTable, relationshipsTable;
-
 			try {
 				objectsTable = JSON.parse(event.data.objectsTable);
 			} catch (err) {
 				console.warn("Could not parse objectsTable:", err);
 				objectsTable = event.data.objectsTable; // fallback
 			}
-
 			try {
 				relationshipsTable = JSON.parse(event.data.relationshipsTable);
 			} catch (err) {
 				console.warn("Could not parse relationshipsTable:", err);
 				relationshipsTable = event.data.relationshipsTable; // fallback
 			}
-
 			const {
 				startingObject,
 				objectTitleField,
@@ -190,7 +186,8 @@ export class Events {
 				objectColorField,
 				objectTypeField
 			} = event.data;
-
+			console.log("objectsTable:", objectsTable);
+			console.log("relationshipsTable:", relationshipsTable);
 			// Now use parsed objectsTable and relationshipsTable as needed
 		}
 	};

@@ -38,8 +38,8 @@
 
 	function onDrag(event: MouseEvent) {
 		if (dragging) {
-			const dx = offsetX - event.clientX;
-			const dy = offsetY - event.clientY;
+			const dx = event.clientX - offsetX;
+			const dy = event.clientY - offsetY;
 			offsetX = event.clientX;
 			offsetY = event.clientY;
 			right -= dx;
