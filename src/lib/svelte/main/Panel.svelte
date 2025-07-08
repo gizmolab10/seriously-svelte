@@ -98,5 +98,7 @@
 				origin={new Point(layout.windowSize.width - half_thickness, layout.panel_boxHeight)}/>
 		{/if}
 	</div>
+	{#if $w_t_database == T_Database.bubble}
+		<Bubble/>
+	{/if}
 {/key}
-<Bubble/>
