@@ -5,19 +5,13 @@
 	import { T_Control, Hierarchy, databases, Direction } from '../../ts/common/Global_Imports';
 	import { w_s_text_edit, w_show_details, w_device_isMobile, } from '../../ts/common/Stores';
 	import { w_t_startup, w_popupView_id, w_ancestry_focus } from '../../ts/common/Stores';
-	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import Detail_Stack from '../details/Detail_Stack.svelte';
 	import { T_Database } from '../../ts/database/DB_Common';
-	import StackDemo from '../experiments/StackDemo.svelte';
-	import Gull_Wings from '../draw/Gull_Wings.svelte';
 	import Separator from '../mouse/Separator.svelte';
 	import Details from '../details/Details.svelte';
 	import Breadcrumbs from './Breadcrumbs.svelte';
 	import BuildNotes from './BuildNotes.svelte';
-	import Bubble from '../debug/Bubble.svelte';
 	import Graph from '../graph/Graph.svelte';
 	import Controls from './Controls.svelte';
-	import Box from '../debug/Box.svelte';
 	import Import from './Import.svelte';
 	import { onMount } from 'svelte';
 	const offset_toIntersection = new Point(-4, 8);
@@ -98,7 +92,4 @@
 				origin={new Point(layout.windowSize.width - half_thickness, layout.panel_boxHeight)}/>
 		{/if}
 	</div>
-	{#if $w_t_database == T_Database.bubble}
-		<Bubble/>
-	{/if}
 {/key}

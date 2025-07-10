@@ -13,17 +13,19 @@ function(instance, context) {
 					instance.data.iframe.contentWindow.postMessage(message, "*");
 				}
 			}
-		} else if (event.data?.type != "hello") {
+		} else if (!(event.data?.hello ?? false)) {
 			console.log("[PLUGIN] Received message:", event.data);
 		}
 	};
 	window.addEventListener("message", handleMessage);
-	const iframe = document.createElement("iframe");
-	iframe.src = "https://webseriously.netlify.app/?db=bubble";
-	iframe.style.width = "100%";
-	iframe.style.height = "100%";
-	iframe.style.border = "none";
-	iframe.style.overflow = "hidden";
-	instance.canvas.appendChild(iframe);
-	instance.data.iframe = iframe;
+	setTimeout(() => {
+		const iframe = document.createElement("iframe");
+		iframe.src = "https://webseriously.netlify.app/?db=bubble";
+		iframe.style.width = "100%";
+		iframe.style.height = "100%";
+		iframe.style.border = "none";
+		iframe.style.overflow = "hidden";
+		instance.canvas.appendChild(iframe);
+		instance.data.iframe = iframe;
+	}, 5000);
 }

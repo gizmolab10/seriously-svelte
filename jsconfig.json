@@ -32,5 +32,5 @@
 		"src/lib/**/*.js",
 		"src/lib/**/*.svelte",
 		"src/lib/**/*.ts"
-, "src/main.js"	]
+, "src/main.js", "notes/initialize.js", "notes/update.js"	]
 }

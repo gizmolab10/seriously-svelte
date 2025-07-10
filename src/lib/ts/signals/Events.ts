@@ -1,10 +1,11 @@
 import { T_Action, T_File_Format, T_Predicate, T_Alteration, S_Mouse, S_Alteration } from '../common/Global_Imports';
 import { c, h, k, u, ux, grabs, Point, debug, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
 import { w_ancestry_focus, w_count_mouse_up, w_mouse_location, w_mouse_location_scaled } from '../common/Stores';
+import { w_device_isMobile, w_ancestries_grabbed, w_user_graph_offset, w_t_database } from '../common/Stores';
 import { w_s_alteration, w_count_resize, w_s_text_edit, w_control_key_down } from '../common/Stores';
-import { w_device_isMobile, w_ancestries_grabbed, w_user_graph_offset } from '../common/Stores';
-import { get } from 'svelte/store';
+import { T_Database } from '../database/DB_Common';
 import Mouse_Timer from './Mouse_Timer';
+import { get } from 'svelte/store';
 
 export class Events {
 	mouse_timer_byName: { [name: string]: Mouse_Timer } = {};
@@ -65,7 +66,6 @@ export class Events {
 		this.update_event_listener('keyup', this.handle_key_up);
 		this.update_event_listener('resize', this.handle_resize);
 		this.update_event_listener('keydown', this.handle_key_down);
-		this.update_event_listener("message", this.handle_bubble_message);
 		this.update_event_listener('orientationchange', this.handle_orientation_change);
 		if (u.device_isMobile) {
 			debug.log_action(`  mobile subscribe GRAPH`);
@@ -77,6 +77,13 @@ export class Events {
 			window.addEventListener('mousemove', this.handle_mouse_move, { passive: false });
 		}
 		window.parent.postMessage({ type: "listening" }, "*");	// tell bubble that we're listening
+		if (get(w_t_database) === T_Database.bubble) {
+			this.subscribeTo_bubble();
+		}
+	}
+
+	subscribeTo_bubble() {
+		this.update_event_listener('message', this.handle_bubble_message);
 	}
 
 	static readonly EVENT_HANDLERS = Symbol('EVENT_HANDLERS');
@@ -169,13 +176,13 @@ export class Events {
 				objectsTable = JSON.parse(event.data.objectsTable);
 			} catch (err) {
 				console.warn("Could not parse objectsTable:", err);
-				objectsTable = event.data.objectsTable; // fallback
+				objectsTable = err; // fallback
 			}
 			try {
 				relationshipsTable = JSON.parse(event.data.relationshipsTable);
 			} catch (err) {
 				console.warn("Could not parse relationshipsTable:", err);
-				relationshipsTable = event.data.relationshipsTable; // fallback
+				relationshipsTable = err; // fallback
 			}
 			const {
 				startingObject,

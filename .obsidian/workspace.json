@@ -11,14 +11,10 @@
             "id": "9968854d61be5eec",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "holons/api.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "api"
+              "title": "New tab"
             }
           }
         ]
@@ -170,22 +166,28 @@
   },
   "active": "9968854d61be5eec",
   "lastOpenFiles": [
+    "notes/update.js",
+    "notes/initialize.js",
+    "notes/Resize_Optimization_AI.md",
+    "notes/goo.svelte",
+    "notes/bubble tears.md",
+    "notes/holons.api.md",
+    "holons/api.md",
+    "notes/api.md",
+    "notes",
+    "src/bubble tears.md",
+    "src/tears.md",
     "src/lib/svelte/debug/Bubble.svelte",
     "src/lib/js/initialize.js",
     "src/lib/js/update.js",
     "Proposal_P_WindowResizePerformance.md",
     "Resize_Optimization_AI.md",
-    "holons/api.md",
     "dist/assets/index.js.map",
     "dist/assets/index.css",
     "dist/index.html",
     "dist/assets/index.js",
-    "dist/assets",
     "dist/vite.svg",
     "dist/settings.svg",
-    "dist/goo.html",
-    "dist",
-    "vite.config.js.timestamp-1751765856998-7b356723f00cd.mjs",
     "src/lib/svelte/shared/README_Title_Editor.md",
     "node_modules/svelte-portal/README.md"
   ]

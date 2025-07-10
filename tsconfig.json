@@ -37,5 +37,5 @@
 		"src/**/*",
 		"src/lib/**/*",
 		"src/main.js"
-	]
+, "notes/initialize.js", "notes/update.js"	]
 }
