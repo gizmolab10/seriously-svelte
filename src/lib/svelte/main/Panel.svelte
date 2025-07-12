@@ -57,7 +57,6 @@
 			<Import/>
 		{:else}
 			<Controls/>
-			<Breadcrumbs/>
 			{#if $w_show_details}
 				<Details/>
 			{/if}
@@ -72,8 +71,8 @@
 			</div>
 			<Separator
 				name='panel-left'
-				has_both_wings={true}
 				isHorizontal={false}
+				has_both_wings={true}
 				margin={k.details_margin}
 				zindex={T_Layer.frontmost}
 				thickness={k.thickness.separator.main}
@@ -82,14 +81,28 @@
 				origin={new Point(2, layout.panel_boxHeight)}/>
 			<Separator
 				name='panel-right'
-				has_both_wings={true}
 				isHorizontal={false}
+				has_both_wings={true}
 				margin={k.details_margin}
 				zindex={T_Layer.frontmost}
 				thickness={k.thickness.separator.main}
 				length={$w_graph_rect.size.height + 10}
 				corner_radius={k.radius.gull_wings.thick}
 				origin={new Point(layout.windowSize.width - half_thickness, layout.panel_boxHeight)}/>
+		{/if}
+		{#if c.has_full_UI}
+			<Breadcrumbs/>
+		{:else}
+			<Separator
+				name='panel-bottom'
+				isHorizontal={true}
+				has_both_wings={true}
+				margin={k.details_margin}
+				zindex={T_Layer.frontmost}
+				length={layout.windowSize.width + 1}
+				thickness={k.thickness.separator.main}
+				corner_radius={k.radius.gull_wings.thick}
+				origin={new Point(2, layout.windowSize.height - 4)}/>
 		{/if}
 	</div>
 {/key}

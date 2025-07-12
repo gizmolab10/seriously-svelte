@@ -1,4 +1,4 @@
-import { h, k, p, u, ux, Size, Rect, Point, Thing, grabs, debug, signals, Ancestry } from '../common/Global_Imports';
+import { c, h, k, p, u, ux, Size, Rect, Point, Thing, grabs, debug, signals, Ancestry } from '../common/Global_Imports';
 import { w_user_graph_offset, w_user_graph_center, w_mouse_location_scaled } from '../common/Stores';
 import { T_Graph, T_Kinship, T_Preference, G_RadialGraph } from '../common/Global_Imports';
 import { w_show_tree_ofType, w_show_graph_ofType } from '../common/Stores';
@@ -54,7 +54,8 @@ export default class G_Layout {
 		const y = this.panel_boxHeight + 2;			// account for origin at top
 		const x = get(w_show_details) ? k.width_details : 0;
 		const origin_ofGraph = new Point(x, y);
-		const size_ofGraph = this.windowSize.reducedBy(origin_ofGraph).reducedByY(this.panel_boxHeight);
+		const y_adjustment = !c.has_full_UI ? 4 : this.panel_boxHeight;
+		const size_ofGraph = this.windowSize.reducedBy(origin_ofGraph).reducedByY(y_adjustment);
 		const rect = new Rect(origin_ofGraph, size_ofGraph);
 		debug.log_mouse(`GRAPH ====> ${rect.description}`);
 		w_graph_rect.set(rect);										// used by Panel and Graph
