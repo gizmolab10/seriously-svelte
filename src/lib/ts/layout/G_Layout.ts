@@ -183,7 +183,7 @@ export default class G_Layout {
 		}
 	}
 
-	layout_breadcrumbs_forAncestry_within(ancestry: Ancestry, thresholdWidth: number): [Array<Thing>, number[], number[], number] {
+	layout_breadcrumbs_forAncestry_centered_starting_within(ancestry: Ancestry, centered: boolean, left: number, thresholdWidth: number): [Array<Thing>, number[], number[], number] {
 		const crumb_things: Array<Thing> = [];
 		const widths: number[] = [];
 		let parent_widths = 0;						// encoded as one parent count per 2 digits (base 10) ... for triggering redraw
@@ -202,7 +202,9 @@ export default class G_Layout {
 				parent_widths = parent_widths * 100 + width;
 			}
 		}
-		let left = 8;					// position of first crumb... was (thresholdWidth - total) / 2
+		if (centered) {
+			left = (thresholdWidth - total) / 2;
+		}
 		let lefts = [left];
 		for (const width of widths) {
 			left += width;				// position of next crumb

@@ -7,11 +7,12 @@
 	import Next_Previous from '../mouse/Next_Previous.svelte';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Segmented from '../mouse/Segmented.svelte';
+	import Separator from '../mouse/Separator.svelte';
+	import Breadcrumbs from './Breadcrumbs.svelte';
 	import Button from '../buttons/Button.svelte';
-	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import Box from '../mouse/Box.svelte';
 	import { onMount } from 'svelte';
-	const widths = [c.has_full_UI ? 18 : -8, 14, 56];
+	const widths = [c.has_full_UI ? 18 : -8, 14, 56, 96, -10];
 	const lefts = u.cumulativeSum(widths);
 	const size_big = k.height.button + 4;
 	const y_center = 10.5;
@@ -83,7 +84,7 @@
 </script>
 
 {#if Object.values(es_control_byType).length > 0}
-	{#key width}
+	{#key width, $w_background_color}
 		<Box
 			name='controls-box'
 			color={colors.separator}
@@ -101,51 +102,47 @@
 					z-index: {T_Layer.frontmost};
 					width: {layout.windowSize.width - 20}px;'>
 				{#if !$w_popupView_id}
-					{#key $w_background_color}
-						{#if c.has_full_UI}
-							<Button
-								border_thickness=0
-								color='transparent'
-								name='details-toggle'
-								center={new Point(lefts[0], y_center)}
-								es_button={es_control_byType[T_Control.details]}
-								closure={(s_mouse) => handle_s_mouse_forControl_Type(s_mouse, T_Control.details)}>
-								<svg
-									class='hamburger-svg'
-									style='
-										height: 17px;
-										width: 20.5px;
-										position: absolute;'
-									viewBox='-1 -1 19 19'>
-									<path
-										d={hamburger_path}
-										stroke-width='0.75'
-										class='hamburger-path'
-										fill={es_control_byType[T_Control.details].isOut ? 'black' : 'white'}
-										stroke={es_control_byType[T_Control.details].isOut ? 'transparent' : 'darkgray'}/>
-								</svg>
-							</Button>
-						{/if}
-					{/key}
-					<Next_Previous
-						size={28}
-						name='recents'
-						height={size_big}
-						has_title={false}
-						has_seperator={false}
-						has_gull_wings={false}
-						origin={Point.x(lefts[1])}
-						closure={handle_recents_mouseClick}/>
-					{#key $w_show_graph_ofType}
-						<Segmented
-							width={80}
-							name='graph'
-							origin={Point.x(lefts[2])}
-							selected={[$w_show_graph_ofType]}
-							titles={[T_Graph.tree, T_Graph.radial]}
-							handle_selection={(titles) => layout.handle_mode_selection('graph', titles)}/>
-					{/key}
-					{#if c.has_full_UI}
+					{#if !c.has_full_UI}
+						<Separator
+							isHorizontal={false}
+							name='before-breadcrumbs'
+							origin={new Point(lefts[3], -8)}
+							length={layout.panel_boxHeight + 2}
+							thickness={k.thickness.separator.main}
+							corner_radius={k.radius.gull_wings.thick}/>
+						<div style='
+							top:-10px;
+							left:{lefts[4]}px;
+							position:absolute;
+							width:{layout.windowSize.width - lefts[4]}px;'>
+							<Breadcrumbs
+								left={lefts[4]}
+								centered={true}
+								width={layout.windowSize.width - lefts[4]}/>
+						</div>
+					{:else}
+						<Button
+							border_thickness=0
+							color='transparent'
+							name='details-toggle'
+							center={new Point(lefts[0], y_center)}
+							es_button={es_control_byType[T_Control.details]}
+							closure={(s_mouse) => handle_s_mouse_forControl_Type(s_mouse, T_Control.details)}>
+							<svg
+								class='hamburger-svg'
+								style='
+									height: 17px;
+									width: 20.5px;
+									position: absolute;'
+								viewBox='-1 -1 19 19'>
+								<path
+									d={hamburger_path}
+									stroke-width='0.75'
+									class='hamburger-path'
+									fill={es_control_byType[T_Control.details].isOut ? 'black' : 'white'}
+									stroke={es_control_byType[T_Control.details].isOut ? 'transparent' : 'darkgray'}/>
+							</svg>
+						</Button>
 						{#key displayName}
 							<div style='
 								width:{displayName_width + 20}px;
@@ -169,6 +166,24 @@
 							</span>
 						</Button>
 					{/if}
+					<Next_Previous
+						size={28}
+						name='recents'
+						height={size_big}
+						has_title={false}
+						has_seperator={false}
+						has_gull_wings={false}
+						origin={Point.x(lefts[1])}
+						closure={handle_recents_mouseClick}/>
+					{#key $w_show_graph_ofType}
+						<Segmented
+							width={80}
+							name='graph'
+							origin={Point.x(lefts[2])}
+							selected={[$w_show_graph_ofType]}
+							titles={[T_Graph.tree, T_Graph.radial]}
+							handle_selection={(titles) => layout.handle_mode_selection('graph', titles)}/>
+					{/key}
 				{/if}
 				{#key $w_device_isMobile}
 					{#if $w_device_isMobile}

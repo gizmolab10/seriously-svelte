@@ -12,6 +12,7 @@
 	import BuildNotes from './BuildNotes.svelte';
 	import Graph from '../graph/Graph.svelte';
 	import Controls from './Controls.svelte';
+	import Box from '../mouse/Box.svelte';
 	import Import from './Import.svelte';
 	import { onMount } from 'svelte';
 	const offset_toIntersection = new Point(-4, 8);
@@ -91,7 +92,26 @@
 				origin={new Point(layout.windowSize.width - half_thickness, layout.panel_boxHeight)}/>
 		{/if}
 		{#if c.has_full_UI}
-			<Breadcrumbs/>
+			<div class='breadcrumbs'
+				style='left:0px;
+					width:100%;
+					position: absolute;
+					top:{layout.breadcrumbs_top}px;
+					height:{layout.panel_boxHeight}px;'>
+				{#key trigger}
+					<Box
+						top={0}
+						left={0}
+						name='breadcrumbs-box'
+						color={separator_color}
+						width={layout.windowSize.width}
+						height={layout.panel_boxHeight}
+						thickness={k.thickness.separator.main}
+						corner_radius={k.radius.gull_wings.thick}>
+						<Breadcrumbs/>
+					</Box>
+				{/key}
+			</div>
 		{:else}
 			<Separator
 				name='panel-bottom'

@@ -5,8 +5,10 @@
 	import { w_graph_rect, w_thing_color, w_background_color } from '../../ts/common/Stores';
 	import Breadcrumb_Button from '../buttons/Breadcrumb_Button.svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
-	import Box from '../mouse/Box.svelte';
 	import { onMount } from 'svelte';
+	export let left: number = 8;
+	export let centered: boolean = false;
+	export let width = layout.windowSize.width;
 	let separator_color = colors.separator;
 	let breadcrumb_reattachments = 0;
 	let things: Array<Thing> = [];
@@ -26,9 +28,8 @@
 			ancestry = h?.ancestry_forBreadcrumbs;		// assure we have an ancestry
 			if (!!ancestry) {				
 				let widths: number[] = [];
-				const windowWidth = layout.windowSize.width;
 				let parent_widths = 0;	// encoded as one parent count per 2 digits (base 10)
-				[things, widths, lefts, parent_widths] = layout.layout_breadcrumbs_forAncestry_within(ancestry, windowWidth);
+				[things, widths, lefts, parent_widths] = layout.layout_breadcrumbs_forAncestry_centered_starting_within(ancestry, centered, left, width);
 				trigger = parent_widths * 10000 + breadcrumb_reattachments * 100 + lefts[0];		// re-render HTML when this value changes
 				debug.log_crumbs(`ALL ${widths} ${things.map(t => t.title)}`);
 				breadcrumb_reattachments += 1;
@@ -44,48 +45,29 @@
 </script>
 
 <div class='breadcrumbs'
-	style='left:0px;
-		width:100%;
-		position: absolute;
-		top:{layout.breadcrumbs_top}px;
-		height:{layout.panel_boxHeight}px;'>
-	{#key trigger}
-		<Box
-			top={0}
-			left={0}
-			name='breadcrumbs-box'
-			color={separator_color}
-			width={layout.windowSize.width}
-			height={layout.panel_boxHeight}
-			thickness={k.thickness.separator.main}
-			corner_radius={k.radius.gull_wings.thick}>
-			<div class='breadcrumbs'
+	style='
+		top:5px;
+		left:7px;
+		position:absolute;'>
+	{#each things as thing, index}
+		{#if index > 0}
+			<div class='crumb-tweener'
 				style='
 					top:5px;
-					left:7px;
-					position:absolute;'>
-				{#each things as thing, index}
-					{#if index > 0}
-						<div class='crumb-tweener'
-							style='
-								top:5px;
-								position:absolute;
-								color:{thing.color};
-								left:{lefts[index] - size + 5.5}px;'>
-							>
-						</div>
-					{/if}
-					<div class='breadcrumb'
-						style='
-							top:0px;
-							position:absolute;'>
-						<Breadcrumb_Button
-							thing={thing}
-							left={lefts[index]}
-							es_breadcrumb={es_breadcrumb(index, thing)}/>
-					</div>
-				{/each}
+					position:absolute;
+					color:{thing.color};
+					left:{lefts[index] - size + 5.5}px;'>
+				>
 			</div>
-		</Box>
-	{/key}
+		{/if}
+		<div class='breadcrumb'
+			style='
+				top:0px;
+				position:absolute;'>
+			<Breadcrumb_Button
+				thing={thing}
+				left={lefts[index]}
+				es_breadcrumb={es_breadcrumb(index, thing)}/>
+		</div>
+	{/each}
 </div>
