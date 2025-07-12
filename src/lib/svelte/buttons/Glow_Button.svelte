@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import { e, k, u, show, Rect, Size, Point, colors, svgPaths, T_Layer } from '../../ts/common/Global_Imports';
+    import { c, e, k, u, show, Rect, Size, Point, colors, svgPaths, T_Layer } from '../../ts/common/Global_Imports';
 	import { w_background_color } from '../../ts/common/Stores';
     import SVG_Gradient from '../draw/SVG_Gradient.svelte';
     import Button from './Button.svelte';
@@ -58,7 +58,7 @@
         width: {width}px;
         height: {height}px;
         position: relative;'>
-    {#if !isHovering}
+    {#if !isHovering == c.has_antique_UI}
         <SVG_Gradient
             isInverted={true}
             name={gradient_name}

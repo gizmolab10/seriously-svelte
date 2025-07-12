@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, Rect, Point, colors, T_Layer, svgPaths } from '../../ts/common/Global_Imports';
+	import { c, k, Rect, Point, colors, T_Layer, svgPaths } from '../../ts/common/Global_Imports';
     import { w_background_color } from '../../ts/common/Stores';
     import SVG_Gradient from '../draw/SVG_Gradient.svelte';
 	import Separator from './Separator.svelte';
@@ -46,13 +46,15 @@
                 origin={new Point(2, 2)}
                 corner_radius={corner_radius}/>
         {/if}
-        <SVG_Gradient
-            isInverted={true}
-            color={banner_color}
-            size={box_rect.size}
-            name={`gradient-${name}`}
-            zindex={T_Layer.frontmost}
-            path={svgPaths.rectangle(box_rect)}/>
+        {#if c.has_antique_UI}
+            <SVG_Gradient
+                isInverted={true}
+                color={banner_color}
+                size={box_rect.size}
+                name={`gradient-${name}`}
+                zindex={T_Layer.frontmost}
+                path={svgPaths.rectangle(box_rect)}/>
+        {/if}
         <div class='box-content-{name}' style='flex: 1;'>
             <slot />
         </div>
