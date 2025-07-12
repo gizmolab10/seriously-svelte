@@ -11,7 +11,7 @@
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import Box from '../mouse/Box.svelte';
 	import { onMount } from 'svelte';
-	const widths = [18, 14, 56];
+	const widths = [c.has_full_UI ? 18 : -8, 14, 56];
 	const lefts = u.cumulativeSum(widths);
 	const size_big = k.height.button + 4;
 	const y_center = 10.5;
@@ -102,28 +102,30 @@
 					width: {layout.windowSize.width - 20}px;'>
 				{#if !$w_popupView_id}
 					{#key $w_background_color}
-						<Button
-							border_thickness=0
-							color='transparent'
-							name='details-toggle'
-							center={new Point(lefts[0], y_center)}
-							es_button={es_control_byType[T_Control.details]}
-							closure={(s_mouse) => handle_s_mouse_forControl_Type(s_mouse, T_Control.details)}>
-							<svg
-								class='hamburger-svg'
-								style='
-									height: 17px;
-									width: 20.5px;
-									position: absolute;'
-								viewBox='-1 -1 19 19'>
-								<path
-									d={hamburger_path}
-									stroke-width='0.75'
-									class='hamburger-path'
-									fill={es_control_byType[T_Control.details].isOut ? 'black' : 'white'}
-									stroke={es_control_byType[T_Control.details].isOut ? 'transparent' : 'darkgray'}/>
-							</svg>
-						</Button>
+						{#if c.has_full_UI}
+							<Button
+								border_thickness=0
+								color='transparent'
+								name='details-toggle'
+								center={new Point(lefts[0], y_center)}
+								es_button={es_control_byType[T_Control.details]}
+								closure={(s_mouse) => handle_s_mouse_forControl_Type(s_mouse, T_Control.details)}>
+								<svg
+									class='hamburger-svg'
+									style='
+										height: 17px;
+										width: 20.5px;
+										position: absolute;'
+									viewBox='-1 -1 19 19'>
+									<path
+										d={hamburger_path}
+										stroke-width='0.75'
+										class='hamburger-path'
+										fill={es_control_byType[T_Control.details].isOut ? 'black' : 'white'}
+										stroke={es_control_byType[T_Control.details].isOut ? 'transparent' : 'darkgray'}/>
+								</svg>
+							</Button>
+						{/if}
 					{/key}
 					<Next_Previous
 						size={28}
@@ -143,28 +145,30 @@
 							titles={[T_Graph.tree, T_Graph.radial]}
 							handle_selection={(titles) => layout.handle_mode_selection('graph', titles)}/>
 					{/key}
-					{#key displayName}
-						<div style='
-							width:{displayName_width + 20}px;
-							left:{displayName_x}px;
-							position:absolute;
-							top:1px;'>
-							{displayName}
-						</div>
-					{/key}
-					<Button name={T_Control.help}
-						width={size_big}
-						height={size_big}
-						center={new Point(width - rights[0], y_center)}
-						es_button={es_control_byType[T_Control.help]}
-						closure={(s_mouse) => handle_s_mouse_forControl_Type(s_mouse, T_Control.help)}>
-						<span
-							style='top:2px;
-								left:5.5px;
-								position:absolute;'>
-							?
-						</span>
-					</Button>
+					{#if c.has_full_UI}
+						{#key displayName}
+							<div style='
+								width:{displayName_width + 20}px;
+								left:{displayName_x}px;
+								position:absolute;
+								top:1px;'>
+								{displayName}
+							</div>
+						{/key}
+						<Button name={T_Control.help}
+							width={size_big}
+							height={size_big}
+							center={new Point(width - rights[0], y_center)}
+							es_button={es_control_byType[T_Control.help]}
+							closure={(s_mouse) => handle_s_mouse_forControl_Type(s_mouse, T_Control.help)}>
+							<span
+								style='top:2px;
+									left:5.5px;
+									position:absolute;'>
+								?
+							</span>
+						</Button>
+					{/if}
 				{/if}
 				{#key $w_device_isMobile}
 					{#if $w_device_isMobile}
@@ -207,16 +211,18 @@
 					{/if}
 				{/key}
 				{#key $w_background_color}
-					<Button name={T_Control.builds}
-						width=75
-						height={size_big}
-						center={new Point(width - rights[1], y_center)}
-						es_button={es_control_byType[T_Control.builds]}
-						closure={(s_mouse) => handle_s_mouse_forControl_Type(s_mouse, T_Control.builds)}>
-						<span style='font-family: {$w_thing_fontFamily};'>
-							{'build ' + k.build_number}
-						</span>
-					</Button>
+					{#if c.has_full_UI}
+						<Button name={T_Control.builds}
+							width=75
+							height={size_big}
+							center={new Point(width - rights[1], y_center)}
+							es_button={es_control_byType[T_Control.builds]}
+							closure={(s_mouse) => handle_s_mouse_forControl_Type(s_mouse, T_Control.builds)}>
+							<span style='font-family: {$w_thing_fontFamily};'>
+								{'build ' + k.build_number}
+							</span>
+						</Button>
+					{/if}
 				{/key}
 			</div>
 		</Box>

@@ -1,5 +1,5 @@
-import { Tag, Rect, Point, Thing, Trait, colors, Ancestry, Hierarchy } from '../common/Global_Imports';
 import { T_Graph, T_Kinship, T_Details, T_Startup, T_Auto_Adjust } from '../common/Global_Imports';
+import { Tag, Rect, Point, Trait, colors, Ancestry, Hierarchy } from '../common/Global_Imports';
 import { G_Paging, G_Cluster, S_Text_Edit, S_Alteration } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
 

@@ -4,7 +4,9 @@ import { stores, w_device_isMobile } from '../common/Stores';
 export class Configuration {
 
 	eraseDB = 0;
+	has_full_UI = true;
 	erasePreferences = 0;
+	has_antique_UI = true;
 	allow_GraphEditing = true;
 	allow_TitleEditing = true;
 	allow_HorizontalScrolling = true;
@@ -38,6 +40,8 @@ export class Configuration {
         const disableOptions = queryStrings.get('disable')?.split(k.comma) ?? [];
 		for (const disableOption of disableOptions) {
 			switch (disableOption) {
+				case 'full_UI':				this.has_full_UI			   = false; break;
+				case 'antique_UI':			this.has_antique_UI			   = false; break;
 				case 'editGraph':			this.allow_GraphEditing		   = false; break;
 				case 'editTitles':			this.allow_TitleEditing		   = false; break;
 				case 'horizontalScrolling': this.allow_HorizontalScrolling = false; break;
