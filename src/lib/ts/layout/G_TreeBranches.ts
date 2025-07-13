@@ -18,7 +18,7 @@ export default class G_TreeBranches {
 			debug.log_layout(`children ${ancestry.g_widget.origin_ofWidget.x} ${ancestry.id}`);
 			const branchAncestries = ancestry.branchAncestries;
 			const halfHeight = ancestry.visibleSubtree_halfHeight;
-			const origin_ofWidget = ancestry.g_widget.origin_ofWidget.offsetByXY(7, halfHeight + 1);
+			const origin_ofWidget = ancestry.g_widget.origin_ofWidget.offsetByXY(9, halfHeight + 2);
 			let height = -halfHeight;		// start out negative and grow positive
 			for (const branchAncestry of branchAncestries) {
 				if (branchAncestry.depth > ancestry.depth) {

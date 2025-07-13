@@ -12,7 +12,7 @@
 	let lineWrapper: Svelte_Wrapper;
 	let svg_dasharray = k.empty;
 	let line_reattachments = 0;
-	let stroke_width = 0.5;
+	let stroke_width = 1;
 	let line;
 
 	//////////////////////////////
@@ -34,7 +34,7 @@
 	if (g_line.isBidirectional) {
 		stroke_color = colors.opacitize(ancestry.thing.color, 0.7);
 		svg_dasharray = '4,3';
-		stroke_width = 0.5;
+		stroke_width = 1;
 	}
 
 	$: {

@@ -1,31 +1,30 @@
 function(instance, properties, context) {
 	console.warn("[PLUGIN] Initializing plugin and checking for hydration...");
-	console.warn("[PLUGIN] relationships_table_list?", properties.relationships_table_list);
-	console.warn("[PLUGIN] keys in properties:", Object.keys(properties));
-	instance.data.dataIsReady = false;
 	instance.data.iframeListening = false;
+	instance.data.dataIsReady = false;
 
-	function dataIsReady() {
-		const objList = properties.objects_table_list;
-		const relList = properties.relationships_table_list;
-
-		const objsReady = !!objList &&
-			typeof objList.length === "function" &&
-			typeof objList.get === "function" &&
-			objList.length() > 0 &&
-			objList.get(0);
-
-		const relsReady = !!relList &&
-			typeof relList.length === "function" &&
-			typeof relList.get == "function" &&
-			relList.length() > 0 &&
-			relList.get(0);
-
-		return objsReady && relsReady;
+	function isReady(list) {
+		try {
+			if (!!list &&
+				typeof list.length === "function" &&
+				typeof list.get == "function" &&
+				list.length() > 0) {
+					const first = list.get(0);
+					return !!first;
+				}
+		} catch (e) {
+			console.log("[PLUGIN] watching failed...", e);
+			return false;
+		}
+		
+		return false;
 	}
 
 	function readyToUpdate() {
-		const ready = dataIsReady() &&
+		const objList = instance.data.properties.objects_table_list;
+		const relList = instance.data.properties.relationships_table_list;
+		const ready = isReady(objList) &&
+			isReady(relList) &&
 			instance.data.iframeListening &&
 			instance.data.dataIsReady == 'yes' &&
 			instance.data.iframe?.contentWindow;
@@ -34,7 +33,8 @@ function(instance, properties, context) {
 	}
 
 	function sendAllData() {
-		if (!readyToUpdate()) {
+		const p = instance.data.properties;
+		if (!p || !readyToUpdate()) {
 			console.warn("[PLUGIN] Update aborted: too soon", instance.data.dataIsReady);
 		} else {
 			console.warn("[PLUGIN] Update proceeding...");
@@ -50,20 +50,20 @@ function(instance, properties, context) {
 				const items = list?.listProperties?.() || [];
 				return items.map(serializeObject);
 			}
-			const serializedObjects = serializeList(properties.objects_table_list);
-			const serializedRelationships = serializeList(properties.relationships_table_list);
+			const serializedObjects = serializeList(p.objects_table_list);
+			const serializedRelationships = serializeList(p.relationships_table_list);
 
 			const message = {
 				type: "update",
 				objectsTable: JSON.stringify(serializedObjects),
 				relationshipsTable: JSON.stringify(serializedRelationships),
-				startingObject: properties.starting_object?.get?.("_id") ?? null,
-				objectTitleField: properties.object_title_field,
-				objectChildrenField: properties.object_children_field,
-				objectIdField: properties.object_id_field,
-				relationshipIdField: properties.relationship_id_field,
-				objectColorField: properties.object_color_field,
-				objectTypeField: properties.object_type_field
+				startingObject: p.starting_object?.get?.("_id") ?? null,
+				objectTitleField: p.object_title_field,
+				objectChildrenField: p.object_children_field,
+				objectIdField: p.object_id_field,
+				relationshipIdField: p.relationship_id_field,
+				objectColorField: p.object_color_field,
+				objectTypeField: p.object_type_field
 			};
 			instance.data.iframe.contentWindow.postMessage(message, "*");
 		}
@@ -77,7 +77,6 @@ function(instance, properties, context) {
 		}
 		console.log("[PLUGIN] Starting hydration watcher...");
 		instance.data._hydrationTimer = setInterval(() => {
-			console.log("[PLUGIN] watching...");
 			if (readyToUpdate()) {
 				clearInterval(instance.data._hydrationTimer);
 				instance.data._hydrationTimer = null;
