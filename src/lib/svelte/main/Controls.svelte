@@ -12,7 +12,7 @@
 	import Button from '../buttons/Button.svelte';
 	import Box from '../mouse/Box.svelte';
 	import { onMount } from 'svelte';
-	const widths = [c.has_full_UI ? 18 : -8, 14, 56, 96, -10];
+	const widths = [c.has_full_UI ? 18 : -11, 14, 56, 92, -2];
 	const lefts = u.cumulativeSum(widths);
 	const size_big = k.height.button + 4;
 	const y_center = 10.5;
@@ -106,19 +106,19 @@
 						<Separator
 							isHorizontal={false}
 							name='before-breadcrumbs'
-							origin={new Point(lefts[3], -8)}
-							length={layout.panel_boxHeight + 2}
+							origin={new Point(lefts[3], -9)}
+							length={layout.panel_boxHeight + 3}
 							thickness={k.thickness.separator.main}
 							corner_radius={k.radius.gull_wings.thick}/>
 						<div style='
 							top:-10px;
-							left:{lefts[4]}px;
 							position:absolute;
+							left:{lefts[4]}px;
 							width:{layout.windowSize.width - lefts[4]}px;'>
 							<Breadcrumbs
-								left={lefts[4]}
 								centered={true}
-								width={layout.windowSize.width - lefts[4]}/>
+								left={lefts[4]}
+								width={layout.windowSize.width - lefts[4] - 10}/>
 						</div>
 					{:else}
 						<Button

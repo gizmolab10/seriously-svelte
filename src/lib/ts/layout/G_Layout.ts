@@ -39,7 +39,7 @@ export default class G_Layout {
 		this.grand_layout();
 	}
 
-	static readonly _____GRAPH: unique symbol;
+	static readonly _____GRAPH_RECT: unique symbol;
 	
 	toggle_graph_type() {
 		switch (get(w_show_graph_ofType)) {
@@ -89,8 +89,8 @@ export default class G_Layout {
 
 	static readonly _____WINDOW: unique symbol;
 	
-	get raw_windowSize(): Size { return new Size(window.innerWidth, window.innerHeight); }
-	get windowSize(): Size { return this.raw_windowSize.dividedBy(this.scale_factor); }
+	get inner_windowSize(): Size { return new Size(window.innerWidth, window.innerHeight); }
+	get windowSize(): Size { return this.inner_windowSize.dividedBy(this.scale_factor); }
 	get windowScroll(): Point { return new Point(window.scrollX, window.scrollY); }
 
 	restore_state() {
@@ -188,7 +188,7 @@ export default class G_Layout {
 		const widths: number[] = [];
 		let parent_widths = 0;						// encoded as one parent count per 2 digits (base 10) ... for triggering redraw
 		let total = 0;								// determine how many crumbs will fit
-		const things = ancestry.ancestors ?? [];
+		const things = ancestry.ancestors?.reverse() ?? [];
 		for (const thing of things) {
 			if (!!thing) {
 				const width = u.getWidthOf(thing.breadcrumb_title) + 29;
@@ -206,11 +206,11 @@ export default class G_Layout {
 			left = (thresholdWidth - total) / 2;
 		}
 		let lefts = [left];
-		for (const width of widths) {
+		for (const width of widths.reverse()) {
 			left += width;				// position of next crumb
 			lefts.push(left);
 		}
-		return [crumb_things, widths, lefts, parent_widths];
+		return [crumb_things.reverse(), widths.reverse(), lefts, parent_widths];
 	}
 
 	static readonly _____PRIMITIVES: unique symbol;

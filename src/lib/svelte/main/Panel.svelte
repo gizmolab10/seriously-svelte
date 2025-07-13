@@ -89,7 +89,7 @@
 				thickness={k.thickness.separator.main}
 				length={$w_graph_rect.size.height + 10}
 				corner_radius={k.radius.gull_wings.thick}
-				origin={new Point(layout.windowSize.width - half_thickness, layout.panel_boxHeight)}/>
+				origin={new Point(layout.windowSize.width + 1 - half_thickness, layout.panel_boxHeight)}/>
 		{/if}
 		{#if c.has_full_UI}
 			<div class='breadcrumbs'
@@ -98,19 +98,17 @@
 					position: absolute;
 					top:{layout.breadcrumbs_top}px;
 					height:{layout.panel_boxHeight}px;'>
-				{#key trigger}
-					<Box
-						top={0}
-						left={0}
-						name='breadcrumbs-box'
-						color={separator_color}
-						width={layout.windowSize.width}
-						height={layout.panel_boxHeight}
-						thickness={k.thickness.separator.main}
-						corner_radius={k.radius.gull_wings.thick}>
-						<Breadcrumbs/>
-					</Box>
-				{/key}
+				<Box
+					top={0}
+					left={0}
+					name='breadcrumbs-box'
+					color={separator_color}
+					width={layout.windowSize.width}
+					height={layout.panel_boxHeight}
+					thickness={k.thickness.separator.main}
+					corner_radius={k.radius.gull_wings.thick}>
+					<Breadcrumbs/>
+				</Box>
 			</div>
 		{:else}
 			<Separator
@@ -119,7 +117,7 @@
 				has_both_wings={true}
 				margin={k.details_margin}
 				zindex={T_Layer.frontmost}
-				length={layout.windowSize.width + 1}
+				length={layout.windowSize.width + 2}
 				thickness={k.thickness.separator.main}
 				corner_radius={k.radius.gull_wings.thick}
 				origin={new Point(2, layout.windowSize.height - 4)}/>

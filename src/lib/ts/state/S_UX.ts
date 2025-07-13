@@ -24,12 +24,11 @@ export default class S_Common {
 	//////////////////////////////////////
 
 	get inTreeMode(): boolean { return get(w_show_graph_ofType) == T_Graph.tree; }
-	s_widget_forID(id: string): S_Widget { return this.s_widget_byAncestryID[id]; }
 	get inRadialMode(): boolean { return get(w_show_graph_ofType) == T_Graph.radial; }
 	s_element_forName(name: string): S_Element { return this.s_element_byName[name]; }
 	s_mouse_forName(name: string): S_Mouse { return u.assure_forKey_inDict(name, this.s_mouse_byName, () => S_Mouse.empty()); }
 	name_from(identifiable: Identifiable, type: T_Element, subtype: string): string { return `${type}(${subtype}) (id '${identifiable.id}')`; }
-	s_widget_forAncestry(ancestry: Ancestry): S_Widget { return u.assure_forKey_inDict(ancestry.pathString, this.s_widget_byAncestryID, () => new S_Widget(ancestry)); }
+	s_widget_forAncestry(ancestry: Ancestry): S_Widget { return u.assure_forKey_inDict(ancestry.id, this.s_widget_byAncestryID, () => new S_Widget(ancestry)); }
 
 	get next_mouse_responder_number(): number {
 		this.mouse_responder_number += 1;

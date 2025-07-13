@@ -37,9 +37,9 @@ export default class S_Widget extends S_Element {
 	}
 
 	get state_didChange(): boolean {
+		const didFocus = this.ancestry.isFocus;
 		const didGrab = this.ancestry.isGrabbed;
 		const didEdit = this.ancestry.isEditing;
-		const didFocus = this.ancestry.isFocus;
 		const change = (this.isEditing != didEdit || this.isGrabbed != didGrab || this.isFocus != didFocus);
 		this.isGrabbed = didGrab;
 		this.isEditing = didEdit;

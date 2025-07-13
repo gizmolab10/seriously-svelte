@@ -16,7 +16,7 @@
     export let width: number = 0;
     export let left: number = 0;
     export let top: number = 0;
-    const box_rect = Rect.createWHRect(width, height);
+    const svg_rect = Rect.createWHRect(width, height);
     let banner_color = colors.ofBannerFor($w_background_color);
 
     $: $w_background_color, banner_color = colors.ofBannerFor($w_background_color);
@@ -39,33 +39,33 @@
         display: flex;'>
         {#if showLeft}
             <Separator
+                length={height}
                 name='left-{name}'
-                length={height + 2}
                 isHorizontal={false}
                 thickness={thickness}
-                origin={new Point(2, 2)}
+                origin={new Point(2, 2.5)}
                 corner_radius={corner_radius}/>
         {/if}
         {#if c.has_antique_UI}
             <SVG_Gradient
                 isInverted={true}
                 color={banner_color}
-                size={box_rect.size}
+                size={svg_rect.size}
                 name={`gradient-${name}`}
                 zindex={T_Layer.frontmost}
-                path={svgPaths.rectangle(box_rect)}/>
+                path={svgPaths.rectangle(svg_rect)}/>
         {/if}
         <div class='box-content-{name}' style='flex: 1;'>
             <slot />
         </div>
         {#if showRight}
             <Separator
+                length={height}
                 name='right-{name}'
-                length={height + 2}
                 isHorizontal={false}
                 thickness={thickness}
                 corner_radius={corner_radius}
-                origin={new Point(width - thickness / 2, 2)}/>
+                origin={new Point(width + 1 - thickness / 2, 2.5)}/>
         {/if}
     </div>
     {#if showTop}

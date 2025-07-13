@@ -3,12 +3,12 @@
 	import { h, k, u, ux, Point, Thing, colors, layout, signals } from '../../ts/common/Global_Imports';
 	import { T_Banner, S_Element } from '../../ts/common/Global_Imports';
 	import Button from './Button.svelte';
-    export let thing;
 	export let left = 0;
 	export let es_breadcrumb;
 	export let center = Point.zero;
 	const borderStyle = '1px solid';
 	let borderColor = $w_background_color;
+	let thing = es_breadcrumb.ancestry.thing;
 	let title = thing.breadcrumb_title ?? k.empty;
 	let colorStyles = es_breadcrumb.background;
 	let name = `crumb: ${title ?? 'unknown'}`;
