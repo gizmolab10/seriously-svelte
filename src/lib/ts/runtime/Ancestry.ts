@@ -592,17 +592,18 @@ export default class Ancestry extends Identifiable {
 	}
 
 	ancestry_createUnique_byStrippingBack(back: number = 1): Ancestry | null {
-		let ancestry: Ancestry | null = h.rootAncestry;
 		const ids = this.relationship_ids;
 		if (back == 0) {
-			ancestry = this;
-		} else if (ids.length != 0) {
-			const stripped_ids = ids.slice(0, -back);
-			if (stripped_ids.length != 0) {
-				ancestry = h.ancestry_remember_createUnique(stripped_ids.join(k.separator.generic));
-			}
+			return this;
+		} else if (ids.length == 0) {
+			return null;
 		}
-		return ancestry;
+		const stripped_ids = ids.slice(0, -back);
+		if (stripped_ids.length == 0) {
+			return h.rootAncestry;
+		} else {
+			return h.ancestry_remember_createUnique(stripped_ids.join(k.separator.generic));
+		}
 	}
 
 	ancestry_createUnique_byAppending_relationshipID(id: string): Ancestry | null {

@@ -73,7 +73,7 @@
 		} else if (s_mouse.isUp) {
 			switch (t_control) {
 				case T_Control.help: c.showHelp(); break;
-				case T_Control.details: $w_show_details = !$w_show_details; break;
+				case T_Control.details: $w_show_details = !$w_show_details; console.log('details', $w_show_details); break;
 				case T_Control.bigger: width = layout.scaleBy(k.ratio.zoom_in) - 20; break;	// mobile only
 				case T_Control.smaller: width = layout.scaleBy(k.ratio.zoom_out) - 20; break;	//   '     '
 				default: togglePopupID(t_control); break;
@@ -116,10 +116,20 @@
 							left:{lefts[4]}px;
 							width:{layout.windowSize.width - lefts[4]}px;'>
 							<Breadcrumbs
-								centered={true}
 								left={lefts[4]}
+								centered={true}
 								width={layout.windowSize.width - lefts[4] - 10}/>
 						</div>
+						<Button
+							width={20}
+							height={30}
+							color='transparent'
+							name='invisible-button'
+							zindex={T_Layer.frontmost}
+							center={new Point(lefts[3], 10)}
+							style='border: none; background: none;'
+							es_button={es_control_byType[T_Control.details]}
+							closure={(s_mouse) => handle_s_mouse_forControl_Type(s_mouse, T_Control.details)}/>
 					{:else}
 						<Button
 							border_thickness=0
