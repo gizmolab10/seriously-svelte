@@ -86,7 +86,7 @@
             transform: translate(-50%, -50%);'>
         {#if svgPaths.hasPath_for(title)}
             <svg
-                viewBox='-2 -3 20 20'
+                viewBox='-2.2 -3.2 20 20'
                 class='svg-glow-button-path'>
                 <path d={svgPaths.path_for(title)} stroke={colors.border} fill={isHovering ? 'black' : 'white'} stroke-width='0.75'/>
             </svg>
