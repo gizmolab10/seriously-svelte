@@ -167,6 +167,29 @@ export class Events {
 		}
 	}
 
+	handle_singleClick_onDragDot(shiftKey: boolean, ancestry: Ancestry) {
+		if (ancestry.isBidirectional && ancestry.thing?.isRoot) {
+			this.handle_singleClick_onDragDot(shiftKey, h.rootAncestry);
+		} else {
+			w_s_text_edit?.set(null);
+			if (!!get(w_s_alteration)) {
+				h.ancestry_alter_connectionTo_maybe(ancestry);
+				layout.grand_build();
+				return;
+			} else if (!shiftKey && ux.inRadialMode) {
+				if (ancestry.becomeFocus()) {
+					layout.grand_build();
+					return;
+				}
+			} else if (shiftKey || ancestry.isGrabbed) {
+				ancestry.toggleGrab();
+			} else {
+				ancestry.grabOnly();
+			}
+			layout.grand_layout();
+		}
+	}
+
 	private handle_bubble_message = (e: Event) => {
 		const event = e as MessageEvent;
 		console.log("Bubble sent config:", event.data);

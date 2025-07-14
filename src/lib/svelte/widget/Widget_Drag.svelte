@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { S_Element, T_Layer, T_Graph, T_Alteration, T_SvelteComponent } from '../../ts/common/Global_Imports';
+	import { c, e, k, u, ux, show, Rect, Size, Point, Thing, debug } from '../../ts/common/Global_Imports';
 	import { w_show_countDots_ofType, w_thing_color, w_ancestries_grabbed } from '../../ts/common/Stores';
-	import { c, k, u, ux, show, Rect, Size, Point, Thing, debug } from '../../ts/common/Global_Imports';
 	import { layout, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
 	import { w_s_alteration, w_background_color } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
@@ -99,9 +99,9 @@
 				update_colors();
 			} else if (s_mouse.isLong) {
 				ancestry?.becomeFocus();
-			} else if (s_mouse.isUp) {
+			} else if (s_mouse.isUp && !!ancestry) {
 				const shiftKey = s_mouse.event?.shiftKey ?? false
-				ancestry?.handle_singleClick_onDragDot(shiftKey);
+				e.handle_singleClick_onDragDot(shiftKey, ancestry);
 			}
 		}
 	}
