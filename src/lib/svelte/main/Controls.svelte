@@ -73,8 +73,8 @@
 		} else if (s_mouse.isUp) {
 			switch (t_control) {
 				case T_Control.help: c.showHelp(); break;
-				case T_Control.details: $w_show_details = !$w_show_details; console.log('details', $w_show_details); break;
-				case T_Control.bigger: width = layout.scaleBy(k.ratio.zoom_in) - 20; break;	// mobile only
+				case T_Control.details: $w_show_details = !$w_show_details; break;
+				case T_Control.bigger: width = layout.scaleBy(k.ratio.zoom_in) - 20; break;		// mobile only
 				case T_Control.smaller: width = layout.scaleBy(k.ratio.zoom_out) - 20; break;	//   '     '
 				default: togglePopupID(t_control); break;
 			}

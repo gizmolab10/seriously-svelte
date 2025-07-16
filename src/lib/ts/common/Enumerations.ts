@@ -255,7 +255,7 @@ export enum T_Preference {
 	auto_adjust		  = 'auto_adjust',
 	background		  = 'background',
 	ring_angle  	  = 'ring_angle',
-	antique_UI		  = 'antique_UI',			// use glow gradient
+	matte_UI		  = 'matte_UI',			// use glow gradient
 	countDots		  = 'countDots',
 	font_size		  = 'font_size',
 	base_id			  = 'base_id',

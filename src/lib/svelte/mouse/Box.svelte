@@ -46,7 +46,7 @@
                 origin={new Point(2, 2.5)}
                 corner_radius={corner_radius}/>
         {/if}
-        {#if c.has_antique_UI}
+        {#if !c.has_matte_UI}
             <SVG_Gradient
                 isInverted={true}
                 color={banner_color}
