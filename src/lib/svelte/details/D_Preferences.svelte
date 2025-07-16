@@ -13,7 +13,7 @@
 	const separator_left = 35;
 	const position = 'relative';
 	const picker_offset = `-88px`;
-	const width = k.width_details;
+	const width = k.width.details;
 	const color_left = width / 2 - 13;
 	const segmented_width = width - 6;
 	const segmented_height = k.height.button;

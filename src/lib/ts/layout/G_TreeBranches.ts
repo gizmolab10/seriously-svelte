@@ -18,16 +18,16 @@ export default class G_TreeBranches {
 			debug.log_layout(`children ${ancestry.g_widget.origin_ofWidget.x} ${ancestry.id}`);
 			const branchAncestries = ancestry.branchAncestries;
 			const halfHeight = ancestry.visibleSubtree_halfHeight;
-			const origin_ofWidget = ancestry.g_widget.origin_ofWidget.offsetByXY(9, halfHeight + 2);
+			const origin_ofWidget = ancestry.g_widget.origin_ofWidget.offsetByXY(6, halfHeight + 1);
 			let height = -halfHeight;		// start out negative and grow positive
 			for (const branchAncestry of branchAncestries) {
 				if (branchAncestry.depth > ancestry.depth) {
 					const g_widget = branchAncestry.g_widget;
-					g_widget.layout_widget_forBranches(height, origin_ofWidget, T_Graph.tree)
+					g_widget.layout_treeBranches(height, origin_ofWidget, T_Graph.tree)
 					height += g_widget.subtree_height;
 				}
 			}
-			this.origin_ofLine = origin_ofWidget.offsetByXY(20, 2);
+			this.origin_ofLine = origin_ofWidget.offsetByXY(25, 1.2);
 		}
 	}
 

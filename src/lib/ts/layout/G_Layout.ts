@@ -52,7 +52,7 @@ export default class G_Layout {
 	graphRect_update() {
 		// respond to changes in: window size & details visibility
 		const y = this.panel_boxHeight + 2;			// account for origin at top
-		const x = get(w_show_details) ? k.width_details : 0;
+		const x = get(w_show_details) ? k.width.details : 0;
 		const origin_ofGraph = new Point(x, y);
 		const y_adjustment = !c.has_full_UI ? 4 : this.panel_boxHeight;
 		const size_ofGraph = this.windowSize.reducedBy(origin_ofGraph).reducedByY(y_adjustment);

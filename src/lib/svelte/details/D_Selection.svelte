@@ -137,7 +137,7 @@
 		has_thin_divider={false}
 		origin={new Point(1, 110)}
 		zindex={T_Layer.frontmost + 1}
-		length={k.width_details - 2.5}
+		length={k.width.details - 2.5}
 		handle_click={handle_toggle_properties}
 		thickness={k.thickness.separator.details}
 		title='click to {show_properties ? 'hide' : 'show more'}'/>

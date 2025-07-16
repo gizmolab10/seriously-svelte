@@ -81,7 +81,7 @@
 
 <div class='buttons-row'
 	style='{style}
-		left:0px;
+		left:1px;
 		top:{top}px;
 		position:absolute;
 		height:{button_height}px;

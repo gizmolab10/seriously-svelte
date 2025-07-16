@@ -35,7 +35,7 @@
 		text-align:center;
 		align-items:center;
 		justify-content:center;
-		width:{k.width_details}px;
+		width:{k.width.details}px;
 		font-size:{k.font_size.common}px;
 		background-color:{background_color};'>
 		{ancestry?.thing?.title.clipWithEllipsisAt(30) ?? k.empty}

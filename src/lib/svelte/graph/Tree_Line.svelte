@@ -12,7 +12,6 @@
 	let lineWrapper: Svelte_Wrapper;
 	let svg_dasharray = k.empty;
 	let line_reattachments = 0;
-	let stroke_width = 1;
 	let line;
 
 	//////////////////////////////
@@ -34,7 +33,6 @@
 	if (g_line.isBidirectional) {
 		stroke_color = colors.opacitize(ancestry.thing.color, 0.7);
 		svg_dasharray = '4,3';
-		stroke_width = 1;
 	}
 
 	$: {
@@ -53,10 +51,10 @@
 			class = 'tree-line-svg'
 			viewBox = {g_line.viewBox.verbose}
 			style = '
-				top: {g_line.origin.y - g_line.size.height + 1 - stroke_width / 2}px;
-				left: {g_line.origin.x + 142 + stroke_width / 2}px;
-				height: {g_line.size.height + stroke_width * 2}px;
-				width: {g_line.size.width + stroke_width * 2}px;
+				top: {g_line.origin.y - g_line.size.height + 1 - g_line.stroke_width / 2}px;
+				left: {g_line.origin.x + 142 + g_line.stroke_width / 2}px;
+				height: {g_line.size.height + g_line.stroke_width * 2}px;
+				width: {g_line.size.width + g_line.stroke_width * 2}px;
 				z-index: {T_Layer.lines};
 				position: absolute;'>
 			<path
@@ -64,8 +62,8 @@
 				d = {g_line.linePath}
 				stroke = {stroke_color}
 				class = 'tree-line-path'
-				stroke-width = {stroke_width}
-				stroke-dasharray = {svg_dasharray}/>
+				stroke-dasharray = {svg_dasharray}
+				stroke-width = {g_line.stroke_width}/>
 		</svg>
 		{#if debug.lines}
 			<Circle

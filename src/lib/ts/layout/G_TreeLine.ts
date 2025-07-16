@@ -12,6 +12,7 @@ export default class G_TreeLine {
 	linePath = k.empty;
 	rect = Rect.zero;
 	size = Size.zero;
+	stroke_width = 1;
 	name = k.empty;
 
 	// scratchpad for one line drawn
@@ -52,7 +53,7 @@ export default class G_TreeLine {
 		
 	private layout_svgPaths() {
 		const lineOffset = new Point(-118.5, 2.5);
-		let lineRect = this.rect.offsetBy(lineOffset);
+		let lineRect = this.rect.offsetBy(lineOffset).expand_widthBy(-4);
 		switch (this.t_curve) {
 			case T_Curve.up:
 				this.origin = lineRect.origin;

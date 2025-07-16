@@ -38,7 +38,7 @@ export default class DB_Test extends DB_Common {
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cbc', kindC, idTb, idTc, [0, 2]);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cbd', kindC, idTb, idTd, [1, 1]);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cbe', kindC, idTb, idTe, [2, 1]);
-		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cbf', kindC, idTb, idTf, [3, 0]);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cbf', kindC, idTd, idTf, [3, 0]);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'ccd', kindC, idTc, idTd, [0, 2]);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cce', kindC, idTc, idTe, [1, 2]);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cef', kindC, idTe, idTf, [0, 1]);

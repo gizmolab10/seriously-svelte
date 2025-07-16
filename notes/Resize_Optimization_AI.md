@@ -315,7 +315,7 @@ export default class G_TreeBranches {
         for (const branchAncestry of visibleBranches) {
             if (branchAncestry.depth > ancestry.depth) {
                 const g_widget = branchAncestry.g_widget;
-                g_widget.layout_widget_forBranches(height, origin_ofWidget, T_Graph.tree);
+                g_widget.layout_treeBranches(height, origin_ofWidget, T_Graph.tree);
                 height += g_widget.subtree_height;
             }
         }

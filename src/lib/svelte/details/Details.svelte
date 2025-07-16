@@ -11,7 +11,7 @@
 	import D_Data from './D_Data.svelte';
 	import D_Tags from './D_Tags.svelte';
 	const next_previous_titles = [T_Direction.previous, T_Direction.next];
-	const width = k.width_details;
+	const width = k.width.details;
 	let prior_graph_type = $w_show_graph_ofType;
 	let extra_selection_titles = [];
 
@@ -40,7 +40,7 @@
 			-ms-overflow-style: none;  
 			z-index:{T_Layer.details};
 			top:{layout.panel_boxHeight + 2}px;
-			width:{k.width_details - 6}px;
+			width:{k.width.details - 6}px;
 			height:{$w_graph_rect.size.height}px;'>
 		<Banner_Hideable t_detail={T_Details.header}>
 			<D_Header/>
@@ -72,7 +72,7 @@
 	thickness={k.thickness.separator.main}
 	length={$w_graph_rect.size.height + 10}
 	corner_radius={k.radius.gull_wings.thick}
-	origin={new Point(k.width_details - 2, layout.panel_boxHeight)}/>
+	origin={new Point(k.width.details - 2, layout.panel_boxHeight)}/>
 
 <style>
 

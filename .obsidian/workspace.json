@@ -166,6 +166,7 @@
   },
   "active": "9968854d61be5eec",
   "lastOpenFiles": [
+    "notes/chris.js",
     "notes/count_lines.sh",
     "count_lines.sh",
     "notes/foo",
@@ -185,7 +186,6 @@
     "src/lib/js/update.js",
     "Proposal_P_WindowResizePerformance.md",
     "Resize_Optimization_AI.md",
-    "dist/assets/index.js.map",
     "dist/vite.svg",
     "dist/settings.svg",
     "src/lib/svelte/shared/README_Title_Editor.md",

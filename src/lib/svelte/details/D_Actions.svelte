@@ -13,10 +13,10 @@
 	export let top = 2;
 	const title_gap = 4;
 	const has_title = true;
-	const top_tableHeight = 94;
+	const top_tableHeight = 93;
 	const left_afterTitle = 39.5;
 	const bottom_tableHeight = 73;
-	const table_width = k.width_details - 8;
+	const table_width = k.width.details - 8;
 	const bottom_padding = bottom_tableHeight - 48;
     const font_sizes = [k.font_size.instructions, k.font_size.instructions];
     const s_banner_hideable = s_details.s_banner_hideables_byType[T_Details.actions];
@@ -164,7 +164,7 @@
 					<br> choose that item's <em>blinking</em> dot
 				</div>
 				<Button
-					center={new Point(k.width_details / 2, 22)}
+					center={new Point(k.width.details / 2, 22)}
 					font_size={k.font_size.instructions}
 					zindex={T_Layer.frontmost}
 					name='cancel-alteration'
@@ -196,7 +196,7 @@
 				has_thin_divider={true}
 				length={top_tableHeight}
 				margin={k.details_margin}
-				origin={new Point(left_afterTitle, -4)}
+				origin={new Point(left_afterTitle, -3)}
 				thickness={k.thickness.separator.details}/>
 			<Buttons_Table
 				gap={2}
@@ -217,15 +217,15 @@
 				margin={k.details_margin}
 				length={bottom_tableHeight}
 				thickness={k.thickness.separator.details}
-				origin={new Point(left_afterTitle, top_tableHeight - 11)}/>
+				origin={new Point(left_afterTitle, top_tableHeight - 10)}/>
 			<Separator
 				isHorizontal={true}
 				has_thin_divider={true}
-				length={k.width_details}
+				length={k.width.details - 1}
 				margin={k.details_margin}
 				title='edit your hierarchy'
 				title_left={k.separator_title_left}
-				origin={Point.y(top_tableHeight - 11)}
+				origin={new Point(0.5, top_tableHeight - 10)}
 				thickness={k.thickness.separator.details}/>
 		{/if}
 	</div>

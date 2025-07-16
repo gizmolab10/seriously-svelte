@@ -52,7 +52,7 @@
 				height: {layout.glows_banner_height}px;'>
 			<Glows_Banner
 				titles={titles}
-				width={k.width_details}
+				width={k.width.details}
 				isSelected={slot_isVisible}
 				toggle_hidden={toggle_hidden}
 				font_size={k.font_size.banners}

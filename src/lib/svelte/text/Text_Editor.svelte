@@ -5,7 +5,7 @@
 	export let handle_textChange = (label: string, text: string) => {};
 	export let handleClick_onLabel: (event: Event) => {} | null = null;
 	export let color = colors.default_forThings;
-	export let width = k.width_details - 20;
+	export let width = k.width.details - 20;
 	export let label_underline = false;
 	export let original_text = k.empty;
 	export let label_color = 'gray';

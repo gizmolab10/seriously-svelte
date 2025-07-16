@@ -24,7 +24,7 @@
 	let heights = [13, height_ofChoices(), 42, 28, 74, 26, 3];
 	let storage_choice: string | null = null;
 	let storage_details: Array<Object> = [];
-	let width = k.width_details - 7;
+	let width = k.width.details - 7;
 	let show_save_button = false;
 	let spinnerAngle = 0;
 
@@ -133,7 +133,7 @@
 		has_thin_divider={false}
 		origin={new Point(1, 30)}
 		zindex={T_Layer.frontmost + 1}
-		length={k.width_details - 2.5}
+		length={k.width.details - 2.5}
 		handle_click={handle_toggle_databases}
 		thickness={k.thickness.separator.details}
 		title='{show_databases ? 'hide' : 'show other databases'}'/>
@@ -193,7 +193,7 @@
 		<Buttons_Row
 			gap={4}
 			margin={20}
-			width={width + 6}
+			width={width + 5}
 			has_seperator={true}
 			font_sizes={font_sizes}
 			row_titles={action_titles()}
@@ -205,7 +205,8 @@
 	{/key}
 	<Separator
 		isHorizontal={true}
-		origin={Point.y(tops[5])}
+		length={k.width.details + 1.5}
+		origin={new Point(-0.6, tops[5])}
 		thickness={k.thickness.separator.main}
 		corner_radius={k.radius.gull_wings.thick}/>
 </div>

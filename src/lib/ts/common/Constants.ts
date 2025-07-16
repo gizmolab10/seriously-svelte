@@ -6,7 +6,6 @@ const row_height = 20;
 export default class Constants {
 	details_margin = 0;
 	halfIncrement = 0.5;
-	width_details = 220;
 	radial_widget_inset = 28;
 	separator_title_left = 0;
 	hid_unknown = 1000000000000;
@@ -21,6 +20,11 @@ export default class Constants {
 	comma = ',';
 	space = ' ';
 	empty = '';
+
+	width = {
+		details:  220,
+		child_gap: 19,
+	};
 
 	id_base = {
 		test:  'handcrafted',

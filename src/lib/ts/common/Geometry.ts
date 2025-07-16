@@ -34,8 +34,8 @@ export class Point {
 	spreadByXY(x: number, y: number):  Point { return new Point(this.x * x, this.y * y); }
 	offsetBy(point: Point):			   Point { return new Point(this.x + point.x, this.y + point.y); }
 	vector_to(point: Point):		   Point { return point.offsetBy(this.negated); }
-	xMultipliedBy(multiplier: number): Point { return new Point(this.x * multiplier, this.y) }
-	yMultipliedBy(multiplier: number): Point { return new Point(this.x, this.y * multiplier) }
+	multiply_xBy(multiplier: number):  Point { return new Point(this.x * multiplier, this.y) }
+	multiply_yBy(multiplier: number):  Point { return new Point(this.x, this.y * multiplier) }
 	dividedBy(divisor: number):		   Point { return new Point(this.x / divisor, this.y / divisor) }
 	multipliedBy(multiplier: number):  Point { return new Point(this.x * multiplier, this.y * multiplier) }
 	static polarToo(phi: number, r: number)  { return new Point(Math.cos(phi) * r, Math.sin(phi) * r); }
@@ -189,9 +189,12 @@ export class Rect {
 	offsetBy(delta: Point):			   Rect { return new Rect(this.origin.offsetBy(delta), this.size); }
 	offsetByXY(x: number, y: number):  Rect { return new Rect(this.origin.offsetByXY(x, y), this.size); }
 	originMultipliedBy(ratio: number): Rect { return new Rect(this.origin.multipliedBy(ratio), this.size); }
-	xMultipliedBy(ratio: number):	   Rect { return new Rect(this.origin.xMultipliedBy(ratio), this.size); }
-	yMultipliedBy(ratio: number):	   Rect { return new Rect(this.origin.yMultipliedBy(ratio), this.size); }
+	multiply_xBy(ratio: number):	   Rect { return new Rect(this.origin.multiply_xBy(ratio), this.size); }
+	multiply_yBy(ratio: number):	   Rect { return new Rect(this.origin.multiply_yBy(ratio), this.size); }
 	multipliedBy(ratio: number):	   Rect { return new Rect(this.origin.multipliedBy(ratio), this.size.multipliedBy(ratio)); }
+	expand_widthBy(width: number):	   Rect { return new Rect(this.origin, this.size.expandedByX(width)); }
+	expand_heightBy(height: number):   Rect { return new Rect(this.origin, this.size.expandedByY(height)); }
+	expand_sizeBy(ratio: number):	   Rect { return new Rect(this.origin, this.size.multipliedBy(ratio)); }
 
 	expandedBy(expansion: Point): Rect {
 		const size = this.size.expandedBy(expansion);

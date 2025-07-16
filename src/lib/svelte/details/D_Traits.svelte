@@ -7,7 +7,7 @@
 	import { s_details } from '../../ts/state/S_Details';
     const s_banner_hideable = s_details.s_banner_hideables_byType[T_Details.traits];
 	const es_button = ux.s_element_for(new Identifiable('trait'), T_Element.button, 'trait');
-	let text_box_size = new Size(k.width_details - 34, 68);
+	let text_box_size = new Size(k.width.details - 34, 68);
 	let prior_trigger = k.empty;
 	let reattachments = 0;
 
@@ -49,7 +49,7 @@
 					label={trait.t_trait}
 					color={colors.default}
 					original_text={trait.text}
-					width={k.width_details - 20}
+					width={k.width.details - 20}
 					label_underline={trait.t_trait == 'link'}
 					label_color={trait.t_trait == 'link' ? 'blue' : 'black'}
 					handle_textChange={async (label, text) => await h.trait_setText_forTrait(text, trait)}
