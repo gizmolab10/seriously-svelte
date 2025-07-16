@@ -8,7 +8,8 @@
 	export let depth: number;
 	export let ancestry: Ancestry;
 	export let show_child_branches = true;
-	const g_childBranches = ancestry.g_widget.g_childBranches;
+	const g_widget = ancestry.g_widget;
+	const g_childBranches = g_widget.g_childBranches;
 
 </script>
 
@@ -23,13 +24,13 @@
 	{#if !!ancestry}
 		{#each ancestry.branchAncestries as branchAncestry}
 			<Tree_Line g_line = {branchAncestry.g_widget.g_line}/>
-			<Widget ancestry = {branchAncestry}/>
+			<Widget g_widget = {branchAncestry.g_widget}/>
 			{#if branchAncestry.shows_branches && !layout.was_visited(branchAncestry)}
 				<Tree_Branches ancestry = {branchAncestry} depth = {depth - 1}/>
 			{/if}
 		{/each}
 		{#if $w_show_related && depth > 1}
-			{#each ancestry.g_widget.g_bidirectionalLines as g_line}
+			{#each g_widget.g_bidirectionalLines as g_line}
 				{#if g_line.depth_ofLine < (depth + 2)}
 					<Tree_Line g_line = {g_line}/>
 				{/if}

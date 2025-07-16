@@ -12,9 +12,10 @@
 	const size = k.height.dot;
 	const capture_size = size;
     const ancestry = es_drag.ancestry;
+	const g_widget = ancestry.g_widget;
 	let fill_color = debug.lines ? 'transparent' : es_drag.fill;
 	let svg_outline_color = es_drag.svg_outline_color;
-	let center = ancestry.g_widget.center_ofDrag;
+	let center = g_widget.center_ofDrag;
 	let ellipsis_color = es_drag.stroke;
 	let svgPathFor_ellipses = k.empty;
 	let svgPathFor_related = k.empty;
@@ -50,7 +51,7 @@
         });
 		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
 			if (!!dotDrag) {
-				center = ancestry.g_widget.center_ofDrag;
+				center = g_widget.center_ofDrag;
 			}
 		});
 		return () => { handle_reposition.disconnect(); handle_altering.disconnect(); };

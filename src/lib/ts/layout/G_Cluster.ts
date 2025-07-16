@@ -189,9 +189,9 @@ export default class G_Cluster {
 				const ancestry = this.ancestries_shown[adjusted_index];
 				const pointsRight = new Angle(angle).angle_pointsRight;
 				const rotated_origin = center.offsetBy(radial.rotate_by(angle));
-				ancestry.g_widget.layout_necklaceWidget(rotated_origin, pointsRight);
-				// ancestry.g_widget.g_cluster = this;
-				this.g_widgets_inCluster.push(ancestry.g_widget);
+				const g_widget = ancestry.g_widget;
+				g_widget.layout_necklaceWidget(rotated_origin, pointsRight);
+				this.g_widgets_inCluster.push(g_widget);
 				index += 1;
 			}
 			this.g_sliderArc.finalize_angles();

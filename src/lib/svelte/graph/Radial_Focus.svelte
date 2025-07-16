@@ -8,11 +8,11 @@
 	import { onMount } from 'svelte';
 	const height = k.height.row + 1;
 	let ancestry = $w_ancestry_focus;
-	let es_title = ux.s_element_for(ancestry, T_Element.radial_focus, k.empty);
 	let es_widget = ux.s_widget_forAncestry(ancestry);
 	let background_color = es_widget.background_color;
 	let svg_strokeColor = 'transparent';
 	let svg_fillColor = 'transparent';
+	let es_title = es_widget.es_title;
 	let origin_ofWidget = Point.zero;
 	let center_ofBorder = Point.zero;
 	let size_ofBorder = Size.zero;

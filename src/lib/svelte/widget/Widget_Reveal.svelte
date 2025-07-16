@@ -12,6 +12,7 @@
 	export let es_reveal!: S_Element;
     export let hover_isReversed = false;
 	const ancestry = es_reveal.ancestry;
+	const g_widget = ancestry.g_widget;
 	const tinyDotsOffset = new Point(-4.9, -2.45);
 	const outer_diameter = k.diameterOf_outer_tinyDots;
 	const size_ofTinyDots = Size.width(3).expandedEquallyBy(outer_diameter)
@@ -20,8 +21,8 @@
 	let svg_outline_color = es_reveal.svg_outline_color;
 	let svgPathFor_outer_tinyDots: string | null = null;
 	let svgPathFor_innerDot: string | null = null;
-	let center = ancestry.g_widget.center_ofReveal;
 	let bulkAlias_color = es_reveal.stroke;
+	let center = g_widget.center_ofReveal;
 	let svgPathFor_revealDot = k.empty;
 	let color = ancestry.thing?.color;
 	let offsetFor_innerDot = 0;
@@ -35,7 +36,7 @@
 		set_isHovering(false);
 		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
 			if (!!dotReveal) {
-				center = ancestry.g_widget.center_ofReveal;
+				center = g_widget.center_ofReveal;
 			}
 		});
 		return () => { handle_reposition.disconnect(); };

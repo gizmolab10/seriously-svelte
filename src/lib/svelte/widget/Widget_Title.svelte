@@ -14,13 +14,14 @@
 	const ancestry = es_title.ancestry;
 	const thing = ancestry?.thing;
 	const padding = `1px 0px 0px 0px`;
+	const g_widget = ancestry.g_widget;
+	const s_widget = g_widget.s_widget;
 	const input_height = k.height.dot + 2;
-	const s_widget = ux.s_widget_forAncestry(ancestry);
 	const showingReveal = ancestry?.shows_reveal ?? false;
 	const id = `title of ${ancestry?.title} ${ancestry?.kind}`;
 	let title_width = (thing?.width_ofTitle ?? 0) + title_extra();
-	let origin = ancestry.g_widget.origin_ofTitle;
 	let title_binded = thing?.title ?? k.empty;
+	let origin = g_widget.origin_ofTitle;
 	let title_wrapper: Svelte_Wrapper;
 	let title_prior = thing?.title;
 	let color = s_widget.color;
@@ -129,14 +130,6 @@
 		input?.blur();
 		update_cursorStyle();
 		layout.grand_layout();
-	}
-
-	function startEditMaybe() {
-		if (ancestry.isEditable) {
-			ancestry?.startEdit();
-			title_updatedTo(thing.title);
-			input?.focus();
-		}
 	}
 
 	async function stop_andPersist() {

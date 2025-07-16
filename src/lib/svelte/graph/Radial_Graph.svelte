@@ -66,7 +66,7 @@
 			class = 'necklace-widgets'
 			style = 'z-index : {T_Layer.necklace};'>
 			{#each layout.g_radialGraph.g_necklace_widgets as g_necklace_widget}
-				<Widget ancestry = {g_necklace_widget.ancestry}/>
+				<Widget g_widget = {g_necklace_widget}/>
 			{/each}
 		</div>
 	{/key}

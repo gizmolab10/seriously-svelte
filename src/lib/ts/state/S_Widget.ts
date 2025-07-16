@@ -1,4 +1,4 @@
-import { k, colors, Ancestry, S_Element, T_Element } from '../common/Global_Imports';
+import { k, colors, Ancestry, S_Element, T_Element, ux } from '../common/Global_Imports';
 import { w_background_color } from '../common/Stores';
 import { get } from 'svelte/store';
 
@@ -16,18 +16,27 @@ import { get } from 'svelte/store';
 	//////////////////////////////////////////
 
 export default class S_Widget extends S_Element {
+	es_reveal: S_Element;
+	es_title: S_Element;
+	es_drag: S_Element;
 	isGrabbed = false;		// NOT a source of truth
 	isEditing = false;		// ... only needed for detecting state changes
 	isFocus	  = false;
-	
+
 	get stroke(): string { return this.color; }
 	get fill(): string { return this.background_color; }
 	get thing_color(): string { return this.ancestry.thing?.color ?? k.empty; }
 	get isFilled(): boolean { return this.ancestry.isGrabbed && !this.isEditing; }
-	constructor(ancestry: Ancestry) { super(ancestry, T_Element.widget, k.empty); }
 	get background(): string { return `background-color: ${this.background_color}`; }
 	get shows_border(): boolean { return this.ancestry.isFocus || this.isEditing || !this.isOut; }
 	get background_color(): string { return this.isFilled ? this.thing_color : this.shows_border ? get(w_background_color) : 'transparent'; }
+
+	constructor(ancestry: Ancestry) {
+		super(ancestry, T_Element.widget, k.empty);
+		this.es_drag = ux.s_element_for(ancestry, T_Element.drag, k.empty);
+		this.es_title = ux.s_element_for(ancestry, T_Element.title, k.empty);
+		this.es_reveal = ux.s_element_for(ancestry, T_Element.reveal, k.empty);
+	}
 
 	get color(): string {
 		const isLight = colors.luminance_ofColor(this.thing_color) > 0.5;

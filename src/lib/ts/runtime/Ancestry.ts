@@ -304,7 +304,7 @@ export default class Ancestry extends Identifiable {
 	get isEditable(): boolean {
 		const isExternals = this.thing?.isExternals ?? true;
 		const isBulkAlias = this.thing?.isBulkAlias ?? true;	// missing thing, return not editable
-		const canEdit = (!this.isRoot || databases.db_now.t_database != T_Database.firebase) && databases.db_now.t_database != T_Database.test;
+		const canEdit = (!this.isRoot || databases.db_now.t_database != T_Database.firebase);
 		return canEdit && c.allow_TitleEditing && !isExternals && !isBulkAlias;
 	}
 

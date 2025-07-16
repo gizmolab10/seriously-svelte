@@ -20,7 +20,7 @@
 	{#if !!focus && !layout.was_visited(focus, true)}
 		<div class = 'tree'
 			style = 'transform:translate({$w_user_graph_offset.x}px, {$w_user_graph_offset.y}px);'>
-			<Widget ancestry = {focus}/>
+			<Widget g_widget = {focus.g_widget}/>
 			<Tree_Branches ancestry = {focus} depth = {$w_depth_limit}/>
 		</div>
 	{/if}
