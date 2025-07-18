@@ -74,8 +74,8 @@
 		const focus = $w_ancestry_focus;
 		const grabbed = focus?.isGrabbed ?? false;
 		const editing = focus?.isEditing ?? false;
-		svg_dasharray = editing ? '1.8,1' : k.empty;
 		svg_strokeColor = grabbed ? color : 'transparent';
+		svg_dasharray = editing ? k.dasharray.editing : k.empty;
 		svg_fillColor = grabbed ? $w_background_color : 'transparent';
 	}
 

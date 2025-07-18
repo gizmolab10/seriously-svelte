@@ -21,6 +21,11 @@ export default class Constants {
 	space = ' ';
 	empty = '';
 
+	dasharray = {
+		relateds: '4,3',
+		editing: '3,2',
+	};
+
 	width = {
 		details:  220,
 		child_gap: 19,

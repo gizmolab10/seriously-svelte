@@ -25,7 +25,6 @@
 	let title_wrapper: Svelte_Wrapper;
 	let title_prior = thing?.title;
 	let color = s_widget.color;
-	let cursor_style = k.empty;
 	let reattachments = 0;
 	let ghost = null;
 	let input = null;
@@ -116,10 +115,11 @@
 
 	export const _____CURSOR: unique symbol = Symbol('_____CURSOR');
 	
-	function update_cursorStyle() {
-		const noCursor = (isEditing() || ancestry.isGrabbed) && ux.inTreeMode && ancestry.isEditable;
-		const useTextCursor = isEditing() || ancestry.isGrabbed || !(ux.inRadialMode || ancestry.isEditable);
-		cursor_style = noCursor ? k.empty : `cursor: ${useTextCursor ? 'text' : 'pointer'}`;
+	function update_cursor() {
+		const cursor = isEditing() ? 'text' : 'pointer';
+		console.log('cursor', cursor);
+		s_widget.set_forHovering(color, cursor);
+		es_title.set_forHovering(color, cursor);
 	}
 
 	export const _____EDIT: unique symbol = Symbol('_____EDIT');
@@ -128,7 +128,7 @@
 		debug.log_edit(`STOP ${title_binded}`);
 		$w_s_text_edit = null;
 		input?.blur();
-		update_cursorStyle();
+		update_cursor();
 		layout.grand_layout();
 	}
 
@@ -180,6 +180,7 @@
 				debug.log_edit(`CURSOR OFFSET ${offset}`);
 				$w_s_text_edit.thing_setSelectionRange_fromOffset(offset);
 				$w_s_text_edit.start_editing();
+				update_cursor();
 			}
 		}
 	}
@@ -327,7 +328,6 @@
 			style='
 				border : none;
 				top : {top}px;
-				{cursor_style};
 				outline : none;
 				left : {left}px;
 				color : {color};

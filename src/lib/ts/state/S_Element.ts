@@ -6,9 +6,9 @@ import { get } from 'svelte/store';
 	//////////////////////////////////////////
 	//										//
 	//	single point of truth for			//
-	//	 stroke, fill, cursor & border of	//
-	//	 buttons, segments & widget dots	//
-	//	 using hover, grabbed, expanded		//
+	//	  stroke, fill, cursor & border of	//
+	//	  buttons, segments & widget dots	//
+	//	  using hover, grabbed, expanded	//
 	//										//
 	//	NEED to move dots to S_Widget?		//
 	//										//
@@ -91,10 +91,7 @@ export default class S_Element {
 			if (this.ancestry.isEditing) {
 				return `dashed ${color} 1px`;
 			}
-			if (this.ancestry.isFocus) {
-				return `solid ${color} 1px`;
-			}
-			if (!this.isOut) {
+			if (this.ancestry.isFocus || !this.isOut) {
 				return `solid ${color} 1px`;
 			}
 		}

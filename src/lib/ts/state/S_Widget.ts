@@ -26,9 +26,9 @@ export default class S_Widget extends S_Element {
 	get stroke(): string { return this.color; }
 	get fill(): string { return this.background_color; }
 	get thing_color(): string { return this.ancestry.thing?.color ?? k.empty; }
-	get isFilled(): boolean { return this.ancestry.isGrabbed && !this.isEditing; }
 	get background(): string { return `background-color: ${this.background_color}`; }
-	get shows_border(): boolean { return this.ancestry.isFocus || this.isEditing || !this.isOut; }
+	get isFilled(): boolean { return this.ancestry.isGrabbed && !this.ancestry.isEditing; }
+	get shows_border(): boolean { return this.ancestry.isFocus || this.ancestry.isEditing || !this.isOut; }
 	get background_color(): string { return this.isFilled ? this.thing_color : this.shows_border ? get(w_background_color) : 'transparent'; }
 
 	constructor(ancestry: Ancestry) {
@@ -41,8 +41,8 @@ export default class S_Widget extends S_Element {
 	get color(): string {
 		const isLight = colors.luminance_ofColor(this.thing_color) > 0.5;
 		return isLight
-			? ((!this.ancestry.isGrabbed && !this.isEditing) ? this.thing_color : 'black')
-			: (this.ancestry.isGrabbed && !this.isEditing) ? 'white' : this.thing_color;
+			? ((!this.ancestry.isGrabbed && !this.ancestry.isEditing) ? this.thing_color : 'black')
+			: (this.ancestry.isGrabbed && !this.ancestry.isEditing) ? 'white' : this.thing_color;
 	}
 
 	get state_didChange(): boolean {

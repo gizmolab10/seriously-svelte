@@ -32,7 +32,7 @@
 
 	if (g_line.isBidirectional) {
 		stroke_color = colors.opacitize(ancestry.thing.color, 0.7);
-		svg_dasharray = '4,3';
+		svg_dasharray = k.dasharray.relateds;
 	}
 
 	$: {
