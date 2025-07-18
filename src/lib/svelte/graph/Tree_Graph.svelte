@@ -4,6 +4,7 @@
 	import { w_depth_limit } from '../../ts/common/Stores';
 	import Tree_Branches from './Tree_Branches.svelte';
 	import Widget from '../widget/Widget.svelte';
+	import Tree_Preferences from './Tree_Preferences.svelte';
 	const focus = $w_ancestry_focus;
 	let reattachments = 0;
 
@@ -16,6 +17,7 @@
 
 </script>
 
+<Tree_Preferences top={0} width={120}/>
 {#key reattachments}
 	{#if !!focus && !layout.was_visited(focus, true)}
 		<div class = 'tree'

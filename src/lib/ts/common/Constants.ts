@@ -114,6 +114,7 @@ export default class Constants {
 		info:		  dot_size - 1,
 		common:		  dot_size,
 		segmented:	  dot_size + 1,
+		tree_prefs:	  36,
 	};
 
 }

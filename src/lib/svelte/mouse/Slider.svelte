@@ -4,6 +4,7 @@
 	export let thumb_color: string = '#007aff';
 	export let isLogarithmic: boolean = false;
 	export let title_font_size: number = 18;
+	export let show_value: boolean = true;
 	export let origin: Point = Point.zero;
 	export let isVisible: boolean = true;
 	export let divisions: number = 100;
@@ -45,11 +46,12 @@
 		type='range'
 		max={divisions}
 		bind:value={slider_value}
-		style='flex: 1 1 auto; position: relative; min-width: 0;'
-	/>
-	<span style='font-size: {title_font_size}px; margin-left: -26px; display: inline-block; width: 3.5em; text-align: right;'>
-		{value}
-	</span>
+		style='flex: 1 1 auto; position: relative; min-width: 0;'/>
+		{#if show_value}
+			<span style='font-size: {title_font_size}px; margin-left: -26px; display: inline-block; width: 3.5em; text-align: right;'>
+				{value}
+			</span>
+		{/if}
 </div>
 </div>
 

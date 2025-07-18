@@ -9,27 +9,21 @@
 	import Color from '../mouse/Color.svelte';
 	import { onMount } from 'svelte';
 	export let top = 0;
-	const back_up = -5;
 	const separator_left = 35;
 	const position = 'relative';
-	const picker_offset = `-88px`;
 	const width = k.width.details;
+	const picker_offset = `-88px`;
 	const color_left = width / 2 - 13;
 	const segmented_width = width - 6;
 	const segmented_height = k.height.button;
 	const separator_height = segmented_height + 9;
 	const separator_width = width - 5 - separator_left * 2;
-	const fourth_height = (ux.inTreeMode ? segmented_height : -4) - 8;
 	let color = $w_background_color;
 	let color_origin = Point.square(-3.5);
 	let color_wrapper: HTMLDivElement | null = null;
 
 	const heights = [
-		11,
-		back_up,			// 1 child/related
-		separator_height,
-		back_up - 4,		// 3. tree levels
-		fourth_height,
+		10,
 		back_up,			// 5. show tiny dots for
 		separator_height,
 		back_up,			// 7. force graph
@@ -76,53 +70,8 @@
 		width: 100%;
 		top:{top}px;
 		position:{position};
-		padding-bottom:{tops[10]}px;
+		padding-bottom:{tops[6]}px;
 		font-size:{k.font_size.info}px;'>
-	{#if ux.inTreeMode}
-		<Separator
-			length={width}
-			isHorizontal={true}
-			position={position}
-			has_gull_wings={true}
-			origin={Point.y(tops[0])}
-			margin={k.details_margin}
-			title='tree relationships'
-			title_left={k.separator_title_left}
-			thickness={k.thickness.separator.details}/>
-		{#key $w_show_tree_ofType}
-			{#key $w_show_tree_ofType}
-				<Segmented
-					width={180}
-					name='tree-types'
-					allow_multiple={true}
-					height={segmented_height}
-					selected={$w_show_tree_ofType}
-					origin={new Point(18, tops[1])}
-					titles={[T_Kinship.child, T_Kinship.related]}
-					handle_selection={(titles) => layout.handle_mode_selection('tree', titles)}/>
-			{/key}
-		{/key}
-		<Separator
-			length={width}
-			title='tree levels'
-			isHorizontal={true}
-			position={position}
-			has_gull_wings={true}
-			origin={Point.y(tops[2])}
-			title_left={k.separator_title_left}
-			thickness={k.thickness.separator.details}/>
-		<Slider
-			max={12}
-			width={width - 26}
-			isLogarithmic={true}
-			value={$w_depth_limit}
-			height={segmented_height}
-			thumb_color={colors.separator}
-			origin={new Point(10, tops[3])}
-			title_left={k.separator_title_left}
-			title_font_size={k.font_size.banners}
-			handle_value_change={handle_depth_limit}/>
-	{/if}
 	<Separator
 		length={width}
 		isHorizontal={true}
@@ -130,7 +79,7 @@
 		has_gull_wings={true}
 		title='force graph to:'
 		margin={k.details_margin}
-		origin={Point.y(tops[4])}
+		origin={Point.y(tops[0])}
 		title_left={k.separator_title_left}
 		thickness={k.thickness.separator.details}/>
 	<Segmented
@@ -139,7 +88,7 @@
 		allow_multiple={false}
 		width={segmented_width}
 		height={segmented_height}
-		origin={Point.y(tops[5])}
+		origin={Point.y(tops[1])}
 		selected={[$w_auto_adjust_graph]}
 		handle_selection={handle_auto_adjust}
 		titles={[T_Auto_Adjust.selection, T_Auto_Adjust.fit]}/>
@@ -149,7 +98,7 @@
 		position={position}
 		has_gull_wings={true}
 		margin={k.details_margin}
-		origin={Point.y(tops[6])}
+		origin={Point.y(tops[2])}
 		title='show tiny dots for'
 		title_left={k.separator_title_left}
 		thickness={k.thickness.separator.details}/>
@@ -159,7 +108,7 @@
 		allow_multiple={true}
 		width={segmented_width}
 		height={segmented_height}
-		origin={Point.y(tops[7])}
+		origin={Point.y(tops[3])}
 		selected={$w_show_countDots_ofType}
 		handle_selection={handle_count_dots}
 		titles={[T_Kinship[T_Kinship.child], T_Kinship[T_Kinship.parent], T_Kinship[T_Kinship.related]]}/>
@@ -171,7 +120,7 @@
 		has_thin_divider={true}
 		title='background color'
 		margin={k.details_margin}
-		origin={Point.y(tops[8])}
+		origin={Point.y(tops[4])}
 		title_left={k.separator_title_left}
 		thickness={k.thickness.separator.details}/>
 	<div 
@@ -180,7 +129,7 @@
 		style='
 			width: 17px;
 			height: 17px;
-			top: {tops[9]}px;
+			top: {tops[5]}px;
 			border-radius: 50%;
 			left: {color_left}px;
 			position: {position};
