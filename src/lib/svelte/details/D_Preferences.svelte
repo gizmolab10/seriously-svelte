@@ -9,6 +9,7 @@
 	import Color from '../mouse/Color.svelte';
 	import { onMount } from 'svelte';
 	export let top = 0;
+	const back_up = -5;
 	const separator_left = 35;
 	const position = 'relative';
 	const width = k.width.details;
