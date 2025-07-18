@@ -224,9 +224,9 @@ export class Preferences {
 	restore_stores() {
 
 		// VISIBILITY
-		w_show_tree_ofType		.set( this.read_key(T_Preference.tree)					?? T_Kinship.child);
+		w_show_tree_ofType		.set( this.read_key(T_Preference.tree)					?? T_Kinship.children);
 		w_show_graph_ofType		.set( this.read_key(T_Preference.graph)					?? T_Graph.tree);
-		w_show_countDots_ofType	.set( this.read_key(T_Preference.countDots)				?? [T_Kinship.child]);
+		w_show_countDots_ofType	.set( this.read_key(T_Preference.countDots)				?? [T_Kinship.children]);
 		w_show_details_ofType	.set( this.read_key(T_Preference.detail_types)			?? [T_Details.actions, T_Details.data]);
 
 		// RADIAL

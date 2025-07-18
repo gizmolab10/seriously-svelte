@@ -9,8 +9,7 @@
 	export let top = 0;
 	const back_up = -5;
 	const left_width = 40;
-	const heights = [ 3, 7, 20 ];
-	const position = 'relative';
+	const heights = [ 3, 5, 18 ];
 	const tops = u.cumulativeSum(heights);
 	const segmented_height = k.height.button;
 
@@ -21,9 +20,9 @@
 </script>
 	
 <div style='
-	height: 40px;
+	height: 36px;
 	display: flex;
-	font-size: 30px;
+	font-size: 28px;
 	position: absolute;
 	align-items: center;
 	width: {left_width}px;
@@ -39,7 +38,7 @@
 	align-items: center;
 	width: {left_width}px;
 	justify-content: center;'>
-	levels
+	level{$w_depth_limit == 1 ? '' : 's'}
 </div>
 <div class='tree-preferences'
 	style='
@@ -64,13 +63,13 @@
 	{#key $w_show_tree_ofType}
 		{#key $w_show_tree_ofType}
 			<Segmented
-				width={120}
+				width={137}
 				name='tree-types'
 				allow_multiple={true}
 				height={segmented_height}
 				selected={$w_show_tree_ofType}
 				origin={new Point(0, tops[1])}
-				titles={[T_Kinship.child, T_Kinship.related]}
+				titles={[T_Kinship.children, T_Kinship.related]}
 				handle_selection={(titles) => layout.handle_mode_selection('tree', titles)}/>
 		{/key}
 	{/key}

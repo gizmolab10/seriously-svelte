@@ -128,10 +128,9 @@ export enum T_File_Format {
 }
 
 export enum T_Kinship {
-	related = 'related',
-	parent  = 'parent',
-	child   = 'child',
-	tags    = 'tags',
+	children = 'children',
+	related  = 'related',
+	parents  = 'parents',
 }
 
 export enum T_RingZone {

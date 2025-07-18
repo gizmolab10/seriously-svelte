@@ -12,6 +12,7 @@
     export let font_sizes: number[];
     export let button_height = 15;
     export let has_title = true;              // false means all titles are buttons, true means first one is row title
+    export let row_offset = 0;
 	export let name = k.empty;
     export let width: number;
     export let title_gap = 8;
@@ -47,7 +48,7 @@
                 detect_longClick={detect_longClick}
                 detect_autorepeat={detect_autorepeat}
                 name={`${name}-table-${T_Action[row]}`}
-                closure={(t_request, s_mouse, column) => closure(t_request, s_mouse, name, row, column)}/>
+                closure={(t_request, s_mouse, column) => closure(t_request, s_mouse, name, row + row_offset, column)}/>
         {/if}
     {/each}
 </div>

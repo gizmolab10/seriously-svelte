@@ -29,7 +29,7 @@ export default class Ancestry extends Identifiable {
 	
 	static readonly _____TRAVERSE: unique symbol;
 
-	traverse(apply_closureTo: (ancestry: Ancestry) => boolean, t_kinship: T_Kinship = T_Kinship.child, visited: string[] = []) {
+	traverse(apply_closureTo: (ancestry: Ancestry) => boolean, t_kinship: T_Kinship = T_Kinship.children, visited: string[] = []) {
 		const id = this.thing?.id;
 		if (!!id && !visited.includes(id) && !apply_closureTo(this)) {
 			for (const progeny of this.ancestries_createUnique_byKinship(t_kinship)) {
@@ -38,7 +38,7 @@ export default class Ancestry extends Identifiable {
 		}
 	}
 
-	async async_traverse(apply_closureTo: (ancestry: Ancestry) => Promise<boolean>, t_kinship: T_Kinship = T_Kinship.child, visited: string[] = []) {
+	async async_traverse(apply_closureTo: (ancestry: Ancestry) => Promise<boolean>, t_kinship: T_Kinship = T_Kinship.children, visited: string[] = []) {
 		const id = this.thing?.id;
 		if (!!id && !visited.includes(id)) {
 			try {
@@ -366,7 +366,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	persistentMoveUp_forParent_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
-		const sibling_ancestries = get(w_ancestry_focus)?.ancestries_createUnique_byKinship(T_Kinship.parent);
+		const sibling_ancestries = get(w_ancestry_focus)?.ancestries_createUnique_byKinship(T_Kinship.parents);
 		let needs_graphRelayout = false;
 		let needs_graphRebuild = false;
 		if (!!sibling_ancestries) {
@@ -561,7 +561,7 @@ export default class Ancestry extends Identifiable {
 
 	get parentAncestry():   Ancestry | null { return this.ancestry_createUnique_byStrippingBack(); }
 	get sibling_ancestries(): Array<Ancestry> { return this.parentAncestry?.childAncestries ?? []; }
-	get childAncestries():   Array<Ancestry> { return this.ancestries_createUnique_byKinship(T_Kinship.child) ?? []; }
+	get childAncestries():   Array<Ancestry> { return this.ancestries_createUnique_byKinship(T_Kinship.children) ?? []; }
 	get branchAncestries():   Array<Ancestry> { return p.branches_areChildren ? this.childAncestries : this.parentAncestries; }
 
 	get parentAncestries(): Array<Ancestry> {
@@ -718,8 +718,8 @@ export default class Ancestry extends Identifiable {
 		if (!!kinship) {
 			switch (kinship) {
 				case T_Kinship.related: return this.thing?.uniqueAncestries_for(Predicate.isRelated) ?? [];
-				case T_Kinship.parent:  return this.thing?.uniqueAncestries_for(Predicate.contains) ?? [];
-				case T_Kinship.child:   return this.ancestries_createUnique_forPredicate(Predicate.contains);
+				case T_Kinship.parents:  return this.thing?.uniqueAncestries_for(Predicate.contains) ?? [];
+				case T_Kinship.children:   return this.ancestries_createUnique_forPredicate(Predicate.contains);
 			}
 		}
 		return [];

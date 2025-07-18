@@ -202,6 +202,7 @@
 				gap={2}
 				top={17}
 				name='second'
+				row_offset={4}
 				width={table_width}
 				has_title={has_title}
 				title_gap={title_gap}

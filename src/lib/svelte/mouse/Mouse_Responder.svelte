@@ -64,10 +64,10 @@
 	function create_s_mouse(isDown: boolean, isDouble: boolean = false, isLong: boolean = false, isRepeat: boolean = false, event: MouseEvent | null = null): S_Mouse {
 		const state = u.copyObject(s_mouse);
 		state.isUp = !isDown && !isDouble && !isLong && !isRepeat;
-		state.isDown = isDown && !isRepeat;
 		state.element = bound_element;
 		state.isDouble = isDouble;
 		state.isRepeat = isRepeat;
+		state.isDown = isDown;
 		state.isLong = isLong;
 		state.isHover = false;
 		state.event = event;
@@ -122,9 +122,9 @@
 			// autorepeat overrides all other clicks
 
 			mouse_timer.autorepeat_start(mouse_responder_number, () => {
-				if (mouse_timer.hasTimer_forID(T_Timer.repeat)) {
-					handle_s_mouse(create_s_mouse(false, false, false, true, event));
-				}
+				const isDown = !mouse_timer.hasTimer_forID(T_Timer.repeat);
+				// set isDown false to prevent autorepeating for non-repeating actions
+				handle_s_mouse(create_s_mouse(isDown, false, false, true, event));
 			});
 		} else {
 			if (detect_mouseDown && s_mouse.clicks == 0) {

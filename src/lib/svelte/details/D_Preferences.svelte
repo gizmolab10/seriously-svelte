@@ -112,7 +112,7 @@
 		origin={Point.y(tops[3])}
 		selected={$w_show_countDots_ofType}
 		handle_selection={handle_count_dots}
-		titles={[T_Kinship[T_Kinship.child], T_Kinship[T_Kinship.parent], T_Kinship[T_Kinship.related]]}/>
+		titles={[T_Kinship[T_Kinship.children], T_Kinship[T_Kinship.parents], T_Kinship[T_Kinship.related]]}/>
 	<Separator
 		length={width}
 		position={position}

@@ -17,7 +17,7 @@
 
 </script>
 
-<Tree_Preferences top={0} width={120}/>
+<Tree_Preferences top={0} width={137}/>
 {#key reattachments}
 	{#if !!focus && !layout.was_visited(focus, true)}
 		<div class = 'tree'

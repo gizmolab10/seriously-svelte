@@ -23,7 +23,7 @@ export class Visibility {
 					w_show_related.set(flag);
 					break;
 				case 'parents':
-					const mode = flag ? T_Kinship.parent : T_Kinship.child;
+					const mode = flag ? T_Kinship.parents : T_Kinship.children;
 					layout.set_tree_types([mode]);
 					break;
 			}
@@ -32,8 +32,8 @@ export class Visibility {
 
 	isShowing_countDots_ofType(t_counts: T_Kinship): boolean { return get(w_show_countDots_ofType).includes(T_Kinship[t_counts]) }
 	get related_dots(): boolean { return  this.isShowing_countDots_ofType(T_Kinship.related); }
-	get children_dots(): boolean { return  this.isShowing_countDots_ofType(T_Kinship.child); }
-	get parent_dots(): boolean { return  this.isShowing_countDots_ofType(T_Kinship.parent); }
+	get children_dots(): boolean { return  this.isShowing_countDots_ofType(T_Kinship.children); }
+	get parent_dots(): boolean { return  this.isShowing_countDots_ofType(T_Kinship.parents); }
 
 	restore_state() {
 		w_show_details.set(p.read_key(T_Preference.show_details) ?? false);

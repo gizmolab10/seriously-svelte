@@ -70,7 +70,7 @@ export default class G_Layout {
 	
 	set_tree_types(t_trees: Array<T_Kinship>) {
 		if (t_trees.length == 0) {
-			t_trees = [T_Kinship.child];
+			t_trees = [T_Kinship.children];
 		}
 		w_show_tree_ofType.set(t_trees);
 		let focus_ancestry = get(w_ancestry_focus);
