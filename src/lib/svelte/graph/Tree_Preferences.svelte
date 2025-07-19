@@ -38,7 +38,7 @@
 	align-items: center;
 	width: {left_width}px;
 	justify-content: center;'>
-	level{$w_depth_limit == 1 ? '' : 's'}
+	level{($w_depth_limit < 2) ? '' : 's'}
 </div>
 <div class='tree-preferences'
 	style='

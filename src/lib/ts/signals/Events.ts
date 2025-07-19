@@ -301,13 +301,12 @@ export class Events {
 				}								break;
 				case T_Action.show:				switch (column) {
 					case a.show.selection:			break;
-					case a.show.list:				await h.ancestry_toggle_expansion(ancestry); break;
-					case a.center.graph:			layout.grand_adjust_toFit(); break;
+					case a.show.list:				h.ancestry_rebuild_persistentMoveRight(ancestry, !ancestry.isExpanded, false, false, false, true); break;
+					case a.show.graph:				layout.grand_adjust_toFit(); break;
 				}								break;
 				case T_Action.center:			switch (column) {
 					case a.center.focus:			layout.place_ancestry_atCenter(get(w_ancestry_focus)); break;
 					case a.center.selection:		layout.place_ancestry_atCenter(ancestry); break;
-					case a.center.root:				layout.place_ancestry_atCenter(h.rootAncestry); break;
 					case a.center.graph:			layout.set_user_graph_offsetTo(Point.zero); break;
 				}								break;
 				case T_Action.add:				switch (column) {
@@ -360,12 +359,11 @@ export class Events {
 				case T_Action.center:			switch (column) {
 					case a.center.focus:			return this.isCentered_invisible_orNull(get(w_ancestry_focus));
 					case a.center.selection:		return this.isCentered_invisible_orNull(ancestry);
-					case a.center.root:				return this.isCentered_invisible_orNull(h.rootAncestry);
 					case a.center.graph:			return get(w_user_graph_offset).magnitude < 0.001;
 				}								break;
 				case T_Action.add:				switch (column) {
 					case a.add.child:				return is_altering;
-					case a.add.sibling:				return is_altering;
+					case a.add.sibling:				return is_altering || is_root;
 					case a.add.line:				return is_altering || is_root;
 					case a.add.parent:				return is_root;
 					case a.add.related:				return false;
@@ -377,9 +375,9 @@ export class Events {
 				}								break;
 				case T_Action.move:				switch (column) {
 					case a.move.left:				return is_root;
-					case a.move.up:					return no_siblings;
-					case a.move.down:				return no_siblings;
-					case a.move.right:				return no_children;
+					case a.move.up:					return no_siblings || is_root;
+					case a.move.down:				return no_siblings || is_root;
+					case a.move.right:				return no_children || is_root;
 				}								break;
 			}
 		}
@@ -426,8 +424,7 @@ export class Events {
 		center: {
 			focus: 0,
 			selection: 1,
-			root: 2,
-			graph: 3,
+			graph: 2,
 		},
 		add: {
 			child: 0,
