@@ -4,6 +4,7 @@ import { w_ancestry_focus, w_count_mouse_up, w_mouse_location, w_mouse_location_
 import { w_device_isMobile, w_ancestries_grabbed, w_user_graph_offset, w_t_database } from '../common/Stores';
 import { w_s_alteration, w_count_resize, w_s_text_edit, w_control_key_down } from '../common/Stores';
 import { T_Database } from '../database/DB_Common';
+import { s_details } from '../state/S_Details';
 import Mouse_Timer from './Mouse_Timer';
 import { get } from 'svelte/store';
 
@@ -27,10 +28,6 @@ export class Events {
 
 	name_ofActionAt(t_action: number, column: number): string {
 		return Object.keys(this.actions[T_Action[t_action]])[column];
-	}
-
-	private isCentered_invisible_orNull(ancestry: Ancestry | null): boolean {
-		return !ancestry || !ancestry.isVisible || layout.ancestry_isCentered(ancestry);
 	}
 
 	private showHelpFor(t_action: number, column: number) { 
@@ -282,8 +279,8 @@ export class Events {
 		}
 	}
 
-	private async handle_action_clickedAt(s_mouse: S_Mouse, t_action: number, column: number, name: string) {
-		const ancestry = grabs.latest;
+	async handle_action_clickedAt(s_mouse: S_Mouse, t_action: number, column: number, name: string) {
+		const ancestry = s_details.ancestry;
 		if (get(w_control_key_down)) {
 			this.showHelpFor(t_action, column);
 		} else if (!!ancestry && !this.handle_isAction_disabledAt(t_action, column) && !!h) {
@@ -305,8 +302,8 @@ export class Events {
 					case a.show.graph:				layout.grand_adjust_toFit(); break;
 				}								break;
 				case T_Action.center:			switch (column) {
-					case a.center.focus:			layout.place_ancestry_atCenter(get(w_ancestry_focus)); break;
-					case a.center.selection:		layout.place_ancestry_atCenter(ancestry); break;
+					case a.center.focus:			layout.ancestry_place_atCenter(get(w_ancestry_focus)); break;
+					case a.center.selection:		layout.ancestry_place_atCenter(ancestry); break;
 					case a.center.graph:			layout.set_user_graph_offsetTo(Point.zero); break;
 				}								break;
 				case T_Action.add:				switch (column) {
@@ -357,9 +354,9 @@ export class Events {
 					case a.show.graph:				return false;
 				}								break;
 				case T_Action.center:			switch (column) {
-					case a.center.focus:			return this.isCentered_invisible_orNull(get(w_ancestry_focus));
-					case a.center.selection:		return this.isCentered_invisible_orNull(ancestry);
-					case a.center.graph:			return get(w_user_graph_offset).magnitude < 0.001;
+					case a.center.focus:			return layout.ancestry_isCentered(get(w_ancestry_focus));
+					case a.center.selection:		return layout.ancestry_isCentered(ancestry);
+					case a.center.graph:			return get(w_user_graph_offset).magnitude < 1;
 				}								break;
 				case T_Action.add:				switch (column) {
 					case a.add.child:				return is_altering;

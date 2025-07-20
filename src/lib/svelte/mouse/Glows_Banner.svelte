@@ -34,7 +34,7 @@
 		if (title === main_title) {
 			toggle_hidden(title);
 		} else {
-			s_details.update_forBanner(titles[0], title);		// main title is the banner title
+			s_details.update_forBanner(main_title, title);		// main title is the banner title
 		}
 	}
 

@@ -16,8 +16,8 @@
 	let extra_selection_titles = [];
 
 	$: {
-		const l = $w_ancestries_grabbed?.length ?? 0;
-		extra_selection_titles = l < 2 ? [] : next_previous_titles;
+		const length = $w_ancestries_grabbed?.length ?? 0;
+		extra_selection_titles = length < 2 ? [] : next_previous_titles;
 		$w_count_details++;
 	}
 

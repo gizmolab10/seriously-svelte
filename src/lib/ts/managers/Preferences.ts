@@ -1,6 +1,6 @@
-import { c, h, k, u, show, grabs, debug, radial, colors, layout, Ancestry, databases } from '../common/Global_Imports';
 import { w_g_paging, w_font_size, w_background_color, w_thing_fontFamily, w_depth_limit, } from '../common/Stores';
 import { G_Paging, T_Graph, T_Details, T_Kinship, T_Preference, T_Auto_Adjust } from '../common/Global_Imports';
+import { c, h, k, u, show, grabs, debug, radial, colors, Ancestry, databases } from '../common/Global_Imports';
 import { w_ancestry_focus, w_ancestries_grabbed, w_ancestries_expanded } from '../common/Stores';
 import { w_t_database, w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
 import { w_auto_adjust_graph, w_show_tree_ofType, w_show_graph_ofType } from '../common/Stores';
@@ -79,13 +79,13 @@ export class Preferences {
 			w_ancestries_expanded.set([]);
 		} else {
 			const expanded = p.ancestries_readDB_key(this.expanded_key) ?? p.ancestries_readDB_key('expanded');	// backwards compatible with 'expanded' key
-			debug.log_expand(`  READ (${get(w_t_database)}): "${layout.ids_forDB(expanded)}"`);
+			debug.log_expand(`  READ (${get(w_t_database)}): "${u.ids_forDB(expanded)}"`);
 			w_ancestries_expanded.set(expanded);
 		}
 		setTimeout(() => {
 			w_ancestries_expanded.subscribe((array: Array<Ancestry> | null) => {
 				if (!!array && array.length > 0) {
-					debug.log_expand(`  WRITING (${get(w_t_database)}): "${layout.ids_forDB(array)}"`);
+					debug.log_expand(`  WRITING (${get(w_t_database)}): "${u.ids_forDB(array)}"`);
 					p.ancestries_writeDB_key(array, this.expanded_key);
 				}
 			});

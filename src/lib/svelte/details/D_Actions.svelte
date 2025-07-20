@@ -103,12 +103,12 @@
 	function compute_button_titles() {
 		return [
 			[['browse', 'left', 'up', 'down', 'right'],
-			['focus', 'selection', 'parent of selection'],
-			['show', 'selection', `${list_title}`, 'entire graph'],
-			['center', 'focus', 'selection', 'graph']],
-			[['add', 'child', 'sibling', 'line', 'parent', 'related'],
-			['delete', 'selection', 'parent', 'related'],
-			['move', 'left', 'up', 'down', 'right']],
+			['focus',   'selection', 'parent of selection'],
+			['show',    'selection', `${list_title}`, 'entire graph'],
+			['center',  'focus', 'selection', 'graph']],
+			[['add',    'child', 'sibling', 'line', 'parent', 'related'],
+			['delete',  'selection', 'parent', 'related'],
+			['move',    'left', 'up', 'down', 'right']],
 		];
 	}
 

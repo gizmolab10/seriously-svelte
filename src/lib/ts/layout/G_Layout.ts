@@ -41,6 +41,8 @@ export default class G_Layout {
 
 	static readonly _____GRAPH_RECT: unique symbol;
 	
+	get center_ofGraphRect(): Point { return get(w_graph_rect).size.asPoint.dividedInHalf; }
+
 	toggle_graph_type() {
 		switch (get(w_show_graph_ofType)) {
 			case T_Graph.tree:   w_show_graph_ofType.set(T_Graph.radial); break;
@@ -60,6 +62,16 @@ export default class G_Layout {
 		debug.log_mouse(`GRAPH ====> ${rect.description}`);
 		w_graph_rect.set(rect);										// used by Panel and Graph
 	}
+
+	static readonly _____DETAILS: unique symbol;
+
+	get glows_banner_height(): number { return u.device_isMobile ? 32 : 20; }
+	get panel_boxHeight(): number { return this.glows_banner_height + k.height.segmented; }
+
+	static readonly _____GRAPHS: unique symbol;
+
+	private get radial_size(): Size { return this.g_radialGraph.radial_size; }
+	get g_radialGraph() { let g = this._g_radialGraph; if (!g) { g = new G_RadialGraph(); this._g_radialGraph = g }; return g; }
 	
 	handle_mode_selection(name: string, types: string[]) {
 		switch (name) {
@@ -68,6 +80,23 @@ export default class G_Layout {
 		}
 	}
 	
+	private get tree_size(): Size {
+		const root = h.rootAncestry;
+		const size = new Size(root.visibleSubtree_width(), root.visibleSubtree_height());
+		return size;
+	}
+
+	branch_was_visited(ancestry: Ancestry, clear: boolean = false): boolean {
+		if (clear) {
+			this.branches_visited = [];	// null clears the array
+		}
+		const visited = this.branches_visited.includes(ancestry.id);
+		if (!visited) {
+			this.branches_visited.push(ancestry.id);
+		}
+		return visited;
+	}
+
 	set_tree_types(t_trees: Array<T_Kinship>) {
 		if (t_trees.length == 0) {
 			t_trees = [T_Kinship.children];
@@ -120,6 +149,7 @@ export default class G_Layout {
 
 	static readonly _____USER_OFFSET: unique symbol;
 	
+	renormalize_user_graph_offset() { this.set_user_graph_offsetTo(this.persisted_user_offset); }
 	get mouse_distance_fromGraphCenter(): number { return this.mouse_vector_ofOffset_fromGraphCenter()?.magnitude ?? 0; }
 	get mouse_angle_fromGraphCenter(): number | null { return this.mouse_vector_ofOffset_fromGraphCenter()?.angle ?? null; }
 
@@ -143,7 +173,7 @@ export default class G_Layout {
 		// user_offset of zero centers the graph
 		let changed = false;
 		const current_offset = get(w_user_graph_offset);
-		if (!!current_offset && current_offset.vector_to(user_offset).magnitude > .001) {
+		if (!!current_offset && current_offset.vector_to(user_offset).magnitude > 1) {
 			p.write_key(T_Preference.user_offset, user_offset);		// persist the property user_offset
 			changed = true;
 		}
@@ -154,34 +184,31 @@ export default class G_Layout {
 		return changed;
 	}
 
-	static readonly _____ANCESTRIES: unique symbol;
-
 	ancestry_isCentered(ancestry: Ancestry | null): boolean {
 		const title_center = ancestry?.center_ofTitle;
 		if (!!title_center) {
 			const center = get(w_user_graph_center);
-			const offset = center.offsetBy(title_center.negated);
+			const title_offset = title_center.vector_to(center);
 			const user_offset = get(w_user_graph_offset);
-			const delta = offset.offsetBy(user_offset.negated).magnitude;
-			// console.log('wrapper', title_center.description, 'delta', delta, ancestry?.title)
-			return delta < 0.001;
+			const delta = title_offset.vector_to(user_offset).magnitude;
+			console.log('delta', delta, ancestry?.title)
+			return delta < 1;
 		}
 		return false;
 	}
 
-	place_ancestry_atCenter(ancestry: Ancestry | null) {
-		// change the user graph offset to place
-		// the ancestry at the center of the graph
-		if (!ancestry) {	
-			ancestry = h.rootAncestry;
-		}
+	ancestry_place_atCenter(ancestry: Ancestry | null) {
 		const title_center = ancestry?.center_ofTitle;
 		if (!!title_center) {
 			const center = get(w_user_graph_center);
-			const offset = center.offsetBy(title_center.negated);		// distance between centers: from graph to ancestry's widget's title
+			const offset = title_center.vector_to(center);	// use this vector to set the user graph offset
 			this.set_user_graph_offsetTo(offset);
 		}
 	}
+
+	static readonly _____BREADCRUMBS: unique symbol;
+
+	get breadcrumbs_top(): number { return this.windowSize.height - this.panel_boxHeight; }
 
 	layout_breadcrumbs_forAncestry_centered_starting_within(ancestry: Ancestry, centered: boolean, left: number, thresholdWidth: number): [Array<Thing>, number[], number[], number] {
 		const crumb_things: Array<Thing> = [];
@@ -211,36 +238,6 @@ export default class G_Layout {
 			lefts.push(left);
 		}
 		return [crumb_things.reverse(), widths.reverse(), lefts, parent_widths];
-	}
-
-	static readonly _____PRIMITIVES: unique symbol;
-
-	get glows_banner_height(): number { return u.device_isMobile ? 32 : 20; }
-	private get radial_size(): Size { return this.g_radialGraph.radial_size; }
-	get panel_boxHeight(): number { return this.glows_banner_height + k.height.segmented; }
-	get breadcrumbs_top(): number { return this.windowSize.height - this.panel_boxHeight; }
-	get isAllExpanded(): boolean { return h.rootAncestry?.isAllProgeny_expanded ?? false; }
-	get center_ofGraphSize(): Point { return get(w_graph_rect).size.asPoint.dividedInHalf; }
-	get g_radialGraph() { let g = this._g_radialGraph; if (!g) { g = new G_RadialGraph(); this._g_radialGraph = g }; return g; }
-	renormalize_user_graph_offset() { this.set_user_graph_offsetTo(this.persisted_user_offset); }
-	ids_forDB(array: Array<Ancestry>): string { return u.ids_forDB(array).join(', '); }
-	expandAll() { h.rootAncestry.traverse(ancestry => ancestry.expand()); }
-
-	private get tree_size(): Size {
-		const root = h.rootAncestry;
-		const size = new Size(root.visibleSubtree_width(), root.visibleSubtree_height());
-		return size;
-	}
-
-	was_visited(ancestry: Ancestry, clear: boolean = false): boolean {
-		if (clear) {
-			this.branches_visited = [];	// null clears the array
-		}
-		const visited = this.branches_visited.includes(ancestry.id);
-		if (!visited) {
-			this.branches_visited.push(ancestry.id);
-		}
-		return visited;
 	}
 
 }

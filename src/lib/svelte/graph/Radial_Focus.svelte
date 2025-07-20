@@ -65,7 +65,7 @@
 		width_ofTitle = ($w_ancestry_focus?.thing?.width_ofTitle ?? 0);
 		const x = -7.5 - (width_ofTitle / 2);
 		const y = -11;
-		origin_ofWidget = layout.center_ofGraphSize.offsetByXY(x, y);
+		origin_ofWidget = layout.center_ofGraphRect.offsetByXY(x, y);
 		size_ofBorder = new Size(width_ofTitle - 6, k.height.row);
 		center_ofBorder = new Point(width_ofTitle + 15, height).dividedInHalf;
 	}

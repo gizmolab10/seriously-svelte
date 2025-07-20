@@ -206,7 +206,7 @@
 				height = {outer_diameter}
 				handle_isHit = {handle_isHit}
 				handle_s_mouse = {handle_up_down}
-				center = {layout.center_ofGraphSize}>
+				center = {layout.center_ofGraphRect}>
 				<svg class = 'rings-svg'
 					viewBox = {viewBox}>
 					<path class = 'resize-path'

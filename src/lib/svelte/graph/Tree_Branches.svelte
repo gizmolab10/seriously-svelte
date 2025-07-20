@@ -25,7 +25,7 @@
 		{#each ancestry.branchAncestries as branchAncestry}
 			<Tree_Line g_line = {branchAncestry.g_widget.g_line}/>
 			<Widget g_widget = {branchAncestry.g_widget}/>
-			{#if branchAncestry.shows_branches && !layout.was_visited(branchAncestry)}
+			{#if branchAncestry.shows_branches && !layout.branch_was_visited(branchAncestry)}
 				<Tree_Branches ancestry = {branchAncestry} depth = {depth - 1}/>
 			{/if}
 		{/each}

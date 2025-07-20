@@ -19,7 +19,7 @@
 
 <Tree_Preferences top={0} width={137}/>
 {#key reattachments}
-	{#if !!focus && !layout.was_visited(focus, true)}
+	{#if !!focus && !layout.branch_was_visited(focus, true)}
 		<div class = 'tree'
 			style = 'transform:translate({$w_user_graph_offset.x}px, {$w_user_graph_offset.y}px);'>
 			<Widget g_widget = {focus.g_widget}/>

@@ -50,7 +50,7 @@ class S_Details {
 	
 	static readonly _____SELECTION: unique symbol;
 
-	private get ancestry(): Ancestry | null { return (this.s_selected_ancestries.item as Ancestry) ?? grabs.latest; }
+	get ancestry(): Ancestry | null { return (this.s_selected_ancestries.item as Ancestry) ?? grabs.latest; }
 
 	private update_selected() {
 		const grabbed = get(w_ancestries_grabbed) ?? [];
