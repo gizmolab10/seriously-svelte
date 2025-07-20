@@ -188,10 +188,8 @@ export default class G_Layout {
 		const title_center = ancestry?.center_ofTitle;
 		if (!!title_center) {
 			const center = get(w_user_graph_center);
-			const title_offset = title_center.vector_to(center);
 			const user_offset = get(w_user_graph_offset);
-			const delta = title_offset.vector_to(user_offset).magnitude;
-			console.log('delta', delta, ancestry?.title)
+			const delta = title_center.vector_to(center).vector_to(user_offset).magnitude;
 			return delta < 1;
 		}
 		return false;
