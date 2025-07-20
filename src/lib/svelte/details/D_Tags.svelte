@@ -10,7 +10,7 @@
 
 </script>
 
-{#key `${grabs.latest?.id} ${$w_thing_tags} ${reattachments}`}
+{#key `${grabs.ancestry?.id} ${$w_thing_tags} ${reattachments}`}
     {#if !$w_thing_tags || $w_thing_tags.length == 0}
         <div
             class='tags'

@@ -755,7 +755,7 @@ export class Hierarchy {
 
 	get ancestry_forBreadcrumbs(): Ancestry {
 		const focus = get(w_ancestry_focus);
-		const grab = grabs.latest;
+		const grab = grabs.ancestry;
 		const grab_containsFocus = !!grab && focus.isAProgenyOf(grab)
 		return (!!grab && !grab_containsFocus) ? grab : focus;
 	}
@@ -1346,7 +1346,7 @@ export class Hierarchy {
 
 	private get ancestry_forFile(): Ancestry {
 		const focus = get(w_ancestry_focus);
-		let grabbed = grabs.latest;
+		let grabbed = grabs.ancestry;
 		if (!!grabbed) {
 			return grabbed;
 		} else if (!!focus) {
@@ -1391,7 +1391,7 @@ export class Hierarchy {
 					await this.extractJSON_fromDict(dict);
 					break;
 				case T_File_Format.seriously:
-					this.extractSeriously_fromDict(dict, grabs.latest ?? this.rootAncestry);
+					this.extractSeriously_fromDict(dict, grabs.ancestry ?? this.rootAncestry);
 					break;
 			}
 		} finally {

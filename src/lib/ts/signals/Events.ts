@@ -4,7 +4,6 @@ import { w_ancestry_focus, w_count_mouse_up, w_mouse_location, w_mouse_location_
 import { w_device_isMobile, w_ancestries_grabbed, w_user_graph_offset, w_t_database } from '../common/Stores';
 import { w_s_alteration, w_count_resize, w_s_text_edit, w_control_key_down } from '../common/Stores';
 import { T_Database } from '../database/DB_Common';
-import { s_details } from '../state/S_Details';
 import Mouse_Timer from './Mouse_Timer';
 import { get } from 'svelte/store';
 
@@ -280,7 +279,7 @@ export class Events {
 	}
 
 	async handle_action_clickedAt(s_mouse: S_Mouse, t_action: number, column: number, name: string) {
-		const ancestry = s_details.ancestry;
+		const ancestry = grabs.ancestry;	
 		if (get(w_control_key_down)) {
 			this.showHelpFor(t_action, column);
 		} else if (!!ancestry && !this.handle_isAction_disabledAt(t_action, column) && !!h) {
@@ -329,7 +328,7 @@ export class Events {
 	}
 
 	handle_isAction_disabledAt(t_action: number, column: number): boolean {		// true means disabled
-		const ancestry = grabs.latest;
+		const ancestry = grabs.ancestry;
 		if (!!ancestry) {
 			const is_altering = !!get(w_s_alteration);
 			const no_children = !ancestry.hasChildren;

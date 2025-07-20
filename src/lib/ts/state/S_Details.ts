@@ -1,13 +1,11 @@
 import { w_thing_tags, w_thing_traits, w_data_updated, w_show_details_ofType } from '../common/Stores';
 import { T_Details, T_Direction, T_Storage_Need, S_Identifiables } from '../common/Global_Imports';
-import { w_count_details, w_ancestry_focus, w_ancestries_grabbed } from '../common/Stores';
 import { h, grabs, Thing, Trait, Ancestry } from '../common/Global_Imports';
+import { w_ancestry_focus, w_ancestries_grabbed } from '../common/Stores';
 import { S_Banner_Hideable } from './S_Banner_Hideable';
-import { get } from 'svelte/store';
 
 class S_Details {
 	private s_banner_hideables_byType: { [t_detail: string]: S_Banner_Hideable } = {};
-	private s_selected_ancestries = new S_Identifiables<Ancestry>([]);
 	private s_trait_things = new S_Identifiables<Thing>([]);
 	private s_tag_things = new S_Identifiables<Thing>([]);
 	t_storage_need = T_Storage_Need.direction;
@@ -20,9 +18,6 @@ class S_Details {
 		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
 			this.update();
 		});
-		w_ancestries_grabbed.subscribe((array: Array<Ancestry>) => {
-			this.update();
-		});
 		w_show_details_ofType.subscribe((t_details: Array<T_Details>) => {
 			this.number_ofDetails = t_details?.length ?? 0;
 			this.update();
@@ -33,7 +28,6 @@ class S_Details {
 	}
 
 	private update() {
-		this.update_selected();
 		this.update_traitThings();
 		this.update_tags();
 	}
@@ -43,23 +37,9 @@ class S_Details {
 		const t_detail = T_Details[banner_title as keyof typeof T_Details];
 		switch (t_detail) {
 			case T_Details.traits:	  this.selectNext_traitThing(next); break;
-			case T_Details.selection: this.selectNext_selection(next); break;
+			case T_Details.selection: grabs.selectNext_selection(next); break;
 			case T_Details.tags:  	  this.selectNext_tag(next); break;
 		}
-	}
-	
-	static readonly _____SELECTION: unique symbol;
-
-	get ancestry(): Ancestry | null { return (this.s_selected_ancestries.item as Ancestry) ?? grabs.latest; }
-
-	private update_selected() {
-		const grabbed = get(w_ancestries_grabbed) ?? [];
-		this.s_selected_ancestries.set_items(grabbed);
-	}
-	
-	selectNext_selection(next: boolean) {
-		this.s_selected_ancestries.find_next_item(next);
-		w_count_details.update(n => n + 1);	// force re-render of details
 	}
 	
 	static readonly _____TAGS: unique symbol;
@@ -68,7 +48,7 @@ class S_Details {
 
 	private update_tags() {
 		this.s_tag_things.set_items(h?.things_unique_havingTags ?? []);
-		w_thing_tags.set(this.ancestry?.thing?.tags ?? []);
+		w_thing_tags.set(grabs.ancestry?.thing?.tags ?? []);
 	}
 	
 	selectNext_tag(next: boolean) {
@@ -103,7 +83,7 @@ class S_Details {
 		let thing_traits: Array<Trait> = [];
 		if (!!h) {
 			this.s_trait_things.set_items(h.things_unique_havingTraits ?? []);
-			const thing = this.ancestry?.thing;
+			const thing = grabs.ancestry?.thing;
 			thing_traits = thing?.traits ?? [];
 			if (!!thing && thing_traits.length > 0) {
 				// compute which index [trait] corresponds to the thing

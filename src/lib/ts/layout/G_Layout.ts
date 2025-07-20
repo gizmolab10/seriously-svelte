@@ -108,7 +108,7 @@ export default class G_Layout {
 			focus_ancestry = this.focus_ancestry;
 		} else {
 			this.focus_ancestry = focus_ancestry;
-			focus_ancestry = this.parents_focus_ancestry ?? grabs.latest;
+			focus_ancestry = this.parents_focus_ancestry ?? grabs.ancestry;
 		}
 		w_show_related.set(t_trees.includes(T_Kinship.related));
 		focus_ancestry?.becomeFocus();

@@ -1,11 +1,10 @@
 <script lang='ts'>
-	import { c, k, p, ux, colors, layout, Rect, Size, Point, Thing, Ancestry } from '../../ts/common/Global_Imports';
+	import { c, k, p, ux, grabs, colors, layout, Rect, Size, Point, Thing, Ancestry } from '../../ts/common/Global_Imports';
 	import { w_ancestry_focus, w_ancestries_grabbed, w_relationship_order } from '../../ts/common/Stores';
 	import { T_Thing, T_Trait, T_Layer, T_Element, T_Preference } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { w_background_color, w_show_details_ofType } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
-	import { s_details } from '../../ts/state/S_Details';
 	import type { Integer } from '../../ts/common/Types';
 	import Text_Table from '../text/Text_Table.svelte';
 	import Separator from '../mouse/Separator.svelte';
@@ -15,7 +14,7 @@
 	export let top = 9;
 	const id = 'selection';
 	const es_info = ux.s_element_for(new Identifiable(id), T_Element.details, id);
-	let ancestry: Ancestry | null = s_details.ancestry;
+	let ancestry: Ancestry | null = grabs.ancestry;
 	let thing: Thing | null = ancestry?.thing ?? null;
 	let thingHID: Integer | null = thing?.hid;
 	let characteristics: Array<Object> = [];
@@ -57,7 +56,7 @@
 	}
 
 	function update_forAncestry() {
-		ancestry = s_details.ancestry;
+		ancestry = grabs.ancestry;
 		thing = ancestry?.thing;
 		if (!!thing) {
 			thing_title = thing.title;

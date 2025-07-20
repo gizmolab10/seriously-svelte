@@ -20,8 +20,8 @@
 	const bottom_padding = bottom_tableHeight - 48;
     const font_sizes = [k.font_size.instructions, k.font_size.instructions];
     const s_banner_hideable = s_details.s_banner_hideables_byType[T_Details.actions];
-	const es_cancel = ux.s_element_for(grabs.latest, T_Element.cancel, k.empty);
-	let list_title = grabs.latest?.isExpanded && ux.inTreeMode ? 'hide list' : 'list';
+	const es_cancel = ux.s_element_for(grabs.ancestry, T_Element.cancel, k.empty);
+	let list_title = grabs.ancestry?.isExpanded && ux.inTreeMode ? 'hide list' : 'list';
 	let button_titles = compute_button_titles();
 	let actions_top = top + 3;
     let reattachments = 0;
@@ -69,7 +69,7 @@
 	}
 
 	function update_button_titles(): void {
-		const ancestry = grabs.latest;
+		const ancestry = grabs.ancestry;
 		list_title = ux.inTreeMode && !!ancestry && ancestry.isExpanded ? 'hide list' : 'show list';
 		button_titles = compute_button_titles();
 		setTimeout(() => reattachments++, 0);
@@ -160,7 +160,7 @@
 					font-size:{k.font_size.instructions}px;'>
 				<div style='top:9px; width: 100%; position:relative;'>
 					To <em>{$w_s_alteration.t_alteration}</em> an item as <em>{target_ofAlteration() ?? k.unknown}</em>
-					<br> to <strong>{grabs.latest.title}</strong>
+					<br> to <strong>{grabs.ancestry.title}</strong>
 					<br> choose that item's <em>blinking</em> dot
 				</div>
 				<Button

@@ -1,14 +1,22 @@
 import { ux, Thing, debug, layout, Ancestry, S_Identifiables } from '../common/Global_Imports';
-import { w_hierarchy, w_ancestry_focus, w_ancestries_grabbed, w_s_alteration } from '../common/Stores';
-import { w_s_text_edit, w_depth_limit } from '../common/Stores';
+import { w_hierarchy, w_s_text_edit, w_depth_limit, w_count_details } from '../common/Stores';
+import { w_ancestry_focus, w_ancestries_grabbed, w_s_alteration } from '../common/Stores';
 import { get } from 'svelte/store';
 
 type Ancestry_Pair = [Ancestry, Ancestry | null];
 
 export class Grabs {
 	// N.B. hierarchy depends on grabs, so we can't use h here
-
+	
 	recents = new S_Identifiables<Ancestry_Pair>([]);
+	s_selected_ancestries = new S_Identifiables<Ancestry>([]);
+	get ancestry(): Ancestry | null { return (this.s_selected_ancestries.item as Ancestry) ?? grabs.latest_upward(true); }
+
+	constructor() {
+		w_ancestries_grabbed.subscribe((array: Array<Ancestry>) => {
+			this.update_selected();
+		});
+	}
 	
 	focus_onNext(next: boolean) {
 		this.recents.find_next_item(next);
@@ -29,13 +37,22 @@ export class Grabs {
 		const priorFocus = get(w_ancestry_focus);
 		const changed = force || !priorFocus || !ancestry.equals(priorFocus!);
 		if (changed) {
-			const pair: Ancestry_Pair = [ancestry, this.latest];
+			const pair: Ancestry_Pair = [ancestry, this.ancestry];
 			grabs.recents.push(pair);
 			w_s_alteration.set(null);
 			w_ancestry_focus.set(ancestry);
 		}
 		ancestry.expand();
 		return changed;
+	}
+	
+	static readonly _____SELECTION: unique symbol;
+
+	update_selected() { this.s_selected_ancestries.set_items(get(w_ancestries_grabbed) ?? []); }
+	
+	selectNext_selection(next: boolean) {
+		this.s_selected_ancestries.find_next_item(next);
+		w_count_details.update(n => n + 1);	// force re-render of details
 	}
 	
 	static readonly _____GRAB: unique symbol;
@@ -88,9 +105,6 @@ export class Grabs {
 	
 	static readonly _____LATEST: unique symbol;
 
-	get latest_thing(): Thing | null { return this.latest?.thing || null; }
-	get latest(): Ancestry | null { return this.latest_upward(true); }
-
 	latest_rebuild_persistentMoveUp_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const ancestry = this.latest_upward(up);
 		if (!!ancestry) {
@@ -111,7 +125,7 @@ export class Grabs {
 	}
 
 	latest_assureIsVisible() {
-		const ancestry = this.latest;
+		const ancestry = this.ancestry;
 		if (!!ancestry && !ancestry.isVisible) {
 			ancestry.grab();
 			if (ux.inTreeMode) {

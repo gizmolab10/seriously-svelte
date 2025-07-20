@@ -35,9 +35,7 @@ export default class Mouse_Timer {
 		this.autorepeat_stop();
 		this.autorepeat_ID = id;
 		callback();
-		console.log('autorepeat_start_start_timer');
 		this.autorepeat_start_timer = setTimeout(() => {
-			console.log('autorepeat_start_timer');
 			this.autorepeat_timer = setInterval(callback, k.threshold.autorepeat);
 			this.autorepeat_start_timer = null;
 		}, k.threshold.long_click);
@@ -45,12 +43,10 @@ export default class Mouse_Timer {
 
 	autorepeat_stop() {
 		if (this.autorepeat_start_timer) {
-			console.log('autorepeat_stop_start_timer');
 			clearTimeout(this.autorepeat_start_timer);
 			this.autorepeat_start_timer = null;
 		}
 		if (this.autorepeat_timer) {
-			console.log('autorepeat_stop_timer');
 			clearInterval(this.autorepeat_timer);
 			this.autorepeat_timer = null;
 		}
