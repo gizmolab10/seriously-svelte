@@ -59,9 +59,9 @@ export default class G_Cluster {
 		const g_paging = this.g_paging;
 		if (!!g_paging) {
 			this.angle_ofCluster = angle_ofCluster;
-			const points_right = new Angle(angle_ofCluster).angle_pointsRight;
+			const pointsNormal = new Angle(angle_ofCluster).angle_pointsNormal;
 			const onePage_ofAncestries = g_paging.onePage_from(this.widgets_shown, this.ancestries);
-			this.ancestries_shown = points_right ? onePage_ofAncestries.reverse() : onePage_ofAncestries;	
+			this.ancestries_shown = pointsNormal ? onePage_ofAncestries.reverse() : onePage_ofAncestries;	
 			this.layout_cluster();
 			let angle = this.g_sliderArc.spread_angle;
 			if (angle < 0) {
@@ -180,17 +180,17 @@ export default class G_Cluster {
 			const center = this.center.offsetByXY(0.5, -1);			// tweak so that drag dots are centered within the rotation ring
 			const radial = Point.x(get(w_ring_rotation_radius) + k.radial_widget_inset);
 			const radial_ofFork = this.radial_ofFork;	// points at middle widget
-			const fork_pointsRight = radial_ofFork.x > 0;
+			const fork_pointsNormal = radial_ofFork.x > 0;
 			const fork_pointsDown = radial_ofFork.y < 0;
 			let index = 0;
 			while (index < this.widgets_shown) {
-				const adjusted_index = fork_pointsRight ? (this.widgets_shown - index - 1) : index;
-				const angle = this.angle_at_index(adjusted_index);
+				const adjusted_index = fork_pointsNormal ? (this.widgets_shown - index - 1) : index;
 				const ancestry = this.ancestries_shown[adjusted_index];
-				const pointsRight = new Angle(angle).angle_pointsRight;
+				const angle = this.angle_at_index(adjusted_index);
+				const pointsNormal = new Angle(angle).angle_pointsNormal;
 				const rotated_origin = center.offsetBy(radial.rotate_by(angle));
 				const g_widget = ancestry.g_widget;
-				g_widget.layout_necklaceWidget(rotated_origin, pointsRight);
+				g_widget.layout_necklaceWidget(rotated_origin, pointsNormal);
 				this.g_widgets_inCluster.push(g_widget);
 				index += 1;
 			}

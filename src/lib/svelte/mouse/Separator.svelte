@@ -39,7 +39,7 @@
 	$: wingsCenter_dual = wingsCenter_for(isHorizontal, length, thickness, true);
 	$: wingsDirection_single = isHorizontal ? Direction.right : Direction.down;
 	$: wingsDirection_dual = isHorizontal ? Direction.left : Direction.up;
-	$: title_left = (length + (origin.x * 2.1) - title_width - 12) / 2;
+	$: title_left = (length - title_width - 20) / 2;
 
 	$: {
 		const _ = $w_background_color;
@@ -61,7 +61,7 @@
 </script>
 
 <div class={class_name} style={separatorStyle}>
-	{#if has_gull_wings && !margin}
+	{#if has_gull_wings}
 		<Gull_Wings
 			thickness={thickness}
 			radius={corner_radius}
@@ -107,6 +107,7 @@
 	{#if handle_click}
 		<div
 			style='
+				left:-1px;
 				width: 100%;
 				display: flex;
 				position:absolute;

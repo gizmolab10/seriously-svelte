@@ -18,7 +18,7 @@
 	const es_title = s_widget.es_title;
 	const es_reveal = s_widget.es_reveal;
 	const points_toChild = g_widget.points_toChild;
-    const points_right = g_widget.widget_pointsRight;
+    const pointsNormal = g_widget.widget_pointsNormal;
 	let width_ofWidget = g_widget.width_ofWidget;
 	let border_radius = k.height.dot / 2;
 	let widgetWrapper!: Svelte_Wrapper;
@@ -155,7 +155,7 @@
 		'>
 		<Widget_Drag
 			es_drag = {es_drag}
-			points_right = {points_right}/>
+			pointsNormal = {pointsNormal}/>
 		<Widget_Title
 			es_title = {es_title}
 			fontSize = {k.font_size.common}px/>

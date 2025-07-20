@@ -5,13 +5,14 @@
 	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { w_background_color, w_show_details_ofType } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
+    import { s_details } from '../../ts/state/S_Details';
 	import type { Integer } from '../../ts/common/Types';
 	import Text_Table from '../text/Text_Table.svelte';
 	import Separator from '../mouse/Separator.svelte';
 	import Portal from '../draw/Portal.svelte';
 	import Color from '../mouse/Color.svelte';
 	import { onMount } from 'svelte';
-	export let top = 9;
+	export let top = 6;
 	const id = 'selection';
 	const es_info = ux.s_element_for(new Identifiable(id), T_Element.details, id);
 	let ancestry: Ancestry | null = grabs.ancestry;
@@ -23,14 +24,13 @@
 	let color = colors.default_forThings;
 	let thing_title = thing?.title;
 	let color_origin = Point.zero;
-	let show_properties = false;
 	let picker_offset = k.empty;
 	let info_table: any;
 
 	$: $w_show_details_ofType, layout_forColor();
 	$: $w_relationship_order, update_forAncestry();
 	$: $w_ancestries_grabbed, $w_ancestry_focus, $w_thing_title, update_forAncestry();
-	function handle_toggle_properties(event: Event) { show_properties = !show_properties; }
+	function handle_toggle_properties(event: Event) { s_details.show_properties = !s_details.show_properties; }
 
 	onMount(() => {
 		update_forAncestry();
@@ -42,8 +42,8 @@
 		if (!!info_table) {
 			const row = Math.max(0, characteristics.findIndex(([key]) => key === 'color'));
 			const offset_toRow = info_table.absolute_location_ofCellAt(row, 1);
-			color_origin = offset_toRow.offsetByXY(-4, -7.5);
-			picker_offset = `-53px`;
+			color_origin = offset_toRow.offsetByXY(-6, -5.5);
+			picker_offset = `-54px`;
 		}
 	}
 
@@ -78,7 +78,7 @@
 			relationships = [
 				['progeny', ancestry.progeny_count().supressZero()],
 				['depth', ancestry.depth.supressZero()],
-				['order', ancestry.order.supressZero()],
+				['order', ancestry.order],
 			];
 			layout_forColor();
 		}
@@ -121,7 +121,7 @@
 					picker_offset={picker_offset}/>
 			</Portal>
 		{/if}
-		{#if show_properties}
+		{#if s_details.show_properties}
 			<Text_Table
 				top={12}
 				row_height={11}
@@ -139,5 +139,5 @@
 		length={k.width.details - 2.5}
 		handle_click={handle_toggle_properties}
 		thickness={k.thickness.separator.details}
-		title='click to {show_properties ? 'hide' : 'show more'}'/>
+		title='click to {s_details.show_properties ? 'hide' : 'show more'}'/>
 {/if}

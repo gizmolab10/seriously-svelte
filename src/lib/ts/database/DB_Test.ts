@@ -42,12 +42,12 @@ export default class DB_Test extends DB_Common {
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'ccd', kindC, idTc, idTd, [0, 2]);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cce', kindC, idTc, idTe, [1, 2]);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cef', kindC, idTe, idTf, [0, 1]);
-		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cfd', kindC, idTf, idTd, [0, 3]);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'rrb', kindR, idTr, idTb, [0, 0]);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'rbd', kindR, idTb, idTd, [0, 1]);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'rac', kindR, idTa, idTc, [0, 0]);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'raf', kindR, idTa, idTf, [0, 1]);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'rce', kindR, idTc, idTe, [0, 1]);
+		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cfd', kindC, idTd, idTe, [0, 3]);
 		h.trait_remember_runtimeCreateUnique(this.idBase, 'ttc', idTc, T_Trait.text, 'Carrumba Tinga!', {});
 		h.trait_remember_runtimeCreateUnique(this.idBase, 'tlb', idTb, T_Trait.link, 'http://www.webseriously.org', {});
 		h.trait_remember_runtimeCreateUnique(this.idBase, 'ttb', idTb, T_Trait.text, 'What a brilliant idea you have!', {});

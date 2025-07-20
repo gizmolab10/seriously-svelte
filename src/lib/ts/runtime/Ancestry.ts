@@ -163,7 +163,7 @@ export default class Ancestry extends Identifiable {
 		const isVisible_inRadial = points_toChild ? isVisible_forChild : this.hasParents && (this.isBidirectional ? show.related_dots : show.parent_dots);
 		const show_outside_tinyDots = in_radial_mode ? isVisible_inRadial : isVisible_forChild;
 		const tinyDots_count = this.relationships_count_forChildren(points_toChild);
-		return !show_outside_tinyDots ? null : svgPaths.tinyDots_circular(k.diameterOf_outer_tinyDots + 4, tinyDots_count as Integer, this.points_right);
+		return !show_outside_tinyDots ? null : svgPaths.tinyDots_circular(k.diameterOf_outer_tinyDots + 4, tinyDots_count as Integer, this.pointsNormal);
 	}
 
 	static readonly _____BIDIRECTIONALS: unique symbol;
@@ -730,6 +730,9 @@ export default class Ancestry extends Identifiable {
 		if (!!predicate) {
 			const relationships = this.relationships_ofKind_forParents(predicate.kind, false);
 			const isContains = predicate.kind == T_Predicate.contains;
+			// if (this.title == 'Friendly') {
+			// 	console.log(`ancestries [${ancestries.length}] ${this.titles}`);
+			// }
 			if (relationships.length > 0) {
 				for (const relationship of relationships) {
 					if (relationship.kind == predicate.kind) {
@@ -852,14 +855,14 @@ export default class Ancestry extends Identifiable {
 	get description():		   string { return `${this.kind} "${this.thing?.t_thing ?? '-'}" ${this.titles.join(':')}`; }
 	get pathString():		   string { return this.id; }
 	get depth():			   number { return this.relationship_ids.length; }
-	get direction_ofReveal():  number { return this.points_right ? Direction.right : Direction.left; }
+	get direction_ofReveal():  number { return this.pointsNormal ? Direction.right : Direction.left; }
 	get siblingIndex():		   number { return this.sibling_ancestries.map(a => a.pathString).indexOf(this.pathString); }
 	get idBridging():   string | null { return this.thing?.idBridging ?? null; }
 
-	get points_right(): boolean {
+	get pointsNormal(): boolean {
 		const hasVisibleChildren = this.isExpanded && this.hasChildren;
-		const radial_points_right = this.g_widget?.widget_pointsRight ?? true;
-		return ux.inRadialMode ? radial_points_right : !hasVisibleChildren;
+		const radial_pointsNormal = this.g_widget?.widget_pointsNormal ?? true;
+		return ux.inRadialMode ? radial_pointsNormal : !hasVisibleChildren;
 	}
 
 	get id_thing(): string {
@@ -899,7 +902,11 @@ export default class Ancestry extends Identifiable {
 	rect_ofWrapper(wrapper: Svelte_Wrapper | null):				    Rect | null { return wrapper?.boundingRect ?? null; }
 
 	showsReveal_forPointingToChild(points_toChild: boolean): boolean {
-		return !(this.predicate?.isBidirectional ?? true) && ((this.relationships_count_forChildren(points_toChild) > 0) || (this.thing?.isBulkAlias ?? false));
+		const isFocus = this.isFocus;
+		const isBulkAlias = this.thing?.isBulkAlias ?? false;
+		const isBidirectional = this.predicate?.isBidirectional ?? true;
+		const hasChildren = this.relationships_count_forChildren(points_toChild) > 0;
+		return (!isBidirectional || !isFocus) && (hasChildren || isBulkAlias);
 	}
 
 	thing_isImmediateParentOf(ancestry: Ancestry, kind: string): boolean {

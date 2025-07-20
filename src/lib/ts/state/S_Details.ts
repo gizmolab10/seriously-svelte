@@ -9,6 +9,7 @@ class S_Details {
 	private s_trait_things = new S_Identifiables<Thing>([]);
 	private s_tag_things = new S_Identifiables<Thing>([]);
 	t_storage_need = T_Storage_Need.direction;
+	show_properties = false;
 	number_ofDetails = 0;
 
 	constructor() {

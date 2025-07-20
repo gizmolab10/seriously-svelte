@@ -2,7 +2,7 @@
 	import { c, k, ux, Size, Point, debug, colors, layout, signals, svgPaths, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { w_background_color, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
 	import { w_thing_color, w_s_text_edit, w_thing_fontFamily } from '../../ts/common/Stores';
-	import { T_Layer, T_Element, T_SvelteComponent } from '../../ts/common/Enumerations';
+	import { T_Layer, T_Element, T_Predicate, T_SvelteComponent } from '../../ts/common/Enumerations';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Widget_Title from '../widget/Widget_Title.svelte';
 	import { onMount } from 'svelte';
@@ -19,6 +19,7 @@
 	let svg_dasharray = k.empty;
 	let color = es_widget.color;
 	let width_ofTitle = 0;
+	let title_left = 0;
 	let focus;
 
 	//////////////////////////////////
@@ -27,6 +28,8 @@
 	//	ignores rebuild & recreate	//
 	//								//
 	//////////////////////////////////
+
+	layout_focus();
 
 	onMount(() => {
 		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
@@ -63,11 +66,15 @@
 
 	function layout_focus() {
 		width_ofTitle = ($w_ancestry_focus?.thing?.width_ofTitle ?? 0);
+		const kind = ancestry.relationship?.predicate?.kind ?? T_Predicate.contains;
+		const isRelated = kind == T_Predicate.isRelated;
 		const x = -7.5 - (width_ofTitle / 2);
 		const y = -11;
-		origin_ofWidget = layout.center_ofGraphRect.offsetByXY(x, y);
+		title_left = isRelated ? 2 : -12;
 		size_ofBorder = new Size(width_ofTitle - 6, k.height.row);
+		origin_ofWidget = layout.center_ofGraphRect.offsetByXY(x, y);
 		center_ofBorder = new Point(width_ofTitle + 15, height).dividedInHalf;
+		console.log('title_left', title_left, 'related', isRelated, 'kind', kind);
 	}
 
 	function update_svg() {
@@ -117,8 +124,8 @@
 	<div class='radial-focus-title'
 		style='
 			top : 3px;
-			left : -11px;
 			position : absolute;
+			left : {title_left}px;
 			background-color : {background_color};'>
 		<Widget_Title
 			fontSize = {k.font_size.common}px
