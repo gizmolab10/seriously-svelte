@@ -895,18 +895,18 @@ export default class Ancestry extends Identifiable {
 		return false;
 	}
 	
-	sharesAnID(ancestry: Ancestry | null):							    boolean { return !ancestry ? false : this.relationship_ids.some(id => ancestry.relationship_ids.includes(id)); }
-	equals(ancestry: Ancestry | null | undefined):					    boolean { return super.equals(ancestry) && this.t_database == ancestry?.t_database; }
+	sharesAnID(ancestry: Ancestry | null):								   boolean { return !ancestry ? false : this.relationship_ids.some(id => ancestry.relationship_ids.includes(id)); }
+	equals(ancestry: Ancestry | null | undefined):						   boolean { return super.equals(ancestry) && this.t_database == ancestry?.t_database; }
 	includedInStore_ofAncestries(store: Writable<Array<Ancestry> | null>): boolean { return !!get(store) && this.includedInAncestries(get(store)!); }
-	matchesStore(store: Writable<Ancestry | null>):					    boolean { return get(store)?.equals(this) ?? false; }
-	rect_ofWrapper(wrapper: Svelte_Wrapper | null):				    Rect | null { return wrapper?.boundingRect ?? null; }
+	matchesStore(store: Writable<Ancestry | null>):						   boolean { return get(store)?.equals(this) ?? false; }
+	rect_ofWrapper(wrapper: Svelte_Wrapper | null):						   Rect | null { return wrapper?.boundingRect ?? null; }
 
 	showsReveal_forPointingToChild(points_toChild: boolean): boolean {
-		const isFocus = this.isFocus;
+		const isRadialFocus = ux.inRadialMode && this.isFocus;
 		const isBulkAlias = this.thing?.isBulkAlias ?? false;
 		const isBidirectional = this.predicate?.isBidirectional ?? true;
 		const hasChildren = this.relationships_count_forChildren(points_toChild) > 0;
-		return (!isBidirectional || !isFocus) && (hasChildren || isBulkAlias);
+		return (!isBidirectional && !isRadialFocus) && (hasChildren || isBulkAlias);
 	}
 
 	thing_isImmediateParentOf(ancestry: Ancestry, kind: string): boolean {

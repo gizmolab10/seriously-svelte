@@ -19,7 +19,6 @@
 	let svg_dasharray = k.empty;
 	let color = es_widget.color;
 	let width_ofTitle = 0;
-	let title_left = 0;
 	let focus;
 
 	//////////////////////////////////
@@ -70,11 +69,9 @@
 		const isRelated = kind == T_Predicate.isRelated;
 		const x = -7.5 - (width_ofTitle / 2);
 		const y = -11;
-		title_left = isRelated ? 2 : -12;
 		size_ofBorder = new Size(width_ofTitle - 6, k.height.row);
 		origin_ofWidget = layout.center_ofGraphRect.offsetByXY(x, y);
 		center_ofBorder = new Point(width_ofTitle + 15, height).dividedInHalf;
-		console.log('title_left', title_left, 'related', isRelated, 'kind', kind);
 	}
 
 	function update_svg() {
@@ -93,18 +90,18 @@
 	style='
 		position : absolute;
 		height : {height}px;
-		width : {width_ofTitle + 15}px;
 		top : {origin_ofWidget.y}px;
 		z-index : {T_Layer.widgets};
-		left : {origin_ofWidget.x}px;'>
+		left : {origin_ofWidget.x}px;
+		width : {width_ofTitle + 15}px;'>
 		<Mouse_Responder
 			height = {height}
 			center = {center_ofBorder}
 			zindex = {T_Layer.widgets}
 			cursor = {k.cursor_default}
 			width = {width_ofTitle + 15}
-			name = 'radial-focus-border'
 			handle_isHit = {() => false}
+			name = 'radial-focus-border'
 			handle_s_mouse = {debug_closure}>
 			<svg
 				class='radial-focus-svg'
@@ -125,10 +122,9 @@
 		style='
 			top : 3px;
 			position : absolute;
-			left : {title_left}px;
 			background-color : {background_color};'>
 		<Widget_Title
-			fontSize = {k.font_size.common}px
-			es_title = {es_title}/>
+			es_title = {es_title}
+			fontSize = {k.font_size.common}px/>
 	</div>
 </div>

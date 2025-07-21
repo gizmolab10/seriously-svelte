@@ -20,7 +20,6 @@
 	const id = `title of ${ancestry?.title} ${ancestry?.kind}`;
 	let title_width = (thing?.width_ofTitle ?? 0) + title_extra();
 	let title_binded = thing?.title ?? k.empty;
-	let origin = g_widget.origin_ofTitle;
 	let title_wrapper: Svelte_Wrapper;
 	let title_prior = thing?.title;
 	let color = s_widget.color;
@@ -294,11 +293,11 @@
 
 {#key reattachments}
 	<Mouse_Responder
-		origin={origin}
 		width={title_width}
 		name={es_title.name}
 		height={k.height.row}
-		handle_s_mouse={handle_s_mouse}>
+		handle_s_mouse={handle_s_mouse}
+		origin={g_widget.origin_ofTitle}>
 		<span class='ghost-{title_binded}'
 			bind:this={ghost}
 			style='left:-9999px;
