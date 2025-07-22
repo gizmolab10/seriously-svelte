@@ -831,7 +831,7 @@ export class Hierarchy {
 			if (!!childAncestry) {
 				childAncestry.grabOnly();
 				childAncestry.order_setTo(order);
-				if (!parentAncestry.isRoot && ux.inRadialMode) {
+				if (!parentAncestry.isRoot && (ux.inRadialMode || !childAncestry.isVisible)) {
 					parentAncestry.becomeFocus();
 				}
 				layout.grand_build();

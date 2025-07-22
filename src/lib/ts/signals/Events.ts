@@ -235,6 +235,9 @@ export class Events {
 			if (!!h && !!ancestry && !modifiers.includes(key)) {		// ignore modifier-key-only events
 				if (c.allow_GraphEditing) {
 					if (!!ancestry && c.allow_TitleEditing) {
+						if (key == 'd') {
+							console.log('user entered "d"');
+						}
 						switch (key) {
 							case 'enter':	ancestry.startEdit(); break;
 							case 'd':		await h.thing_edit_persistentDuplicate(ancestry); break;
