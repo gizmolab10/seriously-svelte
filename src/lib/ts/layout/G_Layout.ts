@@ -53,11 +53,11 @@ export default class G_Layout {
 
 	graphRect_update() {
 		// respond to changes in: window size & details visibility
-		const y = this.panel_boxHeight + 2;			// account for origin at top
+		const y = this.controls_boxHeight + 2;			// account for origin at top
 		const x = get(w_show_details) ? k.width.details : 0;
 		const origin_ofGraph = new Point(x, y);
-		const y_adjustment = !c.has_full_UI ? 4 : this.panel_boxHeight;
-		const size_ofGraph = this.windowSize.reducedBy(origin_ofGraph).reducedByY(y_adjustment);
+		const breadcrumbs_height = !c.has_full_UI ? 4 : this.controls_boxHeight;
+		const size_ofGraph = this.windowSize.reducedBy(origin_ofGraph).reducedByY(breadcrumbs_height);
 		const rect = new Rect(origin_ofGraph, size_ofGraph);
 		debug.log_mouse(`GRAPH ====> ${rect.description}`);
 		w_graph_rect.set(rect);										// used by Panel and Graph
@@ -66,7 +66,7 @@ export default class G_Layout {
 	static readonly _____DETAILS: unique symbol;
 
 	get glows_banner_height(): number { return u.device_isMobile ? 32 : 20; }
-	get panel_boxHeight(): number { return this.glows_banner_height + k.height.segmented; }
+	get controls_boxHeight(): number { return this.glows_banner_height + k.height.segmented; }
 
 	static readonly _____GRAPHS: unique symbol;
 
@@ -206,7 +206,7 @@ export default class G_Layout {
 
 	static readonly _____BREADCRUMBS: unique symbol;
 
-	get breadcrumbs_top(): number { return this.windowSize.height - this.panel_boxHeight; }
+	get breadcrumbs_top(): number { return this.windowSize.height - this.controls_boxHeight; }
 
 	layout_breadcrumbs_forAncestry_centered_starting_within(ancestry: Ancestry, centered: boolean, left: number, thresholdWidth: number): [Array<Thing>, number[], number[], number] {
 		const crumb_things: Array<Thing> = [];

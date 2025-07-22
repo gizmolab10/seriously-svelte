@@ -1,63 +1,74 @@
 function(instance, properties, context) {
-	console.warn("[PLUGIN] Initializing plugin and checking for hydration...");
+	console.log("[PLUGIN] Initializing plugin and checking for hydration...");
+	instance.publishState("objects_table", properties.objects_table);
+	instance.publishState("relationships_table", properties.relationships_table);
+	instance.publishState("starting_object", properties.starting_object);
+	instance.publishState("object_title_field", properties.object_title_field);
+	instance.publishState("object_children_field", properties.object_children_field);
+	instance.publishState("object_id_field", properties.object_id_field);
+	instance.publishState("relationship_id_field", properties.relationship_id_field);
+	instance.publishState("object_color_field", properties.object_color_field);
+	instance.publishState("object_type_field", properties.object_type_field);
+	
+	instance.data.context = context;
 	instance.data.iframeListening = false;
 	instance.data.dataIsReady = false;
 
-	function isReady(list) {
+	async function isListHydrated(list) {
 		try {
-			if (!!list &&
+			if (
+				!!list &&
 				typeof list.length === "function" &&
-				typeof list.get == "function" &&
-				list.length() > 0) {
-				const first = list.get(0);
-				return !!first;
+				typeof list.get === "function"
+			) {
+				const length = list.length();
+				if (length != 0) {
+					const first = await list.get(0);
+					return !!first;
+				}
 			}
 		} catch (e) {
 			console.log("[PLUGIN] watching failed...", e);
-			return false;
 		}
-
 		return false;
 	}
 
-	function readyToUpdate() {
-		const objList = instance.data.properties.objects_table;
-		const relList = instance.data.properties.relationships_table;
-		const ready = isReady(objList) &&
-			isReady(relList) &&
-			instance.data.iframeListening &&
-			instance.data.dataIsReady == 'yes' &&
-			instance.data.iframe?.contentWindow;
-
-		return ready;
+	async function serializeObject(object) {
+		try {
+			const result = {};
+			const fields = (await object?.listProperties?.()) || [];
+			for (const key of fields) {
+				result[key] = await object.get(key);
+			}
+			return result;
+		} catch (e) {
+			console.log("[PLUGIN] serializeObject failed...", e);
+			return null;
+		}
 	}
 
-	function sendAllData() {
-		const p = instance.data.properties;
-		if (!p || !readyToUpdate()) {
-			console.warn("[PLUGIN] Update aborted: too soon", instance.data.dataIsReady);
-		} else {
-			console.warn("[PLUGIN] Update proceeding...");
-			function serializeObject(object) {
-				const result = {};
-				const fields = object?.listProperties?.() || [];
-				for (const key of fields) {
-					result[key] = object.get(key);
-				}
-				return result;
+	async function serializeList(list) {
+		try {
+			const items = list?.get ? await list.get(0)?.listProperties?.() : [];
+			const results = [];
+			for (const item of items) {
+				const result = await serializeObject(item);
+				results.push(result);
 			}
-			function serializeList(list) {
-				const items = list?.listProperties?.() || [];
-				return items.map(serializeObject);
-			}
-			const serializedObjects = serializeList(p.objects_table);
-			const serializedRelationships = serializeList(p.relationships_table);
+			return results;
+		} catch (e) {
+			console.log("[PLUGIN] serializeList failed...", e);
+			return null;
+		}
+	}
 
+	async function sendRemainingData() {
+		const p = instance.data.properties;
+		if (!!p) {
+			const startingObjectId = p.starting_object?.get?.("_id") ?? null;
 			const message = {
 				type: "update",
-				objectsTable: JSON.stringify(serializedObjects),
-				relationshipsTable: JSON.stringify(serializedRelationships),
-				startingObject: p.starting_object?.get?.("_id") ?? null,
+				startingObject: startingObjectId,
 				objectTitleField: p.object_title_field,
 				objectChildrenField: p.object_children_field,
 				objectIdField: p.object_id_field,
@@ -65,31 +76,50 @@ function(instance, properties, context) {
 				objectColorField: p.object_color_field,
 				objectTypeField: p.object_type_field
 			};
-			instance.data.iframe.contentWindow.postMessage(message, "*");
+			instance.data.iframe?.contentWindow?.postMessage(message, "*");
 		}
 	}
 
 	function sendDataWhenReady() {
-		// If hydration watcher is already running, do nothing
-		if (instance.data._hydrationTimer) {
-			console.warn("[PLUGIN] Hydration timer already running.");
-			return;
+		const context = instance.data.context;
+
+		if (!context || typeof context.async !== "function") {
+			console.warn("[PLUGIN] context.async unavailable");
+		} else if (instance.data.hydrationTimer) {
+			console.log("[PLUGIN] Hydration timer already running.");
+		} else {
+			return context.async((callback) => {
+				console.log("[PLUGIN] Starting staged hydration watcher...");
+				const { objects_table, relationships_table } = instance.data.properties;
+				let stage = "objects";
+				instance.data.hydrationTimer = setInterval(async () => {
+					if (stage === "objects") {
+						const ready = await isListHydrated(objects_table);
+						if (ready) {
+							console.log("[PLUGIN] Objects table is hydrated. Sending...");
+							const serialized = await serializeList(objects_table);
+							postPartialData("objectsTable", serialized);
+							stage = "relationships";
+						}
+					} else if (stage === "relationships") {
+						const ready = await isListHydrated(relationships_table);
+						if (ready) {
+							console.log("[PLUGIN] Relationships table is hydrated. Sending...");
+							const serialized = await serializeList(relationships_table);
+							postPartialData("relationshipsTable", serialized);
+							clearInterval(instance.data.hydrationTimer);
+							instance.data.hydrationTimer = null;
+							instance.data.dataIsReady = true;
+							sendRemainingData();
+							callback(null);
+						}
+					}
+				}, 500);
+			});
 		}
-		console.log("[PLUGIN] Starting hydration watcher...");
-		instance.data._hydrationTimer = setInterval(() => {
-			if (readyToUpdate()) {
-				clearInterval(instance.data._hydrationTimer);
-				instance.data._hydrationTimer = null;
-				instance.data.dataIsReady = true;
-				sendAllData();
-			}
-		}, 500);
 	}
 
 	instance.data.sendDataWhenReady = sendDataWhenReady;
-	instance.data.sendAllData = sendAllData;
-
-	// Set up postMessage listener
 	console.log("[INIT] registering message handler");
 	instance.data.messageQueue = instance.data.messageQueue || [];
 
@@ -102,7 +132,7 @@ function(instance, properties, context) {
 				const message = queue.shift();
 				instance.data.iframe?.contentWindow?.postMessage(message, "*");
 			}
-			sendDataWhenReady();
+			sendDataWhenReady(); // no context needed
 		} else if (!(event.data?.hello ?? false)) {
 			console.log("[PLUGIN] Received message:", event.data);
 		}

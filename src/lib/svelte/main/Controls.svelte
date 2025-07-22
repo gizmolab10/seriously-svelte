@@ -89,7 +89,7 @@
 			name='controls-box'
 			color={colors.separator}
 			width={layout.windowSize.width}
-			height={layout.panel_boxHeight + 2}
+			height={layout.controls_boxHeight + 2}
 			thickness={k.thickness.separator.main}
 			corner_radius={k.radius.gull_wings.thick}>
 			<div
@@ -107,7 +107,7 @@
 							isHorizontal={false}
 							name='before-breadcrumbs'
 							origin={new Point(lefts[3], -9)}
-							length={layout.panel_boxHeight + 3}
+							length={layout.controls_boxHeight + 3}
 							thickness={k.thickness.separator.main}
 							corner_radius={k.radius.gull_wings.thick}/>
 						<div style='

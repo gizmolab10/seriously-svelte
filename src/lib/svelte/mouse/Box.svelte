@@ -39,8 +39,8 @@
         display: flex;'>
         {#if showLeft}
             <Separator
-                length={height}
                 name='left-{name}'
+                length={height + 1}
                 isHorizontal={false}
                 thickness={thickness}
                 origin={new Point(2, 2.5)}
@@ -60,9 +60,9 @@
         </div>
         {#if showRight}
             <Separator
-                length={height}
                 name='right-{name}'
                 isHorizontal={false}
+                length={height + 1}
                 thickness={thickness}
                 corner_radius={corner_radius}
                 origin={new Point(width + 1 - thickness / 2, 2.5)}/>

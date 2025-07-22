@@ -77,9 +77,9 @@
 				margin={k.details_margin}
 				zindex={T_Layer.frontmost}
 				thickness={k.thickness.separator.main}
-				length={$w_graph_rect.size.height + 10}
+				length={$w_graph_rect.size.height + 11}
 				corner_radius={k.radius.gull_wings.thick}
-				origin={new Point(2, layout.panel_boxHeight)}/>
+				origin={new Point(2, layout.controls_boxHeight - 0.5)}/>
 			<Separator
 				name='panel-right'
 				isHorizontal={false}
@@ -87,9 +87,9 @@
 				margin={k.details_margin}
 				zindex={T_Layer.frontmost}
 				thickness={k.thickness.separator.main}
-				length={$w_graph_rect.size.height + 10}
+				length={$w_graph_rect.size.height + 11}
 				corner_radius={k.radius.gull_wings.thick}
-				origin={new Point(layout.windowSize.width + 1 - half_thickness, layout.panel_boxHeight)}/>
+				origin={new Point(layout.windowSize.width + 1 - half_thickness, layout.controls_boxHeight - 0.5)}/>
 		{/if}
 		{#if c.has_full_UI}
 			<div class='breadcrumbs'
@@ -97,14 +97,14 @@
 					width:100%;
 					position: absolute;
 					top:{layout.breadcrumbs_top}px;
-					height:{layout.panel_boxHeight}px;'>
+					height:{layout.controls_boxHeight}px;'>
 				<Box
 					top={0}
 					left={0}
 					name='breadcrumbs-box'
 					color={separator_color}
 					width={layout.windowSize.width}
-					height={layout.panel_boxHeight}
+					height={layout.controls_boxHeight}
 					thickness={k.thickness.separator.main}
 					corner_radius={k.radius.gull_wings.thick}>
 					<Breadcrumbs/>
@@ -117,7 +117,7 @@
 				has_both_wings={true}
 				margin={k.details_margin}
 				zindex={T_Layer.frontmost}
-				length={layout.windowSize.width + 2}
+				length={layout.windowSize.width + 3}
 				thickness={k.thickness.separator.main}
 				corner_radius={k.radius.gull_wings.thick}
 				origin={new Point(2, layout.windowSize.height - 4)}/>

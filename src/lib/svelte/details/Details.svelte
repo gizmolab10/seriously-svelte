@@ -39,7 +39,7 @@
 			flex-direction:column;
 			-ms-overflow-style: none;  
 			z-index:{T_Layer.details};
-			top:{layout.panel_boxHeight + 2}px;
+			top:{layout.controls_boxHeight + 2}px;
 			width:{k.width.details - 6}px;
 			height:{$w_graph_rect.size.height}px;'>
 		<Banner_Hideable t_detail={T_Details.header}>
@@ -72,7 +72,7 @@
 	thickness={k.thickness.separator.main}
 	length={$w_graph_rect.size.height + 10}
 	corner_radius={k.radius.gull_wings.thick}
-	origin={new Point(k.width.details - 2, layout.panel_boxHeight)}/>
+	origin={new Point(k.width.details - 2, layout.controls_boxHeight)}/>
 
 <style>
 

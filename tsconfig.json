@@ -14,28 +14,35 @@
 		"resolveJsonModule": true,
 		"isolatedModules": true,
 		"skipLibCheck": true,
+		"baseUrl": ".",
+		"paths": {
+			"*": [
+				"app/*",
+				"plugin/*"
+			]
+		},
 		"forceConsistentCasingInFileNames": true
 	},
 	"typedocOptions": {
 		"highlightLanguages": {
-			"json": "javascript",
+			"css": "css",
+			"html": "html",
 			"js": "javascript",
 			"ts": "typescript",
 			"svelte": "svelte",
-			"html": "html",
-			"css": "css"
+			"json": "javascript"
 		}
 	},
 	"exclude": [
-		"node_modules",
-		"bubble",
-		"aside",
 		"dist",
-		"**/*.svelte"
+		"aside",
+		"bubble",
+		"**/*.svelte",
+		"node_modules"
 	],
 	"include": [
 		"src/**/*",
-		"src/lib/**/*",
-		"src/main.js"
-, "notes/initialize.js", "notes/update.js"	]
+		"src/main.js",
+		"src/lib/**/*"
+	]
 }
