@@ -1,6 +1,6 @@
-import { setupIframe } from "./iframe";
 import { startHydrationWatcher } from "./hydration";
 import { serializeAndSend } from "./serializers";
+import { setupIframe } from "./iframe";
 
 export const pluginApp = {
   instance: null,
