@@ -64,13 +64,9 @@ function(instance, properties) {
 		properties: json
 	};
 
-	if (instance.data.iframe && instance.data.iframe.contentWindow) {
-		try {			// Send immediately if iframe is ready
-			instance.data.iframe.contentWindow.postMessage(message, '*');
-		} catch (error) {
-			console.error("[PLUGIN] Failed to post message to iframe:", error);
-		}
-	} else {			// Store the message if iframe isn't ready
+	if (instance.data.iframeIsListening) {
+		instance.data.iframe.contentWindow.postMessage(message, "*");
+	} else {
 		instance.data.pendingMessages = instance.data.pendingMessages || [];
 		instance.data.pendingMessages.push(message);
 	}

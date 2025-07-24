@@ -7,15 +7,15 @@ function(instance, properties, context) {
 	// Set up the iframe
 	const iframe = document.createElement("iframe");
 	iframe.src = "https://webseriously.netlify.app/?db=bubble&disable=full_UI";
-	iframe.style.width = "100%";
-	iframe.style.height = "100%";
-	iframe.style.border = "none";
 	iframe.style.overflow = "hidden";
+	iframe.style.border = "none";
+	iframe.style.height = "100%";
+	iframe.style.width = "100%";
 
 	// Add load event listener
-	iframe.onload = function () {
+	iframe.addEventListener('message', function () {
 		console.log("[PLUGIN] Iframe loaded, sending any pending messages");
-		instance.data.iframe = iframe;
+		instance.data.iframeIsListening = true;
 
 		// Send any pending messages that were stored before iframe was ready
 		if (instance.data.pendingMessages) {
@@ -28,7 +28,9 @@ function(instance, properties, context) {
 			});
 			instance.data.pendingMessages = [];
 		}
-	};
+	});
 
+	console.log("onload set");
 	instance.canvas.appendChild(iframe);
+	console.log("iframe appended");
 }

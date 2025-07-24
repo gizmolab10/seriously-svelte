@@ -72,14 +72,10 @@ export class Events {
 			window.addEventListener('mouseup', this.handle_mouse_up, { passive: false });
 			window.addEventListener('mousemove', this.handle_mouse_move, { passive: false });
 		}
-		window.parent.postMessage({ type: "listening" }, "*");	// tell bubble that we're listening
 		if (get(w_t_database) === T_Database.bubble) {
-			this.subscribeTo_bubble();
+			this.update_event_listener('message', this.handle_bubble_message);
+			window.parent.postMessage({ type: "listening" }, "*");	// tell bubble that we're listening
 		}
-	}
-
-	subscribeTo_bubble() {
-		this.update_event_listener('message', this.handle_bubble_message);
 	}
 
 	static readonly EVENT_HANDLERS = Symbol('EVENT_HANDLERS');
