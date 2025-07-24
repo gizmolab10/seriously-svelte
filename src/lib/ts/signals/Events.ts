@@ -187,26 +187,14 @@ export class Events {
 		console.log("Bubble sent config:", event.data);
 		let objectsTable, relationshipsTable;
 		try {
-			objectsTable = JSON.parse(event.data.objectsTable);
+			const properties = JSON.parse(event.data.properties);
+			console.log("properties:", properties);
+			objectsTable = properties.objects_table;
+			relationshipsTable = properties.relationships_table;
 		} catch (err) {
-			console.warn("Could not parse objectsTable:", err);
+			console.warn("Could not parse properties:", err);
 			objectsTable = err; // fallback
 		}
-		try {
-			relationshipsTable = JSON.parse(event.data.relationshipsTable);
-		} catch (err) {
-			console.warn("Could not parse relationshipsTable:", err);
-			relationshipsTable = err; // fallback
-		}
-		const {
-			startingObject,
-			objectTitleField,
-			objectChildrenField,
-			objectIdField,
-			relationshipIdField,
-			objectColorField,
-			objectTypeField
-		} = event.data;
 		console.log("objectsTable:", objectsTable);
 		console.log("relationshipsTable:", relationshipsTable);
 		// Now use parsed objectsTable and relationshipsTable as needed

@@ -25,38 +25,35 @@ function(instance, properties) {
 		return undefined;
 	}
 
+	function extractListData(list) {
+		let listElements = list.get(0, list.length());
+		let extractedData = [];
+		listElements.forEach(obj => {
+			let fieldNames = obj.listProperties();
+			let itemData = {};
+			fieldNames.forEach(fieldName => {
+				itemData[fieldName] = obj.get(fieldName);
+			});
+			extractedData.push(itemData);
+		});
+		return extractedData;
+	}
+
 	const cleanProperties = properties;//deepClean(properties);
 
-	// Check if our list exists
+	// Check if our lists exist
 	if (!cleanProperties.objects_table) return;
+	if (!cleanProperties.relationships_table) return;
 
-	// Get all objects from the list
-	let listObjects = cleanProperties.objects_table.get(0, cleanProperties.objects_table.length());
+	const objects_list = cleanProperties.objects_table;
+	const relationships_list = cleanProperties.relationships_table;
+	let extractedObjects = extractListData(objects_list);
+	let extractedRelationships = extractListData(relationships_list);
 
-	// Create array to store our extracted data
-	let extractedData = [];
-
-	// Loop through each object in the list
-	listObjects.forEach(obj => {
-		// Get all available field names for this object type
-		let fieldNames = obj.listProperties();
-
-		// Create a plain JavaScript object to store this item's data
-		let itemData = {};
-
-		// Extract each field's value
-		fieldNames.forEach(fieldName => {
-			itemData[fieldName] = obj.get(fieldName);
-		});
-
-		// Add to our results array
-		extractedData.push(itemData);
-	});
-
-	const json = JSON.stringify(extractedData, null, 2);
+	const json = JSON.stringify({ objects_table: extractedObjects, relationships_table: extractedRelationships }, null, 0);
 
 	// Output the results
-	console.log('Extracted Data:', extractedData);
+	console.log('Extracted Data:', json);
 	console.log('As JSON:', json);
 
 	const message = {

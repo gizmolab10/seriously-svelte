@@ -1,8 +1,9 @@
 export class Builds {
 	notes: { [id: number]: string[] } = {
+		155 : ['July 24, 2025', 'bubble plugin now sending valid data'],
 		154 : ['July 18, 2025', 'move tree preferences into tree graph'],
 		153 : ['July 12, 2025', 'UI suggestions from Vincent Arena'],
-		152 : ['July 5, 2025', 'now loads as a bubble.io plugin'],
+		152 : ['July 5, 2025', 'now loads as a bubble plugin'],
 		151 : ['July 1, 2025', 'autorepeat previous and next buttons'],
 		150 : ['June 29, 2025', 'support for multiple selected things'],
 		149 : ['June 25, 2025', 'hover logic applied everywhere'],
@@ -118,7 +119,7 @@ export class Builds {
 		38 : ['September 18, 2023', 'add fat triangle for focus, click it to go left'],
 		37 : ['September 16, 2023', 'position widgets correctly at ends of curves'],
 		36 : ['September 12, 2023', 'draw curves, switch public to show them'],
-		35 : ['September 8, 2023', 'begin work on bubble.io plugin and svg'],
+		35 : ['September 8, 2023', 'begin work on bubble plugin and svg'],
 		34 : ['September 3, 2023', 'crumbs update on db switch'],
 		33 : ['September 2, 2023', 'separate hierarchy for each db'],
 		32 : ['August 31, 2023', 'manage order changes in snapshots'],
