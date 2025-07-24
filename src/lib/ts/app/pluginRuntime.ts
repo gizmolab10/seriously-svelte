@@ -1,6 +1,6 @@
-import { startHydrationWatcher } from "./hydration";
-import { serializeAndSend } from "./serializers";
+
 import { setupIframe } from "./iframe";
+import { extract } from "./extract";
 
 export const pluginApp = {
   instance: null,
@@ -13,12 +13,11 @@ export const pluginApp = {
     this.context = context;
 
     setupIframe(this);
-    startHydrationWatcher(this);
   },
 
   update(properties) {
     this.properties = properties;
-    serializeAndSend(this);
+    extract(this);
   },
 
   publish(key, value) {

@@ -27,6 +27,7 @@
 	let width = k.width.details - 7;
 	let show_save_button = false;
 	let spinnerAngle = 0;
+	let title = k.empty;
 
 	setup_s_elements();
 	$: tops = u.cumulativeSum(heights);
@@ -136,7 +137,7 @@
 		length={k.width.details - 2.5}
 		handle_click={handle_toggle_databases}
 		thickness={k.thickness.separator.details}
-		title='{show_databases ? 'hide' : 'show other databases'}'/>
+		title='{show_databases ? 'hide other databases' : 'show other databases'}'/>
 	{#if show_databases}
 		<Segmented
 			name='db'
