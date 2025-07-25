@@ -1,4 +1,4 @@
-import { T_Action, T_File_Format, T_Predicate, T_Alteration, S_Mouse, S_Alteration } from '../common/Global_Imports';
+import { T_Thing, T_Action, T_File_Format, T_Predicate, T_Alteration, S_Mouse, S_Alteration } from '../common/Global_Imports';
 import { c, h, k, u, ux, grabs, Point, debug, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
 import { w_ancestry_focus, w_count_mouse_up, w_mouse_location, w_mouse_location_scaled } from '../common/Stores';
 import { w_device_isMobile, w_ancestries_grabbed, w_user_graph_offset, w_t_database } from '../common/Stores';
@@ -74,7 +74,7 @@ export class Events {
 		}
 		if (get(w_t_database) === T_Database.bubble) {
 			this.update_event_listener('message', this.handle_bubble_message);
-			window.parent.postMessage({ type: "listening" }, "*");	// tell bubble that we're listening
+			window.parent.postMessage({ type: 'listening' }, '*');	// tell bubble that we're listening
 		}
 	}
 
@@ -184,20 +184,24 @@ export class Events {
 
 	private handle_bubble_message = (e: Event) => {
 		const event = e as MessageEvent;
-		console.log("Bubble sent config:", event.data);
-		let objectsTable, relationshipsTable;
+		console.log('Bubble sent update:', event.data);
+		let things, relationships;
 		try {
 			const properties = JSON.parse(event.data.properties);
-			console.log("properties:", properties);
-			objectsTable = properties.objects_table;
-			relationshipsTable = properties.relationships_table;
+			relationships = properties.relationships_table;
+			things = properties.things_table;
 		} catch (err) {
-			console.warn("Could not parse properties:", err);
-			objectsTable = err; // fallback
+			console.warn('Could not parse properties:', err);
+			things = err; // fallback
 		}
-		console.log("objectsTable:", objectsTable);
-		console.log("relationshipsTable:", relationshipsTable);
-		// Now use parsed objectsTable and relationshipsTable as needed
+		console.log('received things:', things);
+		console.log('received relationships:', relationships);
+		for (const thing of things) {
+			h.thing_remember_runtimeCreateUnique(h.db.idBase, thing.id, thing.title, thing.color, T_Thing.generic);
+		}
+		for (const relationship of relationships) {
+			h.relationship_remember_runtimeCreateUnique(h.db.idBase, relationship.id, relationship.kind.kind, relationship.parent, relationship.child, relationship.orders);
+		}
 	}
 
 	async handle_key_down(e: Event) {

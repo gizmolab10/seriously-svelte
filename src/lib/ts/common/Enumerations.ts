@@ -113,6 +113,12 @@ export enum T_Persistence {
 	none   = 'none',
 }
 
+export enum T_Kinship {
+	children = 'children',
+	related  = 'related',
+	parents  = 'parents',
+}
+
 export enum T_SvelteComponent {
 	widget	= 'widget',
 	reveal	= 'reveal',
@@ -125,12 +131,6 @@ export enum T_File_Format {
 	cancel	  = 'cancel',
 	json	  = 'json',
 	csv		  = 'csv',
-}
-
-export enum T_Kinship {
-	children = 'children',
-	related  = 'related',
-	parents  = 'parents',
 }
 
 export enum T_RingZone {
