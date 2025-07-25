@@ -256,6 +256,9 @@ export class Hierarchy {
 				this.things.push(thing);
 			}
 			if (thing.isRoot && (!thing.idBase || [k.empty, this.db.idBase].includes(this.db.idBase))) {
+				if (!!this.root) {
+					this.thing_forget(this.root);	// for bubble starting object
+				}
 				this.root = thing;
 			}
 			if (!typed_things.map(t => t.id).includes(thing.id)) {
