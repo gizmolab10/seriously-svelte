@@ -200,7 +200,9 @@ export class Events {
 		if (!!root) {
 			root = h.thing_remember_runtimeCreateUnique(h.db.idBase, root.id, root.title, root.color, T_Thing.root);
 			if (!!root) {
-				h.rootAncestry = root.ancestry;
+				const a = root.ancestry;
+				h.rootAncestry = a;
+				w_ancestry_focus.set(a);
 			}
 		}
 		if (!!objects) {
@@ -213,7 +215,7 @@ export class Events {
 				h.relationship_remember_runtimeCreateUnique(h.db.idBase, relationship.id, relationship.kind.kind, relationship.parent, relationship.child, relationship.orders);
 			}
 		}
-		layout.grand_build();
+		h.wrapUp_data_forUX();
 	}
 
 	async handle_key_down(e: Event) {
