@@ -162,19 +162,6 @@
 								{displayName}
 							</div>
 						{/key}
-						<Button name={T_Control.help}
-							width={size_big}
-							height={size_big}
-							center={new Point(width - rights[0], y_center)}
-							es_button={es_control_byType[T_Control.help]}
-							closure={(s_mouse) => handle_s_mouse_forControl_Type(s_mouse, T_Control.help)}>
-							<span
-								style='top:2px;
-									left:5.5px;
-									position:absolute;'>
-								?
-							</span>
-						</Button>
 					{/if}
 					<Next_Previous
 						size={28}
@@ -233,20 +220,6 @@
 								</svg>
 							</Button>
 						{/if}
-					{/if}
-				{/key}
-				{#key $w_background_color}
-					{#if c.has_full_UI}
-						<Button name={T_Control.builds}
-							width=75
-							height={size_big}
-							center={new Point(width - rights[1], y_center)}
-							es_button={es_control_byType[T_Control.builds]}
-							closure={(s_mouse) => handle_s_mouse_forControl_Type(s_mouse, T_Control.builds)}>
-							<span style='font-family: {$w_thing_fontFamily};'>
-								{'build ' + k.build_number}
-							</span>
-						</Button>
 					{/if}
 				{/key}
 			</div>

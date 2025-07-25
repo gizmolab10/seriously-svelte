@@ -51,14 +51,13 @@ function(instance, properties) {
 	const contentWindow = instance.data.iframe.contentWindow;
 	const relationships_list = properties.relationships_table;
 	const extractedRelationships = extractListData(relationships_list);
+	const starting_object = extractElementData(properties.starting_object);
 
 	const json = JSON.stringify({
 		objects_table: extractedObjects,
+		starting_object: starting_object,
 		relationships_table: extractedRelationships
 	}, null, 0);
-	// const {
-	// 	startingObject,
-	// } = event.data;
 
 	const message = {
 		type: 'UPDATE_PROPERTIES',

@@ -185,22 +185,30 @@ export class Events {
 	private handle_bubble_message = (e: Event) => {
 		const event = e as MessageEvent;
 		console.log('Bubble sent update:', event.data);
-		let things, relationships;
+		let root, objects, relationships;
 		try {
 			const properties = JSON.parse(event.data.properties);
 			relationships = properties.relationships_table;
-			things = properties.objects_table;
+			objects = properties.objects_table;
+			root = properties.starting_object;
 		} catch (err) {
 			console.warn('Could not parse properties:', err);
-			things = err; // fallback
 		}
-		console.log('received things:', things);
+		console.log('received root:', root);
+		console.log('received objects:', objects);
 		console.log('received relationships:', relationships);
-		for (const thing of things) {
-			h.thing_remember_runtimeCreateUnique(h.db.idBase, thing.id, thing.title, thing.color, T_Thing.generic);
+		if (!!root) {
+			h.thing_remember_runtimeCreateUnique(h.db.idBase, root.id, root.title, root.color, T_Thing.root);
 		}
-		for (const relationship of relationships) {
-			h.relationship_remember_runtimeCreateUnique(h.db.idBase, relationship.id, relationship.kind.kind, relationship.parent, relationship.child, relationship.orders);
+		if (!!objects) {
+			for (const object of objects) {
+				h.thing_remember_runtimeCreateUnique(h.db.idBase, object.id, object.title, object.color, T_Thing.generic);
+			}
+		}
+		if (!!relationships) {
+			for (const relationship of relationships) {
+				h.relationship_remember_runtimeCreateUnique(h.db.idBase, relationship.id, relationship.kind.kind, relationship.parent, relationship.child, relationship.orders);
+			}
 		}
 	}
 
