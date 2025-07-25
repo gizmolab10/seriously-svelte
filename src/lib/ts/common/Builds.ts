@@ -1,6 +1,7 @@
 export class Builds {
 	notes: { [id: number]: string[] } = {
-		155 : ['July 24, 2025', 'bubble plugin now sending valid data'],
+		156 : ['July 25, 2025', 'using data received from bubble'],
+		155 : ['July 24, 2025', 'bubble plugin now receiving valid data'],	
 		154 : ['July 18, 2025', 'move tree preferences into tree graph'],
 		153 : ['July 12, 2025', 'UI suggestions from Vincent Arena'],
 		152 : ['July 5, 2025', 'now loads as a bubble plugin'],
