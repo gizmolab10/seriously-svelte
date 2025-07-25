@@ -189,7 +189,7 @@ export class Events {
 		try {
 			const properties = JSON.parse(event.data.properties);
 			relationships = properties.relationships_table;
-			things = properties.things_table;
+			things = properties.objects_table;
 		} catch (err) {
 			console.warn('Could not parse properties:', err);
 			things = err; // fallback
