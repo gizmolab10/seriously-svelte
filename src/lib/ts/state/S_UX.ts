@@ -1,4 +1,4 @@
-import { u, T_Graph, T_Element, Ancestry } from '../common/Global_Imports';
+import { u, T_Graph, T_Element, Ancestry, k } from '../common/Global_Imports';
 import { S_Mouse, S_Widget, S_Element } from '../common/Global_Imports';
 import { w_show_graph_ofType } from '../common/Stores';
 import Identifiable from '../runtime/Identifiable';
@@ -28,7 +28,14 @@ export default class S_Common {
 	s_element_forName(name: string): S_Element { return this.s_element_byName[name]; }
 	s_mouse_forName(name: string): S_Mouse { return u.assure_forKey_inDict(name, this.s_mouse_byName, () => S_Mouse.empty()); }
 	name_from(identifiable: Identifiable, type: T_Element, subtype: string): string { return `${type}(${subtype}) (id '${identifiable.id}')`; }
-	s_widget_forAncestry(ancestry: Ancestry): S_Widget { return u.assure_forKey_inDict(ancestry.id, this.s_widget_byAncestryID, () => new S_Widget(ancestry)); }
+
+	s_widget_forAncestry(ancestry: Ancestry): S_Widget {
+		const id = ancestry.id;
+		if (!id) {
+			console.log(`ancestry ${ancestry.title} has no id`);
+		}
+		return u.assure_forKey_inDict(id, this.s_widget_byAncestryID, () => new S_Widget(ancestry));
+	}
 
 	get next_mouse_responder_number(): number {
 		this.mouse_responder_number += 1;

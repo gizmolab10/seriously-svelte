@@ -45,7 +45,7 @@
 
 	function es_breadcrumb(index: number): S_Widget {
 		const crumb_ancestry = ancestry?.ancestry_createUnique_byStrippingBack(things.length - index - 1);
-		return ux.s_widget_forAncestry(crumb_ancestry);
+		return crumb_ancestry.g_widget.s_widget;
 	}
 
 </script>

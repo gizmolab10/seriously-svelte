@@ -8,16 +8,16 @@
 	import { onMount } from 'svelte';
 	const height = k.height.row + 1;
 	let ancestry = $w_ancestry_focus;
-	let es_widget = ux.s_widget_forAncestry(ancestry);
-	let background_color = es_widget.background_color;
+	let s_widget = ancestry.g_widget.s_widget;
+	let background_color = s_widget.background_color;
 	let svg_strokeColor = 'transparent';
 	let svg_fillColor = 'transparent';
-	let es_title = es_widget.es_title;
+	let es_title = s_widget.es_title;
 	let origin_ofWidget = Point.zero;
 	let center_ofBorder = Point.zero;
 	let size_ofBorder = Size.zero;
 	let svg_dasharray = k.empty;
-	let color = es_widget.color;
+	let color = s_widget.color;
 	let width_ofTitle = 0;
 	let focus;
 
@@ -56,11 +56,11 @@
 
 	function update_colors() {
 		ancestry = $w_ancestry_focus;
-		es_widget = ux.s_widget_forAncestry(ancestry);
-		background_color = es_widget.background_color;
-		color = es_widget.color;
-		svg_strokeColor = es_widget.shows_border ? color : 'transparent';
-		svg_fillColor = es_widget.shows_border ? $w_background_color : 'transparent';
+		s_widget = ancestry.g_widget.s_widget;
+		background_color = s_widget.background_color;
+		color = s_widget.color;
+		svg_strokeColor = s_widget.shows_border ? color : 'transparent';
+		svg_fillColor = s_widget.shows_border ? $w_background_color : 'transparent';
 	}
 
 	function layout_focus() {

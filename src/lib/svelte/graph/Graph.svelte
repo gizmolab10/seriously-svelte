@@ -93,25 +93,32 @@
 				<Tree_Graph/>
 			{/if}
 		</div>
-		<div style='position:absolute; top:0; left:0;'>
-			<Button name={T_Control.builds}
+		<div
+			style='
+				left:0px;
+				position:absolute;
+				top:{draggableRect.size.height + 12}px;'>
+			<Button
 				width=75
 				height={size_big}
+				origin={Point.x(14)}
 				es_button={es_builds}
-				closure={handle_builds_mouseClick}
-				origin={new Point(14, draggableRect.size.height - 30)}>
+				name={T_Control.builds}
+				closure={handle_builds_mouseClick}>
 				<span style='font-family: {$w_thing_fontFamily};'>
 					{'build ' + k.build_number}
 				</span>
 			</Button>
-			<Button name={T_Control.help}
+			<Button
 				width={size_big}
 				height={size_big}
 				es_button={es_help}
+				name={T_Control.help}
 				closure={handle_help_mouseClick}
-				origin={draggableRect.size.asPoint.offsetByXY(-35, -30)}>
+				origin={Point.x(draggableRect.size.width - 35)}>
 				<span
-					style='top:2px;
+					style='
+						top:2px;
 						left:6.5px;
 						position:absolute;'>
 					?
