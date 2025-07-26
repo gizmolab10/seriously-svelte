@@ -207,6 +207,7 @@ export class Events {
 				}
 			}
 			if (!!relationships) {
+				h.predicate_defaults_remember_runtimeCreate();
 				for (const relationship of relationships) {
 					h.relationship_remember_runtimeCreateUnique(h.db.idBase, relationship.id, relationship.kind.kind, relationship.parent, relationship.child, relationship.orders);
 				}
