@@ -1,6 +1,7 @@
 <script lang='ts'>
 	import { k, Point, layout, T_Layer, T_Details, T_Direction } from '../../ts/common/Global_Imports';
-	import { w_graph_rect, w_count_details, w_show_graph_ofType, w_ancestries_grabbed } from '../../ts/common/Stores';
+	import { w_show_graph_ofType, w_ancestries_grabbed } from '../../ts/common/Stores';
+	import { w_graph_rect, w_count_details } from '../../ts/common/Stores';
 	import Banner_Hideable from '../mouse/Banner_Hideable.svelte';
 	import D_Preferences from './D_Preferences.svelte';
 	import Separator from '../mouse/Separator.svelte';
