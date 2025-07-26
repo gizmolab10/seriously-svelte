@@ -42,7 +42,7 @@ export default class G_Layout {
 	static readonly _____GRAPH_RECT: unique symbol;
 	
 	get center_ofGraphRect(): Point { return get(w_graph_rect).size.asPoint.dividedInHalf; }
-	get tree_size(): Size { return ux.inRadialMode ? this.radial_size : h.rootAncestry.size_ofVisibleSubtree; }
+	get tree_size(): Size { return ux.inRadialMode ? this.radial_size : h.rootAncestry?.size_ofVisibleSubtree ?? Size.zero; }
 
 	toggle_graph_type() {
 		switch (get(w_show_graph_ofType)) {

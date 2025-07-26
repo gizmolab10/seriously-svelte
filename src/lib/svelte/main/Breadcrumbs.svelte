@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { c, h, k, u, ux, Size, Point, Thing, T_Layer, T_Element } from '../../ts/common/Global_Imports';
+	import { c, h, k, u, ux, Size, Point, Thing, T_Layer, T_Element, T_Startup } from '../../ts/common/Global_Imports';
+	import { w_t_startup, w_graph_rect, w_thing_color, w_background_color } from '../../ts/common/Stores';
 	import { debug, colors, signals, svgPaths, Ancestry, layout } from '../../ts/common/Global_Imports';
 	import { w_s_text_edit, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
-	import { w_graph_rect, w_thing_color, w_background_color } from '../../ts/common/Stores';
 	import Breadcrumb_Button from '../buttons/Breadcrumb_Button.svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
@@ -23,20 +23,22 @@
 	$: $w_background_color, separator_color = colors.separator;
 
 	$: {
-		const needsUpdate = ($w_ancestry_focus?.title ?? k.empty) + $w_graph_rect + ($w_ancestries_grabbed?.length ?? 0);
-		if (!ancestry || needsUpdate || things.length == 0) {
-			ancestry = h?.ancestry_forBreadcrumbs;		// assure we have an ancestry
-			if (!!ancestry) {				
-				let parent_widths = 0;					// encoded as one parent count per 2 digits (base 10)
-				let widths: number[] = [];
-				[things, widths, lefts, parent_widths] = layout.layout_breadcrumbs_forAncestry_centered_starting_within(ancestry, centered, left, width);
-				trigger = parent_widths * 10000 + breadcrumb_reattachments * 100 + lefts[0];		// re-render HTML when this value changes
-				for (let i = 0; i < things.length; i++) {
-					const state = es_breadcrumb(i);
-					debug.log_crumbs(`thing ${things[i].title} ancestry ${state.ancestry.title} color ${state.background_color}`);
+		if ($w_t_startup == T_Startup.ready) {
+			const needsUpdate = ($w_ancestry_focus?.title ?? k.empty) + $w_graph_rect + ($w_ancestries_grabbed?.length ?? 0);
+			if (!ancestry || needsUpdate || things.length == 0) {
+				ancestry = h?.ancestry_forBreadcrumbs;		// assure we have an ancestry
+				if (!!ancestry) {				
+					let parent_widths = 0;					// encoded as one parent count per 2 digits (base 10)
+					let widths: number[] = [];
+					[things, widths, lefts, parent_widths] = layout.layout_breadcrumbs_forAncestry_centered_starting_within(ancestry, centered, left, width);
+					trigger = parent_widths * 10000 + breadcrumb_reattachments * 100 + lefts[0];		// re-render HTML when this value changes
+					for (let i = 0; i < things.length; i++) {
+						const state = es_breadcrumb(i);
+						debug.log_crumbs(`thing ${things[i].title} ancestry ${state.ancestry.title} color ${state.background_color}`);
+					}
+					debug.log_crumbs(`ALL ${widths} ${things.map(t => t.title)}`);
+					breadcrumb_reattachments += 1;
 				}
-				debug.log_crumbs(`ALL ${widths} ${things.map(t => t.title)}`);
-				breadcrumb_reattachments += 1;
 			}
 		}
 	}
