@@ -255,6 +255,9 @@ export class Events {
 				}
 				switch (key) {
 					case '?':				c.showHelp(); return;
+					case '!':				layout.grand_adjust_toFit(); break;
+					case '>':				layout.increase_depth_limit_by(1); break;
+					case '<':				layout.increase_depth_limit_by(-1); break;
 					case 's':				h.persist_toFile(T_File_Format.json); return;
 					case 'm':				layout.toggle_graph_type(); break;
 					case 'c':				layout.set_user_graph_offsetTo(Point.zero); return;

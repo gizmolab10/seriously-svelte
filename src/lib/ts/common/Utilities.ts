@@ -153,21 +153,34 @@ export class Utilities extends Testworthy_Utilities {
 				const elementHeight = element.offsetHeight;
 				
 				// Try to measure the actual graph content
-				const graphContent = element.querySelector('.tree-graph, .radial-graph');
-				let contentWidth = elementWidth;
-				let contentHeight = elementHeight;
-				
-				if (graphContent) {
-					const rect = graphContent.getBoundingClientRect();
-					contentWidth = rect.width;
-					contentHeight = rect.height;
-					console.log('Graph content dimensions:', contentWidth, '×', contentHeight);
+				let graphContent = element.querySelector('.tree-graph, .radial-graph');
+				if (!graphContent && (element.classList.contains('tree-graph') || element.classList.contains('radial-graph'))) {
+					graphContent = element;
+					console.log('Using the element itself as the graph content');
 				}
 				
-				// Determine orientation based on actual content dimensions
+				// Use element dimensions for landscape detection and scaling
+				// The element dimensions represent the actual rendered size on screen
+				const contentWidth = elementWidth;
+				const contentHeight = elementHeight;
+				
+				if (!graphContent) {
+					console.log('No graph content found');
+				} else {
+					// Log SVG info for debugging but don't use it for calculations
+					const svg = graphContent.querySelector('svg');
+					if (svg && typeof svg.getBBox === 'function') {
+						const bbox = svg.getBBox();
+						console.log('SVG getBBox dimensions:', bbox.width, '×', bbox.height);
+						console.log('SVG viewBox:', svg.getAttribute('viewBox'));
+						console.log('SVG width/height:', svg.getAttribute('width'), '/', svg.getAttribute('height'));
+					}
+				}
+				
+				// Determine orientation based on element dimensions (actual rendered size)
 				const isLandscape = contentWidth > contentHeight;
 				console.log('Element dimensions:', elementWidth, '×', elementHeight);
-				console.log('Content dimensions:', contentWidth, '×', contentHeight);
+				console.log('Content dimensions (using element):', contentWidth, '×', contentHeight);
 				console.log('Is landscape:', isLandscape);
 				console.log('Page size:', isLandscape ? 'A4 landscape' : 'A4 portrait');
 				
@@ -220,6 +233,10 @@ export class Utilities extends Testworthy_Utilities {
 							@page {
 								margin: 0;
 								size: ${isLandscape ? 'A4 landscape' : 'A4 portrait'};
+								orientation: ${isLandscape ? 'landscape' : 'portrait'};
+							}
+							* {
+								page-break-inside: avoid;
 							}
 						}
 					`,

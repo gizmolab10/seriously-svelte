@@ -215,9 +215,9 @@ export default class Ancestry extends Identifiable {
 
 	static readonly _____VISIBILITY: unique symbol;
 
-	get visibleSubtree_halfHeight(): number { return this.visibleSubtree_height() / 2; }
-	get visibleSubtree_halfSize():	   Size { return this.visibleSubtree_size.dividedInHalf; }
-	get visibleSubtree_size():	  	   Size { return new Size(this.visibleSubtree_width(), this.visibleSubtree_height()); }
+	get halfHeight_ofVisibleSubtree(): number { return this.height_ofVisibleSubtree() / 2; }
+	get halfSize_ofVisibleSubtree():     Size { return this.size_ofVisibleSubtree.dividedInHalf; }
+	get size_ofVisibleSubtree():	     Size { return new Size(this.visibleSubtree_width(), this.height_ofVisibleSubtree()); }
 
 	assure_isVisible_within(ancestries: Array<Ancestry>) {
 		if (!!this.predicate && ux.inRadialMode) {
@@ -245,13 +245,13 @@ export default class Ancestry extends Identifiable {
 		}
 	}
 
-	visibleSubtree_height(visited: string[] = []): number {
+	height_ofVisibleSubtree(visited: string[] = []): number {
 		const thing = this.thing;
 		if (!!thing && !visited.includes(this.id)) {
 			if (this.shows_branches) {
 				let height = 0;
 				for (const branchAncestry of this.branchAncestries) {
-					height += branchAncestry.visibleSubtree_height([...visited, this.id]);
+					height += branchAncestry.height_ofVisibleSubtree([...visited, this.id]);
 				}
 				return Math.max(height, k.height.row);
 			}

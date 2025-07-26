@@ -20,12 +20,15 @@
 <Tree_Preferences top={0} width={137} zindex={T_Layer.frontmost}/>
 {#key reattachments}
 	{#if !!focus && !layout.branch_was_visited(focus, true)}
-		<div class = 'tree-graph'
+		<div class = 'tree-graph-container'
 			style = '
-				width: 100%;
-				height: 100%;
-				transform: scale({layout.scale_factor});
-				transform:translate({$w_user_graph_offset.x}px, {$w_user_graph_offset.y}px);'>
+				position: absolute;
+				border:10px solid transparent;
+				top: {$w_user_graph_offset.y}px;
+				left: {$w_user_graph_offset.x}px;
+				width: {layout.tree_size.width}px;
+				height: {layout.tree_size.height}px;
+				transform: scale({layout.scale_factor});'>
 			<Widget g_widget = {focus.g_widget}/>
 			<Tree_Branches ancestry = {focus} depth = {$w_depth_limit}/>
 		</div>

@@ -1,9 +1,9 @@
 import { c, h, k, p, u, ux, Size, Rect, Point, Thing, grabs, debug, signals, Ancestry } from '../common/Global_Imports';
 import { w_user_graph_offset, w_user_graph_center, w_mouse_location_scaled } from '../common/Stores';
 import { T_Graph, T_Kinship, T_Preference, G_RadialGraph } from '../common/Global_Imports';
+import { w_graph_rect, w_depth_limit, w_show_details } from '../common/Stores';
 import { w_show_tree_ofType, w_show_graph_ofType } from '../common/Stores';
 import { w_show_related, w_ancestry_focus } from '../common/Stores';
-import { w_graph_rect, w_show_details } from '../common/Stores';
 import { get } from 'svelte/store';
 
 export default class G_Layout {
@@ -27,8 +27,8 @@ export default class G_Layout {
 	}
 
 	grand_adjust_toFit() {
+		const layout_size = this.tree_size;
 		const graph_size = get(w_graph_rect).size;
-		const layout_size = ux.inRadialMode ? this.radial_size : this.tree_size;
 		const scale_factor = layout_size.best_ratio_to(graph_size);
 		const new_size = layout_size.dividedBy(scale_factor);
 		const new_offset = get(w_user_graph_offset).dividedBy(scale_factor);
@@ -42,6 +42,7 @@ export default class G_Layout {
 	static readonly _____GRAPH_RECT: unique symbol;
 	
 	get center_ofGraphRect(): Point { return get(w_graph_rect).size.asPoint.dividedInHalf; }
+	get tree_size(): Size { return ux.inRadialMode ? this.radial_size : h.rootAncestry.size_ofVisibleSubtree; }
 
 	toggle_graph_type() {
 		switch (get(w_show_graph_ofType)) {
@@ -72,18 +73,17 @@ export default class G_Layout {
 
 	private get radial_size(): Size { return this.g_radialGraph.radial_size; }
 	get g_radialGraph() { let g = this._g_radialGraph; if (!g) { g = new G_RadialGraph(); this._g_radialGraph = g }; return g; }
+
+	increase_depth_limit_by(increment: number) {
+		w_depth_limit.update(a => a + increment);
+		this.grand_layout();
+	}
 	
 	handle_mode_selection(name: string, types: string[]) {
 		switch (name) {
 			case 'graph': w_show_graph_ofType.set(types[0] as unknown as T_Graph); break;
 			case 'tree': this.set_tree_types(types as Array<T_Kinship>); break;
 		}
-	}
-	
-	private get tree_size(): Size {
-		const root = h.rootAncestry;
-		const size = new Size(root.visibleSubtree_width(), root.visibleSubtree_height());
-		return size;
 	}
 
 	branch_was_visited(ancestry: Ancestry, clear: boolean = false): boolean {
