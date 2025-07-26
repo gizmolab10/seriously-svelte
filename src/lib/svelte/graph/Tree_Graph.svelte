@@ -22,6 +22,8 @@
 	{#if !!focus && !layout.branch_was_visited(focus, true)}
 		<div class = 'tree-graph'
 			style = '
+				width: 100%;
+				height: 100%;
 				transform: scale({layout.scale_factor});
 				transform:translate({$w_user_graph_offset.x}px, {$w_user_graph_offset.y}px);'>
 			<Widget g_widget = {focus.g_widget}/>

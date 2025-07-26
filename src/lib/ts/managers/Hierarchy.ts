@@ -231,9 +231,9 @@ export class Hierarchy {
 		return thing;
 	}
 
-	thing_forget(thing: Thing) {
+	thing_forget(thing: Thing, force: boolean = false) {
 		const t_thing = thing.t_thing;
-		if (t_thing != T_Thing.root) {		// must NOT forget root
+		if (t_thing != T_Thing.root || force) {		// must NOT forget root, unless forced to do so
 			const typed_things = this.things_byType[t_thing];
 			const titled_things = this.things_byTitle[thing.title];
 			delete this.thing_byHID[thing.hid];

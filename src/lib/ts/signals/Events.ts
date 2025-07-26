@@ -201,11 +201,11 @@ export class Events {
 			root = h.thing_remember_runtimeCreateUnique(h.db.idBase, root.id, root.title, root.color, T_Thing.root);
 			if (!!root) {
 				const a = root.ancestry;
+				h.thing_forget(h.root, true);
 				h.ancestry_forget(h.rootAncestry);
-				h.thing_forget(h.root);
-				h.root = root;
-				h.rootAncestry = a;
 				w_ancestry_focus.set(a);
+				h.rootAncestry = a;
+				h.root = root;
 			}
 		}
 		if (!!objects) {
@@ -267,7 +267,7 @@ export class Events {
 					case 'm':				layout.toggle_graph_type(); break;
 					case 'c':				layout.set_user_graph_offsetTo(Point.zero); return;
 					case 'o':				h.select_file_toUpload(T_File_Format.json, event.shiftKey); break;
-					case 'p':				u.print_element_byClassName(ux.inTreeMode ? 'tree-graph' : 'radial-graph'); break;
+					case 'p':				if (!COMMAND) { u.print_element_byClassName(ux.inTreeMode ? 'tree-graph' : 'radial-graph') }; break;
 					case '!':				graph_needsRebuild = h.rootAncestry?.becomeFocus(); break;
 					case 'escape':			if (!!get(w_s_alteration)) { h.stop_alteration(); }; break;
 					case 'arrowup':			grabs.latest_rebuild_persistentMoveUp_maybe( true, SHIFT, OPTION, EXTREME); break;

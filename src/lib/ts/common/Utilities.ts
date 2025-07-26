@@ -6,8 +6,10 @@ import Identifiable from '../runtime/Identifiable';
 import G_TreeLine from '../layout/G_TreeLine';
 import { layout } from '../layout/G_Layout';
 import Ancestry from '../runtime/Ancestry';
+import html2canvas from 'html2canvas';
 import { get } from 'svelte/store';
 import { k } from './Constants';
+import printJS from 'print-js';
 
 export class Utilities extends Testworthy_Utilities {
 	
@@ -129,41 +131,65 @@ export class Utilities extends Testworthy_Utilities {
 		}
 	}
 
-	print_element(element: HTMLElement) {
+	async print_element(element: HTMLElement) {
 		if (element) {
-			// Create a new window for printing
-			const printWindow = window.open('', '_blank');
-			if (printWindow) {
-				// Clone the element content
-				const elementContent = element.cloneNode(true) as HTMLElement;
+			try {
+				console.log('Element dimensions:', element.offsetWidth, element.offsetHeight);
+				console.log('Element visible:', element.offsetWidth > 0 && element.offsetHeight > 0);
+				console.log('Tree graph children:', document.querySelector('.tree-graph')?.children);
+				console.log('Tree graph innerHTML:', document.querySelector('.tree-graph')?.innerHTML);
 				
-				// Create the print document
-				printWindow.document.write(`
-					<!DOCTYPE html>
-					<html>
-					<head>
-						<title>Print Element</title>
-						<style>
-							body { margin: 0; padding: 20px; }
-							.draggable { position: relative !important; }
-							@media print {
-								body { margin: 0; }
-								.draggable { position: relative !important; }
-							}
-						</style>
-					</head>
-					<body>
-						${elementContent.outerHTML}
-					</body>
-					</html>
-				`);
-				printWindow.document.close();
+				// Ensure element has dimensions
+				if (element.offsetWidth === 0 || element.offsetHeight === 0) {
+					console.error('Element has zero dimensions, cannot print');
+					return;
+				}
 				
-				// Wait for content to load then print
-				printWindow.onload = () => {
-					printWindow.print();
-					printWindow.close();
-				};
+				// Wait a bit for any async rendering to complete
+				await new Promise(resolve => setTimeout(resolve, 500));
+				// Temporarily ensure the element is fully rendered
+				element.style.display = 'block';
+				element.style.visibility = 'visible';
+				element.style.position = 'relative';
+				
+				// Capture the element as canvas
+				const canvas = await html2canvas(element, {
+					useCORS: true,
+					allowTaint: true,
+					scale: 2, // Higher resolution for less blur
+					width: element.offsetWidth,
+					height: element.offsetHeight,
+					logging: true // Enable logging
+				});
+				
+				console.log('Canvas dimensions:', canvas.width, canvas.height);
+				
+				// Check if canvas has content
+				if (canvas.width === 0 || canvas.height === 0) {
+					console.error('Canvas has zero dimensions');
+					return;
+				}
+				
+				// Convert to data URL with error checking
+				const imgData = canvas.toDataURL('image/png');
+				console.log('Data URL length:', imgData.length);
+				
+				if (imgData === 'data:,') {
+					console.error('Canvas produced empty data URL');
+					return;
+				}
+				
+				// Print using print-js with native print dialog
+				printJS({
+					printable: element,
+					type: 'html',
+					documentTitle: 'Graph Print',
+					style: '@media print { body { margin: 0; } }',
+					scanStyles: false
+				});
+				
+			} catch (error) {
+				console.error('Error printing element:', error);
 			}
 		}
 	}
