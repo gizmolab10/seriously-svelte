@@ -148,12 +148,6 @@ export default class DB_Common {
 			}
 			await this.hierarchy_create_fastLoad_or_fetch_andBuild();
 		}
-		setTimeout( () => {
-			if (h.hasRoot) {
-				w_t_startup.set(T_Startup.ready);
-				layout.grand_build();
-			}
-		}, 1);
 	}
 	
 	async hierarchy_create_fastLoad_or_fetch_andBuild() {
