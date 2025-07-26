@@ -134,10 +134,6 @@ export class Utilities extends Testworthy_Utilities {
 	async print_element(element: HTMLElement) {
 		if (element) {
 			try {
-				console.log('Element dimensions:', element.offsetWidth, element.offsetHeight);
-				console.log('Element visible:', element.offsetWidth > 0 && element.offsetHeight > 0);
-				console.log('Tree graph children:', document.querySelector('.tree-graph')?.children);
-				console.log('Tree graph innerHTML:', document.querySelector('.tree-graph')?.innerHTML);
 				
 				// Ensure element has dimensions
 				if (element.offsetWidth === 0 || element.offsetHeight === 0) {
@@ -152,41 +148,92 @@ export class Utilities extends Testworthy_Utilities {
 				element.style.visibility = 'visible';
 				element.style.position = 'relative';
 				
-				// Capture the element as canvas
-				const canvas = await html2canvas(element, {
-					useCORS: true,
-					allowTaint: true,
-					scale: 2, // Higher resolution for less blur
-					width: element.offsetWidth,
-					height: element.offsetHeight,
-					logging: true // Enable logging
-				});
+				// Calculate scale factor to fit print page
+				const elementWidth = element.offsetWidth;
+				const elementHeight = element.offsetHeight;
 				
-				console.log('Canvas dimensions:', canvas.width, canvas.height);
+				// Try to measure the actual graph content
+				const graphContent = element.querySelector('.tree-graph, .radial-graph');
+				let contentWidth = elementWidth;
+				let contentHeight = elementHeight;
 				
-				// Check if canvas has content
-				if (canvas.width === 0 || canvas.height === 0) {
-					console.error('Canvas has zero dimensions');
-					return;
+				if (graphContent) {
+					const rect = graphContent.getBoundingClientRect();
+					contentWidth = rect.width;
+					contentHeight = rect.height;
+					console.log('Graph content dimensions:', contentWidth, '×', contentHeight);
 				}
 				
-				// Convert to data URL with error checking
-				const imgData = canvas.toDataURL('image/png');
-				console.log('Data URL length:', imgData.length);
+				// Determine orientation based on actual content dimensions
+				const isLandscape = contentWidth > contentHeight;
+				console.log('Element dimensions:', elementWidth, '×', elementHeight);
+				console.log('Content dimensions:', contentWidth, '×', contentHeight);
+				console.log('Is landscape:', isLandscape);
+				console.log('Page size:', isLandscape ? 'A4 landscape' : 'A4 portrait');
 				
-				if (imgData === 'data:,') {
-					console.error('Canvas produced empty data URL');
-					return;
-				}
+				// Standard print page dimensions (A4 in pixels at 96 DPI)
+				const printPageWidth = isLandscape ? 1123 : 794; // A4 width in pixels
+				const printPageHeight = isLandscape ? 794 : 1123; // A4 height in pixels
 				
-				// Print using print-js with native print dialog
+				// Account for 0.5 inch margins (48 pixels at 96 DPI)
+				const marginPixels = 48;
+				const availableWidth = printPageWidth - (2 * marginPixels);
+				const availableHeight = printPageHeight - (2 * marginPixels);
+				
+				// Calculate scale factors for width and height
+				const scaleX = availableWidth / elementWidth;
+				const scaleY = availableHeight / elementHeight;
+				
+				// Use the smaller scale to ensure it fits on the page
+				const scaleFactor = Math.min(scaleX, scaleY) * 0.8; // Reduced from 1.5 to 0.8 for smaller size
+				
+				// Try using original element directly instead of cloning
+				console.log('Using original element directly');
+				console.log('Original element dimensions:', element.offsetWidth, element.offsetHeight);
+				
+				// Apply scaling to original element temporarily
+				const originalTransform = element.style.transform;
+				const originalWidth = element.style.width;
+				const originalHeight = element.style.height;
+				const originalPosition = element.style.position;
+				const originalLeft = element.style.left;
+				
+				element.style.transform = `scale(${scaleFactor})`;
+				element.style.transformOrigin = 'top left';
+				element.style.width = '100%';
+				element.style.height = '100%';
+				element.style.position = 'relative';
+				element.style.left = '-20%';
+				element.style.top = '20%';
+				
+				// Print using original element
 				printJS({
 					printable: element,
 					type: 'html',
 					documentTitle: 'Graph Print',
-					style: '@media print { body { margin: 0; } }',
+					style: `
+						@media print { 
+							body { 
+								margin: 0; 
+								padding: 0;
+							}
+							@page {
+								margin: 0;
+								size: ${isLandscape ? 'A4 landscape' : 'A4 portrait'};
+							}
+						}
+					`,
 					scanStyles: false
 				});
+				
+				// Restore original styles after printing
+				setTimeout(() => {
+					element.style.transform = originalTransform;
+					element.style.width = originalWidth;
+					element.style.height = originalHeight;
+					element.style.position = originalPosition;
+					element.style.left = originalLeft;
+				}, 1000);
 				
 			} catch (error) {
 				console.error('Error printing element:', error);

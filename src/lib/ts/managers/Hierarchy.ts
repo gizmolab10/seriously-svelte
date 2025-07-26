@@ -74,14 +74,16 @@ export class Hierarchy {
 	get idRoot(): string | null { return this.root?.id ?? null; };
 
 	assure_root_andAncestry() {
-		let rootAncestry = this.rootAncestry;
-		if (!rootAncestry) {
-			rootAncestry = this.ancestry_remember_createUnique();
-			this.rootAncestry = rootAncestry;
-		}
-		const root = rootAncestry.thing;
-		if (!!root) {
-			this.root = root;
+		if (this.db.isStandalone) {
+			let rootAncestry = this.rootAncestry;
+			if (!rootAncestry) {
+				rootAncestry = this.ancestry_remember_createUnique();
+				this.rootAncestry = rootAncestry;
+			}
+			const root = rootAncestry.thing;
+			if (!!root) {
+				this.root = root;
+			}
 		}
 	}
 	

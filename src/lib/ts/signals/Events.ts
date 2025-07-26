@@ -199,14 +199,6 @@ export class Events {
 		console.log('received relationships:', relationships);
 		if (!!root) {
 			root = h.thing_remember_runtimeCreateUnique(h.db.idBase, root.id, root.title, root.color, T_Thing.root);
-			if (!!root) {
-				const a = root.ancestry;
-				h.thing_forget(h.root, true);
-				h.ancestry_forget(h.rootAncestry);
-				w_ancestry_focus.set(a);
-				h.rootAncestry = a;
-				h.root = root;
-			}
 		}
 		if (!!objects) {
 			for (const object of objects) {

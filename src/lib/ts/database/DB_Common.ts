@@ -28,6 +28,7 @@ export default class DB_Common {
 	setup_remote_handlers() {}
 	get displayName(): string { return this.t_database; }
 	get details_forStorage(): Object { return ['fetch', this.loadTime]; }
+	get isStandalone(): boolean { return this.t_database != T_Database.bubble; }
 	get isRemote(): boolean { return this.t_persistence == T_Persistence.remote; }
 	get isPersistent(): boolean { return this.t_persistence != T_Persistence.none; }
 	async hierarchy_fetch_forID(idBase: string) {}	// support for browsing multiple firebase bulks
