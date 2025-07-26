@@ -38,12 +38,17 @@
 		return () => { handle_rebuild.disconnect(); };
 	});
 
+	$:	$w_graph_rect, update_style();
+
 	$:	$w_show_graph_ofType,
 		$w_device_isMobile,
 		$w_ancestry_focus,
 		layoutAnd_reattach();
 
-	$:	$w_graph_rect, update_style();
+	function layoutAnd_reattach() {
+		layout.grand_layout();
+		graph_reattachments += 1;
+	}
 
 	function handle_builds_mouseClick(s_mouse: S_Mouse) {
 		if (s_mouse.isDown) {
@@ -55,11 +60,6 @@
 		if (s_mouse.isDown) {
 			c.showHelp();
 		}
-	}
-
-	function layoutAnd_reattach() {
-		layout.grand_layout();
-		graph_reattachments += 1;
 	}
 		
 	function update_style() {
@@ -75,7 +75,7 @@
 			height: ${draggableRect.size.height}px;
 		`.removeWhiteSpace();
 		graph_reattachments += 1;
-	}
+	}	
 
 </script>
 
@@ -90,6 +90,8 @@
 			{:else}
 				<Tree_Graph/>
 			{/if}
+		</div>
+		<div style='position:absolute; top:0; left:0;'>
 			<Button name={T_Control.builds}
 				width=75
 				height={size_big}

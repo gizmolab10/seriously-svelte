@@ -58,6 +58,7 @@
 		z-index : {T_Layer.common};
 		width : {$w_graph_rect.size.width}px;
 		height : {$w_graph_rect.size.height}px;
+		transform: scale({layout.scale_factor});
 		transform : translate({$w_user_graph_offset.x}px, {$w_user_graph_offset.y}px);'>
 	<Radial_Rings/>
 	<Radial_Focus/>

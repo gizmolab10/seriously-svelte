@@ -66,7 +66,7 @@ export class Colors {
 		const g = Math.round((rgbaA.g * alpha) + (rgbaB.g * (1 - alpha)));
 		const b = Math.round((rgbaA.b * alpha) + (rgbaB.b * (1 - alpha)));
 		const blendedHex = this.RGBA_toHex(new RGBA(r, g, b, 1));
-		return this.multiply_saturationOf_by(blendedHex, 1+ ratio);
+		return this.multiply_saturationOf_by(blendedHex, 1 + ratio);
 	}
 
 	static readonly _____SATURATION: unique symbol;

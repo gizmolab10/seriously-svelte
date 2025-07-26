@@ -122,6 +122,52 @@ export class Utilities extends Testworthy_Utilities {
 		return width;
 	}
 
+	print_element_byClassName(className: string) {
+		const element = document.querySelector(`.${className}`) as HTMLElement;
+		if (element) {
+			this.print_element(element);
+		}
+	}
+
+	print_element(element: HTMLElement) {
+		if (element) {
+			// Create a new window for printing
+			const printWindow = window.open('', '_blank');
+			if (printWindow) {
+				// Clone the element content
+				const elementContent = element.cloneNode(true) as HTMLElement;
+				
+				// Create the print document
+				printWindow.document.write(`
+					<!DOCTYPE html>
+					<html>
+					<head>
+						<title>Print Element</title>
+						<style>
+							body { margin: 0; padding: 20px; }
+							.draggable { position: relative !important; }
+							@media print {
+								body { margin: 0; }
+								.draggable { position: relative !important; }
+							}
+						</style>
+					</head>
+					<body>
+						${elementContent.outerHTML}
+					</body>
+					</html>
+				`);
+				printWindow.document.close();
+				
+				// Wait for content to load then print
+				printWindow.onload = () => {
+					printWindow.print();
+					printWindow.close();
+				};
+			}
+		}
+	}
+
 	convert_windowOffset_toCharacterOffset_in(offset: number, input: HTMLInputElement): number {
 		const rect = input.getBoundingClientRect();
 		const style = window.getComputedStyle(input);

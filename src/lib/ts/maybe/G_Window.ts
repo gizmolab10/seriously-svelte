@@ -25,10 +25,6 @@ export class G_Window {
 	set_scale_factor(scale_factor: number) {
 		this.scale_factor = scale_factor;
 		p.write_key(T_Preference.scale, scale_factor);
-		const zoomContainer = document.documentElement;
-		zoomContainer.style.setProperty('zoom', scale_factor.toString());
-		zoomContainer.style.height = `${100 / scale_factor}%`;
-		zoomContainer.style.width = `${100 / scale_factor}%`;
 		layout.graphRect_update();
 	}
 
