@@ -184,33 +184,35 @@ export class Events {
 
 	private handle_bubble_message = (e: Event) => {
 		const event = e as MessageEvent;
-		console.log('Bubble sent update:', event.data);
-		let root, objects, relationships;
-		try {
-			const properties = JSON.parse(event.data.properties);
-			relationships = properties.relationships_table;
-			objects = properties.objects_table;
-			root = properties.starting_object;
-		} catch (err) {
-			console.warn('Could not parse properties:', err);
-		}
-		console.log('received root:', root);
-		console.log('received objects:', objects);
-		console.log('received relationships:', relationships);
-		if (!!root) {
-			root = h.thing_remember_runtimeCreateUnique(h.db.idBase, root.id, root.title, root.color, T_Thing.root);
-		}
-		if (!!objects) {
-			for (const object of objects) {
-				h.thing_remember_runtimeCreateUnique(h.db.idBase, object.id, object.title, object.color, T_Thing.generic);
+		if (!!event.data.properties) {
+			console.log('Bubble sent update:', event.data);
+			let root, objects, relationships;
+			try {
+				const properties = JSON.parse(event.data.properties);
+				relationships = properties.relationships_table;
+				objects = properties.objects_table;
+				root = properties.starting_object;
+			} catch (err) {
+				console.warn('Could not parse properties:', err);
 			}
-		}
-		if (!!relationships) {
-			for (const relationship of relationships) {
-				h.relationship_remember_runtimeCreateUnique(h.db.idBase, relationship.id, relationship.kind.kind, relationship.parent, relationship.child, relationship.orders);
+			console.log('received root:', root);
+			console.log('received objects:', objects);
+			console.log('received relationships:', relationships);
+			if (!!root) {
+				root = h.thing_remember_runtimeCreateUnique(h.db.idBase, root.id, root.title, root.color, T_Thing.root);
 			}
+			if (!!objects) {
+				for (const object of objects) {
+					h.thing_remember_runtimeCreateUnique(h.db.idBase, object.id, object.title, object.color, T_Thing.generic);
+				}
+			}
+			if (!!relationships) {
+				for (const relationship of relationships) {
+					h.relationship_remember_runtimeCreateUnique(h.db.idBase, relationship.id, relationship.kind.kind, relationship.parent, relationship.child, relationship.orders);
+				}
+			}
+			h.wrapUp_data_forUX();
 		}
-		h.wrapUp_data_forUX();
 	}
 
 	async handle_key_down(e: Event) {

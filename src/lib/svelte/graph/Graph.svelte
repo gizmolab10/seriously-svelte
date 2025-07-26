@@ -2,7 +2,7 @@
 	import { w_graph_rect, w_show_graph_ofType, w_user_graph_offset, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { S_Mouse, T_Layer, T_Graph, T_Startup, T_Control, T_Element } from '../../ts/common/Global_Imports';
 	import { w_t_startup, w_ancestry_focus, w_device_isMobile, w_popupView_id } from '../../ts/common/Stores';
-	import { c, k, ux, Rect, Point, debug, layout, signals } from '../../ts/common/Global_Imports';
+	import { c, h, k, ux, Rect, Point, debug, layout, signals } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Radial_Graph from '../graph/Radial_Graph.svelte';
 	import Tree_Graph from '../graph/Tree_Graph.svelte';
@@ -46,8 +46,10 @@
 		layoutAnd_reattach();
 
 	function layoutAnd_reattach() {
-		layout.grand_layout();
-		graph_reattachments += 1;
+		if (!!h && h.hasRoot) {
+			layout.grand_layout();
+			graph_reattachments += 1;
+		}
 	}
 
 	function handle_builds_mouseClick(s_mouse: S_Mouse) {

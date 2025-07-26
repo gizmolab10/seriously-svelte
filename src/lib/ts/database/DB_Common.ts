@@ -121,7 +121,7 @@ export default class DB_Common {
 					for (const dict of array) {
 						h.extract_objects_ofType_fromDict(t_persistable, dict);
 					}
-				} else if (!this.isRemote) {			// no such persistable, create empty hierarchy
+				} else if (!this.isRemote && this.isStandalone) {			// no such persistable, create empty hierarchy
 					switch (t_persistable) {
 						case T_Persistable.predicates:
 							h.predicate_defaults_remember_runtimeCreate();
@@ -149,8 +149,10 @@ export default class DB_Common {
 			await this.hierarchy_create_fastLoad_or_fetch_andBuild();
 		}
 		setTimeout( () => {
-			w_t_startup.set(T_Startup.ready);
-			layout.grand_build();
+			if (h.hasRoot) {
+				w_t_startup.set(T_Startup.ready);
+				layout.grand_build();
+			}
 		}, 1);
 	}
 	
