@@ -34,13 +34,14 @@ export default class DB_DGraph extends DB_Common {
         }
     }
 
-    async fetch_all() {
+    async fetch_all(): Promise<boolean> {
         await busy.temporarily_set_isFetching_while(async () => {
             await this.things_fetch_all();
             await this.traits_fetch_all();
             await this.predicates_fetch_all();
             await this.relationships_fetch_all();
         });
+        return true;
     }
 
     // Things

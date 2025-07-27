@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { h, k, u, ux, busy, Point, colors, S_Element, databases, Hierarchy } from '../../ts/common/Global_Imports';
+	import { h, k, p, u, ux, busy, Point, colors, S_Element, databases, Hierarchy } from '../../ts/common/Global_Imports';
 	import { T_File_Format, T_File_Operation, T_Storage_Need, T_Signal } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Details, T_Element, T_Preference, T_Request } from '../../ts/common/Global_Imports';
 	import { w_data_updated, w_thing_fontFamily } from '../../ts/common/Stores';
@@ -20,7 +20,6 @@
 	const ids_forDatabase = [T_Database.local, T_Database.firebase, T_Database.airtable, T_Database.test, T_Database.bubble];
 	const ids_forInputFormat = [T_File_Format.csv, T_File_Format.json, T_File_Format.seriously, T_File_Format.cancel];
 	let s_element_byStorageType: { [id: string]: S_Element } = {};
-	let show_databases = $w_t_database != T_Database.bubble;
 	let heights = [13, height_ofChoices(), 42, 28, 74, 26, 3];
 	let storage_choice: string | null = null;
 	let storage_details: Array<Object> = [];
@@ -32,7 +31,7 @@
 	setup_s_elements();
 	$: tops = u.cumulativeSum(heights);
 	es_save.set_forHovering('black', 'pointer');
-	function height_ofChoices() { return show_databases ? 22 : -4; }
+	function height_ofChoices() { return p.show_other_databases ? 22 : -4; }
 	function handle_spinner_angle(event) { spinnerAngle = event.detail.angle; }
 
 	$:{
@@ -56,9 +55,10 @@
 	}
 
 	function handle_toggle_databases(event: Event) {
-		show_databases = !show_databases;
+		p.show_other_databases = !p.show_other_databases;
 		heights[1] = height_ofChoices();
 		heights = [...heights];
+		p.write_key(T_Preference.other_databases, p.show_other_databases);
 	}
 
 	function action_titles() {
@@ -137,8 +137,8 @@
 		length={k.width.details - 2.5}
 		handle_click={handle_toggle_databases}
 		thickness={k.thickness.separator.details}
-		title='{show_databases ? 'hide other databases' : 'show other databases'}'/>
-	{#if show_databases}
+		title='{p.show_other_databases ? 'hide other databases' : 'show other databases'}'/>
+	{#if p.show_other_databases}
 		<Segmented
 			name='db'
 			width={width}
@@ -190,7 +190,7 @@
 			{/if}
 		{/key}
 	</div>
-	{#key s_details.t_storage_need, show_databases}
+	{#key s_details.t_storage_need, p.show_other_databases}
 		<Buttons_Row
 			gap={4}
 			margin={20}

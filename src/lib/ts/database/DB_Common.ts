@@ -33,7 +33,7 @@ export default class DB_Common {
 	get isPersistent(): boolean { return this.t_persistence != T_Persistence.none; }
 	async hierarchy_fetch_forID(idBase: string) {}	// support for browsing multiple firebase bulks
 	
-	async fetch_all() { this.fetch_all_fromLocal(); }
+	async fetch_all(): Promise<boolean> { return this.fetch_all_fromLocal(); }
 	async remove_all() { this.remove_all_fromLocal(); }
 
 	async thing_persistentUpdate(thing: Thing) { this.persist_all(); }
@@ -113,7 +113,7 @@ export default class DB_Common {
 		}
 	}
 
-	async fetch_all_fromLocal() {
+	async fetch_all_fromLocal(): Promise<boolean> {
 		await busy.temporarily_set_isFetching_while(async () => {
 			for (const t_persistable of Persistable.t_persistables) {
 				const array = p.readDB_key(t_persistable.toLowerCase()) as Array<Dictionary>;
@@ -133,6 +133,7 @@ export default class DB_Common {
 				}
 			}
 		});
+		return true;
 	}
 
 	async hierarchy_setup_fetch_andBuild() {
@@ -170,24 +171,27 @@ export default class DB_Common {
 		}
 		const startTime = new Date().getTime();
 		this.loadTime = 'busy...';
-		await this.fetch_all();
-		await h.wrapUp_data_forUX();
-		// await this.persist_all();
-		this.set_loadTime_from(startTime);
+		if (await this.fetch_all()) {
+			await h.wrapUp_data_forUX();
+			// await this.persist_all();
+			this.set_loadTime_from(startTime);
+		}
 	}
 	
 	set_loadTime_from(startTime: number | null = null) {
 		if (startTime != null) {
 			const duration = (new Date().getTime()) - startTime;
-			if (Math.abs(duration) < 100) {
-				this.loadTime = 'was instantaneous';
-			} else {
+			if (Math.abs(duration) > 100) {
 				const adjusted = Math.trunc(duration / 100) / 10;
 				const isInteger = adjusted == Math.trunc(adjusted);
 				const suffix = (isInteger && (adjusted == 1)) ? '' : 's';
 				const places = isInteger ? 0 : 1;
 				const time = (duration / 1000).toFixed(places);
 				this.loadTime = `took ${time} second${suffix}`;
+			} else if (h.hasRoot) {
+				this.loadTime = 'instantaneous';
+			} else {
+				this.loadTime = 'incomplete';
 			}
 		}
 	}

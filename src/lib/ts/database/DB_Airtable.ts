@@ -40,7 +40,7 @@ export default class DB_Airtable extends DB_Common {
 
 	// async remove_all() {}	// only remove json from localStorage
 
-	async fetch_all() {
+	async fetch_all(): Promise<boolean> {
 		await busy.temporarily_set_isFetching_while(async () => {
 			await this.things_fetch_all();
 			await this.traits_fetch_all();
@@ -49,6 +49,7 @@ export default class DB_Airtable extends DB_Common {
 			await this.access_fetch_all();
 			await this.users_fetch_all();
 		});
+		return true;
 	}
 
 	queryStrings_apply() {

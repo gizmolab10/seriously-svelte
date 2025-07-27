@@ -245,6 +245,7 @@ export enum T_Preference {
 	focus_forChildren = 'focus_forChildren',
 	expanded_parents  = 'expanded_parents',
 	focus_forParents  = 'focus_forParents',
+	other_databases	  = 'other_databases',
 	relationships	  = 'relationships',
 	detail_types	  = 'detail_types',			// vertical stack
 	show_details	  = 'show_details',			// left side

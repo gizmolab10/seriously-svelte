@@ -9,6 +9,7 @@ import { get } from 'svelte/store';
 
 export class Preferences {
 	branches_areChildren = true;
+	show_other_databases = false;
 	get focus_key(): string { return this.branches_areChildren ? T_Preference.focus_forChildren : T_Preference.focus_forParents; }
 	get expanded_key(): string { return this.branches_areChildren ? T_Preference.expanded_children : T_Preference.expanded_parents; }
 
@@ -219,6 +220,7 @@ export class Preferences {
 	restore_defaults() {
 		this.restore_stores();
 		this.reactivity_subscribe()
+		this.show_other_databases = this.read_key(T_Preference.other_databases) ?? false;
 	}
 
 	restore_stores() {

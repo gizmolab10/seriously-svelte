@@ -60,7 +60,7 @@ export default class DB_Firebase extends DB_Common {
 
 	static readonly _____FETCH: unique symbol;
 
-	async fetch_all() {
+	async fetch_all(): Promise<boolean> {
 		await busy.temporarily_set_isFetching_while(async () => {
 			await this.recordLoginIP();
 			await this.documents_fetch_ofType(T_Persistable.predicates);
@@ -68,6 +68,7 @@ export default class DB_Firebase extends DB_Common {
 			await this.setup_remote_handlers();
 			await this.fetch_bulkAliases();		// TODO: assumes all ancestries are already created, including h.rootAncestry
 		});
+		return true;
 	}
 
 	async hierarchy_fetch_forID(idBase: string) {
@@ -92,7 +93,7 @@ export default class DB_Firebase extends DB_Common {
 			for (const docSnapshot of docs) {
 				const id = docSnapshot.id;
 				const data = docSnapshot.data();
-				await this.document_ofType_remember_validated(t_persistable, id, data, idBase ?? this.idBase);
+				this.document_ofType_remember_validated(t_persistable, id, data, idBase ?? this.idBase);
 			}
 		} catch (error) {
 			this.reportError(error);
@@ -268,7 +269,7 @@ export default class DB_Firebase extends DB_Common {
 		}
 	}
 
-	async document_ofType_remember_validated(t_persistable: T_Persistable, id: string, data: DocumentData, idBase: string) {
+	document_ofType_remember_validated(t_persistable: T_Persistable, id: string, data: DocumentData, idBase: string) {
 		if (DB_Firebase.data_isValidOfKind(t_persistable, data)) {
 			switch (t_persistable) {
 				case T_Persistable.predicates:	  h   .predicate_remember_runtimeCreateUnique(		  id, data.kind,		 data.isBidirectional ); break;
