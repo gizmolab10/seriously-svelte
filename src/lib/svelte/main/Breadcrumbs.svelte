@@ -34,7 +34,9 @@
 					trigger = parent_widths * 10000 + breadcrumb_reattachments * 100 + lefts[0];		// re-render HTML when this value changes
 					for (let i = 0; i < things.length; i++) {
 						const state = es_breadcrumbAt(i);
-						debug.log_crumbs(`thing ${things[i].title} ancestry ${state.ancestry.title} color ${state.background_color}`);
+						if (!!state) {
+							debug.log_crumbs(`thing ${things[i].title} ancestry ${state.ancestry.title} color ${state.background_color}`);
+						}
 					}
 					debug.log_crumbs(`ALL ${widths} ${things.map(t => t.title)}`);
 					breadcrumb_reattachments += 1;
