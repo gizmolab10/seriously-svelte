@@ -59,7 +59,8 @@ export class Preferences {
 		function ids_forDB(array: Array<Ancestry>): string { return u.ids_forDB(array).join(', '); }
 		if (c.eraseDB > 0) {
 			c.eraseDB -= 1;
-			w_ancestries_grabbed.set([h.rootAncestry]);
+			const grabbed = !!h.rootAncestry ? [h.rootAncestry] : [];
+			w_ancestries_grabbed.set(grabbed);
 		} else {
 			w_ancestries_grabbed.set(this.ancestries_readDB_key(T_Preference.grabbed));
 			debug.log_grab(`  READ (${get(w_t_database)}): "${ids_forDB(get(w_ancestries_grabbed))}"`);
@@ -97,7 +98,9 @@ export class Preferences {
 		let ancestryToFocus = h?.rootAncestry ?? null;
 		if (c.eraseDB > 0) {
 			c.eraseDB -= 1;
-			w_ancestry_focus.set(ancestryToFocus);
+			if (!!ancestryToFocus) {
+				w_ancestry_focus.set(ancestryToFocus);
+			}
 		} else {
 			const focusPath = p.readDB_key(this.focus_key) ?? p.readDB_key('focus');
 			if (!!focusPath) {
