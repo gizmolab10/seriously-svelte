@@ -9,6 +9,7 @@ function(instance, properties) {
 	}
 
 	function extractElementData(element) {
+		if (!element) return {};
 		let fieldNames = element.listProperties();
 		let itemData = {};
 		fieldNames.forEach(fieldName => {
@@ -35,6 +36,7 @@ function(instance, properties) {
 	}
 
 	function extractListData(list) {
+		if (!list) return [];
 		let listOfElements = list.get(0, list.length());
 		let extractedData = [];
 		listOfElements.forEach(element => {
@@ -43,19 +45,21 @@ function(instance, properties) {
 		return extractedData;
 	}
 
-	if (!properties.objects_table) return;
-	if (!properties.relationships_table) return;
-
 	const objects_list = properties.objects_table;
 	const extractedObjects = extractListData(objects_list);
 	const contentWindow = instance.data.iframe.contentWindow;
 	const relationships_list = properties.relationships_table;
+	const selected_objects_list = properties.selected_objects;
+	const focus_object = extractElementData(properties.focus_object);
 	const extractedRelationships = extractListData(relationships_list);
 	const starting_object = extractElementData(properties.starting_object);
+	const extractedSelectedObjects = extractListData(selected_objects_list);
 
 	const json = JSON.stringify({
+		focus_object: focus_object,
 		objects_table: extractedObjects,
 		starting_object: starting_object,
+		selected_objects: extractedSelectedObjects,
 		relationships_table: extractedRelationships
 	}, null, 0);
 
