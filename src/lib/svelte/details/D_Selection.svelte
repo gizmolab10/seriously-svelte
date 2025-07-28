@@ -39,7 +39,7 @@
 	});
 
 	function layout_forColor() {
-		if (!!info_table) {
+		if (!!thing && !!info_table) {
 			const row = Math.max(0, characteristics.findIndex(([key]) => key === 'color'));
 			const offset_toRow = info_table.absolute_location_ofCellAt(row, 1);
 			color_origin = offset_toRow.offsetByXY(-6, -5.5);
@@ -86,7 +86,13 @@
 
 </script>
 
-{#if !!thing}
+{#if !ancestry || !thing}
+	<div>
+		<p style='text-align:center; font-size:10px; position:relative; display:flex; align-items:center; justify-content:center;'>
+			{k.nothing_to_show}
+		</p>
+	</div>
+{:else}
 	<div class='selection-container' 
 		style='
 			left:8px;

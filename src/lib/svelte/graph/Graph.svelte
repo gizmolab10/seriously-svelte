@@ -37,13 +37,16 @@
 		});
 		return () => { handle_rebuild.disconnect(); };
 	});
+	
+	$:	{
+		const _ = $w_graph_rect + $w_t_startup + $w_show_graph_ofType
+		update_style();
+	}
 
-	$:	$w_graph_rect, update_style();
-
-	$:	$w_show_graph_ofType,
-		$w_device_isMobile,
-		$w_ancestry_focus,
+	$:	{
+		const _ = $w_show_graph_ofType + $w_device_isMobile + $w_ancestry_focus
 		layoutAnd_reattach();
+	}
 
 	function layoutAnd_reattach() {
 		if (!!h && h.hasRoot) {

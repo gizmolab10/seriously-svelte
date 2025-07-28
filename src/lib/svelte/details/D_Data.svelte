@@ -43,9 +43,10 @@
 		return (storage_choice == T_File_Operation.import) ? ids_forInputFormat : ids_forOutputFormat;
 	}
 
-	function handle_db_selection(titles: string[]) {
+	async function handle_db_selection(titles: string[]) {
 		const t_database = titles[0] as T_Database; // only ever contains one title
-		databases.grand_change_database(t_database);
+		await databases.grand_change_database(t_database);
+		console.log('after handle_db_selection:', t_database, h.isAssembled);
 	}
 
 	async function handle_save(s_mouse) {

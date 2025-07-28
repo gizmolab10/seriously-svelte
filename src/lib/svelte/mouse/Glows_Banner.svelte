@@ -31,7 +31,7 @@
 	}
 
 	function intercept_click(title: string) {
-		if (title === main_title) {
+		if (title === main_title || titles.length == 1) {
 			toggle_hidden(title);
 		} else {
 			s_details.update_forBanner(main_title, title);		// main title is the banner title

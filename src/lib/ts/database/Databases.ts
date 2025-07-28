@@ -45,8 +45,8 @@ export default class Databases {
 	}
 
 	async grand_change_database(type: string) {
+		console.log('before grand_change_database:', type);
 		this.db_now = this.db_forType(type);
-		busy.signal_data_redraw();
 		let h = this.db_now.hierarchy;
 		if (!h) {
 			h = new Hierarchy(this.db_now);
@@ -56,6 +56,8 @@ export default class Databases {
 		w_hierarchy.set(h);
 		w_t_database.set(type);
 		await this.db_now.hierarchy_setup_fetch_andBuild();
+		busy.signal_data_redraw();
+		console.log('after grand_change_database:', type, h.isAssembled);
 	}
 
 	db_change_toNext(forward: boolean) { w_t_database.set(this.db_next_get(forward)); }
@@ -77,10 +79,10 @@ export default class Databases {
 			switch (t_database) {
 				case T_Database.firebase: this.dbCache[t_database] = new DB_Firebase(); break;
 				case T_Database.airtable: this.dbCache[t_database] = new DB_Airtable(); break;
-				case T_Database.local:    this.dbCache[t_database] = new DB_Local(); break;
 				case T_Database.bubble:   this.dbCache[t_database] = new DB_Bubble(); break;
-				// case T_Database.dgraph:   this.dbCache[t_database] = new DB_DGraph(); break;
-				default:                  this.dbCache[t_database] = new DB_Test(); break;
+				case T_Database.local:    this.dbCache[t_database] = new DB_Local(); break;
+				case T_Database.test:     this.dbCache[t_database] = new DB_Test(); break;
+				// default:   this.dbCache[t_database] = new DB_DGraph(); break;
 			}
 		}
 		return this.dbCache[t_database];

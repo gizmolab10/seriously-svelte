@@ -1609,7 +1609,6 @@ export class Hierarchy {
 		p.restore_paging();
 		p.restore_expanded();
 		p.restore_focus();
-		this.isAssembled = true;
 	}
 
 	async wrapUp_data_forUX() {
@@ -1617,6 +1616,7 @@ export class Hierarchy {
 		// await this.relationships_lostAndFound_persistentCreate(this.db.idBase);
 		// await this.relationships_removeHavingNullReferences();
 		this.restore_fromPreferences();
+		this.isAssembled = true;
 		w_t_startup.set(T_Startup.ready);
 		busy.signal_data_redraw();
 	}

@@ -11,6 +11,7 @@ export default class Constants {
 	hid_unknown = 1000000000000;
 	diameterOf_outer_tinyDots = 19;
 	build_number = builds.build_number;
+	nothing_to_show = 'Please select something to show here';
 	prevent_selection_style = '-webkit-user-select: none; user-select: none; -moz-user-select: none';
 	name_bulkAdmin = 'Jonathan Sand';
 	cursor_default = 'default';

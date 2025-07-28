@@ -140,94 +140,102 @@
 </script>
 
 {#key reattachments}
-	<div
-		class='actions'
-		style='
-			width: 100%;
-			position:relative;
-			top:{actions_top}px;
-			z-index:{T_Layer.detailsPlus_2};
-			padding-bottom:{bottom_padding}px;'>
-		{#if $w_s_alteration}
-			<div
-				class='alteration-instructions'
-				style='
-					width: 100%;
-					display:block;
-					position:relative;
-					text-align:center;
-					z-index:{T_Layer.detailsPlus_2 + 1};
-					font-size:{k.font_size.instructions}px;'>
-				<div style='top:9px; width: 100%; position:relative;'>
-					To <em>{$w_s_alteration.t_alteration}</em> an item as <em>{target_ofAlteration() ?? k.unknown}</em>
-					<br> to <strong>{grabs.ancestry.title}</strong>
-					<br> choose that item's <em>blinking</em> dot
+	{#if !$w_ancestries_grabbed || $w_ancestries_grabbed.length == 0}
+		<div>
+			<p style='text-align:center; font-size:10px; position:relative; display:flex; align-items:center; justify-content:center;'>
+				{k.nothing_to_show}
+			</p>
+		</div>
+	{:else }
+		<div
+			class='actions'
+			style='
+				width: 100%;
+				position:relative;
+				top:{actions_top}px;
+				z-index:{T_Layer.detailsPlus_2};
+				padding-bottom:{bottom_padding}px;'>
+			{#if $w_s_alteration}
+				<div
+					class='alteration-instructions'
+					style='
+						width: 100%;
+						display:block;
+						position:relative;
+						text-align:center;
+						z-index:{T_Layer.detailsPlus_2 + 1};
+						font-size:{k.font_size.instructions}px;'>
+					<div style='top:9px; width: 100%; position:relative;'>
+						To <em>{$w_s_alteration.t_alteration}</em> an item as <em>{target_ofAlteration() ?? k.unknown}</em>
+						<br> to <strong>{grabs.ancestry.title}</strong>
+						<br> choose that item's <em>blinking</em> dot
+					</div>
+					<Button
+						center={new Point(k.width.details / 2, 22)}
+						font_size={k.font_size.instructions}
+						zindex={T_Layer.frontmost}
+						name='cancel-alteration'
+						height={k.height.button}
+						closure={handle_cancel}
+						color = colors.default
+						es_button={es_cancel}
+						position='relative'
+						width={40}>
+						cancel
+					</Button>
 				</div>
-				<Button
-					center={new Point(k.width.details / 2, 22)}
-					font_size={k.font_size.instructions}
-					zindex={T_Layer.frontmost}
-					name='cancel-alteration'
-					height={k.height.button}
-					closure={handle_cancel}
-					color = colors.default
-					es_button={es_cancel}
-					position='relative'
-					width={40}>
-					cancel
-				</Button>
-			</div>
-		{:else}
-			<Buttons_Table
-				top={1}
-				gap={2}
-				name='first'
-				width={table_width}
-				has_title={has_title}
-				title_gap={title_gap}
-				type={T_Element.action}
-				font_sizes={font_sizes}
-				detect_autorepeat={true}
-				closure={handle_actionRequest}
-				button_height={k.height.button}
-				button_titles={button_titles[0]}/>
-			<Separator
-				isHorizontal={false}
-				has_thin_divider={true}
-				length={top_tableHeight}
-				margin={k.details_margin}
-				origin={new Point(left_afterTitle, -3)}
-				thickness={k.thickness.separator.details}/>
-			<Buttons_Table
-				gap={2}
-				top={17}
-				name='second'
-				row_offset={4}
-				width={table_width}
-				has_title={has_title}
-				title_gap={title_gap}
-				type={T_Element.action}
-				font_sizes={font_sizes}
-				detect_autorepeat={true}
-				closure={handle_actionRequest}
-				button_height={k.height.button}
-				button_titles={button_titles[1]}/>
-			<Separator
-				isHorizontal={false}
-				has_thin_divider={true}
-				margin={k.details_margin}
-				length={bottom_tableHeight}
-				thickness={k.thickness.separator.details}
-				origin={new Point(left_afterTitle, top_tableHeight - 10)}/>
-			<Separator
-				isHorizontal={true}
-				has_thin_divider={true}
-				length={k.width.details - 1}
-				margin={k.details_margin}
-				title='edit your hierarchy'
-				title_left={k.separator_title_left}
-				origin={new Point(0.5, top_tableHeight - 10)}
-				thickness={k.thickness.separator.details}/>
-		{/if}
-	</div>
+			{:else}
+				<Buttons_Table
+					top={1}
+					gap={2}
+					name='first'
+					width={table_width}
+					has_title={has_title}
+					title_gap={title_gap}
+					type={T_Element.action}
+					font_sizes={font_sizes}
+					detect_autorepeat={true}
+					closure={handle_actionRequest}
+					button_height={k.height.button}
+					button_titles={button_titles[0]}/>
+				<Separator
+					isHorizontal={false}
+					has_thin_divider={true}
+					length={top_tableHeight}
+					margin={k.details_margin}
+					origin={new Point(left_afterTitle, -3)}
+					thickness={k.thickness.separator.details}/>
+				<Buttons_Table
+					gap={2}
+					top={17}
+					name='second'
+					row_offset={4}
+					width={table_width}
+					has_title={has_title}
+					title_gap={title_gap}
+					type={T_Element.action}
+					font_sizes={font_sizes}
+					detect_autorepeat={true}
+					closure={handle_actionRequest}
+					button_height={k.height.button}
+					button_titles={button_titles[1]}/>
+				<Separator
+					isHorizontal={false}
+					has_thin_divider={true}
+					margin={k.details_margin}
+					length={bottom_tableHeight}
+					thickness={k.thickness.separator.details}
+					origin={new Point(left_afterTitle, top_tableHeight - 10)}/>
+				<Separator
+					isHorizontal={true}
+					has_thin_divider={true}
+					length={k.width.details - 1}
+					margin={k.details_margin}
+					title='edit your hierarchy'
+					title_left={k.separator_title_left}
+					origin={new Point(0.5, top_tableHeight - 10)}
+					thickness={k.thickness.separator.details}/>
+			{/if}
+		</div>
+	{/if}
 {/key}

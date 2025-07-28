@@ -10,7 +10,7 @@ export default class DB_Test extends DB_Common {
 	
 	get details_forStorage(): Object { return ['data', 'recreated on launch'] }
 
-	async fetch_all_fromLocal() {
+	async fetch_all_fromLocal(): Promise<boolean> {
 		const idTa = 'a';
 		const idTb = 'b';
 		const idTc = 'c';
@@ -58,6 +58,7 @@ export default class DB_Test extends DB_Common {
 		this.makeMore(2, 'g', kindC, idTb, true, 4);	// children of Brilliant
 		this.makeMore(4, 'e', kindR, idTb, true, 2);	// related to  "
 		// this.makeMore(2, 'c', kindC, idTb, false);	// parents of  "
+		return true;
 	}
 
 	makeMore(count: number, first: string, kind: T_Predicate, idRef: string, asChild: boolean, order: number = 0) {

@@ -23,21 +23,15 @@
 	function ignore_wheel(event) { event.preventDefault(); }
 
 	$: {
-		const _ = $w_t_database + $w_t_startup + $w_graph_rect.description;
-		update_panel();
-	}
-
-	$: {
 		const _ = $w_background_color;
 		separator_color = colors.separator;
 	}
 
-	function update_panel() {
-		setTimeout(() => {
-			if (!!h && h.isAssembled) {
-				panel_reattachments += 1;
-			}
-		}, 0);
+	$: {
+		const _ = $w_t_database + $w_t_startup + $w_graph_rect.description;
+		if (!!h && h.isAssembled) {
+			panel_reattachments += 1;
+		}
 	}
 
 </script>
@@ -124,3 +118,4 @@
 		{/if}
 	</div>
 {/key}
+	

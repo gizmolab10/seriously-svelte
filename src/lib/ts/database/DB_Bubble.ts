@@ -15,7 +15,9 @@ export default class DB_Bubble extends DB_Common {
 
 	private handle_bubble_message = (e: Event) => {
 		const event = e as MessageEvent;
-		if (!!event.data.properties) {
+		if (!event.data.properties) {
+			h.wrapUp_data_forUX();
+		} else {
 			let grabs: Thing[] = [];
 			let focus: Thing | null = null;
 			console.log('Bubble sent update:', event.data);
@@ -49,7 +51,7 @@ export default class DB_Bubble extends DB_Common {
 					h.relationship_remember_runtimeCreateUnique(h.db.idBase, relationship.id, relationship.kind.kind, relationship.parent, relationship.child, relationship.orders);
 				}
 			}
-			if (!!focus) {   // must happen AFTER things are created
+			if (!!focus?.id) {   // must happen AFTER things are created
 				focus = h.thing_forHID(focus.id.hash());
 			}
 			if (!!selecteds) {// must happen AFTER things are created
