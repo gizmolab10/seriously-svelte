@@ -17,8 +17,9 @@ export default class DB_Bubble extends DB_Common {
 		const event = e as MessageEvent;
 		if (!!event.data.properties) {
 			let grabs: Thing[] = [];
+			let focus: Thing | null = null;
 			console.log('Bubble sent update:', event.data);
-			let root, focus, things, selecteds, relationships;
+			let root, things, selecteds, relationships;
 			try {
 				const properties = JSON.parse(event.data.properties);
 				relationships = properties.relationships_table;
@@ -34,23 +35,12 @@ export default class DB_Bubble extends DB_Common {
 			console.log('received objects:', things);
 			console.log('received selected:', selecteds);
 			console.log('received relationships:', relationships);
-			if (!!root) {
+			if (!!root) {   // must happen BEFORE things are created
 				root = h.thing_remember_runtimeCreateUnique(h.db.idBase, root.id, root.title, root.color, T_Thing.root);
 			}
 			if (!!things) {
 				for (const thing of things) {
 					h.thing_remember_runtimeCreateUnique(h.db.idBase, thing.id, thing.title, thing.color, T_Thing.generic);
-				}
-			}
-			if (!!focus) {   // must happen after things are created
-				focus = h.thing_forHID(focus.hid);
-			}
-			if (!!selecteds) {// must happen after things are created
-				for (const selected of selecteds) {
-					const grab = h.thing_forHID(selected.hid);
-					if (!!grab) {
-						grabs.push(grab);
-					}
 				}
 			}
 			if (!!relationships) {
@@ -59,14 +49,28 @@ export default class DB_Bubble extends DB_Common {
 					h.relationship_remember_runtimeCreateUnique(h.db.idBase, relationship.id, relationship.kind.kind, relationship.parent, relationship.child, relationship.orders);
 				}
 			}
+			if (!!focus) {   // must happen AFTER things are created
+				focus = h.thing_forHID(focus.id.hash());
+			}
+			if (!!selecteds) {// must happen AFTER things are created
+				for (const selected of selecteds) {
+					const grab = h.thing_forHID(selected.id.hash());
+					if (!!grab) {
+						grabs.push(grab);
+					}
+				}
+			}
 			h.wrapUp_data_forUX();
-			if (!!grabs && grabs.length > 0) {
-				setTimeout(() => {
+			setTimeout(() => {
+				if (!!focus) {
+					focus.ancestry.becomeFocus(true);
+				}
+				if (!!grabs && grabs.length > 0) {
 					for (const grab of grabs) {
 						grab.ancestry.grab();
 					}
-				}, 1000);
-			}
+				}
+			}, 1000);
 		}
 	}
 
