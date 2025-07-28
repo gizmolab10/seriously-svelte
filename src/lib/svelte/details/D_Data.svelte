@@ -46,7 +46,6 @@
 	async function handle_db_selection(titles: string[]) {
 		const t_database = titles[0] as T_Database; // only ever contains one title
 		await databases.grand_change_database(t_database);
-		console.log('after handle_db_selection:', t_database, h.isAssembled);
 	}
 
 	async function handle_save(s_mouse) {

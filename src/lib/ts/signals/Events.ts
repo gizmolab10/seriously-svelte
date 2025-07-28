@@ -196,7 +196,7 @@ export class Events {
 				if (c.allow_GraphEditing) {
 					if (!!ancestry && c.allow_TitleEditing) {
 						if (key == 'd') {
-							console.log('user entered "d"');
+							console.warn('user entered "d"');
 						}
 						switch (key) {
 							case 'enter':	ancestry.startEdit(); break;

@@ -121,9 +121,9 @@
 		s_widget.state_didChange;
 		thing = ancestry?.thing;
 		if (!ancestry) {
-			console.log('widget is missing an ancestry');
+			console.warn('widget is missing an ancestry');
 		} else if (!thing) {
-			console.log(`widget is missing a thing for "${ancestry?.id ?? k.unknown}"`);
+			console.warn(`widget is missing a thing for "${ancestry?.id ?? k.unknown}"`);
 		} else {
 			const title = thing.title ?? thing.id ?? k.unknown;
 			widgetName = `widget ${title}`;

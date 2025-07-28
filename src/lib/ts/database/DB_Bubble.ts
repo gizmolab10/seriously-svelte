@@ -21,19 +21,19 @@ export default class DB_Bubble extends DB_Common {
 			let grabs: Thing[] = [];
 			let focus: Thing | null = null;
 			console.log('Bubble sent update:', event.data);
-			let root, things, selecteds, relationships;
+			let root, things, focused, selecteds, relationships;
 			try {
 				const properties = JSON.parse(event.data.properties);
 				relationships = properties.relationships_table;
 				selecteds = properties.selected_objects;
+				focused = properties.focus_object;
 				things = properties.objects_table;
-				root = properties.starting_object;
-				focus = properties.focus_object;
+				root = properties.starting_object;	
 			} catch (err) {
 				console.warn('Could not parse properties:', err);
 			}
 			console.log('received root:', root);
-			console.log('received focus:', focus);
+			console.log('received focus:', focused);
 			console.log('received objects:', things);
 			console.log('received selected:', selecteds);
 			console.log('received relationships:', relationships);
@@ -51,8 +51,8 @@ export default class DB_Bubble extends DB_Common {
 					h.relationship_remember_runtimeCreateUnique(h.db.idBase, relationship.id, relationship.kind.kind, relationship.parent, relationship.child, relationship.orders);
 				}
 			}
-			if (!!focus?.id) {   // must happen AFTER things are created
-				focus = h.thing_forHID(focus.id.hash());
+			if (!!focused?.id) {   // must happen AFTER things are created
+				focus = h.thing_forHID(focused.id.hash());
 			}
 			if (!!selecteds) {// must happen AFTER things are created
 				for (const selected of selecteds) {
@@ -64,7 +64,7 @@ export default class DB_Bubble extends DB_Common {
 			}
 			h.wrapUp_data_forUX();
 			setTimeout(() => {
-				if (!!focus) {
+				if (!!focus?.ancestry) {
 					focus.ancestry.becomeFocus(true);
 				}
 				if (!!grabs && grabs.length > 0) {

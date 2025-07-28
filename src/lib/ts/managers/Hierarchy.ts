@@ -426,7 +426,7 @@ export class Hierarchy {
 		// const array = Array<Relationship>();
 		for (const relationship of this.relationships) {
 			if (!relationship.child || !relationship.parent) {
-				console.log(`has null reference ${relationship.description}`);
+				console.warn(`has null reference ${relationship.description}`);
 				// array.push(relationship);
 			}
 		}
@@ -468,7 +468,7 @@ export class Hierarchy {
 		if (relationship.isValid) {
 			this.relationship_remember(relationship);
 		} else {
-			console.log(`invalid relationship ${relationship.description}`);
+			console.warn(`invalid relationship ${relationship.description}`);
 		}
 	}
 	
@@ -882,7 +882,7 @@ export class Hierarchy {
 				await externalsThing.persist();
 				await rootAncestry.ancestry_persistentCreateUnique_byAddingThing(externalsThing)
 				.then((ancestry) => {
-					console.log(`externalsAncestry is wrong type: "${ancestry?.thing?.t_thing ?? 'unknown'}" (should be "^")`)
+					console.warn(`externalsAncestry is wrong type: "${ancestry?.thing?.t_thing ?? 'unknown'}" (should be "^")`)
 					// externalsAncestry = ancestry;
 				});
 			}

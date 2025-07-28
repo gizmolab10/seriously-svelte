@@ -32,7 +32,7 @@ export default class S_Common {
 	s_widget_forAncestry(ancestry: Ancestry): S_Widget {
 		const id = ancestry.id;
 		if (!id) {
-			console.log(`ancestry ${ancestry.title} has no id`);
+			console.warn(`ancestry ${ancestry.title} has no id`);
 		}
 		return u.assure_forKey_inDict(id, this.s_widget_byAncestryID, () => new S_Widget(ancestry));
 	}

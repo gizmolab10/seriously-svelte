@@ -29,7 +29,7 @@ export default class S_Persistence {
 		const duration = new Date().getTime() - this.lastModifyDate.getTime();
 		const result = duration < threshold;
 		if (!result) {
-			console.log('slow: needs remote save');
+			console.warn('slow: needs remote save');
 		}
 		return result;
 	}

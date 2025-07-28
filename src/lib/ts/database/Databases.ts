@@ -45,7 +45,6 @@ export default class Databases {
 	}
 
 	async grand_change_database(type: string) {
-		console.log('before grand_change_database:', type);
 		this.db_now = this.db_forType(type);
 		let h = this.db_now.hierarchy;
 		if (!h) {
@@ -57,7 +56,6 @@ export default class Databases {
 		w_t_database.set(type);
 		await this.db_now.hierarchy_setup_fetch_andBuild();
 		busy.signal_data_redraw();
-		console.log('after grand_change_database:', type, h.isAssembled);
 	}
 
 	db_change_toNext(forward: boolean) { w_t_database.set(this.db_next_get(forward)); }
