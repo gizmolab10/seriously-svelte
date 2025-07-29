@@ -142,9 +142,10 @@ export default class DB_Common {
 			w_hierarchy.set(new Hierarchy(this));
 		}
 		if (h.hasRoot) {
+			h.ancestries_all_createUnique();
 			h.restore_fromPreferences();
 		} else {
-			if (get(w_t_startup) != T_Startup.ready) {
+			if (get(w_t_startup) != T_Startup.ready) {		// WHY????
 				w_t_startup.set(T_Startup.fetch);
 			}
 			await this.hierarchy_create_fastLoad_or_fetch_andBuild();

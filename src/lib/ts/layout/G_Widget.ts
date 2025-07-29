@@ -18,6 +18,7 @@ export default class G_Widget {
 	center_ofDrag = Point.zero;
 	widget_pointsNormal = true;
 	size_ofSubtree = Size.zero;
+	rect_ofTree = Rect.zero;
 	forGraphMode: T_Graph;
 	points_toChild = true;
 	g_cluster!: G_Cluster;
@@ -73,11 +74,21 @@ export default class G_Widget {
 
 	static readonly _____LAYOUT: unique symbol;
 
-	layout_entireTree() {		// misses every Widget.layout
+	grand_layout_tree() {		// ???? misses every Widget.layout
 		const depth_limit = get(w_depth_limit);
 		this.layout_focus_ofTree();
 		this.recursively_layout_subtree(depth_limit);
 		this.recursively_layout_bidirectionals(depth_limit);
+		this.adjust_focus_ofTree();
+		this.update_rect_ofTree();
+	}
+
+	update_rect_ofTree() {
+		const subtree_size = this.ancestry.size_ofVisibleSubtree;
+		const origin_ofTree = this.origin_ofWidget;
+		const origin = new Point(origin_ofTree.x, origin_ofTree.y - 10);
+		const size = new Size(subtree_size.width, subtree_size.height + 20);
+		this.rect_ofTree = new Rect(origin, size);
 	}
 
 	layout_necklaceWidget(
@@ -167,7 +178,6 @@ export default class G_Widget {
 		this.g_childBranches.layout_branches();		//   ...   childless,    ...  
 		this.layout_widget();						// assumes full progeny subtrees are laid out (needed for progeny size)
 		this.layout_incoming_treeLine();
-		this.layout_focus();
 	}
 
 	private layout_incoming_treeLine() {
@@ -221,36 +231,37 @@ export default class G_Widget {
 		}
 	}
 
-	private layout_focus() {
-		const ancestry = this.ancestry;
-		const focus = ancestry.thing;
-		if (!!focus && ux.inTreeMode && ancestry.isFocus) {
-			const graph_rect = get(w_graph_rect);
-			const offset_y = -1 - graph_rect.origin.y;
-			const subtree_size = ancestry.size_ofVisibleSubtree;
-			const x_offset_ofReveal = focus?.width_ofTitle / 2 - 2;
-			const x_offset_forDetails = (get(w_show_details) ? -k.width.details : 0);
-			const x_offset = 15 + x_offset_forDetails - (subtree_size.width / 2) - (k.height.dot / 2.5) + x_offset_ofReveal;
-			const origin_ofReveal = graph_rect.center.offsetByXY(x_offset, offset_y);
-			this.origin_ofWidget = origin_ofReveal.offsetByXY(-21.5 - x_offset_ofReveal, -5);
-		}
-	}
-
 	private layout_focus_ofTree() {
-		const graphRect = get(w_graph_rect);
-		if (!!graphRect && ux.inTreeMode) {
-			const offsetY = graphRect.origin.y;
-			const subtree_size = this.ancestry.size_ofVisibleSubtree;
-			const offsetX_ofFirstReveal = (this.ancestry.thing?.width_ofTitle ?? 0) / 2 - 2;
-			const branches_offsetY = (k.height.dot / 2) -(subtree_size.height / 2) - 4;
-			const branches_offsetX = -8 - k.height.dot + offsetX_ofFirstReveal;
-			const offsetX = (get(w_show_details) ? -k.width.details : 0) + 15 + offsetX_ofFirstReveal - (subtree_size.width / 2) - (k.height.dot / 2.5);
-			const origin_ofFocusReveal = graphRect.center.offsetByXY(offsetX, -offsetY);
+		const ancestry = this.ancestry;
+		const graph_rect = get(w_graph_rect);
+		if (!!graph_rect && ux.inTreeMode && ancestry?.isFocus) {
+			const y_offset = graph_rect.origin.y;
+			const subtree_size = ancestry.size_ofVisibleSubtree;
+			const x_offset_ofFirstReveal = (ancestry.thing?.width_ofTitle ?? 0) / 2 - 2;
+			const y_offset_ofBranches = (k.height.dot / 2) -(subtree_size.height / 2) - 4;
+			const x_offset_ofBranches = -8 - k.height.dot + x_offset_ofFirstReveal;
+			const x_offset = (get(w_show_details) ? -k.width.details : 0) + 15 + x_offset_ofFirstReveal - (subtree_size.width / 2) - (k.height.dot / 2.5);
+			const origin_ofFocusReveal = graph_rect.center.offsetByXY(x_offset, -y_offset);
 			if (get(w_device_isMobile)) {
 				origin_ofFocusReveal.x = 25;
 			}
-			const origin_ofChildren = origin_ofFocusReveal.offsetByXY(branches_offsetX, branches_offsetY);
-			this.origin_ofWidget = origin_ofChildren;
+			// need this for laying out branches, but it is wrong for final positioning
+			// TODO: dunno why, must fix
+			this.origin_ofWidget = origin_ofFocusReveal.offsetByXY(x_offset_ofBranches, y_offset_ofBranches);
+		}
+	}
+
+	private adjust_focus_ofTree() {
+		const ancestry = this.ancestry;
+		const graph_rect = get(w_graph_rect);
+		if (!!graph_rect && ux.inTreeMode && ancestry?.isFocus) {
+			const y_offset = -1 - graph_rect.origin.y;
+			const subtree_size = ancestry.size_ofVisibleSubtree;
+			const x_offset_ofReveal = (ancestry.thing?.width_ofTitle ?? 0) / 2 - 2;
+			const x_offset_forDetails = (get(w_show_details) ? -k.width.details : 0);
+			const x_offset = 15 + x_offset_forDetails - (subtree_size.width / 2) - (k.height.dot / 2.5) + x_offset_ofReveal;
+			const origin_ofFocusReveal = graph_rect.center.offsetByXY(x_offset, y_offset);
+			this.origin_ofWidget = origin_ofFocusReveal.offsetByXY(-21.5 - x_offset_ofReveal, -5);
 		}
 	}
 	

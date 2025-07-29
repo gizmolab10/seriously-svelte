@@ -25,7 +25,7 @@ export default class Thing extends Persistable {
 	get parents():				Array		 <Thing> { return this.parents_ofKind(T_Predicate.contains); }
 	get traits():				Array		 <Trait> { return h.traits_forOwnerHID(this.hid) ?? []; }
 	get parentIDs():			Array		<string> { return this.parents.map(t => t.id); }
-	get ancestries():		 	Array	  <Ancestry> { return this.ancestries_forPredicate(Predicate.contains); }
+	get ancestries():		 	Array	  <Ancestry> { return this.ancestries_create_forPredicate(Predicate.contains); }
 	get childRelationships():	Array <Relationship> { return this.relationships_ofKind_forParents(T_Predicate.contains, false); }
 	get relatedRelationships(): Array <Relationship> { return this.relationships_ofKind_forParents(T_Predicate.isRelated, false); }
 	get fields():		  		Dictionary  <string> { return { title: this.title, color: this.color, type: this.t_thing }; }
@@ -159,15 +159,15 @@ export default class Thing extends Persistable {
 		return ancestries.length > 0 ? ancestries[0] : null;
 	}
 
-	uniqueAncestries_for(predicate: Predicate | null): Array<Ancestry> {
+	ancestries_createUnique_forPredicate(predicate: Predicate | null): Array<Ancestry> {
 		let ancestries: Array<Ancestry> = [];
 		if (!!predicate){
 			if (predicate.isBidirectional) {
-				ancestries = this.ancestries_forPredicate(predicate);
+				ancestries = this.ancestries_create_forPredicate(predicate);
 			} else {
 				let parents = this.parents_ofKind(predicate.kind) ?? [];
 				for (const parent of parents) {
-					const parentAncestries = parent.isRoot ? [h.rootAncestry] : parent.ancestries_forPredicate(predicate);
+					const parentAncestries = parent.isRoot ? [h.rootAncestry] : parent.ancestries_create_forPredicate(predicate);
 					ancestries = u.concatenateArrays(ancestries, parentAncestries);
 				}
 			}
@@ -176,8 +176,16 @@ export default class Thing extends Persistable {
 		return ancestries;
 	}
 
-	ancestries_forPredicate(predicate: Predicate | null, visited: string[] = []): Array<Ancestry> {
-		// the ancestry of each parent [of this thing]
+	ancestries_create_forPredicate(predicate: Predicate | null, visited: string[] = []): Array<Ancestry> {
+
+		// the ancestry of each {parent or related}
+		// recursively, all the way to the root or ???
+		// 
+		// typically just one, can be multiple (hah!)
+		// relateds are bidirectional, and do not participate in the hierarchy
+		// parent ancestries have same predicate and relationship as children
+		//	but the relationship is interpreted backwards
+
 		let ancestries: Array<Ancestry> = [];
 		if (!!predicate) {
 			function addAncestry(ancestry: Ancestry | null) {
@@ -196,7 +204,7 @@ export default class Thing extends Persistable {
 					const parent = parentRelationship.parent;
 					if (!!parent && !visited.includes(parent.id)) {
 						const id_parentRelationship = parentRelationship.id;		// TODO, this is the wrong relationship; needs the next one
-						const parentAncestries = parent.ancestries_forPredicate(predicate, [...visited, parent.id]) ?? [];
+						const parentAncestries = parent.ancestries_create_forPredicate(predicate, [...visited, parent.id]) ?? [];
 						if (parentAncestries.length == 0) {
 							addAncestry(h.rootAncestry.ancestry_createUnique_byAppending_relationshipID(id_parentRelationship));
 						} else {

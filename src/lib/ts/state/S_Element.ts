@@ -38,7 +38,9 @@ export default class S_Element {
 		this.type = type;
 		if (this.isADot) {
 			w_ancestries_grabbed.subscribe((grabbed) => {
-				this.isInverted = grabbed.includes(this.ancestry);
+				if (!!grabbed && grabbed.length > 0) {
+					this.isInverted = grabbed.includes(this.ancestry);	// so UI can draw them dark
+				}
 			});
 			this.color_background = get(w_background_color);
 		}

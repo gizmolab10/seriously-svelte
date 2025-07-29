@@ -21,7 +21,7 @@ export default class G_Layout {
 		if (ux.inRadialMode) {
 			this.g_radialGraph.grand_layout_radial();
 		} else {
-			get(w_ancestry_focus)?.g_widget.layout_entireTree();
+			get(w_ancestry_focus)?.g_widget.grand_layout_tree();
 		}
 		signals.signal_reposition_widgets_fromFocus();
 	}
@@ -72,6 +72,7 @@ export default class G_Layout {
 	static readonly _____GRAPHS: unique symbol;
 
 	private get radial_size(): Size { return this.g_radialGraph.radial_size; }
+	get rect_ofTree(): Rect { return get(w_ancestry_focus)?.g_widget.rect_ofTree ?? Rect.zero; }
 	get g_radialGraph() { let g = this._g_radialGraph; if (!g) { g = new G_RadialGraph(); this._g_radialGraph = g }; return g; }
 
 	increase_depth_limit_by(increment: number) {

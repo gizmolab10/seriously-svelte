@@ -175,7 +175,7 @@ export default class Ancestry extends Identifiable {
 		if (!!h) {
 			for (const predicate of h.predicates) {
 				if (predicate.isBidirectional) {
-					const parents = this.thing?.ancestries_forPredicate(predicate);
+					const parents = this.thing?.ancestries_create_forPredicate(predicate);
 					if (!!parents) {	// each of the parents is bidirectional TO this ancestry's thing
 						ancestries = u.uniquely_concatenateArrays_ofIdentifiables(ancestries, parents) as Array<Ancestry>;
 					}
@@ -717,9 +717,9 @@ export default class Ancestry extends Identifiable {
 	ancestries_createUnique_byKinship(kinship: string | null): Array<Ancestry> {
 		if (!!kinship) {
 			switch (kinship) {
-				case T_Kinship.related: return this.thing?.uniqueAncestries_for(Predicate.isRelated) ?? [];
-				case T_Kinship.parents:  return this.thing?.uniqueAncestries_for(Predicate.contains) ?? [];
-				case T_Kinship.children:   return this.ancestries_createUnique_forPredicate(Predicate.contains);
+				case T_Kinship.related:  return this.thing?.ancestries_createUnique_forPredicate(Predicate.isRelated) ?? [];
+				case T_Kinship.parents:  return this.thing?.ancestries_createUnique_forPredicate(Predicate.contains) ?? [];
+				case T_Kinship.children: return this.ancestries_createUnique_forPredicate(Predicate.contains);
 			}
 		}
 		return [];

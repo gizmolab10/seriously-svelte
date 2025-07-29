@@ -640,6 +640,12 @@ export class Hierarchy {
 		this.ancestry_byKind_andHID = {};
 	}
 
+	ancestries_all_createUnique() {
+		this.rootAncestry.traverse((ancestry: Ancestry) => {
+			return false;	// do nothing, ancestry was just (or already was) created
+		})
+	}
+
 	ancestries_fullRebuild() {		// for Firebase only
 		const rootAncestry = this.rootAncestry;
 		this.ancestries_forget_all();
@@ -1613,6 +1619,7 @@ export class Hierarchy {
 
 	async wrapUp_data_forUX() {
 		this.assure_root_andAncestry();
+		this.ancestries_all_createUnique();
 		// await this.relationships_lostAndFound_persistentCreate(this.db.idBase);
 		// await this.relationships_removeHavingNullReferences();
 		this.restore_fromPreferences();

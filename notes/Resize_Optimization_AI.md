@@ -59,7 +59,7 @@ grand_layout() {
     if (ux.inRadialMode) {
         this.g_radialGraph.grand_layout_radial();
     } else {
-        get(w_ancestry_focus)?.g_widget.layout_entireTree();
+        get(w_ancestry_focus)?.g_widget.grand_layout_tree();
     }
     signals.signal_reposition_widgets_fromFocus();
 }

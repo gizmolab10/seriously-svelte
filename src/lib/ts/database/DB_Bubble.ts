@@ -69,7 +69,9 @@ export default class DB_Bubble extends DB_Common {
 				}
 				if (!!grabs && grabs.length > 0) {
 					for (const grab of grabs) {
-						grab.ancestry.grab();
+						if (!!grab?.ancestry) {
+							grab.ancestry.grab();
+						}
 					}
 				}
 			}, 1000);
