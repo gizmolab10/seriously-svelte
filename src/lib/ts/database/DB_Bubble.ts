@@ -1,4 +1,4 @@
-import { e, h, k, Thing, T_Thing, T_Persistence } from '../common/Global_Imports';
+import { e, h, k, T_Thing, T_Create, T_Persistence } from '../common/Global_Imports';
 import { T_Database } from './DB_Common';
 import DB_Common from './DB_Common';
 
@@ -19,34 +19,57 @@ export default class DB_Bubble extends DB_Common {
 			h.wrapUp_data_forUX();
 		} else {
 			console.log('Bubble sent update:', event.data);
-			let root, things, focused, selecteds, relationships;
+			let root, tags, things, traits, focused, selecteds, predicates, relationships;
 			try {
 				const properties = JSON.parse(event.data.properties);
 				relationships = properties.relationships_table;
+				predicates = properties.predicates_table;
 				selecteds = properties.selected_objects;
 				focused = properties.focus_object;
 				things = properties.objects_table;
-				root = properties.starting_object;	
+				root = properties.starting_object;
+				traits = properties.traits_table;
+				tags = properties.tags_table;
 			} catch (err) {
 				console.warn('Could not parse properties:', err);
 			}
 			console.log('received root:', root);
+			console.log('received tags:', tags);
+			console.log('received traits:', traits);
 			console.log('received focus:', focused);
 			console.log('received objects:', things);
 			console.log('received selected:', selecteds);
+			console.log('received predicates:', predicates);
 			console.log('received relationships:', relationships);
 			if (!!root) {   // must happen BEFORE things are created
-				root = h.thing_remember_runtimeCreateUnique(h.db.idBase, root.id, root.title, root.color, T_Thing.root);
+				root = h.thing_remember_runtimeCreateUnique(h.db.idBase, root.id, root.title, root.color, T_Thing.root, true);
 			}
 			if (!!things) {
 				for (const thing of things) {
-					h.thing_remember_runtimeCreateUnique(h.db.idBase, thing.id, thing.title, thing.color, T_Thing.generic);
+					h.thing_remember_runtimeCreateUnique(h.db.idBase, thing.id, thing.title, thing.color, T_Thing.generic, true);
+				}
+			}
+			if (!predicates) {
+				h.predicate_defaults_remember_runtimeCreate();
+			} else {
+				for (const predicate of predicates) {
+					h.predicate_remember_runtimeCreateUnique(predicate.id, predicate.kind, predicate.isBidirectional, true);
 				}
 			}
 			if (!!relationships) {
-				h.predicate_defaults_remember_runtimeCreate();
 				for (const relationship of relationships) {
-					h.relationship_remember_runtimeCreateUnique(h.db.idBase, relationship.id, relationship.kind.kind, relationship.parent, relationship.child, relationship.orders);
+					h.relationship_remember_runtimeCreateUnique(h.db.idBase, relationship.id, relationship.kind.kind, relationship.parent, relationship.child, relationship.orders, T_Create.isFromPersistent);
+				}
+			}
+			if (!!traits) {
+				for (const trait of traits) {
+					h.trait_remember_runtimeCreateUnique(h.db.idBase, trait.id, trait.owner.id, trait.type, trait.text, {}, true);
+				}
+			}
+			if (!!tags) {
+				for (const tag of tags) {
+					const ownerHIDs = tag.owner.map(o => o.id.hash());
+					h.tag_remember_runtimeCreateUnique(h.db.idBase, tag.id, tag.type, ownerHIDs, true);
 				}
 			}
 

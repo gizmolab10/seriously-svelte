@@ -58,7 +58,7 @@
         width: {width}px;
         height: {height}px;
         position: relative;'>
-    {#if isHovering == c.has_matte_UI}
+    {#if isHovering != c.has_matte_UI}
         <SVG_Gradient
             isInverted={true}
             name={gradient_name}

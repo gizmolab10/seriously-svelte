@@ -46,19 +46,28 @@ function(instance, properties) {
 	}
 
 	const objects_list = properties.objects_table;
+	const tags_list = properties.tags_table || null;
+	const extractedTags = extractListData(tags_list);
+	const traits_list = properties.traits_table || null;
+	const extractedTraits = extractListData(traits_list);
 	const extractedObjects = extractListData(objects_list);
 	const contentWindow = instance.data.iframe.contentWindow;
 	const relationships_list = properties.relationships_table;
 	const selected_objects_list = properties.selected_objects;
+	const predicates_list = properties.predicates_table || null;
+	const extractedPredicates = extractListData(predicates_list);
 	const focus_object = extractElementData(properties.focus_object);
 	const extractedRelationships = extractListData(relationships_list);
 	const starting_object = extractElementData(properties.starting_object);
 	const extractedSelectedObjects = extractListData(selected_objects_list);
 
 	const json = JSON.stringify({
+		tags_table: extractedTags,
 		focus_object: focus_object,
+		traits_table: extractedTraits,
 		objects_table: extractedObjects,
 		starting_object: starting_object,
+		predicates_table: extractedPredicates,
 		selected_objects: extractedSelectedObjects,
 		relationships_table: extractedRelationships
 	}, null, 0);
