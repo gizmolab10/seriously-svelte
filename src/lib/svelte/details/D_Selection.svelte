@@ -20,10 +20,10 @@
 	let thingHID: Integer | null = thing?.hid;
 	let characteristics: Array<Object> = [];
 	let relationships: Array<Object> = [];
-	let properties: Array<Object> = [];
+	let color_origin: Point | null = null;
 	let color = colors.default_forThings;
+	let properties: Array<Object> = [];
 	let thing_title = thing?.title;
-	let color_origin = Point.zero;
 	let picker_offset = k.empty;
 	let info_table: any;
 
@@ -41,9 +41,15 @@
 	function layout_forColor() {
 		if (!!thing && !!info_table) {
 			const row = Math.max(0, characteristics.findIndex(([key]) => key === 'color'));
-			const offset_toRow = info_table.absolute_location_ofCellAt(row, 1);
-			color_origin = offset_toRow.offsetByXY(-6, -5.5);
-			picker_offset = `-54px`;
+			// and make sure info table actually has the absolute_location_ofCellAt function
+			
+			if (typeof info_table.absolute_location_ofCellAt === 'function') {
+				const offset_toRow = info_table.absolute_location_ofCellAt(row, 1);
+				color_origin = offset_toRow.offsetByXY(-6, -5.5);
+				picker_offset = `-54px`;
+			} else {
+				console.warn('info_table does not have a absolute_location_ofCellAt function');
+			}
 		}
 	}
 
@@ -118,7 +124,7 @@
 			array={relationships}
 			name='relationships-table'
 			font_size={k.font_size.info}/>
-		{#if !!ancestry && ancestry.isEditable}
+		{#if !!color_origin && !!ancestry && ancestry.isEditable}
 			<Portal className='selection-color-portal'>
 				<Color
 					color={color}
