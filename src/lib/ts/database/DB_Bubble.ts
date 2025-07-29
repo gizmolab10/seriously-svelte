@@ -18,8 +18,6 @@ export default class DB_Bubble extends DB_Common {
 		if (!event.data.properties) {
 			h.wrapUp_data_forUX();
 		} else {
-			let grabs: Thing[] = [];
-			let focus: Thing | null = null;
 			console.log('Bubble sent update:', event.data);
 			let root, things, focused, selecteds, relationships;
 			try {
@@ -51,30 +49,23 @@ export default class DB_Bubble extends DB_Common {
 					h.relationship_remember_runtimeCreateUnique(h.db.idBase, relationship.id, relationship.kind.kind, relationship.parent, relationship.child, relationship.orders);
 				}
 			}
-			if (!!focused?.id) {   // must happen AFTER things are created
-				focus = h.thing_forHID(focused.id.hash());
-			}
-			if (!!selecteds) {// must happen AFTER things are created
-				for (const selected of selecteds) {
-					const grab = h.thing_forHID(selected.id.hash());
-					if (!!grab) {
-						grabs.push(grab);
-					}
-				}
-			}
-			h.wrapUp_data_forUX();
-			setTimeout(() => {
+
+			h.wrapUp_data_forUX();			// create ancestries and tidy up
+			
+			if (!!focused?.id) {			// must happen AFTER ancestries are created
+				const focus = h.thing_forHID(focused.id.hash());
 				if (!!focus?.ancestry) {
 					focus.ancestry.becomeFocus(true);
 				}
-				if (!!grabs && grabs.length > 0) {
-					for (const grab of grabs) {
-						if (!!grab?.ancestry) {
-							grab.ancestry.grab();
-						}
+			}
+			if (!!selecteds) {				// must happen AFTER ancestries are created
+				for (const selected of selecteds) {
+					const grab = h.thing_forHID(selected.id.hash());
+					if (!!grab?.ancestry) {
+						grab.ancestry.grab();
 					}
 				}
-			}, 1000);
+			}
 		}
 	}
 
