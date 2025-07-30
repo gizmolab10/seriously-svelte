@@ -91,4 +91,14 @@ function(instance, properties) {
 	} catch (error) {
 		console.error("[PLUGIN] Error updating plugin:", error);
 	}
+	
+	// Additional error validation
+	function validateError(error) {
+		// Requirement: error is not a NotReadyError
+		if (error && error.name === 'NotReadyError') {
+			console.warn("[PLUGIN] NotReadyError detected - skipping processing");
+			return false;
+		}
+		return true;
+	}
 }
