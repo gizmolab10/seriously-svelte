@@ -18,10 +18,10 @@ export default class DB_Bubble extends DB_Common {
 		if (!event.data.properties) {
 			h.wrapUp_data_forUX();
 		} else {
-			console.log('Bubble sent update:', event.data);
 			let root, tags, things, traits, focused, selecteds, predicates, relationships;
 			try {
 				const properties = JSON.parse(event.data.properties);
+				console.log('Bubble sent update:', properties);
 				relationships = properties.relationships_table;
 				predicates = properties.predicates_table;
 				selecteds = properties.selected_objects;
@@ -68,7 +68,7 @@ export default class DB_Bubble extends DB_Common {
 			}
 			if (!!tags) {
 				for (const tag of tags) {
-					const ownerHIDs = tag.owners.map(owner => owner.id.hash());
+					const ownerHIDs = tag.owners.map((owner: {id: string;}) => owner.id.hash());
 					h.tag_remember_runtimeCreateUnique(h.db.idBase, tag.id, tag.type, ownerHIDs, true);
 				}
 			}
