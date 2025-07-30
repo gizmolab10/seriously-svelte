@@ -35,8 +35,8 @@ export default class DB_Bubble extends DB_Common {
 			}
 			console.log('received root:', root);
 			console.log('received tags:', tags);
-			console.log('received traits:', traits);
 			console.log('received focus:', focused);
+			console.log('received traits:', traits);
 			console.log('received objects:', things);
 			console.log('received selected:', selecteds);
 			console.log('received predicates:', predicates);
@@ -49,14 +49,14 @@ export default class DB_Bubble extends DB_Common {
 					h.thing_remember_runtimeCreateUnique(h.db.idBase, thing.id, thing.title, thing.color, T_Thing.generic, true);
 				}
 			}
-			if (!predicates) {
+			if (!predicates) {   // should happen BEFORE relationships are created
 				h.predicate_defaults_remember_runtimeCreate();
 			} else {
 				for (const predicate of predicates) {
 					h.predicate_remember_runtimeCreateUnique(predicate.id, predicate.kind, predicate.isBidirectional, true);
 				}
 			}
-			if (!!relationships) {
+			if (!!relationships) {   // all the rest must happen AFTER things are created
 				for (const relationship of relationships) {
 					h.relationship_remember_runtimeCreateUnique(h.db.idBase, relationship.id, relationship.kind.kind, relationship.parent, relationship.child, relationship.orders, T_Create.isFromPersistent);
 				}
@@ -68,7 +68,7 @@ export default class DB_Bubble extends DB_Common {
 			}
 			if (!!tags) {
 				for (const tag of tags) {
-					const ownerHIDs = tag.owner.map(o => o.id.hash());
+					const ownerHIDs = tag.owners.map(owner => owner.id.hash());
 					h.tag_remember_runtimeCreateUnique(h.db.idBase, tag.id, tag.type, ownerHIDs, true);
 				}
 			}
