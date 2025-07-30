@@ -1,5 +1,5 @@
 function(instance, properties) {
-	console.log("[PLUGIN] Updating plugin with new properties:", properties);
+	// console.log("[PLUGIN] Updating plugin with new properties:", properties);
 
 	function normalizeField(name, endsWith) {
 		if (name.endsWith(endsWith)) {
@@ -8,68 +8,79 @@ function(instance, properties) {
 		return name;
 	}
 
-	function extractElementData(element) {
-		if (!element) return {};
-		let fieldNames = element.listProperties();
-		let itemData = {};
-		fieldNames.forEach(fieldName => {
-			let cleanFieldName = fieldName;
-			const endings = ['_text', '_boolean', '_custom_thing', '_custom_predicate'];
-			endings.forEach(ending => {
-				cleanFieldName = normalizeField(cleanFieldName, ending);
-			});
-			const value = element.get(fieldName);
-			if (fieldName == 'kind_custom_predicate') {
-				itemData[cleanFieldName] = extractElementData(value);
-			} else if (fieldName == 'owner_custom_thing') {
-				itemData[cleanFieldName] = extractElementData(value);
-			} else if (fieldName == 'things_list_custom_thing') {
-				itemData['owners'] = extractListData(value);
-			} else if (fieldName == 'orders_list_number') {
-				let orders = [];
-				for (let i = 0; i < value.length(); i++) {
-					const order = value.get(i, i + 1)[0];
-					orders.push(order);
+	function extract_ITEM_data(item, name) {
+		let item_data = {};
+		if (!!item) {
+			const field_names = item.listProperties();
+			const item_properties = field_names.reduce((props, propName) => {	// for debugging
+				props[propName] = item.get(propName);
+				return props;
+			}, {});
+			field_names.forEach(field_name => {
+				let clean_name = field_name;
+				const endings = ['_text', '_boolean', '_custom_thing', '_custom_predicate'];
+				endings.forEach(ending => {
+					clean_name = normalizeField(clean_name, ending);
+				});
+				const value = item.get(field_name);
+				// const isArray = Array.isArray(value);
+				if (value == undefined && field_name != 'Slug') {
+					console.warn('value undefined for', field_name, 'item properties:', item_properties);
+				} else {
+					switch (field_name) {
+						case 'orders_list_number':
+							let orders = [];
+							for (let i = 0; i < value.length(); i++) {
+								const order = value.get(i, i + 1)[0];
+								orders.push(order);
+							}								item_data['orders'] = orders;  break;
+						// case 'owners_list_custom_thing':	item_data['owners'] = extract_LIST_data(value); break;
+						case 'things_list_custom_thing':	item_data['owners'] = extract_LIST_data(value); break;
+						default:
+							const object_names = ['child', 'parent', 'owner', 'kind'];
+							const needs_extraction = object_names.includes(clean_name) && typeof value != 'string';
+							if (needs_extraction) {
+								item_data[clean_name] = extract_ITEM_data(value, clean_name);
+							} else if (clean_name == 'owners_list') {
+								console.warn('owners_list:', field_name);
+							} else {
+								item_data[clean_name] = value;
+							}
+							break;
+					}
 				}
-				itemData['orders'] = orders;
-			} else {
-				itemData[cleanFieldName] = value;
-			}
-		});
-		return itemData;
+			});
+		};
+		console.log('item data:', name, item_data);
+		return item_data;
 	}
 
-	function extractListData(list) {
+	function extract_LIST_data(name) {
+		const list = typeof name === 'string' ? (properties[name] || null) : name;
 		if (!list) return [];
-		let listOfElements = list.get(0, list.length());
+		let sublist = list.get(0, list.length());
 		let extracted_data = [];
-		listOfElements.forEach(element => {
-			extracted_data.push(extractElementData(element));
+		sublist.forEach(item => {
+			extracted_data.push(extract_ITEM_data(item, name));
 		});
 		return extracted_data;
 	}
 
 	try {
-		const objects_list = properties.objects_table;
-		const tags_list = properties.tags_table || null;
-		const extracted_tags = extractListData(tags_list);
-		const traits_list = properties.traits_table || null;
-		const extracted_traits = extractListData(traits_list);
-		const extracted_objects = extractListData(objects_list);
+		const extracted_tags = extract_LIST_data('tags_table');
 		const contentWindow = instance.data.iframe.contentWindow;
-		const relationships_list = properties.relationships_table;
-		const selected_objects_list = properties.selected_objects;
-		const predicates_list = properties.predicates_table || null;
-		const extracted_predicates = extractListData(predicates_list);
-		const focus_object = extractElementData(properties.focus_object);
-		const extracted_relationships = extractListData(relationships_list);
-		const starting_object = extractElementData(properties.starting_object);
-		const extracted_selected_objects = extractListData(selected_objects_list);
+		// const extracted_traits = extract_LIST_data('traits_list');
+		const extracted_objects = extract_LIST_data('objects_table');
+		const extracted_predicates = extract_LIST_data('predicates_table');
+		const extracted_relationships = extract_LIST_data('relationships_table');
+		const extracted_selected_objects = extract_LIST_data('selected_objects');
+		const focus_object = extract_ITEM_data(properties.focus_object, 'focus_object');
+		const starting_object = extract_ITEM_data(properties.starting_object, 'starting_object');
 
 		const json = JSON.stringify({
 			tags_table: extracted_tags,
 			focus_object: focus_object,
-			traits_table: extracted_traits,
+			// traits_table: extracted_traits,
 			objects_table: extracted_objects,
 			starting_object: starting_object,
 			predicates_table: extracted_predicates,
@@ -89,6 +100,8 @@ function(instance, properties) {
 			instance.data.pendingMessages.push(message);
 		}
 	} catch (error) {
-		console.error("[PLUGIN] Error updating plugin:", error);
+		if (error.constructor.name !== 'NotReadyError') {
+			console.warn("[PLUGIN] threw an error:", error);
+		}
 	}
 }

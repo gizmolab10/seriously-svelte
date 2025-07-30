@@ -53,12 +53,12 @@ export default class DB_Bubble extends DB_Common {
 				h.predicate_defaults_remember_runtimeCreate();
 			} else {
 				for (const predicate of predicates) {
-					h.predicate_remember_runtimeCreateUnique(predicate.id, predicate.kind, predicate.isBidirectional, true);
+					h.predicate_remember_runtimeCreateUnique(predicate.id, predicate.kind, predicate.is_bidirectional, true);
 				}
 			}
 			if (!!relationships) {   // all the rest must happen AFTER things are created
 				for (const relationship of relationships) {
-					h.relationship_remember_runtimeCreateUnique(h.db.idBase, relationship.id, relationship.kind.kind, relationship.parent, relationship.child, relationship.orders, T_Create.isFromPersistent);
+					h.relationship_remember_runtimeCreateUnique(h.db.idBase, relationship.id, relationship.kind.kind, relationship.parent.id.hash(), relationship.child.id.hash(), relationship.orders, T_Create.isFromPersistent);
 				}
 			}
 			if (!!traits) {
