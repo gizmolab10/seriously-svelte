@@ -8,6 +8,23 @@ function(instance, properties) {
 		return name;
 	}
 
+	function clean_field_name(field_name) {
+		let clean_name = field_name;
+		
+		// Handle pattern like "poor_rents_list_custom_poorrents" -> "poor_rents"
+		if (clean_name.includes('_list_custom_')) {
+			clean_name = clean_name.split('_list_custom_')[0];
+		}
+		
+		// Apply existing normalization for other patterns
+		const endings = ['_custom_predicate', '_list_custom_thing', '_custom_thing', '_boolean', '_text'];
+		endings.forEach(ending => {
+			clean_name = normalizeField(clean_name, ending);
+		});
+		
+		return clean_name;
+	}
+
 	function extract_ITEM_data(name, item = null, visited = []) {
 		let item_data = {};
 		if (!item) {
@@ -21,11 +38,7 @@ function(instance, properties) {
 				return names;
 			}, {});
 			field_names.forEach(field_name => {
-				let clean_name = field_name;
-				const endings = ['_custom_predicate', '_list_custom_thing', '_custom_thing', '_boolean', '_text'];
-				endings.forEach(ending => {
-					clean_name = normalizeField(clean_name, ending);
-				});
+				let clean_name = clean_field_name(field_name);
 				const ignore_fields = ['Slug'];
 				const value = item.get(field_name);
 				if (!ignore_fields.includes(clean_name)) {
