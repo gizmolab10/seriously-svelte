@@ -20,11 +20,15 @@ export default class DB_Bubble extends DB_Common {
 		}
 		function createThing(thing: any, type: T_Thing = T_Thing.generic) {
 			h.thing_remember_runtimeCreateUnique(h.db.idBase, thing.id, thing.title, thing.color, type, true);
-			for (const parent of thing.parents) {
-				createRelationship(parent, thing, T_Predicate.contains, [1, 1]);
+			if (!!thing.parents) {
+				for (const parent of thing.parents) {
+					createRelationship(parent, thing, T_Predicate.contains, [1, 1]);
+				}
 			}
-			for (const related of thing.related) {
-				createRelationship(related, thing, T_Predicate.isRelated, [1, 1]);
+			if (!!thing.related) {
+				for (const related of thing.related) {
+					createRelationship(related, thing, T_Predicate.isRelated, [1, 1]);
+				}
 			}
 		}
 		const event = e as MessageEvent;
