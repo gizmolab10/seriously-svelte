@@ -8,7 +8,7 @@ function(instance, properties) {
 		return name;
 	}
 
-	function extract_ITEM_data(name, item = null) {
+	function extract_ITEM_data(name, item = null, visited = []) {
 		let item_data = {};
 		if (!item) {
 			item = properties[name];
@@ -29,7 +29,7 @@ function(instance, properties) {
 				const ignore_fields = ['Slug'];
 				const value = item.get(field_name);
 				if (!ignore_fields.includes(clean_name)) {
-					const list_fields = ['owners', 'parents', 'related'];
+					const list_fields = ['parents', 'related', 'owners'];
 					const item_fields = ['child', 'parent', 'owner', 'kind'];
 					if (list_fields.includes(clean_name)) {
 						if (!!value) {
@@ -45,8 +45,7 @@ function(instance, properties) {
 						}
 						item_data['orders'] = orders;
 					} else if (item_fields.includes(clean_name) && typeof value != 'string') {
-						visited.push(clean_name);
-						item_data[clean_name] = extract_ITEM_data(clean_name, value);
+						item_data[clean_name] = extract_ITEM_data(clean_name, value, [...visited, clean_name]);
 					} else {
 						item_data[clean_name] = value;
 					}
@@ -61,7 +60,7 @@ function(instance, properties) {
 		return item_data;
 	}
 
-	function extract_LIST_data(name, list = null) {
+	function extract_LIST_data(name, list = null, visited = []) {
 		// sometimes name is actually the list, use it as a string to get the list from properties
 		list = !!list ? list : (typeof name != 'string') ? name : (properties[name] || null);
 		let extracted_data = [];
@@ -72,8 +71,7 @@ function(instance, properties) {
 		} else {
 			let sublist = list.get(0, list.length());
 			sublist.forEach(item => {
-				visited.push(name);
-				extracted_data.push(extract_ITEM_data(name, item));
+				extracted_data.push(extract_ITEM_data(name, item, [...visited, name]));
 			});
 		}
 		return extracted_data;

@@ -1,4 +1,4 @@
-import { e, h, k, T_Thing, T_Create, T_Persistence } from '../common/Global_Imports';
+import { e, h, k, T_Thing, T_Create, T_Predicate, T_Persistence } from '../common/Global_Imports';
 import { T_Database } from './DB_Common';
 import DB_Common from './DB_Common';
 
@@ -14,6 +14,19 @@ export default class DB_Bubble extends DB_Common {
 	}
 
 	private handle_bubble_message = (e: Event) => {
+		function createRelationship(parent: any, child: any, kind: any, orders: any) {
+			const id = Math.random().toString(36).substring(2, 15);
+			h.relationship_remember_runtimeCreateUnique(h.db.idBase, id, kind, parent.id, child.id, orders, T_Create.isFromPersistent);
+		}
+		function createThing(thing: any, type: T_Thing = T_Thing.generic) {
+			h.thing_remember_runtimeCreateUnique(h.db.idBase, thing.id, thing.title, thing.color, type, true);
+			for (const parent of thing.parents) {
+				createRelationship(parent, thing, T_Predicate.contains, [1, 1]);
+			}
+			for (const related of thing.related) {
+				createRelationship(related, thing, T_Predicate.isRelated, [1, 1]);
+			}
+		}
 		const event = e as MessageEvent;
 		if (!event.data.properties) {
 			h.wrapUp_data_forUX();
@@ -42,11 +55,11 @@ export default class DB_Bubble extends DB_Common {
 			console.log('received predicates:', predicates);
 			console.log('received relationships:', relationships);
 			if (!!root) {   // must happen BEFORE things are created
-				root = h.thing_remember_runtimeCreateUnique(h.db.idBase, root.id, root.title, root.color, T_Thing.root, true);
+				createThing(root, T_Thing.root);
 			}
 			if (!!things) {
 				for (const thing of things) {
-					h.thing_remember_runtimeCreateUnique(h.db.idBase, thing.id, thing.title, thing.color, T_Thing.generic, true);
+					createThing(thing, T_Thing.generic);
 				}
 			}
 			if (!predicates) {   // should happen BEFORE relationships are created
