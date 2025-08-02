@@ -219,19 +219,21 @@ export class Events {
 					}
 				}
 				switch (key) {
+					case '[':				return;
+					case ']':				return;		// recents
 					case '?':				c.showHelp(); return;
+					case 'm':				layout.toggle_graph_type(); break;
 					case '!':				layout.grand_adjust_toFit(); break;
 					case '>':				layout.increase_depth_limit_by(1); break;
 					case '<':				layout.increase_depth_limit_by(-1); break;
 					case 's':				h.persist_toFile(T_File_Format.json); return;
-					case 'm':				layout.toggle_graph_type(); break;
 					case 'c':				layout.set_user_graph_offsetTo(Point.zero); return;
-					case 'o':				h.select_file_toUpload(T_File_Format.json, event.shiftKey); break;
-					case 'p':				if (!COMMAND) { u.print_element_byClassName(ux.inTreeMode ? 'tree-graph' : 'radial-graph') }; break;
-					case '!':				graph_needsRebuild = h.rootAncestry?.becomeFocus(); break;
 					case 'escape':			if (!!get(w_s_alteration)) { h.stop_alteration(); }; break;
+					case 'o':				h.select_file_toUpload(T_File_Format.json, event.shiftKey); break;
+					case '/':				if (!ancestry) { graph_needsRebuild = h.rootAncestry?.becomeFocus(); } break;
 					case 'arrowup':			grabs.latest_rebuild_persistentMoveUp_maybe( true, SHIFT, OPTION, EXTREME); break;
 					case 'arrowdown':		grabs.latest_rebuild_persistentMoveUp_maybe(false, SHIFT, OPTION, EXTREME); break;
+					case 'p':				if (!COMMAND) { u.print_element_byClassName(ux.inTreeMode ? 'tree-graph' : 'radial-graph') }; break;
 				}
 				if (graph_needsRebuild) {
 					layout.grand_build();

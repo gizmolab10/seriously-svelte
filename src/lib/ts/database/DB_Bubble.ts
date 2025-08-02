@@ -1,4 +1,4 @@
-import { e, h, k, T_Thing, T_Create, T_Predicate, T_Persistence } from '../common/Global_Imports';
+import { e, h, k, debug, T_Thing, T_Create, T_Predicate, T_Persistence } from '../common/Global_Imports';
 import { T_Database } from './DB_Common';
 import DB_Common from './DB_Common';
 
@@ -38,7 +38,7 @@ export default class DB_Bubble extends DB_Common {
 			let root, tags, things, traits, focused, selecteds, predicates, relationships;
 			try {
 				const properties = JSON.parse(event.data.properties);
-				console.log('Bubble sent update:', properties);
+				debug.log_bubble(`Bubble sent update: ${properties}`);
 				relationships = properties.relationships_table;
 				predicates = properties.predicates_table;
 				selecteds = properties.selected_objects;
@@ -50,14 +50,14 @@ export default class DB_Bubble extends DB_Common {
 			} catch (err) {
 				console.warn('Could not parse properties:', err);
 			}
-			console.log('received root:', root);
-			console.log('received tags:', tags);
-			console.log('received focus:', focused);
-			console.log('received traits:', traits);
-			console.log('received objects:', things);
-			console.log('received selected:', selecteds);
-			console.log('received predicates:', predicates);
-			console.log('received relationships:', relationships);
+			debug.log_bubble(`received root: ${root}`);
+			debug.log_bubble(`received tags: ${tags}`);
+			debug.log_bubble(`received focus: ${focused}`);
+			debug.log_bubble(`received traits: ${traits}`);
+			debug.log_bubble(`received objects: ${things}`);
+			debug.log_bubble(`received selected: ${selecteds}`);
+			debug.log_bubble(`received predicates: ${predicates}`);
+			debug.log_bubble(`received relationships: ${relationships}`);
 			if (!!root) {   // must happen BEFORE things are created
 				createThing(root, T_Thing.root);
 			}

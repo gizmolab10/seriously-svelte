@@ -9,9 +9,11 @@ export enum T_Debug {
 	reposition		= 'reposition',
 	fast_load		= 'fast_load',
 	segments		= 'segments',
+	actions			= 'actions',		// state logic of add parent action
 	reticle			= 'reticle',	// debug radial layout geometry
 	layout 			= 'layout',
 	action  		= 'action',
+	bubble  		= 'bubble',
 	colors			= 'colors',		// indicate some coordinates
 	cursor			= 'cursor',
 	crumbs  		= 'crumbs',
@@ -24,15 +26,14 @@ export enum T_Debug {
 	build			= 'build',
 	error			= 'error',		// async errors
 	graph			= 'graph',		// log size of graph area
+	hover			= 'hover',
 	lines			= 'lines',		// alignment dots for lines and widgets
 	mouse			= 'mouse',
-	hover			= 'hover',
 	order			= 'order',		// observe relocating
+	thing			= 'thing',
 	trace			= 'trace',
-	actions			= 'actions',		// state logic of add parent action
 	edit			= 'edit',		// state machine for editing
 	grab			= 'grab',
-	thing			= 'thing',
 	move			= 'move',
 	key				= 'key',		// keyboard input
 }
@@ -46,11 +47,11 @@ export class Debug {
 	get thing(): boolean { return this.hasOption(T_Debug.thing); }
 	get graph(): boolean { return this.hasOption(T_Debug.graph); }
 	get lines(): boolean { return this.hasOption(T_Debug.lines); }
-	get actions(): boolean { return this.hasOption(T_Debug.actions); }
 	get trace(): boolean { return this.hasOption(T_Debug.trace); }
 	get cursor(): boolean { return this.hasOption(T_Debug.cursor); }
 	get radial(): boolean { return this.hasOption(T_Debug.radial); }
 	get reticle(): boolean { return this.hasOption(T_Debug.reticle); }
+	get actions(): boolean { return this.hasOption(T_Debug.actions); }
 	get fast_load(): boolean { return this.hasOption(T_Debug.fast_load); }
 	get hide_rings(): boolean { return this.hasOption(T_Debug.hide_rings); }
 
@@ -65,8 +66,8 @@ export class Debug {
 	log_hover(message: string) { this.log_maybe(T_Debug.hover, message); }
 	log_lines(message: string) { this.log_maybe(T_Debug.lines, message); }
 	log_mouse(message: string) { this.log_maybe(T_Debug.mouse, message); }
-	log_actions(message: string) { this.log_maybe(T_Debug.actions, message); }
 	log_action(message: string) { this.log_maybe(T_Debug.action, message); }
+	log_bubble(message: string) { this.log_maybe(T_Debug.bubble, message); }
 	log_colors(message: string) { this.log_maybe(T_Debug.colors, message); }
 	log_crumbs(message: string) { this.log_maybe(T_Debug.crumbs, message); }
 	log_cursor(message: string) { this.log_maybe(T_Debug.cursor, message); }
@@ -77,6 +78,7 @@ export class Debug {
 	log_remote(message: string) { this.log_maybe(T_Debug.remote, message); }
 	log_signal(message: string) { this.log_maybe(T_Debug.signal, message); }
 	log_things(message: string) { this.log_maybe(T_Debug.things, message); }
+	log_actions(message: string) { this.log_maybe(T_Debug.actions, message); }
 	log_segments(message: string) { this.log_maybe(T_Debug.segments, message); }
 	log_reposition(message: string) { this.log_maybe(T_Debug.reposition, message); }
 	log_preferences(message: string) { this.log_maybe(T_Debug.preferences, message); }
@@ -103,8 +105,10 @@ export class Debug {
 					case 'hide_rings': this.flags.push(T_Debug.hide_rings); break;
 					case 'reposition': this.flags.push(T_Debug.reposition); break;
 					case 'segments': this.flags.push(T_Debug.segments); break;
+					case 'actions': this.flags.push(T_Debug.actions); break;
 					case 'reticle': this.flags.push(T_Debug.reticle); break;
 					case 'action': this.flags.push(T_Debug.action); break;
+					case 'bubble': this.flags.push(T_Debug.bubble); break;
 					case 'colors': this.flags.push(T_Debug.colors); break;
 					case 'crumbs': this.flags.push(T_Debug.crumbs); break;
 					case 'cursor': this.flags.push(T_Debug.cursor); break;
@@ -122,11 +126,10 @@ export class Debug {
 					case 'lines': this.flags.push(T_Debug.lines); break;
 					case 'mouse': this.flags.push(T_Debug.mouse); break;
 					case 'order': this.flags.push(T_Debug.order); break;
-					case 'actions': this.flags.push(T_Debug.actions); break;
 					case 'trace': this.flags.push(T_Debug.trace); break;
+					case 'thing': this.flags.push(T_Debug.thing); break;
 					case 'edit': this.flags.push(T_Debug.edit); break;
 					case 'grab': this.flags.push(T_Debug.grab); break;
-					case 'thing': this.flags.push(T_Debug.thing); break;
 					case 'move': this.flags.push(T_Debug.move); break;
 					case 'key': this.flags.push(T_Debug.key); break;
 				}
