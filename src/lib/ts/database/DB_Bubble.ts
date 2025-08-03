@@ -38,7 +38,7 @@ export default class DB_Bubble extends DB_Common {
 			let root, tags, things, traits, focused, selecteds, predicates, relationships;
 			try {
 				const properties = JSON.parse(event.data.properties);
-				debug.log_bubble(`Bubble sent update: ${properties}`);
+				debug.log_bubble(`[DB_Bubble] received bubble update: ${properties}`);
 				relationships = properties.relationships_table;
 				predicates = properties.predicates_table;
 				selecteds = properties.selected_objects;
@@ -48,16 +48,16 @@ export default class DB_Bubble extends DB_Common {
 				traits = properties.traits_table;
 				tags = properties.tags_table;
 			} catch (err) {
-				console.warn('Could not parse properties:', err);
+				console.warn('[DB_Bubble] Could not parse properties:', err);
 			}
-			debug.log_bubble(`received root: ${root}`);
-			debug.log_bubble(`received tags: ${tags}`);
-			debug.log_bubble(`received focus: ${focused}`);
-			debug.log_bubble(`received traits: ${traits}`);
-			debug.log_bubble(`received objects: ${things}`);
-			debug.log_bubble(`received selected: ${selecteds}`);
-			debug.log_bubble(`received predicates: ${predicates}`);
-			debug.log_bubble(`received relationships: ${relationships}`);
+			debug.log_bubble(`[DB_Bubble] got root: ${root}`);
+			debug.log_bubble(`[DB_Bubble] got tags: ${tags}`);
+			debug.log_bubble(`[DB_Bubble] got focus: ${focused}`);
+			debug.log_bubble(`[DB_Bubble] got traits: ${traits}`);
+			debug.log_bubble(`[DB_Bubble] got objects: ${things}`);
+			debug.log_bubble(`[DB_Bubble] got selected: ${selecteds}`);
+			debug.log_bubble(`[DB_Bubble] got predicates: ${predicates}`);
+			debug.log_bubble(`[DB_Bubble] got relationships: ${relationships}`);
 			if (!!root) {   // must happen BEFORE things are created
 				createThing(root, T_Thing.root);
 			}

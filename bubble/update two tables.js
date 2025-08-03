@@ -28,7 +28,9 @@ function(instance, properties) {
 					const item_fields = ['child', 'parent', 'owner', 'kind'];
 					const needs_extraction = item_fields.includes(clean_name) && typeof value != 'string';
 					if (value == undefined) {
-						console.warn('value undefined for', field_name, 'item properties:', item_properties);
+						if (value != null) {
+							console.warn('value undefined for', field_name, 'item properties:', item_properties);
+						}
 					} else if (field_name == 'orders_list_number') {
 						let orders = [];
 						for (let i = 0; i < value.length(); i++) {
@@ -49,7 +51,7 @@ function(instance, properties) {
 			if (instance.data.attempts[name] == 0) {
 				delete instance.data.attempts[name];
 			}
-			console.log('item data:', name, item_data);
+			// console.log('item data:', name, item_data);
 		}
 		return item_data;
 	}

@@ -27,6 +27,7 @@ function(instance, properties) {
 	}
 
 	const list_fields = user_configured_list_names(['object_parents_field', 'object_related_field', 'owners_field']);
+	function has_seriously_name(name) { return Object.keys(user_configured_field_names).includes(name); }
 
 	function clean_field_name(field_name, remove_these) {
 		let rename = field_name;
@@ -84,13 +85,15 @@ function(instance, properties) {
 			}, {});
 			item_field_names.forEach(item_field_name => {
 				let clean_name = clean_field_name(item_field_name, to_be_removed);
+				const has_name = has_seriously_name(clean_name) || has_seriously_name(item_field_name);
 				const seriously_name = seriously_field_name_for(clean_name) ?? seriously_field_name_for(item_field_name);
 				const value = item.get(item_field_name);
 				if (!ignore_fields.includes(clean_name)) {
-					// if (!seriously_name) {
-					// 	console.warn('extracted field name unresolved for', item_field_name, 'item properties:', item_properties);
-					// } else 
-					if (list_fields.includes(clean_name)) {
+					if (!seriously_name) {
+						if (has_name) {
+							console.warn('extracted seriously name unresolved for', item_field_name, 'item properties:', item_properties);
+						}
+					} else if (list_fields.includes(clean_name)) {
 						const keepers = carefully_extract(value, item_field_name, visited, item_data.id);
 						if (!!keepers) {
 							item_data[seriously_name] = keepers;
