@@ -47,8 +47,8 @@ function(instance, properties) {
 	function SERIOUSLY_field_name_for(name) {
 		// convert to a name recognized by the netlify webSERIOUSLY app
 		for (const [PLUGIN_field_name, field_name] of Object.entries(MESSY_names_by_PLUGIN_field_name)) {
-			if (field_name == name) {
-				return STRIPPED_field_name(PLUGIN_field_name, ['_field']);
+			if (name && typeof name.listProperties === 'function') {
+				return true;
 			}
 		}
 		return null;
