@@ -8,6 +8,7 @@ function(instance, properties) {
 	}
 
 	function extract_ITEM_data(item, name) {
+		log('extract_ITEM_data', name, item, visited);
 		let item_data = {};
 		if (!!item) {
 			instance.data.attempts[name] = (instance.data.attempts[name] ?? 0) + 1;

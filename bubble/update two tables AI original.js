@@ -3,8 +3,8 @@ function(instance, properties) {
 	const item_fields = ['child', 'parent', 'owner', 'kind'];
 	const user_configured_field_names = {};
 	const ignore_fields = ['Slug'];
-	const debug = false;
-
+	const debug = true;
+	
 	const plugin_field_names = [
 		'focus_object',
 		'object_id_field',
@@ -13,11 +13,16 @@ function(instance, properties) {
 		'object_color_field',
 		'object_title_field',
 		'object_parents_field',
-		'object_related_field'];
+		'object_related_field'
+	];
 
 	plugin_field_names.forEach(plugin_field_name => {
 		user_configured_field_names[plugin_field_name] = properties[plugin_field_name];
 	});
+
+	const list_fields = user_configured_list_names(['object_parents_field', 'object_related_field', 'owners_field']);
+	function has_seriously_name(name) { return Object.keys(user_configured_field_names).includes(name); }
+	function log(message, ...optionalParams) { if (debug) { console.log(message, ...optionalParams); } }
 
 	function user_configured_list_names(list_names) {
 		const names = [];
@@ -25,25 +30,6 @@ function(instance, properties) {
 			names.push(user_configured_field_names[list_name]);
 		});
 		return names;
-	}
-
-	const list_fields = user_configured_list_names(['object_parents_field', 'object_related_field', 'owners_field']);
-	function has_seriously_name(name) { return Object.keys(user_configured_field_names).includes(name); }
-	function log(message, ...optionalParams) { if (debug) { console.log(message, ...optionalParams); } }
-
-	function short_field_name(field_name, remove_these) {
-		let rename = field_name;
-		let parts = rename.split('object_');
-		if (parts.length > 1) {
-			rename = parts[1];
-		}
-		remove_these.forEach(remove_me => {
-			parts = rename.split(remove_me);
-			if (parts.length > 1) {
-				rename = parts[0];
-			}
-		});
-		return rename;
 	}
 
 	function seriously_field_name_for(name) {
@@ -76,24 +62,37 @@ function(instance, properties) {
 		return null;
 	}
 
-	function extract_ITEM_data(plugin_field_name, item = null, visited = []) {
-		let item_data = {};
-		if (!item) {
-			item = properties[plugin_field_name];
+	function short_field_name(field_name, remove_these) {
+		let rename = field_name;
+		let parts = rename.split('object_');
+		if (parts.length > 1) {
+			rename = parts[1];
 		}
+		remove_these.forEach(remove_me => {
+			parts = rename.split(remove_me);
+			if (parts.length > 1) {
+				rename = parts[0];
+			}
+		});
+		return rename;
+	}
+
+	function extract_ITEM_data(item, name, visited = []) {
+		log('extract_ITEM_data', name, item, visited);
+		let item_data = {};
 		if (!!item) {
-			instance.data.attempts[plugin_field_name] = (instance.data.attempts[plugin_field_name] ?? 0) + 1;
-			const item_field_names = item.listProperties();
-			const item_properties = item_field_names.reduce((names, field_name) => {	// for debugging
+			instance.data.attempts[name] = (instance.data.attempts[name] ?? 0) + 1;
+			const field_names = item.listProperties();
+			const item_properties = field_names.reduce((names, field_name) => {	// for debugging
 				names[field_name] = item.get(field_name);
 				return names;
 			}, {});
-			item_field_names.forEach(item_field_name => {
-				let short_name = short_field_name(item_field_name, to_be_removed);
-				const has_name = has_seriously_name(short_name) || has_seriously_name(item_field_name);
-				const seriously_name = seriously_field_name_for(short_name) ?? seriously_field_name_for(item_field_name);
+			field_names.forEach(item_field_name => {
+				const short_name = short_field_name(item_field_name, to_be_removed);
 				const value = item.get(item_field_name);
 				if (!ignore_fields.includes(short_name)) {
+					const has_name = has_seriously_name(short_name) || has_seriously_name(item_field_name);
+					const seriously_name = seriously_field_name_for(short_name) ?? seriously_field_name_for(item_field_name);
 					if (!seriously_name) {
 						if (has_name) {
 							console.warn('extracted seriously name unresolved for', item_field_name, 'item properties:', item_properties);
@@ -104,9 +103,8 @@ function(instance, properties) {
 						}
 					} else if (item_fields.includes(short_name) && typeof value != 'string') {
 						log('recursively extract_ITEM_data', short_name, value, visited);
-						item_data[seriously_name] = extract_ITEM_data(short_name, value, [...visited, short_name]);
+						item_data[seriously_name] = extract_ITEM_data(value, short_name, [...visited, short_name]);
 					} else if (list_fields.includes(short_name)) {
-						log('list_fields.includes(short_name)', short_name);
 						const keepers = extract_ignoring(item_field_name, value, visited, item_data.id);
 						if (!!keepers) {
 							item_data[seriously_name] = keepers;
@@ -116,34 +114,28 @@ function(instance, properties) {
 					}
 				}
 			});
-			instance.data.attempts[plugin_field_name] -= 1;
-			if (instance.data.attempts[plugin_field_name] == 0) {
-				delete instance.data.attempts[plugin_field_name];
+			instance.data.attempts[name] -= 1;
+			if (instance.data.attempts[name] == 0) {
+				delete instance.data.attempts[name];
 			}
-			// log('item data:', plugin_field_name, item_data);
+			// console.log('item data:', name, item_data);
 		}
 		return item_data;
 	}
 
-	function extract_LIST_data(field_name, list = null, visited = []) {
-		// sometimes name is actually the list, use it as a string to get the list from properties
-		list = !!list ? list : (typeof field_name != 'string') ? field_name : (properties[field_name] || null);
-		log('extract_LIST_data', field_name, list, visited);
-		let extracted_data = [];
-		if (visited.includes(field_name)) {
-			console.log(field_name, 'already visited');
-		} else if (!list) {
-			if (list != null) {
-				console.warn(field_name, 'is null');
-			}
-		} else if (!list.length || typeof list.length !== 'function' || typeof list.get !== 'function') {
-			console.warn(field_name, 'is not a list');
-		} else {
-			let sublist = list.get(0, list.length());
-			sublist.forEach(item => {
-				extracted_data.push(extract_ITEM_data(field_name, item, [...visited, field_name]));
-			});
+	function extract_LIST_data(name, list = null, visited = []) {
+		const list_to_use = list || (typeof name === 'string' ? (properties[name] || null) : name);
+		log('extract_LIST_data', name, list_to_use, visited);
+		if (!list_to_use) return [];
+		if (visited.includes(name)) {
+			console.log(name, 'already visited');
+			return [];
 		}
+		let sublist = list_to_use.get(0, list_to_use.length());
+		let extracted_data = [];
+		sublist.forEach(item => {
+			extracted_data.push(extract_ITEM_data(item, name, [...visited, name]));
+		});
 		return extracted_data;
 	}
 
@@ -166,13 +158,20 @@ function(instance, properties) {
 		instance.data.attempts = instance.data.attempts || {};
 
 		send({
-			things: extract_LIST_data('objects_table'),
-			root: extract_ITEM_data('starting_object'),
+			objects_table: extract_LIST_data('objects_table'),
+			predicates_table: extract_LIST_data('predicates_table'),
+			relationships_table: extract_LIST_data('relationships_table'),
+			starting_object: extract_ITEM_data(properties.starting_object, 'starting_object'),
 		}, null, 0);
 
 		send({
-			focus: extract_ITEM_data('focus_object'),
-			grabs: extract_LIST_data('selected_objects'),
+			selected_objects: extract_LIST_data('selected_objects'),
+			focus_object: extract_ITEM_data(properties.focus_object, 'focus_object'),
+		}, null, 0);
+
+		send({
+			tags_table: extract_LIST_data('tags_table'),
+			traits_table: extract_LIST_data('traits_table')
 		}, null, 0);
 
 	} catch (error) {
@@ -183,4 +182,3 @@ function(instance, properties) {
 		}
 	}
 }
-

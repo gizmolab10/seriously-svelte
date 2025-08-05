@@ -6,7 +6,7 @@
 	import Slider from '../mouse/Slider.svelte';
 	import { transparentize } from 'color2k';
 	export let zindex = T_Layer.frontmost;
-	export let width = k.width.details;
+	export let width = 137;
 	export let top = 0;
 	const back_up = -5;
 	const left_width = 40;
@@ -74,7 +74,7 @@
 			{#key $w_show_tree_ofType}
 				{#key $w_show_tree_ofType}
 					<Segmented
-						width={137}
+						width={width}
 						name='tree-types'
 						allow_multiple={true}
 						height={segmented_height}

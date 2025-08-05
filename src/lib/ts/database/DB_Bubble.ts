@@ -14,20 +14,20 @@ export default class DB_Bubble extends DB_Common {
 	}
 
 	private handle_bubble_message = (e: Event) => {
-		function createRelationship(parent: any, child: any, kind: any, orders: any) {
+		function createRelationship(b_parent: any, b_child: any, b_kind: any, b_orders: any) {
 			const id = Math.random().toString(36).substring(2, 15);
-			h.relationship_remember_runtimeCreateUnique(h.db.idBase, id, kind, parent.id, child.id, orders, T_Create.isFromPersistent);
+			h.relationship_remember_runtimeCreateUnique(h.db.idBase, id, b_kind, b_parent.id, b_child.id, b_orders, T_Create.isFromPersistent);
 		}
-		function createThing(thing: any, type: T_Thing = T_Thing.generic) {
-			h.thing_remember_runtimeCreateUnique(h.db.idBase, thing.id, thing.title, thing.color, type, true);
-			if (!!thing.parents) {
-				for (const parent of thing.parents) {
-					createRelationship(parent, thing, T_Predicate.contains, [1, 1]);
+		function createThing(b_thing: any, b_type: T_Thing = T_Thing.generic) {
+			h.thing_remember_runtimeCreateUnique(h.db.idBase, b_thing.id, b_thing.title, b_thing.color, b_type, true);
+			if (!!b_thing.parents) {
+				for (const b_parent of b_thing.parents) {
+					createRelationship(b_parent, b_thing, T_Predicate.contains, [1, 1]);
 				}
 			}
-			if (!!thing.related) {
-				for (const related of thing.related) {
-					createRelationship(related, thing, T_Predicate.isRelated, [1, 1]);
+			if (!!b_thing.related) {
+				for (const b_related of b_thing.related) {
+					createRelationship(b_related, b_thing, T_Predicate.isRelated, [1, 1]);
 				}
 			}
 		}
@@ -35,72 +35,72 @@ export default class DB_Bubble extends DB_Common {
 		if (!event.data.properties) {
 			h.wrapUp_data_forUX();
 		} else {
-			let root, tags, things, traits, focused, selecteds, predicates, relationships;
+			let b_root, b_tags, b_things, b_traits, b_focused, b_selecteds, b_predicates, b_relationships;
 			try {
 				const properties = JSON.parse(event.data.properties);
 				debug.log_bubble(`[DB_Bubble] received bubble update: ${properties}`);
-				relationships = properties.relationships_table;
-				predicates = properties.predicates_table;
-				selecteds = properties.selected_objects;
-				focused = properties.focus_object;
-				things = properties.objects_table;
-				root = properties.starting_object;
-				traits = properties.traits_table;
-				tags = properties.tags_table;
+				b_relationships = properties.relationships;
+				b_predicates = properties.predicates;
+				b_selecteds = properties.grabs;
+				b_focused = properties.focus;
+				b_things = properties.things;
+				b_traits = properties.traits;
+				b_root = properties.root;
+				b_tags = properties.tags;
 			} catch (err) {
 				console.warn('[DB_Bubble] Could not parse properties:', err);
 			}
-			debug.log_bubble(`[DB_Bubble] got root: ${root}`);
-			debug.log_bubble(`[DB_Bubble] got tags: ${tags}`);
-			debug.log_bubble(`[DB_Bubble] got focus: ${focused}`);
-			debug.log_bubble(`[DB_Bubble] got traits: ${traits}`);
-			debug.log_bubble(`[DB_Bubble] got objects: ${things}`);
-			debug.log_bubble(`[DB_Bubble] got selected: ${selecteds}`);
-			debug.log_bubble(`[DB_Bubble] got predicates: ${predicates}`);
-			debug.log_bubble(`[DB_Bubble] got relationships: ${relationships}`);
-			if (!!root) {   // must happen BEFORE things are created
-				createThing(root, T_Thing.root);
+			debug.log_bubble(`[DB_Bubble] got root: ${b_root}`);
+			debug.log_bubble(`[DB_Bubble] got tags: ${b_tags}`);
+			debug.log_bubble(`[DB_Bubble] got focus: ${b_focused}`);
+			debug.log_bubble(`[DB_Bubble] got traits: ${b_traits}`);
+			debug.log_bubble(`[DB_Bubble] got objects: ${b_things}`);
+			debug.log_bubble(`[DB_Bubble] got selected: ${b_selecteds}`);
+			debug.log_bubble(`[DB_Bubble] got predicates: ${b_predicates}`);
+			debug.log_bubble(`[DB_Bubble] got relationships: ${b_relationships}`);
+			if (!!b_root) {   // must happen BEFORE things are created
+				createThing(b_root, T_Thing.root);
 			}
-			if (!!things) {
-				for (const thing of things) {
-					createThing(thing, T_Thing.generic);
+			if (!!b_things) {
+				for (const b_thing of b_things) {
+					createThing(b_thing, T_Thing.generic);
 				}
 			}
-			if (!predicates) {   // should happen BEFORE relationships are created
+			if (!b_predicates) {   // should happen BEFORE relationships are created
 				h.predicate_defaults_remember_runtimeCreate();
 			} else {
-				for (const predicate of predicates) {
-					h.predicate_remember_runtimeCreateUnique(predicate.id, predicate.kind, predicate.is_bidirectional, true);
+				for (const b_predicate of b_predicates) {
+					h.predicate_remember_runtimeCreateUnique(b_predicate.id, b_predicate.kind, b_predicate.is_bidirectional, true);
 				}
 			}
-			if (!!relationships) {   // all the rest must happen AFTER things are created
-				for (const relationship of relationships) {
-					h.relationship_remember_runtimeCreateUnique(h.db.idBase, relationship.id, relationship.kind.kind, relationship.parent.id, relationship.child.id, relationship.orders, T_Create.isFromPersistent);
+			if (!!b_relationships) {   // all the rest must happen AFTER things are created
+				for (const b_relationship of b_relationships) {
+					h.relationship_remember_runtimeCreateUnique(h.db.idBase, b_relationship.id, b_relationship.kind.kind, b_relationship.parent.id, b_relationship.child.id, b_relationship.orders, T_Create.isFromPersistent);
 				}
 			}
-			if (!!traits) {
-				for (const trait of traits) {
-					h.trait_remember_runtimeCreateUnique(h.db.idBase, trait.id, trait.owner.id, trait.type, trait.text, {}, true);
+			if (!!b_traits) {
+				for (const b_trait of b_traits) {
+					h.trait_remember_runtimeCreateUnique(h.db.idBase, b_trait.id, b_trait.owner.id, b_trait.type, b_trait.text, {}, true);
 				}
 			}
-			if (!!tags) {
-				for (const tag of tags) {
-					const ownerHIDs = tag.owners.map((owner: {id: string;}) => owner.id.hash());
-					h.tag_remember_runtimeCreateUnique(h.db.idBase, tag.id, tag.type, ownerHIDs, true);
+			if (!!b_tags) {
+				for (const b_tag of b_tags) {
+					const ownerHIDs = b_tag.owners.map((owner: {id: string;}) => owner.id.hash());
+					h.tag_remember_runtimeCreateUnique(h.db.idBase, b_tag.id, b_tag.type, ownerHIDs, true);
 				}
 			}
 
 			h.wrapUp_data_forUX();			// create ancestries and tidy up
 			
-			if (!!focused?.id) {			// must happen AFTER ancestries are created
-				const focus = h.thing_forHID(focused.id.hash());
+			if (!!b_focused?.id) {			// must happen AFTER ancestries are created
+				const focus = h.thing_forHID(b_focused.id.hash());
 				if (!!focus?.ancestry) {
 					focus.ancestry.becomeFocus(true);
 				}
 			}
-			if (!!selecteds) {				// must happen AFTER ancestries are created
-				for (const selected of selecteds) {
-					const grab = h.thing_forHID(selected.id.hash());
+			if (!!b_selecteds) {				// must happen AFTER ancestries are created
+				for (const b_selected of b_selecteds) {
+					const grab = h.thing_forHID(b_selected.id.hash());
 					if (!!grab?.ancestry) {
 						grab.ancestry.grab();
 					}

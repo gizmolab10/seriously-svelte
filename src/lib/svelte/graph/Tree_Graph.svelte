@@ -17,7 +17,7 @@
 
 </script>
 
-<Tree_Preferences top={0} width={137} zindex={T_Layer.frontmost}/>
+<Tree_Preferences top={0} width={117} zindex={T_Layer.frontmost}/>
 {#key reattachments}
 	{#if !!focus && !layout.branch_was_visited(focus, true)}
 		<div class = 'tree-graph-container'
