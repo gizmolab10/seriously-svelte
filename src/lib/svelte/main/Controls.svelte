@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { c, h, k, p, u, ux, show, grabs, Point, colors, layout, svgPaths, signals, S_Element } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Graph, T_Element, T_Control, T_Kinship, T_Request } from '../../ts/common/Global_Imports';
+	import { c, e, h, k, p, u, ux, show, grabs, Point, colors, layout, svgPaths, signals } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Graph, S_Element, T_Element, T_Control, T_Kinship, T_Request } from '../../ts/common/Global_Imports';
 	import { w_background_color, w_device_isMobile, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { w_show_details, w_show_graph_ofType, w_show_tree_ofType } from '../../ts/common/Stores';
 	import { w_graph_rect, w_count_resize, w_popupView_id } from '../../ts/common/Stores';
@@ -69,7 +69,7 @@
 						center={new Point(lefts[6], 10)}
 						style='border: none; background: none;'
 						es_button={ux.s_control_forType(T_Control.details)}
-						closure={(s_mouse) => ux.handle_s_mouse_forControl_Type(s_mouse, T_Control.details)}/>
+						closure={(s_mouse) => e.handle_s_mouse_forControl_Type(s_mouse, T_Control.details)}/>
 				{:else}
 					<Button
 						border_thickness=0
@@ -77,7 +77,7 @@
 						name='details-toggle'
 						center={new Point(lefts[0], y_center)}
 						es_button={ux.s_control_forType(T_Control.details)}
-						closure={(s_mouse) => ux.handle_s_mouse_forControl_Type(s_mouse, T_Control.details)}>
+						closure={(s_mouse) => e.handle_s_mouse_forControl_Type(s_mouse, T_Control.details)}>
 						<svg
 							class='hamburger-svg'
 							style='
@@ -119,7 +119,7 @@
 						name={T_Control.grow}
 						center={new Point(lefts[4], y_center)}
 						es_button={ux.s_control_forType(T_Control.grow)}
-						closure={(s_mouse) => ux.handle_s_mouse_forControl_Type(s_mouse, T_Control.grow)}>
+						closure={(s_mouse) => e.handle_s_mouse_forControl_Type(s_mouse, T_Control.grow)}>
 						<svg id='grow-svg' style={svg_style}>
 							<path
 								id='grow-path'
@@ -135,7 +135,7 @@
 						name={T_Control.shrink}
 						center={new Point(lefts[5], y_center)}
 						es_button={ux.s_control_forType(T_Control.shrink)}
-						closure={(s_mouse) => ux.handle_s_mouse_forControl_Type(s_mouse, T_Control.shrink)}>
+						closure={(s_mouse) => e.handle_s_mouse_forControl_Type(s_mouse, T_Control.shrink)}>
 						<svg id='shrink-svg' style={svg_style}>
 							<path
 								id='shrink-path'

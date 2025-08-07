@@ -16,8 +16,11 @@ function(instance, properties) {
 		'object_related_field'];
 
 	plugin_field_names.forEach(plugin_field_name => {
-		const normalized_name = properties[plugin_field_name].replace(/ /, '_').toLowerCase();
-		user_configured_field_names[plugin_field_name] = normalized_name;
+		const value = properties[plugin_field_name];
+		if (!!value) {
+			const normalized_name = value.replace(/ /, '_').toLowerCase();
+			user_configured_field_names[plugin_field_name] = normalized_name;
+		}
 	});
 
 	function user_configured_list_names(list_names) {

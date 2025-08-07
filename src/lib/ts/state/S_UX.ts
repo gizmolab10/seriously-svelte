@@ -1,7 +1,7 @@
-import { w_show_details, w_popupView_id, w_show_graph_ofType } from '../common/Stores';
-import { c, k, colors, layout, Ancestry } from '../common/Global_Imports';
 import { T_Graph, T_Control, T_Element } from '../common/Global_Imports';
 import { S_Mouse, S_Widget, S_Element } from '../common/Global_Imports';
+import { colors, Ancestry } from '../common/Global_Imports';
+import { w_show_graph_ofType } from '../common/Stores';
 import Identifiable from '../runtime/Identifiable';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
@@ -47,11 +47,6 @@ export default class S_UX {
 		return this.mouse_responder_number;
 	}
 
-	togglePopupID(id: T_Control) {
-		const same = get(w_popupView_id) == id
-		w_popupView_id.set(same ? null : id); 
-	}
-
 	s_element_for(identifiable: Identifiable | null, type: T_Element, subtype: string): S_Element {
 		const realIdentifiable = identifiable ?? new Identifiable()
 		const name = this.name_from(realIdentifiable, type, subtype);
@@ -88,23 +83,6 @@ export default class S_UX {
 			this.s_control_byType[t_control] = s_control;
 		}
 		return s_control;
-	}
-
-	handle_s_mouse_forControl_Type(s_mouse: S_Mouse, t_control: T_Control) {
-		if (s_mouse.isHover) {
-			const s_control = this.s_control_byType[t_control];
-			if (!!s_control) {
-				s_control.isOut = s_mouse.isOut;
-			}
-		} else if (s_mouse.isUp) {
-			switch (t_control) {
-				case T_Control.help:	c.showHelp(); break;
-				case T_Control.details: w_show_details.set(!get(w_show_details)); break;
-				case T_Control.grow:	this.width = layout.scaleBy(k.ratio.zoom_in) - 20; break;
-				case T_Control.shrink:	this.width = layout.scaleBy(k.ratio.zoom_out) - 20; break;
-				default:				this.togglePopupID(t_control); break;
-			}
-		}
 	}
 
 }

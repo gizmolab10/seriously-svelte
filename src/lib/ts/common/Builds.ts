@@ -1,5 +1,6 @@
 export class Builds {
 	notes: { [id: number]: string[] } = {
+		159 : ['August 7, 2025', 'new zoom buttons. tolerate space in parents and related field names'],
 		158 : ['July 31, 2025', 'adopt Vincent\'s proposal for parents and related'],
 		157 : ['July 27, 2025', 'add focus and grabs to plugin fields'],
 		156 : ['July 25, 2025', 'using data received from bubble'],

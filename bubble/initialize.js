@@ -3,7 +3,7 @@ function(instance, properties, context) {
 	instance.canvas.style.width = window.innerWidth + 'px';
 	instance.canvas.style.height = window.innerHeight + 'px';
 	const iframe = document.createElement('iframe');
-	iframe.src = 'https://webseriously.netlify.app/?db=bubble&disable=full_UI&erase=data';
+	iframe.src = 'https://webseriously.netlify.app/?db=bubble&disable=details&erase=data';
 	iframe.style.overflow = 'hidden';
 	iframe.style.border = 'none';
 	iframe.style.height = '100%';

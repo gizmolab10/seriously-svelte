@@ -1,7 +1,7 @@
-import { T_Action, T_File_Format, T_Predicate, T_Alteration, S_Mouse, S_Alteration } from '../common/Global_Imports';
+import { w_device_isMobile, w_ancestries_grabbed, w_user_graph_offset, w_show_details, w_popupView_id } from '../common/Stores';
+import { T_Action, T_File_Format, T_Predicate, T_Alteration, S_Mouse, S_Alteration, T_Control } from '../common/Global_Imports';
 import { c, h, k, u, ux, grabs, Point, debug, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
 import { w_ancestry_focus, w_count_mouse_up, w_mouse_location, w_mouse_location_scaled } from '../common/Stores';
-import { w_device_isMobile, w_ancestries_grabbed, w_user_graph_offset, w_t_database } from '../common/Stores';
 import { w_s_alteration, w_count_resize, w_s_text_edit, w_control_key_down } from '../common/Stores';
 import Mouse_Timer from './Mouse_Timer';
 import { get } from 'svelte/store';
@@ -10,6 +10,7 @@ export class Events {
 	mouse_timer_byName: { [name: string]: Mouse_Timer } = {};
 	initialTouch: Point | null = null;
 	mouseTimer: Mouse_Timer;
+	width = 0;
 
 	mouse_timer_forName(name: string): Mouse_Timer { return ux.assure_forKey_inDict(name, this.mouse_timer_byName, () => new Mouse_Timer(name)); }
 
@@ -151,6 +152,28 @@ export class Events {
 		} else {
 			this.mouseTimer.alteration_stop();
 			signals.signal_blink_forAlteration(false);
+		}
+	}
+
+	togglePopupID(id: T_Control) {
+		const same = get(w_popupView_id) == id
+		w_popupView_id.set(same ? null : id); 
+	}
+
+	handle_s_mouse_forControl_Type(s_mouse: S_Mouse, t_control: T_Control) {
+		if (s_mouse.isHover) {
+			const s_control = ux.s_control_byType[t_control];
+			if (!!s_control) {
+				s_control.isOut = s_mouse.isOut;
+			}
+		} else if (s_mouse.isUp) {
+			switch (t_control) {
+				case T_Control.help:	c.showHelp(); break;
+				case T_Control.details: w_show_details.set(!get(w_show_details)); break;
+				case T_Control.grow:	this.width = layout.scaleBy(k.ratio.zoom_in) - 20; break;
+				case T_Control.shrink:	this.width = layout.scaleBy(k.ratio.zoom_out) - 20; break;
+				default:				this.togglePopupID(t_control); break;
+			}
 		}
 	}
 

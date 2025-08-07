@@ -255,11 +255,11 @@ export enum T_Preference {
 	auto_adjust		  = 'auto_adjust',
 	background		  = 'background',
 	ring_angle  	  = 'ring_angle',
-	matte_UI		  = 'matte_UI',			// use glow gradient
+	matte_UI		  = 'matte_UI',				// not use glow gradient
 	countDots		  = 'countDots',
 	font_size		  = 'font_size',
 	base_id			  = 'base_id',
-	full_UI			  = 'full_UI',				// show build notes, etc.
+	details			  = 'details',				// visible details control
 	grabbed			  = 'grabbed',
 	paging 			  = 'paging',
 	traits			  = 'traits',

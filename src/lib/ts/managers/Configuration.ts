@@ -40,7 +40,7 @@ export class Configuration {
         const disableOptions = queryStrings.get('disable')?.split(k.comma) ?? [];
 		for (const disableOption of disableOptions) {
 			switch (disableOption) {
-				case 'full_UI':				this.has_full_UI			   = false; break;
+				case 'details':				this.has_full_UI			   = false; break;
 				case 'matte_UI':			this.has_matte_UI			   = false; break;
 				case 'editGraph':			this.allow_GraphEditing		   = false; break;
 				case 'editTitles':			this.allow_TitleEditing		   = false; break;

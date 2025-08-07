@@ -1,4 +1,4 @@
-import { c, h, k, p, u, ux, Size, Rect, Point, Thing, grabs, debug, signals, Ancestry } from '../common/Global_Imports';
+import { h, k, p, u, ux, Size, Rect, Point, Thing, grabs, debug, signals, Ancestry } from '../common/Global_Imports';
 import { w_user_graph_offset, w_user_graph_center, w_mouse_location_scaled } from '../common/Stores';
 import { T_Graph, T_Kinship, T_Preference, G_RadialGraph } from '../common/Global_Imports';
 import { w_graph_rect, w_depth_limit, w_show_details } from '../common/Stores';
