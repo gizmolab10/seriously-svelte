@@ -147,6 +147,15 @@ export enum T_Oblong {
 	full   = 'full',
 }
 
+export enum T_Request {
+	handle_click = 'handle_click',
+	is_disabled	 = 'is_disabled',
+	is_inverted	 = 'is_inverted',
+	is_visible	 = 'is_visible',
+	is_hit		 = 'is_hit',
+	name		 = 'name',
+}
+
 export enum T_Persistable {
 	relationships = 'Relationships',
 	predicates	  = 'Predicates',
@@ -167,22 +176,13 @@ export enum T_Predicate {
 	supports	= 'supports',
 }
 
-export enum T_Request {
-	handle_click = 'handle_click',
-	is_disabled	 = 'is_disabled',
-	is_inverted	 = 'is_inverted',
-	is_visible	 = 'is_visible',
-	is_hit		 = 'is_hit',
-	name		 = 'name',
-}
-
 export enum T_Control {
 	details	 = 'show details view',
 	builds	 = 'show build notes',
 	recents	 = 'recents',
-	smaller	 = 'smaller',
-	bigger	 = 'bigger',
 	import	 = 'import',
+	shrink	 = 'shrink',
+	grow	 = 'grow',
 	help	 = '?',
 }
 
@@ -200,7 +200,7 @@ export enum T_Thing {
 	organization = 'o',
 	externals	 = '^',	// list of bulks
 	bookmark	 = 'b',
-	generic		 = '',
+	generic		 = '-',
 	person		 = 'p',
 	folder		 = 'f',
 	found		 = '?',

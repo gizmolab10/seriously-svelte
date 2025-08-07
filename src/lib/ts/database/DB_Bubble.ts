@@ -8,8 +8,8 @@ export default class DB_Bubble extends DB_Common {
 	idBase = k.empty;
 
 	async fetch_all() {
-		e.update_event_listener('message', this.handle_bubble_message);
-		window.parent.postMessage({ type: 'listening' }, '*');	// tell bubble that we're listening
+		e.update_event_listener('message', this.handle_bubble_message);		// first prepare listener
+		window.parent.postMessage({ type: 'listening' }, '*');				// tell bubble that we're listening
 		return false;
 	}
 
@@ -35,16 +35,16 @@ export default class DB_Bubble extends DB_Common {
 		if (!event.data.properties) {
 			h.wrapUp_data_forUX();
 		} else {
-			let b_root, b_tags, b_things, b_traits, b_focused, b_selecteds, b_predicates, b_relationships;
+			let b_root, b_tags, b_things, b_traits, b_focus, b_grabs, b_predicates, b_relationships;
 			try {
 				const properties = JSON.parse(event.data.properties);
 				debug.log_bubble(`[DB_Bubble] received bubble update: ${properties}`);
 				b_relationships = properties.relationships;
 				b_predicates = properties.predicates;
-				b_selecteds = properties.grabs;
-				b_focused = properties.focus;
 				b_things = properties.things;
 				b_traits = properties.traits;
+				b_grabs = properties.grabs;
+				b_focus = properties.focus;
 				b_root = properties.root;
 				b_tags = properties.tags;
 			} catch (err) {
@@ -52,10 +52,10 @@ export default class DB_Bubble extends DB_Common {
 			}
 			debug.log_bubble(`[DB_Bubble] got root: ${b_root}`);
 			debug.log_bubble(`[DB_Bubble] got tags: ${b_tags}`);
-			debug.log_bubble(`[DB_Bubble] got focus: ${b_focused}`);
+			debug.log_bubble(`[DB_Bubble] got focus: ${b_focus}`);
 			debug.log_bubble(`[DB_Bubble] got traits: ${b_traits}`);
 			debug.log_bubble(`[DB_Bubble] got objects: ${b_things}`);
-			debug.log_bubble(`[DB_Bubble] got selected: ${b_selecteds}`);
+			debug.log_bubble(`[DB_Bubble] got selected: ${b_grabs}`);
 			debug.log_bubble(`[DB_Bubble] got predicates: ${b_predicates}`);
 			debug.log_bubble(`[DB_Bubble] got relationships: ${b_relationships}`);
 			if (!!b_root) {   // must happen BEFORE things are created
@@ -92,15 +92,15 @@ export default class DB_Bubble extends DB_Common {
 
 			h.wrapUp_data_forUX();			// create ancestries and tidy up
 			
-			if (!!b_focused?.id) {			// must happen AFTER ancestries are created
-				const focus = h.thing_forHID(b_focused.id.hash());
+			if (!!b_focus?.id) {			// must happen AFTER ancestries are created
+				const focus = h.thing_forHID(b_focus.id.hash());
 				if (!!focus?.ancestry) {
 					focus.ancestry.becomeFocus(true);
 				}
 			}
-			if (!!b_selecteds) {				// must happen AFTER ancestries are created
-				for (const b_selected of b_selecteds) {
-					const grab = h.thing_forHID(b_selected.id.hash());
+			if (!!b_grabs) {				// must happen AFTER ancestries are created
+				for (const b_grab of b_grabs) {
+					const grab = h.thing_forHID(b_grab.id.hash());
 					if (!!grab?.ancestry) {
 						grab.ancestry.grab();
 					}

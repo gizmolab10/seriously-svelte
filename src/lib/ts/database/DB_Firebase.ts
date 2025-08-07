@@ -827,14 +827,14 @@ export class Bulk {
 }
 
 export class SnapshotDeferal {
-	idBase: string;
 	t_persistable: T_Persistable;
 	snapshot: QuerySnapshot;
+	idBase: string;
 
 	constructor(idBase: string, t_persistable: T_Persistable, snapshot: QuerySnapshot) {
-		this.idBase = idBase;
-		this.snapshot = snapshot;
 		this.t_persistable = t_persistable;
+		this.snapshot = snapshot;
+		this.idBase = idBase;
 	}
 }
 

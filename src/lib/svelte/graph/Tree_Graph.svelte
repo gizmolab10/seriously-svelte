@@ -1,7 +1,6 @@
 <script lang='ts'>
 	import { w_ancestry_focus, w_user_graph_offset } from '../../ts/common/Stores';
 	import { u, layout, T_Layer } from '../../ts/common/Global_Imports';
-	import Tree_Preferences from './Tree_Preferences.svelte';
 	import { w_depth_limit } from '../../ts/common/Stores';
 	import Tree_Branches from './Tree_Branches.svelte';
 	import Widget from '../widget/Widget.svelte';
@@ -17,7 +16,6 @@
 
 </script>
 
-<Tree_Preferences top={0} width={117} zindex={T_Layer.frontmost}/>
 {#key reattachments}
 	{#if !!focus && !layout.branch_was_visited(focus, true)}
 		<div class = 'tree-graph-container'

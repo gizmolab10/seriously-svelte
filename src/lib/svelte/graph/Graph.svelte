@@ -3,13 +3,12 @@
 	import { S_Mouse, T_Layer, T_Graph, T_Startup, T_Control, T_Element } from '../../ts/common/Global_Imports';
 	import { w_t_startup, w_ancestry_focus, w_device_isMobile, w_popupView_id } from '../../ts/common/Stores';
 	import { c, h, k, ux, Rect, Point, debug, layout, signals } from '../../ts/common/Global_Imports';
+	import Graph_Preferences from './Graph_Preferences.svelte';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Radial_Graph from '../graph/Radial_Graph.svelte';
 	import Tree_Graph from '../graph/Tree_Graph.svelte';
 	import Button from '../buttons/Button.svelte';
 	import { onMount } from 'svelte';
-	const es_builds = ux.s_element_for(new Identifiable(T_Control.builds), T_Element.control, T_Control.builds);
-	const es_help = ux.s_element_for(new Identifiable(T_Control.help), T_Element.control, T_Control.help);
 	const size_big = k.height.button + 4;
 	let draggableRect = $w_graph_rect;
 	let graph_reattachments = 0;
@@ -54,18 +53,6 @@
 			graph_reattachments += 1;
 		}
 	}
-
-	function handle_builds_mouseClick(s_mouse: S_Mouse) {
-		if (s_mouse.isDown) {
-			$w_popupView_id = ($w_popupView_id == T_Control.builds) ? null : T_Control.builds;
-		}
-	}
-
-	function handle_help_mouseClick(s_mouse: S_Mouse) {
-		if (s_mouse.isDown) {
-			c.showHelp();
-		}
-	}
 		
 	function update_style() {
 		draggableRect = $w_graph_rect;
@@ -90,6 +77,7 @@
 			style={style}
 			class='draggable'
 			bind:this={draggable}>
+			<Graph_Preferences top={0} width={117} zindex={T_Layer.frontmost}/>
 			{#if $w_show_graph_ofType == T_Graph.radial}
 				<Radial_Graph/>
 			{:else}
@@ -105,9 +93,9 @@
 				width=75
 				height={size_big}
 				origin={Point.x(14)}
-				es_button={es_builds}
 				name={T_Control.builds}
-				closure={handle_builds_mouseClick}>
+				es_button={ux.s_control_forType(T_Control.builds)}
+				closure={(s_mouse) => ux.handle_s_mouse_forControl_Type(s_mouse, T_Control.builds)}>
 				<span style='font-family: {$w_thing_fontFamily};'>
 					{'build ' + k.build_number}
 				</span>
@@ -115,10 +103,10 @@
 			<Button
 				width={size_big}
 				height={size_big}
-				es_button={es_help}
 				name={T_Control.help}
-				closure={handle_help_mouseClick}
-				origin={Point.x(draggableRect.size.width - 35)}>
+				origin={Point.x(draggableRect.size.width - 35)}
+				es_button={ux.s_control_forType(T_Control.help)}
+				closure={(s_mouse) => ux.handle_s_mouse_forControl_Type(s_mouse, T_Control.help)}>
 				<span
 					style='
 						top:2px;

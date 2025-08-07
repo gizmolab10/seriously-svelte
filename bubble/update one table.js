@@ -5,18 +5,19 @@ function(instance, properties) {
 	const ignore_fields = ['Slug'];
 	const debug = false;
 
+	const has_two_tables = properties.hasOwnProperty('edge_type');
+	console.log('has_two_tables', has_two_tables);
+
 	const plugin_field_names = [
-		'focus_object',
-		'object_id_field',
 		'starting_object',
-		'selected_objects',
 		'object_color_field',
 		'object_title_field',
 		'object_parents_field',
 		'object_related_field'];
 
 	plugin_field_names.forEach(plugin_field_name => {
-		user_configured_field_names[plugin_field_name] = properties[plugin_field_name];
+		const normalized_name = properties[plugin_field_name].replace(/ /, '_').toLowerCase();
+		user_configured_field_names[plugin_field_name] = normalized_name;
 	});
 
 	function user_configured_list_names(list_names) {
@@ -168,9 +169,6 @@ function(instance, properties) {
 		send({
 			things: extract_LIST_data('objects_table'),
 			root: extract_ITEM_data('starting_object'),
-		}, null, 0);
-
-		send({
 			focus: extract_ITEM_data('focus_object'),
 			grabs: extract_LIST_data('selected_objects'),
 		}, null, 0);

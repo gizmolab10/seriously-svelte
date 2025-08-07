@@ -54,17 +54,6 @@ export class Testworthy_Utilities {
 		return array;
 	}
 
-	assure_forKey_inDict<T>(key: string, dict: Dictionary, closure: () => T): T {
-		let result = dict[key];
-		if (!result) {
-			result = closure();
-			if (!!result) {
-				dict[key] = result;
-			}
-		}
-		return result;
-	}
-
 	copyObject(obj: any): any {
 		const copiedObject = Object.create(Object.getPrototypeOf(obj));
 		Object.assign(copiedObject, obj);

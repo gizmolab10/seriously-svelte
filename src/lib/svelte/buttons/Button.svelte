@@ -76,6 +76,7 @@
 			const border_attributes = border_thickness == 0 ? 'none' : `${border_thickness}px solid ${border_color}`;
 			border = `border:${border_attributes}`;
 			computed_style=`
+				top:0px;
 				left:0px;
 				${border};
 				display: flex;
@@ -99,7 +100,7 @@
 
 </script>
 
-{#key $w_background_color}
+{#key $w_background_color, computed_style}
 	<Mouse_Responder
 		name={name}
 		width={width}

@@ -76,6 +76,8 @@
 
 	function setupStyle() {
 		style = `
+			top: 0px;
+			left: 0px;
 			width: ${width}px;
 			z-index: ${zindex};
 			height: ${height}px;

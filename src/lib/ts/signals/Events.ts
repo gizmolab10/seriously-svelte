@@ -1,9 +1,8 @@
-import { T_Thing, T_Action, T_File_Format, T_Predicate, T_Alteration, S_Mouse, S_Alteration } from '../common/Global_Imports';
+import { T_Action, T_File_Format, T_Predicate, T_Alteration, S_Mouse, S_Alteration } from '../common/Global_Imports';
 import { c, h, k, u, ux, grabs, Point, debug, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
 import { w_ancestry_focus, w_count_mouse_up, w_mouse_location, w_mouse_location_scaled } from '../common/Stores';
 import { w_device_isMobile, w_ancestries_grabbed, w_user_graph_offset, w_t_database } from '../common/Stores';
 import { w_s_alteration, w_count_resize, w_s_text_edit, w_control_key_down } from '../common/Stores';
-import { T_Database } from '../database/DB_Common';
 import Mouse_Timer from './Mouse_Timer';
 import { get } from 'svelte/store';
 
@@ -12,7 +11,7 @@ export class Events {
 	initialTouch: Point | null = null;
 	mouseTimer: Mouse_Timer;
 
-	mouse_timer_forName(name: string): Mouse_Timer { return u.assure_forKey_inDict(name, this.mouse_timer_byName, () => new Mouse_Timer(name)); }
+	mouse_timer_forName(name: string): Mouse_Timer { return ux.assure_forKey_inDict(name, this.mouse_timer_byName, () => new Mouse_Timer(name)); }
 
 	constructor() {
 		this.mouseTimer = this.mouse_timer_forName('events');

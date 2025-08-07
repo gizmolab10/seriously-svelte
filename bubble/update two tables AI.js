@@ -1,66 +1,151 @@
 function(instance, properties) {
-	const IGNORE_these_fields = ['Modified Date', 'Created Date', 'Created By', 'Slug', '_id'];
-	const SERIOUSLY_names_of_ITEMS = ['parent', 'child', 'owner', 'kind'];
-	const SERIOUSLY_names_of_LISTS = ['parents', 'related', 'owners'];
-	const to_be_STRIPPED = ['_boolean', '_custom', '_text', '_list'];
-	const MESSY_names_by_PLUGIN_field_name = {};
-	const MESSY_names_of_LISTS = [];
-	const debug = true;
-	
-	const PLUGIN_field_names = [
-		'focus_object',
-		'edge_id_field',
+	const IGNORE_these_keys = ['Created Date', 'Created By', 'Slug', '_id'];
+	const STRIP_these_suffixes = ['_boolean', '_custom', '_text', '_list'];
+	const SERIOUSLY_keys_of_ITEMS = ['parent', 'child', 'owner', 'kind'];
+	const has_two_tables = !!properties.edge_type;
+	const MESSY_keys_by_PLUGIN_key = {};
+	const MESSY_keys_of_LISTS = [];
+	const debug = false;
+
+	log('has_two_tables', has_two_tables);
+
+	let PLUGIN_keys = [
 		'object_id_field',
-		'edge_kind_field',
 		'starting_object',
-		'edge_child_field',
-		'selected_objects',
-		'edge_parent_field',
-		'edge_orders_field',
 		'object_color_field',
 		'object_title_field',
-		'edge_two_way_field'
-	];
+		'object_parents_field',
+		'object_related_field'];
 
-	// five kinds of names:
+	if (has_two_tables) {
+		PLUGIN_keys = [...PLUGIN_keys,
+			'edge_id_field',
+			'edge_kind_field',
+			'edge_child_field',
+			'edge_parent_field',
+			'edge_orders_field',
+			'edge_two_way_field'];
+	}
 
-	// 1. PLUGIN field names of ITEMS and LISTS
-	// 2. indirect MESSY names of LISTS (e.g., poor_rents)
-	// 3. STRIPPED names (STRIPPED of _field, _boolean, etc.)
-	// 4. SERIOUSLY names (recognized/required by the netlify webSERIOUSLY app)
-	// 5. ignore fields (Slug)
+	// five kinds of keys:
 
-	PLUGIN_field_names.forEach(PLUGIN_field_name => {
-		MESSY_names_by_PLUGIN_field_name[PLUGIN_field_name] = properties[PLUGIN_field_name];
+	// 1. PLUGIN keys				labels of element properties ('edge_parent_key' ...)
+	// 2. MESSY keys of LISTS		'parent_by_a_different_key' ...
+	// 3. STRIPPED keys				remove: '_boolean' ...
+	// 4. SERIOUSLY keys			pass to SERIOUSLY app ('parent' ...)
+	// 5. ignore keys				'Slug' ...
+
+	PLUGIN_keys.forEach(PLUGIN_key => {
+		MESSY_keys_by_PLUGIN_key[PLUGIN_key] = properties[PLUGIN_key];
 	});
 
-	SERIOUSLY_names_of_LISTS.forEach(SERIOUSLY_name => {
-		MESSY_names_of_LISTS.push(MESSY_names_by_PLUGIN_field_name[SERIOUSLY_name]);
+	['edge_parent_field', 'edge_child_field'].forEach(key => {
+		MESSY_keys_of_LISTS.push(MESSY_keys_by_PLUGIN_key[key]);
 	});
 
-	// MESSY names are static text, used indirectly to access lists and ITEMs
+	// MESSY keys are static text, used indirectly to access lists and ITEMs
 
-	function has_SERIOUSLY_name(name) { return Object.keys(MESSY_names_by_PLUGIN_field_name).includes(name); }
+	function has_SERIOUSLY_key(key) { return Object.keys(MESSY_keys_by_PLUGIN_key).includes(key); }
 	function log(message, ...optionalParams) { if (debug) { console.log(message, ...optionalParams); } }
 	instance.data.attempts = instance.data.attempts || {};
 
-	function SERIOUSLY_field_name_for(name) {
-		// convert to a name recognized by the netlify webSERIOUSLY app
-		for (const [PLUGIN_field_name, field_name] of Object.entries(MESSY_names_by_PLUGIN_field_name)) {
-			if (field_name == name) {
-				return STRIPPED_field_name(PLUGIN_field_name, ['_field']);
+	function SERIOUSLY_key_for(key, AVOID_key_startswith) {
+		// convert to a key recognized by SERIOUSLY
+		// NB must distinguish between objects and edges
+		for (const [PLUGIN_key, MESSY_value] of Object.entries(MESSY_keys_by_PLUGIN_key)) {
+			// if (typeof MESSY_value === 'object' && typeof MESSY_value.listProperties === 'function') {
+			// 	log(key, 'has properties', MESSY_value.listProperties());
+			// }
+			if (MESSY_value == key && !key.startsWith(AVOID_key_startswith)) {
+				return STRIP_key(PLUGIN_key, ['object_', 'edge_'], ['_field']);
 			}
 		}
 		return null;
 	}
 
-	function extract_list_at_named_field_ignoring(field_name, value, visited, id_to_ignore) {
+	function STRIP_key(key, prefixes_to_remove, suffices_to_remove) {
+		let STRIPPED_key = key;
+		prefixes_to_remove.forEach(strip_me => {
+			parts = STRIPPED_key.split(strip_me);
+			if (parts.length > 1) {
+				STRIPPED_key = parts[1];
+			}
+		});
+		suffices_to_remove.forEach(strip_me_too => {
+			parts = STRIPPED_key.split(strip_me_too);
+			if (parts.length > 1) {
+				STRIPPED_key = parts[0];
+			}
+		});
+		return STRIPPED_key;
+	}
+
+	function extract_DICT_from(ITEM, key, visited = []) {
+		// log('extract_DICT_from', key, ITEM, visited);
+		let ITEM_dict = {};
+		if (!!ITEM) {
+			instance.data.attempts[key] = (instance.data.attempts[key] ?? 0) + 1;
+			const MESSY_keys = ITEM.listProperties();
+			const ITEM_key_value_pairs = MESSY_keys.reduce((keys, key) => {	// for debugging
+				keys[key] = ITEM.get(key);
+				return keys;
+			}, {});
+			MESSY_keys.forEach(MESSY_key => {
+				const STRIPPED_key = STRIP_key(MESSY_key, [], STRIP_these_suffixes);
+				if (!IGNORE_these_keys.includes(STRIPPED_key)) {
+					const value = ITEM.get(MESSY_key);
+					const AVOID = MESSY_key.startsWith('object_') || MESSY_key.endsWith('object') ? 'edge' : 'object';
+					const SERIOUSLY_key = SERIOUSLY_key_for(MESSY_key, AVOID) ?? STRIPPED_key;
+					log('extract_DICT_from', key, MESSY_key, STRIPPED_key, value, AVOID, SERIOUSLY_key);
+					if (!SERIOUSLY_key) {
+						if (has_SERIOUSLY_key(STRIPPED_key) || has_SERIOUSLY_key(MESSY_key)) {
+							console.warn('extracted SERIOUSLY key unresolved for', MESSY_key, 'ITEM key_value_pairs:', ITEM_key_value_pairs);
+						}
+					} else if (!value && value != false) {
+						if (value != null) {
+							console.warn('value undefined for', MESSY_key, 'ITEM key_value_pairs:', ITEM_key_value_pairs);
+						}
+					} else if (SERIOUSLY_key == 'orders') {
+						let orders = [];
+						for (let i = 0; i < value.length(); i++) {
+							const order = value.get(i, i + 1)[0];
+							orders.push(order);
+						}
+						log('orders', orders);
+					// 	ITEM_dict[SERIOUSLY_key] = orders;
+					} else if (MESSY_key == 'owners_list_custom_thing') {	// for traits
+						ITEM_dict['owners'] = extract_ARRAY_from(value);
+					} else if (SERIOUSLY_keys_of_ITEMS.includes(STRIPPED_key) && typeof value != 'string') {
+						log('recursively extract_DICT_from', STRIPPED_key, value, visited);
+						ITEM_dict[SERIOUSLY_key] = extract_DICT_from(value, STRIPPED_key, [...visited, STRIPPED_key]);
+					} else if (MESSY_keys_of_LISTS.includes(MESSY_key)) {
+						log('MESSY_keys_of_LISTS.includes', MESSY_key, value, visited, ITEM_dict.id);
+						const keepers = extract_ARRAY_at_key_ignoring(MESSY_key, value, visited, ITEM_dict.id);
+						if (!!keepers) {
+							ITEM_dict[SERIOUSLY_key] = keepers;
+						}
+					} else {
+						ITEM_dict[SERIOUSLY_key] = value;
+						log(key, MESSY_key, 'DEFAULT YIELDS:', SERIOUSLY_key, value, ITEM_dict);
+					}
+				}
+			});
+			instance.data.attempts[key] -= 1;
+			if (instance.data.attempts[key] == 0) {
+				delete instance.data.attempts[key];
+			}
+			log('ITEM dict:', key, ITEM_dict);
+		}
+		return ITEM_dict;
+	}
+
+	function extract_ARRAY_at_key_ignoring(key, value, visited, id_to_ignore) {
 		if (!!value) {
 			let keepers = [];
 			// this is only for text values that correspond to objects or lists
 			// value is a list of objects
-			log('extract_list_at_named_field_ignoring', field_name, value, visited, id_to_ignore);
-			const extracted = extract_LIST_data(field_name, value, visited);
+			// log('extract_ARRAY_at_key_ignoring', key, value, visited, id_to_ignore);
+			const extracted = extract_ARRAY_from(key, value, visited);
 			if (extracted.length > 0) {
 				for (const extracted_ITEM of extracted) {
 					if (!!extracted_ITEM && extracted_ITEM.id != id_to_ignore) {
@@ -75,113 +160,43 @@ function(instance, properties) {
 		return null;
 	}
 
-	function STRIPPED_field_name(field_name, strip_these) {
-		let rename = field_name;
-		let parts = rename.split('object_');
-		if (parts.length > 1) {
-			rename = parts[1];
-		}
-		strip_these.forEach(strip_me => {
-			parts = rename.split(strip_me);
-			if (parts.length > 1) {
-				rename = parts[0];
-			}
-		});
-		return rename;
-	}
-
-	function extract_ITEM_data(ITEM, name, visited = []) {
-		// log('extract_ITEM_data', name, ITEM, visited);
-		let ITEM_data = {};
-		if (!!ITEM) {
-			instance.data.attempts[name] = (instance.data.attempts[name] ?? 0) + 1;
-			const ITEM_field_names = ITEM.listProperties();
-			const ITEM_properties = ITEM_field_names.reduce((names, field_name) => {	// for debugging
-				names[field_name] = ITEM.get(field_name);
-				return names;
-			}, {});
-			ITEM_field_names.forEach(ITEM_field_name => {
-				const STRIPPED_name = STRIPPED_field_name(ITEM_field_name, to_be_STRIPPED);
-				if (!IGNORE_these_fields.includes(STRIPPED_name)) {
-					const value = ITEM.get(ITEM_field_name);
-					const has_name = has_SERIOUSLY_name(STRIPPED_name) || has_SERIOUSLY_name(ITEM_field_name);
-					const SERIOUSLY_name = SERIOUSLY_field_name_for(STRIPPED_name) ?? SERIOUSLY_field_name_for(ITEM_field_name);
-					if (!SERIOUSLY_name) {
-						if (has_name) {
-							console.warn('extracted SERIOUSLY name unresolved for', ITEM_field_name, 'ITEM properties:', ITEM_properties);
-						}
-					} else if (!value) {
-						if (value != null) {
-							console.warn('value undefined for', ITEM_field_name, 'ITEM properties:', ITEM_properties);
-						}
-					} else if (ITEM_field_name == 'orders_list_number') {
-						let orders = [];
-						for (let i = 0; i < value.length(); i++) {
-							const order = value.get(i, i + 1)[0];
-							orders.push(order);
-						}
-						ITEM_data['orders'] = orders;
-					} else if (ITEM_field_name == 'owners_list_custom_thing') {
-						ITEM_data['owners'] = extract_LIST_data(value);
-					} else if (SERIOUSLY_names_of_ITEMS.includes(STRIPPED_name) && typeof value != 'string') {
-						log('recursively extract_ITEM_data', STRIPPED_name, value, visited);
-						ITEM_data[SERIOUSLY_name] = extract_ITEM_data(value, STRIPPED_name, [...visited, STRIPPED_name]);
-					} else if (MESSY_names_of_LISTS.includes(STRIPPED_name)) {
-						const keepers = extract_list_at_named_field_ignoring(ITEM_field_name, value, visited, ITEM_data.id);
-						if (!!keepers) {
-							ITEM_data[SERIOUSLY_name] = keepers;
-						}
-					} else {
-						ITEM_data[SERIOUSLY_name] = value;
-					}
-				}
-			});
-			instance.data.attempts[name] -= 1;
-			if (instance.data.attempts[name] == 0) {
-				delete instance.data.attempts[name];
-			}
-			// log('ITEM data:', name, ITEM_data);
-		}
-		return ITEM_data;
-	}
-
-	function extract_LIST_data(field_name, list = null, visited = []) {
-		list = list || (typeof field_name === 'string' ? (properties[field_name] || null) : field_name);
+	function extract_ARRAY_from(key, list = null, visited = []) {
+		list = list || (typeof key === 'string' ? (properties[key] || null) : key);
 		let extracted_data = [];
-		log('extract_LIST_data', field_name, list, visited);
+		// log('extract_ARRAY_from', key, list, visited);
 		if (!list) return [];
-		if (visited.includes(field_name)) {
-			log(field_name, 'already visited');
+		if (visited.includes(key)) {
+			log(key, 'already visited');
 		} else if (!list) {
 			if (list != null) {
-				console.warn(field_name, 'is null');
+				console.warn(key, 'is null');
 			}
 		} else if (!list.length || typeof list.length !== 'function' || typeof list.get !== 'function') {
-			console.warn(field_name, 'is not a list');
+			console.warn(key, 'is not a list');
 		} else {
 			try {
 				let sublist = list.get(0, list.length());		// this will throw an error if the list is not ready
 				sublist.forEach(ITEM => {
-					extracted_data.push(extract_ITEM_data(ITEM, field_name, [...visited, field_name]));
+					extracted_data.push(extract_DICT_from(ITEM, key, [...visited, key]));
 				});
 			} catch (error) {
 				if (error.constructor.name != 'NotReadyError') {
-					log('extract_LIST_data', field_name, list, visited, error);
+					log('ERROR (extract_ARRAY_from)', key, list, visited, error);
 				}
 			}
 		}
 		return extracted_data;
 	}
 
-	function send(object) {
-		const contentWindow = instance.data.iframe.contentWindow;
+	function send(data) {
 		const message = {
 			type: 'UPDATE_PROPERTIES',
-			properties: JSON.stringify(object)
+			properties: JSON.stringify(data)
 		};
 
-		if (instance.data.iframeIsListening && contentWindow) {
-			contentWindow.postMessage(message, '*');
+		console.log('send');
+		if (!!instance.data.iframe?.contentWindow && instance.data.iframeIsListening) {
+			instance.data.iframe.contentWindow.postMessage(message, '*');
 		} else {
 			instance.data.pendingMessages = instance.data.pendingMessages || [];
 			instance.data.pendingMessages.push(message);
@@ -190,24 +205,21 @@ function(instance, properties) {
 
 	try {
 
-		send({
-			things: extract_LIST_data('objects_table'),
-			relationships: extract_LIST_data('edges_table'),
-			root: extract_ITEM_data(properties.starting_object, 'starting_object'),
-		}, null, 0);
+		var data = {
+			things: extract_ARRAY_from('objects_table'),
+			grabs: extract_ARRAY_from('selected_objects'),
+			focus: extract_DICT_from(properties.focus_object, 'focus_object'),
+			root: extract_DICT_from(properties.starting_object, 'starting_object'),
+		};
 
-		send({
-			grabs: extract_LIST_data('selected_objects'),
-			focus: extract_ITEM_data(properties.focus_object, 'focus_object'),
-		}, null, 0);
+		// if (has_two_tables) {
+		// 	data.relationships = extract_ARRAY_from('edges_table');
+		// }
 
-		// send({
-		// 	tags: extract_LIST_data('tags_table'),
-		// 	traits: extract_LIST_data('traits_table')
-		// }, null, 0);
+		send(data);
 
 	} catch (error) {
-		if (error.constructor.name != 'NotReadyError') {
+		if (error.constructor.key != 'NotReadyError') {
 			console.warn('[PLUGIN] threw an error:', error);
 		} else if (Object.keys(instance.data.attempts).length > 0) {
 			log('[PLUGIN] data not ready:', instance.data.attempts);

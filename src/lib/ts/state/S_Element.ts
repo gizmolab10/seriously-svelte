@@ -50,6 +50,7 @@ export default class S_Element {
 	get ancestry(): Ancestry { return this.identifiable as Ancestry; }
 	get color_isInverted(): boolean { return this.isInverted != this.isHovering; }
 	get description(): string { return `${this.isOut ? 'out' : 'in '} '${this.name}'`; }
+	get svg_hover_color(): string { return this.isOut ? this.stroke : colors.background; }
 	get isADot(): boolean { return this.type == T_Element.drag || this.type == T_Element.reveal; }
 	get show_help_cursor(): boolean { return get(w_control_key_down) && this.type == T_Element.action; }
 	get isHovering(): boolean { return this.ignore_hover ? false : this.isOut == this.isHoverInverted; }

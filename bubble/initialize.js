@@ -10,17 +10,19 @@ function(instance, properties, context) {
 	iframe.style.width = '100%';
 	instance.data.iframe = iframe;
 
-	window.addEventListener('message', function () {
-		instance.data.iframeIsListening = true;
-		if (instance.data.pendingMessages) {		// Send any pending messages that were stored before iframe was ready
-			instance.data.pendingMessages.forEach(message => {
-				try {
-					iframe.contentWindow.postMessage(message, '*');
-				} catch (error) {
-					console.error('[PLUGIN] Failed to send pending message:', error);
-				}
-			});
-			instance.data.pendingMessages = [];
+	window.addEventListener('message', function (event) {
+		if (event.data && event.data.type === 'listening') {
+			instance.data.iframeIsListening = true;		// once set, only these messages will pend, the rest are sent in update
+			if (instance.data.pendingMessages) {		// Send any pending messages that were stored before iframe was ready
+				instance.data.pendingMessages.forEach(message => {
+					try {
+						iframe.contentWindow.postMessage(message, '*');
+					} catch (error) {
+						console.error('[PLUGIN] Failed to send pending message:', error);
+					}
+				});
+				instance.data.pendingMessages = [];
+			}
 		}
 	});
 
