@@ -85,37 +85,16 @@
 				corner_radius={k.radius.gull_wings.thick}
 				origin={new Point(layout.windowSize.width + 1 - half_thickness, layout.controls_boxHeight - 0.5)}/>
 		{/if}
-		{#if c.has_full_UI}
-			<div class='breadcrumbs'
-				style='left:0px;
-					width:100%;
-					position: absolute;
-					top:{layout.breadcrumbs_top}px;
-					height:{layout.controls_boxHeight}px;'>
-				<Box
-					top={0}
-					left={0}
-					name='breadcrumbs-box'
-					color={separator_color}
-					width={layout.windowSize.width}
-					height={layout.controls_boxHeight}
-					thickness={k.thickness.separator.main}
-					corner_radius={k.radius.gull_wings.thick}>
-					<Breadcrumbs/>
-				</Box>
-			</div>
-		{:else}
-			<Separator
-				name='panel-bottom'
-				isHorizontal={true}
-				has_both_wings={true}
-				margin={k.details_margin}
-				zindex={T_Layer.frontmost}
-				length={layout.windowSize.width + 3}
-				thickness={k.thickness.separator.main}
-				corner_radius={k.radius.gull_wings.thick}
-				origin={new Point(2, layout.windowSize.height - 4)}/>
-		{/if}
+		<Separator
+			name='panel-bottom'
+			isHorizontal={true}
+			has_both_wings={true}
+			margin={k.details_margin}
+			zindex={T_Layer.frontmost}
+			length={layout.windowSize.width + 3}
+			thickness={k.thickness.separator.main}
+			corner_radius={k.radius.gull_wings.thick}
+			origin={new Point(2, layout.windowSize.height - 4)}/>
 	</div>
 {/key}
 	

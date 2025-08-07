@@ -56,7 +56,7 @@
 	<div
 		class='breadcrumbs'
 		style='
-			top:5px;
+			top:-5px;
 			left:7px;
 			position:absolute;'>
 		{#each things as thing, index}

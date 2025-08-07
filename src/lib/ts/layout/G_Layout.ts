@@ -57,7 +57,7 @@ export default class G_Layout {
 		const y = this.controls_boxHeight + 2;			// account for origin at top
 		const x = get(w_show_details) ? k.width.details : 0;
 		const origin_ofGraph = new Point(x, y);
-		const breadcrumbs_height = !c.has_full_UI ? 4 : this.controls_boxHeight;
+		const breadcrumbs_height = 4;
 		const size_ofGraph = this.windowSize.reducedBy(origin_ofGraph).reducedByY(breadcrumbs_height);
 		const rect = new Rect(origin_ofGraph, size_ofGraph);
 		debug.log_mouse(`GRAPH ====> ${rect.description}`);
@@ -229,7 +229,7 @@ export default class G_Layout {
 			}
 		}
 		if (centered) {
-			left = (thresholdWidth - total) / 2;
+			left += (thresholdWidth - total) / 2;
 		}
 		let lefts = [left];
 		for (const width of widths.reverse()) {
