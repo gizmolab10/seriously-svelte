@@ -166,6 +166,7 @@
   },
   "active": "9968854d61be5eec",
   "lastOpenFiles": [
+    "src/lib/svelte/experiments/Canvas_Graph.svelte",
     "src/lib/svelte/graph/Graph_Preferences.svelte",
     "count_lines.sh",
     "vite.config.js.timestamp-1754505132336-14bcbc9d81b5f.mjs",
@@ -183,7 +184,6 @@
     "notes",
     "src/bubble tears.md",
     "src/tears.md",
-    "src/lib/svelte/debug/Bubble.svelte",
     "Proposal_P_WindowResizePerformance.md",
     "Resize_Optimization_AI.md",
     "dist/vite.svg",

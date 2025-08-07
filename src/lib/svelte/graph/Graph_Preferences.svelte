@@ -19,7 +19,7 @@
 	const size_big = k.height.button + 1;
 	const tops = u.cumulativeSum(heights);
 	const segmented_height = k.height.button;
-	const svg_style = 'top: -0.5px; left: -0.5px; position: absolute; width: 100%; height: 100%; z-index: 1000;';
+	const svg_style = 'top: -0.5px; left: -0.5px; position: absolute; width: 100%; height: 100%;';
 
 	function handle_depth_limit(value: number) {
 		$w_depth_limit = value;
