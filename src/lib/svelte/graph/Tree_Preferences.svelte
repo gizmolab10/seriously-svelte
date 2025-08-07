@@ -13,13 +13,9 @@
 	export let top = 0;
 	const back_up = -5;
 	const left_width = 40;
-	const control_top = 14;
-	const control_left = 16;
 	const heights = [ 3, 5, 18 ];
-	const size_big = k.height.button + 1;
 	const tops = u.cumulativeSum(heights);
 	const segmented_height = k.height.button;
-	const svg_style = 'top: -0.5px; left: -0.5px; position: absolute; width: 100%; height: 100%;';
 
 	function handle_depth_limit(value: number) {
 		$w_depth_limit = value;
@@ -29,49 +25,18 @@
 </script>
 
 <div class='graph-preferences' style='
-	left: 3px;
+	left: 9px;
+	top: -9px;
 	width: 177px;
 	height: 50px;
 	z-index: {zindex};
 	position: absolute;
 	border-radius: 20px;
 	background-color: {transparentize($w_background_color, 0.15)};'>
-	<div class='size-controls'>
-		<Button
-			width={size_big}
-			height={size_big}
-			name={T_Control.grow}
-			center={new Point(control_left, control_top)}
-			es_button={ux.s_control_forType(T_Control.grow)}
-			closure={(s_mouse) => ux.handle_s_mouse_forControl_Type(s_mouse, T_Control.grow)}>
-			<svg id='grow-svg' style={svg_style}>
-				<path
-					id='grow-path'
-					fill=transparent
-					d={svgPaths.t_cross(size_big, 2)}
-					stroke={ux.s_control_forType(T_Control.grow).svg_hover_color}/>
-			</svg>
-		</Button>
-		<Button
-			width={size_big}
-			height={size_big}
-			name={T_Control.shrink}
-			center={new Point(control_left, control_top + 21)}
-			es_button={ux.s_control_forType(T_Control.shrink)}
-			closure={(s_mouse) => ux.handle_s_mouse_forControl_Type(s_mouse, T_Control.shrink)}>
-			<svg id='shrink-svg' style={svg_style}>
-				<path
-					id='shrink-path'
-					fill=transparent
-					d={svgPaths.dash(size_big, 2)}
-					stroke={ux.s_control_forType(T_Control.shrink).svg_hover_color}/>
-			</svg>
-		</Button>
-	</div>
 	{#if $w_show_graph_ofType == T_Graph.tree}
 		{#key $w_depth_limit}
 			<div style='
-				left: 22px;
+				left: 13px;
 				width: 100%;
 				height: 100%;
 				position: absolute;

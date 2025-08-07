@@ -166,6 +166,7 @@
   },
   "active": "9968854d61be5eec",
   "lastOpenFiles": [
+    "src/lib/svelte/graph/Tree_Preferences.svelte",
     "src/lib/svelte/experiments/Canvas_Graph.svelte",
     "src/lib/svelte/graph/Graph_Preferences.svelte",
     "count_lines.sh",
@@ -181,7 +182,6 @@
     "notes/holons.api.md",
     "holons/api.md",
     "notes/api.md",
-    "notes",
     "src/bubble tears.md",
     "src/tears.md",
     "Proposal_P_WindowResizePerformance.md",

@@ -3,7 +3,6 @@
 	import { S_Mouse, T_Layer, T_Graph, T_Startup, T_Control, T_Element } from '../../ts/common/Global_Imports';
 	import { w_t_startup, w_ancestry_focus, w_device_isMobile, w_popupView_id } from '../../ts/common/Stores';
 	import { c, h, k, ux, Rect, Point, debug, layout, signals } from '../../ts/common/Global_Imports';
-	import Graph_Preferences from './Graph_Preferences.svelte';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Radial_Graph from '../graph/Radial_Graph.svelte';
 	import Tree_Graph from '../graph/Tree_Graph.svelte';
@@ -77,7 +76,6 @@
 			style={style}
 			class='draggable'
 			bind:this={draggable}>
-			<Graph_Preferences top={0} width={117} zindex={T_Layer.frontmost}/>
 			{#if $w_show_graph_ofType == T_Graph.radial}
 				<Radial_Graph/>
 			{:else}

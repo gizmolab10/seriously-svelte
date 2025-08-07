@@ -11,13 +11,14 @@
 	import Breadcrumbs from './Breadcrumbs.svelte';
 	import Button from '../buttons/Button.svelte';
 	import Box from '../mouse/Box.svelte';
-	const widths = [c.has_full_UI ? 18 : -11, 14, 56, 92, -2];
+	const widths = [c.has_full_UI ? 18 : -11, 17, 57, 92, -2, 11, 26, 22];
 	const lefts = u.cumulativeSum(widths);
 	const size_big = k.height.button + 4;
 	const y_center = 10.5;
-	const rights = [12, 67, 110, 140];
+	const rights = [57, 35, 9];
 	const hamburger_size = k.height.button;
 	const hamburger_path = svgPaths.hamburgerPath(hamburger_size);
+	const svg_style = 'top: -0.5px; left: -0.5px; position: absolute; width: 100%; height: 100%;';
 	let isVisible_forType: {[t_control: string]: boolean} = {};
 	let width = layout.windowSize.width - 20;
 	let displayName = k.empty;
@@ -62,23 +63,23 @@
 				z-index: {T_Layer.frontmost};
 				width: {layout.windowSize.width - 20}px;'>
 			{#if !$w_popupView_id}
+				<Separator
+					isHorizontal={false}
+					name='before-breadcrumbs'
+					origin={new Point(lefts[7], -9)}
+					length={layout.controls_boxHeight + 3}
+					thickness={k.thickness.separator.main}
+					corner_radius={k.radius.gull_wings.thick}/>
 				{#if !c.has_full_UI}
-					<Separator
-						isHorizontal={false}
-						name='before-breadcrumbs'
-						origin={new Point(lefts[3], -9)}
-						length={layout.controls_boxHeight + 3}
-						thickness={k.thickness.separator.main}
-						corner_radius={k.radius.gull_wings.thick}/>
 					<div style='
 						top:-10px;
 						position:absolute;
 						left:{lefts[4]}px;
 						width:{layout.windowSize.width - lefts[4]}px;'>
 						<Breadcrumbs
-							left={lefts[4]}
-							centered={true}
-							width={layout.windowSize.width - lefts[4] - 10}/>
+							left={lefts[2]}
+							centered={false}
+							width={layout.windowSize.width - lefts[7] - 10}/>
 					</div>
 					<Button
 						width={20}
@@ -86,7 +87,7 @@
 						color='transparent'
 						name='invisible-button'
 						zindex={T_Layer.frontmost}
-						center={new Point(lefts[3], 10)}
+						center={new Point(lefts[7], 10)}
 						style='border: none; background: none;'
 						es_button={ux.s_control_forType(T_Control.details)}
 						closure={(s_mouse) => ux.handle_s_mouse_forControl_Type(s_mouse, T_Control.details)}/>
@@ -142,46 +143,40 @@
 						handle_selection={(titles) => layout.handle_mode_selection('graph', titles)}/>
 				{/key}
 			{/if}
-			{#key $w_device_isMobile}
-				{#if $w_device_isMobile}
-					{#if isVisible_forType[T_Control.shrink]}
-						<Button
-							width={size_big}
-							height={size_big}
-							name={T_Control.smaller}
-							center={new Point(width - rights[2], y_center)}
-							es_button={ux.s_control_forType(T_Control.shrink)}
-							closure={(s_mouse) => ux.handle_s_mouse_forControl_Type(s_mouse, T_Control.shrink)}>
-							<svg
-								id='shrink-svg'>
-								<path
-									stroke=colors.default
-									fill=transparent
-									id='shrink-path'
-									d={svgPaths.dash(size_big, 2)}/>
-							</svg>
-						</Button>
-					{/if}
-					{#if isVisible_forType[T_Control.bigger]}
-						<Button
-							width={size_big}
-							height={size_big}
-							name={T_Control.grow}
-							center={new Point(width - rights[3], y_center)}
-							es_button={ux.s_control_forType(T_Control.grow)}
-							closure={(s_mouse) => ux.handle_s_mouse_forControl_Type(s_mouse, T_Control.grow)}>
-							<svg
-								id='enlarge-svg'>
-								<path
-									stroke=colors.default
-									fill=transparent
-									id='enlarge-path'
-									d={svgPaths.t_cross(size_big, 2)}/>
-							</svg>
-						</Button>
-					{/if}
-				{/if}
-			{/key}
+			<div class='size-controls'>
+				<Button
+					width={size_big}
+					height={size_big}
+					name={T_Control.grow}
+					center={new Point(lefts[5], y_center)}
+					es_button={ux.s_control_forType(T_Control.grow)}
+					closure={(s_mouse) => ux.handle_s_mouse_forControl_Type(s_mouse, T_Control.grow)}>
+					<svg id='grow-svg' style={svg_style}>
+						<path
+							id='grow-path'
+							fill=transparent
+							stroke-width='1'
+							d={svgPaths.t_cross(size_big, 2)}
+							stroke={ux.s_control_forType(T_Control.grow).svg_hover_color}/>
+					</svg>
+				</Button>
+				<Button
+					width={size_big}
+					height={size_big}
+					name={T_Control.shrink}
+					center={new Point(lefts[6], y_center)}
+					es_button={ux.s_control_forType(T_Control.shrink)}
+					closure={(s_mouse) => ux.handle_s_mouse_forControl_Type(s_mouse, T_Control.shrink)}>
+					<svg id='shrink-svg' style={svg_style}>
+						<path
+							id='shrink-path'
+							fill=transparent
+							stroke-width='1'
+							d={svgPaths.dash(size_big, 4)}
+							stroke={ux.s_control_forType(T_Control.shrink).svg_hover_color}/>
+					</svg>
+				</Button>
+			</div>
 		</div>
 	</Box>
 {/key}
