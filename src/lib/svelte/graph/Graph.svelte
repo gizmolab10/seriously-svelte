@@ -2,7 +2,8 @@
 	import { w_graph_rect, w_show_graph_ofType, w_user_graph_offset, w_thing_fontFamily } from '../../ts/common/Stores';
 	import { S_Mouse, T_Layer, T_Graph, T_Startup, T_Control, T_Element } from '../../ts/common/Global_Imports';
 	import { w_t_startup, w_ancestry_focus, w_device_isMobile, w_popupView_id } from '../../ts/common/Stores';
-	import { c, h, k, ux, Rect, Point, debug, layout, signals } from '../../ts/common/Global_Imports';
+	import { c, h, k, ux, Rect, Point, debug, layout, signals } from '../../ts/common/Global_Imports';c
+	import Tree_Preferences from './Tree_Preferences.svelte';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Radial_Graph from '../graph/Radial_Graph.svelte';
 	import Tree_Graph from '../graph/Tree_Graph.svelte';
@@ -79,6 +80,7 @@
 			{#if $w_show_graph_ofType == T_Graph.radial}
 				<Radial_Graph/>
 			{:else}
+				<Tree_Preferences top={0} width={117} zindex={T_Layer.frontmost}/>
 				<Tree_Graph/>
 			{/if}
 		</div>

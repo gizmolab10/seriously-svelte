@@ -76,8 +76,6 @@
 
 	function setupStyle() {
 		style = `
-			top: 0px;
-			left: 0px;
 			width: ${width}px;
 			z-index: ${zindex};
 			height: ${height}px;
@@ -88,7 +86,9 @@
 		if (!!cursor) {
 			style = `${style} cursor: ${cursor};`;
 		}
-		if (!!origin || !!center) {
+		if (!origin && !center) {
+			style = `${style} top: 0px; left: 0px;`;
+		} else {
 			const x = origin?.x ?? center?.x - width / 2;
 			const y = origin?.y ?? center?.y - height / 2;
 			const alignment = align_left ? 'left: ' : 'right: ';
