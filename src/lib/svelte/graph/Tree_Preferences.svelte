@@ -25,8 +25,8 @@
 </script>
 
 <div class='graph-preferences' style='
-	left: 9px;
-	top: -9px;
+	left: -5px;
+	top: 0px;
 	width: 177px;
 	height: 50px;
 	z-index: {zindex};

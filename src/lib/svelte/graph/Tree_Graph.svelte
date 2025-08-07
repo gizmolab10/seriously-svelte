@@ -19,6 +19,7 @@
 
 {#key reattachments}
 	{#if !!focus && !layout.branch_was_visited(focus, true)}
+		<Tree_Preferences width={117} zindex={T_Layer.frontmost}/>
 		<div class = 'tree-graph-container'
 			style = '
 				position: absolute;
@@ -28,7 +29,6 @@
 				width: {layout.tree_size.width}px;
 				height: {layout.tree_size.height}px;
 				transform: scale({layout.scale_factor});'>
-			<Tree_Preferences width={117} zindex={T_Layer.frontmost}/>
 			<Widget g_widget = {focus.g_widget}/>
 			<Tree_Branches ancestry = {focus} depth = {$w_depth_limit}/>
 		</div>
