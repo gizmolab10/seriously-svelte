@@ -1,9 +1,10 @@
 function(instance, properties) {
-	const to_be_removed = ['_boolean', '_custom', '_text', '_list'];
-	const item_fields = ['child', 'parent', 'owner', 'kind'];
-	const user_configured_field_names = {};
+	const list_fields = ['object_parents_field', 'object_related_field', 'owners_field'];
+	const to_be_removed = ['_boolean', '_custom', '_text', '_list', '_object'];
+	const item_references = ['child', 'parent', 'owner', 'related'];
+	const user_supplied_names = {};
 	const ignore_fields = ['Slug'];
-	const debug = false;
+	const debug = true;
 
 	const has_two_tables = properties.hasOwnProperty('edge_type');
 	console.log('has_two_tables', has_two_tables);
@@ -15,24 +16,32 @@ function(instance, properties) {
 		'object_parents_field',
 		'object_related_field'];
 
+	if (has_two_tables) {
+		plugin_field_names = [...plugin_field_names,
+			'edge_kind_field',
+			'edge_child_field',
+			'edge_parent_field',
+			'edge_orders_field',
+			'edge_two_way_field'];
+	}
+
 	plugin_field_names.forEach(plugin_field_name => {
-		const value = properties[plugin_field_name];
-		if (!!value) {
-			const normalized_name = value.replace(/ /, '_').toLowerCase();
-			user_configured_field_names[plugin_field_name] = normalized_name;
-		}
+		const value = String(properties[plugin_field_name]).toLowerCase();
+		const normalized_name = value.replace(/ /, '_');
+		user_supplied_names[plugin_field_name] = normalized_name;
 	});
 
 	function user_configured_list_names(list_names) {
+		// this is for one table plugin, needed because Bubble doesn't support lists within lists!!!!!!
 		const names = [];
 		list_names.forEach(list_name => {
-			names.push(user_configured_field_names[list_name]);
+			names.push(user_supplied_names[list_name]);
 		});
 		return names;
 	}
 
-	const list_fields = user_configured_list_names(['object_parents_field', 'object_related_field', 'owners_field']);
-	function has_seriously_name(name) { return Object.keys(user_configured_field_names).includes(name); }
+	const list_names = user_configured_list_names(list_fields);
+	function has_seriously_name(name) { return Object.keys(user_supplied_names).includes(name); }
 	function log(message, ...optionalParams) { if (debug) { console.log(message, ...optionalParams); } }
 
 	function short_field_name(field_name, remove_these) {
@@ -51,29 +60,12 @@ function(instance, properties) {
 	}
 
 	function seriously_field_name_for(name) {
-		for (const [plugin_field_name, field_name] of Object.entries(user_configured_field_names)) {
-			if (field_name == name) {
-				return short_field_name(plugin_field_name, ['_field']);
-			}
-		}
-		return null;
-	}
-
-	function extract_ignoring(item_field_name, value, visited, id_to_ignore) {
-		if (!!value) {
-			let keepers = [];
-			// this is only for text values that correspond to objects or lists
-			// value is a list of objects
-			log('extract_ignoring', item_field_name, value, visited, id_to_ignore);
-			const extracted = extract_LIST_data(item_field_name, value, visited);
-			if (extracted.length > 0) {
-				for (const extracted_item of extracted) {
-					if (!!extracted_item && extracted_item.id != id_to_ignore) {
-						keepers.push(extracted_item);
-					}
-				}
-				if (keepers.length > 0) {
-					return keepers;
+		if (name == '_id') {
+			return 'id';
+		} else {
+			for (const [plugin_field_name, field_name] of Object.entries(user_supplied_names)) {
+				if (field_name == name) {
+					return short_field_name(plugin_field_name, ['_field', 'unique_']);
 				}
 			}
 		}
@@ -93,10 +85,11 @@ function(instance, properties) {
 				return names;
 			}, {});
 			item_field_names.forEach(item_field_name => {
-				let short_name = short_field_name(item_field_name, to_be_removed);
+				const short_name = short_field_name(item_field_name, to_be_removed);
 				const has_name = has_seriously_name(short_name) || has_seriously_name(item_field_name);
 				const seriously_name = seriously_field_name_for(short_name) ?? seriously_field_name_for(item_field_name);
 				const value = item.get(item_field_name);
+				log('extract ITEM field', item_field_name, short_name, seriously_name, value);
 				if (!ignore_fields.includes(short_name)) {
 					if (!seriously_name) {
 						if (has_name) {
@@ -106,14 +99,14 @@ function(instance, properties) {
 						if (value != null) {
 							console.warn('value undefined for', item_field_name, 'item properties:', item_properties);
 						}
-					} else if (item_fields.includes(short_name) && typeof value != 'string') {
+					} else if (item_references.includes(short_name) && typeof value != 'string') {
 						log('recursively extract_ITEM_data', short_name, value, visited);
 						item_data[seriously_name] = extract_ITEM_data(short_name, value, [...visited, short_name]);
-					} else if (list_fields.includes(short_name)) {
-						log('list_fields.includes(short_name)', short_name);
-						const keepers = extract_ignoring(item_field_name, value, visited, item_data.id);
-						if (!!keepers) {
-							item_data[seriously_name] = keepers;
+					} else if (!has_two_tables && list_names.includes(short_name)) {
+						const list_data = extract_LIST_data(item_field_name, value, visited);
+						log('process list for', seriously_name, list_data);
+						if (!!list_data) {
+							item_data[seriously_name] = list_data;
 						}
 					} else {
 						item_data[seriously_name] = value;
@@ -132,7 +125,6 @@ function(instance, properties) {
 	function extract_LIST_data(field_name, list = null, visited = []) {
 		// sometimes name is actually the list, use it as a string to get the list from properties
 		list = !!list ? list : (typeof field_name != 'string') ? field_name : (properties[field_name] || null);
-		log('extract_LIST_data', field_name, list, visited);
 		let extracted_data = [];
 		if (visited.includes(field_name)) {
 			console.log(field_name, 'already visited');
@@ -145,9 +137,13 @@ function(instance, properties) {
 		} else {
 			let sublist = list.get(0, list.length());
 			sublist.forEach(item => {
-				extracted_data.push(extract_ITEM_data(field_name, item, [...visited, field_name]));
+				const item_data = extract_ITEM_data(field_name, item, [...visited, field_name]);
+				if (!!item_data) {
+					extracted_data.push(item_data);
+				}
 			});
 		}
+		log('extract_LIST_data', field_name, list, visited, extracted_data);
 		return extracted_data;
 	}
 
@@ -172,8 +168,6 @@ function(instance, properties) {
 		send({
 			things: extract_LIST_data('objects_table'),
 			root: extract_ITEM_data('starting_object'),
-			focus: extract_ITEM_data('focus_object'),
-			grabs: extract_LIST_data('selected_objects'),
 		}, null, 0);
 
 	} catch (error) {

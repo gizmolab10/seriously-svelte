@@ -10,7 +10,14 @@ export default class DB_Bubble extends DB_Common {
 	async fetch_all() {
 		e.update_event_listener('message', this.handle_bubble_message);		// first prepare listener
 		window.parent.postMessage({ type: 'listening' }, '*');				// tell bubble that we're listening
+		setTimeout(() => {
+			this.focus_on_thing('hello world');
+		}, 4000);
 		return false;
+	}
+
+	focus_on_thing(id: string) {
+		window.parent.postMessage({ type: 'focus', id }, '*');
 	}
 
 	private handle_bubble_message = (e: Event) => {
