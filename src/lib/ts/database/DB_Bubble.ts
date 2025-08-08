@@ -1,4 +1,6 @@
-import { e, h, k, debug, T_Thing, T_Create, T_Predicate, T_Persistence } from '../common/Global_Imports';
+import { T_Thing, T_Create, T_Predicate, T_Persistence } from '../common/Global_Imports';
+import { e, h, k, debug, Ancestry } from '../common/Global_Imports';
+import { w_ancestry_focus, w_ancestries_grabbed } from '../common/Stores';
 import { T_Database } from './DB_Common';
 import DB_Common from './DB_Common';
 
@@ -10,14 +12,23 @@ export default class DB_Bubble extends DB_Common {
 	async fetch_all() {
 		e.update_event_listener('message', this.handle_bubble_message);		// first prepare listener
 		window.parent.postMessage({ type: 'listening' }, '*');				// tell bubble that we're listening
-		setTimeout(() => {
-			this.focus_on_thing('hello world');
-		}, 4000);
+		this.setup_subscriptions();
 		return false;
 	}
 
-	focus_on_thing(id: string) {
-		window.parent.postMessage({ type: 'focus', id }, '*');
+	setup_subscriptions() {
+		setTimeout(() => {
+			w_ancestry_focus.subscribe((ancestry: Ancestry) => {
+				if (!!ancestry?.thing) {
+					window.parent.postMessage({ type: 'focus', id: ancestry.thing.id }, '*');
+				}
+			});
+			w_ancestries_grabbed.subscribe((ancestries: Ancestry[]) => {
+				if (!!ancestries) {
+					window.parent.postMessage({ type: 'select', ids: ancestries.map((ancestry: Ancestry) => ancestry.thing?.id) }, '*');
+				}
+			});
+		}, 4000);
 	}
 
 	private handle_bubble_message = (e: Event) => {

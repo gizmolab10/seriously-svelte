@@ -36,6 +36,7 @@ export default class DB_Common {
 	async fetch_all(): Promise<boolean> { return this.fetch_all_fromLocal(); }
 	async remove_all() { this.remove_all_fromLocal(); }
 
+	async thing_becomeFocus(thing: Thing) {}
 	async thing_persistentUpdate(thing: Thing) { this.persist_all(); }
 	async thing_persistentDelete(thing: Thing) { this.persist_all(); }
 	async thing_remember_persistentCreate(thing: Thing) { h.thing_remember(thing); this.persist_all(); }

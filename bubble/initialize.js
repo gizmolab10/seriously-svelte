@@ -17,6 +17,10 @@ function(instance, properties, context) {
 					instance.publishState('focus_id', event.data.id);
 					instance.trigger('focus');
 					break;
+				case 'select':
+					instance.publishState('selected_ids', event.data.ids);
+					instance.trigger('select');
+					break;
 				case 'listening':
 					instance.data.iframeIsListening = true;		// once set, only these messages will pend, the rest are sent in update
 					if (instance.data.pendingMessages) {		// Send any pending messages that were stored before iframe was ready
