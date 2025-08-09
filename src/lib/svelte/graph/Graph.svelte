@@ -54,6 +54,15 @@
 			graph_reattachments += 1;
 		}
 	}
+	
+	function handle_mouseDown(event: MouseEvent) {
+		const target = event.target as HTMLElement;
+		if (!target.closest('button, input, .mouse-responder')) {
+			rubberbandComponent.handleMouseDown(event);
+			event.preventDefault();
+			event.stopPropagation();
+		}
+	}
 		
 	function update_style() {
 		draggableRect = $w_graph_rect;
@@ -73,55 +82,54 @@
 </script>
 
 {#if $w_t_startup == T_Startup.ready}
-	{#key graph_reattachments}
-		<div class='draggable'
-			style={style}
-			bind:this={draggable}>
-			{#if $w_show_graph_ofType == T_Graph.radial}
-				<Radial_Graph/>
-			{:else}
-				<Tree_Graph/>
-			{/if}
-			<Rubberband
-				strokeWidth={2}
-				bounds={draggableRect}
-				color={colors.rubberband}
-				bind:this={rubberbandComponent}
-			/>
-		</div>
-		<div class='bottom-controls'
-			style='
-				left:0px;
-				position:absolute;
-				top:{draggableRect.size.height - 30}px;'>
-			<Button
-				width=75
-				height={size_big}
-				origin={Point.x(14)}
-				name={T_Control.builds}
-				es_button={ux.s_control_forType(T_Control.builds)}
-				closure={(s_mouse) => e.handle_s_mouse_forControl_Type(s_mouse, T_Control.builds)}>
-				<span style='font-family: {$w_thing_fontFamily};'>
-					{'build ' + k.build_number}
-				</span>
-			</Button>
-			<Button
-				width={size_big}
-				height={size_big}
-				name={T_Control.help}
-				origin={Point.x(draggableRect.size.width - 35)}
-				es_button={ux.s_control_forType(T_Control.help)}
-				closure={(s_mouse) => e.handle_s_mouse_forControl_Type(s_mouse, T_Control.help)}>
-				<span
-					style='
-						top:2px;
-						left:6.5px;
-						position:absolute;'>
-					?
-				</span>
-			</Button>
-		</div>
-	{/key}
+	<div class='draggable'
+		style={style}
+		bind:this={draggable}
+		on:mousedown={handle_mouseDown}>
+		{#if $w_show_graph_ofType == T_Graph.radial}
+			<Radial_Graph/>
+		{:else}
+			<Tree_Graph/>
+		{/if}
+		<Rubberband
+			strokeWidth={2}
+			bounds={draggableRect}
+			color={colors.rubberband}
+			bind:this={rubberbandComponent}
+		/>
+	</div>
+	<div class='bottom-controls'
+		style='
+			left:0px;
+			position:absolute;
+			top:{draggableRect.size.height - 30}px;'>
+		<Button
+			width=75
+			height={size_big}
+			origin={Point.x(14)}
+			name={T_Control.builds}
+			es_button={ux.s_control_forType(T_Control.builds)}
+			closure={(s_mouse) => e.handle_s_mouse_forControl_Type(s_mouse, T_Control.builds)}>
+			<span style='font-family: {$w_thing_fontFamily};'>
+				{'build ' + k.build_number}
+			</span>
+		</Button>
+		<Button
+			width={size_big}
+			height={size_big}
+			name={T_Control.help}
+			origin={Point.x(draggableRect.size.width - 35)}
+			es_button={ux.s_control_forType(T_Control.help)}
+			closure={(s_mouse) => e.handle_s_mouse_forControl_Type(s_mouse, T_Control.help)}>
+			<span
+				style='
+					top:2px;
+					left:6.5px;
+					position:absolute;'>
+				?
+			</span>
+		</Button>
+	</div>
 {/if}
 
 <style>

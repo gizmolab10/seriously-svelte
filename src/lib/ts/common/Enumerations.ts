@@ -39,7 +39,6 @@ export enum T_Action {
 }
 
 export enum T_Layer {
-	rubberband,
 	common,
 	graph,
 	paging,
@@ -56,6 +55,7 @@ export enum T_Layer {
 	detailsPlus_2,
 	detailsPlus_3,
 	box,
+	rubberband,
 	frontmost,
 }
 
