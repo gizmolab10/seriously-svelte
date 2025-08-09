@@ -2,6 +2,7 @@ import { builds } from './Builds';
 
 const dot_size = 14;
 const row_height = 20;
+const rubberband_thickness = 2;
 
 export default class Constants {
 	details_margin = 0;
@@ -87,6 +88,8 @@ export default class Constants {
 	thickness = {
 		rotation_ring: 44,
 		paging_arc:	   15,
+		extra:		   12 + rubberband_thickness,
+		rubberband:	  	rubberband_thickness,
 		fork:		    2.5,
 		separator: {
 			main:		5,

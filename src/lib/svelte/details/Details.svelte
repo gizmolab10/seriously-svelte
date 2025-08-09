@@ -71,8 +71,8 @@
 	has_both_wings={true}
 	margin={k.details_margin}
 	thickness={k.thickness.separator.main}
-	length={$w_graph_rect.size.height + 10}
 	corner_radius={k.radius.gull_wings.thick}
+	length={$w_graph_rect.size.height + k.thickness.extra}
 	origin={new Point(k.width.details - 2, layout.controls_boxHeight)}/>
 
 <style>

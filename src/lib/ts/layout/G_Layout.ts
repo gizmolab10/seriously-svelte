@@ -56,9 +56,9 @@ export default class G_Layout {
 		// respond to changes in: window size & details visibility
 		const y = this.controls_boxHeight + 2;			// account for origin at top
 		const x = get(w_show_details) ? k.width.details : 0;
+		const thickness = k.thickness.separator.main;
 		const origin_ofGraph = new Point(x, y);
-		const breadcrumbs_height = 4;
-		const size_ofGraph = this.windowSize.reducedBy(origin_ofGraph).reducedByY(breadcrumbs_height);
+		const size_ofGraph = this.windowSize.reducedBy(origin_ofGraph).expandedEquallyBy(-thickness - k.thickness.rubberband);
 		const rect = new Rect(origin_ofGraph, size_ofGraph);
 		debug.log_mouse(`GRAPH ====> ${rect.description}`);
 		w_graph_rect.set(rect);										// used by Panel and Graph

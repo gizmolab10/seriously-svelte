@@ -72,8 +72,8 @@
 				margin={k.details_margin}
 				zindex={T_Layer.frontmost}
 				thickness={k.thickness.separator.main}
-				length={$w_graph_rect.size.height + 11}
 				corner_radius={k.radius.gull_wings.thick}
+				length={$w_graph_rect.size.height + k.thickness.extra}
 				origin={new Point(2, layout.controls_boxHeight - 0.5)}/>
 			<Separator
 				name='panel-right'
@@ -82,8 +82,8 @@
 				margin={k.details_margin}
 				zindex={T_Layer.frontmost}
 				thickness={k.thickness.separator.main}
-				length={$w_graph_rect.size.height + 11}
 				corner_radius={k.radius.gull_wings.thick}
+				length={$w_graph_rect.size.height + k.thickness.extra}
 				origin={new Point(layout.windowSize.width + 1 - half_thickness, layout.controls_boxHeight - 0.5)}/>
 		{/if}
 		<Separator

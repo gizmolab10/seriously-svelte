@@ -210,10 +210,16 @@ export class Rect {
 	}
 
 	intersects(rect: Rect): boolean {
-        return !(this.origin.x > rect.extent.x || 
-                rect.origin.x > this.extent.x || 
-                this.origin.y > rect.extent.y || 
-                rect.origin.y > this.extent.y);
+        // For zero width/height, use origin for extent in that dimension
+        const thisExtentX = this.size.width === 0 ? this.origin.x : this.extent.x;
+        const thisExtentY = this.size.height === 0 ? this.origin.y : this.extent.y;
+        const rectExtentX = rect.size.width === 0 ? rect.origin.x : rect.extent.x;
+        const rectExtentY = rect.size.height === 0 ? rect.origin.y : rect.extent.y;
+
+        return !(this.origin.x > rectExtentX || 
+                rect.origin.x > thisExtentX || 
+                this.origin.y > rectExtentY || 
+                rect.origin.y > thisExtentY);
     }
 
 	corners_forAngle(angle: number): [Point, Point] {
