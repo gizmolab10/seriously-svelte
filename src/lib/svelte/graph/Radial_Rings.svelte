@@ -198,10 +198,10 @@
 	{#if !debug.hide_rings}
 		<div class = 'rings'
 			on:mousemove={detect_movement}
-			style = 'z-index:{T_Layer.rings}; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;'>
+			style = 'z-index:{T_Layer.radial}; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;'>
 			<Mouse_Responder name = 'rings'
 				cursor = {cursor}
-				zindex = {T_Layer.rings}
+				zindex = {T_Layer.radial}
 				width = {outer_diameter}
 				height = {outer_diameter}
 				handle_isHit = {handle_isHit}

@@ -1,7 +1,7 @@
 import { w_device_isMobile, w_ancestries_grabbed, w_user_graph_offset, w_show_details, w_popupView_id } from '../common/Stores';
 import { T_Action, T_File_Format, T_Predicate, T_Alteration, S_Mouse, S_Alteration, T_Control } from '../common/Global_Imports';
 import { c, h, k, u, ux, grabs, Point, debug, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
-import { w_ancestry_focus, w_count_mouse_up, w_mouse_location, w_mouse_location_scaled } from '../common/Stores';
+import { w_ancestry_focus, w_count_mouse_up, w_mouse_location, w_mouse_location_scaled, w_rubberband_active } from '../common/Stores';
 import { w_s_alteration, w_count_resize, w_s_text_edit, w_control_key_down } from '../common/Stores';
 import Mouse_Timer from './Mouse_Timer';
 import { get } from 'svelte/store';
@@ -9,14 +9,11 @@ import { get } from 'svelte/store';
 export class Events {
 	mouse_timer_byName: { [name: string]: Mouse_Timer } = {};
 	initialTouch: Point | null = null;
-	mouseTimer: Mouse_Timer;
-	width = 0;
+	alterationTimer: Mouse_Timer;
+	width = 0;		// WTF??
 
+	constructor() { this.alterationTimer = this.mouse_timer_forName('alteration'); }
 	mouse_timer_forName(name: string): Mouse_Timer { return ux.assure_forKey_inDict(name, this.mouse_timer_byName, () => new Mouse_Timer(name)); }
-
-	constructor() {
-		this.mouseTimer = this.mouse_timer_forName('events');
-	}
 
 	setup() {
 		w_s_alteration.subscribe((s_alteration: S_Alteration | null) => { this.handle_s_alteration(s_alteration); });
@@ -80,9 +77,9 @@ export class Events {
 	private handle_mouse_up(event: MouseEvent) { w_count_mouse_up.update(n => n + 1); }
 
 	private handle_mouse_move(event: MouseEvent) {
-		const location = new Point(event.clientX, event.clientY);
-		w_mouse_location.set(location);
-		w_mouse_location_scaled.set(location.dividedBy(layout.scale_factor));
+        const location = new Point(event.clientX, event.clientY);
+        w_mouse_location.set(location);
+        w_mouse_location_scaled.set(location.dividedBy(layout.scale_factor));
 	}
 
 	private handle_key_up(e: Event) {
@@ -146,11 +143,11 @@ export class Events {
 
 	private handle_s_alteration(s_alteration: S_Alteration | null) {
 		if (!!s_alteration) {
-			this.mouseTimer.alteration_start((invert) => {
+			this.alterationTimer.alteration_start((invert) => {
 				signals.signal_blink_forAlteration(invert);
 			});
 		} else {
-			this.mouseTimer.alteration_stop();
+			this.alterationTimer.alteration_stop();
 			signals.signal_blink_forAlteration(false);
 		}
 	}

@@ -1,15 +1,17 @@
 <script lang='ts'>
 	import { w_graph_rect, w_show_graph_ofType, w_user_graph_offset, w_thing_fontFamily } from '../../ts/common/Stores';
-	import { S_Mouse, T_Layer, T_Graph, T_Startup, T_Control, T_Element } from '../../ts/common/Global_Imports';
 	import { w_t_startup, w_ancestry_focus, w_device_isMobile, w_popupView_id } from '../../ts/common/Stores';
-	import { c, e, h, k, ux, Rect, Point, debug, layout, signals } from '../../ts/common/Global_Imports';
+	import { e, h, k, ux, Rect, Point, debug, layout, signals, colors } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Graph, T_Startup, T_Control, T_Element } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Radial_Graph from '../graph/Radial_Graph.svelte';
 	import Tree_Graph from '../graph/Tree_Graph.svelte';
+	import Rubberband from '../draw/Rubberband.svelte';
 	import Button from '../buttons/Button.svelte';
 	import { onMount } from 'svelte';
 	const size_big = k.height.button + 4;
 	let draggableRect = $w_graph_rect;
+	let rubberbandComponent: any;
 	let graph_reattachments = 0;
 	let style = k.empty;
 	let draggable;
@@ -56,12 +58,12 @@
 	function update_style() {
 		draggableRect = $w_graph_rect;
 		style=`
+			top:0px;
 			overflow: hidden;
 			touch-action: none;
 			position: absolute;
 			pointer-events: auto;
-			z-index: ${T_Layer.common};
-			top:${draggableRect.origin.y}px;
+			z-index: ${T_Layer.graph};
 			width: ${draggableRect.size.width}px;
 			height: ${draggableRect.size.height}px;
 		`.removeWhiteSpace();
@@ -72,21 +74,26 @@
 
 {#if $w_t_startup == T_Startup.ready}
 	{#key graph_reattachments}
-		<div
+		<div class='draggable'
 			style={style}
-			class='draggable'
 			bind:this={draggable}>
 			{#if $w_show_graph_ofType == T_Graph.radial}
 				<Radial_Graph/>
 			{:else}
 				<Tree_Graph/>
 			{/if}
+			<Rubberband
+				strokeWidth={2}
+				bounds={draggableRect}
+				color={colors.rubberband}
+				bind:this={rubberbandComponent}
+			/>
 		</div>
-		<div
+		<div class='bottom-controls'
 			style='
 				left:0px;
 				position:absolute;
-				top:{draggableRect.size.height + 12}px;'>
+				top:{draggableRect.size.height - 30}px;'>
 			<Button
 				width=75
 				height={size_big}
@@ -116,3 +123,13 @@
 		</div>
 	{/key}
 {/if}
+
+<style>
+	:global(body.rubberband-active) {
+		cursor: crosshair !important;
+		user-select: none !important;
+		-ms-user-select: none !important;
+		-moz-user-select: none !important;
+		-webkit-user-select: none !important;
+	}
+</style>

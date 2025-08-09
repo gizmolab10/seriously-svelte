@@ -8,7 +8,7 @@
 	import Button from '../buttons/Button.svelte';
 	import Slider from '../mouse/Slider.svelte';
 	import { transparentize } from 'color2k';
-	export let zindex = T_Layer.frontmost;
+	export let zindex = T_Layer.graph;
 	export let width = 137;
 	export let top = 0;
 	const back_up = -5;
@@ -24,7 +24,7 @@
 
 </script>
 
-<div class='graph-preferences' style='
+<div class='tree-preferences' style='
 	left: -5px;
 	top: 0px;
 	width: 177px;

@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { w_ancestry_focus, w_user_graph_offset } from '../../ts/common/Stores';
+	import { w_graph_rect, w_user_graph_offset } from '../../ts/common/Stores';
+	import { w_depth_limit, w_ancestry_focus } from '../../ts/common/Stores';
 	import { u, layout, T_Layer } from '../../ts/common/Global_Imports';
 	import Tree_Preferences from './Tree_Preferences.svelte';
-	import { w_depth_limit } from '../../ts/common/Stores';
 	import Tree_Branches from './Tree_Branches.svelte';
 	import Widget from '../widget/Widget.svelte';
 	const focus = $w_ancestry_focus;
@@ -17,20 +17,21 @@
 
 </script>
 
-<Tree_Preferences top={0} width={117} zindex={T_Layer.frontmost}/>
 {#key reattachments}
 	{#if !!focus && !layout.branch_was_visited(focus, true)}
-		<div class = 'tree-graph-container'
+		<div class = 'tree-graph'
 			style = '
 				position: absolute;
+				z-index: {T_Layer.graph};
 				border:10px solid transparent;
 				top: {$w_user_graph_offset.y}px;
 				left: {$w_user_graph_offset.x}px;
-				width: {layout.tree_size.width}px;
-				height: {layout.tree_size.height}px;
+				width: {$w_graph_rect.size.width}px;
+				height: {$w_graph_rect.size.height}px;
 				transform: scale({layout.scale_factor});'>
 			<Widget g_widget = {focus.g_widget}/>
 			<Tree_Branches ancestry = {focus} depth = {$w_depth_limit}/>
 		</div>
 	{/if}
 {/key}
+<Tree_Preferences top={0} width={117} zindex={T_Layer.graph}/>

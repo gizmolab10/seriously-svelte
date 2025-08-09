@@ -9,6 +9,7 @@ export class Colors {
 	background = 'white';   // #ebf0ff
 	separator = '#eeeee0';
     disabled = 'lightGray';
+	rubberband = '#4a90e2';
     default_forThings = 'blue';
 
 	color_fromSeriously(color: string | undefined): string {

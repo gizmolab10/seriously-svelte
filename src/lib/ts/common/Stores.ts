@@ -56,6 +56,7 @@ const _____COUNTS: unique symbol = Symbol('COUNTS');
 
 export const w_count_mouse_up			 = writable<number>();
 export const w_count_rebuild			 = writable<number>();
+export const w_rubberband_active		 = writable<boolean>(false);
 export const w_count_details			 = writable<number>();	
 export const w_count_resize				 = writable<number>();
 

@@ -156,11 +156,11 @@
 </script>
 
 <div class='mouse-responder' id={name}
-	bind:this={bound_element}
-	on:mousemove={handle_movement}
+	on:pointerdown={handle_pointerDown}
 	on:pointerup={handle_pointerUp}
 	on:mouseleave={handle_movement}
-	on:pointerdown={handle_pointerDown}
+	on:mousemove={handle_movement}
+	bind:this={bound_element}
 	style={style}>
 	<slot/>
 </div>

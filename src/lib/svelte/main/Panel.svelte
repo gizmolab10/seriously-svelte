@@ -55,13 +55,14 @@
 			{#if $w_show_details}
 				<Details/>
 			{/if}
-			<div class='graph-container'
+			<div class='panel-graph'
 				style='
-					top: 0px;
-					height: 100%;
 					position: fixed;
-					z-index: {T_Layer.common};
-					left: {$w_graph_rect.origin.x}px;'>
+					z-index: {T_Layer.graph};
+					top: {$w_graph_rect.origin.y}px;
+					left: {$w_graph_rect.origin.x}px;
+					width: {$w_graph_rect.size.width}px;
+					height: {$w_graph_rect.size.height}px;'>
 				<Graph/>
 			</div>
 			<Separator
