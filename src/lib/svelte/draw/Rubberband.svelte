@@ -1,10 +1,11 @@
 <script lang='ts'>
-    import { w_mouse_location, w_count_mouse_up, w_rubberband_active } from '../../ts/common/Stores';
-    import { Point, Rect, T_Layer, colors } from '../../ts/common/Global_Imports';
+    import { h, Rect, Size, Point, colors, wrappers } from '../../ts/common/Global_Imports';
+    import { w_rubberband_active, w_ancestries_grabbed } from '../../ts/common/Stores';
+    import { T_Layer, T_SvelteComponent } from '../../ts/common/Global_Imports';
+    import { w_mouse_location, w_count_mouse_up } from '../../ts/common/Stores';
     export let color: string = colors.rubberband;
     export let strokeWidth = 1;
     export let bounds: Rect;
-    const enabled = false;
     let mouse_upCount = $w_count_mouse_up;
     let startPoint: Point | null = null;
     let height = 0;
@@ -31,12 +32,30 @@
         }
     }
 
+    function checkIntersections() {
+        if (!$w_rubberband_active || width == 0 || height == 0) {
+            w_ancestries_grabbed.set([]);
+        } else {
+            const rubberbandRect = new Rect( new Point(left, top), new Size(width, height));
+            const widget_wrappers = wrappers.wrappers_ofType_withinRect(T_SvelteComponent.widget, rubberbandRect);
+            const intersecting = [];
+            widget_wrappers.forEach((wrapper) => {
+                const ancestry = h.ancestry_forHID(wrapper.hid);
+                if (!!ancestry) {
+                    intersecting.push(ancestry);
+                }
+            });
+            w_ancestries_grabbed.set(intersecting);
+        }
+    }
+
     $: if ($w_rubberband_active && startPoint && $w_mouse_location) {
         const constrainedEnd = constrainToRect($w_mouse_location.x, $w_mouse_location.y);
         height = Math.abs(constrainedEnd.y - startPoint.y);
         width = Math.abs(constrainedEnd.x - startPoint.x);
         left = Math.min(constrainedEnd.x, startPoint.x);
         top = Math.min(constrainedEnd.y, startPoint.y);
+        checkIntersections();
     }
 
     $: style = `
@@ -60,7 +79,7 @@
 
 </script>
 
-{#if enabled && $w_rubberband_active}
+{#if $w_rubberband_active}
     <div class='rubberband' {style}/>
 {/if}
 

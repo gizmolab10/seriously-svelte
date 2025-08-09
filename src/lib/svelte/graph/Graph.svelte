@@ -1,8 +1,9 @@
 <script lang='ts'>
-	import { w_graph_rect, w_show_graph_ofType, w_user_graph_offset, w_thing_fontFamily } from '../../ts/common/Stores';
-	import { w_t_startup, w_ancestry_focus, w_device_isMobile, w_popupView_id } from '../../ts/common/Stores';
 	import { e, h, k, ux, Rect, Point, debug, layout, signals, colors } from '../../ts/common/Global_Imports';
+	import { w_t_startup, w_ancestry_focus, w_device_isMobile, w_popupView_id } from '../../ts/common/Stores';
 	import { T_Layer, T_Graph, T_Startup, T_Control, T_Element } from '../../ts/common/Global_Imports';
+	import { w_graph_rect, w_show_graph_ofType, w_user_graph_offset } from '../../ts/common/Stores';
+	import { w_thing_fontFamily, w_rubberband_active } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Radial_Graph from '../graph/Radial_Graph.svelte';
 	import Tree_Graph from '../graph/Tree_Graph.svelte';
@@ -85,7 +86,8 @@
 	<div class='draggable'
 		style={style}
 		bind:this={draggable}
-		on:mousedown={handle_mouseDown}>
+		on:mousedown={handle_mouseDown}
+		class:rubberband-active={$w_rubberband_active}>
 		{#if $w_show_graph_ofType == T_Graph.radial}
 			<Radial_Graph/>
 		{:else}
@@ -133,6 +135,10 @@
 {/if}
 
 <style>
+    :global(.draggable.rubberband-active *) {
+        pointer-events: none !important;
+    }
+
 	:global(body.rubberband-active) {
 		cursor: crosshair !important;
 		user-select: none !important;

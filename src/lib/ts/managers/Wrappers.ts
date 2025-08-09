@@ -1,5 +1,5 @@
 import { w_mouse_location_scaled } from '../common/Stores';
-import { Svelte_Wrapper } from '../common/Global_Imports';
+import { Rect, Svelte_Wrapper } from '../common/Global_Imports';
 import type { Integer } from '../common/Types';
 import { get } from 'svelte/store';
 
@@ -37,6 +37,20 @@ export class Wrappers {
 			const wrappers = Object.values(dict);
 			for (const wrapper of wrappers) {
 				if (wrapper.containsPoint(mouse_vector)) {
+					found.push(wrapper);
+				}
+			}
+		}
+		return found;
+	}
+
+	wrappers_ofType_withinRect(type: string, rect: Rect): Array<Svelte_Wrapper> {
+		const dict = this.wrappers_byHID_forType(type);
+		let found: Array<Svelte_Wrapper> = [];
+		if (!!dict) {
+			const wrappers = Object.values(dict);
+			for (const wrapper of wrappers) {
+				if (wrapper.boundingRect.intersects(rect)) {
 					found.push(wrapper);
 				}
 			}

@@ -209,6 +209,13 @@ export class Rect {
 			   point.y.isBetween(origin.y, extent.y, true);
 	}
 
+	intersects(rect: Rect): boolean {
+        return !(this.origin.x > rect.extent.x || 
+                rect.origin.x > this.extent.x || 
+                this.origin.y > rect.extent.y || 
+                rect.origin.y > this.extent.y);
+    }
+
 	corners_forAngle(angle: number): [Point, Point] {
 		switch (new Angle(angle).quadrant_ofAngle) {
 			case T_Quadrant.lowerRight: return [this.bottomLeft, this.topRight];
