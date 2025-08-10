@@ -33,7 +33,7 @@
 	position: absolute;
 	border-radius: 20px;
 	pointer-events: auto;
-	background-color: {transparentize($w_background_color, 0.15)};'>
+	background-color: transparent;'>
 	{#if $w_show_graph_ofType == T_Graph.tree}
 		{#key $w_depth_limit}
 			<div style='
@@ -41,7 +41,7 @@
 				width: 100%;
 				height: 100%;
 				position: absolute;
-				background-color: {transparentize($w_background_color, 0.15)};'>
+				background-color: transparent;'>
 				<div style='
 					height: 36px;
 					display: flex;

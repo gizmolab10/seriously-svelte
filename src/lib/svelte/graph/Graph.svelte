@@ -59,7 +59,7 @@
 	
 	function handle_mouseDown(event: MouseEvent) {
 		const target = event.target as HTMLElement;
-		if (!target.closest('button, input, .mouse-responder')) {
+		if (!target.closest('button, input, .widget, .mouse-responder')) {
 			rubberbandComponent.handleMouseDown(event);
 			event.preventDefault();
 			event.stopPropagation();
@@ -95,10 +95,10 @@
 			<Tree_Graph/>
 		{/if}
 		<Rubberband
-			strokeWidth={2}
 			bounds={draggableRect}
 			color={colors.rubberband}
 			bind:this={rubberbandComponent}
+			strokeWidth={k.thickness.rubberband}
 		/>
 	</div>
 	{#if $w_show_graph_ofType == T_Graph.tree}
@@ -139,9 +139,6 @@
 {/if}
 
 <style>
-    :global(.draggable.rubberband-active *) {
-        pointer-events: none !important;
-    }
 
 	:global(body.rubberband-active) {
 		cursor: crosshair !important;

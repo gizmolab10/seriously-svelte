@@ -111,22 +111,12 @@
 		}
 	}
 
-	export const _____CURSOR: unique symbol = Symbol('_____CURSOR');
-	
-	function update_cursor() {
-		const cursor = isEditing() ? 'text' : 'pointer';
-		console.log('cursor', cursor);
-		s_widget.set_forHovering(color, cursor);
-		es_title.set_forHovering(color, cursor);
-	}
-
 	export const _____EDIT: unique symbol = Symbol('_____EDIT');
 
 	function stopEdit() {
 		debug.log_edit(`STOP ${title_binded}`);
 		$w_s_text_edit = null;
 		input?.blur();
-		update_cursor();
 		layout.grand_layout();
 	}
 
@@ -178,7 +168,6 @@
 				debug.log_edit(`CURSOR OFFSET ${offset}`);
 				$w_s_text_edit.thing_setSelectionRange_fromOffset(offset);
 				$w_s_text_edit.start_editing();
-				update_cursor();
 			}
 		}
 	}
@@ -338,6 +327,7 @@
 				height : {input_height}px;
 				{k.prevent_selection_style};
 				background-color : transparent;
-				font-family : {$w_thing_fontFamily};'/>
+				font-family : {$w_thing_fontFamily};
+				cursor: {isEditing() ? 'text' : 'pointer'};'/>
 	</Mouse_Responder>
 {/key}

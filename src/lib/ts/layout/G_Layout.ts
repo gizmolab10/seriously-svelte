@@ -54,11 +54,11 @@ export default class G_Layout {
 
 	graphRect_update() {
 		// respond to changes in: window size & details visibility
-		const y = this.controls_boxHeight + 2;			// account for origin at top
-		const x = get(w_show_details) ? k.width.details : 0;
-		const thickness = k.thickness.separator.main;
+		const thickness = k.thickness.separator.main - 1;
+		const y = this.controls_boxHeight + 2;						// graph is below controls
+		const x = get(w_show_details) ? k.width.details : thickness;		// graph is to the right of details
 		const origin_ofGraph = new Point(x, y);
-		const size_ofGraph = this.windowSize.reducedBy(origin_ofGraph).expandedEquallyBy(-thickness - k.thickness.rubberband);
+		const size_ofGraph = this.windowSize.reducedBy(origin_ofGraph).expandedEquallyBy(-thickness);
 		const rect = new Rect(origin_ofGraph, size_ofGraph);
 		debug.log_mouse(`GRAPH ====> ${rect.description}`);
 		w_graph_rect.set(rect);										// used by Panel and Graph

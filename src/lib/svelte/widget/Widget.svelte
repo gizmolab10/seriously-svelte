@@ -82,8 +82,24 @@
 		}
 	}
  
-	function isHit(): boolean { return false; }
-	function handle_s_mouse(s_mouse: S_Mouse): boolean { return false; }
+	function isHit(): boolean {
+		return !!widget && !!ancestry;
+	}
+
+	function handle_s_mouse(s_mouse: S_Mouse): boolean {
+		if (!widget || !ancestry) return false;
+		
+		if (s_mouse.isHover) {
+			isHovering = true;
+			update_colors();
+			return true;
+		} else if (s_mouse.isOut) {
+			isHovering = false;
+			update_colors();
+			return true;
+		}
+		return false;
+	}
 
 	function handle_mouse_exit(isOut: boolean) {
 		s_widget.isOut = isOut;
@@ -142,6 +158,7 @@
 		on:click = {handle_click_event}
         on:mouseleave={() => handle_mouse_exit(true)}
         on:mouseenter={() => handle_mouse_exit(false)}
+		on:mousemove = {(e) => handle_s_mouse(S_Mouse.hover(e, widget, true))}
 		style = '
 			{background};
 			top : {top}px;
@@ -151,7 +168,7 @@
 			position :  absolute;
 			width : {width_ofWidget}px;
 			z-index : {T_Layer.widgets};
-			border-radius : {border_radius}px;;
+			border-radius : {border_radius}px;
 		'>
 		<Widget_Drag
 			es_drag = {es_drag}

@@ -5,9 +5,10 @@
     import { w_scaled_movement, w_user_graph_offset } from '../../ts/common/Stores';
     import { w_mouse_location, w_count_mouse_up } from '../../ts/common/Stores';
     import { onMount, onDestroy } from 'svelte';
+    export let strokeWidth = k.thickness.rubberband;
     export let color: string = colors.rubberband;
-    export let strokeWidth = 1;
     export let bounds: Rect;
+    const enabled = true;
     let mouse_upCount = $w_count_mouse_up;
     let startPoint: Point | null = null;
     let height = 0;
@@ -88,7 +89,7 @@
 
     function blockEvent(e: Event) {
         const target = e.target;
-        // Block all mouse events except for panel, rubberband, draggable, and tree-preferences
+        // Only block events when rubberband is active and target is not an interactive element
         if ($w_dragging_active === T_Dragging.rubberband && target instanceof HTMLElement) {
             if (!target.closest('.panel') && 
                 !target.closest('.rubberband') && 
@@ -134,7 +135,7 @@
 
 </script>
 
-{#if $w_dragging_active === T_Dragging.rubberband}
+{#if enabled && $w_dragging_active === T_Dragging.rubberband}
     <div class='rubberband' {style}/>
 {/if}
 
@@ -151,6 +152,7 @@
         position: fixed;
         pointer-events: none;
         border-style: dashed;
+        box-sizing: border-box;
         background-color: rgba(0, 0, 0, 0.05);
     }
 </style>
