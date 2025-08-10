@@ -7,6 +7,8 @@
 	export let handle_s_mouse: (result: S_Mouse) => boolean;
 	export let hover_closure: (flag: boolean) => boolean;
 	export let es_triangle = S_Element.empty();
+	export let detect_autorepeat = false;
+	export let detect_longClick = false;
 	export let extraPath = null;
 	export let name = k.empty;
 	export let strokeColor;
@@ -47,6 +49,8 @@
 	center={center}
 	height={size}
 	width={size}
+	detect_autorepeat={detect_autorepeat}
+	detect_longClick={detect_longClick}
 	name={name}>
 	<SVG_D3 name='triangle'
 		svgPath={trianglePath}

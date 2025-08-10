@@ -13,9 +13,9 @@
 
 	function handle_s_mouse(s_mouse: S_Mouse): boolean {
         const target = s_mouse.element;
-        if (!s_mouse.isHover && !!target && (s_mouse.isUp || s_mouse.isLong)) {
+        if (!s_mouse.isHover && !!target && (s_mouse.isLong || s_mouse.isRepeat)) {
             const pointsUp = target.id == 'up';
-            hit_closure(pointsUp, s_mouse.isLong);
+            hit_closure(pointsUp, s_mouse.event?.metaKey);
         }
 	}
 
@@ -28,6 +28,7 @@
             center={origin.offsetByY(-offsetY)}
             hover_closure={hover_closure}
             strokeColor={colors.default}
+            detect_autorepeat={true}
             angle={Direction.up}
             size={buttonSize}
             name='up'
@@ -39,6 +40,8 @@
             center={origin.offsetByY(offsetY)}
             hover_closure={hover_closure}
             strokeColor={colors.default}
+            detect_longClick={true}
+            detect_autorepeat={true}
             angle={Direction.down}
             size={buttonSize}
             name='down'
