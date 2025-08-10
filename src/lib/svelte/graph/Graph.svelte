@@ -57,9 +57,9 @@
 		}
 	}
 	
-	function handle_mouseDown(event: MouseEvent) {
+	function handle_pointerDown(event: PointerEvent) {
 		const target = event.target as HTMLElement;
-		if (!target.closest('button, input, .mouse-responder')) {
+		if (!target.closest('button, input, .mouse-responder, .widget, .tree-preferences')) {
 			rubberbandComponent.handleMouseDown(event);
 			event.preventDefault();
 			event.stopPropagation();
@@ -87,7 +87,7 @@
 	<div class='draggable'
 		style={style}
 		bind:this={draggable}
-		on:mousedown={handle_mouseDown}
+		on:pointerdown={handle_pointerDown}
 		class:rubberband-active={$w_dragging_active}>
 		{#if $w_show_graph_ofType == T_Graph.radial}
 			<Radial_Graph/>
