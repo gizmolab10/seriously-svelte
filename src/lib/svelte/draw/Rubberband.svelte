@@ -11,7 +11,9 @@
     const enabled = true;
     let mouse_upCount = $w_count_mouse_up;
     let startPoint: Point | null = null;
-    let nothing_selected = false;
+    let had_intersections = false;
+    let original_grab_count = 0;
+    let has_grabs = true;
     let height = 0;
     let width = 0;
     let left = 0;
@@ -37,7 +39,7 @@
     $: if ($w_count_mouse_up !== mouse_upCount) {
         mouse_upCount = $w_count_mouse_up;
         if ($w_dragging_active === T_Dragging.rubberband) {
-            if (nothing_selected) {
+            if (!has_grabs) {
                 $w_ancestries_grabbed = [];
             }
             startPoint = null;
@@ -111,9 +113,11 @@
             $w_dragging_active = T_Dragging.command;
         } else {
             const constrained = constrainToRect(startPoint.x, startPoint.y);
+            original_grab_count = $w_ancestries_grabbed.length;
             top = constrained.y;
             left = constrained.x;
             $w_dragging_active = T_Dragging.rubberband;
+            had_intersections = false;
         }
     }
 
@@ -129,11 +133,16 @@
                 }
             });
             // Only update if the list has changed
-            const newIds = intersecting.map(a => a.hid).sort().join(',');
-            const currentIds = $w_ancestries_grabbed.map(a => a.hid).sort().join(',');
-            nothing_selected = intersecting.length == 0;
-            if (currentIds !== newIds && !nothing_selected) {
-                $w_ancestries_grabbed = intersecting;
+            const new_grabbed_IDs = intersecting.map(a => a.hid).sort().join(',');
+            const prior_grabbed_IDs = $w_ancestries_grabbed.map(a => a.hid).sort().join(',');
+            has_grabs = intersecting.length != 0;
+            if (prior_grabbed_IDs !== new_grabbed_IDs) {
+                if (has_grabs) {
+                    had_intersections = true;
+                    $w_ancestries_grabbed = intersecting;
+                } else if (had_intersections) {
+                    $w_ancestries_grabbed = [];
+                }
             }
         }
     }

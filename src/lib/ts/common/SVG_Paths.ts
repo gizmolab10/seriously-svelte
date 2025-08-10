@@ -26,9 +26,10 @@ export default class SVG_Paths {
 
     t_cross(diameter: number, margin: number): string {
 		const radius = diameter / 2;
-		const length = (radius - margin) * 2;
-        return `M ${margin + 2} ${radius} L ${length + 1} ${radius} M ${radius} ${margin + 2} L ${radius} ${diameter - margin - 2}`;
-    }
+		const start = margin + 2;
+		const end = diameter - margin - 2;
+		return `M ${start} ${radius} L ${end} ${radius} M ${radius} ${start} L ${radius} ${end}`;
+	}
 
     circle_atOffset(width: number, diameter: number, offset: Point = Point.zero): string {
         const center = offset.offsetEquallyBy(width / 2);

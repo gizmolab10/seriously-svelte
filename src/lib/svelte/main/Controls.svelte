@@ -15,6 +15,7 @@
 	const lefts = u.cumulativeSum(widths);
 	const size_big = k.height.button + 4;
 	const y_center = 10.5;
+	const scaling_stroke_width = 1.5;
 	const hamburger_size = k.height.button;
 	const hamburger_path = svgPaths.hamburgerPath(hamburger_size);
 	const svg_style = 'top: -0.5px; left: -0.5px; position: absolute; width: 100%; height: 100%;';
@@ -112,7 +113,7 @@
 						titles={[T_Graph.tree, T_Graph.radial]}
 						handle_selection={(titles) => layout.handle_mode_selection('graph', titles)}/>
 				{/key}
-				<div class='size-controls'>
+				<div class='scaling-controls'>
 					<Button
 						width={size_big}
 						height={size_big}
@@ -124,8 +125,8 @@
 							<path
 								id='grow-path'
 								fill=transparent
-								stroke-width='1'
 								d={svgPaths.t_cross(size_big, 2)}
+								stroke-width={scaling_stroke_width}
 								stroke={ux.s_control_forType(T_Control.grow).svg_hover_color}/>
 						</svg>
 					</Button>
@@ -140,8 +141,8 @@
 							<path
 								id='shrink-path'
 								fill=transparent
-								stroke-width='1'
 								d={svgPaths.dash(size_big, 4)}
+								stroke-width={scaling_stroke_width}
 								stroke={ux.s_control_forType(T_Control.shrink).svg_hover_color}/>
 						</svg>
 					</Button>

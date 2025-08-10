@@ -13,15 +13,7 @@ export default class S_UX {
 	s_element_byName: { [name: string]: S_Element } = {};
 	s_mouse_byName: { [name: string]: S_Mouse } = {};
 	mouse_responder_number = 0;
-	width = 0;
-
-	t_controls = [	// in order of importance on mobile
-		T_Control.details,
-		T_Control.shrink,
-		T_Control.grow,
-		T_Control.help,
-		T_Control.builds,
-	];
+	width = 0;		// cruft from scaling logic
 
 	//////////////////////////////////////
 	//									//

@@ -2,7 +2,7 @@ import { builds } from './Builds';
 
 const dot_size = 14;
 const row_height = 20;
-const rubberband_thickness = 5;
+const rubberband_thickness = 1;
 
 export default class Constants {
 	details_margin = 0;
