@@ -32,6 +32,7 @@
 	z-index: {zindex};
 	position: absolute;
 	border-radius: 20px;
+	pointer-events: auto;
 	background-color: {transparentize($w_background_color, 0.15)};'>
 	{#if $w_show_graph_ofType == T_Graph.tree}
 		{#key $w_depth_limit}

@@ -4,13 +4,14 @@
 	import { T_Layer, T_Graph, T_Startup, T_Control, T_Element } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_show_graph_ofType, w_user_graph_offset } from '../../ts/common/Stores';
 	import { w_thing_fontFamily, w_dragging_active } from '../../ts/common/Stores';
+	import Tree_Preferences from './Tree_Preferences.svelte';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Radial_Graph from '../graph/Radial_Graph.svelte';
 	import Tree_Graph from '../graph/Tree_Graph.svelte';
 	import Rubberband from '../draw/Rubberband.svelte';
 	import Button from '../buttons/Button.svelte';
 	import { onMount } from 'svelte';
-	const size_big = k.height.button + 4;
+		const size_big = k.height.button + 4;
 	let draggableRect = $w_graph_rect;
 	let rubberbandComponent: any;
 	let graph_reattachments = 0;
@@ -100,6 +101,9 @@
 			bind:this={rubberbandComponent}
 		/>
 	</div>
+	{#if $w_show_graph_ofType == T_Graph.tree}
+		<Tree_Preferences top={0} width={117} zindex={T_Layer.frontmost}/>
+	{/if}
 	<div class='bottom-controls'
 		style='
 			left:0px;

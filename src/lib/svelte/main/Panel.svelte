@@ -40,8 +40,6 @@
 	<div
 		class='panel'
 		style='
-			touch-action: none;
-			pointer-events: auto;
 			on:wheel={ignore_wheel}
 			{k.prevent_selection_style};
 			width: {layout.windowSize.width}px;

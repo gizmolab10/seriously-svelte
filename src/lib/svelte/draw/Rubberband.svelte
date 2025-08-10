@@ -17,7 +17,7 @@
 
     $w_dragging_active = T_Dragging.none;
 
-    $: if ($w_dragging_active !== T_Dragging.none) {
+    $: if ($w_dragging_active === T_Dragging.rubberband) {
         document.body.classList.add('rubberband-blocking');     // see style:global block below
     } else {
         document.body.classList.remove('rubberband-blocking');
@@ -88,10 +88,12 @@
 
     function blockEvent(e: Event) {
         const target = e.target;
-        // Block all mouse events except for panel, rubberband and draggable
-        // needed to disable reactions of control and details buttons
+        // Block all mouse events except for panel, rubberband, draggable, and tree-preferences
         if ($w_dragging_active === T_Dragging.rubberband && target instanceof HTMLElement) {
-            if (!target.closest('.panel') && !target.closest('.rubberband') && !target.closest('.draggable')) {
+            if (!target.closest('.panel') && 
+                !target.closest('.rubberband') && 
+                !target.closest('.draggable') && 
+                !target.closest('.tree-preferences')) {
                 e.stopPropagation();
                 e.preventDefault();
             }

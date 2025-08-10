@@ -79,9 +79,13 @@
             margin: 0;
             padding: 0;
             width: 100%;
+            user-select: none;
             text-align: center;
             position: absolute;
+            -ms-user-select: none;
+            -moz-user-select: none;
             font-size: {font_size}px;
+            -webkit-user-select: none;
             background-color: transparent;
             transform: translate(-50%, -50%);'>
         {#if svgPaths.hasPath_for(title)}
