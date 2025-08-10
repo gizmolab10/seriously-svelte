@@ -23,9 +23,9 @@
 	let color_origin: Point | null = null;
 	let color = colors.default_forThings;
 	let properties: Array<Object> = [];
+	let characteristics_table: any;
 	let thing_title = thing?.title;
 	let picker_offset = k.empty;
-	let info_table: any;
 
 	$: $w_show_details_ofType, layout_forColor();
 	$: $w_relationship_order, update_forAncestry();
@@ -39,17 +39,11 @@
 	});
 
 	function layout_forColor() {
-		if (!!thing && !!info_table) {
+		if (!!thing && !!characteristics_table && typeof characteristics_table.absolute_location_ofCellAt === 'function') {
 			const row = Math.max(0, characteristics.findIndex(([key]) => key === 'color'));
-			// and make sure info table actually has the absolute_location_ofCellAt function
-			
-			if (typeof info_table.absolute_location_ofCellAt === 'function') {
-				const offset_toRow = info_table.absolute_location_ofCellAt(row, 1);
-				color_origin = offset_toRow.offsetByXY(-6, -5.5);
-				picker_offset = `-54px`;
-			} else {
-				console.warn('info_table does not have a absolute_location_ofCellAt function');
-			}
+			const offset_toRow = characteristics_table.absolute_location_ofCellAt(row, 1);
+			color_origin = offset_toRow.offsetByXY(-6, -5.5);
+			picker_offset = `-54px`;
 		}
 	}
 
@@ -112,10 +106,10 @@
 		<Text_Table
 			top={0}
 			row_height={11}
-			bind:this={info_table}
 			array={characteristics}
 			name='characteristics-table'
-			font_size={k.font_size.info}/>
+			font_size={k.font_size.info}
+			bind:this={characteristics_table}/>
 		<Text_Table
 			top={29}
 			left={100}
