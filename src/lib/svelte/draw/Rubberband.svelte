@@ -1,7 +1,8 @@
 <script lang='ts'>
-    import { h, Rect, Size, Point, colors, wrappers } from '../../ts/common/Global_Imports';
-    import { w_rubberband_active, w_ancestries_grabbed } from '../../ts/common/Stores';
-    import { T_Layer, T_SvelteComponent } from '../../ts/common/Global_Imports';
+    import { h, Rect, Size, Point, debug, colors, layout, wrappers } from '../../ts/common/Global_Imports';
+    import { T_Layer, T_Dragging, T_SvelteComponent } from '../../ts/common/Global_Imports';
+    import { w_dragging_active, w_ancestries_grabbed } from '../../ts/common/Stores';
+    import { w_scaled_movement, w_user_graph_offset } from '../../ts/common/Stores';
     import { w_mouse_location, w_count_mouse_up } from '../../ts/common/Stores';
     import { onMount, onDestroy } from 'svelte';
     export let color: string = colors.rubberband;
@@ -14,15 +15,15 @@
     let left = 0;
     let top = 0;
 
-    $w_rubberband_active = false;
+    $w_dragging_active = T_Dragging.none;
 
-    $: if ($w_rubberband_active) {
+    $: if ($w_dragging_active !== T_Dragging.none) {
         document.body.classList.add('rubberband-blocking');     // see style:global block below
     } else {
         document.body.classList.remove('rubberband-blocking');
     }
 
-    $: if ($w_rubberband_active && startPoint && $w_mouse_location) {
+    $: if ($w_dragging_active !== T_Dragging.none && startPoint && $w_mouse_location) {
         const constrainedEnd = constrainToRect($w_mouse_location.x, $w_mouse_location.y);
         height = Math.abs(constrainedEnd.y - startPoint.y);
         width = Math.abs(constrainedEnd.x - startPoint.x);
@@ -33,11 +34,20 @@
 
     $: if ($w_count_mouse_up !== mouse_upCount) {
         mouse_upCount = $w_count_mouse_up;
-        if ($w_rubberband_active) {
-            $w_rubberband_active = false;
+        if ($w_dragging_active !== T_Dragging.none) {
+            $w_dragging_active = T_Dragging.none;
             startPoint = null;
             height = 0;
             width = 0;
+        }
+    }
+
+    $: if ($w_dragging_active === T_Dragging.command) {
+        const delta = $w_scaled_movement;
+        const userOffset = $w_user_graph_offset;
+        if (!!userOffset && !!delta && delta.magnitude > 1) {
+            debug.log_action(` command drag GRAPH`);
+            layout.set_user_graph_offsetTo(userOffset.offsetBy(delta));
         }
     }
 
@@ -49,7 +59,7 @@
         z-index: ${T_Layer.rubberband};
         border-width: ${strokeWidth}px;
         border-color: ${colors.separator};
-        display: ${$w_rubberband_active ? 'block' : 'none'};`
+        display: ${$w_dragging_active === T_Dragging.rubberband ? 'block' : 'none'};`
     ;
 
     // Add event handlers at document level
@@ -76,18 +86,11 @@
         );
     }
 
-    export function handleMouseDown(e: MouseEvent): void {
-        startPoint = new Point(e.clientX, e.clientY);
-        const constrained = constrainToRect(startPoint.x, startPoint.y);
-        top = constrained.y;
-        left = constrained.x;
-        $w_rubberband_active = true;
-    }
-
     function blockEvent(e: Event) {
         const target = e.target;
         // Block all mouse events except for panel, rubberband and draggable
-        if ($w_rubberband_active && target instanceof HTMLElement) {
+        // needed to disable reactions of control and details buttons
+        if ($w_dragging_active === T_Dragging.rubberband && target instanceof HTMLElement) {
             if (!target.closest('.panel') && !target.closest('.rubberband') && !target.closest('.draggable')) {
                 e.stopPropagation();
                 e.preventDefault();
@@ -95,10 +98,20 @@
         }
     }
 
-    function checkIntersections() {
-        if (!$w_rubberband_active || width == 0 || height == 0) {
-            $w_ancestries_grabbed = [];
+    export function handleMouseDown(e: MouseEvent): void {
+        startPoint = new Point(e.clientX, e.clientY);
+        if (e.metaKey) {
+            $w_dragging_active = T_Dragging.command;
         } else {
+            const constrained = constrainToRect(startPoint.x, startPoint.y);
+            top = constrained.y;
+            left = constrained.x;
+            $w_dragging_active = T_Dragging.rubberband;
+        }
+    }
+
+    function checkIntersections() {
+        if ($w_dragging_active === T_Dragging.rubberband) {
             const rubberbandRect = new Rect( new Point(left, top), new Size(width, height));
             const widget_wrappers = wrappers.wrappers_ofType_withinRect(T_SvelteComponent.widget, rubberbandRect);
             const intersecting = [];
@@ -119,12 +132,16 @@
 
 </script>
 
-{#if $w_rubberband_active}
+{#if $w_dragging_active === T_Dragging.rubberband}
     <div class='rubberband' {style}/>
 {/if}
 
 <style>
-    :global(.rubberband-blocking .controls, .rubberband-blocking .bottom-controls) {
+    :global(.rubberband-blocking .controls, 
+            .rubberband-blocking .bottom-controls,
+            .rubberband-blocking .details-stack,
+            .rubberband-blocking .segmented,
+            .rubberband-blocking .button) {
         pointer-events: none !important;
     }
 
@@ -132,7 +149,6 @@
         position: fixed;
         pointer-events: none;
         border-style: dashed;
-        cursor: crosshair !important;
         background-color: rgba(0, 0, 0, 0.05);
     }
 </style>

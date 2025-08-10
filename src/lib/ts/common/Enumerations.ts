@@ -86,6 +86,12 @@ export enum T_Auto_Adjust {
 	fit		  = 'exactly fit',
 }
 
+export enum T_Dragging {
+	rubberband = 'rubberband',
+	command	   = 'command',
+	none	   = 'none',
+}
+
 export enum T_Widget {
 	radial = 'radial',
 	focus  = 'focus',

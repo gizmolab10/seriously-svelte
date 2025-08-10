@@ -1,4 +1,4 @@
-import { T_Graph, T_Kinship, T_Details, T_Startup, T_Auto_Adjust } from '../common/Global_Imports';
+import { T_Graph, T_Kinship, T_Details, T_Startup, T_Auto_Adjust, T_Dragging } from '../common/Global_Imports';
 import { Tag, Rect, Point, Trait, colors, Ancestry, Hierarchy } from '../common/Global_Imports';
 import { G_Paging, G_Cluster, S_Text_Edit, S_Alteration } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
@@ -41,6 +41,7 @@ export const w_g_paging					 = writable<G_Paging>();
 
 const _____GEOMETRY: unique symbol = Symbol('GEOMETRY');
 
+export const w_scaled_movement			 = writable<Point | null>(null);
 export const w_mouse_location_scaled	 = writable<Point>();
 export const w_user_graph_center		 = writable<Point>();
 export const w_user_graph_offset		 = writable<Point>();
@@ -56,17 +57,17 @@ const _____COUNTS: unique symbol = Symbol('COUNTS');
 
 export const w_count_mouse_up			 = writable<number>();
 export const w_count_rebuild			 = writable<number>();
-export const w_rubberband_active		 = writable<boolean>(false);
 export const w_count_details			 = writable<number>();	
 export const w_count_resize				 = writable<number>();
 
 const _____OTHER: unique symbol = Symbol('OTHER');
 
+export const w_t_startup				 = writable<T_Startup>();
+export const w_dragging_active			 = writable<T_Dragging>();
 export const w_auto_adjust_graph		 = writable<T_Auto_Adjust | null>();
 export const w_popupView_id				 = writable<string | null>();
-export const w_t_startup				 = writable<T_Startup>();
+export const w_control_key_down			 = writable<boolean>(false);
 export const w_device_isMobile			 = writable<boolean>();
-export const w_control_key_down			 = writable<boolean>();
 export const w_background_color			 = writable<string>();
 export const w_depth_limit				 = writable<number>();
 export const w_font_size				 = writable<number>();

@@ -1,11 +1,10 @@
+import { w_ancestry_focus, w_count_mouse_up, w_mouse_location, w_mouse_location_scaled, w_scaled_movement } from '../common/Stores';
 import { w_device_isMobile, w_ancestries_grabbed, w_user_graph_offset, w_show_details, w_popupView_id } from '../common/Stores';
 import { T_Action, T_File_Format, T_Predicate, T_Alteration, S_Mouse, S_Alteration, T_Control } from '../common/Global_Imports';
 import { c, h, k, u, ux, grabs, Point, debug, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
-import { w_ancestry_focus, w_count_mouse_up, w_mouse_location, w_mouse_location_scaled, w_rubberband_active } from '../common/Stores';
 import { w_s_alteration, w_count_resize, w_s_text_edit, w_control_key_down } from '../common/Stores';
 import Mouse_Timer from './Mouse_Timer';
 import { get } from 'svelte/store';
-
 export class Events {
 	mouse_timer_byName: { [name: string]: Mouse_Timer } = {};
 	initialTouch: Point | null = null;
@@ -67,6 +66,7 @@ export class Events {
 			window.addEventListener('touchstart', this.handle_touch_start, { passive: false });
 		} else {
 			window.addEventListener('mouseup', this.handle_mouse_up, { passive: false });
+			window.addEventListener('mousedown', this.handle_mouse_down, { passive: false });
 			window.addEventListener('mousemove', this.handle_mouse_move, { passive: false });
 		}
 	}
@@ -74,12 +74,23 @@ export class Events {
 	static readonly EVENT_HANDLERS = Symbol('EVENT_HANDLERS');
 
 	private handle_touch_end(event: TouchEvent) { this.initialTouch = null; }
-	private handle_mouse_up(event: MouseEvent) { w_count_mouse_up.update(n => n + 1); }
+	private handle_mouse_down(event: MouseEvent) { w_scaled_movement.set(Point.zero); }
+
+	private handle_mouse_up(event: MouseEvent) {
+		w_scaled_movement.set(null);
+		w_count_mouse_up.update(n => n + 1);
+	}
 
 	private handle_mouse_move(event: MouseEvent) {
-        const location = new Point(event.clientX, event.clientY);
-        w_mouse_location.set(location);
-        w_mouse_location_scaled.set(location.dividedBy(layout.scale_factor));
+		const location = new Point(event.clientX, event.clientY);
+		const scaled = location.dividedBy(layout.scale_factor);
+		const prior_scaled = get(w_mouse_location_scaled);
+		const delta = prior_scaled?.vector_to(scaled);
+		if (!!delta && delta.magnitude > 1) {
+			w_scaled_movement.set(delta);
+		}
+		w_mouse_location.set(location);
+		w_mouse_location_scaled.set(scaled);
 	}
 
 	private handle_key_up(e: Event) {

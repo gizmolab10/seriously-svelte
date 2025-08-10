@@ -17,7 +17,8 @@ import { T_Create, T_Browser, T_Alteration } from './Enumerations';
 import { T_Curve, T_Order, T_Widget, T_Layer } from './Enumerations';
 import { T_Oblong, T_Element, T_SvelteComponent } from './Enumerations';
 import { T_Action, T_Details, T_Request, T_Storage_Need } from './Enumerations';
-import { T_File_Format, T_File_Operation, T_Startup, T_Kinship, T_RingZone, T_Preference, T_Auto_Adjust } from './Enumerations';
+import { T_Kinship, T_RingZone, T_Preference, T_Auto_Adjust } from './Enumerations';
+import { T_Dragging, T_File_Format, T_File_Operation, T_Startup } from './Enumerations';
 
 import S_Identifiables from '../state/S_Identifiables';
 import S_Alteration from '../state/S_Alteration';
@@ -93,7 +94,7 @@ export {
 	G_Widget, G_TreeLine, G_TreeBranches, G_Repeater,
 	G_Paging, G_Cluster, G_RadialGraph, G_Thing_Pages, G_ArcSlider,
 	
-	T_Debug, T_Timer, T_Signal,
+	T_Debug, T_Timer, T_Signal, T_Dragging,
 	T_Quadrant, T_Orientation, T_Direction,
 	T_Banner, T_Details, T_Startup, T_Graph,
 	T_Persistable, T_Persistence, T_Request,
