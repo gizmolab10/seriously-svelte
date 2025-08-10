@@ -4,19 +4,19 @@
 	import { T_Banner, S_Element } from '../../ts/common/Global_Imports';
 	import Button from './Button.svelte';
 	export let left = 0;
-	export let es_breadcrumb;
+	export let s_breadcrumb;
 	export let center = Point.zero;
 	const borderStyle = '1px solid';
 	let borderColor = $w_background_color;
-	let thing = es_breadcrumb.ancestry.thing;
+	let thing = s_breadcrumb.ancestry.thing;
 	let title = thing.breadcrumb_title ?? k.empty;
-	let colorStyles = es_breadcrumb.background;
+	let colorStyles = s_breadcrumb.background;
 	let name = `crumb: ${title ?? 'unknown'}`;
-	let ancestry = es_breadcrumb.ancestry;
+	let ancestry = s_breadcrumb.ancestry;
 	let width = u.getWidthOf(title) + 15;
-	let border = es_breadcrumb.border;;
+	let border = s_breadcrumb.border;;
 	let breadcrumb_reattachments = 0;
-	let color = es_breadcrumb.color;
+	let color = s_breadcrumb.color;
 	let style = k.empty;
 
 	center = new Point(left + width / 2, 14);
@@ -31,9 +31,9 @@
 	
 	function updateColors() {
 		if (!!thing) {
-			colorStyles = es_breadcrumb.background;
-			border = es_breadcrumb.border;
-			color = es_breadcrumb.color;
+			colorStyles = s_breadcrumb.background;
+			border = s_breadcrumb.border;
+			color = s_breadcrumb.color;
 			updateStyle();
 		}
 		breadcrumb_reattachments += 1;
@@ -56,13 +56,13 @@
 		if (!!h && h.hasRoot) {
 			if (s_mouse.isHover) {
 				if (s_mouse.isOut) {
-					border = es_breadcrumb.border;
+					border = s_breadcrumb.border;
 				} else {
 					border = `${borderStyle} ${thing.color}`;
 				}
 				const cursor = !ancestry.isGrabbed && ancestry.hasChildren ? 'pointer' : k.cursor_default;
-				es_breadcrumb.set_forHovering(thing.color, cursor);
-				es_breadcrumb.isOut = s_mouse.isOut;
+				s_breadcrumb.set_forHovering(thing.color, cursor);
+				s_breadcrumb.isOut = s_mouse.isOut;
 				updateStyle();
 				breadcrumb_reattachments += 1;
 			} else if (s_mouse.isUp) {
@@ -84,7 +84,7 @@
 		center={center}
 		closure={closure}
 		position='absolute'
-		es_button={es_breadcrumb}>
+		s_button={s_breadcrumb}>
 		{title}
 	</Button>
 {/key}

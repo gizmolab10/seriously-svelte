@@ -30,7 +30,7 @@
 	const front_margin = has_seperator ? 0 : solo_title_width;
 	const button_titles = has_title ? row_titles.slice(1) : row_titles;
 	const g_repeater = new G_Repeater(button_titles, button_height, width - front_margin, margin, gap, 8, title_gap, true, font_sizes[0]);
-	const es_button_byColumn: { [key: number]: S_Element } = {};
+	const s_button_byColumn: { [key: number]: S_Element } = {};
 	const button_portion = g_repeater.button_portion;
 	const columns = button_titles.length;
 	let reattachments = 0;
@@ -59,14 +59,14 @@
 
 	function update_es_buttons() {
 		for (let column = 0; column < columns; column++) {
-			let es_button = es_button_byColumn[column];
-			if (!es_button) {
-				es_button = ux.s_element_for(new Identifiable(`${name}-${button_name_for(column)}`), type, column);
-				es_button_byColumn[column] = es_button;
+			let s_button = s_button_byColumn[column];
+			if (!s_button) {
+				s_button = ux.s_element_for(new Identifiable(`${name}-${button_name_for(column)}`), type, column);
+				s_button_byColumn[column] = s_button;
 			}
-			es_button.set_forHovering(colors.default, 'pointer');
-			es_button.isDisabled = button_disabled_for(column);
-			es_button.isInverted = button_inverted_for(column);
+			s_button.set_forHovering(colors.default, 'pointer');
+			s_button.isDisabled = button_disabled_for(column);
+			s_button.isInverted = button_inverted_for(column);
 		}
 		if (!!origin || !!center) {
 			const x = origin?.x ?? center?.x - width / 2;
@@ -122,7 +122,7 @@
 						font_size={font_sizes[1]}
 						detect_longClick={detect_longClick}
 						detect_autorepeat={detect_autorepeat}
-						es_button={es_button_byColumn[column]}
+						s_button={s_button_byColumn[column]}
 						width={g_repeater.button_width_for(column)}
 						name={`${name}-${button_name_for(column)}`}
 						origin={Point.x(g_repeater.button_left_for(column))}

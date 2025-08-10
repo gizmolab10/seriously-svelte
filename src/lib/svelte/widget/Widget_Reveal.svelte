@@ -9,19 +9,19 @@
 	import { onMount } from 'svelte';
     export let zindex = T_Layer.dots;
 	export let points_toChild = true;
-	export let es_reveal!: S_Element;
+	export let s_reveal!: S_Element;
     export let hover_isReversed = false;
-	const ancestry = es_reveal.ancestry;
+	const ancestry = s_reveal.ancestry;
 	const g_widget = ancestry.g_widget;
 	const tinyDotsOffset = new Point(-4.9, -2.45);
 	const outer_diameter = k.diameterOf_outer_tinyDots;
 	const size_ofTinyDots = Size.width(3).expandedEquallyBy(outer_diameter)
 	const viewBox = `0.5 2.35 ${outer_diameter} ${outer_diameter}`;
-	let fill_color = debug.lines ? 'transparent' : es_reveal.fill;
-	let svg_outline_color = es_reveal.svg_outline_color;
+	let fill_color = debug.lines ? 'transparent' : s_reveal.fill;
+	let svg_outline_color = s_reveal.svg_outline_color;
 	let svgPathFor_outer_tinyDots: string | null = null;
 	let svgPathFor_innerDot: string | null = null;
-	let bulkAlias_color = es_reveal.stroke;
+	let bulkAlias_color = s_reveal.stroke;
 	let center = g_widget.center_ofReveal;
 	let svgPathFor_revealDot = k.empty;
 	let color = ancestry.thing?.color;
@@ -50,22 +50,22 @@
 
 	$: {
 		if (!!dotReveal) {
-			es_reveal.set_forHovering(color, 'pointer');
+			s_reveal.set_forHovering(color, 'pointer');
 		}
 	}
 
 	function update_colors() {
-		es_reveal.set_forHovering(color, 'pointer');
-		fill_color = debug.lines ? 'transparent' : es_reveal.fill;
-		svg_outline_color = es_reveal.svg_outline_color;
-		bulkAlias_color = es_reveal.stroke;
+		s_reveal.set_forHovering(color, 'pointer');
+		fill_color = debug.lines ? 'transparent' : s_reveal.fill;
+		svg_outline_color = s_reveal.svg_outline_color;
+		bulkAlias_color = s_reveal.stroke;
 		color = ancestry.thing?.color;
 	}
 
 	function set_isHovering(hovering) {
 		const corrected = (hover_isReversed != ancestry.isGrabbed) ? !hovering : hovering;
-		if (!!es_reveal && es_reveal.isOut == corrected) {
-			es_reveal.isOut = !corrected
+		if (!!s_reveal && s_reveal.isOut == corrected) {
+			s_reveal.isOut = !corrected
 			update_colors();
 		}
 	}
@@ -100,13 +100,13 @@
 
 </script>
 
-{#if es_reveal}
+{#if s_reveal}
 	<Mouse_Responder
 		center={center}
 		zindex={zindex}
 		width={k.height.dot}
 		height={k.height.dot}
-		name={es_reveal.name}
+		name={s_reveal.name}
 		bind:this={dotReveal}
 		handle_s_mouse={up_hover_closure}>
 		<div class='reveal-dot'

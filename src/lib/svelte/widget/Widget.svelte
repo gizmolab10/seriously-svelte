@@ -14,9 +14,9 @@
 	const ancestry = g_widget.ancestry;
 	const s_widget = g_widget.s_widget;
 	const name = s_widget.name;
-	const es_drag = s_widget.es_drag;
-	const es_title = s_widget.es_title;
-	const es_reveal = s_widget.es_reveal;
+	const s_drag = s_widget.s_drag;
+	const s_title = s_widget.s_title;
+	const s_reveal = s_widget.s_reveal;
 	const points_toChild = g_widget.points_toChild;
     const pointsNormal = g_widget.widget_pointsNormal;
 	let width_ofWidget = g_widget.width_ofWidget;
@@ -171,14 +171,14 @@
 			border-radius : {border_radius}px;
 		'>
 		<Widget_Drag
-			es_drag = {es_drag}
+			s_drag = {s_drag}
 			pointsNormal = {pointsNormal}/>
 		<Widget_Title
-			es_title = {es_title}
+			s_title = {s_title}
 			fontSize = {k.font_size.common}px/>
 		{#if ancestry?.showsReveal_forPointingToChild(points_toChild)}
 			<Widget_Reveal
-				es_reveal = {es_reveal}
+				s_reveal = {s_reveal}
 				points_toChild = {points_toChild}/>
 		{/if}
 	</div>

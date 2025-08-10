@@ -7,16 +7,16 @@
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
-	export let es_drag!: S_Element;
+	export let s_drag!: S_Element;
 	export let pointsNormal = true;
 	const size = k.height.dot;
 	const capture_size = size;
-    const ancestry = es_drag.ancestry;
+    const ancestry = s_drag.ancestry;
 	const g_widget = ancestry.g_widget;
-	let fill_color = debug.lines ? 'transparent' : es_drag.fill;
-	let svg_outline_color = es_drag.svg_outline_color;
+	let fill_color = debug.lines ? 'transparent' : s_drag.fill;
+	let svg_outline_color = s_drag.svg_outline_color;
 	let center = g_widget.center_ofDrag;
-	let ellipsis_color = es_drag.stroke;
+	let ellipsis_color = s_drag.stroke;
 	let svgPathFor_ellipses = k.empty;
 	let svgPathFor_related = k.empty;
 	let svgPathFor_dragDot = k.empty;
@@ -44,9 +44,9 @@
 	}
 
 	onMount(() => {
-		es_drag.set_forHovering(thing?.color, 'pointer');
+		s_drag.set_forHovering(thing?.color, 'pointer');
         const handle_altering = signals.handle_blink_forAlteration((invert) => {
-			es_drag.isInverted = !!invert && !!ancestry && ancestry.alteration_isAllowed;
+			s_drag.isInverted = !!invert && !!ancestry && ancestry.alteration_isAllowed;
 			update_colors();
         });
 		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
@@ -67,15 +67,15 @@
 	}
 
 	function update_colors() {
-		if (!ux.isAny_rotation_active && !!es_drag && !!thing) {
+		if (!ux.isAny_rotation_active && !!s_drag && !!thing) {
 			const usePointer = (!ancestry.isGrabbed || ux.inRadialMode) && ancestry.hasChildren;
 			const cursor = usePointer ? 'pointer' : 'normal';
-			es_drag.isOut = !isHovering != ancestry.isGrabbed;
-			es_drag.set_forHovering(thing.color, cursor);
+			s_drag.isOut = !isHovering != ancestry.isGrabbed;
+			s_drag.set_forHovering(thing.color, cursor);
 			color = thing.color;
-			ellipsis_color = es_drag.stroke;
-			svg_outline_color = es_drag.svg_outline_color;
-			fill_color = debug.lines ? 'transparent' : es_drag.fill;
+			ellipsis_color = s_drag.stroke;
+			svg_outline_color = s_drag.svg_outline_color;
+			fill_color = debug.lines ? 'transparent' : s_drag.fill;
 		}
 	}
 
@@ -109,10 +109,10 @@
 
 </script>
 
-{#if es_drag}
+{#if s_drag}
 	<Mouse_Responder
 		center={center}
-		name={es_drag.name}
+		name={s_drag.name}
 		width={capture_size}
 		height={capture_size}
 		detect_longClick={true}

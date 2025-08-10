@@ -8,10 +8,10 @@
 	import { w_mouse_location } from '../../ts/common/Stores';
 	import { T_Edit } from '../../ts/state/S_Text_Edit';
 	import { onMount, onDestroy } from 'svelte';
-	export let es_title!: S_Element;
+	export let s_title!: S_Element;
 	export let fontSize = '1em';
-    const name = es_title.name;
-	const ancestry = es_title.ancestry;
+    const name = s_title.name;
+	const ancestry = s_title.ancestry;
 	const thing = ancestry?.thing;
 	const padding = `1px 0px 0px 0px`;
 	const g_widget = ancestry.g_widget;
@@ -283,7 +283,7 @@
 {#key reattachments}
 	<Mouse_Responder
 		width={title_width}
-		name={es_title.name}
+		name={s_title.name}
 		height={k.height.row}
 		handle_s_mouse={handle_s_mouse}
 		origin={g_widget.origin_ofTitle}>

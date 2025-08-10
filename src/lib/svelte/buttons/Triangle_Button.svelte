@@ -6,7 +6,7 @@
 	import Button from './Button.svelte';
 	export let handle_s_mouse: (result: S_Mouse) => boolean;
 	export let hover_closure: (flag: boolean) => boolean;
-	export let es_triangle = S_Element.empty();
+	export let s_triangle = S_Element.empty();
 	export let detect_autorepeat = false;
 	export let detect_longClick = false;
 	export let extraPath = null;
@@ -43,7 +43,7 @@
 </script>
 
 <Button
-	es_button={es_triangle}
+	s_button={s_triangle}
 	border_thickness=0
 	closure={closure}
 	center={center}

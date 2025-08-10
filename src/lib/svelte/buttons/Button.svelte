@@ -5,7 +5,7 @@
 	import { w_thing_fontFamily, w_control_key_down } from '../../ts/common/Stores';
 	import { S_Element, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	export let es_button: S_Element = S_Element.empty();
+	export let s_button: S_Element = S_Element.empty();
 	export let closure: (result: S_Mouse) => boolean;
 	export let font_size = k.font_size.common;
 	export let border_color = colors.border;
@@ -47,20 +47,20 @@
 		const _ = `${$w_graph_rect}
 			${$w_user_graph_offset}
 			${$w_background_color}
-			${es_button.isDisabled}
-			${es_button.isInverted}
-			${es_button.isGrabbed}
-			${es_button.isEditing}
+			${s_button.isDisabled}
+			${s_button.isInverted}
+			${s_button.isGrabbed}
+			${s_button.isEditing}
 			${$w_control_key_down}
-			${es_button.isOut}
-			${es_button.fill}`;
+			${s_button.isOut}
+			${s_button.fill}`;
 		recompute_style();
 	}
 
 	function handle_s_mouse(s_mouse: S_Mouse) {
 		if (s_mouse.isHover) {		// NOT the same as isHovering
-			if (!!es_button) {
-				es_button.isOut = s_mouse.isOut;
+			if (!!s_button) {
+				s_button.isOut = s_mouse.isOut;
 			}
 		}
 		if (!!closure) {
@@ -70,7 +70,7 @@
 	}
 	
 	function recompute_style() {
-		color = es_button.stroke;
+		color = s_button.stroke;
 		if (style.length == 0) {
 			border_color = colors.border;
 			const border_attributes = border_thickness == 0 ? 'none' : `${border_thickness}px solid ${border_color}`;
@@ -90,10 +90,10 @@
 				position:${position};
 				justify-content: center;
 				font-size:${font_size}px;
-				cursor:${es_button.cursor};
+				cursor:${s_button.cursor};
 				border-radius:${height / 2}px;
 				font-family:${$w_thing_fontFamily};
-				background-color:${es_button.fill};
+				background-color:${s_button.fill};
 			`.removeWhiteSpace();
 		}
 	}

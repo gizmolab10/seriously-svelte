@@ -11,6 +11,7 @@
     const enabled = true;
     let mouse_upCount = $w_count_mouse_up;
     let startPoint: Point | null = null;
+    let nothing_selected = false;
     let height = 0;
     let width = 0;
     let left = 0;
@@ -35,12 +36,15 @@
 
     $: if ($w_count_mouse_up !== mouse_upCount) {
         mouse_upCount = $w_count_mouse_up;
-        if ($w_dragging_active !== T_Dragging.none) {
-            $w_dragging_active = T_Dragging.none;
+        if ($w_dragging_active === T_Dragging.rubberband) {
+            if (nothing_selected) {
+                $w_ancestries_grabbed = [];
+            }
             startPoint = null;
             height = 0;
             width = 0;
         }
+        $w_dragging_active = T_Dragging.none;
     }
 
     $: if ($w_dragging_active === T_Dragging.command) {
@@ -127,7 +131,8 @@
             // Only update if the list has changed
             const newIds = intersecting.map(a => a.hid).sort().join(',');
             const currentIds = $w_ancestries_grabbed.map(a => a.hid).sort().join(',');
-            if (currentIds !== newIds) {
+            nothing_selected = intersecting.length == 0;
+            if (currentIds !== newIds && !nothing_selected) {
                 $w_ancestries_grabbed = intersecting;
             }
         }

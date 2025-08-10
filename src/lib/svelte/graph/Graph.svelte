@@ -114,7 +114,7 @@
 			height={size_big}
 			origin={Point.x(14)}
 			name={T_Control.builds}
-			es_button={ux.s_control_forType(T_Control.builds)}
+			s_button={ux.s_control_forType(T_Control.builds)}
 			closure={(s_mouse) => e.handle_s_mouse_forControl_Type(s_mouse, T_Control.builds)}>
 			<span style='font-family: {$w_thing_fontFamily};'>
 				{'build ' + k.build_number}
@@ -125,7 +125,7 @@
 			height={size_big}
 			name={T_Control.help}
 			origin={Point.x(draggableRect.size.width - 35)}
-			es_button={ux.s_control_forType(T_Control.help)}
+			s_button={ux.s_control_forType(T_Control.help)}
 			closure={(s_mouse) => e.handle_s_mouse_forControl_Type(s_mouse, T_Control.help)}>
 			<span
 				style='

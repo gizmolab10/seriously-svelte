@@ -12,7 +12,7 @@
 	let background_color = s_widget.background_color;
 	let svg_strokeColor = 'transparent';
 	let svg_fillColor = 'transparent';
-	let es_title = s_widget.es_title;
+	let s_title = s_widget.s_title;
 	let origin_ofWidget = Point.zero;
 	let center_ofBorder = Point.zero;
 	let size_ofBorder = Size.zero;
@@ -124,7 +124,7 @@
 			position : absolute;
 			background-color : {background_color};'>
 		<Widget_Title
-			es_title = {es_title}
+			s_title = {s_title}
 			fontSize = {k.font_size.common}px/>
 	</div>
 </div>

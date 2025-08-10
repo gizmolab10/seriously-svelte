@@ -14,7 +14,7 @@
 	import { onMount } from 'svelte';
 	export let top = 6;
 	const id = 'selection';
-	const es_info = ux.s_element_for(new Identifiable(id), T_Element.details, id);
+	const s_info = ux.s_element_for(new Identifiable(id), T_Element.details, id);
 	let ancestry: Ancestry | null = grabs.ancestry;
 	let thing: Thing | null = ancestry?.thing ?? null;
 	let thingHID: Integer | null = thing?.hid;
@@ -35,7 +35,7 @@
 	onMount(() => {
 		update_forAncestry();
 		layout_forColor();
-		es_info.set_forHovering(colors.default, 'pointer');
+		s_info.set_forHovering(colors.default, 'pointer');
 	});
 
 	function layout_forColor() {

@@ -68,7 +68,7 @@
 						zindex={T_Layer.frontmost}
 						center={new Point(lefts[6], 10)}
 						style='border: none; background: none;'
-						es_button={ux.s_control_forType(T_Control.details)}
+						s_button={ux.s_control_forType(T_Control.details)}
 						closure={(s_mouse) => e.handle_s_mouse_forControl_Type(s_mouse, T_Control.details)}/>
 				{:else}
 					<Button
@@ -76,7 +76,7 @@
 						color='transparent'
 						name='details-toggle'
 						center={new Point(lefts[0], y_center)}
-						es_button={ux.s_control_forType(T_Control.details)}
+						s_button={ux.s_control_forType(T_Control.details)}
 						closure={(s_mouse) => e.handle_s_mouse_forControl_Type(s_mouse, T_Control.details)}>
 						<svg
 							class='hamburger-svg'
@@ -118,7 +118,7 @@
 						height={size_big}
 						name={T_Control.grow}
 						center={new Point(lefts[4], y_center)}
-						es_button={ux.s_control_forType(T_Control.grow)}
+						s_button={ux.s_control_forType(T_Control.grow)}
 						closure={(s_mouse) => e.handle_s_mouse_forControl_Type(s_mouse, T_Control.grow)}>
 						<svg id='grow-svg' style={svg_style}>
 							<path
@@ -134,7 +134,7 @@
 						height={size_big}
 						name={T_Control.shrink}
 						center={new Point(lefts[5], y_center)}
-						es_button={ux.s_control_forType(T_Control.shrink)}
+						s_button={ux.s_control_forType(T_Control.shrink)}
 						closure={(s_mouse) => e.handle_s_mouse_forControl_Type(s_mouse, T_Control.shrink)}>
 						<svg id='shrink-svg' style={svg_style}>
 							<path

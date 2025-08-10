@@ -77,8 +77,6 @@ export default class S_UX {
 		if (!s_control) {
 			const hover_color = t_control == T_Control.details ? 'white' : colors.default;
 			s_control = this.s_element_for(new Identifiable(t_control), T_Element.control, t_control);
-			s_control.ignore_hover = t_control == T_Control.details;
-			s_control.isDisabled = T_Control.details == t_control;
 			s_control.set_forHovering(hover_color, 'pointer');
 			this.s_control_byType[t_control] = s_control;
 		}

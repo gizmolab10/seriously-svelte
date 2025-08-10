@@ -15,7 +15,7 @@
 	import Spinner from '../draw/Spinner.svelte';
     const font_sizes = [k.font_size.instructions, k.font_size.banners];
 	const ids_forDirection = [T_File_Operation.import, T_File_Operation.export];
-	const es_save = ux.s_element_for(new Identifiable('save'), T_Element.button, 'save');
+	const s_save = ux.s_element_for(new Identifiable('save'), T_Element.button, 'save');
 	const ids_forOutputFormat = [T_File_Format.csv, T_File_Format.json, T_File_Format.cancel];
 	const ids_forDatabase = [T_Database.local, T_Database.firebase, T_Database.airtable, T_Database.test, T_Database.bubble];
 	const ids_forInputFormat = [T_File_Format.csv, T_File_Format.json, T_File_Format.seriously, T_File_Format.cancel];
@@ -30,7 +30,7 @@
 
 	setup_s_elements();
 	$: tops = u.cumulativeSum(heights);
-	es_save.set_forHovering('black', 'pointer');
+	s_save.set_forHovering('black', 'pointer');
 	function height_ofChoices() { return p.show_other_databases ? 22 : -4; }
 	function handle_spinner_angle(event) { spinnerAngle = event.detail.angle; }
 
@@ -72,9 +72,9 @@
 	function setup_s_elements() {
 		const ids = [...ids_forDirection, ...ids_forInputFormat];
 		for (const id of ids) {
-			const es_storage = ux.s_element_for(null, T_Element.database, id);
-			es_storage.set_forHovering(colors.default, 'pointer');
-			s_element_byStorageType[id] = es_storage;
+			const s_storage = ux.s_element_for(null, T_Element.database, id);
+			s_storage.set_forHovering(colors.default, 'pointer');
+			s_element_byStorageType[id] = s_storage;
 		}
 	}
 
@@ -181,7 +181,7 @@
 				<Button
 					width=72
 					name='save'
-					es_button={es_save}
+					s_button={s_save}
 					closure={handle_save}
 					zindex={T_Layer.frontmost}
 					origin={new Point(120, tops[3])}>

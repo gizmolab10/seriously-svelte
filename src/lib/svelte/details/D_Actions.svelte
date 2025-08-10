@@ -20,12 +20,12 @@
 	const bottom_padding = bottom_tableHeight - 48;
     const font_sizes = [k.font_size.instructions, k.font_size.instructions];
     const s_banner_hideable = s_details.s_banner_hideables_byType[T_Details.actions];
-	const es_cancel = ux.s_element_for(grabs.ancestry, T_Element.cancel, k.empty);
+	const s_cancel = ux.s_element_for(grabs.ancestry, T_Element.cancel, k.empty);
 	let list_title = grabs.ancestry?.isExpanded && ux.inTreeMode ? 'hide list' : 'list';
 	let button_titles = compute_button_titles();
 	let actions_top = top + 3;
     let reattachments = 0;
-	es_cancel.set_forHovering(colors.default, 'pointer');
+	s_cancel.set_forHovering(colors.default, 'pointer');
 
 	//////////////////////////////////////////////////////////////
 	//															//
@@ -178,7 +178,7 @@
 						height={k.height.button}
 						closure={handle_cancel}
 						color = colors.default
-						es_button={es_cancel}
+						s_button={s_cancel}
 						position='relative'
 						width={40}>
 						cancel

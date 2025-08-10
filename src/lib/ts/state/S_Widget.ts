@@ -16,9 +16,9 @@ import { get } from 'svelte/store';
 	//////////////////////////////////////////
 
 export default class S_Widget extends S_Element {
-	es_reveal: S_Element;
-	es_title: S_Element;
-	es_drag: S_Element;
+	s_reveal: S_Element;
+	s_title: S_Element;
+	s_drag: S_Element;
 	isGrabbed = false;		// NOT a source of truth
 	isEditing = false;		// ... only needed for detecting state changes
 	isFocus	  = false;
@@ -33,9 +33,9 @@ export default class S_Widget extends S_Element {
 
 	constructor(ancestry: Ancestry) {
 		super(ancestry, T_Element.widget, k.empty);
-		this.es_drag = ux.s_element_for(ancestry, T_Element.drag, k.empty);
-		this.es_title = ux.s_element_for(ancestry, T_Element.title, k.empty);
-		this.es_reveal = ux.s_element_for(ancestry, T_Element.reveal, k.empty);
+		this.s_drag = ux.s_element_for(ancestry, T_Element.drag, k.empty);
+		this.s_title = ux.s_element_for(ancestry, T_Element.title, k.empty);
+		this.s_reveal = ux.s_element_for(ancestry, T_Element.reveal, k.empty);
 	}
 
 	get color(): string {

@@ -33,7 +33,7 @@
 					[things, widths, lefts, parent_widths] = layout.layout_breadcrumbs_forAncestry_centered_starting_within(ancestry, centered, left, width);
 					trigger = parent_widths * 10000 + breadcrumb_reattachments * 100 + lefts[0];		// re-render HTML when this value changes
 					for (let i = 0; i < things.length; i++) {
-						const state = es_breadcrumbAt(i);
+						const state = s_breadcrumbAt(i);
 						if (!!state) {
 							debug.log_crumbs(`thing ${things[i].title} ancestry ${state.ancestry.title} color ${state.background_color}`);
 						}
@@ -45,7 +45,7 @@
 		}
 	}
 
-	function es_breadcrumbAt(index: number): S_Widget | null {
+	function s_breadcrumbAt(index: number): S_Widget | null {
 		const crumb_ancestry = ancestry?.ancestry_createUnique_byStrippingBack(things.length - index - 1);
 		return crumb_ancestry?.g_widget.s_widget ?? null;
 	}
@@ -78,7 +78,7 @@
 					position:absolute;'>
 				<Breadcrumb_Button
 					left={lefts[index]}
-					es_breadcrumb={es_breadcrumbAt(index)}/>
+					s_breadcrumb={s_breadcrumbAt(index)}/>
 			</div>
 		{/each}
 	</div>
