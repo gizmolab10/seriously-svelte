@@ -35,10 +35,10 @@
 	layout.grand_layout();
 
 	onMount(() => {
-		const handle_recreate = signals.handle_reattach_widgets(0, (t_signal, ancestry) => {
+		const handle_recreate = signals.handle_signal_atPriority(T_Signal.reattach, 0, (ancestry) => {
 			necklace_reattachments += 1;		// triggers {#key} below
 		});
-		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
+		const handle_reposition = signals.handle_signal_atPriority(T_Signal.reposition, 2, (received_ancestry) => {
 			necklace_reattachments += 1;
 		});
 		return () => { handle_reposition.disconnect(); handle_recreate.disconnect() };

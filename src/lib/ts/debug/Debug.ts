@@ -6,10 +6,9 @@ export enum T_Debug {
 	bidirectionals	= 'bidirectionals',
 	preferences		= 'preferences',
 	hide_rings		= 'hide_rings',
-	reposition		= 'reposition',
 	fast_load		= 'fast_load',
 	segments		= 'segments',
-	actions			= 'actions',		// state logic of add parent action
+	actions			= 'actions',	// state logic of add parent action
 	reticle			= 'reticle',	// debug radial layout geometry
 	layout 			= 'layout',
 	action  		= 'action',
@@ -21,7 +20,7 @@ export enum T_Debug {
 	handle			= 'handle',
 	radial			= 'radial',
 	remote			= 'remote',		// interactions with remote
-	signal			= 'signal	',
+	signal			= 'signal',
 	things			= 'things',		// enable Things.debugLog
 	build			= 'build',
 	error			= 'error',		// async errors
@@ -80,7 +79,6 @@ export class Debug {
 	log_things(message: string) { this.log_maybe(T_Debug.things, message); }
 	log_actions(message: string) { this.log_maybe(T_Debug.actions, message); }
 	log_segments(message: string) { this.log_maybe(T_Debug.segments, message); }
-	log_reposition(message: string) { this.log_maybe(T_Debug.reposition, message); }
 	log_preferences(message: string) { this.log_maybe(T_Debug.preferences, message); }
 	log_bidirectionals(message: string) { this.log_maybe(T_Debug.bidirectionals, message); }
 	
@@ -103,7 +101,6 @@ export class Debug {
 					case 'bidirectionals': this.flags.push(T_Debug.bidirectionals); break;
 					case 'preferences': this.flags.push(T_Debug.preferences); break;
 					case 'hide_rings': this.flags.push(T_Debug.hide_rings); break;
-					case 'reposition': this.flags.push(T_Debug.reposition); break;
 					case 'segments': this.flags.push(T_Debug.segments); break;
 					case 'actions': this.flags.push(T_Debug.actions); break;
 					case 'reticle': this.flags.push(T_Debug.reticle); break;

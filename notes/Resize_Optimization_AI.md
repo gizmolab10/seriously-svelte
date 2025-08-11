@@ -100,16 +100,16 @@ The signal system processes multiple priorities synchronously:
 ```typescript
 // src/lib/ts/signals/Signals.ts:45-55
 signal(t_signal: T_Signal, value: any = null) {
-    if (busy.anySignal_isInFlight) {
+    if (signals.anySignal_isInFlight) {
         debug.log_signal(`NOT SENDING ${t_signal} in flight`);
-    } else if (!busy.signal_isInFlight_for(T_Signal.rebuild) ||
+    } else if (!signals.signal_isInFlight_for(T_Signal.rebuild) ||
         t_signal != T_Signal.reposition) {
-        busy.set_signal_isInFlight_for(t_signal, true);
+        signals.set_signal_isInFlight_for(t_signal, true);
         const highestPriority = this.highestPriorities[t_signal] ?? 0;
         for (let priority = 0; priority <= highestPriority; priority++) {
             this.conduit.emit(t_signal, priority, value);
         }
-        busy.set_signal_isInFlight_for(t_signal, false);
+        signals.set_signal_isInFlight_for(t_signal, false);
     }
 }
 ```

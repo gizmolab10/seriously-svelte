@@ -21,7 +21,6 @@
     const pointsNormal = g_widget.widget_pointsNormal;
 	let width_ofWidget = g_widget.width_ofWidget;
 	let border_radius = k.height.dot / 2;
-	let widgetWrapper!: Svelte_Wrapper;
 	let center_ofDrag = Point.zero;
 	let revealCenter = Point.zero;
 	let border = s_widget.border;
@@ -44,29 +43,34 @@
 	layout_maybe();
 
 	onMount(() => {
-		const handle_anySignal = signals.handle_anySignal_atPriority(1, (t_signal, received_ancestry) => {
-			if (!!widget) {
-				debug.log_handle(`(ANY as: ${t_signal}) WIDGET "${thing?.title}"`);
-				switch (t_signal) {
-					case T_Signal.reattach:
-						layout_maybe();
-						break;
-					case T_Signal.reposition:
-						final_layout();
-						break;
-				}
+		const signal_handler = signals.handle_anySignal_atPriority_needsWrapper(1, (t_signal, value): Svelte_Wrapper | null => {
+			switch (t_signal) {
+			case T_Signal.needsWrapper:
+				return !widget ? null : new Svelte_Wrapper(widget, handle_s_mouse, ancestry.hid, T_SvelteComponent.widget);
+			case T_Signal.reattach:
+			case T_Signal.reposition:
+				layout_maybe();
+				return null;	// ignored
+			default:
+				return null;	// ignored
 			}
 		});
-		return () => {
-			handle_anySignal.disconnect();
-		};
+		return () => signal_handler.disconnect();
+		
+		// const signal_handler = signals.handle_anySignal_atPriority(1, (t_signal, received_ancestry) => {
+		// 	if (!!widget) {
+		// 		debug.log_handle(`(ANY as: ${t_signal}) WIDGET "${thing?.title}"`);
+		// 		switch (t_signal) {
+		// 			case T_Signal.reattach:
+		// 				layout_maybe();
+		// 				break;
+		// 			case T_Signal.reposition:
+		// 				final_layout();
+		// 				break;
+		// 		}
+		// 	}
+		// });
 	});
-
-	$: {
-		if (!!widget) {
-			widgetWrapper = new Svelte_Wrapper(widget, handle_s_mouse, ancestry.hid, T_SvelteComponent.widget);
-		}
-	}
 
 	$: {
 		const _ = `${$w_thing_color} ${$w_ancestry_focus.id}`;

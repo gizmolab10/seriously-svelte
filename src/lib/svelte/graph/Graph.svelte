@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { e, h, k, ux, Rect, Point, debug, layout, signals, colors } from '../../ts/common/Global_Imports';
 	import { w_t_startup, w_ancestry_focus, w_device_isMobile, w_popupView_id } from '../../ts/common/Stores';
-	import { T_Layer, T_Graph, T_Startup, T_Control, T_Element } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Graph, T_Signal, T_Startup, T_Control, T_Element } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_show_graph_ofType, w_user_graph_offset } from '../../ts/common/Stores';
 	import { w_thing_fontFamily, w_dragging_active } from '../../ts/common/Stores';
 	import Tree_Preferences from './Tree_Preferences.svelte';
@@ -11,7 +11,7 @@
 	import Rubberband from '../draw/Rubberband.svelte';
 	import Button from '../buttons/Button.svelte';
 	import { onMount } from 'svelte';
-		const size_big = k.height.button + 4;
+	const size_big = k.height.button + 4;
 	let draggableRect = $w_graph_rect;
 	let rubberbandComponent: any;
 	let graph_reattachments = 0;
@@ -34,7 +34,7 @@
 	
 	onMount(() => {
 		update_style();
-		const handle_rebuild = signals.handle_rebuildGraph(1, (ancestry) => {
+		const handle_rebuild = signals.handle_signal_atPriority(T_Signal.rebuild, 1, (ancestry) => {
 			layoutAnd_reattach();
 		});
 		return () => { handle_rebuild.disconnect(); };

@@ -119,7 +119,7 @@
 					layout.grand_layout();
 				}
 			} else if (rotation_state.isActive) {								// rotate clusters
-				if (!busy.anySignal_isInFlight && enoughTimeHasPassed(75)) {		// 1 tenth second
+				if (!signals.anySignal_isInFlight && enoughTimeHasPassed(75)) {		// 1 tenth second
 					last_action = now;
 					$w_ring_rotation_angle = mouse_angle.add_angle_normalized(-rotation_state.basis_angle);
 					debug.log_radial(` rotate ${$w_ring_rotation_angle.asDegrees()}`);
