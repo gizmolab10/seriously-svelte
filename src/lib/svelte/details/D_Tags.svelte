@@ -5,13 +5,9 @@
 	import Separator from '../mouse/Separator.svelte';
     const padding = 10;
     const width = 100;
-    let reattachments = 0;
-
-
 </script>
 
-{#key `${grabs.ancestry?.id} ${$w_thing_tags} ${reattachments}`}
-    {#if !$w_thing_tags || $w_thing_tags.length == 0}
+{#if !$w_thing_tags || $w_thing_tags.length == 0}
         <div
             class='tags'
             style='
@@ -43,4 +39,3 @@
                 {$w_thing_tags.map(t => t.type).join(', ')}
             </div>
         {/if}
-{/key}

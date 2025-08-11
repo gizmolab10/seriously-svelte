@@ -8,24 +8,12 @@
     const s_banner_hideable = s_details.s_banner_hideables_byType[T_Details.traits];
 	const s_button = ux.s_element_for(new Identifiable('trait'), T_Element.button, 'trait');
 	let text_box_size = new Size(k.width.details - 34, 68);
-	let prior_trigger = k.empty;
-	let reattachments = 0;
-
 	s_details.update();
 	s_button.set_forHovering(colors.default, 'pointer');
 
-	$: {
-		const trigger = `${$w_thing_traits?.map(t => t.text)?.join(', ')} ${$w_ancestries_grabbed?.map(a => a.id)?.join(', ')}`;
-		if (trigger !== prior_trigger) {
-			prior_trigger = trigger;
-			reattachments++;
-		}
-	}
-
 </script>
 
-{#key reattachments}
-	{#if !$w_thing_traits || $w_thing_traits.length == 0}
+{#if !$w_thing_traits || $w_thing_traits.length == 0}
 		<div class='traits'
 			style='
 				width: 100%;
@@ -57,4 +45,3 @@
 			{/each}
 		</div>
 	{/if}
-{/key}
