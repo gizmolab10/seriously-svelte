@@ -4,20 +4,16 @@
 	import { u, layout, T_Layer } from '../../ts/common/Global_Imports';
 	import Tree_Branches from './Tree_Branches.svelte';
 	import Widget from '../widget/Widget.svelte';
-	const focus = $w_ancestry_focus;
 	let reattachments = 0;
 
-	$: $w_depth_limit, update_layout_andReattach();
-
-	function update_layout_andReattach() {
-		layout.grand_layout();
+	$: if ($w_depth_limit !== undefined) {
 		reattachments++;
 	}
 
 </script>
 
 {#key reattachments}
-	{#if !!focus && !layout.branch_was_visited(focus, true)}
+	{#if !!$w_ancestry_focus && !layout.branch_was_visited($w_ancestry_focus, true)}
 		<div class = 'tree-graph'
 			style = '
 				position: absolute;
@@ -28,8 +24,8 @@
 				width: {$w_graph_rect.size.width}px;
 				height: {$w_graph_rect.size.height}px;
 				transform: scale({layout.scale_factor});'>
-			<Widget g_widget = {focus.g_widget}/>
-			<Tree_Branches ancestry = {focus} depth = {$w_depth_limit}/>
+			<Widget g_widget = {$w_ancestry_focus.g_widget}/>
+			<Tree_Branches ancestry = {$w_ancestry_focus} depth = {$w_depth_limit}/>
 		</div>
 	{/if}
 {/key}

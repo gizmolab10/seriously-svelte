@@ -1,7 +1,9 @@
 <script lang='ts'>
-	import { k, u, ux, Rect, Point, colors, layout, T_Layer, T_Kinship, T_Auto_Adjust, T_Graph } from '../../ts/common/Global_Imports';
-	import { w_show_details_ofType, w_show_tree_ofType, w_show_countDots_ofType } from '../../ts/common/Stores';
-	import { w_depth_limit, w_background_color, w_auto_adjust_graph } from '../../ts/common/Stores';
+	import { T_Graph, T_Layer, T_Kinship, T_Auto_Adjust } from '../../ts/common/Global_Imports';
+	import { k, u, ux, Rect, Point, colors, layout } from '../../ts/common/Global_Imports';
+	import { w_show_details_ofType, w_show_tree_ofType } from '../../ts/common/Stores';
+	import { w_background_color, w_auto_adjust_graph } from '../../ts/common/Stores';
+	import { w_show_countDots_ofType } from '../../ts/common/Stores';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../mouse/Separator.svelte';
 	import Slider from '../mouse/Slider.svelte';
@@ -48,11 +50,6 @@
 
 	function handle_count_dots(types: string[]) {
 		$w_show_countDots_ofType = types as Array<T_Kinship>;
-	}
-	
-	function handle_depth_limit(value: number) {
-		$w_depth_limit = value;
-		layout.grand_layout();
 	}
 
 	function update_color_origin() {

@@ -205,9 +205,9 @@ export class Preferences {
 		
 		// OTHER
 
-		w_depth_limit.subscribe((depth: number) => {
-			this.write_key(T_Preference.levels, depth);
-		});
+		// w_depth_limit.subscribe((depth: number) => {
+		// 	this.write_key(T_Preference.levels, depth);
+		// });
 		w_auto_adjust_graph.subscribe((auto_adjust: T_Auto_Adjust | null) => {
 			this.write_key(T_Preference.auto_adjust, auto_adjust);
 		});

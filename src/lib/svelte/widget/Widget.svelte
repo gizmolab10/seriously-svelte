@@ -1,9 +1,9 @@
 <script lang='ts'>
+	import { T_Layer, T_Graph, T_Widget, T_Signal, T_Element, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { c, k, u, ux, Thing, Point, Angle, debug, layout } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Graph, T_Widget, T_Signal, T_Element } from '../../ts/common/Global_Imports';
 	import { w_s_text_edit, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
-	import { G_Widget, S_Element, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { signals, Ancestry, Svelte_Wrapper } from '../../ts/common/Global_Imports';
+	import { G_Widget, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_background_color } from '../../ts/common/Stores';
 	import Widget_Reveal from './Widget_Reveal.svelte';
 	import Tree_Line from '../graph/Tree_Line.svelte';
