@@ -5,6 +5,7 @@ import type { Integer } from './Types';
 // Ancestry sometimes needs to access and or alter an associated svelte component
 
 export default class Svelte_Wrapper {
+	static readonly dummy_wrapper = new Svelte_Wrapper(null, null, null, T_SvelteComponent.none);
     handle_s_mouse: Handle_S_Mouse | null;
     element: HTMLElement | null;
     type: T_SvelteComponent;

@@ -132,6 +132,7 @@ export enum T_SvelteComponent {
 	widget	= 'widget',
 	reveal	= 'reveal',
 	title	= 'title',
+	tree	= 'tree',
 	none	= 'none',
 	app		= 'app',
 }

@@ -56,20 +56,6 @@
 			}
 		});
 		return () => signal_handler.disconnect();
-		
-		// const signal_handler = signals.handle_anySignal_atPriority(1, (t_signal, received_ancestry) => {
-		// 	if (!!widget) {
-		// 		debug.log_handle(`(ANY as: ${t_signal}) WIDGET "${thing?.title}"`);
-		// 		switch (t_signal) {
-		// 			case T_Signal.reattach:
-		// 				layout_maybe();
-		// 				break;
-		// 			case T_Signal.reposition:
-		// 				final_layout();
-		// 				break;
-		// 		}
-		// 	}
-		// });
 	});
 
 	$: {

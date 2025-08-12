@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, h, k, u, ux, Size, Point, Thing, T_Layer, T_Element, T_Startup } from '../../ts/common/Global_Imports';
+	import { c, h, k, u, ux, Size, Point, Thing, T_Layer, T_Signal, T_Element, T_Startup } from '../../ts/common/Global_Imports';
 	import { w_t_startup, w_graph_rect, w_thing_color, w_background_color } from '../../ts/common/Stores';
 	import { debug, colors, signals, svgPaths, Ancestry, layout } from '../../ts/common/Global_Imports';
 	import { w_s_text_edit, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
@@ -17,7 +17,7 @@
 	let ancestry: Ancestry;
 	let trigger = 0;
 
-	signals.handle_rebuild_andReattach(1, (ancestry) => { breadcrumb_reattachments += 1; });
+	signals.handle_signals_atPriority([T_Signal.rebuild, T_Signal.reattach], 1, null, (ancestry) => { breadcrumb_reattachments += 1; });
 	
 	$: $w_s_text_edit, $w_thing_color, $w_ancestries_grabbed, breadcrumb_reattachments += 1;
 	$: $w_background_color, separator_color = colors.separator;

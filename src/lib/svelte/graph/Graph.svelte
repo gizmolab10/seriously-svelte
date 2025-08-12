@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { e, h, k, ux, Rect, Point, debug, layout, signals, colors } from '../../ts/common/Global_Imports';
+	import { e, h, k, ux, Rect, Point, debug, layout, signals, colors, Svelte_Wrapper } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Graph, T_Signal, T_Startup, T_Control, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_t_startup, w_ancestry_focus, w_device_isMobile, w_popupView_id } from '../../ts/common/Stores';
-	import { T_Layer, T_Graph, T_Signal, T_Startup, T_Control, T_Element } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_show_graph_ofType, w_user_graph_offset } from '../../ts/common/Stores';
 	import { w_thing_fontFamily, w_dragging_active } from '../../ts/common/Stores';
 	import Tree_Preferences from './Tree_Preferences.svelte';
@@ -30,11 +30,20 @@
 	//		w_user_graph_offset					//
 	//		w_graph_rect						//
 	//											//
-	/////////////////////////////////////////////
+	//////////////////////////////////////////////
 	
 	onMount(() => {
 		update_style();
-		const handle_rebuild = signals.handle_signal_atPriority(T_Signal.rebuild, 1, (ancestry) => {
+		const handle_rebuild = signals.handle_signals_atPriority_needsWrapper([T_Signal.rebuild], 1, (t_signal, value) => {
+			switch (t_signal) {
+			case T_Signal.needsWrapper:
+				return !draggable ? null : new Svelte_Wrapper(draggable, null, null, T_SvelteComponent.tree);
+			case T_Signal.rebuild:
+				layoutAnd_reattach();
+				return null;	// ignored
+			default:
+				return null;	// ignored
+			}
 			layoutAnd_reattach();
 		});
 		return () => { handle_rebuild.disconnect(); };

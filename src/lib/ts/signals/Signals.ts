@@ -8,6 +8,7 @@ import { get } from 'svelte/store';
 
 export enum T_Signal {
 	thing		 = 'thing',
+	graph		 = 'graph',
 	rebuild		 = 'rebuild',
 	reattach	 = 'reattach',
 	reposition	 = 'reposition',
@@ -19,16 +20,21 @@ class Signal_Wrapper {
 	t_signal!: T_Signal;
 	wrapper!: Svelte_Wrapper;
 	closure!: (t_signal: T_Signal, value: any | null) => any;
-	dummy_wrapper = new Svelte_Wrapper(null, null, null, T_SvelteComponent.none);
 
-	constructor(t_signal: T_Signal, wrapper: Svelte_Wrapper, closure: (t_signal: T_Signal, value: any | null) => any) {
+	constructor(t_signal: T_Signal, wrapper: Svelte_Wrapper | null, closure: (t_signal: T_Signal, value: any | null) => any) {
+		this.wrapper = wrapper ?? Svelte_Wrapper.dummy_wrapper;
 		this.t_signal = t_signal;
-		this.wrapper = wrapper;
 		this.closure = closure;
+		if (!closure) {
+			debug.log_signal(`NO CLOSURE FOR ${t_signal} on ${this.wrapper.description}`);
+		}
 	}
 
 	emit(value: any | null) {
-		debug.log_signal(`EMITTED with ${value} on ${this.wrapper.description}`);
+		const type = value?.constructor?.name;
+		const resolved = typeof value != 'object' ? value :
+			(type === 'Ancestry' ? `Ancestry (${value.title})` : type ?? 'null');
+		debug.log_signal(`${this.t_signal} EMITTED with ${resolved} on ${this.wrapper.description}`);
 		this.closure(this.t_signal, value);
 	}
 
@@ -77,12 +83,9 @@ export class Signals {
 	// the closure is called with just the type and the signal's value
 	// on each signal's emit whose type and priority match
 
-	handle_signal_atPriority(t_signal: T_Signal, priority: number, onSignal: (value: any | null) => any ) {
-		return this.handle_signals_atPriority([t_signal], priority, onSignal);
-	}
-
-	handle_signals_atPriority(t_signals: Array<T_Signal>, priority: number, onSignal: (t_signal: T_Signal, value: any | null) => any ) {
+	handle_signals_atPriority(t_signals: Array<T_Signal>, priority: number, wrapper: Svelte_Wrapper | null, onSignal: (t_signal: T_Signal, value: any | null) => any ) {
 		this.adjust_highestPriority_forSignals(priority, t_signals);
+		this.register_wrapper_for(t_signals, priority, wrapper, onSignal);
 		return this.signal_emitter.connect((received_t_signal, signalPriority, value) => {
 			for (const t_signal of t_signals) {
 				if (received_t_signal == t_signal && signalPriority == priority) {
@@ -113,8 +116,7 @@ export class Signals {
 			const wrapper = onSignal(T_Signal.needsWrapper, null);	// value of null is ignored
 			if (!!wrapper) {
 				clearInterval(interval);
-				this.register_wrapper_for(t_signals, priority, wrapper, onSignal);
-				signal_handler = this.handle_signals_atPriority(t_signals, priority, onSignal);
+				signal_handler = this.handle_signals_atPriority(t_signals, priority, wrapper, onSignal);
 			}
 		}, 100);
 		return {
@@ -145,16 +147,8 @@ export class Signals {
 		};
 	}
 
-	handle_rebuild_andReattach(priority: number, onSignal: (value: any | null) => any) {
-		return this.handle_signals_atPriority([T_Signal.rebuild, T_Signal.reattach], priority, onSignal);
-	}
-
 	handle_reposition_widgets(priority: number, onSignal: (value: any | null) => any ) {
-		return this.handle_signal_atPriority(T_Signal.reposition, priority, onSignal);
-	}
-
-	handle_blink_forAlteration(onSignal: (value: any | null) => any ) {
-		return this.handle_signal_atPriority(T_Signal.alteration, 0, onSignal);
+		return this.handle_signals_atPriority([T_Signal.reposition], priority, null, onSignal);
 	}
 
 	static readonly _____TRACKING: unique symbol;
@@ -172,7 +166,7 @@ export class Signals {
 	}
 
 	combined_type_andPriority_for(t_signal: T_Signal, priority: number): string {
-		return `${priority}:${t_signal}`;
+		return `${t_signal}@${priority}`;
 	}
 
 	wrapper_for(t_signal: T_Signal, priority: number): Signal_Wrapper | undefined {
@@ -180,7 +174,7 @@ export class Signals {
 		return this.wrappers_byType_andPriority[type_andPriority];
 	}
 
-	register_wrapper_for(t_signals: Array<T_Signal>, priority: number, wrapper: Svelte_Wrapper, onSignal: (t_signal: T_Signal, value: any | null) => any) {
+	register_wrapper_for(t_signals: Array<T_Signal>, priority: number, wrapper: Svelte_Wrapper | null, onSignal: (t_signal: T_Signal, value: any | null) => any) {
 		for (const t_signal of t_signals) {
 			const type_andPriority = this.combined_type_andPriority_for(t_signal, priority);
 			this.wrappers_byType_andPriority[type_andPriority] = new Signal_Wrapper(t_signal, wrapper, onSignal);

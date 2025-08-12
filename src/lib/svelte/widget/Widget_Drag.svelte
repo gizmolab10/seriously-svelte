@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { S_Element, T_Layer, T_Graph, T_Alteration, T_SvelteComponent } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Graph, T_Signal, T_Alteration, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { c, e, k, u, ux, show, Rect, Size, Point, Thing, debug } from '../../ts/common/Global_Imports';
 	import { w_show_countDots_ofType, w_thing_color, w_ancestries_grabbed } from '../../ts/common/Stores';
-	import { layout, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
+	import { layout, S_Element, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
 	import { w_s_alteration, w_background_color } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
@@ -45,7 +45,7 @@
 
 	onMount(() => {
 		s_drag.set_forHovering(thing?.color, 'pointer');
-        const handle_altering = signals.handle_blink_forAlteration((invert) => {
+        const handle_altering = signals.handle_signals_atPriority([T_Signal.alteration], 0, null, (invert) => {
 			s_drag.isInverted = !!invert && !!ancestry && ancestry.alteration_isAllowed;
 			update_colors();
         });
