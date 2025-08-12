@@ -16,6 +16,12 @@ export class Utilities extends Testworthy_Utilities {
 	getWidthOf(s: string):								number { return this.getWidth_ofString_withSize(s, `${k.font_size.common}px`); }
 	sort_byOrder(ancestries: Array<Ancestry>): Array<Ancestry> { return ancestries.sort( (a: Ancestry, b: Ancestry) => { return a.order - b.order; }); }
 
+	resolve_signal_value(value: any): string {
+		const type = value?.constructor?.name;
+		return typeof value != 'object' ? value :
+			(type === 'Ancestry' ? `Ancestry (${value.title})` : type ?? 'null');
+	}
+
 	getFontOf(element: HTMLElement): string {
 		const style: CSSStyleDeclaration = window.getComputedStyle(element);
 		const fontFamily: string = style.fontFamily;

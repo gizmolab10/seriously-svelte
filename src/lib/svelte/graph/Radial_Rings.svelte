@@ -201,9 +201,9 @@
 			style = 'z-index:{T_Layer.radial}; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;'>
 			<Mouse_Responder name = 'rings'
 				cursor = {cursor}
-				zindex = {T_Layer.radial}
 				width = {outer_diameter}
 				height = {outer_diameter}
+				zindex = {T_Layer.radial}
 				handle_isHit = {handle_isHit}
 				handle_s_mouse = {handle_up_down}
 				center = {layout.center_ofGraphRect}>

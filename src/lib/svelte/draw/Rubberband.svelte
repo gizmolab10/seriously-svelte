@@ -154,11 +154,12 @@
 {/if}
 
 <style>
-    :global(.rubberband-blocking .controls, 
-            .rubberband-blocking .bottom-controls,
+    :global(.rubberband-blocking .bottom-controls,
             .rubberband-blocking .details-stack,
             .rubberband-blocking .segmented,
-            .rubberband-blocking .button) {
+            .rubberband-blocking .controls, 
+            .rubberband-blocking .button, 
+            .rubberband-blocking .mouse-responder) {
         pointer-events: none !important;
     }
 
