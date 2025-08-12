@@ -39,7 +39,7 @@
 	}
 
 	$: {
-		const _ = `${$w_thing_color}${$w_background_color}${$w_ancestries_grabbed.join(',')}`;
+		const _ = `${$w_thing_color}${$w_background_color}${$w_ancestries_grabbed.map(a => a.id).join(',')}`;
 		update_colors();
 	}
 
@@ -76,6 +76,7 @@
 			ellipsis_color = s_drag.stroke;
 			svg_outline_color = s_drag.svg_outline_color;
 			fill_color = debug.lines ? 'transparent' : s_drag.fill;
+			debug.log_colors(`DRAG ${ancestry.title}${s_drag.isInverted ? ' INVERTED' : ''}`)
 		}
 	}
 

@@ -34,32 +34,31 @@
 	
 	onMount(() => {
 		update_style();
-		const handle_rebuild = signals.handle_signals_atPriority_needsWrapper([T_Signal.rebuild], 1, (t_signal, value) => {
-			switch (t_signal) {
-			case T_Signal.needsWrapper:
-				return !draggable ? null : new Svelte_Wrapper(draggable, null, null, T_SvelteComponent.tree);
-			case T_Signal.rebuild:
-				layoutAnd_reattach();
-				return null;	// ignored
-			default:
-				return null;	// ignored
-			}
-			layoutAnd_reattach();
-		});
-		return () => { handle_rebuild.disconnect(); };
+		// const handle_rebuild = signals.handle_signals_atPriority_needsWrapper([T_Signal.rebuild], 1, (t_signal, value) => {
+		// 	switch (t_signal) {
+		// 	case T_Signal.needsWrapper:
+		// 		return !draggable ? null : new Svelte_Wrapper(draggable, null, null, T_SvelteComponent.tree);
+		// 	case T_Signal.rebuild:
+		// 		grand_layout_andReattach();
+		// 		return null;	// ignored
+		// 	default:
+		// 		return null;	// ignored
+		// 	}
+		// });
+		// return () => { handle_rebuild.disconnect(); };
 	});
 	
 	$:	{
-		const _ = $w_graph_rect + $w_t_startup + $w_show_graph_ofType
+		const _ = $w_graph_rect.description + $w_t_startup + $w_show_graph_ofType
 		update_style();
 	}
 
 	$:	{
-		const _ = $w_show_graph_ofType + $w_device_isMobile + $w_ancestry_focus
-		layoutAnd_reattach();
+		const _ = $w_show_graph_ofType + $w_ancestry_focus?.id
+		grand_layout_andReattach();
 	}
 
-	function layoutAnd_reattach() {
+	function grand_layout_andReattach() {
 		if (!!h && h.hasRoot) {
 			layout.grand_layout();
 			graph_reattachments += 1;

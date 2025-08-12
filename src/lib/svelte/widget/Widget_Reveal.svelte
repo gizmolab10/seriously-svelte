@@ -60,6 +60,7 @@
 		svg_outline_color = s_reveal.svg_outline_color;
 		bulkAlias_color = s_reveal.stroke;
 		color = ancestry.thing?.color;
+		debug.log_colors(`REVEAL ${ancestry.title}${s_reveal.isInverted ? ' INVERTED' : ''}`)
 	}
 
 	function set_isHovering(hovering) {

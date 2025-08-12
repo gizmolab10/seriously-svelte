@@ -26,7 +26,7 @@ export default class S_Element {
 	ignore_hover = false;
 	isDisabled = false;
 	isSelected = false;
-	isInverted = false;
+	isInverted = false;		// means color for hover == as though not hovering (and vice versa)
 	subtype = k.empty;
 	name = k.empty;
 	isOut = true;
@@ -38,9 +38,7 @@ export default class S_Element {
 		this.type = type;
 		if (this.isADot) {
 			w_ancestries_grabbed.subscribe((grabbed) => {
-				if (!!grabbed && grabbed.length > 0) {
-					this.isInverted = grabbed.includes(this.ancestry);	// so UI can draw them dark
-				}
+				this.isInverted = !!grabbed && grabbed.includes(this.ancestry);
 			});
 			this.color_background = get(w_background_color);
 		}

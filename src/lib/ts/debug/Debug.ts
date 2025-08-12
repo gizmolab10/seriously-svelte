@@ -9,11 +9,11 @@ export enum T_Debug {
 	fast_load		= 'fast_load',
 	segments		= 'segments',
 	actions			= 'actions',	// state logic of add parent action
-	reticle			= 'reticle',	// debug radial layout geometry
+	reticle			= 'reticle',	// show center of radial layout geometry
 	layout 			= 'layout',
 	action  		= 'action',
 	bubble  		= 'bubble',
-	colors			= 'colors',		// indicate some coordinates
+	colors			= 'colors',
 	cursor			= 'cursor',
 	crumbs  		= 'crumbs',
 	expand  		= 'expand',
@@ -24,11 +24,11 @@ export enum T_Debug {
 	things			= 'things',		// enable Things.debugLog
 	build			= 'build',
 	error			= 'error',		// async errors
-	graph			= 'graph',		// log size of graph area
+	graph			= 'graph',		// size of graph area
 	hover			= 'hover',
 	lines			= 'lines',		// alignment dots for lines and widgets
 	mouse			= 'mouse',
-	order			= 'order',		// observe relocating
+	order			= 'order',
 	thing			= 'thing',
 	trace			= 'trace',
 	edit			= 'edit',		// state machine for editing

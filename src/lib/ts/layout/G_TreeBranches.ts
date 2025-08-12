@@ -32,7 +32,7 @@ export default class G_TreeBranches {
 			}
 			this.size = new Size(width, height + halfHeight);
 			this.origin_ofLine = origin_ofWidget.offsetByXY(25, 1.2);
-			debug.log_layout(`children ${g_widget.origin_ofWidget.x} ${ancestry.id}`);
+			debug.log_layout(`BRANCH ${ancestry.title}`);
 		}
 	}
 
