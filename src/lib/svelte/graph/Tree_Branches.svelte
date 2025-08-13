@@ -10,6 +10,7 @@
 	export let show_child_branches = true;
 	const g_widget = ancestry.g_widget;
 	const g_childBranches = g_widget.g_childBranches;
+	debug.log_draw(`TREE_BRANCHES ${ancestry?.titles}`);
 
 </script>
 

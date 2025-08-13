@@ -15,6 +15,11 @@ export default class G_Layout {
 
 	static readonly _____GRAND: unique symbol;
 
+	grand_sweep() {
+		this.grand_layout();
+		this.grand_build();
+	}
+
 	grand_build() { signals.signal_rebuildGraph_fromFocus(); }
 
 	grand_layout() {
@@ -24,6 +29,7 @@ export default class G_Layout {
 			get(w_ancestry_focus)?.g_widget.grand_layout_tree();
 		}
 		signals.signal_reposition_widgets_fromFocus();
+		signals.signal_reattach_widgets_fromFocus();
 	}
 
 	grand_adjust_toFit() {

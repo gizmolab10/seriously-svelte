@@ -15,7 +15,7 @@
 	let color = $w_ancestry_focus?.thing?.color ?? colors.default_forThings;
 	let mouse_up_count = $w_count_mouse_up;
 	let cursor = k.cursor_default;
-	let ring_reattachments = 0;
+	let reattachments = 0;
 	let last_action = 0;
 
 	$: middle_radius   = $w_ring_rotation_radius + k.thickness.rotation_ring;
@@ -32,7 +32,7 @@
 	onMount(() => {
 		cursor = radial.cursor_forRingZone;
 		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
-			ring_reattachments += 1;
+			reattachments += 1;
 		});
 		return () => { handle_reposition.disconnect(); };
 	});
@@ -194,7 +194,7 @@
 
 </script>
 
-{#key ring_reattachments}
+{#key reattachments}
 	{#if !debug.hide_rings}
 		<div class = 'rings'
 			on:mousemove={detect_movement}

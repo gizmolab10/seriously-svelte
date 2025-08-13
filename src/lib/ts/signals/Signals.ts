@@ -11,7 +11,7 @@ export enum T_Signal {
 	graph		 = 'graph',
 	rebuild		 = 'rebuild',
 	reattach	 = 'reattach',
-	reposition	 = 'reposition',
+	reposition	 = 'reposition',	// only for widgets
 	alteration	 = 'alteration',
 	needsWrapper = 'needsWrapper',
 }
@@ -62,11 +62,8 @@ export class Signals {
 			this.set_signal_isInFlight_for(t_signal, true);
 			const highestPriority = this.highestPriorities[t_signal] ?? 0;
 			for (let priority = 0; priority <= highestPriority; priority++) {
-				const signal_wrapper = this.wrapper_for(t_signal, priority);
-				if (!!signal_wrapper) {
-					signal_wrapper.log_signal(value);
-					this.signal_emitter.emit(t_signal, priority, value);
-				}
+				this.wrapper_for(t_signal, priority)?.log_signal(value);
+				this.signal_emitter.emit(t_signal, priority, value);
 			}
 			this.set_signal_isInFlight_for(t_signal, false);
 		}

@@ -43,7 +43,7 @@
 	});
 	
 	$: {
-		const _ = `${$w_ancestries_grabbed.join(',')}${$w_ancestries_expanded.join(',')}${$w_show_countDots_ofType}${$w_thing_title}${$w_background_color}${$w_thing_color}`;
+		const _ = `${$w_ancestries_grabbed.map(a => a.id).join(',')}${$w_ancestries_expanded.map(a => a.id).join(',')}${$w_show_countDots_ofType}${$w_thing_title}${$w_background_color}${$w_thing_color}`;
 		update_svgPaths();
 		update_colors();
 	}
@@ -86,8 +86,7 @@
 		if (s_mouse.isHover) {
 			set_isHovering(!s_mouse.isOut);
 		} else if (s_mouse.isUp && (ancestry.hasChildren || ancestry.thing.isBulkAlias)) {
-			const RIGHT = !ancestry.isExpanded || ux.inRadialMode;
-			h.ancestry_rebuild_persistentMoveRight(ancestry, RIGHT, false, false, false, true);
+			h.ancestry_toggle_expansion(ancestry);
 		}
 	}
  
@@ -105,9 +104,9 @@
 	<Mouse_Responder
 		center={center}
 		zindex={zindex}
+		name={s_reveal.name}
 		width={k.height.dot}
 		height={k.height.dot}
-		name={s_reveal.name}
 		bind:this={dotReveal}
 		handle_s_mouse={up_hover_closure}>
 		<div class='reveal-dot'

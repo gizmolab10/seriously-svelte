@@ -10,16 +10,16 @@
 	export let centered: boolean = false;
 	export let width = layout.windowSize.width;
 	let separator_color = colors.separator;
-	let breadcrumb_reattachments = 0;
 	let things: Array<Thing> = [];
 	let size = k.height.button;
 	let lefts: string[] = [];
 	let ancestry: Ancestry;
+	let reattachments = 0;
 	let trigger = 0;
 
-	signals.handle_signals_atPriority([T_Signal.rebuild, T_Signal.reattach], 1, null, (ancestry) => { breadcrumb_reattachments += 1; });
+	signals.handle_signals_atPriority([T_Signal.rebuild, T_Signal.reattach], 1, null, (ancestry) => { reattachments += 1; });
 	
-	$: $w_s_text_edit, $w_thing_color, $w_ancestries_grabbed, breadcrumb_reattachments += 1;
+	$: $w_s_text_edit, $w_thing_color, $w_ancestries_grabbed, reattachments += 1;
 	$: $w_background_color, separator_color = colors.separator;
 
 	$: {
@@ -31,7 +31,7 @@
 					let parent_widths = 0;					// encoded as one parent count per 2 digits (base 10)
 					let widths: number[] = [];
 					[things, widths, lefts, parent_widths] = layout.layout_breadcrumbs_forAncestry_centered_starting_within(ancestry, centered, left, width);
-					trigger = parent_widths * 10000 + breadcrumb_reattachments * 100 + lefts[0];		// re-render HTML when this value changes
+					trigger = parent_widths * 10000 + reattachments * 100 + lefts[0];		// re-render HTML when this value changes
 					for (let i = 0; i < things.length; i++) {
 						const state = s_breadcrumbAt(i);
 						if (!!state) {
@@ -39,7 +39,7 @@
 						}
 					}
 					debug.log_crumbs(`ALL ${widths} ${things.map(t => t.title)}`);
-					breadcrumb_reattachments += 1;
+					reattachments += 1;
 				}
 			}
 		}

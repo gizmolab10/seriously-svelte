@@ -1,10 +1,12 @@
 <script lang='ts'>
-	import { T_Layer, T_Graph, T_Widget, T_Signal, T_Element, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { c, k, u, ux, Thing, Point, Angle, debug, layout } from '../../ts/common/Global_Imports';
-	import { w_s_text_edit, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
+	import { T_Layer, T_Graph, T_Widget, T_Signal } from '../../ts/common/Global_Imports';
 	import { signals, Ancestry, Svelte_Wrapper } from '../../ts/common/Global_Imports';
+	import { T_Element, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { G_Widget, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_background_color } from '../../ts/common/Stores';
+	import { w_s_text_edit, w_ancestry_focus } from '../../ts/common/Stores';
+	import { w_ancestries_grabbed } from '../../ts/common/Stores';
 	import Widget_Reveal from './Widget_Reveal.svelte';
 	import Tree_Line from '../graph/Tree_Line.svelte';
 	import Widget_Title from './Widget_Title.svelte';
@@ -24,6 +26,7 @@
 	let center_ofDrag = Point.zero;
 	let revealCenter = Point.zero;
 	let border = s_widget.border;
+	let reattachments = 0;
 	let background = k.empty;
 	let widgetName = k.empty;
 	let revealName = k.empty;
@@ -38,6 +41,7 @@
     let widget;
 	let thing;
 
+	debug.log_draw(`WIDGET ${ancestry?.titles}`);
 	setup_fromAncestry();		// this fails if ancestry's thing id is invalid
 	final_layout();
 	layout_maybe();
@@ -48,6 +52,9 @@
 			case T_Signal.needsWrapper:
 				return !widget ? null : new Svelte_Wrapper(widget, handle_s_mouse, ancestry.hid, T_SvelteComponent.widget);
 			case T_Signal.reattach:
+				final_layout();
+				reattachments += 1;
+				return null;	// ignored
 			case T_Signal.reposition:
 				layout_maybe();
 				return null;	// ignored
@@ -64,7 +71,7 @@
 	}
 
 	$: {
-		const _ = $w_s_text_edit + $w_ancestries_grabbed.join(',');
+		const _ = $w_s_text_edit + $w_ancestries_grabbed.map(a => a.id).join(',');
 		if (!!ancestry && !!widget && s_widget.state_didChange) {
 			g_widget.layout_widget();
 			update_colors();
@@ -139,37 +146,39 @@
     
 </script>
 
-{#if s_widget}
-	<div class = 'widget'
-		id = '{widgetName}'
-		on:keyup = {u.ignore}
-		bind:this = {widget}
-		on:keydown = {u.ignore}
-		on:click = {handle_click_event}
-        on:mouseleave={() => handle_mouse_exit(true)}
-        on:mouseenter={() => handle_mouse_exit(false)}
-		on:mousemove = {(e) => handle_s_mouse(S_Mouse.hover(e, widget, true))}
-		style = '
-			{background};
-			top : {top}px;
-			left : {left}px;
-			border : {border};
-			height : {height}px;
-			position :  absolute;
-			width : {width_ofWidget}px;
-			z-index : {T_Layer.widgets};
-			border-radius : {border_radius}px;
-		'>
-		<Widget_Drag
-			s_drag = {s_drag}
-			pointsNormal = {pointsNormal}/>
-		<Widget_Title
-			s_title = {s_title}
-			fontSize = {k.font_size.common}px/>
-		{#if ancestry?.showsReveal_forPointingToChild(points_toChild)}
-			<Widget_Reveal
-				s_reveal = {s_reveal}
-				points_toChild = {points_toChild}/>
-		{/if}
-	</div>
-{/if}
+{#key reattachments}
+	{#if s_widget}
+		<div class = 'widget'
+			id = '{widgetName}'
+			on:keyup = {u.ignore}
+			bind:this = {widget}
+			on:keydown = {u.ignore}
+			on:click = {handle_click_event}
+			on:mouseleave={() => handle_mouse_exit(true)}
+			on:mouseenter={() => handle_mouse_exit(false)}
+			on:mousemove = {(e) => handle_s_mouse(S_Mouse.hover(e, widget, true))}
+			style = '
+				{background};
+				top : {top}px;
+				left : {left}px;
+				border : {border};
+				height : {height}px;
+				position :  absolute;
+				width : {width_ofWidget}px;
+				z-index : {T_Layer.widgets};
+				border-radius : {border_radius}px;
+			'>
+			<Widget_Drag
+				s_drag = {s_drag}
+				pointsNormal = {pointsNormal}/>
+			<Widget_Title
+				s_title = {s_title}
+				fontSize = {k.font_size.common}px/>
+			{#if ancestry?.showsReveal_forPointingToChild(points_toChild)}
+				<Widget_Reveal
+					s_reveal = {s_reveal}
+					points_toChild = {points_toChild}/>
+			{/if}
+		</div>
+	{/if}
+{/key}

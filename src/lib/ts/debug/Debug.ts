@@ -8,9 +8,9 @@ export enum T_Debug {
 	hide_rings		= 'hide_rings',
 	fast_load		= 'fast_load',
 	segments		= 'segments',
-	actions			= 'actions',	// state logic of add parent action
-	reticle			= 'reticle',	// show center of radial layout geometry
-	layout 			= 'layout',
+	actions			= 'actions',		// state logic of actions
+	reticle			= 'reticle',		// show center of radial layout geometry
+	layout 			= 'layout',			// branches and widgets
 	action  		= 'action',
 	bubble  		= 'bubble',
 	colors			= 'colors',
@@ -19,22 +19,22 @@ export enum T_Debug {
 	expand  		= 'expand',
 	handle			= 'handle',
 	radial			= 'radial',
-	remote			= 'remote',		// interactions with remote
+	remote			= 'remote',			// interactions with remote (databases)
 	signal			= 'signal',
-	things			= 'things',		// enable Things.debugLog
-	build			= 'build',
-	error			= 'error',		// async errors
-	graph			= 'graph',		// size of graph area
+	things			= 'things',			// properties of things
+	build			= 'build',			// completely reattach graph and its entire DOM
+	error			= 'error',			// async errors
+	graph			= 'graph',			// size of graph area
 	hover			= 'hover',
-	lines			= 'lines',		// alignment dots for lines and widgets
+	lines			= 'lines',			// alignment dots for lines and widgets
 	mouse			= 'mouse',
 	order			= 'order',
-	thing			= 'thing',
 	trace			= 'trace',
-	edit			= 'edit',		// state machine for editing
+	draw			= 'draw',
+	edit			= 'edit',			// state machine for editing
 	grab			= 'grab',
 	move			= 'move',
-	key				= 'key',		// keyboard input
+	key				= 'key',			// keyboard input
 }
 
 export class Debug {
@@ -43,7 +43,6 @@ export class Debug {
 	hasOption(option: T_Debug) { return this.flags.includes(option); }
 	captureStackTrace(): string | undefined { return new Error().stack; }
 
-	get thing(): boolean { return this.hasOption(T_Debug.thing); }
 	get graph(): boolean { return this.hasOption(T_Debug.graph); }
 	get lines(): boolean { return this.hasOption(T_Debug.lines); }
 	get trace(): boolean { return this.hasOption(T_Debug.trace); }
@@ -56,9 +55,9 @@ export class Debug {
 
 	log_alert(option: T_Debug, message: string) { alert(message); }
 	log_key(message: string) { this.log_maybe(T_Debug.key, message); }
+	log_draw(message: string) { this.log_maybe(T_Debug.draw, message); }
 	log_edit(message: string) { this.log_maybe(T_Debug.edit, message); }
 	log_grab(message: string) { this.log_maybe(T_Debug.grab, message); }
-	log_info(message: string) { this.log_maybe(T_Debug.thing, message); }
 	log_move(message: string) { this.log_maybe(T_Debug.move, message); }
 	log_build(message: string) { this.log_maybe(T_Debug.build, message); }
 	log_error(message: string) { this.log_maybe(T_Debug.error, message); }
@@ -76,7 +75,6 @@ export class Debug {
 	log_radial(message: string) { this.log_maybe(T_Debug.radial, message); }
 	log_remote(message: string) { this.log_maybe(T_Debug.remote, message); }
 	log_signal(message: string) { this.log_maybe(T_Debug.signal, message); }
-	log_things(message: string) { this.log_maybe(T_Debug.things, message); }
 	log_actions(message: string) { this.log_maybe(T_Debug.actions, message); }
 	log_segments(message: string) { this.log_maybe(T_Debug.segments, message); }
 	log_preferences(message: string) { this.log_maybe(T_Debug.preferences, message); }
@@ -124,7 +122,7 @@ export class Debug {
 					case 'mouse': this.flags.push(T_Debug.mouse); break;
 					case 'order': this.flags.push(T_Debug.order); break;
 					case 'trace': this.flags.push(T_Debug.trace); break;
-					case 'thing': this.flags.push(T_Debug.thing); break;
+					case 'draw': this.flags.push(T_Debug.draw); break;
 					case 'edit': this.flags.push(T_Debug.edit); break;
 					case 'grab': this.flags.push(T_Debug.grab); break;
 					case 'move': this.flags.push(T_Debug.move); break;

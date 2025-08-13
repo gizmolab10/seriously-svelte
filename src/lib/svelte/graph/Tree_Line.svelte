@@ -11,7 +11,7 @@
 	let stroke_color = ancestry?.thing?.color;
 	let lineWrapper: Svelte_Wrapper;
 	let svg_dasharray = k.empty;
-	let line_reattachments = 0;
+	let reattachments = 0;
 	let line;
 
 	//////////////////////////////
@@ -25,7 +25,7 @@
 
 	onMount(() => {
 		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
-			line_reattachments += 1;
+			reattachments += 1;
 		});
 		return () => { handle_reposition.disconnect(); }
 	});
@@ -37,13 +37,13 @@
 
 	$: {
 		if (!!ancestry && !!ancestry.thing && ancestry.thing.id == $w_thing_color?.split(k.separator.generic)[0]) {
-			line_reattachments += 1;
+			reattachments += 1;
 		}
 	}
 
 </script>
 
-{#key line_reattachments}
+{#key reattachments}
 	{#if !!ancestry}
 		<svg
 			bind:this = {line}

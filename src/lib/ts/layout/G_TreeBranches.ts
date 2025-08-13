@@ -1,4 +1,5 @@
 import { ux, Size, debug, Point, Ancestry, T_Graph } from '../common/Global_Imports';
+import { w_ancestries_expanded } from '../common/Stores';
 
 export default class G_TreeBranches {
 	show_child_branches = true;
@@ -32,7 +33,6 @@ export default class G_TreeBranches {
 			}
 			this.size = new Size(width, height + halfHeight);
 			this.origin_ofLine = origin_ofWidget.offsetByXY(25, 1.2);
-			debug.log_layout(`BRANCH ${ancestry.title}`);
 		}
 	}
 

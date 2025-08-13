@@ -7,7 +7,7 @@
 	import Radial_Focus from './Radial_Focus.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import { onMount } from 'svelte';
-	let necklace_reattachments = 0;
+	let reattachments = 0;
 
 	//////////////////////////////////////////////
 	//											//
@@ -36,10 +36,10 @@
 
 	onMount(() => {
 		const handle_recreate = signals.handle_signals_atPriority([T_Signal.reattach], 0, null, (ancestry) => {
-			necklace_reattachments += 1;
+			reattachments += 1;
 		});
 		const handle_reposition = signals.handle_signals_atPriority([T_Signal.reposition], 2, null, (received_ancestry) => {
-			necklace_reattachments += 1;
+			reattachments += 1;
 		});
 		return () => { handle_reposition.disconnect(); handle_recreate.disconnect() };
 	});
@@ -47,7 +47,7 @@
 	$: {
 		const g_paging = $w_g_paging;
 		if (!!g_paging && !!$w_ancestry_focus.thing && $w_ancestry_focus.thing.id == g_paging.thing_id) {
-			necklace_reattachments += 1;
+			reattachments += 1;
 		}
 	}
 
@@ -62,7 +62,7 @@
 		transform : translate({$w_user_graph_offset.x}px, {$w_user_graph_offset.y}px);'>
 	<Radial_Rings/>
 	<Radial_Focus/>
-	{#key necklace_reattachments}
+	{#key reattachments}
 		<div
 			class = 'necklace-widgets'
 			style = 'z-index : {T_Layer.necklace};'>

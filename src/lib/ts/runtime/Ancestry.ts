@@ -559,9 +559,9 @@ export default class Ancestry extends Identifiable {
 
 	static readonly _____OTHER_ANCESTRIES: unique symbol;
 
-	get parentAncestry():   Ancestry | null { return this.ancestry_createUnique_byStrippingBack(); }
 	get sibling_ancestries(): Array<Ancestry> { return this.parentAncestry?.childAncestries ?? []; }
-	get childAncestries():   Array<Ancestry> { return this.ancestries_createUnique_byKinship(T_Kinship.children) ?? []; }
+	get parentAncestry():	  Ancestry | null { return this.ancestry_createUnique_byStrippingBack(); }
+	get childAncestries():    Array<Ancestry> { return this.ancestries_createUnique_byKinship(T_Kinship.children) ?? []; }
 	get branchAncestries():   Array<Ancestry> { return p.branches_areChildren ? this.childAncestries : this.parentAncestries; }
 
 	get parentAncestries(): Array<Ancestry> {
@@ -730,13 +730,10 @@ export default class Ancestry extends Identifiable {
 		if (!!predicate) {
 			const relationships = this.relationships_ofKind_forParents(predicate.kind, false);
 			const isContains = predicate.kind == T_Predicate.contains;
-			// if (this.title == 'Friendly') {
-			// 	console.log(`ancestries [${ancestries.length}] ${this.titles}`);
-			// }
 			if (relationships.length > 0) {
 				for (const relationship of relationships) {
 					if (relationship.kind == predicate.kind) {
-						let ancestry: Ancestry | null;
+						let ancestry: Ancestry | null = null;
 						if (isContains) {
 							ancestry = this.ancestry_createUnique_byAppending_relationshipID(relationship.id); 	// add each relationship's id
 						} else {

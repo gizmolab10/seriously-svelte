@@ -18,7 +18,7 @@
 	const offset_toIntersection = new Point(-4, 8);
     const half_thickness: number = k.thickness.separator.main / 2;
 	let separator_color = colors.separator;
-	let panel_reattachments = 0;
+	let reattachments = 0;
 
 	function ignore_wheel(event) { event.preventDefault(); }
 
@@ -30,13 +30,14 @@
 	$: {
 		const _ = $w_t_database + $w_t_startup + $w_graph_rect.description;
 		if (!!h && h.isAssembled) {
-			panel_reattachments += 1;
+			debug.log_draw(`PANEL`);
+			reattachments += 1;
 		}
 	}
 
 </script>
 
-{#key panel_reattachments}
+{#key reattachments}
 	<div
 		class='panel'
 		style='

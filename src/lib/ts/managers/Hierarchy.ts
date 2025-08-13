@@ -818,7 +818,7 @@ export class Hierarchy {
 			await this.ancestry_rebuild_persistentMoveRight(ancestry, !ancestry.isExpanded, false, false, false, false);
 			layout.grand_build();
 		} else if (ancestry.toggleExpanded()) {
-			layout.grand_build();
+			layout.grand_sweep();
 		}
 	}
 
@@ -998,7 +998,7 @@ export class Hierarchy {
 				if (ux.inTreeMode) {
 					const depth_limit = get(w_depth_limit);
 					graph_needsRebuild = ancestry.expand();
-					if (!!newGrabAncestry && newGrabAncestry.depth_ofFocus >= depth_limit) {
+					if (!!newGrabAncestry && newGrabAncestry.depth_ofFocus > depth_limit) {
 						newFocusAncestry = newGrabAncestry.ancestry_createUnique_byStrippingBack(depth_limit);
 					} else {
 						newFocusAncestry = null;
