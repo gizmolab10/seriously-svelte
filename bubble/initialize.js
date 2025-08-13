@@ -3,7 +3,7 @@ function(instance, properties, context) {
 	instance.canvas.style.width = window.innerWidth + 'px';
 	instance.canvas.style.height = window.innerHeight + 'px';
 	const iframe = document.createElement('iframe');
-	iframe.src = 'https://webseriously.netlify.app/?db=bubble&disable=details&erase=data';
+	iframe.src = 'https://webseriously.netlify.app/?db=bubble&disable=details';
 	iframe.style.overflow = 'hidden';
 	iframe.style.border = 'none';
 	iframe.style.height = '100%';
@@ -15,11 +15,9 @@ function(instance, properties, context) {
 			switch (event.data.type) {
 				case 'focus':
 					instance.publishState('focus_id', event.data.id);
-					instance.trigger('focus');
 					break;
 				case 'select':
 					instance.publishState('selected_ids', event.data.ids);
-					instance.trigger('select');
 					break;
 				case 'listening':
 					instance.data.iframeIsListening = true;		// once set, only these messages will pend, the rest are sent in update

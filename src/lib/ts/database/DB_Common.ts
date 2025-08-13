@@ -143,7 +143,7 @@ export default class DB_Common {
 			w_hierarchy.set(new Hierarchy(this));
 		}
 		if (h.hasRoot) {
-			h.ancestries_all_createUnique();
+			h.ancestries_assureAll_createUnique();
 			h.restore_fromPreferences();
 		} else {
 			if (get(w_t_startup) != T_Startup.ready) {		// WHY????

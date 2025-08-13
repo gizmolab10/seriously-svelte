@@ -28,7 +28,7 @@ export default class DB_Bubble extends DB_Common {
 					window.parent.postMessage({ type: 'select', ids: ancestries.map((ancestry: Ancestry) => ancestry.thing?.id) }, '*');
 				}
 			});
-		}, 4000);
+		}, 100);
 	}
 
 	private handle_bubble_message = (e: Event) => {

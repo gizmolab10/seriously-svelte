@@ -16,11 +16,12 @@ export default class G_Layout {
 	static readonly _____GRAND: unique symbol;
 
 	grand_sweep() {
+		h.ancestries_assureAll_createUnique();
 		this.grand_layout();
 		this.grand_build();
 	}
 
-	grand_build() { signals.signal_rebuildGraph_fromFocus(); }
+	grand_build() { return; signals.signal_rebuildGraph_fromFocus(); }
 
 	grand_layout() {
 		if (ux.inRadialMode) {

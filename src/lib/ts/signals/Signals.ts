@@ -27,9 +27,11 @@ class Signal_Wrapper {
 		this.priority = priority;
 	}
 
-	log_signal(value: any | null) {
+	log_signal(sending: boolean, value: any | null) {
 		const resolved = u.resolve_signal_value(value);
-		debug.log_signal(`SEND ${this.t_signal} with ${resolved} on ${this.wrapper.description}`);
+		const first = sending ? 'SENDING' : 'HANDLING';
+		const second = sending ? 'to' : 'in';
+		debug.log_signal(`${first} "${this.t_signal}" @ ${this.priority} ${second} ${this.wrapper.description} with ${resolved}`);
 	}
 
 }
@@ -62,7 +64,7 @@ export class Signals {
 			this.set_signal_isInFlight_for(t_signal, true);
 			const highestPriority = this.highestPriorities[t_signal] ?? 0;
 			for (let priority = 0; priority <= highestPriority; priority++) {
-				this.wrapper_for(t_signal, priority)?.log_signal(value);
+				this.wrapper_for(t_signal, priority)?.log_signal(true, value);
 				this.signal_emitter.emit(t_signal, priority, value);
 			}
 			this.set_signal_isInFlight_for(t_signal, false);
@@ -81,11 +83,9 @@ export class Signals {
 		this.adjust_highestPriority_forSignals(priority, t_signals);
 		this.register_wrapper_for(t_signals, priority, wrapper);
 		return this.signal_emitter.connect((received_t_signal, signalPriority, value) => {
-			const resolved = u.resolve_signal_value(value);
 			for (const t_signal of t_signals) {
 				if (received_t_signal == t_signal && signalPriority == priority) {
-					const type_andPriority = this.combined_type_andPriority_for(received_t_signal, priority);
-					debug.log_signal(`HANDLE ${type_andPriority} with ${resolved}`);
+					this.wrapper_for(received_t_signal, priority)?.log_signal(false, value);
 					onSignal(t_signal, value);
 				}
 			}
@@ -96,9 +96,7 @@ export class Signals {
 		this.adjust_highestPriority_forAllSignals(priority);
 		return this.signal_emitter.connect((received_t_signal, signalPriority, value) => {
 			if (signalPriority == priority) {
-				const resolved = u.resolve_signal_value(value);
-				const type_andPriority = this.combined_type_andPriority_for(received_t_signal, priority);
-				debug.log_signal(`HANDLE ${type_andPriority} with ${resolved}`);
+				this.wrapper_for(received_t_signal, priority)?.log_signal(false, value);
 				onSignal(received_t_signal, value);
 			}
 		});

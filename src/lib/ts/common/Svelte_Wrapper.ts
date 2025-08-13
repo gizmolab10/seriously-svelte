@@ -19,7 +19,7 @@ export default class Svelte_Wrapper {
     	wrappers.wrapper_add(this);
     }
 
-    get description(): string { return `${this.type} for ${this.hid}`; }
+    get description(): string { return this.type; }
     get distance_toGraphCenter(): Point { return this.boundingRect.center; }
 
     get boundingRect(): Rect {

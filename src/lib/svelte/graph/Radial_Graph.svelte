@@ -64,7 +64,7 @@
 	<Radial_Focus/>
 	{#key reattachments}
 		<div
-			class = 'necklace-widgets'
+			class = 'necklace-of-widgets'
 			style = 'z-index : {T_Layer.necklace};'>
 			{#each layout.g_radialGraph.g_necklace_widgets as g_necklace_widget}
 				<Widget g_widget = {g_necklace_widget}/>

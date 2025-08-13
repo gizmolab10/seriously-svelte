@@ -1,8 +1,9 @@
 <script lang='ts'>
-	import { c, h, k, u, ux, Size, Point, Thing, T_Layer, T_Signal, T_Element, T_Startup } from '../../ts/common/Global_Imports';
+	import { c, h, k, u, ux, Size, Point, Thing, debug, colors, signals } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Signal, T_Element, T_Startup, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { w_t_startup, w_graph_rect, w_thing_color, w_background_color } from '../../ts/common/Stores';
-	import { debug, colors, signals, svgPaths, Ancestry, layout } from '../../ts/common/Global_Imports';
 	import { w_s_text_edit, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
+	import { svgPaths, Ancestry, layout, Svelte_Wrapper} from '../../ts/common/Global_Imports';
 	import Breadcrumb_Button from '../buttons/Breadcrumb_Button.svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
@@ -15,9 +16,21 @@
 	let lefts: string[] = [];
 	let ancestry: Ancestry;
 	let reattachments = 0;
+	let breadcrumbs;
 	let trigger = 0;
-
-	signals.handle_signals_atPriority([T_Signal.rebuild, T_Signal.reattach], 1, null, (ancestry) => { reattachments += 1; });
+	
+	onMount(() => {
+		const signal_handler = signals.handle_signals_atPriority_needsWrapper([T_Signal.rebuild, T_Signal.reattach], 1, (t_signal, value): Svelte_Wrapper | null => {
+			switch (t_signal) {
+			case T_Signal.needsWrapper:
+				return !breadcrumbs ? null : new Svelte_Wrapper(breadcrumbs, null, ancestry.hid, T_SvelteComponent.breadcrumbs);
+			default:
+				reattachments += 1;
+				return null;	// ignored
+			}
+		});
+		return () => signal_handler.disconnect();
+	});
 	
 	$: $w_s_text_edit, $w_thing_color, $w_ancestries_grabbed, reattachments += 1;
 	$: $w_background_color, separator_color = colors.separator;
@@ -55,6 +68,7 @@
 {#key trigger}
 	<div
 		class='breadcrumbs'
+		bind:this = {breadcrumbs}
 		style='
 			top:-5px;
 			left:7px;

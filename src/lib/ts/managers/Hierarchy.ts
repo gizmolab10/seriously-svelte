@@ -640,9 +640,9 @@ export class Hierarchy {
 		this.ancestry_byKind_andHID = {};
 	}
 
-	ancestries_all_createUnique() {
+	ancestries_assureAll_createUnique() {
 		this.rootAncestry.traverse((ancestry: Ancestry) => {
-			return false;	// do nothing, ancestry was just (or already was) created
+			return false;	// we do nothing with it, ancestry will merely be created (or already was)
 		})
 	}
 
@@ -843,7 +843,7 @@ export class Hierarchy {
 				if (!parentAncestry.isRoot && (ux.inRadialMode || !childAncestry.isVisible)) {
 					parentAncestry.becomeFocus();
 				}
-				layout.grand_build();
+				layout.grand_sweep();
 				if (shouldStartEdit) {
 					setTimeout(() => {
 						childAncestry.startEdit();
@@ -1619,7 +1619,7 @@ export class Hierarchy {
 
 	async wrapUp_data_forUX() {
 		this.assure_root_andAncestry();
-		this.ancestries_all_createUnique();
+		this.ancestries_assureAll_createUnique();
 		// await this.relationships_lostAndFound_persistentCreate(this.db.idBase);
 		// await this.relationships_removeHavingNullReferences();
 		this.restore_fromPreferences();

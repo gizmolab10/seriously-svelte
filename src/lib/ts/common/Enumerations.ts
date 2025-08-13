@@ -129,12 +129,14 @@ export enum T_Kinship {
 }
 
 export enum T_SvelteComponent {
-	widget	= 'widget',
-	reveal	= 'reveal',
-	title	= 'title',
-	tree	= 'tree',
-	none	= 'none',
-	app		= 'app',
+	breadcrumbs = 'breadcrumbs',
+	reveal		= 'reveal',
+	widget		= 'widget',
+	title		= 'title',
+	drag		= 'drag',
+	none		= 'none',
+	tree		= 'tree',
+	app			= 'app',
 }
 
 export enum T_File_Format {

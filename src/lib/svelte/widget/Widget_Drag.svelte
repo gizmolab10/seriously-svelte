@@ -1,8 +1,8 @@
 <script lang='ts'>
+	import { c, e, k, u, ux, show, Rect, Size, Point, Thing, debug, layout } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Signal, T_Alteration, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { c, e, k, u, ux, show, Rect, Size, Point, Thing, debug } from '../../ts/common/Global_Imports';
+	import { S_Element, signals, svgPaths, databases, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import { w_show_countDots_ofType, w_thing_color, w_ancestries_grabbed } from '../../ts/common/Stores';
-	import { layout, S_Element, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
 	import { w_s_alteration, w_background_color } from '../../ts/common/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
@@ -27,9 +27,34 @@
 	let left = 0;
 	let top = 0;
 	let dotDrag;
+	let wrapper;
 
 	update_svgPaths();
 	update_colors();
+
+	onMount(() => {
+		const alteration_handler = signals.handle_signals_atPriority_needsWrapper([T_Signal.alteration], 0, (t_signal, value): Svelte_Wrapper | null => {
+			switch (t_signal) {
+			case T_Signal.needsWrapper:
+				return !wrapper ? null : wrapper;
+			default:
+				s_drag.isInverted = !!invert && !!ancestry && ancestry.alteration_isAllowed;
+				update_colors();
+				return null;	// ignored
+			}
+		});
+		const reposition_handler = signals.handle_signals_atPriority_needsWrapper([T_Signal.reposition], 2, (t_signal, value): Svelte_Wrapper | null => {
+			switch (t_signal) {
+			case T_Signal.needsWrapper:
+				return !wrapper ? null : wrapper;
+			default:
+				center = g_widget.center_ofDrag;
+				return null;	// ignored
+			}
+		});
+		return () => { alteration_handler.disconnect(); reposition_handler.disconnect(); };
+	});
+
 	function handle_context_menu(event) { event.preventDefault(); }		// no default context menu on right-click
 	function handle_s_mouse(s_mouse: S_Mouse): boolean { return false; }
 
@@ -42,20 +67,12 @@
 		const _ = `${$w_thing_color}${$w_background_color}${$w_ancestries_grabbed.map(a => a.id).join(',')}`;
 		update_colors();
 	}
-
-	onMount(() => {
-		s_drag.set_forHovering(thing?.color, 'pointer');
-        const handle_altering = signals.handle_signals_atPriority([T_Signal.alteration], 0, null, (invert) => {
-			s_drag.isInverted = !!invert && !!ancestry && ancestry.alteration_isAllowed;
-			update_colors();
-        });
-		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
-			if (!!dotDrag) {
-				center = g_widget.center_ofDrag;
-			}
-		});
-		return () => { handle_reposition.disconnect(); handle_altering.disconnect(); };
-	});
+	
+	$: {
+		if (!!dotDrag) {
+			wrapper = new Svelte_Wrapper(dotDrag, handle_s_mouse, ancestry.hid, T_SvelteComponent.drag);
+		}
+	}
 
 	function update_svgPaths() {
 		if (ux.inRadialMode) {
