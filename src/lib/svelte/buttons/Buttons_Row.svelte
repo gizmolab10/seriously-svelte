@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, ux, Point, colors, svgPaths, S_Element, T_Element, T_Request } from '../../ts/common/Global_Imports';
-	import { w_count_button_restyle } from '../../ts/common/Stores';
+	import { w_count_button_restyle } from '../../ts/managers/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
     import G_Repeater from '../../ts/layout/G_Repeater';
 	import Separator from '../mouse/Separator.svelte';

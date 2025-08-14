@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { onMount } from 'svelte';
-	import { w_ancestry_focus, w_user_graph_offset, w_graph_rect } from '../../ts/common/Stores';
+	import { w_ancestry_focus, w_user_graph_offset, w_graph_rect } from '../../ts/managers/Stores';
 	import { layout, T_Layer } from '../../ts/common/Global_Imports';
-	import { w_depth_limit } from '../../ts/common/Stores';
+	import { w_depth_limit } from '../../ts/managers/Stores';
 	
 	let canvas: HTMLCanvasElement;
 	let ctx: CanvasRenderingContext2D;

@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, Point, debug, colors, signals, T_Layer } from '../../ts/common/Global_Imports';
-	import { w_thing_color } from '../../ts/common/Stores';
+	import { w_thing_color } from '../../ts/managers/Stores';
 	import Circle from '../draw/Circle.svelte';
 	import Box from '../debug/Box.svelte';
 	import { onMount } from 'svelte';
@@ -9,7 +9,7 @@
 	const ancestry = g_line.branchAncestry;
 	const debugOffset = new Point(k.height.line - 2.4, 2.5);
 	let stroke_color = ancestry?.thing?.color;
-	let lineWrapper: Svelte_Wrapper;
+	let lineComponent: S_Component;
 	let svg_dasharray = k.empty;
 	let reattachments = 0;
 	let line;

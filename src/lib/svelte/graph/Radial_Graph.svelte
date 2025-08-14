@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { w_g_paging, w_user_graph_offset, w_thing_fontFamily } from '../../ts/common/Stores';
+	import { w_g_paging, w_user_graph_offset, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { k, u, ux, Rect, Point, layout, signals } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Signal, T_RingZone } from '../../ts/common/Global_Imports';
-	import { w_graph_rect, w_ancestry_focus } from '../../ts/common/Stores';
+	import { w_graph_rect, w_ancestry_focus } from '../../ts/managers/Stores';
 	import Radial_Rings from './Radial_Rings.svelte';
 	import Radial_Focus from './Radial_Focus.svelte';
 	import Widget from '../widget/Widget.svelte';

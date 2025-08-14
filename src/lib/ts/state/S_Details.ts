@@ -1,7 +1,7 @@
-import { w_thing_tags, w_thing_traits, w_data_updated, w_show_details_ofType } from '../common/Stores';
+import { w_thing_tags, w_thing_traits, w_data_updated, w_show_details_ofType } from '../managers/Stores';
 import { T_Details, T_Direction, T_Storage_Need, S_Identifiables } from '../common/Global_Imports';
 import { h, grabs, Thing, Trait, Ancestry } from '../common/Global_Imports';
-import { w_ancestry_focus, w_ancestries_grabbed } from '../common/Stores';
+import { w_ancestry_focus, w_ancestries_grabbed } from '../managers/Stores';
 import { S_Banner_Hideable } from './S_Banner_Hideable';
 
 class S_Details {

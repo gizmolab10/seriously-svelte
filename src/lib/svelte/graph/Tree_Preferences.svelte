@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { k, u, ux, Point, colors, layout, svgPaths } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Control, T_Kinship } from '../../ts/common/Global_Imports';
-	import { w_show_tree_ofType, w_show_graph_ofType } from '../../ts/common/Stores';
-	import { w_depth_limit, w_background_color } from '../../ts/common/Stores';
+	import { w_show_tree_ofType, w_show_graph_ofType } from '../../ts/managers/Stores';
+	import { w_depth_limit, w_background_color } from '../../ts/managers/Stores';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../mouse/Separator.svelte';
 	import Button from '../buttons/Button.svelte';

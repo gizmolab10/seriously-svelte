@@ -128,7 +128,7 @@ export enum T_Kinship {
 	parents  = 'parents',
 }
 
-export enum T_SvelteComponent {
+export enum T_Component {
 	breadcrumbs = 'breadcrumbs',
 	reveal		= 'reveal',
 	widget		= 'widget',
@@ -167,6 +167,16 @@ export enum T_Request {
 	is_visible	 = 'is_visible',
 	is_hit		 = 'is_hit',
 	name		 = 'name',
+}
+
+export enum T_Signal {
+	needsComponent = 'needsComponent',
+	alteration	 = 'alteration',
+	reposition	 = 'reposition',	// only for widgets
+	reattach	 = 'reattach',
+	rebuild		 = 'rebuild',
+	graph		 = 'graph',
+	thing		 = 'thing',
 }
 
 export enum T_Persistable {

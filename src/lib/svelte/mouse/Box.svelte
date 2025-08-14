@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { c, k, Rect, Point, colors, T_Layer, svgPaths } from '../../ts/common/Global_Imports';
-    import { w_background_color } from '../../ts/common/Stores';
+    import { w_background_color } from '../../ts/managers/Stores';
     import SVG_Gradient from '../draw/SVG_Gradient.svelte';
 	import Separator from './Separator.svelte';
     export let corner_radius: number = k.radius.gull_wings.thick;

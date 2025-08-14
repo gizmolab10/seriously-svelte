@@ -1,6 +1,6 @@
 <script lang=ts>
 	import { debug, layout, Ancestry } from '../../ts/common/Global_Imports';
-	import { w_show_related } from '../../ts/common/Stores';
+	import { w_show_related } from '../../ts/managers/Stores';
 	import Tree_Branches from './Tree_Branches.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import Tree_Line from './Tree_Line.svelte';

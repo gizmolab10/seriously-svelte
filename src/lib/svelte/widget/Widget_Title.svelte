@@ -1,11 +1,11 @@
 <script lang='ts'>
-	import { w_thing_color, w_background_color, w_thing_title, w_thing_fontFamily } from '../../ts/common/Stores';
-	import { layout, signals, databases, Seriously_Range, Svelte_Wrapper } from '../../ts/common/Global_Imports';
+	import { layout, signals, components, databases, Seriously_Range, S_Component } from '../../ts/common/Global_Imports';
+	import { w_thing_color, w_background_color, w_thing_title, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { c, h, k, u, ux, Rect, Size, Point, Thing, debug, Angle } from '../../ts/common/Global_Imports';
-	import { w_s_text_edit, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
-	import { S_Element, T_Graph, T_Layer, T_SvelteComponent } from '../../ts/common/Global_Imports';
+	import { w_s_text_edit, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/managers/Stores';
+	import { S_Element, T_Graph, T_Layer, T_Component } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import { w_mouse_location } from '../../ts/common/Stores';
+	import { w_mouse_location } from '../../ts/managers/Stores';
 	import { T_Edit } from '../../ts/state/S_Text_Edit';
 	import { onMount, onDestroy } from 'svelte';
 	export let s_title!: S_Element;
@@ -20,7 +20,7 @@
 	const id = `title of ${ancestry?.title} ${ancestry?.kind}`;
 	let title_width = (thing?.width_ofTitle ?? 0) + title_extra();
 	let title_binded = thing?.title ?? k.empty;
-	let title_wrapper: Svelte_Wrapper;
+	let title_component: S_Component;
 	let title_prior = thing?.title;
 	let color = s_widget.color;
 	let reattachments = 0;
@@ -40,7 +40,7 @@
 
 	onMount(() => {
 		debug.log_build(`TITLE ${ancestry?.title}`);
-		const handle_anySignal = signals.handle_anySignal_atPriority(0, (t_signal, ancestry) => {
+		const handle_anySignal = signals.handle_anySignal_atPriority(0, null, (t_signal, ancestry) => {
 			updateInputWidth();
 		});
 		setTimeout(() => {
@@ -75,8 +75,8 @@
 	}
 
 	$: {
-		if (!!input && !title_wrapper) {
-			title_wrapper = new Svelte_Wrapper(input, handle_forWrapper, ancestry.hid, T_SvelteComponent.title);
+		if (!!input && !title_component) {
+			title_component = components.component_createUnique(input, handle_forComponent, ancestry.hid, T_Component.title);
 		}
 	}
 
@@ -174,7 +174,7 @@
 
 	export const _____HANDLERS: unique symbol = Symbol('_____HANDLERS');
 
-	function handle_forWrapper(s_mouse: S_Mouse): boolean { return false; }
+	function handle_forComponent(s_mouse: S_Mouse): boolean { return false; }
 	
 	function handle_cut_paste(event) {
 		extractRange_fromInput_toThing();

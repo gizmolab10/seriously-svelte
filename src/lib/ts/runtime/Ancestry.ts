@@ -1,11 +1,11 @@
-import { c, h, k, p, u, ux, busy, show, Rect, Size, Point, grabs, debug, layout, wrappers, svgPaths } from '../common/Global_Imports';
-import { T_Graph, T_Create, T_Kinship, T_Predicate, T_Alteration, T_SvelteComponent } from '../common/Global_Imports';
-import { Thing, Direction, Predicate, databases, Relationship, Svelte_Wrapper } from '../common/Global_Imports';
+import { c, h, k, p, u, ux, show, Rect, Size, Point, grabs, debug, components, svgPaths } from '../common/Global_Imports';
+import { T_Graph, T_Create, T_Kinship, T_Predicate, T_Alteration, T_Component } from '../common/Global_Imports';
+import { Thing, Direction, Predicate, databases, Relationship, S_Component } from '../common/Global_Imports';
 import { G_Widget, G_Paging, G_Cluster, G_TreeLine, S_Text_Edit } from '../common/Global_Imports';
-import { w_ancestry_focus, w_ancestries_grabbed, w_ancestries_expanded, } from '../common/Stores';
-import { w_t_database, w_depth_limit, w_s_text_edit, w_s_alteration } from '../common/Stores';
+import { w_ancestry_focus, w_ancestries_grabbed, w_ancestries_expanded, } from '../managers/Stores';
+import { w_t_database, w_depth_limit, w_s_text_edit, w_s_alteration } from '../managers/Stores';
 import type { Dictionary, Integer } from '../common/Types';
-import { w_show_graph_ofType } from '../common/Stores';
+import { w_show_graph_ofType } from '../managers/Stores';
 import { T_Database } from '../database/DB_Common';
 import { get, Writable } from 'svelte/store';
 import Identifiable from './Identifiable';
@@ -754,16 +754,16 @@ export default class Ancestry extends Identifiable {
 
 	static readonly _____TITLES: unique symbol;
 
-	get title():				       string { return this.thing?.title ?? 'missing title'; }
-	get abbreviated_title():		   string { return this.thing?.abbreviated_title ?? '?'; }
-	get titleRect():			  Rect | null { return this.rect_ofWrapper(this.titleWrapper); }
-	get titles():		   	   Array <string> { return this.ancestors?.map(a => `${!a ? 'null' : a.title}`) ?? []; }
-	get titleWrapper(): Svelte_Wrapper | null { return wrappers.wrapper_forHID_andType(this.hid, T_SvelteComponent.title); }
+	get title():				    string { return this.thing?.title ?? 'missing title'; }
+	get abbreviated_title():		string { return this.thing?.abbreviated_title ?? '?'; }
+	get titleRect():		   Rect | null { return this.rect_ofComponent(this.titleComponent); }
+	get titles():		   	Array <string> { return this.ancestors?.map(a => `${!a ? 'null' : a.title}`) ?? []; }
+	get titleComponent(): S_Component | null { return components.component_forHID_andType_createUnique(this.hid, T_Component.title); }
 
 	get center_ofTitle(): Point | null {
-		const wrapper = this.titleWrapper;
-		if (!!wrapper) {
-			return wrapper.boundingRect.center;
+		const component = this.titleComponent;
+		if (!!component) {
+			return component.boundingRect.center;
 		}
 		return null;
 	}
@@ -896,7 +896,7 @@ export default class Ancestry extends Identifiable {
 	equals(ancestry: Ancestry | null | undefined):						   boolean { return super.equals(ancestry) && this.t_database == ancestry?.t_database; }
 	includedInStore_ofAncestries(store: Writable<Array<Ancestry> | null>): boolean { return !!get(store) && this.includedInAncestries(get(store)!); }
 	matchesStore(store: Writable<Ancestry | null>):						   boolean { return get(store)?.equals(this) ?? false; }
-	rect_ofWrapper(wrapper: Svelte_Wrapper | null):						   Rect | null { return wrapper?.boundingRect ?? null; }
+	rect_ofComponent(component: S_Component | null):						   Rect | null { return component?.boundingRect ?? null; }
 
 	showsReveal_forPointingToChild(points_toChild: boolean): boolean {
 		const isRadialFocus = ux.inRadialMode && this.isFocus;

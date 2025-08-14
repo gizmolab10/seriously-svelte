@@ -1,7 +1,7 @@
 // N.B., do not import these from Global Imports --> avoid dependency issues when importing Utilities class
 
 import { Testworthy_Utilities } from './Testworthy_Utilities';
-import { w_t_database, w_thing_fontFamily } from './Stores';
+import { w_t_database, w_thing_fontFamily } from '../managers/Stores';
 import Identifiable from '../runtime/Identifiable';
 import G_TreeLine from '../layout/G_TreeLine';
 import { layout } from '../layout/G_Layout';

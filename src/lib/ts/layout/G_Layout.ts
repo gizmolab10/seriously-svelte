@@ -1,9 +1,9 @@
-import { h, k, p, u, ux, Size, Rect, Point, Thing, grabs, debug, signals, Ancestry } from '../common/Global_Imports';
-import { w_user_graph_offset, w_user_graph_center, w_mouse_location_scaled } from '../common/Stores';
+import { h, k, p, u, ux, Size, Rect, Point, Thing, grabs, debug, signals, Ancestry, S_Component } from '../common/Global_Imports';
+import { w_user_graph_offset, w_user_graph_center, w_mouse_location_scaled } from '../managers/Stores';
 import { T_Graph, T_Kinship, T_Preference, G_RadialGraph } from '../common/Global_Imports';
-import { w_graph_rect, w_depth_limit, w_show_details } from '../common/Stores';
-import { w_show_tree_ofType, w_show_graph_ofType } from '../common/Stores';
-import { w_show_related, w_ancestry_focus } from '../common/Stores';
+import { w_graph_rect, w_depth_limit, w_show_details } from '../managers/Stores';
+import { w_show_tree_ofType, w_show_graph_ofType } from '../managers/Stores';
+import { w_show_related, w_ancestry_focus } from '../managers/Stores';
 import { get } from 'svelte/store';
 
 export default class G_Layout {
@@ -15,22 +15,24 @@ export default class G_Layout {
 
 	static readonly _____GRAND: unique symbol;
 
-	grand_sweep() {
+	grand_build(component: S_Component | null = null) {
+		signals.signal_rebuildGraph_fromFocus(component);
+	}
+	
+	grand_sweep(component: S_Component | null = null) {
 		h.ancestries_assureAll_createUnique();
-		this.grand_layout();
-		this.grand_build();
+		this.grand_layout(component);
+		this.grand_build(component);
 	}
 
-	grand_build() { return; signals.signal_rebuildGraph_fromFocus(); }
-
-	grand_layout() {
+	grand_layout(component: S_Component | null = null) {
 		if (ux.inRadialMode) {
 			this.g_radialGraph.grand_layout_radial();
 		} else {
 			get(w_ancestry_focus)?.g_widget.grand_layout_tree();
 		}
-		signals.signal_reposition_widgets_fromFocus();
-		signals.signal_reattach_widgets_fromFocus();
+		signals.signal_reposition_widgets_fromFocus(component);
+		signals.signal_reattach_widgets_fromFocus(component);
 	}
 
 	grand_adjust_toFit() {

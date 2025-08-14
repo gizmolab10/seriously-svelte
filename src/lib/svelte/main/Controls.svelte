@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { c, e, h, k, p, u, ux, show, grabs, Point, colors, layout, svgPaths, signals } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, S_Element, T_Element, T_Control, T_Kinship, T_Request } from '../../ts/common/Global_Imports';
-	import { w_background_color, w_device_isMobile, w_thing_fontFamily } from '../../ts/common/Stores';
-	import { w_show_details, w_show_graph_ofType, w_show_tree_ofType } from '../../ts/common/Stores';
-	import { w_graph_rect, w_count_resize, w_popupView_id } from '../../ts/common/Stores';
+	import { w_background_color, w_device_isMobile, w_thing_fontFamily } from '../../ts/managers/Stores';
+	import { w_show_details, w_show_graph_ofType, w_show_tree_ofType } from '../../ts/managers/Stores';
+	import { w_graph_rect, w_count_resize, w_popupView_id } from '../../ts/managers/Stores';
 	import Next_Previous from '../mouse/Next_Previous.svelte';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Segmented from '../mouse/Segmented.svelte';

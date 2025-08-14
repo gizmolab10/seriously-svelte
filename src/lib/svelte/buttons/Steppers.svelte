@@ -1,6 +1,6 @@
 <script lang='ts'>
     import { k, Point, colors, Direction } from '../../ts/common/Global_Imports';
-	import { w_background_color, w_show_directionals_ofType } from '../../ts/common/Stores';
+	import { w_background_color, w_show_directionals_ofType } from '../../ts/managers/Stores';
     import Triangle_Button from './Triangle_Button.svelte';
     export let hit_closure;
     const buttonSize = 20;

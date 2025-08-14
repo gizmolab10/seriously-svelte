@@ -1,6 +1,6 @@
 import { h, k, debug, T_Debug, databases, Persistable } from '../common/Global_Imports';
 import { T_Kinship, T_Predicate, T_Persistable } from '../common/Global_Imports';
-import { w_ring_rotation_angle } from '../common/Stores';
+import { w_ring_rotation_angle } from '../managers/Stores';
 import { get } from 'svelte/store';
 
 export default class Predicate extends Persistable {

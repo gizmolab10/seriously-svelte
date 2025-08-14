@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, T_Layer, T_Details, layout } from '../../ts/common/Global_Imports';
-	import { w_show_details_ofType } from '../../ts/common/Stores';
+	import { w_show_details_ofType } from '../../ts/managers/Stores';
 	import { s_details } from '../../ts/state/S_Details';
 	import Glows_Banner from './Glows_Banner.svelte';
 	import { Motion } from 'svelte-motion';

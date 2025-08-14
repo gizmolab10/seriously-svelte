@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, Size, Point, colors, T_Layer, svgPaths } from '../../ts/common/Global_Imports';
-    import { w_popupView_id, w_background_color } from '../../ts/common/Stores';
+    import { w_popupView_id, w_background_color } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
     export let name = 'generic close';

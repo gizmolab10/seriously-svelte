@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { w_popupView_id, w_background_color, w_show_directionals_ofType } from '../../ts/common/Stores';
+	import { w_popupView_id, w_background_color, w_show_directionals_ofType } from '../../ts/managers/Stores';
 	import Steppers from '../buttons/Steppers.svelte';
 	import { k, builds, T_Layer } from '../../ts/common/Global_Imports';
 	import Close_Button from '../buttons/Close_Button.svelte';

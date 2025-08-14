@@ -1,4 +1,4 @@
-import { w_g_paging, w_ring_rotation_radius } from '../common/Stores';
+import { w_g_paging, w_ring_rotation_radius } from '../managers/Stores';
 import { k, Thing, Predicate, Ancestry, G_Cluster } from '../common/Global_Imports';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';

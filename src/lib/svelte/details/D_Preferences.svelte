@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { T_Graph, T_Layer, T_Kinship, T_Auto_Adjust } from '../../ts/common/Global_Imports';
 	import { k, u, ux, Rect, Point, colors, layout } from '../../ts/common/Global_Imports';
-	import { w_show_details_ofType, w_show_tree_ofType } from '../../ts/common/Stores';
-	import { w_background_color, w_auto_adjust_graph } from '../../ts/common/Stores';
-	import { w_show_countDots_ofType } from '../../ts/common/Stores';
+	import { w_show_details_ofType, w_show_tree_ofType } from '../../ts/managers/Stores';
+	import { w_background_color, w_auto_adjust_graph } from '../../ts/managers/Stores';
+	import { w_show_countDots_ofType } from '../../ts/managers/Stores';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../mouse/Separator.svelte';
 	import Slider from '../mouse/Slider.svelte';

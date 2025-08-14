@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, Rect, Size, Point, colors } from '../../ts/common/Global_Imports';
-	import { w_background_color } from '../../ts/common/Stores';
+	import { w_background_color } from '../../ts/managers/Stores';
 	import Glow_Button from '../buttons/Glow_Button.svelte';
 	import { s_details } from '../../ts/state/S_Details';
 	import G_Repeater from '../../ts/layout/G_Repeater';

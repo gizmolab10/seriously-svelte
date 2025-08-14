@@ -1,8 +1,8 @@
-import { w_ancestry_focus, w_count_mouse_up, w_mouse_location, w_mouse_location_scaled, w_scaled_movement } from '../common/Stores';
-import { w_device_isMobile, w_ancestries_grabbed, w_user_graph_offset, w_show_details, w_popupView_id } from '../common/Stores';
+import { w_ancestry_focus, w_count_mouse_up, w_mouse_location, w_mouse_location_scaled, w_scaled_movement } from '../managers/Stores';
+import { w_device_isMobile, w_ancestries_grabbed, w_user_graph_offset, w_show_details, w_popupView_id } from '../managers/Stores';
 import { T_Action, T_File_Format, T_Predicate, T_Alteration, S_Mouse, S_Alteration, T_Control } from '../common/Global_Imports';
 import { c, h, k, u, ux, grabs, Point, debug, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
-import { w_s_alteration, w_count_resize, w_s_text_edit, w_control_key_down } from '../common/Stores';
+import { w_s_alteration, w_count_resize, w_s_text_edit, w_control_key_down } from '../managers/Stores';
 import Mouse_Timer from './Mouse_Timer';
 import { get } from 'svelte/store';
 export class Events {
@@ -249,9 +249,9 @@ export class Events {
 					}
 				}
 				switch (key) {
-					case '[':				return;
-					case ']':				return;		// recents
 					case '?':				c.showHelp(); return;
+					case ']':				grabs.focus_onNext(true); break;
+					case '[':				grabs.focus_onNext(false); break;
 					case 'm':				layout.toggle_graph_type(); break;
 					case '!':				layout.grand_adjust_toFit(); break;
 					case '>':				layout.increase_depth_limit_by(1); break;

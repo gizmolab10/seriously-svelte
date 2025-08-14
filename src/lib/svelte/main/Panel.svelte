@@ -1,10 +1,10 @@
 <script lang='ts'>
 	import { c, e, h, k, u, ux, show, Rect, Size, Point, Thing, colors, layout } from '../../ts/common/Global_Imports';
-	import { w_t_database, w_graph_rect, w_hierarchy, w_background_color } from '../../ts/common/Stores';
+	import { w_t_database, w_graph_rect, w_hierarchy, w_background_color } from '../../ts/managers/Stores';
 	import { debug, T_Layer, T_Banner, Ancestry, T_Startup } from '../../ts/common/Global_Imports';
 	import { T_Control, Hierarchy, databases, Direction } from '../../ts/common/Global_Imports';
-	import { w_s_text_edit, w_show_details, w_device_isMobile, } from '../../ts/common/Stores';
-	import { w_t_startup, w_popupView_id, w_ancestry_focus } from '../../ts/common/Stores';
+	import { w_s_text_edit, w_show_details, w_device_isMobile, } from '../../ts/managers/Stores';
+	import { w_t_startup, w_popupView_id, w_ancestry_focus } from '../../ts/managers/Stores';
 	import { T_Database } from '../../ts/database/DB_Common';
 	import Separator from '../mouse/Separator.svelte';
 	import Details from '../details/Details.svelte';

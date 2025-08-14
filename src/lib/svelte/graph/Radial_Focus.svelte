@@ -1,8 +1,9 @@
 <script lang='ts'>
-	import { c, k, ux, Size, Point, debug, colors, layout, signals, svgPaths, Svelte_Wrapper } from '../../ts/common/Global_Imports';
-	import { w_background_color, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/common/Stores';
-	import { w_thing_color, w_s_text_edit, w_thing_fontFamily } from '../../ts/common/Stores';
-	import { T_Layer, T_Element, T_Predicate, T_SvelteComponent } from '../../ts/common/Enumerations';
+	import { w_background_color, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/managers/Stores';
+	import { c, k, ux, Size, Point, debug, colors, layout } from '../../ts/common/Global_Imports';
+	import { signals, svgPaths, components, S_Component } from '../../ts/common/Global_Imports';
+	import { w_thing_color, w_s_text_edit, w_thing_fontFamily } from '../../ts/managers/Stores';
+	import { T_Layer, T_Predicate, T_Component } from '../../ts/common/Enumerations';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Widget_Title from '../widget/Widget_Title.svelte';
 	import { onMount } from 'svelte';
@@ -44,7 +45,7 @@
 	
 	$: {
 		if (!!focus) {
-			new Svelte_Wrapper(focus, handle_s_mouse, $w_ancestry_focus.hid, T_SvelteComponent.widget);
+			components.component_createUnique(focus, handle_s_mouse, $w_ancestry_focus.hid, T_Component.widget);
 		}
 	}
 

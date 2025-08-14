@@ -1,12 +1,12 @@
 <script lang='ts'>
 	import { c, k, u, ux, Thing, Point, Angle, debug, layout } from '../../ts/common/Global_Imports';
+	import { signals, Ancestry, components, S_Component } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Widget, T_Signal } from '../../ts/common/Global_Imports';
-	import { signals, Ancestry, Svelte_Wrapper } from '../../ts/common/Global_Imports';
-	import { T_Element, T_SvelteComponent } from '../../ts/common/Global_Imports';
 	import { G_Widget, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
-	import { w_thing_color, w_background_color } from '../../ts/common/Stores';
-	import { w_s_text_edit, w_ancestry_focus } from '../../ts/common/Stores';
-	import { w_ancestries_grabbed } from '../../ts/common/Stores';
+	import { w_thing_color, w_background_color } from '../../ts/managers/Stores';
+	import { w_s_text_edit, w_ancestry_focus } from '../../ts/managers/Stores';
+	import { T_Element, T_Component } from '../../ts/common/Global_Imports';
+	import { w_ancestries_grabbed } from '../../ts/managers/Stores';
 	import Widget_Reveal from './Widget_Reveal.svelte';
 	import Tree_Line from '../graph/Tree_Line.svelte';
 	import Widget_Title from './Widget_Title.svelte';
@@ -47,10 +47,10 @@
 	layout_maybe();
 
 	onMount(() => {
-		const signal_handler = signals.handle_anySignal_atPriority_needsWrapper(1, (t_signal, value): Svelte_Wrapper | null => {
+		const signal_handler = signals.handle_anySignal_atPriority_needsComponent(1, (t_signal, value): S_Component | null => {
 			switch (t_signal) {
-			case T_Signal.needsWrapper:
-				return !widget ? null : new Svelte_Wrapper(widget, handle_s_mouse, ancestry.hid, T_SvelteComponent.widget);
+			case T_Signal.needsComponent:
+				return !widget ? null : components.component_createUnique(widget, handle_s_mouse, ancestry.hid, T_Component.widget);
 			case T_Signal.reattach:
 				final_layout();
 				reattachments += 1;

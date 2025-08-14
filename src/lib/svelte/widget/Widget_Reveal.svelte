@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { w_show_countDots_ofType, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
+	import { w_show_countDots_ofType, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/managers/Stores';
 	import { c, h, k, u, ux, debug, layout, signals, svgPaths } from '../../ts/common/Global_Imports';
-	import { w_thing_title, w_thing_color, w_background_color } from '../../ts/common/Stores';
+	import { w_thing_title, w_thing_color, w_background_color } from '../../ts/managers/Stores';
 	import { Size, Thing, Point, Predicate } from '../../ts/common/Global_Imports';
 	import { S_Element, T_Layer, T_Graph } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
@@ -15,11 +15,11 @@
 	const g_widget = ancestry.g_widget;
 	const tinyDotsOffset = new Point(-4.9, -2.45);
 	const outer_diameter = k.diameterOf_outer_tinyDots;
-	const size_ofTinyDots = Size.width(3).expandedEquallyBy(outer_diameter)
 	const viewBox = `0.5 2.35 ${outer_diameter} ${outer_diameter}`;
+	const size_ofTinyDots = Size.width(3).expandedEquallyBy(outer_diameter)
 	let fill_color = debug.lines ? 'transparent' : s_reveal.fill;
-	let svg_outline_color = s_reveal.svg_outline_color;
 	let svgPathFor_outer_tinyDots: string | null = null;
+	let svg_outline_color = s_reveal.svg_outline_color;
 	let svgPathFor_innerDot: string | null = null;
 	let bulkAlias_color = s_reveal.stroke;
 	let center = g_widget.center_ofReveal;

@@ -1,6 +1,6 @@
 <script lang='ts'>
     import { c, e, k, u, show, Rect, Size, Point, colors, svgPaths, T_Layer } from '../../ts/common/Global_Imports';
-	import { w_background_color } from '../../ts/common/Stores';
+	import { w_background_color } from '../../ts/managers/Stores';
     import SVG_Gradient from '../draw/SVG_Gradient.svelte';
     import Button from './Button.svelte';
     export let width: number;

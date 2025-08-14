@@ -1,7 +1,7 @@
 import { T_Graph, T_Control, T_Element } from '../common/Global_Imports';
 import { S_Mouse, S_Widget, S_Element } from '../common/Global_Imports';
 import { colors, Ancestry } from '../common/Global_Imports';
-import { w_show_graph_ofType } from '../common/Stores';
+import { w_show_graph_ofType } from '../managers/Stores';
 import Identifiable from '../runtime/Identifiable';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';

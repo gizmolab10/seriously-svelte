@@ -1,10 +1,10 @@
 <script lang='ts'>
 	import { e, k, u, ux, busy, Thing, Point, Angle, debug, colors } from '../../ts/common/Global_Imports';
 	import { layout, radial, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
-	import { w_count_mouse_up, w_s_text_edit, w_g_paging_cluster } from '../../ts/common/Stores';
-	import { w_thing_color, w_background_color, w_ancestry_focus } from '../../ts/common/Stores';
-	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/common/Stores';
-	import { w_graph_rect, w_mouse_location_scaled } from '../../ts/common/Stores';
+	import { w_count_mouse_up, w_s_text_edit, w_g_paging_cluster } from '../../ts/managers/Stores';
+	import { w_thing_color, w_background_color, w_ancestry_focus } from '../../ts/managers/Stores';
+	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/managers/Stores';
+	import { w_graph_rect, w_mouse_location_scaled } from '../../ts/managers/Stores';
 	import { T_Layer, T_RingZone } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Radial_ArcSlider from './Radial_ArcSlider.svelte';
@@ -51,7 +51,7 @@
 		}
 	}
 
-	function handle_s_mouse(s_mouse: S_Mouse): boolean { return true; }				// only for wrappers
+	function handle_s_mouse(s_mouse: S_Mouse): boolean { return true; }				// only for components
 
 	function handle_isHit(): boolean {
 		const zone = radial.ring_zone_atMouseLocation;

@@ -1,9 +1,9 @@
 <script lang='ts'>
-    import { h, Rect, Size, Point, debug, colors, layout, wrappers } from '../../ts/common/Global_Imports';
-    import { T_Layer, T_Dragging, T_SvelteComponent } from '../../ts/common/Global_Imports';
-    import { w_dragging_active, w_ancestries_grabbed } from '../../ts/common/Stores';
-    import { w_scaled_movement, w_user_graph_offset } from '../../ts/common/Stores';
-    import { w_mouse_location, w_count_mouse_up } from '../../ts/common/Stores';
+    import { h, k, Rect, Size, Point, debug, colors, layout, components } from '../../ts/common/Global_Imports';
+    import { T_Layer, T_Dragging, T_Component } from '../../ts/common/Global_Imports';
+    import { w_dragging_active, w_ancestries_grabbed } from '../../ts/managers/Stores';
+    import { w_scaled_movement, w_user_graph_offset } from '../../ts/managers/Stores';
+    import { w_mouse_location, w_count_mouse_up } from '../../ts/managers/Stores';
     import { onMount, onDestroy } from 'svelte';
     export let strokeWidth = k.thickness.rubberband;
     export let color: string = colors.rubberband;
@@ -124,10 +124,10 @@
     function checkIntersections() {
         if ($w_dragging_active === T_Dragging.rubberband) {
             const rubberbandRect = new Rect( new Point(left, top), new Size(width, height));
-            const widget_wrappers = wrappers.wrappers_ofType_withinRect(T_SvelteComponent.widget, rubberbandRect);
+            const widget_components = components.components_ofType_withinRect(T_Component.widget, rubberbandRect);
             const intersecting = [];
-            widget_wrappers.forEach((wrapper) => {
-                const ancestry = h.ancestry_forHID(wrapper.hid);
+            widget_components.forEach((component) => {
+                const ancestry = h.ancestry_forHID(component.hid);
                 if (!!ancestry) {
                     intersecting.push(ancestry);
                 }

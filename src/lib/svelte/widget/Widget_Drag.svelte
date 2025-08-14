@@ -1,9 +1,10 @@
 <script lang='ts'>
-	import { c, e, k, u, ux, show, Rect, Size, Point, Thing, debug, layout } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Graph, T_Signal, T_Alteration, T_SvelteComponent } from '../../ts/common/Global_Imports';
-	import { S_Element, signals, svgPaths, databases, Svelte_Wrapper } from '../../ts/common/Global_Imports';
-	import { w_show_countDots_ofType, w_thing_color, w_ancestries_grabbed } from '../../ts/common/Stores';
-	import { w_s_alteration, w_background_color } from '../../ts/common/Stores';
+	import { c, e, k, u, ux, show, Rect, Size, Point, Thing, debug, layout, signals } from '../../ts/common/Global_Imports';
+	import { S_Element, svgPaths, databases, components, S_Component } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Graph, T_Signal, T_Alteration, T_Component } from '../../ts/common/Global_Imports';
+	import { w_show_countDots_ofType, w_thing_color, w_ancestries_grabbed } from '../../ts/managers/Stores';
+	import { w_s_text_edit, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/managers/Stores';
+	import { w_s_alteration, w_background_color } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
@@ -27,26 +28,26 @@
 	let left = 0;
 	let top = 0;
 	let dotDrag;
-	let wrapper;
+	let component;
 
 	update_svgPaths();
 	update_colors();
 
 	onMount(() => {
-		const alteration_handler = signals.handle_signals_atPriority_needsWrapper([T_Signal.alteration], 0, (t_signal, value): Svelte_Wrapper | null => {
+		const alteration_handler = signals.handle_signals_atPriority_needsComponent([T_Signal.alteration], 0, (t_signal, value): S_Component | null => {
 			switch (t_signal) {
-			case T_Signal.needsWrapper:
-				return !wrapper ? null : wrapper;
+			case T_Signal.needsComponent:
+				return !component ? null : component;
 			default:
 				s_drag.isInverted = !!invert && !!ancestry && ancestry.alteration_isAllowed;
 				update_colors();
 				return null;	// ignored
 			}
 		});
-		const reposition_handler = signals.handle_signals_atPriority_needsWrapper([T_Signal.reposition], 2, (t_signal, value): Svelte_Wrapper | null => {
+		const reposition_handler = signals.handle_signals_atPriority_needsComponent([T_Signal.reposition], 2, (t_signal, value): S_Component | null => {
 			switch (t_signal) {
-			case T_Signal.needsWrapper:
-				return !wrapper ? null : wrapper;
+			case T_Signal.needsComponent:
+				return !component ? null : component;
 			default:
 				center = g_widget.center_ofDrag;
 				return null;	// ignored
@@ -70,7 +71,7 @@
 	
 	$: {
 		if (!!dotDrag) {
-			wrapper = new Svelte_Wrapper(dotDrag, handle_s_mouse, ancestry.hid, T_SvelteComponent.drag);
+			component = components.component_createUnique(dotDrag, handle_s_mouse, ancestry.hid, T_Component.drag);
 		}
 	}
 

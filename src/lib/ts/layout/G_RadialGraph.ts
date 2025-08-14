@@ -1,6 +1,6 @@
 import { h, k, u, radial, Ancestry, Predicate, T_Kinship, Size, Point, Rect } from '../common/Global_Imports';
-import { w_ring_rotation_angle, w_ring_rotation_radius } from '../common/Stores';
-import { w_g_paging, w_ancestry_focus } from '../common/Stores';
+import { w_ring_rotation_angle, w_ring_rotation_radius } from '../managers/Stores';
+import { w_g_paging, w_ancestry_focus } from '../managers/Stores';
 import { G_Widget, G_Cluster, G_Paging } from '../common/Global_Imports';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';

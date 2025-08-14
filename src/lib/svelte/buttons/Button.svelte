@@ -1,9 +1,9 @@
 <script lang='ts'>
-	import { w_background_color, w_graph_rect, w_user_graph_offset } from '../../ts/common/Stores';
+	import { w_background_color, w_graph_rect, w_user_graph_offset } from '../../ts/managers/Stores';
 	import { k, u, ux, Rect, Point, colors, T_Layer } from '../../ts/common/Global_Imports';
-	import { w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
-	import { w_thing_fontFamily, w_control_key_down } from '../../ts/common/Stores';
-	import { S_Element, Svelte_Wrapper } from '../../ts/common/Global_Imports';
+	import { w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/managers/Stores';
+	import { w_thing_fontFamily, w_control_key_down } from '../../ts/managers/Stores';
+	import { S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	export let s_button: S_Element = S_Element.empty();
 	export let closure: (result: S_Mouse) => boolean;
@@ -25,7 +25,7 @@
 	let border = k.empty;
 	let element: HTMLElement;
 	let computed_style = style;
-	let buttonWrapper: Svelte_Wrapper;
+	let buttonComponent: S_Component;
 
 	//////////////////////////////////////
 	//									//

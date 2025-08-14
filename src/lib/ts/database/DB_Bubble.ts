@@ -1,6 +1,6 @@
 import { T_Thing, T_Create, T_Predicate, T_Persistence } from '../common/Global_Imports';
 import { e, h, k, debug, Ancestry } from '../common/Global_Imports';
-import { w_ancestry_focus, w_ancestries_grabbed } from '../common/Stores';
+import { w_ancestry_focus, w_ancestries_grabbed } from '../managers/Stores';
 import { T_Database } from './DB_Common';
 import DB_Common from './DB_Common';
 

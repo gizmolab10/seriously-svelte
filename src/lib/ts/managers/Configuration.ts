@@ -1,5 +1,5 @@
 import { e, k, p, u, show, debug, layout, databases } from '../common/Global_Imports';
-import { stores, w_device_isMobile } from '../common/Stores';
+import { stores, w_device_isMobile } from './Stores';
 
 export class Configuration {
 

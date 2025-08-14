@@ -1,5 +1,5 @@
 import { k, Point, Angle, debug, colors, radial, layout, Ancestry, Predicate } from '../common/Global_Imports';
-import { w_graph_rect, w_ancestry_focus, w_ring_rotation_radius } from '../common/Stores';
+import { w_graph_rect, w_ancestry_focus, w_ring_rotation_radius } from '../managers/Stores';
 import { G_Widget, G_ArcSlider, G_Paging, S_Rotation } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 

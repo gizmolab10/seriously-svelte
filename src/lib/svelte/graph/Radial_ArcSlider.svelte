@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { c, k, show, Rect, Size, Point, debug, Angle, colors, radial, layout, signals } from '../../ts/common/Global_Imports';
-	import { w_ring_rotation_radius, w_ring_rotation_angle, w_g_paging_cluster } from '../../ts/common/Stores';
-	import { w_background_color, w_thing_color, w_thing_fontFamily } from '../../ts/common/Stores';
+	import { w_ring_rotation_radius, w_ring_rotation_angle, w_g_paging_cluster } from '../../ts/managers/Stores';
+	import { w_background_color, w_thing_color, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { T_Layer, G_Cluster, Direction } from '../../ts/common/Global_Imports';
-	import { w_ancestry_focus, w_count_mouse_up } from '../../ts/common/Stores';
+	import { w_ancestry_focus, w_count_mouse_up } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Angled_Text from '../text/Angled_Text.svelte';

@@ -1,9 +1,9 @@
 import { S_Widget, G_Cluster, G_TreeLine, G_TreeBranches } from '../common/Global_Imports';
 import { k, u, ux, Rect, Size, Point, debug, Ancestry } from '../common/Global_Imports';
-import { w_graph_rect, w_show_graph_ofType, w_device_isMobile} from '../common/Stores';
-import { w_show_details, w_show_related } from '../common/Stores';
+import { w_graph_rect, w_show_graph_ofType, w_device_isMobile} from '../managers/Stores';
+import { w_show_details, w_show_related } from '../managers/Stores';
 import { T_Widget, T_Graph } from '../common/Global_Imports';
-import { w_depth_limit } from '../common/Stores';
+import { w_depth_limit } from '../managers/Stores';
 import { get } from 'svelte/store';
 
 export default class G_Widget {

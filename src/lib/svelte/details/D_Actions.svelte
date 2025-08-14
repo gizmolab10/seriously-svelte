@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { T_Layer, T_Details, T_Action, T_Element, T_Kinship, T_Request, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
 	import { e, h, k, u, ux, show, Size, Point, grabs, colors, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
-	import { w_s_alteration, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/common/Stores';
-	import { w_depth_limit, w_user_graph_offset, w_show_graph_ofType } from '../../ts/common/Stores';
-	import { w_background_color } from '../../ts/common/Stores';
+	import { w_s_alteration, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/managers/Stores';
+	import { w_depth_limit, w_user_graph_offset, w_show_graph_ofType } from '../../ts/managers/Stores';
+	import { w_background_color } from '../../ts/managers/Stores';
 	import Buttons_Table from '../buttons/Buttons_Table.svelte';
     import { s_details } from '../../ts/state/S_Details';
 	import Segmented from '../mouse/Segmented.svelte';

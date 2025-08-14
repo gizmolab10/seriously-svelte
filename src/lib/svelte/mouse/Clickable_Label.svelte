@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { w_background_color } from '../../ts/common/Stores';
+	import { w_background_color } from '../../ts/managers/Stores';
 	import { T_Layer } from '../../ts/common/Enumerations';
 	import { k } from '../../ts/common/Global_Imports';
 	export let handle_click: (event: Event) => {} | null = null;

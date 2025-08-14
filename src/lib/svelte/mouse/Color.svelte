@@ -43,7 +43,7 @@
 </div>
 
 <style>
-	div :global(.wrapper) {
+	div :global(.component) {
 		left: var(--picker_offset);
 		top: 24px;
 	}

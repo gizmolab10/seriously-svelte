@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { w_thing_color, w_background_color, w_thing_fontFamily, w_ancestry_focus } from '../../ts/common/Stores';
+	import { w_thing_color, w_background_color, w_thing_fontFamily, w_ancestry_focus } from '../../ts/managers/Stores';
 	import { h, k, u, ux, Point, Thing, debug, colors, layout, signals } from '../../ts/common/Global_Imports';
 	import { T_Banner, S_Element } from '../../ts/common/Global_Imports';
 	import Button from './Button.svelte';

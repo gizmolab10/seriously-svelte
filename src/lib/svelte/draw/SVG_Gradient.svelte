@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { w_background_color } from '../../ts/common/Stores';
+	import { w_background_color } from '../../ts/managers/Stores';
 	import { Size } from '../../ts/common/Global_Imports';
 	export let name = 'shading' + Math.random().toString(36).substr(2, 9);
 	export let path = 'M 50,50 C 50,50 50,50 50,50';

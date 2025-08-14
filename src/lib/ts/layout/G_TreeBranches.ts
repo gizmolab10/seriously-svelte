@@ -1,5 +1,5 @@
 import { ux, Size, debug, Point, Ancestry, T_Graph } from '../common/Global_Imports';
-import { w_ancestries_expanded } from '../common/Stores';
+import { w_ancestries_expanded } from '../managers/Stores';
 
 export default class G_TreeBranches {
 	show_child_branches = true;
