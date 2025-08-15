@@ -10,6 +10,7 @@
 	export let left: number = 8;
 	export let centered: boolean = false;
 	export let width = layout.windowSize.width;
+	let s_component: S_Component | null = null;
 	let separator_color = colors.separator;
 	let things: Array<Thing> = [];
 	let size = k.height.button;
@@ -20,20 +21,18 @@
 	let trigger = 0;
 	
 	onMount(() => {
-		const signal_handler = signals.handle_signals_atPriority_needsComponent([T_Signal.rebuild, T_Signal.reattach], 1, (t_signal, value): S_Component | null => {
-			switch (t_signal) {
-			case T_Signal.needsComponent:
-				return !breadcrumbs ? null : components.component_createUnique(breadcrumbs, null, ancestry.hid, T_Component.breadcrumbs);
-			default:
-				reattachments += 1;
-				return null;	// ignored
-			}
+		s_component = signals.handle_signals_atPriority([T_Signal.rebuild, T_Signal.reattach], 1, ancestry?.hid ?? -1 as Integer, T_Component.breadcrumbs, (t_signal, value): S_Component | null => {
+			reattachments += 1;
 		});
-		return () => signal_handler.disconnect();
+		// return () => s_component.disconnect();
 	});
 	
 	$: $w_s_text_edit, $w_thing_color, $w_ancestries_grabbed, reattachments += 1;
 	$: $w_background_color, separator_color = colors.separator;
+
+	$: if (!!breadcrumbs) {
+		s_component.element = breadcrumbs;
+	}
 
 	$: {
 		if ($w_t_startup == T_Startup.ready) {

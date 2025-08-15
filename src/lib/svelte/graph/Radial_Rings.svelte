@@ -15,8 +15,10 @@
 	let color = $w_ancestry_focus?.thing?.color ?? colors.default_forThings;
 	let mouse_up_count = $w_count_mouse_up;
 	let cursor = k.cursor_default;
+	let s_component: S_Component;
 	let reattachments = 0;
 	let last_action = 0;
+	let rings;
 
 	$: middle_radius   = $w_ring_rotation_radius + k.thickness.rotation_ring;
 	$: outer_radius	   = middle_radius + ring_width;
@@ -31,11 +33,15 @@
 
 	onMount(() => {
 		cursor = radial.cursor_forRingZone;
-		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
+		s_component = signals.handle_reposition_widgets(2, -1 as Integer, T_Component.rings, (received_ancestry) => {
 			reattachments += 1;
 		});
-		return () => { handle_reposition.disconnect(); };
+		return () => s_component.disconnect();
 	});
+
+	$: if (!!rings) {
+		s_component.element = rings;
+	}
 		
 	$: {
 		const thing = $w_ancestry_focus?.thing;	
@@ -197,6 +203,7 @@
 {#key reattachments}
 	{#if !debug.hide_rings}
 		<div class = 'rings'
+			bind:this={rings}
 			on:mousemove={detect_movement}
 			style = 'z-index:{T_Layer.radial}; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;'>
 			<Mouse_Responder name = 'rings'

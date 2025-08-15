@@ -1,15 +1,15 @@
 <script lang='ts'>
 	import { w_show_countDots_ofType, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/managers/Stores';
+	import { S_Element, S_Component, T_Layer, T_Graph, T_Component } from '../../ts/common/Global_Imports';
 	import { c, h, k, u, ux, debug, layout, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import { w_thing_title, w_thing_color, w_background_color } from '../../ts/managers/Stores';
 	import { Size, Thing, Point, Predicate } from '../../ts/common/Global_Imports';
-	import { S_Element, T_Layer, T_Graph } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
+	export let s_reveal!: S_Element;
     export let zindex = T_Layer.dots;
 	export let points_toChild = true;
-	export let s_reveal!: S_Element;
     export let hover_isReversed = false;
 	const ancestry = s_reveal.ancestry;
 	const g_widget = ancestry.g_widget;
@@ -25,6 +25,7 @@
 	let center = g_widget.center_ofReveal;
 	let svgPathFor_revealDot = k.empty;
 	let color = ancestry.thing?.color;
+	let s_component: S_Component;
 	let offsetFor_innerDot = 0;
 	let dotReveal = null;
 	update_colors();
@@ -34,24 +35,23 @@
 	onMount(() => {
 		update_svgPaths();
 		set_isHovering(false);
-		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
+		s_component = signals.handle_reposition_widgets(2, ancestry?.hid ?? -1 as Integer, T_Component.reveal, (received_ancestry) => {
 			if (!!dotReveal) {
 				center = g_widget.center_ofReveal;
 			}
 		});
-		return () => { handle_reposition.disconnect(); };
+		return () => s_component.disconnect();
 	});
+
+	$: if (!!dotReveal) {
+		s_component.element = dotReveal;
+		s_reveal.set_forHovering(color, 'pointer');
+	}
 	
 	$: {
 		const _ = `${$w_ancestries_grabbed.map(a => a.id).join(',')}${$w_ancestries_expanded.map(a => a.id).join(',')}${$w_show_countDots_ofType}${$w_thing_title}${$w_background_color}${$w_thing_color}`;
 		update_svgPaths();
 		update_colors();
-	}
-
-	$: {
-		if (!!dotReveal) {
-			s_reveal.set_forHovering(color, 'pointer');
-		}
 	}
 
 	function update_colors() {

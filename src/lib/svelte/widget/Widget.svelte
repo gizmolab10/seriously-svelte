@@ -26,6 +26,7 @@
 	let center_ofDrag = Point.zero;
 	let revealCenter = Point.zero;
 	let border = s_widget.border;
+	let s_component: S_Component;
 	let background = k.empty;
 	let widgetName = k.empty;
 	let revealName = k.empty;
@@ -47,10 +48,8 @@
 	layout_maybe();
 
 	onMount(() => {
-		const signal_handler = signals.handle_anySignal_atPriority_needsComponent(1, (t_signal, value): S_Component | null => {
+		s_component = signals.handle_anySignal_atPriority(1, ancestry.hid, T_Component.widget, (t_signal, value): S_Component | null => {
 			switch (t_signal) {
-			case T_Signal.needsComponent:
-				return !widget ? null : components.component_createUnique(widget, handle_s_mouse, ancestry.hid, T_Component.widget);
 			case T_Signal.reattach:
 				final_layout();
 				reattachments += 1;
@@ -62,8 +61,10 @@
 				return null;	// ignored
 			}
 		});
-		return () => signal_handler.disconnect();
+		return () => s_component.disconnect();
 	});
+
+	$: if (!!widget) { s_component.element = widget; }
 
 	$: {
 		const _ = `${$w_thing_color} ${$w_ancestry_focus.id}`;

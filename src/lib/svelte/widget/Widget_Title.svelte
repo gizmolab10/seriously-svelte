@@ -22,6 +22,7 @@
 	let title_binded = thing?.title ?? k.empty;
 	let title_component: S_Component;
 	let title_prior = thing?.title;
+	let s_component: S_Component;
 	let color = s_widget.color;
 	let reattachments = 0;
 	let ghost = null;
@@ -40,7 +41,7 @@
 
 	onMount(() => {
 		debug.log_build(`TITLE ${ancestry?.title}`);
-		const handle_anySignal = signals.handle_anySignal_atPriority(0, null, (t_signal, ancestry) => {
+		s_component = signals.handle_anySignal_atPriority(0, ancestry.hid, T_Component.title, (t_signal, ancestry) => {
 			updateInputWidth();
 		});
 		setTimeout(() => {
@@ -49,10 +50,10 @@
 				applyRange_fromThing_toInput();
 			}
 		}, 100);
-		return () => {
-			handle_anySignal.disconnect();
-		};
+		return () => s_component.disconnect();
 	});
+
+	$: if (!!input) { s_component.element = input; }
 
 	export const _____REACTIVES: unique symbol = Symbol('_____REACTIVES');
 

@@ -41,6 +41,9 @@
 	<div
 		class='panel'
 		style='
+			top: 0px;
+			left: 0px;
+			position: fixed;
 			on:wheel={ignore_wheel}
 			{k.prevent_selection_style};
 			width: {layout.windowSize.width}px;

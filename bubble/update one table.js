@@ -1,6 +1,6 @@
 function(instance, properties) {
 	const list_fields = ['object_parents_field', 'object_related_field', 'owners_field'];
-	const to_be_removed = ['_boolean', '_custom', '_text', '_list', '_object'];
+	const bad_ends = ['_boolean', '_custom', '_text', '_list'];
 	const item_references = ['child', 'parent', 'owner', 'related'];
 	const user_supplied_names = {};
 	const ignore_fields = ['Slug'];
@@ -27,7 +27,7 @@ function(instance, properties) {
 
 	plugin_field_names.forEach(plugin_field_name => {
 		const value = String(properties[plugin_field_name]).toLowerCase();
-		const normalized_name = value.replace(/ /, '_');
+		const normalized_name = value.replace(/ /, '_').replace(/^_list/, 's');
 		user_supplied_names[plugin_field_name] = normalized_name;
 	});
 
@@ -85,7 +85,7 @@ function(instance, properties) {
 				return names;
 			}, {});
 			item_field_names.forEach(item_field_name => {
-				const short_name = short_field_name(item_field_name, to_be_removed);
+				const short_name = short_field_name(item_field_name, bad_ends);
 				const has_name = has_seriously_name(short_name) || has_seriously_name(item_field_name);
 				const seriously_name = seriously_field_name_for(short_name) ?? seriously_field_name_for(item_field_name);
 				const value = item.get(item_field_name);

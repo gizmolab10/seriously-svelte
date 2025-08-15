@@ -21,6 +21,7 @@
 	let svgPathFor_ellipses = k.empty;
 	let svgPathFor_related = k.empty;
 	let svgPathFor_dragDot = k.empty;
+	let s_component: S_Component;
     let thing = ancestry.thing;
 	let color = thing?.color;
 	let isHovering = false;
@@ -28,33 +29,24 @@
 	let left = 0;
 	let top = 0;
 	let dotDrag;
-	let component;
 
 	update_svgPaths();
 	update_colors();
 
 	onMount(() => {
-		const alteration_handler = signals.handle_signals_atPriority_needsComponent([T_Signal.alteration], 0, (t_signal, value): S_Component | null => {
-			switch (t_signal) {
-			case T_Signal.needsComponent:
-				return !component ? null : component;
-			default:
-				s_drag.isInverted = !!invert && !!ancestry && ancestry.alteration_isAllowed;
-				update_colors();
-				return null;	// ignored
-			}
+		s_component = signals.handle_signals_atPriority([T_Signal.alteration], 0, ancestry?.hid ?? -1 as Integer, T_Component.drag, (t_signal, value): S_Component | null => {
+			s_drag.isInverted = !!invert && !!ancestry && ancestry.alteration_isAllowed;
+			update_colors();
 		});
-		const reposition_handler = signals.handle_signals_atPriority_needsComponent([T_Signal.reposition], 2, (t_signal, value): S_Component | null => {
-			switch (t_signal) {
-			case T_Signal.needsComponent:
-				return !component ? null : component;
-			default:
-				center = g_widget.center_ofDrag;
-				return null;	// ignored
-			}
+		signals.handle_signals_atPriority([T_Signal.reposition], 2, ancestry?.hid ?? -1 as Integer, T_Component.drag, (t_signal, value): S_Component | null => {
+			center = g_widget.center_ofDrag;
 		});
-		return () => { alteration_handler.disconnect(); reposition_handler.disconnect(); };
+		return () => s_component.disconnect();
 	});
+	
+	$: if (!!dotDrag) {
+		s_component.element = dotDrag;
+	}
 
 	function handle_context_menu(event) { event.preventDefault(); }		// no default context menu on right-click
 	function handle_s_mouse(s_mouse: S_Mouse): boolean { return false; }
@@ -67,12 +59,6 @@
 	$: {
 		const _ = `${$w_thing_color}${$w_background_color}${$w_ancestries_grabbed.map(a => a.id).join(',')}`;
 		update_colors();
-	}
-	
-	$: {
-		if (!!dotDrag) {
-			component = components.component_createUnique(dotDrag, handle_s_mouse, ancestry.hid, T_Component.drag);
-		}
 	}
 
 	function update_svgPaths() {

@@ -13,10 +13,11 @@
 	let background_color = s_widget.background_color;
 	let svg_strokeColor = 'transparent';
 	let svg_fillColor = 'transparent';
-	let s_title = s_widget.s_title;
 	let origin_ofWidget = Point.zero;
 	let center_ofBorder = Point.zero;
+	let s_title = s_widget.s_title;
 	let size_ofBorder = Size.zero;
+	let s_component: S_Component;
 	let svg_dasharray = k.empty;
 	let color = s_widget.color;
 	let width_ofTitle = 0;
@@ -32,22 +33,20 @@
 	layout_focus();
 
 	onMount(() => {
-		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
+		s_component = signals.handle_reposition_widgets(2, ancestry?.hid ?? -1 as Integer, T_Component.focus, (received_ancestry) => {
 			layout_focus();
 		});
-		return () => { handle_reposition.disconnect(); };
+		return () => s_component.disconnect();
 	});
+
+	$: if (!!focus) {
+		s_component.element = focus;
+	}
 
 	function debug_closure(s_mouse) { debug.log_radial(` ${s_mouse.descriptionFor('FOCUS')}`); }
 	function handle_s_mouse(s_mouse: S_Mouse): boolean { return false; }
 
 	$: { const _ = $w_ancestry_focus; layout_focus();}
-	
-	$: {
-		if (!!focus) {
-			components.component_createUnique(focus, handle_s_mouse, $w_ancestry_focus.hid, T_Component.widget);
-		}
-	}
 
 	$: {
 		const _ = `${$w_thing_color} ${$w_ancestry_focus} ${$w_s_text_edit} ${$w_ancestries_grabbed.join(',')} ${$w_ancestry_focus?.isGrabbed} ${$w_ancestry_focus?.isEditing}`;

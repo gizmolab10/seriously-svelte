@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, Point, debug, colors, signals, T_Layer } from '../../ts/common/Global_Imports';
+	import { k, Point, debug, colors, signals, T_Layer, S_Component, T_Component } from '../../ts/common/Global_Imports';
 	import { w_thing_color } from '../../ts/managers/Stores';
 	import Circle from '../draw/Circle.svelte';
 	import Box from '../debug/Box.svelte';
@@ -9,7 +9,7 @@
 	const ancestry = g_line.branchAncestry;
 	const debugOffset = new Point(k.height.line - 2.4, 2.5);
 	let stroke_color = ancestry?.thing?.color;
-	let lineComponent: S_Component;
+	let s_component: S_Component;
 	let svg_dasharray = k.empty;
 	let reattachments = 0;
 	let line;
@@ -24,11 +24,15 @@
 	function isHit(): boolean { return false }
 
 	onMount(() => {
-		const handle_reposition = signals.handle_reposition_widgets(2, (received_ancestry) => {
+		s_component = signals.handle_reposition_widgets(2, ancestry?.hid ?? -1 as Integer, T_Component.line, (received_ancestry) => {
 			reattachments += 1;
 		});
-		return () => { handle_reposition.disconnect(); }
+		return () => s_component.disconnect();
 	});
+
+	$: if (!!line) {
+		s_component.element = line;
+	}
 
 	if (g_line.isBidirectional) {
 		stroke_color = colors.opacitize(ancestry.thing.color, 0.7);

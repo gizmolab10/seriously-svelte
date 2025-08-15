@@ -41,7 +41,7 @@
 		const handle_reposition = signals.handle_signals_atPriority([T_Signal.reposition], 2, null, (received_ancestry) => {
 			reattachments += 1;
 		});
-		return () => { handle_reposition.disconnect(); handle_recreate.disconnect() };
+		// return () => { handle_reposition.disconnect(); handle_recreate.disconnect() };
 	});
 
 	$: {
