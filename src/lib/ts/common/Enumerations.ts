@@ -93,6 +93,11 @@ export enum T_Auto_Adjust {
 	fit		  = 'exactly fit',
 }
 
+export enum T_Filter {
+	titles = 'titles',
+	tags = 'tags',
+}
+
 export enum T_Dragging {
 	rubberband = 'rubberband',
 	command	   = 'command',

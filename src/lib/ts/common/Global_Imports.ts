@@ -6,20 +6,22 @@ import G_TreeLine from '../layout/G_TreeLine';
 import G_Cluster from '../layout/G_Cluster';
 import G_Widget from '../layout/G_Widget';
 
-import { T_Signal } from './Enumerations';
-import { T_Direction } from './Enumerations';
 import { T_Timer } from '../signals/Mouse_Timer';
 import { T_Quadrant, T_Orientation } from './Angle';
 import { G_Paging, G_Thing_Pages } from '../layout/G_Paging';
+
+import { T_Signal } from './Enumerations';
+import { T_Direction } from './Enumerations';
+import { T_Search, T_Filter } from './Enumerations';
 import { T_Graph, T_Banner, T_Control } from './Enumerations';
 import { T_Persistable, T_Persistence } from './Enumerations';
 import { T_Thing, T_Trait, T_Predicate } from './Enumerations';
+import { T_Oblong, T_Element, T_Component } from './Enumerations';
 import { T_Create, T_Browser, T_Alteration } from './Enumerations';
 import { T_Curve, T_Order, T_Widget, T_Layer } from './Enumerations';
-import { T_Oblong, T_Element, T_Component } from './Enumerations';
+import { T_Action, T_Details, T_Request, T_Storage_Need } from './Enumerations';
 import { T_Kinship, T_RingZone, T_Preference, T_Auto_Adjust } from './Enumerations';
 import { T_Dragging, T_File_Format, T_File_Operation, T_Startup } from './Enumerations';
-import { T_Action, T_Details, T_Request, T_Storage_Need, T_Search } from './Enumerations';
 
 import S_Identifiables from '../state/S_Identifiables';
 import S_Alteration from '../state/S_Alteration';
@@ -103,5 +105,5 @@ export {
 	T_Order, T_File_Format, T_File_Operation,
 	T_Layer, T_Curve, T_Create, T_RingZone, T_Oblong, T_Alteration,
 	T_Thing, T_Trait, T_Widget, T_Predicate, T_Kinship, T_Preference,
-	T_Action, T_Control, T_Browser, T_Storage_Need, T_Auto_Adjust, T_Search,
+	T_Action, T_Control, T_Browser, T_Storage_Need, T_Auto_Adjust, T_Search, T_Filter
 };

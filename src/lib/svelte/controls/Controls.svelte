@@ -12,7 +12,7 @@
 	import Button from '../buttons/Button.svelte';
 	import Box from '../mouse/Box.svelte';
 	import Search from './Search.svelte';
-	const widths = [c.has_full_UI ? 18 : -11, 17, 57, 90, 11, 26, 22, 20, 10, 8];
+	const widths = [c.has_full_UI ? 18 : -11, 17, 57, 90, 11, 26, 22, 20, 10, 8, 120];
 	const lefts = u.cumulativeSum(widths);
 	const size_big = k.height.button + 4;
 	const y_center = 10.5;
@@ -57,7 +57,10 @@
 					length={layout.controls_boxHeight + 3}
 					thickness={k.thickness.separator.main}
 					corner_radius={k.radius.gull_wings.thick}/>
-				<Search/>
+				<Search
+					left={lefts[7]}
+					y_center={y_center}
+					input_width={layout.windowSize.width - lefts[10]}/>
 				{#if $w_t_search == T_Search.clear}
 					<Breadcrumbs
 						left={lefts[8]}
@@ -150,17 +153,6 @@
 								stroke={ux.s_control_forType(T_Control.shrink).svg_hover_color}/>
 						</svg>
 					</Button>
-				</div>
-				<div class='search-button'>
-					<Button
-						width={size_big}
-						height={size_big}
-						name={T_Control.search}
-						center={new Point(lefts[7], y_center)}
-						s_button={ux.s_control_forType(T_Control.search)}
-						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.search)}>
-						{$w_t_search != T_Search.clear ? 'X' : 's'}
-						</Button>
 				</div>
 			{/if}
 		</div>

@@ -1,5 +1,5 @@
-import { h, k, p, u, ux, Size, Rect, Point, Thing, grabs, debug, signals, Ancestry, S_Component } from '../common/Global_Imports';
-import { w_user_graph_offset, w_user_graph_center, w_mouse_location_scaled } from '../managers/Stores';
+import { h, k, p, u, ux, Size, Rect, Point, Thing, grabs, debug, signals, Ancestry, S_Component, T_Filter } from '../common/Global_Imports';
+import { w_user_graph_offset, w_user_graph_center, w_mouse_location_scaled, w_t_filter } from '../managers/Stores';
 import { T_Graph, T_Kinship, T_Preference, G_RadialGraph } from '../common/Global_Imports';
 import { w_graph_rect, w_depth_limit, w_show_details } from '../managers/Stores';
 import { w_show_tree_ofType, w_show_graph_ofType } from '../managers/Stores';
@@ -92,6 +92,7 @@ export default class G_Layout {
 	handle_mode_selection(name: string, types: string[]) {
 		switch (name) {
 			case 'graph': w_show_graph_ofType.set(types[0] as unknown as T_Graph); break;
+			case 'filter': w_t_filter.set(types[0] as unknown as T_Filter); break;
 			case 'tree': this.set_tree_types(types as Array<T_Kinship>); break;
 		}
 	}

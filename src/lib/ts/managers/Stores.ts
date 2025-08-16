@@ -1,4 +1,4 @@
-import { T_Graph, T_Search, T_Kinship, T_Details, T_Startup, T_Auto_Adjust, T_Dragging } from '../common/Global_Imports';
+import { T_Graph, T_Search, T_Kinship, T_Details, T_Startup, T_Auto_Adjust, T_Dragging, T_Filter } from '../common/Global_Imports';
 import { Tag, Rect, Point, Trait, colors, Ancestry, Hierarchy } from '../common/Global_Imports';
 import { G_Paging, G_Cluster, S_Text_Edit, S_Alteration } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
@@ -62,6 +62,7 @@ export const w_count_resize				 = writable<number>();
 
 const _____OTHER: unique symbol = Symbol('OTHER');
 
+export const w_t_filter					 = writable<T_Filter>();
 export const w_t_search					 = writable<T_Search>();
 export const w_t_startup				 = writable<T_Startup>();
 export const w_dragging_active			 = writable<T_Dragging>();
@@ -83,6 +84,7 @@ class Stores {
 		w_s_text_edit?.set(null);
 		w_show_details_ofType.set([]);
 		w_t_search.set(T_Search.clear);
+		w_t_filter.set(T_Filter.titles);
 		w_t_startup.set(T_Startup.start);
 		w_background_color.subscribe((color: string) => {
 			colors.banner = colors.ofBannerFor(color);
