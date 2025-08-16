@@ -1,8 +1,8 @@
 <script lang='ts'>
+	import { T_Layer, T_Graph, T_Search, S_Element, T_Element, T_Control, T_Kinship, T_Request } from '../../ts/common/Global_Imports';
 	import { c, e, h, k, p, u, ux, show, grabs, Point, colors, layout, svgPaths, signals } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Graph, S_Element, T_Element, T_Control, T_Kinship, T_Request } from '../../ts/common/Global_Imports';
+	import { w_show_details, w_show_graph_ofType, w_t_search, w_show_tree_ofType } from '../../ts/managers/Stores';
 	import { w_background_color, w_device_isMobile, w_thing_fontFamily } from '../../ts/managers/Stores';
-	import { w_show_details, w_show_graph_ofType, w_show_tree_ofType } from '../../ts/managers/Stores';
 	import { w_graph_rect, w_count_resize, w_popupView_id } from '../../ts/managers/Stores';
 	import Next_Previous from '../mouse/Next_Previous.svelte';
 	import Identifiable from '../../ts/runtime/Identifiable';
@@ -11,7 +11,8 @@
 	import Breadcrumbs from './Breadcrumbs.svelte';
 	import Button from '../buttons/Button.svelte';
 	import Box from '../mouse/Box.svelte';
-	const widths = [c.has_full_UI ? 18 : -11, 17, 57, 90, 11, 26, 22];
+	import Search from './Search.svelte';
+	const widths = [c.has_full_UI ? 18 : -11, 17, 57, 90, 11, 26, 22, 20, 10, 8];
 	const lefts = u.cumulativeSum(widths);
 	const size_big = k.height.button + 4;
 	const y_center = 10.5;
@@ -56,10 +57,13 @@
 					length={layout.controls_boxHeight + 3}
 					thickness={k.thickness.separator.main}
 					corner_radius={k.radius.gull_wings.thick}/>
-				<Breadcrumbs
-					left={lefts[6]}
-					centered={true}
-					width={layout.windowSize.width - lefts[6] - 10}/>
+				<Search/>
+				{#if $w_t_search == T_Search.clear}
+					<Breadcrumbs
+						left={lefts[8]}
+						centered={true}
+						width={layout.windowSize.width - lefts[9]}/>
+				{/if}
 				{#if !c.has_full_UI}
 					<Button
 						width={20}
@@ -70,7 +74,7 @@
 						center={new Point(lefts[6], 10)}
 						style='border: none; background: none;'
 						s_button={ux.s_control_forType(T_Control.details)}
-						closure={(s_mouse) => e.handle_s_mouse_forControl_Type(s_mouse, T_Control.details)}/>
+						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.details)}/>
 				{:else}
 					<Button
 						border_thickness=0
@@ -78,7 +82,7 @@
 						name='details-toggle'
 						center={new Point(lefts[0], y_center)}
 						s_button={ux.s_control_forType(T_Control.details)}
-						closure={(s_mouse) => e.handle_s_mouse_forControl_Type(s_mouse, T_Control.details)}>
+						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.details)}>
 						<svg
 							class='hamburger-svg'
 							style='
@@ -120,7 +124,7 @@
 						name={T_Control.grow}
 						center={new Point(lefts[4], y_center)}
 						s_button={ux.s_control_forType(T_Control.grow)}
-						closure={(s_mouse) => e.handle_s_mouse_forControl_Type(s_mouse, T_Control.grow)}>
+						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.grow)}>
 						<svg id='grow-svg' style={svg_style}>
 							<path
 								id='grow-path'
@@ -136,7 +140,7 @@
 						name={T_Control.shrink}
 						center={new Point(lefts[5], y_center)}
 						s_button={ux.s_control_forType(T_Control.shrink)}
-						closure={(s_mouse) => e.handle_s_mouse_forControl_Type(s_mouse, T_Control.shrink)}>
+						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.shrink)}>
 						<svg id='shrink-svg' style={svg_style}>
 							<path
 								id='shrink-path'
@@ -146,6 +150,17 @@
 								stroke={ux.s_control_forType(T_Control.shrink).svg_hover_color}/>
 						</svg>
 					</Button>
+				</div>
+				<div class='search-button'>
+					<Button
+						width={size_big}
+						height={size_big}
+						name={T_Control.search}
+						center={new Point(lefts[7], y_center)}
+						s_button={ux.s_control_forType(T_Control.search)}
+						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.search)}>
+						{$w_t_search != T_Search.clear ? 'X' : 's'}
+						</Button>
 				</div>
 			{/if}
 		</div>

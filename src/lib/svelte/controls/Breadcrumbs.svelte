@@ -7,7 +7,7 @@
 	import Breadcrumb_Button from '../buttons/Breadcrumb_Button.svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
-	export let left: number = 8;
+	export let left: number = 28;
 	export let centered: boolean = false;
 	export let width = layout.windowSize.width;
 	let s_component: S_Component | null = null;

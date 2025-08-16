@@ -17,9 +17,9 @@ import { T_Thing, T_Trait, T_Predicate } from './Enumerations';
 import { T_Create, T_Browser, T_Alteration } from './Enumerations';
 import { T_Curve, T_Order, T_Widget, T_Layer } from './Enumerations';
 import { T_Oblong, T_Element, T_Component } from './Enumerations';
-import { T_Action, T_Details, T_Request, T_Storage_Need } from './Enumerations';
 import { T_Kinship, T_RingZone, T_Preference, T_Auto_Adjust } from './Enumerations';
 import { T_Dragging, T_File_Format, T_File_Operation, T_Startup } from './Enumerations';
+import { T_Action, T_Details, T_Request, T_Storage_Need, T_Search } from './Enumerations';
 
 import S_Identifiables from '../state/S_Identifiables';
 import S_Alteration from '../state/S_Alteration';
@@ -101,7 +101,7 @@ export {
 	T_Banner, T_Details, T_Startup, T_Graph,
 	T_Persistable, T_Persistence, T_Request,
 	T_Order, T_File_Format, T_File_Operation,
-	T_Action, T_Control, T_Browser, T_Storage_Need, T_Auto_Adjust,
 	T_Layer, T_Curve, T_Create, T_RingZone, T_Oblong, T_Alteration,
 	T_Thing, T_Trait, T_Widget, T_Predicate, T_Kinship, T_Preference,
+	T_Action, T_Control, T_Browser, T_Storage_Need, T_Auto_Adjust, T_Search,
 };

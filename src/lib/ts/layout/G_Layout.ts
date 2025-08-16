@@ -226,7 +226,7 @@ export default class G_Layout {
 		const things = ancestry.ancestors?.reverse() ?? [];
 		for (const thing of things) {
 			if (!!thing) {
-				const width = u.getWidthOf(thing.breadcrumb_title) + 29;
+				const width = u.getWidthOf(thing.breadcrumb_title) + 29;	// 29 px gap for separator character and button border
 				if ((total + width) > thresholdWidth) {
 					break;
 				}

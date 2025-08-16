@@ -18,6 +18,13 @@ export enum T_Startup {
 	ready,
 }
 
+export enum T_Search {
+	clear,
+	enter,
+	listed,
+	selected,
+}
+
 export enum T_Details {
 	header,
 	actions,
@@ -205,6 +212,7 @@ export enum T_Control {
 	builds	 = 'show build notes',
 	recents	 = 'recents',
 	import	 = 'import',
+	search	 = 'search',
 	shrink	 = 'shrink',
 	grow	 = 'grow',
 	help	 = '?',

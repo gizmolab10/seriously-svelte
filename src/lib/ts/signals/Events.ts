@@ -1,8 +1,9 @@
 import { w_ancestry_focus, w_count_mouse_up, w_mouse_location, w_mouse_location_scaled, w_scaled_movement } from '../managers/Stores';
-import { w_device_isMobile, w_ancestries_grabbed, w_user_graph_offset, w_show_details, w_popupView_id } from '../managers/Stores';
-import { T_Action, T_File_Format, T_Predicate, T_Alteration, S_Mouse, S_Alteration, T_Control } from '../common/Global_Imports';
+import { w_count_resize, w_s_alteration, w_s_text_edit, w_user_graph_offset, w_control_key_down } from '../managers/Stores';
+import { w_device_isMobile, w_ancestries_grabbed, w_t_search, w_show_details, w_popupView_id } from '../managers/Stores';
 import { c, h, k, u, ux, grabs, Point, debug, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
-import { w_s_alteration, w_count_resize, w_s_text_edit, w_control_key_down } from '../managers/Stores';
+import { T_Search, T_Action, T_Control, T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Imports';
+import { S_Mouse, S_Alteration } from '../common/Global_Imports';
 import Mouse_Timer from './Mouse_Timer';
 import { get } from 'svelte/store';
 export class Events {
@@ -168,7 +169,7 @@ export class Events {
 		w_popupView_id.set(same ? null : id); 
 	}
 
-	handle_s_mouse_forControl_Type(s_mouse: S_Mouse, t_control: T_Control) {
+	handle_s_mouseFor_t_control(s_mouse: S_Mouse, t_control: T_Control) {
 		if (s_mouse.isHover) {
 			const s_control = ux.s_control_byType[t_control];
 			if (!!s_control) {
@@ -177,12 +178,18 @@ export class Events {
 		} else if (s_mouse.isUp) {
 			switch (t_control) {
 				case T_Control.help:	c.showHelp(); break;
+				case T_Control.search:	this.toggle_search(); break;
 				case T_Control.details: w_show_details.set(!get(w_show_details)); break;
 				case T_Control.grow:	this.width = layout.scaleBy(k.ratio.zoom_in) - 20; break;
 				case T_Control.shrink:	this.width = layout.scaleBy(k.ratio.zoom_out) - 20; break;
 				default:				this.togglePopupID(t_control); break;
 			}
 		}
+	}
+
+	toggle_search() {
+		const search = get(w_t_search);
+		w_t_search.set(search == T_Search.clear ? T_Search.enter : T_Search.clear);
 	}
 
 	handle_singleClick_onDragDot(shiftKey: boolean, ancestry: Ancestry) {

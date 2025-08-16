@@ -47,7 +47,7 @@
 			white-space:pre;
 			border:${border};
 			border-radius: 1em;
-			padding:0px 6px 2px 6px;
+			padding:1px 6px 1px 6px;
 			font: ${k.font_size.common}px ${$w_thing_fontFamily};
 		`.removeWhiteSpace();
 	}

@@ -1,17 +1,17 @@
 <script lang='ts'>
 	import { c, e, h, k, u, ux, show, Rect, Size, Point, Thing, colors, layout } from '../../ts/common/Global_Imports';
+	import { w_s_text_edit, w_t_search, w_show_details, w_device_isMobile, } from '../../ts/managers/Stores';
 	import { w_t_database, w_graph_rect, w_hierarchy, w_background_color } from '../../ts/managers/Stores';
+	import { T_Search, T_Control, Hierarchy, databases, Direction } from '../../ts/common/Global_Imports';
 	import { debug, T_Layer, T_Banner, Ancestry, T_Startup } from '../../ts/common/Global_Imports';
-	import { T_Control, Hierarchy, databases, Direction } from '../../ts/common/Global_Imports';
-	import { w_s_text_edit, w_show_details, w_device_isMobile, } from '../../ts/managers/Stores';
 	import { w_t_startup, w_popupView_id, w_ancestry_focus } from '../../ts/managers/Stores';
 	import { T_Database } from '../../ts/database/DB_Common';
+	import Search_Results from './Search_Results.svelte';
+	import Controls from '../controls/Controls.svelte';
 	import Separator from '../mouse/Separator.svelte';
 	import Details from '../details/Details.svelte';
-	import Breadcrumbs from './Breadcrumbs.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	import Graph from '../graph/Graph.svelte';
-	import Controls from './Controls.svelte';
 	import Box from '../mouse/Box.svelte';
 	import Import from './Import.svelte';
 	import { onMount } from 'svelte';
@@ -57,7 +57,7 @@
 			{#if $w_show_details}
 				<Details/>
 			{/if}
-			<div class='panel-graph'
+			<div class='main'
 				style='
 					position: fixed;
 					z-index: {T_Layer.graph};
@@ -65,7 +65,11 @@
 					left: {$w_graph_rect.origin.x}px;
 					width: {$w_graph_rect.size.width}px;
 					height: {$w_graph_rect.size.height}px;'>
-				<Graph/>
+				{#if $w_t_search != T_Search.clear}
+					<Search_Results/>
+				{:else}
+					<Graph/>
+				{/if}
 			</div>
 			<Separator
 				name='panel-left'

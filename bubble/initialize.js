@@ -15,9 +15,11 @@ function(instance, properties, context) {
 			switch (event.data.type) {
 				case 'focus':
 					instance.publishState('focus', event.data.glob);
+					instance.trigger('focus');
 					break;
 				case 'select':
 					instance.publishState('selected', event.data.globs);
+					instance.trigger('select');
 					break;
 				case 'listening':
 					instance.data.iframeIsListening = true;		// once set, only these messages will pend, the rest are sent in update

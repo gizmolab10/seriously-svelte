@@ -42,7 +42,7 @@
 		if (!!thing && !!characteristics_table && typeof characteristics_table.absolute_location_ofCellAt === 'function') {
 			const row = Math.max(0, characteristics.findIndex(([key]) => key === 'color'));
 			const offset_toRow = characteristics_table.absolute_location_ofCellAt(row, 1);
-			color_origin = offset_toRow.offsetByXY(-6, -5.5);
+			color_origin = offset_toRow.offsetByXY(-6.5, -6.8);
 			picker_offset = `-54px`;
 		}
 	}
