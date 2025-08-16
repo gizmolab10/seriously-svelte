@@ -12,14 +12,25 @@
 	import Button from '../buttons/Button.svelte';
 	import Box from '../mouse/Box.svelte';
 	import Search from './Search.svelte';
-	const widths = [c.has_full_UI ? 18 : -11, 17, 57, 90, 11, 26, 22, 0, 20, 16];
-	const lefts = u.cumulativeSum(widths);
 	const size_big = k.height.button + 4;
 	const y_center = 10.5;
 	const scaling_stroke_width = 1.5;
 	const hamburger_size = k.height.button;
 	const hamburger_path = svgPaths.hamburgerPath(hamburger_size);
 	const svg_style = 'top: -0.5px; left: -0.5px; position: absolute; width: 100%; height: 100%;';
+	const widths = {
+		0: c.has_details_button ? 18 : -11,	// details
+		1: 17,	// recents
+		2: 57,	// graph
+		3: 100,	// grow
+		4: 26,	// shrink
+		5: 6,	// invisible
+		6: 16,	// easter egg
+		7: 10,	// breadcrumbs
+		8: 20,	// search
+		9: 16,	// end
+	};
+	const lefts = u.cumulativeSum(Object.values(widths));
 	let width = layout.windowSize.width - 20;
 
 	function togglePopupID(id) { $w_popupView_id = ($w_popupView_id == id) ? null : id; }
@@ -43,12 +54,12 @@
 			style='
 				left: 6px;
 				top: 11.5px;
+				width: {width}px;
 				position: absolute;
 				height: {size_big}px;
-				z-index: {T_Layer.frontmost};
-				width: {layout.windowSize.width - 20}px;'>
+				z-index: {T_Layer.frontmost};'>
 			{#if !$w_popupView_id}
-				{#if c.has_full_UI}
+				{#if c.has_details_button}
 					<Button name='details-toggle'
 						border_thickness=0
 						color='transparent'
@@ -69,16 +80,6 @@
 								stroke={ux.s_control_forType(T_Control.details).isOut ? 'transparent' : 'darkgray'}/>
 						</svg>
 					</Button>
-				{:else}
-					<Button name='invisible-button'
-						width={20}
-						height={30}
-						color='transparent'
-						zindex={T_Layer.frontmost}
-						center={new Point(lefts[6], 10)}
-						style='border: none; background: none;'
-						s_button={ux.s_control_forType(T_Control.details)}
-						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.details)}/>
 				{/if}
 				<Next_Previous name='recents'
 					size={28}
@@ -100,7 +101,7 @@
 					<Button name={T_Control.grow}
 						width={size_big}
 						height={size_big}
-						center={new Point(lefts[4], y_center)}
+						center={new Point(lefts[3], y_center)}
 						s_button={ux.s_control_forType(T_Control.grow)}
 						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.grow)}>
 						<svg id='grow-svg' style={svg_style}>
@@ -115,7 +116,7 @@
 					<Button name={T_Control.shrink}
 						width={size_big}
 						height={size_big}
-						center={new Point(lefts[5], y_center)}
+						center={new Point(lefts[4], y_center)}
 						s_button={ux.s_control_forType(T_Control.shrink)}
 						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.shrink)}>
 						<svg id='shrink-svg'
@@ -127,13 +128,24 @@
 								stroke={ux.s_control_forType(T_Control.shrink).svg_hover_color}/>
 						</svg>
 					</Button>
-					<Separator name='before-breadcrumbs'
-						isHorizontal={false}
-						origin={new Point(lefts[6], -9)}
-						length={layout.controls_boxHeight + 3}
-						thickness={k.thickness.separator.main}
-						corner_radius={k.radius.gull_wings.thick}/>
 				</div>
+				{#if !c.has_details_button}
+					<Button name='easter-egg'
+						width={20}
+						height={30}
+						color='transparent'
+						zindex={T_Layer.frontmost}
+						center={new Point(lefts[5], 10)}
+						style='border: none; background: none;'
+						s_button={ux.s_control_forType(T_Control.details)}
+						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.details)}/>
+				{/if}
+				<Separator name='before-breadcrumbs'
+					isHorizontal={false}
+					origin={new Point(lefts[6], -9)}
+					length={layout.controls_boxHeight + 3}
+					thickness={k.thickness.separator.main}
+					corner_radius={k.radius.gull_wings.thick}/>
 				<div class='dynamicals'
 					style='
 						left: {lefts[7]}px;

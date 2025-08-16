@@ -4,7 +4,7 @@ import { stores, w_device_isMobile } from './Stores';
 export class Configuration {
 
 	eraseDB = 0;
-	has_full_UI = true;
+	has_details_button = true;
 	has_matte_UI = true;
 	erasePreferences = 0;
 	allow_GraphEditing = true;
@@ -40,7 +40,7 @@ export class Configuration {
         const disableOptions = queryStrings.get('disable')?.split(k.comma) ?? [];
 		for (const disableOption of disableOptions) {
 			switch (disableOption) {
-				case 'details':				this.has_full_UI			   = false; break;
+				case 'details':				this.has_details_button			   = false; break;
 				case 'matte_UI':			this.has_matte_UI			   = false; break;
 				case 'editGraph':			this.allow_GraphEditing		   = false; break;
 				case 'editTitles':			this.allow_TitleEditing		   = false; break;
