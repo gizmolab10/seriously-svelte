@@ -94,8 +94,9 @@ export enum T_Auto_Adjust {
 }
 
 export enum T_Filter {
-	titles = 'titles',
-	tags = 'tags',
+	title = 'title',
+	trait = 'trait',
+	tags  = 'tags',
 }
 
 export enum T_Dragging {

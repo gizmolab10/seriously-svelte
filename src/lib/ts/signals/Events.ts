@@ -178,18 +178,13 @@ export class Events {
 		} else if (s_mouse.isUp) {
 			switch (t_control) {
 				case T_Control.help:	c.showHelp(); break;
-				case T_Control.search:	this.toggle_search(); break;
+				case T_Control.search:	w_t_search.set(T_Search.enter); break;
 				case T_Control.details: w_show_details.set(!get(w_show_details)); break;
 				case T_Control.grow:	this.width = layout.scaleBy(k.ratio.zoom_in) - 20; break;
 				case T_Control.shrink:	this.width = layout.scaleBy(k.ratio.zoom_out) - 20; break;
 				default:				this.togglePopupID(t_control); break;
 			}
 		}
-	}
-
-	toggle_search() {
-		const search = get(w_t_search);
-		w_t_search.set(search == T_Search.clear ? T_Search.enter : T_Search.clear);
 	}
 
 	handle_singleClick_onDragDot(shiftKey: boolean, ancestry: Ancestry) {
@@ -231,10 +226,7 @@ export class Events {
 			w_control_key_down.set(event.ctrlKey);
 			if (!!h && !!ancestry && !modifiers.includes(key)) {		// ignore modifier-key-only events
 				if (c.allow_GraphEditing) {
-					if (!!ancestry && c.allow_TitleEditing) {
-						if (key == 'd') {
-							console.warn('user entered "d"');
-						}
+					if (!!ancestry && c.allow_TitleEditing && get(w_t_search) == T_Search.clear) {
 						switch (key) {
 							case 'enter':	ancestry.startEdit(); break;
 							case 'd':		await h.thing_edit_persistentDuplicate(ancestry); break;
@@ -261,15 +253,16 @@ export class Events {
 					case '[':				grabs.focus_onNext(false); break;
 					case 'm':				layout.toggle_graph_type(); break;
 					case '!':				layout.grand_adjust_toFit(); break;
+					case 'f':				w_t_search.set(T_Search.enter); break;
 					case '>':				layout.increase_depth_limit_by(1); break;
 					case '<':				layout.increase_depth_limit_by(-1); break;
 					case 's':				h.persist_toFile(T_File_Format.json); return;
 					case 'c':				layout.set_user_graph_offsetTo(Point.zero); return;
-					case 'escape':			if (!!get(w_s_alteration)) { h.stop_alteration(); }; break;
 					case 'o':				h.select_file_toUpload(T_File_Format.json, event.shiftKey); break;
 					case '/':				if (!ancestry) { graph_needsRebuild = h.rootAncestry?.becomeFocus(); } break;
 					case 'arrowup':			grabs.latest_rebuild_persistentMoveUp_maybe( true, SHIFT, OPTION, EXTREME); break;
 					case 'arrowdown':		grabs.latest_rebuild_persistentMoveUp_maybe(false, SHIFT, OPTION, EXTREME); break;
+					case 'escape':			if (!!get(w_s_alteration)) { h.stop_alteration(); }; w_t_search.set(T_Search.clear); break;
 					case 'p':				if (!COMMAND) { u.print_element_byClassName(ux.inTreeMode ? 'tree-graph' : 'radial-graph') }; break;
 				}
 				if (graph_needsRebuild) {

@@ -8,7 +8,7 @@
     const offsetY = buttonSize / 2 - 1;
 
 	function hover_closure(isHovering) {
-        return [isHovering ? colors.default : $w_background_color, k.empty];
+        return [isHovering ? colors.default : 'white', k.empty];
     }
 
 	function handle_s_mouse(s_mouse: S_Mouse): boolean {
@@ -24,8 +24,8 @@
 <div class='directionals'>
     {#if $w_show_directionals_ofType[0]}
         <Triangle_Button
-            handle_s_mouse={handle_s_mouse}
             center={origin.offsetByY(-offsetY)}
+            handle_s_mouse={handle_s_mouse}
             hover_closure={hover_closure}
             strokeColor={colors.default}
             detect_autorepeat={true}
@@ -36,8 +36,8 @@
     {/if}
     {#if $w_show_directionals_ofType[1]}
         <Triangle_Button
-            handle_s_mouse={handle_s_mouse}
             center={origin.offsetByY(offsetY)}
+            handle_s_mouse={handle_s_mouse}
             hover_closure={hover_closure}
             strokeColor={colors.default}
             detect_longClick={true}

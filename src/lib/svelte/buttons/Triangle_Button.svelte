@@ -15,8 +15,8 @@
 	export let center;
 	export let angle;
 	export let size;
-	let fillColor = $w_background_color;
-	let extraColor = $w_background_color;
+	let fillColor = 'white';
+	let extraColor = 'white';
 	let trianglePath = svgPaths.fat_polygon(size, angle);
 
 	$: $w_ancestries_grabbed, setFillColor(false);
@@ -43,14 +43,14 @@
 </script>
 
 <Button
+	detect_autorepeat={detect_autorepeat}
+	detect_longClick={detect_longClick}
 	s_button={s_triangle}
 	border_thickness=0
 	closure={closure}
 	center={center}
 	height={size}
 	width={size}
-	detect_autorepeat={detect_autorepeat}
-	detect_longClick={detect_longClick}
 	name={name}>
 	<SVG_D3 name='triangle'
 		svgPath={trianglePath}

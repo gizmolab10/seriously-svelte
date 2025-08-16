@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { w_popupView_id, w_background_color, w_show_directionals_ofType } from '../../ts/managers/Stores';
-	import Steppers from '../buttons/Steppers.svelte';
-	import { k, builds, T_Layer } from '../../ts/common/Global_Imports';
+	import { k, Point, builds, T_Layer } from '../../ts/common/Global_Imports';
 	import Close_Button from '../buttons/Close_Button.svelte';
+	import Steppers from '../buttons/Steppers.svelte';
 	import { onMount } from 'svelte';
 	const notesIndexed = Object.entries(builds.notes).reverse();
 	const notesLimit = notesIndexed.length - 1;
@@ -49,7 +49,11 @@
 			<Steppers hit_closure={hit_closure}/>
 			<div class='title'>{title}</div>
 		</div>
-		<Close_Button name='builds-close' size={k.height.dot * 1.5}/>
+		<Close_Button
+			name='builds-close'
+			size={k.height.dot * 1.5}
+			closure={() => $w_popupView_id = null}
+			origin={new Point(8, k.height.dot * 0.75)}/>
 		<br>
 		<table style='width:100%'>
 			<tbody>

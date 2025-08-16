@@ -12,7 +12,7 @@
 	import Button from '../buttons/Button.svelte';
 	import Box from '../mouse/Box.svelte';
 	import Search from './Search.svelte';
-	const widths = [c.has_full_UI ? 18 : -11, 17, 57, 90, 11, 26, 22, 20, 10, 8, 120];
+	const widths = [c.has_full_UI ? 18 : -11, 17, 57, 90, 11, 26, 22, 0, 20, 16];
 	const lefts = u.cumulativeSum(widths);
 	const size_big = k.height.button + 4;
 	const y_center = 10.5;
@@ -33,15 +33,13 @@
 </script>
 
 {#key width, $w_background_color}
-	<Box
-		name='controls-box'
+	<Box name='controls-box'
 		color={colors.separator}
 		width={layout.windowSize.width}
 		height={layout.controls_boxHeight + 2}
 		thickness={k.thickness.separator.main}
 		corner_radius={k.radius.gull_wings.thick}>
-		<div
-			class='controls'
+		<div class='controls'
 			style='
 				left: 6px;
 				top: 11.5px;
@@ -50,44 +48,14 @@
 				z-index: {T_Layer.frontmost};
 				width: {layout.windowSize.width - 20}px;'>
 			{#if !$w_popupView_id}
-				<Separator
-					isHorizontal={false}
-					name='before-breadcrumbs'
-					origin={new Point(lefts[6], -9)}
-					length={layout.controls_boxHeight + 3}
-					thickness={k.thickness.separator.main}
-					corner_radius={k.radius.gull_wings.thick}/>
-				<Search
-					left={lefts[7]}
-					y_center={y_center}
-					input_width={layout.windowSize.width - lefts[10]}/>
-				{#if $w_t_search == T_Search.clear}
-					<Breadcrumbs
-						left={lefts[8]}
-						centered={true}
-						width={layout.windowSize.width - lefts[9]}/>
-				{/if}
-				{#if !c.has_full_UI}
-					<Button
-						width={20}
-						height={30}
-						color='transparent'
-						name='invisible-button'
-						zindex={T_Layer.frontmost}
-						center={new Point(lefts[6], 10)}
-						style='border: none; background: none;'
-						s_button={ux.s_control_forType(T_Control.details)}
-						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.details)}/>
-				{:else}
-					<Button
+				{#if c.has_full_UI}
+					<Button name='details-toggle'
 						border_thickness=0
 						color='transparent'
-						name='details-toggle'
 						center={new Point(lefts[0], y_center)}
 						s_button={ux.s_control_forType(T_Control.details)}
 						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.details)}>
-						<svg
-							class='hamburger-svg'
+						<svg class='hamburger-svg'
 							style='
 								height: 17px;
 								width: 20.5px;
@@ -101,10 +69,19 @@
 								stroke={ux.s_control_forType(T_Control.details).isOut ? 'transparent' : 'darkgray'}/>
 						</svg>
 					</Button>
+				{:else}
+					<Button name='invisible-button'
+						width={20}
+						height={30}
+						color='transparent'
+						zindex={T_Layer.frontmost}
+						center={new Point(lefts[6], 10)}
+						style='border: none; background: none;'
+						s_button={ux.s_control_forType(T_Control.details)}
+						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.details)}/>
 				{/if}
-				<Next_Previous
+				<Next_Previous name='recents'
 					size={28}
-					name='recents'
 					height={size_big}
 					has_title={false}
 					has_seperator={false}
@@ -112,19 +89,17 @@
 					origin={Point.x(lefts[1])}
 					closure={handle_recents_mouseClick}/>
 				{#key $w_show_graph_ofType}
-					<Segmented
+					<Segmented name='graph'
 						width={80}
-						name='graph'
 						origin={Point.x(lefts[2])}
 						selected={[$w_show_graph_ofType]}
 						titles={[T_Graph.tree, T_Graph.radial]}
 						handle_selection={(titles) => layout.handle_mode_selection('graph', titles)}/>
 				{/key}
 				<div class='scaling-controls'>
-					<Button
+					<Button name={T_Control.grow}
 						width={size_big}
 						height={size_big}
-						name={T_Control.grow}
 						center={new Point(lefts[4], y_center)}
 						s_button={ux.s_control_forType(T_Control.grow)}
 						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.grow)}>
@@ -137,22 +112,45 @@
 								stroke={ux.s_control_forType(T_Control.grow).svg_hover_color}/>
 						</svg>
 					</Button>
-					<Button
+					<Button name={T_Control.shrink}
 						width={size_big}
 						height={size_big}
-						name={T_Control.shrink}
 						center={new Point(lefts[5], y_center)}
 						s_button={ux.s_control_forType(T_Control.shrink)}
 						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.shrink)}>
-						<svg id='shrink-svg' style={svg_style}>
-							<path
-								id='shrink-path'
+						<svg id='shrink-svg'
+							style={svg_style}>
+							<path id='shrink-path'
 								fill=transparent
 								d={svgPaths.dash(size_big, 4)}
 								stroke-width={scaling_stroke_width}
 								stroke={ux.s_control_forType(T_Control.shrink).svg_hover_color}/>
 						</svg>
 					</Button>
+					<Separator name='before-breadcrumbs'
+						isHorizontal={false}
+						origin={new Point(lefts[6], -9)}
+						length={layout.controls_boxHeight + 3}
+						thickness={k.thickness.separator.main}
+						corner_radius={k.radius.gull_wings.thick}/>
+				</div>
+				<div class='dynamicals'
+					style='
+						left: {lefts[7]}px;
+						position: absolute;
+						height: {size_big}px;
+						z-index: {T_Layer.frontmost};
+						width: {layout.windowSize.width - lefts[8]}px;'>
+					<Search
+						left={11}
+						y_center={y_center}
+						width={layout.windowSize.width - lefts[8]}/>
+					{#if $w_t_search == T_Search.clear}
+						<Breadcrumbs
+							left={0}
+							centered={true}
+							width={layout.windowSize.width - lefts[9]}/>
+					{/if}
 				</div>
 			{/if}
 		</div>

@@ -53,6 +53,12 @@ const _____DATABASE: unique symbol = Symbol('DATABASE');
 export const w_t_database				 = writable<string>();
 export const w_data_updated				 = writable<number>();
 
+const _____SEARCH: unique symbol = Symbol('SEARCH');
+
+export const w_t_filter					 = writable<T_Filter>();
+export const w_t_search					 = writable<T_Search>();
+export const w_search_input				 = writable<string>();
+
 const _____COUNTS: unique symbol = Symbol('COUNTS');
 
 export const w_count_mouse_up			 = writable<number>();
@@ -62,8 +68,6 @@ export const w_count_resize				 = writable<number>();
 
 const _____OTHER: unique symbol = Symbol('OTHER');
 
-export const w_t_filter					 = writable<T_Filter>();
-export const w_t_search					 = writable<T_Search>();
 export const w_t_startup				 = writable<T_Startup>();
 export const w_dragging_active			 = writable<T_Dragging>();
 export const w_auto_adjust_graph		 = writable<T_Auto_Adjust | null>();
@@ -84,7 +88,7 @@ class Stores {
 		w_s_text_edit?.set(null);
 		w_show_details_ofType.set([]);
 		w_t_search.set(T_Search.clear);
-		w_t_filter.set(T_Filter.titles);
+		w_t_filter.set(T_Filter.title);
 		w_t_startup.set(T_Startup.start);
 		w_background_color.subscribe((color: string) => {
 			colors.banner = colors.ofBannerFor(color);

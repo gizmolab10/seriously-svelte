@@ -65,7 +65,7 @@
 					left: {$w_graph_rect.origin.x}px;
 					width: {$w_graph_rect.size.width}px;
 					height: {$w_graph_rect.size.height}px;'>
-				{#if $w_t_search != T_Search.clear}
+				{#if $w_t_search > T_Search.enter}
 					<Search_Results/>
 				{:else}
 					<Graph/>
