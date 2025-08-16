@@ -14,10 +14,10 @@ function(instance, properties, context) {
 		if (event.data) {
 			switch (event.data.type) {
 				case 'focus':
-					instance.publishState('focus_id', event.data.id);
+					instance.publishState('focus', event.data.glob);
 					break;
 				case 'select':
-					instance.publishState('selected_ids', event.data.ids);
+					instance.publishState('selected', event.data.globs);
 					break;
 				case 'listening':
 					instance.data.iframeIsListening = true;		// once set, only these messages will pend, the rest are sent in update
