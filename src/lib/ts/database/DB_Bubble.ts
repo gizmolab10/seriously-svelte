@@ -36,8 +36,8 @@ export default class DB_Bubble extends DB_Common {
 			const id = Math.random().toString(36).substring(2, 15);
 			h.relationship_remember_runtimeCreateUnique(h.db.idBase, id, b_kind, b_parent.id, b_child.id, b_orders, glob, T_Create.isFromPersistent);
 		}
-		function createThing(b_thing: any, b_type: T_Thing = T_Thing.generic, glob: string = k.empty) {
-			h.thing_remember_runtimeCreateUnique(h.db.idBase, b_thing.id, b_thing.title, b_thing.color, b_type, glob, true);
+		function createThing(b_thing: any, b_type: T_Thing = T_Thing.generic) {
+			h.thing_remember_runtimeCreateUnique(h.db.idBase, b_thing.id, b_thing.title, b_thing.color, b_type,  b_thing.glob, true);
 			if (!!b_thing.parents) {
 				for (const b_parent of b_thing.parents) {
 					createRelationship(b_parent, b_thing, T_Predicate.contains, [1, 1], k.empty);
