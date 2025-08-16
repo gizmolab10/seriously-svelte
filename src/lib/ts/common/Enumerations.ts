@@ -130,6 +130,7 @@ export enum T_Kinship {
 
 export enum T_Component {
 	breadcrumbs = 'breadcrumbs',
+	radial		= 'radial',
 	reveal		= 'reveal',
 	widget		= 'widget',
 	title		= 'title',

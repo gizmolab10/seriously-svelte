@@ -3,18 +3,21 @@ import S_Persistence from '../state/S_Persistence';
 import Identifiable from '../runtime/Identifiable';
 import { debug, T_Debug } from '../debug/Debug';
 import { h } from '../managers/Hierarchy';
+import { k } from '../common/Constants';
 import { busy } from '../state/S_Busy';
 
 export default class Persistable extends Identifiable {
 	t_persistable: T_Persistable;
 	persistence!: S_Persistence;
 	idBase: string;
+	glob: string;
 
-	constructor(t_database: string, idBase: string, t_persistable: T_Persistable, id: string, already_persisted: boolean = false) {
+	constructor(t_database: string, idBase: string, t_persistable: T_Persistable, id: string, glob: string = k.empty, already_persisted: boolean = false) {
 		super(id);
 		this.persistence = new S_Persistence(t_database, t_persistable, id, already_persisted, false);
 		this.t_persistable = t_persistable;
 		this.idBase = idBase;
+		this.glob = glob;
 	}
 
 	async persistent_create_orUpdate(already_persisted: boolean) {}

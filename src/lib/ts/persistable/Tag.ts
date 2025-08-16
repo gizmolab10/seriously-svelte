@@ -1,4 +1,4 @@
-import { databases, h, T_Persistable, Thing } from '../common/Global_Imports';
+import { h, k, Thing, databases, T_Persistable } from '../common/Global_Imports';
 import type { Integer } from '../common/Types';
 import Persistable from './Persistable';
 
@@ -18,8 +18,8 @@ export default class Tag extends Persistable {
 		return null;
 	}
 	
-	constructor(idBase: string, id: string, type: string, thingHIDs: Array<Integer>, already_persisted: boolean = false) {
-		super(databases.db_now.t_database, idBase, T_Persistable.tags, id, already_persisted);
+	constructor(idBase: string, id: string, type: string, thingHIDs: Array<Integer>, glob: string = k.empty, already_persisted: boolean = false) {
+		super(databases.db_now.t_database, idBase, T_Persistable.tags, id, glob, already_persisted);
 		this.thingHIDs = thingHIDs;
 		this.type = type;
 	}

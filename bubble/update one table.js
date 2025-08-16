@@ -4,7 +4,7 @@ function(instance, properties) {
 	const item_references = ['child', 'parent', 'owner', 'related'];
 	const user_supplied_names = {};
 	const ignore_fields = ['Slug'];
-	const debug = true;
+	const debug = false;
 
 	const has_two_tables = properties.hasOwnProperty('edge_type');
 	console.log('has_two_tables', has_two_tables);
@@ -84,6 +84,7 @@ function(instance, properties) {
 				names[field_name] = item.get(field_name);
 				return names;
 			}, {});
+			item_data.glob = JSON.stringify(item_properties);
 			item_field_names.forEach(item_field_name => {
 				const short_name = short_field_name(item_field_name, bad_ends);
 				const has_name = has_seriously_name(short_name) || has_seriously_name(item_field_name);

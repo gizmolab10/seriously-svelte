@@ -1,13 +1,15 @@
 <script lang='ts'>
 	import { w_g_paging, w_user_graph_offset, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { k, u, ux, Rect, Point, layout, signals } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Signal, T_RingZone } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Signal, T_RingZone, T_Component, S_Component } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_ancestry_focus } from '../../ts/managers/Stores';
 	import Radial_Rings from './Radial_Rings.svelte';
 	import Radial_Focus from './Radial_Focus.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import { onMount } from 'svelte';
+	let s_component: S_Component;
 	let reattachments = 0;
+	let radial;
 
 	//////////////////////////////////////////////
 	//											//
@@ -35,14 +37,18 @@
 	layout.grand_layout();
 
 	onMount(() => {
-		const handle_recreate = signals.handle_signals_atPriority([T_Signal.reattach], 0, null, (ancestry) => {
+		s_component = signals.handle_signals_atPriority([T_Signal.reattach], 0, -1 as Integer, T_Component.radial, (ancestry) => {
 			reattachments += 1;
 		});
-		const handle_reposition = signals.handle_signals_atPriority([T_Signal.reposition], 2, null, (received_ancestry) => {
+		signals.handle_signals_atPriority([T_Signal.reposition], 2, -1 as Integer, T_Component.radial, (received_ancestry) => {
 			reattachments += 1;
 		});
-		// return () => { handle_reposition.disconnect(); handle_recreate.disconnect() };
+		return () => s_component.disconnect();
 	});
+
+	$: if (!!radial) {
+		s_component.element = radial;
+	}
 
 	$: {
 		const g_paging = $w_g_paging;
@@ -54,6 +60,7 @@
 </script>
 
 <div class = 'radial-graph'
+	bind:this={radial}
 	style = '
 		position: absolute;
 		z-index : {T_Layer.graph};

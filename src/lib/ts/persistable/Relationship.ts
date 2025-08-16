@@ -1,4 +1,4 @@
-import { h, Thing, T_Order, databases, Predicate } from '../common/Global_Imports';
+import { h, k, Thing, T_Order, databases, Predicate } from '../common/Global_Imports';
 import { T_Persistable, T_Predicate } from '../common/Global_Imports';
 import { w_relationship_order } from '../managers/Stores';
 import Identifiable from '../runtime/Identifiable';
@@ -15,8 +15,8 @@ export default class Relationship extends Persistable {
 	idChild: string;
 	orders = [0, 0];
 
-	constructor(idBase: string, id: string, kind: T_Predicate, idParent: string, idChild: string, orders: number[], already_persisted: boolean = false) {
-		super(databases.db_now.t_database, idBase, T_Persistable.relationships, id, already_persisted);
+	constructor(idBase: string, id: string, kind: T_Predicate, idParent: string, idChild: string, orders: number[], glob: string = k.empty, already_persisted: boolean = false) {
+		super(databases.db_now.t_database, idBase, T_Persistable.relationships, id, glob, already_persisted);
 		this.hidParent = idParent.hash();
 		this.hidChild = idChild.hash();
 		this.idParent = idParent;

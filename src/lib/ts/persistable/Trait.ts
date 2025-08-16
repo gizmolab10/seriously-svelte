@@ -7,18 +7,17 @@ export default class Trait extends Persistable {
 	t_trait: T_Trait = T_Trait.text;
 	ownerID: string = k.empty;
 	text: string = k.empty;
-	dict: Dictionary = {};
 
-	constructor(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string = k.empty, dict: Dictionary = {}, already_persisted: boolean = false) {
-		super(databases.db_now.t_database, idBase, T_Persistable.traits, id, already_persisted);
+	constructor(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string = k.empty, glob: string = k.empty, already_persisted: boolean = false) {
+		super(databases.db_now.t_database, idBase, T_Persistable.traits, id, glob, already_persisted);
 		this.ownerID = ownerID;
 		this.t_trait = t_trait;
 		this.text = text;
-		this.dict = dict;
+		this.glob = glob;
 	}
 
 	get owner():	   Thing | null { return h.thing_forHID(this.ownerID.hash()); }
-	get fields(): Airtable.FieldSet { return { type: this.t_trait, ownerID: [this.ownerID], text: this.text, dict: u.stringify_object(this.dict) }; }
+	get fields(): Airtable.FieldSet { return { type: this.t_trait, ownerID: [this.ownerID], text: this.text }; }
 
 	async persistent_create_orUpdate(already_persisted: boolean) {
 		if (already_persisted) {
