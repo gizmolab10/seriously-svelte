@@ -221,50 +221,59 @@ export class Events {
 			const time = new Date().getTime();
 			const key = event.key.toLowerCase();
 			const ancestry = grabs.latest_upward(true);
-			const is_searching = get(w_t_search) != T_Search.clear;
 			const modifiers = ['alt', 'meta', 'shift', 'control'];
 			let graph_needsRebuild = false;
 			w_control_key_down.set(event.ctrlKey);
 			if (!!h && !!ancestry && !modifiers.includes(key)) {		// ignore modifier-key-only events
-				if (c.allow_GraphEditing) {
-					if (!!ancestry && c.allow_TitleEditing && !is_searching) {
+				switch (get(w_t_search)) {
+					case T_Search.enter:
 						switch (key) {
-							case 'enter':	ancestry.startEdit(); break;
-							case 'd':		await h.thing_edit_persistentDuplicate(ancestry); break;
-							case ' ':		await h.ancestry_edit_persistentCreateChildOf(ancestry); break;
-							case '-':		if (!COMMAND) { await h.thing_edit_persistentAddLine(ancestry); } break;
-							case 'tab':		await h.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break; // S_Text_Edit editor also makes this call
+							case 'escape':
+							case 'enter':		    w_t_search.set(T_Search.clear); break;	// stop searching
 						}
-					}
-					switch (key) {
-						case 'delete':
-						case 'backspace':	await h.ancestries_rebuild_traverse_persistentDelete(get(w_ancestries_grabbed)); break;
-					}
-				}
-				if (!!ancestry) {
-					switch (key) {
-						case '/':			graph_needsRebuild = ancestry.becomeFocus(); break;
-						case 'arrowright':	event.preventDefault(); await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, SHIFT, OPTION, EXTREME, false); break;
-						case 'arrowleft':	event.preventDefault(); await h.ancestry_rebuild_persistentMoveRight(ancestry, false, SHIFT, OPTION, EXTREME, false); break;
-					}
-				}
-				switch (key) {
-					case '?':				c.showHelp(); return;
-					case ']':				grabs.focus_onNext(true); break;
-					case '[':				grabs.focus_onNext(false); break;
-					case 'm':				layout.toggle_graph_type(); break;
-					case '!':				layout.grand_adjust_toFit(); break;
-					case 'f':				w_t_search.set(T_Search.enter); break;
-					case '>':				layout.increase_depth_limit_by(1); break;
-					case '<':				layout.increase_depth_limit_by(-1); break;
-					case 's':				h.persist_toFile(T_File_Format.json); return;
-					case 'c':				layout.set_user_graph_offsetTo(Point.zero); return;
-					case 'o':				h.select_file_toUpload(T_File_Format.json, event.shiftKey); break;
-					case '/':				if (!ancestry) { graph_needsRebuild = h.rootAncestry?.becomeFocus(); } break;
-					case 'arrowup':			grabs.latest_rebuild_persistentMoveUp_maybe( true, SHIFT, OPTION, EXTREME); break;
-					case 'arrowdown':		grabs.latest_rebuild_persistentMoveUp_maybe(false, SHIFT, OPTION, EXTREME); break;
-					case 'escape':			if (!!get(w_s_alteration)) { h.stop_alteration(); }; w_t_search.set(T_Search.clear); break;
-					case 'p':				if (!COMMAND) { u.print_element_byClassName(ux.inTreeMode ? 'tree-graph' : 'radial-graph') }; break;
+						break;
+					case T_Search.clear:
+						if (c.allow_GraphEditing) {
+							if (!!ancestry && c.allow_TitleEditing) {
+								switch (key) {
+									case 'enter':	ancestry.startEdit(); break;
+									case 'd':		await h.thing_edit_persistentDuplicate(ancestry); break;
+									case ' ':		await h.ancestry_edit_persistentCreateChildOf(ancestry); break;
+									case '-':		if (!COMMAND) { await h.thing_edit_persistentAddLine(ancestry); } break;
+									case 'tab':		await h.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break; // S_Text_Edit editor also makes this call
+								}
+							}
+							switch (key) {
+								case 'delete':
+								case 'backspace':	await h.ancestries_rebuild_traverse_persistentDelete(get(w_ancestries_grabbed)); break;
+							}
+						}
+						if (!!ancestry) {
+							switch (key) {
+								case '/':			graph_needsRebuild = ancestry.becomeFocus(); break;
+								case 'arrowright':	event.preventDefault(); await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, SHIFT, OPTION, EXTREME, false); break;
+								case 'arrowleft':	event.preventDefault(); await h.ancestry_rebuild_persistentMoveRight(ancestry, false, SHIFT, OPTION, EXTREME, false); break;
+							}
+						}
+						switch (key) {
+							case '?':				c.showHelp(); return;
+							case ']':				grabs.focus_onNext(true); break;
+							case '[':				grabs.focus_onNext(false); break;
+							case 'm':				layout.toggle_graph_type(); break;
+							case '!':				layout.grand_adjust_toFit(); break;
+							case 'f':				w_t_search.set(T_Search.enter); break;
+							case '>':				layout.increase_depth_limit_by(1); break;
+							case '<':				layout.increase_depth_limit_by(-1); break;
+							case 's':				h.persist_toFile(T_File_Format.json); return;
+							case 'c':				layout.set_user_graph_offsetTo(Point.zero); return;
+							case 'o':				h.select_file_toUpload(T_File_Format.json, event.shiftKey); break;
+							case '/':				if (!ancestry) { graph_needsRebuild = h.rootAncestry?.becomeFocus(); } break;
+							case 'arrowup':			grabs.latest_rebuild_persistentMoveUp_maybe( true, SHIFT, OPTION, EXTREME); break;
+							case 'arrowdown':		grabs.latest_rebuild_persistentMoveUp_maybe(false, SHIFT, OPTION, EXTREME); break;
+							case 'escape':			if (!!get(w_s_alteration)) { h.stop_alteration(); }; w_t_search.set(T_Search.clear); break;
+							case 'p':				if (!COMMAND) { u.print_element_byClassName(ux.inTreeMode ? 'tree-graph' : 'radial-graph') }; break;
+						}
+						break;
 				}
 				if (graph_needsRebuild) {
 					layout.grand_build();

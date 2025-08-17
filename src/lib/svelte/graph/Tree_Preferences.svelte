@@ -66,7 +66,7 @@
 			top:{top}px;
 			position:relative;
 			font-size:{k.font_size.info}px;'>
-		<Slider class='depth-slider'
+		<Slider
 			max={12}
 			width={width}
 			show_value={false}
@@ -79,9 +79,8 @@
 			title_font_size={k.font_size.banners}
 			handle_value_change={handle_depth_limit}/>
 		{#key $w_show_tree_ofType}
-			<Segmented class='tree-types'
+			<Segmented name='tree-types'
 				width={width}
-				name='tree-types'
 				allow_multiple={true}
 				height={segmented_height}
 				selected={$w_show_tree_ofType}

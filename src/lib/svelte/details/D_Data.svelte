@@ -128,7 +128,7 @@
 <div class='database-container'
 	style='
 		padding:5px;'>
-	<Separator
+	<Separator name='show-other-databases'
 		has_gull_wings={true}
 		has_both_wings={true}
 		has_thin_divider={false}
@@ -139,8 +139,7 @@
 		thickness={k.thickness.separator.details}
 		title='{p.show_other_databases ? 'hide other databases' : 'show other databases'}'/>
 	{#if p.show_other_databases}
-		<Segmented
-			name='db'
+		<Segmented name='databases'
 			width={width}
 			titles={ids_forDatabase}
 			selected={[$w_t_database]}
@@ -154,10 +153,9 @@
 			top={tops[1]}
 			position: relative;
 			font-size:{k.font_size.banners}px;'>
-		<Text_Table
+		<Text_Table name='database-table'
 			top={tops[1]}
 			row_height={11}
-			name='database-table'
 			array={storage_details}
 			font_size={k.font_size.banners}/>
 		{#key $w_data_updated}
@@ -178,9 +176,8 @@
 						on:angle={handle_spinner_angle}/>
 				</div>
 			{:else if show_save_button}
-				<Button
+				<Button name='save'
 					width=72
-					name='save'
 					s_button={s_save}
 					closure={handle_save}
 					zindex={T_Layer.frontmost}
@@ -204,7 +201,7 @@
 			separator_thickness={k.thickness.separator.details}
 			name={`data-${(s_details.t_storage_need == T_Storage_Need.direction) ? 'action' : 'format'}`}/>
 	{/key}
-	<Separator
+	<Separator name='bottom-of-data'
 		isHorizontal={true}
 		length={k.width.details + 1.5}
 		origin={new Point(-0.6, tops[5])}

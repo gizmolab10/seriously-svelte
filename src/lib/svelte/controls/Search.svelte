@@ -16,9 +16,8 @@
 </script>
 
 <div class='search' style='left: {left}px; position: absolute;'>
-	<Segmented
+	<Segmented name='filter'
 		width={80}
-		name='filter'
 		selected={[$w_t_filter]}
 		height={ k.height.button}
 		origin={new Point(22, 1)}

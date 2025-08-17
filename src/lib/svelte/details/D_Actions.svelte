@@ -185,10 +185,9 @@
 					</Button>
 				</div>
 			{:else}
-				<Buttons_Table
+				<Buttons_Table name='first'
 					top={1}
 					gap={2}
-					name='first'
 					width={table_width}
 					has_title={has_title}
 					title_gap={title_gap}
@@ -198,17 +197,16 @@
 					closure={handle_actionRequest}
 					button_height={k.height.button}
 					button_titles={button_titles[0]}/>
-				<Separator
+				<Separator name='after-first-section'
 					isHorizontal={false}
 					has_thin_divider={true}
 					length={top_tableHeight}
 					margin={k.details_margin}
 					origin={new Point(left_afterTitle, -3)}
 					thickness={k.thickness.separator.details}/>
-				<Buttons_Table
+				<Buttons_Table name='second'
 					gap={2}
 					top={17}
-					name='second'
 					row_offset={4}
 					width={table_width}
 					has_title={has_title}
@@ -219,14 +217,14 @@
 					closure={handle_actionRequest}
 					button_height={k.height.button}
 					button_titles={button_titles[1]}/>
-				<Separator
+				<Separator name='after-second-section'
 					isHorizontal={false}
 					has_thin_divider={true}
 					margin={k.details_margin}
 					length={bottom_tableHeight}
 					thickness={k.thickness.separator.details}
 					origin={new Point(left_afterTitle, top_tableHeight - 10)}/>
-				<Separator
+				<Separator name='bottom-of-actions'
 					isHorizontal={true}
 					has_thin_divider={true}
 					length={k.width.details - 1}

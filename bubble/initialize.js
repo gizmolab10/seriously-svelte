@@ -3,6 +3,8 @@ function(instance, properties, context) {
 	instance.canvas.style.width = window.innerWidth + 'px';
 	instance.canvas.style.height = window.innerHeight + 'px';
 	const iframe = document.createElement('iframe');
+	const debug = false;
+	function log(message, ...optionalParams) { if (debug) { console.log(message, ...optionalParams); } }
 	iframe.src = 'https://webseriously.netlify.app/?db=bubble&disable=details';
 	iframe.style.overflow = 'hidden';
 	iframe.style.border = 'none';
@@ -11,15 +13,15 @@ function(instance, properties, context) {
 	instance.data.iframe = iframe;
 
 	window.addEventListener('message', function (event) {
-		if (event.data) {
+		if (event.data && !event.data.hello) {
 			switch (event.data.type) {
 				case 'focus':
 					instance.publishState('focus', event.data.glob);
-					instance.trigger('focus');
+					instance.triggerEvent('focus');
 					break;
 				case 'select':
 					instance.publishState('selected', event.data.globs);
-					instance.trigger('select');
+					instance.triggerEvent('select');
 					break;
 				case 'listening':
 					instance.data.iframeIsListening = true;		// once set, only these messages will pend, the rest are sent in update
@@ -35,7 +37,7 @@ function(instance, properties, context) {
 					}
 					break;
 				default:
-					console.log('[PLUGIN] Received message:', event.data);
+					log('[PLUGIN] Received message:', event.data);
 					break;
 			}
 		}

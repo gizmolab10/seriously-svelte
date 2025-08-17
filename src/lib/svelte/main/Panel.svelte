@@ -71,8 +71,7 @@
 					<Graph/>
 				{/if}
 			</div>
-			<Separator
-				name='panel-left'
+			<Separator name='panel-left'
 				isHorizontal={false}
 				has_both_wings={true}
 				margin={k.details_margin}
@@ -81,8 +80,7 @@
 				corner_radius={k.radius.gull_wings.thick}
 				length={$w_graph_rect.size.height + k.thickness.extra}
 				origin={new Point(2, layout.controls_boxHeight - 0.5)}/>
-			<Separator
-				name='panel-right'
+			<Separator name='panel-right'
 				isHorizontal={false}
 				has_both_wings={true}
 				margin={k.details_margin}
@@ -92,8 +90,7 @@
 				length={$w_graph_rect.size.height + k.thickness.extra}
 				origin={new Point(layout.windowSize.width + 1 - half_thickness, layout.controls_boxHeight - 0.5)}/>
 		{/if}
-		<Separator
-			name='panel-bottom'
+		<Separator name='panel-bottom'
 			isHorizontal={true}
 			has_both_wings={true}
 			margin={k.details_margin}

@@ -136,7 +136,7 @@
 				font_size={k.font_size.info}/>
 		{/if}
 	</div>
-	<Separator
+	<Separator name='toggle-properties'
 		has_gull_wings={true}
 		has_both_wings={true}
 		has_thin_divider={false}

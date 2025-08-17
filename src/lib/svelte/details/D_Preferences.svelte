@@ -70,7 +70,7 @@
 		position:{position};
 		padding-bottom:{tops[6]}px;
 		font-size:{k.font_size.info}px;'>
-	<Separator
+	<Separator name='force-graph'
 		length={width}
 		isHorizontal={true}
 		position={position}
@@ -80,9 +80,8 @@
 		origin={Point.y(tops[0])}
 		title_left={k.separator_title_left}
 		thickness={k.thickness.separator.details}/>
-	<Segmented
+	<Segmented name='auto-adjust'
 		allow_none={true}
-		name='auto-adjust'
 		allow_multiple={false}
 		width={segmented_width}
 		height={segmented_height}
@@ -90,7 +89,7 @@
 		selected={[$w_auto_adjust_graph]}
 		handle_selection={handle_auto_adjust}
 		titles={[T_Auto_Adjust.selection, T_Auto_Adjust.fit]}/>
-	<Separator
+	<Separator name='tiny-dots'
 		length={width}
 		isHorizontal={true}
 		position={position}
@@ -100,8 +99,7 @@
 		title='show tiny dots for'
 		title_left={k.separator_title_left}
 		thickness={k.thickness.separator.details}/>
-	<Segmented
-		name='counts'
+	<Segmented name='counts'
 		allow_none={true}
 		allow_multiple={true}
 		width={segmented_width}
@@ -110,7 +108,7 @@
 		selected={$w_show_countDots_ofType}
 		handle_selection={handle_count_dots}
 		titles={[T_Kinship[T_Kinship.children], T_Kinship[T_Kinship.parents], T_Kinship[T_Kinship.related]]}/>
-	<Separator
+	<Separator name='background-color'
 		length={width}
 		position={position}
 		isHorizontal={true}
@@ -121,8 +119,7 @@
 		origin={Point.y(tops[4])}
 		title_left={k.separator_title_left}
 		thickness={k.thickness.separator.details}/>
-	<div 
-		class= 'background-color-dot'
+	<div class= 'background-color-dot'
 		bind:this={color_wrapper}
 		style='
 			width: 17px;

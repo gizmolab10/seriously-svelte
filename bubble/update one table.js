@@ -1,13 +1,13 @@
 function(instance, properties) {
 	const list_fields = ['object_parents_field', 'object_related_field', 'owners_field'];
-	const bad_ends = ['_boolean', '_custom', '_text', '_list'];
 	const item_references = ['child', 'parent', 'owner', 'related'];
+	const has_two_tables = properties.hasOwnProperty('edge_type');
+	const bad_ends = ['_boolean', '_custom', '_text', '_list'];
 	const user_supplied_names = {};
 	const ignore_fields = ['Slug'];
 	const debug = false;
-
-	const has_two_tables = properties.hasOwnProperty('edge_type');
-	console.log('has_two_tables', has_two_tables);
+	function log(message, ...optionalParams) { if (debug) { console.log(message, ...optionalParams); } }
+	log('has_two_tables', has_two_tables);
 
 	const plugin_field_names = [
 		'starting_object',
@@ -42,7 +42,6 @@ function(instance, properties) {
 
 	const list_names = user_configured_list_names(list_fields);
 	function has_seriously_name(name) { return Object.keys(user_supplied_names).includes(name); }
-	function log(message, ...optionalParams) { if (debug) { console.log(message, ...optionalParams); } }
 
 	function short_field_name(field_name, remove_these) {
 		let rename = field_name;
@@ -175,7 +174,7 @@ function(instance, properties) {
 		if (error.constructor.name != 'NotReadyError') {
 			console.warn('[PLUGIN] threw an error:', error);
 		} else if (Object.keys(instance.data.attempts).length > 0) {
-			console.log('[PLUGIN] data not ready:', instance.data.attempts);
+			log('[PLUGIN] data not ready:', instance.data.attempts);
 		}
 	}
 }

@@ -66,7 +66,7 @@
 		</Banner_Hideable>
 	</div>
 {/key}
-<Separator
+<Separator name='bottom-of-details'
 	isHorizontal={false}
 	has_both_wings={true}
 	margin={k.details_margin}

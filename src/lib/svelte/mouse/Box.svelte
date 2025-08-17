@@ -38,8 +38,7 @@
         flex: 1;
         display: flex;'>
         {#if showLeft}
-            <Separator
-                name='left-{name}'
+            <Separator name='left-{name}'
                 length={height + 1}
                 isHorizontal={false}
                 thickness={thickness}
@@ -59,8 +58,7 @@
             <slot />
         </div>
         {#if showRight}
-            <Separator
-                name='right-{name}'
+            <Separator name='right-{name}'
                 isHorizontal={false}
                 length={height + 1}
                 thickness={thickness}
@@ -69,8 +67,7 @@
         {/if}
     </div>
     {#if showTop}
-        <Separator 
-            name='top-{name}'
+        <Separator name='top-{name}'
             length={width + 2}
             origin={Point.zero}
             isHorizontal={true}
@@ -79,10 +76,9 @@
             corner_radius={corner_radius}/>
     {/if}
     {#if showBottom}
-        <Separator
+        <Separator name='bottom-{name}'
             length={width + 2}
             isHorizontal={true}
-            name='bottom-{name}'
             thickness={thickness}
 			has_gull_wings={false}
             corner_radius={corner_radius}

@@ -47,7 +47,7 @@
 		position: relative;
 		flex-direction: row;
 		align-items: stretch;'>
-	<Separator
+	<Separator name='top-of-banner'
 		origin={Point.zero}
 		isHorizontal={true}
 		has_thin_divider={true}
@@ -64,7 +64,7 @@
 			detect_autorepeat={title != main_title}
 			width={g_repeater.button_width_for(index)}/>
 		{#if index > 0}
-			<Separator
+			<Separator name='between-buttons'
 				length={height + 6}
 				isHorizontal={false}
 				has_thin_divider={true}
@@ -73,7 +73,7 @@
 				origin={new Point(g_repeater.button_left_for(index), 1)}/>
 		{/if}
 	{/each}
-	<Separator
+	<Separator name='bottom-of-banner'
 		isHorizontal={true}
 		origin={Point.y(height)}
 		corner_radius={k.radius.gull_wings.thin}

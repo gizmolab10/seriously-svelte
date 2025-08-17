@@ -88,7 +88,7 @@
 		width:{width - (margin * 2)}px;'>
 	{#if has_title}
 		{#if has_seperator}
-			<Separator
+			<Separator name='buttons-row'
 				length={width}
 				title={row_title}
 				isHorizontal={true}
@@ -97,8 +97,7 @@
 				title_font_size={font_sizes[0]}
 				title_left={k.separator_title_left}/>
 		{:else}
-			<div
-				class='box-title'
+			<div class='box-title'
 				style='
 					top: 1.5px;
 					text-align: right;
