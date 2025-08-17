@@ -13,57 +13,41 @@
 	const size_big = k.height.dot * 1.4;
 	const lefts = u.cumulativeSum(left_widths);
 	const rights = u.cumulativeSum(right_widths);
-	const input_width = width - rights[2];
 </script>
 
 <div class="search">
-	<div class='search-button'>
-		{#if $w_t_search == T_Search.enter}
-			<Segmented
-				width={80}
-				name='filter'
-				selected={[$w_t_filter]}
-				height={ k.height.button}
-				origin={new Point(lefts[0], 1)}
-				titles={[T_Filter.title, T_Filter.trait, T_Filter.tags]}
-				handle_selection={(titles) => layout.handle_mode_selection('filter', titles)}/>
-			<input class='search-input'
-				type='text'
-				placeholder={'enter ' + $w_t_filter + ' text'}
-				style='
-					top: 1px;
-					font-size: 12px;
-					left: {lefts[1]}px;
-					position: absolute;
-					width: {input_width}px;
-					background-color: white;
-					height: {k.height.button - 2}px;
-					border: 1px solid lightgray;'/>
-		{/if}
-		{#if $w_t_search == T_Search.clear}
-			<Button
-				width={size_big}
-				height={size_big}
-				name={T_Control.search}
-				center={new Point(width - rights[0], y_center)}
-				s_button={ux.s_control_forType(T_Control.search)}
-				closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.search)}>
-				s
-			</Button>
-		{:else}
-			<Close_Button
-				name='end-search'
-				align_left={true}
-				size={size_big + 1}
-				stroke_width={0.25}
-				origin={Point.x(width - rights[1])}
-				closure={() => $w_t_search = T_Search.clear}/>
-		{/if}
-	</div>
+	<Segmented
+		width={80}
+		name='filter'
+		selected={[$w_t_filter]}
+		height={ k.height.button}
+		origin={new Point(22, 1)}
+		titles={[T_Filter.title, T_Filter.trait, T_Filter.tags]}
+		handle_selection={(titles) => layout.handle_mode_selection('filter', titles)}/>
+	<input class='search-input'
+		type='text'
+		placeholder={'enter ' + $w_t_filter + ' text'}
+		style='
+			top: 1px;
+			left: 124px;
+			font-size: 12px;
+			width: {width}px;
+			border-radius: 4px;
+			position: absolute;
+			background-color: white;
+			border: 1px solid lightgray;
+			height: {k.height.button - 2}px;'/>
 </div>
 
 <style>
 	.search-input::placeholder {
-		color: gray;
+		color: lightblue;
+	}
+	.search-input:focus::placeholder {
+		color: transparent;
+	}
+	.search-input:focus {
+		outline: none;
+		border: 1px dashed blue !important;
 	}
 </style>
