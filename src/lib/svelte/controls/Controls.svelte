@@ -174,7 +174,7 @@
 						width={size_big}
 						height={size_big}
 						name={T_Control.search}
-						center={new Point(width - rights[0], y_center)}
+						center={Point.x(width - rights[0]).offsetByY(y_center)}
 						s_button={ux.s_control_forType(T_Control.search)}
 						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.search)}>
 						s
