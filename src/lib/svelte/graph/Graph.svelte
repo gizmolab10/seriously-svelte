@@ -107,11 +107,11 @@
 			style='
 				left:0px;
 				position:absolute;
-				top:{draggableRect.size.height - 30}px;'>
+				top:{draggableRect.size.height - 28}px;'>
 			<Button
 				width=75
 				height={size_big}
-				origin={Point.x(14)}
+				origin={Point.x(8)}
 				name={T_Control.builds}
 				s_button={ux.s_control_forType(T_Control.builds)}
 				closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.builds)}>
@@ -123,7 +123,7 @@
 				width={size_big}
 				height={size_big}
 				name={T_Control.help}
-				origin={Point.x(draggableRect.size.width - 35)}
+				origin={Point.x(draggableRect.size.width - 29)}
 				s_button={ux.s_control_forType(T_Control.help)}
 				closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.help)}>
 				<span

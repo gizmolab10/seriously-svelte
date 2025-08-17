@@ -28,8 +28,8 @@
 </script>
 
 <div class='tree-preferences' style='
-	left: -5px;
 	top: 0px;
+	left: 3px;
 	width: 177px;
 	height: 50px;
 	z-index: {zindex};
@@ -37,66 +37,57 @@
 	border-radius: 20px;
 	pointer-events: auto;
 	background-color: transparent;'>
-	{#if $w_show_graph_ofType == T_Graph.tree}
-		<div style='
-			left: 13px;
+	<div class='depth-value' style='
+		height: 36px;
+		display: flex;
+		font-size: 28px;
+		position: absolute;
+		align-items: center;
+		width: {left_width}px;
+		justify-content: center;'>
+		{$w_depth_limit}
+	</div>
+	<div class='depth-plural' style='
+		height: 20px;
+		display: flex;
+		font-size: 12px;
+		top: {tops[2]}px;
+		position: absolute;
+		align-items: center;
+		width: {left_width}px;
+		justify-content: center;'>
+		level{($w_depth_limit < 2) ? '' : 's'}
+	</div>
+	<div class='depth-and-type'
+		style='
+			left:27px;
+			color:black;
 			width: 100%;
-			height: 100%;
-			position: absolute;
-			background-color: transparent;'>
-			<div style='
-				height: 36px;
-				display: flex;
-				font-size: 28px;
-				position: absolute;
-				align-items: center;
-				width: {left_width}px;
-				justify-content: center;'>
-				{$w_depth_limit}
-			</div>
-			<div style='
-				height: 20px;
-				display: flex;
-				font-size: 12px;
-				top: {tops[2]}px;
-				position: absolute;
-				align-items: center;
-				width: {left_width}px;
-				justify-content: center;'>
-				level{($w_depth_limit < 2) ? '' : 's'}
-			</div>
-			<div class='tree-preferences'
-				style='
-					left:27px;
-					color:black;
-					width: 100%;
-					top:{top}px;
-					position:relative;
-					font-size:{k.font_size.info}px;'>
-				<Slider
-					max={12}
-					width={width}
-					show_value={false}
-					isLogarithmic={true}
-					value={$w_depth_limit}
-					height={segmented_height}
-					thumb_color={colors.separator}
-					origin={new Point(10, tops[0])}
-					title_left={k.separator_title_left}
-					title_font_size={k.font_size.banners}
-					handle_value_change={handle_depth_limit}/>
-				{#key $w_show_tree_ofType}
-					<Segmented
-						width={width}
-						name='tree-types'
-						allow_multiple={true}
-						height={segmented_height}
-						selected={$w_show_tree_ofType}
-						origin={new Point(9, tops[1])}
-						titles={[T_Kinship.children, T_Kinship.related]}
-						handle_selection={(titles) => layout.handle_mode_selection('tree', titles)}/>
-				{/key}
-			</div>
-		</div>
-	{/if}
+			top:{top}px;
+			position:relative;
+			font-size:{k.font_size.info}px;'>
+		<Slider class='depth-slider'
+			max={12}
+			width={width}
+			show_value={false}
+			isLogarithmic={true}
+			value={$w_depth_limit}
+			height={segmented_height}
+			thumb_color={colors.separator}
+			origin={new Point(10, tops[0])}
+			title_left={k.separator_title_left}
+			title_font_size={k.font_size.banners}
+			handle_value_change={handle_depth_limit}/>
+		{#key $w_show_tree_ofType}
+			<Segmented class='tree-types'
+				width={width}
+				name='tree-types'
+				allow_multiple={true}
+				height={segmented_height}
+				selected={$w_show_tree_ofType}
+				origin={new Point(9, tops[1])}
+				titles={[T_Kinship.children, T_Kinship.related]}
+				handle_selection={(titles) => layout.handle_mode_selection('tree', titles)}/>
+		{/key}
+	</div>
 </div>

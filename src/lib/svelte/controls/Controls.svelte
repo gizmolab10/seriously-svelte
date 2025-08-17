@@ -17,23 +17,14 @@
 	const size_big = k.height.button + 4;
 	const y_center = 10.5;
 	const scaling_stroke_width = 1.5;
-	const right_widths = [8, 12.5];
+	const right_widths = [9, 11.5];
 	const hamburger_size = k.height.button;
-	const rights = u.cumulativeSum(right_widths);
 	const hamburger_path = svgPaths.hamburgerPath(hamburger_size);
 	const svg_style = 'top: -0.5px; left: -0.5px; position: absolute; width: 100%; height: 100%;';
-	const left_widths = {
-		0: c.has_details_button ? 18 : -11,
-		1: 17,	// recents / search
-		2: 57,	// graph type
-		3: 100,	// grow
-		4: 26,	// shrink
-		5: 20,	// easter egg
-		6: 2,	// separator
-		7: 34,	// breadcrumbs
-	};
-	const lefts = u.cumulativeSum(Object.values(left_widths));
 	let width = layout.windowSize.width - 20;
+	let rights: number[] = [];
+	let lefts: number[] = [];
+	layout_controls();
 
 	// two states
 	// 1. show OR hide the details button
@@ -46,6 +37,27 @@
 	$: {
 		const _ = $w_graph_rect + $w_count_resize;
 		width = layout.windowSize.width - 20;
+	}
+
+	$: {
+		const _ = $w_t_search;
+		layout_controls();
+	}
+
+	function layout_controls() {
+		const right_widths = [9, 11.5];
+		const left_widths = {
+			0: c.has_details_button ? 18 : -11,			// details
+			1: $w_t_search == T_Search.clear ? 17 : c.has_details_button ? 11 : 14,	// recents / search
+			2: 57,	// graph type
+			3: 100,	// grow
+			4: 26,	// shrink
+			5: 20,	// easter egg
+			6: 2,	// separator
+			7: 34,	// breadcrumbs
+		};
+		rights = u.cumulativeSum(right_widths);
+		lefts = u.cumulativeSum(Object.values(left_widths));
 	}
 	
 </script>
@@ -88,17 +100,17 @@
 						</svg>
 					</Button>
 				{/if}
-				{#if $w_t_search != T_Search.clear}
+				{#if $w_t_search != T_Search.clear && c.allow_Search}
 					<Search
-						left={11}
+						left={lefts[1]}
 						y_center={y_center}
-						width={layout.windowSize.width - lefts[1] - 170}/>
+						width={layout.windowSize.width - lefts[1] - 178}/>
 					<Close_Button
 						name='end-search'
 						align_left={true}
 						size={size_big + 1}
 						stroke_width={0.25}
-						origin={Point.x(width - rights[1])}
+						origin={new Point(width - rights[1], -0.5)}
 						closure={() => $w_t_search = T_Search.clear}/>
 				{:else}
 					<Next_Previous name='recents'
@@ -170,15 +182,17 @@
 						left={lefts[6]}
 						centered={true}
 						width={layout.windowSize.width - lefts[7]}/>
-					<Button
-						width={size_big}
-						height={size_big}
-						name={T_Control.search}
-						center={new Point(width - rights[0], y_center)}
-						s_button={ux.s_control_forType(T_Control.search)}
-						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.search)}>
-						s
-					</Button>
+					{#if c.allow_Search}
+						<Button
+							width={size_big}
+							height={size_big}
+							name={T_Control.search}
+							center={new Point(width - rights[0], y_center)}
+							s_button={ux.s_control_forType(T_Control.search)}
+							closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.search)}>
+							s
+						</Button>
+					{/if}
 				{/if}
 			{/if}
 		</div>

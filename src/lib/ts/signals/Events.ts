@@ -178,10 +178,10 @@ export class Events {
 		} else if (s_mouse.isUp) {
 			switch (t_control) {
 				case T_Control.help:	c.showHelp(); break;
-				case T_Control.search:	w_t_search.set(T_Search.enter); break;
 				case T_Control.details: w_show_details.set(!get(w_show_details)); break;
 				case T_Control.grow:	this.width = layout.scaleBy(k.ratio.zoom_in) - 20; break;
 				case T_Control.shrink:	this.width = layout.scaleBy(k.ratio.zoom_out) - 20; break;
+				case T_Control.search:	if (c.allow_Search) { w_t_search.set(T_Search.enter); } break;
 				default:				this.togglePopupID(t_control); break;
 			}
 		}
@@ -221,12 +221,13 @@ export class Events {
 			const time = new Date().getTime();
 			const key = event.key.toLowerCase();
 			const ancestry = grabs.latest_upward(true);
+			const is_searching = get(w_t_search) != T_Search.clear;
 			const modifiers = ['alt', 'meta', 'shift', 'control'];
 			let graph_needsRebuild = false;
 			w_control_key_down.set(event.ctrlKey);
 			if (!!h && !!ancestry && !modifiers.includes(key)) {		// ignore modifier-key-only events
 				if (c.allow_GraphEditing) {
-					if (!!ancestry && c.allow_TitleEditing && get(w_t_search) == T_Search.clear) {
+					if (!!ancestry && c.allow_TitleEditing && !is_searching) {
 						switch (key) {
 							case 'enter':	ancestry.startEdit(); break;
 							case 'd':		await h.thing_edit_persistentDuplicate(ancestry); break;

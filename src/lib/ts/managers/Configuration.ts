@@ -3,14 +3,15 @@ import { stores, w_device_isMobile } from './Stores';
 
 export class Configuration {
 
-	eraseDB = 0;
+	queryStrings = new URLSearchParams(window.location.search);
+	allow_HorizontalScrolling = true;
 	has_details_button = true;
-	has_matte_UI = true;
-	erasePreferences = 0;
 	allow_GraphEditing = true;
 	allow_TitleEditing = true;
-	allow_HorizontalScrolling = true;
-	queryStrings = new URLSearchParams(window.location.search);
+	erasePreferences = 0;
+	allow_Search = true;
+	has_matte_UI = true;
+	eraseDB = 0;
 
 	configure() {
 		
@@ -18,6 +19,8 @@ export class Configuration {
 		//												//
 		//												//
 		//	 this is the first code called by the app	//
+		//												//
+		//	  DO NOT CHANGE THE ORDER OF THESE CALLS	//
 		//												//
 		//												//
 		//////////////////////////////////////////////////

@@ -29,7 +29,7 @@ export default class Constants {
 	};
 
 	width = {
-		details:  220,
+		details:  219,
 		child_gap: 19,
 	};
 

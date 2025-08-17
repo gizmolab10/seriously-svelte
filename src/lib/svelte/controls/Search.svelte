@@ -15,7 +15,7 @@
 	const rights = u.cumulativeSum(right_widths);
 </script>
 
-<div class="search">
+<div class='search' style='left: {left}px; position: absolute;'>
 	<Segmented
 		width={80}
 		name='filter'

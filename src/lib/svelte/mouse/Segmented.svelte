@@ -93,13 +93,12 @@
 			height: {height}px;
 			top: {origin.y}px;'>
 		{#each titles as title}
-			<button
+			<button class='segment'
 				color={selected.includes(title) ? 'black' : 'white'}
 				class:selected={selected.includes(title)}
 				style='font-size:{font_size}px;'
 				on:click={() => select(title)}
 				id={button_name(title)}
-				class='segment'
 				type='button'>
 				{title}
 			</button>
