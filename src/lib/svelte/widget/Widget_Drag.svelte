@@ -28,7 +28,7 @@
 	let mouse_click_timer;
 	let left = 0;
 	let top = 0;
-	let dotDrag;
+	let element;
 
 	update_svgPaths();
 	update_colors();
@@ -44,9 +44,7 @@
 		return () => s_component.disconnect();
 	});
 	
-	$: if (!!dotDrag) {
-		s_component.element = dotDrag;
-	}
+	$: if (!!element) { s_component.element = element; }
 
 	function handle_context_menu(event) { event.preventDefault(); }		// no default context menu on right-click
 	function handle_s_mouse(s_mouse: S_Mouse): boolean { return false; }
@@ -123,7 +121,7 @@
 		detect_longClick={true}
 		handle_s_mouse={handle_up_long_hover}>
 		<button class={name}
-			bind:this={dotDrag}
+			bind:this={element}
 			id={name}
 			style='
 				border:none;

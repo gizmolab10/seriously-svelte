@@ -21,7 +21,7 @@
 	let svg_dasharray = k.empty;
 	let color = s_widget.color;
 	let width_ofTitle = 0;
-	let focus;
+	let element;
 
 	//////////////////////////////////
 	//								//
@@ -39,9 +39,7 @@
 		return () => s_component.disconnect();
 	});
 
-	$: if (!!focus) {
-		s_component.element = focus;
-	}
+	$: if (!!element) { s_component.element = element; }
 
 	function debug_closure(s_mouse) { debug.log_radial(` ${s_mouse.descriptionFor('FOCUS')}`); }
 	function handle_s_mouse(s_mouse: S_Mouse): boolean { return false; }
@@ -86,7 +84,7 @@
 </script>
 
 <div class='radial-focus'
-	bind:this = {focus}
+	bind:this = {element}
 	style='
 		position : absolute;
 		height : {height}px;

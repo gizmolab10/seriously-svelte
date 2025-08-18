@@ -9,8 +9,8 @@
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Radial_ArcSlider from './Radial_ArcSlider.svelte';
 	import { onMount } from 'svelte';
-	const ring_width = k.thickness.rotation_ring;
 	const name = 'rings';
+	const ring_width = k.thickness.rotation_ring;
 	const mouse_timer = e.mouse_timer_forName(name);	// persist across destroy/recreate
 	let color = $w_ancestry_focus?.thing?.color ?? colors.default_forThings;
 	let mouse_up_count = $w_count_mouse_up;
@@ -18,7 +18,7 @@
 	let s_component: S_Component;
 	let reattachments = 0;
 	let last_action = 0;
-	let rings;
+	let element;
 
 	$: middle_radius   = $w_ring_rotation_radius + k.thickness.rotation_ring;
 	$: outer_radius	   = middle_radius + ring_width;
@@ -39,9 +39,7 @@
 		return () => s_component.disconnect();
 	});
 
-	$: if (!!rings) {
-		s_component.element = rings;
-	}
+	$: if (!!element) { s_component.element = element; }
 		
 	$: {
 		const thing = $w_ancestry_focus?.thing;	
@@ -203,7 +201,7 @@
 {#key reattachments}
 	{#if !debug.hide_rings}
 		<div class = 'rings'
-			bind:this={rings}
+			bind:this={element}
 			on:mousemove={detect_movement}
 			style = 'z-index:{T_Layer.radial}; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;'>
 			<Mouse_Responder name = 'rings'

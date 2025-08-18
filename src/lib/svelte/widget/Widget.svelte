@@ -27,6 +27,7 @@
 	let revealCenter = Point.zero;
 	let border = s_widget.border;
 	let s_component: S_Component;
+	let widget_style = k.empty;
 	let background = k.empty;
 	let widgetName = k.empty;
 	let revealName = k.empty;
@@ -34,14 +35,14 @@
 	let revealData = k.empty;
 	let isHovering = false;
 	let dragData = k.empty;
+	let trigger = k.empty;
 	let padding = k.empty;
 	let reattachments = 0;
 	let height = 0;
 	let left = 0;
 	let top = 0;
-    let widget;
+    let element;
 	let thing;
-
 	debug.log_draw(`WIDGET ${ancestry?.titles}`);
 	setup_fromAncestry();		// this fails if ancestry's thing id is invalid
 	final_layout();
@@ -53,18 +54,17 @@
 			case T_Signal.reattach:
 				final_layout();
 				reattachments += 1;
-				return null;	// ignored
+				break;
 			case T_Signal.reposition:
 				layout_maybe();
-				return null;	// ignored
-			default:
-				return null;	// ignored
+				break;
 			}
+			return null;
 		});
 		return () => s_component.disconnect();
 	});
 
-	$: if (!!widget) { s_component.element = widget; }
+	$: if (!!element) { s_component.element = element; }
 
 	$: {
 		const _ = `${$w_thing_color} ${$w_ancestry_focus.id}`;
@@ -72,29 +72,30 @@
 	}
 
 	$: {
-		const _ = $w_s_text_edit + $w_ancestries_grabbed.map(a => a.id).join(',');
-		if (!!ancestry && !!widget && s_widget.state_didChange) {
+		const reactives = `${$w_s_text_edit?.t_edit}:::${$w_ancestries_grabbed.map(a => a.title).join(',')}`;
+		if (reactives != trigger && !!ancestry && !!element && s_widget.state_didChange) {
 			g_widget.layout_widget();
+			trigger = reactives;
 			update_colors();
 			final_layout();
 		}
 	}
  
 	function isHit(): boolean {
-		return !!widget && !!ancestry;
+		return !!element && !!ancestry;
 	}
 
 	function handle_s_mouse(s_mouse: S_Mouse): boolean {
-		if (!widget || !ancestry) return false;
-		
-		if (s_mouse.isHover) {
-			isHovering = true;
-			update_colors();
-			return true;
-		} else if (s_mouse.isOut) {
-			isHovering = false;
-			update_colors();
-			return true;
+		if (!!element && !!ancestry) {	
+			if (s_mouse.isHover) {
+				isHovering = true;
+				update_colors();
+				return true;
+			} else if (s_mouse.isOut) {
+				isHovering = false;
+				update_colors();
+				return true;
+			}
 		}
 		return false;
 	}
@@ -105,8 +106,20 @@
 	}
 
 	function update_colors() {
-		background = s_widget.background;
 		border = s_widget.border;
+		background = s_widget.background;
+		widget_style = `
+			${background};
+			top : ${top}px;
+			left : ${left}px;
+			border : ${border};
+			height : ${height}px;
+			position : absolute;
+			width : ${width_ofWidget}px;
+			z-index : ${T_Layer.widgets};
+			border-radius : ${border_radius}px;
+		`;
+		console.log(`* widget --> ${ancestry?.title} ${widget_style}`);
 	}
 
 	async function handle_click_event(event) {
@@ -151,24 +164,14 @@
 	{#if s_widget}
 		<div class = 'widget'
 			id = '{widgetName}'
-			bind:this = {widget}
+			bind:this = {element}
 			on:keyup = {u.ignore}
 			on:keydown = {u.ignore}
 			on:click = {handle_click_event}
 			on:mouseleave={() => handle_mouse_exit(true)}
 			on:mouseenter={() => handle_mouse_exit(false)}
-			on:mousemove = {(e) => handle_s_mouse(S_Mouse.hover(e, widget, true))}
-			style = '
-				{background};
-				top : {top}px;
-				left : {left}px;
-				border : {border};
-				height : {height}px;
-				position :  absolute;
-				width : {width_ofWidget}px;
-				z-index : {T_Layer.widgets};
-				border-radius : {border_radius}px;
-			'>
+			on:mousemove = {(e) => handle_s_mouse(S_Mouse.hover(e, element, true))}
+			style = {widget_style}>
 			<Widget_Drag
 				s_drag = {s_drag}
 				pointsNormal = {pointsNormal}/>

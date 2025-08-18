@@ -26,10 +26,15 @@ export default class S_Widget extends S_Element {
 	get stroke(): string { return this.color; }
 	get fill(): string { return this.background_color; }
 	get thing_color(): string { return this.ancestry.thing?.color ?? k.empty; }
-	get background(): string { return `background-color: ${this.background_color}`; }
 	get isFilled(): boolean { return this.ancestry.isGrabbed && !this.ancestry.isEditing; }
 	get shows_border(): boolean { return this.ancestry.isFocus || this.ancestry.isEditing || !this.isOut; }
 	get background_color(): string { return this.isFilled ? this.thing_color : this.shows_border ? get(w_background_color) : 'transparent'; }
+
+	get background(): string {
+		const b = `background-color: ${this.background_color}`;
+		console.log(`. ${this.type} ${b} --> ${this.ancestry.title}`);
+		return b;
+	}
 
 	constructor(ancestry: Ancestry) {
 		super(ancestry, T_Element.widget, k.empty);

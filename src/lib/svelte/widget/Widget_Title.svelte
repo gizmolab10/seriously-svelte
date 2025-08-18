@@ -25,6 +25,7 @@
 	let s_component: S_Component;
 	let color = s_widget.color;
 	let reattachments = 0;
+	let trigger = k.empty;
 	let ghost = null;
 	let input = null;
 	let left = 0;
@@ -58,13 +59,16 @@
 	export const _____REACTIVES: unique symbol = Symbol('_____REACTIVES');
 
 	$: {
-		const _ = `${$w_ancestries_grabbed.join(',')}${$w_ancestries_expanded.join(',')}${$w_thing_color}`;
-		const isFocus = ancestry?.isFocus ?? false;
-		const adjust = ux.inRadialMode && isFocus;
-		const isGrabbed = ancestry?.isGrabbed ?? false;
-		top = (isGrabbed ? 0.4 : 0) - (adjust ? isGrabbed ? 2.5 : 2 : 0);
-		left = adjust ? (title_width / 20 - 3) : 0.8;
-		color = s_widget.color;
+		const reactives = `${$w_thing_color}:::${$w_ancestries_grabbed.map(a => a.title).join(',')}:::${$w_ancestries_expanded.map(a => a.title).join(',')}`;
+		if (reactives != trigger) {
+			const isFocus = ancestry?.isFocus ?? false;
+			const adjust = ux.inRadialMode && isFocus;
+			const isGrabbed = ancestry?.isGrabbed ?? false;
+			top = (isGrabbed ? 0.4 : 0) - (adjust ? isGrabbed ? 2.5 : 2 : 0);
+			left = adjust ? (title_width / 20 - 3) : 0.8;
+			color = s_widget.color;
+			trigger = reactives;
+		}
 	}
 
 	$: {

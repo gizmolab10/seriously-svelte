@@ -12,7 +12,7 @@
 	let s_component: S_Component;
 	let svg_dasharray = k.empty;
 	let reattachments = 0;
-	let line;
+	let element;
 
 	//////////////////////////////
 	//	draw a curved line		//
@@ -30,9 +30,7 @@
 		return () => s_component.disconnect();
 	});
 
-	$: if (!!line) {
-		s_component.element = line;
-	}
+	$: if (!!element) { s_component.element = element; }
 
 	if (g_line.isBidirectional) {
 		stroke_color = colors.opacitize(ancestry.thing.color, 0.7);
@@ -50,7 +48,7 @@
 {#key reattachments}
 	{#if !!ancestry}
 		<svg
-			bind:this = {line}
+			bind:this = {element}
 			id = {g_line.name}
 			class = 'tree-line-svg'
 			viewBox = {g_line.viewBox.verbose}

@@ -27,7 +27,7 @@
 	let color = ancestry.thing?.color;
 	let s_component: S_Component;
 	let offsetFor_innerDot = 0;
-	let dotReveal = null;
+	let element;
 	update_colors();
 	
 	function handle_context_menu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
@@ -36,15 +36,15 @@
 		update_svgPaths();
 		set_isHovering(false);
 		s_component = signals.handle_reposition_widgets(2, ancestry?.hid ?? -1 as Integer, T_Component.reveal, (received_ancestry) => {
-			if (!!dotReveal) {
+			if (!!element) {
 				center = g_widget.center_ofReveal;
 			}
 		});
 		return () => s_component.disconnect();
 	});
 
-	$: if (!!dotReveal) {
-		s_component.element = dotReveal;
+	$: if (!!element) {
+		s_component.element = element;
 		s_reveal.set_forHovering(color, 'pointer');
 	}
 	
@@ -104,10 +104,10 @@
 	<Mouse_Responder
 		center={center}
 		zindex={zindex}
+		bind:this={element}
 		name={s_reveal.name}
 		width={k.height.dot}
 		height={k.height.dot}
-		bind:this={dotReveal}
 		handle_s_mouse={up_hover_closure}>
 		<div class='reveal-dot'
 			on:contextmenu={handle_context_menu}

@@ -9,7 +9,7 @@
 	import { onMount } from 'svelte';
 	let s_component: S_Component;
 	let reattachments = 0;
-	let radial;
+	let element;
 
 	//////////////////////////////////////////////
 	//											//
@@ -46,9 +46,7 @@
 		return () => s_component.disconnect();
 	});
 
-	$: if (!!radial) {
-		s_component.element = radial;
-	}
+	$: if (!!element) { s_component.element = element; }
 
 	$: {
 		const g_paging = $w_g_paging;
@@ -60,7 +58,7 @@
 </script>
 
 <div class = 'radial-graph'
-	bind:this={radial}
+	bind:this={element}
 	style = '
 		position: absolute;
 		z-index : {T_Layer.graph};
