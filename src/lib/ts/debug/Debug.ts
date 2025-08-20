@@ -29,6 +29,7 @@ export enum T_Debug {
 	lines			= 'lines',			// alignment dots for lines and widgets
 	mouse			= 'mouse',
 	order			= 'order',
+	style			= 'style',
 	trace			= 'trace',
 	draw			= 'draw',
 	edit			= 'edit',			// state machine for editing
@@ -55,7 +56,7 @@ export class Debug {
 
 	log_alert(option: T_Debug, message: string) { alert(message); }
 	log_key(message: string) { this.log_maybe(T_Debug.key, message); }
-	log_draw(message: string) { this.log_maybe(T_Debug.draw, message); }
+	log_draw(message: string, ...args: any[]) { this.log_maybe(T_Debug.draw, message, ...args); }
 	log_edit(message: string) { this.log_maybe(T_Debug.edit, message); }
 	log_grab(message: string) { this.log_maybe(T_Debug.grab, message); }
 	log_move(message: string) { this.log_maybe(T_Debug.move, message); }
@@ -64,6 +65,7 @@ export class Debug {
 	log_hover(message: string) { this.log_maybe(T_Debug.hover, message); }
 	log_lines(message: string) { this.log_maybe(T_Debug.lines, message); }
 	log_mouse(message: string) { this.log_maybe(T_Debug.mouse, message); }
+	log_style(message: string, ...args: any[]) { this.log_maybe(T_Debug.style, message, ...args	); }
 	log_action(message: string) { this.log_maybe(T_Debug.action, message); }
 	log_bubble(message: string) { this.log_maybe(T_Debug.bubble, message); }
 	log_colors(message: string) { this.log_maybe(T_Debug.colors, message); }
@@ -80,9 +82,9 @@ export class Debug {
 	log_preferences(message: string) { this.log_maybe(T_Debug.preferences, message); }
 	log_bidirectionals(message: string) { this.log_maybe(T_Debug.bidirectionals, message); }
 	
-	log_maybe(option: T_Debug, message: string) {
+	log_maybe(option: T_Debug, message: string, ...args: any[]) {
 		if (this.hasOption(option)) {
-			let log = message;
+			let log = [message, ...args].join(' ');
 			if (this.trace) {
 				log = `\n${log}\n${this.captureStackTrace()}`;
 			}
@@ -122,6 +124,7 @@ export class Debug {
 					case 'mouse': this.flags.push(T_Debug.mouse); break;
 					case 'order': this.flags.push(T_Debug.order); break;
 					case 'trace': this.flags.push(T_Debug.trace); break;
+					case 'style': this.flags.push(T_Debug.style); break;
 					case 'draw': this.flags.push(T_Debug.draw); break;
 					case 'edit': this.flags.push(T_Debug.edit); break;
 					case 'grab': this.flags.push(T_Debug.grab); break;

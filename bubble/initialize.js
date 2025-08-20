@@ -12,16 +12,27 @@ function(instance, properties, context) {
 	iframe.style.width = '100%';
 	instance.data.iframe = iframe;
 
+	function send(key, value, isArray) {
+		try {
+			const parsed = isArray ? value.map(item => JSON.parse(item)) : JSON.parse(value);
+			instance.publishState(key, parsed);
+		} catch (e) {
+			console.error('Failed to parse JSON:', e);
+		}
+		instance.triggerEvent(key);
+	}
+
 	window.addEventListener('message', function (event) {
 		if (event.data && !event.data.hello) {
 			switch (event.data.type) {
 				case 'focus':
-					instance.publishState('focus', event.data.glob);
-					instance.triggerEvent('focus');
+					// send('focus', event.data.glob, false);	// FAILS! causes "missing element" in bubble
 					break;
 				case 'select':
-					instance.publishState('selected', event.data.globs);
-					instance.triggerEvent('select');
+					const array = event.data.globs;
+					if (array.length > 0) {
+						send('selected', array, true);
+					}
 					break;
 				case 'listening':
 					instance.data.iframeIsListening = true;		// once set, only these messages will pend, the rest are sent in update

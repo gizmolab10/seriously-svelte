@@ -20,11 +20,13 @@ export default class DB_Bubble extends DB_Common {
 		setTimeout(() => {
 			w_ancestry_focus.subscribe((ancestry: Ancestry) => {
 				if (!!ancestry?.thing) {
+					window.parent.postMessage({ type: 'focus_id', id: ancestry.thing.id }, '*');
 					window.parent.postMessage({ type: 'focus', glob: ancestry.thing.glob }, '*');
 				}
 			});
 			w_ancestries_grabbed.subscribe((ancestries: Ancestry[]) => {
 				if (!!ancestries) {
+					window.parent.postMessage({ type: 'selected_ids', ids: ancestries.map((ancestry: Ancestry) => ancestry.id) }, '*');
 					window.parent.postMessage({ type: 'select', globs: ancestries.map((ancestry: Ancestry) => ancestry.thing?.glob) }, '*');
 				}
 			});

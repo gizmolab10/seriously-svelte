@@ -6,9 +6,9 @@
 	import Widget from '../widget/Widget.svelte';
 	let reattachments = 0;
 
-	$: if ($w_depth_limit !== undefined) {
-		reattachments++;
-	}
+	// $: if ($w_depth_limit !== undefined) {
+	// 	reattachments++;
+	// }
 
 </script>
 

@@ -1,4 +1,4 @@
-import { k, colors, Ancestry, S_Element, T_Element, ux } from '../common/Global_Imports';
+import { k, debug, colors, Ancestry, S_Element, T_Element, ux } from '../common/Global_Imports';
 import { w_background_color } from '../managers/Stores';
 import { get } from 'svelte/store';
 
@@ -32,7 +32,7 @@ export default class S_Widget extends S_Element {
 
 	get background(): string {
 		const b = `background-color: ${this.background_color}`;
-		console.log(`. ${this.type} ${b} --> ${this.ancestry.title}`);
+		debug.log_style(`. ${this.type} ${b} --> ${this.ancestry.title}`);
 		return b;
 	}
 
