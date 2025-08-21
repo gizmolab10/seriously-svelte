@@ -32,7 +32,7 @@ function(instance, properties, context) {
 				case 'selected_ids':
 					instance.publishState('selected_ids', event.data.ids)
 					break;
-				case 'triggerEvent':
+				case 'trigger_an_event':
 					instance.triggerEvent(event.data.trigger);
 					break;
 				case 'focus_glob':	// testing only for now
