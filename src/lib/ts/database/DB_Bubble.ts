@@ -1,6 +1,6 @@
 import { T_Thing, T_Create, T_Predicate, T_Persistence } from '../common/Global_Imports';
-import { e, h, k, debug, Ancestry } from '../common/Global_Imports';
 import { w_ancestry_focus, w_ancestries_grabbed } from '../managers/Stores';
+import { e, h, k, debug, Ancestry } from '../common/Global_Imports';
 import { T_Database } from './DB_Common';
 import DB_Common from './DB_Common';
 
@@ -11,23 +11,24 @@ export default class DB_Bubble extends DB_Common {
 
 	async fetch_all() {
 		e.update_event_listener('message', this.handle_bubble_message);		// first prepare listener
-		window.parent.postMessage({ type: 'listening' }, '*');				// tell bubble that we're listening
+		window.parent.postMessage({ type: 'listening' }, k.wildcard);			// tell bubble that we're listening
 		this.setup_subscriptions();
 		return false;
 	}
 
 	setup_subscriptions() {
 		setTimeout(() => {
+			// send these message types to initialize.js in bubble
 			w_ancestry_focus.subscribe((ancestry: Ancestry) => {
-				if (!!ancestry?.thing) {
-					window.parent.postMessage({ type: 'focus_id', id: ancestry.thing.id }, '*');
-					window.parent.postMessage({ type: 'focus', glob: ancestry.thing.glob }, '*');
+				if (!!ancestry && !!ancestry.thing) {
+					window.parent.postMessage({ type: 'focus_id', id: ancestry.thing.id }, k.wildcard);
+					window.parent.postMessage({ type: 'focus', glob: ancestry.thing.glob }, k.wildcard);
 				}
 			});
 			w_ancestries_grabbed.subscribe((ancestries: Ancestry[]) => {
 				if (!!ancestries) {
-					window.parent.postMessage({ type: 'selected_ids', ids: ancestries.map((ancestry: Ancestry) => ancestry.id) }, '*');
-					window.parent.postMessage({ type: 'select', globs: ancestries.map((ancestry: Ancestry) => ancestry.thing?.glob) }, '*');
+					window.parent.postMessage({ type: 'select', ids: ancestries.map((ancestry: Ancestry) => ancestry.thing?.id ?? k.corrupted) }, k.wildcard);
+					window.parent.postMessage({ type: 'selected_globs', globs: ancestries.map((ancestry: Ancestry) => ancestry.thing?.glob ?? k.corrupted) }, k.wildcard);
 				}
 			});
 		}, 100);

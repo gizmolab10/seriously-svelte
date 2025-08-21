@@ -19,20 +19,25 @@ function(instance, properties, context) {
 		} catch (e) {
 			console.error('Failed to parse JSON:', e);
 		}
-		instance.triggerEvent(key);
 	}
 
 	window.addEventListener('message', function (event) {
 		if (event.data && !event.data.hello) {
 			switch (event.data.type) {
+				// these are sent from webseriously iframe
+				// see setup_subscriptions in DB_Bubble.ts
 				case 'focus':
 					// send('focus', event.data.glob, false);	// FAILS! causes "missing element" in bubble
 					break;
 				case 'select':
+					instance.publishState('selected_ids', event.data.ids)
+					break;
+				case 'selected_globs':
 					const array = event.data.globs;
 					if (array.length > 0) {
 						send('selected', array, true);
-					}
+					};
+					instance.triggerEvent('selected');
 					break;
 				case 'listening':
 					instance.data.iframeIsListening = true;		// once set, only these messages will pend, the rest are sent in update

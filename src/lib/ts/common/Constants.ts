@@ -16,9 +16,11 @@ export default class Constants {
 	prevent_selection_style = '-webkit-user-select: none; user-select: none; -moz-user-select: none';
 	name_bulkAdmin = 'Jonathan Sand';
 	cursor_default = 'default';
+	corrupted = 'corrupted';
 	unknown = 'unknown';
 	root_path = 'root';
 	newLine = '\n';
+	wildcard = '*';
 	comma = ',';
 	space = ' ';
 	empty = '';
