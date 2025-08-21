@@ -21,8 +21,8 @@ export default class DB_Bubble extends DB_Common {
 			// send these message types to initialize.js in bubble
 			w_ancestry_focus.subscribe((ancestry: Ancestry) => {
 				if (!!ancestry && !!ancestry.thing) {
-					window.parent.postMessage({ type: 'focus_id', id: ancestry.thing.id }, k.wildcard);
-					window.parent.postMessage({ type: 'focus', glob: ancestry.thing.glob }, k.wildcard);
+					window.parent.postMessage({ type: 'focus', id: ancestry.thing.id }, k.wildcard);
+					window.parent.postMessage({ type: 'focus_glob', glob: ancestry.thing.glob }, k.wildcard);
 				}
 			});
 			w_ancestries_grabbed.subscribe((ancestries: Ancestry[]) => {
