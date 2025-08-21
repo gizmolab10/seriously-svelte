@@ -27,20 +27,22 @@ function(instance, properties, context) {
 				// these are sent from webseriously iframe
 				// see setup_subscriptions in DB_Bubble.ts
 				case 'focus':
-					nstance.publishState('focus_id', event.data.id)
-					break;
-				case 'focus_glob':
-					send('focus', event.data.glob, false);	// FAILS! causes "missing element" in bubble
+					instance.publishState('focus_id', event.data.id)
 					break;
 				case 'select':
 					instance.publishState('selected_ids', event.data.ids)
 					break;
-				case 'selected_globs':
+				case 'triggerEvent':
+					instance.triggerEvent(event.data.event);
+					break;
+				case 'focus_glob':	// testing only for now
+					send('focus', event.data.glob, false);
+					break;
+				case 'selected_globs':	// testing only for now
 					const array = event.data.globs;
 					if (!!array && array.length > 0) {
 						send('selected', array, true);
 					};
-					instance.triggerEvent('selected');
 					break;
 				case 'listening':
 					instance.data.iframeIsListening = true;		// once set, only these messages will pend, the rest are sent in update

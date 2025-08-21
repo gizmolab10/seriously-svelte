@@ -21,14 +21,16 @@ export default class DB_Bubble extends DB_Common {
 			// send these message types to initialize.js in bubble
 			w_ancestry_focus.subscribe((ancestry: Ancestry) => {
 				if (!!ancestry && !!ancestry.thing) {
-					window.parent.postMessage({ type: 'focus', id: ancestry.thing.id }, k.wildcard);
+					window.parent.postMessage({ type: 'focus_id', id: ancestry.thing.id }, k.wildcard);
 					window.parent.postMessage({ type: 'focus_glob', glob: ancestry.thing.glob }, k.wildcard);
+					window.parent.postMessage({ type: 'triggerEvent', event: 'focus' }, k.wildcard);			// must be last
 				}
 			});
 			w_ancestries_grabbed.subscribe((ancestries: Ancestry[]) => {
 				if (!!ancestries) {
 					window.parent.postMessage({ type: 'select', ids: ancestries.map((ancestry: Ancestry) => ancestry.thing?.id ?? k.corrupted) }, k.wildcard);
 					window.parent.postMessage({ type: 'selected_globs', globs: ancestries.map((ancestry: Ancestry) => ancestry.thing?.glob ?? k.corrupted) }, k.wildcard);
+					window.parent.postMessage({ type: 'triggerEvent', event: 'select' }, k.wildcard);			// must be last
 				}
 			});
 		}, 100);
