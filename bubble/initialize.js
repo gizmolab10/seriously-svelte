@@ -12,7 +12,7 @@ function(instance, properties, context) {
 	iframe.style.width = '100%';
 	instance.data.iframe = iframe;
 
-	function send(key, value, isArray) {
+	function publishState(key, value, isArray) {
 		try {
 			const parsed = isArray ? value.map(item => JSON.parse(item)) : JSON.parse(value);
 			instance.publishState(key, parsed);
@@ -26,22 +26,22 @@ function(instance, properties, context) {
 			switch (event.data.type) {
 				// these are sent from webseriously iframe
 				// see setup_subscriptions in DB_Bubble.ts
-				case 'focus':
+				case 'focus_id':
 					instance.publishState('focus_id', event.data.id)
 					break;
-				case 'select':
+				case 'selected_ids':
 					instance.publishState('selected_ids', event.data.ids)
 					break;
 				case 'triggerEvent':
-					instance.triggerEvent(event.data.event);
+					instance.triggerEvent(event.data.trigger);
 					break;
 				case 'focus_glob':	// testing only for now
-					send('focus', event.data.glob, false);
+					publishState('focus', event.data.glob, false);
 					break;
 				case 'selected_globs':	// testing only for now
 					const array = event.data.globs;
 					if (!!array && array.length > 0) {
-						send('selected', array, true);
+						publishState('selected', array, true);
 					};
 					break;
 				case 'listening':
