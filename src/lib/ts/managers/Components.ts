@@ -35,10 +35,10 @@ export class Components {
 		const hid = s_component.hid;
 		if (!!hid) {
 			const array = this.components_byType_andHID;
-			const dict = array[s_component.type] ?? {};
+			const components_byHID = array[s_component.type] ?? {};
 			const type = s_component.type;
-			dict[hid] = s_component;
-			array[type] = dict;
+			components_byHID[hid] = s_component;
+			array[type] = components_byHID;
 		}
 	}
 
@@ -56,8 +56,8 @@ export class Components {
 	component_forHID_andType_createUnique(hid: Integer | null, type: T_Component): S_Component | null {
 		let s_component: S_Component | null = null;
 		if (!!hid) {
-			const dict = this.components_byHID_forType(type);
-			s_component = dict[hid];
+			const components_byHID = this.components_byHID_forType(type);
+			s_component = components_byHID[hid];
 			if (!s_component) {
 				s_component = new S_Component(null, null, hid, type);
 				if (!!s_component) {
@@ -101,10 +101,10 @@ export class Components {
 	
 	components_ofType_atMouseLocation(type: T_Component): Array<S_Component> {
 		const mouse_vector = get(w_mouse_location_scaled);
-		const dict = this.components_byHID_forType(type);
+		const components_byHID = this.components_byHID_forType(type);
 		let found: Array<S_Component> = [];
-		if (!!dict && !!mouse_vector) {
-			const components = Object.values(dict);
+		if (!!components_byHID && !!mouse_vector) {
+			const components = Object.values(components_byHID);
 			for (const component of components) {
 				if (component.containsPoint(mouse_vector)) {
 					found.push(component);
@@ -115,10 +115,10 @@ export class Components {
 	}
 
 	components_ofType_withinRect(type: T_Component, rect: Rect): Array<S_Component> {
-		const dict = this.components_byHID_forType(type);
+		const components_byHID = this.components_byHID_forType(type);
 		let found: Array<S_Component> = [];
-		if (!!dict) {
-			const components = Object.values(dict);
+		if (!!components_byHID) {
+			const components = Object.values(components_byHID);
 			for (const component of components) {
 				if (component.boundingRect.intersects(rect)) {
 					found.push(component);
