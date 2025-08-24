@@ -109,20 +109,20 @@ export default class G_Widget {
 		forGraphMode = T_Graph.radial,
 		points_toChild: boolean = true,
 		widget_pointsNormal: boolean = true) {
-			if (forGraphMode == get(w_show_graph_ofType)) {	// assure modes match
-				const height_ofSubtree = this.ancestry.height_ofVisibleSubtree();
-				const height_ofLines = height + height_ofSubtree / 2;
-				const rect_ofLines = new Rect(origin, new Size(k.width.child_gap, height_ofLines - 1));
-				const origin_ofWidget = this.origin_forAncestry_inRect(this.ancestry, rect_ofLines);
-				this.g_line.rect = rect_ofLines.expand_widthBy(5);
-				this.forGraphMode = forGraphMode;
-				this.points_toChild = points_toChild;
-				this.origin_ofWidget = origin_ofWidget;
-				this.size_ofSubtree.height = height_ofSubtree;
-				this.widget_pointsNormal = widget_pointsNormal;
-				this.g_line.set_curve_type_forHeight(height_ofLines);
-				this.layout_widget_andChildren();
-			}
+		if (forGraphMode == get(w_show_graph_ofType)) {	// assure modes match
+			const height_ofSubtree = this.ancestry.height_ofVisibleSubtree();
+			const height_ofLines = height + height_ofSubtree / 2;
+			const rect_ofLines = new Rect(origin, new Size(k.width.child_gap, height_ofLines - 1));
+			const origin_ofWidget = this.origin_forAncestry_inRect(this.ancestry, rect_ofLines);
+			this.g_line.rect = rect_ofLines.expand_widthBy(5);
+			this.forGraphMode = forGraphMode;
+			this.points_toChild = points_toChild;
+			this.origin_ofWidget = origin_ofWidget;
+			this.size_ofSubtree.height = height_ofSubtree;
+			this.widget_pointsNormal = widget_pointsNormal;
+			this.g_line.set_curve_type_forHeight(height_ofLines);
+			this.layout_widget_andChildren();
+		}
 	}
 
 	layout_widget() {
@@ -185,7 +185,7 @@ export default class G_Widget {
 		const ancestry = this.ancestry;
 		if (!!ancestry.thing && ux.inTreeMode) {
 			const offset = k.height.row;
-			const offset_ofBranch = new Point(offset, -(8.2 + offset / 25));
+			const offset_ofBranch = new Point(offset, -(7.8 + offset / 25));
 			this.origin_ofTrunk = this.g_line.rect.extent.offsetBy(offset_ofBranch);
 			this.g_line.update_svg_andName();
 		}

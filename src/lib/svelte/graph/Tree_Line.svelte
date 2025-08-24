@@ -7,7 +7,7 @@
 	export let g_line!: G_TreeLine;
 	const t_curve = g_line.t_curve;
 	const ancestry = g_line.branchAncestry;
-	const debugOffset = new Point(k.height.line - 2.4, 2.5);
+	const debugOffset = new Point(k.height.line - 3.4, 2.5);
 	let stroke_color = ancestry?.thing?.color;
 	let s_component: S_Component;
 	let svg_dasharray = k.empty;
