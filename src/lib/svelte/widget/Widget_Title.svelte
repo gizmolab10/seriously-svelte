@@ -53,10 +53,10 @@
 		return () => s_component.disconnect();
 	});
 
-	export const _____REACTIVES: unique symbol = Symbol('_____REACTIVES');
+	const _____REACTIVES: unique symbol = Symbol('REACTIVES');
 
 	$: {
-		const reactives = `${$w_thing_color}:::${$w_ancestries_grabbed.map(a => a.titles).join(',')}:::${$w_ancestries_expanded.map(a => a.titles).join(',')}`;
+		const reactives = `${$w_thing_color}:::${$w_ancestries_grabbed.map(a => a.titles).join('-')}:::${$w_ancestries_expanded.map(a => a.titles).join('-')}`;
 		if (reactives != trigger) {
 			const isFocus = ancestry?.isFocus ?? false;
 			const adjust = ux.inRadialMode && isFocus;
@@ -119,7 +119,7 @@
 		}
 	}
 
-	export const _____EDIT: unique symbol = Symbol('_____EDIT');
+	const _____EDIT: unique symbol = Symbol('EDIT');
 
 	function stopEdit() {
 		debug.log_edit(`STOP ${title_binded}`);
@@ -147,7 +147,7 @@
 		}
 	}
 
-	export const _____RANGE: unique symbol = Symbol('_____RANGE');
+	const _____RANGE: unique symbol = Symbol('RANGE');
 
 	function extractRange_fromInput_toThing() {
 		if (!!input && !!$w_s_text_edit) {
@@ -180,7 +180,7 @@
 		}
 	}
 
-	export const _____HANDLERS: unique symbol = Symbol('_____HANDLERS');
+	const _____HANDLERS: unique symbol = Symbol('HANDLERS');
 
 	function handle_forComponent(s_mouse: S_Mouse): boolean { return false; }
 	
@@ -250,7 +250,7 @@
 		}
 	}
 
-	export const _____TITLE: unique symbol = Symbol('_____TITLE');
+	const _____TITLE: unique symbol = Symbol('TITLE');
 
 	function updateInputWidth() {
 		if (!!input && !!ghost) { // ghost only exists to provide its width (in pixels)

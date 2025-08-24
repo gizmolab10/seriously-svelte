@@ -12,14 +12,21 @@ export class Signals {
 	signal_emitter = new Signal<Signal_Signature>();
 	signals_inFlight_byT_Signal: Dictionary<boolean> = {};
 
-	debug_isEnabledFor_t_signal = {
-		needsComponent : false,
-		alteration	   : false,
-		reposition	   : false,
-		reattach	   : false,
-		rebuild		   : false,
-		graph		   : false,
-		thing		   : false,
+	log_isEnabled_forSending(sending: boolean): boolean {
+		return this.log_isEnabled_forDirection[sending ? 'sending' : 'handling'];
+	}
+
+	log_isEnabledFor_t_signal = {
+		alteration : false,
+		reposition : true,
+		reattach   : true,
+		rebuild	   : false,
+		thing	   : false,
+	}
+
+	log_isEnabled_forDirection = {
+		handling : true,
+		sending  : false,
 	}
 
 	static readonly _____SENDING: unique symbol;

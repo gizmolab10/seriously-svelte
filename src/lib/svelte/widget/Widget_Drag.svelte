@@ -51,7 +51,7 @@
 	}
 
 	$: {
-		const _ = `${$w_thing_color}${$w_background_color}${$w_ancestries_grabbed.map(a => a.id).join(',')}`;
+		const _ = `${$w_thing_color}${$w_background_color}${$w_ancestries_grabbed.map(a => a.titles).join('-')}`;
 		update_colors();
 	}
 

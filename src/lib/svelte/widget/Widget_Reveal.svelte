@@ -42,7 +42,7 @@
 	});
 	
 	$: {
-		const _ = `${$w_ancestries_grabbed.map(a => a.id).join(',')}${$w_ancestries_expanded.map(a => a.id).join(',')}${$w_show_countDots_ofType}${$w_thing_title}${$w_background_color}${$w_thing_color}`;
+		const _ = `${$w_ancestries_grabbed.map(a => a.titles).join('-')}${$w_ancestries_expanded.map(a => a.titles).join('-')}${$w_show_countDots_ofType}${$w_thing_title}${$w_background_color}${$w_thing_color}`;
 		update_svgPaths();
 		update_colors();
 	}

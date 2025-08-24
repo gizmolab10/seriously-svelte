@@ -143,6 +143,7 @@ export enum T_Kinship {
 
 export enum T_Component {
 	breadcrumbs = 'breadcrumbs',
+	branches	= 'branches',
 	radial		= 'radial',
 	reveal		= 'reveal',
 	widget		= 'widget',
@@ -185,12 +186,10 @@ export enum T_Request {
 }
 
 export enum T_Signal {
-	needsComponent = 'needsComponent',
 	alteration	 = 'alteration',
 	reposition	 = 'reposition',	// only for widgets
 	reattach	 = 'reattach',
 	rebuild		 = 'rebuild',
-	graph		 = 'graph',
 	thing		 = 'thing',
 }
 

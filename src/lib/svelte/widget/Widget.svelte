@@ -44,7 +44,7 @@
 		switch (t_signal) {
 		case T_Signal.reattach:
 				s_component?.log_connection_state('Before reattachment');
-			final_layout();
+				final_layout();
 				u.onNextTick(() => {			// this is needed to ensure the element is connected
 					s_component?.log_connection_state('After reattachment');
 				});
@@ -69,7 +69,7 @@
 	}
 
 	$: {
-		const reactives = `${$w_s_text_edit?.t_edit}:::${$w_ancestries_grabbed.map(a => a.titles).join(',')}`;
+		const reactives = `${$w_s_text_edit?.t_edit}:::${$w_ancestries_grabbed.map(a => a.titles).join('-')}`;
 		if (reactives != trigger && !!ancestry && s_widget.state_didChange) {
 			g_widget.layout_widget();
 			trigger = reactives;
@@ -78,7 +78,7 @@
 		}
 	}
 
-	$: if (!!s_component && !!s_component.element && s_component.isDebug_enabled && false) {
+	$: if (!!s_component && !!s_component.element && s_component.isComponentLog_enabled && false) {
 		observer = new MutationObserver((mutations) => {
 			debug.log_style('MutationObserver callback fired', mutations.length, 'mutations for:', ancestry?.title);
 			mutations.forEach((mutation) => {
@@ -131,7 +131,7 @@
 			border-radius : ${border_radius}px;
 		`;
 		
-		if (s_component?.isDebug_enabled) {
+		if (s_component?.isComponentLog_enabled) {
 			debug.log_style('Setting widget_style for:', ancestry?.title, 'to:', widget_style);
 		}
 

@@ -26,7 +26,7 @@ export default class S_Component {
         const prefix = 'S_Component has no';
         this.ancestry = ancestry;
         this.type = type;
-        if (!ancestry && this.isDebug_enabled) {
+        if (!ancestry && this.isComponentLog_enabled) {
             debug.log_component(prefix, 'ancestry', suffix);
         }
     }
@@ -43,7 +43,7 @@ export default class S_Component {
         return rect?.multipliedBy(unscale_factor) ?? Rect.zero;
     }
 
-    static readonly _____SIGNALS: unique symbol = Symbol('SIGNALS');
+    static readonly _____SIGNALS: unique symbol;
 
     handle_event(event: MouseEvent, create_s_mouse: Create_S_Mouse): boolean {
         if (!!this.element && !!this.handle_s_mouse) {
@@ -54,9 +54,9 @@ export default class S_Component {
     }
 
 	log_signal(sending: boolean, value: any | null, t_signal: T_Signal, priority: number) {
-        if (signals.debug_isEnabledFor_t_signal[t_signal]) {
+        if (signals.log_isEnabledFor_t_signal[t_signal] && signals.log_isEnabled_forSending(sending) && this.isComponentLog_enabled) {
             const resolved = u.resolve_signal_value(value);
-            const first = sending ? '[s]]]]]>' : '[h]---->';
+            const first = sending ? '[s]---->' : '---->[h]';
 			const second = sending ? 'from' : 'in';
 			debug.log_signal(`${first} "${t_signal}" @ ${priority} ${second} ${this.description} with ${resolved}`);
 		}
@@ -86,12 +86,15 @@ export default class S_Component {
         }
     }
 
-    static readonly _____DEBUGGING: unique symbol = Symbol('DEBUGGING');
+    static readonly _____DEBUGGING: unique symbol;
 
-    get isDebug_enabled(): boolean { return components.debug_isEnabledFor_t_component[this.type]; }
+    get isComponentLog_enabled(): boolean {
+        const key = this.type as keyof typeof components.log_isEnabledFor_t_component;
+        return components.log_isEnabledFor_t_component[key] ?? false;
+    }
 
 	log_style(prefix: string) {
-        if (!this.isDebug_enabled) { return; }
+        if (!this.isComponentLog_enabled) { return; }
         const information = this.style_information(prefix);
         if (!!information) {
             debug.log_component(information);
@@ -99,7 +102,7 @@ export default class S_Component {
 	}
 
 	log_parent_connection(prefix: string) {
-        if (!this.isDebug_enabled) { return; }
+        if (!this.isComponentLog_enabled) { return; }
 		const element = this.element;
 		if (!!element) {
 			const array = [prefix, ' on ', this.ancestry?.titles];
@@ -109,7 +112,7 @@ export default class S_Component {
 	}
 
 	log_connection_state(prefix: string) {
-        if (!this.isDebug_enabled) { return; }
+        if (!this.isComponentLog_enabled) { return; }
 		const element = this.element;
 		if (!!element) {
 			const indented = k.newLine + k.tab;
