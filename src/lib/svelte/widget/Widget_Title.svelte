@@ -56,14 +56,15 @@
 	export const _____REACTIVES: unique symbol = Symbol('_____REACTIVES');
 
 	$: {
-		const reactives = `${$w_thing_color}:::${$w_ancestries_grabbed.map(a => a.title).join(',')}:::${$w_ancestries_expanded.map(a => a.title).join(',')}`;
+		const reactives = `${$w_thing_color}:::${$w_ancestries_grabbed.map(a => a.titles).join(',')}:::${$w_ancestries_expanded.map(a => a.titles).join(',')}`;
 		if (reactives != trigger) {
 			const isFocus = ancestry?.isFocus ?? false;
 			const adjust = ux.inRadialMode && isFocus;
+			const isEditing = ancestry?.isEditing ?? false;
 			const isGrabbed = ancestry?.isGrabbed ?? false;
 			top = (isGrabbed ? 0.4 : 0) - (adjust ? isGrabbed ? 2.5 : 2 : 0);
 			left = adjust ? (title_width / 20 - 3) : 0.8;
-			color = s_widget.color;
+			color = s_widget.colorFor_grabbed_andEditing(isGrabbed, isEditing);
 			trigger = reactives;
 			log_connection_state('triggered by reactives');
 		}
@@ -72,8 +73,10 @@
 	$: {
 		const _ = $w_s_text_edit;
 		if (!!input) {
+			const isEditing = ancestry?.isEditing ?? false;
+			const isGrabbed = ancestry?.isGrabbed ?? false;
 			title_width = (thing?.width_ofTitle ?? 0) + title_extra();
-			color = s_widget.color;
+			color = s_widget.colorFor_grabbed_andEditing(isGrabbed, isEditing);
 		}
 	}
 

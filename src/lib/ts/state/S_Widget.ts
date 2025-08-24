@@ -30,6 +30,7 @@ export default class S_Widget extends S_Element {
 	get isFilled(): boolean { return this.ancestry.isGrabbed && !this.ancestry.isEditing; }
 	get shows_border(): boolean { return this.ancestry.isFocus || this.ancestry.isEditing || !this.isOut; }
 	get background_color(): string { return this.isFilled ? this.thing_color : this.shows_border ? get(w_background_color) : 'transparent'; }
+	get color(): string { return this.colorFor_grabbed_andEditing(this.ancestry.isGrabbed, this.ancestry.isEditing); }
 
 	constructor(ancestry: Ancestry) {
 		super(ancestry, T_Element.widget, k.empty);
@@ -38,22 +39,21 @@ export default class S_Widget extends S_Element {
 		this.s_reveal = ux.s_element_for(ancestry, T_Element.reveal, k.empty);
 	}
 
-	get color(): string {
-		const isLight = colors.luminance_ofColor(this.thing_color) > 0.5;
-		return isLight
-			? ((!this.ancestry.isGrabbed && !this.ancestry.isEditing) ? this.thing_color : 'black')
-			: (this.ancestry.isGrabbed && !this.ancestry.isEditing) ? 'white' : this.thing_color;
-	}
-
 	get state_didChange(): boolean {
-		const didFocus = this.ancestry.isFocus;
-		const didGrab = this.ancestry.isGrabbed;
-		const didEdit = this.ancestry.isEditing;
-		const change = (this.isEditing != didEdit || this.isGrabbed != didGrab || this.isFocus != didFocus);
-		this.isGrabbed = didGrab;
-		this.isEditing = didEdit;
-		this.isFocus = didFocus;
+		const wantsFocus = this.ancestry.isFocus;
+		const wantsEdit = this.ancestry.isEditing;
+		const wantsGrab = this.ancestry.isGrabbed;
+		const change = (this.isEditing != wantsEdit || this.isGrabbed != wantsGrab || this.isFocus != wantsFocus);
+		this.isGrabbed = wantsGrab;
+		this.isEditing = wantsEdit;
+		this.isFocus = wantsFocus;
 		return change;
 	}
 
+	colorFor_grabbed_andEditing(isGrabbed: boolean, isEditing: boolean): string {
+		const isLight = colors.luminance_ofColor(this.thing_color) > 0.5;
+		return isLight
+			? ((!isGrabbed && !isEditing) ? this.thing_color : 'black')
+			: (isGrabbed && !isEditing) ? 'white' : this.thing_color;
+	}
 } 

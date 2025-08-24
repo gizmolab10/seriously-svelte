@@ -2,6 +2,7 @@ import { k, Rect, Point, debug, layout, signals, Ancestry, components } from '..
 import { Integer, Handle_S_Mouse, Create_S_Mouse } from '../common/Types';
 import { T_Signal, T_Component } from '../common/Global_Imports';
 import { SignalConnection_atPriority } from '../common/Types';
+import Identifiable from '../runtime/Identifiable';
 import { SignalConnection } from 'typed-signals';
 import { u } from '../common/Utilities';
 
@@ -34,7 +35,7 @@ export default class S_Component {
     get distance_toGraphCenter(): Point { return this.boundingRect.center; }
     containsPoint(point: Point) { return this.boundingRect.contains(point); }
     get element(): HTMLElement | null { return document.getElementById(this.id) }
-    get id(): string { return `${this.type}-${this.ancestry?.titles ?? 'UNIDENTIFIED'}`; }
+    get id(): string { return `${this.type}-${this.ancestry?.titles ?? Identifiable.newID()}`; }
 
     get boundingRect(): Rect {
         const rect = Rect.boundingRectFor(this.element);
@@ -113,7 +114,7 @@ export default class S_Component {
 		if (!!element) {
 			const indented = k.newLine + k.tab;
             const type = this.type.toUpperCase();
-			const array = [type, prefix, 'connection state',
+			const array = [type, prefix, 'connection state', `(at ${new Date().toLocaleString()})`,
 				indented + k.title.line,
 				indented + this.style_information('ancestry'),
 				indented + k.title.line,
@@ -123,9 +124,9 @@ export default class S_Component {
 				indented + 'previousSibling', element.previousSibling?.nodeName,
 				indented + 'nextSibling', element.nextSibling?.nodeName,
 			];
-			array.push(this.element_information('ELEMENT', element));
-			array.push(this.element_information('PARENT', element.parentElement));
-			array.push(this.element_information('GRAND-PARENT', element.parentElement?.parentElement));
+			// array.push(this.element_information('ELEMENT', element));
+			// array.push(this.element_information('PARENT', element.parentElement));
+			// array.push(this.element_information('GRAND-PARENT', element.parentElement?.parentElement));
 			debug.log_component(array.join(k.tab));
 		}
 	}

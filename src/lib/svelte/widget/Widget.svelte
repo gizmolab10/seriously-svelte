@@ -69,16 +69,16 @@
 	}
 
 	$: {
-		const reactives = `${$w_s_text_edit?.t_edit}:::${$w_ancestries_grabbed.map(a => a.title).join(',')}`;
+		const reactives = `${$w_s_text_edit?.t_edit}:::${$w_ancestries_grabbed.map(a => a.titles).join(',')}`;
 		if (reactives != trigger && !!ancestry && s_widget.state_didChange) {
 			g_widget.layout_widget();
 			trigger = reactives;
 			final_layout();
-			s_component.log_parent_connection('GRABBED STATE CHANGED');
+			s_component.log_connection_state('GRABBED STATE CHANGED');
 		}
 	}
 
-	$: if (!!s_component && !!s_component.element && s_component.isDebug_enabled) {
+	$: if (!!s_component && !!s_component.element && s_component.isDebug_enabled && false) {
 		observer = new MutationObserver((mutations) => {
 			debug.log_style('MutationObserver callback fired', mutations.length, 'mutations for:', ancestry?.title);
 			mutations.forEach((mutation) => {
@@ -135,11 +135,11 @@
 			debug.log_style('Setting widget_style for:', ancestry?.title, 'to:', widget_style);
 		}
 
-		s_component?.log_connection_state('After setting style');
+		// s_component?.log_connection_state('After setting style');
 		// setTimeout(() => { s_component?.log_connection_state('After 2 ticks'); }, 2);
 		// setTimeout(() => { s_component?.log_connection_state('After 4 ticks'); }, 4);
 		// setTimeout(() => { s_component?.log_connection_state('After 100 ticks'); }, 100);
-		requestAnimationFrame(() => { s_component?.log_connection_state('RAF'); });
+		// requestAnimationFrame(() => { s_component?.log_connection_state('RAF'); });
 	}
 
 	async function handle_click_event(event) {
