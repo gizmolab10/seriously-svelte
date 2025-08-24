@@ -17,7 +17,7 @@
 
 	debug.log_draw(`TREE_BRANCHES ${ancestry?.titles}`);
 
-	s_component = signals.handle_signals_atPriority([T_Signal.reattach], 0, ancestry, T_Component.branches, (t_signal, value): S_Component | null => {
+	s_component = signals.handle_anySignal_atPriority(2, ancestry, T_Component.branches, (t_signal, value): S_Component | null => {
 		reattachments++;
 	});
 

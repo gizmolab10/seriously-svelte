@@ -18,9 +18,9 @@ export class Signals {
 
 	log_isEnabledFor_t_signal = {
 		alteration : false,
-		reposition : true,
-		reattach   : true,
-		rebuild	   : false,
+		reposition : false,
+		reattach   : false,
+		rebuild	   : true,
 		thing	   : false,
 	}
 

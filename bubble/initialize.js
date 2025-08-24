@@ -35,15 +35,15 @@ function(instance, properties, context) {
 				case 'trigger_an_event':
 					instance.triggerEvent(event.data.trigger);
 					break;
-				case 'focus_glob':	// testing only for now
-					publishState('focus', event.data.glob, false);
-					break;
-				case 'selected_globs':	// testing only for now
-					const array = event.data.globs;
-					if (!!array && array.length > 0) {
-						publishState('selected', array, true);
-					};
-					break;
+				// case 'focus_glob':	// testing only for now
+				// 	publishState('focus', event.data.glob, false);
+				// 	break;
+				// case 'selected_globs':	// testing only for now
+				// 	const array = event.data.globs;
+				// 	if (!!array && array.length > 0) {
+				// 		publishState('selected', array, true);
+				// 	};
+				// 	break;
 				case 'listening':
 					instance.data.iframeIsListening = true;		// once set, only these messages will pend, the rest are sent in update
 					if (instance.data.pendingMessages) {		// Send any pending messages that were stored before iframe was ready

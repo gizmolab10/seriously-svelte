@@ -53,15 +53,6 @@ export default class S_Component {
         return false;
     }
 
-	log_signal(sending: boolean, value: any | null, t_signal: T_Signal, priority: number) {
-        if (signals.log_isEnabledFor_t_signal[t_signal] && signals.log_isEnabled_forSending(sending) && this.isComponentLog_enabled) {
-            const resolved = u.resolve_signal_value(value);
-            const first = sending ? '[s]---->' : '---->[h]';
-			const second = sending ? 'from' : 'in';
-			debug.log_signal(`${first} "${t_signal}" @ ${priority} ${second} ${this.description} with ${resolved}`);
-		}
-	}
-
     assure_hasConnection_atPriority(priority: number, connection: SignalConnection) {
         for (const handler of this.signal_handlers) {
             if (handler.priority == priority) {
@@ -86,7 +77,7 @@ export default class S_Component {
         }
     }
 
-    static readonly _____DEBUGGING: unique symbol;
+    static readonly _____DEBUG_LOGGING: unique symbol;
 
     get isComponentLog_enabled(): boolean {
         const key = this.type as keyof typeof components.log_isEnabledFor_t_component;
@@ -101,13 +92,12 @@ export default class S_Component {
         }
 	}
 
-	log_parent_connection(prefix: string) {
-        if (!this.isComponentLog_enabled) { return; }
-		const element = this.element;
-		if (!!element) {
-			const array = [prefix, ' on ', this.ancestry?.titles];
-			array.push(this.element_information('ELEMENT', element));
-			debug.log_component(array.join(k.newLine));
+	log_signal(sending: boolean, value: any | null, t_signal: T_Signal, priority: number) {
+        if (signals.log_isEnabledFor_t_signal[t_signal] && signals.log_isEnabled_forSending(sending) && this.isComponentLog_enabled) {
+            const resolved = u.resolve_signal_value(value);
+            const first = sending ? '[s]---->' : '---->[h]';
+			const second = sending ? 'from' : 'in';
+			debug.log_signal(`${first} "${t_signal}" @ ${priority} ${second} ${this.description} with ${resolved}`);
 		}
 	}
 
@@ -133,6 +123,8 @@ export default class S_Component {
 			debug.log_component(array.join(k.tab));
 		}
 	}
+
+    static readonly _____INTERNALS: unique symbol;
     
     private get element_style(): string {
         const element = this.element;

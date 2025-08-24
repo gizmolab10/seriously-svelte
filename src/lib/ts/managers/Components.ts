@@ -12,22 +12,31 @@ export class Components {
 
 	log_isEnabledFor_t_component = {
 		breadcrumbs : false,
+		branches	: true,
 		radial		: false,
 		reveal		: false,
 		widget		: true,
-		title		: true,
+		title		: false,
 		drag		: false,
 		line		: false,
 		none		: false,
-		tree		: false,
+		tree		: true,
 		app			: false,
 	}
 
 	// hit testing
+	// debug logging
 	// signal management
-	// element identification
+	// unique id assignment (of html elements) for DOM lookups
 
 	static readonly _____CREATE: unique symbol;
+
+	get dummy(): S_Component {
+		if (!this._dummy) {
+			this._dummy = new S_Component(null, T_Component.none);
+		}
+		return this._dummy;
+	}
 
 	component_forAncestry_andType_createUnique(ancestry: Ancestry | null, type: T_Component): S_Component | null {
 		const dict = this.components_byHID_forType(type);
@@ -43,24 +52,7 @@ export class Components {
 
 	static readonly _____REGISTER: unique symbol;
 
-	component_registerFor_t_component(t_component: T_Component, s_component: S_Component) {
-		if (!this.componentsBy_t_component[t_component]) {
-			this.componentsBy_t_component[t_component] = s_component;
-		}
-	}
-
-	component_registerFor_t_signals_andPriority(t_signals: Array<T_Signal>, priority: number, component: S_Component) {
-		for (const t_signal of t_signals) {
-			const type_andPriority = this.indexFor_t_signal_andPriority(t_signal, priority);
-			let components = this.componentsBy_t_signal_andPriority[type_andPriority] ?? [];
-			if (!components.includes(component)) {
-				components.push(component);
-				this.componentsBy_t_signal_andPriority[type_andPriority] = components;
-			}
-		}
-	}
-
-	component_register(s_component: S_Component) {
+	private component_register(s_component: S_Component) {
 		const type = s_component.type;
 		const hid = s_component.hid;
 		if (!!hid && !!type) {
@@ -73,19 +65,7 @@ export class Components {
 
 	static readonly _____LOOKUP: unique symbol;
 
-	get dummy(): S_Component {
-		if (!this._dummy) {
-			this._dummy = new S_Component(null, T_Component.none);
-		}
-		return this._dummy;
-	}
-
-	componentsFor_t_signal_andPriority(t_signal: T_Signal, priority: number): Array<S_Component> {
-		const type_andPriority = this.indexFor_t_signal_andPriority(t_signal, priority);
-		return this.componentsBy_t_signal_andPriority[type_andPriority] ?? [];
-	}
-
-	components_byHID_forType(type: string): { [hid: Integer]: S_Component } {
+	private components_byHID_forType(type: string): { [hid: Integer]: S_Component } {
 		let dict = this.components_byType_andHID[type];
 		if (!dict) {
 			dict = {};
@@ -93,21 +73,9 @@ export class Components {
 		}
 		return dict;
 	}
-
-	componentFor_t_signals_andPriority_createUnique(t_signals: Array<T_Signal>, priority: number): S_Component {
-		const componentsBy_t_signal = this.componentsFor_t_signal_byPriority[priority] ?? {};
-		let s_component: S_Component | null = null;
-		for (const t_signal of t_signals) {
-			if (!s_component && !componentsBy_t_signal[t_signal]) {
-				s_component = this.dummy;
-				componentsBy_t_signal[t_signal] = s_component;
-				break;
-			}
-		}
-		s_component!.assureHas_t_signals_atPriority(t_signals, priority);
-		return s_component!;
-	}
 	
+	static readonly _____HIT_TESTING: unique symbol;
+
 	components_ofType_atMouseLocation(type: T_Component): Array<S_Component> {
 		const mouse_vector = get(w_mouse_location_scaled);
 		const dict = this.components_byHID_forType(type);
@@ -139,11 +107,11 @@ export class Components {
 
 	static readonly _____INDICES: unique symbol;
 
-	indexFor_t_signal_andPriority(t_signal: T_Signal, priority: number): string {
+	private indexFor_t_signal_andPriority(t_signal: T_Signal, priority: number): string {
 		return `${t_signal}(${priority})`;
 	}
 
-	indexFor_componentType_andHID(component: S_Component | null): string | null {
+	private indexFor_componentType_andHID(component: S_Component | null): string | null {
 		return component ? `${component.type}(${component.hid})` : null;
 	}
 
