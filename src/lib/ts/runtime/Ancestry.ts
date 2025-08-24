@@ -758,7 +758,7 @@ export default class Ancestry extends Identifiable {
 	get abbreviated_title():		string { return this.thing?.abbreviated_title ?? '?'; }
 	get titleRect():		   Rect | null { return this.rect_ofComponent(this.titleComponent); }
 	get titles():		   	Array <string> { return this.ancestors?.map(a => `${!a ? 'null' : a.title}`) ?? []; }
-	get titleComponent(): S_Component | null { return components.component_forHID_andType_createUnique(this.hid, T_Component.title); }
+	get titleComponent(): S_Component | null { return components.component_forAncestry_andType_createUnique(this, T_Component.title); }
 
 	get center_ofTitle(): Point | null {
 		const component = this.titleComponent;

@@ -18,18 +18,15 @@
 	let ancestry: Ancestry;
 	let reattachments = 0;
 	let trigger = 0;
-	let element;
 	
-	onMount(() => {
-		s_component = signals.handle_signals_atPriority([T_Signal.rebuild, T_Signal.reattach], 1, ancestry?.hid ?? -1 as Integer, T_Component.breadcrumbs, (t_signal, value): S_Component | null => {
-			reattachments += 1;
-		});
-		return () => s_component.disconnect();
+	s_component = signals.handle_signals_atPriority([T_Signal.rebuild, T_Signal.reattach], 1, null, T_Component.breadcrumbs, (t_signal, value): S_Component | null => {
+		reattachments += 1;
 	});
+
+	onMount(() => { return () => s_component.disconnect(); });
 	
 	$: $w_s_text_edit, $w_thing_color, $w_ancestries_grabbed, reattachments += 1;
 	$: $w_background_color, separator_color = colors.separator;
-	$: if (!!element) { s_component.element = element; }
 
 	$: {
 		if ($w_t_startup == T_Startup.ready) {
@@ -64,7 +61,7 @@
 {#key trigger}
 	<div
 		class='breadcrumbs'
-		bind:this = {element}
+		id = {s_component.id}
 		style='
 			top:-5px;
 			left:7px;

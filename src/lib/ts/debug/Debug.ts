@@ -5,6 +5,7 @@ import { c } from '../managers/Configuration';
 export enum T_Debug {
 	bidirectionals	= 'bidirectionals',
 	preferences		= 'preferences',
+	components		= 'components',		// S_Component
 	hide_rings		= 'hide_rings',
 	fast_load		= 'fast_load',
 	segments		= 'segments',
@@ -52,35 +53,37 @@ export class Debug {
 	get reticle(): boolean { return this.hasOption(T_Debug.reticle); }
 	get actions(): boolean { return this.hasOption(T_Debug.actions); }
 	get fast_load(): boolean { return this.hasOption(T_Debug.fast_load); }
+	get components(): boolean { return this.hasOption(T_Debug.components); }
 	get hide_rings(): boolean { return this.hasOption(T_Debug.hide_rings); }
 
 	log_alert(option: T_Debug, message: string) { alert(message); }
-	log_key(message: string) { this.log_maybe(T_Debug.key, message); }
+	log_key(message: string, ...args: any[]) { this.log_maybe(T_Debug.key, message, ...args); }
 	log_draw(message: string, ...args: any[]) { this.log_maybe(T_Debug.draw, message, ...args); }
-	log_edit(message: string) { this.log_maybe(T_Debug.edit, message); }
-	log_grab(message: string) { this.log_maybe(T_Debug.grab, message); }
-	log_move(message: string) { this.log_maybe(T_Debug.move, message); }
-	log_build(message: string) { this.log_maybe(T_Debug.build, message); }
-	log_error(message: string) { this.log_maybe(T_Debug.error, message); }
-	log_hover(message: string) { this.log_maybe(T_Debug.hover, message); }
-	log_lines(message: string) { this.log_maybe(T_Debug.lines, message); }
-	log_mouse(message: string) { this.log_maybe(T_Debug.mouse, message); }
+	log_edit(message: string, ...args: any[]) { this.log_maybe(T_Debug.edit, message, ...args); }
+	log_grab(message: string, ...args: any[]) { this.log_maybe(T_Debug.grab, message, ...args); }
+	log_move(message: string, ...args: any[]) { this.log_maybe(T_Debug.move, message, ...args); }
+	log_build(message: string, ...args: any[]) { this.log_maybe(T_Debug.build, message, ...args); }
+	log_error(message: string, ...args: any[]) { this.log_maybe(T_Debug.error, message, ...args); }
+	log_hover(message: string, ...args: any[]) { this.log_maybe(T_Debug.hover, message, ...args); }
+	log_lines(message: string, ...args: any[]) { this.log_maybe(T_Debug.lines, message, ...args); }
+	log_mouse(message: string, ...args: any[]) { this.log_maybe(T_Debug.mouse, message, ...args); }
 	log_style(message: string, ...args: any[]) { this.log_maybe(T_Debug.style, message, ...args	); }
-	log_action(message: string) { this.log_maybe(T_Debug.action, message); }
-	log_bubble(message: string) { this.log_maybe(T_Debug.bubble, message); }
-	log_colors(message: string) { this.log_maybe(T_Debug.colors, message); }
-	log_crumbs(message: string) { this.log_maybe(T_Debug.crumbs, message); }
-	log_cursor(message: string) { this.log_maybe(T_Debug.cursor, message); }
-	log_expand(message: string) { this.log_maybe(T_Debug.expand, message); }
-	log_handle(message: string) { this.log_maybe(T_Debug.handle, message); }
-	log_layout(message: string) { this.log_maybe(T_Debug.layout, message); }
-	log_radial(message: string) { this.log_maybe(T_Debug.radial, message); }
-	log_remote(message: string) { this.log_maybe(T_Debug.remote, message); }
-	log_signal(message: string) { this.log_maybe(T_Debug.signal, message); }
-	log_actions(message: string) { this.log_maybe(T_Debug.actions, message); }
-	log_segments(message: string) { this.log_maybe(T_Debug.segments, message); }
-	log_preferences(message: string) { this.log_maybe(T_Debug.preferences, message); }
-	log_bidirectionals(message: string) { this.log_maybe(T_Debug.bidirectionals, message); }
+	log_action(message: string, ...args: any[]) { this.log_maybe(T_Debug.action, message, ...args); }
+	log_bubble(message: string, ...args: any[]) { this.log_maybe(T_Debug.bubble, message, ...args); }
+	log_colors(message: string, ...args: any[]) { this.log_maybe(T_Debug.colors, message, ...args); }
+	log_crumbs(message: string, ...args: any[]) { this.log_maybe(T_Debug.crumbs, message, ...args); }
+	log_cursor(message: string, ...args: any[]) { this.log_maybe(T_Debug.cursor, message, ...args); }
+	log_expand(message: string, ...args: any[]) { this.log_maybe(T_Debug.expand, message, ...args); }
+	log_handle(message: string, ...args: any[]) { this.log_maybe(T_Debug.handle, message, ...args); }
+	log_layout(message: string, ...args: any[]) { this.log_maybe(T_Debug.layout, message, ...args); }
+	log_radial(message: string, ...args: any[]) { this.log_maybe(T_Debug.radial, message, ...args); }
+	log_remote(message: string, ...args: any[]) { this.log_maybe(T_Debug.remote, message, ...args); }
+	log_signal(message: string, ...args: any[]) { this.log_maybe(T_Debug.signal, message, ...args); }
+	log_actions(message: string, ...args: any[]) { this.log_maybe(T_Debug.actions, message, ...args); }
+	log_segments(message: string, ...args: any[]) { this.log_maybe(T_Debug.segments, message, ...args); }
+	log_components(message: string, ...args: any[]) { this.log_maybe(T_Debug.components, message, ...args); }
+	log_preferences(message: string, ...args: any[]) { this.log_maybe(T_Debug.preferences, message, ...args); }
+	log_bidirectionals(message: string, ...args: any[]) { this.log_maybe(T_Debug.bidirectionals, message, ...args); }
 	
 	log_maybe(option: T_Debug, message: string, ...args: any[]) {
 		if (this.hasOption(option)) {
@@ -100,7 +103,9 @@ export class Debug {
 				switch (option) {
 					case 'bidirectionals': this.flags.push(T_Debug.bidirectionals); break;
 					case 'preferences': this.flags.push(T_Debug.preferences); break;
+					case 'components': this.flags.push(T_Debug.components); break;
 					case 'hide_rings': this.flags.push(T_Debug.hide_rings); break;
+					case 'fast_load': this.flags.push(T_Debug.fast_load); break;
 					case 'segments': this.flags.push(T_Debug.segments); break;
 					case 'actions': this.flags.push(T_Debug.actions); break;
 					case 'reticle': this.flags.push(T_Debug.reticle); break;

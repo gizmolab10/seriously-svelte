@@ -27,32 +27,27 @@
 	let color = ancestry.thing?.color;
 	let s_component: S_Component;
 	let offsetFor_innerDot = 0;
-	let element;
+
 	update_colors();
-	
-	function handle_context_menu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
+
+	s_component = signals.handle_reposition_widgets_atPriority(2, ancestry, T_Component.reveal, (received_ancestry) => {
+		center = g_widget.center_ofReveal;
+	});
 
 	onMount(() => {
 		update_svgPaths();
 		set_isHovering(false);
-		s_component = signals.handle_reposition_widgets(2, ancestry?.hid ?? -1 as Integer, T_Component.reveal, (received_ancestry) => {
-			if (!!element) {
-				center = g_widget.center_ofReveal;
-			}
-		});
+		s_reveal.set_forHovering(color, 'pointer');
 		return () => s_component.disconnect();
 	});
-
-	$: if (!!element) {
-		s_component.element = element;
-		s_reveal.set_forHovering(color, 'pointer');
-	}
 	
 	$: {
 		const _ = `${$w_ancestries_grabbed.map(a => a.id).join(',')}${$w_ancestries_expanded.map(a => a.id).join(',')}${$w_show_countDots_ofType}${$w_thing_title}${$w_background_color}${$w_thing_color}`;
 		update_svgPaths();
 		update_colors();
 	}
+	
+	function handle_context_menu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
 
 	function update_colors() {
 		s_reveal.set_forHovering(color, 'pointer');
@@ -104,10 +99,9 @@
 	<Mouse_Responder
 		center={center}
 		zindex={zindex}
-		bind:this={element}
-		name={s_reveal.name}
 		width={k.height.dot}
 		height={k.height.dot}
+		name={s_component.id}
 		handle_s_mouse={up_hover_closure}>
 		<div class='reveal-dot'
 			on:contextmenu={handle_context_menu}

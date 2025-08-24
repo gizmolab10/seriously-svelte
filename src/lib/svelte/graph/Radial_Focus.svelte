@@ -21,7 +21,6 @@
 	let svg_dasharray = k.empty;
 	let color = s_widget.color;
 	let width_ofTitle = 0;
-	let element;
 
 	//////////////////////////////////
 	//								//
@@ -32,14 +31,11 @@
 
 	layout_focus();
 
-	onMount(() => {
-		s_component = signals.handle_reposition_widgets(2, ancestry?.hid ?? -1 as Integer, T_Component.focus, (received_ancestry) => {
-			layout_focus();
-		});
-		return () => s_component.disconnect();
+	s_component = signals.handle_reposition_widgets_atPriority(2, ancestry, T_Component.focus, (received_ancestry) => {
+		layout_focus();
 	});
 
-	$: if (!!element) { s_component.element = element; }
+	onMount(() => { return () => s_component.disconnect(); });
 
 	function debug_closure(s_mouse) { debug.log_radial(` ${s_mouse.descriptionFor('FOCUS')}`); }
 	function handle_s_mouse(s_mouse: S_Mouse): boolean { return false; }
@@ -84,7 +80,6 @@
 </script>
 
 <div class='radial-focus'
-	bind:this = {element}
 	style='
 		position : absolute;
 		height : {height}px;

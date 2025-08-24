@@ -27,24 +27,20 @@
 	let isHovering = false;
 	let mouse_click_timer;
 	let left = 0;
-	let top = 0;
-	let element;
 
 	update_svgPaths();
 	update_colors();
 
-	onMount(() => {
-		s_component = signals.handle_signals_atPriority([T_Signal.alteration], 0, ancestry?.hid ?? -1 as Integer, T_Component.drag, (t_signal, value): S_Component | null => {
-			s_drag.isInverted = !!invert && !!ancestry && ancestry.alteration_isAllowed;
-			update_colors();
-		});
-		signals.handle_signals_atPriority([T_Signal.reposition], 2, ancestry?.hid ?? -1 as Integer, T_Component.drag, (t_signal, value): S_Component | null => {
-			center = g_widget.center_ofDrag;
-		});
-		return () => s_component.disconnect();
+	s_component = signals.handle_signals_atPriority([T_Signal.alteration], 0, ancestry, T_Component.drag, (t_signal, value): S_Component | null => {
+		s_drag.isInverted = !!invert && !!ancestry && ancestry.alteration_isAllowed;
+		update_colors();
 	});
-	
-	$: if (!!element) { s_component.element = element; }
+
+	signals.handle_signals_atPriority([T_Signal.reposition], 2, ancestry, T_Component.drag, (t_signal, value): S_Component | null => {
+		center = g_widget.center_ofDrag;
+	});
+
+	onMount(() => { return () => s_component.disconnect(); });
 
 	function handle_context_menu(event) { event.preventDefault(); }		// no default context menu on right-click
 	function handle_s_mouse(s_mouse: S_Mouse): boolean { return false; }
@@ -115,14 +111,13 @@
 {#if s_drag}
 	<Mouse_Responder
 		center={center}
-		name={s_drag.name}
 		width={capture_size}
 		height={capture_size}
+		name={s_component.id}
 		detect_longClick={true}
 		handle_s_mouse={handle_up_long_hover}>
 		<button class={name}
-			bind:this={element}
-			id={name}
+			id={s_component.id}
 			style='
 				border:none;
 				cursor:pointer;

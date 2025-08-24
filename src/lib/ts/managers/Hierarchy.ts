@@ -802,9 +802,7 @@ export class Hierarchy {
 	}
 
 	ancestry_remember_createUnique(path: string = k.root_path, kind: string = T_Predicate.contains): Ancestry {
-		const hid = path.hash();
-		let dict = this.ancestries_byHID_forKind(kind);
-		let ancestry = dict[hid];
+		let ancestry = this.ancestries_byHID_forKind(kind)[path.hash()];
 		if (!ancestry) {
 			ancestry = new Ancestry(this.db.t_database, path, kind);
 			this.ancestry_remember(ancestry);

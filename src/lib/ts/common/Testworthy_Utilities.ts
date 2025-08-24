@@ -141,12 +141,12 @@ export class Testworthy_Utilities {
 
 	remove_fromArray<T extends Identifiable>(item: T, array: Array<T>): Array<T> {
 		if (!item) return array;
-		return array.filter(element => element.id !== item.id);
+		return array.filter(e => e.id !== item.id);
 	}
 
 	indexOf_inArray<T extends Identifiable>(item: T, array: Array<T>): number {
 		if (!item) return -1;
-		return array.findIndex(element => element.id === item.id);
+		return array.findIndex(e => e.id === item.id);
 	}
 
 	strip_identifiableDuplicates(identifiables: Array<Identifiable>): Array<Identifiable> {

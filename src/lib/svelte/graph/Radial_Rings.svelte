@@ -18,7 +18,6 @@
 	let s_component: S_Component;
 	let reattachments = 0;
 	let last_action = 0;
-	let element;
 
 	$: middle_radius   = $w_ring_rotation_radius + k.thickness.rotation_ring;
 	$: outer_radius	   = middle_radius + ring_width;
@@ -31,15 +30,14 @@
 	$: rotate_fill	   = (radial.s_ring_rotation.isHighlighted && !radial.s_ring_rotation.isActive) ? colors.opacitize(color, radial.s_ring_rotation.fill_opacity * (radial.s_ring_resizing.isActive ? 0 : 1)) : 'transparent';
 	$: is_dragging	   = radial.s_ring_rotation.isActive || radial.s_ring_resizing.isActive || !!$w_g_paging_cluster;
 
-	onMount(() => {
-		cursor = radial.cursor_forRingZone;
-		s_component = signals.handle_reposition_widgets(2, -1 as Integer, T_Component.rings, (received_ancestry) => {
-			reattachments += 1;
-		});
-		return () => s_component.disconnect();
+	s_component = signals.handle_reposition_widgets_atPriority(2, null, T_Component.rings, (received_ancestry) => {
+		reattachments += 1;
 	});
 
-	$: if (!!element) { s_component.element = element; }
+	onMount(() => {
+		cursor = radial.cursor_forRingZone;
+		return () => s_component.disconnect();
+	});
 		
 	$: {
 		const thing = $w_ancestry_focus?.thing;	
@@ -201,7 +199,7 @@
 {#key reattachments}
 	{#if !debug.hide_rings}
 		<div class = 'rings'
-			bind:this={element}
+			id = {s_component.id}
 			on:mousemove={detect_movement}
 			style = 'z-index:{T_Layer.radial}; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;'>
 			<Mouse_Responder name = 'rings'

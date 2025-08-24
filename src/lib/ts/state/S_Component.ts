@@ -1,5 +1,6 @@
-import { Rect, Point, layout, debug, T_Signal, T_Component } from '../common/Global_Imports';
+import { Rect, Point, debug, layout, Ancestry } from '../common/Global_Imports';
 import { Integer, Handle_S_Mouse, Create_S_Mouse } from '../common/Types';
+import { T_Signal, T_Component } from '../common/Global_Imports';
 import { SignalConnection_atPriority } from '../common/Types';
 import { SignalConnection } from 'typed-signals';
 import { u } from '../common/Utilities';
@@ -9,22 +10,29 @@ import { u } from '../common/Utilities';
 export default class S_Component {
     signal_handlers: SignalConnection_atPriority[] = [];
     handle_s_mouse: Handle_S_Mouse | null;
-    element: HTMLElement | null;
+    ancestry: Ancestry | null = null;
 	hid: Integer | null;
     type: T_Component;
 
     // hit test, logger, emitter, handler and destroyer
 
-    constructor(element: HTMLElement | null, handle_s_mouse: Handle_S_Mouse | null, hid: Integer | null, type: T_Component) {
+    constructor(ancestry: Ancestry | null, type: T_Component, handle_s_mouse: Handle_S_Mouse | null = null) {
+        const suffix = 'handle_ ' + (type ?? '<--NO TYPE-->') + ' for: ' + (ancestry?.titles ?? '<--UNIDENTIFIED ANCESTRY-->');
+        this.hid = ancestry?.hid ?? -1 as Integer;
         this.handle_s_mouse = handle_s_mouse;
-        this.element = element;
+        const prefix = 'S_Component has no';
+        this.ancestry = ancestry;
         this.type = type;
-        this.hid = hid;
+        if (!ancestry) {
+            debug.log_components(prefix, 'ancestry:', suffix);
+        }
     }
 
     get description(): string { return this.type; }
     get distance_toGraphCenter(): Point { return this.boundingRect.center; }
     containsPoint(point: Point) { return this.boundingRect.contains(point); }
+    get element(): HTMLElement | null { return document.getElementById(this.id) }
+    get id(): string { return `${this.type}-${this.ancestry?.titles ?? 'UNIDENTIFIED'}`; }
 
     get boundingRect(): Rect {
         const rect = Rect.boundingRectFor(this.element);
@@ -42,7 +50,7 @@ export default class S_Component {
 
 	log_signal(sending: boolean, value: any | null, t_signal: T_Signal, priority: number) {
 		const resolved = u.resolve_signal_value(value);
-		const first = sending ? ']]]]]>' : '----->';
+		const first = sending ? '[s]]]]]>' : '[h]---->';
 		const second = sending ? 'from' : 'in';
 		debug.log_signal(`${first} "${t_signal}" @ ${priority} ${second} ${this.description} with ${resolved}`);
 	}

@@ -12,7 +12,6 @@
 	let s_component: S_Component;
 	let svg_dasharray = k.empty;
 	let reattachments = 0;
-	let element;
 
 	//////////////////////////////
 	//	draw a curved line		//
@@ -23,14 +22,11 @@
  
 	function isHit(): boolean { return false }
 
-	onMount(() => {
-		s_component = signals.handle_reposition_widgets(2, ancestry?.hid ?? -1 as Integer, T_Component.line, (received_ancestry) => {
-			reattachments += 1;
-		});
-		return () => s_component.disconnect();
+	s_component = signals.handle_reposition_widgets_atPriority(2, ancestry, T_Component.line, (received_ancestry) => {
+		reattachments += 1;
 	});
 
-	$: if (!!element) { s_component.element = element; }
+	onMount(() => { return () => s_component.disconnect(); });
 
 	if (g_line.isBidirectional) {
 		stroke_color = colors.opacitize(ancestry.thing.color, 0.7);
@@ -48,8 +44,7 @@
 {#key reattachments}
 	{#if !!ancestry}
 		<svg
-			bind:this = {element}
-			id = {g_line.name}
+			id = {s_component.id}
 			class = 'tree-line-svg'
 			viewBox = {g_line.viewBox.verbose}
 			style = '

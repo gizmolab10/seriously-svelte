@@ -9,7 +9,6 @@
 	import { onMount } from 'svelte';
 	let s_component: S_Component;
 	let reattachments = 0;
-	let element;
 
 	//////////////////////////////////////////////
 	//											//
@@ -36,17 +35,15 @@
 	
 	layout.grand_layout();
 
-	onMount(() => {
-		s_component = signals.handle_signals_atPriority([T_Signal.reattach], 0, -1 as Integer, T_Component.radial, (ancestry) => {
-			reattachments += 1;
-		});
-		signals.handle_signals_atPriority([T_Signal.reposition], 2, -1 as Integer, T_Component.radial, (received_ancestry) => {
-			reattachments += 1;
-		});
-		return () => s_component.disconnect();
+	s_component = signals.handle_signals_atPriority([T_Signal.reattach], 0, null, T_Component.radial, (ancestry) => {
+		reattachments += 1;
 	});
 
-	$: if (!!element) { s_component.element = element; }
+	signals.handle_signals_atPriority([T_Signal.reposition], 2, null, T_Component.radial, (received_ancestry) => {
+		reattachments += 1;
+	});
+
+	onMount(() => { return () => s_component.disconnect(); });
 
 	$: {
 		const g_paging = $w_g_paging;
@@ -58,7 +55,7 @@
 </script>
 
 <div class = 'radial-graph'
-	bind:this={element}
+	id = {s_component.id}
 	style = '
 		position: absolute;
 		z-index : {T_Layer.graph};

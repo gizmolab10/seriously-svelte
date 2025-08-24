@@ -3,7 +3,7 @@ import { T_Signal, T_Component } from '../common/Enumerations';
 import { w_ancestry_focus } from '../managers/Stores';
 import { components } from '../managers/Components';
 import S_Component from '../state/S_Component';
-import { Integer } from '../common/Types';
+import Ancestry from '../runtime/Ancestry';
 import { Signal } from 'typed-signals';
 import { debug } from '../debug/Debug';
 import { get } from 'svelte/store';
@@ -11,7 +11,6 @@ import { get } from 'svelte/store';
 export class Signals {
 	signal_emitter = new Signal<Signal_Signature>();
 	signals_inFlight_byT_Signal: Dictionary<boolean> = {};
-	dummy_component = new S_Component(null, null, -1 as Integer, T_Component.none);
 
 	static readonly _____SENDING: unique symbol;
 
@@ -35,7 +34,7 @@ export class Signals {
 			t_signal != T_Signal.reposition) {								// suppress reposition
 			this.set_signal_isInFlight_for(t_signal, true);
 			const highestPriority = this.highestPriorities[t_signal] ?? 0;
-			const c = s_component ?? this.dummy_component;					// often no component is provided, use the dummy component	
+			const c = s_component ?? components.dummy;					// often no component is provided, use the dummy component	
 			for (let priority = 0; priority <= highestPriority; priority++) {
 				c.log_signal(true, value, t_signal, priority);	// log components listening to this signal at this priority
 				this.signal_emitter.emit(t_signal, priority, value);
@@ -52,9 +51,9 @@ export class Signals {
 	// the closure is called
 	// with just the signal's type and value
 
-	handle_signals_atPriority(t_signals: Array<T_Signal>, priority: number, hid: Integer, t_component: T_Component, onSignal: (t_signal: T_Signal, value: any | null) => any ): S_Component | null {
+	handle_signals_atPriority(t_signals: Array<T_Signal>, priority: number, ancestry: Ancestry | null, t_component: T_Component, onSignal: (t_signal: T_Signal, value: any | null) => any ): S_Component | null {
 		this.adjust_highestPriority_forSignals(priority, t_signals);
-		const s_component = components.component_forHID_andType_createUnique(hid, t_component);	// 1) create it
+		const s_component = components.component_forAncestry_andType_createUnique(ancestry, t_component);	// 1) create it
 		const connection = this.signal_emitter.connect((received_t_signal, signalPriority, value) => {
 			for (const t_signal of t_signals) {
 				if (received_t_signal == t_signal && signalPriority == priority) {
@@ -70,9 +69,9 @@ export class Signals {
 		return null;
 	}
 
-	handle_anySignal_atPriority(priority: number, hid: Integer, t_component: T_Component, onSignal: (t_signal: T_Signal, value: any | null) => any ): S_Component | null {
+	handle_anySignal_atPriority(priority: number, ancestry: Ancestry | null, t_component: T_Component, onSignal: (t_signal: T_Signal, value: any | null) => any ): S_Component | null {
 		this.adjust_highestPriority_forAllSignals(priority);
-		let s_component = components.component_forHID_andType_createUnique(hid, t_component);		// 1) create it
+		let s_component = components.component_forAncestry_andType_createUnique(ancestry, t_component);		// 1) create it
 		const connection = this.signal_emitter.connect((received_t_signal, signalPriority, value) => {
 			if (signalPriority == priority) {
 				s_component?.log_signal(false, value, received_t_signal, signalPriority);	// 4) use it
@@ -86,8 +85,8 @@ export class Signals {
 		return null;
 	}
 
-	handle_reposition_widgets(priority: number, hid: Integer, t_component: T_Component, onSignal: (value: any | null) => any ) {
-		return this.handle_signals_atPriority([T_Signal.reposition], priority, hid, t_component, onSignal);
+	handle_reposition_widgets_atPriority(priority: number, ancestry: Ancestry | null, t_component: T_Component, onSignal: (value: any | null) => any ) {
+		return this.handle_signals_atPriority([T_Signal.reposition], priority, ancestry, t_component, onSignal);
 	}
 
 	static readonly _____TRACKING: unique symbol;

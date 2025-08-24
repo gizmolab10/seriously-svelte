@@ -24,6 +24,7 @@ export default class Constants {
 	comma = ',';
 	space = ' ';
 	empty = '';
+	tab = '\t';
 
 	dasharray = {
 		relateds: '4,3',

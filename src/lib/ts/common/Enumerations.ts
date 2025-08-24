@@ -148,6 +148,7 @@ export enum T_Component {
 	widget		= 'widget',
 	title		= 'title',
 	drag		= 'drag',
+	line		= 'line',
 	none		= 'none',
 	tree		= 'tree',
 	app			= 'app',

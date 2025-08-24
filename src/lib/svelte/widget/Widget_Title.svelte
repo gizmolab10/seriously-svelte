@@ -10,14 +10,12 @@
 	import { onMount, onDestroy } from 'svelte';
 	export let s_title!: S_Element;
 	export let fontSize = '1em';
-    const name = s_title.name;
 	const ancestry = s_title.ancestry;
 	const thing = ancestry?.thing;
 	const padding = `1px 0px 0px 0px`;
 	const g_widget = ancestry.g_widget;
 	const s_widget = g_widget.s_widget;
 	const input_height = k.height.dot + 2;
-	const id = `title of ${ancestry?.title} ${ancestry?.kind}`;
 	let title_width = (thing?.width_ofTitle ?? 0) + title_extra();
 	let title_binded = thing?.title ?? k.empty;
 	let title_component: S_Component;
@@ -40,11 +38,12 @@
 	function hasChanges()	 		  { return title_prior != title_binded; }
 	function handle_mouse_up() 		  { clearClicks(); }
 
+	s_component = signals.handle_anySignal_atPriority(0, ancestry, T_Component.title, (t_signal, ancestry) => {
+		updateInputWidth();
+	});
+
 	onMount(() => {
 		debug.log_build(`TITLE ${ancestry?.title}`);
-		s_component = signals.handle_anySignal_atPriority(0, ancestry.hid, T_Component.title, (t_signal, ancestry) => {
-			updateInputWidth();
-		});
 		setTimeout(() => {
 			updateInputWidth();
 			if (isEditing()) {
@@ -53,8 +52,6 @@
 		}, 100);
 		return () => s_component.disconnect();
 	});
-
-	$: if (!!input) { s_component.element = input; }
 
 	export const _____REACTIVES: unique symbol = Symbol('_____REACTIVES');
 
@@ -76,12 +73,6 @@
 		if (!!input) {
 			title_width = (thing?.width_ofTitle ?? 0) + title_extra();
 			color = s_widget.color;
-		}
-	}
-
-	$: {
-		if (!!input && !title_component) {
-			title_component = components.component_createUnique(input, handle_forComponent, ancestry.hid, T_Component.title);
 		}
 	}
 
@@ -288,8 +279,8 @@
 {#key reattachments}
 	<Mouse_Responder
 		width={title_width}
-		name={s_title.name}
 		height={k.height.row}
+		name={s_component.id}
 		handle_s_mouse={handle_s_mouse}
 		origin={g_widget.origin_ofTitle}>
 		<span class='ghost-{title_binded}'
@@ -304,10 +295,10 @@
 			{title_binded}
 		</span>
 		<input
-			id={id}
 			type='text'
 			name='title'
 			bind:this={input}
+			id = {s_component.id}
 			on:blur={handle_blur}
 			on:focus={handle_focus}
 			on:input={handle_input}

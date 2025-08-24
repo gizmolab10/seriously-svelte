@@ -13,7 +13,7 @@
 	import Color from '../mouse/Color.svelte';
 	import { onMount } from 'svelte';
 	export let top = 6;
-	const id = 'selection';
+	const id = 'selection details';
 	const s_info = ux.s_element_for(new Identifiable(id), T_Element.details, id);
 	let ancestry: Ancestry | null = grabs.ancestry;
 	let thing: Thing | null = ancestry?.thing ?? null;
