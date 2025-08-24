@@ -70,7 +70,7 @@
 	}
 	input[type="range"]::-webkit-slider-thumb {
 		border-radius: 50%;
-		margin-top: -0.75px;
+		margin-top: -1.1px;
 		width: var(--height);
 		height: var(--height);
 		border: var(--border);

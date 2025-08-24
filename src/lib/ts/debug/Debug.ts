@@ -5,8 +5,8 @@ import { c } from '../managers/Configuration';
 export enum T_Debug {
 	bidirectionals	= 'bidirectionals',
 	preferences		= 'preferences',
-	components		= 'components',		// S_Component
 	hide_rings		= 'hide_rings',
+	component		= 'component',		// S_Component
 	fast_load		= 'fast_load',
 	segments		= 'segments',
 	actions			= 'actions',		// state logic of actions
@@ -53,7 +53,7 @@ export class Debug {
 	get reticle(): boolean { return this.hasOption(T_Debug.reticle); }
 	get actions(): boolean { return this.hasOption(T_Debug.actions); }
 	get fast_load(): boolean { return this.hasOption(T_Debug.fast_load); }
-	get components(): boolean { return this.hasOption(T_Debug.components); }
+	get component(): boolean { return this.hasOption(T_Debug.component); }
 	get hide_rings(): boolean { return this.hasOption(T_Debug.hide_rings); }
 
 	log_alert(option: T_Debug, message: string) { alert(message); }
@@ -81,7 +81,7 @@ export class Debug {
 	log_signal(message: string, ...args: any[]) { this.log_maybe(T_Debug.signal, message, ...args); }
 	log_actions(message: string, ...args: any[]) { this.log_maybe(T_Debug.actions, message, ...args); }
 	log_segments(message: string, ...args: any[]) { this.log_maybe(T_Debug.segments, message, ...args); }
-	log_components(message: string, ...args: any[]) { this.log_maybe(T_Debug.components, message, ...args); }
+	log_component(message: string, ...args: any[]) { this.log_maybe(T_Debug.component, message, ...args); }
 	log_preferences(message: string, ...args: any[]) { this.log_maybe(T_Debug.preferences, message, ...args); }
 	log_bidirectionals(message: string, ...args: any[]) { this.log_maybe(T_Debug.bidirectionals, message, ...args); }
 	
@@ -103,7 +103,7 @@ export class Debug {
 				switch (option) {
 					case 'bidirectionals': this.flags.push(T_Debug.bidirectionals); break;
 					case 'preferences': this.flags.push(T_Debug.preferences); break;
-					case 'components': this.flags.push(T_Debug.components); break;
+					case 'component': this.flags.push(T_Debug.component); break;
 					case 'hide_rings': this.flags.push(T_Debug.hide_rings); break;
 					case 'fast_load': this.flags.push(T_Debug.fast_load); break;
 					case 'segments': this.flags.push(T_Debug.segments); break;

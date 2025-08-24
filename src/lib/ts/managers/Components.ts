@@ -14,7 +14,7 @@ export class Components {
 		breadcrumbs : false,
 		radial		: false,
 		reveal		: false,
-		widget		: false,
+		widget		: true,
 		title		: false,
 		drag		: false,
 		line		: false,

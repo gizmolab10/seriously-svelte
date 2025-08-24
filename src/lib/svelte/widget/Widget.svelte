@@ -13,13 +13,13 @@
 	import Widget_Drag from './Widget_Drag.svelte';
 	import { onMount } from 'svelte';
 	export let g_widget!: G_Widget;
-    const drag_points_normal = g_widget.widget_pointsNormal;
-	const reveal_points_toChild = g_widget.points_toChild;
-	const ancestry = g_widget.ancestry;
 	const s_widget = g_widget.s_widget;
-	const s_reveal = s_widget.s_reveal;
-	const s_title = s_widget.s_title;
 	const s_drag = s_widget.s_drag;
+	const s_title = s_widget.s_title;
+	const s_reveal = s_widget.s_reveal;
+	const ancestry = g_widget.ancestry;
+	const reveal_points_toChild = g_widget.points_toChild;
+    const drag_points_normal = g_widget.widget_pointsNormal;
 	let observer: MutationObserver | null = null;
 	let width_ofWidget = g_widget.width_ofWidget;
 	let border_radius = k.height.dot / 2;

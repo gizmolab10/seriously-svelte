@@ -112,7 +112,7 @@
 		if (!!s_component) {
 			s_component.log_connection_state(prefix);
 		} else {
-			debug.log_components(`S_Component is null for ${ancestry?.titles}`);
+			debug.log_component(`S_Component is null for ${ancestry?.titles}`);
 		}
 	}
 

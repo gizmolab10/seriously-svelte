@@ -12,6 +12,16 @@ export class Signals {
 	signal_emitter = new Signal<Signal_Signature>();
 	signals_inFlight_byT_Signal: Dictionary<boolean> = {};
 
+	debug_isEnabledFor_t_signal = {
+		needsComponent : false,
+		alteration	   : false,
+		reposition	   : false,
+		reattach	   : false,
+		rebuild		   : false,
+		graph		   : false,
+		thing		   : false,
+	}
+
 	static readonly _____SENDING: unique symbol;
 
 	// signal is called with a value and a type, but not a priority
