@@ -19,6 +19,7 @@
 	const s_widget = g_widget.s_widget;
 	const s_reveal = s_widget.s_reveal;
 	const s_title = s_widget.s_title;
+	const debug_connections = false;
 	const s_drag = s_widget.s_drag;
 	let observer: MutationObserver | null = null;
 	let width_ofWidget = g_widget.width_ofWidget;
@@ -34,6 +35,7 @@
 	let left = 0;
 	let top = 0;
 	let thing;
+
 	debug.log_draw(`WIDGET ${ancestry?.titles}`);
 	setup_fromAncestry();		// this fails if ancestry's thing id is invalid
 	final_layout();
@@ -73,13 +75,13 @@
 			g_widget.layout_widget();
 			trigger = reactives;
 			final_layout();
-			log_parent_connection('GRABBED STATE CHANGED');
+			if (debug_connections) {
+				s_component.log_parent_connection('GRABBED STATE CHANGED');
+			}
 		}
 	}
 
 	$: if (!!s_component?.element) {
-		log_parent_connection('BIND TO ELEMENT');
-		
 		observer = new MutationObserver((mutations) => {
 			debug.log_style('MutationObserver callback fired', mutations.length, 'mutations for:', ancestry?.title);
 			mutations.forEach((mutation) => {
@@ -97,6 +99,12 @@
 			attributeOldValue: true
 		});
 		debug.log_style('Observer set up on widget div for:', ancestry?.title);
+	}
+
+	function log_connection_state(prefix: string) {
+		if (debug_connections) {
+			log_connection_state(prefix);
+		}
 	}
 
 	function handle_mouse_exit(isOut: boolean) {
@@ -135,81 +143,10 @@
 		debug.log_style('Setting widget_style for:', ancestry?.title, 'to:', widget_style);
 		
 		log_connection_state('After setting style');
-		setTimeout(() => { log_connection_state('After 2 ticks'); }, 2);
-		setTimeout(() => { log_connection_state('After 4 ticks'); }, 4);
-		setTimeout(() => { log_connection_state('After 100 ticks'); }, 100);
+		// setTimeout(() => { log_connection_state('After 2 ticks'); }, 2);
+		// setTimeout(() => { log_connection_state('After 4 ticks'); }, 4);
+		// setTimeout(() => { log_connection_state('After 100 ticks'); }, 100);
 		requestAnimationFrame(() => { log_connection_state('RAF'); });
-	}
-
-	function log_parent_connection(prefix: string) {
-		const element = s_component?.element;
-		if (!!element) {
-			const array = [prefix, ' on ', ancestry?.titles];
-			array.push(information_about_element('ELEMENT', element));
-			debug.log_style(array);
-		}
-	}
-
-	function information_about_element(prefix: string, element: HTMLElement | null | undefined): string {
-		const indented = k.newLine + k.tab + prefix + k.space;
-		const array = !element ? [] : [
-			k.newLine + k.tab + k.title.line,
-			indented + 'tagName:', element.tagName,
-			indented + 'isConnected:', element.isConnected,
-			indented + 'getBoundingClientRect:', JSON.stringify(element.getBoundingClientRect()),
-			indented + 'ownerDocument.contains:', element.ownerDocument?.contains(element),
-			indented + 'getRootNode:', element.getRootNode()?.nodeName,
-			indented + 'compareDocumentPosition:', element.compareDocumentPosition(document.body) & 0x8 ? 'body contains ' + prefix : prefix + ' is orphaned'	,
-			indented + 'closest body:', element.closest('body')?.tagName];
-			return array.join(k.tab);
-	}
-
-	function log_style(prefix: string) {
-		const element = s_component?.element;
-		if (!!element) {
-			const indented = k.newLine + k.tab;
-			const computed = window.getComputedStyle(element);
-			const array = [prefix, ' on ', ancestry?.title, ':', 	
-				indented + 'getAttribute:', element.getAttribute('style'),
-				indented + 'cssText:', element.style.cssText,
-				indented + 'style.backgroundColor:', element.style.backgroundColor,
-				indented + 'computed.backgroundColor:', computed.backgroundColor,
-				indented + 'computed.display:', computed.display,
-				indented + 'computed.visibility:', computed.visibility,
-				indented + 'isConnected:', element.isConnected,
-				indented + 'getBoundingClientRect:', JSON.stringify(element.getBoundingClientRect()),
-				indented + 'ownerDocument:', element.ownerDocument === document ? 'main document' :'different document',
-				indented + (element.offsetParent === element.parentElement) ? 'positioning is normal' :'offset is not parent'
-			];
-			debug.log_style(array.join(k.tab));
-		}
-	}
-
-	function log_connection_state(prefix: string) {
-		const element = s_component?.element;
-		if (!!element) {
-			const indented = k.newLine + k.tab;
-			const parent = element.parentElement;
-			const element_style = element?.getAttribute('style')?.replace(/; /g, indented);
-			const array = [indented + 'connection state for ' + ancestry?.titles + ':',
-				indented + k.title.line,
-				indented + 's_widget.background:', s_widget.background,
-				indented + 'ancestry.isGrabbed:', ancestry?.isGrabbed,
-				indented + 'ancestry.isEditing:', ancestry?.isEditing,
-				indented + 'ancestry.isFocus:', ancestry?.isFocus,
-				indented + 's_widget.isOut:', s_widget.isOut,
-				indented + 's_widget.isFilled:', s_widget.isFilled,
-				indented + 's_widget.shows_border:', s_widget.shows_border,
-				indented + 'previousSibling:', element.previousSibling?.nodeName,
-				indented + 'nextSibling:', element.nextSibling?.nodeName,
-				indented + k.title.line
-			];
-			array.push(indented + element_style);
-			array.push(information_about_element('ELEMENT', element));
-			array.push(information_about_element('PARENT', element.parentElement));
-			array.push(information_about_element('GRAND-PARENT', element.parentElement?.parentElement));
-			debug.log_style(array.join(k.tab));
-		}
 	}
 
 	async function handle_click_event(event) {

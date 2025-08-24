@@ -1,11 +1,13 @@
-import { Rect, Point, debug, layout, Ancestry } from '../common/Global_Imports';
+import { k, Rect, Point, debug, layout, Ancestry } from '../common/Global_Imports';
 import { Integer, Handle_S_Mouse, Create_S_Mouse } from '../common/Types';
 import { T_Signal, T_Component } from '../common/Global_Imports';
 import { SignalConnection_atPriority } from '../common/Types';
 import { SignalConnection } from 'typed-signals';
 import { u } from '../common/Utilities';
 
-// Ancestry sometimes needs to access and or alter an associated svelte component
+// formerly called Svelte Wrapper
+// provide Ancestry access to an associated svelte component's main element (and vice versa)
+// manage signals and for debugging styles and DOM issues
 
 export default class S_Component {
     signal_handlers: SignalConnection_atPriority[] = [];
@@ -39,6 +41,8 @@ export default class S_Component {
         const unscale_factor = 1 / layout.scale_factor;
         return rect?.multipliedBy(unscale_factor) ?? Rect.zero;
     }
+
+    static readonly _____SIGNALS: unique symbol = Symbol('SIGNALS');
 
     handle_event(event: MouseEvent, create_s_mouse: Create_S_Mouse): boolean {
         if (!!this.element && !!this.handle_s_mouse) {
@@ -78,5 +82,84 @@ export default class S_Component {
             handler.connection = null;
         }
     }
+
+    static readonly _____DEBUGGING: unique symbol = Symbol('DEBUGGING');
+
+	log_style(prefix: string) {
+        const information = this.style_information(prefix);
+        if (!!information) {
+            debug.log_components(information);
+        }
+	}
+
+	log_parent_connection(prefix: string) {
+		const element = this.element;
+		if (!!element) {
+			const array = [prefix, ' on ', this.ancestry?.titles];
+			array.push(this.element_information('ELEMENT', element));
+			debug.log_components(array.join(k.newLine));
+		}
+	}
+
+	log_connection_state(prefix: string) {
+		const element = this.element;
+		if (!!element) {
+			const indented = k.newLine + k.tab;
+			const element_style = element?.getAttribute('style')?.replace(/; /g, indented);
+			const array = [indented + prefix, 'connection state for:',
+				indented + k.title.line,
+				indented + this.type + ' for:', this.ancestry?.titles,
+				indented + k.title.line,
+				indented + 'ancestry.isGrabbed:', this.ancestry?.isGrabbed,
+				indented + 'ancestry.isEditing:', this.ancestry?.isEditing,
+				indented + 'ancestry.isFocus:', this.ancestry?.isFocus,
+				indented + 'previousSibling:', element.previousSibling?.nodeName,
+				indented + 'nextSibling:', element.nextSibling?.nodeName,
+				indented + k.title.line
+			];
+			array.push(indented + element_style);
+            array.push(indented + k.title.line);
+            array.push(indented + this.style_information('style information'));
+			array.push(this.element_information('ELEMENT', element));
+			array.push(this.element_information('PARENT', element.parentElement));
+			array.push(this.element_information('GRAND-PARENT', element.parentElement?.parentElement));
+			debug.log_components(array.join(k.tab));
+		}
+	}
+
+	private style_information(prefix: string): string {
+		const element = this.element;
+		if (!!element) {
+			const indented = k.newLine + k.tab;
+			const computed = window.getComputedStyle(element);
+			return [prefix, ' on ', this.ancestry?.titles,
+                indented + k.title.line,
+				indented + 'cssText:', element.style.cssText,
+				indented + 'style.backgroundColor:', element.style.backgroundColor,
+				indented + 'computed.backgroundColor:', computed.backgroundColor,
+				indented + 'computed.display:', computed.display,
+				indented + 'computed.visibility:', computed.visibility,
+				indented + 'isConnected:', element.isConnected,
+				indented + 'getBoundingClientRect:', JSON.stringify(element.getBoundingClientRect()),
+				indented + 'ownerDocument:', element.ownerDocument === document ? 'main document' :'different document',
+				indented + (element.offsetParent === element.parentElement) ? 'positioning is normal' :'offset is not parent'
+			].join(k.tab);
+		}
+        return 'no style information';
+	}
+
+	private element_information(prefix: string, element: HTMLElement | null | undefined): string {
+		const indented = k.newLine + k.tab + prefix + k.space;
+		const array = !element ? [] : [
+			k.newLine + k.tab + k.title.line,
+			indented + 'tagName:', element.tagName,
+			indented + 'isConnected:', element.isConnected,
+			indented + 'getBoundingClientRect:', JSON.stringify(element.getBoundingClientRect()),
+			indented + 'ownerDocument.contains:', element.ownerDocument?.contains(element),
+			indented + 'getRootNode:', element.getRootNode()?.nodeName,
+			indented + 'compareDocumentPosition:', element.compareDocumentPosition(document.body) & 0x8 ? 'body contains ' + prefix : prefix + ' is orphaned',
+			indented + 'closest body:', element.closest('body')?.tagName];
+			return array.join(k.tab);
+	}
 
 }

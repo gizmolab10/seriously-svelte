@@ -12,6 +12,7 @@
 	export let fontSize = '1em';
 	const ancestry = s_title.ancestry;
 	const thing = ancestry?.thing;
+	const debug_connections = true;
 	const padding = `1px 0px 0px 0px`;
 	const g_widget = ancestry.g_widget;
 	const s_widget = g_widget.s_widget;
@@ -65,6 +66,7 @@
 			left = adjust ? (title_width / 20 - 3) : 0.8;
 			color = s_widget.color;
 			trigger = reactives;
+			log_connection_state('triggered by reactives');
 		}
 	}
 
@@ -103,6 +105,16 @@
 						}
 						break;
 				}
+			}
+		}
+	}
+
+	function log_connection_state(prefix: string) {
+		if (debug_connections) {
+			if (!!s_component) {
+				s_component.log_connection_state(prefix);
+			} else {
+				debug.log_components(`S_Component is null for ${ancestry?.titles}`);
 			}
 		}
 	}
