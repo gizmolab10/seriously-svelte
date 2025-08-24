@@ -1,4 +1,4 @@
-import { k, Rect, Point, debug, layout, Ancestry } from '../common/Global_Imports';
+import { k, Rect, Point, debug, layout, Ancestry, components } from '../common/Global_Imports';
 import { Integer, Handle_S_Mouse, Create_S_Mouse } from '../common/Types';
 import { T_Signal, T_Component } from '../common/Global_Imports';
 import { SignalConnection_atPriority } from '../common/Types';
@@ -25,7 +25,7 @@ export default class S_Component {
         const prefix = 'S_Component has no';
         this.ancestry = ancestry;
         this.type = type;
-        if (!ancestry) {
+        if (!ancestry && this.isDebug_enabled) {
             debug.log_components(prefix, 'ancestry:', suffix);
         }
     }
@@ -85,7 +85,10 @@ export default class S_Component {
 
     static readonly _____DEBUGGING: unique symbol = Symbol('DEBUGGING');
 
+    get isDebug_enabled(): boolean { return components.debug_isEnabledFor_t_component[this.type]; }
+
 	log_style(prefix: string) {
+        if (!this.isDebug_enabled) { return; }
         const information = this.style_information(prefix);
         if (!!information) {
             debug.log_components(information);
@@ -93,6 +96,7 @@ export default class S_Component {
 	}
 
 	log_parent_connection(prefix: string) {
+        if (!this.isDebug_enabled) { return; }
 		const element = this.element;
 		if (!!element) {
 			const array = [prefix, ' on ', this.ancestry?.titles];
@@ -102,6 +106,7 @@ export default class S_Component {
 	}
 
 	log_connection_state(prefix: string) {
+        if (!this.isDebug_enabled) { return; }
 		const element = this.element;
 		if (!!element) {
 			const indented = k.newLine + k.tab;

@@ -10,6 +10,19 @@ export class Components {
 	private componentsBy_t_component: { [t_component: string]: S_Component } = {};
 	private _dummy!: S_Component;
 
+	debug_isEnabledFor_t_component = {
+		breadcrumbs : false,
+		radial		: false,
+		reveal		: false,
+		widget		: false,
+		title		: false,
+		drag		: false,
+		line		: false,
+		none		: false,
+		tree		: false,
+		app			: false,
+	}
+
 	// hit testing
 	// signal management
 	// element identification

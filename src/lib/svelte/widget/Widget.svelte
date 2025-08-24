@@ -19,7 +19,6 @@
 	const s_widget = g_widget.s_widget;
 	const s_reveal = s_widget.s_reveal;
 	const s_title = s_widget.s_title;
-	const debug_connections = false;
 	const s_drag = s_widget.s_drag;
 	let observer: MutationObserver | null = null;
 	let width_ofWidget = g_widget.width_ofWidget;
@@ -44,10 +43,10 @@
 	s_component = signals.handle_anySignal_atPriority(1, ancestry, T_Component.widget, (t_signal, value): S_Component | null => {
 		switch (t_signal) {
 		case T_Signal.reattach:
-				log_connection_state('Before reattachment');
+				s_component?.log_connection_state('Before reattachment');
 			final_layout();
 				u.onNextTick(() => {			// this is needed to ensure the element is connected
-					log_connection_state('After reattachment');
+					s_component?.log_connection_state('After reattachment');
 				});
 			break;
 		case T_Signal.reposition:
@@ -75,13 +74,11 @@
 			g_widget.layout_widget();
 			trigger = reactives;
 			final_layout();
-			if (debug_connections) {
-				s_component.log_parent_connection('GRABBED STATE CHANGED');
-			}
+			s_component.log_parent_connection('GRABBED STATE CHANGED');
 		}
 	}
 
-	$: if (!!s_component?.element) {
+	$: if (!!s_component && !!s_component.element && s_component.isDebug_enabled) {
 		observer = new MutationObserver((mutations) => {
 			debug.log_style('MutationObserver callback fired', mutations.length, 'mutations for:', ancestry?.title);
 			mutations.forEach((mutation) => {
@@ -99,12 +96,6 @@
 			attributeOldValue: true
 		});
 		debug.log_style('Observer set up on widget div for:', ancestry?.title);
-	}
-
-	function log_connection_state(prefix: string) {
-		if (debug_connections) {
-			log_connection_state(prefix);
-		}
 	}
 
 	function handle_mouse_exit(isOut: boolean) {
@@ -140,13 +131,15 @@
 			border-radius : ${border_radius}px;
 		`;
 		
-		debug.log_style('Setting widget_style for:', ancestry?.title, 'to:', widget_style);
-		
-		log_connection_state('After setting style');
-		// setTimeout(() => { log_connection_state('After 2 ticks'); }, 2);
-		// setTimeout(() => { log_connection_state('After 4 ticks'); }, 4);
-		// setTimeout(() => { log_connection_state('After 100 ticks'); }, 100);
-		requestAnimationFrame(() => { log_connection_state('RAF'); });
+		if (s_component?.isDebug_enabled) {
+			debug.log_style('Setting widget_style for:', ancestry?.title, 'to:', widget_style);
+		}
+
+		s_component?.log_connection_state('After setting style');
+		// setTimeout(() => { s_component?.log_connection_state('After 2 ticks'); }, 2);
+		// setTimeout(() => { s_component?.log_connection_state('After 4 ticks'); }, 4);
+		// setTimeout(() => { s_component?.log_connection_state('After 100 ticks'); }, 100);
+		requestAnimationFrame(() => { s_component?.log_connection_state('RAF'); });
 	}
 
 	async function handle_click_event(event) {

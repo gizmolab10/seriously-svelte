@@ -12,7 +12,6 @@
 	export let fontSize = '1em';
 	const ancestry = s_title.ancestry;
 	const thing = ancestry?.thing;
-	const debug_connections = true;
 	const padding = `1px 0px 0px 0px`;
 	const g_widget = ancestry.g_widget;
 	const s_widget = g_widget.s_widget;
@@ -110,12 +109,10 @@
 	}
 
 	function log_connection_state(prefix: string) {
-		if (debug_connections) {
-			if (!!s_component) {
-				s_component.log_connection_state(prefix);
-			} else {
-				debug.log_components(`S_Component is null for ${ancestry?.titles}`);
-			}
+		if (!!s_component) {
+			s_component.log_connection_state(prefix);
+		} else {
+			debug.log_components(`S_Component is null for ${ancestry?.titles}`);
 		}
 	}
 
@@ -292,8 +289,8 @@
 	<Mouse_Responder
 		width={title_width}
 		height={k.height.row}
-		name={s_component.id}
 		handle_s_mouse={handle_s_mouse}
+		name={'ghost_' + s_component.id}
 		origin={g_widget.origin_ofTitle}>
 		<span class='ghost-{title_binded}'
 			bind:this={ghost}
