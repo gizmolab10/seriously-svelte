@@ -190,12 +190,12 @@ export class Utilities extends Testworthy_Utilities {
 				console.log('Is landscape:', isLandscape);
 				console.log('Page size:', isLandscape ? 'A4 landscape' : 'A4 portrait');
 				
-				// Standard print page dimensions (A4 in pixels at 96 DPI)
-				const printPageWidth = isLandscape ? 1123 : 794; // A4 width in pixels
-				const printPageHeight = isLandscape ? 794 : 1123; // A4 height in pixels
-				
-				// Account for 0.5 inch margins (48 pixels at 96 DPI)
-				const marginPixels = 48;
+				// Standard print page dimensions (A4 in pixels at 300 DPI)
+				const printPageWidth = isLandscape ? 3507 : 2481;
+				const printPageHeight = isLandscape ? 2481 : 3507;
+
+				// Account for margins
+				const marginPixels = 150;
 				const availableWidth = printPageWidth - (2 * marginPixels);
 				const availableHeight = printPageHeight - (2 * marginPixels);
 				
