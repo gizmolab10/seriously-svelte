@@ -1,4 +1,4 @@
-import { tu } from '../common/Testworthy_Utilities';
+import { tu } from '../utilities/Testworthy_Utilities';
 import { T_File_Format } from '../common/Enumerations';
 
 export default class Files {

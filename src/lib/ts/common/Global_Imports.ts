@@ -7,7 +7,7 @@ import G_Cluster from '../layout/G_Cluster';
 import G_Widget from '../layout/G_Widget';
 
 import { T_Timer } from '../signals/Mouse_Timer';
-import { T_Quadrant, T_Orientation } from './Angle';
+import { T_Quadrant, T_Orientation } from '../utilities/Angle';
 import { G_Paging, G_Thing_Pages } from '../layout/G_Paging';
 
 import { T_Signal } from './Enumerations';
@@ -34,23 +34,23 @@ import S_Mouse from '../state/S_Mouse';
 import S_Common from '../state/S_UX';
 
 import { builds } from './Builds';
-import { colors } from './Colors';
-import { Direction } from './Angle';
-import { svgPaths } from './SVG_Paths';
 import { busy } from '../state/S_Busy';
 import { files } from '../files/Files';
 import { grabs } from '../managers/Grabs';
 import { layout } from '../layout/G_Layout';
 import { signals } from '../signals/Signals';
+import { colors } from '../utilities/Colors';
 import { show } from '../managers/Visibility';
-import { Rect, Size, Point } from './Geometry';
+import { Direction } from '../utilities/Angle';
 import { radial } from '../state/S_RadialGraph';
 import { ErrorTrace } from '../debug/ErrorTrace';
 import { Hierarchy } from '../managers/Hierarchy';
 import { databases } from '../database/Databases';
+import { svgPaths } from '../utilities/SVG_Paths';
 import { components } from '../managers/Components';
-import { Seriously_Range } from './Seriously_Range';
 import { debug, Debug, T_Debug } from '../debug/Debug';
+import { Rect, Size, Point } from '../utilities/Geometry';
+import { Seriously_Range } from '../utilities/Seriously_Range';
 
 import Relationship from '../persistable/Relationship';
 import Persistable from '../persistable/Persistable';
@@ -61,16 +61,16 @@ import Ancestry from '../runtime/Ancestry';
 import Access from '../persistable/Access';
 import Thing from '../persistable/Thing';
 import Trait from '../persistable/Trait';
+import Angle from '../utilities/Angle';
 import User from '../persistable/User';
 import Tag from '../persistable/Tag';
-import Angle from './Angle';
 
 import './Extensions';
 import { k } from './Constants';
-import { u } from './Utilities';
 import { ux } from '../state/S_UX';
 import { e } from '../signals/Events';
 import { h } from '../managers/Hierarchy';
+import { u } from '../utilities/Utilities';
 import { p } from '../managers/Preferences';
 import { c } from '../managers/Configuration';
 

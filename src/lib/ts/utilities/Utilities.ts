@@ -1,14 +1,14 @@
 // N.B., do not import these from Global Imports --> avoid dependency issues when importing Utilities class
 
-import { Testworthy_Utilities } from './Testworthy_Utilities';
 import { w_t_database, w_thing_fontFamily } from '../managers/Stores';
+import { Testworthy_Utilities } from './Testworthy_Utilities';
 import Identifiable from '../runtime/Identifiable';
 import G_TreeLine from '../layout/G_TreeLine';
 import { layout } from '../layout/G_Layout';
 import Ancestry from '../runtime/Ancestry';
-import html2canvas from 'html2canvas';
+import { k } from '../common/Constants';
 import { get } from 'svelte/store';
-import { k } from './Constants';
+import { print } from './Print';
 import printJS from 'print-js';
 
 export class Utilities extends Testworthy_Utilities {
@@ -133,134 +133,7 @@ export class Utilities extends Testworthy_Utilities {
 	print_element_byClassName(className: string) {
 		const element = document.querySelector(`.${className}`) as HTMLElement;
 		if (element) {
-			this.print_element(element);
-		}
-	}
-
-	async print_element(element: HTMLElement) {
-		if (element) {
-			try {
-				
-				// Ensure element has dimensions
-				if (element.offsetWidth === 0 || element.offsetHeight === 0) {
-					console.error('Element has zero dimensions, cannot print');
-					return;
-				}
-				
-				// Wait a bit for any async rendering to complete
-				await new Promise(resolve => setTimeout(resolve, 500));
-				// Temporarily ensure the element is fully rendered
-				element.style.display = 'block';
-				element.style.visibility = 'visible';
-				element.style.position = 'relative';
-				
-				// Calculate scale factor to fit print page
-				const elementWidth = element.offsetWidth;
-				const elementHeight = element.offsetHeight;
-				
-				// Try to measure the actual graph content
-				let graphContent = element.querySelector('.tree-graph, .radial-graph');
-				if (!graphContent && (element.classList.contains('tree-graph') || element.classList.contains('radial-graph'))) {
-					graphContent = element;
-					console.log('Using the element itself as the graph content');
-				}
-				
-				// Use element dimensions for landscape detection and scaling
-				// The element dimensions represent the actual rendered size on screen
-				const contentWidth = elementWidth;
-				const contentHeight = elementHeight;
-				
-				if (!graphContent) {
-					console.log('No graph content found');
-				} else {
-					// Log SVG info for debugging but don't use it for calculations
-					const svg = graphContent.querySelector('svg');
-					if (svg && typeof svg.getBBox === 'function') {
-						const bbox = svg.getBBox();
-						console.log('SVG getBBox dimensions:', bbox.width, '×', bbox.height);
-						console.log('SVG viewBox:', svg.getAttribute('viewBox'));
-						console.log('SVG width/height:', svg.getAttribute('width'), '/', svg.getAttribute('height'));
-					}
-				}
-				
-				// Determine orientation based on element dimensions (actual rendered size)
-				const isLandscape = contentWidth > contentHeight;
-				console.log('Element dimensions:', elementWidth, '×', elementHeight);
-				console.log('Content dimensions (using element):', contentWidth, '×', contentHeight);
-				console.log('Is landscape:', isLandscape);
-				console.log('Page size:', isLandscape ? 'A4 landscape' : 'A4 portrait');
-				
-				// Standard print page dimensions (A4 in pixels at 300 DPI)
-				const printPageWidth = isLandscape ? 3507 : 2481;
-				const printPageHeight = isLandscape ? 2481 : 3507;
-
-				// Account for margins
-				const marginPixels = 150;
-				const availableWidth = printPageWidth - (2 * marginPixels);
-				const availableHeight = printPageHeight - (2 * marginPixels);
-				
-				// Calculate scale factors for width and height
-				const scaleX = availableWidth / elementWidth;
-				const scaleY = availableHeight / elementHeight;
-				
-				// Use the smaller scale to ensure it fits on the page
-				const scaleFactor = Math.min(scaleX, scaleY) * 0.8; // Reduced from 1.5 to 0.8 for smaller size
-				
-				// Try using original element directly instead of cloning
-				console.log('Using original element directly');
-				console.log('Original element dimensions:', element.offsetWidth, element.offsetHeight);
-				
-				// Apply scaling to original element temporarily
-				const originalTransform = element.style.transform;
-				const originalWidth = element.style.width;
-				const originalHeight = element.style.height;
-				const originalPosition = element.style.position;
-				const originalLeft = element.style.left;
-				
-				element.style.transform = `scale(${scaleFactor})`;
-				element.style.transformOrigin = 'top left';
-				element.style.width = '100%';
-				element.style.height = '100%';
-				element.style.position = 'relative';
-				element.style.left = '-20%';
-				element.style.top = '20%';
-				
-				// Print using original element
-				printJS({
-					printable: element,
-					type: 'html',
-					documentTitle: 'Graph Print',
-					style: `
-						@media print { 
-							body { 
-								margin: 0; 
-								padding: 0;
-							}
-							@page {
-								margin: 0;
-								size: ${isLandscape ? 'A4 landscape' : 'A4 portrait'};
-								orientation: ${isLandscape ? 'landscape' : 'portrait'};
-							}
-							* {
-								page-break-inside: avoid;
-							}
-						}
-					`,
-					scanStyles: false
-				});
-				
-				// Restore original styles after printing
-				setTimeout(() => {
-					element.style.transform = originalTransform;
-					element.style.width = originalWidth;
-					element.style.height = originalHeight;
-					element.style.position = originalPosition;
-					element.style.left = originalLeft;
-				}, 1000);
-				
-			} catch (error) {
-				console.error('Error printing element:', error);
-			}
+			print.print_element(element);
 		}
 	}
 

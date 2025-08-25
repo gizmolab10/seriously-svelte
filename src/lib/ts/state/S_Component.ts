@@ -4,7 +4,7 @@ import { T_Signal, T_Component } from '../common/Global_Imports';
 import { SignalConnection_atPriority } from '../common/Types';
 import Identifiable from '../runtime/Identifiable';
 import { SignalConnection } from 'typed-signals';
-import { u } from '../common/Utilities';
+import { u } from '../utilities/Utilities';
 
 // formerly called Svelte Wrapper
 // provide Ancestry access to an associated svelte component's main element (and vice versa)

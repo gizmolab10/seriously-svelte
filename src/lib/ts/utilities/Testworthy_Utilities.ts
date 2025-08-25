@@ -1,8 +1,8 @@
 // N.B., do not import these from Global Imports --> avoid dependency issues when importing Utilities class into test code
 
 import Identifiable from '../runtime/Identifiable';
-import { T_Browser } from './Enumerations';
-import type { Dictionary } from './Types';
+import { T_Browser } from '../common/Enumerations';
+import type { Dictionary } from '../common/Types';
 import MobileDetect from 'mobile-detect';
 import { T_Quadrant } from './Angle';
 import { Point } from './Geometry';
