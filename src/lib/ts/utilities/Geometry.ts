@@ -135,6 +135,7 @@ export class Size {
 	expandedByX(x: number):				Size { return new Size(this.width + x, this.height); }
 	expandedByY(y: number):				Size { return new Size(this.width, this.height + y); }
 	expandedByXY(x: number, y: number):	Size { return new Size(this.width + x, this.height + y); }
+	relativeTo(size: Size):				Size { return new Size(this.width / size.width, this.height / size.height); }
 	expandedEquallyBy(delta: number):	Size { return new Size(this.width + delta, this.height + delta); }
 	expandedBy(delta: Point):			Size { return new Size(this.width + delta.x, this.height + delta.y); }
 	dividedBy(divisor: number):			Size { return new Size(this.width / divisor, this.height / divisor); }
@@ -144,9 +145,9 @@ export class Size {
 	best_ratio_to(size: Size):		  number { return Math.min(this.width / size.width, this.height / size.height); }
 	static fromDOMRect(rect: DOMRect):	Size { return new Size(rect.width, rect.height); }
 	static square(length: number):		Size { return new Size(length, length); }
-	static get zero():					Size { return new Size(); }
-	static width(width: number):		Size { return new Size(width, 0); }
 	static height(height: number):		Size { return new Size(0, height); }
+	static width(width: number):		Size { return new Size(width, 0); }
+	static get zero():					Size { return new Size(); }
 
 }
 
