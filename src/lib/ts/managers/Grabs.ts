@@ -1,4 +1,4 @@
-import { ux, Thing, debug, layout, Ancestry, S_Identifiables } from '../common/Global_Imports';
+import { u, ux, debug, layout, Ancestry, S_Identifiables } from '../common/Global_Imports';
 import { w_hierarchy, w_s_text_edit, w_depth_limit, w_count_details } from './Stores';
 import { w_ancestry_focus, w_ancestries_grabbed, w_s_alteration } from './Stores';
 import { get } from 'svelte/store';
@@ -56,6 +56,15 @@ export class Grabs {
 	}
 	
 	static readonly _____GRAB: unique symbol;
+
+	temporarily_clearGrabs_while(closure: () => void) {
+		const grabs = get(w_ancestries_grabbed);
+		w_ancestries_grabbed.set([]);	// triggers reactivity, takes time to percolate
+		setTimeout(() => {
+			closure();
+			w_ancestries_grabbed.set(grabs);
+		}, 10);
+	}
 
 	grabOnly(ancestry: Ancestry) {
 		debug.log_grab(`  GRAB ONLY '${ancestry.title}'`);

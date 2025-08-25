@@ -82,6 +82,7 @@ export default class G_Layout {
 
 	private get radial_size(): Size { return this.g_radialGraph.radial_size; }
 	get rect_ofTree(): Rect { return get(w_ancestry_focus)?.g_widget.rect_ofTree ?? Rect.zero; }
+	get size_ofDrawnGraph(): Size { return ux.inRadialMode ? this.g_radialGraph.radial_size : this.rect_ofTree.size; }	
 	get g_radialGraph() { let g = this._g_radialGraph; if (!g) { g = new G_RadialGraph(); this._g_radialGraph = g }; return g; }
 
 	increase_depth_limit_by(increment: number) {

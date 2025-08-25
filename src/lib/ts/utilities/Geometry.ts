@@ -132,6 +132,7 @@ export class Size {
 	reducedByY(y: number):				Size { return this.expandedByXY(0, -y); }
 	reducedByXY(x: number, y: number):	Size { return this.expandedByXY(-x, -y); }
 	reducedBy(delta: Point):			Size { return this.expandedBy(delta.negated); }
+	reducedEquallyBy(delta: number):	Size { return new Size(this.width - delta, this.height - delta); }
 	expandedByX(x: number):				Size { return new Size(this.width + x, this.height); }
 	expandedByY(y: number):				Size { return new Size(this.width, this.height + y); }
 	expandedByXY(x: number, y: number):	Size { return new Size(this.width + x, this.height + y); }

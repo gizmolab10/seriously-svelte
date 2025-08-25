@@ -1,7 +1,7 @@
 import { w_ancestry_focus, w_count_mouse_up, w_mouse_location, w_mouse_location_scaled, w_scaled_movement } from '../managers/Stores';
+import { c, h, k, u, ux, grabs, print, Point, debug, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
 import { w_count_resize, w_s_alteration, w_s_text_edit, w_user_graph_offset, w_control_key_down } from '../managers/Stores';
 import { w_device_isMobile, w_ancestries_grabbed, w_t_search, w_show_details, w_popupView_id } from '../managers/Stores';
-import { c, h, k, u, ux, grabs, Point, debug, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
 import { T_Search, T_Action, T_Control, T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { S_Mouse, S_Alteration } from '../common/Global_Imports';
 import Mouse_Timer from './Mouse_Timer';
@@ -271,7 +271,7 @@ export class Events {
 							case 'arrowup':			grabs.latest_rebuild_persistentMoveUp_maybe( true, SHIFT, OPTION, EXTREME); break;
 							case 'arrowdown':		grabs.latest_rebuild_persistentMoveUp_maybe(false, SHIFT, OPTION, EXTREME); break;
 							case 'escape':			if (!!get(w_s_alteration)) { h.stop_alteration(); }; w_t_search.set(T_Search.clear); break;
-							case 'p':				if (!COMMAND) { u.print_element_byClassName(ux.inTreeMode ? 'tree-graph' : 'radial-graph') }; break;
+							case 'p':				if (!COMMAND) { print.print_element_byClassName_withSize(ux.inTreeMode ? 'tree-graph' : 'radial-graph', layout.size_ofDrawnGraph) }; break;
 						}
 						break;
 				}

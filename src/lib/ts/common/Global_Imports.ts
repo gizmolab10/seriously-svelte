@@ -37,6 +37,7 @@ import { builds } from './Builds';
 import { busy } from '../state/S_Busy';
 import { files } from '../files/Files';
 import { grabs } from '../managers/Grabs';
+import { print } from '../utilities/Print';
 import { layout } from '../layout/G_Layout';
 import { signals } from '../signals/Signals';
 import { colors } from '../utilities/Colors';
@@ -88,8 +89,8 @@ export {
 	Ancestry, Hierarchy, databases,
 	Access, Predicate, Relationship,
 	colors, layout, radial, signals,
-	busy, show, files, grabs, builds, 
 	Tag, User, Persistable, Thing, Trait,
+	busy, show, files, grabs, builds, print,
 	
 	S_Mouse, S_Widget, S_Element, S_Alteration, S_Text_Edit,
 	S_Common, S_Rotation, S_Resizing,  S_Component, S_Identifiables,

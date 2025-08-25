@@ -130,13 +130,6 @@ export class Utilities extends Testworthy_Utilities {
 		return width;
 	}
 
-	print_element_byClassName(className: string) {
-		const element = document.querySelector(`.${className}`) as HTMLElement;
-		if (element) {
-			print.print_element(element);
-		}
-	}
-
 	convert_windowOffset_toCharacterOffset_in(offset: number, input: HTMLInputElement): number {
 		const rect = input.getBoundingClientRect();
 		const style = window.getComputedStyle(input);
