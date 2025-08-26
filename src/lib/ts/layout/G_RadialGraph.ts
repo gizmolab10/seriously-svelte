@@ -72,7 +72,9 @@ export default class G_RadialGraph {
 		return array;
 	}
 
-	get radial_size(): Size {
+	get rect_ofNecklace(): Rect { return new Rect(Point.zero, this.size_ofNecklace); }
+
+	get size_ofNecklace(): Size {
 		const widgets = this.g_necklace_widgets;
 		if (widgets.length === 0) {
 			return Size.zero;

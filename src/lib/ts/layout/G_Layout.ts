@@ -51,7 +51,7 @@ export default class G_Layout {
 	static readonly _____GRAPH_RECT: unique symbol;
 	
 	get center_ofGraphRect(): Point { return get(w_graph_rect).size.asPoint.dividedInHalf; }
-	get tree_size(): Size { return ux.inRadialMode ? this.radial_size : h.rootAncestry?.size_ofVisibleSubtree ?? Size.zero; }
+	get tree_size(): Size { return ux.inRadialMode ? this.size_ofNecklace : h.rootAncestry?.size_ofVisibleSubtree ?? Size.zero; }
 
 	toggle_graph_type() {
 		switch (get(w_show_graph_ofType)) {
@@ -80,9 +80,11 @@ export default class G_Layout {
 
 	static readonly _____GRAPHS: unique symbol;
 
-	private get radial_size(): Size { return this.g_radialGraph.radial_size; }
+	private get size_ofNecklace(): Size { return this.g_radialGraph.size_ofNecklace; }
 	get rect_ofTree(): Rect { return get(w_ancestry_focus)?.g_widget.rect_ofTree ?? Rect.zero; }
-	get size_ofDrawnGraph(): Size { return ux.inRadialMode ? this.g_radialGraph.radial_size : this.rect_ofTree.size; }	
+	get offset_rect_ofDrawnGraph(): Rect { return this.rect_ofDrawnGraph.offsetBy(get(w_user_graph_offset)); }
+	get rect_ofDrawnGraph(): Rect { return ux.inRadialMode ? this.g_radialGraph.rect_ofNecklace : this.rect_ofTree; }
+	get size_ofDrawnGraph(): Size { return ux.inRadialMode ? this.g_radialGraph.size_ofNecklace : this.rect_ofTree.size; }
 	get g_radialGraph() { let g = this._g_radialGraph; if (!g) { g = new G_RadialGraph(); this._g_radialGraph = g }; return g; }
 
 	increase_depth_limit_by(increment: number) {
@@ -90,7 +92,7 @@ export default class G_Layout {
 		this.grand_layout();
 	}
 	
-	handle_mode_selection(name: string, types: string[]) {
+	handdle_choiceOf_t_graph(name: string, types: string[]) {
 		switch (name) {
 			case 'graph': w_show_graph_ofType.set(types[0] as unknown as T_Graph); break;
 			case 'filter': w_t_filter.set(types[0] as unknown as T_Filter); break;

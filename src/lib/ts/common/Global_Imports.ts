@@ -25,7 +25,7 @@ import { T_Dragging, T_File_Format, T_File_Operation, T_Startup } from './Enumer
 
 import S_Identifiables from '../state/S_Identifiables';
 import S_Alteration from '../state/S_Alteration';
-import S_Text_Edit from '../state/S_Text_Edit';
+import S_Title_Edit from '../state/S_Title_Edit';
 import S_Resizing from '../state/S_Resizing';
 import S_Rotation from '../state/S_Rotation';
 import S_Element from '../state/S_Element';
@@ -92,7 +92,7 @@ export {
 	Tag, User, Persistable, Thing, Trait,
 	busy, show, files, grabs, builds, print,
 	
-	S_Mouse, S_Widget, S_Element, S_Alteration, S_Text_Edit,
+	S_Mouse, S_Widget, S_Element, S_Alteration, S_Title_Edit,
 	S_Common, S_Rotation, S_Resizing,  S_Component, S_Identifiables,
 	
 	G_Widget, G_TreeLine, G_TreeBranches, G_Repeater,

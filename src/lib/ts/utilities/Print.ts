@@ -1,31 +1,32 @@
 import { grabs } from '../managers/Grabs';
-import { Rect, Size } from './Geometry';
+import { Size } from './Geometry';
 import printJS from 'print-js';
 
 export default class Print {
+	marginPixels = 48;  // 0.5 inch at 96 DPI
 	style!: CSSStyleDeclaration;
 	isLandscape = false;
 	clone!: HTMLElement;
 	size!: Size;
 
 	get scaleFactor(): number {
-		const marginPixels = 150;										// Account for margins
-		const pageSize = new Size(this.isLandscape ? 3507 : 2481, this.isLandscape ? 2481 : 3507);
-		const availableSize = pageSize.reducedEquallyBy(2 * marginPixels);
-		const scale = availableSize.relativeTo(this.size);
-		return Math.min(scale.width, scale.height) * 0.8;	// ad-hoc 0.8, delete later
+		const pageSize = new Size(
+			this.isLandscape ? 1123 : 794,  // A4 width in pixels at 96 DPI (8.27" × 96 = 794)
+			this.isLandscape ? 794 : 1123   // A4 height in pixels at 96 DPI (11.69" × 96 = 1123)
+		);
+		const printArea_size = pageSize.reducedEquallyBy(2 * this.marginPixels);
+		const scale = printArea_size.relativeTo(this.size);
+		return Math.min(scale.width, scale.height);
 	}
 
 	configure_clone() {
 		this.clone.style.transform = `scale(${this.scaleFactor})`;
+		this.clone.style.left = `${this.marginPixels}px`;
+		this.clone.style.top = `${this.marginPixels}px`;
 		this.clone.style.transformOrigin = 'top left';
 		this.clone.style.visibility = 'visible';
 		this.clone.style.position = 'relative';
 		this.clone.style.display = 'block';
-		this.clone.style.height = '100%';
-		this.clone.style.width = '100%';
-		this.clone.style.left = '-20%';
-		this.clone.style.top = '20%';
 	}
 
 	print_element_byClassName_withSize(className: string, size: Size) {

@@ -35,7 +35,7 @@
 	function handle_recents_mouseClick(column: number) { grabs.focus_onNext(column == 1); }
 
 	$: {
-		const _ = $w_graph_rect + $w_count_resize;
+		const _ = `${$w_graph_rect.description}:::${$w_count_resize}`;
 		width = layout.windowSize.width - 20;
 	}
 
@@ -127,7 +127,7 @@
 							origin={Point.x(lefts[2])}
 							selected={[$w_show_graph_ofType]}
 							titles={[T_Graph.tree, T_Graph.radial]}
-							handle_selection={(titles) => layout.handle_mode_selection('graph', titles)}/>
+							handle_selection={(titles) => layout.handdle_choiceOf_t_graph('graph', titles)}/>
 					{/key}
 					<div class='scaling-controls'>
 						<Button name={T_Control.grow}

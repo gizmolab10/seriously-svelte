@@ -2,7 +2,7 @@
 	import { w_background_color, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/managers/Stores';
 	import { c, k, ux, Size, Point, debug, colors, layout } from '../../ts/common/Global_Imports';
 	import { signals, svgPaths, components, S_Component } from '../../ts/common/Global_Imports';
-	import { w_thing_color, w_s_text_edit, w_thing_fontFamily } from '../../ts/managers/Stores';
+	import { w_thing_color, w_s_title_edit, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { T_Layer, T_Predicate, T_Component } from '../../ts/common/Enumerations';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Widget_Title from '../widget/Widget_Title.svelte';
@@ -43,7 +43,7 @@
 	$: { const _ = $w_ancestry_focus; layout_focus();}
 
 	$: {
-		const _ = `${$w_thing_color} ${$w_ancestry_focus} ${$w_s_text_edit} ${$w_ancestries_grabbed.join(',')} ${$w_ancestry_focus?.isGrabbed} ${$w_ancestry_focus?.isEditing}`;
+		const _ = `${$w_thing_color}:::${$w_ancestry_focus}:::${$w_s_title_edit}:::${$w_ancestries_grabbed.map(a => a.titles.join(',')).join('-')}:::${$w_ancestry_focus?.isGrabbed}:::${$w_ancestry_focus?.isEditing}`;
 		update_colors();
 		update_svg();
 	}

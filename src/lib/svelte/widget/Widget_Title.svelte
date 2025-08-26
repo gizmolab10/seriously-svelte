@@ -2,11 +2,11 @@
 	import { layout, signals, components, databases, Seriously_Range, S_Component } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_background_color, w_thing_title, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { c, h, k, u, ux, Rect, Size, Point, Thing, debug, Angle } from '../../ts/common/Global_Imports';
-	import { w_s_text_edit, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/managers/Stores';
+	import { w_s_title_edit, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/managers/Stores';
 	import { S_Element, T_Graph, T_Layer, T_Component } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { w_mouse_location } from '../../ts/managers/Stores';
-	import { T_Edit } from '../../ts/state/S_Text_Edit';
+	import { T_Edit } from '../../ts/state/S_Title_Edit';
 	import { onMount, onDestroy } from 'svelte';
 	export let s_title!: S_Element;
 	export let fontSize = '1em';
@@ -31,9 +31,9 @@
 	
 	function isHit():		  boolean { return false }
 	function hasFocus():	  boolean { return document.activeElement === input; }
-	function isEditing():	  boolean { return $w_s_text_edit?.ancestry_isEditing(ancestry) ?? false; }
-	function isStopping():	  boolean { return $w_s_text_edit?.ancestry_isStopping(ancestry) ?? false; }
-	function isPercolating(): boolean { return $w_s_text_edit?.ancestry_isPercolating(ancestry) ?? false; }
+	function isEditing():	  boolean { return $w_s_title_edit?.ancestry_isEditing(ancestry) ?? false; }
+	function isStopping():	  boolean { return $w_s_title_edit?.ancestry_isStopping(ancestry) ?? false; }
+	function isPercolating(): boolean { return $w_s_title_edit?.ancestry_isPercolating(ancestry) ?? false; }
 	function title_extra():	   number { return (ux.inTreeMode && isEditing()) ? 2 : 0; }
 	function hasChanges()	 		  { return title_prior != title_binded; }
 	function handle_mouse_up() 		  { clearClicks(); }
@@ -56,7 +56,7 @@
 	const _____REACTIVES: unique symbol = Symbol('REACTIVES');
 
 	$: {
-		const reactives = `${$w_thing_color}:::${$w_ancestries_grabbed.map(a => a.titles).join('-')}:::${$w_ancestries_expanded.map(a => a.titles).join('-')}`;
+		const reactives = `${$w_thing_color}:::${$w_ancestries_grabbed.map(a => a.titles.join(',')).join('-')}:::${$w_ancestries_expanded.map(a => a.titles.join(',')).join('-')}`;
 		if (reactives != trigger) {
 			const isFocus = ancestry?.isFocus ?? false;
 			const adjust = ux.inRadialMode && isFocus;
@@ -71,7 +71,7 @@
 	}
 
 	$: {
-		const _ = $w_s_text_edit;
+		const _ = $w_s_title_edit;
 		if (!!input) {
 			const isEditing = ancestry?.isEditing ?? false;
 			const isGrabbed = ancestry?.isGrabbed ?? false;
@@ -81,7 +81,7 @@
 	}
 
 	$: {
-		const s_text_edit = $w_s_text_edit;
+		const s_text_edit = $w_s_title_edit;
 		if (hasFocus() && !s_text_edit) {
 			stopEdit();
 		} else if (!!input && !!s_text_edit) {
@@ -92,7 +92,7 @@
 
 				//////////////////////////////////////////////////////
 				//													//
-				//			handle w_s_text_edit state				//
+				//			handle w_s_title_edit state				//
 				//													//
 				//////////////////////////////////////////////////////
 
@@ -123,7 +123,7 @@
 
 	function stopEdit() {
 		debug.log_edit(`STOP ${title_binded}`);
-		$w_s_text_edit = null;
+		$w_s_title_edit = null;
 		input?.blur();
 		layout.grand_layout();
 	}
@@ -138,10 +138,10 @@
 				title_prior = thing?.title;			// so hasChanges will be correct next time
 			}
 			u.onNextTick(() => {		// prevent Panel's enter key handler call to start edit from actually starting
-				if (!!$w_s_text_edit && $w_s_text_edit.actively_refersTo(ancestry)) {
+				if (!!$w_s_title_edit && $w_s_title_edit.actively_refersTo(ancestry)) {
 					debug.log_edit(`STOPPING ${ancestry.title}`);
-					$w_s_text_edit.stop_editing();
-					$w_s_text_edit = null;	// inform Widget
+					$w_s_title_edit.stop_editing();
+					$w_s_title_edit = null;	// inform Widget
 				}
 			});
 		}
@@ -150,16 +150,16 @@
 	const _____RANGE: unique symbol = Symbol('RANGE');
 
 	function extractRange_fromInput_toThing() {
-		if (!!input && !!$w_s_text_edit) {
+		if (!!input && !!$w_s_title_edit) {
 			const end = input.selectionEnd;
 			const start = input.selectionStart;
 			debug.log_edit(`EXTRACT RANGE ${start} ${end}`);
-			$w_s_text_edit.thing_setSelectionRange(new Seriously_Range(start, end));
+			$w_s_title_edit.thing_setSelectionRange(new Seriously_Range(start, end));
 		}
 	}
 
 	function applyRange_fromThing_toInput() {
-		const range = $w_s_text_edit.thing_selectionRange;
+		const range = $w_s_title_edit.thing_selectionRange;
 		if (!!range && !!input) {
 			const end = range.end;
 			const start = range.start;
@@ -169,13 +169,13 @@
 	}
 
 	function thing_setSelectionRange_fromMouseLocation() {
-		if (!!input && !!$w_s_text_edit && !isPercolating()) {
+		if (!!input && !!$w_s_title_edit && !isPercolating()) {
 			const location = $w_mouse_location;
 			if (Rect.rect_forElement_containsPoint(input, location)) {
 				const offset = u.convert_windowOffset_toCharacterOffset_in(location.x, input);
 				debug.log_edit(`CURSOR OFFSET ${offset}`);
-				$w_s_text_edit.thing_setSelectionRange_fromOffset(offset);
-				$w_s_text_edit.start_editing();
+				$w_s_title_edit.thing_setSelectionRange_fromOffset(offset);
+				$w_s_title_edit.start_editing();
 			}
 		}
 	}
@@ -232,9 +232,9 @@
 			if (isEditing()) {
 				extractRange_fromInput_toThing();
 			} else if (s_mouse.isDown) {
-				if (!!$w_s_text_edit && $w_s_text_edit.isActive) {
-					$w_s_text_edit.stop_editing();		// stop prior edit, wait for it to percolate (below with setTimeout)
-					$w_s_text_edit = null;
+				if (!!$w_s_title_edit && $w_s_title_edit.isActive) {
+					$w_s_title_edit.stop_editing();		// stop prior edit, wait for it to percolate (below with setTimeout)
+					$w_s_title_edit = null;
 				}
 				if (!ancestry.isGrabbed) {
 					ancestry.grab_forShift(event.shiftKey);
@@ -268,15 +268,15 @@
 
 	function title_updatedTo(title: string | null) {
 		const prior = $w_thing_title;
-		if (prior != title && !!$w_s_text_edit) {
+		if (prior != title && !!$w_s_title_edit) {
 			extractRange_fromInput_toThing();
 			$w_thing_title = title;		// tell Info to update it's selection's title
 			debug.log_edit(`TITLE ${title}`);
-			$w_s_text_edit.title = title;
-			$w_s_text_edit.setState_temporarilyTo_whileApplying(T_Edit.percolating, () => {
+			$w_s_title_edit.title = title;
+			$w_s_title_edit.setState_temporarilyTo_whileApplying(T_Edit.percolating, () => {
 				layout.grand_layout();
 			});
-			debug.log_edit(`UPDATED ${$w_s_text_edit.description}`);
+			debug.log_edit(`UPDATED ${$w_s_title_edit.description}`);
 		}
 	}
 

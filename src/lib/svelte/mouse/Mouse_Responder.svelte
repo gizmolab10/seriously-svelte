@@ -45,7 +45,7 @@
 	});
 
 	$: {
-		const _ = origin?.description + center?.description;
+		const _ = `${origin?.description}:::${center?.description}`;
 		setupStyle();
 	}
 

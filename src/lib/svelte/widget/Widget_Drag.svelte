@@ -3,7 +3,7 @@
 	import { S_Element, svgPaths, databases, components, S_Component } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Signal, T_Alteration, T_Component } from '../../ts/common/Global_Imports';
 	import { w_show_countDots_ofType, w_thing_color, w_ancestries_grabbed } from '../../ts/managers/Stores';
-	import { w_s_text_edit, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/managers/Stores';
+	import { w_s_title_edit, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/managers/Stores';
 	import { w_s_alteration, w_background_color } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
@@ -51,7 +51,7 @@
 	}
 
 	$: {
-		const _ = `${$w_thing_color}${$w_background_color}${$w_ancestries_grabbed.map(a => a.titles).join('-')}`;
+		const _ = `${$w_thing_color}:::${$w_background_color}:::${$w_ancestries_grabbed.map(a => a.titles.join(',')).join('-')}`;
 		update_colors();
 	}
 

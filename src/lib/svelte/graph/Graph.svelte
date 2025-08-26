@@ -1,9 +1,10 @@
 <script lang='ts'>
 	import { e, h, k, ux, Rect, Point, debug, layout, signals, colors, S_Component } from '../../ts/common/Global_Imports';
+	import { w_graph_rect, w_show_graph_ofType, w_user_graph_offset, w_depth_limit } from '../../ts/managers/Stores';
 	import { T_Layer, T_Graph, T_Signal, T_Startup, T_Control, T_Component } from '../../ts/common/Global_Imports';
-	import { w_t_startup, w_ancestry_focus, w_device_isMobile, w_popupView_id } from '../../ts/managers/Stores';
-	import { w_thing_fontFamily, w_dragging_active, w_ancestries_expanded } from '../../ts/managers/Stores';
-	import { w_graph_rect, w_show_graph_ofType, w_user_graph_offset } from '../../ts/managers/Stores';
+	import { w_ancestry_focus, w_ancestries_expanded, w_s_title_edit } from '../../ts/managers/Stores';
+	import { w_t_startup, w_device_isMobile, w_popupView_id } from '../../ts/managers/Stores';
+	import { w_thing_fontFamily, w_dragging_active } from '../../ts/managers/Stores';
 	import Tree_Preferences from './Tree_Preferences.svelte';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Radial_Graph from '../graph/Radial_Graph.svelte';
@@ -12,6 +13,7 @@
 	import Button from '../buttons/Button.svelte';
 	import { onMount } from 'svelte';
 	const size_big = k.height.button + 4;
+	let drawRect = layout.offset_rect_ofDrawnGraph;
 	let draggableRect = $w_graph_rect;
 	let rubberbandComponent: any;
 	let reattachments = 0;
@@ -37,19 +39,25 @@
 	});
 	
 	$:	{
-		const _ = $w_graph_rect.description + $w_t_startup + $w_show_graph_ofType
+		const _ = `${$w_graph_rect.description}:::${$w_t_startup}:::${$w_show_graph_ofType}`;
 		update_style();
 	}
 
 	$:	{
-		const _ = $w_show_graph_ofType + $w_ancestry_focus?.id + $w_ancestries_expanded?.map(a => a.id).join(',')
+		const _ = `${$w_show_graph_ofType}:::${$w_ancestry_focus?.titles.join(',')}:::${$w_ancestries_expanded?.map(a => a.titles.join(',')).join('-')}`;
 		grand_layout_andReattach();
+	}
+
+	$: {
+		const _ = `${$w_user_graph_offset.description}:::${$w_graph_rect.description}:::${$w_depth_limit}:::${$w_s_title_edit?.t_edit}`;
+		drawRect = layout.offset_rect_ofDrawnGraph;
 	}
 
 	function grand_layout_andReattach() {
 		if (!!h && h.hasRoot) {
 			layout.grand_layout();
 			debug.log_draw(`GRAPH grand_layout_andReattach`);
+			drawRect = layout.offset_rect_ofDrawnGraph;
 			reattachments += 1;
 		}
 	}
@@ -92,6 +100,20 @@
 				<Radial_Graph/>
 			{:else}
 				<Tree_Graph/>
+			{/if}
+			{#if debug.graph}
+				<div class='debug-graph'
+					style='
+						position: absolute;
+						border: 1px dashed green;
+						top: {drawRect.origin.y}px;
+						left: {drawRect.origin.x}px;
+						z-index: ${T_Layer.frontmost};
+						background-color: transparent;
+						width: {drawRect.size.width}px;
+						height: {drawRect.size.height}px;
+					'>
+				</div>
 			{/if}
 			<Rubberband
 				bounds={draggableRect}

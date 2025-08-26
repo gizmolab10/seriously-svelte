@@ -4,7 +4,7 @@
 	import { T_Layer, T_Graph, T_Widget, T_Signal } from '../../ts/common/Global_Imports';
 	import { G_Widget, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_background_color } from '../../ts/managers/Stores';
-	import { w_s_text_edit, w_ancestry_focus } from '../../ts/managers/Stores';
+	import { w_s_title_edit, w_ancestry_focus } from '../../ts/managers/Stores';
 	import { T_Element, T_Component } from '../../ts/common/Global_Imports';
 	import { w_ancestries_grabbed } from '../../ts/managers/Stores';
 	import Widget_Reveal from './Widget_Reveal.svelte';
@@ -64,12 +64,12 @@
 	});
 
 	$: {
-		const _ = `${$w_thing_color} ${$w_ancestry_focus.id}`;
+		const _ = `${$w_thing_color}:::${$w_ancestry_focus.id}`;
 		update_style();
 	}
 
 	$: {
-		const reactives = `${$w_s_text_edit?.t_edit}:::${$w_ancestries_grabbed.map(a => a.titles).join('-')}`;
+		const reactives = `${$w_s_title_edit?.t_edit}:::${$w_ancestries_grabbed.map(a => a.titles.join(',')).join('-')}`;
 		if (reactives != trigger && !!ancestry && s_widget.state_didChange) {
 			g_widget.layout_widget();
 			trigger = reactives;

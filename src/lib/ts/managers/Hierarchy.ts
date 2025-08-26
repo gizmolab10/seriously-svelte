@@ -4,7 +4,7 @@ import { Access, Ancestry, Predicate, Relationship, Persistable } from '../commo
 import { T_Create, T_Alteration, T_File_Format, T_Persistable } from '../common/Global_Imports';
 import { w_hierarchy, w_t_startup, w_depth_limit, w_s_alteration } from './Stores';
 import { files, colors, signals, layout, databases } from '../common/Global_Imports';
-import { w_popupView_id, w_ancestry_focus, w_s_text_edit } from './Stores';
+import { w_popupView_id, w_ancestry_focus, w_s_title_edit } from './Stores';
 import type { Integer, Dictionary } from '../common/Types';
 import Identifiable from '../runtime/Identifiable';
 import DB_Common from '../database/DB_Common';
@@ -832,7 +832,7 @@ export class Hierarchy {
 
 	// called in three places
 	async ancestry_edit_persistentAddAsChild(parentAncestry: Ancestry, child: Thing, order: number, shouldStartEdit: boolean = true) {
-		w_s_text_edit?.set(null);
+		w_s_title_edit?.set(null);
 		await parentAncestry.ancestry_persistentCreateUnique_byAddingThing(child)
 		.then((childAncestry) => {
 			if (!!childAncestry) {
@@ -1029,7 +1029,7 @@ export class Hierarchy {
 				}
 			}
 		}
-		w_s_text_edit?.set(null);
+		w_s_title_edit?.set(null);
 		if (!!newGrabAncestry) {
 			newGrabAncestry.grabOnly();
 			if (!!newFocusAncestry) {

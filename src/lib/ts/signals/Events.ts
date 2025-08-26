@@ -1,6 +1,6 @@
 import { w_ancestry_focus, w_count_mouse_up, w_mouse_location, w_mouse_location_scaled, w_scaled_movement } from '../managers/Stores';
 import { c, h, k, u, ux, grabs, print, Point, debug, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
-import { w_count_resize, w_s_alteration, w_s_text_edit, w_user_graph_offset, w_control_key_down } from '../managers/Stores';
+import { w_count_resize, w_s_alteration, w_s_title_edit, w_user_graph_offset, w_control_key_down } from '../managers/Stores';
 import { w_device_isMobile, w_ancestries_grabbed, w_t_search, w_show_details, w_popupView_id } from '../managers/Stores';
 import { T_Search, T_Action, T_Control, T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { S_Mouse, S_Alteration } from '../common/Global_Imports';
@@ -191,7 +191,7 @@ export class Events {
 		if (ancestry.isBidirectional && ancestry.thing?.isRoot) {
 			this.handle_singleClick_onDragDot(shiftKey, h.rootAncestry);
 		} else {
-			w_s_text_edit?.set(null);
+			w_s_title_edit?.set(null);
 			if (!!get(w_s_alteration)) {
 				h.ancestry_alter_connectionTo_maybe(ancestry);
 				layout.grand_build();
@@ -212,7 +212,7 @@ export class Events {
 
 	async handle_key_down(e: Event) {
 		const event = e as KeyboardEvent;
-		const isEditing = get(w_s_text_edit)?.isActive ?? false;
+		const isEditing = get(w_s_title_edit)?.isActive ?? false;
 		if (!!event && event.type == 'keydown' && !isEditing) {
 			const OPTION = event.altKey;
 			const SHIFT = event.shiftKey;
@@ -240,7 +240,7 @@ export class Events {
 									case 'd':		await h.thing_edit_persistentDuplicate(ancestry); break;
 									case ' ':		await h.ancestry_edit_persistentCreateChildOf(ancestry); break;
 									case '-':		if (!COMMAND) { await h.thing_edit_persistentAddLine(ancestry); } break;
-									case 'tab':		await h.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break; // S_Text_Edit editor also makes this call
+									case 'tab':		await h.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break; // S_Title_Edit editor also makes this call
 								}
 							}
 							switch (key) {

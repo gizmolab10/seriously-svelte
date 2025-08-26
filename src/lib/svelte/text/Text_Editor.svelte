@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { w_thing_fontFamily, w_background_color, w_s_text_edit } from '../../ts/managers/Stores';
+	import { w_thing_fontFamily, w_background_color, w_s_title_edit } from '../../ts/managers/Stores';
 	import { k, u, ux, debug, colors, T_Layer, databases } from '../../ts/common/Global_Imports';
 	import Clickable_Label from '../mouse/Clickable_Label.svelte';
 	export let handle_textChange = (label: string, text: string) => {};
@@ -21,16 +21,16 @@
 	function handle_keyup(event: KeyboardEvent) { handle_key(false, event); }
 	
 	function handle_focus(event: Event) {
-		if (!!$w_s_text_edit) {
-			$w_s_text_edit.start_editing();
+		if (!!$w_s_title_edit) {
+			$w_s_title_edit.start_editing();
 		}
 	}
 
 	function handle_blur(event: Event) {
 		handle_textChange(label, null);
-		if (!!$w_s_text_edit) {
-			$w_s_text_edit.stop_editing();
-			$w_s_text_edit = null;		// so widget will react
+		if (!!$w_s_title_edit) {
+			$w_s_title_edit.stop_editing();
+			$w_s_title_edit = null;		// so widget will react
 		}
 	}
 

@@ -85,10 +85,8 @@ export default class G_Widget {
 	}
 
 	update_rect_ofTree() {
-		const subtree_size = this.ancestry.size_ofVisibleSubtree;
-		const origin_ofTree = this.origin_ofWidget;
-		const origin = new Point(origin_ofTree.x, origin_ofTree.y - 10);
-		const size = new Size(subtree_size.width, subtree_size.height + 20);
+		const size = this.ancestry.size_ofVisibleSubtree.expandedByX(40);
+		const origin = this.origin_ofWidget.offsetByXY(3, k.height.row - size.height / 2);
 		this.rect_ofTree = new Rect(origin, size);
 	}
 

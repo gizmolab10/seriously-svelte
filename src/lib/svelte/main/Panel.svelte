@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { c, e, h, k, u, ux, show, Rect, Size, Point, Thing, colors, layout } from '../../ts/common/Global_Imports';
-	import { w_s_text_edit, w_t_search, w_show_details, w_device_isMobile, } from '../../ts/managers/Stores';
+	import { w_s_title_edit, w_t_search, w_show_details, w_device_isMobile, } from '../../ts/managers/Stores';
 	import { w_t_database, w_graph_rect, w_hierarchy, w_background_color } from '../../ts/managers/Stores';
 	import { T_Search, T_Control, Hierarchy, databases, Direction } from '../../ts/common/Global_Imports';
 	import { debug, T_Layer, T_Banner, Ancestry, T_Startup } from '../../ts/common/Global_Imports';
@@ -28,7 +28,7 @@
 	}
 
 	$: {
-		const _ = $w_t_database + $w_t_startup + $w_graph_rect.description;
+		const _ = `${$w_t_database}:::${$w_t_startup}:::${$w_graph_rect.description}`;
 		if (!!h && h.isAssembled) {
 			debug.log_draw(`PANEL`);
 			reattachments += 1;

@@ -1,5 +1,5 @@
 import { u, ux, debug, layout, Ancestry, S_Identifiables } from '../common/Global_Imports';
-import { w_hierarchy, w_s_text_edit, w_depth_limit, w_count_details } from './Stores';
+import { w_hierarchy, w_s_title_edit, w_depth_limit, w_count_details } from './Stores';
 import { w_ancestry_focus, w_ancestries_grabbed, w_s_alteration } from './Stores';
 import { get } from 'svelte/store';
 
@@ -91,7 +91,7 @@ export class Grabs {
 	}
 
 	ungrab(ancestry: Ancestry) {
-		w_s_text_edit?.set(null);
+		w_s_title_edit?.set(null);
 		let grabbed = get(w_ancestries_grabbed) ?? [];
 		const rootAncestry = get(w_hierarchy)?.rootAncestry;
 		if (!!grabbed) {

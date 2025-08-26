@@ -1,9 +1,9 @@
 import { c, h, k, p, u, ux, show, Rect, Size, Point, grabs, debug, components, svgPaths } from '../common/Global_Imports';
 import { T_Graph, T_Create, T_Kinship, T_Predicate, T_Alteration, T_Component } from '../common/Global_Imports';
 import { Thing, Direction, Predicate, databases, Relationship, S_Component } from '../common/Global_Imports';
-import { G_Widget, G_Paging, G_Cluster, G_TreeLine, S_Text_Edit } from '../common/Global_Imports';
+import { G_Widget, G_Paging, G_Cluster, G_TreeLine, S_Title_Edit } from '../common/Global_Imports';
 import { w_ancestry_focus, w_ancestries_grabbed, w_ancestries_expanded, } from '../managers/Stores';
-import { w_t_database, w_depth_limit, w_s_text_edit, w_s_alteration } from '../managers/Stores';
+import { w_t_database, w_depth_limit, w_s_title_edit, w_s_alteration } from '../managers/Stores';
 import type { Dictionary, Integer } from '../common/Types';
 import { w_show_graph_ofType } from '../managers/Stores';
 import { T_Database } from '../database/DB_Common';
@@ -299,7 +299,7 @@ export default class Ancestry extends Identifiable {
 
 	static readonly _____EDIT: unique symbol;
 
-	get isEditing(): boolean { return get(w_s_text_edit)?.ancestry_isEditing(this) ?? false; }
+	get isEditing(): boolean { return get(w_s_title_edit)?.ancestry_isEditing(this) ?? false; }
 
 	get isEditable(): boolean {
 		const isExternals = this.thing?.isExternals ?? true;
@@ -309,9 +309,9 @@ export default class Ancestry extends Identifiable {
 	}
 
 	startEdit() {
-		const s_text_edit = get(w_s_text_edit);
+		const s_text_edit = get(w_s_title_edit);
 		if (this.isEditable && (!s_text_edit || !s_text_edit.ancestry_isEditing(this))) {
-			w_s_text_edit?.set(new S_Text_Edit(this));
+			w_s_title_edit?.set(new S_Title_Edit(this));
 			debug.log_edit(`SETUP ${this.title}`);
 		}
 		this.grabOnly();

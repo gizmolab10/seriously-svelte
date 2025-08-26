@@ -86,7 +86,7 @@
 				selected={$w_show_tree_ofType}
 				origin={new Point(9, tops[1])}
 				titles={[T_Kinship.children, T_Kinship.related]}
-				handle_selection={(titles) => layout.handle_mode_selection('tree', titles)}/>
+				handle_selection={(titles) => layout.handdle_choiceOf_t_graph('tree', titles)}/>
 		{/key}
 	</div>
 </div>

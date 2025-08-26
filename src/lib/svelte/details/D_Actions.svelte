@@ -43,12 +43,12 @@
 	}
 
 	$: {
-		const _ = `${$w_background_color}${$w_user_graph_offset}${$w_show_graph_ofType}${$w_s_alteration}`;
+		const _ = `${$w_background_color}:::${$w_user_graph_offset}:::${$w_show_graph_ofType}:::${$w_s_alteration}`;
 		reattachments++;
 	}
 
 	$: {
-		const _ = `${$w_ancestries_expanded?.join(',')}${$w_ancestries_grabbed?.join(',')}`;
+		const _ = `${$w_ancestries_expanded?.map(a => a.titles.join(',')).join('-')}:::${$w_ancestries_grabbed?.map(a => a.titles.join(',')).join('-')}`;
 		update_button_titles();
 	}
 

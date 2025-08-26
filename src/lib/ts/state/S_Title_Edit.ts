@@ -7,7 +7,7 @@ export enum T_Edit {
 	done		= 'done',
 }
 
-export default class S_Text_Edit {
+export default class S_Title_Edit {
 	t_edit = T_Edit.editing;
 	ancestry: Ancestry;
 	title = k.empty

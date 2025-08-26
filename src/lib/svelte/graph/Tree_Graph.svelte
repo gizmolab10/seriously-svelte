@@ -2,7 +2,7 @@
 	import { T_Layer, S_Component, T_Signal, T_Component } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_user_graph_offset } from '../../ts/managers/Stores';
 	import { w_depth_limit, w_ancestry_focus } from '../../ts/managers/Stores';
-	import { u, layout, signals } from '../../ts/common/Global_Imports';
+	import { layout, signals } from '../../ts/common/Global_Imports';
 	import Tree_Branches from './Tree_Branches.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import { onMount } from 'svelte';

@@ -14,7 +14,7 @@
 		ancestry = grabs.ancestry;
 		if (!!ancestry) {
 			s_widget = ancestry.g_widget.s_widget;
-			const _ = `${$w_thing_color}${$w_ancestries_grabbed.join(',')}`;
+			const _ = `${$w_thing_color}:::${$w_ancestries_grabbed.map(a => a.titles.join(',')).join('-')}`;
 			background_color = s_widget?.background_color ?? 'transparent';
 			color = s_widget?.color ?? colors.default;
 			reattachments += 1;
