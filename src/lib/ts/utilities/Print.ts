@@ -1,3 +1,4 @@
+import { layout } from '../layout/G_Layout';
 import { grabs } from '../managers/Grabs';
 import { Size } from './Geometry';
 import printJS from 'print-js';
@@ -5,17 +6,20 @@ import printJS from 'print-js';
 export default class Print {
 	marginPixels = 48;  // 0.5 inch at 96 DPI
 	style!: CSSStyleDeclaration;
+	size_ofPrintContent!: Size;
 	isLandscape = false;
 	clone!: HTMLElement;
-	size!: Size;
 
 	get scaleFactor(): number {
 		const pageSize = new Size(
 			this.isLandscape ? 1123 : 794,  // A4 width in pixels at 96 DPI (8.27" × 96 = 794)
 			this.isLandscape ? 794 : 1123   // A4 height in pixels at 96 DPI (11.69" × 96 = 1123)
 		);
+		const windowSize = layout.windowSize;
 		const printArea_size = pageSize.reducedEquallyBy(2 * this.marginPixels);
-		const scale = printArea_size.relativeTo(this.size);
+		const p_scale = printArea_size.relativeTo(this.size_ofPrintContent);
+		const w_scale = windowSize.relativeTo(this.size_ofPrintContent);
+		const scale = p_scale.relativeTo(w_scale);
 		return Math.min(scale.width, scale.height);
 	}
 
@@ -42,7 +46,7 @@ export default class Print {
 					return;
 				}
 				await new Promise(resolve => setTimeout(resolve, 500));				// Wait a bit for any async rendering to complete
-				this.size = size;
+				this.size_ofPrintContent = size;
 				grabs.temporarily_clearGrabs_while(() => {
 					this.clone = element.cloneNode(true) as HTMLElement;
 					this.style = window.getComputedStyle(element);

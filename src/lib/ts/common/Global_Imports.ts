@@ -7,8 +7,8 @@ import G_Cluster from '../layout/G_Cluster';
 import G_Widget from '../layout/G_Widget';
 
 import { T_Timer } from '../signals/Mouse_Timer';
-import { T_Quadrant, T_Orientation } from '../utilities/Angle';
 import { G_Paging, G_Thing_Pages } from '../layout/G_Paging';
+import { T_Quadrant, T_Orientation } from '../utilities/Angle';
 
 import { T_Signal } from './Enumerations';
 import { T_Direction } from './Enumerations';
