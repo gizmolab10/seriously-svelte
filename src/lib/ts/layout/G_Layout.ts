@@ -1,13 +1,12 @@
-import { h, k, p, u, ux, tree, Size, Rect, Point, Thing, debug, signals, Ancestry } from '../common/Global_Imports';
-import { w_user_graph_offset, w_user_graph_center, w_mouse_location_scaled } from '../managers/Stores';
-import { T_Graph, S_Component, T_Preference, G_RadialGraph } from '../common/Global_Imports';
+import { h, k, p, u, ux, Size, Rect, Point, Thing, Ancestry } from '../common/Global_Imports';
+import { w_show_graph_ofType, w_mouse_location_scaled } from '../managers/Stores';
+import { w_user_graph_offset, w_user_graph_center } from '../managers/Stores';
+import { T_Graph, S_Component, T_Preference } from '../common/Global_Imports';
+import { debug, g_tree, g_radial, signals } from '../common/Global_Imports';
 import { w_graph_rect, w_show_details } from '../managers/Stores';
-import { w_show_graph_ofType } from '../managers/Stores';
-import { w_ancestry_focus } from '../managers/Stores';
 import { get } from 'svelte/store';
 
 export default class G_Layout {
-	_g_radialGraph!: G_RadialGraph;
 	scale_factor = 1;
 
 	static readonly _____GRAND: unique symbol;
@@ -24,9 +23,9 @@ export default class G_Layout {
 
 	grand_layout(component: S_Component | null = null) {
 		if (ux.inRadialMode) {
-			this.g_radialGraph.grand_layout_radial();
+			g_radial.grand_layout_radial();
 		} else {
-			tree.grand_layout_tree();
+			g_tree.grand_layout_tree();
 		}
 		signals.signal_reposition_widgets_fromFocus(component);
 		signals.signal_reattach_widgets_fromFocus(component);
@@ -77,12 +76,11 @@ export default class G_Layout {
 
 	static readonly _____GRAPHS: unique symbol;
 
-	private get size_ofNecklace(): Size { return this.g_radialGraph.size_ofNecklace; }
-	get rect_ofTree(): Rect { return tree.rect_ofTree ?? Rect.zero; }
+	private get size_ofNecklace(): Size { return g_radial.size_ofNecklace; }
+	get rect_ofTree(): Rect { return g_tree.rect_ofTree ?? Rect.zero; }
+	get rect_ofDrawnGraph(): Rect { return ux.inRadialMode ? g_radial.rect_ofNecklace : this.rect_ofTree; }
 	get offset_rect_ofDrawnGraph(): Rect { return this.rect_ofDrawnGraph.offsetBy(get(w_user_graph_offset)); }
-	get rect_ofDrawnGraph(): Rect { return ux.inRadialMode ? this.g_radialGraph.rect_ofNecklace : this.rect_ofTree; }
-	get size_ofDrawnGraph(): Size { return ux.inRadialMode ? this.g_radialGraph.size_ofNecklace : this.rect_ofTree.size; }
-	get g_radialGraph() { let g = this._g_radialGraph; if (!g) { g = new G_RadialGraph(); this._g_radialGraph = g }; return g; }
+	get size_ofDrawnGraph(): Size { return ux.inRadialMode ? g_radial.size_ofNecklace : this.rect_ofTree.size; }
 
 	static readonly _____WINDOW: unique symbol;
 	

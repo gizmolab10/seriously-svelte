@@ -4,6 +4,7 @@ import { w_g_paging, w_ancestry_focus } from '../managers/Stores';
 import { G_Widget, G_Cluster, G_Paging } from '../common/Global_Imports';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
+import G_TreeGraph from './G_TreeGraph';
 
 export default class G_RadialGraph {
 	g_parent_clusters: Dictionary<G_Cluster> = {};		// includes related
@@ -188,3 +189,5 @@ export default class G_RadialGraph {
 	}
 
 }
+
+export let g_radial = new G_RadialGraph();

@@ -6,17 +6,17 @@ import G_TreeLine from '../layout/G_TreeLine';
 import G_Cluster from '../layout/G_Cluster';
 import G_Widget from '../layout/G_Widget';
 
+import { T_Debug } from '../debug/Debug';
 import { T_Timer } from '../signals/Mouse_Timer';
 import { G_Paging, G_Thing_Pages } from '../layout/G_Paging';
 import { T_Quadrant, T_Orientation } from '../utilities/Angle';
 
-import { T_Signal } from './Enumerations';
-import { T_Direction } from './Enumerations';
 import { T_Search, T_Filter } from './Enumerations';
+import { T_Oblong, T_Direction } from './Enumerations';
 import { T_Graph, T_Banner, T_Control } from './Enumerations';
 import { T_Persistable, T_Persistence } from './Enumerations';
 import { T_Thing, T_Trait, T_Predicate } from './Enumerations';
-import { T_Oblong, T_Element, T_Component } from './Enumerations';
+import { T_Signal, T_Element, T_Component } from './Enumerations';
 import { T_Create, T_Browser, T_Alteration } from './Enumerations';
 import { T_Curve, T_Order, T_Widget, T_Layer } from './Enumerations';
 import { T_Action, T_Details, T_Request, T_Storage_Need } from './Enumerations';
@@ -40,17 +40,18 @@ import { grabs } from '../managers/Grabs';
 import { print } from '../utilities/Print';
 import { layout } from '../layout/G_Layout';
 import { signals } from '../signals/Signals';
-import { tree } from '../layout/G_TreeGraph';
 import { colors } from '../utilities/Colors';
 import { show } from '../managers/Visibility';
+import { debug, Debug } from '../debug/Debug';
+import { g_tree } from '../layout/G_TreeGraph';
 import { Direction } from '../utilities/Angle';
 import { radial } from '../state/S_RadialGraph';
 import { ErrorTrace } from '../debug/ErrorTrace';
 import { Hierarchy } from '../managers/Hierarchy';
 import { databases } from '../database/Databases';
 import { svgPaths } from '../utilities/SVG_Paths';
+import { g_radial } from '../layout/G_RadialGraph';
 import { components } from '../managers/Components';
-import { debug, Debug, T_Debug } from '../debug/Debug';
 import { Rect, Size, Point } from '../utilities/Geometry';
 import { Seriously_Range } from '../utilities/Seriously_Range';
 
@@ -79,25 +80,26 @@ import { c } from '../managers/Configuration';
 import { transparentize } from 'color2k';
 import interact from 'interactjs';
 
-export {
-	Mouse_Timer,
-	Angle, Direction, 
-	e, c, h, k, p, u, ux,
-	debug, Debug, ErrorTrace,
-	interact, transparentize,
-	components, Seriously_Range,
-	Rect, Size, Point, svgPaths,
-	Ancestry, Hierarchy, databases,
-	Access, Predicate, Relationship,
-	Tag, User, Persistable, Thing, Trait,
-	tree, colors, layout, radial, signals,
-	busy, show, files, grabs, builds, print,
-	
+export {	
 	S_Mouse, S_Widget, S_Element, S_Alteration, S_Title_Edit,
 	S_Common, S_Rotation, S_Resizing,  S_Component, S_Identifiables,
 	
 	G_Widget, G_TreeLine, G_TreeBranches, G_Repeater,
 	G_Paging, G_Cluster, G_RadialGraph, G_Thing_Pages, G_ArcSlider,
+
+	g_tree, g_radial,
+	e, c, h, k, p, u, ux,
+	interact, transparentize,
+	debug, svgPaths, databases, 
+	busy, show, files, grabs, builds, print,
+	colors, layout, radial, signals, components,
+
+	Angle, Direction, 
+	Rect, Size, Point,
+	User, Access, Persistable,
+	Debug, ErrorTrace, Mouse_Timer,
+	Ancestry, Hierarchy, Seriously_Range,
+	Tag, Thing, Trait, Predicate, Relationship,
 	
 	T_Debug, T_Timer, T_Dragging,
 	T_Element, T_Signal, T_Component,

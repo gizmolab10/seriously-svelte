@@ -1,9 +1,9 @@
 <script lang='ts'>
-	import { e, k, u, ux, busy, Thing, Point, Angle, debug, colors } from '../../ts/common/Global_Imports';
+	import { e, k, u, ux, busy, Thing, Point, Angle, debug, colors, layout } from '../../ts/common/Global_Imports';
 	import { w_count_mouse_up, w_s_title_edit, w_g_paging_cluster } from '../../ts/managers/Stores';
+	import { radial, g_radial, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_background_color, w_ancestry_focus } from '../../ts/managers/Stores';
 	import { T_Layer, T_RingZone, T_Component, S_Component } from '../../ts/common/Global_Imports';
-	import { layout, radial, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
 	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/managers/Stores';
 	import { w_graph_rect, w_mouse_location_scaled } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
@@ -179,7 +179,7 @@
 						break;
 					case T_RingZone.paging: 
 						const angle_ofPage = angle_ofMouseDown.angle_normalized();
-						const g_cluster = layout.g_radialGraph.g_cluster_atMouseLocation;
+						const g_cluster = g_radial.g_cluster_atMouseLocation;
 						if (!!g_cluster) {
 							debug.log_radial(` begin paging  ${angle_ofPage.asDegrees()}`);
 							g_cluster.g_paging_rotation.active_angle = angle_ofPage;
@@ -231,7 +231,7 @@
 	<div
 		class = 'paging-arcs'
 		style = 'z-index:{T_Layer.paging};'>
-		{#each layout.g_radialGraph.g_clusters as g_cluster}
+		{#each g_radial.g_clusters as g_cluster}
 			{#if !!g_cluster && (g_cluster.widgets_shown > 0)}
 				<Radial_ArcSlider
 					color = {color}

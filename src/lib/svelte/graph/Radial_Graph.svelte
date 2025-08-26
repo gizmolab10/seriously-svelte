@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { w_g_paging, w_user_graph_offset, w_thing_fontFamily } from '../../ts/managers/Stores';
-	import { k, u, ux, Rect, Point, layout, signals } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Signal, T_RingZone, T_Component, S_Component } from '../../ts/common/Global_Imports';
+	import { k, u, ux, Rect, Point, layout, g_radial, signals } from '../../ts/common/Global_Imports';
+	import { w_g_paging, w_user_graph_offset, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { w_graph_rect, w_ancestry_focus } from '../../ts/managers/Stores';
 	import Radial_Rings from './Radial_Rings.svelte';
 	import Radial_Focus from './Radial_Focus.svelte';
@@ -68,7 +68,7 @@
 		<div
 			class = 'necklace-of-widgets'
 			style = 'z-index : {T_Layer.necklace};'>
-			{#each layout.g_radialGraph.g_necklace_widgets as g_necklace_widget}
+			{#each g_radial.g_necklace_widgets as g_necklace_widget}
 				<Widget g_widget = {g_necklace_widget}/>
 			{/each}
 		</div>

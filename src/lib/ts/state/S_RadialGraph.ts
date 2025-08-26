@@ -1,5 +1,5 @@
+import { k, ux, debug, layout, g_radial, components } from '../common/Global_Imports';
 import { S_Rotation, S_Resizing, G_Thing_Pages } from '../common/Global_Imports';
-import { k, ux, debug, layout, components } from '../common/Global_Imports';
 import { T_RingZone, T_Component } from '../common/Global_Imports';
 import { w_ring_rotation_radius } from '../managers/Stores';
 import type { Dictionary } from '../common/Types';
@@ -61,7 +61,7 @@ export default class S_RadialGraph {
 		const mouse_vector = layout.mouse_vector_ofOffset_fromGraphCenter();
 		const widgets = components.components_ofType_atMouseLocation(T_Component.widget);
 		if (!!mouse_vector && widgets.length == 0) {
-			const g_cluster = layout.g_radialGraph.g_cluster_atMouseLocation;
+			const g_cluster = g_radial.g_cluster_atMouseLocation;
 			const inner = get(w_ring_rotation_radius);
 			const distance = mouse_vector.magnitude;
 			const thick = k.thickness.rotation_ring;
