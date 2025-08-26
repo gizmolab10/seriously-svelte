@@ -20,7 +20,7 @@ private handle_resize(event: Event) {
 ```
 
 The `layout.restore_state()` method triggers:
-- `graphRect_update()` - updates the graph rectangle
+- `update_graphRect()` - updates the graph rectangle
 - `set_scale_factor()` - applies scaling  
 - `renormalize_user_graph_offset()` - recalculates offsets
 
@@ -169,7 +169,7 @@ export default class G_Layout {
         this.pendingLayoutUpdates.clear();
     }
 
-    graphRect_update() {
+    update_graphRect() {
         this.scheduleLayoutUpdate('graph_rect');
     }
 }

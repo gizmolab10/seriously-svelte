@@ -23,8 +23,7 @@
 			style = '
 				position: absolute;
 				z-index: {T_Layer.graph};
-				border:10px solid transparent;
-				top: {$w_user_graph_offset.y}px;
+				top: {$w_user_graph_offset.y - 5}px;
 				left: {$w_user_graph_offset.x}px;
 				width: {$w_graph_rect.size.width}px;
 				height: {$w_graph_rect.size.height}px;

@@ -257,13 +257,13 @@ export class Events {
 						}
 						switch (key) {
 							case '?':				c.showHelp(); return;
+							case 'm':				ux.toggle_graph_type(); break;
 							case ']':				grabs.focus_onNext(true); break;
 							case '[':				grabs.focus_onNext(false); break;
-							case 'm':				layout.toggle_graph_type(); break;
 							case '!':				layout.grand_adjust_toFit(); break;
+							case '>':				ux.increase_depth_limit_by(1); break;
+							case '<':				ux.increase_depth_limit_by(-1); break;
 							case 'f':				w_t_search.set(T_Search.enter); break;
-							case '>':				layout.increase_depth_limit_by(1); break;
-							case '<':				layout.increase_depth_limit_by(-1); break;
 							case 's':				h.persist_toFile(T_File_Format.json); return;
 							case 'c':				layout.set_user_graph_offsetTo(Point.zero); return;
 							case 'o':				h.select_file_toUpload(T_File_Format.json, event.shiftKey); break;

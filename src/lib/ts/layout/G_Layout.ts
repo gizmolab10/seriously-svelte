@@ -1,9 +1,9 @@
 import { h, k, p, u, ux, Size, Rect, Point, Thing, Ancestry } from '../common/Global_Imports';
-import { w_show_graph_ofType, w_mouse_location_scaled } from '../managers/Stores';
 import { w_user_graph_offset, w_user_graph_center } from '../managers/Stores';
-import { T_Graph, S_Component, T_Preference } from '../common/Global_Imports';
+import { S_Component, T_Preference } from '../common/Global_Imports';
 import { debug, g_tree, g_radial, signals } from '../common/Global_Imports';
 import { w_graph_rect, w_show_details } from '../managers/Stores';
+import { w_mouse_location_scaled } from '../managers/Stores';
 import { get } from 'svelte/store';
 
 export default class G_Layout {
@@ -44,26 +44,24 @@ export default class G_Layout {
 		this.grand_layout();
 	}
 
+	restore_state() {
+		this.update_graphRect();	// needed for set_scale_factor
+		this.set_scale_factor(p.read_key(T_Preference.scale) ?? 1);
+		this.renormalize_user_graph_offset();	// must be called after apply scale (which otherwise fubars offset)
+		document.documentElement.style.setProperty('--css-body-width', this.windowSize.width.toString() + 'px');
+	}
+
 	static readonly _____GRAPH_RECT: unique symbol;
 	
 	get center_ofGraphRect(): Point { return get(w_graph_rect).size.asPoint.dividedInHalf; }
 	get tree_size(): Size { return ux.inRadialMode ? this.size_ofNecklace : h.rootAncestry?.size_ofVisibleSubtree ?? Size.zero; }
 
-	toggle_graph_type() {
-		switch (get(w_show_graph_ofType)) {
-			case T_Graph.tree:   w_show_graph_ofType.set(T_Graph.radial); break;
-			case T_Graph.radial: w_show_graph_ofType.set(T_Graph.tree);   break;
-		}
-		this.grand_build();
-	}
-
-	graphRect_update() {
+	update_graphRect() {
 		// respond to changes in: window size & details visibility
-		const thickness = k.thickness.separator.main - 1;
 		const y = this.controls_boxHeight + 2;								// graph is below controls
-		const x = get(w_show_details) ? k.width.details : thickness;		// graph is to the right of details
+		const x = get(w_show_details) ? k.width.details : 0;		// graph is to the right of details
 		const origin_ofGraph = new Point(x, y);
-		const size_ofGraph = this.windowSize.reducedBy(origin_ofGraph).expandedEquallyBy(-thickness);
+		const size_ofGraph = this.windowSize.reducedBy(origin_ofGraph);
 		const rect = new Rect(origin_ofGraph, size_ofGraph);
 		debug.log_mouse(`GRAPH ====> ${rect.description}`);
 		w_graph_rect.set(rect);												// emits a signal
@@ -88,13 +86,6 @@ export default class G_Layout {
 	get windowSize(): Size { return this.inner_windowSize.dividedBy(this.scale_factor); }
 	get windowScroll(): Point { return new Point(window.scrollX, window.scrollY); }
 
-	restore_state() {
-		this.graphRect_update();	// needed for set_scale_factor
-		this.set_scale_factor(p.read_key(T_Preference.scale) ?? 1);
-		this.renormalize_user_graph_offset();	// must be called after apply scale (which fubars offset)
-		document.documentElement.style.setProperty('--css-body-width', this.windowSize.width.toString() + 'px');
-	}
-
 	static readonly _____SCALE_FACTOR: unique symbol;
 
 	scaleBy(scale_factor: number): number {
@@ -110,7 +101,7 @@ export default class G_Layout {
 		// doc.style.setProperty('zoom', scale_factor.toString());
 		// doc.style.height = `${100 / scale_factor}%`;
 		// doc.style.width = `${100 / scale_factor}%`;
-		// this.graphRect_update();
+		// this.update_graphRect();
 	}
 
 	static readonly _____USER_OFFSET: unique symbol;

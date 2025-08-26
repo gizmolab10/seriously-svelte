@@ -95,6 +95,14 @@ export default class S_UX {
 		}
 	}
 
+	toggle_graph_type() {
+		switch (get(w_show_graph_ofType)) {
+			case T_Graph.tree:   w_show_graph_ofType.set(T_Graph.radial); break;
+			case T_Graph.radial: w_show_graph_ofType.set(T_Graph.tree);   break;
+		}
+		layout.grand_build();
+	}
+
 	branch_isAlready_attached(ancestry: Ancestry, clear: boolean = false): boolean {
 		if (clear) {
 			this.attached_branches = [];	// null clears the array

@@ -36,7 +36,7 @@ export default class G_TreeGraph {
 
 	private update_rect_ofTree() {
 		const size = this.focus.size_ofVisibleSubtree.expandedByX(40);
-		const origin = this.g_focus.origin_ofWidget.offsetByXY(3, k.height.row - size.height / 2);
+		const origin = this.g_focus.origin_ofWidget.offsetByXY(-8, (k.height.row - size.height) / 2 - 5);
 		this.rect_ofTree = new Rect(origin, size);
 	}
 

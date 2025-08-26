@@ -13,7 +13,7 @@
 	import Button from '../buttons/Button.svelte';
 	import { onMount } from 'svelte';
 	const size_big = k.height.button + 4;
-	let drawRect = layout.offset_rect_ofDrawnGraph;
+	let actual_content_rect = layout.offset_rect_ofDrawnGraph;
 	let draggableRect = $w_graph_rect;
 	let rubberbandComponent: any;
 	let reattachments = 0;
@@ -50,14 +50,14 @@
 
 	$: {
 		const _ = `${$w_user_graph_offset.description}:::${$w_graph_rect.description}:::${$w_depth_limit}:::${$w_s_title_edit?.t_edit}`;
-		drawRect = layout.offset_rect_ofDrawnGraph;
+		actual_content_rect = layout.offset_rect_ofDrawnGraph;
 	}
 
 	function grand_layout_andReattach() {
 		if (!!h && h.hasRoot) {
 			layout.grand_layout();
 			debug.log_draw(`GRAPH grand_layout_andReattach`);
-			drawRect = layout.offset_rect_ofDrawnGraph;
+			actual_content_rect = layout.offset_rect_ofDrawnGraph;
 			reattachments += 1;
 		}
 	}
@@ -74,7 +74,6 @@
 	function update_style() {
 		draggableRect = $w_graph_rect;
 		style=`
-			top:0px;
 			overflow: hidden;
 			touch-action: none;
 			position: absolute;
@@ -102,16 +101,28 @@
 				<Tree_Graph/>
 			{/if}
 			{#if debug.graph}
-				<div class='debug-graph'
+				<div class='debug-graph-content'
 					style='
 						position: absolute;
 						border: 1px dashed green;
-						top: {drawRect.origin.y}px;
-						left: {drawRect.origin.x}px;
 						z-index: ${T_Layer.frontmost};
 						background-color: transparent;
-						width: {drawRect.size.width}px;
-						height: {drawRect.size.height}px;
+						top: {actual_content_rect.origin.y}px;
+						left: {actual_content_rect.origin.x}px;
+						width: {actual_content_rect.size.width}px;
+						height: {actual_content_rect.size.height}px;
+					'>
+				</div>
+				<div class='debug-draggable-rect'
+					style='
+						top: 0px;
+						left: 5px;
+						position: absolute;
+						border: 5px dashed red;
+						z-index: ${T_Layer.frontmost};
+						background-color: transparent;
+						width: {draggableRect.size.width - 19}px;
+						height: {draggableRect.size.height - 14}px;
 					'>
 				</div>
 			{/if}
