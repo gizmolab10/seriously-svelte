@@ -5,8 +5,8 @@ import printJS from 'print-js';
 
 export default class Print {
 	marginPixels = 48;  // 0.5 inch at 96 DPI
+	size_ofContent_toBePrinted!: Size;
 	style!: CSSStyleDeclaration;
-	size_ofPrintContent!: Size;
 	isLandscape = false;
 	clone!: HTMLElement;
 
@@ -17,10 +17,10 @@ export default class Print {
 		);
 		const windowSize = layout.windowSize;
 		const printArea_size = pageSize.reducedEquallyBy(2 * this.marginPixels);
-		const p_scale = printArea_size.relativeTo(this.size_ofPrintContent);
-		const w_scale = windowSize.relativeTo(this.size_ofPrintContent);
+		const p_scale = printArea_size.relativeTo(this.size_ofContent_toBePrinted);
+		const w_scale = windowSize.relativeTo(this.size_ofContent_toBePrinted);
 		const scale = p_scale.relativeTo(w_scale);
-		return Math.min(scale.width, scale.height);
+		return Math.max(scale.width, scale.height);
 	}
 
 	configure_clone() {
@@ -35,18 +35,18 @@ export default class Print {
 
 	print_element_byClassName_withSize(className: string, size: Size) {
 		const element = document.querySelector(`.${className}`) as HTMLElement;
-		this.print_element_inRect(element, size);
+		this.print_element_withSize(element, size);
 	}
 	
-	async print_element_inRect(element: HTMLElement, size: Size) {
+	async print_element_withSize(element: HTMLElement, size: Size) {
 		if (!!element) {
 			try {
 				if (element.offsetWidth === 0 || element.offsetHeight === 0) {
 					console.error('Element has zero dimensions, cannot print');
 					return;
 				}
-				await new Promise(resolve => setTimeout(resolve, 500));				// Wait a bit for any async rendering to complete
-				this.size_ofPrintContent = size;
+				await new Promise(resolve => setTimeout(resolve, 100));				// Wait a bit for any async rendering to complete
+				this.size_ofContent_toBePrinted = size;
 				grabs.temporarily_clearGrabs_while(() => {
 					this.clone = element.cloneNode(true) as HTMLElement;
 					this.style = window.getComputedStyle(element);

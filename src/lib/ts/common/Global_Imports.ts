@@ -40,6 +40,7 @@ import { grabs } from '../managers/Grabs';
 import { print } from '../utilities/Print';
 import { layout } from '../layout/G_Layout';
 import { signals } from '../signals/Signals';
+import { tree } from '../layout/G_TreeGraph';
 import { colors } from '../utilities/Colors';
 import { show } from '../managers/Visibility';
 import { Direction } from '../utilities/Angle';
@@ -88,8 +89,8 @@ export {
 	Rect, Size, Point, svgPaths,
 	Ancestry, Hierarchy, databases,
 	Access, Predicate, Relationship,
-	colors, layout, radial, signals,
 	Tag, User, Persistable, Thing, Trait,
+	tree, colors, layout, radial, signals,
 	busy, show, files, grabs, builds, print,
 	
 	S_Mouse, S_Widget, S_Element, S_Alteration, S_Title_Edit,

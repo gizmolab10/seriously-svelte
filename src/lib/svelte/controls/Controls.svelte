@@ -127,7 +127,7 @@
 							origin={Point.x(lefts[2])}
 							selected={[$w_show_graph_ofType]}
 							titles={[T_Graph.tree, T_Graph.radial]}
-							handle_selection={(titles) => layout.handdle_choiceOf_t_graph('graph', titles)}/>
+							handle_selection={(titles) => ux.handle_choiceOf_t_graph('graph', titles)}/>
 					{/key}
 					<div class='scaling-controls'>
 						<Button name={T_Control.grow}

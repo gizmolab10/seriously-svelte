@@ -3,7 +3,6 @@ import { k, u, ux, Rect, Size, Point, debug, Ancestry } from '../common/Global_I
 import { w_graph_rect, w_show_graph_ofType, w_device_isMobile} from '../managers/Stores';
 import { w_show_details, w_show_related } from '../managers/Stores';
 import { T_Widget, T_Graph } from '../common/Global_Imports';
-import { w_depth_limit } from '../managers/Stores';
 import { get } from 'svelte/store';
 
 export default class G_Widget {
@@ -19,7 +18,6 @@ export default class G_Widget {
 	center_ofDrag = Point.zero;
 	widget_pointsNormal = true;
 	size_ofSubtree = Size.zero;
-	rect_ofTree = Rect.zero;
 	forGraphMode: T_Graph;
 	points_toChild = true;
 	g_cluster!: G_Cluster;
@@ -75,21 +73,6 @@ export default class G_Widget {
 
 	static readonly _____LAYOUT: unique symbol;
 
-	grand_layout_tree() {		// ???? misses every Widget.layout
-		const depth_limit = get(w_depth_limit);
-		this.layout_focus_ofTree();
-		this.recursively_layout_subtree(depth_limit);
-		this.recursively_layout_bidirectionals(depth_limit);
-		this.adjust_focus_ofTree();
-		this.update_rect_ofTree();
-	}
-
-	update_rect_ofTree() {
-		const size = this.ancestry.size_ofVisibleSubtree.expandedByX(40);
-		const origin = this.origin_ofWidget.offsetByXY(3, k.height.row - size.height / 2);
-		this.rect_ofTree = new Rect(origin, size);
-	}
-
 	layout_necklaceWidget(
 		rotated_origin: Point,
 		widget_pointsNormal: boolean) {
@@ -99,6 +82,47 @@ export default class G_Widget {
 				this.widget_pointsNormal = widget_pointsNormal;
 				this.layout_widget();
 			}
+	}
+
+	layout_bidirectional_lines(bidirectionals: G_TreeLine[]) {
+		const g_lines = this.ancestry.g_lines_forBidirectionals;
+		for (const g_line of g_lines) {
+			if (!u.hasMatching_bidirectional(bidirectionals, g_line)) {
+				this.g_bidirectionalLines.push(g_line);
+				g_line.update_svg_andName();
+			}
+		}
+		return this.g_bidirectionalLines;
+	}
+
+	recursively_layout_subtree(depth: number, visited: string[] = []) {
+		if (depth > 0) {
+			const ancestry = this.ancestry;	
+			if (!visited.includes(ancestry.id) && ancestry.shows_branches && depth > 0) {
+				const branchAncestries = ancestry.branchAncestries;
+				for (const branchAncestry of branchAncestries) {
+					branchAncestry.g_widget.recursively_layout_subtree(depth - 1, [...visited, branchAncestry.id]);		// layout progeny first
+				}
+			}
+			this.layout_widget_andChildren();
+		}
+	}
+
+	recursively_layout_bidirectionals(depth: number, visited: string[] = [], bidirectionals: G_TreeLine[] = []) {
+		if (ux.inTreeMode && get(w_show_related) && depth > 0) {
+			this.g_bidirectionalLines = [];
+			const more = this.layout_bidirectional_lines(bidirectionals);
+			const ancestry = this.ancestry;	
+			if (!visited.includes(ancestry.id) && ancestry.shows_branches) {
+				const childAncestries = ancestry.childAncestries;
+				for (const childAncestry of childAncestries) {
+					childAncestry.g_widget.recursively_layout_bidirectionals(		// layout progeny first
+						depth - 1,
+						[...visited, childAncestry.id],
+						[...bidirectionals, ...more]);
+				}
+			}
+		}
 	}
 
 	layout_treeBranches(
@@ -186,81 +210,6 @@ export default class G_Widget {
 			const offset_ofBranch = new Point(offset, -(7.8 + offset / 25));
 			this.origin_ofTrunk = this.g_line.rect.extent.offsetBy(offset_ofBranch);
 			this.g_line.update_svg_andName();
-		}
-	}
-
-	private layout_bidirectional_lines(bidirectionals: G_TreeLine[]) {
-		const g_lines = this.ancestry.g_lines_forBidirectionals;
-		for (const g_line of g_lines) {
-			if (!u.hasMatching_bidirectional(bidirectionals, g_line)) {
-				this.g_bidirectionalLines.push(g_line);
-				g_line.update_svg_andName();
-			}
-		}
-		return this.g_bidirectionalLines;
-	}
-
-	private recursively_layout_subtree(depth: number, visited: string[] = []) {
-		if (depth > 0) {
-			const ancestry = this.ancestry;	
-			if (!visited.includes(ancestry.id) && ancestry.shows_branches && depth > 0) {
-				const branchAncestries = ancestry.branchAncestries;
-				for (const branchAncestry of branchAncestries) {
-					branchAncestry.g_widget.recursively_layout_subtree(depth - 1, [...visited, branchAncestry.id]);		// layout progeny first
-				}
-			}
-			this.layout_widget_andChildren();
-		}
-	}
-
-	private recursively_layout_bidirectionals(depth: number, visited: string[] = [], bidirectionals: G_TreeLine[] = []) {
-		if (ux.inTreeMode && get(w_show_related) && depth > 0) {
-			this.g_bidirectionalLines = [];
-			const more = this.layout_bidirectional_lines(bidirectionals);
-			const ancestry = this.ancestry;	
-			if (!visited.includes(ancestry.id) && ancestry.shows_branches) {
-				const childAncestries = ancestry.childAncestries;
-				for (const childAncestry of childAncestries) {
-					childAncestry.g_widget.recursively_layout_bidirectionals(		// layout progeny first
-						depth - 1,
-						[...visited, childAncestry.id],
-						[...bidirectionals, ...more]);
-				}
-			}
-		}
-	}
-
-	private layout_focus_ofTree() {
-		const ancestry = this.ancestry;
-		const graph_rect = get(w_graph_rect);
-		if (!!graph_rect && ux.inTreeMode && ancestry?.isFocus) {
-			const y_offset = graph_rect.origin.y;
-			const subtree_size = ancestry.size_ofVisibleSubtree;
-			const x_offset_ofFirstReveal = (ancestry.thing?.width_ofTitle ?? 0) / 2 - 2;
-			const y_offset_ofBranches = (k.height.dot / 2) -(subtree_size.height / 2) - 4;
-			const x_offset_ofBranches = -8 - k.height.dot + x_offset_ofFirstReveal;
-			const x_offset = (get(w_show_details) ? -k.width.details : 0) + 15 + x_offset_ofFirstReveal - (subtree_size.width / 2) - (k.height.dot / 2.5);
-			const origin_ofFocusReveal = graph_rect.center.offsetByXY(x_offset, -y_offset);
-			if (get(w_device_isMobile)) {
-				origin_ofFocusReveal.x = 25;
-			}
-			// need this for laying out branches, but it is wrong for final positioning
-			// TODO: dunno why, must fix
-			this.origin_ofWidget = origin_ofFocusReveal.offsetByXY(x_offset_ofBranches, y_offset_ofBranches);
-		}
-	}
-
-	private adjust_focus_ofTree() {
-		const ancestry = this.ancestry;
-		const graph_rect = get(w_graph_rect);
-		if (!!graph_rect && ux.inTreeMode && ancestry?.isFocus) {
-			const y_offset = -1 - graph_rect.origin.y;
-			const subtree_size = ancestry.size_ofVisibleSubtree;
-			const x_offset_ofReveal = (ancestry.thing?.width_ofTitle ?? 0) / 2 - 2;
-			const x_offset_forDetails = (get(w_show_details) ? -k.width.details : 0);
-			const x_offset = 15 + x_offset_forDetails - (subtree_size.width / 2) - (k.height.dot / 2.5) + x_offset_ofReveal;
-			const origin_ofFocusReveal = graph_rect.center.offsetByXY(x_offset, y_offset);
-			this.origin_ofWidget = origin_ofFocusReveal.offsetByXY(-21.5 - x_offset_ofReveal, -5);
 		}
 	}
 	

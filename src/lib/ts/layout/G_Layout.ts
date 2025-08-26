@@ -1,16 +1,13 @@
-import { h, k, p, u, ux, Size, Rect, Point, Thing, grabs, debug, signals, Ancestry, S_Component, T_Filter } from '../common/Global_Imports';
-import { w_user_graph_offset, w_user_graph_center, w_mouse_location_scaled, w_t_filter } from '../managers/Stores';
-import { T_Graph, T_Kinship, T_Preference, G_RadialGraph } from '../common/Global_Imports';
-import { w_graph_rect, w_depth_limit, w_show_details } from '../managers/Stores';
-import { w_show_tree_ofType, w_show_graph_ofType } from '../managers/Stores';
-import { w_show_related, w_ancestry_focus } from '../managers/Stores';
+import { h, k, p, u, ux, tree, Size, Rect, Point, Thing, debug, signals, Ancestry } from '../common/Global_Imports';
+import { w_user_graph_offset, w_user_graph_center, w_mouse_location_scaled } from '../managers/Stores';
+import { T_Graph, S_Component, T_Preference, G_RadialGraph } from '../common/Global_Imports';
+import { w_graph_rect, w_show_details } from '../managers/Stores';
+import { w_show_graph_ofType } from '../managers/Stores';
+import { w_ancestry_focus } from '../managers/Stores';
 import { get } from 'svelte/store';
 
 export default class G_Layout {
-	parents_focus_ancestry!: Ancestry;
-	branches_visited: string[] = [];
 	_g_radialGraph!: G_RadialGraph;
-	focus_ancestry!: Ancestry;
 	scale_factor = 1;
 
 	static readonly _____GRAND: unique symbol;
@@ -29,7 +26,7 @@ export default class G_Layout {
 		if (ux.inRadialMode) {
 			this.g_radialGraph.grand_layout_radial();
 		} else {
-			get(w_ancestry_focus)?.g_widget.grand_layout_tree();
+			tree.grand_layout_tree();
 		}
 		signals.signal_reposition_widgets_fromFocus(component);
 		signals.signal_reattach_widgets_fromFocus(component);
@@ -81,54 +78,11 @@ export default class G_Layout {
 	static readonly _____GRAPHS: unique symbol;
 
 	private get size_ofNecklace(): Size { return this.g_radialGraph.size_ofNecklace; }
-	get rect_ofTree(): Rect { return get(w_ancestry_focus)?.g_widget.rect_ofTree ?? Rect.zero; }
+	get rect_ofTree(): Rect { return tree.rect_ofTree ?? Rect.zero; }
 	get offset_rect_ofDrawnGraph(): Rect { return this.rect_ofDrawnGraph.offsetBy(get(w_user_graph_offset)); }
 	get rect_ofDrawnGraph(): Rect { return ux.inRadialMode ? this.g_radialGraph.rect_ofNecklace : this.rect_ofTree; }
 	get size_ofDrawnGraph(): Size { return ux.inRadialMode ? this.g_radialGraph.size_ofNecklace : this.rect_ofTree.size; }
 	get g_radialGraph() { let g = this._g_radialGraph; if (!g) { g = new G_RadialGraph(); this._g_radialGraph = g }; return g; }
-
-	increase_depth_limit_by(increment: number) {
-		w_depth_limit.update(a => a + increment);
-		this.grand_layout();
-	}
-	
-	handdle_choiceOf_t_graph(name: string, types: string[]) {
-		switch (name) {
-			case 'graph': w_show_graph_ofType.set(types[0] as unknown as T_Graph); break;
-			case 'filter': w_t_filter.set(types[0] as unknown as T_Filter); break;
-			case 'tree': this.set_tree_types(types as Array<T_Kinship>); break;
-		}
-	}
-
-	branch_was_visited(ancestry: Ancestry, clear: boolean = false): boolean {
-		if (clear) {
-			this.branches_visited = [];	// null clears the array
-		}
-		const visited = this.branches_visited.includes(ancestry.id);
-		if (!visited) {
-			this.branches_visited.push(ancestry.id);
-		}
-		return visited;
-	}
-
-	set_tree_types(t_trees: Array<T_Kinship>) {
-		if (t_trees.length == 0) {
-			t_trees = [T_Kinship.children];
-		}
-		w_show_tree_ofType.set(t_trees);
-		let focus_ancestry = get(w_ancestry_focus);
-		if (p.branches_areChildren) {
-			this.parents_focus_ancestry = focus_ancestry;
-			focus_ancestry = this.focus_ancestry;
-		} else {
-			this.focus_ancestry = focus_ancestry;
-			focus_ancestry = this.parents_focus_ancestry ?? grabs.ancestry;
-		}
-		w_show_related.set(t_trees.includes(T_Kinship.related));
-		focus_ancestry?.becomeFocus();
-		p.restore_expanded();
-		this.grand_build();
-	}
 
 	static readonly _____WINDOW: unique symbol;
 	

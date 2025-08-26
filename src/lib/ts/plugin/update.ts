@@ -1,4 +1,4 @@
-import { pluginApp } from "../app/pluginRuntime";
+import { pluginApp } from "../../../../notes/app/pluginRuntime";
 
 function update(instance, properties) {
   pluginApp.update(properties);

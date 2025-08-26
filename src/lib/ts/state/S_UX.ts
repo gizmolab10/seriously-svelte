@@ -1,7 +1,9 @@
-import { T_Graph, T_Control, T_Element } from '../common/Global_Imports';
+import { T_Graph, T_Filter, T_Control, T_Element, T_Kinship } from '../common/Global_Imports';
+import { p, grabs, colors, layout, Ancestry } from '../common/Global_Imports';
 import { S_Mouse, S_Widget, S_Element } from '../common/Global_Imports';
-import { colors, Ancestry } from '../common/Global_Imports';
-import { w_show_graph_ofType } from '../managers/Stores';
+import { w_show_tree_ofType, w_depth_limit } from '../managers/Stores';
+import { w_show_related, w_ancestry_focus } from '../managers/Stores';
+import { w_t_filter, w_show_graph_ofType } from '../managers/Stores';
 import Identifiable from '../runtime/Identifiable';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
@@ -12,7 +14,10 @@ export default class S_UX {
 	s_widget_byAncestryID: { [id: string]: S_Widget } = {};
 	s_element_byName: { [name: string]: S_Element } = {};
 	s_mouse_byName: { [name: string]: S_Mouse } = {};
+	parents_focus_ancestry!: Ancestry;
+	attached_branches: string[] = [];
 	mouse_responder_number = 0;
+	focus_ancestry!: Ancestry;
 	width = 0;		// cruft from scaling logic
 
 	//////////////////////////////////////
@@ -73,6 +78,51 @@ export default class S_UX {
 			this.s_control_byType[t_control] = s_control;
 		}
 		return s_control;
+	}
+
+	static readonly _____GRAPHS: unique symbol;
+
+	increase_depth_limit_by(increment: number) {
+		w_depth_limit.update(a => a + increment);
+		layout.grand_layout();
+	}
+	
+	handle_choiceOf_t_graph(name: string, types: string[]) {
+		switch (name) {
+			case 'graph': w_show_graph_ofType.set(types[0] as unknown as T_Graph); break;
+			case 'filter': w_t_filter.set(types[0] as unknown as T_Filter); break;
+			case 'tree': this.set_tree_types(types as Array<T_Kinship>); break;
+		}
+	}
+
+	branch_isAlready_attached(ancestry: Ancestry, clear: boolean = false): boolean {
+		if (clear) {
+			this.attached_branches = [];	// null clears the array
+		}
+		const visited = this.attached_branches.includes(ancestry.id);
+		if (!visited) {
+			this.attached_branches.push(ancestry.id);
+		}
+		return visited;
+	}
+
+	set_tree_types(t_trees: Array<T_Kinship>) {
+		if (t_trees.length == 0) {
+			t_trees = [T_Kinship.children];
+		}
+		w_show_tree_ofType.set(t_trees);
+		let focus_ancestry = get(w_ancestry_focus);
+		if (p.branches_areChildren) {
+			this.parents_focus_ancestry = focus_ancestry;
+			focus_ancestry = this.focus_ancestry;
+		} else {
+			this.focus_ancestry = focus_ancestry;
+			focus_ancestry = this.parents_focus_ancestry ?? grabs.ancestry;
+		}
+		w_show_related.set(t_trees.includes(T_Kinship.related));
+		focus_ancestry?.becomeFocus();
+		p.restore_expanded();
+		layout.grand_build();
 	}
 
 }

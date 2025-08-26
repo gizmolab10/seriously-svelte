@@ -1,6 +1,6 @@
 <script lang=ts>
 	import { S_Component, T_Signal, T_Component } from '../../ts/common/Global_Imports';
-	import { debug, signals, layout, Ancestry } from '../../ts/common/Global_Imports';
+	import { ux, debug, signals, Ancestry } from '../../ts/common/Global_Imports';
 	import { w_show_related } from '../../ts/managers/Stores';
 	import Tree_Branches from './Tree_Branches.svelte';
 	import Widget from '../widget/Widget.svelte';
@@ -38,7 +38,7 @@
 			{#each ancestry.branchAncestries as branchAncestry}
 				<Tree_Line g_line = {branchAncestry.g_widget.g_line}/>
 				<Widget g_widget = {branchAncestry.g_widget}/>
-				{#if branchAncestry.shows_branches && !layout.branch_was_visited(branchAncestry)}
+				{#if branchAncestry.shows_branches && !ux.branch_isAlready_attached(branchAncestry)}
 					<Tree_Branches ancestry = {branchAncestry} depth = {depth - 1}/>
 				{/if}
 			{/each}

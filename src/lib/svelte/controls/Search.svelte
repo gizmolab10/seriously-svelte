@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { e, k, u, ux, Point, colors, layout, svgPaths } from '../../ts/common/Global_Imports';
+	import { e, k, u, ux, Point, colors, svgPaths } from '../../ts/common/Global_Imports';
 	import { T_Filter, T_Search, T_Control } from '../../ts/common/Global_Imports';
 	import { w_t_filter, w_t_search } from '../../ts/managers/Stores';
 	import Close_Button from '../buttons/Close_Button.svelte';
@@ -22,7 +22,7 @@
 		height={ k.height.button}
 		origin={new Point(22, 1)}
 		titles={[T_Filter.title, T_Filter.trait, T_Filter.tags]}
-		handle_selection={(titles) => layout.handdle_choiceOf_t_graph('filter', titles)}/>
+		handle_selection={(titles) => ux.handle_choiceOf_t_graph('filter', titles)}/>
 	<input class='search-input'
 		type='text'
 		placeholder={'enter ' + $w_t_filter + ' text'}
