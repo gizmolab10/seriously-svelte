@@ -35,7 +35,7 @@ export default class S_Component {
     get distance_toGraphCenter(): Point { return this.boundingRect.center; }
     containsPoint(point: Point) { return this.boundingRect.contains(point); }
     get element(): HTMLElement | null { return document.getElementById(this.id) }
-    get id(): string { return `${this.type}-${this.ancestry?.titles ?? Identifiable.newID()}`; }
+    get id(): string { return `${this.type}-${this.ancestry?.kind ?? 'no-predicate'}-${this.ancestry?.titles ?? Identifiable.newID()}`; }
 
     get boundingRect(): Rect {
         const rect = Rect.boundingRectFor(this.element);

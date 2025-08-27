@@ -84,7 +84,7 @@ export class Events {
 
 	private handle_mouse_move(event: MouseEvent) {
 		const location = new Point(event.clientX, event.clientY);
-		const scaled = location.dividedBy(layout.scale_factor);
+		const scaled = location.dividedEquallyBy(layout.scale_factor);
 		const prior_scaled = get(w_mouse_location_scaled);
 		const delta = prior_scaled?.vector_to(scaled);
 		if (!!delta && delta.magnitude > 1) {

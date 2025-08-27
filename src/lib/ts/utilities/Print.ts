@@ -1,10 +1,11 @@
-import { layout } from '../layout/G_Layout';
+import { w_graph_rect } from '../managers/Stores';
 import { grabs } from '../managers/Grabs';
+import { get } from 'svelte/store';
 import { Size } from './Geometry';
 import printJS from 'print-js';
 
 export default class Print {
-	marginPixels = 48;  // 0.5 inch at 96 DPI
+	marginPixels = 48;  // pixels == 1/2 inch (all browsers render at 96 DPI)
 	size_ofContent_toBePrinted!: Size;
 	style!: CSSStyleDeclaration;
 	isLandscape = false;
@@ -15,11 +16,11 @@ export default class Print {
 			this.isLandscape ? 1123 : 794,  // A4 width in pixels at 96 DPI (8.27" × 96 = 794)
 			this.isLandscape ? 794 : 1123   // A4 height in pixels at 96 DPI (11.69" × 96 = 1123)
 		);
-		const windowSize = layout.windowSize;
-		const printArea_size = pageSize.reducedEquallyBy(2 * this.marginPixels);
+		const graphArea_size = get(w_graph_rect).size;
+		const printArea_size = pageSize.insetEquallyBy(this.marginPixels);
 		const p_scale = printArea_size.relativeTo(this.size_ofContent_toBePrinted);
-		const w_scale = windowSize.relativeTo(this.size_ofContent_toBePrinted);
-		const scale = p_scale.relativeTo(w_scale);
+		const g_scale = graphArea_size.relativeTo(this.size_ofContent_toBePrinted);
+		const scale = p_scale.relativeTo(g_scale);
 		return Math.max(scale.width, scale.height);
 	}
 

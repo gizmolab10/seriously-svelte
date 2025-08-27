@@ -4,6 +4,7 @@
 	import { T_Layer, T_Graph, T_Signal, T_Startup, T_Control, T_Component } from '../../ts/common/Global_Imports';
 	import { w_ancestry_focus, w_ancestries_expanded, w_s_title_edit } from '../../ts/managers/Stores';
 	import { w_t_startup, w_device_isMobile, w_popupView_id } from '../../ts/managers/Stores';
+	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/managers/Stores';
 	import { w_thing_fontFamily, w_dragging_active } from '../../ts/managers/Stores';
 	import Tree_Preferences from './Tree_Preferences.svelte';
 	import Identifiable from '../../ts/runtime/Identifiable';
@@ -13,7 +14,7 @@
 	import Button from '../buttons/Button.svelte';
 	import { onMount } from 'svelte';
 	const size_big = k.height.button + 4;
-	let actual_content_rect = layout.offset_rect_ofDrawnGraph;
+	let actual_content_rect = layout.user_offset_rect_ofDrawnGraph;
 	let draggableRect = $w_graph_rect;
 	let rubberbandComponent: any;
 	let reattachments = 0;
@@ -49,15 +50,15 @@
 	}
 
 	$: {
-		const _ = `${$w_user_graph_offset.description}:::${$w_graph_rect.description}:::${$w_depth_limit}:::${$w_s_title_edit?.t_edit}`;
-		actual_content_rect = layout.offset_rect_ofDrawnGraph;
+		const _ = `${$w_user_graph_offset.description}:::${$w_graph_rect.description}:::${$w_depth_limit}:::${$w_s_title_edit?.t_edit}:::${$w_ring_rotation_angle}:::${$w_ring_rotation_radius}`;
+		actual_content_rect = layout.user_offset_rect_ofDrawnGraph;
 	}
 
 	function grand_layout_andReattach() {
 		if (!!h && h.hasRoot) {
 			layout.grand_layout();
 			debug.log_draw(`GRAPH grand_layout_andReattach`);
-			actual_content_rect = layout.offset_rect_ofDrawnGraph;
+			actual_content_rect = layout.user_offset_rect_ofDrawnGraph;
 			reattachments += 1;
 		}
 	}
@@ -104,7 +105,7 @@
 				<div class='debug-graph-content'
 					style='
 						position: absolute;
-						border: 1px dashed green;
+						border: 4px dashed green;
 						z-index: ${T_Layer.frontmost};
 						background-color: transparent;
 						top: {actual_content_rect.origin.y}px;

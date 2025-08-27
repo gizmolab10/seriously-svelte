@@ -23,8 +23,8 @@
 			style = '
 				position: absolute;
 				z-index: {T_Layer.graph};
-				top: {$w_user_graph_offset.y - 5}px;
 				left: {$w_user_graph_offset.x}px;
+				top: {$w_user_graph_offset.y - 5}px;
 				width: {$w_graph_rect.size.width}px;
 				height: {$w_graph_rect.size.height}px;
 				transform: scale({layout.scale_factor});'>

@@ -228,9 +228,10 @@
 			</Mouse_Responder>
 		</div>
 	{/if}
-	<div
-		class = 'paging-arcs'
-		style = 'z-index:{T_Layer.paging};'>
+	<div class = 'paging-arcs'
+		style = '
+			z-index:{T_Layer.paging};
+			background-color: transparent;'>
 		{#each g_radial.g_clusters as g_cluster}
 			{#if !!g_cluster && (g_cluster.widgets_shown > 0)}
 				<Radial_ArcSlider

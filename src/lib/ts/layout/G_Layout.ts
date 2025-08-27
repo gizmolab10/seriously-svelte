@@ -1,7 +1,7 @@
 import { h, k, p, u, ux, Size, Rect, Point, Thing, Ancestry } from '../common/Global_Imports';
 import { w_user_graph_offset, w_user_graph_center } from '../managers/Stores';
-import { S_Component, T_Preference } from '../common/Global_Imports';
 import { debug, g_tree, g_radial, signals } from '../common/Global_Imports';
+import { S_Component, T_Preference } from '../common/Global_Imports';
 import { w_graph_rect, w_show_details } from '../managers/Stores';
 import { w_mouse_location_scaled } from '../managers/Stores';
 import { get } from 'svelte/store';
@@ -9,7 +9,33 @@ import { get } from 'svelte/store';
 export default class G_Layout {
 	scale_factor = 1;
 
-	static readonly _____GRAND: unique symbol;
+	restore_state() {
+		this.update_graphRect();	// needed for set_scale_factor
+		this.set_scale_factor(p.read_key(T_Preference.scale) ?? 1);
+		this.renormalize_user_graph_offset();	// must be called after apply scale (which otherwise fubars offset)
+		document.documentElement.style.setProperty('--css-body-width', this.windowSize.width.toString() + 'px');
+	}
+
+	static readonly _____GRAPH_RECT: unique symbol;
+
+	private get size_ofNecklace(): Size { return g_radial.size_ofNecklace; }
+	get rect_ofTree(): Rect { return g_tree.rect_ofTree ?? Rect.zero; }
+	get center_ofGraphRect(): Point { return get(w_graph_rect).size.asPoint.dividedInHalf; }
+	get rect_ofDrawnGraph(): Rect { return ux.inRadialMode ? g_radial.rect_ofNecklace : this.rect_ofTree; }
+	get size_ofDrawnGraph(): Size { return ux.inRadialMode ? g_radial.size_ofNecklace : this.rect_ofTree.size; }
+
+	update_graphRect() {
+		// respond to changes in: window size & details visibility
+		const y = this.controls_boxHeight + 2;								// graph is below controls
+		const x = get(w_show_details) ? k.width.details : 0;		// graph is to the right of details
+		const origin_ofGraph = new Point(x, y);
+		const size_ofGraph = this.windowSize.reducedBy(origin_ofGraph);
+		const rect = new Rect(origin_ofGraph, size_ofGraph);
+		debug.log_mouse(`GRAPH ====> ${rect.description}`);
+		w_graph_rect.set(rect);												// emits a signal
+	}
+
+	static readonly _____GRAPHS: unique symbol;
 
 	grand_build(component: S_Component | null = null) {
 		signals.signal_rebuildGraph_fromFocus(component);
@@ -32,11 +58,11 @@ export default class G_Layout {
 	}
 
 	grand_adjust_toFit() {
-		const layout_size = this.tree_size;
 		const graph_size = get(w_graph_rect).size;
+		const layout_size = this.size_ofDrawnGraph;
 		const scale_factor = layout_size.best_ratio_to(graph_size);
-		const new_size = layout_size.dividedBy(scale_factor);
-		const new_offset = get(w_user_graph_offset).dividedBy(scale_factor);
+		const new_size = layout_size.dividedEquallyBy(scale_factor);
+		const new_offset = get(w_user_graph_offset).dividedEquallyBy(scale_factor);
 		// also detect if layout is really needed by difference from prior center and offset
 		w_user_graph_center.set(new_size.asPoint.dividedInHalf);
 		w_user_graph_offset.set(new_offset);
@@ -44,69 +70,10 @@ export default class G_Layout {
 		this.grand_layout();
 	}
 
-	restore_state() {
-		this.update_graphRect();	// needed for set_scale_factor
-		this.set_scale_factor(p.read_key(T_Preference.scale) ?? 1);
-		this.renormalize_user_graph_offset();	// must be called after apply scale (which otherwise fubars offset)
-		document.documentElement.style.setProperty('--css-body-width', this.windowSize.width.toString() + 'px');
-	}
-
-	static readonly _____GRAPH_RECT: unique symbol;
-	
-	get center_ofGraphRect(): Point { return get(w_graph_rect).size.asPoint.dividedInHalf; }
-	get tree_size(): Size { return ux.inRadialMode ? this.size_ofNecklace : h.rootAncestry?.size_ofVisibleSubtree ?? Size.zero; }
-
-	update_graphRect() {
-		// respond to changes in: window size & details visibility
-		const y = this.controls_boxHeight + 2;								// graph is below controls
-		const x = get(w_show_details) ? k.width.details : 0;		// graph is to the right of details
-		const origin_ofGraph = new Point(x, y);
-		const size_ofGraph = this.windowSize.reducedBy(origin_ofGraph);
-		const rect = new Rect(origin_ofGraph, size_ofGraph);
-		debug.log_mouse(`GRAPH ====> ${rect.description}`);
-		w_graph_rect.set(rect);												// emits a signal
-	}
-
-	static readonly _____DETAILS: unique symbol;
-
-	get glows_banner_height(): number { return u.device_isMobile ? 32 : 20; }
-	get controls_boxHeight(): number { return this.glows_banner_height + k.height.segmented; }
-
-	static readonly _____GRAPHS: unique symbol;
-
-	private get size_ofNecklace(): Size { return g_radial.size_ofNecklace; }
-	get rect_ofTree(): Rect { return g_tree.rect_ofTree ?? Rect.zero; }
-	get rect_ofDrawnGraph(): Rect { return ux.inRadialMode ? g_radial.rect_ofNecklace : this.rect_ofTree; }
-	get offset_rect_ofDrawnGraph(): Rect { return this.rect_ofDrawnGraph.offsetBy(get(w_user_graph_offset)); }
-	get size_ofDrawnGraph(): Size { return ux.inRadialMode ? g_radial.size_ofNecklace : this.rect_ofTree.size; }
-
-	static readonly _____WINDOW: unique symbol;
-	
-	get inner_windowSize(): Size { return new Size(window.innerWidth, window.innerHeight); }
-	get windowSize(): Size { return this.inner_windowSize.dividedBy(this.scale_factor); }
-	get windowScroll(): Point { return new Point(window.scrollX, window.scrollY); }
-
-	static readonly _____SCALE_FACTOR: unique symbol;
-
-	scaleBy(scale_factor: number): number {
-		const zoom = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('zoom')) || 1;
-		this.set_scale_factor(zoom * scale_factor);
-		return this.windowSize.width;
-	}
-
-	set_scale_factor(scale_factor: number) {
-		// this.scale_factor = scale_factor;	// needed to edit things
-		// p.write_key(T_Preference.scale, scale_factor);
-		// const doc = document.documentElement;
-		// doc.style.setProperty('zoom', scale_factor.toString());
-		// doc.style.height = `${100 / scale_factor}%`;
-		// doc.style.width = `${100 / scale_factor}%`;
-		// this.update_graphRect();
-	}
-
 	static readonly _____USER_OFFSET: unique symbol;
 	
 	renormalize_user_graph_offset() { this.set_user_graph_offsetTo(this.persisted_user_offset); }
+	get user_offset_rect_ofDrawnGraph(): Rect { return this.rect_ofDrawnGraph.offsetBy(get(w_user_graph_offset)); }
 	get mouse_distance_fromGraphCenter(): number { return this.mouse_vector_ofOffset_fromGraphCenter()?.magnitude ?? 0; }
 	get mouse_angle_fromGraphCenter(): number | null { return this.mouse_vector_ofOffset_fromGraphCenter()?.angle ?? null; }
 
@@ -161,6 +128,11 @@ export default class G_Layout {
 		}
 	}
 
+	static readonly _____DETAILS: unique symbol;
+
+	get glows_banner_height(): number { return u.device_isMobile ? 32 : 20; }
+	get controls_boxHeight(): number { return this.glows_banner_height + k.height.segmented; }
+
 	static readonly _____BREADCRUMBS: unique symbol;
 
 	get breadcrumbs_top(): number { return this.windowSize.height - this.controls_boxHeight; }
@@ -193,6 +165,30 @@ export default class G_Layout {
 			lefts.push(left);
 		}
 		return [crumb_things.reverse(), widths.reverse(), lefts, parent_widths];
+	}
+
+	static readonly _____WINDOW: unique symbol;
+	
+	get inner_windowSize(): Size { return new Size(window.innerWidth, window.innerHeight); }
+	get windowSize(): Size { return this.inner_windowSize.dividedEquallyBy(this.scale_factor); }
+	get windowScroll(): Point { return new Point(window.scrollX, window.scrollY); }
+
+	static readonly _____SCALE_FACTOR: unique symbol;
+
+	scaleBy(scale_factor: number): number {
+		const zoom = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('zoom')) || 1;
+		this.set_scale_factor(zoom * scale_factor);
+		return this.windowSize.width;
+	}
+
+	set_scale_factor(scale_factor: number) {
+		// this.scale_factor = scale_factor;	// needed to edit things
+		// p.write_key(T_Preference.scale, scale_factor);
+		// const doc = document.documentElement;
+		// doc.style.setProperty('zoom', scale_factor.toString());
+		// doc.style.height = `${100 / scale_factor}%`;
+		// doc.style.width = `${100 / scale_factor}%`;
+		// this.update_graphRect();
 	}
 
 }

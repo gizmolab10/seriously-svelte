@@ -149,7 +149,7 @@ export class Preferences {
 	
 	static readonly _____PRIMITIVES: unique symbol;
 
-	db_keyFor	(key: string):					string { return this.keyPair_for(databases.db_now.t_database, key); }
+	db_keyFor	(key: string):					string { return !!databases.db_now.t_database ? this.keyPair_for(databases.db_now.t_database, key) : k.empty; }
 	keyPair_for	(key: string, sub_key: string):	string { return `${key}${k.separator.generic}${sub_key}`; }
 
 	parse(key: string | null | undefined): any | null {

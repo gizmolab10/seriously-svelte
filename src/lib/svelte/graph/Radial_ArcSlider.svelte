@@ -62,7 +62,10 @@
 		radius={k.thickness.fork * 3}
 		color={colors.specialBlend(color, $w_background_color, k.opacity.least)}/>
 {/if}
-<div class='arc-slider' style='z-index:{T_Layer.paging};'>
+<div class='arc-slider'
+	style='
+		z-index:{T_Layer.paging};
+		background-color: transparent;'>
     <Mouse_Responder
 		width = {radius * 2}
 		height = {radius * 2}
@@ -76,13 +79,13 @@
             <path
                 d={bigPath}
                 class='path-fat'
-                fill={$w_background_color}
+                fill='transparent'
                 stroke-width={k.thickness.fork}
                 stroke={colors.specialBlend('transparent', $w_background_color, k.opacity.least)}/>
             <path
                 d={arcSliderPath}
+                fill='transparent'
                 class='path-arc-slider'
-                fill={$w_background_color}
                 stroke-width={k.thickness.fork}
                 stroke={colors.specialBlend(color, $w_background_color, k.opacity.least)}/>
             <path
