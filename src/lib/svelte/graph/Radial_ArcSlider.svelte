@@ -13,7 +13,6 @@
 	export let g_cluster!: G_Cluster;
 	const offset = k.radial_widget_inset;
 	const g_sliderArc = g_cluster.g_sliderArc;
-	const thumb_name = `thumb-${g_cluster.name}`;
 	const g_paging_rotation = g_cluster.g_paging_rotation;
 	let mouse_up_count = $w_count_mouse_up;
 	let textBackground = 'transparent';
@@ -34,15 +33,7 @@
 	$: textBackground = radial.s_ring_rotation.isHighlighted ? $w_background_color : colors.specialBlend(color, $w_background_color, radial.s_ring_resizing.fill_opacity);
 	$: origin = layout.center_ofGraphRect.offsetBy(Point.square(-radius));
 	$: viewBox=`${-offset} ${-offset} ${radius * 2} ${radius * 2}`;
-	$: thumbPath = g_cluster.g_thumbArc.svgPathFor_arcSlider;
-	$: arcSliderPath = g_sliderArc.svgPathFor_arcSlider;
-	$: forkPath = g_sliderArc.svgPathFor_radialFork;
 	$: radius = $w_ring_rotation_radius + offset;
-	$: labelAngle = g_sliderArc.label_text_angle;
-	$: forkDirection = g_sliderArc.angle_ofFork;
-	$: bigPath = g_sliderArc.svgPathFor_bigArc;
-	$: labelCenter = g_cluster.label_center;
-	$: forkTip = g_sliderArc.tip_ofFork;
 
 	function handle_isHit(s_mouse: S_Mouse): boolean { return g_cluster.isMouse_insideThumb; }
 
@@ -56,10 +47,10 @@
 
 {#if g_cluster.widgets_shown > 1}
 	<Gull_Wings
-		center={forkTip}
 		zindex={T_Layer.paging}
-		direction={forkDirection}
 		radius={k.thickness.fork * 3}
+		center={g_sliderArc.tip_ofFork}
+		direction={g_sliderArc.angle_ofFork}
 		color={colors.specialBlend(color, $w_background_color, k.opacity.least)}/>
 {/if}
 <div class='arc-slider'
@@ -73,43 +64,40 @@
 		zindex = {T_Layer.paging}
 		cursor = {k.cursor_default}
 		handle_isHit = {handle_isHit}
-		center = {layout.center_ofGraphRect}
-		handle_s_mouse = {hover_closure}>
-        <svg class='svg-arc-slider' viewBox={viewBox}>
-            <path
-                d={bigPath}
-                class='path-fat'
+		handle_s_mouse = {hover_closure}
+		center = {layout.center_ofGraphRect}>
+        <svg class='svg-arc-slider'
+			viewBox={viewBox}>
+            <path class='path-fat'
                 fill='transparent'
                 stroke-width={k.thickness.fork}
+				d={g_sliderArc.svgPathFor_bigArc}
                 stroke={colors.specialBlend('transparent', $w_background_color, k.opacity.least)}/>
-            <path
-                d={arcSliderPath}
+            <path class='path-arc-slider'
                 fill='transparent'
-                class='path-arc-slider'
                 stroke-width={k.thickness.fork}
+                d={g_sliderArc.svgPathFor_arcSlider}
                 stroke={colors.specialBlend(color, $w_background_color, k.opacity.least)}/>
-            <path
-                d={forkPath}
-                class='path-fork'
+            <path class='path-fork'
                 fill="transparent"
                 stroke-width={k.thickness.fork}
+                d={g_sliderArc.svgPathFor_radialFork}
                 stroke={colors.specialBlend(color, $w_background_color, k.opacity.least)}/>
             {#if g_cluster.isPaging && g_cluster.widgets_shown > 1}
-                <path
-                    d={thumbPath}
-					id={thumb_name}
-                    fill={thumbFill}
-                    class='path-thumb'/>
+                <path class='path-thumb'
+					fill={thumbFill}
+					id={`thumb-${g_cluster.name}`}
+                    d={g_cluster.g_thumbArc.svgPathFor_arcSlider}/>
             {/if}
         </svg>
     </Mouse_Responder>
 </div>
 <Angled_Text
     color={color}
-    angle={labelAngle}
-    center={labelCenter}
     zindex={T_Layer.paging}
     text={g_cluster.cluster_title}
-    background_color={textBackground}
+    center={g_cluster.label_center}
     font_family={$w_thing_fontFamily}
+    background_color={textBackground}
+    angle={g_sliderArc.label_text_angle}
     font_size={k.font_size.arc_slider}px/>
