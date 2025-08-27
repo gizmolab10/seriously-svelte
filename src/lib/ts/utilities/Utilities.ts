@@ -3,13 +3,14 @@
 import { w_t_database, w_thing_fontFamily } from '../managers/Stores';
 import { Testworthy_Utilities } from './Testworthy_Utilities';
 import Identifiable from '../runtime/Identifiable';
+import { Rect, Size, Point } from './Geometry';
 import G_TreeLine from '../layout/G_TreeLine';
 import { layout } from '../layout/G_Layout';
 import Ancestry from '../runtime/Ancestry';
+import G_Widget from '../layout/G_Widget';
 import { k } from '../common/Constants';
+import { ux } from '../common/Global_Imports';
 import { get } from 'svelte/store';
-import { print } from './Print';
-import printJS from 'print-js';
 
 export class Utilities extends Testworthy_Utilities {
 	
@@ -128,6 +129,33 @@ export class Utilities extends Testworthy_Utilities {
 		const width: number = element.getBoundingClientRect().width / layout.scale_factor;
 		document.body.removeChild(element);
 		return width;
+	}
+
+	rectFor_g_widgets(g_widgets: G_Widget[]): Rect {
+		if (g_widgets.length === 0) {
+			return Rect.zero;
+		}
+		let minX = Infinity;
+		let minY = Infinity;
+		let maxX = -Infinity;
+		let maxY = -Infinity;
+		for (const g_widget of g_widgets) {
+			const w_origin = g_widget.origin;
+			const w_width = g_widget.width_ofWidget;
+			const w_height = k.height.row - 1.5;
+			const w_minX = w_origin.x;
+			const w_minY = w_origin.y;
+			const w_maxX = w_origin.x + w_width;
+			const w_maxY = w_origin.y + w_height;
+			minX = Math.min(minX, w_minX);
+			minY = Math.min(minY, w_minY);
+			maxX = Math.max(maxX, w_maxX);
+			maxY = Math.max(maxY, w_maxY);
+		}
+		const width = maxX - minX;
+		const height = maxY - minY;
+		const offset = ux.inRadialMode ? new Point(-10, -3) : new Point(-10, 8);
+		return new Rect(new Point(minX, minY).offsetBy(offset), new Size(width, height));
 	}
 
 	convert_windowOffset_toCharacterOffset_in(offset: number, input: HTMLInputElement): number {

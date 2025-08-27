@@ -20,7 +20,7 @@ import { get } from 'svelte/store';
 //////////////////////////////////////////
 
 export default class G_Cluster {
-	g_widgets_inCluster: Array<G_Widget> = [];
+	g_widgets_inCluster: G_Widget[] = [];
 	ancestries_shown: Array<Ancestry> = [];
 	g_sliderArc = new G_ArcSlider(false);
 	g_thumbArc = new G_ArcSlider(true);

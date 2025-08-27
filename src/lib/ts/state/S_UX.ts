@@ -100,7 +100,7 @@ export default class S_UX {
 			case T_Graph.tree:   w_show_graph_ofType.set(T_Graph.radial); break;
 			case T_Graph.radial: w_show_graph_ofType.set(T_Graph.tree);   break;
 		}
-		layout.grand_build();
+		layout.grand_sweep();
 	}
 
 	branch_isAlready_attached(ancestry: Ancestry, clear: boolean = false): boolean {

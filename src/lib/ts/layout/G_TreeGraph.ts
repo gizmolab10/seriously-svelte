@@ -4,7 +4,6 @@ import { k, Rect, Ancestry, G_Widget} from "../common/Global_Imports";
 import { get } from "svelte/store";
 
 export default class G_TreeGraph {
-	rect_ofTree = Rect.zero;
 	g_focus!: G_Widget;
 	focus!: Ancestry;
 
@@ -28,17 +27,23 @@ export default class G_TreeGraph {
 			this.g_focus.recursively_layout_subtree(depth_limit);
 			this.g_focus.recursively_layout_bidirectionals(depth_limit);
 			this.adjust_focus_ofTree(graph_rect);
-			this.update_rect_ofTree();
 		}
 	}
 
-	static readonly _____PRIVATE: unique symbol;
-
-	private update_rect_ofTree() {
-		const size = this.focus.size_ofVisibleSubtree.expandedByX(40);
-		const origin = this.g_focus.origin_ofWidget.offsetByXY(-8, (k.height.row - size.height) / 2 - 5);
-		this.rect_ofTree = new Rect(origin, size);
+	get visible_g_widgets(): G_Widget[] {
+		let array: G_Widget[] = [];
+		if (!!this.focus) {
+			this.focus.traverse((ancestry: Ancestry) => {
+				if (ancestry.isVisible) {
+					array.push(ancestry.g_widget);
+				}
+				return false;
+			});
+		}
+		return array;
 	}
+
+	static readonly _____PRIVATE: unique symbol;
 
 	private adjust_focus_ofTree(graph_rect: Rect) {
 		const y_offset = -1 - graph_rect.origin.y;

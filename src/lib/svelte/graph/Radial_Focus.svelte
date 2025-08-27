@@ -20,6 +20,7 @@
 	let s_component: S_Component;
 	let svg_dasharray = k.empty;
 	let color = s_widget.color;
+	let width_ofBorder = 0;
 	let width_ofTitle = 0;
 
 	//////////////////////////////////
@@ -58,14 +59,13 @@
 	}
 
 	function layout_focus() {
-		width_ofTitle = ($w_ancestry_focus?.thing?.width_ofTitle ?? 0);
-		const kind = ancestry.relationship?.predicate?.kind ?? T_Predicate.contains;
-		const isRelated = kind == T_Predicate.isRelated;
-		const x = -7.5 - (width_ofTitle / 2);
-		const y = -11;
-		size_ofBorder = new Size(width_ofTitle - 6, k.height.row);
-		origin_ofWidget = layout.center_ofGraphRect.offsetByXY(x, y);
-		center_ofBorder = new Point(width_ofTitle + 15, height).dividedInHalf;
+		const g_focus = $w_ancestry_focus?.g_widget;
+		const width = g_focus.width_ofWidget;
+		origin_ofWidget = g_focus.origin_ofRadial;
+		width_ofTitle = width;
+		width_ofBorder = width + 20;
+		size_ofBorder = new Size(width - 5, k.height.row);
+		center_ofBorder = new Point(width_ofBorder - 3, height).dividedInHalf;
 	}
 
 	function update_svg() {
@@ -86,13 +86,13 @@
 		top : {origin_ofWidget.y}px;
 		z-index : {T_Layer.widgets};
 		left : {origin_ofWidget.x}px;
-		width : {width_ofTitle + 15}px;'>
+		width : {width_ofBorder}px;'>
 		<Mouse_Responder
 			height = {height}
 			center = {center_ofBorder}
 			zindex = {T_Layer.widgets}
 			cursor = {k.cursor_default}
-			width = {width_ofTitle + 15}
+			width = {width_ofBorder}
 			handle_isHit = {() => false}
 			name = 'radial-focus-border'
 			handle_s_mouse = {debug_closure}>
@@ -101,7 +101,7 @@
 				style='
 					height : {height}px;
 					position : absolute;
-					width : {width_ofTitle + 15}px;'>
+					width : {width_ofBorder}px;'>
 				<path
 					stroke = {color}
 					stroke-width = '0.8'

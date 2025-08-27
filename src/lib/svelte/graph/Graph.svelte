@@ -105,25 +105,13 @@
 				<div class='debug-graph-content'
 					style='
 						position: absolute;
-						border: 4px dashed green;
+						border: 4px dashed lightblue;
 						z-index: ${T_Layer.frontmost};
 						background-color: transparent;
 						top: {actual_content_rect.origin.y}px;
 						left: {actual_content_rect.origin.x}px;
 						width: {actual_content_rect.size.width}px;
 						height: {actual_content_rect.size.height}px;
-					'>
-				</div>
-				<div class='debug-draggable-rect'
-					style='
-						top: 0px;
-						left: 5px;
-						position: absolute;
-						border: 5px dashed red;
-						z-index: ${T_Layer.frontmost};
-						background-color: transparent;
-						width: {draggableRect.size.width - 19}px;
-						height: {draggableRect.size.height - 14}px;
 					'>
 				</div>
 			{/if}

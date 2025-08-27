@@ -148,7 +148,7 @@ export default class G_Widget {
 
 	layout_widget() {
 		const ancestry = this.ancestry;
-		if (!!ancestry.thing) {		// short-circuit mismatched graph mode
+		if (!!ancestry.thing) {
 			const dot_size = k.height.dot;
 			const radial_mode = ux.inRadialMode;
 			const show_reveal = this.showingReveal;
@@ -171,8 +171,8 @@ export default class G_Widget {
 			this.center_ofDrag = origin_ofDrag;
 			if (show_reveal) {
 				const y_ofReveal = dot_size * 0.7 - 0.5;
-				const x_offset_forpointsNormal = width_ofWidget - dot_size - 10;
-				const x_ofReveal = dot_size + (widget_pointsNormal ? x_offset_forpointsNormal : -3);
+				const x_offset_forPointsNormal = width_ofWidget - dot_size - 10;
+				const x_ofReveal = dot_size + (widget_pointsNormal ? x_offset_forPointsNormal : -3);
 				this.center_ofReveal = new Point(x_ofReveal, y_ofReveal);
 			}
 		}

@@ -1,14 +1,13 @@
-import { h, k, u, Rect, Size, Point, radial, Ancestry, Predicate } from '../common/Global_Imports';
-import { G_Widget, G_Cluster, G_Paging, T_Kinship } from '../common/Global_Imports';
-import { w_ring_rotation_angle, w_ring_rotation_radius } from '../managers/Stores';
-import { w_g_paging, w_graph_rect, w_ancestry_focus } from '../managers/Stores';
+import { h, k, u, Rect, Size, Point, radial, layout, Ancestry, Predicate } from '../common/Global_Imports';
+import { G_Widget, G_Cluster, G_Paging, T_Kinship, T_Predicate } from '../common/Global_Imports';
+import { w_g_paging, w_ancestry_focus } from '../managers/Stores';
+import { w_ring_rotation_radius } from '../managers/Stores';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
 
 export default class G_RadialGraph {
 	g_parent_clusters: Dictionary<G_Cluster> = {};		// includes related
 	g_child_clusters: Dictionary<G_Cluster> = {};
-	rect_ofNecklace!: Rect;
 
 	constructor() {
 		w_g_paging.subscribe((g_paging: G_Paging | null) => {
@@ -17,14 +16,14 @@ export default class G_RadialGraph {
 				this.layout_forPaging();
 			}
 		});
-		setTimeout(() => {	// must wait for Rect to become available
-			w_ring_rotation_radius.subscribe(() => {
-				this.update_rect_ofNecklace();
-			});
-			w_ring_rotation_angle.subscribe(() => {
-				this.update_rect_ofNecklace();
-			});
-		}, 2);
+		// setTimeout(() => {	// must wait for Rect to become available
+		// 	w_ring_rotation_radius.subscribe(() => {
+		// 		this.update_rect_ofNecklace();
+		// 	});
+		// 	w_ring_rotation_angle.subscribe(() => {
+		// 		this.update_rect_ofNecklace();
+		// 	});
+		// }, 2);
 	}
 
 	destructor() {
@@ -42,11 +41,24 @@ export default class G_RadialGraph {
 
 	grand_layout_radial() {
 		this.destructor();
-		get(w_ancestry_focus)?.g_widget.layout_widget()
+		this.layout_focus();
 		this.layout_forPoints_toChildren(true);
 		this.layout_forPoints_toChildren(false);
 		this.layout_forPaging();
-		this.update_rect_ofNecklace();
+	}
+
+	layout_focus() {
+		const ancestry = get(w_ancestry_focus);
+		const g_focus = ancestry?.g_widget;
+		if (!!g_focus && !!ancestry?.thing) {
+			const width_ofTitle = ancestry.thing.width_ofTitle;
+			const x = -7.5 - (width_ofTitle / 2);
+			const y = -11;
+			const origin_ofWidget = layout.center_ofGraphRect.offsetByXY(x, y);
+			g_focus.layout_widget();
+			g_focus.width_ofWidget = width_ofTitle;
+			g_focus.origin_ofRadial = origin_ofWidget;
+		}
 	}
 
 	private layout_forPoints_toChildren(points_toChildren: boolean) {
@@ -111,39 +123,17 @@ export default class G_RadialGraph {
 
 	static readonly _____NECKLACE: unique symbol;
 
-	update_rect_ofNecklace() {
-		this.rect_ofNecklace = get(w_graph_rect).centeredRect_ofSize(this.size_ofNecklace);
+	get visible_g_widgets(): G_Widget[] {
+		let array: G_Widget[] = this.g_necklace_widgets;
+		const g_focus = get(w_ancestry_focus)?.g_widget;
+		if (!!g_focus) {
+			array.push(g_focus);
+		}
+		return array
 	}
 
-	get size_ofNecklace(): Size {
-		const widgets = this.g_necklace_widgets;
-		if (widgets.length === 0) {
-			return Size.zero;
-		}
-		let minX = Infinity;
-		let minY = Infinity;
-		let maxX = -Infinity;
-		let maxY = -Infinity;
-		for (const widget of widgets) {
-			const widgetOrigin = widget.origin_ofWidget.offsetBy(widget.offset_ofWidget);
-			const widgetWidth = widget.width_ofWidget;
-			const widgetHeight = k.height.row - 1.5;
-			const widgetMinX = widgetOrigin.x;
-			const widgetMinY = widgetOrigin.y;
-			const widgetMaxX = widgetOrigin.x + widgetWidth;
-			const widgetMaxY = widgetOrigin.y + widgetHeight;
-			minX = Math.min(minX, widgetMinX);
-			minY = Math.min(minY, widgetMinY);
-			maxX = Math.max(maxX, widgetMaxX);
-			maxY = Math.max(maxY, widgetMaxY);
-		}
-		const width = maxX - minX;
-		const height = maxY - minY;
-		return new Size(width, height);
-	}
-
-	get g_necklace_widgets(): Array<G_Widget> {
-		let array: Array<G_Widget> = [];
+	get g_necklace_widgets(): G_Widget[] {
+		let array: G_Widget[] = [];
 		for (const g_cluster of this.g_clusters) {
 			if (!!g_cluster) {
 				for (const g_cluster_widget of g_cluster.g_widgets_inCluster) {

@@ -1,7 +1,7 @@
-import { h, k, p, u, ux, Size, Rect, Point, Thing, Ancestry } from '../common/Global_Imports';
+import { h, k, p, u, ux, debug, g_tree, g_radial, signals } from '../common/Global_Imports';
+import { G_Widget, S_Component, T_Preference } from '../common/Global_Imports';
+import { Rect, Size, Point, Thing, Ancestry } from '../common/Global_Imports';
 import { w_user_graph_offset, w_user_graph_center } from '../managers/Stores';
-import { debug, g_tree, g_radial, signals } from '../common/Global_Imports';
-import { S_Component, T_Preference } from '../common/Global_Imports';
 import { w_graph_rect, w_show_details } from '../managers/Stores';
 import { w_mouse_location_scaled } from '../managers/Stores';
 import { get } from 'svelte/store';
@@ -18,11 +18,9 @@ export default class G_Layout {
 
 	static readonly _____GRAPH_RECT: unique symbol;
 
-	private get size_ofNecklace(): Size { return g_radial.size_ofNecklace; }
-	get rect_ofTree(): Rect { return g_tree.rect_ofTree ?? Rect.zero; }
+	get rect_ofDrawnGraph(): Rect { return this.rect_ofAllWidgets; }
+	get size_ofDrawnGraph(): Size { return this.rect_ofAllWidgets.size; }
 	get center_ofGraphRect(): Point { return get(w_graph_rect).size.asPoint.dividedInHalf; }
-	get rect_ofDrawnGraph(): Rect { return ux.inRadialMode ? g_radial.rect_ofNecklace : this.rect_ofTree; }
-	get size_ofDrawnGraph(): Size { return ux.inRadialMode ? g_radial.size_ofNecklace : this.rect_ofTree.size; }
 
 	update_graphRect() {
 		// respond to changes in: window size & details visibility
@@ -68,6 +66,18 @@ export default class G_Layout {
 		w_user_graph_offset.set(new_offset);
 		this.set_scale_factor(scale_factor);
 		this.grand_layout();
+	}
+
+	static readonly _____WIDGETS: unique symbol;
+
+	get rect_ofAllWidgets(): Rect { return u.rectFor_g_widgets(this.all_g_widgets); }
+
+	get all_g_widgets(): G_Widget[] {
+		if (ux.inRadialMode) {
+			return g_radial.visible_g_widgets;
+		} else {
+			return g_tree.visible_g_widgets;
+		}
 	}
 
 	static readonly _____USER_OFFSET: unique symbol;
