@@ -54,7 +54,7 @@
 
 	function update_color_origin() {
 		if (color_wrapper) {
-			const origin = Rect.createFromDOMRect(color_wrapper.getBoundingClientRect()).origin.multipliedBy(1 / layout.scale_factor);
+			const origin = Rect.createFromDOMRect(color_wrapper.getBoundingClientRect()).origin.multipliedEquallyBy(1 / layout.scale_factor);
 			color_origin = origin.offsetByXY(-3, -4);
 		}
 	}

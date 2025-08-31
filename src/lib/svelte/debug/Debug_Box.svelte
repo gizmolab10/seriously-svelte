@@ -7,12 +7,12 @@
     export let zindex = 0;
     export let color;
     let box_size = rect.size;
-    let cross_size = box_size.multipliedBy(3);
+    let cross_size = box_size.multipliedEquallyBy(3);
     let cross_rect = Rect.createCenterRect(rect.center, cross_size);
 
     $: {
         box_size = rect.size;
-        cross_size = box_size.multipliedBy(3);
+        cross_size = box_size.multipliedEquallyBy(3);
         cross_rect = Rect.createCenterRect(rect.center, cross_size);
     }
 

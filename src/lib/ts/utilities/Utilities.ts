@@ -9,8 +9,9 @@ import { layout } from '../layout/G_Layout';
 import Ancestry from '../runtime/Ancestry';
 import G_Widget from '../layout/G_Widget';
 import { k } from '../common/Constants';
-import { ux } from '../common/Global_Imports';
+import { ux } from '../state/S_UX';
 import { get } from 'svelte/store';
+import { print } from './Print';
 
 export class Utilities extends Testworthy_Utilities {
 	
@@ -131,6 +132,12 @@ export class Utilities extends Testworthy_Utilities {
 		return width;
 	}
 
+	print_graph() {
+		const rect = layout.rect_ofDrawnGraph;
+		const className = ux.inTreeMode ? 'tree-graph' : 'radial-graph';
+		print.print_element_byClassName_withSize(className, rect);
+	}
+
 	rectFor_g_widgets(g_widgets: G_Widget[]): Rect {
 		if (g_widgets.length === 0) {
 			return Rect.zero;
@@ -154,7 +161,7 @@ export class Utilities extends Testworthy_Utilities {
 		}
 		const width = maxX - minX;
 		const height = maxY - minY;
-		const offset = ux.inRadialMode ? new Point(-10, -3) : new Point(-10, 8);
+		const offset = ux.inRadialMode ? new Point(-10, -3) : new Point(-10, -8);
 		return new Rect(new Point(minX, minY).offsetBy(offset), new Size(width, height));
 	}
 

@@ -5,10 +5,12 @@ const row_height = 20;
 const rubberband_thickness = 1;
 
 export default class Constants {
+	printer_dpi = 96;
 	details_margin = 0;
 	halfIncrement = 0.5;
 	radial_widget_inset = 28;
 	separator_title_left = 0;
+	printer_pixel_width = 722;
 	hid_unknown = 1000000000000;
 	diameterOf_outer_tinyDots = 19;
 	build_number = builds.build_number;
@@ -124,6 +126,36 @@ export default class Constants {
 		tree_prefs:	  36,
 	};
 
+	constructor() {
+		const printCSS = `
+		@media print {
+			.print-test {
+					top: 0; 
+					left: 0; 
+					width: 100%; 
+					height: 100%; 
+					position: absolute; 
+				}
+			}
+		`;
+		const square_inch = document.createElement('div');
+		const style = document.createElement('style');
+		const page = document.createElement('div');
+		style.textContent = printCSS;
+		page.className = 'print-test';
+		square_inch.style.cssText = 'width: 1in; height: 1in; position: absolute; top: -9999px;';
+
+		document.head.appendChild(style);
+		document.body.appendChild(page);
+		this.printer_pixel_width = page.offsetWidth;
+		document.body.removeChild(page);
+		document.head.removeChild(style);
+
+		document.body.appendChild(square_inch);
+		this.printer_dpi = square_inch.offsetWidth;
+		document.body.removeChild(square_inch);
+	}
+	
 }
 
 export const k = new Constants();

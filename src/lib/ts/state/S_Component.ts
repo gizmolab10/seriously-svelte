@@ -40,7 +40,7 @@ export default class S_Component {
     get boundingRect(): Rect {
         const rect = Rect.boundingRectFor(this.element);
         const unscale_factor = 1 / layout.scale_factor;
-        return rect?.multipliedBy(unscale_factor) ?? Rect.zero;
+        return rect?.multipliedEquallyBy(unscale_factor) ?? Rect.zero;
     }
 
     static readonly _____SIGNALS: unique symbol;

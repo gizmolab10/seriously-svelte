@@ -22,7 +22,7 @@
 		if (y >= cells.length) {
 			console.error('Column index out of bounds');
 		}
-		return Rect.createFromDOMRect(cells[y].getBoundingClientRect()).origin.multipliedBy(1 / layout.scale_factor);
+		return Rect.createFromDOMRect(cells[y].getBoundingClientRect()).origin.multipliedEquallyBy(1 / layout.scale_factor);
 	}
 
 </script>
