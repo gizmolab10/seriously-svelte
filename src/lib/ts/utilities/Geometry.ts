@@ -128,22 +128,21 @@ export class Size {
 	get center():						    Point { return this.asPoint.dividedInHalf; }
 	get asPoint():			   			    Point { return new Point(this.width, this.height); }			// NOTE: always in lower right quadrant (increasing clockwise)
 	get swap():								 Size { return new Size(this.height, this.width); }
-	get dividedInHalf():					 Size { return this.dividedEquallyBy(2); }
 	get negated():							 Size { return this.multipliedEquallyBy(-1); }
+	get dividedInHalf():					 Size { return this.dividedEquallyBy(2); }
 	expandedByX(x: number):					 Size { return this.expandedByXY(x, 0); }
 	expandedByY(y: number):					 Size { return this.expandedByXY(0, y); }
 	reducedByX(x: number):					 Size { return this.expandedByXY(-x, 0); }
 	reducedByY(y: number):					 Size { return this.expandedByXY(0, -y); }
 	reducedByXY(x: number, y: number):		 Size { return this.expandedByXY(-x, -y); }
-	dividedEquallyBy(divisor: number):		 Size { return this.multipliedEquallyBy(1 / divisor); }
 	expandedEquallyBy(delta: number):		 Size { return this.expandedByXY(delta, delta); }
 	reducedBy(srinkage: Point):				 Size { return this.expandedBy(srinkage.negated); }
 	insetEquallyBy(delta: number):			 Size { return this.expandedEquallyBy(2 * -delta); }
 	expandedBy(delta: Point):				 Size { return this.expandedByXY(delta.x, delta.y); }
+	dividedEquallyBy(divisor: number):		 Size { return this.multipliedEquallyBy(1 / divisor); }
 	expandedByXY(x: number, y: number):		 Size { return new Size(this.width + x, this.height + y); }
 	multipliedEquallyBy(multiplier: number): Size { return new Size(this.width * multiplier, this.height * multiplier); }
 	dividedBy(size: Size):					 Size { return new Size(this.width / size.width, this.height / size.height); }
-	unionWith(size: Size):					 Size { return new Size(Math.max(this.width, size.width), Math.max(this.height, size.height)); }
 	best_ratio_to(size: Size):			   number { return Math.min(this.width / size.width, this.height / size.height); }
 	static fromDOMRect(rect: DOMRect):		 Size { return new Size(rect.width, rect.height); }
 	static square(length: number):			 Size { return new Size(length, length); }

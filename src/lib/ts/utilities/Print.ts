@@ -5,13 +5,14 @@ import printJS from 'print-js';
 
 export default class Print {
 	screen_scale_factor = window.devicePixelRatio;
+	kludge = new Point(750, 450);
 	margin = k.printer_dpi / 2;
 	given_content_rect!: Rect;
 	printable!: HTMLElement;
 	final_page_size!: Size;
 	scaleFactor!: number;
 	isLandscape = false;
-	scale!: Size;
+	scale_size!: Size;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
@@ -35,7 +36,7 @@ export default class Print {
 	//
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	get final_origin(): Point { return this.final_page_size.center.offsetBy(this.final_content_rect.center.negated); }
+	get final_origin(): Point { return this.final_content_rect.center.negated.offsetBy(this.kludge); }
 	get final_content_rect(): Rect { return this.given_content_rect.multipliedEquallyBy(this.scaleFactor); }
 	get final_inset_size(): Size { return this.final_page_size.insetEquallyBy(this.margin); }
 
@@ -45,8 +46,8 @@ export default class Print {
 	}
 
 	setup_scaleFactor() {
-		this.scale = this.final_inset_size.dividedBy(this.given_content_rect.size);
-		this.scaleFactor = Math.min(this.scale.width, this.scale.height) * this.screen_scale_factor;
+		this.scale_size = this.final_inset_size.dividedBy(this.given_content_rect.size);
+		this.scaleFactor = Math.min(this.scale_size.width, this.scale_size.height) * this.screen_scale_factor / 1.15;
 	}
 
 	setup_final_page_size() {
@@ -59,17 +60,17 @@ export default class Print {
 		);
 	}
 	
-	setup_clone(element: HTMLElement, size: Size) {
+	setup_printable(element: HTMLElement, size: Size) {
 		this.printable = element.cloneNode(true) as HTMLElement;
 		this.isLandscape = size.width > size.height;
 		this.setup_final_page_size();
 		this.setup_scaleFactor();
-		this.configure_clone();
-		this.setup_test();
+		this.configure_printable();
+		// this.setup_test();
 		this.debug_log();
 	}
 
-	configure_clone() {
+	configure_printable() {
 		this.printable.style.transform = `scale(${this.scaleFactor})`;
 		this.printable.style.left = `${this.final_origin.x}px`;
 		this.printable.style.top = `${this.final_origin.y}px`;
@@ -89,8 +90,8 @@ export default class Print {
 				await new Promise(resolve => setTimeout(resolve, 100));				// Wait a bit for any async rendering to complete
 				this.given_content_rect = rect;
 				grabs.temporarily_clearGrabs_while(() => {
-					this.setup_clone(element, rect.size);
-					this.print_clone();
+					this.setup_printable(element, rect.size);
+					this.print_printable();
 				});
 			} catch (error) {
 				console.error('Error printing element:', error);
@@ -98,7 +99,7 @@ export default class Print {
 		}
 	}
 
-	private print_clone() {
+	private print_printable() {
 		printJS({
 			type: 'html',
 			printable: this.printable,
@@ -132,7 +133,7 @@ export default class Print {
 		test.style.position = 'absolute';
 		test.style.zIndex = '9999';
 		
-		// Add the scaled clone
+		// Add the scaled printable
 		this.printable.appendChild(test);
 		
 		// Remove after 5 seconds
@@ -140,18 +141,20 @@ export default class Print {
 	}
 
 	debug_log() {
-		console.log('Screen DPI:', k.printer_dpi);
-		console.log('Device pixel ratio:', window.devicePixelRatio);
+		console.log('Screen scale factor:', this.screen_scale_factor);
+		console.log('Final DPI:', k.printer_dpi);
+		console.log('Final scale size:', this.scale_size);
     	console.log('Final scale factor:', this.scaleFactor);
+		console.log('Final margin:', this.margin);
 		console.log('Given content origin:', this.given_content_rect.origin);
 		console.log('Given content size:', this.given_content_rect.size);
 		console.log('Final content center:', this.final_content_rect.center);
-		console.log('Final margin:', this.margin);
 		console.log('Final page size:', this.final_page_size);
 		console.log('Final page center:', this.final_page_size.center);
 		console.log('Final inset size:', this.final_inset_size);
-		console.log('Final content size:', this.given_content_rect.size.multipliedEquallyBy(this.scaleFactor));
+		console.log('Final content size:', this.final_content_rect.size);
 		console.log('Final origin:', this.final_origin);
+		console.log('Kludge:', this.kludge);
 		// const final_margin = Point.square(this.margin);
 		// console.log('Manual width ratio:', this.final_inset_size.width / this.given_content_rect.size.width);
 		// console.log('Manual height ratio:', this.final_inset_size.height / this.given_content_rect.size.height);
