@@ -16,14 +16,6 @@ export default class G_RadialGraph {
 				this.layout_forPaging();
 			}
 		});
-		// setTimeout(() => {	// must wait for Rect to become available
-		// 	w_ring_rotation_radius.subscribe(() => {
-		// 		this.update_rect_ofNecklace();
-		// 	});
-		// 	w_ring_rotation_angle.subscribe(() => {
-		// 		this.update_rect_ofNecklace();
-		// 	});
-		// }, 2);
 	}
 
 	destructor() {
@@ -57,7 +49,9 @@ export default class G_RadialGraph {
 			const origin_ofWidget = layout.center_ofGraphRect.offsetByXY(x, y);
 			g_focus.layout_widget();
 			g_focus.width_ofWidget = width_ofTitle;
-			g_focus.origin_ofRadial = origin_ofWidget;
+			g_focus.location_ofRadial = origin_ofWidget;
+			g_focus.width_forDrawRect = width_ofTitle + 30;
+			g_focus.origin_ofRadial = origin_ofWidget.offsetByX(g_focus.widget_pointsNormal ? 0 : -width_ofTitle);	// adjust for printing
 		}
 	}
 

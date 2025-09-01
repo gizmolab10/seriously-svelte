@@ -1,17 +1,19 @@
 import { Point, Rect, Size } from './Geometry';
-import { grabs } from '../managers/Grabs';
+import { u } from '../utilities/Utilities';
 import { k } from '../common/Constants';
 import printJS from 'print-js';
 
 export default class Print {
 	screen_scale_factor = window.devicePixelRatio;
+	margin = k.printer_dpi * 0.75;
+	// kludge = new Point(400, 500);
 	kludge = new Point(750, 450);
-	margin = k.printer_dpi / 2;
 	given_content_rect!: Rect;
 	printable!: HTMLElement;
 	final_page_size!: Size;
 	scaleFactor!: number;
 	isLandscape = false;
+	debug!: HTMLElement;
 	scale_size!: Size;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -36,10 +38,22 @@ export default class Print {
 	//
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	get final_origin(): Point { return this.final_content_rect.center.negated.offsetBy(this.kludge); }
 	get final_content_rect(): Rect { return this.given_content_rect.multipliedEquallyBy(this.scaleFactor); }
+	// get kludge(): Point { return this.final_inset_size.center; } // this.final_inset_size.center.offsetBy(this.final_content_rect.center); }
+	get final_origin(): Point { return this.final_content_rect.center.negated.offsetBy(this.kludge); }
 	get final_inset_size(): Size { return this.final_page_size.insetEquallyBy(this.margin); }
 
+	get ksludge(): Point {
+		// pS / 2 = center of printable area
+		const printable_center = this.final_inset_size.center;
+		// dC * dpF = scaled content center  
+		const scaled_content_center = this.final_content_rect.center;
+		
+		// Since current code does: -final_content_rect.center + kludge
+		// We want: printable_center - scaled_content_center
+		// So: kludge = printable_center + scaled_content_center
+		return printable_center.offsetBy(scaled_content_center);
+	}
 	print_element_byClassName_withSize(className: string, rect: Rect) {
 		const element = document.querySelector(`.${className}`) as HTMLElement;
 		this.print_element_withSize(element, rect);
@@ -66,6 +80,7 @@ export default class Print {
 		this.setup_final_page_size();
 		this.setup_scaleFactor();
 		this.configure_printable();
+		this.add_message('Printing...');
 		// this.setup_test();
 		this.debug_log();
 	}
@@ -89,7 +104,7 @@ export default class Print {
 				}
 				await new Promise(resolve => setTimeout(resolve, 100));				// Wait a bit for any async rendering to complete
 				this.given_content_rect = rect;
-				grabs.temporarily_clearGrabs_while(() => {
+				u.temporarily_setDefaults_while(() => {
 					this.setup_printable(element, rect.size);
 					this.print_printable();
 				});
@@ -102,7 +117,7 @@ export default class Print {
 	private print_printable() {
 		printJS({
 			type: 'html',
-			printable: this.printable,
+			printable: this.debug,
 			documentTitle: 'Graph Print',
 			style: `
 				@media print { 
@@ -163,6 +178,50 @@ export default class Print {
     	// console.log('Height ratio:', this.scale.height);
 		// console.log('Final adjustment:', this.adjustment_toward_center);
 		// console.log('Margin + adjustment', this.final_margin.offsetBy(this.adjustment_toward_center));
+	}
+
+	add_message(message: string) {
+		// Create a debug container that represents the full print page
+		const debug = document.createElement('div');
+		this.debug = debug;
+		debug.style.position = 'absolute';
+		debug.style.left = '0px';
+		debug.style.top = '0px';
+		debug.style.width = `${this.final_page_size.width}px`;
+		debug.style.height = `${this.final_page_size.height}px`;
+		debug.style.transform = 'scale(1)'; // No scaling
+		debug.style.transformOrigin = 'top left';
+		
+		// Move the existing printable element into the debug container
+		// (Keep its existing transform and positioning)
+		debug.appendChild(this.printable);
+		
+		// Create message box with simple coordinates relative to the print page
+		const box = document.createElement('div');
+		const box_height = 100;
+		const box_top = this.final_page_size.height - box_height - this.margin;
+		
+		box.style.position = 'absolute';
+		box.style.left = `${this.margin}px`;
+		box.style.top = `${box_top}px`;
+		box.style.width = `${this.final_inset_size.width}px`;
+		box.style.height = `${box_height}px`;
+		box.style.backgroundColor = 'white';
+		box.style.border = '1px solid red';
+		box.style.padding = '5px';
+		box.style.fontSize = '28px';
+		box.style.fontFamily = 'monospace';
+		box.style.color = 'black';
+		box.style.overflow = 'auto';
+		box.style.whiteSpace = 'pre-wrap';
+		box.style.boxSizing = 'border-box';
+		
+		box.textContent = message;
+		
+		// Add message box to the debug container (as sibling to printable)
+		debug.appendChild(box);
+		
+		console.log('Debug container created with printable and message box');
 	}
 
 }

@@ -61,7 +61,7 @@
 	function layout_focus() {
 		const g_focus = $w_ancestry_focus?.g_widget;
 		const width = g_focus.width_ofWidget;
-		origin_ofWidget = g_focus.origin_ofRadial;
+		origin_ofWidget = g_focus.location_ofRadial;
 		width_ofTitle = width;
 		width_ofBorder = width + 20;
 		size_ofBorder = new Size(width - 5, k.height.row);

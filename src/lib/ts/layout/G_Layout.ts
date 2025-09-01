@@ -70,7 +70,7 @@ export default class G_Layout {
 
 	static readonly _____WIDGETS: unique symbol;
 
-	get rect_ofAllWidgets(): Rect { return u.rectFor_g_widgets(this.all_g_widgets); }
+	get rect_ofAllWidgets(): Rect { return u.drawRectFor_g_widgets(this.all_g_widgets); }
 
 	get all_g_widgets(): G_Widget[] {
 		if (ux.inRadialMode) {

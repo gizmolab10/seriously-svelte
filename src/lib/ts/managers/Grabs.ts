@@ -57,15 +57,6 @@ export class Grabs {
 	
 	static readonly _____GRAB: unique symbol;
 
-	temporarily_clearGrabs_while(closure: () => void) {
-		const grabs = get(w_ancestries_grabbed);
-		w_ancestries_grabbed.set([]);	// triggers reactivity, takes time to percolate
-		setTimeout(() => {
-			closure();
-			w_ancestries_grabbed.set(grabs);
-		}, 10);
-	}
-
 	grabOnly(ancestry: Ancestry) {
 		debug.log_grab(`  GRAB ONLY '${ancestry.title}'`);
 		w_ancestries_grabbed.set([ancestry]);

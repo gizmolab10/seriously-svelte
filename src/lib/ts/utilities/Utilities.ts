@@ -1,5 +1,6 @@
 // N.B., do not import these from Global Imports --> avoid dependency issues when importing Utilities class
 
+import { w_background_color, w_ancestries_grabbed } from '../managers/Stores';
 import { w_t_database, w_thing_fontFamily } from '../managers/Stores';
 import { Testworthy_Utilities } from './Testworthy_Utilities';
 import Identifiable from '../runtime/Identifiable';
@@ -138,7 +139,19 @@ export class Utilities extends Testworthy_Utilities {
 		print.print_element_byClassName_withSize(className, rect);
 	}
 
-	rectFor_g_widgets(g_widgets: G_Widget[]): Rect {
+	temporarily_setDefaults_while(closure: () => void) {
+		const grabs = get(w_ancestries_grabbed);
+		const color = get(w_background_color);
+		w_background_color.set('white');
+		w_ancestries_grabbed.set([]);	// triggers reactivity, takes time to percolate
+		setTimeout(() => {
+			closure();
+			w_ancestries_grabbed.set(grabs);
+			w_background_color.set(color);
+		}, 10);
+	}
+
+	drawRectFor_g_widgets(g_widgets: G_Widget[]): Rect {
 		if (g_widgets.length === 0) {
 			return Rect.zero;
 		}
@@ -147,8 +160,8 @@ export class Utilities extends Testworthy_Utilities {
 		let maxX = -Infinity;
 		let maxY = -Infinity;
 		for (const g_widget of g_widgets) {
-			const w_origin = g_widget.origin;
-			const w_width = g_widget.width_ofWidget;
+			const w_origin = g_widget.origin_forDrawRect;
+			const w_width = g_widget.width_forDrawRect;
 			const w_height = k.height.row - 1.5;
 			const w_minX = w_origin.x;
 			const w_minY = w_origin.y;
