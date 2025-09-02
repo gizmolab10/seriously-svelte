@@ -117,7 +117,6 @@
 			{/if}
 			<Rubberband
 				bounds={draggableRect}
-				color={colors.rubberband}
 				bind:this={rubberbandComponent}
 				strokeWidth={k.thickness.rubberband}
 			/>

@@ -2,12 +2,7 @@
 	import { k, Point, colors, svgPaths, S_Mouse, T_Request, T_Direction, T_Action, e, ux } from '../../ts/common/Global_Imports';
 	import Buttons_Row from '../buttons/Buttons_Row.svelte';
 	import Mouse_Timer from '../../ts/signals/Mouse_Timer';
-	export let separator_thickness = k.thickness.separator.thick;
 	export let closure: (column: number) => any;
-	export let height = k.height.controls;
-	export let has_gull_wings = true;
-	export let has_seperator = false;
-	export let has_both_wings = true;
 	export let origin = Point.zero;
 	export let has_title = false;
 	export let name = k.empty;

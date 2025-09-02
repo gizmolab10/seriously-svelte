@@ -2,11 +2,9 @@
 	import { k, Rect, Point, layout, T_Layer } from '../../ts/common/Global_Imports';
 	import type { Integer } from '../../ts/common/Types';
 	export let font_size = k.font_size.info;
-	export let number_of_columns = 2;
 	export let position = 'relative';
 	export let row_height = 12;
 	export let name = k.empty;
-	export let width = 180;
 	export let left = 0;
 	export let top = 0;
 	export let array;

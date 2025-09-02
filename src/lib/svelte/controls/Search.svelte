@@ -5,7 +5,6 @@
 	import Close_Button from '../buttons/Close_Button.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Button from '../buttons/Button.svelte';
-	export let y_center: number;
 	export let width: number;
 	export let left: number;
 	const left_widths = [18, 102];

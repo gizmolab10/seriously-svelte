@@ -5,7 +5,6 @@
 	export let selected_hover_text_color: string = 'black';
 	export let selected_color: string = colors.separator;
 	export let hover_background_color: string = 'black';
-	export let selected_hover_color: string = 'white';
 	export let selected_text_color: string = 'white';
 	export let border_color: string = colors.border;
 	export let height: number = k.button_height;

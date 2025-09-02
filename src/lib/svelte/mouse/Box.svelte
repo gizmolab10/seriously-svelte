@@ -5,7 +5,6 @@
 	import Separator from './Separator.svelte';
     export let corner_radius: number = k.radius.gull_wings.thick;
     export let thickness: number = k.thickness.separator.main;
-    export let color: string = colors.separator;
     export let showBottom: boolean = true;
     export let showRight: boolean = true;
 	export let zindex = T_Layer.details;

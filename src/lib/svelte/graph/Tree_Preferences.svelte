@@ -75,7 +75,6 @@
 			height={segmented_height}
 			thumb_color={colors.separator}
 			origin={new Point(10, tops[0])}
-			title_left={k.separator_title_left}
 			title_font_size={k.font_size.banners}
 			handle_value_change={handle_depth_limit}/>
 		{#key $w_show_tree_ofType}

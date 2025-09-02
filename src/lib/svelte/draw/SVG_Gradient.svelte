@@ -6,7 +6,6 @@
 	export let size = Size.square(100);
 	export let color = '#4a90e2';
 	export let isInverted = true;
-	export let zindex = 0;
 	const fill = 'url(#' + name + ')';
 	function opacity_for(flag: boolean): string { return flag ? '0' : '1'; }
 

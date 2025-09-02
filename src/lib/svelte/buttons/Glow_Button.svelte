@@ -7,7 +7,6 @@
     export let height: number;
     export let owner = k.empty;
     export let title = k.empty;
-    export let isSelected: boolean = false;
     export let detect_autorepeat: boolean = false;
     export let font_size: number = k.font_size.banners;
     export let handle_click: (title: string) => boolean;

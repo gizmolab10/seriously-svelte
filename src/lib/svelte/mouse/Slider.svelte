@@ -8,7 +8,6 @@
 	export let origin: Point = Point.zero;
 	export let isVisible: boolean = true;
 	export let divisions: number = 100;
-	export let title_left: number = 0;
 	export let height: number = 22;
 	export let width: number = 200;
 	export let value: number = 1;

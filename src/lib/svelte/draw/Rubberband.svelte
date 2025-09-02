@@ -6,7 +6,6 @@
     import { w_mouse_location, w_count_mouse_up } from '../../ts/managers/Stores';
     import { onMount, onDestroy } from 'svelte';
     export let strokeWidth = k.thickness.rubberband;
-    export let color: string = colors.rubberband;
     export let bounds: Rect;
     const enabled = true;
     let mouse_upCount = $w_count_mouse_up;

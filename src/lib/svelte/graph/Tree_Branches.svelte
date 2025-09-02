@@ -7,9 +7,8 @@
 	import Tree_Line from './Tree_Line.svelte';
 	import Circle from '../draw/Circle.svelte';
 	import { onMount } from 'svelte';
-	export let depth: number;
 	export let ancestry: Ancestry;
-	export let show_child_branches = true;
+	export let depth: number;
 	const g_widget = ancestry.g_widget;
 	const g_childBranches = g_widget.g_childBranches;
 	let s_component: S_Component;

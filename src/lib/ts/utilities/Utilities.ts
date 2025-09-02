@@ -1,6 +1,6 @@
 // N.B., do not import these from Global Imports --> avoid dependency issues when importing Utilities class
 
-import { w_background_color, w_ancestries_grabbed } from '../managers/Stores';
+import { w_background_color, w_ancestry_focus, w_ancestries_grabbed } from '../managers/Stores';
 import { w_t_database, w_thing_fontFamily } from '../managers/Stores';
 import { Testworthy_Utilities } from './Testworthy_Utilities';
 import Identifiable from '../runtime/Identifiable';
@@ -136,7 +136,7 @@ export class Utilities extends Testworthy_Utilities {
 	print_graph() {
 		const rect = layout.rect_ofDrawnGraph;
 		const className = ux.inTreeMode ? 'tree-graph' : 'radial-graph';
-		print.print_element_byClassName_withSize(className, rect);
+		print.print_element_byClassName_withRect(className, rect, get(w_ancestry_focus).title);
 	}
 
 	temporarily_setDefaults_while(closure: () => void) {
@@ -151,7 +151,7 @@ export class Utilities extends Testworthy_Utilities {
 		}, 10);
 	}
 
-	drawRectFor_g_widgets(g_widgets: G_Widget[]): Rect {
+	get_drawRectFor_g_widgets(g_widgets: G_Widget[]): Rect {
 		if (g_widgets.length === 0) {
 			return Rect.zero;
 		}

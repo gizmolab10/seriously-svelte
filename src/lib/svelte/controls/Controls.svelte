@@ -64,7 +64,6 @@
 
 {#key width, $w_background_color}
 	<Box name='controls-box'
-		color={colors.separator}
 		width={layout.windowSize.width}
 		height={layout.controls_boxHeight + 2}
 		thickness={k.thickness.separator.main}
@@ -115,10 +114,7 @@
 				{:else}
 					<Next_Previous name='recents'
 						size={28}
-						height={size_big}
 						has_title={false}
-						has_seperator={false}
-						has_gull_wings={false}
 						origin={Point.x(lefts[1])}
 						closure={handle_recents_mouseClick}/>
 					{#key $w_show_graph_ofType}

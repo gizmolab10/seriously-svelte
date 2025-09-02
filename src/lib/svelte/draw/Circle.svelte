@@ -1,7 +1,6 @@
 <script lang='ts'>
 	import { k, u, Point, debug, T_Layer } from '../../ts/common/Global_Imports'
 	import { w_background_color } from '../../ts/managers/Stores';
-	export let color_background = debug.lines ? 'transparent' : $w_background_color;
 	export let zindex = T_Layer.dots;
 	export let center = Point.zero;
 	export let name = k.empty;
