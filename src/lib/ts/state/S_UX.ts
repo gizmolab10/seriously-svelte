@@ -14,7 +14,6 @@ export default class S_UX {
 	s_widget_byAncestryID: { [id: string]: S_Widget } = {};
 	s_element_byName: { [name: string]: S_Element } = {};
 	s_mouse_byName: { [name: string]: S_Mouse } = {};
-	search_string: string | null = null;
 	parents_focus_ancestry!: Ancestry;
 	attached_branches: string[] = [];
 	mouse_responder_number = 0;

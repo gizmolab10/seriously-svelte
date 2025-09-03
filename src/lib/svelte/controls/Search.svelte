@@ -4,6 +4,7 @@
 	import { w_t_filter, w_t_search, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import Close_Button from '../buttons/Close_Button.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
+	import { search } from '../../ts/state/S_Search';
 	import Button from '../buttons/Button.svelte';
 	export let width: number;
 	export let left: number;
@@ -17,6 +18,7 @@
 
 	$: if (ux.search_string !== undefined) {
 		p.write_key(T_Preference.search_text, ux.search_string);
+		// begin search, interrupting any current search
 	}
 
 </script>
