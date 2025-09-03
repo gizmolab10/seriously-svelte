@@ -40,11 +40,12 @@ export default class Ancestry extends Identifiable {
 
 	async async_traverse(apply_closureTo: (ancestry: Ancestry) => Promise<boolean>, t_kinship: T_Kinship = T_Kinship.children, visited: string[] = []) {
 		const id = this.thing?.id;
-		if (!!id && !visited.includes(id)) {
+		const name = this.thing?.title;
+		if (!!id && !visited.includes(name)) {
 			try {
 				if (!await apply_closureTo(this)) {
 					for (const progeny of this.ancestries_createUnique_byKinship(t_kinship)) {
-						await progeny.async_traverse(apply_closureTo, t_kinship, [...visited, id]);
+						await progeny.async_traverse(apply_closureTo, t_kinship, [...visited, name]);
 					}
 				}
 			} catch (error) {
