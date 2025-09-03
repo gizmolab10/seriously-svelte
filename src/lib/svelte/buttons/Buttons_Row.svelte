@@ -97,7 +97,7 @@
 				title_font_size={font_sizes[0]}
 				title_left={k.separator_title_left}/>
 		{:else}
-			<div class='box-title'
+			<div class='actions-left-column'
 				style='
 					top: 1.5px;
 					text-align: right;

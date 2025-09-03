@@ -60,7 +60,7 @@ export default class DB_Common {
 	remove_all_fromLocal() {
 		if (this.isPersistent) {
 			for (const t_persistable of Persistable.t_persistables) {
-				p.writeDB_key(t_persistable.toLowerCase(), null);
+				p.writeDB_key(t_persistable.toLocaleLowerCase(), null);
 			}
 		}
 	}
@@ -107,7 +107,7 @@ export default class DB_Common {
 				}
 			}
 		} else if (this.isPersistent) {		// db local only, db test is not persistent
-			p.writeDB_key(t_persistable.toLowerCase(), identifiables);
+			p.writeDB_key(t_persistable.toLocaleLowerCase(), identifiables);
 			for (const identifiable of identifiables) {
 				identifiable.set_isDirty(false);
 			}
@@ -117,7 +117,7 @@ export default class DB_Common {
 	async fetch_all_fromLocal(): Promise<boolean> {
 		await busy.temporarily_set_isFetching_while(async () => {
 			for (const t_persistable of Persistable.t_persistables) {
-				const array = p.readDB_key(t_persistable.toLowerCase()) as Array<Dictionary>;
+				const array = p.readDB_key(t_persistable.toLocaleLowerCase()) as Array<Dictionary>;
 				if (!!array) {
 					for (const dict of array) {
 						h.extract_objects_ofType_fromDict(t_persistable, dict);

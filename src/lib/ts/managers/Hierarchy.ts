@@ -1345,7 +1345,7 @@ export class Hierarchy {
 				break;
 			case T_File_Format.json:
 				const data = this.data_fromAncestry_toSave(ancestry);
-				const filename = `${data.title.toLowerCase()}.${format}`;
+				const filename = `${data.title.toLocaleLowerCase()}.${format}`;
 				files.persist_json_object_toFile(data, filename);
 				break;
 		}

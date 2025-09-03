@@ -19,7 +19,7 @@ declare global {
 
 Object.defineProperty(String.prototype, 'unCamelCase', {
 	value: function(): string {
-		return this.replace(/([A-Z])/g, ' $1').toLowerCase();
+		return this.replace(/([A-Z])/g, ' $1').toLocaleLowerCase();
 	},
 	writable: false, // Set writable to false to prevent the method to be overwritten
 	enumerable: false, // Set enumerable to false to avoid unintended behavior

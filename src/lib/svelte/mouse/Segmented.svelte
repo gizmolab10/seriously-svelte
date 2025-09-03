@@ -18,7 +18,7 @@
 	export let selected: string[];
 	export let width = 0;
 
-	function button_name(title: string) { return `segment-${name}-${title.replace(/\s+/g, '-').toLowerCase()}`; }
+	function button_name(title: string) { return `segment-${name}-${title.replace(/\s+/g, '-').toLocaleLowerCase()}`; }
 
 	$: {
 		const _ = $w_background_color;

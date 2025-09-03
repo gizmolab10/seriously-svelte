@@ -33,6 +33,7 @@
 	// length			length of the separator
 	// margin		
 	// zindex
+	// handle_click		renders as a clickable label instead
 
 	$: separatorStyle = style_for(isHorizontal, line_left, zindex, top, origin.y, margin, thickness, length, separator_color);
 	$: wingsCenter_single = wingsCenter_for(isHorizontal, length, thickness, false);
@@ -125,7 +126,7 @@
 			style='
 				z-index:{zindex};
 				padding: 0px 5px;
-				top:{title_top}px;
+				top:{title_top + 1}px;
 				left:{title_left}px;
 				position:{position};
 				white-space: nowrap;

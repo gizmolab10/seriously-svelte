@@ -10,6 +10,7 @@ export class Colors {
 	separator = '#eeeee0';
     disabled = 'lightGray';
 	rubberband = '#4a90e2';
+	faint_hover = 'yellow';
     default_forThings = 'blue';
 
 	color_fromSeriously(color: string | undefined): string {

@@ -60,7 +60,7 @@
 					stroke-width='0.75'
 					stroke={colors.border}
 					d={svgPaths.path_for(title, size + 3)}
-					fill={index_forHover === index ? 'black' : 'white'}/>
+					fill={index_forHover === index ? k.faint_hover : 'white'}/>
 			</svg>
 		</button>
 	{/each}

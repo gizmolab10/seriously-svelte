@@ -3,7 +3,7 @@
 	import { T_Layer } from '../../ts/common/Enumerations';
 	import { k } from '../../ts/common/Global_Imports';
 	export let handle_click: (event: Event) => {} | null = null;
-	export let font_size = k.font_size.details;
+	export let font_size = k.font_size.separator;
 	export let zindex = T_Layer.details + 2;
 	export let label_underline = false;
 	export let label_color = 'black';
@@ -13,7 +13,7 @@
 <a
 	on:click={handle_click}
 	style='
-		top: -7px;
+		top: -6px;
 		z-index: {zindex};
 		position: absolute;
 		color: {label_color};
@@ -22,4 +22,4 @@
 		cursor: {!!handle_click ? 'pointer' : 'default'};
 		text-decoration: {label_underline ? 'underline' : 'none'};'>
 	{label}
-</a>
+</a> 

@@ -213,7 +213,7 @@
 
 	function handle_key_down(event) {
 		if (!!thing && !!ancestry && isEditing() && canAlterTitle(event)) {
-			const key = event.key.toLowerCase();
+			const key = event.key.toLocaleLowerCase();
 			debug.log_key(`H KEY ${key}`);
 			switch (key) {	
 				case 'arrowup':

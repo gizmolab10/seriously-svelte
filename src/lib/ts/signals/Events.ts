@@ -219,7 +219,7 @@ export class Events {
 			const COMMAND = event.metaKey;
 			const EXTREME = SHIFT && OPTION;
 			const time = new Date().getTime();
-			const key = event.key.toLowerCase();
+			const key = event.key.toLocaleLowerCase();
 			const ancestry = grabs.latest_upward(true);
 			const modifiers = ['alt', 'meta', 'shift', 'control'];
 			let graph_needsRebuild = false;
