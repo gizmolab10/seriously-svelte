@@ -1,6 +1,6 @@
 import { k, ux, debug, layout, g_radial, components } from '../common/Global_Imports';
 import { S_Rotation, S_Resizing, G_Thing_Pages } from '../common/Global_Imports';
-import { T_RingZone, T_Component } from '../common/Global_Imports';
+import { T_Radial_Zone, T_Component } from '../common/Global_Imports';
 import { w_ring_rotation_radius } from '../managers/Stores';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
@@ -17,7 +17,7 @@ export default class S_RadialGraph {
 	s_cluster_rotation = new S_Rotation();
 	s_ring_resizing	= new S_Resizing();
 	s_ring_rotation	= new S_Rotation();
-	zone = T_RingZone.miss;
+	zone = T_Radial_Zone.miss;
 
 	reset_paging() { this.g_paging_rotations.map(s => s.reset()); }
 	get g_paging_rotations(): Array<S_Rotation> { return Object.values(this.g_paging_rotation_byName); }
@@ -49,15 +49,15 @@ export default class S_RadialGraph {
 
 	get cursor_forRingZone(): string {
 		switch (this.ring_zone_atMouseLocation) {
-			case T_RingZone.paging: return this.s_cluster_rotation.cursor;
-			case T_RingZone.resize: return this.s_ring_resizing.cursor;
-			case T_RingZone.rotate: return this.s_ring_rotation.cursor;
+			case T_Radial_Zone.paging: return this.s_cluster_rotation.cursor;
+			case T_Radial_Zone.resize: return this.s_ring_resizing.cursor;
+			case T_Radial_Zone.rotate: return this.s_ring_rotation.cursor;
 			default:				return 'default';
 		}
 	}
 
-	get ring_zone_atMouseLocation(): T_RingZone {
-		let ring_zone = T_RingZone.miss;
+	get ring_zone_atMouseLocation(): T_Radial_Zone {
+		let ring_zone = T_Radial_Zone.miss;
 		const mouse_vector = layout.mouse_vector_ofOffset_fromGraphCenter();
 		const widgets = components.components_ofType_atMouseLocation(T_Component.widget);
 		if (!!mouse_vector && widgets.length == 0) {
@@ -70,11 +70,11 @@ export default class S_RadialGraph {
 			const thumb = inner + thin;
 			if (!!distance && distance <= rotate) {
 				if (distance < inner) {
-					ring_zone = T_RingZone.resize;
+					ring_zone = T_Radial_Zone.resize;
 				} else if (distance < thumb && !!g_cluster && g_cluster.isMouse_insideThumb) {
-					ring_zone = T_RingZone.paging;
+					ring_zone = T_Radial_Zone.paging;
 				} else {
-					ring_zone = T_RingZone.rotate;
+					ring_zone = T_Radial_Zone.rotate;
 				}
 			}
 			debug.log_mouse(` ring zone ${ring_zone} ${distance.asInt()}`);

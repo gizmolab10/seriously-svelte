@@ -1,6 +1,6 @@
 // DO NOT change the order of the following
 
-export enum T_Order {	
+export enum T_Order {	// need two orders, so .... ???
 	child,
 	other,
 }
@@ -93,6 +93,11 @@ export enum T_Auto_Adjust {
 	fit		  = 'exactly fit',
 }
 
+export enum T_Theme {
+	standalone = 'standalone',
+	bubble	   = 'bubble',
+}
+
 export enum T_Filter {
 	title = 'title',
 	trait = 'trait',
@@ -111,7 +116,7 @@ export enum T_Widget {
 	tree   = 'tree',
 }
 
-export enum T_Curve {
+export enum T_Tree_Line {
 	flat = 'flat',
 	down = 'down',
 	up	 = 'up',
@@ -162,7 +167,7 @@ export enum T_File_Format {
 	csv		  = 'csv',
 }
 
-export enum T_RingZone {
+export enum T_Radial_Zone {
 	resize = 'resize',
 	paging = 'paging',
 	rotate = 'rotate',

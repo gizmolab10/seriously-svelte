@@ -1,7 +1,7 @@
-import { k, Rect, Size, Point, T_Curve, svgPaths, Ancestry } from '../common/Global_Imports';
+import { k, Rect, Size, Point, T_Tree_Line, svgPaths, Ancestry } from '../common/Global_Imports';
 
 export default class G_TreeLine {
-	t_curve: string = T_Curve.flat;
+	t_curve: string = T_Tree_Line.flat;
 	ancestry: Ancestry | null;	// main end of the line
 	other_ancestry: Ancestry;	// other end of the line (N.B. main can be deeper!!)
 	isBidirectional: boolean;
@@ -35,11 +35,11 @@ export default class G_TreeLine {
 
 	set_curve_type_forHeight(height: number) {
 		if (height > 1) {
-			this.t_curve = T_Curve.down;
+			this.t_curve = T_Tree_Line.down;
 		} else if (height < -1) {
-			this.t_curve = T_Curve.up;
+			this.t_curve = T_Tree_Line.up;
 		} else {
-			this.t_curve = T_Curve.flat;
+			this.t_curve = T_Tree_Line.flat;
 		}
 	}
 
@@ -55,15 +55,15 @@ export default class G_TreeLine {
 		const lineOffset = new Point(-118.5, 2.5);
 		let lineRect = this.rect.offsetBy(lineOffset).expand_widthBy(-4);
 		switch (this.t_curve) {
-			case T_Curve.up:
+			case T_Tree_Line.up:
 				this.origin = lineRect.origin;
 				this.extent = lineRect.extent.offsetByY(-1.5);
 				break;
-			case T_Curve.down:
+			case T_Tree_Line.down:
 				this.origin = lineRect.bottomLeft.offsetByY(-0.5);
 				this.extent = this.origin.offsetBy(lineRect.size.asPoint).offsetByY(0.5);
 				break;
-			case T_Curve.flat:
+			case T_Tree_Line.flat:
 				lineRect = lineRect.offsetByY(-1.5);
 				this.origin = lineRect.centerLeft;
 				this.extent = lineRect.centerRight;
@@ -72,10 +72,10 @@ export default class G_TreeLine {
 		}
 		const vector = this.origin.vector_to(this.extent);
 		this.size = vector.abs.asSize;
-		if (this.t_curve != T_Curve.flat) {
-			const flag = (this.t_curve == T_Curve.down) ? 0 : 1;
-			const originY = this.t_curve == T_Curve.down ? 0 : this.size.height;
-			const extentY = this.t_curve == T_Curve.up   ? 0 : this.size.height;
+		if (this.t_curve != T_Tree_Line.flat) {
+			const flag = (this.t_curve == T_Tree_Line.down) ? 0 : 1;
+			const originY = this.t_curve == T_Tree_Line.down ? 0 : this.size.height;
+			const extentY = this.t_curve == T_Tree_Line.up   ? 0 : this.size.height;
 			this.linePath = `M0 ${originY} A ${this.size.description} 0 0 ${flag} ${this.size.width} ${extentY}`;
 		}
 		const boxSize = new Size(this.size.width, Math.max(2, this.size.height));

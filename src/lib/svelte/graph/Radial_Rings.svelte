@@ -3,7 +3,7 @@
 	import { w_count_mouse_up, w_s_title_edit, w_g_paging_cluster } from '../../ts/managers/Stores';
 	import { radial, g_radial, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_background_color, w_ancestry_focus } from '../../ts/managers/Stores';
-	import { T_Layer, T_RingZone, T_Component, S_Component } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Radial_Zone, T_Component, S_Component } from '../../ts/common/Global_Imports';
 	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/managers/Stores';
 	import { w_graph_rect, w_mouse_location_scaled } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
@@ -57,7 +57,7 @@
 
 	function handle_isHit(): boolean {
 		const zone = radial.ring_zone_atMouseLocation;
-		return [T_RingZone.resize, T_RingZone.rotate].includes(zone);
+		return [T_Radial_Zone.resize, T_Radial_Zone.rotate].includes(zone);
 	}
 
 	function s_reset() {
@@ -73,9 +73,9 @@
 		const isResizing = radial.s_ring_resizing.isActive;
 		const isRotating = radial.s_ring_rotation.isActive;
 		const ring_zone = radial.ring_zone_atMouseLocation;
-		const inRotate = ring_zone == T_RingZone.rotate && !isPaging && !isResizing;
-		const inResize = ring_zone == T_RingZone.resize && !isPaging && !isRotating;
-		const inPaging = ring_zone == T_RingZone.paging && !isRotating && !isResizing;
+		const inRotate = ring_zone == T_Radial_Zone.rotate && !isPaging && !isResizing;
+		const inResize = ring_zone == T_Radial_Zone.resize && !isPaging && !isRotating;
+		const inPaging = ring_zone == T_Radial_Zone.paging && !isRotating && !isResizing;
 		if (radial.s_ring_rotation.isHovering != inRotate) {
 			radial.s_ring_rotation.isHovering  = inRotate;
 			debug.log_hover(` hover rotate  ${inRotate}`);
@@ -165,19 +165,19 @@
 				$w_s_title_edit?.stop_editing();
 				$w_s_title_edit = null;		// so widget will react
 				switch (zone) {
-					case T_RingZone.rotate:
+					case T_Radial_Zone.rotate:
 						debug.log_radial(` begin rotate  ${angle_ofRotation.asDegrees()}`);
 						radial.s_ring_rotation.active_angle = angle_ofMouseDown;
 						radial.s_ring_rotation.basis_angle = angle_ofRotation;
 						break;
-					case T_RingZone.resize:
+					case T_Radial_Zone.resize:
 						const change_ofRadius = layout.mouse_distance_fromGraphCenter - $w_ring_rotation_radius;
 						debug.log_radial(` begin resize  ${change_ofRadius.asInt()}`);
 						radial.s_ring_rotation.active_angle = angle_ofMouseDown + Angle.quarter;	// needed for cursor
 						radial.s_ring_rotation.basis_angle = angle_ofRotation + Angle.quarter;		// "
 						radial.s_ring_resizing.basis_radius = change_ofRadius;
 						break;
-					case T_RingZone.paging: 
+					case T_Radial_Zone.paging: 
 						const angle_ofPage = angle_ofMouseDown.angle_normalized();
 						const g_cluster = g_radial.g_cluster_atMouseLocation;
 						if (!!g_cluster) {

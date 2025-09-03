@@ -1,10 +1,11 @@
-import { e, k, p, u, show, debug, layout, databases } from '../common/Global_Imports';
+import { e, k, p, u, show, debug, layout, T_Theme, databases } from '../common/Global_Imports';
 import { stores, w_device_isMobile } from './Stores';
 
 export class Configuration {
 
 	queryStrings = new URLSearchParams(window.location.search);
 	allow_HorizontalScrolling = true;
+	theme = T_Theme.standalone;
 	has_details_button = true;
 	allow_GraphEditing = true;
 	allow_TitleEditing = true;
@@ -15,16 +16,14 @@ export class Configuration {
 
 	configure() {
 		
-		//////////////////////////////////////////////////
-		//												//
-		//												//
-		//	 this is the first code called by the app	//
-		//												//
-		//	  DO NOT CHANGE THE ORDER OF THESE CALLS	//
-		//												//
-		//												//
-		//////////////////////////////////////////////////
+		//////////////////////////////////////
+		//									//
+		//	 first code called by the app	//
+		//									//
+		//////////////////////////////////////
 
+		// DO NOT CHANGE THE ORDER OF THESE CALLS
+		
 		w_device_isMobile.set(u.device_isMobile);
 		debug.queryStrings_apply();						// debugging
 		stores.setup_defaults();
@@ -38,13 +37,14 @@ export class Configuration {
 	}
 
 	queryStrings_apply() {
-		const queryStrings = this.queryStrings;
-        const eraseOptions = queryStrings.get('erase')?.split(k.comma) ?? [];
+		const queryStrings	 = this.queryStrings;
+        const eraseOptions	 = queryStrings.get('erase')?.split(k.comma) ?? [];
+        const themeOptions	 = queryStrings.get('theme')?.split(k.comma) ?? [];
         const disableOptions = queryStrings.get('disable')?.split(k.comma) ?? [];
 		for (const disableOption of disableOptions) {
 			switch (disableOption) {
-				case 'details':				this.has_details_button			   = false; break;
-				case 'matte_UI':			this.has_matte_UI			   = false; break;
+				case 'details':				this.has_details_button		   = false; break;
+				case 'matte_UI':			this.has_matte_UI			   = false; break;	// deprecated
 				case 'editGraph':			this.allow_GraphEditing		   = false; break;
 				case 'editTitles':			this.allow_TitleEditing		   = false; break;
 				case 'horizontalScrolling': this.allow_HorizontalScrolling = false; break;
@@ -54,6 +54,12 @@ export class Configuration {
 			switch (eraseOption) {
 				case 'data':	 this.eraseDB = 4;			break;
 				case 'settings': this.erasePreferences = 2; break;
+			}
+		}
+		for (const themeOption of themeOptions) {
+			switch (themeOption) {
+				case 'bubble':	   this.theme = T_Theme.bubble;		break;
+				case 'standalone': this.theme = T_Theme.standalone; break;
 			}
 		}
     }

@@ -1,5 +1,5 @@
 import { w_show_countDots_ofType, w_show_details, w_show_related } from './Stores';
-import { c, k, p, layout, T_Preference } from '../common/Global_Imports';
+import { c, k, p, ux, layout, T_Preference } from '../common/Global_Imports';
 import { T_Kinship } from '../common/Enumerations';
 import type { Dictionary } from '../common/Types';
 import { get } from 'svelte/store';
@@ -17,14 +17,12 @@ export class Visibility {
         for (const [name, flag] of Object.entries(keyedFlags)) {
 			switch (name) {
 				case 'details':
-					w_show_details.set(flag);
-					break;
 				case 'related':
 					w_show_related.set(flag);
 					break;
 				case 'parents':
 					const mode = flag ? T_Kinship.parents : T_Kinship.children;
-					layout.set_tree_types([mode]);
+					ux.set_tree_types([mode]);
 					break;
 			}
 		}

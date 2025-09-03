@@ -58,6 +58,7 @@
 		if (detect_mouseUp) {
 			reset();
 			handle_s_mouse(S_Mouse.up(event, bound_element));
+			handle_movement(event);  // Check hover state after handling the click
 		}
 	}
 
