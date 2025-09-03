@@ -106,6 +106,36 @@ export class Testworthy_Utilities {
 		}
 	}
 
+	get printer_configuration(): {printer_page_width: number, printer_dpi: number} {
+		const printCSS = `
+			@media print {
+				.print-test {
+						top: 0; 
+						left: 0; 
+						width: 100%; 
+						height: 100%; 
+						position: absolute; 
+					}
+				}`;
+		const square_inch = document.createElement('div');
+		const style = document.createElement('style');
+		const page = document.createElement('div');
+		style.textContent = printCSS;
+		page.className = 'print-test';
+		square_inch.style.cssText = 'width: 1in; height: 1in; position: absolute; top: -9999px;';
+
+		document.head.appendChild(style);
+		document.body.appendChild(page);
+		const printer_page_width = page.offsetWidth;
+		document.body.removeChild(page);
+		document.head.removeChild(style);
+
+		document.body.appendChild(square_inch);
+		const printer_dpi = square_inch.offsetWidth;
+		document.body.removeChild(square_inch);
+		return {printer_page_width, printer_dpi};
+	}
+
 	static readonly _____ARRAYS: unique symbol;
 
 	concatenateArrays(a: Array<any>, b: Array<any>):  Array<any> { return [...a, ...b]; }

@@ -47,11 +47,11 @@
 		const _ = `${$w_graph_rect}
 			${$w_user_graph_offset}
 			${$w_background_color}
+			${$w_control_key_down}
 			${s_button.isDisabled}
 			${s_button.isInverted}
 			${s_button.isGrabbed}
 			${s_button.isEditing}
-			${$w_control_key_down}
 			${s_button.isOut}
 			${s_button.fill}`;
 		recompute_style();
@@ -80,7 +80,6 @@
 				left:0px;
 				${border};
 				display: flex;
-				color:${color};
 				width:${width}px;
 				z-index:${zindex};
 				padding:${padding};
@@ -90,6 +89,7 @@
 				position:${position};
 				justify-content: center;
 				font-size:${font_size}px;
+				color:${s_button.stroke};
 				cursor:${s_button.cursor};
 				border-radius:${height / 2}px;
 				font-family:${$w_thing_fontFamily};
@@ -112,8 +112,7 @@
 		handle_s_mouse={handle_s_mouse}
 		detect_longClick={detect_longClick}
 		detect_autorepeat={detect_autorepeat}>
-		<button
-			class='button'
+		<button class='button'
 			style={computed_style}
 			id={'button-for-' + name}>
 			<slot/>

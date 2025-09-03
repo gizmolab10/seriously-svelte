@@ -151,6 +151,36 @@ export class Utilities extends Testworthy_Utilities {
 		}, 10);
 	}
 
+	print_element_byClassName_withRect(className: string, rect: Rect, title: string) {
+		const element = document.querySelector(`.${className}`) as HTMLElement;
+		const printWindow = window.open('', '_blank');
+		if (!!printWindow && !!element) {
+			printWindow.document.write(`
+				<!DOCTYPE html>
+				<html>
+					<head>
+						<title>Print</title>
+						<style>
+							body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+							@media print {
+								body { margin: 0; }
+							}
+						</style>
+						<link rel="stylesheet" href="/path/to/your/styles.css">
+					</head>
+					<body>
+						${element.outerHTML}
+					</body>
+				</html>
+			`);
+		
+			printWindow.document.close();
+			printWindow.focus();
+			printWindow.print();
+			printWindow.close();
+		}
+	}
+
 	get_drawRectFor_g_widgets(g_widgets: G_Widget[]): Rect {
 		if (g_widgets.length === 0) {
 			return Rect.zero;

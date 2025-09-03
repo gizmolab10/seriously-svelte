@@ -48,7 +48,7 @@
 		const right_widths = [9, 11.5];
 		const left_widths = {
 			0: c.has_details_button ? 18 : -11,			// details
-			1: $w_t_search == T_Search.clear ? 17 : c.has_details_button ? 11 : 14,	// recents / search
+			1: $w_t_search == T_Search.clear ? 14 : c.has_details_button ? 11 : 14,	// recents / search
 			2: 57,	// graph type
 			3: 100,	// grow
 			4: 26,	// shrink
@@ -102,7 +102,6 @@
 				{#if $w_t_search != T_Search.clear && c.allow_Search}
 					<Search
 						left={lefts[1]}
-						y_center={y_center}
 						width={layout.windowSize.width - lefts[1] - 178}/>
 					<Close_Button
 						name='end-search'
@@ -182,11 +181,12 @@
 						<Button
 							width={size_big}
 							height={size_big}
+							border_thickness={0}
 							name={T_Control.search}
 							center={new Point(width - rights[0], y_center)}
 							s_button={ux.s_control_forType(T_Control.search)}
 							closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.search)}>
-							s
+							🔍
 						</Button>
 					{/if}
 				{/if}

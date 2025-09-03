@@ -65,7 +65,7 @@ Final origin: ${final_origin.description}
 	}
 
 	function layout() {
-		const w = k.printer_pixel_width;
+		const w = k.printer_page_width;
 		const h = w * k.printer_aspect_ratio;
 		isLandscape = rect.size.width > rect.size.height;
 		final_page_size = new Size(
@@ -76,7 +76,7 @@ Final origin: ${final_origin.description}
 		scale_size = final_inset_size.dividedBy(rect.size);
 		scaleFactor = Math.min(scale_size.width, scale_size.height) * screen_scale_factor;
 		final_content_rect = rect.multipliedEquallyBy(scaleFactor);
-		kludge = new Point(-60, -300);
+		kludge = new Point(-220, -380);
 		final_origin = final_page_size.center.offsetBy(rect.center.negated).offsetBy(kludge);
 		log_message = debug_log();
 	}
@@ -99,8 +99,8 @@ Final origin: ${final_origin.description}
 	{#if !!log_message && !!final_page_size && !!final_inset_size}
 		<div class='message-box'
 			style='
-				top: {final_page_size.height - message_height}px;
-				width: {final_inset_size.width}px;
+				width: {final_inset_size.width * 1.5}px;
+				top: {final_page_size.height - 100}px;
 				background-color: transparent;
 				height: {message_height}px;
 				box-sizing: border-box;

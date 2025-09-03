@@ -50,7 +50,6 @@
                 color={banner_color}
                 size={svg_rect.size}
                 name={`gradient-${name}`}
-                zindex={T_Layer.frontmost}
                 path={svgPaths.rectangle(svg_rect)}/>
         {/if}
         <div class='box-content-{name}' style='flex: 1;'>

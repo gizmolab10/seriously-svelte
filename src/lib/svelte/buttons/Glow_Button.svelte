@@ -63,7 +63,6 @@
             name={gradient_name}
             color={banner_color}
             size={glow_rect.size}
-            zindex={T_Layer.frontmost}
             path={svgPaths.rectangle(glow_rect)}/>
     {/if}
     <div class='title'

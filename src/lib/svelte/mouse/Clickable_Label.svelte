@@ -10,7 +10,7 @@
 	export let label = k.empty;
 </script>
 
-<div
+<a
 	on:click={handle_click}
 	style='
 		top: -7px;
@@ -22,4 +22,4 @@
 		cursor: {!!handle_click ? 'pointer' : 'default'};
 		text-decoration: {label_underline ? 'underline' : 'none'};'>
 	{label}
-</div> 
+</a>

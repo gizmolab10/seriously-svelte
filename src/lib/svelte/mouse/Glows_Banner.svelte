@@ -59,7 +59,6 @@
 			height={height}
 			owner={main_title}
 			font_size={font_size}
-			isSelected={isSelected}
 			handle_click={intercept_click}
 			detect_autorepeat={title != main_title}
 			width={g_repeater.button_width_for(index)}/>
