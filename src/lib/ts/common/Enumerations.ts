@@ -291,6 +291,7 @@ export enum T_Preference {
 	ring_radius		  = 'ring_radius',
 	user_offset		  = 'user_offset',
 	auto_adjust		  = 'auto_adjust',
+	search_text		  = 'search_text',
 	background		  = 'background',
 	ring_angle  	  = 'ring_angle',
 	matte_UI		  = 'matte_UI',				// not use glow gradient

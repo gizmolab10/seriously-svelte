@@ -1,10 +1,10 @@
 <script lang='ts'>
+    import { w_background_color, w_show_directionals_ofType } from '../../ts/managers/Stores';
     import { k, Point, colors, Direction } from '../../ts/common/Global_Imports';
-	import { w_background_color, w_show_directionals_ofType } from '../../ts/managers/Stores';
     import Triangle_Button from './Triangle_Button.svelte';
     export let hit_closure;
     const buttonSize = 20;
-    const origin = new Point(32, 37);
+    const origin = new Point(19, 29);
     const offsetY = buttonSize / 2 - 1;
 
 	function hover_closure(isHovering) {
@@ -21,7 +21,7 @@
 
 </script>
 
-<div class='directionals'>
+<div class='steppers'>
     {#if $w_show_directionals_ofType[0]}
         <Triangle_Button
             center={origin.offsetByY(-offsetY)}

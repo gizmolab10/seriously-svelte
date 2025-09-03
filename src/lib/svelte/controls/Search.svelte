@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { e, k, u, ux, Point, colors, svgPaths } from '../../ts/common/Global_Imports';
+	import { T_Filter, T_Search, T_Control, T_Preference } from '../../ts/common/Global_Imports';
+	import { e, k, p, u, ux, Point, colors, svgPaths } from '../../ts/common/Global_Imports';
 	import { w_t_filter, w_t_search, w_thing_fontFamily } from '../../ts/managers/Stores';
-	import { T_Filter, T_Search, T_Control } from '../../ts/common/Global_Imports';
 	import Close_Button from '../buttons/Close_Button.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Button from '../buttons/Button.svelte';
@@ -12,6 +12,13 @@
 	const right_widths = [10, 10.5, 130];
 	const lefts = u.cumulativeSum(left_widths);
 	const rights = u.cumulativeSum(right_widths);
+
+	$: ux.search_string = p.read_key(T_Preference.search_text);
+
+	$: if (ux.search_string !== undefined) {
+		p.write_key(T_Preference.search_text, ux.search_string);
+	}
+
 </script>
 
 <div class='search-controls' style='left: {left}px; position: absolute;'>
