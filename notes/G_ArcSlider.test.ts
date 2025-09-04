@@ -1,4 +1,4 @@
-import { G_ArcSlider } from '../common/Global_Imports';
+import { G_ArcSlider } from '../src/lib/ts/common/Global_Imports';
 
 export class ArcSliderTester {
     private slider: G_ArcSlider;
