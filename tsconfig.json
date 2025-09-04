@@ -44,5 +44,5 @@
 		"src/**/*",
 		"src/main.js",
 		"src/lib/**/*"
-, "notes/app", "notes/maybe"	]
+, "notes/experiments/app", "notes/maybe", "notes/experiments/plugin", "notes/experiments/Cursors.ts"	]
 }

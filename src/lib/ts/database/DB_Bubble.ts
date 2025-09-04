@@ -18,7 +18,13 @@ export default class DB_Bubble extends DB_Common {
 
 	setup_subscriptions() {
 		setTimeout(() => {
-			// send these message types to initialize.js in bubble
+
+			//////////////////////////////////////////////////////////////////
+			//																//
+			//	SEND these message types to initialize.js in bubble PLUGIN	//
+			//																//
+			//////////////////////////////////////////////////////////////////
+
 			w_ancestry_focus.subscribe((ancestry: Ancestry) => {
 				if (!!ancestry && !!ancestry.thing) {
 					window.parent.postMessage({ type: 'focus_glob', glob: ancestry.thing.glob }, k.wildcard);
@@ -37,6 +43,9 @@ export default class DB_Bubble extends DB_Common {
 	}
 
 	private handle_bubble_message = (e: Event) => {
+		
+		// TODO: configuration and terminate
+
 		function createRelationship(b_parent: any, b_child: any, b_kind: any, b_orders: any, glob: string = k.empty) {
 			const id = Math.random().toString(36).substring(2, 15);
 			h.relationship_remember_runtimeCreateUnique(h.db.idBase, id, b_kind, b_parent.id, b_child.id, b_orders, glob, T_Create.isFromPersistent);
@@ -73,14 +82,6 @@ export default class DB_Bubble extends DB_Common {
 			} catch (err) {
 				console.warn('[DB_Bubble] Could not parse properties:', err);
 			}
-			debug.log_bubble(`[DB_Bubble] got root: ${b_root}`);
-			debug.log_bubble(`[DB_Bubble] got tags: ${b_tags}`);
-			debug.log_bubble(`[DB_Bubble] got focus: ${b_focus}`);
-			debug.log_bubble(`[DB_Bubble] got traits: ${b_traits}`);
-			debug.log_bubble(`[DB_Bubble] got objects: ${b_things}`);
-			debug.log_bubble(`[DB_Bubble] got selected: ${b_grabs}`);
-			debug.log_bubble(`[DB_Bubble] got predicates: ${b_predicates}`);
-			debug.log_bubble(`[DB_Bubble] got relationships: ${b_relationships}`);
 			if (!!b_root) {   // must happen BEFORE things are created
 				createThing(b_root, T_Thing.root);
 			}

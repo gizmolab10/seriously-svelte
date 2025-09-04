@@ -1,6 +1,6 @@
-import { T_Quadrant, T_Orientation } from '../utilities/Angle';
+import { T_Quadrant, T_Orientation } from '../types/Angle';
 import { Point } from '../utilities/Geometry';
-import Angle from '../utilities/Angle';
+import Angle from '../types/Angle';
 
 describe('Point', () => {
 	it('create a vector', () => {

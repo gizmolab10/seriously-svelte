@@ -12,15 +12,6 @@ function(instance, properties, context) {
 	iframe.style.width = '100%';
 	instance.data.iframe = iframe;
 
-	function publishState(key, value, isArray) {
-		try {
-			const parsed = isArray ? value.map(item => JSON.parse(item)) : JSON.parse(value);
-			instance.publishState(key, parsed);
-		} catch (e) {
-			console.error('Failed to parse JSON:', e);
-		}
-	}
-
 	window.addEventListener('message', function (event) {
 		if (event.data && !event.data.hello) {
 			switch (event.data.type) {
@@ -35,15 +26,6 @@ function(instance, properties, context) {
 				case 'trigger_an_event':
 					instance.triggerEvent(event.data.trigger);
 					break;
-				// case 'focus_glob':	// testing only for now
-				// 	publishState('focus', event.data.glob, false);
-				// 	break;
-				// case 'selected_globs':	// testing only for now
-				// 	const array = event.data.globs;
-				// 	if (!!array && array.length > 0) {
-				// 		publishState('selected', array, true);
-				// 	};
-				// 	break;
 				case 'listening':
 					instance.data.iframeIsListening = true;		// once set, only these messages will pend, the rest are sent in update
 					if (instance.data.pendingMessages) {		// Send any pending messages that were stored before iframe was ready

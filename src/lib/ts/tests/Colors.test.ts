@@ -1,4 +1,4 @@
-import { colors } from '../utilities/Colors';
+import { colors } from '../managers/Colors';
 
 describe('darkness', () => {
 	it('666', () => {

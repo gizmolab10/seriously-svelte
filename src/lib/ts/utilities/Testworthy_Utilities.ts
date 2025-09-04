@@ -2,11 +2,11 @@
 
 import Identifiable from '../runtime/Identifiable';
 import { T_Browser } from '../common/Enumerations';
-import type { Dictionary } from '../common/Types';
+import type { Dictionary } from '../types/Types';
+import { T_Quadrant } from '../types/Angle';
+import { Point } from '../types/Geometry';
 import MobileDetect from 'mobile-detect';
-import { T_Quadrant } from './Angle';
-import { Point } from './Geometry';
-import Angle from './Angle';
+import Angle from '../types/Angle';
 
 export class Testworthy_Utilities {
 	private orderedKeysCache = new WeakMap<object, string[]>();

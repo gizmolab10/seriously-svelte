@@ -3,8 +3,8 @@
 import { w_background_color, w_ancestry_focus, w_ancestries_grabbed } from '../managers/Stores';
 import { w_t_database, w_thing_fontFamily } from '../managers/Stores';
 import { Testworthy_Utilities } from './Testworthy_Utilities';
+import { Rect, Size, Point } from '../types/Geometry';
 import Identifiable from '../runtime/Identifiable';
-import { Rect, Size, Point } from './Geometry';
 import G_TreeLine from '../layout/G_TreeLine';
 import { layout } from '../layout/G_Layout';
 import Ancestry from '../runtime/Ancestry';

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { serializeObject } from "../../../../notes/app/serializers";
+import { serializeObject } from "../../../../notes/experiments/app/serializers";
 
 describe("serializeObject", () => {
   it("handles empty object", async () => {
