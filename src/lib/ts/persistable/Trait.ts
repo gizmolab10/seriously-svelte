@@ -1,6 +1,6 @@
 import { k, u, Thing, databases, T_Trait, h } from '../common/Global_Imports';
 import { Persistable, T_Persistable } from '../common/Global_Imports';
-import type { Dictionary } from '../common/Types';
+import type { Dictionary } from '../types/Types';
 import Airtable from 'airtable';
 
 export default class Trait extends Persistable {

@@ -39,22 +39,17 @@ class Search {
 	
 	private insertSuffix(suffix: string, item: Thing): void {
 		let current = this.root;
-
-		// Walk down the trie, creating nodes as needed
+		// Walk down the tree, creating nodes as needed
 		for (const char of suffix) {
 			if (!current.children.has(char)) {
 				current.children.set(char, new Search_Node());
 			}
 			current = current.children.get(char)!;
-
-			// Add this item to every node along the path
-			// This allows substring matching at any depth
 			current.items.add(item);
 		}
-
 		current.isEndOfWord = true;
 	}
 
 }
 
-export const search = new S_Search();
+export const search = new Search();

@@ -1,4 +1,4 @@
-import type { Integer } from '../common/Types';
+import type { Integer } from '../types/Types';
 import { v4 as uuid } from 'uuid';
 import '../common/Extensions';
 

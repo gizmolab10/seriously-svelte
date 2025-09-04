@@ -5,7 +5,7 @@ import { T_Create, T_Alteration, T_File_Format, T_Persistable } from '../common/
 import { w_hierarchy, w_t_startup, w_depth_limit, w_s_alteration } from './Stores';
 import { files, colors, signals, layout, databases } from '../common/Global_Imports';
 import { w_popupView_id, w_ancestry_focus, w_s_title_edit } from './Stores';
-import type { Integer, Dictionary } from '../common/Types';
+import type { Integer, Dictionary } from '../types/Types';
 import Identifiable from '../runtime/Identifiable';
 import DB_Common from '../database/DB_Common';
 import { pivot } from '../files/Pivot';

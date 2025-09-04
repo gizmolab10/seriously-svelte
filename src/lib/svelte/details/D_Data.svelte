@@ -25,6 +25,7 @@
 	let storage_details: Array<Object> = [];
 	let width = k.width.details - 7;
 	let show_save_button = false;
+	let reattachments = 0;
 	let spinnerAngle = 0;
 	let title = k.empty;
 
@@ -35,8 +36,13 @@
 	function handle_spinner_angle(event) { spinnerAngle = event.detail.angle; }
 
 	$:{
-		const _ = $w_data_updated + $w_t_database;
+		const _ = `${$w_data_updated}:::${$w_t_database}`;
 		update_storage_details();
+	}
+
+	$: {
+		const _ = `${s_details.t_storage_need}:::${p.show_other_databases}`;
+		reattachments++;
 	}
 
 	function ids_forFormat(): T_File_Format[] {
@@ -187,7 +193,7 @@
 			{/if}
 		{/key}
 	</div>
-	{#key s_details.t_storage_need, p.show_other_databases}
+	{#key reattachments}
 		<Buttons_Row
 			gap={4}
 			margin={20}

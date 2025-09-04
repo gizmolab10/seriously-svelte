@@ -3,7 +3,7 @@ import { h, k, u, debug, colors, databases, Seriously_Range } from '../common/Gl
 import { T_Thing, T_Debug, T_Predicate, T_Persistable } from '../common/Global_Imports';
 import { w_ancestry_focus, w_ancestries_expanded } from '../managers/Stores';
 import { w_thing_color, w_count_rebuild } from '../managers/Stores';
-import type { Dictionary } from '../common/Types';
+import type { Dictionary } from '../types/Types';
 import { get } from 'svelte/store';
 
 export default class Thing extends Persistable {

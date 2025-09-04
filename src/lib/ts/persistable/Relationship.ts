@@ -2,7 +2,7 @@ import { h, k, Thing, T_Order, databases, Predicate } from '../common/Global_Imp
 import { T_Persistable, T_Predicate } from '../common/Global_Imports';
 import { w_relationship_order } from '../managers/Stores';
 import Identifiable from '../runtime/Identifiable';
-import type { Integer } from '../common/Types';
+import type { Integer } from '../types/Types';
 import Persistable from './Persistable';
 import Airtable from 'airtable';
 

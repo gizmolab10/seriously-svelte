@@ -1,5 +1,5 @@
 import { k, u, Rect, Size, Point, Angle, T_Oblong, Direction } from '../common/Global_Imports';
-import type { Integer } from '../common/Types';
+import type { Integer } from '../types/Types';
 
 export default class SVG_Paths {
 

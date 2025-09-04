@@ -4,7 +4,7 @@ import { Thing, Direction, Predicate, databases, Relationship, S_Component } fro
 import { G_Widget, G_Paging, G_Cluster, G_TreeLine, S_Title_Edit } from '../common/Global_Imports';
 import { w_ancestry_focus, w_ancestries_grabbed, w_ancestries_expanded, } from '../managers/Stores';
 import { w_t_database, w_depth_limit, w_s_title_edit, w_s_alteration } from '../managers/Stores';
-import type { Dictionary, Integer } from '../common/Types';
+import type { Dictionary, Integer } from '../types/Types';
 import { w_show_graph_ofType } from '../managers/Stores';
 import { T_Database } from '../database/DB_Common';
 import { get, Writable } from 'svelte/store';

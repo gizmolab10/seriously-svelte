@@ -2,7 +2,7 @@
 	import { c, e, k, u, ux, Rect, Size, Point, debug } from '../../ts/common/Global_Imports';
 	import { w_mouse_location, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { T_Layer, T_Timer, S_Mouse } from '../../ts/common/Global_Imports';
-	import type { Handle_Result } from '../../ts/common/Types';
+	import type { Handle_Result } from '../../ts/types/Types';
 	import { onMount } from 'svelte';
 	export let handle_isHit: () => {flag: boolean} | null = null;
 	export let handle_s_mouse = Handle_Result<S_Mouse>;

@@ -1,4 +1,4 @@
-import type { Async_Handle_Boolean } from '../common/Types';
+import type { Async_Handle_Boolean } from '../types/Types';
 import { T_Persistable } from '../common/Enumerations';
 import { databases } from '../database/Databases';
 import { busy } from '../state/S_Busy';

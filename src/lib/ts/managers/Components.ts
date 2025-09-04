@@ -1,6 +1,6 @@
 import { Rect, Ancestry, T_Signal, S_Component, T_Component } from '../common/Global_Imports';
 import { w_mouse_location_scaled } from './Stores';
-import type { Integer } from '../common/Types';
+import type { Integer } from '../types/Types';
 import { get } from 'svelte/store';
 
 export class Components {

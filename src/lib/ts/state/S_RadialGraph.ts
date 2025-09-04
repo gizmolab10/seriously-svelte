@@ -2,7 +2,7 @@ import { k, ux, debug, layout, g_radial, components } from '../common/Global_Imp
 import { S_Rotation, S_Resizing, G_Thing_Pages } from '../common/Global_Imports';
 import { T_Radial_Zone, T_Component } from '../common/Global_Imports';
 import { w_ring_rotation_radius } from '../managers/Stores';
-import type { Dictionary } from '../common/Types';
+import type { Dictionary } from '../types/Types';
 import { get } from 'svelte/store';
 
 //////////////////////////////////

@@ -1,6 +1,6 @@
 import { h, k, Tag, Trait, T_Thing, T_Trait, T_Create, T_Predicate } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
-import type { Dictionary } from '../common/Types';
+import type { Dictionary } from '../types/Types';
 import '../common/Extensions';
 
 class Pivot {

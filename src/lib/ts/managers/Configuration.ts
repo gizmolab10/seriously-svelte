@@ -10,7 +10,7 @@ export class Configuration {
 	allow_GraphEditing = true;
 	allow_TitleEditing = true;
 	erasePreferences = 0;
-	allow_Search = true;
+	allow_Search = false;
 	has_matte_UI = true;
 	eraseDB = 0;
 

@@ -6,7 +6,7 @@ import { T_Thing, T_Trait, T_Debug, T_Order, T_Predicate } from '../common/Globa
 import { databases, Predicate, Relationship, Persistable } from '../common/Global_Imports';
 import { DocumentData, DocumentChange, DocumentReference } from 'firebase/firestore';
 import { QuerySnapshot, CollectionReference } from 'firebase/firestore';
-import type { Dictionary, Integer } from '../common/Types';
+import type { Dictionary, Integer } from '../types/Types';
 import Identifiable from '../runtime/Identifiable';
 import { initializeApp } from 'firebase/app';
 import { T_Database } from './DB_Common';

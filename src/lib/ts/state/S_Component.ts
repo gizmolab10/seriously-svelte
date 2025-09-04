@@ -1,7 +1,7 @@
 import { k, Rect, Point, debug, layout, signals, Ancestry, components } from '../common/Global_Imports';
-import { Integer, Handle_S_Mouse, Create_S_Mouse } from '../common/Types';
+import { Integer, Handle_S_Mouse, Create_S_Mouse } from '../types/Types';
 import { T_Signal, T_Component } from '../common/Global_Imports';
-import { SignalConnection_atPriority } from '../common/Types';
+import { SignalConnection_atPriority } from '../types/Types';
 import Identifiable from '../runtime/Identifiable';
 import { SignalConnection } from 'typed-signals';
 import { u } from '../utilities/Utilities';

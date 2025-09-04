@@ -1,4 +1,4 @@
-import type { Dictionary, Signal_Signature } from '../common/Types';
+import type { Dictionary, Signal_Signature } from '../types/Types';
 import { T_Signal, T_Component } from '../common/Enumerations';
 import { w_ancestry_focus } from '../managers/Stores';
 import { components } from '../managers/Components';

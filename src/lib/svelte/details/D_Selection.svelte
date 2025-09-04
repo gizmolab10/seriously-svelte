@@ -6,7 +6,7 @@
 	import { w_background_color, w_show_details_ofType } from '../../ts/managers/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
     import { s_details } from '../../ts/state/S_Details';
-	import type { Integer } from '../../ts/common/Types';
+	import type { Integer } from '../../ts/types/Types';
 	import Text_Table from '../text/Text_Table.svelte';
 	import Separator from '../mouse/Separator.svelte';
 	import Portal from '../draw/Portal.svelte';

@@ -1,5 +1,5 @@
 import { h, k, Thing, databases, T_Persistable } from '../common/Global_Imports';
-import type { Integer } from '../common/Types';
+import type { Integer } from '../types/Types';
 import Persistable from './Persistable';
 
 export default class Tag extends Persistable {

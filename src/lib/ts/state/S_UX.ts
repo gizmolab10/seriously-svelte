@@ -5,7 +5,7 @@ import { w_show_tree_ofType, w_depth_limit } from '../managers/Stores';
 import { w_show_related, w_ancestry_focus } from '../managers/Stores';
 import { w_t_filter, w_show_graph_ofType } from '../managers/Stores';
 import Identifiable from '../runtime/Identifiable';
-import type { Dictionary } from '../common/Types';
+import type { Dictionary } from '../types/Types';
 import { get } from 'svelte/store';
 
 export default class S_UX {

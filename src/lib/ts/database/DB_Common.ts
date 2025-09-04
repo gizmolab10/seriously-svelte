@@ -2,7 +2,7 @@ import { Tag, Trait, Thing, Predicate, Relationship, Persistable } from '../comm
 import { c, h, p, busy, debug, layout, Hierarchy, databases } from '../common/Global_Imports';
 import { T_Thing, T_Startup, T_Persistence, T_Persistable } from '../common/Global_Imports';
 import { w_hierarchy, w_t_startup } from '../managers/Stores';
-import type { Dictionary } from '../common/Types';
+import type { Dictionary } from '../types/Types';
 import { k } from '../common/Constants';
 import { get } from 'svelte/store';
 

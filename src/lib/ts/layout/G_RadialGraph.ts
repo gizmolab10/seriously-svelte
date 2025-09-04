@@ -2,7 +2,7 @@ import { h, k, u, Rect, Size, Point, radial, layout, Ancestry, Predicate } from 
 import { G_Widget, G_Cluster, G_Paging, T_Kinship, T_Predicate } from '../common/Global_Imports';
 import { w_g_paging, w_ancestry_focus } from '../managers/Stores';
 import { w_ring_rotation_radius } from '../managers/Stores';
-import type { Dictionary } from '../common/Types';
+import type { Dictionary } from '../types/Types';
 import { get } from 'svelte/store';
 
 export default class G_RadialGraph {

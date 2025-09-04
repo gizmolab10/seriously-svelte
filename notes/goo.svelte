@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Point } from './src/lib/ts/common/Geometry';
+    import { Point } from './src/lib/ts/types/Geometry';
     import './src/lib/ts/common/Extensions';
 
     // Parameters

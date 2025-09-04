@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Point } from './src/lib/ts/common/Geometry';
+    import { Point } from './src/lib/ts/types/Geometry';
     export let angle_atStart = Math.PI / -3;
     export let angle_atEnd = Math.PI / 1.2;
     export let inner_radius = 100;

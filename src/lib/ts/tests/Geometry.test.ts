@@ -1,5 +1,5 @@
 import { T_Quadrant, T_Orientation } from '../types/Angle';
-import { Point } from '../utilities/Geometry';
+import { Point } from '../types/Geometry';
 import Angle from '../types/Angle';
 
 describe('Point', () => {
