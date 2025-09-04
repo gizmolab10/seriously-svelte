@@ -1,6 +1,6 @@
 export class Builds {
 	notes: { [id: number]: string[] } = {
-		163 : ['September 3, 2025', 'suppress select and focus events during data download'],
+		163 : ['September 3, 2025', 'suppress select and focus events during plugin data download'],
 		162 : ['August 26, 2025', 'fix bugs (editing, layout, color, hover), new print utility'],
 		161 : ['August 9, 2025', 'rubberband and command drag'],
 		160 : ['August 8, 2025', 'wire up focus and select for bubble plugin'],
