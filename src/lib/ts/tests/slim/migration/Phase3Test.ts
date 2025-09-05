@@ -1,4 +1,4 @@
-import { createSlimStore, removeLegacySystem } from '../../../state/slim/SlimStore';
+import { createSlimStore, removeLegacySystem } from '../../../slim/SlimStore';
 
 describe('Phase 3: Legacy Cleanup', () => {
     test('system works after priority removal', () => {

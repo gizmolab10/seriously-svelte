@@ -5,26 +5,20 @@
     "version": "0.1",
     "type": "module",
     "private": true,
-    "files": [
-        "dist"
-    ],
-    "compilerOptions": {
-        "module": "CommonJS",
-        "target": "ES2015"
-    },
+    "files": ["dist"],
     "scripts": {
         "dev": "vite",
         "docs": "typedoc",
         "build": "vite build",
         "rollup": "rollup -c",
-        "test": "jest --bail=0",
+        "test": "NODE_OPTIONS=--experimental-vm-modules jest",
         "serve": "parcel ./index.html",
         "swc": "swc src -d swc.package",
         "preview": "vite preview --port 8080",
         "parcel": "parcel build ./index.html",
         "esbuild": "node config/esbuild.config.cjs",
         "package": "rm -rf package; svelte-package -o package",
-        "docs:watch": "nodemon --watch src --ext md,js,json,ts,tsx,svelte --exec 'yarn typedoc'",
+        "docs:watch": "nodemon --watch src --ext md,js,json,ts,tsx,svelte --exec \"yarn typedoc\"",
         "eesbuild": "esbuild src/lib/js/index.ts --bundle --outfile=esbuild/webseriously.bundle.js --watch"
     },
     "devDependencies": {

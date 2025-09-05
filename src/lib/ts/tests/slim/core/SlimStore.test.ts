@@ -1,4 +1,4 @@
-import { createSlimStore } from '../../../state/slim/SlimStore';
+import { createSlimStore } from '../../../slim/SlimStore';
 
 describe('Store Updates Integration', () => {
     test('store updates trigger component updates', async () => {

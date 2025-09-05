@@ -1,4 +1,4 @@
-import { createStateMachine } from '../../../state/slim/StateMachine';
+import { createStateMachine } from '../../../slim/StateMachine';
 
 describe('State Machine Core', () => {
     test('creates machine with valid initial state', () => {

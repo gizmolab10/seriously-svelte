@@ -1,28 +1,69 @@
-import { createLegacySystem, createStateMachine } from '../../../state/slim/StateMachine';
-import { T_Signal } from '../../../common/Global_Imports';
+import { signals } from '../../../signals/Signals';
+import { T_Signal } from '../../../common/Enumerations';
+import { StateMachine } from '../../../slim/StateMachine';
+import { writable } from 'svelte/store';
 
-describe('Phase 1: Coexistence', () => {
-    test('state machine works alongside priority system', () => {
-        const oldSystem = createLegacySystem();
-        const newSystem = createStateMachine({/*...*/}, 'idle');
-        
-        oldSystem.signal(T_Signal.reposition, 1);
-        newSystem.transition('layoutComputing');
-        
-        expect(oldSystem.isValid()).toBe(true);
-        expect(newSystem.currentState).toBe('layoutComputing');
+function createPhaseOneStore() {
+    const machine = new StateMachine({
+        states: ['idle', 'layoutComputing', 'componentsComputing', 'done'],
+        transitions: {
+            idle: ['layoutComputing'],
+            layoutComputing: ['componentsComputing'],
+            componentsComputing: ['done']
+        }
+    }, 'idle');
+    
+    const { subscribe, update } = writable({
+        hover: {
+            current: null,
+            config: new Map()
+        },
+        components: {
+            active: new Map(),
+            state: machine
+        }
     });
 
-    test('no interference between systems', async () => {
-        const oldSystem = createLegacySystem();
-        const newSystem = createStateMachine({/*...*/}, 'idle');
+    return {
+        subscribe,
+        async transition(newState) {
+            await machine.transition(newState);
+            signals.signal_reposition_widgets_from();
+            update(s => ({
+                ...s,
+                components: {
+                    ...s.components,
+                    state: machine
+                }
+            }));
+        }
+    };
+}
+
+describe('Phase 1: Coexistence', () => {
+    it('state machine transitions trigger legacy signals', async () => {
+        const store = createPhaseOneStore();
+        const signalSpy = jest.spyOn(signals, 'signal_reposition_widgets_from');
+        
+        await store.transition('layoutComputing');
+        
+        expect(signalSpy).toHaveBeenCalled();
+    });
+
+    it('maintains state consistency during parallel operations', async () => {
+        const store = createPhaseOneStore();
+        const states = [];
+        
+        store.subscribe(state => {
+            states.push(state.components.state.getState());
+        });
         
         await Promise.all([
-            oldSystem.signal(T_Signal.reposition, 1),
-            newSystem.transition('layoutComputing')
+            store.transition('layoutComputing'),
+            signals.signal_reposition_widgets_from()
         ]);
         
-        expect(oldSystem.getState()).toBe('expected');
-        expect(newSystem.currentState).toBe('layoutComputing');
+        expect(states).not.toContain(undefined);
+        expect(states[states.length - 1]).toBe('layoutComputing');
     });
 });

@@ -1,4 +1,4 @@
-import { createStateMachine } from '../../../state/slim/StateMachine';
+import { createStateMachine } from '../../../slim/StateMachine';
 
 describe('Dependency Ordering', () => {
     test('enforces correct transition order', async () => {

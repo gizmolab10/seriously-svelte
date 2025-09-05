@@ -1,4 +1,4 @@
-import { createLegacyStore, createSlimStore, migrateState } from '../../../state/slim/SlimStore';
+import { createLegacyStore, createSlimStore, migrateState } from '../../../slim/SlimStore';
 
 describe('Phase 2: Store Consolidation', () => {
     test('migrates state correctly', () => {

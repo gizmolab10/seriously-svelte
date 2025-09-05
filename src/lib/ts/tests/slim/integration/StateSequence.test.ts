@@ -1,4 +1,4 @@
-import { createStateMachine } from '../../../state/slim/StateMachine';
+import { createStateMachine } from '../../../slim/StateMachine';
 
 describe('State Sequences', () => {
     test('follows correct transition sequence', async () => {

@@ -1,5 +1,5 @@
 import { createTestComponent } from '../../utils/TestHelpers';
-import { createSlimStore } from '../../../state/slim/SlimStore';
+import { createSlimStore } from '../../../slim/SlimStore';
 
 describe('Load Testing', () => {
     test('handles multiple concurrent components', async () => {

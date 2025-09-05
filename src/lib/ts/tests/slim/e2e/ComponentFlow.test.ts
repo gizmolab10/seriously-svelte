@@ -1,5 +1,5 @@
 import { createTestComponent } from '../../utils/TestHelpers';
-import { createSlimStore } from '../../../state/slim/SlimStore';
+import { createSlimStore } from '../../../slim/SlimStore';
 
 describe('End-to-End Component Flow', () => {
     test('complete component lifecycle', async () => {
