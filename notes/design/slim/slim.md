@@ -286,3 +286,99 @@ This new structure:
 2. Maintains clear phase separation
 3. Better reflects the project focus
 4. Easier to find Slim-specific tests
+
+# Phase 2: Store Consolidation
+
+## Goals
+1. Create new consolidated store
+2. Gradually migrate state from old stores
+3. Update components to use new store
+
+## Current Pain Points
+1. Multiple overlapping state stores
+2. Unclear state ownership
+3. Redundant state tracking
+4. Complex store interactions
+
+## Solution: Consolidated Store
+
+### Architecture
+```typescript
+// Core store structure
+export interface ConsolidatedStore {
+    hover: {
+        current: null | string,
+        config: Map<string, HoverConfig>
+    },
+    components: {
+        active: Map<string, ComponentState>,
+        state: StateMachine
+    }
+}
+```
+
+### Key Benefits
+1. **Single Source of Truth**
+   - Clear state ownership
+   - Predictable updates
+   - Type-safe access
+
+2. **Simplified State Management**
+   - Fewer stores to maintain
+   - Clear update patterns
+   - Better debugging
+
+3. **Better Performance**
+   - Reduced memory usage
+   - Fewer subscriptions
+   - Optimized updates
+
+## Implementation Guide
+
+### 1. Store Creation
+```typescript
+/**
+ * Creates the consolidated store
+ */
+export function createStore<T>(config: StoreConfig<T>): Store<T>
+```
+
+### 2. State Migration
+```typescript
+/**
+ * Migrates state from old stores
+ */
+export function migrateState(oldStores: OldStores): void
+```
+
+## Testing Strategy
+
+1. **Store Creation**
+   - Verify store structure
+   - Test subscriptions
+   - Check updates
+
+2. **State Migration**
+   - Validate data transfer
+   - Check integrity
+   - Test rollbacks
+
+3. **Component Integration**
+   - Test store usage
+   - Verify updates
+   - Check cleanup
+
+## Success Metrics
+
+1. All state in consolidated store
+2. Zero data loss
+3. All components updated
+4. Performance improved
+
+## Timeline
+
+1. Store creation: 3 days
+2. Migration: 4 days
+3. Testing: 2 days
+
+Total: 9 days

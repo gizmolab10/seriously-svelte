@@ -32,5 +32,5 @@
 		"src/lib/**/*.js",
 		"src/lib/**/*.svelte",
 		"src/lib/**/*.ts",
-		"src/main.js", "notes/G_ArcSlider.test.ts"]
+		"src/main.js", "notes/G_ArcSlider.test.ts", "notes/experiments/Stores.ts"]
 }

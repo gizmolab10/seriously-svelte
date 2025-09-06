@@ -47,7 +47,7 @@
                 origin={button_origin_for(row)}
                 detect_longClick={detect_longClick}
                 detect_autorepeat={detect_autorepeat}
-                name={`${name}-table-${T_Action[row]}`}
+                name={`${name}-table-${T_Action[row + row_offset]}`}
                 closure={(t_request, s_mouse, column) => closure(t_request, s_mouse, name, row + row_offset, column)}/>
         {/if}
     {/each}

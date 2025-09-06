@@ -35,14 +35,14 @@
 	},
 	"exclude": [
 		"dist",
+		"notes",
 		"aside",
 		"bubble",
 		"**/*.svelte",
-		"node_modules"
+		"node_modules",
 	],
 	"include": [
 		"src/**/*",
 		"src/main.js",
-		"src/lib/**/*"
-, "notes/experiments/app", "notes/maybe", "notes/experiments/plugin", "notes/experiments/Cursors.ts", "notes/G_ArcSlider.test.ts"	]
+		"src/lib/**/*", "src/lib/ts/managers/Stores.ts"	]
 }

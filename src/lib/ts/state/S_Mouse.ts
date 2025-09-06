@@ -3,6 +3,7 @@ import { Rect } from '../common/Global_Imports';
 export default class S_Mouse {
 	element: HTMLElement | null;	// null means mouse responder
 	event: MouseEvent | null;		// null means mouse movement from global state
+	isRepeat: boolean;
 	isDouble: boolean;
 	isHover: boolean;
 	isMove: boolean;
@@ -11,7 +12,6 @@ export default class S_Mouse {
 	isOut: boolean;
 	isHit: boolean;
 	isUp: boolean;
-	isRepeat: boolean;
 	clicks = 0;
 
 	//////////////////////////////////////////////
