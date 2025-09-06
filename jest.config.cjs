@@ -1,24 +1,17 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
-    preset: 'ts-jest/presets/default-esm',
+    preset: 'ts-jest',
     testEnvironment: 'jsdom',
-    moduleNameMapper: {
-        '^(\\.{1,2}/.*)\\.js$': '$1'
-    },
     transform: {
-        '^.+\\.tsx?$': [
-            'ts-jest',
-            {
-                useESM: true,
-                tsconfig: {
-                    moduleResolution: "NodeNext",
-                    module: "NodeNext",
-                    target: "ES2022"
-                }
-            }
-        ]
+        '^.+\\.ts$': ['ts-jest'],
+        '^.+\\.svelte$': ['svelte-jester']
     },
+    moduleFileExtensions: ['js', 'ts', 'svelte'],
     testMatch: [
-        "**/tests/slim/**/*Test.ts"
+        "**/tests/slim/**/*Test.ts",
+        "**/tests/slim/**/*.test.ts"
+    ],
+    transformIgnorePatterns: [
+        "node_modules/(?!(svelte)/)"
     ]
 };
