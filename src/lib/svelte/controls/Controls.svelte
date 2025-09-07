@@ -48,7 +48,7 @@
 		const right_widths = [9, 11.5];
 		const left_widths = {
 			0: c.has_details_button ? 18 : -11,			// details
-			1: $w_search_state == T_Search.clear ? 14 : c.has_details_button ? 11 : 14,	// recents / search
+			1: $w_search_state == T_Search.off ? 14 : c.has_details_button ? 11 : 14,	// recents / search
 			2: 57,	// graph type
 			3: 100,	// grow
 			4: 26,	// shrink
@@ -99,7 +99,7 @@
 						</svg>
 					</Button>
 				{/if}
-				{#if $w_search_state != T_Search.clear && c.allow_Search}
+				{#if $w_search_state != T_Search.off && c.allow_Search}
 					<Search
 						left={lefts[1]}
 						width={layout.windowSize.width - lefts[1] - 178}/>
@@ -109,7 +109,7 @@
 						size={size_big + 1}
 						stroke_width={0.25}
 						origin={new Point(width - rights[1], -0.5)}
-						closure={() => $w_search_state = T_Search.clear}/>
+						closure={() => $w_search_state = T_Search.off}/>
 				{:else}
 					<Next_Previous name='recents'
 						size={28}

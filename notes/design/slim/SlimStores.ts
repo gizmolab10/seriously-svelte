@@ -97,7 +97,7 @@ class SlimStores {
         w_thing_color.set(null);
         w_s_title_edit.set(null);
         w_show_details_ofType.set([]);
-        w_search_state.set(T_Search.clear);
+        w_search_state.set(T_Search.off);
         w_search_filter.set(T_Search_Filter.title);
         w_t_startup.set(T_Startup.start);
 

@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { e, h, k, u, ux, Thing, Point, colors, svgPaths } from '../../ts/common/Global_Imports';
-	import { T_Search_Filter, T_Search, T_Control, T_Preference } from '../../ts/common/Global_Imports';
 	import { w_search_text, w_search_filter, w_search_state, w_thing_fontFamily } from '../../ts/managers/Stores';
+	import { T_Search_Filter, T_Search, T_Control, T_Preference } from '../../ts/common/Global_Imports';
+	import { e, h, k, u, ux, Thing, Point, colors, svgPaths } from '../../ts/common/Global_Imports';
 	import Close_Button from '../buttons/Close_Button.svelte';
-	import Segmented from '../mouse/Segmented.svelte';
 	import { search } from '../../ts/managers/Search';
+	import Segmented from '../mouse/Segmented.svelte';
 	import Button from '../buttons/Button.svelte';
 	export let width: number;
 	export let left: number;

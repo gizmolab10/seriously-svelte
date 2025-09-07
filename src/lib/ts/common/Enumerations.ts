@@ -19,7 +19,7 @@ export enum T_Startup {
 }
 
 export enum T_Search {
-	clear,
+	off,
 	enter,
 	results,
 	selected,

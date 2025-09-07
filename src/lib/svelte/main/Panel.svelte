@@ -2,8 +2,8 @@
 	import { c, e, h, k, u, ux, show, Rect, Size, Point, Thing, colors, layout } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_search_state, w_show_details, w_device_isMobile, } from '../../ts/managers/Stores';
 	import { w_t_database, w_graph_rect, w_hierarchy, w_background_color } from '../../ts/managers/Stores';
-	import { T_Search, T_Control, Hierarchy, databases, Direction } from '../../ts/common/Global_Imports';
-	import { debug, T_Layer, T_Banner, Ancestry, T_Startup } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Search, T_Banner, T_Control, T_Startup } from '../../ts/common/Global_Imports';
+	import { debug, Ancestry, Hierarchy, databases, Direction } from '../../ts/common/Global_Imports';
 	import { w_t_startup, w_popupView_id, w_ancestry_focus } from '../../ts/managers/Stores';
 	import { T_Database } from '../../ts/database/DB_Common';
 	import Search_Results from './Search_Results.svelte';
@@ -18,6 +18,7 @@
 	const offset_toIntersection = new Point(-4, 8);
     const half_thickness: number = k.thickness.separator.main / 2;
 	let separator_color = colors.separator;
+	let show_results = false;
 	let reattachments = 0;
 
 	function ignore_wheel(event) { event.preventDefault(); }
@@ -26,6 +27,8 @@
 		const _ = $w_background_color;
 		separator_color = colors.separator;
 	}
+
+	$: show_results = $w_search_state > T_Search.enter;
 
 	$: {
 		const _ = `${$w_t_database}:::${$w_t_startup}:::${$w_graph_rect.description}`;

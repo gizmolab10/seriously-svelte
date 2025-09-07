@@ -229,10 +229,10 @@ export class Events {
 					case T_Search.enter:
 						switch (key) {
 							case 'escape':
-							case 'enter':		    w_search_state.set(T_Search.clear); break;	// stop searching
+							case 'enter':		    w_search_state.set(T_Search.off); break;	// stop searching
 						}
 						break;
-					case T_Search.clear:
+					case T_Search.off:
 						if (c.allow_GraphEditing) {
 							if (!!ancestry && c.allow_TitleEditing) {
 								switch (key) {
@@ -271,7 +271,7 @@ export class Events {
 							case '/':				if (!ancestry) { graph_needsRebuild = h.rootAncestry?.becomeFocus(); } break;
 							case 'arrowup':			grabs.latest_rebuild_persistentMoveUp_maybe( true, SHIFT, OPTION, EXTREME); break;
 							case 'arrowdown':		grabs.latest_rebuild_persistentMoveUp_maybe(false, SHIFT, OPTION, EXTREME); break;
-							case 'escape':			if (!!get(w_s_alteration)) { h.stop_alteration(); }; w_search_state.set(T_Search.clear); break;
+							case 'escape':			if (!!get(w_s_alteration)) { h.stop_alteration(); }; w_search_state.set(T_Search.off); break;
 						}
 						break;
 				}

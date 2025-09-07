@@ -55,9 +55,9 @@ export const w_data_updated				= writable<number>();
 
 const _____SEARCH: unique symbol = Symbol('SEARCH');
 
-export const w_search_text				= writable<string>();
+export const w_search_text				= writable<string>();			// binded by search <input>
+export const w_results_token			= writable<string>();			// used to re-render the search results
 export const w_search_state				= writable<T_Search>();			// observed by panel, controls, and search_results
-export const w_results_token			= writable<string>();			// used to invalidate the search results
 export const w_search_filter			= writable<T_Search_Filter>();	// observed by search_results
 
 const _____COUNTS: unique symbol = Symbol('COUNTS');
@@ -88,9 +88,9 @@ class Stores {
 		w_thing_color.set(null);
 		w_s_title_edit?.set(null);
 		w_show_details_ofType.set([]);
-		w_search_state.set(T_Search.clear);
-		w_search_filter.set(T_Search_Filter.title);
 		w_t_startup.set(T_Startup.start);
+		w_search_state.set(T_Search.off);
+		w_search_filter.set(T_Search_Filter.title);
 		w_background_color.subscribe((color: string) => {
 			colors.banner = colors.ofBannerFor(color);
 			colors.separator = colors.ofSeparatorFor(color);

@@ -2,6 +2,7 @@ import { h, p, Thing, T_Preference, T_Search, T_Startup } from "../common/Global
 import { w_search_text, w_search_filter, w_search_state, w_t_startup, w_t_database } from './Stores';
 import { Search_Node } from '../types/Search_Node';
 import { w_results_token } from './Stores';
+import { get } from 'svelte/store';
 
 class Search {
 	private root_ofIndex: Search_Node = new Search_Node();
@@ -13,8 +14,13 @@ class Search {
 			if (startup == T_Startup.ready) {
 				this.buildIndex(h.things);
 				w_search_text.subscribe((text) => {
+					// state machine
+					// launch => ignore this
+					// click search button => enter
 					p.write_key(T_Preference.search_text, text);
-					this.search_for(text.toLocaleLowerCase());
+					if (get(w_search_state) !== T_Search.off) {
+						this.search_for(text.toLocaleLowerCase());
+					}
 				});
 			}
 		});
@@ -24,11 +30,11 @@ class Search {
 		if (query.length > 0) {
 			this.results = this.root_ofIndex.search_for(query);
 			w_search_state.set(T_Search.results);
-			w_results_token.set(Date.now().toString());
 		} else {
 			this.results = [];
 			w_search_state.set(T_Search.enter);
 		}
+		w_results_token.set(Date.now().toString());
 	}
 	
 	private buildIndex(things: Thing[]) {
