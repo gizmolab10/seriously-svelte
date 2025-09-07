@@ -66,7 +66,7 @@ export default class DB_Common {
 	}
 
 	async persist_all(force: boolean = false) {
-		if (!databases.defer_persistence) {
+		if (!databases.defer_persistence && false) {
 			busy.isPersisting = true;
 			busy.signal_data_redraw();
 			for (const t_persistable of Persistable.t_persistables) {

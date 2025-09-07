@@ -44,5 +44,5 @@
 	"include": [
 		"src/**/*",
 		"src/main.js",
-		"src/lib/**/*", "src/lib/ts/managers/Stores.ts"	]
+		"src/lib/**/*", "src/lib/ts/managers/Stores.ts", "notes/design/slim/SlimStores.ts"	]
 }

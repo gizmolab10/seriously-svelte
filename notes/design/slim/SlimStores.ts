@@ -1,8 +1,8 @@
 import { writable, type Writable } from 'svelte/store';
-import { StateMachine } from '../slim/StateMachine';
-import { T_Graph, T_Search, T_Kinship, T_Details, T_Startup, T_Auto_Adjust, T_Dragging, T_Filter } from '../common/Global_Imports';
-import { Tag, Rect, Point, Trait, colors, Ancestry, Hierarchy } from '../common/Global_Imports';
-import { G_Paging, G_Cluster, S_Title_Edit, S_Alteration } from '../common/Global_Imports';
+import { StateMachine } from '../../../src/lib/ts/slim/StateMachine';
+import { T_Graph, T_Search, T_Kinship, T_Details, T_Startup, T_Auto_Adjust, T_Dragging, T_Search_Filter } from '../../../src/lib/ts/common/Global_Imports';
+import { Tag, Rect, Point, Trait, colors, Ancestry, Hierarchy } from '../../../src/lib/ts/common/Global_Imports';
+import { G_Paging, G_Cluster, S_Title_Edit, S_Alteration } from '../../../src/lib/ts/common/Global_Imports';
 
 const _____VISIBILITY: unique symbol = Symbol('VISIBILITY');
 
@@ -56,9 +56,9 @@ export const w_data_updated				= writable<number>();
 
 const _____SEARCH: unique symbol = Symbol('SEARCH');
 
-export const w_t_filter					= writable<T_Filter>();
-export const w_t_search					= writable<T_Search>();
-export const w_search_input				= writable<string>();
+export const w_search_filter					= writable<T_Search_Filter>();
+export const w_search_state					= writable<T_Search>();
+export const w_search_text				= writable<string>();
 
 const _____COUNTS: unique symbol = Symbol('COUNTS');
 
@@ -97,8 +97,8 @@ class SlimStores {
         w_thing_color.set(null);
         w_s_title_edit.set(null);
         w_show_details_ofType.set([]);
-        w_t_search.set(T_Search.clear);
-        w_t_filter.set(T_Filter.title);
+        w_search_state.set(T_Search.clear);
+        w_search_filter.set(T_Search_Filter.title);
         w_t_startup.set(T_Startup.start);
 
         w_background_color.subscribe((color: string) => {

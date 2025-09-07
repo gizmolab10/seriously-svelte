@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { c, e, h, k, u, ux, show, Rect, Size, Point, Thing, colors, layout } from '../../ts/common/Global_Imports';
-	import { w_s_title_edit, w_t_search, w_show_details, w_device_isMobile, } from '../../ts/managers/Stores';
+	import { w_s_title_edit, w_search_state, w_show_details, w_device_isMobile, } from '../../ts/managers/Stores';
 	import { w_t_database, w_graph_rect, w_hierarchy, w_background_color } from '../../ts/managers/Stores';
 	import { T_Search, T_Control, Hierarchy, databases, Direction } from '../../ts/common/Global_Imports';
 	import { debug, T_Layer, T_Banner, Ancestry, T_Startup } from '../../ts/common/Global_Imports';
@@ -65,13 +65,13 @@
 					left: {$w_graph_rect.origin.x}px;
 					width: {$w_graph_rect.size.width}px;
 					height: {$w_graph_rect.size.height}px;'>
-				{#if $w_t_search > T_Search.enter}
+				{#if $w_search_state > T_Search.enter}
 					<Search_Results/>
 				{:else}
 					<Graph/>
 				{/if}
 			</div>
-			<Separator name='panel-left'
+			<Separator name='panel-box-left'
 				isHorizontal={false}
 				has_both_wings={true}
 				margin={k.details_margin}
@@ -80,7 +80,7 @@
 				corner_radius={k.radius.gull_wings.thick}
 				length={$w_graph_rect.size.height + k.thickness.extra}
 				origin={new Point(2, layout.controls_boxHeight - 0.5)}/>
-			<Separator name='panel-right'
+			<Separator name='panel-box-right'
 				isHorizontal={false}
 				has_both_wings={true}
 				margin={k.details_margin}
@@ -90,7 +90,7 @@
 				length={$w_graph_rect.size.height + k.thickness.extra}
 				origin={new Point(layout.windowSize.width + 1 - half_thickness, layout.controls_boxHeight - 0.5)}/>
 		{/if}
-		<Separator name='panel-bottom'
+		<Separator name='panel-box-bottom'
 			isHorizontal={true}
 			has_both_wings={true}
 			margin={k.details_margin}

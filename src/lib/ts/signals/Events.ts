@@ -1,7 +1,7 @@
 import { w_ancestry_focus, w_count_mouse_up, w_mouse_location, w_mouse_location_scaled, w_scaled_movement } from '../managers/Stores';
 import { c, h, k, u, ux, grabs, print, Point, debug, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
 import { w_count_resize, w_s_alteration, w_s_title_edit, w_user_graph_offset, w_control_key_down } from '../managers/Stores';
-import { w_device_isMobile, w_ancestries_grabbed, w_t_search, w_show_details, w_popupView_id } from '../managers/Stores';
+import { w_device_isMobile, w_ancestries_grabbed, w_search_state, w_show_details, w_popupView_id } from '../managers/Stores';
 import { T_Search, T_Action, T_Control, T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { S_Mouse, S_Alteration } from '../common/Global_Imports';
 import Mouse_Timer from './Mouse_Timer';
@@ -181,7 +181,7 @@ export class Events {
 				case T_Control.details: w_show_details.set(!get(w_show_details)); break;
 				case T_Control.grow:	this.width = layout.scaleBy(k.ratio.zoom_in) - 20; break;
 				case T_Control.shrink:	this.width = layout.scaleBy(k.ratio.zoom_out) - 20; break;
-				case T_Control.search:	if (c.allow_Search) { w_t_search.set(T_Search.enter); } break;
+				case T_Control.search:	if (c.allow_Search) { w_search_state.set(T_Search.enter); } break;
 				default:				this.togglePopupID(t_control); break;
 			}
 		}
@@ -225,11 +225,11 @@ export class Events {
 			let graph_needsRebuild = false;
 			w_control_key_down.set(event.ctrlKey);
 			if (!!h && !!ancestry && !modifiers.includes(key)) {		// ignore modifier-key-only events
-				switch (get(w_t_search)) {
+				switch (get(w_search_state)) {
 					case T_Search.enter:
 						switch (key) {
 							case 'escape':
-							case 'enter':		    w_t_search.set(T_Search.clear); break;	// stop searching
+							case 'enter':		    w_search_state.set(T_Search.clear); break;	// stop searching
 						}
 						break;
 					case T_Search.clear:
@@ -263,7 +263,7 @@ export class Events {
 							case '!':				layout.grand_adjust_toFit(); break;
 							case '>':				ux.increase_depth_limit_by(1); break;
 							case '<':				ux.increase_depth_limit_by(-1); break;
-							case 'f':				w_t_search.set(T_Search.enter); break;
+							case 'f':				w_search_state.set(T_Search.enter); break;
 							case 'p':				if (!COMMAND) { u.print_graph(); }; break;
 							case 's':				h.persist_toFile(T_File_Format.json); return;
 							case 'c':				layout.set_user_graph_offsetTo(Point.zero); return;
@@ -271,7 +271,7 @@ export class Events {
 							case '/':				if (!ancestry) { graph_needsRebuild = h.rootAncestry?.becomeFocus(); } break;
 							case 'arrowup':			grabs.latest_rebuild_persistentMoveUp_maybe( true, SHIFT, OPTION, EXTREME); break;
 							case 'arrowdown':		grabs.latest_rebuild_persistentMoveUp_maybe(false, SHIFT, OPTION, EXTREME); break;
-							case 'escape':			if (!!get(w_s_alteration)) { h.stop_alteration(); }; w_t_search.set(T_Search.clear); break;
+							case 'escape':			if (!!get(w_s_alteration)) { h.stop_alteration(); }; w_search_state.set(T_Search.clear); break;
 						}
 						break;
 				}

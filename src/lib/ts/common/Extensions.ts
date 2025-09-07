@@ -1,4 +1,4 @@
-import type { Integer } from './Types';
+import type { Integer } from '../types/Types';
 
 declare global {
 	interface String {

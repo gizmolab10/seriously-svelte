@@ -1,10 +1,10 @@
 <script lang='ts'>
-	import { T_Layer, T_Graph, T_Filter, T_Search, S_Element, T_Element, T_Control, T_Kinship, T_Request } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Graph, T_Search_Filter, T_Search, S_Element, T_Element, T_Control, T_Kinship, T_Request } from '../../ts/common/Global_Imports';
 	import { c, e, h, k, p, u, ux, show, grabs, Point, colors, layout, svgPaths, signals } from '../../ts/common/Global_Imports';
 	import { w_background_color, w_device_isMobile, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { w_show_details, w_show_graph_ofType, w_show_tree_ofType } from '../../ts/managers/Stores';
 	import { w_graph_rect, w_count_resize, w_popupView_id } from '../../ts/managers/Stores';
-	import { w_t_filter, w_t_search } from '../../ts/managers/Stores';
+	import { w_search_filter, w_search_state } from '../../ts/managers/Stores';
 	import Close_Button from '../buttons/Close_Button.svelte';
 	import Next_Previous from '../mouse/Next_Previous.svelte';
 	import Identifiable from '../../ts/runtime/Identifiable';
@@ -40,7 +40,7 @@
 	}
 
 	$: {
-		const _ = $w_t_search;
+		const _ = $w_search_state;
 		layout_controls();
 	}
 
@@ -48,7 +48,7 @@
 		const right_widths = [9, 11.5];
 		const left_widths = {
 			0: c.has_details_button ? 18 : -11,			// details
-			1: $w_t_search == T_Search.clear ? 14 : c.has_details_button ? 11 : 14,	// recents / search
+			1: $w_search_state == T_Search.clear ? 14 : c.has_details_button ? 11 : 14,	// recents / search
 			2: 57,	// graph type
 			3: 100,	// grow
 			4: 26,	// shrink
@@ -99,7 +99,7 @@
 						</svg>
 					</Button>
 				{/if}
-				{#if $w_t_search != T_Search.clear && c.allow_Search}
+				{#if $w_search_state != T_Search.clear && c.allow_Search}
 					<Search
 						left={lefts[1]}
 						width={layout.windowSize.width - lefts[1] - 178}/>
@@ -109,7 +109,7 @@
 						size={size_big + 1}
 						stroke_width={0.25}
 						origin={new Point(width - rights[1], -0.5)}
-						closure={() => $w_t_search = T_Search.clear}/>
+						closure={() => $w_search_state = T_Search.clear}/>
 				{:else}
 					<Next_Previous name='recents'
 						size={28}

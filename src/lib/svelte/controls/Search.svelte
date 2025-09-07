@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { T_Filter, T_Search, T_Control, T_Preference } from '../../ts/common/Global_Imports';
-	import { e, k, p, u, ux, Point, colors, svgPaths } from '../../ts/common/Global_Imports';
-	import { w_t_filter, w_t_search, w_thing_fontFamily } from '../../ts/managers/Stores';
+	import { e, h, k, u, ux, Thing, Point, colors, svgPaths } from '../../ts/common/Global_Imports';
+	import { T_Search_Filter, T_Search, T_Control, T_Preference } from '../../ts/common/Global_Imports';
+	import { w_search_text, w_search_filter, w_search_state, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import Close_Button from '../buttons/Close_Button.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
-	import { search } from '../../ts/state/S_Search';
+	import { search } from '../../ts/managers/Search';
 	import Button from '../buttons/Button.svelte';
 	export let width: number;
 	export let left: number;
@@ -14,26 +14,19 @@
 	const lefts = u.cumulativeSum(left_widths);
 	const rights = u.cumulativeSum(right_widths);
 
-	$: ux.search_string = p.read_key(T_Preference.search_text);
-
-	$: if (ux.search_string !== undefined) {
-		p.write_key(T_Preference.search_text, ux.search_string);
-		// begin search, interrupting any current search
-	}
-
 </script>
 
 <div class='search-controls' style='left: {left}px; position: absolute;'>
 	<Segmented name='search-filter'
 		width={80}
-		selected={[$w_t_filter]}
+		selected={[$w_search_filter]}
 		height={ k.height.button}
 		origin={new Point(22, 1)}
-		titles={[T_Filter.title, T_Filter.trait, T_Filter.tags]}
+		titles={[T_Search_Filter.title, T_Search_Filter.trait, T_Search_Filter.tags]}
 		handle_selection={(titles) => ux.handle_choiceOf_t_graph('filter', titles)}/>
 	<input class='search-input' id='search'
-		bind:value={ux.search_string}
-		placeholder={'enter ' + $w_t_filter + ' text'}
+		bind:value={$w_search_text}
+		placeholder={'enter ' + $w_search_filter + ' text'}
 		type='text'
 		style='
 			top: 1px;

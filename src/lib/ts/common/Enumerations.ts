@@ -21,7 +21,7 @@ export enum T_Startup {
 export enum T_Search {
 	clear,
 	enter,
-	listed,
+	results,
 	selected,
 }
 
@@ -98,7 +98,7 @@ export enum T_Theme {
 	bubble	   = 'bubble',
 }
 
-export enum T_Filter {
+export enum T_Search_Filter {
 	title = 'title',
 	trait = 'trait',
 	tags  = 'tags',

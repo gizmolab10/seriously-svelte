@@ -12,7 +12,7 @@ import { T_Quadrant, T_Orientation } from '../types/Angle';
 import { G_Paging, G_Thing_Pages } from '../layout/G_Paging';
 
 import { T_Theme } from './Enumerations';
-import { T_Search, T_Filter } from './Enumerations';
+import { T_Search, T_Search_Filter } from './Enumerations';
 import { T_Oblong, T_Direction } from './Enumerations';
 import { T_Graph, T_Banner, T_Control } from './Enumerations';
 import { T_Persistable, T_Persistence } from './Enumerations';
@@ -104,7 +104,7 @@ export {
 	
 	T_Auto_Adjust,
 	T_Debug, T_Timer,
-	T_Search, T_Filter,
+	T_Search, T_Search_Filter,
 	T_Order, T_Kinship,
 	T_Theme, T_Graph, T_Browser, 
 	T_Startup, T_Dragging, T_Alteration,
