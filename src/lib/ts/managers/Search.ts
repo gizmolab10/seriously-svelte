@@ -9,28 +9,30 @@ class Search {
 	results: Array<Thing> = [];
 
 	constructor() {
-		if (c.allow_Search) {
-			w_search_text.set(p.read_key(T_Preference.search_text));
-			w_t_startup.subscribe((startup) => {
-				if (startup == T_Startup.ready) {
-					this.buildIndex(h.things);
-					w_search_state.subscribe((state) => {
-						if (state !== T_Search.off) {
-							this.search_for(get(w_search_text).toLocaleLowerCase());
-						}
-					});
-					w_search_text.subscribe((text) => {
-						// state machine
-						// launch => ignore this
-						// click search button => enter
-						p.write_key(T_Preference.search_text, text);
-						if (get(w_search_state) !== T_Search.off) {
-							this.search_for(text.toLocaleLowerCase());
-						}
-					});
-				}
-			});
-		}
+		setTimeout(() => {
+			if (c.allow_Search) {
+				w_search_text.set(p.read_key(T_Preference.search_text));
+				w_t_startup.subscribe((startup) => {
+					if (startup == T_Startup.ready) {
+						this.buildIndex(h.things);
+						w_search_state.subscribe((state) => {
+							if (state !== T_Search.off) {
+								this.search_for(get(w_search_text).toLocaleLowerCase());
+							}
+						});
+						w_search_text.subscribe((text) => {
+							// state machine
+							// launch => ignore this
+							// click search button => enter
+							p.write_key(T_Preference.search_text, text);
+							if (get(w_search_state) !== T_Search.off) {
+								this.search_for(text.toLocaleLowerCase());
+							}
+						});
+					}
+				});
+			}
+		}, 1);
 	}
 
 	search_for(query: string) {

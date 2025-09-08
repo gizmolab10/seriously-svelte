@@ -42,6 +42,7 @@ import { print } from '../utilities/Print';
 import { Direction } from '../types/Angle';
 import { layout } from '../layout/G_Layout';
 import { colors } from '../managers/Colors';
+import { search } from '../managers/Search';
 import { show } from '../managers/Visibility';
 import { debug, Debug } from '../debug/Debug';
 import { signals } from '../signals/Signals';
@@ -92,8 +93,8 @@ export {
 	e, c, h, k, p, u, ux,
 	interact, transparentize,
 	debug, svgPaths, databases, 
-	busy, show, files, grabs, builds, print,
 	colors, layout, radial, signals, components,
+	busy, show, files, grabs, builds, print, search,
 
 	Angle, Direction, 
 	Rect, Size, Point,
