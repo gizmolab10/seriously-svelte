@@ -3,8 +3,8 @@
 	import { c, e, h, k, p, u, ux, show, grabs, Point, search, colors, layout, svgPaths, signals } from '../../ts/common/Global_Imports';
 	import { w_background_color, w_device_isMobile, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { w_show_details, w_show_graph_ofType, w_show_tree_ofType } from '../../ts/managers/Stores';
+	import { w_search_filter, w_search_state, w_search_isActive } from '../../ts/managers/Stores';
 	import { w_graph_rect, w_count_resize, w_popupView_id } from '../../ts/managers/Stores';
-	import { w_search_filter, w_search_state } from '../../ts/managers/Stores';
 	import Close_Button from '../buttons/Close_Button.svelte';
 	import Next_Previous from '../mouse/Next_Previous.svelte';
 	import Identifiable from '../../ts/runtime/Identifiable';
@@ -48,7 +48,7 @@
 		const right_widths = [9, 11.5];
 		const left_widths = {
 			0: c.has_details_button ? 18 : -11,			// details
-			1: search.will_search ? 14 : c.has_details_button ? 11 : 14,	// recents / search
+			1: !$w_search_isActive ? 14 : c.has_details_button ? 11 : 14,	// recents / search
 			2: 57,	// graph type
 			3: 100,	// grow
 			4: 26,	// shrink
@@ -99,18 +99,7 @@
 						</svg>
 					</Button>
 				{/if}
-				{#if search.will_search && c.allow_Search}
-					<Search
-						left={lefts[1]}
-						width={layout.windowSize.width - lefts[1] - 178}/>
-					<Close_Button
-						name='end-search'
-						align_left={true}
-						size={size_big + 1}
-						stroke_width={0.25}
-						origin={new Point(width - rights[1], -0.5)}
-						closure={() => $w_search_state = T_Search.off}/>
-				{:else}
+				{#if !c.allow_Search || !$w_search_isActive}
 					<Next_Previous name='recents'
 						size={28}
 						has_title={false}
@@ -177,7 +166,14 @@
 						left={lefts[6]}
 						centered={true}
 						width={layout.windowSize.width - lefts[7]}/>
-					{#if c.allow_Search}
+				{/if}
+				{#if c.allow_Search}
+					{#if $w_search_isActive}
+						<Search
+							left={lefts[1]}
+							width={layout.windowSize.width - lefts[1] - 178}/>
+					{/if}
+					{#if $w_search_state === T_Search.off}
 						<Button
 							width={size_big}
 							height={size_big}
@@ -188,6 +184,14 @@
 							closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.search)}>
 							🔍
 						</Button>
+					{:else}
+						<Close_Button
+							name='end-search'
+							align_left={true}
+							size={size_big + 1}
+							stroke_width={0.25}
+							closure={() => search.deactivate()}
+							origin={new Point(width - rights[1], -0.5)}/>
 					{/if}
 				{/if}
 			{/if}

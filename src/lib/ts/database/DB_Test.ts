@@ -48,9 +48,9 @@ export default class DB_Test extends DB_Common {
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'raf', kindR, idTa, idTf, [0, 1]);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'rce', kindR, idTc, idTe, [0, 1]);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cfd', kindC, idTd, idTe, [0, 3]);
-		h.trait_remember_runtimeCreateUnique(this.idBase, 'ttc', idTc, T_Trait.text, 'Carrumba Tinga!', {});
-		h.trait_remember_runtimeCreateUnique(this.idBase, 'tlb', idTb, T_Trait.link, 'http://www.webseriously.org', {});
-		h.trait_remember_runtimeCreateUnique(this.idBase, 'ttb', idTb, T_Trait.text, 'What a brilliant idea you have!', {});
+		h.trait_remember_runtimeCreateUnique(this.idBase, 'ttc', idTc, T_Trait.text, 'Carrumba Tinga!');
+		h.trait_remember_runtimeCreateUnique(this.idBase, 'tlb', idTb, T_Trait.link, 'http://www.webseriously.org');
+		h.trait_remember_runtimeCreateUnique(this.idBase, 'ttb', idTb, T_Trait.text, 'What a brilliant idea you have!');
 		h.tag_remember_runtimeCreateUnique_byType(this.idBase, 'Fruity', [idTd.hash(), idTc.hash()]);
 		h.tag_remember_runtimeCreateUnique_byType(this.idBase, 'Moody', [idTf.hash(), idTd.hash(), idTb.hash()]);
 		h.tag_remember_runtimeCreateUnique_byType(this.idBase, 'Study', [idTc.hash(), idTe.hash()]);

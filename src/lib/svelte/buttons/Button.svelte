@@ -80,6 +80,7 @@
 				left:0px;
 				${border};
 				display: flex;
+				color:${color};
 				width:${width}px;
 				z-index:${zindex};
 				padding:${padding};
@@ -89,11 +90,10 @@
 				position:${position};
 				justify-content: center;
 				font-size:${font_size}px;
-				color:${s_button.stroke};
 				cursor:${s_button.cursor};
 				border-radius:${height / 2}px;
-				font-family:${$w_thing_fontFamily};
 				background-color:${s_button.fill};
+				font-family:${$w_thing_fontFamily};
 			`.removeWhiteSpace();
 		}
 	}

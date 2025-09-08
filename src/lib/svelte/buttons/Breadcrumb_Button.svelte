@@ -1,7 +1,9 @@
 <script lang='ts'>
-	import { w_thing_color, w_background_color, w_thing_fontFamily, w_ancestry_focus } from '../../ts/managers/Stores';
 	import { h, k, u, ux, Point, Thing, debug, colors, layout, signals } from '../../ts/common/Global_Imports';
-	import { T_Banner, S_Element } from '../../ts/common/Global_Imports';
+	import { w_thing_color, w_thing_fontFamily, w_ancestry_focus } from '../../ts/managers/Stores';
+	import { T_Search, T_Banner, S_Element } from '../../ts/common/Global_Imports';
+	import { w_background_color } from '../../ts/managers/Stores';
+	import { search } from '../../ts/managers/Search';
 	import Button from './Button.svelte';
 	export let left = 0;
 	export let s_breadcrumb;
@@ -66,6 +68,7 @@
 				updateStyle();
 				reattachments += 1;
 			} else if (s_mouse.isUp) {
+				search.deactivate();
 				ancestry.grabOnly();
 				if (ancestry.becomeFocus()) {
 					layout.grand_build();
