@@ -59,7 +59,7 @@ export const w_search_text				= writable<string>();			// binded by search <input
 export const w_results_token			= writable<string>();			// used to re-render the search results
 export const w_show_results				= writable<boolean>();			// show / hide search results, manage key inputs
 export const w_search_state				= writable<T_Search>();			// observed by panel, controls, and search_results
-export const w_selected_row				= writable<number | null>();	// used to select a row in the search results
+export const w_search_result_row		= writable<number | null>();	// used to select a row in the search results
 export const w_search_filter			= writable<T_Search_Filter>();	// observed by search_results
 
 const _____COUNTS: unique symbol = Symbol('COUNTS');

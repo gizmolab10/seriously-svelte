@@ -1,5 +1,6 @@
-import { c, h, p, Thing, T_Preference, T_Search, T_Startup } from "../common/Global_Imports";
-import { w_show_results, w_selected_row, w_results_token } from './Stores';
+import { w_show_results, w_search_result_row, w_results_token } from './Stores';
+import { T_Preference, T_Search, T_Startup } from "../common/Global_Imports";
+import { c, h, p, Thing, Ancestry } from "../common/Global_Imports";
 import { w_search_state, w_search_text } from './Stores';
 import { Search_Node } from '../types/Search_Node';
 import { w_t_startup } from './Stores';
@@ -17,7 +18,7 @@ class Search {
 					if (startup == T_Startup.ready) {
 						this.buildIndex(h.things);
 						w_search_state.subscribe((state) => {
-							if (state !== T_Search.off) {
+							if (this.will_search) {
 								this.search_for(get(w_search_text).toLocaleLowerCase());
 							}
 						});
@@ -26,7 +27,7 @@ class Search {
 							// launch => ignore this
 							// click search button => enter
 							p.write_key(T_Preference.search_text, text);
-							if (get(w_search_state) !== T_Search.off) {
+							if (this.will_search) {
 								this.search_for(text.toLocaleLowerCase());
 							}
 						});
@@ -34,6 +35,15 @@ class Search {
 				});
 			}
 		}, 1);
+	}
+
+	get will_search(): boolean { return [T_Search.enter, T_Search.results].includes(get(w_search_state)); }
+
+	get selected_ancestry(): Ancestry | null {
+		const row = get(w_search_result_row);
+		if (row === null) return null;
+		const thing = this.results[row];
+		return thing?.ancestry ?? null;
 	}
 
 	search_for(query: string) {
@@ -45,7 +55,7 @@ class Search {
 			this.results = [];
 			state = T_Search.enter;
 		}
-		w_selected_row.set(null);
+		w_search_result_row.set(null);	// TODO: only if results are different
 		w_search_state.set(state);
 		w_show_results.set(this.results.length > 0);
 		w_results_token.set(Date.now().toString());

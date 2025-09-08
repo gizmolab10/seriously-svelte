@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { T_Layer, T_Graph, T_Search_Filter, T_Search, S_Element, T_Element, T_Control, T_Kinship, T_Request } from '../../ts/common/Global_Imports';
-	import { c, e, h, k, p, u, ux, show, grabs, Point, colors, layout, svgPaths, signals } from '../../ts/common/Global_Imports';
+	import { c, e, h, k, p, u, ux, show, grabs, Point, search, colors, layout, svgPaths, signals } from '../../ts/common/Global_Imports';
 	import { w_background_color, w_device_isMobile, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { w_show_details, w_show_graph_ofType, w_show_tree_ofType } from '../../ts/managers/Stores';
 	import { w_graph_rect, w_count_resize, w_popupView_id } from '../../ts/managers/Stores';
@@ -48,7 +48,7 @@
 		const right_widths = [9, 11.5];
 		const left_widths = {
 			0: c.has_details_button ? 18 : -11,			// details
-			1: $w_search_state == T_Search.off ? 14 : c.has_details_button ? 11 : 14,	// recents / search
+			1: search.will_search ? 14 : c.has_details_button ? 11 : 14,	// recents / search
 			2: 57,	// graph type
 			3: 100,	// grow
 			4: 26,	// shrink
@@ -99,7 +99,7 @@
 						</svg>
 					</Button>
 				{/if}
-				{#if $w_search_state != T_Search.off && c.allow_Search}
+				{#if search.will_search && c.allow_Search}
 					<Search
 						left={lefts[1]}
 						width={layout.windowSize.width - lefts[1] - 178}/>

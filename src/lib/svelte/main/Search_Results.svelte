@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { w_search_text, w_results_token, w_selected_row, w_background_color } from '../../ts/managers/Stores';
-	import { colors, T_Search } from '../../ts/common/Global_Imports';
+	import { w_search_text, w_search_state, w_background_color } from '../../ts/managers/Stores';
+	import { w_results_token, w_search_result_row } from '../../ts/managers/Stores';
+	import { Thing,colors, T_Search } from '../../ts/common/Global_Imports';
 	import { search } from '../../ts/managers/Search';
 	let element: HTMLDivElement;
 	let results: Thing[] = [];
@@ -10,12 +11,6 @@
 		results = search.results;
 	}
 
-	function handle_row_selected(event: MouseEvent, index: number) {
-		event.preventDefault();
-    	$w_selected_row = index;
-		element?.focus();
-	}
-
 	function handle_key_down(event: KeyboardEvent) {
 		switch (event.key.toLowerCase()) {
 			case 'arrowup':		event.preventDefault(); next_row(false); break;
@@ -23,12 +18,22 @@
 		}
 	}
 
+	function handle_row_selected(event: MouseEvent, index: number) {
+		event.preventDefault();
+		select_row(index);
+	}
+
+	function select_row(index: number) {
+		$w_search_result_row = index;
+		$w_search_state = T_Search.selected;
+		element?.focus();
+	}
+
 	function next_row(up: boolean) {
-		const row = $w_selected_row;
+		const row = $w_search_result_row;
 		if (row !== null) {
 			const count = results.length;	// stupid, but it works
-			$w_selected_row = row.increment(up, count);
-			element?.focus();
+			select_row(row.increment(up, count));
 		}
 	}
 
@@ -56,10 +61,10 @@
 	on:keydown={handle_key_down}
 	bind:this={element}
 	tabindex='0'>
-	{#key `${$w_background_color}:::${$w_selected_row}:::${$w_results_token}`}
+	{#key `${$w_background_color}:::${$w_search_result_row}:::${$w_results_token}`}
 		<ul>
 			{#each results as result, index}
-				<li class:selected={$w_selected_row === index}
+				<li class:selected={$w_search_result_row === index}
 					on:mousedown={(event) => handle_row_selected(event, index)}>
 					{@html highlightMatch(result.title, $w_search_text)}
 				</li>
