@@ -18,8 +18,9 @@ class Search {
 					if (startup == T_Startup.ready) {
 						this.buildIndex(h.things);
 						w_search_state.subscribe((state) => {
-							if (this.isActive) {
-								this.search_for(get(w_search_text).toLowerCase());
+							const text = get(w_search_text);
+							if (this.isActive && !!text) {
+								this.search_for(text.toLowerCase());
 							}
 							w_search_isActive.set(this.isActive);
 						});
