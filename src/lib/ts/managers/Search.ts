@@ -1,7 +1,8 @@
 import { c, h, p, Thing, T_Preference, T_Search, T_Startup } from "../common/Global_Imports";
-import { w_search_text, w_search_filter, w_search_state, w_t_startup, w_t_database } from './Stores';
+import { w_show_results, w_selected_row, w_results_token } from './Stores';
+import { w_search_state, w_search_text } from './Stores';
 import { Search_Node } from '../types/Search_Node';
-import { w_results_token } from './Stores';
+import { w_t_startup } from './Stores';
 import { get } from 'svelte/store';
 
 class Search {
@@ -36,13 +37,17 @@ class Search {
 	}
 
 	search_for(query: string) {
+		let state = get(w_search_state);
 		if (query.length > 0) {
 			this.results = this.root_node.search_for(query);
-			w_search_state.set(T_Search.results);
+			state = T_Search.results;
 		} else {
 			this.results = [];
-			w_search_state.set(T_Search.enter);
+			state = T_Search.enter;
 		}
+		w_selected_row.set(null);
+		w_search_state.set(state);
+		w_show_results.set(this.results.length > 0);
 		w_results_token.set(Date.now().toString());
 	}
 	
