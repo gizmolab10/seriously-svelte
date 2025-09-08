@@ -27,11 +27,13 @@ class Search {
 							// state machine
 							// launch => ignore this
 							// click search button => enter
-							p.write_key(T_Preference.search_text, text);
-							if (this.isActive) {
-								this.search_for(text.toLowerCase());
+							if (!!text) {
+								p.write_key(T_Preference.search_text, text);
+								if (this.isActive) {
+									this.search_for(text.toLowerCase());
+								}
+								w_search_isActive.set(this.isActive);
 							}
-							w_search_isActive.set(this.isActive);
 						});
 					}
 				});
