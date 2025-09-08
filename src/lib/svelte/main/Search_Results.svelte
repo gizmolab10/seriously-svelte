@@ -11,9 +11,11 @@
 </script>
 
 <div class="search">
-	{#each results as result}
-		{result.title}
-	{/each}
+	<ul>
+		{#each results as result}
+			<li>{result.title}</li>
+		{/each}
+	</ul>
 </div>
 
 <style>
@@ -21,7 +23,17 @@
 		position: absolute;
 		height: 100%;
 		width: 100%;
-		left: 8px;
 		top: 8px;
+	}
+	ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+	li {
+		padding-left: 12px;
+	}
+	li:hover {
+		background-color: #eee;
 	}
 </style>

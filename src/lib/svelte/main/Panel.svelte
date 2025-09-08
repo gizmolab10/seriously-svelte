@@ -23,12 +23,12 @@
 
 	function ignore_wheel(event) { event.preventDefault(); }
 
+	$: show_results = ($w_search_state !== T_Search.off && c.allow_Search);
+
 	$: {
 		const _ = $w_background_color;
 		separator_color = colors.separator;
 	}
-
-	$: show_results = $w_search_state > T_Search.enter;
 
 	$: {
 		const _ = `${$w_t_database}:::${$w_t_startup}:::${$w_graph_rect.description}`;
@@ -68,7 +68,7 @@
 					left: {$w_graph_rect.origin.x}px;
 					width: {$w_graph_rect.size.width}px;
 					height: {$w_graph_rect.size.height}px;'>
-				{#if $w_search_state > T_Search.enter}
+				{#if show_results}
 					<Search_Results/>
 				{:else}
 					<Graph/>

@@ -24,7 +24,9 @@
 		origin={new Point(22, 1)}
 		titles={[T_Search_Filter.title, T_Search_Filter.trait, T_Search_Filter.tags]}
 		handle_selection={(titles) => ux.handle_choiceOf_t_graph('filter', titles)}/>
-	<input class='search-input' id='search'
+	<input class='search-input'
+		id='search'
+		autocomplete='off'
 		bind:value={$w_search_text}
 		placeholder={'enter ' + $w_search_filter + ' text'}
 		type='text'
@@ -34,6 +36,7 @@
 			color: blue;
 			font-size: 12px;
 			width: {width}px;
+			padding-left: 6px;
 			border-radius: 4px;
 			position: absolute;
 			background-color: white;
