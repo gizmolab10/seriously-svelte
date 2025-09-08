@@ -19,7 +19,7 @@ class Search {
 						this.buildIndex(h.things);
 						w_search_state.subscribe((state) => {
 							if (this.isActive) {
-								this.search_for(get(w_search_text).toLocaleLowerCase());
+								this.search_for(get(w_search_text).toLowerCase());
 							}
 							w_search_isActive.set(this.isActive);
 						});
@@ -29,7 +29,7 @@ class Search {
 							// click search button => enter
 							p.write_key(T_Preference.search_text, text);
 							if (this.isActive) {
-								this.search_for(text.toLocaleLowerCase());
+								this.search_for(text.toLowerCase());
 							}
 							w_search_isActive.set(this.isActive);
 						});
@@ -79,7 +79,7 @@ class Search {
 	
 	private buildIndex(things: Thing[]) {
 		for (const thing of things) {
-			const title = thing.title.toLocaleLowerCase();
+			const title = thing.title.toLowerCase();
 			const words = title.split(' ');
 			for (const word of words) {
 				// Insert the full word and all its suffixes

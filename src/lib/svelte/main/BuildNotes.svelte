@@ -21,7 +21,7 @@
 	}
 	
 	function handle_key_down(event) {
-		const key = event.key.toLocaleLowerCase();
+		const key = event.key.toLowerCase();
 		switch (key) {
 			case 'escape': $w_popupView_id = null; break;
 		}

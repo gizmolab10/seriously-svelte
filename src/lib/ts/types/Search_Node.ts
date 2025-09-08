@@ -42,7 +42,7 @@ export class Search_Node {
 	}
 
 	search_for(query: string): Thing[] {
-		const lowercase = query.toLocaleLowerCase();
+		const lowercase = query.toLowerCase();
 		let current: Search_Node = this;
 		for (const char of lowercase) {
 			const charCode = char.charCodeAt(0);
