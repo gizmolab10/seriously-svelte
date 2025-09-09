@@ -1,9 +1,9 @@
 import { T_Startup, T_Create, T_Alteration, T_File_Format, T_Persistable } from '../common/Global_Imports';
-import { T_Thing, T_Trait, T_Order, T_Control, T_Predicate, T_Search } from '../common/Global_Imports';
 import { c, k, p, u, ux, busy, debug, grabs, Tag, User, Thing, Trait } from '../common/Global_Imports';
 import { Access, Ancestry, Predicate, Relationship, Persistable } from '../common/Global_Imports';
-import { files, colors, search, signals, layout, databases } from '../common/Global_Imports';
+import { T_Thing, T_Trait, T_Order, T_Control, T_Predicate } from '../common/Global_Imports';
 import { w_popupView_id, w_s_title_edit, w_s_alteration, w_ancestry_focus } from './Stores';
+import { files, colors, signals, layout, databases } from '../common/Global_Imports';
 import { w_hierarchy, w_t_startup, w_depth_limit } from './Stores';
 import type { Integer, Dictionary } from '../types/Types';
 import Identifiable from '../runtime/Identifiable';
@@ -760,17 +760,6 @@ export class Hierarchy {
 				}
 			}
 		}
-	}
-
-	get ancestry_forBreadcrumbs(): Ancestry {
-		const selected_ancestry = search.selected_ancestry;
-		if (!!selected_ancestry) {
-			return selected_ancestry;
-		}
-		const focus = get(w_ancestry_focus);
-		const grab = grabs.ancestry;
-		const grab_containsFocus = !!grab && focus.isAProgenyOf(grab)
-		return (!!grab && !grab_containsFocus) ? grab : focus;
 	}
 
 	ancestry_isAssured_valid_forPath(path: string): Ancestry | null {

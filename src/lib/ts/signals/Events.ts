@@ -288,7 +288,7 @@ export class Events {
 	}
 
 	async handle_action_clickedAt(s_mouse: S_Mouse, t_action: number, column: number, name: string) {
-		const ancestry = grabs.ancestry;	
+		const ancestry = grabs.ancestry_forInformation;	
 		if (get(w_control_key_down)) {
 			this.showHelpFor(t_action, column);
 		} else if (!!ancestry && !this.handle_isAction_disabledAt(t_action, column) && !!h) {
@@ -337,7 +337,7 @@ export class Events {
 	}
 
 	handle_isAction_disabledAt(t_action: number, column: number): boolean {		// true means disabled
-		const ancestry = grabs.ancestry;
+		const ancestry = grabs.ancestry_forInformation;
 		if (!!ancestry) {
 			const is_altering = !!get(w_s_alteration);
 			const no_children = !ancestry.hasChildren;

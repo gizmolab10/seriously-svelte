@@ -516,7 +516,7 @@ export default class Ancestry extends Identifiable {
 	grab() { grabs.grab(this); }
 	ungrab() { grabs.ungrab(this); }
 	grabOnly() { grabs.grabOnly(this); }
-	get isGrabbed(): boolean { return this.includedInStore_ofAncestries(w_ancestries_grabbed); }
+	get isGrabbed(): boolean { return grabs.ancestry_forInformation.equals(this); }
 
 	toggleGrab() {
 		if (this.isGrabbed) {

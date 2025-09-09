@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { c, k, u, ux, Point, debug, colors, layout, grabs, Ancestry } from '../../ts/common/Global_Imports';
+	import { w_show_details_ofType, w_search_result_row } from '../../ts/managers/Stores';
 	import { w_thing_color, w_ancestries_grabbed } from '../../ts/managers/Stores';
 	import { w_graph_rect, w_device_isMobile } from '../../ts/managers/Stores';
 	import { T_Details, S_Widget } from '../../ts/common/Global_Imports';
-	import { w_show_details_ofType } from '../../ts/managers/Stores';
 	let ancestry: Ancestry | null = null;
 	let background_color = 'transparent';
 	let s_widget: S_Widget | null = null;
@@ -11,7 +11,8 @@
     let reattachments = 0;
 
 	$: {
-		ancestry = grabs.ancestry;
+		const _ = $w_search_result_row;
+		ancestry = grabs.ancestry_forInformation;
 		if (!!ancestry) {
 			s_widget = ancestry.g_widget.s_widget;
 			const _ = `${$w_thing_color}:::${$w_ancestries_grabbed.map(a => a.titles.join(',')).join('-')}`;

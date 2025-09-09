@@ -73,9 +73,9 @@ class Search {
 			state = T_Search.enter;
 		}
 		w_search_state.set(state);
+		w_show_results.set(this.results.length > 0);
+		w_results_token.set(Date.now().toString());
 		if (before !== this.results_fingerprint) {	// only if results are different
-			w_show_results.set(this.results.length > 0);
-			w_results_token.set(Date.now().toString());
 			w_search_result_row.set(null);
 		}
 	}

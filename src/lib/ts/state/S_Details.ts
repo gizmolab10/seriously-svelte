@@ -1,7 +1,7 @@
 import { T_Details, T_Direction, T_Storage_Need, S_Identifiables } from '../common/Global_Imports';
+import { w_data_updated, w_show_details_ofType, w_search_result_row } from '../managers/Stores';
 import { w_thing_tags, w_thing_traits, w_ancestry_focus } from '../managers/Stores';
 import { h, grabs, Thing, Trait, Ancestry } from '../common/Global_Imports';
-import { w_data_updated, w_show_details_ofType } from '../managers/Stores';
 import { S_Banner_Hideable } from './S_Banner_Hideable';
 
 class S_Details {
@@ -14,6 +14,9 @@ class S_Details {
 
 	constructor() {
 		w_data_updated.subscribe((count: number) => {
+			this.update();
+		});
+		w_search_result_row.subscribe((row: number | null) => {
 			this.update();
 		});
 		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
@@ -49,7 +52,7 @@ class S_Details {
 
 	private update_tags() {
 		this.s_tag_things.set_items(h?.things_unique_havingTags ?? []);
-		w_thing_tags.set(grabs.ancestry?.thing?.tags ?? []);
+		w_thing_tags.set(grabs.ancestry_forInformation?.thing?.tags ?? []);
 	}
 	
 	selectNext_tag(next: boolean) {
@@ -84,7 +87,7 @@ class S_Details {
 		let thing_traits: Array<Trait> = [];
 		if (!!h) {
 			this.s_trait_things.set_items(h.things_unique_havingTraits ?? []);
-			const thing = grabs.ancestry?.thing;
+			const thing = grabs.ancestry_forInformation?.thing;
 			thing_traits = thing?.traits ?? [];
 			if (!!thing && thing_traits.length > 0) {
 				// compute which index [trait] corresponds to the thing

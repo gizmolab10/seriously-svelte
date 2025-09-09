@@ -13,6 +13,7 @@
 
 	function handle_key_down(event: KeyboardEvent) {
 		switch (event.key.toLowerCase()) {
+			case 'f':			event.preventDefault(); $w_search_state = T_Search.enter; break;
 			case 'arrowup':		event.preventDefault(); next_row(false); break;
 			case 'arrowdown':	event.preventDefault(); next_row(true); break;
 		}
@@ -64,7 +65,7 @@
 	{#key `${$w_background_color}:::${$w_search_result_row}:::${$w_results_token}`}
 		<ul>
 			{#each results as result, index}
-				<li class:selected={$w_search_result_row === index}
+				<li class:selected={$w_search_result_row === index} style='color: {result.color}'
 					on:mousedown={(event) => handle_row_selected(event, index)}>
 					{@html highlightMatch(result.title, $w_search_text)}
 				</li>
@@ -99,6 +100,6 @@
 	}
 	li.selected,
 	li.selected:hover {
-		background-color: pink;
+		background-color: #ccc;
 	}
 </style>

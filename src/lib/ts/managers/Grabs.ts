@@ -1,4 +1,4 @@
-import { u, ux, debug, layout, Ancestry, S_Identifiables } from '../common/Global_Imports';
+import { ux, debug, search, layout, Ancestry, S_Identifiables } from '../common/Global_Imports';
 import { w_hierarchy, w_s_title_edit, w_depth_limit, w_count_details } from './Stores';
 import { w_ancestry_focus, w_ancestries_grabbed, w_s_alteration } from './Stores';
 import { get } from 'svelte/store';
@@ -10,14 +10,28 @@ export class Grabs {
 	
 	recents = new S_Identifiables<Ancestry_Pair>([]);
 	s_selected_ancestries = new S_Identifiables<Ancestry>([]);
-	get ancestry(): Ancestry | null { return (this.s_selected_ancestries.item as Ancestry) ?? grabs.latest_upward(true); }
 
 	constructor() {
 		w_ancestries_grabbed.subscribe((array: Array<Ancestry>) => {
 			this.update_selected();
 		});
 	}
-	
+
+	get ancestry(): Ancestry | null {
+		return (this.s_selected_ancestries.item as Ancestry) ?? grabs.latest_upward(true);
+	}
+
+	get ancestry_forInformation(): Ancestry {
+		const selected_ancestry = search.selected_ancestry;
+		if (!!selected_ancestry) {
+			return selected_ancestry;
+		}
+		const focus = get(w_ancestry_focus);
+		const grab = grabs.ancestry;
+		const grab_containsFocus = !!grab && focus.isAProgenyOf(grab)
+		return (!!grab && !grab_containsFocus) ? grab : focus;
+	}
+
 	focus_onNext(next: boolean) {
 		this.recents.find_next_item(next);
 		const item = this.recents.item;

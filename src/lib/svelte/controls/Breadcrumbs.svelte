@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, h, k, u, ux, Size, Point, Thing, debug, colors, signals } from '../../ts/common/Global_Imports';
+	import { c, h, k, u, ux, Size, Point, Thing, debug, grabs, colors, signals } from '../../ts/common/Global_Imports';
 	import { w_t_startup, w_graph_rect, w_thing_color, w_background_color } from '../../ts/managers/Stores';
 	import { T_Layer, T_Signal, T_Element, T_Startup, T_Component } from '../../ts/common/Global_Imports';
 	import { svgPaths, Ancestry, layout, components, S_Component} from '../../ts/common/Global_Imports';
@@ -33,7 +33,7 @@
 		if ($w_t_startup == T_Startup.ready) {
 			const needsUpdate = ($w_ancestry_focus?.title ?? k.empty) + $w_graph_rect + ($w_ancestries_grabbed?.length ?? 0);
 			if (!ancestry || needsUpdate || things.length == 0) {
-				ancestry = h?.ancestry_forBreadcrumbs;		// assure we have an ancestry
+				ancestry = grabs?.ancestry_forInformation;		// assure we have an ancestry
 				if (!!ancestry) {				
 					let parent_widths = 0;					// encoded as one parent count per 2 digits (base 10)
 					let widths: number[] = [];
