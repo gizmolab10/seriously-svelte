@@ -41,8 +41,8 @@ class S_Details {
 		const t_detail = T_Details[banner_title as keyof typeof T_Details];
 		switch (t_detail) {
 			case T_Details.traits:	  this.selectNext_traitThing(next); break;
-			case T_Details.selection: grabs.selectNext_selection(next); break;
 			case T_Details.tags:  	  this.selectNext_tag(next); break;
+			case T_Details.selection: grabs.grab_next(next); break;
 		}
 	}
 	

@@ -6,28 +6,28 @@ import { get } from 'svelte/store';
 type Ancestry_Pair = [Ancestry, Ancestry | null];
 
 export class Grabs {
-	// N.B. hierarchy depends on grabs, so we can't use h here
+	// N.B. hierarchy depends on this, so we can't use h here
 	
 	recents = new S_Identifiables<Ancestry_Pair>([]);
-	s_selected_ancestries = new S_Identifiables<Ancestry>([]);
+	s_grabbed_ancestries = new S_Identifiables<Ancestry>([]);
 
 	constructor() {
 		w_ancestries_grabbed.subscribe((array: Array<Ancestry>) => {
-			this.update_selected();
+			this.update_this();
 		});
 	}
 
 	get ancestry(): Ancestry | null {
-		return (this.s_selected_ancestries.item as Ancestry) ?? grabs.latest_upward(true);
+		return (this.s_grabbed_ancestries.item as Ancestry) ?? this.latest_upward(true);
 	}
 
 	get ancestry_forInformation(): Ancestry {
-		const selected_ancestry = search.selected_ancestry;
-		if (!!selected_ancestry) {
-			return selected_ancestry;
+		const search_ancestry = search.result_ancestry;
+		if (!!search_ancestry) {
+			return search_ancestry;
 		}
 		const focus = get(w_ancestry_focus);
-		const grab = grabs.ancestry;
+		const grab = this.ancestry;
 		const grab_containsFocus = !!grab && focus.isAProgenyOf(grab)
 		return (!!grab && !grab_containsFocus) ? grab : focus;
 	}
@@ -52,7 +52,7 @@ export class Grabs {
 		const changed = force || !priorFocus || !ancestry.equals(priorFocus!);
 		if (changed) {
 			const pair: Ancestry_Pair = [ancestry, this.ancestry];
-			grabs.recents.push(pair);
+			this.recents.push(pair);
 			w_s_alteration.set(null);
 			w_ancestry_focus.set(ancestry);
 		}
@@ -60,16 +60,15 @@ export class Grabs {
 		return changed;
 	}
 	
-	static readonly _____SELECTION: unique symbol;
+	static readonly _____GRABS: unique symbol;
 
-	update_selected() { this.s_selected_ancestries.set_items(get(w_ancestries_grabbed) ?? []); }
+	private update_this() { this.s_grabbed_ancestries.set_items(get(w_ancestries_grabbed) ?? []); }
+	isGrabbed(ancestry: Ancestry): boolean { return this.ancestry_forInformation.equals(ancestry); }
 	
-	selectNext_selection(next: boolean) {
-		this.s_selected_ancestries.find_next_item(next);
+	grab_next(next: boolean) {	// for next/previous in details selection banner
+		this.s_grabbed_ancestries.find_next_item(next);
 		w_count_details.update(n => n + 1);	// force re-render of details
 	}
-	
-	static readonly _____GRAB: unique symbol;
 
 	grabOnly(ancestry: Ancestry) {
 		debug.log_grab(`  GRAB ONLY '${ancestry.title}'`);

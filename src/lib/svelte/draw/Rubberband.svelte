@@ -153,19 +153,19 @@
 {/if}
 
 <style>
-    :global(.rubberband-blocking .bottom-controls,
-            .rubberband-blocking .details-stack,
-            .rubberband-blocking .segmented,
+    :global(.rubberband-blocking .button,
             .rubberband-blocking .controls, 
-            .rubberband-blocking .button, 
+            .rubberband-blocking .segmented, 
+            .rubberband-blocking .details-stack,
+            .rubberband-blocking .bottom-controls,
             .rubberband-blocking .mouse-responder) {
         pointer-events: none !important;
     }
 
     .rubberband {
         position: fixed;
-        pointer-events: none;
         border-style: dashed;
+        pointer-events: none;
         box-sizing: border-box;
         background-color: rgba(0, 0, 0, 0.05);
     }

@@ -1,37 +1,40 @@
 function(instance, properties) {
-	const exposed_LIST_FIELD_names = ['object_parents_field', 'object_related_field', 'owners_field'];
 	const bubblizing_add_ons = ['_boolean', '_custom', '_text', '_list'];
 	const ITEM_references = ['child', 'parent', 'owner', 'related'];
 	const has_two_tables = properties.hasOwnProperty('edge_type');
 	const original_DATA_TYPE_field_names = {};
 	const ignore_fields = ['Slug'];
 	const debug = false;
-	log('has_two_tables', has_two_tables);
 
 	// naming conventions for functions and variables
 	//
-	// LIST			means an array of ITEM
-	// DATA_TYPE	refers to the bubble app's data types
+	// LIST			array of ITEM(s)
+	// DATA_TYPE	bubble app's data types
 	// SERIOUSLY	internal use within seriously netlify app
-	// FIELD		refers <only> to plugin Fields
-	// ITEM			is an instance of a DATA_TYPE
+	// FIELD		plugin Field (specified in bubble plugin editor)
+	// ITEM			instance of DATA_TYPE
 	//
-	// c_			means convert to
-	// _id			means the unique id of an ITEM
-	// field		refers to a field of an ITEM (seriously, original, bubble, etc.)
+	// c_			convert to
+	// _id			the unique id of ITEM
+	// field		of ITEM (seriously, original, bubble, etc.)
+
+	const exposed_LIST_FIELD_names = [
+		'object_parents_field',
+		'object_related_field',
+		'owners_field'];
 
 	const exposed_FIELD_names = [...exposed_LIST_FIELD_names,
-		'starting_object',
+		'object_title_field',
 		'object_color_field',
-		'object_title_field'];
+		'starting_object'];
 
 	if (has_two_tables) {
 		exposed_FIELD_names = [...exposed_FIELD_names,
-			'edge_kind_field',
-			'edge_child_field',
+			'edge_two_way_field',
 			'edge_parent_field',
 			'edge_orders_field',
-			'edge_two_way_field'];
+			'edge_child_field',
+			'edge_kind_field'];
 	}
 
 	exposed_FIELD_names.forEach(field_name_of_ITEM => {
@@ -44,7 +47,8 @@ function(instance, properties) {
 	});
 
 	const LIST_names = c_DATA_TYPE_LIST_names(exposed_LIST_FIELD_names);
-	function log(message, ...optionalParams) { if (debug) { console.log(message, ...optionalParams); } }
+	function LOG(message, ...optionalParams) { if (debug) { console.log(message, ...optionalParams); } }
+	function WARN(message, ...optionalParams) { if (debug) { console.warn(message, ...optionalParams); } }
 	function has_SERIOUSLY_name(name) { return Object.keys(original_DATA_TYPE_field_names).includes(name); }
 
 	// design:
@@ -116,28 +120,27 @@ function(instance, properties) {
 				names[short_name] = ITEM.get(field_name);
 				return names;
 			}, {});
-			ITEM_data.glob = JSON.stringify(original_data);
 			ITEM_field_names.forEach(ITEM_field_name => {
 				const DATA_TYPE_field_name = c_bubble_app_DATA_TYPE_field_name(ITEM_field_name, bubblizing_add_ons);
 				const has_name = has_SERIOUSLY_name(DATA_TYPE_field_name) || has_SERIOUSLY_name(ITEM_field_name);
 				const SERIOUSLY_name = c_SERIOUSLY_field_name(DATA_TYPE_field_name) ?? c_SERIOUSLY_field_name(ITEM_field_name);
 				const value = ITEM.get(ITEM_field_name);
-				log('extract ITEM field', ITEM_field_name, DATA_TYPE_field_name, SERIOUSLY_name, value);
+				LOG('extract ITEM field', ITEM_field_name, DATA_TYPE_field_name, SERIOUSLY_name, value);
 				if (!ignore_fields.includes(DATA_TYPE_field_name)) {
 					if (!SERIOUSLY_name) {
 						if (has_name) {
-							console.warn('extracted SERIOUSLY name unresolved for', ITEM_field_name, 'item properties:', original_data);
+							WARN('extracted SERIOUSLY name unresolved for', ITEM_field_name, 'item properties:', original_data);
 						}
 					} else if (!value) {
 						if (value != null) {
-							console.warn('value undefined for', ITEM_field_name, 'item properties:', original_data);
+							WARN('value undefined for', ITEM_field_name, 'item properties:', original_data);
 						}
 					} else if (ITEM_references.includes(DATA_TYPE_field_name) && typeof value != 'string') {
-						log('recursively extract_ITEM_data', DATA_TYPE_field_name, value, visited);
+						LOG('recursively extract_ITEM_data', DATA_TYPE_field_name, value, visited);
 						ITEM_data[SERIOUSLY_name] = extract_ITEM_data(DATA_TYPE_field_name, value, [...visited, DATA_TYPE_field_name]);
 					} else if (!has_two_tables && LIST_names.includes(DATA_TYPE_field_name)) {
 						const LIST_data = extract_LIST_data(ITEM_field_name, value, visited);
-						log('process LIST for', SERIOUSLY_name, LIST_data);
+						LOG('process LIST for', SERIOUSLY_name, LIST_data);
 						if (!!LIST_data) {
 							ITEM_data[SERIOUSLY_name] = LIST_data;
 						}
@@ -150,7 +153,7 @@ function(instance, properties) {
 			if (instance.data.attempts[field_name_of_ITEM] == 0) {
 				delete instance.data.attempts[field_name_of_ITEM];
 			}
-			// log('item data:', field_name_of_ITEM, ITEM_data);
+			// LOG('item data:', field_name_of_ITEM, ITEM_data);
 		}
 		return ITEM_data;
 	}
@@ -160,13 +163,13 @@ function(instance, properties) {
 		LIST = !!LIST ? LIST : (typeof field_name != 'string') ? field_name : (properties[field_name] || null);
 		let extracted_data = [];
 		if (visited.includes(field_name)) {
-			console.log(field_name, 'already visited');
+			LOG(field_name, 'already visited');
 		} else if (!LIST) {
 			if (LIST != null) {
-				console.warn(field_name, 'is null');
+				WARN(field_name, 'is null');
 			}
 		} else if (!LIST.length || typeof LIST.length !== 'function' || typeof LIST.get !== 'function') {
-			console.warn(field_name, 'is not a LIST');
+			WARN(field_name, 'is not a LIST');
 		} else {
 			let sublist = LIST.get(0, LIST.length());
 			sublist.forEach(item => {
@@ -176,7 +179,7 @@ function(instance, properties) {
 				}
 			});
 		}
-		log('extract_LIST_data', field_name, LIST, visited, extracted_data);
+		LOG('extract_LIST_data', field_name, LIST, visited, extracted_data);
 		return extracted_data;
 	}
 
@@ -205,9 +208,9 @@ function(instance, properties) {
 
 	} catch (error) {
 		if (error.constructor.name != 'NotReadyError') {
-			console.warn('[PLUGIN] threw an error:', error);
+			WARN('[PLUGIN] threw an error:', error);
 		} else if (Object.keys(instance.data.attempts).length > 0) {
-			log('[PLUGIN] data not ready:', instance.data.attempts);
+			LOG('[PLUGIN] data not ready:', instance.data.attempts);
 		}
 	}
 }

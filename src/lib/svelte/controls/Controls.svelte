@@ -14,10 +14,10 @@
 	import Button from '../buttons/Button.svelte';
 	import Box from '../mouse/Box.svelte';
 	import Search from './Search.svelte';
-	const size_big = k.height.button + 4;
 	const y_center = 10.5;
-	const scaling_stroke_width = 1.5;
 	const right_widths = [9, 11.5];
+	const scaling_stroke_width = 1.5;
+	const size_big = k.height.button + 4;
 	const hamburger_size = k.height.button;
 	const hamburger_path = svgPaths.hamburgerPath(hamburger_size);
 	const svg_style = 'top: -0.5px; left: -0.5px; position: absolute; width: 100%; height: 100%;';
@@ -171,7 +171,7 @@
 					{#if $w_search_isActive}
 						<Search
 							left={lefts[1]}
-							width={layout.windowSize.width - lefts[1] - 178}/>
+							width={layout.windowSize.width - lefts[1] - 144}/>
 					{/if}
 					{#if $w_search_state === T_Search.off}
 						<Button

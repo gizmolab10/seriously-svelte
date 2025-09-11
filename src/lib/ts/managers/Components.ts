@@ -4,30 +4,14 @@ import type { Integer } from '../types/Types';
 import { get } from 'svelte/store';
 
 export class Components {
-	private componentsFor_t_signal_byPriority: { [priority: number]: { [t_signal: string]: S_Component } } = {};
-	private componentsBy_t_signal_andPriority: { [type_andPriority: string]: Array<S_Component> } = {};
 	private components_byType_andHID: { [type: string]: { [hid: Integer]: S_Component } } = {};
-	private componentsBy_t_component: { [t_component: string]: S_Component } = {};
 	private _dummy!: S_Component;
 
-	log_isEnabledFor_t_component = {
-		breadcrumbs : false,
-		branches	: true,
-		radial		: false,
-		reveal		: false,
-		widget		: true,
-		title		: false,
-		drag		: false,
-		line		: false,
-		none		: false,
-		tree		: true,
-		app			: false,
-	}
-
-	// hit testing
 	// debug logging
 	// signal management
-	// unique id assignment (of html elements) for DOM lookups
+	// hit testing (for radial)
+	// (?) style construction (by type and hid)
+	// (?) unique id assignment (of html elements) for DOM lookups
 
 	static readonly _____CREATE: unique symbol;
 
@@ -103,16 +87,6 @@ export class Components {
 			}
 		}
 		return found;
-	}
-
-	static readonly _____INDICES: unique symbol;
-
-	private indexFor_t_signal_andPriority(t_signal: T_Signal, priority: number): string {
-		return `${t_signal}(${priority})`;
-	}
-
-	private indexFor_componentType_andHID(component: S_Component | null): string | null {
-		return component ? `${component.type}(${component.hid})` : null;
 	}
 
 }

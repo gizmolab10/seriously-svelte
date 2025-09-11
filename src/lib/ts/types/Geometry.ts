@@ -267,8 +267,8 @@ export class Rect {
 	}
 
 	static createCenterRect(center: Point, size: Size): Rect {
-		const offset_fromOrigin = size.center;
-		const origin = center.offsetBy(offset_fromOrigin.negated);
+		const toOrigin = size.center.negated;
+		const origin = center.offsetBy(toOrigin);
 		return new Rect(origin, size);
 	}
 

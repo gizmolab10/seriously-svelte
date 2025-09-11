@@ -7,8 +7,10 @@ import { SignalConnection } from 'typed-signals';
 import { u } from '../utilities/Utilities';
 
 // formerly called Svelte Wrapper
-// provide Ancestry access to an associated svelte component's main element (and vice versa)
+// (?) style construction (by type and hid)
 // manage signals and for debugging styles and DOM issues
+// unique id assignment (of html elements) for DOM lookups
+// provide Ancestry access to an associated svelte component's main element (and vice versa)
 
 export default class S_Component {
     signal_handlers: SignalConnection_atPriority[] = [];
@@ -16,6 +18,20 @@ export default class S_Component {
     ancestry: Ancestry | null = null;
 	hid: Integer | null;
     type: T_Component;
+
+	log_isEnabledFor_t_component = {
+		breadcrumbs : false,
+		branches	: true,
+		radial		: false,
+		reveal		: false,
+		widget		: true,
+		title		: false,
+		drag		: false,
+		line		: false,
+		none		: false,
+		tree		: true,
+		app			: false,
+	}
 
     // hit test, logger, emitter, handler and destroyer
 
@@ -80,8 +96,8 @@ export default class S_Component {
     static readonly _____DEBUG_LOGGING: unique symbol;
 
     get isComponentLog_enabled(): boolean {
-        const key = this.type as keyof typeof components.log_isEnabledFor_t_component;
-        return components.log_isEnabledFor_t_component[key] ?? false;
+        const key = this.type as keyof typeof this.log_isEnabledFor_t_component;
+        return this.log_isEnabledFor_t_component[key] ?? false;
     }
 
 	log_style(prefix: string) {

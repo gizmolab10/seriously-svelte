@@ -18,7 +18,8 @@ export default class DB_Bubble extends DB_Common {
 
 	setup_subscriptions() {
 		setTimeout(() => {
-			const unsubscribe = w_t_startup.subscribe((t_startup: T_Startup) => {
+			let unsubscribe: () => void;  // trick compiler into tolerating unsubscribe inside its own closure
+			unsubscribe = w_t_startup.subscribe((t_startup: T_Startup) => {
 				if (t_startup === T_Startup.ready) {
 		
 					//////////////////////////////////////////////////////////////////
@@ -29,16 +30,14 @@ export default class DB_Bubble extends DB_Common {
 		
 					w_ancestry_focus.subscribe((ancestry: Ancestry) => {
 						if (!!ancestry && !!ancestry.thing) {
-							window.parent.postMessage({ type: 'focus_glob', glob: ancestry.thing.glob }, k.wildcard);
 							window.parent.postMessage({ type: 'focus_id', id: ancestry.thing.id }, k.wildcard);
-							window.parent.postMessage({ type: 'trigger_an_event', trigger: 'focus' }, k.wildcard);			// must be last
+							window.parent.postMessage({ type: 'trigger_an_event', trigger: 'focus_changed' }, k.wildcard);			// must be last
 						}
 					});
 					w_ancestries_grabbed.subscribe((ancestries: Ancestry[]) => {
 						if (!!ancestries) {
-							window.parent.postMessage({ type: 'selected_globs', globs: ancestries.map((ancestry: Ancestry) => ancestry.thing?.glob ?? k.corrupted) }, k.wildcard);
 							window.parent.postMessage({ type: 'selected_ids', ids: ancestries.map((ancestry: Ancestry) => ancestry.thing?.id ?? k.corrupted) }, k.wildcard);
-							window.parent.postMessage({ type: 'trigger_an_event', trigger: 'select' }, k.wildcard);			// must be last
+							window.parent.postMessage({ type: 'trigger_an_event', trigger: 'selection_changed' }, k.wildcard);			// must be last
 						}
 					});
 					unsubscribe();

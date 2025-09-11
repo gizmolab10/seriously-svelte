@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { w_search_text, w_search_state, w_background_color } from '../../ts/managers/Stores';
-	import { w_results_token, w_search_result_row } from '../../ts/managers/Stores';
+	import { w_results_changed, w_search_result_row } from '../../ts/managers/Stores';
 	import { Thing,colors, T_Search } from '../../ts/common/Global_Imports';
 	import { search } from '../../ts/managers/Search';
 	let element: HTMLDivElement;
 	let results: Thing[] = [];
 
 	$: {
-		const _ = $w_results_token;
+		const _ = $w_results_changed;
 		results = search.results;
 	}
 
@@ -62,7 +62,7 @@
 	on:keydown={handle_key_down}
 	bind:this={element}
 	tabindex='0'>
-	{#key `${$w_background_color}:::${$w_search_result_row}:::${$w_results_token}`}
+	{#key `${$w_background_color}:::${$w_search_result_row}:::${$w_results_changed}`}
 		<ul>
 			{#each results as result, index}
 				<li class:selected={$w_search_result_row === index} style='color: {result.color}'

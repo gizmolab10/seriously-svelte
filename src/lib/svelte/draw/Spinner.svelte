@@ -5,6 +5,7 @@
     export let strokeWidth = 2;
     export let stroke = 'black';
     export let number_of_dashes = 10;
+    export let title: string | null = null;
     const dash_width = Math.PI * (diameter - strokeWidth) / number_of_dashes / 2;
     let circle: SVGCircleElement;
 
@@ -40,6 +41,15 @@
             r={(diameter - strokeWidth) / 2}
             stroke-dasharray='{dash_width} {dash_width}'/>
     </svg>
+    {#if title}
+        <div class='spinner-title'
+            style='
+                left: 10px;
+                position: absolute;
+                width: {diameter}px;
+                top: {diameter/2 - 10}px;'>
+        {title}</div>
+    {/if}
 </div>
 
 <style>

@@ -1,4 +1,4 @@
-import { k, debug, colors, Ancestry, S_Element, T_Element, ux } from '../common/Global_Imports';
+import { k, grabs, colors, Ancestry, S_Element, T_Element, ux } from '../common/Global_Imports';
 import { w_background_color } from '../managers/Stores';
 import { get } from 'svelte/store';
 
@@ -28,10 +28,10 @@ export default class S_Widget extends S_Element {
 	get thing_color(): string { return this.ancestry.thing?.color ?? k.empty; }
 	get background(): string { return `background-color: ${this.background_color}`; }
 	get isFilled(): boolean { return this.ancestry.isGrabbed && !this.ancestry.isEditing; }
-	get shows_border(): boolean { return this.ancestry.isFocus || this.ancestry.isEditing || !this.isOut; }
+	get shows_border(): boolean { return this.ancestry.isFocus || this.ancestry.isGrabbed || this.ancestry.isEditing || !this.isOut; }
 	get background_color(): string { return this.isFilled ? this.thing_color : this.shows_border ? get(w_background_color) : 'transparent'; }
 	get color(): string { return this.colorFor_grabbed_andEditing(this.ancestry.isGrabbed, this.ancestry.isEditing); }
-
+	
 	constructor(ancestry: Ancestry) {
 		super(ancestry, T_Element.widget, k.empty);
 		this.s_drag = ux.s_element_for(ancestry, T_Element.drag, k.empty);

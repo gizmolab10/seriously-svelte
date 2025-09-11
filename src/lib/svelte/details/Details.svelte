@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, Point, layout, T_Layer, T_Details, T_Direction } from '../../ts/common/Global_Imports';
+	import { c, k, Point, layout, T_Layer, T_Details, T_Direction } from '../../ts/common/Global_Imports';
 	import { w_show_graph_ofType, w_ancestries_grabbed } from '../../ts/managers/Stores';
 	import { w_graph_rect, w_count_details } from '../../ts/managers/Stores';
 	import Banner_Hideable from '../mouse/Banner_Hideable.svelte';
@@ -46,24 +46,28 @@
 		<Banner_Hideable t_detail={T_Details.header}>
 			<D_Header/>
 		</Banner_Hideable>
-		<Banner_Hideable t_detail={T_Details.preferences}>
-			<D_Preferences/>
-		</Banner_Hideable>
+		{#if c.has_standalone_UI}
+			<Banner_Hideable t_detail={T_Details.preferences}>
+				<D_Preferences/>
+			</Banner_Hideable>
+		{/if}
 		<Banner_Hideable t_detail={T_Details.actions}>
 			<D_Actions/>
 		</Banner_Hideable>
-		<Banner_Hideable t_detail={T_Details.selection} extra_titles={extra_selection_titles}>
-			<D_Selection/>
-		</Banner_Hideable>
-		<Banner_Hideable t_detail={T_Details.tags} extra_titles={next_previous_titles}>
-			<D_Tags/>
-		</Banner_Hideable>
-		<Banner_Hideable t_detail={T_Details.traits} extra_titles={next_previous_titles}>
-			<D_Traits/>
-		</Banner_Hideable>
-		<Banner_Hideable t_detail={T_Details.data}>
-			<D_Data/>
-		</Banner_Hideable>
+		{#if c.has_standalone_UI}
+			<Banner_Hideable t_detail={T_Details.selection} extra_titles={extra_selection_titles}>
+				<D_Selection/>
+			</Banner_Hideable>
+			<Banner_Hideable t_detail={T_Details.tags} extra_titles={next_previous_titles}>
+				<D_Tags/>
+			</Banner_Hideable>
+			<Banner_Hideable t_detail={T_Details.traits} extra_titles={next_previous_titles}>
+				<D_Traits/>
+			</Banner_Hideable>
+			<Banner_Hideable t_detail={T_Details.data}>
+				<D_Data/>
+			</Banner_Hideable>
+		{/if}
 	</div>
 {/key}
 <Separator name='bottom-of-details'

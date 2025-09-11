@@ -9,6 +9,7 @@ export class Configuration {
 	has_details_button = true;
 	allow_GraphEditing = true;
 	allow_TitleEditing = true;
+	has_standalone_UI = true;
 	erasePreferences = 0;
 	allow_Search = true;
 	has_matte_UI = true;
@@ -44,6 +45,7 @@ export class Configuration {
         const disableOptions = queryStrings.get('disable')?.split(k.comma) ?? [];
 		for (const disableOption of disableOptions) {
 			switch (disableOption) {
+				case 'standalone_UI':		this.has_standalone_UI		   = false; break;
 				case 'details':				this.has_details_button		   = false; break;
 				case 'matte_UI':			this.has_matte_UI			   = false; break;	// deprecated
 				case 'editGraph':			this.allow_GraphEditing		   = false; break;

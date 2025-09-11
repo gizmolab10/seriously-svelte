@@ -19,20 +19,20 @@
 <div class='search-controls' style='left: {left}px; position: absolute;'>
 	<Segmented name='search-filter'
 		width={80}
-		selected={[$w_search_filter]}
+		origin={new Point(4, 1)}
 		height={ k.height.button}
-		origin={new Point(22, 1)}
-		titles={[T_Search_Filter.title, T_Search_Filter.trait, T_Search_Filter.tags]}
+		selected={[$w_search_filter]}
+		titles={[T_Search_Filter.title, T_Search_Filter.trait]}
 		handle_selection={(titles) => ux.handle_choiceOf_t_graph('filter', titles)}/>
 	<input class='search-input'
 		id='search'
+		type='text'
 		autocomplete='off'
 		bind:value={$w_search_text}
 		placeholder={'enter ' + $w_search_filter + ' text'}
-		type='text'
 		style='
 			top: 1px;
-			left: 124px;
+			left: 88px;
 			color: blue;
 			font-size: 12px;
 			width: {width}px;

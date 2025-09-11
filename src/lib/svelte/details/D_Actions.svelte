@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { T_Layer, T_Details, T_Action, T_Element, T_Kinship, T_Request, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
-	import { e, h, k, u, ux, show, Size, Point, grabs, colors, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
+	import { c, e, h, k, u, ux, show, Size, Point, grabs, colors, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
 	import { w_depth_limit, w_user_graph_offset, w_show_graph_ofType, w_search_result_row } from '../../ts/managers/Stores';
 	import { w_s_alteration, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/managers/Stores';
 	import { w_background_color } from '../../ts/managers/Stores';
@@ -225,15 +225,21 @@
 					thickness={k.thickness.separator.details}
 					origin={new Point(left_afterTitle, top_tableHeight - 10)}/>
 				<Separator name='bottom-of-actions'
-					isHorizontal={true}
 					has_thin_divider={true}
-					length={k.width.details - 1}
 					margin={k.details_margin}
 					title='edit your hierarchy'
+					length={k.width.details - 1}
 					title_left={k.separator_title_left}
 					origin={new Point(0.5, top_tableHeight - 10)}
 					thickness={k.thickness.separator.details}/>
 			{/if}
 		</div>
+	{/if}
+	{#if !c.has_standalone_UI}
+		<Separator name='bottom-of-actions'
+			position='relative'
+			length={k.width.details + 1.5}
+			thickness={k.thickness.separator.main}
+			corner_radius={k.radius.gull_wings.thick}/>
 	{/if}
 {/key}

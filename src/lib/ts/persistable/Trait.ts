@@ -12,7 +12,6 @@ export default class Trait extends Persistable {
 		this.ownerID = ownerID;
 		this.t_trait = t_trait;
 		this.text = text;
-		this.glob = glob;
 	}
 
 	get owner():	   Thing | null { return h.thing_forHID(this.ownerID.hash()); }

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, e, h, k, u, ux, show, Rect, Size, Point, Thing, search, layout } from '../../ts/common/Global_Imports';
+	import { c, e, h, k, u, ux, show, busy, Rect, Size, Point, Thing, search, layout } from '../../ts/common/Global_Imports';
 	import { debug, colors, Ancestry, Hierarchy, databases, Direction } from '../../ts/common/Global_Imports';
 	import { w_hierarchy, w_graph_rect, w_t_database, w_background_color } from '../../ts/managers/Stores';
 	import { T_Layer, T_Search, T_Banner, T_Control, T_Startup } from '../../ts/common/Global_Imports';
@@ -11,23 +11,39 @@
 	import Controls from '../controls/Controls.svelte';
 	import Separator from '../mouse/Separator.svelte';
 	import Details from '../details/Details.svelte';
+	import Spinner from '../draw/Spinner.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	import Graph from '../graph/Graph.svelte';
 	import Box from '../mouse/Box.svelte';
 	import Import from './Import.svelte';
 	import { onMount } from 'svelte';
+	const spinner_title = 'Loading your data...';
 	const offset_toIntersection = new Point(-4, 8);
     const half_thickness: number = k.thickness.separator.main / 2;
+	let spinner_rect = Rect.zero;
 	let reattachments = 0;
+	let spinnerAngle = 0;
 
+	setup_spinner_rect();
 	function ignore_wheel(event) { event.preventDefault(); }
+	function handle_spinner_angle(event) { spinnerAngle = event.detail.angle; }
 
 	$: {
 		const _ = `${$w_t_database}:::${$w_t_startup}:::${$w_graph_rect.description}`;
+		setup_spinner_rect();
 		if (!!h && h.isAssembled) {
 			debug.log_draw(`PANEL`);
 			reattachments += 1;
 		}
+	}
+
+	function setup_spinner_rect() {
+		const size = $w_graph_rect.size
+		const title_width = u.getWidthOf(spinner_title) + 30;
+		const diameter = Math.min(size.height, size.width) / 4;
+		const square = Size.square(Math.max(diameter, title_width));
+		const center = size.asPoint.dividedInHalf;
+		spinner_rect = Rect.createCenterRect(center, square);
 	}
 
 </script>
@@ -60,9 +76,28 @@
 					left: {$w_graph_rect.origin.x}px;
 					width: {$w_graph_rect.size.width}px;
 					height: {$w_graph_rect.size.height}px;'>
-				{#if $w_show_results}
+				{#if busy.isDatabaseBusy && h.db.isPersistent}
+					{#key spinner_rect.description}
+						<div class='data-spinner'
+							style='
+								opacity: 0.5;
+								position: absolute;
+								top: {spinner_rect.origin.y}px;
+								left: {spinner_rect.origin.x}px;'>
+							<Spinner
+								speed='3s'
+								strokeWidth={6}
+								angle={spinnerAngle}
+								title={spinner_title}
+								number_of_dashes={19}
+								stroke={colors.separator}
+								on:angle={handle_spinner_angle}
+								diameter={spinner_rect.size.width}/>
+						</div>
+					{/key}
+				{:else if $w_show_results}
 					<Search_Results/>
-				{:else}
+				{:else }
 					<Graph/>
 				{/if}
 			</div>

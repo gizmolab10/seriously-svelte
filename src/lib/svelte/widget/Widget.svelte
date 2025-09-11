@@ -128,18 +128,7 @@
 			border : ${s_widget.border};
 			width : ${width_ofWidget}px;
 			z-index : ${T_Layer.widgets};
-			border-radius : ${border_radius}px;
-		`;
-		
-		if (s_component?.isComponentLog_enabled) {
-			debug.log_style('Setting widget_style for:', ancestry?.title, 'to:', widget_style);
-		}
-
-		// s_component?.log_connection_state('After setting style');
-		// setTimeout(() => { s_component?.log_connection_state('After 2 ticks'); }, 2);
-		// setTimeout(() => { s_component?.log_connection_state('After 4 ticks'); }, 4);
-		// setTimeout(() => { s_component?.log_connection_state('After 100 ticks'); }, 100);
-		// requestAnimationFrame(() => { s_component?.log_connection_state('RAF'); });
+			border-radius : ${border_radius}px;`;
 	}
 
 	async function handle_click_event(event) {

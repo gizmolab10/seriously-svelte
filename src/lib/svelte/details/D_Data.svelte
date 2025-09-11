@@ -12,7 +12,6 @@
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../mouse/Separator.svelte';
 	import Button from '../buttons/Button.svelte';
-	import Spinner from '../draw/Spinner.svelte';
     const font_sizes = [k.font_size.instructions, k.font_size.banners];
 	const ids_forDirection = [T_File_Operation.import, T_File_Operation.export];
 	const s_save = ux.s_element_for(new Identifiable('save'), T_Element.button, 'save');
@@ -26,14 +25,12 @@
 	let width = k.width.details - 7;
 	let show_save_button = false;
 	let reattachments = 0;
-	let spinnerAngle = 0;
 	let title = k.empty;
 
 	setup_s_elements();
 	$: tops = u.cumulativeSum(heights);
 	s_save.set_forHovering('black', 'pointer');
 	function height_ofChoices() { return p.show_other_databases ? 22 : -4; }
-	function handle_spinner_angle(event) { spinnerAngle = event.detail.angle; }
 
 	$:{
 		const _ = `${$w_data_updated}:::${$w_t_database}`;
@@ -165,23 +162,7 @@
 			array={storage_details}
 			font_size={k.font_size.banners}/>
 		{#key $w_data_updated}
-			{#if busy.isDatabaseBusy && h.db.isPersistent}
-				<div class='data-spinner'
-					style='
-						left: 120px;
-						opacity: 0.5;
-						top: {tops[2]}px;
-						position: absolute;'>
-					<Spinner
-						speed='3s'
-						diameter={72}
-						strokeWidth={8}
-						angle={spinnerAngle}
-						number_of_dashes={9}
-						stroke={colors.separator}
-						on:angle={handle_spinner_angle}/>
-				</div>
-			{:else if show_save_button}
+			{#if show_save_button && !busy.isDatabaseBusy}
 				<Button name='save'
 					width=72
 					s_button={s_save}
