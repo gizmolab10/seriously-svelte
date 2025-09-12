@@ -1,8 +1,8 @@
-import { c, h, k, u, busy, Thing, Trait, Relationship } from '../common/Global_Imports';
-import { T_Debug, T_Create, T_Persistence } from '../common/Global_Imports';
+import { c, h, k, u, busy, Thing, Trait, Relationship } from '../../../src/lib/ts/common/Global_Imports';
+import { T_Debug, T_Create, T_Persistence } from '../../../src/lib/ts/common/Global_Imports';
 import { DgraphClient, DgraphClientStub } from 'dgraph-js';
-import { T_Database } from './DB_Common';
-import DB_Common from './DB_Common';
+import { T_Database } from '../../../src/lib/ts/database/DB_Common';
+import DB_Common from '../../../src/lib/ts/database/DB_Common';
 
 export default class DB_DGraph extends DB_Common {
     private client: DgraphClient;
@@ -69,6 +69,7 @@ export default class DB_DGraph extends DB_Common {
                     thing.title,
                     thing.color,
                     thing.t_thing ?? thing.traits,
+                    k.empty,
                     true,
                     !thing.t_thing
                 );
@@ -167,7 +168,7 @@ export default class DB_DGraph extends DB_Common {
                     trait.ownerID[0],
                     trait.t_trait,
                     trait.text,
-                    {},
+                    k.empty,
                     true
                 );
             }

@@ -202,8 +202,10 @@ function(instance, properties) {
 		instance.data.attempts = instance.data.attempts || {};
 
 		send({
+			inRadialMode: properties['show_radial_mode'],
 			things: extract_LIST_data('objects_table'),
 			root: extract_ITEM_data('starting_object'),
+			focus: extract_ITEM_data('focus_object'),
 		}, null, 0);
 
 	} catch (error) {

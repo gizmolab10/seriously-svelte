@@ -76,7 +76,7 @@
 					left: {$w_graph_rect.origin.x}px;
 					width: {$w_graph_rect.size.width}px;
 					height: {$w_graph_rect.size.height}px;'>
-				{#if busy.isDatabaseBusy && h.db.isPersistent}
+				{#if busy.isDatabaseBusy && h.db.isRemote}
 					{#key spinner_rect.description}
 						<div class='data-spinner'
 							style='

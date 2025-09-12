@@ -1160,13 +1160,13 @@ export class Hierarchy {
 		return this.trait_forHID(id?.hash()) ?? this.trait_remember_runtimeCreate(idBase, id, ownerID, t_trait, text, glob, already_persisted);
 	}
 
+	trait_extract_fromDict(dict: Dictionary) {
+		this.trait_remember_runtimeCreateUnique(this.db.idBase, dict.id, dict.ownerID, dict.t_trait, dict.text, dict.dict);
+	}
+
 	trait_forType_ownerHID(t_trait: T_Trait | null, ownerHID: Integer | null): Trait| null {
 		const traits = this.traits_forOwnerHID(ownerHID)?.filter(t => t.t_trait == t_trait);
 		return !traits ? null : traits[0]
-	}
-
-	trait_extract_fromDict(dict: Dictionary) {
-		this.trait_remember_runtimeCreateUnique(this.db.idBase, dict.id, dict.ownerID, dict.t_trait, dict.text, dict.dict);
 	}
 
 	trait_forget(trait: Trait) {

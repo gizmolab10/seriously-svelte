@@ -1,49 +1,18 @@
-import { T_Thing, T_Create, T_Predicate, T_Persistence, T_Startup } from '../common/Global_Imports';
-import { w_t_startup, w_ancestry_focus, w_ancestries_grabbed } from '../managers/Stores';
+import { T_Thing, T_Graph, T_Create, T_Predicate, T_Persistence } from '../common/Global_Imports';
+import { w_ancestry_focus, w_ancestries_grabbed, w_show_graph_ofType } from '../managers/Stores';
 import { e, h, k, debug, Ancestry } from '../common/Global_Imports';
 import { T_Database } from './DB_Common';
 import DB_Common from './DB_Common';
 
 export default class DB_Bubble extends DB_Common {
-	t_persistence = T_Persistence.none;
+	t_persistence = T_Persistence.remote;
 	t_database = T_Database.bubble;
 	idBase = k.empty;
 
 	async fetch_all() {
 		e.update_event_listener('message', this.handle_bubble_message);		// first prepare listener
 		window.parent.postMessage({ type: 'listening' }, k.wildcard);		// tell bubble that we're listening
-		this.setup_subscriptions();
 		return false;
-	}
-
-	setup_subscriptions() {
-		setTimeout(() => {
-			let unsubscribe: () => void;  // trick compiler into tolerating unsubscribe inside its own closure
-			unsubscribe = w_t_startup.subscribe((t_startup: T_Startup) => {
-				if (t_startup === T_Startup.ready) {
-		
-					//////////////////////////////////////////////////////////////////
-					//																//
-					//	SEND these message types to initialize.js in bubble PLUGIN	//
-					//																//
-					//////////////////////////////////////////////////////////////////
-		
-					w_ancestry_focus.subscribe((ancestry: Ancestry) => {
-						if (!!ancestry && !!ancestry.thing) {
-							window.parent.postMessage({ type: 'focus_id', id: ancestry.thing.id }, k.wildcard);
-							window.parent.postMessage({ type: 'trigger_an_event', trigger: 'focus_changed' }, k.wildcard);			// must be last
-						}
-					});
-					w_ancestries_grabbed.subscribe((ancestries: Ancestry[]) => {
-						if (!!ancestries) {
-							window.parent.postMessage({ type: 'selected_ids', ids: ancestries.map((ancestry: Ancestry) => ancestry.thing?.id ?? k.corrupted) }, k.wildcard);
-							window.parent.postMessage({ type: 'trigger_an_event', trigger: 'selection_changed' }, k.wildcard);			// must be last
-						}
-					});
-					unsubscribe();
-				}
-			});
-		}, 100);
 	}
 
 	private handle_bubble_message = (e: Event) => {
@@ -71,11 +40,12 @@ export default class DB_Bubble extends DB_Common {
 		if (!event.data.properties) {
 			h.wrapUp_data_forUX();
 		} else {
-			let b_root, b_tags, b_things, b_traits, b_focus, b_grabs, b_predicates, b_relationships;
+			let b_root, b_tags, b_things, b_traits, b_focus, b_grabs, b_predicates, b_relationships, b_inRadialMode;
 			try {
 				const properties = JSON.parse(event.data.properties);
 				debug.log_bubble(`[DB_Bubble] received bubble update: ${properties}`);
 				b_relationships = properties.relationships;
+				b_inRadialMode = properties.inRadialMode;
 				b_predicates = properties.predicates;
 				b_things = properties.things;
 				b_traits = properties.traits;
@@ -118,8 +88,9 @@ export default class DB_Bubble extends DB_Common {
 				}
 			}
 
+			w_show_graph_ofType.set(b_inRadialMode ? T_Graph.radial : T_Graph.tree);
 			h.wrapUp_data_forUX();			// create ancestries and tidy up
-			
+
 			if (!!b_focus?.id) {			// must happen AFTER ancestries are created
 				const focus = h.thing_forHID(b_focus.id.hash());
 				if (!!focus?.ancestry) {
@@ -134,6 +105,26 @@ export default class DB_Bubble extends DB_Common {
 					}
 				}
 			}
+
+			//////////////////////////////////////////////////////////////////
+			//																//
+			//	SEND these message types to initialize.js in bubble PLUGIN	//
+			//																//
+			//////////////////////////////////////////////////////////////////
+		
+			window.parent.postMessage({ type: 'trigger_an_event', trigger: 'ready' }, k.wildcard);
+			w_ancestry_focus.subscribe((ancestry: Ancestry) => {
+				if (!!ancestry && !!ancestry.thing) {
+					window.parent.postMessage({ type: 'focus_id', id: ancestry.thing.id }, k.wildcard);
+					window.parent.postMessage({ type: 'trigger_an_event', trigger: 'focus_changed' }, k.wildcard);			// not before focus id
+				}
+			});
+			w_ancestries_grabbed.subscribe((ancestries: Ancestry[]) => {
+				if (!!ancestries) {
+					window.parent.postMessage({ type: 'selected_ids', ids: ancestries.map((ancestry: Ancestry) => ancestry.thing?.id ?? k.corrupted) }, k.wildcard);
+					window.parent.postMessage({ type: 'trigger_an_event', trigger: 'selection_changed' }, k.wildcard);			// not before selected ids
+				}
+			});
 		}
 	}
 
