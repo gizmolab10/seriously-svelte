@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { w_search_text, w_search_state, w_background_color } from '../../ts/managers/Stores';
 	import { w_results_changed, w_search_result_row } from '../../ts/managers/Stores';
-	import { Thing,colors, T_Search } from '../../ts/common/Global_Imports';
+	import { u, Thing,colors, T_Search } from '../../ts/common/Global_Imports';
 	import { search } from '../../ts/managers/Search';
 	let element: HTMLDivElement;
 	let results: Thing[] = [];
@@ -13,14 +13,14 @@
 
 	function handle_key_down(event: KeyboardEvent) {
 		switch (event.key.toLowerCase()) {
-			case 'f':			event.preventDefault(); $w_search_state = T_Search.enter; break;
-			case 'arrowup':		event.preventDefault(); next_row(false); break;
-			case 'arrowdown':	event.preventDefault(); next_row(true); break;
+			case 'f':			u.isolateEvent(event); $w_search_state = T_Search.enter; break;
+			case 'arrowup':		u.isolateEvent(event); next_row(false); break;
+			case 'arrowdown':	u.isolateEvent(event); next_row(true); break;
 		}
 	}
 
 	function handle_row_selected(event: MouseEvent, index: number) {
-		event.preventDefault();
+		u.isolateEvent(event);
 		select_row(index);
 	}
 

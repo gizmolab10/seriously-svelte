@@ -132,7 +132,7 @@
 	}
 
 	async function handle_click_event(event) {
-		event.preventDefault();
+		u.isolateEvent(event);
 		ancestry?.grab_forShift(event.shiftKey);
 	}
 

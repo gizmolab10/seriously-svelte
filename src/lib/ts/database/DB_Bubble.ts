@@ -1,6 +1,6 @@
 import { T_Thing, T_Graph, T_Create, T_Predicate, T_Persistence } from '../common/Global_Imports';
 import { w_ancestry_focus, w_ancestries_grabbed, w_show_graph_ofType } from '../managers/Stores';
-import { e, h, k, debug, Ancestry } from '../common/Global_Imports';
+import { e, h, k, busy, debug, Ancestry } from '../common/Global_Imports';
 import { T_Database } from './DB_Common';
 import DB_Common from './DB_Common';
 
@@ -10,8 +10,10 @@ export default class DB_Bubble extends DB_Common {
 	idBase = k.empty;
 
 	async fetch_all() {
-		e.update_event_listener('message', this.handle_bubble_message);		// first prepare listener
-		window.parent.postMessage({ type: 'listening' }, k.wildcard);		// tell bubble that we're listening
+		await busy.temporarily_set_isFetching_while(async () => {
+			e.update_event_listener('message', this.handle_bubble_message);		// first prepare listener
+			window.parent.postMessage({ type: 'listening' }, k.wildcard);		// tell bubble that we're listening
+		});
 		return false;
 	}
 

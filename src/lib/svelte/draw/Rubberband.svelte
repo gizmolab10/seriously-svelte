@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import { h, k, Rect, Size, Point, debug, colors, layout, components } from '../../ts/common/Global_Imports';
+    import { h, k, u, Rect, Size, Point, debug, colors, layout, components } from '../../ts/common/Global_Imports';
     import { T_Layer, T_Dragging, T_Component } from '../../ts/common/Global_Imports';
     import { w_dragging_active, w_ancestries_grabbed } from '../../ts/managers/Stores';
     import { w_scaled_movement, w_user_graph_offset } from '../../ts/managers/Stores';
@@ -100,8 +100,7 @@
                 !target.closest('.rubberband') && 
                 !target.closest('.draggable') && 
                 !target.closest('.tree-preferences')) {
-                e.stopPropagation();
-                e.preventDefault();
+                u.isolateEvent(e);
             }
         }
     }

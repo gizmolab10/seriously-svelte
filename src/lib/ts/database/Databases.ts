@@ -25,8 +25,9 @@ export default class Databases {
 		if (!!type) {
 			this.db_now = this.db_forType(type);
 		} else {
-			type = p.read_key(T_Preference.db) ?? 'firebase';
-			if (type == 'file') { type = 'local'; }
+			type = p.read_key(T_Preference.db) ?? T_Database.firebase;
+			if (type == 'firebase') { type = T_Database.firebase; }
+			if (type == 'file') { type = T_Database.local; }
 		}
 		w_t_database.set(type!);
 	}
@@ -39,23 +40,26 @@ export default class Databases {
 				done = true;
 				setTimeout( async () => {	// wait for hierarchy to be created
 					await this.grand_change_database(type);
-				}, 0);
+				}, 10);
 			}
 		});
 	}
 
 	async grand_change_database(type: string) {
-		this.db_now = this.db_forType(type);
-		let h = this.db_now.hierarchy;
-		if (!h) {
-			h = new Hierarchy(this.db_now);
-			this.db_now.hierarchy = h;
+		const db = this.db_forType(type);
+		if (!!db) {
+			this.db_now = db;
+			let h = db.hierarchy;
+			if (!h) {
+				h = new Hierarchy(db);
+				db.hierarchy = h;
+			}
+			p.write_key(T_Preference.db, type);
+			w_hierarchy.set(h);
+			w_t_database.set(type);
+			await db.hierarchy_setup_fetch_andBuild();
+			busy.signal_data_redraw();
 		}
-		p.write_key(T_Preference.db, type);
-		w_hierarchy.set(h);
-		w_t_database.set(type);
-		await this.db_now.hierarchy_setup_fetch_andBuild();
-		busy.signal_data_redraw();
 	}
 
 	db_change_toNext(forward: boolean) { w_t_database.set(this.db_next_get(forward)); }

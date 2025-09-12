@@ -15,6 +15,7 @@ export class Testworthy_Utilities {
 	onNextTick(closure: () => void)					{ setTimeout(() => { closure(); }, 0); }
 	quadrant_ofAngle(angle: number):	 T_Quadrant { return new Angle(angle).quadrant_ofAngle; }
 	location_ofMouseEvent(event: MouseEvent): Point { return new Point(event.clientX, event.clientY); }
+	isolateEvent(event: Event)						{ event.preventDefault(); event.stopPropagation(); }
 
 	get device_isMobile(): boolean {
 		const md = new MobileDetect(window.navigator.userAgent);

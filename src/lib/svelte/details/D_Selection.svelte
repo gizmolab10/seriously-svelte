@@ -78,7 +78,7 @@
 			relationships = [
 				['progeny', ancestry.progeny_count().supressZero()],
 				['depth', ancestry.depth.supressZero()],
-				['order', ancestry.order],
+				['order', ancestry.order.supressNegative()],
 			];
 			layout_forColor();
 		}

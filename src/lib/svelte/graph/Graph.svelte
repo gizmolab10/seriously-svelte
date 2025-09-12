@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { e, h, k, ux, Rect, Point, debug, layout, signals, colors, S_Component } from '../../ts/common/Global_Imports';
+	import { e, h, k, u, ux, Rect, Point, debug, layout, signals, colors, S_Component } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_show_graph_ofType, w_user_graph_offset, w_depth_limit } from '../../ts/managers/Stores';
 	import { T_Layer, T_Graph, T_Signal, T_Startup, T_Control, T_Component } from '../../ts/common/Global_Imports';
 	import { w_ancestry_focus, w_ancestries_expanded, w_s_title_edit } from '../../ts/managers/Stores';
@@ -67,8 +67,7 @@
 		const target = event.target as HTMLElement;
 		if (!target.closest('button, input, .widget, .mouse-responder')) {
 			rubberbandComponent.handleMouseDown(event);
-			event.preventDefault();
-			event.stopPropagation();
+			u.isolateEvent(event);
 		}
 	}
 		

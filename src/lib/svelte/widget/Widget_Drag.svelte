@@ -42,7 +42,7 @@
 
 	onMount(() => { return () => s_component.disconnect(); });
 
-	function handle_context_menu(event) { event.preventDefault(); }		// no default context menu on right-click
+	function handle_context_menu(event) { u.isolateEvent(event); }		// no default context menu on right-click
 	function handle_s_mouse(s_mouse: S_Mouse): boolean { return false; }
 
 	$: {

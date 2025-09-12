@@ -47,7 +47,7 @@
 		update_colors();
 	}
 	
-	function handle_context_menu(event) { event.preventDefault(); } 		// Prevent the default context menu on right
+	function handle_context_menu(event) { u.isolateEvent(event); } 		// Prevent the default context menu on right
 
 	function update_colors() {
 		s_reveal.set_forHovering(color, 'pointer');

@@ -126,8 +126,7 @@ export class Events {
 	}
 
 	private handle_wheel(event: Event) {
-		event.preventDefault();
-		event.stopPropagation();
+		u.isolateEvent(event);
 		if (!u.device_isMobile) {
 			const e = event as WheelEvent;
 			const userOffset = get(w_user_graph_offset);
@@ -141,8 +140,7 @@ export class Events {
 
 	private handle_touch_move(event: TouchEvent) {
 		if (event.touches.length == 2) {
-			event.preventDefault();
-			event.stopPropagation();
+			u.isolateEvent(event);
 			if (this.initialTouch) {
 				const touch = event.touches[0];
 				const deltaX = touch.clientX - this.initialTouch.x;
@@ -212,6 +210,7 @@ export class Events {
 
 	async handle_key_down(e: Event) {
 		const event = e as KeyboardEvent;
+		u.isolateEvent(event);
 		const isEditing = get(w_s_title_edit)?.isActive ?? false;
 		if (!!event && event.type == 'keydown' && !isEditing) {
 			const OPTION = event.altKey;
@@ -251,8 +250,8 @@ export class Events {
 						if (!!ancestry) {
 							switch (key) {
 								case '/':			graph_needsRebuild = ancestry.becomeFocus(); break;
-								case 'arrowright':	event.preventDefault(); await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, SHIFT, OPTION, EXTREME, false); break;
-								case 'arrowleft':	event.preventDefault(); await h.ancestry_rebuild_persistentMoveRight(ancestry, false, SHIFT, OPTION, EXTREME, false); break;
+								case 'arrowright':	u.isolateEvent(event); await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, SHIFT, OPTION, EXTREME, false); break;
+								case 'arrowleft':	u.isolateEvent(event); await h.ancestry_rebuild_persistentMoveRight(ancestry, false, SHIFT, OPTION, EXTREME, false); break;
 							}
 						}
 						switch (key) {

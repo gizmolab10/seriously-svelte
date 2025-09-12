@@ -184,6 +184,7 @@ declare global {
 		asDegrees(): string;
 		roundToEven(): number;
 		supressZero(): string;
+		supressNegative(): string;
 		angle_normalized(): number;
 		toFixed(precision: number): string;
 		angle_normalized_aroundZero(): number;
@@ -351,9 +352,18 @@ Object.defineProperty(Number.prototype, 'isClocklyAlmost', {
 	configurable: false
 });
 
+Object.defineProperty(Number.prototype, 'supressNegative', {
+	value: function(): string | number {
+		return this < 0 ? '' : this;
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
+});
+
 Object.defineProperty(Number.prototype, 'supressZero', {
 	value: function(): string | number {
-		return this == 0 ? '' : this;
+		return this == 0 ? '-' : this;
 	},
 	writable: false,
 	enumerable: false,

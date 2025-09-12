@@ -30,7 +30,7 @@
 	});
 
 	function startDrag(event: MouseEvent) {
-		event.preventDefault();
+		u.isolateEvent(event);
 		offsetX = event.clientX;
 		offsetY = event.clientY;
 		dragging = true;
