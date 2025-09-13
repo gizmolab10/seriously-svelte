@@ -47,9 +47,10 @@ class Search {
 				w_t_startup.subscribe((startup) => {
 					if (startup == T_Startup.ready) {
 						this.buildIndex(h.things);
+						w_results_changed.set(Date.now());
 						w_search_state.subscribe((state) => {
 							const text = this.search_text;
-							if (this.isActive_state && !!text) {
+							if (state !== T_Search.off && !!text) {
 								this.search_for(text.toLowerCase());
 							}
 						});
@@ -72,6 +73,7 @@ class Search {
 	private get results_fingerprint(): string { return !this.results ? k.empty : this.results.map(result => result.id).join('|'); }
 
 	private buildIndex(things: Thing[]) {
+		this.root_node = new Search_Node();
 		for (const thing of things) {
 			const title = thing.title.toLowerCase();
 			const words = title.split(' ');

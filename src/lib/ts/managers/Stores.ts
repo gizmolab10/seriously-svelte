@@ -55,12 +55,12 @@ export const w_data_updated				= writable<number>();
 
 const _____SEARCH: unique symbol = Symbol('SEARCH');
 
-export const w_results_changed			= writable<number>();			// used to re-render the search results
+export const w_results_changed			= writable<number>();			// re-render the search results
 export const w_search_isActive			= writable<boolean>();			// show / hide search controls
 export const w_show_results				= writable<boolean>();			// show / hide search results, manage key inputs
-export const w_search_state				= writable<T_Search>();			// observed by panel, controls, and search_results
-export const w_search_result_row		= writable<number | null>();	// used to select a row in the search results
-export const w_search_filter			= writable<T_Search_Filter>();	// observed by search_results
+export const w_search_state				= writable<T_Search>();			// observed by search_results, controls, and panel
+export const w_search_result_row		= writable<number | null>();	// affects appearance of search_results, [three] details and breadcrumbs
+export const w_search_filter			= writable<T_Search_Filter>();	// TBD
 
 const _____COUNTS: unique symbol = Symbol('COUNTS');
 

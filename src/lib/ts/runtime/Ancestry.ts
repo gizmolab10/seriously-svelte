@@ -1,9 +1,10 @@
-import { c, h, k, p, u, ux, show, Rect, Size, Point, grabs, debug, components, svgPaths } from '../common/Global_Imports';
+import { Rect, Size, Point, Thing, Direction, Predicate, databases, Relationship } from '../common/Global_Imports';
 import { T_Graph, T_Create, T_Kinship, T_Predicate, T_Alteration, T_Component } from '../common/Global_Imports';
-import { Thing, Direction, Predicate, databases, Relationship, S_Component } from '../common/Global_Imports';
-import { G_Widget, G_Paging, G_Cluster, G_TreeLine, S_Title_Edit } from '../common/Global_Imports';
+import { c, h, k, p, u, ux, show, grabs, debug, search, svgPaths, components } from '../common/Global_Imports';
 import { w_ancestry_focus, w_ancestries_grabbed, w_ancestries_expanded, } from '../managers/Stores';
 import { w_t_database, w_depth_limit, w_s_title_edit, w_s_alteration } from '../managers/Stores';
+import { G_Widget, G_Paging, G_Cluster, G_TreeLine } from '../common/Global_Imports';
+import { S_Component, S_Title_Edit } from '../common/Global_Imports';
 import type { Dictionary, Integer } from '../types/Types';
 import { w_show_graph_ofType } from '../managers/Stores';
 import { T_Database } from '../database/DB_Common';
@@ -516,7 +517,11 @@ export default class Ancestry extends Identifiable {
 	grab() { grabs.grab(this); }
 	ungrab() { grabs.ungrab(this); }
 	grabOnly() { grabs.grabOnly(this); }
-	get isGrabbed(): boolean { return this.includedInStore_ofAncestries(w_ancestries_grabbed); }
+
+	get isGrabbed(): boolean {
+		return this.includedInStore_ofAncestries(w_ancestries_grabbed)
+			|| (search.result_ancestry?.equals(this) ?? false);		// so details can show the user-selected search result
+	}
 
 	toggleGrab() {
 		if (this.isGrabbed) {

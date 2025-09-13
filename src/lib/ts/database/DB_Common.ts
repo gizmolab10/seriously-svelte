@@ -142,14 +142,13 @@ export default class DB_Common {
 		if (!h) {
 			w_hierarchy.set(new Hierarchy(this));
 		}
-		if (h.hasRoot) {
+		w_t_startup.set(T_Startup.fetch);
+		if (!h.hasRoot) {
+			await this.hierarchy_create_fastLoad_or_fetch_andBuild();
+		} else {
 			h.ancestries_assureAll_createUnique();
 			h.restore_fromPreferences();
-		} else {
-			if (get(w_t_startup) != T_Startup.ready) {		// WHY????
-				w_t_startup.set(T_Startup.fetch);
-			}
-			await this.hierarchy_create_fastLoad_or_fetch_andBuild();
+			w_t_startup.set(T_Startup.ready);		// so search will refresh its index
 		}
 	}
 	

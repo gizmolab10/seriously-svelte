@@ -57,7 +57,7 @@
 		}
 	}
 
-	function handle_toggle_databases(event: Event) {
+	function handle_show_other_databases(event: Event) {
 		p.show_other_databases = !p.show_other_databases;
 		heights[1] = height_ofChoices();
 		heights = [...heights];
@@ -138,7 +138,7 @@
 		origin={new Point(1, 30)}
 		zindex={T_Layer.frontmost + 1}
 		length={k.width.details - 2.5}
-		handle_click={handle_toggle_databases}
+		handle_click={handle_show_other_databases}
 		thickness={k.thickness.separator.details}
 		title='{p.show_other_databases ? 'hide other databases' : 'show other databases'}'/>
 	{#if p.show_other_databases}
