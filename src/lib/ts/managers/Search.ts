@@ -1,40 +1,47 @@
 import { w_show_results, w_search_result_row, w_results_changed } from './Stores';
 import { T_Preference, T_Search, T_Startup } from "../common/Global_Imports";
-import { w_search_state, w_search_text, w_search_isActive } from './Stores';
 import { c, k, h, p, Thing, Ancestry } from "../common/Global_Imports";
+import { w_search_state, w_search_isActive } from './Stores';
 import { Search_Node } from '../types/Search_Node';
 import { w_t_startup } from './Stores';
 import { get } from 'svelte/store';
 
 class Search {
 	private root_node: Search_Node = new Search_Node();
+	search_text: string | null = null;
 	results: Array<Thing> = [];
+
+	search_for(query: string) {
+		const before = this.results_fingerprint;
+		if (query.length > 0) {
+			this.results = this.root_node.search_for(query);
+			const show_results = this.results.length > 0;
+			w_show_results.set(show_results);
+			w_search_state.set(show_results ? T_Search.results : T_Search.enter);
+		} else {
+			this.results = [];
+			w_show_results.set(false);
+			w_search_state.set(T_Search.enter);
+		}
+		if (before !== this.results_fingerprint) {	// only if results are different
+			w_search_result_row.set(null);
+			w_results_changed.set(Date.now());
+		}
+		w_search_isActive.set(this.isActive_state);
+	}
 
 	constructor() {
 		setTimeout(() => {
 			if (c.allow_Search) {
-				w_search_text.set(p.read_key(T_Preference.search_text));
+				this.search_text = p.read_key(T_Preference.search_text);
 				w_t_startup.subscribe((startup) => {
 					if (startup == T_Startup.ready) {
 						this.buildIndex(h.things);
 						w_search_state.subscribe((state) => {
-							const text = get(w_search_text);
-							if (this.isActive && !!text) {
+							const text = this.search_text;
+							if (this.isActive_state && !!text) {
 								this.search_for(text.toLowerCase());
 							}
-							w_search_isActive.set(this.isActive);
-						});
-						w_search_text.subscribe((text) => {
-							// state machine
-							// launch => ignore this
-							// click search button => enter
-							if (!!text) {
-								p.write_key(T_Preference.search_text, text);
-							}
-							if (this.isActive) {
-								this.search_for(text.toLowerCase());
-							}
-							w_search_isActive.set(this.isActive);
 						});
 					}
 				});
@@ -42,7 +49,7 @@ class Search {
 		}, 1);
 	}
 
-	activate() { w_search_state.set(T_Search.enter); }
+	activate() { w_search_state.set(T_Search.enter); w_search_isActive.set(true); }
 
 	deactivate() {
 		w_show_results.set(false);
@@ -56,29 +63,12 @@ class Search {
 		const thing = this.results[row];
 		return thing?.ancestry ?? null;
 	}
-
+	
 	static readonly _____PRIVATE: unique symbol;
 
-	private get isActive(): boolean { return [T_Search.enter, T_Search.results].includes(get(w_search_state)); }
+	private get isActive_state(): boolean { return [T_Search.enter, T_Search.results].includes(get(w_search_state)); }
 	private get results_fingerprint(): string { return !this.results ? k.empty : this.results.map(result => result.id).join('|'); }
 
-	private search_for(query: string) {
-		const before = this.results_fingerprint;
-		if (query.length > 0) {
-			this.results = this.root_node.search_for(query);
-			w_show_results.set(this.results.length > 0);
-			w_results_changed.set(Date.now());
-			w_search_state.set(T_Search.results);
-		} else {
-			this.results = [];
-			w_show_results.set(false);
-			w_search_state.set(T_Search.enter);
-		}
-		if (before !== this.results_fingerprint) {	// only if results are different
-			w_search_result_row.set(null);
-		}
-	}
-	
 	private buildIndex(things: Thing[]) {
 		for (const thing of things) {
 			const title = thing.title.toLowerCase();

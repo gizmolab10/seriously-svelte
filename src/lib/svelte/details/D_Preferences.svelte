@@ -5,7 +5,7 @@
 	import { w_background_color, w_auto_adjust_graph } from '../../ts/managers/Stores';
 	import { w_show_countDots_ofType } from '../../ts/managers/Stores';
 	import Segmented from '../mouse/Segmented.svelte';
-	import Separator from '../mouse/Separator.svelte';
+	import Separator from '../draw/Separator.svelte';
 	import Slider from '../mouse/Slider.svelte';
 	import Portal from '../draw/Portal.svelte';
 	import Color from '../mouse/Color.svelte';

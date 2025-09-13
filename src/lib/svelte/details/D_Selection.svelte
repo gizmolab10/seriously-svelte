@@ -8,7 +8,7 @@
     import { s_details } from '../../ts/state/S_Details';
 	import type { Integer } from '../../ts/types/Types';
 	import Text_Table from '../text/Text_Table.svelte';
-	import Separator from '../mouse/Separator.svelte';
+	import Separator from '../draw/Separator.svelte';
 	import Portal from '../draw/Portal.svelte';
 	import Color from '../mouse/Color.svelte';
 	import { onMount } from 'svelte';

@@ -11,7 +11,7 @@
 	const selectorSize = k.height.dot + 1;
 	const pickerSize = 122;
 
-	async function handleColorChange(event) {
+	async function handle_color_change(event) {
 		u.isolateEvent(event);
 		const new_color = event.detail.hex;
 		if (color != new_color) {
@@ -31,7 +31,7 @@
 		--picker_offset: {picker_offset};'>
 	<ColorPicker
 		label=''
-		on:input={handleColorChange}
+		on:input={handle_color_change}
 		hex={colors.color_toHex(color)}
 		--picker-indicator-size='{selectorSize}px'
 		--slider-width='{selectorSize}px'

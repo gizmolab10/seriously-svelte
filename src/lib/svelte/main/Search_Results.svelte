@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { w_search_text, w_search_state, w_background_color } from '../../ts/managers/Stores';
-	import { w_results_changed, w_search_result_row } from '../../ts/managers/Stores';
+	import { w_results_changed, w_search_result_row, w_search_isActive } from '../../ts/managers/Stores';
+	import { w_search_state, w_background_color } from '../../ts/managers/Stores';
 	import { u, Thing,colors, T_Search } from '../../ts/common/Global_Imports';
 	import { search } from '../../ts/managers/Search';
 	let element: HTMLDivElement;
@@ -67,7 +67,7 @@
 			{#each results as result, index}
 				<li class:selected={$w_search_result_row === index} style='color: {result.color}'
 					on:mousedown={(event) => handle_row_selected(event, index)}>
-					{@html highlightMatch(result.title, $w_search_text)}
+					{@html highlightMatch(result.title, search.search_text)}
 				</li>
 			{/each}
 		</ul>

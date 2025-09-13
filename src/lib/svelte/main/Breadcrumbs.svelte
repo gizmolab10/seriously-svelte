@@ -4,7 +4,7 @@
 	import { T_Layer, T_Signal, T_Element, T_Startup, T_Component } from '../../ts/common/Global_Imports';
 	import { svgPaths, Ancestry, layout, components, S_Component} from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/managers/Stores';
-	import Breadcrumb_Button from '../buttons/Breadcrumb_Button.svelte';
+	import Breadcrumb_Button from '../mouse/Breadcrumb_Button.svelte';
 	import { w_search_result_row } from '../../ts/managers/Stores';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';

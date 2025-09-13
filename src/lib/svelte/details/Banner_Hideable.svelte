@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { k, u, T_Layer, T_Details, layout } from '../../ts/common/Global_Imports';
 	import { w_show_details_ofType } from '../../ts/managers/Stores';
+	import Glows_Banner from '../mouse/Glows_Banner.svelte';
 	import { s_details } from '../../ts/state/S_Details';
-	import Glows_Banner from './Glows_Banner.svelte';
 	import { Motion } from 'svelte-motion';
     export let extra_titles: string[] = [];
     export let t_detail: T_Details;

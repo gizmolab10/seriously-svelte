@@ -4,6 +4,7 @@ import { w_count_resize, w_s_alteration, w_s_title_edit, w_user_graph_offset, w_
 import { w_device_isMobile, w_ancestries_grabbed, w_search_state, w_show_details, w_popupView_id } from '../managers/Stores';
 import { T_Search, T_Action, T_Control, T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { S_Mouse, S_Alteration } from '../common/Global_Imports';
+import { w_search_isActive } from '../managers/Stores';
 import Mouse_Timer from './Mouse_Timer';
 import { get } from 'svelte/store';
 export class Events {
@@ -176,8 +177,8 @@ export class Events {
 		} else if (s_mouse.isUp) {
 			switch (t_control) {
 				case T_Control.help:	c.showHelp(); break;
+				case T_Control.search:	search.activate(); break;
 				case T_Control.details: w_show_details.set(!get(w_show_details)); break;
-				case T_Control.search:	if (c.allow_Search) { search.activate(); } break;
 				case T_Control.grow:	this.width = layout.scaleBy(k.ratio.zoom_in) - 20; break;
 				case T_Control.shrink:	this.width = layout.scaleBy(k.ratio.zoom_out) - 20; break;
 				default:				this.togglePopupID(t_control); break;
@@ -210,9 +211,8 @@ export class Events {
 
 	async handle_key_down(e: Event) {
 		const event = e as KeyboardEvent;
-		u.isolateEvent(event);
 		const isEditing = get(w_s_title_edit)?.isActive ?? false;
-		if (!!event && event.type == 'keydown' && !isEditing) {
+		if (!!event && event.type == 'keydown' && !isEditing && !get(w_search_isActive)) {
 			const OPTION = event.altKey;
 			const SHIFT = event.shiftKey;
 			const COMMAND = event.metaKey;
@@ -393,17 +393,15 @@ export class Events {
 		switch (t_action) {
 			case T_Action.browse: 				return 'actions/browse';
 			case T_Action.focus: 				return 'actions/focus';
-			case T_Action.show:
-				switch (column) {
-					case a.show.selection:		return 'actions/select';
-					case a.show.list:			return 'actions/dots';
-				}							break;
-			case T_Action.center:
-				switch (column) {
-					case a.center.focus:		return 'actions/focus';
-					case a.center.selection:	return 'actions/select';
-					case a.center.graph:		return 'looks/graph';
-				}							break;
+			case T_Action.show:					switch (column) {
+					case a.show.selection:			return 'actions/select';
+					case a.show.list:				return 'actions/dots';
+				}								break;
+			case T_Action.center:				switch (column) {
+					case a.center.focus:			return 'actions/focus';
+					case a.center.selection:		return 'actions/select';
+					case a.center.graph:			return 'looks/graph';
+				}								break;
 			default:							return 'actions/organize';
 		}
 		return k.empty;

@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { w_popupView_id, w_background_color, w_show_directionals_ofType } from '../../ts/managers/Stores';
 	import { k, Point, builds, T_Layer } from '../../ts/common/Global_Imports';
-	import Close_Button from '../buttons/Close_Button.svelte';
-	import Steppers from '../buttons/Steppers.svelte';
+	import Close_Button from '../mouse/Close_Button.svelte';
+	import Steppers from '../mouse/Steppers.svelte';
 	import { onMount } from 'svelte';
 	const notesIndexed = Object.entries(builds.notes).reverse();
 	const notesLimit = notesIndexed.length - 1;

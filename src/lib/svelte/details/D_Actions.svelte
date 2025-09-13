@@ -4,11 +4,11 @@
 	import { w_depth_limit, w_user_graph_offset, w_show_graph_ofType, w_search_result_row } from '../../ts/managers/Stores';
 	import { w_s_alteration, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/managers/Stores';
 	import { w_background_color } from '../../ts/managers/Stores';
-	import Buttons_Table from '../buttons/Buttons_Table.svelte';
+	import Buttons_Table from '../mouse/Buttons_Table.svelte';
     import { s_details } from '../../ts/state/S_Details';
 	import Segmented from '../mouse/Segmented.svelte';
-	import Separator from '../mouse/Separator.svelte';
-	import Button from '../buttons/Button.svelte';
+	import Separator from '../draw/Separator.svelte';
+	import Button from '../mouse/Button.svelte';
 	import Slider from '../mouse/Slider.svelte';
 	export let top = 2;
 	const title_gap = 4;

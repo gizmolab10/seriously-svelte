@@ -4,8 +4,8 @@
 	import { w_show_tree_ofType, w_show_graph_ofType } from '../../ts/managers/Stores';
 	import { w_depth_limit, w_background_color } from '../../ts/managers/Stores';
 	import Segmented from '../mouse/Segmented.svelte';
-	import Separator from '../mouse/Separator.svelte';
-	import Button from '../buttons/Button.svelte';
+	import Separator from '../draw/Separator.svelte';
+	import Button from '../mouse/Button.svelte';
 	import Slider from '../mouse/Slider.svelte';
 	import { transparentize } from 'color2k';
 	export let zindex = T_Layer.graph;

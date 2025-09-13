@@ -5,15 +5,15 @@
 	import { w_show_details, w_show_graph_ofType, w_show_tree_ofType } from '../../ts/managers/Stores';
 	import { w_search_filter, w_search_state, w_search_isActive } from '../../ts/managers/Stores';
 	import { w_graph_rect, w_count_resize, w_popupView_id } from '../../ts/managers/Stores';
-	import Close_Button from '../buttons/Close_Button.svelte';
 	import Next_Previous from '../mouse/Next_Previous.svelte';
+	import Close_Button from '../mouse/Close_Button.svelte';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Segmented from '../mouse/Segmented.svelte';
-	import Separator from '../mouse/Separator.svelte';
+	import Separator from '../draw/Separator.svelte';
 	import Breadcrumbs from './Breadcrumbs.svelte';
-	import Button from '../buttons/Button.svelte';
-	import Box from '../mouse/Box.svelte';
+	import Button from '../mouse/Button.svelte';
 	import Search from './Search.svelte';
+	import Box from '../draw/Box.svelte';
 	const y_center = 10.5;
 	const right_widths = [9, 11.5];
 	const scaling_stroke_width = 1.5;
@@ -99,6 +99,11 @@
 						</svg>
 					</Button>
 				{/if}
+				{#if c.allow_Search}
+					<Search
+						left={lefts[1]}
+						width={layout.windowSize.width - lefts[1] - 20}/>
+				{/if}
 				{#if !c.allow_Search || !$w_search_isActive}
 					<Next_Previous name='recents'
 						size={28}
@@ -166,33 +171,6 @@
 						left={lefts[6]}
 						centered={true}
 						width={layout.windowSize.width - lefts[7]}/>
-				{/if}
-				{#if c.allow_Search}
-					{#if $w_search_isActive}
-						<Search
-							left={lefts[1]}
-							width={layout.windowSize.width - lefts[1] - 144}/>
-					{/if}
-					{#if $w_search_state === T_Search.off}
-						<Button
-							width={size_big}
-							height={size_big}
-							border_thickness={0}
-							name={T_Control.search}
-							center={new Point(width - rights[0], y_center)}
-							s_button={ux.s_control_forType(T_Control.search)}
-							closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.search)}>
-							🔍
-						</Button>
-					{:else}
-						<Close_Button
-							name='end-search'
-							align_left={true}
-							size={size_big + 1}
-							stroke_width={0.25}
-							closure={() => search.deactivate()}
-							origin={new Point(width - rights[1], -0.5)}/>
-					{/if}
 				{/if}
 			{/if}
 		</div>

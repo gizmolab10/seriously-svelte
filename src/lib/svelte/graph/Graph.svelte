@@ -11,7 +11,7 @@
 	import Radial_Graph from '../graph/Radial_Graph.svelte';
 	import Tree_Graph from '../graph/Tree_Graph.svelte';
 	import Rubberband from '../draw/Rubberband.svelte';
-	import Button from '../buttons/Button.svelte';
+	import Button from '../mouse/Button.svelte';
 	import { onMount } from 'svelte';
 	const size_big = k.height.button + 4;
 	let actual_content_rect = layout.user_offset_rect_ofDrawnGraph;

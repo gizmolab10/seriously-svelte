@@ -1,20 +1,20 @@
 {
 	"compilerOptions": {
-		"strict": true,
+		"baseUrl": ".",
 		"target": "es6",
 		"jsx": "preserve",
-		"sourceMap": true,
-		"outDir": "./dist",
 		"module": "CommonJS",
-		"esModuleInterop": true,
-		"strictNullChecks": true,
+		"outDir": "notes/dist",
 		"moduleResolution": "node",
-		"allowJs": true,
-		"checkJs": true,
 		"resolveJsonModule": true,
+		"strictNullChecks": true,
+		"esModuleInterop": true,
 		"isolatedModules": true,
 		"skipLibCheck": true,
-		"baseUrl": ".",
+		"sourceMap": true,
+		"allowJs": true,
+		"checkJs": true,
+		"strict": true,
 		"paths": {
 			"*": [
 				"app/*",
@@ -34,9 +34,7 @@
 		}
 	},
 	"exclude": [
-		"dist",
 		"notes",
-		"notes/aside",
 		"bubble",
 		"**/*.svelte",
 		"node_modules",

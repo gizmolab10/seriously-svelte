@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, Point, colors, svgPaths, S_Mouse, T_Request, T_Direction, T_Action, e, ux } from '../../ts/common/Global_Imports';
-	import Buttons_Row from '../buttons/Buttons_Row.svelte';
+	import Buttons_Row from '../mouse/Buttons_Row.svelte';
 	import Mouse_Timer from '../../ts/signals/Mouse_Timer';
 	export let closure: (column: number) => any;
 	export let origin = Point.zero;

@@ -5,13 +5,13 @@
 	import { w_data_updated, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import { T_Database } from '../../ts/database/DB_Common';
-    import Buttons_Row from '../buttons/Buttons_Row.svelte';
+    import Buttons_Row from '../mouse/Buttons_Row.svelte';
 	import { w_t_database } from '../../ts/managers/Stores';
     import { s_details } from '../../ts/state/S_Details';
 	import Text_Table from '../text/Text_Table.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
-	import Separator from '../mouse/Separator.svelte';
-	import Button from '../buttons/Button.svelte';
+	import Separator from '../draw/Separator.svelte';
+	import Button from '../mouse/Button.svelte';
     const font_sizes = [k.font_size.instructions, k.font_size.banners];
 	const ids_forDirection = [T_File_Operation.import, T_File_Operation.export];
 	const s_save = ux.s_element_for(new Identifiable('save'), T_Element.button, 'save');

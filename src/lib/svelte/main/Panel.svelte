@@ -8,13 +8,13 @@
 	import { w_show_details, w_show_results } from '../../ts/managers/Stores';
 	import { T_Database } from '../../ts/database/DB_Common';
 	import Search_Results from './Search_Results.svelte';
-	import Controls from '../controls/Controls.svelte';
-	import Separator from '../mouse/Separator.svelte';
+	import Separator from '../draw/Separator.svelte';
 	import Details from '../details/Details.svelte';
 	import Spinner from '../draw/Spinner.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	import Graph from '../graph/Graph.svelte';
-	import Box from '../mouse/Box.svelte';
+	import Controls from './Controls.svelte';
+	import Box from '../draw/Box.svelte';
 	import Import from './Import.svelte';
 	import { onMount } from 'svelte';
 	const spinner_title = 'Loading your data...';

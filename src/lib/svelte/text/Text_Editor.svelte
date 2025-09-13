@@ -17,8 +17,8 @@
 	let bound_text = original_text;
 	let cursorStyle = 'cursor: text';
 
-	function handle_keydown(event: KeyboardEvent) { handle_key(true, event); }
-	function handle_keyup(event: KeyboardEvent) { handle_key(false, event); }
+	function handle_key_down(event: KeyboardEvent) { handle_key(true, event); }
+	function handle_key_up(event: KeyboardEvent) { handle_key(false, event); }
 	
 	function handle_focus(event: Event) {
 		if (!!$w_s_title_edit) {
@@ -72,8 +72,8 @@
 		on:blur={handle_blur}
 		bind:value={bound_text}
 		on:focus={handle_focus}
-		on:keyup={handle_keyup}
-		on:keydown={handle_keydown}
+		on:keyup={handle_key_up}
+		on:keydown={handle_key_down}
 		style='
 			resize: none;
 			padding: 6px;
