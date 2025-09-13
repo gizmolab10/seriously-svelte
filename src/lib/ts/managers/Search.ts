@@ -11,6 +11,15 @@ class Search {
 	search_text: string | null = null;
 	results: Array<Thing> = [];
 
+	activate() { w_search_state.set(T_Search.enter); w_search_isActive.set(true); }
+
+	deactivate() {
+		w_show_results.set(false);
+		w_search_isActive.set(false);
+		w_search_result_row.set(null);
+		w_search_state.set(T_Search.off);
+	}
+
 	search_for(query: string) {
 		const before = this.results_fingerprint;
 		if (query.length > 0) {
@@ -47,14 +56,6 @@ class Search {
 				});
 			}
 		}, 1);
-	}
-
-	activate() { w_search_state.set(T_Search.enter); w_search_isActive.set(true); }
-
-	deactivate() {
-		w_show_results.set(false);
-		w_search_result_row.set(null);
-		w_search_state.set(T_Search.off);
 	}
 
 	get result_ancestry(): Ancestry | null {

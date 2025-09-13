@@ -27,6 +27,7 @@
 	function select_row(index: number) {
 		$w_search_result_row = index;
 		$w_search_state = T_Search.selected;
+		$w_search_isActive = false;
 		element?.focus();
 	}
 

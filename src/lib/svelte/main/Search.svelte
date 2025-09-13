@@ -15,8 +15,8 @@
 	const right_widths = [10, 10.5, 96];
 	const lefts = u.cumulativeSum(left_widths);
 	const rights = u.cumulativeSum(right_widths);
+	let text = search.search_text;
 	let input: HTMLInputElement;
-	let text = k.empty;
 
 	function handle_input(event) {
 		const text = input.value;

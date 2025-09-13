@@ -1,6 +1,6 @@
 export class Builds {
 	notes: { [id: number]: string[] } = {
-		165 : ['September 11, 2025', 'revised plugin names, add data load spinner'],
+		165 : ['September 11, 2025', 'revise plugin names, add data load spinner, repair search'],
 		164 : ['September 7, 2025', 'super fast search'],
 		163 : ['September 3, 2025', 'suppress select and focus events during plugin data download'],
 		162 : ['August 26, 2025', 'fix bugs (editing, layout, color, hover), new print utility'],
