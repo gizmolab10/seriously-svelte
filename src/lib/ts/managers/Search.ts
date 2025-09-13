@@ -21,6 +21,7 @@ class Search {
 	}
 
 	search_for(query: string) {
+		this.search_text = query;
 		const before = this.results_fingerprint;
 		if (query.length > 0) {
 			this.results = this.root_node.search_for(query);
@@ -34,9 +35,9 @@ class Search {
 		}
 		if (before !== this.results_fingerprint) {	// only if results are different
 			w_search_result_row.set(null);
-			w_results_changed.set(Date.now());
 		}
 		w_search_isActive.set(this.isActive_state);
+		w_results_changed.set(Date.now());
 	}
 
 	constructor() {

@@ -15,7 +15,6 @@
 	const right_widths = [10, 10.5, 96];
 	const lefts = u.cumulativeSum(left_widths);
 	const rights = u.cumulativeSum(right_widths);
-	let text = search.search_text;
 	let input: HTMLInputElement;
 
 	function handle_input(event) {
@@ -23,8 +22,8 @@
 		console.log('text', text);
 		if (!!text) {
 			p.write_key(T_Preference.search_text, text);
-			search.search_for(text.toLowerCase());
 		}
+		search.search_for(text.toLowerCase());
 	}
 
 </script>
@@ -42,9 +41,9 @@
 			id='search'
 			type='search'
 			bind:this={input}
-			bind:value={text}
 			autocomplete='off'
 			on:input={handle_input}
+			bind:value={search.search_text}
 			placeholder={'enter ' + $w_search_filter + ' text'}
 			style='
 				top: 1px;
