@@ -73,6 +73,9 @@
 		
 	function update_style() {
 		draggableRect = $w_graph_rect;
+		const root = document.documentElement;
+		root.style.setProperty('--graph-x', `${draggableRect.origin.x}px`);
+		root.style.setProperty('--graph-y', `${draggableRect.origin.y}px`);
 		style=`
 			overflow: hidden;
 			touch-action: none;
@@ -82,8 +85,6 @@
 			width: ${draggableRect.size.width}px;
 			height: ${draggableRect.size.height}px;
 		`.removeWhiteSpace();
-		debug.log_draw(`GRAPH update_style`);
-		reattachments += 1;
 	}	
 
 </script>

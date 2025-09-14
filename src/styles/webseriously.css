@@ -38,3 +38,14 @@ html, body {
     transform-origin: center;
     animation: spin var(--spinner-speed, 1s) linear infinite;
 }
+
+.graph-container {
+	transform: translate3d(var(--graph-x), var(--graph-y), 0);
+	will-change: transform;
+	transition: transform 0.1s ease-out;
+}
+
+.widget {
+	transform: translate3d(var(--widget-x), var(--widget-y), 0);
+	will-change: transform;
+}

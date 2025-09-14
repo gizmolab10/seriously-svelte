@@ -8,6 +8,7 @@ import Mouse_Timer from './Mouse_Timer';
 import { get } from 'svelte/store';
 export class Events {
 	mouse_timer_byName: { [name: string]: Mouse_Timer } = {};
+    debouncedResize: NodeJS.Timeout | null = null;
 	initialTouch: Point | null = null;
 	alterationTimer: Mouse_Timer;
 	width = 0;		// WTF??
@@ -117,12 +118,19 @@ export class Events {
 	}
 
 	private handle_resize(event: Event) {
-		// on COMMAND +/-
-		// and on simulator switches platform
-		const isMobile = u.device_isMobile;
-		w_count_resize.update(n => n + 1);
-		w_device_isMobile.set(isMobile);
-		layout.restore_state();
+        if (this.debouncedResize) {
+            clearTimeout(this.debouncedResize);
+        }
+        
+        this.debouncedResize = setTimeout(() => {
+			// on COMMAND +/-
+			// and on simulator switches platform
+            const isMobile = u.device_isMobile;
+            w_count_resize.update(n => n + 1);
+            w_device_isMobile.set(isMobile);
+            layout.restore_state();
+            this.debouncedResize = null;
+        }, 50);		// 20 frames per second
 	}
 
 	private handle_wheel(event: Event) {
