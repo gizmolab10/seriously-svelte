@@ -6,17 +6,21 @@ function(instance, properties) {
 	const ignore_fields = ['Slug'];
 	const debug = false;
 
-	// naming conventions for functions and variables
+	////////////////////////////////////////////////////////////////////
 	//
-	// LIST			array of ITEM(s)
-	// DATA_TYPE	bubble app's data types
-	// SERIOUSLY	internal use within seriously netlify app
-	// FIELD		plugin Field (specified in bubble plugin editor)
-	// ITEM			instance of DATA_TYPE
+	//	naming conventions for functions and variables
 	//
-	// c_			convert to
-	// _id			the unique id of ITEM
-	// field		of ITEM (seriously, original, bubble, etc.)
+	//	LIST			array of ITEM(s)
+	//	DATA_TYPE	bubble app's data types
+	//	SERIOUSLY	internal use within seriously netlify app
+	//	FIELD		plugin Field (specified in bubble plugin editor)
+	//	ITEM			instance of DATA_TYPE
+	//
+	//	c_			convert to
+	//	_id			the unique id of ITEM
+	//	field		of ITEM (seriously, original, bubble, etc.)
+	//
+	////////////////////////////////////////////////////////////////////
 
 	const exposed_LIST_FIELD_names = [
 		'object_parents_field',
@@ -51,21 +55,24 @@ function(instance, properties) {
 	function WARN(message, ...optionalParams) { if (debug) { console.warn(message, ...optionalParams); } }
 	function has_SERIOUSLY_name(name) { return Object.keys(original_DATA_TYPE_field_names).includes(name); }
 
-	// design:
-	// SERIOUSLY_name --> user_supplied_name (of 'their Thing' data type fields) eg title --> titular, color --> cooler
-	// item (bubblized) field name --> bubble_app_DATA_TYPE_field_name
-	//   WHY? field names within items are bubblized (grrr), eg objects --> object_list. so unbubblize them
-	// exposed_FIELD_names --> original_DATA_TYPE_field_names (eg, object_title_field --> titilate)
-
-	// reorganize:
-	//  1. map: item field name --> bubble_app_DATA_TYPE_field_name (declared in the Data tab of app editor, eg titular, cooler)
-	//  2. map: item field name --> SERIOUSLY field name (eg, title, color)
-	//  3. send starting, objects, selected
-
-	// need
-	//  1. use original bubble unique _id
-	//  2. send map: SERIOUSLY field name --> user_supplied_name (eg, title --> titular, color --> cooler)
-	//			(in bubble [eg, test] app editor ... entered in Appearance of plugin)
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//
+	//	design:
+	//	SERIOUSLY_name --> user_supplied_name (of 'their Thing' data type fields) eg title --> titular, color --> cooler
+	//	ITEM (bubblized, grrr) field name --> bubble_app_DATA_TYPE_field_name
+	//	  WHY? field names within ITEMs are bubblized (grrr), eg "objects" shows up as "object_list". so unbubblize them
+	//	exposed_FIELD_names --> original_DATA_TYPE_field_names (eg, "object_title_field" has the value of "titilate"
+	//
+	//	process these properties:
+	//	 1. map: ITEM field name --> bubble_app_DATA_TYPE_field_name (declared in the Data tab of app editor, eg titular, cooler)
+	//	 2. map: ITEM field name --> SERIOUSLY field name (eg, title, color)
+	//	 3. send starting, objects, selected
+	//	
+	//	need to send:
+	//	 1. a map: SERIOUSLY field name --> user_supplied_name (eg, title --> titular, color --> cooler)
+	//		(in bubble [eg, test] app editor ... entered in Appearance of plugin)
+	//
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	const _____CONVERSIONS = Symbol('CONVERSIONS');
 
@@ -183,15 +190,14 @@ function(instance, properties) {
 		return extracted_data;
 	}
 
-	function send(object) {
-		const contentWindow = instance.data.iframe.contentWindow;
+	function send_to_webseriously(object) {
+		const iframe = instance.data.iframe.contentWindow;
 		const message = {
 			type: 'UPDATE_PROPERTIES',
 			properties: JSON.stringify(object)
 		};
-
-		if (instance.data.iframeIsListening && contentWindow) {
-			contentWindow.postMessage(message, '*');
+		if (instance.data.iframeIsListening && iframe) {
+			iframe.postMessage(message, '*');
 		} else {
 			instance.data.pendingMessages = instance.data.pendingMessages || [];
 			instance.data.pendingMessages.push(message);
@@ -199,15 +205,26 @@ function(instance, properties) {
 	}
 
 	try {
-		instance.data.attempts = instance.data.attempts || {};
 
-		send({
+		//////////////////////////////////////////////////////////
+		//														//
+		//	process incoming properties & send to webseriously	//
+		//														//
+		//	 the keys (below) are matched within DB_Bubble.ts	//
+		//  	 (in its handle_bubble_message function)		//
+		//														//
+		//    instance.data.attempts tracks unhydrated ITEMs	//
+		//														//
+		//////////////////////////////////////////////////////////
+		
+		instance.data.attempts = instance.data.attempts || {};
+		send_to_webseriously({
+			overwrite_focus_and_mode: properties['overwrite_focus_and_mode'],
 			inRadialMode: properties['show_radial_mode'],
 			things: extract_LIST_data('objects_table'),
 			root: extract_ITEM_data('starting_object'),
 			focus: extract_ITEM_data('focus_object'),
 		}, null, 0);
-
 	} catch (error) {
 		if (error.constructor.name != 'NotReadyError') {
 			WARN('[PLUGIN] threw an error:', error);

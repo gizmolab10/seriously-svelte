@@ -299,12 +299,13 @@ export enum T_Preference {
 	search_text		  = 'search_text',
 	background		  = 'background',
 	ring_angle  	  = 'ring_angle',
-	matte_UI		  = 'matte_UI',				// not use glow gradient
 	countDots		  = 'countDots',
 	font_size		  = 'font_size',
+	matte_UI		  = 'matte_UI',				// not use glow gradient
 	base_id			  = 'base_id',
 	details			  = 'details',				// visible details control
 	grabbed			  = 'grabbed',
+	bubble 			  = 'bubble',
 	paging 			  = 'paging',
 	traits			  = 'traits',
 	levels			  = 'levels',

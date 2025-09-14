@@ -1,6 +1,6 @@
-import { T_Thing, T_Graph, T_Create, T_Predicate, T_Persistence } from '../common/Global_Imports';
+import { T_Thing, T_Graph, T_Create, T_Predicate, T_Persistence, T_Preference } from '../common/Global_Imports';
 import { w_ancestry_focus, w_ancestries_grabbed, w_show_graph_ofType } from '../managers/Stores';
-import { e, h, k, busy, debug, Ancestry } from '../common/Global_Imports';
+import { e, h, k, p, busy, debug, Ancestry } from '../common/Global_Imports';
 import { T_Database } from './DB_Common';
 import DB_Common from './DB_Common';
 
@@ -42,10 +42,12 @@ export default class DB_Bubble extends DB_Common {
 		if (!event.data.properties) {
 			h.wrapUp_data_forUX();
 		} else {
-			let b_root, b_tags, b_things, b_traits, b_focus, b_grabs, b_predicates, b_relationships, b_inRadialMode;
+			let b_root, b_tags, b_things, b_traits, b_focus, b_grabs, b_overwrite, b_predicates, b_relationships, b_inRadialMode;
 			try {
 				const properties = JSON.parse(event.data.properties);
+				const has_bubble = p.readDB_key(T_Preference.bubble) ?? false;
 				debug.log_bubble(`[DB_Bubble] received bubble update: ${properties}`);
+				b_overwrite = properties.overwrite_focus_and_mode || !has_bubble;
 				b_relationships = properties.relationships;
 				b_inRadialMode = properties.inRadialMode;
 				b_predicates = properties.predicates;
@@ -90,15 +92,7 @@ export default class DB_Bubble extends DB_Common {
 				}
 			}
 
-			w_show_graph_ofType.set(b_inRadialMode ? T_Graph.radial : T_Graph.tree);
 			h.wrapUp_data_forUX();			// create ancestries and tidy up
-
-			if (!!b_focus?.id) {			// must happen AFTER ancestries are created
-				const focus = h.thing_forHID(b_focus.id.hash());
-				if (!!focus?.ancestry) {
-					focus.ancestry.becomeFocus(true);
-				}
-			}
 			if (!!b_grabs) {				// must happen AFTER ancestries are created
 				for (const b_grab of b_grabs) {
 					const grab = h.thing_forHID(b_grab.id.hash());
@@ -107,27 +101,42 @@ export default class DB_Bubble extends DB_Common {
 					}
 				}
 			}
-
-			//////////////////////////////////////////////////////////////////
-			//																//
-			//	SEND these message types to initialize.js in bubble PLUGIN	//
-			//																//
-			//////////////////////////////////////////////////////////////////
-		
-			window.parent.postMessage({ type: 'trigger_an_event', trigger: 'ready' }, k.wildcard);
-			w_ancestry_focus.subscribe((ancestry: Ancestry) => {
-				if (!!ancestry && !!ancestry.thing) {
-					window.parent.postMessage({ type: 'focus_id', id: ancestry.thing.id }, k.wildcard);
-					window.parent.postMessage({ type: 'trigger_an_event', trigger: 'focus_changed' }, k.wildcard);			// not before focus id
+			if (!!b_overwrite) {
+				w_show_graph_ofType.set(b_inRadialMode ? T_Graph.radial : T_Graph.tree);
+				if (!!b_focus?.id) {			// must happen AFTER ancestries are created
+					const focus = h.thing_forHID(b_focus.id.hash());
+					if (!!focus?.ancestry) {
+						focus.ancestry.becomeFocus(true);
+					}
 				}
-			});
-			w_ancestries_grabbed.subscribe((ancestries: Ancestry[]) => {
-				if (!!ancestries) {
-					window.parent.postMessage({ type: 'selected_ids', ids: ancestries.map((ancestry: Ancestry) => ancestry.thing?.id ?? k.corrupted) }, k.wildcard);
-					window.parent.postMessage({ type: 'trigger_an_event', trigger: 'selection_changed' }, k.wildcard);			// not before selected ids
-				}
-			});
+			}
+			this.prepare_to_signal_bubble_plugin();
+			p.writeDB_key(T_Preference.bubble, true);
 		}
+	}
+
+	prepare_to_signal_bubble_plugin() {
+
+		//////////////////////////////////////////////////////////
+		//														//
+		//	 	message types to send to bubble plugin			//
+		//   see handle_webseriously_message in initialize.js	//
+		//														//
+		//////////////////////////////////////////////////////////
+	
+		window.parent.postMessage({ type: 'trigger_an_event', trigger: 'ready' }, k.wildcard);
+		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
+			if (!!ancestry && !!ancestry.thing) {
+				window.parent.postMessage({ type: 'focus_id', id: ancestry.thing.id }, k.wildcard);
+				window.parent.postMessage({ type: 'trigger_an_event', trigger: 'focus_changed' }, k.wildcard);			// not before focus id
+			}
+		});
+		w_ancestries_grabbed.subscribe((ancestries: Ancestry[]) => {
+			if (!!ancestries) {
+				window.parent.postMessage({ type: 'selected_ids', ids: ancestries.map((ancestry: Ancestry) => ancestry.thing?.id ?? k.corrupted) }, k.wildcard);
+				window.parent.postMessage({ type: 'trigger_an_event', trigger: 'selection_changed' }, k.wildcard);			// not before selected ids
+			}
+		});
 	}
 
 }

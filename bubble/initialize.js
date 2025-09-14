@@ -12,11 +12,20 @@ function(instance, properties, context) {
 	iframe.style.width = '100%';
 	instance.data.iframe = iframe;
 
-	window.addEventListener('message', function (event) {
+	window.addEventListener('message', handle_webseriously_message);
+	instance.canvas.appendChild(iframe);
+
+	//////////////////////////////////////////////////////////////
+	//															//
+	//		   handle messages sent from webseriously			//
+	//   	  from inside the iframe established above			//
+	//   see prepare_to_signal_bubble_plugin in DB_Bubble.ts	//
+	//															//
+	//////////////////////////////////////////////////////////////
+
+	function handle_webseriously_message(event) {
 		if (event.data && !event.data.hello) {
 			switch (event.data.type) {
-				// these are sent from webseriously iframe
-				// see setup_subscriptions in DB_Bubble.ts
 				case 'focus_id':
 					instance.publishState('focus_id', event.data.id)
 					break;
@@ -44,7 +53,5 @@ function(instance, properties, context) {
 					break;
 			}
 		}
-	});
-
-	instance.canvas.appendChild(iframe);
+	}
 }

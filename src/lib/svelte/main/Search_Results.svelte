@@ -68,7 +68,7 @@
 			{#each results as result, index}
 				<li class:selected={$w_search_result_row === index} style='color: {result.color}'
 					on:mousedown={(event) => handle_row_selected(event, index)}>
-					{@html highlightMatch(result.title, search.search_text)}
+					<span>{@html highlightMatch(result.title, search.search_text)}</span>
 				</li>
 			{/each}
 		</ul>
@@ -91,16 +91,32 @@
 		margin: 0;
 	}
 	li {
-		padding-right: 100px;
+		position: relative;
+		padding: 0;
 		white-space: nowrap;
-		padding-left: 12px;
 		cursor: pointer;
 	}
-	li:hover {
+	li::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+		background-color: transparent;
+		pointer-events: none;
+	}
+	li:hover::before {
 		background-color: #eee;
 	}
-	li.selected,
-	li.selected:hover {
+	li.selected::before,
+	li.selected:hover::before {
 		background-color: #ccc;
+	}
+	li > * {  /* This targets the content inside the li */
+		position: relative;
+		display: block;
+		padding-left: 12px;
+		padding-right: 12px;
 	}
 </style>

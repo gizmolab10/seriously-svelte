@@ -178,11 +178,19 @@ export class Events {
 			switch (t_control) {
 				case T_Control.help:	c.showHelp(); break;
 				case T_Control.search:	search.activate(); break;
-				case T_Control.details: w_show_details.set(!get(w_show_details)); break;
+				case T_Control.details: this.toggle_details(); break;
 				case T_Control.grow:	this.width = layout.scaleBy(k.ratio.zoom_in) - 20; break;
 				case T_Control.shrink:	this.width = layout.scaleBy(k.ratio.zoom_out) - 20; break;
 				default:				this.togglePopupID(t_control); break;
 			}
+		}
+	}
+
+	toggle_details() {
+		const show_details = !get(w_show_details);
+		w_show_details.set(show_details);
+		if (show_details) {
+			c.has_standalone_UI = true;
 		}
 	}
 
