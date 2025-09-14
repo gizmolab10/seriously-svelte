@@ -1,4 +1,4 @@
-import { w_show_search_results, w_search_result_row, w_search_results_changed } from './Stores';
+import { w_search_results_found, w_search_result_row, w_search_results_changed } from './Stores';
 import { T_Preference, T_Search, T_Startup } from "../common/Global_Imports";
 import { c, k, h, p, Thing, Ancestry } from "../common/Global_Imports";
 import { w_search_state, w_show_search_controls } from './Stores';
@@ -14,10 +14,9 @@ class Search {
 	activate() { w_search_state.set(T_Search.enter); w_show_search_controls.set(true); }
 
 	deactivate() {
-		w_show_search_results.set(false);
-		w_show_search_controls.set(false);
-		w_search_result_row.set(null);
+		w_search_results_found.set(0);
 		w_search_state.set(T_Search.off);
+		w_show_search_controls.set(false);
 	}
 
 	search_for(query: string) {
@@ -26,11 +25,11 @@ class Search {
 		if (query.length > 0) {
 			this.results = this.root_node.search_for(query);
 			const show_results = this.results.length > 0;
-			w_show_search_results.set(show_results);
+			w_search_results_found.set(this.results.length);
 			w_search_state.set(show_results ? T_Search.results : T_Search.enter);
 		} else {
 			this.results = [];
-			w_show_search_results.set(false);
+			w_search_results_found.set(0);
 			w_search_state.set(T_Search.enter);
 		}
 		if (before !== this.results_fingerprint) {	// only if results are different

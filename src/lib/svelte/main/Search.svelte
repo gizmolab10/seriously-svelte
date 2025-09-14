@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { T_Search, T_Layer, T_Control, T_Preference, T_Search_Filter } from '../../ts/common/Global_Imports';
 	import { e, h, k, p, u, ux, Thing, Point, colors, svgPaths } from '../../ts/common/Global_Imports';
-	import { w_search_filter, w_search_state, w_show_search_controls } from '../../ts/managers/Stores';
+	import { w_search_results_found, w_show_search_controls } from '../../ts/managers/Stores';
+	import { w_search_filter, w_search_state } from '../../ts/managers/Stores';
 	import { w_thing_fontFamily } from '../../ts/managers/Stores';
 	import Close_Button from '../mouse/Close_Button.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
@@ -10,12 +11,10 @@
 	export let width: number;
 	export let left: number;
 	export let top: number;
-	const y_center = 11;
-	const left_widths = [left, 18, 102];
 	const size_big = k.height.dot * 1.4;
-	const right_widths = [10, 10.5, 96];
-	const lefts = u.cumulativeSum(left_widths);
+	const right_widths = [10, 10.5, 55, 37, 60];
 	const rights = u.cumulativeSum(right_widths);
+	const widths = rights.map((right, index) => width - right);
 	let input: HTMLInputElement;
 
 	function handle_input(event) {
@@ -61,9 +60,21 @@
 				position: absolute;
 				background-color: white;
 				border: 1px solid lightgray;
-				width: {width - rights[2]}px;
 				height: {k.height.button + 2}px;
-				font-family: {$w_thing_fontFamily};'/>
+				font-family: {$w_thing_fontFamily};
+				width: {widths[$w_search_results_found == 0 ? 3 : 4]}px;'/>
+			{#if $w_search_results_found > 0}
+				<div class='search-results-found'
+					style='
+						top: 4px;
+						width: 100px;
+						font-size: 12px;
+						position: absolute;
+						left: {widths[2]}px;
+						font-family: {$w_thing_fontFamily};'>
+					{$w_search_results_found} matches
+				</div>
+			{/if}
 	{/if}
 	{#if $w_search_state === T_Search.off}
 		<Button
@@ -71,7 +82,7 @@
 			width={size_big - 1}
 			height={size_big - 1}
 			name={T_Control.search}
-			center={new Point(width - rights[0], y_center)}
+			center={new Point(widths[0], 11)}
 			s_button={ux.s_control_forType(T_Control.search)}
 			closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.search)}>
 			🔍
@@ -83,7 +94,7 @@
 			size={size_big + 1}
 			stroke_width={0.25}
 			closure={() => search.deactivate()}
-			origin={new Point(width - rights[1], 0.5)}/>
+			origin={new Point(widths[1], 0.5)}/>
 	{/if}
 </div>
 

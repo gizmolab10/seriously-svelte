@@ -56,10 +56,10 @@ export const w_data_updated				= writable<number>();
 const _____SEARCH: unique symbol = Symbol('SEARCH');
 
 export const w_show_search_controls		= writable<boolean>();
-export const w_show_search_results		= writable<boolean>();
-export const w_search_state				= writable<T_Search>();			// observed by search_results, controls, and panel
+export const w_search_results_found		= writable<number>();
 export const w_search_results_changed	= writable<number>();			// re-render the search results
 export const w_search_result_row		= writable<number | null>();	// affects appearance of search_results, [three] details and breadcrumbs
+export const w_search_state				= writable<T_Search>();			// observed by search_results, controls, and panel
 export const w_search_filter			= writable<T_Search_Filter>();	// TBD
 
 const _____COUNTS: unique symbol = Symbol('COUNTS');
@@ -89,9 +89,9 @@ class Stores {
 		w_count_mouse_up.set(0);
 		w_thing_color.set(null);
 		w_s_title_edit?.set(null);
+		w_search_results_found.set(0);
 		w_show_details_ofType.set([]);
 		w_t_startup.set(T_Startup.start);
-		w_show_search_results.set(false);
 		w_search_state.set(T_Search.off);
 		w_search_filter.set(T_Search_Filter.title);
 		w_background_color.subscribe((color: string) => {

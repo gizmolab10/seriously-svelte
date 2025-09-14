@@ -5,7 +5,7 @@
 	import { T_Layer, T_Search, T_Banner, T_Control, T_Startup } from '../../ts/common/Global_Imports';
 	import { w_t_startup, w_popupView_id, w_device_isMobile, } from '../../ts/managers/Stores';
 	import { w_s_title_edit, w_ancestry_focus } from '../../ts/managers/Stores';
-	import { w_show_details, w_show_search_results } from '../../ts/managers/Stores';
+	import { w_show_details, w_search_results_found } from '../../ts/managers/Stores';
 	import { T_Database } from '../../ts/database/DB_Common';
 	import Search_Results from './Search_Results.svelte';
 	import Separator from '../draw/Separator.svelte';
@@ -102,7 +102,7 @@
 								diameter={spinner_rect.size.width}/>
 						</div>
 					{/key}
-				{:else if $w_show_search_results}
+				{:else if $w_search_results_found}
 					<Search_Results/>
 				{:else }
 					<Graph/>
