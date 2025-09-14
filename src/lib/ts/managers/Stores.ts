@@ -55,10 +55,10 @@ export const w_data_updated				= writable<number>();
 
 const _____SEARCH: unique symbol = Symbol('SEARCH');
 
-export const w_results_changed			= writable<number>();			// re-render the search results
-export const w_search_isActive			= writable<boolean>();			// show / hide search controls
-export const w_show_results				= writable<boolean>();			// show / hide search results, manage key inputs
+export const w_show_search_controls		= writable<boolean>();
+export const w_show_search_results		= writable<boolean>();
 export const w_search_state				= writable<T_Search>();			// observed by search_results, controls, and panel
+export const w_search_results_changed	= writable<number>();			// re-render the search results
 export const w_search_result_row		= writable<number | null>();	// affects appearance of search_results, [three] details and breadcrumbs
 export const w_search_filter			= writable<T_Search_Filter>();	// TBD
 
@@ -91,7 +91,7 @@ class Stores {
 		w_s_title_edit?.set(null);
 		w_show_details_ofType.set([]);
 		w_t_startup.set(T_Startup.start);
-		w_show_results.set(false);
+		w_show_search_results.set(false);
 		w_search_state.set(T_Search.off);
 		w_search_filter.set(T_Search_Filter.title);
 		w_background_color.subscribe((color: string) => {

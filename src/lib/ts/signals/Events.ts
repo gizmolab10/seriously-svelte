@@ -4,7 +4,6 @@ import { w_count_resize, w_s_alteration, w_s_title_edit, w_user_graph_offset, w_
 import { w_device_isMobile, w_ancestries_grabbed, w_search_state, w_show_details, w_popupView_id } from '../managers/Stores';
 import { T_Search, T_Action, T_Control, T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { S_Mouse, S_Alteration } from '../common/Global_Imports';
-import { w_search_isActive } from '../managers/Stores';
 import Mouse_Timer from './Mouse_Timer';
 import { get } from 'svelte/store';
 export class Events {
@@ -220,7 +219,7 @@ export class Events {
 	async handle_key_down(e: Event) {
 		const event = e as KeyboardEvent;
 		const isEditing = get(w_s_title_edit)?.isActive ?? false;
-		if (!!event && event.type == 'keydown' && !isEditing && !get(w_search_isActive)) {
+		if (!!event && event.type == 'keydown' && !isEditing) {
 			const OPTION = event.altKey;
 			const SHIFT = event.shiftKey;
 			const COMMAND = event.metaKey;
@@ -231,15 +230,9 @@ export class Events {
 			const modifiers = ['alt', 'meta', 'shift', 'control'];
 			let graph_needsRebuild = false;
 			w_control_key_down.set(event.ctrlKey);
-			if (!!h && !!ancestry && !modifiers.includes(key)) {		// ignore modifier-key-only events
-				switch (get(w_search_state)) {
-					case T_Search.enter:
-						switch (key) {
-							case 'escape':
-							case 'enter':		    search.deactivate(); break;	// stop searching
-						}
-						break;
-					case T_Search.off:
+			switch (get(w_search_state)) {
+				case T_Search.off:
+					if (!!h && !!ancestry && !modifiers.includes(key)) {		// ignore modifier-key-only events
 						if (c.allow_GraphEditing) {
 							if (!!ancestry && c.allow_TitleEditing) {
 								switch (key) {
@@ -281,16 +274,22 @@ export class Events {
 							case 'escape':			if (!!get(w_s_alteration)) { h.stop_alteration(); }; search.deactivate(); break;
 						}
 						break;
-				}
-				if (graph_needsRebuild) {
-					layout.grand_build();
-				}
-				const duration = ((new Date().getTime()) - time).toFixed(1);
-				debug.log_key(`H  (${duration}) ${key}`);
-				setTimeout( async () => {
-					await h.db.persist_all();
-				}, 1);
+					}
+				default:	// in search mode
+					switch (key) {
+						case 'escape':
+						case 'enter':		    search.deactivate(); break;	// stop searching
+					}
+					break;
 			}
+			if (graph_needsRebuild) {
+				layout.grand_build();
+			}
+			const duration = ((new Date().getTime()) - time).toFixed(1);
+			debug.log_key(`H  (${duration}) ${key}`);
+			setTimeout( async () => {
+				await h.db.persist_all();
+			}, 1);
 		}
 	}
 

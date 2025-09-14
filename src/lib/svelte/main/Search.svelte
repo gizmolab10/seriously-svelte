@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { T_Search_Filter, T_Search, T_Control, T_Preference } from '../../ts/common/Global_Imports';
+	import { T_Search, T_Layer, T_Control, T_Preference, T_Search_Filter } from '../../ts/common/Global_Imports';
 	import { e, h, k, p, u, ux, Thing, Point, colors, svgPaths } from '../../ts/common/Global_Imports';
-	import { w_search_filter, w_search_state, w_search_isActive } from '../../ts/managers/Stores';
+	import { w_search_filter, w_search_state, w_show_search_controls } from '../../ts/managers/Stores';
 	import { w_thing_fontFamily } from '../../ts/managers/Stores';
 	import Close_Button from '../mouse/Close_Button.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
@@ -9,8 +9,9 @@
 	import Button from '../mouse/Button.svelte';
 	export let width: number;
 	export let left: number;
-	const y_center = 10.5;
-	const left_widths = [18, 102];
+	export let top: number;
+	const y_center = 11;
+	const left_widths = [left, 18, 102];
 	const size_big = k.height.dot * 1.4;
 	const right_widths = [10, 10.5, 96];
 	const lefts = u.cumulativeSum(left_widths);
@@ -28,8 +29,13 @@
 
 </script>
 
-<div class='search-controls' style='left: {left}px; position: absolute;'>
-	{#if $w_search_isActive}
+<div class='search-controls'
+	style='
+		top: {top}px;
+		left: {left}px;
+		position: absolute;
+		z-index: {T_Layer.frontmost};'>
+	{#if $w_show_search_controls}
 		<Segmented name='search-filter'
 			width={80}
 			origin={new Point(4, 1)}
@@ -61,9 +67,9 @@
 	{/if}
 	{#if $w_search_state === T_Search.off}
 		<Button
-			width={size_big}
-			height={size_big}
 			border_thickness={0}
+			width={size_big - 1}
+			height={size_big - 1}
 			name={T_Control.search}
 			center={new Point(width - rights[0], y_center)}
 			s_button={ux.s_control_forType(T_Control.search)}
@@ -77,7 +83,7 @@
 			size={size_big + 1}
 			stroke_width={0.25}
 			closure={() => search.deactivate()}
-			origin={new Point(width - rights[1], -0.5)}/>
+			origin={new Point(width - rights[1], 0.5)}/>
 	{/if}
 </div>
 

@@ -5,7 +5,7 @@
 	import { T_Layer, T_Search, T_Banner, T_Control, T_Startup } from '../../ts/common/Global_Imports';
 	import { w_t_startup, w_popupView_id, w_device_isMobile, } from '../../ts/managers/Stores';
 	import { w_s_title_edit, w_ancestry_focus } from '../../ts/managers/Stores';
-	import { w_show_details, w_show_results } from '../../ts/managers/Stores';
+	import { w_show_details, w_show_search_results } from '../../ts/managers/Stores';
 	import { T_Database } from '../../ts/database/DB_Common';
 	import Search_Results from './Search_Results.svelte';
 	import Separator from '../draw/Separator.svelte';
@@ -14,8 +14,9 @@
 	import BuildNotes from './BuildNotes.svelte';
 	import Graph from '../graph/Graph.svelte';
 	import Controls from './Controls.svelte';
-	import Box from '../draw/Box.svelte';
 	import Import from './Import.svelte';
+	import Search from './Search.svelte';
+	import Box from '../draw/Box.svelte';
 	import { onMount } from 'svelte';
 	const spinner_title = 'Loading your data...';
 	const offset_toIntersection = new Point(-4, 8);
@@ -68,6 +69,12 @@
 			{#if $w_show_details}
 				<Details/>
 			{/if}
+			{#if c.allow_Search}
+				<Search
+					left={34}
+					top={11.5}
+					width={layout.windowSize.width - 46}/>
+			{/if}
 			<div class='main'
 				style='
 					position: fixed;
@@ -95,7 +102,7 @@
 								diameter={spinner_rect.size.width}/>
 						</div>
 					{/key}
-				{:else if $w_show_results}
+				{:else if $w_show_search_results}
 					<Search_Results/>
 				{:else }
 					<Graph/>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { w_results_changed, w_search_result_row, w_search_isActive } from '../../ts/managers/Stores';
+	import { w_search_results_changed, w_search_result_row, w_show_search_controls } from '../../ts/managers/Stores';
 	import { w_search_state, w_background_color } from '../../ts/managers/Stores';
 	import { u, Thing,colors, T_Search } from '../../ts/common/Global_Imports';
 	import { search } from '../../ts/managers/Search';
@@ -7,7 +7,7 @@
 	let results: Thing[] = [];
 
 	$: {
-		const _ = $w_results_changed;
+		const _ = $w_search_results_changed;
 		results = search.results;
 	}
 
@@ -27,7 +27,7 @@
 	function select_row(index: number) {
 		$w_search_result_row = index;
 		$w_search_state = T_Search.selected;
-		$w_search_isActive = false;
+		$w_show_search_controls = false;
 		element?.focus();
 	}
 
@@ -63,7 +63,7 @@
 	on:keydown={handle_key_down}
 	bind:this={element}
 	tabindex='0'>
-	{#key `${$w_background_color}:::${$w_search_result_row}:::${$w_results_changed}`}
+	{#key `${$w_background_color}:::${$w_search_result_row}:::${$w_search_results_changed}`}
 		<ul>
 			{#each results as result, index}
 				<li class:selected={$w_search_result_row === index} style='color: {result.color}'

@@ -1,7 +1,7 @@
-import { w_show_results, w_search_result_row, w_results_changed } from './Stores';
+import { w_show_search_results, w_search_result_row, w_search_results_changed } from './Stores';
 import { T_Preference, T_Search, T_Startup } from "../common/Global_Imports";
 import { c, k, h, p, Thing, Ancestry } from "../common/Global_Imports";
-import { w_search_state, w_search_isActive } from './Stores';
+import { w_search_state, w_show_search_controls } from './Stores';
 import { Search_Node } from '../types/Search_Node';
 import { w_t_startup } from './Stores';
 import { get } from 'svelte/store';
@@ -11,11 +11,11 @@ class Search {
 	search_text: string | null = null;
 	results: Array<Thing> = [];
 
-	activate() { w_search_state.set(T_Search.enter); w_search_isActive.set(true); }
+	activate() { w_search_state.set(T_Search.enter); w_show_search_controls.set(true); }
 
 	deactivate() {
-		w_show_results.set(false);
-		w_search_isActive.set(false);
+		w_show_search_results.set(false);
+		w_show_search_controls.set(false);
 		w_search_result_row.set(null);
 		w_search_state.set(T_Search.off);
 	}
@@ -26,18 +26,18 @@ class Search {
 		if (query.length > 0) {
 			this.results = this.root_node.search_for(query);
 			const show_results = this.results.length > 0;
-			w_show_results.set(show_results);
+			w_show_search_results.set(show_results);
 			w_search_state.set(show_results ? T_Search.results : T_Search.enter);
 		} else {
 			this.results = [];
-			w_show_results.set(false);
+			w_show_search_results.set(false);
 			w_search_state.set(T_Search.enter);
 		}
 		if (before !== this.results_fingerprint) {	// only if results are different
 			w_search_result_row.set(null);
 		}
-		w_search_isActive.set(this.isActive_state);
-		w_results_changed.set(Date.now());
+		w_show_search_controls.set([T_Search.enter, T_Search.results].includes(get(w_search_state)));
+		w_search_results_changed.set(Date.now());
 	}
 
 	constructor() {
@@ -47,7 +47,7 @@ class Search {
 				w_t_startup.subscribe((startup) => {
 					if (startup == T_Startup.ready) {
 						this.buildIndex(h.things);
-						w_results_changed.set(Date.now());
+						w_search_results_changed.set(Date.now());
 						w_search_state.subscribe((state) => {
 							const text = this.search_text;
 							if (state !== T_Search.off && !!text) {
@@ -69,7 +69,6 @@ class Search {
 	
 	static readonly _____PRIVATE: unique symbol;
 
-	private get isActive_state(): boolean { return [T_Search.enter, T_Search.results].includes(get(w_search_state)); }
 	private get results_fingerprint(): string { return !this.results ? k.empty : this.results.map(result => result.id).join('|'); }
 
 	private buildIndex(things: Thing[]) {

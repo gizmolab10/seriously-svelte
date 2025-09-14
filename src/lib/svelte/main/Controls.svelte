@@ -3,7 +3,7 @@
 	import { c, e, h, k, p, u, ux, show, grabs, Point, search, colors, layout, svgPaths, signals } from '../../ts/common/Global_Imports';
 	import { w_background_color, w_device_isMobile, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { w_show_details, w_show_graph_ofType, w_show_tree_ofType } from '../../ts/managers/Stores';
-	import { w_search_filter, w_search_state, w_search_isActive } from '../../ts/managers/Stores';
+	import { w_search_filter, w_search_state, w_show_search_controls } from '../../ts/managers/Stores';
 	import { w_graph_rect, w_count_resize, w_popupView_id } from '../../ts/managers/Stores';
 	import Next_Previous from '../mouse/Next_Previous.svelte';
 	import Close_Button from '../mouse/Close_Button.svelte';
@@ -12,7 +12,6 @@
 	import Separator from '../draw/Separator.svelte';
 	import Breadcrumbs from './Breadcrumbs.svelte';
 	import Button from '../mouse/Button.svelte';
-	import Search from './Search.svelte';
 	import Box from '../draw/Box.svelte';
 	const y_center = 10.5;
 	const right_widths = [9, 11.5];
@@ -48,7 +47,7 @@
 		const right_widths = [9, 11.5];
 		const left_widths = {
 			0: c.has_details_button ? 18 : -11,			// details
-			1: !$w_search_isActive ? 14 : c.has_details_button ? 11 : 14,	// recents / search
+			1: !$w_show_search_controls ? 14 : c.has_details_button ? 11 : 14,	// recents / search
 			2: 57,	// graph type
 			3: 100,	// grow
 			4: 26,	// shrink
@@ -99,12 +98,7 @@
 						</svg>
 					</Button>
 				{/if}
-				{#if c.allow_Search}
-					<Search
-						left={lefts[1]}
-						width={layout.windowSize.width - lefts[1] - 20}/>
-				{/if}
-				{#if !c.allow_Search || !$w_search_isActive}
+				{#if !c.allow_Search || !$w_show_search_controls}
 					<Next_Previous name='recents'
 						size={28}
 						has_title={false}
