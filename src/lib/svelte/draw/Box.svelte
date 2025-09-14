@@ -44,14 +44,6 @@
                 origin={new Point(2, 2.5)}
                 corner_radius={corner_radius}/>
         {/if}
-        {#if !c.has_matte_UI}
-            <SVG_Gradient
-                isInverted={true}
-                color={banner_color}
-                size={svg_rect.size}
-                name={`gradient-${name}`}
-                path={svgPaths.rectangle(svg_rect)}/>
-        {/if}
         <div class='box-content-{name}' style='flex: 1;'>
             <slot />
         </div>

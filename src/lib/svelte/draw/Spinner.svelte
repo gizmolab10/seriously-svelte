@@ -44,7 +44,7 @@
     {#if title}
         <div class='spinner-title'
             style='
-                left: 10px;
+                left: 18px;
                 position: absolute;
                 width: {diameter}px;
                 top: {diameter/2 - 10}px;'>

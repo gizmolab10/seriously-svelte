@@ -295,9 +295,11 @@ export class Events {
 			}
 			const duration = ((new Date().getTime()) - time).toFixed(1);
 			debug.log_key(`H  (${duration}) ${key}`);
-			setTimeout( async () => {
-				await h.db.persist_all();
-			}, 1);
+			if (c.allow_autoSave) {
+				setTimeout( async () => {
+					await h.db.persist_all();
+				}, 1);
+			}
 		}
 	}
 

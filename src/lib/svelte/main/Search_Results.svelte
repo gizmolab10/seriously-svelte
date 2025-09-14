@@ -77,6 +77,7 @@
 
 <style>
 	.search-results {
+		overflow: hidden; /* Prevent content from spilling outside */
 		outline: none !important;
 		position: absolute;
 		padding-top: 8px;
@@ -87,36 +88,28 @@
 	ul {
 		list-style: none;
 		outline: none;
+		width: 100%;
 		padding: 0;
 		margin: 0;
 	}
 	li {
-		position: relative;
-		padding: 0;
+		box-sizing: border-box;
 		white-space: nowrap;
+		padding: 0 12px;
 		cursor: pointer;
+		width: 100%;
 	}
-	li::before {
-		content: '';
-		position: absolute;
-		left: 0;
-		right: 0;
-		top: 0;
-		bottom: 0;
-		background-color: transparent;
-		pointer-events: none;
+	li span {
+		text-overflow: ellipsis;
+		display: inline-block;
+		overflow: hidden;
+		max-width: 100%;
 	}
-	li:hover::before {
-		background-color: #eee;
-	}
-	li.selected::before,
-	li.selected:hover::before {
+	li.selected,
+	li.selected:hover {
 		background-color: #ccc;
 	}
-	li > * {  /* This targets the content inside the li */
-		position: relative;
-		display: block;
-		padding-left: 12px;
-		padding-right: 12px;
+	li:hover {
+		background-color: #eee;
 	}
 </style>

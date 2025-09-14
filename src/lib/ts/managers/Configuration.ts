@@ -10,9 +10,9 @@ export class Configuration {
 	allow_GraphEditing = true;
 	allow_TitleEditing = true;
 	has_standalone_UI = true;
+	allow_autoSave = true;
 	erasePreferences = 0;
 	allow_Search = true;
-	has_matte_UI = true;
 	eraseDB = 0;
 
 	configure() {
@@ -47,7 +47,7 @@ export class Configuration {
 			switch (disableOption) {
 				case 'standalone_UI':		this.has_standalone_UI		   = false; break;
 				case 'details':				this.has_details_button		   = false; break;
-				case 'matte_UI':			this.has_matte_UI			   = false; break;	// deprecated
+				case 'auto_save':			this.allow_autoSave			   = false; break;
 				case 'editGraph':			this.allow_GraphEditing		   = false; break;
 				case 'editTitles':			this.allow_TitleEditing		   = false; break;
 				case 'horizontalScrolling': this.allow_HorizontalScrolling = false; break;

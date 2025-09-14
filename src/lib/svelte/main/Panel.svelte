@@ -40,7 +40,7 @@
 
 	function setup_spinner_rect() {
 		const size = $w_graph_rect.size
-		const title_width = u.getWidthOf(spinner_title) + 30;
+		const title_width = u.getWidthOf(spinner_title) + 50;
 		const diameter = Math.min(size.height, size.width) / 4;
 		const square = Size.square(Math.max(diameter, title_width));
 		const center = size.asPoint.dividedInHalf;
