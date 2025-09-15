@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, Point, colors, T_Layer, Direction } from '../../ts/common/Global_Imports';
-	import { w_show_details_ofType, w_background_color } from '../../ts/managers/Stores';
+	import { w_background_color, w_separator_color } from '../../ts/managers/Stores';
 	import Clickable_Label from '../mouse/Clickable_Label.svelte';
 	import Gull_Wings from '../draw/Gull_Wings.svelte';
 	export let handle_click: (event: Event) => {} | null = null;
@@ -19,12 +19,11 @@
 	export let isHorizontal = true;
 	export let name = 'separator';
 	export let margin = 0;
-	const title_top = origin.y - 1 - title_font_size / 1.5 + (position == 'relative' ? 0 : 1);
-	const thin_line_color = colors.ofSeparatorFor('#aaaaaa');
-	const class_name = `${name}-line-${isHorizontal ? 'horizontal' : 'vertical'}`;
+	const thin_line_color = colors.thin_separator_line_color;
 	const line_left = isHorizontal ? origin.x + margin : origin.x - thickness / 2;
+	const class_name = `${name}-line-${isHorizontal ? 'horizontal' : 'vertical'}`;
+	const title_top = origin.y - 1 - title_font_size / 1.5 + (position == 'relative' ? 0 : 1);
 	const title_width = u.getWidth_ofString_withSize(title ?? k.empty, `${title_font_size}px`);
-	let separator_color = colors.separator;
 
 	// origin			is the center at the start of the separator
 	// isHorizontal		true -> starts at origin.x, false -> starts at top
@@ -35,22 +34,17 @@
 	// zindex
 	// handle_click		renders as a clickable label instead
 
-	$: separatorStyle = style_for(isHorizontal, line_left, zindex, top, origin.y, margin, thickness, length, separator_color);
+	$: separatorStyle = style_for(isHorizontal, line_left, zindex, top, origin.y, margin, thickness, length, $w_separator_color);
 	$: wingsCenter_single = wingsCenter_for(isHorizontal, length, thickness, false);
 	$: wingsCenter_dual = wingsCenter_for(isHorizontal, length, thickness, true);
 	$: wingsDirection_single = isHorizontal ? Direction.right : Direction.down;
 	$: wingsDirection_dual = isHorizontal ? Direction.left : Direction.up;
 	$: title_left = (length - title_width - 20) / 2;
 
-	$: {
-		const _ = $w_background_color;
-		separator_color = colors.separator;
-	}
-
-	function style_for(isHorizontal: boolean, line_left: number, zindex: number, top: number, origin_y: number, margin: number, thickness: number, length: number, separator_color: string): string {
+	function style_for(isHorizontal: boolean, line_left: number, zindex: number, top: number, origin_y: number, margin: number, thickness: number, length: number, $w_separator_color: string): string {
 		return isHorizontal
-			? `top:${origin_y}px; z-index:${zindex}; position:${position}; left:${line_left}px; height:${thickness}px; width:${length - margin * 2}px; background-color:${separator_color};`
-			: `left:${line_left}px; z-index:${zindex}; position:${position}; top:${origin_y + margin}px; width:${thickness}px; height:${length - 6 - margin * 2}px; background-color:${separator_color};`;
+			? `top:${origin_y}px; z-index:${zindex}; position:${position}; left:${line_left}px; height:${thickness}px; width:${length - margin * 2}px; background-color:${$w_separator_color};`
+			: `left:${line_left}px; z-index:${zindex}; position:${position}; top:${origin_y + margin}px; width:${thickness}px; height:${length - 6 - margin * 2}px; background-color:${$w_separator_color};`;
 	}
 
 	function wingsCenter_for(isHorizontal: boolean, length: number, thickness: number, forOtherEnd: boolean): Point {
@@ -66,15 +60,15 @@
 		<Gull_Wings
 			thickness={thickness}
 			radius={corner_radius}
-			color={separator_color}
+			color={$w_separator_color}
 			center={wingsCenter_single}
 			direction={wingsDirection_single}/>
 		{#if has_both_wings}
 			<Gull_Wings
 				thickness={thickness}
 				radius={corner_radius}
-				color={separator_color}
 				center={wingsCenter_dual}
+				color={$w_separator_color}
 				direction={wingsDirection_dual}/>
 		{/if}
 	{/if}

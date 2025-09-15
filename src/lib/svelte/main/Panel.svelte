@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { c, e, h, k, u, ux, show, busy, Rect, Size, Point, Thing, search, layout } from '../../ts/common/Global_Imports';
 	import { debug, colors, Ancestry, Hierarchy, databases, Direction } from '../../ts/common/Global_Imports';
-	import { w_hierarchy, w_graph_rect, w_t_database, w_background_color } from '../../ts/managers/Stores';
+	import { w_hierarchy, w_graph_rect, w_t_database, w_separator_color } from '../../ts/managers/Stores';
 	import { T_Layer, T_Search, T_Banner, T_Control, T_Startup } from '../../ts/common/Global_Imports';
 	import { w_t_startup, w_popupView_id, w_device_isMobile, } from '../../ts/managers/Stores';
 	import { w_s_title_edit, w_ancestry_focus } from '../../ts/managers/Stores';
@@ -97,7 +97,7 @@
 								angle={spinnerAngle}
 								title={spinner_title}
 								number_of_dashes={19}
-								stroke={colors.separator}
+								stroke={$w_separator_color}
 								on:angle={handle_spinner_angle}
 								diameter={spinner_rect.size.width}/>
 						</div>

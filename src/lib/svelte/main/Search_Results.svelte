@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { w_search_results_changed, w_search_result_row, w_show_search_controls } from '../../ts/managers/Stores';
-	import { w_search_state, w_background_color } from '../../ts/managers/Stores';
+	import { w_search_state, w_separator_color } from '../../ts/managers/Stores';
 	import { u, Thing,colors, T_Search } from '../../ts/common/Global_Imports';
 	import { search } from '../../ts/managers/Search';
 	let element: HTMLDivElement;
@@ -50,7 +50,7 @@
 			lastIndex += part.length;
 			result += title.slice(lastIndex - part.length, lastIndex);
 			const match = title.slice(lastIndex, lastIndex + searchText.length);
-			result += `<span style='background-color: ${colors.separator}'>${match}</span>`;
+			result += `<span style='background-color: ${$w_separator_color}'>${match}</span>`;
 			lastIndex += searchText.length;
 		}
 		result += title.slice(lastIndex);
@@ -63,7 +63,7 @@
 	on:keydown={handle_key_down}
 	bind:this={element}
 	tabindex='0'>
-	{#key `${$w_background_color}:::${$w_search_result_row}:::${$w_search_results_changed}`}
+	{#key `${$w_separator_color}:::${$w_search_result_row}:::${$w_search_results_changed}`}
 		<ul>
 			{#each results as result, index}
 				<li class:selected={$w_search_result_row === index} style='color: {result.color}'

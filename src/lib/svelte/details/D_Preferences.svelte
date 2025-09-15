@@ -2,7 +2,7 @@
 	import { T_Graph, T_Layer, T_Kinship, T_Auto_Adjust } from '../../ts/common/Global_Imports';
 	import { k, u, ux, Rect, Point, colors, layout } from '../../ts/common/Global_Imports';
 	import { w_show_details_ofType, w_show_tree_ofType } from '../../ts/managers/Stores';
-	import { w_background_color, w_auto_adjust_graph } from '../../ts/managers/Stores';
+	import { w_separator_color, w_auto_adjust_graph } from '../../ts/managers/Stores';
 	import { w_show_countDots_ofType } from '../../ts/managers/Stores';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../draw/Separator.svelte';
@@ -15,15 +15,15 @@
 	const separator_left = 35;
 	const position = 'relative';
 	const width = k.width.details;
-	const picker_offset = `-89px`;
+	const picker_offset = `-189px`;
 	const color_left = width / 2 - 13;
 	const segmented_width = width - 6;
 	const segmented_height = k.height.button;
 	const separator_height = segmented_height + 9;
 	const separator_width = width - 5 - separator_left * 2;
-	let color = $w_background_color;
-	let color_origin = Point.square(-3.5);
 	let color_wrapper: HTMLDivElement | null = null;
+	let color_origin = Point.square(-3.5);
+	let color = $w_separator_color;
 
 	const heights = [
 		10,
@@ -41,7 +41,13 @@
 	}
 
 	function handle_colors(result: string) {
-		$w_background_color = color = result;
+		const lume = colors.luminance_ofColor(result);
+		if (lume > 0.8) {
+			result = 'lightgray';
+		} else {
+			color = result;
+		}
+		$w_separator_color = result;
 	}
 
 	function handle_auto_adjust(types: Array<T_Auto_Adjust | null>) {
@@ -112,9 +118,9 @@
 		length={width}
 		position={position}
 		isHorizontal={true}
+		title='accent color'
 		has_gull_wings={true}
 		has_thin_divider={true}
-		title='background color'
 		margin={k.details_margin}
 		origin={Point.y(tops[4])}
 		title_left={k.separator_title_left}
@@ -130,7 +136,7 @@
 			position: {position};
 			border: 1px solid black;
 			z-index: {T_Layer.detailsPlus_3};
-			background-color: {$w_background_color}'>
+			background-color: {$w_separator_color}'>
 		<Portal className='preferences-color-portal' id='preferences'>
 			<Color
 				color={color}

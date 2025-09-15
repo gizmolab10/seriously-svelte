@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { c, k, p, ux, grabs, colors, layout, Rect, Size, Point, Thing, Ancestry } from '../../ts/common/Global_Imports';
-	import { w_background_color, w_show_details_ofType, w_search_result_row } from '../../ts/managers/Stores';
 	import { w_ancestry_focus, w_ancestries_grabbed, w_relationship_order } from '../../ts/managers/Stores';
 	import { T_Thing, T_Trait, T_Layer, T_Element, T_Preference } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/managers/Stores';
+	import { w_show_details_ofType, w_search_result_row } from '../../ts/managers/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
     import { s_details } from '../../ts/state/S_Details';
 	import type { Integer } from '../../ts/types/Types';

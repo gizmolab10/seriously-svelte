@@ -6,12 +6,17 @@ export class Colors {
 	default = 'black';
 	banner = '#f8f8f8';
 	border = 'darkgray';
-	background = 'white';   // #ebf0ff
+	background = 'white';
 	separator = '#eeeee0';
     disabled = 'lightGray';
 	rubberband = '#4a90e2';
 	faint_hover = 'yellow';
     default_forThings = 'blue';
+	thin_separator_line_color = '#999999';
+
+	ofBackgroundFor(color: string): string { return this.lighterBy(color, 100);}
+	ofBannerFor(background: string): string { return this.blend('white', background, 4);}
+	opacitize(color: string, amount: number): string { return transparentize(color, 1 - amount); }
 
 	color_fromSeriously(color: string | undefined): string {
 		if (!!color) {			
@@ -39,10 +44,6 @@ export class Colors {
 		}
 		return this.default_forThings;
 	}
-
-	opacitize(color: string, amount: number): string { return transparentize(color, 1 - amount); }
-	ofSeparatorFor(background: string): string { return this.blend('#dedede', background);}
-	ofBannerFor(background: string): string { return this.blend('white', background, 4);}
 
 	blend(color: string, background: string, saturation: number = 7): string {
 		let blended: string | null = 'lightgray';

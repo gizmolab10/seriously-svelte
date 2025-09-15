@@ -10,12 +10,14 @@
 	export let color_closure = (color: string) => {};
 	const selectorSize = k.height.dot + 1;
 	const pickerSize = 122;
+	let borderColor = colors.separator;
 
 	async function handle_color_change(event) {
 		u.isolateEvent(event);
 		const new_color = event.detail.hex;
 		if (color != new_color) {
 			color_closure(new_color)
+			borderColor = colors.separator;
 			color = new_color;
 		}
 	}
@@ -36,10 +38,10 @@
 		--picker-indicator-size='{selectorSize}px'
 		--slider-width='{selectorSize}px'
 		--picker-height='{pickerSize}px'
+		--cp-border-color={borderColor}
 		--picker-width='{pickerSize}px'
 		--input-size='{selectorSize}px'
-		--picker-z-index='{zindex}'
-		--cp-border-color=black/>
+		--picker-z-index='{zindex}'/>
 </div>
 
 <style>

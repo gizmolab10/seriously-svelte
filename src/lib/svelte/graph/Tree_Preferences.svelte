@@ -2,7 +2,7 @@
 	import { k, u, ux, Point, colors, layout, svgPaths } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Control, T_Kinship } from '../../ts/common/Global_Imports';
 	import { w_show_tree_ofType, w_show_graph_ofType } from '../../ts/managers/Stores';
-	import { w_depth_limit, w_background_color } from '../../ts/managers/Stores';
+	import { w_depth_limit, w_separator_color } from '../../ts/managers/Stores';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Button from '../mouse/Button.svelte';
@@ -73,7 +73,7 @@
 			isLogarithmic={true}
 			value={$w_depth_limit}
 			height={segmented_height}
-			thumb_color={colors.separator}
+			thumb_color={$w_separator_color}
 			origin={new Point(10, tops[0])}
 			title_font_size={k.font_size.banners}
 			handle_value_change={handle_depth_limit}/>

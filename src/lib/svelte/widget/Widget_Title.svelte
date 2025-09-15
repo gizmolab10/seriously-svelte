@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { layout, signals, components, databases, Seriously_Range, S_Component } from '../../ts/common/Global_Imports';
-	import { w_thing_color, w_background_color, w_thing_title, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { c, h, k, u, ux, Rect, Size, Point, Thing, debug, Angle } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/managers/Stores';
+	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { S_Element, T_Graph, T_Layer, T_Component } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { w_mouse_location } from '../../ts/managers/Stores';

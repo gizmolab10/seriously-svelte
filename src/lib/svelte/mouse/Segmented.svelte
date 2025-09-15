@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { k, Point, colors } from '../../ts/common/Global_Imports';
-	import { w_background_color } from '../../ts/managers/Stores';
+	import { w_separator_color } from '../../ts/managers/Stores';
 	export let handle_selection: ((types: string[]) => void) | null = null;
 	export let selected_hover_text_color: string = 'black';
-	export let selected_color: string = colors.separator;
+	export let selected_color: string = $w_separator_color;
 	export let hover_background_color: string = 'black';
 	export let selected_text_color: string = 'white';
 	export let border_color: string = colors.border;
@@ -21,7 +21,7 @@
 	function button_name(title: string) { return `segment-${name}-${title.replace(/\s+/g, '-').toLowerCase()}`; }
 
 	$: {
-		const _ = $w_background_color;
+		const _ = $w_separator_color;
 		update_colors()
 	}
 
@@ -34,7 +34,7 @@
 		const inverted = colors.luminance_ofColor(selected_color) > 0.5;
 		selected_hover_text_color = inverted ? 'white' : 'black';
 		selected_text_color = inverted ? 'black' : 'white';
-		selected_color = colors.separator;
+		selected_color = $w_separator_color;
 		border_color = colors.border;
 	}
 

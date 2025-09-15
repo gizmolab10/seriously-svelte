@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { w_thing_fontFamily, w_background_color, w_s_title_edit } from '../../ts/managers/Stores';
 	import { k, u, ux, debug, colors, T_Layer, databases } from '../../ts/common/Global_Imports';
+	import { w_thing_fontFamily, w_s_title_edit } from '../../ts/managers/Stores';
 	import Clickable_Label from '../mouse/Clickable_Label.svelte';
 	export let handle_textChange = (label: string, text: string) => {};
 	export let handleClick_onLabel: (event: Event) => {} | null = null;

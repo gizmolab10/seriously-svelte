@@ -2,11 +2,10 @@
 	import { debug, signals, Ancestry, components, S_Component } from '../../ts/common/Global_Imports';
 	import { c, k, u, ux, Thing, Point, Angle, layout } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Widget, T_Signal } from '../../ts/common/Global_Imports';
+	import { w_thing_color, w_ancestries_grabbed } from '../../ts/managers/Stores';
 	import { G_Widget, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
-	import { w_thing_color, w_background_color } from '../../ts/managers/Stores';
 	import { w_s_title_edit, w_ancestry_focus } from '../../ts/managers/Stores';
 	import { T_Element, T_Component } from '../../ts/common/Global_Imports';
-	import { w_ancestries_grabbed } from '../../ts/managers/Stores';
 	import Widget_Reveal from './Widget_Reveal.svelte';
 	import Tree_Line from '../graph/Tree_Line.svelte';
 	import Widget_Title from './Widget_Title.svelte';

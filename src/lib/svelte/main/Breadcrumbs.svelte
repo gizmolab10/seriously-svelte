@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { c, h, k, u, ux, Size, Point, Thing, debug, grabs, colors, signals } from '../../ts/common/Global_Imports';
-	import { w_t_startup, w_graph_rect, w_thing_color, w_background_color } from '../../ts/managers/Stores';
 	import { T_Layer, T_Signal, T_Element, T_Startup, T_Component } from '../../ts/common/Global_Imports';
 	import { svgPaths, Ancestry, layout, components, S_Component} from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/managers/Stores';
+	import { w_t_startup, w_graph_rect, w_thing_color } from '../../ts/managers/Stores';
 	import Breadcrumb_Button from '../mouse/Breadcrumb_Button.svelte';
 	import { w_search_result_row } from '../../ts/managers/Stores';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
@@ -12,7 +12,6 @@
 	export let centered: boolean = false;
 	export let width = layout.windowSize.width;
 	let s_component: S_Component | null = null;
-	let separator_color = colors.separator;
 	let things: Array<Thing> = [];
 	let size = k.height.button;
 	let lefts: string[] = [];
@@ -27,7 +26,6 @@
 	onMount(() => { return () => s_component.disconnect(); });
 	
 	$: $w_s_title_edit, $w_thing_color, $w_ancestries_grabbed, $w_search_result_row, reattachments += 1;
-	$: $w_background_color, separator_color = colors.separator;
 
 	$: {
 		if ($w_t_startup == T_Startup.ready) {

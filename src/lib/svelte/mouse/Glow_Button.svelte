@@ -13,13 +13,13 @@
     const mouseTimer = e.mouse_timer_forName(`glow-button-${owner}-${title}`);
     const glow_rect = Rect.createWHRect(width, height);
     const gradient_name = 'glow-' + title;
-    let banner_color = colors.ofBannerFor($w_background_color);
+    let banner_color = colors.banner;
     let glow_button: HTMLElement | null = null;
     let isHovering = false;
 
 	$: {
 		const _ = $w_background_color;
-		banner_color = colors.ofBannerFor($w_background_color);
+		banner_color = colors.banner;
 	}
     
     function intercept_click() {

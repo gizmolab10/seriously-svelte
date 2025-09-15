@@ -13,7 +13,7 @@
 	export let width: number;
 	const main_title = titles[0];
 	const g_repeater = new G_Repeater(titles, height, width, 0, 0, 7, 0, false, font_size, true);
-	let banner_color = colors.ofBannerFor($w_background_color);
+	let banner_color = colors.banner;
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//																				//
@@ -27,7 +27,7 @@
 
 	$: {
 		const _ = $w_background_color;
-		banner_color = colors.ofBannerFor($w_background_color);
+		banner_color = colors.banner;
 	}
 
 	function intercept_click(title: string) {

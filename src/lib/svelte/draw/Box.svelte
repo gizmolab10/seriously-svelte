@@ -1,7 +1,5 @@
 <script lang='ts'>
-	import { c, k, Rect, Point, colors, T_Layer, svgPaths } from '../../ts/common/Global_Imports';
-    import { w_background_color } from '../../ts/managers/Stores';
-    import SVG_Gradient from '../draw/SVG_Gradient.svelte';
+	import { c, k, Rect, Point, T_Layer } from '../../ts/common/Global_Imports';
 	import Separator from './Separator.svelte';
     export let corner_radius: number = k.radius.gull_wings.thick;
     export let thickness: number = k.thickness.separator.main;
@@ -16,9 +14,6 @@
     export let left: number = 0;
     export let top: number = 0;
     const svg_rect = Rect.createWHRect(width, height);
-    let banner_color = colors.ofBannerFor($w_background_color);
-
-    $: $w_background_color, banner_color = colors.ofBannerFor($w_background_color);
 
     </script>
 

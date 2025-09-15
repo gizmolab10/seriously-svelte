@@ -1,10 +1,11 @@
 import { G_Paging, T_Graph, T_Details, T_Kinship, T_Preference, T_Auto_Adjust } from '../common/Global_Imports';
 import { c, h, k, u, show, grabs, debug, radial, colors, Ancestry, databases } from '../common/Global_Imports';
-import { w_g_paging, w_font_size, w_background_color, w_thing_fontFamily, w_depth_limit, } from './Stores';
 import { w_ancestry_focus, w_ancestries_grabbed, w_ancestries_expanded } from './Stores';
 import { w_auto_adjust_graph, w_show_tree_ofType, w_show_graph_ofType } from './Stores';
 import { w_t_database, w_ring_rotation_angle, w_ring_rotation_radius } from './Stores';
+import { w_g_paging, w_font_size, w_thing_fontFamily, w_depth_limit } from './Stores';
 import { w_show_details_ofType, w_show_countDots_ofType } from './Stores';
+import { w_background_color, w_separator_color } from './Stores';
 import { get } from 'svelte/store';
 
 export class Preferences {
@@ -211,9 +212,14 @@ export class Preferences {
 		w_auto_adjust_graph.subscribe((auto_adjust: T_Auto_Adjust | null) => {
 			this.write_key(T_Preference.auto_adjust, auto_adjust);
 		});
+		w_separator_color.subscribe((color: string) => {
+			this.write_key(T_Preference.separator, color);
+			w_background_color.set(colors.ofBackgroundFor(color));
+		})
 		w_background_color.subscribe((color: string) => {
 			document.documentElement.style.setProperty('--css-background-color', color);
 			this.write_key(T_Preference.background, color);
+			colors.banner = colors.ofBannerFor(color);
 			// colors.background = color;	// uncommenting this turns the glow buttons gray
 		})
 
@@ -244,6 +250,7 @@ export class Preferences {
 		w_auto_adjust_graph		.set( this.read_key(T_Preference.auto_adjust)			?? null);
 		w_thing_fontFamily		.set( this.read_key(T_Preference.font)					?? 'Times New Roman');
 		w_background_color		.set( this.read_key(T_Preference.background)			?? colors.background);
+		w_separator_color		.set( this.read_key(T_Preference.separator)				?? colors.separator);
 	}
 
 }

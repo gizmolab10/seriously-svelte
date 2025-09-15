@@ -78,6 +78,7 @@ export const w_popupView_id				= writable<string | null>();
 export const w_control_key_down			= writable<boolean>(false);
 export const w_device_isMobile			= writable<boolean>();
 export const w_background_color			= writable<string>();
+export const w_separator_color			= writable<string>();
 export const w_depth_limit				= writable<number>();
 export const w_font_size				= writable<number>();
 
@@ -93,11 +94,8 @@ class Stores {
 		w_show_details_ofType.set([]);
 		w_t_startup.set(T_Startup.start);
 		w_search_state.set(T_Search.off);
+		w_separator_color.set(colors.separator);
 		w_search_filter.set(T_Search_Filter.title);
-		w_background_color.subscribe((color: string) => {
-			colors.banner = colors.ofBannerFor(color);
-			colors.separator = colors.ofSeparatorFor(color);
-		});
 	}
 }
 

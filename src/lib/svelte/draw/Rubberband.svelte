@@ -1,8 +1,8 @@
 <script lang='ts'>
     import { h, k, u, Rect, Size, Point, debug, colors, layout, components } from '../../ts/common/Global_Imports';
-    import { T_Layer, T_Dragging, T_Component } from '../../ts/common/Global_Imports';
+    import { w_scaled_movement, w_user_graph_offset, w_separator_color } from '../../ts/managers/Stores';
     import { w_dragging_active, w_ancestries_grabbed } from '../../ts/managers/Stores';
-    import { w_scaled_movement, w_user_graph_offset } from '../../ts/managers/Stores';
+    import { T_Layer, T_Dragging, T_Component } from '../../ts/common/Global_Imports';
     import { w_mouse_location, w_count_mouse_up } from '../../ts/managers/Stores';
     import { onMount, onDestroy } from 'svelte';
     export let strokeWidth = k.thickness.rubberband;
@@ -64,7 +64,7 @@
         height: ${height}px;
         z-index: ${T_Layer.rubberband};
         border-width: ${strokeWidth}px;
-        border-color: ${colors.separator};
+        border-color: ${$w_separator_color};
         display: ${$w_dragging_active === T_Dragging.rubberband ? 'block' : 'none'};`
     ;
 

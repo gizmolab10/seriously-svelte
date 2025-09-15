@@ -2,10 +2,10 @@
 	import { e, k, u, ux, busy, Thing, Point, Angle, debug, colors, layout } from '../../ts/common/Global_Imports';
 	import { w_count_mouse_up, w_s_title_edit, w_g_paging_cluster } from '../../ts/managers/Stores';
 	import { radial, g_radial, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
-	import { w_thing_color, w_background_color, w_ancestry_focus } from '../../ts/managers/Stores';
 	import { T_Layer, T_Radial_Zone, T_Component, S_Component } from '../../ts/common/Global_Imports';
 	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/managers/Stores';
 	import { w_graph_rect, w_mouse_location_scaled } from '../../ts/managers/Stores';
+	import { w_thing_color, w_ancestry_focus } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Radial_ArcSlider from './Radial_ArcSlider.svelte';
 	import { onMount } from 'svelte';
