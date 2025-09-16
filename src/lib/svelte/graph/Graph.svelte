@@ -6,7 +6,6 @@
 	import { w_t_startup, w_device_isMobile, w_popupView_id } from '../../ts/managers/Stores';
 	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/managers/Stores';
 	import { w_thing_fontFamily, w_dragging_active } from '../../ts/managers/Stores';
-	import Tree_Preferences from './Tree_Preferences.svelte';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Radial_Graph from '../graph/Radial_Graph.svelte';
 	import Tree_Graph from '../graph/Tree_Graph.svelte';
@@ -121,9 +120,6 @@
 				strokeWidth={k.thickness.rubberband}
 			/>
 		</div>
-		{#if $w_show_graph_ofType == T_Graph.tree}
-			<Tree_Preferences top={0} width={117} zindex={T_Layer.frontmost}/>
-		{/if}
 		<div class='bottom-controls'
 			style='
 				left:0px;

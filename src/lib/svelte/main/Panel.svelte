@@ -8,14 +8,15 @@
 	import { w_show_details, w_search_results_found } from '../../ts/managers/Stores';
 	import { T_Database } from '../../ts/database/DB_Common';
 	import Search_Results from './Search_Results.svelte';
+	import Secondary from '../controls/Secondary.svelte';
+	import Primary from '../controls/Primary.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Details from '../details/Details.svelte';
+	import Search from '../controls/Search.svelte';
 	import Spinner from '../draw/Spinner.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	import Graph from '../graph/Graph.svelte';
-	import Controls from './Controls.svelte';
 	import Import from './Import.svelte';
-	import Search from './Search.svelte';
 	import Box from '../draw/Box.svelte';
 	import { onMount } from 'svelte';
 	const spinner_title = 'Loading your data...';
@@ -65,7 +66,7 @@
 		{:else if $w_popupView_id == T_Control.import}
 			<Import/>
 		{:else}
-			<Controls/>
+			<Primary/>
 			{#if $w_show_details}
 				<Details/>
 			{/if}
@@ -83,6 +84,7 @@
 					left: {$w_graph_rect.origin.x}px;
 					width: {$w_graph_rect.size.width}px;
 					height: {$w_graph_rect.size.height}px;'>
+				<Secondary/>
 				{#if busy.isDatabaseBusy && h.db.isRemote}
 					{#key spinner_rect.description}
 						<div class='data-spinner'
