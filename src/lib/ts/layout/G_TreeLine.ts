@@ -6,7 +6,6 @@ export default class G_TreeLine {
 	other_ancestry: Ancestry;	// other end of the line (N.B. main can be deeper!!)
 	isBidirectional: boolean;
 	points_atOther = true;
-	viewBox = Rect.zero;
 	origin = Point.zero;
 	extent = Point.zero;
 	linePath = k.empty;
@@ -53,7 +52,7 @@ export default class G_TreeLine {
 		
 	private layout_svgPaths() {
 		const lineOffset = new Point(-118.5, 2.5);
-		let lineRect = this.rect.offsetBy(lineOffset).expand_widthBy(-4);
+		let lineRect = this.rect.offsetBy(lineOffset).extend_widthBy(-4);
 		switch (this.t_curve) {
 			case T_Tree_Line.up:
 				this.origin = lineRect.origin;
@@ -78,8 +77,6 @@ export default class G_TreeLine {
 			const extentY = this.t_curve == T_Tree_Line.up   ? 0 : this.size.height;
 			this.linePath = `M0 ${originY} A ${this.size.description} 0 0 ${flag} ${this.size.width} ${extentY}`;
 		}
-		const boxSize = new Size(this.size.width, Math.max(2, this.size.height));
-		this.viewBox = new Rect(this.origin, boxSize);
 	}
 
 }

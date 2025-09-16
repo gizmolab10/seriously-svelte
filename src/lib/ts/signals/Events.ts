@@ -126,7 +126,7 @@ export class Events {
 			// on COMMAND +/-
 			// and on simulator switches platform
             const isMobile = u.device_isMobile;
-            w_count_resize.update(n => n + 1);
+            w_count_resize.update(n => n + 1);		// observed by controls
             w_device_isMobile.set(isMobile);
             layout.restore_state();
             this.debouncedResize = null;

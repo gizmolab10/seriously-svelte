@@ -11,7 +11,6 @@ export enum T_Debug {
 	segments		= 'segments',
 	actions			= 'actions',		// state logic of actions
 	reticle			= 'reticle',		// show center of radial layout geometry
-	layout 			= 'layout',			// branches and widgets
 	action  		= 'action',
 	bubble  		= 'bubble',
 	colors			= 'colors',
@@ -19,6 +18,8 @@ export enum T_Debug {
 	crumbs  		= 'crumbs',
 	expand  		= 'expand',
 	handle			= 'handle',
+	layout 			= 'layout',			// branches and widgets
+	origin			= 'origin',
 	radial			= 'radial',
 	remote			= 'remote',			// interactions with remote (databases)
 	signal			= 'signal',
@@ -76,6 +77,7 @@ export class Debug {
 	log_expand(message: string, ...args: any[]) { this.log_maybe(T_Debug.expand, message, ...args); }
 	log_handle(message: string, ...args: any[]) { this.log_maybe(T_Debug.handle, message, ...args); }
 	log_layout(message: string, ...args: any[]) { this.log_maybe(T_Debug.layout, message, ...args); }
+	log_origin(message: string, ...args: any[]) { this.log_maybe(T_Debug.origin, message, ...args); }
 	log_radial(message: string, ...args: any[]) { this.log_maybe(T_Debug.radial, message, ...args); }
 	log_remote(message: string, ...args: any[]) { this.log_maybe(T_Debug.remote, message, ...args); }
 	log_signal(message: string, ...args: any[]) { this.log_maybe(T_Debug.signal, message, ...args); }
@@ -117,6 +119,7 @@ export class Debug {
 					case 'expand': this.flags.push(T_Debug.expand); break;
 					case 'handle': this.flags.push(T_Debug.handle); break;
 					case 'layout': this.flags.push(T_Debug.layout); break;
+					case 'origin': this.flags.push(T_Debug.origin); break;
 					case 'radial': this.flags.push(T_Debug.radial); break;
 					case 'remote': this.flags.push(T_Debug.remote); break;
 					case 'signal': this.flags.push(T_Debug.signal); break;

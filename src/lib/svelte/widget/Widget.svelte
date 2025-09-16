@@ -102,6 +102,11 @@
 		update_style();
 	}
 
+	async function handle_click_event(event) {
+		u.isolateEvent(event);
+		ancestry?.grab_forShift(event.shiftKey);
+	}
+
 	function handle_s_mouse(s_mouse: S_Mouse): boolean {
 		if (!!ancestry) {	
 			if (s_mouse.isHover) {
@@ -115,24 +120,6 @@
 			}
 		}
 		return false;
-	}
-
-	function update_style() {
-		widget_style = `
-			top : ${top}px;
-			left : ${left}px;
-			position : absolute;
-			height : ${height}px;
-			${s_widget.background};
-			border : ${s_widget.border};
-			width : ${width_ofWidget}px;
-			z-index : ${T_Layer.widgets};
-			border-radius : ${border_radius}px;`;
-	}
-
-	async function handle_click_event(event) {
-		u.isolateEvent(event);
-		ancestry?.grab_forShift(event.shiftKey);
 	}
 
 	function layout_maybe() {
@@ -149,7 +136,21 @@
 		height = k.height.row - 1.5;
 		border_radius = k.height.row / 2;
 		width_ofWidget = g_widget.width_ofWidget;
+		// debug.log_origin('FINAL', g_widget.origin.verbose, ancestry.titles);
 		update_style();
+	}
+
+	function update_style() {
+		widget_style = `
+			top : ${top}px;
+			left : ${left}px;
+			position : absolute;
+			height : ${height}px;
+			${s_widget.background};
+			border : ${s_widget.border};
+			width : ${width_ofWidget}px;
+			z-index : ${T_Layer.widgets};
+			border-radius : ${border_radius}px;`;
 	}
 
 	function setup_fromAncestry() {

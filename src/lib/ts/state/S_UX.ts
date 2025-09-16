@@ -1,4 +1,4 @@
-import { T_Graph, T_Search_Filter, T_Control, T_Element, T_Kinship } from '../common/Global_Imports';
+import { T_Graph, T_Search_Filter, T_Control, T_Element, T_Kinship, debug } from '../common/Global_Imports';
 import { p, grabs, colors, layout, Ancestry } from '../common/Global_Imports';
 import { S_Mouse, S_Widget, S_Element } from '../common/Global_Imports';
 import { w_show_tree_ofType, w_depth_limit } from '../managers/Stores';
@@ -102,10 +102,13 @@ export default class S_UX {
 		layout.grand_sweep();
 	}
 
-	branch_isAlready_attached(ancestry: Ancestry, clear: boolean = false): boolean {
-		if (clear) {
-			this.attached_branches = [];	// null clears the array
-		}
+	reset_scanOf_attached_branches() {
+		debug.log_draw('TREE', 'reset scan');
+		this.attached_branches = [];
+		return true;	// tell svelte to reattach the tree
+	}
+
+	branch_isAlready_attached(ancestry: Ancestry): boolean {
 		const visited = this.attached_branches.includes(ancestry.id);
 		if (!visited) {
 			this.attached_branches.push(ancestry.id);

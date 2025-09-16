@@ -18,7 +18,7 @@
 </script>
 
 {#key reattachments}
-	{#if !!$w_ancestry_focus && !ux.branch_isAlready_attached($w_ancestry_focus, true)}
+	{#if ux.reset_scanOf_attached_branches() && !!$w_ancestry_focus}
 		<div class = 'tree-graph'
 			style = '
 				position: absolute;

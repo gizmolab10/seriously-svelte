@@ -1,5 +1,4 @@
-import { ux, Size, debug, Point, Ancestry, T_Graph } from '../common/Global_Imports';
-import { w_ancestries_expanded } from '../managers/Stores';
+import { ux, Size, Point, Ancestry, T_Graph, debug } from '../common/Global_Imports';
 
 export default class G_TreeBranches {
 	show_child_branches = true;
@@ -14,11 +13,12 @@ export default class G_TreeBranches {
 		this.ancestry = ancestry;
 	}
 		
-	layout_branches() {
+	layout_subtree() {
 		const ancestry = this.ancestry;
-		if (ux.inTreeMode && !!ancestry && (ancestry.isExpanded || ancestry.isRoot)) {
+		const g_widget = ancestry.g_widget;
+		if (ux.inTreeMode && !!ancestry && !!g_widget && (ancestry.isExpanded || ancestry.isRoot)) {
 			let width = 0;
-			const g_widget = ancestry.g_widget;
+			g_widget.debug('X');
 			const branchAncestries = ancestry.branchAncestries;
 			const halfHeight = ancestry.halfHeight_ofVisibleSubtree;
 			const origin_ofWidget = g_widget.origin_ofWidget.offsetByXY(6, halfHeight + 1);
@@ -26,7 +26,7 @@ export default class G_TreeBranches {
 			for (const ancestry_ofBranch of branchAncestries) {
 				if (ancestry_ofBranch.depth > ancestry.depth) {
 					const g_widget_ofBranch = ancestry_ofBranch.g_widget;
-					g_widget_ofBranch.layout_treeBranches(height, origin_ofWidget, T_Graph.tree)
+					g_widget_ofBranch.layout_subtree(height, origin_ofWidget, T_Graph.tree)
 					width = Math.max(width, g_widget_ofBranch.width_ofWidget);
 					height += g_widget_ofBranch.size_ofSubtree.height;
 				}

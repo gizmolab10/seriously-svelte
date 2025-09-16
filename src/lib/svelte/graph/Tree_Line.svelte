@@ -28,15 +28,15 @@
 
 	onMount(() => { return () => s_component.disconnect(); });
 
-	if (g_line.isBidirectional) {
-		stroke_color = colors.opacitize(ancestry.thing.color, 0.7);
-		svg_dasharray = k.dasharray.relateds;
-	}
-
 	$: {
 		if (!!ancestry && !!ancestry.thing && ancestry.thing.id == $w_thing_color?.split(k.separator.generic)[0]) {
 			reattachments += 1;
 		}
+	}
+
+	if (g_line.isBidirectional) {
+		stroke_color = colors.opacitize(ancestry.thing.color, 0.7);
+		svg_dasharray = k.dasharray.relateds;
 	}
 
 </script>
@@ -46,7 +46,6 @@
 		<svg
 			id = {s_component.id}
 			class = 'tree-line-svg'
-			viewBox = {g_line.viewBox.verbose}
 			style = '
 				top: {g_line.origin.y - g_line.size.height + 1 - g_line.stroke_width / 2}px;
 				left: {g_line.origin.x + 142 + g_line.stroke_width / 2}px;
