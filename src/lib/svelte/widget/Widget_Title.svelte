@@ -66,7 +66,7 @@
 			left = adjust ? (title_width / 20 - 3) : 0.8;
 			color = s_widget.colorFor_grabbed_andEditing(isGrabbed, isEditing);
 			trigger = reactives;
-			log_connection_state('triggered by reactives');
+			debug_log_connection_state('triggered by reactives');
 		}
 	}
 
@@ -111,9 +111,9 @@
 		}
 	}
 
-	function log_connection_state(prefix: string) {
+	function debug_log_connection_state(prefix: string) {
 		if (!!s_component) {
-			s_component.log_connection_state(prefix);
+			s_component.debug_log_connection_state(prefix);
 		} else {
 			debug.log_component(`S_Component is null for ${ancestry?.titles}`);
 		}

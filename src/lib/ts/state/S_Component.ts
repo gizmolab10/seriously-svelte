@@ -100,15 +100,15 @@ export default class S_Component {
         return this.log_isEnabledFor_t_component[key] ?? false;
     }
 
-	log_style(prefix: string) {
+	debug_log_style(prefix: string) {
         if (!this.isComponentLog_enabled) { return; }
-        const information = this.style_information(prefix);
+        const information = this.style_debug_info(prefix);
         if (!!information) {
             debug.log_component(information);
         }
 	}
 
-	log_signal(sending: boolean, value: any | null, t_signal: T_Signal, priority: number) {
+	debug_log_signal(sending: boolean, value: any | null, t_signal: T_Signal, priority: number) {
         if (signals.log_isEnabledFor_t_signal[t_signal] && signals.log_isEnabled_forSending(sending) && this.isComponentLog_enabled) {
             const resolved = u.resolve_signal_value(value);
             const first = sending ? '[s]---->' : '---->[h]';
@@ -117,7 +117,7 @@ export default class S_Component {
 		}
 	}
 
-	log_connection_state(prefix: string) {
+	debug_log_connection_state(prefix: string) {
         if (!this.isComponentLog_enabled) { return; }
 		const element = this.element;
 		if (!!element) {
@@ -125,7 +125,7 @@ export default class S_Component {
             const type = this.type.toUpperCase();
 			const array = [type, prefix, 'connection state', `(at ${new Date().toLocaleString()})`,
 				indented + k.title.line,
-				indented + this.style_information('ancestry'),
+				indented + this.style_debug_info('ancestry'),
 				indented + k.title.line,
 				indented + 'ancestry.isGrabbed', this.ancestry?.isGrabbed,
 				indented + 'ancestry.isEditing', this.ancestry?.isEditing,
@@ -133,9 +133,9 @@ export default class S_Component {
 				indented + 'previousSibling', element.previousSibling?.nodeName,
 				indented + 'nextSibling', element.nextSibling?.nodeName,
 			];
-			// array.push(this.element_information('ELEMENT', element));
-			// array.push(this.element_information('PARENT', element.parentElement));
-			// array.push(this.element_information('GRAND-PARENT', element.parentElement?.parentElement));
+			array.push(this.element_debug_info('ELEMENT', element));
+			// array.push(this.element_debug_info('PARENT', element.parentElement));
+			// array.push(this.element_debug_info('GRAND-PARENT', element.parentElement?.parentElement));
 			debug.log_component(array.join(k.tab));
 		}
 	}
@@ -154,7 +154,7 @@ export default class S_Component {
         return 'no style information';
     }
 
-	private style_information(prefix: string): string {
+	private style_debug_info(prefix: string): string {
 		const element = this.element;
 		if (!!element) {
 			const indented = k.newLine + k.tab;
@@ -174,7 +174,7 @@ export default class S_Component {
         return 'no style information';
 	}
 
-	private element_information(prefix: string, element: HTMLElement | null | undefined): string {
+	private element_debug_info(prefix: string, element: HTMLElement | null | undefined): string {
 		const indented = k.newLine + k.tab + prefix + k.space;
 		const array = !element ? [] : [
 			k.newLine + k.tab + k.title.line,

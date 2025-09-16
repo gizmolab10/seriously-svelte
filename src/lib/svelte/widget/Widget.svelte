@@ -42,10 +42,10 @@
 	s_component = signals.handle_anySignal_atPriority(1, ancestry, T_Component.widget, (t_signal, value): S_Component | null => {
 		switch (t_signal) {
 		case T_Signal.reattach:
-				s_component?.log_connection_state('Before reattachment');
+				s_component?.debug_log_connection_state('Before reattachment');
 				final_layout();
 				u.onNextTick(() => {			// this is needed to ensure the element is connected
-					s_component?.log_connection_state('After reattachment');
+					s_component?.debug_log_connection_state('After reattachment');
 				});
 			break;
 		case T_Signal.reposition:
@@ -73,7 +73,7 @@
 			g_widget.layout_widget();
 			trigger = reactives;
 			final_layout();
-			s_component.log_connection_state('GRABBED STATE CHANGED');
+			s_component.debug_log_connection_state('GRABBED STATE CHANGED');
 		}
 	}
 

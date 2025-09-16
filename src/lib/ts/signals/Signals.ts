@@ -51,9 +51,9 @@ export class Signals {
 			t_signal != T_Signal.reposition) {								// suppress reposition
 			this.set_signal_isInFlight_for(t_signal, true);
 			const highestPriority = this.highestPriorities[t_signal] ?? 0;
-			const c = s_component ?? components.dummy;					// often no component is provided, use the dummy component	
+			const s_c = s_component ?? components.dummy;					// often no component is provided, use the dummy component	
 			for (let priority = 0; priority <= highestPriority; priority++) {
-				c.log_signal(true, value, t_signal, priority);	// log components listening to this signal at this priority
+				s_c.debug_log_signal(true, value, t_signal, priority);	// log components listening to this signal at this priority
 				this.signal_emitter.emit(t_signal, priority, value);
 			}
 			this.set_signal_isInFlight_for(t_signal, false);
@@ -74,7 +74,7 @@ export class Signals {
 		const connection = this.signal_emitter.connect((received_t_signal, signalPriority, value) => {
 			for (const t_signal of t_signals) {
 				if (received_t_signal == t_signal && signalPriority == priority) {
-					s_component?.log_signal(false, value, received_t_signal, signalPriority);	// 4) use it
+					s_component?.debug_log_signal(false, value, received_t_signal, signalPriority);	// 4) use it
 					onSignal(t_signal, value);
 				}
 			}
@@ -91,7 +91,7 @@ export class Signals {
 		let s_component = components.component_forAncestry_andType_createUnique(ancestry, t_component);		// 1) create it
 		const connection = this.signal_emitter.connect((received_t_signal, signalPriority, value) => {
 			if (signalPriority == priority) {
-				s_component?.log_signal(false, value, received_t_signal, signalPriority);	// 4) use it
+				s_component?.debug_log_signal(false, value, received_t_signal, signalPriority);	// 4) use it
 				onSignal(received_t_signal, value);
 			}
 		});
