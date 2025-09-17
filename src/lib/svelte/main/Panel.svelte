@@ -6,10 +6,10 @@
 	import { w_t_startup, w_popupView_id, w_device_isMobile, } from '../../ts/managers/Stores';
 	import { w_s_title_edit, w_ancestry_focus } from '../../ts/managers/Stores';
 	import { w_show_details, w_search_results_found } from '../../ts/managers/Stores';
+	import Secondary_Controls from '../controls/Secondary_Controls.svelte';
+	import Primary_Controls from '../controls/Primary_Controls.svelte';
 	import { T_Database } from '../../ts/database/DB_Common';
 	import Search_Results from './Search_Results.svelte';
-	import Secondary from '../controls/Secondary.svelte';
-	import Primary from '../controls/Primary.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Details from '../details/Details.svelte';
 	import Search from '../controls/Search.svelte';
@@ -66,7 +66,7 @@
 		{:else if $w_popupView_id == T_Control.import}
 			<Import/>
 		{:else}
-			<Primary/>
+			<Primary_Controls/>
 			{#if $w_show_details}
 				<Details/>
 			{/if}
@@ -84,7 +84,7 @@
 					left: {$w_graph_rect.origin.x}px;
 					width: {$w_graph_rect.size.width}px;
 					height: {$w_graph_rect.size.height}px;'>
-				<Secondary/>
+				<Secondary_Controls/>
 				{#if busy.isDatabaseBusy && h.db.isRemote}
 					{#key spinner_rect.description}
 						<div class='data-spinner'

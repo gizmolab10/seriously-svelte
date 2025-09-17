@@ -6,6 +6,8 @@ import DB_Common from './DB_Common';
 
 export default class DB_Bubble extends DB_Common {
 	t_persistence = T_Persistence.remote;
+	prior_focus_id: string | null = null;
+	prior_grabbed_ids: string[] = [];
 	t_database = T_Database.bubble;
 	idBase = k.empty;
 
@@ -110,29 +112,33 @@ export default class DB_Bubble extends DB_Common {
 					}
 				}
 			}
-			this.prepare_to_signal_bubble_plugin();
+			this.begin_to_send_events();
 			p.writeDB_key(T_Preference.bubble, true);
 		}
 	}
 
-	prepare_to_signal_bubble_plugin() {
+	begin_to_send_events() {
 
 		//////////////////////////////////////////////////////////
 		//														//
 		//	 	message types to send to bubble plugin			//
 		//   see handle_webseriously_message in initialize.js	//
 		//														//
+		//	  debounce: only send if changed from prior value	//
+		//														//
 		//////////////////////////////////////////////////////////
 	
 		window.parent.postMessage({ type: 'trigger_an_event', trigger: 'ready' }, k.wildcard);
 		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
-			if (!!ancestry && !!ancestry.thing) {
+			if (!!ancestry && !!ancestry.thing && ancestry.thing.id != this.prior_focus_id) {
+				this.prior_focus_id = ancestry.thing.id;
 				window.parent.postMessage({ type: 'focus_id', id: ancestry.thing.id }, k.wildcard);
 				window.parent.postMessage({ type: 'trigger_an_event', trigger: 'focus_changed' }, k.wildcard);			// not before focus id
 			}
 		});
 		w_ancestries_grabbed.subscribe((ancestries: Ancestry[]) => {
-			if (!!ancestries) {
+			if (!!ancestries && ancestries.map((ancestry: Ancestry) => ancestry.thing?.id ?? k.corrupted).join(', ') != this.prior_grabbed_ids.join(',')) {
+				this.prior_grabbed_ids = ancestries.map((ancestry: Ancestry) => ancestry.thing?.id ?? k.corrupted);
 				window.parent.postMessage({ type: 'selected_ids', ids: ancestries.map((ancestry: Ancestry) => ancestry.thing?.id ?? k.corrupted) }, k.wildcard);
 				window.parent.postMessage({ type: 'trigger_an_event', trigger: 'selection_changed' }, k.wildcard);			// not before selected ids
 			}
