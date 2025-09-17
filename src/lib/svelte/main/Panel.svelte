@@ -70,12 +70,6 @@
 			{#if $w_show_details}
 				<Details/>
 			{/if}
-			{#if c.allow_Search}
-				<Search
-					left={34}
-					top={11.5}
-					width={layout.windowSize.width - 46}/>
-			{/if}
 			<div class='main'
 				style='
 					position: fixed;

@@ -6,12 +6,12 @@
 	import { w_search_filter, w_search_state, w_show_search_controls } from '../../ts/managers/Stores';
 	import { w_graph_rect, w_count_resize, w_popupView_id } from '../../ts/managers/Stores';
 	import Next_Previous from '../mouse/Next_Previous.svelte';
-	import Close_Button from '../mouse/Close_Button.svelte';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Breadcrumbs from './Breadcrumbs.svelte';
 	import Button from '../mouse/Button.svelte';
+	import Search from './Search.svelte';
 	import Box from '../draw/Box.svelte';
 	const y_center = 10.5;
 	const right_widths = [9, 11.5];
@@ -67,7 +67,7 @@
 		height={layout.controls_boxHeight + 2}
 		thickness={k.thickness.separator.main}
 		corner_radius={k.radius.gull_wings.thick}>
-		<div class='controls'
+		<div class='primary-controls'
 			style='
 				left: 6px;
 				top: 11.5px;
@@ -97,6 +97,12 @@
 								stroke={ux.s_control_forType(T_Control.details).isOut ? 'transparent' : 'darkgray'}/>
 						</svg>
 					</Button>
+				{/if}
+				{#if c.allow_Search}
+					<Search
+						top={-0.5}
+						left={-54 - (c.has_details_button ? 0 : 26)}
+						width={layout.windowSize.width + 34 + (c.has_details_button ? 0 : 26)}/>
 				{/if}
 				{#if !c.allow_Search || !$w_show_search_controls}
 					<Next_Previous name='recents'

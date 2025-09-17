@@ -35,13 +35,6 @@
 		position: absolute;
 		z-index: {T_Layer.frontmost};'>
 	{#if $w_show_search_controls}
-		<Segmented name='search-filter'
-			width={80}
-			origin={new Point(4, 1)}
-			height={ k.height.button}
-			selected={[$w_search_filter]}
-			titles={[T_Search_Filter.title, T_Search_Filter.trait]}
-			handle_selection={(titles) => ux.handle_choiceOf_t_graph('filter', titles)}/>
 		<input class='search-input'
 			id='search'
 			type='search'

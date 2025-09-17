@@ -11,7 +11,6 @@
 	export let zindex = T_Layer.graph;
 	export let width = 137;
 	export let top = 0;
-	const back_up = -5;
 	const left_width = 40;
 	const heights = [ 3, 5, 18 ];
 	const tops = u.cumulativeSum(heights);
