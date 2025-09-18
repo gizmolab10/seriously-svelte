@@ -69,7 +69,6 @@
 				reattachments += 1;
 			} else if (s_mouse.isUp) {
 				search.deactivate();
-				ancestry.grabOnly();
 				if (ancestry.becomeFocus()) {
 					layout.grand_build();
 				}

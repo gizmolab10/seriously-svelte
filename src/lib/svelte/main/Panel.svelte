@@ -50,68 +50,68 @@
 
 </script>
 
-<Box name='controls-box'
-	left={1}
-	height={layout.windowSize.height}
-	width={layout.windowSize.width - 2}
-	thickness={k.thickness.separator.main}
-	corner_radius={k.radius.gull_wings.thick}>
 {#key reattachments}
-	<div
-		class='panel'
-		style='
-			top: 0px;
-			left: 0px;
-			position: fixed;
-			on:wheel={ignore_wheel}
-			{k.prevent_selection_style};
-			width: {layout.windowSize.width}px;
-			height: {layout.windowSize.height}px;'>
-		{#if $w_popupView_id == T_Control.builds}
-			<BuildNotes/>
-		{:else if $w_popupView_id == T_Control.import}
-			<Import/>
-		{:else}
-			<Primary_Controls/>
-			{#if $w_show_details}
-				<Details/>
-			{/if}
-			<Secondary_Controls/>
-			<div class='main'
-				style='
-					position: fixed;
-					z-index: {T_Layer.graph};
-					top: {$w_graph_rect.origin.y}px;
-					left: {$w_graph_rect.origin.x}px;
-					width: {$w_graph_rect.size.width}px;
-					height: {$w_graph_rect.size.height}px;'>
-				{#if busy.isDatabaseBusy && h.db.isRemote}
-					{#key spinner_rect.description}
-						<div class='data-spinner'
-							style='
-								opacity: 0.5;
-								position: absolute;
-								top: {spinner_rect.origin.y}px;
-								left: {spinner_rect.origin.x}px;
-								font-size: {k.font_size.common}px;'>
-							<Spinner
-								speed='3s'
-								strokeWidth={6}
-								angle={spinnerAngle}
-								title={spinner_title}
-								number_of_dashes={19}
-								stroke={$w_separator_color}
-								on:angle={handle_spinner_angle}
-								diameter={spinner_rect.size.width}/>
-						</div>
-					{/key}
-				{:else if $w_search_results_found}
-					<Search_Results/>
-				{:else }
-					<Graph/>
+	<Box name='controls-box'
+		left={1}
+		height={layout.windowSize.height}
+		width={layout.windowSize.width - 2}
+		thickness={k.thickness.separator.main}
+		corner_radius={k.radius.gull_wings.thick}>
+		<div
+			class='panel'
+			style='
+				top: 0px;
+				left: 0px;
+				position: fixed;
+				on:wheel={ignore_wheel}
+				{k.prevent_selection_style};
+				width: {layout.windowSize.width}px;
+				height: {layout.windowSize.height}px;'>
+			{#if $w_popupView_id == T_Control.builds}
+				<BuildNotes/>
+			{:else if $w_popupView_id == T_Control.import}
+				<Import/>
+			{:else}
+				<Primary_Controls/>
+				{#if $w_show_details}
+					<Details/>
 				{/if}
-			</div>
-		{/if}
-	</div>
+				<Secondary_Controls/>
+				<div class='main'
+					style='
+						position: fixed;
+						z-index: {T_Layer.graph};
+						top: {$w_graph_rect.origin.y}px;
+						left: {$w_graph_rect.origin.x}px;
+						width: {$w_graph_rect.size.width}px;
+						height: {$w_graph_rect.size.height}px;'>
+					{#if busy.isDatabaseBusy && h.db.isRemote}
+						{#key spinner_rect.description}
+							<div class='data-spinner'
+								style='
+									opacity: 0.5;
+									position: absolute;
+									top: {spinner_rect.origin.y}px;
+									left: {spinner_rect.origin.x}px;
+									font-size: {k.font_size.common}px;'>
+								<Spinner
+									speed='3s'
+									strokeWidth={6}
+									angle={spinnerAngle}
+									title={spinner_title}
+									number_of_dashes={19}
+									stroke={$w_separator_color}
+									on:angle={handle_spinner_angle}
+									diameter={spinner_rect.size.width}/>
+							</div>
+						{/key}
+					{:else if $w_search_results_found}
+						<Search_Results/>
+					{:else }
+						<Graph/>
+					{/if}
+				</div>
+			{/if}
+		</div>
+	</Box>
 {/key}
-</Box>
