@@ -136,7 +136,6 @@
 		height = k.height.row - 1.5;
 		border_radius = k.height.row / 2;
 		width_ofWidget = g_widget.width_ofWidget;
-		// debug.log_origin('FINAL', g_widget.origin.verbose, ancestry.titles);
 		update_style();
 	}
 

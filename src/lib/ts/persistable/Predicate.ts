@@ -7,8 +7,8 @@ export default class Predicate extends Persistable {
 	isBidirectional: boolean;
 	kind: T_Predicate;
 
-	constructor(id: string, kind: T_Predicate, isBidirectional: boolean, glob: string = k.empty, already_persisted: boolean = false) {
-		super(databases.db_now.t_database, k.empty, T_Persistable.predicates, id, glob, already_persisted);
+	constructor(id: string, kind: T_Predicate, isBidirectional: boolean, already_persisted: boolean = false) {
+		super(databases.db_now.t_database, k.empty, T_Persistable.predicates, id, already_persisted);
 		this.isBidirectional = isBidirectional;
 		this.kind			 = kind;
 	}

@@ -20,8 +20,7 @@ export default class G_TreeGraph {
 		const graph_rect = get(w_graph_rect);
 		const depth_limit = get(w_depth_limit) ?? 1;
 		if (!!graph_rect && !!this.g_focus) {
-			this.layout_focus_ofTree(graph_rect);
-			this.g_focus.debug('-');
+			this.layout_focus_ofTree(graph_rect); 
 			this.g_focus.layout_each_generation_recursively(depth_limit);
 			this.g_focus.layout_each_bidirectional_generation_recursively(depth_limit);
 			this.adjust_focus_ofTree(graph_rect);

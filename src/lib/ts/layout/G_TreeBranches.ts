@@ -18,7 +18,6 @@ export default class G_TreeBranches {
 		const g_widget = ancestry.g_widget;
 		if (ux.inTreeMode && !!ancestry && !!g_widget && (ancestry.isExpanded || ancestry.isRoot)) {
 			let width = 0;
-			g_widget.debug('X');
 			const branchAncestries = ancestry.branchAncestries;
 			const halfHeight = ancestry.halfHeight_ofVisibleSubtree;
 			const origin_ofWidget = g_widget.origin_ofWidget.offsetByXY(6, halfHeight + 1);

@@ -12,14 +12,13 @@
 	export let left: number;
 	export let top: number;
 	const size_big = k.height.dot * 1.4;
-	const right_widths = [10, 10.5, 55, 37, 60];
+	const right_widths = [10, 10.5, 66, 33, 60];
 	const rights = u.cumulativeSum(right_widths);
 	const widths = rights.map((right, index) => width - right);
 	let input: HTMLInputElement;
 
 	function handle_input(event) {
 		const text = input.value;
-		console.log('text', text);
 		if (!!text) {
 			p.write_key(T_Preference.search_text, text);
 		}
@@ -60,10 +59,11 @@
 				<div class='search-results-found'
 					style='
 						top: 4px;
-						width: 100px;
 						font-size: 12px;
+						text-align: center;
 						position: absolute;
-						left: {widths[2]}px;
+						left: {widths[2] - 2}px;
+						width: {right_widths[2]}px;
 						font-family: {$w_thing_fontFamily};'>
 					{$w_search_results_found} matches
 				</div>

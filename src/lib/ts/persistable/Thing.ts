@@ -13,8 +13,8 @@ export default class Thing extends Persistable {
 	title: string;
 	color: string;
 
-	constructor(idBase: string, id: string, title = k.title.default, color = colors.default_forThings, t_thing = T_Thing.generic, glob: string = k.empty, already_persisted: boolean = false) {
-		super(databases.db_now.t_database, idBase, T_Persistable.things, id, glob, already_persisted);
+	constructor(idBase: string, id: string, title = k.title.default, color = colors.default_forThings, t_thing = T_Thing.generic, already_persisted: boolean = false) {
+		super(databases.db_now.t_database, idBase, T_Persistable.things, id, already_persisted);
 		this.selectionRange = new Seriously_Range(0, title.length);
 		this.t_thing = t_thing;
 		this.title = title;

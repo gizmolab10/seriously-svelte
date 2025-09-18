@@ -108,26 +108,17 @@ export default class G_Widget {
 		}
 	}
 
-	debug(order: string) {
-		if (this.ancestry.isFocus) {
-			debug.log_origin(order, this.origin_ofWidget.verbose, this.timestamp, this.ancestry.titles);
-		}
-	}
-
 	private layout_one_generation() {
-		debug.log_layout(`WIDGET ${this.ancestry.titles}`);
-		this.debug('a');
 		this.layout_widget();						// assumes full progeny subtrees are laid out (needed for progeny size)
 		this.layout_origin_ofTrunk();
 		this.g_childBranches.layout_subtree();		// noop if childless, radial or collapsed ... FUBAR: BAD origin_ofWidget, after switching to radial, refocusing, then back again
-		this.debug('b');
+		debug.log_layout(`WIDGET ${this.origin.verbose} ${this.ancestry.titles}`);
 	}
 
 	private layout_origin_ofTrunk() {
 		if (!!this.ancestry && ux.inTreeMode) {
 			this.origin_ofTrunk = this.g_line.rect.extent.offsetByXY(k.height.row, -8.6);
 			this.g_line.update_svg_andName();
-			// debug.log_origin(`TRUNK ${this.origin_ofTrunk.verbose} ${this.ancestry.titles}`);
 		}
 	}
 
@@ -160,7 +151,6 @@ export default class G_Widget {
 			const height_ofLines = height + height_ofSubtree / 2;
 			const rect_ofLines = new Rect(origin, new Size(k.width.child_gap, height_ofLines - 1));
 			this.origin_ofWidget = this.origin_forAncestry_inRect(this.ancestry, rect_ofLines);
-			// debug.log_origin('LINES', rect_ofLines.origin.verbose, this.ancestry.titles);
 			this.g_line.rect = rect_ofLines.extend_widthBy(5);
 			this.forGraphMode = forGraphMode;
 			this.points_toChild = points_toChild;

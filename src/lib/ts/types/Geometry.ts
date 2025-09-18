@@ -3,7 +3,7 @@ import { T_Quadrant, T_Orientation } from './Angle';
 import type { SvelteComponent } from 'svelte';
 import Angle from './Angle';
 
-const p = 0;
+const p = 2;
 
 export class Point {
 	x: number;

@@ -155,18 +155,18 @@ export class Hierarchy {
 		this.tags_translate_idsFromTo_forThings(idFrom, idTo);
 	}
 
-	thing_remember_runtimeCreateUnique(idBase: string, id: string, title: string, color: string, t_thing: T_Thing = T_Thing.generic, glob: string = k.empty,
+	thing_remember_runtimeCreateUnique(idBase: string, id: string, title: string, color: string, t_thing: T_Thing = T_Thing.generic,
 		already_persisted: boolean = false): Thing {
 		let thing = this.thing_forHID(id?.hash() ?? null);
 		if (!thing) {
-			thing = this.thing_remember_runtimeCreate(idBase, id, title, color, t_thing, glob, already_persisted);
+			thing = this.thing_remember_runtimeCreate(idBase, id, title, color, t_thing, already_persisted);
 		}
 		return thing;
 	}
 
-	thing_remember_runtimeCreate(idBase: string, id: string, title: string, color: string, t_thing: T_Thing = T_Thing.generic, glob: string = k.empty,
+	thing_remember_runtimeCreate(idBase: string, id: string, title: string, color: string, t_thing: T_Thing = T_Thing.generic,
 		already_persisted: boolean = false, needs_upgrade: boolean = false): Thing {
-		const thing = this.thing_runtimeCreate(idBase, id, title, color, t_thing, glob, already_persisted);
+		const thing = this.thing_runtimeCreate(idBase, id, title, color, t_thing, already_persisted);
 		this.thing_remember(thing);
 		if (needs_upgrade) {
 			thing.set_isDirty();	// add type and remove trait fields
@@ -175,7 +175,7 @@ export class Hierarchy {
 	}
 
 	async thing_remember_runtimeCopy(idBase: string, original: Thing) {
-		const copiedThing = new Thing(idBase, Identifiable.newID(), original.title, original.color, original.t_thing, original.glob);
+		const copiedThing = new Thing(idBase, Identifiable.newID(), original.title, original.color, original.t_thing);
 		const prohibitedTraits: string[] = [T_Thing.externals, T_Thing.root, T_Thing.bulk];
 		if (prohibitedTraits.includes(original.t_thing)) {
 			copiedThing.t_thing = T_Thing.generic;
@@ -272,13 +272,13 @@ export class Hierarchy {
 		}
 	}
 
-	thing_runtimeCreate(idBase: string, id: string, title: string, color: string, t_thing: T_Thing, glob: string = k.empty,
+	thing_runtimeCreate(idBase: string, id: string, title: string, color: string, t_thing: T_Thing,
 		already_persisted: boolean = false): Thing {
 		let thing: Thing | null = null;
 		if (id && t_thing == T_Thing.root && idBase != this.db.idBase) {			// other bulks have their own root & id
 			thing = this.bulkAlias_remember_forRootID_create(idBase, id, color);		// which our thing needs to adopt
 		} else {
-			thing = new Thing(idBase, id, title, color, t_thing, glob, already_persisted);
+			thing = new Thing(idBase, id, title, color, t_thing, already_persisted);
 			if (thing.isBulkAlias) {
 				thing.persistence.needsBulkFetch = true;
 				if (title.includes('@')) {
@@ -522,12 +522,12 @@ export class Hierarchy {
 	}
 
 	relationship_remember_createUnique(idBase: string, idRelationship: string, kind: T_Predicate, idParent: string, idChild: string,
-		order: number, parentOrder: number = 0, glob: string = k.empty, creationOptions: T_Create = T_Create.isFromPersistent): Relationship {
+		order: number, parentOrder: number = 0, creationOptions: T_Create = T_Create.isFromPersistent): Relationship {
 		let relationship = this.relationship_forPredicateKind_parent_child(kind, idParent.hash(), idChild.hash());
 		if (!!relationship) {
 			relationship.order_setTo(order, T_Order.child);
 		} else {
-			relationship = new Relationship(idBase, idRelationship, kind, idParent, idChild, [order, parentOrder], glob, creationOptions == T_Create.isFromPersistent);
+			relationship = new Relationship(idBase, idRelationship, kind, idParent, idChild, [order, parentOrder], creationOptions == T_Create.isFromPersistent);
 			
 		}
 		return relationship;
@@ -611,11 +611,11 @@ export class Hierarchy {
 	}
 
 	relationship_remember_runtimeCreateUnique(idBase: string, id: string, kind: T_Predicate, idParent: string, idChild: string,
-		orders: number[], glob: string = k.empty, creationOptions: T_Create = T_Create.none): Relationship {
+		orders: number[], creationOptions: T_Create = T_Create.none): Relationship {
 		let relationship = this.relationship_forPredicateKind_parent_child(kind, idParent.hash(), idChild.hash());
 		const already_persisted = creationOptions == T_Create.isFromPersistent;
 		if (!relationship) {
-			relationship = new Relationship(idBase, id, kind, idParent, idChild, orders, glob, already_persisted);
+			relationship = new Relationship(idBase, id, kind, idParent, idChild, orders, already_persisted);
 			this.relationship_remember(relationship);
 		}
 		let reversed = relationship?.reversed;
@@ -1065,7 +1065,7 @@ export class Hierarchy {
 	}
 
 	predicate_extract_fromDict(dict: Dictionary) {
-		const predicate = this.predicate_remember_runtimeCreateUnique(dict.id, dict.kind, dict.isBidirectional, dict.glob, false);
+		const predicate = this.predicate_remember_runtimeCreateUnique(dict.id, dict.kind, dict.isBidirectional, dict.false);
 	}
 
 	predicate_forget(predicate: Predicate) {
@@ -1081,12 +1081,12 @@ export class Hierarchy {
 	}
 
 	predicate_defaults_remember_runtimeCreate() {
-		this.predicate_remember_runtimeCreateUnique(Predicate.newID(), T_Predicate.contains, false, k.empty, false);
-		this.predicate_remember_runtimeCreateUnique(Predicate.newID(), T_Predicate.isRelated, true, k.empty, false);
-		this.predicate_remember_runtimeCreateUnique(Predicate.newID(), T_Predicate.explains, false, k.empty, false);
-		this.predicate_remember_runtimeCreateUnique(Predicate.newID(), T_Predicate.requires, false, k.empty, false);
-		this.predicate_remember_runtimeCreateUnique(Predicate.newID(), T_Predicate.supports, false, k.empty, false);
-		this.predicate_remember_runtimeCreateUnique(Predicate.newID(), T_Predicate.appreciates, false, k.empty, false);
+		this.predicate_remember_runtimeCreateUnique(Predicate.newID(), T_Predicate.contains, false);
+		this.predicate_remember_runtimeCreateUnique(Predicate.newID(), T_Predicate.isRelated, true);
+		this.predicate_remember_runtimeCreateUnique(Predicate.newID(), T_Predicate.explains, false);
+		this.predicate_remember_runtimeCreateUnique(Predicate.newID(), T_Predicate.requires, false);
+		this.predicate_remember_runtimeCreateUnique(Predicate.newID(), T_Predicate.supports, false);
+		this.predicate_remember_runtimeCreateUnique(Predicate.newID(), T_Predicate.appreciates, false);
 	}
 
 	predicate_remember(predicate: Predicate) {
@@ -1101,16 +1101,16 @@ export class Hierarchy {
 		}
 	}
 
-	predicate_remember_runtimeCreateUnique(id: string, kind: T_Predicate, isBidirectional: boolean, glob: string = k.empty, already_persisted: boolean = true) {
+	predicate_remember_runtimeCreateUnique(id: string, kind: T_Predicate, isBidirectional: boolean, already_persisted: boolean = true) {
 		let predicate = this.predicate_forKind(kind);
 		if (!predicate) {
-			predicate = this.predicate_remember_runtimeCreate(id, kind, isBidirectional, glob, already_persisted);
+			predicate = this.predicate_remember_runtimeCreate(id, kind, isBidirectional, already_persisted);
 		}
 		return predicate;
 	}
 
-	predicate_remember_runtimeCreate(id: string, kind: T_Predicate, isBidirectional: boolean, glob: string = k.empty, already_persisted: boolean = true) {
-		let predicate = new Predicate(id, kind, isBidirectional, glob, already_persisted);
+	predicate_remember_runtimeCreate(id: string, kind: T_Predicate, isBidirectional: boolean, already_persisted: boolean = true) {
+		let predicate = new Predicate(id, kind, isBidirectional, already_persisted);
 		this.predicate_remember(predicate);
 		return predicate;
 	}
@@ -1152,12 +1152,12 @@ export class Hierarchy {
 
 	trait_forHID(hid: Integer): Trait | null { return this.trait_byHID[hid ?? undefined]; }
 
-	trait_runtimeCreate(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string, glob: string = k.empty, already_persisted: boolean = false): Trait {
-		return new Trait(idBase, id, ownerID, t_trait, text, glob, already_persisted);
+	trait_runtimeCreate(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string, already_persisted: boolean = false): Trait {
+		return new Trait(idBase, id, ownerID, t_trait, text, already_persisted);
 	}
 
-	trait_remember_runtimeCreateUnique(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string, glob: string = k.empty, already_persisted: boolean = false): Trait {
-		return this.trait_forHID(id?.hash()) ?? this.trait_remember_runtimeCreate(idBase, id, ownerID, t_trait, text, glob, already_persisted);
+	trait_remember_runtimeCreateUnique(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string, already_persisted: boolean = false): Trait {
+		return this.trait_forHID(id?.hash()) ?? this.trait_remember_runtimeCreate(idBase, id, ownerID, t_trait, text, already_persisted);
 	}
 
 	trait_extract_fromDict(dict: Dictionary) {
@@ -1192,8 +1192,8 @@ export class Hierarchy {
 		this.traits.push(trait);
 	}
 
-	trait_remember_runtimeCreate(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string, glob: string = k.empty, already_persisted: boolean = false): Trait {
-		const trait = this.trait_runtimeCreate(idBase, id, ownerID, t_trait, text, glob, already_persisted);
+	trait_remember_runtimeCreate(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string, already_persisted: boolean = false): Trait {
+		const trait = this.trait_runtimeCreate(idBase, id, ownerID, t_trait, text, already_persisted);
 		this.trait_remember(trait);
 		return trait;
 	}
@@ -1243,7 +1243,7 @@ export class Hierarchy {
 	tag_forHID(hid: Integer): Tag | null { return this.tag_byHID[hid ?? undefined]; }
 
 	tag_extract_fromDict(dict: Dictionary) {
-		this.tag_remember_runtimeCreateUnique(this.db.idBase, dict.id, dict.type, dict.thingHIDs, dict.glob, false);
+		this.tag_remember_runtimeCreateUnique(this.db.idBase, dict.id, dict.type, dict.thingHIDs, dict.false);
 	}
 
 	tag_forget(tag: Tag) {
@@ -1268,10 +1268,10 @@ export class Hierarchy {
 		}
 	}
 
-	tag_remember_runtimeCreateUnique_byType(idBase: string, type: string, thingHIDs: Array<Integer>, glob: string = k.empty, already_persisted: boolean = false): Tag {
+	tag_remember_runtimeCreateUnique_byType(idBase: string, type: string, thingHIDs: Array<Integer>, already_persisted: boolean = false): Tag {
 		let tag = this.tag_forType(type);
 		if (!tag) {
-			tag = this.tag_remember_runtimeCreate(idBase, Identifiable.newID(), type, thingHIDs, glob, already_persisted);
+			tag = this.tag_remember_runtimeCreate(idBase, Identifiable.newID(), type, thingHIDs, already_persisted);
 		} else {
 			tag.thingHIDs = u.uniquely_concatenateArrays(tag.thingHIDs, thingHIDs);
 			if (!already_persisted) {
@@ -1281,10 +1281,10 @@ export class Hierarchy {
 		return tag;
 	}
 
-	tag_remember_runtimeCreateUnique(idBase: string, id: string, type: string, thingHIDs: Array<Integer>, glob: string = k.empty, already_persisted: boolean = false): Tag {
+	tag_remember_runtimeCreateUnique(idBase: string, id: string, type: string, thingHIDs: Array<Integer>, already_persisted: boolean = false): Tag {
 		let tag = this.tag_forHID(id?.hash());
 		if (!tag) {
-			tag = this.tag_remember_runtimeCreate(idBase, id, type, thingHIDs, glob, already_persisted);
+			tag = this.tag_remember_runtimeCreate(idBase, id, type, thingHIDs, already_persisted);
 		} else {
 			tag.thingHIDs = u.uniquely_concatenateArrays(tag.thingHIDs, thingHIDs);
 			if (!already_persisted) {
@@ -1294,8 +1294,8 @@ export class Hierarchy {
 		return tag;
 	}
 
-	tag_remember_runtimeCreate(idBase: string, id: string, type: string, thingHIDs: Array<Integer>, glob: string = k.empty, already_persisted: boolean = false): Tag {
-		const tag = new Tag(idBase, id, type, thingHIDs, glob, already_persisted);
+	tag_remember_runtimeCreate(idBase: string, id: string, type: string, thingHIDs: Array<Integer>, already_persisted: boolean = false): Tag {
+		const tag = new Tag(idBase, id, type, thingHIDs, already_persisted);
 		this.tag_remember(tag);
 		if (!already_persisted) {
 			tag.set_isDirty();

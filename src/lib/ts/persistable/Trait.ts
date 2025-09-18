@@ -7,8 +7,8 @@ export default class Trait extends Persistable {
 	ownerID: string = k.empty;
 	text: string = k.empty;
 
-	constructor(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string = k.empty, glob: string = k.empty, already_persisted: boolean = false) {
-		super(databases.db_now.t_database, idBase, T_Persistable.traits, id, glob, already_persisted);
+	constructor(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string = k.empty, already_persisted: boolean = false) {
+		super(databases.db_now.t_database, idBase, T_Persistable.traits, id, already_persisted);
 		this.ownerID = ownerID;
 		this.t_trait = t_trait;
 		this.text = text;

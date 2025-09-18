@@ -18,8 +18,8 @@ export default class Tag extends Persistable {
 		return null;
 	}
 	
-	constructor(idBase: string, id: string, type: string, thingHIDs: Array<Integer>, glob: string = k.empty, already_persisted: boolean = false) {
-		super(databases.db_now.t_database, idBase, T_Persistable.tags, id, glob, already_persisted);
+	constructor(idBase: string, id: string, type: string, thingHIDs: Array<Integer>, already_persisted: boolean = false) {
+		super(databases.db_now.t_database, idBase, T_Persistable.tags, id, already_persisted);
 		this.thingHIDs = thingHIDs;
 		this.type = type;
 	}
