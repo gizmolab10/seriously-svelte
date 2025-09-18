@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { c, k, Point, layout, T_Layer, T_Details, T_Direction } from '../../ts/common/Global_Imports';
-	import { w_show_graph_ofType, w_ancestries_grabbed } from '../../ts/managers/Stores';
-	import { w_graph_rect, w_count_details } from '../../ts/managers/Stores';
+	import { c, k, Point, layout, T_Layer, T_Graph, T_Details, T_Direction } from '../../ts/common/Global_Imports';
+	import { w_graph_rect, w_count_details, w_ancestries_grabbed } from '../../ts/managers/Stores';
+	import { w_show_graph_ofType, w_show_search_controls } from '../../ts/managers/Stores';
 	import Banner_Hideable from './Banner_Hideable.svelte';
 	import D_Preferences from './D_Preferences.svelte';
 	import Separator from '../draw/Separator.svelte';
@@ -13,8 +13,9 @@
 	import D_Tags from './D_Tags.svelte';
 	const next_previous_titles = [T_Direction.previous, T_Direction.next];
 	const width = k.width.details;
-	let prior_graph_type = $w_show_graph_ofType;
 	let extra_selection_titles = [];
+	let prior_graph_type = $w_show_graph_ofType;
+	let show_secondary_controls = $w_show_search_controls || ($w_show_graph_ofType == T_Graph.tree);
 
 	$: {
 		const length = $w_ancestries_grabbed?.length ?? 0;
@@ -23,6 +24,7 @@
 	}
 
 	$: if (prior_graph_type != $w_show_graph_ofType) {
+		show_secondary_controls = $w_show_search_controls || ($w_show_graph_ofType == T_Graph.tree);
 		prior_graph_type = $w_show_graph_ofType;
 		$w_count_details++;
 	}
@@ -40,7 +42,7 @@
 			flex-direction:column;
 			-ms-overflow-style: none;  
 			z-index:{T_Layer.details};
-			top:{layout.controls_boxHeight + 2}px;
+			top:{layout.controls_boxHeight}px;
 			width:{k.width.details - 6}px;
 			height:{$w_graph_rect.size.height}px;'>
 		<Banner_Hideable t_detail={T_Details.header}>
@@ -76,8 +78,8 @@
 	margin={k.details_margin}
 	thickness={k.thickness.separator.main}
 	corner_radius={k.radius.gull_wings.thick}
-	length={$w_graph_rect.size.height + k.thickness.extra}
-	origin={new Point(k.width.details - 2, layout.controls_boxHeight)}/>
+	length={layout.windowSize.height - layout.controls_boxHeight + 5}
+	origin={new Point(k.width.details - 2, layout.controls_boxHeight - 2)}/>
 
 <style>
 

@@ -50,6 +50,12 @@
 
 </script>
 
+<Box name='controls-box'
+	left={1}
+	height={layout.windowSize.height}
+	width={layout.windowSize.width - 2}
+	thickness={k.thickness.separator.main}
+	corner_radius={k.radius.gull_wings.thick}>
 {#key reattachments}
 	<div
 		class='panel'
@@ -70,6 +76,7 @@
 			{#if $w_show_details}
 				<Details/>
 			{/if}
+			<Secondary_Controls/>
 			<div class='main'
 				style='
 					position: fixed;
@@ -78,7 +85,6 @@
 					left: {$w_graph_rect.origin.x}px;
 					width: {$w_graph_rect.size.width}px;
 					height: {$w_graph_rect.size.height}px;'>
-				<Secondary_Controls/>
 				{#if busy.isDatabaseBusy && h.db.isRemote}
 					{#key spinner_rect.description}
 						<div class='data-spinner'
@@ -104,34 +110,7 @@
 					<Graph/>
 				{/if}
 			</div>
-			<Separator name='panel-box-left'
-				isHorizontal={false}
-				has_both_wings={true}
-				margin={k.details_margin}
-				zindex={T_Layer.frontmost}
-				thickness={k.thickness.separator.main}
-				corner_radius={k.radius.gull_wings.thick}
-				length={$w_graph_rect.size.height + k.thickness.extra}
-				origin={new Point(2, layout.controls_boxHeight - 0.5)}/>
-			<Separator name='panel-box-right'
-				isHorizontal={false}
-				has_both_wings={true}
-				margin={k.details_margin}
-				zindex={T_Layer.frontmost}
-				thickness={k.thickness.separator.main}
-				corner_radius={k.radius.gull_wings.thick}
-				length={$w_graph_rect.size.height + k.thickness.extra}
-				origin={new Point(layout.windowSize.width + 1 - half_thickness, layout.controls_boxHeight - 0.5)}/>
 		{/if}
-		<Separator name='panel-box-bottom'
-			isHorizontal={true}
-			has_both_wings={true}
-			margin={k.details_margin}
-			zindex={T_Layer.frontmost}
-			length={layout.windowSize.width + 3}
-			thickness={k.thickness.separator.main}
-			corner_radius={k.radius.gull_wings.thick}
-			origin={new Point(2, layout.windowSize.height - 4)}/>
 	</div>
 {/key}
-	
+</Box>

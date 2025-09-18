@@ -14,7 +14,7 @@
 	const left_width = 40;
 	const heights = [ 3, 5, 18 ];
 	const tops = u.cumulativeSum(heights);
-	const segmented_height = k.height.button;
+	const segmented_height = k.height.button + 3;
 
 	function handle_depth_limit(value: number) {
 		const asInteger = Math.round(value);
@@ -27,64 +27,46 @@
 </script>
 
 <div class='tree-preferences' style='
-	top: 0px;
-	left: 3px;
-	width: 177px;
+	top: 3px;
+	left: -3px;
+	width: 100%;
 	height: 50px;
 	z-index: {zindex};
 	position: absolute;
 	border-radius: 20px;
 	pointer-events: auto;
 	background-color: transparent;'>
+	<Slider
+		max={12}
+		width={width}
+		show_value={false}
+		isLogarithmic={true}
+		value={$w_depth_limit}
+		origin={new Point(10, 3)}
+		height={k.height.button + 4}
+		thumb_color={$w_separator_color}
+		title_font_size={k.font_size.banners}
+		handle_value_change={handle_depth_limit}/>
 	<div class='depth-value' style='
-		height: 36px;
+		top: 2px;
+		left: 127px;
+		width: 56px;
+		height: 26px;
 		display: flex;
-		font-size: 28px;
+		font-size: 14px;
 		position: absolute;
 		align-items: center;
-		width: {left_width}px;
 		justify-content: center;'>
-		{$w_depth_limit}
+		{$w_depth_limit} level{($w_depth_limit < 2) ? '' : 's'}
 	</div>
-	<div class='depth-plural' style='
-		height: 20px;
-		display: flex;
-		font-size: 12px;
-		top: {tops[2]}px;
-		position: absolute;
-		align-items: center;
-		width: {left_width}px;
-		justify-content: center;'>
-		level{($w_depth_limit < 2) ? '' : 's'}
-	</div>
-	<div class='depth-and-type'
-		style='
-			left:27px;
-			color:black;
-			width: 100%;
-			top:{top}px;
-			position:relative;
-			font-size:{k.font_size.info}px;'>
-		<Slider
-			max={12}
+	{#key $w_show_tree_ofType}
+		<Segmented name='tree-types'
 			width={width}
-			show_value={false}
-			isLogarithmic={true}
-			value={$w_depth_limit}
-			height={segmented_height}
-			thumb_color={$w_separator_color}
-			origin={new Point(10, tops[0])}
-			title_font_size={k.font_size.banners}
-			handle_value_change={handle_depth_limit}/>
-		{#key $w_show_tree_ofType}
-			<Segmented name='tree-types'
-				width={width}
-				allow_multiple={true}
-				height={segmented_height}
-				selected={$w_show_tree_ofType}
-				origin={new Point(9, tops[1])}
-				titles={[T_Kinship.children, T_Kinship.related]}
-				handle_selection={(titles) => ux.handle_choiceOf_t_graph('tree', titles)}/>
-		{/key}
-	</div>
+			allow_multiple={true}
+			origin={new Point(184, -16)}
+			height={k.height.button + 2}
+			selected={$w_show_tree_ofType}
+			titles={[T_Kinship.children, T_Kinship.related]}
+			handle_selection={(titles) => ux.handle_choiceOf_t_graph('tree', titles)}/>
+	{/key}
 </div>

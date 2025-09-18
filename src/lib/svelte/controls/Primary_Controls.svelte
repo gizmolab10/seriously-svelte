@@ -62,117 +62,119 @@
 </script>
 
 {#key width, $w_background_color}
-	<Box name='controls-box'
-		width={layout.windowSize.width}
-		height={layout.controls_boxHeight + 2}
-		thickness={k.thickness.separator.main}
-		corner_radius={k.radius.gull_wings.thick}>
-		<div class='primary-controls'
-			style='
-				left: 6px;
-				top: 11.5px;
-				width: {width}px;
-				position: absolute;
-				height: {size_big}px;
-				z-index: {T_Layer.frontmost};'>
-			{#if !$w_popupView_id}
-				{#if c.has_details_button}
-					<Button name='details-toggle'
-						border_thickness=0
-						color='transparent'
-						center={new Point(lefts[0], y_center)}
-						s_button={ux.s_control_forType(T_Control.details)}
-						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.details)}>
-						<svg class='hamburger-svg'
-							style='
-								height: 17px;
-								width: 20.5px;
-								position: absolute;'
-							viewBox='-1 -1 19 19'>
+	<div class='primary-controls'
+		style='
+			left: 6px;
+			top: 11.5px;
+			width: {width}px;
+			position: absolute;
+			height: {size_big}px;
+			z-index: {T_Layer.frontmost};'>
+		{#if !$w_popupView_id}
+			{#if c.has_details_button}
+				<Button name='details-toggle'
+					border_thickness=0
+					color='transparent'
+					center={new Point(lefts[0], y_center)}
+					s_button={ux.s_control_forType(T_Control.details)}
+					closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.details)}>
+					<svg class='hamburger-svg'
+						style='
+							height: 17px;
+							width: 20.5px;
+							position: absolute;'
+						viewBox='-1 -1 19 19'>
+						<path
+							d={hamburger_path}
+							stroke-width='0.75'
+							class='hamburger-path'
+							fill={ux.s_control_forType(T_Control.details).isOut ? 'black' : 'white'}
+							stroke={ux.s_control_forType(T_Control.details).isOut ? 'transparent' : 'darkgray'}/>
+					</svg>
+				</Button>
+			{/if}
+			{#if c.allow_Search}
+				<Search
+					top={-0.5}
+					left={-54 - (c.has_details_button ? 0 : 26)}
+					width={layout.windowSize.width + 34 + (c.has_details_button ? 0 : 26)}/>
+			{/if}
+			{#if !c.allow_Search || !$w_show_search_controls}
+				<Next_Previous name='recents'
+					size={28}
+					has_title={false}
+					origin={Point.x(lefts[1])}
+					closure={handle_recents_mouseClick}/>
+				{#key $w_show_graph_ofType}
+					<Segmented name='graph-type'
+						width={80}
+						origin={Point.x(lefts[2])}
+						selected={[$w_show_graph_ofType]}
+						titles={[T_Graph.tree, T_Graph.radial]}
+						handle_selection={(titles) => ux.handle_choiceOf_t_graph('graph', titles)}/>
+				{/key}
+				<div class='scaling-controls'>
+					<Button name={T_Control.grow}
+						width={size_big}
+						height={size_big}
+						center={new Point(lefts[3], y_center)}
+						s_button={ux.s_control_forType(T_Control.grow)}
+						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.grow)}>
+						<svg id='grow-svg' style={svg_style}>
 							<path
-								d={hamburger_path}
-								stroke-width='0.75'
-								class='hamburger-path'
-								fill={ux.s_control_forType(T_Control.details).isOut ? 'black' : 'white'}
-								stroke={ux.s_control_forType(T_Control.details).isOut ? 'transparent' : 'darkgray'}/>
+								id='grow-path'
+								fill=transparent
+								d={svgPaths.t_cross(size_big, 2)}
+								stroke-width={scaling_stroke_width}
+								stroke={ux.s_control_forType(T_Control.grow).svg_hover_color}/>
 						</svg>
 					</Button>
+					<Button name={T_Control.shrink}
+						width={size_big}
+						height={size_big}
+						center={new Point(lefts[4], y_center)}
+						s_button={ux.s_control_forType(T_Control.shrink)}
+						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.shrink)}>
+						<svg id='shrink-svg'
+							style={svg_style}>
+							<path id='shrink-path'
+								fill=transparent
+								d={svgPaths.dash(size_big, 4)}
+								stroke-width={scaling_stroke_width}
+								stroke={ux.s_control_forType(T_Control.shrink).svg_hover_color}/>
+						</svg>
+					</Button>
+				</div>
+				{#if !c.has_details_button}
+					<Button name='easter-egg'
+						width={20}
+						height={30}
+						color='transparent'
+						zindex={T_Layer.frontmost}
+						center={new Point(lefts[5], 10)}
+						style='border: none; background: none;'
+						s_button={ux.s_control_forType(T_Control.details)}
+						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.details)}/>
 				{/if}
-				{#if c.allow_Search}
-					<Search
-						top={-0.5}
-						left={-54 - (c.has_details_button ? 0 : 26)}
-						width={layout.windowSize.width + 34 + (c.has_details_button ? 0 : 26)}/>
-				{/if}
-				{#if !c.allow_Search || !$w_show_search_controls}
-					<Next_Previous name='recents'
-						size={28}
-						has_title={false}
-						origin={Point.x(lefts[1])}
-						closure={handle_recents_mouseClick}/>
-					{#key $w_show_graph_ofType}
-						<Segmented name='graph-type'
-							width={80}
-							origin={Point.x(lefts[2])}
-							selected={[$w_show_graph_ofType]}
-							titles={[T_Graph.tree, T_Graph.radial]}
-							handle_selection={(titles) => ux.handle_choiceOf_t_graph('graph', titles)}/>
-					{/key}
-					<div class='scaling-controls'>
-						<Button name={T_Control.grow}
-							width={size_big}
-							height={size_big}
-							center={new Point(lefts[3], y_center)}
-							s_button={ux.s_control_forType(T_Control.grow)}
-							closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.grow)}>
-							<svg id='grow-svg' style={svg_style}>
-								<path
-									id='grow-path'
-									fill=transparent
-									d={svgPaths.t_cross(size_big, 2)}
-									stroke-width={scaling_stroke_width}
-									stroke={ux.s_control_forType(T_Control.grow).svg_hover_color}/>
-							</svg>
-						</Button>
-						<Button name={T_Control.shrink}
-							width={size_big}
-							height={size_big}
-							center={new Point(lefts[4], y_center)}
-							s_button={ux.s_control_forType(T_Control.shrink)}
-							closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.shrink)}>
-							<svg id='shrink-svg'
-								style={svg_style}>
-								<path id='shrink-path'
-									fill=transparent
-									d={svgPaths.dash(size_big, 4)}
-									stroke-width={scaling_stroke_width}
-									stroke={ux.s_control_forType(T_Control.shrink).svg_hover_color}/>
-							</svg>
-						</Button>
-					</div>
-					{#if !c.has_details_button}
-						<Button name='easter-egg'
-							width={20}
-							height={30}
-							color='transparent'
-							zindex={T_Layer.frontmost}
-							center={new Point(lefts[5], 10)}
-							style='border: none; background: none;'
-							s_button={ux.s_control_forType(T_Control.details)}
-							closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.details)}/>
-					{/if}
-					<Separator name='before-breadcrumbs'
-						isHorizontal={false}
-						origin={new Point(lefts[6], -9)}
-						length={layout.controls_boxHeight + 3}
-						thickness={k.thickness.separator.main}
-						corner_radius={k.radius.gull_wings.thick}/>
-					<Breadcrumbs
-						left={lefts[6]}
-						centered={true}
-						width={layout.windowSize.width - lefts[7]}/>
-				{/if}
+				<Separator name='before-breadcrumbs'
+					isHorizontal={false}
+					origin={new Point(lefts[6], -9)}
+					length={layout.controls_boxHeight + 3}
+					thickness={k.thickness.separator.main}
+					corner_radius={k.radius.gull_wings.thick}/>
+				<Breadcrumbs
+					left={lefts[6]}
+					centered={true}
+					width={layout.windowSize.width - lefts[7]}/>
 			{/if}
-		</div>
-	</Box>
+		{/if}
+	</div>
+	<Separator name='secondary-separator'
+		origin={new Point(3, layout.controls_boxHeight - 5)}
+		corner_radius={k.radius.gull_wings.thick}
+		thickness={k.thickness.separator.main}
+		length={layout.windowSize.width + 2}
+		zindex={T_Layer.frontmost}
+		has_both_wings={true}
+		isHorizontal={true}/>
 {/key}

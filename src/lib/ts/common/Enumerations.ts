@@ -302,7 +302,6 @@ export enum T_Preference {
 	countDots		  = 'countDots',
 	font_size		  = 'font_size',
 	separator		  = 'separator',
-	matte_UI		  = 'matte_UI',				// not use glow gradient
 	base_id			  = 'base_id',
 	details			  = 'details',				// visible details control
 	grabbed			  = 'grabbed',

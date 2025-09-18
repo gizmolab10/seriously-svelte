@@ -6,9 +6,9 @@ export class Configuration {
 	queryStrings = new URLSearchParams(window.location.search);
 	allow_HorizontalScrolling = true;
 	theme = T_Theme.standalone;
-	has_details_button = true;
 	allow_GraphEditing = true;
 	allow_TitleEditing = true;
+	has_details_button = true;
 	has_standalone_UI = true;
 	allow_autoSave = true;
 	erasePreferences = 0;

@@ -13,9 +13,9 @@
     const mouseTimer = e.mouse_timer_forName(`glow-button-${owner}-${title}`);
     const glow_rect = Rect.createWHRect(width, height);
     const gradient_name = 'glow-' + title;
+    let isHovering = false;
     let banner_color = colors.banner;
     let glow_button: HTMLElement | null = null;
-    let isHovering = false;
 
 	$: {
 		const _ = $w_background_color;
@@ -57,7 +57,7 @@
         width: {width}px;
         height: {height}px;
         position: relative;'>
-    {#if !isHovering}
+    {#if isHovering}
         <SVG_Gradient
             isInverted={true}
             name={gradient_name}
@@ -72,7 +72,6 @@
         on:mouseenter={() => handle_mouse_enter(true)}
         on:mouseleave={() => handle_mouse_enter(false)}
         style='
-            top: 50%;
             left: 50%;
             margin: 0;
             padding: 0;
@@ -80,6 +79,7 @@
             user-select: none;
             text-align: center;
             position: absolute;
+            top: calc(50% + 1px);
             -ms-user-select: none;
             -moz-user-select: none;
             font-size: {font_size}px;
