@@ -646,6 +646,13 @@ export class Hierarchy {
 		})
 	}
 
+	ancestries_fullRebuild() {		// for Firebase only
+		const rootAncestry = this.rootAncestry;
+		this.ancestries_forget_all();
+		this.ancestry_remember(rootAncestry);
+		// signals.signal_rebuildGraph_from(rootAncestry);
+	}
+
 	async ancestries_rebuild_traverse_persistentDelete(ancestries: Array<Ancestry>) {
 		if (get(w_ancestry_focus)) {
 			for (const ancestry of ancestries) {
@@ -921,10 +928,10 @@ export class Hierarchy {
 	}
 
 	ancestry_rebuild_persistentMoveUp_maybe(ancestry: Ancestry, up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
-		const [graph_needsRebuild, graph_needsRelayout] = ancestry.persistentMoveUp_maybe(up, SHIFT, OPTION, EXTREME);
-		if (graph_needsRebuild) {
-			layout.grand_build();
-		} else if (graph_needsRelayout) {
+		const [graph_needsSweep, graph_needsReattach] = ancestry.persistentMoveUp_maybe(up, SHIFT, OPTION, EXTREME);
+		if (graph_needsSweep) {
+			layout.grand_sweep();
+		} else if (graph_needsReattach) {
 			signals.signal_reattach_widgets_fromFocus();
 		}
 	}
@@ -971,7 +978,7 @@ export class Hierarchy {
 		const childAncestry = ancestry.ancestry_ofFirst_visibleChild;
 		let newGrabAncestry: Ancestry | null = RIGHT ? childAncestry : newFocusAncestry;
 		const newGrabIsNotFocus = !newGrabAncestry?.isFocus;
-		let graph_needsRebuild = false;
+		let graph_needsSweep = false;
 		if (RIGHT) {
 			if (!ancestry.hasRelevantRelationships && ux.inTreeMode) {
 				return;
@@ -981,7 +988,7 @@ export class Hierarchy {
 				}
 				if (ux.inTreeMode) {
 					const depth_limit = get(w_depth_limit);
-					graph_needsRebuild = ancestry.expand();
+					graph_needsSweep = ancestry.expand();
 					if (!!newGrabAncestry && newGrabAncestry.depth_ofFocus > depth_limit) {
 						newFocusAncestry = newGrabAncestry.ancestry_createUnique_byStrippingBack(depth_limit);
 					} else {
@@ -992,26 +999,26 @@ export class Hierarchy {
 					if (!!childAncestry && !childAncestry.isVisible) {
 						const g_paging = ancestry.g_paging
 						g_paging?.ancestry_atIndex(ancestry.childAncestries).grab()
-						graph_needsRebuild = true;
+						graph_needsSweep = true;
 					}
 				}
 			}
 		} else {
 			const rootAncestry = this.rootAncestry;
 			if (EXTREME) {
-				graph_needsRebuild = rootAncestry?.becomeFocus();	// tells graph to update line rects
+				graph_needsSweep = rootAncestry?.becomeFocus();	// tells graph to update line rects
 			} else if (!SHIFT) {
 				if (fromReveal) {
-					graph_needsRebuild = ancestry.toggleExpanded();
+					graph_needsSweep = ancestry.toggleExpanded();
 				} else if (newGrabIsNotFocus && !!newGrabAncestry && !newGrabAncestry.isExpanded) {
-					graph_needsRebuild = newGrabAncestry.expand();
+					graph_needsSweep = newGrabAncestry.expand();
 				}
 			} else if (!!newGrabAncestry) { 
 				if (ancestry.isExpanded) {
-					graph_needsRebuild = ancestry.collapse();
+					graph_needsSweep = ancestry.collapse();
 					newGrabAncestry = !ancestry.isVisible ? ancestry : null;
 				} else if (newGrabAncestry.isExpanded || (!!rootAncestry && !rootAncestry.equals(newGrabAncestry))) {
-					graph_needsRebuild = newGrabAncestry.collapse();
+					graph_needsSweep = newGrabAncestry.collapse();
 				}
 			}
 		}
@@ -1022,12 +1029,12 @@ export class Hierarchy {
 				const newFocusIsGrabbed = newFocusAncestry.equals(newGrabAncestry);
 				const becomeFocus = newGrabIsNotFocus && (!SHIFT || newFocusIsGrabbed) && (RIGHT || !newFocusAncestry.isVisible);
 				if (becomeFocus && newFocusAncestry.becomeFocus()) {
-					graph_needsRebuild = true;
+					graph_needsSweep = true;
 				}
 			}
 		}
-		if (graph_needsRebuild) {
-			layout.grand_build();
+		if (graph_needsSweep) {
+			layout.grand_sweep();
 		} else {
 			layout.grand_layout();
 		}

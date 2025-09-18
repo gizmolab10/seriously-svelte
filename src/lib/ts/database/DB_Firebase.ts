@@ -220,10 +220,11 @@ export default class DB_Firebase extends DB_Common {
 	signal_docHandled(relationships_haveChanged: boolean) {
 		if (relationships_haveChanged) {
 			busy.signal_data_redraw();
+			h.ancestries_fullRebuild();		// first recreate ancestries
 			setTimeout(() => { // wait in case a thing involved in this relationship arrives in the data
 				h.relationships_refreshKnowns();
 				h.rootAncestry.order_normalizeRecursive();
-				layout.grand_build();
+				layout.grand_layout();
 			}, 20);
 		}
 	}

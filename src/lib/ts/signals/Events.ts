@@ -230,7 +230,7 @@ export class Events {
 			const key = event.key.toLowerCase();
 			const ancestry = grabs.latest_upward(true);
 			const modifiers = ['alt', 'meta', 'shift', 'control'];
-			let graph_needsRebuild = false;
+			let graph_needsSweep = false;
 			w_control_key_down.set(event.ctrlKey);
 			switch (get(w_search_state)) {
 				case T_Search.off:
@@ -252,7 +252,7 @@ export class Events {
 						}
 						if (!!ancestry) {
 							switch (key) {
-								case '/':			graph_needsRebuild = ancestry.becomeFocus(); break;
+								case '/':			graph_needsSweep = ancestry.becomeFocus(); break;
 								case 'arrowright':	u.isolateEvent(event); await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, SHIFT, OPTION, EXTREME, false); break;
 								case 'arrowleft':	u.isolateEvent(event); await h.ancestry_rebuild_persistentMoveRight(ancestry, false, SHIFT, OPTION, EXTREME, false); break;
 							}
@@ -270,7 +270,7 @@ export class Events {
 							case 's':				h.persist_toFile(T_File_Format.json); return;
 							case 'c':				layout.set_user_graph_offsetTo(Point.zero); return;
 							case 'o':				h.select_file_toUpload(T_File_Format.json, event.shiftKey); break;
-							case '/':				if (!ancestry) { graph_needsRebuild = h.rootAncestry?.becomeFocus(); } break;
+							case '/':				if (!ancestry) { graph_needsSweep = h.rootAncestry?.becomeFocus(); } break;
 							case 'arrowup':			grabs.latest_rebuild_persistentMoveUp_maybe( true, SHIFT, OPTION, EXTREME); break;
 							case 'arrowdown':		grabs.latest_rebuild_persistentMoveUp_maybe(false, SHIFT, OPTION, EXTREME); break;
 							case 'escape':			if (!!get(w_s_alteration)) { h.stop_alteration(); }; search.deactivate(); break;
@@ -284,8 +284,8 @@ export class Events {
 					}
 					break;
 			}
-			if (graph_needsRebuild) {
-				layout.grand_build();
+			if (graph_needsSweep) {
+				layout.grand_sweep();
 			}
 			const duration = ((new Date().getTime()) - time).toFixed(1);
 			debug.log_key(`H  (${duration}) ${key}`);
