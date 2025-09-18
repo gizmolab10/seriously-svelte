@@ -646,13 +646,6 @@ export class Hierarchy {
 		})
 	}
 
-	ancestries_fullRebuild() {		// for Firebase only
-		const rootAncestry = this.rootAncestry;
-		this.ancestries_forget_all();
-		this.ancestry_remember(rootAncestry);
-		signals.signal_rebuildGraph_from(rootAncestry);
-	}
-
 	async ancestries_rebuild_traverse_persistentDelete(ancestries: Array<Ancestry>) {
 		if (get(w_ancestry_focus)) {
 			for (const ancestry of ancestries) {

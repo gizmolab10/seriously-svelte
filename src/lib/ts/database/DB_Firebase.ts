@@ -226,7 +226,6 @@ export default class DB_Firebase extends DB_Common {
 				layout.grand_build();
 			}, 20);
 		}
-		h.ancestries_fullRebuild();		// first recreate ancestries
 	}
 
 	async handle_docChanges(idBase: string, t_persistable: T_Persistable, change: DocumentChange): Promise<boolean> {
@@ -273,10 +272,10 @@ export default class DB_Firebase extends DB_Common {
 		if (DB_Firebase.data_isValidOfKind(t_persistable, data)) {
 			switch (t_persistable) {
 				case T_Persistable.predicates:	  h   .predicate_remember_runtimeCreateUnique(		  id, data.kind,		 data.isBidirectional ); break;
-				case T_Persistable.things:		  h       .thing_remember_runtimeCreateUnique(idBase, id, data.title,		 data.color,		  data.t_thing, k.empty, true); break;
+				case T_Persistable.things:		  h       .thing_remember_runtimeCreateUnique(idBase, id, data.title,		 data.color,		  data.t_thing, true); break;
 				case T_Persistable.relationships: h.relationship_remember_runtimeCreateUnique(idBase, id, data.predicate.id, data.parent.id,	  data.child.id, data.orders, T_Create.isFromPersistent); break;
-				case T_Persistable.traits:		  h       .trait_remember_runtimeCreateUnique(idBase, id, data.ownerID,		 data.t_trait,		  data.text, k.empty, true); break;
-				case T_Persistable.tags:		  h         .tag_remember_runtimeCreateUnique(idBase, id, data.type,		 data.thingHIDs,	  k.empty, true); break;
+				case T_Persistable.traits:		  h       .trait_remember_runtimeCreateUnique(idBase, id, data.ownerID,		 data.t_trait,		  data.text, true); break;
+				case T_Persistable.tags:		  h         .tag_remember_runtimeCreateUnique(idBase, id, data.type,		 data.thingHIDs,	  true); break;
 			}
 		}
 	}
@@ -317,7 +316,7 @@ export default class DB_Firebase extends DB_Common {
 
 	async root_default_remember_persistentCreateIn(collectionRef: CollectionReference) {
 		const fields = ['title', 'color', 't_thing'];
-		const root = new Thing(this.idBase, Identifiable.newID(), this.idBase, 'coral', T_Thing.root, k.empty, true);
+		const root = new Thing(this.idBase, Identifiable.newID(), this.idBase, 'coral', T_Thing.root, true);
 		const rootRef = await addDoc(collectionRef, u.convertToObject(root, fields));		// no need to remember now
 		root.log(T_Debug.remote, 'CREATE T');
 		h.root = root;
@@ -373,7 +372,7 @@ export default class DB_Firebase extends DB_Common {
 					if (!!thing || remoteThing.isEqualTo(this.addedThing) || remoteThing.t_thing == T_Thing.root) {
 						return false;			// do not invoke rebuild because nothing has changed
 					}
-					thing = h.thing_remember_runtimeCreate(idBase, id, remoteThing.title, remoteThing.color, remoteThing.t_thing, k.empty, true);
+					thing = h.thing_remember_runtimeCreate(idBase, id, remoteThing.title, remoteThing.color, remoteThing.t_thing, true);
 					break;
 				case 'removed':
 					if (!!thing) {
@@ -469,7 +468,7 @@ export default class DB_Firebase extends DB_Common {
 					if (!!trait || remoteTrait.isEqualTo(this.addedTrait)) {
 						return false;		// do not invoke signal because nothing has changed
 					}
-					trait = h.trait_remember_runtimeCreate(idBase, id, remoteTrait.ownerID, remoteTrait.t_trait, remoteTrait.text, k.empty, true);
+					trait = h.trait_remember_runtimeCreate(idBase, id, remoteTrait.ownerID, remoteTrait.t_trait, remoteTrait.text, true);
 					break;
 				case 'removed':
 					if (!!trait) {
@@ -563,7 +562,7 @@ export default class DB_Firebase extends DB_Common {
 					if (!!tag || remoteTag.isEqualTo(this.addedTag)) {
 						return false;		// do not invoke signal because nothing has changed
 					}
-					tag = h.tag_remember_runtimeCreate(idBase, id, remoteTag.type, remoteTag.thingHIDs, k.empty, true);
+					tag = h.tag_remember_runtimeCreate(idBase, id, remoteTag.type, remoteTag.thingHIDs, true);
 					break;
 				case 'removed':
 					if (!!tag) {

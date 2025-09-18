@@ -38,6 +38,9 @@
 	setup_fromAncestry();		// this fails if ancestry's thing id is invalid
 	final_layout();
 	layout_maybe();
+	if (top < 1) {
+		debug.log_layout(`ONMOUNT ${top.toFixed(0)} ${left.toFixed(0)} ${ancestry.titles}`);
+	}
 
 	s_component = signals.handle_anySignal_atPriority(1, ancestry, T_Component.widget, (t_signal, value): S_Component | null => {
 		switch (t_signal) {
@@ -70,8 +73,8 @@
 	$: {
 		const reactives = `${$w_s_title_edit?.t_edit}:::${$w_ancestries_grabbed.map(a => a.titles.join(',')).join('-')}`;
 		if (reactives != trigger && !!ancestry && s_widget.state_didChange) {
-			g_widget.layout_widget();
 			trigger = reactives;
+			g_widget.layout_widget();
 			final_layout();
 			s_component.debug_log_connection_state('GRABBED STATE CHANGED');
 		}

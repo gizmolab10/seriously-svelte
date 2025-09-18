@@ -112,7 +112,7 @@ export default class G_Widget {
 		this.layout_widget();						// assumes full progeny subtrees are laid out (needed for progeny size)
 		this.layout_origin_ofTrunk();
 		this.g_childBranches.layout_subtree();		// noop if childless, radial or collapsed ... FUBAR: BAD origin_ofWidget, after switching to radial, refocusing, then back again
-		debug.log_layout(`WIDGET ${this.origin.verbose} ${this.ancestry.titles}`);
+		// debug.log_layout(`WIDGET ${this.origin.offsetBy(this.offset_ofWidget).verbose} ${this.ancestry.titles}`);
 	}
 
 	private layout_origin_ofTrunk() {
