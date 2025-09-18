@@ -9,6 +9,7 @@ export default class DB_Bubble extends DB_Common {
 	prior_focus_id: string | null = null;
 	prior_grabbed_ids: string[] = [];
 	t_database = T_Database.bubble;
+	debounce_count = 0;
 	idBase = k.empty;
 
 	async fetch_all() {
@@ -130,17 +131,19 @@ export default class DB_Bubble extends DB_Common {
 	
 		window.parent.postMessage({ type: 'trigger_an_event', trigger: 'ready' }, k.wildcard);
 		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
-			if (!!ancestry && !!ancestry.thing && ancestry.thing.id != this.prior_focus_id) {
+			if (!!ancestry && !!ancestry.thing && ancestry.thing.id != this.prior_focus_id && this.debounce_count > 2) {
 				this.prior_focus_id = ancestry.thing.id;
 				window.parent.postMessage({ type: 'focus_id', id: ancestry.thing.id }, k.wildcard);
-				window.parent.postMessage({ type: 'trigger_an_event', trigger: 'focus_changed' }, k.wildcard);			// not before focus id
+				window.parent.postMessage({ type: 'trigger_an_event', trigger: 'focus_changed' }, k.wildcard);			// post focus id first
+				this.debounce_count += 1;
 			}
 		});
 		w_ancestries_grabbed.subscribe((ancestries: Ancestry[]) => {
-			if (!!ancestries && ancestries.map((ancestry: Ancestry) => ancestry.thing?.id ?? k.corrupted).join(', ') != this.prior_grabbed_ids.join(',')) {
+			if (!!ancestries && ancestries.map((ancestry: Ancestry) => ancestry.thing?.id ?? k.corrupted).join(', ') != this.prior_grabbed_ids.join(', ') && this.debounce_count > 2) {
 				this.prior_grabbed_ids = ancestries.map((ancestry: Ancestry) => ancestry.thing?.id ?? k.corrupted);
 				window.parent.postMessage({ type: 'selected_ids', ids: ancestries.map((ancestry: Ancestry) => ancestry.thing?.id ?? k.corrupted) }, k.wildcard);
-				window.parent.postMessage({ type: 'trigger_an_event', trigger: 'selection_changed' }, k.wildcard);			// not before selected ids
+				window.parent.postMessage({ type: 'trigger_an_event', trigger: 'selection_changed' }, k.wildcard);			// post selected ids first
+				this.debounce_count += 1;
 			}
 		});
 	}

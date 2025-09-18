@@ -41,7 +41,7 @@
 
 	function setup_spinner_rect() {
 		const size = $w_graph_rect.size
-		const title_width = u.getWidthOf(spinner_title) + 50;
+		const title_width = u.getWidthOf(spinner_title) + 35;
 		const diameter = Math.min(size.height, size.width) / 4;
 		const square = Size.square(Math.max(diameter, title_width));
 		const center = size.asPoint.dividedInHalf;
@@ -92,7 +92,8 @@
 								opacity: 0.5;
 								position: absolute;
 								top: {spinner_rect.origin.y}px;
-								left: {spinner_rect.origin.x}px;'>
+								left: {spinner_rect.origin.x}px;
+								font-size: {k.font_size.common}px;'>
 							<Spinner
 								speed='3s'
 								strokeWidth={6}

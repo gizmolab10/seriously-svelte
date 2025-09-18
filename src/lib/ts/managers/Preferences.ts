@@ -182,9 +182,6 @@ export class Preferences {
 		w_show_tree_ofType.subscribe((value) => {
 			this.write_key(T_Preference.tree, value);
 		});
-		w_show_graph_ofType.subscribe((value) => {
-			this.write_key(T_Preference.graph, value);
-		});
 		w_show_countDots_ofType.subscribe((value) => {
 			this.write_key(T_Preference.countDots, value);
 		});
