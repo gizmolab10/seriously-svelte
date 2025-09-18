@@ -51,11 +51,10 @@
 </script>
 
 {#key reattachments}
-	<Box name='controls-box'
-		left={1}
-		height={layout.windowSize.height}
-		width={layout.windowSize.width - 2}
+	<Box name='panel-box'
+		width={layout.windowSize.width}
 		thickness={k.thickness.separator.main}
+		height={layout.windowSize.height + 0.5}
 		corner_radius={k.radius.gull_wings.thick}>
 		<div
 			class='panel'

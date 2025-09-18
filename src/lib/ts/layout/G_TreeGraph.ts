@@ -7,9 +7,6 @@ export default class G_TreeGraph {
 	focus!: Ancestry;
 
 	constructor() {
-		w_graph_rect.subscribe((rect: Rect) => {
-			this.grand_layout_tree();
-		});
 		w_ancestry_focus.subscribe((focus: Ancestry) => {
 			if (!!focus) {
 				this.focus = focus;

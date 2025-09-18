@@ -64,10 +64,10 @@ export const w_search_filter			= writable<T_Search_Filter>();	// TBD
 
 const _____COUNTS: unique symbol = Symbol('COUNTS');
 
+export const w_count_window_resized		= writable<number>();
 export const w_count_mouse_up			= writable<number>();
 export const w_count_rebuild			= writable<number>();
 export const w_count_details			= writable<number>();	
-export const w_count_resize				= writable<number>();
 
 const _____OTHER: unique symbol = Symbol('OTHER');
 
@@ -84,7 +84,7 @@ export const w_font_size				= writable<number>();
 
 class Stores {
 	setup_defaults() {
-		w_count_resize.set(0);
+		w_count_window_resized.set(0);
 		w_count_rebuild.set(0);
 		w_count_details.set(0);
 		w_count_mouse_up.set(0);

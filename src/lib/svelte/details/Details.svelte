@@ -72,14 +72,14 @@
 		{/if}
 	</div>
 {/key}
-<Separator name='bottom-of-details'
+<Separator name='right-of-details'
 	isHorizontal={false}
 	has_both_wings={true}
 	margin={k.details_margin}
 	thickness={k.thickness.separator.main}
 	corner_radius={k.radius.gull_wings.thick}
-	length={layout.windowSize.height - layout.controls_boxHeight + 5}
-	origin={new Point(k.width.details - 2, layout.controls_boxHeight - 2)}/>
+	length={layout.windowSize.height - layout.controls_boxHeight + 6.5}
+	origin={new Point(k.width.details - 2, layout.controls_boxHeight - 2.5)}/>
 
 <style>
 

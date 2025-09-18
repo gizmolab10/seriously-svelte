@@ -122,9 +122,8 @@
 		</div>
 		<div class='bottom-controls'
 			style='
-				left:0px;
 				position:absolute;
-				top:{draggableRect.size.height - 28}px;'>
+				top:{draggableRect.size.height - 34}px;'>
 			<Button
 				width=75
 				height={size_big}
@@ -140,7 +139,7 @@
 				width={size_big}
 				height={size_big}
 				name={T_Control.help}
-				origin={Point.x(draggableRect.size.width - 29)}
+				origin={Point.x(draggableRect.size.width - 34)}
 				s_button={ux.s_control_forType(T_Control.help)}
 				closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.help)}>
 				<span

@@ -4,7 +4,7 @@
 	import { w_background_color, w_device_isMobile, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { w_show_details, w_show_graph_ofType, w_show_tree_ofType } from '../../ts/managers/Stores';
 	import { w_search_filter, w_search_state, w_show_search_controls } from '../../ts/managers/Stores';
-	import { w_graph_rect, w_count_resize, w_popupView_id } from '../../ts/managers/Stores';
+	import { w_graph_rect, w_count_window_resized, w_popupView_id } from '../../ts/managers/Stores';
 	import Next_Previous from '../mouse/Next_Previous.svelte';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Segmented from '../mouse/Segmented.svelte';
@@ -34,7 +34,7 @@
 	function handle_recents_mouseClick(column: number) { grabs.focus_onNext(column == 1); }
 
 	$: {
-		const _ = `${$w_graph_rect.description}:::${$w_count_resize}`;
+		const _ = `${$w_graph_rect.description}:::${$w_count_window_resized}`;
 		width = layout.windowSize.width - 20;
 	}
 
@@ -159,7 +159,7 @@
 				<Separator name='before-breadcrumbs'
 					isHorizontal={false}
 					origin={new Point(lefts[6], -9)}
-					length={layout.controls_boxHeight + 3}
+					length={layout.controls_boxHeight + 1}
 					thickness={k.thickness.separator.main}
 					corner_radius={k.radius.gull_wings.thick}/>
 				<Breadcrumbs
@@ -170,10 +170,10 @@
 		{/if}
 	</div>
 	<Separator name='secondary-separator'
-		origin={new Point(3, layout.controls_boxHeight - 5)}
+		origin={new Point(2, layout.controls_boxHeight - 5)}
 		corner_radius={k.radius.gull_wings.thick}
 		thickness={k.thickness.separator.main}
-		length={layout.windowSize.width + 2}
+		length={layout.windowSize.width + 2.5}
 		zindex={T_Layer.frontmost}
 		has_both_wings={true}
 		isHorizontal={true}/>

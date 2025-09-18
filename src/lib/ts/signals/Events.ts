@@ -1,6 +1,6 @@
 import { w_ancestry_focus, w_count_mouse_up, w_mouse_location, w_mouse_location_scaled, w_scaled_movement } from '../managers/Stores';
 import { c, h, k, u, ux, grabs, Point, debug, search, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
-import { w_count_resize, w_s_alteration, w_s_title_edit, w_user_graph_offset, w_control_key_down } from '../managers/Stores';
+import { w_count_window_resized, w_s_alteration, w_s_title_edit, w_user_graph_offset, w_control_key_down } from '../managers/Stores';
 import { w_device_isMobile, w_ancestries_grabbed, w_search_state, w_show_details, w_popupView_id } from '../managers/Stores';
 import { T_Search, T_Action, T_Control, T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { S_Mouse, S_Alteration } from '../common/Global_Imports';
@@ -21,11 +21,24 @@ export class Events {
 		w_device_isMobile.subscribe((isMobile: boolean) => { this.subscribeTo_events(); });
 	}
 
-	static readonly _____INTERNALS: unique symbol;
-
 	name_ofActionAt(t_action: number, column: number): string {
 		return Object.keys(this.actions[T_Action[t_action]])[column];
 	}
+
+	togglePopupID(id: T_Control) {
+		const same = get(w_popupView_id) == id
+		w_popupView_id.set(same ? null : id); 
+	}
+
+	toggle_details() {
+		const show_details = !get(w_show_details);
+		w_show_details.set(show_details);
+		if (show_details) {
+			c.has_standalone_UI = true;
+		}
+	}
+
+	static readonly _____INTERNALS: unique symbol;
 
 	private showHelpFor(t_action: number, column: number) { 
 		const page = this.help_page_forActionAt(t_action, column);
@@ -58,8 +71,8 @@ export class Events {
 		this.clear_event_subscriptions();
 		this.update_event_listener('wheel', this.handle_wheel);
 		this.update_event_listener('keyup', this.handle_key_up);
-		this.update_event_listener('resize', this.handle_resize);
 		this.update_event_listener('keydown', this.handle_key_down);
+		this.update_event_listener('resize', this.handle_window_resize);
 		this.update_event_listener('orientationchange', this.handle_orientation_change);
 		if (u.device_isMobile) {
 			debug.log_action(`  mobile subscribe GRAPH`);
@@ -81,18 +94,6 @@ export class Events {
 	private handle_mouse_up(event: MouseEvent) {
 		w_scaled_movement.set(null);
 		w_count_mouse_up.update(n => n + 1);
-	}
-
-	private handle_mouse_move(event: MouseEvent) {
-		const location = new Point(event.clientX, event.clientY);
-		const scaled = location.dividedEquallyBy(layout.scale_factor);
-		const prior_scaled = get(w_mouse_location_scaled);
-		const delta = prior_scaled?.vector_to(scaled);
-		if (!!delta && delta.magnitude > 1) {
-			w_scaled_movement.set(delta);
-		}
-		w_mouse_location.set(location);
-		w_mouse_location_scaled.set(scaled);
 	}
 
 	private handle_key_up(e: Event) {
@@ -117,20 +118,14 @@ export class Events {
 		}
 	}
 
-	private handle_resize(event: Event) {
-        if (this.debouncedResize) {
-            clearTimeout(this.debouncedResize);
-        }
-        
-        this.debouncedResize = setTimeout(() => {
-			// on COMMAND +/-
-			// and on simulator switches platform
-            const isMobile = u.device_isMobile;
-            w_count_resize.update(n => n + 1);		// observed by controls
-            w_device_isMobile.set(isMobile);
-            layout.restore_state();
-            this.debouncedResize = null;
-        }, 50);		// 20 frames per second
+	private handle_window_resize(event: Event) {
+		// on COMMAND +/-
+		// and on simulator switches platform
+		const isMobile = u.device_isMobile;
+		w_count_window_resized.update(n => n + 1);		// observed by controls
+		w_device_isMobile.set(isMobile);
+		layout.restore_state();
+		this.debouncedResize = null;
 	}
 
 	private handle_wheel(event: Event) {
@@ -170,9 +165,16 @@ export class Events {
 		}
 	}
 
-	togglePopupID(id: T_Control) {
-		const same = get(w_popupView_id) == id
-		w_popupView_id.set(same ? null : id); 
+	private handle_mouse_move(event: MouseEvent) {
+		const location = new Point(event.clientX, event.clientY);
+		const scaled = location.dividedEquallyBy(layout.scale_factor);
+		const prior_scaled = get(w_mouse_location_scaled);
+		const delta = prior_scaled?.vector_to(scaled);
+		if (!!delta && delta.magnitude > 1) {
+			w_scaled_movement.set(delta);
+		}
+		w_mouse_location.set(location);
+		w_mouse_location_scaled.set(scaled);
 	}
 
 	handle_s_mouseFor_t_control(s_mouse: S_Mouse, t_control: T_Control) {
@@ -190,14 +192,6 @@ export class Events {
 				case T_Control.shrink:	this.width = layout.scaleBy(k.ratio.zoom_out) - 20; break;
 				default:				this.togglePopupID(t_control); break;
 			}
-		}
-	}
-
-	toggle_details() {
-		const show_details = !get(w_show_details);
-		w_show_details.set(show_details);
-		if (show_details) {
-			c.has_standalone_UI = true;
 		}
 	}
 

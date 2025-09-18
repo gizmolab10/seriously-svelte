@@ -19,10 +19,10 @@
 	{/if}
 	{#if $w_show_search_controls || $w_show_graph_ofType == T_Graph.tree}
 		<Separator name='secondary-separator'
-			origin={new Point(-2, layout.controls_boxHeight - 6)}
+			origin={new Point(-($w_show_details ? 2 : 3), layout.controls_boxHeight - 6)}
 			corner_radius={k.radius.gull_wings.thick}
 			thickness={k.thickness.separator.main}
-			length={$w_graph_rect.size.width + ($w_show_details ? 6 : 1)}
+			length={$w_graph_rect.size.width + ($w_show_details ? 7 : 2.5)}
 			zindex={T_Layer.frontmost}
 			has_both_wings={true}
 			isHorizontal={true}/>

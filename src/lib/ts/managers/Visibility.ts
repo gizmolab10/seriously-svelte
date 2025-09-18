@@ -55,9 +55,6 @@ export class Visibility {
 			layout.restore_state();
 			layout.grand_layout();
 		});
-		w_show_search_controls.subscribe((flag: boolean) => {
-			layout.restore_state();
-		});
     }
 }
 
