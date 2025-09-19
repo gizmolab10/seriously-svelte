@@ -140,7 +140,7 @@
 				cursor = g_paging_rotation.cursor;
 				debug.log_radial(` page  ${delta_angle.asDegrees()}`);
 				if (!!basis_angle && !!active_angle && basis_angle != active_angle && $w_g_paging_cluster.adjust_paging_index_byAdding_angle(delta_angle)) {
-					layout.grand_build();
+					layout.grand_layout();
 				}
 			} else {				// not dragging
 				detect_hovering();

@@ -1,4 +1,4 @@
-import { k, Point, Angle, debug, colors, radial, layout, Ancestry, Predicate } from '../common/Global_Imports';
+import { k, Point, Angle, debug, colors, radial, layout, Ancestry, Predicate, signals } from '../common/Global_Imports';
 import { G_Widget, G_ArcSlider, G_Paging, S_Rotation } from '../common/Global_Imports';
 import { w_ring_rotation_angle, w_ring_rotation_radius } from '../managers/Stores';
 import { w_graph_rect, w_ancestry_focus } from '../managers/Stores';
@@ -65,6 +65,7 @@ export default class G_Cluster {
 			this.layout_label();
 			this.layout_thumb_angles();
 			this.update_label_forIndex();
+			signals.signal_reposition_widgets_fromFocus();
 		}
 	}
 	
@@ -258,7 +259,8 @@ export default class G_Cluster {
 			const arc_start = this.g_sliderArc.start_angle * otherInverter;
 			const start = arc_start + (increment * this.paging_index_ofFocus);
 			const end = start + (increment * this.widgets_shown);
-			this.g_thumbArc.layout_fork((start + end) / 2);
+			const angle = (start + end) / 2;
+			this.g_thumbArc.layout_fork(angle);
 			this.g_thumbArc.start_angle = start;
 			this.g_thumbArc.end_angle = end;
 		}

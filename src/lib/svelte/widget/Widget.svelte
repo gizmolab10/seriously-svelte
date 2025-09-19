@@ -72,7 +72,7 @@
 
 	$: {
 		const reactives = `${$w_s_title_edit?.t_edit}:::${$w_ancestries_grabbed.map(a => a.titles.join(',')).join('-')}`;
-		if (reactives != trigger && !!ancestry && s_widget.state_didChange) {
+		if (reactives != trigger && !!ancestry && s_widget.update_state_didChange) {
 			trigger = reactives;
 			g_widget.layout_widget();
 			final_layout();
@@ -126,7 +126,7 @@
 	}
 
 	function layout_maybe() {
-		if (s_widget.state_didChange) {
+		if (s_widget.update_state_didChange) {
 			final_layout();
 		}
 	}
@@ -156,12 +156,12 @@
 	}
 
 	function setup_fromAncestry() {
-		s_widget.state_didChange;
+		s_widget.update_state_didChange;
 		thing = ancestry?.thing;
 		if (!ancestry) {
-			console.warn('widget is missing an ancestry');
+			console.warn('widget has no ancestry');
 		} else if (!thing) {
-			console.warn(`widget is missing a thing for "${ancestry?.id ?? k.unknown}"`);
+			console.warn(`relationship (of ancestry of widget) has no child [${ancestry?.relationship?.id ?? k.unknown}]`);
 		} else {
 			const title = thing.title ?? thing.id ?? k.unknown;
 			reveal_id = `reveal ${title} ${ancestry.id}`;

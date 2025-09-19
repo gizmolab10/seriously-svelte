@@ -65,7 +65,7 @@
 						left: {widths[2] - 2}px;
 						width: {right_widths[2]}px;
 						font-family: {$w_thing_fontFamily};'>
-					{$w_search_results_found} matches
+					{$w_search_results_found} match{$w_search_results_found == 1 ? '' : 'es'}
 				</div>
 			{/if}
 	{/if}

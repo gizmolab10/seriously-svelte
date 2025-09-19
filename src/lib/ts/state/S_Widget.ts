@@ -39,7 +39,7 @@ export default class S_Widget extends S_Element {
 		this.s_reveal = ux.s_element_for(ancestry, T_Element.reveal, k.empty);
 	}
 
-	get state_didChange(): boolean {
+	get update_state_didChange(): boolean {
 		const wantsFocus = this.ancestry.isFocus;
 		const wantsEdit = this.ancestry.isEditing;
 		const wantsGrab = this.ancestry.isGrabbed;
