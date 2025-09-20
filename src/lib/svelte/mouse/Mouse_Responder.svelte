@@ -130,7 +130,7 @@
 				handle_s_mouse(create_s_mouse(isDown, false, false, true, event));
 			});
 		} else {
-			if (detect_mouseDown && s_mouse.clicks == 0) {
+			if (detect_mouseDown && (s_mouse.clicks == 0 || !detect_doubleClick)) {
 				handle_s_mouse(create_s_mouse(true, false, false, false, event));
 			}
 			s_mouse.clicks += 1;

@@ -1,8 +1,9 @@
-import { w_ancestry_focus, w_count_mouse_up, w_mouse_location, w_mouse_location_scaled, w_scaled_movement } from '../managers/Stores';
-import { c, h, k, u, ux, grabs, Point, debug, search, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
 import { w_count_window_resized, w_s_alteration, w_s_title_edit, w_user_graph_offset, w_control_key_down } from '../managers/Stores';
-import { w_device_isMobile, w_ancestries_grabbed, w_search_state, w_show_details, w_popupView_id } from '../managers/Stores';
+import { w_show_details, w_count_mouse_up, w_mouse_location, w_mouse_location_scaled, w_scaled_movement } from '../managers/Stores';
+import { c, h, k, u, ux, grabs, Point, debug, search, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
 import { T_Search, T_Action, T_Control, T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Imports';
+import { w_device_isMobile, w_ancestries_grabbed, w_ancestry_focus, w_popupView_id } from '../managers/Stores';
+import { w_search_state, w_search_result_row } from '../managers/Stores';
 import { S_Mouse, S_Alteration } from '../common/Global_Imports';
 import Mouse_Timer from './Mouse_Timer';
 import { get } from 'svelte/store';
@@ -280,7 +281,8 @@ export class Events {
 				default:	// in search mode
 					switch (key) {
 						case 'escape':
-						case 'enter':		    search.deactivate(); break;	// stop searching
+						case 'enter':		    	search.deactivate(); break;	// stop searching
+						case 'tab':					search.set_result_row(0); break;
 					}
 					break;
 			}

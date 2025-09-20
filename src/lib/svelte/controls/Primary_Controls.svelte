@@ -10,8 +10,8 @@
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Breadcrumbs from './Breadcrumbs.svelte';
+	import Search from '../search/Search.svelte';
 	import Button from '../mouse/Button.svelte';
-	import Search from './Search.svelte';
 	import Box from '../draw/Box.svelte';
 	const y_center = 10.5;
 	const right_widths = [9, 11.5];

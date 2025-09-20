@@ -14,7 +14,7 @@ export class Colors {
     default_forThings = 'blue';
 	thin_separator_line_color = '#999999';
 
-	ofBackgroundFor(color: string): string { return this.lighterBy(color, 100);}
+	ofBackgroundFor(color: string): string { return this.lighterBy(color, 10000);}
 	ofBannerFor(background: string): string { return this.blend('white', background, 4);}
 	opacitize(color: string, amount: number): string { return transparentize(color, 1 - amount); }
 

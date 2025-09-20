@@ -1,5 +1,5 @@
 import { S_Widget, G_Cluster, G_TreeLine, G_TreeBranches } from '../common/Global_Imports';
-import { k, u, ux, Rect, Size, Point, debug, Ancestry } from '../common/Global_Imports';
+import { k, u, ux, Rect, Size, Point, Ancestry } from '../common/Global_Imports';
 import { w_show_graph_ofType, w_show_related } from '../managers/Stores';
 import { T_Widget, T_Graph } from '../common/Global_Imports';
 import { get } from 'svelte/store';
@@ -32,7 +32,7 @@ export default class G_Widget {
 	// create a G_TreeLine as normal
 	// and one for each bidirectional
 
-	get responder(): HTMLElement | null { return this.s_widget.responder; }
+	get html_element(): HTMLElement | null { return this.s_widget.html_element; }
 
 	// single source of truth for widget's
 	//

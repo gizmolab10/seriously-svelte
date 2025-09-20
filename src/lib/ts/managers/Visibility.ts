@@ -38,22 +38,24 @@ export class Visibility {
 		w_show_details.set(p.read_key(T_Preference.show_details) ?? false);
 		w_show_related.set(p.read_key(T_Preference.show_related) ?? false);
 	}
-
+	
 	reactivity_subscribe() {
-		w_show_details.subscribe((flag: boolean) => {
-			p.write_key(T_Preference.show_details, flag);
+		function reactTo(t_preference: T_Preference, flag: any) {
+			p.write_key(t_preference, flag);
 			layout.restore_state();
 			layout.grand_layout();
+		}
+		w_show_details.subscribe((flag: any) => {
+			reactTo(T_Preference.show_details, flag);
 		});
-		w_show_related.subscribe((flag: boolean) => {
-			p.write_key(T_Preference.show_related, flag);
-			layout.restore_state();
-			layout.grand_layout();
+		w_show_related.subscribe((flag: any) => {
+			reactTo(T_Preference.show_related, flag);
 		});
-		w_show_graph_ofType.subscribe((flag: string) => {
-			p.write_key(T_Preference.graph, flag);
-			layout.restore_state();
-			layout.grand_layout();
+		w_show_graph_ofType.subscribe((flag: any) => {
+			reactTo(T_Preference.graph, flag);
+		});
+		w_show_search_controls.subscribe((flag: any) => {
+			reactTo(T_Preference.show_related, flag);
 		});
     }
 }

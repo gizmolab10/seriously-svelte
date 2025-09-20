@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { w_show_details, w_show_graph_ofType, w_show_search_controls } from '../../ts/managers/Stores';
 	import {k, layout, Point, T_Layer, T_Graph } from '../../ts/common/Global_Imports';
+	import Search_Filters from '../search/Search_Filters.svelte';
 	import Tree_Preferences from './Tree_Preferences.svelte';
 	import { w_graph_rect } from '../../ts/managers/Stores';
-	import Search_Filters from './Search_Filters.svelte';
 	import Separator from '../draw/Separator.svelte';
 </script>
 

@@ -277,6 +277,7 @@ export enum T_Element {
 	button		 = 'button',
 	cancel		 = 'cancel',
 	reveal		 = 'reveal',
+	search		 = 'search',
 	widget		 = 'widget',
 	title		 = 'title',
 	drag		 = 'drag',

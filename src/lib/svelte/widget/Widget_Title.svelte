@@ -56,6 +56,22 @@
 	const _____REACTIVES: unique symbol = Symbol('REACTIVES');
 
 	$: {
+		if (!!input) {
+			g_widget.s_widget.s_title.html_element = input;
+		}
+	}
+
+	$: {
+		const _ = $w_s_title_edit;
+		if (!!input) {
+			const isEditing = ancestry?.isEditing ?? false;
+			const isGrabbed = ancestry?.isGrabbed ?? false;
+			title_width = (thing?.width_ofTitle ?? 0) + title_extra();
+			color = s_widget.colorFor_grabbed_andEditing(isGrabbed, isEditing);
+		}
+	}
+
+	$: {
 		const reactives = `${$w_thing_color}:::${$w_ancestries_grabbed.map(a => a.titles.join(',')).join('-')}:::${$w_ancestries_expanded.map(a => a.titles.join(',')).join('-')}`;
 		if (reactives != trigger) {
 			const isFocus = ancestry?.isFocus ?? false;
@@ -67,16 +83,6 @@
 			color = s_widget.colorFor_grabbed_andEditing(isGrabbed, isEditing);
 			trigger = reactives;
 			debug_log_connection_state('triggered by reactives');
-		}
-	}
-
-	$: {
-		const _ = $w_s_title_edit;
-		if (!!input) {
-			const isEditing = ancestry?.isEditing ?? false;
-			const isGrabbed = ancestry?.isGrabbed ?? false;
-			title_width = (thing?.width_ofTitle ?? 0) + title_extra();
-			color = s_widget.colorFor_grabbed_andEditing(isGrabbed, isEditing);
 		}
 	}
 
@@ -102,7 +108,7 @@
 						break;
 					case T_Edit.editing:
 						if (!hasFocus()) {
-							input.focus();
+							ux.element_set_focus_to(input);
 							applyRange_fromThing_toInput();
 						}
 						break;
@@ -242,7 +248,7 @@
 					setTimeout(() => {
 						ancestry.startEdit();
 						thing_setSelectionRange_fromMouseLocation();
-						input.focus();
+						ux.element_set_focus_to(input);
 						applyRange_fromThing_toInput();
 					}, 1);
 				}

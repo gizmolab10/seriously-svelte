@@ -40,14 +40,14 @@
 		u.onNextTick(() => update_color_origin());
 	}
 
-	function handle_colors(result: string) {
-		const lume = colors.luminance_ofColor(result);
-		if (lume > 0.8) {
-			result = 'lightgray';
+	function handle_colors(color: string) {
+		const lume = colors.luminance_ofColor(color);
+		if (lume > 0.95) {
+			color = 'lightgray';
 		} else {
-			color = result;
+			color = color;
 		}
-		$w_separator_color = result;
+		$w_separator_color = color;
 	}
 
 	function handle_auto_adjust(types: Array<T_Auto_Adjust | null>) {

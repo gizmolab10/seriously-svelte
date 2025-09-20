@@ -8,13 +8,13 @@
 	import { w_show_details, w_search_results_found } from '../../ts/managers/Stores';
 	import Secondary_Controls from '../controls/Secondary_Controls.svelte';
 	import Primary_Controls from '../controls/Primary_Controls.svelte';
+	import Search_Results from '../search/Search_Results.svelte';
 	import { T_Database } from '../../ts/database/DB_Common';
-	import Search_Results from './Search_Results.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Details from '../details/Details.svelte';
-	import Search from '../controls/Search.svelte';
-	import Spinner from '../draw/Spinner.svelte';
 	import BuildNotes from './BuildNotes.svelte';
+	import Spinner from '../draw/Spinner.svelte';
+	import Search from '../search/Search.svelte';
 	import Graph from '../graph/Graph.svelte';
 	import Import from './Import.svelte';
 	import Box from '../draw/Box.svelte';

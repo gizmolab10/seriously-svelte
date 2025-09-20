@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { T_Search, T_Layer, T_Control, T_Preference, T_Search_Filter } from '../../ts/common/Global_Imports';
+	import { T_Search, T_Layer, T_Control, T_Element, T_Preference, T_Search_Filter } from '../../ts/common/Global_Imports';
 	import { e, h, k, p, u, ux, Thing, Point, colors, svgPaths } from '../../ts/common/Global_Imports';
 	import { w_search_results_found, w_show_search_controls } from '../../ts/managers/Stores';
 	import { w_search_filter, w_search_state } from '../../ts/managers/Stores';
@@ -15,7 +15,16 @@
 	const right_widths = [10, 10.5, 66, 33, 60];
 	const rights = u.cumulativeSum(right_widths);
 	const widths = rights.map((right, index) => width - right);
+	const s_search = ux.s_element_for(null, T_Element.search, k.empty);
 	let input: HTMLInputElement;
+
+	$: $w_search_state, ux.s_element_set_focus_to(s_search);
+
+	$: {
+		if (!!input) {
+			s_search.html_element = input;
+		}
+	}
 
 	function handle_input(event) {
 		const text = input.value;

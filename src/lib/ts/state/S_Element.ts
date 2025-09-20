@@ -15,7 +15,7 @@ import { get } from 'svelte/store';
 	//////////////////////////////////////////
 
 export default class S_Element {
-	responder: HTMLElement | null = null;
+	html_element: HTMLElement | null = null;
 	defaultDisabledColor = '#999999';
 	defaultCursor = k.cursor_default;
 	hoverCursor = k.cursor_default;
@@ -28,6 +28,7 @@ export default class S_Element {
 	isSelected = false;
 	isInverted = false;		// means color for hover == as though not hovering (and vice versa)
 	subtype = k.empty;
+	isFocus = false;
 	name = k.empty;
 	isOut = true;
 

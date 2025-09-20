@@ -18,6 +18,7 @@ export default class S_UX {
 	attached_branches: string[] = [];
 	mouse_responder_number = 0;
 	focus_ancestry!: Ancestry;
+	focus_element!: S_Element;
 
 	//////////////////////////////////////
 	//									//
@@ -34,14 +35,18 @@ export default class S_UX {
 
 	get inTreeMode(): boolean { return get(w_show_graph_ofType) == T_Graph.tree; }
 	get inRadialMode(): boolean { return get(w_show_graph_ofType) == T_Graph.radial; }
-	s_element_forName(name: string): S_Element { return this.s_element_byName[name]; }
-	s_mouse_forName(name: string): S_Mouse { return this.assure_forKey_inDict(name, this.s_mouse_byName, () => S_Mouse.empty()); }
 	name_from(identifiable: Identifiable, type: T_Element, subtype: string): string { return `${type}(${subtype}) (id '${identifiable.id}')`; }
 
 	get next_mouse_responder_number(): number {
 		this.mouse_responder_number += 1;
 		return this.mouse_responder_number;
 	}
+
+	static readonly _____ELEMENTS: unique symbol;
+
+	get s_elements(): S_Element[] { return Object.values(this.s_element_byName); }
+	s_element_forName(name: string): S_Element { return this.s_element_byName[name]; }
+	s_mouse_forName(name: string): S_Mouse { return this.assure_forKey_inDict(name, this.s_mouse_byName, () => S_Mouse.empty()); }
 
 	s_element_for(identifiable: Identifiable | null, type: T_Element, subtype: string): S_Element {
 		const realIdentifiable = identifiable ?? new Identifiable()
@@ -77,6 +82,29 @@ export default class S_UX {
 			this.s_control_byType[t_control] = s_control;
 		}
 		return s_control;
+	}
+
+	element_set_focus_to(html_element: HTMLElement | null, on: boolean = true) {
+		if (!!html_element) {
+			const s_element = this.s_elements.filter(s_element => s_element.html_element == html_element)[0];
+			this.s_element_set_focus_to(s_element, on);
+		}
+	}
+
+	s_element_set_focus_to(s_element: S_Element | null, on: boolean = true) {
+		if (!!s_element) {
+			if (!on) {
+				s_element.html_element?.blur();
+				s_element.isFocus = false;
+			} else {
+				for (const s_element of this.s_elements) {
+					this.s_element_set_focus_to(s_element, false);
+				}
+				s_element.html_element?.focus();
+				this.focus_element = s_element;
+				s_element.isFocus = true;
+			}
+		}
 	}
 
 	static readonly _____GRAPHS: unique symbol;

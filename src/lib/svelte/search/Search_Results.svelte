@@ -1,19 +1,17 @@
 <script lang="ts">
 	import { w_search_results_changed, w_search_result_row, w_show_search_controls } from '../../ts/managers/Stores';
 	import { w_search_state, w_separator_color } from '../../ts/managers/Stores';
-	import { u, Thing,colors, T_Search } from '../../ts/common/Global_Imports';
+	import { u, ux, Thing,colors, T_Search } from '../../ts/common/Global_Imports';
 	import { search } from '../../ts/managers/Search';
 	let element: HTMLDivElement;
 	let results: Thing[] = [];
 
-	$: {
-		const _ = $w_search_results_changed;
-		results = search.results;
-	}
+	$: $w_search_results_changed, results = search.results;
+	$: $w_search_result_row, ux.element_set_focus_to(element);
 
 	function handle_key_down(event: KeyboardEvent) {
 		switch (event.key.toLowerCase()) {
-			case 'f':			u.isolateEvent(event); $w_search_state = T_Search.enter; break;
+			case 'f':			u.isolateEvent(event); search.activate(); break;
 			case 'arrowup':		u.isolateEvent(event); next_row(false); break;
 			case 'arrowdown':	u.isolateEvent(event); next_row(true); break;
 		}
@@ -21,21 +19,14 @@
 
 	function handle_row_selected(event: MouseEvent, index: number) {
 		u.isolateEvent(event);
-		select_row(index);
-	}
-
-	function select_row(index: number) {
-		$w_search_result_row = index;
-		$w_search_state = T_Search.selected;
-		$w_show_search_controls = false;
-		element?.focus();
+		search.set_result_row(index);
 	}
 
 	function next_row(up: boolean) {
 		const row = $w_search_result_row;
 		if (row !== null) {
 			const count = results.length;	// stupid, but it works
-			select_row(row.increment(up, count));
+			search.set_result_row(row.increment(up, count));
 		}
 	}
 
@@ -61,10 +52,9 @@
 
 <div class='search-results' 
 	on:keydown={handle_key_down}
-	bind:this={element}
 	tabindex='0'>
 	{#key `${$w_separator_color}:::${$w_search_result_row}:::${$w_search_results_changed}`}
-		<ul>
+		<ul bind:this={element}>
 			{#each results as result, index}
 				<li class:selected={$w_search_result_row === index} style='color: {result.color}'
 					on:mousedown={(event) => handle_row_selected(event, index)}>

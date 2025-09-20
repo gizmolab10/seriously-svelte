@@ -19,6 +19,19 @@ class Search {
 		w_show_search_controls.set(false);
 	}
 
+	set_result_row(row: number) {
+		w_search_result_row.set(row);
+		w_search_state.set(T_Search.selected);
+		w_show_search_controls.set(false);
+	}
+
+	get result_ancestry(): Ancestry | null {
+		const row = get(w_search_result_row);
+		if (row === null) return null;
+		const thing = this.results[row];
+		return thing?.ancestry ?? null;
+	}
+
 	search_for(query: string) {
 		this.search_text = query;
 		const before = this.results_fingerprint;
@@ -57,13 +70,6 @@ class Search {
 				});
 			}
 		}, 1);
-	}
-
-	get result_ancestry(): Ancestry | null {
-		const row = get(w_search_result_row);
-		if (row === null) return null;
-		const thing = this.results[row];
-		return thing?.ancestry ?? null;
 	}
 	
 	static readonly _____PRIVATE: unique symbol;
