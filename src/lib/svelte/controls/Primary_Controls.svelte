@@ -14,21 +14,19 @@
 	import Button from '../mouse/Button.svelte';
 	import Box from '../draw/Box.svelte';
 	const y_center = 10.5;
-	const right_widths = [9, 11.5];
 	const scaling_stroke_width = 1.5;
 	const size_big = k.height.button + 4;
 	const hamburger_size = k.height.button;
 	const hamburger_path = svgPaths.hamburgerPath(hamburger_size);
 	const svg_style = 'top: -0.5px; left: -0.5px; position: absolute; width: 100%; height: 100%;';
 	let width = layout.windowSize.width - 20;
-	let rights: number[] = [];
 	let lefts: number[] = [];
 	layout_controls();
 
 	// two states
 	// 1. show OR hide the details button
 	// 2. shows normal OR search controls
-	// normal shows a separator and the breadcrumbs
+	// always shows a separator and the breadcrumbs
 
 	function togglePopupID(id) { $w_popupView_id = ($w_popupView_id == id) ? null : id; }
 	function handle_recents_mouseClick(column: number) { grabs.focus_onNext(column == 1); }
@@ -44,18 +42,16 @@
 	}
 
 	function layout_controls() {
-		const right_widths = [9, 11.5];
 		const left_widths = {
 			0: c.has_details_button ? 18 : -11,			// details
-			1: !$w_show_search_controls ? 14 : c.has_details_button ? 11 : 14,	// recents / search
+			1: !$w_show_search_controls ? 11 : c.has_details_button ? 11 : 14,	// recents / search
 			2: 57,	// graph type
 			3: 100,	// grow
 			4: 26,	// shrink
 			5: 20,	// easter egg
-			6: 2,	// separator
-			7: c.allow_Search ? 34 : 6,	// breadcrumbs
+			6: c.allow_Search ? 24 : 6,	// breadcrumbs
+			7: 2,	// separator
 		};
-		rights = u.cumulativeSum(right_widths);
 		lefts = u.cumulativeSum(Object.values(left_widths));
 	}
 	
@@ -97,7 +93,7 @@
 				<Search
 					top={-0.5}
 					left={-54 - (c.has_details_button ? 0 : 26)}
-					width={layout.windowSize.width + 34 + (c.has_details_button ? 0 : 26)}/>
+					width={lefts[7] + 44}/>
 			{/if}
 			{#if !c.allow_Search || !$w_show_search_controls}
 				<Next_Previous name='recents'
@@ -156,20 +152,20 @@
 						s_button={ux.s_control_forType(T_Control.details)}
 						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.details)}/>
 				{/if}
-				<Separator name='before-breadcrumbs'
-					isHorizontal={false}
-					origin={new Point(lefts[6], -9)}
-					length={layout.controls_boxHeight + 1}
-					thickness={k.thickness.separator.main}
-					corner_radius={k.radius.gull_wings.thick}/>
-				<Breadcrumbs
-					left={lefts[6]}
-					centered={true}
-					width={layout.windowSize.width - lefts[7]}/>
 			{/if}
+			<Separator name='before-breadcrumbs'
+				isHorizontal={false}
+				origin={new Point(lefts[6], -9)}
+				length={layout.controls_boxHeight + 1}
+				thickness={k.thickness.separator.main}
+				corner_radius={k.radius.gull_wings.thick}/>
+			<Breadcrumbs
+				left={lefts[6]}
+				centered={true}
+				width={layout.windowSize.width - lefts[7]}/>
 		{/if}
 	</div>
-	<Separator name='secondary-separator'
+	<Separator name='bottom-separator'
 		origin={new Point(2, layout.controls_boxHeight - 5)}
 		corner_radius={k.radius.gull_wings.thick}
 		thickness={k.thickness.separator.main}

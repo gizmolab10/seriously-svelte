@@ -1,5 +1,5 @@
 import { w_search_results_found, w_search_result_row, w_search_results_changed } from './Stores';
-import { T_Preference, T_Search, T_Startup } from "../common/Global_Imports";
+import { T_Search, T_Startup, T_Preference } from "../common/Global_Imports";
 import { c, k, h, p, Thing, Ancestry } from "../common/Global_Imports";
 import { w_search_state, w_show_search_controls } from './Stores';
 import { Search_Node } from '../types/Search_Node';
@@ -23,7 +23,6 @@ class Search {
 	set_result_row(row: number) {
 		w_search_result_row.set(row);
 		w_search_state.set(T_Search.selected);
-		w_show_search_controls.set(false);
 	}
 
 	get result_ancestry(): Ancestry | null {
@@ -57,7 +56,7 @@ class Search {
 		if (before !== this.results_fingerprint) {	// only if results are different
 			w_search_result_row.set(null);
 		}
-		w_show_search_controls.set([T_Search.enter, T_Search.results].includes(get(w_search_state)));
+		w_show_search_controls.set(T_Search.off != get(w_search_state));
 		w_search_results_changed.set(Date.now());
 	}
 
