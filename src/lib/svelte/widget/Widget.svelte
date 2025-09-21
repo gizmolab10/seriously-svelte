@@ -106,7 +106,7 @@
 	}
 
 	async function handle_click_event(event) {
-		u.isolateEvent(event);
+		u.grab_event(event);
 		ancestry?.grab_forShift(event.shiftKey);
 	}
 

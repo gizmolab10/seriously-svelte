@@ -195,7 +195,7 @@
 	}
 
 	function handle_focus(event) {
-		u.isolateEvent(event);
+		u.grab_event(event);
 		if (!isEditing()) {
 			input.blur();
 		}
@@ -226,8 +226,8 @@
 				case 'arrowdown':
 				case 'arrowleft':
 				case 'arrowright': break;
-				case 'enter': u.isolateEvent(event); stop_andPersist(); break;
-				case 'tab':	  u.isolateEvent(event); stop_andPersist(); h.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break;
+				case 'enter': u.grab_event(event); stop_andPersist(); break;
+				case 'tab':	  u.grab_event(event); stop_andPersist(); h.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break;
 			}
 			extractRange_fromInput_toThing();
 		}
@@ -325,7 +325,7 @@
 			on:paste={handle_cut_paste}
 			class='title-{title_binded}'
 			on:keydown={handle_key_down}
-			on:mouseover={(event) => { u.isolateEvent(event); }}
+			on:mouseover={(event) => { u.grab_event(event); }}
 			style='
 				border : none;
 				top : {top}px;

@@ -1,9 +1,9 @@
 import { T_Graph, T_Search_Filter, T_Control, T_Element, T_Kinship, debug } from '../common/Global_Imports';
 import { p, grabs, colors, layout, Ancestry } from '../common/Global_Imports';
+import { w_search_filter, w_show_graph_ofType } from '../managers/Stores';
 import { S_Mouse, S_Widget, S_Element } from '../common/Global_Imports';
 import { w_show_tree_ofType, w_depth_limit } from '../managers/Stores';
 import { w_show_related, w_ancestry_focus } from '../managers/Stores';
-import { w_search_filter, w_show_graph_ofType } from '../managers/Stores';
 import Identifiable from '../runtime/Identifiable';
 import type { Dictionary } from '../types/Types';
 import { get } from 'svelte/store';
@@ -97,12 +97,16 @@ export default class S_UX {
 				s_element.html_element?.blur();
 				s_element.isFocus = false;
 			} else {
-				for (const s_element of this.s_elements) {
-					this.s_element_set_focus_to(s_element, false);
+				for (const se of this.s_elements) {
+					if (se != s_element) {
+						this.s_element_set_focus_to(se, false);		// assure that even untracked focus is cleared
+					} else {
+						console.log(`setting focus to "${s_element.name}" has element "${s_element.html_element?.className}"`);
+						s_element.html_element?.focus();
+						this.focus_element = s_element;
+						s_element.isFocus = true;
+					}
 				}
-				s_element.html_element?.focus();
-				this.focus_element = s_element;
-				s_element.isFocus = true;
 			}
 		}
 	}

@@ -9,25 +9,9 @@
 	$: $w_search_results_changed, results = search.results;
 	$: $w_search_result_row, ux.element_set_focus_to(element);
 
-	function handle_key_down(event: KeyboardEvent) {
-		switch (event.key.toLowerCase()) {
-			case 'f':			u.isolateEvent(event); search.activate(); break;
-			case 'arrowup':		u.isolateEvent(event); next_row(false); break;
-			case 'arrowdown':	u.isolateEvent(event); next_row(true); break;
-		}
-	}
-
 	function handle_row_selected(event: MouseEvent, index: number) {
-		u.isolateEvent(event);
+		u.grab_event(event);
 		search.set_result_row(index);
-	}
-
-	function next_row(up: boolean) {
-		const row = $w_search_result_row;
-		if (row !== null) {
-			const count = results.length;	// stupid, but it works
-			search.set_result_row(row.increment(up, count));
-		}
 	}
 
 	function highlightMatch(title: string, searchText: string) {
@@ -51,7 +35,6 @@
 </script>
 
 <div class='search-results' 
-	on:keydown={handle_key_down}
 	tabindex='0'>
 	{#key `${$w_separator_color}:::${$w_search_result_row}:::${$w_search_results_changed}`}
 		<ul bind:this={element}>

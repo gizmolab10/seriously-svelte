@@ -56,16 +56,16 @@ export class Events {
 	static readonly _____SUBSCRIPTIONS: unique symbol;
 
 	update_event_listener(name: string, handler: EventListenerOrEventListenerObject) {
-		window.removeEventListener(name, handler);
-		window.addEventListener(name, handler, { passive: false });
+		document.removeEventListener(name, handler);
+		document.addEventListener(name, handler, { passive: false });
 	}
 
 	private clear_event_subscriptions() {
-		window.removeEventListener('mouseup',	 this.handle_mouse_up);
-		window.removeEventListener('mousemove',	 this.handle_mouse_move);
-		window.removeEventListener('touchend',	 this.handle_touch_end);
-		window.removeEventListener('touchmove',	 this.handle_touch_move);
-		window.removeEventListener('touchstart', this.handle_touch_start);
+		document.removeEventListener('mouseup',	 this.handle_mouse_up);
+		document.removeEventListener('mousemove',	 this.handle_mouse_move);
+		document.removeEventListener('touchend',	 this.handle_touch_end);
+		document.removeEventListener('touchmove',	 this.handle_touch_move);
+		document.removeEventListener('touchstart', this.handle_touch_start);
 	}
 
 	private subscribeTo_events() {
@@ -77,13 +77,13 @@ export class Events {
 		this.update_event_listener('orientationchange', this.handle_orientation_change);
 		if (u.device_isMobile) {
 			debug.log_action(`  mobile subscribe GRAPH`);
-			window.addEventListener('touchend', this.handle_touch_end, { passive: false });
-			window.addEventListener('touchmove', this.handle_touch_move, { passive: false });
-			window.addEventListener('touchstart', this.handle_touch_start, { passive: false });
+			document.addEventListener('touchend', this.handle_touch_end, { passive: false });
+			document.addEventListener('touchmove', this.handle_touch_move, { passive: false });
+			document.addEventListener('touchstart', this.handle_touch_start, { passive: false });
 		} else {
-			window.addEventListener('mouseup', this.handle_mouse_up, { passive: false });
-			window.addEventListener('mousedown', this.handle_mouse_down, { passive: false });
-			window.addEventListener('mousemove', this.handle_mouse_move, { passive: false });
+			document.addEventListener('mouseup', this.handle_mouse_up, { passive: false });
+			document.addEventListener('mousedown', this.handle_mouse_down, { passive: false });
+			document.addEventListener('mousemove', this.handle_mouse_move, { passive: false });
 		}
 	}
 
@@ -130,7 +130,7 @@ export class Events {
 	}
 
 	private handle_wheel(event: Event) {
-		u.isolateEvent(event);
+		u.grab_event(event);
 		if (!u.device_isMobile) {
 			const e = event as WheelEvent;
 			const userOffset = get(w_user_graph_offset);
@@ -144,7 +144,7 @@ export class Events {
 
 	private handle_touch_move(event: TouchEvent) {
 		if (event.touches.length == 2) {
-			u.isolateEvent(event);
+			u.grab_event(event);
 			if (this.initialTouch) {
 				const touch = event.touches[0];
 				const deltaX = touch.clientX - this.initialTouch.x;
@@ -223,74 +223,72 @@ export class Events {
 		const event = e as KeyboardEvent;
 		const isEditing = get(w_s_title_edit)?.isActive ?? false;
 		if (!!event && event.type == 'keydown' && !isEditing) {
-			const OPTION = event.altKey;
-			const SHIFT = event.shiftKey;
-			const COMMAND = event.metaKey;
-			const EXTREME = SHIFT && OPTION;
-			const time = new Date().getTime();
 			const key = event.key.toLowerCase();
 			const ancestry = grabs.latest_upward(true);
 			const modifiers = ['alt', 'meta', 'shift', 'control'];
 			let graph_needsSweep = false;
 			w_control_key_down.set(event.ctrlKey);
-			switch (get(w_search_state)) {
-				case T_Search.off:
-					if (!!h && !!ancestry && !modifiers.includes(key)) {		// ignore modifier-key-only events
-						if (c.allow_GraphEditing) {
-							if (!!ancestry && c.allow_TitleEditing) {
-								switch (key) {
-									case 'enter':	ancestry.startEdit(); break;
-									case 'd':		await h.thing_edit_persistentDuplicate(ancestry); break;
-									case ' ':		await h.ancestry_edit_persistentCreateChildOf(ancestry); break;
-									case '-':		if (!COMMAND) { await h.thing_edit_persistentAddLine(ancestry); } break;
-									case 'tab':		await h.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break; // S_Title_Edit editor also makes this call
-								}
-							}
-							switch (key) {
-								case 'delete':
-								case 'backspace':	await h.ancestries_rebuild_traverse_persistentDelete(get(w_ancestries_grabbed)); break;
-							}
-						}
-						if (!!ancestry) {
-							switch (key) {
-								case '/':			graph_needsSweep = ancestry.becomeFocus(); break;
-								case 'arrowright':	u.isolateEvent(event); await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, SHIFT, OPTION, EXTREME, false); break;
-								case 'arrowleft':	u.isolateEvent(event); await h.ancestry_rebuild_persistentMoveRight(ancestry, false, SHIFT, OPTION, EXTREME, false); break;
-							}
-						}
-						switch (key) {
-							case '?':				c.showHelp(); return;
-							case 'm':				ux.toggle_graph_type(); break;
-							case ']':				grabs.focus_onNext(true); break;
-							case '[':				grabs.focus_onNext(false); break;
-							case '!':				layout.grand_adjust_toFit(); break;
-							case '>':				ux.increase_depth_limit_by(1); break;
-							case '<':				ux.increase_depth_limit_by(-1); break;
-							case 'f':				w_search_state.set(T_Search.enter); break;
-							case 'p':				if (!COMMAND) { u.print_graph(); }; break;
-							case 's':				h.persist_toFile(T_File_Format.json); return;
-							case 'c':				layout.set_user_graph_offsetTo(Point.zero); return;
-							case 'o':				h.select_file_toUpload(T_File_Format.json, event.shiftKey); break;
-							case '/':				if (!ancestry) { graph_needsSweep = h.rootAncestry?.becomeFocus(); } break;
-							case 'arrowup':			grabs.latest_rebuild_persistentMoveUp_maybe( true, SHIFT, OPTION, EXTREME); break;
-							case 'arrowdown':		grabs.latest_rebuild_persistentMoveUp_maybe(false, SHIFT, OPTION, EXTREME); break;
-							case 'escape':			if (!!get(w_s_alteration)) { h.stop_alteration(); }; search.deactivate(); break;
-						}
-						break;
-					}
-				default:	// in search mode
+			if (!!h && !!ancestry && !modifiers.includes(key)) {
+				const OPTION = event.altKey;
+				const SHIFT = event.shiftKey;
+				const COMMAND = event.metaKey;
+				const EXTREME = SHIFT && OPTION;
+				if (get(w_search_state) != T_Search.off) {
+					// u.grab_event(event);
 					switch (key) {
+						case 'f':					search.activate(); break;
+						case 'arrowup':				search.next_row(false); break;
+						case 'arrowdown':			search.next_row(true); break;
 						case 'escape':
 						case 'enter':		    	search.deactivate(); break;	// stop searching
 						case 'tab':					search.set_result_row(0); break;
 					}
-					break;
+				} else {
+					if (c.allow_GraphEditing) {
+						if (!!ancestry && c.allow_TitleEditing) {
+							switch (key) {
+								case 'enter':	ancestry.startEdit(); break;
+								case 'd':		await h.thing_edit_persistentDuplicate(ancestry); break;
+								case ' ':		await h.ancestry_edit_persistentCreateChildOf(ancestry); break;
+								case '-':		if (!COMMAND) { await h.thing_edit_persistentAddLine(ancestry); } break;
+								case 'tab':		await h.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break; // S_Title_Edit editor also makes this call
+							}
+						}
+						switch (key) {
+							case 'delete':
+							case 'backspace':	await h.ancestries_rebuild_traverse_persistentDelete(get(w_ancestries_grabbed)); break;
+						}
+					}
+					if (!!ancestry) {
+						switch (key) {
+							case '/':			graph_needsSweep = ancestry.becomeFocus(); break;
+							case 'arrowright':	u.grab_event(event); await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, SHIFT, OPTION, EXTREME, false); break;
+							case 'arrowleft':	u.grab_event(event); await h.ancestry_rebuild_persistentMoveRight(ancestry, false, SHIFT, OPTION, EXTREME, false); break;
+						}
+					}
+					switch (key) {
+						case '?':				c.showHelp(); return;
+						case 'm':				ux.toggle_graph_type(); break;
+						case ']':				grabs.focus_onNext(true); break;
+						case '[':				grabs.focus_onNext(false); break;
+						case '!':				layout.grand_adjust_toFit(); break;
+						case '>':				ux.increase_depth_limit_by(1); break;
+						case '<':				ux.increase_depth_limit_by(-1); break;
+						case 'f':				w_search_state.set(T_Search.enter); break;
+						case 'p':				if (!COMMAND) { u.print_graph(); }; break;
+						case 's':				h.persist_toFile(T_File_Format.json); return;
+						case 'c':				layout.set_user_graph_offsetTo(Point.zero); return;
+						case 'o':				h.select_file_toUpload(T_File_Format.json, event.shiftKey); break;
+						case '/':				if (!ancestry) { graph_needsSweep = h.rootAncestry?.becomeFocus(); } break;
+						case 'arrowup':			grabs.latest_rebuild_persistentMoveUp_maybe( true, SHIFT, OPTION, EXTREME); break;
+						case 'arrowdown':		grabs.latest_rebuild_persistentMoveUp_maybe(false, SHIFT, OPTION, EXTREME); break;
+						case 'escape':			if (!!get(w_s_alteration)) { h.stop_alteration(); }; search.deactivate(); break;
+					}
+				}
 			}
 			if (graph_needsSweep) {
 				layout.grand_sweep();
 			}
-			const duration = ((new Date().getTime()) - time).toFixed(1);
-			debug.log_key(`H  (${duration}) ${key}`);
 			if (c.allow_autoSave) {
 				setTimeout( async () => {
 					await h.db.persist_all();

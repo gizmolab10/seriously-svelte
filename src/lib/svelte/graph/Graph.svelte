@@ -66,7 +66,7 @@
 		const target = event.target as HTMLElement;
 		if (!target.closest('button, input, .widget, .mouse-responder')) {
 			rubberbandComponent.handleMouseDown(event);
-			u.isolateEvent(event);
+			u.grab_event(event);
 		}
 	}
 		

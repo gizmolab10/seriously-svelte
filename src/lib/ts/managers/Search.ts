@@ -12,6 +12,7 @@ class Search {
 	results: Array<Thing> = [];
 
 	activate() { w_search_state.set(T_Search.enter); w_show_search_controls.set(true); }
+	get selected_row(): number | null { return get(w_search_result_row); }
 
 	deactivate() {
 		w_search_results_found.set(0);
@@ -26,10 +27,18 @@ class Search {
 	}
 
 	get result_ancestry(): Ancestry | null {
-		const row = get(w_search_result_row);
+		const row = this.selected_row;
 		if (row === null) return null;
 		const thing = this.results[row];
 		return thing?.ancestry ?? null;
+	}
+
+	next_row(up: boolean) {
+		const row = this.selected_row;
+		if (row !== null) {
+			const count = this.results.length;	// stupid, but it works
+			this.set_result_row(row.increment(up, count));
+		}
 	}
 
 	search_for(query: string) {

@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { T_Search, T_Layer, T_Control, T_Element, T_Preference, T_Search_Filter } from '../../ts/common/Global_Imports';
-	import { e, h, k, p, u, ux, Thing, Point, colors, svgPaths } from '../../ts/common/Global_Imports';
 	import { w_search_results_found, w_show_search_controls } from '../../ts/managers/Stores';
 	import { w_search_filter, w_search_state } from '../../ts/managers/Stores';
+	import { e, k, p, u, ux, Point } from '../../ts/common/Global_Imports';
 	import { w_thing_fontFamily } from '../../ts/managers/Stores';
+	import Identifiable from '../../ts/runtime/Identifiable';
 	import Close_Button from '../mouse/Close_Button.svelte';
-	import Segmented from '../mouse/Segmented.svelte';
 	import { search } from '../../ts/managers/Search';
 	import Button from '../mouse/Button.svelte';
 	export let width: number;
@@ -18,12 +18,14 @@
 	const s_search = ux.s_element_for(null, T_Element.search, k.empty);
 	let input: HTMLInputElement;
 
-	$: $w_search_state, ux.s_element_set_focus_to(s_search);
+	$: if (!!input) {
+		s_search.html_element = input;				// so s_element_set_focus_to will work
+	}
 
-	$: {
-		if (!!input) {
-			s_search.html_element = input;
-		}
+	$: if ($w_search_state != T_Search.enter) {
+		setTimeout(() => {
+			ux.s_element_set_focus_to(s_search);	// so 'f' will not be added to the input
+		}, 1);
 	}
 
 	function handle_input(event) {

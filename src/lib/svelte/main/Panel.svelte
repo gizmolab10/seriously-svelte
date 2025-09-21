@@ -27,7 +27,7 @@
 	let spinnerAngle = 0;
 
 	setup_spinner_rect();
-	function ignore_wheel(event) { u.isolateEvent(event); }
+	function ignore_wheel(event) { u.grab_event(event); }
 	function handle_spinner_angle(event) { spinnerAngle = event.detail.angle; }
 
 	$: {
