@@ -32,7 +32,7 @@
 
 	layout_focus();
 
-	s_component = signals.handle_reposition_widgets_atPriority(2, ancestry, T_Component.focus, (received_ancestry) => {
+	s_component = signals.handle_reposition_widgets_atPriority(2, ancestry, T_Component.widget, (received_ancestry) => {
 		layout_focus();
 	});
 
@@ -79,14 +79,14 @@
 
 </script>
 
-<div class='radial-focus'
+<div class='radial-focus' id = {s_component.id}
 	style='
 		position : absolute;
 		height : {height}px;
-		top : {origin_ofWidget.y}px;
+		width : {width_ofBorder}px;
 		z-index : {T_Layer.widgets};
-		left : {origin_ofWidget.x}px;
-		width : {width_ofBorder}px;'>
+		top : {origin_ofWidget.y}px;
+		left : {origin_ofWidget.x}px;'>
 		<Mouse_Responder
 			height = {height}
 			center = {center_ofBorder}

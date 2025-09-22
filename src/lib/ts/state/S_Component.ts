@@ -1,4 +1,4 @@
-import { k, Rect, Point, debug, layout, signals, Ancestry, components } from '../common/Global_Imports';
+import { k, Rect, Point, debug, layout, signals, Ancestry } from '../common/Global_Imports';
 import { Integer, Handle_S_Mouse, Create_S_Mouse } from '../types/Types';
 import { T_Signal, T_Component } from '../common/Global_Imports';
 import { SignalConnection_atPriority } from '../types/Types';
@@ -54,9 +54,9 @@ export default class S_Component {
     get id(): string { return `${this.type}-${this.ancestry?.kind ?? 'no-predicate'}-${this.ancestry?.titles ?? Identifiable.newID()}`; }
 
     get boundingRect(): Rect {
+        const scale_factor = layout.scale_factor;
         const rect = Rect.boundingRectFor(this.element);
-        const unscale_factor = 1 / layout.scale_factor;
-        return rect?.multipliedEquallyBy(unscale_factor) ?? Rect.zero;
+        return rect?.dividedEquallyBy(scale_factor) ?? Rect.zero;
     }
 
     static readonly _____SIGNALS: unique symbol;

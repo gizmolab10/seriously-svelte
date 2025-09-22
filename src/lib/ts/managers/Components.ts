@@ -22,9 +22,13 @@ export class Components {
 		return this._dummy;
 	}
 
-	component_forAncestry_andType_createUnique(ancestry: Ancestry | null, type: T_Component): S_Component | null {
+	component_forAncestry_andType(ancestry: Ancestry | null, type: T_Component): S_Component | null {
 		const dict = this.components_byHID_forType(type);
-		let s_component: S_Component | null = dict[ancestry?.hid ?? -1 as Integer];
+		return dict[ancestry?.hid ?? -1 as Integer] ?? null;
+	}
+
+	component_forAncestry_andType_createUnique(ancestry: Ancestry | null, type: T_Component): S_Component | null {
+		let s_component: S_Component | null = this.component_forAncestry_andType(ancestry, type);
 		if (!s_component) {
 			s_component = new S_Component(ancestry, type);
 			if (!!s_component) {
@@ -79,8 +83,8 @@ export class Components {
 		const dict = this.components_byHID_forType(type);
 		let found: Array<S_Component> = [];
 		if (!!dict) {
-			const components = Object.values(dict);
-			for (const component of components) {
+			const components_array = Object.values(dict);
+			for (const component of components_array) {
 				if (component.boundingRect.intersects(rect)) {
 					found.push(component);
 				}
