@@ -101,7 +101,6 @@ export default class S_UX {
 					if (se != s_element) {
 						this.s_element_set_focus_to(se, false);		// assure that even untracked focus is cleared
 					} else {
-						console.log(`setting focus to "${s_element.name}" has element "${s_element.html_element?.className}"`);
 						s_element.html_element?.focus();
 						this.focus_element = s_element;
 						s_element.isFocus = true;

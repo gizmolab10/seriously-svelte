@@ -12,9 +12,8 @@
 	export let left: number;
 	export let top: number;
 	const size_big = k.height.dot * 1.4;
-	const right_widths = [10, 10.5, 66, 33, 60];
-	const rights = u.cumulativeSum(right_widths);
-	const widths = rights.map((right, index) => width - right);
+	const right_rights = [10, 10.5, 66, 33, 60];
+	const rights = u.cumulativeSum(right_rights).map((right, index) => width - right);
 	const s_search = ux.s_element_for(null, T_Element.search, k.empty);
 	let input: HTMLInputElement;
 
@@ -65,7 +64,7 @@
 				border: 1px solid lightgray;
 				height: {k.height.button + 2}px;
 				font-family: {$w_thing_fontFamily};
-				width: {widths[$w_search_results_found == 0 ? 3 : 4]}px;'/>
+				width: {rights[$w_search_results_found == 0 ? 3 : 4]}px;'/>
 			{#if $w_search_results_found > 0}
 				<div class='search-results-found'
 					style='
@@ -73,8 +72,8 @@
 						font-size: 12px;
 						text-align: center;
 						position: absolute;
-						left: {widths[2] - 2}px;
-						width: {right_widths[2]}px;
+						left: {rights[2] - 2}px;
+						width: {right_rights[2]}px;
 						font-family: {$w_thing_fontFamily};'>
 					{$w_search_results_found} match{$w_search_results_found == 1 ? '' : 'es'}
 				</div>
@@ -82,11 +81,11 @@
 	{/if}
 	{#if $w_search_state === T_Search.off}
 		<Button
-			border_thickness={0}
 			width={size_big - 1}
 			height={size_big - 1}
+			border_thickness={0.1}
 			name={T_Control.search}
-			center={new Point(widths[0], 11)}
+			center={new Point(rights[0], 11)}
 			s_button={ux.s_control_forType(T_Control.search)}
 			closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.search)}>
 			🔍
@@ -98,7 +97,7 @@
 			size={size_big + 1}
 			stroke_width={0.25}
 			closure={() => search.deactivate()}
-			origin={new Point(widths[1], 0.5)}/>
+			origin={new Point(rights[1], 0.5)}/>
 	{/if}
 </div>
 

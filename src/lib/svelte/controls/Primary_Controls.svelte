@@ -43,14 +43,15 @@
 
 	function layout_controls() {
 		const left_widths = {
-			0: c.has_details_button ? 18 : -11,			// details
-			1: !$w_show_search_controls ? 11 : c.has_details_button ? 11 : 14,	// recents / search
+			0: c.has_details_button ? 18 : -7,			// details
+			1: !$w_show_search_controls ? 11 : c.has_details_button ? 11 : 11,	// recents / search
 			2: 57,	// graph type
-			3: 100,	// grow
-			4: 26,	// shrink
-			5: 20,	// easter egg
-			6: c.allow_Search ? 24 : 6,	// breadcrumbs
-			7: 2,	// separator
+			3: 100,	// plus
+			4: 26,	// minus
+			5: c.allow_Search ? 24 : 6,
+			6: 25,	// easter egg, separator
+			7: 43,	// search
+			8: 0,	// breadcrumbs
 		};
 		lefts = u.cumulativeSum(Object.values(left_widths));
 	}
@@ -93,7 +94,7 @@
 				<Search
 					top={-0.5}
 					left={-54 - (c.has_details_button ? 0 : 26)}
-					width={lefts[7] + 44}/>
+					width={lefts[7] + (c.has_details_button ? 0 : 26)}/>
 			{/if}
 			{#if !c.allow_Search || !$w_show_search_controls}
 				<Next_Previous name='recents'
@@ -147,7 +148,7 @@
 						height={30}
 						color='transparent'
 						zindex={T_Layer.frontmost}
-						center={new Point(lefts[5], 10)}
+						center={new Point(lefts[6], 10)}
 						style='border: none; background: none;'
 						s_button={ux.s_control_forType(T_Control.details)}
 						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.details)}/>
@@ -162,7 +163,7 @@
 			<Breadcrumbs
 				left={lefts[6]}
 				centered={true}
-				width={layout.windowSize.width - lefts[7]}/>
+				width={layout.windowSize.width - lefts[8]}/>
 		{/if}
 	</div>
 	<Separator name='bottom-separator'
