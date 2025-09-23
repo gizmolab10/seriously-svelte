@@ -15,7 +15,7 @@ export default class DB_Bubble extends DB_Common {
 
 	async fetch_all() {
 		await busy.temporarily_set_isFetching_while(async () => {
-			e.update_event_listener('message', this.handle_bubble_message);		// first prepare listener
+			window.addEventListener('message', this.handle_bubble_message);		// first prepare listener
 			window.parent.postMessage({ type: 'listening' }, k.wildcard);		// tell bubble that we're listening
 		});
 		return false;
