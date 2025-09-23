@@ -23,6 +23,7 @@ export enum T_Search {
 	enter,
 	results,
 	selected,
+	rebuild_index,
 }
 
 export enum T_Details {
@@ -146,20 +147,6 @@ export enum T_Kinship {
 	parents  = 'parents',
 }
 
-export enum T_Component {
-	breadcrumbs = 'breadcrumbs',
-	branches	= 'branches',
-	radial		= 'radial',
-	reveal		= 'reveal',
-	widget		= 'widget',
-	title		= 'title',
-	drag		= 'drag',
-	line		= 'line',
-	none		= 'none',
-	tree		= 'tree',
-	app			= 'app',
-}
-
 export enum T_File_Format {
 	seriously = 'seriously',
 	cancel	  = 'cancel',
@@ -250,6 +237,20 @@ export enum T_Thing {
 	root		 = '!',
 	bulk		 = '~',
 	meme		 = '*',
+}
+
+export enum T_Component {
+	breadcrumbs = 'breadcrumbs',
+	branches	= 'branches',
+	radial		= 'radial',
+	reveal		= 'reveal',
+	widget		= 'widget',
+	title		= 'title',
+	drag		= 'drag',
+	line		= 'line',
+	none		= 'none',
+	tree		= 'tree',
+	app			= 'app',
 }
 
 export enum T_Trait {

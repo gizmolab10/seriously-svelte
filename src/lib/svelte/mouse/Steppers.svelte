@@ -50,7 +50,7 @@
 </div>
 
 <style>
-    .directionals {
+    .steppers {
 		top: 0px;
 		left: 0px;
 		position: absolute;     

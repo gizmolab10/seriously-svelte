@@ -1,11 +1,12 @@
 <script lang='ts'>
-	import { layout, signals, components, databases, Seriously_Range, S_Component } from '../../ts/common/Global_Imports';
+	import { layout, signals, components, databases, Seriously_Range } from '../../ts/common/Global_Imports';
 	import { c, h, k, u, ux, Rect, Size, Point, Thing, debug, Angle } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/managers/Stores';
 	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/managers/Stores';
-	import { S_Element, T_Graph, T_Layer, T_Component } from '../../ts/common/Global_Imports';
+	import { T_Graph, T_Search, T_Layer, T_Component } from '../../ts/common/Global_Imports';
+	import { w_mouse_location, w_search_state } from '../../ts/managers/Stores';
+	import { S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import { w_mouse_location } from '../../ts/managers/Stores';
 	import { T_Edit } from '../../ts/state/S_Title_Edit';
 	import { onMount, onDestroy } from 'svelte';
 	export let s_title!: S_Element;
@@ -283,6 +284,7 @@
 				layout.grand_layout();
 			});
 			debug.log_edit(`UPDATED ${$w_s_title_edit.description}`);
+			w_search_state.set(T_Search.rebuild_index);
 		}
 	}
 

@@ -3,7 +3,7 @@
 	import { w_search_filter } from '../../ts/managers/Stores';
 	import Segmented from '../mouse/Segmented.svelte';
 	export let zindex = T_Layer.graph;
-	export let width = 137;
+	export let width = 80;
 	export let top = 0;
 	const back_up = -5;
 	const left_width = 40;
@@ -18,7 +18,7 @@
 	position: absolute;
 	background-color: transparent;'>
 	<Segmented name='search-filter'
-		width={80}
+		width={width}
 		origin={new Point(4, 1)}
 		height={ k.height.button}
 		selected={[$w_search_filter]}

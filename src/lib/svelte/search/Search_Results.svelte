@@ -10,8 +10,8 @@
 	$: $w_search_result_row, ux.element_set_focus_to(element);
 
 	function handle_row_selected(event: MouseEvent, index: number) {
+		search.set_result_row(event.shiftKey ? null : index);
 		u.grab_event(event);
-		search.set_result_row(index);
 	}
 
 	function highlightMatch(title: string, searchText: string) {

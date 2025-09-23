@@ -142,17 +142,17 @@
 						</svg>
 					</Button>
 				</div>
-				{#if !c.has_details_button}
-					<Button name='easter-egg'
-						width={20}
-						height={30}
-						color='transparent'
-						zindex={T_Layer.frontmost}
-						center={new Point(lefts[6], 10)}
-						style='border: none; background: none;'
-						s_button={ux.s_control_forType(T_Control.details)}
-						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.details)}/>
-				{/if}
+			{/if}
+			{#if !c.has_details_button}
+				<Button name='easter-egg'
+					width={20}
+					height={30}
+					color='transparent'
+					zindex={T_Layer.frontmost}
+					center={new Point(lefts[6], 10)}
+					style='border: none; background: none;'
+					s_button={ux.s_control_forType(T_Control.details)}
+					closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.details)}/>
 			{/if}
 			<Separator name='before-breadcrumbs'
 				isHorizontal={false}

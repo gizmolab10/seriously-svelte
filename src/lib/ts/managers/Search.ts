@@ -7,12 +7,17 @@ import { w_t_startup } from './Stores';
 import { get } from 'svelte/store';
 
 class Search {
-	private root_node: Search_Node = new Search_Node();
-	search_text: string | null = null;
 	results: Array<Thing> = [];
+	search_text: string | null = null;
+	private root_node: Search_Node = new Search_Node();
 
-	activate() { w_search_state.set(T_Search.enter); w_show_search_controls.set(true); }
 	get selected_row(): number | null { return get(w_search_result_row); }
+	activate() { w_search_state.set(T_Search.enter); w_show_search_controls.set(true); }
+
+	set_result_row(row: number) {
+		w_search_result_row.set(row);
+		w_search_state.set(T_Search.selected);
+	}
 
 	deactivate() {
 		w_search_results_found.set(0);
@@ -20,16 +25,13 @@ class Search {
 		w_show_search_controls.set(false);
 	}
 
-	set_result_row(row: number) {
-		w_search_result_row.set(row);
-		w_search_state.set(T_Search.selected);
-	}
-
 	get result_ancestry(): Ancestry | null {
 		const row = this.selected_row;
-		if (row === null) return null;
-		const thing = this.results[row];
-		return thing?.ancestry ?? null;
+		if (row !== null && !!get(w_show_search_controls)) {
+			const thing = this.results[row];
+			return thing?.ancestry ?? null;
+		}
+		return null;
 	}
 
 	next_row(up: boolean) {
@@ -37,6 +39,15 @@ class Search {
 		if (row !== null) {
 			const count = this.results.length;	// stupid, but it works
 			this.set_result_row(row.increment(up, count));
+		}
+	}
+
+	update_search_for(query: string) {
+		this.search_text = query;
+		if (query.length > 0) {
+			this.results = this.root_node.search_for(query);
+		} else {
+			this.results = [];
 		}
 	}
 
@@ -69,9 +80,14 @@ class Search {
 						this.buildIndex(h.things);
 						w_search_results_changed.set(Date.now());
 						w_search_state.subscribe((state) => {
-							const text = this.search_text;
-							if (state !== T_Search.off && !!text) {
-								this.search_for(text.toLowerCase());
+							const text = this.search_text?.toLowerCase();
+							if (!!text) {
+								if (state === T_Search.rebuild_index) {
+									this.buildIndex(h.things);
+									this.update_search_for(text);
+								} else if (state !== T_Search.off ) {
+									this.search_for(text);
+								}
 							}
 						});
 					}

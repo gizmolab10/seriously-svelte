@@ -83,7 +83,7 @@
 
 <style>
 
-	.details::-webkit-scrollbar {
+	.details-stack::-webkit-scrollbar {
 		display: none;                /* Chrome, Safari, Opera */
 	}
 

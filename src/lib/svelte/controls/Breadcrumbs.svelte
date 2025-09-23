@@ -4,8 +4,8 @@
 	import { svgPaths, Ancestry, layout, components, S_Component} from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/managers/Stores';
 	import { w_t_startup, w_graph_rect, w_thing_color } from '../../ts/managers/Stores';
+	import { w_search_state, w_search_result_row } from '../../ts/managers/Stores';
 	import Breadcrumb_Button from '../mouse/Breadcrumb_Button.svelte';
-	import { w_search_result_row } from '../../ts/managers/Stores';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
 	export let left: number = 28;
@@ -20,33 +20,31 @@
 	let trigger = 0;
 	
 	s_component = signals.handle_signals_atPriority([T_Signal.rebuild, T_Signal.reattach], 1, null, T_Component.breadcrumbs, (t_signal, value): S_Component | null => {
-		reattachments += 1;
+		update();
 	});
 
 	onMount(() => { return () => s_component.disconnect(); });
 	
-	$: $w_s_title_edit, $w_thing_color, $w_ancestries_grabbed, $w_search_result_row, reattachments += 1;
-
 	$: {
-		if ($w_t_startup == T_Startup.ready) {
-			const needsUpdate = ($w_ancestry_focus?.title ?? k.empty) + $w_graph_rect + ($w_ancestries_grabbed?.length ?? 0);
-			if (!ancestry || needsUpdate || things.length == 0) {
-				ancestry = grabs?.ancestry_forInformation;		// assure we have an ancestry
-				if (!!ancestry) {				
-					let parent_widths = 0;					// encoded as one parent count per 2 digits (base 10)
-					let widths: number[] = [];
-					[things, widths, lefts, parent_widths] = layout.layout_breadcrumbs_forAncestry_centered_starting_within(ancestry, centered, left, width);
-					trigger = parent_widths * 10000 + reattachments * 100 + lefts[0];		// re-render HTML when this value changes
-					for (let i = 0; i < things.length; i++) {
-						const state = s_breadcrumbAt(i);
-						if (!!state) {
-							debug.log_crumbs(`thing ${things[i].title} ancestry ${state.ancestry.title} color ${state.background_color}`);
-						}
-					}
-					debug.log_crumbs(`ALL ${widths} ${things.map(t => t.title)}`);
-					reattachments += 1;
+		const _ = `${$w_t_startup}:::${$w_thing_color}:::${$w_search_state}:::${$w_search_result_row}:::${$w_graph_rect.description}:::${$w_s_title_edit?.description}:::${$w_ancestries_grabbed?.map(a => a.titles.join(',')).join('-')}`;
+		update();
+	}
+
+	function update() {
+		ancestry = grabs?.ancestry_forInformation;		// assure we have an ancestry
+		if (!!ancestry && $w_t_startup == T_Startup.ready) {				
+			let parent_widths = 0;					// encoded as one parent count per 2 digits (base 10)
+			let widths: number[] = [];
+			[things, widths, lefts, parent_widths] = layout.layout_breadcrumbs_forAncestry_centered_starting_within(ancestry, centered, left, width);
+			trigger = parent_widths * 10000 + reattachments * 100 + lefts[0];		// re-render HTML when this value changes
+			for (let i = 0; i < things.length; i++) {
+				const state = s_breadcrumbAt(i);
+				if (!!state) {
+					debug.log_crumbs(`thing ${things[i].title} ancestry ${state.ancestry.title} color ${state.background_color}`);
 				}
 			}
+			debug.log_crumbs(`ALL ${widths} ${things.map(t => t.title)}`);
+			reattachments += 1;
 		}
 	}
 
