@@ -48,9 +48,9 @@ export class Configuration {
 				case 'search':				this.allow_search			   = false; break;
 				case 'auto_save':			this.allow_autoSave			   = false; break;
 				case 'standalone_UI':		this.show_standalone_UI		   = false; break;
-				case 'details':				this.show_details_button		   = false; break;
-				case 'editGraph':			this.allow_graph_editing		   = false; break;
-				case 'editTitles':			this.allow_title_editing		   = false; break;
+				case 'details':				this.show_details_button	   = false; break;
+				case 'editGraph':			this.allow_graph_editing	   = false; break;
+				case 'editTitles':			this.allow_title_editing	   = false; break;
 				case 'horizontalScrolling': this.allow_HorizontalScrolling = false; break;
 			}
 		}

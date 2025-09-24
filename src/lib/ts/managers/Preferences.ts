@@ -18,8 +18,8 @@ export class Preferences {
 
 	dump() 									 { console.log(localStorage); }
 	read_key	   (key: string): any | null { return this.parse(localStorage[key]); }
-	readDB_key	   (key: string): any | null { return this.read_key(this.db_keyFor(key)); }
-	writeDB_key<T> (key: string, value: T)	 { this.write_key(this.db_keyFor(key), value); }
+	readDB_key	   (key: string): any | null { const dbKey = this.db_keyFor(key); return !dbKey ? null : this.read_key(dbKey); }
+	writeDB_key<T> (key: string, value: T)	 { const dbKey = this.db_keyFor(key); if (!!dbKey) { this.write_key(dbKey, value); } }
 
 	write_key<T> (key: string, value: T) {
 		const object = u.stringify_object(value as object);
@@ -34,23 +34,27 @@ export class Preferences {
 
 	writeDB_keyPairs_forKey<T>(key: string, sub_key: string, value: T): void {	// pair => key, sub_key
 		const dbKey = this.db_keyFor(key);
-		const sub_keys: string[] = 					this.read_key(dbKey) ?? [];
-		const pair = this.keyPair_for(dbKey, sub_key);
-		this.write_key(pair, value);			// first store the value by key pair
-		if (sub_keys.length == 0 || !sub_keys.includes(sub_key)) {
-			sub_keys.push(sub_key);
-			this.write_key(dbKey, sub_keys);								// then store they sub key by key
+		if (!!dbKey) {
+			const sub_keys: string[] = this.read_key(dbKey) ?? [];
+			const pair = this.keyPair_for(dbKey, sub_key);
+			this.write_key(pair, value);			// first store the value by key pair
+			if (sub_keys.length == 0 || !sub_keys.includes(sub_key)) {
+				sub_keys.push(sub_key);
+				this.write_key(dbKey, sub_keys);								// then store they sub key by key
+			}
 		}
 	}
 
 	readDB_keyPairs_forKey(key: string): Array<any> {
 		let values: Array<any> = [];
 		const dbKey = this.db_keyFor(key);
-		const sub_keys: string[] = 					this.read_key(dbKey) ?? [];
-		for (const sub_key of sub_keys) {
-			const value = 					this.read_key(this.keyPair_for(dbKey, sub_key));
-			if (!!value) {												// ignore undefined or null
-				values.push(value);
+		if (!!dbKey) {
+			const sub_keys: string[] = this.read_key(dbKey) ?? [];
+			for (const sub_key of sub_keys) {
+				const value = this.read_key(this.keyPair_for(dbKey, sub_key));
+				if (!!value) {												// ignore undefined or null
+					values.push(value);
+				}
 			}
 		}
 		return values;
@@ -152,7 +156,7 @@ export class Preferences {
 	
 	static readonly _____PRIMITIVES: unique symbol;
 
-	db_keyFor	(key: string):					string { return !!databases.db_now.t_database ? this.keyPair_for(databases.db_now.t_database, key) : k.empty; }
+	db_keyFor	(key: string):			 string | null { const type = databases.db_now?.t_database; return !type ? null : this.keyPair_for(type, key); }
 	keyPair_for	(key: string, sub_key: string):	string { return `${key}${k.separator.generic}${sub_key}`; }
 
 	parse(key: string | null | undefined): any | null {

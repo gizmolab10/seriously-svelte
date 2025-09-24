@@ -5,11 +5,12 @@ function(instance, properties, context) {
 	const iframe = document.createElement('iframe');
 	const debug = false;
 	function log(message, ...optionalParams) { if (debug) { console.log(message, ...optionalParams); } }
-	iframe.src = 'https://webseriously.netlify.app/?db=bubble&disable=details,auto_save,standalone_UI';
+	const url = 'https://webseriously.netlify.app/?db=bubble?disable=auto_save,standalone_UI' + (properties.show_details ? k.empty : ',details');
 	iframe.style.overflow = 'hidden';
 	iframe.style.border = 'none';
 	iframe.style.height = '100%';
 	iframe.style.width = '100%';
+	iframe.src = url;
 	instance.data.iframe = iframe;
 
 	window.addEventListener('message', handle_webseriously_message);
