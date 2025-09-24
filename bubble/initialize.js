@@ -5,7 +5,7 @@ function(instance, properties, context) {
 	const iframe = document.createElement('iframe');
 	const debug = false;
 	function log(message, ...optionalParams) { if (debug) { console.log(message, ...optionalParams); } }
-	iframe.src = 'https://webseriously.netlify.app/?db=bubble&disable=standalone_UI,details';
+	iframe.src = 'https://webseriously.netlify.app/?db=bubble&disable=details,auto_save,standalone_UI';
 	iframe.style.overflow = 'hidden';
 	iframe.style.border = 'none';
 	iframe.style.height = '100%';

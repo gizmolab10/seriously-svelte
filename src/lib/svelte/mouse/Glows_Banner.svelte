@@ -7,6 +7,7 @@
 	import Separator from '../draw/Separator.svelte';
 	export let toggle_hidden: (title: string) => void;
 	export let font_size = k.font_size.details;
+    export let isSelected: boolean = false;
 	export let titles: string[];
 	export let height: number;
 	export let width: number;

@@ -919,7 +919,7 @@ export class Hierarchy {
 					this.ancestry_rebuild_runtimeBrowseRight(ancestry, RIGHT, SHIFT, EXTREME, fromReveal);
 				}
 			}
-		} else if (c.allow_GraphEditing) {
+		} else if (c.allow_graph_editing) {
 			const grab = grabs.latest_upward(true);
 			if (!!grab) {
 				this.ancestry_rebuild_persistentRelocateRight(grab, RIGHT, EXTREME);
@@ -1617,6 +1617,8 @@ export class Hierarchy {
 		this.isAssembled = true;
 		w_t_startup.set(T_Startup.ready);
 		busy.signal_data_redraw();
+		await this.db.persist_all();
+		this.db.update_load_time();
 	}
 
 }

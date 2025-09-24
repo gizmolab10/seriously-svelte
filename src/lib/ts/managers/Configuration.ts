@@ -6,13 +6,13 @@ export class Configuration {
 	queryStrings = new URLSearchParams(window.location.search);
 	allow_HorizontalScrolling = true;
 	theme = T_Theme.standalone;
-	allow_GraphEditing = true;
-	allow_TitleEditing = true;
-	has_details_button = true;
-	has_standalone_UI = true;
+	allow_graph_editing = true;
+	allow_title_editing = true;
+	show_details_button = true;
+	show_standalone_UI = true;
 	allow_autoSave = true;
 	erasePreferences = 0;
-	allow_Search = true;
+	allow_search = true;
 	eraseDB = 0;
 
 	configure() {
@@ -45,11 +45,12 @@ export class Configuration {
         const disableOptions = queryStrings.get('disable')?.split(k.comma) ?? [];
 		for (const disableOption of disableOptions) {
 			switch (disableOption) {
-				case 'standalone_UI':		this.has_standalone_UI		   = false; break;
-				case 'details':				this.has_details_button		   = false; break;
+				case 'search':				this.allow_search			   = false; break;
 				case 'auto_save':			this.allow_autoSave			   = false; break;
-				case 'editGraph':			this.allow_GraphEditing		   = false; break;
-				case 'editTitles':			this.allow_TitleEditing		   = false; break;
+				case 'standalone_UI':		this.show_standalone_UI		   = false; break;
+				case 'details':				this.show_details_button		   = false; break;
+				case 'editGraph':			this.allow_graph_editing		   = false; break;
+				case 'editTitles':			this.allow_title_editing		   = false; break;
 				case 'horizontalScrolling': this.allow_HorizontalScrolling = false; break;
 			}
 		}

@@ -1,5 +1,5 @@
 import { w_search_results_found, w_search_result_row, w_search_results_changed } from './Stores';
-import { T_Search, T_Startup, T_Preference } from "../common/Global_Imports";
+import { T_Search, T_Startup, T_Preference, grabs } from "../common/Global_Imports";
 import { c, k, h, p, Thing, Ancestry } from "../common/Global_Imports";
 import { w_search_state, w_show_search_controls } from './Stores';
 import { Search_Node } from '../types/Search_Node';
@@ -51,6 +51,15 @@ class Search {
 		}
 	}
 
+	deactivate_focus_and_grab() {
+		const ancestry = this.result_ancestry;
+		this.deactivate();
+		if (!!ancestry) {
+			ancestry.becomeFocus();
+			ancestry.grab();
+		}
+	}
+
 	search_for(query: string) {
 		this.search_text = query;
 		const before = this.results_fingerprint;
@@ -73,7 +82,7 @@ class Search {
 
 	constructor() {
 		setTimeout(() => {
-			if (c.allow_Search) {
+			if (c.allow_search) {
 				this.search_text = p.read_key(T_Preference.search_text);
 				w_t_startup.subscribe((startup) => {
 					if (startup == T_Startup.ready) {

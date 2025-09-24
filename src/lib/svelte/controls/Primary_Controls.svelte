@@ -43,12 +43,12 @@
 
 	function layout_controls() {
 		const left_widths = {
-			0: c.has_details_button ? 18 : -7,			// details
-			1: !$w_show_search_controls ? 11 : c.has_details_button ? 11 : 11,	// recents / search
+			0: c.show_details_button ? 18 : -7,			// details
+			1: !$w_show_search_controls ? 11 : c.show_details_button ? 11 : 11,	// recents / search
 			2: 57,	// graph type
 			3: 100,	// plus
 			4: 26,	// minus
-			5: c.allow_Search ? 24 : 6,
+			5: c.allow_search ? 24 : 6,
 			6: 25,	// easter egg, separator
 			7: 43,	// search
 			8: 0,	// breadcrumbs
@@ -68,7 +68,7 @@
 			height: {size_big}px;
 			z-index: {T_Layer.frontmost};'>
 		{#if !$w_popupView_id}
-			{#if c.has_details_button}
+			{#if c.show_details_button}
 				<Button name='details-toggle'
 					border_thickness=0
 					color='transparent'
@@ -90,13 +90,13 @@
 					</svg>
 				</Button>
 			{/if}
-			{#if c.allow_Search}
+			{#if c.allow_search}
 				<Search
 					top={-0.5}
-					left={-54 - (c.has_details_button ? 0 : 26)}
-					width={lefts[7] + (c.has_details_button ? 0 : 26)}/>
+					left={-54 - (c.show_details_button ? 0 : 26)}
+					width={lefts[7] + (c.show_details_button ? 0 : 26)}/>
 			{/if}
-			{#if !c.allow_Search || !$w_show_search_controls}
+			{#if !c.allow_search || !$w_show_search_controls}
 				<Next_Previous name='recents'
 					size={28}
 					has_title={false}
@@ -143,7 +143,7 @@
 					</Button>
 				</div>
 			{/if}
-			{#if !c.has_details_button}
+			{#if !c.show_details_button}
 				<Button name='easter-egg'
 					width={20}
 					height={30}

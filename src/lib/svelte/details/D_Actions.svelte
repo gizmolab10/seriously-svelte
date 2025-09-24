@@ -235,7 +235,7 @@
 			{/if}
 		</div>
 	{/if}
-	{#if !c.has_standalone_UI}
+	{#if !c.show_standalone_UI}
 		<Separator name='bottom-of-actions'
 			position='relative'
 			length={k.width.details + 1.5}

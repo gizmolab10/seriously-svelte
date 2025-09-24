@@ -48,7 +48,7 @@
 		<Banner_Hideable t_detail={T_Details.header}>
 			<D_Header/>
 		</Banner_Hideable>
-		{#if c.has_standalone_UI}
+		{#if c.show_standalone_UI}
 			<Banner_Hideable t_detail={T_Details.preferences}>
 				<D_Preferences/>
 			</Banner_Hideable>
@@ -56,7 +56,7 @@
 		<Banner_Hideable t_detail={T_Details.actions}>
 			<D_Actions/>
 		</Banner_Hideable>
-		{#if c.has_standalone_UI}
+		{#if c.show_standalone_UI}
 			<Banner_Hideable t_detail={T_Details.selection} extra_titles={extra_selection_titles}>
 				<D_Selection/>
 			</Banner_Hideable>

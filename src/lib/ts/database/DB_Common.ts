@@ -1,10 +1,8 @@
 import { Tag, Trait, Thing, Predicate, Relationship, Persistable } from '../common/Global_Imports';
-import { c, h, p, busy, debug, layout, Hierarchy, databases } from '../common/Global_Imports';
 import { T_Thing, T_Startup, T_Persistence, T_Persistable } from '../common/Global_Imports';
+import { c, h, k, p, busy, debug, Hierarchy, databases } from '../common/Global_Imports';
 import { w_hierarchy, w_t_startup } from '../managers/Stores';
 import type { Dictionary } from '../types/Types';
-import { k } from '../common/Constants';
-import { get } from 'svelte/store';
 
 export enum T_Database {
 	airtable = 'air',
@@ -20,14 +18,15 @@ export enum T_Database {
 export default class DB_Common {
 	t_persistence = T_Persistence.none;
 	hierarchy!: Hierarchy;
+	load_time = 'busy...';
+	load_start_time = -1;
 	t_database = k.empty;
-	loadTime = 'busy...';
 	idBase = k.empty;
 	
 	queryStrings_apply() {}
 	setup_remote_handlers() {}
 	get displayName(): string { return this.t_database; }
-	get details_forStorage(): Object { return ['fetch', this.loadTime]; }
+	get details_forStorage(): Object { return ['fetch', this.load_time]; }
 	get isStandalone(): boolean { return this.t_database != T_Database.bubble; }
 	get isRemote(): boolean { return this.t_persistence == T_Persistence.remote; }
 	get isPersistent(): boolean { return this.t_persistence != T_Persistence.none; }
@@ -66,13 +65,13 @@ export default class DB_Common {
 	}
 
 	async persist_all(force: boolean = false) {
-		if (!databases.defer_persistence && false) {
+		if (!databases.defer_persistence && (force || c.allow_autoSave)) {
 			busy.isPersisting = true;
 			busy.signal_data_redraw();
 			for (const t_persistable of Persistable.t_persistables) {
 				await this.persistAll_identifiables_ofType_maybe(t_persistable, force);
 			}
-			this.wait_forClean();
+			this.wait_forClean();	// kludge to wait for airtable to catch up
 		}
 	}
 
@@ -170,17 +169,17 @@ export default class DB_Common {
 				return;
 			}
 		}
-		const startTime = new Date().getTime();
-		this.loadTime = 'busy...';
+		this.load_start_time = new Date().getTime();
+		this.load_time = 'busy...';
 		if (await this.fetch_all()) {
 			await h.wrapUp_data_forUX();
-			// await this.persist_all();
-			this.set_loadTime_from(startTime);
 		}
 	}
 	
-	set_loadTime_from(startTime: number | null = null) {
-		if (startTime != null) {
+	update_load_time() {
+		const startTime = this.load_start_time;
+		if (startTime != -1) {
+			this.load_start_time = -1;
 			const duration = (new Date().getTime()) - startTime;
 			if (Math.abs(duration) > 100) {
 				const adjusted = Math.trunc(duration / 100) / 10;
@@ -188,11 +187,11 @@ export default class DB_Common {
 				const suffix = (isInteger && (adjusted == 1)) ? '' : 's';
 				const places = isInteger ? 0 : 1;
 				const time = (duration / 1000).toFixed(places);
-				this.loadTime = `took ${time} second${suffix}`;
+				this.load_time = `took ${time} second${suffix}`;
 			} else if (h.hasRoot) {
-				this.loadTime = 'instantaneous';
+				this.load_time = 'instantaneous';
 			} else {
-				this.loadTime = 'incomplete';
+				this.load_time = 'incomplete';
 			}
 		}
 	}

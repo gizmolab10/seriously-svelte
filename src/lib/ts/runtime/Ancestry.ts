@@ -306,7 +306,7 @@ export default class Ancestry extends Identifiable {
 		const isExternals = this.thing?.isExternals ?? true;
 		const isBulkAlias = this.thing?.isBulkAlias ?? true;	// missing thing, return not editable
 		const canEdit = (!this.isRoot || databases.db_now.t_database != T_Database.firebase);
-		return canEdit && c.allow_TitleEditing && !isExternals && !isBulkAlias;
+		return canEdit && c.allow_title_editing && !isExternals && !isBulkAlias;
 	}
 
 	startEdit() {
@@ -350,7 +350,7 @@ export default class Ancestry extends Identifiable {
 						grabAncestry.grab_forShift(SHIFT);
 						needs_graphRelayout = true;
 					}
-				} else if (c.allow_GraphEditing) {
+				} else if (c.allow_graph_editing) {
 					needs_graphRebuild = true;
 					this.reorder_within(this.sibling_ancestries, up);
 				}
@@ -380,7 +380,7 @@ export default class Ancestry extends Identifiable {
 					grabAncestry.grab_forShift(SHIFT);
 					needs_graphRelayout = true;
 				}
-			} else if (c.allow_GraphEditing) {
+			} else if (c.allow_graph_editing) {
 				needs_graphRebuild = true;
 				this.reorder_within(sibling_ancestries, up);
 			}
@@ -405,7 +405,7 @@ export default class Ancestry extends Identifiable {
 					grabAncestry.grab_forShift(SHIFT);
 					needs_graphRelayout = true;
 				}
-			} else if (c.allow_GraphEditing) {
+			} else if (c.allow_graph_editing) {
 				needs_graphRebuild = true;
 				this.reorder_within(sibling_ancestries, up);
 			}

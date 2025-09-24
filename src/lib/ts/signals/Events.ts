@@ -35,7 +35,7 @@ export class Events {
 		const show_details = !get(w_show_details);
 		w_show_details.set(show_details);
 		if (show_details) {
-			c.has_standalone_UI = true;
+			c.show_standalone_UI = true;
 		}
 	}
 
@@ -234,18 +234,17 @@ export class Events {
 				const COMMAND = event.metaKey;
 				const EXTREME = SHIFT && OPTION;
 				if (get(w_search_state) != T_Search.off) {
-					// u.grab_event(event);
 					switch (key) {
 						case 'f':					search.activate(); break;
 						case 'arrowup':				search.next_row(false); break;
 						case 'arrowdown':			search.next_row(true); break;
 						case 'escape':
-						case 'enter':		    	search.deactivate(); break;	// stop searching
+						case 'enter':		    	search.deactivate_focus_and_grab(); break;	// stop searching
 						case 'tab':					search.set_result_row(0); break;
 					}
 				} else {
-					if (c.allow_GraphEditing) {
-						if (!!ancestry && c.allow_TitleEditing) {
+					if (c.allow_graph_editing) {
+						if (!!ancestry && c.allow_title_editing) {
 							switch (key) {
 								case 'enter':	ancestry.startEdit(); break;
 								case 'd':		await h.thing_edit_persistentDuplicate(ancestry); break;
