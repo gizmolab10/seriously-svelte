@@ -4,28 +4,35 @@ function(instance, properties) {
 	const has_two_tables = properties.hasOwnProperty('edge_type');
 	const original_DATA_TYPE_field_names = {};
 	const ignore_fields = ['Slug'];
-	const debug = false;
 
 	////////////////////////////////////////////////////////////////////
 	//
-	//	naming conventions for functions and variables
+	//	naming convention, uppercase for emphasis
 	//
-	//	LIST			array of ITEM(s)
+	//	LIST		array of ITEM(s)
+	//	ITEM		instance of DATA_TYPE
 	//	DATA_TYPE	bubble app's data types
 	//	SERIOUSLY	internal use within seriously netlify app
 	//	FIELD		plugin Field (specified in bubble plugin editor)
-	//	ITEM			instance of DATA_TYPE
 	//
-	//	c_			convert to
 	//	_id			the unique id of ITEM
-	//	field		of ITEM (seriously, original, bubble, etc.)
+	//	c_			convert to
+	//	_field		of ITEM
 	//
 	////////////////////////////////////////////////////////////////////
+
+	instance.data.assure_iframe_is_instantiated(properties);	// start the ball rolling
+
+	function has_SERIOUSLY_name(name) { return Object.keys(original_DATA_TYPE_field_names).includes(name); }
+	function LOG(message, ...optionalParams) { if (instance.data.debug) { console.log(message, ...optionalParams); } }
+	function WARN(message, ...optionalParams) { if (instance.data.debug) { console.warn(message, ...optionalParams); } }
 
 	const exposed_LIST_FIELD_names = [
 		'object_parents_field',
 		'object_related_field',
 		'owners_field'];
+
+	const LIST_names = c_DATA_TYPE_LIST_names(exposed_LIST_FIELD_names);
 
 	const exposed_FIELD_names = [...exposed_LIST_FIELD_names,
 		'object_title_field',
@@ -50,11 +57,6 @@ function(instance, properties) {
 		original_DATA_TYPE_field_names[field_name_of_ITEM] = convergent_name;
 	});
 
-	const LIST_names = c_DATA_TYPE_LIST_names(exposed_LIST_FIELD_names);
-	function LOG(message, ...optionalParams) { if (debug) { console.log(message, ...optionalParams); } }
-	function WARN(message, ...optionalParams) { if (debug) { console.warn(message, ...optionalParams); } }
-	function has_SERIOUSLY_name(name) { return Object.keys(original_DATA_TYPE_field_names).includes(name); }
-
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
 	//	design:
@@ -73,6 +75,8 @@ function(instance, properties) {
 	//		(in bubble [eg, test] app editor ... entered in Appearance of plugin)
 	//
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	process_incoming_properties();
 
 	const _____CONVERSIONS = Symbol('CONVERSIONS');
 
@@ -132,7 +136,9 @@ function(instance, properties) {
 				const has_name = has_SERIOUSLY_name(DATA_TYPE_field_name) || has_SERIOUSLY_name(ITEM_field_name);
 				const SERIOUSLY_name = c_SERIOUSLY_field_name(DATA_TYPE_field_name) ?? c_SERIOUSLY_field_name(ITEM_field_name);
 				const value = ITEM.get(ITEM_field_name);
+				if (!!value) {
 				LOG('extract ITEM field', ITEM_field_name, DATA_TYPE_field_name, SERIOUSLY_name, value);
+				}
 				if (!ignore_fields.includes(DATA_TYPE_field_name)) {
 					if (!SERIOUSLY_name) {
 						if (has_name) {
@@ -204,32 +210,35 @@ function(instance, properties) {
 		}
 	}
 
-	try {
+	function process_incoming_properties() {
+		LOG('incoming', properties);
+		try {
 
-		//////////////////////////////////////////////////////////
-		//														//
-		//	process incoming properties & send to webseriously	//
-		//														//
-		//	 the keys (below) are matched within DB_Bubble.ts	//
-		//  	 (in its handle_bubble_message function)		//
-		//														//
-		//    instance.data.attempts tracks unhydrated ITEMs	//
-		//														//
-		//////////////////////////////////////////////////////////
-		
-		instance.data.attempts = instance.data.attempts || {};
-		send_to_webseriously({
-			overwrite_focus_and_mode: properties['overwrite_focus_and_mode'],
-			inRadialMode: properties['show_radial_mode'],
-			things: extract_LIST_data('objects_table'),
-			root: extract_ITEM_data('starting_object'),
-			focus: extract_ITEM_data('focus_object'),
-		}, null, 0);
-	} catch (error) {
-		if (error.constructor.name != 'NotReadyError') {
-			WARN('[PLUGIN] threw an error:', error);
-		} else if (Object.keys(instance.data.attempts).length > 0) {
-			LOG('[PLUGIN] data not ready:', instance.data.attempts);
+			//////////////////////////////////////////////////////////
+			//														//
+			//	process incoming properties & send to webseriously	//
+			//														//
+			//	 the keys (below) are matched within DB_Bubble.ts	//
+			//  	 (in its handle_bubble_message function)		//
+			//														//
+			//    instance.data.attempts tracks unhydrated ITEMs	//
+			//														//
+			//////////////////////////////////////////////////////////
+			
+			instance.data.attempts = instance.data.attempts || {};
+			send_to_webseriously({
+				overwrite_focus_and_mode: properties['overwrite_focus_and_mode'],
+				inRadialMode: properties['show_radial_mode'],
+				things: extract_LIST_data('objects_table'),
+				root: extract_ITEM_data('starting_object'),
+				focus: extract_ITEM_data('focus_object'),
+			}, null, 0);
+		} catch (error) {
+			if (error.constructor.name != 'NotReadyError') {
+				WARN('[PLUGIN] threw an error:', error);
+			} else if (Object.keys(instance.data.attempts).length > 0) {
+				LOG('[PLUGIN] data not ready:', instance.data.attempts);
+			}
 		}
 	}
 }

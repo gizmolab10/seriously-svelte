@@ -1,6 +1,6 @@
-import { G_Paging, T_Graph, T_Details, T_Kinship, T_Preference, T_Auto_Adjust } from '../common/Global_Imports';
+import { G_Paging, T_Graph, T_Details, T_Kinship, T_Preference, T_Auto_Adjust, T_Startup } from '../common/Global_Imports';
 import { c, h, k, u, show, grabs, debug, radial, colors, Ancestry, databases } from '../common/Global_Imports';
-import { w_ancestry_focus, w_ancestries_grabbed, w_ancestries_expanded } from './Stores';
+import { w_ancestry_focus, w_ancestries_grabbed, w_ancestries_expanded, w_t_startup } from './Stores';
 import { w_auto_adjust_graph, w_show_tree_ofType, w_show_graph_ofType } from './Stores';
 import { w_t_database, w_ring_rotation_angle, w_ring_rotation_radius } from './Stores';
 import { w_g_paging, w_font_size, w_thing_fontFamily, w_depth_limit } from './Stores';
@@ -203,9 +203,13 @@ export class Preferences {
 		w_ring_rotation_radius.subscribe((radius: number) => {
 			this.write_key(T_Preference.ring_radius, radius);
 		});
-		w_g_paging.subscribe((g_paging: G_Paging) => {
-			this.writeDB_key(T_Preference.paging, radial.s_thing_pages_byThingID);
-		})
+		w_t_startup.subscribe((startup) => {
+			if (startup == T_Startup.ready) {
+				w_g_paging.subscribe((g_paging: G_Paging) => {
+					this.writeDB_key(T_Preference.paging, radial.s_thing_pages_byThingID);
+				})
+			}
+		});
 		
 		// OTHER
 

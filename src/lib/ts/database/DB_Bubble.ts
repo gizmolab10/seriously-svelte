@@ -31,12 +31,12 @@ export default class DB_Bubble extends DB_Common {
 		}
 		function createThing(b_thing: any, b_type: T_Thing = T_Thing.generic) {
 			h.thing_remember_runtimeCreateUnique(h.db.idBase, b_thing.id, b_thing.title, b_thing.color, b_type,  b_thing.true);
-			if (!!b_thing.parents) {
+			if (!!b_thing.parents && Array.isArray(b_thing.parents)) {
 				for (const b_parent of b_thing.parents) {
 					createRelationship(b_parent, b_thing, T_Predicate.contains, [1, 1]);
 				}
 			}
-			if (!!b_thing.related) {
+			if (!!b_thing.related && Array.isArray(b_thing.related)) {
 				for (const b_related of b_thing.related) {
 					createRelationship(b_related, b_thing, T_Predicate.isRelated, [1, 1]);
 				}
