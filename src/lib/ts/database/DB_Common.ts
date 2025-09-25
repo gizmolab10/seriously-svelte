@@ -65,33 +65,27 @@ export default class DB_Common {
 	}
 
 	async persist_all(force: boolean = false) {
-		if (!databases.defer_persistence && (force || c.allow_autoSave)) {
+		if (databases.defer_persistence || !(force && !c.allow_autoSave)) {
+			busy.signal_data_redraw();
+		} else {
 			busy.isPersisting = true;
 			busy.signal_data_redraw();
 			for (const t_persistable of Persistable.t_persistables) {
 				await this.persistAll_identifiables_ofType_maybe(t_persistable, force);
 			}
-			this.wait_forClean();	// kludge to wait for airtable to catch up
-		}
-	}
-
-	wait_forClean() {
-		if (!this.isRemote) {
-			busy.isPersisting = false;
-			busy.signal_data_redraw();
-		} else {
-			// kludge to wait for airtable to catch up
-			let interval = setInterval(() => {
-				if (!h.isDirty) {
-					clearInterval(interval);
-					interval = setInterval(() => {	
-						if (!h.isDirty) {
-							busy.isPersisting = false;
-							busy.signal_data_redraw();
-						}
-					}, 1000);
-				}
-			}, 10);
+			if (this.t_database != T_Database.airtable) {
+				busy.isPersisting = false;
+				busy.signal_data_redraw();
+			} else {
+				// kludge to wait for airtable to catch up
+				let interval = setInterval(() => {
+					if (!h.isDirty) {
+						busy.isPersisting = false;
+						busy.signal_data_redraw();
+						clearInterval(interval);
+					}
+				}, 100);
+			}
 		}
 	}
 

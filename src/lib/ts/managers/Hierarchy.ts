@@ -1615,10 +1615,10 @@ export class Hierarchy {
 		// await this.relationships_removeHavingNullReferences();
 		this.restore_fromPreferences();
 		this.isAssembled = true;
-		w_t_startup.set(T_Startup.ready);
 		busy.signal_data_redraw();
 		await this.db.persist_all();
 		this.db.update_load_time();
+		w_t_startup.set(T_Startup.ready);
 	}
 
 }

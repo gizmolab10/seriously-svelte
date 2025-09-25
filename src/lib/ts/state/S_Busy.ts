@@ -6,11 +6,11 @@ export class S_Busy {
 
 	get isDatabaseBusy(): boolean { return this.isPersisting || this.isFetching; }
 
-	temporarily_set_isPersisting_while(closure: () => void) {
+	async temporarily_set_isPersisting_while(closure: () => Promise<void>) {
 		const wasPersisting = this.isPersisting;
 		this.isPersisting = true;
 		this.signal_data_redraw();
-		closure();
+		await closure();
 		this.isPersisting = wasPersisting;
 		this.signal_data_redraw();
 	}
