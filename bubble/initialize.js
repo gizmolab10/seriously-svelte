@@ -1,43 +1,19 @@
-function(instance) {
-	instance.data.debug = true;
-	instance.data.iframe_is_instantiated = false;
-	instance.data.assure_iframe_is_instantiated = function (properties) {
-		if (instance.data.iframe_is_instantiated) {
-			return;
-		}
-		instance.data.iframe_is_instantiated = true;
-		console.log('[PLUGIN] Initializing plugin ...');
-		instance.canvas.style.width = window.innerWidth + 'px';
-		instance.canvas.style.height = window.innerHeight + 'px';
-		const iframe = document.createElement('iframe');
-		instance.data.iframe = iframe;
-		iframe.src = url_from_properties(properties);
-		iframe.style.overflow = 'hidden';
-		iframe.style.border = 'none';
-		iframe.style.height = '100%';
-		iframe.style.width = '100%';
+function(instance, properties, context) {
+	console.log('[PLUGIN] Initializing plugin ...');
+	instance.canvas.style.width = window.innerWidth + 'px';
+	instance.canvas.style.height = window.innerHeight + 'px';
+	const iframe = document.createElement('iframe');
+	const debug = false;
+	function log(message, ...optionalParams) { if (debug) { console.log(message, ...optionalParams); } }
+	iframe.src = 'https://webseriously.netlify.app/?db=bubble&disable=details';
+	iframe.style.overflow = 'hidden';
+	iframe.style.border = 'none';
+	iframe.style.height = '100%';
+	iframe.style.width = '100%';
+	instance.data.iframe = iframe;
 
-		window.addEventListener('message', handle_webseriously_message);
-		instance.canvas.appendChild(iframe);
-	}
-
-	function LOG(message, ...optionalParams) { if (instance.data.debug) { console.log(message, ...optionalParams); } }
-
-	function url_from_properties(properties) {
-		const disables = [
-			'auto_save',
-			'standalone_UI',
-			properties.show_details ? 'unknown' : 'details'];
-		const pairs = {
-			db: 'bubble',
-			debug: 'bubble',
-			disable: disables.join(',')
-		}
-		const queries = Object.entries(pairs).map(([key, value]) => `${key}=${value}`).join('&');
-		const url = 'https://webseriously.netlify.app/?' + queries;
-		console.log('[PLUGIN] url', url);
-		return url;
-	}
+	window.addEventListener('message', handle_webseriously_message);
+	instance.canvas.appendChild(iframe);
 
 	//////////////////////////////////////////////////////////////
 	//															//
@@ -64,7 +40,7 @@ function(instance) {
 					if (instance.data.pendingMessages) {		// Send any pending messages that were stored before iframe was ready
 						instance.data.pendingMessages.forEach(message => {
 							try {
-								instance.data.iframe.contentWindow.postMessage(message, '*');
+								iframe.contentWindow.postMessage(message, '*');
 							} catch (error) {
 								console.error('[PLUGIN] Failed to send pending message:', error);
 							}
@@ -73,9 +49,9 @@ function(instance) {
 					}
 					break;
 				default:
+					log('[PLUGIN] Received message:', event.data);
 					break;
-				}
-			LOG('[PLUGIN] Received message:', event.data);
+			}
 		}
 	}
 }

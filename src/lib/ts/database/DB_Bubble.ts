@@ -30,7 +30,7 @@ export default class DB_Bubble extends DB_Common {
 			h.relationship_remember_runtimeCreateUnique(h.db.idBase, id, b_kind, b_parent.id, b_child.id, b_orders, T_Create.isFromPersistent);
 		}
 		function createThing(b_thing: any, b_type: T_Thing = T_Thing.generic) {
-			h.thing_remember_runtimeCreateUnique(h.db.idBase, b_thing.id, b_thing.title, b_thing.color, b_type,  b_thing.true);
+			h.thing_remember_runtimeCreateUnique(h.db.idBase, b_thing.id, b_thing.title, b_thing.color, b_type);
 			if (!!b_thing.parents && Array.isArray(b_thing.parents)) {
 				for (const b_parent of b_thing.parents) {
 					createRelationship(b_parent, b_thing, T_Predicate.contains, [1, 1]);
@@ -76,7 +76,7 @@ export default class DB_Bubble extends DB_Common {
 				h.predicate_defaults_remember_runtimeCreate();
 			} else {
 				for (const b_predicate of b_predicates) {
-					h.predicate_remember_runtimeCreateUnique(b_predicate.id, b_predicate.kind, b_predicate.is_bidirectional, b_predicate.true);
+					h.predicate_remember_runtimeCreateUnique(b_predicate.id, b_predicate.kind, b_predicate.is_bidirectional);
 				}
 			}
 			if (!!b_relationships) {   // all the rest must happen AFTER things are created
@@ -86,13 +86,13 @@ export default class DB_Bubble extends DB_Common {
 			}
 			if (!!b_traits) {
 				for (const b_trait of b_traits) {
-					h.trait_remember_runtimeCreateUnique(h.db.idBase, b_trait.id, b_trait.owner.id, b_trait.type, b_trait.text, b_trait.true);
+					h.trait_remember_runtimeCreateUnique(h.db.idBase, b_trait.id, b_trait.owner.id, b_trait.type, b_trait.text);
 				}
 			}
 			if (!!b_tags) {
 				for (const b_tag of b_tags) {
 					const ownerHIDs = b_tag.owners.map((owner: {id: string;}) => owner.id.hash());
-					h.tag_remember_runtimeCreateUnique(h.db.idBase, b_tag.id, b_tag.type, ownerHIDs, b_tag.true);
+					h.tag_remember_runtimeCreateUnique(h.db.idBase, b_tag.id, b_tag.type, ownerHIDs);
 				}
 			}
 
