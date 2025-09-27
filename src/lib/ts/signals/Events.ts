@@ -55,7 +55,12 @@ export class Events {
 
 	static readonly _____SUBSCRIPTIONS: unique symbol;
 
-	update_event_listener(name: string, handler: EventListenerOrEventListenerObject) {
+	update_window_listener(name: string, handler: EventListenerOrEventListenerObject) {
+		window.removeEventListener(name, handler);
+		window.addEventListener(name, handler, { passive: false });
+	}
+
+	update_document_listener(name: string, handler: EventListenerOrEventListenerObject) {
 		document.removeEventListener(name, handler);
 		document.addEventListener(name, handler, { passive: false });
 	}
@@ -70,11 +75,11 @@ export class Events {
 
 	private subscribeTo_events() {
 		this.clear_event_subscriptions();
-		this.update_event_listener('wheel', this.handle_wheel);
-		this.update_event_listener('keyup', this.handle_key_up);
-		this.update_event_listener('keydown', this.handle_key_down);
-		this.update_event_listener('resize', this.handle_window_resize);
-		this.update_event_listener('orientationchange', this.handle_orientation_change);
+		this.update_document_listener('wheel', this.handle_wheel);
+		this.update_document_listener('keyup', this.handle_key_up);
+		this.update_document_listener('keydown', this.handle_key_down);
+		this.update_window_listener('resize', this.handle_window_resize);
+		this.update_document_listener('orientationchange', this.handle_orientation_change);
 		if (u.device_isMobile) {
 			debug.log_action(`  mobile subscribe GRAPH`);
 			document.addEventListener('touchend', this.handle_touch_end, { passive: false });
