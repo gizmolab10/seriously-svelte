@@ -39,6 +39,7 @@ class Search {
 		if (row !== null) {
 			const count = this.results.length;	// stupid, but it works
 			this.set_result_row(row.increment(up, count));
+			// also make sure the row is visible
 		}
 	}
 

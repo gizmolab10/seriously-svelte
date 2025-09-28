@@ -3,7 +3,6 @@
 	import { w_show_details_ofType } from '../../ts/managers/Stores';
 	import Glows_Banner from '../mouse/Glows_Banner.svelte';
 	import { s_details } from '../../ts/state/S_Details';
-	import { Motion } from 'svelte-motion';
     export let extra_titles: string[] = [];
     export let t_detail: T_Details;
 	const titles = [T_Details[t_detail], ...extra_titles];
@@ -30,8 +29,7 @@
 
 </script>
 
-<div
-	class='{titles[0]}-dynamic-container'
+<div class='{titles[0]}-dynamic-container'
 	style='
 		width: 100%;
 		height: auto;
@@ -41,8 +39,7 @@
 		background-color: transparent;
 		z-index:{T_Layer.detailsPlus_1};'>
 	{#if s_banner_hideable?.hasBanner}
-		<div
-			class='banner'
+		<div class='banner'
 			style='
 				top: 0px;
 				width: 100%;
@@ -60,7 +57,7 @@
 		</div>
 	{/if}
 	{#if slot_isVisible}
-		<div
+		<div class='hideable'
 			style='
 				z-index:{T_Layer.detailsPlus_2};'>
 			<slot />

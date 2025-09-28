@@ -14,30 +14,22 @@ export class Colors {
     default_forThings = 'blue';
 	thin_separator_line_color = '#999999';
 
-	ofBackgroundFor(color: string): string { return this.lighterBy(color, 10000);}
+	ofBackgroundFor(color: string): string { return this.lighterBy(color, 10);}
 	ofBannerFor(background: string): string { return this.blend('white', background, 4);}
 	opacitize(color: string, amount: number): string { return transparentize(color, 1 - amount); }
 
 	color_fromSeriously(color: string | undefined): string {
 		if (!!color) {			
-			const parts = color.split(',');				// "red:0.7073394146162211,green:0.0,blue:0.0,alpha:1.0"
+			const parts = color.split(',');				// "red:0.7,green:0,blue:0,alpha:1"
 			const rgba = new RGBA();
 			for (const part of parts) {
 				const [key, value] = part.split(':');
 				const numValue = parseFloat(value);
 				switch (key) {
-					case 'red':
-						rgba.r = Math.round(numValue * 255);
-						break;
-					case 'green':
-						rgba.g = Math.round(numValue * 255);
-						break;
-					case 'blue':
-						rgba.b = Math.round(numValue * 255);
-						break;
-					case 'alpha':
-						rgba.a = numValue;
-						break;
+					case 'red':	  rgba.r = Math.round(numValue * 255); break;
+					case 'blue':  rgba.b = Math.round(numValue * 255); break;
+					case 'green': rgba.g = Math.round(numValue * 255); break;
+					case 'alpha': rgba.a = numValue;				   break;
 				}
 			}
 			return this.RGBA_toHex(rgba);
@@ -94,7 +86,7 @@ export class Colors {
 
 	lighterBy(color: string, ratio: number): string {
 		return this.adjust_luminance_byApplying(color, (lume => {
-			return Math.max(0, (1 - lume) - ratio);
+			return Math.max(0, (1 - lume) / ratio);
 		}));
 	}
 

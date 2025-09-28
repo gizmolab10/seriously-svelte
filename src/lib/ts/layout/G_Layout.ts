@@ -28,7 +28,7 @@ export default class G_Layout {
 		const y = (this.controls_boxHeight) * (show_secondary_controls ? 2 : 1) - 4;	// below primary and secondary controls
 		const x = get(w_show_details) ? k.width.details : 0;								// right of details
 		const origin_ofGraph = new Point(x, y);
-		const size_ofGraph = this.windowSize.reducedBy(origin_ofGraph);
+		const size_ofGraph = this.windowSize.reducedBy(origin_ofGraph).reducedBy(Point.square(k.thickness.separator.main - 1));
 		const rect = new Rect(origin_ofGraph, size_ofGraph);
 		debug.log_mouse(`GRAPH ====> ${rect.description}`);
 		w_graph_rect.set(rect);																// emits a signal, to adjust

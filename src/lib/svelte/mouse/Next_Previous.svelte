@@ -29,8 +29,7 @@
 
 </script>
 
-<div
-	class='{name}-next-previous'
+<div class='{name}-next-previous'
 	style='
 		top: -7.5px;
 		display:flex;
@@ -39,8 +38,7 @@
 		flex-direction:row;
 		align-items:center;'>
 	{#each row_titles as title, index}
-		<button
-			class='{name}-{title}-button'
+		<button class='{name}-{title}-button'
 			class:held={mouseTimer.isAutorepeating_forID(index)}
 			style='
 				padding: 0;
@@ -53,8 +51,7 @@
 			on:mousedown={() => autorepeat_start(index)}
 			on:mouseleave={() => update_index_forHover(-1)}
 			on:mouseenter={() => update_index_forHover(index)}>
-			<svg
-				class='svg-glow-button-path'
+			<svg class='svg-glow-button-path'
 				viewBox='0 0 {size} {size}'>
 				<path
 					stroke-width='0.75'

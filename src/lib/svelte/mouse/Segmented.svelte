@@ -74,14 +74,12 @@
 
 </script>
 
-<div
-	class='segmented'
+<div class='segmented'
 	style='
 		position:absolute;
 		left:{origin.x}px;
 		width:{width}px;'>
-	<div
-		class='group-of-segments'
+	<div class='group-of-segments'
 		style='
 			--selected-hover-text-color: {selected_hover_text_color};
 			--hover-background-color: {hover_background_color};
@@ -106,6 +104,24 @@
 </div>
 
 <style>
+
+	.segment.selected:hover {
+		color: var(--selected-hover-text-color);
+	}
+
+	.segment:not(:last-child) {
+		border-right: 1px solid var(--border-color);
+	}
+
+	.segment.selected {
+		background: var(--selected-color) !important;
+		color: var(--selected-text-color);
+	}
+
+	.segment:hover {
+		background: darkgray !important;
+		color: var(--hover-color);
+	}
 
 	.group-of-segments {
 		border: 1px solid var(--border-color);
@@ -136,24 +152,6 @@
 		height: 100%;
 		border: none;
 		flex: none;
-	}
-
-	.segment.selected {
-		background: var(--selected-color) !important;
-		color: var(--selected-text-color);
-	}
-
-	.segment.selected:hover {
-		color: var(--selected-hover-text-color);
-	}
-
-	.segment:not(:last-child) {
-		border-right: 1px solid var(--border-color);
-	}
-
-	.segment:hover {
-		background: darkgray !important;
-		color: var(--hover-color);
 	}
 
 </style>

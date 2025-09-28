@@ -40,7 +40,7 @@
 
 </script>
 
-<div
+<div class='glows-banner'
 	style='
 		display: flex;
 		width: {width}px;

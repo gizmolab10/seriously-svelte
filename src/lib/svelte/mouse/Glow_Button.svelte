@@ -49,15 +49,14 @@
     
 </script>
 
-<div
-	class='glow'
+<div class='glow-button'
     bind:this={glow_button}
 	class:autorepeating={detect_autorepeat && mouseTimer.isAutorepeating_forID(0)}
 	style='
         width: {width}px;
         height: {height}px;
         position: relative;'>
-    {#if isHovering}
+    {#if !isHovering}
         <SVG_Gradient
             isInverted={true}
             name={gradient_name}
@@ -65,7 +64,7 @@
             size={glow_rect.size}
             path={svgPaths.rectangle(glow_rect)}/>
     {/if}
-    <div class='title'
+    <div class='glow-button-title'
         on:click={intercept_click}
         on:mouseup={handle_mouse_up}
         on:mousedown={handle_mouse_down}
@@ -99,7 +98,7 @@
 </div>
 
 <style>
-    .glow.autorepeating {
+    .glow-button.autorepeating {
         transform: scale(0.95);
         transition: transform 0.1s ease;
     }

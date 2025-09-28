@@ -56,8 +56,7 @@
 </script>
 
 {#key trigger}
-	<div
-		class='breadcrumbs'
+	<div class='breadcrumbs'
 		id = {s_component.id}
 		style='
 			top:-5px;
@@ -65,8 +64,7 @@
 			position:absolute;'>
 		{#each things as thing, index}
 			{#if index > 0}
-				<div
-					class='between-breadcrumbs'
+				<div class='between-breadcrumbs'
 					style='
 						top:5px;
 						position:absolute;
@@ -75,8 +73,7 @@
 					>
 				</div>
 			{/if}
-			<div
-				class='breadcrumb'
+			<div class='breadcrumb'
 				style='
 					top:0px;
 					position:absolute;'>

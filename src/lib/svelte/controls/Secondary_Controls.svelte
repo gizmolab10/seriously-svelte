@@ -22,7 +22,7 @@
 			origin={new Point(-($w_show_details ? 2 : 3), layout.controls_boxHeight - 6)}
 			corner_radius={k.radius.gull_wings.thick}
 			thickness={k.thickness.separator.main}
-			length={$w_graph_rect.size.width + ($w_show_details ? 7 : 2.5)}
+			length={$w_graph_rect.size.width + ($w_show_details ? 10 : 7)}
 			zindex={T_Layer.frontmost}
 			has_both_wings={true}
 			isHorizontal={true}/>

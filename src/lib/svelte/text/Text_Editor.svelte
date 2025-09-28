@@ -91,7 +91,7 @@
 			font-family: {$w_thing_fontFamily};
 			border-radius: {k.radius.text_area_border}px;
 		'/>
-	<div
+	<div class='clickable-label'
 		style='
 			width: 100%;
 			display: flex;

@@ -99,19 +99,6 @@ export default class Constants {
 		},
 	};
 
-	thickness = {
-		rotation_ring: 44,
-		paging_arc:	   15,
-		extra:		   12 + rubberband_thickness,
-		rubberband:	  	rubberband_thickness,
-		fork:		    2.5,
-		separator: {
-			main:		5,
-			banners:	2.5,
-			details:	0.75,
-		},
-	};
-
 	height = {
 		separator: 7,
 		empty:	   22,
@@ -133,6 +120,19 @@ export default class Constants {
 		common:		  dot_size,
 		segmented:	  dot_size + 1,
 		tree_prefs:	  36,
+	};
+
+	thickness = {
+		rotation_ring: 44,
+		paging_arc:	   15,
+		extra:		   12 + rubberband_thickness,
+		rubberband:	  	rubberband_thickness,
+		fork:		    2.5,
+		separator: {
+			main:		5,
+			banners:	2.5,
+			details:	0.75,
+		},
 	};
 	
 }

@@ -141,14 +141,13 @@
 
 {#key reattachments}
 	{#if !$w_ancestries_grabbed || $w_ancestries_grabbed.length == 0}
-		<div>
+		<div class='nothing-to-show'>
 			<p style='text-align:center; font-size:10px; position:relative; display:flex; align-items:center; justify-content:center;'>
 				{k.nothing_to_show}
 			</p>
 		</div>
 	{:else }
-		<div
-			class='actions'
+		<div class='actions'
 			style='
 				width: 100%;
 				position:relative;
@@ -156,8 +155,7 @@
 				z-index:{T_Layer.detailsPlus_2};
 				padding-bottom:{bottom_padding}px;'>
 			{#if $w_s_alteration}
-				<div
-					class='alteration-instructions'
+				<div class='alteration-instructions'
 					style='
 						width: 100%;
 						display:block;

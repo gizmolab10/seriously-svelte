@@ -66,8 +66,7 @@
 	<Radial_Rings/>
 	<Radial_Focus/>
 	{#key reattachments}
-		<div
-			class = 'necklace-of-widgets'
+		<div class = 'necklace-of-widgets'
 			style = 'z-index : {T_Layer.necklace};'>
 			{#each g_radial.g_necklace_widgets as g_necklace_widget}
 				<Widget g_widget = {g_necklace_widget}/>

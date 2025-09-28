@@ -100,7 +100,7 @@
 {/if}
 {#if !!title}
 	{#if handle_click}
-		<div
+		<div class='clickable-title'
 			style='
 				left:-1px;
 				width: 100%;
@@ -116,7 +116,7 @@
 				font_size={title_font_size}/>
 		</div>
 	{:else}
-		<div
+		<div class='static-title'
 			style='
 				z-index:{zindex};
 				padding: 0px 5px;

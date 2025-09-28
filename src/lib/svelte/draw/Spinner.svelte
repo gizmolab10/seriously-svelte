@@ -22,7 +22,7 @@
     }
 </script>
 
-<div
+<div class='spinner'
     style='
         position:relative;
         width:{diameter}px;
@@ -30,13 +30,12 @@
         --spinner-speed:{speed};
         --spinner-angle:{angle}deg;'>
     <svg width={diameter} height={diameter} viewBox={`0 0 ${diameter} ${diameter}`}>
-        <circle
+        <circle class='spinner-circle'
             cx={diameter/2}
             cy={diameter/2}
             stroke={stroke}
             fill='transparent'
             bind:this={circle}
-            class='spinner-circle'
             stroke-width={strokeWidth}
             r={(diameter - strokeWidth) / 2}
             stroke-dasharray='{dash_width} {dash_width}'/>

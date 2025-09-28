@@ -30,28 +30,33 @@
 	
 </script>
 
-<div style='position: relative; height: {height}px; top: {origin.y}px; left: {origin.x}px;'>
-<div style='
-	width: {width}px;
-	position: relative;
-	--border: {border};
-	align-items: center;
-	--height: {height}px;
-	--thumb-color: {thumb_color};
-	display: {isVisible ? "flex" : "none"};'>
-	<input
-		min='0'
-		step='1'
-		type='range'
-		max={divisions}
-		bind:value={slider_value}
-		style='flex: 1 1 auto; position: relative; min-width: 0;'/>
-		{#if show_value}
-			<span style='font-size: {title_font_size}px; margin-left: -26px; display: inline-block; width: 3.5em; text-align: right;'>
-				{value}
-			</span>
-		{/if}
-</div>
+<div class='slider'
+	style='
+		top: {origin.y}px;
+		left: {origin.x}px;
+		height: {height}px;
+		position: relative;'>
+	<div class='slider-border' style='
+		width: {width}px;
+		position: relative;
+		--border: {border};
+		align-items: center;
+		--height: {height}px;
+		--thumb-color: {thumb_color};
+		display: {isVisible ? "flex" : "none"};'>
+		<input class='slider-input'
+			min='0'
+			step='1'
+			type='range'
+			max={divisions}
+			bind:value={slider_value}
+			style='flex: 1 1 auto; position: relative; min-width: 0;'/>
+			{#if show_value}
+				<span style='font-size: {title_font_size}px; margin-left: -26px; display: inline-block; width: 3.5em; text-align: right;'>
+					{value}
+				</span>
+			{/if}
+	</div>
 </div>
 
 <style>

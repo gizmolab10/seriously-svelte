@@ -1,17 +1,31 @@
 <script lang="ts">
 	import { w_search_results_changed, w_search_result_row, w_show_search_controls } from '../../ts/managers/Stores';
-	import { w_search_state, w_separator_color } from '../../ts/managers/Stores';
-	import { u, ux, Thing,colors, T_Search } from '../../ts/common/Global_Imports';
+	import { w_graph_rect, w_search_state, w_separator_color } from '../../ts/managers/Stores';
+	import { k, u, ux, Thing,colors, T_Search } from '../../ts/common/Global_Imports';
 	import { search } from '../../ts/managers/Search';
 	let element: HTMLDivElement;
 	let results: Thing[] = [];
 
 	$: $w_search_results_changed, results = search.results;
-	$: $w_search_result_row, ux.element_set_focus_to(element);
+
+	$: {
+		const row = $w_search_result_row;
+		let selected_row: HTMLElement | null = null;
+		if (row !== null && !!element) {
+			selected_row = element.children[row] as HTMLElement;
+		}
+		ux.element_set_focus_to(element);
+		selected_row?.scrollIntoView({ block: 'nearest' });
+	}
 
 	function handle_row_selected(event: MouseEvent, index: number) {
-		search.set_result_row(event.shiftKey ? null : index);
-		u.grab_event(event);
+		const prior_row = $w_search_result_row;
+		if (prior_row !== null && prior_row === index) {
+			search.deactivate_focus_and_grab();
+		} else {
+			search.set_result_row(event.shiftKey ? null : index);
+			u.grab_event(event);
+		}
 	}
 
 	function highlightMatch(title: string, searchText: string) {
@@ -34,7 +48,7 @@
 
 </script>
 
-<div class='search-results' 
+<div class='search-results'
 	tabindex='0'>
 	{#key `${$w_separator_color}:::${$w_search_result_row}:::${$w_search_results_changed}`}
 		<ul bind:this={element}>
@@ -53,7 +67,6 @@
 		overflow: hidden; /* Prevent content from spilling outside */
 		outline: none !important;
 		position: absolute;
-		padding-top: 8px;
         z-index: 100;
 		height: 100%;
 		width: 100%;

@@ -240,12 +240,14 @@ export class Events {
 				const EXTREME = SHIFT && OPTION;
 				if (get(w_search_state) != T_Search.off) {
 					switch (key) {
-						case 'f':					search.activate(); break;
-						case 'arrowup':				search.next_row(false); break;
-						case 'arrowdown':			search.next_row(true); break;
+						case 'enter':	
 						case 'escape':
-						case 'enter':		    	search.deactivate_focus_and_grab(); break;	// stop searching
-						case 'tab':					search.set_result_row(0); break;
+						case 'arrowright':	    search.deactivate_focus_and_grab(); break;	// stop searching		
+						case 'arrowleft':		u.grab_event(event); w_search_state.set(T_Search.enter); break;
+						case 'tab':				search.set_result_row(0); break;
+						case 'arrowup':			u.grab_event(event); search.next_row(false); break;
+						case 'arrowdown':		u.grab_event(event); search.next_row(true); break;
+						case 'f':				search.activate(); break;			
 					}
 				} else {
 					if (c.allow_graph_editing) {
