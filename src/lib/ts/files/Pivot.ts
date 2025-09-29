@@ -28,7 +28,8 @@ class Pivot {
 		const isBookmark = dict['Type'] == 'bookmark' ? T_Thing.bookmark : T_Thing.generic;
 		const text = (isBookmark ? dict['Link'] : dict['Description']) ?? k.unknown;
 		const t_trait = isBookmark ? T_Trait.link : T_Trait.text;
-		const trait = h.trait_remember_runtimeCreate(h.db.idBase, Identifiable.newID(), thing_id, t_trait, text, dict);			// save dict in memory, but do not persist it
+		const trait = h.trait_remember_runtimeCreate(h.db.idBase, Identifiable.newID(), thing_id, t_trait, text);			// save dict in memory, but do not persist it
+		trait.dict = dict;
 		return trait;
 	}
 	
@@ -44,7 +45,7 @@ class Pivot {
 	create_tag_forThing_andKey_fromDict(thingID: string, tag_types: string): Tag | null {
 		if (!!tag_types) {
 			for (const tag_type of tag_types.split(',')) {
-				const tag = h.tag_remember_runtimeCreateUnique_byType(h.db.idBase, tag_type.trim(), [thingID.hash()]);
+				const tag = h.tag_remember_runtimeCreateUnique_byType(h.db.idBase, Identifiable.newID(), tag_type.trim(), [thingID.hash()]);
 				return tag;
 			}
 		}

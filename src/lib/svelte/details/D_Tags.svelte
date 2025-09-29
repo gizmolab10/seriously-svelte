@@ -7,20 +7,7 @@
     const width = 100;
 </script>
 
-{#if !$w_thing_tags || $w_thing_tags.length == 0}
-    <div class='tags'
-        style='
-            width: 100%;
-            display: flex;
-            position: relative;
-            text-align: center;
-            align-items: center;
-            justify-content: center;
-            min-height:{k.height.empty}px;
-            font-size:{k.font_size.details}px;'>
-            no tags
-    </div>
-{:else}
+{#if !!$w_thing_tags && $w_thing_tags.length > 0}
     <div class='tags-list'
         style='
             width:100%;
@@ -35,5 +22,18 @@
             min-height: {k.height.empty}px;
             font-size:{k.font_size.details}px;'>
         {$w_thing_tags.map(t => t.type).join(', ')}
+    </div>
+{:else}
+    <div class='no-tags'
+        style='
+            width: 100%;
+            display: flex;
+            position: relative;
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+            min-height:{k.height.empty}px;
+            font-size:{k.font_size.details}px;'>
+            no tags
     </div>
 {/if}

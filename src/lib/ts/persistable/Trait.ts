@@ -1,11 +1,13 @@
 import { k, Thing, databases, T_Trait, h } from '../common/Global_Imports';
 import { Persistable, T_Persistable } from '../common/Global_Imports';
+import type { Dictionary } from '../types/Types';
 import Airtable from 'airtable';
 
 export default class Trait extends Persistable {
 	t_trait: T_Trait = T_Trait.text;
 	ownerID: string = k.empty;
 	text: string = k.empty;
+	dict: Dictionary = {};	// need this for pivot data import
 
 	constructor(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string = k.empty, already_persisted: boolean = false) {
 		super(databases.db_now.t_database, idBase, T_Persistable.traits, id, already_persisted);

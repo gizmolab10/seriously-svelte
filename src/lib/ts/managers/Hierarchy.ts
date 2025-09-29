@@ -19,7 +19,7 @@ export type Relationships_ByHID = { [hid: Integer]: Array<Relationship> }
 export class Hierarchy {
 	private predicate_byDirection: { [direction: number]: Array<Predicate> } = {};
 	private relationships_byKind: { [kind: string]: Array<Relationship> } = {};
-	private ancestry_byKind_andHID: { [kind: string]: Ancestries_ByHID } = {};					// for uniqueness
+	private ancestry_byKind_andHID: { [kind: string]: Ancestries_ByHID } = {};
 	private ancestries_byThingHID: { [hid: Integer]: Array<Ancestry> } = {};
 	private traits_byOwnerHID: { [ownerHID: Integer]: Array<Trait> } = {};
 	private things_byT_Trait: { [t_trait: string]: Array<Thing> } = {};
@@ -40,6 +40,7 @@ export class Hierarchy {
 	private user_byHID: { [hid: Integer]: User } = {};
 	private tag_byType: { [type: string]: Tag } = {};
 	private tag_byHID: { [hid: Integer]: Tag } = {};
+
 	ids_translated: { [prior: string]: string } = {};
 	replace_rootID: string | null = k.empty;		// required for DB_Local at launch
 	relationships: Array<Relationship> = [];
@@ -1214,6 +1215,7 @@ export class Hierarchy {
 	tags_forget_all() {
 		this.tags_byThingHID = {};
 		this.tag_byType = {};
+		this.tag_byHID = {};
 		this.tags = [];
 	}
 
@@ -1247,31 +1249,65 @@ export class Hierarchy {
 	}
 
 	tag_forget(tag: Tag) {
-		delete this.tag_byHID[tag.hid];
-		delete this.tag_byType[tag.type];
-		for (const hid of tag.thingHIDs) {
-			const tags: Array<Tag> = this.tags_byThingHID[hid] ?? [];
-			this.tags_byThingHID[hid] = tags.filter(t => t != tag);
-		}
+		this.tag_addTo_known_tags(tag, false);
+		this.tag_addTo_known_tags_byHID(tag, false);
+		this.tag_addTo_known_tags_byType(tag, false);
+		this.tag_addTo_known_tags_byThingHID(tag, false);
 	}
 
 	tag_remember(tag: Tag) {
-		this.tags.push(tag);
-		this.tag_byHID[tag.hid] = tag;
-		this.tag_byType[tag.type] = tag;
-		for (const hid of tag.thingHIDs) {
-			const tags: Array<Tag> = this.tags_byThingHID[hid] ?? [];
-			if (!tags.includes(tag)) {
-				tags.push(tag)
-				this.tags_byThingHID[hid] = tags;
-			}
+		this.tag_addTo_known_tags(tag);
+		this.tag_addTo_known_tags_byHID(tag);
+		this.tag_addTo_known_tags_byType(tag);
+		this.tag_addTo_known_tags_byThingHID(tag);
+	}
+
+	// create toggles for each index!
+
+	tag_addTo_known_tags(tag: Tag, add: boolean = true) {
+		const exists = this.tags.some(t => t.hid === tag.hid);
+		if (add && !exists) {
+			this.tags.push(tag);
+		} else if (!add && !!exists) {
+			u.remove(this.tags, tag);
 		}
 	}
 
-	tag_remember_runtimeCreateUnique_byType(idBase: string, type: string, thingHIDs: Array<Integer>, already_persisted: boolean = false): Tag {
+	tag_addTo_known_tags_byHID(tag: Tag, add: boolean = true) {
+		if (!add) {
+			delete this.tag_byHID[tag.hid];
+		} else if (!this.tag_byHID[tag.hid]) {
+			this.tag_byHID[tag.hid] = tag;
+		}
+	}
+
+	tag_addTo_known_tags_byType(tag: Tag, add: boolean = true) {
+		if (!add) {
+			delete this.tag_byType[tag.type];
+		} else if (!this.tag_byType[tag.type]) {
+			this.tag_byType[tag.type] = tag;
+		}
+	}
+
+	tag_addTo_known_tags_byThingHID(tag: Tag, add: boolean = true) {
+		for (const hid of tag.thingHIDs) {
+			let tags = this.tags_byThingHID[hid];
+			if (!add && !!tags) {
+				u.remove(tags, tag);
+			} else {
+				tags = tags ?? [];
+				if (!tags.some(t => t.hid === tag.hid)) {
+					tags.push(tag);
+				}
+			}
+			this.tags_byThingHID[hid] = tags;
+		}
+	}
+
+	tag_remember_runtimeCreateUnique_byType(idBase: string, id: string, type: string, thingHIDs: Array<Integer>, already_persisted: boolean = false): Tag {
 		let tag = this.tag_forType(type);
 		if (!tag) {
-			tag = this.tag_remember_runtimeCreate(idBase, Identifiable.newID(), type, thingHIDs, already_persisted);
+			tag = this.tag_remember_runtimeCreate(idBase, id, type, thingHIDs, already_persisted);
 		} else {
 			tag.thingHIDs = u.uniquely_concatenateArrays(tag.thingHIDs, thingHIDs);
 			if (!already_persisted) {
@@ -1471,7 +1507,7 @@ export class Hierarchy {
 	forget_all() {
 		this.things_forget_all();
 		this.traits_forget_all();
-		// this.predicates_forget_all();
+		this.tags_forget_all();
 		this.ancestries_forget_all();
 		this.relationships_forget_all();
 	}
@@ -1480,6 +1516,7 @@ export class Hierarchy {
 		this.ancestries_forget_all();
 		this.things_refreshKnowns();
 		this.traits_refreshKnowns();
+		this.tags_refreshKnowns();
 		this.predicates_refreshKnowns();
 		this.relationships_refreshKnowns();
 	}

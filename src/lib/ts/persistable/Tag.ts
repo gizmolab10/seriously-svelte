@@ -5,6 +5,12 @@ import Persistable from './Persistable';
 export default class Tag extends Persistable {
 	thingHIDs: Array<Integer> = [];
 	type: string = '';
+	
+	constructor(idBase: string, id: string, type: string, thingHIDs: Array<Integer>, already_persisted: boolean = false) {
+		super(databases.db_now.t_database, idBase, T_Persistable.tags, id, already_persisted);
+		this.thingHIDs = thingHIDs;
+		this.type = type;
+	}
 
 	get things(): Array<Thing> {
 		return this.thingHIDs.map(hid => h.thing_forHID(hid)).filter(thing => !!thing) as Array<Thing>;
@@ -16,12 +22,6 @@ export default class Tag extends Persistable {
 			return things[index];
 		}
 		return null;
-	}
-	
-	constructor(idBase: string, id: string, type: string, thingHIDs: Array<Integer>, already_persisted: boolean = false) {
-		super(databases.db_now.t_database, idBase, T_Persistable.tags, id, already_persisted);
-		this.thingHIDs = thingHIDs;
-		this.type = type;
 	}
 
 	async persistent_create_orUpdate(already_persisted: boolean) {
