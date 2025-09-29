@@ -1,7 +1,7 @@
 import { w_search_results_found, w_search_result_row, w_search_results_changed } from './Stores';
 import { T_Search, T_Startup, T_Preference, grabs } from "../common/Global_Imports";
 import { c, k, h, p, Thing, Ancestry } from "../common/Global_Imports";
-import { w_search_state, w_show_search_controls } from './Stores';
+import { w_search_state, w_search_show_controls } from './Stores';
 import { Search_Node } from '../types/Search_Node';
 import { w_t_startup } from './Stores';
 import { get } from 'svelte/store';
@@ -12,7 +12,7 @@ class Search {
 	private root_node: Search_Node = new Search_Node();
 
 	get selected_row(): number | null { return get(w_search_result_row); }
-	activate() { w_search_state.set(T_Search.enter); w_show_search_controls.set(true); }
+	activate() { w_search_state.set(T_Search.enter); w_search_show_controls.set(true); }
 
 	set_result_row(row: number) {
 		w_search_result_row.set(row);
@@ -22,12 +22,12 @@ class Search {
 	deactivate() {
 		w_search_results_found.set(0);
 		w_search_state.set(T_Search.off);
-		w_show_search_controls.set(false);
+		w_search_show_controls.set(false);
 	}
 
 	get result_ancestry(): Ancestry | null {
 		const row = this.selected_row;
-		if (row !== null && !!get(w_show_search_controls)) {
+		if (row !== null && !!get(w_search_show_controls)) {
 			const thing = this.results[row];
 			return thing?.ancestry ?? null;
 		}
@@ -77,7 +77,7 @@ class Search {
 		if (before !== this.results_fingerprint) {	// only if results are different
 			w_search_result_row.set(null);
 		}
-		w_show_search_controls.set(T_Search.off != get(w_search_state));
+		w_search_show_controls.set(T_Search.off != get(w_search_state));
 		w_search_results_changed.set(Date.now());
 	}
 

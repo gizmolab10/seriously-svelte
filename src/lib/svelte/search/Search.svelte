@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { T_Search, T_Layer, T_Control, T_Element, T_Preference, T_Search_Filter } from '../../ts/common/Global_Imports';
-	import { w_search_results_found, w_show_search_controls } from '../../ts/managers/Stores';
-	import { w_search_filter, w_search_state } from '../../ts/managers/Stores';
+	import { T_Search, T_Layer, T_Control, T_Element, T_Preference, T_Search_Preference } from '../../ts/common/Global_Imports';
+	import { w_search_results_found, w_search_show_controls } from '../../ts/managers/Stores';
+	import { w_search_preferences, w_search_state } from '../../ts/managers/Stores';
 	import { e, k, p, u, ux, Point } from '../../ts/common/Global_Imports';
 	import { w_thing_fontFamily } from '../../ts/managers/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
@@ -43,7 +43,7 @@
 		left: {left}px;
 		position: absolute;
 		z-index: {T_Layer.frontmost};'>
-	{#if $w_show_search_controls}
+	{#if $w_search_show_controls}
 		<input class='search-input'
 			id='search'
 			type='search'
@@ -51,7 +51,7 @@
 			autocomplete='off'
 			on:input={handle_input}
 			bind:value={search.search_text}
-			placeholder={'enter ' + $w_search_filter + ' text'}
+			placeholder={'enter ' + $w_search_preferences + ' text'}
 			style='
 				top: 1px;
 				left: 88px;

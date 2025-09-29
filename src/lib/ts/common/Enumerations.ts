@@ -99,7 +99,7 @@ export enum T_Theme {
 	bubble	   = 'bubble',
 }
 
-export enum T_Search_Filter {
+export enum T_Search_Preference {
 	title = 'title',
 	trait = 'trait',
 	tags  = 'tags',

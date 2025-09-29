@@ -1,5 +1,5 @@
 import { h, k, p, u, ux, debug, g_tree, g_radial, signals, T_Graph } from '../common/Global_Imports';
-import { w_show_details, w_show_graph_ofType, w_show_search_controls } from '../managers/Stores';
+import { w_show_details, w_show_graph_ofType, w_search_show_controls } from '../managers/Stores';
 import { G_Widget, S_Component, T_Preference } from '../common/Global_Imports';
 import { Rect, Size, Point, Thing, Ancestry } from '../common/Global_Imports';
 import { w_user_graph_offset, w_user_graph_center } from '../managers/Stores';
@@ -24,7 +24,7 @@ export default class G_Layout {
 
 	update_graphRect() {
 		// respond to changes in: window size & details visibility
-		const show_secondary_controls = get(w_show_search_controls) || (get(w_show_graph_ofType) == T_Graph.tree);
+		const show_secondary_controls = get(w_search_show_controls) || (get(w_show_graph_ofType) == T_Graph.tree);
 		const y = (this.controls_boxHeight) * (show_secondary_controls ? 2 : 1) - 4;	// below primary and secondary controls
 		const x = get(w_show_details) ? k.width.details : 0;								// right of details
 		const origin_ofGraph = new Point(x, y);

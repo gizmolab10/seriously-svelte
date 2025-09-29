@@ -1,6 +1,6 @@
-import { T_Graph, T_Search_Filter, T_Control, T_Element, T_Kinship, debug } from '../common/Global_Imports';
+import { T_Graph, T_Search_Preference, T_Control, T_Element, T_Kinship, debug } from '../common/Global_Imports';
 import { p, grabs, colors, layout, Ancestry } from '../common/Global_Imports';
-import { w_search_filter, w_show_graph_ofType } from '../managers/Stores';
+import { w_search_preferences, w_show_graph_ofType } from '../managers/Stores';
 import { S_Mouse, S_Widget, S_Element } from '../common/Global_Imports';
 import { w_show_tree_ofType, w_depth_limit } from '../managers/Stores';
 import { w_show_related, w_ancestry_focus } from '../managers/Stores';
@@ -120,7 +120,7 @@ export default class S_UX {
 	handle_choiceOf_t_graph(name: string, types: string[]) {
 		switch (name) {
 			case 'graph': w_show_graph_ofType.set(types[0] as unknown as T_Graph); break;
-			case 'filter': w_search_filter.set(types[0] as unknown as T_Search_Filter); break;
+			case 'filter': w_search_preferences.set(types[0] as unknown as T_Search_Preference); break;
 			case 'tree': this.set_tree_types(types as Array<T_Kinship>); break;
 		}
 	}

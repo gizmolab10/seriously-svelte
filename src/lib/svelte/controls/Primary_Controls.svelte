@@ -1,9 +1,9 @@
 <script lang='ts'>
-	import { T_Layer, T_Graph, T_Search_Filter, T_Search, S_Element, T_Element, T_Control, T_Kinship, T_Request } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Graph, T_Search_Preference, T_Search, S_Element, T_Element, T_Control, T_Kinship, T_Request } from '../../ts/common/Global_Imports';
 	import { c, e, h, k, p, u, ux, show, grabs, Point, search, colors, layout, svgPaths, signals } from '../../ts/common/Global_Imports';
 	import { w_background_color, w_device_isMobile, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { w_show_details, w_show_graph_ofType, w_show_tree_ofType } from '../../ts/managers/Stores';
-	import { w_search_filter, w_search_state, w_show_search_controls } from '../../ts/managers/Stores';
+	import { w_search_preferences, w_search_state, w_search_show_controls } from '../../ts/managers/Stores';
 	import { w_graph_rect, w_count_window_resized, w_popupView_id } from '../../ts/managers/Stores';
 	import Next_Previous from '../mouse/Next_Previous.svelte';
 	import Identifiable from '../../ts/runtime/Identifiable';
@@ -44,7 +44,7 @@
 	function layout_controls() {
 		const left_widths = {
 			0: c.show_details_button ? 18 : -7,			// details
-			1: !$w_show_search_controls ? 11 : c.show_details_button ? 11 : 11,	// recents / search
+			1: !$w_search_show_controls ? 11 : c.show_details_button ? 11 : 11,	// recents / search
 			2: 57,	// graph type
 			3: 100,	// plus
 			4: 26,	// minus
@@ -96,7 +96,7 @@
 					left={-54 - (c.show_details_button ? 0 : 26)}
 					width={lefts[7] + (c.show_details_button ? 0 : 26)}/>
 			{/if}
-			{#if !c.allow_search || !$w_show_search_controls}
+			{#if !c.allow_search || !$w_search_show_controls}
 				<Next_Previous name='recents'
 					size={28}
 					has_title={false}

@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { c, k, Point, layout, T_Layer, T_Graph, T_Details, T_Direction } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_count_details, w_ancestries_grabbed } from '../../ts/managers/Stores';
-	import { w_show_graph_ofType, w_show_search_controls } from '../../ts/managers/Stores';
+	import { w_show_graph_ofType, w_search_show_controls } from '../../ts/managers/Stores';
 	import Banner_Hideable from './Banner_Hideable.svelte';
 	import D_Preferences from './D_Preferences.svelte';
 	import Separator from '../draw/Separator.svelte';
@@ -15,7 +15,7 @@
 	const width = k.width.details;
 	let extra_selection_titles = [];
 	let prior_graph_type = $w_show_graph_ofType;
-	let show_secondary_controls = $w_show_search_controls || ($w_show_graph_ofType == T_Graph.tree);
+	let show_secondary_controls = $w_search_show_controls || ($w_show_graph_ofType == T_Graph.tree);
 
 	$: {
 		const length = $w_ancestries_grabbed?.length ?? 0;
@@ -24,7 +24,7 @@
 	}
 
 	$: if (prior_graph_type != $w_show_graph_ofType) {
-		show_secondary_controls = $w_show_search_controls || ($w_show_graph_ofType == T_Graph.tree);
+		show_secondary_controls = $w_search_show_controls || ($w_show_graph_ofType == T_Graph.tree);
 		prior_graph_type = $w_show_graph_ofType;
 		$w_count_details++;
 	}

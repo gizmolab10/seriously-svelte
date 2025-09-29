@@ -1,6 +1,7 @@
-import { T_Graph, T_Search, T_Kinship, T_Details, T_Startup, T_Auto_Adjust, T_Dragging, T_Search_Filter, Thing } from '../common/Global_Imports';
 import { Tag, Rect, Point, Trait, colors, Ancestry, Hierarchy } from '../common/Global_Imports';
+import { T_Graph, T_Kinship, T_Details, T_Startup, T_Dragging } from '../common/Global_Imports';
 import { G_Paging, G_Cluster, S_Title_Edit, S_Alteration } from '../common/Global_Imports';
+import { T_Search, T_Auto_Adjust, T_Search_Preference } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
 
 const _____VISIBILITY: unique symbol = Symbol('VISIBILITY');
@@ -15,13 +16,13 @@ export const w_show_details				= writable<boolean>();
 
 const _____THING: unique symbol = Symbol('THING');
 
+export const w_tag_thing_index			= writable<number>();
+export const w_relationship_order		= writable<number>();
+export const w_thing_fontFamily			= writable<string>();
 export const w_thing_tags				= writable<Array<Tag>>();
 export const w_thing_traits				= writable<Array<Trait>>();
 export const w_thing_title				= writable<string | null>();
 export const w_thing_color				= writable<string | null>();
-export const w_thing_fontFamily			= writable<string>();
-export const w_tag_thing_index			= writable<number>();
-export const w_relationship_order		= writable<number>();
 export const w_s_alteration				= writable<S_Alteration | null>();
 export const w_s_title_edit				= writable<S_Title_Edit | null>();
 
@@ -29,15 +30,15 @@ const _____ANCESTRY: unique symbol = Symbol('ANCESTRY');
 
 export const w_ancestries_expanded		= writable<Array<Ancestry>>();
 export const w_ancestries_grabbed		= writable<Array<Ancestry>>();
-export const w_ancestry_focus			= writable<Ancestry>();
 export const w_hierarchy				= writable<Hierarchy>();
+export const w_ancestry_focus			= writable<Ancestry>();
 
 const _____RADIAL: unique symbol = Symbol('RADIAL');
 
-export const w_g_paging_cluster			= writable<G_Cluster | null>();
 export const w_ring_rotation_radius		= writable<number>();
 export const w_ring_rotation_angle		= writable<number>();
 export const w_g_paging					= writable<G_Paging>();
+export const w_g_paging_cluster			= writable<G_Cluster | null>();
 
 const _____GEOMETRY: unique symbol = Symbol('GEOMETRY');
 
@@ -55,12 +56,12 @@ export const w_data_updated				= writable<number>();
 
 const _____SEARCH: unique symbol = Symbol('SEARCH');
 
-export const w_show_search_controls		= writable<boolean>();
+export const w_search_show_controls		= writable<boolean>();
 export const w_search_results_found		= writable<number>();
-export const w_search_results_changed	= writable<number>();			// re-render the search results
-export const w_search_result_row		= writable<number | null>();	// affects appearance of search_results, [three] details and breadcrumbs
-export const w_search_state				= writable<T_Search>();			// observed by search_results, controls, and panel
-export const w_search_filter			= writable<T_Search_Filter>();	// TBD
+export const w_search_results_changed	= writable<number>();				// re-render the search results
+export const w_search_state				= writable<T_Search>();				// observed by search_results, controls, and panel
+export const w_search_result_row		= writable<number | null>();		// affects appearance of search_results, [three] details and breadcrumbs
+export const w_search_preferences		= writable<T_Search_Preference>();	// TBD
 
 const _____COUNTS: unique symbol = Symbol('COUNTS');
 
@@ -71,16 +72,16 @@ export const w_count_details			= writable<number>();
 
 const _____OTHER: unique symbol = Symbol('OTHER');
 
-export const w_t_startup				= writable<T_Startup>();
-export const w_dragging_active			= writable<T_Dragging>();
 export const w_auto_adjust_graph		= writable<T_Auto_Adjust | null>();
-export const w_popupView_id				= writable<string | null>();
+export const w_dragging_active			= writable<T_Dragging>();
+export const w_t_startup				= writable<T_Startup>();
 export const w_control_key_down			= writable<boolean>(false);
 export const w_device_isMobile			= writable<boolean>();
-export const w_background_color			= writable<string>();
-export const w_separator_color			= writable<string>();
 export const w_depth_limit				= writable<number>();
 export const w_font_size				= writable<number>();
+export const w_background_color			= writable<string>();
+export const w_separator_color			= writable<string>();
+export const w_popupView_id				= writable<string | null>();
 
 class Stores {
 	setup_defaults() {
@@ -95,7 +96,7 @@ class Stores {
 		w_t_startup.set(T_Startup.start);
 		w_search_state.set(T_Search.off);
 		w_separator_color.set(colors.separator);
-		w_search_filter.set(T_Search_Filter.title);
+		w_search_preferences.set(T_Search_Preference.title);
 	}
 }
 
