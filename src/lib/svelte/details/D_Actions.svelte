@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { T_Layer, T_Details, T_Action, T_Element, T_Kinship, T_Request, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Detail, T_Action, T_Element, T_Kinship, T_Request, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
 	import { c, e, h, k, u, ux, show, Size, Point, grabs, colors, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
 	import { w_depth_limit, w_user_graph_offset, w_show_graph_ofType, w_search_result_row } from '../../ts/managers/Stores';
 	import { w_s_alteration, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/managers/Stores';
@@ -19,7 +19,7 @@
 	const table_width = k.width.details - 8;
 	const bottom_padding = bottom_tableHeight - 48;
     const font_sizes = [k.font_size.instructions, k.font_size.instructions];
-    const s_banner_hideable = s_details.s_banner_hideables_byType[T_Details.actions];
+    const s_banner_hideable = s_details.s_banner_hideables_byType[T_Detail.actions];
 	const s_cancel = ux.s_element_for(grabs.ancestry_forInformation, T_Element.cancel, k.empty);
 	let list_title = grabs.ancestry_forInformation?.isExpanded && ux.inTreeMode ? 'hide list' : 'list';
 	let button_titles = compute_button_titles();

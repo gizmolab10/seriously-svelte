@@ -17,6 +17,10 @@ export class Grabs {
 		});
 	}
 
+	get index_ofAncestry(): number {
+		return this.s_grabbed_ancestries.index_ofItem;
+	}
+
 	get ancestry(): Ancestry | null {
 		return (this.s_grabbed_ancestries.item as Ancestry) ?? this.latest_upward(true);
 	}

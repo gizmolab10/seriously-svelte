@@ -1,21 +1,24 @@
 <script lang='ts'>
-    import { c, e, k, u, show, Rect, Size, Point, colors, svgPaths, T_Layer } from '../../ts/common/Global_Imports';
+    import { c, e, k, u, show, colors, svgPaths } from '../../ts/common/Global_Imports';
+    import { Rect, Size, Point, T_Layer } from '../../ts/common/Global_Imports';
 	import { w_background_color } from '../../ts/managers/Stores';
     import SVG_Gradient from '../draw/SVG_Gradient.svelte';
-    import Button from './Button.svelte';
-    export let width: number;
-    export let height: number;
-    export let owner = k.empty;
-    export let title = k.empty;
-    export let detect_autorepeat: boolean = false;
-    export let font_size: number = k.font_size.banners;
     export let handle_click: (title: string) => boolean;
-    const mouseTimer = e.mouse_timer_forName(`glow-button-${owner}-${title}`);
+    export let font_size: number = k.font_size.banners;
+    export let detect_autorepeat: boolean = false;
+    export let banner_id: string = k.empty;
+    export let title = k.empty;
+    export let name = k.empty;
+    export let height: number;
+    export let width: number;
+    const gradient_name = 'glow-' + banner_id;
+    const icon_path = svgPaths.path_for(title);
     const glow_rect = Rect.createWHRect(width, height);
-    const gradient_name = 'glow-' + title;
-    let isHovering = false;
-    let banner_color = colors.banner;
+    const click_title = !!icon_path ? title : banner_id;
+    const mouseTimer = e.mouse_timer_forName(`glow-button-${banner_id}-${click_title}`);
     let glow_button: HTMLElement | null = null;
+    let banner_color = colors.banner;
+    let isHovering = false;
 
 	$: {
 		const _ = $w_background_color;
@@ -23,13 +26,13 @@
 	}
     
     function intercept_click() {
-        handle_click(title);
+        handle_click(click_title);
         isHovering = false;
     }
 
     function handle_mouse_down() {
         if (detect_autorepeat) {
-            mouseTimer.autorepeat_start(0, () => handle_click(title));
+            mouseTimer.autorepeat_start(0, () => handle_click(click_title));
         }
     }
 
@@ -85,11 +88,11 @@
             -webkit-user-select: none;
             background-color: transparent;
             transform: translate(-50%, -50%);'>
-        {#if svgPaths.hasPath_for(title)}
+        {#if !!icon_path}
             <svg
                 viewBox='-2.2 -3.2 20 20'
                 class='svg-glow-button-path'>
-                <path d={svgPaths.path_for(title)} stroke={colors.border} fill={isHovering ? 'black' : 'white'} stroke-width='0.75'/>
+                <path d={icon_path} stroke={colors.border} fill={isHovering ? 'black' : 'white'} stroke-width='0.75'/>
             </svg>
         {:else}
             {title}

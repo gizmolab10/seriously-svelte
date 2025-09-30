@@ -64,21 +64,21 @@
 			color = thing.color;
 			characteristics = [
 				['modified', thing.persistence.lastModifyDate.toLocaleString()],
-				['color', ancestry.isEditable ? k.empty : 'not editable'],
+				['color',	 ancestry.isEditable ? k.empty : 'not editable'],
 				['children', ancestry.children.length.supressZero()],
-				['parents', thing.parents.length.supressZero()],
+				['parents',  thing.parents.length.supressZero()],
 				['relateds', thing.relatedRelationships.length.supressZero()],
 			];
 			properties = [
-				['id', thing.id.beginWithEllipsis_forLength(17)],
-				['ancestry', ancestry.id.beginWithEllipsis_forLength(19)],
-				['kind', ancestry.predicate.kind],
-				['type', Object.keys(T_Thing).find(k => T_Thing[k] === thing.t_thing)],
+				['id',		 thing.id.beginWithEllipsis_forLength(15)],
+				['ancestry', ancestry.id.beginWithEllipsis_forLength(15)],
+				['kind',	 ancestry.predicate.kind],
+				['type',	 Object.keys(T_Thing).find(k => T_Thing[k] === thing.t_thing)],
 			];
 			relationships = [
-				['progeny', ancestry.progeny_count().supressZero()],
-				['depth', ancestry.depth.supressZero()],
-				['order', ancestry.order.supressNegative()],
+				['progeny',	 ancestry.progeny_count().supressZero()],
+				['depth',	 ancestry.depth.supressZero()],
+				['order',	 ancestry.order.supressNegative()],
 			];
 			layout_forColor();
 		}

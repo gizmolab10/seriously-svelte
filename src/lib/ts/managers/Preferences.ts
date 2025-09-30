@@ -1,4 +1,4 @@
-import { G_Paging, T_Graph, T_Details, T_Kinship, T_Preference, T_Auto_Adjust, T_Startup } from '../common/Global_Imports';
+import { G_Paging, T_Graph, T_Detail, T_Kinship, T_Preference, T_Auto_Adjust, T_Startup } from '../common/Global_Imports';
 import { c, h, k, u, show, grabs, debug, radial, colors, Ancestry, databases } from '../common/Global_Imports';
 import { w_ancestry_focus, w_ancestries_grabbed, w_ancestries_expanded, w_t_startup } from './Stores';
 import { w_auto_adjust_graph, w_show_tree_ofType, w_show_graph_ofType } from './Stores';
@@ -245,7 +245,7 @@ export class Preferences {
 		w_show_tree_ofType		.set( this.read_key(T_Preference.tree)					?? T_Kinship.children);
 		w_show_graph_ofType		.set( this.read_key(T_Preference.graph)					?? T_Graph.tree);
 		w_show_countDots_ofType	.set( this.read_key(T_Preference.countDots)				?? [T_Kinship.children]);
-		w_show_details_ofType	.set( this.read_key(T_Preference.detail_types)			?? [T_Details.actions, T_Details.data]);
+		w_show_details_ofType	.set( this.read_key(T_Preference.detail_types)			?? [T_Detail.actions, T_Detail.data]);
 
 		// RADIAL
 		w_ring_rotation_angle	.set( this.read_key(T_Preference.ring_angle)			?? 0);

@@ -2,8 +2,8 @@
 	import { T_Search, T_Layer, T_Control, T_Element, T_Preference, T_Search_Preference } from '../../ts/common/Global_Imports';
 	import { w_search_results_found, w_search_show_controls } from '../../ts/managers/Stores';
 	import { w_search_preferences, w_search_state } from '../../ts/managers/Stores';
+	import { w_show_details, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { e, k, p, u, ux, Point } from '../../ts/common/Global_Imports';
-	import { w_thing_fontFamily } from '../../ts/managers/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Close_Button from '../mouse/Close_Button.svelte';
 	import { search } from '../../ts/managers/Search';
@@ -12,8 +12,8 @@
 	export let left: number;
 	export let top: number;
 	const size_big = k.height.dot * 1.4;
-	const right_rights = [10, 10.5, 66, 33, 60];
-	const rights = u.cumulativeSum(right_rights).map((right, index) => width - right);
+	const right_widths = [10, 10.5, $w_show_details ? 5 : 86, 33, 60];
+	const rights = u.cumulativeSum(right_widths).map((right, index) => width - right);
 	const s_search = ux.s_element_for(null, T_Element.search, k.empty);
 	let input: HTMLInputElement;
 
@@ -65,7 +65,7 @@
 				height: {k.height.button + 2}px;
 				font-family: {$w_thing_fontFamily};
 				width: {rights[$w_search_results_found == 0 ? 3 : 4]}px;'/>
-			{#if $w_search_results_found > 0}
+			{#if $w_search_results_found > 0 && !$w_show_details}
 				<div class='search-results-found'
 					style='
 						top: 4px;
@@ -73,7 +73,7 @@
 						text-align: center;
 						position: absolute;
 						left: {rights[2] - 2}px;
-						width: {right_rights[2]}px;
+						width: {right_widths[2]}px;
 						font-family: {$w_thing_fontFamily};'>
 					{$w_search_results_found} match{$w_search_results_found == 1 ? '' : 'es'}
 				</div>

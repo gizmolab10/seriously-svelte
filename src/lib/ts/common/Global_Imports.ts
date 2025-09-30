@@ -20,7 +20,7 @@ import { T_Thing, T_Trait, T_Predicate } from './Enumerations';
 import { T_Signal, T_Element, T_Component } from './Enumerations';
 import { T_Create, T_Browser, T_Alteration } from './Enumerations';
 import { T_Tree_Line, T_Order, T_Widget, T_Layer } from './Enumerations';
-import { T_Action, T_Details, T_Request, T_Storage_Need } from './Enumerations';
+import { T_Action, T_Detail, T_Request, T_Storage_Need } from './Enumerations';
 import { T_Kinship, T_Radial_Zone, T_Preference, T_Auto_Adjust } from './Enumerations';
 import { T_Dragging, T_File_Format, T_File_Operation, T_Startup } from './Enumerations';
 
@@ -111,7 +111,7 @@ export {
 	T_Startup, T_Dragging, T_Alteration,
 	T_Create, T_Persistable, T_Persistence,
 	T_Quadrant, T_Orientation, T_Direction,
-	T_Banner, T_Details, T_Request, T_Action,
+	T_Banner, T_Detail, T_Request, T_Action,
 	T_Signal, T_Element, T_Control, T_Component,
 	T_Layer, T_Tree_Line, T_Radial_Zone, T_Oblong,
 	T_File_Format, T_File_Operation, T_Storage_Need,

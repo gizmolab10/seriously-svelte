@@ -1,5 +1,5 @@
 import { Tag, Rect, Point, Trait, colors, Ancestry, Hierarchy } from '../common/Global_Imports';
-import { T_Graph, T_Kinship, T_Details, T_Startup, T_Dragging } from '../common/Global_Imports';
+import { T_Graph, T_Kinship, T_Detail, T_Startup, T_Dragging } from '../common/Global_Imports';
 import { G_Paging, G_Cluster, S_Title_Edit, S_Alteration } from '../common/Global_Imports';
 import { T_Search, T_Auto_Adjust, T_Search_Preference } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
@@ -8,7 +8,7 @@ const _____VISIBILITY: unique symbol = Symbol('VISIBILITY');
 
 export const w_show_tree_ofType			= writable<Array<T_Kinship>>();
 export const w_show_countDots_ofType	= writable<Array<T_Kinship>>();
-export const w_show_details_ofType		= writable<Array<T_Details>>();
+export const w_show_details_ofType		= writable<Array<T_Detail>>();
 export const w_show_directionals_ofType	= writable<string[]>();
 export const w_show_graph_ofType		= writable<T_Graph>();
 export const w_show_related				= writable<boolean>();

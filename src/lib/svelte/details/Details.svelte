@@ -1,7 +1,8 @@
 <script lang='ts'>
-	import { c, k, Point, layout, T_Layer, T_Graph, T_Details, T_Direction } from '../../ts/common/Global_Imports';
-	import { w_graph_rect, w_count_details, w_ancestries_grabbed } from '../../ts/managers/Stores';
-	import { w_show_graph_ofType, w_search_show_controls } from '../../ts/managers/Stores';
+	import { c, k, Point, layout, T_Layer, T_Graph, T_Detail, T_Direction } from '../../ts/common/Global_Imports';
+	import { w_search_state, w_search_result_row, w_search_show_controls } from '../../ts/managers/Stores';
+	import { w_count_details, w_ancestries_grabbed } from '../../ts/managers/Stores';
+	import { w_graph_rect, w_show_graph_ofType } from '../../ts/managers/Stores';
 	import Banner_Hideable from './Banner_Hideable.svelte';
 	import D_Preferences from './D_Preferences.svelte';
 	import Separator from '../draw/Separator.svelte';
@@ -18,6 +19,7 @@
 	let show_secondary_controls = $w_search_show_controls || ($w_show_graph_ofType == T_Graph.tree);
 
 	$: {
+		const _ = `${$w_search_state}:::${$w_search_result_row}:::${$w_ancestries_grabbed?.map(a => a.titles.join(',')).join('-') ?? k.empty}`;
 		const length = $w_ancestries_grabbed?.length ?? 0;
 		extra_selection_titles = length < 2 ? [] : next_previous_titles;
 		$w_count_details++;
@@ -45,28 +47,28 @@
 			top:{layout.controls_boxHeight}px;
 			width:{k.width.details - 6}px;
 			height:{$w_graph_rect.size.height}px;'>
-		<Banner_Hideable t_detail={T_Details.header}>
+		<Banner_Hideable t_detail={T_Detail.header}>
 			<D_Header/>
 		</Banner_Hideable>
 		{#if c.show_standalone_UI}
-			<Banner_Hideable t_detail={T_Details.preferences}>
+			<Banner_Hideable t_detail={T_Detail.preferences}>
 				<D_Preferences/>
 			</Banner_Hideable>
 		{/if}
-		<Banner_Hideable t_detail={T_Details.actions}>
+		<Banner_Hideable t_detail={T_Detail.actions}>
 			<D_Actions/>
 		</Banner_Hideable>
 		{#if c.show_standalone_UI}
-			<Banner_Hideable t_detail={T_Details.selection} extra_titles={extra_selection_titles}>
+			<Banner_Hideable t_detail={T_Detail.selection} extra_titles={extra_selection_titles}>
 				<D_Selection/>
 			</Banner_Hideable>
-			<Banner_Hideable t_detail={T_Details.tags} extra_titles={next_previous_titles}>
+			<Banner_Hideable t_detail={T_Detail.tags} extra_titles={next_previous_titles}>
 				<D_Tags/>
 			</Banner_Hideable>
-			<Banner_Hideable t_detail={T_Details.traits} extra_titles={next_previous_titles}>
+			<Banner_Hideable t_detail={T_Detail.traits} extra_titles={next_previous_titles}>
 				<D_Traits/>
 			</Banner_Hideable>
-			<Banner_Hideable t_detail={T_Details.data}>
+			<Banner_Hideable t_detail={T_Detail.data}>
 				<D_Data/>
 			</Banner_Hideable>
 		{/if}

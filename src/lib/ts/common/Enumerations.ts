@@ -26,7 +26,7 @@ export enum T_Search {
 	rebuild_index,
 }
 
-export enum T_Details {
+export enum T_Detail {
 	header,
 	actions,
 	selection,

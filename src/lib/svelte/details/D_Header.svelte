@@ -1,20 +1,19 @@
 <script lang='ts'>
-	import { c, k, u, ux, Point, debug, search, colors, layout, grabs, Ancestry } from '../../ts/common/Global_Imports';
-	import { w_show_details_ofType, w_search_result_row } from '../../ts/managers/Stores';
+	import { c, k, u, ux, debug, search, colors, layout, grabs } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_ancestries_grabbed } from '../../ts/managers/Stores';
+	import { Ancestry, T_Detail, S_Widget } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_device_isMobile } from '../../ts/managers/Stores';
-	import { T_Details, S_Widget } from '../../ts/common/Global_Imports';
+	import { w_search_result_row } from '../../ts/managers/Stores';
 	let ancestry: Ancestry | null = null;
 	let background_color = 'transparent';
 	let color = colors.default;
     let reattachments = 0;
 
 	$: {
-		const _ = $w_search_result_row;
+		const _ = `${$w_thing_color}:::${$w_search_result_row}:::${$w_ancestries_grabbed?.map(a => a.titles.join(',')).join('-') ?? k.empty}`;
 		ancestry = grabs.ancestry_forInformation;
 		if (!!ancestry) {
 			const s_widget = ancestry.g_widget.s_widget;
-			const _ = `${$w_thing_color}:::${$w_ancestries_grabbed.map(a => a.titles.join(',')).join('-')}`;
 			background_color = s_widget?.background_color ?? 'transparent';
 			color = s_widget?.color ?? colors.default;
 			reattachments += 1;

@@ -1,8 +1,11 @@
-import { T_Details, T_Direction, T_Storage_Need, S_Identifiables } from '../common/Global_Imports';
-import { w_data_updated, w_show_details_ofType, w_search_result_row } from '../managers/Stores';
+import { T_Detail, T_Direction, T_Storage_Need, S_Identifiables } from '../common/Global_Imports';
 import { w_thing_tags, w_thing_traits, w_ancestry_focus } from '../managers/Stores';
+import { w_search_result_row, w_search_results_found } from '../managers/Stores';
 import { h, grabs, Thing, Trait, Ancestry } from '../common/Global_Imports';
+import { w_data_updated, w_show_details_ofType } from '../managers/Stores';
+import { w_ancestries_grabbed } from '../managers/Stores';
 import { S_Banner_Hideable } from './S_Banner_Hideable';
+import { get } from 'svelte/store';
 
 class S_Details {
 	private s_banner_hideables_byType: { [t_detail: string]: S_Banner_Hideable } = {};
@@ -16,17 +19,17 @@ class S_Details {
 		w_data_updated.subscribe((count: number) => {
 			this.update();
 		});
-		w_search_result_row.subscribe((row: number | null) => {
-			this.update();
-		});
 		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
 			this.update();
 		});
-		w_show_details_ofType.subscribe((t_details: Array<T_Details>) => {
+		w_search_result_row.subscribe((row: number | null) => {
+			this.update();
+		});
+		w_show_details_ofType.subscribe((t_details: Array<T_Detail>) => {
 			this.number_ofDetails = t_details?.length ?? 0;
 			this.update();
 		});
-		for (const t_detail of Object.values(T_Details) as T_Details[]) {
+		for (const t_detail of Object.values(T_Detail) as T_Detail[]) {
 			this.s_banner_hideables_byType[t_detail] = new S_Banner_Hideable(t_detail);
 		}
 	}
@@ -35,15 +38,36 @@ class S_Details {
 		this.update_traitThings();
 		this.update_tags();
 	}
+	
+	static readonly _____BANNERS: unique symbol;
 
 	update_forBanner(banner_title: string, selected_title: string) {
 		const next = T_Direction.next === selected_title as unknown as T_Direction;	// unknown defeats ts
-		const t_detail = T_Details[banner_title as keyof typeof T_Details];
+		const t_detail = T_Detail[banner_title as keyof typeof T_Detail];
 		switch (t_detail) {
-			case T_Details.traits:	  this.selectNext_traitThing(next); break;
-			case T_Details.tags:  	  this.selectNext_tag(next); break;
-			case T_Details.selection: grabs.grab_next(next); break;
+			case T_Detail.traits:	  this.selectNext_traitThing(next); break;
+			case T_Detail.tags:  	  this.selectNext_tag(next); break;
+			case T_Detail.selection: grabs.grab_next(next); break;
 		}
+	}
+
+	banner_title_forDetail(t_detail: T_Detail): string {
+		const normal_title = T_Detail[t_detail];
+		switch (t_detail) {	
+			case T_Detail.selection:
+				const row = get(w_search_result_row);
+				const grabbed = get(w_ancestries_grabbed);
+				const matches = get(w_search_results_found);
+				if (row != null && !!matches && matches > 1) {
+					return row.of_n_for_type(matches, 'match', 'es');
+				} else if (!!grabbed && grabbed.length > 1) {
+					return grabs.index_ofAncestry.of_n_for_type(grabbed.length, 'grabbed', '');
+				}
+				break;
+			default:
+				break;
+		}
+		return normal_title;
 	}
 	
 	static readonly _____TAGS: unique symbol;

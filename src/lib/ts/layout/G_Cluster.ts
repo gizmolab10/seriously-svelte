@@ -109,13 +109,13 @@ export default class G_Cluster {
 	}
 	
 	private update_label_forIndex() {
-		let cluster_title =  `${this.total_widgets} ${this.direction_kind}`;
+		let title =  `${this.total_widgets} ${this.direction_kind}`;
 		if (this.isPaging) {
 			const index = this.paging_index_ofFocus;
 			const middle = (this.widgets_shown < 2) ? k.empty : `-${index + this.widgets_shown}`;
-			cluster_title += ` (${index + 1}${middle})`
+			title += ` (${index + 1}${middle})`
 		}
-		this.cluster_title = cluster_title;
+		this.cluster_title = title;
 	}
 	
 	static readonly _____PAGING: unique symbol;

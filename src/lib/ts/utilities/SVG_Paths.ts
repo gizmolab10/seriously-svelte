@@ -218,12 +218,8 @@ export default class SVG_Paths {
 		return paths.join(k.space);
 	}
 
-	hasPath_for(title: string): boolean {
-		return !!this.path_for(title);
-	}
-
-	path_for(title: string, size: number = 16): string | null {
-		switch (title) {
+	path_for(name: string, size: number = 16): string | null {
+		switch (name) {
 			case 'down':		return this.fat_polygon(size, -Math.PI / 2);
 			case 'up':			return this.fat_polygon(size, Math.PI / 2);
 			case '>':

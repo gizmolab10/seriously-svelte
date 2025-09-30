@@ -1,17 +1,17 @@
 <script lang='ts'>
-	import { k, u, T_Layer, T_Details, layout } from '../../ts/common/Global_Imports';
+	import { k, u, T_Layer, T_Detail, layout } from '../../ts/common/Global_Imports';
 	import { w_show_details_ofType } from '../../ts/managers/Stores';
 	import Glows_Banner from '../mouse/Glows_Banner.svelte';
 	import { s_details } from '../../ts/state/S_Details';
     export let extra_titles: string[] = [];
-    export let t_detail: T_Details;
-	const titles = [T_Details[t_detail], ...extra_titles];
+    export let t_detail: T_Detail;
 	const s_banner_hideable = s_details.s_banner_hideables_byType[t_detail];
+	const titles = [s_details.banner_title_forDetail(t_detail), ...extra_titles];
 	$: slot_isVisible = compute_slot_isVisible();
 
 	function compute_slot_isVisible() {
 		if (s_banner_hideable?.hasBanner) {
-			return $w_show_details_ofType?.includes(T_Details[t_detail]) ?? false;
+			return $w_show_details_ofType?.includes(T_Detail[t_detail]) ?? false;
 		}
 		return true;
 	}
@@ -52,6 +52,7 @@
 				width={k.width.details}
 				isSelected={slot_isVisible}
 				toggle_hidden={toggle_hidden}
+				banner_id={T_Detail[t_detail]}
 				font_size={k.font_size.banners}
 				height={layout.glows_banner_height}/>
 		</div>

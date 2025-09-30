@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { h, k, p, u, ux, busy, Point, colors, S_Element, databases, Hierarchy } from '../../ts/common/Global_Imports';
 	import { T_File_Format, T_File_Operation, T_Storage_Need, T_Signal } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Details, T_Element, T_Preference, T_Request } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Detail, T_Element, T_Preference, T_Request } from '../../ts/common/Global_Imports';
 	import { w_data_updated, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import { T_Database } from '../../ts/database/DB_Common';

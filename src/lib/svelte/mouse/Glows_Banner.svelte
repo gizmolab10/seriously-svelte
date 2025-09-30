@@ -8,10 +8,11 @@
 	export let toggle_hidden: (title: string) => void;
 	export let font_size = k.font_size.details;
     export let isSelected: boolean = false;
+    export let banner_id: string = k.empty;
 	export let titles: string[];
 	export let height: number;
 	export let width: number;
-	const main_title = titles[0];
+	const banner_title = titles[0];
 	const g_repeater = new G_Repeater(titles, height, width, 0, 0, 7, 0, false, font_size, true);
 	let banner_color = colors.banner;
 
@@ -31,10 +32,10 @@
 	}
 
 	function intercept_click(title: string) {
-		if (title === main_title || titles.length == 1) {
-			toggle_hidden(title);
+		if (title === banner_id || titles.length == 1) {
+			toggle_hidden(banner_id);
 		} else {
-			s_details.update_forBanner(main_title, title);		// main title is the banner title
+			s_details.update_forBanner(banner_id, title);		// banner_id is NOT dynamic, banner_title and title are
 		}
 	}
 
@@ -57,10 +58,11 @@
 		<Glow_Button
 			title={title}
 			height={height}
-			owner={main_title}
+			name={banner_title}
+			banner_id={banner_id}
 			font_size={font_size}
 			handle_click={intercept_click}
-			detect_autorepeat={title != main_title}
+			detect_autorepeat={title != banner_title}
 			width={g_repeater.button_width_for(index)}/>
 		{#if index > 0}
 			<Separator name='between-buttons'

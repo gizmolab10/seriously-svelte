@@ -180,6 +180,7 @@ Object.defineProperty(String.prototype, 'html_encode', {
 
 declare global {
 	interface Number {
+		nth(): string;
 		asInt(): string;
 		asDegrees(): string;
 		roundToEven(): number;
@@ -199,6 +200,7 @@ declare global {
 		increment_by_assuring(delta: number, total: number): number;
 		isBetween(a: number, b: number, inclusive: boolean): boolean;
 		isClocklyBetween(a: number, b: number, limit: number): boolean;
+		of_n_for_type(n: number, type: string, plurality: string): string;
 		force_asInteger_between(smallest: number, largest: number): number;
 		bump_towards(smallest: number, largest: number, within: number): number;
 		isClocklyAlmost(target: number, within: number, clock: number): boolean;
@@ -373,6 +375,37 @@ Object.defineProperty(Number.prototype, 'supressZero', {
 Object.defineProperty(Number.prototype, 'asInt', {
 	value: function(): string {
 		return this.toFixed(0);
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
+});
+
+Object.defineProperty(Number.prototype, 'of_n_for_type', {
+	value: function(n: number, type: string, plurality: string): string {
+		const x = this + 1;
+		const suffix = ` ${type}${n == 1 ? '' : plurality}`;
+		const prefix = `${x.nth()} (of ${n})`;
+		return prefix + suffix;
+	},
+	writable: false,
+	enumerable: false,
+	configurable: false
+});
+
+Object.defineProperty(Number.prototype, 'nth', {
+	value: function(): string {
+		const prefix = this.asInt();
+		const n = Number(prefix);
+		let suffix = 'th';
+		if (n < 10 || n > 20) {
+			switch (n % 10) {
+				case 1: suffix = 'st'; break;
+				case 2: suffix = 'nd'; break;
+				case 3: suffix = 'rd'; break;
+			}
+		}
+		return prefix + suffix;
 	},
 	writable: false,
 	enumerable: false,
