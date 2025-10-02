@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { T_Trait, T_Detail, T_Element, T_Request, T_Direction } from '../../ts/common/Global_Imports';
 	import { h, k, ux, colors, Size, S_Mouse } from '../../ts/common/Global_Imports';
-	import { w_thing_traits, w_ancestries_grabbed } from '../../ts/managers/Stores';
+	import { w_thing_traits } from '../../ts/managers/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Text_Editor from '../text/Text_Editor.svelte';
 	import { s_details } from '../../ts/state/S_Details';

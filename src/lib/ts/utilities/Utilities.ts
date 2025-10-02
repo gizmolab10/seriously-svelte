@@ -1,10 +1,11 @@
 // N.B., do not import these from Global Imports --> avoid dependency issues when importing Utilities class
 
-import { w_background_color, w_ancestry_focus, w_ancestries_grabbed } from '../managers/Stores';
+import { w_background_color, w_ancestry_focus } from '../managers/Stores';
 import { w_t_database, w_thing_fontFamily } from '../managers/Stores';
 import { Testworthy_Utilities } from './Testworthy_Utilities';
 import { Rect, Size, Point } from '../types/Geometry';
 import Identifiable from '../runtime/Identifiable';
+import { grabs } from '../common/Global_Imports';
 import G_TreeLine from '../layout/G_TreeLine';
 import { layout } from '../layout/G_Layout';
 import Ancestry from '../runtime/Ancestry';
@@ -140,13 +141,13 @@ export class Utilities extends Testworthy_Utilities {
 	}
 
 	temporarily_setDefaults_while(closure: () => void) {
-		const grabs = get(w_ancestries_grabbed);
+		const grabbed = grabs.s_grabbed_ancestries.items;
 		const color = get(w_background_color);
 		w_background_color.set('white');
-		w_ancestries_grabbed.set([]);	// triggers reactivity, takes time to percolate
+		grabs.s_grabbed_ancestries.items = [];	// triggers reactivity, takes time to percolate
 		setTimeout(() => {
 			closure();
-			w_ancestries_grabbed.set(grabs);
+			grabs.s_grabbed_ancestries.items = grabbed;
 			w_background_color.set(color);
 		}, 10);
 	}

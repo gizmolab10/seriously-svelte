@@ -1,17 +1,16 @@
-import { h, grabs, Tag, Thing, Trait, Ancestry, S_Identifiables } from '../common/Global_Imports';
-import { T_Detail, T_Startup, T_Direction, T_Storage_Need } from '../common/Global_Imports';
+import { T_Detail, T_Startup, T_Direction, S_Identifiables } from '../common/Global_Imports';
+import { w_t_startup, w_count_details, w_show_details_ofType } from '../managers/Stores';
 import { w_thing_traits, w_ancestry_focus, w_data_updated } from '../managers/Stores';
+import { h, Tag, Thing, Trait, grabs, Ancestry } from '../common/Global_Imports';
 import { w_search_result_row, w_search_results_found } from '../managers/Stores';
-import { w_count_details, w_show_details_ofType } from '../managers/Stores';
-import { w_t_startup, w_ancestries_grabbed } from '../managers/Stores';
 import { S_Banner_Hideable } from './S_Banner_Hideable';
-import { get } from 'svelte/store';
+import { get, Writable } from 'svelte/store';
 
 class S_Details {
 	private s_banner_hideables_byType: { [t_detail: string]: S_Banner_Hideable } = {};
 	private s_trait_things = new S_Identifiables<Thing>([]);
-	t_storage_need = T_Storage_Need.direction;
-	s_tags = new S_Identifiables<Tag>([]);
+	private grabbed_ancestries!: Writable<Array<Ancestry>>;
+	private s_tags = new S_Identifiables<Tag>([]);
 	show_properties = false;
 
 	constructor() {
@@ -27,14 +26,20 @@ class S_Details {
 		w_show_details_ofType.subscribe((t_details: Array<T_Detail>) => {
 			this.update();
 		});
+		w_t_startup.subscribe((startup: number | null) => {
+			this.update();
+		});
 		for (const t_detail of Object.values(T_Detail) as T_Detail[]) {
 			this.s_banner_hideables_byType[t_detail] = new S_Banner_Hideable(t_detail);
 		}
 	}
 
 	private update() {
-		this.update_traitThings();
-		this.update_tags();
+		if (get(w_t_startup) == T_Startup.ready) {
+			this.update_traitThings();
+			this.grabbed_ancestries = grabs.s_grabbed_ancestries.w_items;
+			this.s_tags.items = grabs.ancestry_forInformation?.thing?.tags ?? [];
+		}
 	}
 
 	redraw() { w_count_details.update(n => n + 1); }	// force re-render of details
@@ -56,8 +61,8 @@ class S_Details {
 		switch (t_detail) {	
 			case T_Detail.selection:
 				const row	  = get(w_search_result_row);
-				const grabbed = get(w_ancestries_grabbed);
 				const matches = get(w_search_results_found);
+				const grabbed = get(this.grabbed_ancestries);
 				if (row != null && !!matches && matches > 1) {
 					console.log('search result', row);
 					return row.of_n_for_type(matches, 'search result', '');
@@ -79,12 +84,6 @@ class S_Details {
 
 	private get tag(): Tag | null { return (this.s_tags.item as Tag) ?? null; }
 	selectNext_tag(next: boolean): boolean { return this.s_tags.find_next_item(next); }
-
-	private update_tags() {
-		if (get(w_t_startup) == T_Startup.ready) {
-			this.s_tags.set_items(grabs.ancestry_forInformation?.thing?.tags ?? []);
-		}
-	}
 	
 	static readonly _____TRAITS: unique symbol;
 
@@ -105,16 +104,15 @@ class S_Details {
 		//															  //
 		////////////////////////////////////////////////////////////////
 
-		const t_startup = get(w_t_startup);
 		let thing_traits: Array<Trait> = [];
-		if (!!t_startup && t_startup == T_Startup.ready && !!h) {
-			this.s_trait_things.set_items(h.things_unique_havingTraits ?? []);
+		if (!!h) {
+			this.s_trait_things.items = h.things_unique_havingTraits ?? [];
 			const thing = grabs.ancestry_forInformation?.thing;
 			thing_traits = thing?.traits ?? [];
 			if (!!thing && thing_traits.length > 0) {
 				// compute which index [trait] corresponds to the thing
 				const index = this.s_trait_things.items.findIndex(t => t.id == thing.id);
-				this.s_trait_things.index_ofItem = Math.max(0, index);
+				this.s_trait_things.index = Math.max(0, index);
 			}
 		}
 		w_thing_traits.set(thing_traits);

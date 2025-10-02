@@ -1,6 +1,6 @@
 import { T_Thing, T_Graph, T_Create, T_Predicate, T_Persistence, T_Preference } from '../common/Global_Imports';
-import { w_ancestry_focus, w_ancestries_grabbed, w_show_graph_ofType } from '../managers/Stores';
-import { e, h, k, p, busy, debug, Ancestry } from '../common/Global_Imports';
+import { h, k, p, busy, grabs, debug, Ancestry } from '../common/Global_Imports';
+import { w_ancestry_focus, w_show_graph_ofType } from '../managers/Stores';
 import { T_Database } from './DB_Common';
 import DB_Common from './DB_Common';
 
@@ -141,7 +141,7 @@ export default class DB_Bubble extends DB_Common {
 				this.debounced_focus = true;
 			}
 		});
-		w_ancestries_grabbed.subscribe((ancestries: Ancestry[]) => {
+		grabs.s_grabbed_ancestries.w_items.subscribe((ancestries: Ancestry[]) => {
 			if (!!ancestries && ancestries.map((ancestry: Ancestry) => ancestry.thing?.id ?? k.corrupted).join(', ') != this.prior_grabbed_ids.join(', ')) {
 				if (this.debounced_grab) {
 					this.prior_grabbed_ids = ancestries.map((ancestry: Ancestry) => ancestry.thing?.id ?? k.corrupted);

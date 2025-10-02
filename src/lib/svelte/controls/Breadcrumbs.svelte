@@ -2,15 +2,16 @@
 	import { c, h, k, u, ux, Size, Point, Thing, debug, grabs, colors, signals } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Signal, T_Element, T_Startup, T_Component } from '../../ts/common/Global_Imports';
 	import { svgPaths, Ancestry, layout, components, S_Component} from '../../ts/common/Global_Imports';
-	import { w_s_title_edit, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/managers/Stores';
 	import { w_t_startup, w_graph_rect, w_thing_color } from '../../ts/managers/Stores';
 	import { w_search_state, w_search_result_row } from '../../ts/managers/Stores';
+	import { w_s_title_edit, w_ancestry_focus } from '../../ts/managers/Stores';
 	import Breadcrumb_Button from '../mouse/Breadcrumb_Button.svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
 	export let left: number = 28;
 	export let centered: boolean = false;
 	export let width = layout.windowSize.width;
+	const { w_items: w_grabbed_ancestries } = grabs.s_grabbed_ancestries;
 	let s_component: S_Component | null = null;
 	let things: Array<Thing> = [];
 	let size = k.height.button;
@@ -26,7 +27,7 @@
 	onMount(() => { return () => s_component.disconnect(); });
 	
 	$: {
-		const _ = `${$w_t_startup}:::${$w_thing_color}:::${$w_search_state}:::${$w_search_result_row}:::${$w_graph_rect.description}:::${$w_s_title_edit?.description}:::${$w_ancestries_grabbed?.map(a => a.titles.join(',')).join('-')}`;
+		const _ = `${$w_t_startup}:::${$w_thing_color}:::${$w_search_state}:::${$w_search_result_row}:::${$w_graph_rect.description}:::${$w_s_title_edit?.description}:::${$w_grabbed_ancestries?.map(a => a.titles.join(',')).join('-')}`;
 		update();
 	}
 

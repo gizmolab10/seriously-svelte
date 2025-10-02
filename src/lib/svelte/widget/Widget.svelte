@@ -1,11 +1,11 @@
 <script lang='ts'>
 	import { debug, signals, Ancestry, components, S_Component } from '../../ts/common/Global_Imports';
-	import { c, k, u, ux, Thing, Point, Angle, layout } from '../../ts/common/Global_Imports';
+	import { c, k, u, ux, grabs, Thing, Point, Angle, layout } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Widget, T_Signal } from '../../ts/common/Global_Imports';
-	import { w_thing_color, w_ancestries_grabbed } from '../../ts/managers/Stores';
 	import { G_Widget, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_ancestry_focus } from '../../ts/managers/Stores';
 	import { T_Element, T_Component } from '../../ts/common/Global_Imports';
+	import { w_thing_color } from '../../ts/managers/Stores';
 	import Widget_Reveal from './Widget_Reveal.svelte';
 	import Tree_Line from '../graph/Tree_Line.svelte';
 	import Widget_Title from './Widget_Title.svelte';
@@ -19,6 +19,7 @@
 	const ancestry = g_widget.ancestry;
 	const reveal_points_toChild = g_widget.points_toChild;
     const drag_points_normal = g_widget.widget_pointsNormal;
+	const { w_items: w_grabbed_ancestries } = grabs.s_grabbed_ancestries;
 	let observer: MutationObserver | null = null;
 	let width_ofWidget = g_widget.width_ofWidget;
 	let border_radius = k.height.dot / 2;
@@ -71,7 +72,7 @@
 	}
 
 	$: {
-		const reactives = `${$w_s_title_edit?.t_edit}:::${$w_ancestries_grabbed.map(a => a.titles.join(',')).join('-')}`;
+		const reactives = `${$w_s_title_edit?.t_edit}:::${$w_grabbed_ancestries?.map(a => a.titles.join(',')).join('-')}`;
 		if (reactives != trigger && !!ancestry && s_widget.update_state_didChange) {
 			trigger = reactives;
 			g_widget.layout_widget();

@@ -2,11 +2,11 @@ import { w_count_window_resized, w_s_alteration, w_s_title_edit, w_user_graph_of
 import { w_show_details, w_count_mouse_up, w_mouse_location, w_mouse_location_scaled, w_scaled_movement } from '../managers/Stores';
 import { c, h, k, u, ux, grabs, Point, debug, search, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
 import { T_Search, T_Action, T_Control, T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Imports';
-import { w_device_isMobile, w_ancestries_grabbed, w_ancestry_focus, w_popupView_id } from '../managers/Stores';
-import { w_search_state, w_search_result_row } from '../managers/Stores';
+import { w_search_state, w_device_isMobile, w_ancestry_focus, w_popupView_id } from '../managers/Stores';
 import { S_Mouse, S_Alteration } from '../common/Global_Imports';
 import Mouse_Timer from './Mouse_Timer';
 import { get } from 'svelte/store';
+
 export class Events {
 	mouse_timer_byName: { [name: string]: Mouse_Timer } = {};
     debouncedResize: NodeJS.Timeout | null = null;
@@ -262,7 +262,7 @@ export class Events {
 						}
 						switch (key) {
 							case 'delete':
-							case 'backspace':	await h.ancestries_rebuild_traverse_persistentDelete(get(w_ancestries_grabbed)); break;
+							case 'backspace':	await h.ancestries_rebuild_traverse_persistentDelete(grabs.s_grabbed_ancestries.items); break;
 						}
 					}
 					if (!!ancestry) {
@@ -338,7 +338,7 @@ export class Events {
 					case a.add.related:				this.ancestry_toggle_alteration(ancestry, T_Alteration.add, Predicate.isRelated); break;
 				}								break;
 				case T_Action.delete:			switch (column) {
-					case a.delete.selection:		await h.ancestries_rebuild_traverse_persistentDelete(get(w_ancestries_grabbed)); break;
+					case a.delete.selection:		await h.ancestries_rebuild_traverse_persistentDelete(grabs.s_grabbed_ancestries.items); break;
 					case a.delete.parent:			this.ancestry_toggle_alteration(ancestry, T_Alteration.delete, Predicate.contains); break;
 					case a.delete.related:			this.ancestry_toggle_alteration(ancestry, T_Alteration.delete, Predicate.isRelated); break;
 				}								break;

@@ -2,7 +2,7 @@
 	import { T_Layer, T_Detail, T_Action, T_Element, T_Kinship, T_Request, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
 	import { c, e, h, k, u, ux, show, Size, Point, grabs, colors, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
 	import { w_depth_limit, w_user_graph_offset, w_show_graph_ofType, w_search_result_row } from '../../ts/managers/Stores';
-	import { w_s_alteration, w_ancestries_grabbed, w_ancestries_expanded } from '../../ts/managers/Stores';
+	import { w_s_alteration, w_ancestries_expanded } from '../../ts/managers/Stores';
 	import { w_background_color } from '../../ts/managers/Stores';
 	import Buttons_Table from '../mouse/Buttons_Table.svelte';
     import { s_details } from '../../ts/state/S_Details';
@@ -18,6 +18,7 @@
 	const bottom_tableHeight = 73;
 	const table_width = k.width.details - 8;
 	const bottom_padding = bottom_tableHeight - 48;
+	const { w_items: w_grabbed_ancestries } = grabs.s_grabbed_ancestries;
     const font_sizes = [k.font_size.instructions, k.font_size.instructions];
     const s_banner_hideable = s_details.s_banner_hideables_byType[T_Detail.actions];
 	const s_cancel = ux.s_element_for(grabs.ancestry_forInformation, T_Element.cancel, k.empty);
@@ -48,7 +49,7 @@
 	}
 
 	$: {
-		const _ = `${$w_ancestries_expanded?.map(a => a.titles.join(',')).join('-')}:::${$w_ancestries_grabbed?.map(a => a.titles.join(',')).join('-')}`;
+		const _ = `${$w_ancestries_expanded?.map(a => a.titles.join(',')).join('-')}:::${$w_grabbed_ancestries?.map(a => a.titles.join(',')).join('-')}`;
 		update_button_titles();
 	}
 
@@ -140,7 +141,7 @@
 </script>
 
 {#key reattachments}
-	{#if !$w_ancestries_grabbed || $w_ancestries_grabbed.length == 0}
+	{#if !$w_grabbed_ancestries || $w_grabbed_ancestries.length == 0}
 		<div class='nothing-to-show'>
 			<p style='text-align:center; font-size:10px; position:relative; display:flex; align-items:center; justify-content:center;'>
 				{k.nothing_to_show}

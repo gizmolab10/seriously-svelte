@@ -1,10 +1,11 @@
 <script lang='ts'>
-	import { c, e, k, u, ux, show, Rect, Size, Point, Thing, debug, layout, signals } from '../../ts/common/Global_Imports';
-	import { S_Element, svgPaths, databases, components, S_Component } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Signal, T_Alteration, T_Component } from '../../ts/common/Global_Imports';
-	import { w_show_countDots_ofType, w_thing_color, w_ancestries_grabbed } from '../../ts/managers/Stores';
-	import { w_s_title_edit, w_ancestry_focus, w_ancestries_grabbed } from '../../ts/managers/Stores';
+	import { c, e, k, u, ux, show, grabs, debug, layout, signals } from '../../ts/common/Global_Imports';
+	import { Rect, Size, Point, Thing, S_Element, S_Component } from '../../ts/common/Global_Imports';
+	import { w_show_countDots_ofType, w_thing_color } from '../../ts/managers/Stores';
+	import { svgPaths, databases, components } from '../../ts/common/Global_Imports';
 	import { w_s_alteration, w_background_color } from '../../ts/managers/Stores';
+	import { w_s_title_edit, w_ancestry_focus } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
@@ -14,6 +15,7 @@
 	const capture_size = size;
     const ancestry = s_drag.ancestry;
 	const g_widget = ancestry.g_widget;
+	const { w_items: w_grabbed_ancestries } = grabs.s_grabbed_ancestries;
 	let fill_color = debug.lines ? 'transparent' : s_drag.fill;
 	let svg_outline_color = s_drag.svg_outline_color;
 	let center = g_widget.center_ofDrag;
@@ -51,7 +53,7 @@
 	}
 
 	$: {
-		const _ = `${$w_thing_color}:::${$w_background_color}:::${$w_ancestries_grabbed.map(a => a.titles.join(',')).join('-')}`;
+		const _ = `${$w_thing_color}:::${$w_background_color}:::${$w_grabbed_ancestries?.map(a => a.titles.join(',')).join('-')}`;
 		update_colors();
 	}
 

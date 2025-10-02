@@ -1,8 +1,7 @@
 <script lang='ts'>
-	import { c, k, Point, layout, T_Layer, T_Graph, T_Detail, T_Direction } from '../../ts/common/Global_Imports';
+	import { c, k, grabs, Point, layout, T_Layer, T_Graph, T_Detail, T_Direction } from '../../ts/common/Global_Imports';
 	import { w_search_state, w_search_result_row, w_search_show_controls } from '../../ts/managers/Stores';
-	import { w_count_details, w_ancestries_grabbed } from '../../ts/managers/Stores';
-	import { w_graph_rect, w_show_graph_ofType } from '../../ts/managers/Stores';
+	import { w_graph_rect, w_count_details, w_show_graph_ofType } from '../../ts/managers/Stores';
 	import Banner_Hideable from './Banner_Hideable.svelte';
 	import D_Preferences from './D_Preferences.svelte';
 	import Separator from '../draw/Separator.svelte';
@@ -13,14 +12,15 @@
 	import D_Data from './D_Data.svelte';
 	import D_Tags from './D_Tags.svelte';
 	const next_previous_titles = [T_Direction.previous, T_Direction.next];
+	const { w_items: w_grabbed_ancestries } = grabs.s_grabbed_ancestries;
 	const width = k.width.details;
 	let extra_selection_titles = [];
 	let prior_graph_type = $w_show_graph_ofType;
 	let show_secondary_controls = $w_search_show_controls || ($w_show_graph_ofType == T_Graph.tree);
 
 	$: {
-		const _ = `${$w_search_state}:::${$w_search_result_row}:::${$w_ancestries_grabbed?.map(a => a.titles.join(',')).join('-') ?? k.empty}`;
-		const length = $w_ancestries_grabbed?.length ?? 0;
+		const _ = `${$w_search_state}:::${$w_search_result_row}:::${$w_grabbed_ancestries?.map(a => a.titles.join(',')).join('-') ?? k.empty}`;
+		const length = $w_grabbed_ancestries?.length ?? 0;
 		extra_selection_titles = length < 2 ? [] : next_previous_titles;
 		$w_count_details++;
 	}

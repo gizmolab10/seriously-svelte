@@ -1,7 +1,6 @@
 <script lang='ts'>
-	import { k, u, Size, Thing, Point, svgPaths, databases } from '../../ts/common/Global_Imports';
+	import { k, u, Size, Thing, Point, grabs, svgPaths, databases } from '../../ts/common/Global_Imports';
 	import { T_Layer, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
-	import { w_ancestries_grabbed } from '../../ts/managers/Stores';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import Button from './Button.svelte';
 	export let handle_s_mouse: (result: S_Mouse) => boolean;
@@ -19,7 +18,7 @@
 	let extraColor = 'white';
 	let trianglePath = svgPaths.fat_polygon(size, angle);
 
-	$: $w_ancestries_grabbed, setFillColor(false);
+	$: $grabs.s_grabbed_ancestries.w_items, setFillColor(false);
 	
 	$: {
 		trianglePath = svgPaths.fat_polygon(size, angle);

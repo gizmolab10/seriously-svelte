@@ -1,5 +1,5 @@
-import { w_ancestries_grabbed, w_control_key_down, w_background_color } from '../managers/Stores';
-import { k, ux, colors, Ancestry, T_Element, T_Control } from '../common/Global_Imports';
+import { k, ux, grabs, colors, Ancestry, T_Element, T_Control } from '../common/Global_Imports';
+import { w_control_key_down, w_background_color } from '../managers/Stores';
 import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
 
@@ -38,7 +38,7 @@ export default class S_Element {
 		this.subtype = subtype;
 		this.type = type;
 		if (this.isADot) {
-			w_ancestries_grabbed.subscribe((grabbed) => {
+			grabs.s_grabbed_ancestries.w_items.subscribe((grabbed) => {
 				this.isInverted = !!grabbed && grabbed.includes(this.ancestry);
 			});
 			if (type == T_Element.control) {
