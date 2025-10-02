@@ -15,7 +15,7 @@
 	const capture_size = size;
     const ancestry = s_drag.ancestry;
 	const g_widget = ancestry.g_widget;
-	const { w_items: w_grabbed_ancestries } = grabs.s_grabbed_ancestries;
+	const { w_items: w_grabbed } = grabs.s_grabbed_ancestries;
 	let fill_color = debug.lines ? 'transparent' : s_drag.fill;
 	let svg_outline_color = s_drag.svg_outline_color;
 	let center = g_widget.center_ofDrag;
@@ -53,7 +53,7 @@
 	}
 
 	$: {
-		const _ = `${$w_thing_color}:::${$w_background_color}:::${$w_grabbed_ancestries?.map(a => a.titles.join(',')).join('-')}`;
+		const _ = `${$w_thing_color}:::${$w_background_color}:::${$w_grabbed?.map(a => a.titles.join(',')).join('-')}`;
 		update_colors();
 	}
 

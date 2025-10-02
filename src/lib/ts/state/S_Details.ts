@@ -1,7 +1,7 @@
-import { T_Detail, T_Startup, T_Direction, S_Identifiables } from '../common/Global_Imports';
+import { h, Tag, Thing, Trait, grabs, Ancestry, S_Identifiables } from '../common/Global_Imports';
+import { T_Detail, T_Startup, T_Direction, T_Storage_Need } from '../common/Global_Imports';
 import { w_t_startup, w_count_details, w_show_details_ofType } from '../managers/Stores';
 import { w_thing_traits, w_ancestry_focus, w_data_updated } from '../managers/Stores';
-import { h, Tag, Thing, Trait, grabs, Ancestry } from '../common/Global_Imports';
 import { w_search_result_row, w_search_results_found } from '../managers/Stores';
 import { S_Banner_Hideable } from './S_Banner_Hideable';
 import { get, Writable } from 'svelte/store';
@@ -11,6 +11,7 @@ class S_Details {
 	private s_trait_things = new S_Identifiables<Thing>([]);
 	private grabbed_ancestries!: Writable<Array<Ancestry>>;
 	private s_tags = new S_Identifiables<Tag>([]);
+	t_storage_need = T_Storage_Need.direction;
 	show_properties = false;
 
 	constructor() {

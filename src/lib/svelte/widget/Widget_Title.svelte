@@ -17,7 +17,7 @@
 	const g_widget = ancestry.g_widget;
 	const s_widget = g_widget.s_widget;
 	const input_height = k.height.dot + 2;
-	const { w_items: w_grabbed_ancestries } = grabs.s_grabbed_ancestries;
+	const { w_items: w_grabbed } = grabs.s_grabbed_ancestries;
 	let title_width = (thing?.width_ofTitle ?? 0) + title_extra();
 	let title_binded = thing?.title ?? k.empty;
 	let title_component: S_Component;
@@ -74,7 +74,7 @@
 	}
 
 	$: {
-		const reactives = `${$w_thing_color}:::${$w_grabbed_ancestries.map(a => a.titles.join(',')).join('-')}:::${$w_ancestries_expanded.map(a => a.titles.join(',')).join('-')}`;
+		const reactives = `${$w_thing_color}:::${$w_grabbed.map(a => a.titles.join(',')).join('-')}:::${$w_ancestries_expanded.map(a => a.titles.join(',')).join('-')}`;
 		if (reactives != trigger) {
 			const isFocus = ancestry?.isFocus ?? false;
 			const adjust = ux.inRadialMode && isFocus;

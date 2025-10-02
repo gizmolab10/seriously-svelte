@@ -11,7 +11,7 @@
 	export let left: number = 28;
 	export let centered: boolean = false;
 	export let width = layout.windowSize.width;
-	const { w_items: w_grabbed_ancestries } = grabs.s_grabbed_ancestries;
+	const { w_items: w_grabbed } = grabs.s_grabbed_ancestries;
 	let s_component: S_Component | null = null;
 	let things: Array<Thing> = [];
 	let size = k.height.button;
@@ -27,7 +27,7 @@
 	onMount(() => { return () => s_component.disconnect(); });
 	
 	$: {
-		const _ = `${$w_t_startup}:::${$w_thing_color}:::${$w_search_state}:::${$w_search_result_row}:::${$w_graph_rect.description}:::${$w_s_title_edit?.description}:::${$w_grabbed_ancestries?.map(a => a.titles.join(',')).join('-')}`;
+		const _ = `${$w_t_startup}:::${$w_thing_color}:::${$w_search_state}:::${$w_search_result_row}:::${$w_graph_rect.description}:::${$w_s_title_edit?.description}:::${$w_grabbed?.map(a => a.titles.join(',')).join('-')}`;
 		update();
 	}
 

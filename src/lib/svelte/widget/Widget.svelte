@@ -19,7 +19,7 @@
 	const ancestry = g_widget.ancestry;
 	const reveal_points_toChild = g_widget.points_toChild;
     const drag_points_normal = g_widget.widget_pointsNormal;
-	const { w_items: w_grabbed_ancestries } = grabs.s_grabbed_ancestries;
+	const { w_items: w_grabbed } = grabs.s_grabbed_ancestries;
 	let observer: MutationObserver | null = null;
 	let width_ofWidget = g_widget.width_ofWidget;
 	let border_radius = k.height.dot / 2;
@@ -72,7 +72,7 @@
 	}
 
 	$: {
-		const reactives = `${$w_s_title_edit?.t_edit}:::${$w_grabbed_ancestries?.map(a => a.titles.join(',')).join('-')}`;
+		const reactives = `${$w_s_title_edit?.t_edit}:::${$w_grabbed?.map(a => a.titles.join(',')).join('-')}`;
 		if (reactives != trigger && !!ancestry && s_widget.update_state_didChange) {
 			trigger = reactives;
 			g_widget.layout_widget();

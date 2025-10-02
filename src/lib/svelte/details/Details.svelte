@@ -12,15 +12,15 @@
 	import D_Data from './D_Data.svelte';
 	import D_Tags from './D_Tags.svelte';
 	const next_previous_titles = [T_Direction.previous, T_Direction.next];
-	const { w_items: w_grabbed_ancestries } = grabs.s_grabbed_ancestries;
+	const { w_items: w_grabbed } = grabs.s_grabbed_ancestries;
 	const width = k.width.details;
 	let extra_selection_titles = [];
 	let prior_graph_type = $w_show_graph_ofType;
 	let show_secondary_controls = $w_search_show_controls || ($w_show_graph_ofType == T_Graph.tree);
 
 	$: {
-		const _ = `${$w_search_state}:::${$w_search_result_row}:::${$w_grabbed_ancestries?.map(a => a.titles.join(',')).join('-') ?? k.empty}`;
-		const length = $w_grabbed_ancestries?.length ?? 0;
+		const _ = `${$w_search_state}:::${$w_search_result_row}:::${$w_grabbed?.map(a => a.titles.join(',')).join('-') ?? k.empty}`;
+		const length = $w_grabbed?.length ?? 0;
 		extra_selection_titles = length < 2 ? [] : next_previous_titles;
 		$w_count_details++;
 	}
@@ -46,7 +46,7 @@
 			z-index:{T_Layer.details};
 			top:{layout.controls_boxHeight}px;
 			width:{k.width.details - 6}px;
-			height:{$w_graph_rect.size.height}px;'>
+			height:{layout.windowSize.height - layout.controls_boxHeight}px;'>
 		<Banner_Hideable t_detail={T_Detail.header}>
 			<D_Header/>
 		</Banner_Hideable>

@@ -16,7 +16,7 @@
 	const tinyDotsOffset = new Point(-4.9, -2.45);
 	const outer_diameter = k.diameterOf_outer_tinyDots;
 	const viewBox = `0.5 2.35 ${outer_diameter} ${outer_diameter}`;
-	const { w_items: w_grabbed_ancestries } = grabs.s_grabbed_ancestries;
+	const { w_items: w_grabbed } = grabs.s_grabbed_ancestries;
 	const size_ofTinyDots = Size.width(3).expandedEquallyBy(outer_diameter)
 	let fill_color = debug.lines ? 'transparent' : s_reveal.fill;
 	let svgPathFor_outer_tinyDots: string | null = null;
@@ -43,7 +43,7 @@
 	});
 	
 	$: {
-		const _ = `${$w_grabbed_ancestries.map(a => a.titles.join(',')).join('-')}:::${$w_ancestries_expanded.map(a => a.titles.join(',')).join('-')}:::${$w_show_countDots_ofType}:::${$w_thing_title}:::${$w_background_color}:::${$w_thing_color}`;
+		const _ = `${$w_grabbed.map(a => a.titles.join(',')).join('-')}:::${$w_ancestries_expanded.map(a => a.titles.join(',')).join('-')}:::${$w_show_countDots_ofType}:::${$w_thing_title}:::${$w_background_color}:::${$w_thing_color}`;
 		update_svgPaths();
 		update_colors();
 	}
