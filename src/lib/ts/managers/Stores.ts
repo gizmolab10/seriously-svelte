@@ -1,7 +1,8 @@
 import { Tag, Rect, Point, Trait, colors, Ancestry, Hierarchy } from '../common/Global_Imports';
 import { T_Graph, T_Kinship, T_Detail, T_Startup, T_Dragging } from '../common/Global_Imports';
-import { G_Paging, G_Cluster, S_Title_Edit, S_Alteration } from '../common/Global_Imports';
 import { T_Search, T_Auto_Adjust, T_Search_Preference } from '../common/Global_Imports';
+import { S_Title_Edit, S_Alteration, S_Identifiables } from '../common/Global_Imports';
+import { G_Paging, G_Cluster } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
 
 const _____VISIBILITY: unique symbol = Symbol('VISIBILITY');
@@ -19,7 +20,6 @@ const _____THING: unique symbol = Symbol('THING');
 export const w_tag_thing_index			= writable<number>();
 export const w_relationship_order		= writable<number>();
 export const w_thing_fontFamily			= writable<string>();
-export const w_thing_tags				= writable<Array<Tag>>();
 export const w_thing_traits				= writable<Array<Trait>>();
 export const w_thing_title				= writable<string | null>();
 export const w_thing_color				= writable<string | null>();
@@ -85,14 +85,14 @@ export const w_popupView_id				= writable<string | null>();
 
 class Stores {
 	setup_defaults() {
-		w_count_window_resized.set(0);
 		w_count_rebuild.set(0);
 		w_count_details.set(0);
 		w_count_mouse_up.set(0);
 		w_thing_color.set(null);
 		w_s_title_edit?.set(null);
-		w_search_results_found.set(0);
 		w_show_details_ofType.set([]);
+		w_search_results_found.set(0);
+		w_count_window_resized.set(0);
 		w_t_startup.set(T_Startup.start);
 		w_search_state.set(T_Search.off);
 		w_separator_color.set(colors.separator);

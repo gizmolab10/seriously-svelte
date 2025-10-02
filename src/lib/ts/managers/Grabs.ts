@@ -1,6 +1,9 @@
-import { ux, debug, search, layout, Ancestry, S_Identifiables } from '../common/Global_Imports';
-import { w_hierarchy, w_s_title_edit, w_depth_limit, w_count_details } from './Stores';
-import { w_ancestry_focus, w_ancestries_grabbed, w_s_alteration } from './Stores';
+import { T_Search, T_Startup, S_Identifiables } from '../common/Global_Imports';
+import { ux, debug, search, layout, Ancestry } from '../common/Global_Imports';
+import { w_t_startup, w_search_state, w_ancestries_grabbed } from './Stores';
+import { w_hierarchy, w_depth_limit, w_s_title_edit } from './Stores';
+import { w_s_alteration, w_ancestry_focus } from './Stores';
+import { s_details } from '../state/S_Details';
 import { get } from 'svelte/store';
 
 type Ancestry_Pair = [Ancestry, Ancestry | null];
@@ -13,13 +16,31 @@ export class Grabs {
 
 	constructor() {
 		w_ancestries_grabbed.subscribe((array: Array<Ancestry>) => {
-			this.update_this();
+			if (get(w_t_startup) == T_Startup.ready) {
+				this.update();
+			}
+		});
+		w_search_state.subscribe((row: number | null) => {
+			if (get(w_t_startup) == T_Startup.ready) {
+				this.update();
+			}
+		});
+		w_t_startup.subscribe((startup: number | null) => {
+			if (startup == T_Startup.ready) {
+				this.update();
+			}
 		});
 	}
 
-	get index_ofAncestry(): number {
-		return this.s_grabbed_ancestries.index_ofItem;
+	private update() {
+		let items = get(w_ancestries_grabbed) ?? [];
+		if (get(w_search_state) != T_Search.off) {
+			items = search?.results.map(result => result.ancestry);
+		}
+		this.s_grabbed_ancestries.set_items(items);
 	}
+
+	get index_ofAncestry(): number { return this.s_grabbed_ancestries.index_ofItem; }
 
 	get ancestry(): Ancestry | null {
 		return (this.s_grabbed_ancestries.item as Ancestry) ?? this.latest_upward(true);
@@ -66,12 +87,14 @@ export class Grabs {
 	
 	static readonly _____GRABS: unique symbol;
 
-	private update_this() { this.s_grabbed_ancestries.set_items(get(w_ancestries_grabbed) ?? []); }
 	isGrabbed(ancestry: Ancestry): boolean { return this.ancestry_forInformation.equals(ancestry); }
 	
 	grab_next(next: boolean) {	// for next/previous in details selection banner
 		this.s_grabbed_ancestries.find_next_item(next);
-		w_count_details.update(n => n + 1);	// force re-render of details
+		if (get(w_search_state) != T_Search.off) {
+			w_ancestries_grabbed.set([this.ancestry_forInformation]);
+		}
+		s_details.redraw();		// force re-render of details
 	}
 
 	grabOnly(ancestry: Ancestry) {

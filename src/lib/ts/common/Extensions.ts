@@ -383,10 +383,7 @@ Object.defineProperty(Number.prototype, 'asInt', {
 
 Object.defineProperty(Number.prototype, 'of_n_for_type', {
 	value: function(n: number, type: string, plurality: string): string {
-		const x = this + 1;
-		const suffix = ` ${type}${n == 1 ? '' : plurality}`;
-		const prefix = `${x.nth()} (of ${n})`;
-		return prefix + suffix;
+		return `${type}${n == 1 ? '' : plurality}: ${(this + 1).nth()} of ${n}`;
 	},
 	writable: false,
 	enumerable: false,

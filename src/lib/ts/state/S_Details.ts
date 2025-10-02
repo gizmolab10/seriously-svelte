@@ -1,19 +1,18 @@
-import { T_Detail, T_Direction, T_Storage_Need, S_Identifiables } from '../common/Global_Imports';
-import { w_thing_tags, w_thing_traits, w_ancestry_focus } from '../managers/Stores';
+import { h, grabs, Tag, Thing, Trait, Ancestry, S_Identifiables } from '../common/Global_Imports';
+import { T_Detail, T_Startup, T_Direction, T_Storage_Need } from '../common/Global_Imports';
+import { w_thing_traits, w_ancestry_focus, w_data_updated } from '../managers/Stores';
 import { w_search_result_row, w_search_results_found } from '../managers/Stores';
-import { h, grabs, Thing, Trait, Ancestry } from '../common/Global_Imports';
-import { w_data_updated, w_show_details_ofType } from '../managers/Stores';
-import { w_ancestries_grabbed } from '../managers/Stores';
+import { w_count_details, w_show_details_ofType } from '../managers/Stores';
+import { w_t_startup, w_ancestries_grabbed } from '../managers/Stores';
 import { S_Banner_Hideable } from './S_Banner_Hideable';
 import { get } from 'svelte/store';
 
 class S_Details {
 	private s_banner_hideables_byType: { [t_detail: string]: S_Banner_Hideable } = {};
 	private s_trait_things = new S_Identifiables<Thing>([]);
-	private s_tag_things = new S_Identifiables<Thing>([]);
 	t_storage_need = T_Storage_Need.direction;
+	s_tags = new S_Identifiables<Tag>([]);
 	show_properties = false;
-	number_ofDetails = 0;
 
 	constructor() {
 		w_data_updated.subscribe((count: number) => {
@@ -26,7 +25,6 @@ class S_Details {
 			this.update();
 		});
 		w_show_details_ofType.subscribe((t_details: Array<T_Detail>) => {
-			this.number_ofDetails = t_details?.length ?? 0;
 			this.update();
 		});
 		for (const t_detail of Object.values(T_Detail) as T_Detail[]) {
@@ -38,15 +36,17 @@ class S_Details {
 		this.update_traitThings();
 		this.update_tags();
 	}
+
+	redraw() { w_count_details.update(n => n + 1); }	// force re-render of details
 	
 	static readonly _____BANNERS: unique symbol;
 
-	update_forBanner(banner_title: string, selected_title: string) {
+	update_forBanner(banner_id: string, selected_title: string) {
 		const next = T_Direction.next === selected_title as unknown as T_Direction;	// unknown defeats ts
-		const t_detail = T_Detail[banner_title as keyof typeof T_Detail];
+		const t_detail = T_Detail[banner_id as keyof typeof T_Detail];
 		switch (t_detail) {
-			case T_Detail.traits:	  this.selectNext_traitThing(next); break;
-			case T_Detail.tags:  	  this.selectNext_tag(next); break;
+			case T_Detail.traits:	 this.selectNext_traitThing(next); break;
+			case T_Detail.tags:  	 this.selectNext_tag(next); break;
 			case T_Detail.selection: grabs.grab_next(next); break;
 		}
 	}
@@ -55,13 +55,18 @@ class S_Details {
 		const normal_title = T_Detail[t_detail];
 		switch (t_detail) {	
 			case T_Detail.selection:
-				const row = get(w_search_result_row);
+				const row	  = get(w_search_result_row);
 				const grabbed = get(w_ancestries_grabbed);
 				const matches = get(w_search_results_found);
 				if (row != null && !!matches && matches > 1) {
-					return row.of_n_for_type(matches, 'match', 'es');
-				} else if (!!grabbed && grabbed.length > 1) {
-					return grabs.index_ofAncestry.of_n_for_type(grabbed.length, 'grabbed', '');
+					console.log('search result', row);
+					return row.of_n_for_type(matches, 'search result', '');
+				} else if (!!grabbed) {
+					switch (grabbed.length) {
+						case 1:  break;
+						case 0:  return 'focus';
+						default: return grabs.index_ofAncestry.of_n_for_type(grabbed.length, 'selected', '');
+					}
 				}
 				break;
 			default:
@@ -72,23 +77,15 @@ class S_Details {
 	
 	static readonly _____TAGS: unique symbol;
 
-	private get tag_thing(): Thing | null { return (this.s_tag_things.item as Thing) ?? null; }
+	private get tag(): Tag | null { return (this.s_tags.item as Tag) ?? null; }
+	selectNext_tag(next: boolean): boolean { return this.s_tags.find_next_item(next); }
 
 	private update_tags() {
-		this.s_tag_things.set_items(h?.things_unique_havingTags ?? []);
-		w_thing_tags.set(grabs.ancestry_forInformation?.thing?.tags ?? []);
-	}
-	
-	selectNext_tag(next: boolean) {
-		if (this.s_tag_things.find_next_item(next)) {
-			const ancestry = this.tag_thing?.ancestry;
-			if (!!ancestry) {
-				ancestry.grabOnly();
-				grabs.latest_assureIsVisible();
-			}
+		if (get(w_t_startup) == T_Startup.ready) {
+			this.s_tags.set_items(grabs.ancestry_forInformation?.thing?.tags ?? []);
 		}
 	}
-
+	
 	static readonly _____TRAITS: unique symbol;
 
 	private get traitThing(): Thing | null {
@@ -108,8 +105,9 @@ class S_Details {
 		//															  //
 		////////////////////////////////////////////////////////////////
 
+		const t_startup = get(w_t_startup);
 		let thing_traits: Array<Trait> = [];
-		if (!!h) {
+		if (!!t_startup && t_startup == T_Startup.ready && !!h) {
 			this.s_trait_things.set_items(h.things_unique_havingTraits ?? []);
 			const thing = grabs.ancestry_forInformation?.thing;
 			thing_traits = thing?.traits ?? [];

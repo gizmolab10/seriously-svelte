@@ -1,13 +1,11 @@
 <script lang='ts'>
-    import { k, grabs, T_Request, S_Mouse, Point, T_Direction } from '../../ts/common/Global_Imports';
-    import { w_thing_tags, w_tag_thing_index } from '../../ts/managers/Stores';
-	import { s_details } from '../../ts/state/S_Details';
-	import Separator from '../draw/Separator.svelte';
-    const padding = 10;
+    import { s_details } from '../../ts/state/S_Details';
+    import { k } from '../../ts/common/Global_Imports';
     const width = 100;
+    s_details.update();
 </script>
 
-{#if !!$w_thing_tags && $w_thing_tags.length > 0}
+{#if s_details.s_tags.items.length > 0}
     <div class='tags-list'
         style='
             width:100%;
@@ -21,7 +19,7 @@
             justify-content: center;
             min-height: {k.height.empty}px;
             font-size:{k.font_size.details}px;'>
-        {$w_thing_tags.map(t => t.type).join(', ')}
+        {s_details.s_tags.item?.type}
     </div>
 {:else}
     <div class='no-tags'
