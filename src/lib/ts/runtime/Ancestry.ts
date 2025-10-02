@@ -3,10 +3,9 @@ import { T_Graph, T_Create, T_Kinship, T_Predicate, T_Alteration, T_Component } 
 import { c, h, k, p, u, ux, show, grabs, debug, search, svgPaths, components } from '../common/Global_Imports';
 import { w_t_database, w_depth_limit, w_s_title_edit, w_s_alteration } from '../managers/Stores';
 import { G_Widget, G_Paging, G_Cluster, G_TreeLine } from '../common/Global_Imports';
-import { w_ancestry_focus, w_ancestries_expanded, } from '../managers/Stores';
+import { w_ancestry_focus, w_show_graph_ofType } from '../managers/Stores';
 import { S_Component, S_Title_Edit } from '../common/Global_Imports';
 import type { Dictionary, Integer } from '../types/Types';
-import { w_show_graph_ofType } from '../managers/Stores';
 import { T_Database } from '../database/DB_Common';
 import { get, Writable } from 'svelte/store';
 import Identifiable from './Identifiable';
@@ -453,7 +452,7 @@ export default class Ancestry extends Identifiable {
 	toggleExpanded() { return this.expanded_setTo(!this.isExpanded); }
 	get shows_branches(): boolean { return p.branches_areChildren ? this.shows_children : !this.isRoot; }
 	get shows_children(): boolean { return this.isExpanded && this.hasChildren && this.hasVisible_depth_ofFocus; }
-	get isExpanded(): boolean { return this.isRoot || !get(w_ancestries_expanded) || this.includedInStore_ofAncestries(w_ancestries_expanded); }
+	get isExpanded(): boolean { return this.isRoot || this.includedInStore_ofAncestries(ux.s_expanded_ancestries.w_items); }
 
 	remove_fromGrabbed_andExpanded() {
 		this.collapse();
@@ -489,10 +488,7 @@ export default class Ancestry extends Identifiable {
 		let mutated = false;
 		const matchesDB = this.t_database == get(w_t_database);
 		if (matchesDB && (!this.isRoot || expand)) {
-			if (!get(w_ancestries_expanded)) {
-				w_ancestries_expanded.set([]);
-			}
-			w_ancestries_expanded.update((a) => {
+			ux.s_expanded_ancestries.w_items.update((a) => {
 				let array = a ?? [];
 				if (!!array) {
 					const index = array.map(a => a.pathString).indexOf(this.pathString);

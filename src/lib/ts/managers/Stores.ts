@@ -28,7 +28,6 @@ export const w_s_title_edit				= writable<S_Title_Edit | null>();
 
 const _____ANCESTRY: unique symbol = Symbol('ANCESTRY');
 
-export const w_ancestries_expanded		= writable<Array<Ancestry>>();
 export const w_hierarchy				= writable<Hierarchy>();
 export const w_ancestry_focus			= writable<Ancestry>();
 

@@ -2,8 +2,8 @@
 	import { c, h, k, u, ux, grabs, debug, layout, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import { S_Element, S_Component, T_Layer, T_Graph, T_Component } from '../../ts/common/Global_Imports';
 	import { w_thing_title, w_thing_color, w_background_color } from '../../ts/managers/Stores';
-	import { w_show_countDots_ofType, w_ancestries_expanded } from '../../ts/managers/Stores';
 	import { Size, Thing, Point, Predicate } from '../../ts/common/Global_Imports';
+	import { w_show_countDots_ofType } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
@@ -15,8 +15,9 @@
 	const g_widget = ancestry.g_widget;
 	const tinyDotsOffset = new Point(-4.9, -2.45);
 	const outer_diameter = k.diameterOf_outer_tinyDots;
-	const viewBox = `0.5 2.35 ${outer_diameter} ${outer_diameter}`;
+	const { w_items: w_expanded } = ux.s_expanded_ancestries;
 	const { w_items: w_grabbed } = grabs.s_grabbed_ancestries;
+	const viewBox = `0.5 2.35 ${outer_diameter} ${outer_diameter}`;
 	const size_ofTinyDots = Size.width(3).expandedEquallyBy(outer_diameter)
 	let fill_color = debug.lines ? 'transparent' : s_reveal.fill;
 	let svgPathFor_outer_tinyDots: string | null = null;
@@ -43,7 +44,7 @@
 	});
 	
 	$: {
-		const _ = `${$w_grabbed.map(a => a.titles.join(',')).join('-')}:::${$w_ancestries_expanded.map(a => a.titles.join(',')).join('-')}:::${$w_show_countDots_ofType}:::${$w_thing_title}:::${$w_background_color}:::${$w_thing_color}`;
+		const _ = `${$w_grabbed.map(a => a.titles.join(',')).join('-')}:::${$w_expanded.map(a => a.titles.join(',')).join('-')}:::${$w_show_countDots_ofType}:::${$w_thing_title}:::${$w_background_color}:::${$w_thing_color}`;
 		update_svgPaths();
 		update_colors();
 	}

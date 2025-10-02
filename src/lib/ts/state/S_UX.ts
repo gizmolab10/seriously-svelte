@@ -1,7 +1,7 @@
-import { T_Graph, T_Search_Preference, T_Control, T_Element, T_Kinship, debug } from '../common/Global_Imports';
-import { p, grabs, colors, layout, Ancestry } from '../common/Global_Imports';
+import { T_Graph, T_Control, T_Element, T_Kinship, T_Search_Preference } from '../common/Global_Imports';
+import { S_Mouse, S_Widget, S_Element, S_Identifiables } from '../common/Global_Imports';
+import { p, grabs, debug, colors, layout, Ancestry } from '../common/Global_Imports';
 import { w_search_preferences, w_show_graph_ofType } from '../managers/Stores';
-import { S_Mouse, S_Widget, S_Element } from '../common/Global_Imports';
 import { w_show_tree_ofType, w_depth_limit } from '../managers/Stores';
 import { w_show_related, w_ancestry_focus } from '../managers/Stores';
 import Identifiable from '../runtime/Identifiable';
@@ -11,6 +11,7 @@ import { get } from 'svelte/store';
 export default class S_UX {
 	control_isVisible_forType: {[t_control: string]: boolean} = {};
 	s_control_byType: { [t_control: string]: S_Element } = {};
+	s_expanded_ancestries = new S_Identifiables<Ancestry>([]);
 	s_widget_byAncestryID: { [id: string]: S_Widget } = {};
 	s_element_byName: { [name: string]: S_Element } = {};
 	s_mouse_byName: { [name: string]: S_Mouse } = {};

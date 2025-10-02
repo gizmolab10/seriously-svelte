@@ -2,9 +2,8 @@
 	import { c, h, k, u, ux, Rect, Size, Point, Thing, grabs, debug, Angle } from '../../ts/common/Global_Imports';
 	import { layout, signals, components, databases, Seriously_Range } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/managers/Stores';
-	import { T_Graph, T_Search, T_Layer, T_Component } from '../../ts/common/Global_Imports';
-	import { w_s_title_edit, w_ancestries_expanded } from '../../ts/managers/Stores';
-	import { w_mouse_location, w_search_state } from '../../ts/managers/Stores';
+	import { w_s_title_edit, w_mouse_location, w_search_state } from '../../ts/managers/Stores';
+	import { T_Search, T_Layer, T_Component } from '../../ts/common/Global_Imports';
 	import { S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { T_Edit } from '../../ts/state/S_Title_Edit';
@@ -17,6 +16,7 @@
 	const g_widget = ancestry.g_widget;
 	const s_widget = g_widget.s_widget;
 	const input_height = k.height.dot + 2;
+	const { w_items: w_expanded } = ux.s_expanded_ancestries;
 	const { w_items: w_grabbed } = grabs.s_grabbed_ancestries;
 	let title_width = (thing?.width_ofTitle ?? 0) + title_extra();
 	let title_binded = thing?.title ?? k.empty;
@@ -74,7 +74,7 @@
 	}
 
 	$: {
-		const reactives = `${$w_thing_color}:::${$w_grabbed.map(a => a.titles.join(',')).join('-')}:::${$w_ancestries_expanded.map(a => a.titles.join(',')).join('-')}`;
+		const reactives = `${$w_thing_color}:::${$w_grabbed.map(a => a.titles.join(',')).join('-')}:::${$w_expanded.map(a => a.titles.join(',')).join('-')}`;
 		if (reactives != trigger) {
 			const isFocus = ancestry?.isFocus ?? false;
 			const adjust = ux.inRadialMode && isFocus;

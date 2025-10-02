@@ -3,7 +3,6 @@
 	import { k, u, ux, Rect, Point, colors, T_Layer } from '../../ts/common/Global_Imports';
 	import { w_thing_fontFamily, w_control_key_down } from '../../ts/managers/Stores';
 	import { S_Element, S_Component } from '../../ts/common/Global_Imports';
-	import { w_ancestries_expanded } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	export let s_button: S_Element = S_Element.empty();
 	export let closure: (result: S_Mouse) => boolean;

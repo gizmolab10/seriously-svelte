@@ -2,8 +2,7 @@
 	import { T_Layer, T_Detail, T_Action, T_Element, T_Kinship, T_Request, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
 	import { c, e, h, k, u, ux, show, Size, Point, grabs, colors, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
 	import { w_depth_limit, w_user_graph_offset, w_show_graph_ofType, w_search_result_row } from '../../ts/managers/Stores';
-	import { w_s_alteration, w_ancestries_expanded } from '../../ts/managers/Stores';
-	import { w_background_color } from '../../ts/managers/Stores';
+	import { w_s_alteration, w_background_color } from '../../ts/managers/Stores';
 	import Buttons_Table from '../mouse/Buttons_Table.svelte';
     import { s_details } from '../../ts/state/S_Details';
 	import Segmented from '../mouse/Segmented.svelte';
@@ -18,6 +17,7 @@
 	const bottom_tableHeight = 73;
 	const table_width = k.width.details - 8;
 	const bottom_padding = bottom_tableHeight - 48;
+	const { w_items: w_expanded } = ux.s_expanded_ancestries;
 	const { w_items: w_grabbed } = grabs.s_grabbed_ancestries;
     const font_sizes = [k.font_size.instructions, k.font_size.instructions];
     const s_banner_hideable = s_details.s_banner_hideables_byType[T_Detail.actions];
@@ -49,7 +49,7 @@
 	}
 
 	$: {
-		const _ = `${$w_ancestries_expanded?.map(a => a.titles.join(',')).join('-')}:::${$w_grabbed?.map(a => a.titles.join(',')).join('-')}`;
+		const _ = `${$w_expanded?.map(a => a.titles.join(',')).join('-')}:::${$w_grabbed?.map(a => a.titles.join(',')).join('-')}`;
 		update_button_titles();
 	}
 

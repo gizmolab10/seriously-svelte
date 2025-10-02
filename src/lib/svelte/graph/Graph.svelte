@@ -2,10 +2,10 @@
 	import { e, h, k, u, ux, Rect, Point, debug, layout, signals, colors, S_Component } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_show_graph_ofType, w_user_graph_offset, w_depth_limit } from '../../ts/managers/Stores';
 	import { T_Layer, T_Graph, T_Signal, T_Startup, T_Control, T_Component } from '../../ts/common/Global_Imports';
-	import { w_ancestry_focus, w_ancestries_expanded, w_s_title_edit } from '../../ts/managers/Stores';
 	import { w_t_startup, w_device_isMobile, w_popupView_id } from '../../ts/managers/Stores';
 	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/managers/Stores';
 	import { w_thing_fontFamily, w_dragging_active } from '../../ts/managers/Stores';
+	import { w_ancestry_focus, w_s_title_edit } from '../../ts/managers/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Radial_Graph from '../graph/Radial_Graph.svelte';
 	import Tree_Graph from '../graph/Tree_Graph.svelte';
@@ -13,6 +13,7 @@
 	import Button from '../mouse/Button.svelte';
 	import { onMount } from 'svelte';
 	const size_big = k.height.button + 4;
+	const { w_items: w_expanded } = ux.s_expanded_ancestries;
 	let actual_content_rect = layout.user_offset_rect_ofDrawnGraph;
 	let draggableRect = $w_graph_rect;
 	let rubberbandComponent: any;
@@ -44,7 +45,7 @@
 	}
 
 	$:	{
-		const _ = `${$w_show_graph_ofType}:::${$w_ancestry_focus?.titles.join(',')}:::${$w_ancestries_expanded?.map(a => a.titles.join(',')).join('-')}`;
+		const _ = `${$w_show_graph_ofType}:::${$w_ancestry_focus?.titles.join(',')}:::${$w_expanded?.map(a => a.titles.join(',')).join('-')}`;
 		grand_layout_andReattach();
 	}
 

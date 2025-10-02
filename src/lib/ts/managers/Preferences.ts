@@ -1,11 +1,11 @@
 import { G_Paging, T_Graph, T_Detail, T_Kinship, T_Preference, T_Auto_Adjust, T_Startup } from '../common/Global_Imports';
-import { c, h, k, u, show, grabs, debug, radial, colors, Ancestry, databases } from '../common/Global_Imports';
+import { c, h, k, u, ux, show, grabs, debug, radial, colors, Ancestry, databases } from '../common/Global_Imports';
 import { w_auto_adjust_graph, w_show_tree_ofType, w_show_graph_ofType } from './Stores';
 import { w_t_database, w_ring_rotation_angle, w_ring_rotation_radius } from './Stores';
 import { w_g_paging, w_font_size, w_thing_fontFamily, w_depth_limit } from './Stores';
-import { w_ancestry_focus, w_ancestries_expanded, w_t_startup } from './Stores';
 import { w_show_details_ofType, w_show_countDots_ofType } from './Stores';
 import { w_background_color, w_separator_color } from './Stores';
+import { w_ancestry_focus, w_t_startup } from './Stores';
 import { get } from 'svelte/store';
 
 export class Preferences {
@@ -85,14 +85,14 @@ export class Preferences {
 	restore_expanded() {
 		if (c.eraseDB > 0) {
 			c.eraseDB -= 1;
-			w_ancestries_expanded.set([]);
+			ux.s_expanded_ancestries.items = [];
 		} else {
 			const expanded = p.ancestries_readDB_key(this.expanded_key) ?? p.ancestries_readDB_key('expanded');	// backwards compatible with 'expanded' key
 			debug.log_expand(`  READ (${get(w_t_database)}): "${u.ids_forDB(expanded)}"`);
-			w_ancestries_expanded.set(expanded);
+			ux.s_expanded_ancestries.items = expanded;
 		}
 		setTimeout(() => {
-			w_ancestries_expanded.subscribe((array: Array<Ancestry> | null) => {
+			ux.s_expanded_ancestries.w_items.subscribe((array: Array<Ancestry> | null) => {
 				if (!!array && array.length > 0) {
 					debug.log_expand(`  WRITING (${get(w_t_database)}): "${u.ids_forDB(array)}"`);
 					p.ancestries_writeDB_key(array, this.expanded_key);
