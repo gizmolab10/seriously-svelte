@@ -14,7 +14,7 @@
 	import { onMount } from 'svelte';
 	export let top = 6;
 	const id = 'selection details';
-	const { w_items: w_grabbed } = grabs.s_grabbed_ancestries;
+	const { w_items: w_grabbed } = ux.s_grabbed_ancestries;
 	const s_info = ux.s_element_for(new Identifiable(id), T_Element.details, id);
 	let ancestry: Ancestry | null = grabs.ancestry_forInformation;
 	let thing: Thing | null = ancestry?.thing ?? null;

@@ -7,7 +7,7 @@
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Widget_Title from '../widget/Widget_Title.svelte';
 	import { onMount } from 'svelte';
-	const { w_items: w_grabbed } = grabs.s_grabbed_ancestries;
+	const { w_items: w_grabbed } = ux.s_grabbed_ancestries;
 	const height = k.height.row + 1;
 	let ancestry = $w_ancestry_focus;
 	let s_widget = ancestry.g_widget.s_widget;

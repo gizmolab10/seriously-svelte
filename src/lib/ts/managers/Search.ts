@@ -12,11 +12,15 @@ class Search {
 	private root_node: Search_Node = new Search_Node();
 
 	get selected_row(): number | null { return get(w_search_result_row); }
-	activate() { w_search_state.set(T_Search.enter); w_search_show_controls.set(true); }
 
 	set_result_row(row: number) {
 		w_search_result_row.set(row);
 		w_search_state.set(T_Search.selected);
+	}
+
+	activate() {
+		w_search_state.set(T_Search.enter);
+		w_search_show_controls.set(true);
 	}
 
 	deactivate() {

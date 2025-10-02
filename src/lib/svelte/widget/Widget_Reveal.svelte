@@ -16,7 +16,7 @@
 	const tinyDotsOffset = new Point(-4.9, -2.45);
 	const outer_diameter = k.diameterOf_outer_tinyDots;
 	const { w_items: w_expanded } = ux.s_expanded_ancestries;
-	const { w_items: w_grabbed } = grabs.s_grabbed_ancestries;
+	const { w_items: w_grabbed } = ux.s_grabbed_ancestries;
 	const viewBox = `0.5 2.35 ${outer_diameter} ${outer_diameter}`;
 	const size_ofTinyDots = Size.width(3).expandedEquallyBy(outer_diameter)
 	let fill_color = debug.lines ? 'transparent' : s_reveal.fill;

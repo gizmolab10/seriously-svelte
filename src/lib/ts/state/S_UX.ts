@@ -4,17 +4,19 @@ import { p, grabs, debug, colors, layout, Ancestry } from '../common/Global_Impo
 import { w_search_preferences, w_show_graph_ofType } from '../managers/Stores';
 import { w_show_tree_ofType, w_depth_limit } from '../managers/Stores';
 import { w_show_related, w_ancestry_focus } from '../managers/Stores';
+import type { Dictionary, Ancestry_Pair } from '../types/Types';
 import Identifiable from '../runtime/Identifiable';
-import type { Dictionary } from '../types/Types';
 import { get } from 'svelte/store';
 
 export default class S_UX {
 	control_isVisible_forType: {[t_control: string]: boolean} = {};
 	s_control_byType: { [t_control: string]: S_Element } = {};
 	s_expanded_ancestries = new S_Identifiables<Ancestry>([]);
+	s_grabbed_ancestries = new S_Identifiables<Ancestry>([]);
 	s_widget_byAncestryID: { [id: string]: S_Widget } = {};
 	s_element_byName: { [name: string]: S_Element } = {};
 	s_mouse_byName: { [name: string]: S_Mouse } = {};
+	recents = new S_Identifiables<Ancestry_Pair>([]);
 	parents_focus_ancestry!: Ancestry;
 	attached_branches: string[] = [];
 	mouse_responder_number = 0;

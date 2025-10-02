@@ -262,7 +262,7 @@ export class Events {
 						}
 						switch (key) {
 							case 'delete':
-							case 'backspace':	await h.ancestries_rebuild_traverse_persistentDelete(grabs.s_grabbed_ancestries.items); break;
+							case 'backspace':	await h.ancestries_rebuild_traverse_persistentDelete(ux.s_grabbed_ancestries.items); break;
 						}
 					}
 					if (!!ancestry) {
@@ -338,7 +338,7 @@ export class Events {
 					case a.add.related:				this.ancestry_toggle_alteration(ancestry, T_Alteration.add, Predicate.isRelated); break;
 				}								break;
 				case T_Action.delete:			switch (column) {
-					case a.delete.selection:		await h.ancestries_rebuild_traverse_persistentDelete(grabs.s_grabbed_ancestries.items); break;
+					case a.delete.selection:		await h.ancestries_rebuild_traverse_persistentDelete(ux.s_grabbed_ancestries.items); break;
 					case a.delete.parent:			this.ancestry_toggle_alteration(ancestry, T_Alteration.delete, Predicate.contains); break;
 					case a.delete.related:			this.ancestry_toggle_alteration(ancestry, T_Alteration.delete, Predicate.isRelated); break;
 				}								break;

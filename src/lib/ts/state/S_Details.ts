@@ -1,4 +1,4 @@
-import { h, Tag, Thing, Trait, grabs, Ancestry, S_Identifiables } from '../common/Global_Imports';
+import { h,  ux, Tag, Thing, Trait, grabs, Ancestry, S_Identifiables } from '../common/Global_Imports';
 import { T_Detail, T_Startup, T_Direction, T_Storage_Need } from '../common/Global_Imports';
 import { w_t_startup, w_count_details, w_show_details_ofType } from '../managers/Stores';
 import { w_thing_traits, w_ancestry_focus, w_data_updated } from '../managers/Stores';
@@ -38,7 +38,7 @@ class S_Details {
 	private update() {
 		if (get(w_t_startup) == T_Startup.ready) {
 			this.update_traitThings();
-			this.grabbed_ancestries = grabs.s_grabbed_ancestries.w_items;
+			this.grabbed_ancestries = ux.s_grabbed_ancestries.w_items;
 			this.s_tags.items = grabs.ancestry_forInformation?.thing?.tags ?? [];
 		}
 	}

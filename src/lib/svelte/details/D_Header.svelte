@@ -3,7 +3,7 @@
 	import { Ancestry, T_Detail, S_Widget } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_search_result_row } from '../../ts/managers/Stores';
 	import { w_graph_rect, w_device_isMobile } from '../../ts/managers/Stores';
-	const { w_items: w_grabbed } = grabs.s_grabbed_ancestries;
+	const { w_items: w_grabbed } = ux.s_grabbed_ancestries;
 	let ancestry: Ancestry | null = null;
 	let background_color = 'transparent';
 	let color = colors.default;

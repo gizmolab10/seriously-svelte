@@ -141,13 +141,13 @@ export class Utilities extends Testworthy_Utilities {
 	}
 
 	temporarily_setDefaults_while(closure: () => void) {
-		const grabbed = grabs.s_grabbed_ancestries.items;
+		const grabbed = ux.s_grabbed_ancestries.items;
 		const color = get(w_background_color);
 		w_background_color.set('white');
-		grabs.s_grabbed_ancestries.items = [];	// triggers reactivity, takes time to percolate
+		ux.s_grabbed_ancestries.items = [];	// triggers reactivity, takes time to percolate
 		setTimeout(() => {
 			closure();
-			grabs.s_grabbed_ancestries.items = grabbed;
+			ux.s_grabbed_ancestries.items = grabbed;
 			w_background_color.set(color);
 		}, 10);
 	}

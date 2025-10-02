@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, k, grabs, Point, layout, T_Layer, T_Graph, T_Detail, T_Direction } from '../../ts/common/Global_Imports';
+	import { c, k, ux, Point, layout, T_Layer, T_Graph, T_Detail, T_Direction } from '../../ts/common/Global_Imports';
 	import { w_search_state, w_search_result_row, w_search_show_controls } from '../../ts/managers/Stores';
 	import { w_graph_rect, w_count_details, w_show_graph_ofType } from '../../ts/managers/Stores';
 	import Banner_Hideable from './Banner_Hideable.svelte';
@@ -12,7 +12,7 @@
 	import D_Data from './D_Data.svelte';
 	import D_Tags from './D_Tags.svelte';
 	const next_previous_titles = [T_Direction.previous, T_Direction.next];
-	const { w_items: w_grabbed } = grabs.s_grabbed_ancestries;
+	const { w_items: w_grabbed } = ux.s_grabbed_ancestries;
 	const width = k.width.details;
 	let extra_selection_titles = [];
 	let prior_graph_type = $w_show_graph_ofType;

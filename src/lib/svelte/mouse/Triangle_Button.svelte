@@ -18,7 +18,7 @@
 	let extraColor = 'white';
 	let trianglePath = svgPaths.fat_polygon(size, angle);
 
-	$: $grabs.s_grabbed_ancestries.w_items, setFillColor(false);
+	$: $ux.s_grabbed_ancestries.w_items, setFillColor(false);
 	
 	$: {
 		trianglePath = svgPaths.fat_polygon(size, angle);

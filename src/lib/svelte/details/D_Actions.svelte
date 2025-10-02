@@ -18,7 +18,7 @@
 	const table_width = k.width.details - 8;
 	const bottom_padding = bottom_tableHeight - 48;
 	const { w_items: w_expanded } = ux.s_expanded_ancestries;
-	const { w_items: w_grabbed } = grabs.s_grabbed_ancestries;
+	const { w_items: w_grabbed } = ux.s_grabbed_ancestries;
     const font_sizes = [k.font_size.instructions, k.font_size.instructions];
     const s_banner_hideable = s_details.s_banner_hideables_byType[T_Detail.actions];
 	const s_cancel = ux.s_element_for(grabs.ancestry_forInformation, T_Element.cancel, k.empty);

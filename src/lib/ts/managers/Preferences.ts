@@ -67,13 +67,13 @@ export class Preferences {
 		if (c.eraseDB > 0) {
 			c.eraseDB -= 1;
 			const grabbed = !!h.rootAncestry ? [h.rootAncestry] : [];
-			grabs.s_grabbed_ancestries.items = grabbed;
+			ux.s_grabbed_ancestries.items = grabbed;
 		} else {
-			grabs.s_grabbed_ancestries.items = this.ancestries_readDB_key(T_Preference.grabbed);
-			debug.log_grab(`  READ (${get(w_t_database)}): "${ids_forDB(grabs.s_grabbed_ancestries.items)}"`);
+			ux.s_grabbed_ancestries.items = this.ancestries_readDB_key(T_Preference.grabbed);
+			debug.log_grab(`  READ (${get(w_t_database)}): "${ids_forDB(ux.s_grabbed_ancestries.items)}"`);
 		}
 		setTimeout(() => {
-			grabs.s_grabbed_ancestries.w_items.subscribe((array: Array<Ancestry>) => {
+			ux.s_grabbed_ancestries.w_items.subscribe((array: Array<Ancestry>) => {
 				if (array.length > 0) {
 					this.ancestries_writeDB_key(array, T_Preference.grabbed);
 					debug.log_grab(`  WRITING (${get(w_t_database)}): "${ids_forDB(array)}"`);

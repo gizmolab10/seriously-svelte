@@ -1,21 +1,17 @@
-import { T_Search, T_Startup, S_Identifiables } from '../common/Global_Imports';
 import { ux, debug, search, layout, Ancestry } from '../common/Global_Imports';
 import { w_hierarchy, w_depth_limit, w_s_title_edit } from './Stores';
+import { T_Search, T_Startup } from '../common/Global_Imports';
 import { w_s_alteration, w_ancestry_focus } from './Stores';
 import { w_t_startup, w_search_state } from './Stores';
+import type { Ancestry_Pair } from '../types/Types';
 import { s_details } from '../state/S_Details';
 import { get } from 'svelte/store';
 
-type Ancestry_Pair = [Ancestry, Ancestry | null];
-
 export class Grabs {
 	// N.B. hierarchy depends on this, so we can't use h here
-	
-	recents = new S_Identifiables<Ancestry_Pair>([]);
-	s_grabbed_ancestries = new S_Identifiables<Ancestry>([]);
 
 	constructor() {
-		this.s_grabbed_ancestries.w_items.subscribe((array: Array<Ancestry>) => {
+		ux.s_grabbed_ancestries.w_items.subscribe((array: Array<Ancestry>) => {
 			if (get(w_t_startup) == T_Startup.ready) {
 				this.update();
 			}
@@ -35,14 +31,14 @@ export class Grabs {
 	private update() {
 		if (get(w_search_state) != T_Search.off) {
 			const items = search?.results.map(result => result.ancestry) ?? [];
-			this.s_grabbed_ancestries.items = items;
+			ux.s_grabbed_ancestries.items = items;
 		}
 	}
 
-	get index_ofAncestry(): number { return this.s_grabbed_ancestries.index; }
+	get index_ofAncestry(): number { return ux.s_grabbed_ancestries.index; }
 
 	get ancestry(): Ancestry | null {
-		return (this.s_grabbed_ancestries.item as Ancestry) ?? this.latest_upward(true);
+		return (ux.s_grabbed_ancestries.item as Ancestry) ?? this.latest_upward(true);
 	}
 
 	get ancestry_forInformation(): Ancestry {
@@ -57,8 +53,8 @@ export class Grabs {
 	}
 
 	focus_onNext(next: boolean) {
-		this.recents.find_next_item(next);
-		const item = this.recents.item;
+		ux.recents.find_next_item(next);
+		const item = ux.recents.item;
 		if (!!item && Array.isArray(item) && item.length >= 2) {
 			const [ancestry, grabbed] = item;
 			if (!!ancestry) {
@@ -76,7 +72,7 @@ export class Grabs {
 		const changed = force || !priorFocus || !ancestry.equals(priorFocus!);
 		if (changed) {
 			const pair: Ancestry_Pair = [ancestry, this.ancestry];
-			this.recents.push(pair);
+			ux.recents.push(pair);
 			w_s_alteration.set(null);
 			w_ancestry_focus.set(ancestry);
 		}
@@ -89,18 +85,18 @@ export class Grabs {
 	isGrabbed(ancestry: Ancestry): boolean { return this.ancestry_forInformation.equals(ancestry); }
 	
 	grab_next(next: boolean) {	// for next/previous in details selection banner
-		this.s_grabbed_ancestries.find_next_item(next);
+		ux.s_grabbed_ancestries.find_next_item(next);
 		s_details.redraw();		// force re-render of details
 	}
 
 	grabOnly(ancestry: Ancestry) {
 		debug.log_grab(`  GRAB ONLY '${ancestry.title}'`);
-		this.s_grabbed_ancestries.items = [ancestry];
+		ux.s_grabbed_ancestries.items = [ancestry];
 		get(w_hierarchy)?.stop_alteration();
 	}
 
 	grab(ancestry: Ancestry) {
-		let grabbed = this.s_grabbed_ancestries.items ?? [];
+		let grabbed = ux.s_grabbed_ancestries.items ?? [];
 		if (!!grabbed) {
 			const index = grabbed.indexOf(ancestry);
 			if (grabbed.length == 0) {
@@ -112,14 +108,14 @@ export class Grabs {
 				grabbed.push(ancestry);					// always add last
 			}
 		}
-		this.s_grabbed_ancestries.items = grabbed;
+		ux.s_grabbed_ancestries.items = grabbed;
 		debug.log_grab(`  GRAB '${ancestry.title}'`);
 		get(w_hierarchy)?.stop_alteration();
 	}
 
 	ungrab(ancestry: Ancestry) {
 		w_s_title_edit?.set(null);
-		let grabbed = this.s_grabbed_ancestries.items ?? [];
+		let grabbed = ux.s_grabbed_ancestries.items ?? [];
 		const rootAncestry = get(w_hierarchy)?.rootAncestry;
 		if (!!grabbed) {
 			const index = grabbed.indexOf(ancestry);
@@ -135,7 +131,7 @@ export class Grabs {
 		} else {
 			get(w_hierarchy)?.stop_alteration(); // do not show editingActions for root
 		}
-		this.s_grabbed_ancestries.items = grabbed;
+		ux.s_grabbed_ancestries.items = grabbed;
 		debug.log_grab(`  UNGRAB '${ancestry.title}'`);
 	}
 	
@@ -149,7 +145,7 @@ export class Grabs {
 	}
 
 	latest_upward(up: boolean): Ancestry | null {	// does not alter array
-		const ancestries = this.s_grabbed_ancestries.items ?? [];
+		const ancestries = ux.s_grabbed_ancestries.items ?? [];
 		if (ancestries.length > 0) {
 			if (up) {
 				return ancestries[0];
