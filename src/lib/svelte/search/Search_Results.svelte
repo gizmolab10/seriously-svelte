@@ -66,7 +66,6 @@
 
 <style>
 	.search-results {
-		overflow: hidden; /* Prevent content from spilling outside */
 		outline: none !important;
 		position: absolute;
         z-index: 100;
@@ -95,7 +94,7 @@
 	}
 	li.selected,
 	li.selected:hover {
-		background-color: #ccc;
+		background-color: lightblue;
 	}
 	li:hover {
 		background-color: #eee;

@@ -2,10 +2,10 @@
 	import { T_Layer, T_Graph, T_Signal, T_Alteration, T_Component } from '../../ts/common/Global_Imports';
 	import { c, e, k, u, ux, show, grabs, debug, layout, signals } from '../../ts/common/Global_Imports';
 	import { Rect, Size, Point, Thing, S_Element, S_Component } from '../../ts/common/Global_Imports';
-	import { w_show_countDots_ofType, w_thing_color } from '../../ts/managers/Stores';
+	import { w_thing_color, w_s_title_edit, w_s_alteration } from '../../ts/managers/Stores';
+	import { w_background_color, w_show_countDots_ofType } from '../../ts/managers/Stores';
+	import { w_ancestry_focus, w_ancestry_presented } from '../../ts/managers/Stores';
 	import { svgPaths, databases, components } from '../../ts/common/Global_Imports';
-	import { w_s_alteration, w_background_color } from '../../ts/managers/Stores';
-	import { w_s_title_edit, w_ancestry_focus } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
@@ -53,7 +53,7 @@
 	}
 
 	$: {
-		const _ = `${$w_thing_color}:::${$w_background_color}:::${u.description_byTitles($w_grabbed)}`;
+		const _ = `${$w_thing_color}:::${$w_background_color}:::${$w_ancestry_focus?.id}:::${$w_ancestry_presented?.id}:::${u.description_byTitles($w_grabbed)}`;
 		update_colors();
 	}
 
@@ -69,8 +69,9 @@
 	function update_colors() {
 		if (!ux.isAny_rotation_active && !!s_drag && !!thing) {
 			const usePointer = (!ancestry.isGrabbed || ux.inRadialMode) && ancestry.hasChildren;
+			const presented_inDetails = grabs.ancestry_forInformation.id == ancestry.id;
 			const cursor = usePointer ? 'pointer' : 'normal';
-			s_drag.isOut = !isHovering != ancestry.isGrabbed;
+			s_drag.isOut = !isHovering != (ancestry.isGrabbed && !presented_inDetails);
 			s_drag.set_forHovering(thing.color, cursor);
 			color = thing.color;
 			ellipsis_color = s_drag.stroke;

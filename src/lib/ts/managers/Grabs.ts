@@ -1,7 +1,7 @@
+import { w_hierarchy, w_depth_limit, w_s_title_edit, w_s_alteration } from './Stores';
 import { ux, debug, search, layout, Ancestry } from '../common/Global_Imports';
-import { w_hierarchy, w_depth_limit, w_s_title_edit } from './Stores';
+import { w_ancestry_focus, w_ancestry_presented } from './Stores';
 import { T_Search, T_Startup } from '../common/Global_Imports';
-import { w_s_alteration, w_ancestry_focus } from './Stores';
 import type { Identifiable_Pair } from '../types/Types';
 import { w_t_startup, w_search_state } from './Stores';
 import { s_details } from '../state/S_Details';
@@ -48,10 +48,15 @@ export class Grabs {
 		if (!!search_ancestry) {
 			return search_ancestry;
 		}
-		const focus = get(w_ancestry_focus);
 		const grab = this.ancestry;
+		const focus = get(w_ancestry_focus);
+		const presented = get(w_ancestry_presented);
 		const grab_containsFocus = !!grab && !!focus && focus.isAProgenyOf(grab)
-		return (!!grab && !grab_containsFocus) ? grab : focus;
+		const ancestry = (!!grab && !grab_containsFocus) ? grab : focus;
+		if (!presented || !presented.equals(ancestry)) {
+			w_ancestry_presented.set(ancestry);
+		}
+		return ancestry;
 	}
 
 	focus_onNext(next: boolean) {
