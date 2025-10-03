@@ -1,15 +1,19 @@
 <script lang="ts">
-	import { w_search_results_changed, w_search_result_row, w_search_show_controls } from '../../ts/managers/Stores';
+	import { w_search_results_changed, w_search_show_controls } from '../../ts/managers/Stores';
 	import { w_graph_rect, w_search_state, w_separator_color } from '../../ts/managers/Stores';
 	import { k, u, ux, Thing,colors, T_Search } from '../../ts/common/Global_Imports';
 	import { search } from '../../ts/managers/Search';
+	import { derived } from 'svelte/store';
+	const index_store = ux.s_search_results.w_index;
+	let results_index = $index_store;
 	let element: HTMLDivElement;
 	let results: Thing[] = [];
-
-	$: $w_search_results_changed, results = search.results;
+	
+	$: results_index = $index_store;
+	$: $w_search_results_changed, results = ux.s_search_results.items;
 
 	$: {
-		const row = $w_search_result_row;
+		const row = $index_store;
 		let selected_row: HTMLElement | null = null;
 		if (row !== null && !!element) {
 			selected_row = element.children[row] as HTMLElement;
@@ -19,7 +23,7 @@
 	}
 
 	function handle_row_selected(event: MouseEvent, index: number) {
-		const prior_row = $w_search_result_row;
+		const prior_row = $index_store;
 		if (prior_row !== null && prior_row === index) {
 			search.deactivate_focus_and_grab();
 		} else {
@@ -50,16 +54,16 @@
 
 <div class='search-results'
 	tabindex='0'>
-	{#key `${$w_separator_color}:::${$w_search_result_row}:::${$w_search_results_changed}`}
-		<ul bind:this={element}>
+	<ul bind:this={element}>
+		{#key `${$w_separator_color}:::${$index_store}:::${$w_search_results_changed}`}
 			{#each results as result, index}
-				<li class:selected={$w_search_result_row === index} style='color: {result.color}'
+				<li class:selected={$index_store === index} style='color: {result.color}'
 					on:mousedown={(event) => handle_row_selected(event, index)}>
 					<span>{@html highlightMatch(result.title, search.search_text)}</span>
 				</li>
 			{/each}
-		</ul>
-	{/key}
+		{/key}
+	</ul>
 </div>
 
 <style>

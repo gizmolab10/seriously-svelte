@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { c, k, ux, Point, layout, T_Layer, T_Graph, T_Detail, T_Direction } from '../../ts/common/Global_Imports';
-	import { w_search_state, w_search_result_row, w_search_show_controls } from '../../ts/managers/Stores';
+	import { w_search_state, w_search_show_controls } from '../../ts/managers/Stores';
 	import { w_graph_rect, w_count_details, w_show_graph_ofType } from '../../ts/managers/Stores';
 	import Banner_Hideable from './Banner_Hideable.svelte';
 	import D_Preferences from './D_Preferences.svelte';
@@ -19,7 +19,7 @@
 	let show_secondary_controls = $w_search_show_controls || ($w_show_graph_ofType == T_Graph.tree);
 
 	$: {
-		const _ = `${$w_search_state}:::${$w_search_result_row}:::${$w_grabbed?.map(a => a.titles.join(',')).join('-') ?? k.empty}`;
+		const _ = `${$w_search_state}:::${ux.s_search_results.w_index}:::${$w_grabbed?.map(a => a.titles.join(',')).join('-') ?? k.empty}`;
 		const length = $w_grabbed?.length ?? 0;
 		extra_selection_titles = length < 2 ? [] : next_previous_titles;
 		$w_count_details++;

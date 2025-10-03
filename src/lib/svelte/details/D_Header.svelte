@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { c, k, u, ux, grabs, debug, search, colors, layout } from '../../ts/common/Global_Imports';
 	import { Ancestry, T_Detail, S_Widget } from '../../ts/common/Global_Imports';
-	import { w_thing_color, w_search_result_row } from '../../ts/managers/Stores';
+	import { w_thing_color } from '../../ts/managers/Stores';
 	import { w_graph_rect, w_device_isMobile } from '../../ts/managers/Stores';
 	const { w_items: w_grabbed } = ux.s_grabbed_ancestries;
 	let ancestry: Ancestry | null = null;
@@ -10,7 +10,7 @@
     let reattachments = 0;
 
 	$: {
-		const _ = `${$w_thing_color}:::${$w_search_result_row}:::${$w_grabbed?.map(a => a.titles.join(',')).join('-')}`;
+		const _ = `${$w_thing_color}:::${ux.s_search_results.w_index}:::${$w_grabbed?.map(a => a.titles.join(',')).join('-')}`;
 		ancestry = grabs.ancestry_forInformation;
 		if (!!ancestry) {
 			const s_widget = ancestry.g_widget.s_widget;

@@ -1,9 +1,9 @@
-import { ux, debug, search, layout, Ancestry } from '../common/Global_Imports';
 import { w_hierarchy, w_depth_limit, w_s_title_edit } from './Stores';
+import { ux, debug, search, layout, Ancestry } from '../common/Global_Imports';
 import { T_Search, T_Startup } from '../common/Global_Imports';
 import { w_s_alteration, w_ancestry_focus } from './Stores';
 import { w_t_startup, w_search_state } from './Stores';
-import type { Ancestry_Pair } from '../types/Types';
+import type { Identifiable_Pair } from '../types/Types';
 import { s_details } from '../state/S_Details';
 import { get } from 'svelte/store';
 
@@ -30,8 +30,10 @@ export class Grabs {
 
 	private update() {
 		if (get(w_search_state) != T_Search.off) {
-			const items = search?.results.map(result => result.ancestry) ?? [];
-			ux.s_grabbed_ancestries.items = items;
+			const items = ux.s_search_results.items.map(result => result.ancestry) ?? [];
+			if (ux.s_grabbed_ancestries.items.map(a => a.id).join(',') != items.map(a => a.id).join(',')) {
+				ux.s_grabbed_ancestries.items = items;
+			}
 		}
 	}
 
@@ -53,10 +55,11 @@ export class Grabs {
 	}
 
 	focus_onNext(next: boolean) {
-		ux.recents.find_next_item(next);
-		const item = ux.recents.item;
-		if (!!item && Array.isArray(item) && item.length >= 2) {
-			const [ancestry, grabbed] = item;
+		ux.s_recents.find_next_item(next);
+		ux.s_search_results.index = ux.s_recents.index;
+		const pair = ux.s_recents.item as [Ancestry, Ancestry | null];
+		if (!!pair && Array.isArray(pair) && pair.length == 2) {
+			const [ancestry, grabbed] = pair;
 			if (!!ancestry) {
 				w_ancestry_focus.set(ancestry);
 				ancestry.expand();
@@ -71,8 +74,8 @@ export class Grabs {
 		const priorFocus = get(w_ancestry_focus);
 		const changed = force || !priorFocus || !ancestry.equals(priorFocus!);
 		if (changed) {
-			const pair: Ancestry_Pair = [ancestry, this.ancestry];
-			ux.recents.push(pair);
+			const pair: Identifiable_Pair<Ancestry> = [ancestry, this.ancestry];
+			ux.s_recents.push(pair);
 			w_s_alteration.set(null);
 			w_ancestry_focus.set(ancestry);
 		}
@@ -84,8 +87,12 @@ export class Grabs {
 
 	isGrabbed(ancestry: Ancestry): boolean { return this.ancestry_forInformation.equals(ancestry); }
 	
-	grab_next(next: boolean) {	// for next/previous in details selection banner
-		ux.s_grabbed_ancestries.find_next_item(next);
+	grab_next_forSelection(next: boolean) {	// for next/previous in details selection banner
+		if (get(w_search_state) > T_Search.off) {
+			ux.s_search_results.find_next_item(next);
+		} else {
+			ux.s_grabbed_ancestries.find_next_item(next);
+		}
 		s_details.redraw();		// force re-render of details
 	}
 

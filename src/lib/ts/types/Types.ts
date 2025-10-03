@@ -1,13 +1,13 @@
+import Identifiable from '../runtime/Identifiable';
 import { T_Signal } from '../common/Enumerations';
 import { SignalConnection } from 'typed-signals';
-import Ancestry from '../runtime/Ancestry';
 import S_Mouse from '../state/S_Mouse';
 
 export type Integer = number & { __brand: 'integer' };
 export type Dictionary<T = any> = { [key: string]: T };
-export type Ancestry_Pair = [Ancestry, Ancestry | null];
 export type Handle_Result<T = Object, U = void> = (result: T) => U;
 export type Handle_S_Mouse = Handle_Result<S_Mouse, boolean>;
+export type Identifiable_Pair<T = Identifiable> = [T, T | null];
 export type Async_Handle_Boolean = (flag: boolean) => Promise<void>;
 export type Signal_Handler = (t_signal: T_Signal, value: any | null) => any;
 export type Create_S_Mouse = (event: MouseEvent | null, element: HTMLElement) => S_Mouse;

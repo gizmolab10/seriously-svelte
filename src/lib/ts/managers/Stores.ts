@@ -1,7 +1,7 @@
 import { Tag, Rect, Point, Trait, colors, Ancestry, Hierarchy } from '../common/Global_Imports';
 import { T_Graph, T_Kinship, T_Detail, T_Startup, T_Dragging } from '../common/Global_Imports';
 import { T_Search, T_Auto_Adjust, T_Search_Preference } from '../common/Global_Imports';
-import { S_Title_Edit, S_Alteration, S_Identifiables } from '../common/Global_Imports';
+import { S_Title_Edit, S_Alteration } from '../common/Global_Imports';
 import { G_Paging, G_Cluster } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
 
@@ -58,7 +58,6 @@ export const w_search_show_controls		= writable<boolean>();
 export const w_search_results_found		= writable<number>();
 export const w_search_results_changed	= writable<number>();				// re-render the search results
 export const w_search_state				= writable<T_Search>();				// observed by search_results, controls, and panel
-export const w_search_result_row		= writable<number | null>();		// affects appearance of search_results, [three] details and breadcrumbs
 export const w_search_preferences		= writable<T_Search_Preference>();	// TBD
 
 const _____COUNTS: unique symbol = Symbol('COUNTS');

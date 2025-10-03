@@ -2,7 +2,7 @@ import { h,  ux, Tag, Thing, Trait, grabs, Ancestry, S_Identifiables } from '../
 import { T_Detail, T_Startup, T_Direction, T_Storage_Need } from '../common/Global_Imports';
 import { w_t_startup, w_count_details, w_show_details_ofType } from '../managers/Stores';
 import { w_thing_traits, w_ancestry_focus, w_data_updated } from '../managers/Stores';
-import { w_search_result_row, w_search_results_found } from '../managers/Stores';
+import { w_search_results_found } from '../managers/Stores';
 import { S_Banner_Hideable } from './S_Banner_Hideable';
 import { get, Writable } from 'svelte/store';
 
@@ -21,7 +21,7 @@ class S_Details {
 		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
 			this.update();
 		});
-		w_search_result_row.subscribe((row: number | null) => {
+		ux.s_search_results.w_index.subscribe((row: number | null) => {
 			this.update();
 		});
 		w_show_details_ofType.subscribe((t_details: Array<T_Detail>) => {
@@ -53,7 +53,7 @@ class S_Details {
 		switch (t_detail) {
 			case T_Detail.traits:	 this.selectNext_traitThing(next); break;
 			case T_Detail.tags:  	 this.selectNext_tag(next); break;
-			case T_Detail.selection: grabs.grab_next(next); break;
+			case T_Detail.selection: grabs.grab_next_forSelection(next); break;
 		}
 	}
 
@@ -61,7 +61,7 @@ class S_Details {
 		const normal_title = T_Detail[t_detail];
 		switch (t_detail) {	
 			case T_Detail.selection:
-				const row	  = get(w_search_result_row);
+				const row	  = ux.s_search_results.index;
 				const matches = get(w_search_results_found);
 				const grabbed = get(this.grabbed_ancestries);
 				if (row != null && !!matches && matches > 1) {

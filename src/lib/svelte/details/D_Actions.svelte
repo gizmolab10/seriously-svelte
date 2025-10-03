@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { T_Layer, T_Detail, T_Action, T_Element, T_Kinship, T_Request, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
 	import { c, e, h, k, u, ux, show, Size, Point, grabs, colors, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
-	import { w_depth_limit, w_user_graph_offset, w_show_graph_ofType, w_search_result_row } from '../../ts/managers/Stores';
+	import { w_depth_limit, w_user_graph_offset, w_show_graph_ofType } from '../../ts/managers/Stores';
 	import { w_s_alteration, w_background_color } from '../../ts/managers/Stores';
 	import Buttons_Table from '../mouse/Buttons_Table.svelte';
     import { s_details } from '../../ts/state/S_Details';
@@ -44,7 +44,7 @@
 	}
 
 	$: {
-		const _ = `${$w_background_color}:::${$w_user_graph_offset}:::${$w_show_graph_ofType}:::${$w_s_alteration}:::${$w_search_result_row}`;
+		const _ = `${$w_background_color}:::${$w_user_graph_offset}:::${$w_show_graph_ofType}:::${$w_s_alteration}:::${ux.s_search_results.w_index}`;
 		reattachments++;
 	}
 

@@ -2,7 +2,7 @@
 	import { c, k, p, ux, grabs, colors, layout, Rect, Size, Point, Thing, Ancestry } from '../../ts/common/Global_Imports';
 	import { T_Thing, T_Trait, T_Layer, T_Element, T_Preference } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/managers/Stores';
-	import { w_show_details_ofType, w_search_result_row } from '../../ts/managers/Stores';
+	import { w_show_details_ofType } from '../../ts/managers/Stores';
 	import { w_ancestry_focus, w_relationship_order } from '../../ts/managers/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
     import { s_details } from '../../ts/state/S_Details';
@@ -30,7 +30,7 @@
 
 	$: $w_show_details_ofType, layout_forColor();
 	$: $w_relationship_order, update_forAncestry();
-	$: $w_grabbed, $w_ancestry_focus, $w_thing_title, $w_search_result_row, update_forAncestry();
+	$: $w_grabbed, $w_ancestry_focus, $w_thing_title, ux.s_search_results.w_index, update_forAncestry();
 	function handle_toggle_properties(event: Event) { s_details.show_properties = !s_details.show_properties; }
 
 	onMount(() => {
