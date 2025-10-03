@@ -12,7 +12,7 @@
 	export let left: number;
 	export let top: number;
 	const size_big = k.height.dot * 1.4;
-	const right_widths = [10, 10.5, $w_show_details ? 5 : 86, 33, 60];
+	const right_widths = [10, 10.5, $w_show_details ? 5 : 86, 73, 60];
 	const rights = u.cumulativeSum(right_widths).map((right, index) => width - right);
 	const s_search = ux.s_element_for(null, T_Element.search, k.empty);
 	let input: HTMLInputElement;
@@ -54,7 +54,7 @@
 			placeholder={'enter ' + $w_search_preferences + ' text'}
 			style='
 				top: 1px;
-				left: 88px;
+				left: 132px;
 				color: blue;
 				font-size: 12px;
 				padding-left: 6px;

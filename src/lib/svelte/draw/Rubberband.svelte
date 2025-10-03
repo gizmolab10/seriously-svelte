@@ -39,7 +39,7 @@
         mouse_upCount = $w_count_mouse_up;
         if ($w_dragging_active === T_Dragging.rubberband) {
             if (!has_grabs) {
-                ux.s_grabbed_ancestries.items = [];
+                ux.si_grabs.items = [];
             }
             startPoint = null;
             height = 0;
@@ -111,7 +111,7 @@
             $w_dragging_active = T_Dragging.command;
         } else {
             const constrained = constrainToRect(startPoint.x, startPoint.y);
-            original_grab_count = ux.s_grabbed_ancestries.items.length;
+            original_grab_count = ux.si_grabs.items.length;
             top = constrained.y;
             left = constrained.x;
             $w_dragging_active = T_Dragging.rubberband;
@@ -123,7 +123,7 @@
         if ($w_dragging_active === T_Dragging.rubberband) {
             const rubberbandRect = new Rect( new Point(left, top), new Size(width, height));
             const widget_components = components.components_ofType_withinRect(T_Component.widget, rubberbandRect);
-            const intersecting = [];
+            const intersecting: Ancestry[] = [];
             widget_components.forEach((component) => {
                 const ancestry = h.ancestry_forHID(component.hid);
                 if (!!ancestry) {
@@ -131,15 +131,15 @@
                 }
             });
             // Only update if the list has changed
-            const new_grabbed_IDs = intersecting.map(a => a.hid).sort().join(',');
-            const prior_grabbed_IDs = ux.s_grabbed_ancestries.items.map(a => a.hid).sort().join(',');
+            const new_grabbed_IDs = u.description_byHID(intersecting);
+            const prior_grabbed_IDs = u.description_byHID(ux.si_grabs.items);
             has_grabs = intersecting.length != 0;
             if (prior_grabbed_IDs !== new_grabbed_IDs) {
                 if (has_grabs) {
                     had_intersections = true;
-                    ux.s_grabbed_ancestries.items = intersecting;
+                    ux.si_grabs.items = intersecting;
                 } else if (had_intersections) {
-                    ux.s_grabbed_ancestries.items = [];
+                    ux.si_grabs.items = [];
                 }
             }
         }

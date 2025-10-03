@@ -16,9 +16,9 @@
 	const left_afterTitle = 39.5;
 	const bottom_tableHeight = 73;
 	const table_width = k.width.details - 8;
+	const { w_items: w_grabbed } = ux.si_grabs;
+	const { w_items: w_expanded } = ux.si_expanded;
 	const bottom_padding = bottom_tableHeight - 48;
-	const { w_items: w_expanded } = ux.s_expanded_ancestries;
-	const { w_items: w_grabbed } = ux.s_grabbed_ancestries;
     const font_sizes = [k.font_size.instructions, k.font_size.instructions];
     const s_banner_hideable = s_details.s_banner_hideables_byType[T_Detail.actions];
 	const s_cancel = ux.s_element_for(grabs.ancestry_forInformation, T_Element.cancel, k.empty);
@@ -44,12 +44,12 @@
 	}
 
 	$: {
-		const _ = `${$w_background_color}:::${$w_user_graph_offset}:::${$w_show_graph_ofType}:::${$w_s_alteration}:::${ux.s_search_results.w_index}`;
+		const _ = `${$w_background_color}:::${$w_user_graph_offset}:::${$w_show_graph_ofType}:::${$w_s_alteration}:::${ux.si_found.w_index}`;
 		reattachments++;
 	}
 
 	$: {
-		const _ = `${$w_expanded?.map(a => a.titles.join(',')).join('-')}:::${$w_grabbed?.map(a => a.titles.join(',')).join('-')}`;
+		const _ = `${u.description_byTitles($w_expanded)}:::${u.description_byTitles($w_grabbed)}`;
 		update_button_titles();
 	}
 

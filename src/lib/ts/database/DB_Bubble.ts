@@ -141,7 +141,7 @@ export default class DB_Bubble extends DB_Common {
 				this.debounced_focus = true;
 			}
 		});
-		ux.s_grabbed_ancestries.w_items.subscribe((ancestries: Ancestry[]) => {
+		ux.si_grabs.w_items.subscribe((ancestries: Ancestry[]) => {
 			if (!!ancestries && ancestries.map((ancestry: Ancestry) => ancestry.thing?.id ?? k.corrupted).join(', ') != this.prior_grabbed_ids.join(', ')) {
 				if (this.debounced_grab) {
 					this.prior_grabbed_ids = ancestries.map((ancestry: Ancestry) => ancestry.thing?.id ?? k.corrupted);

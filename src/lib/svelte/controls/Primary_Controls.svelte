@@ -67,6 +67,11 @@
 			position: absolute;
 			height: {size_big}px;
 			z-index: {T_Layer.frontmost};'>
+		<Next_Previous name='recents'
+			size={28}
+			has_title={false}
+			origin={Point.x(lefts[1])}
+			closure={handle_recents_mouseClick}/>
 		{#if !$w_popupView_id}
 			{#if c.show_details_button}
 				<Button name='details-toggle'
@@ -97,11 +102,6 @@
 					width={lefts[7] + (c.show_details_button ? 0 : 26)}/>
 			{/if}
 			{#if !c.allow_search || !$w_search_show_controls}
-				<Next_Previous name='recents'
-					size={28}
-					has_title={false}
-					origin={Point.x(lefts[1])}
-					closure={handle_recents_mouseClick}/>
 				{#key $w_show_graph_ofType}
 					<Segmented name='graph-type'
 						width={80}

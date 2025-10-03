@@ -452,7 +452,7 @@ export default class Ancestry extends Identifiable {
 	toggleExpanded() { return this.expanded_setTo(!this.isExpanded); }
 	get shows_branches(): boolean { return p.branches_areChildren ? this.shows_children : !this.isRoot; }
 	get shows_children(): boolean { return this.isExpanded && this.hasChildren && this.hasVisible_depth_ofFocus; }
-	get isExpanded(): boolean { return this.isRoot || this.includedInStore_ofAncestries(ux.s_expanded_ancestries.w_items); }
+	get isExpanded(): boolean { return this.isRoot || this.includedInStore_ofAncestries(ux.si_expanded.w_items); }
 
 	remove_fromGrabbed_andExpanded() {
 		this.collapse();
@@ -488,7 +488,7 @@ export default class Ancestry extends Identifiable {
 		let mutated = false;
 		const matchesDB = this.t_database == get(w_t_database);
 		if (matchesDB && (!this.isRoot || expand)) {
-			ux.s_expanded_ancestries.w_items.update((a) => {
+			ux.si_expanded.w_items.update((a) => {
 				let array = a ?? [];
 				if (!!array) {
 					const index = array.map(a => a.pathString).indexOf(this.pathString);
@@ -515,7 +515,7 @@ export default class Ancestry extends Identifiable {
 	grabOnly() { grabs.grabOnly(this); }
 
 	get isGrabbed(): boolean {
-		const ancestries = ux.s_grabbed_ancestries.w_items ?? [] as Array<Ancestry> | null;
+		const ancestries = ux.si_grabs.w_items ?? [] as Array<Ancestry> | null;
 		return this.includedInStore_ofAncestries(ancestries)
 			|| (search.result_ancestry?.equals(this) ?? false);		// so details can show the user-selected search result
 	}

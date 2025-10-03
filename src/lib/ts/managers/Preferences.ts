@@ -67,13 +67,13 @@ export class Preferences {
 		if (c.eraseDB > 0) {
 			c.eraseDB -= 1;
 			const grabbed = !!h.rootAncestry ? [h.rootAncestry] : [];
-			ux.s_grabbed_ancestries.items = grabbed;
+			ux.si_grabs.items = grabbed;
 		} else {
-			ux.s_grabbed_ancestries.items = this.ancestries_readDB_key(T_Preference.grabbed);
-			debug.log_grab(`  READ (${get(w_t_database)}): "${ids_forDB(ux.s_grabbed_ancestries.items)}"`);
+			ux.si_grabs.items = this.ancestries_readDB_key(T_Preference.grabbed);
+			debug.log_grab(`  READ (${get(w_t_database)}): "${ids_forDB(ux.si_grabs.items)}"`);
 		}
 		setTimeout(() => {
-			ux.s_grabbed_ancestries.w_items.subscribe((array: Array<Ancestry>) => {
+			ux.si_grabs.w_items.subscribe((array: Array<Ancestry>) => {
 				if (array.length > 0) {
 					this.ancestries_writeDB_key(array, T_Preference.grabbed);
 					debug.log_grab(`  WRITING (${get(w_t_database)}): "${ids_forDB(array)}"`);
@@ -85,14 +85,14 @@ export class Preferences {
 	restore_expanded() {
 		if (c.eraseDB > 0) {
 			c.eraseDB -= 1;
-			ux.s_expanded_ancestries.items = [];
+			ux.si_expanded.items = [];
 		} else {
 			const expanded = p.ancestries_readDB_key(this.expanded_key) ?? p.ancestries_readDB_key('expanded');	// backwards compatible with 'expanded' key
 			debug.log_expand(`  READ (${get(w_t_database)}): "${u.ids_forDB(expanded)}"`);
-			ux.s_expanded_ancestries.items = expanded;
+			ux.si_expanded.items = expanded;
 		}
 		setTimeout(() => {
-			ux.s_expanded_ancestries.w_items.subscribe((array: Array<Ancestry> | null) => {
+			ux.si_expanded.w_items.subscribe((array: Array<Ancestry> | null) => {
 				if (!!array && array.length > 0) {
 					debug.log_expand(`  WRITING (${get(w_t_database)}): "${u.ids_forDB(array)}"`);
 					p.ancestries_writeDB_key(array, this.expanded_key);

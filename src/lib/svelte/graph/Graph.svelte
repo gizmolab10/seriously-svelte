@@ -13,7 +13,7 @@
 	import Button from '../mouse/Button.svelte';
 	import { onMount } from 'svelte';
 	const size_big = k.height.button + 4;
-	const { w_items: w_expanded } = ux.s_expanded_ancestries;
+	const { w_items: w_expanded } = ux.si_expanded;
 	let actual_content_rect = layout.user_offset_rect_ofDrawnGraph;
 	let draggableRect = $w_graph_rect;
 	let rubberbandComponent: any;
@@ -45,7 +45,7 @@
 	}
 
 	$:	{
-		const _ = `${$w_show_graph_ofType}:::${$w_ancestry_focus?.titles.join(',')}:::${$w_expanded?.map(a => a.titles.join(',')).join('-')}`;
+		const _ = `${$w_show_graph_ofType}:::${$w_ancestry_focus?.titles.join(',')}:::${u.description_byTitles($w_expanded)}`;
 		grand_layout_andReattach();
 	}
 

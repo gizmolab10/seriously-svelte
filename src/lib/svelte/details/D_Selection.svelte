@@ -14,7 +14,8 @@
 	import { onMount } from 'svelte';
 	export let top = 6;
 	const id = 'selection details';
-	const { w_items: w_grabbed } = ux.s_grabbed_ancestries;
+	const { w_items: w_grabbed } = ux.si_grabs;
+	const { w_items: w_grab_index } = ux.si_grabs;
 	const s_info = ux.s_element_for(new Identifiable(id), T_Element.details, id);
 	let ancestry: Ancestry | null = grabs.ancestry_forInformation;
 	let thing: Thing | null = ancestry?.thing ?? null;
@@ -30,7 +31,7 @@
 
 	$: $w_show_details_ofType, layout_forColor();
 	$: $w_relationship_order, update_forAncestry();
-	$: $w_grabbed, $w_ancestry_focus, $w_thing_title, ux.s_search_results.w_index, update_forAncestry();
+	$: $w_grabbed, $w_ancestry_focus, $w_thing_title, $w_grab_index, update_forAncestry();
 	function handle_toggle_properties(event: Event) { s_details.show_properties = !s_details.show_properties; }
 
 	onMount(() => {

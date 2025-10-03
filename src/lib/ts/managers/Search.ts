@@ -10,10 +10,10 @@ class Search {
 	search_text: string | null = null;
 	private root_node: Search_Node = new Search_Node();
 
-	get selected_row(): number | null { return ux.s_search_results.index; }
+	get selected_row(): number | null { return ux.si_found.index; }
 
 	set_result_row(row: number) {
-		ux.s_search_results.index = row;
+		ux.si_found.index = row;
 		w_search_state.set(T_Search.selected);
 	}
 
@@ -31,7 +31,7 @@ class Search {
 	get result_ancestry(): Ancestry | null {
 		const row = this.selected_row;
 		if (row !== null && !!get(w_search_show_controls)) {
-			const thing = ux.s_search_results.items[row];
+			const thing = ux.si_found.items[row];
 			return thing?.ancestry ?? null;
 		}
 		return null;
@@ -40,7 +40,7 @@ class Search {
 	next_row(up: boolean) {
 		const row = this.selected_row;
 		if (row !== null) {
-			const count = ux.s_search_results.items.length;	// stupid, but it works
+			const count = ux.si_found.items.length;	// stupid, but it works
 			this.set_result_row(row.increment(up, count));
 			// also make sure the row is visible
 		}
@@ -49,9 +49,9 @@ class Search {
 	update_search_for(query: string) {
 		this.search_text = query;
 		if (query.length > 0) {
-			ux.s_search_results.items = this.root_node.search_for(query);
+			ux.si_found.items = this.root_node.search_for(query);
 		} else {
-			ux.s_search_results.items = [];
+			ux.si_found.items = [];
 		}
 	}
 
@@ -68,17 +68,17 @@ class Search {
 		this.search_text = query;
 		const before = this.results_fingerprint;
 		if (query.length > 0) {
-			ux.s_search_results.items = this.root_node.search_for(query);
-			const show_results = ux.s_search_results.items.length > 0;
-			w_search_results_found.set(ux.s_search_results.items.length);
+			ux.si_found.items = this.root_node.search_for(query);
+			const show_results = ux.si_found.items.length > 0;
+			w_search_results_found.set(ux.si_found.items.length);
 			w_search_state.set(show_results ? T_Search.results : T_Search.enter);
 		} else {
-			ux.s_search_results.items = [];
+			ux.si_found.items = [];
 			w_search_results_found.set(0);
 			w_search_state.set(T_Search.enter);
 		}
 		if (before !== this.results_fingerprint) {	// only if results are different
-			ux.s_search_results.index = -1;
+			ux.si_found.index = -1;
 		}
 		w_search_show_controls.set(T_Search.off != get(w_search_state));
 		w_search_results_changed.set(Date.now());
@@ -111,7 +111,7 @@ class Search {
 	
 	static readonly _____PRIVATE: unique symbol;
 
-	private get results_fingerprint(): string { return !ux.s_search_results.items ? k.empty : ux.s_search_results.items.map(result => result.id).join('|'); }
+	private get results_fingerprint(): string { return !ux.si_found.items ? k.empty : ux.si_found.items.map(result => result.id).join('|'); }
 
 	private buildIndex(things: Thing[]) {
 		this.root_node = new Search_Node();

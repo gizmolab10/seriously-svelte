@@ -5,7 +5,6 @@ import { w_t_database, w_thing_fontFamily } from '../managers/Stores';
 import { Testworthy_Utilities } from './Testworthy_Utilities';
 import { Rect, Size, Point } from '../types/Geometry';
 import Identifiable from '../runtime/Identifiable';
-import { grabs } from '../common/Global_Imports';
 import G_TreeLine from '../layout/G_TreeLine';
 import { layout } from '../layout/G_Layout';
 import Ancestry from '../runtime/Ancestry';
@@ -17,8 +16,10 @@ import { print } from './Print';
 
 export class Utilities extends Testworthy_Utilities {
 	
-	getWidthOf(s: string):								number { return this.getWidth_ofString_withSize(s, `${k.font_size.common}px`); }
-	sort_byOrder(ancestries: Array<Ancestry>): Array<Ancestry> { return ancestries.sort( (a: Ancestry, b: Ancestry) => { return a.order - b.order; }); }
+	description_byHID(identifiables: Array<Identifiable>):	  string { return identifiables.map(a => a.hid).sort().join(','); }	
+	description_byTitles(ancestries: Array<Ancestry> | null): string { return ancestries?.map(a => a.titles.join(',')).join('-') ?? k.empty; }
+	getWidthOf(s: string):									  number { return this.getWidth_ofString_withSize(s, `${k.font_size.common}px`); }
+	sort_byOrder(ancestries: Array<Ancestry>):		 Array<Ancestry> { return ancestries.sort( (a: Ancestry, b: Ancestry) => { return a.order - b.order; }); }
 
 	resolve_signal_value(value: any): string {
 		const type = value?.constructor?.name;
@@ -141,13 +142,13 @@ export class Utilities extends Testworthy_Utilities {
 	}
 
 	temporarily_setDefaults_while(closure: () => void) {
-		const grabbed = ux.s_grabbed_ancestries.items;
+		const grabbed = ux.si_grabs.items;
 		const color = get(w_background_color);
 		w_background_color.set('white');
-		ux.s_grabbed_ancestries.items = [];	// triggers reactivity, takes time to percolate
+		ux.si_grabs.items = [];	// triggers reactivity, takes time to percolate
 		setTimeout(() => {
 			closure();
-			ux.s_grabbed_ancestries.items = grabbed;
+			ux.si_grabs.items = grabbed;
 			w_background_color.set(color);
 		}, 10);
 	}

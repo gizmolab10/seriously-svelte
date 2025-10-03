@@ -38,7 +38,7 @@ export default class S_Element {
 		this.subtype = subtype;
 		this.type = type;
 		if (this.isADot) {
-			ux.s_grabbed_ancestries.w_items.subscribe((grabbed) => {
+			ux.si_grabs.w_items.subscribe((grabbed) => {
 				this.isInverted = !!grabbed && grabbed.includes(this.ancestry);
 			});
 			if (type == T_Element.control) {

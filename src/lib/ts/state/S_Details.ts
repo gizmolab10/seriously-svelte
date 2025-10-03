@@ -21,7 +21,7 @@ class S_Details {
 		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
 			this.update();
 		});
-		ux.s_search_results.w_index.subscribe((row: number | null) => {
+		ux.si_found.w_index.subscribe((row: number | null) => {
 			this.update();
 		});
 		w_show_details_ofType.subscribe((t_details: Array<T_Detail>) => {
@@ -38,7 +38,7 @@ class S_Details {
 	private update() {
 		if (get(w_t_startup) == T_Startup.ready) {
 			this.update_traitThings();
-			this.grabbed_ancestries = ux.s_grabbed_ancestries.w_items;
+			this.grabbed_ancestries = ux.si_grabs.w_items;
 			this.s_tags.items = grabs.ancestry_forInformation?.thing?.tags ?? [];
 		}
 	}
@@ -61,11 +61,10 @@ class S_Details {
 		const normal_title = T_Detail[t_detail];
 		switch (t_detail) {	
 			case T_Detail.selection:
-				const row	  = ux.s_search_results.index;
+				const row	  = ux.si_found.index;
 				const matches = get(w_search_results_found);
 				const grabbed = get(this.grabbed_ancestries);
 				if (row != null && !!matches && matches > 1) {
-					console.log('search result', row);
 					return row.of_n_for_type(matches, 'search result', '');
 				} else if (!!grabbed) {
 					switch (grabbed.length) {

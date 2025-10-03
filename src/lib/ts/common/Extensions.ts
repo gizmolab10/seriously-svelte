@@ -197,7 +197,6 @@ declare global {
 		increment_by(delta: number, total: number): number;
 		increment(increment: boolean, total: number): number;
 		force_between(smallest: number, largest: number): number;
-		increment_by_assuring(delta: number, total: number): number;
 		isBetween(a: number, b: number, inclusive: boolean): boolean;
 		isClocklyBetween(a: number, b: number, limit: number): boolean;
 		of_n_for_type(n: number, type: string, plurality: string): string;
@@ -439,27 +438,11 @@ Object.defineProperty(Number.prototype, 'bump_towards', {
 	configurable: false
 });
 
-Object.defineProperty(Number.prototype, 'increment_by_assuring', {
-	value: function(delta: number, total: number): number {
-		let assure = Math.abs(delta);
-		let value = this.valueOf();
-		if (value < assure && assure != delta) {
-			return 0;
-		}
-		let result = value + delta;
-		result = Math.min(total - assure, result);
-		return result;
-	},
-	writable: false,
-	enumerable: false,
-	configurable: false
-});
-
 Object.defineProperty(Number.prototype, 'normalize_between_zeroAnd', {
 
 	// converts this using clock arithmetic
 	// force between 0 and value
-	// or 0 or value
+	// inclusive
 
 	value: function(value: number): number {
 		let result = this;

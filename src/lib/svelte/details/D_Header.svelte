@@ -3,14 +3,15 @@
 	import { Ancestry, T_Detail, S_Widget } from '../../ts/common/Global_Imports';
 	import { w_thing_color } from '../../ts/managers/Stores';
 	import { w_graph_rect, w_device_isMobile } from '../../ts/managers/Stores';
-	const { w_items: w_grabbed } = ux.s_grabbed_ancestries;
+	const { w_items: w_grabbed } = ux.si_grabs;
+	const { w_index: w_found } = ux.si_found;
 	let ancestry: Ancestry | null = null;
 	let background_color = 'transparent';
 	let color = colors.default;
     let reattachments = 0;
 
 	$: {
-		const _ = `${$w_thing_color}:::${ux.s_search_results.w_index}:::${$w_grabbed?.map(a => a.titles.join(',')).join('-')}`;
+	const _ = `${$w_thing_color}:::${$w_found}:::${u.description_byTitles($w_grabbed)}`;
 		ancestry = grabs.ancestry_forInformation;
 		if (!!ancestry) {
 			const s_widget = ancestry.g_widget.s_widget;

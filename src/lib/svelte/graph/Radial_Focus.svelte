@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, k, ux, grabs, debug, colors, layout, signals, svgPaths, components } from '../../ts/common/Global_Imports';
+	import { c, k, u, ux, grabs, debug, colors, layout, signals, svgPaths, components } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_s_title_edit, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { Size, Point, S_Mouse, S_Component } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Predicate, T_Component } from '../../ts/common/Enumerations';
@@ -7,7 +7,7 @@
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Widget_Title from '../widget/Widget_Title.svelte';
 	import { onMount } from 'svelte';
-	const { w_items: w_grabbed } = ux.s_grabbed_ancestries;
+	const { w_items: w_grabbed } = ux.si_grabs;
 	const height = k.height.row + 1;
 	let ancestry = $w_ancestry_focus;
 	let s_widget = ancestry.g_widget.s_widget;
@@ -45,7 +45,7 @@
 	$: { const _ = $w_ancestry_focus; layout_focus();}
 
 	$: {
-		const _ = `${$w_thing_color}:::${$w_ancestry_focus}:::${$w_s_title_edit}:::${$w_grabbed.map(a => a.titles.join(',')).join('-')}:::${$w_ancestry_focus?.isGrabbed}:::${$w_ancestry_focus?.isEditing}`;
+		const _ = `${$w_thing_color}:::${$w_ancestry_focus}:::${$w_s_title_edit}:::${u.description_byTitles($w_grabbed)}:::${$w_ancestry_focus?.isGrabbed}:::${$w_ancestry_focus?.isEditing}`;
 		update_colors();
 		update_svg();
 	}

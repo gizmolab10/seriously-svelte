@@ -9,20 +9,21 @@ import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
 
 export default class S_UX {
-	control_isVisible_forType: {[t_control: string]: boolean} = {};
-	s_control_byType: { [t_control: string]: S_Element } = {};
-	s_expanded_ancestries = new S_Identifiables<Ancestry>([]);
-	s_grabbed_ancestries = new S_Identifiables<Ancestry>([]);
-	s_widget_byAncestryID: { [id: string]: S_Widget } = {};
-	s_recents = new S_Identifiables<Identifiable_Pair>([]);
-	s_element_byName: { [name: string]: S_Element } = {};
-	s_search_results = new S_Identifiables<Thing>([]);
-	s_mouse_byName: { [name: string]: S_Mouse } = {};
 	parents_focus_ancestry!: Ancestry;
 	attached_branches: string[] = [];
 	mouse_responder_number = 0;
 	focus_ancestry!: Ancestry;
 	focus_element!: S_Element;
+
+	s_control_byType: { [t_control: string]: S_Element } = {};
+	s_widget_byAncestryID: { [id: string]: S_Widget } = {};
+	s_element_byName: { [name: string]: S_Element } = {};
+	s_mouse_byName: { [name: string]: S_Mouse } = {};
+
+	si_recents = new S_Identifiables<Identifiable_Pair>([]);
+	si_expanded = new S_Identifiables<Ancestry>([]);
+	si_grabs = new S_Identifiables<Ancestry>([]);
+	si_found = new S_Identifiables<Thing>([]);
 
 	//////////////////////////////////////
 	//									//

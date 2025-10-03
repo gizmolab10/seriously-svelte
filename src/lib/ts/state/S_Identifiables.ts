@@ -33,7 +33,6 @@ export default class S_Identifiables<T> {
 		while (attempts > 0) {
 			this.index = this.index.increment(next, this.items.length);
 			if (!!this.item) {
-				console.log('found item', this.index);
 				return true;
 			}
 			attempts--;
