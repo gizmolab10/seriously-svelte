@@ -5,12 +5,12 @@
 	import { w_show_details, w_show_graph_ofType, w_show_tree_ofType } from '../../ts/managers/Stores';
 	import { w_search_preferences, w_search_state, w_search_show_controls } from '../../ts/managers/Stores';
 	import { w_graph_rect, w_count_window_resized, w_popupView_id } from '../../ts/managers/Stores';
+	import Search_Toggle from '../search/Search_Toggle.svelte';
 	import Next_Previous from '../mouse/Next_Previous.svelte';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Breadcrumbs from './Breadcrumbs.svelte';
-	import Search from '../search/Search.svelte';
 	import Button from '../mouse/Button.svelte';
 	import Box from '../draw/Box.svelte';
 	const y_center = 10.5;
@@ -96,53 +96,51 @@
 				</Button>
 			{/if}
 			{#if c.allow_search}
-				<Search
+				<Search_Toggle
 					top={-0.5}
 					left={-54 - (c.show_details_button ? 0 : 26)}
 					width={lefts[7] + (c.show_details_button ? 0 : 26)}/>
 			{/if}
-			{#if !c.allow_search || !$w_search_show_controls}
-				{#key $w_show_graph_ofType}
-					<Segmented name='graph-type'
-						width={80}
-						origin={Point.x(lefts[2])}
-						selected={[$w_show_graph_ofType]}
-						titles={[T_Graph.tree, T_Graph.radial]}
-						handle_selection={(titles) => ux.handle_choiceOf_t_graph('graph', titles)}/>
-				{/key}
-				<div class='scaling-controls'>
-					<Button name={T_Control.grow}
-						width={size_big}
-						height={size_big}
-						center={new Point(lefts[3], y_center)}
-						s_button={ux.s_control_forType(T_Control.grow)}
-						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.grow)}>
-						<svg id='grow-svg' style={svg_style}>
-							<path
-								id='grow-path'
-								fill=transparent
-								d={svgPaths.t_cross(size_big, 2)}
-								stroke-width={scaling_stroke_width}
-								stroke={ux.s_control_forType(T_Control.grow).svg_hover_color}/>
-						</svg>
-					</Button>
-					<Button name={T_Control.shrink}
-						width={size_big}
-						height={size_big}
-						center={new Point(lefts[4], y_center)}
-						s_button={ux.s_control_forType(T_Control.shrink)}
-						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.shrink)}>
-						<svg id='shrink-svg'
-							style={svg_style}>
-							<path id='shrink-path'
-								fill=transparent
-								d={svgPaths.dash(size_big, 4)}
-								stroke-width={scaling_stroke_width}
-								stroke={ux.s_control_forType(T_Control.shrink).svg_hover_color}/>
-						</svg>
-					</Button>
-				</div>
-			{/if}
+			{#key $w_show_graph_ofType}
+				<Segmented name='graph-type'
+					width={80}
+					origin={Point.x(lefts[2])}
+					selected={[$w_show_graph_ofType]}
+					titles={[T_Graph.tree, T_Graph.radial]}
+					handle_selection={(titles) => ux.handle_choiceOf_t_graph('graph', titles)}/>
+			{/key}
+			<div class='scaling-controls'>
+				<Button name={T_Control.grow}
+					width={size_big}
+					height={size_big}
+					center={new Point(lefts[3], y_center)}
+					s_button={ux.s_control_forType(T_Control.grow)}
+					closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.grow)}>
+					<svg id='grow-svg' style={svg_style}>
+						<path
+							id='grow-path'
+							fill=transparent
+							d={svgPaths.t_cross(size_big, 2)}
+							stroke-width={scaling_stroke_width}
+							stroke={ux.s_control_forType(T_Control.grow).svg_hover_color}/>
+					</svg>
+				</Button>
+				<Button name={T_Control.shrink}
+					width={size_big}
+					height={size_big}
+					center={new Point(lefts[4], y_center)}
+					s_button={ux.s_control_forType(T_Control.shrink)}
+					closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.shrink)}>
+					<svg id='shrink-svg'
+						style={svg_style}>
+						<path id='shrink-path'
+							fill=transparent
+							d={svgPaths.dash(size_big, 4)}
+							stroke-width={scaling_stroke_width}
+							stroke={ux.s_control_forType(T_Control.shrink).svg_hover_color}/>
+					</svg>
+				</Button>
+			</div>
 			{#if !c.show_details_button}
 				<Button name='easter-egg'
 					width={20}

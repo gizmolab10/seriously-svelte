@@ -17,6 +17,7 @@
 	export let titles: string[] = [];
 	export let selected: string[];
 	export let width = 0;
+	export let left = 38;
 
 	function button_name(title: string) { return `segment-${name}-${title.replace(/\s+/g, '-').toLowerCase()}`; }
 
@@ -88,7 +89,8 @@
 			--border-color: {border_color};
 			--hover-color: {hover_color};
 			height: {height}px;
-			top: {origin.y}px;'>
+			top: {origin.y}px;
+			left: {left}px;'>
 		{#each titles as title}
 			<button class='segment'
 				color={selected.includes(title) ? 'black' : 'white'}

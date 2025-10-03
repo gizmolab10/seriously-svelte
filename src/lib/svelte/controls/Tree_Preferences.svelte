@@ -60,6 +60,7 @@
 	</div>
 	{#key $w_show_tree_ofType}
 		<Segmented name='tree-types'
+			left={58}
 			width={width}
 			allow_multiple={true}
 			origin={new Point(184, -16)}

@@ -87,6 +87,7 @@
 		title_left={k.separator_title_left}
 		thickness={k.thickness.separator.details}/>
 	<Segmented name='auto-adjust'
+		left={106}
 		allow_none={true}
 		allow_multiple={false}
 		width={segmented_width}
@@ -106,6 +107,7 @@
 		title_left={k.separator_title_left}
 		thickness={k.thickness.separator.details}/>
 	<Segmented name='counts'
+		left={106}
 		allow_none={true}
 		allow_multiple={true}
 		width={segmented_width}

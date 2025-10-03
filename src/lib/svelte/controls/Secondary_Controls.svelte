@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { w_show_details, w_show_graph_ofType, w_search_show_controls } from '../../ts/managers/Stores';
 	import {k, layout, Point, T_Layer, T_Graph } from '../../ts/common/Global_Imports';
-	import Search_Preferences from '../search/Search_Preferences.svelte';
+	import Search from '../search/Search.svelte';
 	import Tree_Preferences from './Tree_Preferences.svelte';
 	import { w_graph_rect } from '../../ts/managers/Stores';
 	import Separator from '../draw/Separator.svelte';
@@ -13,7 +13,7 @@
 		top: {layout.controls_boxHeight - 2}px;
 		left: {$w_graph_rect.origin.x + ($w_show_details ? 0 : 5)}px;'>
 	{#if $w_search_show_controls}
-		<Search_Preferences top={8} width={117} zindex={T_Layer.frontmost}/>
+		<Search top={8} width={117} zindex={T_Layer.frontmost}/>
 	{:else if $w_show_graph_ofType == T_Graph.tree}
 		<Tree_Preferences width={117} zindex={T_Layer.frontmost}/>
 	{/if}

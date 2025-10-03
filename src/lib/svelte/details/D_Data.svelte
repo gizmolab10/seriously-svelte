@@ -143,6 +143,7 @@
 		title='{p.show_other_databases ? 'hide other databases' : 'show other databases'}'/>
 	{#if p.show_other_databases}
 		<Segmented name='databases'
+			left={105}
 			width={width}
 			titles={ids_forDatabase}
 			selected={[$w_t_database]}

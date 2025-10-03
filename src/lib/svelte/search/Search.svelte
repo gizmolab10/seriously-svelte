@@ -1,20 +1,17 @@
-<script lang="ts">
-	import { T_Search, T_Layer, T_Control, T_Element, T_Preference, T_Search_Preference } from '../../ts/common/Global_Imports';
-	import { w_search_results_found, w_search_show_controls } from '../../ts/managers/Stores';
-	import { w_search_preferences, w_search_state } from '../../ts/managers/Stores';
-	import { w_show_details, w_thing_fontFamily } from '../../ts/managers/Stores';
-	import { e, k, p, u, ux, Point } from '../../ts/common/Global_Imports';
-	import Identifiable from '../../ts/runtime/Identifiable';
-	import Close_Button from '../mouse/Close_Button.svelte';
-	import { search } from '../../ts/managers/Search';
-	import Button from '../mouse/Button.svelte';
-	export let width: number;
-	export let left: number;
-	export let top: number;
-	const size_big = k.height.dot * 1.4;
-	const right_widths = [10, 10.5, $w_show_details ? 5 : 86, 73, 60];
-	const rights = u.cumulativeSum(right_widths).map((right, index) => width - right);
+<script lang='ts'>
+	import { T_Search, T_Layer, T_Element, T_Preference, T_Search_Preference } from '../../ts/common/Global_Imports';
+	import { w_search_state, w_search_preferences, w_search_results_found } from '../../ts/managers/Stores';
+	import { w_graph_rect, w_show_details, w_thing_fontFamily } from '../../ts/managers/Stores';
+	import { k, p, u, ux, Point, search } from '../../ts/common/Global_Imports';
+	import Segmented from '../mouse/Segmented.svelte';
+	export let zindex = T_Layer.graph;
+	export let width = 80;
+	export let top = 0;
+	const back_up = -5;
+	const left_width = 180;
 	const s_search = ux.s_element_for(null, T_Element.search, k.empty);
+	let graph_width = $w_graph_rect.size.width - ($w_show_details ? 0 : 5);
+	let search_width = graph_width - left_width;
 	let input: HTMLInputElement;
 
 	$: if (!!input) {
@@ -27,6 +24,11 @@
 		}, 1);
 	}
 
+	$: {
+		graph_width = $w_graph_rect.size.width + ($w_show_details ? 0 : 5);
+		width = graph_width - left_width;
+	}
+
 	function handle_input(event) {
 		const text = input.value;
 		if (!!text) {
@@ -37,67 +39,54 @@
 
 </script>
 
-<div class='search-controls'
-	style='
-		top: {top}px;
-		left: {left}px;
-		position: absolute;
-		z-index: {T_Layer.frontmost};'>
-	{#if $w_search_show_controls}
-		<input class='search-input'
-			id='search'
-			type='search'
-			bind:this={input}
-			autocomplete='off'
-			on:input={handle_input}
-			bind:value={search.search_text}
-			placeholder={'enter ' + $w_search_preferences + ' text'}
+<div class='search-preferences' style='
+	top: {top}px;
+	height: 50px;
+	z-index: {zindex};
+	position: absolute;
+	width: {graph_width}px;
+	background-color: transparent;'>
+	<Segmented name='search-filter'
+		width={width}
+		left={62}
+		origin={new Point(-12, 1)}
+		height={ k.height.button}
+		selected={[$w_search_preferences]}
+		titles={[T_Search_Preference.title, T_Search_Preference.trait]}
+		handle_selection={(titles) => ux.handle_choiceOf_t_graph('filter', titles)}/>
+	<input class='search-input'
+		id='search'
+		type='search'
+		bind:this={input}
+		autocomplete='off'
+		on:input={handle_input}
+		bind:value={search.search_text}
+		placeholder={'enter ' + $w_search_preferences + ' text'}
+		style='
+			top: 1px;
+			left: 94px;
+			color: blue;
+			font-size: 12px;
+			padding-left: 6px;
+			border-radius: 6px;
+			position: absolute;
+			width: {search_width}px;
+			background-color: white;
+			border: 1px solid lightgray;
+			height: {k.height.button + 2}px;
+			font-family: {$w_thing_fontFamily};'/>
+	{#if $w_search_results_found > 0}
+		<div class='search-results-found'
 			style='
-				top: 1px;
-				left: 132px;
-				color: blue;
+				top: 4px;
+				width: 100px;
 				font-size: 12px;
-				padding-left: 6px;
-				border-radius: 6px;
+				text-align: center;
 				position: absolute;
-				background-color: white;
-				border: 1px solid lightgray;
-				height: {k.height.button + 2}px;
-				font-family: {$w_thing_fontFamily};
-				width: {rights[$w_search_results_found == 0 ? 3 : 4]}px;'/>
-			{#if $w_search_results_found > 0 && !$w_show_details}
-				<div class='search-results-found'
-					style='
-						top: 4px;
-						font-size: 12px;
-						text-align: center;
-						position: absolute;
-						left: {rights[2] - 2}px;
-						width: {right_widths[2]}px;
-						font-family: {$w_thing_fontFamily};'>
-					{$w_search_results_found} match{$w_search_results_found == 1 ? '' : 'es'}
-				</div>
-			{/if}
-	{/if}
-	{#if $w_search_state === T_Search.off}
-		<Button
-			width={size_big - 1}
-			height={size_big - 1}
-			border_thickness={0.1}
-			name={T_Control.search}
-			center={new Point(rights[0], 11)}
-			s_button={ux.s_control_forType(T_Control.search)}
-			closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.search)}>
-			🔍
-		</Button>
-	{:else}
-		<Close_Button
-			name='end-search'
-			align_left={true}
-			size={size_big + 1}
-			stroke_width={0.25}
-			closure={() => search.deactivate()}
-			origin={new Point(rights[1], 0.5)}/>
+				left: {search_width + 84}px;
+				font-family: {$w_thing_fontFamily};'>
+			{$w_search_results_found} match{$w_search_results_found == 1 ? '' : 'es'}
+		</div>
 	{/if}
 </div>
 
