@@ -29,7 +29,7 @@
 	// always shows a separator and the breadcrumbs
 
 	function togglePopupID(id) { $w_popupView_id = ($w_popupView_id == id) ? null : id; }
-	function handle_recents_mouseClick(column: number) { grabs.focusOn_next(column == 1); }
+	function handle_recents_mouseClick(column: number) { x.ancestry_next_focusOn(column == 1); }
 
 	$: {
 		const _ = `${$w_graph_rect.description}:::${$w_count_window_resized}`;

@@ -1,8 +1,8 @@
-import { h,	x, Tag, Thing, Trait, grabs, Ancestry, S_Identifiables } from '../common/Global_Imports';
-import { T_Detail, T_Startup, T_Direction, T_Storage_Need } from '../common/Global_Imports';
-import { w_t_startup, w_count_details, w_show_details_ofType } from '../managers/Stores';
+import { T_Search, T_Detail, T_Startup, T_Direction, T_Storage_Need } from '../common/Global_Imports';
+import { w_search_results_found, w_count_details, w_ancestry_forDetails } from '../managers/Stores';
+import { h,	x, Tag, Thing, Trait, Ancestry, S_Identifiables } from '../common/Global_Imports';
+import { w_t_startup, w_search_state, w_show_details_ofType } from '../managers/Stores';
 import { w_thing_traits, w_ancestry_focus, w_data_updated } from '../managers/Stores';
-import { w_search_results_found, w_ancestry_forDetails } from '../managers/Stores';
 import { S_Banner_Hideable } from './S_Banner_Hideable';
 import { get, Writable } from 'svelte/store';
 
@@ -39,7 +39,7 @@ class S_Details {
 
 	private update() {
 		if (get(w_t_startup) == T_Startup.ready) {
-			this.update_traitThings();
+			this.traitThings_update();
 			this.grabbed_ancestries = x.si_grabs.w_items;
 			this.s_tags.items = get(w_ancestry_forDetails)?.thing?.tags ?? [];
 		}
@@ -49,13 +49,13 @@ class S_Details {
 	
 	static readonly _____BANNERS: unique symbol;
 
-	update_forBanner(banner_id: string, selected_title: string) {
+	banner_update(banner_id: string, selected_title: string) {
 		const next = T_Direction.next === selected_title as unknown as T_Direction;	// unknown defeats ts
 		const t_detail = T_Detail[banner_id as keyof typeof T_Detail];
 		switch (t_detail) {
-			case T_Detail.traits:	 this.selectNext_traitThing(next); break;
-			case T_Detail.tags:  	 this.selectNext_tag(next); break;
-			case T_Detail.selection: grabs.grab_next_forSelection(next); break;
+			case T_Detail.traits:	 this.traitThing_select_next(next); break;
+			case T_Detail.selection: this.ancestry_select_next(next); break;
+			case T_Detail.tags:  	 this.tag_select_next(next); break;
 		}
 	}
 
@@ -85,9 +85,22 @@ class S_Details {
 	static readonly _____TAGS: unique symbol;
 
 	private get tag(): Tag | null { return (this.s_tags.item as Tag) ?? null; }
-	selectNext_tag(next: boolean): boolean { return this.s_tags.find_next_item(next); }
+	private tag_select_next(next: boolean): boolean { return this.s_tags.find_next_item(next); }
+
 	
-	static readonly _____TRAITS: unique symbol;
+	static readonly _____ANCESTRIES: unique symbol;
+	
+	private ancestry_select_next(next: boolean) {	// for next/previous in details selection banner
+		if (get(w_search_state) > T_Search.off) {
+			x.si_found.find_next_item(next);
+		} else {
+			x.si_grabs.find_next_item(next);
+		}
+		x.ancestry_update_forDetails();
+		s_details.redraw();		// force re-render of details
+	}	
+
+	static readonly _____TRAIT_THINGS: unique symbol;
 
 	private get traitThing(): Thing | null {
 		const item = this.s_trait_things.item;
@@ -96,8 +109,18 @@ class S_Details {
 		}
 		return null;
 	}
+	
+	private traitThing_select_next(next: boolean) {
+		if (this.s_trait_things.find_next_item(next)) {
+			const ancestry = this.traitThing?.ancestry;
+			if (!!ancestry) {
+				ancestry.grabOnly();	// causes reaction (invoking update())
+				x.ancestry_assureIsVisible(ancestry);
+			}
+		}
+	}
 
-	private update_traitThings() {
+	private traitThings_update() {
 
 		////////////////////////////////////////////////////////////////
 		//															  //
@@ -118,16 +141,6 @@ class S_Details {
 			}
 		}
 		w_thing_traits.set(thing_traits);
-	}
-	
-	selectNext_traitThing(next: boolean) {
-		if (this.s_trait_things.find_next_item(next)) {
-			const ancestry = this.traitThing?.ancestry;
-			if (!!ancestry) {
-				ancestry.grabOnly();	// causes reaction (invoking update())
-				grabs.latest_assureIsVisible();
-			}
-		}
 	}
 
 }

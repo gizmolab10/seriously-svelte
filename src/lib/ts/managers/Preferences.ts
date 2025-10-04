@@ -1,5 +1,5 @@
 import { G_Paging, T_Graph, T_Detail, T_Kinship, T_Preference, T_Auto_Adjust, T_Startup } from '../common/Global_Imports';
-import { c, h, k, u, ux, x, show, grabs, debug, radial, colors, Ancestry, databases } from '../common/Global_Imports';
+import { c, h, k, u, x, show, debug, radial, colors, Ancestry, databases } from '../common/Global_Imports';
 import { w_auto_adjust_graph, w_show_tree_ofType, w_show_graph_ofType } from './Stores';
 import { w_t_database, w_ring_rotation_angle, w_ring_rotation_radius } from './Stores';
 import { w_g_paging, w_font_size, w_thing_fontFamily, w_depth_limit } from './Stores';
@@ -119,7 +119,7 @@ export class Preferences {
 		}
 		if (!!ancestryToFocus) {
 			if (!ancestryToFocus.thing) {
-				const lastGrabbedAncestry = grabs.ancestry?.parentAncestry;
+				const lastGrabbedAncestry = x.ancestry_forDetails?.parentAncestry;
 				if (lastGrabbedAncestry) {
 					ancestryToFocus = lastGrabbedAncestry;
 				}

@@ -1,6 +1,6 @@
 import { Rect, Size, Point, Thing, Direction, Predicate, databases, Relationship } from '../common/Global_Imports';
 import { T_Graph, T_Create, T_Kinship, T_Predicate, T_Alteration, T_Component } from '../common/Global_Imports';
-import { c, h, k, p, u, ux, x, show, grabs, debug, search, svgPaths, components } from '../common/Global_Imports';
+import { c, h, k, p, u, ux, x, show, debug, search, svgPaths, components } from '../common/Global_Imports';
 import { w_t_database, w_depth_limit, w_s_title_edit, w_s_alteration } from '../managers/Stores';
 import { G_Widget, G_Paging, G_Cluster, G_TreeLine } from '../common/Global_Imports';
 import { w_ancestry_focus, w_show_graph_ofType } from '../managers/Stores';
@@ -71,7 +71,7 @@ export default class Ancestry extends Identifiable {
 	static readonly _____FOCUS: unique symbol;
 
 	get isFocus(): boolean { return this.matchesStore(w_ancestry_focus); }
-	becomeFocus(force: boolean = false): boolean { return grabs.focusOn_ancestry(this, force); }
+	becomeFocus(force: boolean = false): boolean { return x.ancestry_focusOn(this, force); }
 
 	get depth_ofFocus(): number {
 		const focus = get(w_ancestry_focus);
@@ -510,9 +510,9 @@ export default class Ancestry extends Identifiable {
 
 	static readonly _____GRAB: unique symbol;
 	
-	grab() { grabs.grab(this); }
-	ungrab() { grabs.ungrab(this); }
-	grabOnly() { grabs.grabOnly(this); }
+	grab() { x.grab(this); }
+	ungrab() { x.ungrab(this); }
+	grabOnly() { x.grabOnly(this); }
 
 	get isGrabbed(): boolean {
 		const grabs = x.si_grabs.w_items ?? [] as Array<Ancestry> | null;

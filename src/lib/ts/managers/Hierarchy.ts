@@ -1,5 +1,5 @@
 import { T_Startup, T_Create, T_Alteration, T_File_Format, T_Persistable } from '../common/Global_Imports';
-import { c, k, p, u, ux, x, busy, debug, grabs, Tag, User, Thing, Trait } from '../common/Global_Imports';
+import { c, k, p, u, ux, x, busy, debug, Tag, User, Thing, Trait } from '../common/Global_Imports';
 import { Access, Ancestry, Predicate, Relationship, Persistable } from '../common/Global_Imports';
 import { T_Thing, T_Trait, T_Order, T_Control, T_Predicate } from '../common/Global_Imports';
 import { w_popupView_id, w_s_title_edit, w_s_alteration, w_ancestry_focus } from './Stores';
@@ -921,10 +921,17 @@ export class Hierarchy {
 				}
 			}
 		} else if (c.allow_graph_editing) {
-			const grab = grabs.latest_upward(true);
+			const grab = x.ancestry_grabbed_atEnd_upward(true);
 			if (!!grab) {
 				this.ancestry_rebuild_persistentRelocateRight(grab, RIGHT, EXTREME);
 			}
+		}
+	}
+
+	ancestry_rebuild_persistent_grabbed_atEnd_moveUp_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
+		const ancestry = x.ancestry_grabbed_atEnd_upward(up);
+		if (!!ancestry) {
+			this.ancestry_rebuild_persistentMoveUp_maybe(ancestry, up, SHIFT, OPTION, EXTREME);
 		}
 	}
 
@@ -1382,7 +1389,7 @@ export class Hierarchy {
 
 	private get ancestry_forFile(): Ancestry {
 		const focus = get(w_ancestry_focus);
-		let grabbed = grabs.ancestry;
+		let grabbed = x.ancestry_forDetails;
 		if (!!grabbed) {
 			return grabbed;
 		} else if (!!focus) {
@@ -1427,7 +1434,7 @@ export class Hierarchy {
 					await this.extractJSON_fromDict(dict);
 					break;
 				case T_File_Format.seriously:
-					this.extractSeriously_fromDict(dict, grabs.ancestry ?? this.rootAncestry);
+					this.extractSeriously_fromDict(dict, x.ancestry_forDetails ?? this.rootAncestry);
 					break;
 			}
 		} finally {

@@ -26,7 +26,7 @@ class Search {
 	set selected_row(row: number) {
 		x.si_found.index = row;
 		w_search_state.set(T_Search.selected);
-		x.update_ancestry_forDetails();
+		x.ancestry_update_forDetails();
 	}
 
 	get selected_ancestry(): Ancestry | null {

@@ -35,7 +35,7 @@
 		if (title === banner_id || titles.length == 1) {
 			toggle_hidden(banner_id);
 		} else {
-			s_details.update_forBanner(banner_id, title);		// banner_id is NOT dynamic, banner_title and title are
+			s_details.banner_update(banner_id, title);		// banner_id is NOT dynamic, banner_title and title are
 		}
 	}
 

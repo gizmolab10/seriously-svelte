@@ -1,5 +1,5 @@
 import { T_Graph, T_Control, T_Element, T_Kinship, T_Search_Preference } from '../common/Global_Imports';
-import { p, grabs, debug, colors, layout, Ancestry } from '../common/Global_Imports';
+import { p, x, debug, colors, layout, Ancestry } from '../common/Global_Imports';
 import { w_search_preferences, w_show_graph_ofType } from '../managers/Stores';
 import { S_Mouse, S_Widget, S_Element } from '../common/Global_Imports';
 import { w_show_tree_ofType, w_depth_limit } from '../managers/Stores';
@@ -13,12 +13,12 @@ export default class S_UX {
 	s_widget_byAncestryID: { [id: string]: S_Widget } = {};
 	s_element_byName: { [name: string]: S_Element } = {};
 	s_mouse_byName: { [name: string]: S_Mouse } = {};
+	mouse_responder_number = 0;
+	s_focus!: S_Element;
 
 	parents_focus_ancestry!: Ancestry;
 	attached_branches: string[] = [];
-	mouse_responder_number = 0;
-	focus_ancestry!: Ancestry;
-	focus_element!: S_Element;
+	prior_focus_ancestry!: Ancestry;
 
 	//////////////////////////////////////
 	//									//
@@ -104,7 +104,7 @@ export default class S_UX {
 						this.s_element_set_focus_to(se, false);		// assure that even untracked focus is cleared
 					} else {
 						s_element.html_element?.focus();
-						this.focus_element = s_element;
+						this.s_focus = s_element;
 						s_element.isFocus = true;
 					}
 				}
@@ -157,10 +157,10 @@ export default class S_UX {
 		let focus_ancestry = get(w_ancestry_focus);
 		if (p.branches_areChildren) {
 			this.parents_focus_ancestry = focus_ancestry;
-			focus_ancestry = this.focus_ancestry;
+			focus_ancestry = this.prior_focus_ancestry;
 		} else {
-			this.focus_ancestry = focus_ancestry;
-			focus_ancestry = this.parents_focus_ancestry ?? grabs.ancestry;
+			this.prior_focus_ancestry = focus_ancestry;
+			focus_ancestry = this.parents_focus_ancestry ?? x.ancestry_forDetails;
 		}
 		w_show_related.set(t_trees.includes(T_Kinship.related));
 		focus_ancestry?.becomeFocus();

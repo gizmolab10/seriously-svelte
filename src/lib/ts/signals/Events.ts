@@ -229,7 +229,7 @@ export class Events {
 		const isEditing = get(w_s_title_edit)?.isActive ?? false;
 		if (!!event && event.type == 'keydown' && !isEditing) {
 			const key = event.key.toLowerCase();
-			const ancestry = grabs.latest_upward(true);
+			const ancestry = x.ancestry_grabbed_atEnd_upward(true);
 			const modifiers = ['alt', 'meta', 'shift', 'control'];
 			let graph_needsSweep = false;
 			w_control_key_down.set(event.ctrlKey);
@@ -275,8 +275,8 @@ export class Events {
 					switch (key) {
 						case '?':				c.showHelp(); return;
 						case 'm':				ux.toggle_graph_type(); break;
-						case ']':				grabs.focusOn_next(true); break;
-						case '[':				grabs.focusOn_next(false); break;
+						case ']':				x.ancestry_next_focusOn(true); break;
+						case '[':				x.ancestry_next_focusOn(false); break;
 						case '!':				layout.grand_adjust_toFit(); break;
 						case '>':				ux.increase_depth_limit_by(1); break;
 						case '<':				ux.increase_depth_limit_by(-1); break;
@@ -286,8 +286,8 @@ export class Events {
 						case 'c':				layout.set_user_graph_offsetTo(Point.zero); return;
 						case 'o':				h.select_file_toUpload(T_File_Format.json, event.shiftKey); break;
 						case '/':				if (!ancestry) { graph_needsSweep = h.rootAncestry?.becomeFocus(); } break;
-						case 'arrowup':			grabs.latest_rebuild_persistentMoveUp_maybe( true, SHIFT, OPTION, EXTREME); break;
-						case 'arrowdown':		grabs.latest_rebuild_persistentMoveUp_maybe(false, SHIFT, OPTION, EXTREME); break;
+						case 'arrowup':			h.ancestry_rebuild_persistent_grabbed_atEnd_moveUp_maybe( true, SHIFT, OPTION, EXTREME); break;
+						case 'arrowdown':		h.ancestry_rebuild_persistent_grabbed_atEnd_moveUp_maybe(false, SHIFT, OPTION, EXTREME); break;
 						case 'escape':			if (!!get(w_s_alteration)) { h.stop_alteration(); }; search.deactivate(); break;
 					}
 				}
@@ -311,8 +311,8 @@ export class Events {
 			const a = this.actions;
 			switch (t_action) {
 				case T_Action.browse:			switch (column) {
-					case a.browse.up:				grabs.latest_rebuild_persistentMoveUp_maybe( true, false, false, false); break;
-					case a.browse.down:				grabs.latest_rebuild_persistentMoveUp_maybe(false, false, false, false); break;
+					case a.browse.up:				h.ancestry_rebuild_persistent_grabbed_atEnd_moveUp_maybe( true, false, false, false); break;
+					case a.browse.down:				h.ancestry_rebuild_persistent_grabbed_atEnd_moveUp_maybe(false, false, false, false); break;
 					case a.browse.left:				await h.ancestry_rebuild_persistentMoveRight(ancestry, false, false, false, false, false); break;
 					case a.browse.right:			await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, false, false, false); break;
 				}								break;
@@ -343,8 +343,8 @@ export class Events {
 					case a.delete.related:			this.ancestry_toggle_alteration(ancestry, T_Alteration.delete, Predicate.isRelated); break;
 				}								break;
 				case T_Action.move:				switch (column) {
-					case a.move.up:					grabs.latest_rebuild_persistentMoveUp_maybe( true, false, true, false); break;
-					case a.move.down:				grabs.latest_rebuild_persistentMoveUp_maybe(false, false, true, false); break;
+					case a.move.up:					h.ancestry_rebuild_persistent_grabbed_atEnd_moveUp_maybe( true, false, true, false); break;
+					case a.move.down:				h.ancestry_rebuild_persistent_grabbed_atEnd_moveUp_maybe(false, false, true, false); break;
 					case a.move.left:				await h.ancestry_rebuild_persistentMoveRight(ancestry, false, false, true, false, false); break;
 					case a.move.right:				await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, false, true, false, false); break;
 				}								break;
