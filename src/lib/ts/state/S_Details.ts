@@ -2,7 +2,7 @@ import { h,  ux, Tag, Thing, Trait, grabs, Ancestry, S_Identifiables } from '../
 import { T_Detail, T_Startup, T_Direction, T_Storage_Need } from '../common/Global_Imports';
 import { w_t_startup, w_count_details, w_show_details_ofType } from '../managers/Stores';
 import { w_thing_traits, w_ancestry_focus, w_data_updated } from '../managers/Stores';
-import { w_search_results_found } from '../managers/Stores';
+import { w_search_results_found, w_ancestry_presented } from '../managers/Stores';
 import { S_Banner_Hideable } from './S_Banner_Hideable';
 import { get, Writable } from 'svelte/store';
 
@@ -39,7 +39,7 @@ class S_Details {
 		if (get(w_t_startup) == T_Startup.ready) {
 			this.update_traitThings();
 			this.grabbed_ancestries = ux.si_grabs.w_items;
-			this.s_tags.items = grabs.ancestry_forInformation?.thing?.tags ?? [];
+			this.s_tags.items = get(w_ancestry_presented)?.thing?.tags ?? [];
 		}
 	}
 
@@ -107,7 +107,7 @@ class S_Details {
 		let thing_traits: Array<Trait> = [];
 		if (!!h) {
 			this.s_trait_things.items = h.things_unique_havingTraits ?? [];
-			const thing = grabs.ancestry_forInformation?.thing;
+			const thing = get(w_ancestry_presented)?.thing;
 			thing_traits = thing?.traits ?? [];
 			if (!!thing && thing_traits.length > 0) {
 				// compute which index [trait] corresponds to the thing

@@ -1,8 +1,8 @@
 <script lang='ts'>
 	import { T_Layer, T_Detail, T_Action, T_Element, T_Kinship, T_Request, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
 	import { c, e, h, k, u, ux, show, Size, Point, grabs, colors, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
+	import { w_s_alteration, w_background_color, w_ancestry_presented } from '../../ts/managers/Stores';
 	import { w_depth_limit, w_user_graph_offset, w_show_graph_ofType } from '../../ts/managers/Stores';
-	import { w_s_alteration, w_background_color } from '../../ts/managers/Stores';
 	import Buttons_Table from '../mouse/Buttons_Table.svelte';
     import { s_details } from '../../ts/state/S_Details';
 	import Segmented from '../mouse/Segmented.svelte';
@@ -21,8 +21,8 @@
 	const bottom_padding = bottom_tableHeight - 48;
     const font_sizes = [k.font_size.instructions, k.font_size.instructions];
     const s_banner_hideable = s_details.s_banner_hideables_byType[T_Detail.actions];
-	const s_cancel = ux.s_element_for(grabs.ancestry_forInformation, T_Element.cancel, k.empty);
-	let list_title = grabs.ancestry_forInformation?.isExpanded && ux.inTreeMode ? 'hide list' : 'list';
+	const s_cancel = ux.s_element_for($w_ancestry_presented, T_Element.cancel, k.empty);
+	let list_title = $w_ancestry_presented?.isExpanded && ux.inTreeMode ? 'hide list' : 'list';
 	let button_titles = compute_button_titles();
 	let actions_top = top + 3;
     let reattachments = 0;
@@ -70,7 +70,7 @@
 	}
 
 	function update_button_titles(): void {
-		const ancestry = grabs.ancestry_forInformation;
+		const ancestry = $w_ancestry_presented;
 		list_title = ux.inTreeMode && !!ancestry && ancestry.isExpanded ? 'hide list' : 'show list';
 		button_titles = compute_button_titles();
 		setTimeout(() => reattachments++, 0);
@@ -166,7 +166,7 @@
 						font-size:{k.font_size.instructions}px;'>
 					<div style='top:9px; width: 100%; position:relative;'>
 						To <em>{$w_s_alteration.t_alteration}</em> an item as <em>{target_ofAlteration() ?? k.unknown}</em>
-						<br> to <strong>{grabs.ancestry_forInformation.title}</strong>
+						<br> to <strong>{$w_ancestry_presented.title}</strong>
 						<br> choose that item's <em>blinking</em> dot
 					</div>
 					<Button

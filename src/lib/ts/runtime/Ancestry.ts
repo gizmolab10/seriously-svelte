@@ -517,7 +517,7 @@ export default class Ancestry extends Identifiable {
 	get isGrabbed(): boolean {
 		const grabs = ux.si_grabs.w_items ?? [] as Array<Ancestry> | null;
 		return this.includedInStore_ofAncestries(grabs)
-			|| (search.result_ancestry?.equals(this) ?? false);		// so details can show the user-selected search result
+			|| (search.selected_ancestry?.equals(this) ?? false);		// so details can show the user-selected search result
 	}
 
 	toggleGrab() {

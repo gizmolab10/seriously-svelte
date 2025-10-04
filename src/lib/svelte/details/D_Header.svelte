@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { c, k, u, ux, grabs, debug, search, colors, layout } from '../../ts/common/Global_Imports';
+	import { w_thing_color, w_ancestry_presented } from '../../ts/managers/Stores';
 	import { Ancestry, T_Detail, S_Widget } from '../../ts/common/Global_Imports';
-	import { w_thing_color } from '../../ts/managers/Stores';
 	import { w_graph_rect, w_device_isMobile } from '../../ts/managers/Stores';
 	const { w_items: w_grabbed } = ux.si_grabs;
 	const { w_index: w_found } = ux.si_found;
@@ -12,7 +12,7 @@
 
 	$: {
 	const _ = `${$w_thing_color}:::${$w_found}:::${u.description_byTitles($w_grabbed)}`;
-		ancestry = grabs.ancestry_forInformation;
+		ancestry = $w_ancestry_presented;
 		if (!!ancestry) {
 			const s_widget = ancestry.g_widget.s_widget;
 			background_color = s_widget?.background_color ?? 'transparent';

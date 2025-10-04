@@ -44,7 +44,7 @@ export class Grabs {
 	}
 
 	get ancestry_forInformation(): Ancestry {
-		const search_ancestry = search.result_ancestry;
+		const search_ancestry = search.selected_ancestry;
 		if (!!search_ancestry) {
 			return search_ancestry;
 		}
@@ -57,6 +57,14 @@ export class Grabs {
 			w_ancestry_presented.set(ancestry);
 		}
 		return ancestry;
+	}
+
+	update_ancestry_presented() {
+		const presented = get(w_ancestry_presented);
+		const ancestry = this.ancestry_forInformation;
+		if (!presented || !presented.equals(ancestry)) {
+			w_ancestry_presented.set(ancestry);
+		}
 	}
 
 	focus_onNext(next: boolean) {
@@ -85,6 +93,7 @@ export class Grabs {
 			w_ancestry_focus.set(ancestry);
 		}
 		ancestry.expand();
+		this.update_ancestry_presented();
 		return changed;
 	}
 	
@@ -98,6 +107,7 @@ export class Grabs {
 		} else {
 			ux.si_grabs.find_next_item(next);
 		}
+		grabs.update_ancestry_presented();
 		s_details.redraw();		// force re-render of details
 	}
 
@@ -105,6 +115,7 @@ export class Grabs {
 		debug.log_grab(`  GRAB ONLY '${ancestry.title}'`);
 		ux.si_grabs.items = [ancestry];
 		get(w_hierarchy)?.stop_alteration();
+		this.update_ancestry_presented();
 	}
 
 	grab(ancestry: Ancestry) {
@@ -123,6 +134,7 @@ export class Grabs {
 		ux.si_grabs.items = grabbed;
 		debug.log_grab(`  GRAB '${ancestry.title}'`);
 		get(w_hierarchy)?.stop_alteration();
+		this.update_ancestry_presented();
 	}
 
 	ungrab(ancestry: Ancestry) {
@@ -145,6 +157,7 @@ export class Grabs {
 		}
 		ux.si_grabs.items = grabbed;
 		debug.log_grab(`  UNGRAB '${ancestry.title}'`);
+		this.update_ancestry_presented();
 	}
 	
 	static readonly _____LATEST: unique symbol;

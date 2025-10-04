@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { c, k, p, ux, grabs, colors, layout, Rect, Size, Point, Thing, Ancestry } from '../../ts/common/Global_Imports';
+	import { c, k, p, u, ux, grabs, colors, layout, Rect, Size, Point, Thing, Ancestry } from '../../ts/common/Global_Imports';
 	import { T_Thing, T_Trait, T_Layer, T_Element, T_Preference } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/managers/Stores';
-	import { w_show_details_ofType } from '../../ts/managers/Stores';
+	import { w_show_details_ofType, w_ancestry_presented } from '../../ts/managers/Stores';
 	import { w_ancestry_focus, w_relationship_order } from '../../ts/managers/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
     import { s_details } from '../../ts/state/S_Details';
@@ -15,9 +15,9 @@
 	export let top = 6;
 	const id = 'selection details';
 	const { w_items: w_grabbed } = ux.si_grabs;
-	const { w_items: w_grab_index } = ux.si_grabs;
+	const { w_items: w_grab_items } = ux.si_grabs;
 	const s_info = ux.s_element_for(new Identifiable(id), T_Element.details, id);
-	let ancestry: Ancestry | null = grabs.ancestry_forInformation;
+	let ancestry: Ancestry | null = $w_ancestry_presented;
 	let thing: Thing | null = ancestry?.thing ?? null;
 	let thingHID: Integer | null = thing?.hid;
 	let characteristics: Array<Object> = [];
@@ -28,15 +28,18 @@
 	let characteristics_table: any;
 	let thing_title = thing?.title;
 	let picker_offset = k.empty;
+	let trigger = k.empty;
 
 	$: $w_show_details_ofType, layout_forColor();
-	$: $w_relationship_order, update_forAncestry();
-	$: $w_grabbed, $w_ancestry_focus, $w_thing_title, $w_grab_index, update_forAncestry();
 	function handle_toggle_properties(event: Event) { s_details.show_properties = !s_details.show_properties; }
+
+	$: {
+		update_forAncestry();
+		trigger = `${u.description_byTitle($w_grabbed)}:::${$w_ancestry_focus?.title}:::${$w_thing_title}:::>${u.description_byTitle($w_grab_items)}:::${$w_ancestry_presented?.title}:::<${$w_relationship_order}`;
+	}
 
 	onMount(() => {
 		update_forAncestry();
-		layout_forColor();
 		s_info.set_forHovering(colors.default, 'pointer');
 	});
 
@@ -58,7 +61,7 @@
 	}
 
 	function update_forAncestry() {
-		ancestry = grabs.ancestry_forInformation;
+		ancestry = $w_ancestry_presented;
 		thing = ancestry?.thing;
 		if (!!thing) {
 			thing_title = thing.title;
@@ -88,64 +91,66 @@
 
 </script>
 
-{#if !ancestry || !thing}
-	<div>
-		<p style='text-align:center; font-size:10px; position:relative; display:flex; align-items:center; justify-content:center;'>
-			{k.nothing_to_show}
-		</p>
-	</div>
-{:else}
-	<div class='selection-container' 
-		style='
-			left:8px;
-			width:100%;
-			color:black;
-			top:{top}px;
-			height:auto;
-			position:relative;
-			padding-bottom:25px;
-			z-index:{T_Layer.frontmost};'>
-		<Text_Table
-			top={0}
-			row_height={11}
-			array={characteristics}
-			name='characteristics-table'
-			font_size={k.font_size.info}
-			bind:this={characteristics_table}/>
-		<Text_Table
-			top={29}
-			left={100}
-			row_height={11}
-			position='absolute'
-			array={relationships}
-			name='relationships-table'
-			font_size={k.font_size.info}/>
-		{#if !!color_origin && !!ancestry && ancestry.isEditable}
-			<Portal className='selection-color-portal'>
-				<Color
-					color={color}
-					origin={color_origin}
-					color_closure={handle_colors}
-					picker_offset={picker_offset}/>
-			</Portal>
-		{/if}
-		{#if s_details.show_properties}
+{#key trigger}
+	{#if !ancestry || !thing}
+		<div>
+			<p style='text-align:center; font-size:10px; position:relative; display:flex; align-items:center; justify-content:center;'>
+				{k.nothing_to_show}
+			</p>
+		</div>
+	{:else}
+		<div class='selection-container' 
+			style='
+				left:8px;
+				width:100%;
+				color:black;
+				top:{top}px;
+				height:auto;
+				position:relative;
+				padding-bottom:25px;
+				z-index:{T_Layer.frontmost};'>
 			<Text_Table
-				top={12}
+				top={0}
 				row_height={11}
-				array={properties}
-				name='properties-table'
+				array={characteristics}
+				name='characteristics-table'
+				font_size={k.font_size.info}
+				bind:this={characteristics_table}/>
+			<Text_Table
+				top={29}
+				left={100}
+				row_height={11}
+				position='absolute'
+				array={relationships}
+				name='relationships-table'
 				font_size={k.font_size.info}/>
-		{/if}
-	</div>
-	<Separator name='toggle-properties'
-		has_gull_wings={true}
-		has_both_wings={true}
-		has_thin_divider={false}
-		origin={new Point(1, 110)}
-		zindex={T_Layer.frontmost + 1}
-		length={k.width.details - 2.5}
-		handle_click={handle_toggle_properties}
-		thickness={k.thickness.separator.details}
-		title='click to {s_details.show_properties ? 'hide' : 'show more'}'/>
-{/if}
+			{#if !!color_origin && !!ancestry && ancestry.isEditable}
+				<Portal className='selection-color-portal'>
+					<Color
+						color={color}
+						origin={color_origin}
+						color_closure={handle_colors}
+						picker_offset={picker_offset}/>
+				</Portal>
+			{/if}
+			{#if s_details.show_properties}
+				<Text_Table
+					top={12}
+					row_height={11}
+					array={properties}
+					name='properties-table'
+					font_size={k.font_size.info}/>
+			{/if}
+		</div>
+		<Separator name='toggle-properties'
+			has_gull_wings={true}
+			has_both_wings={true}
+			has_thin_divider={false}
+			origin={new Point(1, 110)}
+			zindex={T_Layer.frontmost + 1}
+			length={k.width.details - 2.5}
+			handle_click={handle_toggle_properties}
+			thickness={k.thickness.separator.details}
+			title='click to {s_details.show_properties ? 'hide' : 'show more'}'/>
+	{/if}
+{/key}

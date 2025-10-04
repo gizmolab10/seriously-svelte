@@ -17,6 +17,7 @@ import { print } from './Print';
 export class Utilities extends Testworthy_Utilities {
 	
 	description_byHID(identifiables: Array<Identifiable>):	  string { return identifiables.map(a => a.hid).sort().join(','); }	
+	description_byTitle(ancestries: Array<Ancestry> | null): string { return ancestries?.map(a => a.title).join('-') ?? k.empty; }
 	description_byTitles(ancestries: Array<Ancestry> | null): string { return ancestries?.map(a => a.titles.join(',')).join('-') ?? k.empty; }
 	getWidthOf(s: string):									  number { return this.getWidth_ofString_withSize(s, `${k.font_size.common}px`); }
 	sort_byOrder(ancestries: Array<Ancestry>):		 Array<Ancestry> { return ancestries.sort( (a: Ancestry, b: Ancestry) => { return a.order - b.order; }); }

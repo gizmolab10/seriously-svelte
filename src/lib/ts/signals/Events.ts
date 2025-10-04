@@ -1,8 +1,8 @@
 import { w_count_window_resized, w_s_alteration, w_s_title_edit, w_user_graph_offset, w_control_key_down } from '../managers/Stores';
 import { w_show_details, w_count_mouse_up, w_mouse_location, w_mouse_location_scaled, w_scaled_movement } from '../managers/Stores';
+import { w_search_state, w_device_isMobile, w_ancestry_focus, w_popupView_id, w_ancestry_presented } from '../managers/Stores';
 import { c, h, k, u, ux, grabs, Point, debug, search, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
 import { T_Search, T_Action, T_Control, T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Imports';
-import { w_search_state, w_device_isMobile, w_ancestry_focus, w_popupView_id } from '../managers/Stores';
 import { S_Mouse, S_Alteration } from '../common/Global_Imports';
 import Mouse_Timer from './Mouse_Timer';
 import { get } from 'svelte/store';
@@ -244,9 +244,9 @@ export class Events {
 						case 'escape':
 						case 'arrowright':	    search.deactivate_focus_and_grab(); break;	// stop searching		
 						case 'arrowleft':		u.grab_event(event); w_search_state.set(T_Search.enter); break;
-						case 'tab':				search.set_result_row(0); break;
 						case 'arrowup':			u.grab_event(event); search.next_row(false); break;
 						case 'arrowdown':		u.grab_event(event); search.next_row(true); break;
+						case 'tab':				search.selected_row = 0; break;
 						case 'f':				search.activate(); break;			
 					}
 				} else {
@@ -304,7 +304,7 @@ export class Events {
 	}
 
 	async handle_action_clickedAt(s_mouse: S_Mouse, t_action: number, column: number, name: string) {
-		const ancestry = grabs.ancestry_forInformation;	
+		const ancestry = get(w_ancestry_presented);	
 		if (get(w_control_key_down)) {
 			this.showHelpFor(t_action, column);
 		} else if (!!ancestry && !this.handle_isAction_disabledAt(t_action, column) && !!h) {
@@ -353,7 +353,7 @@ export class Events {
 	}
 
 	handle_isAction_disabledAt(t_action: number, column: number): boolean {		// true means disabled
-		const ancestry = grabs.ancestry_forInformation;
+		const ancestry = get(w_ancestry_presented);
 		if (!!ancestry) {
 			const is_altering = !!get(w_s_alteration);
 			const no_children = !ancestry.hasChildren;

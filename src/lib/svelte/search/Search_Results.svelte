@@ -25,7 +25,7 @@
 		if (prior_row !== null && prior_row === index) {
 			search.deactivate_focus_and_grab();
 		} else {
-			search.set_result_row(event.shiftKey ? null : index);
+			search.selected_row = event.shiftKey ? null : index;
 			u.grab_event(event);
 		}
 	}

@@ -2,8 +2,8 @@
 	import { c, h, k, u, ux, Size, Point, Thing, debug, grabs, colors, signals } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Signal, T_Element, T_Startup, T_Component } from '../../ts/common/Global_Imports';
 	import { svgPaths, Ancestry, layout, components, S_Component} from '../../ts/common/Global_Imports';
+	import { w_s_title_edit, w_ancestry_focus, w_ancestry_presented } from '../../ts/managers/Stores';
 	import { w_t_startup, w_graph_rect, w_thing_color } from '../../ts/managers/Stores';
-	import { w_s_title_edit, w_ancestry_focus } from '../../ts/managers/Stores';
 	import Breadcrumb_Button from '../mouse/Breadcrumb_Button.svelte';
 	import { w_search_state } from '../../ts/managers/Stores';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
@@ -32,7 +32,7 @@
 	}
 
 	function update() {
-		ancestry = grabs?.ancestry_forInformation;		// assure we have an ancestry
+		ancestry = $w_ancestry_presented;		// assure we have an ancestry
 		if (!!ancestry && $w_t_startup == T_Startup.ready) {				
 			let parent_widths = 0;					// encoded as one parent count per 2 digits (base 10)
 			let widths: number[] = [];

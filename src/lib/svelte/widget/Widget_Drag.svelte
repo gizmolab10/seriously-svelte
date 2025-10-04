@@ -69,14 +69,14 @@
 	function update_colors() {
 		if (!ux.isAny_rotation_active && !!s_drag && !!thing) {
 			const usePointer = (!ancestry.isGrabbed || ux.inRadialMode) && ancestry.hasChildren;
-			const presented_inDetails = grabs.ancestry_forInformation.id == ancestry.id;
+			const isAncestry_presented = $w_ancestry_presented.equals(ancestry);
 			const cursor = usePointer ? 'pointer' : 'normal';
-			s_drag.isOut = !isHovering != (ancestry.isGrabbed && !presented_inDetails);
-			s_drag.set_forHovering(thing.color, cursor);
 			color = thing.color;
 			ellipsis_color = s_drag.stroke;
+			s_drag.set_forHovering(thing.color, cursor);
 			svg_outline_color = s_drag.svg_outline_color;
 			fill_color = debug.lines ? 'transparent' : s_drag.fill;
+			s_drag.isOut = !isHovering != (ancestry.isGrabbed && !isAncestry_presented);
 			debug.log_colors(`DRAG ${ancestry.title}${s_drag.isInverted ? ' INVERTED' : ''}`)
 		}
 	}

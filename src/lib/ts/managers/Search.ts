@@ -1,6 +1,6 @@
+import { c, k, h, p, ux, grabs, Thing, Ancestry } from "../common/Global_Imports";
 import { T_Search, T_Startup, T_Preference } from "../common/Global_Imports";
 import { w_search_results_found, w_search_results_changed } from './Stores';
-import { c, k, h, p, ux, Thing, Ancestry } from "../common/Global_Imports";
 import { w_search_state, w_search_show_controls } from './Stores';
 import { Search_Node } from '../types/Search_Node';
 import { w_t_startup } from './Stores';
@@ -11,11 +11,6 @@ class Search {
 	private root_node: Search_Node = new Search_Node();
 
 	get selected_row(): number | null { return ux.si_found.index; }
-
-	set_result_row(row: number) {
-		ux.si_found.index = row;
-		w_search_state.set(T_Search.selected);
-	}
 
 	activate() {
 		w_search_state.set(T_Search.enter);
@@ -28,7 +23,13 @@ class Search {
 		w_search_show_controls.set(false);
 	}
 
-	get result_ancestry(): Ancestry | null {
+	set selected_row(row: number) {
+		ux.si_found.index = row;
+		w_search_state.set(T_Search.selected);
+		grabs.update_ancestry_presented();
+	}
+
+	get selected_ancestry(): Ancestry | null {
 		const row = this.selected_row;
 		if (row !== null && !!get(w_search_show_controls)) {
 			const thing = ux.si_found.items[row];
@@ -41,7 +42,7 @@ class Search {
 		const row = this.selected_row;
 		if (row !== null) {
 			const count = ux.si_found.items.length;	// stupid, but it works
-			this.set_result_row(row.increment(up, count));
+			this.selected_row = row.increment(up, count);
 			// also make sure the row is visible
 		}
 	}
@@ -56,7 +57,7 @@ class Search {
 	}
 
 	deactivate_focus_and_grab() {
-		const ancestry = this.result_ancestry;
+		const ancestry = this.selected_ancestry;
 		this.deactivate();
 		if (!!ancestry) {
 			ancestry.becomeFocus();
