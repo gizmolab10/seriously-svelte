@@ -1,5 +1,7 @@
-import { e, k, p, u, show, debug, layout, T_Theme, databases } from '../common/Global_Imports';
-import { stores, w_device_isMobile } from './Stores';
+import { e, k, p, u, show, debug, layout, databases } from '../common/Global_Imports';
+import { stores, w_device_isMobile, w_show_graph_ofType } from './Stores';
+import { T_Graph, T_Theme } from '../common/Global_Imports';
+import { get } from 'svelte/store';
 
 export class Configuration {
 
@@ -67,6 +69,9 @@ export class Configuration {
 			}
 		}
     }
+	
+	get inTreeMode(): boolean { return get(w_show_graph_ofType) == T_Graph.tree; }
+	get inRadialMode(): boolean { return get(w_show_graph_ofType) == T_Graph.radial; }
 
 	get isServerLocal(): boolean {
 		const hostname = window.location.hostname;

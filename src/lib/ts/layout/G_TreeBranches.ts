@@ -1,4 +1,4 @@
-import { ux, x, Size, Point, Ancestry, T_Graph, debug } from '../common/Global_Imports';
+import { c, Size, Point, Ancestry, T_Graph } from '../common/Global_Imports';
 
 export default class G_TreeBranches {
 	show_child_branches = true;
@@ -16,7 +16,7 @@ export default class G_TreeBranches {
 	layout_subtree() {
 		const ancestry = this.ancestry;
 		const g_widget = ancestry.g_widget;
-		if (x.inTreeMode && !!ancestry && !!g_widget && (ancestry.isExpanded || ancestry.isRoot)) {
+		if (c.inTreeMode && !!ancestry && !!g_widget && (ancestry.isExpanded || ancestry.isRoot)) {
 			let width = 0;
 			const branchAncestries = ancestry.branchAncestries;
 			const halfHeight = ancestry.halfHeight_ofVisibleSubtree;

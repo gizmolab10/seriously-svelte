@@ -210,7 +210,7 @@ export class Events {
 				h.ancestry_alter_connectionTo_maybe(ancestry);
 				layout.grand_build();
 				return;
-			} else if (!shiftKey && x.inRadialMode) {
+			} else if (!shiftKey && c.inRadialMode) {
 				if (ancestry.becomeFocus()) {
 					layout.grand_build();
 					return;
@@ -360,7 +360,7 @@ export class Events {
 			const no_siblings = !ancestry.hasSiblings;
 			const is_root = ancestry.isRoot;
 			const a = this.actions;
-			const disable_revealConceal = no_children || is_root || (x.inRadialMode && ancestry.isFocus);
+			const disable_revealConceal = no_children || is_root || (c.inRadialMode && ancestry.isFocus);
 			switch (t_action) {
 				case T_Action.browse:			switch (column) {
 					case a.browse.left:				return is_root;

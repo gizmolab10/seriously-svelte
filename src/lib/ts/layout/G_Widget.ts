@@ -1,5 +1,5 @@
 import { S_Widget, G_Cluster, G_TreeLine, G_TreeBranches } from '../common/Global_Imports';
-import { k, u, ux, x, Rect, Size, Point, Ancestry } from '../common/Global_Imports';
+import { c, k, u, ux, Rect, Size, Point, Ancestry } from '../common/Global_Imports';
 import { w_show_graph_ofType, w_show_related } from '../managers/Stores';
 import { T_Widget, T_Graph } from '../common/Global_Imports';
 import { get } from 'svelte/store';
@@ -69,7 +69,7 @@ export default class G_Widget {
 
 	private get t_widget(): T_Widget {
 		const isFocus = this.ancestry?.isFocus ?? false;
-		return x.inTreeMode ? isFocus ? T_Widget.focus : T_Widget.tree : T_Widget.radial;
+		return c.inTreeMode ? isFocus ? T_Widget.focus : T_Widget.tree : T_Widget.radial;
 	}
 
 	get origin(): Point {
@@ -116,14 +116,14 @@ export default class G_Widget {
 	}
 
 	private layout_origin_ofTrunk() {
-		if (!!this.ancestry && x.inTreeMode) {
+		if (!!this.ancestry && c.inTreeMode) {
 			this.origin_ofTrunk = this.g_line.rect.extent.offsetByXY(k.height.row, -8.6);
 			this.g_line.update_svg_andName();
 		}
 	}
 
 	layout_each_bidirectional_generation_recursively(depth: number, visited: string[] = [], bidirectionals: G_TreeLine[] = []) {
-		if (x.inTreeMode && get(w_show_related) && depth > 0) {
+		if (c.inTreeMode && get(w_show_related) && depth > 0) {
 			this.g_bidirectionalLines = [];
 			const more = this.layout_bidirectional_lines(bidirectionals);
 			const ancestry = this.ancestry;	
@@ -165,12 +165,12 @@ export default class G_Widget {
 		const ancestry = this.ancestry;
 		if (!!ancestry.thing) {
 			const dot_size = k.height.dot;
-			const radial_mode = x.inRadialMode;
+			const radial_mode = c.inRadialMode;
 			const show_reveal = this.showingReveal;
 			const width_ofReveal = show_reveal ? dot_size : 0;
 			const width_ofTitle = ancestry.thing.width_ofTitle;
 			const widget_pointsNormal = this.widget_pointsNormal;
-			const isRadialFocus = x.inRadialMode && ancestry.isFocus;
+			const isRadialFocus = c.inRadialMode && ancestry.isFocus;
 			const width_ofDrag = (dot_size * 2) + (radial_mode ? 2 : -4);
 			const width_ofWidget = width_ofTitle + width_ofDrag + width_ofReveal + (radial_mode ? 0 : 4);
 			const x_ofDrag_forPointsBackwards = width_ofWidget - dot_size - 3 + (show_reveal ? 0.5 : 0);
@@ -197,7 +197,7 @@ export default class G_Widget {
 	}
 
 	layout_necklaceWidget(rotated_origin: Point, widget_pointsNormal: boolean) {
-		if (x.inRadialMode) {
+		if (c.inRadialMode) {
 			this.forGraphMode = T_Graph.radial;
 			this.location_ofNecklace = rotated_origin;
 			this.widget_pointsNormal = widget_pointsNormal;

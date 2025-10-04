@@ -36,7 +36,7 @@
 	function isEditing():	  boolean { return $w_s_title_edit?.ancestry_isEditing(ancestry) ?? false; }
 	function isStopping():	  boolean { return $w_s_title_edit?.ancestry_isStopping(ancestry) ?? false; }
 	function isPercolating(): boolean { return $w_s_title_edit?.ancestry_isPercolating(ancestry) ?? false; }
-	function title_extra():	   number { return (x.inTreeMode && isEditing()) ? 2 : 0; }
+	function title_extra():	   number { return (c.inTreeMode && isEditing()) ? 2 : 0; }
 	function hasChanges()	 		  { return title_prior != title_binded; }
 	function handle_mouse_up() 		  { clearClicks(); }
 
@@ -77,7 +77,7 @@
 		const reactives = `${$w_thing_color}:::${u.description_byTitles($w_grabbed)}:::${u.description_byTitles($w_expanded)}`;
 		if (reactives != trigger) {
 			const isFocus = ancestry?.isFocus ?? false;
-			const adjust = x.inRadialMode && isFocus;
+			const adjust = c.inRadialMode && isFocus;
 			const isEditing = ancestry?.isEditing ?? false;
 			const isGrabbed = ancestry?.isGrabbed ?? false;
 			top = (isGrabbed ? 0.4 : 0) - (adjust ? isGrabbed ? 2.5 : 2 : 0);

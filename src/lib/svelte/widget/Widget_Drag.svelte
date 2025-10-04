@@ -58,7 +58,7 @@
 	}
 
 	function update_svgPaths() {
-		if (x.inRadialMode) {
+		if (c.inRadialMode) {
 			svgPathFor_dragDot = svgPaths.circle_atOffset(size, size - 1);
 		} else {
 			svgPathFor_dragDot = svgPaths.oval(size, false);
@@ -68,7 +68,7 @@
 
 	function update_colors() {
 		if (!ux.isAny_rotation_active && !!s_drag && !!thing) {
-			const usePointer = (!ancestry.isGrabbed || x.inRadialMode) && ancestry.hasChildren;
+			const usePointer = (!ancestry.isGrabbed || c.inRadialMode) && ancestry.hasChildren;
 			const isAncestry_presented = $w_ancestry_forDetails.equals(ancestry);
 			const cursor = usePointer ? 'pointer' : 'normal';
 			color = thing.color;
@@ -88,7 +88,7 @@
 				svgPathFor_ellipses = svgPaths.ellipses(6, 0.8, false, count, size / 2);
 			}
 			if (thing.hasRelated && show.related_dots) {
-				const x = (x.inRadialMode ? 5.2 : 4.5) * (pointsNormal ? -1 : 1);
+				const x = (c.inRadialMode ? 5.2 : 4.5) * (pointsNormal ? -1 : 1);
 				svgPathFor_related = svgPaths.circle_atOffset(size, 3, Point.x(x));
 			}
 		}

@@ -1,6 +1,6 @@
 import { T_Search, T_Kinship, T_Startup, T_Graph, T_Search_Preference } from '../common/Global_Imports';
 import { w_t_startup, w_depth_limit, w_search_state, w_search_preferences } from './Stores';
-import { h, p, Thing, debug, search, layout, Ancestry } from '../common/Global_Imports';
+import { c, h, p, Thing, debug, search, layout, Ancestry } from '../common/Global_Imports';
 import { w_show_related, w_show_tree_ofType, w_show_graph_ofType } from './Stores';
 import { w_ancestry_forDetails, w_ancestry_focus } from './Stores';
 import { S_Identifiables } from '../common/Global_Imports';
@@ -118,7 +118,7 @@ export default class X_Core {
 				grabbed.push(rootAncestry);
 			}
 		}
-		if (grabbed.length == 0 && this.inTreeMode) {
+		if (grabbed.length == 0 && c.inTreeMode) {
 			grabbed = [rootAncestry];
 		} else {
 			h?.stop_alteration(); // do not show editingActions for root
@@ -165,7 +165,7 @@ export default class X_Core {
 
 	ancestry_assureIsVisible(ancestry: Ancestry) {
 		if (!!ancestry && !ancestry.isVisible) {
-			if (this.inTreeMode) {
+			if (c.inTreeMode) {
 				const focusAncestry = ancestry.ancestry_createUnique_byStrippingBack(get(w_depth_limit));
 				focusAncestry?.becomeFocus();
 				ancestry.reveal_toFocus();
@@ -178,9 +178,6 @@ export default class X_Core {
 	}
 
 	static readonly _____GRAPHS: unique symbol;
-	
-	get inTreeMode(): boolean { return get(w_show_graph_ofType) == T_Graph.tree; }
-	get inRadialMode(): boolean { return get(w_show_graph_ofType) == T_Graph.radial; }
 
 	increase_depth_limit_by(increment: number) {
 		w_depth_limit.update(a => a + increment);

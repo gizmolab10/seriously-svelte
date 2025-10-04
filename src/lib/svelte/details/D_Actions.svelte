@@ -22,7 +22,7 @@
     const font_sizes = [k.font_size.instructions, k.font_size.instructions];
     const s_banner_hideable = s_details.s_banner_hideables_byType[T_Detail.actions];
 	const s_cancel = ux.s_element_for($w_ancestry_forDetails, T_Element.cancel, k.empty);
-	let list_title = $w_ancestry_forDetails?.isExpanded && x.inTreeMode ? 'hide list' : 'list';
+	let list_title = $w_ancestry_forDetails?.isExpanded && c.inTreeMode ? 'hide list' : 'list';
 	let button_titles = compute_button_titles();
 	let actions_top = top + 3;
     let reattachments = 0;
@@ -71,7 +71,7 @@
 
 	function update_button_titles(): void {
 		const ancestry = $w_ancestry_forDetails;
-		list_title = x.inTreeMode && !!ancestry && ancestry.isExpanded ? 'hide list' : 'show list';
+		list_title = c.inTreeMode && !!ancestry && ancestry.isExpanded ? 'hide list' : 'show list';
 		button_titles = compute_button_titles();
 		setTimeout(() => reattachments++, 0);
 	}
