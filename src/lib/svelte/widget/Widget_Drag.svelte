@@ -1,10 +1,10 @@
 <script lang='ts'>
 	import { T_Layer, T_Graph, T_Signal, T_Alteration, T_Component } from '../../ts/common/Global_Imports';
-	import { c, e, k, u, ux, show, grabs, debug, layout, signals } from '../../ts/common/Global_Imports';
+	import { c, e, k, u, ux, x, show, grabs, debug, layout, signals } from '../../ts/common/Global_Imports';
 	import { Rect, Size, Point, Thing, S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_s_title_edit, w_s_alteration } from '../../ts/managers/Stores';
 	import { w_background_color, w_show_countDots_ofType } from '../../ts/managers/Stores';
-	import { w_ancestry_focus, w_ancestry_presented } from '../../ts/managers/Stores';
+	import { w_ancestry_focus, w_ancestry_forDetails } from '../../ts/managers/Stores';
 	import { svgPaths, databases, components } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
@@ -15,7 +15,7 @@
 	const capture_size = size;
     const ancestry = s_drag.ancestry;
 	const g_widget = ancestry.g_widget;
-	const { w_items: w_grabbed } = ux.si_grabs;
+	const { w_items: w_grabbed } = x.si_grabs;
 	let fill_color = debug.lines ? 'transparent' : s_drag.fill;
 	let svg_outline_color = s_drag.svg_outline_color;
 	let center = g_widget.center_ofDrag;
@@ -53,7 +53,7 @@
 	}
 
 	$: {
-		const _ = `${$w_thing_color}:::${$w_background_color}:::${$w_ancestry_focus?.id}:::${$w_ancestry_presented?.id}:::${u.description_byTitles($w_grabbed)}`;
+		const _ = `${$w_thing_color}:::${$w_background_color}:::${$w_ancestry_focus?.id}:::${$w_ancestry_forDetails?.id}:::${u.description_byTitles($w_grabbed)}`;
 		update_colors();
 	}
 
@@ -69,15 +69,14 @@
 	function update_colors() {
 		if (!ux.isAny_rotation_active && !!s_drag && !!thing) {
 			const usePointer = (!ancestry.isGrabbed || ux.inRadialMode) && ancestry.hasChildren;
-			const isAncestry_presented = $w_ancestry_presented.equals(ancestry);
+			const isAncestry_presented = $w_ancestry_forDetails.equals(ancestry);
 			const cursor = usePointer ? 'pointer' : 'normal';
 			color = thing.color;
 			ellipsis_color = s_drag.stroke;
 			s_drag.set_forHovering(thing.color, cursor);
 			svg_outline_color = s_drag.svg_outline_color;
-			fill_color = debug.lines ? 'transparent' : s_drag.fill;
 			s_drag.isOut = !isHovering != (ancestry.isGrabbed && !isAncestry_presented);
-			debug.log_colors(`DRAG ${ancestry.title}${s_drag.isInverted ? ' INVERTED' : ''}`)
+			fill_color = debug.lines ? 'transparent' : s_drag.fill;
 		}
 	}
 

@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { T_Layer, T_Graph, T_Search_Preference, T_Search, S_Element, T_Element, T_Control, T_Kinship, T_Request } from '../../ts/common/Global_Imports';
-	import { c, e, h, k, p, u, ux, show, grabs, Point, search, colors, layout, svgPaths, signals } from '../../ts/common/Global_Imports';
+	import { c, e, h, k, p, u, ux, x, show, grabs, Point, search, colors, layout, svgPaths, signals } from '../../ts/common/Global_Imports';
 	import { w_background_color, w_device_isMobile, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { w_show_details, w_show_graph_ofType, w_show_tree_ofType } from '../../ts/managers/Stores';
 	import { w_search_preferences, w_search_state, w_search_show_controls } from '../../ts/managers/Stores';
@@ -29,7 +29,7 @@
 	// always shows a separator and the breadcrumbs
 
 	function togglePopupID(id) { $w_popupView_id = ($w_popupView_id == id) ? null : id; }
-	function handle_recents_mouseClick(column: number) { grabs.focus_onNext(column == 1); }
+	function handle_recents_mouseClick(column: number) { grabs.focusOn_next(column == 1); }
 
 	$: {
 		const _ = `${$w_graph_rect.description}:::${$w_count_window_resized}`;

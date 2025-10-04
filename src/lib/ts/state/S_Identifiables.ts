@@ -8,8 +8,14 @@ export default class S_Identifiables<T> {
 
 	set index(i: number) { this.w_index.set(i); }
 	get index(): number { return get(this.w_index); }
+	get length(): number { return this.items.length; }
 	get items(): Array<T> { return get(this.w_items); }
-	get item(): T | null { return get(this.w_items)[this.index] ?? null; }
+	get item(): T | null { return this.items[this.index] ?? null; }
+
+	copy_from(other: S_Identifiables<T>) {
+		this.items = other.items;
+		this.index = other.index;
+	}
 	
 	set items(items: Array<T>) {
 		this.w_items.set(items);

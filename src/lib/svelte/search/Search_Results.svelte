@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { w_search_results_changed, w_search_show_controls } from '../../ts/managers/Stores';
 	import { w_graph_rect, w_search_state, w_separator_color } from '../../ts/managers/Stores';
-	import { k, u, ux, Thing, colors, T_Search } from '../../ts/common/Global_Imports';
+	import { k, u, ux, x, Thing, colors, T_Search } from '../../ts/common/Global_Imports';
 	import { search } from '../../ts/managers/Search';
 	import { derived } from 'svelte/store';
-	const { w_index: results_index } = ux.si_found;
+	const { w_index: results_index } = x.si_found;
 	let element: HTMLDivElement;
 	let results: Thing[] = [];
 	
-	$: $w_search_results_changed, results = ux.si_found.items;
+	$: $w_search_results_changed, results = x.si_found.items;
 
 	$: {
 		const row = $results_index;

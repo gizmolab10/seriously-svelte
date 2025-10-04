@@ -78,6 +78,7 @@ import { h } from '../managers/Hierarchy';
 import { u } from '../utilities/Utilities';
 import { p } from '../managers/Preferences';
 import { c } from '../managers/Configuration';
+import { x } from '../managers/X_Identifiables';
 
 import { transparentize } from 'color2k';
 import interact from 'interactjs';
@@ -90,7 +91,7 @@ export {
 	G_Paging, G_Cluster, G_RadialGraph, G_Thing_Pages, G_ArcSlider,
 
 	g_tree, g_radial,
-	e, c, h, k, p, u, ux,
+	e, c, h, k, p, u, ux, x,
 	interact, transparentize,
 	debug, svgPaths, databases, 
 	colors, layout, radial, signals, components,

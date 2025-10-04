@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { c, k, p, u, ux, grabs, colors, layout, Rect, Size, Point, Thing, Ancestry } from '../../ts/common/Global_Imports';
+	import { c, k, p, u, ux, x, grabs, colors, layout, Rect, Size, Point, Thing, Ancestry } from '../../ts/common/Global_Imports';
 	import { T_Thing, T_Trait, T_Layer, T_Element, T_Preference } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/managers/Stores';
-	import { w_show_details_ofType, w_ancestry_presented } from '../../ts/managers/Stores';
+	import { w_show_details_ofType, w_ancestry_forDetails } from '../../ts/managers/Stores';
 	import { w_ancestry_focus, w_relationship_order } from '../../ts/managers/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
     import { s_details } from '../../ts/state/S_Details';
@@ -14,10 +14,10 @@
 	import { onMount } from 'svelte';
 	export let top = 6;
 	const id = 'selection details';
-	const { w_items: w_grabbed } = ux.si_grabs;
-	const { w_items: w_grab_items } = ux.si_grabs;
+	const { w_items: w_grabbed } = x.si_grabs;
+	const { w_items: w_grab_items } = x.si_grabs;
 	const s_info = ux.s_element_for(new Identifiable(id), T_Element.details, id);
-	let ancestry: Ancestry | null = $w_ancestry_presented;
+	let ancestry: Ancestry | null = $w_ancestry_forDetails;
 	let thing: Thing | null = ancestry?.thing ?? null;
 	let thingHID: Integer | null = thing?.hid;
 	let characteristics: Array<Object> = [];
@@ -35,7 +35,7 @@
 
 	$: {
 		update_forAncestry();
-		trigger = `${u.description_byTitle($w_grabbed)}:::${$w_ancestry_focus?.title}:::${$w_thing_title}:::>${u.description_byTitle($w_grab_items)}:::${$w_ancestry_presented?.title}:::<${$w_relationship_order}`;
+		trigger = `${u.description_byTitle($w_grabbed)}:::${$w_ancestry_focus?.title}:::${$w_thing_title}:::>${u.description_byTitle($w_grab_items)}:::${$w_ancestry_forDetails?.title}:::<${$w_relationship_order}`;
 	}
 
 	onMount(() => {
@@ -61,7 +61,7 @@
 	}
 
 	function update_forAncestry() {
-		ancestry = $w_ancestry_presented;
+		ancestry = $w_ancestry_forDetails;
 		thing = ancestry?.thing;
 		if (!!thing) {
 			thing_title = thing.title;

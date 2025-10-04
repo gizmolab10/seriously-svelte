@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, h, k, u, ux, Rect, Size, Point, Thing, grabs, debug, Angle } from '../../ts/common/Global_Imports';
+	import { c, h, k, u, ux, x, Rect, Size, Point, Thing, grabs, debug, Angle } from '../../ts/common/Global_Imports';
 	import { layout, signals, components, databases, Seriously_Range } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { w_s_title_edit, w_mouse_location, w_search_state } from '../../ts/managers/Stores';
@@ -16,8 +16,8 @@
 	const g_widget = ancestry.g_widget;
 	const s_widget = g_widget.s_widget;
 	const input_height = k.height.dot + 2;
-	const { w_items: w_grabbed } = ux.si_grabs;
-	const { w_items: w_expanded } = ux.si_expanded;
+	const { w_items: w_grabbed } = x.si_grabs;
+	const { w_items: w_expanded } = x.si_expanded;
 	let title_width = (thing?.width_ofTitle ?? 0) + title_extra();
 	let title_binded = thing?.title ?? k.empty;
 	let title_component: S_Component;

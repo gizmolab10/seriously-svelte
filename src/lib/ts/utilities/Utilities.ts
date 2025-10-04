@@ -143,13 +143,13 @@ export class Utilities extends Testworthy_Utilities {
 	}
 
 	temporarily_setDefaults_while(closure: () => void) {
-		const grabbed = ux.si_grabs.items;
+		const grabbed = x.si_grabs.items;
 		const color = get(w_background_color);
 		w_background_color.set('white');
-		ux.si_grabs.items = [];	// triggers reactivity, takes time to percolate
+		x.si_grabs.items = [];	// triggers reactivity, takes time to percolate
 		setTimeout(() => {
 			closure();
-			ux.si_grabs.items = grabbed;
+			x.si_grabs.items = grabbed;
 			w_background_color.set(color);
 		}, 10);
 	}

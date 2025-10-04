@@ -1,7 +1,7 @@
 import { w_count_window_resized, w_s_alteration, w_s_title_edit, w_user_graph_offset, w_control_key_down } from '../managers/Stores';
 import { w_show_details, w_count_mouse_up, w_mouse_location, w_mouse_location_scaled, w_scaled_movement } from '../managers/Stores';
-import { w_search_state, w_device_isMobile, w_ancestry_focus, w_popupView_id, w_ancestry_presented } from '../managers/Stores';
-import { c, h, k, u, ux, grabs, Point, debug, search, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
+import { w_search_state, w_device_isMobile, w_ancestry_focus, w_popupView_id, w_ancestry_forDetails } from '../managers/Stores';
+import { c, h, k, u, ux, x, grabs, Point, debug, search, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
 import { T_Search, T_Action, T_Control, T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { S_Mouse, S_Alteration } from '../common/Global_Imports';
 import Mouse_Timer from './Mouse_Timer';
@@ -262,7 +262,7 @@ export class Events {
 						}
 						switch (key) {
 							case 'delete':
-							case 'backspace':	await h.ancestries_rebuild_traverse_persistentDelete(ux.si_grabs.items); break;
+							case 'backspace':	await h.ancestries_rebuild_traverse_persistentDelete(x.si_grabs.items); break;
 						}
 					}
 					if (!!ancestry) {
@@ -275,8 +275,8 @@ export class Events {
 					switch (key) {
 						case '?':				c.showHelp(); return;
 						case 'm':				ux.toggle_graph_type(); break;
-						case ']':				grabs.focus_onNext(true); break;
-						case '[':				grabs.focus_onNext(false); break;
+						case ']':				grabs.focusOn_next(true); break;
+						case '[':				grabs.focusOn_next(false); break;
 						case '!':				layout.grand_adjust_toFit(); break;
 						case '>':				ux.increase_depth_limit_by(1); break;
 						case '<':				ux.increase_depth_limit_by(-1); break;
@@ -304,7 +304,7 @@ export class Events {
 	}
 
 	async handle_action_clickedAt(s_mouse: S_Mouse, t_action: number, column: number, name: string) {
-		const ancestry = get(w_ancestry_presented);	
+		const ancestry = get(w_ancestry_forDetails);	
 		if (get(w_control_key_down)) {
 			this.showHelpFor(t_action, column);
 		} else if (!!ancestry && !this.handle_isAction_disabledAt(t_action, column) && !!h) {
@@ -338,7 +338,7 @@ export class Events {
 					case a.add.related:				this.ancestry_toggle_alteration(ancestry, T_Alteration.add, Predicate.isRelated); break;
 				}								break;
 				case T_Action.delete:			switch (column) {
-					case a.delete.selection:		await h.ancestries_rebuild_traverse_persistentDelete(ux.si_grabs.items); break;
+					case a.delete.selection:		await h.ancestries_rebuild_traverse_persistentDelete(x.si_grabs.items); break;
 					case a.delete.parent:			this.ancestry_toggle_alteration(ancestry, T_Alteration.delete, Predicate.contains); break;
 					case a.delete.related:			this.ancestry_toggle_alteration(ancestry, T_Alteration.delete, Predicate.isRelated); break;
 				}								break;
@@ -353,7 +353,7 @@ export class Events {
 	}
 
 	handle_isAction_disabledAt(t_action: number, column: number): boolean {		// true means disabled
-		const ancestry = get(w_ancestry_presented);
+		const ancestry = get(w_ancestry_forDetails);
 		if (!!ancestry) {
 			const is_altering = !!get(w_s_alteration);
 			const no_children = !ancestry.hasChildren;

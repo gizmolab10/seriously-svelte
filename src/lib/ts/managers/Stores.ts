@@ -30,7 +30,7 @@ const _____ANCESTRY: unique symbol = Symbol('ANCESTRY');
 
 export const w_hierarchy				= writable<Hierarchy>();
 export const w_ancestry_focus			= writable<Ancestry>();
-export const w_ancestry_presented		= writable<Ancestry>();
+export const w_ancestry_forDetails		= writable<Ancestry>();
 
 const _____RADIAL: unique symbol = Symbol('RADIAL');
 

@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { c, h, k, u, ux, Size, Point, Thing, debug, grabs, colors, signals } from '../../ts/common/Global_Imports';
+	import { c, h, k, u, ux, x, Size, Point, Thing, debug, grabs, colors, signals } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Signal, T_Element, T_Startup, T_Component } from '../../ts/common/Global_Imports';
 	import { svgPaths, Ancestry, layout, components, S_Component} from '../../ts/common/Global_Imports';
-	import { w_s_title_edit, w_ancestry_focus, w_ancestry_presented } from '../../ts/managers/Stores';
+	import { w_s_title_edit, w_ancestry_focus, w_ancestry_forDetails } from '../../ts/managers/Stores';
 	import { w_t_startup, w_graph_rect, w_thing_color } from '../../ts/managers/Stores';
 	import Breadcrumb_Button from '../mouse/Breadcrumb_Button.svelte';
 	import { w_search_state } from '../../ts/managers/Stores';
@@ -11,7 +11,7 @@
 	export let left: number = 28;
 	export let centered: boolean = false;
 	export let width = layout.windowSize.width;
-	const { w_items: w_grabbed } = ux.si_grabs;
+	const { w_items: w_grabbed } = x.si_grabs;
 	let s_component: S_Component | null = null;
 	let things: Array<Thing> = [];
 	let size = k.height.button;
@@ -27,12 +27,12 @@
 	onMount(() => { return () => s_component.disconnect(); });
 	
 	$: {
-		const _ = `${$w_t_startup}:::${$w_thing_color}:::${$w_search_state}:::${ux.si_found.w_index}:::${$w_graph_rect.description}:::${$w_s_title_edit?.description}:::${u.description_byTitles($w_grabbed)}`;
+		const _ = `${$w_t_startup}:::${$w_thing_color}:::${$w_search_state}:::${x.si_found.w_index}:::${$w_ancestry_forDetails?.id}:::${$w_graph_rect.description}:::${$w_s_title_edit?.description}:::${u.description_byTitles($w_grabbed)}`;
 		update();
 	}
 
 	function update() {
-		ancestry = $w_ancestry_presented;		// assure we have an ancestry
+		ancestry = $w_ancestry_forDetails;		// assure we have an ancestry
 		if (!!ancestry && $w_t_startup == T_Startup.ready) {				
 			let parent_widths = 0;					// encoded as one parent count per 2 digits (base 10)
 			let widths: number[] = [];

@@ -1,4 +1,4 @@
-import { ux, Size, Point, Ancestry, T_Graph, debug } from '../common/Global_Imports';
+import { ux, x, Size, Point, Ancestry, T_Graph, debug } from '../common/Global_Imports';
 
 export default class G_TreeBranches {
 	show_child_branches = true;

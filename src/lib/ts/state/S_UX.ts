@@ -1,33 +1,30 @@
 import { T_Graph, T_Control, T_Element, T_Kinship, T_Search_Preference } from '../common/Global_Imports';
-import { p, grabs, debug, colors, layout, Thing, Ancestry } from '../common/Global_Imports';
-import { S_Mouse, S_Widget, S_Element, S_Identifiables } from '../common/Global_Imports';
+import { p, grabs, debug, colors, layout, Ancestry } from '../common/Global_Imports';
 import { w_search_preferences, w_show_graph_ofType } from '../managers/Stores';
+import { S_Mouse, S_Widget, S_Element } from '../common/Global_Imports';
 import { w_show_tree_ofType, w_depth_limit } from '../managers/Stores';
 import { w_show_related, w_ancestry_focus } from '../managers/Stores';
-import type { Dictionary, Identifiable_Pair } from '../types/Types';
 import Identifiable from '../runtime/Identifiable';
+import type { Dictionary } from '../types/Types';
 import { get } from 'svelte/store';
 
 export default class S_UX {
+	s_control_byType: { [t_control: string]: S_Element } = {};
+	s_widget_byAncestryID: { [id: string]: S_Widget } = {};
+	s_element_byName: { [name: string]: S_Element } = {};
+	s_mouse_byName: { [name: string]: S_Mouse } = {};
+
 	parents_focus_ancestry!: Ancestry;
 	attached_branches: string[] = [];
 	mouse_responder_number = 0;
 	focus_ancestry!: Ancestry;
 	focus_element!: S_Element;
 
-	s_control_byType: { [t_control: string]: S_Element } = {};
-	s_widget_byAncestryID: { [id: string]: S_Widget } = {};
-	s_element_byName: { [name: string]: S_Element } = {};
-	s_mouse_byName: { [name: string]: S_Mouse } = {};
-
-	si_recents = new S_Identifiables<Identifiable_Pair>([]);
-	si_expanded = new S_Identifiables<Ancestry>([]);
-	si_grabs = new S_Identifiables<Ancestry>([]);
-	si_found = new S_Identifiables<Thing>([]);
-
 	//////////////////////////////////////
 	//									//
 	//	state managed outside svelte	//
+	//	DOM lookup, mouse detection		//
+	//	grab, expand, recent, search	//
 	//									//
 	//  allows svelte components to be	//
 	//	  deleted by their own event	//

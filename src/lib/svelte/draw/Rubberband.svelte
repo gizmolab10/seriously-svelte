@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import { h, k, u, ux, Rect, Size, Point, debug, layout, components } from '../../ts/common/Global_Imports';
+    import { h, k, u, ux, x, Rect, Size, Point, debug, layout, components, grabs } from '../../ts/common/Global_Imports';
     import { w_scaled_movement, w_user_graph_offset, w_separator_color } from '../../ts/managers/Stores';
     import { T_Layer, T_Dragging, T_Component } from '../../ts/common/Global_Imports';
     import { w_mouse_location, w_count_mouse_up } from '../../ts/managers/Stores';
@@ -32,14 +32,14 @@
         width = Math.abs(constrainedEnd.x - startPoint.x);
         left = Math.min(constrainedEnd.x, startPoint.x);
         top = Math.min(constrainedEnd.y, startPoint.y);
-        checkIntersections();
+        detect_and_grab();
     }
 
     $: if ($w_count_mouse_up !== mouse_upCount) {
         mouse_upCount = $w_count_mouse_up;
         if ($w_dragging_active === T_Dragging.rubberband) {
             if (!has_grabs) {
-                ux.si_grabs.items = [];
+                x.si_grabs.items = [];
             }
             startPoint = null;
             height = 0;
@@ -111,7 +111,7 @@
             $w_dragging_active = T_Dragging.command;
         } else {
             const constrained = constrainToRect(startPoint.x, startPoint.y);
-            original_grab_count = ux.si_grabs.items.length;
+            original_grab_count = x.si_grabs.items.length;
             top = constrained.y;
             left = constrained.x;
             $w_dragging_active = T_Dragging.rubberband;
@@ -119,7 +119,7 @@
         }
     }
 
-    function checkIntersections() {
+    function detect_and_grab() {
         if ($w_dragging_active === T_Dragging.rubberband) {
             const rubberbandRect = new Rect( new Point(left, top), new Size(width, height));
             const widget_components = components.components_ofType_withinRect(T_Component.widget, rubberbandRect);
@@ -130,17 +130,18 @@
                     intersecting.push(ancestry);
                 }
             });
-            // Only update if the list has changed
+            // Only update if si_grabs.items have changed
             const new_grabbed_IDs = u.description_byHID(intersecting);
-            const prior_grabbed_IDs = u.description_byHID(ux.si_grabs.items);
+            const prior_grabbed_IDs = u.description_byHID(x.si_grabs.items);
             has_grabs = intersecting.length != 0;
             if (prior_grabbed_IDs !== new_grabbed_IDs) {
                 if (has_grabs) {
                     had_intersections = true;
-                    ux.si_grabs.items = intersecting;
+                    x.si_grabs.items = intersecting;
                 } else if (had_intersections) {
-                    ux.si_grabs.items = [];
+                    x.si_grabs.items = [];
                 }
+                x.update_ancestry_forDetails();
             }
         }
     }

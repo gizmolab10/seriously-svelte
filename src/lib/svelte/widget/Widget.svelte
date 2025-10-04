@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { debug, signals, Ancestry, components, S_Component } from '../../ts/common/Global_Imports';
-	import { c, k, u, ux, grabs, Thing, Point, Angle, layout } from '../../ts/common/Global_Imports';
+	import { c, k, u, ux, x, grabs, Thing, Point, Angle, layout } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Widget, T_Signal } from '../../ts/common/Global_Imports';
 	import { G_Widget, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_ancestry_focus } from '../../ts/managers/Stores';
@@ -17,7 +17,7 @@
 	const s_title = s_widget.s_title;
 	const s_reveal = s_widget.s_reveal;
 	const ancestry = g_widget.ancestry;
-	const { w_items: w_grabbed } = ux.si_grabs;
+	const { w_items: w_grabbed } = x.si_grabs;
 	const reveal_points_toChild = g_widget.points_toChild;
     const drag_points_normal = g_widget.widget_pointsNormal;
 	let observer: MutationObserver | null = null;

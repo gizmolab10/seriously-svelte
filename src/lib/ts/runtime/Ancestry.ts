@@ -1,6 +1,6 @@
 import { Rect, Size, Point, Thing, Direction, Predicate, databases, Relationship } from '../common/Global_Imports';
 import { T_Graph, T_Create, T_Kinship, T_Predicate, T_Alteration, T_Component } from '../common/Global_Imports';
-import { c, h, k, p, u, ux, show, grabs, debug, search, svgPaths, components } from '../common/Global_Imports';
+import { c, h, k, p, u, ux, x, show, grabs, debug, search, svgPaths, components } from '../common/Global_Imports';
 import { w_t_database, w_depth_limit, w_s_title_edit, w_s_alteration } from '../managers/Stores';
 import { G_Widget, G_Paging, G_Cluster, G_TreeLine } from '../common/Global_Imports';
 import { w_ancestry_focus, w_show_graph_ofType } from '../managers/Stores';
@@ -452,7 +452,7 @@ export default class Ancestry extends Identifiable {
 	toggleExpanded() { return this.expanded_setTo(!this.isExpanded); }
 	get shows_branches(): boolean { return p.branches_areChildren ? this.shows_children : !this.isRoot; }
 	get shows_children(): boolean { return this.isExpanded && this.hasChildren && this.hasVisible_depth_ofFocus; }
-	get isExpanded(): boolean { return this.isRoot || this.includedInStore_ofAncestries(ux.si_expanded.w_items); }
+	get isExpanded(): boolean { return this.isRoot || this.includedInStore_ofAncestries(x.si_expanded.w_items); }
 
 	remove_fromGrabbed_andExpanded() {
 		this.collapse();
@@ -488,7 +488,7 @@ export default class Ancestry extends Identifiable {
 		let mutated = false;
 		const matchesDB = this.t_database == get(w_t_database);
 		if (matchesDB && (!this.isRoot || expand)) {
-			ux.si_expanded.w_items.update((a) => {
+			x.si_expanded.w_items.update((a) => {
 				let array = a ?? [];
 				if (!!array) {
 					const index = array.map(a => a.pathString).indexOf(this.pathString);
@@ -515,7 +515,7 @@ export default class Ancestry extends Identifiable {
 	grabOnly() { grabs.grabOnly(this); }
 
 	get isGrabbed(): boolean {
-		const grabs = ux.si_grabs.w_items ?? [] as Array<Ancestry> | null;
+		const grabs = x.si_grabs.w_items ?? [] as Array<Ancestry> | null;
 		return this.includedInStore_ofAncestries(grabs)
 			|| (search.selected_ancestry?.equals(this) ?? false);		// so details can show the user-selected search result
 	}

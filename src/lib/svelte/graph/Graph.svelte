@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { e, h, k, u, ux, Rect, Point, debug, layout, signals, colors, S_Component } from '../../ts/common/Global_Imports';
+	import { e, h, k, u, ux, x, Rect, Point, debug, layout, signals, colors, S_Component } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_show_graph_ofType, w_user_graph_offset, w_depth_limit } from '../../ts/managers/Stores';
 	import { T_Layer, T_Graph, T_Signal, T_Startup, T_Control, T_Component } from '../../ts/common/Global_Imports';
 	import { w_t_startup, w_device_isMobile, w_popupView_id } from '../../ts/managers/Stores';
@@ -13,7 +13,7 @@
 	import Button from '../mouse/Button.svelte';
 	import { onMount } from 'svelte';
 	const size_big = k.height.button + 4;
-	const { w_items: w_expanded } = ux.si_expanded;
+	const { w_items: w_expanded } = x.si_expanded;
 	let actual_content_rect = layout.user_offset_rect_ofDrawnGraph;
 	let draggableRect = $w_graph_rect;
 	let rubberbandComponent: any;
