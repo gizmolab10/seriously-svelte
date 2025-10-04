@@ -805,7 +805,7 @@ export class Hierarchy {
 	}
 
 	async ancestry_toggle_expansion(ancestry: Ancestry) {
-		if (ux.inRadialMode) {
+		if (x.inRadialMode) {
 			// kludge for now? in radial mode we need to do a bit extra for our user
 			await this.ancestry_rebuild_persistentMoveRight(ancestry, !ancestry.isExpanded, false, false, false, false);
 			layout.grand_build();
@@ -832,7 +832,7 @@ export class Hierarchy {
 			if (!!childAncestry) {
 				childAncestry.grabOnly();
 				childAncestry.order_setTo(order);
-				if (!parentAncestry.isRoot && (ux.inRadialMode || !childAncestry.isVisible)) {
+				if (!parentAncestry.isRoot && (x.inRadialMode || !childAncestry.isVisible)) {
 					parentAncestry.becomeFocus();
 				}
 				layout.grand_sweep();
@@ -893,7 +893,7 @@ export class Hierarchy {
 			await this.db.hierarchy_fetch_forID(thing.title)
 			this.relationships_refreshKnowns();
 			const childAncestries = ancestry?.childAncestries;
-			const isRadialMode = ux.inRadialMode;
+			const isRadialMode = x.inRadialMode;
 			if (!!childAncestries && childAncestries.length > 0) {
 				if (!!grab) {
 					childAncestries[0].grabOnly()
@@ -988,13 +988,13 @@ export class Hierarchy {
 		const newGrabIsNotFocus = !newGrabAncestry?.isFocus;
 		let graph_needsSweep = false;
 		if (RIGHT) {
-			if (!ancestry.hasRelevantRelationships && ux.inTreeMode) {
+			if (!ancestry.hasRelevantRelationships && x.inTreeMode) {
 				return;
 			} else {
 				if (SHIFT) {
 					newGrabAncestry = null;
 				}
-				if (ux.inTreeMode) {
+				if (x.inTreeMode) {
 					const depth_limit = get(w_depth_limit);
 					graph_needsSweep = ancestry.expand();
 					if (!!newGrabAncestry && newGrabAncestry.depth_ofFocus > depth_limit) {

@@ -52,7 +52,7 @@
 		height={ k.height.button}
 		selected={[$w_search_preferences]}
 		titles={[T_Search_Preference.title, T_Search_Preference.trait]}
-		handle_selection={(titles) => ux.handle_choiceOf_t_graph('filter', titles)}/>
+		handle_selection={(titles) => x.handle_choiceOf_t_graph('filter', titles)}/>
 	<input class='search-input'
 		id='search'
 		type='search'

@@ -77,7 +77,7 @@ import { h } from '../managers/Hierarchy';
 import { u } from '../utilities/Utilities';
 import { p } from '../managers/Preferences';
 import { c } from '../managers/Configuration';
-import { x } from '../managers/X_Identifiables';
+import { x } from '../managers/X_Core';
 
 import { transparentize } from 'color2k';
 import interact from 'interactjs';

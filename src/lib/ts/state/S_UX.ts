@@ -16,10 +16,6 @@ export default class S_UX {
 	mouse_responder_number = 0;
 	s_focus!: S_Element;
 
-	parents_focus_ancestry!: Ancestry;
-	attached_branches: string[] = [];
-	prior_focus_ancestry!: Ancestry;
-
 	//////////////////////////////////////
 	//									//
 	//	state managed outside svelte	//
@@ -35,8 +31,6 @@ export default class S_UX {
 	//									//
 	//////////////////////////////////////
 
-	get inTreeMode(): boolean { return get(w_show_graph_ofType) == T_Graph.tree; }
-	get inRadialMode(): boolean { return get(w_show_graph_ofType) == T_Graph.radial; }
 	name_from(identifiable: Identifiable, type: T_Element, subtype: string): string { return `${type}(${subtype}) (id '${identifiable.id}')`; }
 
 	get next_mouse_responder_number(): number {
@@ -110,62 +104,6 @@ export default class S_UX {
 				}
 			}
 		}
-	}
-
-	static readonly _____GRAPHS: unique symbol;
-
-	increase_depth_limit_by(increment: number) {
-		w_depth_limit.update(a => a + increment);
-		layout.grand_layout();
-	}
-	
-	handle_choiceOf_t_graph(name: string, types: string[]) {
-		switch (name) {
-			case 'graph': w_show_graph_ofType.set(types[0] as unknown as T_Graph); break;
-			case 'filter': w_search_preferences.set(types[0] as unknown as T_Search_Preference); break;
-			case 'tree': this.set_tree_types(types as Array<T_Kinship>); break;
-		}
-	}
-
-	toggle_graph_type() {
-		switch (get(w_show_graph_ofType)) {
-			case T_Graph.tree:   w_show_graph_ofType.set(T_Graph.radial); break;
-			case T_Graph.radial: w_show_graph_ofType.set(T_Graph.tree);   break;
-		}
-		layout.grand_sweep();
-	}
-
-	reset_scanOf_attached_branches() {
-		debug.log_draw('TREE', 'reset scan');
-		this.attached_branches = [];
-		return true;	// tell svelte to reattach the tree
-	}
-
-	branch_isAlready_attached(ancestry: Ancestry): boolean {
-		const visited = this.attached_branches.includes(ancestry.id);
-		if (!visited) {
-			this.attached_branches.push(ancestry.id);
-		}
-		return visited;
-	}
-
-	set_tree_types(t_trees: Array<T_Kinship>) {
-		if (t_trees.length == 0) {
-			t_trees = [T_Kinship.children];
-		}
-		w_show_tree_ofType.set(t_trees);
-		let focus_ancestry = get(w_ancestry_focus);
-		if (p.branches_areChildren) {
-			this.parents_focus_ancestry = focus_ancestry;
-			focus_ancestry = this.prior_focus_ancestry;
-		} else {
-			this.prior_focus_ancestry = focus_ancestry;
-			focus_ancestry = this.parents_focus_ancestry ?? x.ancestry_forDetails;
-		}
-		w_show_related.set(t_trees.includes(T_Kinship.related));
-		focus_ancestry?.becomeFocus();
-		p.restore_expanded();
-		layout.grand_build();
 	}
 
 }

@@ -69,7 +69,7 @@ export default class G_Widget {
 
 	private get t_widget(): T_Widget {
 		const isFocus = this.ancestry?.isFocus ?? false;
-		return ux.inTreeMode ? isFocus ? T_Widget.focus : T_Widget.tree : T_Widget.radial;
+		return x.inTreeMode ? isFocus ? T_Widget.focus : T_Widget.tree : T_Widget.radial;
 	}
 
 	get origin(): Point {
@@ -116,14 +116,14 @@ export default class G_Widget {
 	}
 
 	private layout_origin_ofTrunk() {
-		if (!!this.ancestry && ux.inTreeMode) {
+		if (!!this.ancestry && x.inTreeMode) {
 			this.origin_ofTrunk = this.g_line.rect.extent.offsetByXY(k.height.row, -8.6);
 			this.g_line.update_svg_andName();
 		}
 	}
 
 	layout_each_bidirectional_generation_recursively(depth: number, visited: string[] = [], bidirectionals: G_TreeLine[] = []) {
-		if (ux.inTreeMode && get(w_show_related) && depth > 0) {
+		if (x.inTreeMode && get(w_show_related) && depth > 0) {
 			this.g_bidirectionalLines = [];
 			const more = this.layout_bidirectional_lines(bidirectionals);
 			const ancestry = this.ancestry;	
@@ -165,12 +165,12 @@ export default class G_Widget {
 		const ancestry = this.ancestry;
 		if (!!ancestry.thing) {
 			const dot_size = k.height.dot;
-			const radial_mode = ux.inRadialMode;
+			const radial_mode = x.inRadialMode;
 			const show_reveal = this.showingReveal;
 			const width_ofReveal = show_reveal ? dot_size : 0;
 			const width_ofTitle = ancestry.thing.width_ofTitle;
 			const widget_pointsNormal = this.widget_pointsNormal;
-			const isRadialFocus = ux.inRadialMode && ancestry.isFocus;
+			const isRadialFocus = x.inRadialMode && ancestry.isFocus;
 			const width_ofDrag = (dot_size * 2) + (radial_mode ? 2 : -4);
 			const width_ofWidget = width_ofTitle + width_ofDrag + width_ofReveal + (radial_mode ? 0 : 4);
 			const x_ofDrag_forPointsBackwards = width_ofWidget - dot_size - 3 + (show_reveal ? 0.5 : 0);
@@ -197,7 +197,7 @@ export default class G_Widget {
 	}
 
 	layout_necklaceWidget(rotated_origin: Point, widget_pointsNormal: boolean) {
-		if (ux.inRadialMode) {
+		if (x.inRadialMode) {
 			this.forGraphMode = T_Graph.radial;
 			this.location_ofNecklace = rotated_origin;
 			this.widget_pointsNormal = widget_pointsNormal;

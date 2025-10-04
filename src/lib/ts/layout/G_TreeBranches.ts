@@ -16,7 +16,7 @@ export default class G_TreeBranches {
 	layout_subtree() {
 		const ancestry = this.ancestry;
 		const g_widget = ancestry.g_widget;
-		if (ux.inTreeMode && !!ancestry && !!g_widget && (ancestry.isExpanded || ancestry.isRoot)) {
+		if (x.inTreeMode && !!ancestry && !!g_widget && (ancestry.isExpanded || ancestry.isRoot)) {
 			let width = 0;
 			const branchAncestries = ancestry.branchAncestries;
 			const halfHeight = ancestry.halfHeight_ofVisibleSubtree;

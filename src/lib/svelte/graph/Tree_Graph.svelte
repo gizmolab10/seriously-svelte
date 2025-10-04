@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { T_Layer, S_Component, T_Signal, T_Component } from '../../ts/common/Global_Imports';
+	import { x, layout, signals, S_Component } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Signal, T_Component } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_user_graph_offset } from '../../ts/managers/Stores';
 	import { w_depth_limit, w_ancestry_focus } from '../../ts/managers/Stores';
-	import { ux,layout, signals } from '../../ts/common/Global_Imports';
 	import Tree_Branches from './Tree_Branches.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import { onMount } from 'svelte';
@@ -18,7 +18,7 @@
 </script>
 
 {#key reattachments}
-	{#if ux.reset_scanOf_attached_branches() && !!$w_ancestry_focus}
+	{#if x.reset_scanOf_attached_branches() && !!$w_ancestry_focus}
 		<div class = 'tree-graph'
 			style = '
 				position: absolute;

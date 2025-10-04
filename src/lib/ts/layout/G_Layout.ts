@@ -47,7 +47,7 @@ export default class G_Layout {
 	}
 
 	grand_layout(component: S_Component | null = null) {
-		if (ux.inRadialMode) {
+		if (x.inRadialMode) {
 			g_radial.grand_layout_radial();
 		} else {
 			g_tree.grand_layout_tree();
@@ -74,7 +74,7 @@ export default class G_Layout {
 	get rect_ofAllWidgets(): Rect { return u.get_drawRectFor_g_widgets(this.all_g_widgets); }
 
 	get all_g_widgets(): G_Widget[] {
-		if (ux.inRadialMode) {
+		if (x.inRadialMode) {
 			return g_radial.visible_g_widgets;
 		} else {
 			return g_tree.visible_g_widgets;

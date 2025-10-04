@@ -1,7 +1,7 @@
 import { w_count_window_resized, w_s_alteration, w_s_title_edit, w_user_graph_offset, w_control_key_down } from '../managers/Stores';
 import { w_show_details, w_count_mouse_up, w_mouse_location, w_mouse_location_scaled, w_scaled_movement } from '../managers/Stores';
 import { w_search_state, w_device_isMobile, w_ancestry_focus, w_popupView_id, w_ancestry_forDetails } from '../managers/Stores';
-import { c, h, k, u, ux, x, grabs, Point, debug, search, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
+import { c, h, k, u, ux, x, Point, debug, search, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
 import { T_Search, T_Action, T_Control, T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { S_Mouse, S_Alteration } from '../common/Global_Imports';
 import Mouse_Timer from './Mouse_Timer';
@@ -210,7 +210,7 @@ export class Events {
 				h.ancestry_alter_connectionTo_maybe(ancestry);
 				layout.grand_build();
 				return;
-			} else if (!shiftKey && ux.inRadialMode) {
+			} else if (!shiftKey && x.inRadialMode) {
 				if (ancestry.becomeFocus()) {
 					layout.grand_build();
 					return;
@@ -274,12 +274,12 @@ export class Events {
 					}
 					switch (key) {
 						case '?':				c.showHelp(); return;
-						case 'm':				ux.toggle_graph_type(); break;
+						case 'm':				x.toggle_graph_type(); break;
 						case ']':				x.ancestry_next_focusOn(true); break;
 						case '[':				x.ancestry_next_focusOn(false); break;
 						case '!':				layout.grand_adjust_toFit(); break;
-						case '>':				ux.increase_depth_limit_by(1); break;
-						case '<':				ux.increase_depth_limit_by(-1); break;
+						case '>':				x.increase_depth_limit_by(1); break;
+						case '<':				x.increase_depth_limit_by(-1); break;
 						case 'f':				w_search_state.set(T_Search.enter); break;
 						case 'p':				if (!COMMAND) { u.print_graph(); }; break;
 						case 's':				h.persist_toFile(T_File_Format.json); return;
@@ -360,7 +360,7 @@ export class Events {
 			const no_siblings = !ancestry.hasSiblings;
 			const is_root = ancestry.isRoot;
 			const a = this.actions;
-			const disable_revealConceal = no_children || is_root || (ux.inRadialMode && ancestry.isFocus);
+			const disable_revealConceal = no_children || is_root || (x.inRadialMode && ancestry.isFocus);
 			switch (t_action) {
 				case T_Action.browse:			switch (column) {
 					case a.browse.left:				return is_root;

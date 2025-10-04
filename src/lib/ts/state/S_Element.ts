@@ -82,7 +82,7 @@ export default class S_Element {
 		if (this.isADot) {
 			const a = this.ancestry;
 			switch (this.type) {
-				case T_Element.reveal: return ux.inTreeMode && a.isExpanded == a.isEditing;
+				case T_Element.reveal: return x.inTreeMode && a.isExpanded == a.isEditing;
 				default:			   return a.isEditing;
 			}
 		} else {
