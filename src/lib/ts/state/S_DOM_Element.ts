@@ -14,7 +14,7 @@ import { get } from 'svelte/store';
 	//										//
 	//////////////////////////////////////////
 
-export default class S_HTML_Element {
+export default class S_DOM_Element {
 	html_element: HTMLElement | null = null;
 	defaultDisabledColor = '#999999';
 	defaultCursor = k.cursor_default;

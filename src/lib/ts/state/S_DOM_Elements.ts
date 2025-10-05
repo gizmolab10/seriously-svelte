@@ -1,16 +1,16 @@
-import { S_Mouse, S_Widget, S_HTML_Element } from '../common/Global_Imports';
+import { S_Mouse, S_Widget, S_DOM_Element } from '../common/Global_Imports';
 import { T_Control, T_Element } from '../common/Global_Imports';
 import { colors, Ancestry } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
 import type { Dictionary } from '../types/Types';
 
-export default class S_HTML_Elements {
-	s_control_byType: { [t_control: string]: S_HTML_Element } = {};
+export default class S_DOM_Elements {
+	s_control_byType: { [t_control: string]: S_DOM_Element } = {};
 	s_widget_byAncestryID: { [id: string]: S_Widget } = {};
-	s_element_byName: { [name: string]: S_HTML_Element } = {};
+	s_element_byName: { [name: string]: S_DOM_Element } = {};
 	s_mouse_byName: { [name: string]: S_Mouse } = {};
 	mouse_responder_number = 0;
-	s_focus!: S_HTML_Element;
+	s_focus!: S_DOM_Element;
 
 	//////////////////////////////////////
 	//									//
@@ -36,14 +36,14 @@ export default class S_HTML_Elements {
 
 	static readonly _____ELEMENTS: unique symbol;
 
-	get s_elements(): S_HTML_Element[] { return Object.values(this.s_element_byName); }
-	s_element_forName(name: string): S_HTML_Element { return this.s_element_byName[name]; }
+	get s_elements(): S_DOM_Element[] { return Object.values(this.s_element_byName); }
+	s_element_forName(name: string): S_DOM_Element { return this.s_element_byName[name]; }
 	s_mouse_forName(name: string): S_Mouse { return this.assure_forKey_inDict(name, this.s_mouse_byName, () => S_Mouse.empty()); }
 
-	s_element_for(identifiable: Identifiable | null, type: T_Element, subtype: string): S_HTML_Element {
+	s_element_for(identifiable: Identifiable | null, type: T_Element, subtype: string): S_DOM_Element {
 		const realIdentifiable = identifiable ?? new Identifiable()
 		const name = this.name_from(realIdentifiable, type, subtype);
-		return this.assure_forKey_inDict(name, this.s_element_byName, () => new S_HTML_Element(realIdentifiable, type, subtype));
+		return this.assure_forKey_inDict(name, this.s_element_byName, () => new S_DOM_Element(realIdentifiable, type, subtype));
 	}
 
 	s_widget_forAncestry(ancestry: Ancestry): S_Widget {
@@ -65,7 +65,7 @@ export default class S_HTML_Elements {
 		return result;
 	}
 
-	s_control_forType(t_control: T_Control): S_HTML_Element {
+	s_control_forType(t_control: T_Control): S_DOM_Element {
 		let s_control = this.s_control_byType[t_control];
 		if (!s_control) {
 			const hover_color = t_control == T_Control.details ? 'white' : colors.default;
@@ -83,7 +83,7 @@ export default class S_HTML_Elements {
 		}
 	}
 
-	s_element_set_focus_to(s_element: S_HTML_Element | null, on: boolean = true) {
+	s_element_set_focus_to(s_element: S_DOM_Element | null, on: boolean = true) {
 		if (!!s_element) {
 			if (!on) {
 				s_element.html_element?.blur();
@@ -104,4 +104,4 @@ export default class S_HTML_Elements {
 
 }
 
-export const ux = new S_HTML_Elements();
+export const ux = new S_DOM_Elements();

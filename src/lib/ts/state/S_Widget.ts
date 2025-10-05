@@ -1,4 +1,4 @@
-import { k, ux, x, colors, Ancestry, S_HTML_Element, T_Element } from '../common/Global_Imports';
+import { k, ux, x, colors, Ancestry, S_DOM_Element, T_Element } from '../common/Global_Imports';
 import { w_background_color } from '../managers/Stores';
 import { get } from 'svelte/store';
 
@@ -15,10 +15,10 @@ import { get } from 'svelte/store';
 	//										//
 	//////////////////////////////////////////
 
-export default class S_Widget extends S_HTML_Element {
-	s_reveal: S_HTML_Element;
-	s_title: S_HTML_Element;
-	s_drag: S_HTML_Element;
+export default class S_Widget extends S_DOM_Element {
+	s_reveal: S_DOM_Element;
+	s_title: S_DOM_Element;
+	s_drag: S_DOM_Element;
 	isGrabbed = false;		// NOT a source of truth
 	isEditing = false;		// ... only needed for detecting state changes
 	isFocus	  = false;

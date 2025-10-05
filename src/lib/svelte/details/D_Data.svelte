@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { h, k, p, u, ux, x, busy, Point, colors, S_HTML_Element, databases, Hierarchy } from '../../ts/common/Global_Imports';
+	import { h, k, p, u, ux, x, busy, Point, colors, S_DOM_Element, databases, Hierarchy } from '../../ts/common/Global_Imports';
 	import { T_File_Format, T_File_Operation, T_Storage_Need, T_Signal } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Detail, T_Element, T_Preference, T_Request } from '../../ts/common/Global_Imports';
 	import { w_data_updated, w_thing_fontFamily } from '../../ts/managers/Stores';
@@ -18,7 +18,7 @@
 	const ids_forOutputFormat = [T_File_Format.csv, T_File_Format.json, T_File_Format.cancel];
 	const ids_forDatabase = [T_Database.local, T_Database.firebase, T_Database.airtable, T_Database.test, T_Database.bubble];
 	const ids_forInputFormat = [T_File_Format.csv, T_File_Format.json, T_File_Format.seriously, T_File_Format.cancel];
-	let s_element_byStorageType: { [id: string]: S_HTML_Element } = {};
+	let s_element_byStorageType: { [id: string]: S_DOM_Element } = {};
 	let heights = [13, height_ofChoices(), 42, 28, 74, 26, 3];
 	let storage_choice: string | null = null;
 	let storage_details: Array<Object> = [];

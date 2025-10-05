@@ -1,11 +1,11 @@
 <script lang='ts'>
 	import { k, u, Size, Thing, Point, grabs, svgPaths, databases } from '../../ts/common/Global_Imports';
-	import { T_Layer, S_Mouse, S_HTML_Element } from '../../ts/common/Global_Imports';
+	import { T_Layer, S_Mouse, S_DOM_Element } from '../../ts/common/Global_Imports';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import Button from './Button.svelte';
 	export let handle_s_mouse: (result: S_Mouse) => boolean;
 	export let hover_closure: (flag: boolean) => boolean;
-	export let s_triangle = S_HTML_Element.empty();
+	export let s_triangle = S_DOM_Element.empty();
 	export let detect_autorepeat = false;
 	export let detect_longClick = false;
 	export let extraPath = null;
