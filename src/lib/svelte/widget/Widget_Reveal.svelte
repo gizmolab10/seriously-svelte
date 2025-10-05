@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { c, h, k, u, ux, x, grabs, debug, layout, signals, svgPaths } from '../../ts/common/Global_Imports';
-	import { S_Element, S_Component, T_Layer, T_Graph, T_Component } from '../../ts/common/Global_Imports';
+	import { S_HTML_Element, S_Component, T_Layer, T_Graph, T_Component } from '../../ts/common/Global_Imports';
 	import { w_thing_title, w_thing_color, w_background_color } from '../../ts/managers/Stores';
 	import { Size, Thing, Point, Predicate } from '../../ts/common/Global_Imports';
 	import { w_show_countDots_ofType } from '../../ts/managers/Stores';
@@ -10,7 +10,7 @@
     export let hover_isReversed = false;
     export let zindex = T_Layer.dots;
 	export let points_toChild = true;
-	export let s_reveal!: S_Element;
+	export let s_reveal!: S_HTML_Element;
 	const ancestry = s_reveal.ancestry;
 	const g_widget = ancestry.g_widget;
 	const { w_items: w_grabbed } = x.si_grabs;

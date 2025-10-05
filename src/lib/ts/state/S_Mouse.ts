@@ -17,7 +17,7 @@ export default class S_Mouse {
 	//////////////////////////////////////////////
 	//	encapsulate relevant event properties	//
 	//	pass to buttons, widgets, radial & arcs	//
-	//	isOut is mirrored in S_Element		//
+	//	isOut is mirrored in S_HTML_Element		//
 	//////////////////////////////////////////////
 
 	constructor(event: MouseEvent | null, element: HTMLElement | null, isHover: boolean, isOut: boolean, isDown: boolean, isUp: boolean, isDouble: boolean, isLong: boolean, isMove: boolean, isHit: boolean = false, isRepeat: boolean = false) {

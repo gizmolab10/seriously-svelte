@@ -1,4 +1,4 @@
-import S_Identifiables from '../state/S_Identifiables';
+import S_Items from '../state/S_Items';
 import Identifiable from '../runtime/Identifiable';
 import { T_Signal } from '../common/Enumerations';
 import { SignalConnection } from 'typed-signals';
@@ -10,7 +10,7 @@ export type Handle_Result<T = Object, U = void> = (result: T) => U;
 export type Handle_S_Mouse = Handle_Result<S_Mouse, boolean>;
 export type Async_Handle_Boolean = (flag: boolean) => Promise<void>;
 export type Signal_Handler = (t_signal: T_Signal, value: any | null) => any;
-export type Identifiable_Pair<T = Identifiable, U = S_Identifiables<T>> = [T, U | null];
+export type Identifiable_Pair<T = Identifiable, U = S_Items<T>> = [T, U | null];
 export type Create_S_Mouse = (event: MouseEvent | null, element: HTMLElement) => S_Mouse;
 export type Signal_Signature = (t_signal: T_Signal, priority: number, value: any) => void;
 export type SignalConnection_atPriority = { t_signal: T_Signal, priority: number, connection: SignalConnection | null };

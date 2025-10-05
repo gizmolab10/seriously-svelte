@@ -1,6 +1,6 @@
 import { T_Search, T_Detail, T_Startup, T_Direction, T_Storage_Need } from '../common/Global_Imports';
 import { w_search_results_found, w_count_details, w_ancestry_forDetails } from '../managers/Stores';
-import { h,	x, Tag, Thing, Trait, Ancestry, S_Identifiables } from '../common/Global_Imports';
+import { h,	x, Tag, Thing, Trait, Ancestry, S_Items } from '../common/Global_Imports';
 import { w_t_startup, w_search_state, w_show_details_ofType } from '../managers/Stores';
 import { w_thing_traits, w_ancestry_focus, w_data_updated } from '../managers/Stores';
 import { S_Banner_Hideable } from './S_Banner_Hideable';
@@ -8,9 +8,9 @@ import { get, Writable } from 'svelte/store';
 
 class S_Details {
 	private s_banner_hideables_byType: { [t_detail: string]: S_Banner_Hideable } = {};
-	private s_trait_things = new S_Identifiables<Thing>([]);
+	private s_trait_things = new S_Items<Thing>([]);
 	private grabbed_ancestries!: Writable<Array<Ancestry>>;
-	private s_tags = new S_Identifiables<Tag>([]);
+	private s_tags = new S_Items<Tag>([]);
 	t_storage_need = T_Storage_Need.direction;
 	show_properties = false;
 

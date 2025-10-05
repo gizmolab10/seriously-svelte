@@ -1,6 +1,6 @@
 import { get, writable } from 'svelte/store';
 
-export default class S_Identifiables<T> {
+export default class S_Items<T> {
 	w_items = writable<Array<T>>([]);
 	w_index = writable(0);
 	
@@ -12,7 +12,7 @@ export default class S_Identifiables<T> {
 	get items(): Array<T> { return get(this.w_items); }
 	get item(): T | null { return this.items[this.index] ?? null; }
 
-	copy_from(other: S_Identifiables<T>) {
+	copy_from(other: S_Items<T>) {
 		this.items = other.items;
 		this.index = other.index;
 	}

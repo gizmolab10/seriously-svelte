@@ -1,19 +1,19 @@
-import { T_Search, T_Kinship, T_Startup, T_Graph, T_Search_Preference } from '../common/Global_Imports';
+import { T_Search, T_Kinship, T_Startup, T_Graph, T_Search_Preference, u } from '../common/Global_Imports';
 import { w_t_startup, w_depth_limit, w_search_state, w_search_preferences } from './Stores';
 import { c, h, p, Thing, debug, search, layout, Ancestry } from '../common/Global_Imports';
 import { w_show_related, w_show_tree_ofType, w_show_graph_ofType } from './Stores';
 import { w_ancestry_forDetails, w_ancestry_focus } from './Stores';
-import { S_Identifiables } from '../common/Global_Imports';
 import { w_s_alteration, w_s_title_edit } from './Stores';
 import type { Identifiable_Pair } from '../types/Types';
+import { S_Items } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
 export default class X_Core {
 
-	si_recents = new S_Identifiables<Identifiable_Pair>([]);
-	si_expanded = new S_Identifiables<Ancestry>([]);
-	si_grabs = new S_Identifiables<Ancestry>([]);
-	si_found = new S_Identifiables<Thing>([]);
+	si_recents = new S_Items<Identifiable_Pair>([]);
+	si_expanded = new S_Items<Ancestry>([]);
+	si_grabs = new S_Items<Ancestry>([]);
+	si_found = new S_Items<Thing>([]);
 
 	parents_focus_ancestry!: Ancestry;
 	attached_branches: string[] = [];
@@ -50,7 +50,7 @@ export default class X_Core {
 
 	ancestry_next_focusOn(next: boolean) {
 		this.si_recents.find_next_item(next);
-		const pair = this.si_recents.item as [Ancestry, S_Identifiables<Ancestry> | null];
+		const pair = this.si_recents.item as [Ancestry, S_Items<Ancestry> | null];
 		if (!!pair && Array.isArray(pair) && pair.length == 2) {
 			const [ancestry, grabbed] = pair;
 			if (!!ancestry) {
@@ -130,9 +130,9 @@ export default class X_Core {
 
 	private grabs_update_forSearch() {
 		if (get(w_search_state) != T_Search.off) {
-			const items = this.si_found.items.map(result => result.ancestry) ?? [];
-			if (this.si_grabs.items.map(a => a.id).join(',') != items.map(a => a.id).join(',')) {
-				this.si_grabs.items = items;
+			const ancestries = this.si_found.items.map((result: Thing) => result.ancestry) ?? [];
+			if (u.description_byID(this.si_grabs.items) != u.description_byID(ancestries)) {
+				this.si_grabs.items = ancestries;
 			}
 		}
 	}
