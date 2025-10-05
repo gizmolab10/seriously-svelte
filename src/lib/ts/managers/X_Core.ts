@@ -3,14 +3,14 @@ import { w_t_startup, w_depth_limit, w_search_state, w_search_preferences } from
 import { c, h, p, Thing, debug, search, layout, Ancestry } from '../common/Global_Imports';
 import { w_show_related, w_show_tree_ofType, w_show_graph_ofType } from './Stores';
 import { w_ancestry_forDetails, w_ancestry_focus } from './Stores';
+import type { Identifiable_S_Items_Pair } from '../types/Types';
 import { w_s_alteration, w_s_title_edit } from './Stores';
-import type { Identifiable_Pair } from '../types/Types';
 import { S_Items } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
 export default class X_Core {
 
-	si_recents = new S_Items<Identifiable_Pair>([]);
+	si_recents = new S_Items<Identifiable_S_Items_Pair>([]);
 	si_expanded = new S_Items<Ancestry>([]);
 	si_grabs = new S_Items<Ancestry>([]);
 	si_found = new S_Items<Thing>([]);
@@ -43,8 +43,24 @@ export default class X_Core {
 			}
 		});
 	}
+		
+	static readonly _____DETAILS: unique symbol;
 
 	get ancestry_forDetails(): Ancestry | null { return get(w_ancestry_forDetails); }
+
+	ancestry_update_forDetails() {
+		const presented = this.ancestry_forDetails;
+		let ancestry = search.selected_ancestry;
+		if (!ancestry) {
+			const focus = get(w_ancestry_focus);
+			const grab = this.si_grabs.item as Ancestry;
+			const grab_containsFocus = !!grab && !!focus && focus.isAProgenyOf(grab)
+			ancestry = (!!grab && !grab_containsFocus) ? grab : focus;
+		}
+		if (!presented || !presented.equals(ancestry)) {
+			w_ancestry_forDetails.set(ancestry);
+		}
+	}
 		
 	static readonly _____FOCUS: unique symbol;
 
@@ -67,7 +83,7 @@ export default class X_Core {
 		const priorFocus = get(w_ancestry_focus);
 		const changed = force || !priorFocus || !ancestry.equals(priorFocus!);
 		if (changed) {
-			const pair: Identifiable_Pair = [ancestry, this.si_grabs];
+			const pair: Identifiable_S_Items_Pair = [ancestry, this.si_grabs];
 			this.si_recents.push(pair);
 			w_s_alteration.set(null);
 			w_ancestry_focus.set(ancestry);
@@ -137,20 +153,6 @@ export default class X_Core {
 		}
 	}
 
-	ancestry_update_forDetails() {
-		const presented = this.ancestry_forDetails;
-		let ancestry = search.selected_ancestry;
-		if (!ancestry) {
-			const focus = get(w_ancestry_focus);
-			const grab = this.si_grabs.item as Ancestry;
-			const grab_containsFocus = !!grab && !!focus && focus.isAProgenyOf(grab)
-			ancestry = (!!grab && !grab_containsFocus) ? grab : focus;
-		}
-		if (!presented || !presented.equals(ancestry)) {
-			w_ancestry_forDetails.set(ancestry);
-		}
-	}
-
 	ancestry_grabbed_atEnd_upward(up: boolean): Ancestry | null {	// does not alter array
 		const ancestries = this.si_grabs.items ?? [];
 		if (ancestries.length > 0) {
@@ -161,20 +163,6 @@ export default class X_Core {
 			}
 		}
 		return h?.rootAncestry ?? null;
-	}
-
-	ancestry_assureIsVisible(ancestry: Ancestry) {
-		if (!!ancestry && !ancestry.isVisible) {
-			if (c.inTreeMode) {
-				const focusAncestry = ancestry.ancestry_createUnique_byStrippingBack(get(w_depth_limit));
-				focusAncestry?.becomeFocus();
-				ancestry.reveal_toFocus();
-			} else {
-				ancestry.parentAncestry?.becomeFocus();
-				ancestry.assure_isVisible_within(ancestry.sibling_ancestries);
-			}
-			layout.grand_build();
-		}
 	}
 
 	static readonly _____GRAPHS: unique symbol;

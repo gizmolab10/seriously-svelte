@@ -12,10 +12,10 @@ import { T_Quadrant, T_Orientation } from '../types/Angle';
 import { G_Paging, G_Thing_Pages } from '../layout/G_Paging';
 
 import { T_Theme } from './Enumerations';
-import { T_Search, T_Search_Preference } from './Enumerations';
 import { T_Oblong, T_Direction } from './Enumerations';
 import { T_Graph, T_Banner, T_Control } from './Enumerations';
 import { T_Persistable, T_Persistence } from './Enumerations';
+import { T_Search, T_Search_Preference } from './Enumerations';
 import { T_Thing, T_Trait, T_Predicate } from './Enumerations';
 import { T_Signal, T_Element, T_Component } from './Enumerations';
 import { T_Create, T_Browser, T_Alteration } from './Enumerations';
@@ -24,15 +24,15 @@ import { T_Action, T_Detail, T_Request, T_Storage_Need } from './Enumerations';
 import { T_Kinship, T_Radial_Zone, T_Preference, T_Auto_Adjust } from './Enumerations';
 import { T_Dragging, T_File_Format, T_File_Operation, T_Startup } from './Enumerations';
 
-import S_Items from '../state/S_Items';
+import S_HTML_Element from '../state/S_HTML_Element';
 import S_Alteration from '../state/S_Alteration';
 import S_Title_Edit from '../state/S_Title_Edit';
+import S_Common from '../state/S_HTML_Elements';
 import S_Resizing from '../state/S_Resizing';
 import S_Rotation from '../state/S_Rotation';
-import S_HTML_Element from '../state/S_HTML_Element';
 import S_Widget from '../state/S_Widget';
 import S_Mouse from '../state/S_Mouse';
-import S_Common from '../state/S_HTML_Elements';
+import S_Items from '../state/S_Items';
 
 import { builds } from './Builds';
 import { busy } from '../state/S_Busy';
@@ -71,20 +71,20 @@ import Angle from '../types/Angle';
 
 import './Extensions';
 import { k } from './Constants';
-import { ux } from '../state/S_HTML_Elements';
 import { e } from '../signals/Events';
+import { x } from '../managers/X_Core';
 import { h } from '../managers/Hierarchy';
 import { u } from '../utilities/Utilities';
 import { p } from '../managers/Preferences';
 import { c } from '../managers/Configuration';
-import { x } from '../managers/X_Core';
+import { ux } from '../state/S_HTML_Elements';
 
 import { transparentize } from 'color2k';
 import interact from 'interactjs';
 
 export {	
-	S_Mouse, S_Widget, S_HTML_Element, S_Alteration, S_Title_Edit,
 	S_Common, S_Rotation, S_Resizing,  S_Component, S_Items,
+	S_Mouse, S_Widget, S_HTML_Element, S_Alteration, S_Title_Edit,
 	
 	G_Widget, G_TreeLine, G_TreeBranches, G_Repeater,
 	G_Paging, G_Cluster, G_RadialGraph, G_Thing_Pages, G_ArcSlider,
@@ -105,9 +105,9 @@ export {
 	
 	T_Auto_Adjust,
 	T_Debug, T_Timer,
-	T_Search, T_Search_Preference,
 	T_Order, T_Kinship,
 	T_Theme, T_Graph, T_Browser, 
+	T_Search, T_Search_Preference,
 	T_Startup, T_Dragging, T_Alteration,
 	T_Create, T_Persistable, T_Persistence,
 	T_Quadrant, T_Orientation, T_Direction,

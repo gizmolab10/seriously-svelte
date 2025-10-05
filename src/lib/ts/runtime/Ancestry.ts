@@ -1,6 +1,6 @@
 import { Rect, Size, Point, Thing, Direction, Predicate, databases, Relationship } from '../common/Global_Imports';
 import { T_Graph, T_Create, T_Kinship, T_Predicate, T_Alteration, T_Component } from '../common/Global_Imports';
-import { c, h, k, p, u, ux, x, show, debug, search, svgPaths, components } from '../common/Global_Imports';
+import { c, h, k, p, u, x, show, debug, search, svgPaths, components } from '../common/Global_Imports';
 import { w_t_database, w_depth_limit, w_s_title_edit, w_s_alteration } from '../managers/Stores';
 import { G_Widget, G_Paging, G_Cluster, G_TreeLine } from '../common/Global_Imports';
 import { w_ancestry_focus, w_show_graph_ofType } from '../managers/Stores';
@@ -79,14 +79,6 @@ export default class Ancestry extends Identifiable {
 			return Math.abs(this.depth - focus.depth);
 		}
 		return 0;
-	}
-
-	get hasVisible_depth_ofFocus(): boolean {
-		const depth = get(w_depth_limit);
-		if (!!depth) {
-			return this.depth_ofFocus < depth;
-		}
-		return true;
 	}
 
 	reveal_toFocus() {
@@ -219,6 +211,14 @@ export default class Ancestry extends Identifiable {
 	get halfSize_ofVisibleSubtree():     Size { return this.size_ofVisibleSubtree.dividedInHalf; }
 	get size_ofVisibleSubtree():	     Size { return new Size(this.visibleSubtree_width(), this.height_ofVisibleSubtree()); }
 
+	get hasVisible_depth_ofFocus(): boolean {
+		const depth = get(w_depth_limit);
+		if (!!depth) {
+			return this.depth_ofFocus < depth;
+		}
+		return true;
+	}
+
 	assure_isVisible_within(ancestries: Array<Ancestry>) {
 		if (!!this.predicate && c.inRadialMode) {
 			const index = u.indexOf_withMatchingThingID_in(this, ancestries);
@@ -228,6 +228,21 @@ export default class Ancestry extends Identifiable {
 			}
 		}
 		return false;
+	}
+
+	ancestry_assureIsVisible(): boolean {
+		if (!this.isVisible) {
+			if (c.inTreeMode) {
+				const focusAncestry = this.ancestry_createUnique_byStrippingBack(get(w_depth_limit));
+				focusAncestry?.becomeFocus();
+				this.reveal_toFocus();
+			} else {
+				this.parentAncestry?.becomeFocus();
+				this.assure_isVisible_within(this.sibling_ancestries);
+			}
+			return true;
+		}
+		return false
 	}
 
 	get isVisible(): boolean {

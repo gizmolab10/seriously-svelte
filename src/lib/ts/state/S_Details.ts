@@ -1,6 +1,6 @@
 import { T_Search, T_Detail, T_Startup, T_Direction, T_Storage_Need } from '../common/Global_Imports';
 import { w_search_results_found, w_count_details, w_ancestry_forDetails } from '../managers/Stores';
-import { h,	x, Tag, Thing, Trait, Ancestry, S_Items } from '../common/Global_Imports';
+import { h,	x, Tag, Thing, Trait, layout, Ancestry, S_Items } from '../common/Global_Imports';
 import { w_t_startup, w_search_state, w_show_details_ofType } from '../managers/Stores';
 import { w_thing_traits, w_ancestry_focus, w_data_updated } from '../managers/Stores';
 import { S_Banner_Hideable } from './S_Banner_Hideable';
@@ -115,7 +115,9 @@ class S_Details {
 			const ancestry = this.traitThing?.ancestry;
 			if (!!ancestry) {
 				ancestry.grabOnly();	// causes reaction (invoking update())
-				x.ancestry_assureIsVisible(ancestry);
+				if (ancestry.ancestry_assureIsVisible()) {
+					layout.grand_build();
+				}
 			}
 		}
 	}
@@ -136,7 +138,7 @@ class S_Details {
 			thing_traits = thing?.traits ?? [];
 			if (!!thing && thing_traits.length > 0) {
 				// compute which index [trait] corresponds to the thing
-				const index = this.s_trait_things.items.findIndex(t => t.id == thing.id);
+				const index = this.s_trait_things.items.findIndex((t: Thing) => t.id == thing.id);
 				this.s_trait_things.index = Math.max(0, index);
 			}
 		}
