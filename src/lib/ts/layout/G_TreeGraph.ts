@@ -4,6 +4,7 @@ import { k, Rect, Ancestry, G_Widget, debug} from "../common/Global_Imports";
 import { get } from "svelte/store";
 
 export default class G_TreeGraph {
+	attached_branches: string[] = [];
 	focus!: Ancestry;
 
 	constructor() {
@@ -12,6 +13,20 @@ export default class G_TreeGraph {
 				this.focus = focus;
 			}
 		});
+	}
+
+	reset_scanOf_attached_branches() {
+		debug.log_draw('TREE', 'reset scan');
+		this.attached_branches = [];
+		return true;	// tell svelte to reattach the tree
+	}
+
+	branch_isAlready_attached(ancestry: Ancestry): boolean {
+		const visited = this.attached_branches.includes(ancestry.id);
+		if (!visited) {
+			this.attached_branches.push(ancestry.id);
+		}
+		return visited;
 	}
 
 	get g_focus(): G_Widget | undefined { return this.focus?.g_widget; }

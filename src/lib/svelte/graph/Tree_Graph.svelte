@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { x, layout, signals, S_Component } from '../../ts/common/Global_Imports';
+	import { g_tree, layout, signals, S_Component } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Signal, T_Component } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_user_graph_offset } from '../../ts/managers/Stores';
 	import { w_depth_limit, w_ancestry_focus } from '../../ts/managers/Stores';
@@ -18,7 +18,7 @@
 </script>
 
 {#key reattachments}
-	{#if x.reset_scanOf_attached_branches() && !!$w_ancestry_focus}
+	{#if g_tree.reset_scanOf_attached_branches() && !!$w_ancestry_focus}
 		<div class = 'tree-graph'
 			style = '
 				position: absolute;

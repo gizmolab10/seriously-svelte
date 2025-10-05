@@ -62,7 +62,7 @@
 	<div class='primary-controls'
 		style='
 			left: 6px;
-			top: 11.5px;
+			top: 10.5px;
 			width: {width}px;
 			position: absolute;
 			height: {size_big}px;

@@ -3,10 +3,12 @@ import { w_t_startup, w_depth_limit, w_search_state, w_search_preferences } from
 import { c, h, p, Thing, debug, search, layout, Ancestry } from '../common/Global_Imports';
 import { w_show_related, w_show_tree_ofType, w_show_graph_ofType } from './Stores';
 import { w_ancestry_forDetails, w_ancestry_focus } from './Stores';
-import type { Identifiable_S_Items_Pair } from '../types/Types';
 import { w_s_alteration, w_s_title_edit } from './Stores';
 import { S_Items } from '../common/Global_Imports';
+import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
+
+type Identifiable_S_Items_Pair<T = Identifiable, U = S_Items<T>> = [T, U | null];
 
 export default class X_Core {
 
@@ -16,7 +18,6 @@ export default class X_Core {
 	si_found = new S_Items<Thing>([]);
 
 	parents_focus_ancestry!: Ancestry;
-	attached_branches: string[] = [];
 	prior_focus_ancestry!: Ancestry;
 
 	//////////////////////////
@@ -186,20 +187,6 @@ export default class X_Core {
 			case T_Graph.radial: w_show_graph_ofType.set(T_Graph.tree);   break;
 		}
 		layout.grand_sweep();
-	}
-
-	reset_scanOf_attached_branches() {
-		debug.log_draw('TREE', 'reset scan');
-		this.attached_branches = [];
-		return true;	// tell svelte to reattach the tree
-	}
-
-	branch_isAlready_attached(ancestry: Ancestry): boolean {
-		const visited = this.attached_branches.includes(ancestry.id);
-		if (!visited) {
-			this.attached_branches.push(ancestry.id);
-		}
-		return visited;
 	}
 
 	set_tree_types(t_trees: Array<T_Kinship>) {
