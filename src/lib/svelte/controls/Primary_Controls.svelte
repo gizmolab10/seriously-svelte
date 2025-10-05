@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { T_Layer, T_Graph, T_Search_Preference, T_Search, S_DOM_Element, T_Element, T_Control, T_Kinship, T_Request } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Graph, T_Search_Preference, T_Search, S_Element, T_Element, T_Control, T_Kinship, T_Request } from '../../ts/common/Global_Imports';
 	import { c, e, h, k, p, u, ux, x, show, grabs, Point, search, colors, layout, svgPaths, signals } from '../../ts/common/Global_Imports';
 	import { w_background_color, w_device_isMobile, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { w_show_details, w_show_graph_ofType, w_show_tree_ofType } from '../../ts/managers/Stores';

@@ -4,7 +4,7 @@
 	import { w_s_alteration, w_background_color, w_ancestry_forDetails } from '../../ts/managers/Stores';
 	import { w_depth_limit, w_user_graph_offset, w_show_graph_ofType } from '../../ts/managers/Stores';
 	import Buttons_Table from '../mouse/Buttons_Table.svelte';
-    import { s_details } from '../../ts/state/S_Details';
+    import { s_banners } from '../../ts/state/S_Banners';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Button from '../mouse/Button.svelte';
@@ -20,7 +20,7 @@
 	const { w_items: w_expanded } = x.si_expanded;
 	const bottom_padding = bottom_tableHeight - 48;
     const font_sizes = [k.font_size.instructions, k.font_size.instructions];
-    const s_banner_hideable = s_details.s_banner_hideables_byType[T_Detail.actions];
+    const s_banner_hideable = s_banners.s_banner_hideables_byType[T_Detail.actions];
 	const s_cancel = ux.s_element_for($w_ancestry_forDetails, T_Element.cancel, k.empty);
 	let list_title = $w_ancestry_forDetails?.isExpanded && c.inTreeMode ? 'hide list' : 'list';
 	let button_titles = compute_button_titles();

@@ -6,13 +6,13 @@ import G_TreeLine from '../layout/G_TreeLine';
 import G_Cluster from '../layout/G_Cluster';
 import G_Widget from '../layout/G_Widget';
 
-import { T_Debug } from '../debug/Debug';
-import { T_Timer } from '../signals/Mouse_Timer';
-import { T_Quadrant, T_Orientation } from '../types/Angle';
 import { G_Paging, G_Thing_Pages } from '../layout/G_Paging';
 
+import { T_Debug } from '../debug/Debug';
 import { T_Theme } from './Enumerations';
+import { T_Timer } from '../signals/Mouse_Timer';
 import { T_Oblong, T_Direction } from './Enumerations';
+import { T_Quadrant, T_Orientation } from '../types/Angle';
 import { T_Graph, T_Banner, T_Control } from './Enumerations';
 import { T_Persistable, T_Persistence } from './Enumerations';
 import { T_Search, T_Search_Preference } from './Enumerations';
@@ -24,12 +24,11 @@ import { T_Action, T_Detail, T_Request, T_Storage_Need } from './Enumerations';
 import { T_Kinship, T_Radial_Zone, T_Preference, T_Auto_Adjust } from './Enumerations';
 import { T_Dragging, T_File_Format, T_File_Operation, T_Startup } from './Enumerations';
 
-import S_DOM_Element from '../state/S_DOM_Element';
 import S_Alteration from '../state/S_Alteration';
 import S_Title_Edit from '../state/S_Title_Edit';
-import S_Common from '../state/S_DOM_Elements';
 import S_Resizing from '../state/S_Resizing';
 import S_Rotation from '../state/S_Rotation';
+import S_Element from '../state/S_Element';
 import S_Widget from '../state/S_Widget';
 import S_Mouse from '../state/S_Mouse';
 import S_Items from '../state/S_Items';
@@ -72,19 +71,19 @@ import Angle from '../types/Angle';
 import './Extensions';
 import { k } from './Constants';
 import { e } from '../signals/Events';
-import { x } from '../managers/X_Core';
+import { x } from '../managers/UX_Core';
 import { h } from '../managers/Hierarchy';
 import { u } from '../utilities/Utilities';
 import { p } from '../managers/Preferences';
+import { ux } from '../managers/UX_Elements';
 import { c } from '../managers/Configuration';
-import { ux } from '../state/S_DOM_Elements';
 
 import { transparentize } from 'color2k';
 import interact from 'interactjs';
 
 export {	
-	S_Common, S_Rotation, S_Resizing,  S_Component, S_Items,
-	S_Mouse, S_Widget, S_DOM_Element, S_Alteration, S_Title_Edit,
+	S_Rotation, S_Resizing,  S_Component, S_Items,
+	S_Mouse, S_Widget, S_Element, S_Alteration, S_Title_Edit,
 	
 	G_Widget, G_TreeLine, G_TreeBranches, G_Repeater,
 	G_Paging, G_Cluster, G_RadialGraph, G_Thing_Pages, G_ArcSlider,

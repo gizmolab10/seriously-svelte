@@ -11,7 +11,7 @@ import { layout } from '../layout/G_Layout';
 import Ancestry from '../runtime/Ancestry';
 import G_Widget from '../layout/G_Widget';
 import { k } from '../common/Constants';
-import { x } from '../managers/X_Core';	
+import { x } from '../managers/UX_Core';	
 import { get } from 'svelte/store';
 import { print } from './Print';
 

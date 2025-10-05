@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { h, k, u, ux, x, Point, Thing, debug, colors, layout, signals } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_thing_fontFamily, w_ancestry_focus } from '../../ts/managers/Stores';
-	import { T_Search, T_Banner, S_DOM_Element } from '../../ts/common/Global_Imports';
+	import { T_Search, T_Banner, S_Element } from '../../ts/common/Global_Imports';
 	import { w_background_color } from '../../ts/managers/Stores';
 	import { search } from '../../ts/managers/Search';
 	import Button from './Button.svelte';

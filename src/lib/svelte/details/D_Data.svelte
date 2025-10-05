@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { h, k, p, u, ux, x, busy, Point, colors, S_DOM_Element, databases, Hierarchy } from '../../ts/common/Global_Imports';
+	import { h, k, p, u, ux, x, busy, Point, colors, S_Element, databases, Hierarchy } from '../../ts/common/Global_Imports';
 	import { T_File_Format, T_File_Operation, T_Storage_Need, T_Signal } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Detail, T_Element, T_Preference, T_Request } from '../../ts/common/Global_Imports';
 	import { w_data_updated, w_thing_fontFamily } from '../../ts/managers/Stores';
@@ -7,7 +7,7 @@
 	import { T_Database } from '../../ts/database/DB_Common';
     import Buttons_Row from '../mouse/Buttons_Row.svelte';
 	import { w_t_database } from '../../ts/managers/Stores';
-    import { s_details } from '../../ts/state/S_Details';
+    import { s_banners } from '../../ts/state/S_Banners';
 	import Text_Table from '../text/Text_Table.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../draw/Separator.svelte';
@@ -18,7 +18,7 @@
 	const ids_forOutputFormat = [T_File_Format.csv, T_File_Format.json, T_File_Format.cancel];
 	const ids_forDatabase = [T_Database.local, T_Database.firebase, T_Database.airtable, T_Database.test, T_Database.bubble];
 	const ids_forInputFormat = [T_File_Format.csv, T_File_Format.json, T_File_Format.seriously, T_File_Format.cancel];
-	let s_element_byStorageType: { [id: string]: S_DOM_Element } = {};
+	let s_element_byStorageType: { [id: string]: S_Element } = {};
 	let heights = [13, height_ofChoices(), 42, 28, 74, 26, 3];
 	let storage_choice: string | null = null;
 	let storage_details: Array<Object> = [];
@@ -38,7 +38,7 @@
 	}
 
 	$: {
-		const _ = `${s_details.t_storage_need}:::${p.show_other_databases}`;
+		const _ = `${s_banners.t_storage_need}:::${p.show_other_databases}`;
 		reattachments++;
 	}
 
@@ -65,7 +65,7 @@
 	}
 
 	function action_titles() {
-		switch (s_details.t_storage_need) {
+		switch (s_banners.t_storage_need) {
 			case T_Storage_Need.direction: return ['local file', ...ids_forDirection];
 			case T_Storage_Need.format:    return ['file type', ...ids_forFormat()];
 			case T_Storage_Need.busy:      return [`${storage_choice}ing...`];
@@ -82,7 +82,7 @@
 	}
 
 	function handle_actionRequest(t_request: T_Request, s_mouse: S_Mouse, column: number): any {
-		const ids = (s_details.t_storage_need == T_Storage_Need.direction) ? ids_forDirection : ids_forFormat();
+		const ids = (s_banners.t_storage_need == T_Storage_Need.direction) ? ids_forDirection : ids_forFormat();
 		switch (t_request) {
 			case T_Request.handle_click: return handle_click_forColumn(s_mouse, column);
 			case T_Request.name:        return ids[column];
@@ -106,16 +106,16 @@
 	}
 	
 	function handle_click_forColumn(s_mouse, column) {
-		const beginning = s_details.t_storage_need == T_Storage_Need.direction;
+		const beginning = s_banners.t_storage_need == T_Storage_Need.direction;
 		const ids = beginning ? ids_forDirection : ids_forFormat();
 		if (s_mouse.isHover) {
 			s_element_byStorageType[ids[column]].isOut = s_mouse.isOut;
 		} else if (s_mouse.isDown) {
 			const choice = ids[column];
-			s_details.t_storage_need = T_Storage_Need.direction; // reset by default
+			s_banners.t_storage_need = T_Storage_Need.direction; // reset by default
 			if (beginning) {
 				storage_choice = choice;
-				s_details.t_storage_need = T_Storage_Need.format; // not reset
+				s_banners.t_storage_need = T_Storage_Need.format; // not reset
 			} else if (choice != T_File_Format.cancel) {
 				const format = choice as T_File_Format;
 				switch (storage_choice) {
@@ -187,7 +187,7 @@
 			button_height={k.height.button}
 			center={new Point(width / 2 + 3, tops[4])}
 			separator_thickness={k.thickness.separator.details}
-			name={`data-${(s_details.t_storage_need == T_Storage_Need.direction) ? 'action' : 'format'}`}/>
+			name={`data-${(s_banners.t_storage_need == T_Storage_Need.direction) ? 'action' : 'format'}`}/>
 	{/key}
 	<Separator name='bottom-of-data'
 		isHorizontal={true}

@@ -1,11 +1,10 @@
 <script lang='ts'>
-    import { s_details } from '../../ts/state/S_Details';
-    import { k } from '../../ts/common/Global_Imports';
+    import { k, x } from '../../ts/common/Global_Imports';
     const width = 100;
-    s_details.update();
+    x.update();
 </script>
 
-{#if s_details.s_tags.items.length > 0}
+{#if x.si_tags.items.length > 0}
     <div class='tags-list'
         style='
             width:100%;
@@ -19,7 +18,7 @@
             justify-content: center;
             min-height: {k.height.empty}px;
             font-size:{k.font_size.details}px;'>
-        {s_details.s_tags.item?.type}
+        {x.si_tags.item?.type}
     </div>
 {:else}
     <div class='no-tags'

@@ -11,10 +11,8 @@ export class Events {
 	mouse_timer_byName: { [name: string]: Mouse_Timer } = {};
     debouncedResize: NodeJS.Timeout | null = null;
 	initialTouch: Point | null = null;
-	alterationTimer: Mouse_Timer;
-	width = 0;		// WTF??
+	alterationTimer!: Mouse_Timer;
 
-	constructor() { this.alterationTimer = this.mouse_timer_forName('alteration'); }
 	mouse_timer_forName(name: string): Mouse_Timer { return ux.assure_forKey_inDict(name, this.mouse_timer_byName, () => new Mouse_Timer(name)); }
 
 	setup() {
@@ -161,6 +159,9 @@ export class Events {
 	}
 
 	private handle_s_alteration(s_alteration: S_Alteration | null) {
+		if (!this.alterationTimer) {
+			this.alterationTimer = this.mouse_timer_forName('alteration');
+		}
 		if (!!s_alteration) {
 			this.alterationTimer.alteration_start((invert) => {
 				signals.signal_blink_forAlteration(invert);
@@ -194,8 +195,8 @@ export class Events {
 				case T_Control.help:	c.showHelp(); break;
 				case T_Control.search:	search.activate(); break;
 				case T_Control.details: this.toggle_details(); break;
-				case T_Control.grow:	this.width = layout.scaleBy(k.ratio.zoom_in) - 20; break;
-				case T_Control.shrink:	this.width = layout.scaleBy(k.ratio.zoom_out) - 20; break;
+				case T_Control.grow:	layout.scaleBy(k.ratio.zoom_in) - 20; break;
+				case T_Control.shrink:	layout.scaleBy(k.ratio.zoom_out) - 20; break;
 				default:				this.togglePopupID(t_control); break;
 			}
 		}

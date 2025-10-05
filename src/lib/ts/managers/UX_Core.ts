@@ -1,11 +1,12 @@
-import { T_Search, T_Kinship, T_Startup, T_Graph, T_Search_Preference, u } from '../common/Global_Imports';
-import { w_t_startup, w_depth_limit, w_search_state, w_search_preferences } from './Stores';
-import { c, h, p, Thing, debug, search, layout, Ancestry } from '../common/Global_Imports';
-import { w_show_related, w_show_tree_ofType, w_show_graph_ofType } from './Stores';
-import { w_ancestry_forDetails, w_ancestry_focus } from './Stores';
+import { T_Detail, T_Search, T_Kinship, T_Startup, T_Graph, T_Search_Preference } from '../common/Global_Imports';
+import { w_t_startup, w_depth_limit, w_data_updated, w_search_state, w_search_preferences } from './Stores';
+import { c, h, p, u, Tag, Thing, Trait, debug, search, layout, Ancestry } from '../common/Global_Imports';
+import { w_show_related, w_show_tree_ofType, w_show_graph_ofType, w_show_details_ofType } from './Stores';
+import { w_ancestry_forDetails, w_ancestry_focus, w_thing_traits } from './Stores';
 import { w_s_alteration, w_s_title_edit } from './Stores';
 import { S_Items } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
+import { s_banners } from '../state/S_Banners';
 import { get } from 'svelte/store';
 
 type Identifiable_S_Items_Pair<T = Identifiable, U = S_Items<T>> = [T, U | null];
@@ -13,9 +14,11 @@ type Identifiable_S_Items_Pair<T = Identifiable, U = S_Items<T>> = [T, U | null]
 export default class X_Core {
 
 	si_recents = new S_Items<Identifiable_S_Items_Pair>([]);
+	si_trait_things = new S_Items<Thing>([]);
 	si_expanded = new S_Items<Ancestry>([]);
 	si_grabs = new S_Items<Ancestry>([]);
 	si_found = new S_Items<Thing>([]);
+	si_tags = new S_Items<Tag>([]);
 
 	parents_focus_ancestry!: Ancestry;
 	prior_focus_ancestry!: Ancestry;
@@ -32,24 +35,44 @@ export default class X_Core {
 	//////////////////////////
 
 	constructor() {
+		w_data_updated.subscribe((count: number) => {
+			this.update();
+		});
+		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
+			this.update();
+		});
+		w_show_details_ofType.subscribe((t_details: Array<T_Detail>) => {
+			this.update();
+		});
 		w_t_startup.subscribe((startup: number | null) => {
 			if (startup == T_Startup.ready) {
-				this.grabs_update_forSearch();
-				w_search_state.subscribe((row: number | null) => {
-					this.grabs_update_forSearch();
-						});
 				w_ancestry_focus.subscribe((ancestry: Ancestry) => {
-					this.ancestry_update_forDetails();
+					this.ancestry_focus_update_forDetails();
 				});
+				w_search_state.subscribe((state: number | null) => {
+					this.grabs_update_forSearch();
+				});
+				x.si_found.w_index.subscribe((row: number | null) => {
+					this.update();
+				});
+				this.update();
 			}
 		});
+	}
+
+	update() {
+		if (get(w_t_startup) == T_Startup.ready) {
+			this.traitThings_update();
+			this.grabs_update_forSearch();
+			this.si_tags.items = get(w_ancestry_forDetails)?.thing?.tags ?? [];
+		}
 	}
 		
 	static readonly _____DETAILS: unique symbol;
 
 	get ancestry_forDetails(): Ancestry | null { return get(w_ancestry_forDetails); }
 
-	ancestry_update_forDetails() {
+	ancestry_focus_update_forDetails() {
 		const presented = this.ancestry_forDetails;
 		let ancestry = search.selected_ancestry;
 		if (!ancestry) {
@@ -90,7 +113,7 @@ export default class X_Core {
 			w_ancestry_focus.set(ancestry);
 		}
 		ancestry.expand();
-		this.ancestry_update_forDetails();
+		this.ancestry_focus_update_forDetails();
 		return changed;
 	}
 	
@@ -100,7 +123,7 @@ export default class X_Core {
 		debug.log_grab(`  GRAB ONLY '${ancestry.title}'`);
 		this.si_grabs.items = [ancestry];
 		h?.stop_alteration();
-		this.ancestry_update_forDetails();
+		this.ancestry_focus_update_forDetails();
 	}
 
 	grab(ancestry: Ancestry) {
@@ -119,7 +142,7 @@ export default class X_Core {
 		this.si_grabs.items = grabbed;
 		debug.log_grab(`  GRAB '${ancestry.title}'`);
 		h?.stop_alteration();
-		this.ancestry_update_forDetails();
+		this.ancestry_focus_update_forDetails();
 	}
 
 	ungrab(ancestry: Ancestry) {
@@ -142,10 +165,10 @@ export default class X_Core {
 		}
 		this.si_grabs.items = grabbed;
 		debug.log_grab(`  UNGRAB '${ancestry.title}'`);
-		this.ancestry_update_forDetails();
+		this.ancestry_focus_update_forDetails();
 	}
 
-	private grabs_update_forSearch() {
+	grabs_update_forSearch() {
 		if (get(w_search_state) != T_Search.off) {
 			const ancestries = this.si_found.items.map((result: Thing) => result.ancestry) ?? [];
 			if (u.description_byID(this.si_grabs.items) != u.description_byID(ancestries)) {
@@ -164,6 +187,69 @@ export default class X_Core {
 			}
 		}
 		return h?.rootAncestry ?? null;
+	}
+
+	static readonly _____TRAIT_THINGS: unique symbol;
+
+	get traitThing(): Thing | null {
+		const item = this.si_trait_things.item;
+		if (!!item) {
+			return item as Thing;
+		}
+		return null;
+	}
+	
+	traitThing_select_next(next: boolean) {
+		if (this.si_trait_things.find_next_item(next)) {
+			const ancestry = this.traitThing?.ancestry;
+			if (!!ancestry) {
+				ancestry.grabOnly();	// causes reaction (invoking update())
+				if (ancestry.ancestry_assureIsVisible()) {
+					layout.grand_build();
+				}
+			}
+		}
+	}
+
+	traitThings_update() {
+
+		////////////////////////////////////////////////////////////////
+		//															  //
+		//	trait_things				  ALL things that have traits //
+		//	w_thing_traits	JUST traits of the current ancestry.thing //
+		//															  //
+		////////////////////////////////////////////////////////////////
+
+		let thing_traits: Array<Trait> = [];
+		if (!!h) {
+			this.si_trait_things.items = h.things_unique_havingTraits ?? [];
+			const thing = get(w_ancestry_forDetails)?.thing;
+			thing_traits = thing?.traits ?? [];
+			if (!!thing && thing_traits.length > 0) {
+				// compute which index [trait] corresponds to the thing
+				const index = this.si_trait_things.items.findIndex((t: Thing) => t.id == thing.id);
+				this.si_trait_things.index = Math.max(0, index);
+			}
+		}
+		w_thing_traits.set(thing_traits);
+	}
+	
+	static readonly _____TAGS: unique symbol;
+
+	get tag(): Tag | null { return (this.si_tags.item as Tag) ?? null; }
+	tag_select_next(next: boolean): boolean { return this.si_tags.find_next_item(next); }
+
+	
+	static readonly _____ANCESTRIES: unique symbol;
+	
+	ancestry_select_next(next: boolean) {	// for next/previous in details selection banner
+		if (get(w_search_state) > T_Search.off) {
+			x.si_found.find_next_item(next);
+		} else {
+			x.si_grabs.find_next_item(next);
+		}
+		x.ancestry_focus_update_forDetails();
+		s_banners.redraw();		// force re-render of details
 	}
 
 	static readonly _____GRAPHS: unique symbol;

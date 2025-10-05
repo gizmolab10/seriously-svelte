@@ -4,11 +4,11 @@
 	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { w_s_title_edit, w_mouse_location, w_search_state } from '../../ts/managers/Stores';
 	import { T_Search, T_Layer, T_Component } from '../../ts/common/Global_Imports';
-	import { S_DOM_Element, S_Component } from '../../ts/common/Global_Imports';
+	import { S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { T_Edit } from '../../ts/state/S_Title_Edit';
 	import { onMount, onDestroy } from 'svelte';
-	export let s_title!: S_DOM_Element;
+	export let s_title!: S_Element;
 	export let fontSize = '1em';
 	const ancestry = s_title.ancestry;
 	const thing = ancestry?.thing;

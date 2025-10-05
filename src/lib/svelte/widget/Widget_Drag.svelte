@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { T_Layer, T_Graph, T_Signal, T_Alteration, T_Component } from '../../ts/common/Global_Imports';
 	import { c, e, k, u, ux, x, show, grabs, debug, layout, signals } from '../../ts/common/Global_Imports';
-	import { Rect, Size, Point, Thing, S_DOM_Element, S_Component } from '../../ts/common/Global_Imports';
+	import { Rect, Size, Point, Thing, S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_s_title_edit, w_s_alteration } from '../../ts/managers/Stores';
 	import { w_background_color, w_show_countDots_ofType } from '../../ts/managers/Stores';
 	import { w_ancestry_focus, w_ancestry_forDetails } from '../../ts/managers/Stores';
@@ -9,7 +9,7 @@
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
-	export let s_drag!: S_DOM_Element;
+	export let s_drag!: S_Element;
 	export let pointsNormal = true;
 	const size = k.height.dot;
 	const capture_size = size;

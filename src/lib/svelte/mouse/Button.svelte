@@ -2,9 +2,9 @@
 	import { w_background_color, w_graph_rect, w_user_graph_offset } from '../../ts/managers/Stores';
 	import { k, u, ux, x, Rect, Point, colors, T_Layer } from '../../ts/common/Global_Imports';
 	import { w_thing_fontFamily, w_control_key_down } from '../../ts/managers/Stores';
-	import { S_DOM_Element, S_Component } from '../../ts/common/Global_Imports';
+	import { S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	export let s_button: S_DOM_Element = S_DOM_Element.empty();
+	export let s_button: S_Element = S_Element.empty();
 	export let closure: (result: S_Mouse) => boolean;
 	export let font_size = k.font_size.common;
 	export let border_color = colors.border;
@@ -30,7 +30,7 @@
 	//									//
 	//	adds: border_thickness & style	//
 	//									//
-	//	container owns S_DOM_Element:	//
+	//	container owns S_Element:	//
 	//	  (stroke, fill & cursor)		//
 	//	  calls closure to update it	//
 	//									//
