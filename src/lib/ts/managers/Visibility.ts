@@ -1,5 +1,5 @@
 import { w_show_countDots_ofType, w_show_details, w_show_related } from './Stores';
-import { c, k, p, x, layout, T_Preference } from '../common/Global_Imports';
+import { c, k, p, g_tree, layout, T_Preference } from '../common/Global_Imports';
 import { w_show_graph_ofType, w_search_show_controls } from './Stores';
 import { T_Kinship } from '../common/Enumerations';
 import type { Dictionary } from '../types/Types';
@@ -23,7 +23,7 @@ export class Visibility {
 					break;
 				case 'parents':
 					const mode = flag ? T_Kinship.parents : T_Kinship.children;
-					x.set_tree_types([mode]);
+					g_tree.set_tree_types([mode]);
 					break;
 			}
 		}

@@ -141,7 +141,7 @@
                 } else if (had_intersections) {
                     x.si_grabs.items = [];
                 }
-                x.ancestry_update_forDetails();
+                x.ancestry_focus_update_forDetails();
             }
         }
     }

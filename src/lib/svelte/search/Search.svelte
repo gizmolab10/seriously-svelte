@@ -2,7 +2,7 @@
 	import { T_Search, T_Layer, T_Element, T_Preference, T_Search_Preference } from '../../ts/common/Global_Imports';
 	import { w_search_state, w_search_preferences, w_search_results_found } from '../../ts/managers/Stores';
 	import { w_graph_rect, w_show_details, w_thing_fontFamily } from '../../ts/managers/Stores';
-	import { k, p, ux, x, Point, search } from '../../ts/common/Global_Imports';
+	import { k, p, ux, Point, search, ux_common } from '../../ts/common/Global_Imports';
 	import Segmented from '../mouse/Segmented.svelte';
 	export let zindex = T_Layer.graph;
 	export let width = 80;
@@ -52,7 +52,7 @@
 		height={ k.height.button}
 		selected={[$w_search_preferences]}
 		titles={[T_Search_Preference.title, T_Search_Preference.trait]}
-		handle_selection={(titles) => x.handle_choiceOf_t_graph('filter', titles)}/>
+		handle_selection={(titles) => ux_common.handle_choiceOf_t_graph('filter', titles)}/>
 	<input class='search-input'
 		id='search'
 		type='search'

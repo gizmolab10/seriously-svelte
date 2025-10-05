@@ -50,6 +50,7 @@ import { ErrorTrace } from '../debug/ErrorTrace';
 import { Hierarchy } from '../managers/Hierarchy';
 import { databases } from '../database/Databases';
 import { svgPaths } from '../utilities/SVG_Paths';
+import { ux_common } from '../ux/UX_Common';
 import { g_radial } from '../layout/G_RadialGraph';
 import { components } from '../managers/Components';
 import { Rect, Size, Point } from '../types/Geometry';
@@ -71,11 +72,11 @@ import Angle from '../types/Angle';
 import './Extensions';
 import { k } from './Constants';
 import { e } from '../signals/Events';
-import { x } from '../managers/UX_Core';
+import { x } from '../ux/UX_Core';
 import { h } from '../managers/Hierarchy';
 import { u } from '../utilities/Utilities';
 import { p } from '../managers/Preferences';
-import { ux } from '../managers/UX_Elements';
+import { ux } from '../ux/UX_Elements';
 import { c } from '../managers/Configuration';
 
 import { transparentize } from 'color2k';
@@ -91,7 +92,7 @@ export {
 	g_tree, g_radial,
 	e, c, h, k, p, u, ux, x,
 	interact, transparentize,
-	debug, svgPaths, databases, 
+	debug, svgPaths, databases, ux_common,
 	busy, show, files, builds, print, search,
 	colors, layout, radial, signals, components,
 

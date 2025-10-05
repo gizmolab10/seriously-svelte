@@ -1,10 +1,12 @@
 <script lang='ts'>
-	import { T_Layer, T_Graph, T_Search_Preference, T_Search, S_Element, T_Element, T_Control, T_Kinship, T_Request } from '../../ts/common/Global_Imports';
-	import { c, e, h, k, p, u, ux, x, show, grabs, Point, search, colors, layout, svgPaths, signals } from '../../ts/common/Global_Imports';
+	import { c, e, h, k, p, u, ux, x, show, grabs, search, colors, layout } from '../../ts/common/Global_Imports';
+	import { w_search_preferences, w_search_state, w_search_show_controls } from '../../ts/managers/Stores';
 	import { w_background_color, w_device_isMobile, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { w_show_details, w_show_graph_ofType, w_show_tree_ofType } from '../../ts/managers/Stores';
-	import { w_search_preferences, w_search_state, w_search_show_controls } from '../../ts/managers/Stores';
+	import { T_Layer, T_Graph, T_Search, T_Element, T_Control } from '../../ts/common/Global_Imports';
+	import { Point, svgPaths, signals, S_Element, ux_common } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_count_window_resized, w_popupView_id } from '../../ts/managers/Stores';
+	import { T_Kinship, T_Request, T_Search_Preference } from '../../ts/common/Global_Imports';
 	import Search_Toggle from '../search/Search_Toggle.svelte';
 	import Next_Previous from '../mouse/Next_Previous.svelte';
 	import Identifiable from '../../ts/runtime/Identifiable';
@@ -12,7 +14,6 @@
 	import Separator from '../draw/Separator.svelte';
 	import Breadcrumbs from './Breadcrumbs.svelte';
 	import Button from '../mouse/Button.svelte';
-	import Box from '../draw/Box.svelte';
 	const y_center = 10.5;
 	const scaling_stroke_width = 1.5;
 	const size_big = k.height.button + 4;
@@ -107,7 +108,7 @@
 					origin={Point.x(lefts[2])}
 					selected={[$w_show_graph_ofType]}
 					titles={[T_Graph.tree, T_Graph.radial]}
-					handle_selection={(titles) => x.handle_choiceOf_t_graph('graph', titles)}/>
+					handle_selection={(titles) => ux_common.handle_choiceOf_t_graph('graph', titles)}/>
 			{/key}
 			<div class='scaling-controls'>
 				<Button name={T_Control.grow}

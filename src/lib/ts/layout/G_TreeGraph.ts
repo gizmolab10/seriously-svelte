@@ -1,6 +1,7 @@
-import { w_depth_limit, w_graph_rect, w_show_details } from "../managers/Stores";
+import { k, p, x, Rect, Ancestry, G_Widget, debug, layout, T_Kinship} from "../common/Global_Imports";
+import { w_show_related, w_show_details, w_show_tree_ofType } from "../managers/Stores";
 import { w_ancestry_focus, w_device_isMobile } from "../managers/Stores";
-import { k, Rect, Ancestry, G_Widget, debug} from "../common/Global_Imports";
+import { w_depth_limit, w_graph_rect } from "../managers/Stores";
 import { get } from "svelte/store";
 
 export default class G_TreeGraph {
@@ -13,6 +14,37 @@ export default class G_TreeGraph {
 				this.focus = focus;
 			}
 		});
+	}
+
+	grand_layout_tree() {
+		const graph_rect = get(w_graph_rect);
+		const depth_limit = get(w_depth_limit) ?? 1;
+		if (!!graph_rect && !!this.g_focus) {
+			this.layout_focus_ofTree(graph_rect); 
+			this.g_focus.layout_each_generation_recursively(depth_limit);
+			this.g_focus.layout_each_bidirectional_generation_recursively(depth_limit);
+			this.adjust_focus_ofTree(graph_rect);
+		}
+	}
+
+	get g_focus(): G_Widget | undefined { return this.focus?.g_widget; }
+
+	get visible_g_widgets(): G_Widget[] {
+		let array: G_Widget[] = [];
+		if (!!this.focus) {
+			this.focus.traverse((ancestry: Ancestry) => {
+				if (ancestry.isVisible) {
+					array.push(ancestry.g_widget);
+				}
+				return false;
+			});
+		}
+		return array;
+	}
+
+	increase_depth_limit_by(increment: number) {
+		w_depth_limit.update(a => a + increment);
+		layout.grand_layout();
 	}
 
 	reset_scanOf_attached_branches() {
@@ -29,30 +61,15 @@ export default class G_TreeGraph {
 		return visited;
 	}
 
-	get g_focus(): G_Widget | undefined { return this.focus?.g_widget; }
-
-	grand_layout_tree() {
-		const graph_rect = get(w_graph_rect);
-		const depth_limit = get(w_depth_limit) ?? 1;
-		if (!!graph_rect && !!this.g_focus) {
-			this.layout_focus_ofTree(graph_rect); 
-			this.g_focus.layout_each_generation_recursively(depth_limit);
-			this.g_focus.layout_each_bidirectional_generation_recursively(depth_limit);
-			this.adjust_focus_ofTree(graph_rect);
+	set_tree_types(t_trees: Array<T_Kinship>) {
+		if (t_trees.length == 0) {
+			t_trees = [T_Kinship.children];
 		}
-	}
-
-	get visible_g_widgets(): G_Widget[] {
-		let array: G_Widget[] = [];
-		if (!!this.focus) {
-			this.focus.traverse((ancestry: Ancestry) => {
-				if (ancestry.isVisible) {
-					array.push(ancestry.g_widget);
-				}
-				return false;
-			});
-		}
-		return array;
+		w_show_tree_ofType.set(t_trees);
+		x.update_forFocus();
+		w_show_related.set(t_trees.includes(T_Kinship.related));
+		p.restore_expanded();
+		layout.grand_build();
 	}
 
 	static readonly _____PRIVATE: unique symbol;
