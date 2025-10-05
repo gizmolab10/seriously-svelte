@@ -6,13 +6,13 @@ import { Testworthy_Utilities } from './Testworthy_Utilities';
 import { Rect, Size, Point } from '../types/Geometry';
 import Identifiable from '../runtime/Identifiable';
 import G_TreeLine from '../layout/G_TreeLine';
-import { c } from '../managers/Configuration';
 import { layout } from '../layout/G_Layout';
 import Ancestry from '../runtime/Ancestry';
 import G_Widget from '../layout/G_Widget';
 import { k } from '../common/Constants';
-import { x } from '../ux/UX_Core';	
+import { ux } from '../ux/UX_Common';
 import { get } from 'svelte/store';
+import { x } from '../ux/UX_Core';
 import { print } from './Print';
 
 export class Utilities extends Testworthy_Utilities {
@@ -140,7 +140,7 @@ export class Utilities extends Testworthy_Utilities {
 
 	print_graph() {
 		const rect = layout.rect_ofDrawnGraph;
-		const className = c.inTreeMode ? 'tree-graph' : 'radial-graph';
+		const className = ux.inTreeMode ? 'tree-graph' : 'radial-graph';
 		print.print_element_byClassName_withRect(className, rect, get(w_ancestry_focus).title);
 	}
 
@@ -209,7 +209,7 @@ export class Utilities extends Testworthy_Utilities {
 		}
 		const width = maxX - minX;
 		const height = maxY - minY;
-		const offset = c.inRadialMode ? new Point(-10, -3) : new Point(-10, -8);
+		const offset = ux.inRadialMode ? new Point(-10, -3) : new Point(-10, -8);
 		return new Rect(new Point(minX, minY).offsetBy(offset), new Size(width, height));
 	}
 

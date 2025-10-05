@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { h, k, p, u, ux, x, busy, Point, colors, S_Element, databases, Hierarchy } from '../../ts/common/Global_Imports';
+	import { h, k, p, u, ex, x, busy, Point, colors, S_Element, databases, Hierarchy } from '../../ts/common/Global_Imports';
 	import { T_File_Format, T_File_Operation, T_Storage_Need, T_Signal } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Detail, T_Element, T_Preference, T_Request } from '../../ts/common/Global_Imports';
 	import { w_data_updated, w_thing_fontFamily } from '../../ts/managers/Stores';
@@ -14,7 +14,7 @@
 	import Button from '../mouse/Button.svelte';
     const font_sizes = [k.font_size.instructions, k.font_size.banners];
 	const ids_forDirection = [T_File_Operation.import, T_File_Operation.export];
-	const s_save = ux.s_element_for(new Identifiable('save'), T_Element.button, 'save');
+	const s_save = ex.s_element_for(new Identifiable('save'), T_Element.button, 'save');
 	const ids_forOutputFormat = [T_File_Format.csv, T_File_Format.json, T_File_Format.cancel];
 	const ids_forDatabase = [T_Database.local, T_Database.firebase, T_Database.airtable, T_Database.test, T_Database.bubble];
 	const ids_forInputFormat = [T_File_Format.csv, T_File_Format.json, T_File_Format.seriously, T_File_Format.cancel];
@@ -75,7 +75,7 @@
 	function setup_s_elements() {
 		const ids = [...ids_forDirection, ...ids_forInputFormat];
 		for (const id of ids) {
-			const s_storage = ux.s_element_for(null, T_Element.database, id);
+			const s_storage = ex.s_element_for(null, T_Element.database, id);
 			s_storage.set_forHovering(colors.default, 'pointer');
 			s_element_byStorageType[id] = s_storage;
 		}

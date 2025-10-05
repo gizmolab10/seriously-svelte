@@ -1,14 +1,12 @@
 <script lang='ts'>
 	import { T_Layer, T_Detail, T_Action, T_Element, T_Kinship, T_Request, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
-	import { c, e, h, k, u, ux, x, show, Size, Point, grabs, colors, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
+	import { c, e, h, k, u, ex, x, ux, show, Size, Point, grabs, colors, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
 	import { w_s_alteration, w_background_color, w_ancestry_forDetails } from '../../ts/managers/Stores';
-	import { w_depth_limit, w_user_graph_offset, w_show_graph_ofType } from '../../ts/managers/Stores';
+	import { w_user_graph_offset, w_show_graph_ofType } from '../../ts/managers/Stores';
 	import Buttons_Table from '../mouse/Buttons_Table.svelte';
     import { s_banners } from '../../ts/state/S_Banners';
-	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Button from '../mouse/Button.svelte';
-	import Slider from '../mouse/Slider.svelte';
 	export let top = 2;
 	const title_gap = 4;
 	const has_title = true;
@@ -21,8 +19,8 @@
 	const bottom_padding = bottom_tableHeight - 48;
     const font_sizes = [k.font_size.instructions, k.font_size.instructions];
     const s_banner_hideable = s_banners.s_banner_hideables_byType[T_Detail.actions];
-	const s_cancel = ux.s_element_for($w_ancestry_forDetails, T_Element.cancel, k.empty);
-	let list_title = $w_ancestry_forDetails?.isExpanded && c.inTreeMode ? 'hide list' : 'list';
+	const s_cancel = ex.s_element_for($w_ancestry_forDetails, T_Element.cancel, k.empty);
+	let list_title = $w_ancestry_forDetails?.isExpanded && ux.inTreeMode ? 'hide list' : 'list';
 	let button_titles = compute_button_titles();
 	let actions_top = top + 3;
     let reattachments = 0;
@@ -71,7 +69,7 @@
 
 	function update_button_titles(): void {
 		const ancestry = $w_ancestry_forDetails;
-		list_title = c.inTreeMode && !!ancestry && ancestry.isExpanded ? 'hide list' : 'show list';
+		list_title = ux.inTreeMode && !!ancestry && ancestry.isExpanded ? 'hide list' : 'show list';
 		button_titles = compute_button_titles();
 		setTimeout(() => reattachments++, 0);
 	}

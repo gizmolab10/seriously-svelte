@@ -1,13 +1,12 @@
 <script lang='ts'>
-	import { c, h, k, u, ux, x, Rect, Size, Point, Thing, grabs, debug, Angle } from '../../ts/common/Global_Imports';
-	import { layout, signals, components, databases, Seriously_Range } from '../../ts/common/Global_Imports';
+	import { c, ex, h, k, u, x, ux, Rect, Size, Point, grabs, Angle } from '../../ts/common/Global_Imports';
+	import { debug, layout, signals, databases, Seriously_Range } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { w_s_title_edit, w_mouse_location, w_search_state } from '../../ts/managers/Stores';
-	import { T_Search, T_Layer, T_Component } from '../../ts/common/Global_Imports';
+	import { T_Search, T_Layer, T_Component, T_Edit } from '../../ts/common/Global_Imports';
 	import { S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import { T_Edit } from '../../ts/state/S_Title_Edit';
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount } from 'svelte';
 	export let s_title!: S_Element;
 	export let fontSize = '1em';
 	const ancestry = s_title.ancestry;
@@ -36,7 +35,7 @@
 	function isEditing():	  boolean { return $w_s_title_edit?.ancestry_isEditing(ancestry) ?? false; }
 	function isStopping():	  boolean { return $w_s_title_edit?.ancestry_isStopping(ancestry) ?? false; }
 	function isPercolating(): boolean { return $w_s_title_edit?.ancestry_isPercolating(ancestry) ?? false; }
-	function title_extra():	   number { return (c.inTreeMode && isEditing()) ? 2 : 0; }
+	function title_extra():	   number { return (ux.inTreeMode && isEditing()) ? 2 : 0; }
 	function hasChanges()	 		  { return title_prior != title_binded; }
 	function handle_mouse_up() 		  { clearClicks(); }
 
@@ -77,7 +76,7 @@
 		const reactives = `${$w_thing_color}:::${u.description_byTitles($w_grabbed)}:::${u.description_byTitles($w_expanded)}`;
 		if (reactives != trigger) {
 			const isFocus = ancestry?.isFocus ?? false;
-			const adjust = c.inRadialMode && isFocus;
+			const adjust = ux.inRadialMode && isFocus;
 			const isEditing = ancestry?.isEditing ?? false;
 			const isGrabbed = ancestry?.isGrabbed ?? false;
 			top = (isGrabbed ? 0.4 : 0) - (adjust ? isGrabbed ? 2.5 : 2 : 0);
@@ -110,7 +109,7 @@
 						break;
 					case T_Edit.editing:
 						if (!hasFocus()) {
-							ux.element_set_focus_to(input);
+							ex.element_set_focus_to(input);
 							applyRange_fromThing_toInput();
 						}
 						break;
@@ -250,7 +249,7 @@
 					setTimeout(() => {
 						ancestry.startEdit();
 						thing_setSelectionRange_fromMouseLocation();
-						ux.element_set_focus_to(input);
+						ex.element_set_focus_to(input);
 						applyRange_fromThing_toInput();
 					}, 1);
 				}

@@ -1,12 +1,12 @@
 <script lang='ts'>
-	import { c, e, h, k, p, u, ux, x, show, grabs, search, colors, layout } from '../../ts/common/Global_Imports';
+	import { c, e, ex, h, k, p, u, ux, x, show, grabs, search, colors, layout } from '../../ts/common/Global_Imports';
 	import { w_search_preferences, w_search_state, w_search_show_controls } from '../../ts/managers/Stores';
 	import { w_background_color, w_device_isMobile, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { w_show_details, w_show_graph_ofType, w_show_tree_ofType } from '../../ts/managers/Stores';
 	import { T_Layer, T_Graph, T_Search, T_Element, T_Control } from '../../ts/common/Global_Imports';
-	import { Point, svgPaths, signals, S_Element, ux_common } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_count_window_resized, w_popupView_id } from '../../ts/managers/Stores';
 	import { T_Kinship, T_Request, T_Search_Preference } from '../../ts/common/Global_Imports';
+	import { Point, svgPaths, signals, S_Element } from '../../ts/common/Global_Imports';
 	import Search_Toggle from '../search/Search_Toggle.svelte';
 	import Next_Previous from '../mouse/Next_Previous.svelte';
 	import Identifiable from '../../ts/runtime/Identifiable';
@@ -79,7 +79,7 @@
 					border_thickness=0
 					color='transparent'
 					center={new Point(lefts[0], y_center)}
-					s_button={ux.s_control_forType(T_Control.details)}
+					s_button={ex.s_control_forType(T_Control.details)}
 					closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.details)}>
 					<svg class='hamburger-svg'
 						style='
@@ -91,8 +91,8 @@
 							d={hamburger_path}
 							stroke-width='0.75'
 							class='hamburger-path'
-							fill={ux.s_control_forType(T_Control.details).isOut ? 'black' : 'white'}
-							stroke={ux.s_control_forType(T_Control.details).isOut ? 'transparent' : 'darkgray'}/>
+							fill={ex.s_control_forType(T_Control.details).isOut ? 'black' : 'white'}
+							stroke={ex.s_control_forType(T_Control.details).isOut ? 'transparent' : 'darkgray'}/>
 					</svg>
 				</Button>
 			{/if}
@@ -108,14 +108,14 @@
 					origin={Point.x(lefts[2])}
 					selected={[$w_show_graph_ofType]}
 					titles={[T_Graph.tree, T_Graph.radial]}
-					handle_selection={(titles) => ux_common.handle_choiceOf_t_graph('graph', titles)}/>
+					handle_selection={(titles) => ux.handle_choiceOf_t_graph('graph', titles)}/>
 			{/key}
 			<div class='scaling-controls'>
 				<Button name={T_Control.grow}
 					width={size_big}
 					height={size_big}
 					center={new Point(lefts[3], y_center)}
-					s_button={ux.s_control_forType(T_Control.grow)}
+					s_button={ex.s_control_forType(T_Control.grow)}
 					closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.grow)}>
 					<svg id='grow-svg' style={svg_style}>
 						<path
@@ -123,14 +123,14 @@
 							fill=transparent
 							d={svgPaths.t_cross(size_big, 2)}
 							stroke-width={scaling_stroke_width}
-							stroke={ux.s_control_forType(T_Control.grow).svg_hover_color}/>
+							stroke={ex.s_control_forType(T_Control.grow).svg_hover_color}/>
 					</svg>
 				</Button>
 				<Button name={T_Control.shrink}
 					width={size_big}
 					height={size_big}
 					center={new Point(lefts[4], y_center)}
-					s_button={ux.s_control_forType(T_Control.shrink)}
+					s_button={ex.s_control_forType(T_Control.shrink)}
 					closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.shrink)}>
 					<svg id='shrink-svg'
 						style={svg_style}>
@@ -138,7 +138,7 @@
 							fill=transparent
 							d={svgPaths.dash(size_big, 4)}
 							stroke-width={scaling_stroke_width}
-							stroke={ux.s_control_forType(T_Control.shrink).svg_hover_color}/>
+							stroke={ex.s_control_forType(T_Control.shrink).svg_hover_color}/>
 					</svg>
 				</Button>
 			</div>
@@ -150,7 +150,7 @@
 					zindex={T_Layer.frontmost}
 					center={new Point(lefts[6], 10)}
 					style='border: none; background: none;'
-					s_button={ux.s_control_forType(T_Control.details)}
+					s_button={ex.s_control_forType(T_Control.details)}
 					closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.details)}/>
 			{/if}
 			<Separator name='before-breadcrumbs'

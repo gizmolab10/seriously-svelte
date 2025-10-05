@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { T_Search, T_Layer, T_Control } from '../../ts/common/Global_Imports';
 	import { w_show_details, w_search_state } from '../../ts/managers/Stores';
-	import { e, k, u, ux, x, Point } from '../../ts/common/Global_Imports';
+	import { e, k, u, ex, x, Point } from '../../ts/common/Global_Imports';
 	import Close_Button from '../mouse/Close_Button.svelte';
 	import { search } from '../../ts/managers/Search';
 	import Button from '../mouse/Button.svelte';
@@ -27,7 +27,7 @@
 			border_thickness={0.1}
 			name={T_Control.search}
 			center={new Point(rights[0], 11)}
-			s_button={ux.s_control_forType(T_Control.search)}
+			s_button={ex.s_control_forType(T_Control.search)}
 			closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.search)}>
 			🔍
 		</Button>

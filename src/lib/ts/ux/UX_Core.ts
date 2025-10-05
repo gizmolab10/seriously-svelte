@@ -1,12 +1,12 @@
-import { c, h, p, u, debug, search, layout } from '../common/Global_Imports';
 import { w_s_alteration, w_s_title_edit, w_thing_traits } from '../managers/Stores';
+import { w_t_startup, w_data_updated, w_search_state } from '../managers/Stores';
+import { h, p, u, ux, debug, search, layout } from '../common/Global_Imports';
+import { w_ancestry_forDetails, w_ancestry_focus } from '../managers/Stores';
 import { T_Detail, T_Search, T_Startup } from '../common/Global_Imports';
 import { Tag, Thing, Trait, Ancestry } from '../common/Global_Imports';
-import { w_t_startup, w_data_updated, w_search_state } from '../managers/Stores';
-import { w_ancestry_forDetails, w_ancestry_focus } from '../managers/Stores';
+import { w_show_details_ofType } from '../managers/Stores';
 import { S_Items } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
-import { w_show_details_ofType } from '../managers/Stores';
 import { s_banners } from '../state/S_Banners';
 import { get } from 'svelte/store';
 
@@ -171,7 +171,7 @@ export default class X_Core {
 				grabbed.push(rootAncestry);
 			}
 		}
-		if (grabbed.length == 0 && c.inTreeMode) {
+		if (grabbed.length == 0 && ux.inTreeMode) {
 			grabbed = [rootAncestry];
 		} else {
 			h?.stop_alteration(); // do not show editingActions for root

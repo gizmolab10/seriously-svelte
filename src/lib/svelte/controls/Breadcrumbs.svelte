@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, h, k, u, ux, x, Size, Point, Thing, debug, grabs, colors, signals } from '../../ts/common/Global_Imports';
+	import { c, h, k, u, ex, x, Size, Point, Thing, debug, grabs, colors, signals } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Signal, T_Element, T_Startup, T_Component } from '../../ts/common/Global_Imports';
 	import { svgPaths, Ancestry, layout, components, S_Component} from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_ancestry_focus, w_ancestry_forDetails } from '../../ts/managers/Stores';

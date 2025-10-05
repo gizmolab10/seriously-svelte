@@ -69,9 +69,6 @@ export class Configuration {
 			}
 		}
     }
-	
-	get inTreeMode(): boolean { return get(w_show_graph_ofType) == T_Graph.tree; }
-	get inRadialMode(): boolean { return get(w_show_graph_ofType) == T_Graph.radial; }
 
 	get isServerLocal(): boolean {
 		const hostname = window.location.hostname;
@@ -86,9 +83,6 @@ export class Configuration {
 		const db_name = t_database ? (t_database + ', ') : k.empty;
 		return `Seriously (${host}, ${db_name}${base_name}${u.browserType}, α)`;
 	}
-
-	open_tabFor(url: string) { window.open(url, 'help-webseriously')?.focus(); }
-	showHelp() { this.open_tabFor(this.isServerLocal ? k.help_url.local : k.help_url.remote); }
 
 }
 

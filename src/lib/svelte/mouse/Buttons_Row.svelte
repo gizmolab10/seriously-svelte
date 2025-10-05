@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, ux, x, Point, colors, svgPaths, S_Element, T_Element, T_Request } from '../../ts/common/Global_Imports';
+	import { k, u, ex, x, Point, colors, svgPaths, S_Element, T_Element, T_Request } from '../../ts/common/Global_Imports';
 	import { w_count_button_restyle } from '../../ts/managers/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
     import G_Repeater from '../../ts/layout/G_Repeater';
@@ -61,7 +61,7 @@
 		for (let column = 0; column < columns; column++) {
 			let s_button = s_button_byColumn[column];
 			if (!s_button) {
-				s_button = ux.s_element_for(new Identifiable(`${name}-${button_name_for(column)}`), type, column);
+				s_button = ex.s_element_for(new Identifiable(`${name}-${button_name_for(column)}`), type, column);
 				s_button_byColumn[column] = s_button;
 			}
 			s_button.set_forHovering(colors.default, 'pointer');

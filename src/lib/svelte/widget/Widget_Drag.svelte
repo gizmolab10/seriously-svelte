@@ -1,12 +1,12 @@
 <script lang='ts'>
+	import { c, e, ex, k, u, x, ux, show, grabs, debug, layout, signals } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Signal, T_Alteration, T_Component } from '../../ts/common/Global_Imports';
-	import { c, e, k, u, ux, x, show, grabs, debug, layout, signals } from '../../ts/common/Global_Imports';
-	import { Rect, Size, Point, Thing, S_Element, S_Component } from '../../ts/common/Global_Imports';
-	import { w_thing_color, w_s_title_edit, w_s_alteration } from '../../ts/managers/Stores';
+	import { Rect, Size, Point, S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import { w_background_color, w_show_countDots_ofType } from '../../ts/managers/Stores';
 	import { w_ancestry_focus, w_ancestry_forDetails } from '../../ts/managers/Stores';
-	import { svgPaths, databases, components } from '../../ts/common/Global_Imports';
+	import { w_thing_color, w_s_alteration } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
+	import { svgPaths } from '../../ts/common/Global_Imports';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
 	export let s_drag!: S_Element;
@@ -58,7 +58,7 @@
 	}
 
 	function update_svgPaths() {
-		if (c.inRadialMode) {
+		if (ux.inRadialMode) {
 			svgPathFor_dragDot = svgPaths.circle_atOffset(size, size - 1);
 		} else {
 			svgPathFor_dragDot = svgPaths.oval(size, false);
@@ -67,8 +67,8 @@
 	}
 
 	function update_colors() {
-		if (!ux.isAny_rotation_active && !!s_drag && !!thing) {
-			const usePointer = (!ancestry.isGrabbed || c.inRadialMode) && ancestry.hasChildren;
+		if (!ex.isAny_rotation_active && !!s_drag && !!thing) {
+			const usePointer = (!ancestry.isGrabbed || ux.inRadialMode) && ancestry.hasChildren;
 			const isAncestry_presented = $w_ancestry_forDetails.equals(ancestry);
 			const cursor = usePointer ? 'pointer' : 'normal';
 			color = thing.color;
@@ -88,14 +88,14 @@
 				svgPathFor_ellipses = svgPaths.ellipses(6, 0.8, false, count, size / 2);
 			}
 			if (thing.hasRelated && show.related_dots) {
-				const x = (c.inRadialMode ? 5.2 : 4.5) * (pointsNormal ? -1 : 1);
+				const x = (ux.inRadialMode ? 5.2 : 4.5) * (pointsNormal ? -1 : 1);
 				svgPathFor_related = svgPaths.circle_atOffset(size, 3, Point.x(x));
 			}
 		}
 	}
 
 	function handle_up_long_hover(s_mouse) {
-		if (!ux.isAny_rotation_active) {
+		if (!ex.isAny_rotation_active) {
 			if (s_mouse.isHover) {
 				isHovering = !s_mouse.isOut;
 				update_colors();

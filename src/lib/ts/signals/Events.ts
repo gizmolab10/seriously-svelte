@@ -1,19 +1,18 @@
-import { c, h, k, u, ux, x, g_tree, Point, debug, search, layout, signals, Ancestry, Predicate, ux_common } from '../common/Global_Imports';
+import { c, ex, h, k, u, ux, x, g_tree, Point, debug, search, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
 import { w_count_window_resized, w_s_alteration, w_s_title_edit, w_user_graph_offset, w_control_key_down } from '../managers/Stores';
-import { w_show_details, w_count_mouse_up, w_mouse_location, w_mouse_location_scaled, w_scaled_movement } from '../managers/Stores';
-import { w_search_state, w_device_isMobile, w_ancestry_focus, w_popupView_id, w_ancestry_forDetails } from '../managers/Stores';
+import { w_count_mouse_up, w_mouse_location, w_mouse_location_scaled, w_scaled_movement } from '../managers/Stores';
 import { T_Search, T_Action, T_Control, T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Imports';
+import { w_search_state, w_device_isMobile, w_ancestry_focus, w_ancestry_forDetails } from '../managers/Stores';
 import { S_Mouse, S_Alteration } from '../common/Global_Imports';
 import Mouse_Timer from './Mouse_Timer';
 import { get } from 'svelte/store';
 
 export class Events {
 	mouse_timer_byName: { [name: string]: Mouse_Timer } = {};
-    debouncedResize: NodeJS.Timeout | null = null;
 	initialTouch: Point | null = null;
 	alterationTimer!: Mouse_Timer;
 
-	mouse_timer_forName(name: string): Mouse_Timer { return ux.assure_forKey_inDict(name, this.mouse_timer_byName, () => new Mouse_Timer(name)); }
+	mouse_timer_forName(name: string): Mouse_Timer { return ex.assure_forKey_inDict(name, this.mouse_timer_byName, () => new Mouse_Timer(name)); }
 
 	setup() {
 		w_s_alteration.subscribe((s_alteration: S_Alteration | null) => { this.handle_s_alteration(s_alteration); });
@@ -22,33 +21,6 @@ export class Events {
 
 	name_ofActionAt(t_action: number, column: number): string {
 		return Object.keys(this.actions[T_Action[t_action]])[column];
-	}
-
-	togglePopupID(id: T_Control) {
-		const same = get(w_popupView_id) == id
-		w_popupView_id.set(same ? null : id); 
-	}
-
-	toggle_details() {
-		const show_details = !get(w_show_details);
-		w_show_details.set(show_details);
-		if (show_details) {
-			c.show_standalone_UI = true;
-		}
-	}
-
-	static readonly _____INTERNALS: unique symbol;
-
-	private showHelpFor(t_action: number, column: number) { 
-		const page = this.help_page_forActionAt(t_action, column);
-		const url = `${k.help_url.remote}/user_guide/${page}`;
-		c.open_tabFor(url);
-	}
-
-	private ancestry_toggle_alteration(ancestry: Ancestry, t_alteration: T_Alteration, predicate: Predicate | null) {
-		const isAltering = !!get(w_s_alteration);
-		const s_alteration = isAltering ? null : new S_Alteration(ancestry, t_alteration, predicate);
-		w_s_alteration.set(s_alteration);
 	}
 
 	static readonly _____SUBSCRIPTIONS: unique symbol;
@@ -129,7 +101,6 @@ export class Events {
 		w_count_window_resized.update(n => n + 1);		// observed by controls
 		w_device_isMobile.set(isMobile);
 		layout.restore_state();
-		this.debouncedResize = null;
 	}
 
 	private handle_wheel(event: Event) {
@@ -186,18 +157,18 @@ export class Events {
 
 	handle_s_mouseFor_t_control(s_mouse: S_Mouse, t_control: T_Control) {
 		if (s_mouse.isHover) {
-			const s_control = ux.s_control_byType[t_control];
+			const s_control = ex.s_control_byType[t_control];
 			if (!!s_control) {
 				s_control.isOut = s_mouse.isOut;
 			}
 		} else if (s_mouse.isUp) {
 			switch (t_control) {
-				case T_Control.help:	c.showHelp(); break;
+				case T_Control.help:	ux.showHelp(); break;
 				case T_Control.search:	search.activate(); break;
-				case T_Control.details: this.toggle_details(); break;
+				case T_Control.details: ux.toggle_details(); break;
 				case T_Control.grow:	layout.scaleBy(k.ratio.zoom_in) - 20; break;
 				case T_Control.shrink:	layout.scaleBy(k.ratio.zoom_out) - 20; break;
-				default:				this.togglePopupID(t_control); break;
+				default:				ux.togglePopupID(t_control); break;
 			}
 		}
 	}
@@ -211,7 +182,7 @@ export class Events {
 				h.ancestry_alter_connectionTo_maybe(ancestry);
 				layout.grand_build();
 				return;
-			} else if (!shiftKey && c.inRadialMode) {
+			} else if (!shiftKey && ux.inRadialMode) {
 				if (ancestry.becomeFocus()) {
 					layout.grand_build();
 					return;
@@ -274,8 +245,8 @@ export class Events {
 						}
 					}
 					switch (key) {
-						case '?':				c.showHelp(); return;
-						case 'm':				ux_common.toggle_graph_type(); break;
+						case '?':				ux.showHelp(); return;
+						case 'm':				ux.toggle_graph_type(); break;
 						case ']':				x.ancestry_next_focusOn(true); break;
 						case '[':				x.ancestry_next_focusOn(false); break;
 						case '!':				layout.grand_adjust_toFit(); break;
@@ -307,7 +278,7 @@ export class Events {
 	async handle_action_clickedAt(s_mouse: S_Mouse, t_action: number, column: number, name: string) {
 		const ancestry = get(w_ancestry_forDetails);	
 		if (get(w_control_key_down)) {
-			this.showHelpFor(t_action, column);
+			ux.showHelpFor(t_action, column);
 		} else if (!!ancestry && !this.handle_isAction_disabledAt(t_action, column) && !!h) {
 			const a = this.actions;
 			switch (t_action) {
@@ -335,13 +306,13 @@ export class Events {
 					case a.add.child:				await h.ancestry_edit_persistentCreateChildOf(ancestry); break;
 					case a.add.sibling:				await h.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break;
 					case a.add.line:				await h.thing_edit_persistentAddLine(ancestry); break;
-					case a.add.parent:				this.ancestry_toggle_alteration(ancestry, T_Alteration.add, Predicate.contains); break;
-					case a.add.related:				this.ancestry_toggle_alteration(ancestry, T_Alteration.add, Predicate.isRelated); break;
+					case a.add.parent:				ux.toggle_alteration(ancestry, T_Alteration.add, Predicate.contains); break;
+					case a.add.related:				ux.toggle_alteration(ancestry, T_Alteration.add, Predicate.isRelated); break;
 				}								break;
 				case T_Action.delete:			switch (column) {
 					case a.delete.selection:		await h.ancestries_rebuild_traverse_persistentDelete(x.si_grabs.items); break;
-					case a.delete.parent:			this.ancestry_toggle_alteration(ancestry, T_Alteration.delete, Predicate.contains); break;
-					case a.delete.related:			this.ancestry_toggle_alteration(ancestry, T_Alteration.delete, Predicate.isRelated); break;
+					case a.delete.parent:			ux.toggle_alteration(ancestry, T_Alteration.delete, Predicate.contains); break;
+					case a.delete.related:			ux.toggle_alteration(ancestry, T_Alteration.delete, Predicate.isRelated); break;
 				}								break;
 				case T_Action.move:				switch (column) {
 					case a.move.up:					h.ancestry_rebuild_persistent_grabbed_atEnd_moveUp_maybe( true, false, true, false); break;
@@ -361,7 +332,7 @@ export class Events {
 			const no_siblings = !ancestry.hasSiblings;
 			const is_root = ancestry.isRoot;
 			const a = this.actions;
-			const disable_revealConceal = no_children || is_root || (c.inRadialMode && ancestry.isFocus);
+			const disable_revealConceal = no_children || is_root || (ux.inRadialMode && ancestry.isFocus);
 			switch (t_action) {
 				case T_Action.browse:			switch (column) {
 					case a.browse.left:				return is_root;
@@ -406,7 +377,7 @@ export class Events {
 		return true;
 	}
 
-	private help_page_forActionAt(t_action: number, column: number): string {
+	help_page_forActionAt(t_action: number, column: number): string {
 		const a = this.actions;
 		switch (t_action) {
 			case T_Action.browse: 				return 'actions/browse';

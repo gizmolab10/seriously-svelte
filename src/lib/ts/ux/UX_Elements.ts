@@ -104,4 +104,4 @@ export default class UX_Elements {
 
 }
 
-export const ux = new UX_Elements();
+export const ex = new UX_Elements();

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, k, p, u, ux, x, grabs, colors, layout, Rect, Size, Point, Thing, Ancestry } from '../../ts/common/Global_Imports';
+	import { c, k, p, u, ex, x, grabs, colors, layout, Rect, Size, Point, Thing, Ancestry } from '../../ts/common/Global_Imports';
 	import { T_Thing, T_Trait, T_Layer, T_Element, T_Preference } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { w_show_details_ofType, w_ancestry_forDetails } from '../../ts/managers/Stores';
@@ -16,7 +16,7 @@
 	const id = 'selection details';
 	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_items: w_grab_items } = x.si_grabs;
-	const s_info = ux.s_element_for(new Identifiable(id), T_Element.details, id);
+	const s_info = ex.s_element_for(new Identifiable(id), T_Element.details, id);
 	let ancestry: Ancestry | null = $w_ancestry_forDetails;
 	let thing: Thing | null = ancestry?.thing ?? null;
 	let thingHID: Integer | null = thing?.hid;

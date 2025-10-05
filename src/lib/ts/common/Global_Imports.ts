@@ -10,6 +10,7 @@ import { G_Paging, G_Thing_Pages } from '../layout/G_Paging';
 
 import { T_Debug } from '../debug/Debug';
 import { T_Theme } from './Enumerations';
+import { T_Edit } from '../state/S_Title_Edit';
 import { T_Timer } from '../signals/Mouse_Timer';
 import { T_Oblong, T_Direction } from './Enumerations';
 import { T_Quadrant, T_Orientation } from '../types/Angle';
@@ -50,7 +51,7 @@ import { ErrorTrace } from '../debug/ErrorTrace';
 import { Hierarchy } from '../managers/Hierarchy';
 import { databases } from '../database/Databases';
 import { svgPaths } from '../utilities/SVG_Paths';
-import { ux_common } from '../ux/UX_Common';
+import { ux } from '../ux/UX_Common';
 import { g_radial } from '../layout/G_RadialGraph';
 import { components } from '../managers/Components';
 import { Rect, Size, Point } from '../types/Geometry';
@@ -76,7 +77,7 @@ import { x } from '../ux/UX_Core';
 import { h } from '../managers/Hierarchy';
 import { u } from '../utilities/Utilities';
 import { p } from '../managers/Preferences';
-import { ux } from '../ux/UX_Elements';
+import { ex } from '../ux/UX_Elements';
 import { c } from '../managers/Configuration';
 
 import { transparentize } from 'color2k';
@@ -90,9 +91,9 @@ export {
 	G_Paging, G_Cluster, G_RadialGraph, G_Thing_Pages, G_ArcSlider,
 
 	g_tree, g_radial,
-	e, c, h, k, p, u, ux, x,
+	e, c, h, k, p, u, ex, x,
 	interact, transparentize,
-	debug, svgPaths, databases, ux_common,
+	debug, svgPaths, databases, ux,
 	busy, show, files, builds, print, search,
 	colors, layout, radial, signals, components,
 
@@ -109,11 +110,11 @@ export {
 	T_Theme, T_Graph, T_Browser, 
 	T_Search, T_Search_Preference,
 	T_Startup, T_Dragging, T_Alteration,
-	T_Create, T_Persistable, T_Persistence,
 	T_Quadrant, T_Orientation, T_Direction,
 	T_Banner, T_Detail, T_Request, T_Action,
 	T_Signal, T_Element, T_Control, T_Component,
 	T_Layer, T_Tree_Line, T_Radial_Zone, T_Oblong,
+	T_Edit, T_Create, T_Persistable, T_Persistence,
 	T_File_Format, T_File_Operation, T_Storage_Need,
 	T_Thing, T_Trait, T_Widget, T_Predicate, T_Preference,
 };

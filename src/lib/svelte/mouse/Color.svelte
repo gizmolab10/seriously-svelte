@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, ux, x, Point, Thing, T_Layer, colors, signals } from '../../ts/common/Global_Imports';
+	import { k, u, ex, x, Point, Thing, T_Layer, colors, signals } from '../../ts/common/Global_Imports';
 	import ColorPicker from 'svelte-awesome-color-picker';
 	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';

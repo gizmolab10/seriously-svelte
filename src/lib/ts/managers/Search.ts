@@ -1,4 +1,4 @@
-import { c, k, h, p, ux, x, grabs, Thing, Ancestry } from "../common/Global_Imports";
+import { c, k, h, p, ex, x, grabs, Thing, Ancestry } from "../common/Global_Imports";
 import { T_Search, T_Startup, T_Preference } from "../common/Global_Imports";
 import { w_search_results_found, w_search_results_changed } from './Stores';
 import { w_search_state, w_search_show_controls } from './Stores';

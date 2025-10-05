@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, k, u, ux, x, grabs, debug, search, colors, layout } from '../../ts/common/Global_Imports';
+	import { c, k, u, ex, x, grabs, debug, search, colors, layout } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_ancestry_forDetails } from '../../ts/managers/Stores';
 	import { Ancestry, T_Detail, S_Widget } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_device_isMobile } from '../../ts/managers/Stores';
