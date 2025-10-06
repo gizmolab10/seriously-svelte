@@ -1,36 +1,38 @@
 <script lang='ts'>
     import { k, x } from '../../ts/common/Global_Imports';
-    const width = 100;
+	const { w_index: w_tag_index } = x.si_tags;
     x.update();
 </script>
 
-{#if x.si_tags.items.length > 0}
-    <div class='tags-list'
-        style='
-            width:100%;
-            display: flex;
-            padding: 4px 0;
-            flex-wrap:wrap;
-            text-align: center;
-            align-items: center;
-            white-space:pre-line;
-            word-break:break-word;
-            justify-content: center;
-            min-height: {k.height.empty}px;
-            font-size:{k.font_size.details}px;'>
-        {x.si_tags.item?.type}
-    </div>
-{:else}
-    <div class='no-tags'
-        style='
-            width: 100%;
-            display: flex;
-            position: relative;
-            text-align: center;
-            align-items: center;
-            justify-content: center;
-            min-height:{k.height.empty}px;
-            font-size:{k.font_size.details}px;'>
-            no tags
-    </div>
-{/if}
+{#key $w_tag_index}
+    {#if !!x.si_tags &&  x.si_tags.length > 0}
+        <div class='tags-list'
+            style='
+                width: 100%;
+                display: flex;
+                padding: 4px 0;
+                flex-wrap: wrap;
+                text-align: center;
+                align-items: center;
+                white-space: pre-line;
+                word-break: break-word;
+                justify-content: center;
+                min-height: {k.height.empty}px;
+                font-size: {k.font_size.details}px;'>
+            {x.si_tags.item?.type}
+        </div>
+    {:else}
+        <div class='no-tags'
+            style='
+                width: 100%;
+                display: flex;
+                position: relative;
+                text-align: center;
+                align-items: center;
+                justify-content: center;
+                min-height: {k.height.empty}px;
+                font-size: {k.font_size.details}px;'>
+                no tags
+        </div>
+    {/if}
+{/key}

@@ -1,5 +1,5 @@
+import { h, k, u, x, debug, colors, S_Items, databases, Seriously_Range } from '../common/Global_Imports';
 import { Tag, Trait, Ancestry, Predicate, Persistable, Relationship } from '../common/Global_Imports';
-import { h, k, u, ex, x, debug, colors, databases, Seriously_Range } from '../common/Global_Imports';
 import { T_Thing, T_Debug, T_Predicate, T_Persistable } from '../common/Global_Imports';
 import { w_thing_color, w_count_rebuild } from '../managers/Stores';
 import { w_ancestry_focus } from '../managers/Stores';
@@ -8,6 +8,10 @@ import { get } from 'svelte/store';
 
 export default class Thing extends Persistable {
 	selectionRange = new Seriously_Range(0, 0);
+	si_ancestries = new S_Items<Ancestry>([]);
+	si_children = new S_Items<Thing>([]);
+	si_parents = new S_Items<Thing>([]);
+	si_traits = new S_Items<Trait>([]);
 	bulkRootID: string = k.empty;
 	t_thing: T_Thing;
 	title: string;
@@ -21,7 +25,7 @@ export default class Thing extends Persistable {
 		this.color = color;
 	};
 	
-	get tags():					Array		   <Tag> { return h.tags_forThingHID(this.hid) ?? []; }
+	get si_tags():				S_Items		   <Tag> { return h.si_tags_forThingHID(this.hid) ?? []; }
 	get parents():				Array		 <Thing> { return this.parents_ofKind(T_Predicate.contains); }
 	get traits():				Array		 <Trait> { return h.traits_forOwnerHID(this.hid) ?? []; }
 	get parentIDs():			Array		<string> { return this.parents.map(t => t.id); }

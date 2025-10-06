@@ -39,7 +39,7 @@
         mouse_upCount = $w_count_mouse_up;
         if ($w_dragging_active === T_Dragging.rubberband) {
             if (!has_grabs) {
-                x.si_grabs.items = [];
+                x.si_grabs.reset();
             }
             startPoint = null;
             height = 0;
@@ -131,15 +131,15 @@
                 }
             });
             // Only update if si_grabs.items have changed
-            const new_grabbed_IDs = u.description_byHID(intersecting);
-            const prior_grabbed_IDs = u.description_byHID(x.si_grabs.items);
+            const new_grabbed_IDs = u.description_bySorted_HIDs(intersecting);
+            const prior_grabbed_IDs = u.description_bySorted_HIDs(x.si_grabs.items);
             has_grabs = intersecting.length != 0;
             if (prior_grabbed_IDs !== new_grabbed_IDs) {
                 if (has_grabs) {
                     had_intersections = true;
                     x.si_grabs.items = intersecting;
                 } else if (had_intersections) {
-                    x.si_grabs.items = [];
+                    x.si_grabs.reset();
                 }
                 x.ancestry_focus_update_forDetails();
             }

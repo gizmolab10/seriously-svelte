@@ -85,7 +85,7 @@ export class Preferences {
 	restore_expanded() {
 		if (c.eraseDB > 0) {
 			c.eraseDB -= 1;
-			x.si_expanded.items = [];
+			x.si_expanded.reset();
 		} else {
 			const expanded = p.ancestries_readDB_key(this.expanded_key) ?? p.ancestries_readDB_key('expanded');	// backwards compatible with 'expanded' key
 			debug.log_expand(`  READ (${get(w_t_database)}): "${u.ids_forDB(expanded)}"`);

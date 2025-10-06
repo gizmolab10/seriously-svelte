@@ -11,24 +11,41 @@
 	import D_Traits from './D_Traits.svelte';
 	import D_Data from './D_Data.svelte';
 	import D_Tags from './D_Tags.svelte';
-	const next_previous_titles = [T_Direction.previous, T_Direction.next];
-	const { w_items: w_grabbed } = x.si_grabs;
 	const width = k.width.details;
-	let extra_selection_titles = [];
-	let prior_graph_type = $w_show_graph_ofType;
+	const { w_items: w_tags } = x.si_tags;
+	const { w_items: w_grabbed } = x.si_grabs;
+	const { w_items: w_trait_things } = x.si_trait_things;
+	const next_previous_titles = [T_Direction.previous, T_Direction.next];
 	let show_secondary_controls = $w_search_show_controls || ($w_show_graph_ofType == T_Graph.tree);
-
-	$: {
-		const _ = `${$w_search_state}:::${x.si_found.w_index}:::${u.description_byTitles($w_grabbed)}`;
-		const length = $w_grabbed?.length ?? 0;
-		extra_selection_titles = length < 2 ? [] : next_previous_titles;
-		$w_count_details++;
-	}
+	let prior_graph_type = $w_show_graph_ofType;
+	let extra_selection_titles = [];
+	let extra_traits_titles = [];
+	let extra_tags_titles = [];
 
 	$: if (prior_graph_type != $w_show_graph_ofType) {
 		show_secondary_controls = $w_search_show_controls || ($w_show_graph_ofType == T_Graph.tree);
 		prior_graph_type = $w_show_graph_ofType;
 		$w_count_details++;
+	}
+
+	$: {
+		const _ = `${$w_search_state}:::${x.si_found.w_index}:::${$w_tags.description_bySorted_IDs}:::${$w_grabbed.description_bySorted_IDs}:::${$w_trait_things.description_bySorted_IDs}`;
+		const tr_changed = update_titles($w_trait_things.length, extra_traits_titles);
+		const g_changed = update_titles($w_grabbed.length, extra_selection_titles);
+		const t_changed = update_titles($w_tags.length, extra_tags_titles);
+		if (t_changed || g_changed || tr_changed) {
+			$w_count_details++;
+		}
+	}
+
+	function update_titles(count: number, titles: string[]): boolean {
+		const new_titles = (count < 2) ? [] : next_previous_titles;
+		if (new_titles.length != titles.length) {
+			titles.length = 0;
+			titles.push(...new_titles);
+			return true;
+		}
+		return false;
 	}
 
 </script>
@@ -62,10 +79,10 @@
 			<Banner_Hideable t_detail={T_Detail.selection} extra_titles={extra_selection_titles}>
 				<D_Selection/>
 			</Banner_Hideable>
-			<Banner_Hideable t_detail={T_Detail.tags} extra_titles={next_previous_titles}>
+			<Banner_Hideable t_detail={T_Detail.tags} extra_titles={extra_tags_titles}>
 				<D_Tags/>
 			</Banner_Hideable>
-			<Banner_Hideable t_detail={T_Detail.traits} extra_titles={next_previous_titles}>
+			<Banner_Hideable t_detail={T_Detail.traits} extra_titles={extra_traits_titles}>
 				<D_Traits/>
 			</Banner_Hideable>
 			<Banner_Hideable t_detail={T_Detail.data}>

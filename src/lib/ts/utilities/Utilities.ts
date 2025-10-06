@@ -17,12 +17,12 @@ import { print } from './Print';
 
 export class Utilities extends Testworthy_Utilities {
 	
-	description_byID(identifiables: Array<Identifiable>):	  string { return identifiables.map((a: Identifiable) => a.id).join(','); }
-	description_byHID(identifiables: Array<Identifiable>):	  string { return identifiables.map((a: Identifiable) => a.hid).sort().join(','); }	
-	description_byTitle(ancestries:  Array<Ancestry> | null): string { return ancestries?.map(a => a.title).join('-') ?? k.empty; }
-	description_byTitles(ancestries: Array<Ancestry> | null): string { return ancestries?.map(a => a.titles.join(',')).join('-') ?? k.empty; }
-	getWidthOf(s: string):									  number { return this.getWidth_ofString_withSize(s, `${k.font_size.common}px`); }
-	sort_byOrder(ancestries: Array<Ancestry>):		 Array<Ancestry> { return ancestries.sort( (a: Ancestry, b: Ancestry) => { return a.order - b.order; }); }
+	description_byTitle(ancestries:		  Array<Ancestry> | null): string { return ancestries?.map(a => a.title).join('-') ?? k.empty; }
+	description_byTitles(ancestries:	  Array<Ancestry> | null): string { return ancestries?.map(a => a.titles.join(',')).join('-') ?? k.empty; }
+	description_bySorted_IDs(identifiables:  Array<Identifiable>): string { return identifiables.map((a: Identifiable) => a.id).sort().join(','); }
+	description_bySorted_HIDs(identifiables: Array<Identifiable>): string { return identifiables.map((a: Identifiable) => a.hid).sort().join(','); }
+	sort_byOrder(ancestries: Array<Ancestry>):			  Array<Ancestry> { return ancestries.sort( (a: Ancestry, b: Ancestry) => { return a.order - b.order; }); }
+	getWidthOf(s: string):										   number { return this.getWidth_ofString_withSize(s, `${k.font_size.common}px`); }
 
 	resolve_signal_value(value: any): string {
 		const type = value?.constructor?.name;
@@ -148,7 +148,7 @@ export class Utilities extends Testworthy_Utilities {
 		const grabbed = x.si_grabs.items;
 		const color = get(w_background_color);
 		w_background_color.set('white');
-		x.si_grabs.items = [];	// triggers reactivity, takes time to percolate
+		x.si_grabs.reset();	// triggers reactivity, takes time to percolate
 		setTimeout(() => {
 			closure();
 			x.si_grabs.items = grabbed;

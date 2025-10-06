@@ -1,8 +1,20 @@
 import { w_search_results_found, w_count_details } from '../managers/Stores';
 import { T_Detail, T_Direction } from '../common/Global_Imports';
-import { S_Banner_Hideable } from './S_Banner_Hideable';
 import { x } from '../common/Global_Imports';
 import { get } from 'svelte/store';
+
+export class S_Banner_Hideable {
+	slot_isVisible = false;
+    t_detail!: T_Detail;
+	hasBanner = false;
+	isBottom = false;
+
+	constructor(t_detail: T_Detail) {
+		this.hasBanner = t_detail !== T_Detail.header;
+		this.isBottom = t_detail === T_Detail.data;
+		this.t_detail = t_detail;
+    }
+}
 
 class S_Banners {
 	s_banner_hideables_byType: { [t_detail: string]: S_Banner_Hideable } = {};

@@ -1,5 +1,5 @@
+import { c, k, p, u, ux, x, busy, debug, Tag, User, Thing, Trait, S_Items } from '../common/Global_Imports';
 import { T_Startup, T_Create, T_Alteration, T_File_Format, T_Persistable } from '../common/Global_Imports';
-import { c, k, p, u, ux, x, busy, debug, Tag, User, Thing, Trait } from '../common/Global_Imports';
 import { Access, Ancestry, Predicate, Relationship, Persistable } from '../common/Global_Imports';
 import { T_Thing, T_Trait, T_Order, T_Control, T_Predicate } from '../common/Global_Imports';
 import { w_popupView_id, w_s_title_edit, w_s_alteration, w_ancestry_focus } from './Stores';
@@ -24,12 +24,12 @@ export class Hierarchy {
 	private traits_byOwnerHID: { [ownerHID: Integer]: Array<Trait> } = {};
 	private things_byT_Trait: { [t_trait: string]: Array<Thing> } = {};
 	private relationship_byHID: { [hid: Integer]: Relationship } = {};
+	private si_tags_byThingHID: { [hid: Integer]: S_Items<Tag> } = {};
 	private traits_byType: { [t_trait: string]: Array<Trait> } = {};
 	private things_byType: { [t_thing: string]: Array<Thing> } = {};
 	private things_byTitle: { [title: string]: Array<Thing> } = {};
 	private predicate_byKind: { [kind: string]: Predicate } = {};
 	private thing_byAncestryHID: { [hid: Integer]: Thing } = {};
-	private tags_byThingHID: { [hid: Integer]: Array<Tag> } = {};
 	private relationships_byParentHID: Relationships_ByHID = {};
 	private relationships_byChildHID: Relationships_ByHID = {};
 	private ancestry_byHID: { [hid: Integer]: Ancestry } = {};
@@ -45,14 +45,14 @@ export class Hierarchy {
 	replace_rootID: string | null = k.empty;		// required for DB_Local at launch
 	relationships: Array<Relationship> = [];
 	predicates: Array<Predicate> = [];
+	si_tags = new S_Items<Tag>([]);
 	externalsAncestry!: Ancestry;
 	things: Array<Thing> = [];
 	traits: Array<Trait> = [];
 	rootAncestry!: Ancestry;
-	tags: Array<Tag> = [];
 	isAssembled = false;
-	root!: Thing;
 	db: DB_Common;
+	root!: Thing;
 
 	constructor(db: DB_Common) {
 		this.db = db;
@@ -93,7 +93,7 @@ export class Hierarchy {
 	get things_unique_havingTraits(): Array<Thing> { return u.strip_duplicates(Object.values(this.things_byT_Trait).flat()); }
 
 	get things_unique_havingTags(): Array<Thing> {
-		const hids = Object.keys(this.tags_byThingHID);
+		const hids = Object.keys(this.si_tags_byThingHID);
 		const things = hids.map(hid => this.thing_forHID(parseInt(hid) as Integer));
 		return u.strip_duplicates(things);
 	}
@@ -1217,20 +1217,21 @@ export class Hierarchy {
 
 	static readonly _____TAGS: unique symbol;
 
-	tags_forThingHID(hid: Integer): Array<Tag> { return this.tags_byThingHID[hid]; }
+	si_tags_forThingHID(hid: Integer): S_Items<Tag> { return this.si_tags_byThingHID[hid]; }
+	get tags(): Array<Tag> { return this.si_tags.items; }
 
 	tags_forget_all() {
-		this.tags_byThingHID = {};
+		this.si_tags_byThingHID = {};
+		this.si_tags.reset();
 		this.tag_byType = {};
 		this.tag_byHID = {};
-		this.tags = [];
 	}
 
 	tags_refreshKnowns() {
 		const tags = this.tags;
 		this.tags_forget_all();
+		this.si_tags.items = tags;
 		tags.map(t => this.tag_remember(t));
-		this.tags = tags;
 	}
 
 	tags_translate_idsFromTo_forThings(idFrom: string, idTo: string) {
@@ -1298,7 +1299,12 @@ export class Hierarchy {
 
 	tag_addTo_known_tags_byThingHID(tag: Tag, add: boolean = true) {
 		for (const hid of tag.thingHIDs) {
-			let tags = this.tags_byThingHID[hid];
+			let si_tags = this.si_tags_byThingHID[hid];
+			if (!si_tags) {
+				si_tags = new S_Items<Tag>([]);
+				this.si_tags_byThingHID[hid] = si_tags;
+			}
+			let tags = si_tags.items;
 			if (!add && !!tags) {
 				u.remove(tags, tag);
 			} else {
@@ -1307,7 +1313,7 @@ export class Hierarchy {
 					tags.push(tag);
 				}
 			}
-			this.tags_byThingHID[hid] = tags;
+			si_tags.items = tags;
 		}
 	}
 
@@ -1457,7 +1463,7 @@ export class Hierarchy {
 		ancestry.traverse((ancestry: Ancestry) => {
 			const thing = ancestry.thing;
 			const thingTraits = thing?.traits;
-			const thingTags = thing?.tags;
+			const thingTags = thing?.si_tags.items;
 			const relationship = ancestry.relationship;
 			if (!!thingTraits) {
 				traits = u.uniquely_concatenateArrays_ofIdentifiables(traits, thingTraits) as Array<Trait>;

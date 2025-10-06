@@ -52,7 +52,7 @@ class Search {
 		if (query.length > 0) {
 			x.si_found.items = this.root_node.search_for(query);
 		} else {
-			x.si_found.items = [];
+			x.si_found.reset();
 		}
 	}
 
@@ -74,7 +74,7 @@ class Search {
 			w_search_results_found.set(x.si_found.items.length);
 			w_search_state.set(show_results ? T_Search.results : T_Search.enter);
 		} else {
-			x.si_found.items = [];
+			x.si_found.reset();
 			w_search_results_found.set(0);
 			w_search_state.set(T_Search.enter);
 		}

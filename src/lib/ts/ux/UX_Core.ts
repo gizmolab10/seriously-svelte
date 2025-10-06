@@ -21,17 +21,16 @@ export default class X_Core {
 	si_found = new S_Items<Thing>([]);
 	si_tags = new S_Items<Tag>([]);
 
-	prior_focus!: Ancestry;
 	parents_focus!: Ancestry;
+	prior_focus!: Ancestry;
 
 	//////////////////////////
 	//						//
 	//	manage				//
-	//	  grab, expand,		//
 	//	  recent, search,	//
-	//	  details, focus	//
-	//	  trees, depth,		//
-	//	  graphs			//
+	//	  details, focus,	//
+	//	  grab, expand,		//
+	//	  tags, traits		//
 	//						//
 	//////////////////////////
 
@@ -63,9 +62,9 @@ export default class X_Core {
 
 	update() {
 		if (get(w_t_startup) == T_Startup.ready) {
-			this.traitThings_update();
 			this.grabs_update_forSearch();
-			this.si_tags.items = get(w_ancestry_forDetails)?.thing?.tags ?? [];
+			this.traitThings_update();
+			this.tags_update();
 		}
 	}
 		
@@ -183,8 +182,8 @@ export default class X_Core {
 
 	grabs_update_forSearch() {
 		if (get(w_search_state) != T_Search.off) {
-			const ancestries = this.si_found.items.map((result: Thing) => result.ancestry) ?? [];
-			if (u.description_byID(this.si_grabs.items) != u.description_byID(ancestries)) {
+			const ancestries = this.si_found.items.map((found: Thing) => found.ancestry) ?? [];
+			if (this.si_grabs.description_bySorted_IDs != u.description_bySorted_IDs(ancestries)) {
 				this.si_grabs.items = ancestries;
 			}
 		}
@@ -249,9 +248,17 @@ export default class X_Core {
 	
 	static readonly _____TAGS: unique symbol;
 
-	get tag(): Tag | null { return (this.si_tags.item as Tag) ?? null; }
 	tag_select_next(next: boolean): boolean { return this.si_tags.find_next_item(next); }
 
+	tags_update() {
+		const hid = get(w_ancestry_forDetails)?.thing?.hid;
+		const si_tags = (!hid && hid != 0) ? h.si_tags : h.si_tags_forThingHID(hid);
+		if (!si_tags) {
+			this.si_tags.reset();
+		} else if (si_tags.description_bySorted_IDs != this.si_tags.description_bySorted_IDs) {
+			this.si_tags.copy_from(si_tags);
+		}
+	}
 	
 	static readonly _____ANCESTRIES: unique symbol;
 	

@@ -1,6 +1,8 @@
+import Identifiable from '../runtime/Identifiable';
 import { get, writable } from 'svelte/store';
 
 export default class S_Items<T> {
+	static dummy = new S_Items<any>([]);
 	w_items = writable<Array<T>>([]);
 	w_index = writable(0);
 	
@@ -11,6 +13,12 @@ export default class S_Items<T> {
 	get length(): number { return this.items.length; }
 	get items(): Array<T> { return get(this.w_items); }
 	get item(): T | null { return this.items[this.index] ?? null; }
+	get description_bySorted_IDs(): string { return this.items.map(item => (item as unknown as Identifiable).id).sort().join(','); }
+
+	reset() {
+		this.index = 0;
+		this.items = [];
+	}
 
 	copy_from(other: S_Items<T>) {
 		this.items = other.items;
@@ -28,8 +36,9 @@ export default class S_Items<T> {
 		const currentItems = this.items;
 		let index = currentItems.indexOf(item);
 		if (index == -1) {
-			this.w_items.update(arr => [...arr, item]);
-			index = currentItems.length;
+			currentItems.push(item);
+			this.items = currentItems;
+			index = currentItems.length - 1;
 		}
 		this.w_index.set(index);
 	}
