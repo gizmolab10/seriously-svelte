@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, e, k, u, ex, x, Rect, Size, Point, debug } from '../../ts/common/Global_Imports';
+	import { c, e, k, u, elements, x, Rect, Size, Point, debug } from '../../ts/common/Global_Imports';
 	import { w_mouse_location, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { T_Layer, T_Timer, S_Mouse } from '../../ts/common/Global_Imports';
 	import type { Handle_Result } from '../../ts/types/Types';
@@ -21,9 +21,9 @@
 	export let cursor = 'pointer';
 	export let align_left = true;
 	export let name = 'generic';
-	const s_mouse = ex.s_mouse_forName(name);
+	const s_mouse = elements.s_mouse_forName(name);
 	const mouse_timer = e.mouse_timer_forName(name);
-	const mouse_responder_number = ex.next_mouse_responder_number;
+	const mouse_responder_number = elements.next_mouse_responder_number;
 	let style = k.empty;
 	let bound_element;
 

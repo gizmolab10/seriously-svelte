@@ -2,13 +2,13 @@
 	import { T_Search, T_Layer, T_Element, T_Preference, T_Search_Preference } from '../../ts/common/Global_Imports';
 	import { w_search_state, w_search_preferences, w_search_results_found } from '../../ts/managers/Stores';
 	import { w_graph_rect, w_show_details, w_thing_fontFamily } from '../../ts/managers/Stores';
-	import { ex, k, p, controls, Point, search } from '../../ts/common/Global_Imports';
+	import { elements, k, p, controls, Point, search } from '../../ts/common/Global_Imports';
 	import Segmented from '../mouse/Segmented.svelte';
 	export let zindex = T_Layer.graph;
 	export let width = 80;
 	export let top = 0;
 	const left_width = 180;
-	const s_search = ex.s_element_for(null, T_Element.search, k.empty);
+	const s_search = elements.s_element_for(null, T_Element.search, k.empty);
 	let graph_width = $w_graph_rect.size.width - ($w_show_details ? 0 : 5);
 	let search_width = graph_width - left_width;
 	let input: HTMLInputElement;
@@ -24,7 +24,7 @@
 
 	$: if ($w_search_state != T_Search.enter) {
 		setTimeout(() => {
-			ex.s_element_set_focus_to(s_search);	// so 'f' will not be added to the input
+			elements.s_element_set_focus_to(s_search);	// so 'f' will not be added to the input
 		}, 1);
 	}
 

@@ -1,4 +1,4 @@
-import { k, ex, x, debug, layout, g_radial, components } from '../common/Global_Imports';
+import { k, elements, x, debug, layout, g_radial, components } from '../common/Global_Imports';
 import { S_Rotation, S_Resizing, G_Thing_Pages } from '../common/Global_Imports';
 import { T_Radial_Zone, T_Component } from '../common/Global_Imports';
 import { w_ring_rotation_radius } from '../managers/Stores';
@@ -24,10 +24,10 @@ export default class S_RadialGraph {
 	get isAny_paging_arc_active(): boolean { return this.g_paging_rotations.filter(s => s.isActive).length > 0; }
 	get isAny_paging_arc_hovering(): boolean { return this.g_paging_rotations.filter(s => s.isHovering).length > 0; }
 	get isAny_rotation_active(): boolean { return this.isAny_paging_arc_active || radial.s_cluster_rotation.isActive || radial.s_ring_rotation.isActive; }
-	g_paging_rotation_forName(name: string): S_Rotation { return ex.assure_forKey_inDict(name, this.g_paging_rotation_byName, () => new S_Rotation()); }
+	g_paging_rotation_forName(name: string): S_Rotation { return elements.assure_forKey_inDict(name, this.g_paging_rotation_byName, () => new S_Rotation()); }
 	
 	s_thing_pages_forThingID(id: string | null | undefined): G_Thing_Pages | null {
-		return !id ? null : ex.assure_forKey_inDict(id, this.s_thing_pages_byThingID, () => new G_Thing_Pages(id));
+		return !id ? null : elements.assure_forKey_inDict(id, this.s_thing_pages_byThingID, () => new G_Thing_Pages(id));
 	}
 
 	reset() {

@@ -1,4 +1,4 @@
-import { ex, k, controls, x, colors, Ancestry, T_Element, T_Control } from '../common/Global_Imports';
+import { elements, k, controls, x, colors, Ancestry, T_Element, T_Control } from '../common/Global_Imports';
 import { w_control_key_down, w_background_color } from '../managers/Stores';
 import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
@@ -33,7 +33,7 @@ export default class S_Element {
 	isOut = true;
 
 	constructor(identifiable: Identifiable, type: T_Element, subtype: string) {
-		this.name = ex.name_from(identifiable, type, subtype);
+		this.name = elements.name_from(identifiable, type, subtype);
 		this.identifiable = identifiable;
 		this.subtype = subtype;
 		this.type = type;

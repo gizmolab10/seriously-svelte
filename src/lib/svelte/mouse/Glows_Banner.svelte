@@ -2,7 +2,7 @@
 	import { k, Rect, Size, Point, colors } from '../../ts/common/Global_Imports';
 	import { w_background_color } from '../../ts/managers/Stores';
 	import Glow_Button from '../mouse/Glow_Button.svelte';
-	import { ux_details } from '../../ts/ux/UX_Details';
+	import { details } from '../../ts/ux/UX_Details';
 	import G_Repeater from '../../ts/layout/G_Repeater';
 	import Separator from '../draw/Separator.svelte';
 	export let toggle_hidden: (title: string) => void;
@@ -35,7 +35,7 @@
 		if (title === banner_id || titles.length == 1) {
 			toggle_hidden(banner_id);
 		} else {
-			ux_details.update(banner_id, title);		// banner_id is NOT dynamic, banner_title and title are
+			details.update(banner_id, title);		// banner_id is NOT dynamic, banner_title and title are
 		}
 	}
 

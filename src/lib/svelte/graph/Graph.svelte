@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { e, h, k, u, ex, x, Rect, Point, debug, layout, signals, colors, S_Component } from '../../ts/common/Global_Imports';
+	import { e, h, k, u, elements, x, Rect, Point, debug, layout, signals, colors, S_Component } from '../../ts/common/Global_Imports';
 	import { w_graph_rect, w_show_graph_ofType, w_user_graph_offset, w_depth_limit } from '../../ts/managers/Stores';
 	import { T_Layer, T_Graph, T_Signal, T_Startup, T_Control, T_Component } from '../../ts/common/Global_Imports';
 	import { w_t_startup, w_device_isMobile, w_popupView_id } from '../../ts/managers/Stores';
@@ -130,7 +130,7 @@
 				height={size_big}
 				origin={Point.x(8)}
 				name={T_Control.builds}
-				s_button={ex.s_control_forType(T_Control.builds)}
+				s_button={elements.s_control_forType(T_Control.builds)}
 				closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.builds)}>
 				<span style='font-family: {$w_thing_fontFamily};'>
 					{'build ' + k.build_number}
@@ -141,7 +141,7 @@
 				height={size_big}
 				name={T_Control.help}
 				origin={Point.x(draggableRect.size.width - 34)}
-				s_button={ex.s_control_forType(T_Control.help)}
+				s_button={elements.s_control_forType(T_Control.help)}
 				closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.help)}>
 				<span
 					style='

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, e, ex, k, u, x, controls, show, grabs, debug, layout, signals } from '../../ts/common/Global_Imports';
+	import { c, e, elements, k, u, x, controls, show, grabs, debug, layout, signals } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Signal, T_Alteration, T_Component } from '../../ts/common/Global_Imports';
 	import { Rect, Size, Point, S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import { w_background_color, w_show_countDots_ofType } from '../../ts/managers/Stores';
@@ -67,7 +67,7 @@
 	}
 
 	function update_colors() {
-		if (!ex.isAny_rotation_active && !!s_drag && !!thing) {
+		if (!elements.isAny_rotation_active && !!s_drag && !!thing) {
 			const usePointer = (!ancestry.isGrabbed || controls.inRadialMode) && ancestry.hasChildren;
 			const isAncestry_presented = $w_ancestry_forDetails.equals(ancestry);
 			const cursor = usePointer ? 'pointer' : 'normal';
@@ -95,7 +95,7 @@
 	}
 
 	function handle_up_long_hover(s_mouse) {
-		if (!ex.isAny_rotation_active) {
+		if (!elements.isAny_rotation_active) {
 			if (s_mouse.isHover) {
 				isHovering = !s_mouse.isOut;
 				update_colors();

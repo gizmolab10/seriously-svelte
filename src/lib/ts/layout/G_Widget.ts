@@ -1,5 +1,5 @@
 import { S_Widget, G_Cluster, G_TreeLine, G_TreeBranches } from '../common/Global_Imports';
-import { ex, k, u, controls, Rect, Size, Point, Ancestry } from '../common/Global_Imports';
+import { elements, k, u, controls, Rect, Size, Point, Ancestry } from '../common/Global_Imports';
 import { w_show_graph_ofType, w_show_related } from '../managers/Stores';
 import { T_Widget, T_Graph } from '../common/Global_Imports';
 import { get } from 'svelte/store';
@@ -49,7 +49,7 @@ export default class G_Widget {
 		this.g_line = new G_TreeLine(ancestry.parentAncestry, ancestry);
 		this.g_parentBranches = new G_TreeBranches(ancestry, false);
 		this.g_childBranches = new G_TreeBranches(ancestry);
-		this.s_widget = ex.s_widget_forAncestry(ancestry);
+		this.s_widget = elements.s_widget_forAncestry(ancestry);
 		this.forGraphMode = get(w_show_graph_ofType);
 		this.ancestry = ancestry;
 		if (!ancestry) {

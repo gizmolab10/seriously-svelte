@@ -41,7 +41,7 @@ import { print } from '../utilities/Print';
 import { Direction } from '../types/Angle';
 import { layout } from '../layout/G_Layout';
 import { colors } from '../managers/Colors';
-import { search } from '../managers/Search';
+import { search } from '../ux/UX_Search';
 import { signals } from '../signals/Signals';
 import { controls } from '../ux/UX_Controls';
 import { show } from '../managers/Visibility';
@@ -73,7 +73,7 @@ import Angle from '../types/Angle';
 import './Extensions';
 import { k } from './Constants';
 import { e } from '../signals/Events';
-import { ex } from '../ux/UX_Elements';
+import { elements } from '../ux/UX_Elements';
 import { h } from '../managers/Hierarchy';
 import { x } from '../ux/UX_Identifiables';
 import { u } from '../utilities/Utilities';
@@ -91,7 +91,7 @@ export {
 	G_Paging, G_Cluster, G_RadialGraph, G_Thing_Pages, G_ArcSlider,
 
 	g_tree, g_radial,
-	e, c, h, k, p, u, ex, x,
+	e, c, h, k, p, u, elements, x,
 	interact, transparentize,
 	debug, svgPaths, databases, controls,
 	busy, show, files, builds, print, search,

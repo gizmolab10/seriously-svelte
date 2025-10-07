@@ -1,12 +1,12 @@
 import { T_Search, T_Startup, T_Preference } from "../common/Global_Imports";
-import { w_search_results_found, w_search_results_changed } from './Stores';
+import { w_search_results_found, w_search_results_changed } from '../managers/Stores';
 import { c, k, h, p, x, Thing, Ancestry } from "../common/Global_Imports";
-import { w_search_state, w_search_show_controls } from './Stores';
+import { w_search_state, w_search_show_controls } from '../managers/Stores';
 import { Search_Node } from '../types/Search_Node';
-import { w_t_startup } from './Stores';
+import { w_t_startup } from '../managers/Stores';
 import { get } from 'svelte/store';
 
-class Search {
+class UX_Search {
 	search_text: string | null = null;
 	private root_node: Search_Node = new Search_Node();
 
@@ -131,4 +131,4 @@ class Search {
 
 }
 
-export const search = new Search();
+export const search = new UX_Search();

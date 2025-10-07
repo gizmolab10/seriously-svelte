@@ -1,4 +1,4 @@
-import { k, ex, x, colors, Ancestry, S_Element, T_Element } from '../common/Global_Imports';
+import { k, elements, x, colors, Ancestry, S_Element, T_Element } from '../common/Global_Imports';
 import { w_background_color } from '../managers/Stores';
 import { get } from 'svelte/store';
 
@@ -34,9 +34,9 @@ export default class S_Widget extends S_Element {
 	
 	constructor(ancestry: Ancestry) {
 		super(ancestry, T_Element.widget, k.empty);
-		this.s_drag = ex.s_element_for(ancestry, T_Element.drag, k.empty);
-		this.s_title = ex.s_element_for(ancestry, T_Element.title, k.empty);
-		this.s_reveal = ex.s_element_for(ancestry, T_Element.reveal, k.empty);
+		this.s_drag = elements.s_element_for(ancestry, T_Element.drag, k.empty);
+		this.s_title = elements.s_element_for(ancestry, T_Element.title, k.empty);
+		this.s_reveal = elements.s_element_for(ancestry, T_Element.reveal, k.empty);
 	}
 
 	get update_state_didChange(): boolean {

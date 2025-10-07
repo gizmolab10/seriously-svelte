@@ -1,10 +1,10 @@
-import { c, ex, h, k, u, controls, x, g_tree, Point, debug, search, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
+import { c, elements, h, k, u, controls, x, g_tree, Point, debug, search, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
 import { w_count_window_resized, w_s_alteration, w_s_title_edit, w_user_graph_offset, w_control_key_down } from '../managers/Stores';
 import { w_count_mouse_up, w_mouse_location, w_mouse_location_scaled, w_scaled_movement } from '../managers/Stores';
 import { T_Search, T_Action, T_Control, T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { w_search_state, w_device_isMobile, w_ancestry_focus, w_ancestry_forDetails } from '../managers/Stores';
 import { S_Mouse, S_Alteration } from '../common/Global_Imports';
-import { ux_details } from '../ux/UX_Details';
+import { details } from '../ux/UX_Details';
 import Mouse_Timer from './Mouse_Timer';
 import { get } from 'svelte/store';
 
@@ -13,7 +13,7 @@ export class Events {
 	initialTouch: Point | null = null;
 	alterationTimer!: Mouse_Timer;
 
-	mouse_timer_forName(name: string): Mouse_Timer { return ex.assure_forKey_inDict(name, this.mouse_timer_byName, () => new Mouse_Timer(name)); }
+	mouse_timer_forName(name: string): Mouse_Timer { return elements.assure_forKey_inDict(name, this.mouse_timer_byName, () => new Mouse_Timer(name)); }
 
 	setup() {
 		w_s_alteration.subscribe((s_alteration: S_Alteration | null) => { this.handle_s_alteration(s_alteration); });
@@ -158,7 +158,7 @@ export class Events {
 
 	handle_s_mouseFor_t_control(s_mouse: S_Mouse, t_control: T_Control) {
 		if (s_mouse.isHover) {
-			const s_control = ex.s_control_byType[t_control];
+			const s_control = elements.s_control_byType[t_control];
 			if (!!s_control) {
 				s_control.isOut = s_mouse.isOut;
 			}
@@ -168,7 +168,7 @@ export class Events {
 				case T_Control.search:	search.activate(); break;
 				case T_Control.grow:	layout.scaleBy(k.ratio.zoom_in) - 20; break;
 				case T_Control.shrink:	layout.scaleBy(k.ratio.zoom_out) - 20; break;
-				case T_Control.details: ux_details.details_toggle_visibility(); break;
+				case T_Control.details: details.details_toggle_visibility(); break;
 				default:				controls.togglePopupID(t_control); break;
 			}
 		}

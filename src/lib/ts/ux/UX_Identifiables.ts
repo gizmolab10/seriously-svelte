@@ -7,7 +7,7 @@ import { Tag, Thing, Trait, Ancestry } from '../common/Global_Imports';
 import { w_show_details_ofType } from '../managers/Stores';
 import { S_Items } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
-import { ux_details } from './UX_Details';
+import { details } from './UX_Details';
 import { get } from 'svelte/store';
 
 type Identifiable_S_Items_Pair<T = Identifiable, U = S_Items<T>> = [T, U | null];
@@ -80,7 +80,7 @@ export default class UX_Identifiables {
 			this.si_grabs.find_next_item(next);
 		}
 		this.ancestry_update_forDetails();
-		ux_details.redraw();		// force re-render of details
+		details.redraw();		// force re-render of details
 	}
 
 	ancestry_update_forDetails() {
@@ -255,7 +255,7 @@ export default class UX_Identifiables {
 			}
 		}
 		w_thing_traits.set(thing_traits);
-		// ux_details.redraw();		// force re-render of details
+		// details.redraw();		// force re-render of details
 	}
 	
 	static readonly _____TAGS: unique symbol;

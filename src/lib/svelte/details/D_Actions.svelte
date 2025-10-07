@@ -1,10 +1,10 @@
 <script lang='ts'>
 	import { T_Layer, T_Detail, T_Action, T_Element, T_Kinship, T_Request, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
-	import { c, e, h, k, u, ex, x, controls, show, Size, Point, grabs, colors, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
+	import { c, e, h, k, u, elements, x, controls, show, Size, Point, grabs, colors, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
 	import { w_s_alteration, w_background_color, w_ancestry_forDetails } from '../../ts/managers/Stores';
 	import { w_user_graph_offset, w_show_graph_ofType } from '../../ts/managers/Stores';
 	import Buttons_Table from '../mouse/Buttons_Table.svelte';
-    import { ux_details } from '../../ts/ux/UX_Details';
+    import { details } from '../../ts/ux/UX_Details';
 	import Separator from '../draw/Separator.svelte';
 	import Button from '../mouse/Button.svelte';
 	export let top = 2;
@@ -18,8 +18,8 @@
 	const { w_items: w_expanded } = x.si_expanded;
 	const bottom_padding = bottom_tableHeight - 48;
     const font_sizes = [k.font_size.instructions, k.font_size.instructions];
-    const s_banner_hideable = ux_details.s_banner_hideables_byType[T_Detail.actions];
-	const s_cancel = ex.s_element_for($w_ancestry_forDetails, T_Element.cancel, k.empty);
+    const s_banner_hideable = details.s_banner_hideables_byType[T_Detail.actions];
+	const s_cancel = elements.s_element_for($w_ancestry_forDetails, T_Element.cancel, k.empty);
 	let list_title = $w_ancestry_forDetails?.isExpanded && controls.inTreeMode ? 'hide list' : 'list';
 	let button_titles = compute_button_titles();
 	let actions_top = top + 3;

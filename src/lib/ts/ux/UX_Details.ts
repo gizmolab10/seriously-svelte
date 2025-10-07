@@ -88,4 +88,4 @@ class UX_Details {
 
 }
 
-export const ux_details = new UX_Details();
+export const details = new UX_Details();

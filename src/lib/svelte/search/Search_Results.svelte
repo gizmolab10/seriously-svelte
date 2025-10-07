@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { w_search_results_changed, w_search_show_controls } from '../../ts/managers/Stores';
 	import { w_graph_rect, w_search_state, w_separator_color } from '../../ts/managers/Stores';
-	import { k, u, ex, x, Thing, colors, T_Search } from '../../ts/common/Global_Imports';
-	import { search } from '../../ts/managers/Search';
+	import { k, u, elements, x, Thing, colors, T_Search } from '../../ts/common/Global_Imports';
+	import { search } from '../../ts/ux/UX_Search';
 	import { derived } from 'svelte/store';
 	const { w_index: results_index } = x.si_found;
 	let element: HTMLDivElement;
@@ -16,7 +16,7 @@
 		if (row !== null && !!element) {
 			selected_row = element.children[row] as HTMLElement;
 		}
-		ex.element_set_focus_to(element);
+		elements.element_set_focus_to(element);
 		selected_row?.scrollIntoView({ block: 'nearest' });
 	}
 

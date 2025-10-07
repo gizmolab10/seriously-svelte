@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, ex, h, k, u, x, controls, Rect, Size, Point, grabs, Angle } from '../../ts/common/Global_Imports';
+	import { c, elements, h, k, u, x, controls, Rect, Size, Point, grabs, Angle } from '../../ts/common/Global_Imports';
 	import { debug, layout, signals, databases, Seriously_Range } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { w_s_title_edit, w_mouse_location, w_search_state } from '../../ts/managers/Stores';
@@ -109,7 +109,7 @@
 						break;
 					case T_Edit.editing:
 						if (!hasFocus()) {
-							ex.element_set_focus_to(input);
+							elements.element_set_focus_to(input);
 							applyRange_fromThing_toInput();
 						}
 						break;
@@ -249,7 +249,7 @@
 					setTimeout(() => {
 						ancestry.startEdit();
 						thing_setSelectionRange_fromMouseLocation();
-						ex.element_set_focus_to(input);
+						elements.element_set_focus_to(input);
 						applyRange_fromThing_toInput();
 					}, 1);
 				}

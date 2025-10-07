@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, e, ex, h, k, p, u, controls, x, show, grabs, search, colors, layout } from '../../ts/common/Global_Imports';
+	import { c, e, elements, h, k, p, u, controls, x, show, grabs, search, colors, layout } from '../../ts/common/Global_Imports';
 	import { w_search_preferences, w_search_state, w_search_show_controls } from '../../ts/managers/Stores';
 	import { w_background_color, w_device_isMobile, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { w_show_details, w_show_graph_ofType, w_show_tree_ofType } from '../../ts/managers/Stores';
@@ -79,7 +79,7 @@
 					border_thickness=0
 					color='transparent'
 					center={new Point(lefts[0], y_center)}
-					s_button={ex.s_control_forType(T_Control.details)}
+					s_button={elements.s_control_forType(T_Control.details)}
 					closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.details)}>
 					<svg class='hamburger-svg'
 						style='
@@ -91,8 +91,8 @@
 							d={hamburger_path}
 							stroke-width='0.75'
 							class='hamburger-path'
-							fill={ex.s_control_forType(T_Control.details).isOut ? 'black' : 'white'}
-							stroke={ex.s_control_forType(T_Control.details).isOut ? 'transparent' : 'darkgray'}/>
+							fill={elements.s_control_forType(T_Control.details).isOut ? 'black' : 'white'}
+							stroke={elements.s_control_forType(T_Control.details).isOut ? 'transparent' : 'darkgray'}/>
 					</svg>
 				</Button>
 			{/if}
@@ -115,7 +115,7 @@
 					width={size_big}
 					height={size_big}
 					center={new Point(lefts[3], y_center)}
-					s_button={ex.s_control_forType(T_Control.grow)}
+					s_button={elements.s_control_forType(T_Control.grow)}
 					closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.grow)}>
 					<svg id='grow-svg' style={svg_style}>
 						<path
@@ -123,14 +123,14 @@
 							fill=transparent
 							d={svgPaths.t_cross(size_big, 2)}
 							stroke-width={scaling_stroke_width}
-							stroke={ex.s_control_forType(T_Control.grow).svg_hover_color}/>
+							stroke={elements.s_control_forType(T_Control.grow).svg_hover_color}/>
 					</svg>
 				</Button>
 				<Button name={T_Control.shrink}
 					width={size_big}
 					height={size_big}
 					center={new Point(lefts[4], y_center)}
-					s_button={ex.s_control_forType(T_Control.shrink)}
+					s_button={elements.s_control_forType(T_Control.shrink)}
 					closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.shrink)}>
 					<svg id='shrink-svg'
 						style={svg_style}>
@@ -138,7 +138,7 @@
 							fill=transparent
 							d={svgPaths.dash(size_big, 4)}
 							stroke-width={scaling_stroke_width}
-							stroke={ex.s_control_forType(T_Control.shrink).svg_hover_color}/>
+							stroke={elements.s_control_forType(T_Control.shrink).svg_hover_color}/>
 					</svg>
 				</Button>
 			</div>
@@ -150,7 +150,7 @@
 					zindex={T_Layer.frontmost}
 					center={new Point(lefts[6], 10)}
 					style='border: none; background: none;'
-					s_button={ex.s_control_forType(T_Control.details)}
+					s_button={elements.s_control_forType(T_Control.details)}
 					closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.details)}/>
 			{/if}
 			<Separator name='before-breadcrumbs'
