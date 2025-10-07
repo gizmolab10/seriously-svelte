@@ -47,7 +47,7 @@
 	}
 
 	$: {
-		const _ = `${u.description_byTitles($w_expanded)}:::${u.description_byTitles($w_grabbed)}`;
+		const _ = `${u.descriptionBy_titles($w_expanded)}:::${u.descriptionBy_titles($w_grabbed)}`;
 		update_button_titles();
 	}
 

@@ -73,7 +73,7 @@
 	}
 
 	$: {
-		const reactives = `${$w_thing_color}:::${u.description_byTitles($w_grabbed)}:::${u.description_byTitles($w_expanded)}`;
+		const reactives = `${$w_thing_color}:::${u.descriptionBy_titles($w_grabbed)}:::${u.descriptionBy_titles($w_expanded)}`;
 		if (reactives != trigger) {
 			const isFocus = ancestry?.isFocus ?? false;
 			const adjust = ux.inRadialMode && isFocus;

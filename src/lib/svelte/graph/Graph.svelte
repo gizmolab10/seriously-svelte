@@ -45,7 +45,7 @@
 	}
 
 	$:	{
-		const _ = `${$w_show_graph_ofType}:::${$w_ancestry_focus?.titles.join(',')}:::${u.description_byTitles($w_expanded)}`;
+		const _ = `${$w_show_graph_ofType}:::${$w_ancestry_focus?.titles.join(k.comma)}:::${u.descriptionBy_titles($w_expanded)}`;
 		grand_layout_andReattach();
 	}
 

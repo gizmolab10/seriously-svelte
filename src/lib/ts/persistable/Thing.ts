@@ -33,7 +33,7 @@ export default class Thing extends Persistable {
 	get childRelationships():	Array <Relationship> { return this.relationships_ofKind_forParents(T_Predicate.contains, false); }
 	get relatedRelationships(): Array <Relationship> { return this.relationships_ofKind_forParents(T_Predicate.isRelated, false); }
 	get fields():		  		Dictionary  <string> { return { title: this.title, color: this.color, type: this.t_thing }; }
-	get abbreviated_title():				  string { return this.title.split(' ').map(word => word[0]).join('').toLowerCase(); }
+	get abbreviated_title():				  string { return this.title.split(' ').map(word => word[0]).join(k.empty).toLowerCase(); }
 	get idBridging():						  string { return this.isBulkAlias ? this.bulkRootID : this.id; }
 	get description():						  string { return this.id + ' "' + this.title + '"'; }
 	get breadcrumb_title():					  string { return this.title.clipWithEllipsisAt(15); }
@@ -191,7 +191,9 @@ export default class Thing extends Persistable {
 		//	but the relationship is interpreted backwards
 
 		let ancestries: Array<Ancestry> = [];
-		if (!!predicate) {
+		if (this.isRoot) {
+			ancestries.push(h.rootAncestry);
+		} else if (!!predicate) {
 			function addAncestry(ancestry: Ancestry | null) {
 				if (!!ancestry) {
 					ancestries.push(ancestry);

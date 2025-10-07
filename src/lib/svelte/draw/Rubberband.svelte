@@ -131,8 +131,8 @@
                 }
             });
             // Only update if si_grabs.items have changed
-            const new_grabbed_IDs = u.description_bySorted_HIDs(intersecting);
-            const prior_grabbed_IDs = u.description_bySorted_HIDs(x.si_grabs.items);
+            const new_grabbed_IDs = u.descriptionBy_sorted_HIDs(intersecting);
+            const prior_grabbed_IDs = u.descriptionBy_sorted_HIDs(x.si_grabs.items);
             has_grabs = intersecting.length != 0;
             if (prior_grabbed_IDs !== new_grabbed_IDs) {
                 if (has_grabs) {
@@ -141,7 +141,7 @@
                 } else if (had_intersections) {
                     x.si_grabs.reset();
                 }
-                x.ancestry_focus_update_forDetails();
+                x.ancestry_update_forDetails();
             }
         }
     }

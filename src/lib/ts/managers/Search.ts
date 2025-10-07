@@ -1,6 +1,6 @@
-import { c, k, h, p, ex, x, grabs, Thing, Ancestry } from "../common/Global_Imports";
 import { T_Search, T_Startup, T_Preference } from "../common/Global_Imports";
 import { w_search_results_found, w_search_results_changed } from './Stores';
+import { c, k, h, p, x, Thing, Ancestry } from "../common/Global_Imports";
 import { w_search_state, w_search_show_controls } from './Stores';
 import { Search_Node } from '../types/Search_Node';
 import { w_t_startup } from './Stores';
@@ -26,7 +26,7 @@ class Search {
 	set selected_row(row: number) {
 		x.si_found.index = row;
 		w_search_state.set(T_Search.selected);
-		x.ancestry_focus_update_forDetails();
+		x.ancestry_update_forDetails();
 	}
 
 	get selected_ancestry(): Ancestry | null {

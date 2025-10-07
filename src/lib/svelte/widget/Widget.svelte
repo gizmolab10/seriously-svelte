@@ -72,7 +72,7 @@
 	}
 
 	$: {
-		const reactives = `${$w_s_title_edit?.t_edit}:::${u.description_byTitles($w_grabbed)}`;
+		const reactives = `${$w_s_title_edit?.t_edit}:::${u.descriptionBy_titles($w_grabbed)}`;
 		if (reactives != trigger && !!ancestry && s_widget.update_state_didChange) {
 			trigger = reactives;
 			g_widget.layout_widget();

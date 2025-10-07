@@ -29,7 +29,7 @@
 	}
 
 	$: {
-		const _ = `${$w_search_state}:::${x.si_found.w_index}:::${$w_tags.description_bySorted_IDs}:::${$w_grabbed.description_bySorted_IDs}:::${$w_trait_things.description_bySorted_IDs}`;
+		const _ = `${$w_search_state}:::${x.si_found.w_index}:::${$w_tags.descriptionBy_sorted_IDs}:::${$w_grabbed.descriptionBy_sorted_IDs}:::${$w_trait_things.descriptionBy_sorted_IDs}`;
 		const tr_changed = update_titles($w_trait_things.length, extra_traits_titles);
 		const g_changed = update_titles($w_grabbed.length, extra_selection_titles);
 		const t_changed = update_titles($w_tags.length, extra_tags_titles);

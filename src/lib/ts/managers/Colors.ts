@@ -20,7 +20,7 @@ export class Colors {
 
 	color_fromSeriously(color: string | undefined): string {
 		if (!!color) {			
-			const parts = color.split(',');				// "red:0.7,green:0,blue:0,alpha:1"
+			const parts = color.split(k.comma);				// "red:0.7,green:0,blue:0,alpha:1"
 			const rgba = new RGBA();
 			for (const part of parts) {
 				const [key, value] = part.split(':');

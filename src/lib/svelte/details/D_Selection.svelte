@@ -35,7 +35,7 @@
 
 	$: {
 		update_forAncestry();
-		trigger = `${u.description_byTitle($w_grabbed)}:::${$w_ancestry_focus?.title}:::${$w_thing_title}:::>${u.description_byTitle($w_grab_items)}:::${$w_ancestry_forDetails?.title}:::<${$w_relationship_order}`;
+		trigger = `${u.descriptionBy_title($w_grabbed)}:::${$w_ancestry_focus?.title}:::${$w_thing_title}:::>${u.descriptionBy_title($w_grab_items)}:::${$w_ancestry_forDetails?.title}:::<${$w_relationship_order}`;
 	}
 
 	onMount(() => {
@@ -73,6 +73,7 @@
 				['children', ancestry.children.length.supressZero()],
 				['parents',  thing.parents.length.supressZero()],
 				['relateds', thing.relatedRelationships.length.supressZero()],
+				['progeny',	 ancestry.progeny_count().supressZero()],
 			];
 			properties = [
 				['id',		 thing.id.beginWithEllipsis_forLength(15)],
@@ -81,7 +82,8 @@
 				['type',	 Object.keys(T_Thing).find(k => T_Thing[k] === thing.t_thing)],
 			];
 			relationships = [
-				['progeny',	 ancestry.progeny_count().supressZero()],
+				['tags',	 x.si_tags.length.supressZero()],
+				['traits',	 x.si_trait_things.length.supressZero()],
 				['depth',	 ancestry.depth.supressZero()],
 				['order',	 ancestry.order.supressNegative()],
 			];
@@ -146,7 +148,7 @@
 			has_gull_wings={true}
 			has_both_wings={true}
 			has_thin_divider={false}
-			origin={new Point(1, 110)}
+			origin={new Point(1, 125)}
 			zindex={T_Layer.frontmost + 1}
 			length={k.width.details - 2.5}
 			handle_click={handle_toggle_properties}

@@ -44,7 +44,7 @@
 	});
 	
 	$: {
-		const _ = `${u.description_byTitles($w_grabbed)}:::${u.description_byTitles($w_expanded)}:::${$w_show_countDots_ofType}:::${$w_thing_title}:::${$w_background_color}:::${$w_thing_color}`;
+		const _ = `${u.descriptionBy_titles($w_grabbed)}:::${u.descriptionBy_titles($w_expanded)}:::${$w_show_countDots_ofType}:::${$w_thing_title}:::${$w_background_color}:::${$w_thing_color}`;
 		update_svgPaths();
 		update_colors();
 	}

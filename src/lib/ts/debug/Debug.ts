@@ -98,7 +98,7 @@ export class Debug {
 	queryStrings_apply() {
 		const debug = c.queryStrings.get('debug');
 		if (debug) {
-			const flags = debug.split(',');
+			const flags = debug.split(k.comma);
 			for (const option of flags) {
 				switch (option) {
 					case 'bidirectionals': this.flags.push(T_Debug.bidirectionals); break;

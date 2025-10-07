@@ -27,7 +27,7 @@
 	onMount(() => { return () => s_component.disconnect(); });
 	
 	$: {
-		const _ = `${$w_t_startup}:::${$w_thing_color}:::${$w_search_state}:::${x.si_found.w_index}:::${$w_ancestry_forDetails?.id}:::${$w_graph_rect.description}:::${$w_s_title_edit?.description}:::${u.description_byTitles($w_grabbed)}`;
+		const _ = `${$w_t_startup}:::${$w_thing_color}:::${$w_search_state}:::${x.si_found.w_index}:::${$w_ancestry_forDetails?.id}:::${$w_graph_rect.description}:::${$w_s_title_edit?.description}:::${u.descriptionBy_titles($w_grabbed)}`;
 		update();
 	}
 

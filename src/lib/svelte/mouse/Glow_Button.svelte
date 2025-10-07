@@ -33,6 +33,8 @@
     function handle_mouse_down() {
         if (detect_autorepeat) {
             mouseTimer.autorepeat_start(0, () => handle_click(click_title));
+        } else {
+            intercept_click();
         }
     }
 
@@ -68,7 +70,6 @@
             path={svgPaths.rectangle(glow_rect)}/>
     {/if}
     <div class='glow-button-title'
-        on:click={intercept_click}
         on:mouseup={handle_mouse_up}
         on:mousedown={handle_mouse_down}
         on:mouseenter={() => handle_mouse_enter(true)}

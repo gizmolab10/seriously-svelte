@@ -53,7 +53,7 @@
 	}
 
 	$: {
-		const _ = `${$w_thing_color}:::${$w_background_color}:::${$w_ancestry_focus?.id}:::${$w_ancestry_forDetails?.id}:::${u.description_byTitles($w_grabbed)}`;
+		const _ = `${$w_thing_color}:::${$w_background_color}:::${$w_ancestry_focus?.id}:::${$w_ancestry_forDetails?.id}:::${u.descriptionBy_titles($w_grabbed)}`;
 		update_colors();
 	}
 

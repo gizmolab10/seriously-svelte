@@ -12,7 +12,7 @@ import { get } from 'svelte/store';
 
 type Identifiable_S_Items_Pair<T = Identifiable, U = S_Items<T>> = [T, U | null];
 
-export default class X_Core {
+export default class UX_Core {
 
 	si_recents = new S_Items<Identifiable_S_Items_Pair>([]);
 	si_trait_things = new S_Items<Thing>([]);
@@ -47,7 +47,7 @@ export default class X_Core {
 		w_t_startup.subscribe((startup: number | null) => {
 			if (startup == T_Startup.ready) {
 				w_ancestry_focus.subscribe((ancestry: Ancestry) => {
-					this.ancestry_focus_update_forDetails();
+					this.ancestry_update_forDetails();
 				});
 				w_search_state.subscribe((state: number | null) => {
 					this.grabs_update_forSearch();
@@ -67,12 +67,31 @@ export default class X_Core {
 			this.tags_update();
 		}
 	}
+
+	si_forType(t_detail: T_Detail): S_Items<any> {
+		switch (t_detail) {
+			case T_Detail.tags:		 return this.si_tags;
+			case T_Detail.selection: return this.si_grabs;
+			case T_Detail.traits:	 return this.si_trait_things;
+			default:				 return S_Items.dummy;
+		}
+	}
 		
-	static readonly _____DETAILS: unique symbol;
+	static readonly _____ANCESTRY: unique symbol;
 
 	get ancestry_forDetails(): Ancestry | null { return get(w_ancestry_forDetails); }
+	
+	ancestry_select_next(next: boolean) {	// for next/previous in details selection banner
+		if (get(w_search_state) > T_Search.off) {
+			this.si_found.find_next_item(next);
+		} else {
+			this.si_grabs.find_next_item(next);
+		}
+		this.ancestry_update_forDetails();
+		s_banners.redraw();		// force re-render of details
+	}
 
-	ancestry_focus_update_forDetails() {
+	ancestry_update_forDetails() {
 		const presented = this.ancestry_forDetails;
 		let ancestry = search.selected_ancestry;
 		if (!ancestry) {
@@ -113,7 +132,7 @@ export default class X_Core {
 			w_ancestry_focus.set(ancestry);
 		}
 		ancestry.expand();
-		this.ancestry_focus_update_forDetails();
+		this.ancestry_update_forDetails();
 		return changed;
 	}
 
@@ -135,7 +154,7 @@ export default class X_Core {
 		debug.log_grab(`  GRAB ONLY '${ancestry.title}'`);
 		this.si_grabs.items = [ancestry];
 		h?.stop_alteration();
-		this.ancestry_focus_update_forDetails();
+		this.ancestry_update_forDetails();
 	}
 
 	grab(ancestry: Ancestry) {
@@ -154,7 +173,7 @@ export default class X_Core {
 		this.si_grabs.items = grabbed;
 		debug.log_grab(`  GRAB '${ancestry.title}'`);
 		h?.stop_alteration();
-		this.ancestry_focus_update_forDetails();
+		this.ancestry_update_forDetails();
 	}
 
 	ungrab(ancestry: Ancestry) {
@@ -177,13 +196,13 @@ export default class X_Core {
 		}
 		this.si_grabs.items = grabbed;
 		debug.log_grab(`  UNGRAB '${ancestry.title}'`);
-		this.ancestry_focus_update_forDetails();
+		this.ancestry_update_forDetails();
 	}
 
 	grabs_update_forSearch() {
-		if (get(w_search_state) != T_Search.off) {
+		if (get(w_search_state) != T_Search.off && this.si_found.length > 0) {
 			const ancestries = this.si_found.items.map((found: Thing) => found.ancestry) ?? [];
-			if (this.si_grabs.description_bySorted_IDs != u.description_bySorted_IDs(ancestries)) {
+			if (this.si_grabs.descriptionBy_sorted_IDs != u.descriptionBy_sorted_IDs(ancestries)) {
 				this.si_grabs.items = ancestries;
 			}
 		}
@@ -201,7 +220,7 @@ export default class X_Core {
 		return h?.rootAncestry ?? null;
 	}
 
-	static readonly _____TRAIT_THINGS: unique symbol;
+	static readonly _____TRAITS: unique symbol;
 
 	get traitThing(): Thing | null {
 		const item = this.si_trait_things.item;
@@ -244,34 +263,25 @@ export default class X_Core {
 			}
 		}
 		w_thing_traits.set(thing_traits);
+		// s_banners.redraw();		// force re-render of details
 	}
 	
 	static readonly _____TAGS: unique symbol;
 
-	tag_select_next(next: boolean): boolean { return this.si_tags.find_next_item(next); }
+	tag_select_next(next: boolean): boolean {
+		return this.si_tags.find_next_item(next);
+	}
 
 	tags_update() {
 		const hid = get(w_ancestry_forDetails)?.thing?.hid;
 		const si_tags = (!hid && hid != 0) ? h.si_tags : h.si_tags_forThingHID(hid);
 		if (!si_tags) {
 			this.si_tags.reset();
-		} else if (si_tags.description_bySorted_IDs != this.si_tags.description_bySorted_IDs) {
+		} else if (si_tags.descriptionBy_sorted_IDs != this.si_tags.descriptionBy_sorted_IDs) {
 			this.si_tags.copy_from(si_tags);
 		}
-	}
-	
-	static readonly _____ANCESTRIES: unique symbol;
-	
-	ancestry_select_next(next: boolean) {	// for next/previous in details selection banner
-		if (get(w_search_state) > T_Search.off) {
-			x.si_found.find_next_item(next);
-		} else {
-			x.si_grabs.find_next_item(next);
-		}
-		x.ancestry_focus_update_forDetails();
-		s_banners.redraw();		// force re-render of details
 	}
 
 }
 
-export const x = new X_Core();
+export const x = new UX_Core();
