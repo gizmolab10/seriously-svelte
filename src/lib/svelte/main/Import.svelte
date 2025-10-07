@@ -3,7 +3,7 @@
 	import { T_Storage_Need } from '../../ts/common/Enumerations';
 	import { w_popupView_id } from '../../ts/managers/Stores';
 	import { files } from '../../ts/files/Files';
-	import { s_banners } from '../../ts/state/S_Banners';
+	import { ux_details } from '../../ts/ux/UX_Details';
 	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';
 	export let accept: string = '.' + files.format_preference;
@@ -27,7 +27,7 @@
 			await h.fetch_andBuild_fromFile(files[0]);
 		}
 		target.value = k.empty;		// allow re-selection of the same file, MUST do this AFTER fetch
-		s_banners.t_storage_need = T_Storage_Need.direction;
+		ux_details.t_storage_need = T_Storage_Need.direction;
 		dismiss_popup();
 		layout.grand_build();
 	}

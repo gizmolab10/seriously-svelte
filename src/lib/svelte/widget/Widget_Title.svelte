@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, ex, h, k, u, x, ux, Rect, Size, Point, grabs, Angle } from '../../ts/common/Global_Imports';
+	import { c, ex, h, k, u, x, controls, Rect, Size, Point, grabs, Angle } from '../../ts/common/Global_Imports';
 	import { debug, layout, signals, databases, Seriously_Range } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { w_s_title_edit, w_mouse_location, w_search_state } from '../../ts/managers/Stores';
@@ -35,7 +35,7 @@
 	function isEditing():	  boolean { return $w_s_title_edit?.ancestry_isEditing(ancestry) ?? false; }
 	function isStopping():	  boolean { return $w_s_title_edit?.ancestry_isStopping(ancestry) ?? false; }
 	function isPercolating(): boolean { return $w_s_title_edit?.ancestry_isPercolating(ancestry) ?? false; }
-	function title_extra():	   number { return (ux.inTreeMode && isEditing()) ? 2 : 0; }
+	function title_extra():	   number { return (controls.inTreeMode && isEditing()) ? 2 : 0; }
 	function hasChanges()	 		  { return title_prior != title_binded; }
 	function handle_mouse_up() 		  { clearClicks(); }
 
@@ -76,7 +76,7 @@
 		const reactives = `${$w_thing_color}:::${u.descriptionBy_titles($w_grabbed)}:::${u.descriptionBy_titles($w_expanded)}`;
 		if (reactives != trigger) {
 			const isFocus = ancestry?.isFocus ?? false;
-			const adjust = ux.inRadialMode && isFocus;
+			const adjust = controls.inRadialMode && isFocus;
 			const isEditing = ancestry?.isEditing ?? false;
 			const isGrabbed = ancestry?.isGrabbed ?? false;
 			top = (isGrabbed ? 0.4 : 0) - (adjust ? isGrabbed ? 2.5 : 2 : 0);

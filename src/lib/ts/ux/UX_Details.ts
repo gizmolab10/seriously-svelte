@@ -1,6 +1,7 @@
 import { S_Items, T_Detail, T_Direction } from '../common/Global_Imports';
-import { w_count_details } from '../managers/Stores';
-import { x } from '../common/Global_Imports';
+import { w_show_details, w_count_details } from '../managers/Stores';
+import { x, c } from '../common/Global_Imports';
+import { get } from 'svelte/store';
 
 export class S_Banner_Hideable {
 	slot_isVisible = false;
@@ -14,10 +15,17 @@ export class S_Banner_Hideable {
 		this.t_detail = t_detail;
     }
 
-	get si_detail(): S_Items<any> { return x.si_forType(this.t_detail); }
+	get si_detail(): S_Items<any> {
+		switch (this.t_detail) {
+			case T_Detail.tags:		 return x.si_tags;
+			case T_Detail.selection: return x.si_grabs;
+			case T_Detail.traits:	 return x.si_trait_things;
+			default:				 return S_Items.dummy;
+		}
+	}
 }
 
-class S_Banners {
+class UX_Details {
 	s_banner_hideables_byType: { [t_detail: string]: S_Banner_Hideable } = {};
 
 	constructor() {
@@ -26,12 +34,22 @@ class S_Banners {
 			this.s_banner_hideables_byType[t_detail] = s_hideable;
 		}
 	}
+		
+	static readonly _____MAIN_SHUTOFF: unique symbol;
 
-	redraw() { w_count_details.update(n => n + 1); }	// force re-render of details
-	
+	details_toggle_visibility() {
+		const show_details = !get(w_show_details);
+		w_show_details.set(show_details);
+		if (show_details) {
+			c.show_standalone_UI = true;
+		}
+	}
+		
 	static readonly _____BANNERS: unique symbol;
 
-	banner_update(banner_id: string, selected_title: string) {
+	redraw() { w_count_details.update(n => n + 1); }	// force re-render of details
+
+	update(banner_id: string, selected_title: string) {
 		const next = T_Direction.next === selected_title as unknown as T_Direction;	// unknown defeats ts type check
 		const t_detail = T_Detail[banner_id as keyof typeof T_Detail];
 		switch (t_detail) {
@@ -42,7 +60,7 @@ class S_Banners {
 	}
 
 	banner_title_forDetail(t_detail: T_Detail): string {
-		const si_detail = x.si_forType(t_detail);
+		const si_detail = this.s_banner_hideables_byType[t_detail].si_detail;
 		let title = T_Detail[t_detail];
 		switch (t_detail) {
 			case T_Detail.tags:
@@ -70,4 +88,4 @@ class S_Banners {
 
 }
 
-export const s_banners = new S_Banners();
+export const ux_details = new UX_Details();

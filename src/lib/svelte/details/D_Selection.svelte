@@ -5,7 +5,7 @@
 	import { w_show_details_ofType, w_ancestry_forDetails } from '../../ts/managers/Stores';
 	import { w_ancestry_focus, w_relationship_order } from '../../ts/managers/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
-    import { s_banners } from '../../ts/state/S_Banners';
+    import { ux_details } from '../../ts/ux/UX_Details';
 	import type { Integer } from '../../ts/types/Types';
 	import Text_Table from '../text/Text_Table.svelte';
 	import Separator from '../draw/Separator.svelte';
@@ -31,7 +31,7 @@
 	let trigger = k.empty;
 
 	$: $w_show_details_ofType, layout_forColor();
-	function handle_toggle_properties(event: Event) { s_banners.show_properties = !s_banners.show_properties; }
+	function handle_toggle_properties(event: Event) { ux_details.show_properties = !ux_details.show_properties; }
 
 	$: {
 		update_forAncestry();
@@ -135,7 +135,7 @@
 						picker_offset={picker_offset}/>
 				</Portal>
 			{/if}
-			{#if s_banners.show_properties}
+			{#if ux_details.show_properties}
 				<Text_Table
 					top={12}
 					row_height={11}
@@ -153,6 +153,6 @@
 			length={k.width.details - 2.5}
 			handle_click={handle_toggle_properties}
 			thickness={k.thickness.separator.details}
-			title='click to {s_banners.show_properties ? 'hide' : 'show more'}'/>
+			title='click to {ux_details.show_properties ? 'hide' : 'show more'}'/>
 	{/if}
 {/key}

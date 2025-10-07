@@ -42,16 +42,16 @@ import { Direction } from '../types/Angle';
 import { layout } from '../layout/G_Layout';
 import { colors } from '../managers/Colors';
 import { search } from '../managers/Search';
+import { signals } from '../signals/Signals';
+import { controls } from '../ux/UX_Controls';
 import { show } from '../managers/Visibility';
 import { debug, Debug } from '../debug/Debug';
-import { signals } from '../signals/Signals';
 import { g_tree } from '../layout/G_TreeGraph';
 import { radial } from '../state/S_RadialGraph';
 import { ErrorTrace } from '../debug/ErrorTrace';
 import { Hierarchy } from '../managers/Hierarchy';
 import { databases } from '../database/Databases';
 import { svgPaths } from '../utilities/SVG_Paths';
-import { ux } from '../ux/UX_Common';
 import { g_radial } from '../layout/G_RadialGraph';
 import { components } from '../managers/Components';
 import { Rect, Size, Point } from '../types/Geometry';
@@ -73,11 +73,11 @@ import Angle from '../types/Angle';
 import './Extensions';
 import { k } from './Constants';
 import { e } from '../signals/Events';
-import { x } from '../ux/UX_Core';
+import { ex } from '../ux/UX_Elements';
 import { h } from '../managers/Hierarchy';
+import { x } from '../ux/UX_Identifiables';
 import { u } from '../utilities/Utilities';
 import { p } from '../managers/Preferences';
-import { ex } from '../ux/UX_Elements';
 import { c } from '../managers/Configuration';
 
 import { transparentize } from 'color2k';
@@ -93,7 +93,7 @@ export {
 	g_tree, g_radial,
 	e, c, h, k, p, u, ex, x,
 	interact, transparentize,
-	debug, svgPaths, databases, ux,
+	debug, svgPaths, databases, controls,
 	busy, show, files, builds, print, search,
 	colors, layout, radial, signals, components,
 

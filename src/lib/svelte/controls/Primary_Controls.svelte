@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, e, ex, h, k, p, u, ux, x, show, grabs, search, colors, layout } from '../../ts/common/Global_Imports';
+	import { c, e, ex, h, k, p, u, controls, x, show, grabs, search, colors, layout } from '../../ts/common/Global_Imports';
 	import { w_search_preferences, w_search_state, w_search_show_controls } from '../../ts/managers/Stores';
 	import { w_background_color, w_device_isMobile, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { w_show_details, w_show_graph_ofType, w_show_tree_ofType } from '../../ts/managers/Stores';
@@ -108,7 +108,7 @@
 					origin={Point.x(lefts[2])}
 					selected={[$w_show_graph_ofType]}
 					titles={[T_Graph.tree, T_Graph.radial]}
-					handle_selection={(titles) => ux.handle_choiceOf_t_graph('graph', titles)}/>
+					handle_selection={(titles) => controls.handle_segmented_choices('graph', titles)}/>
 			{/key}
 			<div class='scaling-controls'>
 				<Button name={T_Control.grow}

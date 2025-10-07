@@ -1,9 +1,10 @@
-import { c, ex, h, k, u, ux, x, g_tree, Point, debug, search, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
+import { c, ex, h, k, u, controls, x, g_tree, Point, debug, search, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
 import { w_count_window_resized, w_s_alteration, w_s_title_edit, w_user_graph_offset, w_control_key_down } from '../managers/Stores';
 import { w_count_mouse_up, w_mouse_location, w_mouse_location_scaled, w_scaled_movement } from '../managers/Stores';
 import { T_Search, T_Action, T_Control, T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { w_search_state, w_device_isMobile, w_ancestry_focus, w_ancestry_forDetails } from '../managers/Stores';
 import { S_Mouse, S_Alteration } from '../common/Global_Imports';
+import { ux_details } from '../ux/UX_Details';
 import Mouse_Timer from './Mouse_Timer';
 import { get } from 'svelte/store';
 
@@ -163,12 +164,12 @@ export class Events {
 			}
 		} else if (s_mouse.isUp) {
 			switch (t_control) {
-				case T_Control.help:	ux.showHelp(); break;
+				case T_Control.help:	controls.showHelp_home(); break;
 				case T_Control.search:	search.activate(); break;
-				case T_Control.details: ux.toggle_details(); break;
 				case T_Control.grow:	layout.scaleBy(k.ratio.zoom_in) - 20; break;
 				case T_Control.shrink:	layout.scaleBy(k.ratio.zoom_out) - 20; break;
-				default:				ux.togglePopupID(t_control); break;
+				case T_Control.details: ux_details.details_toggle_visibility(); break;
+				default:				controls.togglePopupID(t_control); break;
 			}
 		}
 	}
@@ -182,7 +183,7 @@ export class Events {
 				h.ancestry_alter_connectionTo_maybe(ancestry);
 				layout.grand_build();
 				return;
-			} else if (!shiftKey && ux.inRadialMode) {
+			} else if (!shiftKey && controls.inRadialMode) {
 				if (ancestry.becomeFocus()) {
 					layout.grand_build();
 					return;
@@ -245,8 +246,8 @@ export class Events {
 						}
 					}
 					switch (key) {
-						case '?':				ux.showHelp(); return;
-						case 'm':				ux.toggle_graph_type(); break;
+						case '?':				controls.showHelp_home(); return;
+						case 'm':				controls.toggle_graph_type(); break;
 						case ']':				x.ancestry_next_focusOn(true); break;
 						case '[':				x.ancestry_next_focusOn(false); break;
 						case '!':				layout.grand_adjust_toFit(); break;
@@ -278,7 +279,7 @@ export class Events {
 	async handle_action_clickedAt(s_mouse: S_Mouse, t_action: number, column: number, name: string) {
 		const ancestry = get(w_ancestry_forDetails);	
 		if (get(w_control_key_down)) {
-			ux.showHelpFor(t_action, column);
+			controls.showHelp_for(t_action, column);
 		} else if (!!ancestry && !this.handle_isAction_disabledAt(t_action, column) && !!h) {
 			const a = this.actions;
 			switch (t_action) {
@@ -306,13 +307,13 @@ export class Events {
 					case a.add.child:				await h.ancestry_edit_persistentCreateChildOf(ancestry); break;
 					case a.add.sibling:				await h.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break;
 					case a.add.line:				await h.thing_edit_persistentAddLine(ancestry); break;
-					case a.add.parent:				ux.toggle_alteration(ancestry, T_Alteration.add, Predicate.contains); break;
-					case a.add.related:				ux.toggle_alteration(ancestry, T_Alteration.add, Predicate.isRelated); break;
+					case a.add.parent:				controls.toggle_alteration(ancestry, T_Alteration.add, Predicate.contains); break;
+					case a.add.related:				controls.toggle_alteration(ancestry, T_Alteration.add, Predicate.isRelated); break;
 				}								break;
 				case T_Action.delete:			switch (column) {
 					case a.delete.selection:		await h.ancestries_rebuild_traverse_persistentDelete(x.si_grabs.items); break;
-					case a.delete.parent:			ux.toggle_alteration(ancestry, T_Alteration.delete, Predicate.contains); break;
-					case a.delete.related:			ux.toggle_alteration(ancestry, T_Alteration.delete, Predicate.isRelated); break;
+					case a.delete.parent:			controls.toggle_alteration(ancestry, T_Alteration.delete, Predicate.contains); break;
+					case a.delete.related:			controls.toggle_alteration(ancestry, T_Alteration.delete, Predicate.isRelated); break;
 				}								break;
 				case T_Action.move:				switch (column) {
 					case a.move.up:					h.ancestry_rebuild_persistent_grabbed_atEnd_moveUp_maybe( true, false, true, false); break;
@@ -332,7 +333,7 @@ export class Events {
 			const no_siblings = !ancestry.hasSiblings;
 			const is_root = ancestry.isRoot;
 			const a = this.actions;
-			const disable_revealConceal = no_children || is_root || (ux.inRadialMode && ancestry.isFocus);
+			const disable_revealConceal = no_children || is_root || (controls.inRadialMode && ancestry.isFocus);
 			switch (t_action) {
 				case T_Action.browse:			switch (column) {
 					case a.browse.left:				return is_root;

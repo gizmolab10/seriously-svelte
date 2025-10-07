@@ -1,18 +1,18 @@
+import { h, p, u, controls, debug, search, layout } from '../common/Global_Imports';
 import { w_s_alteration, w_s_title_edit, w_thing_traits } from '../managers/Stores';
 import { w_t_startup, w_data_updated, w_search_state } from '../managers/Stores';
-import { h, p, u, ux, debug, search, layout } from '../common/Global_Imports';
 import { w_ancestry_forDetails, w_ancestry_focus } from '../managers/Stores';
 import { T_Detail, T_Search, T_Startup } from '../common/Global_Imports';
 import { Tag, Thing, Trait, Ancestry } from '../common/Global_Imports';
 import { w_show_details_ofType } from '../managers/Stores';
 import { S_Items } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
-import { s_banners } from '../state/S_Banners';
+import { ux_details } from './UX_Details';
 import { get } from 'svelte/store';
 
 type Identifiable_S_Items_Pair<T = Identifiable, U = S_Items<T>> = [T, U | null];
 
-export default class UX_Core {
+export default class UX_Identifiables {
 
 	si_recents = new S_Items<Identifiable_S_Items_Pair>([]);
 	si_trait_things = new S_Items<Thing>([]);
@@ -24,15 +24,16 @@ export default class UX_Core {
 	parents_focus!: Ancestry;
 	prior_focus!: Ancestry;
 
-	//////////////////////////
-	//						//
-	//	manage				//
-	//	  recent, search,	//
-	//	  details, focus,	//
-	//	  grab, expand,		//
-	//	  tags, traits		//
-	//						//
-	//////////////////////////
+	//////////////////////////////
+	//							//
+	//	manage identifiables:	//
+	//							//
+	//	  recents, found,		//
+	//	  details, focus,		//
+	//	  grabs, expandeds,		//
+	//	  tags, traits			//
+	//							//
+	//////////////////////////////
 
 	constructor() {
 		w_data_updated.subscribe((count: number) => {
@@ -67,15 +68,6 @@ export default class UX_Core {
 			this.tags_update();
 		}
 	}
-
-	si_forType(t_detail: T_Detail): S_Items<any> {
-		switch (t_detail) {
-			case T_Detail.tags:		 return this.si_tags;
-			case T_Detail.selection: return this.si_grabs;
-			case T_Detail.traits:	 return this.si_trait_things;
-			default:				 return S_Items.dummy;
-		}
-	}
 		
 	static readonly _____ANCESTRY: unique symbol;
 
@@ -88,7 +80,7 @@ export default class UX_Core {
 			this.si_grabs.find_next_item(next);
 		}
 		this.ancestry_update_forDetails();
-		s_banners.redraw();		// force re-render of details
+		ux_details.redraw();		// force re-render of details
 	}
 
 	ancestry_update_forDetails() {
@@ -111,13 +103,13 @@ export default class UX_Core {
 		this.si_recents.find_next_item(next);
 		const pair = this.si_recents.item as [Ancestry, S_Items<Ancestry> | null];
 		if (!!pair && Array.isArray(pair) && pair.length == 2) {
-			const [ancestry, grabbed] = pair;
+			const [ancestry, si_grabs] = pair;
 			if (!!ancestry) {
 				w_ancestry_focus.set(ancestry);
 				ancestry.expand();
 			}
-			if (!!grabbed) {
-				this.si_grabs.copy_from(grabbed);
+			if (!!si_grabs) {
+				this.si_grabs = si_grabs;
 			}
 		}
 	}
@@ -189,7 +181,7 @@ export default class UX_Core {
 				grabbed.push(rootAncestry);
 			}
 		}
-		if (grabbed.length == 0 && ux.inTreeMode) {
+		if (grabbed.length == 0 && controls.inTreeMode) {
 			grabbed = [rootAncestry];
 		} else {
 			h?.stop_alteration(); // do not show editingActions for root
@@ -263,7 +255,7 @@ export default class UX_Core {
 			}
 		}
 		w_thing_traits.set(thing_traits);
-		// s_banners.redraw();		// force re-render of details
+		// ux_details.redraw();		// force re-render of details
 	}
 	
 	static readonly _____TAGS: unique symbol;
@@ -278,10 +270,10 @@ export default class UX_Core {
 		if (!si_tags) {
 			this.si_tags.reset();
 		} else if (si_tags.descriptionBy_sorted_IDs != this.si_tags.descriptionBy_sorted_IDs) {
-			this.si_tags.copy_from(si_tags);
+			this.si_tags = si_tags;
 		}
 	}
 
 }
 
-export const x = new UX_Core();
+export const x = new UX_Identifiables();

@@ -1,4 +1,4 @@
-import { ex, k, ux, x, colors, Ancestry, T_Element, T_Control } from '../common/Global_Imports';
+import { ex, k, controls, x, colors, Ancestry, T_Element, T_Control } from '../common/Global_Imports';
 import { w_control_key_down, w_background_color } from '../managers/Stores';
 import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
@@ -82,7 +82,7 @@ export default class S_Element {
 		if (this.isADot) {
 			const a = this.ancestry;
 			switch (this.type) {
-				case T_Element.reveal: return ux.inTreeMode && a.isExpanded == a.isEditing;
+				case T_Element.reveal: return controls.inTreeMode && a.isExpanded == a.isEditing;
 				default:			   return a.isEditing;
 			}
 		} else {

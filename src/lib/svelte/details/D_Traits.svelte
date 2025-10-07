@@ -4,8 +4,8 @@
 	import { w_thing_traits } from '../../ts/managers/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Text_Editor from '../text/Text_Editor.svelte';
-	import { s_banners } from '../../ts/state/S_Banners';
-    const s_banner_hideable = s_banners.s_banner_hideables_byType[T_Detail.traits];
+	import { ux_details } from '../../ts/ux/UX_Details';
+    const s_banner_hideable = ux_details.s_banner_hideables_byType[T_Detail.traits];
 	const s_button = ex.s_element_for(new Identifiable('trait'), T_Element.button, 'trait');
 	let text_box_size = new Size(k.width.details - 34, 68);
 	s_button.set_forHovering(colors.default, 'pointer');

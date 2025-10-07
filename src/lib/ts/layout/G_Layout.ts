@@ -1,4 +1,4 @@
-import { c, h, k, p, u, ux, debug, g_tree, g_radial, signals, T_Graph } from '../common/Global_Imports';
+import { c, h, k, p, u, controls, debug, g_tree, g_radial, signals, T_Graph } from '../common/Global_Imports';
 import { w_show_details, w_show_graph_ofType, w_search_show_controls } from '../managers/Stores';
 import { G_Widget, S_Component, T_Preference } from '../common/Global_Imports';
 import { Rect, Size, Point, Thing, Ancestry } from '../common/Global_Imports';
@@ -47,7 +47,7 @@ export default class G_Layout {
 	}
 
 	grand_layout(component: S_Component | null = null) {
-		if (ux.inRadialMode) {
+		if (controls.inRadialMode) {
 			g_radial.grand_layout_radial();
 		} else {
 			g_tree.grand_layout_tree();
@@ -74,7 +74,7 @@ export default class G_Layout {
 	get rect_ofAllWidgets(): Rect { return u.get_drawRectFor_g_widgets(this.all_g_widgets); }
 
 	get all_g_widgets(): G_Widget[] {
-		if (ux.inRadialMode) {
+		if (controls.inRadialMode) {
 			return g_radial.visible_g_widgets;
 		} else {
 			return g_tree.visible_g_widgets;

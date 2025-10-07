@@ -7,7 +7,7 @@
 	import { T_Database } from '../../ts/database/DB_Common';
     import Buttons_Row from '../mouse/Buttons_Row.svelte';
 	import { w_t_database } from '../../ts/managers/Stores';
-    import { s_banners } from '../../ts/state/S_Banners';
+    import { ux_details } from '../../ts/ux/UX_Details';
 	import Text_Table from '../text/Text_Table.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../draw/Separator.svelte';
@@ -38,7 +38,7 @@
 	}
 
 	$: {
-		const _ = `${s_banners.t_storage_need}:::${p.show_other_databases}`;
+		const _ = `${ux_details.t_storage_need}:::${p.show_other_databases}`;
 		reattachments++;
 	}
 
@@ -65,7 +65,7 @@
 	}
 
 	function action_titles() {
-		switch (s_banners.t_storage_need) {
+		switch (ux_details.t_storage_need) {
 			case T_Storage_Need.direction: return ['local file', ...ids_forDirection];
 			case T_Storage_Need.format:    return ['file type', ...ids_forFormat()];
 			case T_Storage_Need.busy:      return [`${storage_choice}ing...`];
@@ -82,7 +82,7 @@
 	}
 
 	function handle_actionRequest(t_request: T_Request, s_mouse: S_Mouse, column: number): any {
-		const ids = (s_banners.t_storage_need == T_Storage_Need.direction) ? ids_forDirection : ids_forFormat();
+		const ids = (ux_details.t_storage_need == T_Storage_Need.direction) ? ids_forDirection : ids_forFormat();
 		switch (t_request) {
 			case T_Request.handle_click: return handle_click_forColumn(s_mouse, column);
 			case T_Request.name:        return ids[column];
@@ -106,16 +106,16 @@
 	}
 	
 	function handle_click_forColumn(s_mouse, column) {
-		const beginning = s_banners.t_storage_need == T_Storage_Need.direction;
+		const beginning = ux_details.t_storage_need == T_Storage_Need.direction;
 		const ids = beginning ? ids_forDirection : ids_forFormat();
 		if (s_mouse.isHover) {
 			s_element_byStorageType[ids[column]].isOut = s_mouse.isOut;
 		} else if (s_mouse.isDown) {
 			const choice = ids[column];
-			s_banners.t_storage_need = T_Storage_Need.direction; // reset by default
+			ux_details.t_storage_need = T_Storage_Need.direction; // reset by default
 			if (beginning) {
 				storage_choice = choice;
-				s_banners.t_storage_need = T_Storage_Need.format; // not reset
+				ux_details.t_storage_need = T_Storage_Need.format; // not reset
 			} else if (choice != T_File_Format.cancel) {
 				const format = choice as T_File_Format;
 				switch (storage_choice) {
@@ -187,7 +187,7 @@
 			button_height={k.height.button}
 			center={new Point(width / 2 + 3, tops[4])}
 			separator_thickness={k.thickness.separator.details}
-			name={`data-${(s_banners.t_storage_need == T_Storage_Need.direction) ? 'action' : 'format'}`}/>
+			name={`data-${(ux_details.t_storage_need == T_Storage_Need.direction) ? 'action' : 'format'}`}/>
 	{/key}
 	<Separator name='bottom-of-data'
 		isHorizontal={true}

@@ -2,17 +2,17 @@
 	import { w_ancestry_forDetails, w_show_details_ofType } from '../../ts/managers/Stores';
 	import { k, u, T_Layer, T_Detail, layout } from '../../ts/common/Global_Imports';
 	import Glows_Banner from '../mouse/Glows_Banner.svelte';
-	import { s_banners } from '../../ts/state/S_Banners';
+	import { ux_details } from '../../ts/ux/UX_Details';
     export let extra_titles: string[] = [];
     export let t_detail: T_Detail;
-	const s_banner_hideable = s_banners.s_banner_hideables_byType[t_detail];
+	const s_banner_hideable = ux_details.s_banner_hideables_byType[t_detail];
 	const si_detail = s_banner_hideable?.si_detail;
 	const { w_length: length } = si_detail;
 	const { w_index: index } = si_detail;
 	const { w_items: items } = si_detail;
 	let trigger = k.empty;
 	let hideable_isVisible = true;
-	let titles = [s_banners.banner_title_forDetail(t_detail), ...extra_titles];
+	let titles = [ux_details.banner_title_forDetail(t_detail), ...extra_titles];
 
 	update_hideable_isVisible();
 
@@ -25,7 +25,7 @@
 
 	$: {
 		const _ = `${$index}:::${$length}:::${u.descriptionBy_sorted_IDs($items)}:::${$w_ancestry_forDetails?.id}`;
-		const new_titles = [s_banners.banner_title_forDetail(t_detail), ...extra_titles];
+		const new_titles = [ux_details.banner_title_forDetail(t_detail), ...extra_titles];
 		if (new_titles.join(k.comma) != titles.join(k.comma)) {
 			console.log(`titles: "${titles}" => "${new_titles}"`);
 			titles = new_titles;

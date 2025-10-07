@@ -2,7 +2,7 @@
 	import { T_Layer, T_Graph, T_Control, T_Kinship } from '../../ts/common/Global_Imports';
 	import { w_show_tree_ofType, w_show_graph_ofType } from '../../ts/managers/Stores';
 	import { w_depth_limit, w_separator_color } from '../../ts/managers/Stores';
-	import { k, u, ux, Point, layout } from '../../ts/common/Global_Imports';
+	import { k, u, controls, Point, layout } from '../../ts/common/Global_Imports';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Slider from '../mouse/Slider.svelte';
@@ -66,6 +66,6 @@
 			height={k.height.button + 2}
 			selected={$w_show_tree_ofType}
 			titles={[T_Kinship.children, T_Kinship.related]}
-			handle_selection={(titles) => ux.handle_choiceOf_t_graph('tree', titles)}/>
+			handle_selection={(titles) => controls.handle_segmented_choices('tree', titles)}/>
 	{/key}
 </div>

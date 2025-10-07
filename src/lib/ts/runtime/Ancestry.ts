@@ -1,6 +1,6 @@
 import { Rect, Size, Point, Thing, Direction, Predicate, databases, Relationship } from '../common/Global_Imports';
 import { T_Graph, T_Create, T_Kinship, T_Predicate, T_Alteration, T_Component } from '../common/Global_Imports';
-import { c, h, k, p, u, ux, x, show, debug, search, svgPaths, components } from '../common/Global_Imports';
+import { c, h, k, p, u, controls, x, show, debug, search, svgPaths, components } from '../common/Global_Imports';
 import { w_t_database, w_depth_limit, w_s_title_edit, w_s_alteration } from '../managers/Stores';
 import { G_Widget, G_Paging, G_Cluster, G_TreeLine } from '../common/Global_Imports';
 import { w_ancestry_focus, w_show_graph_ofType } from '../managers/Stores';
@@ -150,7 +150,7 @@ export default class Ancestry extends Identifiable {
 	static readonly _____SVG: unique symbol;
 
 	svgPathFor_tinyDots_outsideReveal(points_toChild: boolean): string | null {
-		const in_radial_mode = ux.inRadialMode;
+		const in_radial_mode = controls.inRadialMode;
 		const isVisible_forChild = this.hasChildren && show.children_dots && (in_radial_mode ? true : !this.isExpanded);
 		const isVisible_inRadial = points_toChild ? isVisible_forChild : this.hasParents && (this.isBidirectional ? show.related_dots : show.parent_dots);
 		const show_outside_tinyDots = in_radial_mode ? isVisible_inRadial : isVisible_forChild;
@@ -220,7 +220,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	assure_isVisible_within(ancestries: Array<Ancestry>) {
-		if (!!this.predicate && ux.inRadialMode) {
+		if (!!this.predicate && controls.inRadialMode) {
 			const index = u.indexOf_withMatchingThingID_in(this, ancestries);
 			const g_paging = this.g_cluster?.g_paging;
 			if (!!g_paging && !g_paging.index_isVisible(index)) {
@@ -232,7 +232,7 @@ export default class Ancestry extends Identifiable {
 
 	ancestry_assureIsVisible(): boolean {
 		if (!this.isVisible) {
-			if (ux.inTreeMode) {
+			if (controls.inTreeMode) {
 				const focusAncestry = this.ancestry_createUnique_byStrippingBack(get(w_depth_limit));
 				focusAncestry?.becomeFocus();
 				this.reveal_toFocus();
@@ -246,7 +246,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	get isVisible(): boolean {
-		if (ux.inRadialMode) {
+		if (controls.inRadialMode) {
 			const parent = this.parentAncestry;
 			const g_paging = this.g_paging;
 			return this.isFocus || (!!parent && parent.isFocus && (g_paging?.index_isVisible(this.siblingIndex) ?? true));
@@ -369,7 +369,7 @@ export default class Ancestry extends Identifiable {
 					this.reorder_within(this.sibling_ancestries, up);
 				}
 				if (!!grabAncestry) {
-					if (ux.inRadialMode) {
+					if (controls.inRadialMode) {
 						needs_graphRebuild = grabAncestry.assure_isVisible_within(this.sibling_ancestries) || needs_graphRebuild;	// change paging
 					} else if (!parentAncestry.isFocus && !grabAncestry.isVisible) {
 						needs_graphRebuild = parentAncestry.becomeFocus() || needs_graphRebuild;
@@ -590,7 +590,7 @@ export default class Ancestry extends Identifiable {
 	get ancestry_ofFirst_visibleChild(): Ancestry {
 		const childAncestries = this.childAncestries;
 		const first = childAncestries[0]
-		if (ux.inRadialMode) {
+		if (controls.inRadialMode) {
 			const g_paging = this.g_paging
 			const maybe = g_paging?.ancestry_atIndex(childAncestries);
 			if (!!maybe) {
@@ -876,7 +876,7 @@ export default class Ancestry extends Identifiable {
 	get pointsNormal(): boolean {
 		const hasVisibleChildren = this.isExpanded && this.hasChildren;
 		const radial_pointsNormal = this.g_widget?.widget_pointsNormal ?? true;
-		return ux.inRadialMode ? radial_pointsNormal : !hasVisibleChildren;
+		return controls.inRadialMode ? radial_pointsNormal : !hasVisibleChildren;
 	}
 
 	get id_thing(): string {
@@ -916,7 +916,7 @@ export default class Ancestry extends Identifiable {
 	rect_ofComponent(component: S_Component | null):						   Rect | null { return component?.boundingRect ?? null; }
 
 	showsReveal_forPointingToChild(points_toChild: boolean): boolean {
-		const isRadialFocus = ux.inRadialMode && this.isFocus;
+		const isRadialFocus = controls.inRadialMode && this.isFocus;
 		const isBulkAlias = this.thing?.isBulkAlias ?? false;
 		const isBidirectional = this.predicate?.isBidirectional ?? true;
 		const hasChildren = this.relationships_count_forChildren(points_toChild) > 0;
