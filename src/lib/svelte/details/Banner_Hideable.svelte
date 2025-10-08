@@ -1,34 +1,41 @@
 <script lang='ts'>
-import { k, u, T_Layer, T_Detail, layout, details } from '../../ts/common/Global_Imports';
+	import { k, u, T_Layer, T_Detail, layout, details } from '../../ts/common/Global_Imports';
 	import { w_ancestry_forDetails, w_show_details_ofType } from '../../ts/managers/Stores';
 	import Glows_Banner from '../mouse/Glows_Banner.svelte';
     export let extra_titles: string[] = [];
     export let t_detail: T_Detail;
 	const s_banner_hideable = details.s_banner_hideables_byType[t_detail];
-	const si_detail = s_banner_hideable?.si_detail;
-	const { w_length: length } = si_detail;
-	const { w_index: index } = si_detail;
-	const { w_items: items } = si_detail;
+	const { w_description: w_description } = s_banner_hideable?.si_items;
 	let trigger = k.empty;
 	let hideable_isVisible = true;
-	let titles = [details.banner_title_forDetail(t_detail), ...extra_titles];
+	let title = details.banner_title_forDetail(t_detail);
+	let titles = [title, ...extra_titles];
 
 	update_hideable_isVisible();
 
-	function update_trigger() { trigger = `${titles.join(k.comma)}:::${hideable_isVisible}:::${$w_ancestry_forDetails?.id}`; }
+	$: {
+		const _ = `${$w_description}:::${$w_ancestry_forDetails?.id}`;
+		update_banner_titles();
+	}
 
 	$: { 
 		const _ = $w_show_details_ofType;
 		update_hideable_isVisible();
 	}
 
-	$: {
-		const _ = `${$index}:::${$length}:::${u.descriptionBy_sorted_IDs($items)}:::${$w_ancestry_forDetails?.id}`;
-		const new_titles = [details.banner_title_forDetail(t_detail), ...extra_titles];
-		if (new_titles.join(k.comma) != titles.join(k.comma)) {
-			console.log(`titles: "${titles}" => "${new_titles}"`);
+	function update_trigger() { trigger = `${titles.join(k.comma)}:::${hideable_isVisible}:::${$w_description}:::${$w_ancestry_forDetails?.id}`; }
+
+	function update_banner_titles() {
+		const new_title = details.banner_title_forDetail(t_detail);
+		const new_titles = [new_title, ...extra_titles];
+		if (new_titles.join(k.comma) == titles.join(k.comma)) {
+			console.log(`no trigger: "${new_title}"`);
+		} else {
+			const prior_titles = titles;
 			titles = new_titles;
+			title = new_title;
 			update_trigger();
+			console.log(`now: "${new_title}" description: "${$w_description}"`);
 		}
 	}
 

@@ -15,7 +15,7 @@ export class S_Banner_Hideable {
 		this.t_detail = t_detail;
     }
 
-	get si_detail(): S_Items<any> {
+	get si_items(): S_Items<any> {
 		switch (this.t_detail) {
 			case T_Detail.tags:		 return x.si_tags;
 			case T_Detail.selection: return x.si_grabs;
@@ -60,24 +60,24 @@ class UX_Details {
 	}
 
 	banner_title_forDetail(t_detail: T_Detail): string {
-		const si_detail = this.s_banner_hideables_byType[t_detail].si_detail;
+		const si_items = this.s_banner_hideables_byType[t_detail].si_items;
 		let title = T_Detail[t_detail];
 		switch (t_detail) {
 			case T_Detail.tags:
-				title = si_detail.title('tag', 'tag', title);
+				title = si_items.title('tag', 'tag', title);
 				break;
 			case T_Detail.traits:
-				title = si_detail.title('trait', 'trait', title);
+				title = si_items.title('trait', 'trait', title);
 				break;
 			case T_Detail.selection:
 				const si_found = x.si_found;
 				const row	   = si_found.index;
 				const found    = si_found.length;
-				const grabbed  = si_detail.items;
+				const grabbed  = si_items.items;
 				if (row != null && !!found && found > 1 && get(w_search_state) != T_Search.off) {
 					title = si_found.title('search result', 'focus', title);
 				} else if (!!grabbed) {
-					title = si_detail.title('selected', 'focus', title); break;
+					title = si_items.title('selected', 'focus', title); break;
 				}
 				break;
 			default:
