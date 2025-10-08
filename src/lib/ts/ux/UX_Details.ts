@@ -1,5 +1,5 @@
+import { S_Items, T_Search, T_Detail, T_Direction, T_Storage_Need } from '../common/Global_Imports';
 import { w_search_state, w_show_details, w_count_details } from '../managers/Stores';
-import { S_Items, T_Search, T_Detail, T_Direction } from '../common/Global_Imports';
 import { x, c } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
@@ -27,6 +27,7 @@ export class S_Banner_Hideable {
 
 class UX_Details {
 	s_banner_hideables_byType: { [t_detail: string]: S_Banner_Hideable } = {};
+	t_storage_need = T_Storage_Need.direction;
 
 	constructor() {
 		for (const t_detail of Object.values(T_Detail) as T_Detail[]) {
