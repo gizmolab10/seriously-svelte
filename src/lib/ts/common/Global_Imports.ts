@@ -37,12 +37,14 @@ import S_Items from '../state/S_Items';
 import { builds } from './Builds';
 import { busy } from '../state/S_Busy';
 import { files } from '../files/Files';
+import { search } from '../ux/UX_Search';
 import { print } from '../utilities/Print';
+import { details } from '../ux/UX_Details';
 import { Direction } from '../types/Angle';
 import { layout } from '../layout/G_Layout';
 import { colors } from '../managers/Colors';
-import { search } from '../ux/UX_Search';
 import { signals } from '../signals/Signals';
+import { elements } from '../ux/UX_Elements';
 import { controls } from '../ux/UX_Controls';
 import { show } from '../managers/Visibility';
 import { debug, Debug } from '../debug/Debug';
@@ -73,7 +75,6 @@ import Angle from '../types/Angle';
 import './Extensions';
 import { k } from './Constants';
 import { e } from '../signals/Events';
-import { elements } from '../ux/UX_Elements';
 import { h } from '../managers/Hierarchy';
 import { x } from '../ux/UX_Identifiables';
 import { u } from '../utilities/Utilities';
@@ -91,10 +92,11 @@ export {
 	G_Paging, G_Cluster, G_RadialGraph, G_Thing_Pages, G_ArcSlider,
 
 	g_tree, g_radial,
-	e, c, h, k, p, u, elements, x,
+	e, c, h, k, p, u, x,
 	interact, transparentize,
-	debug, svgPaths, databases, controls,
-	busy, show, files, builds, print, search,
+	debug, svgPaths, databases,
+	busy, show, files, builds, print,
+	search, details, elements, controls,
 	colors, layout, radial, signals, components,
 
 	Angle, Direction, 

@@ -1,5 +1,5 @@
-import { S_Items, T_Detail, T_Direction } from '../common/Global_Imports';
-import { w_show_details, w_count_details } from '../managers/Stores';
+import { w_search_state, w_show_details, w_count_details } from '../managers/Stores';
+import { S_Items, T_Search, T_Detail, T_Direction } from '../common/Global_Imports';
 import { x, c } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
@@ -74,7 +74,7 @@ class UX_Details {
 				const row	   = si_found.index;
 				const found    = si_found.length;
 				const grabbed  = si_detail.items;
-				if (row != null && !!found && found > 1) {
+				if (row != null && !!found && found > 1 && get(w_search_state) != T_Search.off) {
 					title = si_found.title('search result', 'focus', title);
 				} else if (!!grabbed) {
 					title = si_detail.title('selected', 'focus', title); break;

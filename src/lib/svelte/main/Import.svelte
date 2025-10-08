@@ -1,9 +1,8 @@
 <script lang='ts'>
-	import { h, k, elements, x, Point, layout } from '../../ts/common/Global_Imports';
+	import { h, k, x, Point, layout, details, elements } from '../../ts/common/Global_Imports';
 	import { T_Storage_Need } from '../../ts/common/Enumerations';
 	import { w_popupView_id } from '../../ts/managers/Stores';
 	import { files } from '../../ts/files/Files';
-	import { details } from '../../ts/ux/UX_Details';
 	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';
 	export let accept: string = '.' + files.format_preference;

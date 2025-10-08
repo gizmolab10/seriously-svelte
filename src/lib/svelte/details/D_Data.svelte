@@ -1,13 +1,12 @@
 <script lang='ts'>
-	import { h, k, p, u, elements, x, busy, Point, colors, S_Element, databases, Hierarchy } from '../../ts/common/Global_Imports';
+	import { h, k, p, u, elements, x, busy, Point, colors, details, S_Element, databases, Hierarchy } from '../../ts/common/Global_Imports';
 	import { T_File_Format, T_File_Operation, T_Storage_Need, T_Signal } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Detail, T_Element, T_Preference, T_Request } from '../../ts/common/Global_Imports';
 	import { w_data_updated, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import { T_Database } from '../../ts/database/DB_Common';
-    import Buttons_Row from '../mouse/Buttons_Row.svelte';
 	import { w_t_database } from '../../ts/managers/Stores';
-    import { details } from '../../ts/ux/UX_Details';
+    import Buttons_Row from '../mouse/Buttons_Row.svelte';
 	import Text_Table from '../text/Text_Table.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../draw/Separator.svelte';

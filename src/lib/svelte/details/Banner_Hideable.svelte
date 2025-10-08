@@ -1,8 +1,7 @@
 <script lang='ts'>
+import { k, u, T_Layer, T_Detail, layout, details } from '../../ts/common/Global_Imports';
 	import { w_ancestry_forDetails, w_show_details_ofType } from '../../ts/managers/Stores';
-	import { k, u, T_Layer, T_Detail, layout } from '../../ts/common/Global_Imports';
 	import Glows_Banner from '../mouse/Glows_Banner.svelte';
-	import { details } from '../../ts/ux/UX_Details';
     export let extra_titles: string[] = [];
     export let t_detail: T_Detail;
 	const s_banner_hideable = details.s_banner_hideables_byType[t_detail];

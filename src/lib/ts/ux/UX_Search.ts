@@ -1,6 +1,6 @@
-import { T_Search, T_Startup, T_Preference } from "../common/Global_Imports";
 import { w_search_results_found, w_search_results_changed } from '../managers/Stores';
-import { c, k, h, p, x, Thing, Ancestry } from "../common/Global_Imports";
+import { c, k, h, p, x, Thing, details, Ancestry } from "../common/Global_Imports";
+import { T_Search, T_Startup, T_Preference } from "../common/Global_Imports";
 import { w_search_state, w_search_show_controls } from '../managers/Stores';
 import { Search_Node } from '../types/Search_Node';
 import { w_t_startup } from '../managers/Stores';
@@ -21,6 +21,7 @@ class UX_Search {
 		w_search_results_found.set(0);
 		w_search_state.set(T_Search.off);
 		w_search_show_controls.set(false);
+		details.redraw();		// force re-render of details
 	}
 
 	set selected_row(row: number) {

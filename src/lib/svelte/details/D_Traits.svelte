@@ -1,10 +1,9 @@
 <script lang='ts'>
 	import { T_Trait, T_Detail, T_Element, T_Request, T_Direction } from '../../ts/common/Global_Imports';
-	import { h, k, elements, x, colors, Size, S_Mouse } from '../../ts/common/Global_Imports';
+	import { h, k, x, Size, S_Mouse, colors, details, elements } from '../../ts/common/Global_Imports';
 	import { w_thing_traits } from '../../ts/managers/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Text_Editor from '../text/Text_Editor.svelte';
-	import { details } from '../../ts/ux/UX_Details';
     const s_banner_hideable = details.s_banner_hideables_byType[T_Detail.traits];
 	const s_button = elements.s_element_for(new Identifiable('trait'), T_Element.button, 'trait');
 	let text_box_size = new Size(k.width.details - 34, 68);

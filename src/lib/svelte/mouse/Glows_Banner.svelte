@@ -1,8 +1,7 @@
 <script lang='ts'>
-	import { k, Rect, Size, Point, colors } from '../../ts/common/Global_Imports';
+	import { k, Rect, Size, Point, colors, details } from '../../ts/common/Global_Imports';
 	import { w_background_color } from '../../ts/managers/Stores';
 	import Glow_Button from '../mouse/Glow_Button.svelte';
-	import { details } from '../../ts/ux/UX_Details';
 	import G_Repeater from '../../ts/layout/G_Repeater';
 	import Separator from '../draw/Separator.svelte';
 	export let toggle_hidden: (title: string) => void;

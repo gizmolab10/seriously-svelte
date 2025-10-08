@@ -18,6 +18,7 @@
 	const next_previous_titles = [T_Direction.previous, T_Direction.next];
 	let show_secondary_controls = $w_search_show_controls || ($w_show_graph_ofType == T_Graph.tree);
 	let prior_graph_type = $w_show_graph_ofType;
+	let prior_search_state = $w_search_state;
 	let extra_selection_titles = [];
 	let extra_traits_titles = [];
 	let extra_tags_titles = [];
@@ -33,7 +34,8 @@
 		const tr_changed = update_titles($w_trait_things.length, extra_traits_titles);
 		const g_changed = update_titles($w_grabbed.length, extra_selection_titles);
 		const t_changed = update_titles($w_tags.length, extra_tags_titles);
-		if (t_changed || g_changed || tr_changed) {
+		const s_changed = $w_search_state != prior_search_state;
+		if (t_changed || g_changed || tr_changed || s_changed) {
 			$w_count_details++;
 		}
 	}

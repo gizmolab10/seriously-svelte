@@ -1,10 +1,10 @@
-import { c, elements, h, k, u, controls, x, g_tree, Point, debug, search, layout, signals, Ancestry, Predicate } from '../common/Global_Imports';
 import { w_count_window_resized, w_s_alteration, w_s_title_edit, w_user_graph_offset, w_control_key_down } from '../managers/Stores';
+import { c, h, k, u, x, g_tree, debug, search, layout, details, signals, controls, elements } from '../common/Global_Imports';
 import { w_count_mouse_up, w_mouse_location, w_mouse_location_scaled, w_scaled_movement } from '../managers/Stores';
 import { T_Search, T_Action, T_Control, T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { w_search_state, w_device_isMobile, w_ancestry_focus, w_ancestry_forDetails } from '../managers/Stores';
+import { Point, Ancestry, Predicate } from '../common/Global_Imports';
 import { S_Mouse, S_Alteration } from '../common/Global_Imports';
-import { details } from '../ux/UX_Details';
 import Mouse_Timer from './Mouse_Timer';
 import { get } from 'svelte/store';
 
