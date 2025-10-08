@@ -502,7 +502,7 @@ export default class Ancestry extends Identifiable {
 	expanded_setTo(expand: boolean) {
 		let mutated = false;
 		const matchesDB = this.t_database == get(w_t_database);
-		if (matchesDB && (!this.isRoot || expand)) {
+		if (matchesDB && (!this.isRoot || expand) && this.isExpanded != expand) {
 			x.si_expanded.w_items.update((a: Array<Ancestry> | null) => {
 				let array = a ?? [];
 				if (!!array) {
