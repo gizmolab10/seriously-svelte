@@ -29,13 +29,13 @@
 		const new_title = details.banner_title_forDetail(t_detail);
 		const new_titles = [new_title, ...extra_titles];
 		if (new_titles.join(k.comma) == titles.join(k.comma)) {
-			console.log(`no trigger: "${new_title}"`);
+			// console.log(`no trigger: "${new_title}"`);
 		} else {
 			const prior_titles = titles;
 			titles = new_titles;
 			title = new_title;
 			update_trigger();
-			console.log(`now: "${new_title}" description: "${$w_description}"`);
+			// console.log(`now: "${new_title}" description: "${$w_description}"`);
 		}
 	}
 

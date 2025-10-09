@@ -1,5 +1,5 @@
 import { T_Thing, T_Graph, T_Create, T_Predicate, T_Persistence, T_Preference } from '../common/Global_Imports';
-import { w_ancestry_focus, w_show_graph_ofType } from '../managers/Stores';
+import { stores, w_ancestry_focus, w_show_graph_ofType } from '../managers/Stores';
 import { h, k, p, x, busy, debug, Ancestry } from '../common/Global_Imports';
 import { T_Database } from './DB_Common';
 import DB_Common from './DB_Common';
@@ -46,12 +46,13 @@ export default class DB_Bubble extends DB_Common {
 		if (!event.data.properties) {
 			h.wrapUp_data_forUX();
 		} else {
-			let b_root, b_tags, b_things, b_traits, b_focus, b_grabs, b_overwrite, b_predicates, b_relationships, b_inRadialMode;
+			let b_root, b_tags, b_things, b_traits, b_focus, b_grabs, b_overwrite, b_predicates, b_relationships, b_inRadialMode, b_erase_user_preferences;
 			try {
 				const properties = JSON.parse(event.data.properties);
 				const has_bubble = p.readDB_key(T_Preference.bubble) ?? false;
 				debug.log_bubble(`[DB_Bubble] received bubble update: ${properties}`);
 				b_overwrite = properties.overwrite_focus_and_mode || !has_bubble;
+				b_erase_user_preferences = properties.erase_user_preferences;
 				b_relationships = properties.relationships;
 				b_inRadialMode = properties.inRadialMode;
 				b_predicates = properties.predicates;
@@ -95,7 +96,6 @@ export default class DB_Bubble extends DB_Common {
 					h.tag_remember_runtimeCreateUnique(h.db.idBase, b_tag.id, b_tag.type, ownerHIDs);
 				}
 			}
-
 			h.wrapUp_data_forUX();			// create ancestries and tidy up
 			if (!!b_grabs) {				// must happen AFTER ancestries are created
 				for (const b_grab of b_grabs) {
@@ -114,12 +114,12 @@ export default class DB_Bubble extends DB_Common {
 					}
 				}
 			}
-			this.begin_to_send_events();
+			this.setup_to_send_events();
 			p.writeDB_key(T_Preference.bubble, true);
 		}
 	}
 
-	begin_to_send_events() {
+	setup_to_send_events() {
 
 		//////////////////////////////////////////////////////////
 		//														//

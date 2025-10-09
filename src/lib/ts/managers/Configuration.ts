@@ -58,8 +58,8 @@ export class Configuration {
 		}
 		for (const eraseOption of eraseOptions) {
 			switch (eraseOption) {
-				case 'data':	 this.eraseDB = 4;			break;
-				case 'settings': this.erasePreferences = 2; break;
+				case 'data':	 this.eraseDB = 4;		break;
+				case 'settings': p.preferences_reset(); break;
 			}
 		}
 		for (const themeOption of themeOptions) {

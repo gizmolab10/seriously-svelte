@@ -2,7 +2,7 @@ module.exports = function(instance, properties) {
 	const SERIOUSLY_LIST_FIELD_names = new Set(['child', 'parent', 'owner', 'related']);
 	const BUBBLIZED_add_ons = ['_boolean', '_custom', '_text', '_list'];
 	const has_two_tables = properties.hasOwnProperty('edge_type');
-	const BUBBLIZED_to_SERIOUSLY = new Map();
+	const SERIOUSLY_name_by_BUBBLIZED_name = new Map();
 	const FIELD_name_by_BUBBLIZED_name = {};
 	const shorter_FIELD_names = new Map();
 	const BUBBLIZED_names = new Map();
@@ -34,7 +34,7 @@ module.exports = function(instance, properties) {
 
 	function has_BUBBLIZED_name(name) {
 		if (!BUBBLIZED_names.has(name)) {
-			BUBBLIZED_names.set(name, Object.keys(FIELD_name_by_BUBBLIZED_name).includes(name));
+			BUBBLIZED_names.set(name, SERIOUSLY_name_by_BUBBLIZED_name.has(name));
 		}
 		return BUBBLIZED_names.get(name);
 	}
@@ -66,6 +66,9 @@ module.exports = function(instance, properties) {
 			// unbublizes them (strips the annoying LIST suffix added by bubble to its field names, grrrr)
 			ITEM_field_name = ITEM_field_name.replace(/ /, '_').replace(/^_list/, 's');
 			FIELD_name_by_BUBBLIZED_name[name] = ITEM_field_name;
+			const seriously_name = c_shorter_FIELD_names(name, ['_field', 'unique_']);
+			SERIOUSLY_name_by_BUBBLIZED_name.set(ITEM_field_name, seriously_name);
+			
 			LOG('setup_names', name, ITEM_field_name);
 		});
 		LIST_names = new Set(c_LIST_names(LIST_FIELD_name_labels));
@@ -107,25 +110,13 @@ module.exports = function(instance, properties) {
 	}
 
 	function c_SERIOUSLY_field_name(name) {
-		if (BUBBLIZED_to_SERIOUSLY.has(name)) {
-			return BUBBLIZED_to_SERIOUSLY.get(name);
-		}
-		let result;
 		if (name == '_id') {
-			result = 'id';
-		} else {
-			for (const [field_name_of_ITEM, field_name] of Object.entries(FIELD_name_by_BUBBLIZED_name)) {
-				if (field_name == name) {
-					result = c_shorter_FIELD_names(field_name_of_ITEM, ['_field', 'unique_']);
-					break;
-				}
-			}
+			return 'id';
 		}
-		BUBBLIZED_to_SERIOUSLY.set(name, result);
-		return result;
+		return SERIOUSLY_name_by_BUBBLIZED_name.get(name);
 	}
 
-	function extract_ITEM_data(field_name_of_ITEM, ITEM = null, visited = []) {
+	function extract_ITEM_data(field_name_of_ITEM, ITEM = null) {
 		let ITEM_data = {};
 		if (!ITEM) {
 			ITEM = properties[field_name_of_ITEM];
@@ -134,40 +125,33 @@ module.exports = function(instance, properties) {
 			instance.data.attempts[field_name_of_ITEM] = (instance.data.attempts[field_name_of_ITEM] ?? 0) + 1;
 			LOG('extract_ITEM_data', field_name_of_ITEM, ITEM);
 			const BUBBLIZED_ITEM_properties = ITEM.listProperties();
-			const ITEM_properties = BUBBLIZED_ITEM_properties.reduce((properties, BUBBLIZED_field_name) => {
-				// cleaned up by stripping the bubble add-ons, like _field, _list, etc.
-				const shorter_name = c_shorter_FIELD_names(BUBBLIZED_field_name, BUBBLIZED_add_ons);
-				properties[shorter_name] = ITEM.get(BUBBLIZED_field_name);
-				return properties;
-			}, {});
-			BUBBLIZED_ITEM_properties.forEach(BUBBLIZED_ITEM_property => {
+			for (const BUBBLIZED_ITEM_property of BUBBLIZED_ITEM_properties) {
 				const BUBBLIZED_DATA_TYPE_field_name = c_shorter_FIELD_names(BUBBLIZED_ITEM_property, BUBBLIZED_add_ons);
+				if (ignore_fields.includes(BUBBLIZED_DATA_TYPE_field_name)) continue;
+				const value = ITEM.get(BUBBLIZED_ITEM_property);
+				if (!value && value !== 0) continue;  // Allow 0 as valid value
 				const has_name = has_BUBBLIZED_name(BUBBLIZED_DATA_TYPE_field_name) || has_BUBBLIZED_name(BUBBLIZED_ITEM_property);
 				const SERIOUSLY_name = c_SERIOUSLY_field_name(BUBBLIZED_DATA_TYPE_field_name) ?? c_SERIOUSLY_field_name(BUBBLIZED_ITEM_property);
-				const value = ITEM.get(BUBBLIZED_ITEM_property);
-				if (!ignore_fields.includes(BUBBLIZED_DATA_TYPE_field_name)) {
-					if (!SERIOUSLY_name) {
-						if (has_name) {
-							WARN('extracted SERIOUSLY name unresolved for', BUBBLIZED_ITEM_property, 'item properties:', ITEM_properties);
-						}
-					} else if (!value) {
-						if (value != null) {
-							WARN('value undefined for', BUBBLIZED_ITEM_property, 'item properties:', ITEM_properties);
-						}
-					} else if (SERIOUSLY_LIST_FIELD_names.has(SERIOUSLY_name) && typeof value === 'object' && value !== null && value.hasOwnProperty('listProperties')) {
-						LOG('recursively extract_ITEM_data', typeof value, BUBBLIZED_DATA_TYPE_field_name, visited);
-						ITEM_data[SERIOUSLY_name] = extract_ITEM_data(BUBBLIZED_DATA_TYPE_field_name, value, [...visited, BUBBLIZED_DATA_TYPE_field_name]);
-					} else if (!has_two_tables && LIST_names.has(BUBBLIZED_DATA_TYPE_field_name)) {
-						const LIST_data = extract_LIST_data(BUBBLIZED_ITEM_property, value, visited);
-						LOG('process LIST for', SERIOUSLY_name, LIST_data);
-						if (!!LIST_data) {
-							ITEM_data[SERIOUSLY_name] = LIST_data;
-						}
-					} else {
-						ITEM_data[SERIOUSLY_name] = value;
+				if (!SERIOUSLY_name) {
+					if (has_name) {
+						WARN('extracted SERIOUSLY name unresolved for', BUBBLIZED_ITEM_property);
 					}
+					continue;
 				}
-			});
+				if (SERIOUSLY_LIST_FIELD_names.has(SERIOUSLY_name) && typeof value === 'object' && value !== null && value.hasOwnProperty('listProperties')) {
+					LOG('recursively extract_ITEM_data', typeof value, BUBBLIZED_DATA_TYPE_field_name);
+					ITEM_data[SERIOUSLY_name] = extract_ITEM_data(BUBBLIZED_DATA_TYPE_field_name, value);
+				} else if (!has_two_tables && LIST_names.has(BUBBLIZED_DATA_TYPE_field_name)) {
+					const LIST_data = extract_LIST_data(BUBBLIZED_ITEM_property, value);
+					LOG('process LIST for', SERIOUSLY_name, LIST_data);
+					if (!!LIST_data) {
+						ITEM_data[SERIOUSLY_name] = LIST_data;
+					}
+				} else {
+					ITEM_data[SERIOUSLY_name] = value;
+				}
+			}
+			
 			instance.data.attempts[field_name_of_ITEM] -= 1;
 			if (instance.data.attempts[field_name_of_ITEM] == 0) {
 				delete instance.data.attempts[field_name_of_ITEM];
@@ -176,13 +160,11 @@ module.exports = function(instance, properties) {
 		return ITEM_data;
 	}
 
-	function extract_LIST_data(field_name, LIST = null, visited = []) {
+	function extract_LIST_data(field_name, LIST = null) {
 		// sometimes name is actually the LIST, use it as a string to get the LIST from properties
 		LIST = !!LIST ? LIST : (typeof field_name != 'string') ? field_name : (properties[field_name] || null);
 		let extracted_data = [];
-		if (visited.includes(field_name)) {
-			LOG(field_name, 'already visited');
-		} else if (!LIST) {
+		if (!LIST) {
 			if (LIST != null) {
 				WARN(field_name, 'is null');
 			}
@@ -191,13 +173,13 @@ module.exports = function(instance, properties) {
 		} else {
 			let sublist = LIST.get(0, LIST.length());
 			sublist.forEach(item => {
-				const ITEM_data = extract_ITEM_data(field_name, item, [...visited, field_name]);
+				const ITEM_data = extract_ITEM_data(field_name, item);
 				if (!!ITEM_data) {
 					extracted_data.push(ITEM_data);
 				}
 			});
 		}
-		LOG('extract_LIST_data', field_name, LIST, visited, extracted_data);
+		LOG('extract_LIST_data', field_name, LIST, extracted_data);
 		return extracted_data;
 	}
 
@@ -231,10 +213,11 @@ module.exports = function(instance, properties) {
 			//    instance.data.attempts tracks unhydrated ITEMs	//
 			//														//
 			//////////////////////////////////////////////////////////
-
+			
 			instance.data.attempts = instance.data.attempts || {};
 			send_to_webseriously({
 				overwrite_focus_and_mode: properties['overwrite_focus_and_mode'],
+				erase_user_preferences: properties['erase_user_preferences'],
 				inRadialMode: properties['show_radial_mode'],
 				things: extract_LIST_data('objects_table'),
 				root: extract_ITEM_data('starting_object'),

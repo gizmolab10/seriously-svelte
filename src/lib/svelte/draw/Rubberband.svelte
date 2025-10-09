@@ -125,7 +125,7 @@
             const widget_components = components.components_ofType_withinRect(T_Component.widget, rubberbandRect);
             const intersecting: Ancestry[] = [];
             widget_components.forEach((component) => {
-                const ancestry = h.ancestry_forHID(component.hid);
+                const ancestry = component.ancestry;
                 if (!!ancestry) {
                     intersecting.push(ancestry);
                 }

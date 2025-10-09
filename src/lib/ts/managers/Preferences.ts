@@ -167,12 +167,12 @@ export class Preferences {
 	}
 
 	preferences_reset() {
-		const ids = Object.keys(T_Preference)
+		const keys = Object.keys(T_Preference)
 			.filter(key => isNaN(Number(key))) // Exclude numeric keys
 			.map(key => T_Preference[key as keyof typeof T_Preference]);
-		for (const id of ids) {
-			if (id != 'local') {
-				this.write_key(id, null);
+		for (const key of keys) {
+			if (key != 'local') {
+				this.write_key(key, null);
 			}
 		}
 	}
