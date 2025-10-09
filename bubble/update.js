@@ -1,10 +1,11 @@
-function(instance, properties) {
-	const SERIOUSLY_LIST_FIELD_names = ['child', 'parent', 'owner', 'related'];
+module.exports = function(instance, properties) {
+	const SERIOUSLY_LIST_FIELD_names = new Set(['child', 'parent', 'owner', 'related']);
 	const BUBBLIZED_add_ons = ['_boolean', '_custom', '_text', '_list'];
 	const has_two_tables = properties.hasOwnProperty('edge_type');
 	const BUBBLIZED_to_SERIOUSLY = new Map();
 	const FIELD_name_by_BUBBLIZED_name = {};
 	const shorter_FIELD_names = new Map();
+	const BUBBLIZED_names = new Map();
 	const ignore_fields = ['Slug'];
 	let LIST_names = [];
 
@@ -31,7 +32,13 @@ function(instance, properties) {
 	instance.data.assure_iframe_is_instantiated(properties);	// start the ball rolling
 	process_incoming_properties();
 
-	function has_BUBBLIZED_name(name) { return Object.keys(FIELD_name_by_BUBBLIZED_name).includes(name); }
+	function has_BUBBLIZED_name(name) {
+		if (!BUBBLIZED_names.has(name)) {
+			BUBBLIZED_names.set(name, Object.keys(FIELD_name_by_BUBBLIZED_name).includes(name));
+		}
+		return BUBBLIZED_names.get(name);
+	}
+
 	function LOG(message, value, ...optionalParams) { instance.data.LOG(message, value, ...optionalParams); }
 	function WARN(message, ...optionalParams) { if (instance.data.debug) { console.warn(message, ...optionalParams); } }
 
@@ -61,7 +68,7 @@ function(instance, properties) {
 			FIELD_name_by_BUBBLIZED_name[name] = ITEM_field_name;
 			LOG('setup_names', name, ITEM_field_name);
 		});
-		LIST_names = c_LIST_names(LIST_FIELD_name_labels);
+		LIST_names = new Set(c_LIST_names(LIST_FIELD_name_labels));
 	}
 
 	const _____CONVERSIONS = Symbol('CONVERSIONS');
@@ -147,10 +154,10 @@ function(instance, properties) {
 						if (value != null) {
 							WARN('value undefined for', BUBBLIZED_ITEM_property, 'item properties:', ITEM_properties);
 						}
-					} else if (SERIOUSLY_LIST_FIELD_names.includes(SERIOUSLY_name) && typeof value === 'object' && value !== null && value.hasOwnProperty('listProperties')) {
+					} else if (SERIOUSLY_LIST_FIELD_names.has(SERIOUSLY_name) && typeof value === 'object' && value !== null && value.hasOwnProperty('listProperties')) {
 						LOG('recursively extract_ITEM_data', typeof value, BUBBLIZED_DATA_TYPE_field_name, visited);
 						ITEM_data[SERIOUSLY_name] = extract_ITEM_data(BUBBLIZED_DATA_TYPE_field_name, value, [...visited, BUBBLIZED_DATA_TYPE_field_name]);
-					} else if (!has_two_tables && LIST_names.includes(BUBBLIZED_DATA_TYPE_field_name)) {
+					} else if (!has_two_tables && LIST_names.has(BUBBLIZED_DATA_TYPE_field_name)) {
 						const LIST_data = extract_LIST_data(BUBBLIZED_ITEM_property, value, visited);
 						LOG('process LIST for', SERIOUSLY_name, LIST_data);
 						if (!!LIST_data) {
@@ -231,8 +238,8 @@ function(instance, properties) {
 				inRadialMode: properties['show_radial_mode'],
 				things: extract_LIST_data('objects_table'),
 				root: extract_ITEM_data('starting_object'),
-				focus: extract_ITEM_data('focus_object'),
-			}, null, 0);
+				focus: extract_ITEM_data('focus_object')
+			});
 		} catch (error) {
 			if (error.constructor.name != 'NotReadyError') {
 				WARN('[PLUGIN] threw an error:', error);
