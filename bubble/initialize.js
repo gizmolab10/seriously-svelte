@@ -1,7 +1,7 @@
 function(instance) {
-	instance.data.debug = false;
-	instance.data.iframe_is_instantiated = false;
-	instance.data.LOG = function (message, value, ...optionalParams) {if (instance.data.debug && !!value) { console.log('[PLUGIN]', message, value, ...optionalParams); } }
+	instance.data.debug							= true;
+	instance.data.iframe_is_instantiated		= false;	// assure_iframe_is_instantiated (right below, called from update) sets this to true
+	instance.data.LOG							= function (message, value, ...optionalParams) {if (instance.data.debug && !!value) { console.log('[PLUGIN]', message, value, ...optionalParams); } }
 	instance.data.assure_iframe_is_instantiated = function (properties) {
 		if (!instance.data.iframe_is_instantiated) {
 			LOG('Initializing plugin ...');
@@ -31,6 +31,7 @@ function(instance) {
 			properties.show_details ? 'unknown' : 'standalone_UI'];
 		const pairs = {
 			db: 'bubble',
+			// erase: 'data',
 			debug: 'bubble',
 			disable: disables.join(',')
 		}

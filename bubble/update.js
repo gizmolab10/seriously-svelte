@@ -2,7 +2,9 @@ function(instance, properties) {
 	const SERIOUSLY_LIST_FIELD_names = ['child', 'parent', 'owner', 'related'];
 	const BUBBLIZED_add_ons = ['_boolean', '_custom', '_text', '_list'];
 	const has_two_tables = properties.hasOwnProperty('edge_type');
+	const BUBBLIZED_to_SERIOUSLY = new Map();
 	const FIELD_name_by_BUBBLIZED_name = {};
+	const shorter_FIELD_names = new Map();
 	const ignore_fields = ['Slug'];
 	let LIST_names = [];
 
@@ -32,25 +34,6 @@ function(instance, properties) {
 	function has_BUBBLIZED_name(name) { return Object.keys(FIELD_name_by_BUBBLIZED_name).includes(name); }
 	function LOG(message, value, ...optionalParams) { instance.data.LOG(message, value, ...optionalParams); }
 	function WARN(message, ...optionalParams) { if (instance.data.debug) { console.warn(message, ...optionalParams); } }
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//																																//
-	//	design:																														//																																//
-	//	SERIOUSLY_name --> user_supplied_name (of 'their Thing' data type fields) eg title --> titular, color --> cooler			//
-	//	ITEM (bubblized, grrr) field name --> BUBBLIZED_DATA_TYPE_field_name														//
-	//	  WHY? field names within ITEMs are bubblized (grrr), eg "objects" shows up as "object_list". so unbubblize them			//
-	//	ITEM_FIELD_names --> FIELD_name_by_BUBBLIZED_name (eg, "object_title_field" has the value of "titilate"						//
-	//																																//
-	//	process these properties:																									//
-	//	 1. map: ITEM field name --> BUBBLIZED_DATA_TYPE_field_name (declared in the Data tab of app editor, eg titular, cooler)	//
-	//	 2. map: ITEM field name --> SERIOUSLY field name (eg, title, color)														//
-	//	 3. send starting, objects, selected																						//
-	//																																//
-	//	need to send:																												//
-	//	 1. a map: SERIOUSLY field name --> user_supplied_name (eg, title --> titular, color --> cooler)							//
-	//		(in bubble [eg, test] app editor ... entered in Appearance of plugin)													//
-	//																																//
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	function setup_names() {
 		const LIST_FIELD_name_labels = [
@@ -98,6 +81,9 @@ function(instance, properties) {
 	}
 
 	function c_shorter_FIELD_names(name, remove_these) {
+		if (shorter_FIELD_names.has(name)) {
+			return shorter_FIELD_names.get(name);
+		}
 		let rename = name;
 		let parts = rename.split('object_');
 		if (parts.length > 1) {
@@ -109,23 +95,28 @@ function(instance, properties) {
 				rename = parts[0];
 			}
 		});
+		shorter_FIELD_names.set(name, rename);
 		return rename;
 	}
 
 	function c_SERIOUSLY_field_name(name) {
+		if (BUBBLIZED_to_SERIOUSLY.has(name)) {
+			return BUBBLIZED_to_SERIOUSLY.get(name);
+		}
+		let result;
 		if (name == '_id') {
-			return 'id';
+			result = 'id';
 		} else {
 			for (const [field_name_of_ITEM, field_name] of Object.entries(FIELD_name_by_BUBBLIZED_name)) {
 				if (field_name == name) {
-					return c_shorter_FIELD_names(field_name_of_ITEM, ['_field', 'unique_']);
+					result = c_shorter_FIELD_names(field_name_of_ITEM, ['_field', 'unique_']);
+					break;
 				}
 			}
 		}
-		return null;
+		BUBBLIZED_to_SERIOUSLY.set(name, result);
+		return result;
 	}
-
-	const _____EXTRACTIONS = Symbol('EXTRACTIONS');
 
 	function extract_ITEM_data(field_name_of_ITEM, ITEM = null, visited = []) {
 		let ITEM_data = {};
@@ -147,9 +138,6 @@ function(instance, properties) {
 				const has_name = has_BUBBLIZED_name(BUBBLIZED_DATA_TYPE_field_name) || has_BUBBLIZED_name(BUBBLIZED_ITEM_property);
 				const SERIOUSLY_name = c_SERIOUSLY_field_name(BUBBLIZED_DATA_TYPE_field_name) ?? c_SERIOUSLY_field_name(BUBBLIZED_ITEM_property);
 				const value = ITEM.get(BUBBLIZED_ITEM_property);
-				// if (!!value) {
-				// 	LOG('extract ITEM field', value, BUBBLIZED_ITEM_property, BUBBLIZED_DATA_TYPE_field_name, SERIOUSLY_name);
-				// }
 				if (!ignore_fields.includes(BUBBLIZED_DATA_TYPE_field_name)) {
 					if (!SERIOUSLY_name) {
 						if (has_name) {
@@ -177,7 +165,6 @@ function(instance, properties) {
 			if (instance.data.attempts[field_name_of_ITEM] == 0) {
 				delete instance.data.attempts[field_name_of_ITEM];
 			}
-			// LOG('item data:', field_name_of_ITEM, ITEM_data);
 		}
 		return ITEM_data;
 	}
@@ -227,7 +214,6 @@ function(instance, properties) {
 		LOG('incoming', properties);
 
 		try {
-
 			//////////////////////////////////////////////////////////
 			//														//
 			//	process incoming properties & send to webseriously	//
@@ -238,7 +224,7 @@ function(instance, properties) {
 			//    instance.data.attempts tracks unhydrated ITEMs	//
 			//														//
 			//////////////////////////////////////////////////////////
-			
+
 			instance.data.attempts = instance.data.attempts || {};
 			send_to_webseriously({
 				overwrite_focus_and_mode: properties['overwrite_focus_and_mode'],
@@ -256,4 +242,3 @@ function(instance, properties) {
 		}
 	}
 }
-
