@@ -1,24 +1,27 @@
-module.exports = function(instance, properties) {
-	const SERIOUSLY_LIST_FIELD_names = new Set(['child', 'parent', 'owner', 'related']);
+function(instance, properties) {
+	const object_add_ons = ['object_', '_object'];
 	const BUBBLIZED_add_ons = ['_boolean', '_custom', '_text', '_list'];
+	const shortening_FIELD_pattern = new RegExp(`^${object_add_ons.join('|')}|${BUBBLIZED_add_ons.join('|')}`, 'g');
+	const unique_FIELD_pattern = new RegExp(`^${object_add_ons.join('|')}|_field|unique_`, 'g');
+	const SERIOUSLY_field_name_by_BUBBLIZED_field_name = new Map([['_id', 'id']]);
+	const SERIOUSLY_LIST_field_names = new Set(['parents', 'related']);
 	const has_two_tables = properties.hasOwnProperty('edge_type');
-	const SERIOUSLY_name_by_BUBBLIZED_name = new Map();
-	const FIELD_name_by_BUBBLIZED_name = {};
-	const shorter_FIELD_names = new Map();
-	const BUBBLIZED_names = new Map();
+	const shorter_FIELD_name_by_BUBBLIZED_field_name = new Map();
+	const USER_FIELD_name_by_BUBBLIZED_field_name = new Map();
 	const ignore_fields = ['Slug'];
-	let LIST_names = [];
+	let USER_LIST_names = [];
 
 	//////////////////////////////////////////////////////////////////////
 	//																	//
 	//	naming convention, uppercase for emphasis						//
 	//																	//
 	//	LIST		array of ITEM(s)									//
-	//	ITEM		instance of DATA_TYPE								//
-	//	DATA_TYPE	bubble app's data types								//
+	//	ITEM		instance of USER data type (eg, "Object")			//
 	//	SERIOUSLY	internal use within seriously netlify app			//
 	//	FIELD		plugin Field (specified in bubble plugin editor)	//
-	//	BUBBLIZED	field name within bubble app (grrr)					//
+	//	BUBBLIZED	wordy (sigh) field names created by bubble app		//
+	//	LABELS		labels of text entries for USER field names			//
+	//	USER		field name chosen by author of bubble app			//
 	//																	//
 	//	_id			the unique id of ITEM								//
 	//	c_			convert to											//
@@ -32,88 +35,81 @@ module.exports = function(instance, properties) {
 	instance.data.assure_iframe_is_instantiated(properties);	// start the ball rolling
 	process_incoming_properties();
 
-	function has_BUBBLIZED_name(name) {
-		if (!BUBBLIZED_names.has(name)) {
-			BUBBLIZED_names.set(name, SERIOUSLY_name_by_BUBBLIZED_name.has(name));
-		}
-		return BUBBLIZED_names.get(name);
-	}
-
 	function LOG(message, value, ...optionalParams) { instance.data.LOG(message, value, ...optionalParams); }
 	function WARN(message, ...optionalParams) { if (instance.data.debug) { console.warn(message, ...optionalParams); } }
 
 	function setup_names() {
-		const LIST_FIELD_name_labels = [
+		const LABELS_of_USER_LIST_names = [
 			'object_parents_field',
 			'object_related_field',
 			'owners_field'];
-		let ITEM_FIELD_names = [...LIST_FIELD_name_labels,
+		let LABELS_of_FIELD_names = [...LABELS_of_USER_LIST_names,
 			'object_title_field',
 			'object_color_field',
 			'starting_object'];
 		if (has_two_tables) {
-			ITEM_FIELD_names = [...ITEM_FIELD_names,
+			LABELS_of_FIELD_names = [...LABELS_of_FIELD_names,
 				'edge_two_way_field',
 				'edge_parent_field',
 				'edge_orders_field',
 				'edge_child_field',
 				'edge_kind_field'];
 		}
-		ITEM_FIELD_names.forEach(name => {
-			let ITEM_field_name = String(properties[name]).toLowerCase();
-			// replace all spaces with underscores, and _list with s (eg, "object_list" becomes "objects")
-			// this converges "related_objects" with "related objects" 
-			// unbublizes them (strips the annoying LIST suffix added by bubble to its field names, grrrr)
-			ITEM_field_name = ITEM_field_name.replace(/ /, '_').replace(/^_list/, 's');
-			FIELD_name_by_BUBBLIZED_name[name] = ITEM_field_name;
-			const seriously_name = c_shorter_FIELD_names(name, ['_field', 'unique_']);
-			SERIOUSLY_name_by_BUBBLIZED_name.set(ITEM_field_name, seriously_name);
-			
-			LOG('setup_names', name, ITEM_field_name);
+		LABELS_of_FIELD_names.forEach(name => {
+			const property_value = properties[name];
+			if(!!property_value && property_value != 'undefined') {
+				if (isList(property_value)) {
+					console.log('isList', name, property_value);
+				} else {					
+					const ITEM_field_name = String(properties[name]).toLowerCase();
+					// replace all spaces with underscores, and _list with s (eg, "object_list" becomes "objects")
+					// this converges "related_objects" with "related objects"
+					// unbubblizes them (strips the annoying list suffix added by bubble to its field names, grrrr)
+					const USER_FIELD_name = ITEM_field_name.replace(/ /, '_').replace(/^_list/, 's');
+					USER_FIELD_name_by_BUBBLIZED_field_name[name] = USER_FIELD_name;
+					const SERIOUSLY_field_name = c_shorter_FIELD_names(name, ['_field', 'unique_']);
+					SERIOUSLY_field_name_by_BUBBLIZED_field_name.set(USER_FIELD_name, SERIOUSLY_field_name);
+					LOG('setup_names', name, ITEM_field_name);
+				}
+			}
 		});
-		LIST_names = new Set(c_LIST_names(LIST_FIELD_name_labels));
+		USER_LIST_names = new Set(c_LABELS_to_USER_LIST_names(LABELS_of_USER_LIST_names));	// N.B. needs USER_FIELD_name_by_BUBBLIZED_field_name from LABELS_of_FIELD_names.forEach
 	}
 
 	const _____CONVERSIONS = Symbol('CONVERSIONS');
 
-	function c_LIST_names(BUBBLIZED_names) {
+	function c_LABELS_to_USER_LIST_names(LABELS_of_USER_LIST_names) {
 		// Ack! Bubble doesn't support lists within lists!!!!!!
 		const translated = [];
-		BUBBLIZED_names.forEach(BUBBLIZED_name => {
-			const name = FIELD_name_by_BUBBLIZED_name[BUBBLIZED_name];
+		LABELS_of_USER_LIST_names.forEach(label_of_LIST_name => {
+			const name = USER_FIELD_name_by_BUBBLIZED_field_name[label_of_LIST_name];
 			if (!!name) {
 				translated.push(name);
 			} else {
-				WARN(['c_LIST_names "', BUBBLIZED_name, '" not found in FIELD_name_by_BUBBLIZED_name'].join(''));
+				WARN(['c_LABELS_to_USER_LIST_names "', label_of_LIST_name, '" not found in USER_FIELD_name_by_BUBBLIZED_field_name'].join(''));
 			}
 		});
 		return translated;
 	}
 
 	function c_shorter_FIELD_names(name, remove_these) {
-		if (shorter_FIELD_names.has(name)) {
-			return shorter_FIELD_names.get(name);
+		if (shorter_FIELD_name_by_BUBBLIZED_field_name.has(name)) {
+			return shorter_FIELD_name_by_BUBBLIZED_field_name.get(name);
 		}
-		let rename = name;
-		let parts = rename.split('object_');
-		if (parts.length > 1) {
-			rename = parts[1];
-		}
-		remove_these.forEach(remove_me => {
-			parts = rename.split(remove_me);
-			if (parts.length > 1) {
-				rename = parts[0];
-			}
-		});
-		shorter_FIELD_names.set(name, rename);
+		const pattern = remove_these === BUBBLIZED_add_ons ? shortening_FIELD_pattern : unique_FIELD_pattern;
+		const rename = name.replace(pattern, '');
+		shorter_FIELD_name_by_BUBBLIZED_field_name.set(name, rename);
 		return rename;
 	}
 
-	function c_SERIOUSLY_field_name(name) {
-		if (name == '_id') {
-			return 'id';
-		}
-		return SERIOUSLY_name_by_BUBBLIZED_name.get(name);
+	function isList(value) {
+		return !!value &&
+			typeof value === 'object' &&
+			value.hasOwnProperty('listProperties');
+	}
+
+	function isListProperty(value, SERIOUSLY_field_name) {
+		return isList(value) && SERIOUSLY_LIST_field_names.has(SERIOUSLY_field_name);
 	}
 
 	function extract_ITEM_data(field_name_of_ITEM, ITEM = null) {
@@ -123,35 +119,28 @@ module.exports = function(instance, properties) {
 		}
 		if (!!ITEM) {
 			instance.data.attempts[field_name_of_ITEM] = (instance.data.attempts[field_name_of_ITEM] ?? 0) + 1;
-			LOG('extract_ITEM_data', field_name_of_ITEM, ITEM);
-			const BUBBLIZED_ITEM_properties = ITEM.listProperties();
-			for (const BUBBLIZED_ITEM_property of BUBBLIZED_ITEM_properties) {
-				const BUBBLIZED_DATA_TYPE_field_name = c_shorter_FIELD_names(BUBBLIZED_ITEM_property, BUBBLIZED_add_ons);
-				if (ignore_fields.includes(BUBBLIZED_DATA_TYPE_field_name)) continue;
-				const value = ITEM.get(BUBBLIZED_ITEM_property);
-				if (!value && value !== 0) continue;  // Allow 0 as valid value
-				const has_name = has_BUBBLIZED_name(BUBBLIZED_DATA_TYPE_field_name) || has_BUBBLIZED_name(BUBBLIZED_ITEM_property);
-				const SERIOUSLY_name = c_SERIOUSLY_field_name(BUBBLIZED_DATA_TYPE_field_name) ?? c_SERIOUSLY_field_name(BUBBLIZED_ITEM_property);
-				if (!SERIOUSLY_name) {
-					if (has_name) {
-						WARN('extracted SERIOUSLY name unresolved for', BUBBLIZED_ITEM_property);
+			LOG('extracting data from ITEM for', field_name_of_ITEM, ITEM);
+			const BUBBLIZED_field_names = ITEM.listProperties();
+			for (const BUBBLIZED_field_name of BUBBLIZED_field_names) {
+				const USER_FIELD_name = c_shorter_FIELD_names(BUBBLIZED_field_name, BUBBLIZED_add_ons);
+				if (ignore_fields.includes(USER_FIELD_name)) continue;
+				const value = ITEM.get(BUBBLIZED_field_name);
+				if (!!value || value == 0) {  // 0 is a valid value
+					const SERIOUSLY_field_name = SERIOUSLY_field_name_by_BUBBLIZED_field_name.get(BUBBLIZED_field_name) ??
+												 SERIOUSLY_field_name_by_BUBBLIZED_field_name.get(USER_FIELD_name);
+					if (!!SERIOUSLY_field_name) {
+						if (!USER_LIST_names.has(USER_FIELD_name)) {
+							ITEM_data[SERIOUSLY_field_name] = value;
+						} else {
+							const LIST_data = extract_LIST_data(BUBBLIZED_field_name, value);
+							if (!!LIST_data) {
+								LOG('extracted LIST for', SERIOUSLY_field_name, LIST_data);
+								ITEM_data[SERIOUSLY_field_name] = LIST_data;
+							}
+						}
 					}
-					continue;
-				}
-				if (SERIOUSLY_LIST_FIELD_names.has(SERIOUSLY_name) && typeof value === 'object' && value !== null && value.hasOwnProperty('listProperties')) {
-					LOG('recursively extract_ITEM_data', typeof value, BUBBLIZED_DATA_TYPE_field_name);
-					ITEM_data[SERIOUSLY_name] = extract_ITEM_data(BUBBLIZED_DATA_TYPE_field_name, value);
-				} else if (!has_two_tables && LIST_names.has(BUBBLIZED_DATA_TYPE_field_name)) {
-					const LIST_data = extract_LIST_data(BUBBLIZED_ITEM_property, value);
-					LOG('process LIST for', SERIOUSLY_name, LIST_data);
-					if (!!LIST_data) {
-						ITEM_data[SERIOUSLY_name] = LIST_data;
-					}
-				} else {
-					ITEM_data[SERIOUSLY_name] = value;
 				}
 			}
-			
 			instance.data.attempts[field_name_of_ITEM] -= 1;
 			if (instance.data.attempts[field_name_of_ITEM] == 0) {
 				delete instance.data.attempts[field_name_of_ITEM];
@@ -179,7 +168,7 @@ module.exports = function(instance, properties) {
 				}
 			});
 		}
-		LOG('extract_LIST_data', field_name, LIST, extracted_data);
+		LOG('extracted data from LIST for', field_name, LIST, extracted_data);
 		return extracted_data;
 	}
 
@@ -226,7 +215,7 @@ module.exports = function(instance, properties) {
 		} catch (error) {
 			if (error.constructor.name != 'NotReadyError') {
 				WARN('[PLUGIN] threw an error:', error);
-			} else if (Object.keys(instance.data.attempts).length > 0) {
+			} else if (instance.data.attempts && Object.entries(instance.data.attempts).some(([_, val]) => val > 0)) {
 				WARN('[PLUGIN] data not ready:', instance.data.attempts);
 			}
 		}

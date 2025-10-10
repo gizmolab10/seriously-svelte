@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { w_popupView_id, w_background_color, w_show_directionals_ofType } from '../../ts/managers/Stores';
-	import { k, Point, builds, T_Layer } from '../../ts/common/Global_Imports';
+	import { k, u, Point, builds, T_Layer } from '../../ts/common/Global_Imports';
 	import Close_Button from '../mouse/Close_Button.svelte';
 	import Steppers from '../mouse/Steppers.svelte';
 	import { onMount } from 'svelte';
@@ -41,7 +41,10 @@
 </script>
 
 <svelte:document on:keydown={handle_key_down} />
-<div class='notes-modal-overlay' on:click={() => $w_popupView_id = null}>
+<div class='notes-modal-overlay'
+	on:keyup = {u.ignore}
+	on:keydown = {u.ignore}
+	on:click={() => $w_popupView_id = null}>
 	<div class='notes-modal-content'
 		style='background-color:{$w_background_color}'
 		on:click|stopPropagation>

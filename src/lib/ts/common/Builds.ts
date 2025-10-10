@@ -1,6 +1,6 @@
 export class Builds {
 	notes: { [id: number]: string[] } = {
-		168 : ['October 8, 2025', 'adopt s items design'],
+		168 : ['October 8, 2025', 'adopt s items design for tags, recents and search'],
 		167 : ['September 21, 2025', 'move search controls to left of breadcrumbs'],
 		166 : ['September 17, 2025', 'new secondary controls: more room for search and tree type'],
 		165 : ['September 11, 2025', 'revise plugin names, add data load spinner, repair search'],
