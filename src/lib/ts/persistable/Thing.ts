@@ -191,9 +191,7 @@ export default class Thing extends Persistable {
 		//	but the relationship is interpreted backwards
 
 		let ancestries: Array<Ancestry> = [];
-		if (this.isRoot) {
-			ancestries.push(h.rootAncestry);
-		} else if (!!predicate) {
+		if (!this.isRoot && !!predicate) {
 			function addAncestry(ancestry: Ancestry | null) {
 				if (!!ancestry) {
 					ancestries.push(ancestry);

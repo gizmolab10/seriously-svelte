@@ -53,8 +53,8 @@ export default class Relationship extends Persistable {
 		return reversed;
 	}
 
-	order_forPointsTo(pointsToChildren: boolean): number {
-		return pointsToChildren ? this.orders[T_Order.child] : this.orders[T_Order.other];
+	order_forPointsTo(points_normalToChildren: boolean): number {
+		return points_normalToChildren ? this.orders[T_Order.child] : this.orders[T_Order.other];
 	}
 
 	remove_from(relationships: Array<Relationship>) {

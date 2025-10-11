@@ -149,13 +149,13 @@ export default class Ancestry extends Identifiable {
 
 	static readonly _____SVG: unique symbol;
 
-	svgPathFor_tinyDots_outsideReveal(points_toChild: boolean): string | null {
+	svgPathFor_tinyDots_outsideReveal(points_normal_toChild: boolean): string | null {
 		const in_radial_mode = controls.inRadialMode;
 		const isVisible_forChild = this.hasChildren && show.children_dots && (in_radial_mode ? true : !this.isExpanded);
-		const isVisible_inRadial = points_toChild ? isVisible_forChild : this.hasParents && (this.isBidirectional ? show.related_dots : show.parent_dots);
+		const isVisible_inRadial = points_normal_toChild ? isVisible_forChild : this.hasParents && (this.isBidirectional ? show.related_dots : show.parent_dots);
 		const show_outside_tinyDots = in_radial_mode ? isVisible_inRadial : isVisible_forChild;
-		const tinyDots_count = this.relationships_count_forChildren(points_toChild);
-		return !show_outside_tinyDots ? null : svgPaths.tinyDots_circular(k.diameterOf_outer_tinyDots + 4, tinyDots_count as Integer, this.pointsNormal);
+		const tinyDots_count = this.relationships_count_forChildren(points_normal_toChild);
+		return !show_outside_tinyDots ? null : svgPaths.tinyDots_circular(k.diameterOf_outer_tinyDots + 4, tinyDots_count as Integer, this.points_right);
 	}
 
 	static readonly _____BIDIRECTIONALS: unique symbol;
@@ -869,14 +869,14 @@ export default class Ancestry extends Identifiable {
 	get description():		   string { return `${this.kind} "${this.thing?.t_thing ?? '-'}" ${this.titles.join(':')}`; }
 	get pathString():		   string { return this.id; }
 	get depth():			   number { return this.relationship_ids.length; }
-	get direction_ofReveal():  number { return this.pointsNormal ? Direction.right : Direction.left; }
+	get direction_ofReveal():  number { return this.points_right ? Direction.right : Direction.left; }
 	get siblingIndex():		   number { return this.sibling_ancestries.map(a => a.pathString).indexOf(this.pathString); }
 	get idBridging():   string | null { return this.thing?.idBridging ?? null; }
 
-	get pointsNormal(): boolean {
+	get points_right(): boolean {
 		const hasVisibleChildren = this.isExpanded && this.hasChildren;
-		const radial_pointsNormal = this.g_widget?.widget_pointsNormal ?? true;
-		return controls.inRadialMode ? radial_pointsNormal : !hasVisibleChildren;
+		const radial_points_normal = this.g_widget?.widget_points_normal ?? true;
+		return controls.inRadialMode ? radial_points_normal : !hasVisibleChildren;
 	}
 
 	get id_thing(): string {
@@ -915,11 +915,11 @@ export default class Ancestry extends Identifiable {
 	matchesStore(store: Writable<Ancestry | null>):						   boolean { return get(store)?.equals(this) ?? false; }
 	rect_ofComponent(component: S_Component | null):						   Rect | null { return component?.boundingRect ?? null; }
 
-	showsReveal_forPointingToChild(points_toChild: boolean): boolean {
+	showsReveal_forPointingToChild(points_normal_toChild: boolean): boolean {
 		const isRadialFocus = controls.inRadialMode && this.isFocus;
 		const isBulkAlias = this.thing?.isBulkAlias ?? false;
 		const isBidirectional = this.predicate?.isBidirectional ?? true;
-		const hasChildren = this.relationships_count_forChildren(points_toChild) > 0;
+		const hasChildren = this.relationships_count_forChildren(points_normal_toChild) > 0;
 		return (!isBidirectional && !isRadialFocus) && (hasChildren || isBulkAlias);
 	}
 

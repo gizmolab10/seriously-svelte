@@ -82,15 +82,15 @@ export class Testworthy_Utilities {
 
 	polygonPoints(radius: number, count: number, offset: number): Array<Point> {
 		const increment = Angle.full / count;
-		const points: Point[] = [];
+		const points_normal: Point[] = [];
 		let angle = offset;
 		let index = count;
 		do {
-			points.push(Point.fromPolar(radius, angle));
+			points_normal.push(Point.fromPolar(radius, angle));
 			angle += increment;
 			index--;
 		} while (index > 0)
-		return points;
+		return points_normal;
 	}
 
 	get browserType(): T_Browser {

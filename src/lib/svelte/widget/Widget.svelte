@@ -18,8 +18,8 @@
 	const s_reveal = s_widget.s_reveal;
 	const ancestry = g_widget.ancestry;
 	const { w_items: w_grabbed } = x.si_grabs;
-	const reveal_points_toChild = g_widget.points_toChild;
-    const drag_points_normal = g_widget.widget_pointsNormal;
+	const reveal_points_normal_toChild = g_widget.points_normal_toChild;
+    const drag_points_normal_normal = g_widget.widget_points_normal;
 	let observer: MutationObserver | null = null;
 	let width_ofWidget = g_widget.width_ofWidget;
 	let border_radius = k.height.dot / 2;
@@ -180,14 +180,14 @@
         style = {widget_style.removeWhiteSpace()}>
         <Widget_Drag
             s_drag = {s_drag}
-            pointsNormal = {drag_points_normal}/>
+            points_right = {drag_points_normal_normal}/>
         <Widget_Title
             s_title = {s_title}
             fontSize = {k.font_size.common}px/>
-        {#if ancestry?.showsReveal_forPointingToChild(reveal_points_toChild)}
+        {#if ancestry?.showsReveal_forPointingToChild(reveal_points_normal_toChild)}
             <Widget_Reveal
                 s_reveal = {s_reveal}
-                points_toChild = {reveal_points_toChild}/>
+                points_normal_toChild = {reveal_points_normal_toChild}/>
         {/if}
     </div>
 {/if}

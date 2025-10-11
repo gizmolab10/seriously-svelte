@@ -33,9 +33,9 @@ export default class G_RadialGraph {
 
 	grand_layout_radial() {
 		this.destructor();
-		this.layout_focus();
 		this.layout_forPoints_toChildren(true);
 		this.layout_forPoints_toChildren(false);
+		this.layout_focus();
 		this.layout_forPaging();
 	}
 
@@ -51,7 +51,7 @@ export default class G_RadialGraph {
 			g_focus.width_ofWidget = width_ofTitle;
 			g_focus.location_ofRadial = origin_ofWidget;
 			g_focus.width_ofDrawnGraph = width_ofTitle + 30;
-			g_focus.origin_ofRadial = origin_ofWidget.offsetByX(g_focus.widget_pointsNormal ? 0 : -width_ofTitle);	// adjust for printing
+			g_focus.origin_ofRadial = origin_ofWidget.offsetByX(g_focus.widget_points_normal ? 0 : -width_ofTitle);	// adjust for printing
 		}
 	}
 

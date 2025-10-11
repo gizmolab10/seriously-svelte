@@ -9,8 +9,8 @@
 	import { svgPaths } from '../../ts/common/Global_Imports';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
+	export let points_right = true;
 	export let s_drag!: S_Element;
-	export let pointsNormal = true;
 	const size = k.height.dot;
 	const capture_size = size;
     const ancestry = s_drag.ancestry;
@@ -88,7 +88,7 @@
 				svgPathFor_ellipses = svgPaths.ellipses(6, 0.8, false, count, size / 2);
 			}
 			if (thing.hasRelated && show.related_dots) {
-				const x = (controls.inRadialMode ? 5.2 : 4.5) * (pointsNormal ? -1 : 1);
+				const x = (controls.inRadialMode ? 5.2 : 4.5) * (points_right ? -1 : 1);
 				svgPathFor_related = svgPaths.circle_atOffset(size, 3, Point.x(x));
 			}
 		}

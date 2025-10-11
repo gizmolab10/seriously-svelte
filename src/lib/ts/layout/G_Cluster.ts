@@ -139,9 +139,9 @@ export default class G_Cluster {
 	layout_forPaging() {
 		const g_paging = this.g_paging;
 		if (!!g_paging) {
-			const pointsNormal = new Angle(this.angle_ofCluster).angle_pointsNormal;
+			const points_right = new Angle(this.angle_ofCluster).angle_points_normal;
 			const onePage_ofAncestries = g_paging.onePage_from(this.widgets_shown, this.ancestries);
-			this.ancestries_shown = pointsNormal ? onePage_ofAncestries.reverse() : onePage_ofAncestries;	
+			this.ancestries_shown = points_right ? onePage_ofAncestries.reverse() : onePage_ofAncestries;	
 			this.layout_cluster();
 			let angle = this.g_sliderArc.spread_angle;
 			if (angle < 0) {
@@ -193,23 +193,23 @@ export default class G_Cluster {
 		if (this.widgets_shown > 0 && !!this.predicate) {
 			const center = this.center.offsetByXY(0.5, -1);			// tweak so that drag dots are centered within the rotation ring
 			const radial = Point.x(get(w_ring_rotation_radius) + k.radial_widget_inset);
-			const radial_ofFork = this.radial_ofFork;	// points at middle widget
-			const fork_pointsNormal = radial_ofFork.x > 0;
-			const fork_pointsDown = radial_ofFork.y < 0;
+			const radial_ofFork = this.radial_ofFork;				// points_normal at middle widget (of cluster)
+			const fork_points_right = radial_ofFork.x > 0;
+			const fork_points_down = radial_ofFork.y < 0;
 			let index = 0;
 			while (index < this.widgets_shown) {
-				const adjusted_index = fork_pointsNormal ? (this.widgets_shown - index - 1) : index;
+				const adjusted_index = fork_points_right ? (this.widgets_shown - index - 1) : index;
 				const ancestry = this.ancestries_shown[adjusted_index];
 				const angle = this.angle_at_index(adjusted_index);
-				const pointsNormal = new Angle(angle).angle_pointsNormal;
+				const points_right = new Angle(angle).angle_points_normal;
 				const rotated_origin = center.offsetBy(radial.rotate_by(angle));
 				const g_widget = ancestry.g_widget;
-				g_widget.layout_necklaceWidget(rotated_origin, pointsNormal);
+				g_widget.layout_necklaceWidget(rotated_origin, points_right);
 				this.g_widgets_inCluster.push(g_widget);
 				index += 1;
 			}
 			this.g_sliderArc.finalize_angles();
-			this.arc_in_lower_half = fork_pointsDown;
+			this.arc_in_lower_half = fork_points_down;
 		}
 	}
 
@@ -226,9 +226,9 @@ export default class G_Cluster {
 
 		const max = this.widgets_shown - 1;
 		const row = (max / 2) - index;						// row centered around zero
-		const radial = this.radial_ofFork;					// points at middle widget
+		const radial = this.radial_ofFork;					// points_normal at middle widget (of cluster)
 		const radius = get(w_ring_rotation_radius);
-		let y = radial.y + (row * (k.height.dot + 1.3));		// distribute y equally around fork_y
+		let y = radial.y + (row * (k.height.dot + 1.3));	// distribute y equally around fork_y
 		let y_isOutside = false;
 		const absY = Math.abs(y);
 		if (absY > radius) {

@@ -39,7 +39,7 @@ export default class Angle {
 		return [T_Quadrant.lowerRight, T_Quadrant.upperLeft].includes(quadrant);
 	}
 
-	get angle_pointsNormal(): boolean {
+	get angle_points_normal(): boolean {
 		switch(this.quadrant_ofAngle) {
 			case T_Quadrant.lowerRight: return true;
 			case T_Quadrant.upperRight: return true;

@@ -5,7 +5,7 @@ export default class G_TreeLine {
 	ancestry: Ancestry | null;	// main end of the line
 	other_ancestry: Ancestry;	// other end of the line (N.B. main can be deeper!!)
 	isBidirectional: boolean;
-	points_atOther = true;
+	points_normal_atOther = true;
 	origin = Point.zero;
 	extent = Point.zero;
 	linePath = k.empty;
@@ -24,7 +24,7 @@ export default class G_TreeLine {
 		this.ancestry = ancestry;
 	}
 
-	get branchAncestry(): Ancestry | null { return this.points_atOther ? this.other_ancestry : this.ancestry; }
+	get branchAncestry(): Ancestry | null { return this.points_normal_atOther ? this.other_ancestry : this.ancestry; }
 	get depth_ofLine(): number { return Math.max(this.ancestry?.depth ?? 0, this.other_ancestry.depth); }
 		
 	update_svg_andName() {

@@ -18,11 +18,11 @@ export default class G_Widget {
 	origin_ofTrunk = Point.zero;
 	origin_ofTitle = Point.zero;
 	center_ofDrag = Point.zero;
-	widget_pointsNormal = true;
+	widget_points_normal = true;
 	size_ofSubtree = Size.zero;
 	width_ofDrawnGraph = 0;
 	forGraphMode: T_Graph;
-	points_toChild = true;
+	points_normal_toChild = true;
 	g_cluster!: G_Cluster;
 	s_widget!: S_Widget;
 	g_line!: G_TreeLine;
@@ -65,7 +65,7 @@ export default class G_Widget {
 	get absolute_center_ofDrag(): Point { return this.center_ofDrag.offsetBy(this.origin); }
 	get absolute_center_ofReveal(): Point { return this.center_ofReveal.offsetBy(this.origin); }
 	get origin_ofDrawnGraph(): Point { return this.t_widget == T_Widget.radial ? this.origin_ofRadial : this.origin; }
-	get showingReveal(): boolean { return this.ancestry.showsReveal_forPointingToChild(this.points_toChild) ?? false; }
+	get showingReveal(): boolean { return this.ancestry.showsReveal_forPointingToChild(this.points_normal_toChild) ?? false; }
 
 	private get t_widget(): T_Widget {
 		const isFocus = this.ancestry?.isFocus ?? false;
@@ -143,8 +143,8 @@ export default class G_Widget {
 		height: number = 0,
 		origin: Point = Point.zero,
 		forGraphMode = T_Graph.radial,
-		points_toChild: boolean = true,
-		widget_pointsNormal: boolean = true) {
+		points_normal_toChild: boolean = true,
+		widget_points_normal: boolean = true) {
 
 		if (forGraphMode == get(w_show_graph_ofType)) {	// assure modes match
 			const height_ofSubtree = this.ancestry.height_ofVisibleSubtree();
@@ -153,9 +153,9 @@ export default class G_Widget {
 			this.origin_ofWidget = this.origin_forAncestry_inRect(this.ancestry, rect_ofLines);
 			this.g_line.rect = rect_ofLines.extend_widthBy(5);
 			this.forGraphMode = forGraphMode;
-			this.points_toChild = points_toChild;
+			this.points_normal_toChild = points_normal_toChild;
 			this.size_ofSubtree.height = height_ofSubtree;
-			this.widget_pointsNormal = widget_pointsNormal;
+			this.widget_points_normal = widget_points_normal;
 			this.g_line.set_curve_type_forHeight(height_ofLines);
 			this.layout_one_generation();
 		}
@@ -165,24 +165,26 @@ export default class G_Widget {
 		const ancestry = this.ancestry;
 		if (!!ancestry.thing) {
 			const dot_size = k.height.dot;
-			const radial_mode = controls.inRadialMode;
 			const show_reveal = this.showingReveal;
+			const inRadialMode = controls.inRadialMode;
 			const width_ofReveal = show_reveal ? dot_size : 0;
 			const width_ofTitle = ancestry.thing.width_ofTitle;
-			const widget_pointsNormal = this.widget_pointsNormal;
-			const isRadialFocus = controls.inRadialMode && ancestry.isFocus;
-			const width_ofDrag = (dot_size * 2) + (radial_mode ? 2 : -4);
-			const width_ofWidget = width_ofTitle + width_ofDrag + width_ofReveal + (radial_mode ? 0 : 4);
+			const widget_points_normal = this.widget_points_normal;
+			const isRadialFocus = inRadialMode && ancestry.isFocus;
+			const width_ofDrag = (dot_size * 2) + (inRadialMode ? 2 : -4);
+			const width_ofWidget = width_ofTitle + width_ofDrag + width_ofReveal + (inRadialMode ? 0 : 4);
 			const x_ofDrag_forPointsBackwards = width_ofWidget - dot_size - 3 + (show_reveal ? 0.5 : 0);
-			const x_ofDrag = widget_pointsNormal ? (radial_mode ? 3 : 2) : x_ofDrag_forPointsBackwards;
-			const y_ofDrag = 2.5 + (radial_mode ? 0.1 : 0);
-			const x_ofRadial = widget_pointsNormal ? -4 : -dot_size;
-			const x_ofWidget = widget_pointsNormal ? -7 : 6 + dot_size - width_ofWidget;
+			const x_ofDrag = widget_points_normal ? (inRadialMode ? 3 : 2) : x_ofDrag_forPointsBackwards;
+			const y_ofDrag = 2.5 + (inRadialMode ? 0.1 : 0);
+			const x_ofRadial = widget_points_normal ? -4 : -dot_size;
+			const x_ofWidget = widget_points_normal ? -7 : 6 + dot_size - width_ofWidget;
 			const origin_ofDrag = new Point(x_ofDrag, y_ofDrag).offsetEquallyBy(dot_size / 2);
-			const x_ofRadial_title =  widget_pointsNormal && !isRadialFocus ? 20 : (show_reveal ? 20 : 8);
-			this.location_ofRadial = this.location_ofNecklace.offsetByXY(x_ofRadial, 4 - dot_size);
-			this.origin_ofRadial = this.location_ofRadial.offsetByX(widget_pointsNormal ? 0 : -width_ofTitle - width_ofReveal);
-			this.origin_ofTitle = Point.x(radial_mode ? x_ofRadial_title : dot_size + 5);
+			const x_ofRadial_title =  widget_points_normal && !isRadialFocus ? 20 : (show_reveal ? 20 : 8);
+			if (!isRadialFocus) {
+				this.location_ofRadial = this.location_ofNecklace.offsetByXY(x_ofRadial, 4 - dot_size);
+			}
+			this.origin_ofRadial = this.location_ofRadial.offsetByX(widget_points_normal ? 0 : -width_ofTitle - width_ofReveal);
+			this.origin_ofTitle = Point.x(inRadialMode ? x_ofRadial_title : dot_size + 5);
 			this.offset_ofWidget = new Point(x_ofWidget, 0.5);
 			this.width_ofDrawnGraph = width_ofWidget;
 			this.width_ofWidget = width_ofWidget;
@@ -190,17 +192,17 @@ export default class G_Widget {
 			if (show_reveal) {
 				const y_ofReveal = dot_size * 0.7 - 0.5;
 				const x_offset_forPointsNormal = width_ofWidget - dot_size - 10;
-				const x_ofReveal = dot_size + (widget_pointsNormal ? x_offset_forPointsNormal : -3);
+				const x_ofReveal = dot_size + (widget_points_normal ? x_offset_forPointsNormal : -3);
 				this.center_ofReveal = new Point(x_ofReveal, y_ofReveal);
 			}
 		}
 	}
 
-	layout_necklaceWidget(rotated_origin: Point, widget_pointsNormal: boolean) {
+	layout_necklaceWidget(rotated_origin: Point, widget_points_normal: boolean) {
 		if (controls.inRadialMode) {
 			this.forGraphMode = T_Graph.radial;
 			this.location_ofNecklace = rotated_origin;
-			this.widget_pointsNormal = widget_pointsNormal;
+			this.widget_points_normal = widget_points_normal;
 			this.layout_widget();
 		}
 	}
