@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { c, e, h, k, u, elements, x, show, busy, Rect, Size, Point, Thing, search, layout } from '../../ts/common/Global_Imports';
 	import { debug, colors, Ancestry, Hierarchy, databases, Direction } from '../../ts/common/Global_Imports';
-	import { w_hierarchy, w_graph_rect, w_t_database, w_separator_color } from '../../ts/managers/Stores';
+	import { w_hierarchy, w_rect_ofGraphView, w_t_database, w_separator_color } from '../../ts/managers/Stores';
 	import { T_Layer, T_Search, T_Banner, T_Control, T_Startup } from '../../ts/common/Global_Imports';
 	import { w_t_startup, w_popupView_id, w_device_isMobile, } from '../../ts/managers/Stores';
 	import { w_s_title_edit, w_ancestry_focus } from '../../ts/managers/Stores';
@@ -31,7 +31,7 @@
 	function handle_spinner_angle(event) { spinnerAngle = event.detail.angle; }
 
 	$: {
-		const _ = `${$w_t_database}:::${$w_t_startup}:::${$w_graph_rect.description}`;
+		const _ = `${$w_t_database}:::${$w_t_startup}:::${$w_rect_ofGraphView.description}`;
 		setup_spinner_rect();
 		if (!!h && h.isAssembled) {
 			debug.log_draw(`PANEL`);
@@ -40,7 +40,7 @@
 	}
 
 	function setup_spinner_rect() {
-		const size = $w_graph_rect.size
+		const size = $w_rect_ofGraphView.size
 		const title_width = u.getWidthOf(spinner_title) + 35;
 		const diameter = Math.min(size.height, size.width) / 4;
 		const square = Size.square(Math.max(diameter, title_width));
@@ -79,10 +79,10 @@
 					style='
 						position: fixed;
 						z-index: {T_Layer.graph};
-						top: {$w_graph_rect.origin.y}px;
-						left: {$w_graph_rect.origin.x}px;
-						width: {$w_graph_rect.size.width}px;
-						height: {$w_graph_rect.size.height}px;'>
+						top: {$w_rect_ofGraphView.origin.y}px;
+						left: {$w_rect_ofGraphView.origin.x}px;
+						width: {$w_rect_ofGraphView.size.width}px;
+						height: {$w_rect_ofGraphView.size.height}px;'>
 					{#if busy.isDatabaseBusy && h.db.isRemote}
 						{#key spinner_rect.description}
 							<div class='data-spinner'

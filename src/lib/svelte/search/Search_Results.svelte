@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { w_search_results_changed, w_search_show_controls } from '../../ts/managers/Stores';
-	import { w_graph_rect, w_search_state, w_separator_color } from '../../ts/managers/Stores';
+	import { w_rect_ofGraphView, w_search_state, w_separator_color } from '../../ts/managers/Stores';
 	import { k, u, elements, x, Thing, colors, T_Search } from '../../ts/common/Global_Imports';
 	import { search } from '../../ts/ux/UX_Search';
 	import { derived } from 'svelte/store';

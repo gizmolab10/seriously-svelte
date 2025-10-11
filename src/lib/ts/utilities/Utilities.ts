@@ -186,7 +186,7 @@ export class Utilities extends Testworthy_Utilities {
 		}
 	}
 
-	get_drawRectFor_g_widgets(g_widgets: G_Widget[]): Rect {
+	get_rect_ofDrawnGraphFor_g_widgets(g_widgets: G_Widget[]): Rect {
 		if (g_widgets.length === 0) {
 			return Rect.zero;
 		}
@@ -195,8 +195,8 @@ export class Utilities extends Testworthy_Utilities {
 		let maxX = -Infinity;
 		let maxY = -Infinity;
 		for (const g_widget of g_widgets) {
-			const w_origin = g_widget.origin_forDrawRect;
-			const w_width = g_widget.width_forDrawRect;
+			const w_origin = g_widget.origin_ofDrawnGraph;
+			const w_width = g_widget.width_ofDrawnGraph;
 			const w_height = k.height.row - 1.5;
 			const w_minX = w_origin.x;
 			const w_minY = w_origin.y;

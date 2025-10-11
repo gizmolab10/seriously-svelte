@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { w_background_color, w_graph_rect, w_user_graph_offset } from '../../ts/managers/Stores';
+	import { w_background_color, w_rect_ofGraphView, w_user_graph_offset } from '../../ts/managers/Stores';
 	import { k, u, elements, x, Rect, Point, colors, T_Layer } from '../../ts/common/Global_Imports';
 	import { w_thing_fontFamily, w_control_key_down } from '../../ts/managers/Stores';
 	import { S_Element, S_Component } from '../../ts/common/Global_Imports';
@@ -43,7 +43,7 @@
 	recompute_style();
 
 	$: {
-		const _ = `${$w_graph_rect}
+		const _ = `${$w_rect_ofGraphView}
 			${$w_user_graph_offset}
 			${$w_background_color}
 			${$w_control_key_down}

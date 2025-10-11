@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { e, h, k, u, elements, x, Rect, Point, debug, layout, signals, colors, S_Component } from '../../ts/common/Global_Imports';
-	import { w_graph_rect, w_show_graph_ofType, w_user_graph_offset, w_depth_limit } from '../../ts/managers/Stores';
+	import { w_rect_ofGraphView, w_show_graph_ofType, w_user_graph_offset, w_depth_limit } from '../../ts/managers/Stores';
 	import { T_Layer, T_Graph, T_Signal, T_Startup, T_Control, T_Component } from '../../ts/common/Global_Imports';
 	import { w_t_startup, w_device_isMobile, w_popupView_id } from '../../ts/managers/Stores';
 	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/managers/Stores';
@@ -14,8 +14,8 @@
 	import { onMount } from 'svelte';
 	const size_big = k.height.button + 4;
 	const { w_items: w_expanded } = x.si_expanded;
-	let actual_content_rect = layout.user_offset_rect_ofDrawnGraph;
-	let draggableRect = $w_graph_rect;
+	let actual_content_rect = layout.user_offset_toDrawnGraph;
+	let draggableRect = $w_rect_ofGraphView;
 	let rubberbandComponent: any;
 	let reattachments = 0;
 	let style = k.empty;
@@ -31,7 +31,7 @@
 	//	SHOULD only reposition for:				//
 	//											//
 	//		w_user_graph_offset					//
-	//		w_graph_rect						//
+	//		w_rect_ofGraphView						//
 	//											//
 	//////////////////////////////////////////////
 	
@@ -40,7 +40,7 @@
 	});
 	
 	$:	{
-		const _ = `${$w_graph_rect.description}:::${$w_t_startup}:::${$w_show_graph_ofType}`;
+		const _ = `${$w_rect_ofGraphView.description}:::${$w_t_startup}:::${$w_show_graph_ofType}`;
 		update_style();
 	}
 
@@ -50,15 +50,15 @@
 	}
 
 	$: {
-		const _ = `${$w_user_graph_offset.description}:::${$w_graph_rect.description}:::${$w_depth_limit}:::${$w_s_title_edit?.t_edit}:::${$w_ring_rotation_angle}:::${$w_ring_rotation_radius}`;
-		actual_content_rect = layout.user_offset_rect_ofDrawnGraph;
+		const _ = `${$w_user_graph_offset.description}:::${$w_rect_ofGraphView.description}:::${$w_depth_limit}:::${$w_s_title_edit?.t_edit}:::${$w_ring_rotation_angle}:::${$w_ring_rotation_radius}`;
+		actual_content_rect = layout.user_offset_toDrawnGraph;
 	}
 
 	function grand_layout_andReattach() {
 		if (!!h && h.hasRoot) {
 			layout.grand_layout();
 			debug.log_draw(`GRAPH grand_layout_andReattach`);
-			actual_content_rect = layout.user_offset_rect_ofDrawnGraph;
+			actual_content_rect = layout.user_offset_toDrawnGraph;
 			reattachments += 1;
 		}
 	}
@@ -72,7 +72,7 @@
 	}
 		
 	function update_style() {
-		draggableRect = $w_graph_rect;
+		draggableRect = $w_rect_ofGraphView;
 		const root = document.documentElement;
 		root.style.setProperty('--graph-x', `${draggableRect.origin.x}px`);
 		root.style.setProperty('--graph-y', `${draggableRect.origin.y}px`);

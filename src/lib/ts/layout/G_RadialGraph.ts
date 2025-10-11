@@ -46,11 +46,11 @@ export default class G_RadialGraph {
 			const width_ofTitle = ancestry.thing.width_ofTitle;
 			const x = -7.5 - (width_ofTitle / 2);
 			const y = -11;
-			const origin_ofWidget = layout.center_ofGraphRect.offsetByXY(x, y);
+			const origin_ofWidget = layout.center_ofGraphView.offsetByXY(x, y);
 			g_focus.layout_widget();
 			g_focus.width_ofWidget = width_ofTitle;
 			g_focus.location_ofRadial = origin_ofWidget;
-			g_focus.width_forDrawRect = width_ofTitle + 30;
+			g_focus.width_ofDrawnGraph = width_ofTitle + 30;
 			g_focus.origin_ofRadial = origin_ofWidget.offsetByX(g_focus.widget_pointsNormal ? 0 : -width_ofTitle);	// adjust for printing
 		}
 	}

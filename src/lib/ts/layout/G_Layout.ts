@@ -3,26 +3,26 @@ import { w_show_details, w_show_graph_ofType, w_search_show_controls } from '../
 import { G_Widget, S_Component, T_Preference } from '../common/Global_Imports';
 import { Rect, Size, Point, Thing, Ancestry } from '../common/Global_Imports';
 import { w_user_graph_offset, w_user_graph_center } from '../managers/Stores';
-import { w_graph_rect, w_mouse_location_scaled } from '../managers/Stores';
+import { w_rect_ofGraphView, w_mouse_location_scaled } from '../managers/Stores';
 import { get } from 'svelte/store';
 
 export default class G_Layout {
 	scale_factor = 1;
 
 	restore_state() {
-		this.update_graphRect();	// needed for set_scale_factor
+		this.update_rect_ofGraphView();	// needed for set_scale_factor
 		this.set_scale_factor(p.read_key(T_Preference.scale) ?? 1);
 		this.renormalize_user_graph_offset();	// must be called after apply scale (which otherwise fubars offset)
 		document.documentElement.style.setProperty('--css-body-width', this.windowSize.width.toString() + 'px');
 	}
 
-	static readonly _____GRAPH_RECT: unique symbol;
+	static readonly _____RECT_OF_GRAPH_VIEW: unique symbol;
 
 	get rect_ofDrawnGraph(): Rect { return this.rect_ofAllWidgets; }
 	get size_ofDrawnGraph(): Size { return this.rect_ofAllWidgets.size; }
-	get center_ofGraphRect(): Point { return get(w_graph_rect).size.asPoint.dividedInHalf; }
+	get center_ofGraphView(): Point { return get(w_rect_ofGraphView).size.asPoint.dividedInHalf; }
 
-	update_graphRect() {
+	update_rect_ofGraphView() {
 		// respond to changes in: window size & details visibility
 		const show_secondary_controls = get(w_search_show_controls) || (get(w_show_graph_ofType) == T_Graph.tree);
 		const y = (this.controls_boxHeight) * (show_secondary_controls ? 2 : 1) - 4;	// below primary and secondary controls
@@ -31,7 +31,7 @@ export default class G_Layout {
 		const size_ofGraph = this.windowSize.reducedBy(origin_ofGraph).reducedBy(Point.square(k.thickness.separator.main - 1));
 		const rect = new Rect(origin_ofGraph, size_ofGraph);
 		debug.log_mouse(`GRAPH ====> ${rect.description}`);
-		w_graph_rect.set(rect);																// emits a signal, to adjust
+		w_rect_ofGraphView.set(rect);																// emits a signal, to adjust
 	}
 
 	static readonly _____GRAPHS: unique symbol;
@@ -57,7 +57,7 @@ export default class G_Layout {
 	}
 
 	grand_adjust_toFit() {
-		const graph_size = get(w_graph_rect).size;
+		const graph_size = get(w_rect_ofGraphView).size;
 		const layout_size = this.size_ofDrawnGraph;
 		const scale_factor = layout_size.best_ratio_to(graph_size);
 		const new_size = layout_size.dividedEquallyBy(scale_factor);
@@ -71,7 +71,7 @@ export default class G_Layout {
 
 	static readonly _____WIDGETS: unique symbol;
 
-	get rect_ofAllWidgets(): Rect { return u.get_drawRectFor_g_widgets(this.all_g_widgets); }
+	get rect_ofAllWidgets(): Rect { return u.get_rect_ofDrawnGraphFor_g_widgets(this.all_g_widgets); }
 
 	get all_g_widgets(): G_Widget[] {
 		if (controls.inRadialMode) {
@@ -84,7 +84,7 @@ export default class G_Layout {
 	static readonly _____USER_OFFSET: unique symbol;
 	
 	renormalize_user_graph_offset() { this.set_user_graph_offsetTo(this.persisted_user_offset); }
-	get user_offset_rect_ofDrawnGraph(): Rect { return this.rect_ofDrawnGraph.offsetBy(get(w_user_graph_offset)); }
+	get user_offset_toDrawnGraph(): Rect { return this.rect_ofDrawnGraph.offsetBy(get(w_user_graph_offset)); }
 	get mouse_distance_fromGraphCenter(): number { return this.mouse_vector_ofOffset_fromGraphCenter()?.magnitude ?? 0; }
 	get mouse_angle_fromGraphCenter(): number | null { return this.mouse_vector_ofOffset_fromGraphCenter()?.angle ?? null; }
 
@@ -112,7 +112,7 @@ export default class G_Layout {
 			p.write_key(T_Preference.user_offset, user_offset);		// persist the property user_offset
 			changed = true;
 		}
-		const center_offset = get(w_graph_rect).center.offsetBy(user_offset);	// center of the graph in window coordinates
+		const center_offset = get(w_rect_ofGraphView).center.offsetBy(user_offset);	// center of the graph in window coordinates
 		w_user_graph_center.set(center_offset);									// w_user_graph_center: a signal change
 		w_user_graph_offset.set(user_offset);									// w_user_graph_offset: a signal change
 		debug.log_mouse(`USER ====> ${user_offset.verbose}  ${center_offset.verbose}`);
@@ -199,7 +199,7 @@ export default class G_Layout {
 		// doc.style.setProperty('zoom', scale_factor.toString());
 		// doc.style.height = `${100 / scale_factor}%`;
 		// doc.style.width = `${100 / scale_factor}%`;
-		// this.update_graphRect();
+		// this.update_rect_ofGraphView();
 	}
 
 }

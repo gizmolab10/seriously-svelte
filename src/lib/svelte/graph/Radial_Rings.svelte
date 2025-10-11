@@ -4,7 +4,7 @@
 	import { radial, g_radial, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Radial_Zone, T_Component, S_Component } from '../../ts/common/Global_Imports';
 	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/managers/Stores';
-	import { w_graph_rect, w_mouse_location_scaled } from '../../ts/managers/Stores';
+	import { w_rect_ofGraphView, w_mouse_location_scaled } from '../../ts/managers/Stores';
 	import { w_thing_color, w_ancestry_focus } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Radial_ArcSlider from './Radial_ArcSlider.svelte';
@@ -209,7 +209,7 @@
 				zindex = {T_Layer.radial}
 				handle_isHit = {handle_isHit}
 				handle_s_mouse = {handle_up_down}
-				center = {layout.center_ofGraphRect}>
+				center = {layout.center_ofGraphView}>
 				<svg class = 'rings-svg'
 					viewBox = {viewBox}>
 					<path class = 'resize-path'

@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { c, k, u, elements, x, Point, layout, T_Layer, T_Graph, T_Detail, T_Direction } from '../../ts/common/Global_Imports';
 	import { w_search_state, w_search_show_controls } from '../../ts/managers/Stores';
-	import { w_graph_rect, w_count_details, w_show_graph_ofType } from '../../ts/managers/Stores';
+	import { w_rect_ofGraphView, w_count_details, w_show_graph_ofType } from '../../ts/managers/Stores';
 	import Banner_Hideable from './Banner_Hideable.svelte';
 	import D_Preferences from './D_Preferences.svelte';
 	import Separator from '../draw/Separator.svelte';

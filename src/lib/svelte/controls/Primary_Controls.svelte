@@ -4,7 +4,7 @@
 	import { w_background_color, w_device_isMobile, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { w_show_details, w_show_graph_ofType, w_show_tree_ofType } from '../../ts/managers/Stores';
 	import { T_Layer, T_Graph, T_Search, T_Element, T_Control } from '../../ts/common/Global_Imports';
-	import { w_graph_rect, w_count_window_resized, w_popupView_id } from '../../ts/managers/Stores';
+	import { w_rect_ofGraphView, w_count_window_resized, w_popupView_id } from '../../ts/managers/Stores';
 	import { T_Kinship, T_Request, T_Search_Preference } from '../../ts/common/Global_Imports';
 	import { Point, svgPaths, signals, S_Element } from '../../ts/common/Global_Imports';
 	import Search_Toggle from '../search/Search_Toggle.svelte';
@@ -33,7 +33,7 @@
 	function handle_recents_mouseClick(column: number) { x.ancestry_next_focusOn(column == 1); }
 
 	$: {
-		const _ = `${$w_graph_rect.description}:::${$w_count_window_resized}`;
+		const _ = `${$w_rect_ofGraphView.description}:::${$w_count_window_resized}`;
 		width = layout.windowSize.width - 20;
 	}
 

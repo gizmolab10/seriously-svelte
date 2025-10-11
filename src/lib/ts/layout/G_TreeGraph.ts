@@ -1,7 +1,7 @@
 import { k, p, x, Rect, Ancestry, G_Widget, debug, layout, T_Kinship} from "../common/Global_Imports";
 import { w_show_related, w_show_details, w_show_tree_ofType } from "../managers/Stores";
 import { w_ancestry_focus, w_device_isMobile } from "../managers/Stores";
-import { w_depth_limit, w_graph_rect } from "../managers/Stores";
+import { w_depth_limit, w_rect_ofGraphView } from "../managers/Stores";
 import { get } from "svelte/store";
 
 export default class G_TreeGraph {
@@ -17,13 +17,13 @@ export default class G_TreeGraph {
 	}
 
 	grand_layout_tree() {
-		const graph_rect = get(w_graph_rect);
+		const rect_ofGraphView = get(w_rect_ofGraphView);
 		const depth_limit = get(w_depth_limit) ?? 1;
-		if (!!graph_rect && !!this.g_focus) {
-			this.layout_focus_ofTree(graph_rect); 
+		if (!!rect_ofGraphView && !!this.g_focus) {
+			this.layout_focus_ofTree(rect_ofGraphView); 
 			this.g_focus.layout_each_generation_recursively(depth_limit);
 			this.g_focus.layout_each_bidirectional_generation_recursively(depth_limit);
-			this.adjust_focus_ofTree(graph_rect);
+			this.adjust_focus_ofTree(rect_ofGraphView);
 		}
 	}
 
@@ -74,26 +74,26 @@ export default class G_TreeGraph {
 
 	static readonly _____PRIVATE: unique symbol;
 
-	private adjust_focus_ofTree(graph_rect: Rect) {
+	private adjust_focus_ofTree(rect_ofGraphView: Rect) {
 		if (!!this.g_focus) {
-			const y_offset = -1 - graph_rect.origin.y;
+			const y_offset = -1 - rect_ofGraphView.origin.y;
 			const subtree_size = this.focus.size_ofVisibleSubtree;
 			const x_offset_ofReveal = (this.focus.thing?.width_ofTitle ?? 0) / 2 - 2;
 			const x_offset_forDetails = (get(w_show_details) ? -k.width.details : 0);
 			const x_offset = 15 + x_offset_forDetails - (subtree_size.width / 2) - (k.height.dot / 2.5) + x_offset_ofReveal;
-			const origin_ofFocusReveal = graph_rect.center.offsetByXY(x_offset, y_offset);
+			const origin_ofFocusReveal = rect_ofGraphView.center.offsetByXY(x_offset, y_offset);
 			this.g_focus.origin_ofWidget = origin_ofFocusReveal.offsetByXY(-21.5 - x_offset_ofReveal, -5);
 		}
 	}
 
-	private layout_focus_ofTree(graph_rect: Rect) {
-		const y_offset = graph_rect.origin.y;
+	private layout_focus_ofTree(rect_ofGraphView: Rect) {
+		const y_offset = rect_ofGraphView.origin.y;
 		const subtree_size = this.focus.size_ofVisibleSubtree;
 		const x_offset_ofFirstReveal = (this.focus.thing?.width_ofTitle ?? 0) / 2 - 2;
 		const y_offset_ofBranches = (k.height.dot / 2) -(subtree_size.height / 2) - 4;
 		const x_offset_ofBranches = -8 - k.height.dot + x_offset_ofFirstReveal;
 		const x_offset = (get(w_show_details) ? -k.width.details : 0) + 15 + x_offset_ofFirstReveal - (subtree_size.width / 2) - (k.height.dot / 2.5);
-		const origin_ofFocusReveal = graph_rect.center.offsetByXY(x_offset, -y_offset);
+		const origin_ofFocusReveal = rect_ofGraphView.center.offsetByXY(x_offset, -y_offset);
 		if (get(w_device_isMobile)) {
 			origin_ofFocusReveal.x = 25;
 		}

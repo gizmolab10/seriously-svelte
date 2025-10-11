@@ -3,25 +3,24 @@ function(instance, properties) {
 	const BUBBLIZED_add_ons = ['_boolean', '_custom', '_text', '_list'];
 	const shortening_FIELD_pattern = new RegExp(`^${object_add_ons.join('|')}|${BUBBLIZED_add_ons.join('|')}`, 'g');
 	const unique_FIELD_pattern = new RegExp(`^${object_add_ons.join('|')}|_field|unique_`, 'g');
-	const SERIOUSLY_field_name_by_BUBBLIZED_field_name = new Map([['_id', 'id']]);
-	const SERIOUSLY_LIST_field_names = new Set(['parents', 'related']);
+	const ignore_fields = new Set(['Slug', 'Created By', 'Created Date', 'Modified Date']);
+	const SERIOUSLY_name_by_CUSTOM_name = new Map([['_id', 'id']]);
 	const has_two_tables = properties.hasOwnProperty('edge_type');
 	const shorter_FIELD_name_by_BUBBLIZED_field_name = new Map();
-	const USER_FIELD_name_by_BUBBLIZED_field_name = new Map();
-	const ignore_fields = ['Slug'];
-	let USER_LIST_names = [];
+	const CUSTOM_FIELD_name_by_label = new Map();
+	let CUSTOM_LIST_names = new Set();
 
 	//////////////////////////////////////////////////////////////////////
 	//																	//
 	//	naming convention, uppercase for emphasis						//
 	//																	//
 	//	LIST		array of ITEM(s)									//
-	//	ITEM		instance of USER data type (eg, "Object")			//
+	//	ITEM		instance of CUSTOM data type (eg, "Object")			//
 	//	SERIOUSLY	internal use within seriously netlify app			//
 	//	FIELD		plugin Field (specified in bubble plugin editor)	//
-	//	BUBBLIZED	wordy (sigh) field names created by bubble app		//
-	//	LABELS		labels of text entries for USER field names			//
-	//	USER		field name chosen by author of bubble app			//
+	//	BUBBLIZED	verbose (sigh) field names created by bubble app	//
+	//	LABELS		labels of text entries for CUSTOM field names		//
+	//	CUSTOM		field name specified by author of bubble app		//
 	//																	//
 	//	_id			the unique id of ITEM								//
 	//	c_			convert to											//
@@ -39,11 +38,11 @@ function(instance, properties) {
 	function WARN(message, ...optionalParams) { if (instance.data.debug) { console.warn(message, ...optionalParams); } }
 
 	function setup_names() {
-		const LABELS_of_USER_LIST_names = [
+		const LABELS_of_CUSTOM_LISTS = [
 			'object_parents_field',
 			'object_related_field',
 			'owners_field'];
-		let LABELS_of_FIELD_names = [...LABELS_of_USER_LIST_names,
+		let LABELS_of_FIELD_names = [...LABELS_of_CUSTOM_LISTS,
 			'object_title_field',
 			'object_color_field',
 			'starting_object'];
@@ -55,38 +54,34 @@ function(instance, properties) {
 				'edge_child_field',
 				'edge_kind_field'];
 		}
-		LABELS_of_FIELD_names.forEach(name => {
-			const property_value = properties[name];
+		LABELS_of_FIELD_names.forEach(label => {
+			const property_value = properties[label];
 			if(!!property_value && property_value != 'undefined') {
-				if (isList(property_value)) {
-					console.log('isList', name, property_value);
-				} else {					
-					const ITEM_field_name = String(properties[name]).toLowerCase();
-					// replace all spaces with underscores, and _list with s (eg, "object_list" becomes "objects")
-					// this converges "related_objects" with "related objects"
-					// unbubblizes them (strips the annoying list suffix added by bubble to its field names, grrrr)
-					const USER_FIELD_name = ITEM_field_name.replace(/ /, '_').replace(/^_list/, 's');
-					USER_FIELD_name_by_BUBBLIZED_field_name[name] = USER_FIELD_name;
-					const SERIOUSLY_field_name = c_shorter_FIELD_names(name, ['_field', 'unique_']);
-					SERIOUSLY_field_name_by_BUBBLIZED_field_name.set(USER_FIELD_name, SERIOUSLY_field_name);
-					LOG('setup_names', name, ITEM_field_name);
-				}
+				const ITEM_field_name = String(properties[label]).toLowerCase();
+				// replace all spaces with underscores, and _list with s (eg, "object_list" becomes "objects")
+				// this converges "related_objects" with "related objects"
+				// unbubblizes them (strips the annoying list suffix added by bubble to its field names, grrrr)
+				const CUSTOM_FIELD_name = ITEM_field_name.replace(/ /, '_').replace(/^_list/, 's');
+				CUSTOM_FIELD_name_by_label[label] = CUSTOM_FIELD_name;
+				const SERIOUSLY_field_name = c_shorter_FIELD_names(label, ['_field', 'unique_']);
+				SERIOUSLY_name_by_CUSTOM_name.set(CUSTOM_FIELD_name, SERIOUSLY_field_name);
+				LOG('setup_names', label, ITEM_field_name);
 			}
 		});
-		USER_LIST_names = new Set(c_LABELS_to_USER_LIST_names(LABELS_of_USER_LIST_names));	// N.B. needs USER_FIELD_name_by_BUBBLIZED_field_name from LABELS_of_FIELD_names.forEach
+		CUSTOM_LIST_names = new Set(c_LABELS_to_CUSTOM_LIST_names(LABELS_of_CUSTOM_LISTS));	// N.B. needs CUSTOM_FIELD_name_by_label from LABELS_of_FIELD_names.forEach
 	}
 
 	const _____CONVERSIONS = Symbol('CONVERSIONS');
 
-	function c_LABELS_to_USER_LIST_names(LABELS_of_USER_LIST_names) {
+	function c_LABELS_to_CUSTOM_LIST_names(LABELS_of_CUSTOM_LISTS) {
 		// Ack! Bubble doesn't support lists within lists!!!!!!
 		const translated = [];
-		LABELS_of_USER_LIST_names.forEach(label_of_LIST_name => {
-			const name = USER_FIELD_name_by_BUBBLIZED_field_name[label_of_LIST_name];
+		LABELS_of_CUSTOM_LISTS.forEach(label_of_LIST_name => {
+			const name = CUSTOM_FIELD_name_by_label[label_of_LIST_name];
 			if (!!name) {
 				translated.push(name);
 			} else {
-				WARN(['c_LABELS_to_USER_LIST_names "', label_of_LIST_name, '" not found in USER_FIELD_name_by_BUBBLIZED_field_name'].join(''));
+				WARN(['c_LABELS_to_CUSTOM_LIST_names "', label_of_LIST_name, '" not found in CUSTOM_FIELD_name_by_label'].join(''));
 			}
 		});
 		return translated;
@@ -102,14 +97,10 @@ function(instance, properties) {
 		return rename;
 	}
 
-	function isList(value) {
+	function is_LIST(value) {
 		return !!value &&
 			typeof value === 'object' &&
 			value.hasOwnProperty('listProperties');
-	}
-
-	function isListProperty(value, SERIOUSLY_field_name) {
-		return isList(value) && SERIOUSLY_LIST_field_names.has(SERIOUSLY_field_name);
 	}
 
 	function extract_ITEM_data(field_name_of_ITEM, ITEM = null) {
@@ -122,14 +113,14 @@ function(instance, properties) {
 			LOG('extracting data from ITEM for', field_name_of_ITEM, ITEM);
 			const BUBBLIZED_field_names = ITEM.listProperties();
 			for (const BUBBLIZED_field_name of BUBBLIZED_field_names) {
-				const USER_FIELD_name = c_shorter_FIELD_names(BUBBLIZED_field_name, BUBBLIZED_add_ons);
-				if (ignore_fields.includes(USER_FIELD_name)) continue;
+				const CUSTOM_FIELD_name = c_shorter_FIELD_names(BUBBLIZED_field_name, BUBBLIZED_add_ons);
+				if (ignore_fields.has(CUSTOM_FIELD_name)) continue;
 				const value = ITEM.get(BUBBLIZED_field_name);
 				if (!!value || value == 0) {  // 0 is a valid value
-					const SERIOUSLY_field_name = SERIOUSLY_field_name_by_BUBBLIZED_field_name.get(BUBBLIZED_field_name) ??
-												 SERIOUSLY_field_name_by_BUBBLIZED_field_name.get(USER_FIELD_name);
+					const SERIOUSLY_field_name = SERIOUSLY_name_by_CUSTOM_name.get(BUBBLIZED_field_name) ??
+												 SERIOUSLY_name_by_CUSTOM_name.get(CUSTOM_FIELD_name);
 					if (!!SERIOUSLY_field_name) {
-						if (!USER_LIST_names.has(USER_FIELD_name)) {
+						if (!CUSTOM_LIST_names.has(CUSTOM_FIELD_name)) {
 							ITEM_data[SERIOUSLY_field_name] = value;
 						} else {
 							const LIST_data = extract_LIST_data(BUBBLIZED_field_name, value);

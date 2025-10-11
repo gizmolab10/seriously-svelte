@@ -46,7 +46,7 @@ export const w_mouse_location_scaled	= writable<Point>();
 export const w_user_graph_center		= writable<Point>();
 export const w_user_graph_offset		= writable<Point>();
 export const w_mouse_location			= writable<Point>();
-export const w_graph_rect				= writable<Rect>();
+export const w_rect_ofGraphView			= writable<Rect>();
 
 const _____DATABASE: unique symbol = Symbol('DATABASE');
 

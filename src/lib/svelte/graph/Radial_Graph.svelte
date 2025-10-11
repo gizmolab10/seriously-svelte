@@ -2,7 +2,7 @@
 	import { T_Layer, T_Signal, T_Radial_Zone, T_Component, S_Component } from '../../ts/common/Global_Imports';
 	import { k, u, elements, x, Rect, Point, layout, g_radial, signals } from '../../ts/common/Global_Imports';
 	import { w_g_paging, w_ancestry_focus, w_thing_fontFamily } from '../../ts/managers/Stores';
-	import { w_graph_rect, w_user_graph_offset } from '../../ts/managers/Stores';
+	import { w_rect_ofGraphView, w_user_graph_offset } from '../../ts/managers/Stores';
 	import { w_search_show_controls } from '../../ts/managers/Stores';
 	import Radial_Rings from './Radial_Rings.svelte';
 	import Radial_Focus from './Radial_Focus.svelte';
@@ -22,7 +22,7 @@
 	//	SHOULD only reposition for:				//
 	//											//
 	//		w_user_graph_offset					//
-	//		w_graph_rect						//
+	//		w_rect_ofGraphView						//
 	//											//
 	//////////////////////////////////////////////
 
@@ -60,8 +60,8 @@
 	style = '
 		position: absolute;
 		z-index : {T_Layer.graph};
-		width : {$w_graph_rect.size.width}px;
-		height : {$w_graph_rect.size.height}px;
+		width : {$w_rect_ofGraphView.size.width}px;
+		height : {$w_rect_ofGraphView.size.height}px;
 		transform : translate({$w_user_graph_offset.x}px, {$w_user_graph_offset.y}px);'>
 	<Radial_Rings/>
 	<Radial_Focus/>

@@ -3,7 +3,7 @@
 	import {k, layout, Point, T_Layer, T_Graph } from '../../ts/common/Global_Imports';
 	import Search from '../search/Search.svelte';
 	import Tree_Preferences from './Tree_Preferences.svelte';
-	import { w_graph_rect } from '../../ts/managers/Stores';
+	import { w_rect_ofGraphView } from '../../ts/managers/Stores';
 	import Separator from '../draw/Separator.svelte';
 </script>
 
@@ -11,7 +11,7 @@
 	style='
 		position: absolute;
 		top: {layout.controls_boxHeight - 2}px;
-		left: {$w_graph_rect.origin.x + ($w_show_details ? 0 : 5)}px;'>
+		left: {$w_rect_ofGraphView.origin.x + ($w_show_details ? 0 : 5)}px;'>
 	{#if $w_search_show_controls}
 		<Search top={8} width={117} zindex={T_Layer.frontmost}/>
 	{:else if $w_show_graph_ofType == T_Graph.tree}
@@ -22,7 +22,7 @@
 			origin={new Point(-($w_show_details ? 2 : 3), layout.controls_boxHeight - 6)}
 			corner_radius={k.radius.gull_wings.thick}
 			thickness={k.thickness.separator.main}
-			length={$w_graph_rect.size.width + ($w_show_details ? 10 : 7)}
+			length={$w_rect_ofGraphView.size.width + ($w_show_details ? 10 : 7)}
 			zindex={T_Layer.frontmost}
 			has_both_wings={true}
 			isHorizontal={true}/>

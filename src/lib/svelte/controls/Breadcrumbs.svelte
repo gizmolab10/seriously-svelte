@@ -3,7 +3,7 @@
 	import { T_Layer, T_Signal, T_Element, T_Startup, T_Component } from '../../ts/common/Global_Imports';
 	import { svgPaths, Ancestry, layout, components, S_Component} from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_ancestry_focus, w_ancestry_forDetails } from '../../ts/managers/Stores';
-	import { w_t_startup, w_graph_rect, w_thing_color } from '../../ts/managers/Stores';
+	import { w_t_startup, w_rect_ofGraphView, w_thing_color } from '../../ts/managers/Stores';
 	import Breadcrumb_Button from '../mouse/Breadcrumb_Button.svelte';
 	import { w_search_state } from '../../ts/managers/Stores';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
@@ -27,7 +27,7 @@
 	onMount(() => { return () => s_component.disconnect(); });
 	
 	$: {
-		const _ = `${$w_t_startup}:::${$w_thing_color}:::${$w_search_state}:::${x.si_found.w_index}:::${$w_ancestry_forDetails?.id}:::${$w_graph_rect.description}:::${$w_s_title_edit?.description}:::${u.descriptionBy_titles($w_grabbed)}`;
+		const _ = `${$w_t_startup}:::${$w_thing_color}:::${$w_search_state}:::${x.si_found.w_index}:::${$w_ancestry_forDetails?.id}:::${$w_rect_ofGraphView.description}:::${$w_s_title_edit?.description}:::${u.descriptionBy_titles($w_grabbed)}`;
 		update();
 	}
 
