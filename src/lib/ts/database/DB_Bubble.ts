@@ -50,7 +50,7 @@ export default class DB_Bubble extends DB_Common {
 			try {
 				const properties = JSON.parse(event.data.properties);
 				const has_bubble = p.readDB_key(T_Preference.bubble) ?? false;
-				debug.log_bubble(`[DB_Bubble] received bubble update: ${properties}`);
+				debug.log_bubble(`[DB_Bubble] received bubble update: ${JSON.stringify(properties)}`);
 				b_overwrite = properties.overwrite_focus_and_mode || !has_bubble;
 				b_erase_user_preferences = properties.erase_user_preferences;
 				b_relationships = properties.relationships;

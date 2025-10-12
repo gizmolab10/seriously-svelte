@@ -1,4 +1,5 @@
 <script lang='ts'>
+    import { k } from '../../ts/common/Constants';
     export let angle = 0; // starting angle in degrees
     export let speed = '1s';
     export let diameter = 48;
@@ -46,7 +47,8 @@
                 left: 18px;
                 position: absolute;
                 width: {diameter}px;
-                top: {diameter/2 - 10}px;'>
+                top: {diameter/2 - 10}px;
+                font-size: {k.font_size.common}px;'>
         {title}</div>
     {/if}
 </div>

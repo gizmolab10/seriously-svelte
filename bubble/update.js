@@ -1,9 +1,7 @@
 function(instance, properties) {
-	const object_add_ons = ['object_', '_object'];
-	const BUBBLIZED_add_ons = ['_boolean', '_custom', '_text', '_list'];
-	const shortening_FIELD_pattern = new RegExp(`^${object_add_ons.join('|')}|${BUBBLIZED_add_ons.join('|')}`, 'g');
-	const unique_FIELD_pattern = new RegExp(`^${object_add_ons.join('|')}|_field|unique_`, 'g');
+	const BUBBLIZED_add_ons = '_boolean|_resource\\\\d*|_object|_custom|_field|_text|_list|object_|unique_';
 	const ignore_fields = new Set(['Slug', 'Created By', 'Created Date', 'Modified Date']);
+	const shortening_FIELD_pattern = new RegExp(`^${BUBBLIZED_add_ons}`, 'g');
 	const SERIOUSLY_name_by_CUSTOM_name = new Map([['_id', 'id']]);
 	const has_two_tables = properties.hasOwnProperty('edge_type');
 	const shorter_FIELD_name_by_BUBBLIZED_field_name = new Map();
@@ -28,14 +26,14 @@ function(instance, properties) {
 	//																	//
 	//////////////////////////////////////////////////////////////////////
 
-	const _____MAIN = Symbol('MAIN');
-
-	setup_names();
-	instance.data.assure_iframe_is_instantiated(properties);	// start the ball rolling
-	process_incoming_properties();
-
 	function LOG(message, value, ...optionalParams) { instance.data.LOG(message, value, ...optionalParams); }
 	function WARN(message, ...optionalParams) { if (instance.data.debug) { console.warn(message, ...optionalParams); } }
+
+	const _____SETUP = Symbol('SETUP');
+
+	setup_names();
+	instance.data.assure_iframe_is_instantiated(properties);	// start the ball rolling, effective once
+	process_incoming_properties();
 
 	function setup_names() {
 		const LABELS_of_CUSTOM_LISTS = [
@@ -63,7 +61,7 @@ function(instance, properties) {
 				// unbubblizes them (strips the annoying list suffix added by bubble to its field names, grrrr)
 				const CUSTOM_FIELD_name = ITEM_field_name.replace(/ /, '_').replace(/^_list/, 's');
 				CUSTOM_FIELD_name_by_label[label] = CUSTOM_FIELD_name;
-				const SERIOUSLY_field_name = c_shorter_FIELD_names(label, ['_field', 'unique_']);
+				const SERIOUSLY_field_name = c_shorter_FIELD_name_from(label);	// "parents_resource1" --> "parents"
 				SERIOUSLY_name_by_CUSTOM_name.set(CUSTOM_FIELD_name, SERIOUSLY_field_name);
 				LOG('setup_names', label, ITEM_field_name);
 			}
@@ -72,6 +70,15 @@ function(instance, properties) {
 	}
 
 	const _____CONVERSIONS = Symbol('CONVERSIONS');
+
+	function c_shorter_FIELD_name_from(name) {
+		if (shorter_FIELD_name_by_BUBBLIZED_field_name.has(name)) {
+			return shorter_FIELD_name_by_BUBBLIZED_field_name.get(name);
+		}
+		const rename = name.replace(shortening_FIELD_pattern, '');
+		shorter_FIELD_name_by_BUBBLIZED_field_name.set(name, rename);
+		return rename;
+	}
 
 	function c_LABELS_to_CUSTOM_LIST_names(LABELS_of_CUSTOM_LISTS) {
 		// Ack! Bubble doesn't support lists within lists!!!!!!
@@ -87,21 +94,7 @@ function(instance, properties) {
 		return translated;
 	}
 
-	function c_shorter_FIELD_names(name, remove_these) {
-		if (shorter_FIELD_name_by_BUBBLIZED_field_name.has(name)) {
-			return shorter_FIELD_name_by_BUBBLIZED_field_name.get(name);
-		}
-		const pattern = remove_these === BUBBLIZED_add_ons ? shortening_FIELD_pattern : unique_FIELD_pattern;
-		const rename = name.replace(pattern, '');
-		shorter_FIELD_name_by_BUBBLIZED_field_name.set(name, rename);
-		return rename;
-	}
-
-	function is_LIST(value) {
-		return !!value &&
-			typeof value === 'object' &&
-			value.hasOwnProperty('listProperties');
-	}
+	const _____EXTRACTIONS = Symbol('EXTRACTIONS');
 
 	function extract_ITEM_data(field_name_of_ITEM, ITEM = null) {
 		let ITEM_data = {};
@@ -113,7 +106,7 @@ function(instance, properties) {
 			LOG('extracting data from ITEM for', field_name_of_ITEM, ITEM);
 			const BUBBLIZED_field_names = ITEM.listProperties();
 			for (const BUBBLIZED_field_name of BUBBLIZED_field_names) {
-				const CUSTOM_FIELD_name = c_shorter_FIELD_names(BUBBLIZED_field_name, BUBBLIZED_add_ons);
+				const CUSTOM_FIELD_name = c_shorter_FIELD_name_from(BUBBLIZED_field_name);
 				if (ignore_fields.has(CUSTOM_FIELD_name)) continue;
 				const value = ITEM.get(BUBBLIZED_field_name);
 				if (!!value || value == 0) {  // 0 is a valid value

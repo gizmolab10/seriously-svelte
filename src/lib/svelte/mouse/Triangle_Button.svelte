@@ -14,11 +14,12 @@
 	export let center;
 	export let angle;
 	export let size;
+	const { w_items: w_grabbed } = x.si_grabs;
 	let fillColor = 'white';
 	let extraColor = 'white';
 	let trianglePath = svgPaths.fat_polygon(size, angle);
 
-	$: $x.si_grabs.w_items, setFillColor(false);
+	$: $w_grabbed, setFillColor(false);
 	
 	$: {
 		trianglePath = svgPaths.fat_polygon(size, angle);

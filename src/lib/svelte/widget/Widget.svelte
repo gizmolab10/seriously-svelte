@@ -39,9 +39,6 @@
 	setup_fromAncestry();		// this fails if ancestry's thing id is invalid
 	final_layout();
 	layout_maybe();
-	if (top < 1) {
-		debug.log_layout(`ONMOUNT ${top.toFixed(0)} ${left.toFixed(0)} ${ancestry.titles}`);
-	}
 
 	s_component = signals.handle_anySignal_atPriority(1, ancestry, T_Component.widget, (t_signal, value): S_Component | null => {
 		switch (t_signal) {

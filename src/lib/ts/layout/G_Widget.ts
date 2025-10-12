@@ -1,5 +1,5 @@
+import { k, u, Rect, Size, Point, debug, elements, controls, Ancestry } from '../common/Global_Imports';
 import { S_Widget, G_Cluster, G_TreeLine, G_TreeBranches } from '../common/Global_Imports';
-import { elements, k, u, controls, Rect, Size, Point, Ancestry } from '../common/Global_Imports';
 import { w_show_graph_ofType, w_show_related } from '../managers/Stores';
 import { T_Widget, T_Graph } from '../common/Global_Imports';
 import { get } from 'svelte/store';
@@ -112,7 +112,7 @@ export default class G_Widget {
 		this.layout_widget();						// assumes full progeny subtrees are laid out (needed for progeny size)
 		this.layout_origin_ofTrunk();
 		this.g_childBranches.layout_subtree();		// noop if childless, radial or collapsed ... FUBAR: BAD origin_ofWidget, after switching to radial, refocusing, then back again
-		// debug.log_layout(`WIDGET ${this.origin.offsetBy(this.offset_ofWidget).verbose} ${this.ancestry.titles}`);
+		// debug.log_layout(`WIDGET one generation ${this.origin.offsetBy(this.offset_ofWidget).verbose} ${this.ancestry.titles}`);
 	}
 
 	private layout_origin_ofTrunk() {
@@ -180,7 +180,7 @@ export default class G_Widget {
 			const x_ofWidget = widget_points_normal ? -7 : 6 + dot_size - width_ofWidget;
 			const origin_ofDrag = new Point(x_ofDrag, y_ofDrag).offsetEquallyBy(dot_size / 2);
 			const x_ofRadial_title =  widget_points_normal && !isRadialFocus ? 20 : (show_reveal ? 20 : 8);
-			if (!isRadialFocus) {
+			if (!isRadialFocus) {	// not overwrite g_radial's location_ofRadial
 				this.location_ofRadial = this.location_ofNecklace.offsetByXY(x_ofRadial, 4 - dot_size);
 			}
 			this.origin_ofRadial = this.location_ofRadial.offsetByX(widget_points_normal ? 0 : -width_ofTitle - width_ofReveal);

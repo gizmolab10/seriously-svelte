@@ -4,8 +4,8 @@
 	import { w_hierarchy, w_rect_ofGraphView, w_t_database, w_separator_color } from '../../ts/managers/Stores';
 	import { T_Layer, T_Search, T_Banner, T_Control, T_Startup } from '../../ts/common/Global_Imports';
 	import { w_t_startup, w_popupView_id, w_device_isMobile, } from '../../ts/managers/Stores';
-	import { w_s_title_edit, w_ancestry_focus } from '../../ts/managers/Stores';
 	import { w_show_details, w_search_results_found } from '../../ts/managers/Stores';
+	import { w_s_title_edit, w_ancestry_focus } from '../../ts/managers/Stores';
 	import Secondary_Controls from '../controls/Secondary_Controls.svelte';
 	import Primary_Controls from '../controls/Primary_Controls.svelte';
 	import Search_Results from '../search/Search_Results.svelte';
