@@ -55,11 +55,11 @@ export default class Ancestry extends Identifiable {
 	
 	static readonly _____GEOMETRY: unique symbol;
 
-	get g_widget():			 G_Widget { return this.g_widget_forGraphMode(get(w_show_graph_ofType)); }
+	get g_widget():			 G_Widget { return this.g_widget_for_t_graph(get(w_show_graph_ofType)); }
 	get g_paging():	  G_Paging | null { return this.g_cluster?.g_paging_forAncestry(this) ?? null; }
 	get g_cluster(): G_Cluster | null { return this.g_widget.g_cluster ?? null; }
 
-	g_widget_forGraphMode(t_graph: T_Graph): G_Widget {
+	g_widget_for_t_graph(t_graph: T_Graph): G_Widget {
 		let g_widget = this.g_widgets[t_graph];
 		if (!g_widget) {
 			g_widget = G_Widget.empty(this);
@@ -149,12 +149,12 @@ export default class Ancestry extends Identifiable {
 
 	static readonly _____SVG: unique symbol;
 
-	svgPathFor_tinyDots_outsideReveal(points_normal_toChild: boolean): string | null {
+	svgPathFor_tinyDots_outsideReveal(points_toChild: boolean): string | null {
 		const in_radial_mode = controls.inRadialMode;
 		const isVisible_forChild = this.hasChildren && show.children_dots && (in_radial_mode ? true : !this.isExpanded);
-		const isVisible_inRadial = points_normal_toChild ? isVisible_forChild : this.hasParents && (this.isBidirectional ? show.related_dots : show.parent_dots);
+		const isVisible_inRadial = points_toChild ? isVisible_forChild : this.hasParents && (this.isBidirectional ? show.related_dots : show.parent_dots);
 		const show_outside_tinyDots = in_radial_mode ? isVisible_inRadial : isVisible_forChild;
-		const tinyDots_count = this.relationships_count_forChildren(points_normal_toChild);
+		const tinyDots_count = this.relationships_count_forChildren(points_toChild);
 		return !show_outside_tinyDots ? null : svgPaths.tinyDots_circular(k.diameterOf_outer_tinyDots + 4, tinyDots_count as Integer, this.points_right);
 	}
 
@@ -875,8 +875,8 @@ export default class Ancestry extends Identifiable {
 
 	get points_right(): boolean {
 		const hasVisibleChildren = this.isExpanded && this.hasChildren;
-		const radial_points_normal = this.g_widget?.widget_points_normal ?? true;
-		return controls.inRadialMode ? radial_points_normal : !hasVisibleChildren;
+		const radial_points_right = this.g_widget?.widget_points_right ?? true;
+		return controls.inRadialMode ? radial_points_right : !hasVisibleChildren;
 	}
 
 	get id_thing(): string {
@@ -915,11 +915,11 @@ export default class Ancestry extends Identifiable {
 	matchesStore(store: Writable<Ancestry | null>):						   boolean { return get(store)?.equals(this) ?? false; }
 	rect_ofComponent(component: S_Component | null):						   Rect | null { return component?.boundingRect ?? null; }
 
-	showsReveal_forPointingToChild(points_normal_toChild: boolean): boolean {
+	showsReveal_forPointingToChild(points_toChild: boolean): boolean {
 		const isRadialFocus = controls.inRadialMode && this.isFocus;
 		const isBulkAlias = this.thing?.isBulkAlias ?? false;
 		const isBidirectional = this.predicate?.isBidirectional ?? true;
-		const hasChildren = this.relationships_count_forChildren(points_normal_toChild) > 0;
+		const hasChildren = this.relationships_count_forChildren(points_toChild) > 0;
 		return (!isBidirectional && !isRadialFocus) && (hasChildren || isBulkAlias);
 	}
 

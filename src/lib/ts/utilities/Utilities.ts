@@ -186,7 +186,7 @@ export class Utilities extends Testworthy_Utilities {
 		}
 	}
 
-	get_rect_ofDrawnGraphFor_g_widgets(g_widgets: G_Widget[]): Rect {
+	get_rect_ofDrawnGraph_forAll_g_widgets(g_widgets: G_Widget[]): Rect {
 		if (g_widgets.length === 0) {
 			return Rect.zero;
 		}

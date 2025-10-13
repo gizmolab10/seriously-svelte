@@ -31,15 +31,15 @@ export default class Angle {
 	static eighth = Angle.full / 8;
 
 	static radians_from_degrees(degrees: number): number { return Math.PI / 180 * degrees; }
-	get angle_orientsDown(): boolean { return this.orientation_ofAngle == T_Orientation.down; }
+	get angle_points_down(): boolean { return this.orientation_ofAngle == T_Orientation.down; }
 	get quadrant_basis_angle(): number { return tu.basis_angle_ofType_Quadrant(this.quadrant_ofAngle); }
 
-	get angle_slantsForward(): boolean {
+	get angle_slants_forward(): boolean {
 		const quadrant = this.quadrant_ofAngle;
 		return [T_Quadrant.lowerRight, T_Quadrant.upperLeft].includes(quadrant);
 	}
 
-	get angle_points_normal(): boolean {
+	get angle_points_right(): boolean {
 		switch(this.quadrant_ofAngle) {
 			case T_Quadrant.lowerRight: return true;
 			case T_Quadrant.upperRight: return true;

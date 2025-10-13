@@ -9,7 +9,7 @@
 	import { onMount } from 'svelte';
     export let hover_isReversed = false;
     export let zindex = T_Layer.dots;
-	export let points_normal_toChild = true;
+	export let points_toChild = true;
 	export let s_reveal!: S_Element;
 	const ancestry = s_reveal.ancestry;
 	const g_widget = ancestry.g_widget;
@@ -75,7 +75,7 @@
 			offsetFor_innerDot = has_innerDot ? 0 : -1;
 			svgPathFor_revealDot = ancestry.svgPathFor_revealDot;
 			svgPathFor_innerDot = has_innerDot ? svgPaths.circle_atOffset(k.height.dot, 3) : null;
-			svgPathFor_outer_tinyDots = ancestry.svgPathFor_tinyDots_outsideReveal(points_normal_toChild);
+			svgPathFor_outer_tinyDots = ancestry.svgPathFor_tinyDots_outsideReveal(points_toChild);
 		}
 	}
 

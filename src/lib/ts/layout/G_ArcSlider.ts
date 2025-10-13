@@ -47,9 +47,9 @@ export default class G_ArcSlider {
 	get spread_angle():			number { return this.end_angle - this.start_angle; }
 	get angle_ofFork():			number { return (this.end_angle + this.start_angle) / 2 - this.offset_ofNadir; }
 	get offset_ofNadir():		number { return (this.arc_straddles_nadir && !this.arc_straddles_zero) ? Angle.half : 0; }
-	get fork_slantsForward():  boolean { return new Angle(this.angle_ofCluster).angle_slantsForward; }
-	get fork_orientsDown():	   boolean { return new Angle(this.angle_ofCluster).angle_orientsDown; }
-	get fork_points_right():	   boolean { return new Angle(this.angle_ofCluster).angle_points_normal; }
+	get fork_slants_forward(): boolean { return new Angle(this.angle_ofCluster).angle_slants_forward; }
+	get fork_points_right():   boolean { return new Angle(this.angle_ofCluster).angle_points_right; }
+	get fork_points_down():    boolean { return new Angle(this.angle_ofCluster).angle_points_down; }
 	get straddles_zero():	   boolean { return this.end_angle.straddles_zero(this.start_angle); }
 	get arc_straddles_nadir(): boolean { return this.arc_straddles(Angle.three_quarters); }
 	get arc_straddles_zero():  boolean { return this.arc_straddles(0); }
