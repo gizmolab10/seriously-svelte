@@ -4,7 +4,7 @@ import { colors, Ancestry } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
 import type { Dictionary } from '../types/Types';
 
-export default class UX_Elements {
+export default class UX_S_Elements {
 	s_control_byType: { [t_control: string]: S_Element } = {};
 	s_widget_byAncestryID: { [id: string]: S_Widget } = {};
 	s_element_byName: { [name: string]: S_Element } = {};
@@ -104,4 +104,4 @@ export default class UX_Elements {
 
 }
 
-export const elements = new UX_Elements();
+export const elements = new UX_S_Elements();

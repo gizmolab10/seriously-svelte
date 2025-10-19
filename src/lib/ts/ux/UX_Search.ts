@@ -113,7 +113,7 @@ class UX_Search {
 	
 	static readonly _____PRIVATE: unique symbol;
 
-	private get results_fingerprint(): string { return !x.si_found.items ? k.empty : x.si_found.items.map(result => result.id).join('|'); }
+	private get results_fingerprint(): string { return !x.si_found.items ? k.empty : x.si_found.items.map((result: Thing) => result.id).join('|'); }
 
 	private buildIndex(things: Thing[]) {
 		this.root_node = new Search_Node();

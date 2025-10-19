@@ -6,8 +6,8 @@ import { get } from 'svelte/store';
 
 export default class G_Widget {
 	g_bidirectionalLines: G_TreeLine[] = [];
+	location_within_necklace = Point.zero;
 	timestamp = new Date().getTime();
-	location_ofNecklace = Point.zero;
 	g_parentBranches: G_TreeBranches;	// <future>
 	g_childBranches: G_TreeBranches;	// scratchpad size_ofSubtree.height and center (of subtree)
 	location_ofRadial = Point.zero;
@@ -39,11 +39,12 @@ export default class G_Widget {
 	// widget_width (computed here)
 	// UX state (fill, border) 
 	// relevant ancestries (children, thing, shows reveal)
-	// locations of:
+	// layout:
 	//	 rects for lines from: parent and bidirectionals
-	//	 dots and title for:
-	//		child tree
-	//		radial origin, angles and orientations (in/out, right/left)
+	//	 locations of:
+	//		dots and title
+	//		tree trunk and child branches
+	//		necklace angle, origin, orientations (in/out, right/left)
 
 	constructor(ancestry: Ancestry) {
 		this.g_line = new G_TreeLine(ancestry.parentAncestry, ancestry);
@@ -82,6 +83,30 @@ export default class G_Widget {
 
 	static readonly _____LAYOUT: unique symbol;
 
+	private layout_one_generation() {
+		this.layout_widget();						// assumes full progeny subtrees are laid out (needed for progeny size)
+		this.layout_origin_ofTrunk();
+		this.g_childBranches.layout_subtree();		// noop if childless, radial or collapsed ... FUBAR: BAD origin_ofWidget, after switching to radial, refocusing, then back again
+		debug.log_layout(`WIDGET one generation ${this.origin.verbose} ${this.ancestry.title}`);
+	}
+
+	private layout_origin_ofTrunk() {
+		if (!!this.ancestry && controls.inTreeMode) {
+			this.origin_ofTrunk = this.g_line.rect.extent.offsetByXY(k.height.row, -8.6);
+			this.g_line.update_svg_andName();
+		}
+	}
+
+	layout_necklaceWidget(rotated_origin: Point, widget_points_right: boolean) {
+		if (controls.inRadialMode) {
+			this.t_graph = T_Graph.radial;
+			this.location_within_necklace = rotated_origin;
+			this.widget_points_right = widget_points_right;
+			this.layout_widget();
+			debug.log_layout(`WIDGET necklaceWidget ${this.origin.verbose} ${this.ancestry.title}`);
+		}
+	}
+
 	layout_bidirectional_lines(bidirectionals: G_TreeLine[]) {
 		const g_lines = this.ancestry.g_lines_forBidirectionals;
 		for (const g_line of g_lines) {
@@ -102,23 +127,7 @@ export default class G_Widget {
 					branchAncestry.g_widget.layout_each_generation_recursively(depth - 1, [...visited, branchAncestry.id]);		// layout progeny first
 				}
 			}
-
 			this.layout_one_generation();			// <-- this is the heavy lifter
-
-		}
-	}
-
-	private layout_one_generation() {
-		this.g_childBranches.layout_subtree();		// noop if childless, radial or collapsed ... FUBAR: BAD origin_ofWidget, after switching to radial, refocusing, then back again
-		this.layout_widget();						// assumes full progeny subtrees are laid out (needed for progeny size)
-		this.layout_origin_ofTrunk();
-		debug.log_layout(`WIDGET one generation ${this.origin.verbose} ${this.ancestry.title}`);
-	}
-
-	private layout_origin_ofTrunk() {
-		if (!!this.ancestry && controls.inTreeMode) {
-			this.origin_ofTrunk = this.g_line.rect.extent.offsetByXY(k.height.row, -8.6);
-			this.g_line.update_svg_andName();
 		}
 	}
 
@@ -167,44 +176,34 @@ export default class G_Widget {
 			const dot_size = k.height.dot;
 			const show_reveal = this.showingReveal;
 			const inRadialMode = controls.inRadialMode;
-			const width_ofReveal = show_reveal ? dot_size : 0;
 			const width_ofTitle = ancestry.thing.width_ofTitle;
 			const widget_points_right = this.widget_points_right;
+			const width_ofReveal_dot = show_reveal ? dot_size : 0;
 			const isRadialFocus = inRadialMode && ancestry.isFocus;
 			const width_ofDrag = (dot_size * 2) + (inRadialMode ? 2 : -4);
-			const width_ofWidget = width_ofTitle + width_ofDrag + width_ofReveal + (inRadialMode ? 0 : 4);
+			const width_ofWidget = width_ofTitle + width_ofDrag + width_ofReveal_dot + (inRadialMode ? 0 : 4);
 			const x_ofDrag_for_pointing_left = width_ofWidget - dot_size - 3 + (show_reveal ? 0.5 : 0);
 			const x_ofDrag = widget_points_right ? (inRadialMode ? 3 : 2) : x_ofDrag_for_pointing_left;
 			const y_ofDrag = 2.5 + (inRadialMode ? 0.1 : 0);
 			const x_ofRadial = widget_points_right ? -4 : -dot_size;
 			const x_offset_ofWidget = widget_points_right ? -7 : 6 + dot_size - width_ofWidget;
-			const origin_ofDrag = new Point(x_ofDrag, y_ofDrag).offsetEquallyBy(dot_size / 2);
+			const origin_ofDrag = new Point(x_ofDrag, y_ofDrag);
 			const x_ofRadial_title =  widget_points_right && !isRadialFocus ? 20 : (show_reveal ? 20 : 8);
 			if (!isRadialFocus) {	// not overwrite g_radial's location_ofRadial
-				this.location_ofRadial = this.location_ofNecklace.offsetByXY(x_ofRadial, 4 - dot_size);
+				this.location_ofRadial = this.location_within_necklace.offsetByXY(x_ofRadial, 4 - dot_size);
 			}
-			this.origin_ofRadial = this.location_ofRadial.offsetByX(widget_points_right ? 0 : -width_ofTitle - width_ofReveal);
+			this.origin_ofRadial = this.location_ofRadial.offsetByX(widget_points_right ? 0 : -width_ofTitle - width_ofReveal_dot);
 			this.origin_ofTitle = Point.x(inRadialMode ? x_ofRadial_title : dot_size + 5);
+			this.center_ofDrag = origin_ofDrag.offsetEquallyBy(dot_size / 2);
 			this.offset_ofWidget = new Point(x_offset_ofWidget, 0.5);
 			this.width_ofDrawnGraph = width_ofWidget;
 			this.width_ofWidget = width_ofWidget;
-			this.center_ofDrag = origin_ofDrag;
 			if (show_reveal) {
 				const y_ofReveal = dot_size * 0.7 - 0.5;
 				const x_offsetFor_points_right = width_ofWidget - dot_size - 10;
 				const x_ofReveal = dot_size + (widget_points_right ? x_offsetFor_points_right : -3);
 				this.center_ofReveal = new Point(x_ofReveal, y_ofReveal);
 			}
-		}
-	}
-
-	layout_necklaceWidget(rotated_origin: Point, widget_points_right: boolean) {
-		if (controls.inRadialMode) {
-			this.t_graph = T_Graph.radial;
-			this.location_ofNecklace = rotated_origin;
-			this.widget_points_right = widget_points_right;
-			this.layout_widget();
-			debug.log_layout(`WIDGET necklaceWidget ${this.origin.verbose} ${this.ancestry.title}`);
 		}
 	}
 

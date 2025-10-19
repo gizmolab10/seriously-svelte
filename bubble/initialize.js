@@ -4,19 +4,18 @@ function(instance) {
 	instance.data.LOG							= function (message, value, ...optionalParams) {if (instance.data.debug && !!value) { console.log('[PLUGIN]', message, value, ...optionalParams); } }
 	instance.data.assure_iframe_is_instantiated = function (properties) {
 		if (!instance.data.iframe_is_instantiated) {
-			LOG('Initializing plugin ...');
-			instance.canvas.style.width = window.innerWidth + 'px';
-			instance.canvas.style.height = window.innerHeight + 'px';
-			const iframe = document.createElement('iframe');
-			instance.data.iframe = iframe;
-			iframe.src = url_from_properties(properties);
-			iframe.style.overflow = 'hidden';
-			iframe.style.border = 'none';
-			iframe.style.height = '100%';
-			iframe.style.width = '100%';
-
-			window.addEventListener('message', handle_webseriously_message);
-			instance.canvas.appendChild(iframe);
+			if (!instance.data.iframe) {
+				LOG('Initializing plugin ...');
+				const iframe = document.createElement('iframe');
+				instance.data.iframe = iframe;
+				iframe.src = url_from_properties(properties);
+				iframe.style.overflow = 'hidden';
+				iframe.style.border = 'none';
+				iframe.style.height = '100%';
+				iframe.style.width = '100%';
+				window.addEventListener('message', handle_webseriously_message);
+			}
+			instance.canvas.append(instance.data.iframe);
 			instance.data.iframe_is_instantiated = true;
 		}
 	}

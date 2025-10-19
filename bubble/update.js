@@ -42,8 +42,7 @@ function(instance, properties) {
 			'owners_field'];
 		let LABELS_of_FIELD_names = [...LABELS_of_CUSTOM_LISTS,
 			'object_title_field',
-			'object_color_field',
-			'starting_object'];
+			'object_color_field'];
 		if (has_two_tables) {
 			LABELS_of_FIELD_names = [...LABELS_of_FIELD_names,
 				'edge_two_way_field',

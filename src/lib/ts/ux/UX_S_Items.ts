@@ -10,7 +10,7 @@ import { get } from 'svelte/store';
 
 type Identifiable_S_Items_Pair<T = Identifiable, U = S_Items<T>> = [T, U | null];
 
-export default class UX_Identifiables {
+export default class UX_S_Items {
 
 	si_recents = new S_Items<Identifiable_S_Items_Pair>([]);
 	si_trait_things = new S_Items<Thing>([]);
@@ -273,4 +273,4 @@ export default class UX_Identifiables {
 
 }
 
-export const x = new UX_Identifiables();
+export const x = new UX_S_Items();

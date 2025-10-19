@@ -1,5 +1,5 @@
 import { T_Thing, T_Graph, T_Create, T_Predicate, T_Persistence, T_Preference } from '../common/Global_Imports';
-import { w_ancestry_focus, w_show_graph_ofType } from '../managers/Stores';
+import { stores, w_ancestry_focus, w_show_graph_ofType } from '../managers/Stores';
 import { h, k, p, x, busy, debug, Ancestry } from '../common/Global_Imports';
 import { T_Database } from './DB_Common';
 import DB_Common from './DB_Common';
@@ -25,61 +25,90 @@ export default class DB_Bubble extends DB_Common {
 		
 		// TODO: configuration and terminate
 
-		function createRelationship(b_parent: string, b_child: string, b_kind: T_Predicate, b_orders: number[]) {
+		function createRelationship(b_parent: any, b_child: any, b_kind: any, b_orders: any) {
 			const id = Math.random().toString(36).substring(2, 15);
-			h.relationship_remember_runtimeCreateUnique(h.db.idBase, id, b_kind, b_parent, b_child, b_orders, T_Create.isFromPersistent);
+			h.relationship_remember_runtimeCreateUnique(h.db.idBase, id, b_kind, b_parent.id, b_child.id, b_orders, T_Create.isFromPersistent);
 		}
-		function createThing(b_thing: string, b_title: string, b_color: string, b_type: T_Thing) {
-			h.thing_remember_runtimeCreateUnique(h.db.idBase, b_thing, b_title, b_color, b_type);
+		function createThing(b_thing: any, b_type: T_Thing = T_Thing.generic) {
+			h.thing_remember_runtimeCreateUnique(h.db.idBase, b_thing.id, b_thing.title, b_thing.color, b_type);
+			if (!!b_thing.parents && Array.isArray(b_thing.parents)) {
+				for (const b_parent of b_thing.parents) {
+					createRelationship(b_parent, b_thing, T_Predicate.contains, [1, 1]);
+				}
+			}
+			if (!!b_thing.related && Array.isArray(b_thing.related)) {
+				for (const b_related of b_thing.related) {
+					createRelationship(b_related, b_thing, T_Predicate.isRelated, [1, 1]);
+				}
+			}
 		}
 		const event = e as MessageEvent;
 		if (!event.data.properties) {
 			h.wrapUp_data_forUX();
 		} else {
-			let b_ids, b_root, b_focus, b_titles, b_colors, b_parents, b_related, b_overwrite, b_inRadialMode, b_erase_user_preferences;
+			let b_root, b_tags, b_things, b_traits, b_focus, b_grabs, b_overwrite, b_predicates, b_relationships, b_inRadialMode, b_erase_user_preferences;
 			try {
 				const properties = JSON.parse(event.data.properties);
-				const has_bubble = p.readDB_key(T_Preference.bubble) ?? false;	// true after first launch
+				const has_bubble = p.readDB_key(T_Preference.bubble) ?? false;
 				debug.log_bubble(`[DB_Bubble] received bubble update: ${JSON.stringify(properties)}`);
 				b_overwrite = properties.overwrite_focus_and_mode || !has_bubble;
 				b_erase_user_preferences = properties.erase_user_preferences;
+				b_relationships = properties.relationships;
 				b_inRadialMode = properties.inRadialMode;
-				b_parents = properties.parents;
-				b_related = properties.related;
-				b_titles = properties.titles;
-				b_colors = properties.colors;
+				b_predicates = properties.predicates;
+				b_things = properties.things;
+				b_traits = properties.traits;
+				b_grabs = properties.grabs;
 				b_focus = properties.focus;
 				b_root = properties.root;
-				b_ids = properties.ids;
+				b_tags = properties.tags;
 			} catch (err) {
 				console.warn('[DB_Bubble] Could not parse properties:', err);
 			}
-			// merge colors, titles, and ids into things
-			if (!!b_titles && !!b_colors && !!b_ids) {
-				for (let i = 0; i < b_titles.length; i++) {
-					const title = b_titles[i];
-					const color = b_colors[i];
-					const id = b_ids[i];
-					const isRoot = id == b_root;
-					const type = isRoot ? T_Thing.root : T_Thing.generic;
-					createThing(id, title, color, type);
+			if (!!b_root) {   // must happen BEFORE things are created
+				createThing(b_root, T_Thing.root);
+			}
+			if (!!b_things) {
+				for (const b_thing of b_things) {
+					createThing(b_thing, T_Thing.generic);
 				}
 			}
-			// create relationships
-			if (!!b_parents && !!b_related) {
-				for (let i = 0; i < b_parents.length; i++) {
-					const id = b_ids[i];
-					const parent = b_parents[i];
-					const related = b_related[i];
-					createRelationship(parent, id, T_Predicate.contains, [1, 1]);
-					createRelationship(id, related, T_Predicate.isRelated, [1, 1]);
+			if (!b_predicates) {   // should happen BEFORE relationships are created
+				h.predicate_defaults_remember_runtimeCreate();
+			} else {
+				for (const b_predicate of b_predicates) {
+					h.predicate_remember_runtimeCreateUnique(b_predicate.id, b_predicate.kind, b_predicate.is_bidirectional);
+				}
+			}
+			if (!!b_relationships) {   // all the rest must happen AFTER things are created
+				for (const b_relationship of b_relationships) {
+					h.relationship_remember_runtimeCreateUnique(h.db.idBase, b_relationship.id, b_relationship.kind.kind, b_relationship.parent.id, b_relationship.child.id, b_relationship.orders, b_relationship.T_Create.isFromPersistent);
+				}
+			}
+			if (!!b_traits) {
+				for (const b_trait of b_traits) {
+					h.trait_remember_runtimeCreateUnique(h.db.idBase, b_trait.id, b_trait.owner.id, b_trait.type, b_trait.text);
+				}
+			}
+			if (!!b_tags) {
+				for (const b_tag of b_tags) {
+					const ownerHIDs = b_tag.owners.map((owner: {id: string;}) => owner.id.hash());
+					h.tag_remember_runtimeCreateUnique(h.db.idBase, b_tag.id, b_tag.type, ownerHIDs);
 				}
 			}
 			h.wrapUp_data_forUX();			// create ancestries and tidy up
+			if (!!b_grabs) {				// must happen AFTER ancestries are created
+				for (const b_grab of b_grabs) {
+					const grab = h.thing_forHID(b_grab.id.hash());
+					if (!!grab?.ancestry) {
+						grab.ancestry.grab();
+					}
+				}
+			}
 			if (!!b_overwrite) {
 				w_show_graph_ofType.set(b_inRadialMode ? T_Graph.radial : T_Graph.tree);
-				if (!!b_focus) {			// must happen AFTER ancestries are created
-					const focus = h.thing_forHID(b_focus.hash());
+				if (!!b_focus?.id) {			// must happen AFTER ancestries are created
+					const focus = h.thing_forHID(b_focus.id.hash());
 					if (!!focus?.ancestry) {
 						focus.ancestry.becomeFocus(true);
 					}

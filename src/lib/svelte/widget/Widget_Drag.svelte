@@ -38,10 +38,6 @@
 		update_colors();
 	});
 
-	signals.handle_signals_atPriority([T_Signal.reposition], 2, ancestry, T_Component.drag, (t_signal, value): S_Component | null => {
-		center = g_widget.center_ofDrag;
-	});
-
 	onMount(() => { return () => s_component.disconnect(); });
 
 	function handle_context_menu(event) { u.grab_event(event); }		// no default context menu on right-click
