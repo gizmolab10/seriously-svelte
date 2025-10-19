@@ -32,6 +32,9 @@ export default class DB_Bubble extends DB_Common {
 		function createThing(b_thing: string, b_title: string, b_color: string, b_type: T_Thing) {
 			h.thing_remember_runtimeCreateUnique(h.db.idBase, b_thing, b_title, b_color, b_type);
 		}
+		function split_array(array: string) {
+			return array.replace('[', '').replace(']', '').replace('"', '').split(',');
+		}
 		const event = e as MessageEvent;
 		if (!event.data.properties) {
 			h.wrapUp_data_forUX();
@@ -43,34 +46,26 @@ export default class DB_Bubble extends DB_Common {
 				debug.log_bubble(`[DB_Bubble] received bubble update: ${JSON.stringify(properties)}`);
 				b_overwrite = properties.overwrite_focus_and_mode || !has_bubble;
 				b_erase_user_preferences = properties.erase_user_preferences;
+				b_parents = split_array(properties.parents);
+				b_related = split_array(properties.related);
+				b_titles = split_array(properties.titles);
+				b_colors = split_array(properties.colors);
 				b_inRadialMode = properties.inRadialMode;
-				b_parents = properties.parents;
-				b_related = properties.related;
-				b_titles = properties.titles;
-				b_colors = properties.colors;
+				b_ids = split_array(properties.ids);
 				b_focus = properties.focus;
 				b_root = properties.root;
-				b_ids = properties.ids;
 			} catch (err) {
 				console.warn('[DB_Bubble] Could not parse properties:', err);
 			}
-			// merge colors, titles, and ids into things
-			if (!!b_titles && !!b_colors && !!b_ids) {
+			if (!!b_ids && !!b_titles && !!b_colors && !!b_parents && !!b_related) {
 				for (let i = 0; i < b_titles.length; i++) {
+					const id = b_ids[i];
 					const title = b_titles[i];
 					const color = b_colors[i];
-					const id = b_ids[i];
-					const isRoot = id == b_root;
-					const type = isRoot ? T_Thing.root : T_Thing.generic;
-					createThing(id, title, color, type);
-				}
-			}
-			// create relationships
-			if (!!b_parents && !!b_related) {
-				for (let i = 0; i < b_parents.length; i++) {
-					const id = b_ids[i];
 					const parent = b_parents[i];
 					const related = b_related[i];
+					const type = (id == b_root) ? T_Thing.root : T_Thing.generic;
+					createThing(id, title, color, type);
 					createRelationship(parent, id, T_Predicate.contains, [1, 1]);
 					createRelationship(id, related, T_Predicate.isRelated, [1, 1]);
 				}

@@ -69,7 +69,7 @@ function(instance, properties) {
 				const length = array.length();
 				let items = [];
 				for (let i = 0; i < length; i++) {
-					const item = array.get(i, 1);
+					const item = array.get(i, 1)[0] ?? '';
 					items.push(item);
 				}
 				const json_string = JSON.stringify(items);
