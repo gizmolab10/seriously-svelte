@@ -9,9 +9,9 @@ export default class DB_Bubble extends DB_Common {
 	prior_focus_id: string | null = null;
 	prior_grabbed_ids: string[] = [];
 	t_database = T_Database.bubble;
+	idBase = k.id_base.bubble;
 	debounced_focus = false;
 	debounced_grab = false;
-	idBase = k.empty;
 
 	async fetch_all() {
 		await busy.temporarily_set_isFetching_while(async () => {

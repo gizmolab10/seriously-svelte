@@ -31,7 +31,7 @@ export default class DB_Airtable extends DB_Common {
 	users_table = this.base(T_Persistable.users);
 	t_persistence = T_Persistence.remote;
 	t_database = T_Database.airtable;
-	idBase = k.empty;
+	idBase = k.id_base.airtable;
 
 	relationships_errorMessage = 'Error in Relationships:';
 	async hierarchy_fetch_forID(idBase: string) {}

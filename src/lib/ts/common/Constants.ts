@@ -48,8 +48,11 @@ export default class Constants {
 	};
 
 	id_base = {
-		test:  'handcrafted',
-		local: 'data',
+		airtable: 'Airtable',
+		firebase: 'Public',
+		bubble:	  'Bubble',
+		test:	  'Frozen',
+		local:	  'Local',
 	};
 
 	help_url = {

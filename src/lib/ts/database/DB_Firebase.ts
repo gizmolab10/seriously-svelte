@@ -23,12 +23,12 @@ export default class DB_Firebase extends DB_Common {
 		projectId: "seriously-4536d"
 	};
 
-	idBase = 'Public';
 	addedTag!: Tag;
 	addedThing!: Thing;
 	addedTrait!: Trait;
 	bulksName = 'Bulks';
 	deferSnapshots = false;
+	idBase = k.id_base.firebase;
 	bulks: Dictionary<Bulk> = {};
 	t_database = T_Database.firebase;
 	app = initializeApp(this.config);
