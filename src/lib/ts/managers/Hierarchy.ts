@@ -5,9 +5,9 @@ import { T_Thing, T_Trait, T_Order, T_Control, T_Predicate } from '../common/Glo
 import { w_popupView_id, w_s_title_edit, w_s_alteration, w_ancestry_focus } from './Stores';
 import { files, colors, signals, layout, databases } from '../common/Global_Imports';
 import { w_hierarchy, w_t_startup, w_depth_limit } from './Stores';
+import DB_Common, { T_Database } from '../database/DB_Common';
 import type { Integer, Dictionary } from '../types/Types';
 import Identifiable from '../runtime/Identifiable';
-import DB_Common from '../database/DB_Common';
 import { pivot } from '../files/Pivot';
 import { get } from 'svelte/store';
 
@@ -1569,11 +1569,13 @@ export class Hierarchy {
 
 	get total_dirty_count(): number {
 		let sum = 0;
-		for (const t_persistable of Persistable.t_persistables) {
-			const identifiables = this.persistables_forKey(t_persistable);
-			const count = Persistable.dirty_count(identifiables);
-			if (count > 0) {
-				sum += count;
+		if (this.db.isPersistent && this.db.t_database != T_Database.bubble) {
+			for (const t_persistable of Persistable.t_persistables) {
+				const identifiables = this.persistables_forKey(t_persistable);
+				const count = Persistable.dirty_count(identifiables);
+				if (count > 0) {
+					sum += count;
+				}
 			}
 		}
 		return sum;
