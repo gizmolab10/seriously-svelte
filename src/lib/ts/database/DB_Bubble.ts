@@ -74,15 +74,23 @@ export default class DB_Bubble extends DB_Common {
 			}
 			if (!!b_ids && !!b_titles && !!b_colors && !!b_parent_ids && !!b_related_ids) {
 				for (let i = 0; i < b_titles.length; i++) {
-					const related_id	 = b_related_ids[i];
-					const parent_id		 = b_parent_ids[i];
+					const related_ids	 = b_related_ids[i].split(k.separator.generic);
+					const parent_ids	 = b_parent_ids[i].split(k.separator.generic);
 					const title			 = b_titles[i];
 					const color			 = b_colors[i];
 					const id			 = b_ids[i];
 					const type			 = (id == b_root) ? T_Thing.root : T_Thing.generic;
 					createThing(id, title, color, type);
-					createRelationship(parent_id, id, T_Predicate.contains, [1, 1]);
-					createRelationship(id, related_id, T_Predicate.isRelated, [1, 1]);
+					if (!!parent_ids && parent_ids.length > 0) {
+						for(const parent_id of parent_ids) {	
+							createRelationship(parent_id, id, T_Predicate.contains, [1, 1]);
+						}
+					}
+					if (!!related_ids && related_ids.length > 0) {
+						for(const related_id of related_ids) {
+							createRelationship(id, related_id, T_Predicate.isRelated, [1, 1]);
+						}
+					}
 				}
 			}
 			if (!!b_traits) {
