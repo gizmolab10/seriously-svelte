@@ -79,8 +79,8 @@ export class Configuration {
 		const idBase = databases.db_now.idBase;
 		const t_database = databases.db_now.t_database;
 		const host = this.isServerLocal ? 'local' : 'remote';
-		const base_name = idBase ? (idBase + ', ') : k.empty;
-		const db_name = t_database ? (t_database + ', ') : k.empty;
+		const base_name = idBase ? (idBase + ', ') : k.id_base.unknown;
+		const db_name = t_database ? (t_database + ', ') : k.id_base.unknown;
 		return `Seriously (${host}, ${db_name}${base_name}${u.browserType}, α)`;
 	}
 

@@ -6,22 +6,23 @@ import type { Dictionary } from '../types/Types';
 
 export enum T_Database {
 	airtable = 'air',
-	firebase = 'fire',
-	dgraph   = 'dgraph',
 	bubble	 = 'bubble',
+	dgraph   = 'dgraph',
+	firebase = 'fire',
 	local	 = 'local',
 	test	 = 'test',
+	unknown	 = 'unknown',
 }
 
 // CRUD API --> for all databases
 
 export default class DB_Common {
 	t_persistence = T_Persistence.none;
+	t_database = T_Database.unknown;
+	idBase = k.id_base.unknown;
 	hierarchy!: Hierarchy;
 	load_time = 'busy...';
 	load_start_time = -1;
-	t_database = k.empty;
-	idBase = k.empty;
 	
 	queryStrings_apply() {}
 	setup_remote_handlers() {}

@@ -816,7 +816,7 @@ export default class DB_Firebase extends DB_Common {
 }
 
 export class Bulk {
-	idBase: string = k.empty;
+	idBase: string = k.id_base.bulks;
 	tagsCollection: CollectionReference | null = null;
 	thingsCollection: CollectionReference | null = null;
 	traitsCollection: CollectionReference | null = null;

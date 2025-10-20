@@ -82,7 +82,7 @@ export default class DB_Airtable extends DB_Common {
 			for (const remoteThing of remoteThings) {
 				const id = remoteThing.id;
 				const fields = remoteThing.fields;
-				h.thing_remember_runtimeCreate(k.empty, id, fields.title as string, fields.color as string, (fields.type as T_Thing) ?? fields.trait as string, true, !fields.type);
+				h.thing_remember_runtimeCreate(k.id_base.airtable, id, fields.title as string, fields.color as string, (fields.type as T_Thing) ?? fields.trait as string, true, !fields.type);
 			}
 		} catch (error) {
 			alert(this.things_errorMessage + ' (things_fetch_all) ' + error);
@@ -134,7 +134,7 @@ export default class DB_Airtable extends DB_Common {
 				const text = record.fields.text as string;
 				const type = record.fields.type as T_Trait;
 				const ownerIDs = record.fields.ownerID as (string[]);
-				h.trait_remember_runtimeCreateUnique(k.empty, id, ownerIDs[0], type, text, true);
+				h.trait_remember_runtimeCreateUnique(k.id_base.airtable, id, ownerIDs[0], type, text, true);
 			}
 		} catch (error) {
 			alert(this.traits_errorMessage + error);
@@ -182,7 +182,7 @@ export default class DB_Airtable extends DB_Common {
 				const parents = record.fields.parent as (string[]);
 				const children = record.fields.child as (string[]);
 				const kind = record.fields.kindPredicate as T_Predicate;
-				h.relationship_remember_runtimeCreateUnique(k.empty, id, kind, parents[0], children[0], [order, 0], T_Create.isFromPersistent);
+				h.relationship_remember_runtimeCreateUnique(k.id_base.airtable, id, kind, parents[0], children[0], [order, 0], T_Create.isFromPersistent);
 			}
 		} catch (error) {
 			alert(this.relationships_errorMessage + error);
