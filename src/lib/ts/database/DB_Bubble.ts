@@ -32,42 +32,40 @@ export default class DB_Bubble extends DB_Common {
 		function createThing(b_thing: string, b_title: string, b_color: string, b_type: T_Thing) {
 			h.thing_remember_runtimeCreateUnique(h.db.idBase, b_thing, b_title, b_color, b_type);
 		}
-		function split_array(array: string) {
-			return array.replace('[', '').replace(']', '').replace('"', '').split(',');
-		}
 		const event = e as MessageEvent;
-		if (!event.data.properties) {
+		const JSON_string = event.data.properties;
+		if (!JSON_string || JSON_string.length == 0) {
 			h.wrapUp_data_forUX();
 		} else {
-			let b_ids, b_root, b_focus, b_titles, b_colors, b_parents, b_related, b_overwrite, b_inRadialMode, b_erase_user_preferences;
+			let b_ids, b_root, b_focus, b_titles, b_colors, b_parent_ids, b_related_ids, b_overwrite, b_inRadialMode, b_erase_user_preferences;
 			try {
-				const properties = JSON.parse(event.data.properties);
-				const has_bubble = p.readDB_key(T_Preference.bubble) ?? false;	// true after first launch
-				debug.log_bubble(`[DB_Bubble] received bubble update: ${JSON.stringify(properties)}`);
-				b_overwrite = properties.overwrite_focus_and_mode || !has_bubble;
-				b_erase_user_preferences = properties.erase_user_preferences;
-				b_parents = split_array(properties.parents);
-				b_related = split_array(properties.related);
-				b_titles = split_array(properties.titles);
-				b_colors = split_array(properties.colors);
-				b_inRadialMode = properties.inRadialMode;
-				b_ids = split_array(properties.ids);
-				b_focus = properties.focus;
-				b_root = properties.root;
+				const bubble_properties  = JSON.parse(JSON_string);
+				const has_bubble		 = p.readDB_key(T_Preference.bubble) ?? false;	// true after first launch
+				debug.log_bubble(`[DB_Bubble] received bubble update: ${JSON.stringify(bubble_properties)}`);
+				b_overwrite				 = bubble_properties.overwrite_focus_and_mode || !has_bubble;
+				b_erase_user_preferences = bubble_properties.erase_user_preferences;
+				b_inRadialMode			 = bubble_properties.inRadialMode;
+				b_related_ids			 = bubble_properties.related;
+				b_parent_ids			 = bubble_properties.parents;
+				b_titles				 = bubble_properties.titles;
+				b_colors				 = bubble_properties.colors;
+				b_focus					 = bubble_properties.focus;
+				b_root					 = bubble_properties.root;
+				b_ids					 = bubble_properties.ids;
 			} catch (err) {
-				console.warn('[DB_Bubble] Could not parse properties:', err);
+				console.warn('[DB_Bubble] Could not parse bubble_properties:', err);
 			}
-			if (!!b_ids && !!b_titles && !!b_colors && !!b_parents && !!b_related) {
+			if (!!b_ids && !!b_titles && !!b_colors && !!b_parent_ids && !!b_related_ids) {
 				for (let i = 0; i < b_titles.length; i++) {
-					const id = b_ids[i];
-					const title = b_titles[i];
-					const color = b_colors[i];
-					const parent = b_parents[i];
-					const related = b_related[i];
-					const type = (id == b_root) ? T_Thing.root : T_Thing.generic;
+					const related_id	 = b_related_ids[i];
+					const parent_id		 = b_parent_ids[i];
+					const title			 = b_titles[i];
+					const color			 = b_colors[i];
+					const id			 = b_ids[i];
+					const type			 = (id == b_root) ? T_Thing.root : T_Thing.generic;
 					createThing(id, title, color, type);
-					createRelationship(parent, id, T_Predicate.contains, [1, 1]);
-					createRelationship(id, related, T_Predicate.isRelated, [1, 1]);
+					createRelationship(parent_id, id, T_Predicate.contains, [1, 1]);
+					createRelationship(id, related_id, T_Predicate.isRelated, [1, 1]);
 				}
 			}
 			h.wrapUp_data_forUX();			// create ancestries and tidy up

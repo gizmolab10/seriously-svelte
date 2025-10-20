@@ -72,9 +72,7 @@ function(instance, properties) {
 					const item = array.get(i, 1)[0] ?? '';
 					items.push(item);
 				}
-				const json_string = JSON.stringify(items);
-				to_send[SERIOUSLY_name] = json_string;
-				LOG('converted array for', SERIOUSLY_name, json_string);
+				to_send[SERIOUSLY_name] = items;
 			}
 		});
 		send_to_webseriously(to_send);
