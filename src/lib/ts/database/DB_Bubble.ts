@@ -38,23 +38,39 @@ export default class DB_Bubble extends DB_Common {
 		if (!JSON_string || JSON_string.length == 0) {
 			h.wrapUp_data_forUX();
 		} else {
-			let b_ids, b_root, b_focus, b_titles, b_colors, b_parent_ids, b_related_ids, b_overwrite, b_inRadialMode, b_erase_user_preferences;
+			let b_ids, b_root, b_focus, b_titles, b_colors, b_parent_ids, b_related_ids, b_predicates, b_relationships, b_traits, b_tags, b_overwrite, b_inRadialMode, b_erase_user_preferences;
 			try {
 				const bubble_properties  = JSON.parse(JSON_string);
 				const has_bubble		 = p.readDB_key(T_Preference.bubble) ?? false;	// true after first launch
 				debug.log_bubble(`[DB_Bubble] received bubble update: ${JSON.stringify(bubble_properties)}`);
 				b_overwrite				 = bubble_properties.overwrite_focus_and_mode || !has_bubble;
 				b_erase_user_preferences = bubble_properties.erase_user_preferences;
+				b_relationships			 = bubble_properties.relationships;
 				b_inRadialMode			 = bubble_properties.inRadialMode;
+				b_predicates			 = bubble_properties.predicates;
 				b_related_ids			 = bubble_properties.related;
 				b_parent_ids			 = bubble_properties.parents;
-				b_titles				 = bubble_properties.titles;
 				b_colors				 = bubble_properties.colors;
+				b_titles				 = bubble_properties.titles;
+				b_traits				 = bubble_properties.traits;
 				b_focus					 = bubble_properties.focus;
 				b_root					 = bubble_properties.root;
+				b_tags					 = bubble_properties.tags;
 				b_ids					 = bubble_properties.ids;
 			} catch (err) {
 				console.warn('[DB_Bubble] Could not parse bubble_properties:', err);
+			}
+			if (!b_predicates) {   // should happen BEFORE relationships are created
+				h.predicate_defaults_remember_runtimeCreate();
+			} else {
+				for (const b_predicate of b_predicates) {
+					h.predicate_remember_runtimeCreateUnique(b_predicate.id, b_predicate.kind, b_predicate.is_bidirectional);
+				}
+			}
+			if (!!b_relationships) {   // all the rest must happen AFTER things are created
+				for (const b_relationship of b_relationships) {
+					h.relationship_remember_runtimeCreateUnique(h.db.idBase, b_relationship.id, b_relationship.kind.kind, b_relationship.parent.id, b_relationship.child.id, b_relationship.orders, b_relationship.T_Create.isFromPersistent);
+				}
 			}
 			if (!!b_ids && !!b_titles && !!b_colors && !!b_parent_ids && !!b_related_ids) {
 				for (let i = 0; i < b_titles.length; i++) {
@@ -67,6 +83,17 @@ export default class DB_Bubble extends DB_Common {
 					createThing(id, title, color, type);
 					createRelationship(parent_id, id, T_Predicate.contains, [1, 1]);
 					createRelationship(id, related_id, T_Predicate.isRelated, [1, 1]);
+				}
+			}
+			if (!!b_traits) {
+				for (const b_trait of b_traits) {
+					h.trait_remember_runtimeCreateUnique(h.db.idBase, b_trait.id, b_trait.owner.id, b_trait.type, b_trait.text);
+				}
+			}
+			if (!!b_tags) {
+				for (const b_tag of b_tags) {
+					const ownerHIDs = b_tag.owners.map((owner: {id: string;}) => owner.id.hash());
+					h.tag_remember_runtimeCreateUnique(h.db.idBase, b_tag.id, b_tag.type, ownerHIDs);
 				}
 			}
 			h.wrapUp_data_forUX();			// create ancestries and tidy up
