@@ -22,15 +22,16 @@ export default class DB_Bubble extends DB_Common {
 	}
 
 	private handle_bubble_message = (e: Event) => {
-		
-		// TODO: configuration and terminate
-
-		function createRelationship(b_parent: string, b_child: string, b_kind: T_Predicate, b_orders: number[]) {
-			const id = Math.random().toString(36).substring(2, 15);
-			h.relationship_remember_runtimeCreateUnique(h.db.idBase, id, b_kind, b_parent, b_child, b_orders, T_Create.isFromPersistent);
+		function createRelationship(parent_id: string, child_id: string, kind: T_Predicate, orders: number[]) {
+			if (!!parent_id && !!child_id && parent_id != k.empty && child_id != k.empty) {
+				const id = Math.random().toString(36).substring(2, 15);
+				h.relationship_remember_runtimeCreateUnique(h.db.idBase, id, kind, parent_id, child_id, orders, T_Create.isFromPersistent);
+			}
 		}
-		function createThing(b_thing: string, b_title: string, b_color: string, b_type: T_Thing) {
-			h.thing_remember_runtimeCreateUnique(h.db.idBase, b_thing, b_title, b_color, b_type);
+		function createThing(id: string, title: string, color: string, type: T_Thing) {
+			if (!!id && !!title && !!color && !!type && id != k.empty) {
+				h.thing_remember_runtimeCreateUnique(h.db.idBase, id, title, color, type);
+			}
 		}
 		const event = e as MessageEvent;
 		const JSON_string = event.data.properties;
