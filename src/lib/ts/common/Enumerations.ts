@@ -23,7 +23,6 @@ export enum T_Search {
 	enter,
 	results,
 	selected,
-	rebuild_index,
 }
 
 export enum T_Detail {

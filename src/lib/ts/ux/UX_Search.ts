@@ -96,19 +96,22 @@ class UX_Search {
 						w_search_results_changed.set(Date.now());
 						w_search_state.subscribe((state) => {
 							const text = this.search_text?.toLowerCase();
-							if (!!text) {
-								if (state === T_Search.rebuild_index) {
-									this.buildIndex(h.things);
-									this.update_search_for(text);
-								} else if (state !== T_Search.off ) {
-									this.search_for(text);
-								}
+							if (!!text && state !== T_Search.off ) {
+								this.search_for(text);
 							}
 						});
 					}
 				});
 			}
 		}, 1);
+	}
+
+	update_search() {
+		const text = this.search_text?.toLowerCase();
+		if (!!text) {
+			this.buildIndex(h.things);
+			this.update_search_for(text);
+		}
 	}
 	
 	static readonly _____PRIVATE: unique symbol;

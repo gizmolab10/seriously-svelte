@@ -25,6 +25,7 @@ export enum T_Debug {
 	things			= 'things',			// properties of things
 	build			= 'build',			// completely reattach graph and its entire DOM
 	error			= 'error',			// async errors
+	focus			= 'focus',			// watch for and log focus changes
 	graph			= 'graph',			// size of graph area
 	hover			= 'hover',
 	lines			= 'lines',			// alignment dots for lines and widgets
@@ -46,6 +47,7 @@ export class Debug {
 	captureStackTrace(): string | undefined { return new Error().stack; }
 
 	get graph(): boolean { return this.hasOption(T_Debug.graph); }
+	get focus(): boolean { return this.hasOption(T_Debug.focus); }
 	get lines(): boolean { return this.hasOption(T_Debug.lines); }
 	get trace(): boolean { return this.hasOption(T_Debug.trace); }
 	get cursor(): boolean { return this.hasOption(T_Debug.cursor); }
@@ -123,6 +125,7 @@ export class Debug {
 					case 'things': this.flags.push(T_Debug.things); break;
 					case 'build': this.flags.push(T_Debug.build); break;
 					case 'error': this.flags.push(T_Debug.error); break;
+					case 'focus': this.flags.push(T_Debug.focus); break;
 					case 'graph': this.flags.push(T_Debug.graph); break;
 					case 'hover': this.flags.push(T_Debug.hover); break;
 					case 'lines': this.flags.push(T_Debug.lines); break;

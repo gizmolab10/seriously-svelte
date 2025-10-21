@@ -1,7 +1,7 @@
-import { e, k, p, u, show, debug, layout, databases } from '../common/Global_Imports';
-import { stores, w_device_isMobile, w_show_graph_ofType } from './Stores';
-import { T_Graph, T_Theme } from '../common/Global_Imports';
-import { get } from 'svelte/store';
+import { e, k, p, u, show, debug } from '../common/Global_Imports';
+import { layout, databases } from '../common/Global_Imports';
+import { stores, w_device_isMobile } from './Stores';
+import { T_Theme } from '../common/Global_Imports';
 
 export class Configuration {
 

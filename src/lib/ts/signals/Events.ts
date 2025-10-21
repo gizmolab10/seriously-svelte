@@ -10,6 +10,7 @@ import { get } from 'svelte/store';
 
 export class Events {
 	mouse_timer_byName: { [name: string]: Mouse_Timer } = {};
+	handle_focus_cleanup: (() => void) | null = null;
 	initialTouch: Point | null = null;
 	alterationTimer!: Mouse_Timer;
 
@@ -18,6 +19,7 @@ export class Events {
 	setup() {
 		w_s_alteration.subscribe((s_alteration: S_Alteration | null) => { this.handle_s_alteration(s_alteration); });
 		w_device_isMobile.subscribe((isMobile: boolean) => { this.subscribeTo_events(); });
+		this.start_watching_focus();
 	}
 
 	name_ofActionAt(t_action: number, column: number): string {
@@ -61,6 +63,69 @@ export class Events {
 			document.addEventListener('mousedown', this.handle_mouse_down, { passive: false });
 			document.addEventListener('mousemove', this.handle_mouse_move, { passive: false });
 		}
+	}
+
+	static readonly _____FOCUS_WATCHING: unique symbol;
+
+	get focused_element(): Element | null { return document.activeElement; }
+
+	get focused_element_deep(): Element | null {
+		let focused = this.focused_element;
+		// Traverse shadow DOM if present
+		while (focused && focused.shadowRoot && focused.shadowRoot.activeElement) {
+			focused = focused.shadowRoot.activeElement;
+		}
+		return focused;
+	}
+
+	start_watching_focus(): void {
+		if (!this.handle_focus_cleanup && debug.focus) {
+			this.handle_focus_cleanup = this.watch_focus(this.log_focus.bind(this));
+		}
+	}
+
+	stop_watching_focus() {
+		if (!!this.handle_focus_cleanup) {
+			this.handle_focus_cleanup();
+			this.handle_focus_cleanup = null;
+		}
+	}
+
+	log_focus(element: Element | null, gained_focus: boolean): void {
+		if (element) {
+			console.log(gained_focus ? 'Focus gained:' : 'Focus lost:');
+			console.log('Element:', element);
+			console.log('Tag name:', element.tagName);
+			console.log('ID:', element.id);
+			console.log('Class list:', element.classList);
+		} else {
+			console.log(gained_focus ? 'No element gained focus' : 'No element lost focus');
+		}
+	}
+
+	watch_focus(callback?: (focused_element: Element | null, gained_focus: boolean) => void): () => void {
+		const handleFocusIn = () => {
+			const focused = this.focused_element_deep;
+			if (callback) {
+				callback(focused, true);
+			} else {
+				console.log(`Focus gained by: ${focused?.tagName ?? 'none'}`);
+			}
+		};
+		const handleFocusOut = () => {
+			const focused = this.focused_element_deep;
+			if (callback) {
+				callback(focused, false);
+			} else {
+				console.log(`Focus lost from: ${focused?.tagName ?? 'none'}`);
+			}
+		};
+		document.addEventListener('focusin', handleFocusIn);
+		document.addEventListener('focusout', handleFocusOut);
+		return () => {
+			document.removeEventListener('focusin', handleFocusIn);
+			document.removeEventListener('focusout', handleFocusOut);
+		};
 	}
 
 	static readonly EVENT_HANDLERS = Symbol('EVENT_HANDLERS');

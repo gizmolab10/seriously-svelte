@@ -42,5 +42,6 @@
 	"include": [
 		"src/**/*",
 		"src/main.js",
-		"src/lib/**/*", "src/lib/ts/managers/Stores.ts", "notes/design/slim/SlimStores.ts", "notes/experiments/source/DB_DGraph.ts", "notes/experiments/source/DB_Holon.ts"	]
+		"src/lib/**/*"
+	]
 }

@@ -29,8 +29,9 @@
 	* to avoid limiting type declarations.
 	*/
 	"include": [
-		"src/lib/**/*.js",
 		"src/lib/**/*.svelte",
+		"src/lib/**/*.js",
 		"src/lib/**/*.ts",
-		"src/main.js", "notes/G_ArcSlider.test.ts", "notes/experiments/Stores.ts", "notes/design/slim/SlimStores.ts", "notes/experiments/source/DB_DGraph.ts", "notes/experiments/source/DB_Holon.ts"]
+		"src/main.js"
+	]
 }
