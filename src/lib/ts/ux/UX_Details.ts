@@ -1,6 +1,6 @@
 import { S_Items, T_Search, T_Detail, T_Direction, T_Storage_Need } from '../common/Global_Imports';
 import { w_search_state, w_show_details, w_count_details } from '../managers/Stores';
-import { x, c } from '../common/Global_Imports';
+import { x, show } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
 export class S_Banner_Hideable {
@@ -41,9 +41,7 @@ class UX_Details {
 	details_toggle_visibility() {
 		const show_details = !get(w_show_details);
 		w_show_details.set(show_details);
-		if (show_details) {
-			c.show_standalone_UI = true;
-		}
+		show.details = show_details;
 	}
 		
 	static readonly _____BANNERS: unique symbol;

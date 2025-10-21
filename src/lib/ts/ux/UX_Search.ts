@@ -39,6 +39,14 @@ class UX_Search {
 		return null;
 	}
 
+	update_search() {
+		const text = this.search_text?.toLowerCase();
+		if (!!text) {
+			this.buildIndex(h.things);
+			this.update_search_for(text);
+		}
+	}
+
 	next_row(up: boolean) {
 		const row = this.selected_row;
 		if (row !== null) {
@@ -104,14 +112,6 @@ class UX_Search {
 				});
 			}
 		}, 1);
-	}
-
-	update_search() {
-		const text = this.search_text?.toLowerCase();
-		if (!!text) {
-			this.buildIndex(h.things);
-			this.update_search_for(text);
-		}
 	}
 	
 	static readonly _____PRIVATE: unique symbol;

@@ -1,12 +1,11 @@
 <script lang='ts'>
-	import { c, e, elements, h, k, p, u, controls, x, show, grabs, search, colors, layout } from '../../ts/common/Global_Imports';
-	import { w_search_preferences, w_search_state, w_search_show_controls } from '../../ts/managers/Stores';
-	import { w_background_color, w_device_isMobile, w_thing_fontFamily } from '../../ts/managers/Stores';
-	import { w_show_details, w_show_graph_ofType, w_show_tree_ofType } from '../../ts/managers/Stores';
-	import { T_Layer, T_Graph, T_Search, T_Element, T_Control } from '../../ts/common/Global_Imports';
-	import { w_rect_ofGraphView, w_count_window_resized, w_popupView_id } from '../../ts/managers/Stores';
-	import { T_Kinship, T_Request, T_Search_Preference } from '../../ts/common/Global_Imports';
-	import { Point, svgPaths, signals, S_Element } from '../../ts/common/Global_Imports';
+	import { c, e, k, u, x, show, colors, layout, elements, controls, svgPaths } from '../../ts/common/Global_Imports';
+	import { w_popupView_id, w_rect_ofGraphView, w_count_window_resized } from '../../ts/managers/Stores';
+	import { T_Layer, T_Graph, T_Element, T_Control } from '../../ts/common/Global_Imports';
+	import { w_background_color, w_show_graph_ofType } from '../../ts/managers/Stores';
+	import { w_search_state, w_search_show_controls } from '../../ts/managers/Stores';
+	import { T_Kinship, T_Request } from '../../ts/common/Global_Imports';
+	import { Point, S_Element } from '../../ts/common/Global_Imports';
 	import Search_Toggle from '../search/Search_Toggle.svelte';
 	import Next_Previous from '../mouse/Next_Previous.svelte';
 	import Identifiable from '../../ts/runtime/Identifiable';
@@ -44,8 +43,8 @@
 
 	function layout_controls() {
 		const left_widths = {
-			0: c.show_details_button ? 18 : -7,			// details
-			1: !$w_search_show_controls ? 11 : c.show_details_button ? 11 : 11,	// recents / search
+			0: c.has_details_button ? 18 : -7,			// details
+			1: !$w_search_show_controls ? 11 : c.has_details_button ? 11 : 11,	// recents / search
 			2: 57,	// graph type
 			3: 100,	// plus
 			4: 26,	// minus
@@ -74,7 +73,7 @@
 			origin={Point.x(lefts[1])}
 			closure={handle_recents_mouseClick}/>
 		{#if !$w_popupView_id}
-			{#if c.show_details_button}
+			{#if c.has_details_button}
 				<Button name='details-toggle'
 					border_thickness=0
 					color='transparent'
@@ -99,8 +98,8 @@
 			{#if c.allow_search}
 				<Search_Toggle
 					top={-0.5}
-					left={-54 - (c.show_details_button ? 0 : 26)}
-					width={lefts[7] + (c.show_details_button ? 0 : 26)}/>
+					left={-54 - (c.has_details_button ? 0 : 26)}
+					width={lefts[7] + (c.has_details_button ? 0 : 26)}/>
 			{/if}
 			{#key $w_show_graph_ofType}
 				<Segmented name='graph-type'
@@ -142,7 +141,7 @@
 					</svg>
 				</Button>
 			</div>
-			{#if !c.show_details_button}
+			{#if !c.has_details_button}
 				<Button name='easter-egg'
 					width={20}
 					height={30}

@@ -1,10 +1,10 @@
 <script lang='ts'>
-	import { search, layout, signals, controls, elements, databases } from '../../ts/common/Global_Imports';
-	import { c, h, k, u, x, Rect, Size, Point, Angle, grabs, debug } from '../../ts/common/Global_Imports';
+	import { h, k, u, x, debug, layout, signals, controls, elements, databases } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/managers/Stores';
-	import { w_s_title_edit, w_mouse_location, w_search_state } from '../../ts/managers/Stores';
-	import { S_Element, S_Component, Seriously_Range } from '../../ts/common/Global_Imports';
 	import { T_Search, T_Layer, T_Component, T_Edit } from '../../ts/common/Global_Imports';
+	import { S_Mouse, S_Element, S_Component } from '../../ts/common/Global_Imports';
+	import { w_s_title_edit, w_mouse_location } from '../../ts/managers/Stores';
+	import { Rect, Seriously_Range } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { onMount } from 'svelte';
 	export let s_title!: S_Element;

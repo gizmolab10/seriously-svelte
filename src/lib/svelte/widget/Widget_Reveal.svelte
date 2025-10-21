@@ -1,10 +1,10 @@
 <script lang='ts'>
-	import { c, h, k, u, elements, x, grabs, debug, layout, signals, svgPaths } from '../../ts/common/Global_Imports';
-	import { S_Element, S_Component, T_Layer, T_Graph, T_Component } from '../../ts/common/Global_Imports';
+	import { S_Mouse, S_Element, S_Component, T_Layer, T_Component } from '../../ts/common/Global_Imports';
+	import { h, k, u, x, debug, signals, elements, svgPaths } from '../../ts/common/Global_Imports';
 	import { w_thing_title, w_thing_color, w_background_color } from '../../ts/managers/Stores';
-	import { Size, Thing, Point, Predicate } from '../../ts/common/Global_Imports';
 	import { w_show_countDots_ofType } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
+	import { Size, Point } from '../../ts/common/Global_Imports';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
     export let hover_isReversed = false;

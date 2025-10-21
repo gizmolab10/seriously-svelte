@@ -1,9 +1,9 @@
 <script lang='ts'>
-	import { c, k, u, elements, x, grabs, debug, colors, layout, signals, svgPaths, components } from '../../ts/common/Global_Imports';
-	import { w_thing_color, w_s_title_edit, w_thing_fontFamily } from '../../ts/managers/Stores';
+	import { k, u, elements, x, debug, layout, signals, svgPaths } from '../../ts/common/Global_Imports';
+	import { w_thing_color, w_s_title_edit, w_ancestry_focus } from '../../ts/managers/Stores';
 	import { Size, Point, S_Mouse, S_Component } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Predicate, T_Component } from '../../ts/common/Enumerations';
-	import { w_background_color, w_ancestry_focus } from '../../ts/managers/Stores';
+	import { T_Layer, T_Component } from '../../ts/common/Enumerations';
+	import { w_background_color } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Widget_Title from '../widget/Widget_Title.svelte';
 	import { onMount } from 'svelte';

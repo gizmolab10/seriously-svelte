@@ -134,7 +134,7 @@ export class Preferences {
 	static readonly _____ANCESTRIES: unique symbol;
 
 	ancestries_writeDB_key(ancestries: Array<Ancestry>, key: string) {	// 2 keys use this {grabbed, expanded}
-		const pathStrings = ancestries.map(a => a.pathString);			// array of pathStrings (of Relationship ids)
+		const pathStrings = ancestries.map(a => a?.pathString ?? k.empty);			// array of pathStrings (of Relationship ids)
 		this.writeDB_key(key, ancestries.length == 0 ? null : pathStrings);
 	}
 

@@ -1,12 +1,12 @@
-import { w_show_countDots_ofType, w_show_details, w_show_related } from './Stores';
-import { c, k, p, g_tree, layout, T_Preference } from '../common/Global_Imports';
+import { c, k, p, g_tree, layout, T_Kinship, T_Preference } from '../common/Global_Imports';
+import { w_show_details, w_show_related , w_show_countDots_ofType} from './Stores';
 import { w_show_graph_ofType, w_search_show_controls } from './Stores';
-import { T_Kinship } from '../common/Enumerations';
 import type { Dictionary } from '../types/Types';
 import { get } from 'svelte/store';
 
 export class Visibility {
 	debug_cursor = false;
+	details = false;
 
 	queryStrings_apply() {
 		const queryStrings = c.queryStrings;
@@ -30,8 +30,8 @@ export class Visibility {
 	}
 
 	isShowing_countDots_ofType(t_counts: T_Kinship): boolean { return get(w_show_countDots_ofType).includes(T_Kinship[t_counts]) }
-	get related_dots(): boolean { return  this.isShowing_countDots_ofType(T_Kinship.related); }
 	get children_dots(): boolean { return  this.isShowing_countDots_ofType(T_Kinship.children); }
+	get related_dots(): boolean { return  this.isShowing_countDots_ofType(T_Kinship.related); }
 	get parent_dots(): boolean { return  this.isShowing_countDots_ofType(T_Kinship.parents); }
 
 	restore_state() {

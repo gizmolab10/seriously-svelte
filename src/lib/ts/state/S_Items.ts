@@ -34,7 +34,7 @@ export default class S_Items<T> {
 	get items(): Array<T> { return get(this.w_items); }
 	get item(): T | null { return this.items[this.index] ?? null; }
 	get identifiable(): Identifiable | null { return this.item as unknown as Identifiable ?? null; }
-	get descriptionBy_sorted_IDs(): string { return this.items.map(item => (item as unknown as Identifiable).id).sort().join('|'); }
+	get descriptionBy_sorted_IDs(): string { return this.items.map(item => (item as unknown as Identifiable)?.id ?? '').sort().join('|'); }
 	private set item(item: T | null) { this.w_item.set(item); }
 	private set length(l: number) { this.w_length.set(l); }
 

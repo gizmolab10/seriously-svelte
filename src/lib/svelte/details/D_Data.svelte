@@ -1,11 +1,11 @@
 <script lang='ts'>
-	import { h, k, p, u, elements, x, busy, Point, colors, details, S_Element, databases, Hierarchy } from '../../ts/common/Global_Imports';
-	import { T_File_Format, T_File_Operation, T_Storage_Need, T_Signal } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Detail, T_Element, T_Preference, T_Request } from '../../ts/common/Global_Imports';
-	import { w_data_updated, w_thing_fontFamily } from '../../ts/managers/Stores';
+	import { c, h, k, p, u, busy, colors, details, elements, databases } from '../../ts/common/Global_Imports';
+	import { T_File_Format, T_File_Operation, T_Storage_Need } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Element, T_Request, T_Preference } from '../../ts/common/Global_Imports';
+	import { Point, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
+	import { w_t_database, w_data_updated } from '../../ts/managers/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import { T_Database } from '../../ts/database/DB_Common';
-	import { w_t_database } from '../../ts/managers/Stores';
     import Buttons_Row from '../mouse/Buttons_Row.svelte';
 	import Text_Table from '../text/Text_Table.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
@@ -130,25 +130,37 @@
 <div class='database-container'
 	style='
 		padding:5px;'>
-	<Separator name='show-other-databases'
-		has_gull_wings={true}
-		has_both_wings={true}
-		has_thin_divider={false}
-		origin={new Point(1, 30)}
-		zindex={T_Layer.frontmost + 1}
-		length={k.width.details - 2.5}
-		handle_click={handle_show_other_databases}
-		thickness={k.thickness.separator.details}
-		title='{p.show_other_databases ? 'hide other databases' : 'show other databases'}'/>
-	{#if p.show_other_databases}
-		<Segmented name='databases'
-			left={105}
-			width={width}
-			titles={ids_forDatabase}
-			selected={[$w_t_database]}
-			height={k.height.controls}
-			origin={new Point(0, tops[0])}
-			handle_selection={handle_db_selection}/>
+	{#if c.has_standalone_UI}
+		<Separator name='show-other-databases'
+			has_gull_wings={true}
+			has_both_wings={true}
+			has_thin_divider={false}
+			origin={new Point(1, 30)}
+			zindex={T_Layer.frontmost + 1}
+			length={k.width.details - 2.5}
+			handle_click={handle_show_other_databases}
+			thickness={k.thickness.separator.details}
+			title='{p.show_other_databases ? 'hide other databases' : 'show other databases'}'/>
+		<Separator name='show-other-databases'
+			has_gull_wings={true}
+			has_both_wings={true}
+			has_thin_divider={false}
+			origin={new Point(1, 30)}
+			zindex={T_Layer.frontmost + 1}
+			length={k.width.details - 2.5}
+			handle_click={handle_show_other_databases}
+			thickness={k.thickness.separator.details}
+			title='{p.show_other_databases ? 'hide other databases' : 'show other databases'}'/>
+		{#if p.show_other_databases}
+			<Segmented name='databases'
+				left={105}
+				width={width}
+				titles={ids_forDatabase}
+				selected={[$w_t_database]}
+				height={k.height.controls}
+				origin={new Point(0, tops[0])}
+				handle_selection={handle_db_selection}/>
+		{/if}
 	{/if}
 	<div class='database-information'
 		style='

@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { T_Layer, T_Detail, T_Action, T_Element, T_Kinship, T_Request, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
-	import { c, e, h, k, u, x, show, Size, Point, grabs, colors, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
+	import { c, e, h, k, u, x, show, Size, Point, colors, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
 	import { w_s_alteration, w_background_color, w_ancestry_forDetails } from '../../ts/managers/Stores';
 	import { w_user_graph_offset, w_show_graph_ofType } from '../../ts/managers/Stores';
 	import { elements, details, controls } from '../../ts/common/Global_Imports';
@@ -232,7 +232,7 @@
 			{/if}
 		</div>
 	{/if}
-	{#if !c.show_standalone_UI}
+	{#if !c.has_standalone_UI}
 		<Separator name='bottom-of-actions'
 			position='relative'
 			length={k.width.details + 1.5}

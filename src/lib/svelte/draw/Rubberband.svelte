@@ -1,18 +1,18 @@
 <script lang='ts'>
-    import { h, k, u, elements, x, Rect, Size, Point, debug, layout, components, grabs } from '../../ts/common/Global_Imports';
+    import { Rect, Size, Point, T_Layer, T_Search, T_Dragging, T_Component } from '../../ts/common/Global_Imports';
     import { w_scaled_movement, w_user_graph_offset, w_separator_color } from '../../ts/managers/Stores';
-    import { T_Layer, T_Dragging, T_Component } from '../../ts/common/Global_Imports';
+    import { h, k, u, x, debug, layout, elements, components } from '../../ts/common/Global_Imports';
     import { w_mouse_location, w_count_mouse_up } from '../../ts/managers/Stores';
-    import { w_dragging_active } from '../../ts/managers/Stores';
+    import { w_s_title_edit, w_dragging_active } from '../../ts/managers/Stores';
     import { onMount, onDestroy } from 'svelte';
     export let strokeWidth = k.thickness.rubberband;
     export let bounds: Rect;
     const enabled = true;
     let mouse_upCount = $w_count_mouse_up;
     let startPoint: Point | null = null;
-    let had_intersections = false;
+    let has_rubberbanded_grabs = true;
+    let has_intersections = false;
     let original_grab_count = 0;
-    let has_grabs = true;
     let height = 0;
     let width = 0;
     let left = 0;
@@ -38,7 +38,10 @@
     $: if ($w_count_mouse_up !== mouse_upCount) {
         mouse_upCount = $w_count_mouse_up;
         if ($w_dragging_active === T_Dragging.rubberband) {
-            if (!has_grabs) {
+            if (!!$w_s_title_edit) {
+                $w_s_title_edit.stop_editing();
+                $w_s_title_edit = null;
+            } else if (!has_rubberbanded_grabs) {
                 x.si_grabs.reset();
             }
             startPoint = null;
@@ -115,7 +118,7 @@
             top = constrained.y;
             left = constrained.x;
             $w_dragging_active = T_Dragging.rubberband;
-            had_intersections = false;
+            has_intersections = false;
         }
     }
 
@@ -133,12 +136,12 @@
             // Only update if si_grabs.items have changed
             const new_grabbed_IDs = u.descriptionBy_sorted_HIDs(intersecting);
             const prior_grabbed_IDs = u.descriptionBy_sorted_HIDs(x.si_grabs.items);
-            has_grabs = intersecting.length != 0;
+            has_rubberbanded_grabs = intersecting.length != 0;
             if (prior_grabbed_IDs !== new_grabbed_IDs) {
-                if (has_grabs) {
-                    had_intersections = true;
+                if (has_rubberbanded_grabs) {
+                    has_intersections = true;
                     x.si_grabs.items = intersecting;
-                } else if (had_intersections) {
+                } else if (has_intersections) {
                     x.si_grabs.reset();
                 }
                 x.ancestry_update_forDetails();

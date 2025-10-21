@@ -10,8 +10,8 @@ export class Configuration {
 	theme = T_Theme.standalone;
 	allow_graph_editing = true;
 	allow_title_editing = true;
-	show_details_button = true;
-	show_standalone_UI = true;
+	has_details_button = true;
+	has_standalone_UI = true;
 	allow_autoSave = true;
 	erasePreferences = 0;
 	allow_search = true;
@@ -49,8 +49,8 @@ export class Configuration {
 			switch (disableOption) {
 				case 'search':				this.allow_search			   = false; break;
 				case 'auto_save':			this.allow_autoSave			   = false; break;
-				case 'standalone_UI':		this.show_standalone_UI		   = false; break;
-				case 'details':				this.show_details_button	   = false; break;
+				case 'standalone_UI':		this.has_standalone_UI		   = false; break;
+				case 'details':				this.has_details_button		   = false; break;
 				case 'editGraph':			this.allow_graph_editing	   = false; break;
 				case 'editTitles':			this.allow_title_editing	   = false; break;
 				case 'horizontalScrolling': this.allow_HorizontalScrolling = false; break;

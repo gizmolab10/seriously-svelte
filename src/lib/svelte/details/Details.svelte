@@ -1,7 +1,8 @@
 <script lang='ts'>
-	import { c, k, u, elements, x, Point, layout, T_Layer, T_Graph, T_Detail, T_Direction } from '../../ts/common/Global_Imports';
-	import { w_search_state, w_search_show_controls } from '../../ts/managers/Stores';
 	import { w_rect_ofGraphView, w_count_details, w_show_graph_ofType } from '../../ts/managers/Stores';
+	import { T_Layer, T_Graph, T_Detail, T_Direction } from '../../ts/common/Global_Imports';
+	import { w_search_state, w_search_show_controls } from '../../ts/managers/Stores';
+	import { c, k, u, x, Point, layout, elements } from '../../ts/common/Global_Imports';
 	import Banner_Hideable from './Banner_Hideable.svelte';
 	import D_Preferences from './D_Preferences.svelte';
 	import Separator from '../draw/Separator.svelte';
@@ -69,7 +70,7 @@
 		<Banner_Hideable t_detail={T_Detail.header}>
 			<D_Header/>
 		</Banner_Hideable>
-		{#if c.show_standalone_UI}
+		{#if c.has_standalone_UI}
 			<Banner_Hideable t_detail={T_Detail.preferences}>
 				<D_Preferences/>
 			</Banner_Hideable>
@@ -77,7 +78,7 @@
 		<Banner_Hideable t_detail={T_Detail.actions}>
 			<D_Actions/>
 		</Banner_Hideable>
-		{#if c.show_standalone_UI}
+		{#if c.has_standalone_UI}
 			<Banner_Hideable t_detail={T_Detail.selection} extra_titles={extra_selection_titles}>
 				<D_Selection/>
 			</Banner_Hideable>

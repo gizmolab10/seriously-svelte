@@ -28,7 +28,7 @@ export default class UX_S_Items {
 	//							//
 	//	  recents, found,		//
 	//	  details, focus,		//
-	//	  grabs, expandeds,		//
+	//	  expandeds,		//
 	//	  tags, traits			//
 	//							//
 	//////////////////////////////
