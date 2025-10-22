@@ -3,7 +3,7 @@
 	import { k, u, elements, x, Rect, Point, layout, g_radial, signals } from '../../ts/common/Global_Imports';
 	import { w_g_paging, w_ancestry_focus, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { w_rect_ofGraphView, w_user_graph_offset } from '../../ts/managers/Stores';
-	import { w_search_show_controls } from '../../ts/managers/Stores';
+	import { w_show_search_controls } from '../../ts/managers/Stores';
 	import Radial_Rings from './Radial_Rings.svelte';
 	import Radial_Focus from './Radial_Focus.svelte';
 	import Widget from '../widget/Widget.svelte';

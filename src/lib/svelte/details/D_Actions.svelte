@@ -232,11 +232,4 @@
 			{/if}
 		</div>
 	{/if}
-	{#if !c.has_standalone_UI}
-		<Separator name='bottom-of-actions'
-			position='relative'
-			length={k.width.details + 1.5}
-			thickness={k.thickness.separator.main}
-			corner_radius={k.radius.gull_wings.thick}/>
-	{/if}
 {/key}

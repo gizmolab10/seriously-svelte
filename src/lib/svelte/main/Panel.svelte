@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { c, e, h, k, u, elements, x, show, busy, Rect, Size, Point, Thing, search, layout } from '../../ts/common/Global_Imports';
-	import { debug, colors, Ancestry, Hierarchy, databases, Direction } from '../../ts/common/Global_Imports';
-	import { w_hierarchy, w_rect_ofGraphView, w_t_database, w_separator_color } from '../../ts/managers/Stores';
+	import { c, e, h, k, u, x, show, busy, debug, colors, search, layout, elements, databases } from '../../ts/common/Global_Imports';
+	import { w_hierarchy, w_t_database, w_separator_color, w_rect_ofGraphView } from '../../ts/managers/Stores';
+	import { Rect, Size, Point, Thing, Ancestry, Hierarchy, Direction } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Search, T_Banner, T_Control, T_Startup } from '../../ts/common/Global_Imports';
 	import { w_t_startup, w_popupView_id, w_device_isMobile, } from '../../ts/managers/Stores';
 	import { w_show_details, w_search_results_found } from '../../ts/managers/Stores';

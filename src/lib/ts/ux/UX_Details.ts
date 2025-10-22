@@ -36,13 +36,7 @@ class UX_Details {
 		}
 	}
 		
-	static readonly _____MAIN_SHUTOFF: unique symbol;
-
-	details_toggle_visibility() {
-		const show_details = !get(w_show_details);
-		w_show_details.set(show_details);
-		show.details = show_details;
-	}
+	details_toggle_visibility() { w_show_details.update(n => !n); }
 		
 	static readonly _____BANNERS: unique symbol;
 

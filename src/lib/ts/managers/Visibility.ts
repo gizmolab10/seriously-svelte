@@ -1,12 +1,11 @@
 import { c, k, p, g_tree, layout, T_Kinship, T_Preference } from '../common/Global_Imports';
 import { w_show_details, w_show_related , w_show_countDots_ofType} from './Stores';
-import { w_show_graph_ofType, w_search_show_controls } from './Stores';
+import { w_show_graph_ofType, w_show_search_controls } from './Stores';
 import type { Dictionary } from '../types/Types';
 import { get } from 'svelte/store';
 
 export class Visibility {
 	debug_cursor = false;
-	details = false;
 
 	queryStrings_apply() {
 		const queryStrings = c.queryStrings;
@@ -54,7 +53,7 @@ export class Visibility {
 		w_show_graph_ofType.subscribe((flag: any) => {
 			reactTo(T_Preference.graph, flag);
 		});
-		w_search_show_controls.subscribe((flag: any) => {
+		w_show_search_controls.subscribe((flag: any) => {
 			reactTo(T_Preference.show_related, flag);
 		});
     }

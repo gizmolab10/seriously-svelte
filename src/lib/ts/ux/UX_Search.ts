@@ -1,7 +1,7 @@
 import { w_search_results_found, w_search_results_changed } from '../managers/Stores';
 import { c, k, h, p, x, Thing, details, Ancestry } from "../common/Global_Imports";
 import { T_Search, T_Startup, T_Preference } from "../common/Global_Imports";
-import { w_search_state, w_search_show_controls } from '../managers/Stores';
+import { w_search_state, w_show_search_controls } from '../managers/Stores';
 import { Search_Node } from '../types/Search_Node';
 import { w_t_startup } from '../managers/Stores';
 import { get } from 'svelte/store';
@@ -14,13 +14,13 @@ class UX_Search {
 
 	activate() {
 		w_search_state.set(T_Search.enter);
-		w_search_show_controls.set(true);
+		w_show_search_controls.set(true);
 	}
 
 	deactivate() {
 		w_search_results_found.set(0);
 		w_search_state.set(T_Search.off);
-		w_search_show_controls.set(false);
+		w_show_search_controls.set(false);
 		details.redraw();		// force re-render of details
 	}
 
@@ -32,7 +32,7 @@ class UX_Search {
 
 	get selected_ancestry(): Ancestry | null {
 		const row = this.selected_row;
-		if (row !== null && !!get(w_search_show_controls)) {
+		if (row !== null && !!get(w_show_search_controls)) {
 			const thing = x.si_found.items[row];
 			return thing?.ancestry ?? null;
 		}
@@ -90,7 +90,7 @@ class UX_Search {
 		if (before !== this.results_fingerprint) {	// only if results are different
 			x.si_found.index = -1;
 		}
-		w_search_show_controls.set(T_Search.off != get(w_search_state));
+		w_show_search_controls.set(T_Search.off != get(w_search_state));
 		w_search_results_changed.set(Date.now());
 	}
 

@@ -3,7 +3,7 @@
 	import { w_popupView_id, w_rect_ofGraphView, w_count_window_resized } from '../../ts/managers/Stores';
 	import { T_Layer, T_Graph, T_Element, T_Control } from '../../ts/common/Global_Imports';
 	import { w_background_color, w_show_graph_ofType } from '../../ts/managers/Stores';
-	import { w_search_state, w_search_show_controls } from '../../ts/managers/Stores';
+	import { w_search_state, w_show_search_controls } from '../../ts/managers/Stores';
 	import { T_Kinship, T_Request } from '../../ts/common/Global_Imports';
 	import { Point, S_Element } from '../../ts/common/Global_Imports';
 	import Search_Toggle from '../search/Search_Toggle.svelte';
@@ -23,10 +23,7 @@
 	let lefts: number[] = [];
 	layout_controls();
 
-	// two states
-	// 1. show OR hide the details button
-	// 2. shows normal OR search controls
-	// always shows a separator and the breadcrumbs
+	// always show controls and breadcrumbs
 
 	function togglePopupID(id) { $w_popupView_id = ($w_popupView_id == id) ? null : id; }
 	function handle_recents_mouseClick(column: number) { x.ancestry_next_focusOn(column == 1); }
@@ -44,7 +41,7 @@
 	function layout_controls() {
 		const left_widths = {
 			0: c.has_details_button ? 18 : -7,			// details
-			1: !$w_search_show_controls ? 11 : c.has_details_button ? 11 : 11,	// recents / search
+			1: !$w_show_search_controls ? 11 : c.has_details_button ? 11 : 11,	// recents / search
 			2: 57,	// graph type
 			3: 100,	// plus
 			4: 26,	// minus

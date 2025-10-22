@@ -2,8 +2,8 @@
 	import { c, h, k, p, u, busy, colors, details, elements, databases } from '../../ts/common/Global_Imports';
 	import { T_File_Format, T_File_Operation, T_Storage_Need } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Element, T_Request, T_Preference } from '../../ts/common/Global_Imports';
+	import { w_t_database, w_data_updated, w_show_details } from '../../ts/managers/Stores';
 	import { Point, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
-	import { w_t_database, w_data_updated } from '../../ts/managers/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import { T_Database } from '../../ts/database/DB_Common';
     import Buttons_Row from '../mouse/Buttons_Row.svelte';
@@ -29,7 +29,7 @@
 	setup_s_elements();
 	$: tops = u.cumulativeSum(heights);
 	s_save.set_forHovering('black', 'pointer');
-	function height_ofChoices() { return p.show_other_databases ? 22 : -4; }
+	function height_ofChoices() { return c.has_standalone_UI ? p.show_other_databases ? 22 : -4 : -16; }
 
 	$:{
 		const _ = `${$w_data_updated}:::${$w_t_database}`;

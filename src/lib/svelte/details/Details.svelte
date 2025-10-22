@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { w_rect_ofGraphView, w_count_details, w_show_graph_ofType } from '../../ts/managers/Stores';
+	import { w_search_state, w_count_details, w_rect_ofGraphView } from '../../ts/managers/Stores';
 	import { T_Layer, T_Graph, T_Detail, T_Direction } from '../../ts/common/Global_Imports';
-	import { w_search_state, w_search_show_controls } from '../../ts/managers/Stores';
+	import { w_show_search_controls, w_show_graph_ofType } from '../../ts/managers/Stores';
 	import { c, k, u, x, Point, layout, elements } from '../../ts/common/Global_Imports';
 	import Banner_Hideable from './Banner_Hideable.svelte';
 	import D_Preferences from './D_Preferences.svelte';
@@ -17,7 +17,7 @@
 	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_items: w_trait_things } = x.si_trait_things;
 	const next_previous_titles = [T_Direction.previous, T_Direction.next];
-	let show_secondary_controls = $w_search_show_controls || ($w_show_graph_ofType == T_Graph.tree);
+	let show_secondary_controls = $w_show_search_controls || ($w_show_graph_ofType == T_Graph.tree);
 	let prior_graph_type = $w_show_graph_ofType;
 	let prior_search_state = $w_search_state;
 	let extra_selection_titles = [];
@@ -25,7 +25,7 @@
 	let extra_tags_titles = [];
 
 	$: if (prior_graph_type != $w_show_graph_ofType) {
-		show_secondary_controls = $w_search_show_controls || ($w_show_graph_ofType == T_Graph.tree);
+		show_secondary_controls = $w_show_search_controls || ($w_show_graph_ofType == T_Graph.tree);
 		prior_graph_type = $w_show_graph_ofType;
 		$w_count_details++;
 	}
@@ -88,10 +88,10 @@
 			<Banner_Hideable t_detail={T_Detail.traits} extra_titles={extra_traits_titles}>
 				<D_Traits/>
 			</Banner_Hideable>
-			<Banner_Hideable t_detail={T_Detail.data}>
-				<D_Data/>
-			</Banner_Hideable>
 		{/if}
+		<Banner_Hideable t_detail={T_Detail.data}>
+			<D_Data/>
+		</Banner_Hideable>
 	</div>
 {/key}
 <Separator name='right-of-details'

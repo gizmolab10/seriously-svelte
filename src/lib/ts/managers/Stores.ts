@@ -12,6 +12,7 @@ export const w_show_countDots_ofType	= writable<Array<T_Kinship>>();
 export const w_show_details_ofType		= writable<Array<T_Detail>>();
 export const w_show_directionals_ofType	= writable<string[]>();
 export const w_show_graph_ofType		= writable<T_Graph>();
+export const w_show_search_controls		= writable<boolean>();
 export const w_show_related				= writable<boolean>();
 export const w_show_details				= writable<boolean>();
 
@@ -55,7 +56,6 @@ export const w_data_updated				= writable<number>();
 
 const _____SEARCH: unique symbol = Symbol('SEARCH');
 
-export const w_search_show_controls		= writable<boolean>();
 export const w_search_results_found		= writable<number>();
 export const w_search_results_changed	= writable<number>();				// re-render the search results
 export const w_search_state				= writable<T_Search>();				// observed by search_results, controls, and panel
