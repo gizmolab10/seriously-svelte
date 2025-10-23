@@ -2,7 +2,7 @@
 	import { S_Mouse, S_Element, S_Component, T_Layer, T_Component } from '../../ts/common/Global_Imports';
 	import { h, k, u, x, debug, signals, elements, svgPaths } from '../../ts/common/Global_Imports';
 	import { w_thing_title, w_thing_color, w_background_color } from '../../ts/managers/Stores';
-	import { w_show_countDots_ofType } from '../../ts/managers/Stores';
+	import { w_depth_limit, w_show_countDots_ofType } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { Size, Point } from '../../ts/common/Global_Imports';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
@@ -22,13 +22,13 @@
 	let fill_color = debug.lines ? 'transparent' : s_reveal.fill;
 	let svgPathFor_outer_tinyDots: string | null = null;
 	let svg_outline_color = s_reveal.svg_outline_color;
-	let svgPathFor_innerDot: string | null = null;
+	let svgPathFor_fat_center_dot: string | null = null;
 	let bulkAlias_color = s_reveal.stroke;
 	let center = g_widget.center_ofReveal;
 	let svgPathFor_revealDot = k.empty;
 	let color = ancestry.thing?.color;
 	let s_component: S_Component;
-	let offsetFor_innerDot = 0;
+	let offsetFor_fat_center_dot = 0;
 
 	update_colors();
 
@@ -71,10 +71,11 @@
 	function update_svgPaths() {
 		const thing = ancestry.thing;
 		if (!!thing) {
-			const has_innerDot = thing.isBulkAlias;
-			offsetFor_innerDot = has_innerDot ? 0 : -1;
+			const hidden_by_depth_limit = (ancestry.depth_ofFocus >= ($w_depth_limit ?? 0)) && ancestry.isExpanded && ancestry.hasChildren;
+			const has_fat_center_dot = thing.isBulkAlias || hidden_by_depth_limit;
+			offsetFor_fat_center_dot = has_fat_center_dot ? 0 : -1;
 			svgPathFor_revealDot = ancestry.svgPathFor_revealDot;
-			svgPathFor_innerDot = has_innerDot ? svgPaths.circle_atOffset(k.height.dot, 3) : null;
+			svgPathFor_fat_center_dot = has_fat_center_dot ? svgPaths.circle_atOffset(k.height.dot, 3) : null;
 			svgPathFor_outer_tinyDots = ancestry.svgPathFor_tinyDots_outsideReveal(points_toChild);
 		}
 	}
@@ -116,15 +117,15 @@
 				height={k.height.dot}
 				width={k.height.dot}
 				fill={fill_color}/>
-			{#if !!svgPathFor_innerDot}
-				<div class='bulk-alias-dot' style='
-					left:{offsetFor_innerDot}px;
-					top:{offsetFor_innerDot}px;
+			{#if !!svgPathFor_fat_center_dot}
+				<div class='fat_center-dot' style='
+					left:{offsetFor_fat_center_dot}px;
+					top:{offsetFor_fat_center_dot}px;
 					height:{k.height.dot}px;
 					width:{k.height.dot}px;
 					position:absolute;'>
-					<SVG_D3 name='bulk-alias-dot-svg'
-						svgPath={svgPathFor_innerDot}
+					<SVG_D3 name='fat_center-dot-svg'
+						svgPath={svgPathFor_fat_center_dot}
 						stroke={bulkAlias_color}
 						fill={bulkAlias_color}
 						height={k.height.dot}
