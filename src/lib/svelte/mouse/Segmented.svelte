@@ -140,6 +140,7 @@
 		justify-content: center;
 		padding-bottom: 2.2px;
 		font-family: inherit;
+		align-items: center;
 		white-space: nowrap;
 		position: relative;
 		width: fit-content;

@@ -18,15 +18,15 @@ import { print } from './Print';
 
 export class Utilities extends Testworthy_Utilities {
 	
-	descriptionBy_title(ancestries:		  Array<Ancestry> | null): string { return ancestries?.map(a => a.title).join('-') ?? k.empty; }
-	descriptionBy_titles(ancestries:	  Array<Ancestry> | null): string { return ancestries?.map(a => a?.titles?.join(k.comma)).join('-') ?? k.empty; }
-	descriptionBy_sorted_IDs(identifiables:  Array<Identifiable>): string { return identifiables.map((a: Identifiable) => a?.id ?? k.empty).sort().join(k.comma); }
+	descriptionBy_title(ancestries:		  Array<Ancestry> | null): string { return ancestries?.map(a => a?.title ?? k.unknown).join('-') ?? k.empty; }
+	descriptionBy_titles(ancestries:	  Array<Ancestry> | null): string { return ancestries?.map(a => (a?.titles ?? [k.unknown])?.join(k.comma) ?? k.unknown).join('-') ?? k.unknown; }
 	descriptionBy_sorted_HIDs(identifiables: Array<Identifiable>): string { return identifiables.map((a: Identifiable) => a?.hid ?? -1 as unknown as Integer).sort().join(k.comma); }
+	descriptionBy_sorted_IDs(identifiables:  Array<Identifiable>): string { return identifiables.map((a: Identifiable) => a?.id ?? k.unknown).sort().join(k.comma); }
 	sort_byOrder(ancestries: Array<Ancestry>):			  Array<Ancestry> { return ancestries.sort( (a: Ancestry, b: Ancestry) => { return a.order - b.order; }); }
 	getWidthOf(s: string):										   number { return this.getWidth_ofString_withSize(s, `${k.font_size.common}px`); }
 
 	ids_forDB(ancestries: Array<Ancestry>): string[] {
-		return ancestries.filter(a => !!a && a?.t_database == get(w_t_database)).map(a => a?.id ?? k.empty);
+		return ancestries.filter(a => !!a && a?.t_database == get(w_t_database)).map(a => a?.id ?? k.unknown);
 	}
 
 	resolve_signal_value(value: any): string {

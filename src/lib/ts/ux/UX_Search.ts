@@ -1,7 +1,7 @@
 import { w_search_results_found, w_search_results_changed } from '../managers/Stores';
 import { c, k, h, p, x, Thing, details, Ancestry } from "../common/Global_Imports";
 import { T_Search, T_Startup, T_Preference } from "../common/Global_Imports";
-import { w_search_state, w_show_search_controls } from '../managers/Stores';
+import { w_t_database, w_search_state, w_show_search_controls } from '../managers/Stores';
 import { Search_Node } from '../types/Search_Node';
 import { w_t_startup } from '../managers/Stores';
 import { get } from 'svelte/store';
@@ -10,7 +10,14 @@ class UX_Search {
 	search_text: string | null = null;
 	private root_node: Search_Node = new Search_Node();
 
-	get selected_row(): number | null { return x.si_found.index; }
+	constructor() {
+		setTimeout(() => {
+			this.setup();
+			w_t_database.subscribe((database) => {
+				this.setup();
+			});
+		}, 1);
+	}
 
 	activate() {
 		w_search_state.set(T_Search.enter);
@@ -23,6 +30,26 @@ class UX_Search {
 		w_show_search_controls.set(false);
 		details.redraw();		// force re-render of details
 	}
+
+	private setup() {
+		if (c.allow_search) {
+			this.search_text = p.readDB_key(T_Preference.search_text);
+			w_t_startup.subscribe((startup) => {
+				if (startup == T_Startup.ready) {
+					this.buildIndex(h.things);
+					w_search_results_changed.set(Date.now());
+					w_search_state.subscribe((state) => {
+						const text = this.search_text?.toLowerCase();
+						if (!!text && state !== T_Search.off) {
+							this.search_for(text);
+						}
+					});
+				}
+			});
+		}
+	}
+
+	get selected_row(): number | null { return x.si_found.index; }
 
 	set selected_row(row: number) {
 		x.si_found.index = row;
@@ -67,11 +94,11 @@ class UX_Search {
 
 	deactivate_focus_and_grab() {
 		const ancestry = this.selected_ancestry;
-		this.deactivate();
 		if (!!ancestry) {
 			ancestry.becomeFocus();
 			ancestry.grab();
 		}
+		this.deactivate();
 	}
 
 	search_for(query: string) {
@@ -92,26 +119,6 @@ class UX_Search {
 		}
 		w_show_search_controls.set(T_Search.off != get(w_search_state));
 		w_search_results_changed.set(Date.now());
-	}
-
-	constructor() {
-		setTimeout(() => {
-			if (c.allow_search) {
-				this.search_text = p.read_key(T_Preference.search_text);
-				w_t_startup.subscribe((startup) => {
-					if (startup == T_Startup.ready) {
-						this.buildIndex(h.things);
-						w_search_results_changed.set(Date.now());
-						w_search_state.subscribe((state) => {
-							const text = this.search_text?.toLowerCase();
-							if (!!text && state !== T_Search.off ) {
-								this.search_for(text);
-							}
-						});
-					}
-				});
-			}
-		}, 1);
 	}
 	
 	static readonly _____PRIVATE: unique symbol;

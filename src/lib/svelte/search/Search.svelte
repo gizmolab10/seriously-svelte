@@ -31,7 +31,7 @@
 	function handle_input(event) {
 		const text = input.value;
 		if (!!text) {
-			p.write_key(T_Preference.search_text, text);
+			p.writeDB_key(T_Preference.search_text, text);
 		}
 		search.search_for(text.toLowerCase());
 	}
@@ -74,7 +74,7 @@
 			border: 1px solid lightgray;
 			height: {k.height.button + 2}px;
 			font-family: {$w_thing_fontFamily};'/>
-	{#if $w_search_results_found > 0}
+	{#if search.search_text?.length > 0}
 		<div class='search-results-found'
 			style='
 				top: 4px;

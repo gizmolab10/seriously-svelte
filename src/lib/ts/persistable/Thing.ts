@@ -156,7 +156,7 @@ export default class Thing extends Persistable {
 
 	static readonly _____ANCESTRIES: unique symbol;
 
-	get ancestry(): Ancestry { return this.ancestries[0]; }
+	get ancestry(): Ancestry { return this.ancestries[0] ?? h.rootAncestry; }
 
 	get ancestry_maybe(): Ancestry | null {
 		const ancestries = h.ancestries_forThing(this);

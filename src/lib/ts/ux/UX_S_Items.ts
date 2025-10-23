@@ -87,8 +87,7 @@ export default class UX_S_Items {
 		if (!ancestry) {
 			const focus = get(w_ancestry_focus);
 			const grab = this.si_grabs.item as Ancestry;
-			const grab_containsFocus = !!grab && !!focus && focus.isAProgenyOf(grab)
-			ancestry = (!!grab && !grab_containsFocus) ? grab : focus;
+			ancestry = grab ?? focus ?? h.rootAncestry;
 		}
 		if (!presented || !presented.equals(ancestry)) {
 			w_ancestry_forDetails.set(ancestry);
@@ -191,7 +190,8 @@ export default class UX_S_Items {
 
 	grabs_update_forSearch() {
 		if (get(w_search_state) != T_Search.off && this.si_found.length > 0) {
-			const ancestries = this.si_found.items.map((found: Thing) => found.ancestry) ?? [];
+			let ancestries = this.si_found.items.map((found: Thing) => found.ancestry).filter(a => !!a) ?? [];
+			ancestries = u.strip_hidDuplicates(ancestries);
 			if (this.si_grabs.descriptionBy_sorted_IDs != u.descriptionBy_sorted_IDs(ancestries)) {
 				this.si_grabs.items = ancestries;
 			}
