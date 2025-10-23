@@ -969,7 +969,7 @@ export class Hierarchy {
 				if (!parentAncestry.isExpanded) {
 					parentAncestry.expand();
 				}
-				const needsRefocus = RIGHT && !!relocatedAncestry && relocatedAncestry.depth_ofFocus >= depth_limit;
+				const needsRefocus = RIGHT && !!relocatedAncestry && relocatedAncestry.depth_below_focus >= depth_limit;
 				if (!parentAncestry.isVisible || needsRefocus) {
 					if (needsRefocus && !!relocatedAncestry) {
 						parentAncestry = relocatedAncestry.ancestry_createUnique_byStrippingBack(depth_limit);
@@ -997,7 +997,7 @@ export class Hierarchy {
 				if (controls.inTreeMode) {
 					const depth_limit = get(w_depth_limit);
 					graph_needsSweep = ancestry.expand();
-					if (!!newGrabAncestry && newGrabAncestry.depth_ofFocus > depth_limit) {
+					if (!!newGrabAncestry && newGrabAncestry.depth_below_focus > depth_limit) {
 						newFocusAncestry = newGrabAncestry.ancestry_createUnique_byStrippingBack(depth_limit);
 					} else {
 						newFocusAncestry = null;

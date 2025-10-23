@@ -73,12 +73,20 @@ export default class Ancestry extends Identifiable {
 	get isFocus(): boolean { return this.matchesStore(w_ancestry_focus); }
 	becomeFocus(force: boolean = false): boolean { return x.ancestry_focusOn(this, force); }
 
-	get depth_ofFocus(): number {
+	get depth_below_focus(): number {
 		const focus = get(w_ancestry_focus);
 		if (!!focus) {
 			return Math.abs(this.depth - focus.depth);
 		}
 		return 0;
+	}
+
+	get isVisible_accordingTo_depth_below_focus(): boolean {
+		const depth_limit = this.depth_limit;
+		if (!!depth_limit) {
+			return this.depth_below_focus < depth_limit;
+		}
+		return true;
 	}
 
 	reveal_toFocus() {
@@ -153,7 +161,7 @@ export default class Ancestry extends Identifiable {
 		const in_radial_mode = controls.inRadialMode;
 		const isVisible_forChild = this.hasChildren && show.children_dots && (in_radial_mode ? true : !this.isExpanded);
 		const isVisible_inRadial = points_toChild ? isVisible_forChild : this.hasParents && (this.isBidirectional ? show.related_dots : show.parent_dots);
-		const show_outside_tinyDots = in_radial_mode ? isVisible_inRadial : isVisible_forChild;
+		const show_outside_tinyDots = in_radial_mode ? isVisible_inRadial : (isVisible_forChild || this.hidden_by_depth_limit);
 		const tinyDots_count = this.relationships_count_forChildren(points_toChild);
 		return !show_outside_tinyDots ? null : svgPaths.tinyDots_circular(k.diameterOf_outer_tinyDots + 4, tinyDots_count as Integer, this.points_right);
 	}
@@ -207,17 +215,11 @@ export default class Ancestry extends Identifiable {
 
 	static readonly _____VISIBILITY: unique symbol;
 
+	get depth_limit():				   number { return get(w_depth_limit) ?? 0; }
 	get halfHeight_ofVisibleSubtree(): number { return this.height_ofVisibleSubtree() / 2; }
 	get halfSize_ofVisibleSubtree():     Size { return this.size_ofVisibleSubtree.dividedInHalf; }
 	get size_ofVisibleSubtree():	     Size { return new Size(this.visibleSubtree_width(), this.height_ofVisibleSubtree()); }
-
-	get hasVisible_depth_ofFocus(): boolean {
-		const depth = get(w_depth_limit);
-		if (!!depth) {
-			return this.depth_ofFocus < depth;
-		}
-		return true;
-	}
+	get hidden_by_depth_limit():	  boolean { return !this.isVisible_accordingTo_depth_below_focus && this.isExpanded && this.hasChildren; }
 
 	assure_isVisible_within(ancestries: Array<Ancestry>) {
 		if (!!this.predicate && controls.inRadialMode) {
@@ -233,7 +235,8 @@ export default class Ancestry extends Identifiable {
 	ancestry_assureIsVisible(): boolean {
 		if (!this.isVisible) {
 			if (controls.inTreeMode) {
-				const focusAncestry = this.ancestry_createUnique_byStrippingBack(get(w_depth_limit));
+				const depth_limit = this.depth_limit;
+				const focusAncestry = this.ancestry_createUnique_byStrippingBack(depth_limit);
 				focusAncestry?.becomeFocus();
 				this.reveal_toFocus();
 			} else {
@@ -252,8 +255,7 @@ export default class Ancestry extends Identifiable {
 			return this.isFocus || (!!parent && parent.isFocus && (g_paging?.index_isVisible(this.siblingIndex) ?? true));
 		} else {
 			const focus = get(w_ancestry_focus);
-			const depth = get(w_depth_limit) ?? 0;
-			const visible = this.depth_ofFocus <= depth;
+			const visible = this.isVisible_accordingTo_depth_below_focus;
 			const incorporates = this.incorporates(focus);
 			const expanded = this.isAllExpanded_fromRootTo(focus);
 			return (incorporates && expanded && visible);
@@ -466,7 +468,7 @@ export default class Ancestry extends Identifiable {
 	collapse() { return this.expanded_setTo(false); }
 	toggleExpanded() { return this.expanded_setTo(!this.isExpanded); }
 	get shows_branches(): boolean { return p.branches_areChildren ? this.shows_children : !this.isRoot; }
-	get shows_children(): boolean { return this.isExpanded && this.hasChildren && this.hasVisible_depth_ofFocus; }
+	get shows_children(): boolean { return this.isExpanded && this.hasChildren && this.isVisible_accordingTo_depth_below_focus; }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore_ofAncestries(x.si_expanded.w_items); }
 
 	remove_fromGrabbed_andExpanded() {

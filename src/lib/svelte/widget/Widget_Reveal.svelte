@@ -71,8 +71,7 @@
 	function update_svgPaths() {
 		const thing = ancestry.thing;
 		if (!!thing) {
-			const hidden_by_depth_limit = (ancestry.depth_ofFocus >= ($w_depth_limit ?? 0)) && ancestry.isExpanded && ancestry.hasChildren;
-			const has_fat_center_dot = thing.isBulkAlias || hidden_by_depth_limit;
+			const has_fat_center_dot = thing.isBulkAlias || ancestry.hidden_by_depth_limit;
 			offsetFor_fat_center_dot = has_fat_center_dot ? 0 : -1;
 			svgPathFor_revealDot = ancestry.svgPathFor_revealDot;
 			svgPathFor_fat_center_dot = has_fat_center_dot ? svgPaths.circle_atOffset(k.height.dot, 3) : null;

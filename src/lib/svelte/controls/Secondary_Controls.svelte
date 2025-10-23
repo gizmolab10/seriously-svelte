@@ -14,7 +14,7 @@
 	style='
 		position: absolute;
 		top: {layout.controls_boxHeight - 2}px;
-		left: {$w_rect_ofGraphView.origin.x + ($w_show_details ? 0 : 5)}px;'>
+		left: {$w_rect_ofGraphView.origin.x + 2 + ($w_show_details ? 0 : -2)}px;'>
 	{#if $w_show_search_controls}
 		<Search top={8} width={117} zindex={T_Layer.frontmost}/>
 	{:else if $w_show_graph_ofType == T_Graph.tree}
@@ -22,7 +22,7 @@
 	{/if}
 	{#if $w_show_search_controls || $w_show_graph_ofType == T_Graph.tree}
 		<Separator name='secondary-separator'
-			origin={new Point(-($w_show_details ? 2 : 3), layout.controls_boxHeight - 6)}
+			origin={new Point(-($w_show_details ? 4 : 3), layout.controls_boxHeight - 6)}
 			corner_radius={k.radius.gull_wings.thick}
 			thickness={k.thickness.separator.main}
 			length={$w_rect_ofGraphView.size.width + ($w_show_details ? 10 : 7)}

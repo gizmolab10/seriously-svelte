@@ -128,7 +128,7 @@
 			<Button
 				width=75
 				height={size_big}
-				origin={Point.x(8)}
+				origin={Point.x(12)}
 				name={T_Control.builds}
 				s_button={elements.s_control_forType(T_Control.builds)}
 				closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.builds)}>

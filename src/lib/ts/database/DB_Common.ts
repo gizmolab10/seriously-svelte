@@ -5,10 +5,10 @@ import { w_hierarchy, w_t_startup } from '../managers/Stores';
 import type { Dictionary } from '../types/Types';
 
 export enum T_Database {
-	airtable = 'air',
+	airtable = 'airtable',
 	bubble	 = 'bubble',
 	dgraph   = 'dgraph',
-	firebase = 'fire',
+	firebase = 'firebase',
 	local	 = 'local',
 	test	 = 'test',
 	unknown	 = 'unknown',
