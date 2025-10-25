@@ -74,7 +74,7 @@
 			const isOut = !isHovering != (ancestry.isGrabbed && !isAncestry_presented);
 			const cursor = usePointer ? 'pointer' : 'normal';
 			color = thing.color;
-			s_drag.isOut = isOut;	// HANG!!!
+			// s_drag.isOut = isOut;	// HANG!!!
 			ellipsis_color = s_drag.stroke;
 			s_drag.set_forHovering(thing.color, cursor);
 			svg_outline_color = s_drag.svg_outline_color;

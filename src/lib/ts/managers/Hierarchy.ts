@@ -156,7 +156,7 @@ export class Hierarchy {
 		this.tags_translate_idsFromTo_forThings(idFrom, idTo);
 	}
 
-	thing_remember_runtimeCreateUnique(idBase: string, id: string, title: string, color: string, t_thing: T_Thing = T_Thing.generic,
+	thing_remember_runtimeCreateUnique(idBase: string, id: string, title: string, color: string = colors.default_forThings, t_thing: T_Thing = T_Thing.generic,
 		already_persisted: boolean = false): Thing {
 		let thing = this.thing_forHID(id?.hash() ?? null);
 		if (!thing) {

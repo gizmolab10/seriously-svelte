@@ -21,7 +21,7 @@ export default class DB_Test extends DB_Common {
 		const kindC = T_Predicate.contains;
 		const kindR = T_Predicate.isRelated;
 		h.predicate_defaults_remember_runtimeCreate();
-		h.thing_remember_runtimeCreateUnique(this.idBase, idTa, 'Active', 'green');
+		h.thing_remember_runtimeCreateUnique(this.idBase, idTa, 'Active');
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTb, 'Brilliant', 'blue');
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTc, 'Curious', '#d96726');
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTd, 'Diligent', 'mediumvioletred');

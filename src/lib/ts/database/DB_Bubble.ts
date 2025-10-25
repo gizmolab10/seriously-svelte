@@ -30,7 +30,11 @@ export default class DB_Bubble extends DB_Common {
 		}
 		function createThing(id: string, title: string, color: string, type: T_Thing) {
 			if (id != null && title != null && color != null && type != null) {
-				h.thing_remember_runtimeCreateUnique(h.db.idBase, id, title, color, type);
+				if (color == k.empty) {
+					h.thing_remember_runtimeCreateUnique(h.db.idBase, id, title);
+				} else {
+					h.thing_remember_runtimeCreateUnique(h.db.idBase, id, title, color, type);
+				}
 			}
 		}
 		const event = e as MessageEvent;

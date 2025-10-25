@@ -16,7 +16,7 @@ export class Colors {
 
 	ofBackgroundFor(color: string): string { return this.lighterBy(color, 10);}
 	ofBannerFor(background: string): string { return this.blend('white', background, 4);}
-	opacitize(color: string, amount: number): string { return transparentize(color, 1 - amount); }
+	opacitize(color: string, amount: number): string { return color == '' ? '' : transparentize(color, 1 - amount); }
 
 	color_fromSeriously(color: string | undefined): string {
 		if (!!color) {			
