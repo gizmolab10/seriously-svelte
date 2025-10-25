@@ -13,7 +13,7 @@
 	export let g_cluster!: G_Cluster;
 	const offset = k.radial_widget_inset;
 	const g_sliderArc = g_cluster.g_sliderArc;
-	const g_paging_rotation = g_cluster.g_paging_rotation;
+	const s_paging_rotation = g_cluster.s_paging_rotation;
 	let mouse_up_count = $w_count_mouse_up;
 	let textBackground = 'transparent';
 	let thumbFill = 'transparent';
@@ -29,7 +29,7 @@
 	//												//
 	//////////////////////////////////////////////////
 	
-	$: $w_g_paging_cluster, thumbFill = colors.specialBlend(color, $w_background_color, radial.s_ring_rotation.isHighlighted ? k.opacity.thumb : g_paging_rotation.thumb_opacity);
+	$: $w_g_paging_cluster, thumbFill = colors.specialBlend(color, $w_background_color, radial.s_ring_rotation.isHighlighted ? k.opacity.thumb : s_paging_rotation.thumb_opacity);
 	$: textBackground = radial.s_ring_rotation.isHighlighted ? $w_background_color : colors.specialBlend(color, $w_background_color, radial.s_ring_resizing.fill_opacity);
 	$: origin = layout.center_ofGraphView.offsetBy(Point.square(-radius));
 	$: viewBox=`${-offset} ${-offset} ${radius * 2} ${radius * 2}`;
@@ -39,7 +39,7 @@
 
 	function handle_s_mouse(s_mouse) {
 		if (s_mouse.hover_didChange) {
-			g_paging_rotation.isHovering = !s_mouse.isOut;
+			s_paging_rotation.isHovering = s_mouse.isHovering;
 		}
 	}
 

@@ -11,7 +11,9 @@
     let reattachments = 0;
 
 	$: {
-	const _ = `${$w_thing_color}:::${$w_found}:::${u.descriptionBy_titles($w_grabbed)}`;
+	const _ = `${u.descriptionBy_titles($w_grabbed)}
+		:::${$w_thing_color}
+		:::${$w_found}`;
 		ancestry = $w_ancestry_forDetails;
 		if (!!ancestry) {
 			const s_widget = ancestry.g_widget.s_widget;

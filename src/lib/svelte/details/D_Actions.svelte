@@ -42,7 +42,11 @@
 	}
 
 	$: {
-		const _ = `${$w_background_color}:::${$w_user_graph_offset}:::${$w_show_graph_ofType}:::${$w_s_alteration}:::${x.si_found.w_index}`;
+		const _ = `${$w_user_graph_offset}
+		:::${$w_show_graph_ofType}
+		:::${$w_background_color}
+		:::${x.si_found.w_index}
+		:::${$w_s_alteration}`;
 		reattachments++;
 	}
 

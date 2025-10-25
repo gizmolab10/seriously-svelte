@@ -70,14 +70,13 @@
 		if (!elements.isAny_rotation_active && !!s_drag && !!thing) {
 			const usePointer = (!ancestry.isGrabbed || controls.inRadialMode) && ancestry.hasChildren;
 			const isAncestry_presented = $w_ancestry_forDetails.equals(ancestry);
-			const isOut = !isHovering != (ancestry.isGrabbed && !isAncestry_presented);
 			const cursor = usePointer ? 'pointer' : 'normal';
 			color = thing.color;
-			s_drag.isOut = isOut;
-			ellipsis_color = s_drag.stroke;
-			s_drag.set_forHovering(thing.color, cursor);
+			s_drag.isHovering = isHovering != (ancestry.isGrabbed && !isAncestry_presented);
+			s_drag.set_forHovering(color, cursor);
 			svg_outline_color = s_drag.svg_outline_color;
 			fill_color = debug.lines ? 'transparent' : s_drag.fill;
+			ellipsis_color = s_drag.stroke;
 		}
 	}
 
@@ -98,7 +97,7 @@
 	function handle_s_mouse(s_mouse) {
 		if (!elements.isAny_rotation_active) {
 			if (s_mouse.hover_didChange) {
-				isHovering = !s_mouse.isOut;
+				isHovering = s_mouse.isHovering;
 				update_colors();
 			} else if (s_mouse.isLong) {
 				ancestry?.becomeFocus();

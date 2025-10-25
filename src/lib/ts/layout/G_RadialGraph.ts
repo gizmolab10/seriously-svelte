@@ -141,8 +141,8 @@ export default class G_RadialGraph {
 	static readonly _____PAGING: unique symbol;
 
 	g_paging_forPredicate_toChildren(predicate: Predicate, points_toChildren: boolean): G_Paging | null {
-		const s_thing_pages = radial.s_thing_pages_forThingID(get(w_ancestry_focus)?.thing?.id);
-		return s_thing_pages?.g_paging_forPredicate_toChildren(predicate, points_toChildren) ?? null;
+		const g_thing_pages = radial.g_thing_pages_forThingID(get(w_ancestry_focus)?.thing?.id);
+		return g_thing_pages?.g_paging_forPredicate_toChildren(predicate, points_toChildren) ?? null;
 	}
 
 	private layout_forPaging() {

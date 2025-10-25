@@ -31,7 +31,9 @@
 	function handle_spinner_angle(event) { spinnerAngle = event.detail.angle; }
 
 	$: {
-		const _ = `${$w_t_database}:::${$w_t_startup}:::${$w_rect_ofGraphView.description}`;
+		const _ = `${$w_rect_ofGraphView.description}
+		:::${$w_t_database}
+		:::${$w_t_startup}`;
 		setup_spinner_rect();
 		if (!!h && h.isAssembled) {
 			debug.log_draw(`PANEL`);

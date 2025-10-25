@@ -12,22 +12,22 @@ import { get } from 'svelte/store';
 //////////////////////////////////
 
 export default class S_RadialGraph {
-	g_paging_rotation_byName: { [name: string]: S_Rotation } = {};
-	s_thing_pages_byThingID: {[id: string]: G_Thing_Pages} = {};
+	s_paging_rotation_byName: { [name: string]: S_Rotation } = {};
+	g_thing_pages_byThingID: {[id: string]: G_Thing_Pages} = {};
 	s_cluster_rotation = new S_Rotation();
 	s_ring_resizing	= new S_Resizing();
 	s_ring_rotation	= new S_Rotation();
 	zone = T_Radial_Zone.miss;
 
-	reset_paging() { this.g_paging_rotations.map(s => s.reset()); }
-	get g_paging_rotations(): Array<S_Rotation> { return Object.values(this.g_paging_rotation_byName); }
-	get isAny_paging_arc_active(): boolean { return this.g_paging_rotations.filter(s => s.isActive).length > 0; }
-	get isAny_paging_arc_hovering(): boolean { return this.g_paging_rotations.filter(s => s.isHovering).length > 0; }
+	reset_paging() { this.s_paging_rotations.map(s => s.reset()); }
+	get s_paging_rotations(): Array<S_Rotation> { return Object.values(this.s_paging_rotation_byName); }
+	get isAny_paging_arc_active(): boolean { return this.s_paging_rotations.filter(s => s.isActive).length > 0; }
+	get isAny_paging_arc_hovering(): boolean { return this.s_paging_rotations.filter(s => s.isHovering).length > 0; }
 	get isAny_rotation_active(): boolean { return this.isAny_paging_arc_active || radial.s_cluster_rotation.isActive || radial.s_ring_rotation.isActive; }
-	g_paging_rotation_forName(name: string): S_Rotation { return elements.assure_forKey_inDict(name, this.g_paging_rotation_byName, () => new S_Rotation()); }
+	s_paging_rotation_forName(name: string): S_Rotation { return elements.assure_forKey_inDict(name, this.s_paging_rotation_byName, () => new S_Rotation()); }
 	
-	s_thing_pages_forThingID(id: string | null | undefined): G_Thing_Pages | null {
-		return !id ? null : elements.assure_forKey_inDict(id, this.s_thing_pages_byThingID, () => new G_Thing_Pages(id));
+	g_thing_pages_forThingID(id: string | null | undefined): G_Thing_Pages | null {
+		return !id ? null : elements.assure_forKey_inDict(id, this.g_thing_pages_byThingID, () => new G_Thing_Pages(id));
 	}
 
 	reset() {
@@ -39,9 +39,9 @@ export default class S_RadialGraph {
 	createAll_thing_pages_fromDict(dict: Dictionary | null) {
 		if (!!dict) {
 			for (const sub_dict of Object.values(dict)) {
-				const s_thing_pages = G_Thing_Pages.create_fromDict(sub_dict);
-				if (!!s_thing_pages) {
-					this.s_thing_pages_byThingID[s_thing_pages.thing_id] = s_thing_pages;
+				const g_thing_pages = G_Thing_Pages.create_fromDict(sub_dict);
+				if (!!g_thing_pages) {
+					this.g_thing_pages_byThingID[g_thing_pages.thing_id] = g_thing_pages;
 				}
 			}
 		}

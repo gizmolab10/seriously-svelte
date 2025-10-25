@@ -109,9 +109,9 @@
 				} else {					
 					isHit = Rect.rect_forElement_containsPoint(bound_element, mouse_location);		// use bounding rect
 				}
-				if (s_mouse.hover_didChange != isHit) {
-					s_mouse.hover_didChange  = isHit;
-					s_mouse.isOut   = !isHit;
+				if (s_mouse.isHovering != isHit) {
+					s_mouse.isHovering  = isHit;
+					s_mouse.hover_didChange  = true;
 					handle_s_mouse(S_Mouse.hover(null, bound_element, isHit));					// pass a null event
 					if (isHit) {
 						reset();	// to support double click

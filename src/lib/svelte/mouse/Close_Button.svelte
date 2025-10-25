@@ -14,7 +14,7 @@
 
 	function handle_s_mouse(s_mouse) {
 		if (s_mouse.hover_didChange) {
-			const isHovering = !s_mouse.isOut;
+			const isHovering = s_mouse.isHovering;
 			fill = isHovering ? colors.default : 'white';
 			stroke = isHovering ? $w_background_color : colors.default;
 		} else if (s_mouse.isUp) {

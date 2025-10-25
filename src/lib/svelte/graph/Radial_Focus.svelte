@@ -44,7 +44,12 @@
 	$: { const _ = $w_ancestry_focus; layout_focus();}
 
 	$: {
-		const _ = `${$w_thing_color}:::${$w_ancestry_focus}:::${$w_s_title_edit}:::${u.descriptionBy_titles($w_grabbed)}:::${$w_ancestry_focus?.isGrabbed}:::${$w_ancestry_focus?.isEditing}`;
+		const _ = `${u.descriptionBy_titles($w_grabbed)}
+		:::${$w_ancestry_focus?.isGrabbed}
+		:::${$w_ancestry_focus?.isEditing}
+		:::${$w_ancestry_focus}
+		:::${$w_s_title_edit}
+		:::${$w_thing_color}`;
 		update_colors();
 		update_svg();
 	}

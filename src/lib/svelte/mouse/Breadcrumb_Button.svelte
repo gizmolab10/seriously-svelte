@@ -61,14 +61,14 @@
 	function closure(s_mouse) {
 		if (!!h && h.hasRoot) {
 			if (s_mouse.hover_didChange) {
-				if (s_mouse.isOut) {
-					border = s_breadcrumb.border;
-				} else {
+				if (s_mouse.isHovering) {
 					border = `${borderStyle} ${thing.color}`;
+				} else {
+					border = s_breadcrumb.border;
 				}
 				const cursor = !ancestry.isGrabbed && ancestry.hasChildren ? 'pointer' : k.cursor_default;
 				s_breadcrumb.set_forHovering(thing.color, cursor);
-				s_breadcrumb.isOut = s_mouse.isOut;
+				s_breadcrumb.isHovering = s_mouse.isHovering;
 				updateStyle();
 				reattachments += 1;
 			} else if (s_mouse.isUp) {

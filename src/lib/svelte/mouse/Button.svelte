@@ -44,7 +44,7 @@
 
 	$: {
 		const _ = `
-			${$w_s_hover}
+			${s_button.isHovering}
 			${$w_user_graph_offset}
 			${$w_rect_ofGraphView}
 			${$w_background_color}
@@ -53,15 +53,15 @@
 			${s_button.isInverted}
 			${s_button.isGrabbed}
 			${s_button.isEditing}
-			${s_button.isOut}
-			${s_button.fill}`;
+			${s_button.fill}
+			${$w_s_hover}`;
 		recompute_style();
 	}
 
 	function handle_s_mouse(s_mouse: S_Mouse) {
-		if (s_mouse.hover_didChange) {		// NOT the same as isHovering
+		if (s_mouse.hover_didChange) {
 			if (!!s_button) {
-				s_button.isOut = s_mouse.isOut;
+				s_button.isHovering = s_mouse.isHovering;
 			}
 		}
 		if (!!closure) {

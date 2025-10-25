@@ -49,27 +49,26 @@ export default class S_Element {
 	}
 
 	static empty() { return {}; }
-	get isOut(): boolean { return get(w_s_hover) != this; }
+	get isHovering(): boolean { return get(w_s_hover) == this; }
 	get ancestry(): Ancestry { return this.identifiable as Ancestry; }
 	get color_isInverted(): boolean { return this.isInverted != this.isHovering; }
-	get description(): string { return `${this.isOut ? 'out' : 'in '} '${this.name}'`; }
-	get svg_hover_color(): string { return this.isOut ? this.stroke : colors.background; }
+	get description(): string { return `${this.isHovering ? 'in' : 'out '} '${this.name}'`; }
 	get isADot(): boolean { return this.type == T_Element.drag || this.type == T_Element.reveal; }
+	get svg_hover_color(): string { return this.isHovering ? colors.background : this.stroke; }
 	get show_help_cursor(): boolean { return get(w_control_key_down) && this.type == T_Element.action; }
-	get isHovering(): boolean { return this.ignore_hover ? false : this.isOut == this.isHoverInverted; }
 	get stroke(): string { return this.isDisabled ? this.disabledTextColor : this.color_isInverted ? this.color_background : this.hoverColor; }
 	get cursor(): string { return (this.isHovering && !this.isDisabled) ? this.show_help_cursor ? 'help' : this.hoverCursor : this.defaultCursor; }
 	get disabledTextColor(): string { return colors.specialBlend(this.color_background, this.defaultDisabledColor, 0.3) ?? this.defaultDisabledColor; }
 	get fill(): string { return this.isDisabled ? 'transparent' : this.color_isInverted ? this.hoverColor : this.isSelected ? 'lightblue' : this.color_background; }
 
-	set isOut(isOut: boolean) {
+	set isHovering(isHovering: boolean) {
 		const old_hover = get(w_s_hover);
 		const same = old_hover == this;
-		const new_hover = isOut ? null : this;
-		// if !same and !isOut, set to this, if same and isOut, set to null, otherwise leave as is
-		if (same == isOut && new_hover != old_hover) {
+		const new_hover = isHovering ? this : null;
+		// if !same and isHovering, set to this, if same and !isHovering, set to null, otherwise leave it unchanged
+		if (same != isHovering && new_hover != old_hover) {
 			w_s_hover.set(new_hover);
-			console.log(`set ${this.name} to ${!isOut ? '' : 'NOT '}hovering`);
+			// console.log(`set ${this.name} to ${isHovering ? '' : 'NOT '}hovering`);
 		}
 	}
 

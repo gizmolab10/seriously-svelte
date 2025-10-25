@@ -225,7 +225,7 @@ export class Events {
 		if (s_mouse.hover_didChange) {
 			const s_control = elements.s_control_byType[t_control];
 			if (!!s_control) {
-				s_control.isOut = s_mouse.isOut;
+				s_control.isHovering = s_mouse.isHovering;
 			}
 		} else if (s_mouse.isUp) {
 			switch (t_control) {

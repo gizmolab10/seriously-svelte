@@ -96,11 +96,6 @@
 		debug.log_style('Observer set up on widget div for:', ancestry?.title);
 	}
 
-	function handle_mouse_exit(isOut: boolean) {
-		s_widget.isOut = isOut;
-		update_style();
-	}
-
 	async function handle_click_event(event) {
 		u.grab_event(event);
 		ancestry?.grab_forShift(event.shiftKey);
@@ -125,7 +120,7 @@
 
 	function handle_s_mouse(s_mouse: S_Mouse) {
 		if (!!ancestry && s_mouse.hover_didChange) {
-			s_widget.isOut = s_mouse.isOut;
+			s_widget.isHovering = s_mouse.isHovering;
 			update_style();
 		}
 	}

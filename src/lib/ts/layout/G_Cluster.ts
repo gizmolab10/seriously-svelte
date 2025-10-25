@@ -120,20 +120,20 @@ export default class G_Cluster {
 	
 	static readonly _____PAGING: unique symbol;
 
-	get g_paging_rotation():  S_Rotation { return radial.g_paging_rotation_forName(this.name); }
+	get s_paging_rotation():  S_Rotation { return radial.s_paging_rotation_forName(this.name); }
 	get maximum_paging_index()	: number { return this.total_widgets - this.widgets_shown; }	
 	get paging_index_ofFocus()	: number { return Math.round(this.g_focusPaging?.index ?? 0); }
 	get g_focusPaging(): G_Paging | null { return this.g_paging_forAncestry(get(w_ancestry_focus)); }
 	get g_paging():		 G_Paging | null { return this.g_paging_forPredicate_toChildren(this.predicate, this.points_toChildren); }
 
 	g_paging_forPredicate_toChildren(predicate: Predicate, points_toChildren: boolean): G_Paging | null {
-		const s_thing_pages = radial.s_thing_pages_forThingID(get(w_ancestry_focus)?.thing?.id);
-		return s_thing_pages?.g_paging_forPredicate_toChildren(predicate, points_toChildren) ?? null;
+		const g_thing_pages = radial.g_thing_pages_forThingID(get(w_ancestry_focus)?.thing?.id);
+		return g_thing_pages?.g_paging_forPredicate_toChildren(predicate, points_toChildren) ?? null;
 	}
 
 	g_paging_forAncestry(ancestry: Ancestry): G_Paging | null {
-		const s_thing_pages = radial.s_thing_pages_forThingID(ancestry.thing?.id);
-		return s_thing_pages?.g_paging_for(this) ?? null;
+		const g_thing_pages = radial.g_thing_pages_forThingID(ancestry.thing?.id);
+		return g_thing_pages?.g_paging_for(this) ?? null;
 	}
 
 	layout_forPaging() {

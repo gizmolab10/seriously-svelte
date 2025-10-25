@@ -44,7 +44,12 @@
 	});
 	
 	$: {
-		const _ = `${u.descriptionBy_titles($w_grabbed)}:::${u.descriptionBy_titles($w_expanded)}:::${$w_show_countDots_ofType}:::${$w_thing_title}:::${$w_background_color}:::${$w_thing_color}`;
+		const _ = `${u.descriptionBy_titles($w_grabbed)}
+		:::${u.descriptionBy_titles($w_expanded)}
+		:::${$w_show_countDots_ofType}
+		:::${$w_background_color}
+		:::${$w_thing_title}
+		:::${$w_thing_color}`;
 		update_svgPaths();
 		update_colors();
 	}
@@ -60,10 +65,10 @@
 		debug.log_colors(`REVEAL ${ancestry.title}${s_reveal.isInverted ? ' INVERTED' : ''}`)
 	}
 
-	function set_isHovering(hovering) {
-		const corrected = (hover_isReversed != ancestry.isGrabbed) ? !hovering : hovering;
-		if (!!s_reveal && s_reveal.isOut == corrected) {
-			s_reveal.isOut = !corrected;
+	function set_isHovering(isHovering) {
+		const new_isHovering = (hover_isReversed != ancestry.isGrabbed) ? !isHovering : isHovering;
+		if (!!s_reveal && s_reveal.isHovering != new_isHovering) {
+			s_reveal.isHovering = new_isHovering;
 			update_colors();
 		}
 	}
@@ -81,7 +86,7 @@
 
 	function handle_s_mouse(s_mouse) {
 		if (s_mouse.hover_didChange) {
-			set_isHovering(!s_mouse.isOut);
+			set_isHovering(s_mouse.isHovering);
 		} else if (s_mouse.isUp && (ancestry.hasChildren || ancestry.thing.isBulkAlias)) {
 			h.ancestry_toggle_expansion(ancestry);
 		}

@@ -206,7 +206,7 @@ export class Preferences {
 		w_t_startup.subscribe((startup) => {
 			if (startup == T_Startup.ready) {
 				w_g_paging.subscribe((g_paging: G_Paging) => {
-					this.writeDB_key(T_Preference.paging, radial.s_thing_pages_byThingID);
+					this.writeDB_key(T_Preference.paging, radial.g_thing_pages_byThingID);
 				})
 			}
 		});

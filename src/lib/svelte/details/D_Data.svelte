@@ -109,7 +109,7 @@
 		const ids = beginning ? ids_forDirection : ids_forFormat();
 		if (s_mouse.hover_didChange) {
 			const s_control = s_element_byStorageType[ids[column]];
-			s_control.isOut = s_mouse.isOut;
+			s_control.isHovering = s_mouse.isHovering;
 		} else if (s_mouse.isDown) {
 			const choice = ids[column];
 			details.t_storage_need = T_Storage_Need.direction; // reset by default

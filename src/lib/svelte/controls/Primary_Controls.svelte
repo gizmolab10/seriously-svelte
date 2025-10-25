@@ -87,8 +87,8 @@
 							d={hamburger_path}
 							stroke-width='0.75'
 							class='hamburger-path'
-							fill={elements.s_control_forType(T_Control.details).isOut ? 'black' : 'white'}
-							stroke={elements.s_control_forType(T_Control.details).isOut ? 'transparent' : 'darkgray'}/>
+							fill={elements.s_control_forType(T_Control.details).isHovering ? 'white' : 'black'}
+							stroke={elements.s_control_forType(T_Control.details).isHovering ? 'darkgray' : 'transparent'}/>
 					</svg>
 				</Button>
 			{/if}

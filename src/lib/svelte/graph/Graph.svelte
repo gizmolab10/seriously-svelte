@@ -40,17 +40,27 @@
 	});
 	
 	$:	{
-		const _ = `${$w_t_startup}:::${$w_show_graph_ofType}:::${$w_s_hover}:::${$w_rect_ofGraphView.description}`;
+		const _ = `${$w_rect_ofGraphView.description}
+		:::${$w_show_graph_ofType}
+		:::${$w_t_startup}
+		:::${$w_s_hover}`;
 		update_style();
 	}
 
 	$:	{
-		const _ = `${$w_show_graph_ofType}:::${$w_ancestry_focus?.titles.join(k.comma)}:::${u.descriptionBy_titles($w_expanded)}`;
+		const _ = `${u.descriptionBy_titles($w_expanded)}
+		:::${$w_ancestry_focus?.titles.join(k.comma)}
+		:::${$w_show_graph_ofType}`;
 		grand_layout_andReattach();
 	}
 
 	$: {
-		const _ = `${$w_user_graph_offset.description}:::${$w_rect_ofGraphView.description}:::${$w_depth_limit}:::${$w_s_title_edit?.t_edit}:::${$w_ring_rotation_angle}:::${$w_ring_rotation_radius}`;
+		const _ = `${$w_user_graph_offset.description}
+		:::${$w_rect_ofGraphView.description}
+		:::${$w_s_title_edit?.t_edit}
+		:::${$w_ring_rotation_radius}
+		:::${$w_ring_rotation_angle}
+		:::${$w_depth_limit}`;
 		actual_content_rect = layout.user_offset_toDrawnGraph;
 	}
 
