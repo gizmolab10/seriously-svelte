@@ -1,6 +1,6 @@
-import { Rect, Size, Point, Thing, Direction, Predicate, databases, Relationship } from '../common/Global_Imports';
+import { c, h, k, p, u, x, show, debug, search, controls, svgPaths, databases, components } from '../common/Global_Imports';
 import { T_Graph, T_Create, T_Kinship, T_Predicate, T_Alteration, T_Component } from '../common/Global_Imports';
-import { c, h, k, p, u, controls, x, show, debug, search, svgPaths, components } from '../common/Global_Imports';
+import { Rect, Size, Point, Thing, Direction, Predicate, Relationship } from '../common/Global_Imports';
 import { w_t_database, w_depth_limit, w_s_title_edit, w_s_alteration } from '../managers/Stores';
 import { G_Widget, G_Paging, G_Cluster, G_TreeLine } from '../common/Global_Imports';
 import { w_ancestry_focus, w_show_graph_ofType } from '../managers/Stores';

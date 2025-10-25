@@ -53,8 +53,6 @@
 		}
 	}
 
-	function handle_s_mouse(s_mouse: S_Mouse): boolean { return true; }				// only for components
-
 	function handle_isHit(): boolean {
 		const zone = radial.ring_zone_atMouseLocation;
 		return [T_Radial_Zone.resize, T_Radial_Zone.rotate].includes(zone);
@@ -149,13 +147,13 @@
 		}
 	}
 
-	function handle_up_down(s_mouse) {
+	function handle_s_mouse(s_mouse) {
 
 		/////////////////////////////
 		// setup or teardown state //
 		/////////////////////////////
 
-		if (!s_mouse.isHover) {
+		if (!s_mouse.hover_didChange) {
 			if (s_mouse.isUp) {
 				s_reset();
 			} else if (s_mouse.isDown) {
@@ -208,7 +206,7 @@
 				height = {outer_diameter}
 				zindex = {T_Layer.radial}
 				handle_isHit = {handle_isHit}
-				handle_s_mouse = {handle_up_down}
+				handle_s_mouse = {handle_s_mouse}
 				center = {layout.center_ofGraphView}>
 				<svg class = 'rings-svg'
 					viewBox = {viewBox}>

@@ -1,8 +1,9 @@
 <script lang='ts'>
-	import { h, k, u, elements, x, Point, Thing, debug, colors, layout, signals } from '../../ts/common/Global_Imports';
-	import { w_thing_color, w_thing_fontFamily, w_ancestry_focus } from '../../ts/managers/Stores';
+	import { h, k, u, x,debug, colors, layout, signals, elements } from '../../ts/common/Global_Imports';
 	import { T_Search, T_Banner, S_Element } from '../../ts/common/Global_Imports';
-	import { w_background_color } from '../../ts/managers/Stores';
+	import { w_thing_color, w_thing_fontFamily } from '../../ts/managers/Stores';
+	import { w_s_hover, w_background_color } from '../../ts/managers/Stores';
+	import { Point } from '../../ts/common/Global_Imports';
 	import { search } from '../../ts/ux/UX_Search';
 	import Button from './Button.svelte';
 	export let left = 0;
@@ -23,7 +24,10 @@
 
 	center = new Point(left + width / 2, 14);
 	updateColors();
-	$: { const _ = $w_background_color; updateColors(); }
+	$: {
+		const _ = `${$w_background_color}:::${$w_s_hover}`;
+		updateColors();
+	}
 
 	$: {
 		if (!!thing && thing.id == $w_thing_color?.split(k.separator.generic)[0]) {
@@ -56,7 +60,7 @@
 
 	function closure(s_mouse) {
 		if (!!h && h.hasRoot) {
-			if (s_mouse.isHover) {
+			if (s_mouse.hover_didChange) {
 				if (s_mouse.isOut) {
 					border = s_breadcrumb.border;
 				} else {

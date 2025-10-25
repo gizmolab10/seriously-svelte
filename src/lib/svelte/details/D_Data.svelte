@@ -107,8 +107,9 @@
 	function handle_click_forColumn(s_mouse, column) {
 		const beginning = details.t_storage_need == T_Storage_Need.direction;
 		const ids = beginning ? ids_forDirection : ids_forFormat();
-		if (s_mouse.isHover) {
-			s_element_byStorageType[ids[column]].isOut = s_mouse.isOut;
+		if (s_mouse.hover_didChange) {
+			const s_control = s_element_byStorageType[ids[column]];
+			s_control.isOut = s_mouse.isOut;
 		} else if (s_mouse.isDown) {
 			const choice = ids[column];
 			details.t_storage_need = T_Storage_Need.direction; // reset by default

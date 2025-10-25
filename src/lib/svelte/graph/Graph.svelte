@@ -4,8 +4,8 @@
 	import { T_Layer, T_Graph, T_Signal, T_Startup, T_Control, T_Component } from '../../ts/common/Global_Imports';
 	import { w_t_startup, w_device_isMobile, w_popupView_id } from '../../ts/managers/Stores';
 	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/managers/Stores';
+	import { w_s_hover, w_ancestry_focus, w_s_title_edit } from '../../ts/managers/Stores';
 	import { w_thing_fontFamily, w_dragging_active } from '../../ts/managers/Stores';
-	import { w_ancestry_focus, w_s_title_edit } from '../../ts/managers/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Radial_Graph from '../graph/Radial_Graph.svelte';
 	import Tree_Graph from '../graph/Tree_Graph.svelte';
@@ -40,7 +40,7 @@
 	});
 	
 	$:	{
-		const _ = `${$w_rect_ofGraphView.description}:::${$w_t_startup}:::${$w_show_graph_ofType}`;
+		const _ = `${$w_t_startup}:::${$w_show_graph_ofType}:::${$w_s_hover}:::${$w_rect_ofGraphView.description}`;
 		update_style();
 	}
 

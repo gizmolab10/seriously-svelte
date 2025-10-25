@@ -37,8 +37,8 @@
 
 	function handle_isHit(s_mouse: S_Mouse): boolean { return g_cluster.isMouse_insideThumb; }
 
-	function hover_closure(s_mouse) {
-		if (s_mouse.isHover) {
+	function handle_s_mouse(s_mouse) {
+		if (s_mouse.hover_didChange) {
 			g_paging_rotation.isHovering = !s_mouse.isOut;
 		}
 	}
@@ -64,7 +64,7 @@
 		zindex = {T_Layer.paging}
 		cursor = {k.cursor_default}
 		handle_isHit = {handle_isHit}
-		handle_s_mouse = {hover_closure}
+		handle_s_mouse = {handle_s_mouse}
 		center = {layout.center_ofGraphView}>
         <svg class='svg-arc-slider'
 			viewBox={viewBox}>

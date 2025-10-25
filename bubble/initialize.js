@@ -1,5 +1,5 @@
 function(instance) {
-	instance.data.debug							= false;
+	instance.data.debug							= true;
 	instance.data.iframe_is_instantiated		= false;	// assure_iframe_is_instantiated (right below, called from update) sets this to true
 	instance.data.LOG							= function (message, value, ...optionalParams) {if (instance.data.debug && !!value) { console.log('[PLUGIN]', message, value, ...optionalParams); } }
 	instance.data.assure_iframe_is_instantiated = function (properties) {
@@ -61,8 +61,8 @@ function(instance) {
 					instance.triggerEvent(event.data.trigger);
 					break;
 				case 'listening':
-					instance.data.iframeIsListening = true;		// once set, only these messages will pend, the rest are sent in update
-					if (instance.data.pendingMessages) {		// Send any pending messages that were stored before iframe was ready
+					instance.data.iframeIsListening = true;		// once set, no more messages will pend, update will send them all
+					if (instance.data.pendingMessages) {		// update stored previously prepared messages (before iframe was ready to receive them)
 						instance.data.pendingMessages.forEach(message => {
 							try {
 								instance.data.iframe.contentWindow.postMessage(message, '*');
@@ -76,7 +76,7 @@ function(instance) {
 				default:
 					break;
 				}
-			LOG('[PLUGIN] Received message:', event.data);
+			LOG('[PLUGIN] Received webseriously message type:', event.data.type);
 		}
 	}
 }

@@ -5,7 +5,7 @@ export default class S_Mouse {
 	event: MouseEvent | null;		// null means mouse movement from global state
 	isRepeat: boolean;
 	isDouble: boolean;
-	isHover: boolean;
+	hover_didChange: boolean;
 	isMove: boolean;
 	isLong: boolean;
 	isDown: boolean;
@@ -20,11 +20,11 @@ export default class S_Mouse {
 	//	isOut is mirrored in S_Element		//
 	//////////////////////////////////////////////
 
-	constructor(event: MouseEvent | null, element: HTMLElement | null, isHover: boolean, isOut: boolean, isDown: boolean, isUp: boolean, isDouble: boolean, isLong: boolean, isMove: boolean, isHit: boolean = false, isRepeat: boolean = false) {
+	constructor(event: MouseEvent | null, element: HTMLElement | null, hover_didChange: boolean, isOut: boolean, isDown: boolean, isUp: boolean, isDouble: boolean, isLong: boolean, isMove: boolean, isHit: boolean = false, isRepeat: boolean = false) {
 		this.isDouble = isDouble;
 		this.isRepeat = isRepeat;
 		this.element = element;
-		this.isHover = isHover;
+		this.hover_didChange = hover_didChange;
 		this.isDown = isDown;
 		this.isLong = isLong;
 		this.isMove = isMove;
@@ -36,7 +36,7 @@ export default class S_Mouse {
 
 	get isShapeHit():	boolean { return false; }
 	get isElementHit(): boolean { return !!this.event && !!this.element && Rect.rect_forElement_containsEvent(this.element, this.event); }
-	get notRelevant():	boolean { return !this.isHover && !this.isOut && !this.isDown && !this.isUp && !this.isDouble && !this.isLong && !this.isMove && !this.isHit && !this.isRepeat; }
+	get notRelevant():	boolean { return !this.hover_didChange && !this.isOut && !this.isDown && !this.isUp && !this.isDouble && !this.isLong && !this.isMove && !this.isHit && !this.isRepeat; }
 
 	get description(): string {
 		let states: string[] = [];
@@ -46,7 +46,7 @@ export default class S_Mouse {
 		if (this.isDown) { states.push('down'); }
 		if (this.isLong) { states.push('long'); }
 		if (this.isMove) { states.push('move'); }
-		if (this.isHover) { states.push('hover'); }
+		if (this.hover_didChange) { states.push('hover'); }
 		if (this.isDouble) { states.push('double'); }
 		if (this.isRepeat) { states.push('repeat'); }
 		return states.length == 0 ? 'empty mouse state' : states.join(', ');

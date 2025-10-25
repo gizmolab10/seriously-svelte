@@ -29,20 +29,20 @@ export default class DB_Bubble extends DB_Common {
 			}
 		}
 		function createThing(id: string, title: string, color: string, type: T_Thing) {
-			if (!!id && !!title && !!color && !!type && id != k.empty) {
+			if (id != null && title != null && color != null && type != null) {
 				h.thing_remember_runtimeCreateUnique(h.db.idBase, id, title, color, type);
 			}
 		}
 		const event = e as MessageEvent;
-		const JSON_string = event.data.properties;
-		if (!JSON_string || JSON_string.length == 0) {
+		const properties_string = event.data.properties;
+		if (!properties_string || properties_string.length == 0) {
 			h.wrapUp_data_forUX();
 		} else {
 			let b_ids, b_root, b_focus, b_titles, b_colors, b_parent_ids, b_related_ids, b_predicates, b_relationships, b_traits, b_tags, b_overwrite, b_inRadialMode, b_erase_user_preferences;
 			try {
-				const bubble_properties  = JSON.parse(JSON_string);
+				const bubble_properties  = JSON.parse(properties_string);
 				const has_bubble		 = p.readDB_key(T_Preference.bubble) ?? false;	// true after first launch
-				debug.log_bubble(`[DB_Bubble] received bubble update: ${JSON.stringify(bubble_properties)}`);
+				debug.log_bubble(`[DB_Bubble] received bubble update: ${properties_string}`);
 				b_overwrite				 = bubble_properties.overwrite_focus_and_mode || !has_bubble;
 				b_erase_user_preferences = bubble_properties.erase_user_preferences;
 				b_relationships			 = bubble_properties.relationships;

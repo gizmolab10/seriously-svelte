@@ -1,5 +1,6 @@
-import { elements, k, controls, x, colors, Ancestry, T_Element, T_Control } from '../common/Global_Imports';
-import { w_control_key_down, w_background_color } from '../managers/Stores';
+import { w_s_hover, w_control_key_down, w_background_color } from '../managers/Stores';
+import { k, x, colors, elements, controls } from '../common/Global_Imports';
+import { Ancestry, T_Element, T_Control } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
 
@@ -30,7 +31,6 @@ export default class S_Element {
 	subtype = k.empty;
 	isFocus = false;
 	name = k.empty;
-	isOut = true;
 
 	constructor(identifiable: Identifiable, type: T_Element, subtype: string) {
 		this.name = elements.name_from(identifiable, type, subtype);
@@ -49,6 +49,7 @@ export default class S_Element {
 	}
 
 	static empty() { return {}; }
+	get isOut(): boolean { return get(w_s_hover) != this; }
 	get ancestry(): Ancestry { return this.identifiable as Ancestry; }
 	get color_isInverted(): boolean { return this.isInverted != this.isHovering; }
 	get description(): string { return `${this.isOut ? 'out' : 'in '} '${this.name}'`; }
@@ -60,6 +61,14 @@ export default class S_Element {
 	get cursor(): string { return (this.isHovering && !this.isDisabled) ? this.show_help_cursor ? 'help' : this.hoverCursor : this.defaultCursor; }
 	get disabledTextColor(): string { return colors.specialBlend(this.color_background, this.defaultDisabledColor, 0.3) ?? this.defaultDisabledColor; }
 	get fill(): string { return this.isDisabled ? 'transparent' : this.color_isInverted ? this.hoverColor : this.isSelected ? 'lightblue' : this.color_background; }
+
+	set isOut(isOut: boolean) {
+		const same = get(w_s_hover) == this;
+		if (!same || same == isOut) {
+			w_s_hover.set(isOut ? null : this);
+			console.log(`set ${this.name} to ${!isOut ? '' : 'NOT '}hovering`);
+		}
+	}
 
 	get svg_outline_color(): string {
 		const thing_color = this.ancestry.thing?.color ?? k.empty;
@@ -96,8 +105,11 @@ export default class S_Element {
 			if (this.ancestry.isEditing) {
 				return `dashed ${color} 1px`;
 			}
-			if (this.ancestry.isFocus || !this.isOut) {
+			if (this.ancestry.isFocus) {
 				return `solid ${color} 1px`;
+			}
+			if (this.isHovering) {
+				return `solid ${colors.ofBackgroundFor(color)} 1px`;
 			}
 		}
 		return 'solid transparent 1px';

@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { w_background_color, w_rect_ofGraphView, w_user_graph_offset } from '../../ts/managers/Stores';
 	import { k, u, elements, x, Rect, Point, colors, T_Layer } from '../../ts/common/Global_Imports';
-	import { w_thing_fontFamily, w_control_key_down } from '../../ts/managers/Stores';
+	import { w_s_hover, w_thing_fontFamily, w_control_key_down } from '../../ts/managers/Stores';
 	import { S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	export let s_button: S_Element = S_Element.empty();
@@ -43,8 +43,10 @@
 	recompute_style();
 
 	$: {
-		const _ = `${$w_rect_ofGraphView}
+		const _ = `
+			${$w_s_hover}
 			${$w_user_graph_offset}
+			${$w_rect_ofGraphView}
 			${$w_background_color}
 			${$w_control_key_down}
 			${s_button.isDisabled}
@@ -57,7 +59,7 @@
 	}
 
 	function handle_s_mouse(s_mouse: S_Mouse) {
-		if (s_mouse.isHover) {		// NOT the same as isHovering
+		if (s_mouse.hover_didChange) {		// NOT the same as isHovering
 			if (!!s_button) {
 				s_button.isOut = s_mouse.isOut;
 			}

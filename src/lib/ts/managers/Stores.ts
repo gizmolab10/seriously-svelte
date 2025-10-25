@@ -1,7 +1,7 @@
-import { Tag, Rect, Point, Trait, colors, Ancestry, Hierarchy } from '../common/Global_Imports';
 import { T_Graph, T_Kinship, T_Detail, T_Startup, T_Dragging } from '../common/Global_Imports';
+import { Rect, Point, Trait, colors, Ancestry, Hierarchy } from '../common/Global_Imports';
 import { T_Search, T_Auto_Adjust, T_Search_Preference } from '../common/Global_Imports';
-import { S_Title_Edit, S_Alteration } from '../common/Global_Imports';
+import { S_Element, S_Title_Edit, S_Alteration } from '../common/Global_Imports';
 import { G_Paging, G_Cluster } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
 
@@ -9,7 +9,7 @@ const _____VISIBILITY: unique symbol = Symbol('VISIBILITY');
 
 export const w_show_tree_ofType			= writable<Array<T_Kinship>>();
 export const w_show_countDots_ofType	= writable<Array<T_Kinship>>();
-export const w_show_details_ofType		= writable<Array<T_Detail>>();
+export const w_show_details_ofType		= writable<Array<T_Detail>>([]);	
 export const w_show_directionals_ofType	= writable<string[]>();
 export const w_show_graph_ofType		= writable<T_Graph>();
 export const w_show_search_controls		= writable<boolean>();
@@ -23,9 +23,9 @@ export const w_relationship_order		= writable<number>();
 export const w_thing_fontFamily			= writable<string>();
 export const w_thing_traits				= writable<Array<Trait>>();
 export const w_thing_title				= writable<string | null>();
-export const w_thing_color				= writable<string | null>();
+export const w_thing_color				= writable<string | null>(null);
 export const w_s_alteration				= writable<S_Alteration | null>();
-export const w_s_title_edit				= writable<S_Title_Edit | null>();
+export const w_s_title_edit				= writable<S_Title_Edit | null>(null);
 
 const _____ANCESTRY: unique symbol = Symbol('ANCESTRY');
 
@@ -56,41 +56,34 @@ export const w_data_updated				= writable<number>();
 
 const _____SEARCH: unique symbol = Symbol('SEARCH');
 
-export const w_search_results_found		= writable<number>();
-export const w_search_results_changed	= writable<number>();				// re-render the search results
-export const w_search_state				= writable<T_Search>();				// observed by search_results, controls, and panel
-export const w_search_preferences		= writable<T_Search_Preference>();	// TBD
+export const w_search_results_found		= writable<number>(0);
+export const w_search_results_changed	= writable<number>(0);		// re-render the search results when changed
+export const w_search_state				= writable<T_Search>();		// observed by search_results, controls, and panel
+export const w_search_preferences		= writable<T_Search_Preference>();
 
 const _____COUNTS: unique symbol = Symbol('COUNTS');
 
-export const w_count_window_resized		= writable<number>();
-export const w_count_mouse_up			= writable<number>();
-export const w_count_rebuild			= writable<number>();
-export const w_count_details			= writable<number>();	
+export const w_count_window_resized		= writable<number>(0);
+export const w_count_mouse_up			= writable<number>(0);
+export const w_count_rebuild			= writable<number>(0);
+export const w_count_details			= writable<number>(0);	
 
 const _____OTHER: unique symbol = Symbol('OTHER');
 
-export const w_auto_adjust_graph		= writable<T_Auto_Adjust | null>();
-export const w_dragging_active			= writable<T_Dragging>();
 export const w_t_startup				= writable<T_Startup>();
+export const w_auto_adjust_graph		= writable<T_Auto_Adjust | null>();
+export const w_s_hover					= writable<S_Element | null>();
+export const w_popupView_id				= writable<string | null>();
+export const w_dragging_active			= writable<T_Dragging>();
 export const w_control_key_down			= writable<boolean>(false);
 export const w_device_isMobile			= writable<boolean>();
 export const w_depth_limit				= writable<number>();
 export const w_font_size				= writable<number>();
-export const w_background_color			= writable<string>();
 export const w_separator_color			= writable<string>();
-export const w_popupView_id				= writable<string | null>();
+export const w_background_color			= writable<string>();
 
 class Stores {
 	setup_defaults() {
-		w_count_rebuild.set(0);
-		w_count_details.set(0);
-		w_count_mouse_up.set(0);
-		w_thing_color.set(null);
-		w_s_title_edit?.set(null);
-		w_show_details_ofType.set([]);
-		w_search_results_found.set(0);
-		w_count_window_resized.set(0);
 		w_t_startup.set(T_Startup.start);
 		w_search_state.set(T_Search.off);
 		w_separator_color.set(colors.separator);

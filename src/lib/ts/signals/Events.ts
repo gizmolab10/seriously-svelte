@@ -222,7 +222,7 @@ export class Events {
 	}
 
 	handle_s_mouseFor_t_control(s_mouse: S_Mouse, t_control: T_Control) {
-		if (s_mouse.isHover) {
+		if (s_mouse.hover_didChange) {
 			const s_control = elements.s_control_byType[t_control];
 			if (!!s_control) {
 				s_control.isOut = s_mouse.isOut;

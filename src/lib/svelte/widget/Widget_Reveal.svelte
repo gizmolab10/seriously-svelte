@@ -63,7 +63,7 @@
 	function set_isHovering(hovering) {
 		const corrected = (hover_isReversed != ancestry.isGrabbed) ? !hovering : hovering;
 		if (!!s_reveal && s_reveal.isOut == corrected) {
-			s_reveal.isOut = !corrected
+			s_reveal.isOut = !corrected;
 			update_colors();
 		}
 	}
@@ -79,8 +79,8 @@
 		}
 	}
 
-	function up_hover_closure(s_mouse) {
-		if (s_mouse.isHover) {
+	function handle_s_mouse(s_mouse) {
+		if (s_mouse.hover_didChange) {
 			set_isHovering(!s_mouse.isOut);
 		} else if (s_mouse.isUp && (ancestry.hasChildren || ancestry.thing.isBulkAlias)) {
 			h.ancestry_toggle_expansion(ancestry);
@@ -89,10 +89,6 @@
  
 	function isHit(): boolean {
 		return false
-	}
-
-	function handle_s_mouse(s_mouse: S_Mouse): boolean {
-		return false;
 	}
 
 </script>
@@ -104,7 +100,7 @@
 		width={k.height.dot}
 		height={k.height.dot}
 		name={s_component.id}
-		handle_s_mouse={up_hover_closure}>
+		handle_s_mouse={handle_s_mouse}>
 		<div class='reveal-dot'
 			on:contextmenu={handle_context_menu}
 			style='

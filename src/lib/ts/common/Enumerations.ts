@@ -238,20 +238,6 @@ export enum T_Thing {
 	meme		 = '*',
 }
 
-export enum T_Component {
-	breadcrumbs = 'breadcrumbs',
-	branches	= 'branches',
-	radial		= 'radial',
-	reveal		= 'reveal',
-	widget		= 'widget',
-	title		= 'title',
-	drag		= 'drag',
-	line		= 'line',
-	none		= 'none',
-	tree		= 'tree',
-	app			= 'app',
-}
-
 export enum T_Trait {
 	consequence = 'consequence',
 	location	= 'location',
@@ -265,6 +251,20 @@ export enum T_Trait {
 	link		= 'link',
 	note		= 'note',
 	sum			= 'sum',
+}
+
+export enum T_Component {
+	breadcrumbs = 'breadcrumbs',
+	branches	= 'branches',
+	radial		= 'radial',
+	reveal		= 'reveal',
+	widget		= 'widget',
+	title		= 'title',
+	drag		= 'drag',
+	line		= 'line',
+	none		= 'none',
+	tree		= 'tree',
+	app			= 'app',
 }
 
 export enum T_Element {

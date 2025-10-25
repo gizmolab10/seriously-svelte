@@ -21,10 +21,10 @@
 	export let cursor = 'pointer';
 	export let align_left = true;
 	export let name = 'generic';
+	export let style = k.empty;
 	const s_mouse = elements.s_mouse_forName(name);
 	const mouse_timer = e.mouse_timer_forName(name);
 	const mouse_responder_number = elements.next_mouse_responder_number;
-	let style = k.empty;
 	let bound_element;
 
 	//////////////////////////////////////////////////////////////
@@ -70,20 +70,22 @@
 		state.isRepeat = isRepeat;
 		state.isDown = isDown;
 		state.isLong = isLong;
-		state.isHover = false;
+		state.hover_didChange = false;
 		state.event = event;
 		return state;
 	}
 
 	function setupStyle() {
-		style = `
-			width: ${width}px;
-			z-index: ${zindex};
-			height: ${height}px;
-			position: ${position};
-			font-size: ${font_size};
-			font-family: ${$w_thing_fontFamily};
-			`.removeWhiteSpace();
+		if (style.length == 0) {
+			style = `
+				width: ${width}px;
+				z-index: ${zindex};
+				height: ${height}px;
+				position: ${position};
+				font-size: ${font_size};
+				font-family: ${$w_thing_fontFamily};
+				`.removeWhiteSpace();
+		}
 		if (!!cursor) {
 			style = `${style} cursor: ${cursor};`;
 		}
@@ -107,8 +109,8 @@
 				} else {					
 					isHit = Rect.rect_forElement_containsPoint(bound_element, mouse_location);		// use bounding rect
 				}
-				if (s_mouse.isHover != isHit) {
-					s_mouse.isHover  = isHit;
+				if (s_mouse.hover_didChange != isHit) {
+					s_mouse.hover_didChange  = isHit;
 					s_mouse.isOut   = !isHit;
 					handle_s_mouse(S_Mouse.hover(null, bound_element, isHit));					// pass a null event
 					if (isHit) {

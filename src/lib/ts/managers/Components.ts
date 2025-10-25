@@ -1,4 +1,4 @@
-import { Rect, Ancestry, T_Signal, S_Component, T_Component } from '../common/Global_Imports';
+import { Rect, Ancestry, S_Component, T_Component } from '../common/Global_Imports';
 import { w_mouse_location_scaled } from './Stores';
 import type { Integer } from '../types/Types';
 import { get } from 'svelte/store';
@@ -41,7 +41,7 @@ export class Components {
 	static readonly _____REGISTER: unique symbol;
 
 	private component_register(s_component: S_Component) {
-		const type = s_component.type;
+		const type = s_component.t_component;
 		const hid = s_component.hid;
 		if (!!hid && !!type) {
 			const array = this.components_byType_andHID;

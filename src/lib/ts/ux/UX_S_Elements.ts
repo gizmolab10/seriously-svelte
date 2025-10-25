@@ -1,4 +1,4 @@
-import { S_Mouse, S_Widget, S_Element } from '../common/Global_Imports';
+import { S_Mouse, S_Widget, S_Element, S_Component } from '../common/Global_Imports';
 import { T_Control, T_Element } from '../common/Global_Imports';
 import { colors, Ancestry } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
@@ -44,6 +44,10 @@ export default class UX_S_Elements {
 		const realIdentifiable = identifiable ?? new Identifiable()
 		const name = this.name_from(realIdentifiable, type, subtype);
 		return this.assure_forKey_inDict(name, this.s_element_byName, () => new S_Element(realIdentifiable, type, subtype));
+	}
+
+	s_element_forComponent(s_component: S_Component): S_Element | null {
+		return null;
 	}
 
 	s_widget_forAncestry(ancestry: Ancestry): S_Widget {

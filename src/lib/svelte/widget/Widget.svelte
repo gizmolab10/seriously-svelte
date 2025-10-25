@@ -1,10 +1,11 @@
 <script lang='ts'>
+	import { k, u, x, debug, signals, components, layout, elements } from '../../ts/common/Global_Imports';
 	import { G_Widget, S_Mouse, S_Element, S_Component } from '../../ts/common/Global_Imports';
-	import { debug, signals, components, layout } from '../../ts/common/Global_Imports';
+	import { w_s_hover, w_s_title_edit, w_ancestry_focus } from '../../ts/managers/Stores';
 	import { T_Layer, T_Signal, T_Component } from '../../ts/common/Global_Imports';
-	import { w_s_title_edit, w_ancestry_focus } from '../../ts/managers/Stores';
-	import { k, u, x, Point } from '../../ts/common/Global_Imports';
+	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { w_thing_color } from '../../ts/managers/Stores';
+	import { Point } from '../../ts/common/Global_Imports';
 	import Widget_Reveal from './Widget_Reveal.svelte';
 	import Widget_Title from './Widget_Title.svelte';
 	import Widget_Drag from './Widget_Drag.svelte';
@@ -26,7 +27,6 @@
 	let s_component: S_Component;
 	let widget_style = k.empty;
 	let reveal_id = k.unknown;
-	let isHovering = false;
 	let trigger = k.empty;
 	let height = 0;
 	let left = 0;
@@ -62,7 +62,7 @@
 	});
 
 	$: {
-		const _ = `${$w_thing_color}:::${$w_ancestry_focus.id}`;
+		const _ = `${$w_thing_color}:::${$w_ancestry_focus.id}:::${$w_s_hover}`;
 		update_style();
 	}
 
@@ -106,21 +106,6 @@
 		ancestry?.grab_forShift(event.shiftKey);
 	}
 
-	function handle_s_mouse(s_mouse: S_Mouse): boolean {
-		if (!!ancestry) {	
-			if (s_mouse.isHover) {
-				isHovering = true;
-				update_style();
-				return true;
-			} else if (s_mouse.isOut) {
-				isHovering = false;
-				update_style();
-				return true;
-			}
-		}
-		return false;
-	}
-
 	function layout_maybe() {
 		if (s_widget.update_state_didChange) {
 			final_layout();
@@ -138,6 +123,13 @@
 		update_style();
 	}
 
+	function handle_s_mouse(s_mouse: S_Mouse) {
+		if (!!ancestry && s_mouse.hover_didChange) {
+			s_widget.isOut = s_mouse.isOut;
+			update_style();
+		}
+	}
+
 	function update_style() {
 		widget_style = `
 			top : ${top}px;
@@ -145,6 +137,7 @@
 			position : absolute;
 			height : ${height}px;
 			${s_widget.background};
+			color : ${s_widget.color};
 			border : ${s_widget.border};
 			width : ${width_ofWidget}px;
 			z-index : ${T_Layer.widgets};
@@ -167,12 +160,18 @@
 </script>
 
 {#if s_widget}
-    <div class = 'widget'
-		id = {s_component.id}
-		on:keyup = {u.ignore}
-        on:keydown = {u.ignore}
-        on:click = {handle_click_event}
-        style = {widget_style.removeWhiteSpace()}>
+    <Mouse_Responder
+		height={height}
+		position="absolute"
+        on:keyup={u.ignore}
+        on:keydown={u.ignore}
+        name={s_component.id}
+        width={width_ofWidget}
+        zindex={T_Layer.widgets}
+        on:click={handle_click_event}
+        handle_s_mouse={handle_s_mouse}
+        style={widget_style.removeWhiteSpace()}
+        origin={g_widget.origin.offsetBy(g_widget.offset_ofWidget)}>
         <Widget_Drag
             s_drag = {s_drag}
             points_right = {drag_points_right}/>
@@ -184,5 +183,5 @@
                 s_reveal = {s_reveal}
                 points_toChild = {reveal_points_toChild}/>
         {/if}
-    </div>
+    </Mouse_Responder>
 {/if}

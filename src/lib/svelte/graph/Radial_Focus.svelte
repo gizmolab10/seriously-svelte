@@ -39,8 +39,7 @@
 
 	onMount(() => { return () => s_component.disconnect(); });
 
-	function debug_closure(s_mouse) { debug.log_radial(` ${s_mouse.descriptionFor('FOCUS')}`); }
-	function handle_s_mouse(s_mouse: S_Mouse): boolean { return false; }
+	function handle_s_mouse(s_mouse) { debug.log_radial(` ${s_mouse.descriptionFor('FOCUS')}`); }
 
 	$: { const _ = $w_ancestry_focus; layout_focus();}
 
@@ -96,7 +95,7 @@
 			width = {width_ofBorder}
 			handle_isHit = {() => false}
 			name = 'radial-focus-border'
-			handle_s_mouse = {debug_closure}>
+			handle_s_mouse = {handle_s_mouse}>
 			<svg
 				class='radial-focus-svg'
 				style='

@@ -12,8 +12,8 @@
 	let stroke = colors.default;
 	let fill = 'white';
 
-	function hover_up_closure(s_mouse) {
-		if (s_mouse.isHover) {
+	function handle_s_mouse(s_mouse) {
+		if (s_mouse.hover_didChange) {
 			const isHovering = !s_mouse.isOut;
 			fill = isHovering ? colors.default : 'white';
 			stroke = isHovering ? $w_background_color : colors.default;
@@ -30,7 +30,7 @@
 	height={size}
 	origin={origin}
 	align_left={align_left}
-	handle_s_mouse={hover_up_closure}>
+	handle_s_mouse={handle_s_mouse}>
     <SVG_D3 name='close'
 		fill={fill}
 		width={size}

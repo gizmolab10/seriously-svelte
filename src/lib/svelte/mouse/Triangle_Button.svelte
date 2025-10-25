@@ -33,7 +33,7 @@
 	}
 
 	function closure(s_mouse) {
-		if (s_mouse.isHover) {
+		if (s_mouse.hover_didChange) {
 			setFillColor(!s_mouse.isOut);
 		} else {
 			handle_s_mouse(s_mouse);

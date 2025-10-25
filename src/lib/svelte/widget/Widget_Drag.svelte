@@ -1,10 +1,10 @@
 <script lang='ts'>
 	import { e, k, u, x, elements, controls, show, debug, signals } from '../../ts/common/Global_Imports';
 	import { w_background_color, w_show_countDots_ofType } from '../../ts/managers/Stores';
+	import { w_s_hover, w_thing_color, w_s_alteration } from '../../ts/managers/Stores';
 	import { w_ancestry_focus, w_ancestry_forDetails } from '../../ts/managers/Stores';
 	import { T_Layer, T_Signal, T_Component } from '../../ts/common/Global_Imports';
 	import { Point, S_Element, S_Component } from '../../ts/common/Global_Imports';
-	import { w_thing_color, w_s_alteration } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { svgPaths } from '../../ts/common/Global_Imports';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
@@ -41,7 +41,6 @@
 	onMount(() => { return () => s_component.disconnect(); });
 
 	function handle_context_menu(event) { u.grab_event(event); }		// no default context menu on right-click
-	function handle_s_mouse(s_mouse: S_Mouse): boolean { return false; }
 
 	$: {
 		const _ = $w_show_countDots_ofType;
@@ -49,7 +48,13 @@
 	}
 
 	$: {
-		const _ = `${$w_thing_color}:::${$w_background_color}:::${$w_ancestry_focus?.id}:::${$w_ancestry_forDetails?.id}:::${u.descriptionBy_titles($w_grabbed)}`;
+		const _ = `
+		${$w_s_hover}:::
+		${$w_thing_color}:::
+		${$w_background_color}:::
+		${$w_ancestry_focus?.id}:::
+		${$w_ancestry_forDetails?.id}:::
+		${u.descriptionBy_titles($w_grabbed)}`;
 		update_colors();
 	}
 
@@ -66,12 +71,13 @@
 		if (!elements.isAny_rotation_active && !!s_drag && !!thing) {
 			const usePointer = (!ancestry.isGrabbed || controls.inRadialMode) && ancestry.hasChildren;
 			const isAncestry_presented = $w_ancestry_forDetails.equals(ancestry);
+			const isOut = !isHovering != (ancestry.isGrabbed && !isAncestry_presented);
 			const cursor = usePointer ? 'pointer' : 'normal';
 			color = thing.color;
+			s_drag.isOut = isOut;	// HANG!!!
 			ellipsis_color = s_drag.stroke;
 			s_drag.set_forHovering(thing.color, cursor);
 			svg_outline_color = s_drag.svg_outline_color;
-			s_drag.isOut = !isHovering != (ancestry.isGrabbed && !isAncestry_presented);
 			fill_color = debug.lines ? 'transparent' : s_drag.fill;
 		}
 	}
@@ -90,9 +96,9 @@
 		}
 	}
 
-	function handle_up_long_hover(s_mouse) {
+	function handle_s_mouse(s_mouse) {
 		if (!elements.isAny_rotation_active) {
-			if (s_mouse.isHover) {
+			if (s_mouse.hover_didChange) {
 				isHovering = !s_mouse.isOut;
 				update_colors();
 			} else if (s_mouse.isLong) {
@@ -113,7 +119,7 @@
 		height={capture_size}
 		name={s_component.id}
 		detect_longClick={true}
-		handle_s_mouse={handle_up_long_hover}>
+		handle_s_mouse={handle_s_mouse}>
 		<button class={name}
 			id={s_component.id}
 			style='

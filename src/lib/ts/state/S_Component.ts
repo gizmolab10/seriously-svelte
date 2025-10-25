@@ -1,6 +1,6 @@
-import { k, Rect, Point, debug, layout, signals, Ancestry } from '../common/Global_Imports';
+import { k, Rect, Point, debug, layout, signals, elements, Ancestry } from '../common/Global_Imports';
 import { Integer, Handle_S_Mouse, Create_S_Mouse } from '../types/Types';
-import { T_Signal, T_Component } from '../common/Global_Imports';
+import { S_Element, T_Signal, T_Component } from '../common/Global_Imports';
 import { SignalConnection_atPriority } from '../types/Types';
 import Identifiable from '../runtime/Identifiable';
 import { SignalConnection } from 'typed-signals';
@@ -14,44 +14,32 @@ import { u } from '../utilities/Utilities';
 
 export default class S_Component {
     signal_handlers: SignalConnection_atPriority[] = [];
-    handle_s_mouse: Handle_S_Mouse | null;
+    handle_s_mouse: Handle_S_Mouse | null = null;
+    s_element: S_Element | null = null;
     ancestry: Ancestry | null = null;
-	hid: Integer | null;
-    type: T_Component;
-
-	log_isEnabledFor_t_component = {
-		breadcrumbs : false,
-		branches	: true,
-		radial		: false,
-		reveal		: false,
-		widget		: true,
-		title		: false,
-		drag		: false,
-		line		: false,
-		none		: false,
-		tree		: true,
-		app			: false,
-	}
+	hid: Integer | null = null;
+    t_component: T_Component;
 
     // hit test, logger, emitter, handler and destroyer
 
-    constructor(ancestry: Ancestry | null, type: T_Component, handle_s_mouse: Handle_S_Mouse | null = null) {
-        const suffix = 'handle_ ' + (type ?? '<--NO TYPE-->') + ' for: ' + (ancestry?.titles ?? '<--UNIDENTIFIED ANCESTRY-->');
+    constructor(ancestry: Ancestry | null, t_component: T_Component, handle_s_mouse: Handle_S_Mouse | null = null) {
+        const suffix = 'handle_ ' + (t_component ?? '<--NO TYPE-->') + ' for: ' + (ancestry?.titles ?? '<--UNIDENTIFIED ANCESTRY-->');
         this.hid = ancestry?.hid ?? -1 as Integer;
         this.handle_s_mouse = handle_s_mouse;
         const prefix = 'S_Component has no';
+        this.t_component = t_component;
         this.ancestry = ancestry;
-        this.type = type;
+        this.s_element = elements.s_element_forComponent(this);
         if (!ancestry && this.isComponentLog_enabled) {
             debug.log_component(prefix, 'ancestry', suffix);
         }
     }
 
-    get description(): string { return this.type; }
+    get description(): string { return this.t_component; }
     get distance_toGraphCenter(): Point { return this.boundingRect.center; }
     containsPoint(point: Point) { return this.boundingRect.contains(point); }
     get element(): HTMLElement | null { return document.getElementById(this.id) }
-    get id(): string { return `${this.type}-${this.ancestry?.kind ?? 'no-predicate'}-${this.ancestry?.titles ?? Identifiable.newID()}`; }
+    get id(): string { return `${this.t_component}-${this.ancestry?.kind ?? 'no-predicate'}-${this.ancestry?.titles ?? Identifiable.newID()}`; }
 
     get boundingRect(): Rect {
         const scale_factor = layout.scale_factor;
@@ -96,8 +84,21 @@ export default class S_Component {
     static readonly _____DEBUG_LOGGING: unique symbol;
 
     get isComponentLog_enabled(): boolean {
-        const key = this.type as keyof typeof this.log_isEnabledFor_t_component;
-        return this.log_isEnabledFor_t_component[key] ?? false;
+        const log_isEnabledFor_t_component = {
+            breadcrumbs : false,
+            branches	: false,
+            radial		: false,
+            reveal		: false,
+            widget		: false,
+            title		: false,
+            drag		: false,
+            line		: false,
+            none		: false,
+            tree		: false,
+            app			: false,
+        }
+        const t_component = this.t_component as keyof typeof log_isEnabledFor_t_component;
+        return log_isEnabledFor_t_component[t_component] ?? false;
     }
 
 	debug_log_style(prefix: string) {
@@ -122,7 +123,7 @@ export default class S_Component {
 		const element = this.element;
 		if (!!element) {
 			const indented = k.newLine + k.tab;
-            const type = this.type.toUpperCase();
+            const type = this.t_component.toUpperCase();
 			const array = [type, prefix, 'connection state', `(at ${new Date().toLocaleString()})`,
 				indented + k.title.line,
 				indented + this.style_debug_info('ancestry'),
