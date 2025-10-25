@@ -63,9 +63,12 @@ export default class S_Element {
 	get fill(): string { return this.isDisabled ? 'transparent' : this.color_isInverted ? this.hoverColor : this.isSelected ? 'lightblue' : this.color_background; }
 
 	set isOut(isOut: boolean) {
-		const same = get(w_s_hover) == this;
-		if (!same || same == isOut) {
-			w_s_hover.set(isOut ? null : this);
+		const old_hover = get(w_s_hover);
+		const same = old_hover == this;
+		const new_hover = isOut ? null : this;
+		// if !same and !isOut, set to this, if same and isOut, set to null, otherwise leave as is
+		if (same == isOut && new_hover != old_hover) {
+			w_s_hover.set(new_hover);
 			console.log(`set ${this.name} to ${!isOut ? '' : 'NOT '}hovering`);
 		}
 	}
