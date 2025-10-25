@@ -82,10 +82,10 @@
 		<Banner_Hideable t_detail={T_Detail.actions}>
 			<D_Actions/>
 		</Banner_Hideable>
+		<Banner_Hideable t_detail={T_Detail.selection} extra_titles={extra_selection_titles}>
+			<D_Selection/>
+		</Banner_Hideable>
 		{#if c.has_standalone_UI}
-			<Banner_Hideable t_detail={T_Detail.selection} extra_titles={extra_selection_titles}>
-				<D_Selection/>
-			</Banner_Hideable>
 			<Banner_Hideable t_detail={T_Detail.tags} extra_titles={extra_tags_titles}>
 				<D_Tags/>
 			</Banner_Hideable>

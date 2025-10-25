@@ -151,7 +151,7 @@
 			{/if}
 			<Separator name='before-breadcrumbs'
 				isHorizontal={false}
-				origin={new Point(lefts[6], -9)}
+				origin={new Point(lefts[6], -8)}
 				length={layout.controls_boxHeight + 1}
 				thickness={k.thickness.separator.main}
 				corner_radius={k.radius.gull_wings.thick}/>

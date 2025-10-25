@@ -23,7 +23,7 @@ export default class DB_Bubble extends DB_Common {
 
 	private handle_bubble_message = (e: Event) => {
 		function createRelationship(parent_id: string, child_id: string, kind: T_Predicate, orders: number[]) {
-			if (!!parent_id && !!child_id && parent_id != k.empty && child_id != k.empty) {
+			if (!!parent_id && !!child_id && parent_id != k.empty && parent_id != k.empty_id && child_id != k.empty && child_id != k.empty_id) {
 				const id = parent_id + '-->' + kind + '-->' + child_id;
 				h.relationship_remember_runtimeCreateUnique(h.db.idBase, id, kind, parent_id, child_id, orders, T_Create.isFromPersistent);
 			}

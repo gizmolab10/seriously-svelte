@@ -30,6 +30,7 @@ export default class Constants {
 	corrupted = 'corrupted';
 	unknown = 'unknown';
 	root_path = 'root';
+	empty_id = '""';
 	newLine = '\n';
 	wildcard = '*';
 	comma = ',';
