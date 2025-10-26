@@ -23,7 +23,7 @@ export default class DB_Bubble extends DB_Common {
 
 	private handle_bubble_message = (e: Event) => {
 		function createRelationship(parent_id: string, child_id: string, kind: T_Predicate, orders: number[]) {
-			if (!!parent_id && !!child_id && parent_id != k.empty && parent_id != k.empty_id && child_id != k.empty && child_id != k.empty_id) {
+			if (!!parent_id && !!child_id && parent_id != k.empty && child_id != k.empty) {
 				const id = parent_id + '-->' + kind + '-->' + child_id;
 				h.relationship_remember_runtimeCreateUnique(h.db.idBase, id, kind, parent_id, child_id, orders, T_Create.isFromPersistent);
 			}
@@ -87,12 +87,12 @@ export default class DB_Bubble extends DB_Common {
 					createThing(id, title, color, type);
 					if (!!parent_ids && parent_ids.length > 0) {
 						for(const parent_id of parent_ids) {	
-							createRelationship(parent_id, id, T_Predicate.contains, [1, 1]);
+							createRelationship(JSON.parse(parent_id), id, T_Predicate.contains, [1, 1]);
 						}
 					}
 					if (!!related_ids && related_ids.length > 0) {
 						for(const related_id of related_ids) {
-							createRelationship(id, related_id, T_Predicate.isRelated, [1, 1]);
+							createRelationship(id, JSON.parse(related_id), T_Predicate.isRelated, [1, 1]);
 						}
 					}
 				}
