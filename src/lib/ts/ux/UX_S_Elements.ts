@@ -38,16 +38,13 @@ export default class UX_S_Elements {
 
 	get s_elements(): S_Element[] { return Object.values(this.s_element_byName); }
 	s_element_forName(name: string): S_Element { return this.s_element_byName[name]; }
+	s_element_forComponent(s_component: S_Component): S_Element | null { return null; }
 	s_mouse_forName(name: string): S_Mouse { return this.assure_forKey_inDict(name, this.s_mouse_byName, () => S_Mouse.empty()); }
 
-	s_element_for(identifiable: Identifiable | null, type: T_Element, subtype: string): S_Element {
+	s_element_for(identifiable: Identifiable | null, type: T_Element, subtype: string, s_widget: S_Widget | null = null): S_Element {
 		const realIdentifiable = identifiable ?? new Identifiable()
 		const name = this.name_from(realIdentifiable, type, subtype);
-		return this.assure_forKey_inDict(name, this.s_element_byName, () => new S_Element(realIdentifiable, type, subtype));
-	}
-
-	s_element_forComponent(s_component: S_Component): S_Element | null {
-		return null;
+		return this.assure_forKey_inDict(name, this.s_element_byName, () => new S_Element(realIdentifiable, type, subtype, s_widget));
 	}
 
 	s_widget_forAncestry(ancestry: Ancestry): S_Widget {
