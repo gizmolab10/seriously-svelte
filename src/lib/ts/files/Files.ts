@@ -65,7 +65,7 @@ export default class Files {
 					let inQuotes = false;
 					let processed = '';
 					for (let i = 0; i < result.length; i++) {
-						if (result[i] === '"') inQuotes = !inQuotes;
+						if (result[i] === k.quote) inQuotes = !inQuotes;
 						else if (result[i] === k.comma && inQuotes) processed += '$$$$$$';
 						else processed += result[i];
 					}

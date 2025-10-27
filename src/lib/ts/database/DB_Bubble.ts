@@ -87,17 +87,13 @@ export default class DB_Bubble extends DB_Common {
 					createThing(id, title, color, type);
 					if (!!parent_ids && parent_ids.length > 0) {
 						for(let parent_id of parent_ids) {
-							if (parent_id[0] == '"') {
-								parent_id = JSON.parse(parent_id);
-							}
+							parent_id = parent_id.replaceAll(k.quote, k.empty);
 							createRelationship(parent_id, id, T_Predicate.contains, [1, 1]);
 						}
 					}
 					if (!!related_ids && related_ids.length > 0) {
 						for(let related_id of related_ids) {
-							if (related_id[0] == '"') {
-								related_id = JSON.parse(related_id);
-							}
+							related_id = related_id.replaceAll(k.quote, k.empty);
 							createRelationship(id, related_id, T_Predicate.isRelated, [1, 1]);
 						}
 					}
