@@ -80,6 +80,7 @@ export default class DB_Bubble extends DB_Common {
 				for (let i = 0; i < b_titles.length; i++) {
 					const related_ids	 = b_related_ids[i].split(k.separator.generic);
 					const parent_ids	 = b_parent_ids[i].split(k.separator.generic);
+					const remove_these	 = new RegExp(`[${k.space}${k.quote}]`, 'g');
 					const title			 = b_titles[i];
 					const color			 = b_colors[i];
 					const id			 = b_ids[i];
@@ -87,13 +88,13 @@ export default class DB_Bubble extends DB_Common {
 					createThing(id, title, color, type);
 					if (!!parent_ids && parent_ids.length > 0) {
 						for(let parent_id of parent_ids) {
-							parent_id = parent_id.replaceAll(k.quote, k.empty);
+							parent_id = parent_id.replaceAll(remove_these, '');
 							createRelationship(parent_id, id, T_Predicate.contains, [1, 1]);
 						}
 					}
 					if (!!related_ids && related_ids.length > 0) {
 						for(let related_id of related_ids) {
-							related_id = related_id.replaceAll(k.quote, k.empty);
+							related_id = related_id.replaceAll(remove_these, '');
 							createRelationship(id, related_id, T_Predicate.isRelated, [1, 1]);
 						}
 					}
