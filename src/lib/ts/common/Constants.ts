@@ -34,6 +34,7 @@ export default class Constants {
 	newLine = '\n';
 	wildcard = '*';
 	comma = ',';
+	quote = '"';
 	space = ' ';
 	empty = '';
 	tab = '\t';

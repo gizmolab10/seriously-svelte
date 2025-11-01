@@ -1,20 +1,21 @@
 function(instance) {
-	instance.data.debug							= true;
+	instance.data.enable_logging				= false;
 	instance.data.iframe_is_instantiated		= false;	// assure_iframe_is_instantiated (right below, called from update) sets this to true
-	instance.data.LOG							= function (message, value, ...optionalParams) {if (instance.data.debug && !!value) { console.log('[PLUGIN]', message, value, ...optionalParams); } }
+	instance.data.LOG							= function (message, value, ...optionalParams) {if (instance.data.enable_logging && !!value) { console.log('[PLUGIN]', message, value, ...optionalParams); } }
 	instance.data.assure_iframe_is_instantiated = function (properties) {
 		if (!instance.data.iframe_is_instantiated) {
 			if (!instance.data.iframe) {
 				LOG('Initializing plugin ...');
 				const iframe = document.createElement('iframe');
-				instance.data.iframe = iframe;
 				iframe.src = url_from_properties(properties);
 				iframe.style.overflow = 'hidden';
 				iframe.style.border = 'none';
 				iframe.style.height = '100%';
 				iframe.style.width = '100%';
+				instance.data.iframe = iframe;
 				window.addEventListener('message', handle_webseriously_message);
 			}
+			instance.data.enable_logging = properties.enable_logging;
 			instance.canvas.append(instance.data.iframe);
 			instance.data.iframe_is_instantiated = true;
 		}

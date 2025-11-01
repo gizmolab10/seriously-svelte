@@ -1,28 +1,17 @@
 function(instance, properties) {
-	const FIELD_LABELS = [
+	const field_labels = [
 		'overwrite_focus_and_mode',
 		'erase_user_settings',
 		'starting_object_id',
 		'show_radial_mode',
 		'focus_object_id',
 		'show_details'];
-	const FIELD_LABELS_of_arrays = [
+	const field_labels_of_arrays = [
 		'related_ids_array',
 		'parent_ids_array',
 		'titles_array',
 		'colors_array',
 		'ids_array'];
-
-	//////////////////////////////////////////////////////////////////
-	//																//
-	//						naming conventions						//
-	//																//
-	//	ITEM		instance of CUSTOM data type (eg, "Object")		//
-	//	SERIOUSLY	recognized by seriously netlify app (iframe)	//
-	//	LABELS		labels of FIELDS (specified by me)				//
-	//	FIELD		plugin Field (value supplied by plugin user)	//
-	//																//
-	//////////////////////////////////////////////////////////////////
 
 	function LOG(message, value, ...optionalParams) { instance.data.LOG(message, value, ...optionalParams); }
 	instance.data.assure_iframe_is_instantiated(properties);	// start the ball rolling, effective once
@@ -49,30 +38,28 @@ function(instance, properties) {
 		//														//
 		//	process incoming properties & send to webseriously	//
 		//														//
-		//	  the keys (below) are recognized by DB_Bubble.ts	//
-		//  	  (in its handle_bubble_message function)		//
-		//														//
-		//    instance.data.attempts tracks unhydrated ITEMs	//
+		//	seriously_name(s) are recognized by DB_Bubble.ts	//
+		//  instance.data.attempts tracks unhydrated properties	//
 		//														//
 		//////////////////////////////////////////////////////////
 		
 		instance.data.attempts = instance.data.attempts || {};
 		let to_send = {};
-		FIELD_LABELS.forEach(label => {
-			const SERIOUSLY_name = label.replace('_object_id', '').replace('starting', 'root');
-			to_send[SERIOUSLY_name] = properties[label]
+		field_labels.forEach(label => {
+			const seriously_name = label.replace('_object_id', '').replace('starting', 'root');
+			to_send[seriously_name] = properties[label]
 		});
-		FIELD_LABELS_of_arrays.forEach(label => {
+		field_labels_of_arrays.forEach(label => {
 			const array = properties[label];
 			if (!!array && typeof array == 'object' && typeof array.length === 'function' && array.length() > 0) {
-				const SERIOUSLY_name = label.replace('parent_', 'parents_').replace('_ids', '').replace('_array', '').replace('_object_id', '');
+				const seriously_name = label.replace('parent_', 'parents_').replace('_ids', '').replace('_array', '').replace('_object_id', '');
 				const length = array.length();
 				let items = [];
 				for (let i = 0; i < length; i++) {
 					const item = array.get(i, 1)[0] ?? '';
 					items.push(item);
 				}
-				to_send[SERIOUSLY_name] = items;
+				to_send[seriously_name] = items;
 			}
 		});
 		send_to_webseriously(to_send);
