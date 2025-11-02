@@ -92,4 +92,17 @@ export default class S_Items<T> {
 		return false;
 	}
 
+	remove(item: T) {
+		const index = this.items.indexOf(item);
+		if (index != -1) {
+			this.items.splice(index, 1);
+			this.length -= 1;
+			if (this.items.length == 0) {
+				this.reset();
+			} else if (index < this.index) {
+				this.index -= 1;
+			}
+		}
+	}
+
 }

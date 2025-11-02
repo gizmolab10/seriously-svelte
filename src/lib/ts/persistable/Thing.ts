@@ -8,7 +8,6 @@ import { get } from 'svelte/store';
 
 export default class Thing extends Persistable {
 	selectionRange = new Seriously_Range(0, 0);
-	si_ancestries = new S_Items<Ancestry>([]);
 	si_children = new S_Items<Thing>([]);
 	si_parents = new S_Items<Thing>([]);
 	bulkRootID: string = k.empty;
@@ -25,7 +24,8 @@ export default class Thing extends Persistable {
 	};
 	
 	get si_tags():				S_Items		   <Tag> { return h.si_tags_forThingHID(this.hid); }
-	get si_traits():			S_Items		 <Trait> { return h.si_traits_forOwnerHID(this.hid); }
+	get si_traits():	 null | S_Items		 <Trait> { return h.si_traits_forOwnerHID(this.hid); }
+	get si_ancestries(): null | S_Items   <Ancestry> { return h.si_ancesties_forThingHID(this.hid); }
 	get parents():				Array		 <Thing> { return this.parents_ofKind(T_Predicate.contains); }
 	get parentIDs():			Array		<string> { return this.parents.map(t => t.id); }
 	get ancestries():		 	Array	  <Ancestry> { return this.ancestries_create_forPredicate(Predicate.contains); }

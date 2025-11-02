@@ -13,20 +13,20 @@ import { get } from 'svelte/store';
 
 export let h!: Hierarchy;
 w_hierarchy.subscribe(value => h = value);
-export type Ancestries_ByHID = { [hid: Integer]: Ancestry }
-export type Relationships_ByHID = { [hid: Integer]: Array<Relationship> }
+export type Ancestry_ByHID = { [hid: Integer]: Ancestry }
+export type Relationships_ByHID = { [hid: Integer]: S_Items<Relationship> }
 
 export class Hierarchy {
+	private si_relationships_byKind: { [kind: string]: S_Items<Relationship> } = {};
 	private predicate_byDirection: { [direction: number]: Array<Predicate> } = {};
-	private relationships_byKind: { [kind: string]: Array<Relationship> } = {};
-	private ancestry_byKind_andHID: { [kind: string]: Ancestries_ByHID } = {};
-	private ancestries_byThingHID: { [hid: Integer]: Array<Ancestry> } = {};
-	private traits_byOwnerHID: { [ownerHID: Integer]: Array<Trait> } = {};
+	private si_ancestries_byThingHID: { [hid: Integer]: S_Items<Ancestry> } = {};
+	private si_traits_byOwnerHID: { [ownerHID: Integer]: S_Items<Trait> } = {};
+	private ancestry_byKind_andHID: { [kind: string]: Ancestry_ByHID } = {};
 	private si_traits_byThingHID: { [hid: Integer]: S_Items<Trait> } = {};
+	private si_traits_byType: { [t_trait: string]: S_Items<Trait> } = {};
 	private things_byT_Trait: { [t_trait: string]: Array<Thing> } = {};
 	private relationship_byHID: { [hid: Integer]: Relationship } = {};
 	private si_tags_byThingHID: { [hid: Integer]: S_Items<Tag> } = {};
-	private traits_byType: { [t_trait: string]: Array<Trait> } = {};
 	private things_byType: { [t_thing: string]: Array<Thing> } = {};
 	private things_byTitle: { [title: string]: Array<Thing> } = {};
 	private predicate_byKind: { [kind: string]: Predicate } = {};
@@ -309,8 +309,8 @@ export class Hierarchy {
 
 	async thing_forget_persistentDelete(thing: Thing) {
 		const relationships = u.uniquely_concatenateArrays_ofIdentifiables(
-			this.relationships_byChildHID[thing.hid] ?? [],
-			this.relationships_byParentHID[thing.hid] ?? []
+			this.relationships_byParentHID[thing.hid]?.items ?? [],
+			this.relationships_byChildHID[thing.hid]?.items ?? []
 		) as Array<Relationship>;
 		thing.remove_fromGrabbed_andExpanded_andResolveFocus();
 		this.thing_forget(thing);				// forget so onSnapshot logic will not signal children, do first so UX updates quickly
@@ -318,7 +318,7 @@ export class Hierarchy {
 		for (const ancestry of thing.ancestries) {
 			this.ancestry_forget(ancestry);
 		}
-		for (const trait of thing.si_traits.items) {
+		for (const trait of thing.si_traits?.items ?? []) {
 			this.trait_forget(trait)
 			await this.db.trait_persistentDelete(trait);
 		}
@@ -386,7 +386,7 @@ export class Hierarchy {
 
 	static readonly _____RELATIONSHIPS: unique symbol;
 
-	relationships_forKind(kind: T_Predicate): Array<Relationship> { return this.relationships_byKind[kind] ?? [];; }
+	si_relationships_forKind(kind: T_Predicate): S_Items<Relationship> { return this.si_relationships_byKind[kind] ?? new S_Items<Relationship>([]); }
 
 	relationships_refreshKnowns() {
 		const saved = this.relationships;
@@ -412,10 +412,10 @@ export class Hierarchy {
 
 	relationships_forKindPredicate_hid_thing_isChild(kind: string, hid: Integer, forParents: boolean): Array<Relationship> {
 		const dict = forParents ? this.relationships_byChildHID : this.relationships_byParentHID;
-		const matches = dict[hid] as Array<Relationship>; // filter out bad values (dunno what this does)
+		const si_matches = dict[hid];
 		const array: Array<Relationship> = [];
-		if (Array.isArray(matches)) {
-			for (const relationship of matches) {
+		if (si_matches) {
+			for (const relationship of si_matches.items) {
 				if (relationship.kind == kind && !array.includes(relationship)) {
 					array.push(relationship);
 				}
@@ -475,12 +475,12 @@ export class Hierarchy {
 	}
 	
 	relationship_forget_forHID(relationships: Relationships_ByHID, hid: Integer, relationship: Relationship) {
-		let array = relationships[hid] ?? [];
-		array = Identifiable.remove_byHID<Relationship>(array, relationship);
-		if (array.length == 0) {
-			delete relationships[hid];
-		} else {
-			relationships[hid] = array;
+		let si_relationships = relationships[hid];
+		if (si_relationships) {
+			si_relationships.remove(relationship);
+			if (si_relationships.length == 0) {
+				delete relationships[hid];
+			}
 		}
 	}
 
@@ -497,11 +497,11 @@ export class Hierarchy {
 	}
 
 	relationship_remember_byKnown(relationship: Relationship, hid: Integer, relationships: Relationships_ByHID) {
-		let array = relationships[hid] ?? [];
-		if (!array.map(r => r.id).includes(relationship.id)) {
-			array.push(relationship);
+		let si_relationships = relationships[hid] ?? new S_Items<Relationship>([]);
+		if (!si_relationships.items.map(r => r.id).includes(relationship.id)) {
+			si_relationships.push(relationship);
 		}
-		relationships[hid] = array;
+		relationships[hid] = si_relationships;
 	}
 
 	relationship_forPredicateKind_parent_child(kind: string, hidParent: Integer, hidChild: Integer): Relationship | null {
@@ -537,22 +537,21 @@ export class Hierarchy {
 
 	relationship_forget(relationship: Relationship) {
 		delete this.relationship_byHID[relationship.hid];
-		const relationships = this.relationships_forKind(relationship.kind);
+		this.si_relationships_forKind(relationship.kind).remove(relationship);
 		this.relationships = Identifiable.remove_byHID<Relationship>(this.relationships, relationship);
 		this.relationship_forget_forHID(this.relationships_byChildHID, relationship.hidChild, relationship);
 		this.relationship_forget_forHID(this.relationships_byParentHID, relationship.hidParent, relationship);
-		relationship.remove_from(relationships);
 	}
 	
 	relationship_remember(relationship: Relationship) {
 		if (!this.relationship_byHID[relationship.hid]) {
-			let relationships = this.relationships_forKind(relationship.kind)
+			let si_relationships = this.si_relationships_forKind(relationship.kind)
 			if (!this.relationships.map(r => r.id).includes(relationship.id)) {
 				this.relationships.push(relationship);
 			}
-			if (!relationships.map(r => r.id).includes(relationship.id)) {
-				relationships.push(relationship);
-				this.relationships_byKind[relationship.kind] = relationships;
+			if (!si_relationships.items.map(r => r.id).includes(relationship.id)) {
+				si_relationships.push(relationship);
+				this.si_relationships_byKind[relationship.kind] = si_relationships;
 			}
 			this.relationship_byHID[relationship.hid] = relationship;
 			this.relationship_remember_byKnown(relationship, relationship.hidChild, this.relationships_byChildHID);
@@ -633,13 +632,14 @@ export class Hierarchy {
 	static readonly _____ANCESTRIES: unique symbol;
 
 	get ancestries(): Array<Ancestry> { return Object.values(this.ancestry_byHID); }
-	ancestries_byHID_forKind(kind: string) { return this.ancestry_byKind_andHID[kind] ?? {}; }
+	si_ancestries_byHID_forKind(kind: string) { return this.ancestry_byKind_andHID[kind] ?? {}; }
+	si_ancesties_forThingHID(hid: Integer): S_Items<Ancestry> { return this.si_ancestries_byThingHID[hid]; }
 	get ancestries_thatAreVisible(): Array<Ancestry> { return this.rootAncestry.visibleSubtree_ancestries(); }
 
 	ancestries_forget_all() {
 		this.ancestry_byHID = {};
-		this.ancestries_byThingHID = {};
 		this.ancestry_byKind_andHID = {};
+		this.si_ancestries_byThingHID = {};
 	}
 
 	ancestries_assureAll_createUnique() {
@@ -711,7 +711,7 @@ export class Hierarchy {
 	static readonly _____ANCESTRY: unique symbol;
 	
 	ancestry_forHID(hid: Integer): Ancestry | null { return this.ancestry_byHID[hid] ?? null; }
-	ancestries_forThing(thing: Thing): Array<Ancestry> { return this.ancestries_byThingHID[thing.hid] ?? []; }
+	ancestries_forThing(thing: Thing): Array<Ancestry> { return this.si_ancestries_byThingHID[thing.hid]?.items ?? []; }
 
 	async ancestry_persistentCreateUnique(name: string, parent: Ancestry, t_thing: T_Thing): Promise<Ancestry | null> {
 		const thing = this.thing_remember_runtimeCreateUnique(this.db.idBase, name, name, colors.default, t_thing);
@@ -721,45 +721,41 @@ export class Hierarchy {
 
 	ancestry_remember(ancestry: Ancestry) {
 		const hid = ancestry.hid;
-		let dict = this.ancestries_byHID_forKind(ancestry.kind);
+		let dict = this.si_ancestries_byHID_forKind(ancestry.kind);
 		this.ancestry_byHID[hid] = ancestry;
 		dict[hid] = ancestry;
 		this.ancestry_byKind_andHID[ancestry.kind] = dict;
-		this.ancestry_remember_forThingOfAncestry(ancestry);
+		this.ancestry_remember_forThing_ofAncestry(ancestry);
 	}
 	
 	ancestry_forget(ancestry: Ancestry | null) {
 		if (!!ancestry) {
 			const hid = ancestry.hid;
-			let dict = this.ancestries_byHID_forKind(ancestry.kind);
+			let dict = this.si_ancestries_byHID_forKind(ancestry.kind);
 			delete this.ancestry_byHID[hid];
 			delete dict[hid];
 			this.ancestry_byKind_andHID[ancestry.kind] = dict;
-			this.ancestry_forget_forThingOfAncestry(ancestry);
+			this.ancestry_forget_forThing_ofAncestry(ancestry);
 		}
 	}
 
-	ancestry_remember_forThingOfAncestry(ancestry: Ancestry) {
+	ancestry_remember_forThing_ofAncestry(ancestry: Ancestry) {
 		const thing = ancestry.thing;
 		if (!!thing) {
-			let ancestries = this.ancestries_byThingHID[thing.hid] ?? [];
-			if (!ancestries.includes(ancestry)) {
-				ancestries.push(ancestry);
-				this.ancestries_byThingHID[thing.hid] = ancestries;
+			let si_ancestries = this.si_ancestries_byThingHID[thing.hid] ?? new S_Items<Ancestry>([]);
+			if (!si_ancestries.items.map(a => a.hid).includes(ancestry.hid)) {
+				si_ancestries.push(ancestry);
+				this.si_ancestries_byThingHID[thing.hid] = si_ancestries;
 			}
 		}
 	}
 
-	ancestry_forget_forThingOfAncestry(ancestry: Ancestry) {
+	ancestry_forget_forThing_ofAncestry(ancestry: Ancestry) {
 		const thing = ancestry.thing;
 		if (!!thing) {
-			let ancestries = this.ancestries_byThingHID[thing.hid];
-			if (!!ancestries) {
-				const index = ancestries.indexOf(ancestry);
-				if (index !== -1) {
-					ancestries.splice(index, 1);
-					this.ancestries_byThingHID[thing.hid] = ancestries;
-				}
+			let si_ancestries = this.si_ancestries_byThingHID[thing.hid];
+			if (!!si_ancestries) {
+				si_ancestries.remove(ancestry);
 			}
 		}
 	}
@@ -797,7 +793,7 @@ export class Hierarchy {
 	}
 
 	ancestry_remember_createUnique(path: string = k.root_path, kind: string = T_Predicate.contains): Ancestry {
-		let ancestry = this.ancestries_byHID_forKind(kind)[path.hash()];
+		let ancestry = this.si_ancestries_byHID_forKind(kind)[path.hash()];
 		if (!ancestry) {
 			ancestry = new Ancestry(this.db.t_database, path, kind);
 			this.ancestry_remember(ancestry);
@@ -1127,13 +1123,8 @@ export class Hierarchy {
 	static readonly _____TRAITS: unique symbol;
 
 	get traits(): Array<Trait> { return this.si_traits.items; }
-	traits_forType(t_trait: T_Trait): Array<Trait> | null { return this.traits_byType[t_trait]; }
-	si_traits_forOwnerHID(hid: Integer): S_Items<Trait> { return this.si_traits_byThingHID[hid]; }
-
-	traits_forOwnerHID(hid: Integer | null): Array<Trait> | null {
-		const value = !!hid ? this.traits_byOwnerHID?.[hid] : null;
-		return (value instanceof Array) ? value : null;
-	}
+	traits_forType(t_trait: T_Trait): S_Items<Trait> | null { return this.si_traits_byType[t_trait]; }
+	si_traits_forOwnerHID(hid: Integer | null): S_Items<Trait> | null { return !!hid ? this.si_traits_byOwnerHID?.[hid] ?? null : null; }
 
 	traits_refreshKnowns() {
 		const traits = this.traits;
@@ -1144,8 +1135,8 @@ export class Hierarchy {
 
 	traits_forget_all() {
 		this.si_traits_byThingHID = {};
-		this.traits_byOwnerHID = {};
-		this.traits_byType = {};
+		this.si_traits_byOwnerHID = {};
+		this.si_traits_byType = {};
 		this.si_traits.reset();
 		this.trait_byHID = {};
 	}
@@ -1177,19 +1168,17 @@ export class Hierarchy {
 	}
 
 	trait_forType_ownerHID(t_trait: T_Trait | null, ownerHID: Integer | null): Trait| null {
-		const traits = this.traits_forOwnerHID(ownerHID)?.filter(t => t.t_trait == t_trait);
-		return !traits ? null : traits[0]
+		return !t_trait ? null : this.si_traits_byType[t_trait]?.item ?? null;
 	}
 
 	trait_forget(trait: Trait) {
+		const ownerHID = trait.ownerID.hash();
 		delete this.trait_byHID[trait.hid];
-		delete this.traits_byOwnerHID[trait.ownerID.hash()];
-		delete this.si_traits_byThingHID[trait.ownerID.hash()];
-		this.si_traits.items = Identifiable.remove_byHID<Trait>(this.si_traits.items, trait);
-		this.traits_byType[trait.t_trait] = Identifiable.remove_byHID<Trait>(this.traits_byType[trait.t_trait], trait);
-		if (!!trait.owner) {
-			this.things_byT_Trait[trait.t_trait] = Identifiable.remove_byHID<Thing>(this.things_byT_Trait[trait.t_trait], trait.owner);
-		}
+		delete this.si_traits_byOwnerHID[ownerHID];
+		delete this.si_traits_byThingHID[ownerHID];
+		delete this.si_traits_byType[trait.t_trait];
+		delete this.things_byT_Trait[trait.t_trait];
+		this.si_traits.remove(trait);
 	}
 
 	trait_remember(trait: Trait) {
@@ -1201,9 +1190,9 @@ export class Hierarchy {
 			this.things_byT_Trait[trait.t_trait] = things;
 		}
 		this.traits.push(trait);
-		(this.traits_byOwnerHID[hid] = this.traits_byOwnerHID[hid] || []).push(trait);
-		(this.traits_byType[trait.t_trait] = this.traits_byType[trait.t_trait] || []).push(trait);
-		(this.si_traits_byThingHID[hid] = this.si_traits_byThingHID[hid] || new S_Items<Trait>([])).push(trait);
+		(this.si_traits_byOwnerHID[hid] = this.si_traits_byOwnerHID[hid] ?? new S_Items<Trait>([])).push(trait);
+		(this.si_traits_byThingHID[hid] = this.si_traits_byThingHID[hid] ?? new S_Items<Trait>([])).push(trait);
+		(this.si_traits_byType[trait.t_trait] = this.si_traits_byType[trait.t_trait] ?? new S_Items<Trait>([])).push(trait);
 	}
 
 	trait_remember_runtimeCreate(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string, already_persisted: boolean = false): Trait {
@@ -1469,18 +1458,18 @@ export class Hierarchy {
 		ancestry.traverse((ancestry: Ancestry) => {
 			const thing = ancestry.thing;
 			const thingTags = thing?.si_tags.items;
-			const thingTraits = thing?.si_traits.items;
 			const relationship = ancestry.relationship;
+			const thingTraits = thing?.si_traits?.items;
 			if (!!thingTraits) {
 				traits = u.uniquely_concatenateArrays_ofIdentifiables(traits, thingTraits) as Array<Trait>;
 			}
 			if (!!thingTags) {
 				tags = u.uniquely_concatenateArrays_ofIdentifiables(tags, thingTags) as Array<Tag>;
 			}
-			if (!!thing && !things.some(t => t.id == thing.id)) {
+			if (!!thing && !things.some(t => t.id == thing.id)) {	// assure uniqueness
 				things.push(thing);
 			}
-			if (!isFirst && !!relationship && !relationships.some(r => r.id == relationship.id)) {
+			if (!isFirst && !!relationship && !relationships.some(r => r.id == relationship.id)) {	// assure uniqueness
 				relationships.push(relationship);
 			}
 			isFirst = false;
