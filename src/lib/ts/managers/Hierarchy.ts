@@ -22,6 +22,7 @@ export class Hierarchy {
 	private ancestry_byKind_andHID: { [kind: string]: Ancestries_ByHID } = {};
 	private ancestries_byThingHID: { [hid: Integer]: Array<Ancestry> } = {};
 	private traits_byOwnerHID: { [ownerHID: Integer]: Array<Trait> } = {};
+	private si_traits_byThingHID: { [hid: Integer]: S_Items<Trait> } = {};
 	private things_byT_Trait: { [t_trait: string]: Array<Thing> } = {};
 	private relationship_byHID: { [hid: Integer]: Relationship } = {};
 	private si_tags_byThingHID: { [hid: Integer]: S_Items<Tag> } = {};
@@ -44,11 +45,11 @@ export class Hierarchy {
 	ids_translated: { [prior: string]: string } = {};
 	replace_rootID: string | null = k.empty;		// required for DB_Local at launch
 	relationships: Array<Relationship> = [];
+	si_traits = new S_Items<Trait>([]);
 	predicates: Array<Predicate> = [];
 	si_tags = new S_Items<Tag>([]);
 	externalsAncestry!: Ancestry;
 	things: Array<Thing> = [];
-	traits: Array<Trait> = [];
 	rootAncestry!: Ancestry;
 	isAssembled = false;
 	db: DB_Common;
@@ -317,7 +318,7 @@ export class Hierarchy {
 		for (const ancestry of thing.ancestries) {
 			this.ancestry_forget(ancestry);
 		}
-		for (const trait of thing.traits) {
+		for (const trait of thing.si_traits.items) {
 			this.trait_forget(trait)
 			await this.db.trait_persistentDelete(trait);
 		}
@@ -1125,7 +1126,9 @@ export class Hierarchy {
 
 	static readonly _____TRAITS: unique symbol;
 
+	get traits(): Array<Trait> { return this.si_traits.items; }
 	traits_forType(t_trait: T_Trait): Array<Trait> | null { return this.traits_byType[t_trait]; }
+	si_traits_forOwnerHID(hid: Integer): S_Items<Trait> { return this.si_traits_byThingHID[hid]; }
 
 	traits_forOwnerHID(hid: Integer | null): Array<Trait> | null {
 		const value = !!hid ? this.traits_byOwnerHID?.[hid] : null;
@@ -1135,15 +1138,16 @@ export class Hierarchy {
 	traits_refreshKnowns() {
 		const traits = this.traits;
 		this.traits_forget_all();
+		this.si_traits.items = traits;
 		traits.map(t => this.trait_remember(t));
-		this.traits = traits;
 	}
 
 	traits_forget_all() {
+		this.si_traits_byThingHID = {};
 		this.traits_byOwnerHID = {};
 		this.traits_byType = {};
+		this.si_traits.reset();
 		this.trait_byHID = {};
-		this.traits = [];
 	}
 
 	traits_translate_idsFromTo_forThings(idFrom: string, idTo: string) {
@@ -1180,7 +1184,8 @@ export class Hierarchy {
 	trait_forget(trait: Trait) {
 		delete this.trait_byHID[trait.hid];
 		delete this.traits_byOwnerHID[trait.ownerID.hash()];
-		this.traits = Identifiable.remove_byHID<Trait>(this.traits, trait);
+		delete this.si_traits_byThingHID[trait.ownerID.hash()];
+		this.si_traits.items = Identifiable.remove_byHID<Trait>(this.si_traits.items, trait);
 		this.traits_byType[trait.t_trait] = Identifiable.remove_byHID<Trait>(this.traits_byType[trait.t_trait], trait);
 		if (!!trait.owner) {
 			this.things_byT_Trait[trait.t_trait] = Identifiable.remove_byHID<Thing>(this.things_byT_Trait[trait.t_trait], trait.owner);
@@ -1195,9 +1200,10 @@ export class Hierarchy {
 			things.push(trait.owner);
 			this.things_byT_Trait[trait.t_trait] = things;
 		}
+		this.traits.push(trait);
 		(this.traits_byOwnerHID[hid] = this.traits_byOwnerHID[hid] || []).push(trait);
 		(this.traits_byType[trait.t_trait] = this.traits_byType[trait.t_trait] || []).push(trait);
-		this.traits.push(trait);
+		(this.si_traits_byThingHID[hid] = this.si_traits_byThingHID[hid] || new S_Items<Trait>([])).push(trait);
 	}
 
 	trait_remember_runtimeCreate(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string, already_persisted: boolean = false): Trait {
@@ -1220,18 +1226,18 @@ export class Hierarchy {
 	si_tags_forThingHID(hid: Integer): S_Items<Tag> { return this.si_tags_byThingHID[hid]; }
 	get tags(): Array<Tag> { return this.si_tags.items; }
 
-	tags_forget_all() {
-		this.si_tags_byThingHID = {};
-		this.si_tags.reset();
-		this.tag_byType = {};
-		this.tag_byHID = {};
-	}
-
 	tags_refreshKnowns() {
 		const tags = this.tags;
 		this.tags_forget_all();
 		this.si_tags.items = tags;
 		tags.map(t => this.tag_remember(t));
+	}
+
+	tags_forget_all() {
+		this.si_tags_byThingHID = {};
+		this.si_tags.reset();
+		this.tag_byType = {};
+		this.tag_byHID = {};
 	}
 
 	tags_translate_idsFromTo_forThings(idFrom: string, idTo: string) {
@@ -1462,8 +1468,8 @@ export class Hierarchy {
 		data[T_Persistable.predicates] = this.predicates;
 		ancestry.traverse((ancestry: Ancestry) => {
 			const thing = ancestry.thing;
-			const thingTraits = thing?.traits;
 			const thingTags = thing?.si_tags.items;
+			const thingTraits = thing?.si_traits.items;
 			const relationship = ancestry.relationship;
 			if (!!thingTraits) {
 				traits = u.uniquely_concatenateArrays_ofIdentifiables(traits, thingTraits) as Array<Trait>;

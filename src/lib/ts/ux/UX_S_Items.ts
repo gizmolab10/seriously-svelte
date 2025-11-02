@@ -245,7 +245,7 @@ export default class UX_S_Items {
 		if (!!h) {
 			this.si_trait_things.items = h.things_unique_havingTraits ?? [];
 			const thing = get(w_ancestry_forDetails)?.thing;
-			thing_traits = thing?.traits ?? [];
+			thing_traits = thing?.si_traits?.items ?? [];
 			if (!!thing && thing_traits.length > 0) {
 				// compute which index [trait] corresponds to the thing
 				const index = this.si_trait_things.items.findIndex((t: Thing) => t.id == thing.id);

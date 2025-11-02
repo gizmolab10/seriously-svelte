@@ -11,7 +11,6 @@ export default class Thing extends Persistable {
 	si_ancestries = new S_Items<Ancestry>([]);
 	si_children = new S_Items<Thing>([]);
 	si_parents = new S_Items<Thing>([]);
-	si_traits = new S_Items<Trait>([]);
 	bulkRootID: string = k.empty;
 	t_thing: T_Thing;
 	title: string;
@@ -25,9 +24,9 @@ export default class Thing extends Persistable {
 		this.color = color;
 	};
 	
-	get si_tags():				S_Items		   <Tag> { return h.si_tags_forThingHID(this.hid) ?? []; }
+	get si_tags():				S_Items		   <Tag> { return h.si_tags_forThingHID(this.hid); }
+	get si_traits():			S_Items		 <Trait> { return h.si_traits_forOwnerHID(this.hid); }
 	get parents():				Array		 <Thing> { return this.parents_ofKind(T_Predicate.contains); }
-	get traits():				Array		 <Trait> { return h.traits_forOwnerHID(this.hid) ?? []; }
 	get parentIDs():			Array		<string> { return this.parents.map(t => t.id); }
 	get ancestries():		 	Array	  <Ancestry> { return this.ancestries_create_forPredicate(Predicate.contains); }
 	get childRelationships():	Array <Relationship> { return this.relationships_ofKind_forParents(T_Predicate.contains, false); }
@@ -35,7 +34,7 @@ export default class Thing extends Persistable {
 	get fields():		  		Dictionary  <string> { return { title: this.title, color: this.color, type: this.t_thing }; }
 	get abbreviated_title():				  string { return this.title.split(' ').map(word => word[0]).join(k.empty).toLowerCase(); }
 	get idBridging():						  string { return this.isBulkAlias ? this.bulkRootID : this.id; }
-	get description():						  string { return this.id + ' "' + this.title + '"'; }
+	get description():						  string { return this.id + ' "' + this.title + k.quote; }
 	get breadcrumb_title():					  string { return this.title.clipWithEllipsisAt(15); }
 	get width_ofTitle():					  number { return u.getWidthOf(this.title); }
 	get isRoot():							 boolean { return this.t_thing == T_Thing.root; }
