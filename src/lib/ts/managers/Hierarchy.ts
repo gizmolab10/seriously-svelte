@@ -394,6 +394,12 @@ export class Hierarchy {
 		saved.map(r => this.relationship_remember(r));
 	}
 
+	relationships_inBothDirections_forThing_andKind(thing: Thing, kind: string): Array<Relationship> {
+		const childrenRelationships = this.relationships_ofKind_forParents_ofThing(kind, false, thing);
+		const parentsRelationships = this.relationships_ofKind_forParents_ofThing(kind, true, thing);
+		return u.uniquely_concatenateArrays_ofIdentifiables(parentsRelationships, childrenRelationships) as Array<Relationship>;
+	}
+
 	relationships_forget_all() {
 		this.relationships_byParentHID = {};
 		this.relationships_byChildHID = {};
@@ -408,6 +414,26 @@ export class Hierarchy {
 			}
 		}
 		return true;
+	}
+
+	relationships_ofKind_forParents_ofThing(kind: string, forParents: boolean, thing: Thing | null): Array<Relationship> {
+		if (!!thing) {
+			const id = forParents ? thing.id : thing.idBridging;		//  use idBridging for children, in case thing is a bulk alias
+			if ((!!id || id == k.empty) && id != k.unknown) {
+				return this.relationships_forKindPredicate_hid_thing_isChild(kind, id.hash(), forParents);
+			}
+		}
+		return [];
+	}
+
+	relationships_forParent_ofKind(parent: Thing, predicate: Predicate): Array<Relationship> {
+		let relationships: Array<Relationship> = [] 
+		if (predicate.isBidirectional) {
+			relationships = h.relationships_inBothDirections_forThing_andKind(parent, predicate.kind);
+		} else {
+			relationships = h.relationships_ofKind_forParents_ofThing(predicate.kind, true, parent);
+		}
+		return relationships;
 	}
 
 	relationships_forKindPredicate_hid_thing_isChild(kind: string, hid: Integer, forParents: boolean): Array<Relationship> {
@@ -633,7 +659,6 @@ export class Hierarchy {
 
 	get ancestries(): Array<Ancestry> { return Object.values(this.ancestry_byHID); }
 	si_ancestries_byHID_forKind(kind: string) { return this.ancestry_byKind_andHID[kind] ?? {}; }
-	si_ancesties_forThingHID(hid: Integer): S_Items<Ancestry> { return this.si_ancestries_byThingHID[hid]; }
 	get ancestries_thatAreVisible(): Array<Ancestry> { return this.rootAncestry.visibleSubtree_ancestries(); }
 
 	ancestries_forget_all() {
@@ -653,6 +678,14 @@ export class Hierarchy {
 		this.ancestries_forget_all();
 		this.ancestry_remember(rootAncestry);
 		// signals.signal_rebuildGraph_from(rootAncestry);
+	}
+
+	si_ancesties_forThingHID(hid: Integer): S_Items<Ancestry> {
+		const thing = this.thing_forHID(hid);
+		if (!!thing) {
+			this.ancestries_create_forThing_andPredicate(thing, Predicate.contains);
+		}
+		return this.si_ancestries_byThingHID[hid] ?? new S_Items<Ancestry>([]);
 	}
 
 	async ancestries_rebuild_traverse_persistentDelete(ancestries: Array<Ancestry>) {
@@ -681,6 +714,50 @@ export class Hierarchy {
 			debug.log_grab(`  DELETE, FOCUS grabbed: "${get(w_ancestry_focus).isGrabbed}"`);
 			layout.grand_build();
 		}
+	}
+
+	ancestries_create_forThing_andPredicate(thing: Thing | null, predicate: Predicate | null, visited: string[] = []): Array<Ancestry> {
+
+		// the ancestry of each {parent or related}
+		// recursively, all the way to the root or ???
+		// 
+		// typically just one, can be multiple (hah!)
+		// relateds are bidirectional, and do not participate in the hierarchy
+		// parent ancestries have same predicate and relationship as children
+		//	but the relationship is interpreted backwards
+
+		let ancestries: Array<Ancestry> = [];
+		if (!!thing && !thing.isRoot && !!predicate) {
+			function addAncestry(ancestry: Ancestry | null) {
+				if (!!ancestry) {
+					ancestries.push(ancestry);
+				}
+			}
+			const parentRelationships = this.relationships_forParent_ofKind(thing, predicate);
+			for (const parentRelationship of parentRelationships) {
+				if (predicate.isBidirectional) {
+					const child = parentRelationship.child;
+					if (!!child && child.id != thing.id) {
+						addAncestry(this.ancestry_remember_createUnique(parentRelationship.id, predicate.kind));
+					}
+				} else {
+					const parent = parentRelationship.parent;
+					if (!!parent && !visited.includes(parent.id)) {
+						const id_parentRelationship = parentRelationship.id;		// TODO, this is the wrong relationship; needs the next one
+						const parentAncestries = h.ancestries_create_forThing_andPredicate(parent, predicate, [...visited, parent.id]) ?? [];
+						if (parentAncestries.length == 0) {
+							addAncestry(this.rootAncestry.ancestry_createUnique_byAppending_relationshipID(id_parentRelationship));
+						} else {
+							parentAncestries.map((a: Ancestry) => addAncestry(a.ancestry_createUnique_byAppending_relationshipID(id_parentRelationship)));
+						}
+					}
+				}
+			}
+			ancestries = u.strip_hidDuplicates(ancestries);
+			ancestries = u.sort_byOrder(ancestries).reverse();
+			this.si_ancestries_byThingHID[thing.hid] = new S_Items<Ancestry>(ancestries);
+		}
+		return ancestries;
 	}
 
 	static readonly _____ALTERATION: unique symbol;

@@ -117,7 +117,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	things_childrenFor(kind: string): Array<Thing> {
-		const relationships = this.thing?.relationships_ofKind_forParents(kind, true);
+		const relationships = h.relationships_ofKind_forParents_ofThing(kind, true, this.thing);
 		let children: Array<Thing> = [];
 		if (!this.isRoot && !!relationships) {
 			for (const relationship of relationships) {
@@ -138,8 +138,8 @@ export default class Ancestry extends Identifiable {
 	get hasRelevantRelationships():			 boolean { return this.relevantRelationships.length > 0; }
 	get relevantRelationships(): Array<Relationship> { return this.relationships_forChildren(true); }
 	get relationship_hids():		  Array<Integer> { return this.relationship_ids.map(i => i.hash()); }
-	get parentRelationships():	 Array<Relationship> { return this.relationships_ofKind_forParents(this.kind, true); }
-	get childRelationships():	 Array<Relationship> { return this.relationships_ofKind_forParents(this.kind, false); }
+	get parentRelationships():	 Array<Relationship> { return h.relationships_ofKind_forParents_ofThing(this.kind, true, this.thing); }
+	get childRelationships():	 Array<Relationship> { return h.relationships_ofKind_forParents_ofThing(this.kind, false, this.thing); }
 	get relationship_ids():			  Array <string> { return this.isRoot ? [] : this.pathString.split(k.separator.generic); }
 
 	get relationships(): Array<Relationship> {
@@ -150,10 +150,6 @@ export default class Ancestry extends Identifiable {
 	relationships_count_forChildren(forChildren: boolean):		  number { return this.relationships_forChildren(forChildren).length; }
 	relationshipAt(back: number = 1):				 Relationship | null { return h.relationship_forHID(this.idAt(back).hash()) ?? null; }
 	relationships_forChildren(forChildren: boolean): Array<Relationship> { return forChildren ? this.childRelationships : this.parentRelationships; }
-	
-	relationships_ofKind_forParents(kind: string, forParents: boolean): Array<Relationship> {
-		return this.thing?.relationships_ofKind_forParents(kind, forParents) ?? [];
-	}
 
 	static readonly _____SVG: unique symbol;
 
@@ -175,7 +171,7 @@ export default class Ancestry extends Identifiable {
 		if (!!h) {
 			for (const predicate of h.predicates) {
 				if (predicate.isBidirectional) {
-					const parents = this.thing?.ancestries_create_forPredicate(predicate);
+					const parents = h.ancestries_create_forThing_andPredicate(this.thing, predicate);
 					if (!!parents) {	// each of the parents is bidirectional TO this ancestry's thing
 						ancestries = u.uniquely_concatenateArrays_ofIdentifiables(ancestries, parents) as Array<Ancestry>;
 					}
@@ -747,7 +743,7 @@ export default class Ancestry extends Identifiable {
 	ancestries_createUnique_forPredicate(predicate: Predicate | null): Array<Ancestry> {
 		let ancestries: Array<Ancestry> = [];
 		if (!!predicate) {
-			const relationships = this.relationships_ofKind_forParents(predicate.kind, false);
+			const relationships = h.relationships_ofKind_forParents_ofThing(predicate.kind, false, this.thing);
 			const isContains = predicate.kind == T_Predicate.contains;
 			if (relationships.length > 0) {
 				for (const relationship of relationships) {

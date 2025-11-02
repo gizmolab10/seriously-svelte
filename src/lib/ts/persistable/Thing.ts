@@ -28,9 +28,9 @@ export default class Thing extends Persistable {
 	get si_ancestries(): null | S_Items   <Ancestry> { return h.si_ancesties_forThingHID(this.hid); }
 	get parents():				Array		 <Thing> { return this.parents_ofKind(T_Predicate.contains); }
 	get parentIDs():			Array		<string> { return this.parents.map(t => t.id); }
-	get ancestries():		 	Array	  <Ancestry> { return this.ancestries_create_forPredicate(Predicate.contains); }
-	get childRelationships():	Array <Relationship> { return this.relationships_ofKind_forParents(T_Predicate.contains, false); }
-	get relatedRelationships(): Array <Relationship> { return this.relationships_ofKind_forParents(T_Predicate.isRelated, false); }
+	get ancestries():		 	Array	  <Ancestry> { return this.si_ancestries?.items ?? []; }
+	get childRelationships():	Array <Relationship> { return h.relationships_ofKind_forParents_ofThing(T_Predicate.contains, false, this); }
+	get relatedRelationships(): Array <Relationship> { return h.relationships_ofKind_forParents_ofThing(T_Predicate.isRelated, false, this); }
 	get fields():		  		Dictionary  <string> { return { title: this.title, color: this.color, type: this.t_thing }; }
 	get abbreviated_title():				  string { return this.title.split(' ').map(word => word[0]).join(k.empty).toLowerCase(); }
 	get idBridging():						  string { return this.isBulkAlias ? this.bulkRootID : this.id; }
@@ -84,26 +84,12 @@ export default class Thing extends Persistable {
 		w_thing_color.set(`${this.id}${k.separator.generic}${get(w_count_rebuild)}`);
 	}
 
-	relationships_inBothDirections_forKind(kind: string): Array<Relationship> {
-		const childrenRelationships = this.relationships_ofKind_forParents(kind, false);
-		const parentsRelationships = this.relationships_ofKind_forParents(kind, true);
-		return u.uniquely_concatenateArrays_ofIdentifiables(parentsRelationships, childrenRelationships) as Array<Relationship>;
-	}
-
 	async persistent_create_orUpdate(already_persisted: boolean) {
 		if (already_persisted) {
 			await databases.db_now.thing_persistentUpdate(this);
 		} else {
 			await databases.db_now.thing_remember_persistentCreate(this);
 		}
-	}
-
-	relationships_ofKind_forParents(kind: string, forParents: boolean): Array<Relationship> {
-		const id = forParents ? this.id : this.idBridging;		//  use idBridging for children, in case thing is a bulk alias
-		if ((!!id || id == k.empty) && id != k.unknown) {
-			return h.relationships_forKindPredicate_hid_thing_isChild(kind, id.hash(), forParents);
-		}
-		return [];
 	}
 
 	crumbWidth(numberOfParents: number): number {
@@ -114,17 +100,6 @@ export default class Thing extends Persistable {
 			default: return forNone + 18;
 		}
 	}
-
-	parent_relationships_ofKind(predicate: Predicate): Array<Relationship> {
-		let relationships: Array<Relationship> = [] 
-		if (predicate.isBidirectional) {
-			relationships = this.relationships_inBothDirections_forKind(predicate.kind);
-		} else {
-			relationships = this.relationships_ofKind_forParents(predicate.kind, true);
-		}
-		return relationships;
-	}
-
 
 	remove_fromGrabbed_andExpanded_andResolveFocus() {
 		// called when this (thing) is being deleted
@@ -142,7 +117,7 @@ export default class Thing extends Persistable {
 	parents_ofKind(kind: string): Array<Thing> {
 		let parents: Array<Thing> = [];
 		if (!this.isRoot) {
-			const relationships = this.relationships_ofKind_forParents(kind, true);
+			const relationships = h.relationships_ofKind_forParents_ofThing(kind, true, this);
 			for (const relationship of relationships) {
 				const thing = relationship.parent;
 				if (!!thing) {
@@ -166,59 +141,16 @@ export default class Thing extends Persistable {
 		let ancestries: Array<Ancestry> = [];
 		if (!!predicate){
 			if (predicate.isBidirectional) {
-				ancestries = this.ancestries_create_forPredicate(predicate);
+				ancestries = h.ancestries_create_forThing_andPredicate(this, predicate);
 			} else {
 				let parents = this.parents_ofKind(predicate.kind) ?? [];
 				for (const parent of parents) {
-					const parentAncestries = parent.isRoot ? [h.rootAncestry] : parent.ancestries_create_forPredicate(predicate);
+					const parentAncestries = parent.isRoot ? [h.rootAncestry] : h.ancestries_create_forThing_andPredicate(parent, predicate);
 					ancestries = u.concatenateArrays(ancestries, parentAncestries);
 				}
 			}
 			ancestries = u.strip_thingDuplicates_from(u.strip_falsies(ancestries));
 		}
-		return ancestries;
-	}
-
-	ancestries_create_forPredicate(predicate: Predicate | null, visited: string[] = []): Array<Ancestry> {
-
-		// the ancestry of each {parent or related}
-		// recursively, all the way to the root or ???
-		// 
-		// typically just one, can be multiple (hah!)
-		// relateds are bidirectional, and do not participate in the hierarchy
-		// parent ancestries have same predicate and relationship as children
-		//	but the relationship is interpreted backwards
-
-		let ancestries: Array<Ancestry> = [];
-		if (!this.isRoot && !!predicate) {
-			function addAncestry(ancestry: Ancestry | null) {
-				if (!!ancestry) {
-					ancestries.push(ancestry);
-				}
-			}
-			const parentRelationships = this.parent_relationships_ofKind(predicate);
-			for (const parentRelationship of parentRelationships) {
-				if (predicate.isBidirectional) {
-					const child = parentRelationship.child;
-					if (!!child && child.id != this.id) {
-						addAncestry(h.ancestry_remember_createUnique(parentRelationship.id, predicate.kind));
-					}
-				} else {
-					const parent = parentRelationship.parent;
-					if (!!parent && !visited.includes(parent.id)) {
-						const id_parentRelationship = parentRelationship.id;		// TODO, this is the wrong relationship; needs the next one
-						const parentAncestries = parent.ancestries_create_forPredicate(predicate, [...visited, parent.id]) ?? [];
-						if (parentAncestries.length == 0) {
-							addAncestry(h.rootAncestry.ancestry_createUnique_byAppending_relationshipID(id_parentRelationship));
-						} else {
-							parentAncestries.map((p: Ancestry) => addAncestry(p.ancestry_createUnique_byAppending_relationshipID(id_parentRelationship)));
-						}
-					}
-				}
-			}
-			ancestries = u.strip_hidDuplicates(ancestries);
-		}
-		ancestries = u.sort_byOrder(ancestries).reverse();
 		return ancestries;
 	}
 	
