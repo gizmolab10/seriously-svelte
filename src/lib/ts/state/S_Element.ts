@@ -1,6 +1,6 @@
 import { w_s_hover, w_control_key_down, w_background_color } from '../managers/Stores';
+import { Ancestry, S_Widget, T_Element, T_Control } from '../common/Global_Imports';
 import { k, x, colors, elements, controls } from '../common/Global_Imports';
-import { Ancestry, T_Element, T_Control } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
 
@@ -17,6 +17,7 @@ import { get } from 'svelte/store';
 
 export default class S_Element {
 	html_element: HTMLElement | null = null;
+	s_widget: S_Widget | null = null;		// only for dots
 	defaultDisabledColor = '#999999';
 	defaultCursor = k.cursor_default;
 	hoverCursor = k.cursor_default;
@@ -32,9 +33,10 @@ export default class S_Element {
 	isFocus = false;
 	name = k.empty;
 
-	constructor(identifiable: Identifiable, type: T_Element, subtype: string) {
+	constructor(identifiable: Identifiable, type: T_Element, subtype: string, s_widget: S_Widget | null = null) {
 		this.name = elements.name_from(identifiable, type, subtype);
 		this.identifiable = identifiable;
+		this.s_widget = s_widget;
 		this.subtype = subtype;
 		this.type = type;
 		if (this.isADot) {
@@ -64,11 +66,10 @@ export default class S_Element {
 	set isHovering(isHovering: boolean) {
 		const old_hover = get(w_s_hover);
 		const same = old_hover == this;
-		const new_hover = isHovering ? this : null;
+		let new_hover = isHovering ? this : this.s_widget;
 		// if !same and isHovering, set to this, if same and !isHovering, set to null, otherwise leave it unchanged
 		if (same != isHovering && new_hover != old_hover) {
 			w_s_hover.set(new_hover);
-			// console.log(`set ${this.name} to ${isHovering ? '' : 'NOT '}hovering`);
 		}
 	}
 
