@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { h, k, u, x, debug, layout, signals, controls, elements, databases } from '../../ts/common/Global_Imports';
+	import { h, k, u, x, debug, search, layout, signals, controls, elements, databases } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { T_Search, T_Layer, T_Component, T_Edit } from '../../ts/common/Global_Imports';
 	import { S_Mouse, S_Element, S_Component } from '../../ts/common/Global_Imports';
@@ -18,11 +18,13 @@
 	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_items: w_expanded } = x.si_expanded;
 	let title_width = (thing?.width_ofTitle ?? 0) + title_extra();
+	let layout_timer: number | null = null;
 	let title_binded = thing?.title ?? k.empty;
 	let title_component: S_Component;
 	let title_prior = thing?.title;
 	let s_component: S_Component;
 	let color = s_widget.color;
+	let layoutPending = false;
 	let reattachments = 0;
 	let trigger = k.empty;
 	let ghost = null;
@@ -208,6 +210,8 @@
 			stop_andPersist();
 			debug.log_edit(`H BLUR ${title_binded}`);
 			updateInputWidth();
+			layout.grand_layout();
+			search.update_search();
 		}
 	}
 
@@ -278,6 +282,81 @@
 		const prior = $w_thing_title;
 		if (prior != title && !!$w_s_title_edit) {
 			extractRange_fromInput_toThing();
+			$w_thing_title = title;
+			debug.log_edit(`TITLE ${title}`);
+			$w_s_title_edit.title = title;
+			if (layout_timer !== null) {
+				clearTimeout(layout_timer);
+			}
+			// Debounce: only layout after typing pauses
+			layout_timer = setTimeout(() => {
+				// Use requestAnimationFrame to ensure we don't interrupt any ongoing rendering
+				requestAnimationFrame(() => {
+					layout_timer = null;
+					if ($w_s_title_edit) {
+						$w_s_title_edit.setState_temporarilyTo_whileApplying(T_Edit.percolating, () => {
+							layout.grand_layout();
+						});
+					}
+				});
+			}, 400);
+			
+			debug.log_edit(`UPDATED ${$w_s_title_edit.description}`);
+		}
+	}
+
+	function ztitle_updatedTo(title: string | null) {
+		const prior = $w_thing_title;
+		if (prior != title && !!$w_s_title_edit) {
+			extractRange_fromInput_toThing();
+			$w_thing_title = title;
+			debug.log_edit(`TITLE ${title}`);
+			$w_s_title_edit.title = title;
+			
+			// Defer layout to next animation frame (non-blocking)
+			if (!layoutPending) {
+				layoutPending = true;
+				requestAnimationFrame(() => {
+					$w_s_title_edit?.setState_temporarilyTo_whileApplying(T_Edit.percolating, () => {
+						layout.grand_layout();
+					});
+					layoutPending = false;
+				});
+			}
+			
+			debug.log_edit(`UPDATED ${$w_s_title_edit.description}`);
+		}
+	}
+
+	function ytitle_updatedTo(title: string | null) {
+		const prior = $w_thing_title;
+		if (prior != title && !!$w_s_title_edit) {
+			extractRange_fromInput_toThing();
+			$w_thing_title = title;
+			debug.log_edit(`TITLE ${title}`);
+			$w_s_title_edit.title = title;
+			
+			// Clear any pending layout
+			if (layout_timer !== null) {
+				clearTimeout(layout_timer);
+			}
+			
+			// Debounce layout - only call after typing pauses
+			layout_timer = setTimeout(() => {
+				$w_s_title_edit.setState_temporarilyTo_whileApplying(T_Edit.percolating, () => {
+					layout.grand_layout();
+				});
+				layout_timer = null;
+			}, 500);
+			
+			debug.log_edit(`UPDATED ${$w_s_title_edit.description}`);
+		}
+	}
+
+	function xtitle_updatedTo(title: string | null) {
+		const prior = $w_thing_title;
+		if (prior != title && !!$w_s_title_edit) {
+			extractRange_fromInput_toThing();
 			$w_thing_title = title;		// tell Info to update it's selection's title
 			debug.log_edit(`TITLE ${title}`);
 			$w_s_title_edit.title = title;
@@ -286,7 +365,6 @@
 				// FUBAR: this removes focus!!! needs editing state
 			});
 			debug.log_edit(`UPDATED ${$w_s_title_edit.description}`);
-			search.update_search();
 		}
 	}
 

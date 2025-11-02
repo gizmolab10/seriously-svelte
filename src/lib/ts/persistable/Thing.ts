@@ -8,8 +8,6 @@ import { get } from 'svelte/store';
 
 export default class Thing extends Persistable {
 	selectionRange = new Seriously_Range(0, 0);
-	si_children = new S_Items<Thing>([]);
-	si_parents = new S_Items<Thing>([]);
 	bulkRootID: string = k.empty;
 	t_thing: T_Thing;
 	title: string;

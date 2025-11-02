@@ -49,6 +49,16 @@ export default class S_Items<T> {
 		this.item = this.items[i] ?? null;
 		this.w_description.set(`id (@ ${this.index}): ${this.identifiable?.id}   ids (${this.length}): ${this.descriptionBy_sorted_IDs}`);
     }
+
+	add_uniquely_from(from: S_Items<T> | null) {
+		if (!!from) {
+			for (const item of from.items) {
+				if (!this.items.includes(item)) {
+					this.push(item);
+				}
+			}	
+		}
+	}
 	
 	set items(items: Array<T>) {
 		const prior = this.index;

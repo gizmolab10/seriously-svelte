@@ -3,8 +3,8 @@ import { T_Graph, T_Create, T_Kinship, T_Predicate, T_Alteration, T_Component } 
 import { Rect, Size, Point, Thing, Direction, Predicate, Relationship } from '../common/Global_Imports';
 import { w_t_database, w_depth_limit, w_s_title_edit, w_s_alteration } from '../managers/Stores';
 import { G_Widget, G_Paging, G_Cluster, G_TreeLine } from '../common/Global_Imports';
+import { S_Items, S_Component, S_Title_Edit } from '../common/Global_Imports';
 import { w_ancestry_focus, w_show_graph_ofType } from '../managers/Stores';
-import { S_Component, S_Title_Edit } from '../common/Global_Imports';
 import type { Dictionary, Integer } from '../types/Types';
 import { T_Database } from '../database/DB_Common';
 import { get, Writable } from 'svelte/store';
@@ -104,6 +104,7 @@ export default class Ancestry extends Identifiable {
 	static readonly _____THINGS: unique symbol;
 
 	get thing():  Thing | null { return h?.thing_forAncestry(this) ?? null; }
+	get si_children(): S_Items<Thing> { return new S_Items<Thing>(this.children); }
 	get children():  Array<Thing> { return h?.things_forAncestries(this.childAncestries) ?? []; }
 	get ancestors(): Array<Thing> { return h?.things_forAncestry(this) ?? []; }
 	get parents():  Array<Thing> { return this.thing?.parents ?? []; }
@@ -215,7 +216,7 @@ export default class Ancestry extends Identifiable {
 	get halfHeight_ofVisibleSubtree(): number { return this.height_ofVisibleSubtree() / 2; }
 	get halfSize_ofVisibleSubtree():     Size { return this.size_ofVisibleSubtree.dividedInHalf; }
 	get size_ofVisibleSubtree():	     Size { return new Size(this.visibleSubtree_width(), this.height_ofVisibleSubtree()); }
-	get hidden_by_depth_limit():	  boolean { return !this.isVisible_accordingTo_depth_below_focus && this.isExpanded && this.hasChildren; }
+	get hidden_by_depth_limit():	  boolean { return !this.isVisible_accordingTo_depth_below_focus && this.isExpanded && this.hasChildren && controls.inTreeMode; }
 
 	assure_isVisible_within(ancestries: Array<Ancestry>) {
 		if (!!this.predicate && controls.inRadialMode) {

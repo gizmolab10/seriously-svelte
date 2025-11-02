@@ -1,8 +1,7 @@
 <script lang='ts'>
-	import { w_search_state, w_count_details, w_rect_ofGraphView } from '../../ts/managers/Stores';
 	import { T_Layer, T_Graph, T_Detail, T_Direction } from '../../ts/common/Global_Imports';
-	import { w_show_search_controls, w_show_graph_ofType } from '../../ts/managers/Stores';
 	import { c, k, u, x, Point, layout, elements } from '../../ts/common/Global_Imports';
+	import { w_search_state, w_count_details } from '../../ts/managers/Stores';
 	import Banner_Hideable from './Banner_Hideable.svelte';
 	import D_Preferences from './D_Preferences.svelte';
 	import Separator from '../draw/Separator.svelte';
@@ -17,18 +16,10 @@
 	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_items: w_trait_things } = x.si_trait_things;
 	const next_previous_titles = [T_Direction.previous, T_Direction.next];
-	let show_secondary_controls = $w_show_search_controls || ($w_show_graph_ofType == T_Graph.tree);
-	let prior_graph_type = $w_show_graph_ofType;
 	let prior_search_state = $w_search_state;
 	let extra_selection_titles = [];
 	let extra_traits_titles = [];
 	let extra_tags_titles = [];
-
-	$: if (prior_graph_type != $w_show_graph_ofType) {
-		show_secondary_controls = $w_show_search_controls || ($w_show_graph_ofType == T_Graph.tree);
-		prior_graph_type = $w_show_graph_ofType;
-		$w_count_details++;
-	}
 
 	$: {
 		const _ = `${$w_trait_things.descriptionBy_sorted_IDs}
@@ -56,6 +47,18 @@
 	}
 
 </script>
+
+<style>
+
+	.details-stack::-webkit-scrollbar {
+		display: none;                /* Chrome, Safari, Opera */
+	}
+
+	.details-stack > :global(*) {
+		flex-shrink: 0;
+	}
+
+</style>
 
 {#key $w_count_details}
 	<div class='details-stack'
@@ -106,15 +109,3 @@
 	corner_radius={k.radius.gull_wings.thick}
 	length={layout.windowSize.height - layout.controls_boxHeight + 6.5}
 	origin={new Point(k.width.details - 2, layout.controls_boxHeight - 2.5)}/>
-
-<style>
-
-	.details-stack::-webkit-scrollbar {
-		display: none;                /* Chrome, Safari, Opera */
-	}
-
-	.details-stack > :global(*) {
-		flex-shrink: 0;
-	}
-
-</style>

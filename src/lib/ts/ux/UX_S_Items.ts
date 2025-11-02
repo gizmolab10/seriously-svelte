@@ -62,7 +62,7 @@ export default class UX_S_Items {
 	update() {
 		if (get(w_t_startup) == T_Startup.ready) {
 			this.grabs_update_forSearch();
-			this.traitThings_update();
+			this.thing_traits_update();
 			this.tags_update();
 		}
 	}
@@ -232,7 +232,7 @@ export default class UX_S_Items {
 		}
 	}
 
-	traitThings_update() {
+	thing_traits_update() {
 
 		////////////////////////////////////////////////////////////////
 		//															  //

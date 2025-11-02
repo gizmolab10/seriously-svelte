@@ -53,7 +53,6 @@ export default class G_Layout {
 			g_tree.grand_layout_tree();
 		}
 		signals.signal_reposition_widgets_fromFocus(component);
-		signals.signal_reattach_widgets_fromFocus(component);
 	}
 
 	grand_adjust_toFit() {

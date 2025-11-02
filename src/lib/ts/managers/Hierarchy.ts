@@ -14,7 +14,7 @@ import { get } from 'svelte/store';
 export let h!: Hierarchy;
 w_hierarchy.subscribe(value => h = value);
 export type Ancestry_ByHID = { [hid: Integer]: Ancestry }
-export type Relationships_ByHID = { [hid: Integer]: S_Items<Relationship> }
+export type SI_Relationships_ByHID = { [hid: Integer]: S_Items<Relationship> }
 
 export class Hierarchy {
 	private si_relationships_byKind: { [kind: string]: S_Items<Relationship> } = {};
@@ -22,17 +22,17 @@ export class Hierarchy {
 	private si_ancestries_byThingHID: { [hid: Integer]: S_Items<Ancestry> } = {};
 	private si_traits_byOwnerHID: { [ownerHID: Integer]: S_Items<Trait> } = {};
 	private ancestry_byKind_andHID: { [kind: string]: Ancestry_ByHID } = {};
+	private si_things_byT_trait: { [t_trait: string]: S_Items<Thing> } = {};
 	private si_traits_byThingHID: { [hid: Integer]: S_Items<Trait> } = {};
 	private si_traits_byType: { [t_trait: string]: S_Items<Trait> } = {};
-	private things_byT_Trait: { [t_trait: string]: Array<Thing> } = {};
 	private relationship_byHID: { [hid: Integer]: Relationship } = {};
 	private si_tags_byThingHID: { [hid: Integer]: S_Items<Tag> } = {};
+	private si_relationships_byParentHID: SI_Relationships_ByHID = {};
+	private si_relationships_byChildHID: SI_Relationships_ByHID = {};
 	private things_byType: { [t_thing: string]: Array<Thing> } = {};
 	private things_byTitle: { [title: string]: Array<Thing> } = {};
 	private predicate_byKind: { [kind: string]: Predicate } = {};
 	private thing_byAncestryHID: { [hid: Integer]: Thing } = {};
-	private relationships_byParentHID: Relationships_ByHID = {};
-	private relationships_byChildHID: Relationships_ByHID = {};
 	private ancestry_byHID: { [hid: Integer]: Ancestry } = {};
 	private access_byKind: { [kind: string]: Access } = {};
 	private access_byHID: { [hid: Integer]: Access } = {};
@@ -90,8 +90,7 @@ export class Hierarchy {
 	static readonly _____THINGS: unique symbol;
 
 	things_forTitle(title: string): Array<Thing> | null { return this.things_byTitle[title] ?? null; }
-	things_forT_Trait(t_trait: T_Trait): Array<Thing> { return this.things_byT_Trait[t_trait] ?? []; }
-	get things_unique_havingTraits(): Array<Thing> { return u.strip_duplicates(Object.values(this.things_byT_Trait).flat()); }
+	get things_unique_havingTraits(): Array<Thing> { return u.strip_duplicates(Object.values(this.si_things_byT_trait).flat()); }
 
 	get things_unique_havingTags(): Array<Thing> {
 		const hids = Object.keys(this.si_tags_byThingHID);
@@ -309,8 +308,8 @@ export class Hierarchy {
 
 	async thing_forget_persistentDelete(thing: Thing) {
 		const relationships = u.uniquely_concatenateArrays_ofIdentifiables(
-			this.relationships_byParentHID[thing.hid]?.items ?? [],
-			this.relationships_byChildHID[thing.hid]?.items ?? []
+			this.si_relationships_byParentHID[thing.hid]?.items ?? [],
+			this.si_relationships_byChildHID[thing.hid]?.items ?? []
 		) as Array<Relationship>;
 		thing.remove_fromGrabbed_andExpanded_andResolveFocus();
 		this.thing_forget(thing);				// forget so onSnapshot logic will not signal children, do first so UX updates quickly
@@ -401,8 +400,8 @@ export class Hierarchy {
 	}
 
 	relationships_forget_all() {
-		this.relationships_byParentHID = {};
-		this.relationships_byChildHID = {};
+		this.si_relationships_byParentHID = {};
+		this.si_relationships_byChildHID = {};
 		this.relationship_byHID = {};
 		this.relationships = [];
 	}
@@ -437,7 +436,7 @@ export class Hierarchy {
 	}
 
 	relationships_forKindPredicate_hid_thing_isChild(kind: string, hid: Integer, forParents: boolean): Array<Relationship> {
-		const dict = forParents ? this.relationships_byChildHID : this.relationships_byParentHID;
+		const dict = forParents ? this.si_relationships_byChildHID : this.si_relationships_byParentHID;
 		const si_matches = dict[hid];
 		const array: Array<Relationship> = [];
 		if (si_matches) {
@@ -500,13 +499,10 @@ export class Hierarchy {
 		}
 	}
 	
-	relationship_forget_forHID(relationships: Relationships_ByHID, hid: Integer, relationship: Relationship) {
-		let si_relationships = relationships[hid];
-		if (si_relationships) {
+	relationship_forget_forHID(si_relationships_byHID: SI_Relationships_ByHID, hid: Integer, relationship: Relationship) {
+		let si_relationships = si_relationships_byHID[hid];
+		if (!!si_relationships) {
 			si_relationships.remove(relationship);
-			if (si_relationships.length == 0) {
-				delete relationships[hid];
-			}
 		}
 	}
 
@@ -522,12 +518,12 @@ export class Hierarchy {
 		}
 	}
 
-	relationship_remember_byKnown(relationship: Relationship, hid: Integer, relationships: Relationships_ByHID) {
-		let si_relationships = relationships[hid] ?? new S_Items<Relationship>([]);
-		if (!si_relationships.items.map(r => r.id).includes(relationship.id)) {
+	relationship_remember_byKnown(relationship: Relationship, hid: Integer, si_relationships_byHID: SI_Relationships_ByHID) {
+		let si_relationships = si_relationships_byHID[hid] ?? new S_Items<Relationship>([]);
+		if (si_relationships.items.filter(r => r.id == relationship.id).length == 0) {
 			si_relationships.push(relationship);
 		}
-		relationships[hid] = si_relationships;
+		si_relationships_byHID[hid] = si_relationships;
 	}
 
 	relationship_forPredicateKind_parent_child(kind: string, hidParent: Integer, hidChild: Integer): Relationship | null {
@@ -565,8 +561,8 @@ export class Hierarchy {
 		delete this.relationship_byHID[relationship.hid];
 		this.si_relationships_forKind(relationship.kind).remove(relationship);
 		this.relationships = Identifiable.remove_byHID<Relationship>(this.relationships, relationship);
-		this.relationship_forget_forHID(this.relationships_byChildHID, relationship.hidChild, relationship);
-		this.relationship_forget_forHID(this.relationships_byParentHID, relationship.hidParent, relationship);
+		this.relationship_forget_forHID(this.si_relationships_byChildHID, relationship.hidChild, relationship);
+		this.relationship_forget_forHID(this.si_relationships_byParentHID, relationship.hidParent, relationship);
 	}
 	
 	relationship_remember(relationship: Relationship) {
@@ -580,8 +576,8 @@ export class Hierarchy {
 				this.si_relationships_byKind[relationship.kind] = si_relationships;
 			}
 			this.relationship_byHID[relationship.hid] = relationship;
-			this.relationship_remember_byKnown(relationship, relationship.hidChild, this.relationships_byChildHID);
-			this.relationship_remember_byKnown(relationship, relationship.hidParent, this.relationships_byParentHID);
+			this.relationship_remember_byKnown(relationship, relationship.hidChild, this.si_relationships_byChildHID);
+			this.relationship_remember_byKnown(relationship, relationship.hidParent, this.si_relationships_byParentHID);
 			if (relationship.idBase != this.db.idBase) {
 				alert(`relationship crossing dbs: ${relationship.description}`);
 			}
@@ -1254,7 +1250,7 @@ export class Hierarchy {
 		delete this.si_traits_byOwnerHID[ownerHID];
 		delete this.si_traits_byThingHID[ownerHID];
 		delete this.si_traits_byType[trait.t_trait];
-		delete this.things_byT_Trait[trait.t_trait];
+		delete this.si_things_byT_trait[trait.t_trait];
 		this.si_traits.remove(trait);
 	}
 
@@ -1262,9 +1258,9 @@ export class Hierarchy {
 		const hid = trait.ownerID.hash();
 		this.trait_byHID[trait.hid] = trait;
 		if (!!trait.owner) {
-			let things = this.things_byT_Trait[trait.t_trait] ?? [];
-			things.push(trait.owner);
-			this.things_byT_Trait[trait.t_trait] = things;
+			let si_things = this.si_things_byT_trait[trait.t_trait] ?? new S_Items<Thing>([]);
+			si_things.push(trait.owner);
+			this.si_things_byT_trait[trait.t_trait] = si_things;
 		}
 		this.traits.push(trait);
 		(this.si_traits_byOwnerHID[hid] = this.si_traits_byOwnerHID[hid] ?? new S_Items<Trait>([])).push(trait);
