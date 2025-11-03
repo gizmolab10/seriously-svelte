@@ -47,7 +47,7 @@ class UX_Details {
 		switch (t_detail) {
 			case T_Detail.traits:	 x.select_next_thingTrait(next); break;
 			case T_Detail.selection: x.grab_next_ancestry(next); break;
-			case T_Detail.tags:  	 x.select_next_tag(next); break;
+			case T_Detail.tags:  	 x.select_next_thing_tag(next); break;
 		}
 	}
 

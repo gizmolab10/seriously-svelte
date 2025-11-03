@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { T_Layer, T_Graph, T_Detail, T_Direction } from '../../ts/common/Global_Imports';
-	import { c, k, u, x, Point, layout, elements } from '../../ts/common/Global_Imports';
-	import { w_search_state, w_count_details } from '../../ts/managers/Stores';
+	import { w_search_state, w_count_details, w_ancestry_forDetails } from '../../ts/managers/Stores';
+	import { c, k, x, Point, layout } from '../../ts/common/Global_Imports'; 
+	import { T_Layer, T_Detail } from '../../ts/common/Global_Imports';
 	import Banner_Hideable from './Banner_Hideable.svelte';
 	import D_Preferences from './D_Preferences.svelte';
 	import Separator from '../draw/Separator.svelte';
@@ -12,38 +12,19 @@
 	import D_Data from './D_Data.svelte';
 	import D_Tags from './D_Tags.svelte';
 	const width = k.width.details;
-	const { w_items: w_grabbed } = x.si_grabs;
-	const { w_items: w_thing_tags } = x.si_thing_tags;
-	const { w_items: w_thing_traits } = x.si_thing_traits;
-	const next_previous_titles = [T_Direction.previous, T_Direction.next];
-	let prior_search_state = $w_search_state;
-	let extra_selection_titles = [];
-	let extra_traits_titles = [];
-	let extra_tags_titles = [];
+	const { w_index: w_found } = x.si_found;
+	const { w_description: w_grabs_description } = x.si_grabs;
+	const { w_description: w_tags_description } = x.si_thing_tags;
+	const { w_description: w_traits_description } = x.si_thing_traits;
 
 	$: {
-		const _ = `${$w_thing_traits.descriptionBy_sorted_IDs}
-		:::${$w_grabbed.descriptionBy_sorted_IDs}
-		:::${$w_thing_tags.descriptionBy_sorted_IDs}
-		:::${x.si_found.w_index}
-		:::${$w_search_state}`;
-		const tr_changed = update_titles($w_thing_traits.length, extra_traits_titles);
-		const g_changed = update_titles($w_grabbed.length, extra_selection_titles);
-		const t_changed = update_titles($w_thing_tags.length, extra_tags_titles);
-		const s_changed = $w_search_state != prior_search_state;
-		if (t_changed || g_changed || tr_changed || s_changed) {
-			$w_count_details++;
-		}
-	}
-
-	function update_titles(count: number, titles: string[]): boolean {
-		const new_titles = (count < 2) ? [] : next_previous_titles;
-		if (new_titles.length != titles.length) {
-			titles.length = 0;
-			titles.push(...new_titles);
-			return true;
-		}
-		return false;
+		const _ = `${$w_found}
+		:::${$w_search_state}
+		:::${$w_tags_description}
+		:::${$w_grabs_description}
+		:::${$w_traits_description}
+		:::${$w_ancestry_forDetails}`;
+		$w_count_details++;
 	}
 
 </script>
@@ -73,14 +54,14 @@
 		<Banner_Hideable t_detail={T_Detail.actions}>
 			<D_Actions/>
 		</Banner_Hideable>
-		<Banner_Hideable t_detail={T_Detail.selection} extra_titles={extra_selection_titles}>
+		<Banner_Hideable t_detail={T_Detail.selection}>
 			<D_Selection/>
 		</Banner_Hideable>
 		{#if c.has_standalone_UI}
-			<Banner_Hideable t_detail={T_Detail.tags} extra_titles={extra_tags_titles}>
+			<Banner_Hideable t_detail={T_Detail.tags}>
 				<D_Tags/>
 			</Banner_Hideable>
-			<Banner_Hideable t_detail={T_Detail.traits} extra_titles={extra_traits_titles}>
+			<Banner_Hideable t_detail={T_Detail.traits}>
 				<D_Traits/>
 			</Banner_Hideable>
 		{/if}

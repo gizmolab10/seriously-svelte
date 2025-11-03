@@ -2,14 +2,13 @@
 	import { k, u, T_Layer, T_Detail, layout, details } from '../../ts/common/Global_Imports';
 	import { w_ancestry_forDetails, w_show_details_ofType } from '../../ts/managers/Stores';
 	import Glows_Banner from '../mouse/Glows_Banner.svelte';
-    export let extra_titles: string[] = [];
     export let t_detail: T_Detail;
 	const s_banner_hideable = details.s_banner_hideables_byType[t_detail];
-	const { w_description: w_description } = s_banner_hideable?.si_items;
-	let trigger = k.empty;
-	let hideable_isVisible = true;
+	const { w_description: w_description, w_extra_titles: w_extra_titles } = s_banner_hideable?.si_items;
 	let title = details.banner_title_forDetail(t_detail);
-	let titles = [title, ...extra_titles];
+	let titles = [title, ...$w_extra_titles];
+	let hideable_isVisible = true;
+	let trigger = k.empty;
 
 	update_hideable_isVisible();
 
@@ -27,7 +26,7 @@
 
 	function update_banner_titles() {
 		const new_title = details.banner_title_forDetail(t_detail);
-		const new_titles = [new_title, ...extra_titles];
+		const new_titles = [new_title, ...$w_extra_titles];
 		if (new_titles.join(k.comma) == titles.join(k.comma)) {
 			// console.log(`no trigger: "${new_title}"`);
 		} else {
@@ -85,10 +84,10 @@
 					<Glows_Banner
 						titles={titles}
 						width={k.width.details}
-						isSelected={hideable_isVisible}
 						toggle_hidden={toggle_hidden}
 						banner_id={T_Detail[t_detail]}
 						font_size={k.font_size.banners}
+						isSelected={hideable_isVisible}
 						height={layout.glows_banner_height}/>
 			</div>
 		{/if}

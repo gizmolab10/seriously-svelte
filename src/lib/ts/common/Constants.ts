@@ -1,4 +1,5 @@
 import { tu } from '../utilities/Testworthy_Utilities';
+import { T_Direction } from './Enumerations';
 import { builds } from './Builds';
 
 const dot_size = 14;
@@ -23,8 +24,9 @@ export default class Constants {
 	diameterOf_outer_tinyDots = 19;
 	build_number = builds.build_number;
 	printer_aspect_ratio = 11.69 / 8.27;
-	nothing_to_show = 'Please select something to show here';
+	next_previous_titles: string[] = [T_Direction.previous, T_Direction.next];
 	prevent_selection_style = '-webkit-user-select: none; user-select: none; -moz-user-select: none';
+	nothing_to_show = 'Please select something to show here';
 	name_bulkAdmin = 'Jonathan Sand';
 	cursor_default = 'default';
 	corrupted = 'corrupted';

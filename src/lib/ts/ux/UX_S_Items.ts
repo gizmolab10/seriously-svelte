@@ -1,9 +1,9 @@
 import { h, p, u, debug, search, layout, details, controls } from '../common/Global_Imports';
-import { w_s_alteration, w_s_title_edit, w_si_thing_traits } from '../managers/Stores';
 import { S_Items, T_Detail, T_Search, T_Startup } from '../common/Global_Imports';
 import { w_t_startup, w_data_updated, w_search_state } from '../managers/Stores';
 import { w_ancestry_forDetails, w_ancestry_focus } from '../managers/Stores';
 import { Tag, Thing, Trait, Ancestry } from '../common/Global_Imports';
+import { w_s_alteration, w_s_title_edit } from '../managers/Stores';
 import { w_show_details_ofType } from '../managers/Stores';
 import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
@@ -32,13 +32,13 @@ export default class UX_S_Items {
 
 	constructor() {
 		w_data_updated.subscribe((count: number) => {
-			this.update();
+			this.update_grabs_forSearch();
 		});
 		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
-			this.update();
+			this.update_grabs_forSearch();
 		});
 		w_show_details_ofType.subscribe((t_details: Array<T_Detail>) => {
-			this.update();
+			this.update_grabs_forSearch();
 		});
 		w_t_startup.subscribe((startup: number | null) => {
 			if (startup == T_Startup.ready) {
@@ -49,17 +49,11 @@ export default class UX_S_Items {
 					this.update_grabs_forSearch();
 				});
 				x.si_found.w_index.subscribe((row: number | null) => {
-					this.update();
+					this.update_grabs_forSearch();
 				});
-				this.update();
+				this.update_grabs_forSearch();
 			}
 		});
-	}
-
-	update() {
-		if (get(w_t_startup) == T_Startup.ready) {
-			this.update_grabs_forSearch();
-		}
 	}
 		
 	static readonly _____ANCESTRY: unique symbol;
@@ -87,7 +81,6 @@ export default class UX_S_Items {
 		if (!presented || !presented.equals(ancestry)) {
 			w_ancestry_forDetails.set(ancestry);
 		}
-		w_si_thing_traits.set(this.si_thing_traits);
 	}
 		
 	static readonly _____FOCUS: unique symbol;
@@ -184,12 +177,13 @@ export default class UX_S_Items {
 		this.update_ancestry_forDetails();
 	}
 
-	private update_grabs_forSearch() {
-		if (get(w_search_state) != T_Search.off && this.si_found.length > 0) {
+	update_grabs_forSearch() {
+		if (get(w_t_startup) == T_Startup.ready && get(w_search_state) != T_Search.off && this.si_found.length > 0) {
 			let ancestries = this.si_found.items.map((found: Thing) => found.ancestry).filter(a => !!a) ?? [];
 			ancestries = u.strip_hidDuplicates(ancestries);
 			if (this.si_grabs.descriptionBy_sorted_IDs != u.descriptionBy_sorted_IDs(ancestries)) {
 				this.si_grabs.items = ancestries;
+				this.update_ancestry_forDetails();
 			}
 		}
 	}
@@ -216,27 +210,25 @@ export default class UX_S_Items {
 	//																	//
 	//////////////////////////////////////////////////////////////////////
 
+	select_next_thingTrait(next: boolean) { this.si_thing_traits.find_next_item(next); }
 	get trait(): Trait | null { return h.si_traits.item as Trait | null; }
-	select_next_trait(next: boolean): boolean { return h.si_traits.find_next_item(next); }
 	get thing_trait(): Trait | null { return this.si_thing_traits?.item as Trait | null; }
 	get si_thing_traits(): S_Items<Trait> { return this.ancestry_forDetails?.thing?.si_traits ?? new S_Items<Trait>([]); }
 	
-	select_next_thingTrait(next: boolean) {
-		const si_thing_traits = this.si_thing_traits;
-		if (!!si_thing_traits && si_thing_traits.find_next_item(next)) {
-			const ancestry = si_thing_traits.item?.owner?.ancestry;
-			if (!!ancestry) {
-				ancestry.grabOnly();	// causes reaction (invoking update())
-				if (ancestry.ancestry_assureIsVisible()) {
-					layout.grand_build();
-				}
+	select_next_trait(next: boolean) {
+		const si_traits = h.si_traits;
+		if (!!si_traits && si_traits.find_next_item(next)) {
+			const ancestry = si_traits.item?.owner?.ancestry;
+			if (!!ancestry && ancestry.ancestry_assureIsVisible()) {
+				layout.grand_build();
+				details.redraw();
 			}
 		}
 	}
 	
 	static readonly _____TAGS: unique symbol;
 
-	select_next_tag(next: boolean): boolean { return h.si_tags.find_next_item(next); }
+	select_next_thing_tag(next: boolean) { this.si_thing_tags.find_next_item(next); }
 	get si_thing_tags(): S_Items<Tag> { return this.ancestry_forDetails?.thing?.si_tags ?? new S_Items<Tag>([]); }
 
 }

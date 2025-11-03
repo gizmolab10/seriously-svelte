@@ -1,7 +1,9 @@
 import Identifiable from '../runtime/Identifiable';
 import { get, writable } from 'svelte/store';
+import { k } from '../common/Constants';
 
 export default class S_Items<T> {
+	w_extra_titles = writable<string[]>([]);
 	w_description = writable<string>('');
 	static dummy = new S_Items<any>([]);
     w_item = writable<T | null>(null);
@@ -64,6 +66,8 @@ export default class S_Items<T> {
 		const prior = this.index;
 		const length = items.length;
 		const index = prior.force_between(0, length - 1);
+		const new_titles = (length < 2) ? [] : k.next_previous_titles;
+		this.w_extra_titles.set(new_titles);
 		this.w_items.set(items);
 		this.length = length;
 		this.index = index;

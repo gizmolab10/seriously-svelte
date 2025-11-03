@@ -9,9 +9,10 @@ export default class DB_Bubble extends DB_Common {
 	prior_focus_id: string | null = null;
 	prior_grabbed_ids: string[] = [];
 	t_database = T_Database.bubble;
+	respond_to_focus_event = false;
+	respond_to_grab_event = false;
 	idBase = k.id_base.bubble;
-	debounced_focus = false;
-	debounced_grab = false;
+	invoke_wrapUp = true;
 
 	async fetch_all() {
 		await busy.temporarily_set_isFetching_while(async () => {
@@ -101,7 +102,13 @@ export default class DB_Bubble extends DB_Common {
 				h.root = root;
 			}
 		}
-		h.wrapUp_data_forUX(); // create ancestries and tidy up
+		if (this.invoke_wrapUp) {
+			this.invoke_wrapUp = false;
+			h.wrapUp_data_forUX(); // create ancestries and tidy up
+		} else {
+			h.ancestries_assureAll_createUnique();
+			busy.signal_data_redraw();
+		}
 		if (!!b_overwrite) {
 			w_show_graph_ofType.set(b_inRadialMode ? T_Graph.radial : T_Graph.tree);
 			if (!!b_focus) { // must happen AFTER ancestries are created
@@ -127,22 +134,22 @@ export default class DB_Bubble extends DB_Common {
 		window.parent.postMessage({ type: 'trigger_an_event', trigger: 'ready' }, k.wildcard);
 		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
 			if (!!ancestry && !!ancestry.thing && ancestry.thing.id != this.prior_focus_id) {
-				if (this.debounced_focus) {
+				if (this.respond_to_focus_event) {
 					this.prior_focus_id = ancestry.thing.id;
 					window.parent.postMessage({ type: 'focus_id', id: ancestry.thing.id }, k.wildcard);
 					window.parent.postMessage({ type: 'trigger_an_event', trigger: 'focus_changed' }, k.wildcard);			// post focus id first
 				}
-				this.debounced_focus = true;
+				this.respond_to_focus_event = true;
 			}
 		});
 		x.si_grabs.w_items.subscribe((ancestries: Ancestry[]) => {
 			if (!!ancestries && ancestries.map((ancestry: Ancestry) => ancestry.thing?.id ?? k.corrupted).join(', ') != this.prior_grabbed_ids.join(', ')) {
-				if (this.debounced_grab) {
+				if (this.respond_to_grab_event) {
 					this.prior_grabbed_ids = ancestries.map((ancestry: Ancestry) => ancestry.thing?.id ?? k.corrupted);
 					window.parent.postMessage({ type: 'selected_ids', ids: ancestries.map((ancestry: Ancestry) => ancestry.thing?.id ?? k.corrupted) }, k.wildcard);
 					window.parent.postMessage({ type: 'trigger_an_event', trigger: 'selection_changed' }, k.wildcard);			// post selected ids first
 				}
-				this.debounced_grab = true;
+				this.respond_to_grab_event = true;
 			}
 		});
 	}

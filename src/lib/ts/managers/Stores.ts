@@ -18,14 +18,12 @@ export const w_show_details				= writable<boolean>();
 
 const _____THING: unique symbol = Symbol('THING');
 
-export const w_tag_thing_index			= writable<number>();
 export const w_relationship_order		= writable<number>();
 export const w_thing_fontFamily			= writable<string>();
 export const w_thing_title				= writable<string | null>();
 export const w_thing_color				= writable<string | null>(null);
 export const w_s_alteration				= writable<S_Alteration | null>();
 export const w_s_title_edit				= writable<S_Title_Edit | null>(null);
-export const w_si_thing_traits			= writable<S_Items<Trait> | null>(null);
 
 const _____ANCESTRY: unique symbol = Symbol('ANCESTRY');
 

@@ -1,5 +1,6 @@
 export class Builds {
 	notes: { [id: number]: string[] } = {
+		171 : ['November 3, 2025', 'tag and trait details now correctly use s items'],
 		170 : ['October 25, 2025', 'refactored hover logic'],
 		169 : ['October 19, 2025', 'revised bubble plugin API'],
 		168 : ['October 8, 2025', 'adopt s items design for recents, search and tags'],
