@@ -44,6 +44,7 @@ export class Hierarchy {
 
 	ids_translated: { [prior: string]: string } = {};
 	replace_rootID: string | null = k.empty;		// required for DB_Local at launch
+	si_traitThings = new S_Items<Thing>([]);		// ALL things that have traits
 	relationships: Array<Relationship> = [];
 	si_traits = new S_Items<Trait>([]);
 	predicates: Array<Predicate> = [];
@@ -89,14 +90,8 @@ export class Hierarchy {
 	
 	static readonly _____THINGS: unique symbol;
 
+	get si_things_unique_havingTraits(): S_Items<Thing> { return this.si_traitThings; }
 	things_forTitle(title: string): Array<Thing> | null { return this.things_byTitle[title] ?? null; }
-	get things_unique_havingTraits(): Array<Thing> { return u.strip_duplicates(Object.values(this.si_things_byT_trait).flat()); }
-
-	get things_unique_havingTags(): Array<Thing> {
-		const hids = Object.keys(this.si_tags_byThingHID);
-		const things = hids.map(hid => this.thing_forHID(parseInt(hid) as Integer));
-		return u.strip_duplicates(things);
-	}
 
 	things_refreshKnowns() {
 		const saved = this.things;
@@ -1245,13 +1240,16 @@ export class Hierarchy {
 	}
 
 	trait_forget(trait: Trait) {
-		const ownerHID = trait.ownerID.hash();
+		const hid = trait.ownerID.hash();
 		delete this.trait_byHID[trait.hid];
-		delete this.si_traits_byOwnerHID[ownerHID];
-		delete this.si_traits_byThingHID[ownerHID];
+		delete this.si_traits_byOwnerHID[hid];
+		delete this.si_traits_byThingHID[hid];
 		delete this.si_traits_byType[trait.t_trait];
 		delete this.si_things_byT_trait[trait.t_trait];
 		this.si_traits.remove(trait);
+		if (!!trait.owner) {
+			this.si_traitThings.remove(trait.owner);
+		}
 	}
 
 	trait_remember(trait: Trait) {
@@ -1261,6 +1259,7 @@ export class Hierarchy {
 			let si_things = this.si_things_byT_trait[trait.t_trait] ?? new S_Items<Thing>([]);
 			si_things.push(trait.owner);
 			this.si_things_byT_trait[trait.t_trait] = si_things;
+			this.si_traitThings.push(trait.owner);
 		}
 		this.traits.push(trait);
 		(this.si_traits_byOwnerHID[hid] = this.si_traits_byOwnerHID[hid] ?? new S_Items<Trait>([])).push(trait);

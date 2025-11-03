@@ -15,7 +15,6 @@
 	export let top = 6;
 	const id = 'selection details';
 	const { w_items: w_grabbed } = x.si_grabs;
-	const { w_items: w_grab_items } = x.si_grabs;
 	const s_info = elements.s_element_for(new Identifiable(id), T_Element.details, id);
 	let ancestry: Ancestry | null = $w_ancestry_forDetails;
 	let thing: Thing | null = ancestry?.thing ?? null;
@@ -35,7 +34,7 @@
 
 	$: {
 		update_forAncestry();
-		trigger = `${u.descriptionBy_title($w_grabbed)}:::${$w_ancestry_focus?.title}:::${$w_thing_title}:::>${u.descriptionBy_title($w_grab_items)}:::${$w_ancestry_forDetails?.title}:::<${$w_relationship_order}`;
+		trigger = `${u.descriptionBy_title($w_grabbed)}:::${$w_ancestry_focus?.title}:::${$w_thing_title}:::>${u.descriptionBy_title($w_grabbed)}:::${$w_ancestry_forDetails?.title}:::<${$w_relationship_order}`;
 	}
 
 	onMount(() => {
@@ -82,8 +81,8 @@
 				['type',	 Object.keys(T_Thing).find(k => T_Thing[k] === thing.t_thing)],
 			];
 			relationships = [
-				['tags',	 x.si_tags.length.supressZero()],
-				['traits',	 x.si_trait_things.length.supressZero()],
+				['tags',	 x.si_thing_tags.length.supressZero()],
+				['traits',	 x.si_thing_traits.length.supressZero()],
 				['depth',	 ancestry.depth.supressZero()],
 				['order',	 ancestry.order.supressNegative()],
 			];

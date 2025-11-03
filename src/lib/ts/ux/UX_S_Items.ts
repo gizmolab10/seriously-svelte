@@ -1,5 +1,5 @@
 import { h, p, u, debug, search, layout, details, controls } from '../common/Global_Imports';
-import { w_s_alteration, w_s_title_edit, w_thing_traits } from '../managers/Stores';
+import { w_s_alteration, w_s_title_edit, w_si_thing_traits } from '../managers/Stores';
 import { S_Items, T_Detail, T_Search, T_Startup } from '../common/Global_Imports';
 import { w_t_startup, w_data_updated, w_search_state } from '../managers/Stores';
 import { w_ancestry_forDetails, w_ancestry_focus } from '../managers/Stores';
@@ -13,11 +13,9 @@ type Identifiable_S_Items_Pair<T = Identifiable, U = S_Items<T>> = [T, U | null]
 export default class UX_S_Items {
 
 	si_recents = new S_Items<Identifiable_S_Items_Pair>([]);
-	si_trait_things = new S_Items<Thing>([]);
 	si_expanded = new S_Items<Ancestry>([]);
 	si_grabs = new S_Items<Ancestry>([]);
 	si_found = new S_Items<Thing>([]);
-	si_tags = new S_Items<Tag>([]);
 
 	parents_focus!: Ancestry;
 	prior_focus!: Ancestry;
@@ -28,8 +26,7 @@ export default class UX_S_Items {
 	//							//
 	//	  recents, found,		//
 	//	  details, focus,		//
-	//	  expandeds,		//
-	//	  tags, traits			//
+	//	  expandeds, grabs,		//
 	//							//
 	//////////////////////////////
 
@@ -46,10 +43,10 @@ export default class UX_S_Items {
 		w_t_startup.subscribe((startup: number | null) => {
 			if (startup == T_Startup.ready) {
 				w_ancestry_focus.subscribe((ancestry: Ancestry) => {
-					this.ancestry_update_forDetails();
+					this.update_ancestry_forDetails();
 				});
 				w_search_state.subscribe((state: number | null) => {
-					this.grabs_update_forSearch();
+					this.update_grabs_forSearch();
 				});
 				x.si_found.w_index.subscribe((row: number | null) => {
 					this.update();
@@ -61,9 +58,7 @@ export default class UX_S_Items {
 
 	update() {
 		if (get(w_t_startup) == T_Startup.ready) {
-			this.grabs_update_forSearch();
-			this.thing_traits_update();
-			this.tags_update();
+			this.update_grabs_forSearch();
 		}
 	}
 		
@@ -71,17 +66,17 @@ export default class UX_S_Items {
 
 	get ancestry_forDetails(): Ancestry | null { return get(w_ancestry_forDetails); }
 	
-	ancestry_select_next(next: boolean) {	// for next/previous in details selection banner
+	grab_next_ancestry(next: boolean) {	// for next/previous in details selection banner
 		if (get(w_search_state) > T_Search.off) {
 			this.si_found.find_next_item(next);
 		} else {
 			this.si_grabs.find_next_item(next);
 		}
-		this.ancestry_update_forDetails();
+		this.update_ancestry_forDetails();
 		details.redraw();		// force re-render of details
 	}
 
-	ancestry_update_forDetails() {
+	update_ancestry_forDetails() {
 		const presented = this.ancestry_forDetails;
 		let ancestry = search.selected_ancestry;
 		if (!ancestry) {
@@ -92,6 +87,7 @@ export default class UX_S_Items {
 		if (!presented || !presented.equals(ancestry)) {
 			w_ancestry_forDetails.set(ancestry);
 		}
+		w_si_thing_traits.set(this.si_thing_traits);
 	}
 		
 	static readonly _____FOCUS: unique symbol;
@@ -121,7 +117,7 @@ export default class UX_S_Items {
 			w_ancestry_focus.set(ancestry);
 		}
 		ancestry.expand();
-		this.ancestry_update_forDetails();
+		this.update_ancestry_forDetails();
 		return changed;
 	}
 
@@ -143,7 +139,7 @@ export default class UX_S_Items {
 		debug.log_grab(`  GRAB ONLY '${ancestry.title}'`);
 		this.si_grabs.items = [ancestry];
 		h?.stop_alteration();
-		this.ancestry_update_forDetails();
+		this.update_ancestry_forDetails();
 	}
 
 	grab(ancestry: Ancestry) {
@@ -162,7 +158,7 @@ export default class UX_S_Items {
 		this.si_grabs.items = grabbed;
 		debug.log_grab(`  GRAB '${ancestry.title}'`);
 		h?.stop_alteration();
-		this.ancestry_update_forDetails();
+		this.update_ancestry_forDetails();
 	}
 
 	ungrab(ancestry: Ancestry) {
@@ -185,10 +181,10 @@ export default class UX_S_Items {
 		}
 		this.si_grabs.items = grabbed;
 		debug.log_grab(`  UNGRAB '${ancestry.title}'`);
-		this.ancestry_update_forDetails();
+		this.update_ancestry_forDetails();
 	}
 
-	grabs_update_forSearch() {
+	private update_grabs_forSearch() {
 		if (get(w_search_state) != T_Search.off && this.si_found.length > 0) {
 			let ancestries = this.si_found.items.map((found: Thing) => found.ancestry).filter(a => !!a) ?? [];
 			ancestries = u.strip_hidDuplicates(ancestries);
@@ -211,18 +207,24 @@ export default class UX_S_Items {
 	}
 
 	static readonly _____TRAITS: unique symbol;
-
-	get traitThing(): Thing | null {
-		const item = this.si_trait_things.item;
-		if (!!item) {
-			return item as Thing;
-		}
-		return null;
-	}
 	
-	traitThing_select_next(next: boolean) {
-		if (this.si_trait_things.find_next_item(next)) {
-			const ancestry = this.traitThing?.ancestry;
+	//////////////////////////////////////////////////////////////////////
+	//																	//
+	//	traits are managed by Things									//
+	//	si_thing_traits is the list of traits for ancestry_forDetails	//
+	//	trait is the current trait (independent of ancestry_forDetails)	//
+	//																	//
+	//////////////////////////////////////////////////////////////////////
+
+	get trait(): Trait | null { return h.si_traits.item as Trait | null; }
+	select_next_trait(next: boolean): boolean { return h.si_traits.find_next_item(next); }
+	get thing_trait(): Trait | null { return this.si_thing_traits?.item as Trait | null; }
+	get si_thing_traits(): S_Items<Trait> { return this.ancestry_forDetails?.thing?.si_traits ?? new S_Items<Trait>([]); }
+	
+	select_next_thingTrait(next: boolean) {
+		const si_thing_traits = this.si_thing_traits;
+		if (!!si_thing_traits && si_thing_traits.find_next_item(next)) {
+			const ancestry = si_thing_traits.item?.owner?.ancestry;
 			if (!!ancestry) {
 				ancestry.grabOnly();	// causes reaction (invoking update())
 				if (ancestry.ancestry_assureIsVisible()) {
@@ -231,45 +233,11 @@ export default class UX_S_Items {
 			}
 		}
 	}
-
-	thing_traits_update() {
-
-		////////////////////////////////////////////////////////////////
-		//															  //
-		//	trait_things				  ALL things that have traits //
-		//	w_thing_traits	JUST traits of the current ancestry.thing //
-		//															  //
-		////////////////////////////////////////////////////////////////
-
-		let thing_traits: Array<Trait> = [];
-		if (!!h) {
-			this.si_trait_things.items = h.things_unique_havingTraits ?? [];
-			const thing = get(w_ancestry_forDetails)?.thing;
-			thing_traits = thing?.si_traits?.items ?? [];
-			if (!!thing && thing_traits.length > 0) {
-				// compute which index [trait] corresponds to the thing
-				const index = this.si_trait_things.items.findIndex((t: Thing) => t.id == thing.id);
-				this.si_trait_things.index = Math.max(0, index);
-			}
-		}
-		w_thing_traits.set(thing_traits);
-	}
 	
 	static readonly _____TAGS: unique symbol;
 
-	tag_select_next(next: boolean): boolean {
-		return this.si_tags.find_next_item(next);
-	}
-
-	tags_update() {
-		const hid = get(w_ancestry_forDetails)?.thing?.hid;
-		const si_tags = (!hid && hid != 0) ? h.si_tags : h.si_tags_forThingHID(hid);
-		if (!si_tags) {
-			this.si_tags.reset();
-		} else if (si_tags.descriptionBy_sorted_IDs != this.si_tags.descriptionBy_sorted_IDs) {
-			this.si_tags = si_tags;
-		}
-	}
+	select_next_tag(next: boolean): boolean { return h.si_tags.find_next_item(next); }
+	get si_thing_tags(): S_Items<Tag> { return this.ancestry_forDetails?.thing?.si_tags ?? new S_Items<Tag>([]); }
 
 }
 

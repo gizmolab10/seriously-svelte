@@ -54,7 +54,7 @@ class UX_Search {
 	set selected_row(row: number) {
 		x.si_found.index = row;
 		w_search_state.set(T_Search.selected);
-		x.ancestry_update_forDetails();
+		x.update_ancestry_forDetails();
 	}
 
 	get selected_ancestry(): Ancestry | null {

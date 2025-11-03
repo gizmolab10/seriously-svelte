@@ -1,7 +1,7 @@
 import { T_Graph, T_Kinship, T_Detail, T_Startup, T_Dragging } from '../common/Global_Imports';
 import { Rect, Point, Trait, colors, Ancestry, Hierarchy } from '../common/Global_Imports';
+import { S_Items, S_Element, S_Title_Edit, S_Alteration } from '../common/Global_Imports';
 import { T_Search, T_Auto_Adjust, T_Search_Preference } from '../common/Global_Imports';
-import { S_Element, S_Title_Edit, S_Alteration } from '../common/Global_Imports';
 import { G_Paging, G_Cluster } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
 
@@ -21,11 +21,11 @@ const _____THING: unique symbol = Symbol('THING');
 export const w_tag_thing_index			= writable<number>();
 export const w_relationship_order		= writable<number>();
 export const w_thing_fontFamily			= writable<string>();
-export const w_thing_traits				= writable<Array<Trait>>();
 export const w_thing_title				= writable<string | null>();
 export const w_thing_color				= writable<string | null>(null);
 export const w_s_alteration				= writable<S_Alteration | null>();
 export const w_s_title_edit				= writable<S_Title_Edit | null>(null);
+export const w_si_thing_traits			= writable<S_Items<Trait> | null>(null);
 
 const _____ANCESTRY: unique symbol = Symbol('ANCESTRY');
 

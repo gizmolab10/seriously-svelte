@@ -1,11 +1,11 @@
 <script lang='ts'>
     import { k, x } from '../../ts/common/Global_Imports';
-	const { w_index: w_tag_index } = x.si_tags;
+	const { w_index: w_tag_index } = x.si_thing_tags;
     x.update();
 </script>
 
 {#key $w_tag_index}
-    {#if !!x.si_tags &&  x.si_tags.length > 0}
+    {#if !!x.si_thing_tags &&  x.si_thing_tags.length > 0}
         <div class='tags-list'
             style='
                 width: 100%;
@@ -19,7 +19,7 @@
                 justify-content: center;
                 min-height: {k.height.empty}px;
                 font-size: {k.font_size.details}px;'>
-            {x.si_tags.item?.type}
+            {x.si_thing_tags.item?.type}
         </div>
     {:else}
         <div class='no-tags'

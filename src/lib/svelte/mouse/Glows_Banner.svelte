@@ -31,10 +31,10 @@
 	}
 
 	function intercept_click(title: string) {
-		if (title === banner_id || titles.length == 1) {
+		if (title === banner_id || titles.length == 1) {		// banner_title and title are dynamic, banner_id is NOT
 			toggle_hidden(banner_id);
 		} else {
-			details.update(banner_id, title);		// banner_title and title are dynamic, banner_id is NOT
+			details.select_next(banner_id, title);
 		}
 	}
 

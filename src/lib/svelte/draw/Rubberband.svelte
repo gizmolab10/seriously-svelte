@@ -144,7 +144,7 @@
                 } else if (has_intersections) {
                     x.si_grabs.reset();
                 }
-                x.ancestry_update_forDetails();
+                x.update_ancestry_forDetails();
             }
         }
     }

@@ -6,8 +6,8 @@ export default class S_Items<T> {
 	static dummy = new S_Items<any>([]);
     w_item = writable<T | null>(null);
 	w_items = writable<Array<T>>([]);
-	w_length = writable(0);
-	w_index = writable(0);
+	w_length = writable<number>(0);
+	w_index = writable<number>(0);
 
 	//////////////////////////////////////////////
 	//											//
@@ -99,7 +99,7 @@ export default class S_Items<T> {
 			}
 			attempts--;
 		}
-		return false;
+		return false;	// there are no items
 	}
 
 	remove(item: T) {

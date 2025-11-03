@@ -12,9 +12,9 @@
 	import D_Data from './D_Data.svelte';
 	import D_Tags from './D_Tags.svelte';
 	const width = k.width.details;
-	const { w_items: w_tags } = x.si_tags;
 	const { w_items: w_grabbed } = x.si_grabs;
-	const { w_items: w_trait_things } = x.si_trait_things;
+	const { w_items: w_thing_tags } = x.si_thing_tags;
+	const { w_items: w_thing_traits } = x.si_thing_traits;
 	const next_previous_titles = [T_Direction.previous, T_Direction.next];
 	let prior_search_state = $w_search_state;
 	let extra_selection_titles = [];
@@ -22,14 +22,14 @@
 	let extra_tags_titles = [];
 
 	$: {
-		const _ = `${$w_trait_things.descriptionBy_sorted_IDs}
+		const _ = `${$w_thing_traits.descriptionBy_sorted_IDs}
 		:::${$w_grabbed.descriptionBy_sorted_IDs}
-		:::${$w_tags.descriptionBy_sorted_IDs}
+		:::${$w_thing_tags.descriptionBy_sorted_IDs}
 		:::${x.si_found.w_index}
 		:::${$w_search_state}`;
-		const tr_changed = update_titles($w_trait_things.length, extra_traits_titles);
+		const tr_changed = update_titles($w_thing_traits.length, extra_traits_titles);
 		const g_changed = update_titles($w_grabbed.length, extra_selection_titles);
-		const t_changed = update_titles($w_tags.length, extra_tags_titles);
+		const t_changed = update_titles($w_thing_tags.length, extra_tags_titles);
 		const s_changed = $w_search_state != prior_search_state;
 		if (t_changed || g_changed || tr_changed || s_changed) {
 			$w_count_details++;
@@ -47,18 +47,6 @@
 	}
 
 </script>
-
-<style>
-
-	.details-stack::-webkit-scrollbar {
-		display: none;                /* Chrome, Safari, Opera */
-	}
-
-	.details-stack > :global(*) {
-		flex-shrink: 0;
-	}
-
-</style>
 
 {#key $w_count_details}
 	<div class='details-stack'
@@ -108,4 +96,15 @@
 	thickness={k.thickness.separator.main}
 	corner_radius={k.radius.gull_wings.thick}
 	length={layout.windowSize.height - layout.controls_boxHeight + 6.5}
-	origin={new Point(k.width.details - 2, layout.controls_boxHeight - 2.5)}/>
+	origin={new Point(k.width.details - 2, layout.controls_boxHeight - 2.5)}
+/>
+
+<style>
+	.details-stack::-webkit-scrollbar {
+		display: none;                /* Chrome, Safari, Opera */
+	}
+
+	.details-stack > :global(*) {
+		flex-shrink: 0;
+	}
+</style>
