@@ -1,7 +1,6 @@
 <script lang=ts>
+	import { show, debug, g_tree, signals, Ancestry } from '../../ts/common/Global_Imports';
 	import { S_Component, T_Signal, T_Component } from '../../ts/common/Global_Imports';
-	import { g_tree, debug, signals, Ancestry } from '../../ts/common/Global_Imports';
-	import { w_show_related } from '../../ts/managers/Stores';
 	import Tree_Branches from './Tree_Branches.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import Tree_Line from './Tree_Line.svelte';
@@ -9,6 +8,7 @@
 	import { onMount } from 'svelte';
 	export let ancestry: Ancestry;
 	export let depth: number;
+	const { w_related } = show;
 	const g_widget = ancestry.g_widget;
 	const g_childBranches = g_widget.g_childBranches;
 	let s_component: S_Component;
@@ -41,7 +41,7 @@
 					<Tree_Branches ancestry = {branchAncestry} depth = {depth - 1}/>
 				{/if}
 			{/each}
-			{#if $w_show_related && depth > 1}
+			{#if $w_related && depth > 1}
 				{#each g_widget.g_bidirectionalLines as g_line}
 					{#if g_line.depth_ofLine < (depth + 2)}
 						<Tree_Line g_line = {g_line}/>

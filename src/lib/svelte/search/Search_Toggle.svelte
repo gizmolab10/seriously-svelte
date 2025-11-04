@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { T_Search, T_Layer, T_Control } from '../../ts/common/Global_Imports';
-	import { w_show_details, w_search_state } from '../../ts/managers/Stores';
-	import { e, k, u, elements, x, Point } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Search, T_Control } from '../../ts/common/Global_Imports';
+	import { e, k, u, x, Point, elements } from '../../ts/common/Global_Imports';
+	import { w_search_state } from '../../ts/managers/Stores';
 	import Close_Button from '../mouse/Close_Button.svelte';
 	import { search } from '../../ts/ux/UX_Search';
 	import Button from '../mouse/Button.svelte';

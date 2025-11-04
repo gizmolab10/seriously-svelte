@@ -2,8 +2,7 @@
 	import { c, e, k, u, x, show, colors, layout, elements, controls, svgPaths } from '../../ts/common/Global_Imports';
 	import { w_popupView_id, w_rect_ofGraphView, w_count_window_resized } from '../../ts/managers/Stores';
 	import { T_Layer, T_Graph, T_Element, T_Control } from '../../ts/common/Global_Imports';
-	import { w_background_color, w_show_graph_ofType } from '../../ts/managers/Stores';
-	import { w_search_state, w_show_search_controls } from '../../ts/managers/Stores';
+	import { w_search_state, w_background_color } from '../../ts/managers/Stores';
 	import { T_Kinship, T_Request } from '../../ts/common/Global_Imports';
 	import { Point, S_Element } from '../../ts/common/Global_Imports';
 	import Search_Toggle from '../search/Search_Toggle.svelte';
@@ -17,6 +16,7 @@
 	const scaling_stroke_width = 1.5;
 	const size_big = k.height.button + 4;
 	const hamburger_size = k.height.button;
+	const { w_search_controls, w_graph_ofType } = show;
 	const hamburger_path = svgPaths.hamburgerPath(hamburger_size);
 	const svg_style = 'top: -0.5px; left: -0.5px; position: absolute; width: 100%; height: 100%;';
 	let width = layout.windowSize.width - 20;
@@ -41,7 +41,7 @@
 	function layout_controls() {
 		const left_widths = {
 			0: c.has_details_button ? 18 : -7,			// details
-			1: !$w_show_search_controls ? 11 : c.has_details_button ? 11 : 11,	// recents / search
+			1: !$w_search_controls ? 11 : c.has_details_button ? 11 : 11,	// recents / search
 			2: 57,	// graph type
 			3: 100,	// plus
 			4: 26,	// minus
@@ -98,11 +98,11 @@
 					left={-54 - (c.has_details_button ? 0 : 26)}
 					width={lefts[7] + (c.has_details_button ? 0 : 26)}/>
 			{/if}
-			{#key $w_show_graph_ofType}
+			{#key $w_graph_ofType}
 				<Segmented name='graph-type'
 					width={80}
 					origin={Point.x(lefts[2])}
-					selected={[$w_show_graph_ofType]}
+					selected={[$w_graph_ofType]}
 					titles={[T_Graph.tree, T_Graph.radial]}
 					handle_selection={(titles) => controls.handle_segmented_choices('graph', titles)}/>
 			{/key}

@@ -1,10 +1,9 @@
-import { h, p, u, debug, search, layout, details, controls } from '../common/Global_Imports';
+import { h, p, u, show, debug, search, layout, details, controls } from '../common/Global_Imports';
 import { S_Items, T_Detail, T_Search, T_Startup } from '../common/Global_Imports';
 import { w_t_startup, w_data_updated, w_search_state } from '../managers/Stores';
 import { w_ancestry_forDetails, w_ancestry_focus } from '../managers/Stores';
 import { Tag, Thing, Trait, Ancestry } from '../common/Global_Imports';
 import { w_s_alteration, w_s_title_edit } from '../managers/Stores';
-import { w_show_details_ofType } from '../managers/Stores';
 import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
 
@@ -35,9 +34,6 @@ export default class UX_S_Items {
 			this.update_grabs_forSearch();
 		});
 		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
-			this.update_grabs_forSearch();
-		});
-		w_show_details_ofType.subscribe((t_details: Array<T_Detail>) => {
 			this.update_grabs_forSearch();
 		});
 		w_t_startup.subscribe((startup: number | null) => {

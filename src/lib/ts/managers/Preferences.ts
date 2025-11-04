@@ -1,11 +1,9 @@
 import { G_Paging, T_Graph, T_Detail, T_Kinship, T_Preference, T_Auto_Adjust, T_Startup } from '../common/Global_Imports';
 import { c, h, k, u, x, show, debug, radial, colors, Ancestry, databases } from '../common/Global_Imports';
-import { w_auto_adjust_graph, w_show_tree_ofType, w_show_graph_ofType } from './Stores';
 import { w_t_database, w_ring_rotation_angle, w_ring_rotation_radius } from './Stores';
 import { w_g_paging, w_font_size, w_thing_fontFamily, w_depth_limit } from './Stores';
-import { w_show_details_ofType, w_show_countDots_ofType } from './Stores';
+import { w_ancestry_focus, w_t_startup, w_auto_adjust_graph } from './Stores';
 import { w_background_color, w_separator_color } from './Stores';
-import { w_ancestry_focus, w_t_startup } from './Stores';
 import { get } from 'svelte/store';
 
 export class Preferences {
@@ -185,13 +183,13 @@ export class Preferences {
 
 		// VISIBILITY
 
-		w_show_tree_ofType.subscribe((value) => {
+		show.w_tree_ofType.subscribe((value) => {
 			this.write_key(T_Preference.tree, value);
 		});
-		w_show_countDots_ofType.subscribe((value) => {
+		show.w_countDots_ofType.subscribe((value) => {
 			this.write_key(T_Preference.countDots, value);
 		});
-		w_show_details_ofType.subscribe((value) => {
+		show.w_details_ofType.subscribe((value) => {
 			this.write_key(T_Preference.detail_types, value);
 		});
 
@@ -242,10 +240,10 @@ export class Preferences {
 	restore_stores() {
 
 		// VISIBILITY
-		w_show_tree_ofType		.set( this.read_key(T_Preference.tree)					?? T_Kinship.children);
-		w_show_graph_ofType		.set( this.read_key(T_Preference.graph)					?? T_Graph.tree);
-		w_show_countDots_ofType	.set( this.read_key(T_Preference.countDots)				?? [T_Kinship.children]);
-		w_show_details_ofType	.set( this.read_key(T_Preference.detail_types)			?? [T_Detail.actions, T_Detail.data]);
+		show.w_tree_ofType		.set( this.read_key(T_Preference.tree)				?? T_Kinship.children);
+		show.w_graph_ofType	.set( this.read_key(T_Preference.graph)				?? T_Graph.tree);
+		show.w_countDots_ofType.set( this.read_key(T_Preference.countDots)			?? [T_Kinship.children]);
+		show.w_details_ofType	.set( this.read_key(T_Preference.detail_types)		?? [T_Detail.actions, T_Detail.data]);
 
 		// RADIAL
 		w_ring_rotation_angle	.set( this.read_key(T_Preference.ring_angle)			?? 0);

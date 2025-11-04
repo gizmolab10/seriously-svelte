@@ -1,9 +1,8 @@
-import { h, k, p, u, controls, debug, g_tree, g_radial, signals, T_Graph } from '../common/Global_Imports';
-import { w_show_details, w_show_graph_ofType, w_show_search_controls } from '../managers/Stores';
-import { G_Widget, S_Component, T_Preference } from '../common/Global_Imports';
+import { h, k, p, u, show, debug, g_tree, g_radial, signals, controls } from '../common/Global_Imports';
+import { G_Widget, S_Component, T_Graph, T_Preference } from '../common/Global_Imports';
+import { w_rect_ofGraphView, w_mouse_location_scaled } from '../managers/Stores';
 import { Rect, Size, Point, Thing, Ancestry } from '../common/Global_Imports';
 import { w_user_graph_offset, w_user_graph_center } from '../managers/Stores';
-import { w_rect_ofGraphView, w_mouse_location_scaled } from '../managers/Stores';
 import { get } from 'svelte/store';
 
 export default class G_Layout {
@@ -24,9 +23,9 @@ export default class G_Layout {
 
 	update_rect_ofGraphView() {
 		// respond to changes in: window size & details visibility
-		const show_secondary_controls = get(w_show_search_controls) || (get(w_show_graph_ofType) == T_Graph.tree);
+		const show_secondary_controls = get(show.w_search_controls) || (get(show.w_graph_ofType) == T_Graph.tree);
 		const y = (this.controls_boxHeight) * (show_secondary_controls ? 2 : 1) - 4;	// below primary and secondary controls
-		const x = get(w_show_details) ? k.width.details : 5;								// right of details
+		const x = get(show.w_details) ? k.width.details : 5;								// right of details
 		const origin_ofGraph = new Point(x, y);
 		const size_ofGraph = this.windowSize.reducedBy(origin_ofGraph).reducedBy(Point.square(k.thickness.separator.main - 1));
 		const rect = new Rect(origin_ofGraph, size_ofGraph);

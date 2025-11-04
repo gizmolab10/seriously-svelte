@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { e, h, k, u, elements, x, Rect, Point, debug, layout, signals, colors, S_Component } from '../../ts/common/Global_Imports';
-	import { w_rect_ofGraphView, w_show_graph_ofType, w_user_graph_offset, w_depth_limit } from '../../ts/managers/Stores';
-	import { T_Layer, T_Graph, T_Signal, T_Startup, T_Control, T_Component } from '../../ts/common/Global_Imports';
+	import { e, h, k, u, x, show, Rect, Point, debug, layout, signals, elements } from '../../ts/common/Global_Imports';
+	import { S_Component, T_Layer, T_Graph, T_Signal, T_Startup, T_Control } from '../../ts/common/Global_Imports';
+	import { w_rect_ofGraphView, w_user_graph_offset, w_depth_limit } from '../../ts/managers/Stores';
 	import { w_t_startup, w_device_isMobile, w_popupView_id } from '../../ts/managers/Stores';
 	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/managers/Stores';
 	import { w_s_hover, w_ancestry_focus, w_s_title_edit } from '../../ts/managers/Stores';
@@ -13,6 +13,7 @@
 	import Button from '../mouse/Button.svelte';
 	import { onMount } from 'svelte';
 	const size_big = k.height.button + 4;
+	const { w_graph_ofType } = show;
 	const { w_items: w_expanded } = x.si_expanded;
 	let actual_content_rect = layout.user_offset_toDrawnGraph;
 	let draggableRect = $w_rect_ofGraphView;
@@ -41,7 +42,7 @@
 	
 	$:	{
 		const _ = `${$w_rect_ofGraphView.description}
-		:::${$w_show_graph_ofType}
+		:::${$w_graph_ofType}
 		:::${$w_t_startup}
 		:::${$w_s_hover}`;
 		update_style();
@@ -50,7 +51,7 @@
 	$:	{
 		const _ = `${u.descriptionBy_titles($w_expanded)}
 		:::${$w_ancestry_focus?.titles.join(k.comma)}
-		:::${$w_show_graph_ofType}`;
+		:::${$w_graph_ofType}`;
 		grand_layout_andReattach();
 	}
 
@@ -106,7 +107,7 @@
 			bind:this={draggable}
 			on:mousedown={handle_mouseDown}
 			class:rubberband-active={$w_dragging_active}>
-			{#if $w_show_graph_ofType == T_Graph.radial}
+			{#if $w_graph_ofType == T_Graph.radial}
 				<Radial_Graph/>
 			{:else}
 				<Tree_Graph/>

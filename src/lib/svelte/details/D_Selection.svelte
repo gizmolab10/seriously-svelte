@@ -1,10 +1,10 @@
 <script lang='ts'>
-	import { c, k, p, u, x, colors, layout, details, elements } from '../../ts/common/Global_Imports';
+	import { c, k, p, u, x, show, colors, layout, details, elements } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/managers/Stores';
-	import { w_show_details_ofType, w_ancestry_forDetails } from '../../ts/managers/Stores';
-	import { w_ancestry_focus, w_relationship_order } from '../../ts/managers/Stores';
+	import { w_ancestry_focus, w_ancestry_forDetails } from '../../ts/managers/Stores';
 	import { T_Thing, T_Layer, T_Element } from '../../ts/common/Global_Imports';
 	import { Point, Thing, Ancestry } from '../../ts/common/Global_Imports';
+	import { w_relationship_order } from '../../ts/managers/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import type { Integer } from '../../ts/types/Types';
 	import Text_Table from '../text/Text_Table.svelte';
@@ -14,6 +14,7 @@
 	import { onMount } from 'svelte';
 	export let top = 6;
 	const id = 'selection details';
+	const { w_details_ofType } = show;
 	const { w_items: w_grabbed } = x.si_grabs;
 	const s_info = elements.s_element_for(new Identifiable(id), T_Element.details, id);
 	let ancestry: Ancestry | null = $w_ancestry_forDetails;
@@ -29,7 +30,7 @@
 	let picker_offset = k.empty;
 	let trigger = k.empty;
 
-	$: $w_show_details_ofType, layout_forColor();
+	$: $w_details_ofType, layout_forColor();
 	function handle_toggle_properties(event: Event) { details.show_properties = !details.show_properties; }
 
 	$: {

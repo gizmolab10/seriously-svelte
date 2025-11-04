@@ -1,8 +1,9 @@
 <script lang='ts'>
-	import { k, u, T_Layer, T_Detail, layout, details } from '../../ts/common/Global_Imports';
-	import { w_ancestry_forDetails, w_show_details_ofType } from '../../ts/managers/Stores';
+	import { k, u, show, T_Layer, T_Detail, layout, details } from '../../ts/common/Global_Imports';
+	import { w_ancestry_forDetails } from '../../ts/managers/Stores';
 	import Glows_Banner from '../mouse/Glows_Banner.svelte';
     export let t_detail: T_Detail;
+	const { w_details_ofType } = show;
 	const s_banner_hideable = details.s_banner_hideables_byType[t_detail];
 	const { w_description: w_description, w_extra_titles: w_extra_titles } = s_banner_hideable?.si_items;
 	let title = details.banner_title_forDetail(t_detail);
@@ -18,7 +19,7 @@
 	}
 
 	$: { 
-		const _ = $w_show_details_ofType;
+		const _ = $w_details_ofType;
 		update_hideable_isVisible();
 	}
 
@@ -41,7 +42,7 @@
 	function update_hideable_isVisible() {
 		let isVisible = true;
 		if (s_banner_hideable?.hasBanner) {	// d_header has no banner
-			isVisible = $w_show_details_ofType?.includes(T_Detail[t_detail]) ?? false;
+			isVisible = $w_details_ofType?.includes(T_Detail[t_detail]) ?? false;
 		}
 		if (isVisible != hideable_isVisible) {
 			hideable_isVisible = isVisible;
@@ -50,13 +51,13 @@
 	}
 
 	function toggle_hidden(t_detail: string) {
-		let t_details = $w_show_details_ofType;
+		let t_details = $w_details_ofType;
 		if (t_details.includes(t_detail)) {
 			t_details = u.remove_fromArray_byReference(t_detail, t_details);
 		} else {
 			t_details.push(t_detail);
 		}
-		$w_show_details_ofType = t_details;
+		$w_details_ofType = t_details;
 		update_hideable_isVisible();
 	}
 

@@ -1,6 +1,5 @@
-import { k, u, Rect, Size, Point, debug, elements, controls, Ancestry } from '../common/Global_Imports';
+import { k, u, show, Rect, Size, Point, debug, elements, controls, Ancestry } from '../common/Global_Imports';
 import { S_Widget, G_Cluster, G_TreeLine, G_TreeBranches } from '../common/Global_Imports';
-import { w_show_graph_ofType, w_show_related } from '../managers/Stores';
 import { T_Widget, T_Graph } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
@@ -51,7 +50,7 @@ export default class G_Widget {
 		this.g_parentBranches = new G_TreeBranches(ancestry, false);
 		this.g_childBranches = new G_TreeBranches(ancestry);
 		this.s_widget = elements.s_widget_forAncestry(ancestry);
-		this.t_graph = get(w_show_graph_ofType);
+		this.t_graph = get(show.w_graph_ofType);
 		this.ancestry = ancestry;
 		if (!ancestry) {
 			console.warn(`G_Widget is missing an ancestry`);
@@ -132,7 +131,7 @@ export default class G_Widget {
 	}
 
 	layout_each_bidirectional_generation_recursively(depth: number, visited: string[] = [], bidirectionals: G_TreeLine[] = []) {
-		if (controls.inTreeMode && get(w_show_related) && depth > 0) {
+		if (controls.inTreeMode && get(show.w_related) && depth > 0) {
 			this.g_bidirectionalLines = [];
 			const more = this.layout_bidirectional_lines(bidirectionals);
 			const ancestry = this.ancestry;	
@@ -155,7 +154,7 @@ export default class G_Widget {
 		points_toChild: boolean = true,
 		widget_points_right: boolean = true) {
 
-		if (t_graph == get(w_show_graph_ofType)) {	// assure modes match
+		if (t_graph == get(show.w_graph_ofType)) {	// assure modes match
 			const height_ofSubtree = this.ancestry.height_ofVisibleSubtree();
 			const height_ofLines = height + height_ofSubtree / 2;
 			const rect_ofLines = new Rect(origin, new Size(k.width.child_gap, height_ofLines - 1));

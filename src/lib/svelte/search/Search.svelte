@@ -1,15 +1,16 @@
 <script lang='ts'>
 	import { T_Search, T_Layer, T_Element, T_Preference, T_Search_Preference } from '../../ts/common/Global_Imports';
 	import { w_search_state, w_search_preferences, w_search_results_found } from '../../ts/managers/Stores';
-	import { w_rect_ofGraphView, w_show_details, w_thing_fontFamily } from '../../ts/managers/Stores';
-	import { elements, k, p, controls, Point, search } from '../../ts/common/Global_Imports';
+	import { k, p, show, Point, search, elements, controls } from '../../ts/common/Global_Imports';
+	import { w_rect_ofGraphView, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import Segmented from '../mouse/Segmented.svelte';
 	export let zindex = T_Layer.graph;
 	export let width = 80;
 	export let top = 0;
 	const left_width = 180;
+	const { w_details } = show;
 	const s_search = elements.s_element_for(null, T_Element.search, k.empty);
-	let graph_width = $w_rect_ofGraphView.size.width - ($w_show_details ? 0 : 5);
+	let graph_width = $w_rect_ofGraphView.size.width - ($w_details ? 0 : 5);
 	let search_width = graph_width - left_width;
 	let input: HTMLInputElement;
 
@@ -18,7 +19,7 @@
 	}
 
 	$: {
-		graph_width = $w_rect_ofGraphView.size.width + ($w_show_details ? 0 : 5);
+		graph_width = $w_rect_ofGraphView.size.width + ($w_details ? 0 : 5);
 		width = graph_width - left_width;
 	}
 

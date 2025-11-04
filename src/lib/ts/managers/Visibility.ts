@@ -1,11 +1,24 @@
-import { c, k, p, g_tree, layout, T_Kinship, T_Preference } from '../common/Global_Imports';
-import { w_show_details, w_show_related , w_show_countDots_ofType} from './Stores';
-import { w_show_graph_ofType, w_show_search_controls } from './Stores';
+import { T_Graph, T_Detail, T_Kinship, T_Preference } from '../common/Global_Imports';
+import { c, k, p, x, g_tree, layout } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
-import { get } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 
 export class Visibility {
-	debug_cursor = false;
+	w_tree_ofType			= writable<Array<T_Kinship>>();
+	w_countDots_ofType		= writable<Array<T_Kinship>>();
+	w_details_ofType		= writable<Array<T_Detail>>([]);	
+	w_directionals_ofType	= writable<string[]>();
+	w_graph_ofType			= writable<T_Graph>();
+	w_search_controls		= writable<boolean>();
+	w_related				= writable<boolean>();
+	w_details				= writable<boolean>();
+	debug_cursor: boolean	= false;
+
+	constructor() {
+		this.w_details_ofType.subscribe((t_details: Array<T_Detail>) => {
+			x.update_grabs_forSearch();
+		});
+	}
 
 	queryStrings_apply() {
 		const queryStrings = c.queryStrings;
@@ -17,8 +30,10 @@ export class Visibility {
         for (const [name, flag] of Object.entries(keyedFlags)) {
 			switch (name) {
 				case 'details':
+					this.w_details.set(flag);
+					break;
 				case 'related':
-					w_show_related.set(flag);
+					this.w_related.set(flag);
 					break;
 				case 'parents':
 					const mode = flag ? T_Kinship.parents : T_Kinship.children;
@@ -28,14 +43,14 @@ export class Visibility {
 		}
 	}
 
-	isShowing_countDots_ofType(t_counts: T_Kinship): boolean { return get(w_show_countDots_ofType).includes(T_Kinship[t_counts]) }
+	isShowing_countDots_ofType(t_counts: T_Kinship): boolean { return get(this.w_countDots_ofType).includes(T_Kinship[t_counts]) }
 	get children_dots(): boolean { return  this.isShowing_countDots_ofType(T_Kinship.children); }
 	get related_dots(): boolean { return  this.isShowing_countDots_ofType(T_Kinship.related); }
 	get parent_dots(): boolean { return  this.isShowing_countDots_ofType(T_Kinship.parents); }
 
 	restore_state() {
-		w_show_details.set(p.read_key(T_Preference.show_details) ?? false);
-		w_show_related.set(p.read_key(T_Preference.show_related) ?? false);
+		this.w_details.set(p.read_key(T_Preference.show_details) ?? false);
+		this.w_related.set(p.read_key(T_Preference.show_related) ?? false);
 	}
 	
 	reactivity_subscribe() {
@@ -44,16 +59,16 @@ export class Visibility {
 			layout.restore_state();
 			layout.grand_layout();
 		}
-		w_show_details.subscribe((flag: any) => {
+		this.w_details.subscribe((flag: any) => {
 			reactTo(T_Preference.show_details, flag);
 		});
-		w_show_related.subscribe((flag: any) => {
+		this.w_related.subscribe((flag: any) => {
 			reactTo(T_Preference.show_related, flag);
 		});
-		w_show_graph_ofType.subscribe((flag: any) => {
+		this.w_graph_ofType.subscribe((flag: any) => {
 			reactTo(T_Preference.graph, flag);
 		});
-		w_show_search_controls.subscribe((flag: any) => {
+		this.w_search_controls.subscribe((flag: any) => {
 			reactTo(T_Preference.show_related, flag);
 		});
     }

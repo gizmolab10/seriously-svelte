@@ -1,8 +1,7 @@
 <script lang='ts'>
 	import { T_Layer, T_Graph, T_Control, T_Kinship } from '../../ts/common/Global_Imports';
-	import { w_show_tree_ofType, w_show_graph_ofType } from '../../ts/managers/Stores';
+	import { k, u, show, Point, layout, controls } from '../../ts/common/Global_Imports';
 	import { w_depth_limit, w_separator_color } from '../../ts/managers/Stores';
-	import { k, u, controls, Point, layout } from '../../ts/common/Global_Imports';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Slider from '../mouse/Slider.svelte';
@@ -11,6 +10,7 @@
 	export let width = 137;
 	const left_width = 40;
 	const heights = [ 3, 5, 18 ];
+	const { w_tree_ofType } = show;
 	const tops = u.cumulativeSum(heights);
 	const segmented_height = k.height.button + 3;
 
@@ -57,14 +57,14 @@
 		justify-content: center;'>
 		{$w_depth_limit} level{($w_depth_limit < 2) ? '' : 's'}
 	</div>
-	{#key $w_show_tree_ofType}
+	{#key $w_tree_ofType}
 		<Segmented name='tree-types'
 			left={58}
 			width={width}
 			allow_multiple={true}
 			origin={new Point(184, -16)}
 			height={k.height.button + 2}
-			selected={$w_show_tree_ofType}
+			selected={$w_tree_ofType}
 			titles={[T_Kinship.children, T_Kinship.related]}
 			handle_selection={(titles) => controls.handle_segmented_choices('tree', titles)}/>
 	{/key}

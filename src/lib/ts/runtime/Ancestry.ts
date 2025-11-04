@@ -4,8 +4,8 @@ import { Rect, Size, Point, Thing, Direction, Predicate, Relationship } from '..
 import { w_t_database, w_depth_limit, w_s_title_edit, w_s_alteration } from '../managers/Stores';
 import { G_Widget, G_Paging, G_Cluster, G_TreeLine } from '../common/Global_Imports';
 import { S_Items, S_Component, S_Title_Edit } from '../common/Global_Imports';
-import { w_ancestry_focus, w_show_graph_ofType } from '../managers/Stores';
 import type { Dictionary, Integer } from '../types/Types';
+import { w_ancestry_focus } from '../managers/Stores';
 import { T_Database } from '../database/DB_Common';
 import { get, Writable } from 'svelte/store';
 import Identifiable from './Identifiable';
@@ -55,7 +55,7 @@ export default class Ancestry extends Identifiable {
 	
 	static readonly _____GEOMETRY: unique symbol;
 
-	get g_widget():			 G_Widget { return this.g_widget_for_t_graph(get(w_show_graph_ofType)); }
+	get g_widget():			 G_Widget { return this.g_widget_for_t_graph(get(show.w_graph_ofType)); }
 	get g_paging():	  G_Paging | null { return this.g_cluster?.g_paging_forAncestry(this) ?? null; }
 	get g_cluster(): G_Cluster | null { return this.g_widget.g_cluster ?? null; }
 

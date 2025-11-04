@@ -1,10 +1,10 @@
 <script lang='ts'>
-	import { e, k, u, x, elements, controls, show, debug, signals } from '../../ts/common/Global_Imports';
-	import { w_background_color, w_show_countDots_ofType } from '../../ts/managers/Stores';
+	import { e, k, u, x, show, debug, signals, elements, controls } from '../../ts/common/Global_Imports';
 	import { w_s_hover, w_thing_color, w_s_alteration } from '../../ts/managers/Stores';
 	import { w_ancestry_focus, w_ancestry_forDetails } from '../../ts/managers/Stores';
 	import { T_Layer, T_Signal, T_Component } from '../../ts/common/Global_Imports';
 	import { Point, S_Element, S_Component } from '../../ts/common/Global_Imports';
+	import { w_background_color } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { svgPaths } from '../../ts/common/Global_Imports';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
@@ -15,6 +15,7 @@
 	const capture_size = size;
     const ancestry = s_drag.ancestry;
 	const g_widget = ancestry.g_widget;
+	const { w_countDots_ofType } = show;
 	const { w_items: w_grabbed } = x.si_grabs;
 	let fill_color = debug.lines ? 'transparent' : s_drag.fill;
 	let svg_outline_color = s_drag.svg_outline_color;
@@ -43,7 +44,7 @@
 	function handle_context_menu(event) { u.grab_event(event); }		// no default context menu on right-click
 
 	$: {
-		const _ = $w_show_countDots_ofType;
+		const _ = $w_countDots_ofType;
 		update_svgPaths();
 	}
 

@@ -1,20 +1,9 @@
-import { T_Graph, T_Kinship, T_Detail, T_Startup, T_Dragging } from '../common/Global_Imports';
-import { T_Search, T_Auto_Adjust, T_Search_Preference } from '../common/Global_Imports';
 import { Rect, Point, colors, Ancestry, Hierarchy } from '../common/Global_Imports';
 import { S_Element, S_Title_Edit, S_Alteration } from '../common/Global_Imports';
+import { T_Auto_Adjust, T_Search_Preference } from '../common/Global_Imports';
+import { T_Search, T_Startup, T_Dragging } from '../common/Global_Imports';
 import { G_Paging, G_Cluster } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
-
-const _____VISIBILITY: unique symbol = Symbol('VISIBILITY');
-
-export const w_show_tree_ofType			= writable<Array<T_Kinship>>();
-export const w_show_countDots_ofType	= writable<Array<T_Kinship>>();
-export const w_show_details_ofType		= writable<Array<T_Detail>>([]);	
-export const w_show_directionals_ofType	= writable<string[]>();
-export const w_show_graph_ofType		= writable<T_Graph>();
-export const w_show_search_controls		= writable<boolean>();
-export const w_show_related				= writable<boolean>();
-export const w_show_details				= writable<boolean>();
 
 const _____THING: unique symbol = Symbol('THING');
 

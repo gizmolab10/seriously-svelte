@@ -1,6 +1,6 @@
 import { T_Thing, T_Graph, T_Create, T_Predicate, T_Persistence, T_Preference } from '../common/Global_Imports';
-import { stores, w_ancestry_focus, w_show_graph_ofType } from '../managers/Stores';
-import { h, k, p, x, busy, debug, Ancestry } from '../common/Global_Imports';
+import { h, k, p, x, busy, show, debug, Ancestry } from '../common/Global_Imports';
+import { w_ancestry_focus } from '../managers/Stores';
 import { T_Database } from './DB_Common';
 import DB_Common from './DB_Common';
 
@@ -106,7 +106,7 @@ export default class DB_Bubble extends DB_Common {
 				}
 			}
 			if (!!b_overwrite) {
-				w_show_graph_ofType.set(b_inRadialMode ? T_Graph.radial : T_Graph.tree);
+				show.w_graph_ofType.set(b_inRadialMode ? T_Graph.radial : T_Graph.tree);
 				if (!!b_focus?.id) {			// must happen AFTER ancestries are created
 					const focus = h.thing_forHID(b_focus.id.hash());
 					if (!!focus?.ancestry) {

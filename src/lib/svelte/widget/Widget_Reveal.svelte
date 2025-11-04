@@ -1,10 +1,10 @@
 <script lang='ts'>
 	import { S_Mouse, S_Element, S_Component, T_Layer, T_Component } from '../../ts/common/Global_Imports';
-	import { h, k, u, x, debug, signals, elements, svgPaths } from '../../ts/common/Global_Imports';
+	import { h, k, u, x, show, debug, signals, elements, svgPaths } from '../../ts/common/Global_Imports';
 	import { w_thing_title, w_thing_color, w_background_color } from '../../ts/managers/Stores';
-	import { w_depth_limit, w_show_countDots_ofType } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { Size, Point } from '../../ts/common/Global_Imports';
+	import { w_depth_limit } from '../../ts/managers/Stores';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
     export let hover_isReversed = false;
@@ -13,6 +13,7 @@
 	export let s_reveal!: S_Element;
 	const ancestry = s_reveal.ancestry;
 	const g_widget = ancestry.g_widget;
+	const { w_countDots_ofType } = show;
 	const { w_items: w_grabbed } = x.si_grabs;
 	const tinyDotsOffset = new Point(-4.9, -2.45);
 	const { w_items: w_expanded } = x.si_expanded;
@@ -46,7 +47,7 @@
 	$: {
 		const _ = `${u.descriptionBy_titles($w_grabbed)}
 		:::${u.descriptionBy_titles($w_expanded)}
-		:::${$w_show_countDots_ofType}
+		:::${$w_countDots_ofType}
 		:::${$w_background_color}
 		:::${$w_thing_title}
 		:::${$w_thing_color}`;

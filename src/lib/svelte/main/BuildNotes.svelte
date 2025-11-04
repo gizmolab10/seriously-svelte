@@ -1,17 +1,18 @@
 <script lang='ts'>
-	import { w_popupView_id, w_background_color, w_show_directionals_ofType } from '../../ts/managers/Stores';
-	import { k, u, Point, builds, T_Layer } from '../../ts/common/Global_Imports';
+	import { k, u, show, Point, builds, T_Layer } from '../../ts/common/Global_Imports';
+	import { w_popupView_id, w_background_color } from '../../ts/managers/Stores';
 	import Close_Button from '../mouse/Close_Button.svelte';
 	import Steppers from '../mouse/Steppers.svelte';
 	import { onMount } from 'svelte';
 	const notesIndexed = Object.entries(builds.notes).reverse();
+	const { w_directionals_ofType } = show;
 	const notesLimit = notesIndexed.length - 1;
 	let title = k.empty;
 	let notesIndex = 0;
 	let notes = [];
 	
 	updateNotes();
-	$w_show_directionals_ofType = [false, true];
+	$w_directionals_ofType = [false, true];
 
 	function updateNotes() {
 		const end = Math.min(notesLimit, notesIndex + 10);
@@ -34,7 +35,7 @@
 			const nextIndex = notesIndex + (10 * (pointsUp ? -1 : 1));
 			notesIndex = nextIndex.force_between(0, notesLimit - 10);
 		}
-		$w_show_directionals_ofType = [notesIndex > 0, notesIndex < notesLimit - 10];
+		$w_directionals_ofType = [notesIndex > 0, notesIndex < notesLimit - 10];
 		updateNotes();
 	}
 

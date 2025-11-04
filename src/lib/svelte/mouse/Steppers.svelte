@@ -1,11 +1,11 @@
 <script lang='ts'>
-    import { k, Point, colors, Direction } from '../../ts/common/Global_Imports';
-    import { w_show_directionals_ofType } from '../../ts/managers/Stores';
+    import { k, show, Point, colors, Direction } from '../../ts/common/Global_Imports';
     import Triangle_Button from './Triangle_Button.svelte';
     export let hit_closure;
     const buttonSize = 20;
     const origin = new Point(19, 29);
     const offsetY = buttonSize / 2 - 1;
+    const { w_directionals_ofType } = show;
 
 	function hover_closure(isHovering) {
         return [isHovering ? colors.default : 'white', k.empty];
@@ -22,7 +22,7 @@
 </script>
 
 <div class='steppers'>
-    {#if $w_show_directionals_ofType[0]}
+    {#if $w_directionals_ofType[0]}
         <Triangle_Button
             center={origin.offsetByY(-offsetY)}
             handle_s_mouse={handle_s_mouse}
@@ -34,7 +34,7 @@
             name='up'
         />
     {/if}
-    {#if $w_show_directionals_ofType[1]}
+    {#if $w_directionals_ofType[1]}
         <Triangle_Button
             center={origin.offsetByY(offsetY)}
             handle_s_mouse={handle_s_mouse}

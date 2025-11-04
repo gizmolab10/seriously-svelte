@@ -1,9 +1,7 @@
 <script lang='ts'>
+	import { k, u, x, show, Rect, Point, colors, layout, elements } from '../../ts/common/Global_Imports';
 	import { T_Graph, T_Layer, T_Kinship, T_Auto_Adjust } from '../../ts/common/Global_Imports';
-	import { k, u, elements, x, Rect, Point, colors, layout } from '../../ts/common/Global_Imports';
-	import { w_show_details_ofType, w_show_tree_ofType } from '../../ts/managers/Stores';
 	import { w_separator_color, w_auto_adjust_graph } from '../../ts/managers/Stores';
-	import { w_show_countDots_ofType } from '../../ts/managers/Stores';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Slider from '../mouse/Slider.svelte';
@@ -21,6 +19,7 @@
 	const segmented_height = k.height.button;
 	const separator_height = segmented_height + 9;
 	const separator_width = width - 5 - separator_left * 2;
+	const { w_details_ofType, w_countDots_ofType } = show;
 	let color_wrapper: HTMLDivElement | null = null;
 	let color_origin = Point.square(-3.5);
 	let color = $w_separator_color;
@@ -36,7 +35,7 @@
 
 	const tops = u.cumulativeSum(heights);
 
-	$: if (color_wrapper || $w_show_details_ofType) {
+	$: if (color_wrapper || $w_details_ofType) {
 		u.onNextTick(() => update_color_origin());
 	}
 
@@ -55,7 +54,7 @@
 	}
 
 	function handle_count_dots(types: string[]) {
-		$w_show_countDots_ofType = types as Array<T_Kinship>;
+		$w_countDots_ofType = types as Array<T_Kinship>;
 	}
 
 	function update_color_origin() {
@@ -113,8 +112,8 @@
 		width={segmented_width}
 		height={segmented_height}
 		origin={Point.y(tops[3])}
-		selected={$w_show_countDots_ofType}
 		handle_selection={handle_count_dots}
+		selected={$w_countDots_ofType}
 		titles={[T_Kinship[T_Kinship.children], T_Kinship[T_Kinship.parents], T_Kinship[T_Kinship.related]]}/>
 	<Separator name='background-color'
 		length={width}
