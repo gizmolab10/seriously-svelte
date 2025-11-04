@@ -25,7 +25,7 @@
 			origin={new Point(-($w_details ? 4 : 3), layout.controls_boxHeight - 6)}
 			corner_radius={k.radius.gull_wings.thick}
 			thickness={k.thickness.separator.main}
-			length={$w_rect_ofGraphView.size.width + ($w_details ? 10 : 7)}
+			length={$w_rect_ofGraphView.size.width + ($w_details ? 10 : 11)}
 			zindex={T_Layer.frontmost}
 			has_both_wings={true}
 			isHorizontal={true}/>

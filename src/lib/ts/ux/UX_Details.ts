@@ -46,8 +46,8 @@ class UX_Details {
 		const t_detail = T_Detail[banner_id as keyof typeof T_Detail];
 		switch (t_detail) {
 			case T_Detail.traits:	 x.select_next_thingTrait(next); break;
-			case T_Detail.selection: x.grab_next_ancestry(next); break;
 			case T_Detail.tags:  	 x.select_next_thing_tag(next); break;
+			case T_Detail.selection: x.grab_next_ancestry(next); break;
 		}
 	}
 
@@ -56,10 +56,10 @@ class UX_Details {
 		let title = T_Detail[t_detail];
 		switch (t_detail) {
 			case T_Detail.tags:
-				title = si_items.title('tag', 'tag', title);
+				title = si_items.title('tag', 'tags', title);
 				break;
 			case T_Detail.traits:
-				title = si_items.title('trait', 'trait', title);
+				title = si_items.title('trait', 'traits', title);
 				break;
 			case T_Detail.selection:
 				const si_found = x.si_found;

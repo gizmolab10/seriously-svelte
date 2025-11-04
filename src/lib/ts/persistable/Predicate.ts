@@ -17,11 +17,13 @@ export default class Predicate extends Persistable {
 	get description():					  			  string { return this.kind.unCamelCase().lastWord(); }
 	static isBidirectional_for(kind: T_Predicate):	 boolean { return kind != T_Predicate.contains; }
 	static get contains():				    Predicate | null { return this.predicate_forKind(T_Predicate.contains); }
-	static get explains():				    Predicate | null { return this.predicate_forKind(T_Predicate.explains); }
+	static get isTagged():					Predicate | null { return this.predicate_forKind(T_Predicate.isTagged); }
 	static get requires():				    Predicate | null { return this.predicate_forKind(T_Predicate.requires); }
-	static get supports():				    Predicate | null { return this.predicate_forKind(T_Predicate.supports); }
 	static get isRelated():				    Predicate | null { return this.predicate_forKind(T_Predicate.isRelated); }
+	static get alliedWith():				Predicate | null { return this.predicate_forKind(T_Predicate.alliedWith); }
 	static get appreciates():			  	Predicate | null { return this.predicate_forKind(T_Predicate.appreciates); }
+	static get explainedBy():				Predicate | null { return this.predicate_forKind(T_Predicate.explainedBy); }
+	static get supportedBy():				Predicate | null { return this.predicate_forKind(T_Predicate.supportedBy); }
 	static predicate_forKind(kind: string): Predicate | null { return h.predicate_forKind(kind) ?? null; }
 
 	kinship_forPoints_toChildren(points_toChildren: boolean): T_Kinship | null {

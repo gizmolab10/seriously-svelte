@@ -196,12 +196,13 @@ export enum T_Persistable {
 
 export enum T_Predicate {
 	appreciates = 'appreciates',
+	explainedBy	= 'explainedBy',
+	supportedBy	= 'supportedBy',
+	alliedWith	= 'alliedWith',		// steve melville's term
 	isRelated	= 'isRelated',
-	isAllyOf	= 'isAllyOf',	// steve melville's term
 	contains	= 'contains',
-	explains	= 'explains',
+	isTagged	= 'isTagged',		// trying this out...
 	requires	= 'requires',
-	supports	= 'supports',
 }
 
 export enum T_Control {

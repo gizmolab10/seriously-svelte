@@ -56,9 +56,9 @@ export default class Constants {
 		unknown:  'Unknown',
 		firebase: 'Public',
 		bubble:	  'Bubble',
-		test:	  'Frozen',
 		bulks:	  'Bulks',
 		local:	  'Local',
+		test:	  'Test',
 	};
 
 	help_url = {

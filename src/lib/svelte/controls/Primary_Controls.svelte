@@ -48,7 +48,7 @@
 			5: c.allow_search ? 24 : 6,
 			6: 25,	// easter egg, separator
 			7: 43,	// search
-			8: 0,	// breadcrumbs
+			8: -37,	// breadcrumbs
 		};
 		lefts = u.cumulativeSum(Object.values(left_widths));
 	}
