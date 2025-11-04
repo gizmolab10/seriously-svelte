@@ -1,7 +1,7 @@
 import { T_Graph, T_Kinship, T_Detail, T_Startup, T_Dragging } from '../common/Global_Imports';
-import { Rect, Point, Trait, colors, Ancestry, Hierarchy } from '../common/Global_Imports';
-import { S_Items, S_Element, S_Title_Edit, S_Alteration } from '../common/Global_Imports';
 import { T_Search, T_Auto_Adjust, T_Search_Preference } from '../common/Global_Imports';
+import { Rect, Point, colors, Ancestry, Hierarchy } from '../common/Global_Imports';
+import { S_Element, S_Title_Edit, S_Alteration } from '../common/Global_Imports';
 import { G_Paging, G_Cluster } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
 
