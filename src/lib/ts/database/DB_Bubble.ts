@@ -1,10 +1,11 @@
 import { T_Thing, T_Graph, T_Create, T_Predicate, T_Persistence, T_Preference } from '../common/Global_Imports';
+import { w_ancestry_focus, w_ancestry_forDetails, w_show_graph_ofType } from '../managers/Stores';
 import { h, k, p, x, busy, debug, Ancestry } from '../common/Global_Imports';
-import { w_ancestry_focus, w_show_graph_ofType } from '../managers/Stores';
 import { T_Database } from './DB_Common';
 import DB_Common from './DB_Common';
 
 export default class DB_Bubble extends DB_Common {
+	prior_details_id: string | null = null;
 	t_persistence = T_Persistence.remote;
 	prior_focus_id: string | null = null;
 	prior_grabbed_ids: string[] = [];
@@ -132,6 +133,13 @@ export default class DB_Bubble extends DB_Common {
 		//////////////////////////////////////////////////////////
 	
 		window.parent.postMessage({ type: 'trigger_an_event', trigger: 'ready' }, k.wildcard);
+		w_ancestry_forDetails.subscribe((ancestry: Ancestry) => {
+			if (!!ancestry && !!ancestry.thing && ancestry.thing.id != this.prior_details_id) {
+				this.prior_details_id = ancestry.thing.id;
+				window.parent.postMessage({ type: 'details_id', id: ancestry.thing.id }, k.wildcard);
+					window.parent.postMessage({ type: 'trigger_an_event', trigger: 'details_changed' }, k.wildcard);			// post focus id first
+			}
+		});
 		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
 			if (!!ancestry && !!ancestry.thing && ancestry.thing.id != this.prior_focus_id) {
 				if (this.respond_to_focus_event) {

@@ -55,6 +55,9 @@ function(instance) {
 				case 'focus_id':
 					instance.publishState('focus_id', event.data.id)
 					break;
+				case 'details_id':
+					instance.publishState('details_id', event.data.id)
+					break;
 				case 'selected_ids':
 					instance.publishState('selected_ids', event.data.ids)
 					break;

@@ -66,7 +66,7 @@ export default class DB_Common {
 	}
 
 	async persist_all(force: boolean = false) {
-		if (databases.defer_persistence || !(force && !c.allow_autoSave)) {
+		if (!force && (databases.defer_persistence || !c.allow_autoSave)) {
 			busy.signal_data_redraw();
 		} else {
 			busy.isPersisting = true;
