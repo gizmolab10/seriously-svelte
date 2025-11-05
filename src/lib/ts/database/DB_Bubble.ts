@@ -155,7 +155,7 @@ export default class DB_Bubble extends DB_Common {
 		window.parent.postMessage({ type: 'trigger_an_event', trigger: 'ready' }, k.wildcard);
 		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
 			const focus_id = ancestry?.thing?.id ?? k.corrupted;
-			if (!!focus_id && focus_id != this.prior_focus_id) {
+			if (!!focus_id && focus_id != this.prior_focus_id && busy.isFocusEventEnabled) {
 				if (this.respond_to_focus_event) {
 					this.prior_focus_id = focus_id;
 					window.parent.postMessage({ type: 'focus_id', id: focus_id }, k.wildcard);
