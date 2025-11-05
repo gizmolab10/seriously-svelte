@@ -17,20 +17,18 @@ export default class G_Layout {
 
 	static readonly _____RECT_OF_GRAPH_VIEW: unique symbol;
 
-	get rect_ofDrawnGraph(): Rect { return this.rect_ofAllWidgets; }
-	get size_ofDrawnGraph(): Size { return this.rect_ofAllWidgets.size; }
 	get center_ofGraphView(): Point { return get(w_rect_ofGraphView).size.asPoint.dividedInHalf; }
 
 	update_rect_ofGraphView() {
 		// respond to changes in: window size & details visibility
 		const show_secondary_controls = get(show.w_search_controls) || (get(show.w_graph_ofType) == T_Graph.tree);
 		const y = (this.controls_boxHeight) * (show_secondary_controls ? 2 : 1) - 4;	// below primary and secondary controls
-		const x = get(show.w_details) ? k.width.details : 5;								// right of details
-		const origin_ofGraph = new Point(x, y);
-		const size_ofGraph = this.windowSize.reducedBy(origin_ofGraph).reducedBy(Point.square(k.thickness.separator.main - 1));
-		const rect = new Rect(origin_ofGraph, size_ofGraph);
-		debug.log_mouse(`GRAPH ====> ${rect.description}`);
-		w_rect_ofGraphView.set(rect);																// emits a signal, to adjust
+		const x = get(show.w_details) ? k.width.details : 5;							// right of details
+		const origin_ofGraphView = new Point(x, y);
+		const size_ofGraphView = this.windowSize.reducedBy(origin_ofGraphView).reducedBy(Point.square(k.thickness.separator.main - 1));
+		const rect = new Rect(origin_ofGraphView, size_ofGraphView);
+		debug.log_mouse(`GRAPH View ====> ${rect.description}`);
+		w_rect_ofGraphView.set(rect);													// emits a signal, to adjust the graph location
 	}
 
 	static readonly _____GRAPHS: unique symbol;
@@ -55,9 +53,9 @@ export default class G_Layout {
 	}
 
 	grand_adjust_toFit() {
-		const graph_size = get(w_rect_ofGraphView).size;
-		const layout_size = this.size_ofDrawnGraph;
-		const scale_factor = layout_size.best_ratio_to(graph_size);
+		const graphView_size = get(w_rect_ofGraphView).size;
+		const layout_size = this.rect_ofAllWidgets.size;
+		const scale_factor = layout_size.best_ratio_to(graphView_size);
 		const new_size = layout_size.dividedEquallyBy(scale_factor);
 		const new_offset = get(w_user_graph_offset).dividedEquallyBy(scale_factor);
 		// also detect if layout is really needed by difference from prior center and offset
@@ -69,7 +67,7 @@ export default class G_Layout {
 
 	static readonly _____WIDGETS: unique symbol;
 
-	get rect_ofAllWidgets(): Rect { return u.get_rect_ofDrawnGraph_forAll_g_widgets(this.all_g_widgets); }
+	get rect_ofAllWidgets(): Rect { return u.get_rect_ofGraphDrawing_forAll_g_widgets(this.all_g_widgets); }
 
 	get all_g_widgets(): G_Widget[] {
 		if (controls.inRadialMode) {
@@ -82,7 +80,7 @@ export default class G_Layout {
 	static readonly _____USER_OFFSET: unique symbol;
 	
 	renormalize_user_graph_offset() { this.set_user_graph_offsetTo(this.persisted_user_offset); }
-	get user_offset_toDrawnGraph(): Rect { return this.rect_ofDrawnGraph.offsetBy(get(w_user_graph_offset)); }
+	get user_offset_toGraphDrawing(): Rect { return this.rect_ofAllWidgets.offsetBy(get(w_user_graph_offset)); }
 	get mouse_distance_fromGraphCenter(): number { return this.mouse_vector_ofOffset_fromGraphCenter()?.magnitude ?? 0; }
 	get mouse_angle_fromGraphCenter(): number | null { return this.mouse_vector_ofOffset_fromGraphCenter()?.angle ?? null; }
 

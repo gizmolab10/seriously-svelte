@@ -19,7 +19,7 @@ export default class G_Widget {
 	center_ofDrag = Point.zero;
 	widget_points_right = true;
 	size_ofSubtree = Size.zero;
-	width_ofDrawnGraph = 0;
+	width_ofGraphDrawing = 0;
 	points_toChild = true;
 	g_cluster!: G_Cluster;
 	s_widget!: S_Widget;
@@ -64,7 +64,7 @@ export default class G_Widget {
 	static empty(ancestry: Ancestry) { return new G_Widget(ancestry); }
 	get absolute_center_ofDrag(): Point { return this.origin.offsetBy(this.center_ofDrag); }
 	get absolute_center_ofReveal(): Point { return this.origin.offsetBy(this.center_ofReveal); }
-	get origin_ofDrawnGraph(): Point { return this.t_widget == T_Widget.radial ? this.origin_ofRadial : this.origin; }
+	get origin_ofGraphDrawing(): Point { return this.t_widget == T_Widget.radial ? this.origin_ofRadial : this.origin; }
 	get showingReveal(): boolean { return this.ancestry.showsReveal_forPointingToChild(this.points_toChild) ?? false; }
 
 	private get t_widget(): T_Widget {
@@ -195,7 +195,7 @@ export default class G_Widget {
 			this.origin_ofTitle = Point.x(inRadialMode ? x_ofRadial_title : dot_size + 5);
 			this.center_ofDrag = origin_ofDrag.offsetEquallyBy(dot_size / 2);
 			this.offset_ofWidget = new Point(x_offset_ofWidget, 0.5);
-			this.width_ofDrawnGraph = width_ofWidget;
+			this.width_ofGraphDrawing = width_ofWidget;
 			this.width_ofWidget = width_ofWidget;
 			if (show_reveal) {
 				const y_ofReveal = dot_size * 0.7 - 0.5;

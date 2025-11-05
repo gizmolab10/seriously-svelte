@@ -15,7 +15,7 @@
 	const size_big = k.height.button + 4;
 	const { w_graph_ofType } = show;
 	const { w_items: w_expanded } = x.si_expanded;
-	let actual_content_rect = layout.user_offset_toDrawnGraph;
+	let actual_content_rect = layout.user_offset_toGraphDrawing;
 	let draggableRect = $w_rect_ofGraphView;
 	let rubberbandComponent: any;
 	let reattachments = 0;
@@ -62,14 +62,14 @@
 		:::${$w_ring_rotation_radius}
 		:::${$w_ring_rotation_angle}
 		:::${$w_depth_limit}`;
-		actual_content_rect = layout.user_offset_toDrawnGraph;
+		actual_content_rect = layout.user_offset_toGraphDrawing;
 	}
 
 	function grand_layout_andReattach() {
 		if (!!h && h.hasRoot) {
 			layout.grand_layout();
 			debug.log_draw(`GRAPH grand_layout_andReattach`);
-			actual_content_rect = layout.user_offset_toDrawnGraph;
+			actual_content_rect = layout.user_offset_toGraphDrawing;
 			reattachments += 1;
 		}
 	}

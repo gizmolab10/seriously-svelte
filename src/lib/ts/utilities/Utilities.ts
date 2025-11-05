@@ -140,7 +140,7 @@ export class Utilities extends Testworthy_Utilities {
 	}
 
 	print_graph() {
-		const rect = layout.rect_ofDrawnGraph;
+		const rect = layout.rect_ofAllWidgets;
 		const className = controls.inTreeMode ? 'tree-graph' : 'radial-graph';
 		print.print_element_byClassName_withRect(className, rect, get(w_ancestry_focus).title);
 	}
@@ -187,7 +187,7 @@ export class Utilities extends Testworthy_Utilities {
 		}
 	}
 
-	get_rect_ofDrawnGraph_forAll_g_widgets(g_widgets: G_Widget[]): Rect {
+	get_rect_ofGraphDrawing_forAll_g_widgets(g_widgets: G_Widget[]): Rect {
 		if (g_widgets.length === 0) {
 			return Rect.zero;
 		}
@@ -196,8 +196,8 @@ export class Utilities extends Testworthy_Utilities {
 		let maxX = -Infinity;
 		let maxY = -Infinity;
 		for (const g_widget of g_widgets) {
-			const w_origin = g_widget.origin_ofDrawnGraph;
-			const w_width = g_widget.width_ofDrawnGraph;
+			const w_origin = g_widget.origin_ofGraphDrawing;
+			const w_width = g_widget.width_ofGraphDrawing;
 			const w_height = k.height.row - 1.5;
 			const w_minX = w_origin.x;
 			const w_minY = w_origin.y;
@@ -210,8 +210,7 @@ export class Utilities extends Testworthy_Utilities {
 		}
 		const width = maxX - minX;
 		const height = maxY - minY;
-		const offset = controls.inRadialMode ? new Point(-10, -3) : new Point(-10, -8);
-		return new Rect(new Point(minX, minY).offsetBy(offset), new Size(width, height));
+		return new Rect(new Point(minX, minY), new Size(width, height));
 	}
 
 	convert_windowOffset_toCharacterOffset_in(offset: number, input: HTMLInputElement): number {

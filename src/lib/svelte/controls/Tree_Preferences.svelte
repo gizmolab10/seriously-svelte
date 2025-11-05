@@ -28,7 +28,7 @@
 	top: 3px;
 	left: -3px;
 	width: 100%;
-	height: 50px;
+	height: 35px;
 	z-index: {zindex};
 	position: absolute;
 	border-radius: 20px;

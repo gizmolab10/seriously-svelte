@@ -157,17 +157,17 @@ export default class DB_Bubble extends DB_Common {
 				this.respond_to_grab_event = true;
 			}
 		});
-		w_ancestry_forDetails.subscribe((ancestry: Ancestry) => {
-			const details_id = ancestry?.thing?.id ?? k.corrupted;
-			if (!!details_id && details_id != this.prior_details_id) {
-				if (this.respond_to_details_event) {
-					this.prior_details_id = details_id;
-					window.parent.postMessage({ type: 'details_id', id: details_id }, k.wildcard);
-					window.parent.postMessage({ type: 'trigger_an_event', trigger: 'details_changed' }, k.wildcard);
-				}
-				this.respond_to_details_event = true;
-			}
-		});
+		// w_ancestry_forDetails.subscribe((ancestry: Ancestry) => {
+		// 	const details_id = ancestry?.thing?.id ?? k.corrupted;
+		// 	if (!!details_id && details_id != this.prior_details_id) {
+		// 		if (this.respond_to_details_event) {
+		// 			this.prior_details_id = details_id;
+		// 			window.parent.postMessage({ type: 'details_id', id: details_id }, k.wildcard);
+		// 			window.parent.postMessage({ type: 'trigger_an_event', trigger: 'details_changed' }, k.wildcard);
+		// 		}
+		// 		this.respond_to_details_event = true;
+		// 	}
+		// });
 	}
 
 }
