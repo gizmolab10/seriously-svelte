@@ -31,7 +31,15 @@ export default class DB_Bubble extends DB_Common {
 		if (!properties_string || properties_string.length == 0) {
 			h.wrapUp_data_forUX();
 		} else {
-			this.extract_fromProperties(properties_string);
+			const type = event.data.type;
+			switch (type) {
+				case 'UPDATE_PROPERTIES':
+					this.extract_fromProperties(properties_string);
+					break;
+				case 'CHANGE_FOCUS':
+					this.changeFocus(properties_string);
+					break;
+			}
 			this.setup_to_send_events();
 			p.writeDB_key(T_Preference.bubble, true);
 		}
@@ -50,6 +58,19 @@ export default class DB_Bubble extends DB_Common {
 				h.thing_remember_runtimeCreateUnique(h.db.idBase, id, title);
 			} else {
 				h.thing_remember_runtimeCreateUnique(h.db.idBase, id, title, color, type);
+			}
+		}
+	}
+
+	private changeFocus(properties_string: any) {
+		const bubble_properties = JSON.parse(properties_string);
+		const b_focus = bubble_properties.id;
+		if (!!b_focus) {
+			const focus = h.thing_forHID(b_focus.hash())?.ancestry;
+			if (!!focus) {
+				busy.temporarily_disable_focus_event_while(() => {
+					focus.becomeFocus();
+				});
 			}
 		}
 	}

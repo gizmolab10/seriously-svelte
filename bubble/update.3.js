@@ -17,20 +17,6 @@ function(instance, properties) {
 	instance.data.assure_iframe_is_instantiated(properties);	// start the ball rolling, effective once
 	process_incoming_properties();
 
-	function send_to_webseriously(to_send) {
-		const iframe = instance.data.iframe.contentWindow;
-		const message = {
-			type: 'UPDATE_PROPERTIES',
-			properties: JSON.stringify(to_send)
-		};
-		if (instance.data.iframeIsListening && iframe) {
-			iframe.postMessage(message, '*');
-		} else {
-			instance.data.pendingMessages = instance.data.pendingMessages || [];
-			instance.data.pendingMessages.push(message);
-		}
-	}
-
 	function process_incoming_properties() {
 		LOG('incoming', properties);
 
@@ -62,6 +48,6 @@ function(instance, properties) {
 				to_send[seriously_name] = items;
 			}
 		});
-		send_to_webseriously(to_send);
+		instance.data.send_to_webseriously('UPDATE_PROPERTIES', to_send);
 	}
 }

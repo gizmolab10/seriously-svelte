@@ -56,10 +56,13 @@ function(instance) {
 					instance.publishState('focus_id', event.data.id)
 					break;
 				case 'details_id':
-					instance.publishState('details_id', event.data.id)
+					instance.publishState('details_id', event.data.id);
 					break;
 				case 'selected_ids':
-					instance.publishState('selected_ids', event.data.ids)
+					instance.publishState('selected_ids', event.data.ids);
+					break;
+				case 'in_radial_mode':
+					instance.publishState('in_radial_mode', event.data.in_radial_mode);
 					break;
 				case 'trigger_an_event':
 					instance.triggerEvent(event.data.trigger);
@@ -81,6 +84,20 @@ function(instance) {
 					break;
 				}
 			LOG('[PLUGIN] Received webseriously message type:', event.data.type);
+		}
+	}
+
+	instance.data.send_to_webseriously = function (type, object) {
+		const iframe = instance.data.iframe.contentWindow;
+		const message = {
+			type: type,
+			properties: JSON.stringify(object)
+		};
+		if (instance.data.iframeIsListening && iframe) {
+			iframe.postMessage(message, '*');
+		} else {
+			instance.data.pendingMessages = instance.data.pendingMessages || [];
+			instance.data.pendingMessages.push(message);
 		}
 	}
 }
