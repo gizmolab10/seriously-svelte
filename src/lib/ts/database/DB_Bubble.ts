@@ -41,6 +41,9 @@ export default class DB_Bubble extends DB_Common {
 				case 'CHANGE_FOCUS':
 					this.changeFocusTo(bubble_properties.id);
 					break;
+				case 'CHANGE_SELECTION':
+					this.changeGrabTo(bubble_properties.id);
+					break;
 			}
 			this.setup_to_send_events();
 			p.writeDB_key(T_Preference.bubble, true);
@@ -64,6 +67,16 @@ export default class DB_Bubble extends DB_Common {
 		}
 	}
 
+	private changeGrabTo(id: string) {
+		if (!!id) {
+			const grab = h.thing_forHID(id.hash())?.ancestry;
+			if (!!grab) {
+				grab.grabOnly();
+				grab.parentAncestry?.expand();
+				grab.ancestry_assureIsVisible();
+			}
+		}
+	}
 	private changeFocusTo(id: string) {
 		if (!!id) {
 			const focus = h.thing_forHID(id.hash())?.ancestry;
