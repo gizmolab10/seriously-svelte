@@ -159,6 +159,9 @@ export default class DB_Bubble extends DB_Common {
 				this.respond_to_grab_event = true;
 			}
 		});
+		show.w_graph_ofType.subscribe((graph_type: T_Graph) => {
+			window.parent.postMessage({ type: 'in_radial_mode', in_radial_mode: graph_type == T_Graph.radial }, k.wildcard);
+		});
 		// w_ancestry_forDetails.subscribe((ancestry: Ancestry) => {
 		// 	const details_id = ancestry?.thing?.id ?? k.corrupted;
 		// 	if (!!details_id && details_id != this.prior_details_id) {
