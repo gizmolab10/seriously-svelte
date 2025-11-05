@@ -1,7 +1,7 @@
-import { h, p, u, show, debug, search, layout, details, controls } from '../common/Global_Imports';
-import { S_Items, T_Detail, T_Search, T_Startup } from '../common/Global_Imports';
+import { h, p, u, busy, debug, search, layout, details, controls } from '../common/Global_Imports';
 import { w_t_startup, w_data_updated, w_search_state } from '../managers/Stores';
 import { w_ancestry_forDetails, w_ancestry_focus } from '../managers/Stores';
+import { S_Items, T_Search, T_Startup } from '../common/Global_Imports';
 import { Tag, Thing, Trait, Ancestry } from '../common/Global_Imports';
 import { w_s_alteration, w_s_title_edit } from '../managers/Stores';
 import Identifiable from '../runtime/Identifiable';
@@ -99,7 +99,7 @@ export default class UX_S_Items {
 	ancestry_focusOn(ancestry: Ancestry): boolean {
 		const priorFocus = get(w_ancestry_focus);
 		const changed = !priorFocus || !ancestry.equals(priorFocus!);
-		if (changed) {
+		if (changed && busy.isFocusEventEnabled) {
 			const pair: Identifiable_S_Items_Pair = [ancestry, this.si_grabs];
 			this.si_recents.push(pair);
 			w_s_alteration.set(null);

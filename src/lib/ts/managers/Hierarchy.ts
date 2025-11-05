@@ -1154,12 +1154,14 @@ export class Hierarchy {
 	}
 
 	predicate_defaults_remember_runtimeCreate() {
+		this.predicate_remember_runtimeCreateUnique(Predicate.newID(), T_Predicate.isTagged, true);
 		this.predicate_remember_runtimeCreateUnique(Predicate.newID(), T_Predicate.contains, false);
 		this.predicate_remember_runtimeCreateUnique(Predicate.newID(), T_Predicate.isRelated, true);
-		this.predicate_remember_runtimeCreateUnique(Predicate.newID(), T_Predicate.explains, false);
 		this.predicate_remember_runtimeCreateUnique(Predicate.newID(), T_Predicate.requires, false);
-		this.predicate_remember_runtimeCreateUnique(Predicate.newID(), T_Predicate.supports, false);
+		this.predicate_remember_runtimeCreateUnique(Predicate.newID(), T_Predicate.alliedWith, true);
 		this.predicate_remember_runtimeCreateUnique(Predicate.newID(), T_Predicate.appreciates, false);
+		this.predicate_remember_runtimeCreateUnique(Predicate.newID(), T_Predicate.explainedBy, false);
+		this.predicate_remember_runtimeCreateUnique(Predicate.newID(), T_Predicate.supportedBy, false);
 	}
 
 	predicate_remember(predicate: Predicate) {

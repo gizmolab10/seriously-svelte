@@ -32,12 +32,14 @@ export default class DB_Bubble extends DB_Common {
 			h.wrapUp_data_forUX();
 		} else {
 			const type = event.data.type;
+			const bubble_properties = JSON.parse(properties_string);
+			debug.log_bubble(`[DB_Bubble] received bubble update: ${properties_string}`);
 			switch (type) {
 				case 'UPDATE_PROPERTIES':
-					this.extract_fromProperties(properties_string);
+					this.extract_fromProperties(bubble_properties);
 					break;
 				case 'CHANGE_FOCUS':
-					this.changeFocus(properties_string);
+					this.changeFocusTo(bubble_properties.id);
 					break;
 			}
 			this.setup_to_send_events();
@@ -63,28 +65,20 @@ export default class DB_Bubble extends DB_Common {
 	}
 
 	private changeFocusTo(id: string) {
-		const focus = h.thing_forHID(id.hash())?.ancestry;
-		if (!!focus) {
-			busy.temporarily_disable_focus_event_while(() => {
-				focus.becomeFocus();
-			});
+		if (!!id) {
+			const focus = h.thing_forHID(id.hash())?.ancestry;
+			if (!!focus) {
+				busy.temporarily_disable_focus_event_while(() => {
+					focus.becomeFocus();
+				});
+			}
 		}
 	}
 
-	private changeFocus(properties_string: any) {
-		const bubble_properties = JSON.parse(properties_string);
-		const b_focus = bubble_properties.id;
-		if (!!b_focus) {
-			this.changeFocusTo(b_focus);
-		}
-	}
-
-	private extract_fromProperties(properties_string: any) {
+	private extract_fromProperties(bubble_properties: any) {
 		let b_ids, b_root, b_focus, b_titles, b_colors, b_parent_ids, b_related_ids, b_overwrite, b_inRadialMode, b_show_details, b_erase_user_preferences;
 		try {
-			const bubble_properties = JSON.parse(properties_string);
 			const has_bubble = p.readDB_key(T_Preference.bubble) ?? false; // true after first launch
-			debug.log_bubble(`[DB_Bubble] received bubble update: ${properties_string}`);
 			b_overwrite = bubble_properties.overwrite_focus_and_mode || !has_bubble;
 			b_erase_user_preferences = bubble_properties.erase_user_preferences;
 			b_inRadialMode = bubble_properties.show_radial_mode;
