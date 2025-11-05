@@ -96,17 +96,17 @@ export default class UX_S_Items {
 		}
 	}
 
-	ancestry_focusOn(ancestry: Ancestry, force: boolean = false): boolean {
+	ancestry_focusOn(ancestry: Ancestry): boolean {
 		const priorFocus = get(w_ancestry_focus);
-		const changed = force || !priorFocus || !ancestry.equals(priorFocus!);
+		const changed = !priorFocus || !ancestry.equals(priorFocus!);
 		if (changed) {
 			const pair: Identifiable_S_Items_Pair = [ancestry, this.si_grabs];
 			this.si_recents.push(pair);
 			w_s_alteration.set(null);
 			w_ancestry_focus.set(ancestry);
+			ancestry.expand();
+			this.update_ancestry_forDetails();
 		}
-		ancestry.expand();
-		this.update_ancestry_forDetails();
 		return changed;
 	}
 

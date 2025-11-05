@@ -115,10 +115,10 @@ export default class DB_Bubble extends DB_Common {
 		}
 		if (!!b_overwrite) {
 			show.w_graph_ofType.set(b_inRadialMode ? T_Graph.radial : T_Graph.tree);
-			if (!!b_focus) { // must happen AFTER ancestries are created
-				const focus = h.thing_forHID(b_focus.hash());
-				if (!!focus?.ancestry) {
-					focus.ancestry.becomeFocus(true);
+			if (!!b_focus) {
+				const focus = h.thing_forHID(b_focus.hash())?.ancestry;		// must happen AFTER ancestries are created
+				if (!!focus) {
+					focus.becomeFocus();
 				}
 			}
 		}
@@ -161,18 +161,19 @@ export default class DB_Bubble extends DB_Common {
 		});
 		show.w_graph_ofType.subscribe((graph_type: T_Graph) => {
 			window.parent.postMessage({ type: 'in_radial_mode', in_radial_mode: graph_type == T_Graph.radial }, k.wildcard);
+			window.parent.postMessage({ type: 'trigger_an_event', trigger: 'mode_changed' }, k.wildcard);
 		});
-		// w_ancestry_forDetails.subscribe((ancestry: Ancestry) => {
-		// 	const details_id = ancestry?.thing?.id ?? k.corrupted;
-		// 	if (!!details_id && details_id != this.prior_details_id) {
-		// 		if (this.respond_to_details_event) {
-		// 			this.prior_details_id = details_id;
-		// 			window.parent.postMessage({ type: 'details_id', id: details_id }, k.wildcard);
-		// 			window.parent.postMessage({ type: 'trigger_an_event', trigger: 'details_changed' }, k.wildcard);
-		// 		}
-		// 		this.respond_to_details_event = true;
-		// 	}
-		// });
+		w_ancestry_forDetails.subscribe((ancestry: Ancestry) => {
+			const details_id = ancestry?.thing?.id ?? k.corrupted;
+			if (!!details_id && details_id != this.prior_details_id) {
+				if (this.respond_to_details_event) {
+					this.prior_details_id = details_id;
+					window.parent.postMessage({ type: 'details_id', id: details_id }, k.wildcard);
+					window.parent.postMessage({ type: 'trigger_an_event', trigger: 'details_changed' }, k.wildcard);
+				}
+				this.respond_to_details_event = true;
+			}
+		});
 	}
 
 }

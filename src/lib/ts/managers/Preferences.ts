@@ -122,7 +122,7 @@ export class Preferences {
 					ancestryToFocus = lastGrabbedAncestry;
 				}
 			}
-			ancestryToFocus.becomeFocus(true);
+			ancestryToFocus.becomeFocus();
 		}
 		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
 			p.writeDB_key(this.focus_key, !ancestry ? null : ancestry.pathString);

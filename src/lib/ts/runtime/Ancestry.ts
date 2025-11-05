@@ -71,7 +71,7 @@ export default class Ancestry extends Identifiable {
 	static readonly _____FOCUS: unique symbol;
 
 	get isFocus(): boolean { return this.matchesStore(w_ancestry_focus); }
-	becomeFocus(force: boolean = false): boolean { return x.ancestry_focusOn(this, force); }
+	becomeFocus(): boolean { return x.ancestry_focusOn(this); }
 
 	get depth_below_focus(): number {
 		const focus = get(w_ancestry_focus);
