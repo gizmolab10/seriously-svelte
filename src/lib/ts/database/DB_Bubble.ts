@@ -62,16 +62,20 @@ export default class DB_Bubble extends DB_Common {
 		}
 	}
 
+	private changeFocusTo(id: string) {
+		const focus = h.thing_forHID(id.hash())?.ancestry;
+		if (!!focus) {
+			busy.temporarily_disable_focus_event_while(() => {
+				focus.becomeFocus();
+			});
+		}
+	}
+
 	private changeFocus(properties_string: any) {
 		const bubble_properties = JSON.parse(properties_string);
 		const b_focus = bubble_properties.id;
 		if (!!b_focus) {
-			const focus = h.thing_forHID(b_focus.hash())?.ancestry;
-			if (!!focus) {
-				busy.temporarily_disable_focus_event_while(() => {
-					focus.becomeFocus();
-				});
-			}
+			this.changeFocusTo(b_focus);
 		}
 	}
 
@@ -137,10 +141,7 @@ export default class DB_Bubble extends DB_Common {
 		if (!!b_overwrite) {
 			show.w_graph_ofType.set(b_inRadialMode ? T_Graph.radial : T_Graph.tree);
 			if (!!b_focus) {
-				const focus = h.thing_forHID(b_focus.hash())?.ancestry;		// must happen AFTER ancestries are created
-				if (!!focus) {
-					focus.becomeFocus();
-				}
+				this.changeFocusTo(b_focus);
 			}
 		}
 		show.w_details.set(!!b_show_details);
