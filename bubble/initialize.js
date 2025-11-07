@@ -1,11 +1,11 @@
 function(instance) {
-	instance.data.enable_logging				= false;
+	instance.data.enable_logging = false;
 	instance.data.iframe_is_instantiated		= false;	// assure_iframe_is_instantiated (right below, called from update) sets this to true
 	instance.data.LOG							= function (message, value, ...optionalParams) {if (instance.data.enable_logging && !!value) { console.log('[PLUGIN]', message, value, ...optionalParams); } }
 	instance.data.assure_iframe_is_instantiated = function (properties) {
 		if (!instance.data.iframe_is_instantiated) {
+			instance.data.enable_logging = properties.enable_logging;
 			if (!instance.data.iframe) {
-				LOG('Initializing plugin ...');
 				const iframe = document.createElement('iframe');
 				iframe.src = url_from_properties(properties);
 				iframe.style.overflow = 'hidden';
@@ -15,7 +15,6 @@ function(instance) {
 				instance.data.iframe = iframe;
 				window.addEventListener('message', handle_webseriously_message);
 			}
-			instance.data.enable_logging = properties.enable_logging;
 			instance.canvas.append(instance.data.iframe);
 			instance.data.iframe_is_instantiated = true;
 		}
@@ -33,11 +32,20 @@ function(instance) {
 			db: 'bubble',
 			debug: 'bubble',
 			erase: properties.erase_user_settings ? 'settings' : 'unknown',
-			disable: disables.join(',')
+			disable: disables.filter(d => d !== 'unknown').join(',')
 		}
-		const queries = Object.entries(pairs).map(([key, value]) => `${key}=${value}`).join('&');
-		const url = 'https://webseriously.netlify.app/?' + queries;
-		LOG('url', url);
+		const urlParams = new URLSearchParams(window.location.search);
+		// Merge pairs into URL params, overwriting duplicates and eliminating unknowns
+		Object.entries(pairs).filter(([key, value]) => value !== 'unknown').forEach(([key, value]) => {
+			const overwrite = urlParams.get(key);
+			if (!!overwrite && overwrite !== value) {
+				urlParams.set(key, `${overwrite},${value}`);
+			} else {
+				urlParams.set(key, overwrite || value);
+			}
+		});
+		const url = 'https://webseriously.netlify.app/?' + urlParams.toString().replace(/%2C/g, ',');
+		LOG('initializing with url:', url);
 		return url;
 	}
 

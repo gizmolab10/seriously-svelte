@@ -18,7 +18,7 @@
 	const ids_forDatabase = [T_Database.local, T_Database.firebase, T_Database.test];
 	const ids_forInputFormat = [T_File_Format.csv, T_File_Format.json, T_File_Format.seriously, T_File_Format.cancel];
 	let s_element_byStorageType: { [id: string]: S_Element } = {};
-	let heights = [13, height_ofChoices(), 42, 28, 74, 26, 3];
+	let heights = [15, height_ofChoices(), 42, 28, 74, 26, 3];
 	let storage_choice: string | null = null;
 	let storage_details: Array<Object> = [];
 	let width = k.width.details - 7;
@@ -29,7 +29,7 @@
 	setup_s_elements();
 	$: tops = u.cumulativeSum(heights);
 	s_save.set_forHovering('black', 'pointer');
-	function height_ofChoices() { return c.has_standalone_UI ? p.show_other_databases ? 22 : -4 : -16; }
+	function height_ofChoices() { return c.has_standalone_UI ? p.show_other_databases ? 18 : -5 : -16; }
 
 	$:{
 		const _ = `${$w_data_updated}:::${$w_t_database}`;
