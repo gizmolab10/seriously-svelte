@@ -5,6 +5,7 @@ import { SignalConnection_atPriority } from '../types/Types';
 import Identifiable from '../runtime/Identifiable';
 import { SignalConnection } from 'typed-signals';
 import { u } from '../utilities/Utilities';
+import { get } from 'svelte/store';
 
 // formerly called Svelte Wrapper
 // (?) style construction (by type and hid)
@@ -42,7 +43,7 @@ export default class S_Component {
     get id(): string { return `${this.t_component}-${this.ancestry?.kind ?? 'no-predicate'}-${this.ancestry?.titles ?? Identifiable.newID()}`; }
 
     get boundingRect(): Rect {
-        const scale_factor = layout.scale_factor;
+        const scale_factor = get(layout.w_scale_factor);
         const rect = Rect.boundingRectFor(this.element);
         return rect?.dividedEquallyBy(scale_factor) ?? Rect.zero;
     }

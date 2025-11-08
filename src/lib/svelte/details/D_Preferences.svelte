@@ -16,10 +16,11 @@
 	const picker_offset = `-189px`;
 	const color_left = width / 2 - 13;
 	const segmented_width = width - 6;
+	const { w_scale_factor } = layout;
 	const segmented_height = k.height.button;
 	const separator_height = segmented_height + 9;
-	const separator_width = width - 5 - separator_left * 2;
 	const { w_details_ofType, w_countDots_ofType } = show;
+	const separator_width = width - 5 - separator_left * 2;
 	let color_wrapper: HTMLDivElement | null = null;
 	let color_origin = Point.square(-3.5);
 	let color = $w_separator_color;
@@ -59,7 +60,7 @@
 
 	function update_color_origin() {
 		if (color_wrapper) {
-			const origin = Rect.createFromDOMRect(color_wrapper.getBoundingClientRect()).origin.multipliedEquallyBy(1 / layout.scale_factor);
+			const origin = Rect.createFromDOMRect(color_wrapper.getBoundingClientRect()).origin.multipliedEquallyBy(1 / $w_scale_factor);
 			color_origin = origin.offsetByXY(-3, -4);
 		}
 	}

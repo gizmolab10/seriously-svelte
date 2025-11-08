@@ -8,6 +8,7 @@
 	export let left = 0;
 	export let top = 0;
 	export let array;
+	const { w_scale_factor } = layout;
 	let table;
 
 	export function absolute_location_ofCellAt(x: Integer, y: Integer): Point {
@@ -20,7 +21,7 @@
 		if (y >= cells.length) {
 			console.error('Column index out of bounds');
 		}
-		return Rect.createFromDOMRect(cells[y].getBoundingClientRect()).origin.multipliedEquallyBy(1 / layout.scale_factor);
+		return Rect.createFromDOMRect(cells[y].getBoundingClientRect()).origin.multipliedEquallyBy(1 / $w_scale_factor);
 	}
 
 </script>

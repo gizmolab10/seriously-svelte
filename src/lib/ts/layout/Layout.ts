@@ -3,32 +3,22 @@ import { G_Widget, S_Component, T_Graph, T_Preference } from '../common/Global_I
 import { w_rect_ofGraphView, w_mouse_location_scaled } from '../managers/Stores';
 import { Rect, Size, Point, Thing, Ancestry } from '../common/Global_Imports';
 import { w_user_graph_offset, w_user_graph_center } from '../managers/Stores';
-import { get } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 
-export default class G_Layout {
-	scale_factor = 1;
+export default class Layout {
+	w_scale_factor			= writable<number>(1);
+	w_scaled_movement		= writable<Point | null>(null);
+	w_mouse_location_scaled	= writable<Point>();
+	w_user_graph_center		= writable<Point>();
+	w_user_graph_offset		= writable<Point>();
+	w_mouse_location		= writable<Point>();
+	w_rect_ofGraphView		= writable<Rect>();
 
 	restore_preferences() {
 		this.update_rect_ofGraphView();	// needed for set_scale_factor
 		this.set_scale_factor(p.read_key(T_Preference.scale) ?? 1);
 		this.renormalize_user_graph_offset();	// must be called after apply scale (which otherwise fubars offset)
 		document.documentElement.style.setProperty('--css-body-width', this.windowSize.width.toString() + 'px');
-	}
-
-	static readonly _____RECT_OF_GRAPH_VIEW: unique symbol;
-
-	get center_ofGraphView(): Point { return get(w_rect_ofGraphView).size.asPoint.dividedInHalf; }
-
-	update_rect_ofGraphView() {
-		// respond to changes in: window size & details visibility
-		const show_secondary_controls = get(show.w_search_controls) || (get(show.w_graph_ofType) == T_Graph.tree);
-		const y = (this.controls_boxHeight) * (show_secondary_controls ? 2 : 1) - 4;	// below primary and secondary controls
-		const x = get(show.w_details) ? k.width.details : 5;							// right of details
-		const origin_ofGraphView = new Point(x, y);
-		const size_ofGraphView = this.windowSize.reducedBy(origin_ofGraphView).reducedBy(Point.square(k.thickness.separator.main - 1));
-		const rect = new Rect(origin_ofGraphView, size_ofGraphView);
-		debug.log_mouse(`GRAPH View ====> ${rect.description}`);
-		w_rect_ofGraphView.set(rect);													// emits a signal, to adjust the graph location
 	}
 
 	static readonly _____GRAPHS: unique symbol;
@@ -75,6 +65,22 @@ export default class G_Layout {
 		} else {
 			return g_tree.visible_g_widgets;
 		}
+	}
+
+	static readonly _____RECT_OF_GRAPH_VIEW: unique symbol;
+
+	get center_ofGraphView(): Point { return get(w_rect_ofGraphView).size.asPoint.dividedInHalf; }
+
+	update_rect_ofGraphView() {
+		// respond to changes in: window size & details visibility
+		const show_secondary_controls = get(show.w_search_controls) || (get(show.w_graph_ofType) == T_Graph.tree);
+		const y = (this.controls_boxHeight) * (show_secondary_controls ? 2 : 1) - 4;	// below primary and secondary controls
+		const x = get(show.w_details) ? k.width.details : 5;							// right of details
+		const origin_ofGraphView = new Point(x, y);
+		const size_ofGraphView = this.windowSize.reducedBy(origin_ofGraphView).reducedBy(Point.square(k.thickness.separator.main - 1));
+		const rect = new Rect(origin_ofGraphView, size_ofGraphView);
+		debug.log_mouse(`GRAPH View ====> ${rect.description}`);
+		w_rect_ofGraphView.set(rect);													// emits a signal, to adjust the graph location
 	}
 
 	static readonly _____USER_OFFSET: unique symbol;
@@ -177,7 +183,7 @@ export default class G_Layout {
 	static readonly _____WINDOW: unique symbol;
 	
 	get inner_windowSize(): Size { return new Size(window.innerWidth, window.innerHeight); }
-	get windowSize(): Size { return this.inner_windowSize.dividedEquallyBy(this.scale_factor); }
+	get windowSize(): Size { return this.inner_windowSize.dividedEquallyBy(get(this.w_scale_factor)); }
 	get windowScroll(): Point { return new Point(window.scrollX, window.scrollY); }
 
 	static readonly _____SCALE_FACTOR: unique symbol;
@@ -189,7 +195,7 @@ export default class G_Layout {
 	}
 
 	set_scale_factor(scale_factor: number) {
-		// this.scale_factor = scale_factor;	// needed to edit things
+		// this.w_scale_factor.set(scale_factor);	// needed to edit things
 		// p.write_key(T_Preference.scale, scale_factor);
 		// const doc = document.documentElement;
 		// doc.style.setProperty('zoom', scale_factor.toString());
@@ -200,4 +206,4 @@ export default class G_Layout {
 
 }
 
-export let layout = new G_Layout();
+export let layout = new Layout();

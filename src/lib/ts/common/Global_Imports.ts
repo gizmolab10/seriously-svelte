@@ -41,7 +41,7 @@ import { search } from '../ux/UX_Search';
 import { print } from '../utilities/Print';
 import { details } from '../ux/UX_Details';
 import { Direction } from '../types/Angle';
-import { layout } from '../layout/G_Layout';
+import { layout } from '../layout/Layout';
 import { colors } from '../managers/Colors';
 import { signals } from '../signals/Signals';
 import { elements } from '../ux/UX_S_Elements';

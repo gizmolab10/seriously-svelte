@@ -6,6 +6,7 @@
 	import Tree_Branches from './Tree_Branches.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import { onMount } from 'svelte';
+	const { w_scale_factor } = layout;
 	const { w_depth_limit } = show;
 	let s_component: S_Component;
 	let reattachments = 0;
@@ -28,7 +29,7 @@
 				top: {$w_user_graph_offset.y - 5}px;
 				width: {$w_rect_ofGraphView.size.width}px;
 				height: {$w_rect_ofGraphView.size.height}px;
-				transform: scale({layout.scale_factor});'>
+				transform: scale({$w_scale_factor});'>
 			<Widget g_widget = {$w_ancestry_focus.g_widget}/>
 			{#if $w_ancestry_focus.shows_branches}
 				<Tree_Branches ancestry = {$w_ancestry_focus} depth = {$w_depth_limit}/>

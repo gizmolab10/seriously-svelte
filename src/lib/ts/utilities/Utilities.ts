@@ -7,7 +7,7 @@ import { Rect, Size, Point } from '../types/Geometry';
 import Identifiable from '../runtime/Identifiable';
 import G_TreeLine from '../layout/G_TreeLine';
 import { controls } from '../ux/UX_Controls';
-import { layout } from '../layout/G_Layout';
+import { layout } from '../layout/Layout';
 import Ancestry from '../runtime/Ancestry';
 import G_Widget from '../layout/G_Widget';
 import { Integer } from '../types/Types';
@@ -134,7 +134,7 @@ export class Utilities extends Testworthy_Utilities {
 		element.style.whiteSpace = 'pre';
 		element.textContent = s;
 		document.body.appendChild(element);
-		const width: number = element.getBoundingClientRect().width / layout.scale_factor;
+		const width: number = element.getBoundingClientRect().width / get(layout.w_scale_factor);
 		document.body.removeChild(element);
 		return width;
 	}
@@ -223,7 +223,7 @@ export class Utilities extends Testworthy_Utilities {
 		if (relativeX < 0) {
 			relativeX = 0;
 		}
-		const effectiveX = (relativeX + input.scrollLeft) / layout.scale_factor;
+		const effectiveX = (relativeX + input.scrollLeft) / get(layout.w_scale_factor);
 		// Create a canvas context for measuring text.
 		const canvas = document.createElement('canvas');
 		const context = canvas.getContext('2d');

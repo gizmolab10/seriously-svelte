@@ -14,7 +14,6 @@ export class Visibility {
 	w_related				= writable<boolean>();
 	w_save_data_button		= writable<boolean>();
 	w_search_controls		= writable<boolean>();
-	w_scale_factor			= writable<number>(1);
 	w_depth_limit			= writable<number>();
 	debug_cursor			= false;
 
