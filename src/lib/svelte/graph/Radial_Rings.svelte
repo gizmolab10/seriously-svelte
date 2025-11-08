@@ -4,12 +4,12 @@
 	import { radial, g_radial, signals, svgPaths, databases } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Radial_Zone, T_Component, S_Component } from '../../ts/common/Global_Imports';
 	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/managers/Stores';
-	import { w_rect_ofGraphView, w_mouse_location_scaled } from '../../ts/managers/Stores';
 	import { w_thing_color, w_ancestry_focus } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Radial_ArcSlider from './Radial_ArcSlider.svelte';
 	import { onMount } from 'svelte';
 	const name = 'rings';
+	const { w_mouse_location_scaled } = layout;
 	const ring_width = k.thickness.rotation_ring;
 	const mouse_timer = e.mouse_timer_forName(name);	// persist across destroy/recreate
 	let color = $w_ancestry_focus?.thing?.color ?? colors.default_forThings;

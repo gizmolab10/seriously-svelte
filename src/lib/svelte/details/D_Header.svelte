@@ -2,7 +2,6 @@
 	import { c, k, u, elements, x, debug, search, colors, layout } from '../../ts/common/Global_Imports';
 	import { w_thing_color, w_ancestry_forDetails } from '../../ts/managers/Stores';
 	import { Ancestry, T_Detail, S_Widget } from '../../ts/common/Global_Imports';
-	import { w_rect_ofGraphView } from '../../ts/managers/Stores';
 	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_index: w_found } = x.si_found;
 	let ancestry: Ancestry | null = null;

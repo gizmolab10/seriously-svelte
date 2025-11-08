@@ -1,17 +1,15 @@
 import { h, k, p, u, show, debug, g_tree, g_radial, signals, controls } from '../common/Global_Imports';
 import { G_Widget, S_Component, T_Graph, T_Preference } from '../common/Global_Imports';
-import { w_rect_ofGraphView, w_mouse_location_scaled } from '../managers/Stores';
 import { Rect, Size, Point, Thing, Ancestry } from '../common/Global_Imports';
-import { w_user_graph_offset, w_user_graph_center } from '../managers/Stores';
 import { get, writable } from 'svelte/store';
 
 export default class Layout {
 	w_scale_factor			= writable<number>(1);
 	w_scaled_movement		= writable<Point | null>(null);
+	w_mouse_location		= writable<Point>();
 	w_mouse_location_scaled	= writable<Point>();
 	w_user_graph_center		= writable<Point>();
 	w_user_graph_offset		= writable<Point>();
-	w_mouse_location		= writable<Point>();
 	w_rect_ofGraphView		= writable<Rect>();
 
 	restore_preferences() {
@@ -43,14 +41,14 @@ export default class Layout {
 	}
 
 	grand_adjust_toFit() {
-		const graphView_size = get(w_rect_ofGraphView).size;
+		const graphView_size = get(this.w_rect_ofGraphView).size;
 		const layout_size = this.rect_ofAllWidgets.size;
 		const scale_factor = layout_size.best_ratio_to(graphView_size);
 		const new_size = layout_size.dividedEquallyBy(scale_factor);
-		const new_offset = get(w_user_graph_offset).dividedEquallyBy(scale_factor);
+		const new_offset = get(this.w_user_graph_offset).dividedEquallyBy(scale_factor);
 		// also detect if layout is really needed by difference from prior center and offset
-		w_user_graph_center.set(new_size.asPoint.dividedInHalf);
-		w_user_graph_offset.set(new_offset);
+		this.w_user_graph_center.set(new_size.asPoint.dividedInHalf);
+		this.w_user_graph_offset.set(new_offset);
 		this.set_scale_factor(scale_factor);
 		this.grand_layout();
 	}
@@ -69,7 +67,7 @@ export default class Layout {
 
 	static readonly _____RECT_OF_GRAPH_VIEW: unique symbol;
 
-	get center_ofGraphView(): Point { return get(w_rect_ofGraphView).size.asPoint.dividedInHalf; }
+	get center_ofGraphView(): Point { return get(this.w_rect_ofGraphView).size.asPoint.dividedInHalf; }
 
 	update_rect_ofGraphView() {
 		// respond to changes in: window size & details visibility
@@ -80,13 +78,13 @@ export default class Layout {
 		const size_ofGraphView = this.windowSize.reducedBy(origin_ofGraphView).reducedBy(Point.square(k.thickness.separator.main - 1));
 		const rect = new Rect(origin_ofGraphView, size_ofGraphView);
 		debug.log_mouse(`GRAPH View ====> ${rect.description}`);
-		w_rect_ofGraphView.set(rect);													// emits a signal, to adjust the graph location
+		this.w_rect_ofGraphView.set(rect);													// emits a signal, to adjust the graph location
 	}
 
 	static readonly _____USER_OFFSET: unique symbol;
 	
 	renormalize_user_graph_offset() { this.set_user_graph_offsetTo(this.persisted_user_offset); }
-	get user_offset_toGraphDrawing(): Rect { return this.rect_ofAllWidgets.offsetBy(get(w_user_graph_offset)); }
+	get user_offset_toGraphDrawing(): Rect { return this.rect_ofAllWidgets.offsetBy(get(this.w_user_graph_offset)); }
 	get mouse_distance_fromGraphCenter(): number { return this.mouse_vector_ofOffset_fromGraphCenter()?.magnitude ?? 0; }
 	get mouse_angle_fromGraphCenter(): number | null { return this.mouse_vector_ofOffset_fromGraphCenter()?.angle ?? null; }
 
@@ -96,11 +94,11 @@ export default class Layout {
 	}
 
 	mouse_vector_ofOffset_fromGraphCenter(offset: Point = Point.zero): Point | null {
-		const mouse_location = get(w_mouse_location_scaled);
+		const mouse_location = get(this.w_mouse_location_scaled);
 		if (!!mouse_location) {
-			const center_offset = get(w_user_graph_center).offsetBy(offset);
+			const center_offset = get(this.w_user_graph_center).offsetBy(offset);
 			const mouse_vector = center_offset.vector_to(mouse_location);
-			debug.log_mouse(`offset  ${get(w_user_graph_offset).verbose}  ${mouse_vector.verbose}`);
+			debug.log_mouse(`offset  ${get(this.w_user_graph_offset).verbose}  ${mouse_vector.verbose}`);
 			return mouse_vector;
 		}
 		return null
@@ -109,14 +107,14 @@ export default class Layout {
 	set_user_graph_offsetTo(user_offset: Point): boolean {
 		// user_offset of zero centers the graph
 		let changed = false;
-		const current_offset = get(w_user_graph_offset);
+		const current_offset = get(this.w_user_graph_offset);
 		if (!!current_offset && current_offset.vector_to(user_offset).magnitude > 1) {
 			p.write_key(T_Preference.user_offset, user_offset);		// persist the property user_offset
 			changed = true;
 		}
-		const center_offset = get(w_rect_ofGraphView).center.offsetBy(user_offset);	// center of the graph in window coordinates
-		w_user_graph_center.set(center_offset);									// w_user_graph_center: a signal change
-		w_user_graph_offset.set(user_offset);									// w_user_graph_offset: a signal change
+		const center_offset = get(this.w_rect_ofGraphView).center.offsetBy(user_offset);	// center of the graph in window coordinates
+		this.w_user_graph_center.set(center_offset);									// w_user_graph_center: a signal change
+		this.w_user_graph_offset.set(user_offset);									// w_user_graph_offset: a signal change
 		debug.log_mouse(`USER ====> ${user_offset.verbose}  ${center_offset.verbose}`);
 		return changed;
 	}
@@ -124,8 +122,8 @@ export default class Layout {
 	ancestry_isCentered(ancestry: Ancestry | null): boolean {
 		const title_center = ancestry?.center_ofTitle;
 		if (!!title_center) {
-			const center = get(w_user_graph_center);
-			const user_offset = get(w_user_graph_offset);
+			const center = get(this.w_user_graph_center);
+			const user_offset = get(this.w_user_graph_offset);
 			const delta = title_center.vector_to(center).vector_to(user_offset).magnitude;
 			return delta < 1;
 		}
@@ -135,7 +133,7 @@ export default class Layout {
 	ancestry_place_atCenter(ancestry: Ancestry | null) {
 		const title_center = ancestry?.center_ofTitle;
 		if (!!title_center) {
-			const center = get(w_user_graph_center);
+			const center = get(this.w_user_graph_center);
 			const offset = title_center.vector_to(center);	// use this vector to set the user graph offset
 			this.set_user_graph_offsetTo(offset);
 		}

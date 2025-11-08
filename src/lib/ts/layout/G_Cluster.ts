@@ -1,7 +1,7 @@
 import { k, Point, Angle, debug, colors, radial, layout, Ancestry, Predicate, signals } from '../common/Global_Imports';
 import { G_Widget, G_ArcSlider, G_Paging, S_Rotation } from '../common/Global_Imports';
 import { w_ring_rotation_angle, w_ring_rotation_radius } from '../managers/Stores';
-import { w_rect_ofGraphView, w_ancestry_focus } from '../managers/Stores';
+import { w_ancestry_focus } from '../managers/Stores';
 import { get } from 'svelte/store';
 
 //////////////////////////////////////////
@@ -57,7 +57,7 @@ export default class G_Cluster {
 			debug.log_build(`layout_cluster (${this.ancestries_shown.length} shown)  ${this.direction_kind}`);
 			this.widgets_shown = this.ancestries_shown.length;
 			this.isPaging = this.widgets_shown < this.total_widgets;
-			this.center = get(w_rect_ofGraphView).size.asPoint.dividedInHalf;
+			this.center = get(layout.w_rect_ofGraphView).size.asPoint.dividedInHalf;
 			this.color = colors.opacitize(get(w_ancestry_focus).thing?.color ?? this.color, 0.2);
 			this.g_sliderArc.layout_fork(this.angle_ofCluster);
 			this.layout_widgets_inCluster();

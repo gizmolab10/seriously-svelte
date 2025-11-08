@@ -3,9 +3,9 @@
 	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { T_Search, T_Layer, T_Component, T_Edit } from '../../ts/common/Global_Imports';
 	import { S_Mouse, S_Element, S_Component } from '../../ts/common/Global_Imports';
-	import { w_s_title_edit, w_mouse_location } from '../../ts/managers/Stores';
 	import { Rect, Seriously_Range } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
+	import { w_s_title_edit } from '../../ts/managers/Stores';
 	import { onMount } from 'svelte';
 	export let s_title!: S_Element;
 	export let fontSize = '1em';
@@ -14,6 +14,7 @@
 	const padding = `1px 0px 0px 0px`;
 	const g_widget = ancestry.g_widget;
 	const s_widget = g_widget.s_widget;
+    const { w_mouse_location } = layout;
 	const input_height = k.height.dot + 2;
 	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_items: w_expanded } = x.si_expanded;

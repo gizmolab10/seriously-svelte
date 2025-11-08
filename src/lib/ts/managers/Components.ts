@@ -1,5 +1,4 @@
-import { Rect, Ancestry, S_Component, T_Component } from '../common/Global_Imports';
-import { w_mouse_location_scaled } from './Stores';
+import { Rect, layout, Ancestry, S_Component, T_Component } from '../common/Global_Imports';
 import type { Integer } from '../types/Types';
 import { get } from 'svelte/store';
 
@@ -65,7 +64,7 @@ export class Components {
 	static readonly _____HIT_TESTING: unique symbol;
 
 	components_ofType_atMouseLocation(type: T_Component): Array<S_Component> {
-		const mouse_vector = get(w_mouse_location_scaled);
+		const mouse_vector = get(layout.w_mouse_location_scaled);
 		const dict = this.components_byHID_forType(type);
 		let found: Array<S_Component> = [];
 		if (!!dict && !!mouse_vector) {

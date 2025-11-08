@@ -27,15 +27,6 @@ export const w_ring_rotation_angle		= writable<number>();
 export const w_g_paging					= writable<G_Paging>();
 export const w_g_paging_cluster			= writable<G_Cluster | null>();
 
-const _____GEOMETRY: unique symbol = Symbol('GEOMETRY');
-
-export const w_scaled_movement			= writable<Point | null>(null);
-export const w_mouse_location_scaled	= writable<Point>();
-export const w_user_graph_center		= writable<Point>();
-export const w_user_graph_offset		= writable<Point>();
-export const w_mouse_location			= writable<Point>();
-export const w_rect_ofGraphView			= writable<Rect>();
-
 const _____DATABASE: unique symbol = Symbol('DATABASE');
 
 export const w_t_database				= writable<string>();

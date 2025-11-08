@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { k, show, layout, Point, T_Layer, T_Graph } from '../../ts/common/Global_Imports';
-	import { w_rect_ofGraphView } from '../../ts/managers/Stores';
 	import Tree_Preferences from './Tree_Preferences.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Search from '../search/Search.svelte';
+	const { w_rect_ofGraphView } = layout;
 	const { w_details, w_search_controls, w_graph_ofType } = show;
 
 	// two states: search and tree preferences

@@ -1,13 +1,14 @@
 <script lang='ts'>
     import { Rect, Size, Point, T_Layer, T_Search, T_Dragging, T_Component } from '../../ts/common/Global_Imports';
-    import { w_scaled_movement, w_user_graph_offset, w_separator_color } from '../../ts/managers/Stores';
     import { h, k, u, x, debug, layout, elements, components } from '../../ts/common/Global_Imports';
-    import { w_mouse_location, w_count_mouse_up } from '../../ts/managers/Stores';
+    import { w_count_mouse_up } from '../../ts/managers/Stores';
     import { w_s_title_edit, w_dragging_active } from '../../ts/managers/Stores';
+    import { w_separator_color } from '../../ts/managers/Stores';
     import { onMount, onDestroy } from 'svelte';
     export let strokeWidth = k.thickness.rubberband;
     export let bounds: Rect;
     const enabled = true;
+    const { w_mouse_location, w_scaled_movement, w_user_graph_offset } = layout;
     let mouse_upCount = $w_count_mouse_up;
     let startPoint: Point | null = null;
     let has_rubberbanded_grabs = true;

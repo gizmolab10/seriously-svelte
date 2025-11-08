@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { c, e, h, k, u, x, show, busy, debug, colors, search, layout, elements, databases } from '../../ts/common/Global_Imports';
-	import { w_hierarchy, w_t_database, w_separator_color, w_rect_ofGraphView } from '../../ts/managers/Stores';
+	import { w_hierarchy, w_t_database, w_separator_color } from '../../ts/managers/Stores';
 	import { Rect, Size, Point, Thing, Ancestry, Hierarchy, Direction } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Search, T_Banner, T_Control, T_Startup } from '../../ts/common/Global_Imports';
 	import { w_t_startup, w_popupView_id, w_device_isMobile, } from '../../ts/managers/Stores';
@@ -20,6 +20,7 @@
 	import Box from '../draw/Box.svelte';
 	import { onMount } from 'svelte';
 	const { w_details } = show;
+	const { w_rect_ofGraphView } = layout;
 	const spinner_title = 'Loading your data...';
 	const offset_toIntersection = new Point(-4, 8);
     const half_thickness: number = k.thickness.separator.main / 2;

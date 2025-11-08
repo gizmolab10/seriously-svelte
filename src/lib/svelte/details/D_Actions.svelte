@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { T_Layer, T_Detail, T_Action, T_Element, T_Kinship, T_Request, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
 	import { c, e, h, k, u, x, show, Size, Point, colors, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
-	import { w_background_color, w_user_graph_offset } from '../../ts/managers/Stores';
 	import { w_s_alteration, w_ancestry_forDetails } from '../../ts/managers/Stores';
 	import { elements, details, controls } from '../../ts/common/Global_Imports';
+	import { w_background_color } from '../../ts/managers/Stores';
 	import Buttons_Table from '../mouse/Buttons_Table.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Button from '../mouse/Button.svelte';
@@ -14,6 +14,7 @@
 	const left_afterTitle = 39.5;
 	const bottom_tableHeight = 73;
 	const { w_graph_ofType } = show;
+	const { w_user_graph_offset } = layout;
 	const table_width = k.width.details - 8;
 	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_items: w_expanded } = x.si_expanded;

@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { c, e, k, u, elements, x, Rect, Size, Point, debug } from '../../ts/common/Global_Imports';
-	import { w_mouse_location, w_thing_fontFamily } from '../../ts/managers/Stores';
+	import { c, e, k, u, x, Rect, Size, Point, debug, layout, elements } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Timer, S_Mouse } from '../../ts/common/Global_Imports';
+	import { w_thing_fontFamily } from '../../ts/managers/Stores';
 	import type { Handle_Result } from '../../ts/types/Types';
 	import { onMount } from 'svelte';
 	export let handle_isHit: () => {flag: boolean} | null = null;
@@ -22,6 +22,7 @@
 	export let align_left = true;
 	export let name = 'generic';
 	export let style = k.empty;
+    const { w_mouse_location } = layout;
 	const s_mouse = elements.s_mouse_forName(name);
 	const mouse_timer = e.mouse_timer_forName(name);
 	const mouse_responder_number = elements.next_mouse_responder_number;

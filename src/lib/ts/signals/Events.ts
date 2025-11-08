@@ -1,10 +1,10 @@
-import { w_count_window_resized, w_s_alteration, w_s_title_edit, w_user_graph_offset, w_control_key_down } from '../managers/Stores';
 import { c, h, k, u, x, g_tree, debug, search, layout, details, signals, controls, elements } from '../common/Global_Imports';
-import { w_count_mouse_up, w_mouse_location, w_mouse_location_scaled, w_scaled_movement } from '../managers/Stores';
 import { T_Search, T_Action, T_Control, T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Imports';
+import { w_count_window_resized, w_s_alteration, w_s_title_edit, w_control_key_down } from '../managers/Stores';
 import { w_search_state, w_device_isMobile, w_ancestry_focus, w_ancestry_forDetails } from '../managers/Stores';
 import { Point, Ancestry, Predicate } from '../common/Global_Imports';
 import { S_Mouse, S_Alteration } from '../common/Global_Imports';
+import { w_count_mouse_up } from '../managers/Stores';
 import Mouse_Timer from './Mouse_Timer';
 import { get } from 'svelte/store';
 
@@ -131,10 +131,10 @@ export class Events {
 	static readonly EVENT_HANDLERS = Symbol('EVENT_HANDLERS');
 
 	private handle_touch_end(event: TouchEvent) { this.initialTouch = null; }
-	private handle_mouse_down(event: MouseEvent) { w_scaled_movement.set(Point.zero); }
+	private handle_mouse_down(event: MouseEvent) { layout.w_scaled_movement.set(Point.zero); }
 
 	private handle_mouse_up(event: MouseEvent) {
-		w_scaled_movement.set(null);
+		layout.w_scaled_movement.set(null);
 		w_count_mouse_up.update(n => n + 1);
 	}
 
@@ -173,7 +173,7 @@ export class Events {
 		u.grab_event(event);
 		if (!u.device_isMobile) {
 			const e = event as WheelEvent;
-			const userOffset = get(w_user_graph_offset);
+			const userOffset = get(layout.w_user_graph_offset);
 			const delta = new Point(-e.deltaX, -e.deltaY);
 			if (!!userOffset && c.allow_HorizontalScrolling && delta.magnitude > 1) {
 				debug.log_action(` wheel GRAPH`);
@@ -212,13 +212,13 @@ export class Events {
 	private handle_mouse_move(event: MouseEvent) {
 		const location = new Point(event.clientX, event.clientY);
 		const scaled = location.dividedEquallyBy(get(layout.w_scale_factor));
-		const prior_scaled = get(w_mouse_location_scaled);
-		const delta = prior_scaled?.vector_to(scaled);
+		const prior_scaled = get(layout.w_mouse_location_scaled);
+		const delta = prior_scaled?.vector_to(scaled) ?? null;
 		if (!!delta && delta.magnitude > 1) {
-			w_scaled_movement.set(delta);
+			layout.w_scaled_movement.set(delta);
 		}
-		w_mouse_location.set(location);
-		w_mouse_location_scaled.set(scaled);
+		layout.w_mouse_location.set(location);
+		layout.w_mouse_location_scaled.set(scaled);
 	}
 
 	handle_s_mouseFor_t_control(s_mouse: S_Mouse, t_control: T_Control) {
@@ -418,7 +418,7 @@ export class Events {
 				case T_Action.center:			switch (column) {
 					case a.center.focus:			return layout.ancestry_isCentered(get(w_ancestry_focus));
 					case a.center.selection:		return layout.ancestry_isCentered(ancestry);
-					case a.center.graph:			return get(w_user_graph_offset).magnitude < 1;
+					case a.center.graph:			return get(layout.w_user_graph_offset).magnitude < 1;
 				}								break;
 				case T_Action.add:				switch (column) {
 					case a.add.child:				return is_altering;

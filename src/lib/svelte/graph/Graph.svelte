@@ -1,12 +1,10 @@
 <script lang='ts'>
 	import { e, h, k, u, x, show, Rect, Point, debug, layout, signals, elements } from '../../ts/common/Global_Imports';
 	import { S_Component, T_Layer, T_Graph, T_Signal, T_Startup, T_Control } from '../../ts/common/Global_Imports';
-	import { w_rect_ofGraphView, w_user_graph_offset, w_depth_limit } from '../../ts/managers/Stores';
 	import { w_t_startup, w_device_isMobile, w_popupView_id } from '../../ts/managers/Stores';
 	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/managers/Stores';
 	import { w_s_hover, w_ancestry_focus, w_s_title_edit } from '../../ts/managers/Stores';
 	import { w_thing_fontFamily, w_dragging_active } from '../../ts/managers/Stores';
-	import Identifiable from '../../ts/runtime/Identifiable';
 	import Radial_Graph from '../graph/Radial_Graph.svelte';
 	import Tree_Graph from '../graph/Tree_Graph.svelte';
 	import Rubberband from '../draw/Rubberband.svelte';
@@ -15,6 +13,7 @@
 	const size_big = k.height.button + 4;
 	const { w_items: w_expanded } = x.si_expanded;
 	const { w_graph_ofType, w_depth_limit } = show;
+	const { w_user_graph_offset, w_rect_ofGraphView } = layout;
 	let actual_content_rect = layout.user_offset_toGraphDrawing;
 	let draggableRect = $w_rect_ofGraphView;
 	let rubberbandComponent: any;

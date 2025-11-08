@@ -1,8 +1,8 @@
 <script lang='ts'>
-	import { w_background_color, w_rect_ofGraphView, w_user_graph_offset } from '../../ts/managers/Stores';
-	import { k, u, elements, x, Rect, Point, colors, T_Layer } from '../../ts/common/Global_Imports';
+	import { k, u, x, Rect, Point, colors, T_Layer, layout, elements } from '../../ts/common/Global_Imports';
 	import { w_s_hover, w_thing_fontFamily, w_control_key_down } from '../../ts/managers/Stores';
 	import { S_Element, S_Component } from '../../ts/common/Global_Imports';
+	import { w_background_color } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	export let s_button: S_Element = S_Element.empty();
 	export let closure: (result: S_Mouse) => boolean;
@@ -21,10 +21,11 @@
 	export let zindex = T_Layer.dots;
 	export let style = k.empty;
 	export let name = k.empty;
-	let border = k.empty;
-	let element: HTMLElement;
-	let computed_style = style;
+	const { w_rect_ofGraphView, w_user_graph_offset } = layout;
 	let buttonComponent: S_Component;
+	let computed_style = style;
+	let element: HTMLElement;
+	let border = k.empty;
 
 	//////////////////////////////////////
 	//									//

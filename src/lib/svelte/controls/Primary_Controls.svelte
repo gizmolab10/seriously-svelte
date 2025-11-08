@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { c, e, k, u, x, show, colors, layout, elements, controls, svgPaths } from '../../ts/common/Global_Imports';
-	import { w_popupView_id, w_rect_ofGraphView, w_count_window_resized } from '../../ts/managers/Stores';
+	import { w_popupView_id, w_count_window_resized } from '../../ts/managers/Stores';
 	import { T_Layer, T_Graph, T_Element, T_Control } from '../../ts/common/Global_Imports';
 	import { w_search_state, w_background_color } from '../../ts/managers/Stores';
 	import { T_Kinship, T_Request } from '../../ts/common/Global_Imports';
@@ -15,6 +15,7 @@
 	const y_center = 10.5;
 	const scaling_stroke_width = 1.5;
 	const size_big = k.height.button + 4;
+	const { w_rect_ofGraphView } = layout;
 	const hamburger_size = k.height.button;
 	const { w_search_controls, w_graph_ofType } = show;
 	const hamburger_path = svgPaths.hamburgerPath(hamburger_size);
