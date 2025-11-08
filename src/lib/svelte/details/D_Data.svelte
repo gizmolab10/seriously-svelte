@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, h, k, p, u, busy, colors, details, elements, databases } from '../../ts/common/Global_Imports';
+	import { c, h, k, p, u, busy, show, colors, details, elements, databases } from '../../ts/common/Global_Imports';
 	import { T_File_Format, T_File_Operation, T_Storage_Need } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Element, T_Request, T_Preference } from '../../ts/common/Global_Imports';
 	import { Point, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
@@ -11,6 +11,7 @@
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Button from '../mouse/Button.svelte';
+	const { w_other_databases, w_save_data_button } = show;
     const font_sizes = [k.font_size.instructions, k.font_size.banners];
 	const ids_forDirection = [T_File_Operation.import, T_File_Operation.export];
 	const s_save = elements.s_element_for(new Identifiable('save'), T_Element.button, 'save');
@@ -22,14 +23,13 @@
 	let storage_choice: string | null = null;
 	let storage_details: Array<Object> = [];
 	let width = k.width.details - 7;
-	let show_save_button = false;
 	let reattachments = 0;
 	let title = k.empty;
 
 	setup_s_elements();
 	$: tops = u.cumulativeSum(heights);
 	s_save.set_forHovering('black', 'pointer');
-	function height_ofChoices() { return c.has_standalone_UI ? p.show_other_databases ? 18 : -5 : -16; }
+	function height_ofChoices() { return c.has_standalone_UI ? $w_other_databases ? 18 : -5 : -16; }
 
 	$:{
 		const _ = `${$w_data_updated}:::${$w_t_database}`;
@@ -37,7 +37,7 @@
 	}
 
 	$: {
-		const _ = `${details.t_storage_need}:::${p.show_other_databases}`;
+		const _ = `${details.t_storage_need}:::${$w_other_databases}`;
 		reattachments++;
 	}
 
@@ -57,10 +57,9 @@
 	}
 
 	function handle_show_other_databases(event: Event) {
-		p.show_other_databases = !p.show_other_databases;
+		show.toggle_show_other_databases();
 		heights[1] = height_ofChoices();
-		heights = [...heights];
-		p.write_key(T_Preference.other_databases, p.show_other_databases);
+		heights = [...heights];	// force a re-render
 	}
 
 	function action_titles() {
@@ -93,7 +92,7 @@
 
 	function update_storage_details() {
 		if (!!h) {
-			show_save_button = h.db.isPersistent && h.total_dirty_count != 0;
+			$w_save_data_button = h.db.isPersistent && h.total_dirty_count != 0;
 			storage_details = [h.db.details_forStorage,
 			['depth', h.depth.supressZero()],
 			['things', h.things.length.supressZero()],
@@ -141,7 +140,7 @@
 			length={k.width.details - 2.5}
 			handle_click={handle_show_other_databases}
 			thickness={k.thickness.separator.details}
-			title='{p.show_other_databases ? 'hide other databases' : 'show other databases'}'/>
+			title='{$w_other_databases ? 'hide other databases' : 'show other databases'}'/>
 		<Separator name='show-other-databases'
 			has_gull_wings={true}
 			has_both_wings={true}
@@ -151,8 +150,8 @@
 			length={k.width.details - 2.5}
 			handle_click={handle_show_other_databases}
 			thickness={k.thickness.separator.details}
-			title='{p.show_other_databases ? 'hide other databases' : 'show other databases'}'/>
-		{#if p.show_other_databases}
+			title='{$w_other_databases ? 'hide other databases' : 'show other databases'}'/>
+		{#if $w_other_databases}
 			<Segmented name='databases'
 				left={105}
 				width={width}
@@ -175,7 +174,7 @@
 			array={storage_details}
 			font_size={k.font_size.banners}/>
 		{#key $w_data_updated}
-			{#if show_save_button && !busy.isDatabaseBusy}
+			{#if $w_save_data_button && !busy.isDatabaseBusy}
 				<Button name='save'
 					width=72
 					s_button={s_save}

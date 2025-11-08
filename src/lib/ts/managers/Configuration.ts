@@ -31,11 +31,11 @@ export class Configuration {
 		w_device_isMobile.set(u.device_isMobile);
 		debug.apply_queryStrings();						// debugging
 		stores.setup_defaults();
-		show.restore_state();							// visibility
-		layout.restore_state();
+		show.restore_preferences();							// visibility
+		layout.restore_preferences();
 		this.apply_queryStrings();						// must call before prefs and db
 		databases.apply_queryStrings();
-		p.restore_defaults();
+		p.restore_preferences();
 		show.apply_queryStrings();
 		e.setup();
 	}

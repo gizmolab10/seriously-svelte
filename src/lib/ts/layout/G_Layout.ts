@@ -8,7 +8,7 @@ import { get } from 'svelte/store';
 export default class G_Layout {
 	scale_factor = 1;
 
-	restore_state() {
+	restore_preferences() {
 		this.update_rect_ofGraphView();	// needed for set_scale_factor
 		this.set_scale_factor(p.read_key(T_Preference.scale) ?? 1);
 		this.renormalize_user_graph_offset();	// must be called after apply scale (which otherwise fubars offset)

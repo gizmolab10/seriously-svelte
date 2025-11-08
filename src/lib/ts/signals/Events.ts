@@ -149,7 +149,7 @@ export class Events {
 		const isMobile = u.device_isMobile;
 		debug.log_action(` orientation change [is${isMobile ? '' : ' not'} mobile] STATE`);
 		w_device_isMobile.set(isMobile);
-		layout.restore_state();
+		layout.restore_preferences();
 	}
 
 	private handle_touch_start(event: TouchEvent) {
@@ -166,7 +166,7 @@ export class Events {
 		const isMobile = u.device_isMobile;
 		w_count_window_resized.update(n => n + 1);		// observed by controls
 		w_device_isMobile.set(isMobile);
-		layout.restore_state();
+		layout.restore_preferences();
 	}
 
 	private handle_wheel(event: Event) {

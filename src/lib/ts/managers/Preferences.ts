@@ -8,9 +8,18 @@ import { get } from 'svelte/store';
 
 export class Preferences {
 	branches_areChildren = true;
-	show_other_databases = false;
 	get focus_key(): string { return this.branches_areChildren ? T_Preference.focus_forChildren : T_Preference.focus_forParents; }
 	get expanded_key(): string { return this.branches_areChildren ? T_Preference.expanded_children : T_Preference.expanded_parents; }
+
+	apply_queryStrings() {
+		const queryStrings = c.queryStrings;
+		const levels = queryStrings.get('levels');
+		if (!!levels) {
+			show.w_depth_limit.set(Number(levels));
+		}
+		this.restore_preferences();
+
+	}
 
 	static readonly _____READ_WRITE: unique symbol;
 
@@ -59,6 +68,8 @@ export class Preferences {
 	}
 	
 	static readonly _____RESTORE: unique symbol;
+
+	restore_paging() { radial.createAll_thing_pages_fromDict(this.readDB_key(T_Preference.paging)); }
 
 	restore_grabbed() {
 		function ids_forDB(array: Array<Ancestry>): string { return u.ids_forDB(array).join(', '); }
@@ -128,6 +139,28 @@ export class Preferences {
 			p.writeDB_key(this.focus_key, !ancestry ? null : ancestry.pathString);
 		});
 	}
+
+	restore_preferences() {
+
+		// VISIBILITY
+		show.w_tree_ofType		.set( this.read_key(T_Preference.tree)					?? T_Kinship.children);
+		show.w_graph_ofType		.set( this.read_key(T_Preference.graph)					?? T_Graph.tree);
+		show.w_countDots_ofType	.set( this.read_key(T_Preference.countDots)				?? [T_Kinship.children]);
+		show.w_details_ofType	.set( this.read_key(T_Preference.detail_types)			?? [T_Detail.actions, T_Detail.data]);
+
+		// RADIAL
+		w_ring_rotation_angle	.set( this.read_key(T_Preference.ring_angle)			?? 0);
+		w_ring_rotation_radius	.set( Math.max( this.read_key(T_Preference.ring_radius) ?? 0, k.radius.ring_minimum));
+	
+		// OTHER
+		show.w_depth_limit		.set( this.read_key(T_Preference.levels)				?? 2);
+		w_font_size				.set( this.read_key(T_Preference.font_size)				?? 14);
+		w_auto_adjust_graph		.set( this.read_key(T_Preference.auto_adjust)			?? null);
+		w_thing_fontFamily		.set( this.read_key(T_Preference.font)					?? 'Times New Roman');
+		w_background_color		.set( this.read_key(T_Preference.background)			?? colors.background);
+		w_separator_color		.set( this.read_key(T_Preference.separator)				?? colors.separator);
+		this.reactivity_subscribe()
+	}
 	
 	static readonly _____ANCESTRIES: unique symbol;
 
@@ -175,9 +208,7 @@ export class Preferences {
 		}
 	}
 	
-	static readonly _____SUBSCRIBE_AND_RESTORE: unique symbol;
-
-	restore_paging() { radial.createAll_thing_pages_fromDict(this.readDB_key(T_Preference.paging)); }
+	static readonly _____SUBSCRIBE: unique symbol;
 
 	reactivity_subscribe() {
 
@@ -229,33 +260,6 @@ export class Preferences {
 		})
 
 		show.reactivity_subscribe();
-	}
-
-	restore_defaults() {
-		this.restore_stores();
-		this.reactivity_subscribe()
-		this.show_other_databases = this.read_key(T_Preference.other_databases) ?? false;
-	}
-
-	restore_stores() {
-
-		// VISIBILITY
-		show.w_tree_ofType		.set( this.read_key(T_Preference.tree)				?? T_Kinship.children);
-		show.w_graph_ofType	.set( this.read_key(T_Preference.graph)				?? T_Graph.tree);
-		show.w_countDots_ofType.set( this.read_key(T_Preference.countDots)			?? [T_Kinship.children]);
-		show.w_details_ofType	.set( this.read_key(T_Preference.detail_types)		?? [T_Detail.actions, T_Detail.data]);
-
-		// RADIAL
-		w_ring_rotation_angle	.set( this.read_key(T_Preference.ring_angle)			?? 0);
-		w_ring_rotation_radius	.set( Math.max( this.read_key(T_Preference.ring_radius) ?? 0, k.radius.ring_minimum));
-	
-		// OTHER
-		show.w_depth_limit		.set( this.read_key(T_Preference.levels)				?? 2);
-		w_font_size				.set( this.read_key(T_Preference.font_size)				?? 14);
-		w_auto_adjust_graph		.set( this.read_key(T_Preference.auto_adjust)			?? null);
-		w_thing_fontFamily		.set( this.read_key(T_Preference.font)					?? 'Times New Roman');
-		w_background_color		.set( this.read_key(T_Preference.background)			?? colors.background);
-		w_separator_color		.set( this.read_key(T_Preference.separator)				?? colors.separator);
 	}
 
 }
