@@ -64,7 +64,6 @@ export const w_popupView_id				= writable<string | null>();
 export const w_dragging_active			= writable<T_Dragging>();
 export const w_control_key_down			= writable<boolean>(false);
 export const w_device_isMobile			= writable<boolean>();
-export const w_depth_limit				= writable<number>();
 export const w_font_size				= writable<number>();
 export const w_separator_color			= writable<string>();
 export const w_background_color			= writable<string>();

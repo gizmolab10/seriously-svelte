@@ -40,7 +40,7 @@ export default class DB_Firebase extends DB_Common {
 	reportError(error: any) { console.log(error); }
 	get displayName(): string { return this.idBase; }
 
-	queryStrings_apply() {
+	apply_queryStrings() {
 		const persistedID = p.read_key(T_Preference.base_id);
 		const id = c.queryStrings.get('name') ?? c.queryStrings.get('dbid') ?? persistedID ?? 'Public';
 		p.write_key(T_Preference.base_id, id);

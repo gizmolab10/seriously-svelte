@@ -1,8 +1,8 @@
 import { G_Paging, T_Graph, T_Detail, T_Kinship, T_Preference, T_Auto_Adjust, T_Startup } from '../common/Global_Imports';
 import { c, h, k, u, x, show, debug, radial, colors, Ancestry, databases } from '../common/Global_Imports';
 import { w_t_database, w_ring_rotation_angle, w_ring_rotation_radius } from './Stores';
-import { w_g_paging, w_font_size, w_thing_fontFamily, w_depth_limit } from './Stores';
 import { w_ancestry_focus, w_t_startup, w_auto_adjust_graph } from './Stores';
+import { w_g_paging, w_font_size, w_thing_fontFamily } from './Stores';
 import { w_background_color, w_separator_color } from './Stores';
 import { get } from 'svelte/store';
 
@@ -211,7 +211,7 @@ export class Preferences {
 		
 		// OTHER
 
-		w_depth_limit.subscribe((depth: number) => {
+		show.w_depth_limit.subscribe((depth: number) => {
 			this.write_key(T_Preference.levels, depth);
 		});
 		w_auto_adjust_graph.subscribe((auto_adjust: T_Auto_Adjust | null) => {
@@ -250,7 +250,7 @@ export class Preferences {
 		w_ring_rotation_radius	.set( Math.max( this.read_key(T_Preference.ring_radius) ?? 0, k.radius.ring_minimum));
 	
 		// OTHER
-		w_depth_limit			.set( this.read_key(T_Preference.levels)				?? 2);
+		show.w_depth_limit		.set( this.read_key(T_Preference.levels)				?? 2);
 		w_font_size				.set( this.read_key(T_Preference.font_size)				?? 14);
 		w_auto_adjust_graph		.set( this.read_key(T_Preference.auto_adjust)			?? null);
 		w_thing_fontFamily		.set( this.read_key(T_Preference.font)					?? 'Times New Roman');

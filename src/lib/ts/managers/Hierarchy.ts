@@ -1,12 +1,13 @@
-import { c, k, p, u, controls, x, busy, debug, Tag, User, Thing, Trait, S_Items } from '../common/Global_Imports';
 import { T_Startup, T_Create, T_Alteration, T_File_Format, T_Persistable } from '../common/Global_Imports';
 import { Access, Ancestry, Predicate, Relationship, Persistable } from '../common/Global_Imports';
 import { T_Thing, T_Trait, T_Order, T_Control, T_Predicate } from '../common/Global_Imports';
 import { w_popupView_id, w_s_title_edit, w_s_alteration, w_ancestry_focus } from './Stores';
+import { c, k, p, u, x, busy, show, debug, controls } from '../common/Global_Imports';
 import { files, colors, signals, layout, databases } from '../common/Global_Imports';
-import { w_hierarchy, w_t_startup, w_depth_limit } from './Stores';
+import { Tag, User, Thing, Trait, S_Items } from '../common/Global_Imports';
 import DB_Common, { T_Database } from '../database/DB_Common';
 import type { Integer, Dictionary } from '../types/Types';
+import { w_hierarchy, w_t_startup } from './Stores';
 import Identifiable from '../runtime/Identifiable';
 import { pivot } from '../files/Pivot';
 import { get } from 'svelte/store';
@@ -1019,7 +1020,7 @@ export class Hierarchy {
 			if (thing.isInDifferentBulkThan(parentThing)) {		// should move across bulks
 				this.ancestry_remember_bulk_persistentRelocateRight(ancestry, parentAncestry);
 			} else {
-				const depth_limit = get(w_depth_limit);
+				const depth_limit = get(show.w_depth_limit);
 				const relationship = ancestry.relationship;
 				if (!!relationship) {
 					// move ancestry to a different parent
@@ -1060,7 +1061,7 @@ export class Hierarchy {
 					newGrabAncestry = null;
 				}
 				if (controls.inTreeMode) {
-					const depth_limit = get(w_depth_limit);
+					const depth_limit = get(show.w_depth_limit);
 					graph_needsSweep = ancestry.expand();
 					if (!!newGrabAncestry && newGrabAncestry.depth_below_focus > depth_limit) {
 						newFocusAncestry = newGrabAncestry.ancestry_createUnique_byStrippingBack(depth_limit);

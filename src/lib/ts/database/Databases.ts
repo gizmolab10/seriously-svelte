@@ -19,7 +19,7 @@ export default class Databases {
 	defer_persistence: boolean = false;
 	db_now: DB_Common;
 
-	queryStrings_apply() {
+	apply_queryStrings() {
 		const queryStrings = c.queryStrings;
 		let type = queryStrings.get('db');
 		if (!!type) {

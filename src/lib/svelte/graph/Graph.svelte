@@ -13,8 +13,8 @@
 	import Button from '../mouse/Button.svelte';
 	import { onMount } from 'svelte';
 	const size_big = k.height.button + 4;
-	const { w_graph_ofType } = show;
 	const { w_items: w_expanded } = x.si_expanded;
+	const { w_graph_ofType, w_depth_limit } = show;
 	let actual_content_rect = layout.user_offset_toGraphDrawing;
 	let draggableRect = $w_rect_ofGraphView;
 	let rubberbandComponent: any;

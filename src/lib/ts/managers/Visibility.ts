@@ -12,7 +12,8 @@ export class Visibility {
 	w_search_controls		= writable<boolean>();
 	w_related				= writable<boolean>();
 	w_details				= writable<boolean>();
-	debug_cursor: boolean	= false;
+	w_depth_limit			= writable<number>();
+	debug_cursor			= false;
 
 	constructor() {
 		this.w_details_ofType.subscribe((t_details: Array<T_Detail>) => {
@@ -20,7 +21,7 @@ export class Visibility {
 		});
 	}
 
-	queryStrings_apply() {
+	apply_queryStrings() {
 		const queryStrings = c.queryStrings;
 		const hiddenNames = queryStrings.get('hide')?.split(k.comma) ?? [];
 		const visibleNames = queryStrings.get('show')?.split(k.comma) ?? [];

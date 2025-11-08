@@ -1,6 +1,6 @@
 import { k, p, x, show, Rect, debug, layout, Ancestry, G_Widget, T_Kinship} from "../common/Global_Imports";
 import { w_ancestry_focus, w_device_isMobile } from "../managers/Stores";
-import { w_depth_limit, w_rect_ofGraphView } from "../managers/Stores";
+import { w_rect_ofGraphView } from "../managers/Stores";
 import { get } from "svelte/store";
 
 export default class G_TreeGraph {
@@ -17,7 +17,7 @@ export default class G_TreeGraph {
 
 	grand_layout_tree() {
 		const rect_ofGraphView = get(w_rect_ofGraphView);
-		const depth_limit = get(w_depth_limit) ?? 1;
+		const depth_limit = get(show.w_depth_limit) ?? 1;
 		if (!!rect_ofGraphView && !!this.g_focus) {
 			this.layout_focus_ofTree(rect_ofGraphView); 
 			this.g_focus.layout_each_generation_recursively(depth_limit);
@@ -42,7 +42,7 @@ export default class G_TreeGraph {
 	}
 
 	increase_depth_limit_by(increment: number) {
-		w_depth_limit.update(a => a + increment);
+		show.w_depth_limit.update(a => a + increment);
 		layout.grand_layout();
 	}
 

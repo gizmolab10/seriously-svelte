@@ -4,7 +4,6 @@
 	import { w_thing_title, w_thing_color, w_background_color } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { Size, Point } from '../../ts/common/Global_Imports';
-	import { w_depth_limit } from '../../ts/managers/Stores';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
     export let hover_isReversed = false;

@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { T_Layer, T_Graph, T_Control, T_Kinship } from '../../ts/common/Global_Imports';
 	import { k, u, show, Point, layout, controls } from '../../ts/common/Global_Imports';
-	import { w_depth_limit, w_separator_color } from '../../ts/managers/Stores';
+	import { w_separator_color } from '../../ts/managers/Stores';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Slider from '../mouse/Slider.svelte';
@@ -10,9 +10,9 @@
 	export let width = 137;
 	const left_width = 40;
 	const heights = [ 3, 5, 18 ];
-	const { w_tree_ofType } = show;
 	const tops = u.cumulativeSum(heights);
 	const segmented_height = k.height.button + 3;
+	const { w_tree_ofType, w_depth_limit } = show;
 
 	function handle_depth_limit(value: number) {
 		const asInteger = Math.round(value);

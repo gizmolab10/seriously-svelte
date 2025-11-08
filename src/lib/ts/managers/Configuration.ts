@@ -29,18 +29,18 @@ export class Configuration {
 		// DO NOT CHANGE THE ORDER OF THESE CALLS
 		
 		w_device_isMobile.set(u.device_isMobile);
-		debug.queryStrings_apply();						// debugging
+		debug.apply_queryStrings();						// debugging
 		stores.setup_defaults();
 		show.restore_state();							// visibility
 		layout.restore_state();
-		this.queryStrings_apply();						// must call before prefs and db
-		databases.queryStrings_apply();
+		this.apply_queryStrings();						// must call before prefs and db
+		databases.apply_queryStrings();
 		p.restore_defaults();
-		show.queryStrings_apply();
+		show.apply_queryStrings();
 		e.setup();
 	}
 
-	queryStrings_apply() {
+	apply_queryStrings() {
 		const queryStrings	 = this.queryStrings;
         const eraseOptions	 = queryStrings.get('erase')?.split(k.comma) ?? [];
         const themeOptions	 = queryStrings.get('theme')?.split(k.comma) ?? [];

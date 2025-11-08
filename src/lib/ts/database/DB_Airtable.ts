@@ -52,7 +52,7 @@ export default class DB_Airtable extends DB_Common {
 		return true;
 	}
 
-	queryStrings_apply() {
+	apply_queryStrings() {
 		const string = c.queryStrings.get('name') ?? c.queryStrings.get('dbid');
 		if (!!string) {
 			const names = string.split(k.comma);

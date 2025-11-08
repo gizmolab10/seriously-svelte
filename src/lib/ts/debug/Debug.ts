@@ -97,7 +97,7 @@ export class Debug {
 		}
 	}
 
-	queryStrings_apply() {
+	apply_queryStrings() {
 		const debug = c.queryStrings.get('debug');
 		if (debug) {
 			const flags = debug.split(',');
