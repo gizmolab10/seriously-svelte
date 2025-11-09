@@ -1,14 +1,17 @@
-import { w_search_results_found, w_search_results_changed } from '../managers/Stores';
+import { T_Search, T_Startup, T_Preference, T_Search_Preference } from "../common/Global_Imports";
 import { c, k, h, p, x, show, Thing, details, Ancestry } from "../common/Global_Imports";
-import { T_Search, T_Startup, T_Preference } from "../common/Global_Imports";
-import { w_t_database, w_search_state } from '../managers/Stores';
 import { Search_Node } from '../types/Search_Node';
-import { w_t_startup } from '../managers/Stores';
-import { get } from 'svelte/store';
+import { get, writable } from 'svelte/store';
+import { w_t_database } from './Stores';
+import { w_t_startup } from './Stores';
 
-class UX_Search {
-	search_text: string | null = null;
-	private root_node: Search_Node = new Search_Node();
+class Search {
+	search_text: string | null		= null;
+	private root_node: Search_Node	= new Search_Node();
+	w_search_results_found			= writable<number>(0);
+	w_search_results_changed		= writable<number>(0);		// re-render the search results when changed
+	w_search_state					= writable<T_Search>();		// observed by search_results, controls, and panel
+	w_search_preferences			= writable<T_Search_Preference>();
 
 	constructor() {
 		setTimeout(() => {
@@ -19,14 +22,19 @@ class UX_Search {
 		}, 1);
 	}
 
+	setup_defaults() {
+		this.w_search_state.set(T_Search.off);
+		this.w_search_preferences.set(T_Search_Preference.title);
+	}
+
 	activate() {
-		w_search_state.set(T_Search.enter);
+		this.w_search_state.set(T_Search.enter);
 		show.w_search_controls.set(true);
 	}
 
 	deactivate() {
-		w_search_results_found.set(0);
-		w_search_state.set(T_Search.off);
+		this.w_search_results_found.set(0);
+		this.w_search_state.set(T_Search.off);
 		show.w_search_controls.set(false);
 		details.redraw();		// force re-render of details
 	}
@@ -37,8 +45,8 @@ class UX_Search {
 			w_t_startup.subscribe((startup) => {
 				if (startup == T_Startup.ready) {
 					this.buildIndex(h.things);
-					w_search_results_changed.set(Date.now());
-					w_search_state.subscribe((state) => {
+					this.w_search_results_changed.set(Date.now());
+					this.w_search_state.subscribe((state) => {
 						const text = this.search_text?.toLowerCase();
 						if (!!text && state !== T_Search.off) {
 							this.search_for(text);
@@ -53,7 +61,7 @@ class UX_Search {
 
 	set selected_row(row: number) {
 		x.si_found.index = row;
-		w_search_state.set(T_Search.selected);
+		this.w_search_state.set(T_Search.selected);
 		x.update_ancestry_forDetails();
 	}
 
@@ -107,18 +115,18 @@ class UX_Search {
 		if (query.length > 0) {
 			x.si_found.items = this.root_node.search_for(query);
 			const show_results = x.si_found.items.length > 0;
-			w_search_results_found.set(x.si_found.items.length);
-			w_search_state.set(show_results ? T_Search.results : T_Search.enter);
+			this.w_search_results_found.set(x.si_found.items.length);
+			this.w_search_state.set(show_results ? T_Search.results : T_Search.enter);
 		} else {
 			x.si_found.reset();
-			w_search_results_found.set(0);
-			w_search_state.set(T_Search.enter);
+			this.w_search_results_found.set(0);
+			this.w_search_state.set(T_Search.enter);
 		}
 		if (before !== this.results_fingerprint) {	// only if results are different
 			x.si_found.index = -1;
 		}
-		show.w_search_controls.set(T_Search.off != get(w_search_state));
-		w_search_results_changed.set(Date.now());
+		show.w_search_controls.set(T_Search.off != get(this.w_search_state));
+		this.w_search_results_changed.set(Date.now());
 	}
 	
 	static readonly _____PRIVATE: unique symbol;
@@ -142,4 +150,4 @@ class UX_Search {
 
 }
 
-export const search = new UX_Search();
+export const search = new Search();

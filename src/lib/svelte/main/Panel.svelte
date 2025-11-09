@@ -7,7 +7,6 @@
 	import { w_s_title_edit, w_ancestry_focus } from '../../ts/managers/Stores';
 	import Secondary_Controls from '../controls/Secondary_Controls.svelte';
 	import Primary_Controls from '../controls/Primary_Controls.svelte';
-	import { w_search_results_found } from '../../ts/managers/Stores';
 	import Search_Results from '../search/Search_Results.svelte';
 	import { T_Database } from '../../ts/database/DB_Common';
 	import Separator from '../draw/Separator.svelte';
@@ -21,6 +20,7 @@
 	import { onMount } from 'svelte';
 	const { w_details } = show;
 	const { w_rect_ofGraphView } = layout;
+	const { w_search_results_found } = search;
 	const spinner_title = 'Loading your data...';
 	const offset_toIntersection = new Point(-4, 8);
     const half_thickness: number = k.thickness.separator.main / 2;

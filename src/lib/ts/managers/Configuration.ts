@@ -1,4 +1,4 @@
-import { e, k, p, u, show, debug } from '../common/Global_Imports';
+import { e, k, p, u, show, debug, search } from '../common/Global_Imports';
 import { layout, databases } from '../common/Global_Imports';
 import { stores, w_device_isMobile } from './Stores';
 import { T_Theme } from '../common/Global_Imports';
@@ -31,6 +31,7 @@ export class Configuration {
 		w_device_isMobile.set(u.device_isMobile);
 		debug.apply_queryStrings();						// debugging
 		stores.setup_defaults();
+		search.setup_defaults();
 		show.restore_preferences();							// visibility
 		layout.restore_preferences();
 		this.apply_queryStrings();						// must call before prefs and db

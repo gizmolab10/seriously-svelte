@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { w_search_state, w_separator_color } from '../../ts/managers/Stores';
 	import { k, u, elements, x, Thing, colors, T_Search } from '../../ts/common/Global_Imports';
-	import { w_search_results_changed } from '../../ts/managers/Stores';
-	import { search } from '../../ts/ux/UX_Search';
+	import { w_separator_color } from '../../ts/managers/Stores';
+	import { search } from '../../ts/managers/Search';
 	import { derived } from 'svelte/store';
 	const { w_index: results_index } = x.si_found;
+	const { w_search_results_changed } = search;
 	let element: HTMLDivElement;
 	let results: Thing[] = [];
 	

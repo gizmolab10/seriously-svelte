@@ -4,7 +4,7 @@
 	import { w_thing_color, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { w_s_hover, w_background_color } from '../../ts/managers/Stores';
 	import { Point } from '../../ts/common/Global_Imports';
-	import { search } from '../../ts/ux/UX_Search';
+	import { search } from '../../ts/managers/Search';
 	import Button from './Button.svelte';
 	export let left = 0;
 	export let s_breadcrumb;

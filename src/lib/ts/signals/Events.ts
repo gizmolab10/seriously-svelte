@@ -1,7 +1,7 @@
 import { c, h, k, u, x, g_tree, debug, search, layout, details, signals, controls, elements } from '../common/Global_Imports';
 import { T_Search, T_Action, T_Control, T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { w_count_window_resized, w_s_alteration, w_s_title_edit, w_control_key_down } from '../managers/Stores';
-import { w_search_state, w_device_isMobile, w_ancestry_focus, w_ancestry_forDetails } from '../managers/Stores';
+import { w_device_isMobile, w_ancestry_focus, w_ancestry_forDetails } from '../managers/Stores';
 import { Point, Ancestry, Predicate } from '../common/Global_Imports';
 import { S_Mouse, S_Alteration } from '../common/Global_Imports';
 import { w_count_mouse_up } from '../managers/Stores';
@@ -276,12 +276,12 @@ export class Events {
 				const SHIFT = event.shiftKey;
 				const COMMAND = event.metaKey;
 				const EXTREME = SHIFT && OPTION;
-				if (get(w_search_state) != T_Search.off) {
+				if (get(search.w_search_state) != T_Search.off) {
 					switch (key) {
 						case 'enter':	
 						case 'escape':
 						case 'arrowright':	    search.deactivate_focus_and_grab(); break;	// stop searching		
-						case 'arrowleft':		u.grab_event(event); w_search_state.set(T_Search.enter); break;
+						case 'arrowleft':		u.grab_event(event); search.w_search_state.set(T_Search.enter); break;
 						case 'arrowup':			u.grab_event(event); search.next_row(false); break;
 						case 'arrowdown':		u.grab_event(event); search.next_row(true); break;
 						case 'tab':				search.selected_row = 0; break;
@@ -318,7 +318,7 @@ export class Events {
 						case '!':				layout.grand_adjust_toFit(); break;
 						case '>':				g_tree.increase_depth_limit_by(1); break;
 						case '<':				g_tree.increase_depth_limit_by(-1); break;
-						case 'f':				w_search_state.set(T_Search.enter); break;
+						case 'f':				search.w_search_state.set(T_Search.enter); break;
 						case 'p':				if (!COMMAND) { u.print_graph(); }; break;
 						case 's':				h.persist_toFile(T_File_Format.json); return;
 						case 'c':				layout.set_user_graph_offsetTo(Point.zero); return;

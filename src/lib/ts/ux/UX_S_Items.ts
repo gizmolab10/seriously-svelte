@@ -1,9 +1,9 @@
 import { h, p, u, debug, search, layout, details, controls } from '../common/Global_Imports';
-import { w_t_startup, w_data_updated, w_search_state } from '../managers/Stores';
 import { w_ancestry_forDetails, w_ancestry_focus } from '../managers/Stores';
 import { S_Items, T_Search, T_Startup } from '../common/Global_Imports';
 import { Tag, Thing, Trait, Ancestry } from '../common/Global_Imports';
 import { w_s_alteration, w_s_title_edit } from '../managers/Stores';
+import { w_t_startup, w_data_updated } from '../managers/Stores';
 import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
 
@@ -41,7 +41,7 @@ export default class UX_S_Items {
 				w_ancestry_focus.subscribe((ancestry: Ancestry) => {
 					this.update_ancestry_forDetails();
 				});
-				w_search_state.subscribe((state: number | null) => {
+				search.w_search_state.subscribe((state: number | null) => {
 					this.update_grabs_forSearch();
 				});
 				x.si_found.w_index.subscribe((row: number | null) => {
@@ -57,7 +57,7 @@ export default class UX_S_Items {
 	get ancestry_forDetails(): Ancestry | null { return get(w_ancestry_forDetails); }
 	
 	grab_next_ancestry(next: boolean) {	// for next/previous in details selection banner
-		if (get(w_search_state) > T_Search.off) {
+		if (get(search.w_search_state) > T_Search.off) {
 			this.si_found.find_next_item(next);
 		} else {
 			this.si_grabs.find_next_item(next);
@@ -174,7 +174,7 @@ export default class UX_S_Items {
 	}
 
 	update_grabs_forSearch() {
-		if (get(w_t_startup) == T_Startup.ready && get(w_search_state) != T_Search.off && this.si_found.length > 0) {
+		if (get(w_t_startup) == T_Startup.ready && get(search.w_search_state) != T_Search.off && this.si_found.length > 0) {
 			let ancestries = this.si_found.items.map((found: Thing) => found.ancestry).filter(a => !!a) ?? [];
 			ancestries = u.strip_hidDuplicates(ancestries);
 			if (this.si_grabs.descriptionBy_sorted_IDs != u.descriptionBy_sorted_IDs(ancestries)) {

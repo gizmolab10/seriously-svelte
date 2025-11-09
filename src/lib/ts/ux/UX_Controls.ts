@@ -1,6 +1,6 @@
-import { w_search_preferences, w_popupView_id, w_s_alteration } from '../managers/Stores';
-import { T_Control, T_Alteration, T_Search_Preference, T_Graph, T_Kinship } from '../common/Global_Imports';
-import { c, e, k, show, layout, g_tree, Ancestry, Predicate, S_Alteration } from '../common/Global_Imports';
+import { c, e, k, show, search, layout, g_tree, Ancestry, Predicate, S_Alteration } from '../common/Global_Imports';
+import { T_Graph, T_Kinship, T_Control, T_Alteration, T_Search_Preference } from '../common/Global_Imports';
+import { w_popupView_id, w_s_alteration } from '../managers/Stores';
 import { get } from 'svelte/store';
 
 class UX_Controls {
@@ -29,7 +29,7 @@ class UX_Controls {
 	
 	handle_segmented_choices(segmented_name: string, choices: string[]) {
 		switch (segmented_name) {
-			case 'search': w_search_preferences.set(choices[0] as unknown as T_Search_Preference); break;
+			case 'search': search.w_search_preferences.set(choices[0] as unknown as T_Search_Preference); break;
 			case 'graph':  show.w_graph_ofType.set(choices[0] as unknown as T_Graph); break;
 			case 'tree':   g_tree.set_tree_types(choices as Array<T_Kinship>); break;
 		}

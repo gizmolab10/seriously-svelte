@@ -1,6 +1,5 @@
 <script lang='ts'>
 	import { T_Search, T_Layer, T_Element, T_Preference, T_Search_Preference } from '../../ts/common/Global_Imports';
-	import { w_search_state, w_search_preferences, w_search_results_found } from '../../ts/managers/Stores';
 	import { k, p, show, Point, search, elements, controls } from '../../ts/common/Global_Imports';
 	import { w_thing_fontFamily } from '../../ts/managers/Stores';
 	import Segmented from '../mouse/Segmented.svelte';
@@ -11,6 +10,7 @@
 	const { w_details } = show;
 	const { w_rect_ofGraphView } = layout;
 	const s_search = elements.s_element_for(null, T_Element.search, k.empty);
+	const { w_search_state, w_search_preferences, w_search_results_found } = search;
 	let graph_width = $w_rect_ofGraphView.size.width - ($w_details ? 0 : 5);
 	let search_width = graph_width - left_width;
 	let input: HTMLInputElement;

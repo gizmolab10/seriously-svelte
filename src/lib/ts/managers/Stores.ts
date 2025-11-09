@@ -1,7 +1,6 @@
-import { Rect, Point, colors, Ancestry, Hierarchy } from '../common/Global_Imports';
 import { S_Element, S_Title_Edit, S_Alteration } from '../common/Global_Imports';
-import { T_Auto_Adjust, T_Search_Preference } from '../common/Global_Imports';
-import { T_Search, T_Startup, T_Dragging } from '../common/Global_Imports';
+import { T_Auto_Adjust, T_Startup, T_Dragging } from '../common/Global_Imports';
+import { colors, Ancestry, Hierarchy } from '../common/Global_Imports';
 import { G_Paging, G_Cluster } from '../common/Global_Imports';
 import { writable } from 'svelte/store';
 
@@ -32,13 +31,6 @@ const _____DATABASE: unique symbol = Symbol('DATABASE');
 export const w_t_database				= writable<string>();
 export const w_data_updated				= writable<number>();
 
-const _____SEARCH: unique symbol = Symbol('SEARCH');
-
-export const w_search_results_found		= writable<number>(0);
-export const w_search_results_changed	= writable<number>(0);		// re-render the search results when changed
-export const w_search_state				= writable<T_Search>();		// observed by search_results, controls, and panel
-export const w_search_preferences		= writable<T_Search_Preference>();
-
 const _____COUNTS: unique symbol = Symbol('COUNTS');
 
 export const w_count_window_resized		= writable<number>(0);
@@ -62,9 +54,7 @@ export const w_background_color			= writable<string>();
 class Stores {
 	setup_defaults() {
 		w_t_startup.set(T_Startup.start);
-		w_search_state.set(T_Search.off);
 		w_separator_color.set(colors.separator);
-		w_search_preferences.set(T_Search_Preference.title);
 	}
 }
 

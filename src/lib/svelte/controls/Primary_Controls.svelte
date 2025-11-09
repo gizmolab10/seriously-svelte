@@ -1,19 +1,18 @@
 <script lang='ts'>
-	import { c, e, k, u, x, show, colors, layout, elements, controls, svgPaths } from '../../ts/common/Global_Imports';
+	import { c, e, k, u, x, show, search, layout } from '../../ts/common/Global_Imports';
+	import { Point, elements, controls, svgPaths } from '../../ts/common/Global_Imports';
 	import { w_popupView_id, w_count_window_resized } from '../../ts/managers/Stores';
-	import { T_Layer, T_Graph, T_Element, T_Control } from '../../ts/common/Global_Imports';
-	import { w_search_state, w_background_color } from '../../ts/managers/Stores';
-	import { T_Kinship, T_Request } from '../../ts/common/Global_Imports';
-	import { Point, S_Element } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Graph, T_Control } from '../../ts/common/Global_Imports';
+	import { w_background_color } from '../../ts/managers/Stores';
 	import Search_Toggle from '../search/Search_Toggle.svelte';
 	import Next_Previous from '../mouse/Next_Previous.svelte';
-	import Identifiable from '../../ts/runtime/Identifiable';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Breadcrumbs from './Breadcrumbs.svelte';
 	import Button from '../mouse/Button.svelte';
 	const y_center = 10.5;
 	const scaling_stroke_width = 1.5;
+	const { w_search_state } = search;
 	const size_big = k.height.button + 4;
 	const { w_rect_ofGraphView } = layout;
 	const hamburger_size = k.height.button;

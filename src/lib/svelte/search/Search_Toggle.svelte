@@ -1,14 +1,13 @@
 <script lang="ts">
+	import { e, k, u, x, Point, search, elements } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Search, T_Control } from '../../ts/common/Global_Imports';
-	import { e, k, u, x, Point, elements } from '../../ts/common/Global_Imports';
-	import { w_search_state } from '../../ts/managers/Stores';
 	import Close_Button from '../mouse/Close_Button.svelte';
-	import { search } from '../../ts/ux/UX_Search';
 	import Button from '../mouse/Button.svelte';
 	export let width: number;
 	export let left: number;
 	export let top: number;
 	const right_widths = [10, 10.5];
+	const { w_search_state } = search;
 	const size_big = k.height.dot * 1.4;
 	const rights = u.cumulativeSum(right_widths).map((right, index) => width - right);
 
