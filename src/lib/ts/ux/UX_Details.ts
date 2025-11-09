@@ -1,6 +1,6 @@
 import { T_Search, T_Detail, T_Direction, T_Storage_Need } from '../common/Global_Imports';
 import { x, show, search, S_Items } from '../common/Global_Imports';
-import { w_count_details } from '../managers/Stores';
+import { w_count_details } from '../state/State';
 import { get } from 'svelte/store';
 
 export class S_Banner_Hideable {

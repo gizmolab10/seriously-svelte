@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, u, x, debug, colors, layout, signals, elements, components } from '../../ts/common/Global_Imports';
 	import { G_Widget, S_Mouse, S_Element, S_Component } from '../../ts/common/Global_Imports';
-	import { w_s_hover, w_s_title_edit, w_ancestry_focus } from '../../ts/managers/Stores';
+	import { w_s_hover, w_s_title_edit, w_ancestry_focus } from '../../ts/state/State';
 	import { T_Layer, T_Signal, T_Component } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { Point } from '../../ts/common/Global_Imports';

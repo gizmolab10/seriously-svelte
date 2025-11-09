@@ -3,9 +3,9 @@ import { T_Graph, T_Create, T_Kinship, T_Predicate, T_Alteration, T_Component } 
 import { Rect, Size, Point, Thing, Direction, Predicate, Relationship } from '../common/Global_Imports';
 import { G_Widget, G_Paging, G_Cluster, G_TreeLine } from '../common/Global_Imports';
 import { S_Items, S_Component, S_Title_Edit } from '../common/Global_Imports';
-import { w_s_title_edit, w_s_alteration } from '../managers/Stores';
+import { w_s_title_edit, w_s_alteration } from '../state/State';
 import type { Dictionary, Integer } from '../types/Types';
-import { w_ancestry_focus } from '../managers/Stores';
+import { w_ancestry_focus } from '../state/State';
 import { T_Database } from '../database/DB_Common';
 import { get, Writable } from 'svelte/store';
 import Identifiable from './Identifiable';

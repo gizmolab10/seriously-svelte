@@ -3,7 +3,7 @@
 	import { S_Mouse, S_Element, S_Component, T_Layer, T_Component } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { Size, Point } from '../../ts/common/Global_Imports';
-	import { w_thing_title } from '../../ts/managers/Stores';
+	import { w_thing_title } from '../../ts/state/State';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
     export let hover_isReversed = false;

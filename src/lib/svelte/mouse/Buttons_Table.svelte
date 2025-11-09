@@ -1,7 +1,7 @@
 <script lang='ts'>
     import {S_Mouse, S_Element, T_Element, T_Request, T_Action } from '../../ts/common/Global_Imports';
     import { k, show, Point, colors } from '../../ts/common/Global_Imports';
-    import { w_s_alteration } from '../../ts/managers/Stores';
+    import { w_s_alteration } from '../../ts/state/State';
     import Buttons_Row from './Buttons_Row.svelte';
     export let closure: (t_request: T_Request, s_mouse: S_Mouse, name: string, row: number, column: number) => boolean;
     export let button_titles: string[][];

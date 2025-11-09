@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { w_count_details, w_ancestry_forDetails } from '../../ts/managers/Stores';
+	import { w_count_details, w_ancestry_forDetails } from '../../ts/state/State';
 	import { c, k, x, Point, search, layout } from '../../ts/common/Global_Imports'; 
 	import { T_Layer, T_Detail } from '../../ts/common/Global_Imports';
 	import Banner_Hideable from './Banner_Hideable.svelte';

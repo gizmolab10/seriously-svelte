@@ -1,5 +1,5 @@
 import { c, k, p, busy, Hierarchy, T_Preference } from '../common/Global_Imports';
-import { w_hierarchy } from '../managers/Stores';
+import { w_hierarchy } from '../state/State';
 import { T_Persistence } from '../common/Global_Imports';
 import { T_Database } from '../database/DB_Common';
 import DB_Common from '../database/DB_Common';

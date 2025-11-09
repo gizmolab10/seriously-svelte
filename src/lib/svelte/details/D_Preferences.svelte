@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, u, x, show, Rect, Point, colors, layout, elements } from '../../ts/common/Global_Imports';
 	import { T_Graph, T_Layer, T_Kinship, T_Auto_Adjust } from '../../ts/common/Global_Imports';
-	import { w_auto_adjust_graph } from '../../ts/managers/Stores';
+	import { w_auto_adjust_graph } from '../../ts/state/State';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Slider from '../mouse/Slider.svelte';

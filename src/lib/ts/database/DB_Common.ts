@@ -1,7 +1,7 @@
 import { Tag, Trait, Thing, Predicate, Relationship, Persistable } from '../common/Global_Imports';
 import { T_Thing, T_Startup, T_Persistence, T_Persistable } from '../common/Global_Imports';
 import { c, h, k, p, busy, debug, Hierarchy, databases } from '../common/Global_Imports';
-import { w_hierarchy, w_t_startup } from '../managers/Stores';
+import { w_hierarchy, w_t_startup } from '../state/State';
 import type { Dictionary } from '../types/Types';
 
 export enum T_Database {

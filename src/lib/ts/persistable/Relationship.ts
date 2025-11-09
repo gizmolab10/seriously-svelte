@@ -1,6 +1,6 @@
 import { h, k, Thing, T_Order, databases, Predicate } from '../common/Global_Imports';
 import { T_Persistable, T_Predicate } from '../common/Global_Imports';
-import { w_relationship_order } from '../managers/Stores';
+import { w_relationship_order } from '../state/State';
 import Identifiable from '../runtime/Identifiable';
 import type { Integer } from '../types/Types';
 import Persistable from './Persistable';

@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { T_Search, T_Layer, T_Element, T_Preference, T_Search_Preference } from '../../ts/common/Global_Imports';
 	import { k, p, show, Point, search, elements, controls } from '../../ts/common/Global_Imports';
-	import { w_thing_fontFamily } from '../../ts/managers/Stores';
+	import { w_thing_fontFamily } from '../../ts/state/State';
 	import Segmented from '../mouse/Segmented.svelte';
 	export let zindex = T_Layer.graph;
 	export let width = 80;

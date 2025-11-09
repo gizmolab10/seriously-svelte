@@ -2,8 +2,8 @@
 	import { c, e, h, k, u, x, show, busy, debug, colors, search, layout, elements, databases } from '../../ts/common/Global_Imports';
 	import { Rect, Size, Point, Thing, Ancestry, Hierarchy, Direction } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Search, T_Banner, T_Control, T_Startup } from '../../ts/common/Global_Imports';
-	import { w_t_startup, w_popupView_id, w_device_isMobile, } from '../../ts/managers/Stores';
-	import { w_hierarchy, w_s_title_edit, w_ancestry_focus } from '../../ts/managers/Stores';
+	import { w_t_startup, w_popupView_id, w_device_isMobile, } from '../../ts/state/State';
+	import { w_hierarchy, w_s_title_edit, w_ancestry_focus } from '../../ts/state/State';
 	import Secondary_Controls from '../controls/Secondary_Controls.svelte';
 	import Primary_Controls from '../controls/Primary_Controls.svelte';
 	import Search_Results from '../search/Search_Results.svelte';

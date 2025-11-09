@@ -1,6 +1,6 @@
 import { h, k, u, radial, layout, Ancestry, Predicate } from '../common/Global_Imports';
 import { G_Widget, G_Cluster, G_Paging, T_Kinship } from '../common/Global_Imports';
-import { w_ancestry_focus } from '../managers/Stores';
+import { w_ancestry_focus } from '../state/State';
 import type { Dictionary } from '../types/Types';
 import { get } from 'svelte/store';
 

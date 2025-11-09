@@ -2,10 +2,10 @@
 	import { h, k, u, x, debug, colors, search, layout, signals, controls, elements, databases } from '../../ts/common/Global_Imports';
 	import { T_Search, T_Layer, T_Component, T_Edit } from '../../ts/common/Global_Imports';
 	import { S_Mouse, S_Element, S_Component } from '../../ts/common/Global_Imports';
-	import { w_thing_title, w_thing_fontFamily } from '../../ts/managers/Stores';
+	import { w_thing_title, w_thing_fontFamily } from '../../ts/state/State';
 	import { Rect, Seriously_Range } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import { w_s_title_edit } from '../../ts/managers/Stores';
+	import { w_s_title_edit } from '../../ts/state/State';
 	import { onMount } from 'svelte';
 	export let s_title!: S_Element;
 	export let fontSize = '1em';

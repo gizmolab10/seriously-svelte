@@ -1,7 +1,7 @@
 import { G_Widget, G_ArcSlider, G_Paging, S_Rotation } from '../common/Global_Imports';
 import { k, debug, colors, radial, layout, signals } from '../common/Global_Imports';
 import { Point, Angle, Ancestry, Predicate  } from '../common/Global_Imports';
-import { w_ancestry_focus } from '../managers/Stores';
+import { w_ancestry_focus } from '../state/State';
 import { get } from 'svelte/store';
 
 //////////////////////////////////////////

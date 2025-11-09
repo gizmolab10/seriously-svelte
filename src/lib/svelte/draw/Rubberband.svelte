@@ -1,7 +1,7 @@
 <script lang='ts'>
     import { Rect, Size, Point, T_Layer, T_Dragging, T_Component, colors } from '../../ts/common/Global_Imports';
     import { h, k, u, x, debug, layout, elements, components } from '../../ts/common/Global_Imports';
-    import { w_count_mouse_up, w_s_title_edit, w_dragging_active } from '../../ts/managers/Stores';
+    import { w_count_mouse_up, w_s_title_edit, w_dragging_active } from '../../ts/state/State';
     import { onMount, onDestroy } from 'svelte';
     export let strokeWidth = k.thickness.rubberband;
     export let bounds: Rect;

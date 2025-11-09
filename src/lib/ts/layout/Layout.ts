@@ -2,7 +2,7 @@ import { h, k, p, u, show, debug, radial, g_tree, g_radial, signals, controls } 
 import { S_Component, T_Graph, T_Preference, T_Startup } from '../common/Global_Imports';
 import { Rect, Size, Point, Thing, Ancestry } from '../common/Global_Imports';
 import { G_Cluster, G_Paging, G_Widget } from '../common/Global_Imports';
-import { w_t_startup } from '../managers/Stores';
+import { w_t_startup } from '../state/State';
 import { get, writable } from 'svelte/store';
 
 export default class Layout {

@@ -2,9 +2,9 @@
 	import { e, k, x, busy, debug, colors, radial, layout, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Radial_Zone, T_Component, S_Component } from '../../ts/common/Global_Imports';
 	import { Thing, Point, Angle, g_radial, databases } from '../../ts/common/Global_Imports';
-	import { w_count_mouse_up, w_s_title_edit } from '../../ts/managers/Stores';
+	import { w_count_mouse_up, w_s_title_edit } from '../../ts/state/State';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import { w_ancestry_focus } from '../../ts/managers/Stores';
+	import { w_ancestry_focus } from '../../ts/state/State';
 	import Radial_ArcSlider from './Radial_ArcSlider.svelte';
 	import { onMount } from 'svelte';
 	const name = 'rings';

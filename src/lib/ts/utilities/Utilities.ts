@@ -1,6 +1,6 @@
 // N.B., do not import these from Global Imports --> avoid dependency issues when importing Utilities class
 
-import { w_ancestry_focus, w_thing_fontFamily } from '../managers/Stores';
+import { w_ancestry_focus, w_thing_fontFamily } from '../state/State';
 import { Testworthy_Utilities } from './Testworthy_Utilities';
 import { Rect, Size, Point } from '../types/Geometry';
 import Identifiable from '../runtime/Identifiable';

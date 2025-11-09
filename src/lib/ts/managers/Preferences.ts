@@ -1,7 +1,7 @@
 import { G_Paging, T_Graph, T_Detail, T_Kinship, T_Preference, T_Auto_Adjust, T_Startup } from '../common/Global_Imports';
 import { c, h, k, u, x, show, debug, radial, layout, Ancestry, databases } from '../common/Global_Imports';
-import { w_ancestry_focus, w_t_startup, w_auto_adjust_graph } from './Stores';
-import { w_font_size, w_thing_fontFamily } from './Stores';
+import { w_ancestry_focus, w_t_startup, w_auto_adjust_graph } from '../state/State';
+import { w_font_size, w_thing_fontFamily } from '../state/State';
 import { get } from 'svelte/store';
 
 export class Preferences {

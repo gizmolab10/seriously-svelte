@@ -1,5 +1,5 @@
 import { k, p, x, show, Rect, debug, layout, Ancestry, G_Widget, T_Kinship} from "../common/Global_Imports";
-import { w_ancestry_focus, w_device_isMobile } from "../managers/Stores";
+import { w_ancestry_focus, w_device_isMobile } from "../state/State";
 import { get } from "svelte/store";
 
 export default class G_TreeGraph {

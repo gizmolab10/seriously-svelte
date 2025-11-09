@@ -1,6 +1,6 @@
 import type { Dictionary, Signal_Signature } from '../types/Types';
 import { T_Signal, T_Component } from '../common/Enumerations';
-import { w_ancestry_focus } from '../managers/Stores';
+import { w_ancestry_focus } from '../state/State';
 import { components } from '../managers/Components';
 import S_Component from '../state/S_Component';
 import Ancestry from '../runtime/Ancestry';

@@ -1,6 +1,6 @@
 import { c, e, k, show, search, layout, g_tree, Ancestry, Predicate, S_Alteration } from '../common/Global_Imports';
 import { T_Graph, T_Kinship, T_Control, T_Alteration, T_Search_Preference } from '../common/Global_Imports';
-import { w_popupView_id, w_s_alteration } from '../managers/Stores';
+import { w_popupView_id, w_s_alteration } from '../state/State';
 import { get } from 'svelte/store';
 
 class UX_Controls {

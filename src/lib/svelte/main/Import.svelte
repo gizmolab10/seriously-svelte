@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { h, k, x, Point, layout, details, elements } from '../../ts/common/Global_Imports';
 	import { T_Storage_Need } from '../../ts/common/Enumerations';
-	import { w_popupView_id } from '../../ts/managers/Stores';
+	import { w_popupView_id } from '../../ts/state/State';
 	import { files } from '../../ts/files/Files';
 	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';

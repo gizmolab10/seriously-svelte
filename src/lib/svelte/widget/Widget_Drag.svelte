@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { e, k, u, x, show, debug, colors, signals, elements, controls } from '../../ts/common/Global_Imports';
-	import { w_ancestry_focus, w_ancestry_forDetails } from '../../ts/managers/Stores';
+	import { w_ancestry_focus, w_ancestry_forDetails } from '../../ts/state/State';
 	import { T_Layer, T_Signal, T_Component } from '../../ts/common/Global_Imports';
 	import { Point, S_Element, S_Component } from '../../ts/common/Global_Imports';
-	import { w_s_hover, w_s_alteration } from '../../ts/managers/Stores';
+	import { w_s_hover, w_s_alteration } from '../../ts/state/State';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { svgPaths } from '../../ts/common/Global_Imports';
 	import SVG_D3 from '../draw/SVG_D3.svelte';

@@ -1,6 +1,6 @@
 import { Ancestry, S_Widget, T_Element, T_Control } from '../common/Global_Imports';
 import { k, x, colors, elements, controls } from '../common/Global_Imports';
-import { w_s_hover, w_control_key_down } from '../managers/Stores';
+import { w_s_hover, w_control_key_down } from './State';
 import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
 

@@ -1,13 +1,13 @@
 import { T_Startup, T_Create, T_Alteration, T_File_Format, T_Persistable } from '../common/Global_Imports';
 import { Access, Ancestry, Predicate, Relationship, Persistable } from '../common/Global_Imports';
 import { T_Thing, T_Trait, T_Order, T_Control, T_Predicate } from '../common/Global_Imports';
-import { w_popupView_id, w_s_title_edit, w_s_alteration, w_ancestry_focus } from './Stores';
+import { w_popupView_id, w_s_title_edit, w_s_alteration, w_ancestry_focus } from '../state/State';
 import { c, k, p, u, x, busy, show, debug, controls } from '../common/Global_Imports';
 import { files, colors, signals, layout, databases } from '../common/Global_Imports';
 import { Tag, User, Thing, Trait, S_Items } from '../common/Global_Imports';
 import DB_Common, { T_Database } from '../database/DB_Common';
 import type { Integer, Dictionary } from '../types/Types';
-import { w_hierarchy, w_t_startup } from './Stores';
+import { w_hierarchy, w_t_startup } from '../state/State';
 import Identifiable from '../runtime/Identifiable';
 import { pivot } from '../files/Pivot';
 import { get } from 'svelte/store';

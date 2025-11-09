@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { e, h, k, u, x, show, Rect, Point, debug, layout, signals, elements } from '../../ts/common/Global_Imports';
 	import { S_Component, T_Layer, T_Graph, T_Signal, T_Startup, T_Control } from '../../ts/common/Global_Imports';
-	import { w_t_startup, w_device_isMobile, w_popupView_id } from '../../ts/managers/Stores';
-	import { w_s_hover, w_ancestry_focus, w_s_title_edit } from '../../ts/managers/Stores';
-	import { w_thing_fontFamily, w_dragging_active } from '../../ts/managers/Stores';
+	import { w_t_startup, w_device_isMobile, w_popupView_id } from '../../ts/state/State';
+	import { w_s_hover, w_ancestry_focus, w_s_title_edit } from '../../ts/state/State';
+	import { w_thing_fontFamily, w_dragging_active } from '../../ts/state/State';
 	import Radial_Graph from '../graph/Radial_Graph.svelte';
 	import Tree_Graph from '../graph/Tree_Graph.svelte';
 	import Rubberband from '../draw/Rubberband.svelte';

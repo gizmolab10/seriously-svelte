@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { c, e, k, u, x, show, colors, search, layout } from '../../ts/common/Global_Imports';
 	import { Point, elements, controls, svgPaths } from '../../ts/common/Global_Imports';
-	import { w_popupView_id, w_count_window_resized } from '../../ts/managers/Stores';
+	import { w_popupView_id, w_count_window_resized } from '../../ts/state/State';
 	import { T_Layer, T_Graph, T_Control } from '../../ts/common/Global_Imports';
 	import Search_Toggle from '../search/Search_Toggle.svelte';
 	import Next_Previous from '../mouse/Next_Previous.svelte';

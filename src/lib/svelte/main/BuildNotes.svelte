@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, show, colors, Point, builds, T_Layer } from '../../ts/common/Global_Imports';
-	import { w_popupView_id } from '../../ts/managers/Stores';
+	import { w_popupView_id } from '../../ts/state/State';
 	import Close_Button from '../mouse/Close_Button.svelte';
 	import Steppers from '../mouse/Steppers.svelte';
 	import { onMount } from 'svelte';
