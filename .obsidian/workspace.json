@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "README.md",
+                "file": "project-analysis.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "README"
+              "title": "project-analysis"
             }
           }
         ]
@@ -171,6 +171,7 @@
   },
   "active": "9968854d61be5eec",
   "lastOpenFiles": [
+    "README.md",
     "src/lib/svelte/draw/Rubberband.svelte",
     "src/lib/svelte/graph/Tree_Preferences.svelte",
     "src/lib/svelte/experiments/Canvas_Graph.svelte",
@@ -181,7 +182,6 @@
     "notes/count_lines.sh",
     "notes/foo",
     "notes/update.js",
-    "notes/initialize.js",
     "notes/Resize_Optimization_AI.md",
     "notes/bubble tears.md",
     "notes/holons.api.md",

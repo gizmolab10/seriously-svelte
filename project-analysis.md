@@ -16,7 +16,12 @@
 ## Tasks
 
 - [x] Analyze `src/lib/ts/state/State.ts`
-- [ ] TBD: Further analysis based on findings
+- [ ] propose a strategy for converting the global writable stores into properties of a class called State
+	- [ ] assess how many files will need to be changed
+	- [ ] analyze how ts/Colors.ts has some writable store properties and (to understand how to properly update how the rest of the app needs to be updated):
+		- [ ] analyze how other ts files access colors.w_*
+		- [ ] analyze how svelte components access them
+	- [ ] begin with exactly one of the global writable stores and move it into State and properly update all files that use it
 
 ## Analyses
 
