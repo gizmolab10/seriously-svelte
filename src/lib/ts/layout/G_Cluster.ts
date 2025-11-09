@@ -1,6 +1,6 @@
-import { k, Point, Angle, debug, colors, radial, layout, Ancestry, Predicate, signals } from '../common/Global_Imports';
 import { G_Widget, G_ArcSlider, G_Paging, S_Rotation } from '../common/Global_Imports';
-import { w_ring_rotation_angle, w_ring_rotation_radius } from '../managers/Stores';
+import { k, debug, colors, radial, layout, signals } from '../common/Global_Imports';
+import { Point, Angle, Ancestry, Predicate  } from '../common/Global_Imports';
 import { w_ancestry_focus } from '../managers/Stores';
 import { get } from 'svelte/store';
 
@@ -43,7 +43,7 @@ export default class G_Cluster {
 	constructor(predicate: Predicate, points_toChildren: boolean) {
 		this.points_toChildren = points_toChildren;
 		this.predicate = predicate;
-		w_ring_rotation_radius.subscribe((radius: number) => {
+		layout.w_ring_rotation_radius.subscribe((radius: number) => {
 			if (this.g_sliderArc.outside_arc_radius != radius) {
 				this.layout_cluster();		// do not set_paging_index (else expand will hang)
 			}
@@ -72,7 +72,7 @@ export default class G_Cluster {
 	get angle_ofCluster(): number {
 		// returns one of three angles: 1) children_angle 2) opposite+tweak 3) opposite-tweak
 		const tweak = 2 * Math.PI / 3;					// equilateral distribution
-		const children_angle = get(w_ring_rotation_angle);
+		const children_angle = get(layout.w_ring_rotation_angle);
 		const raw = this.predicate.isBidirectional ?
 			children_angle + tweak :
 			this.points_toChildren ? children_angle :		// one directional, use global
@@ -88,7 +88,7 @@ export default class G_Cluster {
 	get name(): string { return `${get(w_ancestry_focus).title}-cluster-${this.direction_kind}`; }
 
 	get isMouse_insideThumb(): boolean {
-		const offset = Point.square(-get(w_ring_rotation_radius));
+		const offset = Point.square(-get(layout.w_ring_rotation_radius));
 		const mouse_vector = layout.mouse_vector_ofOffset_fromGraphCenter(offset);
 		return this.isPaging && !!mouse_vector && mouse_vector.isContainedBy_path(this.g_thumbArc.svgPathFor_arcSlider);
 	}
@@ -103,7 +103,7 @@ export default class G_Cluster {
 	private layout_label() {		// rotate text tangent to arc, at center of arc
 		const angle = this.g_sliderArc.angle_ofFork;
 		const ortho = this.arc_in_lower_half ? Angle.three_quarters : Angle.quarter;
-		const label_radius = get(w_ring_rotation_radius) + (this.arc_in_lower_half ? 0 : 5) - 22.4;
+		const label_radius = get(layout.w_ring_rotation_radius) + (this.arc_in_lower_half ? 0 : 5) - 22.4;
 		this.label_center = this.center.offsetBy(Point.fromPolar(label_radius, angle));
 		this.g_sliderArc.label_text_angle = ortho - angle;
 	}
@@ -170,7 +170,7 @@ export default class G_Cluster {
 
 	static readonly _____ANGLES: unique symbol;
 	
-	get radial_ofFork(): Point { return Point.fromPolar(get(w_ring_rotation_radius), this.angle_ofCluster); }
+	get radial_ofFork(): Point { return Point.fromPolar(get(layout.w_ring_rotation_radius), this.angle_ofCluster); }
 
 	get direction_kind(): string {
 		const isSingular = this.total_widgets == 1;
@@ -192,7 +192,7 @@ export default class G_Cluster {
 		this.g_widgets_inCluster = [];
 		if (this.widgets_shown > 0 && !!this.predicate) {
 			const center = this.center.offsetByXY(0.5, -1);			// tweak so that drag dots are centered within the rotation ring
-			const radial = Point.x(get(w_ring_rotation_radius) + k.radial_widget_inset);
+			const radial = Point.x(get(layout.w_ring_rotation_radius) + k.radial_widget_inset);
 			const radial_ofFork = this.radial_ofFork;				// points at middle widget (of cluster)
 			const fork_points_right = radial_ofFork.x > 0;
 			const fork_points_down = radial_ofFork.y < 0;
@@ -227,7 +227,7 @@ export default class G_Cluster {
 		const max = this.widgets_shown - 1;
 		const row = (max / 2) - index;						// row centered around zero
 		const radial = this.radial_ofFork;					// points at middle widget (of cluster)
-		const radius = get(w_ring_rotation_radius);
+		const radius = get(layout.w_ring_rotation_radius);
 		let y = radial.y + (row * (k.height.dot + 1.3));	// distribute y equally around fork_y
 		let y_isOutside = false;
 		const absY = Math.abs(y);

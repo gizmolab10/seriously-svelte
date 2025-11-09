@@ -1,5 +1,4 @@
-import { k, Rect, Point, Angle, svgPaths } from '../common/Global_Imports';
-import { w_ring_rotation_radius } from '../managers/Stores';
+import { k, Rect, Point, Angle, layout, svgPaths } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 // import * as d3 from 'd3';
 // import Two from 'two.js';
@@ -27,7 +26,7 @@ export default class G_ArcSlider {
 	end_angle = 0;
 
 	constructor(isThumb: boolean) {
-		const radius = get(w_ring_rotation_radius);
+		const radius = get(layout.w_ring_rotation_radius);
 		this.clusters_center = Point.square(radius);
 		this.isThumb = isThumb;
 		if (isThumb) {
@@ -131,7 +130,7 @@ export default class G_ArcSlider {
 
 	get svgPathFor_bigArc(): string {
 		const capRadius = k.thickness.rotation_ring / 2;
-		const smallRadius = get(w_ring_rotation_radius) + 1;
+		const smallRadius = get(layout.w_ring_rotation_radius) + 1;
 		const bigRadius = smallRadius + k.thickness.rotation_ring;
 		return this.svgPathFor_arcSlider_using(smallRadius, bigRadius, capRadius);
 	}

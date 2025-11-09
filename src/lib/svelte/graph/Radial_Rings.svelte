@@ -1,9 +1,8 @@
 <script lang='ts'>
-	import { e, k, x, busy, debug, colors, radial, layout, signals, svgPaths, Thing, Point, Angle, g_radial, databases } from '../../ts/common/Global_Imports';
+	import { e, k, x, busy, debug, colors, radial, layout, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Radial_Zone, T_Component, S_Component } from '../../ts/common/Global_Imports';
-	import { w_count_mouse_up, w_s_title_edit, w_g_paging_cluster } from '../../ts/managers/Stores';
 	import { Thing, Point, Angle, g_radial, databases } from '../../ts/common/Global_Imports';
-	import { w_ring_rotation_angle, w_ring_rotation_radius } from '../../ts/managers/Stores';
+	import { w_count_mouse_up, w_s_title_edit } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { w_ancestry_focus } from '../../ts/managers/Stores';
 	import Radial_ArcSlider from './Radial_ArcSlider.svelte';
@@ -12,6 +11,7 @@
 	const { w_thing_color } = colors;
 	const ring_width = k.thickness.rotation_ring;
 	const mouse_timer = e.mouse_timer_forName(name);	// persist across destroy/recreate
+	const { w_g_paging_cluster, w_ring_rotation_angle, w_ring_rotation_radius } = layout;
 	let color = $w_ancestry_focus?.thing?.color ?? colors.default_forThings;
 	let mouse_up_count = $w_count_mouse_up;
 	let cursor = k.cursor_default;

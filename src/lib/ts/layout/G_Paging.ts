@@ -1,6 +1,5 @@
-import { h, k, Thing, Predicate, Ancestry, G_Cluster } from '../common/Global_Imports';
+import { h, k, Thing, layout, Predicate, Ancestry, G_Cluster } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
-import { w_g_paging } from '../managers/Stores';
 
 export class G_Thing_Pages {
 
@@ -98,7 +97,7 @@ export class G_Paging {
 		}
 		const changed = this.index != prior;
 		if (changed) {
-			w_g_paging.set(this);
+			layout.w_g_paging.set(this);
 		}
 		return changed;
 	}

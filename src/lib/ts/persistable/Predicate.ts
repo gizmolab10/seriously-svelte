@@ -1,6 +1,5 @@
-import { h, k, debug, T_Debug, databases, Persistable } from '../common/Global_Imports';
+import { h, k, debug, layout, T_Debug, databases, Persistable } from '../common/Global_Imports';
 import { T_Kinship, T_Predicate, T_Persistable } from '../common/Global_Imports';
-import { w_ring_rotation_angle } from '../managers/Stores';
 import { get } from 'svelte/store';
 
 export default class Predicate extends Persistable {
@@ -45,7 +44,7 @@ export default class Predicate extends Persistable {
 	angle_ofCluster_when(points_toChildren: boolean): number {
 		// returns one of three angles: 1) children_angle 2) opposite+tweak 3) opposite-tweak
 		const tweak = 2 * Math.PI / 3;					// equilateral distribution
-		const children_angle = get(w_ring_rotation_angle);
+		const children_angle = get(layout.w_ring_rotation_angle);
 		const raw = this.isBidirectional ?
 			children_angle + tweak :
 			points_toChildren ? children_angle :		// one directional, use global

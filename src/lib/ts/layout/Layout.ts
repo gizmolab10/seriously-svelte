@@ -1,6 +1,8 @@
-import { h, k, p, u, show, debug, g_tree, g_radial, signals, controls } from '../common/Global_Imports';
-import { G_Widget, S_Component, T_Graph, T_Preference } from '../common/Global_Imports';
+import { h, k, p, u, show, debug, radial, g_tree, g_radial, signals, controls } from '../common/Global_Imports';
+import { S_Component, T_Graph, T_Preference, T_Startup } from '../common/Global_Imports';
 import { Rect, Size, Point, Thing, Ancestry } from '../common/Global_Imports';
+import { G_Cluster, G_Paging, G_Widget } from '../common/Global_Imports';
+import { w_t_startup } from '../managers/Stores';
 import { get, writable } from 'svelte/store';
 
 export default class Layout {
@@ -8,15 +10,42 @@ export default class Layout {
 	w_scaled_movement		= writable<Point | null>(null);
 	w_mouse_location		= writable<Point>();
 	w_mouse_location_scaled	= writable<Point>();
+
+	static readonly _____GRAPH_VIEW: unique symbol;
+
 	w_user_graph_center		= writable<Point>();
 	w_user_graph_offset		= writable<Point>();
 	w_rect_ofGraphView		= writable<Rect>();
+
+	static readonly _____RADIAL: unique symbol;
+
+	w_ring_rotation_radius	= writable<number>();
+	w_ring_rotation_angle	= writable<number>();
+	w_g_paging				= writable<G_Paging>();
+	w_g_paging_cluster		= writable<G_Cluster | null>();
 
 	restore_preferences() {
 		this.update_rect_ofGraphView();	// needed for set_scale_factor
 		this.set_scale_factor(p.read_key(T_Preference.scale) ?? 1);
 		this.renormalize_user_graph_offset();	// must be called after apply scale (which otherwise fubars offset)
 		document.documentElement.style.setProperty('--css-body-width', this.windowSize.width.toString() + 'px');
+		w_t_startup.subscribe((startup) => {
+			if (startup == T_Startup.ready) {
+				this.w_ring_rotation_angle.subscribe((angle: number) => {
+					p.write_key(T_Preference.ring_angle, angle);
+				});
+				this.w_ring_rotation_radius.subscribe((radius: number) => {
+					p.write_key(T_Preference.ring_radius, radius);
+				});
+				this.w_g_paging.subscribe((g_paging: G_Paging) => {
+					p.writeDB_key(T_Preference.paging, radial.g_thing_pages_byThingID);
+					if (!!g_paging) {
+						g_radial.layout_forPoints_toChildren(g_paging.points_toChildren);
+						g_radial.layout_forPaging();
+					}
+				})
+			}
+		});
 	}
 
 	static readonly _____GRAPHS: unique symbol;

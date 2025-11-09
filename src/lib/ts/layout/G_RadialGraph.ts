@@ -1,22 +1,12 @@
-import { h, k, u, Rect, Size, Point, radial, layout, Ancestry, Predicate } from '../common/Global_Imports';
-import { G_Widget, G_Cluster, G_Paging, T_Kinship, T_Predicate } from '../common/Global_Imports';
-import { w_g_paging, w_ancestry_focus } from '../managers/Stores';
-import { w_ring_rotation_radius } from '../managers/Stores';
+import { h, k, u, radial, layout, Ancestry, Predicate } from '../common/Global_Imports';
+import { G_Widget, G_Cluster, G_Paging, T_Kinship } from '../common/Global_Imports';
+import { w_ancestry_focus } from '../managers/Stores';
 import type { Dictionary } from '../types/Types';
 import { get } from 'svelte/store';
 
 export default class G_RadialGraph {
 	g_parent_clusters: Dictionary<G_Cluster> = {};		// includes related
 	g_child_clusters: Dictionary<G_Cluster> = {};
-
-	constructor() {
-		w_g_paging.subscribe((g_paging: G_Paging | null) => {
-			if (!!g_paging) {
-				this.layout_forPoints_toChildren(g_paging.points_toChildren);
-				this.layout_forPaging();
-			}
-		});
-	}
 
 	destructor() {
 		Object.values(this.g_parent_clusters).forEach(cluster => cluster.destructor());
@@ -55,7 +45,7 @@ export default class G_RadialGraph {
 		}
 	}
 
-	private layout_forPoints_toChildren(points_toChildren: boolean) {
+	layout_forPoints_toChildren(points_toChildren: boolean) {
 		const focus_ancestry = get(w_ancestry_focus);
 		if (!!focus_ancestry) {
 			if (points_toChildren) {
@@ -145,9 +135,9 @@ export default class G_RadialGraph {
 		return g_thing_pages?.g_paging_forPredicate_toChildren(predicate, points_toChildren) ?? null;
 	}
 
-	private layout_forPaging() {
-		let remaining_toShow = Math.ceil((get(w_ring_rotation_radius) ** 1.5) / k.height.row);
-		const angle_per_widget = 40 / get(w_ring_rotation_radius);			// Limit show so arc spread never exceeds 180°
+	layout_forPaging() {
+		let remaining_toShow = Math.ceil((get(layout.w_ring_rotation_radius) ** 1.5) / k.height.row);
+		const angle_per_widget = 40 / get(layout.w_ring_rotation_radius);			// Limit show so arc spread never exceeds 180°
 		const maximum_portion = Math.floor(Math.PI / angle_per_widget);
 		if (this.total_ancestries > remaining_toShow || this.total_ancestries > maximum_portion) {
 			let clusters = this.g_clusters_forPaging;
