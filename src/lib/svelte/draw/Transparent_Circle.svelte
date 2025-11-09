@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, Point, debug, colors, T_Layer } from '../../ts/common/Global_Imports'
-	import { w_background_color } from '../../ts/managers/Stores';
+	const { w_background_color } = colors;
 	export let color_background = debug.lines ? 'transparent' : $w_background_color;
 	export let zindex = T_Layer.dots;
 	export let opacity = 0;

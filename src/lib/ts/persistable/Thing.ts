@@ -1,7 +1,7 @@
 import { h, k, u, x, debug, colors, S_Items, databases, Seriously_Range } from '../common/Global_Imports';
 import { Tag, Trait, Ancestry, Predicate, Persistable, Relationship } from '../common/Global_Imports';
 import { T_Thing, T_Debug, T_Predicate, T_Persistable } from '../common/Global_Imports';
-import { w_thing_color, w_count_rebuild } from '../managers/Stores';
+import { w_count_rebuild } from '../managers/Stores';
 import { w_ancestry_focus } from '../managers/Stores';
 import type { Dictionary } from '../types/Types';
 import { get } from 'svelte/store';
@@ -79,7 +79,7 @@ export default class Thing extends Persistable {
 
 	signal_color_change() {
 		w_count_rebuild.update(n => n + 1);
-		w_thing_color.set(`${this.id}${k.separator.generic}${get(w_count_rebuild)}`);
+		colors.w_thing_color.set(`${this.id}${k.separator.generic}${get(w_count_rebuild)}`);
 	}
 
 	async persistent_create_orUpdate(already_persisted: boolean) {

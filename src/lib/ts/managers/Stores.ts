@@ -9,7 +9,6 @@ const _____THING: unique symbol = Symbol('THING');
 export const w_relationship_order		= writable<number>();
 export const w_thing_fontFamily			= writable<string>();
 export const w_thing_title				= writable<string | null>();
-export const w_thing_color				= writable<string | null>(null);
 export const w_s_alteration				= writable<S_Alteration | null>();
 export const w_s_title_edit				= writable<S_Title_Edit | null>(null);
 
@@ -43,13 +42,10 @@ export const w_dragging_active			= writable<T_Dragging>();
 export const w_control_key_down			= writable<boolean>(false);
 export const w_device_isMobile			= writable<boolean>();
 export const w_font_size				= writable<number>();
-export const w_separator_color			= writable<string>();
-export const w_background_color			= writable<string>();
 
 class Stores {
 	setup_defaults() {
 		w_t_startup.set(T_Startup.start);
-		w_separator_color.set(colors.separator);
 	}
 }
 

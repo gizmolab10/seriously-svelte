@@ -1,12 +1,13 @@
 <script lang='ts'>
-	import { k, u, show, Point, builds, T_Layer } from '../../ts/common/Global_Imports';
-	import { w_popupView_id, w_background_color } from '../../ts/managers/Stores';
+	import { k, u, show, colors, Point, builds, T_Layer } from '../../ts/common/Global_Imports';
+	import { w_popupView_id } from '../../ts/managers/Stores';
 	import Close_Button from '../mouse/Close_Button.svelte';
 	import Steppers from '../mouse/Steppers.svelte';
 	import { onMount } from 'svelte';
 	const notesIndexed = Object.entries(builds.notes).reverse();
-	const { w_directionals_ofType } = show;
 	const notesLimit = notesIndexed.length - 1;
+	const { w_directionals_ofType } = show;
+	const { w_background_color } = colors;
 	let title = k.empty;
 	let notesIndex = 0;
 	let notes = [];

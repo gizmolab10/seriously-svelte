@@ -1,6 +1,5 @@
 <script lang='ts'>
 	import { k, u, Point, colors, T_Layer, Direction } from '../../ts/common/Global_Imports';
-	import { w_background_color, w_separator_color } from '../../ts/managers/Stores';
 	import Clickable_Label from '../mouse/Clickable_Label.svelte';
 	import Gull_Wings from '../draw/Gull_Wings.svelte';
 	export let handle_click: (event: Event) => {} | null = null;
@@ -19,6 +18,7 @@
 	export let isHorizontal = true;
 	export let name = 'separator';
 	export let margin = 0;
+	const { w_separator_color, w_background_color } = colors;
 	const thin_line_color = colors.thin_separator_line_color;
 	const line_left = isHorizontal ? origin.x + margin : origin.x - thickness / 2;
 	const class_name = `${name}-line-${isHorizontal ? 'horizontal' : 'vertical'}`;

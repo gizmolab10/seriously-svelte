@@ -3,7 +3,6 @@ import { c, h, k, u, x, show, debug, radial, colors, Ancestry, databases } from 
 import { w_ancestry_focus, w_t_startup, w_auto_adjust_graph } from './Stores';
 import { w_ring_rotation_angle, w_ring_rotation_radius } from './Stores';
 import { w_g_paging, w_font_size, w_thing_fontFamily } from './Stores';
-import { w_background_color, w_separator_color } from './Stores';
 import { get } from 'svelte/store';
 
 export class Preferences {
@@ -157,8 +156,6 @@ export class Preferences {
 		w_font_size				.set( this.read_key(T_Preference.font_size)				?? 14);
 		w_auto_adjust_graph		.set( this.read_key(T_Preference.auto_adjust)			?? null);
 		w_thing_fontFamily		.set( this.read_key(T_Preference.font)					?? 'Times New Roman');
-		w_background_color		.set( this.read_key(T_Preference.background)			?? colors.background);
-		w_separator_color		.set( this.read_key(T_Preference.separator)				?? colors.separator);
 		this.reactivity_subscribe()
 	}
 	
@@ -248,16 +245,6 @@ export class Preferences {
 		w_auto_adjust_graph.subscribe((auto_adjust: T_Auto_Adjust | null) => {
 			this.write_key(T_Preference.auto_adjust, auto_adjust);
 		});
-		w_separator_color.subscribe((color: string) => {
-			this.write_key(T_Preference.separator, color);
-			w_background_color.set(colors.ofBackgroundFor(color));
-		})
-		w_background_color.subscribe((color: string) => {
-			document.documentElement.style.setProperty('--css-background-color', color);
-			this.write_key(T_Preference.background, color);
-			colors.banner = colors.ofBannerFor(color);
-			// colors.background = color;	// uncommenting this turns the glow buttons gray
-		})
 
 		show.reactivity_subscribe();
 	}

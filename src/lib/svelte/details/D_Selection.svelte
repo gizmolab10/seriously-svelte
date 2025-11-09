@@ -1,10 +1,10 @@
 <script lang='ts'>
 	import { c, k, p, u, x, show, colors, layout, details, elements } from '../../ts/common/Global_Imports';
-	import { w_thing_color, w_thing_title, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import { w_ancestry_focus, w_ancestry_forDetails } from '../../ts/managers/Stores';
 	import { T_Thing, T_Layer, T_Element } from '../../ts/common/Global_Imports';
 	import { Point, Thing, Ancestry } from '../../ts/common/Global_Imports';
 	import { w_relationship_order } from '../../ts/managers/Stores';
+	import { w_thing_title } from '../../ts/managers/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import type { Integer } from '../../ts/types/Types';
 	import Text_Table from '../text/Text_Table.svelte';

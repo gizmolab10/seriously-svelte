@@ -1,12 +1,12 @@
 <script lang='ts'>
-	import { k, u, elements, x, debug, layout, signals, svgPaths } from '../../ts/common/Global_Imports';
-	import { w_thing_color, w_s_title_edit, w_ancestry_focus } from '../../ts/managers/Stores';
-	import { Size, Point, S_Mouse, S_Component } from '../../ts/common/Global_Imports';
+	import { k, u, x, debug, colors, layout, signals, elements, svgPaths } from '../../ts/common/Global_Imports';
+	import { w_s_title_edit, w_ancestry_focus } from '../../ts/managers/Stores';
+	import { Size, Point, S_Component } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Component } from '../../ts/common/Enumerations';
-	import { w_background_color } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Widget_Title from '../widget/Widget_Title.svelte';
 	import { onMount } from 'svelte';
+	const { w_thing_color, w_background_color } = colors;
 	const { w_items: w_grabbed } = x.si_grabs;
 	const height = k.height.row + 1;
 	let ancestry = $w_ancestry_focus;

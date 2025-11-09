@@ -1,15 +1,15 @@
 // N.B., do not import these from Global Imports --> avoid dependency issues when importing Utilities class
 
-import { w_background_color, w_ancestry_focus } from '../managers/Stores';
+import { w_ancestry_focus, w_thing_fontFamily } from '../managers/Stores';
 import { Testworthy_Utilities } from './Testworthy_Utilities';
-import { w_thing_fontFamily } from '../managers/Stores';
 import { Rect, Size, Point } from '../types/Geometry';
 import Identifiable from '../runtime/Identifiable';
 import { databases } from '../database/Databases';
 import G_TreeLine from '../layout/G_TreeLine';
 import { controls } from '../ux/UX_Controls';
-import { layout } from '../layout/Layout';
+import { colors } from '../managers/Colors';
 import Ancestry from '../runtime/Ancestry';
+import { layout } from '../layout/Layout';
 import G_Widget from '../layout/G_Widget';
 import { Integer } from '../types/Types';
 import { k } from '../common/Constants';
@@ -148,13 +148,13 @@ export class Utilities extends Testworthy_Utilities {
 
 	temporarily_setDefaults_while(closure: () => void) {
 		const grabbed = x.si_grabs.items;
-		const color = get(w_background_color);
-		w_background_color.set('white');
+		const color = get(colors.w_background_color);
+		colors.w_background_color.set('white');
 		x.si_grabs.reset();	// triggers reactivity, takes time to percolate
 		setTimeout(() => {
 			closure();
 			x.si_grabs.items = grabbed;
-			w_background_color.set(color);
+			colors.w_background_color.set(color);
 		}, 10);
 	}
 

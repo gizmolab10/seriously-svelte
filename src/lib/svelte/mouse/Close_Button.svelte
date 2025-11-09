@@ -1,6 +1,5 @@
 <script lang='ts'>
 	import { k, u, Size, Point, colors, T_Layer, svgPaths } from '../../ts/common/Global_Imports';
-    import { w_popupView_id, w_background_color } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	export let align_left: boolean = false;
@@ -9,6 +8,7 @@
 	export let closure: () => void;
 	export let origin: Point;
     export let size = 20;
+	const { w_background_color } = colors;
 	let stroke = colors.default;
 	let fill = 'white';
 

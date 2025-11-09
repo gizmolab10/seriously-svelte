@@ -1,8 +1,7 @@
 <script lang='ts'>
 	import { k, u, x, Rect, Point, colors, T_Layer, layout, elements } from '../../ts/common/Global_Imports';
 	import { w_s_hover, w_thing_fontFamily, w_control_key_down } from '../../ts/managers/Stores';
-	import { S_Element, S_Component } from '../../ts/common/Global_Imports';
-	import { w_background_color } from '../../ts/managers/Stores';
+	import { S_Mouse, S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	export let s_button: S_Element = S_Element.empty();
 	export let closure: (result: S_Mouse) => boolean;
@@ -22,6 +21,7 @@
 	export let style = k.empty;
 	export let name = k.empty;
 	const { w_rect_ofGraphView, w_user_graph_offset } = layout;
+	const { w_background_color } = colors;
 	let buttonComponent: S_Component;
 	let computed_style = style;
 	let element: HTMLElement;

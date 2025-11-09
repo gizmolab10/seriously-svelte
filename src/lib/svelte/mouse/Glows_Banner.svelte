@@ -1,6 +1,5 @@
 <script lang='ts'>
 	import { k, Rect, Size, Point, colors, details } from '../../ts/common/Global_Imports';
-	import { w_background_color } from '../../ts/managers/Stores';
 	import Glow_Button from '../mouse/Glow_Button.svelte';
 	import G_Repeater from '../../ts/layout/G_Repeater';
 	import Separator from '../draw/Separator.svelte';
@@ -12,6 +11,7 @@
 	export let height: number;
 	export let width: number;
 	const banner_title = titles[0];
+	const { w_background_color } = colors;
 	const g_repeater = new G_Repeater(titles, height, width, 0, 0, 7, 0, false, font_size, true);
 	let banner_color = colors.banner;
 

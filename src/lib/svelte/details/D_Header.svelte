@@ -1,13 +1,14 @@
 <script lang='ts'>
 	import { c, k, u, elements, x, debug, search, colors, layout } from '../../ts/common/Global_Imports';
-	import { w_thing_color, w_ancestry_forDetails } from '../../ts/managers/Stores';
 	import { Ancestry, T_Detail, S_Widget } from '../../ts/common/Global_Imports';
+	import { w_ancestry_forDetails } from '../../ts/managers/Stores';
 	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_index: w_found } = x.si_found;
+	const { w_thing_color } = colors;
+    let reattachments = 0;
+	let color = colors.default;
 	let ancestry: Ancestry | null = null;
 	let background_color = 'transparent';
-	let color = colors.default;
-    let reattachments = 0;
 
 	$: {
 	const _ = `${u.descriptionBy_titles($w_grabbed)}

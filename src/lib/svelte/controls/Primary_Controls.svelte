@@ -1,9 +1,8 @@
 <script lang='ts'>
-	import { c, e, k, u, x, show, search, layout } from '../../ts/common/Global_Imports';
+	import { c, e, k, u, x, show, colors, search, layout } from '../../ts/common/Global_Imports';
 	import { Point, elements, controls, svgPaths } from '../../ts/common/Global_Imports';
 	import { w_popupView_id, w_count_window_resized } from '../../ts/managers/Stores';
 	import { T_Layer, T_Graph, T_Control } from '../../ts/common/Global_Imports';
-	import { w_background_color } from '../../ts/managers/Stores';
 	import Search_Toggle from '../search/Search_Toggle.svelte';
 	import Next_Previous from '../mouse/Next_Previous.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
@@ -15,6 +14,7 @@
 	const { w_search_state } = search;
 	const size_big = k.height.button + 4;
 	const { w_rect_ofGraphView } = layout;
+	const { w_background_color } = colors;
 	const hamburger_size = k.height.button;
 	const { w_search_controls, w_graph_ofType } = show;
 	const hamburger_path = svgPaths.hamburgerPath(hamburger_size);

@@ -1,16 +1,16 @@
 <script lang='ts'>
-	import { k, u, x, debug, signals, components, layout, elements } from '../../ts/common/Global_Imports';
+	import { k, u, x, debug, colors, layout, signals, elements, components } from '../../ts/common/Global_Imports';
 	import { G_Widget, S_Mouse, S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import { w_s_hover, w_s_title_edit, w_ancestry_focus } from '../../ts/managers/Stores';
 	import { T_Layer, T_Signal, T_Component } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import { w_thing_color } from '../../ts/managers/Stores';
 	import { Point } from '../../ts/common/Global_Imports';
 	import Widget_Reveal from './Widget_Reveal.svelte';
 	import Widget_Title from './Widget_Title.svelte';
 	import Widget_Drag from './Widget_Drag.svelte';
 	import { onMount } from 'svelte';
 	export let g_widget!: G_Widget;
+	const { w_thing_color } = colors;
 	const s_widget = g_widget.s_widget;
 	const s_drag = s_widget.s_drag;
 	const s_title = s_widget.s_title;

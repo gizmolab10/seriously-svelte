@@ -1,15 +1,13 @@
 <script lang='ts'>
-	import { h, k, u, x,debug, colors, layout, signals, elements } from '../../ts/common/Global_Imports';
-	import { T_Search, T_Banner, S_Element } from '../../ts/common/Global_Imports';
-	import { w_thing_color, w_thing_fontFamily } from '../../ts/managers/Stores';
-	import { w_s_hover, w_background_color } from '../../ts/managers/Stores';
-	import { Point } from '../../ts/common/Global_Imports';
-	import { search } from '../../ts/managers/Search';
+	import { h, k, u, x, debug, colors, search, elements } from '../../ts/common/Global_Imports';
+	import { Point, T_Search, T_Banner, S_Element } from '../../ts/common/Global_Imports';
+	import { w_s_hover, w_thing_fontFamily } from '../../ts/managers/Stores';
 	import Button from './Button.svelte';
 	export let left = 0;
 	export let s_breadcrumb;
 	export let center = Point.zero;
 	const borderStyle = '1px solid';
+	const { w_thing_color, w_background_color } = colors;
 	let borderColor = $w_background_color;
 	let thing = s_breadcrumb.ancestry.thing;
 	let title = thing.breadcrumb_title ?? k.empty;

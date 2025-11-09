@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, u, x, show, Rect, Point, colors, layout, elements } from '../../ts/common/Global_Imports';
 	import { T_Graph, T_Layer, T_Kinship, T_Auto_Adjust } from '../../ts/common/Global_Imports';
-	import { w_separator_color, w_auto_adjust_graph } from '../../ts/managers/Stores';
+	import { w_auto_adjust_graph } from '../../ts/managers/Stores';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Slider from '../mouse/Slider.svelte';
@@ -17,6 +17,7 @@
 	const color_left = width / 2 - 13;
 	const segmented_width = width - 6;
 	const { w_scale_factor } = layout;
+	const { w_separator_color } = colors;
 	const segmented_height = k.height.button;
 	const separator_height = segmented_height + 9;
 	const { w_details_ofType, w_countDots_ofType } = show;

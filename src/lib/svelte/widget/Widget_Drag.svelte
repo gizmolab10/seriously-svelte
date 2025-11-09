@@ -1,10 +1,9 @@
 <script lang='ts'>
-	import { e, k, u, x, show, debug, signals, elements, controls } from '../../ts/common/Global_Imports';
-	import { w_s_hover, w_thing_color, w_s_alteration } from '../../ts/managers/Stores';
+	import { e, k, u, x, show, debug, colors, signals, elements, controls } from '../../ts/common/Global_Imports';
 	import { w_ancestry_focus, w_ancestry_forDetails } from '../../ts/managers/Stores';
 	import { T_Layer, T_Signal, T_Component } from '../../ts/common/Global_Imports';
 	import { Point, S_Element, S_Component } from '../../ts/common/Global_Imports';
-	import { w_background_color } from '../../ts/managers/Stores';
+	import { w_s_hover, w_s_alteration } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { svgPaths } from '../../ts/common/Global_Imports';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
@@ -13,9 +12,11 @@
 	export let s_drag!: S_Element;
 	const size = k.height.dot;
 	const capture_size = size;
+	const { w_thing_color } = colors;
     const ancestry = s_drag.ancestry;
 	const g_widget = ancestry.g_widget;
 	const { w_countDots_ofType } = show;
+	const { w_background_color } = colors;
 	const { w_items: w_grabbed } = x.si_grabs;
 	let fill_color = debug.lines ? 'transparent' : s_drag.fill;
 	let svg_outline_color = s_drag.svg_outline_color;

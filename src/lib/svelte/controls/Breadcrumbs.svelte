@@ -3,13 +3,14 @@
 	import { T_Layer, T_Signal, T_Element, T_Startup, T_Component } from '../../ts/common/Global_Imports';
 	import { svgPaths, Ancestry, layout, components, S_Component} from '../../ts/common/Global_Imports';
 	import { w_s_title_edit, w_ancestry_focus, w_ancestry_forDetails } from '../../ts/managers/Stores';
-	import { w_t_startup, w_thing_color } from '../../ts/managers/Stores';
 	import Breadcrumb_Button from '../mouse/Breadcrumb_Button.svelte';
+	import { w_t_startup } from '../../ts/managers/Stores';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
 	export let width = layout.windowSize.width;
 	export let centered: boolean = false;
 	export let left: number = 28;
+	const { w_thing_color } = colors;
 	const { w_search_state } = search;
 	const { w_rect_ofGraphView } = layout;
 	const { w_items: w_grabbed } = x.si_grabs;

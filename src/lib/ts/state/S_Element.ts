@@ -1,6 +1,6 @@
-import { w_s_hover, w_control_key_down, w_background_color } from '../managers/Stores';
 import { Ancestry, S_Widget, T_Element, T_Control } from '../common/Global_Imports';
 import { k, x, colors, elements, controls } from '../common/Global_Imports';
+import { w_s_hover, w_control_key_down } from '../managers/Stores';
 import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
 
@@ -46,7 +46,7 @@ export default class S_Element {
 			if (type == T_Element.control) {
 				console.log(`subtype: ${subtype}`);
 			}
-			this.color_background = subtype == T_Control.search ? 'transparent' : get(w_background_color);
+			this.color_background = subtype == T_Control.search ? 'transparent' : get(colors.w_background_color);
 		}
 	}
 

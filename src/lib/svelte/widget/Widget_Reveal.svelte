@@ -1,9 +1,9 @@
 <script lang='ts'>
+	import { h, k, u, x, show, debug, colors, signals, elements, svgPaths } from '../../ts/common/Global_Imports';
 	import { S_Mouse, S_Element, S_Component, T_Layer, T_Component } from '../../ts/common/Global_Imports';
-	import { h, k, u, x, show, debug, signals, elements, svgPaths } from '../../ts/common/Global_Imports';
-	import { w_thing_title, w_thing_color, w_background_color } from '../../ts/managers/Stores';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { Size, Point } from '../../ts/common/Global_Imports';
+	import { w_thing_title } from '../../ts/managers/Stores';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
     export let hover_isReversed = false;
@@ -17,6 +17,7 @@
 	const tinyDotsOffset = new Point(-4.9, -2.45);
 	const { w_items: w_expanded } = x.si_expanded;
 	const outer_diameter = k.diameterOf_outer_tinyDots;
+	const { w_thing_color, w_background_color } = colors;
 	const viewBox = `0.5 2.35 ${outer_diameter} ${outer_diameter}`;
 	const size_ofTinyDots = Size.width(3).expandedEquallyBy(outer_diameter)
 	let fill_color = debug.lines ? 'transparent' : s_reveal.fill;

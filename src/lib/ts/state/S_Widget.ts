@@ -1,5 +1,4 @@
-import { k, elements, x, colors, Ancestry, S_Element, T_Element } from '../common/Global_Imports';
-import { w_background_color } from '../managers/Stores';
+import { k, colors, elements, Ancestry, S_Element, T_Element } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
 	//////////////////////////////////////////
@@ -29,7 +28,7 @@ export default class S_Widget extends S_Element {
 	get background(): string { return `background-color: ${this.background_color}`; }
 	get isFilled(): boolean { return this.ancestry.isGrabbed && !this.ancestry.isEditing; }
 	get color(): string { return this.colorFor_grabbed_andEditing(this.ancestry.isGrabbed, this.ancestry.isEditing); }
-	get background_color(): string { return this.isFilled ? this.thing_color : this.shows_border ? get(w_background_color) : 'transparent'; }
+	get background_color(): string { return this.isFilled ? this.thing_color : this.shows_border ? get(colors.w_background_color) : 'transparent'; }
 	get shows_border(): boolean { return this.ancestry.isFocus || this.ancestry.isGrabbed || this.ancestry.isEditing || this.isHovering; }
 	
 	constructor(ancestry: Ancestry) {

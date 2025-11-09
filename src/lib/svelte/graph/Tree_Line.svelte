@@ -1,11 +1,12 @@
 <script lang='ts'>
-	import { k, Point, debug, colors, signals, T_Layer, S_Component, T_Component } from '../../ts/common/Global_Imports';
-	import { w_thing_color } from '../../ts/managers/Stores';
+	import { Point, G_TreeLine, T_Layer, S_Component, T_Component } from '../../ts/common/Global_Imports';
+	import { k, debug, colors, signals } from '../../ts/common/Global_Imports';
 	import Circle from '../draw/Circle.svelte';
 	import Box from '../debug/Box.svelte';
 	import { onMount } from 'svelte';
 	export let g_line!: G_TreeLine;
 	const t_curve = g_line.t_curve;
+	const { w_thing_color } = colors;
 	const ancestry = g_line.branchAncestry;
 	const debugOffset = new Point(k.height.line - 3.4, 2.5);
 	let stroke_color = ancestry?.thing?.color;

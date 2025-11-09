@@ -1,7 +1,6 @@
 <script lang='ts'>
     import { c, e, k, u, show, colors, svgPaths } from '../../ts/common/Global_Imports';
     import { Rect, Size, Point, T_Layer } from '../../ts/common/Global_Imports';
-	import { w_background_color } from '../../ts/managers/Stores';
     import SVG_Gradient from '../draw/SVG_Gradient.svelte';
     export let handle_click: (title: string) => boolean;
     export let font_size: number = k.font_size.banners;
@@ -11,6 +10,7 @@
     export let name = k.empty;
     export let height: number;
     export let width: number;
+	const { w_background_color } = colors;
     const gradient_name = 'glow-' + banner_id;
     const icon_path = svgPaths.path_for(title);
     const glow_rect = Rect.createWHRect(width, height);

@@ -1,4 +1,7 @@
 import { parseToRgba, transparentize } from 'color2k';
+import { T_Preference } from '../common/Enumerations';
+import { writable } from 'svelte/store';
+import { p } from './Preferences';
 
 // single source of truth for colors?????
 
@@ -13,6 +16,24 @@ export class Colors {
 	faint_hover = 'yellow';
     default_forThings = 'blue';
 	thin_separator_line_color = '#999999';
+	w_background_color = writable<string>();
+	w_thing_color	   = writable<string | null>(null);
+	w_separator_color  = writable<string>(this.separator);
+
+	restore_preferences() {
+		this.w_background_color	.set( p.read_key(T_Preference.background) ?? colors.background);
+		this.w_separator_color	.set( p.read_key(T_Preference.separator) ?? colors.separator);
+		this.w_separator_color.subscribe((color: string) => {
+			p.write_key(T_Preference.separator, color);
+			this.w_background_color.set(colors.ofBackgroundFor(color));
+		})
+		this.w_background_color.subscribe((color: string) => {
+			document.documentElement.style.setProperty('--css-background-color', color);
+			p.write_key(T_Preference.background, color);
+			colors.banner = colors.ofBannerFor(color);
+			// colors.background = color;	// uncommenting this turns the glow buttons gray
+		})
+	}
 
 	ofBackgroundFor(color: string): string { return this.lighterBy(color, 10);}
 	ofBannerFor(background: string): string { return this.blend('white', background, 4);}

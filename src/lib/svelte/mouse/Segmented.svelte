@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, Point, colors } from '../../ts/common/Global_Imports';
-	import { w_separator_color } from '../../ts/managers/Stores';
+	const { w_separator_color } = colors;
 	export let handle_selection: ((types: string[]) => void) | null = null;
 	export let selected_hover_text_color: string = 'black';
 	export let selected_color: string = $w_separator_color;
