@@ -6,6 +6,12 @@ import S_Title_Edit from './S_Title_Edit';
 import { writable } from 'svelte/store';
 import S_Element from './S_Element';
 
+export class State {
+	w_count_rebuild = writable<number>(0);
+}
+
+export const state = new State();
+
 const _____THING: unique symbol = Symbol('THING');
 
 export const w_relationship_order	= writable<number>();
@@ -24,7 +30,6 @@ const _____COUNTS: unique symbol = Symbol('COUNTS');
 
 export const w_count_window_resized	= writable<number>(0);
 export const w_count_mouse_up		= writable<number>(0);
-export const w_count_rebuild		= writable<number>(0);
 export const w_count_details		= writable<number>(0);	
 
 const _____OTHER: unique symbol = Symbol('OTHER');
