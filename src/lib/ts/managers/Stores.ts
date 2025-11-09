@@ -26,11 +26,6 @@ export const w_ring_rotation_angle		= writable<number>();
 export const w_g_paging					= writable<G_Paging>();
 export const w_g_paging_cluster			= writable<G_Cluster | null>();
 
-const _____DATABASE: unique symbol = Symbol('DATABASE');
-
-export const w_t_database				= writable<string>();
-export const w_data_updated				= writable<number>();
-
 const _____COUNTS: unique symbol = Symbol('COUNTS');
 
 export const w_count_window_resized		= writable<number>(0);

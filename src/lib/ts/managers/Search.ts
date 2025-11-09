@@ -1,8 +1,7 @@
+import { c, k, h, p, x, show, Thing, details, Ancestry, databases } from "../common/Global_Imports";
 import { T_Search, T_Startup, T_Preference, T_Search_Preference } from "../common/Global_Imports";
-import { c, k, h, p, x, show, Thing, details, Ancestry } from "../common/Global_Imports";
 import { Search_Node } from '../types/Search_Node';
 import { get, writable } from 'svelte/store';
-import { w_t_database } from './Stores';
 import { w_t_startup } from './Stores';
 
 class Search {
@@ -16,7 +15,7 @@ class Search {
 	constructor() {
 		setTimeout(() => {
 			this.setup();
-			w_t_database.subscribe((database) => {
+			databases.w_t_database.subscribe((database) => {
 				this.setup();
 			});
 		}, 1);

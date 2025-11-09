@@ -1,10 +1,10 @@
-import { h, p, u, debug, search, layout, details, controls } from '../common/Global_Imports';
+import { h, p, u, debug, search, layout, details, controls, databases } from '../common/Global_Imports';
 import { w_ancestry_forDetails, w_ancestry_focus } from '../managers/Stores';
 import { S_Items, T_Search, T_Startup } from '../common/Global_Imports';
 import { Tag, Thing, Trait, Ancestry } from '../common/Global_Imports';
 import { w_s_alteration, w_s_title_edit } from '../managers/Stores';
-import { w_t_startup, w_data_updated } from '../managers/Stores';
 import Identifiable from '../runtime/Identifiable';
+import { w_t_startup } from '../managers/Stores';
 import { get } from 'svelte/store';
 
 type Identifiable_S_Items_Pair<T = Identifiable, U = S_Items<T>> = [T, U | null];
@@ -30,7 +30,7 @@ export default class UX_S_Items {
 	//////////////////////////////
 
 	constructor() {
-		w_data_updated.subscribe((count: number) => {
+		databases.w_data_updated.subscribe((count: number) => {
 			this.update_grabs_forSearch();
 		});
 		w_ancestry_focus.subscribe((ancestry: Ancestry) => {

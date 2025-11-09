@@ -2,8 +2,8 @@ import { c, h, k, p, u, x, show, debug, search, controls, svgPaths, databases, c
 import { T_Graph, T_Create, T_Kinship, T_Predicate, T_Alteration, T_Component } from '../common/Global_Imports';
 import { Rect, Size, Point, Thing, Direction, Predicate, Relationship } from '../common/Global_Imports';
 import { G_Widget, G_Paging, G_Cluster, G_TreeLine } from '../common/Global_Imports';
-import { w_t_database, w_s_title_edit, w_s_alteration } from '../managers/Stores';
 import { S_Items, S_Component, S_Title_Edit } from '../common/Global_Imports';
+import { w_s_title_edit, w_s_alteration } from '../managers/Stores';
 import type { Dictionary, Integer } from '../types/Types';
 import { w_ancestry_focus } from '../managers/Stores';
 import { T_Database } from '../database/DB_Common';
@@ -500,7 +500,7 @@ export default class Ancestry extends Identifiable {
 	
 	expanded_setTo(expand: boolean) {
 		let mutated = false;
-		const matchesDB = this.t_database == get(w_t_database);
+		const matchesDB = this.t_database == get(databases.w_t_database);
 		if (matchesDB && (!this.isRoot || expand) && this.isExpanded != expand) {
 			x.si_expanded.w_items.update((a: Array<Ancestry> | null) => {
 				let array = a ?? [];

@@ -3,7 +3,6 @@
 	import { T_File_Format, T_File_Operation, T_Storage_Need } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Element, T_Request, T_Preference } from '../../ts/common/Global_Imports';
 	import { Point, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
-	import { w_t_database, w_data_updated } from '../../ts/managers/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import { T_Database } from '../../ts/database/DB_Common';
     import Buttons_Row from '../mouse/Buttons_Row.svelte';
@@ -11,6 +10,7 @@
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Button from '../mouse/Button.svelte';
+	const { w_t_database, w_data_updated } = databases;
 	const { w_other_databases, w_save_data_button } = show;
     const font_sizes = [k.font_size.instructions, k.font_size.banners];
 	const ids_forDirection = [T_File_Operation.import, T_File_Operation.export];

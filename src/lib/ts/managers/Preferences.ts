@@ -1,7 +1,7 @@
 import { G_Paging, T_Graph, T_Detail, T_Kinship, T_Preference, T_Auto_Adjust, T_Startup } from '../common/Global_Imports';
 import { c, h, k, u, x, show, debug, radial, colors, Ancestry, databases } from '../common/Global_Imports';
-import { w_t_database, w_ring_rotation_angle, w_ring_rotation_radius } from './Stores';
 import { w_ancestry_focus, w_t_startup, w_auto_adjust_graph } from './Stores';
+import { w_ring_rotation_angle, w_ring_rotation_radius } from './Stores';
 import { w_g_paging, w_font_size, w_thing_fontFamily } from './Stores';
 import { w_background_color, w_separator_color } from './Stores';
 import { get } from 'svelte/store';
@@ -79,13 +79,13 @@ export class Preferences {
 			x.si_grabs.items = grabbed;
 		} else {
 			x.si_grabs.items = this.ancestries_readDB_key(T_Preference.grabbed);
-			debug.log_grab(`  READ (${get(w_t_database)}): "${ids_forDB(x.si_grabs.items)}"`);
+			debug.log_grab(`  READ (${get(databases.w_t_database)}): "${ids_forDB(x.si_grabs.items)}"`);
 		}
 		setTimeout(() => {
 			x.si_grabs.w_items.subscribe((array: Array<Ancestry>) => {
 				if (array.length > 0) {
 					this.ancestries_writeDB_key(array, T_Preference.grabbed);
-					debug.log_grab(`  WRITING (${get(w_t_database)}): "${ids_forDB(array)}"`);
+					debug.log_grab(`  WRITING (${get(databases.w_t_database)}): "${ids_forDB(array)}"`);
 				}
 			});
 		}, 100);
@@ -97,13 +97,13 @@ export class Preferences {
 			x.si_expanded.reset();
 		} else {
 			const expanded = p.ancestries_readDB_key(this.expanded_key) ?? p.ancestries_readDB_key('expanded');	// backwards compatible with 'expanded' key
-			debug.log_expand(`  READ (${get(w_t_database)}): "${u.ids_forDB(expanded)}"`);
+			debug.log_expand(`  READ (${get(databases.w_t_database)}): "${u.ids_forDB(expanded)}"`);
 			x.si_expanded.items = expanded;
 		}
 		setTimeout(() => {
 			x.si_expanded.w_items.subscribe((array: Array<Ancestry> | null) => {
 				if (!!array && array.length > 0) {
-					debug.log_expand(`  WRITING (${get(w_t_database)}): "${u.ids_forDB(array)}"`);
+					debug.log_expand(`  WRITING (${get(databases.w_t_database)}): "${u.ids_forDB(array)}"`);
 					p.ancestries_writeDB_key(array, this.expanded_key);
 				}
 			});

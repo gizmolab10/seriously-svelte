@@ -1,10 +1,11 @@
 // N.B., do not import these from Global Imports --> avoid dependency issues when importing Utilities class
 
 import { w_background_color, w_ancestry_focus } from '../managers/Stores';
-import { w_t_database, w_thing_fontFamily } from '../managers/Stores';
 import { Testworthy_Utilities } from './Testworthy_Utilities';
+import { w_thing_fontFamily } from '../managers/Stores';
 import { Rect, Size, Point } from '../types/Geometry';
 import Identifiable from '../runtime/Identifiable';
+import { databases } from '../database/Databases';
 import G_TreeLine from '../layout/G_TreeLine';
 import { controls } from '../ux/UX_Controls';
 import { layout } from '../layout/Layout';
@@ -26,7 +27,7 @@ export class Utilities extends Testworthy_Utilities {
 	getWidthOf(s: string):										   number { return this.getWidth_ofString_withSize(s, `${k.font_size.common}px`); }
 
 	ids_forDB(ancestries: Array<Ancestry>): string[] {
-		return ancestries.filter(a => !!a && a?.t_database == get(w_t_database)).map(a => a?.id ?? k.unknown);
+		return ancestries.filter(a => !!a && a?.t_database == get(databases.w_t_database)).map(a => a?.id ?? k.unknown);
 	}
 
 	resolve_signal_value(value: any): string {

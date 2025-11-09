@@ -1,8 +1,9 @@
 import { c, k, p, busy, Hierarchy, T_Preference } from '../common/Global_Imports';
-import { w_hierarchy, w_t_database } from '../managers/Stores';
+import { w_hierarchy } from '../managers/Stores';
 import { T_Persistence } from '../common/Global_Imports';
 import { T_Database } from '../database/DB_Common';
 import DB_Common from '../database/DB_Common';
+import { writable } from 'svelte/store';
 import DB_Firebase from './DB_Firebase';
 import DB_Airtable from './DB_Airtable';
 import DB_Bubble from './DB_Bubble';
@@ -16,6 +17,8 @@ import DB_Test from './DB_Test';
 
 export default class Databases {
 	private dbCache: { [key: string]: DB_Common } = {};
+	w_data_updated = writable<number>();
+	w_t_database   = writable<string>();
 	defer_persistence: boolean = false;
 	db_now: DB_Common;
 
@@ -29,13 +32,13 @@ export default class Databases {
 			if (type == 'firebase') { type = T_Database.firebase; }
 			if (type == 'file') { type = T_Database.local; }
 		}
-		w_t_database.set(type!);
+		this.w_t_database.set(type!);
 	}
 
 	constructor() {
 		let done = false;
 		this.db_now = this.db_forType(T_Database.firebase);
-		w_t_database.subscribe((type: string) => {
+		this.w_t_database.subscribe((type: string) => {
 			if (!!type && (!done || (type && this.db_now.t_database != type))) {
 				done = true;
 				setTimeout( async () => {	// wait for hierarchy to be created
@@ -56,13 +59,13 @@ export default class Databases {
 			}
 			p.write_key(T_Preference.db, type);
 			w_hierarchy.set(h);
-			w_t_database.set(type);
+			this.w_t_database.set(type);
 			await db.hierarchy_setup_fetch_andBuild();
 			busy.signal_data_redraw();
 		}
 	}
 
-	db_change_toNext(forward: boolean) { w_t_database.set(this.db_next_get(forward)); }
+	db_change_toNext(forward: boolean) { this.w_t_database.set(this.db_next_get(forward)); }
 	isRemote(t_persistence: T_Persistence): boolean { return t_persistence == T_Persistence.remote; }
 	isPersistent(t_persistence: T_Persistence): boolean { return t_persistence != T_Persistence.none; }
 

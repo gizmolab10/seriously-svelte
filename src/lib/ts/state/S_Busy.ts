@@ -1,4 +1,4 @@
-import { w_data_updated } from '../managers/Stores';
+import { databases } from '../database/Databases';
 
 export class S_Busy {
 	isPersisting = false;
@@ -35,7 +35,7 @@ export class S_Busy {
 
 	signal_data_redraw(after: number = 0) {
 		setTimeout(() => {
-			w_data_updated.set(new Date().getTime());
+			databases.w_data_updated.set(new Date().getTime());
 		}, after);
 	}
 
