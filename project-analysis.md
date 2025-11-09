@@ -170,7 +170,7 @@ $w_ancestry_focus
 
 This means the migration will require:
 1. Converting imports from destructured exports to object property access
-2. Updating all `$w_store` to `$state.w_store` in Svelte
+2. In Svelte components: import state, then destructure properties to enable `$` reactivity
 3. Changing `get(w_store)` to `get(state.w_store)` in TypeScript
 
 ---
@@ -222,10 +222,11 @@ export const state = new State();
 ```diff
 - import { w_count_rebuild } from '../../ts/state/State';
 + import { state } from '../../ts/state/State';
++ const { w_count_rebuild } = state;
 
-- $w_count_rebuild
-+ $state.w_count_rebuild
+  $w_count_rebuild
 ```
+Note: In Svelte, you cannot use `$state.w_count_rebuild` for reactivity. You must destructure first with `const { w_count_rebuild } = state;` then use `$w_count_rebuild`.
 
 **4. Remove old export**
 - After all files updated, remove module-level export
