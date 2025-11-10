@@ -1,9 +1,8 @@
 <script lang='ts'>
     import { Rect, Size, Point, T_Layer, T_Dragging, T_Component, colors } from '../../ts/common/Global_Imports';
     import { h, k, s, u, x, debug, layout, elements, components } from '../../ts/common/Global_Imports';
-    import { w_count_mouse_up, w_s_title_edit } from '../../ts/state/State';
     import { onMount, onDestroy } from 'svelte';
-    const { w_dragging_active } = s;
+    const { w_dragging_active, w_count_mouse_up, w_s_title_edit } = s;
     export let strokeWidth = k.thickness.rubberband;
     export let bounds: Rect;
     const enabled = true;

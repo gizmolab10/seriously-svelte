@@ -1,11 +1,9 @@
-import { c, h, k, p, u, x, show, debug, search, controls, svgPaths, databases, components } from '../common/Global_Imports';
+import { c, h, k, p, s, u, x, show, debug, search, controls, svgPaths, databases, components } from '../common/Global_Imports';
 import { T_Graph, T_Create, T_Kinship, T_Predicate, T_Alteration, T_Component } from '../common/Global_Imports';
 import { Rect, Size, Point, Thing, Direction, Predicate, Relationship } from '../common/Global_Imports';
 import { G_Widget, G_Paging, G_Cluster, G_TreeLine } from '../common/Global_Imports';
 import { S_Items, S_Component, S_Title_Edit } from '../common/Global_Imports';
-import { w_s_title_edit, w_s_alteration } from '../state/State';
 import type { Dictionary, Integer } from '../types/Types';
-import { w_ancestry_focus } from '../state/State';
 import { T_Database } from '../database/DB_Common';
 import { get, Writable } from 'svelte/store';
 import Identifiable from './Identifiable';
@@ -70,11 +68,11 @@ export default class Ancestry extends Identifiable {
 	
 	static readonly _____FOCUS: unique symbol;
 
-	get isFocus(): boolean { return this.matchesStore(w_ancestry_focus); }
+	get isFocus(): boolean { return this.matchesStore(s.w_ancestry_focus); }
 	becomeFocus(): boolean { return x.ancestry_focusOn(this); }
 
 	get depth_below_focus(): number {
-		const focus = get(w_ancestry_focus);
+		const focus = get(s.w_ancestry_focus);
 		if (!!focus) {
 			return Math.abs(this.depth - focus.depth);
 		}
@@ -251,7 +249,7 @@ export default class Ancestry extends Identifiable {
 			const g_paging = this.g_paging;
 			return this.isFocus || (!!parent && parent.isFocus && (g_paging?.index_isVisible(this.siblingIndex) ?? true));
 		} else {
-			const focus = get(w_ancestry_focus);
+			const focus = get(s.w_ancestry_focus);
 			const visible = this.isVisible_accordingTo_depth_below_focus;
 			const incorporates = this.incorporates(focus);
 			const expanded = this.isAllExpanded_fromRootTo(focus);
@@ -313,7 +311,7 @@ export default class Ancestry extends Identifiable {
 
 	static readonly _____EDIT: unique symbol;
 
-	get isEditing(): boolean { return get(w_s_title_edit)?.ancestry_isEditing(this) ?? false; }
+	get isEditing(): boolean { return get(s.w_s_title_edit)?.ancestry_isEditing(this) ?? false; }
 
 	get isEditable(): boolean {
 		const isExternals = this.thing?.isExternals ?? true;
@@ -323,9 +321,9 @@ export default class Ancestry extends Identifiable {
 	}
 
 	startEdit() {
-		const s_text_edit = get(w_s_title_edit);
+		const s_text_edit = get(s.w_s_title_edit);
 		if (this.isEditable && (!s_text_edit || !s_text_edit.ancestry_isEditing(this))) {
-			w_s_title_edit?.set(new S_Title_Edit(this));
+			s.w_s_title_edit?.set(new S_Title_Edit(this));
 			debug.log_edit(`SETUP ${this.title}`);
 		}
 		this.grabOnly();
@@ -380,7 +378,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	persistentMoveUp_forParent_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
-		const sibling_ancestries = get(w_ancestry_focus)?.ancestries_createUnique_byKinship(T_Kinship.parents);
+		const sibling_ancestries = get(s.w_ancestry_focus)?.ancestries_createUnique_byKinship(T_Kinship.parents);
 		let needs_graphRelayout = false;
 		let needs_graphRebuild = false;
 		if (!!sibling_ancestries) {
@@ -405,7 +403,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	persistentMoveUp_forBidirectional_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
-		const sibling_ancestries = get(w_ancestry_focus)?.ancestries_createUnique_byKinship(T_Kinship.related) ?? [];
+		const sibling_ancestries = get(s.w_ancestry_focus)?.ancestries_createUnique_byKinship(T_Kinship.related) ?? [];
 		let needs_graphRelayout = false;
 		let needs_graphRebuild = false;
 		if (!!sibling_ancestries) {
@@ -553,7 +551,7 @@ export default class Ancestry extends Identifiable {
 	static readonly _____ALTERATION: unique symbol;
 
 	get alteration_isAllowed(): boolean {
-		const s_alteration = get(w_s_alteration);
+		const s_alteration = get(s.w_s_alteration);
 		const predicate = s_alteration?.predicate;
 		if (!!s_alteration && !!predicate) {
 			const from_ancestry = s_alteration.ancestry;

@@ -1,6 +1,5 @@
 import { T_Thing, T_Graph, T_Create, T_Predicate, T_Persistence, T_Preference } from '../common/Global_Imports';
-import { h, k, p, x, busy, show, debug, Ancestry } from '../common/Global_Imports';
-import { w_ancestry_focus } from '../state/State';
+import { h, k, p, s, x, busy, show, debug, Ancestry } from '../common/Global_Imports';
 import { T_Database } from './DB_Common';
 import DB_Common from './DB_Common';
 
@@ -129,9 +128,9 @@ export default class DB_Bubble extends DB_Common {
 		//	  debounce: only send if changed from prior value	//
 		//														//
 		//////////////////////////////////////////////////////////
-	
+
 		window.parent.postMessage({ type: 'trigger_an_event', trigger: 'ready' }, k.wildcard);
-		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
+		s.w_ancestry_focus.subscribe((ancestry: Ancestry) => {
 			if (!!ancestry && !!ancestry.thing && ancestry.thing.id != this.prior_focus_id) {
 				if (this.debounced_focus) {
 					this.prior_focus_id = ancestry.thing.id;

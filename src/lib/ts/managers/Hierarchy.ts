@@ -1,19 +1,17 @@
 import { T_Startup, T_Create, T_Alteration, T_File_Format, T_Persistable } from '../common/Global_Imports';
 import { Access, Ancestry, Predicate, Relationship, Persistable } from '../common/Global_Imports';
-import { w_popupView_id, w_s_title_edit, w_s_alteration, w_ancestry_focus } from '../state/State';
 import { T_Thing, T_Trait, T_Order, T_Control, T_Predicate } from '../common/Global_Imports';
-import { c, k, p, u, x, busy, show, debug, controls } from '../common/Global_Imports';
+import { c, k, p, s, u, x, busy, show, debug, controls } from '../common/Global_Imports';
 import { files, colors, signals, layout, databases } from '../common/Global_Imports';
 import { Tag, User, Thing, Trait, S_Items } from '../common/Global_Imports';
 import DB_Common, { T_Database } from '../database/DB_Common';
 import type { Integer, Dictionary } from '../types/Types';
-import { w_hierarchy, w_t_startup } from '../state/State';
 import Identifiable from '../runtime/Identifiable';
 import { pivot } from '../files/Pivot';
 import { get } from 'svelte/store';
 
 export let h!: Hierarchy;
-w_hierarchy.subscribe(value => h = value);
+s.w_hierarchy.subscribe(value => h = value);
 export type Ancestry_ByHID = { [hid: Integer]: Ancestry }
 export type SI_Relationships_ByHID = { [hid: Integer]: S_Items<Relationship> }
 
@@ -681,7 +679,7 @@ export class Hierarchy {
 	}
 
 	async ancestries_rebuild_traverse_persistentDelete(ancestries: Array<Ancestry>) {
-		if (get(w_ancestry_focus)) {
+		if (get(s.w_ancestry_focus)) {
 			for (const ancestry of ancestries) {
 				const thing = ancestry.thing;
 				const parentAncestry = ancestry.parentAncestry;
@@ -703,7 +701,7 @@ export class Hierarchy {
 					});
 				}
 			}
-			debug.log_grab(`  DELETE, FOCUS grabbed: "${get(w_ancestry_focus).isGrabbed}"`);
+			debug.log_grab(`  DELETE, FOCUS grabbed: "${get(s.w_ancestry_focus).isGrabbed}"`);
 			layout.grand_build();
 		}
 	}
@@ -756,7 +754,7 @@ export class Hierarchy {
 
 	async ancestry_alter_connectionTo_maybe(ancestry: Ancestry) {
 		if (ancestry.alteration_isAllowed) {
-			const alteration = get(w_s_alteration);
+			const alteration = get(s.w_s_alteration);
 			const from_ancestry = alteration?.ancestry;
 			const predicate = alteration?.predicate;
 			if (!!alteration && !!from_ancestry && !!predicate) {
@@ -892,7 +890,7 @@ export class Hierarchy {
 
 	// called in three places
 	async ancestry_edit_persistentAddAsChild(parentAncestry: Ancestry, child: Thing, order: number, shouldStartEdit: boolean = true) {
-		w_s_title_edit?.set(null);
+		s.w_s_title_edit?.set(null);
 		await parentAncestry.ancestry_persistentCreateUnique_byAddingThing(child)
 		.then((childAncestry) => {
 			if (!!childAncestry) {
@@ -1096,7 +1094,7 @@ export class Hierarchy {
 				}
 			}
 		}
-		w_s_title_edit?.set(null);
+		s.w_s_title_edit?.set(null);
 		if (!!newGrabAncestry) {
 			newGrabAncestry.grabOnly();
 			if (!!newFocusAncestry) {
@@ -1447,7 +1445,7 @@ export class Hierarchy {
 	select_file_toUpload(format: T_File_Format, SHIFT: boolean) {
 		this.replace_rootID = SHIFT ? k.empty : null;		// to replace (or not) the root id extracted from file
 		files.format_preference = format;
-		w_popupView_id.set(T_Control.import);
+		s.w_popupView_id.set(T_Control.import);
 	}
 
 	persist_fromAncestry_toFile(ancestry: Ancestry, format: T_File_Format) {
@@ -1464,14 +1462,14 @@ export class Hierarchy {
 	}
 
 	private get ancestry_forFile(): Ancestry {
-		const focus = get(w_ancestry_focus);
+		const focus = get(s.w_ancestry_focus);
 		let grabbed = x.ancestry_forDetails;
 		if (!!grabbed) {
 			return grabbed;
 		} else if (!!focus) {
 			return focus;
 		} else {
-			return get(w_hierarchy)?.rootAncestry;
+			return get(s.w_hierarchy)?.rootAncestry;
 		}
 	}
 
@@ -1615,11 +1613,11 @@ export class Hierarchy {
 	}
 
 	get focus(): Thing | null {
-		const ancestry = get(w_ancestry_focus);
+		const ancestry = get(s.w_ancestry_focus);
 		return !ancestry ? this.root : ancestry.thing;
 	}
 
-	stop_alteration() { w_s_alteration.set(null); }
+	stop_alteration() { s.w_s_alteration.set(null); }
 
 	get depth(): number {
 		let maximum = 1;
@@ -1740,7 +1738,7 @@ export class Hierarchy {
 		busy.signal_data_redraw();
 		await this.db.persist_all();
 		this.db.update_load_time();
-		w_t_startup.set(T_Startup.ready);
+		s.w_t_startup.set(T_Startup.ready);
 	}
 
 }

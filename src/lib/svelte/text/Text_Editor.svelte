@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { k, u, elements, x, debug, colors, T_Layer, databases } from '../../ts/common/Global_Imports';
-	import { w_thing_fontFamily, w_s_title_edit } from '../../ts/state/State';
+	import { k, s, u, elements, x, debug, colors, T_Layer, databases } from '../../ts/common/Global_Imports';
+	const { w_thing_fontFamily, w_s_title_edit } = s;
 	import Clickable_Label from '../mouse/Clickable_Label.svelte';
 	export let handle_textChange = (label: string, text: string) => {};
 	export let handleClick_onLabel: (event: Event) => {} | null = null;

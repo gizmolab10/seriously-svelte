@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { h, k, u, x, debug, colors, search, elements } from '../../ts/common/Global_Imports';
+	import { h, k, s, u, x, debug, colors, search, elements } from '../../ts/common/Global_Imports';
 	import { Point, T_Search, T_Banner, S_Element } from '../../ts/common/Global_Imports';
-	import { w_s_hover, w_thing_fontFamily } from '../../ts/state/State';
+	const { w_s_hover, w_thing_fontFamily } = s;
 	import Button from './Button.svelte';
 	export let left = 0;
 	export let s_breadcrumb;

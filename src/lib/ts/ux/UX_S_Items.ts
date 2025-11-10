@@ -1,10 +1,7 @@
-import { h, p, u, debug, search, layout, details, controls, databases } from '../common/Global_Imports';
-import { w_ancestry_forDetails, w_ancestry_focus } from '../state/State';
+import { h, p, s, u, debug, search, layout, details, controls, databases } from '../common/Global_Imports';
 import { S_Items, T_Search, T_Startup } from '../common/Global_Imports';
 import { Tag, Thing, Trait, Ancestry } from '../common/Global_Imports';
-import { w_s_alteration, w_s_title_edit } from '../state/State';
 import Identifiable from '../runtime/Identifiable';
-import { w_t_startup } from '../state/State';
 import { get } from 'svelte/store';
 
 type Identifiable_S_Items_Pair<T = Identifiable, U = S_Items<T>> = [T, U | null];
@@ -33,12 +30,12 @@ export default class UX_S_Items {
 		databases.w_data_updated.subscribe((count: number) => {
 			this.update_grabs_forSearch();
 		});
-		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
+		s.w_ancestry_focus.subscribe((ancestry: Ancestry) => {
 			this.update_grabs_forSearch();
 		});
-		w_t_startup.subscribe((startup: number | null) => {
+		s.w_t_startup.subscribe((startup: number | null) => {
 			if (startup == T_Startup.ready) {
-				w_ancestry_focus.subscribe((ancestry: Ancestry) => {
+				s.w_ancestry_focus.subscribe((ancestry: Ancestry) => {
 					this.update_ancestry_forDetails();
 				});
 				search.w_search_state.subscribe((state: number | null) => {
@@ -54,7 +51,7 @@ export default class UX_S_Items {
 		
 	static readonly _____ANCESTRY: unique symbol;
 
-	get ancestry_forDetails(): Ancestry | null { return get(w_ancestry_forDetails); }
+	get ancestry_forDetails(): Ancestry | null { return get(s.w_ancestry_forDetails); }
 	
 	grab_next_ancestry(next: boolean) {	// for next/previous in details selection banner
 		if (get(search.w_search_state) > T_Search.off) {
@@ -70,12 +67,12 @@ export default class UX_S_Items {
 		const presented = this.ancestry_forDetails;
 		let ancestry = search.selected_ancestry;
 		if (!ancestry) {
-			const focus = get(w_ancestry_focus);
+			const focus = get(s.w_ancestry_focus);
 			const grab = this.si_grabs.item as Ancestry;
 			ancestry = grab ?? focus ?? h.rootAncestry;
 		}
 		if (!presented || !presented.equals(ancestry)) {
-			w_ancestry_forDetails.set(ancestry);
+			s.w_ancestry_forDetails.set(ancestry);
 		}
 	}
 		
@@ -97,13 +94,13 @@ export default class UX_S_Items {
 	}
 
 	ancestry_focusOn(ancestry: Ancestry): boolean {
-		const priorFocus = get(w_ancestry_focus);
+		const priorFocus = get(s.w_ancestry_focus);
 		const changed = !priorFocus || !ancestry.equals(priorFocus!);
 		if (changed) {
 			const pair: Identifiable_S_Items_Pair = [ancestry, this.si_grabs];
 			this.si_recents.push(pair);
-			w_s_alteration.set(null);
-			w_ancestry_focus.set(ancestry);
+			s.w_s_alteration.set(null);
+			s.w_ancestry_focus.set(ancestry);
 			ancestry.expand();
 			this.update_ancestry_forDetails();
 		}
@@ -111,7 +108,7 @@ export default class UX_S_Items {
 	}
 
 	update_forFocus() {
-		let focus = get(w_ancestry_focus);
+		let focus = get(s.w_ancestry_focus);
 		if (p.branches_areChildren) {
 			this.parents_focus = focus;
 			focus = this.prior_focus;
@@ -151,7 +148,7 @@ export default class UX_S_Items {
 	}
 
 	ungrab(ancestry: Ancestry) {
-		w_s_title_edit?.set(null);
+		s.w_s_title_edit?.set(null);
 		let grabbed = this.si_grabs.items ?? [];
 		const rootAncestry = h?.rootAncestry;
 		if (!!grabbed) {
@@ -174,7 +171,7 @@ export default class UX_S_Items {
 	}
 
 	update_grabs_forSearch() {
-		if (get(w_t_startup) == T_Startup.ready && get(search.w_search_state) != T_Search.off && this.si_found.length > 0) {
+		if (get(s.w_t_startup) == T_Startup.ready && get(search.w_search_state) != T_Search.off && this.si_found.length > 0) {
 			let ancestries = this.si_found.items.map((found: Thing) => found.ancestry).filter(a => !!a) ?? [];
 			ancestries = u.strip_hidDuplicates(ancestries);
 			if (this.si_grabs.descriptionBy_sorted_IDs != u.descriptionBy_sorted_IDs(ancestries)) {

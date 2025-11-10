@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { T_Layer, T_Signal, T_Radial_Zone, T_Component, S_Component } from '../../ts/common/Global_Imports';
-	import { k, u, x, layout, g_radial, signals, elements } from '../../ts/common/Global_Imports';
-	import { w_ancestry_focus, w_thing_fontFamily } from '../../ts/state/State';
+	import { k, s, u, x, layout, g_radial, signals, elements } from '../../ts/common/Global_Imports';
+	const { w_ancestry_focus, w_thing_fontFamily } = s;
 	import Radial_Rings from './Radial_Rings.svelte';
 	import Radial_Focus from './Radial_Focus.svelte';
 	import Widget from '../widget/Widget.svelte';

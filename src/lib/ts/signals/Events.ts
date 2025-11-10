@@ -1,10 +1,7 @@
 import { c, h, k, s, u, x, g_tree, debug, search, layout, details, signals, controls, elements } from '../common/Global_Imports';
 import { T_Search, T_Action, T_Control, T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Imports';
-import { w_s_alteration, w_s_title_edit } from '../state/State';
-import { w_device_isMobile, w_ancestry_focus, w_ancestry_forDetails } from '../state/State';
 import { Point, Ancestry, Predicate } from '../common/Global_Imports';
 import { S_Mouse, S_Alteration } from '../common/Global_Imports';
-import { w_count_mouse_up } from '../state/State';
 import Mouse_Timer from './Mouse_Timer';
 import { get } from 'svelte/store';
 
@@ -17,8 +14,8 @@ export class Events {
 	mouse_timer_forName(name: string): Mouse_Timer { return elements.assure_forKey_inDict(name, this.mouse_timer_byName, () => new Mouse_Timer(name)); }
 
 	setup() {
-		w_s_alteration.subscribe((s_alteration: S_Alteration | null) => { this.handle_s_alteration(s_alteration); });
-		w_device_isMobile.subscribe((isMobile: boolean) => { this.subscribeTo_events(); });
+		s.w_s_alteration.subscribe((s_alteration: S_Alteration | null) => { this.handle_s_alteration(s_alteration); });
+		s.w_device_isMobile.subscribe((isMobile: boolean) => { this.subscribeTo_events(); });
 		this.start_watching_focus();
 	}
 
@@ -135,7 +132,7 @@ export class Events {
 
 	private handle_mouse_up(event: MouseEvent) {
 		layout.w_scaled_movement.set(null);
-		w_count_mouse_up.update(n => n + 1);
+		s.w_count_mouse_up.update(n => n + 1);
 	}
 
 	private handle_key_up(e: Event) {
@@ -148,7 +145,7 @@ export class Events {
 	private handle_orientation_change(event: Event) {
 		const isMobile = u.device_isMobile;
 		debug.log_action(` orientation change [is${isMobile ? '' : ' not'} mobile] STATE`);
-		w_device_isMobile.set(isMobile);
+		s.w_device_isMobile.set(isMobile);
 		layout.restore_preferences();
 	}
 
@@ -165,7 +162,7 @@ export class Events {
 		// and on simulator switches platform
 		const isMobile = u.device_isMobile;
 		s.w_count_window_resized.update(n => n + 1);		// observed by controls
-		w_device_isMobile.set(isMobile);
+		s.w_device_isMobile.set(isMobile);
 		layout.restore_preferences();
 	}
 
@@ -243,8 +240,8 @@ export class Events {
 		if (ancestry.isBidirectional && ancestry.thing?.isRoot) {
 			this.handle_singleClick_onDragDot(shiftKey, h.rootAncestry);
 		} else {
-			w_s_title_edit?.set(null);
-			if (!!get(w_s_alteration)) {
+			s.w_s_title_edit?.set(null);
+			if (!!get(s.w_s_alteration)) {
 				h.ancestry_alter_connectionTo_maybe(ancestry);
 				layout.grand_build();
 				return;
@@ -264,7 +261,7 @@ export class Events {
 
 	async handle_key_down(e: Event) {
 		const event = e as KeyboardEvent;
-		const isEditing = get(w_s_title_edit)?.isActive ?? false;
+		const isEditing = get(s.w_s_title_edit)?.isActive ?? false;
 		if (!!event && event.type == 'keydown' && !isEditing) {
 			const key = event.key.toLowerCase();
 			const ancestry = x.ancestry_grabbed_atEnd_upward(true);
@@ -326,7 +323,7 @@ export class Events {
 						case '/':				if (!ancestry) { graph_needsSweep = h.rootAncestry?.becomeFocus(); } break;
 						case 'arrowup':			h.ancestry_rebuild_persistent_grabbed_atEnd_moveUp_maybe( true, SHIFT, OPTION, EXTREME); break;
 						case 'arrowdown':		h.ancestry_rebuild_persistent_grabbed_atEnd_moveUp_maybe(false, SHIFT, OPTION, EXTREME); break;
-						case 'escape':			if (!!get(w_s_alteration)) { h.stop_alteration(); }; search.deactivate(); break;
+						case 'escape':			if (!!get(s.w_s_alteration)) { h.stop_alteration(); }; search.deactivate(); break;
 					}
 				}
 			}
@@ -342,7 +339,7 @@ export class Events {
 	}
 
 	async handle_action_clickedAt(s_mouse: S_Mouse, t_action: number, column: number, name: string) {
-		const ancestry = get(w_ancestry_forDetails);	
+		const ancestry = get(s.w_ancestry_forDetails);	
 		if (get(s.w_control_key_down)) {
 			controls.showHelp_for(t_action, column);
 		} else if (!!ancestry && !this.handle_isAction_disabledAt(t_action, column) && !!h) {
@@ -364,7 +361,7 @@ export class Events {
 					case a.show.graph:				layout.grand_adjust_toFit(); break;
 				}								break;
 				case T_Action.center:			switch (column) {
-					case a.center.focus:			layout.ancestry_place_atCenter(get(w_ancestry_focus)); break;
+					case a.center.focus:			layout.ancestry_place_atCenter(get(s.w_ancestry_focus)); break;
 					case a.center.selection:		layout.ancestry_place_atCenter(ancestry); break;
 					case a.center.graph:			layout.set_user_graph_offsetTo(Point.zero); break;
 				}								break;
@@ -391,9 +388,9 @@ export class Events {
 	}
 
 	handle_isAction_disabledAt(t_action: number, column: number): boolean {		// true means disabled
-		const ancestry = get(w_ancestry_forDetails);
+		const ancestry = get(s.w_ancestry_forDetails);
 		if (!!ancestry) {
-			const is_altering = !!get(w_s_alteration);
+			const is_altering = !!get(s.w_s_alteration);
 			const no_children = !ancestry.hasChildren;
 			const no_siblings = !ancestry.hasSiblings;
 			const is_root = ancestry.isRoot;
@@ -416,7 +413,7 @@ export class Events {
 					case a.show.graph:				return false;
 				}								break;
 				case T_Action.center:			switch (column) {
-					case a.center.focus:			return layout.ancestry_isCentered(get(w_ancestry_focus));
+					case a.center.focus:			return layout.ancestry_isCentered(get(s.w_ancestry_focus));
 					case a.center.selection:		return layout.ancestry_isCentered(ancestry);
 					case a.center.graph:			return get(layout.w_user_graph_offset).magnitude < 1;
 				}								break;

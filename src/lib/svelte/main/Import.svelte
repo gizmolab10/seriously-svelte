@@ -1,10 +1,10 @@
 <script lang='ts'>
-	import { h, k, x, Point, layout, details, elements } from '../../ts/common/Global_Imports';
+	import { h, k, s, x, Point, layout, details, elements } from '../../ts/common/Global_Imports';
 	import { T_Storage_Need } from '../../ts/common/Enumerations';
-	import { w_popupView_id } from '../../ts/state/State';
 	import { files } from '../../ts/files/Files';
 	import { get } from 'svelte/store';
 	import { onMount } from 'svelte';
+	const { w_popupView_id } = s;
 	export let accept: string = '.' + files.format_preference;
 	export let multiple = k.empty;		// can be set to 'multiple'
 	let file_input: HTMLInputElement;

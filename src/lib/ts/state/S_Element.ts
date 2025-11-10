@@ -1,6 +1,5 @@
 import { Ancestry, S_Widget, T_Element, T_Control } from '../common/Global_Imports';
 import { k, s, x, colors, elements, controls } from '../common/Global_Imports';
-import { w_s_hover } from './State';
 import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
 
@@ -51,7 +50,7 @@ export default class S_Element {
 	}
 
 	static empty() { return {}; }
-	get isHovering(): boolean { return get(w_s_hover) == this; }
+	get isHovering(): boolean { return get(s.w_s_hover) == this; }
 	get ancestry(): Ancestry { return this.identifiable as Ancestry; }
 	get color_isInverted(): boolean { return this.isInverted != this.isHovering; }
 	get description(): string { return `${this.isHovering ? 'in' : 'out '} '${this.name}'`; }
@@ -64,12 +63,12 @@ export default class S_Element {
 	get fill(): string { return this.isDisabled ? 'transparent' : this.color_isInverted ? this.hoverColor : this.isSelected ? 'lightblue' : this.color_background; }
 
 	set isHovering(isHovering: boolean) {
-		const old_hover = get(w_s_hover);
+		const old_hover = get(s.w_s_hover);
 		const same = old_hover == this;
 		let new_hover = isHovering ? this : this.s_widget;
 		// if !same and isHovering, set to this, if same and !isHovering, set to null, otherwise leave it unchanged
 		if (same != isHovering && new_hover != old_hover) {
-			w_s_hover.set(new_hover);
+			s.w_s_hover.set(new_hover);
 		}
 	}
 

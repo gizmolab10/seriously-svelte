@@ -1,5 +1,4 @@
-import { k, p, x, show, Rect, debug, layout, Ancestry, G_Widget, T_Kinship} from "../common/Global_Imports";
-import { w_ancestry_focus, w_device_isMobile } from "../state/State";
+import { k, p, s, x, show, Rect, debug, layout, Ancestry, G_Widget, T_Kinship} from "../common/Global_Imports";
 import { get } from "svelte/store";
 
 export default class G_TreeGraph {
@@ -7,7 +6,7 @@ export default class G_TreeGraph {
 	focus!: Ancestry;
 
 	constructor() {
-		w_ancestry_focus.subscribe((focus: Ancestry) => {
+		s.w_ancestry_focus.subscribe((focus: Ancestry) => {
 			if (!!focus) {
 				this.focus = focus;
 			}
@@ -92,7 +91,7 @@ export default class G_TreeGraph {
 		const x_offset_ofBranches = -8 - k.height.dot + x_offset_ofFirstReveal;
 		const x_offset = (get(show.w_details) ? -k.width.details : 0) + 15 + x_offset_ofFirstReveal - (subtree_size.width / 2) - (k.height.dot / 2.5);
 		const origin_ofFocusReveal = rect_ofGraphView.center.offsetByXY(x_offset, -y_offset);
-		if (get(w_device_isMobile)) {
+		if (get(s.w_device_isMobile)) {
 			origin_ofFocusReveal.x = 25;
 		}
 		// need this for laying out branches, but it is wrong for final positioning

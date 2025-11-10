@@ -1,5 +1,4 @@
-import { c, k, p, busy, Hierarchy, T_Preference } from '../common/Global_Imports';
-import { w_hierarchy } from '../state/State';
+import { c, k, p, s, busy, Hierarchy, T_Preference } from '../common/Global_Imports';
 import { T_Persistence } from '../common/Global_Imports';
 import { T_Database } from '../database/DB_Common';
 import DB_Common from '../database/DB_Common';
@@ -58,7 +57,7 @@ export default class Databases {
 				db.hierarchy = h;
 			}
 			p.write_key(T_Preference.db, type);
-			w_hierarchy.set(h);
+			s.w_hierarchy.set(h);
 			this.w_t_database.set(type);
 			await db.hierarchy_setup_fetch_andBuild();
 			busy.signal_data_redraw();

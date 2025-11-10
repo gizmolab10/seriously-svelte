@@ -1,6 +1,5 @@
 import { T_Thing, T_Graph, T_Create, T_Predicate, T_Detail } from '../common/Global_Imports';
-import { h, k, p, x, busy, show, debug, Ancestry } from '../common/Global_Imports';
-import { w_ancestry_focus, w_ancestry_forDetails } from '../state/State';
+import { h, k, p, s, x, busy, show, debug, Ancestry } from '../common/Global_Imports';
 import { T_Persistence, T_Preference } from '../common/Global_Imports';
 import { T_Database } from './DB_Common';
 import DB_Common from './DB_Common';
@@ -164,9 +163,9 @@ export default class DB_Bubble extends DB_Common {
 		//	  debounce: only send if changed from prior value	//
 		//														//
 		//////////////////////////////////////////////////////////
-	
+
 		window.parent.postMessage({ type: 'trigger_an_event', trigger: 'ready' }, k.wildcard);
-		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
+		s.w_ancestry_focus.subscribe((ancestry: Ancestry) => {
 			const focus_id = ancestry?.thing?.id ?? k.corrupted;
 			if (!!focus_id && focus_id != this.prior_focus_id && busy.isFocusEventEnabled) {
 				if (this.respond_to_focus_event) {
@@ -192,7 +191,7 @@ export default class DB_Bubble extends DB_Common {
 			window.parent.postMessage({ type: 'in_radial_mode', in_radial_mode: graph_type == T_Graph.radial }, k.wildcard);
 			window.parent.postMessage({ type: 'trigger_an_event', trigger: 'mode_changed' }, k.wildcard);
 		});
-		w_ancestry_forDetails.subscribe((ancestry: Ancestry) => {
+		s.w_ancestry_forDetails.subscribe((ancestry: Ancestry) => {
 			const details_id = ancestry?.thing?.id ?? k.corrupted;
 			if (!!details_id && details_id != this.prior_details_id) {
 				if (this.respond_to_details_event) {
