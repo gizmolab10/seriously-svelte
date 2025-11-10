@@ -1,12 +1,11 @@
 <script lang='ts'>
-	import { h, k, u, x, show, debug, colors, signals, elements, svgPaths } from '../../ts/common/Global_Imports';
+	import { h, k, s, u, x, show, debug, colors, signals, elements, svgPaths } from '../../ts/common/Global_Imports';
 	import { S_Mouse, S_Element, S_Component, T_Layer, T_Component } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { Size, Point } from '../../ts/common/Global_Imports';
-	import { state } from '../../ts/state/State';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
-	const { w_thing_title } = state;
+	const { w_thing_title } = s;
     export let hover_isReversed = false;
     export let zindex = T_Layer.dots;
 	export let points_toChild = true;

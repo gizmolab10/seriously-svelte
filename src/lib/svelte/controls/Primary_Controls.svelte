@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { c, e, k, u, x, show, colors, search, layout } from '../../ts/common/Global_Imports';
+	import { c, e, k, s, u, x, show, colors, search, layout } from '../../ts/common/Global_Imports';
 	import { Point, elements, controls, svgPaths } from '../../ts/common/Global_Imports';
-	import { state, w_popupView_id } from '../../ts/state/State';
+	import { w_popupView_id } from '../../ts/state/State';
 	import { T_Layer, T_Graph, T_Control } from '../../ts/common/Global_Imports';
 	import Search_Toggle from '../search/Search_Toggle.svelte';
 	import Next_Previous from '../mouse/Next_Previous.svelte';
@@ -9,7 +9,7 @@
 	import Separator from '../draw/Separator.svelte';
 	import Breadcrumbs from './Breadcrumbs.svelte';
 	import Button from '../mouse/Button.svelte';
-	const { w_count_window_resized } = state;
+	const { w_count_window_resized } = s;
 	const y_center = 10.5;
 	const scaling_stroke_width = 1.5;
 	const { w_search_state } = search;

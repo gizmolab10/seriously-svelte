@@ -17,7 +17,7 @@ export class State {
 	w_thing_title = writable<string | null>();
 }
 
-export const state = new State();
+export const s = new State();
 
 const _____THING: unique symbol = Symbol('THING');
 
