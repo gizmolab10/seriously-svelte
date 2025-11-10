@@ -88,4 +88,4 @@ export class Visibility {
     }
 }
 
-export let show = new Visibility();
+export const show = new Visibility();

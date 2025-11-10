@@ -7,14 +7,14 @@ import { writable } from 'svelte/store';
 import S_Element from './S_Element';
 
 export class State {
-	w_count_rebuild = writable<number>(0);
+	w_font_size			   = writable<number>();
+	w_count_rebuild		   = writable<number>(0);
 	w_count_window_resized = writable<number>(0);
-	w_count_details = writable<number>(0);
-	w_auto_adjust_graph = writable<T_Auto_Adjust | null>();
-	w_dragging_active = writable<T_Dragging>();
-	w_control_key_down = writable<boolean>(false);
-	w_font_size = writable<number>();
-	w_thing_title = writable<string | null>();
+	w_count_details		   = writable<number>(0);
+	w_dragging_active	   = writable<T_Dragging>();
+	w_control_key_down	   = writable<boolean>(false);
+	w_thing_title		   = writable<string | null>();
+	w_auto_adjust_graph	   = writable<T_Auto_Adjust | null>();
 }
 
 export const state = new State();

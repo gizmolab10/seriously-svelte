@@ -100,4 +100,4 @@ export default class Files {
 
 }
 
-export let files = new Files();
+export const files = new Files();

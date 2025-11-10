@@ -233,4 +233,4 @@ export default class Layout {
 
 }
 
-export let layout = new Layout();
+export const layout = new Layout();

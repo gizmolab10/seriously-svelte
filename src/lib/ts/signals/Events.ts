@@ -505,4 +505,4 @@ export class Events {
 
 }
 
-export let e = new Events();
+export const e = new Events();

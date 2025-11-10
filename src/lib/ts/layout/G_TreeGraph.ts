@@ -104,4 +104,4 @@ export default class G_TreeGraph {
 
 }
 
-export let g_tree = new G_TreeGraph();
+export const g_tree = new G_TreeGraph();
