@@ -4,7 +4,7 @@
 	import { Thing, Point, Angle, g_radial, databases } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	const { w_count_mouse_up, w_s_title_edit, w_ancestry_focus } = s;
-	import Radial_ArcSlider from './Radial_ArcSlider.svelte';
+	import Radial_Cluster from './Radial_Cluster.svelte';
 	import { onMount } from 'svelte';
 	const name = 'rings';
 	const { w_thing_color } = colors;
@@ -231,7 +231,7 @@
 			background-color: transparent;'>
 		{#each g_radial.g_clusters as g_cluster}
 			{#if !!g_cluster && (g_cluster.widgets_shown > 0)}
-				<Radial_ArcSlider
+				<Radial_Cluster
 					color = {color}
 					g_cluster = {g_cluster}/>
 			{/if}

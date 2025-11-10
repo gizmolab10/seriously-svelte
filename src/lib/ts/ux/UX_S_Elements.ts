@@ -21,7 +21,7 @@ export default class UX_S_Elements {
 	//	  handling						//
 	//									//
 	//	used by: Button, Close_Button,	//
-	//	  Radial & Radial_ArcSlider,	//
+	//	  Radial & Radial_Cluster,	//
 	//	  Widget_Drag, Widget_Title,	//
 	//	  Controls, Focus				//
 	//									//

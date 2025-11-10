@@ -53,7 +53,7 @@
 		direction={g_sliderArc.angle_ofFork}
 		color={colors.specialBlend(color, $w_background_color, k.opacity.least)}/>
 {/if}
-<div class='arc-slider'
+<div class='radial-cluster'
 	style='
 		z-index:{T_Layer.paging};
 		background-color: transparent;'>
@@ -66,9 +66,9 @@
 		handle_isHit = {handle_isHit}
 		handle_s_mouse = {handle_s_mouse}
 		center = {layout.center_ofGraphView}>
-        <svg class='svg-arc-slider'
+        <svg class='svg-radial-cluster'
 			viewBox={viewBox}>
-            <path class='path-fat'
+            <path class='path-arc-big'
                 fill='transparent'
                 stroke-width={k.thickness.fork}
 				d={g_sliderArc.svgPathFor_bigArc}

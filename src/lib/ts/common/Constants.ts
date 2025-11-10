@@ -91,10 +91,10 @@ export default class Constants {
 
 	opacity = {
 		none:	0,
-		least:  0.1,
-		thumb:	0.13,
-		hover:	0.2,
-		active:	0.3
+		least:  0.13,
+		thumb:	0.25,
+		hover:	0.35,
+		active:	0.4
 	};
 
 	radius = {
