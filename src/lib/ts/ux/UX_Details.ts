@@ -1,6 +1,5 @@
 import { T_Search, T_Detail, T_Direction, T_Storage_Need } from '../common/Global_Imports';
-import { x, show, search, S_Items } from '../common/Global_Imports';
-import { state } from '../state/State';
+import { s, x, show, search, S_Items } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
 export class S_Banner_Hideable {
@@ -39,7 +38,7 @@ class UX_Details {
 		
 	static readonly _____BANNERS: unique symbol;
 
-	redraw() { state.w_count_details.update(n => n + 1); }	// force re-render of details
+	redraw() { s.w_count_details.update(n => n + 1); }	// force re-render of details
 
 	select_next(banner_id: string, selected_title: string) {
 		const next = T_Direction.next === selected_title as unknown as T_Direction;	// unknown defeats ts type check

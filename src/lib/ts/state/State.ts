@@ -17,7 +17,7 @@ export class State {
 	w_auto_adjust_graph	   = writable<T_Auto_Adjust | null>();
 }
 
-export const state = new State();
+export const s = new State();
 
 const _____THING: unique symbol = Symbol('THING');
 
