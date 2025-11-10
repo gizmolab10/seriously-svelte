@@ -109,7 +109,7 @@ export default class DB_Bubble extends DB_Common {
 				if (!!b_focus?.id) {			// must happen AFTER ancestries are created
 					const focus = h.thing_forHID(b_focus.id.hash());
 					if (!!focus?.ancestry) {
-						focus.ancestry.becomeFocus(true);
+						focus.ancestry.becomeFocus();
 					}
 				}
 			}

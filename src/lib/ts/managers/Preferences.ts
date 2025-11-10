@@ -137,22 +137,10 @@ export class Preferences {
 	}
 
 	restore_preferences() {
-
-		// VISIBILITY
-		show.w_tree_ofType		.set( this.read_key(T_Preference.tree)					?? T_Kinship.children);
-		show.w_graph_ofType		.set( this.read_key(T_Preference.graph)					?? T_Graph.tree);
-		show.w_countDots_ofType	.set( this.read_key(T_Preference.countDots)				?? [T_Kinship.children]);
-		show.w_details_ofType	.set( this.read_key(T_Preference.detail_types)			?? [T_Detail.actions, T_Detail.data]);
-
-		// RADIAL
-		layout.w_ring_rotation_angle	.set( this.read_key(T_Preference.ring_angle)			?? 0);
-		layout.w_ring_rotation_radius	.set( Math.max( this.read_key(T_Preference.ring_radius) ?? 0, k.radius.ring_minimum));
-	
-		// OTHER
-		show.w_depth_limit		.set( this.read_key(T_Preference.levels)				?? 2);
-		s.w_font_size		.set( this.read_key(T_Preference.font_size)				?? 14);
-		s.w_auto_adjust_graph.set( this.read_key(T_Preference.auto_adjust)			?? null);
-		s.w_thing_fontFamily		.set( this.read_key(T_Preference.font)					?? 'Times New Roman');
+		s.w_thing_title					.set( this.read_key(T_Preference.thing)					?? k.title.default);
+		s.w_font_size					.set( this.read_key(T_Preference.font_size)				?? 14);
+		s.w_auto_adjust_graph			.set( this.read_key(T_Preference.auto_adjust)			?? null);
+		s.w_thing_fontFamily			.set( this.read_key(T_Preference.font)					?? 'Times New Roman');
 		this.reactivity_subscribe()
 	}
 	

@@ -26,6 +26,8 @@ export default class Layout {
 	restore_preferences() {
 		this.update_rect_ofGraphView();	// needed for set_scale_factor
 		this.set_scale_factor(p.read_key(T_Preference.scale) ?? 1);
+		this.w_ring_rotation_angle.set( p.read_key(T_Preference.ring_angle) ?? 0);
+		this.w_ring_rotation_radius.set( Math.max( p.read_key(T_Preference.ring_radius) ?? 0, k.radius.ring_minimum));
 		this.renormalize_user_graph_offset();	// must be called after apply scale (which otherwise fubars offset)
 		document.documentElement.style.setProperty('--css-body-width', this.windowSize.width.toString() + 'px');
 		s.w_t_startup.subscribe((startup) => {
