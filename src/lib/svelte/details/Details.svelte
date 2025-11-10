@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { w_count_details, w_ancestry_forDetails } from '../../ts/state/State';
-	import { c, k, x, Point, search, layout } from '../../ts/common/Global_Imports'; 
+	import { state, w_ancestry_forDetails } from '../../ts/state/State';
+	import { c, k, x, Point, search, layout } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Detail } from '../../ts/common/Global_Imports';
 	import Banner_Hideable from './Banner_Hideable.svelte';
 	import D_Preferences from './D_Preferences.svelte';
@@ -11,6 +11,7 @@
 	import D_Traits from './D_Traits.svelte';
 	import D_Data from './D_Data.svelte';
 	import D_Tags from './D_Tags.svelte';
+	const { w_count_details } = state;
 	const width = k.width.details;
 	const { w_search_state } = search;
 	const { w_index: w_found } = x.si_found;

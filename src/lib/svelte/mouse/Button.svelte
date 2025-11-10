@@ -1,8 +1,9 @@
 <script lang='ts'>
 	import { k, u, x, Rect, Point, colors, T_Layer, layout, elements } from '../../ts/common/Global_Imports';
-	import { w_s_hover, w_thing_fontFamily, w_control_key_down } from '../../ts/state/State';
+	import { state, w_s_hover, w_thing_fontFamily } from '../../ts/state/State';
 	import { S_Mouse, S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
+	const { w_control_key_down } = state;
 	export let s_button: S_Element = S_Element.empty();
 	export let closure: (result: S_Mouse) => boolean;
 	export let font_size = k.font_size.common;

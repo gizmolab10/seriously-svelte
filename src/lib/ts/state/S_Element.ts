@@ -1,6 +1,6 @@
 import { Ancestry, S_Widget, T_Element, T_Control } from '../common/Global_Imports';
 import { k, x, colors, elements, controls } from '../common/Global_Imports';
-import { w_s_hover, w_control_key_down } from './State';
+import { state, w_s_hover } from './State';
 import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
 
@@ -57,7 +57,7 @@ export default class S_Element {
 	get description(): string { return `${this.isHovering ? 'in' : 'out '} '${this.name}'`; }
 	get isADot(): boolean { return this.type == T_Element.drag || this.type == T_Element.reveal; }
 	get svg_hover_color(): string { return this.isHovering ? colors.background : this.stroke; }
-	get show_help_cursor(): boolean { return get(w_control_key_down) && this.type == T_Element.action; }
+	get show_help_cursor(): boolean { return get(state.w_control_key_down) && this.type == T_Element.action; }
 	get stroke(): string { return this.isDisabled ? this.disabledTextColor : this.color_isInverted ? this.color_background : this.hoverColor; }
 	get cursor(): string { return (this.isHovering && !this.isDisabled) ? this.show_help_cursor ? 'help' : this.hoverCursor : this.defaultCursor; }
 	get disabledTextColor(): string { return colors.specialBlend(this.color_background, this.defaultDisabledColor, 0.3) ?? this.defaultDisabledColor; }
