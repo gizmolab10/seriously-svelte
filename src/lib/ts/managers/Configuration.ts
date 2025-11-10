@@ -1,7 +1,6 @@
-import { e, k, p, u, show, debug, search, colors } from '../common/Global_Imports';
+import { e, k, p, s, u, show, debug, search, colors } from '../common/Global_Imports';
 import { layout, databases } from '../common/Global_Imports';
 import { T_Theme } from '../common/Global_Imports';
-import { w_device_isMobile } from '../state/State';
 
 export class Configuration {
 
@@ -27,8 +26,8 @@ export class Configuration {
 
 		
 		// DO NOT CHANGE THE ORDER OF THESE CALLS
-		
-		w_device_isMobile.set(u.device_isMobile);
+
+		s.w_device_isMobile.set(u.device_isMobile);
 		debug.apply_queryStrings();
 		colors.restore_preferences();
 		search.setup_defaults();

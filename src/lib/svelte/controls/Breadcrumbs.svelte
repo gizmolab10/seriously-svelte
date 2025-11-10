@@ -1,12 +1,11 @@
 <script lang='ts'>
-	import { c, h, k, u, x, Size, Point, Thing, debug, search, colors, signals, elements } from '../../ts/common/Global_Imports';
+	import { c, h, k, s, u, x, Size, Point, Thing, debug, search, colors, signals, elements } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Signal, T_Element, T_Startup, T_Component } from '../../ts/common/Global_Imports';
 	import { svgPaths, Ancestry, layout, components, S_Component} from '../../ts/common/Global_Imports';
-	import { w_s_title_edit, w_ancestry_focus, w_ancestry_forDetails } from '../../ts/state/State';
 	import Breadcrumb_Button from '../mouse/Breadcrumb_Button.svelte';
-	import { w_t_startup } from '../../ts/state/State';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
+	const { w_s_title_edit, w_ancestry_focus, w_ancestry_forDetails, w_t_startup } = s;
 	export let width = layout.windowSize.width;
 	export let centered: boolean = false;
 	export let left: number = 28;

@@ -1,8 +1,7 @@
-import { c, k, h, p, x, show, Thing, details, Ancestry, databases } from "../common/Global_Imports";
+import { c, k, h, p, s, x, show, Thing, details, Ancestry, databases } from "../common/Global_Imports";
 import { T_Search, T_Startup, T_Preference, T_Search_Preference } from "../common/Global_Imports";
 import { Search_Node } from '../types/Search_Node';
 import { get, writable } from 'svelte/store';
-import { w_t_startup } from '../state/State';
 
 class Search {
 	search_text: string | null		= null;
@@ -41,7 +40,7 @@ class Search {
 	private setup() {
 		if (c.allow_search) {
 			this.search_text = p.readDB_key(T_Preference.search_text);
-			w_t_startup.subscribe((startup) => {
+			s.w_t_startup.subscribe((startup) => {
 				if (startup == T_Startup.ready) {
 					this.buildIndex(h.things);
 					this.w_search_results_changed.set(Date.now());

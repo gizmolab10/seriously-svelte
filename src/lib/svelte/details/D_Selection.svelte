@@ -1,9 +1,7 @@
 <script lang='ts'>
 	import { c, k, p, s, u, x, show, colors, layout, details, elements } from '../../ts/common/Global_Imports';
-	import { w_ancestry_focus, w_ancestry_forDetails } from '../../ts/state/State';
 	import { T_Thing, T_Layer, T_Element } from '../../ts/common/Global_Imports';
 	import { Point, Thing, Ancestry } from '../../ts/common/Global_Imports';
-	import { w_relationship_order } from '../../ts/state/State';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import type { Integer } from '../../ts/types/Types';
 	import Text_Table from '../text/Text_Table.svelte';
@@ -11,7 +9,7 @@
 	import Portal from '../draw/Portal.svelte';
 	import Color from '../mouse/Color.svelte';
 	import { onMount } from 'svelte';
-	const { w_thing_title } = s;
+	const { w_thing_title, w_ancestry_focus, w_ancestry_forDetails, w_relationship_order } = s;
 	export let top = 6;
 	const id = 'selection details';
 	const { w_details_ofType } = show;

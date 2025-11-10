@@ -1,7 +1,6 @@
 import { G_Widget, G_ArcSlider, G_Paging, S_Rotation } from '../common/Global_Imports';
-import { k, debug, colors, radial, layout, signals } from '../common/Global_Imports';
+import { k, s, debug, colors, radial, layout, signals } from '../common/Global_Imports';
 import { Point, Angle, Ancestry, Predicate  } from '../common/Global_Imports';
-import { w_ancestry_focus } from '../state/State';
 import { get } from 'svelte/store';
 
 //////////////////////////////////////////
@@ -58,7 +57,7 @@ export default class G_Cluster {
 			this.widgets_shown = this.ancestries_shown.length;
 			this.isPaging = this.widgets_shown < this.total_widgets;
 			this.center = get(layout.w_rect_ofGraphView).size.asPoint.dividedInHalf;
-			this.color = colors.opacitize(get(w_ancestry_focus).thing?.color ?? this.color, 0.2);
+			this.color = colors.opacitize(get(s.w_ancestry_focus).thing?.color ?? this.color, 0.2);
 			this.g_sliderArc.layout_fork(this.angle_ofCluster);
 			this.layout_widgets_inCluster();
 			this.g_sliderArc.layout_forkTip(this.center);
@@ -85,7 +84,7 @@ export default class G_Cluster {
 	get titles(): string { return this.ancestries.map(a => a.title).join(', '); }
 	get description(): string { return `(${this.cluster_title}) ${this.titles}`; }
 	get kind(): string { return this.predicate?.kind.unCamelCase().lastWord() ?? k.empty; }
-	get name(): string { return `${get(w_ancestry_focus).title}-cluster-${this.direction_kind}`; }
+	get name(): string { return `${get(s.w_ancestry_focus).title}-cluster-${this.direction_kind}`; }
 
 	get isMouse_insideThumb(): boolean {
 		const offset = Point.square(-get(layout.w_ring_rotation_radius));
@@ -121,13 +120,13 @@ export default class G_Cluster {
 	static readonly _____PAGING: unique symbol;
 
 	get s_paging_rotation():  S_Rotation { return radial.s_paging_rotation_forName(this.name); }
-	get maximum_paging_index()	: number { return this.total_widgets - this.widgets_shown; }	
+	get maximum_paging_index()	: number { return this.total_widgets - this.widgets_shown; }
 	get paging_index_ofFocus()	: number { return Math.round(this.g_focusPaging?.index ?? 0); }
-	get g_focusPaging(): G_Paging | null { return this.g_paging_forAncestry(get(w_ancestry_focus)); }
+	get g_focusPaging(): G_Paging | null { return this.g_paging_forAncestry(get(s.w_ancestry_focus)); }
 	get g_paging():		 G_Paging | null { return this.g_paging_forPredicate_toChildren(this.predicate, this.points_toChildren); }
 
 	g_paging_forPredicate_toChildren(predicate: Predicate, points_toChildren: boolean): G_Paging | null {
-		const g_thing_pages = radial.g_thing_pages_forThingID(get(w_ancestry_focus)?.thing?.id);
+		const g_thing_pages = radial.g_thing_pages_forThingID(get(s.w_ancestry_focus)?.thing?.id);
 		return g_thing_pages?.g_paging_forPredicate_toChildren(predicate, points_toChildren) ?? null;
 	}
 

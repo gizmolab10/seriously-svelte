@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { c, e, k, u, x, Rect, Size, Point, debug, layout, elements } from '../../ts/common/Global_Imports';
+	import { c, e, k, s, u, x, Rect, Size, Point, debug, layout, elements } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Timer, S_Mouse } from '../../ts/common/Global_Imports';
-	import { w_thing_fontFamily } from '../../ts/state/State';
+	const { w_thing_fontFamily } = s;
 	import type { Handle_Result } from '../../ts/types/Types';
 	import { onMount } from 'svelte';
 	export let handle_isHit: () => {flag: boolean} | null = null;

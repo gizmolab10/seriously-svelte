@@ -1,6 +1,5 @@
 // N.B., do not import these from Global Imports --> avoid dependency issues when importing Utilities class
 
-import { w_ancestry_focus, w_thing_fontFamily } from '../state/State';
 import { Testworthy_Utilities } from './Testworthy_Utilities';
 import { Rect, Size, Point } from '../types/Geometry';
 import Identifiable from '../runtime/Identifiable';
@@ -13,6 +12,7 @@ import { layout } from '../layout/Layout';
 import G_Widget from '../layout/G_Widget';
 import { Integer } from '../types/Types';
 import { k } from '../common/Constants';
+import { s } from '../state/State';
 import { x } from '../ux/UX_S_Items';
 import { get } from 'svelte/store';
 import { print } from './Print';
@@ -125,15 +125,15 @@ export class Utilities extends Testworthy_Utilities {
 		}
 	}
 
-	getWidth_ofString_withSize(s: string, fontSize: string): number {
+	getWidth_ofString_withSize(str: string, fontSize: string): number {
 		const element: HTMLElement = document.createElement('div');
-		element.style.fontFamily = get(w_thing_fontFamily);
+		element.style.fontFamily = get(s.w_thing_fontFamily);
 		element.style.left = '-9999px'; // offscreen
 		element.style.padding = '0px 0px 0px 0px';
 		element.style.position = 'absolute';
 		element.style.fontSize = fontSize;
 		element.style.whiteSpace = 'pre';
-		element.textContent = s;
+		element.textContent = str;
 		document.body.appendChild(element);
 		const width: number = element.getBoundingClientRect().width / get(layout.w_scale_factor);
 		document.body.removeChild(element);
@@ -143,7 +143,7 @@ export class Utilities extends Testworthy_Utilities {
 	print_graph() {
 		const rect = layout.rect_ofAllWidgets;
 		const className = controls.inTreeMode ? 'tree-graph' : 'radial-graph';
-		print.print_element_byClassName_withRect(className, rect, get(w_ancestry_focus).title);
+		print.print_element_byClassName_withRect(className, rect, get(s.w_ancestry_focus).title);
 	}
 
 	temporarily_setDefaults_while(closure: () => void) {

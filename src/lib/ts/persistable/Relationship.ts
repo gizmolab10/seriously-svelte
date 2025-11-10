@@ -1,6 +1,5 @@
-import { h, k, Thing, T_Order, databases, Predicate } from '../common/Global_Imports';
+import { h, k, s, Thing, T_Order, databases, Predicate } from '../common/Global_Imports';
 import { T_Persistable, T_Predicate } from '../common/Global_Imports';
-import { w_relationship_order } from '../state/State';
 import Identifiable from '../runtime/Identifiable';
 import type { Integer } from '../types/Types';
 import Persistable from './Persistable';
@@ -86,10 +85,10 @@ export default class Relationship extends Persistable {
 
 	order_setTo(newOrder: number, t_order: T_Order = T_Order.child) {
 		const order = this.orders[t_order] ?? 0;
-		const difference = Math.abs(order - newOrder);	
+		const difference = Math.abs(order - newOrder);
 		if (difference > 0.001) {
 			this.orders[t_order] = newOrder;
-			w_relationship_order.set(Date.now());
+			s.w_relationship_order.set(Date.now());
 			this.set_isDirty();
 		}
 	}

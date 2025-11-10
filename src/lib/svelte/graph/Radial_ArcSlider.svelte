@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { c, k, show, Rect, Size, Point, debug, Angle, colors, radial, layout, signals } from '../../ts/common/Global_Imports';
-	import { w_ancestry_focus, w_count_mouse_up, w_thing_fontFamily } from '../../ts/state/State';
+	import { c, k, s, show, Rect, Size, Point, debug, Angle, colors, radial, layout, signals } from '../../ts/common/Global_Imports';
+	const { w_ancestry_focus, w_count_mouse_up, w_thing_fontFamily } = s;
 	import { T_Layer, G_Cluster, Direction } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/runtime/Identifiable';

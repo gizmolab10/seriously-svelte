@@ -1,8 +1,7 @@
-import { h, k, p, u, show, debug, radial, g_tree, g_radial, signals, controls } from '../common/Global_Imports';
+import { h, k, p, s, u, show, debug, radial, g_tree, g_radial, signals, controls } from '../common/Global_Imports';
 import { S_Component, T_Graph, T_Preference, T_Startup } from '../common/Global_Imports';
 import { Rect, Size, Point, Thing, Ancestry } from '../common/Global_Imports';
 import { G_Cluster, G_Paging, G_Widget } from '../common/Global_Imports';
-import { w_t_startup } from '../state/State';
 import { get, writable } from 'svelte/store';
 
 export default class Layout {
@@ -29,7 +28,7 @@ export default class Layout {
 		this.set_scale_factor(p.read_key(T_Preference.scale) ?? 1);
 		this.renormalize_user_graph_offset();	// must be called after apply scale (which otherwise fubars offset)
 		document.documentElement.style.setProperty('--css-body-width', this.windowSize.width.toString() + 'px');
-		w_t_startup.subscribe((startup) => {
+		s.w_t_startup.subscribe((startup) => {
 			if (startup == T_Startup.ready) {
 				this.w_ring_rotation_angle.subscribe((angle: number) => {
 					p.write_key(T_Preference.ring_angle, angle);

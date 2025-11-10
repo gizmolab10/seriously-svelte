@@ -1,6 +1,6 @@
 <script>
-	import { k, u, Point, debug, T_Layer } from '../../ts/common/Global_Imports';
-	import { w_thing_fontFamily } from '../../ts/state/State';
+	import { k, s, u, Point, debug, T_Layer } from '../../ts/common/Global_Imports';
+	const { w_thing_fontFamily } = s;
 	export let background_color = colors.background;
 	export let font_family = $w_thing_fontFamily;
 	export let zindex = T_Layer.paging;

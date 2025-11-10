@@ -1,7 +1,5 @@
 import { G_Paging, T_Graph, T_Detail, T_Kinship, T_Preference, T_Auto_Adjust, T_Startup } from '../common/Global_Imports';
 import { c, h, k, s, u, x, show, debug, radial, layout, Ancestry, databases } from '../common/Global_Imports';
-import { w_ancestry_focus, w_t_startup } from '../state/State';
-import { w_thing_fontFamily } from '../state/State';
 import { get } from 'svelte/store';
 
 export class Preferences {
@@ -113,7 +111,7 @@ export class Preferences {
 		if (c.eraseDB > 0) {
 			c.eraseDB -= 1;
 			if (!!ancestryToFocus) {
-				w_ancestry_focus.set(ancestryToFocus);
+				s.w_ancestry_focus.set(ancestryToFocus);
 			}
 		} else {
 			const focusPath = p.readDB_key(this.focus_key) ?? p.readDB_key('focus');
@@ -133,7 +131,7 @@ export class Preferences {
 			}
 			ancestryToFocus.becomeFocus();
 		}
-		w_ancestry_focus.subscribe((ancestry: Ancestry) => {
+		s.w_ancestry_focus.subscribe((ancestry: Ancestry) => {
 			p.writeDB_key(this.focus_key, !ancestry ? null : ancestry.pathString);
 		});
 	}
@@ -154,7 +152,7 @@ export class Preferences {
 		show.w_depth_limit		.set( this.read_key(T_Preference.levels)				?? 2);
 		s.w_font_size		.set( this.read_key(T_Preference.font_size)				?? 14);
 		s.w_auto_adjust_graph.set( this.read_key(T_Preference.auto_adjust)			?? null);
-		w_thing_fontFamily		.set( this.read_key(T_Preference.font)					?? 'Times New Roman');
+		s.w_thing_fontFamily		.set( this.read_key(T_Preference.font)					?? 'Times New Roman');
 		this.reactivity_subscribe()
 	}
 	

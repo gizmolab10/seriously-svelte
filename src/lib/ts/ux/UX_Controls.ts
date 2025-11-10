@@ -1,6 +1,5 @@
-import { c, e, k, show, search, layout, g_tree, Ancestry, Predicate, S_Alteration } from '../common/Global_Imports';
+import { c, e, k, s, show, search, layout, g_tree, Ancestry, Predicate, S_Alteration } from '../common/Global_Imports';
 import { T_Graph, T_Kinship, T_Control, T_Alteration, T_Search_Preference } from '../common/Global_Imports';
-import { w_popupView_id, w_s_alteration } from '../state/State';
 import { get } from 'svelte/store';
 
 class UX_Controls {
@@ -11,8 +10,8 @@ class UX_Controls {
 	showHelp_home() { this.open_tabFor(c.isServerLocal ? k.help_url.local : k.help_url.remote); }
 
 	togglePopupID(id: T_Control) {
-		const same = get(w_popupView_id) == id
-		w_popupView_id.set(same ? null : id); 
+		const same = get(s.w_popupView_id) == id
+		s.w_popupView_id.set(same ? null : id);
 	}
 
 	showHelp_for(t_action: number, column: number) { 
@@ -22,9 +21,9 @@ class UX_Controls {
 	}
 
 	toggle_alteration(ancestry: Ancestry, t_alteration: T_Alteration, predicate: Predicate | null) {
-		const isAltering = !!get(w_s_alteration);
+		const isAltering = !!get(s.w_s_alteration);
 		const s_alteration = isAltering ? null : new S_Alteration(ancestry, t_alteration, predicate);
-		w_s_alteration.set(s_alteration);
+		s.w_s_alteration.set(s_alteration);
 	}
 	
 	handle_segmented_choices(segmented_name: string, choices: string[]) {

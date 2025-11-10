@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { k, u, x, debug, colors, layout, signals, elements, svgPaths } from '../../ts/common/Global_Imports';
-	import { w_s_title_edit, w_ancestry_focus } from '../../ts/state/State';
+	import { k, s, u, x, debug, colors, layout, signals, elements, svgPaths } from '../../ts/common/Global_Imports';
+	const { w_s_title_edit, w_ancestry_focus } = s;
 	import { Size, Point, S_Component } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Component } from '../../ts/common/Enumerations';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';

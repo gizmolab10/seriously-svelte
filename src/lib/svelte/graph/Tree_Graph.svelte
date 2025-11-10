@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { show, g_tree, layout, signals, S_Component } from '../../ts/common/Global_Imports';
+	import { s, show, g_tree, layout, signals, S_Component } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Signal, T_Component } from '../../ts/common/Global_Imports';
-	import { w_ancestry_focus } from '../../ts/state/State';
+	const { w_ancestry_focus } = s;
 	import Tree_Branches from './Tree_Branches.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import { onMount } from 'svelte';

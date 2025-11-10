@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { k, u, show, T_Layer, T_Detail, layout, details } from '../../ts/common/Global_Imports';
-	import { w_ancestry_forDetails } from '../../ts/state/State';
+	import { k, s, u, show, T_Layer, T_Detail, layout, details } from '../../ts/common/Global_Imports';
+	const { w_ancestry_forDetails } = s;
 	import Glows_Banner from '../mouse/Glows_Banner.svelte';
     export let t_detail: T_Detail;
 	const { w_details_ofType } = show;
