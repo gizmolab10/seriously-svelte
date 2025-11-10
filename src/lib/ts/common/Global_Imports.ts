@@ -37,7 +37,6 @@ import S_Items from '../state/S_Items';
 import { builds } from './Builds';
 import { busy } from '../state/S_Busy';
 import { files } from '../files/Files';
-import { state } from '../state/State';
 import { layout } from '../layout/Layout';
 import { print } from '../utilities/Print';
 import { details } from '../ux/UX_Details';
@@ -75,6 +74,7 @@ import Angle from '../types/Angle';
 
 import './Extensions';
 import { k } from './Constants';
+import { s } from '../state/State';
 import { e } from '../signals/Events';
 import { h } from '../managers/Hierarchy';
 import { x } from '../ux/UX_S_Items';
@@ -93,11 +93,11 @@ export {
 	G_Paging, G_Cluster, G_RadialGraph, G_Thing_Pages, G_ArcSlider,
 
 	g_tree, g_radial,
-	e, c, h, k, p, u, x,
+	e, c, h, k, p, s, u, x,
 	interact, transparentize,
 	debug, svgPaths, databases,
 	busy, show, files, builds, print,
-	state, search, details, elements, controls,
+	search, details, elements, controls,
 	colors, layout, radial, signals, components,
 
 	Angle, Direction, 
