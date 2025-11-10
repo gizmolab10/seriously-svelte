@@ -1,6 +1,6 @@
 import { c, h, k, u, x, g_tree, debug, search, layout, details, signals, controls, elements } from '../common/Global_Imports';
 import { T_Search, T_Action, T_Control, T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Imports';
-import { state, w_s_alteration, w_s_title_edit, w_control_key_down } from '../state/State';
+import { state, w_s_alteration, w_s_title_edit } from '../state/State';
 import { w_device_isMobile, w_ancestry_focus, w_ancestry_forDetails } from '../state/State';
 import { Point, Ancestry, Predicate } from '../common/Global_Imports';
 import { S_Mouse, S_Alteration } from '../common/Global_Imports';
@@ -141,7 +141,7 @@ export class Events {
 	private handle_key_up(e: Event) {
 		const event = e as KeyboardEvent;
 		if (!!event && event.type == 'keyup') {
-			w_control_key_down.set(event.ctrlKey);
+			state.w_control_key_down.set(event.ctrlKey);
 		}
 	}
 
@@ -270,7 +270,7 @@ export class Events {
 			const ancestry = x.ancestry_grabbed_atEnd_upward(true);
 			const modifiers = ['alt', 'meta', 'shift', 'control'];
 			let graph_needsSweep = false;
-			w_control_key_down.set(event.ctrlKey);
+			state.w_control_key_down.set(event.ctrlKey);
 			if (!!h && !!ancestry && !modifiers.includes(key)) {
 				const OPTION = event.altKey;
 				const SHIFT = event.shiftKey;
@@ -343,7 +343,7 @@ export class Events {
 
 	async handle_action_clickedAt(s_mouse: S_Mouse, t_action: number, column: number, name: string) {
 		const ancestry = get(w_ancestry_forDetails);	
-		if (get(w_control_key_down)) {
+		if (get(state.w_control_key_down)) {
 			controls.showHelp_for(t_action, column);
 		} else if (!!ancestry && !this.handle_isAction_disabledAt(t_action, column) && !!h) {
 			const a = this.actions;

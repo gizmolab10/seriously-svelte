@@ -3,9 +3,10 @@
 	import { S_Mouse, S_Element, S_Component, T_Layer, T_Component } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { Size, Point } from '../../ts/common/Global_Imports';
-	import { w_thing_title } from '../../ts/state/State';
+	import { state } from '../../ts/state/State';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
+	const { w_thing_title } = state;
     export let hover_isReversed = false;
     export let zindex = T_Layer.dots;
 	export let points_toChild = true;

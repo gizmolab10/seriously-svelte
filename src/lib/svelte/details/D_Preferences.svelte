@@ -1,13 +1,14 @@
 <script lang='ts'>
 	import { k, u, x, show, Rect, Point, colors, layout, elements } from '../../ts/common/Global_Imports';
 	import { T_Graph, T_Layer, T_Kinship, T_Auto_Adjust } from '../../ts/common/Global_Imports';
-	import { w_auto_adjust_graph } from '../../ts/state/State';
+	import { state } from '../../ts/state/State';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Slider from '../mouse/Slider.svelte';
 	import Portal from '../draw/Portal.svelte';
 	import Color from '../mouse/Color.svelte';
 	import { onMount } from 'svelte';
+	const { w_auto_adjust_graph } = state;
 	export let top = 0;
 	const back_up = -5;
 	const separator_left = 35;
