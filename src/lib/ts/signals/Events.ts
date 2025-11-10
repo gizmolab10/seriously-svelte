@@ -1,6 +1,6 @@
 import { c, h, k, u, x, g_tree, debug, search, layout, details, signals, controls, elements } from '../common/Global_Imports';
 import { T_Search, T_Action, T_Control, T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Imports';
-import { w_count_window_resized, w_s_alteration, w_s_title_edit, w_control_key_down } from '../state/State';
+import { state, w_s_alteration, w_s_title_edit, w_control_key_down } from '../state/State';
 import { w_device_isMobile, w_ancestry_focus, w_ancestry_forDetails } from '../state/State';
 import { Point, Ancestry, Predicate } from '../common/Global_Imports';
 import { S_Mouse, S_Alteration } from '../common/Global_Imports';
@@ -164,7 +164,7 @@ export class Events {
 		// on COMMAND +/-
 		// and on simulator switches platform
 		const isMobile = u.device_isMobile;
-		w_count_window_resized.update(n => n + 1);		// observed by controls
+		state.w_count_window_resized.update(n => n + 1);		// observed by controls
 		w_device_isMobile.set(isMobile);
 		layout.restore_preferences();
 	}

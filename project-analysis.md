@@ -209,7 +209,7 @@ export const state = new State();
 **2. Update TypeScript files** (~20 files)
 ```diff
 - import { w_count_rebuild } from '../state/State';
-+ import { state } from '../state/State';
++ import { state, w_count_rebuild } from '../state/State';
 
 - get(w_count_rebuild)
 + get(state.w_count_rebuild)
@@ -217,16 +217,17 @@ export const state = new State();
 - w_count_rebuild.set(value)
 + state.w_count_rebuild.set(value)
 ```
+Note: Keep old export temporarily during migration. Combine state with other State imports on same line.
 
 **3. Update Svelte files** (~30 files)
 ```diff
 - import { w_count_rebuild } from '../../ts/state/State';
-+ import { state } from '../../ts/state/State';
++ import { state, w_count_rebuild } from '../../ts/state/State';
 + const { w_count_rebuild } = state;
 
   $w_count_rebuild
 ```
-Note: In Svelte, you cannot use `$state.w_count_rebuild` for reactivity. You must destructure first with `const { w_count_rebuild } = state;` then use `$w_count_rebuild`.
+Note: Combine state with other State imports on same line. In Svelte, you cannot use `$state.w_count_rebuild` for reactivity. You must destructure first with `const { w_count_rebuild } = state;` then use `$w_count_rebuild`.
 
 **4. Remove old export**
 - After all files updated, remove module-level export

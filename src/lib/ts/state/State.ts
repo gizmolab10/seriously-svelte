@@ -8,6 +8,7 @@ import S_Element from './S_Element';
 
 export class State {
 	w_count_rebuild = writable<number>(0);
+	w_count_window_resized = writable<number>(0);
 }
 
 export const state = new State();
@@ -28,7 +29,6 @@ export const w_ancestry_forDetails	= writable<Ancestry>();
 
 const _____COUNTS: unique symbol = Symbol('COUNTS');
 
-export const w_count_window_resized	= writable<number>(0);
 export const w_count_mouse_up		= writable<number>(0);
 export const w_count_details		= writable<number>(0);	
 
