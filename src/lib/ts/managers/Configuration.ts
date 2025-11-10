@@ -87,4 +87,4 @@ export class Configuration {
 
 }
 
-export let c = new Configuration();
+export const c = new Configuration();

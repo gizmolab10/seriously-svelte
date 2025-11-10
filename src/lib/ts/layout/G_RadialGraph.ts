@@ -158,4 +158,4 @@ export default class G_RadialGraph {
 
 }
 
-export let g_radial = new G_RadialGraph();
+export const g_radial = new G_RadialGraph();

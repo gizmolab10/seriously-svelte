@@ -37,6 +37,7 @@ import S_Items from '../state/S_Items';
 import { builds } from './Builds';
 import { busy } from '../state/S_Busy';
 import { files } from '../files/Files';
+import { state } from '../state/State';
 import { layout } from '../layout/Layout';
 import { print } from '../utilities/Print';
 import { details } from '../ux/UX_Details';
@@ -96,7 +97,7 @@ export {
 	interact, transparentize,
 	debug, svgPaths, databases,
 	busy, show, files, builds, print,
-	search, details, elements, controls,
+	state, search, details, elements, controls,
 	colors, layout, radial, signals, components,
 
 	Angle, Direction, 

@@ -11,14 +11,10 @@
             "id": "9968854d61be5eec",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "project-analysis.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "project-analysis"
+              "title": "New tab"
             }
           }
         ]
@@ -94,7 +90,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "holons/api.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +99,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for api"
+              "title": "Backlinks"
             }
           },
           {
@@ -113,12 +108,11 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "holons/api.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from api"
+              "title": "Outgoing links"
             }
           },
           {
@@ -142,24 +136,34 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "holons/api.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of api"
+              "title": "Outline"
+            }
+          },
+          {
+            "id": "ac6a0758ab4ef4b8",
+            "type": "leaf",
+            "state": {
+              "type": "git-view",
+              "state": {},
+              "icon": "git-pull-request",
+              "title": "Source Control"
             }
           }
-        ]
+        ],
+        "currentTab": 4
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
+      "obsidian-git:Open Git source control": false,
       "bases:Create new base": false,
       "switcher:Open quick switcher": false,
       "graph:Open graph view": false,
@@ -171,6 +175,9 @@
   },
   "active": "9968854d61be5eec",
   "lastOpenFiles": [
+    "notes/design/refactor_writables.md",
+    "project-analysis.md",
+    "notes/design/project-analysis.md",
     "README.md",
     "src/lib/svelte/draw/Rubberband.svelte",
     "src/lib/svelte/graph/Tree_Preferences.svelte",
