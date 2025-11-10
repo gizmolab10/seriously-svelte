@@ -1,11 +1,15 @@
 function(instance, properties) {
 	const field_labels = [
-		'overwrite_focus_and_mode',
+		'override_focus_and_mode',
+		'override_depth_limit',
+		'override_zoom_scale',
 		'erase_user_settings',
 		'starting_object_id',
 		'show_radial_mode',
 		'focus_object_id',
-		'show_details'];
+		'show_details',
+		'depth_limit',
+		'zoom_scale'];
 	const field_labels_of_arrays = [
 		'related_ids_array',
 		'parent_ids_array',

@@ -1,4 +1,4 @@
-import { T_Thing, T_Graph, T_Create, T_Predicate, T_Detail } from '../common/Global_Imports';
+import { T_Thing, T_Graph, T_Create, T_Predicate, T_Detail, layout } from '../common/Global_Imports';
 import { h, k, p, s, x, busy, show, debug, Ancestry } from '../common/Global_Imports';
 import { T_Persistence, T_Preference } from '../common/Global_Imports';
 import { T_Database } from './DB_Common';
@@ -88,13 +88,19 @@ export default class DB_Bubble extends DB_Common {
 	}
 
 	private extract_fromProperties(bubble_properties: any) {
-		let b_ids, b_root, b_focus, b_titles, b_colors, b_parent_ids, b_related_ids, b_overwrite, b_inRadialMode, b_show_details, b_erase_user_preferences;
+		let b_zoom_scale, b_depth_limit, b_inRadialMode, b_show_details,
+			b_ids, b_root, b_focus, b_titles, b_colors, b_parent_ids, b_related_ids,
+			b_override_zoom_scale, b_override_depth_limit, b_erase_user_preferences, b_override_focus_and_mode;
 		try {
 			const has_bubble = p.readDB_key(T_Preference.bubble) ?? false; // true after first launch
-			b_overwrite = bubble_properties.overwrite_focus_and_mode || !has_bubble;
+			b_override_focus_and_mode = bubble_properties.override_focus_and_mode || !has_bubble;
+			b_override_depth_limit = bubble_properties.override_depth_limit || !has_bubble;
+			b_override_zoom_scale = bubble_properties.override_zoom_scale || !has_bubble;
 			b_erase_user_preferences = bubble_properties.erase_user_preferences;
 			b_inRadialMode = bubble_properties.show_radial_mode;
 			b_show_details = bubble_properties.show_details;
+			b_depth_limit = bubble_properties.depth_limit;
+			b_zoom_scale = bubble_properties.zoom_scale;
 			b_related_ids = bubble_properties.related;
 			b_parent_ids = bubble_properties.parents;
 			b_colors = bubble_properties.colors;
@@ -144,7 +150,13 @@ export default class DB_Bubble extends DB_Common {
 			h.ancestries_assureAll_createUnique();
 			busy.signal_data_redraw();
 		}
-		if (!!b_overwrite) {
+		if (!!b_override_depth_limit) {
+			show.w_depth_limit.set(b_depth_limit);
+		}
+		if (!!b_override_zoom_scale) {
+			layout.w_scale_factor.set(b_zoom_scale);
+		}
+		if (!!b_override_focus_and_mode) {
 			show.w_graph_ofType.set(b_inRadialMode ? T_Graph.radial : T_Graph.tree);
 			if (!!b_focus) {
 				this.changeFocusTo(b_focus);

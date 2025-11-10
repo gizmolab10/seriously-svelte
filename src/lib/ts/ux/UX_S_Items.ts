@@ -84,7 +84,7 @@ export default class UX_S_Items {
 		if (!!pair && Array.isArray(pair) && pair.length == 2) {
 			const [ancestry, si_grabs] = pair;
 			if (!!ancestry) {
-				w_ancestry_focus.set(ancestry);
+				s.w_ancestry_focus.set(ancestry);
 				ancestry.expand();
 			}
 			if (!!si_grabs) {

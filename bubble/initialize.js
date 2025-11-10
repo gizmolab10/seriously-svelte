@@ -37,11 +37,11 @@ function(instance) {
 		const urlParams = new URLSearchParams(window.location.search);
 		// Merge pairs into URL params, overwriting duplicates and eliminating unknowns
 		Object.entries(pairs).filter(([key, value]) => value !== 'unknown').forEach(([key, value]) => {
-			const overwrite = urlParams.get(key);
-			if (!!overwrite && overwrite !== value) {
-				urlParams.set(key, `${overwrite},${value}`);
+			const override = urlParams.get(key);
+			if (!!override && override !== value) {
+				urlParams.set(key, `${override},${value}`);
 			} else {
-				urlParams.set(key, overwrite || value);
+				urlParams.set(key, override || value);
 			}
 		});
 		const url = 'https://webseriously.netlify.app/?' + urlParams.toString().replace(/%2C/g, ',');

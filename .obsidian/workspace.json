@@ -175,6 +175,9 @@
   },
   "active": "9968854d61be5eec",
   "lastOpenFiles": [
+    "src/lib/ts/database/DB_Bubble.abandoned.ts",
+    "notes/aside/2025/DB_Bubble.abandoned.ts",
+    "notes/aside/bubble/DB_Bubble.abandoned.ts",
     "notes/design/refactor_writables.md",
     "project-analysis.md",
     "notes/design/project-analysis.md",
@@ -187,8 +190,6 @@
     "vite.config.js.timestamp-1754505132336-14bcbc9d81b5f.mjs",
     "notes/chris.js",
     "notes/count_lines.sh",
-    "notes/foo",
-    "notes/update.js",
     "notes/Resize_Optimization_AI.md",
     "notes/bubble tears.md",
     "notes/holons.api.md",
