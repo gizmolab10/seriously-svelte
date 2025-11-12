@@ -33,7 +33,7 @@ export default class DB_Bubble extends DB_Common {
 		} else {
 			const type = event.data.type;
 			const bubble_properties = JSON.parse(properties_string);
-			debug.log_bubble(`[DB_Bubble] received bubble update: ${properties_string}`);
+			debug.log_bubble(`update: ${type}`);
 			switch (type) {
 				case 'CHANGE_FOCUS':
 					this.changeFocusTo(bubble_properties.id);
