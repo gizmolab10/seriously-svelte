@@ -43,8 +43,8 @@
 			0: c.has_details_button ? 18 : -7,			// details
 			1: !$w_search_controls ? 11 : c.has_details_button ? 11 : 11,	// recents / search
 			2: 57,	// graph type
-			3: 100,	// plus
-			4: 26,	// minus
+			3: 69,	// plus (100, for now hidden)
+			4: 0,	// minus (26, for now hidden)
 			5: c.allow_search ? 24 : 6,
 			6: 25,	// easter egg, separator
 			7: 43,	// search
@@ -106,38 +106,40 @@
 					titles={[T_Graph.tree, T_Graph.radial]}
 					handle_selection={(titles) => controls.handle_segmented_choices('graph', titles)}/>
 			{/key}
-			<div class='scaling-controls'>
-				<Button name={T_Control.grow}
-					width={size_big}
-					height={size_big}
-					center={new Point(lefts[3], y_center)}
-					s_button={elements.s_control_forType(T_Control.grow)}
-					closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.grow)}>
-					<svg id='grow-svg' style={svg_style}>
-						<path
-							id='grow-path'
-							fill=transparent
-							d={svgPaths.t_cross(size_big, 2)}
-							stroke-width={scaling_stroke_width}
-							stroke={elements.s_control_forType(T_Control.grow).svg_hover_color}/>
-					</svg>
-				</Button>
-				<Button name={T_Control.shrink}
-					width={size_big}
-					height={size_big}
-					center={new Point(lefts[4], y_center)}
-					s_button={elements.s_control_forType(T_Control.shrink)}
-					closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.shrink)}>
-					<svg id='shrink-svg'
-						style={svg_style}>
-						<path id='shrink-path'
-							fill=transparent
-							d={svgPaths.dash(size_big, 4)}
-							stroke-width={scaling_stroke_width}
-							stroke={elements.s_control_forType(T_Control.shrink).svg_hover_color}/>
-					</svg>
-				</Button>
-			</div>
+			{#if false}
+				<div class='scaling-controls'>
+					<Button name={T_Control.grow}
+						width={size_big}
+						height={size_big}
+						center={new Point(lefts[3], y_center)}
+						s_button={elements.s_control_forType(T_Control.grow)}
+						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.grow)}>
+						<svg id='grow-svg' style={svg_style}>
+							<path
+								id='grow-path'
+								fill=transparent
+								d={svgPaths.t_cross(size_big, 2)}
+								stroke-width={scaling_stroke_width}
+								stroke={elements.s_control_forType(T_Control.grow).svg_hover_color}/>
+						</svg>
+					</Button>
+					<Button name={T_Control.shrink}
+						width={size_big}
+						height={size_big}
+						center={new Point(lefts[4], y_center)}
+						s_button={elements.s_control_forType(T_Control.shrink)}
+						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.shrink)}>
+						<svg id='shrink-svg'
+							style={svg_style}>
+							<path id='shrink-path'
+								fill=transparent
+								d={svgPaths.dash(size_big, 4)}
+								stroke-width={scaling_stroke_width}
+								stroke={elements.s_control_forType(T_Control.shrink).svg_hover_color}/>
+						</svg>
+					</Button>
+				</div>
+			{/if}
 			{#if !c.has_details_button}
 				<Button name='easter-egg'
 					width={20}

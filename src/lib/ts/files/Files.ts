@@ -65,9 +65,10 @@ export default class Files {
 					let inQuotes = false;
 					let processed = '';
 					for (let i = 0; i < result.length; i++) {
-						if (result[i] === k.quote) inQuotes = !inQuotes;
-						else if (result[i] === k.comma && inQuotes) processed += '$$$$$$';
-						else processed += result[i];
+						const character = result[i];
+						if (character === '"') inQuotes = !inQuotes;
+						else if (character === ',' && inQuotes) processed += '$$$$$$';
+						else processed += character;
 					}
 					
 					const lines = processed.split('\n').filter(line => line.trim().length > 0);
@@ -75,9 +76,9 @@ export default class Files {
 						reject('No data found in CSV file.');
 						return;
 					}
-					const headers = lines[0].split(k.comma).map(header => header.trim());
+					const headers = lines[0].split(',').map(header => header.trim());
 					const records = lines.slice(1).map(line => {
-						const values = line.split(k.comma).map(value => value.trim().replace(/\$\$\$\$\$\$/g, k.comma));
+						const values = line.split(',').map(value => value.trim().replace(/\$\$\$\$\$\$/g, ','));
 						const record: Record<string, string> = {};
 						headers.forEach((header, index) => {
 							record[header] = values[index] || '';

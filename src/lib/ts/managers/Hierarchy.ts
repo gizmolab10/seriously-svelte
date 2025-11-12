@@ -1498,9 +1498,9 @@ export class Hierarchy {
 			const dict = result as Dictionary;
 			switch (format) {
 				case T_File_Format.csv:
-					const array = result as Array<Dictionary>;
-					for (const dict of array) {
-						pivot.extract_fromDict(dict);
+					const subdicts = result as Array<Dictionary>;
+					for (const subdict of subdicts) {
+						pivot.extract_fromDict(subdict);
 					}
 					await pivot.create_relationships_fromAllTraits();
 					break;
