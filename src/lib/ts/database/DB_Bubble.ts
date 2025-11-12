@@ -1,5 +1,5 @@
-import { T_Thing, T_Graph, T_Create, T_Predicate, T_Detail, layout } from '../common/Global_Imports';
-import { h, k, p, s, x, busy, show, debug, Ancestry } from '../common/Global_Imports';
+import { T_Thing, T_Graph, T_Create, T_Predicate, layout, Hierarchy } from '../common/Global_Imports';
+import { k, h, p, s, x, busy, show, debug, Ancestry } from '../common/Global_Imports';
 import { T_Persistence, T_Preference } from '../common/Global_Imports';
 import { T_Database } from './DB_Common';
 import DB_Common from './DB_Common';
@@ -13,6 +13,7 @@ export default class DB_Bubble extends DB_Common {
 	respond_to_focus_event = false;
 	t_database = T_Database.bubble;
 	respond_to_grab_event = false;
+	replace_hierarchy = false;
 	idBase = k.id_base.bubble;
 	invoke_wrapUp = true;
 
@@ -34,14 +35,24 @@ export default class DB_Bubble extends DB_Common {
 			const bubble_properties = JSON.parse(properties_string);
 			debug.log_bubble(`[DB_Bubble] received bubble update: ${properties_string}`);
 			switch (type) {
-				case 'UPDATE_PROPERTIES':
-					this.extract_fromProperties(bubble_properties);
-					break;
 				case 'CHANGE_FOCUS':
 					this.changeFocusTo(bubble_properties.id);
 					break;
-				case 'CHANGE_SELECTION':
+				case 'CHANGE_GRAB':
 					this.changeGrabTo(bubble_properties.id);
+					break;
+				case 'CHANGE_GRAPH_MODE':
+					show.w_graph_ofType.set(bubble_properties.in_radial_mode ? T_Graph.radial : T_Graph.tree);
+					break;
+				case 'REPLACE_HIERARCHY':
+					this.replace_hierarchy = true;		// N.B. must happen BEFORE next UPDATE_PROPERTIES
+					break;
+				case 'UPDATE_PROPERTIES':
+					if (this.replace_hierarchy) {
+						this.replace_hierarchy = false;
+						this.hierarchy = new Hierarchy(this);
+					}
+					this.extract_fromProperties(bubble_properties);
 					break;
 			}
 			this.setup_to_send_events();

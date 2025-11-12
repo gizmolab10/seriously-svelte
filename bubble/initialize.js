@@ -26,8 +26,8 @@ function(instance) {
 	function url_from_properties(properties) {
 		const disables = [
 			'auto_save',
-			properties.show_details ? 'unknown' : 'details',
-			properties.show_details ? 'unknown' : 'standalone_UI'];
+			'standalone_UI',
+			properties.show_details ? 'unknown' : 'details'];
 		const pairs = {
 			db: 'bubble',
 			debug: 'bubble',
