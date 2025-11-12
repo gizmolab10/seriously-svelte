@@ -22,7 +22,7 @@ function(instance, properties) {
 	process_incoming_properties();
 
 	function process_incoming_properties() {
-		LOG('incoming');
+		LOG('INCOMING');
 
 		//////////////////////////////////////////////////////////
 		//														//

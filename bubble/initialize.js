@@ -20,7 +20,7 @@ function(instance) {
 		}
 	}
 
-	function ERROR(message, ...optionalParams) { console.error(message, ...optionalParams); }
+	function ERROR(message, ...optionalParams) { console.error('[PLUGIN]', message, ...optionalParams); }
 	function LOG(message, value, ...optionalParams) { instance.data.LOG(message, value, ...optionalParams); }
 
 	function url_from_properties(properties) {
@@ -61,26 +61,27 @@ function(instance) {
 		if (event.data && !event.data.hello) {
 			switch (event.data.type) {
 				case 'focus_id':
-					LOG('publish focus_id:', event.data.id);
+					LOG('PUBLISH --> focus_id:', event.data.id);
 					instance.publishState('focus_id', event.data.id)
 					break;
 				case 'details_id':
-					LOG('publish details_id:', event.data.id);
+					LOG('PUBLISH --> details_id:', event.data.id);
 					instance.publishState('details_id', event.data.id);
 					break;
 				case 'selected_ids':
-					LOG('publish selected_ids:', event.data.ids);
+					LOG('PUBLISH --> selected_ids:', event.data.ids);
 					instance.publishState('selected_ids', event.data.ids);
 					break;
 				case 'in_radial_mode':
-					LOG('publish in_radial_mode:', event.data.in_radial_mode);
+					LOG('PUBLISH --> in_radial_mode:', event.data.in_radial_mode);
 					instance.publishState('in_radial_mode', event.data.in_radial_mode);
 					break;
 				case 'trigger_an_event':
-					LOG('trigger:', event.data.trigger);
+					LOG('TRIGGER -->', event.data.trigger);
 					instance.triggerEvent(event.data.trigger);
 					break;
 				case 'listening':
+					LOG('LISTENING');
 					instance.data.iframeIsListening = true;		// once set, no more messages will pend, update will send them all
 					if (instance.data.pendingMessages) {		// update stored previously prepared messages (before iframe was ready to receive them)
 						instance.data.pendingMessages.forEach(message => {

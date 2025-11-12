@@ -4,17 +4,22 @@ import { T_Persistence, T_Preference } from '../common/Global_Imports';
 import { T_Database } from './DB_Common';
 import DB_Common from './DB_Common';
 
+enum T_MID {	// type of message or identifier
+	details,
+	focus,
+	grab,
+	mode,
+}
+
 export default class DB_Bubble extends DB_Common {
-	prior_details_id: string | null = null;
+	allow_response_to: boolean[] = [false, false, false, false];
+	prior_id: string[] = [k.empty, k.empty];
 	t_persistence = T_Persistence.remote;
-	prior_focus_id: string | null = null;
 	prior_grabbed_ids: string[] = [];
-	respond_to_details_event = false;
-	respond_to_focus_event = false;
 	t_database = T_Database.bubble;
-	respond_to_grab_event = false;
-	replace_hierarchy = false;
 	idBase = k.id_base.bubble;
+	replace_hierarchy = false;
+	will_send_events = false;
 	invoke_wrapUp = true;
 
 	async fetch_all() {
@@ -33,7 +38,7 @@ export default class DB_Bubble extends DB_Common {
 		} else {
 			const type = event.data.type;
 			const bubble_properties = JSON.parse(properties_string);
-			debug.log_bubble(`update: ${type}`);
+			debug.log_bubble(type);
 			switch (type) {
 				case 'CHANGE_FOCUS':
 					this.changeFocusTo(bubble_properties.id);
@@ -187,44 +192,50 @@ export default class DB_Bubble extends DB_Common {
 		//														//
 		//////////////////////////////////////////////////////////
 
-		window.parent.postMessage({ type: 'trigger_an_event', trigger: 'ready' }, k.wildcard);
-		s.w_ancestry_focus.subscribe((ancestry: Ancestry) => {
-			const focus_id = ancestry?.thing?.id ?? k.corrupted;
-			if (!!focus_id && focus_id != this.prior_focus_id && busy.isFocusEventEnabled) {
-				if (this.respond_to_focus_event) {
-					this.prior_focus_id = focus_id;
-					window.parent.postMessage({ type: 'focus_id', id: focus_id }, k.wildcard);
-					window.parent.postMessage({ type: 'trigger_an_event', trigger: 'focus_changed' }, k.wildcard);			// post state first
+		if (!this.will_send_events) {
+			this.will_send_events = true;
+			window.parent.postMessage({ type: 'trigger_an_event', trigger: 'ready' }, k.wildcard);
+			s.w_ancestry_focus.subscribe((ancestry: Ancestry) => {
+				const focus_id = ancestry?.thing?.id ?? k.empty;
+				if (!!focus_id && focus_id != this.prior_id[T_MID.focus] && busy.isFocusEventEnabled) {
+					if (this.allow_response_to[T_MID.focus]) {
+						this.prior_id[T_MID.focus] = focus_id;
+						window.parent.postMessage({ type: 'focus_id', id: focus_id }, k.wildcard);
+						window.parent.postMessage({ type: 'trigger_an_event', trigger: 'focus_changed' }, k.wildcard);			// post state first
+					}
+					this.allow_response_to[T_MID.focus] = true;
 				}
-				this.respond_to_focus_event = true;
-			}
-		});
-		x.si_grabs.w_items.subscribe((ancestries: Ancestry[]) => {
-			const grabbed_ids = ancestries.map((ancestry: Ancestry) => ancestry.thing?.id ?? k.corrupted);
-			if (!!ancestries && grabbed_ids.join(', ') != this.prior_grabbed_ids.join(', ')) {
-				if (this.respond_to_grab_event) {
-					this.prior_grabbed_ids = grabbed_ids;
-					window.parent.postMessage({ type: 'selected_ids', ids: grabbed_ids }, k.wildcard);
-					window.parent.postMessage({ type: 'trigger_an_event', trigger: 'selection_changed' }, k.wildcard);
+			});
+			x.si_grabs.w_items.subscribe((ancestries: Ancestry[]) => {
+				const grabbed_ids = ancestries.map((ancestry: Ancestry) => ancestry.thing?.id ?? k.empty);
+				if (!!ancestries && grabbed_ids.join(', ') != this.prior_grabbed_ids.join(', ')) {
+					if (this.allow_response_to[T_MID.grab]) {
+						this.prior_grabbed_ids = grabbed_ids;
+						window.parent.postMessage({ type: 'selected_ids', ids: grabbed_ids }, k.wildcard);
+						window.parent.postMessage({ type: 'trigger_an_event', trigger: 'selection_changed' }, k.wildcard);
+					}
+					this.allow_response_to[T_MID.grab] = true;
 				}
-				this.respond_to_grab_event = true;
-			}
-		});
-		show.w_graph_ofType.subscribe((graph_type: T_Graph) => {
-			window.parent.postMessage({ type: 'in_radial_mode', in_radial_mode: graph_type == T_Graph.radial }, k.wildcard);
-			window.parent.postMessage({ type: 'trigger_an_event', trigger: 'mode_changed' }, k.wildcard);
-		});
-		s.w_ancestry_forDetails.subscribe((ancestry: Ancestry) => {
-			const details_id = ancestry?.thing?.id ?? k.corrupted;
-			if (!!details_id && details_id != this.prior_details_id) {
-				if (this.respond_to_details_event) {
-					this.prior_details_id = details_id;
-					window.parent.postMessage({ type: 'details_id', id: details_id }, k.wildcard);
-					window.parent.postMessage({ type: 'trigger_an_event', trigger: 'details_changed' }, k.wildcard);
+			});
+			show.w_graph_ofType.subscribe((graph_type: T_Graph) => {
+				if (this.allow_response_to[T_MID.mode]) {
+					window.parent.postMessage({ type: 'in_radial_mode', in_radial_mode: graph_type == T_Graph.radial }, k.wildcard);
+					window.parent.postMessage({ type: 'trigger_an_event', trigger: 'mode_changed' }, k.wildcard);
 				}
-				this.respond_to_details_event = true;
-			}
-		});
+				this.allow_response_to[T_MID.mode] = true;
+			});
+			s.w_ancestry_forDetails.subscribe((ancestry: Ancestry) => {
+				const details_id = ancestry?.thing?.id ?? k.empty;
+				if (!!details_id && details_id != this.prior_id[T_MID.details]) {
+					if (this.allow_response_to[T_MID.details]) {
+						this.prior_id[T_MID.details] = details_id;
+						window.parent.postMessage({ type: 'details_id', id: details_id }, k.wildcard);
+						window.parent.postMessage({ type: 'trigger_an_event', trigger: 'details_changed' }, k.wildcard);
+					}
+					this.allow_response_to[T_MID.details] = true;
+				}
+			});
+		}
 	}
 
 }
