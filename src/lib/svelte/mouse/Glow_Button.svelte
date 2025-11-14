@@ -1,6 +1,7 @@
 <script lang='ts'>
     import { c, e, k, u, show, colors, svgPaths } from '../../ts/common/Global_Imports';
-    import { Rect, Size, Point, T_Layer } from '../../ts/common/Global_Imports';
+    import { Rect, Size, Point, T_Layer, S_Mouse } from '../../ts/common/Global_Imports';
+    import Mouse_Responder from './Mouse_Responder.svelte';
     import SVG_Gradient from '../draw/SVG_Gradient.svelte';
     export let handle_click: (title: string) => boolean;
     export let font_size: number = k.font_size.banners;
@@ -24,34 +25,33 @@
 		const _ = $w_background_color;
 		banner_color = colors.banner;
 	}
-    
+
     function intercept_click() {
         handle_click(click_title);
         isHovering = false;
     }
 
-    function handle_mouse_down() {
-        if (detect_autorepeat) {
-            mouseTimer.autorepeat_start(0, () => handle_click(click_title));
-        } else {
-            intercept_click();
+    function handle_s_mouse(s_mouse: S_Mouse) {
+        if (s_mouse.hover_didChange) {
+            const was_in = isHovering;
+            isHovering = s_mouse.isHovering;
+            if (s_mouse.isHovering && was_in && detect_autorepeat) {
+                // Extra mouse enter event when we click - stop autorepeat
+                mouseTimer.autorepeat_stop();
+            }
+        } else if (s_mouse.isDown) {
+            if (detect_autorepeat) {
+                mouseTimer.autorepeat_start(0, () => handle_click(click_title));
+            } else {
+                intercept_click();
+            }
+        } else if (s_mouse.isUp) {
+            if (detect_autorepeat) {
+                mouseTimer.autorepeat_stop();
+            }
         }
     }
 
-    function handle_mouse_up() {
-        if (detect_autorepeat) {
-            mouseTimer.autorepeat_stop();
-        }
-    }
-
-    function handle_mouse_enter(is_in: boolean) {
-        const was_in = isHovering;
-        isHovering = is_in;
-        if (is_in && was_in && detect_autorepeat) {        // we get an extra mouse enter event when we click
-            mouseTimer.autorepeat_stop();
-        }
-    }
-    
 </script>
 
 <div class='glow-button'
@@ -69,36 +69,41 @@
             size={glow_rect.size}
             path={svgPaths.rectangle(glow_rect)}/>
     {/if}
-    <div class='glow-button-title'
-        on:mouseup={handle_mouse_up}
-        on:mousedown={handle_mouse_down}
-        on:mouseenter={() => handle_mouse_enter(true)}
-        on:mouseleave={() => handle_mouse_enter(false)}
-        style='
-            left: 50%;
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            user-select: none;
-            text-align: center;
-            position: absolute;
-            top: calc(50% + 1px);
-            -ms-user-select: none;
-            -moz-user-select: none;
-            font-size: {font_size}px;
-            -webkit-user-select: none;
-            background-color: transparent;
-            transform: translate(-50%, -50%);'>
-        {#if !!icon_path}
-            <svg
-                viewBox='-2.2 -3.2 20 20'
-                class='svg-glow-button-path'>
-                <path d={icon_path} stroke={colors.border} fill={isHovering ? 'black' : 'white'} stroke-width='0.75'/>
-            </svg>
-        {:else}
-            {title}
-        {/if}
-    </div>
+    <Mouse_Responder
+        width={width}
+        height={height}
+        name={name || `glow-${banner_id}`}
+        handle_s_mouse={handle_s_mouse}
+        detect_mouseUp={true}
+        detect_mouseDown={true}
+        origin={Point.zero}>
+        <div class='glow-button-title'
+            style='
+                left: 50%;
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                user-select: none;
+                text-align: center;
+                position: absolute;
+                top: calc(50% + 1px);
+                -ms-user-select: none;
+                -moz-user-select: none;
+                font-size: {font_size}px;
+                -webkit-user-select: none;
+                background-color: transparent;
+                transform: translate(-50%, -50%);'>
+            {#if !!icon_path}
+                <svg
+                    viewBox='-2.2 -3.2 20 20'
+                    class='svg-glow-button-path'>
+                    <path d={icon_path} stroke={colors.border} fill={isHovering ? 'black' : 'white'} stroke-width='0.75'/>
+                </svg>
+            {:else}
+                {title}
+            {/if}
+        </div>
+    </Mouse_Responder>
 </div>
 
 <style>
