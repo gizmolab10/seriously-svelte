@@ -153,6 +153,85 @@ Signal-based events in `src/lib/ts/signals/`:
 - `Events`: Event definitions
 - Components and managers communicate via signals
 
+### 7. Hover System
+
+The hover system manages interactive visual feedback across UI elements with significant complexity.
+
+**Architecture**:
+- **Global State**: Single `w_s_hover` store (State.ts:35) holds currently hovered S_Element
+- **S_Element**: Base class (state/S_Element.ts) manages hover state, cursor, colors
+- **S_Mouse**: Encapsulates mouse events including hover state changes
+- **Mouse_Responder**: Reusable Svelte component for unified mouse handling
+
+**Key Files**:
+- `src/lib/ts/state/S_Element.ts` - Core hover logic and visual properties
+- `src/lib/ts/state/S_Mouse.ts` - Mouse state encapsulation
+- `src/lib/svelte/mouse/Mouse_Responder.svelte` - Centralized mouse event handler
+- `src/lib/ts/signals/Events.ts` - Global mouse tracking (w_mouse_location)
+
+**How It Works**:
+1. Global mouse position tracked in `layout.w_mouse_location` (Events.ts:217)
+2. Each interactive element wrapped in `Mouse_Responder` component
+3. Mouse_Responder detects hover via bounding box or custom `handle_isHit` function
+4. On hover change, creates `S_Mouse.hover()` and calls parent's `handle_s_mouse()`
+5. Parent updates `S_Element.isHovering`, which sets global `w_s_hover` store
+6. Visual properties (stroke, fill, cursor, border) recompute reactively
+
+**Complexity Points**:
+
+1. **Dual Tracking**: Hover state stored in both S_Element and S_Mouse
+2. **Delayed Detection**: 10ms setTimeout in Mouse_Responder:104 to wait for store updates
+3. **Inverted Logic**: Three similar but different concepts:
+   - `isInverted` (S_Element:30) - Base inversion flag
+   - `color_isInverted` (S_Element:55) - `isInverted XOR isHovering`
+   - `isHoverInverted` (S_Element:92) - Complex widget-specific logic
+4. **Widget Hierarchy**: S_Widget contains S_Element children (drag, title, reveal dots)
+5. **Hover Reversal**: `hover_isReversed` flag (Widget_Reveal:9) flips hover logic for grabbed state
+6. **Visual Dependencies**: Hover affects multiple computed properties across S_Element/S_Widget
+
+**Inconsistencies & Issues**:
+
+1. **Two Patterns**: Some components use Mouse_Responder, others use direct `on:mouseenter/on:mouseleave` (Glow_Button.svelte)
+2. **Unused Flag**: `ignore_hover` defined (S_Element:27) but never checked
+3. **Naming Confusion**: `hover_isReversed` vs `isInverted` vs `isHoverInverted` - unclear distinctions
+4. **State Duplication**: `s_mouse.isHovering` mirrors `S_Element.isHovering`
+5. **Complex Fallback**: Setting hover to `s_widget` when element unhovered (S_Element:68) - unclear intent
+6. **Reactive Chaining**: Hover triggers visual updates which trigger component re-renders - can cascade
+
+**Widget-Specific Behavior**:
+
+Widgets (src/lib/svelte/widget/) have special hover rules:
+- **Widget dots** (drag/reveal): Use inverted colors when grabbed/editing
+- **Reveal dots**: Reverse hover when `hover_isReversed != ancestry.isGrabbed`
+- **Drag dots**: Set `isInverted` based on alteration permissions
+- **Borders**: Show on hover, focus, grabbed, or editing states
+
+**Best Practices When Working With Hover**:
+
+✅ **DO**:
+- Use `Mouse_Responder` for consistent behavior
+- Check `s_element.isHovering` getter, don't access store directly
+- Let `S_Element` compute visual properties (stroke, fill, cursor)
+- Provide `handle_isHit` for non-rectangular hit areas
+
+❌ **DON'T**:
+- Mix Mouse_Responder with manual `on:mouseenter/leave` handlers
+- Modify `w_s_hover` directly - use `S_Element.isHovering` setter
+- Create multiple hover timers - reuse from `elements.s_mouse_forName()`
+- Assume hover state is instant - account for 10ms detection delay
+
+**Debugging Hover Issues**:
+```typescript
+// Check current hover state
+console.log('Hover:', get(s.w_s_hover)?.description);
+
+// Enable S_Element color logging
+debug.log_colors(`ELEMENT ${name} inverted:${isInverted}`);
+
+// Check mouse state
+console.log('Mouse:', s_mouse.description);
+```
+
 ## Key Systems
 
 ### Hierarchy System
