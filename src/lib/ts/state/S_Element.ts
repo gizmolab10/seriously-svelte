@@ -24,7 +24,6 @@ export default class S_Element {
 	color_background = 'white';
 	hoverColor = 'transparent';
 	type = T_Element.none;
-	ignore_hover = false;
 	isDisabled = false;
 	isSelected = false;
 	isInverted = false;		// means color for hover == as though not hovering (and vice versa)
