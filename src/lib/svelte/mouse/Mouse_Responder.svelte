@@ -101,24 +101,16 @@
 	}
 
 	function handle_hover(event: MouseEvent) {
-		if (!!bound_element) {
+		// Use event coordinates directly instead of waiting for global store
+		const mouse_location = event ? new Point(event.clientX, event.clientY) : $w_mouse_location;
+
+		if (!!bound_element && !!mouse_location) {
 			let isHit = false;
-
-			// For mouseleave, always treat as not hovering
-			if (event.type === 'mouseleave') {
-				isHit = false;
+			if (!!handle_isHit) {
+				isHit = handle_isHit();				// used when this element's hover shape is not its bounding rect
 			} else {
-				// For mousemove, check if mouse is actually inside
-				const mouse_location = event ? new Point(event.clientX, event.clientY) : $w_mouse_location;
-				if (!!mouse_location) {
-					if (!!handle_isHit) {
-						isHit = handle_isHit();				// used when this element's hover shape is not its bounding rect
-					} else {
-						isHit = Rect.rect_forElement_containsPoint(bound_element, mouse_location);		// use bounding rect
-					}
-				}
+				isHit = Rect.rect_forElement_containsPoint(bound_element, mouse_location);		// use bounding rect
 			}
-
 			if (s_mouse.isHovering != isHit) {
 				s_mouse.isHovering  = isHit;
 				s_mouse.hover_didChange  = true;
