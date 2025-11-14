@@ -5,7 +5,6 @@
 	import Breadcrumb_Button from '../mouse/Breadcrumb_Button.svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
-	const { w_s_title_edit, w_ancestry_focus, w_ancestry_forDetails, w_t_startup } = s;
 	export let width = layout.windowSize.width;
 	export let centered: boolean = false;
 	export let left: number = 28;
@@ -13,6 +12,7 @@
 	const { w_search_state } = search;
 	const { w_rect_ofGraphView } = layout;
 	const { w_items: w_grabbed } = x.si_grabs;
+	const { w_s_title_edit, w_ancestry_forDetails, w_t_startup } = s;
 	let s_component: S_Component | null = null;
 	let things: Array<Thing> = [];
 	let size = k.height.button;

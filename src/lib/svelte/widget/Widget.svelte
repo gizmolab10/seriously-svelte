@@ -2,7 +2,6 @@
 	import { k, s, u, x, debug, colors, layout, signals, elements, components } from '../../ts/common/Global_Imports';
 	import { G_Widget, S_Mouse, S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Signal, T_Component } from '../../ts/common/Global_Imports';
-	const { w_s_hover, w_s_title_edit, w_ancestry_focus } = s;
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { Point } from '../../ts/common/Global_Imports';
 	import Widget_Reveal from './Widget_Reveal.svelte';
@@ -19,6 +18,7 @@
 	const { w_items: w_grabbed } = x.si_grabs;
 	const reveal_points_toChild = g_widget.points_toChild;
     const drag_points_right = g_widget.widget_points_right;
+	const { w_s_hover, w_s_title_edit, w_ancestry_focus } = s;
 	let observer: MutationObserver | null = null;
 	let width_ofWidget = g_widget.width_ofWidget;
 	let border_radius = k.height.dot / 2;

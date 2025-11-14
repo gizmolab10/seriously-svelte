@@ -2,12 +2,12 @@
 	import { T_Search, T_Layer, T_Element, T_Preference, T_Search_Preference } from '../../ts/common/Global_Imports';
 	import { k, p, s, show, Point, layout, search, elements, controls } from '../../ts/common/Global_Imports';
 	import Segmented from '../mouse/Segmented.svelte';
-	const { w_thing_fontFamily } = s;
 	export let zindex = T_Layer.graph;
 	export let width = 80;
 	export let top = 0;
 	const left_width = 180;
 	const { w_details } = show;
+	const { w_thing_fontFamily } = s;
 	const { w_rect_ofGraphView } = layout;
 	const s_search = elements.s_element_for(null, T_Element.search, k.empty);
 	const { w_search_state, w_search_preferences, w_search_results_found } = search;

@@ -6,12 +6,11 @@
 	import Rubberband from '../draw/Rubberband.svelte';
 	import Button from '../mouse/Button.svelte';
 	import { onMount } from 'svelte';
-	const { w_dragging_active, w_t_startup, w_device_isMobile, w_popupView_id, w_s_hover, w_ancestry_focus, w_s_title_edit, w_thing_fontFamily } = s;
 	const size_big = k.height.button + 4;
 	const { w_items: w_expanded } = x.si_expanded;
 	const { w_graph_ofType, w_depth_limit } = show;
-	const { w_user_graph_offset, w_rect_ofGraphView } = layout;
-	const { w_ring_rotation_angle, w_ring_rotation_radius } = layout;
+	const { w_user_graph_offset, w_rect_ofGraphView, w_ring_rotation_angle, w_ring_rotation_radius } = layout;
+	const { w_dragging_active, w_t_startup, w_s_hover, w_ancestry_focus, w_s_title_edit, w_thing_fontFamily } = s;
 	let actual_content_rect = layout.user_offset_toGraphDrawing;
 	let draggableRect = $w_rect_ofGraphView;
 	let rubberbandComponent: any;

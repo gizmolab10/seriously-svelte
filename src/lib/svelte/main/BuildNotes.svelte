@@ -1,6 +1,5 @@
 <script lang='ts'>
 	import { k, s, u, show, colors, Point, builds, T_Layer } from '../../ts/common/Global_Imports';
-	const { w_popupView_id } = s;
 	import Close_Button from '../mouse/Close_Button.svelte';
 	import Steppers from '../mouse/Steppers.svelte';
 	import { onMount } from 'svelte';
@@ -8,6 +7,7 @@
 	const notesLimit = notesIndexed.length - 1;
 	const { w_directionals_ofType } = show;
 	const { w_background_color } = colors;
+	const { w_popupView_id } = s;
 	let title = k.empty;
 	let notesIndex = 0;
 	let notes = [];

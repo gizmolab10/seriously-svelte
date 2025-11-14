@@ -1,6 +1,5 @@
 <script lang='ts'>
 	import { c, k, s, show, Rect, Size, Point, debug, Angle, colors, radial, layout, signals } from '../../ts/common/Global_Imports';
-	const { w_ancestry_focus, w_count_mouse_up, w_thing_fontFamily } = s;
 	import { T_Layer, G_Cluster, Direction } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/runtime/Identifiable';
@@ -12,6 +11,7 @@
 	const offset = k.radial_widget_inset;
 	const { w_background_color } = colors;
 	const g_sliderArc = g_cluster.g_sliderArc;
+	const { w_count_mouse_up, w_thing_fontFamily } = s;
 	const s_paging_rotation = g_cluster.s_paging_rotation;
 	const { w_g_paging_cluster, w_ring_rotation_radius } = layout;
 	let mouse_up_count = $w_count_mouse_up;

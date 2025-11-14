@@ -1,12 +1,11 @@
 function(instance, properties) {
 	const field_labels = [
-		'override_focus_and_mode',
 		'override_depth_limit',
 		'override_zoom_scale',
 		'erase_user_settings',
 		'starting_object_id',
-		'show_radial_mode',
 		'focus_object_id',
+		'override_focus',
 		'show_details',
 		'depth_limit',
 		'zoom_scale'];

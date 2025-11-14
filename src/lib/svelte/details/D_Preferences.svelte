@@ -7,7 +7,6 @@
 	import Portal from '../draw/Portal.svelte';
 	import Color from '../mouse/Color.svelte';
 	import { onMount } from 'svelte';
-	const { w_auto_adjust_graph } = s;
 	export let top = 0;
 	const back_up = -5;
 	const separator_left = 35;
@@ -16,6 +15,7 @@
 	const picker_offset = `-189px`;
 	const color_left = width / 2 - 13;
 	const segmented_width = width - 6;
+	const { w_auto_adjust_graph } = s;
 	const { w_scale_factor } = layout;
 	const { w_separator_color } = colors;
 	const segmented_height = k.height.button;

@@ -5,7 +5,6 @@
 	import Buttons_Table from '../mouse/Buttons_Table.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Button from '../mouse/Button.svelte';
-	const { w_s_alteration, w_ancestry_forDetails } = s;
 	export let top = 2;
 	const title_gap = 4;
 	const has_title = true;
@@ -19,6 +18,7 @@
 	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_items: w_expanded } = x.si_expanded;
 	const bottom_padding = bottom_tableHeight - 48;
+	const { w_s_alteration, w_ancestry_forDetails } = s;
     const font_sizes = [k.font_size.instructions, k.font_size.instructions];
     const s_banner_hideable = details.s_banner_hideables_byType[T_Detail.actions];
 	const s_cancel = elements.s_element_for($w_ancestry_forDetails, T_Element.cancel, k.empty);

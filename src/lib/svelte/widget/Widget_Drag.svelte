@@ -6,7 +6,6 @@
 	import { svgPaths } from '../../ts/common/Global_Imports';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
-	const { w_ancestry_focus, w_ancestry_forDetails, w_s_hover, w_s_alteration } = s;
 	export let points_right = true;
 	export let s_drag!: S_Element;
 	const size = k.height.dot;
@@ -17,6 +16,7 @@
 	const { w_countDots_ofType } = show;
 	const { w_background_color } = colors;
 	const { w_items: w_grabbed } = x.si_grabs;
+	const { w_ancestry_focus, w_ancestry_forDetails } = s;
 	let fill_color = debug.lines ? 'transparent' : s_drag.fill;
 	let svg_outline_color = s_drag.svg_outline_color;
 	let center = g_widget.center_ofDrag;

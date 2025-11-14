@@ -3,13 +3,13 @@
 	import { T_Layer, T_Radial_Zone, T_Component, S_Component } from '../../ts/common/Global_Imports';
 	import { Thing, Point, Angle, g_radial, databases } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	const { w_count_mouse_up, w_s_title_edit, w_ancestry_focus } = s;
 	import Radial_Cluster from './Radial_Cluster.svelte';
 	import { onMount } from 'svelte';
 	const name = 'rings';
 	const { w_thing_color } = colors;
 	const ring_width = k.thickness.rotation_ring;
 	const mouse_timer = e.mouse_timer_forName(name);	// persist across destroy/recreate
+	const { w_count_mouse_up, w_s_title_edit, w_ancestry_focus } = s;
 	const { w_g_paging_cluster, w_ring_rotation_angle, w_ring_rotation_radius } = layout;
 	let color = $w_ancestry_focus?.thing?.color ?? colors.default_forThings;
 	let mouse_up_count = $w_count_mouse_up;

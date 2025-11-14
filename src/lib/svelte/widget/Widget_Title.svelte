@@ -5,7 +5,6 @@
 	import { Rect, Seriously_Range } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { onMount } from 'svelte';
-	const { w_thing_title, w_thing_fontFamily, w_s_title_edit } = s;
 	export let s_title!: S_Element;
 	export let fontSize = '1em';
 	const ancestry = s_title.ancestry;
@@ -18,6 +17,7 @@
 	const input_height = k.height.dot + 2;
 	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_items: w_expanded } = x.si_expanded;
+	const { w_thing_title, w_thing_fontFamily, w_s_title_edit } = s;
 	let title_width = (thing?.width_ofTitle ?? 0) + title_extra();
 	let layout_timer: number | null = null;
 	let title_binded = thing?.title ?? k.empty;

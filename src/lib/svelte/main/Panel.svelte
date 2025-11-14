@@ -2,7 +2,6 @@
 	import { c, e, h, k, s, u, x, show, busy, debug, colors, search, layout, elements, databases } from '../../ts/common/Global_Imports';
 	import { Rect, Size, Point, Thing, Ancestry, Hierarchy, Direction } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Search, T_Banner, T_Control, T_Startup } from '../../ts/common/Global_Imports';
-	const { w_t_startup, w_popupView_id, w_device_isMobile, w_hierarchy, w_s_title_edit, w_ancestry_focus } = s;
 	import Secondary_Controls from '../controls/Secondary_Controls.svelte';
 	import Primary_Controls from '../controls/Primary_Controls.svelte';
 	import Search_Results from '../search/Search_Results.svelte';
@@ -21,6 +20,7 @@
 	const { w_separator_color } = colors;
 	const { w_rect_ofGraphView } = layout;
 	const { w_search_results_found } = search;
+	const { w_t_startup, w_popupView_id } = s;
 	const spinner_title = 'Loading your data...';
 	const offset_toIntersection = new Point(-4, 8);
     const half_thickness: number = k.thickness.separator.main / 2;

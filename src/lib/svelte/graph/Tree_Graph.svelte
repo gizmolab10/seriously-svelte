@@ -1,11 +1,11 @@
 <script lang='ts'>
 	import { s, show, g_tree, layout, signals, S_Component } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Signal, T_Component } from '../../ts/common/Global_Imports';
-	const { w_ancestry_focus } = s;
 	import Tree_Branches from './Tree_Branches.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import { onMount } from 'svelte';
 	const { w_scale_factor, w_rect_ofGraphView, w_user_graph_offset } = layout;
+	const { w_ancestry_focus } = s;
 	const { w_depth_limit } = show;
 	let s_component: S_Component;
 	let reattachments = 0;

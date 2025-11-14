@@ -1,7 +1,6 @@
 <script lang='ts'>
-	import { c, e, k, s, u, x, Rect, Size, Point, debug, layout, elements } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Timer, S_Mouse } from '../../ts/common/Global_Imports';
-	const { w_thing_fontFamily } = s;
+	import { Rect, Point, T_Layer, T_Timer, S_Mouse } from '../../ts/common/Global_Imports';
+	import { e, k, s, u, layout, elements } from '../../ts/common/Global_Imports';
 	import type { Handle_Result } from '../../ts/types/Types';
 	import { onMount } from 'svelte';
 	export let handle_isHit: () => {flag: boolean} | null = null;
@@ -22,6 +21,7 @@
 	export let align_left = true;
 	export let name = 'generic';
 	export let style = k.empty;
+	const { w_thing_fontFamily } = s;
     const { w_mouse_location } = layout;
 	const s_mouse = elements.s_mouse_forName(name);
 	const mouse_timer = e.mouse_timer_forName(name);
@@ -31,12 +31,12 @@
 	//////////////////////////////////////////////////////////////
 	//															//
 	//	required: width, height, name,							//
-	//		handle_s_mouse closure (*),						//
+	//		handle_s_mouse closure (*),							//
 	//  	center or origin (one must remain null)				//
 	//  optional: handle_isHit closure (*)						//
 	//															//
 	//  (*)	handle_isHit: override for hit geometry & logic		//
-	//	(*)	handle_s_mouse: mouse info relevant to caller:	//
+	//	(*)	handle_s_mouse: mouse info relevant to caller:		//
 	//		down, up, double, long & hover						//
 	//															//
 	//////////////////////////////////////////////////////////////

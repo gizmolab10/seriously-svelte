@@ -10,6 +10,7 @@ export class Configuration {
 	allow_graph_editing = true;
 	allow_title_editing = true;
 	has_details_button = true;
+	has_zoom_controls = false;
 	has_standalone_UI = true;
 	allow_autoSave = true;
 	erasePreferences = 0;

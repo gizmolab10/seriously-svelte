@@ -10,10 +10,10 @@
 	import D_Traits from './D_Traits.svelte';
 	import D_Data from './D_Data.svelte';
 	import D_Tags from './D_Tags.svelte';
-	const { w_count_details, w_ancestry_forDetails } = s;
 	const width = k.width.details;
 	const { w_search_state } = search;
 	const { w_index: w_found } = x.si_found;
+	const { w_count_details, w_ancestry_forDetails } = s;
 	const { w_description: w_grabs_description } = x.si_grabs;
 	const { w_description: w_tags_description } = x.si_thing_tags;
 	const { w_description: w_traits_description } = x.si_thing_traits;

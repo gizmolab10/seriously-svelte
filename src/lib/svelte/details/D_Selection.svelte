@@ -9,12 +9,12 @@
 	import Portal from '../draw/Portal.svelte';
 	import Color from '../mouse/Color.svelte';
 	import { onMount } from 'svelte';
-	const { w_thing_title, w_ancestry_focus, w_ancestry_forDetails, w_relationship_order } = s;
 	export let top = 6;
 	const id = 'selection details';
 	const { w_details_ofType } = show;
 	const { w_items: w_grabbed } = x.si_grabs;
 	const s_info = elements.s_element_for(new Identifiable(id), T_Element.details, id);
+	const { w_thing_title, w_ancestry_focus, w_ancestry_forDetails, w_relationship_order } = s;
 	let ancestry: Ancestry | null = $w_ancestry_forDetails;
 	let thing: Thing | null = ancestry?.thing ?? null;
 	let thingHID: Integer | null = thing?.hid;

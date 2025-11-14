@@ -8,7 +8,6 @@
 	import Separator from '../draw/Separator.svelte';
 	import Breadcrumbs from './Breadcrumbs.svelte';
 	import Button from '../mouse/Button.svelte';
-	const { w_count_window_resized, w_popupView_id } = s;
 	const y_center = 10.5;
 	const scaling_stroke_width = 1.5;
 	const { w_search_state } = search;
@@ -17,6 +16,7 @@
 	const { w_background_color } = colors;
 	const hamburger_size = k.height.button;
 	const { w_search_controls, w_graph_ofType } = show;
+	const { w_count_window_resized, w_popupView_id } = s;
 	const hamburger_path = svgPaths.hamburgerPath(hamburger_size);
 	const svg_style = 'top: -0.5px; left: -0.5px; position: absolute; width: 100%; height: 100%;';
 	let width = layout.windowSize.width - 20;
@@ -42,9 +42,9 @@
 		const left_widths = {
 			0: c.has_details_button ? 18 : -7,			// details
 			1: !$w_search_controls ? 11 : c.has_details_button ? 11 : 11,	// recents / search
-			2: 57,	// graph type
-			3: 69,	// plus (100, for now hidden)
-			4: 0,	// minus (26, for now hidden)
+			2: c.has_standalone_UI ? 57 : 0,	// graph type
+			3: c.has_zoom_controls ? 100 : 34,	// plus (100, for now hidden)
+			4: c.has_zoom_controls ? 26 : 0,	// minus (26, for now hidden)
 			5: c.allow_search ? 24 : 6,
 			6: 25,	// easter egg, separator
 			7: 43,	// search
@@ -98,15 +98,17 @@
 					left={-54 - (c.has_details_button ? 0 : 26)}
 					width={lefts[7] + (c.has_details_button ? 0 : 26)}/>
 			{/if}
-			{#key $w_graph_ofType}
-				<Segmented name='graph-type'
-					width={80}
-					origin={Point.x(lefts[2])}
-					selected={[$w_graph_ofType]}
-					titles={[T_Graph.tree, T_Graph.radial]}
-					handle_selection={(titles) => controls.handle_segmented_choices('graph', titles)}/>
-			{/key}
-			{#if false}
+			{#if c.has_standalone_UI}
+				{#key $w_graph_ofType}
+					<Segmented name='graph-type'
+						width={80}
+						origin={Point.x(lefts[2])}
+						selected={[$w_graph_ofType]}
+						titles={[T_Graph.tree, T_Graph.radial]}
+						handle_selection={(titles) => controls.handle_segmented_choices('graph', titles)}/>
+				{/key}
+			{/if}
+			{#if c.has_zoom_controls}
 				<div class='scaling-controls'>
 					<Button name={T_Control.grow}
 						width={size_big}

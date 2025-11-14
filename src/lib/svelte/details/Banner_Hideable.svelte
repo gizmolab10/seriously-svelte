@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { k, s, u, show, T_Layer, T_Detail, layout, details } from '../../ts/common/Global_Imports';
-	const { w_ancestry_forDetails } = s;
 	import Glows_Banner from '../mouse/Glows_Banner.svelte';
     export let t_detail: T_Detail;
 	const { w_details_ofType } = show;
+	const { w_ancestry_forDetails } = s;
 	const s_banner_hideable = details.s_banner_hideables_byType[t_detail];
 	const { w_description: w_description, w_extra_titles: w_extra_titles } = s_banner_hideable?.si_items;
 	let title = details.banner_title_forDetail(t_detail);

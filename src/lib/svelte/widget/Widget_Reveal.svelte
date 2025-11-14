@@ -5,11 +5,11 @@
 	import { Size, Point } from '../../ts/common/Global_Imports';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
-	const { w_thing_title } = s;
     export let hover_isReversed = false;
     export let zindex = T_Layer.dots;
 	export let points_toChild = true;
 	export let s_reveal!: S_Element;
+	const { w_thing_title } = s;
 	const ancestry = s_reveal.ancestry;
 	const g_widget = ancestry.g_widget;
 	const { w_countDots_ofType } = show;

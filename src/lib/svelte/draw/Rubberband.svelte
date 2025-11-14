@@ -2,11 +2,11 @@
     import { Rect, Size, Point, T_Layer, T_Dragging, T_Component, colors } from '../../ts/common/Global_Imports';
     import { h, k, s, u, x, debug, layout, elements, components } from '../../ts/common/Global_Imports';
     import { onMount, onDestroy } from 'svelte';
-    const { w_dragging_active, w_count_mouse_up, w_s_title_edit } = s;
     export let strokeWidth = k.thickness.rubberband;
     export let bounds: Rect;
     const enabled = true;
 	const { w_separator_color } = colors;
+    const { w_dragging_active, w_count_mouse_up, w_s_title_edit } = s;
     const { w_mouse_location, w_scaled_movement, w_user_graph_offset } = layout;
     let mouse_upCount = $w_count_mouse_up;
     let startPoint: Point | null = null;
