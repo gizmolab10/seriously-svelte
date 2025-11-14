@@ -192,11 +192,10 @@ The hover system manages interactive visual feedback across UI elements with sig
 **Inconsistencies & Issues**:
 
 1. **Two Patterns**: Some components use Mouse_Responder, others use direct `on:mouseenter/on:mouseleave` (Glow_Button.svelte)
-2. **Unused Flag**: `ignore_hover` defined (S_Element:27) but never checked
-3. **Naming Confusion**: `hover_isReversed` vs `isInverted` vs `isHoverInverted` - unclear distinctions
-4. **State Duplication**: `s_mouse.isHovering` mirrors `S_Element.isHovering`
-5. **Complex Fallback**: Setting hover to `s_widget` when element unhovered (S_Element:68) - unclear intent
-6. **Reactive Chaining**: Hover triggers visual updates which trigger component re-renders - can cascade
+2. **Naming Confusion**: `hover_isReversed` vs `isInverted` vs `isHoverInverted` - unclear distinctions
+3. **State Duplication**: `s_mouse.isHovering` mirrors `S_Element.isHovering`
+4. **Complex Fallback**: Setting hover to `s_widget` when element unhovered (S_Element:68) - unclear intent
+5. **Reactive Chaining**: Hover triggers visual updates which trigger component re-renders - can cascade
 
 **Widget-Specific Behavior**:
 
@@ -236,7 +235,7 @@ console.log('Mouse:', s_mouse.description);
 
 See `notes/claude/HOVER_REFACTOR_PROPOSAL.md` for full details. Incremental refactoring steps:
 
-- [ ] **Step 1**: Remove unused `ignore_hover` flag from S_Element
+- [x] **Step 1**: Remove unused `ignore_hover` flag from S_Element ✅
 - [ ] **Step 2**: Standardize Mouse_Responder usage (refactor Glow_Button direct handlers)
 - [ ] **Step 3**: Clarify hover inversion naming (`isInverted` → `colors_swapOnGrab`, etc.)
 - [ ] **Step 4**: Eliminate S_Mouse.isHovering duplication (use `hover_isHit` instead)
