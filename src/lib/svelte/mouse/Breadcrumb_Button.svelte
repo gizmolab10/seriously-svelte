@@ -1,21 +1,20 @@
 <script lang='ts'>
-	import { h, k, s, u, x, debug, colors, search, elements } from '../../ts/common/Global_Imports';
+	import { h, k, s, u, x, debug, colors, layout, search, elements } from '../../ts/common/Global_Imports';
 	import { Point, T_Search, T_Banner, S_Element } from '../../ts/common/Global_Imports';
-	const { w_s_hover, w_thing_fontFamily } = s;
 	import Button from './Button.svelte';
 	export let left = 0;
 	export let s_breadcrumb;
 	export let center = Point.zero;
 	const borderStyle = '1px solid';
+	const { w_s_hover, w_thing_fontFamily } = s;
 	const { w_thing_color, w_background_color } = colors;
-	let borderColor = $w_background_color;
 	let thing = s_breadcrumb.ancestry.thing;
 	let title = thing.breadcrumb_title ?? k.empty;
 	let colorStyles = s_breadcrumb.background;
 	let name = `crumb: ${title ?? 'unknown'}`;
 	let ancestry = s_breadcrumb.ancestry;
 	let width = u.getWidthOf(title) + 15;
-	let border = s_breadcrumb.border;;
+	let border = s_breadcrumb.border;
 	let color = s_breadcrumb.color;
 	let reattachments = 0;
 	let style = k.empty;

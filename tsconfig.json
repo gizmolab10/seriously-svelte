@@ -43,5 +43,5 @@
 		"src/**/*",
 		"src/main.js",
 		"src/lib/**/*"
-	]
+, "notes/experiments/slim"	]
 }

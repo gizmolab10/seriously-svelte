@@ -1,5 +1,5 @@
 import { StateMachine } from '../../../slim/StateMachine';
-import { T_Signal } from '../../../common/Enumerations';
+import { T_Signal } from '../../../../src/lib/ts/common/Enumerations';
 
 describe('Phase 4 - Parallel Operation', () => {
     const mockSignals = {

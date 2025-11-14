@@ -59,7 +59,7 @@
 		if (detect_mouseUp) {
 			reset();
 			handle_s_mouse(S_Mouse.up(event, bound_element));
-			handle_movement(event);  // Check hover state after handling the click
+			handle_hover(event);  // Check hover state after handling the click
 		}
 	}
 
@@ -100,7 +100,7 @@
 		}
 	}
 
-	function handle_movement(event: MouseEvent) {
+	function handle_hover(event: MouseEvent) {
 		setTimeout(() => {		// in case event arrives before store is updated, wait 1/100 second
 			const mouse_location = $w_mouse_location;
 			if (!!bound_element && !!mouse_location) {
@@ -162,8 +162,8 @@
 <div class='mouse-responder' id={name}
 	on:pointerdown={handle_pointerDown}
 	on:pointerup={handle_pointerUp}
-	on:mouseleave={handle_movement}
-	on:mousemove={handle_movement}
+	on:mouseleave={handle_hover}
+	on:mousemove={handle_hover}
 	bind:this={bound_element}
 	style={style}>
 	<slot/>
