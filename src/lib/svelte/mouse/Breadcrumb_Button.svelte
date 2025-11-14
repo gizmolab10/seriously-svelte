@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { h, k, s, u, x, debug, colors, layout, search, elements } from '../../ts/common/Global_Imports';
+	import { h, k, s, u, colors, layout, search, elements } from '../../ts/common/Global_Imports';
 	import { Point, T_Search, T_Banner, S_Element } from '../../ts/common/Global_Imports';
 	import Button from './Button.svelte';
 	export let left = 0;
