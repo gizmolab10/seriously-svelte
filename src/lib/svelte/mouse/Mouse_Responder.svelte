@@ -101,25 +101,25 @@
 	}
 
 	function handle_hover(event: MouseEvent) {
-		setTimeout(() => {		// in case event arrives before store is updated, wait 1/100 second
-			const mouse_location = $w_mouse_location;
-			if (!!bound_element && !!mouse_location) {
-				let isHit = false;
-				if (!!handle_isHit) {
-					isHit = handle_isHit();				// used when this element's hover shape is not its bounding rect
-				} else {					
-					isHit = Rect.rect_forElement_containsPoint(bound_element, mouse_location);		// use bounding rect
-				}
-				if (s_mouse.isHovering != isHit) {
-					s_mouse.isHovering  = isHit;
-					s_mouse.hover_didChange  = true;
-					handle_s_mouse(S_Mouse.hover(null, bound_element, isHit));					// pass a null event
-					if (isHit) {
-						reset();	// to support double click
-					}
+		// Use event coordinates directly instead of waiting for global store
+		const mouse_location = event ? new Point(event.clientX, event.clientY) : $w_mouse_location;
+
+		if (!!bound_element && !!mouse_location) {
+			let isHit = false;
+			if (!!handle_isHit) {
+				isHit = handle_isHit();				// used when this element's hover shape is not its bounding rect
+			} else {
+				isHit = Rect.rect_forElement_containsPoint(bound_element, mouse_location);		// use bounding rect
+			}
+			if (s_mouse.isHovering != isHit) {
+				s_mouse.isHovering  = isHit;
+				s_mouse.hover_didChange  = true;
+				handle_s_mouse(S_Mouse.hover(event, bound_element, isHit));
+				if (isHit) {
+					reset();	// to support double click
 				}
 			}
-		}, 10);
+		}
 	}
 	
 	function handle_pointerDown(event) {
