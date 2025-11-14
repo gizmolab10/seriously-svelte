@@ -232,6 +232,18 @@ debug.log_colors(`ELEMENT ${name} inverted:${isInverted}`);
 console.log('Mouse:', s_mouse.description);
 ```
 
+### Hover System Refactoring Plan
+
+See `notes/claude/HOVER_REFACTOR_PROPOSAL.md` for full details. Incremental refactoring steps:
+
+- [ ] **Step 1**: Remove unused `ignore_hover` flag from S_Element
+- [ ] **Step 2**: Standardize Mouse_Responder usage (refactor Glow_Button direct handlers)
+- [ ] **Step 3**: Clarify hover inversion naming (`isInverted` → `colors_swapOnGrab`, etc.)
+- [ ] **Step 4**: Eliminate S_Mouse.isHovering duplication (use `hover_isHit` instead)
+- [ ] **Step 5**: Document and simplify fallback behavior (s_widget hover inheritance)
+- [ ] **Step 6**: Reduce delayed hover detection (remove 10ms setTimeout)
+- [ ] **Step 7**: Extract hover state machine (consolidate scattered logic)
+
 ## Key Systems
 
 ### Hierarchy System
