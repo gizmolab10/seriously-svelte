@@ -4,6 +4,7 @@
 	import Separator from '../draw/Separator.svelte';
 	import Search from '../search/Search.svelte';
 	const { w_rect_ofGraphView } = layout;
+	const height = layout.controls_boxHeight + 1;
 	const { w_details, w_search_controls, w_graph_ofType } = show;
 	const top = c.has_standalone_UI ? layout.controls_boxHeight - 2 : 2;
 	const left = c.has_standalone_UI ? $w_rect_ofGraphView.origin.x : 116;
@@ -17,6 +18,7 @@
 	style='
 		top: {top}px;
 		left: {left}px;
+		height: {height}px;
 		position: absolute;
 		z-index: {T_Layer.frontmost};'>
 	{#if $w_search_controls}
@@ -37,9 +39,9 @@
 			<Separator name='secondary-right-separator'
 				corner_radius={k.radius.gull_wings.thick}
 				thickness={k.thickness.separator.main}
-				length={layout.controls_boxHeight + 1}
 				origin={new Point(2, top - 1.5)}
-				isHorizontal={false}/>
+				isHorizontal={false}
+				length={height}/>
 		{/if}
 	{/if}
 </div>
@@ -47,7 +49,6 @@
 <style>
 	.secondary {
 		position: absolute;
-		height: 100%;
 		width: 100%;
 		left: 0;
 		top: 0;
