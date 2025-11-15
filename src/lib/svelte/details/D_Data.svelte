@@ -132,6 +132,7 @@
 		padding:5px;'>
 	{#if c.has_standalone_UI}
 		<Separator name='show-other-databases'
+			isHorizontal={true}
 			has_gull_wings={true}
 			has_both_wings={true}
 			has_thin_divider={false}
@@ -142,6 +143,7 @@
 			thickness={k.thickness.separator.details}
 			title='{$w_other_databases ? 'hide other databases' : 'show other databases'}'/>
 		<Separator name='show-other-databases'
+			isHorizontal={true}
 			has_gull_wings={true}
 			has_both_wings={true}
 			has_thin_divider={false}

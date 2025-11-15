@@ -17,6 +17,7 @@
 	const hamburger_size = k.height.button;
 	const { w_search_controls, w_graph_ofType } = show;
 	const { w_count_window_resized, w_popupView_id } = s;
+	const search_left = -38 - (c.has_details_button ? 0 : 26) + (c.has_standalone_UI ? 0 : 0);
 	const hamburger_path = svgPaths.hamburgerPath(hamburger_size);
 	const svg_style = 'top: -0.5px; left: -0.5px; position: absolute; width: 100%; height: 100%;';
 	let width = layout.windowSize.width - 20;
@@ -40,15 +41,15 @@
 
 	function layout_controls() {
 		const left_widths = {
-			0: c.has_details_button ? 18 : -7,			// details
-			1: !$w_search_controls ? 11 : c.has_details_button ? 11 : 11,	// recents / search
-			2: c.has_standalone_UI ? 57 : 0,	// graph type
-			3: c.has_zoom_controls ? 100 : c.has_standalone_UI ? 70 : 34,	// plus (100, for now hidden)
-			4: c.has_zoom_controls ? 26 : 0,	// minus (26, for now hidden)
-			5: c.allow_search ? 24 : 6,
-			6: 25,	// easter egg, separator
-			7: 43,	// search
-			8: -37,	// breadcrumbs
+			0: c.has_details_button ? 18  : -7,									// details
+			1: !$w_search_controls  ? 11  : c.has_details_button ? 11 : 11,		// recents / search
+			2: c.has_standalone_UI  ? 57  : 0,									// graph type
+			3: c.has_zoom_controls  ? 100 : c.has_standalone_UI  ? 70 : 34,		// plus
+			4: c.has_zoom_controls  ? 26  : 0,									// minus
+			5: c.allow_search		? 22  : 6,
+			6: 25,																// easter egg, separator
+			7: 43,																// search
+			8: -37,																// breadcrumbs
 		};
 		lefts = u.cumulativeSum(Object.values(left_widths));
 	}
@@ -95,7 +96,7 @@
 			{#if c.allow_search}
 				<Search_Toggle
 					top={-0.5}
-					left={-54 - (c.has_details_button ? 0 : 26)}
+					left={search_left}
 					width={lefts[7] + (c.has_details_button ? 0 : 26)}/>
 			{/if}
 			{#if c.has_standalone_UI}
@@ -148,15 +149,15 @@
 					height={30}
 					color='transparent'
 					zindex={T_Layer.frontmost}
-					center={new Point(lefts[6], 10)}
+					center={new Point(lefts[5], 10)}
 					style='border: none; background: none;'
 					s_button={elements.s_control_forType(T_Control.details)}
 					closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.details)}/>
 			{/if}
 			{#if c.has_standalone_UI}
-				<Separator name='before-breadcrumbs'
+				<Separator name='before-search'
 					isHorizontal={false}
-					origin={new Point(lefts[6], -8)}
+					origin={new Point(lefts[5], -8)}
 					length={layout.controls_boxHeight + 1}
 					thickness={k.thickness.separator.main}
 					corner_radius={k.radius.gull_wings.thick}/>
@@ -164,6 +165,13 @@
 					left={lefts[6]}
 					centered={true}
 					width={layout.windowSize.width - lefts[8]}/>
+			{:else}
+				<Separator name='before-search'
+					isHorizontal={false}
+					origin={new Point(lefts[5], -8)}
+					length={layout.controls_boxHeight + 1}
+					thickness={k.thickness.separator.main}
+					corner_radius={k.radius.gull_wings.thick}/>
 			{/if}
 		{/if}
 	</div>

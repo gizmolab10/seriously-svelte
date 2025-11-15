@@ -143,6 +143,7 @@
 			{/if}
 		</div>
 		<Separator name='toggle-properties'
+			isHorizontal={true}
 			has_gull_wings={true}
 			has_both_wings={true}
 			has_thin_divider={false}

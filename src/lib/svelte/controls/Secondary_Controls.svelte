@@ -7,8 +7,8 @@
 	const height = layout.controls_boxHeight + 1;
 	const { w_details, w_search_controls, w_graph_ofType } = show;
 	const top = c.has_standalone_UI ? layout.controls_boxHeight - 2 : 2;
-	const left = c.has_standalone_UI ? $w_rect_ofGraphView.origin.x : 116;
-	const width = c.has_standalone_UI ? $w_rect_ofGraphView.size.width + ($w_details ? 10 : 11) : 117;
+	const left = c.has_standalone_UI ? $w_rect_ofGraphView.origin.x : 115;
+	const width = c.has_standalone_UI ? $w_rect_ofGraphView.size.width + ($w_details ? 10 : 11) : 120;
 
 	// two states: search and tree preferences
 
@@ -35,13 +35,6 @@
 				has_both_wings={true}
 				isHorizontal={true}
 				length={width}/>
-		{:else}
-			<Separator name='secondary-right-separator'
-				corner_radius={k.radius.gull_wings.thick}
-				thickness={k.thickness.separator.main}
-				origin={new Point(2, top - 1.5)}
-				isHorizontal={false}
-				length={height}/>
 		{/if}
 	{/if}
 </div>

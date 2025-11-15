@@ -228,6 +228,7 @@
 					thickness={k.thickness.separator.details}
 					origin={new Point(left_afterTitle, top_tableHeight - 10)}/>
 				<Separator name='bottom-of-actions'
+					isHorizontal={true}
 					has_thin_divider={true}
 					margin={k.details_margin}
 					title='edit your hierarchy'

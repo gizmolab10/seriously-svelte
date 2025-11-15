@@ -5,7 +5,7 @@
 	export let zindex = T_Layer.graph;
 	export let width = 80;
 	export let top = 0;
-	const left_width = 100;
+	const left_width = 110;
 	const { w_details } = show;
 	const { w_thing_fontFamily } = s;
 	const { w_rect_ofGraphView } = layout;
@@ -27,7 +27,7 @@
 	}
 
 	function graph_width() {
-		return c.has_standalone_UI ? $w_rect_ofGraphView.size.width + 5 : layout.windowSize.width - 124;
+		return c.has_standalone_UI ? $w_rect_ofGraphView.size.width + 7 : layout.windowSize.width - 124;
 	}
 
 	function handle_input(event) {
@@ -49,7 +49,7 @@
 	background-color: transparent;'>
 	<Segmented name='search-filter'
 		width={width}
-		left={62}
+		left={60}
 		origin={new Point(-12, 1)}
 		height={ k.height.button}
 		selected={[$w_search_preferences]}

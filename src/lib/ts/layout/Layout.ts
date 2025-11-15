@@ -1,4 +1,4 @@
-import { h, k, p, s, u, show, debug, radial, g_tree, g_radial, signals, controls } from '../common/Global_Imports';
+import { c, h, k, p, s, u, show, debug, radial, g_tree, g_radial, signals, controls } from '../common/Global_Imports';
 import { S_Component, T_Graph, T_Preference, T_Startup } from '../common/Global_Imports';
 import { Rect, Size, Point, Thing, Ancestry } from '../common/Global_Imports';
 import { G_Cluster, G_Paging, G_Widget } from '../common/Global_Imports';
@@ -101,8 +101,8 @@ export default class Layout {
 
 	update_rect_ofGraphView() {
 		// respond to changes in: window size & details visibility
-		const show_secondary_controls = get(show.w_search_controls) || (get(show.w_graph_ofType) == T_Graph.tree);
-		const y = (this.controls_boxHeight) * (show_secondary_controls ? 2 : 1) - 4;	// below primary and secondary controls
+		const secondary_below_primary_controls = c.has_standalone_UI && (get(show.w_search_controls) || (get(show.w_graph_ofType) == T_Graph.tree));
+		const y = (this.controls_boxHeight) * (secondary_below_primary_controls ? 2 : 1) - 4;	// below primary and secondary controls
 		const x = get(show.w_details) ? k.width.details : 5;							// right of details
 		const origin_ofGraphView = new Point(x, y);
 		const size_ofGraphView = this.windowSize.reducedBy(origin_ofGraphView).reducedBy(Point.square(k.thickness.separator.main - 1));
@@ -139,12 +139,12 @@ export default class Layout {
 		let changed = false;
 		const current_offset = get(this.w_user_graph_offset);
 		if (!!current_offset && current_offset.vector_to(user_offset).magnitude > 1) {
-			p.write_key(T_Preference.user_offset, user_offset);		// persist the property user_offset
+			p.write_key(T_Preference.user_offset, user_offset);								// persist user_offset
 			changed = true;
 		}
 		const center_offset = get(this.w_rect_ofGraphView).center.offsetBy(user_offset);	// center of the graph in window coordinates
-		this.w_user_graph_center.set(center_offset);									// w_user_graph_center: a signal change
-		this.w_user_graph_offset.set(user_offset);									// w_user_graph_offset: a signal change
+		this.w_user_graph_center.set(center_offset);										// w_user_graph_center: a signal change
+		this.w_user_graph_offset.set(user_offset);											// w_user_graph_offset: a signal change
 		debug.log_mouse(`USER ====> ${user_offset.verbose}  ${center_offset.verbose}`);
 		return changed;
 	}
