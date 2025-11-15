@@ -66,10 +66,10 @@ export class Visibility {
 		this.w_details			.set(p.read_key(T_Preference.show_details)	  ?? false);
 		this.w_related			.set(p.read_key(T_Preference.show_related)	  ?? false);
 		this.w_other_databases	.set(p.read_key(T_Preference.other_databases) ?? false);
-		this.w_graph_ofType		.set(p.read_key(T_Preference.graph)			  ?? T_Graph.tree);
 		this.w_tree_ofType		.set(p.read_key(T_Preference.tree)			  ?? T_Kinship.children);
 		this.w_countDots_ofType	.set(p.read_key(T_Preference.countDots)		  ?? [T_Kinship.children]);
 		this.w_details_ofType	.set(p.read_key(T_Preference.detail_types)	  ?? [T_Detail.actions, T_Detail.data]);
+		this.w_graph_ofType		.set(c.has_standalone_UI ? p.read_key(T_Preference.graph) ?? T_Graph.tree : T_Graph.radial);
 	}
 	
 	reactivity_subscribe() {

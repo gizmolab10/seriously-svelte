@@ -1,5 +1,5 @@
 function(instance) {
-	instance.data.enable_logging = false;
+    instance.data.enable_logging	    		= false;
 	instance.data.iframe_is_instantiated		= false;	// assure_iframe_is_instantiated (right below, called from update) sets this to true
 	instance.data.LOG							= function (message, value, ...optionalParams) {if (instance.data.enable_logging && !!value) { console.log('[PLUGIN]', message, value, ...optionalParams); } }
 	instance.data.assure_iframe_is_instantiated = function (properties) {
