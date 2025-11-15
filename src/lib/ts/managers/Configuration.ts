@@ -32,9 +32,9 @@ export class Configuration {
 		debug.apply_queryStrings();
 		colors.restore_preferences();
 		search.setup_defaults();
+		this.apply_queryStrings();						// must call before prefs and db
 		show.restore_preferences();							// visibility
 		layout.restore_preferences();
-		this.apply_queryStrings();						// must call before prefs and db
 		databases.apply_queryStrings();
 		p.restore_preferences();
 		show.apply_queryStrings();
