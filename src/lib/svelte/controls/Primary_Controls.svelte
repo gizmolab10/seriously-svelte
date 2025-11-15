@@ -43,7 +43,7 @@
 			0: c.has_details_button ? 18 : -7,			// details
 			1: !$w_search_controls ? 11 : c.has_details_button ? 11 : 11,	// recents / search
 			2: c.has_standalone_UI ? 57 : 0,	// graph type
-			3: c.has_zoom_controls ? 100 : 34,	// plus (100, for now hidden)
+			3: c.has_zoom_controls ? 100 : c.has_standalone_UI ? 70 : 34,	// plus (100, for now hidden)
 			4: c.has_zoom_controls ? 26 : 0,	// minus (26, for now hidden)
 			5: c.allow_search ? 24 : 6,
 			6: 25,	// easter egg, separator
@@ -153,16 +153,18 @@
 					s_button={elements.s_control_forType(T_Control.details)}
 					closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.details)}/>
 			{/if}
-			<Separator name='before-breadcrumbs'
-				isHorizontal={false}
-				origin={new Point(lefts[6], -8)}
-				length={layout.controls_boxHeight + 1}
-				thickness={k.thickness.separator.main}
-				corner_radius={k.radius.gull_wings.thick}/>
-			<Breadcrumbs
-				left={lefts[6]}
-				centered={true}
-				width={layout.windowSize.width - lefts[8]}/>
+			{#if c.has_standalone_UI}
+				<Separator name='before-breadcrumbs'
+					isHorizontal={false}
+					origin={new Point(lefts[6], -8)}
+					length={layout.controls_boxHeight + 1}
+					thickness={k.thickness.separator.main}
+					corner_radius={k.radius.gull_wings.thick}/>
+				<Breadcrumbs
+					left={lefts[6]}
+					centered={true}
+					width={layout.windowSize.width - lefts[8]}/>
+			{/if}
 		{/if}
 	</div>
 	<Separator name='bottom-separator'
