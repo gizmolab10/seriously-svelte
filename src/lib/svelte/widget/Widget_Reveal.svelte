@@ -12,7 +12,7 @@
 	const { w_thing_title } = s;
 	const ancestry = s_reveal.ancestry;
 	const g_widget = ancestry.g_widget;
-	const { w_countDots_ofType } = show;
+	const { w_show_countDots_ofType } = show;
 	const { w_items: w_grabbed } = x.si_grabs;
 	const tinyDotsOffset = new Point(-4.9, -2.45);
 	const { w_items: w_expanded } = x.si_expanded;
@@ -47,7 +47,7 @@
 	$: {
 		const _ = `${u.descriptionBy_titles($w_grabbed)}
 		:::${u.descriptionBy_titles($w_expanded)}
-		:::${$w_countDots_ofType}
+		:::${$w_show_countDots_ofType}
 		:::${$w_background_color}
 		:::${$w_thing_title}
 		:::${$w_thing_color}`;

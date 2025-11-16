@@ -1,4 +1,4 @@
-import { h, p, s, u, debug, search, layout, details, controls, databases } from '../common/Global_Imports';
+import { h, s, u, debug, search, layout, details, controls, databases } from '../common/Global_Imports';
 import { S_Items, T_Search, T_Startup } from '../common/Global_Imports';
 import { Tag, Thing, Trait, Ancestry } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
@@ -109,7 +109,7 @@ export default class UX_S_Items {
 
 	update_forFocus() {
 		let focus = get(s.w_ancestry_focus);
-		if (p.branches_areChildren) {
+		if (get(layout.w_branches_areChildren)) {
 			this.parents_focus = focus;
 			focus = this.prior_focus;
 		} else {

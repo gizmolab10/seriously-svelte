@@ -1,5 +1,4 @@
-import { e, k, p, s, u, show, debug, search, colors } from '../common/Global_Imports';
-import { layout, databases } from '../common/Global_Imports';
+import { e, k, p, s, u, show, debug, search, colors, layout, databases } from '../common/Global_Imports';
 import { T_Theme } from '../common/Global_Imports';
 
 export class Configuration {
@@ -17,6 +16,7 @@ export class Configuration {
 	erasePreferences = 0;
 	allow_search = true;
 	eraseDB = 0;
+
 
 	configure() {
 		

@@ -27,7 +27,7 @@ function(instance) {
 		const disables = [
 			'auto_save',
 			'standalone_UI',
-			properties.show_details ? 'unknown' : 'details'];
+			properties.show_show_details ? 'unknown' : 'details'];
 		const pairs = {
 			db: 'bubble',
 			debug: 'bubble',

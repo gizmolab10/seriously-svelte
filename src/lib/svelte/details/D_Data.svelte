@@ -11,7 +11,7 @@
 	import Separator from '../draw/Separator.svelte';
 	import Button from '../mouse/Button.svelte';
 	const { w_t_database, w_data_updated } = databases;
-	const { w_other_databases, w_save_data_button } = show;
+	const { w_show_other_databases, w_show_save_data_button } = show;
     const font_sizes = [k.font_size.instructions, k.font_size.banners];
 	const ids_forDirection = [T_File_Operation.import, T_File_Operation.export];
 	const s_save = elements.s_element_for(new Identifiable('save'), T_Element.button, 'save');
@@ -29,7 +29,7 @@
 	setup_s_elements();
 	$: tops = u.cumulativeSum(heights);
 	s_save.set_forHovering('black', 'pointer');
-	function height_ofChoices() { return c.has_standalone_UI ? $w_other_databases ? 18 : -5 : -16; }
+	function height_ofChoices() { return c.has_standalone_UI ? $w_show_other_databases ? 18 : -5 : -16; }
 
 	$:{
 		const _ = `${$w_data_updated}:::${$w_t_database}`;
@@ -37,7 +37,7 @@
 	}
 
 	$: {
-		const _ = `${details.t_storage_need}:::${$w_other_databases}`;
+		const _ = `${details.t_storage_need}:::${$w_show_other_databases}`;
 		reattachments++;
 	}
 
@@ -56,8 +56,8 @@
 		}
 	}
 
-	function handle_show_other_databases(event: Event) {
-		show.toggle_show_other_databases();
+	function handle_show_show_other_databases(event: Event) {
+		show.toggle_show_show_other_databases();
 		heights[1] = height_ofChoices();
 		heights = [...heights];	// force a re-render
 	}
@@ -92,7 +92,7 @@
 
 	function update_storage_details() {
 		if (!!h) {
-			$w_save_data_button = h.db.isPersistent && h.total_dirty_count != 0;
+			$w_show_save_data_button = h.db.isPersistent && h.total_dirty_count != 0;
 			storage_details = [h.db.details_forStorage,
 			['depth', h.depth.supressZero()],
 			['things', h.things.length.supressZero()],
@@ -139,9 +139,9 @@
 			origin={new Point(1, 30)}
 			zindex={T_Layer.frontmost + 1}
 			length={k.width.details - 2.5}
-			handle_click={handle_show_other_databases}
+			handle_click={handle_show_show_other_databases}
 			thickness={k.thickness.separator.details}
-			title='{$w_other_databases ? 'hide other databases' : 'show other databases'}'/>
+			title='{$w_show_other_databases ? 'hide other databases' : 'show other databases'}'/>
 		<Separator name='show-other-databases'
 			isHorizontal={true}
 			has_gull_wings={true}
@@ -150,10 +150,10 @@
 			origin={new Point(1, 30)}
 			zindex={T_Layer.frontmost + 1}
 			length={k.width.details - 2.5}
-			handle_click={handle_show_other_databases}
+			handle_click={handle_show_show_other_databases}
 			thickness={k.thickness.separator.details}
-			title='{$w_other_databases ? 'hide other databases' : 'show other databases'}'/>
-		{#if $w_other_databases}
+			title='{$w_show_other_databases ? 'hide other databases' : 'show other databases'}'/>
+		{#if $w_show_other_databases}
 			<Segmented name='databases'
 				left={105}
 				width={width}
@@ -176,7 +176,7 @@
 			array={storage_details}
 			font_size={k.font_size.banners}/>
 		{#key $w_data_updated}
-			{#if $w_save_data_button && !busy.isDatabaseBusy}
+			{#if $w_show_save_data_button && !busy.isDatabaseBusy}
 				<Button name='save'
 					width=72
 					s_button={s_save}

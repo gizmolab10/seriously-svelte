@@ -27,13 +27,13 @@ class Search {
 
 	activate() {
 		this.w_search_state.set(T_Search.enter);
-		show.w_search_controls.set(true);
+		show.w_show_search_controls.set(true);
 	}
 
 	deactivate() {
 		this.w_search_results_found.set(0);
 		this.w_search_state.set(T_Search.off);
-		show.w_search_controls.set(false);
+		show.w_show_search_controls.set(false);
 		details.redraw();		// force re-render of details
 	}
 
@@ -65,7 +65,7 @@ class Search {
 
 	get selected_ancestry(): Ancestry | null {
 		const row = this.selected_row;
-		if (row !== null && !!get(show.w_search_controls)) {
+		if (row !== null && !!get(show.w_show_search_controls)) {
 			const thing = x.si_found.items[row];
 			return thing?.ancestry ?? null;
 		}
@@ -123,7 +123,7 @@ class Search {
 		if (before !== this.results_fingerprint) {	// only if results are different
 			x.si_found.index = -1;
 		}
-		show.w_search_controls.set(T_Search.off != get(this.w_search_state));
+		show.w_show_search_controls.set(T_Search.off != get(this.w_search_state));
 		this.w_search_results_changed.set(Date.now());
 	}
 	

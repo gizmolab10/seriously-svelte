@@ -293,8 +293,8 @@ export enum T_Preference {
 	other_databases	  = 'other_databases',
 	relationships	  = 'relationships',
 	detail_types	  = 'detail_types',			// vertical stack
-	show_details	  = 'show_details',			// left side
-	show_related	  = 'show_related',
+	show_show_details	  = 'show_show_details',			// left side
+	show_show_related	  = 'show_show_related',
 	ring_radius		  = 'ring_radius',
 	user_offset		  = 'user_offset',
 	auto_adjust		  = 'auto_adjust',

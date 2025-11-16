@@ -1,11 +1,11 @@
-import { G_Paging, T_Graph, T_Detail, T_Kinship, T_Preference, T_Auto_Adjust, T_Startup } from '../common/Global_Imports';
-import { c, h, k, s, u, x, show, debug, radial, layout, Ancestry, databases } from '../common/Global_Imports';
+import { c, h, k, s, u, x, show, debug, layout, radial, databases } from '../common/Global_Imports';
+import { Ancestry, T_Preference, T_Auto_Adjust } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
 export class Preferences {
-	branches_areChildren = true;
-	get focus_key(): string { return this.branches_areChildren ? T_Preference.focus_forChildren : T_Preference.focus_forParents; }
-	get expanded_key(): string { return this.branches_areChildren ? T_Preference.expanded_children : T_Preference.expanded_parents; }
+
+	get focus_key(): string { return get(layout.w_branches_areChildren) ? T_Preference.focus_forChildren : T_Preference.focus_forParents; }
+	get expanded_key(): string { return get(layout.w_branches_areChildren) ? T_Preference.expanded_children : T_Preference.expanded_parents; }
 
 	apply_queryStrings() {
 		const queryStrings = c.queryStrings;
@@ -196,13 +196,13 @@ export class Preferences {
 
 		// VISIBILITY
 
-		show.w_tree_ofType.subscribe((value) => {
+		show.w_show_tree_ofType.subscribe((value) => {
 			this.write_key(T_Preference.tree, value);
 		});
-		show.w_countDots_ofType.subscribe((value) => {
+		show.w_show_countDots_ofType.subscribe((value) => {
 			this.write_key(T_Preference.countDots, value);
 		});
-		show.w_details_ofType.subscribe((value) => {
+		show.w_show_show_details_ofType.subscribe((value) => {
 			this.write_key(T_Preference.detail_types, value);
 		});
 		

@@ -5,7 +5,7 @@
     const buttonSize = 20;
     const origin = new Point(19, 29);
     const offsetY = buttonSize / 2 - 1;
-    const { w_directionals_ofType } = show;
+    const { w_show_directionals_ofType } = show;
 
 	function hover_closure(isHovering) {
         return [isHovering ? colors.default : 'white', k.empty];
@@ -22,7 +22,7 @@
 </script>
 
 <div class='steppers'>
-    {#if $w_directionals_ofType[0]}
+    {#if $w_show_directionals_ofType[0]}
         <Triangle_Button
             center={origin.offsetByY(-offsetY)}
             handle_s_mouse={handle_s_mouse}
@@ -34,7 +34,7 @@
             name='up'
         />
     {/if}
-    {#if $w_directionals_ofType[1]}
+    {#if $w_show_directionals_ofType[1]}
         <Triangle_Button
             center={origin.offsetByY(offsetY)}
             handle_s_mouse={handle_s_mouse}

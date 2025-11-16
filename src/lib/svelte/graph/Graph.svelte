@@ -8,7 +8,7 @@
 	import { onMount } from 'svelte';
 	const size_big = k.height.button + 4;
 	const { w_items: w_expanded } = x.si_expanded;
-	const { w_graph_ofType, w_depth_limit } = show;
+	const { w_show_graph_ofType, w_depth_limit } = show;
 	const { w_user_graph_offset, w_rect_ofGraphView, w_ring_rotation_angle, w_ring_rotation_radius } = layout;
 	const { w_dragging_active, w_t_startup, w_s_hover, w_ancestry_focus, w_s_title_edit, w_thing_fontFamily } = s;
 	let actual_content_rect = layout.user_offset_toGraphDrawing;
@@ -38,7 +38,7 @@
 	
 	$:	{
 		const _ = `${$w_rect_ofGraphView.description}
-		:::${$w_graph_ofType}
+		:::${$w_show_graph_ofType}
 		:::${$w_t_startup}
 		:::${$w_s_hover}`;
 		update_style();
@@ -47,7 +47,7 @@
 	$:	{
 		const _ = `${u.descriptionBy_titles($w_expanded)}
 		:::${$w_ancestry_focus?.titles.join(k.comma)}
-		:::${$w_graph_ofType}`;
+		:::${$w_show_graph_ofType}`;
 		grand_layout_andReattach();
 	}
 
@@ -103,7 +103,7 @@
 			bind:this={draggable}
 			on:mousedown={handle_mouseDown}
 			class:rubberband-active={$w_dragging_active}>
-			{#if $w_graph_ofType == T_Graph.radial}
+			{#if $w_show_graph_ofType == T_Graph.radial}
 				<Radial_Graph/>
 			{:else}
 				<Tree_Graph/>

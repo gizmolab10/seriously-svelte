@@ -15,8 +15,8 @@
 	const { w_rect_ofGraphView } = layout;
 	const { w_background_color } = colors;
 	const hamburger_size = k.height.button;
-	const { w_search_controls, w_graph_ofType } = show;
 	const { w_count_window_resized, w_popupView_id } = s;
+	const { w_show_search_controls, w_show_graph_ofType } = show;
 	const hamburger_path = svgPaths.hamburgerPath(hamburger_size);
 	const search_left = -38 - (c.has_details_button ? 0 : 26) + (c.allow_tree_mode ? 0 : 0);
 	const svg_style = 'top: -0.5px; left: -0.5px; position: absolute; width: 100%; height: 100%;';
@@ -42,7 +42,7 @@
 	function layout_controls() {
 		const left_widths = {
 			0: c.has_details_button ? 18  : -7,									// details
-			1: !$w_search_controls  ? 11  : c.has_details_button ? 11 : 11,		// recents / search
+			1: !$w_show_search_controls  ? 11  : c.has_details_button ? 11 : 11,		// recents / search
 			2: c.allow_tree_mode	? 57  : 0,									// graph type
 			3: c.has_zoom_controls  ? 100 : c.allow_tree_mode  ? 70 : 34,		// plus
 			4: c.has_zoom_controls  ? 26  : 0,									// minus
@@ -100,11 +100,11 @@
 					width={lefts[7] + (c.has_details_button ? 0 : 26)}/>
 			{/if}
 			{#if c.allow_tree_mode}
-				{#key $w_graph_ofType}
+				{#key $w_show_graph_ofType}
 					<Segmented name='graph-type'
 						width={80}
 						origin={Point.x(lefts[2])}
-						selected={[$w_graph_ofType]}
+						selected={[$w_show_graph_ofType]}
 						titles={[T_Graph.tree, T_Graph.radial]}
 						handle_selection={(titles) => controls.handle_segmented_choices('graph', titles)}/>
 				{/key}

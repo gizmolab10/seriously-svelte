@@ -34,7 +34,7 @@ class UX_Details {
 		}
 	}
 		
-	details_toggle_visibility() { show.w_details.update(n => !n); }
+	details_toggle_visibility() { show.w_show_details.update(n => !n); }
 		
 	static readonly _____BANNERS: unique symbol;
 

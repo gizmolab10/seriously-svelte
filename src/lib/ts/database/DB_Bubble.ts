@@ -47,7 +47,7 @@ export default class DB_Bubble extends DB_Common {
 					this.changeGrabTo(bubble_properties.id);
 					break;
 				case 'CHANGE_GRAPH_MODE':
-					show.w_graph_ofType.set(bubble_properties.in_radial_mode ? T_Graph.radial : T_Graph.tree);
+					show.w_show_graph_ofType.set(bubble_properties.in_radial_mode ? T_Graph.radial : T_Graph.tree);
 					break;
 				case 'REPLACE_HIERARCHY':
 					this.replace_hierarchy = true;		// N.B. must happen BEFORE next UPDATE_PROPERTIES
@@ -104,7 +104,7 @@ export default class DB_Bubble extends DB_Common {
 	}
 
 	private extract_fromProperties(bubble_properties: any) {
-		let b_zoom_scale, b_depth_limit, b_inRadialMode, b_show_details,
+		let b_zoom_scale, b_depth_limit, b_inRadialMode, b_show_show_details,
 			b_ids, b_root, b_focus, b_titles, b_colors, b_parent_ids, b_related_ids,
 			b_override_focus_and_mode, b_override_zoom_scale, b_override_depth_limit, 
 			b_erase_user_preferences, b_suppress_tree_mode;
@@ -116,7 +116,7 @@ export default class DB_Bubble extends DB_Common {
 			b_erase_user_preferences = bubble_properties.erase_user_preferences;
 			b_suppress_tree_mode = bubble_properties.suppress_tree_mode;
 			b_inRadialMode = bubble_properties.in_radial_mode;
-			b_show_details = bubble_properties.show_details;
+			b_show_show_details = bubble_properties.show_show_details;
 			b_depth_limit = bubble_properties.depth_limit;
 			b_zoom_scale = bubble_properties.zoom_scale;
 			b_related_ids = bubble_properties.related;
@@ -176,17 +176,17 @@ export default class DB_Bubble extends DB_Common {
 		}
 		if (!!b_suppress_tree_mode) {
 			c.allow_tree_mode = false;
-			show.w_graph_ofType.set(T_Graph.radial);
+			show.w_show_graph_ofType.set(T_Graph.radial);
 		}
 		if (!!b_override_focus_and_mode) {
 			if (!b_suppress_tree_mode) {
-				show.w_graph_ofType.set(b_inRadialMode ? T_Graph.radial : T_Graph.tree);
+				show.w_show_graph_ofType.set(b_inRadialMode ? T_Graph.radial : T_Graph.tree);
 			}
 			if (!!b_focus) {
 				this.changeFocusTo(b_focus);
 			}
 		}
-		show.w_details.set(!!b_show_details);
+		show.w_show_details.set(!!b_show_show_details);
 	}
 
 	private setup_to_send_events() {
@@ -225,7 +225,7 @@ export default class DB_Bubble extends DB_Common {
 					this.allow_response_to[T_MID.grab] = true;
 				}
 			});
-			show.w_graph_ofType.subscribe((graph_type: T_Graph) => {
+			show.w_show_graph_ofType.subscribe((graph_type: T_Graph) => {
 				if (this.allow_response_to[T_MID.mode]) {
 					window.parent.postMessage({ type: 'in_radial_mode', in_radial_mode: graph_type == T_Graph.radial }, k.wildcard);
 					window.parent.postMessage({ type: 'trigger_an_event', trigger: 'mode_changed' }, k.wildcard);

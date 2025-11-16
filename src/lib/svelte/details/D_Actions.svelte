@@ -11,7 +11,7 @@
 	const top_tableHeight = 93;
 	const left_afterTitle = 39.5;
 	const bottom_tableHeight = 73;
-	const { w_graph_ofType } = show;
+	const { w_show_graph_ofType } = show;
 	const { w_background_color } = colors;
 	const { w_user_graph_offset } = layout;
 	const table_width = k.width.details - 8;
@@ -45,7 +45,7 @@
 
 	$: {
 		const _ = `${$w_user_graph_offset}
-		:::${$w_graph_ofType}
+		:::${$w_show_graph_ofType}
 		:::${$w_background_color}
 		:::${x.si_found.w_index}
 		:::${$w_s_alteration}`;

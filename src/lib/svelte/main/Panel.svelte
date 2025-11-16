@@ -15,7 +15,7 @@
 	import Import from './Import.svelte';
 	import Box from '../draw/Box.svelte';
 	import { onMount } from 'svelte';
-	const { w_details } = show;
+	const { w_show_details } = show;
 	const { w_t_database } = databases;
 	const { w_separator_color } = colors;
 	const { w_rect_ofGraphView } = layout;
@@ -75,7 +75,7 @@
 				<Import/>
 			{:else}
 				<Primary_Controls/>
-				{#if $w_details}
+				{#if $w_show_details}
 					<Details/>
 				{/if}
 				<Secondary_Controls/>

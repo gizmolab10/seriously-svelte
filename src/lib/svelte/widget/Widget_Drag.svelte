@@ -13,8 +13,8 @@
 	const { w_thing_color } = colors;
     const ancestry = s_drag.ancestry;
 	const g_widget = ancestry.g_widget;
-	const { w_countDots_ofType } = show;
 	const { w_background_color } = colors;
+	const { w_show_countDots_ofType } = show;
 	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_ancestry_focus, w_ancestry_forDetails } = s;
 	let fill_color = debug.lines ? 'transparent' : s_drag.fill;
@@ -44,7 +44,7 @@
 	function handle_context_menu(event) { u.grab_event(event); }		// no default context menu on right-click
 
 	$: {
-		const _ = $w_countDots_ofType;
+		const _ = $w_show_countDots_ofType;
 		update_svgPaths();
 	}
 

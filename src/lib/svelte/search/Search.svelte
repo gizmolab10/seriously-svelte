@@ -5,25 +5,26 @@
 	export let zindex = T_Layer.graph;
 	export let width = 80;
 	export let top = 0;
-	const left_width = 110;
-	const { w_details } = show;
+	const { w_show_details } = show;
 	const { w_thing_fontFamily } = s;
 	const { w_rect_ofGraphView } = layout;
+	const left_width = $w_show_details ? 124 : 100;
 	const s_search = elements.s_element_for(null, T_Element.search, k.empty);
 	const { w_search_state, w_search_preferences, w_search_results_found } = search;
-	let search_width = graph_width() - left_width;
 	let input: HTMLInputElement;
 
 	$: if (!!input) {
 		s_search.html_element = input;				// so s_element_set_focus_to will work
 	}
 
-	$: { width = graph_width() - left_width; }
-
 	$: if ($w_search_state != T_Search.enter) {
 		setTimeout(() => {
 			elements.s_element_set_focus_to(s_search);	// so 'f' will not be added to the input
 		}, 1);
+	}
+
+	function search_width() {
+		return graph_width() - left_width + ($w_show_details ? 0: 24);
 	}
 
 	function graph_width() {
@@ -71,7 +72,7 @@
 			padding-left: 6px;
 			border-radius: 6px;
 			position: absolute;
-			width: {search_width}px;
+			width: {search_width()}px;
 			background-color: white;
 			border: 1px solid lightgray;
 			height: {k.height.button + 2}px;
@@ -84,7 +85,7 @@
 				font-size: 12px;
 				text-align: center;
 				position: absolute;
-				left: {search_width + 84}px;
+				left: {search_width() + 84}px;
 				font-family: {$w_thing_fontFamily};'>
 			{$w_search_results_found} match{$w_search_results_found == 1 ? '' : 'es'}
 		</div>

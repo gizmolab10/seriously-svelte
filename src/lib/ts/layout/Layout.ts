@@ -6,6 +6,7 @@ import { get, writable } from 'svelte/store';
 
 export default class Layout {
 	w_scale_factor			= writable<number>(1);
+	w_branches_areChildren	= writable<boolean>(true);
 	w_scaled_movement		= writable<Point | null>(null);
 	w_mouse_location		= writable<Point>();
 	w_mouse_location_scaled	= writable<Point>();
@@ -101,9 +102,9 @@ export default class Layout {
 
 	update_rect_ofGraphView() {
 		// respond to changes in: window size & details visibility
-		const secondary_below_primary_controls = c.allow_tree_mode && (get(show.w_search_controls) || (get(show.w_graph_ofType) == T_Graph.tree));
+		const secondary_below_primary_controls = c.allow_tree_mode && (get(show.w_show_search_controls) || (get(show.w_show_graph_ofType) == T_Graph.tree));
 		const y = (this.controls_boxHeight) * (secondary_below_primary_controls ? 2 : 1) - 4;	// below primary and secondary controls
-		const x = get(show.w_details) ? k.width.details : 5;							// right of details
+		const x = get(show.w_show_details) ? k.width.details : 5;							// right of details
 		const origin_ofGraphView = new Point(x, y);
 		const size_ofGraphView = this.windowSize.reducedBy(origin_ofGraphView).reducedBy(Point.square(k.thickness.separator.main - 1));
 		const rect = new Rect(origin_ofGraphView, size_ofGraphView);

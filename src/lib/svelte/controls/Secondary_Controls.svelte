@@ -5,10 +5,10 @@
 	import Search from '../search/Search.svelte';
 	const { w_rect_ofGraphView } = layout;
 	const height = layout.controls_boxHeight + 1;
-	const { w_details, w_search_controls, w_graph_ofType } = show;
 	const top = c.allow_tree_mode ? layout.controls_boxHeight - 2 : 2;
-	const left = c.allow_tree_mode ? $w_rect_ofGraphView.origin.x : 115;
-	const width = c.allow_tree_mode ? $w_rect_ofGraphView.size.width + ($w_details ? 10 : 11) : 120;
+	const { w_show_details, w_show_search_controls, w_show_graph_ofType } = show;
+	const left = c.allow_tree_mode ? $w_rect_ofGraphView.origin.x : c.has_details_button ? 115 : 92;
+	const width = c.allow_tree_mode ? $w_rect_ofGraphView.size.width + ($w_show_details ? 10 : 11) : c.has_details_button ? 140 : 137;
 
 	// two states: search and tree preferences
 
@@ -21,15 +21,15 @@
 		height: {height}px;
 		position: absolute;
 		z-index: {T_Layer.frontmost};'>
-	{#if $w_search_controls}
+	{#if $w_show_search_controls}
 		<Search top={8} width={width}/>
-	{:else if $w_graph_ofType == T_Graph.tree}
+	{:else if $w_show_graph_ofType == T_Graph.tree}
 		<Tree_Preferences width={width}/>
 	{/if}
-	{#if ($w_search_controls || $w_graph_ofType == T_Graph.tree)}
+	{#if ($w_show_search_controls || $w_show_graph_ofType == T_Graph.tree)}
 		{#if c.allow_tree_mode}
 			<Separator name='secondary-bottom-separator'
-				origin={new Point(-($w_details ? 2 : 3), top - 4)}
+				origin={new Point(-($w_show_details ? 2 : 3), top - 4)}
 				corner_radius={k.radius.gull_wings.thick}
 				thickness={k.thickness.separator.main}
 				has_both_wings={true}

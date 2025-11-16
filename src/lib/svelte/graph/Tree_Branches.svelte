@@ -8,7 +8,7 @@
 	import { onMount } from 'svelte';
 	export let ancestry: Ancestry;
 	export let depth: number;
-	const { w_related } = show;
+	const { w_show_related } = show;
 	const g_widget = ancestry.g_widget;
 	const g_childBranches = g_widget.g_childBranches;
 	let s_component: S_Component;
@@ -41,7 +41,7 @@
 					<Tree_Branches ancestry = {branchAncestry} depth = {depth - 1}/>
 				{/if}
 			{/each}
-			{#if $w_related && depth > 1}
+			{#if $w_show_related && depth > 1}
 				{#each g_widget.g_bidirectionalLines as g_line}
 					{#if g_line.depth_ofLine < (depth + 2)}
 						<Tree_Line g_line = {g_line}/>
