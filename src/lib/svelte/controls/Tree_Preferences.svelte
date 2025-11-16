@@ -36,7 +36,7 @@
 	background-color: transparent;'>
 	<Slider
 		max={12}
-		width={width}
+		width={117}
 		show_value={false}
 		isLogarithmic={true}
 		value={$w_depth_limit}
