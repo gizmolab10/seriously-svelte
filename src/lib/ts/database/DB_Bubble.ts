@@ -1,5 +1,5 @@
 import { T_Thing, T_Graph, T_Create, T_Predicate, layout, Hierarchy } from '../common/Global_Imports';
-import { k, h, p, s, x, busy, show, debug, Ancestry } from '../common/Global_Imports';
+import { c, k, h, p, s, x, busy, show, debug, Ancestry } from '../common/Global_Imports';
 import { T_Persistence, T_Preference } from '../common/Global_Imports';
 import { T_Database } from './DB_Common';
 import DB_Common from './DB_Common';
@@ -174,8 +174,14 @@ export default class DB_Bubble extends DB_Common {
 		if (!!b_override_zoom_scale) {
 			layout.w_scale_factor.set(b_zoom_scale);
 		}
+		if (!!b_suppress_tree_mode) {
+			c.allow_tree_mode = false;
+			show.w_graph_ofType.set(T_Graph.radial);
+		}
 		if (!!b_override_focus_and_mode) {
-			show.w_graph_ofType.set(b_inRadialMode ? T_Graph.radial : T_Graph.tree);
+			if (!b_suppress_tree_mode) {
+				show.w_graph_ofType.set(b_inRadialMode ? T_Graph.radial : T_Graph.tree);
+			}
 			if (!!b_focus) {
 				this.changeFocusTo(b_focus);
 			}
