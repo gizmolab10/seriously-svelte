@@ -104,15 +104,18 @@ export default class DB_Bubble extends DB_Common {
 	}
 
 	private extract_fromProperties(bubble_properties: any) {
-		let b_zoom_scale, b_depth_limit, b_show_details,
+		let b_zoom_scale, b_depth_limit, b_inRadialMode, b_show_details,
 			b_ids, b_root, b_focus, b_titles, b_colors, b_parent_ids, b_related_ids,
-			b_override_zoom_scale, b_override_depth_limit, b_erase_user_preferences, b_override_focus;
+			b_override_focus_and_mode, b_override_zoom_scale, b_override_depth_limit, 
+			b_erase_user_preferences, b_suppress_tree_mode;
 		try {
 			const has_bubble = p.readDB_key(T_Preference.bubble) ?? false; // true after first launch
-			b_override_focus = bubble_properties.override_focus || !has_bubble;
+			b_override_focus_and_mode = bubble_properties.override_focus_and_mode || !has_bubble;
 			b_override_depth_limit = bubble_properties.override_depth_limit || !has_bubble;
 			b_override_zoom_scale = bubble_properties.override_zoom_scale || !has_bubble;
 			b_erase_user_preferences = bubble_properties.erase_user_preferences;
+			b_suppress_tree_mode = bubble_properties.suppress_tree_mode;
+			b_inRadialMode = bubble_properties.in_radial_mode;
 			b_show_details = bubble_properties.show_details;
 			b_depth_limit = bubble_properties.depth_limit;
 			b_zoom_scale = bubble_properties.zoom_scale;
@@ -171,8 +174,11 @@ export default class DB_Bubble extends DB_Common {
 		if (!!b_override_zoom_scale) {
 			layout.w_scale_factor.set(b_zoom_scale);
 		}
-		if (!!b_override_focus && !!b_focus) {
-			this.changeFocusTo(b_focus);
+		if (!!b_override_focus_and_mode) {
+			show.w_graph_ofType.set(b_inRadialMode ? T_Graph.radial : T_Graph.tree);
+			if (!!b_focus) {
+				this.changeFocusTo(b_focus);
+			}
 		}
 		show.w_details.set(!!b_show_details);
 	}

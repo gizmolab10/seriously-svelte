@@ -69,7 +69,7 @@ export class Visibility {
 		this.w_tree_ofType		.set(p.read_key(T_Preference.tree)			  ?? T_Kinship.children);
 		this.w_countDots_ofType	.set(p.read_key(T_Preference.countDots)		  ?? [T_Kinship.children]);
 		this.w_details_ofType	.set(p.read_key(T_Preference.detail_types)	  ?? [T_Detail.actions, T_Detail.data]);
-		this.w_graph_ofType		.set(c.has_standalone_UI ? p.read_key(T_Preference.graph) ?? T_Graph.tree : T_Graph.radial);
+		this.w_graph_ofType		.set(c.allow_tree_mode ? p.read_key(T_Preference.graph) ?? T_Graph.tree : T_Graph.radial);
 	}
 	
 	reactivity_subscribe() {

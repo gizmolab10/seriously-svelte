@@ -6,9 +6,9 @@
 	const { w_rect_ofGraphView } = layout;
 	const height = layout.controls_boxHeight + 1;
 	const { w_details, w_search_controls, w_graph_ofType } = show;
-	const top = c.has_standalone_UI ? layout.controls_boxHeight - 2 : 2;
-	const left = c.has_standalone_UI ? $w_rect_ofGraphView.origin.x : 115;
-	const width = c.has_standalone_UI ? $w_rect_ofGraphView.size.width + ($w_details ? 10 : 11) : 120;
+	const top = c.allow_tree_mode ? layout.controls_boxHeight - 2 : 2;
+	const left = c.allow_tree_mode ? $w_rect_ofGraphView.origin.x : 115;
+	const width = c.allow_tree_mode ? $w_rect_ofGraphView.size.width + ($w_details ? 10 : 11) : 120;
 
 	// two states: search and tree preferences
 
@@ -27,7 +27,7 @@
 		<Tree_Preferences width={width}/>
 	{/if}
 	{#if ($w_search_controls || $w_graph_ofType == T_Graph.tree)}
-		{#if c.has_standalone_UI}
+		{#if c.allow_tree_mode}
 			<Separator name='secondary-bottom-separator'
 				origin={new Point(-($w_details ? 2 : 3), top - 4)}
 				corner_radius={k.radius.gull_wings.thick}

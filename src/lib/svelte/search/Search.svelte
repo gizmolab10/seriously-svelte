@@ -27,7 +27,7 @@
 	}
 
 	function graph_width() {
-		return c.has_standalone_UI ? $w_rect_ofGraphView.size.width + 7 : layout.windowSize.width - 124;
+		return c.allow_tree_mode ? $w_rect_ofGraphView.size.width + 7 : layout.windowSize.width - 124;
 	}
 
 	function handle_input(event) {

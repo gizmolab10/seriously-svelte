@@ -17,8 +17,8 @@
 	const hamburger_size = k.height.button;
 	const { w_search_controls, w_graph_ofType } = show;
 	const { w_count_window_resized, w_popupView_id } = s;
-	const search_left = -38 - (c.has_details_button ? 0 : 26) + (c.has_standalone_UI ? 0 : 0);
 	const hamburger_path = svgPaths.hamburgerPath(hamburger_size);
+	const search_left = -38 - (c.has_details_button ? 0 : 26) + (c.allow_tree_mode ? 0 : 0);
 	const svg_style = 'top: -0.5px; left: -0.5px; position: absolute; width: 100%; height: 100%;';
 	let width = layout.windowSize.width - 20;
 	let lefts: number[] = [];
@@ -43,8 +43,8 @@
 		const left_widths = {
 			0: c.has_details_button ? 18  : -7,									// details
 			1: !$w_search_controls  ? 11  : c.has_details_button ? 11 : 11,		// recents / search
-			2: c.has_standalone_UI  ? 57  : 0,									// graph type
-			3: c.has_zoom_controls  ? 100 : c.has_standalone_UI  ? 70 : 34,		// plus
+			2: c.allow_tree_mode	? 57  : 0,									// graph type
+			3: c.has_zoom_controls  ? 100 : c.allow_tree_mode  ? 70 : 34,		// plus
 			4: c.has_zoom_controls  ? 26  : 0,									// minus
 			5: c.allow_search		? 22  : 6,
 			6: 25,																// easter egg, separator
@@ -99,7 +99,7 @@
 					left={search_left}
 					width={lefts[7] + (c.has_details_button ? 0 : 26)}/>
 			{/if}
-			{#if c.has_standalone_UI}
+			{#if c.allow_tree_mode}
 				{#key $w_graph_ofType}
 					<Segmented name='graph-type'
 						width={80}
@@ -154,7 +154,7 @@
 					s_button={elements.s_control_forType(T_Control.details)}
 					closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.details)}/>
 			{/if}
-			{#if c.has_standalone_UI}
+			{#if c.allow_tree_mode}
 				<Separator name='before-search'
 					isHorizontal={false}
 					origin={new Point(lefts[5], -8)}

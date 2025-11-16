@@ -12,6 +12,7 @@ export class Configuration {
 	has_details_button = true;
 	has_zoom_controls = false;
 	has_standalone_UI = true;
+	allow_tree_mode = true;
 	allow_autoSave = true;
 	erasePreferences = 0;
 	allow_search = true;
@@ -52,6 +53,7 @@ export class Configuration {
 				case 'auto_save':			this.allow_autoSave			   = false; break;
 				case 'standalone_UI':		this.has_standalone_UI		   = false; break;
 				case 'details':				this.has_details_button		   = false; break;
+				case 'tree_mode':			this.allow_tree_mode		   = false; break;
 				case 'editGraph':			this.allow_graph_editing	   = false; break;
 				case 'editTitles':			this.allow_title_editing	   = false; break;
 				case 'horizontalScrolling': this.allow_HorizontalScrolling = false; break;
