@@ -210,7 +210,7 @@ export default class Ancestry extends Identifiable {
 
 	static readonly _____VISIBILITY: unique symbol;
 
-	get depth_limit():				   number { return get(show.w_depth_limit) ?? 0; }
+	get depth_limit():				   number { return get(layout.w_depth_limit) ?? 0; }
 	get halfHeight_ofVisibleSubtree(): number { return this.height_ofVisibleSubtree() / 2; }
 	get halfSize_ofVisibleSubtree():     Size { return this.size_ofVisibleSubtree.dividedInHalf; }
 	get size_ofVisibleSubtree():	     Size { return new Size(this.visibleSubtree_width(), this.height_ofVisibleSubtree()); }

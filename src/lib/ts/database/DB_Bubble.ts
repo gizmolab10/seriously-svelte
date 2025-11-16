@@ -169,7 +169,7 @@ export default class DB_Bubble extends DB_Common {
 			busy.signal_data_redraw();
 		}
 		if (!!b_override_depth_limit) {
-			show.w_depth_limit.set(b_depth_limit);
+			layout.w_depth_limit.set(b_depth_limit);
 		}
 		if (!!b_override_zoom_scale) {
 			layout.w_scale_factor.set(b_zoom_scale);

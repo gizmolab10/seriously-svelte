@@ -14,7 +14,6 @@ export class Visibility {
 	w_show_related				= writable<boolean>();
 	w_show_save_data_button		= writable<boolean>();
 	w_show_search_controls		= writable<boolean>();
-	w_depth_limit				= writable<number>();
 	debug_cursor				= false;
 
 	constructor() {
@@ -32,7 +31,7 @@ export class Visibility {
 		const visible = Object.fromEntries(visibleNames.map(s => [s, true]) ?? {});
 		const keyedFlags: Dictionary<boolean> = {...visible, ...hidden};
 		if (!!levels) {
-			this.w_depth_limit.set(Number(levels));
+			layout.w_depth_limit.set(Number(levels));
 		}
         for (const [name, flag] of Object.entries(keyedFlags)) {
 			switch (name) {
@@ -62,7 +61,6 @@ export class Visibility {
 	}
 
 	restore_preferences() {
-		this.w_depth_limit		.set(p.read_key(T_Preference.levels)		  ?? 12);
 		this.w_show_details			.set(p.read_key(T_Preference.show_show_details)	  ?? false);
 		this.w_show_related			.set(p.read_key(T_Preference.show_show_related)	  ?? false);
 		this.w_show_other_databases	.set(p.read_key(T_Preference.other_databases) ?? false);

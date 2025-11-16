@@ -11,7 +11,7 @@ export class Preferences {
 		const queryStrings = c.queryStrings;
 		const levels = queryStrings.get('levels');
 		if (!!levels) {
-			show.w_depth_limit.set(Number(levels));
+			layout.w_depth_limit.set(Number(levels));
 		}
 		this.restore_preferences();
 
@@ -208,7 +208,7 @@ export class Preferences {
 		
 		// OTHER
 
-		show.w_depth_limit.subscribe((depth: number) => {
+		layout.w_depth_limit.subscribe((depth: number) => {
 			this.write_key(T_Preference.levels, depth);
 		});
 		s.w_auto_adjust_graph.subscribe((auto_adjust: T_Auto_Adjust | null) => {

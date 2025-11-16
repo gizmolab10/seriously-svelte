@@ -12,7 +12,8 @@
 	const { w_separator_color } = colors;
 	const tops = u.cumulativeSum(heights);
 	const segmented_height = k.height.button + 3;
-	const { w_show_tree_ofType, w_depth_limit } = show;
+	const { w_show_tree_ofType } = show;
+	const { w_depth_limit } = layout;
 
 	function handle_depth_limit(value: number) {
 		const asInteger = Math.round(value);

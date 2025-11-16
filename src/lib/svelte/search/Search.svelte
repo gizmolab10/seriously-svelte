@@ -8,7 +8,6 @@
 	const { w_show_details } = show;
 	const { w_thing_fontFamily } = s;
 	const { w_rect_ofGraphView } = layout;
-	const left_width = $w_show_details ? 124 : 100;
 	const s_search = elements.s_element_for(null, T_Element.search, k.empty);
 	const { w_search_state, w_search_preferences, w_search_results_found } = search;
 	let input: HTMLInputElement;
@@ -24,11 +23,11 @@
 	}
 
 	function search_width() {
-		return graph_width() - left_width + ($w_show_details ? 0: 24);
+		return graph_width() - (c.has_details_button ? 96 : 74);
 	}
 
 	function graph_width() {
-		return c.allow_tree_mode ? $w_rect_ofGraphView.size.width + 7 : layout.windowSize.width - 124;
+		return c.allow_tree_mode ? $w_rect_ofGraphView.size.width - 28 : layout.windowSize.width - 124;
 	}
 
 	function handle_input(event) {

@@ -15,7 +15,7 @@ export default class G_TreeGraph {
 
 	grand_layout_tree() {
 		const rect_ofGraphView = get(layout.w_rect_ofGraphView);
-		const depth_limit = get(show.w_depth_limit) ?? 1;
+		const depth_limit = get(layout.w_depth_limit) ?? 1;
 		if (!!rect_ofGraphView && !!this.g_focus) {
 			this.layout_focus_ofTree(rect_ofGraphView); 
 			this.g_focus.layout_each_generation_recursively(depth_limit);
@@ -40,7 +40,7 @@ export default class G_TreeGraph {
 	}
 
 	increase_depth_limit_by(increment: number) {
-		show.w_depth_limit.update(a => a + increment);
+		layout.w_depth_limit.update(a => a + increment);
 		layout.grand_layout();
 	}
 

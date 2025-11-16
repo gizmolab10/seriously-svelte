@@ -5,11 +5,11 @@ import { G_Cluster, G_Paging, G_Widget } from '../common/Global_Imports';
 import { get, writable } from 'svelte/store';
 
 export default class Layout {
-	w_scale_factor			= writable<number>(1);
+
+	static readonly _____TREE: unique symbol;
+
+	w_depth_limit			= writable<number>(3);
 	w_branches_areChildren	= writable<boolean>(true);
-	w_scaled_movement		= writable<Point | null>(null);
-	w_mouse_location		= writable<Point>();
-	w_mouse_location_scaled	= writable<Point>();
 
 	static readonly _____GRAPH_VIEW: unique symbol;
 
@@ -24,7 +24,15 @@ export default class Layout {
 	w_g_paging				= writable<G_Paging>();
 	w_g_paging_cluster		= writable<G_Cluster | null>();
 
+	static readonly _____ZOOM: unique symbol;
+
+	w_scale_factor			= writable<number>(1);
+	w_scaled_movement		= writable<Point | null>(null);
+	w_mouse_location		= writable<Point>();
+	w_mouse_location_scaled	= writable<Point>();
+
 	restore_preferences() {
+		this.w_depth_limit.set(p.read_key(T_Preference.levels) ?? 12);
 		this.update_rect_ofGraphView();	// needed for set_scale_factor
 		this.set_scale_factor(p.read_key(T_Preference.scale) ?? 1);
 		this.w_ring_rotation_angle.set( p.read_key(T_Preference.ring_angle) ?? 0);

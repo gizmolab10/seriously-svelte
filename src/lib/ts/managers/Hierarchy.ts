@@ -1018,7 +1018,7 @@ export class Hierarchy {
 			if (thing.isInDifferentBulkThan(parentThing)) {		// should move across bulks
 				this.ancestry_remember_bulk_persistentRelocateRight(ancestry, parentAncestry);
 			} else {
-				const depth_limit = get(show.w_depth_limit);
+				const depth_limit = get(layout.w_depth_limit);
 				const relationship = ancestry.relationship;
 				if (!!relationship) {
 					// move ancestry to a different parent
@@ -1059,7 +1059,7 @@ export class Hierarchy {
 					newGrabAncestry = null;
 				}
 				if (controls.inTreeMode) {
-					const depth_limit = get(show.w_depth_limit);
+					const depth_limit = get(layout.w_depth_limit);
 					graph_needsSweep = ancestry.expand();
 					if (!!newGrabAncestry && newGrabAncestry.depth_below_focus > depth_limit) {
 						newFocusAncestry = newGrabAncestry.ancestry_createUnique_byStrippingBack(depth_limit);
