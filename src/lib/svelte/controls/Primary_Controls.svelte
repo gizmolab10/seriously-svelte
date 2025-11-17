@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, e, k, s, u, x, show, colors, search, layout } from '../../ts/common/Global_Imports';
+	import { c, e, k, s, u, x, show, colors, search, layout, features } from '../../ts/common/Global_Imports';
 	import { Point, elements, controls, svgPaths } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Control } from '../../ts/common/Global_Imports';
 	import Search_Toggle from '../search/Search_Toggle.svelte';
@@ -18,7 +18,7 @@
 	const { w_count_window_resized, w_popupView_id } = s;
 	const { w_show_search_controls, w_show_graph_ofType } = show;
 	const hamburger_path = svgPaths.hamburgerPath(hamburger_size);
-	const search_left = -38 - (c.has_details_button ? 0 : 26) + (c.allow_tree_mode ? 0 : 0);
+	const search_left = -38 - (features.has_details_button ? 0 : 26) + (features.allow_tree_mode ? 0 : 0);
 	const svg_style = 'top: -0.5px; left: -0.5px; position: absolute; width: 100%; height: 100%;';
 	let width = layout.windowSize.width - 20;
 	let lefts: number[] = [];
@@ -41,12 +41,12 @@
 
 	function layout_controls() {
 		const left_widths = {
-			0: c.has_details_button ? 18  : -7,									// details
-			1: !$w_show_search_controls  ? 11  : c.has_details_button ? 11 : 11,		// recents / search
-			2: c.allow_tree_mode	? 57  : 0,									// graph type
-			3: c.has_zoom_controls  ? 100 : c.allow_tree_mode  ? 70 : 34,		// plus
-			4: c.has_zoom_controls  ? 26  : 0,									// minus
-			5: c.allow_search		? 22  : 6,
+			0: features.has_details_button ? 18  : -7,									// details
+			1: !$w_show_search_controls  ? 11  : features.has_details_button ? 11 : 11,		// recents / search
+			2: features.allow_tree_mode	? 57  : 0,									// graph type
+			3: features.has_zoom_controls  ? 100 : features.allow_tree_mode  ? 70 : 34,		// plus
+			4: features.has_zoom_controls  ? 26  : 0,									// minus
+			5: features.allow_search		? 22  : 6,
 			6: 25,																// easter egg, separator
 			7: 43,																// search
 			8: -37,																// breadcrumbs
@@ -71,7 +71,7 @@
 			origin={Point.x(lefts[1])}
 			closure={handle_recents_mouseClick}/>
 		{#if !$w_popupView_id}
-			{#if c.has_details_button}
+			{#if features.has_details_button}
 				<Button name='details-toggle'
 					border_thickness=0
 					color='transparent'
@@ -93,13 +93,13 @@
 					</svg>
 				</Button>
 			{/if}
-			{#if c.allow_search}
+			{#if features.allow_search}
 				<Search_Toggle
 					top={-0.5}
 					left={search_left}
-					width={lefts[7] + (c.has_details_button ? 0 : 26)}/>
+					width={lefts[7] + (features.has_details_button ? 0 : 26)}/>
 			{/if}
-			{#if c.allow_tree_mode}
+			{#if features.allow_tree_mode}
 				{#key $w_show_graph_ofType}
 					<Segmented name='graph-type'
 						width={80}
@@ -109,7 +109,7 @@
 						handle_selection={(titles) => controls.handle_segmented_choices('graph', titles)}/>
 				{/key}
 			{/if}
-			{#if c.has_zoom_controls}
+			{#if features.has_zoom_controls}
 				<div class='scaling-controls'>
 					<Button name={T_Control.grow}
 						width={size_big}
@@ -143,7 +143,7 @@
 					</Button>
 				</div>
 			{/if}
-			{#if !c.has_details_button}
+			{#if !features.has_details_button}
 				<Button name='easter-egg'
 					width={20}
 					height={30}
@@ -154,7 +154,7 @@
 					s_button={elements.s_control_forType(T_Control.details)}
 					closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.details)}/>
 			{/if}
-			{#if c.allow_tree_mode}
+			{#if features.allow_tree_mode}
 				<Separator name='before-search'
 					isHorizontal={false}
 					origin={new Point(lefts[5], -8)}

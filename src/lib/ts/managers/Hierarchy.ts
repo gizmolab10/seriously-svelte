@@ -1,7 +1,7 @@
 import { T_Startup, T_Create, T_Alteration, T_File_Format, T_Persistable } from '../common/Global_Imports';
 import { Access, Ancestry, Predicate, Relationship, Persistable } from '../common/Global_Imports';
 import { T_Thing, T_Trait, T_Order, T_Control, T_Predicate } from '../common/Global_Imports';
-import { c, k, p, s, u, x, busy, show, debug, controls } from '../common/Global_Imports';
+import { k, p, s, u, x, busy, debug, controls, features } from '../common/Global_Imports';
 import { files, colors, signals, layout, databases } from '../common/Global_Imports';
 import { Tag, User, Thing, Trait, S_Items } from '../common/Global_Imports';
 import DB_Common, { T_Database } from '../database/DB_Common';
@@ -984,7 +984,7 @@ export class Hierarchy {
 					this.ancestry_rebuild_runtimeBrowseRight(ancestry, RIGHT, SHIFT, EXTREME, fromReveal);
 				}
 			}
-		} else if (c.allow_graph_editing) {
+		} else if (features.allow_graph_editing) {
 			const grab = x.ancestry_grabbed_atEnd_upward(true);
 			if (!!grab) {
 				this.ancestry_rebuild_persistentRelocateRight(grab, RIGHT, EXTREME);

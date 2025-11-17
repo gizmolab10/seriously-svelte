@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, k, s, x, Point, search, layout } from '../../ts/common/Global_Imports';
+	import { k, s, x, Point, search, layout, features } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Detail } from '../../ts/common/Global_Imports';
 	import Banner_Hideable from './Banner_Hideable.svelte';
 	import D_Preferences from './D_Preferences.svelte';
@@ -47,7 +47,7 @@
 		<Banner_Hideable t_detail={T_Detail.header}>
 			<D_Header/>
 		</Banner_Hideable>
-		{#if c.has_standalone_UI}
+		{#if features.has_standalone_UI}
 			<Banner_Hideable t_detail={T_Detail.preferences}>
 				<D_Preferences/>
 			</Banner_Hideable>
@@ -58,7 +58,7 @@
 		<Banner_Hideable t_detail={T_Detail.selection}>
 			<D_Selection/>
 		</Banner_Hideable>
-		{#if c.has_standalone_UI}
+		{#if features.has_standalone_UI}
 			<Banner_Hideable t_detail={T_Detail.tags}>
 				<D_Tags/>
 			</Banner_Hideable>

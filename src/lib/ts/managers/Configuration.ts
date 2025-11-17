@@ -1,22 +1,10 @@
-import { e, k, p, s, u, show, debug, search, colors, layout, databases } from '../common/Global_Imports';
-import { T_Theme } from '../common/Global_Imports';
+import { e, k, p, s, u, show, debug, search, colors, layout, features, databases } from '../common/Global_Imports';
 
 export class Configuration {
 
 	queryStrings = new URLSearchParams(window.location.search);
-	allow_HorizontalScrolling = true;
-	theme = T_Theme.standalone;
-	allow_graph_editing = true;
-	allow_title_editing = true;
-	has_details_button = true;
-	has_zoom_controls = false;
-	has_standalone_UI = true;
-	allow_tree_mode = true;
-	allow_autoSave = true;
 	erasePreferences = 0;
-	allow_search = true;
 	eraseDB = 0;
-
 
 	configure() {
 		
@@ -26,7 +14,6 @@ export class Configuration {
 		//									//
 		//////////////////////////////////////
 
-		
 		// DO NOT CHANGE THE ORDER OF THESE CALLS
 
 		s.w_device_isMobile.set(u.device_isMobile);
@@ -34,6 +21,7 @@ export class Configuration {
 		colors.restore_preferences();
 		search.setup_defaults();
 		this.apply_queryStrings();						// must call before prefs and db
+		features.apply_queryStrings();
 		show.restore_preferences();							// visibility
 		layout.restore_preferences();
 		databases.apply_queryStrings();
@@ -45,30 +33,10 @@ export class Configuration {
 	apply_queryStrings() {
 		const queryStrings	 = this.queryStrings;
         const eraseOptions	 = queryStrings.get('erase')?.split(k.comma) ?? [];
-        const themeOptions	 = queryStrings.get('theme')?.split(k.comma) ?? [];
-        const disableOptions = queryStrings.get('disable')?.split(k.comma) ?? [];
-		for (const disableOption of disableOptions) {
-			switch (disableOption) {
-				case 'search':				this.allow_search			   = false; break;
-				case 'auto_save':			this.allow_autoSave			   = false; break;
-				case 'standalone_UI':		this.has_standalone_UI		   = false; break;
-				case 'details':				this.has_details_button		   = false; break;
-				case 'tree_mode':			this.allow_tree_mode		   = false; break;
-				case 'editGraph':			this.allow_graph_editing	   = false; break;
-				case 'editTitles':			this.allow_title_editing	   = false; break;
-				case 'horizontalScrolling': this.allow_HorizontalScrolling = false; break;
-			}
-		}
 		for (const eraseOption of eraseOptions) {
 			switch (eraseOption) {
 				case 'data':	 this.eraseDB = 4;		break;
 				case 'settings': p.preferences_reset(); break;
-			}
-		}
-		for (const themeOption of themeOptions) {
-			switch (themeOption) {
-				case 'bubble':	   this.theme = T_Theme.bubble;		break;
-				case 'standalone': this.theme = T_Theme.standalone; break;
 			}
 		}
     }

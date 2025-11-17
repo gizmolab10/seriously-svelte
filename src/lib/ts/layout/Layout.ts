@@ -1,4 +1,4 @@
-import { c, h, k, p, s, u, show, debug, radial, g_tree, g_radial, signals, controls } from '../common/Global_Imports';
+import { h, k, p, s, u, show, debug, radial, g_tree, g_radial, signals, controls, features } from '../common/Global_Imports';
 import { S_Component, T_Graph, T_Preference, T_Startup } from '../common/Global_Imports';
 import { Rect, Size, Point, Thing, Ancestry } from '../common/Global_Imports';
 import { G_Cluster, G_Paging, G_Widget } from '../common/Global_Imports';
@@ -110,7 +110,7 @@ export default class Layout {
 
 	update_rect_ofGraphView() {
 		// respond to changes in: window size & details visibility
-		const secondary_below_primary_controls = c.allow_tree_mode && (get(show.w_show_search_controls) || (get(show.w_show_graph_ofType) == T_Graph.tree));
+		const secondary_below_primary_controls = features.allow_tree_mode && (get(show.w_show_search_controls) || (get(show.w_show_graph_ofType) == T_Graph.tree));
 		const y = (this.controls_boxHeight) * (secondary_below_primary_controls ? 2 : 1) - 4;	// below primary and secondary controls
 		const x = get(show.w_show_details) ? k.width.details : 5;							// right of details
 		const origin_ofGraphView = new Point(x, y);

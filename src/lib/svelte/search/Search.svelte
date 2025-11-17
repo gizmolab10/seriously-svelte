@@ -1,6 +1,6 @@
 <script lang='ts'>
+	import { c, k, p, s, show, Point, layout, search, elements, controls, features } from '../../ts/common/Global_Imports';
 	import { T_Search, T_Layer, T_Element, T_Preference, T_Search_Preference } from '../../ts/common/Global_Imports';
-	import { c, k, p, s, show, Point, layout, search, elements, controls } from '../../ts/common/Global_Imports';
 	import Segmented from '../mouse/Segmented.svelte';
 	export let zindex = T_Layer.graph;
 	export let width = 80;
@@ -23,11 +23,11 @@
 	}
 
 	function search_width() {
-		return graph_width() - (c.has_details_button ? 96 : 74);
+		return graph_width() - (features.has_details_button ? 96 : 74);
 	}
 
 	function graph_width() {
-		return c.allow_tree_mode ? $w_rect_ofGraphView.size.width - 28 : layout.windowSize.width - 124;
+		return features.allow_tree_mode ? $w_rect_ofGraphView.size.width - 28 : layout.windowSize.width - 124;
 	}
 
 	function handle_input(event) {

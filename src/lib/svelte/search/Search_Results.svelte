@@ -28,22 +28,17 @@
 		}
 	}
 
-	function highlightMatch(title: string, searchText: string) {
-		if (!searchText) return title;
-		const parts = title.toLowerCase().split(searchText.toLowerCase());
-		if (parts.length === 1) return title;
-		let lastIndex = 0;
-		let result = '';
-		for (let i = 0; i < parts.length - 1; i++) {
-			const part = parts[i];
-			lastIndex += part.length;
-			result += title.slice(lastIndex - part.length, lastIndex);
-			const match = title.slice(lastIndex, lastIndex + searchText.length);
-			result += `<span style='background-color: ${$w_separator_color}'>${match}</span>`;
-			lastIndex += searchText.length;
-		}
-		result += title.slice(lastIndex);
-		return result;
+	function highlightMatch(title: string) {
+		if (!search.search_words || search.search_words.length === 0) return title;
+		
+		const escapedWords = search.search_words.map(word => 
+			word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+		);
+		const pattern = new RegExp(`(${escapedWords.join('|')})`, 'gi');
+		
+		return title.replace(pattern, (match) => 
+			`<span style='background-color: ${$w_separator_color}'>${match}</span>`
+		);
 	}
 
 </script>
@@ -55,8 +50,7 @@
 			{#each results as result, index}
 				<li class:selected={$results_index === index} style='color: {result.color}'
 					on:mousedown={(event) => handle_row_selected(event, index)}>
-					<span>{@html highlightMatch(result.title, search.search_text)}</span>
-				</li>
+					<span>{@html highlightMatch(result.title)}</span>				</li>
 			{/each}
 		{/key}
 	</ul>

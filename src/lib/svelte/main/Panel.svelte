@@ -6,7 +6,6 @@
 	import Primary_Controls from '../controls/Primary_Controls.svelte';
 	import Search_Results from '../search/Search_Results.svelte';
 	import { T_Database } from '../../ts/database/DB_Common';
-	import Separator from '../draw/Separator.svelte';
 	import Details from '../details/Details.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	import Spinner from '../draw/Spinner.svelte';

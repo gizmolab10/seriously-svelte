@@ -1,6 +1,6 @@
-import { Tag, Trait, Thing, Predicate, Relationship, Persistable } from '../common/Global_Imports';
+import { Tag, Trait, Thing, Hierarchy, Predicate, Relationship, Persistable } from '../common/Global_Imports';
 import { T_Thing, T_Startup, T_Persistence, T_Persistable } from '../common/Global_Imports';
-import { c, h, k, p, s, busy, debug, Hierarchy, databases } from '../common/Global_Imports';
+import { c, h, k, p, s, busy, debug, features, databases } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
 
 export enum T_Database {
@@ -65,7 +65,7 @@ export default class DB_Common {
 	}
 
 	async persist_all(force: boolean = false) {
-		if (!force && (databases.defer_persistence || !c.allow_autoSave)) {
+		if (!force && (databases.defer_persistence || !features.allow_autoSave)) {
 			busy.signal_data_redraw();
 		} else {
 			busy.isPersisting = true;

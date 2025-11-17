@@ -1,4 +1,4 @@
-import { c, h, k, s, u, x, g_tree, debug, search, layout, details, signals, controls, elements } from '../common/Global_Imports';
+import { h, k, s, u, x, g_tree, debug, search, layout, details, signals, controls, elements, features } from '../common/Global_Imports';
 import { T_Search, T_Action, T_Control, T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { Point, Ancestry, Predicate } from '../common/Global_Imports';
 import { S_Mouse, S_Alteration } from '../common/Global_Imports';
@@ -172,7 +172,7 @@ export class Events {
 			const e = event as WheelEvent;
 			const userOffset = get(layout.w_user_graph_offset);
 			const delta = new Point(-e.deltaX, -e.deltaY);
-			if (!!userOffset && c.allow_HorizontalScrolling && delta.magnitude > 1) {
+			if (!!userOffset && features.allow_horizontal_scrolling && delta.magnitude > 1) {
 				debug.log_action(` wheel GRAPH`);
 				layout.set_user_graph_offsetTo(userOffset.offsetBy(delta));
 			}
@@ -285,8 +285,8 @@ export class Events {
 						case 'f':				search.activate(); break;			
 					}
 				} else {
-					if (c.allow_graph_editing) {
-						if (!!ancestry && c.allow_title_editing) {
+					if (features.allow_graph_editing) {
+						if (!!ancestry && features.allow_title_editing) {
 							switch (key) {
 								case 'enter':	ancestry.startEdit(); break;
 								case 'd':		await h.thing_edit_persistentDuplicate(ancestry); break;
@@ -330,7 +330,7 @@ export class Events {
 			if (graph_needsSweep) {
 				layout.grand_sweep();
 			}
-			if (c.allow_autoSave) {
+			if (features.allow_autoSave) {
 				setTimeout( async () => {
 					await h.db.persist_all();
 				}, 1);

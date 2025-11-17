@@ -1,9 +1,11 @@
-import { c, k, h, p, s, x, show, Thing, details, Ancestry, databases } from "../common/Global_Imports";
+import { k, h, p, s, x, show, Thing, details, Ancestry, databases, features } from "../common/Global_Imports";
 import { T_Search, T_Startup, T_Preference, T_Search_Preference } from "../common/Global_Imports";
 import { Search_Node } from '../types/Search_Node';
 import { get, writable } from 'svelte/store';
 
 class Search {
+	use_AND_logic: boolean			= false; // for multi-word searches
+	search_words: string[]			= []; // for multi-word searches
 	search_text: string | null		= null;
 	private root_node: Search_Node	= new Search_Node();
 	w_search_results_found			= writable<number>(0);
@@ -38,7 +40,7 @@ class Search {
 	}
 
 	private setup() {
-		if (c.allow_search) {
+		if (features.allow_search) {
 			this.search_text = p.readDB_key(T_Preference.search_text);
 			s.w_t_startup.subscribe((startup) => {
 				if (startup == T_Startup.ready) {
@@ -89,15 +91,6 @@ class Search {
 		}
 	}
 
-	update_search_for(query: string) {
-		this.search_text = query;
-		if (query.length > 0) {
-			x.si_found.items = this.root_node.search_for(query);
-		} else {
-			x.si_found.reset();
-		}
-	}
-
 	deactivate_focus_and_grab() {
 		const ancestry = this.selected_ancestry;
 		if (!!ancestry) {
@@ -111,22 +104,40 @@ class Search {
 		this.search_text = query;
 		const before = this.results_fingerprint;
 		if (query.length > 0) {
-			x.si_found.items = this.root_node.search_for(query);
+			// Split once here
+			const lowercase = query.toLowerCase().trim();
+			this.search_words = lowercase.split(/\s+/).filter(w => w.length > 0);
+			
+			// Pass the words array and the intersect flag
+			x.si_found.items = this.root_node.search_for(this.search_words, this.use_AND_logic);
 			const show_results = x.si_found.items.length > 0;
 			this.w_search_results_found.set(x.si_found.items.length);
 			this.w_search_state.set(show_results ? T_Search.results : T_Search.enter);
 		} else {
+			this.search_words = [];
 			x.si_found.reset();
 			this.w_search_results_found.set(0);
 			this.w_search_state.set(T_Search.enter);
 		}
-		if (before !== this.results_fingerprint) {	// only if results are different
+		if (before !== this.results_fingerprint) {
 			x.si_found.index = -1;
 		}
 		show.w_show_search_controls.set(T_Search.off != get(this.w_search_state));
 		this.w_search_results_changed.set(Date.now());
 	}
 	
+	update_search_for(query: string) {
+		this.search_text = query;
+		if (query.length > 0) {
+			const lowercase = query.toLowerCase().trim();
+			this.search_words = lowercase.split(/\s+/).filter(w => w.length > 0);
+			x.si_found.items = this.root_node.search_for(this.search_words, this.use_AND_logic);
+		} else {
+			this.search_words = [];
+			x.si_found.reset();
+		}
+	}
+
 	static readonly _____PRIVATE: unique symbol;
 
 	private get results_fingerprint(): string { return !x.si_found.items ? k.empty : x.si_found.items.map((result: Thing) => result.id).join('|'); }

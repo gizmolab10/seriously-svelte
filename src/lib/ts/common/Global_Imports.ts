@@ -45,6 +45,7 @@ import { colors } from '../managers/Colors';
 import { search } from '../managers/Search';
 import { signals } from '../signals/Signals';
 import { controls } from '../ux/UX_Controls';
+import { features } from '../ux/UX_Features';
 import { show } from '../managers/Visibility';
 import { debug, Debug } from '../debug/Debug';
 import { elements } from '../ux/UX_S_Elements';
@@ -97,8 +98,8 @@ export {
 	interact, transparentize,
 	debug, svgPaths, databases,
 	busy, show, files, builds, print,
-	search, details, elements, controls,
-	colors, layout, radial, signals, components,
+	layout, search, details, controls, features,
+	colors, radial, signals, elements, components,
 
 	Angle, Direction, 
 	Rect, Size, Point,

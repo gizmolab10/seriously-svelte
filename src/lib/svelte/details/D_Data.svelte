@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, h, k, p, u, busy, show, colors, details, elements, databases } from '../../ts/common/Global_Imports';
+	import { c, h, k, p, u, busy, show, colors, details, features, elements, databases } from '../../ts/common/Global_Imports';
 	import { T_File_Format, T_File_Operation, T_Storage_Need } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Element, T_Request, T_Preference } from '../../ts/common/Global_Imports';
 	import { Point, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
@@ -29,7 +29,7 @@
 	setup_s_elements();
 	$: tops = u.cumulativeSum(heights);
 	s_save.set_forHovering('black', 'pointer');
-	function height_ofChoices() { return c.has_standalone_UI ? $w_show_other_databases ? 18 : -5 : -16; }
+	function height_ofChoices() { return features.has_standalone_UI ? $w_show_other_databases ? 18 : -5 : -16; }
 
 	$:{
 		const _ = `${$w_data_updated}:::${$w_t_database}`;
@@ -130,7 +130,7 @@
 <div class='database-container'
 	style='
 		padding:5px;'>
-	{#if c.has_standalone_UI}
+	{#if features.has_standalone_UI}
 		<Separator name='show-other-databases'
 			isHorizontal={true}
 			has_gull_wings={true}

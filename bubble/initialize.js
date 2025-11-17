@@ -24,15 +24,11 @@ function(instance) {
 	function LOG(message, value, ...optionalParams) { instance.data.LOG(message, value, ...optionalParams); }
 
 	function url_from_properties(properties) {
-		const disables = [
-			'auto_save',
-			'standalone_UI',
-			properties.show_show_details ? 'unknown' : 'details'];
 		const pairs = {
-			db: 'bubble',
+			db:	   'bubble',
+			theme: 'bubble',
 			debug: 'bubble',
-			erase: properties.erase_user_settings ? 'settings' : 'unknown',
-			disable: disables.filter(d => d !== 'unknown').join(',')
+			erase: properties.erase_user_settings ? 'settings' : 'unknown'
 		}
 		const urlParams = new URLSearchParams(window.location.search);
 		// Merge pairs into URL params, overwriting duplicates and eliminating unknowns

@@ -1,4 +1,4 @@
-import { c, h, k, s, u, x, show, debug, search, layout, controls, svgPaths, databases, components } from '../common/Global_Imports';
+import { h, k, s, u, x, show, debug, search, layout, controls, features, svgPaths, databases, components } from '../common/Global_Imports';
 import { T_Graph, T_Create, T_Kinship, T_Predicate, T_Alteration, T_Component } from '../common/Global_Imports';
 import { Rect, Size, Point, Thing, Direction, Predicate, Relationship } from '../common/Global_Imports';
 import { G_Widget, G_Paging, G_Cluster, G_TreeLine } from '../common/Global_Imports';
@@ -317,7 +317,7 @@ export default class Ancestry extends Identifiable {
 		const isExternals = this.thing?.isExternals ?? true;
 		const isBulkAlias = this.thing?.isBulkAlias ?? true;	// missing thing, return not editable
 		const canEdit = (!this.isRoot || databases.db_now.t_database != T_Database.firebase);
-		return canEdit && c.allow_title_editing && !isExternals && !isBulkAlias;
+		return canEdit && features.allow_title_editing && !isExternals && !isBulkAlias;
 	}
 
 	startEdit() {
@@ -361,7 +361,7 @@ export default class Ancestry extends Identifiable {
 						grabAncestry.grab_forShift(SHIFT);
 						needs_graphRelayout = true;
 					}
-				} else if (c.allow_graph_editing) {
+				} else if (features.allow_graph_editing) {
 					needs_graphRebuild = true;
 					this.reorder_within(this.sibling_ancestries, up);
 				}
@@ -391,7 +391,7 @@ export default class Ancestry extends Identifiable {
 					grabAncestry.grab_forShift(SHIFT);
 					needs_graphRelayout = true;
 				}
-			} else if (c.allow_graph_editing) {
+			} else if (features.allow_graph_editing) {
 				needs_graphRebuild = true;
 				this.reorder_within(sibling_ancestries, up);
 			}
@@ -416,7 +416,7 @@ export default class Ancestry extends Identifiable {
 					grabAncestry.grab_forShift(SHIFT);
 					needs_graphRelayout = true;
 				}
-			} else if (c.allow_graph_editing) {
+			} else if (features.allow_graph_editing) {
 				needs_graphRebuild = true;
 				this.reorder_within(sibling_ancestries, up);
 			}
