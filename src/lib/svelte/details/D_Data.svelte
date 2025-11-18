@@ -29,7 +29,7 @@
 	setup_s_elements();
 	$: tops = u.cumulativeSum(heights);
 	s_save.set_forHovering('black', 'pointer');
-	function height_ofChoices() { return features.has_standalone_UI ? $w_show_other_databases ? 18 : -5 : -16; }
+	function height_ofChoices() { return features.has_every_detail ? $w_show_other_databases ? 18 : -5 : -16; }
 
 	$:{
 		const _ = `${$w_data_updated}:::${$w_t_database}`;
@@ -130,7 +130,7 @@
 <div class='database-container'
 	style='
 		padding:5px;'>
-	{#if features.has_standalone_UI}
+	{#if features.has_every_detail}
 		<Separator name='show-other-databases'
 			isHorizontal={true}
 			has_gull_wings={true}

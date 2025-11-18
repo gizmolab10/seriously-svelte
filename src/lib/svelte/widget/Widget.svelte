@@ -134,7 +134,7 @@
 			${s_widget.background};
 			color : ${s_widget.color};
 			border : ${s_widget.border};
-			width : ${width_ofWidget}px;
+			width : ${width_ofWidget - 5}px;
 			z-index : ${T_Layer.widgets};
 			border-radius : ${border_radius}px;`;
 	}
@@ -157,16 +157,25 @@
 {#if s_widget}
     <Mouse_Responder
 		height={height}
-		position="absolute"
+		position='absolute'
         on:keyup={u.ignore}
         on:keydown={u.ignore}
         name={s_component.id}
-        width={width_ofWidget}
+        width={width_ofWidget - 6}
         zindex={T_Layer.widgets}
         on:click={handle_click_event}
         handle_s_mouse={handle_s_mouse}
         style={widget_style.removeWhiteSpace()}
         origin={g_widget.origin.offsetBy(g_widget.offset_ofWidget)}>
+	</Mouse_Responder>
+	<div class='widget-content'
+		style='
+			top : {top - 1.5}px;
+			left : {left - 2}px;
+			height : {height}px;
+			position : absolute;
+			width : {width_ofWidget}px;
+			z-index : {T_Layer.widgets};'>
         <Widget_Drag
             s_drag = {s_drag}
             points_right = {drag_points_right}/>
@@ -178,5 +187,5 @@
                 s_reveal = {s_reveal}
                 points_toChild = {reveal_points_toChild}/>
         {/if}
-    </Mouse_Responder>
+	</div>
 {/if}

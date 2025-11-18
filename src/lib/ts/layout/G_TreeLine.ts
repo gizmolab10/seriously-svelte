@@ -63,7 +63,7 @@ export default class G_TreeLine {
 				this.extent = this.origin.offsetBy(lineRect.size.asPoint).offsetByY(0.5);
 				break;
 			case T_Tree_Line.flat:
-				lineRect = lineRect.offsetByY(-1.5);
+				lineRect = lineRect.offsetByY(-1);
 				this.origin = lineRect.centerLeft;
 				this.extent = lineRect.centerRight;
 				this.linePath = svgPaths.line(this.origin.vector_to(this.extent));

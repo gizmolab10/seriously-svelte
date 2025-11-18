@@ -172,7 +172,7 @@ export class Events {
 			const e = event as WheelEvent;
 			const userOffset = get(layout.w_user_graph_offset);
 			const delta = new Point(-e.deltaX, -e.deltaY);
-			if (!!userOffset && features.allow_horizontal_scrolling && delta.magnitude > 1) {
+			if (!!userOffset && features.allow_h_scrolling && delta.magnitude > 1) {
 				debug.log_action(` wheel GRAPH`);
 				layout.set_user_graph_offsetTo(userOffset.offsetBy(delta));
 			}

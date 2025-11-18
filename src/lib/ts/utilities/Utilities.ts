@@ -173,7 +173,7 @@ export class Utilities extends Testworthy_Utilities {
 								body { margin: 0; }
 							}
 						</style>
-						<link rel="stylesheet" href="/path/to/your/styles.css">
+						<link rel='stylesheet' href='/path/to/your/styles.css'>
 					</head>
 					<body>
 						${element.outerHTML}

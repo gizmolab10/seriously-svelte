@@ -43,7 +43,7 @@
 		align-items: center;
 		--height: {height}px;
 		--thumb-color: {thumb_color};
-		display: {isVisible ? "flex" : "none"};'>
+		display: {isVisible ? 'flex' : 'none'};'>
 		<input class='slider-input'
 			min='0'
 			step='1'
@@ -60,19 +60,19 @@
 </div>
 
 <style>
-	input[type="range"] {
+	input[type='range'] {
 		appearance: none;
 		height: var(--height);
 		background: transparent;
 		-webkit-appearance: none;
 	}
-	input[type="range"]::-webkit-slider-runnable-track {
+	input[type='range']::-webkit-slider-runnable-track {
 		background: white;
 		border-radius: 16px;
 		height: var(--height);
 		border: var(--border);
 	}
-	input[type="range"]::-webkit-slider-thumb {
+	input[type='range']::-webkit-slider-thumb {
 		border-radius: 50%;
 		margin-top: -1.1px;
 		width: var(--height);
@@ -81,33 +81,33 @@
 		-webkit-appearance: none;
 		background: var(--thumb-color);
 	}
-	input[type="range"]::-moz-range-thumb {
+	input[type='range']::-moz-range-thumb {
 		border-radius: 50%;
 		width: var(--height);
 		height: var(--height);
 		border: var(--border);
 		background: var(--thumb-color);
 	}
-	input[type="range"]::-moz-range-track {
+	input[type='range']::-moz-range-track {
 		background: white;
 		border-radius: 50%;
 		height: var(--height);
 		border: var(--border);
 	}
-	input[type="range"]::-ms-fill-lower,
-	input[type="range"]::-ms-fill-upper {
+	input[type='range']::-ms-fill-lower,
+	input[type='range']::-ms-fill-upper {
 		background: white;
 		border-radius: 50%;
 		border: var(--border);
 	}
-	input[type="range"]::-ms-thumb {
+	input[type='range']::-ms-thumb {
 		border-radius: 50%;
 		width: var(--height);
 		height: var(--height);
 		border: var(--border);
 		background: var(--thumb-color);
 	}
-	input[type="range"]:focus {
+	input[type='range']:focus {
 		outline: none;
 	}
 </style>

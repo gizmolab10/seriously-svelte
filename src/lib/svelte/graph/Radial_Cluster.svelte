@@ -79,7 +79,7 @@
                 d={g_sliderArc.svgPathFor_arcSlider}
                 stroke={colors.specialBlend(color, $w_background_color, k.opacity.least)}/>
             <path class='path-fork'
-                fill="transparent"
+                fill='transparent'
                 stroke-width={k.thickness.fork}
                 d={g_sliderArc.svgPathFor_radialFork}
                 stroke={colors.specialBlend(color, $w_background_color, k.opacity.least)}/>

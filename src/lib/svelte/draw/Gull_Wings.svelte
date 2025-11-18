@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang='ts'>
     import { k, Point, Angle, T_Layer, Direction, svgPaths } from '../../ts/common/Global_Imports';
     export let radius = k.radius.gull_wings.ultra_thin;
     export let direction = Direction.down;

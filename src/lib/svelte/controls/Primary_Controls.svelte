@@ -20,7 +20,7 @@
 	const hamburger_path = svgPaths.hamburgerPath(hamburger_size);
 	const search_left = -38 - (features.has_details_button ? 0 : 26) + (features.allow_tree_mode ? 0 : 0);
 	const svg_style = 'top: -0.5px; left: -0.5px; position: absolute; width: 100%; height: 100%;';
-	let width = layout.windowSize.width - 20;
+	let width = layout.windowSize.width - 16;
 	let lefts: number[] = [];
 	layout_controls();
 
@@ -31,7 +31,7 @@
 
 	$: {
 		const _ = `${$w_rect_ofGraphView.description}:::${$w_count_window_resized}`;
-		width = layout.windowSize.width - 20;
+		width = layout.windowSize.width - 16;
 	}
 
 	$: {
@@ -41,15 +41,15 @@
 
 	function layout_controls() {
 		const left_widths = {
-			0: features.has_details_button ? 18  : -7,									// details
-			1: !$w_show_search_controls  ? 11  : features.has_details_button ? 11 : 11,		// recents / search
-			2: features.allow_tree_mode	? 57  : 0,									// graph type
-			3: features.has_zoom_controls  ? 100 : features.allow_tree_mode  ? 70 : 34,		// plus
-			4: features.has_zoom_controls  ? 26  : 0,									// minus
-			5: features.allow_search		? 22  : 6,
-			6: 25,																// easter egg, separator
-			7: 43,																// search
-			8: -37,																// breadcrumbs
+			0: features.has_details_button ? 18  : -7,										// details
+			1: 11,																			// recents
+			2: features.allow_tree_mode	   ? 54  : 0,										// graph type
+			3: features.has_zoom_controls  ? 100 : features.allow_tree_mode	   ? 66 : 34,	// plus
+			4: features.has_zoom_controls  ? 26  : 0,										// minus
+			5: features.allow_search	   ? 22  : 6,
+			6: 22,																			// easter egg, separator
+			7: 43,																			// search
+			8: -37,																			// breadcrumbs
 		};
 		lefts = u.cumulativeSum(Object.values(left_widths));
 	}
@@ -59,8 +59,8 @@
 {#key width, $w_background_color}
 	<div class='primary-controls'
 		style='
-			left: 6px;
-			top: 10.5px;
+			left: 2px;
+			top: 8.8px;
 			width: {width}px;
 			position: absolute;
 			height: {size_big}px;
@@ -157,8 +157,8 @@
 			{#if features.allow_tree_mode}
 				<Separator name='before-search'
 					isHorizontal={false}
-					origin={new Point(lefts[5], -8)}
-					length={layout.controls_boxHeight + 1}
+					origin={new Point(lefts[5], -6)}
+					length={layout.controls_boxHeight + 0}
 					thickness={k.thickness.separator.main}
 					corner_radius={k.radius.gull_wings.thick}/>
 				<Breadcrumbs

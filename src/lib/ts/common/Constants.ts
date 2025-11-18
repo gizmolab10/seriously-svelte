@@ -3,7 +3,7 @@ import { T_Direction } from './Enumerations';
 import { builds } from './Builds';
 
 const dot_size = 14;
-const row_height = 20;
+const row_height = 16;
 const rubberband_thickness = 1;
 
 export default class Constants {
@@ -48,7 +48,7 @@ export default class Constants {
 
 	width = {
 		details:  219,
-		child_gap: 19,
+		child_gap: 12,
 	};
 
 	id_base = {

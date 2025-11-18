@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang='ts'>
 	import { k, u, x, Thing, colors, search, elements } from '../../ts/common/Global_Imports';
 	const { w_index: results_index } = x.si_found;
 	const { w_search_results_changed } = search;

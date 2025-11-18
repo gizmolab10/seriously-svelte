@@ -48,8 +48,8 @@
 			id = {s_component.id}
 			class = 'tree-line-svg'
 			style = '
-				top: {g_line.origin.y - g_line.size.height + 1 - g_line.stroke_width / 2}px;
-				left: {g_line.origin.x + 142 + g_line.stroke_width / 2}px;
+				top: {g_line.origin.y - g_line.size.height - 2 - g_line.stroke_width / 2}px;
+				left: {g_line.origin.x + 136 + g_line.stroke_width / 2}px;
 				height: {g_line.size.height + g_line.stroke_width * 2}px;
 				width: {g_line.size.width + g_line.stroke_width * 2}px;
 				z-index: {T_Layer.lines};

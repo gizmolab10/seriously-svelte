@@ -11,7 +11,7 @@ body {
     width: var(--css-body-width, 100%);
 }
 
-input[type="range"] {
+input[type='range'] {
 	user-select: auto !important;
 	touch-action: auto !important;
 }

@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang='ts'>
 	import { e, k, u, x, Point, search, elements } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Search, T_Control } from '../../ts/common/Global_Imports';
 	import Close_Button from '../mouse/Close_Button.svelte';

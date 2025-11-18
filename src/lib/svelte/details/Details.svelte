@@ -47,7 +47,7 @@
 		<Banner_Hideable t_detail={T_Detail.header}>
 			<D_Header/>
 		</Banner_Hideable>
-		{#if features.has_standalone_UI}
+		{#if features.has_every_detail}
 			<Banner_Hideable t_detail={T_Detail.preferences}>
 				<D_Preferences/>
 			</Banner_Hideable>
@@ -58,7 +58,7 @@
 		<Banner_Hideable t_detail={T_Detail.selection}>
 			<D_Selection/>
 		</Banner_Hideable>
-		{#if features.has_standalone_UI}
+		{#if features.has_every_detail}
 			<Banner_Hideable t_detail={T_Detail.tags}>
 				<D_Tags/>
 			</Banner_Hideable>

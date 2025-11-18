@@ -22,10 +22,10 @@ export class Configuration {
 		search.setup_defaults();
 		this.apply_queryStrings();						// must call before prefs and db
 		features.apply_queryStrings();
-		show.restore_preferences();							// visibility
 		layout.restore_preferences();
 		databases.apply_queryStrings();
 		p.restore_preferences();
+		show.restore_preferences();
 		show.apply_queryStrings();
 		e.setup();
 	}
@@ -43,7 +43,7 @@ export class Configuration {
 
 	get isServerLocal(): boolean {
 		const hostname = window.location.hostname;
-		return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "0.0.0.0";
+		return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0';
 	}
 
 	get siteTitle(): string {

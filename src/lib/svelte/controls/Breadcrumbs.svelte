@@ -68,8 +68,8 @@
 	<div class='breadcrumbs'
 		id = {s_component.id}
 		style='
-			top:-5px;
 			left:7px;
+			top:-5.5px;
 			position:absolute;'>
 		{#each things as thing, index}
 			{#if index > 0}
