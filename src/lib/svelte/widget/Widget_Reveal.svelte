@@ -14,16 +14,13 @@
 	const g_widget = ancestry.g_widget;
 	const { w_show_countDots_ofType } = show;
 	const { w_items: w_grabbed } = x.si_grabs;
-	const tinyDotsOffset = new Point(-4.9, -2.45);
+	const viewBox = k.tiny_outer_dots.viewBox;
 	const { w_items: w_expanded } = x.si_expanded;
-	const outer_diameter = k.diameterOf_outer_tinyDots;
 	const { w_thing_color, w_background_color } = colors;
-	const viewBox = `0.5 2.35 ${outer_diameter} ${outer_diameter}`;
-	const size_ofTinyDots = Size.width(3).expandedEquallyBy(outer_diameter)
 	let fill_color = debug.lines ? 'transparent' : s_reveal.fill;
-	let svgPathFor_outer_tinyDots: string | null = null;
-	let svg_outline_color = s_reveal.svg_outline_color;
+	let svgPathFor_tiny_outer_dots: string | null = null;
 	let svgPathFor_fat_center_dot: string | null = null;
+	let svg_outline_color = s_reveal.svg_outline_color;
 	let bulkAlias_color = s_reveal.stroke;
 	let center = g_widget.center_ofReveal;
 	let svgPathFor_revealDot = k.empty;
@@ -80,8 +77,8 @@
 			const has_fat_center_dot = thing.isBulkAlias || ancestry.hidden_by_depth_limit;
 			offsetFor_fat_center_dot = has_fat_center_dot ? 0 : -1;
 			svgPathFor_revealDot = ancestry.svgPathFor_revealDot;
+			svgPathFor_tiny_outer_dots = ancestry.svgPathFor_tiny_outer_dots_points_toChild(points_toChild);
 			svgPathFor_fat_center_dot = has_fat_center_dot ? svgPaths.circle_atOffset(k.height.dot, 3) : null;
-			svgPathFor_outer_tinyDots = ancestry.svgPathFor_tinyDots_outsideReveal(points_toChild);
 		}
 	}
 
@@ -134,23 +131,23 @@
 					/>
 				</div>
 			{/if}
-			{#if !!svgPathFor_outer_tinyDots}
-				<div class='tiny-dots' style='
-					height:{size_ofTinyDots.height}px;
-					width:{size_ofTinyDots.width}px;
-					left:{tinyDotsOffset.x}px;
-					top:{tinyDotsOffset.y}px;
+			{#if !!svgPathFor_tiny_outer_dots}
+				<div class='tiny-outer-dots' style='
+					height:{k.tiny_outer_dots.size.height}px;
+					width:{k.tiny_outer_dots.size.width}px;
+					left:{k.tiny_outer_dots.offset.x}px;
+					top:{k.tiny_outer_dots.offset.y}px;
 					position:absolute;
 					z-index:0'>
-					<svg class='tiny-dots-svg'
-						height={size_ofTinyDots.height}px
-						width={size_ofTinyDots.width}px
+					<svg class='tiny-outer-dots-svg'
+						height={k.tiny_outer_dots.size.height}px
+						width={k.tiny_outer_dots.size.width}px
 						viewBox='{viewBox}'
 						style='
 							shape-rendering: geometricPrecision;
 							position: absolute;'>
 						<path
-							d={svgPathFor_outer_tinyDots}
+							d={svgPathFor_tiny_outer_dots}
 							stroke={svg_outline_color}
 							fill={color}/>
 					</svg>

@@ -1,10 +1,13 @@
 import { tu } from '../utilities/Testworthy_Utilities';
+import { Size, Point } from '../types/Geometry';
 import { T_Direction } from './Enumerations';
 import { builds } from './Builds';
 
 const dot_size = 14;
 const row_height = 16;
 const rubberband_thickness = 1;
+const tiny_outer_dots_expansion = 6;
+const tiny_outer_dots_diameter = dot_size + tiny_outer_dots_expansion;
 
 export default class Constants {
 
@@ -17,12 +20,11 @@ export default class Constants {
 	printer_dpi = 96;
 	details_margin = 0;
 	halfIncrement = 0.5;
-	radial_widget_inset = 28;
 	separator_title_left = 0;
 	printer_page_width = 722;
 	hid_unknown = 1000000000000;
-	diameterOf_outer_tinyDots = 19;
 	build_number = builds.build_number;
+	radial_widget_inset = dot_size + 14;
 	printer_aspect_ratio = 11.69 / 8.27;
 	next_previous_titles: string[] = [T_Direction.previous, T_Direction.next];
 	prevent_selection_style = '-webkit-user-select: none; user-select: none; -moz-user-select: none';
@@ -43,7 +45,7 @@ export default class Constants {
 
 	dasharray = {
 		relateds: '4,3',
-		editing: '3,2',
+		editing:  '3,2',
 	};
 
 	width = {
@@ -144,6 +146,13 @@ export default class Constants {
 		},
 	};
 	
+	tiny_outer_dots = {
+		diameter: tiny_outer_dots_diameter,
+		expansion: tiny_outer_dots_expansion,
+		size: Size.square(tiny_outer_dots_diameter).extendedByY(3),
+		offset: Point.square(-tiny_outer_dots_expansion).offsetByXY(4, 3.5),
+		viewBox: `0.5 2.35 ${tiny_outer_dots_diameter} ${tiny_outer_dots_diameter}`,	
+	};
 }
 
 export const k = new Constants();

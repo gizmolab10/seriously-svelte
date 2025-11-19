@@ -152,13 +152,13 @@ export default class Ancestry extends Identifiable {
 
 	static readonly _____SVG: unique symbol;
 
-	svgPathFor_tinyDots_outsideReveal(points_toChild: boolean): string | null {
+	svgPathFor_tiny_outer_dots_points_toChild(points_toChild: boolean): string | null {
 		const in_radial_mode = controls.inRadialMode;
+		const tiny_outer_dots_count = this.relationships_count_forChildren(points_toChild);
 		const isVisible_forChild = this.hasChildren && show.children_dots && (in_radial_mode ? true : !this.isExpanded);
 		const isVisible_inRadial = points_toChild ? isVisible_forChild : this.hasParents && (this.isBidirectional ? show.related_dots : show.parent_dots);
-		const show_outside_tinyDots = in_radial_mode ? isVisible_inRadial : (isVisible_forChild || this.hidden_by_depth_limit);
-		const tinyDots_count = this.relationships_count_forChildren(points_toChild);
-		return !show_outside_tinyDots ? null : svgPaths.tinyDots_circular(k.diameterOf_outer_tinyDots + 4, tinyDots_count as Integer, this.points_right);
+		const show_tiny_outer_dots = in_radial_mode ? isVisible_inRadial : (isVisible_forChild || this.hidden_by_depth_limit);
+		return !show_tiny_outer_dots ? null : svgPaths.tiny_outer_dots_circular(k.tiny_outer_dots.diameter, tiny_outer_dots_count as Integer, this.points_right);
 	}
 
 	static readonly _____BIDIRECTIONALS: unique symbol;
