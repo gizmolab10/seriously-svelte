@@ -53,16 +53,6 @@ export default class Constants {
 		child_gap: 12,
 	};
 
-	id_base = {
-		airtable: 'Airtable',
-		unknown:  'Unknown',
-		firebase: 'Public',
-		bubble:	  'Bubble',
-		bulks:	  'Bulks',
-		local:	  'Local',
-		test:	  'Test',
-	};
-
 	help_url = {
 		local:  'http://localhost:8000/README.html',
 		remote: 'https://help.webseriously.org',
@@ -97,6 +87,16 @@ export default class Constants {
 		thumb:	0.25,
 		hover:	0.35,
 		active:	0.4
+	};
+
+	id_base = {
+		airtable: 'Airtable',
+		unknown:  'Unknown',
+		firebase: 'Public',
+		bubble:	  'Bubble',
+		bulks:	  'Bulks',
+		local:	  'Local',
+		test:	  'Test',
 	};
 
 	radius = {

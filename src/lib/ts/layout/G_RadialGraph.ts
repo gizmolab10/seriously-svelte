@@ -116,15 +116,15 @@ export default class G_RadialGraph {
 	}
 
 	get g_necklace_widgets(): G_Widget[] {
-		let array: G_Widget[] = [];
+		let g_widgets: G_Widget[] = [];
 		for (const g_cluster of this.g_clusters) {
 			if (!!g_cluster) {
-				for (const g_cluster_widget of g_cluster.g_widgets_inCluster) {
-					array.push(g_cluster_widget);
+				for (const g_widget of g_cluster.g_cluster_widgets) {
+					g_widgets.push(g_widget);
 				}
 			}
 		}
-		return array;
+		return g_widgets;
 	}
 
 	static readonly _____PAGING: unique symbol;

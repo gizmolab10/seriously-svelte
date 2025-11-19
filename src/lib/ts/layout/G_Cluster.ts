@@ -19,7 +19,7 @@ import { get } from 'svelte/store';
 //////////////////////////////////////////
 
 export default class G_Cluster {
-	g_widgets_inCluster: G_Widget[] = [];
+	g_cluster_widgets: G_Widget[] = [];
 	ancestries_shown: Array<Ancestry> = [];
 	g_sliderArc = new G_ArcSlider(false);
 	g_thumbArc = new G_ArcSlider(true);
@@ -59,7 +59,7 @@ export default class G_Cluster {
 			this.center = get(layout.w_rect_ofGraphView).size.asPoint.dividedInHalf;
 			this.color = colors.opacitize(get(s.w_ancestry_focus).thing?.color ?? this.color, 0.2);
 			this.g_sliderArc.layout_fork(this.angle_ofCluster);
-			this.layout_widgets_inCluster();
+			this.layout_cluster_widgets();
 			this.g_sliderArc.layout_forkTip(this.center);
 			this.layout_label();
 			this.layout_thumb_angles();
@@ -187,8 +187,8 @@ export default class G_Cluster {
 		}
 	}
 
-	layout_widgets_inCluster() {
-		this.g_widgets_inCluster = [];
+	layout_cluster_widgets() {
+		this.g_cluster_widgets = [];
 		if (this.widgets_shown > 0 && !!this.predicate) {
 			const center = this.center.offsetByXY(0.5, -1);			// tweak so that drag dots are centered within the rotation ring
 			const radial = Point.x(get(layout.w_ring_rotation_radius) + k.radial_widget_inset);
@@ -204,7 +204,7 @@ export default class G_Cluster {
 				const rotated_origin = center.offsetBy(radial.rotate_by(angle));
 				const g_widget = ancestry.g_widget;
 				g_widget.layout_necklaceWidget(rotated_origin, points_right);
-				this.g_widgets_inCluster.push(g_widget);
+				this.g_cluster_widgets.push(g_widget);
 				index += 1;
 			}
 			this.g_sliderArc.finalize_angles();
@@ -224,10 +224,11 @@ export default class G_Cluster {
 		//	widgets distributed half-and-half around fork-angle
 
 		const max = this.widgets_shown - 1;
-		const row = (max / 2) - index;						// row centered around zero
-		const radial = this.radial_ofFork;					// points at middle widget (of cluster)
+		const row = (max / 2) - index;						// row goes from minus to plus (equally divided around fork_y)
+		const radial = this.radial_ofFork;					// points at cluster's middle widget
 		const radius = get(layout.w_ring_rotation_radius);
-		let y = radial.y + (row * (k.height.dot + 1.3));	// distribute y equally around fork_y
+		const row_height = k.height.dot - 3.2;
+		let y = radial.y + (row * row_height);			// distribute y equally around fork_y
 		let y_isOutside = false;
 		const absY = Math.abs(y);
 		if (absY > radius) {

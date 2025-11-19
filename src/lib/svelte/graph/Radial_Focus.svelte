@@ -118,7 +118,7 @@
 		</Mouse_Responder>
 	<div class='radial-focus-title'
 		style='
-			top : 3px;
+			top : 1px;
 			position : absolute;
 			background-color : {background_color};'>
 		<Widget_Title

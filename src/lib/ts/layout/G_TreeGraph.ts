@@ -77,7 +77,7 @@ export default class G_TreeGraph {
 			const subtree_size = this.focus.size_ofVisibleSubtree;
 			const x_offset_ofReveal = (this.focus.thing?.width_ofTitle ?? 0) / 2 - 2;
 			const x_offset_forDetails = (get(show.w_show_details) ? -k.width.details : 0);
-			const x_offset = x_offset_forDetails - (subtree_size.width / 2) - (k.height.dot / 2.5) + x_offset_ofReveal;
+			const x_offset = x_offset_forDetails - (subtree_size.width / 2) - (k.height.dot / 2.5) + x_offset_ofReveal - 5;
 			const origin_ofFocusReveal = rect_ofGraphView.center.offsetByXY(x_offset, y_offset);
 			this.g_focus.origin_ofWidget = origin_ofFocusReveal.offsetByXY(-21.5 - x_offset_ofReveal, -5);
 		}
