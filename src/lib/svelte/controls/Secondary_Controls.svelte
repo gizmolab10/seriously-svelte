@@ -30,7 +30,7 @@
 	{#if ($w_show_search_controls || $w_show_graph_ofType == T_Graph.tree)}
 		{#if features.allow_tree_mode}
 			<Separator name='secondary-bottom-separator'
-				origin={new Point(($w_show_details ? 2 : 1), top)}
+				origin={new Point(($w_show_details ? 4 : 3), top)}
 				corner_radius={k.radius.gull_wings.thick}
 				thickness={k.thickness.separator.main}
 				has_both_wings={true}

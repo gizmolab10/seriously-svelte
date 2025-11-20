@@ -41,15 +41,15 @@
 
 	function layout_controls() {
 		const left_widths = {
-			0: features.has_details_button ? 18  : -7,										// details
-			1: 11,																			// recents
-			2: features.allow_tree_mode	   ? 54  : 0,										// graph type
-			3: features.has_zoom_controls  ? 100 : features.allow_tree_mode	   ? 66 : 34,	// plus
-			4: features.has_zoom_controls  ? 26  : 0,										// minus
-			5: features.allow_search	   ? 22  : 6,
-			6: 22,																			// easter egg, separator
-			7: 43,																			// search
-			8: -37,																			// breadcrumbs
+			0: features.has_details_button ? 18  : -7,									// details
+			1: 11,																		// recents
+			2: features.allow_tree_mode	   ? 54  : 0,									// graph type
+			3: features.has_zoom_controls  ? 100 : features.allow_tree_mode ? 66 : 34,	// plus
+			4: features.has_zoom_controls  ? 26  : 0,									// minus
+			5: features.allow_search	   ? 22  : 6,									// easter egg
+			6: 23,																		// separator
+			7: 42,																		// search toggle
+			8: -40,																		// breadcrumbs
 		};
 		lefts = u.cumulativeSum(Object.values(left_widths));
 	}

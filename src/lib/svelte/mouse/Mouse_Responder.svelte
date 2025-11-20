@@ -64,16 +64,16 @@
 	}
 
 	function create_s_mouse(isDown: boolean, isDouble: boolean = false, isLong: boolean = false, isRepeat: boolean = false, event: MouseEvent | null = null): S_Mouse {
-		const state = u.copyObject(s_mouse);
-		state.isUp = !isDown && !isDouble && !isLong && !isRepeat;
-		state.element = bound_element;
-		state.isDouble = isDouble;
-		state.isRepeat = isRepeat;
-		state.isDown = isDown;
-		state.isLong = isLong;
-		state.hover_didChange = false;
-		state.event = event;
-		return state;
+		const s_mouse_copy = u.copyObject(s_mouse);
+		s_mouse_copy.isUp = !isDown && !isDouble && !isLong && !isRepeat;
+		s_mouse_copy.element = bound_element;
+		s_mouse_copy.hover_didChange = false;
+		s_mouse_copy.isDouble = isDouble;
+		s_mouse_copy.isRepeat = isRepeat;
+		s_mouse_copy.isDown = isDown;
+		s_mouse_copy.isLong = isLong;
+		s_mouse_copy.event = event;
+		return s_mouse_copy;
 	}
 
 	function setupStyle() {
