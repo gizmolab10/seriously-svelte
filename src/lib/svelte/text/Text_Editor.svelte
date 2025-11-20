@@ -41,7 +41,7 @@
 		
 		const exit = event.key == 'Enter' && !event.shiftKey;
 		if (down && exit) {
-			u.grab_event(event);
+			u.consume_event(event);
 			textarea.blur();
 			textarea.value = bound_text;
 		} else if (!down && !exit) {

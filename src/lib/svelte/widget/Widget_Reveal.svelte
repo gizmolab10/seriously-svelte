@@ -9,9 +9,9 @@
     export let zindex = T_Layer.dots;
 	export let points_toChild = true;
 	export let s_reveal!: S_Element;
-	const { w_thing_title } = s;
 	const ancestry = s_reveal.ancestry;
 	const g_widget = ancestry.g_widget;
+	const { w_s_hover, w_thing_title } = s;
 	const { w_show_countDots_ofType } = show;
 	const { w_items: w_grabbed } = x.si_grabs;
 	const viewBox = k.tiny_outer_dots.viewBox;
@@ -43,16 +43,17 @@
 	
 	$: {
 		const _ = `${u.descriptionBy_titles($w_grabbed)}
-		:::${u.descriptionBy_titles($w_expanded)}
-		:::${$w_show_countDots_ofType}
-		:::${$w_background_color}
-		:::${$w_thing_title}
-		:::${$w_thing_color}`;
+			:::${u.descriptionBy_titles($w_expanded)}
+			:::${$w_s_hover?.description ?? 'null'}
+			:::${$w_show_countDots_ofType}
+			:::${$w_background_color}
+			:::${$w_thing_title}
+			:::${$w_thing_color}`;
 		update_svgPaths();
 		update_colors();
 	}
 	
-	function handle_context_menu(event) { u.grab_event(event); } 		// Prevent the default context menu on right
+	function handle_context_menu(event) { u.consume_event(event); } 		// Prevent the default context menu on right
 
 	function update_colors() {
 		s_reveal.set_forHovering(color, 'pointer');

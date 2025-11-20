@@ -9,6 +9,7 @@
 	export let points_right = true;
 	export let s_drag!: S_Element;
 	const size = k.height.dot;
+	const { w_s_hover } = s;
 	const capture_size = size;
 	const { w_thing_color } = colors;
     const ancestry = s_drag.ancestry;
@@ -41,7 +42,7 @@
 
 	onMount(() => { return () => s_component.disconnect(); });
 
-	function handle_context_menu(event) { u.grab_event(event); }		// no default context menu on right-click
+	function handle_context_menu(event) { u.consume_event(event); }		// no default context menu on right-click
 
 	$: {
 		const _ = $w_show_countDots_ofType;
@@ -49,12 +50,12 @@
 	}
 
 	$: {
-		const _ = `
-		${$w_thing_color}:::
-		${$w_background_color}:::
-		${$w_ancestry_focus?.id}:::
-		${$w_ancestry_forDetails?.id}:::
-		${u.descriptionBy_titles($w_grabbed)}`;
+		const _ = `${$w_thing_color}
+			:::${$w_background_color}
+			:::${$w_ancestry_focus?.id}
+			:::${$w_ancestry_forDetails?.id}
+			:::${$w_s_hover?.description ?? 'null'}
+			:::${u.descriptionBy_titles($w_grabbed)}`;
 		update_colors();
 	}
 
@@ -77,7 +78,6 @@
 			const usePointer = (!ancestry.isGrabbed || controls.inRadialMode) && ancestry.hasChildren;
 			const cursor = usePointer ? 'pointer' : 'normal';
 			color = thing.color;
-			// update_hovering();
 			s_drag.set_forHovering(color, cursor);
 			svg_outline_color = s_drag.svg_outline_color;
 			fill_color = debug.lines ? 'transparent' : s_drag.fill;

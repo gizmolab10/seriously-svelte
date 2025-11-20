@@ -167,7 +167,7 @@ export class Events {
 	}
 
 	private handle_wheel(event: Event) {
-		u.grab_event(event);
+		u.consume_event(event);
 		if (!u.device_isMobile) {
 			const e = event as WheelEvent;
 			const userOffset = get(layout.w_user_graph_offset);
@@ -181,7 +181,7 @@ export class Events {
 
 	private handle_touch_move(event: TouchEvent) {
 		if (event.touches.length == 2) {
-			u.grab_event(event);
+			u.consume_event(event);
 			if (this.initialTouch) {
 				const touch = event.touches[0];
 				const deltaX = touch.clientX - this.initialTouch.x;
@@ -278,9 +278,9 @@ export class Events {
 						case 'enter':	
 						case 'escape':
 						case 'arrowright':	    search.deactivate_focus_and_grab(); break;	// stop searching		
-						case 'arrowleft':		u.grab_event(event); search.w_search_state.set(T_Search.enter); break;
-						case 'arrowup':			u.grab_event(event); search.next_row(false); break;
-						case 'arrowdown':		u.grab_event(event); search.next_row(true); break;
+						case 'arrowleft':		u.consume_event(event); search.w_search_state.set(T_Search.enter); break;
+						case 'arrowup':			u.consume_event(event); search.next_row(false); break;
+						case 'arrowdown':		u.consume_event(event); search.next_row(true); break;
 						case 'tab':				search.selected_row = 0; break;
 						case 'f':				search.activate(); break;			
 					}
@@ -303,8 +303,8 @@ export class Events {
 					if (!!ancestry) {
 						switch (key) {
 							case '/':			graph_needsSweep = ancestry.becomeFocus(); break;
-							case 'arrowright':	u.grab_event(event); await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, SHIFT, OPTION, EXTREME, false); break;
-							case 'arrowleft':	u.grab_event(event); await h.ancestry_rebuild_persistentMoveRight(ancestry, false, SHIFT, OPTION, EXTREME, false); break;
+							case 'arrowright':	u.consume_event(event); await h.ancestry_rebuild_persistentMoveRight(ancestry,  true, SHIFT, OPTION, EXTREME, false); break;
+							case 'arrowleft':	u.consume_event(event); await h.ancestry_rebuild_persistentMoveRight(ancestry, false, SHIFT, OPTION, EXTREME, false); break;
 						}
 					}
 					switch (key) {

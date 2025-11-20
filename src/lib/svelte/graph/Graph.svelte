@@ -38,9 +38,9 @@
 	
 	$:	{
 		const _ = `${$w_rect_ofGraphView.description}
-		:::${$w_show_graph_ofType}
-		:::${$w_t_startup}
-		:::${$w_s_hover}`;
+			:::${$w_s_hover?.description ?? 'null'}
+			:::${$w_show_graph_ofType}
+			:::${$w_t_startup}`;
 		update_style();
 	}
 
@@ -74,7 +74,7 @@
 		const target = event.target as HTMLElement;
 		if (!target.closest('button, input, .widget, .mouse-responder')) {
 			rubberbandComponent.handleMouseDown(event);
-			u.grab_event(event);
+			u.consume_event(event);
 		}
 	}
 		

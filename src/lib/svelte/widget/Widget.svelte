@@ -62,7 +62,9 @@
 	});
 
 	$: {
-		const _ = `${$w_thing_color}:::${$w_ancestry_focus.id}:::${$w_s_hover}`;
+		const _ = `${$w_thing_color}
+			:::${$w_s_hover?.description ?? 'null'}
+			:::${$w_ancestry_focus.id}`;
 		update_style();
 	}
 
@@ -97,7 +99,7 @@
 	}
 
 	async function handle_click_event(event) {
-		u.grab_event(event);
+		u.consume_event(event);
 		ancestry?.grab_forShift(event.shiftKey);
 	}
 
@@ -110,11 +112,11 @@
 	function final_layout() {
 		const hasExtra_onRight = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
 		const origin_ofWidget = g_widget.origin.offsetBy(g_widget.offset_ofWidget);
-		top = origin_ofWidget.y;
-		left = origin_ofWidget.x;
-		height = k.height.row - 1.5;
-		border_radius = k.height.row / 2;
 		width_ofWidget = g_widget.width_ofWidget;
+		border_radius = k.height.row / 2;
+		height = k.height.row - 1.5;
+		left = origin_ofWidget.x;
+		top = origin_ofWidget.y;
 		update_style();
 	}
 

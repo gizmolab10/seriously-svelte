@@ -19,9 +19,9 @@
 	export let zindex = T_Layer.dots;
 	export let style = k.empty;
 	export let name = k.empty;
-	const { w_control_key_down, w_s_hover, w_thing_fontFamily } = s;
-	const { w_rect_ofGraphView, w_user_graph_offset } = layout;
 	const { w_background_color } = colors;
+	const { w_rect_ofGraphView, w_user_graph_offset } = layout;
+	const { w_control_key_down, w_s_hover, w_thing_fontFamily } = s;
 	let buttonComponent: S_Component;
 	let computed_style = style;
 	let element: HTMLElement;
@@ -44,18 +44,16 @@
 	recompute_style();
 
 	$: {
-		const _ = `
-			${s_button.isHovering}
-			${$w_user_graph_offset}
-			${$w_rect_ofGraphView}
-			${$w_background_color}
-			${$w_control_key_down}
-			${s_button.isDisabled}
-			${s_button.isInverted}
-			${s_button.isGrabbed}
-			${s_button.isEditing}
-			${s_button.fill}
-			${$w_s_hover}`;
+		const _ = `${$w_user_graph_offset.description}
+			:::${$w_s_hover?.description ?? 'null'}
+			:::${$w_rect_ofGraphView.description}
+			:::${$w_background_color}
+			:::${$w_control_key_down}
+			:::${s_button.isDisabled}
+			:::${s_button.isInverted}
+			:::${s_button.isGrabbed}
+			:::${s_button.isEditing}
+			:::${s_button.fill}`;
 		recompute_style();
 	}
 

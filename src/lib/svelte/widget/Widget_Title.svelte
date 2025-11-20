@@ -7,6 +7,7 @@
 	import { onMount } from 'svelte';
 	export let s_title!: S_Element;
 	export let fontSize = '1em';
+	const { w_s_hover } = s;
 	const ancestry = s_title.ancestry;
 	const thing = ancestry?.thing;
 	const { w_thing_color } = colors;
@@ -200,7 +201,7 @@
 	}
 
 	function handle_focus(event) {
-		u.grab_event(event);
+		u.consume_event(event);
 		if (!isEditing()) {
 			input.blur();
 		}
@@ -233,8 +234,8 @@
 				case 'arrowdown':
 				case 'arrowleft':
 				case 'arrowright': break;
-				case 'enter': u.grab_event(event); stop_andPersist(); break;
-				case 'tab':	  u.grab_event(event); stop_andPersist(); h.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break;
+				case 'enter': u.consume_event(event); stop_andPersist(); break;
+				case 'tab':	  u.consume_event(event); stop_andPersist(); h.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break;
 			}
 			extractRange_fromInput_toThing();
 		}
@@ -306,69 +307,6 @@
 		}
 	}
 
-	function ztitle_updatedTo(title: string | null) {
-		const prior = $w_thing_title;
-		if (prior != title && !!$w_s_title_edit) {
-			extractRange_fromInput_toThing();
-			$w_thing_title = title;
-			debug.log_edit(`TITLE ${title}`);
-			$w_s_title_edit.title = title;
-			
-			// Defer layout to next animation frame (non-blocking)
-			if (!layoutPending) {
-				layoutPending = true;
-				requestAnimationFrame(() => {
-					$w_s_title_edit?.setState_temporarilyTo_whileApplying(T_Edit.percolating, () => {
-						layout.grand_layout();
-					});
-					layoutPending = false;
-				});
-			}
-			
-			debug.log_edit(`UPDATED ${$w_s_title_edit.description}`);
-		}
-	}
-
-	function ytitle_updatedTo(title: string | null) {
-		const prior = $w_thing_title;
-		if (prior != title && !!$w_s_title_edit) {
-			extractRange_fromInput_toThing();
-			$w_thing_title = title;
-			debug.log_edit(`TITLE ${title}`);
-			$w_s_title_edit.title = title;
-			
-			// Clear any pending layout
-			if (layout_timer !== null) {
-				clearTimeout(layout_timer);
-			}
-			
-			// Debounce layout - only call after typing pauses
-			layout_timer = setTimeout(() => {
-				$w_s_title_edit.setState_temporarilyTo_whileApplying(T_Edit.percolating, () => {
-					layout.grand_layout();
-				});
-				layout_timer = null;
-			}, 500);
-			
-			debug.log_edit(`UPDATED ${$w_s_title_edit.description}`);
-		}
-	}
-
-	function xtitle_updatedTo(title: string | null) {
-		const prior = $w_thing_title;
-		if (prior != title && !!$w_s_title_edit) {
-			extractRange_fromInput_toThing();
-			$w_thing_title = title;		// tell Info to update it's selection's title
-			debug.log_edit(`TITLE ${title}`);
-			$w_s_title_edit.title = title;
-			$w_s_title_edit.setState_temporarilyTo_whileApplying(T_Edit.percolating, () => {
-				layout.grand_layout();
-				// FUBAR: this removes focus!!! needs editing state
-			});
-			debug.log_edit(`UPDATED ${$w_s_title_edit.description}`);
-		}
-	}
-
 </script>
 
 <style lang='scss'>
@@ -408,7 +346,7 @@
 			on:paste={handle_cut_paste}
 			class='title-{title_binded}'
 			on:keydown={handle_key_down}
-			on:mouseover={(event) => { u.grab_event(event); }}
+			on:mouseover={(event) => { u.consume_event(event); }}
 			style='
 				border : none;
 				top : {top}px;

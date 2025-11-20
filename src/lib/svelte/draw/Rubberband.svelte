@@ -103,7 +103,7 @@
                 !target.closest('.rubberband') && 
                 !target.closest('.draggable') && 
                 !target.closest('.tree-preferences')) {
-                u.grab_event(e);
+                u.consume_event(e);
             }
         }
     }

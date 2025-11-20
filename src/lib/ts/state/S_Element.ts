@@ -68,11 +68,7 @@ export default class S_Element {
 		// if !same and isHovering, set to this, if same and !isHovering, set to null, otherwise leave it unchanged
 		if (same != isHovering && new_s_widget != old_hover) {
 			s.w_s_hover.set(new_s_widget);
-			if (isHovering) {
-				debug.log_hover(`isHovering: [${isHovering}] ${this.name}`);
-			} else {
-				debug.log_hover(`isHovering: [${isHovering}] ${this.name}`);
-			}
+			debug.log_hover(`S_Element [${isHovering}] ${this.name}`);
 		}
 	}
 

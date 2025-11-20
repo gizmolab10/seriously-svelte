@@ -13,7 +13,7 @@
 	let borderColor = colors.separator;
 
 	async function handle_color_change(event) {
-		u.grab_event(event);
+		u.consume_event(event);
 		const new_color = event.detail.hex;
 		if (color != new_color) {
 			color_closure(new_color)

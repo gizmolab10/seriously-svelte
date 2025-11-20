@@ -24,7 +24,7 @@
 			search.deactivate_focus_and_grab();
 		} else {
 			search.selected_row = event.shiftKey ? null : index;
-			u.grab_event(event);
+			u.consume_event(event);
 		}
 	}
 
