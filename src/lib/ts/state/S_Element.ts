@@ -10,13 +10,11 @@ import { get } from 'svelte/store';
 	//	  buttons, segments & widget dots	//
 	//	  using hover, grabbed, expanded	//
 	//										//
-	//	NEED to move dots to S_Widget?		//
-	//										//
 	//////////////////////////////////////////
 
 export default class S_Element {
 	html_element: HTMLElement | null = null;
-	s_widget: S_Widget | null = null;		// only for dots
+	s_widget: S_Widget | null = null;		// only for drag and reveal dots
 	defaultDisabledColor = '#999999';
 	defaultCursor = k.cursor_default;
 	hoverCursor = k.cursor_default;
@@ -38,9 +36,6 @@ export default class S_Element {
 		this.subtype = subtype;
 		this.type = type;
 		if (this.isADot) {
-			x.si_grabs.w_items.subscribe((grabbed: Ancestry[]) => {
-				this.isInverted = !!grabbed && grabbed.includes(this.ancestry);
-			});
 			if (type == T_Element.control) {
 				console.log(`subtype: ${subtype}`);
 			}
@@ -64,11 +59,13 @@ export default class S_Element {
 	set isHovering(isHovering: boolean) {
 		const old_hover = get(s.w_s_hover);
 		const same = old_hover == this;
-		let new_s_widget = isHovering ? this : this.s_widget;
+		let new_hover = isHovering ? this : this.s_widget;
 		// if !same and isHovering, set to this, if same and !isHovering, set to null, otherwise leave it unchanged
-		if (same != isHovering && new_s_widget != old_hover) {
-			s.w_s_hover.set(new_s_widget);
-			debug.log_hover(`S_Element [${isHovering}] ${this.name}`);
+		if (same != isHovering && new_hover != old_hover) {
+			s.w_s_hover.set(new_hover);
+			if (!this.isADot) {
+				debug.log_hover(`${isHovering ? '|' : '-'} set ${this.name}`);
+			}
 		}
 	}
 

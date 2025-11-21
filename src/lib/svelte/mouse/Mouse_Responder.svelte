@@ -63,19 +63,6 @@
 		}
 	}
 
-	function create_s_mouse(isDown: boolean, isDouble: boolean = false, isLong: boolean = false, isRepeat: boolean = false, event: MouseEvent | null = null): S_Mouse {
-		const s_mouse_copy = u.copyObject(s_mouse);
-		s_mouse_copy.isUp = !isDown && !isDouble && !isLong && !isRepeat;
-		s_mouse_copy.element = bound_element;
-		s_mouse_copy.hover_didChange = false;
-		s_mouse_copy.isDouble = isDouble;
-		s_mouse_copy.isRepeat = isRepeat;
-		s_mouse_copy.isDown = isDown;
-		s_mouse_copy.isLong = isLong;
-		s_mouse_copy.event = event;
-		return s_mouse_copy;
-	}
-
 	function setupStyle() {
 		if (style.length == 0) {
 			style = `
@@ -112,14 +99,13 @@
 				}
 				if (s_mouse.isHovering != isHit) {
 					s_mouse.isHovering  = isHit;
-					s_mouse.hover_didChange  = true;
-					handle_s_mouse(S_Mouse.hover(null, bound_element, isHit));					// pass a null event
+					handle_s_mouse(S_Mouse.hover(null, bound_element, isHit));					// pass a null event, hover_didChange is set to true
 					if (isHit) {
 						reset();	// to support double click
 					}
 				}
 			}
-		}, 10);
+		}, 5);
 	}
 	
 	function handle_pointerDown(event) {
@@ -130,18 +116,18 @@
 			mouse_timer.autorepeat_start(mouse_responder_number, () => {
 				const isDown = !mouse_timer.hasTimer_forID(T_Timer.repeat);
 				// set isDown false to prevent autorepeating for non-repeating actions
-				handle_s_mouse(create_s_mouse(isDown, false, false, true, event));
+				handle_s_mouse(isDown ? S_Mouse.down(event, bound_element) : S_Mouse.repeat(event, bound_element));
 			});
 		} else {
 			if (detect_mouseDown && (s_mouse.clicks == 0 || !detect_doubleClick)) {
-				handle_s_mouse(create_s_mouse(true, false, false, false, event));
+				handle_s_mouse(S_Mouse.down(event, bound_element));
 			}
 			s_mouse.clicks += 1;
 			if (detect_doubleClick) {
 				mouse_timer.timeout_start(T_Timer.double, () => {
 					if (mouse_timer.hasTimer_forID(T_Timer.double) && s_mouse.clicks == 2) {
 						reset();
-						handle_s_mouse(create_s_mouse(false, true, false, false, event));
+						handle_s_mouse(S_Mouse.double(event, bound_element));
 					}
 				});
 			}
@@ -150,7 +136,7 @@
 					if (mouse_timer.hasTimer_forID(T_Timer.long)) {
 						reset();
 						s_mouse.clicks = 0;
-						handle_s_mouse(create_s_mouse(false, false, true, false, event));
+						handle_s_mouse(S_Mouse.long(event, bound_element));
 					}
 				});
 			}

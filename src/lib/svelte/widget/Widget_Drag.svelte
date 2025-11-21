@@ -36,7 +36,7 @@
 	update_colors();
 
 	s_component = signals.handle_signals_atPriority([T_Signal.alteration], 0, ancestry, T_Component.drag, (t_signal, value): S_Component | null => {
-		s_drag.isInverted = !!invert && !!ancestry && ancestry.alteration_isAllowed;
+		s_drag.isInverted = !!ancestry && ancestry.alteration_isAllowed;
 		update_colors();
 	});
 

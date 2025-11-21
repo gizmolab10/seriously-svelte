@@ -123,6 +123,7 @@
 	function handle_s_mouse(s_mouse: S_Mouse) {
 		if (!!ancestry && s_mouse.hover_didChange) {
 			s_widget.isHovering = s_mouse.isHovering;
+			debug.log_hover(`${s_widget.isHovering ? '|' : '-'}  W  ${s_widget.name}`);
 			update_style();
 		}
 	}

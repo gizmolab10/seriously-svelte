@@ -37,6 +37,7 @@ export default class S_Mouse {
 	get isShapeHit():	boolean { return false; }
 	get isElementHit(): boolean { return !!this.event && !!this.element && Rect.rect_forElement_containsEvent(this.element, this.event); }
 	get notRelevant():	boolean { return !this.hover_didChange && this.isHovering && !this.isDown && !this.isUp && !this.isDouble && !this.isLong && !this.isMove && !this.isHit && !this.isRepeat; }
+	descriptionFor(name: string = ''): string { return `${name} states: ${this.description}`; }
 
 	get description(): string {
 		let states: string[] = [];
@@ -52,15 +53,16 @@ export default class S_Mouse {
 		return states.length == 0 ? 'empty mouse state' : states.join(', ');
 	}
 
-	descriptionFor(name: string = ''): string { return `${name} states: ${this.description}`; }
-	static empty(event: MouseEvent | null = null) { return new S_Mouse(event, null, false, false, false, true, false, false, false); }
-	static hit(event: MouseEvent | null = null) { return new S_Mouse(event, null, false, false, false, true, false, false, false, true); }
-	static up(event: MouseEvent | null, element: HTMLElement) { return new S_Mouse(event, element, false, false, false, true, false, false, false); }
-	static down(event: MouseEvent | null, element: HTMLElement) { return new S_Mouse(event, element, false, false, true, false, false, false, false); }
-	static long(event: MouseEvent | null, element: HTMLElement) { return new S_Mouse(event, element, false, false, false, false, false, true, false); }
-	static repeat(event: MouseEvent | null, element: HTMLElement) { return new S_Mouse(event, element, false, false, false, false, false, false, false, false, true); }
-	static hover(event: MouseEvent | null, element: HTMLElement, isHit: boolean) { return new S_Mouse(event, element, true, isHit, false, false, false, false, false); }
-	static clicks(event: MouseEvent | null, element: HTMLElement, clickCount: number) { return new S_Mouse(event, element, false, false, false, false, clickCount > 1, false, false); }
-	static move(event: MouseEvent | null, element: HTMLElement, isDown: boolean, isHit: boolean) { return new S_Mouse(event, element, false, false, isDown, false, false, false, isHit); }
+	// Transient mouse states, for passing to parent
 
+	static empty (event: MouseEvent | null = null) { return new S_Mouse(event, null, false, false, false, true, false, false, false); }
+	static hit   (event: MouseEvent | null = null) { return new S_Mouse(event, null, false, false, false, true, false, false, false, true); }
+	static up    (event: MouseEvent | null, element: HTMLElement) { return new S_Mouse(event, element, false, false, false, true, false, false, false); }
+	static down  (event: MouseEvent | null, element: HTMLElement) { return new S_Mouse(event, element, false, false, true, false, false, false, false); }
+	static long  (event: MouseEvent | null, element: HTMLElement) { return new S_Mouse(event, element, false, false, false, false, false, true, false); }
+	static repeat(event: MouseEvent | null, element: HTMLElement) { return new S_Mouse(event, element, false, false, false, false, false, false, false, false, true); }
+	static hover (event: MouseEvent | null, element: HTMLElement, isHit: boolean) { return new S_Mouse(event, element, true, isHit, false, false, false, false, false); }
+	static clicks(event: MouseEvent | null, element: HTMLElement, clickCount: number) { return new S_Mouse(event, element, false, false, false, false, clickCount > 1, false, false); }
+	static move  (event: MouseEvent | null, element: HTMLElement, isDown: boolean, isHit: boolean) { return new S_Mouse(event, element, false, false, isDown, false, false, false, isHit); }
+	static double(event: MouseEvent | null, element: HTMLElement) { return new S_Mouse(event, element, true, false, false, false, true, false, false); }
 }

@@ -5,7 +5,6 @@
 	import { Size, Point } from '../../ts/common/Global_Imports';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
-    export let hover_isReversed = false;
     export let zindex = T_Layer.dots;
 	export let points_toChild = true;
 	export let s_reveal!: S_Element;
@@ -36,7 +35,8 @@
 
 	onMount(() => {
 		update_svgPaths();
-		set_isHovering(false);
+		s_reveal.isHovering = false;
+		update_colors();
 		s_reveal.set_forHovering(color, 'pointer');
 		return () => s_component.disconnect();
 	});
@@ -64,14 +64,6 @@
 		debug.log_colors(`REVEAL ${ancestry.title}${s_reveal.isInverted ? ' INVERTED' : ''}`)
 	}
 
-	function set_isHovering(isHovering) {
-		const new_isHovering = (hover_isReversed != ancestry.isGrabbed) ? !isHovering : isHovering;
-		if (!!s_reveal && s_reveal.isHovering != new_isHovering) {
-			s_reveal.isHovering = new_isHovering;
-			update_colors();
-		}
-	}
-
 	function update_svgPaths() {
 		const thing = ancestry.thing;
 		if (!!thing) {
@@ -85,7 +77,8 @@
 
 	function handle_s_mouse(s_mouse) {
 		if (s_mouse.hover_didChange) {
-			set_isHovering(s_mouse.isHovering);
+			s_reveal.isHovering = s_mouse.isHovering;
+			update_colors();
 		} else if (s_mouse.isUp && (ancestry.hasChildren || ancestry.thing.isBulkAlias)) {
 			h.ancestry_toggle_expansion(ancestry);
 		}
