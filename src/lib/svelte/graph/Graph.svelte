@@ -131,23 +131,21 @@
 		<div class='bottom-controls'
 			style='
 				position:absolute;
-				top:{draggableRect.size.height - 34}px;'>
-			<Button
-				width=75
+				top:{draggableRect.size.height - 26}px;'>
+			<Button name={T_Control.builds}
+				width={85}
 				height={size_big}
-				origin={Point.x(12)}
-				name={T_Control.builds}
+				origin={Point.x(4)}
 				s_button={elements.s_control_forType(T_Control.builds)}
 				closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.builds)}>
 				<span style='font-family: {$w_thing_fontFamily};'>
 					{'build ' + k.build_number}
 				</span>
 			</Button>
-			<Button
+			<Button name={T_Control.help}
 				width={size_big}
 				height={size_big}
-				name={T_Control.help}
-				origin={Point.x(draggableRect.size.width - 34)}
+				origin={Point.x(draggableRect.size.width - 26)}
 				s_button={elements.s_control_forType(T_Control.help)}
 				closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.help)}>
 				<span

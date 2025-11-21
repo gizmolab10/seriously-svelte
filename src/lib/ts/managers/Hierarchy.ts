@@ -1530,7 +1530,7 @@ export class Hierarchy {
 		data[T_Persistable.predicates] = this.predicates;
 		ancestry.traverse((ancestry: Ancestry) => {
 			const thing = ancestry.thing;
-			const thingTags = thing?.si_tags.items;
+			const thingTags = thing?.si_tags?.items;
 			const relationship = ancestry.relationship;
 			const thingTraits = thing?.si_traits?.items;
 			if (!!thingTraits) {

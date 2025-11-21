@@ -136,8 +136,8 @@
 				background-color:transparent;'>
 			<div id={'div-for-' + name}
 				style='
-					top:0px;
 					left:0px;
+					top:0.3px;
 					width:{size}px;
 					height:{size}px;
 					color:transparent;

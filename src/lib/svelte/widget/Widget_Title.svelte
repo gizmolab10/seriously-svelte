@@ -187,7 +187,7 @@
 				const offset = u.convert_windowOffset_toCharacterOffset_in(location.x, input);
 				debug.log_edit(`CURSOR OFFSET ${offset}`);
 				$w_s_title_edit.thing_setSelectionRange_fromOffset(offset);
-				$w_s_title_edit.start_editing();
+				$w_s_title_edit.set_isEditing();
 			}
 		}
 	}
@@ -351,9 +351,9 @@
 				border : none;
 				top : {top}px;
 				outline : none;
-				left : {left}px;
 				color : {color};
 				white-space : pre;
+				left : {left - 2}px;
 				position : absolute;
 				padding : {padding};
 				font-size : {fontSize};

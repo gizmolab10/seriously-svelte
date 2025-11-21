@@ -16,7 +16,7 @@ export default class S_Title_Edit {
 	// t_edit is source of truth for all editing
 	// ancestry.thing is source of truth for selection range
 	
-	start_editing() { this.t_edit = T_Edit.editing; }
+	set_isEditing() { this.t_edit = T_Edit.editing; }
 	get thing(): Thing | null { return this.ancestry.thing; }
 	constructor(ancestry: Ancestry) { this.ancestry = ancestry; }
 	get isActive(): boolean { return this.t_edit != T_Edit.done; }
@@ -47,11 +47,6 @@ export default class S_Title_Edit {
 	// widget reacts to changes too it
 	// title editor calls blur if isEditStopping is true
 	// ancestry props that reference this object: {isEditing, isEditStopping, isEditPercolating}
-
-	startEditing(ancestry: Ancestry) {
-		this.ancestry = ancestry;
-		this.start_editing();
-	}
 
 	isAncestry_inState(ancestry: Ancestry | null, t_edit: string) {
 		return (!ancestry || (!this.ancestry.equals(ancestry))) ? false : (this.t_edit == t_edit);

@@ -1,5 +1,5 @@
 import { Ancestry, S_Widget, T_Element, T_Control } from '../common/Global_Imports';
-import { k, s, x, debug, colors, elements, controls } from '../common/Global_Imports';
+import { k, s, u, colors, elements, controls } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
 
@@ -59,26 +59,11 @@ export default class S_Element {
 	set isHovering(isHovering: boolean) {
 		const old_hover = get(s.w_s_hover);
 		const same = old_hover == this;
-		let new_hover = isHovering ? this : this.s_widget;
+		let new_hover = (!isHovering && this.isADot) ? this.s_widget : this;	// when leaving a dot, set to s_widget
 		// if !same and isHovering, set to this, if same and !isHovering, set to null, otherwise leave it unchanged
 		if (same != isHovering && new_hover != old_hover) {
 			s.w_s_hover.set(new_hover);
-			if (!this.isADot) {
-				debug.log_hover(`${isHovering ? '|' : '-'} set ${this.name}`);
-			}
 		}
-	}
-
-	get svg_outline_color(): string {
-		const thing_color = this.ancestry.thing?.color ?? k.empty;
-		const isLight = colors.luminance_ofColor(thing_color) > 0.5;
-		return (!this.ancestry.isGrabbed && !this.ancestry.isEditing)
-			? thing_color
-			: (this.ancestry.isGrabbed && !this.ancestry.isEditing)
-			? this.color_background
-			: isLight
-			? 'black'
-			: this.hoverColor	;
 	}
 
 	set_forHovering(hoverColor: string, hoverCursor: string) {
@@ -96,6 +81,18 @@ export default class S_Element {
 		} else {
 			return this.isInverted;
 		}
+	}
+
+	get svg_outline_color(): string {
+		const thing_color = this.ancestry.thing?.color ?? k.empty;
+		const isLight = colors.luminance_ofColor(thing_color) > 0.5;
+		return (!this.ancestry.isGrabbed && !this.ancestry.isEditing)
+			? thing_color
+			: (this.ancestry.isGrabbed && !this.ancestry.isEditing)
+			? this.color_background
+			: isLight
+			? 'black'
+			: this.hoverColor	;
 	}
 	
 	get border(): string {

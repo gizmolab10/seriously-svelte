@@ -72,14 +72,15 @@ export default class G_TreeGraph {
 	static readonly _____PRIVATE: unique symbol;
 
 	private adjust_focus_ofTree(rect_ofGraphView: Rect) {
-		if (!!this.g_focus) {
+		const g_focus = this.g_focus;
+		if (!!g_focus) {
 			const y_offset = -1 - rect_ofGraphView.origin.y;
 			const subtree_size = this.focus.size_ofVisibleSubtree;
 			const x_offset_ofReveal = (this.focus.thing?.width_ofTitle ?? 0) / 2 - 2;
 			const x_offset_forDetails = (get(show.w_show_details) ? -k.width.details : 0);
 			const x_offset = x_offset_forDetails - (subtree_size.width / 2) - (k.height.dot / 2.5) + x_offset_ofReveal - 5;
 			const origin_ofFocusReveal = rect_ofGraphView.center.offsetByXY(x_offset, y_offset);
-			this.g_focus.origin_ofWidget = origin_ofFocusReveal.offsetByXY(-21.5 - x_offset_ofReveal, -5);
+			g_focus.origin_ofWidget = origin_ofFocusReveal.offsetByXY(-21.5 - x_offset_ofReveal, -5);
 		}
 	}
 

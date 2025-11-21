@@ -147,7 +147,7 @@ export default class G_Widget {
 		}
 	}
 
-	layout_subtree(
+	layout_subtree_for(
 		height: number = 0,
 		origin: Point = Point.zero,
 		t_graph = T_Graph.radial,
@@ -180,7 +180,7 @@ export default class G_Widget {
 			const width_ofReveal_dot = show_reveal ? dot_size : 0;
 			const isRadialFocus = inRadialMode && ancestry.isFocus;
 			const width_ofDrag = (dot_size * 2) + (inRadialMode ? 2 : -4);
-			const width_ofWidget = width_ofTitle + width_ofDrag + width_ofReveal_dot + (inRadialMode ? 0 : 4);
+			const width_ofWidget = width_ofTitle + width_ofDrag + width_ofReveal_dot + (inRadialMode ? 0 : 4) - 5;
 			const x_ofDrag_for_pointing_left = width_ofWidget - dot_size - 3 + (show_reveal ? 0.5 : 0);
 			const x_ofDrag = widget_points_right ? (inRadialMode ? 3 : 2) : x_ofDrag_for_pointing_left;
 			const y_ofDrag = 2.5 + (inRadialMode ? 0.1 : 0);
@@ -194,7 +194,7 @@ export default class G_Widget {
 			this.origin_ofRadial = this.location_ofRadial.offsetByX(widget_points_right ? 0 : -width_ofTitle - width_ofReveal_dot);
 			this.origin_ofTitle = Point.x(inRadialMode ? x_ofRadial_title : dot_size + 5);
 			this.center_ofDrag = origin_ofDrag.offsetEquallyBy(dot_size / 2);
-			this.offset_ofWidget = new Point(x_offset_ofWidget, 0.5);
+			this.offset_ofWidget = new Point(x_offset_ofWidget + (ancestry.isFocus ? 5 : 0), 0.5);
 			this.width_ofGraphDrawing = width_ofWidget;
 			this.width_ofWidget = width_ofWidget;
 			if (show_reveal) {

@@ -22,7 +22,7 @@
 	
 	function handle_focus(event: Event) {
 		if (!!$w_s_title_edit) {
-			$w_s_title_edit.start_editing();
+			$w_s_title_edit.set_isEditing();
 		}
 	}
 

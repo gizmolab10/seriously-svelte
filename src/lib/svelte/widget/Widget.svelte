@@ -121,9 +121,15 @@
 	}
 
 	function handle_s_mouse(s_mouse: S_Mouse) {
-		if (!!ancestry && s_mouse.hover_didChange) {
-			s_widget.isHovering = s_mouse.isHovering;
-			debug.log_hover(`${s_widget.isHovering ? '|' : '-'}  W  ${s_widget.name}`);
+		if (!!ancestry) {
+			if (s_mouse.hover_didChange) {
+				s_widget.isHovering = s_mouse.isHovering;
+				// debug.log_hover(`${u.t_or_f(s_widget.isHovering)}  W  ${s_widget.name}`);
+			} else if (s_mouse.isLong) {
+				ancestry?.becomeFocus();
+			} else if (s_mouse.isUp) {
+				handle_click_event(s_mouse.event);
+			}
 			update_style();
 		}
 	}
@@ -164,31 +170,31 @@
         on:keyup={u.ignore}
         on:keydown={u.ignore}
         name={s_component.id}
-        width={width_ofWidget - 6}
+        width={width_ofWidget}
         zindex={T_Layer.widgets}
         on:click={handle_click_event}
         handle_s_mouse={handle_s_mouse}
         style={widget_style.removeWhiteSpace()}
         origin={g_widget.origin.offsetBy(g_widget.offset_ofWidget)}>
+		<div class='widget-content'
+			style='
+				left : {-3}px;
+				top : {-2.5}px;
+				height : {height}px;
+				position : absolute;
+				width : {width_ofWidget}px;
+				z-index : {T_Layer.widgets};'>
+			<Widget_Drag
+				s_drag = {s_drag}
+				points_right = {drag_points_right}/>
+			<Widget_Title
+				s_title = {s_title}
+				fontSize = {k.font_size.common}px/>
+			{#if ancestry?.showsReveal_forPointingToChild(reveal_points_toChild)}
+				<Widget_Reveal
+					s_reveal = {s_reveal}
+					points_toChild = {reveal_points_toChild}/>
+			{/if}
+		</div>
 	</Mouse_Responder>
-	<div class='widget-content'
-		style='
-			top : {top - 1.5}px;
-			left : {left - 2}px;
-			height : {height}px;
-			position : absolute;
-			width : {width_ofWidget}px;
-			z-index : {T_Layer.widgets};'>
-        <Widget_Drag
-            s_drag = {s_drag}
-            points_right = {drag_points_right}/>
-        <Widget_Title
-            s_title = {s_title}
-            fontSize = {k.font_size.common}px/>
-        {#if ancestry?.showsReveal_forPointingToChild(reveal_points_toChild)}
-            <Widget_Reveal
-                s_reveal = {s_reveal}
-                points_toChild = {reveal_points_toChild}/>
-        {/if}
-	</div>
 {/if}

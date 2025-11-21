@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { Rect, Point, T_Layer, T_Timer, S_Mouse } from '../../ts/common/Global_Imports';
-	import { e, k, s, u, layout, elements } from '../../ts/common/Global_Imports';
+	import { e, k, s, u, debug, layout, elements } from '../../ts/common/Global_Imports';
 	import type { Handle_Result } from '../../ts/types/Types';
 	import { onMount } from 'svelte';
 	export let handle_isHit: () => {flag: boolean} | null = null;
@@ -88,24 +88,23 @@
 	}
 
 	function handle_hover(event: MouseEvent) {
-		setTimeout(() => {		// in case event arrives before store is updated, wait 1/100 second
-			const mouse_location = $w_mouse_location;
-			if (!!bound_element && !!mouse_location) {
-				let isHit = false;
-				if (!!handle_isHit) {
-					isHit = handle_isHit();				// used when this element's hover shape is not its bounding rect
-				} else {					
-					isHit = Rect.rect_forElement_containsPoint(bound_element, mouse_location);		// use bounding rect
-				}
-				if (s_mouse.isHovering != isHit) {
-					s_mouse.isHovering  = isHit;
-					handle_s_mouse(S_Mouse.hover(null, bound_element, isHit));					// pass a null event, hover_didChange is set to true
-					if (isHit) {
-						reset();	// to support double click
-					}
+		if (!!bound_element) {
+			let isHit = false;
+			if (!!handle_isHit) {
+				isHit = handle_isHit();				// used when this element's hover shape is not its bounding rect
+			} else {					
+				const mouse_location = new Point(event.clientX, event.clientY);
+				isHit = Rect.rect_forElement_containsPoint(bound_element, mouse_location);		// use bounding rect
+			}
+			if (s_mouse.isHovering != isHit) {
+				s_mouse.isHovering  = isHit;
+				debug.log_hover(`${u.t_or_f(isHit)} mouse ${name}`);
+				handle_s_mouse(S_Mouse.hover(null, bound_element, isHit));					// pass a null event, hover_didChange is set to true
+				if (isHit) {
+					reset();	// to support double click
 				}
 			}
-		}, 5);
+		}
 	}
 	
 	function handle_pointerDown(event) {
@@ -149,6 +148,7 @@
 	on:pointerdown={handle_pointerDown}
 	on:pointerup={handle_pointerUp}
 	on:mouseleave={handle_hover}
+	on:mouseenter={handle_hover}
 	on:mousemove={handle_hover}
 	bind:this={bound_element}
 	style={style}>
