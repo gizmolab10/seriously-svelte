@@ -88,9 +88,9 @@ export default class G_TreeGraph {
 		const y_offset = rect_ofGraphView.origin.y;
 		const subtree_size = this.focus.size_ofVisibleSubtree;
 		const x_offset_ofFirstReveal = (this.focus.thing?.width_ofTitle ?? 0) / 2 - 2;
-		const y_offset_ofBranches = (k.height.dot / 2) -(subtree_size.height / 2) - 4;
-		const x_offset_ofBranches = -8 - k.height.dot + x_offset_ofFirstReveal;
-		const x_offset = (get(show.w_show_details) ? -k.width.details : 4) + x_offset_ofFirstReveal - (subtree_size.width / 2) - (k.height.dot / 2.5);
+		const y_offset_ofFirstBranches = (k.height.dot / 2) -(subtree_size.height / 2) - 5;
+		const x_offset_ofFirstBranches = -8 - k.height.dot + x_offset_ofFirstReveal;
+		const x_offset = (get(show.w_show_details) ? -k.width.details : 0) + 5 + x_offset_ofFirstReveal - (subtree_size.width / 2) - (k.height.dot / 2.5);
 		const origin_ofFocusReveal = rect_ofGraphView.center.offsetByXY(x_offset, -y_offset);
 		if (get(s.w_device_isMobile)) {
 			origin_ofFocusReveal.x = 25;
@@ -98,7 +98,7 @@ export default class G_TreeGraph {
 		// need this for laying out branches, but it is wrong for final positioning
 		// TODO: dunno why, must fix
 		if (!!this.g_focus) {
-			this.g_focus.origin_ofWidget = origin_ofFocusReveal.offsetByXY(x_offset_ofBranches, y_offset_ofBranches);
+			this.g_focus.origin_ofWidget = origin_ofFocusReveal.offsetByXY(x_offset_ofFirstBranches, y_offset_ofFirstBranches);
 		}
 	}
 

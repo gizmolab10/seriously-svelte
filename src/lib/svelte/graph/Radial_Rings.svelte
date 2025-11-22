@@ -7,7 +7,7 @@
 	import { onMount } from 'svelte';
 	const name = 'rings';
 	const { w_thing_color } = colors;
-	const ring_width = k.thickness.rotation_ring;
+	const ring_width = k.thickness.radial.ring;
 	const mouse_timer = e.mouse_timer_forName(name);	// persist across destroy/recreate
 	const { w_count_mouse_up, w_s_title_edit, w_ancestry_focus } = s;
 	const { w_g_paging_cluster, w_ring_rotation_angle, w_ring_rotation_radius } = layout;
@@ -18,7 +18,7 @@
 	let reattachments = 0;
 	let last_action = 0;
 
-	$: middle_radius   = $w_ring_rotation_radius + k.thickness.rotation_ring;
+	$: middle_radius   = $w_ring_rotation_radius + k.thickness.radial.ring;
 	$: outer_radius	   = middle_radius + ring_width;
 	$: outer_diameter  = outer_radius * 2;
 	$: viewBox		   = `${-ring_width}, ${-ring_width}, ${outer_diameter}, ${outer_diameter}`;

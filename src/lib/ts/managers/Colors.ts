@@ -1,6 +1,7 @@
 import { parseToRgba, transparentize } from 'color2k';
 import { T_Preference } from '../common/Enumerations';
-import { writable } from 'svelte/store';
+import { get, writable } from 'svelte/store';
+import { k } from '../common/Constants';
 import { p } from './Preferences';
 
 // single source of truth for colors?????
@@ -13,7 +14,6 @@ export class Colors {
 	separator = '#eeeee0';
     disabled = 'lightGray';
 	rubberband = '#4a90e2';
-	faint_hover = 'yellow';
     default_forThings = 'blue';
 	thin_separator_line_color = '#999999';
 	w_background_color = writable<string>();
@@ -31,13 +31,13 @@ export class Colors {
 			document.documentElement.style.setProperty('--css-background-color', color);
 			p.write_key(T_Preference.background, color);
 			colors.banner = colors.ofBannerFor(color);
-			// colors.background = color;	// uncommenting this turns the glow buttons gray
 		})
 	}
 
 	ofBackgroundFor(color: string): string { return this.lighterBy(color, 10);}
 	ofBannerFor(background: string): string { return this.blend('white', background, 4);}
 	opacitize(color: string, amount: number): string { return color == '' ? '' : transparentize(color, 1 - amount); }
+	hover_special_blend(color: string): string { return this.specialBlend(color, get(this.w_background_color), k.opacity.hover) ?? color; }
 
 	color_fromSeriously(color: string | undefined): string {
 		if (!!color) {			

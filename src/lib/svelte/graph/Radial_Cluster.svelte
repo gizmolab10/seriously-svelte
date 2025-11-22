@@ -29,7 +29,7 @@
 	//												//
 	//////////////////////////////////////////////////
 	
-	$: $w_g_paging_cluster, thumbFill = colors.specialBlend(color, $w_background_color, radial.s_ring_rotation.isHighlighted ? k.opacity.thumb : s_paging_rotation.thumb_opacity);
+	$: $w_g_paging_cluster, thumbFill = colors.specialBlend(color, $w_background_color, radial.s_ring_rotation.isHighlighted ? k.opacity.radial.thumb : s_paging_rotation.thumb_opacity);
 	$: textBackground = radial.s_ring_rotation.isHighlighted ? $w_background_color : colors.specialBlend(color, $w_background_color, radial.s_ring_resizing.fill_opacity);
 	$: origin = layout.center_ofGraphView.offsetBy(Point.square(-radius));
 	$: viewBox=`${-offset} ${-offset} ${radius * 2} ${radius * 2}`;
@@ -48,10 +48,10 @@
 {#if g_cluster.widgets_shown > 1}
 	<Gull_Wings
 		zindex={T_Layer.paging}
-		radius={k.thickness.fork * 3}
+		radius={k.thickness.radial.fork * 3}
 		center={g_sliderArc.tip_ofFork}
 		direction={g_sliderArc.angle_ofFork}
-		color={colors.specialBlend(color, $w_background_color, k.opacity.least)}/>
+		color={colors.specialBlend(color, $w_background_color, k.opacity.radial.least)}/>
 {/if}
 <div class='radial-cluster'
 	style='
@@ -70,19 +70,19 @@
 			viewBox={viewBox}>
             <path class='path-arc-big'
                 fill='transparent'
-                stroke-width={k.thickness.fork}
+                stroke-width={k.thickness.radial.fork}
 				d={g_sliderArc.svgPathFor_bigArc}
-                stroke={colors.specialBlend('transparent', $w_background_color, k.opacity.least)}/>
+                stroke={colors.specialBlend('transparent', $w_background_color, k.opacity.radial.least)}/>
             <path class='path-arc-slider'
                 fill='transparent'
-                stroke-width={k.thickness.fork}
+                stroke-width={k.thickness.radial.fork}
                 d={g_sliderArc.svgPathFor_arcSlider}
-                stroke={colors.specialBlend(color, $w_background_color, k.opacity.least)}/>
+                stroke={colors.specialBlend(color, $w_background_color, k.opacity.radial.least)}/>
             <path class='path-fork'
                 fill='transparent'
-                stroke-width={k.thickness.fork}
+                stroke-width={k.thickness.radial.fork}
                 d={g_sliderArc.svgPathFor_radialFork}
-                stroke={colors.specialBlend(color, $w_background_color, k.opacity.least)}/>
+                stroke={colors.specialBlend(color, $w_background_color, k.opacity.radial.least)}/>
             {#if g_cluster.isPaging && g_cluster.widgets_shown > 1}
                 <path class='path-thumb'
 					fill={thumbFill}

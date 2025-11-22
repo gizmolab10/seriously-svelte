@@ -21,7 +21,7 @@
 	const segmented_height = k.height.button;
 	const separator_height = segmented_height + 9;
 	const separator_width = width - 5 - separator_left * 2;
-	const { w_show_show_details_ofType, w_show_countDots_ofType } = show;
+	const { w_show_details_ofType, w_show_countDots_ofType } = show;
 	let color_wrapper: HTMLDivElement | null = null;
 	let color_origin = Point.square(-3.5);
 	let color = $w_separator_color;
@@ -37,7 +37,7 @@
 
 	const tops = u.cumulativeSum(heights);
 
-	$: if (color_wrapper || $w_show_show_details_ofType) {
+	$: if (color_wrapper || $w_show_details_ofType) {
 		u.onNextTick(() => update_color_origin());
 	}
 

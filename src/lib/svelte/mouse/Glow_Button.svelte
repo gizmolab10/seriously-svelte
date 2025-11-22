@@ -75,6 +75,7 @@
         on:mouseenter={() => handle_mouse_enter(true)}
         on:mouseleave={() => handle_mouse_enter(false)}
         style='
+            top: 50%;
             left: 50%;
             margin: 0;
             padding: 0;
@@ -82,7 +83,6 @@
             user-select: none;
             text-align: center;
             position: absolute;
-            top: calc(50% + 1px);
             -ms-user-select: none;
             -moz-user-select: none;
             font-size: {font_size}px;

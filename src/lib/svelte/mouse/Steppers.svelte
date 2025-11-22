@@ -8,7 +8,8 @@
     const { w_show_directionals_ofType } = show;
 
 	function hover_closure(isHovering) {
-        return [isHovering ? colors.default : 'white', k.empty];
+        const hover_color = colors.hover_special_blend(colors.default)
+        return [isHovering ? hover_color : 'white', k.empty];
     }
 
 	function handle_s_mouse(s_mouse: S_Mouse): boolean {

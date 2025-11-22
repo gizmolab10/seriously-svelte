@@ -1,7 +1,8 @@
 <script lang='ts'>
-	import { k, Point, colors, svgPaths, S_Mouse, T_Request, T_Direction, T_Action, e, elements } from '../../ts/common/Global_Imports';
-	import Buttons_Row from '../mouse/Buttons_Row.svelte';
+	import { Point, S_Mouse, T_Request, T_Direction, T_Action } from '../../ts/common/Global_Imports';
+	import { e, k, colors, elements, svgPaths } from '../../ts/common/Global_Imports';
 	import Mouse_Timer from '../../ts/signals/Mouse_Timer';
+	import Buttons_Row from '../mouse/Buttons_Row.svelte';
 	export let closure: (column: number) => any;
 	export let origin = Point.zero;
 	export let has_title = false;
@@ -57,7 +58,7 @@
 					stroke-width='0.75'
 					stroke={colors.border}
 					d={svgPaths.path_for(title, size + 3)}
-					fill={index_forHover === index ? k.faint_hover : 'white'}/>
+					fill={index_forHover === index ? colors.hover_special_blend('black') : 'white'}/>
 			</svg>
 		</button>
 	{/each}

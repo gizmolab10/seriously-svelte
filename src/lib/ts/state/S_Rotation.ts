@@ -11,9 +11,9 @@ export default class S_Rotation {
 	get isActive():		 boolean { return !!this.basis_angle; }
 	get isHighlighted(): boolean { return (this.isHovering || this.isActive); }
 	get active_cursor():  string { return new Angle(this.active_angle!).cursor_forAngle; }
-	get fill_opacity():	  number { return this.isHovering ? k.opacity.least : k.opacity.none; }
-	get stroke_opacity(): number { return this.isHovering ? k.opacity.hover : k.opacity.none; }
-	get thumb_opacity():  number { return this.isActive ? k.opacity.active : this.isHovering ? k.opacity.hover : k.opacity.thumb; }
+	get fill_opacity():	  number { return this.isHovering ? k.opacity.radial.least : k.opacity.radial.none; }
+	get stroke_opacity(): number { return this.isHovering ? k.opacity.radial.hover : k.opacity.radial.none; }
+	get thumb_opacity():  number { return this.isActive ? k.opacity.radial.active : this.isHovering ? k.opacity.radial.hover : k.opacity.radial.thumb; }
 	get cursor():		  string { return this.isActive ? this.active_cursor : this.isHovering ? this.hover_cursor : k.cursor_default; }
 	reset()						 { this.basis_angle = this.active_angle = null; }
 	

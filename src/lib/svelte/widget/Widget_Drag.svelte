@@ -21,7 +21,7 @@
 	let fill_color = debug.lines ? 'transparent' : s_drag.fill;
 	let svg_outline_color = s_drag.svg_outline_color;
 	let center = g_widget.center_ofDrag;
-	let ellipsis_color = s_drag.stroke;
+	let parents_color = s_drag.stroke;
 	let svgPathFor_ellipses = k.empty;
 	let svgPathFor_related = k.empty;
 	let svgPathFor_dragDot = k.empty;
@@ -81,7 +81,7 @@
 			s_drag.set_forHovering(color, cursor);
 			svg_outline_color = s_drag.svg_outline_color;
 			fill_color = debug.lines ? 'transparent' : s_drag.fill;
-			ellipsis_color = s_drag.stroke;
+			parents_color = s_drag.stroke;
 		}
 	}
 
@@ -150,11 +150,11 @@
 					stroke={svg_outline_color}
 					svgPath={svgPathFor_dragDot}/>
 				{#if svgPathFor_ellipses}
-					<SVG_D3 name={'svg-ellipsis-' + name}
+					<SVG_D3 name={'svg-parents-' + name}
 						width={size}
 						height={size}
-						fill={ellipsis_color}
-						stroke={ellipsis_color}
+						fill={parents_color}
+						stroke={parents_color}
 						svgPath={svgPathFor_ellipses}/>
 				{/if}
 				{#if svgPathFor_related}

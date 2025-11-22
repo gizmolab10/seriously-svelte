@@ -202,7 +202,7 @@ export class Preferences {
 		show.w_show_countDots_ofType.subscribe((value) => {
 			this.write_key(T_Preference.countDots, value);
 		});
-		show.w_show_show_details_ofType.subscribe((value) => {
+		show.w_show_details_ofType.subscribe((value) => {
 			this.write_key(T_Preference.detail_types, value);
 		});
 		

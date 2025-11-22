@@ -21,6 +21,7 @@ export default class S_Element {
 	identifiable!: Identifiable;
 	color_background = 'white';
 	hoverColor = 'transparent';
+	element_color = 'black';
 	type = T_Element.none;
 	isDisabled = false;
 	isSelected = false;
@@ -44,17 +45,23 @@ export default class S_Element {
 	}
 
 	static empty() { return {}; }
-	get isHovering(): boolean { return get(s.w_s_hover) == this; }
-	get ancestry(): Ancestry { return this.identifiable as Ancestry; }
+	get isHovering():		boolean { return get(s.w_s_hover) == this; }
 	get color_isInverted(): boolean { return this.isInverted != this.isHovering; }
-	get description(): string { return `${this.isHovering ? 'in' : 'out '} '${this.name}'`; }
-	get isADot(): boolean { return this.type == T_Element.drag || this.type == T_Element.reveal; }
-	get svg_hover_color(): string { return this.isHovering ? colors.background : this.stroke; }
 	get show_help_cursor(): boolean { return get(s.w_control_key_down) && this.type == T_Element.action; }
-	get stroke(): string { return this.isDisabled ? this.disabledTextColor : this.color_isInverted ? this.color_background : this.hoverColor; }
-	get cursor(): string { return (this.isHovering && !this.isDisabled) ? this.show_help_cursor ? 'help' : this.hoverCursor : this.defaultCursor; }
+	get isADot():			boolean { return this.type == T_Element.drag || this.type == T_Element.reveal; }
+	get fill():				 string { return this.isDisabled ? 'transparent' : this.color_isInverted ? this.hoverColor : this.isSelected ? 'lightblue' : this.color_background; }
+	get cursor():			 string { return (this.isHovering && !this.isDisabled) ? this.show_help_cursor ? 'help' : this.hoverCursor : this.defaultCursor; }
+	get stroke():			 string { return this.isDisabled ? this.disabledTextColor : this.color_isInverted ? this.color_background : this.element_color; }
 	get disabledTextColor(): string { return colors.specialBlend(this.color_background, this.defaultDisabledColor, 0.3) ?? this.defaultDisabledColor; }
-	get fill(): string { return this.isDisabled ? 'transparent' : this.color_isInverted ? this.hoverColor : this.isSelected ? 'lightblue' : this.color_background; }
+	get description():		 string { return `${this.isHovering ? 'in' : 'out '} '${this.name}'`; }
+	get svg_hover_color():	 string { return this.isHovering ? colors.background : this.stroke; }
+	get ancestry():		   Ancestry { return this.identifiable as Ancestry; }
+
+	set_forHovering(element_color: string, hoverCursor: string) {
+		this.hoverColor = colors.hover_special_blend(element_color);
+		this.element_color = element_color;
+		this.hoverCursor = hoverCursor;
+	}
 
 	set isHovering(isHovering: boolean) {
 		const old_hover = get(s.w_s_hover);
@@ -64,11 +71,6 @@ export default class S_Element {
 		if (same != isHovering && new_hover != old_hover) {
 			s.w_s_hover.set(new_hover);
 		}
-	}
-
-	set_forHovering(hoverColor: string, hoverCursor: string) {
-		this.hoverCursor = hoverCursor;
-		this.hoverColor = hoverColor;
 	}
 
 	get isHoverInverted(): boolean {

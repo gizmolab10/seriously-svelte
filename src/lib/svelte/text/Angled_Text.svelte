@@ -1,6 +1,6 @@
 <script>
 	import { k, s, u, Point, debug, T_Layer } from '../../ts/common/Global_Imports';
-	export let background_color = colors.background;
+	export let background_color = $w_background_color;
 	export let font_family = $w_thing_fontFamily;
 	export let zindex = T_Layer.paging;
 	export let center = Point.zero;
@@ -8,7 +8,7 @@
 	export let text = k.space;
 	export let color = 'red';
 	export let angle = 0;
-	const { w_thing_fontFamily } = s;
+	const { w_thing_fontFamily, w_background_color } = s;
 	
 	// Calculate degrees from radians for CSS rotation
 	$: angleDeg = angle * 180 / Math.PI;

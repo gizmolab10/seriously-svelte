@@ -104,7 +104,7 @@ export default class DB_Bubble extends DB_Common {
 	}
 
 	private extract_fromProperties(bubble_properties: any) {
-		let b_zoom_scale, b_depth_limit, b_inRadialMode, b_show_show_details,
+		let b_zoom_scale, b_depth_limit, b_inRadialMode, b_show_details,
 			b_ids, b_root, b_focus, b_titles, b_colors, b_parent_ids, b_related_ids,
 			b_override_focus_and_mode, b_override_zoom_scale, b_override_depth_limit, 
 			b_erase_user_preferences, b_suppress_tree_mode;
@@ -116,7 +116,7 @@ export default class DB_Bubble extends DB_Common {
 			b_erase_user_preferences = bubble_properties.erase_user_preferences;
 			b_suppress_tree_mode = bubble_properties.suppress_tree_mode;
 			b_inRadialMode = bubble_properties.in_radial_mode;
-			b_show_show_details = bubble_properties.show_show_details;
+			b_show_details = bubble_properties.show_details;
 			b_depth_limit = bubble_properties.depth_limit;
 			b_zoom_scale = bubble_properties.zoom_scale;
 			b_related_ids = bubble_properties.related;
@@ -186,7 +186,7 @@ export default class DB_Bubble extends DB_Common {
 				this.changeFocusTo(b_focus);
 			}
 		}
-		show.w_show_details.set(!!b_show_show_details);
+		show.w_show_details.set(!!b_show_details);
 	}
 
 	private setup_to_send_events() {

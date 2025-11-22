@@ -81,14 +81,6 @@ export default class Constants {
 		autorepeat:	  150,
 	};
 
-	opacity = {
-		none:	0,
-		least:  0.13,
-		thumb:	0.25,
-		hover:	0.35,
-		active:	0.4
-	};
-
 	id_base = {
 		airtable: 'Airtable',
 		unknown:  'Unknown',
@@ -133,12 +125,25 @@ export default class Constants {
 		tree_prefs:	  36,
 	};
 
+	opacity = {
+		hover:	   0.4,
+		selected:  0.7,
+		radial: {
+			none:	0,
+			least:  0.13,
+			thumb:	0.25,
+			hover:	0.35,
+			active:	0.4
+		},
+	};
+
 	thickness = {
-		rotation_ring: 44,
-		paging_arc:	   15,
-		extra:		   12 + rubberband_thickness,
-		rubberband:	  	rubberband_thickness,
-		fork:		    2.5,
+		rubberband:		rubberband_thickness,
+		radial: {
+			ring:		44,
+			arc:		15,
+			fork:		2.5,
+		},
 		separator: {
 			main:		5,
 			banners:	2.5,

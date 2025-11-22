@@ -56,8 +56,8 @@
 		}
 	}
 
-	function handle_show_show_other_databases(event: Event) {
-		show.toggle_show_show_other_databases();
+	function handle_show_other_databases(event: Event) {
+		show.toggle_show_other_databases();
 		heights[1] = height_ofChoices();
 		heights = [...heights];	// force a re-render
 	}
@@ -139,7 +139,7 @@
 			origin={new Point(1, 30)}
 			zindex={T_Layer.frontmost + 1}
 			length={k.width.details - 2.5}
-			handle_click={handle_show_show_other_databases}
+			handle_click={handle_show_other_databases}
 			thickness={k.thickness.separator.details}
 			title='{$w_show_other_databases ? 'hide other databases' : 'show other databases'}'/>
 		<Separator name='show-other-databases'
@@ -150,7 +150,7 @@
 			origin={new Point(1, 30)}
 			zindex={T_Layer.frontmost + 1}
 			length={k.width.details - 2.5}
-			handle_click={handle_show_show_other_databases}
+			handle_click={handle_show_other_databases}
 			thickness={k.thickness.separator.details}
 			title='{$w_show_other_databases ? 'hide other databases' : 'show other databases'}'/>
 		{#if $w_show_other_databases}

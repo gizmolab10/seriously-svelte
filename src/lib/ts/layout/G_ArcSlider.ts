@@ -31,11 +31,11 @@ export default class G_ArcSlider {
 		this.isThumb = isThumb;
 		if (isThumb) {
 			const delta = k.thickness.separator.main / 3;
-			this.outside_arc_radius = radius + k.thickness.paging_arc - delta + 1;
+			this.outside_arc_radius = radius + k.thickness.radial.arc - delta + 1;
 			this.cap_radius = k.radius.arcSlider_cap - delta;
 			this.inside_arc_radius = radius + delta + 1;
 		} else {
-			this.outside_arc_radius = radius + k.thickness.paging_arc + 1;
+			this.outside_arc_radius = radius + k.thickness.radial.arc + 1;
 			this.cap_radius = k.radius.arcSlider_cap;
 			this.inside_arc_radius = radius + 1;
 		}
@@ -82,7 +82,7 @@ export default class G_ArcSlider {
 	}
 
 	layout_fork(angle_ofCluster: number) {
-		const fork_raw_radius = k.thickness.rotation_ring * 0.6;
+		const fork_raw_radius = k.thickness.radial.ring * 0.6;
 		const fork_backoff = this.fork_adjustment(fork_raw_radius, this.inside_arc_radius);
 		this.fork_radius = fork_raw_radius - fork_backoff;
 		this.angle_ofCluster = angle_ofCluster;
@@ -129,9 +129,9 @@ export default class G_ArcSlider {
 	}
 
 	get svgPathFor_bigArc(): string {
-		const capRadius = k.thickness.rotation_ring / 2;
+		const capRadius = k.thickness.radial.ring / 2;
 		const smallRadius = get(layout.w_ring_rotation_radius) + 1;
-		const bigRadius = smallRadius + k.thickness.rotation_ring;
+		const bigRadius = smallRadius + k.thickness.radial.ring;
 		return this.svgPathFor_arcSlider_using(smallRadius, bigRadius, capRadius);
 	}
 

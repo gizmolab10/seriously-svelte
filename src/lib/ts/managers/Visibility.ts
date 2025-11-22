@@ -6,7 +6,7 @@ import { get, writable } from 'svelte/store';
 export class Visibility {
 	w_show_tree_ofType			= writable<Array<T_Kinship>>();
 	w_show_countDots_ofType		= writable<Array<T_Kinship>>();
-	w_show_show_details_ofType	= writable<Array<T_Detail>>([]);	
+	w_show_details_ofType		= writable<Array<T_Detail>>([]);	
 	w_show_directionals_ofType	= writable<string[]>();
 	w_show_graph_ofType			= writable<T_Graph>();
 	w_show_details				= writable<boolean>();
@@ -17,7 +17,7 @@ export class Visibility {
 	debug_cursor				= false;
 
 	constructor() {
-		this.w_show_show_details_ofType.subscribe((t_details: Array<T_Detail>) => {
+		this.w_show_details_ofType.subscribe((t_details: Array<T_Detail>) => {
 			x.update_grabs_forSearch();
 		});
 	}
@@ -54,39 +54,39 @@ export class Visibility {
 	get related_dots(): boolean { return  this.isShowing_countDots_ofType(T_Kinship.related); }
 	get parent_dots(): boolean { return  this.isShowing_countDots_ofType(T_Kinship.parents); }
 
-	toggle_show_show_other_databases() {
+	toggle_show_other_databases() {
 		const other_databases = !get(this.w_show_other_databases)
 		p.write_key(T_Preference.other_databases, other_databases);
 		this.w_show_other_databases.set(other_databases);
 	}
 
 	restore_preferences() {
-		this.w_show_details				.set(p.read_key(T_Preference.show_show_details)	  ?? false);
-		this.w_show_related				.set(p.read_key(T_Preference.show_show_related)	  ?? false);
+		this.w_show_details				.set(p.read_key(T_Preference.show_details)	  ?? false);
+		this.w_show_related				.set(p.read_key(T_Preference.show_related)	  ?? false);
 		this.w_show_other_databases		.set(p.read_key(T_Preference.other_databases) ?? false);
 		this.w_show_tree_ofType			.set(p.read_key(T_Preference.tree)			  ?? T_Kinship.children);
 		this.w_show_countDots_ofType	.set(p.read_key(T_Preference.countDots)		  ?? [T_Kinship.children]);
-		this.w_show_show_details_ofType	.set(p.read_key(T_Preference.detail_types)	  ?? [T_Detail.actions, T_Detail.data]);
+		this.w_show_details_ofType	.set(p.read_key(T_Preference.detail_types)	  ?? [T_Detail.actions, T_Detail.data]);
 		this.w_show_graph_ofType		.set(features.allow_tree_mode ? p.read_key(T_Preference.graph) ?? T_Graph.tree : T_Graph.radial);
 	}
 	
 	reactivity_subscribe() {
-		function reactTo(t_preference: T_Preference, flag: any) {
+		function writeAnd_reactTo(t_preference: T_Preference, flag: any) {
 			p.write_key(t_preference, flag);
 			layout.restore_preferences();
 			layout.grand_layout();
 		}
 		this.w_show_details.subscribe((flag: any) => {
-			reactTo(T_Preference.show_show_details, flag);
+			writeAnd_reactTo(T_Preference.show_details, flag);
 		});
 		this.w_show_related.subscribe((flag: any) => {
-			reactTo(T_Preference.show_show_related, flag);
+			writeAnd_reactTo(T_Preference.show_related, flag);
 		});
 		this.w_show_graph_ofType.subscribe((flag: any) => {
-			reactTo(T_Preference.graph, flag);
+			writeAnd_reactTo(T_Preference.graph, flag);
 		});
 		this.w_show_search_controls.subscribe((flag: any) => {
-			reactTo(T_Preference.show_show_related, flag);
+			writeAnd_reactTo(T_Preference.show_related, flag);
 		});
     }
 }

@@ -8,7 +8,7 @@ function(instance, properties) {
 		'suppress_tree_mode',
 		'focus_object_id',
 		'in_radial_mode',
-		'show_show_details',
+		'show_details',
 		'depth_limit',
 		'zoom_scale'];
 	const field_labels_of_arrays = [
