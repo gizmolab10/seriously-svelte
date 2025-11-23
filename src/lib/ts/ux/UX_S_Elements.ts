@@ -1,14 +1,24 @@
 import { S_Mouse, S_Widget, S_Element, S_Component } from '../common/Global_Imports';
+import { colors, Rect, Ancestry } from '../common/Global_Imports';
 import { T_Control, T_Element } from '../common/Global_Imports';
-import { colors, Ancestry } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
 import type { Dictionary } from '../types/Types';
+import RBush from 'rbush';
+
+type ElementItem = {
+	minX: number;
+	minY: number;
+	maxX: number;
+	maxY: number;
+	element: S_Element;
+}
 
 export default class UX_S_Elements {
 	s_control_byType: { [t_control: string]: S_Element } = {};
 	s_widget_byAncestryID: { [id: string]: S_Widget } = {};
 	s_element_byName: { [name: string]: S_Element } = {};
 	s_mouse_byName: { [name: string]: S_Mouse } = {};
+	rbush = new RBush<ElementItem>();
 	mouse_responder_number = 0;
 	s_focus!: S_Element;
 
@@ -34,37 +44,12 @@ export default class UX_S_Elements {
 		return this.mouse_responder_number;
 	}
 
-	static readonly _____ELEMENTS: unique symbol;
+	static readonly _____LOOKUP: unique symbol;
 
 	get s_elements(): S_Element[] { return Object.values(this.s_element_byName); }
 	s_element_forName(name: string): S_Element { return this.s_element_byName[name]; }
 	s_element_forComponent(s_component: S_Component): S_Element | null { return null; }
 	s_mouse_forName(name: string): S_Mouse { return this.assure_forKey_inDict(name, this.s_mouse_byName, () => S_Mouse.empty()); }
-
-	s_element_for(identifiable: Identifiable | null, type: T_Element, subtype: string, s_widget: S_Widget | null = null): S_Element {
-		const realIdentifiable = identifiable ?? new Identifiable()
-		const name = this.name_from(realIdentifiable, type, subtype);
-		return this.assure_forKey_inDict(name, this.s_element_byName, () => new S_Element(realIdentifiable, type, subtype, s_widget));
-	}
-
-	s_widget_forAncestry(ancestry: Ancestry): S_Widget {
-		const id = ancestry.id;
-		if (!id) {
-			console.warn(`ancestry ${ancestry.title} has no id`);
-		}
-		return this.assure_forKey_inDict(id, this.s_widget_byAncestryID, () => new S_Widget(ancestry));
-	}
-
-	assure_forKey_inDict<T>(key: string, dict: Dictionary, closure: () => T): T {
-		let result = dict[key];
-		if (!result) {
-			result = closure();
-			if (!!result) {
-				dict[key] = result;
-			}
-		}
-		return result;
-	}
 
 	s_control_forType(t_control: T_Control): S_Element {
 		let s_control = this.s_control_byType[t_control];
@@ -101,6 +86,87 @@ export default class UX_S_Elements {
 				}
 			}
 		}
+	}
+
+	static readonly _____CREATE: unique symbol;
+
+	s_element_for(identifiable: Identifiable | null, type: T_Element, subtype: string, s_widget: S_Widget | null = null): S_Element {
+		const realIdentifiable = identifiable ?? new Identifiable()
+		const name = this.name_from(realIdentifiable, type, subtype);
+		return this.assure_forKey_inDict(name, this.s_element_byName, () => new S_Element(realIdentifiable, type, subtype, s_widget));
+	}
+
+	s_widget_forAncestry(ancestry: Ancestry): S_Widget {
+		const id = ancestry.id;
+		if (!id) {
+			console.warn(`ancestry ${ancestry.title} has no id`);
+		}
+		return this.assure_forKey_inDict(id, this.s_widget_byAncestryID, () => new S_Widget(ancestry));
+	}
+
+	assure_forKey_inDict<T>(key: string, dict: Dictionary, closure: () => T): T {
+		let result = dict[key];
+		if (!result) {
+			result = closure();
+			if (!!result) {
+				dict[key] = result;
+			}
+		}
+		return result;
+	}
+
+	static readonly _____RBUSH: unique symbol;
+
+	indexElement(s_element: S_Element) {
+		if (s_element.rect) {
+			this.rbush.insert({
+				minX: s_element.rect.x,
+				minY: s_element.rect.y,
+				maxX: s_element.rect.right,
+				maxY: s_element.rect.bottom,
+				element: s_element
+			});
+		}
+	}
+
+	updateElement(s_element: S_Element) {
+		if (s_element.rect) {
+			s_element.rect = Rect.boundingRectFor(s_element.html_element);
+			this.removeElement(s_element);
+			this.indexElement(s_element);
+		}
+	}
+
+	removeElement(s_element: S_Element) {
+		if (s_element.rect) {
+			this.rbush.remove({
+				minX: s_element.rect.x,
+				minY: s_element.rect.y,
+				maxX: s_element.rect.right,
+				maxY: s_element.rect.bottom,
+				element: s_element
+			}, (a, b) => a.element === b.element);
+		}
+	}
+
+	findElementsAtPoint(x: number, y: number): S_Element[] {
+		const results = this.rbush.search({
+			minX: x,
+			minY: y,
+			maxX: x,
+			maxY: y
+		});
+		return results.map(item => item.element);
+	}
+
+	findElementsInRect(rect: Rect): S_Element[] {
+		const results = this.rbush.search({
+			minX: rect.x,
+			minY: rect.y,
+			maxX: rect.right,
+			maxY: rect.bottom
+		});
+		return results.map(item => item.element as S_Element);
 	}
 
 }

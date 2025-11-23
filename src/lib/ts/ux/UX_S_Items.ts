@@ -181,18 +181,6 @@ export default class UX_S_Items {
 		}
 	}
 
-	ancestry_grabbed_atEnd_upward(up: boolean): Ancestry | null {	// does not alter array
-		const ancestries = this.si_grabs.items ?? [];
-		if (ancestries.length > 0) {
-			if (up) {
-				return ancestries[0];
-			} else {
-				return ancestries.slice(-1)[0];
-			}
-		}
-		return h?.rootAncestry ?? null;
-	}
-
 	static readonly _____TRAITS: unique symbol;
 	
 	//////////////////////////////////////////////////////////////////////

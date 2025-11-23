@@ -65,7 +65,7 @@ export default class Layout {
 	}
 	
 	grand_sweep(component: S_Component | null = null) {
-		h.ancestries_assureAll_createUnique();
+		// h.ancestries_assureAll_createUnique();
 		this.grand_layout(component);
 		this.grand_build(component);
 	}

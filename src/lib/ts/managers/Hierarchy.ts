@@ -985,7 +985,7 @@ export class Hierarchy {
 				}
 			}
 		} else if (features.allow_graph_editing) {
-			const grab = x.ancestry_grabbed_atEnd_upward(true);
+			const grab = get(s.w_ancestry_forDetails);
 			if (!!grab) {
 				this.ancestry_rebuild_persistentRelocateRight(grab, RIGHT, EXTREME);
 			}
@@ -993,7 +993,7 @@ export class Hierarchy {
 	}
 
 	ancestry_rebuild_persistent_grabbed_atEnd_moveUp_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
-		const ancestry = x.ancestry_grabbed_atEnd_upward(up);
+		const ancestry = get(s.w_ancestry_forDetails);
 		if (!!ancestry) {
 			this.ancestry_rebuild_persistentMoveUp_maybe(ancestry, up, SHIFT, OPTION, EXTREME);
 		}

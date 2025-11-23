@@ -83,6 +83,52 @@ export default class S_Component {
     }
 
     static readonly _____DEBUG_LOGGING: unique symbol;
+    
+    private get element_debug_style(): string {
+        const element = this.element;
+        if (!!element) {
+            const indented = k.newLine + k.tab;
+            const style = element.getAttribute('style');
+            if (!!style) {
+                return style.replace(/; /g, indented).replace(/ :/g, ':').replace(/: /g, '\t');
+            }
+        }
+        return 'no style information';
+    }
+
+	private style_debug_info(prefix: string): string {
+		const element = this.element;
+		if (!!element) {
+			const indented = k.newLine + k.tab;
+			const computed = window.getComputedStyle(element);
+			return [prefix, this.ancestry?.titles,
+                indented + k.title.line,
+                indented + this.element_debug_style,
+				indented + k.title.line,
+				indented + 'isConnected', element.isConnected,
+				indented + 'computed.backgroundColor', computed.backgroundColor,
+				indented + 'computed.display', computed.display,
+				indented + 'computed.visibility', computed.visibility,
+				indented + 'ownerDocument', element.ownerDocument === document ? 'main document' :'different document',
+				indented + (element.offsetParent === element.parentElement) ? 'positioning is normal' :'offset is not parent'
+			].join(k.tab);
+		}
+        return 'no style information';
+	}
+
+	private element_debug_info(prefix: string, element: HTMLElement | null | undefined): string {
+		const indented = k.newLine + k.tab + prefix + k.space;
+		const array = !element ? [] : [
+			k.newLine + k.tab + k.title.line,
+			indented + 'tagName', element.tagName,
+			indented + 'isConnected', element.isConnected,
+			indented + 'getBoundingClientRect', JSON.stringify(element.getBoundingClientRect()),
+			indented + 'ownerDocument.contains', element.ownerDocument?.contains(element),
+			indented + 'getRootNode', element.getRootNode()?.nodeName,
+			indented + 'compareDocumentPosition', element.compareDocumentPosition(document.body) & 0x8 ? 'body contains ' + prefix : prefix + ' is orphaned',
+			indented + 'closest body', element.closest('body')?.tagName];
+			return array.join(k.tab);
+	}
 
     get isComponentLog_enabled(): boolean {
         const log_isEnabledFor_t_component = {
@@ -140,54 +186,6 @@ export default class S_Component {
 			// array.push(this.element_debug_info('GRAND-PARENT', element.parentElement?.parentElement));
 			debug.log_component(array.join(k.tab));
 		}
-	}
-
-    static readonly _____INTERNALS: unique symbol;
-    
-    private get element_style(): string {
-        const element = this.element;
-        if (!!element) {
-            const indented = k.newLine + k.tab;
-            const style = element.getAttribute('style');
-            if (!!style) {
-                return style.replace(/; /g, indented).replace(/ :/g, ':').replace(/: /g, '\t');
-            }
-        }
-        return 'no style information';
-    }
-
-	private style_debug_info(prefix: string): string {
-		const element = this.element;
-		if (!!element) {
-			const indented = k.newLine + k.tab;
-			const computed = window.getComputedStyle(element);
-			return [prefix, this.ancestry?.titles,
-                indented + k.title.line,
-                indented + this.element_style,
-				indented + k.title.line,
-				indented + 'isConnected', element.isConnected,
-				indented + 'computed.backgroundColor', computed.backgroundColor,
-				indented + 'computed.display', computed.display,
-				indented + 'computed.visibility', computed.visibility,
-				indented + 'ownerDocument', element.ownerDocument === document ? 'main document' :'different document',
-				indented + (element.offsetParent === element.parentElement) ? 'positioning is normal' :'offset is not parent'
-			].join(k.tab);
-		}
-        return 'no style information';
-	}
-
-	private element_debug_info(prefix: string, element: HTMLElement | null | undefined): string {
-		const indented = k.newLine + k.tab + prefix + k.space;
-		const array = !element ? [] : [
-			k.newLine + k.tab + k.title.line,
-			indented + 'tagName', element.tagName,
-			indented + 'isConnected', element.isConnected,
-			indented + 'getBoundingClientRect', JSON.stringify(element.getBoundingClientRect()),
-			indented + 'ownerDocument.contains', element.ownerDocument?.contains(element),
-			indented + 'getRootNode', element.getRootNode()?.nodeName,
-			indented + 'compareDocumentPosition', element.compareDocumentPosition(document.body) & 0x8 ? 'body contains ' + prefix : prefix + ' is orphaned',
-			indented + 'closest body', element.closest('body')?.tagName];
-			return array.join(k.tab);
 	}
 
 }

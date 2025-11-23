@@ -50,7 +50,7 @@ export default class Constants {
 
 	width = {
 		details:  219,
-		child_gap: 12,
+		child_gap: 20,
 	};
 
 	help_url = {
@@ -75,10 +75,18 @@ export default class Constants {
 	};
 
 	threshold = {
-		double_click: 400,
-		long_click:	  800,
-		alteration:	  500,
 		autorepeat:	  150,
+		double_click: 400,
+		alteration:	  500,
+		long_click:	  800,
+	};
+	
+	tiny_outer_dots = {
+		diameter:	tiny_outer_dots_diameter,
+		expansion:	tiny_outer_dots_expansion,
+		size:		Size.square(tiny_outer_dots_diameter).extendedByY(3),
+		offset:		Point.square(-tiny_outer_dots_expansion).offsetByXY(4, 3.5),
+		viewBox:	`0.5 2.35 ${tiny_outer_dots_diameter} ${tiny_outer_dots_diameter}`,	
 	};
 
 	id_base = {
@@ -126,14 +134,20 @@ export default class Constants {
 	};
 
 	opacity = {
-		hover:	   0.4,
-		selected:  0.7,
+		none:		  0,
+		hover:		  0.4,
+		selected:	  0.7,
+		ancestry: {
+			editing:  0,
+			focus:	  0.2,
+			hover:	  0.8,
+			selected: 1.0,
+		},
 		radial: {
-			none:	0,
-			least:  0.13,
-			thumb:	0.25,
-			hover:	0.35,
-			active:	0.4
+			least:    0.13,
+			thumb:	  0.25,
+			hover:	  0.35,
+			active:	  0.4
 		},
 	};
 
@@ -149,14 +163,6 @@ export default class Constants {
 			banners:	2.5,
 			details:	0.75,
 		},
-	};
-	
-	tiny_outer_dots = {
-		diameter: tiny_outer_dots_diameter,
-		expansion: tiny_outer_dots_expansion,
-		size: Size.square(tiny_outer_dots_diameter).extendedByY(3),
-		offset: Point.square(-tiny_outer_dots_expansion).offsetByXY(4, 3.5),
-		viewBox: `0.5 2.35 ${tiny_outer_dots_diameter} ${tiny_outer_dots_diameter}`,	
 	};
 }
 

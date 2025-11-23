@@ -33,5 +33,5 @@
 		"src/lib/**/*.js",
 		"src/lib/**/*.ts",
 		"src/main.js"
-	]
+, "notes/experiments/source/UX_Hover.ts"	]
 }

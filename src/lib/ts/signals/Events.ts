@@ -264,11 +264,11 @@ export class Events {
 		const isEditing = get(s.w_s_title_edit)?.isActive ?? false;
 		if (!!event && event.type == 'keydown' && !isEditing) {
 			const key = event.key.toLowerCase();
-			const ancestry = x.ancestry_grabbed_atEnd_upward(true);
+			const ancestry = get(s.w_ancestry_forDetails);
 			const modifiers = ['alt', 'meta', 'shift', 'control'];
 			let graph_needsSweep = false;
 			s.w_control_key_down.set(event.ctrlKey);
-			if (!!h && !!ancestry && !modifiers.includes(key)) {
+			if (!!ancestry && !modifiers.includes(key)) {
 				const OPTION = event.altKey;
 				const SHIFT = event.shiftKey;
 				const COMMAND = event.metaKey;

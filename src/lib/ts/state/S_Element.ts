@@ -1,5 +1,5 @@
-import { Ancestry, S_Widget, T_Element, T_Control } from '../common/Global_Imports';
-import { k, s, u, colors, elements, controls } from '../common/Global_Imports';
+import { Rect, Ancestry, S_Widget, T_Element, T_Control } from '../common/Global_Imports';
+import { k, s, colors, elements, controls } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
 
@@ -21,6 +21,7 @@ export default class S_Element {
 	identifiable!: Identifiable;
 	color_background = 'white';
 	hoverColor = 'transparent';
+	rect: Rect | null = null;		// for use in rbush index
 	element_color = 'black';
 	type = T_Element.none;
 	isDisabled = false;
@@ -32,6 +33,7 @@ export default class S_Element {
 
 	constructor(identifiable: Identifiable, type: T_Element, subtype: string, s_widget: S_Widget | null = null) {
 		this.name = elements.name_from(identifiable, type, subtype);
+		this.rect = Rect.boundingRectFor(this.html_element);
 		this.identifiable = identifiable;
 		this.s_widget = s_widget;
 		this.subtype = subtype;
