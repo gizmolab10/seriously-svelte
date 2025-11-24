@@ -1,4 +1,4 @@
-import { S_Widget, S_Hoverable, T_Element, T_Control } from '../common/Global_Imports';
+import { S_Widget, S_Hoverable, T_Hoverable, T_Control } from '../common/Global_Imports';
 import { k, s, colors, elements, Ancestry, controls } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
@@ -16,7 +16,6 @@ export default class S_Element extends S_Hoverable {
 	defaultDisabledColor = '#999999';
 	identifiable!: Identifiable;
 	color_background = 'white';
-	type = T_Element.none;
 	isDisabled = false;
 	isSelected = false;
 	isInverted = false;		// means color for hover == as though not hovering (and vice versa)
@@ -24,14 +23,12 @@ export default class S_Element extends S_Hoverable {
 	isFocus = false;
 	name = k.empty;
 
-	constructor(identifiable: Identifiable, type: T_Element, subtype: string, s_widget: S_Widget | null = null) {
-		super();
-		this.isADot = type == T_Element.drag || type == T_Element.reveal;
+	constructor(identifiable: Identifiable, type: T_Hoverable, subtype: string, s_widget: S_Widget | null = null) {
+		super(type);
 		this.name = elements.name_from(identifiable, type, subtype);
 		this.identifiable = identifiable;
 		this.s_widget = s_widget;
 		this.subtype = subtype;
-		this.type = type;
 		if (this.isADot) { 
 			this.color_background = subtype == T_Control.search ? 'transparent' : get(colors.w_background_color);
 		}
@@ -39,7 +36,7 @@ export default class S_Element extends S_Hoverable {
 
 	static empty() { return {}; }
 	get color_isInverted(): boolean { return this.isInverted != this.isHovering; }
-	get show_help_cursor(): boolean { return get(s.w_control_key_down) && this.type == T_Element.action; }
+	get show_help_cursor(): boolean { return get(s.w_control_key_down) && this.type == T_Hoverable.action; }
 	get fill():				 string { return this.isDisabled ? 'transparent' : this.color_isInverted ? this.hoverColor : this.isSelected ? 'lightblue' : this.color_background; }
 	get cursor():			 string { return (this.isHovering && !this.isDisabled) ? this.show_help_cursor ? 'help' : this.hoverCursor : this.defaultCursor; }
 	get stroke():			 string { return this.isDisabled ? this.disabledTextColor : this.color_isInverted ? this.color_background : this.element_color; }
@@ -57,7 +54,7 @@ export default class S_Element extends S_Hoverable {
 		if (this.isADot) {
 			const a = this.ancestry;
 			switch (this.type) {
-				case T_Element.reveal: return controls.inTreeMode && a.isExpanded == a.isEditing;
+				case T_Hoverable.reveal: return controls.inTreeMode && a.isExpanded == a.isEditing;
 				default:			   return a.isEditing;
 			}
 		} else {

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { Point, G_TreeLine, T_Layer, S_Component, T_Component } from '../../ts/common/Global_Imports';
+	import { Point, G_TreeLine, T_Layer, S_Component, T_Hoverable } from '../../ts/common/Global_Imports';
 	import { k, debug, colors, signals } from '../../ts/common/Global_Imports';
 	import Circle from '../draw/Circle.svelte';
 	import Box from '../debug/Box.svelte';
@@ -23,7 +23,7 @@
  
 	function isHit(): boolean { return false }
 
-	s_component = signals.handle_reposition_widgets_atPriority(2, ancestry, T_Component.line, (received_ancestry) => {
+	s_component = signals.handle_reposition_widgets_atPriority(2, ancestry, T_Hoverable.line, (received_ancestry) => {
 		reattachments += 1;
 	});
 

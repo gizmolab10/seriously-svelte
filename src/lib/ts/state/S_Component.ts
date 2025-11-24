@@ -1,4 +1,4 @@
-import { Rect, Point, T_Signal, T_Component } from '../common/Global_Imports';
+import { Rect, Point, T_Signal, T_Hoverable } from '../common/Global_Imports';
 import { k, u, debug, layout, signals, Ancestry } from '../common/Global_Imports';
 import { Integer, Handle_S_Mouse, Create_S_Mouse } from '../types/Types';
 import { SignalConnection_atPriority } from '../types/Types';
@@ -16,26 +16,26 @@ export default class S_Component {
     signal_handlers: SignalConnection_atPriority[] = [];
     ancestry: Ancestry | null = null;
 	hid: Integer | null = null;
-    t_component: T_Component;
+    type: T_Hoverable;
 
     // hit test, logger, emitter, handler and destroyer
 
-    constructor(ancestry: Ancestry | null, t_component: T_Component) {
-        const suffix = 'handle_ ' + (t_component ?? '<--NO TYPE-->') + ' for: ' + (ancestry?.titles ?? '<--UNIDENTIFIED ANCESTRY-->');
+    constructor(ancestry: Ancestry | null, type: T_Hoverable) {
+        const suffix = 'handle_ ' + (type ?? '<--NO TYPE-->') + ' for: ' + (ancestry?.titles ?? '<--UNIDENTIFIED ANCESTRY-->');
         this.hid = ancestry?.hid ?? -1 as Integer;
         const prefix = 'S_Component has no';
-        this.t_component = t_component;
+        this.type = type;
         this.ancestry = ancestry;
         if (!ancestry && this.isComponentLog_enabled) {
             debug.log_component(prefix, 'ancestry', suffix);
         }
     }
 
-    get description(): string { return this.t_component; }
+    get description(): string { return this.type; }
     get distance_toGraphCenter(): Point { return this.boundingRect.center; }
     containsPoint(point: Point) { return this.boundingRect.contains(point); }
     get element(): HTMLElement | null { return document.getElementById(this.id) }
-    get id(): string { return `${this.t_component}-${this.ancestry?.kind ?? 'no-predicate'}-${this.ancestry?.titles ?? Identifiable.newID()}`; }
+    get id(): string { return `${this.type}-${this.ancestry?.kind ?? 'no-predicate'}-${this.ancestry?.titles ?? Identifiable.newID()}`; }
 
     get boundingRect(): Rect {
         const scale_factor = get(layout.w_scale_factor);
@@ -118,7 +118,7 @@ export default class S_Component {
 	}
 
     get isComponentLog_enabled(): boolean {
-        const log_isEnabledFor_t_component = {
+        const log_isEnabledFor_t_hoverable = {
             breadcrumbs : false,
             branches	: false,
             radial		: false,
@@ -131,8 +131,8 @@ export default class S_Component {
             tree		: false,
             app			: false,
         }
-        const t_component = this.t_component as keyof typeof log_isEnabledFor_t_component;
-        return log_isEnabledFor_t_component[t_component] ?? false;
+        const type = this.type as keyof typeof log_isEnabledFor_t_hoverable;
+        return log_isEnabledFor_t_hoverable[type] ?? false;
     }
 
 	debug_log_style(prefix: string) {
@@ -157,7 +157,7 @@ export default class S_Component {
 		const element = this.element;
 		if (!!element) {
 			const indented = k.newLine + k.tab;
-            const type = this.t_component.toUpperCase();
+            const type = this.type.toUpperCase();
 			const array = [type, prefix, 'connection state', `(at ${new Date().toLocaleString()})`,
 				indented + k.title.line,
 				indented + this.style_debug_info('ancestry'),

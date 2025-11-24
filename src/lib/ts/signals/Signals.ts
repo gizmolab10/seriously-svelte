@@ -1,5 +1,5 @@
 import type { Dictionary, Signal_Signature } from '../types/Types';
-import { T_Signal, T_Component } from '../common/Enumerations';
+import { T_Signal, T_Hoverable } from '../common/Enumerations';
 import { components } from '../managers/Components';
 import S_Component from '../state/S_Component';
 import Ancestry from '../runtime/Ancestry';
@@ -68,9 +68,9 @@ export class Signals {
 	// the closure is called
 	// with just the signal's type and value
 
-	handle_signals_atPriority(t_signals: Array<T_Signal>, priority: number, ancestry: Ancestry | null, t_component: T_Component, onSignal: (t_signal: T_Signal, value: any | null) => any ): S_Component | null {
+	handle_signals_atPriority(t_signals: Array<T_Signal>, priority: number, ancestry: Ancestry | null, type: T_Hoverable, onSignal: (t_signal: T_Signal, value: any | null) => any ): S_Component | null {
 		this.adjust_highestPriority_forSignals(priority, t_signals);
-		const s_component = components.component_forAncestry_andType_createUnique(ancestry, t_component);	// 1) create it
+		const s_component = components.component_forAncestry_andType_createUnique(ancestry, type);	// 1) create it
 		const connection = this.signal_emitter.connect((received_t_signal, signalPriority, value) => {
 			for (const t_signal of t_signals) {
 				if (received_t_signal == t_signal && signalPriority == priority) {
@@ -86,9 +86,9 @@ export class Signals {
 		return null;
 	}
 
-	handle_anySignal_atPriority(priority: number, ancestry: Ancestry | null, t_component: T_Component, onSignal: (t_signal: T_Signal, value: any | null) => any ): S_Component | null {
+	handle_anySignal_atPriority(priority: number, ancestry: Ancestry | null, type: T_Hoverable, onSignal: (t_signal: T_Signal, value: any | null) => any ): S_Component | null {
 		this.adjust_highestPriority_forAllSignals(priority);
-		let s_component = components.component_forAncestry_andType_createUnique(ancestry, t_component);		// 1) create it
+		let s_component = components.component_forAncestry_andType_createUnique(ancestry, type);		// 1) create it
 		const connection = this.signal_emitter.connect((received_t_signal, signalPriority, value) => {
 			if (signalPriority == priority) {
 				s_component?.debug_log_signal(false, value, received_t_signal, signalPriority);	// 4) use it
@@ -102,8 +102,8 @@ export class Signals {
 		return null;
 	}
 
-	handle_reposition_widgets_atPriority(priority: number, ancestry: Ancestry | null, t_component: T_Component, onSignal: (value: any | null) => any ) {
-		return this.handle_signals_atPriority([T_Signal.reposition], priority, ancestry, t_component, onSignal);
+	handle_reposition_widgets_atPriority(priority: number, ancestry: Ancestry | null, type: T_Hoverable, onSignal: (value: any | null) => any ) {
+		return this.handle_signals_atPriority([T_Signal.reposition], priority, ancestry, type, onSignal);
 	}
 
 	static readonly _____TRACKING: unique symbol;

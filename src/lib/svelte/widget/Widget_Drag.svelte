@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { e, k, s, u, x, show, debug, colors, signals, elements, controls } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Signal, T_Component } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Signal, T_Hoverable } from '../../ts/common/Global_Imports';
 	import { Point, S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { svgPaths } from '../../ts/common/Global_Imports';
@@ -35,7 +35,7 @@
 	update_svgPaths();
 	update_colors();
 
-	s_component = signals.handle_signals_atPriority([T_Signal.alteration], 0, ancestry, T_Component.drag, (t_signal, value): S_Component | null => {
+	s_component = signals.handle_signals_atPriority([T_Signal.alteration], 0, ancestry, T_Hoverable.drag, (t_signal, value): S_Component | null => {
 		s_drag.isInverted = !!ancestry && ancestry.alteration_isAllowed;
 		update_colors();
 	});

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { T_Layer, T_Signal, T_Radial_Zone, T_Component, S_Component } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Signal, T_Radial_Zone, T_Hoverable, S_Component } from '../../ts/common/Global_Imports';
 	import { k, s, u, x, layout, g_radial, signals, elements } from '../../ts/common/Global_Imports';
 	import Radial_Rings from './Radial_Rings.svelte';
 	import Radial_Focus from './Radial_Focus.svelte';
@@ -35,11 +35,11 @@
 	
 	layout.grand_layout();
 
-	s_component = signals.handle_signals_atPriority([T_Signal.reattach], 0, null, T_Component.radial, (ancestry) => {
+	s_component = signals.handle_signals_atPriority([T_Signal.reattach], 0, null, T_Hoverable.radial, (ancestry) => {
 		reattachments += 1;
 	});
 
-	signals.handle_signals_atPriority([T_Signal.reposition], 2, null, T_Component.radial, (received_ancestry) => {
+	signals.handle_signals_atPriority([T_Signal.reposition], 2, null, T_Hoverable.radial, (received_ancestry) => {
 		reattachments += 1;
 	});
 

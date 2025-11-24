@@ -1,4 +1,4 @@
-import { k, colors, elements, Ancestry, S_Element, T_Element } from '../common/Global_Imports';
+import { k, colors, elements, Ancestry, S_Element, T_Hoverable } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
 	//////////////////////////////////////////
@@ -32,10 +32,10 @@ export default class S_Widget extends S_Element {
 	get shows_border(): boolean { return this.ancestry.isFocus || this.ancestry.isGrabbed || this.ancestry.isEditing || this.isHovering; }
 	
 	constructor(ancestry: Ancestry) {
-		super(ancestry, T_Element.widget, k.empty);
-		this.s_drag = elements.s_element_for(ancestry, T_Element.drag, k.empty, this);
-		this.s_title = elements.s_element_for(ancestry, T_Element.title, k.empty, this);
-		this.s_reveal = elements.s_element_for(ancestry, T_Element.reveal, k.empty, this);
+		super(ancestry, T_Hoverable.widget, k.empty);
+		this.s_drag = elements.s_element_for(ancestry, T_Hoverable.drag, k.empty, this);
+		this.s_title = elements.s_element_for(ancestry, T_Hoverable.title, k.empty, this);
+		this.s_reveal = elements.s_element_for(ancestry, T_Hoverable.reveal, k.empty, this);
 	}
 
 	get update_state_didChange(): boolean {

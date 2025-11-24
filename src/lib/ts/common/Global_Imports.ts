@@ -13,6 +13,7 @@ import { T_Theme } from './Enumerations';
 import { T_Edit } from '../state/S_Title_Edit';
 import { T_Timer } from '../signals/Mouse_Timer';
 import { T_Oblong, T_Direction } from './Enumerations';
+import { T_Signal, T_Hoverable } from './Enumerations';
 import { T_Quadrant, T_Orientation } from '../types/Angle';
 import { T_Graph, T_Banner, T_Control } from './Enumerations';
 import { T_Persistable, T_Persistence } from './Enumerations';
@@ -20,7 +21,6 @@ import { T_Search, T_Search_Preference } from './Enumerations';
 import { T_Thing, T_Trait, T_Predicate } from './Enumerations';
 import { T_Create, T_Browser, T_Alteration } from './Enumerations';
 import { T_Tree_Line, T_Order, T_Widget, T_Layer } from './Enumerations';
-import { T_Signal, T_Element, T_Component, T_Hoverable } from './Enumerations';
 import { T_Action, T_Detail, T_Request, T_Storage_Need } from './Enumerations';
 import { T_Kinship, T_Radial_Zone, T_Preference, T_Auto_Adjust } from './Enumerations';
 import { T_Dragging, T_File_Format, T_File_Operation, T_Startup } from './Enumerations';
@@ -116,6 +116,7 @@ export {
 	T_Order, T_Kinship,
 	T_Theme, T_Graph, T_Browser, 
 	T_Search, T_Search_Preference,
+	T_Signal, T_Control, T_Hoverable,
 	T_Startup, T_Dragging, T_Alteration,
 	T_Quadrant, T_Orientation, T_Direction,
 	T_Banner, T_Detail, T_Request, T_Action,
@@ -123,5 +124,4 @@ export {
 	T_Edit, T_Create, T_Persistable, T_Persistence,
 	T_File_Format, T_File_Operation, T_Storage_Need,
 	T_Thing, T_Trait, T_Widget, T_Predicate, T_Preference,
-	T_Signal, T_Element, T_Control, T_Component, T_Hoverable,
 };

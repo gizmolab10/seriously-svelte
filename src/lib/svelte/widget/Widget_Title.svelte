@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { h, k, s, u, x, debug, hover, colors, search, layout, signals, controls, elements, databases } from '../../ts/common/Global_Imports';
-	import { T_Search, T_Layer, T_Component, T_Edit } from '../../ts/common/Global_Imports';
+	import { T_Search, T_Layer, T_Hoverable, T_Edit } from '../../ts/common/Global_Imports';
 	import { S_Mouse, S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import { Rect, Seriously_Range } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
@@ -43,7 +43,7 @@
 	function hasChanges()	 		  { return title_prior != title_binded; }
 	function handle_mouse_up() 		  { clearClicks(); }
 
-	s_component = signals.handle_anySignal_atPriority(0, ancestry, T_Component.title, (t_signal, ancestry) => {
+	s_component = signals.handle_anySignal_atPriority(0, ancestry, T_Hoverable.title, (t_signal, ancestry) => {
 		updateInputWidth();
 	});
 

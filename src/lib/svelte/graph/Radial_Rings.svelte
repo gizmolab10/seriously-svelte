@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { e, k, s, x, busy, debug, colors, radial, layout, signals, svgPaths } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Radial_Zone, T_Component, S_Component } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Radial_Zone, T_Hoverable, S_Component } from '../../ts/common/Global_Imports';
 	import { Thing, Point, Angle, g_radial, databases } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Radial_Cluster from './Radial_Cluster.svelte';
@@ -29,7 +29,7 @@
 	$: rotate_fill	   = (radial.s_ring_rotation.isHighlighted && !radial.s_ring_rotation.isActive) ? colors.opacitize(color, radial.s_ring_rotation.fill_opacity * (radial.s_ring_resizing.isActive ? 0 : 1)) : 'transparent';
 	$: is_dragging	   = radial.s_ring_rotation.isActive || radial.s_ring_resizing.isActive || !!$w_g_paging_cluster;
 
-	s_component = signals.handle_reposition_widgets_atPriority(2, null, T_Component.rings, (received_ancestry) => {
+	s_component = signals.handle_reposition_widgets_atPriority(2, null, T_Hoverable.rings, (received_ancestry) => {
 		reattachments += 1;
 	});
 

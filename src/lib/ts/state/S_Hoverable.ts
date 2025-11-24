@@ -9,10 +9,15 @@ export default class S_Hoverable {
 	hoverCursor = k.cursor_default;
 	hoverColor = 'transparent';
 	rect: Rect | null = null;							// for use in UX_Hover rbush index
-	// type = T_Hoverable.none;
 	element_color = 'black';							// override in subclasses
+	type: T_Hoverable;
 	isADot = false;										// override in subclasses
 	id = k.empty;										// override in subclasses
+	
+	constructor(type: T_Hoverable) {
+		this.isADot = type === T_Hoverable.drag || type === T_Hoverable.reveal;
+		this.type = type;
+	}
 
 	get stroke(): string { return 'red'; }				// override in subclasses
 	get isHovering(): boolean { return get(s.w_s_hover) == this; }

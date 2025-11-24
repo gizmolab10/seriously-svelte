@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { h, k, s, u, x, show, debug, colors, signals, elements, svgPaths } from '../../ts/common/Global_Imports';
-	import { S_Mouse, S_Element, S_Component, T_Layer, T_Component } from '../../ts/common/Global_Imports';
+	import { S_Mouse, S_Element, S_Component, T_Layer, T_Hoverable } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { Size, Point } from '../../ts/common/Global_Imports';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
@@ -29,7 +29,7 @@
 
 	update_colors();
 
-	s_component = signals.handle_reposition_widgets_atPriority(2, ancestry, T_Component.reveal, (received_ancestry) => {
+	s_component = signals.handle_reposition_widgets_atPriority(2, ancestry, T_Hoverable.reveal, (received_ancestry) => {
 		center = g_widget.center_ofReveal;
 	});
 

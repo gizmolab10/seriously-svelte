@@ -1,12 +1,12 @@
 <script lang='ts'>
-    import {S_Mouse, S_Element, T_Element, T_Request, T_Action } from '../../ts/common/Global_Imports';
+    import {S_Mouse, S_Element, T_Hoverable, T_Request, T_Action } from '../../ts/common/Global_Imports';
     import { k, s, show, Point, colors } from '../../ts/common/Global_Imports';
     import Buttons_Row from './Buttons_Row.svelte';
     export let closure: (t_request: T_Request, s_mouse: S_Mouse, name: string, row: number, column: number) => boolean;
     export let button_titles: string[][];
 	export let detect_autorepeat = false;
 	export let detect_longClick = false;
-    export let type = T_Element.button;
+    export let type = T_Hoverable.button;
     export let has_seperator = false;         // false means row titles precede buttons
     export let font_sizes: number[];
     export let button_height = 15;

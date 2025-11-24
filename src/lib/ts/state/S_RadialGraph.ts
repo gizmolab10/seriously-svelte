@@ -1,6 +1,6 @@
 import { k, debug, layout, g_radial, elements, components } from '../common/Global_Imports';
 import { S_Rotation, S_Resizing, G_Thing_Pages } from '../common/Global_Imports';
-import { T_Radial_Zone, T_Component } from '../common/Global_Imports';
+import { T_Radial_Zone, T_Hoverable } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
 import { get } from 'svelte/store';
 
@@ -58,7 +58,7 @@ export default class S_RadialGraph {
 	get ring_zone_atMouseLocation(): T_Radial_Zone {
 		let ring_zone = T_Radial_Zone.miss;
 		const mouse_vector = layout.mouse_vector_ofOffset_fromGraphCenter();
-		const widgets = components.components_ofType_atMouseLocation(T_Component.widget);
+		const widgets = components.components_ofType_atMouseLocation(T_Hoverable.widget);
 		if (!!mouse_vector && widgets.length == 0) {
 			const g_cluster = g_radial.g_cluster_atMouseLocation;
 			const inner = get(layout.w_ring_rotation_radius);

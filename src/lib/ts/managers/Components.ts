@@ -1,4 +1,4 @@
-import { Rect, layout, Ancestry, S_Component, T_Component } from '../common/Global_Imports';
+import { Rect, layout, Ancestry, S_Component, T_Hoverable } from '../common/Global_Imports';
 import type { Integer } from '../types/Types';
 import { get } from 'svelte/store';
 import RBush from 'rbush';
@@ -31,7 +31,7 @@ export class Components {
 	static readonly _____REGISTER: unique symbol;
 
 	private component_register(s_component: S_Component) {
-		const type = s_component.t_component;
+		const type = s_component.type;
 		const hid = s_component.hid;
 		if (!!hid && !!type) {
 			const array = this.components_byType_andHID;
@@ -46,17 +46,17 @@ export class Components {
 
 	get dummy(): S_Component {
 		if (!this._dummy) {
-			this._dummy = new S_Component(null, T_Component.none);
+			this._dummy = new S_Component(null, T_Hoverable.none);
 		}
 		return this._dummy;
 	}
 
-	component_forAncestry_andType(ancestry: Ancestry | null, type: T_Component): S_Component | null {
+	component_forAncestry_andType(ancestry: Ancestry | null, type: T_Hoverable): S_Component | null {
 		const dict = this.components_byHID_forType(type);
 		return dict[ancestry?.hid ?? -1 as Integer] ?? null;
 	}
 
-	component_forAncestry_andType_createUnique(ancestry: Ancestry | null, type: T_Component): S_Component | null {
+	component_forAncestry_andType_createUnique(ancestry: Ancestry | null, type: T_Hoverable): S_Component | null {
 		let s_component: S_Component | null = this.component_forAncestry_andType(ancestry, type);
 		if (!s_component) {
 			s_component = new S_Component(ancestry, type);
@@ -111,7 +111,7 @@ export class Components {
 
 	static readonly _____HIT_TESTING: unique symbol;
 
-	components_ofType_atMouseLocation(type: T_Component): Array<S_Component> {
+	components_ofType_atMouseLocation(type: T_Hoverable): Array<S_Component> {
 		const mouse_vector = get(layout.w_mouse_location_scaled);
 		if (!mouse_vector) return [];
 		
@@ -126,10 +126,10 @@ export class Components {
 		// Filter by type and verify containment
 		return results
 			.map(item => item.component)
-			.filter(component => component.t_component === type && component.containsPoint(mouse_vector));
+			.filter(component => component.type === type && component.containsPoint(mouse_vector));
 	}
 
-	components_ofType_withinRect(type: T_Component, rect: Rect): Array<S_Component> {
+	components_ofType_withinRect(type: T_Hoverable, rect: Rect): Array<S_Component> {
 		// Use rbush for spatial query
 		const results = this.rbush.search({
 			minX: rect.x,
@@ -141,10 +141,10 @@ export class Components {
 		// Filter by type and verify intersection
 		return results
 			.map(item => item.component)
-			.filter(component => component.t_component === type &&component.boundingRect.intersects(rect));
+			.filter(component => component.type === type &&component.boundingRect.intersects(rect));
 	}
 
-	xcomponents_ofType_atMouseLocation(type: T_Component): Array<S_Component> {
+	xcomponents_ofType_atMouseLocation(type: T_Hoverable): Array<S_Component> {
 		const mouse_vector = get(layout.w_mouse_location_scaled);
 		const dict = this.components_byHID_forType(type);
 		let found: Array<S_Component> = [];
@@ -159,7 +159,7 @@ export class Components {
 		return found;
 	}
 
-	xcomponents_ofType_withinRect(type: T_Component, rect: Rect): Array<S_Component> {
+	xcomponents_ofType_withinRect(type: T_Hoverable, rect: Rect): Array<S_Component> {
 		const dict = this.components_byHID_forType(type);
 		let found: Array<S_Component> = [];
 		if (!!dict) {

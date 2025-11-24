@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import { Rect, Size, Point, T_Layer, T_Dragging, T_Component, colors } from '../../ts/common/Global_Imports';
+    import { Rect, Size, Point, T_Layer, T_Dragging, T_Hoverable, colors } from '../../ts/common/Global_Imports';
     import { h, k, s, u, x, debug, layout, elements, components } from '../../ts/common/Global_Imports';
     import { onMount, onDestroy } from 'svelte';
     export let strokeWidth = k.thickness.rubberband;
@@ -125,7 +125,7 @@
     function detect_and_grab() {
         if ($w_dragging_active === T_Dragging.rubberband) {
             const rubberbandRect = new Rect( new Point(left, top), new Size(width, height));
-            const widget_components = components.components_ofType_withinRect(T_Component.widget, rubberbandRect);
+            const widget_components = components.components_ofType_withinRect(T_Hoverable.widget, rubberbandRect);
             const intersecting: Ancestry[] = [];
             widget_components.forEach((component) => {
                 const ancestry = component.ancestry;

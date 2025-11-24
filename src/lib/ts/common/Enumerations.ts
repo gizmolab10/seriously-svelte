@@ -271,26 +271,6 @@ export enum T_Trait {
 }
 
 export enum T_Hoverable {
-	reveal = 'reveal',
-	drag = 'drag',
-	none = 'none',
-}
-
-export enum T_Component {
-	breadcrumbs = 'breadcrumbs',
-	branches	= 'branches',
-	radial		= 'radial',
-	reveal		= 'reveal',
-	widget		= 'widget',
-	title		= 'title',
-	drag		= 'drag',
-	line		= 'line',
-	none		= 'none',
-	tree		= 'tree',
-	app			= 'app',
-}
-
-export enum T_Element {
 	radial_focus = 'radial_focus',
 	breadcrumb 	 = 'breadcrumb',
 	database	 = 'database',
@@ -304,7 +284,10 @@ export enum T_Element {
 	widget		 = 'widget',
 	title		 = 'title',
 	drag		 = 'drag',
+	line		 = 'line',
 	none		 = 'none',
+	tree		 = 'tree',
+	app			 = 'app',
 }
 
 export enum T_Preference {
