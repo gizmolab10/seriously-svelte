@@ -52,11 +52,6 @@
 		}
 	}
 
-	function handle_isHit(): boolean {
-		const zone = radial.ring_zone_atMouseLocation;
-		return [T_Radial_Zone.resize, T_Radial_Zone.rotate].includes(zone);
-	}
-
 	function s_reset() {
 		e.mouse_timer_forName(name).reset();
 		$w_g_paging_cluster = null;
@@ -204,7 +199,6 @@
 				width = {outer_diameter}
 				height = {outer_diameter}
 				zindex = {T_Layer.radial}
-				handle_isHit = {handle_isHit}
 				handle_s_mouse = {handle_s_mouse}
 				center = {layout.center_ofGraphView}>
 				<svg class = 'rings-svg'

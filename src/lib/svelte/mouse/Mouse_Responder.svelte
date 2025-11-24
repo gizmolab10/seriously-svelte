@@ -1,10 +1,10 @@
 <script lang='ts'>
-	import { Rect, Point, T_Layer, T_Timer, S_Mouse } from '../../ts/common/Global_Imports';
-	import { e, k, s, u, debug, layout, elements } from '../../ts/common/Global_Imports';
+	import { Point, T_Layer, T_Timer, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
+	import { e, k, s, u, debug, hover, layout, elements } from '../../ts/common/Global_Imports';
 	import type { Handle_Result } from '../../ts/types/Types';
-	import { onMount } from 'svelte';
-	export let handle_isHit: () => {flag: boolean} | null = null;
-	export let handle_s_mouse = Handle_Result<S_Mouse>;
+	import { onMount, onDestroy } from 'svelte';
+	export let s_element: S_Element = S_Element.empty();
+	export let handle_s_mouse: Handle_Result<S_Mouse>;
 	export let font_size = `${k.font_size.info}px`;
 	export let origin: Point | null = null;
 	export let center: Point | null = null;
@@ -26,22 +26,28 @@
 	const s_mouse = elements.s_mouse_forName(name);
 	const mouse_timer = e.mouse_timer_forName(name);
 	const mouse_responder_number = elements.next_mouse_responder_number;
-	let bound_element;
+	let bound_element: HTMLElement | null = null;
 
 	//////////////////////////////////////////////////////////////
 	//															//
 	//	required: width, height, name,							//
 	//		handle_s_mouse closure (*),							//
 	//  	center or origin (one must remain null)				//
-	//  optional: handle_isHit closure (*)						//
 	//															//
-	//  (*)	handle_isHit: override for hit geometry & logic		//
 	//	(*)	handle_s_mouse: mouse info relevant to caller:		//
 	//		down, up, double, long & hover						//
 	//															//
 	//////////////////////////////////////////////////////////////
+	
+	onDestroy(() => {
+		hover.remove_hoverable(s_element); // Remove from rbush
+	});
 
 	onMount(() => {
+		if (!!s_element) {
+			s_element.handle_s_mouse = handle_s_mouse;
+			hover.index_hoverable(s_element); // Add to rbush
+		}
 		setupStyle();
 	});
 
@@ -59,7 +65,6 @@
 		if (detect_mouseUp) {
 			reset();
 			handle_s_mouse(S_Mouse.up(event, bound_element));
-			handle_hover(event);  // Check hover state after handling the click
 		}
 	}
 
@@ -84,26 +89,6 @@
 			const y = origin?.y ?? center?.y - height / 2;
 			const alignment = align_left ? 'left: ' : 'right: ';
 			style = `${style} ${alignment}${x}px; top: ${y}px;`;
-		}
-	}
-
-	function handle_hover(event: MouseEvent) {
-		if (!!bound_element) {
-			let isHit = false;
-			if (!!handle_isHit) {
-				isHit = handle_isHit();				// used when this element's hover shape is not its bounding rect
-			} else {					
-				const mouse_location = new Point(event.clientX, event.clientY);
-				isHit = Rect.rect_forElement_containsPoint(bound_element, mouse_location);		// use bounding rect
-			}
-			if (s_mouse.isHovering != isHit) {
-				s_mouse.isHovering  = isHit;
-				debug.log_hover(`${u.t_or_f(isHit)} mouse ${name}`);
-				handle_s_mouse(S_Mouse.hover(null, bound_element, isHit));					// pass a null event, hover_didChange is set to true
-				if (isHit) {
-					reset();	// to support double click
-				}
-			}
 		}
 	}
 	
@@ -147,9 +132,6 @@
 <div class='mouse-responder' id={name}
 	on:pointerdown={handle_pointerDown}
 	on:pointerup={handle_pointerUp}
-	on:mouseleave={handle_hover}
-	on:mouseenter={handle_hover}
-	on:mousemove={handle_hover}
 	bind:this={bound_element}
 	style={style}>
 	<slot/>

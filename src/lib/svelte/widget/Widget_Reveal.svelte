@@ -94,6 +94,7 @@
 	<Mouse_Responder
 		center={center}
 		zindex={zindex}
+		s_element={s_reveal}
 		width={k.height.dot}
 		height={k.height.dot}
 		name={s_component.id}

@@ -118,6 +118,7 @@
 {#if s_drag}
 	<Mouse_Responder
 		center={center}
+		s_element={s_drag}
 		width={capture_size}
 		height={capture_size}
 		name={s_component.id}

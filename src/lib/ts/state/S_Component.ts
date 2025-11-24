@@ -1,10 +1,9 @@
-import { k, Rect, Point, debug, layout, signals, elements, Ancestry } from '../common/Global_Imports';
+import { Rect, Point, T_Signal, T_Component } from '../common/Global_Imports';
+import { k, u, debug, layout, signals, Ancestry } from '../common/Global_Imports';
 import { Integer, Handle_S_Mouse, Create_S_Mouse } from '../types/Types';
-import { S_Element, T_Signal, T_Component } from '../common/Global_Imports';
 import { SignalConnection_atPriority } from '../types/Types';
 import Identifiable from '../runtime/Identifiable';
 import { SignalConnection } from 'typed-signals';
-import { u } from '../utilities/Utilities';
 import { get } from 'svelte/store';
 
 // formerly called Svelte Wrapper
@@ -15,22 +14,18 @@ import { get } from 'svelte/store';
 
 export default class S_Component {
     signal_handlers: SignalConnection_atPriority[] = [];
-    handle_s_mouse: Handle_S_Mouse | null = null;
-    s_element: S_Element | null = null;
     ancestry: Ancestry | null = null;
 	hid: Integer | null = null;
     t_component: T_Component;
 
     // hit test, logger, emitter, handler and destroyer
 
-    constructor(ancestry: Ancestry | null, t_component: T_Component, handle_s_mouse: Handle_S_Mouse | null = null) {
+    constructor(ancestry: Ancestry | null, t_component: T_Component) {
         const suffix = 'handle_ ' + (t_component ?? '<--NO TYPE-->') + ' for: ' + (ancestry?.titles ?? '<--UNIDENTIFIED ANCESTRY-->');
         this.hid = ancestry?.hid ?? -1 as Integer;
-        this.handle_s_mouse = handle_s_mouse;
         const prefix = 'S_Component has no';
         this.t_component = t_component;
         this.ancestry = ancestry;
-        this.s_element = elements.s_element_forComponent(this);
         if (!ancestry && this.isComponentLog_enabled) {
             debug.log_component(prefix, 'ancestry', suffix);
         }
@@ -49,14 +44,6 @@ export default class S_Component {
     }
 
     static readonly _____SIGNALS: unique symbol;
-
-    handle_event(event: MouseEvent, create_s_mouse: Create_S_Mouse): boolean {
-        if (!!this.element && !!this.handle_s_mouse) {
-            const state = create_s_mouse(event, this.element);
-            return this.handle_s_mouse(state);
-        }
-        return false;
-    }
 
     assure_hasConnection_atPriority(priority: number, connection: SignalConnection) {
         for (const handler of this.signal_handlers) {

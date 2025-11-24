@@ -270,6 +270,12 @@ export enum T_Trait {
 	sum			= 'sum',
 }
 
+export enum T_Hoverable {
+	reveal = 'reveal',
+	drag = 'drag',
+	none = 'none',
+}
+
 export enum T_Component {
 	breadcrumbs = 'breadcrumbs',
 	branches	= 'branches',

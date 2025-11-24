@@ -18,15 +18,16 @@ import { T_Graph, T_Banner, T_Control } from './Enumerations';
 import { T_Persistable, T_Persistence } from './Enumerations';
 import { T_Search, T_Search_Preference } from './Enumerations';
 import { T_Thing, T_Trait, T_Predicate } from './Enumerations';
-import { T_Signal, T_Element, T_Component } from './Enumerations';
 import { T_Create, T_Browser, T_Alteration } from './Enumerations';
 import { T_Tree_Line, T_Order, T_Widget, T_Layer } from './Enumerations';
+import { T_Signal, T_Element, T_Component, T_Hoverable } from './Enumerations';
 import { T_Action, T_Detail, T_Request, T_Storage_Need } from './Enumerations';
 import { T_Kinship, T_Radial_Zone, T_Preference, T_Auto_Adjust } from './Enumerations';
 import { T_Dragging, T_File_Format, T_File_Operation, T_Startup } from './Enumerations';
 
 import S_Alteration from '../state/S_Alteration';
 import S_Title_Edit from '../state/S_Title_Edit';
+import S_Hoverable from '../state/S_Hoverable';
 import S_Resizing from '../state/S_Resizing';
 import S_Rotation from '../state/S_Rotation';
 import S_Element from '../state/S_Element';
@@ -37,6 +38,7 @@ import S_Items from '../state/S_Items';
 import { builds } from './Builds';
 import { busy } from '../state/S_Busy';
 import { files } from '../files/Files';
+import { hover } from '../ux/UX_Hover';
 import { layout } from '../layout/Layout';
 import { print } from '../utilities/Print';
 import { details } from '../ux/UX_Details';
@@ -87,8 +89,9 @@ import { transparentize } from 'color2k';
 import interact from 'interactjs';
 
 export {	
-	S_Rotation, S_Resizing,  S_Component, S_Items,
-	S_Mouse, S_Widget, S_Element, S_Alteration, S_Title_Edit,
+	S_Rotation, S_Resizing, S_Component,
+	S_Items, S_Mouse, S_Widget, S_Element,
+	S_Hoverable, S_Alteration, S_Title_Edit,
 	
 	G_Widget, G_TreeLine, G_TreeBranches, G_Repeater,
 	G_Paging, G_Cluster, G_RadialGraph, G_Thing_Pages, G_ArcSlider,
@@ -97,7 +100,7 @@ export {
 	e, c, h, k, p, s, u, x,
 	interact, transparentize,
 	debug, svgPaths, databases,
-	busy, show, files, builds, print,
+	busy, show, files, builds, print, hover,
 	layout, search, details, controls, features,
 	colors, radial, signals, elements, components,
 
@@ -116,9 +119,9 @@ export {
 	T_Startup, T_Dragging, T_Alteration,
 	T_Quadrant, T_Orientation, T_Direction,
 	T_Banner, T_Detail, T_Request, T_Action,
-	T_Signal, T_Element, T_Control, T_Component,
 	T_Layer, T_Tree_Line, T_Radial_Zone, T_Oblong,
 	T_Edit, T_Create, T_Persistable, T_Persistence,
 	T_File_Format, T_File_Operation, T_Storage_Need,
 	T_Thing, T_Trait, T_Widget, T_Predicate, T_Preference,
+	T_Signal, T_Element, T_Control, T_Component, T_Hoverable,
 };

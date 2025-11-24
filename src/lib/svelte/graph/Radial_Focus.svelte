@@ -94,11 +94,10 @@
 		left : {origin_ofWidget.x}px;'>
 		<Mouse_Responder
 			height = {height}
+			width = {width_ofBorder}
 			center = {center_ofBorder}
 			zindex = {T_Layer.widgets}
 			cursor = {k.cursor_default}
-			width = {width_ofBorder}
-			handle_isHit = {() => false}
 			name = 'radial-focus-border'
 			handle_s_mouse = {handle_s_mouse}>
 			<svg

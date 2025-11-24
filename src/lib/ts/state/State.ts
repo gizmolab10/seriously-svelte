@@ -3,8 +3,8 @@ import { Hierarchy } from '../managers/Hierarchy';
 import Ancestry from '../runtime/Ancestry';
 import S_Alteration from './S_Alteration';
 import S_Title_Edit from './S_Title_Edit';
+import S_Hoverable from './S_Hoverable';
 import { writable } from 'svelte/store';
-import S_Element from './S_Element';
 
 export class State {
 	static readonly _____THING: unique symbol = Symbol('THING');
@@ -32,7 +32,7 @@ export class State {
 
 	w_t_startup			   = writable<T_Startup>(T_Startup.start);
 	w_auto_adjust_graph	   = writable<T_Auto_Adjust | null>();
-	w_s_hover			   = writable<S_Element | null>();
+	w_s_hover			   = writable<S_Hoverable | null>();
 	w_popupView_id		   = writable<string | null>();
 	w_dragging_active	   = writable<T_Dragging>();
 	w_control_key_down	   = writable<boolean>(false);

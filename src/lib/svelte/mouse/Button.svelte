@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, s, u, x, Rect, Point, colors, layout, elements } from '../../ts/common/Global_Imports';
+	import { k, s, u, x, Rect, Point, hover, colors, layout, elements } from '../../ts/common/Global_Imports';
 	import { S_Mouse, S_Element, S_Component, T_Layer } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	export let s_button: S_Element = S_Element.empty();
@@ -109,6 +109,7 @@
 		origin={origin}
 		center={center}
 		position={position}
+		s_element={s_button}
 		handle_s_mouse={handle_s_mouse}
 		detect_longClick={detect_longClick}
 		detect_autorepeat={detect_autorepeat}>

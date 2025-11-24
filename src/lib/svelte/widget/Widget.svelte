@@ -3,7 +3,7 @@
 	import { G_Widget, S_Mouse, S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Signal, T_Component } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import { Point } from '../../ts/common/Global_Imports';
+	import { Rect, Point } from '../../ts/common/Global_Imports';
 	import Widget_Reveal from './Widget_Reveal.svelte';
 	import Widget_Title from './Widget_Title.svelte';
 	import Widget_Drag from './Widget_Drag.svelte';
@@ -117,6 +117,7 @@
 		height = k.height.row - 1.5;
 		left = origin_ofWidget.x;
 		top = origin_ofWidget.y;
+		s_widget.rect = Rect.boundingRectFor(s_title.html_element);
 		update_style();
 	}
 
@@ -168,6 +169,7 @@
 		height={height}
 		position='absolute'
         on:keyup={u.ignore}
+		s_element={s_widget}
         on:keydown={u.ignore}
         name={s_component.id}
         width={width_ofWidget}

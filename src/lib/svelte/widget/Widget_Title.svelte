@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { h, k, s, u, x, debug, colors, search, layout, signals, controls, elements, databases } from '../../ts/common/Global_Imports';
+	import { h, k, s, u, x, debug, hover, colors, search, layout, signals, controls, elements, databases } from '../../ts/common/Global_Imports';
 	import { T_Search, T_Layer, T_Component, T_Edit } from '../../ts/common/Global_Imports';
 	import { S_Mouse, S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import { Rect, Seriously_Range } from '../../ts/common/Global_Imports';
@@ -63,7 +63,10 @@
 
 	$: {
 		if (!!input) {
-			g_widget.s_widget.s_title.html_element = input;
+			const s_title = s_widget.s_title;
+			s_title.html_element = input;
+			s_title.rect = Rect.boundingRectFor(input);
+			hover.index_hoverable(s_widget); // Add to rbush
 		}
 	}
 
@@ -318,6 +321,7 @@
 {#key reattachments}
 	<Mouse_Responder
 		width={title_width}
+		s_element={s_widget}
 		height={k.height.row}
 		handle_s_mouse={handle_s_mouse}
 		name={'ghost_' + s_component.id}

@@ -1,24 +1,14 @@
-import { S_Mouse, S_Widget, S_Element, S_Component } from '../common/Global_Imports';
-import { colors, Rect, Ancestry } from '../common/Global_Imports';
+import { S_Mouse, S_Widget, S_Element } from '../common/Global_Imports';
+import { colors, hover, Ancestry } from '../common/Global_Imports';
 import { T_Control, T_Element } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
 import type { Dictionary } from '../types/Types';
-import RBush from 'rbush';
-
-type ElementItem = {
-	minX: number;
-	minY: number;
-	maxX: number;
-	maxY: number;
-	element: S_Element;
-}
 
 export default class UX_S_Elements {
 	s_control_byType: { [t_control: string]: S_Element } = {};
 	s_widget_byAncestryID: { [id: string]: S_Widget } = {};
 	s_element_byName: { [name: string]: S_Element } = {};
 	s_mouse_byName: { [name: string]: S_Mouse } = {};
-	rbush = new RBush<ElementItem>();
 	mouse_responder_number = 0;
 	s_focus!: S_Element;
 
@@ -48,7 +38,6 @@ export default class UX_S_Elements {
 
 	get s_elements(): S_Element[] { return Object.values(this.s_element_byName); }
 	s_element_forName(name: string): S_Element { return this.s_element_byName[name]; }
-	s_element_forComponent(s_component: S_Component): S_Element | null { return null; }
 	s_mouse_forName(name: string): S_Mouse { return this.assure_forKey_inDict(name, this.s_mouse_byName, () => S_Mouse.empty()); }
 
 	s_control_forType(t_control: T_Control): S_Element {
@@ -113,60 +102,6 @@ export default class UX_S_Elements {
 			}
 		}
 		return result;
-	}
-
-	static readonly _____RBUSH: unique symbol;
-
-	indexElement(s_element: S_Element) {
-		if (s_element.rect) {
-			this.rbush.insert({
-				minX: s_element.rect.x,
-				minY: s_element.rect.y,
-				maxX: s_element.rect.right,
-				maxY: s_element.rect.bottom,
-				element: s_element
-			});
-		}
-	}
-
-	updateElement(s_element: S_Element) {
-		if (s_element.rect) {
-			s_element.rect = Rect.boundingRectFor(s_element.html_element);
-			this.removeElement(s_element);
-			this.indexElement(s_element);
-		}
-	}
-
-	removeElement(s_element: S_Element) {
-		if (s_element.rect) {
-			this.rbush.remove({
-				minX: s_element.rect.x,
-				minY: s_element.rect.y,
-				maxX: s_element.rect.right,
-				maxY: s_element.rect.bottom,
-				element: s_element
-			}, (a, b) => a.element === b.element);
-		}
-	}
-
-	findElementsAtPoint(x: number, y: number): S_Element[] {
-		const results = this.rbush.search({
-			minX: x,
-			minY: y,
-			maxX: x,
-			maxY: y
-		});
-		return results.map(item => item.element);
-	}
-
-	findElementsInRect(rect: Rect): S_Element[] {
-		const results = this.rbush.search({
-			minX: rect.x,
-			minY: rect.y,
-			maxX: rect.right,
-			maxY: rect.bottom
-		});
-		return results.map(item => item.element as S_Element);
 	}
 
 }
