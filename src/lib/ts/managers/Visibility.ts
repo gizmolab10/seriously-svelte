@@ -61,12 +61,12 @@ export class Visibility {
 	}
 
 	restore_preferences() {
+		this.w_show_countDots_ofType	.set(p.read_key(T_Preference.countDots)		  ?? []);
 		this.w_show_details				.set(p.read_key(T_Preference.show_details)	  ?? false);
 		this.w_show_related				.set(p.read_key(T_Preference.show_related)	  ?? false);
 		this.w_show_other_databases		.set(p.read_key(T_Preference.other_databases) ?? false);
 		this.w_show_tree_ofType			.set(p.read_key(T_Preference.tree)			  ?? T_Kinship.children);
-		this.w_show_countDots_ofType	.set(p.read_key(T_Preference.countDots)		  ?? [T_Kinship.children]);
-		this.w_show_details_ofType	.set(p.read_key(T_Preference.detail_types)	  ?? [T_Detail.actions, T_Detail.data]);
+		this.w_show_details_ofType		.set(p.read_key(T_Preference.detail_types)	  ?? [T_Detail.actions, T_Detail.data]);
 		this.w_show_graph_ofType		.set(features.allow_tree_mode ? p.read_key(T_Preference.graph) ?? T_Graph.tree : T_Graph.radial);
 	}
 	

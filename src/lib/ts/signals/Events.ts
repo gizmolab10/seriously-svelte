@@ -250,7 +250,7 @@ export class Events {
 				h.ancestry_alter_connectionTo_maybe(ancestry);
 				layout.grand_build();
 				return;
-			} else if (!shiftKey && controls.inRadialMode) {
+			} else if (!shiftKey) {
 				if (ancestry.becomeFocus()) {
 					layout.grand_build();
 					return;

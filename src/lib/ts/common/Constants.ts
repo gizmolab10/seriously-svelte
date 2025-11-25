@@ -33,7 +33,7 @@ export default class Constants {
 	cursor_default = 'default';
 	corrupted = 'corrupted';
 	unknown = 'unknown';
-	root_path = 'root';
+	root = 'root';
 	empty_id = '""';
 	newLine = '\n';
 	wildcard = '*';
@@ -126,7 +126,7 @@ export default class Constants {
 		separator:	  dot_size - 4,
 		details:	  dot_size - 3,
 		banners:	  dot_size - 2,
-		arc_slider:	  dot_size - 1.7,
+		arc_slider:	  dot_size - 4,
 		info:		  dot_size - 1,
 		common:		  dot_size,
 		segmented:	  dot_size + 1,
@@ -144,10 +144,11 @@ export default class Constants {
 			selected: 1.0,
 		},
 		radial: {
-			least:    0.13,
-			thumb:	  0.25,
-			hover:	  0.35,
-			active:	  0.4
+			least:    0.1,
+			thumb:	  0.12,
+			hover:	  0.14,
+			text:	  0.25,
+			active:	  0.4,
 		},
 	};
 

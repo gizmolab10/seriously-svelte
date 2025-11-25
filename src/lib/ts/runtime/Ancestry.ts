@@ -19,7 +19,7 @@ export default class Ancestry extends Identifiable {
 	//   "   kind is from the last relationship
 	//    all children are of that kind of predicate
 
-	constructor(t_database: string, path: string = k.root_path, kind: string = T_Predicate.contains) {
+	constructor(t_database: string, path: string = k.root, kind: string = T_Predicate.contains) {
 		super(path);
 		this.kind = kind;
 		this.t_database = t_database;
@@ -852,7 +852,7 @@ export default class Ancestry extends Identifiable {
 
 	static readonly _____PROPERTIES: unique symbol;
 	
-	get isRoot():			  boolean { return this.pathString == k.root_path; }
+	get isRoot():			  boolean { return this.pathString == k.root; }
 	get hasSiblings():		  boolean { return this.sibling_ancestries.length > 1; }
 	get shows_reveal():		  boolean { return this.showsReveal_forPointingToChild(true); }
 	get isInvalid():		  boolean { return this.containsReciprocals || this.containsMixedPredicates; }
@@ -932,7 +932,7 @@ export default class Ancestry extends Identifiable {
 	idAt(back: number = 1): string {	// default 1 == last
 		const ids = this.relationship_ids;
 		if (back > ids.length) {
-			return k.root_path;
+			return k.root;
 		}
 		return ids.slice(-(Math.max(1, back)))[0];
 	}

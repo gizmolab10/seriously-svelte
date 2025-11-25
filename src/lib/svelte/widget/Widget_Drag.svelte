@@ -65,11 +65,11 @@
 	}
 
 	function update_svgPaths() {
-		if (controls.inRadialMode) {
-			svgPathFor_dragDot = svgPaths.circle_atOffset(size, size - 1);
-		} else {
+		// if (controls.inRadialMode) {
+		// 	svgPathFor_dragDot = svgPaths.circle_atOffset(size, size - 1);
+		// } else {
 			svgPathFor_dragDot = svgPaths.oval(size, false);
-		}
+		// }
 		update_svgPathsExtra();
 	}
 

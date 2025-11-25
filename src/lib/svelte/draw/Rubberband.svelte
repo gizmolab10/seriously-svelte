@@ -77,7 +77,7 @@
             const ancestries = ancestries_intersecting_rubberband();
             if (ancestries.length != 0) {
                 x.si_grabs.items = ancestries;
-                debug.log_hits(`${ancestries.map(ancestry => ancestry.id).join(', ')}`);
+                debug.log_hits(`${ancestries.map(ancestry => ancestry.relationship?.id ?? k.root).join(', ')}`);
             } else {
                 x.si_grabs.reset();
             }

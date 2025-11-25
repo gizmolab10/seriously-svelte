@@ -12,7 +12,7 @@ type HIT_RBRect = {
 export default class Hits {
 	rbush = new RBush<HIT_RBRect>();
 	current_hits = new Set<S_Detectable>();
-	hits_byElement_ID: { [element_ID: string]: S_Detectable } = {};
+	hits_byID: { [id: string]: S_Detectable } = {};
 
 	static readonly _____HIT_TEST: unique symbol;
 
@@ -64,14 +64,14 @@ export default class Hits {
 		this.add_hit(hit);
 	}
 
-	add_hit(hit: S_Detectable) {
+	private add_hit(hit: S_Detectable) {
 		if (!!hit && !!hit.rect) {
-			const id = hit.html_element?.id ?? hit.id;
+			const id = hit.id;
 			if (!!id) {
-				if (this.hits_byElement_ID[id] == hit) {
+				if (this.hits_byID[id] == hit) {
 					return;	// already added, avoid duplicates
 				}
-				this.hits_byElement_ID[id] = hit;
+				this.hits_byID[id] = hit;
 			}
 			this.rbush.insert({
 				minX: hit.rect.x,
@@ -85,9 +85,9 @@ export default class Hits {
 
 	remove_hit(hit: S_Detectable) {
 		if (!!hit && !!hit.rect) {
-			const id = hit.html_element?.id ?? hit.id;
+			const id = hit.id;
 			if (!!id) {
-				delete this.hits_byElement_ID[id];
+				delete this.hits_byID[id];
 			}
 			this.rbush.remove({
 				minX: hit.rect.x,

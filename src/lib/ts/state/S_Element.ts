@@ -59,9 +59,9 @@ export default class S_Element extends S_Detectable {
 			if (this.ancestry.isEditing) {
 				return `dashed ${color} 1px`;
 			}
-			if (this.ancestry.isFocus) {
-				return `solid ${color} 1px`;
-			}
+			// if (this.ancestry.isFocus) {
+			// 	return `solid ${color} 1px`;
+			// }
 			if (this.isHovering) {
 				return `solid ${colors.ofBackgroundFor(color)} 1px`;
 			}

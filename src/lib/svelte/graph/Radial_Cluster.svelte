@@ -90,7 +90,7 @@
     </Mouse_Responder>
 </div>
 <Angled_Text
-    color={color}
+    color={colors.specialBlend(color, $w_background_color, k.opacity.radial.text)}
     zindex={T_Layer.paging}
     text={g_cluster.cluster_title}
     center={g_cluster.label_center}

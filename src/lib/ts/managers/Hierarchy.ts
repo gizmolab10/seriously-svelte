@@ -828,7 +828,7 @@ export class Hierarchy {
 	}
 
 	ancestry_isAssured_valid_forPath(path: string): Ancestry | null {
-		if (path == k.root_path) {
+		if (path == k.root) {
 			return this.rootAncestry;
 		} else {
 			const ids = path.split(k.separator.generic);						// path is multiple relationship ids separated by separator.generic
@@ -859,7 +859,7 @@ export class Hierarchy {
 		}
 	}
 
-	ancestry_remember_createUnique(path: string = k.root_path, kind: string = T_Predicate.contains): Ancestry {
+	ancestry_remember_createUnique(path: string = k.root, kind: string = T_Predicate.contains): Ancestry {
 		let ancestry = this.si_ancestries_byHID_forKind(kind)[path.hash()];
 		if (!ancestry) {
 			ancestry = new Ancestry(this.db.t_database, path, kind);

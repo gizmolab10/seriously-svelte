@@ -1,5 +1,6 @@
 export class Builds {
 	notes: { [id: number]: string[] } = {
+		174 : ['November 25, 2025', 'click drag dot changes focus (in both graph modes)'],
 		173 : ['November 18, 2025', 'decrease spacing everywhere'],
 		172 : ['November 14, 2025', 'simplified non-standalone UI mode'],
 		171 : ['November 3, 2025', 'tag and trait details now correctly use s items'],

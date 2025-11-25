@@ -9,7 +9,7 @@ import { get } from 'svelte/store';
 	//										//
 	// computes color, background, border	//
 	//										//
-	//	responds to grab, edit, focus,		//	
+	//	responds to grab, edit,	focus,		//	
 	//	hover & expand						//
 	//										//
 	//////////////////////////////////////////
@@ -27,9 +27,9 @@ export default class S_Widget extends S_Element {
 	get thing_color(): string { return this.ancestry.thing?.color ?? k.empty; }
 	get background(): string { return `background-color: ${this.background_color}`; }
 	get isFilled(): boolean { return this.ancestry.isGrabbed && !this.ancestry.isEditing; }
+	get shows_border(): boolean { return this.ancestry.isGrabbed || this.ancestry.isEditing || this.isHovering; }
 	get color(): string { return this.colorFor_grabbed_andEditing(this.ancestry.isGrabbed, this.ancestry.isEditing); }
 	get background_color(): string { return this.isFilled ? this.thing_color : this.shows_border ? get(colors.w_background_color) : 'transparent'; }
-	get shows_border(): boolean { return this.ancestry.isFocus || this.ancestry.isGrabbed || this.ancestry.isEditing || this.isHovering; }
 	
 	constructor(ancestry: Ancestry) {
 		super(ancestry, T_Detectable.widget, k.empty);
