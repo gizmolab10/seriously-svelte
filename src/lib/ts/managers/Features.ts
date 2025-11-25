@@ -1,6 +1,6 @@
 import { c, k, T_Theme } from '../common/Global_Imports';
 
-export class UX_Features {
+export class Features {
 
 	theme = T_Theme.standalone;
 
@@ -47,4 +47,4 @@ export class UX_Features {
 
 }
 
-export const features = new UX_Features();
+export const features = new Features();

@@ -5,12 +5,12 @@ import { get } from 'svelte/store';
 export default class S_Hoverable {
 	containing_hoverable: S_Hoverable | null = null;	// only for drag and reveal dots
 	identifiable: Identifiable | null = null;
-	html_element: HTMLElement | null = null;			// for use in UX_Hover rbush index
+	html_element: HTMLElement | null = null;			// for use in Hover rbush index
 	s_widget: S_Widget | null = null;					// only for drag and reveal dots
 	defaultCursor = k.cursor_default;
 	hoverCursor = k.cursor_default;
 	hoverColor = 'transparent';
-	rect: Rect | null = null;							// for use in UX_Hover rbush index
+	rect: Rect | null = null;							// for use in Hover rbush index
 	element_color = 'black';
 	type: T_Hoverable;
 	isADot = false;

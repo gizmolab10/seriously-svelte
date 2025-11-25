@@ -2,7 +2,7 @@ import { c, e, k, s, show, search, layout, g_tree, Ancestry, Predicate, S_Altera
 import { T_Graph, T_Kinship, T_Control, T_Alteration, T_Search_Preference } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
-class UX_Controls {
+class Controls {
 	
 	open_tabFor(url: string) { window.open(url, 'help-webseriously')?.focus(); }
 	get inTreeMode(): boolean { return get(show.w_show_graph_ofType) == T_Graph.tree; }
@@ -44,4 +44,4 @@ class UX_Controls {
 
 }
 
-export const controls = new UX_Controls();
+export const controls = new Controls();

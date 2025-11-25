@@ -1,10 +1,10 @@
 import { S_Mouse, S_Widget, S_Element } from '../common/Global_Imports';
-import { colors, hover, Ancestry } from '../common/Global_Imports';
 import { T_Control, T_Hoverable } from '../common/Global_Imports';
+import { colors, Ancestry } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
 import type { Dictionary } from '../types/Types';
 
-export default class UX_S_Elements {
+export default class Elements {
 	s_control_byType: { [t_control: string]: S_Element } = {};
 	s_widget_byAncestryID: { [id: string]: S_Widget } = {};
 	s_element_byName: { [name: string]: S_Element } = {};
@@ -21,7 +21,7 @@ export default class UX_S_Elements {
 	//	  handling						//
 	//									//
 	//	used by: Button, Close_Button,	//
-	//	  Radial & Radial_Cluster,	//
+	//	  Radial & Radial_Cluster,		//
 	//	  Widget_Drag, Widget_Title,	//
 	//	  Controls, Focus				//
 	//									//
@@ -106,4 +106,4 @@ export default class UX_S_Elements {
 
 }
 
-export const elements = new UX_S_Elements();
+export const elements = new Elements();

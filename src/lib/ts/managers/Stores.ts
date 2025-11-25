@@ -1,12 +1,12 @@
 import { T_Startup, T_Dragging, T_Auto_Adjust } from '../common/Enumerations';
-import { Hierarchy } from '../managers/Hierarchy';
+import { Hierarchy } from './Hierarchy';
 import Ancestry from '../runtime/Ancestry';
-import S_Alteration from './S_Alteration';
-import S_Title_Edit from './S_Title_Edit';
-import S_Hoverable from './S_Hoverable';
+import S_Alteration from '../state/S_Alteration';
+import S_Title_Edit from '../state/S_Title_Edit';
+import S_Hoverable from '../state/S_Hoverable';
 import { writable } from 'svelte/store';
 
-export class State {
+export class Stores {
 	static readonly _____THING: unique symbol = Symbol('THING');
 
 	w_thing_fontFamily	   = writable<string>();
@@ -40,4 +40,4 @@ export class State {
 	w_font_size			   = writable<number>();
 }
 
-export const s = new State();
+export const s = new Stores();

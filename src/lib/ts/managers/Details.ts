@@ -24,7 +24,7 @@ export class S_Banner_Hideable {
 	}
 }
 
-class UX_Details {
+class Details {
 	s_banner_hideables_byType: { [t_detail: string]: S_Banner_Hideable } = {};
 	t_storage_need = T_Storage_Need.direction;
 
@@ -79,4 +79,4 @@ class UX_Details {
 
 }
 
-export const details = new UX_Details();
+export const details = new Details();

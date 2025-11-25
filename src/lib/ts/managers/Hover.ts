@@ -1,16 +1,16 @@
-import { Rect, Point, S_Hoverable } from '../common/Global_Imports';
+import { Rect, Point, S_Hoverable, T_Hoverable } from '../common/Global_Imports';
 import RBush from 'rbush';
 
-type S_Hoverable_RBBox = {
-	s_hoverable: S_Hoverable;
+type S_Hoverable_RBRect = {
 	minX: number;
 	minY: number;
 	maxX: number;
 	maxY: number;
+	s_hoverable: S_Hoverable;
 }
 
 export default class UX_Hover {
-	rbush = new RBush<S_Hoverable_RBBox>();
+	rbush = new RBush<S_Hoverable_RBRect>();
 	current_s_hoverables = new Set<S_Hoverable>();
 	s_hoverables_byElement_ID: { [element_ID: string]: S_Hoverable } = {};
 
@@ -61,22 +61,33 @@ export default class UX_Hover {
 		}
 	}
 
-	s_hoverables_atPoint(point: Point): S_Hoverable[] {
+	s_hoverables_atPoint(point: Point): Array<S_Hoverable> {
 		return this.rbush.search({
 			minX: point.x,
 			minY: point.y,
 			maxX: point.x,
 			maxY: point.y
-		}).map(item => item.s_hoverable);
+		}).map(rbRect => rbRect.s_hoverable);
 	}
 
-	s_hoverables_inRect(rect: Rect): S_Hoverable[] {
+	s_hoverables_inRect(rect: Rect): Array<S_Hoverable> {
 		return this.rbush.search({
 			minX: rect.x,
 			minY: rect.y,
 			maxX: rect.right,
 			maxY: rect.bottom
-		}).map(item => item.s_hoverable);
+		}).map(rbRect => rbRect.s_hoverable);
+	}
+
+	s_hoverables_inRect_ofType(rect: Rect, type: T_Hoverable): Array<S_Hoverable> {
+		return this.s_hoverables_inRect(rect).filter(s_hoverable => s_hoverable.type === type);
+	}
+
+	s_hoverables_atPoint_ofType(point: Point | null, type: T_Hoverable): Array<S_Hoverable> {
+		if (!!point) {
+			return this.s_hoverables_atPoint(point).filter(s_hoverable => s_hoverable.type === type);
+		}
+		return [];
 	}
 
 }

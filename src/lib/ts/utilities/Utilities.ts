@@ -5,15 +5,15 @@ import { Rect, Size, Point } from '../types/Geometry';
 import Identifiable from '../runtime/Identifiable';
 import { databases } from '../database/Databases';
 import G_TreeLine from '../layout/G_TreeLine';
-import { controls } from '../ux/UX_Controls';
+import { controls } from '../managers/Controls';
 import { colors } from '../managers/Colors';
 import Ancestry from '../runtime/Ancestry';
 import { layout } from '../layout/Layout';
 import G_Widget from '../layout/G_Widget';
 import { Integer } from '../types/Types';
 import { k } from '../common/Constants';
-import { s } from '../state/State';
-import { x } from '../ux/UX_S_Items';
+import { s } from '../managers/Stores';
+import { x } from '../managers/Identifiables';
 import { get } from 'svelte/store';
 import { print } from './Print';
 

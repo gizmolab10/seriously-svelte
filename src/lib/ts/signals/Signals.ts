@@ -5,7 +5,7 @@ import S_Component from '../state/S_Component';
 import Ancestry from '../runtime/Ancestry';
 import { Signal } from 'typed-signals';
 import { debug } from '../debug/Debug';
-import { s } from '../state/State';
+import { s } from '../managers/Stores';
 import { get } from 'svelte/store';
 
 export class Signals {

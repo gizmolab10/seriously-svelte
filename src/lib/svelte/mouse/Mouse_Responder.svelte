@@ -37,6 +37,8 @@
 	//	(*)	handle_s_mouse: mouse info relevant to caller:		//
 	//		down, up, double, long & hover						//
 	//															//
+	//	sets html_element in s_element for hover detection		//
+	//															//
 	//////////////////////////////////////////////////////////////
 	
 	onDestroy(() => {
@@ -44,7 +46,7 @@
 	});
 
 	onMount(() => {
-		if (!!s_element) {
+		if (!!s_element && s_element instanceof S_Element) {
 			s_element.handle_s_mouse = handle_s_mouse;
 			s_element.set_html_element(bound_element);
 			hover.add_hoverable(s_element);
