@@ -1,19 +1,9 @@
-import { Rect, layout, Ancestry, S_Component, T_Hoverable } from '../common/Global_Imports';
+import { Rect, hover, layout, Ancestry, S_Component, T_Hoverable } from '../common/Global_Imports';
 import type { Integer } from '../types/Types';
 import { get } from 'svelte/store';
-import RBush from 'rbush';
-
-type S_Component_RBBox = {
-	component: S_Component;
-	minX: number;
-	minY: number;
-	maxX: number;
-	maxY: number;
-}
 
 export class Components {
 	private components_byType_andHID: { [type: string]: { [hid: Integer]: S_Component } } = {};
-	private rbush = new RBush<S_Component_RBBox>();  // single tree for all types
 	private _dummy!: S_Component;
 
 	//////////////////////////////////////////////////////////////////
@@ -38,7 +28,6 @@ export class Components {
 			const dict = array[type] ?? {};
 			dict[hid] = s_component;
 			array[type] = dict;
-			this.index_s_component(s_component);
 		}
 	}
 
@@ -76,101 +65,27 @@ export class Components {
 		return dict;
 	}
 
-	static readonly _____RBUSH: unique symbol;
-
-	index_s_component(s_component: S_Component) {
-		const rect = s_component.boundingRect;
-		if (!rect.isZero) {
-			this.rbush.insert({
-				minX: rect.x,
-				minY: rect.y,
-				maxX: rect.right,
-				maxY: rect.bottom,
-				component: s_component
-			});
-		}
-	}
-
-	update_s_component(s_component: S_Component) {
-		this.remove_s_component(s_component);
-		this.index_s_component(s_component);
-	}
-
-	remove_s_component(s_component: S_Component) {
-		const rect = s_component.boundingRect;
-		if (!rect.isZero) {
-			this.rbush.remove({
-				minX: rect.x,
-				minY: rect.y,
-				maxX: rect.right,
-				maxY: rect.bottom,
-				component: s_component
-			}, (a, b) => a.component === b.component);
-		}
-	}
-
 	static readonly _____HIT_TESTING: unique symbol;
 
 	components_ofType_atMouseLocation(type: T_Hoverable): Array<S_Component> {
 		const mouse_vector = get(layout.w_mouse_location_scaled);
-		if (!mouse_vector) return [];
-		
-		// Use rbush for spatial query
-		const results = this.rbush.search({
-			minX: mouse_vector.x,
-			minY: mouse_vector.y,
-			maxX: mouse_vector.x,
-			maxY: mouse_vector.y
-		});
-		
-		// Filter by type and verify containment
-		return results
-			.map(item => item.component)
-			.filter(component => component.type === type && component.containsPoint(mouse_vector));
+		if (!!mouse_vector) {
+			const s_components = hover.s_hoverables_atPoint(mouse_vector)
+				.map(s_hoverable => s_hoverable as S_Component);
+			return s_components
+				.filter(component => component.type === type && component.contains_point(mouse_vector));
+		}
+		return [];
 	}
 
 	components_ofType_withinRect(type: T_Hoverable, rect: Rect): Array<S_Component> {
-		// Use rbush for spatial query
-		const results = this.rbush.search({
-			minX: rect.x,
-			minY: rect.y,
-			maxX: rect.right,
-			maxY: rect.bottom
-		});
-		
-		// Filter by type and verify intersection
-		return results
-			.map(item => item.component)
-			.filter(component => component.type === type &&component.boundingRect.intersects(rect));
-	}
-
-	xcomponents_ofType_atMouseLocation(type: T_Hoverable): Array<S_Component> {
-		const mouse_vector = get(layout.w_mouse_location_scaled);
-		const dict = this.components_byHID_forType(type);
-		let found: Array<S_Component> = [];
-		if (!!dict && !!mouse_vector) {
-			const components = Object.values(dict);
-			for (const component of components) {
-				if (component.containsPoint(mouse_vector)) {
-					found.push(component);
-				}
-			}
+		const s_components = hover.s_hoverables_inRect(rect)
+			.map(s_hoverable => s_hoverable as S_Component);
+		if (s_components.length > 0) {
+			return s_components
+				.filter(s_component => s_component.type === type && s_component.intersects_rect(rect));
 		}
-		return found;
-	}
-
-	xcomponents_ofType_withinRect(type: T_Hoverable, rect: Rect): Array<S_Component> {
-		const dict = this.components_byHID_forType(type);
-		let found: Array<S_Component> = [];
-		if (!!dict) {
-			const components_array = Object.values(dict);
-			for (const component of components_array) {
-				if (component.boundingRect.intersects(rect)) {
-					found.push(component);
-				}
-			}
-		}
-		return found;
+		return [];
 	}
 
 }

@@ -65,8 +65,8 @@
 		if (!!input) {
 			const s_title = s_widget.s_title;
 			s_title.html_element = input;
-			s_title.rect = Rect.boundingRectFor(input);
-			hover.index_hoverable(s_widget); // Add to rbush
+			s_title.rect = layout.scaled_rect_forElement(input);
+			hover.update_hoverable(s_title);
 		}
 	}
 
@@ -186,7 +186,7 @@
 	function thing_setSelectionRange_fromMouseLocation() {
 		if (!!input && !!$w_s_title_edit && !isPercolating()) {
 			const location = $w_mouse_location;
-			if (Rect.rect_forElement_containsPoint(input, location)) {
+			if (layout.scaled_rect_forElement_containsPoint(input, location)) {
 				const offset = u.convert_windowOffset_toCharacterOffset_in(location.x, input);
 				debug.log_edit(`CURSOR OFFSET ${offset}`);
 				$w_s_title_edit.thing_setSelectionRange_fromOffset(offset);

@@ -8,13 +8,12 @@ import { get } from 'svelte/store';
 	//	single point of truth for			//
 	//	  stroke, fill, cursor & border of	//
 	//	  buttons, segments & widget dots	//
-	//	  hover, grabbed, expanded			//
+	//	  grabbed, expanded					//
 	//										//
 	//////////////////////////////////////////
 
 export default class S_Element extends S_Hoverable {
-	defaultDisabledColor = '#999999';
-	identifiable!: Identifiable;
+	defaultDisabledColor = '#999999'
 	color_background = 'white';
 	isDisabled = false;
 	isSelected = false;
@@ -24,9 +23,8 @@ export default class S_Element extends S_Hoverable {
 	name = k.empty;
 
 	constructor(identifiable: Identifiable, type: T_Hoverable, subtype: string, s_widget: S_Widget | null = null) {
-		super(type);
-		this.name = elements.name_from(identifiable, type, subtype);
-		this.identifiable = identifiable;
+		super(type, identifiable);
+		this.name = elements.name_from(identifiable, type, subtype);;
 		this.s_widget = s_widget;
 		this.subtype = subtype;
 		if (this.isADot) { 
@@ -43,25 +41,7 @@ export default class S_Element extends S_Hoverable {
 	get disabledTextColor(): string { return colors.specialBlend(this.color_background, this.defaultDisabledColor, 0.3) ?? this.defaultDisabledColor; }
 	get description():		 string { return `${this.isHovering ? 'in' : 'out '} '${this.name}'`; }
 	get ancestry():		   Ancestry { return this.identifiable as Ancestry; }
-
-	set_forHovering(element_color: string, hoverCursor: string) {
-		this.hoverColor = colors.hover_special_blend(element_color);
-		this.element_color = element_color;
-		this.hoverCursor = hoverCursor;
-	}
-
-	get isHoverInverted(): boolean {
-		if (this.isADot) {
-			const a = this.ancestry;
-			switch (this.type) {
-				case T_Hoverable.reveal: return controls.inTreeMode && a.isExpanded == a.isEditing;
-				default:			   return a.isEditing;
-			}
-		} else {
-			return this.isInverted;
-		}
-	}
-
+	
 	get svg_outline_color(): string {
 		const thing_color = this.ancestry.thing?.color ?? k.empty;
 		const isLight = colors.luminance_ofColor(thing_color) > 0.5;

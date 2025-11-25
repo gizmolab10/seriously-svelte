@@ -768,19 +768,12 @@ export default class Ancestry extends Identifiable {
 
 	static readonly _____TITLES: unique symbol;
 
-	get title():				    string { return this.thing?.title ?? 'missing title'; }
-	get abbreviated_title():		string { return this.thing?.abbreviated_title ?? '?'; }
-	get titleRect():		   Rect | null { return this.rect_ofComponent(this.titleComponent); }
-	get titles():		   	Array <string> { return this.ancestors?.map(a => `${!a ? 'null' : a.title}`) ?? []; }
+	get center_ofTitle():		Point | null { return this.rect_ofTitle?.center ?? null; }
+	get title():				      string { return this.thing?.title ?? 'missing title'; }
+	get abbreviated_title():		  string { return this.thing?.abbreviated_title ?? '?'; }
+	get rect_ofTitle():			 Rect | null { return this.rect_ofComponent(this.titleComponent); }
+	get titles():			  Array <string> { return this.ancestors?.map(a => `${!a ? 'null' : a.title}`) ?? []; }
 	get titleComponent(): S_Component | null { return components.component_forAncestry_andType_createUnique(this, T_Hoverable.title); }
-
-	get center_ofTitle(): Point | null {
-		const component = this.titleComponent;
-		if (!!component) {
-			return component.boundingRect.center;
-		}
-		return null;
-	}
 
 	static readonly _____PREDICATES: unique symbol;
 
@@ -910,7 +903,7 @@ export default class Ancestry extends Identifiable {
 	equals(ancestry: Ancestry | null | undefined):						   boolean { return super.equals(ancestry) && this.t_database == ancestry?.t_database; }
 	includedInStore_ofAncestries(store: Writable<Array<Ancestry> | null>): boolean { return !!get(store) && this.includedInAncestries(get(store)!); }
 	matchesStore(store: Writable<Ancestry | null>):						   boolean { return get(store)?.equals(this) ?? false; }
-	rect_ofComponent(component: S_Component | null):						   Rect | null { return component?.boundingRect ?? null; }
+	rect_ofComponent(component: S_Component | null):				   Rect | null { return component?.rect ?? null; }
 
 	showsReveal_forPointingToChild(points_toChild: boolean): boolean {
 		const isRadialFocus = controls.inRadialMode && this.isFocus;

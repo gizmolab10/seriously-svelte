@@ -271,8 +271,7 @@ export enum T_Trait {
 }
 
 export enum T_Hoverable {
-	radial_focus = 'radial_focus',
-	breadcrumb 	 = 'breadcrumb',
+	breadcrumbs	 = 'breadcrumbs',
 	database	 = 'database',
 	details		 = 'details',
 	control		 = 'control',
@@ -286,8 +285,6 @@ export enum T_Hoverable {
 	drag		 = 'drag',
 	line		 = 'line',
 	none		 = 'none',
-	tree		 = 'tree',
-	app			 = 'app',
 }
 
 export enum T_Preference {

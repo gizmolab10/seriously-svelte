@@ -225,10 +225,10 @@ export default class Layout {
 
 	static readonly _____SCALE_FACTOR: unique symbol;
 
-	scaleBy(scale_factor: number): number {
-		const zoom = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('zoom')) || 1;
-		this.set_scale_factor(zoom * scale_factor);
-		return this.windowSize.width;
+	scaled_rect_forElement(element: HTMLElement | null): Rect | null {
+		const scale_factor = get(this.w_scale_factor);
+		const rect = Rect.rect_forElement(element);
+		return !!rect ? rect.dividedEquallyBy(scale_factor) : null;
 	}
 
 	set_scale_factor(scale_factor: number) {

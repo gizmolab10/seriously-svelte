@@ -1,4 +1,4 @@
-import { Rect, Point, debug, S_Hoverable } from '../common/Global_Imports';
+import { Rect, Point, S_Hoverable } from '../common/Global_Imports';
 import RBush from 'rbush';
 
 type S_Hoverable_RBBox = {
@@ -12,15 +12,12 @@ type S_Hoverable_RBBox = {
 export default class UX_Hover {
 	rbush = new RBush<S_Hoverable_RBBox>();
 	current_s_hoverables = new Set<S_Hoverable>();
+	s_hoverables_byElement_ID: { [element_ID: string]: S_Hoverable } = {};
 
 	static readonly _____HOVER_DETECTION: unique symbol;
 
 	detect_hover_at(point: Point, event: MouseEvent | null = null) {
-		// Query rbush for hoverables at mouse position - O(log n)
-		const s_hoverables_at_point = this.s_hoverables_atPoint(point.x, point.y);
-		const s_hoverables_set = new Set(s_hoverables_at_point);
-
-		// Find hoverables that lost hover (leave)
+		const s_hoverables_set = new Set(this.s_hoverables_atPoint(point));
 		for (const s_hoverable of this.current_s_hoverables) {
 			if (!s_hoverables_set.has(s_hoverable)) {
 				s_hoverable.isHovering = false;
@@ -29,8 +26,16 @@ export default class UX_Hover {
 		this.current_s_hoverables = s_hoverables_set;
 	}
 
-	index_hoverable(s_hoverable: S_Hoverable) {
+	update_hoverable(s_hoverable: S_Hoverable) {
+		this.remove_hoverable(s_hoverable);
+		this.add_hoverable(s_hoverable);
+	}
+
+	add_hoverable(s_hoverable: S_Hoverable) {
 		if (!!s_hoverable && !!s_hoverable.rect) {
+			if (!!s_hoverable.html_element) {
+				this.s_hoverables_byElement_ID[s_hoverable.html_element.id] = s_hoverable;
+			}
 			this.rbush.insert({
 				minX: s_hoverable.rect.x,
 				minY: s_hoverable.rect.y,
@@ -41,15 +46,11 @@ export default class UX_Hover {
 		}
 	}
 
-	update_hoverable(s_hoverable: S_Hoverable) {
-		if (!!s_hoverable && !!s_hoverable.rect) {
-			this.remove_hoverable(s_hoverable);
-			this.index_hoverable(s_hoverable);
-		}
-	}
-
 	remove_hoverable(s_hoverable: S_Hoverable) {
 		if (!!s_hoverable && !!s_hoverable.rect) {
+			if (!!s_hoverable.html_element) {
+				delete this.s_hoverables_byElement_ID[s_hoverable.html_element.id];
+			}
 			this.rbush.remove({
 				minX: s_hoverable.rect.x,
 				minY: s_hoverable.rect.y,
@@ -60,24 +61,22 @@ export default class UX_Hover {
 		}
 	}
 
-	s_hoverables_atPoint(x: number, y: number): S_Hoverable[] {
-		const results = this.rbush.search({
-			minX: x,
-			minY: y,
-			maxX: x,
-			maxY: y
-		});
-		return results.map(item => item.s_hoverable);
+	s_hoverables_atPoint(point: Point): S_Hoverable[] {
+		return this.rbush.search({
+			minX: point.x,
+			minY: point.y,
+			maxX: point.x,
+			maxY: point.y
+		}).map(item => item.s_hoverable);
 	}
 
 	s_hoverables_inRect(rect: Rect): S_Hoverable[] {
-		const results = this.rbush.search({
+		return this.rbush.search({
 			minX: rect.x,
 			minY: rect.y,
 			maxX: rect.right,
 			maxY: rect.bottom
-		});
-		return results.map(item => item.s_hoverable as S_Hoverable);
+		}).map(item => item.s_hoverable);
 	}
 
 }

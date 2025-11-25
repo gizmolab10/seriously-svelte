@@ -54,8 +54,8 @@ export class Utilities extends Testworthy_Utilities {
 
 	sort_byTitleTop(ancestries: Array<Ancestry>): Array<Ancestry> {
 		return ancestries.sort( (a: Ancestry, b: Ancestry) => {
-			const aTop = a.titleRect?.origin.y;
-			const bTop = b.titleRect?.origin.y;
+			const aTop = a.rect_ofTitle?.origin.y;
+			const bTop = b.rect_ofTitle?.origin.y;
 			return (!aTop || !bTop) ? 0 : aTop - bTop;
 		});
 	}

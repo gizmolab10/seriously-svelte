@@ -218,7 +218,7 @@ export class Events {
 		}
 		layout.w_mouse_location.set(location);
 		layout.w_mouse_location_scaled.set(scaled);
-		hover.detect_hover_at(location, event);
+		hover.detect_hover_at(scaled, event);
 	}
 
 	handle_s_mouseFor_t_control(s_mouse: S_Mouse, t_control: T_Control) {
@@ -231,8 +231,8 @@ export class Events {
 			switch (t_control) {
 				case T_Control.help:	controls.showHelp_home(); break;
 				case T_Control.search:	search.activate(); break;
-				case T_Control.grow:	layout.scaleBy(k.ratio.zoom_in) - 20; break;
-				case T_Control.shrink:	layout.scaleBy(k.ratio.zoom_out) - 20; break;
+				// case T_Control.grow:	layout.scaleBy(k.ratio.zoom_in) - 20; break;
+				// case T_Control.shrink:	layout.scaleBy(k.ratio.zoom_out) - 20; break;
 				case T_Control.details: details.details_toggle_visibility(); break;
 				default:				controls.togglePopupID(t_control); break;
 			}

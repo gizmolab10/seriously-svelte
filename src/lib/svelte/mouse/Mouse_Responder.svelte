@@ -46,7 +46,8 @@
 	onMount(() => {
 		if (!!s_element) {
 			s_element.handle_s_mouse = handle_s_mouse;
-			hover.index_hoverable(s_element); // Add to rbush
+			s_element.set_html_element(bound_element);
+			hover.add_hoverable(s_element);
 		}
 		setupStyle();
 	});

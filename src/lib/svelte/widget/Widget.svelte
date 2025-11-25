@@ -117,7 +117,7 @@
 		height = k.height.row - 1.5;
 		left = origin_ofWidget.x;
 		top = origin_ofWidget.y;
-		s_widget.rect = Rect.boundingRectFor(s_title.html_element);
+		s_widget.rect = layout.scaled_rect_forElement(s_title.html_element);
 		update_style();
 	}
 

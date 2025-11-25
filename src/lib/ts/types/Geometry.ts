@@ -2,6 +2,7 @@ import { tu } from '../utilities/Testworthy_Utilities';
 import { T_Quadrant, T_Orientation } from './Angle';
 import type { SvelteComponent } from 'svelte';
 import Angle from './Angle';
+import {get} from 'svelte/store';
 
 const p = 2;
 
@@ -269,20 +270,14 @@ export class Rect {
 	}
 
 	static rect_forElement_containsPoint(element: HTMLElement | null, point: Point): boolean {
-		const rect = Rect.boundingRectFor(element);
-		return rect?.contains(point) ?? false;
+		const rect = Rect.rect_forElement(element);
+		return !!rect && rect.contains(point);
 	}
 
 	static createCenterRect(center: Point, size: Size): Rect {
 		const toOrigin = size.center.negated;
 		const origin = center.offsetBy(toOrigin);
 		return new Rect(origin, size);
-	}
-
-	static rect_forElement_containsEvent(element: HTMLElement | null, event: MouseEvent): boolean {
-		const rect = Rect.boundingRectFor(element);
-		const point = tu.location_ofMouseEvent(event);
-		return rect?.contains(point) ?? false;
 	}
 
 	static createFromDOMRect(domRect: DOMRect | null) {
@@ -293,16 +288,7 @@ export class Rect {
 		return new Rect(origin, new Size(domRect.width, domRect.height));
 	}
 
-	static rect_forComponent_contains(component: SvelteComponent, event: MouseEvent): boolean {
-		const rect = Rect.rect_forComponent(component);
-		const point = tu.location_ofMouseEvent(event);
-		if (rect.isZero) {
-			return false;
-		}
-		return rect.contains(point);
-	}
-
-	static boundingRectFor(element: HTMLElement | null): Rect | null {
+	static rect_forElement(element: HTMLElement | null): Rect | null {
 		if (!element) {
 			return null;
 		}

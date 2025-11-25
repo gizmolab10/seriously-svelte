@@ -48,7 +48,6 @@ export default class S_Mouse {
 	static move  (event: MouseEvent | null, element: HTMLElement | null, isDown: boolean, isHit: boolean) { return new S_Mouse(event, element, false,   false,  isDown, false, false,          false, isHit); }
 
 	get isShapeHit():	boolean { return false; }
-	get isElementHit(): boolean { return !!this.event && !!this.element && Rect.rect_forElement_containsEvent(this.element, this.event); }
 	get notRelevant():	boolean { return !this.hover_didChange && this.isHovering && !this.isDown && !this.isUp && !this.isDouble && !this.isLong && !this.isMove && !this.isHit && !this.isRepeat; }
 	descriptionFor(name: string = ''): string { return `${name} states: ${this.description}`; }
 

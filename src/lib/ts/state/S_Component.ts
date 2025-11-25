@@ -1,10 +1,9 @@
-import { Rect, Point, T_Signal, T_Hoverable } from '../common/Global_Imports';
+import { Rect, Point, S_Hoverable, T_Signal, T_Hoverable } from '../common/Global_Imports';
 import { k, u, debug, layout, signals, Ancestry } from '../common/Global_Imports';
 import { Integer, Handle_S_Mouse, Create_S_Mouse } from '../types/Types';
 import { SignalConnection_atPriority } from '../types/Types';
 import Identifiable from '../runtime/Identifiable';
 import { SignalConnection } from 'typed-signals';
-import { get } from 'svelte/store';
 
 // formerly called Svelte Wrapper
 // (?) style construction (by type and hid)
@@ -12,36 +11,25 @@ import { get } from 'svelte/store';
 // unique id assignment (of html elements) for DOM lookups
 // provide Ancestry access to an associated svelte component's main element (and vice versa)
 
-export default class S_Component {
+export default class S_Component extends S_Hoverable {
     signal_handlers: SignalConnection_atPriority[] = [];
-    ancestry: Ancestry | null = null;
 	hid: Integer | null = null;
-    type: T_Hoverable;
 
-    // hit test, logger, emitter, handler and destroyer
+    // hit test (hover and rubberband), logger, emitter, handler and destroyer
 
     constructor(ancestry: Ancestry | null, type: T_Hoverable) {
-        const suffix = 'handle_ ' + (type ?? '<--NO TYPE-->') + ' for: ' + (ancestry?.titles ?? '<--UNIDENTIFIED ANCESTRY-->');
+        super(type, ancestry as Identifiable);
         this.hid = ancestry?.hid ?? -1 as Integer;
-        const prefix = 'S_Component has no';
-        this.type = type;
-        this.ancestry = ancestry;
-        if (!ancestry && this.isComponentLog_enabled) {
-            debug.log_component(prefix, 'ancestry', suffix);
-        }
+        this.id = `${type}-${ancestry?.kind ?? 'no-predicate'}-${ancestry?.titles ?? Identifiable.newID()}`;
+        this.set_html_element(document.getElementById(this.id));
     }
 
     get description(): string { return this.type; }
-    get distance_toGraphCenter(): Point { return this.boundingRect.center; }
-    containsPoint(point: Point) { return this.boundingRect.contains(point); }
-    get element(): HTMLElement | null { return document.getElementById(this.id) }
-    get id(): string { return `${this.type}-${this.ancestry?.kind ?? 'no-predicate'}-${this.ancestry?.titles ?? Identifiable.newID()}`; }
-
-    get boundingRect(): Rect {
-        const scale_factor = get(layout.w_scale_factor);
-        const rect = Rect.boundingRectFor(this.element);
-        return rect?.dividedEquallyBy(scale_factor) ?? Rect.zero;
-    }
+    get distance_toGraphCenter(): Point { return this.rect?.center ?? Point.zero; }
+    get ancestry(): Ancestry | null { return this.identifiable as Ancestry | null; }
+    
+	intersects_rect(rect: Rect | null): boolean { return !!rect && !!this.rect && this.rect.intersects(rect); }
+	contains_point(point: Point | null): boolean { return !!point && !!this.rect && this.rect.contains(point); }
 
     static readonly _____SIGNALS: unique symbol;
 
@@ -72,7 +60,7 @@ export default class S_Component {
     static readonly _____DEBUG_LOGGING: unique symbol;
     
     private get element_debug_style(): string {
-        const element = this.element;
+        const element = this.html_element;
         if (!!element) {
             const indented = k.newLine + k.tab;
             const style = element.getAttribute('style');
@@ -84,7 +72,7 @@ export default class S_Component {
     }
 
 	private style_debug_info(prefix: string): string {
-		const element = this.element;
+		const element = this.html_element;
 		if (!!element) {
 			const indented = k.newLine + k.tab;
 			const computed = window.getComputedStyle(element);
@@ -154,7 +142,7 @@ export default class S_Component {
 
 	debug_log_connection_state(prefix: string) {
         if (!this.isComponentLog_enabled) { return; }
-		const element = this.element;
+		const element = this.html_element;
 		if (!!element) {
 			const indented = k.newLine + k.tab;
             const type = this.type.toUpperCase();
