@@ -44,7 +44,7 @@
 	$: {
 		const _ = `${u.descriptionBy_titles($w_grabbed)}
 			:::${u.descriptionBy_titles($w_expanded)}
-			:::${$w_s_hover?.description ?? 'null'}
+			:::${$w_s_hover?.id ?? 'null'}
 			:::${$w_show_countDots_ofType}
 			:::${$w_background_color}
 			:::${$w_thing_title}

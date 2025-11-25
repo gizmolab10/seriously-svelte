@@ -15,7 +15,7 @@
 	export let has_gull_wings = true;
 	export let has_seperator = false;
 	export let row_titles: string[];	// first one is optional row title, rest are button titles
-	export let font_sizes: number[];
+	export let font_sizes: Array<number>;
 	export let button_height = 13;
 	export let align_left = true;
 	export let has_title = true;	// true means first row_titles is the title of the row

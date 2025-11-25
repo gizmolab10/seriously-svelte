@@ -21,7 +21,7 @@ export class Search_Node {
 	// 2. Node pooling: Reuse deallocated nodes
 	// 3. Compact arrays for small branching factors: Use arrays instead of Maps for nodes with few children
 
-	get results(): Thing[] {
+	get results(): Array<Thing> {
 		return Array.from(this.items).sort((a, b) =>
 			a.title.localeCompare(b.title)
 		);
@@ -41,7 +41,7 @@ export class Search_Node {
 		current.isEndOfWord = true;
 	}
 
-	search_for(words: string[], use_AND_logic: boolean = false): Thing[] {
+	search_for(words: string[], use_AND_logic: boolean = false): Array<Thing> {
 		if (words.length === 0) return [];
 		
 		// For single word, return results directly

@@ -1,6 +1,7 @@
 <script lang='ts'>
-    import { Rect, Size, Point, T_Layer, T_Dragging, Ancestry, T_Hoverable } from '../../ts/common/Global_Imports';
     import { k, s, u, x, debug, hover, colors, layout } from '../../ts/common/Global_Imports';
+    import { T_Layer, T_Dragging, T_Hoverable } from '../../ts/common/Global_Imports';
+    import { Rect, Size, Point, Ancestry } from '../../ts/common/Global_Imports';
     import { onMount, onDestroy } from 'svelte';
     export let strokeWidth = k.thickness.rubberband;
     export let bounds: Rect;
@@ -24,15 +25,6 @@
         document.body.classList.add('rubberband-blocking');     // see style:global block below
     } else {
         document.body.classList.remove('rubberband-blocking');
-    }
-
-    $: if ($w_dragging_active !== T_Dragging.none && startPoint && $w_mouse_location) {
-        const constrainedEnd = constrainToRect($w_mouse_location.x, $w_mouse_location.y);
-        height = Math.abs(constrainedEnd.y - startPoint.y);
-        width = Math.abs(constrainedEnd.x - startPoint.x);
-        left = Math.min(constrainedEnd.x, startPoint.x);
-        top = Math.min(constrainedEnd.y, startPoint.y);
-        detect_and_grab();
     }
 
     $: if ($w_count_mouse_up !== mouse_upCount) {
@@ -70,6 +62,34 @@
         border-color: ${$w_separator_color};
         display: ${$w_dragging_active === T_Dragging.rubberband ? 'block' : 'none'};`
     ;
+
+    $: if ($w_dragging_active !== T_Dragging.none && startPoint && $w_mouse_location) {
+        const constrainedEnd = constrainToRect($w_mouse_location.x, $w_mouse_location.y);
+        height = Math.abs(constrainedEnd.y - startPoint.y);
+        width = Math.abs(constrainedEnd.x - startPoint.x);
+        left = Math.min(constrainedEnd.x, startPoint.x);
+        top = Math.min(constrainedEnd.y, startPoint.y);
+        detect_and_grab();
+    }
+
+    function detect_and_grab() {
+        if ($w_dragging_active === T_Dragging.rubberband) {
+            const ancestries = ancestries_intersecting_rubberband();
+            if (ancestries.length != 0) {
+                x.si_grabs.items = ancestries;
+                debug.log_hover(`${ancestries.map(ancestry => ancestry.id).join(', ')}`);
+            } else {
+                x.si_grabs.reset();
+            }
+            x.update_ancestry_forDetails();
+        }
+    }
+
+    function ancestries_intersecting_rubberband(): Array<Ancestry> {
+        const rect = new Rect( new Point(left, top), new Size(width, height));
+        const hits = hover.hits_inRect_ofType(rect, T_Hoverable.widget);
+        return hits.map((hit) => hit.identifiable as Ancestry);
+    }
 
     // Add event handlers at document level
     onMount(() => {
@@ -118,34 +138,6 @@
             top = constrained.y;
             left = constrained.x;
             $w_dragging_active = T_Dragging.rubberband;
-            has_intersections = false;
-        }
-    }
-
-    function detect_and_grab() {
-        if ($w_dragging_active === T_Dragging.rubberband) {
-            const rubberbandRect = new Rect( new Point(left, top), new Size(width, height));
-            const widget_hoverables = hover.s_hoverables_inRect_ofType(rubberbandRect, T_Hoverable.widget);
-            const intersecting: Ancestry[] = [];
-            widget_hoverables.forEach((hoverable) => {
-                const ancestry = hoverable.identifiable as Ancestry;
-                if (!!ancestry) {
-                    intersecting.push(ancestry);
-                }
-            });
-            // Only update if si_grabs.items have changed
-            const new_grabbed_IDs = u.descriptionBy_sorted_HIDs(intersecting);
-            const prior_grabbed_IDs = u.descriptionBy_sorted_HIDs(x.si_grabs.items);
-            has_rubberbanded_grabs = intersecting.length != 0;
-            if (prior_grabbed_IDs !== new_grabbed_IDs) {
-                if (has_rubberbanded_grabs) {
-                    has_intersections = true;
-                    x.si_grabs.items = intersecting;
-                } else if (has_intersections) {
-                    x.si_grabs.reset();
-                }
-                x.update_ancestry_forDetails();
-            }
         }
     }
 

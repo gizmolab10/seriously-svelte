@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { c, h, k, s, u, x, Size, Point, Thing, debug, search, colors, signals, elements } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Signal, T_Hoverable, T_Startup, T_Hoverable } from '../../ts/common/Global_Imports';
-	import { svgPaths, Ancestry, layout, components, S_Component} from '../../ts/common/Global_Imports';
+	import { c, h, k, s, u, x, debug, hover, search, colors, signals, elements } from '../../ts/common/Global_Imports';
+	import { Size, Point, Thing, T_Signal, T_Startup, T_Hoverable } from '../../ts/common/Global_Imports';
+	import { svgPaths, Ancestry, layout, S_Component} from '../../ts/common/Global_Imports';
 	import Breadcrumb_Button from '../mouse/Breadcrumb_Button.svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
@@ -43,7 +43,7 @@
 		ancestry = $w_ancestry_forDetails;		// assure we have an ancestry
 		if (!!ancestry && $w_t_startup == T_Startup.ready) {				
 			let parent_widths = 0;					// encoded as one parent count per 2 digits (base 10)
-			let widths: number[] = [];
+			let widths: Array<number> = [];
 			[things, widths, lefts, parent_widths] = layout.layout_breadcrumbs_forAncestry_centered_starting_within(ancestry, centered, left, width);
 			trigger = parent_widths * 10000 + reattachments * 100 + lefts[0];		// re-render HTML when this value changes
 			for (let i = 0; i < things.length; i++) {

@@ -8,7 +8,7 @@
 	export let detect_longClick = false;
     export let type = T_Hoverable.button;
     export let has_seperator = false;         // false means row titles precede buttons
-    export let font_sizes: number[];
+    export let font_sizes: Array<number>;
     export let button_height = 15;
     export let has_title = true;              // false means all titles are buttons, true means first one is row title
     export let row_offset = 0;

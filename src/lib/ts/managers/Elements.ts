@@ -79,10 +79,10 @@ export default class Elements {
 
 	static readonly _____CREATE: unique symbol;
 
-	s_element_for(identifiable: Identifiable | null, type: T_Hoverable, subtype: string, s_widget: S_Widget | null = null): S_Element {
+	s_element_for(identifiable: Identifiable | null, type: T_Hoverable, subtype: string): S_Element {
 		const realIdentifiable = identifiable ?? new Identifiable()
 		const name = this.name_from(realIdentifiable, type, subtype);
-		return this.assure_forKey_inDict(name, this.s_element_byName, () => new S_Element(realIdentifiable, type, subtype, s_widget));
+		return this.assure_forKey_inDict(name, this.s_element_byName, () => new S_Element(realIdentifiable, type, subtype));
 	}
 
 	s_widget_forAncestry(ancestry: Ancestry): S_Widget {

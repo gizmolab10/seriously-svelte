@@ -1,7 +1,7 @@
 import { h, k, s, u, x, g_tree, debug, hover, search, layout } from '../common/Global_Imports';
 import { details, signals, controls, elements, features } from '../common/Global_Imports';
+import { T_Search, T_Action, T_Control, T_Dragging } from '../common/Global_Imports';
 import { T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Imports';
-import { T_Search, T_Action, T_Control } from '../common/Global_Imports';
 import { Point, Ancestry, Predicate } from '../common/Global_Imports';
 import { S_Mouse, S_Alteration } from '../common/Global_Imports';
 import Mouse_Timer from './Mouse_Timer';
@@ -218,7 +218,9 @@ export class Events {
 		}
 		layout.w_mouse_location.set(location);
 		layout.w_mouse_location_scaled.set(scaled);
-		hover.detect_hover_at(scaled, event);
+		if (get(s.w_dragging_active) === T_Dragging.none) {
+			hover.update_hover_at(location);
+		}
 	}
 
 	handle_s_mouseFor_t_control(s_mouse: S_Mouse, t_control: T_Control) {

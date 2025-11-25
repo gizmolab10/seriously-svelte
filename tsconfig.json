@@ -43,5 +43,5 @@
 		"src/**/*",
 		"src/main.js",
 		"src/lib/**/*"
-, "notes/experiments/slim", "notes/experiments/source/UX_Hover.ts"	]
+, "notes/experiments/slim", "notes/experiments/source/Hover.ts"	]
 }

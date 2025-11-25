@@ -22,10 +22,9 @@ export default class S_Element extends S_Hoverable {
 	isFocus = false;
 	name = k.empty;
 
-	constructor(identifiable: Identifiable, type: T_Hoverable, subtype: string, s_widget: S_Widget | null = null) {
+	constructor(identifiable: Identifiable, type: T_Hoverable, subtype: string) {
 		super(type, identifiable);
-		this.name = elements.name_from(identifiable, type, subtype);;
-		this.s_widget = s_widget;
+		this.name = elements.name_from(identifiable, type, subtype);
 		this.subtype = subtype;
 		if (this.isADot) { 
 			this.color_background = subtype == T_Control.search ? 'transparent' : get(colors.w_background_color);

@@ -45,8 +45,8 @@
 
 	$: {
 		const _ = `${$w_user_graph_offset.description}
-			:::${$w_s_hover?.description ?? 'null'}
 			:::${$w_rect_ofGraphView.description}
+			:::${$w_s_hover?.id ?? 'null'}
 			:::${$w_background_color}
 			:::${$w_control_key_down}
 			:::${s_button.isDisabled}

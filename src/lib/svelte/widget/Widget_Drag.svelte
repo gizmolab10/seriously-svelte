@@ -53,8 +53,8 @@
 		const _ = `${$w_thing_color}
 			:::${$w_background_color}
 			:::${$w_ancestry_focus?.id}
+			:::${$w_s_hover?.id ?? 'null'}
 			:::${$w_ancestry_forDetails?.id}
-			:::${$w_s_hover?.description ?? 'null'}
 			:::${u.descriptionBy_titles($w_grabbed)}`;
 		update_colors();
 	}

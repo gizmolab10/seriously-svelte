@@ -6,7 +6,6 @@ export default class S_Hoverable {
 	containing_hoverable: S_Hoverable | null = null;	// only for drag and reveal dots
 	identifiable: Identifiable | null = null;
 	html_element: HTMLElement | null = null;			// for use in Hover rbush index
-	s_widget: S_Widget | null = null;					// only for drag and reveal dots
 	defaultCursor = k.cursor_default;
 	hoverCursor = k.cursor_default;
 	hoverColor = 'transparent';
@@ -26,18 +25,9 @@ export default class S_Hoverable {
 	get isHovering(): boolean { return this.isEqualTo(get(s.w_s_hover)); }
 	get stroke(): string { return 'red'; }				// override in subclasses
 	get svg_hover_color(): string { return this.isHovering ? colors.background : this.stroke; }
+	set isHovering(isHovering: boolean) { s.w_s_hover.set(isHovering ? this : null); }
 
 	isEqualTo(other: S_Hoverable | null): boolean { return !!other && this.id == other.id; }
-
-	set isHovering(isHovering: boolean) {
-		const old_hover = get(s.w_s_hover);
-		const same = this.isEqualTo(old_hover);
-		let new_hover = (!isHovering && this.isADot) ? this.s_widget : this;	// when leaving a dot, set to s_widget
-		// if !same and isHovering, set to this, if same and !isHovering, set to null, otherwise leave it unchanged
-		if (same != isHovering && new_hover != old_hover) {
-			s.w_s_hover.set(new_hover as S_Hoverable);
-		}
-	}
 
 	set_forHovering(element_color: string, hoverCursor: string) {
 		this.hoverColor = colors.hover_special_blend(element_color);
@@ -49,7 +39,7 @@ export default class S_Hoverable {
 		if (!!html_element) {
 			this.rect = layout.scaled_rect_forElement(html_element);
 			this.html_element = html_element;
-			hover.update_hoverable(this);
+			hover.update_hit(this);
 		}
 	}
 

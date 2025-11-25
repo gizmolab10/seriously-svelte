@@ -2,10 +2,10 @@ import { u } from '../common/Global_Imports';
 
 export default class G_Repeater {
 	proportionate: boolean;
-	title_widths: number[];
+	title_widths: Array<number>;
 	title_gap: number = 8;
-	widths: number[] = [];
-	lefts: number[] = [];
+	widths: Array<number> = [];
+	lefts: Array<number> = [];
 	swap_title = false;
 	font_size: number;
 	columns: number;

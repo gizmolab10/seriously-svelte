@@ -12,7 +12,6 @@ export class Components {
 	//																//
 	// debug logging												//
 	// signal management											//
-	// hit testing (for radial)										//
 	// (?) style construction (by type and hid)						//
 	// (?) unique id assignment (of html elements) for DOM lookups	//
 	//																//
@@ -63,35 +62,6 @@ export class Components {
 			this.components_byType_andHID[type] = dict;
 		}
 		return dict;
-	}
-
-	static readonly _____HIT_TESTING: unique symbol;
-
-	convert_hoverables_to_components(s_hoverables: Array<S_Hoverable>): Array<S_Component> {
-		return s_hoverables
-			.map(s_hoverable => s_hoverable as S_Component)
-			.filter(s_c => !!s_c && s_c instanceof S_Component);
-	}
-
-	components_ofType_withinRect(type: T_Hoverable, rect: Rect): Array<S_Component> {
-		const s_components = this.convert_hoverables_to_components(hover.s_hoverables_inRect(rect));
-		if (s_components.length > 0) {
-			return s_components
-				.filter(s_c => s_c.type === type && s_c.intersects_rect(rect));
-		}
-		return [];
-	}
-
-	components_ofType_atMouseLocation(type: T_Hoverable): Array<S_Component> {
-		const mouse_vector = get(layout.w_mouse_location_scaled);
-		if (!!mouse_vector) {
-			const s_components = this.convert_hoverables_to_components(hover.s_hoverables_atPoint(mouse_vector));
-			if (s_components.length > 0) {
-				return s_components
-					.filter(s_c => s_c.type === type && s_c.contains_point(mouse_vector));
-			}
-		}
-		return [];
 	}
 
 }

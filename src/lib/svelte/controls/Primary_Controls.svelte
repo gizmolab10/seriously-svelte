@@ -21,7 +21,7 @@
 	const search_left = -38 - (features.has_details_button ? 0 : 26) + (features.allow_tree_mode ? 0 : 0);
 	const svg_style = 'top: -0.5px; left: -0.5px; position: absolute; width: 100%; height: 100%;';
 	let width = layout.windowSize.width - 16;
-	let lefts: number[] = [];
+	let lefts: Array<number> = [];
 	layout_controls();
 
 	// always show controls and breadcrumbs

@@ -65,7 +65,7 @@ export default class DB_Bubble extends DB_Common {
 		}
 	}
 
-	private createRelationship(parent_id: string, child_id: string, kind: T_Predicate, orders: number[]) {
+	private createRelationship(parent_id: string, child_id: string, kind: T_Predicate, orders: Array<number>) {
 		if (!!parent_id && !!child_id && parent_id != k.empty && parent_id != k.empty_id && child_id != k.empty && child_id != k.empty_id) {
 			const id = parent_id + '-->' + kind + '-->' + child_id;
 			h.relationship_remember_runtimeCreateUnique(h.db.idBase, id, kind, parent_id, child_id, orders, T_Create.isFromPersistent);
@@ -214,7 +214,7 @@ export default class DB_Bubble extends DB_Common {
 					this.allow_response_to[T_MID.focus] = true;
 				}
 			});
-			x.si_grabs.w_items.subscribe((ancestries: Ancestry[]) => {
+			x.si_grabs.w_items.subscribe((ancestries: Array<Ancestry>) => {
 				const grabbed_ids = ancestries.map((ancestry: Ancestry) => ancestry.thing?.id ?? k.empty);
 				if (!!ancestries && grabbed_ids.join(', ') != this.prior_grabbed_ids.join(', ')) {
 					if (this.allow_response_to[T_MID.grab]) {

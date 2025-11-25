@@ -142,7 +142,7 @@ class Search {
 
 	private get results_fingerprint(): string { return !x.si_found.items ? k.empty : x.si_found.items.map((result: Thing) => result.id).join('|'); }
 
-	private buildIndex(things: Thing[]) {
+	private buildIndex(things: Array<Thing>) {
 		this.root_node = new Search_Node();
 		for (const thing of things) {
 			const title = thing.title.toLowerCase();

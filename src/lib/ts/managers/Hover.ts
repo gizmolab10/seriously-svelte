@@ -1,95 +1,104 @@
-import { Rect, Point, S_Hoverable, T_Hoverable } from '../common/Global_Imports';
+import { Rect, Point, debug, S_Hoverable, T_Hoverable } from '../common/Global_Imports';
 import RBush from 'rbush';
 
-type S_Hoverable_RBRect = {
+type HIT_RBRect = {
 	minX: number;
 	minY: number;
-	maxX: number;
-	maxY: number;
-	s_hoverable: S_Hoverable;
+	maxX: number;	
+	maxY: number;	
+	hit: S_Hoverable;
 }
 
-export default class UX_Hover {
-	rbush = new RBush<S_Hoverable_RBRect>();
-	current_s_hoverables = new Set<S_Hoverable>();
-	s_hoverables_byElement_ID: { [element_ID: string]: S_Hoverable } = {};
+export default class Hover {
+	rbush = new RBush<HIT_RBRect>();
+	current_hits = new Set<S_Hoverable>();
+	hits_byElement_ID: { [element_ID: string]: S_Hoverable } = {};
 
-	static readonly _____HOVER_DETECTION: unique symbol;
+	static readonly _____HIT_TEST: unique symbol;
 
-	detect_hover_at(point: Point, event: MouseEvent | null = null) {
-		const s_hoverables_set = new Set(this.s_hoverables_atPoint(point));
-		for (const s_hoverable of this.current_s_hoverables) {
-			if (!s_hoverables_set.has(s_hoverable)) {
-				s_hoverable.isHovering = false;
-			}
-		}
-		this.current_s_hoverables = s_hoverables_set;
-	}
+	// adjusts isHovering for all hits,
+	// (isHovering sets s.w_s_hover to the last hit where isHovering is true
 
-	update_hoverable(s_hoverable: S_Hoverable) {
-		this.remove_hoverable(s_hoverable);
-		this.add_hoverable(s_hoverable);
-	}
-
-	add_hoverable(s_hoverable: S_Hoverable) {
-		if (!!s_hoverable && !!s_hoverable.rect) {
-			if (!!s_hoverable.html_element) {
-				this.s_hoverables_byElement_ID[s_hoverable.html_element.id] = s_hoverable;
-			}
-			this.rbush.insert({
-				minX: s_hoverable.rect.x,
-				minY: s_hoverable.rect.y,
-				maxX: s_hoverable.rect.right,
-				maxY: s_hoverable.rect.bottom,
-				s_hoverable: s_hoverable
-			});
+	update_hover_at(point: Point) {
+		const hits = this.hits_atPoint(point);
+		const dots = hits.filter(s => s.isADot);
+		const widgets = hits.filter(s => s.type === T_Hoverable.widget);
+		// debug.log_hover(`${hits.map(hit => hit.id).join(', ')}`);
+		if (dots.length > 0) {
+			dots[0].isHovering = true;
+		} else if (widgets.length > 0) {
+			widgets[0].isHovering = true;
 		}
 	}
 
-	remove_hoverable(s_hoverable: S_Hoverable) {
-		if (!!s_hoverable && !!s_hoverable.rect) {
-			if (!!s_hoverable.html_element) {
-				delete this.s_hoverables_byElement_ID[s_hoverable.html_element.id];
-			}
-			this.rbush.remove({
-				minX: s_hoverable.rect.x,
-				minY: s_hoverable.rect.y,
-				maxX: s_hoverable.rect.right,
-				maxY: s_hoverable.rect.bottom,
-				s_hoverable: s_hoverable
-			}, (a, b) => a.s_hoverable === b.s_hoverable);
-		}
+	hits_inRect_ofType(rect: Rect, type: T_Hoverable): Array<S_Hoverable> {
+		return this.hits_inRect(rect).filter(hit => hit.type === type);
 	}
 
-	s_hoverables_atPoint(point: Point): Array<S_Hoverable> {
+	hits_atPoint_ofType(point: Point | null, type: T_Hoverable): Array<S_Hoverable> {
+		return !point ? [] : this.hits_atPoint(point).filter(hit => hit.type === type);
+	}
+
+	hits_atPoint(point: Point): Array<S_Hoverable> {
 		return this.rbush.search({
 			minX: point.x,
 			minY: point.y,
 			maxX: point.x,
 			maxY: point.y
-		}).map(rbRect => rbRect.s_hoverable);
+		}).map(rbRect => rbRect.hit);
 	}
 
-	s_hoverables_inRect(rect: Rect): Array<S_Hoverable> {
+	hits_inRect(rect: Rect): Array<S_Hoverable> {
 		return this.rbush.search({
 			minX: rect.x,
 			minY: rect.y,
 			maxX: rect.right,
 			maxY: rect.bottom
-		}).map(rbRect => rbRect.s_hoverable);
+		}).map(rbRect => rbRect.hit);
 	}
 
-	s_hoverables_inRect_ofType(rect: Rect, type: T_Hoverable): Array<S_Hoverable> {
-		return this.s_hoverables_inRect(rect).filter(s_hoverable => s_hoverable.type === type);
+	static readonly _____ADD_AND_REMOVE: unique symbol;
+
+	update_hit(hit: S_Hoverable) {
+		this.remove_hit(hit);
+		this.add_hit(hit);
 	}
 
-	s_hoverables_atPoint_ofType(point: Point | null, type: T_Hoverable): Array<S_Hoverable> {
-		if (!!point) {
-			return this.s_hoverables_atPoint(point).filter(s_hoverable => s_hoverable.type === type);
+	add_hit(hit: S_Hoverable) {
+		if (!!hit && !!hit.rect) {
+			const id = hit.html_element?.id ?? hit.id;
+			if (!!id) {
+				if (this.hits_byElement_ID[id] == hit) {
+					return;	// already added, avoid duplicates
+				}
+				this.hits_byElement_ID[id] = hit;
+			}
+			this.rbush.insert({
+				minX: hit.rect.x,
+				minY: hit.rect.y,
+				maxX: hit.rect.right,
+				maxY: hit.rect.bottom,
+				hit: hit
+			});
 		}
-		return [];
+	}
+
+	remove_hit(hit: S_Hoverable) {
+		if (!!hit && !!hit.rect) {
+			const id = hit.html_element?.id ?? hit.id;
+			if (!!id) {
+				delete this.hits_byElement_ID[id];
+			}
+			this.rbush.remove({
+				minX: hit.rect.x,
+				minY: hit.rect.y,
+				maxX: hit.rect.right,
+				maxY: hit.rect.bottom,
+				hit: hit
+			}, (a, b) => a.hit === b.hit);
+		}
 	}
 
 }
 
-export const hover = new UX_Hover();
+export const hover = new Hover();

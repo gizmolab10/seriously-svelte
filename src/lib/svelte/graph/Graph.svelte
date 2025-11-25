@@ -38,7 +38,7 @@
 	
 	$:	{
 		const _ = `${$w_rect_ofGraphView.description}
-			:::${$w_s_hover?.description ?? 'null'}
+			:::${$w_s_hover?.id ?? 'null'}
 			:::${$w_show_graph_ofType}
 			:::${$w_t_startup}`;
 		update_style();

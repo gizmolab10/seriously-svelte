@@ -22,7 +22,7 @@
 	center = new Point(left + width / 2, 14);
 	updateColors();
 	$: {
-		const _ = `${$w_background_color}:::${$w_s_hover?.description ?? 'null'}`;
+		const _ = `${$w_background_color}:::${$w_s_hover?.id ?? 'null'}`;
 		updateColors();
 	}
 

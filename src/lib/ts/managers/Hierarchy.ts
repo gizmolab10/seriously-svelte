@@ -628,7 +628,7 @@ export class Hierarchy {
 	}
 
 	relationship_remember_runtimeCreateUnique(idBase: string, id: string, kind: T_Predicate, idParent: string, idChild: string,
-		orders: number[], creationOptions: T_Create = T_Create.none): Relationship {
+		orders: Array<number>, creationOptions: T_Create = T_Create.none): Relationship {
 		let relationship = this.relationship_forPredicateKind_parent_child(kind, idParent.hash(), idChild.hash());
 		const already_persisted = creationOptions == T_Create.isFromPersistent;
 		if (!relationship) {

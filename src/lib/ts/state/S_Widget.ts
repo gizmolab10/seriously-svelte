@@ -33,9 +33,9 @@ export default class S_Widget extends S_Element {
 	
 	constructor(ancestry: Ancestry) {
 		super(ancestry, T_Hoverable.widget, k.empty);
-		this.s_drag = elements.s_element_for(ancestry, T_Hoverable.drag, k.empty, this);
-		this.s_title = elements.s_element_for(ancestry, T_Hoverable.title, k.empty, this);
-		this.s_reveal = elements.s_element_for(ancestry, T_Hoverable.reveal, k.empty, this);
+		this.s_drag = elements.s_element_for(ancestry, T_Hoverable.drag, k.empty);
+		this.s_title = elements.s_element_for(ancestry, T_Hoverable.title, k.empty);
+		this.s_reveal = elements.s_element_for(ancestry, T_Hoverable.reveal, k.empty);
 	}
 
 	get update_state_didChange(): boolean {

@@ -222,8 +222,8 @@ export class Testworthy_Utilities {
 	 * Returns the cumulative sum (prefix sum) array for the input array.
 	 * Example: [10, 20, 30] => [10, 30, 60]
 	 */
-	cumulativeSum(array: number[]): number[] {
-		const result: number[] = [];
+	cumulativeSum(array: Array<number>): Array<number> {
+		const result: Array<number> = [];
 		array.reduce((acc, val) => {
 			const sum = acc + val;
 			result.push(sum);

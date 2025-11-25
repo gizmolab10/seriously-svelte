@@ -187,9 +187,9 @@ export default class Layout {
 
 	get breadcrumbs_top(): number { return this.windowSize.height - this.controls_boxHeight; }
 
-	layout_breadcrumbs_forAncestry_centered_starting_within(ancestry: Ancestry, centered: boolean, left: number, thresholdWidth: number): [Array<Thing>, number[], number[], number] {
+	layout_breadcrumbs_forAncestry_centered_starting_within(ancestry: Ancestry, centered: boolean, left: number, thresholdWidth: number): [Array<Thing>, Array<number>, Array<number>, number] {
 		const crumb_things: Array<Thing> = [];
-		const widths: number[] = [];
+		const widths: Array<number> = [];
 		let parent_widths = 0;						// encoded as one parent count per 2 digits (base 10) ... for triggering redraw
 		let total = 0;								// determine how many crumbs will fit
 		const things = ancestry.ancestors?.reverse() ?? [];

@@ -109,7 +109,7 @@ export default class SVG_Paths {
 		}
 	}
 
-	polygon(radius: number, angle: number, count: number = 3, skip: number[]): string {
+	polygon(radius: number, angle: number, count: number = 3, skip: Array<number>): string {
 		const points = u.polygonPoints(radius, count, angle);
 		const center = Point.square(radius);
 		let index = count;
@@ -200,7 +200,7 @@ export default class SVG_Paths {
 		let a = 2.5 + ((max > 2) ? 0 : k.halfIncrement);
 		let i = 0;
 		let paths: string[] = [];
-		const pairs: Array<number[]> = [[a]];
+		const pairs: Array<Array<number>> = [[a]];
 		while (i < max) {
 			const b = a + tiny * 2;
 			pairs[i][1] = b;
@@ -388,7 +388,7 @@ export default class SVG_Paths {
 			maxY = Math.max(maxY, y);
 		}
 
-		function handleArcCommand(args: number[]): void {
+		function handleArcCommand(args: Array<number>): void {
 			const startX = x;
 			const startY = y;
 			let [rx, ry, xAxisRotation, largeArcFlag, sweepFlag, endX, endY] = args;

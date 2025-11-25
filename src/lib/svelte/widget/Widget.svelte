@@ -63,7 +63,7 @@
 
 	$: {
 		const _ = `${$w_thing_color}
-			:::${$w_s_hover?.description ?? 'null'}
+			:::${$w_s_hover?.id ?? 'null'}
 			:::${$w_ancestry_focus.id}`;
 		update_style();
 	}

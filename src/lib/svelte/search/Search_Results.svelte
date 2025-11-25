@@ -4,7 +4,7 @@
 	const { w_search_results_changed } = search;
 	const { w_separator_color } = colors;
 	let element: HTMLDivElement;
-	let results: Thing[] = [];
+	let results: Array<Thing> = [];
 	
 	$: $w_search_results_changed, results = x.si_found.items;
 

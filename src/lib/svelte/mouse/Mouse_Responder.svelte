@@ -42,14 +42,14 @@
 	//////////////////////////////////////////////////////////////
 	
 	onDestroy(() => {
-		hover.remove_hoverable(s_element); // Remove from rbush
+		hover.remove_hit(s_element); // Remove from rbush
 	});
 
 	onMount(() => {
 		if (!!s_element && s_element instanceof S_Element) {
 			s_element.handle_s_mouse = handle_s_mouse;
 			s_element.set_html_element(bound_element);
-			hover.add_hoverable(s_element);
+			hover.add_hit(s_element);
 		}
 		setupStyle();
 	});

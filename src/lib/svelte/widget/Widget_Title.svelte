@@ -7,7 +7,6 @@
 	import { onMount } from 'svelte';
 	export let s_title!: S_Element;
 	export let fontSize = '1em';
-	const { w_s_hover } = s;
 	const ancestry = s_title.ancestry;
 	const thing = ancestry?.thing;
 	const { w_thing_color } = colors;
@@ -66,7 +65,7 @@
 			const s_title = s_widget.s_title;
 			s_title.html_element = input;
 			s_title.rect = layout.scaled_rect_forElement(input);
-			hover.update_hoverable(s_title);
+			hover.update_hit(s_title);
 		}
 	}
 

@@ -58,7 +58,7 @@ export default class S_RadialGraph {
 	get ring_zone_atMouseLocation(): T_Radial_Zone {
 		let ring_zone = T_Radial_Zone.miss;
 		const mouse_vector = layout.mouse_vector_ofOffset_fromGraphCenter();
-		const widgets = hover.s_hoverables_atPoint_ofType(mouse_vector, T_Hoverable.widget);
+		const widgets = hover.hits_atPoint_ofType(mouse_vector, T_Hoverable.widget);
 		if (!!mouse_vector && widgets.length == 0) {
 			const g_cluster = g_radial.g_cluster_atMouseLocation;
 			const inner = get(layout.w_ring_rotation_radius);
