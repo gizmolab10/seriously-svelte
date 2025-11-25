@@ -27,7 +27,6 @@ export enum T_Debug {
 	error			= 'error',			// async errors
 	focus			= 'focus',			// watch for and log focus changes
 	graph			= 'graph',			// size of graph area
-	hover			= 'hover',
 	lines			= 'lines',			// alignment dots for lines and widgets
 	mouse			= 'mouse',
 	order			= 'order',
@@ -36,6 +35,7 @@ export enum T_Debug {
 	draw			= 'draw',
 	edit			= 'edit',			// state machine for editing
 	grab			= 'grab',
+	hits			= 'hits',
 	move			= 'move',
 	key				= 'key',			// keyboard input
 }
@@ -63,10 +63,10 @@ export class Debug {
 	log_draw(message: string, ...args: any[]) { this.log_maybe(T_Debug.draw, message, ...args); }
 	log_edit(message: string, ...args: any[]) { this.log_maybe(T_Debug.edit, message, ...args); }
 	log_grab(message: string, ...args: any[]) { this.log_maybe(T_Debug.grab, message, ...args); }
+	log_hits(message: string, ...args: any[]) { this.log_maybe(T_Debug.hits, message, ...args); }
 	log_move(message: string, ...args: any[]) { this.log_maybe(T_Debug.move, message, ...args); }
 	log_build(message: string, ...args: any[]) { this.log_maybe(T_Debug.build, message, ...args); }
 	log_error(message: string, ...args: any[]) { this.log_maybe(T_Debug.error, message, ...args); }
-	log_hover(message: string, ...args: any[]) { this.log_maybe(T_Debug.hover, message, ...args); }
 	log_lines(message: string, ...args: any[]) { this.log_maybe(T_Debug.lines, message, ...args); }
 	log_mouse(message: string, ...args: any[]) { this.log_maybe(T_Debug.mouse, message, ...args); }
 	log_style(message: string, ...args: any[]) { this.log_maybe(T_Debug.style, message, ...args	); }
@@ -127,7 +127,6 @@ export class Debug {
 					case 'error': this.flags.push(T_Debug.error); break;
 					case 'focus': this.flags.push(T_Debug.focus); break;
 					case 'graph': this.flags.push(T_Debug.graph); break;
-					case 'hover': this.flags.push(T_Debug.hover); break;
 					case 'lines': this.flags.push(T_Debug.lines); break;
 					case 'mouse': this.flags.push(T_Debug.mouse); break;
 					case 'order': this.flags.push(T_Debug.order); break;
@@ -136,6 +135,7 @@ export class Debug {
 					case 'draw': this.flags.push(T_Debug.draw); break;
 					case 'edit': this.flags.push(T_Debug.edit); break;
 					case 'grab': this.flags.push(T_Debug.grab); break;
+					case 'hits': this.flags.push(T_Debug.hits); break;
 					case 'move': this.flags.push(T_Debug.move); break;
 					case 'key': this.flags.push(T_Debug.key); break;
 				}

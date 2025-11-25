@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { Point, T_Layer, T_Timer, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
-	import { e, k, s, u, debug, hover, layout, elements } from '../../ts/common/Global_Imports';
+	import { e, k, s, u, hits, debug, layout, elements } from '../../ts/common/Global_Imports';
 	import type { Handle_Result } from '../../ts/types/Types';
 	import { onMount, onDestroy } from 'svelte';
 	export let s_element: S_Element = S_Element.empty();
@@ -42,14 +42,14 @@
 	//////////////////////////////////////////////////////////////
 	
 	onDestroy(() => {
-		hover.remove_hit(s_element); // Remove from rbush
+		hits.remove_hit(s_element); // Remove from rbush
 	});
 
 	onMount(() => {
 		if (!!s_element && s_element instanceof S_Element) {
 			s_element.handle_s_mouse = handle_s_mouse;
 			s_element.set_html_element(bound_element);
-			hover.add_hit(s_element);
+			hits.add_hit(s_element);
 		}
 		setupStyle();
 	});

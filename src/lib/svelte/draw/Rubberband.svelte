@@ -1,6 +1,6 @@
 <script lang='ts'>
-    import { k, s, u, x, debug, hover, colors, layout } from '../../ts/common/Global_Imports';
-    import { T_Layer, T_Dragging, T_Hoverable } from '../../ts/common/Global_Imports';
+    import { k, s, u, x, hits, debug, colors, layout } from '../../ts/common/Global_Imports';
+    import { T_Layer, T_Dragging, T_Detectable } from '../../ts/common/Global_Imports';
     import { Rect, Size, Point, Ancestry } from '../../ts/common/Global_Imports';
     import { onMount, onDestroy } from 'svelte';
     export let strokeWidth = k.thickness.rubberband;
@@ -77,7 +77,7 @@
             const ancestries = ancestries_intersecting_rubberband();
             if (ancestries.length != 0) {
                 x.si_grabs.items = ancestries;
-                debug.log_hover(`${ancestries.map(ancestry => ancestry.id).join(', ')}`);
+                debug.log_hits(`${ancestries.map(ancestry => ancestry.id).join(', ')}`);
             } else {
                 x.si_grabs.reset();
             }
@@ -87,8 +87,8 @@
 
     function ancestries_intersecting_rubberband(): Array<Ancestry> {
         const rect = new Rect( new Point(left, top), new Size(width, height));
-        const hits = hover.hits_inRect_ofType(rect, T_Hoverable.widget);
-        return hits.map((hit) => hit.identifiable as Ancestry);
+        const found = hits.hits_inRect_ofType(rect, T_Detectable.widget);
+        return found.map((hit) => hit.identifiable as Ancestry);
     }
 
     // Add event handlers at document level

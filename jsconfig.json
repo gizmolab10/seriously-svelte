@@ -33,5 +33,5 @@
 		"src/lib/**/*.js",
 		"src/lib/**/*.ts",
 		"src/main.js"
-, "notes/experiments/source/Hover.ts"	]
+, "notes/experiments/source/Detect.ts"	]
 }

@@ -1,4 +1,4 @@
-import { Rect, Point, S_Hoverable, T_Signal, T_Hoverable } from '../common/Global_Imports';
+import { Rect, Point, S_Detectable, T_Signal, T_Detectable } from '../common/Global_Imports';
 import { k, u, debug, layout, signals, Ancestry } from '../common/Global_Imports';
 import { Integer, Handle_S_Mouse, Create_S_Mouse } from '../types/Types';
 import { SignalConnection_atPriority } from '../types/Types';
@@ -11,13 +11,13 @@ import { SignalConnection } from 'typed-signals';
 // unique id assignment (of html elements) for DOM lookups
 // provide Ancestry access to an associated svelte component's main element (and vice versa)
 
-export default class S_Component extends S_Hoverable {
+export default class S_Component extends S_Detectable {
     signal_handlers: SignalConnection_atPriority[] = [];
 	hid: Integer | null = null;
 
-    // hit test (hover and rubberband), logger, emitter, handler and destroyer
+    // hit test (detect and rubberband), logger, emitter, handler and destroyer
 
-    constructor(ancestry: Ancestry | null, type: T_Hoverable) {
+    constructor(ancestry: Ancestry | null, type: T_Detectable) {
         super(type, ancestry as Identifiable);
         this.hid = ancestry?.hid ?? -1 as Integer;
         this.id = `${type}-${ancestry?.kind ?? 'no-predicate'}-${ancestry?.titles ?? Identifiable.newID()}`;
@@ -106,7 +106,7 @@ export default class S_Component extends S_Hoverable {
 	}
 
     get isComponentLog_enabled(): boolean {
-        const log_isEnabledFor_t_hoverable = {
+        const log_isEnabledFor_type = {
             breadcrumbs : false,
             branches	: false,
             radial		: false,
@@ -119,8 +119,8 @@ export default class S_Component extends S_Hoverable {
             tree		: false,
             app			: false,
         }
-        const type = this.type as keyof typeof log_isEnabledFor_t_hoverable;
-        return log_isEnabledFor_t_hoverable[type] ?? false;
+        const type = this.type as keyof typeof log_isEnabledFor_type;
+        return log_isEnabledFor_type[type] ?? false;
     }
 
 	debug_log_style(prefix: string) {

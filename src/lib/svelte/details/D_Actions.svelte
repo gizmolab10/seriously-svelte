@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { T_Layer, T_Detail, T_Action, T_Hoverable, T_Kinship, T_Request, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Detail, T_Action, T_Detectable, T_Kinship, T_Request, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
 	import { c, e, h, k, s, u, x, show, Size, Point, colors, signals, layout, S_Mouse } from '../../ts/common/Global_Imports';
 	import { elements, details, controls } from '../../ts/common/Global_Imports';
 	import Buttons_Table from '../mouse/Buttons_Table.svelte';
@@ -21,7 +21,7 @@
 	const { w_s_alteration, w_ancestry_forDetails } = s;
     const font_sizes = [k.font_size.instructions, k.font_size.instructions];
     const s_banner_hideable = details.s_banner_hideables_byType[T_Detail.actions];
-	const s_cancel = elements.s_element_for($w_ancestry_forDetails, T_Hoverable.cancel, k.empty);
+	const s_cancel = elements.s_element_for($w_ancestry_forDetails, T_Detectable.cancel, k.empty);
 	let list_title = $w_ancestry_forDetails?.isExpanded && controls.inTreeMode ? 'hide list' : 'list';
 	let button_titles = compute_button_titles();
 	let actions_top = top + 3;
@@ -194,7 +194,7 @@
 					width={table_width}
 					has_title={has_title}
 					title_gap={title_gap}
-					type={T_Hoverable.action}
+					type={T_Detectable.action}
 					font_sizes={font_sizes}
 					detect_autorepeat={true}
 					closure={handle_actionRequest}
@@ -214,7 +214,7 @@
 					width={table_width}
 					has_title={has_title}
 					title_gap={title_gap}
-					type={T_Hoverable.action}
+					type={T_Detectable.action}
 					font_sizes={font_sizes}
 					detect_autorepeat={true}
 					closure={handle_actionRequest}

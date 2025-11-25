@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, s, u, x, debug, colors, layout, signals, elements, components } from '../../ts/common/Global_Imports';
 	import { G_Widget, S_Mouse, S_Element, S_Component } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Signal, T_Hoverable } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Signal, T_Detectable } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { Rect, Point } from '../../ts/common/Global_Imports';
 	import Widget_Reveal from './Widget_Reveal.svelte';
@@ -38,7 +38,7 @@
 	final_layout();
 	layout_maybe();
 
-	s_component = signals.handle_anySignal_atPriority(1, ancestry, T_Hoverable.widget, (t_signal, value): S_Component | null => {
+	s_component = signals.handle_anySignal_atPriority(1, ancestry, T_Detectable.widget, (t_signal, value): S_Component | null => {
 		switch (t_signal) {
 		case T_Signal.reattach:
 				s_component?.debug_log_connection_state('Before reattachment');
@@ -125,7 +125,7 @@
 		if (!!ancestry) {
 			if (s_mouse.hover_didChange) {
 				s_widget.isHovering = s_mouse.isHovering;
-				// debug.log_hover(`${u.t_or_f(s_widget.isHovering)}  W  ${s_widget.name}`);
+				// debug.log_hits(`${u.t_or_f(s_widget.isHovering)}  W  ${s_widget.name}`);
 			} else if (s_mouse.isLong) {
 				ancestry?.becomeFocus();
 			} else if (s_mouse.isUp) {

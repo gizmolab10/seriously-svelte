@@ -1,4 +1,4 @@
-import { Rect, Point, debug, S_Hoverable, T_Hoverable } from '../common/Global_Imports';
+import { Rect, Point, debug, S_Detectable, T_Detectable } from '../common/Global_Imports';
 import RBush from 'rbush';
 
 type HIT_RBRect = {
@@ -6,13 +6,13 @@ type HIT_RBRect = {
 	minY: number;
 	maxX: number;	
 	maxY: number;	
-	hit: S_Hoverable;
+	hit: S_Detectable;
 }
 
-export default class Hover {
+export default class Hits {
 	rbush = new RBush<HIT_RBRect>();
-	current_hits = new Set<S_Hoverable>();
-	hits_byElement_ID: { [element_ID: string]: S_Hoverable } = {};
+	current_hits = new Set<S_Detectable>();
+	hits_byElement_ID: { [element_ID: string]: S_Detectable } = {};
 
 	static readonly _____HIT_TEST: unique symbol;
 
@@ -22,8 +22,8 @@ export default class Hover {
 	update_hover_at(point: Point) {
 		const hits = this.hits_atPoint(point);
 		const dots = hits.filter(s => s.isADot);
-		const widgets = hits.filter(s => s.type === T_Hoverable.widget);
-		// debug.log_hover(`${hits.map(hit => hit.id).join(', ')}`);
+		const widgets = hits.filter(s => s.type === T_Detectable.widget);
+		// debug.log_hits(`${hits.map(hit => hit.id).join(', ')}`);
 		if (dots.length > 0) {
 			dots[0].isHovering = true;
 		} else if (widgets.length > 0) {
@@ -31,15 +31,15 @@ export default class Hover {
 		}
 	}
 
-	hits_inRect_ofType(rect: Rect, type: T_Hoverable): Array<S_Hoverable> {
+	hits_inRect_ofType(rect: Rect, type: T_Detectable): Array<S_Detectable> {
 		return this.hits_inRect(rect).filter(hit => hit.type === type);
 	}
 
-	hits_atPoint_ofType(point: Point | null, type: T_Hoverable): Array<S_Hoverable> {
+	hits_atPoint_ofType(point: Point | null, type: T_Detectable): Array<S_Detectable> {
 		return !point ? [] : this.hits_atPoint(point).filter(hit => hit.type === type);
 	}
 
-	hits_atPoint(point: Point): Array<S_Hoverable> {
+	hits_atPoint(point: Point): Array<S_Detectable> {
 		return this.rbush.search({
 			minX: point.x,
 			minY: point.y,
@@ -48,7 +48,7 @@ export default class Hover {
 		}).map(rbRect => rbRect.hit);
 	}
 
-	hits_inRect(rect: Rect): Array<S_Hoverable> {
+	hits_inRect(rect: Rect): Array<S_Detectable> {
 		return this.rbush.search({
 			minX: rect.x,
 			minY: rect.y,
@@ -59,12 +59,12 @@ export default class Hover {
 
 	static readonly _____ADD_AND_REMOVE: unique symbol;
 
-	update_hit(hit: S_Hoverable) {
+	update_hit(hit: S_Detectable) {
 		this.remove_hit(hit);
 		this.add_hit(hit);
 	}
 
-	add_hit(hit: S_Hoverable) {
+	add_hit(hit: S_Detectable) {
 		if (!!hit && !!hit.rect) {
 			const id = hit.html_element?.id ?? hit.id;
 			if (!!id) {
@@ -83,7 +83,7 @@ export default class Hover {
 		}
 	}
 
-	remove_hit(hit: S_Hoverable) {
+	remove_hit(hit: S_Detectable) {
 		if (!!hit && !!hit.rect) {
 			const id = hit.html_element?.id ?? hit.id;
 			if (!!id) {
@@ -101,4 +101,4 @@ export default class Hover {
 
 }
 
-export const hover = new Hover();
+export const hits = new Hits();

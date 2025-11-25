@@ -3,7 +3,7 @@ import { Hierarchy } from './Hierarchy';
 import Ancestry from '../runtime/Ancestry';
 import S_Alteration from '../state/S_Alteration';
 import S_Title_Edit from '../state/S_Title_Edit';
-import S_Hoverable from '../state/S_Hoverable';
+import S_Detectable from '../state/S_Detectable';
 import { writable } from 'svelte/store';
 
 export class Stores {
@@ -32,7 +32,7 @@ export class Stores {
 
 	w_t_startup			   = writable<T_Startup>(T_Startup.start);
 	w_auto_adjust_graph	   = writable<T_Auto_Adjust | null>();
-	w_s_hover			   = writable<S_Hoverable | null>();
+	w_s_hover			   = writable<S_Detectable | null>();
 	w_popupView_id		   = writable<string | null>();
 	w_dragging_active	   = writable<T_Dragging>();
 	w_control_key_down	   = writable<boolean>(false);

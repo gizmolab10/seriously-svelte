@@ -1,22 +1,22 @@
-import { k, s, Rect, Point, hover, colors, layout, S_Widget, T_Hoverable } from '../common/Global_Imports';
+import { k, s, hits, Rect, colors, layout, T_Detectable } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
 
-export default class S_Hoverable {
-	containing_hoverable: S_Hoverable | null = null;	// only for drag and reveal dots
+export default class S_Detectable {
+	containing_detectable: S_Detectable | null = null;	// only for drag and reveal dots
 	identifiable: Identifiable | null = null;
-	html_element: HTMLElement | null = null;			// for use in Hover rbush index
+	html_element: HTMLElement | null = null;
 	defaultCursor = k.cursor_default;
 	hoverCursor = k.cursor_default;
 	hoverColor = 'transparent';
-	rect: Rect | null = null;							// for use in Hover rbush index
+	rect: Rect | null = null;							// for use in Hits index
 	element_color = 'black';
-	type: T_Hoverable;
+	type: T_Detectable;
 	isADot = false;
 	id: string;
 	
-	constructor(type: T_Hoverable, identifiable: Identifiable | null) {
-		this.isADot = type === T_Hoverable.drag || type === T_Hoverable.reveal;
+	constructor(type: T_Detectable, identifiable: Identifiable | null) {
+		this.isADot = type === T_Detectable.drag || type === T_Detectable.reveal;
 		this.id = type + '-' + (identifiable?.id ?? 'unknown identifiable');
 		this.identifiable = identifiable;
 		this.type = type;
@@ -27,7 +27,7 @@ export default class S_Hoverable {
 	get svg_hover_color(): string { return this.isHovering ? colors.background : this.stroke; }
 	set isHovering(isHovering: boolean) { s.w_s_hover.set(isHovering ? this : null); }
 
-	isEqualTo(other: S_Hoverable | null): boolean { return !!other && this.id == other.id; }
+	isEqualTo(other: S_Detectable | null): boolean { return !!other && this.id == other.id; }
 
 	set_forHovering(element_color: string, hoverCursor: string) {
 		this.hoverColor = colors.hover_special_blend(element_color);
@@ -39,7 +39,7 @@ export default class S_Hoverable {
 		if (!!html_element) {
 			this.rect = layout.scaled_rect_forElement(html_element);
 			this.html_element = html_element;
-			hover.update_hit(this);
+			hits.update_hit(this);
 		}
 	}
 

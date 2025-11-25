@@ -270,7 +270,7 @@ export enum T_Trait {
 	sum			= 'sum',
 }
 
-export enum T_Hoverable {
+export enum T_Detectable {
 	breadcrumbs	 = 'breadcrumbs',
 	database	 = 'database',
 	details		 = 'details',

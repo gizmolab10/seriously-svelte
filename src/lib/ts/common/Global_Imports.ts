@@ -13,7 +13,7 @@ import { T_Theme } from './Enumerations';
 import { T_Edit } from '../state/S_Title_Edit';
 import { T_Timer } from '../signals/Mouse_Timer';
 import { T_Oblong, T_Direction } from './Enumerations';
-import { T_Signal, T_Hoverable } from './Enumerations';
+import { T_Signal, T_Detectable } from './Enumerations';
 import { T_Quadrant, T_Orientation } from '../types/Angle';
 import { T_Graph, T_Banner, T_Control } from './Enumerations';
 import { T_Persistable, T_Persistence } from './Enumerations';
@@ -27,7 +27,7 @@ import { T_Dragging, T_File_Format, T_File_Operation, T_Startup } from './Enumer
 
 import S_Alteration from '../state/S_Alteration';
 import S_Title_Edit from '../state/S_Title_Edit';
-import S_Hoverable from '../state/S_Hoverable';
+import S_Detectable from '../state/S_Detectable';
 import S_Resizing from '../state/S_Resizing';
 import S_Rotation from '../state/S_Rotation';
 import S_Element from '../state/S_Element';
@@ -52,7 +52,7 @@ import { g_radial } from '../layout/G_RadialGraph';
 import { Rect, Size, Point } from '../types/Geometry';
 import { Seriously_Range } from '../types/Seriously_Range';
 
-import { hover } from '../managers/Hover';
+import { hits } from '../managers/Hits';
 import { colors } from '../managers/Colors';
 import { search } from '../managers/Search';
 import { details } from '../managers/Details';
@@ -92,18 +92,19 @@ import interact from 'interactjs';
 export {	
 	S_Rotation, S_Resizing, S_Component,
 	S_Items, S_Mouse, S_Widget, S_Element,
-	S_Hoverable, S_Alteration, S_Title_Edit,
+	S_Detectable, S_Alteration, S_Title_Edit,
 	
 	G_Widget, G_TreeLine, G_TreeBranches, G_Repeater,
 	G_Paging, G_Cluster, G_RadialGraph, G_Thing_Pages, G_ArcSlider,
 
 	g_tree, g_radial,
 	e, c, h, k, p, s, u, x,
+	colors, radial, signals, 
 	interact, transparentize,
 	debug, svgPaths, databases,
-	busy, show, files, builds, print, hover,
-	layout, search, details, controls, features,
-	colors, radial, signals, elements, components,
+	busy, show, files, builds, print,
+	hits, layout, elements, components,
+	search, details, controls, features,
 
 	Angle, Direction, 
 	Rect, Size, Point,
@@ -117,7 +118,7 @@ export {
 	T_Order, T_Kinship,
 	T_Theme, T_Graph, T_Browser, 
 	T_Search, T_Search_Preference,
-	T_Signal, T_Control, T_Hoverable,
+	T_Signal, T_Control, T_Detectable,
 	T_Startup, T_Dragging, T_Alteration,
 	T_Quadrant, T_Orientation, T_Direction,
 	T_Banner, T_Detail, T_Request, T_Action,

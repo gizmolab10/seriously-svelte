@@ -1,6 +1,5 @@
-import { Rect, Point, hover, layout, Ancestry, S_Component, S_Hoverable, T_Hoverable } from '../common/Global_Imports';
+import { Ancestry, S_Component, T_Detectable } from '../common/Global_Imports';
 import type { Integer } from '../types/Types';
-import { get } from 'svelte/store';
 
 export class Components {
 	private components_byType_andHID: { [type: string]: { [hid: Integer]: S_Component } } = {};
@@ -34,17 +33,17 @@ export class Components {
 
 	get dummy(): S_Component {
 		if (!this._dummy) {
-			this._dummy = new S_Component(null, T_Hoverable.none);
+			this._dummy = new S_Component(null, T_Detectable.none);
 		}
 		return this._dummy;
 	}
 
-	component_forAncestry_andType(ancestry: Ancestry | null, type: T_Hoverable): S_Component | null {
+	component_forAncestry_andType(ancestry: Ancestry | null, type: T_Detectable): S_Component | null {
 		const dict = this.components_byHID_forType(type);
 		return dict[ancestry?.hid ?? -1 as Integer] ?? null;
 	}
 
-	component_forAncestry_andType_createUnique(ancestry: Ancestry | null, type: T_Hoverable): S_Component | null {
+	component_forAncestry_andType_createUnique(ancestry: Ancestry | null, type: T_Detectable): S_Component | null {
 		let s_component: S_Component | null = this.component_forAncestry_andType(ancestry, type);
 		if (!s_component) {
 			s_component = new S_Component(ancestry, type);

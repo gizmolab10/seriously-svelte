@@ -1,4 +1,4 @@
-import { h, k, s, u, x, g_tree, debug, hover, search, layout } from '../common/Global_Imports';
+import { h, k, s, u, x, hits, g_tree, debug, search, layout } from '../common/Global_Imports';
 import { details, signals, controls, elements, features } from '../common/Global_Imports';
 import { T_Search, T_Action, T_Control, T_Dragging } from '../common/Global_Imports';
 import { T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Imports';
@@ -219,7 +219,7 @@ export class Events {
 		layout.w_mouse_location.set(location);
 		layout.w_mouse_location_scaled.set(scaled);
 		if (get(s.w_dragging_active) === T_Dragging.none) {
-			hover.update_hover_at(location);
+			hits.update_hover_at(location);
 		}
 	}
 

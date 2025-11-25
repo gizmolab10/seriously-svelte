@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, u, elements, x, Point, colors, svgPaths, S_Element, T_Hoverable, T_Request } from '../../ts/common/Global_Imports';
+	import { k, u, elements, x, Point, colors, svgPaths, S_Element, T_Detectable, T_Request } from '../../ts/common/Global_Imports';
 	import { w_count_button_restyle } from '../../ts/state/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
     import G_Repeater from '../../ts/layout/G_Repeater';
@@ -11,7 +11,7 @@
 	export let center: Point | null = null;
 	export let detect_autorepeat = false;
 	export let detect_longClick = false;
-    export let type = T_Hoverable.button;
+    export let type = T_Detectable.button;
 	export let has_gull_wings = true;
 	export let has_seperator = false;
 	export let row_titles: string[];	// first one is optional row title, rest are button titles

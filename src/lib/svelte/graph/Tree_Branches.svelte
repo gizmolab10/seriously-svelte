@@ -1,6 +1,6 @@
 <script lang=ts>
 	import { show, debug, g_tree, signals, Ancestry } from '../../ts/common/Global_Imports';
-	import { S_Component, T_Signal, T_Hoverable } from '../../ts/common/Global_Imports';
+	import { S_Component, T_Signal, T_Detectable } from '../../ts/common/Global_Imports';
 	import Tree_Branches from './Tree_Branches.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import Tree_Line from './Tree_Line.svelte';
@@ -16,7 +16,7 @@
 
 	debug.log_draw(`TREE_BRANCHES ${ancestry?.titles}`);
 
-	s_component = signals.handle_anySignal_atPriority(2, ancestry, T_Hoverable.branches, (t_signal, value): S_Component | null => {
+	s_component = signals.handle_anySignal_atPriority(2, ancestry, T_Detectable.branches, (t_signal, value): S_Component | null => {
 		reattachments++;
 	});
 
