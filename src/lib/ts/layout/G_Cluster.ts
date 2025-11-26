@@ -102,19 +102,19 @@ export default class G_Cluster {
 	private layout_label() {		// rotate text tangent to arc, at center of arc
 		const angle = this.g_sliderArc.angle_ofFork;
 		const ortho = this.arc_in_lower_half ? Angle.three_quarters : Angle.quarter;
-		const label_radius = get(layout.w_ring_rotation_radius) + (this.arc_in_lower_half ? 0 : 5) - 22.4;
+		const label_radius = get(layout.w_ring_rotation_radius) + (this.arc_in_lower_half ? 0 : 5) + 5;// - 22.4;
 		this.label_center = this.center.offsetBy(Point.fromPolar(label_radius, angle));
 		this.g_sliderArc.label_text_angle = ortho - angle;
 	}
 	
 	private update_label_forIndex() {
-		let title =  `${this.total_widgets} ${this.direction_kind}`;
-		if (this.isPaging) {
-			const index = this.paging_index_ofFocus;
-			const middle = (this.widgets_shown < 2) ? k.empty : `-${index + this.widgets_shown}`;
-			title += ` (${index + 1}${middle})`
-		}
-		this.cluster_title = title;
+		// let title =  `${this.total_widgets} ${this.direction_kind}`;
+		// if (this.isPaging) {
+		// 	const index = this.paging_index_ofFocus;
+		// 	const middle = (this.widgets_shown < 2) ? k.empty : `-${index + this.widgets_shown}`;
+		// 	title += ` (${index + 1}${middle})`
+		// }
+		this.cluster_title = this.direction_kind[0].toUpperCase();
 	}
 	
 	static readonly _____PAGING: unique symbol;

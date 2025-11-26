@@ -147,8 +147,8 @@ export default class Constants {
 			least:    0.1,
 			thumb:	  0.12,
 			hover:	  0.14,
-			text:	  0.25,
-			active:	  0.4,
+			text:	  1,
+			active:	  0.3,
 		},
 	};
 
