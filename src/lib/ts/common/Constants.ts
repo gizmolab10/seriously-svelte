@@ -144,9 +144,9 @@ export default class Constants {
 			selected: 1.0,
 		},
 		radial: {
-			least:    0.1,
-			thumb:	  0.12,
-			hover:	  0.14,
+			least:    0.05,
+			thumb:	  0.0,
+			hover:	  0.7,
 			text:	  1,
 			active:	  0.3,
 		},

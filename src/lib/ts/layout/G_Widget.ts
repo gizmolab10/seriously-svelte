@@ -36,14 +36,15 @@ export default class G_Widget {
 	// single source of truth for widget's
 	//
 	// widget_width (computed here)
-	// UX state (fill, border) 
 	// relevant ancestries (children, thing, shows reveal)
+	//
 	// layout:
 	//	 rects for lines from: parent and bidirectionals
 	//	 locations of:
-	//		dots and title
-	//		tree trunk and child branches
-	//		necklace angle, origin, orientations (in/out, right/left)
+	//		dots and title, 
+	//		trunk base and its child branches
+	//		necklace angle, radial origin
+	//		orientations (in/out, right/left) caused by rotating the necklace
 
 	constructor(ancestry: Ancestry) {
 		this.g_line = new G_TreeLine(ancestry.parentAncestry, ancestry);
@@ -181,15 +182,15 @@ export default class G_Widget {
 			const isRadialFocus = inRadialMode && ancestry.isFocus;
 			const width_ofDrag = (dot_size * 2) + (inRadialMode ? 2 : -4);
 			const width_ofWidget = width_ofTitle + width_ofDrag + width_ofReveal_dot + (inRadialMode ? 0 : 4) - 5;
-			const x_ofDrag_for_pointing_left = width_ofWidget - dot_size - 3 + (show_reveal ? 0.5 : 0);
-			const x_ofDrag = widget_points_right ? (inRadialMode ? 3 : 2) : x_ofDrag_for_pointing_left;
-			const y_ofDrag = 2.5 + (inRadialMode ? 0.1 : 0);
+			const x_ofDrag_for_pointing_left = width_ofWidget - dot_size - 1.25 + (show_reveal ? 0.5 : 0);
+			const x_ofDrag = widget_points_right ? (inRadialMode ? 2 : 2) : x_ofDrag_for_pointing_left;
+			const y_ofDrag = 2.5 - (inRadialMode ? 0.1 : 0);
 			const x_ofRadial = widget_points_right ? -4 : -dot_size;
 			const x_offset_ofWidget = widget_points_right ? -7 : 6 + dot_size - width_ofWidget;
 			const origin_ofDrag = new Point(x_ofDrag, y_ofDrag);
 			const x_ofRadial_title =  widget_points_right && !isRadialFocus ? 20 : (show_reveal ? 20 : 8);
 			if (!isRadialFocus) {	// not overwrite g_radial's location_ofRadial
-				this.location_ofRadial = this.location_within_necklace.offsetByXY(x_ofRadial, 4 - dot_size);
+				this.location_ofRadial = this.location_within_necklace.offsetByXY(x_ofRadial + 4, 6 - dot_size);
 			}
 			this.origin_ofRadial = this.location_ofRadial.offsetByX(widget_points_right ? 0 : -width_ofTitle - width_ofReveal_dot);
 			this.origin_ofTitle = Point.x(inRadialMode ? x_ofRadial_title : dot_size + 5);

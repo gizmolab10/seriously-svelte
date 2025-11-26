@@ -104,7 +104,7 @@ export default class G_Cluster {
 		const ortho = this.arc_in_lower_half ? Angle.three_quarters : Angle.quarter;
 		const label_radius = get(layout.w_ring_rotation_radius) + (this.arc_in_lower_half ? 0 : 5) + 5;// - 22.4;
 		this.label_center = this.center.offsetBy(Point.fromPolar(label_radius, angle));
-		this.g_sliderArc.label_text_angle = ortho - angle;
+		this.g_sliderArc.label_text_angle = 0; // ortho - angle; // uncomment to rotate with fork
 	}
 	
 	private update_label_forIndex() {

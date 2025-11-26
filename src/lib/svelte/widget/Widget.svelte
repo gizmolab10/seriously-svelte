@@ -22,7 +22,6 @@
 	let observer: MutationObserver | null = null;
 	let width_ofWidget = g_widget.width_ofWidget;
 	let border_radius = k.height.dot / 2;
-	let center_ofDrag = Point.zero;
 	let revealCenter = Point.zero;
 	let s_component: S_Component;
 	let widget_style = k.empty;

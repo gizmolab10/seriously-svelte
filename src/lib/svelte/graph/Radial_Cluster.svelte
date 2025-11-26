@@ -1,13 +1,14 @@
 <script lang='ts'>
-	import { c, k, s, show, Rect, Size, Point, debug, Angle, colors, radial, layout, signals } from '../../ts/common/Global_Imports';
+	import { k, s, show, Rect, Size, Point, debug, Angle, colors, radial, layout, signals } from '../../ts/common/Global_Imports';
 	import { T_Layer, G_Cluster, Direction } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Angled_Text from '../text/Angled_Text.svelte';
 	import Gull_Wings from '../draw/Gull_Wings.svelte';
 	import Arc from '../draw/Arc.svelte';
-	export let color = 'red';
 	export let g_cluster!: G_Cluster;
+	export let color = 'red';
+	const show_forks = false;
 	const offset = k.radial_widget_inset;
 	const { w_background_color } = colors;
 	const g_sliderArc = g_cluster.g_sliderArc;
@@ -43,7 +44,7 @@
 
 </script>
 
-{#if g_cluster.widgets_shown > 1}
+{#if show_forks && g_cluster.widgets_shown > 1}
 	<Gull_Wings
 		zindex={T_Layer.paging}
 		radius={k.thickness.radial.fork * 3}
@@ -71,21 +72,23 @@
 				d={g_sliderArc.svgPathFor_bigArc}
                 stroke={colors.specialBlend('transparent', $w_background_color, k.opacity.radial.least)}/>
             <path class='path-arc-slider'
-                fill='transparent'
+                fill={colors.specialBlend(color, $w_background_color, k.opacity.radial.least)}
                 stroke-width={k.thickness.radial.fork}
                 d={g_sliderArc.svgPathFor_arcSlider}
                 stroke={colors.specialBlend(color, $w_background_color, k.opacity.radial.least)}/>
-            <path class='path-fork'
-                fill='transparent'
-                stroke-width={k.thickness.radial.fork}
-                d={g_sliderArc.svgPathFor_radialFork}
-                stroke={colors.specialBlend(color, $w_background_color, k.opacity.radial.least)}/>
-            {#if g_cluster.isPaging && g_cluster.widgets_shown > 1}
+			{#if show_forks}
+				<path class='path-fork'
+					fill='transparent'
+					stroke-width={k.thickness.radial.fork}
+					d={g_sliderArc.svgPathFor_radialFork}
+					stroke={colors.specialBlend(color, $w_background_color, k.opacity.radial.least)}/>
+			{/if}
+			{#if g_cluster.isPaging && g_cluster.widgets_shown > 1}
                 <path class='path-thumb'
 					fill={thumbFill}
 					id={`thumb-${g_cluster.name}`}
                     d={g_cluster.g_thumbArc.svgPathFor_arcSlider}/>
-            {/if}
+            	{/if}
         </svg>
     </Mouse_Responder>
 </div>
