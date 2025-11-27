@@ -14,7 +14,7 @@
 
 	function handle_s_mouse(s_mouse: S_Mouse): boolean {
         const target = s_mouse.element;
-        if (!s_mouse.hover_didChange && !!target && (s_mouse.isLong || s_mouse.isRepeat)) {
+        if (!!!target && (s_mouse.isLong || s_mouse.isRepeat)) {
             const pointsUp = target.id == 'up';
             hit_closure(pointsUp, s_mouse.event?.metaKey);
         }

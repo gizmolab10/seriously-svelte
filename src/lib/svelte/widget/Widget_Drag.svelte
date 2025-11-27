@@ -101,10 +101,7 @@
 
 	function handle_s_mouse(s_mouse) {
 		if (!elements.isAny_rotation_active) {
-			if (s_mouse.hover_didChange) {
-				s_drag.isHovering = s_mouse.isHovering;
-				update_colors();
-			} else if (s_mouse.isLong) {
+			if (s_mouse.isLong) {
 				ancestry?.becomeFocus();
 			} else if (s_mouse.isUp && !!ancestry) {
 				const shiftKey = s_mouse.event?.shiftKey ?? false

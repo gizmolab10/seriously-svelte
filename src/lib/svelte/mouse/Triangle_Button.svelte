@@ -32,22 +32,14 @@
 		}
 	}
 
-	function closure(s_mouse) {
-		if (s_mouse.hover_didChange) {
-			setFillColor(s_mouse.isHovering);
-		} else {
-			handle_s_mouse(s_mouse);
-		}
-	}
-
 </script>
 
 <Button
 	detect_autorepeat={detect_autorepeat}
 	detect_longClick={detect_longClick}
+	closure={handle_s_mouse}
 	s_button={s_triangle}
 	border_thickness=0
-	closure={closure}
 	center={center}
 	height={size}
 	width={size}

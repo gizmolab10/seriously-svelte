@@ -147,39 +147,37 @@
 		// setup or teardown state //
 		/////////////////////////////
 
-		if (!s_mouse.hover_didChange) {
-			if (s_mouse.isUp) {
-				s_reset();
-			} else if (s_mouse.isDown) {
-				const angle_ofMouseDown = layout.mouse_angle_fromGraphCenter;
-				const angle_ofRotation = angle_ofMouseDown.add_angle_normalized(-$w_ring_rotation_angle);
-				const zone = radial.ring_zone_atMouseLocation;
-				$w_s_title_edit?.stop_editing();
-				$w_s_title_edit = null;		// so widget will react
-				switch (zone) {
-					case T_Radial_Zone.rotate:
-						debug.log_radial(` begin rotate  ${angle_ofRotation.asDegrees()}`);
-						radial.s_ring_rotation.active_angle = angle_ofMouseDown;
-						radial.s_ring_rotation.basis_angle = angle_ofRotation;
-						break;
-					case T_Radial_Zone.resize:
-						const change_ofRadius = layout.mouse_distance_fromGraphCenter - $w_ring_rotation_radius;
-						debug.log_radial(` begin resize  ${change_ofRadius.asInt()}`);
-						radial.s_ring_rotation.active_angle = angle_ofMouseDown + Angle.quarter;	// needed for cursor
-						radial.s_ring_rotation.basis_angle = angle_ofRotation + Angle.quarter;		// "
-						radial.s_ring_resizing.basis_radius = change_ofRadius;
-						break;
-					case T_Radial_Zone.paging: 
-						const angle_ofPage = angle_ofMouseDown.angle_normalized();
-						const g_cluster = g_radial.g_cluster_atMouseLocation;
-						if (!!g_cluster) {
-							debug.log_radial(` begin paging  ${angle_ofPage.asDegrees()}`);
-							g_cluster.s_paging_rotation.active_angle = angle_ofPage;
-							g_cluster.s_paging_rotation.basis_angle = angle_ofPage;
-							$w_g_paging_cluster = g_cluster;
-						}
-						break;
-				}
+		if (s_mouse.isUp) {
+			s_reset();
+		} else if (s_mouse.isDown) {
+			const angle_ofMouseDown = layout.mouse_angle_fromGraphCenter;
+			const angle_ofRotation = angle_ofMouseDown.add_angle_normalized(-$w_ring_rotation_angle);
+			const zone = radial.ring_zone_atMouseLocation;
+			$w_s_title_edit?.stop_editing();
+			$w_s_title_edit = null;		// so widget will react
+			switch (zone) {
+				case T_Radial_Zone.rotate:
+					debug.log_radial(` begin rotate  ${angle_ofRotation.asDegrees()}`);
+					radial.s_ring_rotation.active_angle = angle_ofMouseDown;
+					radial.s_ring_rotation.basis_angle = angle_ofRotation;
+					break;
+				case T_Radial_Zone.resize:
+					const change_ofRadius = layout.mouse_distance_fromGraphCenter - $w_ring_rotation_radius;
+					debug.log_radial(` begin resize  ${change_ofRadius.asInt()}`);
+					radial.s_ring_rotation.active_angle = angle_ofMouseDown + Angle.quarter;	// needed for cursor
+					radial.s_ring_rotation.basis_angle = angle_ofRotation + Angle.quarter;		// "
+					radial.s_ring_resizing.basis_radius = change_ofRadius;
+					break;
+				case T_Radial_Zone.paging: 
+					const angle_ofPage = angle_ofMouseDown.angle_normalized();
+					const g_cluster = g_radial.g_cluster_atMouseLocation;
+					if (!!g_cluster) {
+						debug.log_radial(` begin paging  ${angle_ofPage.asDegrees()}`);
+						g_cluster.s_paging_rotation.active_angle = angle_ofPage;
+						g_cluster.s_paging_rotation.basis_angle = angle_ofPage;
+						$w_g_paging_cluster = g_cluster;
+					}
+					break;
 			}
 		}
 		detect_hovering();

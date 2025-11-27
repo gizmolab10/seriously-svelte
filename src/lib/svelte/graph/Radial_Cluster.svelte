@@ -34,12 +34,6 @@
 	$: viewBox=`${-offset} ${-offset} ${radius * 2} ${radius * 2}`;
 	$: radius = $w_ring_rotation_radius + offset;
 
-	function handle_s_mouse(s_mouse) {
-		if (s_mouse.hover_didChange) {
-			s_paging_rotation.isHovering = s_mouse.isHovering;
-		}
-	}
-
 </script>
 
 {#if $w_show_radial_forks && g_cluster.widgets_shown > 1}
@@ -60,7 +54,6 @@
 		name = {g_cluster.name}
 		zindex = {T_Layer.paging}
 		cursor = {k.cursor_default}
-		handle_s_mouse = {handle_s_mouse}
 		center = {layout.center_ofGraphView}>
         <svg class='svg-radial-cluster'
 			viewBox={viewBox}>

@@ -21,6 +21,7 @@
 
 	center = new Point(left + width / 2, 14);
 	updateColors();
+
 	$: {
 		const _ = `${$w_background_color}:::${$w_s_hover?.id ?? 'null'}`;
 		updateColors();
@@ -56,23 +57,10 @@
 	}
 
 	function closure(s_mouse) {
-		if (!!h && h.hasRoot) {
-			if (s_mouse.hover_didChange) {
-				if (s_mouse.isHovering) {
-					border = `${borderStyle} ${thing.color}`;
-				} else {
-					border = s_breadcrumb.border;
-				}
-				const cursor = !ancestry.isGrabbed && ancestry.hasChildren ? 'pointer' : k.cursor_default;
-				s_breadcrumb.set_forHovering(thing.color, cursor);
-				s_breadcrumb.isHovering = s_mouse.isHovering;
-				updateStyle();
-				reattachments += 1;
-			} else if (s_mouse.isUp) {
-				search.deactivate();
-				if (ancestry.becomeFocus()) {
-					layout.grand_build();
-				}
+		if (!!h && h.hasRoot && s_mouse.isUp) {
+			search.deactivate();
+			if (ancestry.becomeFocus()) {
+				layout.grand_build();
 			}
 		}
 	}

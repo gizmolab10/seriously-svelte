@@ -122,10 +122,7 @@
 
 	function handle_s_mouse(s_mouse: S_Mouse) {
 		if (!!ancestry) {
-			if (s_mouse.hover_didChange) {
-				s_widget.isHovering = s_mouse.isHovering;
-				// debug.log_hits(`${u.t_or_f(s_widget.isHovering)}  W  ${s_widget.name}`);
-			} else if (s_mouse.isLong) {
+			if (s_mouse.isLong) {
 				ancestry?.becomeFocus();
 			} else if (s_mouse.isUp) {
 				handle_click_event(s_mouse.event);

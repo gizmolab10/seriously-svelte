@@ -118,13 +118,10 @@
 	}
 
 	function handle_action_autorepeatAt(s_mouse: S_Mouse, t_action: number, column: number, name: string) {
-		if (!s_mouse.hover_didChange) {
-			const valid_autorepeat = [T_Action.browse, T_Action.move].includes(t_action);
-			if (s_mouse.isDown || (s_mouse.isRepeat && valid_autorepeat)) {
-				e.handle_action_clickedAt(s_mouse, t_action, column, name);
-			}
+		const valid_autorepeat = [T_Action.browse, T_Action.move].includes(t_action);
+		if (s_mouse.isDown || (s_mouse.isRepeat && valid_autorepeat)) {
+			e.handle_action_clickedAt(s_mouse, t_action, column, name);
 		}
-		return null;
 	}
 
 	function handle_actionRequest(t_request: T_Request, s_mouse: S_Mouse, name: string, row: number, column: number): any {

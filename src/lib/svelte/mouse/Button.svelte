@@ -21,7 +21,7 @@
 	export let name = k.empty;
 	const { w_background_color } = colors;
 	const { w_rect_ofGraphView, w_user_graph_offset } = layout;
-	const { w_control_key_down, w_s_hover, w_thing_fontFamily } = s;
+	const { w_s_hover, w_control_key_down, w_thing_fontFamily } = s;
 	let buttonComponent: S_Component;
 	let computed_style = style;
 	let element: HTMLElement;
@@ -58,15 +58,10 @@
 	}
 
 	function handle_s_mouse(s_mouse: S_Mouse) {
-		if (s_mouse.hover_didChange) {
-			if (!!s_button) {
-				s_button.isHovering = s_mouse.isHovering;
-			}
-		}
 		if (!!closure) {
 			closure(s_mouse);		// so container can adjust behavior or appearance
+			recompute_style();
 		}
-		recompute_style();
 	}
 	
 	function recompute_style() {
