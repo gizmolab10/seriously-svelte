@@ -1,5 +1,5 @@
+import { k, s, u, show, debug, colors, radial, layout, signals } from '../common/Global_Imports';
 import { G_Widget, G_ArcSlider, G_Paging, S_Rotation } from '../common/Global_Imports';
-import { k, s, debug, colors, radial, layout, signals } from '../common/Global_Imports';
 import { Point, Angle, Ancestry, Predicate  } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
@@ -19,9 +19,9 @@ import { get } from 'svelte/store';
 //////////////////////////////////////////
 
 export default class G_Cluster {
-	g_cluster_widgets: G_Widget[] = [];
 	ancestries_shown: Array<Ancestry> = [];
 	g_sliderArc = new G_ArcSlider(false);
+	g_cluster_widgets: G_Widget[] = [];
 	g_thumbArc = new G_ArcSlider(true);
 	ancestries: Array<Ancestry> = [];
 	color = colors.default_forThings;
@@ -102,26 +102,28 @@ export default class G_Cluster {
 	private layout_label() {		// rotate text tangent to arc, at center of arc
 		const angle = this.g_sliderArc.angle_ofFork;
 		const ortho = this.arc_in_lower_half ? Angle.three_quarters : Angle.quarter;
-		const label_radius = get(layout.w_ring_rotation_radius) + (this.arc_in_lower_half ? 0 : 5) + 5;// - 22.4;
+		const tweak = [10, 7, -17.4, -22.4][u.convert_toNumber([this.arc_in_lower_half, this.show_forks])];
+		const label_radius = get(layout.w_ring_rotation_radius) + tweak;
 		this.label_center = this.center.offsetBy(Point.fromPolar(label_radius, angle));
-		this.g_sliderArc.label_text_angle = 0; // ortho - angle; // uncomment to rotate with fork
+		this.g_sliderArc.label_text_angle = this.show_forks ? ortho - angle : 0; // uncomment to rotate with fork
 	}
 	
 	private update_label_forIndex() {
-		// let title =  `${this.total_widgets} ${this.direction_kind}`;
-		// if (this.isPaging) {
-		// 	const index = this.paging_index_ofFocus;
-		// 	const middle = (this.widgets_shown < 2) ? k.empty : `-${index + this.widgets_shown}`;
-		// 	title += ` (${index + 1}${middle})`
-		// }
-		this.cluster_title = this.direction_kind[0].toUpperCase();
+		let title =  `${this.total_widgets} ${this.direction_kind}`;
+		if (this.isPaging) {
+			const index = this.paging_index_ofFocus;
+			const middle = (this.widgets_shown < 2) ? k.empty : `-${index + this.widgets_shown}`;
+			title += ` (${index + 1}${middle})`
+		}
+		this.cluster_title = this.show_forks ? title : this.direction_indicator;
 	}
 	
 	static readonly _____PAGING: unique symbol;
 
-	get s_paging_rotation():  S_Rotation { return radial.s_paging_rotation_forName(this.name); }
+	get show_forks():			 boolean { return get(show.w_show_radial_forks); }
 	get maximum_paging_index()	: number { return this.total_widgets - this.widgets_shown; }
 	get paging_index_ofFocus()	: number { return Math.round(this.g_focusPaging?.index ?? 0); }
+	get s_paging_rotation():  S_Rotation { return radial.s_paging_rotation_forName(this.name); }
 	get g_focusPaging(): G_Paging | null { return this.g_paging_forAncestry(get(s.w_ancestry_focus)); }
 	get g_paging():		 G_Paging | null { return this.g_paging_forPredicate_toChildren(this.predicate, this.points_toChildren); }
 
@@ -169,13 +171,11 @@ export default class G_Cluster {
 
 	static readonly _____ANGLES: unique symbol;
 	
-	get radial_ofFork(): Point { return Point.fromPolar(get(layout.w_ring_rotation_radius), this.angle_ofCluster); }
-
-	get direction_kind(): string {
-		const isSingular = this.total_widgets == 1;
-		const isParental = !this.points_toChildren && !this.predicate?.isBidirectional;
-		return isParental ? isSingular ? 'parent' : 'parents' : this.points_toChildren ? isSingular ? 'child' : 'children' : this.kind;
-	}
+	private get isSingular(): boolean { return this.total_widgets == 1; }
+	private get isParental(): boolean { return !this.points_toChildren && !this.predicate?.isBidirectional; }
+	private get direction_indicator(): string { return this.isParental ? '•' : this.points_toChildren ? '|||' : '='; }
+	private get radial_ofFork(): Point { return Point.fromPolar(get(layout.w_ring_rotation_radius), this.angle_ofCluster); }
+	private get direction_kind(): string { return this.isParental ? this.isSingular ? 'parent' : 'parents' : this.points_toChildren ? this.isSingular ? 'child' : 'children' : this.kind; }
 
 	private update_arc_angles(index: number, max: number, child_angle: number) {
 		// index increases & angle decreases clockwise

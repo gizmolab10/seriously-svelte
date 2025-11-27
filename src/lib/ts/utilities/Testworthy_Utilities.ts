@@ -1,11 +1,9 @@
  // N.B., do not import these from Global Imports --> avoid dependency issues when importing Utilities class into test code
 
 import Identifiable from '../runtime/Identifiable';
-import { T_Browser } from '../common/Enumerations';
 import type { Dictionary } from '../types/Types';
 import { T_Quadrant } from '../types/Angle';
 import { Point } from '../types/Geometry';
-import MobileDetect from 'mobile-detect';
 import Angle from '../types/Angle';
 
 export class Testworthy_Utilities {
@@ -17,11 +15,6 @@ export class Testworthy_Utilities {
 	quadrant_ofAngle(angle: number):	 T_Quadrant { return new Angle(angle).quadrant_ofAngle; }
 	location_ofMouseEvent(event: MouseEvent): Point { return new Point(event.clientX, event.clientY); }
 	consume_event(event: Event)						{ event.preventDefault(); event.stopPropagation(); }
-
-	get device_isMobile(): boolean {
-		const md = new MobileDetect(window.navigator.userAgent);
-		return !!md.mobile();
-	}
 
 	// remove item from a dictionary at the index
 	// assuming it has string keys and number values
@@ -94,57 +87,14 @@ export class Testworthy_Utilities {
 		return points;
 	}
 
-	get browserType(): T_Browser {
-		const userAgent: string = navigator.userAgent;
-		switch (true) {
-			case /msie (\d+)/i.test(userAgent) ||
-				/trident\/.*; rv:(\d+)/i.test(userAgent):  return T_Browser.explorer;
-			case /(chrome|crios)\/(\d+)/i.test(userAgent): return T_Browser.chrome;
-			case /firefox\/(\d+)/i.test(userAgent):		   return T_Browser.firefox;
-			case /opr\/(\d+)/i.test(userAgent):			   return T_Browser.opera;
-			case /orion\/(\d+)/i.test(userAgent):		   return T_Browser.orion;
-			case /safari\/(\d+)/i.test(userAgent):		   return T_Browser.safari;
-			default:									   return T_Browser.unknown
-		}
-	}
-
-	get printer_configuration(): {printer_page_width: number, printer_dpi: number} {
-		const printCSS = `
-			@media print {
-				.print-test {
-						top: 0; 
-						left: 0; 
-						width: 100%; 
-						height: 100%; 
-						position: absolute; 
-					}
-				}`;
-		const square_inch = document.createElement('div');
-		const style = document.createElement('style');
-		const page = document.createElement('div');
-		style.textContent = printCSS;
-		page.className = 'print-test';
-		square_inch.style.cssText = 'width: 1in; height: 1in; position: absolute; top: -9999px;';
-
-		document.head.appendChild(style);
-		document.body.appendChild(page);
-		const printer_page_width = page.offsetWidth;
-		document.body.removeChild(page);
-		document.head.removeChild(style);
-
-		document.body.appendChild(square_inch);
-		const printer_dpi = square_inch.offsetWidth;
-		document.body.removeChild(square_inch);
-		return {printer_page_width, printer_dpi};
-	}
-
 	static readonly _____ARRAYS: unique symbol;
 
-	concatenateArrays(a: Array<any>, b: Array<any>):  Array<any> { return [...a, ...b]; }
-	strip_falsies(array: Array<any>):				  Array<any> { return array.filter(a => !!a); }
-	subtract_arrayFrom(a: Array<any>, b: Array<any>): Array<any> { return b.filter(c => a.filter(d => c != d)); }
-	strip_invalid(array: Array<any>):				  Array<any> { return this.strip_duplicates(this.strip_falsies(array)); }
+	concatenateArrays(a: Array<any>, b: Array<any>):  		  Array<any> { return [...a, ...b]; }
+	strip_falsies(array: Array<any>):				  		  Array<any> { return array.filter(a => !!a); }
+	subtract_arrayFrom(a: Array<any>, b: Array<any>): 		  Array<any> { return b.filter(c => a.filter(d => c != d)); }
+	strip_invalid(array: Array<any>):				  		  Array<any> { return this.strip_duplicates(this.strip_falsies(array)); }
 	uniquely_concatenateArrays(a: Array<any>, b: Array<any>): Array<any> { return this.strip_duplicates(this.concatenateArrays(a, b)); }
+	convert_toNumber(values: Array<boolean>):					  number { return values.reduce((acc, val, index) => acc + (val ? (1 << index) : 0), 0); }
 
 	remove_fromArray_byReference<T>(item: T, array: Array<T>): Array<T> {
 		if (!item) return array;

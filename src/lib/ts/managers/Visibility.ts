@@ -7,13 +7,14 @@ export class Visibility {
 	w_show_tree_ofType			= writable<Array<T_Kinship>>();
 	w_show_countDots_ofType		= writable<Array<T_Kinship>>();
 	w_show_details_ofType		= writable<Array<T_Detail>>([]);	
-	w_show_directionals_ofType	= writable<string[]>();
-	w_show_graph_ofType			= writable<T_Graph>();
-	w_show_details				= writable<boolean>();
-	w_show_other_databases		= writable<boolean>();
-	w_show_related				= writable<boolean>();
-	w_show_save_data_button		= writable<boolean>();
-	w_show_search_controls		= writable<boolean>();
+	w_show_graph_ofType			= writable<T_Graph>(T_Graph.tree);
+	w_show_directionals_ofType	= writable<boolean[]>([false, true]);
+	w_show_save_data_button		= writable<boolean>(false);
+	w_show_search_controls		= writable<boolean>(false);
+	w_show_related				= writable<boolean>(false);
+	w_show_details				= writable<boolean>(true);
+	w_show_other_databases		= writable<boolean>(true);
+	w_show_radial_forks			= writable<boolean>(true);
 	debug_cursor				= false;
 
 	constructor() {
@@ -41,6 +42,9 @@ export class Visibility {
 				case 'related':
 					this.w_show_related.set(flag);
 					break;
+				case 'radial_forks':
+					this.w_show_radial_forks.set(flag);
+					break;
 				case 'parents':
 					const mode = flag ? T_Kinship.parents : T_Kinship.children;
 					g_tree.set_tree_types([mode]);
@@ -61,13 +65,14 @@ export class Visibility {
 	}
 
 	restore_preferences() {
-		this.w_show_countDots_ofType	.set(p.read_key(T_Preference.countDots)		  ?? []);
-		this.w_show_details				.set(p.read_key(T_Preference.show_details)	  ?? false);
-		this.w_show_related				.set(p.read_key(T_Preference.show_related)	  ?? false);
-		this.w_show_other_databases		.set(p.read_key(T_Preference.other_databases) ?? false);
-		this.w_show_tree_ofType			.set(p.read_key(T_Preference.tree)			  ?? T_Kinship.children);
-		this.w_show_details_ofType		.set(p.read_key(T_Preference.detail_types)	  ?? [T_Detail.actions, T_Detail.data]);
-		this.w_show_graph_ofType		.set(features.allow_tree_mode ? p.read_key(T_Preference.graph) ?? T_Graph.tree : T_Graph.radial);
+		this.w_show_countDots_ofType.set(p.read_key(T_Preference.countDots)		  ?? []);
+		this.w_show_details			.set(p.read_key(T_Preference.show_details)	  ?? false);
+		this.w_show_related			.set(p.read_key(T_Preference.show_related)	  ?? false);
+		this.w_show_radial_forks	.set(p.read_key(T_Preference.radial_forks)  ?? false);
+		this.w_show_other_databases	.set(p.read_key(T_Preference.other_databases) ?? false);
+		this.w_show_tree_ofType		.set(p.read_key(T_Preference.tree)			  ?? T_Kinship.children);
+		this.w_show_details_ofType	.set(p.read_key(T_Preference.detail_types)	  ?? [T_Detail.actions, T_Detail.data]);
+		this.w_show_graph_ofType	.set(features.allow_tree_mode ? p.read_key(T_Preference.graph) ?? T_Graph.tree : T_Graph.radial);
 	}
 	
 	reactivity_subscribe() {

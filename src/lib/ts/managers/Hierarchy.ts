@@ -4,7 +4,7 @@ import { T_Thing, T_Trait, T_Order, T_Control, T_Predicate } from '../common/Glo
 import { k, p, s, u, x, busy, debug, controls, features } from '../common/Global_Imports';
 import { files, colors, signals, layout, databases } from '../common/Global_Imports';
 import { Tag, User, Thing, Trait, S_Items } from '../common/Global_Imports';
-import DB_Common, { T_Database } from '../database/DB_Common';
+import DB_Common, { DB_Name, T_Database } from '../database/DB_Common';
 import type { Integer, Dictionary } from '../types/Types';
 import Identifiable from '../runtime/Identifiable';
 import { pivot } from '../files/Pivot';
@@ -250,7 +250,7 @@ export class Hierarchy {
 			if (!this.things.map(t => t.id).includes(thing.id)) {
 				this.things.push(thing);
 			}
-			if (thing.isRoot && (!thing.idBase || [k.id_base.bulks, this.db.idBase].includes(this.db.idBase))) {
+			if (thing.isRoot && (!thing.idBase || [DB_Name.bulks, this.db.idBase].includes(this.db.idBase))) {
 				if (!!this.root) {
 					this.thing_forget(this.root);	// for bubble starting object
 				}
@@ -1739,6 +1739,7 @@ export class Hierarchy {
 		await this.db.persist_all();
 		this.db.update_load_time();
 		s.w_t_startup.set(T_Startup.ready);
+		x.setup_subscriptions();
 	}
 
 }

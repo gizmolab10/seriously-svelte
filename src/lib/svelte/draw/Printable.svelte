@@ -3,16 +3,18 @@
 	import { k } from '../../ts/common/Constants';
 	export let element; // The HTML element (E) to print
 	export let rect; // The rect (position and size of D)
-	const margin = k.printer_dpi * 0.75; // 3/4 inch margins
 	const screen_scale_factor = window.devicePixelRatio;``
 	const message_height = 290;
+	let printer_page_width = 722;
 	let final_content_rect;
+	let printer_dpi = 96;
 	let final_inset_size;
 	let final_page_size;
 	let final_origin;
 	let log_message;
 	let isLandscape;
 	let scaleFactor;
+	let margin = 0;
 	let scale_size;
 	let printable;
 	let kludge
@@ -40,11 +42,42 @@
 	//
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
+	configure();
 	layout();
 
 	$: if (!!printable) {
 		printable.innerHTML = k.empty;
 		printable.appendChild(element.cloneNode(true));
+	}
+
+	function configure() {
+		const printCSS = `
+			@media print {
+				.print-test {
+						top: 0; 
+						left: 0; 
+						width: 100%; 
+						height: 100%; 
+						position: absolute; 
+					}
+				}`;
+		const square_inch = document.createElement('div');
+		const style = document.createElement('style');
+		const page = document.createElement('div');
+		style.textContent = printCSS;
+		page.className = 'print-test';
+		square_inch.style.cssText = 'width: 1in; height: 1in; position: absolute; top: -9999px;';
+
+		document.head.appendChild(style);
+		document.body.appendChild(page);
+		printer_page_width = page.offsetWidth;
+		document.body.removeChild(page);
+		document.head.removeChild(style);
+
+		document.body.appendChild(square_inch);
+		printer_dpi = square_inch.offsetWidth;
+		document.body.removeChild(square_inch);
+		margin = printer_dpi * 0.75; // 3/4 inch margins
 	}
 	
 	function debug_log() {
@@ -65,13 +98,14 @@ Final origin: ${final_origin.description}
 	}
 
 	function layout() {
-		const w = k.printer_page_width;
-		const h = w * k.printer_aspect_ratio;
+		const w = printer_page_width;
+		const h = w * printer_aspect_ratio;
 		isLandscape = rect.size.width > rect.size.height;
 		final_page_size = new Size(
 			isLandscape ? h : w,
 			isLandscape ? w : h
 		);
+		margin = printer_dpi * 0.75; // 3/4 inch margins
 		final_inset_size = final_page_size.insetEquallyBy(margin);
 		scale_size = final_inset_size.dividedBy(rect.size);
 		scaleFactor = Math.min(scale_size.width, scale_size.height) * screen_scale_factor;

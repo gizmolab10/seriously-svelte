@@ -1,8 +1,8 @@
 import { c, h, k, u, busy, Thing, Trait, Relationship } from '../../../src/lib/ts/common/Global_Imports';
 import { T_Debug, T_Create, T_Persistence } from '../../../src/lib/ts/common/Global_Imports';
-import { DgraphClient, DgraphClientStub } from 'dgraph-js';
-import { T_Database } from '../../../src/lib/ts/database/DB_Common';
+import { DB_Name, T_Database } from '../../../src/lib/ts/database/DB_Common';
 import DB_Common from '../../../src/lib/ts/database/DB_Common';
+import { DgraphClient, DgraphClientStub } from 'dgraph-js';
 
 export default class DB_DGraph extends DB_Common {
     private client: DgraphClient;
@@ -11,7 +11,7 @@ export default class DB_DGraph extends DB_Common {
     
     t_persistence = T_Persistence.remote;
     t_database = T_Database.dgraph;
-    idBase = k.empty;
+    idBase = DB_Name.dgraph;
 
     constructor(endpoint: string = 'https://your-dgraph-instance.cloud.dgraph.io/graphql', apiKey: string = '') {
         super();

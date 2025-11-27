@@ -1,7 +1,7 @@
 import { T_Thing, T_Trait, T_Debug, T_Create, T_Predicate, busy } from '../common/Global_Imports';
 import { c, h, k, u, Thing, Trait, Relationship } from '../common/Global_Imports';
 import { T_Persistable, T_Persistence } from '../common/Global_Imports';
-import { T_Database } from './DB_Common';
+import { DB_Name, T_Database } from './DB_Common';
 import DB_Common from './DB_Common';
 import Airtable from 'airtable';
 
@@ -31,7 +31,7 @@ export default class DB_Airtable extends DB_Common {
 	users_table = this.base(T_Persistable.users);
 	t_persistence = T_Persistence.remote;
 	t_database = T_Database.airtable;
-	idBase = k.id_base.airtable;
+	idBase = DB_Name.airtable;
 
 	relationships_errorMessage = 'Error in Relationships:';
 	async hierarchy_fetch_forID(idBase: string) {}
@@ -82,7 +82,7 @@ export default class DB_Airtable extends DB_Common {
 			for (const remoteThing of remoteThings) {
 				const id = remoteThing.id;
 				const fields = remoteThing.fields;
-				h.thing_remember_runtimeCreate(k.id_base.airtable, id, fields.title as string, fields.color as string, (fields.type as T_Thing) ?? fields.trait as string, true, !fields.type);
+				h.thing_remember_runtimeCreate(DB_Name.airtable, id, fields.title as string, fields.color as string, (fields.type as T_Thing) ?? fields.trait as string, true, !fields.type);
 			}
 		} catch (error) {
 			alert(this.things_errorMessage + ' (things_fetch_all) ' + error);
@@ -134,7 +134,7 @@ export default class DB_Airtable extends DB_Common {
 				const text = record.fields.text as string;
 				const type = record.fields.type as T_Trait;
 				const ownerIDs = record.fields.ownerID as (string[]);
-				h.trait_remember_runtimeCreateUnique(k.id_base.airtable, id, ownerIDs[0], type, text, true);
+				h.trait_remember_runtimeCreateUnique(DB_Name.airtable, id, ownerIDs[0], type, text, true);
 			}
 		} catch (error) {
 			alert(this.traits_errorMessage + error);
@@ -182,7 +182,7 @@ export default class DB_Airtable extends DB_Common {
 				const parents = record.fields.parent as (string[]);
 				const children = record.fields.child as (string[]);
 				const kind = record.fields.kindPredicate as T_Predicate;
-				h.relationship_remember_runtimeCreateUnique(k.id_base.airtable, id, kind, parents[0], children[0], [order, 0], T_Create.isFromPersistent);
+				h.relationship_remember_runtimeCreateUnique(DB_Name.airtable, id, kind, parents[0], children[0], [order, 0], T_Create.isFromPersistent);
 			}
 		} catch (error) {
 			alert(this.relationships_errorMessage + error);

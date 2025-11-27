@@ -180,7 +180,7 @@ export default class Layout {
 
 	static readonly _____DETAILS: unique symbol;
 
-	get glows_banner_height(): number { return u.device_isMobile ? 32 : 20; }
+	get glows_banner_height(): number { return get(s.w_device_isMobile) ? 32 : 20; }
 	get controls_boxHeight(): number { return this.glows_banner_height + k.height.segmented; }
 
 	static readonly _____BREADCRUMBS: unique symbol;

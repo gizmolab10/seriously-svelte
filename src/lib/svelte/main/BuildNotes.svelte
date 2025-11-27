@@ -13,7 +13,6 @@
 	let notes = [];
 	
 	updateNotes();
-	$w_show_directionals_ofType = [false, true];
 
 	function updateNotes() {
 		const end = Math.min(notesLimit, notesIndex + 10);

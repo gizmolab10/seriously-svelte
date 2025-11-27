@@ -5,8 +5,10 @@ import S_Alteration from '../state/S_Alteration';
 import S_Title_Edit from '../state/S_Title_Edit';
 import S_Detectable from '../state/S_Detectable';
 import { writable } from 'svelte/store';
+import { c } from './Configuration';
 
 export class Stores {
+
 	static readonly _____THING: unique symbol = Symbol('THING');
 
 	w_thing_fontFamily	   = writable<string>();
@@ -33,10 +35,9 @@ export class Stores {
 	w_t_startup			   = writable<T_Startup>(T_Startup.start);
 	w_auto_adjust_graph	   = writable<T_Auto_Adjust | null>();
 	w_s_hover			   = writable<S_Detectable | null>();
-	w_popupView_id		   = writable<string | null>();
 	w_dragging_active	   = writable<T_Dragging>();
+	w_popupView_id		   = writable<string | null>();
 	w_control_key_down	   = writable<boolean>(false);
-	w_device_isMobile	   = writable<boolean>();
 	w_font_size			   = writable<number>();
 }
 

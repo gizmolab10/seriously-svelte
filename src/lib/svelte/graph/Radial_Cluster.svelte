@@ -1,16 +1,14 @@
 <script lang='ts'>
-	import { k, s, show, Rect, Size, Point, debug, Angle, colors, radial, layout, signals } from '../../ts/common/Global_Imports';
-	import { T_Layer, G_Cluster, Direction } from '../../ts/common/Global_Imports';
+	import { k, s, show, colors, radial, layout } from '../../ts/common/Global_Imports';
+	import { Point, T_Layer, G_Cluster } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import Identifiable from '../../ts/runtime/Identifiable';
 	import Angled_Text from '../text/Angled_Text.svelte';
 	import Gull_Wings from '../draw/Gull_Wings.svelte';
-	import Arc from '../draw/Arc.svelte';
 	export let g_cluster!: G_Cluster;
 	export let color = 'red';
-	const show_forks = false;
 	const offset = k.radial_widget_inset;
 	const { w_background_color } = colors;
+	const { w_show_radial_forks } = show;
 	const g_sliderArc = g_cluster.g_sliderArc;
 	const { w_count_mouse_up, w_thing_fontFamily } = s;
 	const s_paging_rotation = g_cluster.s_paging_rotation;
@@ -21,17 +19,17 @@
 
 	//////////////////////////////////////////////////
 	//												//
-	//	draw arc, thumb, label, fork line			//
+	//		draw arc, thumb, label, fork line		//
 	//												//
 	//	radial graph => radial rings => this		//
 	//	ignores signals: {rebuild, recreate}		//
-	//	uses g_cluster => {geometry, text}			//
-	//	& {g_sliderArc, g_thumbArc} => svg paths	//
+	//	uses g_cluster => {geometry, text} &		//
+	//	  {g_sliderArc, g_thumbArc} => svg paths	//
 	//												//
 	//////////////////////////////////////////////////
 	
+	$: textBackground = $w_show_radial_forks ? radial.s_ring_rotation.isHighlighted ? $w_background_color : colors.specialBlend(color, $w_background_color, radial.s_ring_resizing.fill_opacity) : 'transparent';
 	$: $w_g_paging_cluster, thumbFill = colors.specialBlend(color, $w_background_color, radial.s_ring_rotation.isHighlighted ? k.opacity.radial.thumb : s_paging_rotation.thumb_opacity);
-	// $: textBackground = radial.s_ring_rotation.isHighlighted ? $w_background_color : colors.specialBlend(color, $w_background_color, radial.s_ring_resizing.fill_opacity);
 	$: origin = layout.center_ofGraphView.offsetBy(Point.square(-radius));
 	$: viewBox=`${-offset} ${-offset} ${radius * 2} ${radius * 2}`;
 	$: radius = $w_ring_rotation_radius + offset;
@@ -44,13 +42,13 @@
 
 </script>
 
-{#if show_forks && g_cluster.widgets_shown > 1}
+{#if $w_show_radial_forks && g_cluster.widgets_shown > 1}
 	<Gull_Wings
 		zindex={T_Layer.paging}
 		radius={k.thickness.radial.fork * 3}
 		center={g_sliderArc.tip_ofFork}
 		direction={g_sliderArc.angle_ofFork}
-		color={colors.specialBlend(color, $w_background_color, k.opacity.radial.least)}/>
+		color={colors.specialBlend(color, $w_background_color, k.opacity.radial.armature)}/>
 {/if}
 <div class='radial-cluster'
 	style='
@@ -70,18 +68,18 @@
                 fill='transparent'
                 stroke-width={k.thickness.radial.fork}
 				d={g_sliderArc.svgPathFor_bigArc}
-                stroke={colors.specialBlend('transparent', $w_background_color, k.opacity.radial.least)}/>
+                stroke={colors.specialBlend('transparent', $w_background_color, k.opacity.radial.armature)}/>
             <path class='path-arc-slider'
-                fill={colors.specialBlend(color, $w_background_color, k.opacity.radial.least)}
+                fill='transparent'
                 stroke-width={k.thickness.radial.fork}
                 d={g_sliderArc.svgPathFor_arcSlider}
-                stroke={colors.specialBlend(color, $w_background_color, k.opacity.radial.least)}/>
-			{#if show_forks}
+                stroke={colors.specialBlend(color, $w_background_color, k.opacity.radial.armature)}/>
+			{#if $w_show_radial_forks}
 				<path class='path-fork'
 					fill='transparent'
 					stroke-width={k.thickness.radial.fork}
 					d={g_sliderArc.svgPathFor_radialFork}
-					stroke={colors.specialBlend(color, $w_background_color, k.opacity.radial.least)}/>
+					stroke={colors.specialBlend(color, $w_background_color, k.opacity.radial.armature)}/>
 			{/if}
 			{#if g_cluster.isPaging && g_cluster.widgets_shown > 1}
                 <path class='path-thumb'

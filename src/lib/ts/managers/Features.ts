@@ -1,19 +1,19 @@
-import { c, k, T_Theme } from '../common/Global_Imports';
+import { c, k, show, T_Theme } from '../common/Global_Imports';
 
 export class Features {
 
 	theme = T_Theme.standalone;
 
-	has_zoom_controls   = false;	// NB: hidden until implemented
-	has_details_button  = true;
-	has_every_detail    = true;
+	has_zoom_controls	 = false;	// NB: hidden until implemented
+	has_details_button 	 = true;
+	has_every_detail	 = true;
 
-	allow_graph_editing = true;
-	allow_title_editing	= true;
-	allow_h_scrolling	= true;
-	allow_tree_mode		= true;
-	allow_autoSave		= true;
-	allow_search		= true;
+	allow_graph_editing	 = true;
+	allow_title_editing	 = true;
+	allow_h_scrolling	 = true;
+	allow_tree_mode		 = true;
+	allow_autoSave		 = true;
+	allow_search		 = true;
 
 	apply_queryStrings() {
 		const queryStrings	 = c.queryStrings;
@@ -34,12 +34,13 @@ export class Features {
 			switch (themeOption) {
 				case 'bubble':
 					this.theme				 = T_Theme.bubble;
+					show.w_show_radial_forks.set(true);
 					this.allow_graph_editing = false;
 					this.allow_title_editing = false;
-					this.has_details_button  = false;
 					this.allow_h_scrolling	 = false;
-					this.has_every_detail	 = false;
 					this.allow_autoSave		 = false;
+					this.has_every_detail	 = false;
+					this.has_details_button  = false;
 					break;
 			}
 		}

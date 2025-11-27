@@ -1,7 +1,7 @@
 import { T_Thing, T_Graph, T_Create, T_Predicate, Ancestry, Hierarchy } from '../common/Global_Imports';
 import { k, h, p, s, x, busy, show, debug, layout, features } from '../common/Global_Imports';
 import { T_Persistence, T_Preference } from '../common/Global_Imports';
-import { T_Database } from './DB_Common';
+import { DB_Name, T_Database } from './DB_Common';
 import DB_Common from './DB_Common';
 
 enum T_MID {	// type of message or identifier
@@ -17,7 +17,7 @@ export default class DB_Bubble extends DB_Common {
 	t_persistence = T_Persistence.remote;
 	prior_grabbed_ids: string[] = [];
 	t_database = T_Database.bubble;
-	idBase = k.id_base.bubble;
+	idBase = DB_Name.bubble;
 	replace_hierarchy = false;
 	will_send_events = false;
 	invoke_wrapUp = true;

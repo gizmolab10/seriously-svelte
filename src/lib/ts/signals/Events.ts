@@ -1,4 +1,4 @@
-import { h, k, s, u, x, hits, g_tree, debug, search, layout } from '../common/Global_Imports';
+import { c, h, k, s, u, x, hits, g_tree, debug, search, layout } from '../common/Global_Imports';
 import { details, signals, controls, elements, features } from '../common/Global_Imports';
 import { T_Search, T_Action, T_Control, T_Dragging } from '../common/Global_Imports';
 import { T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Imports';
@@ -17,7 +17,7 @@ export class Events {
 
 	setup() {
 		s.w_s_alteration.subscribe((s_alteration: S_Alteration | null) => { this.handle_s_alteration(s_alteration); });
-		s.w_device_isMobile.subscribe((isMobile: boolean) => { this.subscribeTo_events(); });
+		c.w_device_isMobile.subscribe((isMobile: boolean) => { this.subscribeTo_events(); });
 		this.start_watching_focus();
 	}
 
@@ -52,7 +52,7 @@ export class Events {
 		this.update_document_listener('keydown', this.handle_key_down);
 		this.update_window_listener('resize', this.handle_window_resize);
 		this.update_document_listener('orientationchange', this.handle_orientation_change);
-		if (u.device_isMobile) {
+		if (c.device_isMobile) {
 			debug.log_action(`  mobile subscribe GRAPH`);
 			document.addEventListener('touchend', this.handle_touch_end, { passive: false });
 			document.addEventListener('touchmove', this.handle_touch_move, { passive: false });
@@ -145,9 +145,9 @@ export class Events {
 	}
 
 	private handle_orientation_change(event: Event) {
-		const isMobile = u.device_isMobile;
+		const isMobile = c.device_isMobile;
 		debug.log_action(` orientation change [is${isMobile ? '' : ' not'} mobile] STATE`);
-		s.w_device_isMobile.set(isMobile);
+		c.w_device_isMobile.set(isMobile);
 		layout.restore_preferences();
 	}
 
@@ -162,15 +162,15 @@ export class Events {
 	private handle_window_resize(event: Event) {
 		// on COMMAND +/-
 		// and on simulator switches platform
-		const isMobile = u.device_isMobile;
+		const isMobile = c.device_isMobile;
 		s.w_count_window_resized.update(n => n + 1);		// observed by controls
-		s.w_device_isMobile.set(isMobile);
+		c.w_device_isMobile.set(isMobile);					// force reaction (unchanged)
 		layout.restore_preferences();
 	}
 
 	private handle_wheel(event: Event) {
 		u.consume_event(event);
-		if (!u.device_isMobile) {
+		if (!c.device_isMobile) {
 			const e = event as WheelEvent;
 			const userOffset = get(layout.w_user_graph_offset);
 			const delta = new Point(-e.deltaX, -e.deltaY);

@@ -25,13 +25,6 @@ export enum T_Search {
 	selected,
 }
 
-export enum T_Radial {
-	least,
-	thumb,
-	hover,
-	active,
-}
-
 export enum T_Attention {
 	none,
 	hover,
@@ -293,6 +286,7 @@ export enum T_Preference {
 	expanded_parents  = 'expanded_parents',
 	focus_forParents  = 'focus_forParents',
 	other_databases	  = 'other_databases',
+	radial_forks	  = 'radial_forks',
 	relationships	  = 'relationships',
 	detail_types	  = 'detail_types',			// vertical stack
 	show_details	  = 'show_details',			// left side

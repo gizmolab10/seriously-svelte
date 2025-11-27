@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { e, h, k, s, u, x, show, Rect, Point, debug, layout, signals, elements } from '../../ts/common/Global_Imports';
+	import { e, h, k, s, u, x, show, Rect, Point, builds, debug, layout, signals, elements } from '../../ts/common/Global_Imports';
 	import { S_Component, T_Layer, T_Graph, T_Signal, T_Startup, T_Control } from '../../ts/common/Global_Imports';
 	import Radial_Graph from '../graph/Radial_Graph.svelte';
 	import Tree_Graph from '../graph/Tree_Graph.svelte';
@@ -139,7 +139,7 @@
 				s_button={elements.s_control_forType(T_Control.builds)}
 				closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.builds)}>
 				<span style='font-family: {$w_thing_fontFamily};'>
-					{'build ' + k.build_number}
+					{'build ' + builds.build_number}
 				</span>
 			</Button>
 			<Button name={T_Control.help}

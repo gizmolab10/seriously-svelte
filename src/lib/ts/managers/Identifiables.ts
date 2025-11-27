@@ -1,4 +1,5 @@
-import { h, s, u, debug, search, layout, details, controls, databases } from '../common/Global_Imports';
+import { h, s, u, debug, search, layout } from '../common/Global_Imports';
+import { details, controls, databases } from '../common/Global_Imports';
 import { S_Items, T_Search, T_Startup } from '../common/Global_Imports';
 import { Tag, Thing, Trait, Ancestry } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
@@ -20,33 +21,29 @@ export default class Identifiables {
 	//							//
 	//	manage identifiables:	//
 	//							//
-	//	  recents, found,		//
-	//	  details, focus,		//
-	//	  expandeds, grabs,		//
+	//	  grabs					//
+	//	  focus					//
+	//	  found					//
+	//	  recents				//
+	//	  expandeds				//
 	//							//
 	//////////////////////////////
 
-	constructor() {
+	setup_subscriptions() {
+		s.w_ancestry_focus.subscribe((ancestry: Ancestry) => {
+			this.update_grabs_forSearch();
+			this.update_ancestry_forDetails();
+		});
 		databases.w_data_updated.subscribe((count: number) => {
 			this.update_grabs_forSearch();
 		});
-		s.w_ancestry_focus.subscribe((ancestry: Ancestry) => {
+		search.w_search_state.subscribe((state: number | null) => {
 			this.update_grabs_forSearch();
 		});
-		s.w_t_startup.subscribe((startup: number | null) => {
-			if (startup == T_Startup.ready) {
-				s.w_ancestry_focus.subscribe((ancestry: Ancestry) => {
-					this.update_ancestry_forDetails();
-				});
-				search.w_search_state.subscribe((state: number | null) => {
-					this.update_grabs_forSearch();
-				});
-				x.si_found.w_index.subscribe((row: number | null) => {
-					this.update_grabs_forSearch();
-				});
-				this.update_grabs_forSearch();
-			}
+		this.si_found.w_index.subscribe((row: number | null) => {
+			this.update_grabs_forSearch();
 		});
+		this.update_grabs_forSearch();
 	}
 		
 	static readonly _____ANCESTRY: unique symbol;

@@ -1,7 +1,4 @@
-import { tu } from '../utilities/Testworthy_Utilities';
 import { Size, Point } from '../types/Geometry';
-import { T_Direction } from './Enumerations';
-import { builds } from './Builds';
 
 const dot_size = 14;
 const row_height = 16;
@@ -11,22 +8,12 @@ const tiny_outer_dots_diameter = dot_size + tiny_outer_dots_expansion;
 
 export default class Constants {
 
-	constructor() {
-		const {printer_page_width, printer_dpi} = tu.printer_configuration;
-		this.printer_page_width = printer_page_width;
-		this.printer_dpi = printer_dpi;
-	}
-
-	printer_dpi = 96;
 	details_margin = 0;
 	halfIncrement = 0.5;
 	separator_title_left = 0;
-	printer_page_width = 722;
 	hid_unknown = 1000000000000;
-	build_number = builds.build_number;
 	radial_widget_inset = dot_size + 14;
 	printer_aspect_ratio = 11.69 / 8.27;
-	next_previous_titles: string[] = [T_Direction.previous, T_Direction.next];
 	prevent_selection_style = '-webkit-user-select: none; user-select: none; -moz-user-select: none';
 	nothing_to_show = 'Please select something to show here';
 	name_bulkAdmin = 'Jonathan Sand';
@@ -89,16 +76,6 @@ export default class Constants {
 		viewBox:	`0.5 2.35 ${tiny_outer_dots_diameter} ${tiny_outer_dots_diameter}`,	
 	};
 
-	id_base = {
-		airtable: 'Airtable',
-		unknown:  'Unknown',
-		firebase: 'Public',
-		bubble:	  'Bubble',
-		bulks:	  'Bulks',
-		local:	  'Local',
-		test:	  'Test',
-	};
-
 	radius = {
 		text_area_border:  7,
 		arcSlider_cap: 	   7.5,
@@ -144,8 +121,8 @@ export default class Constants {
 			selected: 1.0,
 		},
 		radial: {
-			least:    0.05,
-			thumb:	  0.0,
+			armature: 0.05,
+			thumb:	  0.1,
 			hover:	  0.7,
 			text:	  1,
 			active:	  0.3,

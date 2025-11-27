@@ -1,16 +1,27 @@
 import { Tag, Trait, Thing, Hierarchy, Predicate, Relationship, Persistable } from '../common/Global_Imports';
 import { T_Thing, T_Startup, T_Persistence, T_Persistable } from '../common/Global_Imports';
-import { c, h, k, p, s, busy, debug, features, databases } from '../common/Global_Imports';
+import { c, h, p, s, x, busy, debug, features, databases } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
 
 export enum T_Database {
+	firebase = 'firebase',
 	airtable = 'airtable',
+	unknown	 = 'unknown',
 	bubble	 = 'bubble',
 	dgraph   = 'dgraph',
-	firebase = 'firebase',
 	local	 = 'local',
 	test	 = 'test',
-	unknown	 = 'unknown',
+}
+
+export enum	DB_Name {
+	airtable = 'Airtable',
+	unknown  = 'Unknown',
+	firebase = 'Public',
+	bubble   = 'Bubble',
+	dgraph   = 'DGraph',
+	bulks    = 'Bulks',
+	local    = 'Local',
+	test     = 'Test',
 }
 
 // CRUD API --> for all databases
@@ -18,7 +29,7 @@ export enum T_Database {
 export default class DB_Common {
 	t_persistence = T_Persistence.none;
 	t_database = T_Database.unknown;
-	idBase = k.id_base.unknown;
+	idBase = DB_Name.unknown;
 	hierarchy!: Hierarchy;
 	load_time = 'busy...';
 	load_start_time = -1;
@@ -142,6 +153,7 @@ export default class DB_Common {
 			h.ancestries_assureAll_createUnique();
 			h.restore_fromPreferences();
 			s.w_t_startup.set(T_Startup.ready);		// so search will refresh its index
+			x.setup_subscriptions();
 		}
 	}
 	

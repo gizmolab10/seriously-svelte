@@ -1,8 +1,13 @@
-import { e, k, p, s, u, show, debug, search, colors, layout, features, databases } from '../common/Global_Imports';
+import { e, k, p, show, debug, search, colors, layout } from '../common/Global_Imports';
+import { T_Browser, features, databases } from '../common/Global_Imports';
+import { DB_Name } from '../database/DB_Common';
+import MobileDetect from 'mobile-detect';
+import { writable } from 'svelte/store';
 
 export class Configuration {
 
 	queryStrings = new URLSearchParams(window.location.search);
+	w_device_isMobile = writable<boolean>(false);
 	erasePreferences = 0;
 	eraseDB = 0;
 
@@ -16,16 +21,15 @@ export class Configuration {
 
 		// DO NOT CHANGE THE ORDER OF THESE CALLS
 
-		s.w_device_isMobile.set(u.device_isMobile);
 		debug.apply_queryStrings();
 		colors.restore_preferences();
 		search.setup_defaults();
-		this.apply_queryStrings();						// must call before prefs and db
+		this.apply_queryStrings();						// must call BEFORE prefs and db
 		features.apply_queryStrings();
 		layout.restore_preferences();
 		databases.apply_queryStrings();
+		show.restore_preferences();						// must call BEFORE prefs
 		p.restore_preferences();
-		show.restore_preferences();
 		show.apply_queryStrings();
 		e.setup();
 	}
@@ -41,6 +45,11 @@ export class Configuration {
 		}
     }
 
+	get device_isMobile(): boolean {
+		const md = new MobileDetect(window.navigator.userAgent);
+		return !!md.mobile();
+	}
+
 	get isServerLocal(): boolean {
 		const hostname = window.location.hostname;
 		return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0';
@@ -50,9 +59,23 @@ export class Configuration {
 		const idBase = databases.db_now.idBase;
 		const t_database = databases.db_now.t_database;
 		const host = this.isServerLocal ? 'local' : 'remote';
-		const base_name = idBase ? (idBase + ', ') : k.id_base.unknown;
-		const db_name = t_database ? (t_database + ', ') : k.id_base.unknown;
-		return `Seriously (${host}, ${db_name}${base_name}${u.browserType}, α)`;
+		const base_name = idBase ? (idBase + ', ') : DB_Name.unknown;
+		const db_name = t_database ? (t_database + ', ') : DB_Name.unknown;
+		return `Seriously (${host}, ${db_name}${base_name}${this.browserType}, α)`;
+	}
+
+	get browserType(): T_Browser {
+		const userAgent: string = navigator.userAgent;
+		switch (true) {
+			case /msie (\d+)/i.test(userAgent) ||
+				/trident\/.*; rv:(\d+)/i.test(userAgent):  return T_Browser.explorer;
+			case /(chrome|crios)\/(\d+)/i.test(userAgent): return T_Browser.chrome;
+			case /firefox\/(\d+)/i.test(userAgent):		   return T_Browser.firefox;
+			case /opr\/(\d+)/i.test(userAgent):			   return T_Browser.opera;
+			case /orion\/(\d+)/i.test(userAgent):		   return T_Browser.orion;
+			case /safari\/(\d+)/i.test(userAgent):		   return T_Browser.safari;
+			default:									   return T_Browser.unknown
+		}
 	}
 
 }

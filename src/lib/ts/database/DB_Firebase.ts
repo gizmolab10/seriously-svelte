@@ -1,5 +1,5 @@
+import { c, h, k, p, u, busy, Tag, Thing, Trait, builds, debug, layout } from '../common/Global_Imports';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
-import { c, h, k, p, u, busy, Tag, Thing, Trait, debug, layout } from '../common/Global_Imports';
 import { T_Create, T_Preference, T_Persistable, T_Persistence } from '../common/Global_Imports';
 import { onSnapshot, deleteField, getFirestore, serverTimestamp } from 'firebase/firestore';
 import { T_Thing, T_Trait, T_Debug, T_Order, T_Predicate } from '../common/Global_Imports';
@@ -8,8 +8,8 @@ import { DocumentData, DocumentChange, DocumentReference } from 'firebase/firest
 import { QuerySnapshot, CollectionReference } from 'firebase/firestore';
 import type { Dictionary, Integer } from '../types/Types';
 import Identifiable from '../runtime/Identifiable';
+import { DB_Name, T_Database } from './DB_Common';
 import { initializeApp } from 'firebase/app';
-import { T_Database } from './DB_Common';
 import DB_Common from './DB_Common';
 
 export default class DB_Firebase extends DB_Common {
@@ -28,7 +28,7 @@ export default class DB_Firebase extends DB_Common {
 	addedTrait!: Trait;
 	bulksName = 'Bulks';
 	deferSnapshots = false;
-	idBase = k.id_base.firebase;
+	idBase = DB_Name.firebase;
 	bulks: Dictionary<Bulk> = {};
 	t_database = T_Database.firebase;
 	app = initializeApp(this.config);
@@ -784,7 +784,7 @@ export default class DB_Firebase extends DB_Common {
 				const logRef = collection(this.firestore, 'access_logs');
 				const item = {
 					queries: queryStrings,
-					build: k.build_number,
+					build: builds.build_number,
 					ipAddress: ipAddress,
 					timestamp: serverTimestamp(),
 				}
@@ -816,7 +816,7 @@ export default class DB_Firebase extends DB_Common {
 }
 
 export class Bulk {
-	idBase: string = k.id_base.bulks;
+	idBase: string = DB_Name.bulks;
 	tagsCollection: CollectionReference | null = null;
 	thingsCollection: CollectionReference | null = null;
 	traitsCollection: CollectionReference | null = null;
