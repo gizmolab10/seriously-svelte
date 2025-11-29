@@ -85,7 +85,7 @@ export default class Radial_Graph {
 	get ring_zone_atMouseLocation(): T_Radial_Zone {
 		let ring_zone = T_Radial_Zone.miss;
 		const mouse_vector = layout.mouse_vector_ofOffset_fromGraphCenter();
-		const widgets = hits.hits_atPoint_ofType(mouse_vector, T_Hit_Target.widget);
+		const widgets = hits.targets_ofType_atPoint(T_Hit_Target.widget, mouse_vector);
 		if (!!mouse_vector && widgets.length == 0) {
 			const g_cluster = g_radial.g_cluster_atMouseLocation;
 			const inner = get(this.w_radial_ring_radius);

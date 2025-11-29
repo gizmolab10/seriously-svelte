@@ -1,4 +1,4 @@
-import { c, k, p, u, show, debug, g_tree, g_radial, signals, controls, features } from '../common/Global_Imports';
+import { c, k, p, u, hits, show, debug, g_tree, g_radial, signals, controls, features } from '../common/Global_Imports';
 import { G_Widget, S_Component, T_Graph, T_Preference } from '../common/Global_Imports';
 import { Rect, Size, Point, Thing, Ancestry } from '../common/Global_Imports';
 import { get, writable } from 'svelte/store';
@@ -128,6 +128,7 @@ export default class Layout {
 		this.w_user_graph_center.set(center_offset);										// w_user_graph_center: a signal change
 		this.w_user_graph_offset.set(user_offset);											// w_user_graph_offset: a signal change
 		debug.log_mouse(`USER ====> ${user_offset.verbose}  ${center_offset.verbose}`);
+		hits.recalibrate();
 		return changed;
 	}
 
@@ -192,9 +193,9 @@ export default class Layout {
 
 	static readonly _____WINDOW: unique symbol;
 	
+	get windowScroll(): Point { return new Point(window.scrollX, window.scrollY); }
 	get inner_windowSize(): Size { return new Size(window.innerWidth, window.innerHeight); }
 	get windowSize(): Size { return this.inner_windowSize.dividedEquallyBy(get(this.w_scale_factor)); }
-	get windowScroll(): Point { return new Point(window.scrollX, window.scrollY); }
 
 	static readonly _____SCALE_FACTOR: unique symbol;
 

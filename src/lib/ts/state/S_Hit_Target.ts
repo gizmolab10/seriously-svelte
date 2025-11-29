@@ -22,10 +22,10 @@ export default class S_Hit_Target {
 		this.type = type;
 	}
 
-	get isHovering(): boolean { return this.isEqualTo(get(hits.w_s_hover)); }
 	get stroke(): string { return 'red'; }				// override in subclasses
-	get svg_hover_color(): string { return this.isHovering ? colors.background : this.stroke; }
+	get isHovering(): boolean { return this.isEqualTo(get(hits.w_s_hover)); }
 	set isHovering(isHovering: boolean) { hits.w_s_hover.set(isHovering ? this : null); }
+	get svg_hover_color(): string { return this.isHovering ? colors.background : this.stroke; }
 
 	isEqualTo(other: S_Hit_Target | null): boolean { return !!other && this.id == other.id; }
 
@@ -37,9 +37,15 @@ export default class S_Hit_Target {
 
 	set_html_element(html_element: HTMLElement | null) {
 		if (!!html_element) {
-			this.rect = layout.scaled_rect_forElement(html_element);
 			this.html_element = html_element;
-			hits.update_hit(this);
+			this.update_rect();
+			hits.update_target(this);
+		}
+	}
+
+	update_rect() {
+		if (!!this.html_element) {
+			this.rect = layout.scaled_rect_forElement(this.html_element);
 		}
 	}
 

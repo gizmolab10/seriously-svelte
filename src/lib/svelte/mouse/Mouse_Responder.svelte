@@ -42,14 +42,14 @@
 	//////////////////////////////////////////////////////////////
 	
 	onDestroy(() => {
-		hits.remove_hit(s_element); // Remove from rbush
+		hits.delete_target(s_element); // Remove from rbush
 	});
 
 	onMount(() => {
 		if (!!s_element && s_element instanceof S_Element) {
 			s_element.handle_s_mouse = handle_s_mouse;
 			s_element.set_html_element(bound_element);
-			hits.update_hit(s_element);
+			hits.update_target(s_element);
 		}
 		setupStyle();
 	});

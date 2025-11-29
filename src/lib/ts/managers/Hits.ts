@@ -4,22 +4,38 @@ import { S_Hit_Target } from '../common/Global_Imports';
 import { get, writable } from 'svelte/store';
 import RBush from 'rbush';
 
-type HIT_RBRect = {
+type Target_RBRect = {
 	minX: number;
 	minY: number;
 	maxX: number;	
 	maxY: number;	
-	hit: S_Hit_Target;
+	target: S_Hit_Target;
 }
 
 export default class Hits {
 	time_ofPrior_hover: number = 0;
-	rbush = new RBush<HIT_RBRect>();
-	current_hits = new Set<S_Hit_Target>();
+	rbush = new RBush<Target_RBRect>();
 	location_ofPrior_hover: Point | null = null;
-	hits_byID: { [id: string]: S_Hit_Target } = {};
 	w_s_hover = writable<S_Hit_Target | null>(null);
 	w_dragging_active = writable<T_Drag>(T_Drag.none);
+	targets_byID: { [id: string]: S_Hit_Target } = {};
+
+	reset() {
+		this.rbush.clear();
+		this.targets_byID = {};
+		this.w_s_hover.set(null);
+		this.time_ofPrior_hover = 0;
+		this.location_ofPrior_hover = null;
+	}
+
+	recalibrate() {
+		this.rbush.clear();
+		const targets = Object.values(this.targets_byID);
+		for (const target of targets) {
+			target.update_rect();
+			this.insert_into_rbush(target);
+		}
+	}
 
 	static readonly _____HOVER: unique symbol;
 
@@ -29,81 +45,97 @@ export default class Hits {
 		const isBusy = radial.isAny_rotation_active || get(this.w_dragging_active) !== T_Drag.none;
 		const traveled_far_enough = (this.location_ofPrior_hover?.vector_to(point).magnitude ?? Infinity) >= 10;
 		if (!isBusy && waited_long_enough && traveled_far_enough) {
-			this.location_ofPrior_hover = point;
-			this.time_ofPrior_hover = now;
-			const matches = this.hits_atPoint(point);
+			const matches = this.targets_atPoint(point);
 			const target = matches.find(s => s.isADot) 
 				?? matches.find(s => s.type === T_Hit_Target.widget)
 				?? matches[0];
-			if (target) {
+			if (!target) {
+				this.w_s_hover.set(null);
+			} else {
 				target.isHovering = true;	// sets w_s_hover to target
+				this.time_ofPrior_hover = now;
+				this.location_ofPrior_hover = point;
 			}
 		}
 	}
 
 	static readonly _____HIT_TEST: unique symbol;
 
-	hits_atPoint_ofType(point: Point | null, type: T_Hit_Target): Array<S_Hit_Target> {
-		return !point ? [] : this.hits_atPoint(point).filter(hit => hit.type === type);
+	targets_ofType_atPoint(type: T_Hit_Target, point: Point | null): Array<S_Hit_Target> {
+		return !point ? [] : this.targets_atPoint(point).filter(target => target.type === type);
 	}
 
-	hits_atPoint(point: Point): Array<S_Hit_Target> {
+	targets_atPoint(point: Point): Array<S_Hit_Target> {
 		return this.rbush.search({
 			minX: point.x,
 			minY: point.y,
 			maxX: point.x,
 			maxY: point.y
-		}).map(rbRect => rbRect.hit);
+		}).map(rbRect => rbRect.target);
 	}
 
-	hits_inRect(rect: Rect): Array<S_Hit_Target> {
+	targets_inRect(rect: Rect): Array<S_Hit_Target> {
 		return this.rbush.search({
 			minX: rect.x,
 			minY: rect.y,
 			maxX: rect.right,
 			maxY: rect.bottom
-		}).map(rbRect => rbRect.hit);
+		}).map(rbRect => rbRect.target);
 	}
 
 	static readonly _____ADD_AND_REMOVE: unique symbol;
 
-	update_hit(hit: S_Hit_Target) {
-		this.remove_hit(hit);
-		this.add_hit(hit);
+	update_target(target: S_Hit_Target) {
+		this.delete_target(target);
+		this.add_target(target);
 	}
 
-	private add_hit(hit: S_Hit_Target) {
-		if (!!hit && !!hit.rect) {
-			const id = hit.id;
+	delete_target(target: S_Hit_Target) {
+		if (!!target && !!target.rect) {
+			const id = target.id;
 			if (!!id) {
-				if (this.hits_byID[id] == hit) {
+				delete this.targets_byID[id];
+			}
+			this.remove_from_rbush(target);
+		}
+	}
+
+	static readonly _____INTERNALS: unique symbol;
+
+	private add_target(target: S_Hit_Target) {
+		if (!!target && !!target.rect) {
+			const id = target.id;
+			if (!!id) {
+				if (this.targets_byID[id] == target) {
 					return;	// already added, avoid duplicates
 				}
-				this.hits_byID[id] = hit;
+				this.targets_byID[id] = target;
 			}
+			this.insert_into_rbush(target);
+		}
+	}
+
+	private insert_into_rbush(target: S_Hit_Target) {
+		if (!!target && !!target.rect) {
 			this.rbush.insert({
-				minX: hit.rect.x,
-				minY: hit.rect.y,
-				maxX: hit.rect.right,
-				maxY: hit.rect.bottom,
-				hit: hit
+				minX: target.rect.x,
+				minY: target.rect.y,
+				maxX: target.rect.right,
+				maxY: target.rect.bottom,
+				target: target
 			});
 		}
 	}
 
-	remove_hit(hit: S_Hit_Target) {
-		if (!!hit && !!hit.rect) {
-			const id = hit.id;
-			if (!!id) {
-				delete this.hits_byID[id];
-			}
+	private remove_from_rbush(target: S_Hit_Target) {
+		if (!!target && !!target.rect) {
 			this.rbush.remove({
-				minX: hit.rect.x,
-				minY: hit.rect.y,
-				maxX: hit.rect.right,
-				maxY: hit.rect.bottom,
-				hit: hit
-			}, (a, b) => a.hit === b.hit);
+				minX: target.rect.x,
+				minY: target.rect.y,
+				maxX: target.rect.right,
+				maxY: target.rect.bottom,
+				target: target
+			}, (a, b) => a.target === b.target);
 		}
 	}
 
