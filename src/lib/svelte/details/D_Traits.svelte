@@ -1,10 +1,10 @@
 <script lang='ts'>
 	import { h, k, x, Size, colors, details, elements } from '../../ts/common/Global_Imports';
-	import { T_Detail, T_Detectable } from '../../ts/common/Global_Imports';
+	import { T_Detail, T_Hit_Target } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import Text_Editor from '../text/Text_Editor.svelte';
 	const { w_item: w_trait } = x.si_thing_traits;
-	const s_button = elements.s_element_for(new Identifiable('trait'), T_Detectable.button, 'trait');
+	const s_button = elements.s_element_for(new Identifiable('trait'), T_Hit_Target.button, 'trait');
 	let text_box_size = new Size(k.width.details - 34, 68);
 	s_button.set_forHovering(colors.default, 'pointer');
 	x.update_grabs_forSearch();

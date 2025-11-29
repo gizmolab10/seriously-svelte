@@ -1,4 +1,4 @@
-import { Rect, Point, S_Detectable, T_Signal, T_Detectable } from '../common/Global_Imports';
+import { Rect, Point, S_Detectable, T_Signal, T_Hit_Target } from '../common/Global_Imports';
 import { k, u, debug, layout, signals, Ancestry } from '../common/Global_Imports';
 import { Integer, Handle_S_Mouse, Create_S_Mouse } from '../types/Types';
 import { SignalConnection_atPriority } from '../types/Types';
@@ -17,7 +17,7 @@ export default class S_Component extends S_Detectable {
 
     // hit test (detect and rubberband), logger, emitter, handler and destroyer
 
-    constructor(ancestry: Ancestry | null, type: T_Detectable) {
+    constructor(ancestry: Ancestry | null, type: T_Hit_Target) {
         super(type, ancestry as Identifiable);
         this.hid = ancestry?.hid ?? -1 as Integer;
         this.id = `${type}-${ancestry?.kind ?? 'no-predicate'}-${ancestry?.titles ?? Identifiable.newID()}`;

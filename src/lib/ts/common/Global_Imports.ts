@@ -13,7 +13,7 @@ import { T_Theme } from './Enumerations';
 import { T_Edit } from '../state/S_Title_Edit';
 import { T_Timer } from '../signals/Mouse_Timer';
 import { T_Oblong, T_Direction } from './Enumerations';
-import { T_Signal, T_Detectable } from './Enumerations';
+import { T_Signal, T_Hit_Target } from './Enumerations';
 import { T_Quadrant, T_Orientation } from '../types/Angle';
 import { T_Graph, T_Banner, T_Control } from './Enumerations';
 import { T_Persistable, T_Persistence } from './Enumerations';
@@ -23,7 +23,7 @@ import { T_Create, T_Browser, T_Alteration } from './Enumerations';
 import { T_Tree_Line, T_Order, T_Widget, T_Layer } from './Enumerations';
 import { T_Action, T_Detail, T_Request, T_Storage_Need } from './Enumerations';
 import { T_Kinship, T_Radial_Zone, T_Preference, T_Auto_Adjust } from './Enumerations';
-import { T_Dragging, T_File_Format, T_File_Operation, T_Startup } from './Enumerations';
+import { T_Drag, T_File_Format, T_File_Operation, T_Startup } from './Enumerations';
 
 import S_Alteration from '../state/S_Alteration';
 import S_Title_Edit from '../state/S_Title_Edit';
@@ -44,7 +44,7 @@ import { Direction } from '../types/Angle';
 import { signals } from '../signals/Signals';
 import { debug, Debug } from '../debug/Debug';
 import { g_tree } from '../layout/G_TreeGraph';
-import { radial } from '../state/S_RadialGraph';
+import { radial } from '../state/Radial_Graph';
 import { ErrorTrace } from '../debug/ErrorTrace';
 import { databases } from '../database/Databases';
 import { svgPaths } from '../utilities/SVG_Paths';
@@ -118,8 +118,8 @@ export {
 	T_Order, T_Kinship,
 	T_Theme, T_Graph, T_Browser, 
 	T_Search, T_Search_Preference,
-	T_Signal, T_Control, T_Detectable,
-	T_Startup, T_Dragging, T_Alteration,
+	T_Signal, T_Control, T_Hit_Target,
+	T_Startup, T_Drag, T_Alteration,
 	T_Quadrant, T_Orientation, T_Direction,
 	T_Banner, T_Detail, T_Request, T_Action,
 	T_Layer, T_Tree_Line, T_Radial_Zone, T_Oblong,

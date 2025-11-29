@@ -113,12 +113,6 @@ export enum T_Search_Preference {
 	tags  = 'tags',
 }
 
-export enum T_Dragging {
-	rubberband = 'rubberband',
-	command	   = 'command',
-	none	   = 'none',
-}
-
 export enum T_Widget {
 	radial = 'radial',
 	focus  = 'focus',
@@ -153,6 +147,13 @@ export enum T_Kinship {
 	children = 'children',
 	related  = 'related',
 	parents  = 'parents',
+}
+
+export enum T_Drag {
+	rubberband = 'rubberband',
+	and_drop   = 'and_drop',
+	graph	   = 'graph',
+	none	   = 'none',
 }
 
 export enum T_File_Format {
@@ -263,7 +264,7 @@ export enum T_Trait {
 	sum			= 'sum',
 }
 
-export enum T_Detectable {
+export enum T_Hit_Target {
 	breadcrumbs	 = 'breadcrumbs',
 	database	 = 'database',
 	details		 = 'details',

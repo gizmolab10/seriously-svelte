@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, s, u, x, Rect, Point, colors, layout, elements } from '../../ts/common/Global_Imports';
+	import { k, s, u, x, hits, Rect, Point, colors, layout, elements } from '../../ts/common/Global_Imports';
 	import { S_Mouse, S_Element, S_Component, T_Layer } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	export let s_button: S_Element = S_Element.empty();
@@ -19,9 +19,10 @@
 	export let zindex = T_Layer.dots;
 	export let style = k.empty;
 	export let name = k.empty;
+	const { w_s_hover } = hits;
 	const { w_background_color } = colors;
 	const { w_rect_ofGraphView, w_user_graph_offset } = layout;
-	const { w_s_hover, w_control_key_down, w_thing_fontFamily } = s;
+	const { w_control_key_down, w_thing_fontFamily } = s;
 	let buttonComponent: S_Component;
 	let computed_style = style;
 	let element: HTMLElement;

@@ -1,4 +1,4 @@
-import { h, k, s, u, radial, layout, Ancestry, Predicate } from '../common/Global_Imports';
+import { h, k, s, u, hits,radial, layout, Ancestry, Predicate } from '../common/Global_Imports';
 import { G_Widget, G_Cluster, G_Paging, T_Kinship } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
 import { get } from 'svelte/store';
@@ -135,9 +135,10 @@ export default class G_RadialGraph {
 	}
 
 	layout_forPaging() {
-		let remaining_toShow = Math.ceil((get(layout.w_ring_rotation_radius) ** 1.5) / k.height.row);
-		const angle_per_widget = 40 / get(layout.w_ring_rotation_radius);			// Limit show so arc spread never exceeds 180°
+		const radius = get(radial.w_radial_ring_radius);
+		const angle_per_widget = 40 / radius;			// Limit show so arc spread never exceeds 180°
 		const maximum_portion = Math.floor(Math.PI / angle_per_widget);
+		let remaining_toShow = Math.ceil(Math.pow(radius, 1.5) / k.height.row);
 		if (this.total_ancestries > remaining_toShow || this.total_ancestries > maximum_portion) {
 			let clusters = this.g_clusters_forPaging;
 			clusters.sort((a, b) => a.total_widgets - b.total_widgets);		// sort clusters by widgets count, smallest first

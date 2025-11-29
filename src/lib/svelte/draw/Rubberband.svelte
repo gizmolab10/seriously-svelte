@@ -1,13 +1,14 @@
 <script lang='ts'>
     import { k, s, u, x, hits, debug, colors, layout } from '../../ts/common/Global_Imports';
-    import { T_Layer, T_Dragging, T_Detectable } from '../../ts/common/Global_Imports';
+    import { T_Layer, T_Drag, T_Hit_Target } from '../../ts/common/Global_Imports';
     import { Rect, Size, Point, Ancestry } from '../../ts/common/Global_Imports';
     import { onMount, onDestroy } from 'svelte';
     export let strokeWidth = k.thickness.rubberband;
     export let bounds: Rect;
     const enabled = true;
+    const { w_dragging_active } = hits;
 	const { w_separator_color } = colors;
-    const { w_dragging_active, w_count_mouse_up, w_s_title_edit } = s;
+    const { w_count_mouse_up, w_s_title_edit } = s;
     const { w_mouse_location, w_scaled_movement, w_user_graph_offset } = layout;
     let mouse_upCount = $w_count_mouse_up;
     let startPoint: Point | null = null;
@@ -19,9 +20,9 @@
     let left = 0;
     let top = 0;
 
-    $w_dragging_active = T_Dragging.none;
+    $w_dragging_active = T_Drag.none;
 
-    $: if ($w_dragging_active === T_Dragging.rubberband) {
+    $: if ($w_dragging_active === T_Drag.rubberband) {
         document.body.classList.add('rubberband-blocking');     // see style:global block below
     } else {
         document.body.classList.remove('rubberband-blocking');
@@ -29,7 +30,7 @@
 
     $: if ($w_count_mouse_up !== mouse_upCount) {
         mouse_upCount = $w_count_mouse_up;
-        if ($w_dragging_active === T_Dragging.rubberband) {
+        if ($w_dragging_active === T_Drag.rubberband) {
             if (!!$w_s_title_edit) {
                 $w_s_title_edit.stop_editing();
                 $w_s_title_edit = null;
@@ -40,10 +41,10 @@
             height = 0;
             width = 0;
         }
-        $w_dragging_active = T_Dragging.none;
+        $w_dragging_active = T_Drag.none;
     }
 
-    $: if ($w_dragging_active === T_Dragging.command) {
+    $: if ($w_dragging_active === T_Drag.graph) {
         const delta = $w_scaled_movement;
         const userOffset = $w_user_graph_offset;
         if (!!userOffset && !!delta && delta.magnitude > 1) {
@@ -60,10 +61,10 @@
         z-index: ${T_Layer.rubberband};
         border-width: ${strokeWidth}px;
         border-color: ${$w_separator_color};
-        display: ${$w_dragging_active === T_Dragging.rubberband ? 'block' : 'none'};`
+        display: ${$w_dragging_active === T_Drag.rubberband ? 'block' : 'none'};`
     ;
 
-    $: if ($w_dragging_active !== T_Dragging.none && startPoint && $w_mouse_location) {
+    $: if ($w_dragging_active !== T_Drag.none && startPoint && $w_mouse_location) {
         const constrainedEnd = constrainToRect($w_mouse_location.x, $w_mouse_location.y);
         height = Math.abs(constrainedEnd.y - startPoint.y);
         width = Math.abs(constrainedEnd.x - startPoint.x);
@@ -73,7 +74,7 @@
     }
 
     function detect_and_grab() {
-        if ($w_dragging_active === T_Dragging.rubberband) {
+        if ($w_dragging_active === T_Drag.rubberband) {
             const ancestries = ancestries_intersecting_rubberband();
             if (ancestries.length != 0) {
                 x.si_grabs.items = ancestries;
@@ -87,7 +88,7 @@
 
     function ancestries_intersecting_rubberband(): Array<Ancestry> {
         const rect = new Rect( new Point(left, top), new Size(width, height));
-        const found = hits.hits_inRect_ofType(rect, T_Detectable.widget);
+        const found = hits.hits_inRect(rect).filter(hit => hit.type === T_Hit_Target.widget);
         return found.map((hit) => hit.identifiable as Ancestry);
     }
 
@@ -118,7 +119,7 @@
     function blockEvent(e: Event) {
         const target = e.target;
         // Only block events when rubberband is active and target is not an interactive element
-        if ($w_dragging_active === T_Dragging.rubberband && target instanceof HTMLElement) {
+        if ($w_dragging_active === T_Drag.rubberband && target instanceof HTMLElement) {
             if (!target.closest('.panel') && 
                 !target.closest('.rubberband') && 
                 !target.closest('.draggable') && 
@@ -131,19 +132,19 @@
     export function handleMouseDown(e: MouseEvent): void {
         startPoint = new Point(e.clientX, e.clientY);
         if (e.metaKey) {
-            $w_dragging_active = T_Dragging.command;
+            $w_dragging_active = T_Drag.graph;
         } else {
             const constrained = constrainToRect(startPoint.x, startPoint.y);
             original_grab_count = x.si_grabs.items.length;
             top = constrained.y;
             left = constrained.x;
-            $w_dragging_active = T_Dragging.rubberband;
+            $w_dragging_active = T_Drag.rubberband;
         }
     }
 
 </script>
 
-{#if enabled && $w_dragging_active === T_Dragging.rubberband}
+{#if enabled && $w_dragging_active === T_Drag.rubberband}
     <div class='rubberband' {style}/>
 {/if}
 

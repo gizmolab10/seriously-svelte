@@ -1,11 +1,10 @@
-import { T_Startup, T_Dragging, T_Auto_Adjust } from '../common/Enumerations';
+import { T_Startup, T_Auto_Adjust } from '../common/Enumerations';
 import { Hierarchy } from './Hierarchy';
 import Ancestry from '../runtime/Ancestry';
 import S_Alteration from '../state/S_Alteration';
 import S_Title_Edit from '../state/S_Title_Edit';
 import S_Detectable from '../state/S_Detectable';
 import { writable } from 'svelte/store';
-import { c } from './Configuration';
 
 export class Stores {
 
@@ -34,8 +33,6 @@ export class Stores {
 
 	w_t_startup			   = writable<T_Startup>(T_Startup.start);
 	w_auto_adjust_graph	   = writable<T_Auto_Adjust | null>();
-	w_s_hover			   = writable<S_Detectable | null>();
-	w_dragging_active	   = writable<T_Dragging>();
 	w_popupView_id		   = writable<string | null>();
 	w_control_key_down	   = writable<boolean>(false);
 	w_font_size			   = writable<number>();

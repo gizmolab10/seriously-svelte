@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { e, k, s, u, x, show, debug, colors, signals, elements, controls } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Signal, T_Detectable } from '../../ts/common/Global_Imports';
+	import { e, k, s, u, x, hits, show, debug, colors, signals, elements, controls } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Signal, T_Hit_Target } from '../../ts/common/Global_Imports';
 	import { Point, S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { svgPaths } from '../../ts/common/Global_Imports';
@@ -9,8 +9,8 @@
 	export let points_right = true;
 	export let s_drag!: S_Element;
 	const size = k.height.dot;
-	const { w_s_hover } = s;
 	const capture_size = size;
+	const { w_s_hover } = hits;
 	const { w_thing_color } = colors;
     const ancestry = s_drag.ancestry;
 	const g_widget = ancestry.g_widget;
@@ -35,7 +35,7 @@
 	update_svgPaths();
 	update_colors();
 
-	s_component = signals.handle_signals_atPriority([T_Signal.alteration], 0, ancestry, T_Detectable.drag, (t_signal, value): S_Component | null => {
+	s_component = signals.handle_signals_atPriority([T_Signal.alteration], 0, ancestry, T_Hit_Target.drag, (t_signal, value): S_Component | null => {
 		s_drag.isInverted = !!ancestry && ancestry.alteration_isAllowed;
 		update_colors();
 	});

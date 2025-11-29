@@ -1,4 +1,4 @@
-import { Ancestry, S_Element, T_Detectable } from '../common/Global_Imports';
+import { Ancestry, S_Element, T_Hit_Target } from '../common/Global_Imports';
 import { k, colors, controls, elements } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
@@ -34,10 +34,10 @@ export default class S_Widget extends S_Element {
 	get background_color(): string { return this.isFilled ? this.thing_color : (this.shows_border || this.isRadial_focus) ? get(colors.w_background_color) : 'transparent'; }
 	
 	constructor(ancestry: Ancestry) {
-		super(ancestry, T_Detectable.widget, k.empty);
-		this.s_drag = elements.s_element_for(ancestry, T_Detectable.drag, k.empty);
-		this.s_title = elements.s_element_for(ancestry, T_Detectable.title, k.empty);
-		this.s_reveal = elements.s_element_for(ancestry, T_Detectable.reveal, k.empty);
+		super(ancestry, T_Hit_Target.widget, k.empty);
+		this.s_drag = elements.s_element_for(ancestry, T_Hit_Target.drag, k.empty);
+		this.s_title = elements.s_element_for(ancestry, T_Hit_Target.title, k.empty);
+		this.s_reveal = elements.s_element_for(ancestry, T_Hit_Target.reveal, k.empty);
 	}
 
 	get update_state_didChange(): boolean {

@@ -3,8 +3,8 @@
 	import { e, k, s, u, hits, debug, layout, elements } from '../../ts/common/Global_Imports';
 	import type { Handle_Result } from '../../ts/types/Types';
 	import { onMount, onDestroy } from 'svelte';
+	export let handle_s_mouse: Handle_Result<S_Mouse> = () => false;
 	export let s_element: S_Element = S_Element.empty();
-	export let handle_s_mouse: Handle_Result<S_Mouse>;
 	export let font_size = `${k.font_size.info}px`;
 	export let origin: Point | null = null;
 	export let center: Point | null = null;

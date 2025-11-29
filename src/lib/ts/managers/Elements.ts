@@ -1,5 +1,5 @@
 import { S_Mouse, S_Widget, S_Element } from '../common/Global_Imports';
-import { T_Control, T_Detectable } from '../common/Global_Imports';
+import { T_Control, T_Hit_Target } from '../common/Global_Imports';
 import { colors, Ancestry } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
 import type { Dictionary } from '../types/Types';
@@ -27,7 +27,7 @@ export default class Elements {
 	//									//
 	//////////////////////////////////////
 
-	name_from(identifiable: Identifiable, type: T_Detectable, subtype: string): string { return `${type}(${subtype}) (id '${identifiable.id}')`; }
+	name_from(identifiable: Identifiable, type: T_Hit_Target, subtype: string): string { return `${type}(${subtype}) (id '${identifiable.id}')`; }
 
 	get next_mouse_responder_number(): number {
 		this.mouse_responder_number += 1;
@@ -44,7 +44,7 @@ export default class Elements {
 		let s_control = this.s_control_byType[t_control];
 		if (!s_control) {
 			const hover_color = t_control == T_Control.details ? 'white' : colors.default;
-			s_control = this.s_element_for(new Identifiable(t_control), T_Detectable.control, t_control);
+			s_control = this.s_element_for(new Identifiable(t_control), T_Hit_Target.control, t_control);
 			s_control.set_forHovering(hover_color, 'pointer');
 			this.s_control_byType[t_control] = s_control;
 		}
@@ -79,7 +79,7 @@ export default class Elements {
 
 	static readonly _____CREATE: unique symbol;
 
-	s_element_for(identifiable: Identifiable | null, type: T_Detectable, subtype: string): S_Element {
+	s_element_for(identifiable: Identifiable | null, type: T_Hit_Target, subtype: string): S_Element {
 		const realIdentifiable = identifiable ?? new Identifiable()
 		const name = this.name_from(realIdentifiable, type, subtype);
 		return this.assure_forKey_inDict(name, this.s_element_byName, () => new S_Element(realIdentifiable, type, subtype));

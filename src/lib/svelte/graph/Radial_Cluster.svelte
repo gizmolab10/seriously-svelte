@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, s, show, colors, radial, layout } from '../../ts/common/Global_Imports';
+	import { k, s, hits, show, colors, radial, layout } from '../../ts/common/Global_Imports';
 	import { Point, T_Layer, G_Cluster } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Angled_Text from '../text/Angled_Text.svelte';
@@ -7,12 +7,12 @@
 	export let g_cluster!: G_Cluster;
 	export let color = 'red';
 	const offset = k.radial_widget_inset;
-	const { w_background_color } = colors;
 	const { w_show_radial_forks } = show;
+	const { w_background_color } = colors;
 	const g_sliderArc = g_cluster.g_sliderArc;
 	const { w_count_mouse_up, w_thing_fontFamily } = s;
 	const s_paging_rotation = g_cluster.s_paging_rotation;
-	const { w_g_paging_cluster, w_ring_rotation_radius } = layout;
+	const { w_g_paging_cluster, w_radial_ring_radius } = radial;
 	let mouse_up_count = $w_count_mouse_up;
 	let textBackground = 'transparent';
 	let thumbFill = 'transparent';
@@ -28,11 +28,11 @@
 	//												//
 	//////////////////////////////////////////////////
 	
-	$: textBackground = $w_show_radial_forks ? radial.s_ring_rotation.isHighlighted ? $w_background_color : colors.specialBlend(color, $w_background_color, radial.s_ring_resizing.fill_opacity) : 'transparent';
-	$: $w_g_paging_cluster, thumbFill = colors.specialBlend(color, $w_background_color, radial.s_ring_rotation.isHighlighted ? k.opacity.radial.thumb : s_paging_rotation.thumb_opacity);
+	$: textBackground = $w_show_radial_forks ? radial.s_radial_ring.isHighlighted ? $w_background_color : colors.specialBlend(color, $w_background_color, radial.s_ring_resizing.fill_opacity) : 'transparent';
+	$: $w_g_paging_cluster, thumbFill = colors.specialBlend(color, $w_background_color, radial.s_radial_ring.isHighlighted ? k.opacity.radial.thumb : s_paging_rotation.thumb_opacity);
 	$: origin = layout.center_ofGraphView.offsetBy(Point.square(-radius));
 	$: viewBox=`${-offset} ${-offset} ${radius * 2} ${radius * 2}`;
-	$: radius = $w_ring_rotation_radius + offset;
+	$: radius = $w_radial_ring_radius + offset;
 
 </script>
 

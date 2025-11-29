@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { c, k, p, s, u, x, show, colors, layout, details, elements } from '../../ts/common/Global_Imports';
-	import { T_Thing, T_Layer, T_Detectable } from '../../ts/common/Global_Imports';
+	import { T_Thing, T_Layer, T_Hit_Target } from '../../ts/common/Global_Imports';
 	import { Point, Thing, Ancestry } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import type { Integer } from '../../ts/types/Types';
@@ -13,7 +13,7 @@
 	const id = 'selection details';
 	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_show_details_ofType } = show;
-	const s_info = elements.s_element_for(new Identifiable(id), T_Detectable.details, id);
+	const s_info = elements.s_element_for(new Identifiable(id), T_Hit_Target.details, id);
 	const { w_thing_title, w_ancestry_focus, w_ancestry_forDetails, w_relationship_order } = s;
 	let ancestry: Ancestry | null = $w_ancestry_forDetails;
 	let thing: Thing | null = ancestry?.thing ?? null;

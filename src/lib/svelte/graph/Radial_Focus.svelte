@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, s, u, x, debug, colors, layout, signals, elements, svgPaths } from '../../ts/common/Global_Imports';
 	import { Size, Point, S_Component } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Detectable } from '../../ts/common/Enumerations';
+	import { T_Layer, T_Hit_Target } from '../../ts/common/Enumerations';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Widget_Title from '../widget/Widget_Title.svelte';
 	import { onMount } from 'svelte';
@@ -33,7 +33,7 @@
 
 	layout_focus();
 
-	s_component = signals.handle_reposition_widgets_atPriority(2, ancestry, T_Detectable.widget, (received_ancestry) => {
+	s_component = signals.handle_reposition_widgets_atPriority(2, ancestry, T_Hit_Target.widget, (received_ancestry) => {
 		layout_focus();
 	});
 

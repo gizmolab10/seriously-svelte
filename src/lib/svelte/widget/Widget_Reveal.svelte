@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { h, k, s, u, x, show, debug, colors, signals, elements, svgPaths } from '../../ts/common/Global_Imports';
-	import { S_Mouse, S_Element, S_Component, T_Layer, T_Detectable } from '../../ts/common/Global_Imports';
+	import { h, k, s, u, x, hits, show, debug, colors, signals, elements, svgPaths } from '../../ts/common/Global_Imports';
+	import { S_Mouse, S_Element, S_Component, T_Layer, T_Hit_Target } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { Size, Point } from '../../ts/common/Global_Imports';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
@@ -8,9 +8,10 @@
     export let zindex = T_Layer.dots;
 	export let points_toChild = true;
 	export let s_reveal!: S_Element;
+	const { w_s_hover } = hits;
+	const { w_thing_title } = s;
 	const ancestry = s_reveal.ancestry;
 	const g_widget = ancestry.g_widget;
-	const { w_s_hover, w_thing_title } = s;
 	const { w_show_countDots_ofType } = show;
 	const { w_items: w_grabbed } = x.si_grabs;
 	const viewBox = k.tiny_outer_dots.viewBox;
@@ -29,7 +30,7 @@
 
 	update_colors();
 
-	s_component = signals.handle_reposition_widgets_atPriority(2, ancestry, T_Detectable.reveal, (received_ancestry) => {
+	s_component = signals.handle_reposition_widgets_atPriority(2, ancestry, T_Hit_Target.reveal, (received_ancestry) => {
 		center = g_widget.center_ofReveal;
 	});
 

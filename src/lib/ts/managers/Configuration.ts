@@ -1,4 +1,4 @@
-import { e, k, p, show, debug, search, colors, layout } from '../common/Global_Imports';
+import { e, k, p, show, debug, search, colors, layout, radial } from '../common/Global_Imports';
 import { T_Browser, features, databases } from '../common/Global_Imports';
 import { DB_Name } from '../database/DB_Common';
 import MobileDetect from 'mobile-detect';
@@ -29,6 +29,7 @@ export class Configuration {
 		layout.restore_preferences();
 		databases.apply_queryStrings();
 		show.restore_preferences();						// must call BEFORE prefs
+		radial.restore_radial_preferences();
 		p.restore_preferences();
 		show.apply_queryStrings();
 		e.setup();

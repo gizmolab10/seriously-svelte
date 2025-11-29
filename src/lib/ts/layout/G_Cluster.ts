@@ -1,4 +1,4 @@
-import { k, s, u, show, debug, colors, radial, layout, signals } from '../common/Global_Imports';
+import { k, s, u, hits, show, debug, colors, radial, layout, signals } from '../common/Global_Imports';
 import { G_Widget, G_ArcSlider, G_Paging, S_Rotation } from '../common/Global_Imports';
 import { Point, Angle, Ancestry, Predicate  } from '../common/Global_Imports';
 import { get } from 'svelte/store';
@@ -42,7 +42,7 @@ export default class G_Cluster {
 	constructor(predicate: Predicate, points_toChildren: boolean) {
 		this.points_toChildren = points_toChildren;
 		this.predicate = predicate;
-		layout.w_ring_rotation_radius.subscribe((radius: number) => {
+		radial.w_radial_ring_radius.subscribe((radius: number) => {
 			if (this.g_sliderArc.outside_arc_radius != radius) {
 				this.layout_cluster();		// do not set_paging_index (else expand will hang)
 			}
@@ -71,7 +71,7 @@ export default class G_Cluster {
 	get angle_ofCluster(): number {
 		// returns one of three angles: 1) children_angle 2) opposite+tweak 3) opposite-tweak
 		const tweak = 2 * Math.PI / 3;					// equilateral distribution
-		const children_angle = get(layout.w_ring_rotation_angle);
+		const children_angle = get(radial.w_radial_ring_angle);
 		const raw = this.predicate.isBidirectional ?
 			children_angle + tweak :
 			this.points_toChildren ? children_angle :		// one directional, use global
@@ -81,13 +81,14 @@ export default class G_Cluster {
 
 	static readonly _____OTHER: unique symbol;
 
+	get ring_radius(): number { return get(radial.w_radial_ring_radius); }
 	get titles(): string { return this.ancestries.map(a => a.title).join(', '); }
 	get description(): string { return `(${this.cluster_title}) ${this.titles}`; }
 	get kind(): string { return this.predicate?.kind.unCamelCase().lastWord() ?? k.empty; }
 	get name(): string { return `${get(s.w_ancestry_focus).title}-cluster-${this.direction_kind}`; }
 
 	get isMouse_insideThumb(): boolean {
-		const offset = Point.square(-get(layout.w_ring_rotation_radius));
+		const offset = Point.square(-this.ring_radius);
 		const mouse_vector = layout.mouse_vector_ofOffset_fromGraphCenter(offset);
 		return this.isPaging && !!mouse_vector && mouse_vector.isContainedBy_path(this.g_thumbArc.svgPathFor_arcSlider);
 	}
@@ -103,9 +104,9 @@ export default class G_Cluster {
 		const angle = this.g_sliderArc.angle_ofFork;
 		const ortho = this.arc_in_lower_half ? Angle.three_quarters : Angle.quarter;
 		const tweak = [10, 7, -17.4, -22.4][u.convert_toNumber([this.arc_in_lower_half, this.show_forks])];
-		const label_radius = get(layout.w_ring_rotation_radius) + tweak;
+		const label_radius = this.ring_radius + tweak;
 		this.label_center = this.center.offsetBy(Point.fromPolar(label_radius, angle));
-		this.g_sliderArc.label_text_angle = this.show_forks ? ortho - angle : 0; // uncomment to rotate with fork
+		this.g_sliderArc.label_text_angle = this.show_forks ? ortho - angle : Math.PI / 2; // uncomment to rotate with fork
 	}
 	
 	private update_label_forIndex() {
@@ -172,9 +173,9 @@ export default class G_Cluster {
 	static readonly _____ANGLES: unique symbol;
 	
 	private get isSingular(): boolean { return this.total_widgets == 1; }
+	private get radial_ofFork(): Point { return Point.fromPolar(this.ring_radius, this.angle_ofCluster); }
 	private get isParental(): boolean { return !this.points_toChildren && !this.predicate?.isBidirectional; }
-	private get direction_indicator(): string { return this.isParental ? '•' : this.points_toChildren ? '|||' : '='; }
-	private get radial_ofFork(): Point { return Point.fromPolar(get(layout.w_ring_rotation_radius), this.angle_ofCluster); }
+	private get direction_indicator(): string { return this.isParental ? '•' : this.points_toChildren ? '||||' : '::'; }
 	private get direction_kind(): string { return this.isParental ? this.isSingular ? 'parent' : 'parents' : this.points_toChildren ? this.isSingular ? 'child' : 'children' : this.kind; }
 
 	private update_arc_angles(index: number, max: number, child_angle: number) {
@@ -191,7 +192,7 @@ export default class G_Cluster {
 		this.g_cluster_widgets = [];
 		if (this.widgets_shown > 0 && !!this.predicate) {
 			const center = this.center.offsetByXY(0.5, -1);			// tweak so that drag dots are centered within the rotation ring
-			const radial = Point.x(get(layout.w_ring_rotation_radius) + k.radial_widget_inset);
+			const radial = Point.x(this.ring_radius + k.radial_widget_inset);
 			const radial_ofFork = this.radial_ofFork;				// points at middle widget (of cluster)
 			const fork_points_right = radial_ofFork.x > 0;
 			const fork_points_down = radial_ofFork.y < 0;
@@ -225,8 +226,8 @@ export default class G_Cluster {
 
 		const max = this.widgets_shown - 1;
 		const row = (max / 2) - index;						// row goes from minus to plus (equally divided around fork_y)
+		const radius = this.ring_radius;
 		const radial = this.radial_ofFork;					// points at cluster's middle widget
-		const radius = get(layout.w_ring_rotation_radius);
 		const row_height = k.height.dot - 3.2;
 		let y = radial.y + (row * row_height);			// distribute y equally around fork_y
 		let y_isOutside = false;

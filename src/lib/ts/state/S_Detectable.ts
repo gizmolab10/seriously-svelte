@@ -1,4 +1,4 @@
-import { k, s, hits, Rect, colors, layout, T_Detectable } from '../common/Global_Imports';
+import { k, hits, Rect, colors, layout, T_Hit_Target } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
 
@@ -11,21 +11,21 @@ export default class S_Detectable {
 	hoverColor = 'transparent';
 	rect: Rect | null = null;							// for use in Hits index
 	element_color = 'black';
-	type: T_Detectable;
+	type: T_Hit_Target;
 	isADot = false;
 	id: string;
 	
-	constructor(type: T_Detectable, identifiable: Identifiable | null) {
-		this.isADot = type === T_Detectable.drag || type === T_Detectable.reveal;
+	constructor(type: T_Hit_Target, identifiable: Identifiable | null) {
+		this.isADot = type === T_Hit_Target.drag || type === T_Hit_Target.reveal;
 		this.id = type + '-' + (identifiable?.id ?? 'unknown identifiable');
 		this.identifiable = identifiable;
 		this.type = type;
 	}
 
-	get isHovering(): boolean { return this.isEqualTo(get(s.w_s_hover)); }
+	get isHovering(): boolean { return this.isEqualTo(get(hits.w_s_hover)); }
 	get stroke(): string { return 'red'; }				// override in subclasses
 	get svg_hover_color(): string { return this.isHovering ? colors.background : this.stroke; }
-	set isHovering(isHovering: boolean) { s.w_s_hover.set(isHovering ? this : null); }
+	set isHovering(isHovering: boolean) { hits.w_s_hover.set(isHovering ? this : null); }
 
 	isEqualTo(other: S_Detectable | null): boolean { return !!other && this.id == other.id; }
 

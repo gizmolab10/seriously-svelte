@@ -1,4 +1,4 @@
-import { Ancestry, S_Component, T_Detectable } from '../common/Global_Imports';
+import { Ancestry, S_Component, T_Hit_Target } from '../common/Global_Imports';
 import type { Integer } from '../types/Types';
 
 export class Components {
@@ -33,17 +33,17 @@ export class Components {
 
 	get dummy(): S_Component {
 		if (!this._dummy) {
-			this._dummy = new S_Component(null, T_Detectable.none);
+			this._dummy = new S_Component(null, T_Hit_Target.none);
 		}
 		return this._dummy;
 	}
 
-	component_forAncestry_andType(ancestry: Ancestry | null, type: T_Detectable): S_Component | null {
+	component_forAncestry_andType(ancestry: Ancestry | null, type: T_Hit_Target): S_Component | null {
 		const dict = this.components_byHID_forType(type);
 		return dict[ancestry?.hid ?? -1 as Integer] ?? null;
 	}
 
-	component_forAncestry_andType_createUnique(ancestry: Ancestry | null, type: T_Detectable): S_Component | null {
+	component_forAncestry_andType_createUnique(ancestry: Ancestry | null, type: T_Hit_Target): S_Component | null {
 		let s_component: S_Component | null = this.component_forAncestry_andType(ancestry, type);
 		if (!s_component) {
 			s_component = new S_Component(ancestry, type);

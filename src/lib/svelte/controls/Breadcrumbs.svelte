@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { c, h, k, s, u, x, debug, search, colors, signals, elements } from '../../ts/common/Global_Imports';
-	import { Size, Point, Thing, T_Signal, T_Startup, T_Detectable } from '../../ts/common/Global_Imports';
+	import { Size, Point, Thing, T_Signal, T_Startup, T_Hit_Target } from '../../ts/common/Global_Imports';
 	import { svgPaths, Ancestry, layout, S_Component} from '../../ts/common/Global_Imports';
 	import Breadcrumb_Button from '../mouse/Breadcrumb_Button.svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
@@ -21,7 +21,7 @@
 	let reattachments = 0;
 	let trigger = 0;
 	
-	s_component = signals.handle_signals_atPriority([T_Signal.rebuild, T_Signal.reattach], 1, null, T_Detectable.breadcrumbs, (t_signal, value): S_Component | null => {
+	s_component = signals.handle_signals_atPriority([T_Signal.rebuild, T_Signal.reattach], 1, null, T_Hit_Target.breadcrumbs, (t_signal, value): S_Component | null => {
 		update();
 	});
 

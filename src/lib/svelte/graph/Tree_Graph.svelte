@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { s, g_tree, layout, signals, S_Component } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Signal, T_Detectable } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Signal, T_Hit_Target } from '../../ts/common/Global_Imports';
 	import Tree_Branches from './Tree_Branches.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import { onMount } from 'svelte';
@@ -9,7 +9,7 @@
 	let s_component: S_Component;
 	let reattachments = 0;
 
-	s_component = signals.handle_anySignal_atPriority(3, $w_ancestry_focus, T_Detectable.tree, (t_signal, value): S_Component | null => {
+	s_component = signals.handle_anySignal_atPriority(3, $w_ancestry_focus, T_Hit_Target.tree, (t_signal, value): S_Component | null => {
 		reattachments++;
 	});
 

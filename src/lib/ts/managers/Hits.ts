@@ -1,4 +1,7 @@
-import { Rect, Point, debug, S_Detectable, T_Detectable } from '../common/Global_Imports';
+import { k, Rect, Point, radial, g_radial, debug, layout } from '../common/Global_Imports';
+import { T_Drag, T_Hit_Target, T_Radial_Zone } from '../common/Global_Imports';
+import { S_Detectable } from '../common/Global_Imports';
+import { get, writable } from 'svelte/store';
 import RBush from 'rbush';
 
 type HIT_RBRect = {
@@ -13,29 +16,30 @@ export default class Hits {
 	rbush = new RBush<HIT_RBRect>();
 	current_hits = new Set<S_Detectable>();
 	hits_byID: { [id: string]: S_Detectable } = {};
+	w_s_hover = writable<S_Detectable | null>(null);
+	w_dragging_active = writable<T_Drag>(T_Drag.none);
 
-	static readonly _____HIT_TEST: unique symbol;
+	static readonly _____HOVER: unique symbol;
 
 	// adjusts isHovering for all hits,
-	// (isHovering sets s.w_s_hover to the last hit where isHovering is true
+	// (isHovering sets w_s_hover to the last hit where isHovering is true
 
-	update_hover_at(point: Point) {
-		const hits = this.hits_atPoint(point);
-		const dots = hits.filter(s => s.isADot);
-		const widgets = hits.filter(s => s.type === T_Detectable.widget);
-		// debug.log_hits(`${hits.map(hit => hit.id).join(', ')}`);
-		if (dots.length > 0) {
-			dots[0].isHovering = true;
-		} else if (widgets.length > 0) {
-			widgets[0].isHovering = true;
+	handle_hover_at(point: Point) {
+		if (!radial.isAny_rotation_active && get(this.w_dragging_active) === T_Drag.none) {
+			const hits = this.hits_atPoint(point);
+			const dots = hits.filter(s => s.isADot);
+			const widgets = hits.filter(s => s.type === T_Hit_Target.widget);
+			if (dots.length > 0) {
+				dots[0].isHovering = true;
+			} else if (widgets.length > 0) {
+				widgets[0].isHovering = true;
+			}
 		}
 	}
 
-	hits_inRect_ofType(rect: Rect, type: T_Detectable): Array<S_Detectable> {
-		return this.hits_inRect(rect).filter(hit => hit.type === type);
-	}
+	static readonly _____HIT_TEST: unique symbol;
 
-	hits_atPoint_ofType(point: Point | null, type: T_Detectable): Array<S_Detectable> {
+	hits_atPoint_ofType(point: Point | null, type: T_Hit_Target): Array<S_Detectable> {
 		return !point ? [] : this.hits_atPoint(point).filter(hit => hit.type === type);
 	}
 

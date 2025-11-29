@@ -1,22 +1,20 @@
-import { k, Rect, Point, Angle, layout, svgPaths } from '../common/Global_Imports';
+import { k, Rect, Point, Angle, radial, svgPaths } from '../common/Global_Imports';
 import { get } from 'svelte/store';
-// import * as d3 from 'd3';
-// import Two from 'two.js';
 
 // create svg paths for generic arcs
 // arc radii are smaller than ring radii
 //
 // given:
 //	start, end & fork angles
-//	w_ring_rotation_radius
+//	w_radial_ring_radius
 
 export default class G_ArcSlider {
+	label_text_angle = Math.PI / 2;
 	clusters_center = Point.zero;
 	label_center = Point.zero;
 	tip_ofFork = Point.zero;
 	outside_arc_radius = 0;
 	inside_arc_radius = 0;
-	label_text_angle = 0;
 	arc_rect = Rect.zero;
 	angle_ofCluster = 0;
 	isThumb = false;
@@ -26,7 +24,7 @@ export default class G_ArcSlider {
 	end_angle = 0;
 
 	constructor(isThumb: boolean) {
-		const radius = get(layout.w_ring_rotation_radius);
+		const radius = get(radial.w_radial_ring_radius);
 		this.clusters_center = Point.square(radius);
 		this.isThumb = isThumb;
 		if (isThumb) {
@@ -43,15 +41,14 @@ export default class G_ArcSlider {
 
 	static readonly _____PRIMITIVES: unique symbol;
 
-	get spread_angle():			number { return this.end_angle - this.start_angle; }
 	get angle_ofFork():			number { return (this.end_angle + this.start_angle) / 2 - this.offset_ofNadir; }
-	get offset_ofNadir():		number { return (this.arc_straddles_nadir && !this.arc_straddles_zero) ? Angle.half : 0; }
+	get offset_ofNadir():		number { return (this.arc_straddles_nadir && !this.arc_straddles(0)) ? Angle.half : 0; }
 	get fork_slants_forward(): boolean { return new Angle(this.angle_ofCluster).angle_slants_forward; }
 	get fork_points_right():   boolean { return new Angle(this.angle_ofCluster).angle_points_right; }
 	get fork_points_down():    boolean { return new Angle(this.angle_ofCluster).angle_points_down; }
 	get straddles_zero():	   boolean { return this.end_angle.straddles_zero(this.start_angle); }
 	get arc_straddles_nadir(): boolean { return this.arc_straddles(Angle.three_quarters); }
-	get arc_straddles_zero():  boolean { return this.arc_straddles(0); }
+	get spread_angle():			number { return this.end_angle - this.start_angle; }
 	get arc_origin():			 Point { return this.arc_rect.origin; }
 	get arc_center():			 Point { return this.arc_rect.center; }
 
@@ -130,7 +127,7 @@ export default class G_ArcSlider {
 
 	get svgPathFor_bigArc(): string {
 		const capRadius = k.thickness.radial.ring / 2;
-		const smallRadius = get(layout.w_ring_rotation_radius) + 1;
+		const smallRadius = get(radial.w_radial_ring_radius) + 1;
 		const bigRadius = smallRadius + k.thickness.radial.ring;
 		return this.svgPathFor_arcSlider_using(smallRadius, bigRadius, capRadius);
 	}

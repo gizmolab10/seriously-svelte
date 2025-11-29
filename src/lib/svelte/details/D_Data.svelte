@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { c, h, k, u, busy, show, colors, details, features, elements, databases } from '../../ts/common/Global_Imports';
 	import { T_File_Format, T_File_Operation, T_Storage_Need } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Detectable, T_Request, T_Preference } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Hit_Target, T_Request, T_Preference } from '../../ts/common/Global_Imports';
 	import { Point, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
 	import { T_Database } from '../../ts/database/DB_Common';
 	import Identifiable from '../../ts/runtime/Identifiable';
@@ -14,7 +14,7 @@
 	const { w_show_other_databases, w_show_save_data_button } = show;
     const font_sizes = [k.font_size.instructions, k.font_size.banners];
 	const ids_forDirection = [T_File_Operation.import, T_File_Operation.export];
-	const s_save = elements.s_element_for(new Identifiable('save'), T_Detectable.button, 'save');
+	const s_save = elements.s_element_for(new Identifiable('save'), T_Hit_Target.button, 'save');
 	const ids_forOutputFormat = [T_File_Format.csv, T_File_Format.json, T_File_Format.cancel];
 	const ids_forDatabase = [T_Database.local, T_Database.firebase, T_Database.test];
 	const ids_forInputFormat = [T_File_Format.csv, T_File_Format.json, T_File_Format.seriously, T_File_Format.cancel];
@@ -73,7 +73,7 @@
 	function setup_s_elements() {
 		const ids = [...ids_forDirection, ...ids_forInputFormat];
 		for (const id of ids) {
-			const s_storage = elements.s_element_for(null, T_Detectable.database, id);
+			const s_storage = elements.s_element_for(null, T_Hit_Target.database, id);
 			s_storage.set_forHovering(colors.default, 'pointer');
 			s_element_byStorageType[id] = s_storage;
 		}

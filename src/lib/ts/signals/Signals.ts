@@ -1,5 +1,5 @@
 import type { Dictionary, Signal_Signature } from '../types/Types';
-import { T_Signal, T_Detectable } from '../common/Enumerations';
+import { T_Signal, T_Hit_Target } from '../common/Enumerations';
 import { components } from '../managers/Components';
 import S_Component from '../state/S_Component';
 import Ancestry from '../runtime/Ancestry';
@@ -68,7 +68,7 @@ export class Signals {
 	// the closure is called
 	// with just the signal's type and value
 
-	handle_signals_atPriority(t_signals: Array<T_Signal>, priority: number, ancestry: Ancestry | null, type: T_Detectable, onSignal: (t_signal: T_Signal, value: any | null) => any ): S_Component | null {
+	handle_signals_atPriority(t_signals: Array<T_Signal>, priority: number, ancestry: Ancestry | null, type: T_Hit_Target, onSignal: (t_signal: T_Signal, value: any | null) => any ): S_Component | null {
 		this.adjust_highestPriority_forSignals(priority, t_signals);
 		const s_component = components.component_forAncestry_andType_createUnique(ancestry, type);	// 1) create it
 		const connection = this.signal_emitter.connect((received_t_signal, signalPriority, value) => {
@@ -86,7 +86,7 @@ export class Signals {
 		return null;
 	}
 
-	handle_anySignal_atPriority(priority: number, ancestry: Ancestry | null, type: T_Detectable, onSignal: (t_signal: T_Signal, value: any | null) => any ): S_Component | null {
+	handle_anySignal_atPriority(priority: number, ancestry: Ancestry | null, type: T_Hit_Target, onSignal: (t_signal: T_Signal, value: any | null) => any ): S_Component | null {
 		this.adjust_highestPriority_forAllSignals(priority);
 		let s_component = components.component_forAncestry_andType_createUnique(ancestry, type);		// 1) create it
 		const connection = this.signal_emitter.connect((received_t_signal, signalPriority, value) => {
@@ -102,7 +102,7 @@ export class Signals {
 		return null;
 	}
 
-	handle_reposition_widgets_atPriority(priority: number, ancestry: Ancestry | null, type: T_Detectable, onSignal: (value: any | null) => any ) {
+	handle_reposition_widgets_atPriority(priority: number, ancestry: Ancestry | null, type: T_Hit_Target, onSignal: (value: any | null) => any ) {
 		return this.handle_signals_atPriority([T_Signal.reposition], priority, ancestry, type, onSignal);
 	}
 

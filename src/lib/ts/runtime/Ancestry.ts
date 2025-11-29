@@ -1,5 +1,5 @@
 import { h, k, s, u, x, show, debug, search, layout, controls, features, svgPaths, databases, components } from '../common/Global_Imports';
-import { T_Graph, T_Create, T_Kinship, T_Predicate, T_Alteration, T_Detectable } from '../common/Global_Imports';
+import { T_Graph, T_Create, T_Kinship, T_Predicate, T_Alteration, T_Hit_Target } from '../common/Global_Imports';
 import { Rect, Size, Point, Thing, Direction, Predicate, Relationship } from '../common/Global_Imports';
 import { G_Widget, G_Paging, G_Cluster, G_TreeLine } from '../common/Global_Imports';
 import { S_Items, S_Component, S_Title_Edit } from '../common/Global_Imports';
@@ -773,7 +773,7 @@ export default class Ancestry extends Identifiable {
 	get abbreviated_title():		  string { return this.thing?.abbreviated_title ?? '?'; }
 	get rect_ofTitle():			 Rect | null { return this.rect_ofComponent(this.titleComponent); }
 	get titles():			  Array <string> { return this.ancestors?.map(a => `${!a ? 'null' : a.title}`) ?? []; }
-	get titleComponent(): S_Component | null { return components.component_forAncestry_andType_createUnique(this, T_Detectable.title); }
+	get titleComponent(): S_Component | null { return components.component_forAncestry_andType_createUnique(this, T_Hit_Target.title); }
 
 	static readonly _____PREDICATES: unique symbol;
 
