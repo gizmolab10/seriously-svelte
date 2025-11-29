@@ -1,5 +1,5 @@
+import { Rect, Point, radial, controls } from '../common/Global_Imports';
 import { T_Drag, T_Hit_Target } from '../common/Global_Imports';
-import { Rect, Point, radial } from '../common/Global_Imports';
 import { S_Hit_Target } from '../common/Global_Imports';
 import { get, writable } from 'svelte/store';
 import RBush from 'rbush';
@@ -41,20 +41,23 @@ export default class Hits {
 
 	handle_hover_at(point: Point) {
 		const now = Date.now();
-		const waited_long_enough = (now - this.time_ofPrior_hover) >= 10;
+		const waited_long_enough = (now - this.time_ofPrior_hover) >= 5;
 		const isBusy = radial.isAny_rotation_active || get(this.w_dragging_active) !== T_Drag.none;
-		const traveled_far_enough = (this.location_ofPrior_hover?.vector_to(point).magnitude ?? Infinity) >= 10;
+		const traveled_far_enough = (this.location_ofPrior_hover?.vector_to(point).magnitude ?? Infinity) >= 5;
 		if (!isBusy && waited_long_enough && traveled_far_enough) {
 			const matches = this.targets_atPoint(point);
 			const target = matches.find(s => s.isADot) 
 				?? matches.find(s => s.type === T_Hit_Target.widget)
 				?? matches[0];
-			if (!target) {
-				this.w_s_hover.set(null);
-			} else {
-				target.isHovering = true;	// sets w_s_hover to target
+			if (!!target && !target.isRadial) {
+				target.isHovering = true;	// set w_s_hover to target
 				this.time_ofPrior_hover = now;
 				this.location_ofPrior_hover = point;
+			} else {
+				this.w_s_hover.set(null);
+				if (controls.inRadialMode) {
+					radial.detect_hovering();
+				}
 			}
 		}
 	}

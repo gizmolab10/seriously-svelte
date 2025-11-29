@@ -1,9 +1,8 @@
-import { k, hits, Rect, colors, layout, T_Hit_Target } from '../common/Global_Imports';
+import { k, hits, Rect, colors, layout, Ancestry, T_Hit_Target } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
 
 export default class S_Hit_Target {
-	containing_detectable: S_Hit_Target | null = null;	// only for drag and reveal dots
 	identifiable: Identifiable | null = null;
 	html_element: HTMLElement | null = null;
 	defaultCursor = k.cursor_default;
@@ -23,9 +22,11 @@ export default class S_Hit_Target {
 	}
 
 	get stroke(): string { return 'red'; }				// override in subclasses
+	get ancestry(): Ancestry { return this.identifiable as Ancestry; }
 	get isHovering(): boolean { return this.isEqualTo(get(hits.w_s_hover)); }
 	set isHovering(isHovering: boolean) { hits.w_s_hover.set(isHovering ? this : null); }
 	get svg_hover_color(): string { return this.isHovering ? colors.background : this.stroke; }
+	get isRadial(): boolean { return [T_Hit_Target.rotation, T_Hit_Target.resizing, T_Hit_Target.paging].includes(this.type); }
 
 	isEqualTo(other: S_Hit_Target | null): boolean { return !!other && this.id == other.id; }
 

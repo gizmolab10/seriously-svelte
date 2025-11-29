@@ -28,8 +28,8 @@
 	//												//
 	//////////////////////////////////////////////////
 	
-	$: textBackground = $w_show_radial_forks ? radial.s_radial_ring.isHighlighted ? $w_background_color : colors.specialBlend(color, $w_background_color, radial.s_ring_resizing.fill_opacity) : 'transparent';
-	$: $w_g_paging_cluster, thumbFill = colors.specialBlend(color, $w_background_color, radial.s_radial_ring.isHighlighted ? k.opacity.radial.thumb : s_paging_rotation.thumb_opacity);
+	$: textBackground = $w_show_radial_forks ? radial.s_ring_rotation.isHighlighted ? $w_background_color : colors.specialBlend(color, $w_background_color, radial.s_ring_resizing.fill_opacity) : 'transparent';
+	$: $w_g_paging_cluster, thumbFill = colors.specialBlend(color, $w_background_color, radial.s_ring_rotation.isHighlighted ? k.opacity.radial.thumb : s_paging_rotation.thumb_opacity);
 	$: origin = layout.center_ofGraphView.offsetBy(Point.square(-radius));
 	$: viewBox=`${-offset} ${-offset} ${radius * 2} ${radius * 2}`;
 	$: radius = $w_radial_ring_radius + offset;

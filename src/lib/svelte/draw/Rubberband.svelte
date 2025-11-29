@@ -88,7 +88,7 @@
 
     function ancestries_intersecting_rubberband(): Array<Ancestry> {
         const rect = new Rect( new Point(left, top), new Size(width, height));
-        const found = hits.hits_inRect(rect).filter(hit => hit.type === T_Hit_Target.widget);
+        const found = hits.targets_inRect(rect).filter(hit => hit.type === T_Hit_Target.widget);
         return found.map((hit) => hit.identifiable as Ancestry);
     }
 

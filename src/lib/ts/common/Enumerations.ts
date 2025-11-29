@@ -265,20 +265,23 @@ export enum T_Trait {
 }
 
 export enum T_Hit_Target {
-	breadcrumbs	 = 'breadcrumbs',
-	database	 = 'database',
-	details		 = 'details',
-	control		 = 'control',
-	action		 = 'action',
-	button		 = 'button',
-	cancel		 = 'cancel',
-	reveal		 = 'reveal',
-	search		 = 'search',
-	widget		 = 'widget',
-	title		 = 'title',
-	drag		 = 'drag',
-	line		 = 'line',
-	none		 = 'none',
+	breadcrumbs	= 'breadcrumbs',
+	database	= 'database',
+	resizing	= 'resizing',
+	rotation	= 'rotation',
+	details		= 'details',
+	control		= 'control',
+	action		= 'action',
+	button		= 'button',
+	cancel		= 'cancel',
+	paging		= 'paging',
+	reveal		= 'reveal',
+	search		= 'search',
+	widget		= 'widget',
+	title		= 'title',
+	drag		= 'drag',
+	line		= 'line',
+	none		= 'none',
 }
 
 export enum T_Preference {

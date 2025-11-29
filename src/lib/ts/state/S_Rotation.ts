@@ -1,20 +1,28 @@
-import { k, Angle } from '../common/Global_Imports';
+import { k, s, colors, Angle, S_Hit_Target, T_Hit_Target } from '../common/Global_Imports';
+import { get } from 'svelte/store';
 
-// for rotating (arc sliders and the rotation ring)
+// for rotating (paging thumb and ring)
 
-export default class S_Rotation {
+export default class S_Rotation extends S_Hit_Target {
 	active_angle: number | null = null;		// current angle (at location of mouse MOVE)
 	basis_angle: number | null = null;		// starting angle (where mouse went DOWN)
-	isHovering = false;
+	fill_color = 'transparent';
+
+	constructor(type: T_Hit_Target = T_Hit_Target.rotation) {
+		super(type, get(s.w_ancestry_focus));
+	}
 
 	get hover_cursor():	  string { return 'alias'; }
-	get isActive():		 boolean { return !!this.basis_angle; }
-	get isHighlighted(): boolean { return (this.isHovering || this.isActive); }
+	get isDragging():	 boolean { return !!this.basis_angle; }
+	get isHighlighted(): boolean { return (this.isHovering || this.isDragging); }
 	get active_cursor():  string { return new Angle(this.active_angle!).cursor_forAngle; }
-	get fill_opacity():	  number { return this.isHovering ? k.opacity.radial.armature : k.opacity.none; }
+	get color():		  string { return this.ancestry?.thing?.color ?? colors.default_forThings; }
 	get stroke_opacity(): number { return this.isHovering ? k.opacity.radial.hover : k.opacity.none; }
-	get thumb_opacity():  number { return this.isActive ? k.opacity.radial.active : this.isHovering ? k.opacity.radial.hover : k.opacity.radial.thumb; }
-	get cursor():		  string { return this.isActive ? this.active_cursor : this.isHovering ? this.hover_cursor : k.cursor_default; }
+	get fill_opacity():	  number { return this.isHovering ? k.opacity.radial.armature : k.opacity.none; }
+	get cursor():		  string { return this.isDragging ? this.active_cursor : this.isHovering ? this.hover_cursor : k.cursor_default; }
+	get thumb_opacity():  number { return this.isDragging ? k.opacity.radial.active : this.isHovering ? k.opacity.radial.hover : k.opacity.radial.thumb; }
+	update_fill_color()			 { this.fill_color = this.isHovering ? colors.opacitize(this.color, this.fill_opacity) : 'transparent'; }
 	reset()						 { this.basis_angle = this.active_angle = null; }
+
 	
 }

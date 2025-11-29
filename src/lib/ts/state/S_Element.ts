@@ -1,5 +1,5 @@
-import { S_Widget, S_Hit_Target, T_Hit_Target, T_Control } from '../common/Global_Imports';
-import { k, s, colors, elements, Ancestry, controls } from '../common/Global_Imports';
+import { S_Hit_Target, T_Hit_Target, T_Control } from '../common/Global_Imports';
+import { k, s, colors, elements } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
 
@@ -39,7 +39,6 @@ export default class S_Element extends S_Hit_Target {
 	get stroke():			 string { return this.isDisabled ? this.disabledTextColor : this.color_isInverted ? this.color_background : this.element_color; }
 	get disabledTextColor(): string { return colors.specialBlend(this.color_background, this.defaultDisabledColor, 0.3) ?? this.defaultDisabledColor; }
 	get description():		 string { return `${this.isHovering ? 'in' : 'out '} '${this.name}'`; }
-	get ancestry():		   Ancestry { return this.identifiable as Ancestry; }
 	
 	get svg_outline_color(): string {
 		const thing_color = this.ancestry.thing?.color ?? k.empty;

@@ -1,4 +1,4 @@
-# CLAUDE.md - Webseriously Project Guide
+# Webseriously Project Guide
 
 This document provides comprehensive guidance for AI assistants working on the Webseriously project.
 
@@ -231,17 +231,6 @@ debug.log_colors(`ELEMENT ${name} inverted:${isInverted}`);
 console.log('Mouse:', s_mouse.description);
 ```
 
-### Hover System Refactoring Plan
-
-See `notes/claude/HOVER_REFACTOR_PROPOSAL.md` for full details. Incremental refactoring steps:
-
-- [x] **Step 1**: Remove unused `ignore_hover` flag from S_Element ✅
-- [ ] **Step 2**: Standardize Mouse_Responder usage (refactor Glow_Button direct handlers)
-- [ ] **Step 3**: Clarify hover inversion naming (`isInverted` → `colors_swapOnGrab`, etc.)
-- [ ] **Step 4**: Eliminate S_Mouse.isHovering duplication (use `hover_isHit` instead)
-- [ ] **Step 5**: Document and simplify fallback behavior (s_widget hover inheritance)
-- [ ] **Step 6**: Reduce delayed hover detection (remove 10ms setTimeout)
-- [ ] **Step 7**: Extract hover state machine (consolidate scattered logic)
 
 ## Key Systems
 
@@ -301,13 +290,7 @@ npm run preview
 npm run test
 ```
 
-Tests located in `src/lib/ts/tests/`:
-- `slim/`: New streamlined test suite
-  - `core/`: Core functionality tests
-  - `integration/`: Integration tests
-  - `e2e/`: End-to-end tests
-  - `migration/`: Migration phase tests
-- Legacy tests at root level
+Tests located in `src/lib/ts/tests/`
 
 **Test naming**: `*.test.ts` or `*Test.ts`
 
@@ -469,5 +452,5 @@ find src/lib/ts/tests -name "*.test.ts"
 
 ---
 
-**Last Updated**: 2025-11-14
+**Last Updated**: 2025-11-28
 **Maintained by**: AI assistants should keep this file current as architecture evolves
