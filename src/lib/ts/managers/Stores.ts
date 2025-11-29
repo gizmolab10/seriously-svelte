@@ -3,7 +3,7 @@ import { Hierarchy } from './Hierarchy';
 import Ancestry from '../runtime/Ancestry';
 import S_Alteration from '../state/S_Alteration';
 import S_Title_Edit from '../state/S_Title_Edit';
-import S_Detectable from '../state/S_Detectable';
+import S_Hit_Target from '../state/S_Hit_Target';
 import { writable } from 'svelte/store';
 
 export class Stores {

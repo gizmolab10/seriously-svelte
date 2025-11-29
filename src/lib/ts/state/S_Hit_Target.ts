@@ -2,8 +2,8 @@ import { k, hits, Rect, colors, layout, T_Hit_Target } from '../common/Global_Im
 import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
 
-export default class S_Detectable {
-	containing_detectable: S_Detectable | null = null;	// only for drag and reveal dots
+export default class S_Hit_Target {
+	containing_detectable: S_Hit_Target | null = null;	// only for drag and reveal dots
 	identifiable: Identifiable | null = null;
 	html_element: HTMLElement | null = null;
 	defaultCursor = k.cursor_default;
@@ -27,7 +27,7 @@ export default class S_Detectable {
 	get svg_hover_color(): string { return this.isHovering ? colors.background : this.stroke; }
 	set isHovering(isHovering: boolean) { hits.w_s_hover.set(isHovering ? this : null); }
 
-	isEqualTo(other: S_Detectable | null): boolean { return !!other && this.id == other.id; }
+	isEqualTo(other: S_Hit_Target | null): boolean { return !!other && this.id == other.id; }
 
 	set_forHovering(element_color: string, hoverCursor: string) {
 		this.hoverColor = colors.hover_special_blend(element_color);

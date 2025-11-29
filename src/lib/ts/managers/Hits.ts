@@ -1,6 +1,6 @@
-import { k, Rect, Point, radial, g_radial, debug, layout } from '../common/Global_Imports';
-import { T_Drag, T_Hit_Target, T_Radial_Zone } from '../common/Global_Imports';
-import { S_Detectable } from '../common/Global_Imports';
+import { T_Drag, T_Hit_Target } from '../common/Global_Imports';
+import { Rect, Point, radial } from '../common/Global_Imports';
+import { S_Hit_Target } from '../common/Global_Imports';
 import { get, writable } from 'svelte/store';
 import RBush from 'rbush';
 
@@ -9,41 +9,45 @@ type HIT_RBRect = {
 	minY: number;
 	maxX: number;	
 	maxY: number;	
-	hit: S_Detectable;
+	hit: S_Hit_Target;
 }
 
 export default class Hits {
+	time_ofPrior_hover: number = 0;
 	rbush = new RBush<HIT_RBRect>();
-	current_hits = new Set<S_Detectable>();
-	hits_byID: { [id: string]: S_Detectable } = {};
-	w_s_hover = writable<S_Detectable | null>(null);
+	current_hits = new Set<S_Hit_Target>();
+	location_ofPrior_hover: Point | null = null;
+	hits_byID: { [id: string]: S_Hit_Target } = {};
+	w_s_hover = writable<S_Hit_Target | null>(null);
 	w_dragging_active = writable<T_Drag>(T_Drag.none);
 
 	static readonly _____HOVER: unique symbol;
 
-	// adjusts isHovering for all hits,
-	// (isHovering sets w_s_hover to the last hit where isHovering is true
-
 	handle_hover_at(point: Point) {
-		if (!radial.isAny_rotation_active && get(this.w_dragging_active) === T_Drag.none) {
-			const hits = this.hits_atPoint(point);
-			const dots = hits.filter(s => s.isADot);
-			const widgets = hits.filter(s => s.type === T_Hit_Target.widget);
-			if (dots.length > 0) {
-				dots[0].isHovering = true;
-			} else if (widgets.length > 0) {
-				widgets[0].isHovering = true;
+		const now = Date.now();
+		const waited_long_enough = (now - this.time_ofPrior_hover) >= 10;
+		const isBusy = radial.isAny_rotation_active || get(this.w_dragging_active) !== T_Drag.none;
+		const traveled_far_enough = (this.location_ofPrior_hover?.vector_to(point).magnitude ?? Infinity) >= 10;
+		if (!isBusy && waited_long_enough && traveled_far_enough) {
+			this.location_ofPrior_hover = point;
+			this.time_ofPrior_hover = now;
+			const matches = this.hits_atPoint(point);
+			const target = matches.find(s => s.isADot) 
+				?? matches.find(s => s.type === T_Hit_Target.widget)
+				?? matches[0];
+			if (target) {
+				target.isHovering = true;	// sets w_s_hover to target
 			}
 		}
 	}
 
 	static readonly _____HIT_TEST: unique symbol;
 
-	hits_atPoint_ofType(point: Point | null, type: T_Hit_Target): Array<S_Detectable> {
+	hits_atPoint_ofType(point: Point | null, type: T_Hit_Target): Array<S_Hit_Target> {
 		return !point ? [] : this.hits_atPoint(point).filter(hit => hit.type === type);
 	}
 
-	hits_atPoint(point: Point): Array<S_Detectable> {
+	hits_atPoint(point: Point): Array<S_Hit_Target> {
 		return this.rbush.search({
 			minX: point.x,
 			minY: point.y,
@@ -52,7 +56,7 @@ export default class Hits {
 		}).map(rbRect => rbRect.hit);
 	}
 
-	hits_inRect(rect: Rect): Array<S_Detectable> {
+	hits_inRect(rect: Rect): Array<S_Hit_Target> {
 		return this.rbush.search({
 			minX: rect.x,
 			minY: rect.y,
@@ -63,12 +67,12 @@ export default class Hits {
 
 	static readonly _____ADD_AND_REMOVE: unique symbol;
 
-	update_hit(hit: S_Detectable) {
+	update_hit(hit: S_Hit_Target) {
 		this.remove_hit(hit);
 		this.add_hit(hit);
 	}
 
-	private add_hit(hit: S_Detectable) {
+	private add_hit(hit: S_Hit_Target) {
 		if (!!hit && !!hit.rect) {
 			const id = hit.id;
 			if (!!id) {
@@ -87,7 +91,7 @@ export default class Hits {
 		}
 	}
 
-	remove_hit(hit: S_Detectable) {
+	remove_hit(hit: S_Hit_Target) {
 		if (!!hit && !!hit.rect) {
 			const id = hit.id;
 			if (!!id) {

@@ -1,4 +1,4 @@
-import { Rect, Point, S_Detectable, T_Signal, T_Hit_Target } from '../common/Global_Imports';
+import { Rect, Point, S_Hit_Target, T_Signal, T_Hit_Target } from '../common/Global_Imports';
 import { k, u, debug, layout, signals, Ancestry } from '../common/Global_Imports';
 import { Integer, Handle_S_Mouse, Create_S_Mouse } from '../types/Types';
 import { SignalConnection_atPriority } from '../types/Types';
@@ -11,7 +11,7 @@ import { SignalConnection } from 'typed-signals';
 // unique id assignment (of html elements) for DOM lookups
 // provide Ancestry access to an associated svelte component's main element (and vice versa)
 
-export default class S_Component extends S_Detectable {
+export default class S_Component extends S_Hit_Target {
     signal_handlers: SignalConnection_atPriority[] = [];
 	hid: Integer | null = null;
 

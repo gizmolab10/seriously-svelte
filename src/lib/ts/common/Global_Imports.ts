@@ -27,7 +27,7 @@ import { T_Drag, T_File_Format, T_File_Operation, T_Startup } from './Enumeratio
 
 import S_Alteration from '../state/S_Alteration';
 import S_Title_Edit from '../state/S_Title_Edit';
-import S_Detectable from '../state/S_Detectable';
+import S_Hit_Target from '../state/S_Hit_Target';
 import S_Resizing from '../state/S_Resizing';
 import S_Rotation from '../state/S_Rotation';
 import S_Element from '../state/S_Element';
@@ -92,7 +92,7 @@ import interact from 'interactjs';
 export {	
 	S_Rotation, S_Resizing, S_Component,
 	S_Items, S_Mouse, S_Widget, S_Element,
-	S_Detectable, S_Alteration, S_Title_Edit,
+	S_Hit_Target, S_Alteration, S_Title_Edit,
 	
 	G_Widget, G_TreeLine, G_TreeBranches, G_Repeater,
 	G_Paging, G_Cluster, G_RadialGraph, G_Thing_Pages, G_ArcSlider,

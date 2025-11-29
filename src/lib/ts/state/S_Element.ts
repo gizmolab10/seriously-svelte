@@ -1,4 +1,4 @@
-import { S_Widget, S_Detectable, T_Hit_Target, T_Control } from '../common/Global_Imports';
+import { S_Widget, S_Hit_Target, T_Hit_Target, T_Control } from '../common/Global_Imports';
 import { k, s, colors, elements, Ancestry, controls } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
@@ -12,7 +12,7 @@ import { get } from 'svelte/store';
 	//										//
 	//////////////////////////////////////////
 
-export default class S_Element extends S_Detectable {
+export default class S_Element extends S_Hit_Target {
 	defaultDisabledColor = '#999999'
 	color_background = 'white';
 	isDisabled = false;
