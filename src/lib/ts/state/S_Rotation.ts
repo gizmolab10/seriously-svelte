@@ -13,7 +13,7 @@ export default class S_Rotation extends S_Hit_Target {
 	}
 
 	get hover_cursor():	  string { return 'alias'; }
-	get isDragging():	 boolean { return !!this.basis_angle; }
+	get isDragging():	 boolean { return !!this.basis_angle; }		// user has clicked and is dragging
 	get isHighlighted(): boolean { return (this.isHovering || this.isDragging); }
 	get active_cursor():  string { return new Angle(this.active_angle!).cursor_forAngle; }
 	get color():		  string { return this.ancestry?.thing?.color ?? colors.default_forThings; }
@@ -21,7 +21,7 @@ export default class S_Rotation extends S_Hit_Target {
 	get fill_opacity():	  number { return this.isHovering ? k.opacity.radial.armature : k.opacity.none; }
 	get cursor():		  string { return this.isDragging ? this.active_cursor : this.isHovering ? this.hover_cursor : k.cursor_default; }
 	get thumb_opacity():  number { return this.isDragging ? k.opacity.radial.active : this.isHovering ? k.opacity.radial.hover : k.opacity.radial.thumb; }
-	update_fill_color()			 { this.fill_color = this.isHovering ? colors.opacitize(this.color, this.fill_opacity) : 'transparent'; }
+	update_fill_color()			 { this.fill_color = this.isHighlighted ? colors.opacitize(this.color, this.fill_opacity) : 'transparent'; }
 	reset()						 { this.basis_angle = this.active_angle = null; }
 
 	

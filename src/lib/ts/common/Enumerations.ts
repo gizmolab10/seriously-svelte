@@ -150,9 +150,9 @@ export enum T_Kinship {
 }
 
 export enum T_Drag {
-	rubberband = 'rubberband',
-	and_drop   = 'and_drop',
-	graph	   = 'graph',
+	rubberband = 'rubberband',	// selecting widgets
+	widget	   = 'widget',		// drag and drop
+	graph	   = 'graph',		// repositioning the graph
 	none	   = 'none',
 }
 

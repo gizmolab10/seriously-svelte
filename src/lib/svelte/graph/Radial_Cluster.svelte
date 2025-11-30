@@ -59,19 +59,19 @@
 			viewBox={viewBox}>
             <path class='path-arc-big'
                 fill='transparent'
-                stroke-width={k.thickness.radial.fork}
 				d={g_sliderArc.svgPathFor_bigArc}
+                stroke-width={k.thickness.radial.fork}
                 stroke={colors.specialBlend('transparent', $w_background_color, k.opacity.radial.armature)}/>
             <path class='path-arc-slider'
                 fill='transparent'
-                stroke-width={k.thickness.radial.fork}
                 d={g_sliderArc.svgPathFor_arcSlider}
+                stroke-width={k.thickness.radial.fork}
                 stroke={colors.specialBlend(color, $w_background_color, k.opacity.radial.armature)}/>
 			{#if $w_show_radial_forks}
 				<path class='path-fork'
 					fill='transparent'
-					stroke-width={k.thickness.radial.fork}
 					d={g_sliderArc.svgPathFor_radialFork}
+					stroke-width={k.thickness.radial.fork}
 					stroke={colors.specialBlend(color, $w_background_color, k.opacity.radial.armature)}/>
 			{/if}
 			{#if g_cluster.isPaging && g_cluster.widgets_shown > 1}

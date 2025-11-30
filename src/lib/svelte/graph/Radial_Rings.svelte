@@ -36,7 +36,9 @@
 
 	$: {
 		if (!!$w_s_hover) {
-			update_fill_colors();
+			setTimeout(() => {
+				update_fill_colors();
+			}, 100);
 		}
 	}
 		

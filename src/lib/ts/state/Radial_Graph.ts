@@ -1,5 +1,5 @@
+import { T_Drag, T_Startup, T_Preference, T_Hit_Target, T_Radial_Zone } from '../common/Global_Imports';
 import { k, p, s, hits, debug, layout, signals, elements, g_radial } from '../common/Global_Imports';
-import { T_Radial_Zone, T_Preference, T_Startup, T_Hit_Target } from '../common/Global_Imports';
 import { G_Paging, G_Cluster, G_Thing_Pages } from '../common/Global_Imports';
 import { Angle, S_Rotation, S_Resizing } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
@@ -36,7 +36,7 @@ export default class Radial_Graph {
 	get s_paging_rotations(): Array<S_Rotation> { return Object.values(this.s_paging_rotation_byName); }
 	get isAny_paging_arc_hovering(): boolean { return this.s_paging_rotations.some(s => s.isHovering); }
 	get isAny_paging_thumb_dragging(): boolean { return this.s_paging_rotations.some(s => s.isDragging); }
-	get isAny_rotation_active(): boolean { return this.isAny_paging_thumb_dragging || this.s_paging.isDragging || this.s_ring_rotation.isDragging; }
+	get isAny_rotation_dragging(): boolean { return this.isAny_paging_thumb_dragging || this.s_paging.isDragging || this.s_ring_rotation.isDragging; }
 	s_paging_rotation_forName(name: string): S_Rotation { return elements.assure_forKey_inDict(name, this.s_paging_rotation_byName, () => new S_Rotation()); }
 	
 	g_thing_pages_forThingID(id: string | null | undefined): G_Thing_Pages | null {
@@ -79,7 +79,8 @@ export default class Radial_Graph {
 		this.s_ring_resizing.update_fill_color();
 	}
 
-	detect_hovering() {
+	detect_hovering(): boolean {
+		let detected = false;
 		const paging = this.s_paging;
 		const rotate = this.s_ring_rotation;
 		const resize = this.s_ring_resizing;
@@ -87,25 +88,25 @@ export default class Radial_Graph {
 		const isResizing = resize.isDragging;
 		const ring_zone = this.ring_zone_atMouseLocation;
 		const isPaging = this.isAny_paging_thumb_dragging;
-		if (ring_zone == T_Radial_Zone.miss) {
-			hits.w_s_hover.set(null);
-		} else {
-			const inRotate = ring_zone == T_Radial_Zone.rotate && !isResizing && !isPaging;
-			const inResize = ring_zone == T_Radial_Zone.resize && !isRotating && !isPaging;
-			const inPaging = ring_zone == T_Radial_Zone.paging && !isRotating && !isResizing;
-			if (rotate.isHovering != inRotate) {
-				rotate.isHovering  = inRotate;
-				debug.log_hits(` hover rotate  ${inRotate}`);
-			}
-			if (resize.isHovering != inResize) {
-				resize.isHovering  = inResize;
-				debug.log_hits(` hover resize  ${inResize}`);
-			}
-			if (paging.isHovering != inPaging) {
-				paging.isHovering  = inPaging;
-				debug.log_hits(` hover paging  ${inPaging}`);
-			}
+		const inRotate = ring_zone == T_Radial_Zone.rotate && !isResizing && !isPaging;
+		const inResize = ring_zone == T_Radial_Zone.resize && !isRotating && !isPaging;
+		const inPaging = ring_zone == T_Radial_Zone.paging && !isRotating && !isResizing;
+		if (rotate.isHovering != inRotate) {
+			rotate.isHovering  = inRotate;
+			debug.log_hits(` hover rotate  ${inRotate}`);
+			detected = true;
 		}
+		if (resize.isHovering != inResize) {
+			resize.isHovering  = inResize;
+			debug.log_hits(` hover resize  ${inResize}`);
+			detected = true;
+		}
+		if (paging.isHovering != inPaging) {
+			paging.isHovering  = inPaging;
+			debug.log_hits(` hover paging  ${inPaging}`);
+			detected = true;
+		}
+		return detected;
 	}
 
 	detect_ring_movement() {
@@ -121,7 +122,7 @@ export default class Radial_Graph {
 			if (is_dragging) {
 				window.getSelection()?.removeAllRanges();		// Prevent text selection during dragging
 			}
-			if (!!resize && resize.isDragging && !!resize.basis_radius) {										// resize, check this FIRST (when both states return isDragging true, rotate should be ignored)
+			if (!!resize && resize.isDragging && resize.basis_radius != null) {										// resize, check this FIRST (when both states return isDragging true, rotate should be ignored)
 				const smallest = k.radius.ring_minimum;
 				const largest = smallest * 3;
 				const magnitude = mouse_vector.magnitude - resize.basis_radius;
@@ -137,7 +138,7 @@ export default class Radial_Graph {
 					this.w_radial_ring_radius.set(radius);
 					layout.grand_layout();
 				}
-			} else if (!!rotate && rotate.isDragging && !!rotate.basis_angle) {								// rotate clusters
+			} else if (!!rotate && rotate.isDragging && rotate.basis_angle != null) {								// rotate clusters
 				if (!signals.anySignal_isInFlight && ((now - this.last_action) > 75)) {		// 1 tenth second
 					this.last_action = now;
 					this.w_radial_ring_angle.set(mouse_angle.add_angle_normalized(-rotate.basis_angle));
@@ -146,7 +147,7 @@ export default class Radial_Graph {
 					this.cursor = rotate.cursor;
 					layout.grand_layout();										// reposition necklace widgets and arc sliders
 				}
-			} else if (!!g_cluster && !!s_paging_rotation && !!s_paging_rotation.active_angle) {
+			} else if (!!g_cluster && !!s_paging_rotation && s_paging_rotation.active_angle != null) {
 				const basis_angle = s_paging_rotation.basis_angle;
 				const active_angle = s_paging_rotation.active_angle;
 				const delta_angle = (active_angle - mouse_angle).angle_normalized_aroundZero();

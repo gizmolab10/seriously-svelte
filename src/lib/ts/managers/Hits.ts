@@ -15,51 +15,72 @@ type Target_RBRect = {
 export default class Hits {
 	time_ofPrior_hover: number = 0;
 	rbush = new RBush<Target_RBRect>();
-	location_ofPrior_hover: Point | null = null;
+	w_dragging = writable<T_Drag>(T_Drag.none);
 	w_s_hover = writable<S_Hit_Target | null>(null);
-	w_dragging_active = writable<T_Drag>(T_Drag.none);
 	targets_byID: { [id: string]: S_Hit_Target } = {};
+
+	static readonly _____HOVER: unique symbol;
+
+	get isHovering(): boolean { return get(this.w_s_hover) != null; }
+	get hovering_type(): T_Hit_Target | null { return get(this.w_s_hover)?.type ?? null; }
+	get isHovering_inWidget(): boolean { return !!this.hovering_type && [T_Hit_Target.widget, T_Hit_Target.drag, T_Hit_Target.reveal].includes(this.hovering_type); }
+	get isHovering_inRing(): boolean { return !!this.hovering_type && [T_Hit_Target.rotation, T_Hit_Target.resizing, T_Hit_Target.paging].includes(this.hovering_type); }
+
+	private detect_hovering_at(point: Point): boolean {
+		const matches = this.targets_atPoint(point);
+		const target = matches.find(s => s.isADot) 
+			?? matches.find(s => s.type === T_Hit_Target.widget)
+			?? matches[0];
+		if (!!target) {
+			target.isHovering = true;		// GOAL: set w_s_hover to target
+		}
+		return !!target;
+	}
+
+	static readonly _____GENERAL: unique symbol;
+
+	handle_mouse_movement_at(point: Point) {
+		if (((Date.now() - this.time_ofPrior_hover) >= 20) && !radial.isAny_rotation_dragging) {
+			this.time_ofPrior_hover = Date.now();
+			if (get(this.w_dragging) === T_Drag.none) {
+				if (!this.detect_hovering_at(point)) {
+					this.w_s_hover.set(null);
+				}
+			}
+			if (!this.isHovering || this.isHovering_inRing) {
+				if (!radial.detect_hovering()) {
+					this.w_s_hover.set(null);
+				}
+			}
+		}
+		if (controls.inRadialMode) {
+			radial.detect_ring_movement();
+		}
+	}
 
 	reset() {
 		this.rbush.clear();
 		this.targets_byID = {};
 		this.w_s_hover.set(null);
 		this.time_ofPrior_hover = 0;
-		this.location_ofPrior_hover = null;
 	}
 
 	recalibrate() {
-		this.rbush.clear();
+		const newBush = new RBush<Target_RBRect>();
 		const targets = Object.values(this.targets_byID);
 		for (const target of targets) {
 			target.update_rect();
-			this.insert_into_rbush(target);
-		}
-	}
-
-	static readonly _____HOVER: unique symbol;
-
-	handle_hover_at(point: Point) {
-		const now = Date.now();
-		const waited_long_enough = (now - this.time_ofPrior_hover) >= 5;
-		const isBusy = radial.isAny_rotation_active || get(this.w_dragging_active) !== T_Drag.none;
-		const traveled_far_enough = (this.location_ofPrior_hover?.vector_to(point).magnitude ?? Infinity) >= 5;
-		if (!isBusy && waited_long_enough && traveled_far_enough) {
-			const matches = this.targets_atPoint(point);
-			const target = matches.find(s => s.isADot) 
-				?? matches.find(s => s.type === T_Hit_Target.widget)
-				?? matches[0];
-			if (!!target && !target.isRadial) {
-				target.isHovering = true;	// set w_s_hover to target
-				this.time_ofPrior_hover = now;
-				this.location_ofPrior_hover = point;
-			} else {
-				this.w_s_hover.set(null);
-				if (controls.inRadialMode) {
-					radial.detect_hovering();
-				}
+			if (!!target && !!target.rect) {
+				newBush.insert({
+					minX: target.rect.x,
+					minY: target.rect.y,
+					maxX: target.rect.right,
+					maxY: target.rect.bottom,
+					target: target
+				});
 			}
 		}
+		this.rbush = newBush;  // atomic swap
 	}
 
 	static readonly _____HIT_TEST: unique symbol;

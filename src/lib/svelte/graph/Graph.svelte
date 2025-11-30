@@ -9,7 +9,7 @@
 	const size_big = k.height.button + 4;
 	const { w_show_graph_ofType } = show;
 	const { w_items: w_expanded } = x.si_expanded;
-	const { w_s_hover, w_dragging_active } = hits;
+	const { w_s_hover, w_dragging } = hits;
 	const { w_radial_ring_angle, w_radial_ring_radius } = hits;
 	const { w_depth_limit, w_user_graph_offset, w_rect_ofGraphView } = layout;
 	const { w_t_startup, w_ancestry_focus, w_s_title_edit, w_thing_fontFamily } = s;
@@ -104,7 +104,7 @@
 			style={style}
 			bind:this={draggable}
 			on:mousedown={handle_mouseDown}
-			class:rubberband-active={$w_dragging_active}>
+			class:rubberband-active={$w_dragging}>
 			{#if $w_show_graph_ofType == T_Graph.radial}
 				<Radial_Graph/>
 			{:else}
