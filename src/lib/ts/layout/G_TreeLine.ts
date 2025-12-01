@@ -51,7 +51,7 @@ export default class G_TreeLine {
 	}
 		
 	private layout_svgPaths() {
-		const lineOffset = new Point(-118.5, 2.5);
+		const lineOffset = new Point(-118.5, 1.5);
 		let lineRect = this.rect.offsetBy(lineOffset).extend_widthBy(-4);
 		switch (this.t_curve) {
 			case T_Tree_Line.up:

@@ -6,7 +6,7 @@ import { get } from 'svelte/store';
 //
 // given:
 //	start, end & fork angles
-//	w_radial_ring_radius
+//	w_resize_radius
 
 export default class G_ArcSlider {
 	label_text_angle = Math.PI / 2;
@@ -24,7 +24,7 @@ export default class G_ArcSlider {
 	end_angle = 0;
 
 	constructor(isThumb: boolean) {
-		const radius = get(radial.w_radial_ring_radius);
+		const radius = get(radial.w_resize_radius);
 		this.clusters_center = Point.square(radius);
 		this.isThumb = isThumb;
 		if (isThumb) {
@@ -127,7 +127,7 @@ export default class G_ArcSlider {
 
 	get svgPathFor_bigArc(): string {
 		const capRadius = k.thickness.radial.ring / 2;
-		const smallRadius = get(radial.w_radial_ring_radius) + 1;
+		const smallRadius = get(radial.w_resize_radius) + 1;
 		const bigRadius = smallRadius + k.thickness.radial.ring;
 		return this.svgPathFor_arcSlider_using(smallRadius, bigRadius, capRadius);
 	}

@@ -135,7 +135,7 @@ export default class G_RadialGraph {
 	}
 
 	layout_forPaging() {
-		const radius = get(radial.w_radial_ring_radius);
+		const radius = get(radial.w_resize_radius);
 		const angle_per_widget = 40 / radius;			// Limit show so arc spread never exceeds 180°
 		const maximum_portion = Math.floor(Math.PI / angle_per_widget);
 		let remaining_toShow = Math.ceil(Math.pow(radius, 1.5) / k.height.row);

@@ -10,7 +10,7 @@
 	const { w_show_graph_ofType } = show;
 	const { w_items: w_expanded } = x.si_expanded;
 	const { w_s_hover, w_dragging } = hits;
-	const { w_radial_ring_angle, w_radial_ring_radius } = hits;
+	const { w_rotate_angle, w_resize_radius } = hits;
 	const { w_depth_limit, w_user_graph_offset, w_rect_ofGraphView } = layout;
 	const { w_t_startup, w_ancestry_focus, w_s_title_edit, w_thing_fontFamily } = s;
 	let actual_content_rect = layout.user_offset_toGraphDrawing;
@@ -57,8 +57,8 @@
 		const _ = `${$w_user_graph_offset.description}
 		:::${$w_rect_ofGraphView.description}
 		:::${$w_s_title_edit?.t_edit}
-		:::${$w_radial_ring_radius}
-		:::${$w_radial_ring_angle}
+		:::${$w_resize_radius}
+		:::${$w_rotate_angle}
 		:::${$w_depth_limit}`;
 		actual_content_rect = layout.user_offset_toGraphDrawing;
 	}

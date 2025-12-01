@@ -6,8 +6,6 @@ import G_TreeLine from '../layout/G_TreeLine';
 import G_Cluster from '../layout/G_Cluster';
 import G_Widget from '../layout/G_Widget';
 
-import { G_Paging, G_Thing_Pages } from '../layout/G_Paging';
-
 import { T_Debug } from '../debug/Debug';
 import { T_Theme } from './Enumerations';
 import { T_Edit } from '../state/S_Title_Edit';
@@ -38,13 +36,13 @@ import S_Items from '../state/S_Items';
 import { builds } from './Builds';
 import { busy } from '../state/S_Busy';
 import { files } from '../files/Files';
-import { layout } from '../layout/Layout';
 import { print } from '../utilities/Print';
 import { Direction } from '../types/Angle';
+import { layout } from '../managers/Layout';
+import { radial } from '../managers/Radial';
 import { signals } from '../signals/Signals';
 import { debug, Debug } from '../debug/Debug';
 import { g_tree } from '../layout/G_TreeGraph';
-import { radial } from '../state/Radial_Graph';
 import { ErrorTrace } from '../debug/ErrorTrace';
 import { databases } from '../database/Databases';
 import { svgPaths } from '../utilities/SVG_Paths';
@@ -79,9 +77,9 @@ import Angle from '../types/Angle';
 import './Extensions';
 import { k } from './Constants';
 import { e } from '../signals/Events';
+import { x } from '../state/UX_State';
 import { s } from '../managers/Stores';
 import { h } from '../managers/Hierarchy';
-import { x } from '../managers/Identifiables';
 import { u } from '../utilities/Utilities';
 import { p } from '../managers/Preferences';
 import { c } from '../managers/Configuration';
@@ -94,8 +92,8 @@ export {
 	S_Items, S_Mouse, S_Widget, S_Element,
 	S_Hit_Target, S_Alteration, S_Title_Edit,
 	
+	G_Cluster, G_RadialGraph, G_ArcSlider,
 	G_Widget, G_TreeLine, G_TreeBranches, G_Repeater,
-	G_Paging, G_Cluster, G_RadialGraph, G_Thing_Pages, G_ArcSlider,
 
 	g_tree, g_radial,
 	e, c, h, k, p, s, u, x,

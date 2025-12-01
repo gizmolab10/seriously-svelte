@@ -10,7 +10,7 @@
 	const { w_thing_color } = colors;
 	const ring_width = k.thickness.radial.ring;
 	const { w_count_mouse_up, w_s_title_edit, w_ancestry_focus } = s;
-	const { w_g_paging_cluster, w_radial_ring_angle, w_radial_ring_radius } = radial;
+	const { w_g_cluster, w_rotate_angle, w_resize_radius } = radial;
 	let color = $w_ancestry_focus?.thing?.color ?? colors.default_forThings;
 	let mouse_up_count = $w_count_mouse_up;
 	let resize_fill = 'transparent';
@@ -18,13 +18,13 @@
 	let s_component: S_Component;
 	let reattachments = 0;
 
-	$: middle_radius   = $w_radial_ring_radius + k.thickness.radial.ring;
+	$: middle_radius   = $w_resize_radius + k.thickness.radial.ring;
 	$: outer_radius	   = middle_radius + ring_width;
 	$: outer_diameter  = outer_radius * 2;
 	$: viewBox		   = `${-ring_width}, ${-ring_width}, ${outer_diameter}, ${outer_diameter}`;
 	$: reticle_svgPath = debug.reticle ? svgPaths.t_cross(outer_diameter, -2) : '';
-	$: resize_svgPath  = svgPaths.circle(Point.square($w_radial_ring_radius).offsetEquallyBy(44), $w_radial_ring_radius - 0.3, true);
-	$: rotate_svgPath  = svgPaths.annulus(Point.square($w_radial_ring_radius), middle_radius, ring_width, Point.square(ring_width));
+	$: resize_svgPath  = svgPaths.circle(Point.square($w_resize_radius).offsetEquallyBy(44), $w_resize_radius - 0.3, true);
+	$: rotate_svgPath  = svgPaths.annulus(Point.square($w_resize_radius), middle_radius, ring_width, Point.square(ring_width));
 
 	s_component = signals.handle_reposition_widgets_atPriority(2, null, T_Hit_Target.rings, (received_ancestry) => {
 		reattachments += 1;
@@ -57,8 +57,8 @@
 	}
 
 	function update_fill_colors() {
-		resize_fill	= radial.s_ring_resizing.fill_color;
-		rotate_fill	= radial.s_ring_rotation.fill_color;
+		resize_fill	= radial.s_resizing.fill_color;
+		rotate_fill	= radial.s_rotation.fill_color;
 	}
 
 	function s_reset() {
@@ -77,31 +77,31 @@
 			s_reset();
 		} else if (s_mouse.isDown) {
 			const angle_ofMouseDown = layout.mouse_angle_fromGraphCenter;
-			const angle_ofRotation = angle_ofMouseDown.add_angle_normalized(-$w_radial_ring_angle);
+			const angle_ofRotation = angle_ofMouseDown.add_angle_normalized(-$w_rotate_angle);
 			const zone = radial.ring_zone_atMouseLocation;
 			$w_s_title_edit?.stop_editing();
 			$w_s_title_edit = null;		// so widget will react
 			switch (zone) {
 				case T_Radial_Zone.rotate:
 					debug.log_radial(` begin rotate  ${angle_ofRotation.asDegrees()}`);
-					radial.s_ring_rotation.active_angle = angle_ofMouseDown;
-					radial.s_ring_rotation.basis_angle = angle_ofRotation;
+					radial.s_rotation.active_angle = angle_ofMouseDown;
+					radial.s_rotation.basis_angle = angle_ofRotation;
 					break;
 				case T_Radial_Zone.resize:
-					const change_ofRadius = layout.mouse_distance_fromGraphCenter - $w_radial_ring_radius;
+					const change_ofRadius = layout.mouse_distance_fromGraphCenter - $w_resize_radius;
 					debug.log_radial(` begin resize  ${change_ofRadius.asInt()}`);
-					radial.s_ring_rotation.active_angle = angle_ofMouseDown + Angle.quarter;	// needed for cursor
-					radial.s_ring_rotation.basis_angle = angle_ofRotation + Angle.quarter;		// "
-					radial.s_ring_resizing.basis_radius = change_ofRadius;
+					radial.s_rotation.active_angle = angle_ofMouseDown + Angle.quarter;	// needed for cursor
+					radial.s_rotation.basis_angle = angle_ofRotation + Angle.quarter;		// "
+					radial.s_resizing.basis_radius = change_ofRadius;
 					break;
 				case T_Radial_Zone.paging: 
 					const angle_ofPage = angle_ofMouseDown.angle_normalized();
 					const g_cluster = g_radial.g_cluster_atMouseLocation;
 					if (!!g_cluster) {
 						debug.log_radial(` begin paging  ${angle_ofPage.asDegrees()}`);
-						g_cluster.s_paging_rotation.active_angle = angle_ofPage;
-						g_cluster.s_paging_rotation.basis_angle = angle_ofPage;
-						$w_g_paging_cluster = g_cluster;
+						g_cluster.s_paging.active_angle = angle_ofPage;
+						g_cluster.s_paging.basis_angle = angle_ofPage;
+						$w_g_cluster = g_cluster;
 					}
 					break;
 			}

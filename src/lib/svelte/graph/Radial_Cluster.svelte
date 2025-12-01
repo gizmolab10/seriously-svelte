@@ -9,10 +9,10 @@
 	const offset = k.radial_widget_inset;
 	const { w_show_radial_forks } = show;
 	const { w_background_color } = colors;
-	const g_sliderArc = g_cluster.g_sliderArc;
+	const g_arcSlider = g_cluster.g_arcSlider;
 	const { w_count_mouse_up, w_thing_fontFamily } = s;
-	const s_paging_rotation = g_cluster.s_paging_rotation;
-	const { w_g_paging_cluster, w_radial_ring_radius } = radial;
+	const s_paging = g_cluster.s_paging;
+	const { w_g_cluster, w_resize_radius } = radial;
 	let mouse_up_count = $w_count_mouse_up;
 	let textBackground = 'transparent';
 	let thumbFill = 'transparent';
@@ -24,15 +24,15 @@
 	//	radial graph => radial rings => this		//
 	//	ignores signals: {rebuild, recreate}		//
 	//	uses g_cluster => {geometry, text} &		//
-	//	  {g_sliderArc, g_thumbArc} => svg paths	//
+	//	  {g_arcSlider, g_thumbArc} => svg paths	//
 	//												//
 	//////////////////////////////////////////////////
 	
-	$: textBackground = $w_show_radial_forks ? radial.s_ring_rotation.isHighlighted ? $w_background_color : colors.specialBlend(color, $w_background_color, radial.s_ring_resizing.fill_opacity) : 'transparent';
-	$: $w_g_paging_cluster, thumbFill = colors.specialBlend(color, $w_background_color, radial.s_ring_rotation.isHighlighted ? k.opacity.radial.thumb : s_paging_rotation.thumb_opacity);
+	$: textBackground = $w_show_radial_forks ? radial.s_rotation.isHighlighted ? $w_background_color : colors.specialBlend(color, $w_background_color, radial.s_resizing.fill_opacity) : 'transparent';
+	$: $w_g_cluster, thumbFill = colors.specialBlend(color, $w_background_color, radial.s_rotation.isHighlighted ? k.opacity.radial.thumb : s_paging.thumb_opacity);
 	$: origin = layout.center_ofGraphView.offsetBy(Point.square(-radius));
 	$: viewBox=`${-offset} ${-offset} ${radius * 2} ${radius * 2}`;
-	$: radius = $w_radial_ring_radius + offset;
+	$: radius = $w_resize_radius + offset;
 
 </script>
 
@@ -40,8 +40,8 @@
 	<Gull_Wings
 		zindex={T_Layer.paging}
 		radius={k.thickness.radial.fork * 3}
-		center={g_sliderArc.tip_ofFork}
-		direction={g_sliderArc.angle_ofFork}
+		center={g_arcSlider.tip_ofFork}
+		direction={g_arcSlider.angle_ofFork}
 		color={colors.specialBlend(color, $w_background_color, k.opacity.radial.armature)}/>
 {/if}
 <div class='radial-cluster'
@@ -59,18 +59,18 @@
 			viewBox={viewBox}>
             <path class='path-arc-big'
                 fill='transparent'
-				d={g_sliderArc.svgPathFor_bigArc}
+				d={g_arcSlider.svgPathFor_bigArc}
                 stroke-width={k.thickness.radial.fork}
                 stroke={colors.specialBlend('transparent', $w_background_color, k.opacity.radial.armature)}/>
             <path class='path-arc-slider'
                 fill='transparent'
-                d={g_sliderArc.svgPathFor_arcSlider}
+                d={g_arcSlider.svgPathFor_arcSlider}
                 stroke-width={k.thickness.radial.fork}
                 stroke={colors.specialBlend(color, $w_background_color, k.opacity.radial.armature)}/>
 			{#if $w_show_radial_forks}
 				<path class='path-fork'
 					fill='transparent'
-					d={g_sliderArc.svgPathFor_radialFork}
+					d={g_arcSlider.svgPathFor_radialFork}
 					stroke-width={k.thickness.radial.fork}
 					stroke={colors.specialBlend(color, $w_background_color, k.opacity.radial.armature)}/>
 			{/if}
@@ -89,6 +89,6 @@
     center={g_cluster.label_center}
     font_family={$w_thing_fontFamily}
     background_color={textBackground}
-    angle={g_sliderArc.label_text_angle}
+    angle={g_arcSlider.label_text_angle}
     font_size={k.font_size.arc_slider}px
     color={colors.specialBlend(color, $w_background_color, k.opacity.radial.text)}/>

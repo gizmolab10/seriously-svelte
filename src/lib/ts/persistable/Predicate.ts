@@ -44,7 +44,7 @@ export default class Predicate extends Persistable {
 	angle_ofCluster_when(points_toChildren: boolean): number {
 		// returns one of three angles: 1) children_angle 2) opposite+tweak 3) opposite-tweak
 		const tweak = 2 * Math.PI / 3;					// equilateral distribution
-		const children_angle = get(radial.w_radial_ring_angle);
+		const children_angle = get(radial.w_rotate_angle);
 		const raw = this.isBidirectional ?
 			children_angle + tweak :
 			points_toChildren ? children_angle :		// one directional, use global
