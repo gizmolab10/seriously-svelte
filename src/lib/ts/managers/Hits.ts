@@ -13,6 +13,7 @@ type Target_RBRect = {
 }
 
 export default class Hits {
+	time_ofPrior_drag: number = 0;
 	time_ofPrior_hover: number = 0;
 	rbush = new RBush<Target_RBRect>();
 	w_dragging = writable<T_Drag>(T_Drag.none);
@@ -40,8 +41,9 @@ export default class Hits {
 	static readonly _____GENERAL: unique symbol;
 
 	handle_mouse_movement_at(point: Point) {
-		if (((Date.now() - this.time_ofPrior_hover) >= 20) && !radial.isDragging) {
-			this.time_ofPrior_hover = Date.now();
+		const now = Date.now();
+		if (!radial.isDragging && ((now - this.time_ofPrior_hover) >= 20)) {
+			this.time_ofPrior_hover = now;
 			if (get(this.w_dragging) === T_Drag.none) {
 				if (!this.detect_hovering_at(point)) {
 					this.w_s_hover.set(null);
@@ -53,7 +55,8 @@ export default class Hits {
 				}
 			}
 		}
-		if (controls.inRadialMode) {
+		if (controls.inRadialMode && ((now - this.time_ofPrior_drag) >= 40)) {
+			this.time_ofPrior_drag = now;
 			radial.handle_mouse_drag();
 		}
 	}

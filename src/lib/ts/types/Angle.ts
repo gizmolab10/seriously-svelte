@@ -47,6 +47,14 @@ export default class Angle {
 		}
 	}
 
+	get angle_points_up(): boolean {
+		switch(this.quadrant_ofAngle) {
+			case T_Quadrant.upperLeft: return true;
+			case T_Quadrant.upperRight: return true;
+			default: return false;
+		}
+	}
+
 	get orientation_ofAngle(): T_Orientation {
 		let quadrant = this.quadrant_ofAngle;
 		// isFirstEighth first of two half quadrants, counting counter-clockwise

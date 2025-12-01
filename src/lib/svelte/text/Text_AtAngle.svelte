@@ -10,8 +10,8 @@
 	export let angle = 0;
 	const { w_thing_fontFamily, w_background_color } = s;
 	
-	// Calculate degrees from radians for CSS rotation
-	$: angleDeg = angle * 180 / Math.PI;
+	$: angleDeg = angle * 180 / Math.PI;	// Calculate degrees from radians for CSS rotation
+
 </script>
 
 <div class='angled-text'

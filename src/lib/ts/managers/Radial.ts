@@ -177,8 +177,8 @@ export default class Radial {
 			if (!!distance) {
 				if (distance < inner) {
 					ring_zone = T_Radial_Zone.resize;
-				} else if (distance < thumb && !!g_cluster && g_cluster.isMouse_insideThumb) {
-					ring_zone = T_Radial_Zone.paging;
+				// } else if (distance < thumb && !!g_cluster && g_cluster.isMouse_insideThumb) {
+				// 	ring_zone = T_Radial_Zone.paging;
 				} else if (distance <= outer) {
 					ring_zone = T_Radial_Zone.rotate;
 				}

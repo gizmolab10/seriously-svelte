@@ -1,6 +1,6 @@
 import { k, s, u, show, debug, colors, radial, layout, signals } from '../common/Global_Imports';
+import { G_Widget, G_ArcSlider, S_Rotation, T_Predicate } from '../common/Global_Imports';
 import { Point, Angle, Ancestry, Predicate } from '../common/Global_Imports';
-import { G_Widget, G_ArcSlider, S_Rotation } from '../common/Global_Imports';
 import { G_Paging } from './G_Paging';
 import { get } from 'svelte/store';
 
@@ -107,7 +107,7 @@ export default class G_Cluster {
 		const tweak = [10, 7, -17.4, -22.4][u.convert_toNumber([this.arc_in_lower_half, this.show_forks])];
 		const label_radius = this.ring_radius + tweak;
 		this.label_center = this.center.offsetBy(Point.fromPolar(label_radius, angle));
-		this.g_arcSlider.label_text_angle = this.show_forks ? ortho - angle : Math.PI / 2; // uncomment to rotate with fork
+		this.g_arcSlider.label_text_angle = this.show_forks ? ortho - angle : Math.PI / 2;
 	}
 	
 	private update_label_forIndex() {
@@ -115,9 +115,9 @@ export default class G_Cluster {
 		if (this.isPaging) {
 			const index = this.paging_index_ofFocus;
 			const middle = (this.widgets_shown < 2) ? k.empty : `-${index + this.widgets_shown}`;
-			title += ` (${index + 1}${middle})`
+			title = `${this.direction_kind} (${index + 1}${middle} of ${this.total_widgets})`
 		}
-		this.cluster_title = this.show_forks ? title : this.direction_indicator;
+		this.cluster_title = title;
 	}
 	
 	static readonly _____PAGING: unique symbol;
@@ -193,7 +193,9 @@ export default class G_Cluster {
 		this.g_cluster_widgets = [];
 		if (this.widgets_shown > 0 && !!this.predicate) {
 			const center = this.center.offsetByXY(0.5, -1);			// tweak so that drag dots are centered within the rotation ring
-			const radial = Point.x(this.ring_radius + k.radial_widget_inset);
+			const factor = this.predicate.kind == T_Predicate.contains ? this.points_toChildren ? 0 : 1 : 2;
+			const inset = (factor + 3) * k.thickness.radial.ring / 6;
+			const radial = Point.x(this.ring_radius + inset);
 			const radial_ofFork = this.radial_ofFork;				// points at middle widget (of cluster)
 			const fork_points_right = radial_ofFork.x > 0;
 			const fork_points_down = radial_ofFork.y < 0;
