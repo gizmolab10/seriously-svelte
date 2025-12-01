@@ -6,14 +6,13 @@
 	import Gull_Wings from '../draw/Gull_Wings.svelte';
 	export let g_cluster!: G_Cluster;
 	export let color = 'red';
+	const { w_thing_fontFamily } = s;
+	const s_paging = g_cluster.s_paging;
 	const offset = k.radial_widget_inset;
 	const { w_show_radial_forks } = show;
 	const { w_background_color } = colors;
 	const g_arcSlider = g_cluster.g_arcSlider;
-	const { w_count_mouse_up, w_thing_fontFamily } = s;
-	const s_paging = g_cluster.s_paging;
 	const { w_g_cluster, w_resize_radius } = radial;
-	let mouse_up_count = $w_count_mouse_up;
 	let textBackground = 'transparent';
 	let thumbFill = 'transparent';
 

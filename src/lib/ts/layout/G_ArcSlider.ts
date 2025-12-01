@@ -66,16 +66,34 @@ export default class G_ArcSlider {
 		return Rect.createExtentRect(origin, extent);
 	}
 
-	arc_straddles(angle: number): boolean { return (this.start_angle.angle_normalized() > angle && this.end_angle.angle_normalized() < angle); }
+	radial_forAngle(angle: number): Point {
+		const middle_radius = this.inside_arc_radius + this.cap_radius;
+		return Point.fromPolar(middle_radius, angle);
+	}
+
+	arc_straddles(angle: number): boolean {
+		return (this.start_angle.angle_normalized() > angle && this.end_angle.angle_normalized() < angle);
+	}
+
+	arc_contains_point(point: Point | null): boolean {
+		if (!point) return false;
+		const center = this.clusters_center;
+		const angle = Math.atan2(point.y - center.y, point.x - center.x);
+		const radius = center.vector_to(point).magnitude;
+		
+		const within_angle = this.arc_straddles(angle);
+		const within_radius = 
+			radius >= this.inside_arc_radius && 
+			radius <= this.outside_arc_radius;
+		
+		return within_angle && within_radius;
+	}
+
+	static readonly _____LAYOUT: unique symbol;
 
 	layout_forkTip(center: Point) {
 		const radial = Point.fromPolar(this.inside_arc_radius, this.angle_ofFork);
 		this.tip_ofFork = center.offsetBy(radial);
-	}
-
-	radial_forAngle(angle: number): Point {
-		const middle_radius = this.inside_arc_radius + this.cap_radius;
-		return Point.fromPolar(middle_radius, angle);
 	}
 
 	layout_fork(angle_ofCluster: number) {

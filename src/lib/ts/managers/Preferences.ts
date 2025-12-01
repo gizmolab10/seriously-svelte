@@ -7,8 +7,7 @@ export class Preferences {
 	get focus_key(): string { return get(layout.w_branches_areChildren) ? T_Preference.focus_forChildren : T_Preference.focus_forParents; }
 	get expanded_key(): string { return get(layout.w_branches_areChildren) ? T_Preference.expanded_children : T_Preference.expanded_parents; }
 
-	apply_queryStrings() {
-		const queryStrings = c.queryStrings;
+	apply_queryStrings(queryStrings: URLSearchParams) {
 		const levels = queryStrings.get('levels');
 		if (!!levels) {
 			layout.w_depth_limit.set(Number(levels));

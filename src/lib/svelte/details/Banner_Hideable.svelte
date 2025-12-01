@@ -4,7 +4,7 @@
     export let t_detail: T_Detail;
 	const { w_ancestry_forDetails } = s;
 	const { w_show_details_ofType } = show;
-	const s_banner_hideable = details.s_banner_hideables_byType[t_detail];
+	const s_banner_hideable = details.s_banner_hideables_dict_byType[t_detail];
 	const { w_description: w_description, w_extra_titles: w_extra_titles } = s_banner_hideable?.si_items;
 	let title = details.banner_title_forDetail(t_detail);
 	let titles = [title, ...$w_extra_titles];

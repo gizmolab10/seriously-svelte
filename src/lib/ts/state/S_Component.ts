@@ -26,10 +26,8 @@ export default class S_Component extends S_Hit_Target {
 
     get description(): string { return this.type; }
     get distance_toGraphCenter(): Point { return this.rect?.center ?? Point.zero; }
-    get ancestry(): Ancestry | null { return this.identifiable as Ancestry | null; }
     
 	intersects_rect(rect: Rect | null): boolean { return !!rect && !!this.rect && this.rect.intersects(rect); }
-	contains_point(point: Point | null): boolean { return !!point && !!this.rect && this.rect.contains(point); }
 
     static readonly _____SIGNALS: unique symbol;
 

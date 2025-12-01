@@ -21,22 +21,22 @@ export class Configuration {
 
 		// DO NOT CHANGE THE ORDER OF THESE CALLS
 
-		debug.apply_queryStrings();
+		const q = this.queryStrings;
+		debug.apply_queryStrings(q);
 		colors.restore_preferences();
 		search.setup_defaults();
-		this.apply_queryStrings();						// must call BEFORE prefs and db
-		features.apply_queryStrings();
+		this.apply_queryStrings(q);						// must call BEFORE prefs and db
+		features.apply_queryStrings(q);
 		layout.restore_preferences();
-		databases.apply_queryStrings();
+		databases.apply_queryStrings(q);
 		show.restore_preferences();						// must call BEFORE prefs
 		radial.restore_radial_preferences();
 		p.restore_preferences();
-		show.apply_queryStrings();
+		show.apply_queryStrings(q);
 		e.setup();
 	}
 
-	apply_queryStrings() {
-		const queryStrings	 = this.queryStrings;
+	apply_queryStrings(queryStrings: URLSearchParams) {
         const eraseOptions	 = queryStrings.get('erase')?.split(k.comma) ?? [];
 		for (const eraseOption of eraseOptions) {
 			switch (eraseOption) {

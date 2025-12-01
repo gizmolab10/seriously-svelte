@@ -1,8 +1,13 @@
-import { k, hits, Rect, colors, layout, Ancestry, T_Hit_Target } from '../common/Global_Imports';
+import { k, hits, Rect, Point, colors, layout, Ancestry, T_Hit_Target } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
 
 export default class S_Hit_Target {
+
+	// supports hit testing for all user-interactables in the DOM
+	// S_Element, S_Widget, S_Component, S_Rotation, S_Resizing
+
+    contains_point?: (point: Point | null) => boolean;
 	identifiable: Identifiable | null = null;
 	html_element: HTMLElement | null = null;
 	defaultCursor = k.cursor_default;
@@ -40,7 +45,7 @@ export default class S_Hit_Target {
 		if (!!html_element) {
 			this.html_element = html_element;
 			this.update_rect();
-			hits.update_target(this);
+			hits.update_hit_target(this);
 		}
 	}
 

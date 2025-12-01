@@ -74,7 +74,7 @@
 	}
 
 	function update_colors() {
-		if (!elements.isAny_rotation_dragging && !!s_drag && !!thing) {
+		if (!elements.isDragging && !!s_drag && !!thing) {
 			const usePointer = (!ancestry.isGrabbed || controls.inRadialMode) && ancestry.hasChildren;
 			const cursor = usePointer ? 'pointer' : 'normal';
 			color = thing.color;
@@ -100,7 +100,7 @@
 	}
 
 	function handle_s_mouse(s_mouse) {
-		if (!elements.isAny_rotation_dragging) {
+		if (!elements.isDragging) {
 			if (s_mouse.isLong) {
 				ancestry?.becomeFocus();
 			} else if (s_mouse.isUp && !!ancestry) {

@@ -65,7 +65,7 @@
 			const s_title = s_widget.s_title;
 			s_title.html_element = input;
 			s_title.rect = layout.scaled_rect_forElement(input);
-			hits.update_target(s_title);
+			hits.update_hit_target(s_title);
 		}
 	}
 

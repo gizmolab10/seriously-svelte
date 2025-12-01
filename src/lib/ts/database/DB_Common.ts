@@ -34,8 +34,8 @@ export default class DB_Common {
 	load_time = 'busy...';
 	load_start_time = -1;
 	
-	apply_queryStrings() {}
 	setup_remote_handlers() {}
+	apply_queryStrings(queryStrings: URLSearchParams) {}
 	get displayName(): string { return this.t_database; }
 	get details_forStorage(): Object { return ['fetch', this.load_time]; }
 	get isStandalone(): boolean { return this.t_database != T_Database.bubble; }
@@ -142,7 +142,7 @@ export default class DB_Common {
 	}
 
 	async hierarchy_setup_fetch_andBuild() {
-		this.apply_queryStrings();
+		this.apply_queryStrings(c.queryStrings);
 		if (!h) {
 			s.w_hierarchy.set(new Hierarchy(this));
 		}

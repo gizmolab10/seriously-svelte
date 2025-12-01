@@ -52,9 +52,9 @@ export default class DB_Test extends DB_Common {
 		h.trait_remember_runtimeCreateUnique(this.idBase, 'ttc', idTc, T_Trait.text, 'Carrumba Tinga!');
 		h.trait_remember_runtimeCreateUnique(this.idBase, 'tlb', idTb, T_Trait.link, 'http://www.webseriously.org');
 		h.trait_remember_runtimeCreateUnique(this.idBase, 'ttb', idTb, T_Trait.text, 'What a brilliant idea you have!');
-		h.tag_remember_runtimeCreateUnique_byType(this.idBase, 'f', 'Fruity', [idTd.hash(), idTc.hash()]);
-		h.tag_remember_runtimeCreateUnique_byType(this.idBase, 'm', 'Moody', [idTf.hash(), idTd.hash(), idTb.hash()]);
-		h.tag_remember_runtimeCreateUnique_byType(this.idBase, 's', 'Study', [idTc.hash(), idTe.hash()]);
+		h.tag_remember_runtimeCreateUnique_forType(this.idBase, 'f', 'Fruity', [idTd.hash(), idTc.hash()]);
+		h.tag_remember_runtimeCreateUnique_forType(this.idBase, 'm', 'Moody', [idTf.hash(), idTd.hash(), idTb.hash()]);
+		h.tag_remember_runtimeCreateUnique_forType(this.idBase, 's', 'Study', [idTc.hash(), idTe.hash()]);
 		// this.makeMore(3, 'c', contains, idTf, true);	// children of Friendly
 		this.makeMore(4, 'g', contains, idTb, true, 4);	// children of Brilliant
 		this.makeMore(4, 'e', related, idTb, true, 2);	// related to  "

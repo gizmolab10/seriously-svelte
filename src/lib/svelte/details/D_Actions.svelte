@@ -20,7 +20,7 @@
 	const bottom_padding = bottom_tableHeight - 48;
 	const { w_s_alteration, w_ancestry_forDetails } = s;
     const font_sizes = [k.font_size.instructions, k.font_size.instructions];
-    const s_banner_hideable = details.s_banner_hideables_byType[T_Detail.actions];
+    const s_banner_hideable = details.s_banner_hideables_dict_byType[T_Detail.actions];
 	const s_cancel = elements.s_element_for($w_ancestry_forDetails, T_Hit_Target.cancel, k.empty);
 	let list_title = $w_ancestry_forDetails?.isExpanded && controls.inTreeMode ? 'hide list' : 'list';
 	let button_titles = compute_button_titles();

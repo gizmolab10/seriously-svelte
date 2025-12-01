@@ -10,7 +10,7 @@ import { get } from 'svelte/store';
 
 export class Signals {
 	signal_emitter = new Signal<Signal_Signature>();
-	signals_inFlight_byT_Signal: Dictionary<boolean> = {};
+	signals_inFlight_dict_byT_Signal: Dictionary<boolean> = {};
 
 	log_isEnabled_forSending(sending: boolean): boolean {
 		return this.log_isEnabled_forDirection[sending ? 'sending' : 'handling'];
@@ -109,15 +109,15 @@ export class Signals {
 	static readonly _____TRACKING: unique symbol;
 
 	get anySignal_isInFlight(): boolean {
-		return Object.values(this.signals_inFlight_byT_Signal).some(flag => !!flag);
+		return Object.values(this.signals_inFlight_dict_byT_Signal).some(flag => !!flag);
 	}
 
 	set_signal_isInFlight_for(t_signal: T_Signal, flag: boolean) {
-		this.signals_inFlight_byT_Signal[t_signal] = flag;
+		this.signals_inFlight_dict_byT_Signal[t_signal] = flag;
 	}
 
 	signal_isInFlight_for(t_signal: T_Signal): boolean {
-		return this.signals_inFlight_byT_Signal[t_signal];
+		return this.signals_inFlight_dict_byT_Signal[t_signal];
 	}
 
 	static readonly _____PRIORITY: unique symbol;

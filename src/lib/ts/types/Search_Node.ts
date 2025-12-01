@@ -1,7 +1,7 @@
 import { Thing } from "../common/Global_Imports";
 
 export class Search_Node {
-	nodes_byCharCode: Map<number, Search_Node> = new Map();
+	nodes_map_byCharCode: Map<number, Search_Node> = new Map();
 	items: Set<Thing> = new Set();
 	isEndOfWord: boolean = false;
 
@@ -31,11 +31,11 @@ export class Search_Node {
 		let current: Search_Node = this;
 		for (const char of word) {
 			const charCode = char.charCodeAt(0);
-			if (!current.nodes_byCharCode.has(charCode)) {
-				current.nodes_byCharCode.set(charCode, new Search_Node());
+			if (!current.nodes_map_byCharCode.has(charCode)) {
+				current.nodes_map_byCharCode.set(charCode, new Search_Node());
 			}
 			// walk down the trie
-			current = current.nodes_byCharCode.get(charCode)! as Search_Node;
+			current = current.nodes_map_byCharCode.get(charCode)! as Search_Node;
 			current.items.add(thing);
 		}
 		current.isEndOfWord = true;
@@ -100,7 +100,7 @@ export class Search_Node {
 		let current: Search_Node = this;
 		for (const char of word) {
 			const charCode = char.charCodeAt(0);
-			const child = current.nodes_byCharCode.get(charCode) as Search_Node;
+			const child = current.nodes_map_byCharCode.get(charCode) as Search_Node;
 			if (!child) return null;
 			current = child;
 		}

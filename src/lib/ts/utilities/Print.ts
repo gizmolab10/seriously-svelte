@@ -1,5 +1,5 @@
 import Printable from '../../svelte/draw/Printable.svelte';
-import { Rect } from './Geometry';
+import { Rect } from '../types/Geometry';
 import { u } from './Utilities';
 import printJS from 'print-js';
 

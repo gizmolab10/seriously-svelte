@@ -45,7 +45,7 @@ class Pivot {
 	create_tag_forThing_andKey_fromDict(thingID: string, tag_types: string): Tag | null {
 		if (!!tag_types) {
 			for (const tag_type of tag_types.split(k.comma)) {
-				const tag = h.tag_remember_runtimeCreateUnique_byType(h.db.idBase, Identifiable.newID(), tag_type.trim(), [thingID.hash()]);
+				const tag = h.tag_remember_runtimeCreateUnique_forType(h.db.idBase, Identifiable.newID(), tag_type.trim(), [thingID.hash()]);
 				return tag;
 			}
 		}

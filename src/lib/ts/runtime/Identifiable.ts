@@ -28,14 +28,8 @@ export default class Identifiable {
 		this.hid = id.hash();
 		this.id = id;
 	}
-	
-	static conntains_byHID<T>(from: Array<T>, item: T): boolean {
-		const identifiable = item as Identifiable;
-		const identifiables = from as Array<Identifiable>;
-		return identifiables.filter(t => t.hid == identifiable.hid).length > 0;
-	}
 
-	static remove_byHID<T>(from: Array<T>, item: T): Array<T> {
+	static remove_item_byHID<T>(from: Array<T>, item: T): Array<T> {
 		const identifiable = item as Identifiable;
 		const identifiables = from as Array<Identifiable>;
 		return identifiables.filter(t => t.hid != identifiable.hid) as Array<T>;

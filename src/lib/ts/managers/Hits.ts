@@ -17,7 +17,7 @@ export default class Hits {
 	rbush = new RBush<Target_RBRect>();
 	w_dragging = writable<T_Drag>(T_Drag.none);
 	w_s_hover = writable<S_Hit_Target | null>(null);
-	targets_byID: { [id: string]: S_Hit_Target } = {};
+	targets_dict_byID: { [id: string]: S_Hit_Target } = {};
 
 	static readonly _____HOVER: unique symbol;
 
@@ -40,7 +40,7 @@ export default class Hits {
 	static readonly _____GENERAL: unique symbol;
 
 	handle_mouse_movement_at(point: Point) {
-		if (((Date.now() - this.time_ofPrior_hover) >= 20) && !radial.isAny_rotation_dragging) {
+		if (((Date.now() - this.time_ofPrior_hover) >= 20) && !radial.isDragging) {
 			this.time_ofPrior_hover = Date.now();
 			if (get(this.w_dragging) === T_Drag.none) {
 				if (!this.detect_hovering_at(point)) {
@@ -54,20 +54,20 @@ export default class Hits {
 			}
 		}
 		if (controls.inRadialMode) {
-			radial.detect_ring_movement();
+			radial.handle_mouse_drag();
 		}
 	}
 
 	reset() {
 		this.rbush.clear();
-		this.targets_byID = {};
+		this.targets_dict_byID = {};
 		this.w_s_hover.set(null);
 		this.time_ofPrior_hover = 0;
 	}
 
 	recalibrate() {
 		const newBush = new RBush<Target_RBRect>();
-		const targets = Object.values(this.targets_byID);
+		const targets = Object.values(this.targets_dict_byID);
 		for (const target of targets) {
 			target.update_rect();
 			if (!!target && !!target.rect) {
@@ -109,16 +109,16 @@ export default class Hits {
 
 	static readonly _____ADD_AND_REMOVE: unique symbol;
 
-	update_target(target: S_Hit_Target) {
-		this.delete_target(target);
-		this.add_target(target);
+	update_hit_target(target: S_Hit_Target) {
+		this.delete_hit_target(target);
+		this.add_hit_target(target);
 	}
 
-	delete_target(target: S_Hit_Target) {
+	delete_hit_target(target: S_Hit_Target) {
 		if (!!target && !!target.rect) {
 			const id = target.id;
 			if (!!id) {
-				delete this.targets_byID[id];
+				delete this.targets_dict_byID[id];
 			}
 			this.remove_from_rbush(target);
 		}
@@ -126,14 +126,14 @@ export default class Hits {
 
 	static readonly _____INTERNALS: unique symbol;
 
-	private add_target(target: S_Hit_Target) {
+	private add_hit_target(target: S_Hit_Target) {
 		if (!!target && !!target.rect) {
 			const id = target.id;
 			if (!!id) {
-				if (this.targets_byID[id] == target) {
+				if (this.targets_dict_byID[id] == target) {
 					return;	// already added, avoid duplicates
 				}
-				this.targets_byID[id] = target;
+				this.targets_dict_byID[id] = target;
 			}
 			this.insert_into_rbush(target);
 		}

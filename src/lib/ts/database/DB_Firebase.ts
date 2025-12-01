@@ -40,9 +40,9 @@ export default class DB_Firebase extends DB_Common {
 	reportError(error: any) { console.log(error); }
 	get displayName(): string { return this.idBase; }
 
-	apply_queryStrings() {
+	apply_queryStrings(queryStrings: URLSearchParams) {
 		const persistedID = p.read_key(T_Preference.base_id);
-		const id = c.queryStrings.get('name') ?? c.queryStrings.get('dbid') ?? persistedID ?? 'Public';
+		const id = queryStrings.get('name') ?? queryStrings.get('dbid') ?? persistedID ?? 'Public';
 		p.write_key(T_Preference.base_id, id);
 		this.idBase = id;
 	}
@@ -276,7 +276,7 @@ export default class DB_Firebase extends DB_Common {
 				case T_Persistable.things:		  h       .thing_remember_runtimeCreateUnique(idBase, id, data.title,		 data.color,		  data.t_thing, true); break;
 				case T_Persistable.relationships: h.relationship_remember_runtimeCreateUnique(idBase, id, data.predicate.id, data.parent.id,	  data.child.id, data.orders, T_Create.isFromPersistent); break;
 				case T_Persistable.traits:		  h       .trait_remember_runtimeCreateUnique(idBase, id, data.ownerID,		 data.t_trait,		  data.text, true); break;
-				case T_Persistable.tags:		  h  .tag_remember_runtimeCreateUnique_byType(idBase, id, data.type,		 data.thingHIDs,	  true); break;
+				case T_Persistable.tags:		  h  .tag_remember_runtimeCreateUnique_forType(idBase, id, data.type,		 data.thingHIDs,	  true); break;
 			}
 		}
 	}
@@ -563,7 +563,7 @@ export default class DB_Firebase extends DB_Common {
 					if (!!tag || remoteTag.isEqualTo(this.addedTag)) {
 						return false;		// do not invoke signal because nothing has changed
 					}
-					tag = h.tag_remember_runtimeCreateUnique_byType(idBase, id, remoteTag.type, remoteTag.thingHIDs, true);
+					tag = h.tag_remember_runtimeCreateUnique_forType(idBase, id, remoteTag.type, remoteTag.thingHIDs, true);
 					break;
 				case 'removed':
 					if (!!tag) {

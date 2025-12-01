@@ -125,7 +125,7 @@ export default class G_Cluster {
 	get show_forks():			 boolean { return get(show.w_show_radial_forks); }
 	get maximum_paging_index():	  number { return this.total_widgets - this.widgets_shown; }
 	get paging_index_ofFocus():	  number { return Math.round(this.g_focusPaging?.index ?? 0); }
-	get s_paging():			  S_Rotation { return radial.s_paging_forName(this.name); }
+	get s_paging():			  S_Rotation { return radial.s_paging_forName_ofCluster(this.name); }
 	get g_focusPaging(): G_Paging | null { return this.g_paging_forAncestry(get(s.w_ancestry_focus)); }
 	get g_paging():		 G_Paging | null { return this.g_paging_forPredicate_toChildren(this.predicate, this.points_toChildren); }
 

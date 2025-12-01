@@ -1,10 +1,11 @@
 import { h, k, s, u, x, show, debug, search, layout, controls, features, svgPaths, databases, components } from '../common/Global_Imports';
 import { T_Graph, T_Create, T_Kinship, T_Predicate, T_Alteration, T_Hit_Target } from '../common/Global_Imports';
 import { Rect, Size, Point, Thing, Direction, Predicate, Relationship } from '../common/Global_Imports';
-import { G_Widget, G_Paging, G_Cluster, G_TreeLine } from '../common/Global_Imports';
 import { S_Items, S_Component, S_Title_Edit } from '../common/Global_Imports';
+import { G_Widget, G_Cluster, G_TreeLine } from '../common/Global_Imports';
 import type { Dictionary, Integer } from '../types/Types';
 import { T_Database } from '../database/DB_Common';
+import { G_Paging } from '../layout/G_Paging';
 import { get, Writable } from 'svelte/store';
 import Identifiable from './Identifiable';
 
@@ -30,7 +31,7 @@ export default class Ancestry extends Identifiable {
 	traverse(apply_closureTo: (ancestry: Ancestry) => boolean, t_kinship: T_Kinship = T_Kinship.children, visited: string[] = []) {
 		const id = this.thing?.id;
 		if (!!id && !visited.includes(id) && !apply_closureTo(this)) {
-			for (const progeny of this.ancestries_createUnique_byKinship(t_kinship)) {
+			for (const progeny of this.ancestries_createUnique_forKinship(t_kinship)) {
 				progeny.traverse(apply_closureTo, t_kinship, [...visited, id]);
 			}
 		}
@@ -41,7 +42,7 @@ export default class Ancestry extends Identifiable {
 		if (!!id && !visited.includes(id)) {
 			try {
 				if (!await apply_closureTo(this)) {
-					for (const progeny of this.ancestries_createUnique_byKinship(t_kinship)) {
+					for (const progeny of this.ancestries_createUnique_forKinship(t_kinship)) {
 						await progeny.async_traverse(apply_closureTo, t_kinship, [...visited, id]);
 					}
 				}
@@ -378,7 +379,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	persistentMoveUp_forParent_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
-		const sibling_ancestries = get(s.w_ancestry_focus)?.ancestries_createUnique_byKinship(T_Kinship.parents);
+		const sibling_ancestries = get(s.w_ancestry_focus)?.ancestries_createUnique_forKinship(T_Kinship.parents);
 		let needs_graphRelayout = false;
 		let needs_graphRebuild = false;
 		if (!!sibling_ancestries) {
@@ -403,7 +404,7 @@ export default class Ancestry extends Identifiable {
 	}
 
 	persistentMoveUp_forBidirectional_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
-		const sibling_ancestries = get(s.w_ancestry_focus)?.ancestries_createUnique_byKinship(T_Kinship.related) ?? [];
+		const sibling_ancestries = get(s.w_ancestry_focus)?.ancestries_createUnique_forKinship(T_Kinship.related) ?? [];
 		let needs_graphRelayout = false;
 		let needs_graphRebuild = false;
 		if (!!sibling_ancestries) {
@@ -575,7 +576,7 @@ export default class Ancestry extends Identifiable {
 
 	get sibling_ancestries(): Array<Ancestry> { return this.parentAncestry?.childAncestries ?? []; }
 	get parentAncestry():	  Ancestry | null { return this.ancestry_createUnique_byStrippingBack(); }
-	get childAncestries():    Array<Ancestry> { return this.ancestries_createUnique_byKinship(T_Kinship.children) ?? []; }
+	get childAncestries():    Array<Ancestry> { return this.ancestries_createUnique_forKinship(T_Kinship.children) ?? []; }
 	get branchAncestries():   Array<Ancestry> { return get(layout.w_branches_areChildren) ? this.childAncestries : this.parentAncestries; }
 
 	get parentAncestries(): Array<Ancestry> {
@@ -728,7 +729,7 @@ export default class Ancestry extends Identifiable {
 		return ancestry;
 	}
 
-	ancestries_createUnique_byKinship(kinship: string | null): Array<Ancestry> {
+	ancestries_createUnique_forKinship(kinship: string | null): Array<Ancestry> {
 		if (!!kinship) {
 			switch (kinship) {
 				case T_Kinship.related:  return this.thing?.ancestries_createUnique_forPredicate(Predicate.isRelated) ?? [];

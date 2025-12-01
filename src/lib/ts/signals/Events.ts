@@ -1,5 +1,5 @@
 import { layout, details, signals, controls, elements, features } from '../common/Global_Imports';
-import { c, h, k, s, u, x, hits, g_tree, debug, search } from '../common/Global_Imports';
+import { c, h, k, s, u, x, hits, g_tree, debug, search, radial } from '../common/Global_Imports';
 import { T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { T_Search, T_Action, T_Control } from '../common/Global_Imports';
 import { Point, Ancestry, Predicate } from '../common/Global_Imports';
@@ -8,12 +8,12 @@ import Mouse_Timer from './Mouse_Timer';
 import { get } from 'svelte/store';
 
 export class Events {
-	mouse_timer_byName: { [name: string]: Mouse_Timer } = {};
+	mouse_timer_dict_byName: { [name: string]: Mouse_Timer } = {};
 	handle_focus_cleanup: (() => void) | null = null;
 	initialTouch: Point | null = null;
 	alterationTimer!: Mouse_Timer;
 
-	mouse_timer_forName(name: string): Mouse_Timer { return elements.assure_forKey_inDict(name, this.mouse_timer_byName, () => new Mouse_Timer(name)); }
+	mouse_timer_forName(name: string): Mouse_Timer { return elements.assure_forKey_inDict(name, this.mouse_timer_dict_byName, () => new Mouse_Timer(name)); }
 
 	setup() {
 		s.w_s_alteration.subscribe((s_alteration: S_Alteration | null) => { this.handle_s_alteration(s_alteration); });
@@ -237,7 +237,7 @@ export class Events {
 	handle_singleClick_onDragDot(shiftKey: boolean, ancestry: Ancestry) {
 		if (ancestry.isBidirectional && ancestry.thing?.isRoot) {
 			this.handle_singleClick_onDragDot(shiftKey, h.rootAncestry);
-		} else {
+		} else if (!radial.isDragging) {
 			s.w_s_title_edit?.set(null);
 			if (!!get(s.w_s_alteration)) {
 				h.ancestry_alter_connectionTo_maybe(ancestry);

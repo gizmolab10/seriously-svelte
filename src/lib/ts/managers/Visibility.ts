@@ -1,5 +1,5 @@
 import { T_Graph, T_Detail, T_Kinship, T_Preference } from '../common/Global_Imports';
-import { c, k, p, x, g_tree, layout, features } from '../common/Global_Imports';
+import { k, p, x, g_tree, layout, features } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
 import { get, writable } from 'svelte/store';
 
@@ -23,8 +23,7 @@ export class Visibility {
 		});
 	}
 
-	apply_queryStrings() {
-		const queryStrings = c.queryStrings;
+	apply_queryStrings(queryStrings: URLSearchParams) {
 		const levels = queryStrings.get('levels');
 		const hiddenNames = queryStrings.get('hide')?.split(k.comma) ?? [];
 		const visibleNames = queryStrings.get('show')?.split(k.comma) ?? [];

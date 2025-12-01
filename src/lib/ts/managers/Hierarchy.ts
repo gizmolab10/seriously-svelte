@@ -16,30 +16,30 @@ export type Ancestry_ByHID = { [hid: Integer]: Ancestry }
 export type SI_Relationships_ByHID = { [hid: Integer]: S_Items<Relationship> }
 
 export class Hierarchy {
-	private si_relationships_byKind: { [kind: string]: S_Items<Relationship> } = {};
-	private predicate_byDirection: { [direction: number]: Array<Predicate> } = {};
-	private si_ancestries_byThingHID: { [hid: Integer]: S_Items<Ancestry> } = {};
-	private si_traits_byOwnerHID: { [ownerHID: Integer]: S_Items<Trait> } = {};
-	private ancestry_byKind_andHID: { [kind: string]: Ancestry_ByHID } = {};
-	private si_things_byT_trait: { [t_trait: string]: S_Items<Thing> } = {};
-	private si_traits_byThingHID: { [hid: Integer]: S_Items<Trait> } = {};
-	private si_traits_byType: { [t_trait: string]: S_Items<Trait> } = {};
-	private relationship_byHID: { [hid: Integer]: Relationship } = {};
-	private si_tags_byThingHID: { [hid: Integer]: S_Items<Tag> } = {};
-	private si_relationships_byParentHID: SI_Relationships_ByHID = {};
-	private si_relationships_byChildHID: SI_Relationships_ByHID = {};
-	private things_byType: { [t_thing: string]: Array<Thing> } = {};
-	private things_byTitle: { [title: string]: Array<Thing> } = {};
-	private predicate_byKind: { [kind: string]: Predicate } = {};
-	private thing_byAncestryHID: { [hid: Integer]: Thing } = {};
-	private ancestry_byHID: { [hid: Integer]: Ancestry } = {};
-	private access_byKind: { [kind: string]: Access } = {};
-	private access_byHID: { [hid: Integer]: Access } = {};
-	private thing_byHID: { [hid: Integer]: Thing } = {};
-	private trait_byHID: { [hid: Integer]: Trait } = {};
-	private user_byHID: { [hid: Integer]: User } = {};
-	private tag_byType: { [type: string]: Tag } = {};
-	private tag_byHID: { [hid: Integer]: Tag } = {};
+	private si_relationships_dict_byKind: { [kind: string]: S_Items<Relationship> } = {};
+	private predicate_dict_byDirection: { [direction: number]: Array<Predicate> } = {};
+	private si_ancestries_dict_byThingHID: { [hid: Integer]: S_Items<Ancestry> } = {};
+	private si_traits_dict_byOwnerHID: { [ownerHID: Integer]: S_Items<Trait> } = {};
+	private ancestry_dict_byKind_andHID: { [kind: string]: Ancestry_ByHID } = {};
+	private si_things_dict_byT_trait: { [t_trait: string]: S_Items<Thing> } = {};
+	private si_traits_dict_byThingHID: { [hid: Integer]: S_Items<Trait> } = {};
+	private si_traits_dict_byType: { [t_trait: string]: S_Items<Trait> } = {};
+	private relationship_dict_byHID: { [hid: Integer]: Relationship } = {};
+	private si_tags_dict_byThingHID: { [hid: Integer]: S_Items<Tag> } = {};
+	private si_relationships_dict_byParentHID: SI_Relationships_ByHID = {};
+	private si_relationships_dict_byChildHID: SI_Relationships_ByHID = {};
+	private things_dict_byType: { [t_thing: string]: Array<Thing> } = {};
+	private things_dict_byTitle: { [title: string]: Array<Thing> } = {};
+	private predicate_dict_byKind: { [kind: string]: Predicate } = {};
+	private thing_dict_byAncestryHID: { [hid: Integer]: Thing } = {};
+	private ancestry_dict_byHID: { [hid: Integer]: Ancestry } = {};
+	private access_dict_byKind: { [kind: string]: Access } = {};
+	private access_dict_byHID: { [hid: Integer]: Access } = {};
+	private thing_dict_byHID: { [hid: Integer]: Thing } = {};
+	private trait_dict_byHID: { [hid: Integer]: Trait } = {};
+	private user_dict_byHID: { [hid: Integer]: User } = {};
+	private tag_dict_byType: { [type: string]: Tag } = {};
+	private tag_dict_byHID: { [hid: Integer]: Tag } = {};
 
 	ids_translated: { [prior: string]: string } = {};
 	replace_rootID: string | null = k.empty;		// required for DB_Local at launch
@@ -90,7 +90,7 @@ export class Hierarchy {
 	static readonly _____THINGS: unique symbol;
 
 	get si_things_unique_havingTraits(): S_Items<Thing> { return this.si_traitThings; }
-	things_forTitle(title: string): Array<Thing> | null { return this.things_byTitle[title] ?? null; }
+	things_forTitle(title: string): Array<Thing> | null { return this.things_dict_byTitle[title] ?? null; }
 
 	things_refreshKnowns() {
 		const saved = this.things;
@@ -100,8 +100,8 @@ export class Hierarchy {
 
 	things_forget_all() {
 		this.things = []; // clear
-		this.thing_byHID = {};
-		this.things_byType = {};
+		this.thing_dict_byHID = {};
+		this.things_dict_byType = {};
 	}
 
 	things_forAncestries(ancestries: Array<Ancestry>): Array<Thing> {
@@ -137,7 +137,7 @@ export class Hierarchy {
 
 	static readonly _____THING: unique symbol;
 	
-	thing_forHID(hid: Integer): Thing | null { return this.thing_byHID[hid ?? undefined]; }
+	thing_forHID(hid: Integer): Thing | null { return this.thing_dict_byHID[hid ?? undefined]; }
 
 	thing_remember_updateID_to(thing: Thing, idTo: string) {
 		const idFrom = thing.id;
@@ -212,7 +212,7 @@ export class Hierarchy {
 	}
 
 	thing_forAncestry(ancestry: Ancestry): Thing | null {
-		let thing: Thing | null = this.thing_byAncestryHID[ancestry.hid];
+		let thing: Thing | null = this.thing_dict_byAncestryHID[ancestry.hid];
 		if (!thing) {
 			if (ancestry.isRoot) {
 				thing = this.root;
@@ -220,7 +220,7 @@ export class Hierarchy {
 				thing = ancestry.thingAt(1) ?? null;	// always recompute
 			}
 			if (!!thing) {
-				this.thing_byAncestryHID[ancestry.hid] = thing;
+				this.thing_dict_byAncestryHID[ancestry.hid] = thing;
 			}
 		}
 		return thing;
@@ -229,24 +229,24 @@ export class Hierarchy {
 	thing_forget(thing: Thing, force: boolean = false) {
 		const t_thing = thing.t_thing;
 		if (t_thing != T_Thing.root || force) {		// must NOT forget root, unless forced to do so
-			const typed_things = this.things_byType[t_thing];
-			const titled_things = this.things_byTitle[thing.title];
-			delete this.thing_byHID[thing.hid];
-			this.things = Identifiable.remove_byHID<Thing>(this.things, thing);
+			const typed_things = this.things_dict_byType[t_thing];
+			const titled_things = this.things_dict_byTitle[thing.title];
+			delete this.thing_dict_byHID[thing.hid];
+			this.things = Identifiable.remove_item_byHID<Thing>(this.things, thing);
 			if (!!typed_things) {
-				delete this.things_byType[t_thing];
+				delete this.things_dict_byType[t_thing];
 			}
 			if (!!titled_things) {
-				delete this.things_byTitle[thing.title];
+				delete this.things_dict_byTitle[thing.title];
 			}
 		}
 	}
 
 	thing_remember(thing: Thing) {
 		if (!!thing && !this.thing_forHID(thing.hid)) {
-			const typed_things = this.things_byType[thing.t_thing] ?? [];
-			const titled_things = this.things_byTitle[thing.title] ?? [];
-			this.thing_byHID[thing.hid] = thing;
+			const typed_things = this.things_dict_byType[thing.t_thing] ?? [];
+			const titled_things = this.things_dict_byTitle[thing.title] ?? [];
+			this.thing_dict_byHID[thing.hid] = thing;
 			if (!this.things.map(t => t.id).includes(thing.id)) {
 				this.things.push(thing);
 			}
@@ -258,11 +258,11 @@ export class Hierarchy {
 			}
 			if (!typed_things.map(t => t.id).includes(thing.id)) {
 				typed_things.push(thing);
-				this.things_byType[thing.t_thing] = typed_things;
+				this.things_dict_byType[thing.t_thing] = typed_things;
 			}
 			if (!titled_things?.includes(thing)) {
 				titled_things.push(thing);
-				this.things_byTitle[thing.title] = titled_things;
+				this.things_dict_byTitle[thing.title] = titled_things;
 			}
 		}
 	}
@@ -302,8 +302,8 @@ export class Hierarchy {
 
 	async thing_forget_persistentDelete(thing: Thing) {
 		const relationships = u.uniquely_concatenateArrays_ofIdentifiables(
-			this.si_relationships_byParentHID[thing.hid]?.items ?? [],
-			this.si_relationships_byChildHID[thing.hid]?.items ?? []
+			this.si_relationships_dict_byParentHID[thing.hid]?.items ?? [],
+			this.si_relationships_dict_byChildHID[thing.hid]?.items ?? []
 		) as Array<Relationship>;
 		thing.remove_fromGrabbed_andExpanded_andResolveFocus();
 		this.thing_forget(thing);				// forget so onSnapshot logic will not signal children, do first so UX updates quickly
@@ -325,7 +325,7 @@ export class Hierarchy {
 
 	bulkAlias_forTitle(title: string | null) {
 		if (!!title) {
-			const bulkAliases = this.things_byType[T_Thing.bulk] ?? [];
+			const bulkAliases = this.things_dict_byType[T_Thing.bulk] ?? [];
 			for (const bulkAlias of bulkAliases) {
 				if  (bulkAlias.title == title) {		// special case TODO: convert to a query string
 					return bulkAlias;
@@ -342,7 +342,7 @@ export class Hierarchy {
 			// i.e., it is the root id from another idBase (title)
 			// need a second thing remembered by this root id
 			// so children relationships will work
-			this.thing_byHID[rootID.hash()] = bulkAlias;
+			this.thing_dict_byHID[rootID.hash()] = bulkAlias;
 			bulkAlias.persistence.needsBulkFetch = true;
 			bulkAlias.bulkRootID = rootID;
 			bulkAlias.color = color;
@@ -379,7 +379,7 @@ export class Hierarchy {
 
 	static readonly _____RELATIONSHIPS: unique symbol;
 
-	si_relationships_forKind(kind: T_Predicate): S_Items<Relationship> { return this.si_relationships_byKind[kind] ?? new S_Items<Relationship>([]); }
+	si_relationships_forKind(kind: T_Predicate): S_Items<Relationship> { return this.si_relationships_dict_byKind[kind] ?? new S_Items<Relationship>([]); }
 
 	relationships_refreshKnowns() {
 		const saved = this.relationships;
@@ -394,9 +394,9 @@ export class Hierarchy {
 	}
 
 	relationships_forget_all() {
-		this.si_relationships_byParentHID = {};
-		this.si_relationships_byChildHID = {};
-		this.relationship_byHID = {};
+		this.si_relationships_dict_byParentHID = {};
+		this.si_relationships_dict_byChildHID = {};
+		this.relationship_dict_byHID = {};
 		this.relationships = [];
 	}
 
@@ -430,7 +430,7 @@ export class Hierarchy {
 	}
 
 	relationships_forKindPredicate_hid_thing_isChild(kind: string, hid: Integer, forParents: boolean): Array<Relationship> {
-		const dict = forParents ? this.si_relationships_byChildHID : this.si_relationships_byParentHID;
+		const dict = forParents ? this.si_relationships_dict_byChildHID : this.si_relationships_dict_byParentHID;
 		const si_matches = dict[hid];
 		const array: Array<Relationship> = [];
 		if (si_matches) {
@@ -478,7 +478,7 @@ export class Hierarchy {
 
 	static readonly _____RELATIONSHIP: unique symbol;
 
-	relationship_forHID(hid: Integer): Relationship | null { return this.relationship_byHID[hid ?? undefined]; }
+	relationship_forHID(hid: Integer): Relationship | null { return this.relationship_dict_byHID[hid ?? undefined]; }
 
 	relationship_whereHID_isChild(hid_thing: Integer, isChild: boolean = true): Relationship | null {
 		const matches = this.relationships_forKindPredicate_hid_thing_isChild(T_Predicate.contains, hid_thing, isChild);
@@ -493,8 +493,8 @@ export class Hierarchy {
 		}
 	}
 	
-	relationship_forget_forHID(si_relationships_byHID: SI_Relationships_ByHID, hid: Integer, relationship: Relationship) {
-		let si_relationships = si_relationships_byHID[hid];
+	relationship_forget_forHID(si_relationships_dict_byHID: SI_Relationships_ByHID, hid: Integer, relationship: Relationship) {
+		let si_relationships = si_relationships_dict_byHID[hid];
 		if (!!si_relationships) {
 			si_relationships.remove(relationship);
 		}
@@ -512,12 +512,12 @@ export class Hierarchy {
 		}
 	}
 
-	relationship_remember_byKnown(relationship: Relationship, hid: Integer, si_relationships_byHID: SI_Relationships_ByHID) {
-		let si_relationships = si_relationships_byHID[hid] ?? new S_Items<Relationship>([]);
+	relationship_remember_dict_byKnown(relationship: Relationship, hid: Integer, si_relationships_dict_byHID: SI_Relationships_ByHID) {
+		let si_relationships = si_relationships_dict_byHID[hid] ?? new S_Items<Relationship>([]);
 		if (si_relationships.items.filter(r => r.id == relationship.id).length == 0) {
 			si_relationships.push(relationship);
 		}
-		si_relationships_byHID[hid] = si_relationships;
+		si_relationships_dict_byHID[hid] = si_relationships;
 	}
 
 	relationship_forPredicateKind_parent_child(kind: string, hidParent: Integer, hidChild: Integer): Relationship | null {
@@ -552,26 +552,26 @@ export class Hierarchy {
 	}
 
 	relationship_forget(relationship: Relationship) {
-		delete this.relationship_byHID[relationship.hid];
+		delete this.relationship_dict_byHID[relationship.hid];
 		this.si_relationships_forKind(relationship.kind).remove(relationship);
-		this.relationships = Identifiable.remove_byHID<Relationship>(this.relationships, relationship);
-		this.relationship_forget_forHID(this.si_relationships_byChildHID, relationship.hidChild, relationship);
-		this.relationship_forget_forHID(this.si_relationships_byParentHID, relationship.hidParent, relationship);
+		this.relationships = Identifiable.remove_item_byHID<Relationship>(this.relationships, relationship);
+		this.relationship_forget_forHID(this.si_relationships_dict_byChildHID, relationship.hidChild, relationship);
+		this.relationship_forget_forHID(this.si_relationships_dict_byParentHID, relationship.hidParent, relationship);
 	}
 	
 	relationship_remember(relationship: Relationship) {
-		if (!this.relationship_byHID[relationship.hid]) {
+		if (!this.relationship_dict_byHID[relationship.hid]) {
 			let si_relationships = this.si_relationships_forKind(relationship.kind)
 			if (!this.relationships.map(r => r.id).includes(relationship.id)) {
 				this.relationships.push(relationship);
 			}
 			if (!si_relationships.items.map(r => r.id).includes(relationship.id)) {
 				si_relationships.push(relationship);
-				this.si_relationships_byKind[relationship.kind] = si_relationships;
+				this.si_relationships_dict_byKind[relationship.kind] = si_relationships;
 			}
-			this.relationship_byHID[relationship.hid] = relationship;
-			this.relationship_remember_byKnown(relationship, relationship.hidChild, this.si_relationships_byChildHID);
-			this.relationship_remember_byKnown(relationship, relationship.hidParent, this.si_relationships_byParentHID);
+			this.relationship_dict_byHID[relationship.hid] = relationship;
+			this.relationship_remember_dict_byKnown(relationship, relationship.hidChild, this.si_relationships_dict_byChildHID);
+			this.relationship_remember_dict_byKnown(relationship, relationship.hidParent, this.si_relationships_dict_byParentHID);
 			if (relationship.idBase != this.db.idBase) {
 				alert(`relationship crossing dbs: ${relationship.description}`);
 			}
@@ -647,14 +647,14 @@ export class Hierarchy {
 
 	static readonly _____ANCESTRIES: unique symbol;
 
-	get ancestries(): Array<Ancestry> { return Object.values(this.ancestry_byHID); }
-	si_ancestries_byHID_forKind(kind: string) { return this.ancestry_byKind_andHID[kind] ?? {}; }
+	get ancestries(): Array<Ancestry> { return Object.values(this.ancestry_dict_byHID); }
+	si_ancestries_dict_byHID_forKind(kind: string) { return this.ancestry_dict_byKind_andHID[kind] ?? {}; }
 	get ancestries_thatAreVisible(): Array<Ancestry> { return this.rootAncestry.visibleSubtree_ancestries(); }
 
 	ancestries_forget_all() {
-		this.ancestry_byHID = {};
-		this.ancestry_byKind_andHID = {};
-		this.si_ancestries_byThingHID = {};
+		this.ancestry_dict_byHID = {};
+		this.ancestry_dict_byKind_andHID = {};
+		this.si_ancestries_dict_byThingHID = {};
 	}
 
 	ancestries_assureAll_createUnique() {
@@ -675,7 +675,7 @@ export class Hierarchy {
 		if (!!thing) {
 			this.ancestries_create_forThing_andPredicate(thing, Predicate.contains);
 		}
-		return this.si_ancestries_byThingHID[hid] ?? new S_Items<Ancestry>([]);
+		return this.si_ancestries_dict_byThingHID[hid] ?? new S_Items<Ancestry>([]);
 	}
 
 	async ancestries_rebuild_traverse_persistentDelete(ancestries: Array<Ancestry>) {
@@ -745,7 +745,7 @@ export class Hierarchy {
 			}
 			ancestries = u.strip_hidDuplicates(ancestries);
 			ancestries = u.sort_byOrder(ancestries).reverse();
-			this.si_ancestries_byThingHID[thing.hid] = new S_Items<Ancestry>(ancestries);
+			this.si_ancestries_dict_byThingHID[thing.hid] = new S_Items<Ancestry>(ancestries);
 		}
 		return ancestries;
 	}
@@ -777,8 +777,8 @@ export class Hierarchy {
 
 	static readonly _____ANCESTRY: unique symbol;
 	
-	ancestry_forHID(hid: Integer): Ancestry | null { return this.ancestry_byHID[hid] ?? null; }
-	ancestries_forThing(thing: Thing): Array<Ancestry> { return this.si_ancestries_byThingHID[thing.hid]?.items ?? []; }
+	ancestry_forHID(hid: Integer): Ancestry | null { return this.ancestry_dict_byHID[hid] ?? null; }
+	ancestries_forThing(thing: Thing): Array<Ancestry> { return this.si_ancestries_dict_byThingHID[thing.hid]?.items ?? []; }
 
 	async ancestry_persistentCreateUnique(name: string, parent: Ancestry, t_thing: T_Thing): Promise<Ancestry | null> {
 		const thing = this.thing_remember_runtimeCreateUnique(this.db.idBase, name, name, colors.default, t_thing);
@@ -788,20 +788,20 @@ export class Hierarchy {
 
 	ancestry_remember(ancestry: Ancestry) {
 		const hid = ancestry.hid;
-		let dict = this.si_ancestries_byHID_forKind(ancestry.kind);
-		this.ancestry_byHID[hid] = ancestry;
+		let dict = this.si_ancestries_dict_byHID_forKind(ancestry.kind);
+		this.ancestry_dict_byHID[hid] = ancestry;
 		dict[hid] = ancestry;
-		this.ancestry_byKind_andHID[ancestry.kind] = dict;
+		this.ancestry_dict_byKind_andHID[ancestry.kind] = dict;
 		this.ancestry_remember_forThing_ofAncestry(ancestry);
 	}
 	
 	ancestry_forget(ancestry: Ancestry | null) {
 		if (!!ancestry) {
 			const hid = ancestry.hid;
-			let dict = this.si_ancestries_byHID_forKind(ancestry.kind);
-			delete this.ancestry_byHID[hid];
+			let dict = this.si_ancestries_dict_byHID_forKind(ancestry.kind);
+			delete this.ancestry_dict_byHID[hid];
 			delete dict[hid];
-			this.ancestry_byKind_andHID[ancestry.kind] = dict;
+			this.ancestry_dict_byKind_andHID[ancestry.kind] = dict;
 			this.ancestry_forget_forThing_ofAncestry(ancestry);
 		}
 	}
@@ -809,10 +809,10 @@ export class Hierarchy {
 	ancestry_remember_forThing_ofAncestry(ancestry: Ancestry) {
 		const thing = ancestry.thing;
 		if (!!thing) {
-			let si_ancestries = this.si_ancestries_byThingHID[thing.hid] ?? new S_Items<Ancestry>([]);
+			let si_ancestries = this.si_ancestries_dict_byThingHID[thing.hid] ?? new S_Items<Ancestry>([]);
 			if (!si_ancestries.items.map(a => a.hid).includes(ancestry.hid)) {
 				si_ancestries.push(ancestry);
-				this.si_ancestries_byThingHID[thing.hid] = si_ancestries;
+				this.si_ancestries_dict_byThingHID[thing.hid] = si_ancestries;
 			}
 		}
 	}
@@ -820,7 +820,7 @@ export class Hierarchy {
 	ancestry_forget_forThing_ofAncestry(ancestry: Ancestry) {
 		const thing = ancestry.thing;
 		if (!!thing) {
-			let si_ancestries = this.si_ancestries_byThingHID[thing.hid];
+			let si_ancestries = this.si_ancestries_dict_byThingHID[thing.hid];
 			if (!!si_ancestries) {
 				si_ancestries.remove(ancestry);
 			}
@@ -860,7 +860,7 @@ export class Hierarchy {
 	}
 
 	ancestry_remember_createUnique(path: string = k.root, kind: string = T_Predicate.contains): Ancestry {
-		let ancestry = this.si_ancestries_byHID_forKind(kind)[path.hash()];
+		let ancestry = this.si_ancestries_dict_byHID_forKind(kind)[path.hash()];
 		if (!ancestry) {
 			ancestry = new Ancestry(this.db.t_database, path, kind);
 			this.ancestry_remember(ancestry);
@@ -928,7 +928,7 @@ export class Hierarchy {
 			let externalsAncestry: Ancestry | null = null;
 			const rootAncestry = this.rootAncestry;
 			if (!!rootAncestry) {
-				const externalsArray = this.things_byType[T_Thing.externals] ?? [];		// there should only be one
+				const externalsArray = this.things_dict_byType[T_Thing.externals] ?? [];		// there should only be one
 				const length = externalsArray.length;
 				if (!!length) {
 					for (const externalsThing of externalsArray) {				// add to the root ancestry
@@ -1114,10 +1114,10 @@ export class Hierarchy {
 
 	static readonly _____PREDICATES: unique symbol;
 
-	predicates_byDirection(isBidirectional: boolean) { return this.predicate_byDirection[isBidirectional ? 1 : 0]; }
+	predicates_dict_byDirection(isBidirectional: boolean) { return this.predicate_dict_byDirection[isBidirectional ? 1 : 0]; }
 
 	predicates_forget_all() {
-		this.relationship_byHID = {};
+		this.relationship_dict_byHID = {};
 		this.predicates = [];
 	}
 
@@ -1129,7 +1129,7 @@ export class Hierarchy {
 
 	static readonly _____PREDICATE: unique symbol;
 
-	predicate_forKind(kind: string | null): Predicate | null { return !kind ? null : this.predicate_byKind[kind]; }
+	predicate_forKind(kind: string | null): Predicate | null { return !kind ? null : this.predicate_dict_byKind[kind]; }
 
 	predicate_kindFor_idRelationship(idRelationship: string): string | null {
 		const relationship = this.relationship_forHID(idRelationship.hash());
@@ -1141,15 +1141,15 @@ export class Hierarchy {
 	}
 
 	predicate_forget(predicate: Predicate) {
-		let predicates = this.predicates_byDirection(predicate.isBidirectional) ?? [];
-		predicates = Identifiable.remove_byHID<Predicate>(predicates, predicate);
+		let predicates = this.predicates_dict_byDirection(predicate.isBidirectional) ?? [];
+		predicates = Identifiable.remove_item_byHID<Predicate>(predicates, predicate);
 		if (predicates.length == 0) {
-			delete this.predicate_byDirection[predicate.isBidirectional ? 1 : 0];
+			delete this.predicate_dict_byDirection[predicate.isBidirectional ? 1 : 0];
 		} else {
-			this.predicate_byDirection[predicate.isBidirectional ? 1 : 0] = predicates;
+			this.predicate_dict_byDirection[predicate.isBidirectional ? 1 : 0] = predicates;
 		}
-		this.predicates = Identifiable.remove_byHID<Predicate>(this.predicates, predicate);
-		delete this.predicate_byKind[predicate.kind];
+		this.predicates = Identifiable.remove_item_byHID<Predicate>(this.predicates, predicate);
+		delete this.predicate_dict_byKind[predicate.kind];
 	}
 
 	predicate_defaults_remember_runtimeCreate() {
@@ -1164,14 +1164,14 @@ export class Hierarchy {
 	}
 
 	predicate_remember(predicate: Predicate) {
-		this.predicate_byKind[predicate.kind] = predicate;
-		let predicates = this.predicates_byDirection(predicate.isBidirectional) ?? [];
+		this.predicate_dict_byKind[predicate.kind] = predicate;
+		let predicates = this.predicates_dict_byDirection(predicate.isBidirectional) ?? [];
 		if (!this.predicates.map(p => p.id).includes(predicate.id)) {
 			this.predicates.push(predicate);
 		}
 		if (!predicates.map(p => p.id).includes(predicate.id)) {
 			predicates.push(predicate);
-			this.predicate_byDirection[predicate.isBidirectional ? 1 : 0] = predicates;
+			this.predicate_dict_byDirection[predicate.isBidirectional ? 1 : 0] = predicates;
 		}
 	}
 
@@ -1192,8 +1192,8 @@ export class Hierarchy {
 	static readonly _____TRAITS: unique symbol;
 
 	get traits(): Array<Trait> { return this.si_traits.items; }
-	traits_forType(t_trait: T_Trait): S_Items<Trait> | null { return this.si_traits_byType[t_trait]; }
-	si_traits_forOwnerHID(hid: Integer | null): S_Items<Trait> | null { return !!hid ? this.si_traits_byOwnerHID?.[hid] ?? null : null; }
+	traits_forType(t_trait: T_Trait): S_Items<Trait> | null { return this.si_traits_dict_byType[t_trait]; }
+	si_traits_forOwnerHID(hid: Integer | null): S_Items<Trait> | null { return !!hid ? this.si_traits_dict_byOwnerHID?.[hid] ?? null : null; }
 
 	traits_refreshKnowns() {
 		const traits = this.traits;
@@ -1203,11 +1203,11 @@ export class Hierarchy {
 	}
 
 	traits_forget_all() {
-		this.si_traits_byThingHID = {};
-		this.si_traits_byOwnerHID = {};
-		this.si_traits_byType = {};
+		this.si_traits_dict_byThingHID = {};
+		this.si_traits_dict_byOwnerHID = {};
+		this.si_traits_dict_byType = {};
 		this.si_traits.reset();
-		this.trait_byHID = {};
+		this.trait_dict_byHID = {};
 	}
 
 	traits_translate_idsFromTo_forThings(idFrom: string, idTo: string) {
@@ -1222,7 +1222,7 @@ export class Hierarchy {
 
 	static readonly _____TRAIT: unique symbol;
 
-	trait_forHID(hid: Integer): Trait | null { return this.trait_byHID[hid ?? undefined]; }
+	trait_forHID(hid: Integer): Trait | null { return this.trait_dict_byHID[hid ?? undefined]; }
 
 	trait_runtimeCreate(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string, already_persisted: boolean = false): Trait {
 		return new Trait(idBase, id, ownerID, t_trait, text, already_persisted);
@@ -1237,16 +1237,16 @@ export class Hierarchy {
 	}
 
 	trait_forType_ownerHID(t_trait: T_Trait | null, ownerHID: Integer | null): Trait| null {
-		return !t_trait ? null : this.si_traits_byType[t_trait]?.item ?? null;
+		return !t_trait ? null : this.si_traits_dict_byType[t_trait]?.item ?? null;
 	}
 
 	trait_forget(trait: Trait) {
 		const hid = trait.ownerID.hash();
-		delete this.trait_byHID[trait.hid];
-		delete this.si_traits_byOwnerHID[hid];
-		delete this.si_traits_byThingHID[hid];
-		delete this.si_traits_byType[trait.t_trait];
-		delete this.si_things_byT_trait[trait.t_trait];
+		delete this.trait_dict_byHID[trait.hid];
+		delete this.si_traits_dict_byOwnerHID[hid];
+		delete this.si_traits_dict_byThingHID[hid];
+		delete this.si_traits_dict_byType[trait.t_trait];
+		delete this.si_things_dict_byT_trait[trait.t_trait];
 		this.si_traits.remove(trait);
 		if (!!trait.owner) {
 			this.si_traitThings.remove(trait.owner);
@@ -1255,17 +1255,17 @@ export class Hierarchy {
 
 	trait_remember(trait: Trait) {
 		const hid = trait.ownerID.hash();
-		this.trait_byHID[trait.hid] = trait;
+		this.trait_dict_byHID[trait.hid] = trait;
 		if (!!trait.owner) {
-			let si_things = this.si_things_byT_trait[trait.t_trait] ?? new S_Items<Thing>([]);
+			let si_things = this.si_things_dict_byT_trait[trait.t_trait] ?? new S_Items<Thing>([]);
 			si_things.push(trait.owner);
-			this.si_things_byT_trait[trait.t_trait] = si_things;
+			this.si_things_dict_byT_trait[trait.t_trait] = si_things;
 			this.si_traitThings.push(trait.owner);
 		}
 		this.traits.push(trait);
-		(this.si_traits_byOwnerHID[hid] = this.si_traits_byOwnerHID[hid] ?? new S_Items<Trait>([])).push(trait);
-		(this.si_traits_byThingHID[hid] = this.si_traits_byThingHID[hid] ?? new S_Items<Trait>([])).push(trait);
-		(this.si_traits_byType[trait.t_trait] = this.si_traits_byType[trait.t_trait] ?? new S_Items<Trait>([])).push(trait);
+		(this.si_traits_dict_byOwnerHID[hid] = this.si_traits_dict_byOwnerHID[hid] ?? new S_Items<Trait>([])).push(trait);
+		(this.si_traits_dict_byThingHID[hid] = this.si_traits_dict_byThingHID[hid] ?? new S_Items<Trait>([])).push(trait);
+		(this.si_traits_dict_byType[trait.t_trait] = this.si_traits_dict_byType[trait.t_trait] ?? new S_Items<Trait>([])).push(trait);
 	}
 
 	trait_remember_runtimeCreate(idBase: string, id: string, ownerID: string, t_trait: T_Trait, text: string, already_persisted: boolean = false): Trait {
@@ -1285,7 +1285,7 @@ export class Hierarchy {
 
 	static readonly _____TAGS: unique symbol;
 
-	si_tags_forThingHID(hid: Integer): S_Items<Tag> { return this.si_tags_byThingHID[hid]; }
+	si_tags_forThingHID(hid: Integer): S_Items<Tag> { return this.si_tags_dict_byThingHID[hid]; }
 	get tags(): Array<Tag> { return this.si_tags.items; }
 
 	tags_refreshKnowns() {
@@ -1296,10 +1296,10 @@ export class Hierarchy {
 	}
 
 	tags_forget_all() {
-		this.si_tags_byThingHID = {};
+		this.si_tags_dict_byThingHID = {};
 		this.si_tags.reset();
-		this.tag_byType = {};
-		this.tag_byHID = {};
+		this.tag_dict_byType = {};
+		this.tag_dict_byHID = {};
 	}
 
 	tags_translate_idsFromTo_forThings(idFrom: string, idTo: string) {
@@ -1317,8 +1317,8 @@ export class Hierarchy {
 
 	static readonly _____TAG: unique symbol;
 
-	tag_forType(type: string): Tag | null { return this.tag_byType[type] ?? null; }
-	tag_forHID(hid: Integer): Tag | null { return this.tag_byHID[hid ?? undefined]; }
+	tag_forType(type: string): Tag | null { return this.tag_dict_byType[type] ?? null; }
+	tag_forHID(hid: Integer): Tag | null { return this.tag_dict_byHID[hid ?? undefined]; }
 
 	tag_extract_fromDict(dict: Dictionary) {
 		this.tag_remember_runtimeCreateUnique(this.db.idBase, dict.id, dict.type, dict.thingHIDs, dict.false);
@@ -1326,16 +1326,16 @@ export class Hierarchy {
 
 	tag_forget(tag: Tag) {
 		this.tag_addTo_known_tags(tag, false);
-		this.tag_addTo_known_tags_byHID(tag, false);
-		this.tag_addTo_known_tags_byType(tag, false);
-		this.tag_addTo_known_tags_byThingHID(tag, false);
+		this.tag_addTo_known_tags_dict_byHID(tag, false);
+		this.tag_addTo_known_tags_dict_byType(tag, false);
+		this.tag_addTo_known_tags_dict_byThingHID(tag, false);
 	}
 
 	tag_remember(tag: Tag) {
 		this.tag_addTo_known_tags(tag);
-		this.tag_addTo_known_tags_byHID(tag);
-		this.tag_addTo_known_tags_byType(tag);
-		this.tag_addTo_known_tags_byThingHID(tag);
+		this.tag_addTo_known_tags_dict_byHID(tag);
+		this.tag_addTo_known_tags_dict_byType(tag);
+		this.tag_addTo_known_tags_dict_byThingHID(tag);
 	}
 
 	// create toggles for each index!
@@ -1349,28 +1349,28 @@ export class Hierarchy {
 		}
 	}
 
-	tag_addTo_known_tags_byHID(tag: Tag, add: boolean = true) {
+	tag_addTo_known_tags_dict_byHID(tag: Tag, add: boolean = true) {
 		if (!add) {
-			delete this.tag_byHID[tag.hid];
-		} else if (!this.tag_byHID[tag.hid]) {
-			this.tag_byHID[tag.hid] = tag;
+			delete this.tag_dict_byHID[tag.hid];
+		} else if (!this.tag_dict_byHID[tag.hid]) {
+			this.tag_dict_byHID[tag.hid] = tag;
 		}
 	}
 
-	tag_addTo_known_tags_byType(tag: Tag, add: boolean = true) {
+	tag_addTo_known_tags_dict_byType(tag: Tag, add: boolean = true) {
 		if (!add) {
-			delete this.tag_byType[tag.type];
-		} else if (!this.tag_byType[tag.type]) {
-			this.tag_byType[tag.type] = tag;
+			delete this.tag_dict_byType[tag.type];
+		} else if (!this.tag_dict_byType[tag.type]) {
+			this.tag_dict_byType[tag.type] = tag;
 		}
 	}
 
-	tag_addTo_known_tags_byThingHID(tag: Tag, add: boolean = true) {
+	tag_addTo_known_tags_dict_byThingHID(tag: Tag, add: boolean = true) {
 		for (const hid of tag.thingHIDs) {
-			let si_tags = this.si_tags_byThingHID[hid];
+			let si_tags = this.si_tags_dict_byThingHID[hid];
 			if (!si_tags) {
 				si_tags = new S_Items<Tag>([]);
-				this.si_tags_byThingHID[hid] = si_tags;
+				this.si_tags_dict_byThingHID[hid] = si_tags;
 			}
 			let tags = si_tags.items;
 			if (!add && !!tags) {
@@ -1385,7 +1385,7 @@ export class Hierarchy {
 		}
 	}
 
-	tag_remember_runtimeCreateUnique_byType(idBase: string, id: string, type: string, thingHIDs: Array<Integer>, already_persisted: boolean = false): Tag {
+	tag_remember_runtimeCreateUnique_forType(idBase: string, id: string, type: string, thingHIDs: Array<Integer>, already_persisted: boolean = false): Tag {
 		let tag = this.tag_forType(type);
 		if (!tag) {
 			tag = this.tag_remember_runtimeCreate(idBase, id, type, thingHIDs, already_persisted);
@@ -1424,13 +1424,13 @@ export class Hierarchy {
 
 	access_runtimeCreate(idAccess: string, kind: string) {
 		const access = new Access(this.db.t_database, T_Persistable.access, idAccess, kind);
-		this.access_byHID[idAccess.hash()] = access;
-		this.access_byKind[kind] = access;
+		this.access_dict_byHID[idAccess.hash()] = access;
+		this.access_dict_byKind[kind] = access;
 	}
 
 	user_runtimeCreate(id: string, name: string, email: string, phone: string) {
 		const user = new User(this.db.t_database, T_Persistable.users, id, name, email, phone);
-		this.user_byHID[id.hash()] = user;
+		this.user_dict_byHID[id.hash()] = user;
 	}
 
 	static readonly _____FILES: unique symbol;
@@ -1563,7 +1563,7 @@ export class Hierarchy {
 	}
 
 	async ancestry_lost_and_found(): Promise<Ancestry | null> {
-		const found = this.things_byType[T_Thing.found];
+		const found = this.things_dict_byType[T_Thing.found];
 		if (!!found && found.length > 0) {
 			return found[0].ancestry;		// force creation
 		}
@@ -1621,7 +1621,7 @@ export class Hierarchy {
 
 	get depth(): number {
 		let maximum = 1;
-		const ancestries = Object.values(this.ancestry_byHID);
+		const ancestries = Object.values(this.ancestry_dict_byHID);
 		for (const ancestry of ancestries) {
 			const depth = ancestry.depth;
 			if (maximum < depth) {

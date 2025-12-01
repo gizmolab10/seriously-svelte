@@ -97,10 +97,10 @@ export class Debug {
 		}
 	}
 
-	apply_queryStrings() {
-		const debug = c.queryStrings.get('debug');
-		if (debug) {
-			const flags = debug.split(',');
+	apply_queryStrings(queryStrings: URLSearchParams) {
+		const query = queryStrings.get('debug');
+		if (query) {
+			const flags = query.split(',');
 			for (const option of flags) {
 				switch (option) {
 					case 'bidirectionals': this.flags.push(T_Debug.bidirectionals); break;

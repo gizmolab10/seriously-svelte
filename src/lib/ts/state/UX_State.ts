@@ -1,4 +1,4 @@
-import { h, s, u, debug, search, layout } from '../common/Global_Imports';
+import { h, s, u, debug, search, radial, layout } from '../common/Global_Imports';
 import { details, controls, databases } from '../common/Global_Imports';
 import { S_Items, T_Search, T_Startup } from '../common/Global_Imports';
 import { Tag, Thing, Trait, Ancestry } from '../common/Global_Imports';
@@ -119,6 +119,7 @@ export default class UX_State {
 	static readonly _____GRABS: unique symbol;
 
 	grabOnly(ancestry: Ancestry) {
+		if (radial.isDragging) return;
 		debug.log_grab(`  GRAB ONLY '${ancestry.title}'`);
 		this.si_grabs.items = [ancestry];
 		h?.stop_alteration();
@@ -127,6 +128,7 @@ export default class UX_State {
 
 	grab(ancestry: Ancestry) {
 		let grabbed = this.si_grabs.items ?? [];
+		if (radial.isDragging) return;
 		if (!!grabbed) {
 			const index = grabbed.indexOf(ancestry);
 			if (grabbed.length == 0) {
@@ -147,6 +149,7 @@ export default class UX_State {
 	ungrab(ancestry: Ancestry) {
 		s.w_s_title_edit?.set(null);
 		let grabbed = this.si_grabs.items ?? [];
+		if (radial.isDragging) return;
 		const rootAncestry = h?.rootAncestry;
 		if (!!grabbed) {
 			const index = grabbed.indexOf(ancestry);

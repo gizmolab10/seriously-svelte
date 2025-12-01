@@ -2,7 +2,7 @@ import { Ancestry, S_Component, T_Hit_Target } from '../common/Global_Imports';
 import type { Integer } from '../types/Types';
 
 export class Components {
-	private components_byType_andHID: { [type: string]: { [hid: Integer]: S_Component } } = {};
+	private components_dict_byType_andHID: { [type: string]: { [hid: Integer]: S_Component } } = {};
 	private _dummy!: S_Component;
 
 	//////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@ export class Components {
 		const type = s_component.type;
 		const hid = s_component.hid;
 		if (!!hid && !!type) {
-			const array = this.components_byType_andHID;
+			const array = this.components_dict_byType_andHID;
 			const dict = array[type] ?? {};
 			dict[hid] = s_component;
 			array[type] = dict;
@@ -55,10 +55,10 @@ export class Components {
 	}
 
 	private components_byHID_forType(type: string): { [hid: Integer]: S_Component } {
-		let dict = this.components_byType_andHID[type];
+		let dict = this.components_dict_byType_andHID[type];
 		if (!dict) {
 			dict = {};
-			this.components_byType_andHID[type] = dict;
+			this.components_dict_byType_andHID[type] = dict;
 		}
 		return dict;
 	}

@@ -25,12 +25,12 @@ export class S_Banner_Hideable {
 }
 
 class Details {
-	s_banner_hideables_byType: { [t_detail: string]: S_Banner_Hideable } = {};
+	s_banner_hideables_dict_byType: { [t_detail: string]: S_Banner_Hideable } = {};
 	t_storage_need = T_Storage_Need.direction;
 
 	constructor() {
 		for (const t_detail of Object.values(T_Detail) as T_Detail[]) {
-			this.s_banner_hideables_byType[t_detail] = new S_Banner_Hideable(t_detail);
+			this.s_banner_hideables_dict_byType[t_detail] = new S_Banner_Hideable(t_detail);
 		}
 	}
 		
@@ -51,7 +51,7 @@ class Details {
 	}
 
 	banner_title_forDetail(t_detail: T_Detail): string {
-		const si_items = this.s_banner_hideables_byType[t_detail].si_items;
+		const si_items = this.s_banner_hideables_dict_byType[t_detail].si_items;
 		let title = T_Detail[t_detail];
 		switch (t_detail) {
 			case T_Detail.tags:

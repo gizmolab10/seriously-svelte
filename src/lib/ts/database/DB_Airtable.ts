@@ -1,5 +1,5 @@
 import { T_Thing, T_Trait, T_Debug, T_Create, T_Predicate, busy } from '../common/Global_Imports';
-import { c, h, k, u, Thing, Trait, Relationship } from '../common/Global_Imports';
+import { h, k, u, Thing, Trait, Relationship } from '../common/Global_Imports';
 import { T_Persistable, T_Persistence } from '../common/Global_Imports';
 import { DB_Name, T_Database } from './DB_Common';
 import DB_Common from './DB_Common';
@@ -52,8 +52,8 @@ export default class DB_Airtable extends DB_Common {
 		return true;
 	}
 
-	apply_queryStrings() {
-		const string = c.queryStrings.get('name') ?? c.queryStrings.get('dbid');
+	apply_queryStrings(queryStrings: URLSearchParams) {
+		const string = queryStrings.get('name') ?? queryStrings.get('dbid');
 		if (!!string) {
 			const names = string.split(k.comma);
 			if (names.length > 1) {

@@ -13,8 +13,8 @@ import { G_Pages } from '../layout/G_Pages';
 //////////////////////////////////
 
 export default class Radial {
-	s_paging_byName: { [name: string]: S_Rotation } = {};
-	g_pages_byThingID: {[id: string]: G_Pages} = {};
+	s_paging_dict_byName: { [name: string]: S_Rotation } = {};
+	g_pages_dict_byThingID: {[id: string]: G_Pages} = {};
 	cursor = k.cursor_default;
 	zone = T_Radial_Zone.miss;
 	s_resizing!: S_Resizing;
@@ -34,14 +34,14 @@ export default class Radial {
 	}
 
 	reset_paging() { this.s_pagings.map(s => s.reset()); }
-	get s_pagings(): Array<S_Rotation> { return Object.values(this.s_paging_byName); }
+	get s_pagings(): Array<S_Rotation> { return Object.values(this.s_paging_dict_byName); }
 	get isAny_paging_arc_hovering(): boolean { return this.s_pagings.some(s => s.isHovering); }
 	get isAny_paging_thumb_dragging(): boolean { return this.s_pagings.some(s => s.isDragging); }
-	get isAny_rotation_dragging(): boolean { return this.isAny_paging_thumb_dragging || this.s_paging.isDragging || this.s_rotation.isDragging; }
-	s_paging_forName(name: string): S_Rotation { return elements.assure_forKey_inDict(name, this.s_paging_byName, () => new S_Rotation()); }
+	get isDragging(): boolean { return this.isAny_paging_thumb_dragging || this.s_paging.isDragging || this.s_rotation.isDragging; }
+	s_paging_forName_ofCluster(name: string): S_Rotation { return elements.assure_forKey_inDict(name, this.s_paging_dict_byName, () => new S_Rotation()); }
 	
 	g_pages_forThingID(id: string | null | undefined): G_Pages | null {
-		return !id ? null : elements.assure_forKey_inDict(id, this.g_pages_byThingID, () => new G_Pages(id));
+		return !id ? null : elements.assure_forKey_inDict(id, this.g_pages_dict_byThingID, () => new G_Pages(id));
 	}
 
 	reset() {
@@ -59,7 +59,7 @@ export default class Radial {
 			for (const sub_dict of Object.values(dict)) {
 				const g_pages = G_Pages.create_fromDict(sub_dict);
 				if (!!g_pages) {
-					this.g_pages_byThingID[g_pages.thing_id] = g_pages;
+					this.g_pages_dict_byThingID[g_pages.thing_id] = g_pages;
 				}
 			}
 		}
@@ -67,9 +67,9 @@ export default class Radial {
 
 	get cursor_forRingZone(): string {
 		switch (this.ring_zone_atMouseLocation) {
-			case T_Radial_Zone.paging: return this.s_paging.cursor;
 			case T_Radial_Zone.resize: return this.s_resizing.cursor;
 			case T_Radial_Zone.rotate: return this.s_rotation.cursor;
+			case T_Radial_Zone.paging: return this.s_paging.cursor;
 			default:				   return k.cursor_default;
 		}
 	}
@@ -110,18 +110,17 @@ export default class Radial {
 		return detected;
 	}
 
-	detect_ring_movement() {
+	handle_mouse_drag() {
 		const mouse_vector = layout.mouse_vector_ofOffset_fromGraphCenter();
 		if (!!mouse_vector) {
 			const rotate = this.s_rotation;
 			const resize = this.s_resizing;
 			const now = new Date().getTime();
-			const mouse_angle = mouse_vector.angle;
 			const g_cluster = get(this.w_g_cluster);
 			const s_paging = g_cluster?.s_paging;
-			const is_dragging = rotate.isDragging || resize.isDragging || !!get(this.w_g_cluster);		// must not overload DOM refresh
-			if (is_dragging) {
-				window.getSelection()?.removeAllRanges();		// Prevent text selection during dragging
+			const mouse_angle = mouse_vector.angle;
+			if (rotate.isDragging || resize.isDragging || !!g_cluster) {	// not overload DOM refresh
+				window.getSelection()?.removeAllRanges();					// prevent text selection during dragging
 			}
 			if (!!resize && resize.isDragging && resize.basis_radius != null) {										// resize, check this FIRST (when both states return isDragging true, rotate should be ignored)
 				const smallest = k.radius.ring_minimum;
@@ -205,7 +204,7 @@ export default class Radial {
 					this.update_fill_colors();
 				});
 				this.w_g_paging.subscribe((g_paging: G_Paging) => {
-					p.writeDB_key(T_Preference.paging, this.g_pages_byThingID);
+					p.writeDB_key(T_Preference.paging, this.g_pages_dict_byThingID);
 					if (!!g_paging) {
 						g_radial.layout_forPoints_toChildren(g_paging.points_toChildren);
 						g_radial.layout_forPaging();

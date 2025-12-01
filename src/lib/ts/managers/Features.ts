@@ -1,4 +1,4 @@
-import { c, k, show, T_Theme } from '../common/Global_Imports';
+import { k, show, T_Theme } from '../common/Global_Imports';
 
 export class Features {
 
@@ -15,19 +15,18 @@ export class Features {
 	allow_autoSave		 = true;
 	allow_search		 = true;
 
-	apply_queryStrings() {
-		const queryStrings	 = c.queryStrings;
+	apply_queryStrings(queryStrings: URLSearchParams) {
         const themeOptions	 = queryStrings.get('theme')?.split(k.comma) ?? [];
         const disableOptions = queryStrings.get('disable')?.split(k.comma) ?? [];
 		for (const disableOption of disableOptions) {
 			switch (disableOption) {
-				case 'details':				this.has_details_button		    = false; break;
-				case 'editGraph':			this.allow_graph_editing	    = false; break;
-				case 'editTitles':			this.allow_title_editing	    = false; break;
-				case 'horizontalScrolling': this.allow_h_scrolling			= false; break;
-				case 'tree_mode':			this.allow_tree_mode		    = false; break;
-				case 'auto_save':			this.allow_autoSave			    = false; break;
-				case 'search':				this.allow_search			    = false; break;
+				case 'editGraph':			this.allow_graph_editing = false; break;
+				case 'editTitles':			this.allow_title_editing = false; break;
+				case 'details':				this.has_details_button	 = false; break;
+				case 'horizontalScrolling': this.allow_h_scrolling	 = false; break;
+				case 'tree_mode':			this.allow_tree_mode	 = false; break;
+				case 'auto_save':			this.allow_autoSave		 = false; break;
+				case 'search':				this.allow_search		 = false; break;
 			}
 		}
 		for (const themeOption of themeOptions) {

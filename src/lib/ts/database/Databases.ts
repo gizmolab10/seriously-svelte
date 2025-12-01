@@ -1,4 +1,4 @@
-import { c, k, p, s, busy, Hierarchy, T_Preference } from '../common/Global_Imports';
+import { k, p, s, busy, Hierarchy, T_Preference } from '../common/Global_Imports';
 import { T_Persistence } from '../common/Global_Imports';
 import { T_Database } from '../database/DB_Common';
 import DB_Common from '../database/DB_Common';
@@ -21,8 +21,7 @@ export default class Databases {
 	defer_persistence: boolean = false;
 	db_now: DB_Common;
 
-	apply_queryStrings() {
-		const queryStrings = c.queryStrings;
+	apply_queryStrings(queryStrings: URLSearchParams) {
 		let type = queryStrings.get('db');
 		if (!!type) {
 			this.db_now = this.db_forType(type);
