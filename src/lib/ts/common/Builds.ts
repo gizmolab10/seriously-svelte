@@ -1,5 +1,6 @@
 export class Builds {
 	notes: { [id: number]: string[] } = {
+		176 : ['December 2, 2025', 'new curved cluster titles'],
 		175 : ['December 1, 2025', 'new hover system'],
 		174 : ['November 25, 2025', 'click drag dot changes focus (in both graph modes)'],
 		173 : ['November 18, 2025', 'decrease spacing everywhere'],
