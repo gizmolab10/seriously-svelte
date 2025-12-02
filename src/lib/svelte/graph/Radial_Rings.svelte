@@ -9,8 +9,8 @@
 	const { w_s_hover } = hits;
 	const { w_thing_color } = colors;
 	const ring_width = k.thickness.radial.ring;
-	const { w_count_mouse_up, w_s_title_edit, w_ancestry_focus } = s;
 	const { w_g_cluster, w_rotate_angle, w_resize_radius } = radial;
+	const { w_count_mouse_up, w_s_title_edit, w_ancestry_focus } = s;
 	let color = $w_ancestry_focus?.thing?.color ?? colors.default_forThings;
 	let mouse_up_count = $w_count_mouse_up;
 	let resize_fill = 'transparent';
@@ -62,9 +62,9 @@
 	}
 
 	function s_reset() {
+		radial.reset();
 		e.mouse_timer_forName(name).reset();
 		update_fill_colors();
-		radial.reset();
 	}
 
 	function handle_s_mouse(s_mouse) {

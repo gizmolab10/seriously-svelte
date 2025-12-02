@@ -231,9 +231,9 @@ export default class SVG_Paths {
 	}
 
 	// TODO: this only works for the default number of vertices (3)
-	fat_polygon(size: number, angle: number, vertices: number = 3): string {
+	fat_polygon(size: number, angle: number, vertices: number = 3, onCenter: boolean = false): string {
 		const segmentAngle = Math.PI / vertices;
-		const offset = Point.square(size / 2);
+		const offset = onCenter ? Point.zero : Point.square(size / 2);
 		const inner = Point.x(size / 3);
 		const outer = Point.x(size / 2);
 		const tweak = segmentAngle / 5;

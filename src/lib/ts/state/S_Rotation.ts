@@ -10,6 +10,9 @@ export default class S_Rotation extends S_Hit_Target {
 
 	constructor(type: T_Hit_Target = T_Hit_Target.rotation) {
 		super(type, get(s.w_ancestry_focus));
+		setTimeout(() => {
+			this.reset();
+		}, 1);
 	}
 
 	get hover_cursor():	  string { return 'alias'; }
@@ -18,11 +21,11 @@ export default class S_Rotation extends S_Hit_Target {
 	get active_cursor():  string { return new Angle(this.active_angle!).cursor_forAngle; }
 	get color():		  string { return this.ancestry?.thing?.color ?? colors.default_forThings; }
 	get stroke_opacity(): number { return this.isHovering ? k.opacity.radial.hover : k.opacity.none; }
-	get fill_opacity():	  number { return this.isHovering ? k.opacity.radial.armature : k.opacity.none; }
+	get fill_opacity():	  number { return this.isHovering ? k.opacity.radial.armature : k.opacity.radial.default; }
 	get cursor():		  string { return this.isDragging ? this.active_cursor : this.isHovering ? this.hover_cursor : k.cursor_default; }
 	get thumb_opacity():  number { return this.isDragging ? k.opacity.radial.active : this.isHovering ? k.opacity.radial.hover : k.opacity.radial.thumb; }
-	update_fill_color()			 { this.fill_color = this.isHighlighted ? colors.opacitize(this.color, this.fill_opacity) : 'transparent'; }
-	reset()						 { this.basis_angle = this.active_angle = null; }
+	reset()						 { this.basis_angle = this.active_angle = null; this.update_fill_color(); }
+	update_fill_color()			 { this.fill_color = colors.opacitize(this.color, this.fill_opacity) }
 
 	
 }

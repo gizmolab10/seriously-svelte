@@ -26,6 +26,7 @@ export default class S_Hit_Target {
 		this.type = type;
 	}
 
+	static empty() { return {}; }
 	get stroke(): string { return 'red'; }				// override in subclasses
 	get ancestry(): Ancestry { return this.identifiable as Ancestry; }
 	get isHovering(): boolean { return this.isEqualTo(get(hits.w_s_hover)); }

@@ -31,7 +31,6 @@ export default class S_Element extends S_Hit_Target {
 		}
 	}
 
-	static empty() { return {}; }
 	get color_isInverted(): boolean { return this.isInverted != this.isHovering; }
 	get show_help_cursor(): boolean { return get(s.w_control_key_down) && this.type == T_Hit_Target.action; }
 	get fill():				 string { return this.isDisabled ? 'transparent' : this.color_isInverted ? this.hoverColor : this.isSelected ? 'lightblue' : this.color_background; }

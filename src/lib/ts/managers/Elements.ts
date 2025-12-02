@@ -1,14 +1,15 @@
-import { S_Mouse, S_Widget, S_Element } from '../common/Global_Imports';
+import { S_Mouse, S_Widget, S_Element, S_Hit_Target, S_Component } from '../common/Global_Imports';
 import { T_Control, T_Hit_Target } from '../common/Global_Imports';
 import { colors, Ancestry } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
-import type { Dictionary } from '../types/Types';
+import type { Dictionary, Integer } from '../types/Types';
 
 export default class Elements {
-	s_control_dict_byType: { [t_control: string]: S_Element } = {};
-	s_widget_dict_byAncestryID: { [id: string]: S_Widget } = {};
-	s_element_dict_byName: { [name: string]: S_Element } = {};
-	s_mouse_dict_byName: { [name: string]: S_Mouse } = {};
+	private s_element_dict_byType_andID: { [type: string]: { [id: string]: S_Element } } = {};
+	private s_control_dict_byType: { [t_control: string]: S_Element } = {};
+	private s_widget_dict_byAncestryID: { [id: string]: S_Widget } = {};
+	private s_element_dict_byName: { [name: string]: S_Element } = {};
+	private s_mouse_dict_byName: { [name: string]: S_Mouse } = {};
 	mouse_responder_number = 0;
 	s_focus!: S_Element;
 
@@ -36,9 +37,11 @@ export default class Elements {
 
 	static readonly _____LOOKUP: unique symbol;
 
-	get s_elements(): S_Element[] { return Object.values(this.s_element_dict_byName); }
-	s_element_forName(name: string): S_Element { return this.s_element_dict_byName[name]; }
 	s_mouse_forName(name: string): S_Mouse { return this.assure_forKey_inDict(name, this.s_mouse_dict_byName, () => S_Mouse.empty()); }
+	
+	s_element_forName_andType(name: string, type: T_Hit_Target, subtype: string): S_Element {
+		return this.assure_forKey_inDict(name, this.s_element_byName_forType(type), () => this.s_element_for(new Identifiable(type), type, subtype));
+	}
 
 	s_control_forType(t_control: T_Control): S_Element {
 		let s_control = this.s_control_dict_byType[t_control];
@@ -102,6 +105,19 @@ export default class Elements {
 			}
 		}
 		return result;
+	}
+
+	static readonly _____INTERNALS: unique symbol;
+
+	private get s_elements(): S_Element[] { return Object.values(this.s_element_dict_byName); }
+
+	private s_element_byName_forType(type: T_Hit_Target): { [name: string]: S_Element } {
+		let dict = this.s_element_dict_byType_andID[type];
+		if (!dict) {
+			dict = {};
+			this.s_element_dict_byType_andID[type] = dict;
+		}
+		return dict;
 	}
 
 }

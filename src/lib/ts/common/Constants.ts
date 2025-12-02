@@ -121,7 +121,8 @@ export default class Constants {
 			selected: 1.0,
 		},
 		radial: {
-			armature: 0.05,
+			default:  0.04,
+			armature: 0.1,
 			thumb:	  0.1,
 			hover:	  0.7,
 			text:	  1,

@@ -2,9 +2,9 @@
 	import { k, s, hits, show, colors, radial, layout } from '../../ts/common/Global_Imports';
 	import { Point, T_Layer, G_Cluster } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import Text_OnArc from '../text/Text_OnArc.svelte';
+	import Curved_Text from '../text/Curved_Text.svelte';
 	import Gull_Wings from '../draw/Gull_Wings.svelte';
-	export let g_cluster!: G_Cluster;
+	export let g_cluster: G_Cluster;
 	export let color = 'red';
 	const { w_thing_fontFamily } = s;
 	const s_paging = g_cluster.s_paging;
@@ -33,7 +33,7 @@
 	$: viewBox=`${-offset} ${-offset} ${radius * 2} ${radius * 2}`;
 	$: radius = $w_resize_radius + offset;
 
-// <Text_OnArc
+// <Angled_Text
 //     zindex={T_Layer.paging}
 //     text={g_cluster.cluster_title}
 //     center={g_cluster.label_center}
@@ -82,7 +82,7 @@
 					d={g_arcSlider.svgPathFor_radialFork}
 					stroke-width={k.thickness.radial.fork}
 					stroke={colors.specialBlend(color, $w_background_color, k.opacity.radial.armature)}/>
-				{#if g_cluster.isPaging && g_cluster.widgets_shown > 1}
+				{#if g_cluster.isPaging && false}
 					<path class='path-thumb'
 						fill={thumbFill}
 						id={`thumb-${g_cluster.name}`}
@@ -92,9 +92,12 @@
         </svg>
     </Mouse_Responder>
 </div>
-<Text_OnArc
-    zindex={T_Layer.text}
+<Curved_Text
+	viewBox={viewBox}
+	zindex={T_Layer.text}
+	isPaging={g_cluster.isPaging}
     text={g_cluster.cluster_title}
+	name={g_cluster.predicate.kind}
     angle={-g_arcSlider.angle_ofFork}
     font_family={$w_thing_fontFamily}
     background_color={textBackground}

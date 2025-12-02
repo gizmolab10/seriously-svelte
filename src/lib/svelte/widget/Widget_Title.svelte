@@ -63,9 +63,7 @@
 	$: {
 		if (!!input) {
 			const s_title = s_widget.s_title;
-			s_title.html_element = input;
-			s_title.rect = layout.scaled_rect_forElement(input);
-			hits.update_hit_target(s_title);
+			s_title.set_html_element(input);
 		}
 	}
 
@@ -185,7 +183,7 @@
 	function thing_setSelectionRange_fromMouseLocation() {
 		if (!!input && !!$w_s_title_edit && !isPercolating()) {
 			const location = $w_mouse_location;
-			if (layout.scaled_rect_forElement_containsPoint(input, location)) {
+			if (layout.scaled_rect_forElement(input)?.contains(location)) {
 				const offset = u.convert_windowOffset_toCharacterOffset_in(location.x, input);
 				debug.log_edit(`CURSOR OFFSET ${offset}`);
 				$w_s_title_edit.thing_setSelectionRange_fromOffset(offset);

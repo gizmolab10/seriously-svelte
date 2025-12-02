@@ -115,7 +115,7 @@ export default class G_Cluster {
 		if (this.isPaging) {
 			const index = this.paging_index_ofFocus;
 			const middle = (this.widgets_shown < 2) ? k.empty : `-${index + this.widgets_shown}`;
-			title = `${this.direction_kind} (${index + 1}${middle} of ${this.total_widgets})`
+			title = `${index + 1}${middle} / ${this.total_widgets} ${this.direction_kind}`
 		}
 		this.cluster_title = title;
 	}
@@ -193,7 +193,7 @@ export default class G_Cluster {
 		this.g_cluster_widgets = [];
 		if (this.widgets_shown > 0 && !!this.predicate) {
 			const center = this.center.offsetByXY(0.5, -1);			// tweak so that drag dots are centered within the rotation ring
-			const factor = this.predicate.kind == T_Predicate.contains ? this.points_toChildren ? 0 : 1 : 2;
+			const factor = 1;//this.predicate.kind == T_Predicate.contains ? this.points_toChildren ? 0 : 1 : 2;
 			const inset = (factor + 3) * k.thickness.radial.ring / 6;
 			const radial = Point.x(this.ring_radius + inset);
 			const radial_ofFork = this.radial_ofFork;				// points at middle widget (of cluster)

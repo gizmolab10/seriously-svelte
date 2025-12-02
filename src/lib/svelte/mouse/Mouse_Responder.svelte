@@ -49,7 +49,6 @@
 		if (!!s_element && s_element instanceof S_Element) {
 			s_element.handle_s_mouse = handle_s_mouse;
 			s_element.set_html_element(bound_element);
-			hits.update_hit_target(s_element);
 		}
 		setupStyle();
 	});

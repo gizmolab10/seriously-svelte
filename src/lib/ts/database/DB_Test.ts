@@ -25,7 +25,7 @@ export default class DB_Test extends DB_Common {
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTb, 'Brilliant', 'blue');
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTc, 'Curious', '#d96726');
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTd, 'Diligent', 'mediumvioletred');
-		h.thing_remember_runtimeCreateUnique(this.idBase, idTe, 'Excellent', 'purple');
+		h.thing_remember_runtimeCreateUnique(this.idBase, idTe, 'Excellence of breathable air', 'purple');
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTf, 'Friendly', 'coral');
 		h.thing_remember_runtimeCreateUnique(this.idBase, idTr, 'Life', 'limegreen', T_Thing.root);
 		h.relationship_remember_runtimeCreateUnique(this.idBase, 'cra', contains, idTr, idTa, [0, 0]);

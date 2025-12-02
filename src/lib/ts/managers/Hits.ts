@@ -63,8 +63,8 @@ export default class Hits {
 
 	reset() {
 		this.rbush.clear();
-		this.targets_dict_byID = {};
 		this.w_s_hover.set(null);
+		this.targets_dict_byID = {};
 		this.time_ofPrior_hover = 0;
 	}
 

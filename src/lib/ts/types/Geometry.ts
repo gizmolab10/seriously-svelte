@@ -269,11 +269,6 @@ export class Rect {
 		return new Rect(rightCenter.offsetByY(size.height / -2), size);
 	}
 
-	static rect_forElement_containsPoint(element: HTMLElement | null, point: Point): boolean {
-		const rect = Rect.rect_forElement(element);
-		return !!rect && rect.contains(point);
-	}
-
 	static createCenterRect(center: Point, size: Size): Rect {
 		const toOrigin = size.center.negated;
 		const origin = center.offsetBy(toOrigin);
