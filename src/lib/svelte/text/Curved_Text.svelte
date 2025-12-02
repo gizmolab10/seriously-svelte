@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { T_Layer, T_Orientation } from '../../ts/common/Global_Imports';
 	import { k, s, Angle, Point } from '../../ts/common/Global_Imports';
-	import Cluster_Pager from '../draw/Cluster_Pager.svelte';
+	import Cluster_Pager from '../mouse/Cluster_Pager.svelte';
 	export let background_color = $w_background_color;
 	export let font_family = $w_thing_fontFamily;
 	export let center_ofArc = Point.zero;

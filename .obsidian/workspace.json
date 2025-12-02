@@ -180,7 +180,7 @@
     "bubble/replace_hierarchy.js",
     "bubble/replace_hierarchy.send_to_webseriously('REPLACE_HIERARCHY', {}); }",
     "bubble/function(instance, properties, context) { \tinstance.data.send_to_webseriously('REPLACE_HIERARCHY', {}); }",
-    "src/lib/svelte/graph/Radial_Cluster.svelte",
+    "src/lib/svelte/radial/Radial_Cluster.svelte",
     "notes/tools/analyze_counts.sh",
     "src/lib/ts/database/DB_Bubble.abandoned.ts",
     "notes/aside/2025/DB_Bubble.abandoned.ts",

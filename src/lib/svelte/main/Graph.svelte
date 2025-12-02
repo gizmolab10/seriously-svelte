@@ -1,9 +1,9 @@
 <script lang='ts'>
 	import { e, h, k, s, u, x, hits, show, Rect, Point, builds, debug, layout, signals, elements } from '../../ts/common/Global_Imports';
 	import { S_Component, T_Layer, T_Graph, T_Signal, T_Startup, T_Control } from '../../ts/common/Global_Imports';
-	import Radial_Graph from '../graph/Radial_Graph.svelte';
-	import Tree_Graph from '../graph/Tree_Graph.svelte';
-	import Rubberband from '../draw/Rubberband.svelte';
+	import Radial_Graph from '../radial/Radial_Graph.svelte';
+	import Rubberband from '../mouse/Rubberband.svelte';
+	import Tree_Graph from '../tree/Tree_Graph.svelte';
 	import Button from '../mouse/Button.svelte';
 	import { onMount } from 'svelte';
 	const size_big = k.height.button + 4;

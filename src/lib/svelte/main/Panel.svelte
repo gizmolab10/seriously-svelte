@@ -6,13 +6,13 @@
 	import Primary_Controls from '../controls/Primary_Controls.svelte';
 	import Search_Results from '../search/Search_Results.svelte';
 	import { T_Database } from '../../ts/database/DB_Common';
-	import Details from '../details/Details.svelte';
 	import BuildNotes from './BuildNotes.svelte';
 	import Spinner from '../draw/Spinner.svelte';
 	import Search from '../search/Search.svelte';
-	import Graph from '../graph/Graph.svelte';
+	import Details from './Details.svelte';
 	import Import from './Import.svelte';
 	import Box from '../draw/Box.svelte';
+	import Graph from './Graph.svelte';
 	import { onMount } from 'svelte';
 	const { w_show_details } = show;
 	const { w_t_database } = databases;

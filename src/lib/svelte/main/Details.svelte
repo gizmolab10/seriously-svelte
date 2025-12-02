@@ -1,15 +1,15 @@
 <script lang='ts'>
 	import { k, s, x, Point, search, layout, features } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Detail } from '../../ts/common/Global_Imports';
-	import Banner_Hideable from './Banner_Hideable.svelte';
-	import D_Preferences from './D_Preferences.svelte';
+	import Banner_Hideable from '../details/Banner_Hideable.svelte';
+	import D_Preferences from '../details/D_Preferences.svelte';
+	import D_Selection from '../details/D_Selection.svelte';
+	import D_Actions from '../details/D_Actions.svelte';
+	import D_Header from '../details/D_Header.svelte';
+	import D_Traits from '../details/D_Traits.svelte';
 	import Separator from '../draw/Separator.svelte';
-	import D_Selection from './D_Selection.svelte';
-	import D_Actions from './D_Actions.svelte';
-	import D_Header from './D_Header.svelte';
-	import D_Traits from './D_Traits.svelte';
-	import D_Data from './D_Data.svelte';
-	import D_Tags from './D_Tags.svelte';
+	import D_Data from '../details/D_Data.svelte';
+	import D_Tags from '../details/D_Tags.svelte';
 	const width = k.width.details;
 	const { w_search_state } = search;
 	const { w_index: w_found } = x.si_found;
