@@ -1,5 +1,5 @@
 import { k, s, u, debug, colors, radial, layout, signals } from '../common/Global_Imports';
-import { G_Widget, G_Cluster_Pager, S_Rotation, T_Predicate, T_Paging_Style } from '../common/Global_Imports';
+import { G_Widget, G_Cluster_Pager, S_Rotation, T_Predicate, T_Cluster_Pager } from '../common/Global_Imports';
 import { Point, Angle, Ancestry, Predicate } from '../common/Global_Imports';
 import { G_Paging } from './G_Paging';
 import { get } from 'svelte/store';
@@ -121,7 +121,7 @@ export default class G_Cluster {
 	
 	static readonly _____PAGING: unique symbol;
 
-	get show_forks():			 boolean { return get(s.w_paging_style) == T_Paging_Style.sliders; }
+	get show_forks():			 boolean { return get(s.w_t_cluster_pager) == T_Cluster_Pager.sliders; }
 	get maximum_paging_index():	  number { return this.total_widgets - this.widgets_shown; }
 	get paging_index_ofFocus():	  number { return Math.round(this.g_focusPaging?.index ?? 0); }
 	get s_paging():			  S_Rotation { return radial.s_paging_forName_ofCluster(this.name); }

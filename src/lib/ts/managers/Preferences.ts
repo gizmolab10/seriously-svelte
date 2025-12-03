@@ -1,5 +1,5 @@
 import { c, h, k, s, u, x, show, debug, layout, radial, databases } from '../common/Global_Imports';
-import { Ancestry, T_Preference, T_Auto_Adjust, T_Paging_Style } from '../common/Global_Imports';
+import { Ancestry, T_Preference, T_Auto_Adjust, T_Cluster_Pager } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
 export class Preferences {
@@ -14,7 +14,7 @@ export class Preferences {
 			layout.w_depth_limit.set(Number(levels));
 		}
 		if (!!paging_style) {
-			s.w_paging_style.set(paging_style == 'sliders' ? T_Paging_Style.sliders : T_Paging_Style.steppers);
+			s.w_t_cluster_pager.set(paging_style == 'sliders' ? T_Cluster_Pager.sliders : T_Cluster_Pager.steppers);
 		}
 		this.restore_preferences();
 	}
@@ -143,7 +143,7 @@ export class Preferences {
 		s.w_auto_adjust_graph.set( this.read_key(T_Preference.auto_adjust)	?? null);
 		s.w_thing_title		 .set( this.read_key(T_Preference.thing)		?? k.title.default);
 		s.w_thing_fontFamily .set( this.read_key(T_Preference.font)			?? 'Times New Roman');
-		s.w_paging_style	 .set( this.read_key(T_Preference.paging_style)	?? T_Paging_Style.sliders);
+		s.w_t_cluster_pager	 .set( this.read_key(T_Preference.paging_style)	?? T_Cluster_Pager.sliders);
 		this.reactivity_subscribe()
 	}
 	
@@ -217,7 +217,7 @@ export class Preferences {
 		s.w_auto_adjust_graph.subscribe((auto_adjust: T_Auto_Adjust | null) => {
 			this.write_key(T_Preference.auto_adjust, auto_adjust);
 		});
-		s.w_paging_style.subscribe((paging_style: T_Paging_Style) => {
+		s.w_t_cluster_pager.subscribe((paging_style: T_Cluster_Pager) => {
 			this.write_key(T_Preference.paging_style, paging_style);
 		});
 

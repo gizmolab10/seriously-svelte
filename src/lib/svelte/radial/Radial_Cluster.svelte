@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { Point, T_Layer, G_Cluster, T_Paging_Style } from '../../ts/common/Global_Imports';
+	import { Point, T_Layer, G_Cluster, T_Cluster_Pager } from '../../ts/common/Global_Imports';
 	import { k, s, colors, radial, layout } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Curved_Text from '../text/Curved_Text.svelte';
@@ -12,7 +12,7 @@
 	const inset = k.radial_widget_inset;
 	const { w_background_color } = colors;
 	const { w_g_cluster, w_resize_radius } = radial;
-	const { w_paging_style, w_thing_fontFamily } = s;
+	const { w_t_cluster_pager, w_thing_fontFamily } = s;
 	const g_cluster_pager = g_cluster.g_cluster_pager;
 	let textBackground = 'transparent';
 	let thumbFill = 'transparent';
@@ -28,7 +28,7 @@
 	//													//
 	//////////////////////////////////////////////////////
 	
-	$: textBackground = $w_paging_style ? radial.s_rotation.isHighlighted ? $w_background_color : colors.specialBlend(color, $w_background_color, radial.s_resizing.fill_opacity) : 'transparent';
+	$: textBackground = $w_t_cluster_pager ? radial.s_rotation.isHighlighted ? $w_background_color : colors.specialBlend(color, $w_background_color, radial.s_resizing.fill_opacity) : 'transparent';
 	$: $w_g_cluster, thumbFill = colors.specialBlend(color, $w_background_color, radial.s_rotation.isHighlighted ? k.opacity.radial.thumb : s_paging.thumb_opacity);
 	$: origin = layout.center_ofGraphView.offsetBy(Point.square(-radius));
 	$: viewBox=`${-inset} ${-inset} ${radius * 2} ${radius * 2}`;
@@ -59,9 +59,9 @@
 			<path class='path-fork'
 				fill='transparent'
 				d={g_cluster_pager.svgPathFor_radialFork}
-				stroke-width={k.thickness.radial.fork * ($w_paging_style == T_Paging_Style.sliders ? 1 : 2)}
+				stroke-width={k.thickness.radial.fork * ($w_t_cluster_pager == T_Cluster_Pager.sliders ? 1 : 2)}
 				stroke={colors.specialBlend(color, $w_background_color, k.opacity.radial.default)}/>
-			{#if $w_paging_style == T_Paging_Style.sliders}
+			{#if $w_t_cluster_pager == T_Cluster_Pager.sliders}
 				<path class='path-arc-slider'
 					fill='transparent'
 					d={g_cluster_pager.svgPathFor_arcSlider}
@@ -79,7 +79,7 @@
         </svg>
     </Mouse_Responder>
 </div>
-{#if $w_paging_style == T_Paging_Style.sliders}
+{#if $w_t_cluster_pager == T_Cluster_Pager.sliders}
 	{#if g_cluster.widgets_shown > 1}
 		<Gull_Wings
 			zindex={T_Layer.paging}

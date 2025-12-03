@@ -21,7 +21,7 @@ import { T_Tree_Line, T_Order, T_Widget, T_Layer } from './Enumerations';
 import { T_Thing, T_Trait, T_Kinship, T_Predicate } from './Enumerations';
 import { T_Action, T_Detail, T_Request, T_Storage_Need } from './Enumerations';
 import { T_Drag, T_File_Format, T_File_Operation, T_Startup } from './Enumerations';
-import { T_Radial_Zone, T_Preference, T_Auto_Adjust, T_Paging_Style } from './Enumerations';
+import { T_Radial_Zone, T_Preference, T_Auto_Adjust, T_Cluster_Pager } from './Enumerations';
 
 import S_Alteration from '../state/S_Alteration';
 import S_Title_Edit from '../state/S_Title_Edit';
@@ -115,7 +115,7 @@ export {
 	T_Order, T_Kinship,
 	T_Theme, T_Graph, T_Browser, 
 	T_Search, T_Search_Preference,
-	T_Auto_Adjust, T_Paging_Style,
+	T_Auto_Adjust, T_Cluster_Pager,
 	T_Startup, T_Drag, T_Alteration,
 	T_Signal, T_Control, T_Hit_Target,
 	T_Quadrant, T_Orientation, T_Direction,

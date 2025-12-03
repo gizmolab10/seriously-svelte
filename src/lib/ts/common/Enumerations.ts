@@ -107,7 +107,7 @@ export enum T_Theme {
 	bubble	   = 'bubble',
 }
 
-export enum T_Paging_Style {
+export enum T_Cluster_Pager {
 	steppers = 'steppers',
 	sliders  = 'sliders',
 }

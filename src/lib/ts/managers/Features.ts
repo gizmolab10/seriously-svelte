@@ -1,4 +1,4 @@
-import { k, s, T_Theme, T_Paging_Style } from '../common/Global_Imports';
+import { k, s, T_Theme, T_Cluster_Pager } from '../common/Global_Imports';
 
 export class Features {
 
@@ -32,7 +32,7 @@ export class Features {
 		for (const themeOption of themeOptions) {
 			switch (themeOption) {
 				case 'bubble':
-					s.w_paging_style.set(T_Paging_Style.sliders);
+					s.w_t_cluster_pager.set(T_Cluster_Pager.sliders);
 					this.theme				 = T_Theme.bubble;
 					this.allow_graph_editing = false;
 					this.allow_title_editing = false;

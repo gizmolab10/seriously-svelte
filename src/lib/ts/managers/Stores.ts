@@ -1,4 +1,4 @@
-import { T_Startup, T_Auto_Adjust, T_Paging_Style } from '../common/Enumerations';
+import { T_Startup, T_Auto_Adjust, T_Cluster_Pager } from '../common/Enumerations';
 import { Hierarchy } from '../managers/Hierarchy';
 import S_Alteration from '../state/S_Alteration';
 import S_Title_Edit from '../state/S_Title_Edit';
@@ -30,7 +30,7 @@ export class Stores {
 
 	static readonly _____OTHER: unique symbol = Symbol('OTHER');
 
-	w_paging_style		   = writable<T_Paging_Style>(T_Paging_Style.sliders);
+	w_t_cluster_pager		   = writable<T_Cluster_Pager>(T_Cluster_Pager.sliders);
 	w_t_startup			   = writable<T_Startup>(T_Startup.start);
 	w_auto_adjust_graph	   = writable<T_Auto_Adjust | null>();
 	w_popupView_id		   = writable<string | null>();

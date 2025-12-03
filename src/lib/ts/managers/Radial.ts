@@ -1,4 +1,4 @@
-import { T_Startup, T_Preference, T_Hit_Target, T_Radial_Zone, T_Paging_Style } from '../common/Global_Imports';
+import { T_Startup, T_Preference, T_Hit_Target, T_Radial_Zone, T_Cluster_Pager } from '../common/Global_Imports';
 import { k, p, s, hits, debug, layout, signals, elements, g_radial } from '../common/Global_Imports';
 import { Angle, G_Cluster, S_Rotation, S_Resizing } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
@@ -168,7 +168,7 @@ export default class Radial {
 		const mouse_vector = layout.mouse_vector_ofOffset_fromGraphCenter();
 		const hasHovering_conflict = !!hover_type && [T_Hit_Target.widget, T_Hit_Target.drag].includes(hover_type);
 		if (!!mouse_vector && !hasHovering_conflict) {
-			const show_cluster_sliders = get(s.w_paging_style) == T_Paging_Style.sliders;
+			const show_cluster_sliders = get(s.w_t_cluster_pager) == T_Cluster_Pager.sliders;
 			const g_cluster = g_radial.g_cluster_atMouseLocation;
 			const inner = get(this.w_resize_radius);
 			const distance = mouse_vector.magnitude;

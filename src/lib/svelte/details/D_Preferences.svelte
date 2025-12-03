@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, s, u, x, show, Rect, Point, colors, layout, controls } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Kinship, T_Auto_Adjust, T_Paging_Style } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Kinship, T_Auto_Adjust, T_Cluster_Pager } from '../../ts/common/Global_Imports';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Slider from '../mouse/Slider.svelte';
@@ -19,7 +19,7 @@
 	const { w_separator_color } = colors;
 	const segmented_height = k.height.button;
 	const separator_height = segmented_height + 9;
-	const { w_paging_style, w_auto_adjust_graph } = s;
+	const { w_t_cluster_pager, w_auto_adjust_graph } = s;
 	const separator_width = width - 5 - separator_left * 2;
 	const { w_show_details_ofType, w_show_countDots_ofType } = show;
 	let color_wrapper: HTMLDivElement | null = null;
@@ -55,8 +55,8 @@
 		$w_auto_adjust_graph = types.length > 0 ? types[0] : null;
 	}
 
-	function handle_paging_style(types: Array<T_Paging_Style | null>) {
-		$w_paging_style = types.length > 0 ? types[0] : T_Paging_Style.sliders;
+	function handle_pager_type(types: Array<T_Cluster_Pager | null>) {
+		$w_t_cluster_pager = types.length > 0 ? types[0] : T_Cluster_Pager.sliders;
 	}
 
 	function handle_count_dots(types: string[]) {
@@ -130,9 +130,9 @@
 			width={segmented_width}
 			height={segmented_height}
 			origin={Point.y(tops[3])}
-			selected={[$w_paging_style]}
-			handle_selection={handle_paging_style}
-			titles={[T_Paging_Style.steppers, T_Paging_Style.sliders]}/>
+			selected={[$w_t_cluster_pager]}
+			handle_selection={handle_pager_type}
+			titles={[T_Cluster_Pager.sliders, T_Cluster_Pager.steppers]}/>
 	{/if}
 	<Separator name='background-color'
 		length={width}

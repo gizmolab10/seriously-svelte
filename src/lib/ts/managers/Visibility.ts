@@ -1,4 +1,4 @@
-import { T_Graph, T_Detail, T_Kinship, T_Preference, T_Paging_Style } from '../common/Global_Imports';
+import { T_Graph, T_Detail, T_Kinship, T_Preference, T_Cluster_Pager } from '../common/Global_Imports';
 import { k, p, x, g_tree, layout, features } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
 import { get, writable } from 'svelte/store';
