@@ -1,4 +1,4 @@
-import { k, p, s, hits, debug, layout, signals, elements, g_radial } from '../common/Global_Imports';
+import { k, p, s, hits, show, debug, layout, signals, elements, g_radial } from '../common/Global_Imports';
 import { T_Startup, T_Preference, T_Hit_Target, T_Radial_Zone } from '../common/Global_Imports';
 import { Angle, G_Cluster, S_Rotation, S_Resizing } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
@@ -167,6 +167,7 @@ export default class Radial {
 		const mouse_vector = layout.mouse_vector_ofOffset_fromGraphCenter();
 		const hasHovering_conflict = !!hover_type && [T_Hit_Target.widget, T_Hit_Target.drag].includes(hover_type);
 		if (!!mouse_vector && !hasHovering_conflict) {
+			const show_arc_sliders = get(show.w_show_arc_sliders);
 			const g_cluster = g_radial.g_cluster_atMouseLocation;
 			const inner = get(this.w_resize_radius);
 			const distance = mouse_vector.magnitude;
@@ -177,8 +178,8 @@ export default class Radial {
 			if (!!distance) {
 				if (distance < inner) {
 					ring_zone = T_Radial_Zone.resize;
-				// } else if (distance < thumb && !!g_cluster && g_cluster.isMouse_insideThumb) {
-				// 	ring_zone = T_Radial_Zone.paging;
+				} else if (distance < thumb && show_arc_sliders && !!g_cluster && g_cluster.isMouse_insideThumb) {
+					ring_zone = T_Radial_Zone.paging;
 				} else if (distance <= outer) {
 					ring_zone = T_Radial_Zone.rotate;
 				}

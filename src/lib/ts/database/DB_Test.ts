@@ -58,6 +58,7 @@ export default class DB_Test extends DB_Common {
 		// this.makeMore(3, 'c', contains, idTf, true);	// children of Friendly
 		this.makeMore(4, 'g', contains, idTb, true, 4);	// children of Brilliant
 		this.makeMore(4, 'e', related, idTb, true, 2);	// related to  "
+		this.makeMore(4, 'k', related, idTr, true, 2);	// related to  Root
 		// this.makeMore(2, 'c', contains, idTb, false);	// parents of  "
 		return true;
 	}

@@ -14,7 +14,7 @@ export class Visibility {
 	w_show_related				= writable<boolean>(false);
 	w_show_details				= writable<boolean>(true);
 	w_show_other_databases		= writable<boolean>(true);
-	w_show_radial_forks			= writable<boolean>(true);
+	w_show_arc_sliders			= writable<boolean>(true);
 	debug_cursor				= false;
 
 	constructor() {
@@ -41,8 +41,8 @@ export class Visibility {
 				case 'related':
 					this.w_show_related.set(flag);
 					break;
-				case 'radial_forks':
-					this.w_show_radial_forks.set(flag);
+				case 'arc_sliders':
+					this.w_show_arc_sliders.set(flag);
 					break;
 				case 'parents':
 					const mode = flag ? T_Kinship.parents : T_Kinship.children;
@@ -67,7 +67,7 @@ export class Visibility {
 		this.w_show_countDots_ofType.set(p.read_key(T_Preference.countDots)		  ?? []);
 		this.w_show_details			.set(p.read_key(T_Preference.show_details)	  ?? false);
 		this.w_show_related			.set(p.read_key(T_Preference.show_related)	  ?? false);
-		this.w_show_radial_forks	.set(p.read_key(T_Preference.radial_forks)  ?? false);
+		this.w_show_arc_sliders		.set(p.read_key(T_Preference.arc_sliders)	  ?? false);
 		this.w_show_other_databases	.set(p.read_key(T_Preference.other_databases) ?? false);
 		this.w_show_tree_ofType		.set(p.read_key(T_Preference.tree)			  ?? T_Kinship.children);
 		this.w_show_details_ofType	.set(p.read_key(T_Preference.detail_types)	  ?? [T_Detail.actions, T_Detail.data]);

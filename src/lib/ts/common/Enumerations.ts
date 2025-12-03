@@ -290,7 +290,7 @@ export enum T_Preference {
 	expanded_parents  = 'expanded_parents',
 	focus_forParents  = 'focus_forParents',
 	other_databases	  = 'other_databases',
-	radial_forks	  = 'radial_forks',
+	arc_sliders	  = 'arc_sliders',
 	relationships	  = 'relationships',
 	detail_types	  = 'detail_types',			// vertical stack
 	show_details	  = 'show_details',			// left side

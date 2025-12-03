@@ -122,7 +122,7 @@ export default class G_Cluster {
 	
 	static readonly _____PAGING: unique symbol;
 
-	get show_forks():			 boolean { return get(show.w_show_radial_forks); }
+	get show_forks():			 boolean { return get(show.w_show_arc_sliders); }
 	get maximum_paging_index():	  number { return this.total_widgets - this.widgets_shown; }
 	get paging_index_ofFocus():	  number { return Math.round(this.g_focusPaging?.index ?? 0); }
 	get s_paging():			  S_Rotation { return radial.s_paging_forName_ofCluster(this.name); }

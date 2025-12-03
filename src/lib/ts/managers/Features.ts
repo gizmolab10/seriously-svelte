@@ -33,7 +33,7 @@ export class Features {
 			switch (themeOption) {
 				case 'bubble':
 					this.theme				 = T_Theme.bubble;
-					show.w_show_radial_forks.set(true);
+					show.w_show_arc_sliders.set(true);
 					this.allow_graph_editing = false;
 					this.allow_title_editing = false;
 					this.allow_h_scrolling	 = false;

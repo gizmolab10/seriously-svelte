@@ -99,15 +99,29 @@ export default class Constants {
 	};
 
 	font_size = {
+		arc_slider:	  dot_size - 5,
 		instructions: dot_size - 4,
 		separator:	  dot_size - 4,
 		details:	  dot_size - 3,
 		banners:	  dot_size - 2,
-		arc_slider:	  dot_size - 4,
 		info:		  dot_size - 1,
 		common:		  dot_size,
 		segmented:	  dot_size + 1,
 		tree_prefs:	  36,
+	};
+
+	thickness = {
+		rubberband:	 rubberband_thickness,
+		radial: {
+			ring:	 44,
+			arc:	 15,
+			fork:	 2.5,
+		},
+		separator: {
+			main:	 5,
+			banners: 2.5,
+			details: 0.75,
+		},
 	};
 
 	opacity = {
@@ -127,20 +141,6 @@ export default class Constants {
 			hover:	  0.7,
 			text:	  1,
 			active:	  0.3,
-		},
-	};
-
-	thickness = {
-		rubberband:		rubberband_thickness,
-		radial: {
-			ring:		44,
-			arc:		15,
-			fork:		2.5,
-		},
-		separator: {
-			main:		5,
-			banners:	2.5,
-			details:	0.75,
 		},
 	};
 }

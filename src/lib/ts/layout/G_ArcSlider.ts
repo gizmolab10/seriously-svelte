@@ -143,7 +143,7 @@ export default class G_ArcSlider {
 		return svgPaths.arc_partial(center, cap_radius, 0, 1, end_angle);
 	}
 
-	get svgPathFor_bigArc(): string {
+	get svgPathFor_fatArc(): string {
 		const capRadius = k.thickness.radial.ring / 2;
 		const smallRadius = get(radial.w_resize_radius) + 1;
 		const bigRadius = smallRadius + k.thickness.radial.ring;
