@@ -1,10 +1,11 @@
 <script lang='ts'>
-	import { T_Layer, T_Orientation } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Orientation, G_Cluster_Pager } from '../../ts/common/Global_Imports';
 	import { k, s, u, Angle, Point } from '../../ts/common/Global_Imports';
 	import Cluster_Pager from '../mouse/Cluster_Pager.svelte';
-	export let font_size = `${k.font_size.arc_slider}px`;
+	export let font_size = `${k.font_size.cluster_slider}px`;
 	export let background_color = $w_background_color;
 	export let font_family = $w_thing_fontFamily;
+	export let g_cluster_pager: G_Cluster_Pager;
 	export let center_ofArc = Point.zero;
 	export let zindex = T_Layer.text;
 	export let viewBox = k.empty;
@@ -16,35 +17,8 @@
 	export let angle = 0;
 	const { w_thing_fontFamily, w_background_color } = s;
 	const arcLength = u.getWidth_ofString_withSize(text, font_size) * 1.3;
-	const text_path_id = `arc-path-${Math.random().toString(36).substr(2, 9)}`;
-	let start_thumb_transform = k.empty;
-	let end_thumb_transform = k.empty;
-	let text_path_d = k.empty;
-	
-	endpoints_onArc();
-
-	function endpoints_onArc() {
-		const sweepAngle = arcLength / radius;
-		const startAngle = angle - sweepAngle / 2;
-		const endAngle = startAngle + sweepAngle;
-		const invert = new Angle(angle).orientation_ofAngle == T_Orientation.up;
-		const { start: text_start, end: text_end } = endpoints(startAngle, endAngle, radius, invert);
-		const { start: thumb_start, end: thumb_end } = endpoints(startAngle, endAngle, radius + 0.8);
-		const startThumbAngleDeg = (startAngle + Math.PI/2) * 180 / Math.PI;
-		const endThumbAngleDeg = (endAngle - Math.PI/2) * 180 / Math.PI;
-		const sweepFlag = invert ? 0 : 1;
-		text_path_d = `M ${text_start.x} ${text_start.y} A ${radius} ${radius} 0 0 ${sweepFlag} ${text_end.x} ${text_end.y}`;
-		start_thumb_transform = `translate(${thumb_start.x}, ${thumb_start.y}) rotate(${startThumbAngleDeg})`;
-		end_thumb_transform = `translate(${thumb_end.x}, ${thumb_end.y}) rotate(${endThumbAngleDeg})`;
-	}
-
-	function endpoints(startAngle: number, endAngle: number, arc_radius: number, invert: boolean) {
-		const startX = center_ofArc.x + arc_radius * Math.cos(invert ? endAngle : startAngle);
-		const startY = center_ofArc.y + arc_radius * Math.sin(invert ? endAngle : startAngle);
-		const endX = center_ofArc.x + arc_radius * Math.cos(invert ? startAngle : endAngle);
-		const endY = center_ofArc.y + arc_radius * Math.sin(invert ? startAngle : endAngle);
-		return { start: new Point(startX, startY), end: new Point(endX, endY) };
-	}
+	const text_path_id = `arc-path-${Math.random().toString(36).substr(2, 9)}`;	
+	const { text_path_d, start_thumb_transform, end_thumb_transform } = g_cluster_pager.layout_endpoints_onArc(radius, angle, arcLength);
 
 </script>
 

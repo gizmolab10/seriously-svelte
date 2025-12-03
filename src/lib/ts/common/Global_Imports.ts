@@ -1,6 +1,6 @@
+import G_Cluster_Pager from '../layout/G_Cluster_Pager';
 import G_TreeBranches from '../layout/G_TreeBranches';
 import G_RadialGraph from '../layout/G_RadialGraph';
-import G_ArcSlider from '../layout/G_ArcSlider';
 import G_Repeater from '../layout/G_Repeater';
 import G_TreeLine from '../layout/G_TreeLine';
 import G_Cluster from '../layout/G_Cluster';
@@ -16,12 +16,12 @@ import { T_Quadrant, T_Orientation } from '../types/Angle';
 import { T_Graph, T_Banner, T_Control } from './Enumerations';
 import { T_Persistable, T_Persistence } from './Enumerations';
 import { T_Search, T_Search_Preference } from './Enumerations';
-import { T_Thing, T_Trait, T_Predicate } from './Enumerations';
 import { T_Create, T_Browser, T_Alteration } from './Enumerations';
 import { T_Tree_Line, T_Order, T_Widget, T_Layer } from './Enumerations';
+import { T_Thing, T_Trait, T_Kinship, T_Predicate } from './Enumerations';
 import { T_Action, T_Detail, T_Request, T_Storage_Need } from './Enumerations';
-import { T_Kinship, T_Radial_Zone, T_Preference, T_Auto_Adjust } from './Enumerations';
 import { T_Drag, T_File_Format, T_File_Operation, T_Startup } from './Enumerations';
+import { T_Radial_Zone, T_Preference, T_Auto_Adjust, T_Paging_Style } from './Enumerations';
 
 import S_Alteration from '../state/S_Alteration';
 import S_Title_Edit from '../state/S_Title_Edit';
@@ -92,7 +92,7 @@ export {
 	S_Items, S_Mouse, S_Widget, S_Element,
 	S_Hit_Target, S_Alteration, S_Title_Edit,
 	
-	G_Cluster, G_RadialGraph, G_ArcSlider,
+	G_Cluster, G_RadialGraph, G_Cluster_Pager,
 	G_Widget, G_TreeLine, G_TreeBranches, G_Repeater,
 
 	g_tree, g_radial,
@@ -111,13 +111,13 @@ export {
 	Ancestry, Hierarchy, Seriously_Range,
 	Tag, Thing, Trait, Predicate, Relationship,
 	
-	T_Auto_Adjust,
 	T_Debug, T_Timer,
 	T_Order, T_Kinship,
 	T_Theme, T_Graph, T_Browser, 
 	T_Search, T_Search_Preference,
-	T_Signal, T_Control, T_Hit_Target,
+	T_Auto_Adjust, T_Paging_Style,
 	T_Startup, T_Drag, T_Alteration,
+	T_Signal, T_Control, T_Hit_Target,
 	T_Quadrant, T_Orientation, T_Direction,
 	T_Banner, T_Detail, T_Request, T_Action,
 	T_Layer, T_Tree_Line, T_Radial_Zone, T_Oblong,

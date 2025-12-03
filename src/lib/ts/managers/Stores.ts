@@ -1,9 +1,8 @@
-import { T_Startup, T_Auto_Adjust } from '../common/Enumerations';
-import { Hierarchy } from './Hierarchy';
-import Ancestry from '../runtime/Ancestry';
+import { T_Startup, T_Auto_Adjust, T_Paging_Style } from '../common/Enumerations';
+import { Hierarchy } from '../managers/Hierarchy';
 import S_Alteration from '../state/S_Alteration';
 import S_Title_Edit from '../state/S_Title_Edit';
-import S_Hit_Target from '../state/S_Hit_Target';
+import Ancestry from '../runtime/Ancestry';
 import { writable } from 'svelte/store';
 
 export class Stores {
@@ -31,6 +30,7 @@ export class Stores {
 
 	static readonly _____OTHER: unique symbol = Symbol('OTHER');
 
+	w_paging_style		   = writable<T_Paging_Style>(T_Paging_Style.sliders);
 	w_t_startup			   = writable<T_Startup>(T_Startup.start);
 	w_auto_adjust_graph	   = writable<T_Auto_Adjust | null>();
 	w_popupView_id		   = writable<string | null>();

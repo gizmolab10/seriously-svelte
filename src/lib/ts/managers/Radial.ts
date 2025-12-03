@@ -1,5 +1,5 @@
-import { k, p, s, hits, show, debug, layout, signals, elements, g_radial } from '../common/Global_Imports';
-import { T_Startup, T_Preference, T_Hit_Target, T_Radial_Zone } from '../common/Global_Imports';
+import { T_Startup, T_Preference, T_Hit_Target, T_Radial_Zone, T_Paging_Style } from '../common/Global_Imports';
+import { k, p, s, hits, debug, layout, signals, elements, g_radial } from '../common/Global_Imports';
 import { Angle, G_Cluster, S_Rotation, S_Resizing } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
 import { G_Paging } from '../layout/G_Paging';
@@ -34,6 +34,7 @@ export default class Radial {
 	}
 
 	reset_paging() { this.s_pagings.map(s => s.reset()); }
+	get ring_radius(): number { return get(this.w_resize_radius); }
 	get s_pagings(): Array<S_Rotation> { return Object.values(this.s_paging_dict_byName); }
 	get isAny_paging_arc_hovering(): boolean { return this.s_pagings.some(s => s.isHovering); }
 	get isAny_paging_thumb_dragging(): boolean { return this.s_pagings.some(s => s.isDragging); }
@@ -167,7 +168,7 @@ export default class Radial {
 		const mouse_vector = layout.mouse_vector_ofOffset_fromGraphCenter();
 		const hasHovering_conflict = !!hover_type && [T_Hit_Target.widget, T_Hit_Target.drag].includes(hover_type);
 		if (!!mouse_vector && !hasHovering_conflict) {
-			const show_arc_sliders = get(show.w_show_arc_sliders);
+			const show_cluster_sliders = get(s.w_paging_style) == T_Paging_Style.sliders;
 			const g_cluster = g_radial.g_cluster_atMouseLocation;
 			const inner = get(this.w_resize_radius);
 			const distance = mouse_vector.magnitude;
@@ -178,7 +179,7 @@ export default class Radial {
 			if (!!distance) {
 				if (distance < inner) {
 					ring_zone = T_Radial_Zone.resize;
-				} else if (distance < thumb && show_arc_sliders && !!g_cluster && g_cluster.isMouse_insideThumb) {
+				} else if (distance < thumb && show_cluster_sliders && !!g_cluster && g_cluster.isMouse_insideThumb) {
 					ring_zone = T_Radial_Zone.paging;
 				} else if (distance <= outer) {
 					ring_zone = T_Radial_Zone.rotate;

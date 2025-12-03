@@ -99,7 +99,7 @@ export default class Constants {
 	};
 
 	font_size = {
-		arc_slider:	  dot_size - 5,
+		cluster_slider:	  dot_size - 5,
 		instructions: dot_size - 4,
 		separator:	  dot_size - 4,
 		details:	  dot_size - 3,

@@ -107,6 +107,11 @@ export enum T_Theme {
 	bubble	   = 'bubble',
 }
 
+export enum T_Paging_Style {
+	steppers = 'steppers',
+	sliders  = 'sliders',
+}
+
 export enum T_Search_Preference {
 	title = 'title',
 	trait = 'trait',
@@ -290,9 +295,10 @@ export enum T_Preference {
 	expanded_parents  = 'expanded_parents',
 	focus_forParents  = 'focus_forParents',
 	other_databases	  = 'other_databases',
-	arc_sliders	  = 'arc_sliders',
+	cluster_sliders	  = 'cluster_sliders',
 	relationships	  = 'relationships',
-	detail_types	  = 'detail_types',			// vertical stack
+	detail_types	  = 'detail_types',			// shown in details view, vertical stack
+	paging_style	  = 'paging_style',
 	show_details	  = 'show_details',			// left side
 	show_related	  = 'show_related',
 	ring_radius		  = 'ring_radius',

@@ -1,4 +1,5 @@
-import { k, Rect, Point, Angle, radial, svgPaths } from '../common/Global_Imports';
+import { Rect, Point, Angle, T_Orientation } from '../common/Global_Imports';
+import { k, radial, layout, svgPaths } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
 // create svg paths for generic arcs
@@ -8,7 +9,7 @@ import { get } from 'svelte/store';
 //	start, end & fork angles
 //	w_resize_radius
 
-export default class G_ArcSlider {
+export default class G_Cluster_Pager {
 	label_text_angle = Math.PI / 2;
 	clusters_center = Point.zero;
 	label_center = Point.zero;
@@ -55,8 +56,8 @@ export default class G_ArcSlider {
 	get compute_arc_rect(): Rect {
 		let origin = Point.zero;
 		let extent = Point.zero;
-		const end_radial = this.radial_forAngle(this.end_angle);								// for each of start and end radials,
-		const start_radial = this.radial_forAngle(this.start_angle);
+		const end_radial = this.radial_vector_atAngle(this.end_angle);								// for each of start and end radials,
+		const start_radial = this.radial_vector_atAngle(this.start_angle);
 		const start_x_isSmaller = start_radial.x < end_radial.x;								// for x and then for y
 		const start_y_isSmaller = start_radial.y < end_radial.y;
 		origin.x = (start_x_isSmaller ? start_radial.x : end_radial.x) - this.cap_radius;		// which radial's coordinate is smaller?
@@ -66,7 +67,7 @@ export default class G_ArcSlider {
 		return Rect.createExtentRect(origin, extent);
 	}
 
-	radial_forAngle(angle: number): Point {
+	radial_vector_atAngle(angle: number): Point {
 		const middle_radius = this.inside_arc_radius + this.cap_radius;
 		return Point.fromPolar(middle_radius, angle);
 	}
@@ -92,8 +93,8 @@ export default class G_ArcSlider {
 	static readonly _____LAYOUT: unique symbol;
 
 	layout_forkTip(center: Point) {
-		const radial = Point.fromPolar(this.inside_arc_radius, this.angle_ofFork);
-		this.tip_ofFork = center.offsetBy(radial);
+		const radial_vector = Point.fromPolar(this.inside_arc_radius, this.angle_ofFork);
+		this.tip_ofFork = center.offsetBy(radial_vector);
 	}
 
 	layout_fork(angle_ofCluster: number) {
@@ -137,8 +138,8 @@ export default class G_ArcSlider {
 	}
 
 	svgPathFor_cap(arc_angle: number, clockwise: boolean, cap_radius: number) {
-		const radial = this.radial_forAngle(arc_angle);
-		const center = this.clusters_center.offsetBy(radial);
+		const radial_vector = this.radial_vector_atAngle(arc_angle);
+		const center = this.clusters_center.offsetBy(radial_vector);
 		const end_angle = arc_angle + (clockwise ? 0 : Math.PI);
 		return svgPaths.arc_partial(center, cap_radius, 0, 1, end_angle);
 	}
@@ -164,6 +165,31 @@ export default class G_ArcSlider {
 			this.svgPathFor_cap(start, true, cap_radius),
 		];
 		return paths.join(k.space);
+	}
+
+	layout_endpoints_onArc(radius: number, angle: number, arcLength: number): { text_path_d: string, start_thumb_transform: string, end_thumb_transform: string } {
+		const sweepAngle = arcLength / radius;
+		const startAngle = angle - sweepAngle / 2;
+		const endAngle = startAngle + sweepAngle;
+		const invert = new Angle(angle).orientation_ofAngle == T_Orientation.up;
+		const { start: text_start, end: text_end } = this.get_endpoints(startAngle, endAngle, radius, invert);
+		const { start: thumb_start, end: thumb_end } = this.get_endpoints(startAngle, endAngle, radius + 0.8);
+		const startThumbAngleDeg = (startAngle + Math.PI/2) * 180 / Math.PI;
+		const endThumbAngleDeg = (endAngle - Math.PI/2) * 180 / Math.PI;
+		const sweepFlag = invert ? 0 : 1;
+		const text_path_d = `M ${text_start.x} ${text_start.y} A ${radius} ${radius} 0 0 ${sweepFlag} ${text_end.x} ${text_end.y}`;
+		const start_thumb_transform = `translate(${thumb_start.x}, ${thumb_start.y}) rotate(${startThumbAngleDeg})`;
+		const end_thumb_transform = `translate(${thumb_end.x}, ${thumb_end.y}) rotate(${endThumbAngleDeg})`;
+		return { text_path_d, start_thumb_transform, end_thumb_transform };
+	}
+
+	private get_endpoints(startAngle: number, endAngle: number, arc_radius: number, invert: boolean = false) {
+		const center_ofArc = layout.center_ofGraphView;
+		const startX = center_ofArc.x + arc_radius * Math.cos(invert ? endAngle : startAngle);
+		const startY = center_ofArc.y + arc_radius * Math.sin(invert ? endAngle : startAngle);
+		const endX = center_ofArc.x + arc_radius * Math.cos(invert ? startAngle : endAngle);
+		const endY = center_ofArc.y + arc_radius * Math.sin(invert ? startAngle : endAngle);
+		return { start: new Point(startX, startY), end: new Point(endX, endY) };
 	}
 
 }

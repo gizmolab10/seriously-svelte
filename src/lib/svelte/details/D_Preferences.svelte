@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { k, s, u, x, show, Rect, Point, colors, layout, elements } from '../../ts/common/Global_Imports';
-	import { T_Graph, T_Layer, T_Kinship, T_Auto_Adjust } from '../../ts/common/Global_Imports';
+	import { k, s, u, x, show, Rect, Point, colors, layout, controls } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Kinship, T_Auto_Adjust, T_Paging_Style } from '../../ts/common/Global_Imports';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Slider from '../mouse/Slider.svelte';
@@ -15,11 +15,11 @@
 	const picker_offset = `-189px`;
 	const color_left = width / 2 - 13;
 	const segmented_width = width - 6;
-	const { w_auto_adjust_graph } = s;
 	const { w_scale_factor } = layout;
 	const { w_separator_color } = colors;
 	const segmented_height = k.height.button;
 	const separator_height = segmented_height + 9;
+	const { w_paging_style, w_auto_adjust_graph } = s;
 	const separator_width = width - 5 - separator_left * 2;
 	const { w_show_details_ofType, w_show_countDots_ofType } = show;
 	let color_wrapper: HTMLDivElement | null = null;
@@ -55,6 +55,10 @@
 		$w_auto_adjust_graph = types.length > 0 ? types[0] : null;
 	}
 
+	function handle_paging_style(types: Array<T_Paging_Style | null>) {
+		$w_paging_style = types.length > 0 ? types[0] : T_Paging_Style.sliders;
+	}
+
 	function handle_count_dots(types: string[]) {
 		$w_show_countDots_ofType = types as Array<T_Kinship>;
 	}
@@ -77,33 +81,13 @@
 		position:{position};
 		padding-bottom:{tops[6]}px;
 		font-size:{k.font_size.info}px;'>
-	<Separator name='force-graph'
-		length={width}
-		isHorizontal={true}
-		position={position}
-		has_gull_wings={true}
-		title='force graph to:'
-		margin={k.details_margin}
-		origin={Point.y(tops[0])}
-		title_left={k.separator_title_left}
-		thickness={k.thickness.separator.details}/>
-	<Segmented name='auto-adjust'
-		left={106}
-		allow_none={true}
-		allow_multiple={false}
-		width={segmented_width}
-		height={segmented_height}
-		origin={Point.y(tops[1])}
-		selected={[$w_auto_adjust_graph]}
-		handle_selection={handle_auto_adjust}
-		titles={[T_Auto_Adjust.selection, T_Auto_Adjust.fit]}/>
 	<Separator name='tiny-dots'
 		length={width}
 		isHorizontal={true}
 		position={position}
 		has_gull_wings={true}
 		margin={k.details_margin}
-		origin={Point.y(tops[2])}
+		origin={Point.y(tops[0])}
 		title='show tiny dots for'
 		title_left={k.separator_title_left}
 		thickness={k.thickness.separator.details}/>
@@ -113,10 +97,43 @@
 		allow_multiple={true}
 		width={segmented_width}
 		height={segmented_height}
-		origin={Point.y(tops[3])}
+		origin={Point.y(tops[1])}
 		handle_selection={handle_count_dots}
 		selected={$w_show_countDots_ofType}
 		titles={[T_Kinship[T_Kinship.children], T_Kinship[T_Kinship.parents], T_Kinship[T_Kinship.related]]}/>
+	<Separator name='first-preference'
+		length={width}
+		isHorizontal={true}
+		position={position}
+		has_gull_wings={true}
+		margin={k.details_margin}
+		origin={Point.y(tops[2])}
+		title_left={k.separator_title_left}
+		thickness={k.thickness.separator.details}
+		title={controls.inTreeMode ? 'force graph to:' : 'paging style:'}/>
+	{#if controls.inTreeMode}
+		<Segmented name='auto-adjust'
+			left={106}
+			allow_none={true}
+			allow_multiple={false}
+			width={segmented_width}
+			height={segmented_height}
+			origin={Point.y(tops[3])}
+			selected={[$w_auto_adjust_graph]}
+			handle_selection={handle_auto_adjust}
+			titles={[T_Auto_Adjust.selection, T_Auto_Adjust.fit]}/>
+	{:else}
+		<Segmented name='paging-style'
+			left={106}
+			allow_none={false}
+			allow_multiple={false}
+			width={segmented_width}
+			height={segmented_height}
+			origin={Point.y(tops[3])}
+			selected={[$w_paging_style]}
+			handle_selection={handle_paging_style}
+			titles={[T_Paging_Style.steppers, T_Paging_Style.sliders]}/>
+	{/if}
 	<Separator name='background-color'
 		length={width}
 		position={position}

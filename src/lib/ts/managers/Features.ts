@@ -1,4 +1,4 @@
-import { k, show, T_Theme } from '../common/Global_Imports';
+import { k, s, T_Theme, T_Paging_Style } from '../common/Global_Imports';
 
 export class Features {
 
@@ -32,8 +32,8 @@ export class Features {
 		for (const themeOption of themeOptions) {
 			switch (themeOption) {
 				case 'bubble':
+					s.w_paging_style.set(T_Paging_Style.sliders);
 					this.theme				 = T_Theme.bubble;
-					show.w_show_arc_sliders.set(true);
 					this.allow_graph_editing = false;
 					this.allow_title_editing = false;
 					this.allow_h_scrolling	 = false;
