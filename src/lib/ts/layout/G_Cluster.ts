@@ -45,21 +45,22 @@ export default class G_Cluster {
 		this.predicate = predicate;
 		radial.w_resize_radius.subscribe((radius: number) => {
 			if (this.g_cluster_pager.outside_arc_radius != radius) {
-				this.layout_cluster();		// do not set_paging_index (else expand will hang)
+				this.layout();		// do not set_paging_index (else expand will hang)
 			}
 		})
 	}
 
 	static readonly _____CLUSTER: unique symbol;
 
-	layout_cluster() {
+	layout() {
 		if (this.ancestries_shown.length > 0) {
-			debug.log_build(`layout_cluster (${this.ancestries_shown.length} shown)  ${this.direction_kind}`);
+			debug.log_build(`layout (${this.ancestries_shown.length} shown)  ${this.direction_kind}`);
 			this.widgets_shown = this.ancestries_shown.length;
 			this.isPaging = this.widgets_shown < this.total_widgets;
 			this.center = get(layout.w_rect_ofGraphView).size.asPoint.dividedInHalf;
 			this.color = colors.opacitize(get(s.w_ancestry_focus).thing?.color ?? this.color, 0.2);
-			this.g_cluster_pager.layout_fork(this.angle_ofCluster);
+			this.g_cluster_pager.angle_ofCluster = this.angle_ofCluster;
+			this.g_cluster_pager.layout();
 			this.layout_cluster_widgets();
 			this.g_cluster_pager.layout_forkTip(this.center);
 			this.layout_label();
@@ -144,7 +145,7 @@ export default class G_Cluster {
 			const points_right = new Angle(this.angle_ofCluster).angle_points_right;
 			const onePage_ofAncestries = g_paging.onePage_from(this.widgets_shown, this.ancestries);
 			this.ancestries_shown = points_right ? onePage_ofAncestries.reverse() : onePage_ofAncestries;	
-			this.layout_cluster();
+			this.layout();
 			let angle = this.g_cluster_pager.spread_angle;
 			if (angle < 0) {
 				angle = -angle;
@@ -262,9 +263,10 @@ export default class G_Cluster {
 			const start = arc_start + (increment * this.paging_index_ofFocus);
 			const end = start + (increment * this.widgets_shown);
 			const angle = (start + end) / 2;
-			this.g_thumbArc.layout_fork(angle);
+			this.g_thumbArc.angle_ofCluster = angle;
 			this.g_thumbArc.start_angle = start;
 			this.g_thumbArc.end_angle = end;
+			this.g_thumbArc.layout();
 		}
 	}
 

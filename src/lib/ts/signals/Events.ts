@@ -253,7 +253,7 @@ export class Events {
 			} else {
 				ancestry.grabOnly();
 			}
-			layout.grand_layout();
+			layout.layout();
 		}
 	}
 

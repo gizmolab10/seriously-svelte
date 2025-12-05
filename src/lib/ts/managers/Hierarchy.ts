@@ -1108,7 +1108,7 @@ export class Hierarchy {
 		if (graph_needsSweep) {
 			layout.grand_sweep();
 		} else {
-			layout.grand_layout();
+			layout.layout();
 		}
 	}
 

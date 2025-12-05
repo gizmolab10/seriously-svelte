@@ -92,16 +92,15 @@ export default class G_Cluster_Pager {
 
 	static readonly _____LAYOUT: unique symbol;
 
-	layout_forkTip(center: Point) {
-		const radial_vector = Point.fromPolar(this.inside_arc_radius, this.angle_ofFork);
-		this.tip_ofFork = center.offsetBy(radial_vector);
-	}
-
-	layout_fork(angle_ofCluster: number) {
+	layout() {
 		const fork_raw_radius = k.thickness.radial.ring * 0.6;
 		const fork_backoff = this.fork_adjustment(fork_raw_radius, this.inside_arc_radius);
 		this.fork_radius = fork_raw_radius - fork_backoff;
-		this.angle_ofCluster = angle_ofCluster;
+	}
+
+	layout_forkTip(center: Point) {
+		const radial_vector = Point.fromPolar(this.inside_arc_radius, this.angle_ofFork);
+		this.tip_ofFork = center.offsetBy(radial_vector);
 	}
 
 	fork_adjustment(fork_radius: number, inside_arc_radius: number): number {

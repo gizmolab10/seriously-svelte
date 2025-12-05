@@ -224,7 +224,7 @@ export default class DB_Firebase extends DB_Common {
 			setTimeout(() => { // wait in case a thing involved in this relationship arrives in the data
 				h.relationships_refreshKnowns();
 				h.rootAncestry.order_normalizeRecursive();
-				layout.grand_layout();
+				layout.layout();
 			}, 20);
 		}
 	}

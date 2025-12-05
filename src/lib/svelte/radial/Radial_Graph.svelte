@@ -33,7 +33,7 @@
 	//	edit titles (keydown terminates edit) BROKEN
 	//	displays editing go when asked by user
 	
-	layout.grand_layout();
+	layout.layout();
 
 	s_component = signals.handle_signals_atPriority([T_Signal.reattach], 0, null, T_Hit_Target.radial, (ancestry) => {
 		reattachments += 1;

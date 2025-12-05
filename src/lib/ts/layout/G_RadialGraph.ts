@@ -21,7 +21,7 @@ export default class G_RadialGraph {
 	// layout widgets, cluster lines, & paging arcs //
 	//////////////////////////////////////////////////
 
-	grand_layout_radial() {
+	layout() {
 		this.destructor();
 		this.layout_forPoints_toChildren(true);
 		this.layout_forPoints_toChildren(false);
@@ -37,7 +37,7 @@ export default class G_RadialGraph {
 			const x = -7.5 - (width_ofTitle / 2);
 			const y = -11;
 			const origin_ofWidget = layout.center_ofGraphView.offsetByXY(x, y);
-			g_focus.layout_widget();
+			g_focus.layout();
 			g_focus.width_ofWidget = width_ofTitle;
 			g_focus.location_ofRadial = origin_ofWidget;
 			g_focus.width_ofGraphDrawing = width_ofTitle + 30;

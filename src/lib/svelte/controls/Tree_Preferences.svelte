@@ -19,7 +19,7 @@
 		const asInteger = Math.round(value);
 		if (asInteger !== $w_depth_limit) {
 			$w_depth_limit = asInteger;  // Store the integer, not the raw value
-			layout.grand_layout();
+			layout.layout();
 		}
 	}
 

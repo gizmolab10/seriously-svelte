@@ -73,7 +73,7 @@ export class Visibility {
 		function writeAnd_reactTo(t_preference: T_Preference, flag: any) {
 			p.write_key(t_preference, flag);
 			layout.restore_preferences();
-			layout.grand_layout();
+			layout.layout();
 		}
 		this.w_show_details.subscribe((flag: any) => {
 			writeAnd_reactTo(T_Preference.show_details, flag);

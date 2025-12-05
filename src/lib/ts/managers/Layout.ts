@@ -39,17 +39,17 @@ export default class Layout {
 	
 	grand_sweep(component: S_Component | null = null) {
 		// h.ancestries_assureAll_createUnique();
-		this.grand_layout(component);
+		this.layout();
+		signals.signal_reposition_widgets_fromFocus(component);
 		this.grand_build(component);
 	}
 
-	grand_layout(component: S_Component | null = null) {
+	layout() {
 		if (controls.inRadialMode) {
-			g_radial.grand_layout_radial();
+			g_radial.layout();
 		} else {
-			g_tree.grand_layout_tree();
+			g_tree.layout();
 		}
-		signals.signal_reposition_widgets_fromFocus(component);
 	}
 
 	grand_adjust_toFit() {
@@ -62,7 +62,7 @@ export default class Layout {
 		this.w_user_graph_center.set(new_size.asPoint.dividedInHalf);
 		this.w_user_graph_offset.set(new_offset);
 		this.set_scale_factor(scale_factor);
-		this.grand_layout();
+		this.layout();
 	}
 
 	static readonly _____WIDGETS: unique symbol;

@@ -13,7 +13,7 @@ export default class G_TreeBranches {
 		this.ancestry = ancestry;
 	}
 		
-	layout_subtree() {
+	layout() {
 		const ancestry = this.ancestry;
 		const g_widget = ancestry.g_widget;
 		if (controls.inTreeMode && !!ancestry && !!g_widget && (ancestry.isExpanded || ancestry.isRoot)) {

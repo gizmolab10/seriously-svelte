@@ -84,16 +84,16 @@ export default class G_Widget {
 	static readonly _____LAYOUT: unique symbol;
 
 	private layout_one_generation() {
-		this.layout_widget();						// assumes full progeny subtrees are laid out (needed for progeny size)
+		this.layout();						// assumes full progeny subtrees are laid out (needed for progeny size)
 		this.layout_origin_ofTrunk();
-		this.g_childBranches.layout_subtree();		// noop if childless, radial or collapsed ... FUBAR: BAD origin_ofWidget, after switching to radial, refocusing, then back again
+		this.g_childBranches.layout();		// noop if childless, radial or collapsed ... FUBAR: BAD origin_ofWidget, after switching to radial, refocusing, then back again
 		debug.log_layout(`WIDGET one generation ${this.origin.verbose} ${this.ancestry.title}`);
 	}
 
 	private layout_origin_ofTrunk() {
 		if (!!this.ancestry && controls.inTreeMode) {
 			this.origin_ofTrunk = this.g_line.rect.extent.offsetByXY(k.height.row, -8.6);
-			this.g_line.update_svg_andName();
+			this.g_line.layout();
 		}
 	}
 
@@ -102,7 +102,7 @@ export default class G_Widget {
 			this.t_graph = T_Graph.radial;
 			this.location_within_necklace = rotated_origin;
 			this.widget_points_right = widget_points_right;
-			this.layout_widget();
+			this.layout();
 			debug.log_layout(`WIDGET necklaceWidget ${this.origin.verbose} ${this.ancestry.title}`);
 		}
 	}
@@ -112,7 +112,7 @@ export default class G_Widget {
 		for (const g_line of g_lines) {
 			if (!u.hasMatching_bidirectional(bidirectionals, g_line)) {
 				this.g_bidirectionalLines.push(g_line);
-				g_line.update_svg_andName();
+				g_line.layout();
 			}
 		}
 		return this.g_bidirectionalLines;
@@ -170,7 +170,7 @@ export default class G_Widget {
 		}
 	}
 
-	layout_widget() {
+	layout() {
 		const ancestry = this.ancestry;
 		if (!!ancestry.thing) {
 			const dot_size = k.height.dot;

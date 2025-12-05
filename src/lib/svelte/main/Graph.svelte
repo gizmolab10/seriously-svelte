@@ -65,7 +65,7 @@
 
 	function grand_layout_andReattach() {
 		if (!!h && h.hasRoot) {
-			layout.grand_layout();
+			layout.layout();
 			debug.log_draw(`GRAPH grand_layout_andReattach`);
 			actual_content_rect = layout.user_offset_toGraphDrawing;
 			reattachments += 1;

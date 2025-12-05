@@ -71,7 +71,7 @@
 		const reactives = `${$w_s_title_edit?.t_edit}:::${u.descriptionBy_titles($w_grabbed)}`;
 		if (reactives != trigger && !!ancestry && s_widget.update_state_didChange) {
 			trigger = reactives;
-			g_widget.layout_widget();
+			g_widget.layout();
 			final_layout();
 			s_component.debug_log_connection_state('GRABBED STATE CHANGED');
 		}

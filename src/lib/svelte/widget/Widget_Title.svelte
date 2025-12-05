@@ -137,7 +137,7 @@
 		debug.log_edit(`STOP ${title_binded}`);
 		$w_s_title_edit = null;
 		input?.blur();
-		layout.grand_layout();
+		layout.layout();
 	}
 
 	async function stop_andPersist() {
@@ -212,7 +212,7 @@
 			stop_andPersist();
 			debug.log_edit(`H BLUR ${title_binded}`);
 			updateInputWidth();
-			layout.grand_layout();
+			layout.layout();
 			search.update_search();
 		}
 	}
@@ -297,7 +297,7 @@
 					layout_timer = null;
 					if ($w_s_title_edit) {
 						$w_s_title_edit.setState_temporarilyTo_whileApplying(T_Edit.percolating, () => {
-							layout.grand_layout();
+							layout.layout();
 						});
 					}
 				});

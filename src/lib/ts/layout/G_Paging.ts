@@ -1,6 +1,5 @@
 import { h, k, radial, Thing, Predicate, Ancestry } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
-import { G_Pages } from './G_Pages';
 
 export class G_Paging {
 

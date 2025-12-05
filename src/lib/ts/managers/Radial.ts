@@ -137,7 +137,7 @@ export default class Radial {
 					this.last_action = now;
 					debug.log_radial(` resize  D ${distance.asInt()}  R ${radius.asInt()}  + ${delta.toFixed(1)}`);
 					this.w_resize_radius.set(radius);
-					layout.grand_layout();
+					layout.layout();
 				}
 			} else if (!!rotate && rotate.isDragging && rotate.basis_angle != null) {								// rotate clusters
 				if (!signals.anySignal_isInFlight && ((now - this.last_action) > 75)) {		// 1 tenth second
@@ -146,7 +146,7 @@ export default class Radial {
 					debug.log_radial(` rotate ${get(this.w_rotate_angle).asDegrees()}`);
 					rotate.active_angle = mouse_angle;
 					this.cursor = rotate.cursor;
-					layout.grand_layout();										// reposition necklace widgets and arc sliders
+					layout.layout();										// reposition necklace widgets and arc sliders
 				}
 			} else if (!!g_cluster && !!s_paging && s_paging.active_angle != null) {
 				const basis_angle = s_paging.basis_angle;
@@ -156,7 +156,7 @@ export default class Radial {
 				this.cursor = s_paging.cursor;
 				debug.log_radial(` page  ${delta_angle.asDegrees()}`);
 				if (!!basis_angle && !!active_angle && basis_angle != active_angle && !!g_cluster && g_cluster.adjust_paging_index_byAdding_angle(delta_angle)) {
-					layout.grand_layout();
+					layout.layout();
 				}
 			}
 		}
