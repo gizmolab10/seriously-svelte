@@ -1,5 +1,5 @@
 import { T_Thing, T_Graph, T_Create, T_Predicate, Ancestry, Hierarchy } from '../common/Global_Imports';
-import { k, h, p, s, x, busy, show, debug, layout, features } from '../common/Global_Imports';
+import { g, h, k, p, s, x, busy, show, debug, features } from '../common/Global_Imports';
 import { T_Persistence, T_Preference } from '../common/Global_Imports';
 import { DB_Name, T_Database } from './DB_Common';
 import DB_Common from './DB_Common';
@@ -169,10 +169,10 @@ export default class DB_Bubble extends DB_Common {
 			busy.signal_data_redraw();
 		}
 		if (!!b_override_depth_limit) {
-			layout.w_depth_limit.set(b_depth_limit);
+			g.w_depth_limit.set(b_depth_limit);
 		}
 		if (!!b_override_zoom_scale) {
-			layout.w_scale_factor.set(b_zoom_scale);
+			g.w_scale_factor.set(b_zoom_scale);
 		}
 		if (!!b_suppress_tree_mode) {
 			features.allow_tree_mode = false;

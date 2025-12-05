@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { h, k, s, u, x, hits, debug, colors, search, layout, signals, controls, elements, databases } from '../../ts/common/Global_Imports';
+	import { g, h, k, s, u, x, hits, debug, colors, search, signals, controls, elements, databases } from '../../ts/common/Global_Imports';
 	import { T_Search, T_Layer, T_Hit_Target, T_Edit } from '../../ts/common/Global_Imports';
 	import { S_Mouse, S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import { Rect, Seriously_Range } from '../../ts/common/Global_Imports';
@@ -9,11 +9,11 @@
 	export let fontSize = '1em';
 	const ancestry = s_title.ancestry;
 	const thing = ancestry?.thing;
+    const { w_mouse_location } = g;
 	const { w_thing_color } = colors;
 	const padding = `1px 0px 0px 0px`;
 	const g_widget = ancestry.g_widget;
 	const s_widget = g_widget.s_widget;
-    const { w_mouse_location } = layout;
 	const input_height = k.height.dot + 2;
 	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_items: w_expanded } = x.si_expanded;
@@ -137,7 +137,7 @@
 		debug.log_edit(`STOP ${title_binded}`);
 		$w_s_title_edit = null;
 		input?.blur();
-		layout.layout();
+		g.layout();
 	}
 
 	async function stop_andPersist() {
@@ -183,7 +183,7 @@
 	function thing_setSelectionRange_fromMouseLocation() {
 		if (!!input && !!$w_s_title_edit && !isPercolating()) {
 			const location = $w_mouse_location;
-			if (layout.scaled_rect_forElement(input)?.contains(location)) {
+			if (g.scaled_rect_forElement(input)?.contains(location)) {
 				const offset = u.convert_windowOffset_toCharacterOffset_in(location.x, input);
 				debug.log_edit(`CURSOR OFFSET ${offset}`);
 				$w_s_title_edit.thing_setSelectionRange_fromOffset(offset);
@@ -212,7 +212,7 @@
 			stop_andPersist();
 			debug.log_edit(`H BLUR ${title_binded}`);
 			updateInputWidth();
-			layout.layout();
+			g.layout();
 			search.update_search();
 		}
 	}
@@ -297,7 +297,7 @@
 					layout_timer = null;
 					if ($w_s_title_edit) {
 						$w_s_title_edit.setState_temporarilyTo_whileApplying(T_Edit.percolating, () => {
-							layout.layout();
+							g.layout();
 						});
 					}
 				});

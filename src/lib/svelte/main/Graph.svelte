@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { e, h, k, s, u, x, hits, show, Rect, Point, builds, debug, layout, signals, elements } from '../../ts/common/Global_Imports';
+	import { e, g, h, k, s, u, x, hits, show, Rect, Point, builds, debug, signals, elements } from '../../ts/common/Global_Imports';
 	import { S_Component, T_Layer, T_Graph, T_Signal, T_Startup, T_Control } from '../../ts/common/Global_Imports';
 	import Radial_Graph from '../radial/Radial_Graph.svelte';
 	import Rubberband from '../mouse/Rubberband.svelte';
@@ -11,9 +11,9 @@
 	const { w_items: w_expanded } = x.si_expanded;
 	const { w_s_hover, w_dragging } = hits;
 	const { w_rotate_angle, w_resize_radius } = hits;
-	const { w_depth_limit, w_user_graph_offset, w_rect_ofGraphView } = layout;
+	const { w_depth_limit, w_user_graph_offset, w_rect_ofGraphView } = g;
 	const { w_t_startup, w_ancestry_focus, w_s_title_edit, w_thing_fontFamily } = s;
-	let actual_content_rect = layout.user_offset_toGraphDrawing;
+	let actual_content_rect = g.user_offset_toGraphDrawing;
 	let draggableRect = $w_rect_ofGraphView;
 	let rubberbandComponent: any;
 	let reattachments = 0;
@@ -60,14 +60,14 @@
 		:::${$w_resize_radius}
 		:::${$w_rotate_angle}
 		:::${$w_depth_limit}`;
-		actual_content_rect = layout.user_offset_toGraphDrawing;
+		actual_content_rect = g.user_offset_toGraphDrawing;
 	}
 
 	function grand_layout_andReattach() {
 		if (!!h && h.hasRoot) {
-			layout.layout();
+			g.layout();
 			debug.log_draw(`GRAPH grand_layout_andReattach`);
-			actual_content_rect = layout.user_offset_toGraphDrawing;
+			actual_content_rect = g.user_offset_toGraphDrawing;
 			reattachments += 1;
 		}
 	}

@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import { k, s, u, x, hits, debug, colors, layout } from '../../ts/common/Global_Imports';
+    import { g, k, s, u, x, hits, debug, colors } from '../../ts/common/Global_Imports';
     import { T_Layer, T_Drag, T_Hit_Target } from '../../ts/common/Global_Imports';
     import { Rect, Size, Point, Ancestry } from '../../ts/common/Global_Imports';
     import { onMount, onDestroy } from 'svelte';
@@ -9,7 +9,7 @@
     const { w_dragging } = hits;
 	const { w_separator_color } = colors;
     const { w_count_mouse_up, w_s_title_edit } = s;
-    const { w_mouse_location, w_scaled_movement, w_user_graph_offset } = layout;
+    const { w_mouse_location, w_scaled_movement, w_user_graph_offset } = g;
     let mouse_upCount = $w_count_mouse_up;
     let startPoint: Point | null = null;
     let has_rubberbanded_grabs = true;
@@ -47,7 +47,7 @@
         const userOffset = $w_user_graph_offset;
         if (!!userOffset && !!delta && delta.magnitude > 1) {
             debug.log_action(` command drag GRAPH`);
-            layout.set_user_graph_offsetTo(userOffset.offsetBy(delta));
+            g.set_user_graph_offsetTo(userOffset.offsetBy(delta));
         }
     }
 

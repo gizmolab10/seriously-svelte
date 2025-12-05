@@ -1,5 +1,5 @@
-import { k, s, u, debug, colors, radial, layout, signals } from '../common/Global_Imports';
 import { G_Widget, G_Cluster_Pager, S_Rotation, T_Predicate, T_Cluster_Pager } from '../common/Global_Imports';
+import { g, k, s, u, debug, colors, radial, signals } from '../common/Global_Imports';
 import { Point, Angle, Ancestry, Predicate } from '../common/Global_Imports';
 import { G_Paging } from './G_Paging';
 import { get } from 'svelte/store';
@@ -57,7 +57,7 @@ export default class G_Cluster {
 			debug.log_build(`layout (${this.ancestries_shown.length} shown)  ${this.direction_kind}`);
 			this.widgets_shown = this.ancestries_shown.length;
 			this.isPaging = this.widgets_shown < this.total_widgets;
-			this.center = get(layout.w_rect_ofGraphView).size.asPoint.dividedInHalf;
+			this.center = get(g.w_rect_ofGraphView).size.asPoint.dividedInHalf;
 			this.color = colors.opacitize(get(s.w_ancestry_focus).thing?.color ?? this.color, 0.2);
 			this.g_cluster_pager.angle_ofCluster = this.angle_ofCluster;
 			this.g_cluster_pager.layout();
@@ -90,7 +90,7 @@ export default class G_Cluster {
 
 	get isMouse_insideThumb(): boolean {
 		const offset = Point.square(-radial.ring_radius);
-		const mouse_vector = layout.mouse_vector_ofOffset_fromGraphCenter(offset);
+		const mouse_vector = g.mouse_vector_ofOffset_fromGraphCenter(offset);
 		return this.isPaging && !!mouse_vector && mouse_vector.isContainedBy_path(this.g_thumbArc.svgPathFor_arcSlider);
 	}
 

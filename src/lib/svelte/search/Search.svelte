@@ -1,13 +1,13 @@
 <script lang='ts'>
-	import { c, k, p, s, show, Point, layout, search, elements, controls, features } from '../../ts/common/Global_Imports';
 	import { T_Search, T_Layer, T_Hit_Target, T_Preference, T_Search_Preference } from '../../ts/common/Global_Imports';
+	import { g, k, p, s, show, Point, search, elements, controls, features } from '../../ts/common/Global_Imports';
 	import Segmented from '../mouse/Segmented.svelte';
 	export let zindex = T_Layer.graph;
 	export let width = 80;
 	export let top = 0;
 	const { w_show_details } = show;
 	const { w_thing_fontFamily } = s;
-	const { w_rect_ofGraphView } = layout;
+	const { w_rect_ofGraphView } = g;
 	const s_search = elements.s_element_for(null, T_Hit_Target.search, k.empty);
 	const { w_search_state, w_search_preferences, w_search_results_found } = search;
 	let input: HTMLInputElement;
@@ -27,7 +27,7 @@
 	}
 
 	function graph_width() {
-		return features.allow_tree_mode ? $w_rect_ofGraphView.size.width - 28 : layout.windowSize.width - 124;
+		return features.allow_tree_mode ? $w_rect_ofGraphView.size.width - 28 : g.windowSize.width - 124;
 	}
 
 	function handle_input(event) {

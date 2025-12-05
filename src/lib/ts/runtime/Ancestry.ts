@@ -1,4 +1,4 @@
-import { h, k, s, u, x, show, debug, search, layout, controls, features, svgPaths, databases, components } from '../common/Global_Imports';
+import { g, h, k, s, u, x, show, debug, search, controls, features, svgPaths, databases, components } from '../common/Global_Imports';
 import { T_Graph, T_Create, T_Kinship, T_Predicate, T_Alteration, T_Hit_Target } from '../common/Global_Imports';
 import { Rect, Size, Point, Thing, Direction, Predicate, Relationship } from '../common/Global_Imports';
 import { S_Items, S_Component, S_Title_Edit } from '../common/Global_Imports';
@@ -211,7 +211,7 @@ export default class Ancestry extends Identifiable {
 
 	static readonly _____VISIBILITY: unique symbol;
 
-	get depth_limit():				   number { return get(layout.w_depth_limit) ?? 0; }
+	get depth_limit():				   number { return get(g.w_depth_limit) ?? 0; }
 	get halfHeight_ofVisibleSubtree(): number { return this.height_ofVisibleSubtree() / 2; }
 	get halfSize_ofVisibleSubtree():     Size { return this.size_ofVisibleSubtree.dividedInHalf; }
 	get size_ofVisibleSubtree():	     Size { return new Size(this.visibleSubtree_width(), this.height_ofVisibleSubtree()); }
@@ -463,7 +463,7 @@ export default class Ancestry extends Identifiable {
 	expand() { return this.expanded_setTo(true); }
 	collapse() { return this.expanded_setTo(false); }
 	toggleExpanded() { return this.expanded_setTo(!this.isExpanded); }
-	get shows_branches(): boolean { return get(layout.w_branches_areChildren) ? this.shows_children : !this.isRoot; }
+	get shows_branches(): boolean { return get(g.w_branches_areChildren) ? this.shows_children : !this.isRoot; }
 	get shows_children(): boolean { return this.isExpanded && this.hasChildren && this.isVisible_accordingTo_depth_below_focus; }
 	get isExpanded(): boolean { return this.isRoot || this.includedInStore_ofAncestries(x.si_expanded.w_items); }
 
@@ -577,7 +577,7 @@ export default class Ancestry extends Identifiable {
 	get sibling_ancestries(): Array<Ancestry> { return this.parentAncestry?.childAncestries ?? []; }
 	get parentAncestry():	  Ancestry | null { return this.ancestry_createUnique_byStrippingBack(); }
 	get childAncestries():    Array<Ancestry> { return this.ancestries_createUnique_forKinship(T_Kinship.children) ?? []; }
-	get branchAncestries():   Array<Ancestry> { return get(layout.w_branches_areChildren) ? this.childAncestries : this.parentAncestries; }
+	get branchAncestries():   Array<Ancestry> { return get(g.w_branches_areChildren) ? this.childAncestries : this.parentAncestries; }
 
 	get parentAncestries(): Array<Ancestry> {
 		let ancestries = this.thing?.ancestries ?? [];

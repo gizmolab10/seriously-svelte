@@ -1,4 +1,4 @@
-import { h, s, u, debug, search, radial, layout } from '../common/Global_Imports';
+import { h, s, u, debug, search, radial, g } from '../common/Global_Imports';
 import { details, controls, databases } from '../common/Global_Imports';
 import { S_Items, T_Search, T_Startup } from '../common/Global_Imports';
 import { Tag, Thing, Trait, Ancestry } from '../common/Global_Imports';
@@ -106,7 +106,7 @@ export default class UX_State {
 
 	update_forFocus() {
 		let focus = get(s.w_ancestry_focus);
-		if (get(layout.w_branches_areChildren)) {
+		if (get(g.w_branches_areChildren)) {
 			this.parents_focus = focus;
 			focus = this.prior_focus;
 		} else {
@@ -201,7 +201,7 @@ export default class UX_State {
 		if (!!si_traits && si_traits.find_next_item(next)) {
 			const ancestry = si_traits.item?.owner?.ancestry;
 			if (!!ancestry && ancestry.ancestry_assureIsVisible()) {
-				layout.grand_build();
+				g.grand_build();
 				details.redraw();
 			}
 		}

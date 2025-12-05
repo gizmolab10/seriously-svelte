@@ -1,5 +1,5 @@
 import { Rect, Point, Angle, T_Orientation } from '../common/Global_Imports';
-import { k, radial, layout, svgPaths } from '../common/Global_Imports';
+import { g, k, radial, svgPaths } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
 // create svg paths for generic arcs
@@ -183,7 +183,7 @@ export default class G_Cluster_Pager {
 	}
 
 	private get_endpoints(startAngle: number, endAngle: number, arc_radius: number, invert: boolean = false) {
-		const center_ofArc = layout.center_ofGraphView;
+		const center_ofArc = g.center_ofGraphView;
 		const startX = center_ofArc.x + arc_radius * Math.cos(invert ? endAngle : startAngle);
 		const startY = center_ofArc.y + arc_radius * Math.sin(invert ? endAngle : startAngle);
 		const endX = center_ofArc.x + arc_radius * Math.cos(invert ? startAngle : endAngle);

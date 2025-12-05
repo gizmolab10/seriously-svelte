@@ -1,4 +1,4 @@
-import { c, k, p, s, x, show, Rect, debug, layout, Ancestry, G_Widget, T_Kinship} from "../common/Global_Imports";
+import { c, g, k, p, s, x, show, Rect, debug, Ancestry, G_Widget, T_Kinship} from "../common/Global_Imports";
 import { get } from "svelte/store";
 
 export default class G_TreeGraph {
@@ -14,8 +14,8 @@ export default class G_TreeGraph {
 	}
 
 	layout() {
-		const rect_ofGraphView = get(layout.w_rect_ofGraphView);
-		const depth_limit = get(layout.w_depth_limit) ?? 1;
+		const rect_ofGraphView = get(g.w_rect_ofGraphView);
+		const depth_limit = get(g.w_depth_limit) ?? 1;
 		if (!!rect_ofGraphView && !!this.g_focus) {
 			this.layout_focus_ofTree(rect_ofGraphView); 
 			this.g_focus.layout_each_generation_recursively(depth_limit);
@@ -40,8 +40,8 @@ export default class G_TreeGraph {
 	}
 
 	increase_depth_limit_by(increment: number) {
-		layout.w_depth_limit.update(a => a + increment);
-		layout.layout();
+		g.w_depth_limit.update(a => a + increment);
+		g.layout();
 	}
 
 	reset_scanOf_attached_branches() {
@@ -66,7 +66,7 @@ export default class G_TreeGraph {
 		x.update_forFocus();
 		show.w_show_related.set(t_trees.includes(T_Kinship.related));
 		p.restore_expanded();
-		layout.grand_build();
+		g.grand_build();
 	}
 
 	static readonly _____PRIVATE: unique symbol;

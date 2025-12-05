@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, s, x, Point, search, layout, features } from '../../ts/common/Global_Imports';
+	import { g, k, s, x, Point, search, features } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Detail } from '../../ts/common/Global_Imports';
 	import Banner_Hideable from '../details/Banner_Hideable.svelte';
 	import D_Preferences from '../details/D_Preferences.svelte';
@@ -41,9 +41,9 @@
 			flex-direction:column;
 			-ms-overflow-style: none;  
 			z-index:{T_Layer.details};
-			top:{layout.controls_boxHeight}px;
+			top:{g.controls_boxHeight}px;
 			width:{k.width.details - 6}px;
-			height:{layout.windowSize.height - layout.controls_boxHeight}px;'>
+			height:{g.windowSize.height - g.controls_boxHeight}px;'>
 		<Banner_Hideable t_detail={T_Detail.header}>
 			<D_Header/>
 		</Banner_Hideable>
@@ -77,8 +77,8 @@
 	margin={k.details_margin}
 	thickness={k.thickness.separator.main}
 	corner_radius={k.radius.gull_wings.thick}
-	length={layout.windowSize.height - layout.controls_boxHeight + 6.5}
-	origin={new Point(k.width.details - 2, layout.controls_boxHeight - 2.5)}
+	length={g.windowSize.height - g.controls_boxHeight + 6.5}
+	origin={new Point(k.width.details - 2, g.controls_boxHeight - 2.5)}
 />
 
 <style>

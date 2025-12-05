@@ -1,16 +1,16 @@
 <script lang='ts'>
-	import { c, h, k, s, u, x, debug, search, colors, signals, elements } from '../../ts/common/Global_Imports';
+	import { c, g, h, k, s, u, x, debug, search, colors, signals, elements } from '../../ts/common/Global_Imports';
 	import { Size, Point, Thing, T_Signal, T_Startup, T_Hit_Target } from '../../ts/common/Global_Imports';
-	import { svgPaths, Ancestry, layout, S_Component} from '../../ts/common/Global_Imports';
+	import { svgPaths, Ancestry, S_Component} from '../../ts/common/Global_Imports';
 	import Breadcrumb_Button from '../mouse/Breadcrumb_Button.svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
-	export let width = layout.windowSize.width;
+	export let width = g.windowSize.width;
 	export let centered: boolean = false;
 	export let left: number = 28;
 	const { w_thing_color } = colors;
+	const { w_rect_ofGraphView } = g;
 	const { w_search_state } = search;
-	const { w_rect_ofGraphView } = layout;
 	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_s_title_edit, w_ancestry_forDetails, w_t_startup } = s;
 	let s_component: S_Component | null = null;
@@ -44,7 +44,7 @@
 		if (!!ancestry && $w_t_startup == T_Startup.ready) {				
 			let parent_widths = 0;					// encoded as one parent count per 2 digits (base 10)
 			let widths: Array<number> = [];
-			[things, widths, lefts, parent_widths] = layout.layout_breadcrumbs_forAncestry_centered_starting_within(ancestry, centered, left, width);
+			[things, widths, lefts, parent_widths] = g.layout_breadcrumbs_forAncestry_centered_starting_within(ancestry, centered, left, width);
 			trigger = parent_widths * 10000 + reattachments * 100 + lefts[0];		// re-render HTML when this value changes
 			for (let i = 0; i < things.length; i++) {
 				const state = s_breadcrumbAt(i);

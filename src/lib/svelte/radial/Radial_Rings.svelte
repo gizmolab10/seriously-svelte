@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { e, k, s, x, hits, busy, debug, colors, radial, layout, signals, svgPaths } from '../../ts/common/Global_Imports';
+	import { e, g, k, s, x, hits, busy, debug, colors, radial, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Radial_Zone, T_Hit_Target, S_Component } from '../../ts/common/Global_Imports';
 	import { Thing, Point, Angle, g_radial, databases } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
@@ -76,7 +76,7 @@
 		if (s_mouse.isUp) {
 			s_reset();
 		} else if (s_mouse.isDown) {
-			const angle_ofMouseDown = layout.mouse_angle_fromGraphCenter;
+			const angle_ofMouseDown = g.mouse_angle_fromGraphCenter;
 			const angle_ofRotation = angle_ofMouseDown.add_angle_normalized(-$w_rotate_angle);
 			const zone = radial.ring_zone_atMouseLocation;
 			$w_s_title_edit?.stop_editing();
@@ -88,7 +88,7 @@
 					radial.s_rotation.basis_angle = angle_ofRotation;
 					break;
 				case T_Radial_Zone.resize:
-					const change_ofRadius = layout.mouse_distance_fromGraphCenter - $w_resize_radius;
+					const change_ofRadius = g.mouse_distance_fromGraphCenter - $w_resize_radius;
 					debug.log_radial(` begin resize  ${change_ofRadius.asInt()}`);
 					radial.s_rotation.active_angle = angle_ofMouseDown + Angle.quarter;	// needed for cursor
 					radial.s_rotation.basis_angle = angle_ofRotation + Angle.quarter;		// "
@@ -122,7 +122,7 @@
 				height = {outer_diameter}
 				zindex = {T_Layer.radial}
 				handle_s_mouse = {handle_s_mouse}
-				center = {layout.center_ofGraphView}>
+				center = {g.center_ofGraphView}>
 				<svg class = 'rings-svg'
 					viewBox = {viewBox}>
 					<path class = 'resize-path'

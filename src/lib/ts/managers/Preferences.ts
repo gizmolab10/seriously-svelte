@@ -1,17 +1,17 @@
-import { c, h, k, s, u, x, show, debug, layout, radial, databases } from '../common/Global_Imports';
+import { c, g, h, k, s, u, x, show, debug, radial, databases } from '../common/Global_Imports';
 import { Ancestry, T_Preference, T_Auto_Adjust, T_Cluster_Pager } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
 export class Preferences {
 
-	get focus_key(): string { return get(layout.w_branches_areChildren) ? T_Preference.focus_forChildren : T_Preference.focus_forParents; }
-	get expanded_key(): string { return get(layout.w_branches_areChildren) ? T_Preference.expanded_children : T_Preference.expanded_parents; }
+	get focus_key(): string { return get(g.w_branches_areChildren) ? T_Preference.focus_forChildren : T_Preference.focus_forParents; }
+	get expanded_key(): string { return get(g.w_branches_areChildren) ? T_Preference.expanded_children : T_Preference.expanded_parents; }
 
 	apply_queryStrings(queryStrings: URLSearchParams) {
 		const paging_style = queryStrings.get('paging_style');
 		const levels = queryStrings.get('levels');
 		if (!!levels) {
-			layout.w_depth_limit.set(Number(levels));
+			g.w_depth_limit.set(Number(levels));
 		}
 		if (!!paging_style) {
 			s.w_t_cluster_pager.set(paging_style == 'sliders' ? T_Cluster_Pager.sliders : T_Cluster_Pager.steppers);
@@ -211,7 +211,7 @@ export class Preferences {
 		
 		// OTHER
 
-		layout.w_depth_limit.subscribe((depth: number) => {
+		g.w_depth_limit.subscribe((depth: number) => {
 			this.write_key(T_Preference.levels, depth);
 		});
 		s.w_auto_adjust_graph.subscribe((auto_adjust: T_Auto_Adjust | null) => {

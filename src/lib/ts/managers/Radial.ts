@@ -1,5 +1,5 @@
 import { T_Startup, T_Preference, T_Hit_Target, T_Radial_Zone, T_Cluster_Pager } from '../common/Global_Imports';
-import { k, p, s, hits, debug, layout, signals, elements, g_radial } from '../common/Global_Imports';
+import { g, k, p, s, hits, debug, signals, elements, g_radial } from '../common/Global_Imports';
 import { Angle, G_Cluster, S_Rotation, S_Resizing } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
 import { G_Paging } from '../layout/G_Paging';
@@ -112,7 +112,7 @@ export default class Radial {
 	}
 
 	handle_mouse_drag() {
-		const mouse_vector = layout.mouse_vector_ofOffset_fromGraphCenter();
+		const mouse_vector = g.mouse_vector_ofOffset_fromGraphCenter();
 		if (!!mouse_vector) {
 			const rotate = this.s_rotation;
 			const resize = this.s_resizing;
@@ -137,7 +137,7 @@ export default class Radial {
 					this.last_action = now;
 					debug.log_radial(` resize  D ${distance.asInt()}  R ${radius.asInt()}  + ${delta.toFixed(1)}`);
 					this.w_resize_radius.set(radius);
-					layout.layout();
+					g.layout();
 				}
 			} else if (!!rotate && rotate.isDragging && rotate.basis_angle != null) {								// rotate clusters
 				if (!signals.anySignal_isInFlight && ((now - this.last_action) > 75)) {		// 1 tenth second
@@ -146,7 +146,7 @@ export default class Radial {
 					debug.log_radial(` rotate ${get(this.w_rotate_angle).asDegrees()}`);
 					rotate.active_angle = mouse_angle;
 					this.cursor = rotate.cursor;
-					layout.layout();										// reposition necklace widgets and arc sliders
+					g.layout();										// reposition necklace widgets and arc sliders
 				}
 			} else if (!!g_cluster && !!s_paging && s_paging.active_angle != null) {
 				const basis_angle = s_paging.basis_angle;
@@ -156,7 +156,7 @@ export default class Radial {
 				this.cursor = s_paging.cursor;
 				debug.log_radial(` page  ${delta_angle.asDegrees()}`);
 				if (!!basis_angle && !!active_angle && basis_angle != active_angle && !!g_cluster && g_cluster.adjust_paging_index_byAdding_angle(delta_angle)) {
-					layout.layout();
+					g.layout();
 				}
 			}
 		}
@@ -165,7 +165,7 @@ export default class Radial {
 	get ring_zone_atMouseLocation(): T_Radial_Zone {
 		let ring_zone = T_Radial_Zone.miss;
 		const hover_type = get(hits.w_s_hover)?.type;
-		const mouse_vector = layout.mouse_vector_ofOffset_fromGraphCenter();
+		const mouse_vector = g.mouse_vector_ofOffset_fromGraphCenter();
 		const hasHovering_conflict = !!hover_type && [T_Hit_Target.widget, T_Hit_Target.drag].includes(hover_type);
 		if (!!mouse_vector && !hasHovering_conflict) {
 			const show_cluster_sliders = get(s.w_t_cluster_pager) == T_Cluster_Pager.sliders;

@@ -1,4 +1,4 @@
-import { c, h, k, p, u, busy, Tag, Thing, Trait, builds, debug, layout } from '../common/Global_Imports';
+import { c, h, k, p, u, busy, Tag, Thing, Trait, builds, debug, g } from '../common/Global_Imports';
 import { doc, addDoc, setDoc, getDocs, deleteDoc, updateDoc, collection } from 'firebase/firestore';
 import { T_Create, T_Preference, T_Persistable, T_Persistence } from '../common/Global_Imports';
 import { onSnapshot, deleteField, getFirestore, serverTimestamp } from 'firebase/firestore';
@@ -224,7 +224,7 @@ export default class DB_Firebase extends DB_Common {
 			setTimeout(() => { // wait in case a thing involved in this relationship arrives in the data
 				h.relationships_refreshKnowns();
 				h.rootAncestry.order_normalizeRecursive();
-				layout.layout();
+				g.layout();
 			}, 20);
 		}
 	}
@@ -484,7 +484,7 @@ export default class DB_Firebase extends DB_Common {
 			}
 			setTimeout(() => { // wait in case a thing involved in this trait arrives in the data
 				h.traits_refreshKnowns();
-				layout.grand_build();
+				g.grand_build();
 			}, 20);
 		}
 		return true;
@@ -578,7 +578,7 @@ export default class DB_Firebase extends DB_Common {
 			}
 			setTimeout(() => { // wait in case a thing involved in this tag arrives in the data
 				h.tags_refreshKnowns();
-				layout.grand_build();
+				g.grand_build();
 			}, 20);
 		}
 		return true;

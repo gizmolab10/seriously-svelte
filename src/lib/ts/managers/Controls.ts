@@ -1,4 +1,4 @@
-import { c, e, k, s, show, search, layout, g_tree, Ancestry, Predicate, S_Alteration } from '../common/Global_Imports';
+import { c, e, g, k, s, show, search, g_tree, Ancestry, Predicate, S_Alteration } from '../common/Global_Imports';
 import { T_Graph, T_Kinship, T_Control, T_Alteration, T_Search_Preference } from '../common/Global_Imports';
 import { get } from 'svelte/store';
 
@@ -39,7 +39,7 @@ class Controls {
 			case T_Graph.tree:   show.w_show_graph_ofType.set(T_Graph.radial); break;
 			case T_Graph.radial: show.w_show_graph_ofType.set(T_Graph.tree);   break;
 		}
-		layout.grand_sweep();
+		g.grand_sweep();
 	}
 
 }

@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, s, u, show, T_Layer, T_Detail, layout, details } from '../../ts/common/Global_Imports';
+	import { g, k, s, u, show, T_Layer, T_Detail, details } from '../../ts/common/Global_Imports';
 	import Glows_Banner from '../mouse/Glows_Banner.svelte';
     export let t_detail: T_Detail;
 	const { w_ancestry_forDetails } = s;
@@ -81,7 +81,7 @@
 					display: flex;
 					cursor: pointer;
 					align-items: stretch;
-					height: {layout.glows_banner_height}px;'>
+					height: {g.glows_banner_height}px;'>
 					<Glows_Banner
 						titles={titles}
 						width={k.width.details}
@@ -89,7 +89,7 @@
 						banner_id={T_Detail[t_detail]}
 						font_size={k.font_size.banners}
 						isSelected={hideable_isVisible}
-						height={layout.glows_banner_height}/>
+						height={g.glows_banner_height}/>
 			</div>
 		{/if}
 		{#if hideable_isVisible}

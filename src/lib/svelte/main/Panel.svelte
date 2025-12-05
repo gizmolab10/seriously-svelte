@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, e, h, k, s, u, x, show, busy, debug, colors, search, layout, elements, databases } from '../../ts/common/Global_Imports';
+	import { c, e, g, h, k, s, u, x, show, busy, debug, colors, search, elements, databases } from '../../ts/common/Global_Imports';
 	import { Rect, Size, Point, Thing, Ancestry, Hierarchy, Direction } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Search, T_Banner, T_Control, T_Startup } from '../../ts/common/Global_Imports';
 	import Secondary_Controls from '../controls/Secondary_Controls.svelte';
@@ -15,9 +15,9 @@
 	import Graph from './Graph.svelte';
 	import { onMount } from 'svelte';
 	const { w_show_details } = show;
+	const { w_rect_ofGraphView } = g;
 	const { w_t_database } = databases;
 	const { w_separator_color } = colors;
-	const { w_rect_ofGraphView } = layout;
 	const { w_search_results_found } = search;
 	const { w_t_startup, w_popupView_id } = s;
 	const spinner_title = 'Loading your data...';
@@ -55,9 +55,9 @@
 
 {#key reattachments}
 	<Box name='panel-box'
-		width={layout.windowSize.width}
+		width={g.windowSize.width}
 		thickness={k.thickness.separator.main}
-		height={layout.windowSize.height + 0.5}
+		height={g.windowSize.height + 0.5}
 		corner_radius={k.radius.gull_wings.thick}>
 		<div class='panel'
 			style='
@@ -66,8 +66,8 @@
 				position: fixed;
 				on:wheel={ignore_wheel}
 				{k.prevent_selection_style};
-				width: {layout.windowSize.width}px;
-				height: {layout.windowSize.height}px;'>
+				width: {g.windowSize.width}px;
+				height: {g.windowSize.height}px;'>
 			{#if $w_popupView_id == T_Control.builds}
 				<BuildNotes/>
 			{:else if $w_popupView_id == T_Control.import}

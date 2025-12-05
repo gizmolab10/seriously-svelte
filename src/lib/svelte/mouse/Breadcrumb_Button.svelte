@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { h, k, s, u, hits, colors, layout, search, elements } from '../../ts/common/Global_Imports';
+	import { g, h, k, s, u, hits, colors, search, elements } from '../../ts/common/Global_Imports';
 	import { Point, T_Search, T_Banner, S_Element } from '../../ts/common/Global_Imports';
 	import Button from './Button.svelte';
 	export let center = Point.zero;
@@ -61,7 +61,7 @@
 		if (!!h && h.hasRoot && s_mouse.isUp) {
 			search.deactivate();
 			if (ancestry.becomeFocus()) {
-				layout.grand_build();
+				g.grand_build();
 			}
 		}
 	}

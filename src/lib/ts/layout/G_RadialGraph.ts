@@ -1,4 +1,4 @@
-import { h, k, s, u, radial, layout, Ancestry, Predicate } from '../common/Global_Imports';
+import { g, h, k, s, u, radial, Ancestry, Predicate } from '../common/Global_Imports';
 import { G_Widget, G_Cluster, T_Kinship } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
 import { G_Paging } from './G_Paging';
@@ -36,7 +36,7 @@ export default class G_RadialGraph {
 			const width_ofTitle = ancestry.thing.width_ofTitle;
 			const x = -7.5 - (width_ofTitle / 2);
 			const y = -11;
-			const origin_ofWidget = layout.center_ofGraphView.offsetByXY(x, y);
+			const origin_ofWidget = g.center_ofGraphView.offsetByXY(x, y);
 			g_focus.layout();
 			g_focus.width_ofWidget = width_ofTitle;
 			g_focus.location_ofRadial = origin_ofWidget;

@@ -38,7 +38,6 @@ import { busy } from '../state/S_Busy';
 import { files } from '../files/Files';
 import { print } from '../utilities/Print';
 import { Direction } from '../types/Angle';
-import { layout } from '../managers/Layout';
 import { radial } from '../managers/Radial';
 import { signals } from '../signals/Signals';
 import { debug, Debug } from '../debug/Debug';
@@ -79,6 +78,7 @@ import { k } from './Constants';
 import { e } from '../signals/Events';
 import { x } from '../state/UX_State';
 import { s } from '../managers/Stores';
+import { g } from '../managers/Layout';
 import { h } from '../managers/Hierarchy';
 import { u } from '../utilities/Utilities';
 import { p } from '../managers/Preferences';
@@ -96,12 +96,12 @@ export {
 	G_Widget, G_TreeLine, G_TreeBranches, G_Repeater,
 
 	g_tree, g_radial,
-	e, c, h, k, p, s, u, x,
 	colors, radial, signals, 
 	interact, transparentize,
+	e, c, g, h, k, p, s, u, x,
 	debug, svgPaths, databases,
+	hits, elements, components,
 	busy, show, files, builds, print,
-	hits, layout, elements, components,
 	search, details, controls, features,
 
 	Angle, Direction, 

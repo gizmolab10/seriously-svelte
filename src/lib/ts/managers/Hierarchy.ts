@@ -1,8 +1,8 @@
 import { T_Startup, T_Create, T_Alteration, T_File_Format, T_Persistable } from '../common/Global_Imports';
 import { Access, Ancestry, Predicate, Relationship, Persistable } from '../common/Global_Imports';
+import { g, k, p, s, u, x, busy, debug, controls, features } from '../common/Global_Imports';
 import { T_Thing, T_Trait, T_Order, T_Control, T_Predicate } from '../common/Global_Imports';
-import { k, p, s, u, x, busy, debug, controls, features } from '../common/Global_Imports';
-import { files, colors, signals, layout, databases } from '../common/Global_Imports';
+import { files, colors, signals, databases } from '../common/Global_Imports';
 import { Tag, User, Thing, Trait, S_Items } from '../common/Global_Imports';
 import DB_Common, { DB_Name, T_Database } from '../database/DB_Common';
 import type { Integer, Dictionary } from '../types/Types';
@@ -702,7 +702,7 @@ export class Hierarchy {
 				}
 			}
 			debug.log_grab(`  DELETE, FOCUS grabbed: "${get(s.w_ancestry_focus).isGrabbed}"`);
-			layout.grand_build();
+			g.grand_build();
 		}
 	}
 
@@ -770,7 +770,7 @@ export class Hierarchy {
 						break;
 				}
 				this.stop_alteration();
-				layout.grand_build();
+				g.grand_build();
 			}
 		}
 	}
@@ -872,9 +872,9 @@ export class Hierarchy {
 		if (controls.inRadialMode) {
 			// kludge for now? in radial mode we need to do a bit extra for our user
 			await this.ancestry_rebuild_persistentMoveRight(ancestry, !ancestry.isExpanded, false, false, false, false);
-			layout.grand_build();
+			g.grand_build();
 		} else if (ancestry.toggleExpanded()) {
-			layout.grand_sweep();
+			g.grand_sweep();
 		}
 	}
 
@@ -899,7 +899,7 @@ export class Hierarchy {
 				if (!parentAncestry.isRoot && (controls.inRadialMode || !childAncestry.isVisible)) {
 					parentAncestry.becomeFocus();
 				}
-				layout.grand_sweep();
+				g.grand_sweep();
 				if (shouldStartEdit) {
 					setTimeout(() => {
 						childAncestry.startEdit();
@@ -964,12 +964,12 @@ export class Hierarchy {
 				}
 				ancestry?.expand()
 				if (!isRadialMode) {
-					layout.grand_build();	// not rebuild until focus changes
+					g.grand_build();	// not rebuild until focus changes
 				}
 			}
 			if (isRadialMode) {
 				ancestry?.becomeFocus();
-				layout.grand_build();
+				g.grand_build();
 			}
 		}
 	}
@@ -1002,7 +1002,7 @@ export class Hierarchy {
 	ancestry_rebuild_persistentMoveUp_maybe(ancestry: Ancestry, up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean) {
 		const [graph_needsSweep, graph_needsReattach] = ancestry.persistentMoveUp_maybe(up, SHIFT, OPTION, EXTREME);
 		if (graph_needsSweep) {
-			layout.grand_sweep();
+			g.grand_sweep();
 		} else if (graph_needsReattach) {
 			signals.signal_reattach_widgets_fromFocus();
 		}
@@ -1018,7 +1018,7 @@ export class Hierarchy {
 			if (thing.isInDifferentBulkThan(parentThing)) {		// should move across bulks
 				this.ancestry_remember_bulk_persistentRelocateRight(ancestry, parentAncestry);
 			} else {
-				const depth_limit = get(layout.w_depth_limit);
+				const depth_limit = get(g.w_depth_limit);
 				const relationship = ancestry.relationship;
 				if (!!relationship) {
 					// move ancestry to a different parent
@@ -1041,7 +1041,7 @@ export class Hierarchy {
 					parentAncestry?.becomeFocus();
 				}
 			}
-			layout.grand_build();			// so Tree_Branches component will update
+			g.grand_build();			// so Tree_Branches component will update
 		}
 	}
 
@@ -1059,7 +1059,7 @@ export class Hierarchy {
 					newGrabAncestry = null;
 				}
 				if (controls.inTreeMode) {
-					const depth_limit = get(layout.w_depth_limit);
+					const depth_limit = get(g.w_depth_limit);
 					graph_needsSweep = ancestry.expand();
 					if (!!newGrabAncestry && newGrabAncestry.depth_below_focus > depth_limit) {
 						newFocusAncestry = newGrabAncestry.ancestry_createUnique_byStrippingBack(depth_limit);
@@ -1106,9 +1106,9 @@ export class Hierarchy {
 			}
 		}
 		if (graph_needsSweep) {
-			layout.grand_sweep();
+			g.grand_sweep();
 		} else {
-			layout.layout();
+			g.layout();
 		}
 	}
 
@@ -1698,7 +1698,7 @@ export class Hierarchy {
 			await this.wrapUp_data_forUX();	
 			await this.db.persist_all(true);							// true means force (overrides isDirty) persists all of what was retained
 		}
-		layout.grand_build();
+		g.grand_build();
 	}
 
 	extract_allTypes_ofObjects_fromDict(dict: Dictionary) {

@@ -1,5 +1,5 @@
-import { T_Graph, T_Detail, T_Kinship, T_Preference, T_Cluster_Pager } from '../common/Global_Imports';
-import { k, p, x, g_tree, layout, features } from '../common/Global_Imports';
+import { T_Graph, T_Detail, T_Kinship, T_Preference } from '../common/Global_Imports';
+import { g, k, p, x, g_tree, features } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
 import { get, writable } from 'svelte/store';
 
@@ -30,7 +30,7 @@ export class Visibility {
 		const visible = Object.fromEntries(visibleNames.map(s => [s, true]) ?? {});
 		const keyedFlags: Dictionary<boolean> = {...visible, ...hidden};
 		if (!!levels) {
-			layout.w_depth_limit.set(Number(levels));
+			g.w_depth_limit.set(Number(levels));
 		}
         for (const [name, flag] of Object.entries(keyedFlags)) {
 			switch (name) {
@@ -72,8 +72,8 @@ export class Visibility {
 	reactivity_subscribe() {
 		function writeAnd_reactTo(t_preference: T_Preference, flag: any) {
 			p.write_key(t_preference, flag);
-			layout.restore_preferences();
-			layout.layout();
+			g.restore_preferences();
+			g.layout();
 		}
 		this.w_show_details.subscribe((flag: any) => {
 			writeAnd_reactTo(T_Preference.show_details, flag);

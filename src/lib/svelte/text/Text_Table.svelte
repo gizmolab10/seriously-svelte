@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, Rect, Point, layout, T_Layer } from '../../ts/common/Global_Imports';
+	import { g, k, Rect, Point, T_Layer } from '../../ts/common/Global_Imports';
 	import type { Integer } from '../../ts/types/Types';
 	export let font_size = k.font_size.info;
 	export let position = 'relative';
@@ -8,7 +8,7 @@
 	export let left = 0;
 	export let top = 0;
 	export let array;
-	const { w_scale_factor } = layout;
+	const { w_scale_factor } = g;
 	let table;
 
 	export function absolute_location_ofCellAt(x: Integer, y: Integer): Point {

@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { Point, T_Layer, G_Cluster, T_Cluster_Pager } from '../../ts/common/Global_Imports';
-	import { k, s, colors, radial, layout } from '../../ts/common/Global_Imports';
+	import { k, s, colors, radial, g } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Curved_Text from '../text/Curved_Text.svelte';
 	import Angled_Text from '../text/Angled_Text.svelte';
@@ -30,7 +30,7 @@
 	
 	$: textBackground = $w_t_cluster_pager ? radial.s_rotation.isHighlighted ? $w_background_color : colors.specialBlend(color, $w_background_color, radial.s_resizing.fill_opacity) : 'transparent';
 	$: $w_g_cluster, thumbFill = colors.specialBlend(color, $w_background_color, radial.s_rotation.isHighlighted ? k.opacity.radial.thumb : s_paging.thumb_opacity);
-	$: origin = layout.center_ofGraphView.offsetBy(Point.square(-radius));
+	$: origin = g.center_ofGraphView.offsetBy(Point.square(-radius));
 	$: viewBox=`${-inset} ${-inset} ${radius * 2} ${radius * 2}`;
 	$: radius = $w_resize_radius + inset;
 
@@ -46,7 +46,7 @@
 		name = {g_cluster.name}
 		zindex = {T_Layer.paging}
 		cursor = {k.cursor_default}
-		center = {layout.center_ofGraphView}>
+		center = {g.center_ofGraphView}>
         <svg class='svg-radial-cluster'
 			viewBox={viewBox}>
 			{#if show_fat_arc}
@@ -110,6 +110,6 @@
 		background_color={textBackground}
 		font_size={k.font_size.cluster_slider}px
 		angle={-g_cluster_pager.angle_ofFork}
-		center_ofArc={layout.center_ofGraphView}
+		center_ofArc={g.center_ofGraphView}
 		color={colors.specialBlend(color, $w_background_color, k.opacity.radial.text)}/>
 {/if}

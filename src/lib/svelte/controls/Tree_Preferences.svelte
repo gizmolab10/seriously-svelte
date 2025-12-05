@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { T_Layer, T_Graph, T_Control, T_Kinship } from '../../ts/common/Global_Imports';
-	import { k, u, show, Point, colors, layout, controls } from '../../ts/common/Global_Imports';
+	import { g, k, u, show, Point, colors, controls } from '../../ts/common/Global_Imports';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Slider from '../mouse/Slider.svelte';
@@ -8,18 +8,18 @@
 	export let zindex = T_Layer.graph;
 	export let width = 137;
 	const left_width = 40;
+	const { w_depth_limit } = g;
 	const heights = [ 3, 5, 18 ];
 	const { w_separator_color } = colors;
 	const tops = u.cumulativeSum(heights);
 	const segmented_height = k.height.button + 3;
 	const { w_show_tree_ofType } = show;
-	const { w_depth_limit } = layout;
 
 	function handle_depth_limit(value: number) {
 		const asInteger = Math.round(value);
 		if (asInteger !== $w_depth_limit) {
 			$w_depth_limit = asInteger;  // Store the integer, not the raw value
-			layout.layout();
+			g.layout();
 		}
 	}
 

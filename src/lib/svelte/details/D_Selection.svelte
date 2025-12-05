@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, k, p, s, u, x, show, colors, layout, details, elements } from '../../ts/common/Global_Imports';
+	import { c, g, k, p, s, u, x, show, colors, details, elements } from '../../ts/common/Global_Imports';
 	import { T_Thing, T_Layer, T_Hit_Target } from '../../ts/common/Global_Imports';
 	import { Point, Thing, Ancestry } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/runtime/Identifiable';
@@ -11,8 +11,8 @@
 	import { onMount } from 'svelte';
 	export let top = 6;
 	const id = 'selection details';
-	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_show_details_ofType } = show;
+	const { w_items: w_grabbed } = x.si_grabs;
 	const s_info = elements.s_element_for(new Identifiable(id), T_Hit_Target.details, id);
 	const { w_thing_title, w_ancestry_focus, w_ancestry_forDetails, w_relationship_order } = s;
 	let ancestry: Ancestry | null = $w_ancestry_forDetails;
@@ -28,7 +28,7 @@
 	let picker_offset = k.empty;
 	let trigger = k.empty;
 
-	$: $w_show_details_ofType, layout_forColor();
+	$: $w_show_details_ofType, g_forColor();
 	function handle_toggle_properties(event: Event) { details.show_properties = !details.show_properties; }
 
 	$: {

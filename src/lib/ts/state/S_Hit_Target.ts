@@ -1,4 +1,4 @@
-import { k, hits, Rect, Point, colors, layout, Ancestry, T_Hit_Target } from '../common/Global_Imports';
+import { g, k, hits, Rect, Point, colors, Ancestry, T_Hit_Target } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
 
@@ -52,7 +52,7 @@ export default class S_Hit_Target {
 
 	update_rect() {
 		if (!!this.html_element) {
-			this.rect = layout.scaled_rect_forElement(this.html_element);
+			this.rect = g.scaled_rect_forElement(this.html_element);
 		}
 	}
 

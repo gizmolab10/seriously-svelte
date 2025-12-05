@@ -33,15 +33,13 @@ export default class Layout {
 
 	static readonly _____GRAPHS: unique symbol;
 
-	grand_build(component: S_Component | null = null) {
-		signals.signal_rebuildGraph_fromFocus(component);
+	grand_build() {
+		signals.signal_rebuildGraph_fromFocus();
 	}
 	
-	grand_sweep(component: S_Component | null = null) {
-		// h.ancestries_assureAll_createUnique();
+	grand_sweep() {
 		this.layout();
-		signals.signal_reposition_widgets_fromFocus(component);
-		this.grand_build(component);
+		this.grand_build();
 	}
 
 	layout() {
@@ -50,6 +48,7 @@ export default class Layout {
 		} else {
 			g_tree.layout();
 		}
+		signals.signal_reposition_widgets_fromFocus();
 	}
 
 	grand_adjust_toFit() {
@@ -217,4 +216,4 @@ export default class Layout {
 
 }
 
-export const layout = new Layout();
+export const g = new Layout();

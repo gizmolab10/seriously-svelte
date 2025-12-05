@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, s, u, x, show, Rect, Point, colors, layout, controls } from '../../ts/common/Global_Imports';
+	import { g, k, s, u, x, show, Rect, Point, colors, controls } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Kinship, T_Auto_Adjust, T_Cluster_Pager } from '../../ts/common/Global_Imports';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../draw/Separator.svelte';
@@ -11,11 +11,11 @@
 	const back_up = -5;
 	const separator_left = 35;
 	const position = 'relative';
+	const { w_scale_factor } = g;
 	const width = k.width.details;
 	const picker_offset = `-189px`;
 	const color_left = width / 2 - 13;
 	const segmented_width = width - 6;
-	const { w_scale_factor } = layout;
 	const { w_separator_color } = colors;
 	const segmented_height = k.height.button;
 	const separator_height = segmented_height + 9;

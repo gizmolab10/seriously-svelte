@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { k, s, u, x, debug, colors, layout, signals, elements, components } from '../../ts/common/Global_Imports';
+	import { g, k, s, u, x, debug, colors, signals, elements, components } from '../../ts/common/Global_Imports';
 	import { G_Widget, S_Mouse, S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Signal, T_Hit_Target } from '../../ts/common/Global_Imports';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
@@ -116,7 +116,7 @@
 		height = k.height.row - 1.5;
 		left = origin_ofWidget.x;
 		top = origin_ofWidget.y;
-		s_widget.rect = layout.scaled_rect_forElement(s_title.html_element);
+		s_widget.rect = g.scaled_rect_forElement(s_title.html_element);
 		update_style();
 	}
 

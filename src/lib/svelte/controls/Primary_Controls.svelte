@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, e, k, s, u, x, show, colors, search, layout, features } from '../../ts/common/Global_Imports';
+	import { c, e, g, k, s, u, x, show, colors, search, features } from '../../ts/common/Global_Imports';
 	import { Point, elements, controls, svgPaths } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Graph, T_Control } from '../../ts/common/Global_Imports';
 	import Search_Toggle from '../search/Search_Toggle.svelte';
@@ -10,9 +10,9 @@
 	import Button from '../mouse/Button.svelte';
 	const y_center = 10.5;
 	const scaling_stroke_width = 1.5;
+	const { w_rect_ofGraphView } = g;
 	const { w_search_state } = search;
 	const size_big = k.height.button + 4;
-	const { w_rect_ofGraphView } = layout;
 	const { w_background_color } = colors;
 	const hamburger_size = k.height.button;
 	const { w_count_window_resized, w_popupView_id } = s;
@@ -20,7 +20,7 @@
 	const hamburger_path = svgPaths.hamburgerPath(hamburger_size);
 	const search_left = -38 - (features.has_details_button ? 0 : 26) + (features.allow_tree_mode ? 0 : 0);
 	const svg_style = 'top: -0.5px; left: -0.5px; position: absolute; width: 100%; height: 100%;';
-	let width = layout.windowSize.width - 16;
+	let width = g.windowSize.width - 16;
 	let lefts: Array<number> = [];
 	layout_controls();
 
@@ -31,7 +31,7 @@
 
 	$: {
 		const _ = `${$w_rect_ofGraphView.description}:::${$w_count_window_resized}`;
-		width = layout.windowSize.width - 16;
+		width = g.windowSize.width - 16;
 	}
 
 	$: {
@@ -158,28 +158,28 @@
 				<Separator name='before-search'
 					isHorizontal={false}
 					origin={new Point(lefts[5], -6)}
-					length={layout.controls_boxHeight + 0}
+					length={g.controls_boxHeight + 0}
 					thickness={k.thickness.separator.main}
 					corner_radius={k.radius.gull_wings.thick}/>
 				<Breadcrumbs
 					left={lefts[6]}
 					centered={true}
-					width={layout.windowSize.width - lefts[8]}/>
+					width={g.windowSize.width - lefts[8]}/>
 			{:else}
 				<Separator name='before-search'
 					isHorizontal={false}
 					origin={new Point(lefts[5], -8)}
-					length={layout.controls_boxHeight + 1}
+					length={g.controls_boxHeight + 1}
 					thickness={k.thickness.separator.main}
 					corner_radius={k.radius.gull_wings.thick}/>
 			{/if}
 		{/if}
 	</div>
 	<Separator name='bottom-separator'
-		origin={new Point(2, layout.controls_boxHeight - 5)}
+		origin={new Point(2, g.controls_boxHeight - 5)}
 		corner_radius={k.radius.gull_wings.thick}
 		thickness={k.thickness.separator.main}
-		length={layout.windowSize.width + 2.5}
+		length={g.windowSize.width + 2.5}
 		zindex={T_Layer.frontmost}
 		has_both_wings={true}
 		isHorizontal={true}/>

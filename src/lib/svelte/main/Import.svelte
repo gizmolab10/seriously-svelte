@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { h, k, s, x, Point, layout, details, elements } from '../../ts/common/Global_Imports';
+	import { g, h, k, s, x, Point, details, elements } from '../../ts/common/Global_Imports';
 	import { T_Storage_Need } from '../../ts/common/Enumerations';
 	import { files } from '../../ts/files/Files';
 	import { onMount } from 'svelte';
@@ -27,7 +27,7 @@
 		target.value = k.empty;		// allow re-selection of the same file, MUST do this AFTER fetch
 		details.t_storage_need = T_Storage_Need.direction;
 		dismiss_popup();
-		layout.grand_build();
+		g.grand_build();
 	}
 
 </script>

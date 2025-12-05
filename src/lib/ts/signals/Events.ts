@@ -1,5 +1,5 @@
-import { layout, details, signals, controls, elements, features } from '../common/Global_Imports';
-import { c, h, k, s, u, x, hits, g_tree, debug, search, radial } from '../common/Global_Imports';
+import { c, g, h, k, s, u, x, hits, g_tree, debug, search, radial } from '../common/Global_Imports';
+import { details, signals, controls, elements, features } from '../common/Global_Imports';
 import { T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Imports';
 import { T_Search, T_Action, T_Control } from '../common/Global_Imports';
 import { Point, Ancestry, Predicate } from '../common/Global_Imports';
@@ -130,10 +130,10 @@ export class Events {
 	static readonly EVENT_HANDLERS = Symbol('EVENT_HANDLERS');
 
 	private handle_touch_end(event: TouchEvent) { this.initialTouch = null; }
-	private handle_mouse_down(event: MouseEvent) { layout.w_scaled_movement.set(Point.zero); }
+	private handle_mouse_down(event: MouseEvent) { g.w_scaled_movement.set(Point.zero); }
 
 	private handle_mouse_up(event: MouseEvent) {
-		layout.w_scaled_movement.set(null);
+		g.w_scaled_movement.set(null);
 		s.w_count_mouse_up.update(n => n + 1);
 	}
 
@@ -148,7 +148,7 @@ export class Events {
 		const isMobile = c.device_isMobile;
 		debug.log_action(` orientation change [is${isMobile ? '' : ' not'} mobile] STATE`);
 		c.w_device_isMobile.set(isMobile);
-		layout.restore_preferences();
+		g.restore_preferences();
 	}
 
 	private handle_touch_start(event: TouchEvent) {
@@ -165,18 +165,18 @@ export class Events {
 		const isMobile = c.device_isMobile;
 		s.w_count_window_resized.update(n => n + 1);		// observed by controls
 		c.w_device_isMobile.set(isMobile);					// force reaction (unchanged)
-		layout.restore_preferences();
+		g.restore_preferences();
 	}
 
 	private handle_wheel(event: Event) {
 		u.consume_event(event);
 		if (!c.device_isMobile) {
 			const e = event as WheelEvent;
-			const userOffset = get(layout.w_user_graph_offset);
+			const userOffset = get(g.w_user_graph_offset);
 			const delta = new Point(-e.deltaX, -e.deltaY);
 			if (!!userOffset && features.allow_h_scrolling && delta.magnitude > 1) {
 				debug.log_action(` wheel GRAPH`);
-				layout.set_user_graph_offsetTo(userOffset.offsetBy(delta));
+				g.set_user_graph_offsetTo(userOffset.offsetBy(delta));
 			}
 		}
 	}
@@ -188,7 +188,7 @@ export class Events {
 				const touch = event.touches[0];
 				const deltaX = touch.clientX - this.initialTouch.x;
 				const deltaY = touch.clientY - this.initialTouch.y;
-				layout.set_user_graph_offsetTo(new Point(deltaX, deltaY));
+				g.set_user_graph_offsetTo(new Point(deltaX, deltaY));
 				debug.log_action(` two-finger touch move GRAPH`);
 			}
 		}
@@ -210,14 +210,14 @@ export class Events {
 
 	private handle_mouse_move(event: MouseEvent) {
 		const location = new Point(event.clientX, event.clientY);
-		const scaled = location.dividedEquallyBy(get(layout.w_scale_factor));
-		const prior_scaled = get(layout.w_mouse_location_scaled);
+		const scaled = location.dividedEquallyBy(get(g.w_scale_factor));
+		const prior_scaled = get(g.w_mouse_location_scaled);
 		const delta = prior_scaled?.vector_to(scaled) ?? null;
 		if (!!delta && delta.magnitude > 1) {
-			layout.w_scaled_movement.set(delta);
+			g.w_scaled_movement.set(delta);
 		}
-		layout.w_mouse_location.set(location);
-		layout.w_mouse_location_scaled.set(scaled);
+		g.w_mouse_location.set(location);
+		g.w_mouse_location_scaled.set(scaled);
 		hits.handle_mouse_movement_at(scaled);
 	}
 
@@ -226,8 +226,8 @@ export class Events {
 			switch (t_control) {
 				case T_Control.help:	controls.showHelp_home(); break;
 				case T_Control.search:	search.activate(); break;
-				// case T_Control.grow:	layout.scaleBy(k.ratio.zoom_in) - 20; break;
-				// case T_Control.shrink:	layout.scaleBy(k.ratio.zoom_out) - 20; break;
+				// case T_Control.grow:	g.scaleBy(k.ratio.zoom_in) - 20; break;
+				// case T_Control.shrink:	g.scaleBy(k.ratio.zoom_out) - 20; break;
 				case T_Control.details: details.details_toggle_visibility(); break;
 				default:				controls.togglePopupID(t_control); break;
 			}
@@ -241,11 +241,11 @@ export class Events {
 			s.w_s_title_edit?.set(null);
 			if (!!get(s.w_s_alteration)) {
 				h.ancestry_alter_connectionTo_maybe(ancestry);
-				layout.grand_build();
+				g.grand_build();
 				return;
 			} else if (!shiftKey) {
 				if (ancestry.becomeFocus()) {
-					layout.grand_build();
+					g.grand_build();
 					return;
 				}
 			} else if (shiftKey || ancestry.isGrabbed) {
@@ -253,7 +253,7 @@ export class Events {
 			} else {
 				ancestry.grabOnly();
 			}
-			layout.layout();
+			g.layout();
 		}
 	}
 
@@ -310,13 +310,13 @@ export class Events {
 						case 'm':				controls.toggle_graph_type(); break;
 						case ']':				x.ancestry_next_focusOn(true); break;
 						case '[':				x.ancestry_next_focusOn(false); break;
-						case '!':				layout.grand_adjust_toFit(); break;
+						case '!':				g.grand_adjust_toFit(); break;
 						case '>':				g_tree.increase_depth_limit_by(1); break;
 						case '<':				g_tree.increase_depth_limit_by(-1); break;
 						case 'f':				search.w_search_state.set(T_Search.enter); break;
 						case 'p':				if (!COMMAND) { u.print_graph(); }; break;
 						case 's':				h.persist_toFile(T_File_Format.json); return;
-						case 'c':				layout.set_user_graph_offsetTo(Point.zero); return;
+						case 'c':				g.set_user_graph_offsetTo(Point.zero); return;
 						case 'o':				h.select_file_toUpload(T_File_Format.json, event.shiftKey); break;
 						case '/':				if (!ancestry) { graph_needsSweep = h.rootAncestry?.becomeFocus(); } break;
 						case 'arrowup':			h.ancestry_rebuild_persistent_grabbed_atEnd_moveUp_maybe( true, SHIFT, OPTION, EXTREME); break;
@@ -326,7 +326,7 @@ export class Events {
 				}
 			}
 			if (graph_needsSweep) {
-				layout.grand_sweep();
+				g.grand_sweep();
 			}
 			if (features.allow_autoSave) {
 				setTimeout( async () => {
@@ -356,12 +356,12 @@ export class Events {
 				case T_Action.show:				switch (column) {
 					case a.show.selection:			break;
 					case a.show.list:				h.ancestry_rebuild_persistentMoveRight(ancestry, !ancestry.isExpanded, false, false, false, true); break;
-					case a.show.graph:				layout.grand_adjust_toFit(); break;
+					case a.show.graph:				g.grand_adjust_toFit(); break;
 				}								break;
 				case T_Action.center:			switch (column) {
-					case a.center.focus:			layout.ancestry_place_atCenter(get(s.w_ancestry_focus)); break;
-					case a.center.selection:		layout.ancestry_place_atCenter(ancestry); break;
-					case a.center.graph:			layout.set_user_graph_offsetTo(Point.zero); break;
+					case a.center.focus:			g.ancestry_place_atCenter(get(s.w_ancestry_focus)); break;
+					case a.center.selection:		g.ancestry_place_atCenter(ancestry); break;
+					case a.center.graph:			g.set_user_graph_offsetTo(Point.zero); break;
 				}								break;
 				case T_Action.add:				switch (column) {
 					case a.add.child:				await h.ancestry_edit_persistentCreateChildOf(ancestry); break;
@@ -411,9 +411,9 @@ export class Events {
 					case a.show.graph:				return false;
 				}								break;
 				case T_Action.center:			switch (column) {
-					case a.center.focus:			return layout.ancestry_isCentered(get(s.w_ancestry_focus));
-					case a.center.selection:		return layout.ancestry_isCentered(ancestry);
-					case a.center.graph:			return get(layout.w_user_graph_offset).magnitude < 1;
+					case a.center.focus:			return g.ancestry_isCentered(get(s.w_ancestry_focus));
+					case a.center.selection:		return g.ancestry_isCentered(ancestry);
+					case a.center.graph:			return get(g.w_user_graph_offset).magnitude < 1;
 				}								break;
 				case T_Action.add:				switch (column) {
 					case a.add.child:				return is_altering;

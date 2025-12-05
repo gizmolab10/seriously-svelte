@@ -1,11 +1,11 @@
 <script lang='ts'>
 	import { T_Layer, T_Signal, T_Radial_Zone, T_Hit_Target, S_Component } from '../../ts/common/Global_Imports';
-	import { k, s, u, x, layout, g_radial, signals, elements } from '../../ts/common/Global_Imports';
+	import { g, k, s, u, x, g_radial, signals, elements } from '../../ts/common/Global_Imports';
 	import Radial_Rings from './Radial_Rings.svelte';
 	import Radial_Focus from './Radial_Focus.svelte';
 	import Widget from '../widget/Widget.svelte';
 	import { onMount } from 'svelte';
-	const { w_g_paging, w_rect_ofGraphView, w_user_graph_offset } = layout;
+	const { w_g_paging, w_rect_ofGraphView, w_user_graph_offset } = g;
 	const { w_ancestry_focus } = s;
 	let s_component: S_Component;
 	let reattachments = 0;
@@ -33,7 +33,7 @@
 	//	edit titles (keydown terminates edit) BROKEN
 	//	displays editing go when asked by user
 	
-	layout.layout();
+	g.layout();
 
 	s_component = signals.handle_signals_atPriority([T_Signal.reattach], 0, null, T_Hit_Target.radial, (ancestry) => {
 		reattachments += 1;
