@@ -2,9 +2,9 @@ import { T_Startup, T_Preference, T_Hit_Target, T_Radial_Zone, T_Cluster_Pager }
 import { g, k, p, s, hits, debug, signals, elements, g_radial } from '../common/Global_Imports';
 import { Angle, G_Cluster, S_Rotation, S_Resizing } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
-import { G_Paging } from '../layout/G_Paging';
+import { G_Paging } from '../geometry/G_Paging';
 import { get, writable } from 'svelte/store';
-import { G_Pages } from '../layout/G_Pages';
+import { G_Pages } from '../geometry/G_Pages';
 
 //////////////////////////////////
 //								//

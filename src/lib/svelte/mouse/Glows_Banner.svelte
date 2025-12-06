@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, Rect, Size, Point, colors, details } from '../../ts/common/Global_Imports';
 	import Glow_Button from '../mouse/Glow_Button.svelte';
-	import G_Repeater from '../../ts/layout/G_Repeater';
+	import G_Repeater from '../../ts/geometry/G_Repeater';
 	import Separator from '../draw/Separator.svelte';
 	export let toggle_hidden: (title: string) => void;
 	export let font_size = k.font_size.details;

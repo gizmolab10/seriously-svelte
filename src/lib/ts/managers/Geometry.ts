@@ -3,7 +3,7 @@ import { G_Widget, S_Component, T_Graph, T_Preference } from '../common/Global_I
 import { Rect, Size, Point, Thing, Ancestry } from '../common/Global_Imports';
 import { get, writable } from 'svelte/store';
 
-export default class Layout {
+export default class Geometry {
 
 	static readonly _____TREE: unique symbol;
 
@@ -216,4 +216,4 @@ export default class Layout {
 
 }
 
-export const g = new Layout();
+export const g = new Geometry();

@@ -1,8 +1,6 @@
-import { tu } from '../utilities/Testworthy_Utilities';
 import { T_Quadrant, T_Orientation } from './Angle';
 import type { SvelteComponent } from 'svelte';
 import Angle from './Angle';
-import {get} from 'svelte/store';
 
 const p = 2;
 

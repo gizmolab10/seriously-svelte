@@ -1,4 +1,4 @@
-import { Size, Point } from '../types/Geometry';
+import { Size, Point } from '../types/Coordinates';
 
 const dot_size = 14;
 const row_height = 16;

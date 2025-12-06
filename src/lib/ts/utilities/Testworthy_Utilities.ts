@@ -3,7 +3,7 @@
 import Identifiable from '../runtime/Identifiable';
 import type { Dictionary } from '../types/Types';
 import { T_Quadrant } from '../types/Angle';
-import { Point } from '../types/Geometry';
+import { Point } from '../types/Coordinates';
 import Angle from '../types/Angle';
 
 export class Testworthy_Utilities {

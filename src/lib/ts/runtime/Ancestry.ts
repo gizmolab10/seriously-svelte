@@ -5,7 +5,7 @@ import { S_Items, S_Component, S_Title_Edit } from '../common/Global_Imports';
 import { G_Widget, G_Cluster, G_TreeLine } from '../common/Global_Imports';
 import type { Dictionary, Integer } from '../types/Types';
 import { T_Database } from '../database/DB_Common';
-import { G_Paging } from '../layout/G_Paging';
+import { G_Paging } from '../geometry/G_Paging';
 import { get, Writable } from 'svelte/store';
 import Identifiable from './Identifiable';
 

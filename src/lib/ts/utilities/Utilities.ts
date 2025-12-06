@@ -1,19 +1,19 @@
 // N.B., do not import these from Global Imports --> avoid dependency issues when importing Utilities class
 
 import { Testworthy_Utilities } from './Testworthy_Utilities';
-import { Rect, Size, Point } from '../types/Geometry';
+import { Rect, Size, Point } from '../types/Coordinates';
 import Identifiable from '../runtime/Identifiable';
 import { databases } from '../database/Databases';
 import { controls } from '../managers/Controls';
-import G_TreeLine from '../layout/G_TreeLine';
+import G_TreeLine from '../geometry/G_TreeLine';
 import { colors } from '../managers/Colors';
 import Ancestry from '../runtime/Ancestry';
-import G_Widget from '../layout/G_Widget';
+import G_Widget from '../geometry/G_Widget';
 import { Integer } from '../types/Types';
 import { k } from '../common/Constants';
-import { g } from '../managers/Layout';
+import { g } from '../managers/Geometry';
 import { s } from '../managers/Stores';
-import { x } from '../state/UX_State';
+import { x } from '../state/S_UX';
 import { get } from 'svelte/store';
 import { print } from './Print';
 

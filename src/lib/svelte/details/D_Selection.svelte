@@ -28,7 +28,7 @@
 	let picker_offset = k.empty;
 	let trigger = k.empty;
 
-	$: $w_show_details_ofType, g_forColor();
+	$: $w_show_details_ofType, layout_forColor();
 	function handle_toggle_properties(event: Event) { details.show_properties = !details.show_properties; }
 
 	$: {

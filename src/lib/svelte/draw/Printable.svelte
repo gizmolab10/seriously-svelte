@@ -1,5 +1,5 @@
 <script>
-	import { Point, Rect, Size } from '../../ts/types/Geometry';
+	import { Point, Rect, Size } from '../../ts/types/Coordinates';
 	import { k } from '../../ts/common/Constants';
 	export let element; // The HTML element (E) to print
 	export let rect; // The rect (position and size of D)
