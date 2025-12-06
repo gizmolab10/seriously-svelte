@@ -2,3 +2,5 @@
   for = "/*"
   [headers.values]
     connect-src = "https://api.airtable.com"
+[context.plugin-0-3-3.environment]
+  BUILD_TARGET = "plugin"
