@@ -99,6 +99,8 @@
 		handle_s_mouse={handle_s_mouse}>
 		<div class='reveal-dot'
 			on:contextmenu={handle_context_menu}
+			role="button"
+			tabindex="0"
 			style='
 				width: {k.height.dot}px;
 				height: {k.height.dot}px;'>
@@ -149,3 +151,4 @@
 		</div>
 	</Mouse_Responder>
 {/if}
+
