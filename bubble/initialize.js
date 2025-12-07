@@ -40,7 +40,7 @@ function(instance) {
 				urlParams.set(key, override || value);
 			}
 		});
-		const url = 'https://webseriously.netlify.app/?' + urlParams.toString().replace(/%2C/g, ',');
+		const url = 'http://plugin.webseriously.org/?' + urlParams.toString().replace(/%2C/g, ',');
 		LOG('initializing with url:', url);
 		return url;
 	}
