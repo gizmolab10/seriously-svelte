@@ -117,7 +117,7 @@ export default class G_Cluster {
 			const middle = (this.widgets_shown < 2) ? k.empty : `-${index + this.widgets_shown}`;
 			title += ` (${index + 1}${middle})`
 		}
-		this.cluster_title = this.show_forks ? title : this.direction_indicator;
+		this.cluster_title = this.show_forks ? this.direction_indicator : title;
 	}
 	
 	static readonly _____PAGING: unique symbol;
