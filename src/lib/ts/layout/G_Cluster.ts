@@ -107,7 +107,7 @@ export default class G_Cluster {
 		const tweak = [10, 7, -17.4, -22.4][u.convert_toNumber([this.arc_in_lower_half, this.show_forks])];
 		const label_radius = this.ring_radius + tweak;
 		this.label_center = this.center.offsetBy(Point.fromPolar(label_radius, angle));
-		this.g_arcSlider.label_text_angle = this.show_forks ? ortho - angle : Math.PI / 2; // uncomment to rotate with fork
+		this.g_arcSlider.label_text_angle = this.show_forks ? ortho - angle : Math.PI / 2;
 	}
 	
 	private update_label_forIndex() {
@@ -117,7 +117,7 @@ export default class G_Cluster {
 			const middle = (this.widgets_shown < 2) ? k.empty : `-${index + this.widgets_shown}`;
 			title += ` (${index + 1}${middle})`
 		}
-		this.cluster_title = this.show_forks ? this.direction_indicator : title;
+		this.cluster_title = this.show_forks ? title : this.direction_indicator;
 	}
 	
 	static readonly _____PAGING: unique symbol;

@@ -25,11 +25,11 @@ export class Configuration {
 		debug.apply_queryStrings(q);
 		colors.restore_preferences();
 		search.setup_defaults();
+		show.restore_preferences();						// must call BEFORE prefs
 		this.apply_queryStrings(q);						// must call BEFORE prefs and db
 		features.apply_queryStrings(q);
 		layout.restore_preferences();
 		databases.apply_queryStrings(q);
-		show.restore_preferences();						// must call BEFORE prefs
 		radial.restore_radial_preferences();
 		p.restore_preferences();
 		show.apply_queryStrings(q);
