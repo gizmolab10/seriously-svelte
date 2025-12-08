@@ -31,6 +31,7 @@
 	});
 
 	onMount(() => {
+		update_fill_colors();
 		return () => s_component.disconnect();
 	});
 
