@@ -131,7 +131,7 @@
         startPoint = new Point(e.clientX, e.clientY);
         if (e.metaKey) {
             $w_dragging = T_Drag.graph;
-        } else {
+        } else if (!hits.isHovering) {
             const constrained = constrainToRect(startPoint.x, startPoint.y);
             original_grab_count = x.si_grabs.items.length;
             top = constrained.y;
