@@ -170,7 +170,7 @@ export default class G_Cluster_Pager {
 		const sweepAngle = arcLength / radius;
 		const startAngle = angle - sweepAngle / 2;
 		const endAngle = startAngle + sweepAngle;
-		const invert = new Angle(angle).orientation_ofAngle == T_Orientation.up;
+		const invert = new Angle(angle).angle_points_up;
 		const { start: text_start, end: text_end } = this.get_endpoints(startAngle, endAngle, radius, invert);
 		const { start: thumb_start, end: thumb_end } = this.get_endpoints(startAngle, endAngle, radius + 0.8);
 		const startThumbAngleDeg = (startAngle + Math.PI/2) * 180 / Math.PI;

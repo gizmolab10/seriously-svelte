@@ -18,13 +18,13 @@
 	let s_component: S_Component;
 	let reattachments = 0;
 
-	$: middle_radius   = $w_resize_radius + k.thickness.radial.ring;
-	$: outer_radius	   = middle_radius + ring_width;
 	$: outer_diameter  = outer_radius * 2;
+	$: outer_radius	   = middle_radius;// + ring_width;
+	$: middle_radius   = $w_resize_radius + ring_width;
+	$: reticle_svgPath = debug.reticle ? reticle_path() : '';
 	$: viewBox		   = `${-ring_width}, ${-ring_width}, ${outer_diameter}, ${outer_diameter}`;
-	$: reticle_svgPath = debug.reticle ? svgPaths.t_cross(outer_diameter, -2) : '';
-	$: resize_svgPath  = svgPaths.circle(Point.square($w_resize_radius).offsetEquallyBy(44), $w_resize_radius - 0.3, true);
-	$: rotate_svgPath  = svgPaths.annulus(Point.square($w_resize_radius), middle_radius, ring_width, Point.square(ring_width));
+	$: resize_svgPath  = svgPaths.circle(Point.square($w_resize_radius), $w_resize_radius - 0.3, true);
+	$: rotate_svgPath  = svgPaths.annulus(Point.square($w_resize_radius), middle_radius, ring_width);
 
 	s_component = signals.handle_reposition_widgets_atPriority(2, null, T_Hit_Target.rings, (received_ancestry) => {
 		reattachments += 1;
@@ -110,20 +110,32 @@
 		radial.cursor = radial.cursor_forRingZone;
 	}
 
+	function reticle_path(): string {
+		const center = $w_resize_radius;
+		const start = -ring_width;
+		const end = outer_diameter - ring_width;
+		return `M ${start} ${center} L ${end} ${center} M ${center} ${start} L ${center} ${end}`;
+	}
+
 </script>
 
 {#key reattachments}
 	{#if !debug.hide_rings}
 		<div class = 'rings'
 			id = {s_component.id}
-			style = 'z-index:{T_Layer.radial}; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;'>
+			style = '
+				user-select: none;
+				-ms-user-select: none;
+				-moz-user-select: none;
+				z-index:{T_Layer.radial};
+				-webkit-user-select: none;'>
 			<Mouse_Responder name = 'rings'
 				cursor = {radial.cursor}
 				width = {outer_diameter}
 				height = {outer_diameter}
 				zindex = {T_Layer.radial}
-				handle_s_mouse = {handle_s_mouse}
-				center = {g.center_ofGraphView}>
+				center = {g.center_ofGraphView}
+				handle_s_mouse = {handle_s_mouse}>
 				<svg class = 'rings-svg'
 					viewBox = {viewBox}>
 					<path class = 'resize-path'

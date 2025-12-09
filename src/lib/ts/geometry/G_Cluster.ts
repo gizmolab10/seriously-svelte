@@ -115,7 +115,7 @@ export default class G_Cluster {
 		if (this.isPaging) {
 			const index = this.paging_index_ofFocus;
 			const middle = (this.widgets_shown < 2) ? k.empty : `-${index + this.widgets_shown}`;
-			title = `${index + 1}${middle} / ${this.total_widgets} ${this.direction_kind}`
+			title = `${this.total_widgets} ${this.direction_kind} (${index + 1}${middle})`
 		}
 		this.cluster_title = title;
 	}

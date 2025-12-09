@@ -12,9 +12,10 @@
 	export let radius = 0;
 	export let angle = 0;
 	const { w_thing_fontFamily, w_background_color } = s;
-	const arcLength = u.getWidth_ofString_withSize(text, font_size) * 1.3;
 	const text_path_id = `arc-path-${Math.random().toString(36).substr(2, 9)}`;	
-	const { text_path_d } = g_cluster_pager.layout_endpoints_onArc(radius, angle, arcLength);
+
+	$: arcLength = u.getWidth_ofString_withSize(text, font_size) * 1.3;
+	$: ({ text_path_d } = g_cluster_pager.layout_endpoints_onArc(radius, angle, arcLength));
 
 </script>
 
@@ -34,8 +35,7 @@
 		text-anchor='middle'
 		font-size={font_size}
 		font-family={font_family}
-		dominant-baseline='middle'
-		style='pointer-events: auto;'>
+		dominant-baseline='middle'>
 		<textPath href='#{text_path_id}' startOffset='50%'>
 			<tspan style='background-color: {background_color};'>
 				{text}

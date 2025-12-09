@@ -47,10 +47,11 @@
 <g class='pager-group {name}'
 	bind:this={pager}
 	transform={thumbTransform}
-	style='cursor: pointer; pointer-events: auto;'
-	on:pointerup={handle_pointerup}>
+	on:pointerup={handle_pointerup}
+	style='cursor: pointer; pointer-events: auto;'>
 	<path class={name}
 		stroke={color}
 		fill={fill_color}
+		pointer-events="all"
 		d={svgPaths.fat_polygon(size, 0, 3, true)}/>
 </g>

@@ -38,29 +38,29 @@ export class Events {
 	}
 
 	private clear_event_subscriptions() {
-		document.removeEventListener('mouseup',	 this.handle_mouse_up);
-		document.removeEventListener('mousemove',	 this.handle_mouse_move);
-		document.removeEventListener('touchend',	 this.handle_touch_end);
-		document.removeEventListener('touchmove',	 this.handle_touch_move);
-		document.removeEventListener('touchstart', this.handle_touch_start);
+		document.removeEventListener('mouseup',				this.handle_mouse_up);
+		document.removeEventListener('mousemove',			this.handle_mouse_move);
+		document.removeEventListener('touchend',			this.handle_touch_end);
+		document.removeEventListener('touchmove',			this.handle_touch_move);
+		document.removeEventListener('touchstart',			this.handle_touch_start);
 	}
 
 	private subscribeTo_events() {
 		this.clear_event_subscriptions();
-		this.update_document_listener('wheel', this.handle_wheel);
-		this.update_document_listener('keyup', this.handle_key_up);
-		this.update_document_listener('keydown', this.handle_key_down);
-		this.update_window_listener('resize', this.handle_window_resize);
-		this.update_document_listener('orientationchange', this.handle_orientation_change);
+		this.update_document_listener('wheel',				this.handle_wheel);
+		this.update_document_listener('keyup',				this.handle_key_up);
+		this.update_document_listener('keydown',			this.handle_key_down);
+		this.update_window_listener('resize',				this.handle_window_resize);
+		this.update_document_listener('orientationchange',	this.handle_orientation_change);
 		if (c.device_isMobile) {
 			debug.log_action(`  mobile subscribe GRAPH`);
-			document.addEventListener('touchend', this.handle_touch_end, { passive: false });
-			document.addEventListener('touchmove', this.handle_touch_move, { passive: false });
-			document.addEventListener('touchstart', this.handle_touch_start, { passive: false });
+			document.addEventListener('touchend',			this.handle_touch_end, { passive: false });
+			document.addEventListener('touchmove',			this.handle_touch_move, { passive: false });
+			document.addEventListener('touchstart',			this.handle_touch_start, { passive: false });
 		} else {
-			document.addEventListener('mouseup', this.handle_mouse_up, { passive: false });
-			document.addEventListener('mousedown', this.handle_mouse_down, { passive: false });
-			document.addEventListener('mousemove', this.handle_mouse_move, { passive: false });
+			document.addEventListener('mouseup',			this.handle_mouse_up, { passive: false });
+			document.addEventListener('mousedown',			this.handle_mouse_down, { passive: false });
+			document.addEventListener('mousemove',			this.handle_mouse_move, { passive: false });
 		}
 	}
 
@@ -93,10 +93,10 @@ export class Events {
 	log_focus(element: Element | null, gained_focus: boolean): void {
 		if (element) {
 			console.log(gained_focus ? 'Focus gained:' : 'Focus lost:');
-			console.log('Element:', element);
-			console.log('Tag name:', element.tagName);
-			console.log('ID:', element.id);
-			console.log('Class list:', element.classList);
+			console.log('Element:',	element);
+			console.log('Tag name:',	element.tagName);
+			console.log('ID:',	element.id);
+			console.log('Class list:',	element.classList);
 		} else {
 			console.log(gained_focus ? 'No element gained focus' : 'No element lost focus');
 		}
@@ -119,11 +119,11 @@ export class Events {
 				console.log(`Focus lost from: ${focused?.tagName ?? 'none'}`);
 			}
 		};
-		document.addEventListener('focusin', handleFocusIn);
-		document.addEventListener('focusout', handleFocusOut);
+		document.addEventListener('focusin',	handleFocusIn);
+		document.addEventListener('focusout',	handleFocusOut);
 		return () => {
-			document.removeEventListener('focusin', handleFocusIn);
-			document.removeEventListener('focusout', handleFocusOut);
+			document.removeEventListener('focusin',	handleFocusIn);
+			document.removeEventListener('focusout',	handleFocusOut);
 		};
 	}
 
@@ -263,7 +263,7 @@ export class Events {
 		if (!!event && event.type == 'keydown' && !isEditing) {
 			const key = event.key.toLowerCase();
 			const ancestry = get(s.w_ancestry_forDetails);
-			const modifiers = ['alt', 'meta', 'shift', 'control'];
+			const modifiers = ['alt',	'meta',	'shift',	'control'];
 			let graph_needsSweep = false;
 			s.w_control_key_down.set(event.ctrlKey);
 			if (!!ancestry && !modifiers.includes(key)) {
