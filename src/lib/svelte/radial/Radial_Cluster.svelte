@@ -34,6 +34,11 @@
 	$: viewBox=`${-inset} ${-inset} ${radius * 2} ${radius * 2}`;
 	$: radius = $w_resize_radius + inset;
 
+	function handle_page(delta: number) {
+		g_cluster.g_focusPaging?.addTo_paging_index_for(delta);
+		g.layout();
+	}
+
 </script>
 
 <div class='radial-cluster'
@@ -100,16 +105,17 @@
 {:else}
 	<Curved_Text
 		viewBox={viewBox}
+		name={g_cluster.name}
 		zindex={T_Layer.text}
+		handle_page={handle_page}
 		isPaging={g_cluster.isPaging}
 		text={g_cluster.cluster_title}
-		name={g_cluster.predicate.kind}
 		radius={radial.ring_radius + 8}
 		g_cluster_pager={g_cluster_pager}
 		font_family={$w_thing_fontFamily}
 		background_color={textBackground}
-		font_size={k.font_size.cluster_slider}px
-		angle={-g_cluster_pager.angle_ofFork}
 		center_ofArc={g.center_ofGraphView}
+		angle={-g_cluster_pager.angle_ofFork}
+		font_size={k.font_size.cluster_slider}px
 		color={colors.specialBlend(color, $w_background_color, k.opacity.radial.text)}/>
 {/if}

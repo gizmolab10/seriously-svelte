@@ -24,13 +24,14 @@ export default class Hits {
 
 	get isHovering(): boolean { return get(this.w_s_hover) != null; }
 	get hovering_type(): T_Hit_Target | null { return get(this.w_s_hover)?.type ?? null; }
+	get isHovering_inPaging(): boolean { return !!this.hovering_type && [T_Hit_Target.paging].includes(this.hovering_type); }
+	get isHovering_inRing(): boolean { return !!this.hovering_type && [T_Hit_Target.rotation, T_Hit_Target.resizing].includes(this.hovering_type); }
 	get isHovering_inWidget(): boolean { return !!this.hovering_type && [T_Hit_Target.widget, T_Hit_Target.drag, T_Hit_Target.reveal].includes(this.hovering_type); }
-	get isHovering_inRing(): boolean { return !!this.hovering_type && [T_Hit_Target.rotation, T_Hit_Target.resizing, T_Hit_Target.paging].includes(this.hovering_type); }
 
 	private detect_hovering_at(point: Point): boolean {
 		const matches = this.targets_atPoint(point);
 		const target = matches.find(s => s.isADot) 
-			?? matches.find(s => s.type === T_Hit_Target.widget)
+			?? matches.find(s => [T_Hit_Target.widget, T_Hit_Target.paging].includes(s.type))
 			?? matches[0];
 		if (!!target) {
 			target.isHovering = true;		// GOAL: set w_s_hover to target

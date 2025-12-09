@@ -40,7 +40,7 @@ export default class Elements {
 	s_mouse_forName(name: string): S_Mouse { return this.assure_forKey_inDict(name, this.s_mouse_dict_byName, () => S_Mouse.empty()); }
 	
 	s_element_forName_andType(name: string, type: T_Hit_Target, subtype: string): S_Element {
-		return this.assure_forKey_inDict(name, this.s_element_byName_forType(type), () => this.s_element_for(new Identifiable(type), type, subtype));
+		return this.assure_forKey_inDict(name, this.s_element_byName_forType(type), () => this.s_element_for(new Identifiable(), type, subtype));
 	}
 
 	s_control_forType(t_control: T_Control): S_Element {

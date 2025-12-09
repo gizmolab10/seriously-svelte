@@ -1,6 +1,6 @@
 import { c, k, p, u, hits, show, debug, g_tree, g_radial, signals, controls, features } from '../common/Global_Imports';
-import { G_Widget, S_Component, T_Graph, T_Preference } from '../common/Global_Imports';
 import { Rect, Size, Point, Thing, Ancestry } from '../common/Global_Imports';
+import { G_Widget, T_Graph, T_Preference } from '../common/Global_Imports';
 import { get, writable } from 'svelte/store';
 
 export default class Geometry {
@@ -105,7 +105,11 @@ export default class Geometry {
 	}
 
 	mouse_vector_ofOffset_fromGraphCenter(offset: Point = Point.zero): Point | null {
-		const mouse_location = get(this.w_mouse_location_scaled);
+		const scaled_mouse_location = get(this.w_mouse_location_scaled);
+		return this.vector_fromScaled_mouseLocation_andOffset_fromGraphCenter(scaled_mouse_location, offset);
+	}
+
+	vector_fromScaled_mouseLocation_andOffset_fromGraphCenter(mouse_location: Point, offset: Point = Point.zero): Point | null {
 		if (!!mouse_location) {
 			const center_offset = get(this.w_user_graph_center).offsetBy(offset);
 			const mouse_vector = center_offset.vector_to(mouse_location);

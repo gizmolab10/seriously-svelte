@@ -1,15 +1,15 @@
-import { k, s, colors, Angle, S_Hit_Target, T_Hit_Target } from '../common/Global_Imports';
-import { get } from 'svelte/store';
+import { k, colors, Angle, T_Hit_Target } from '../common/Global_Imports';
+import S_Component from './S_Component';
 
 // for rotating (paging thumb and ring)
 
-export default class S_Rotation extends S_Hit_Target {
+export default class S_Rotation extends S_Component {
 	active_angle: number | null = null;		// current angle (at location of mouse MOVE)
 	basis_angle: number | null = null;		// starting angle (where mouse went DOWN)
 	fill_color = 'transparent';
 
 	constructor(type: T_Hit_Target = T_Hit_Target.rotation) {
-		super(type, get(s.w_ancestry_focus));
+		super(null, type);
 		setTimeout(() => {
 			this.reset();
 		}, 1);
