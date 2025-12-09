@@ -1,28 +1,20 @@
 <script lang='ts'>
 	import { T_Layer, T_Orientation, G_Cluster_Pager } from '../../ts/common/Global_Imports';
 	import { k, s, u, Angle, Point } from '../../ts/common/Global_Imports';
-	import Cluster_Pager from '../mouse/Cluster_Pager.svelte';
-	export let handle_page: (delta: number) => void = () => {};
 	export let font_size = `${k.font_size.cluster_slider}px`;
 	export let background_color = $w_background_color;
 	export let font_family = $w_thing_fontFamily;
 	export let g_cluster_pager: G_Cluster_Pager;
 	export let center_ofArc = Point.zero;
 	export let zindex = T_Layer.text;
-	export let viewBox = k.empty;
-	export let isPaging = false;
 	export let text = k.space;
-	export let name = k.empty;
 	export let color = 'red';
 	export let radius = 0;
 	export let angle = 0;
 	const { w_thing_fontFamily, w_background_color } = s;
 	const arcLength = u.getWidth_ofString_withSize(text, font_size) * 1.3;
 	const text_path_id = `arc-path-${Math.random().toString(36).substr(2, 9)}`;	
-	const { text_path_d, start_thumb_transform, end_thumb_transform } = g_cluster_pager.layout_endpoints_onArc(radius, angle, arcLength);
-
-	function handle_backward() { handle_page(-1); }
-	function handle_forward() { handle_page(1); }
+	const { text_path_d } = g_cluster_pager.layout_endpoints_onArc(radius, angle, arcLength);
 
 </script>
 
@@ -50,24 +42,6 @@
 			</tspan>
 		</textPath>
 	</text>
-	{#if isPaging}
-		<Cluster_Pager
-			color={color}
-			viewBox={viewBox}
-			size={k.height.dot}
-			direction='backward'
-			name={name+'-start'}
-			handle_click={handle_backward}
-			thumbTransform={start_thumb_transform}/>
-		<Cluster_Pager
-			color={color}
-			viewBox={viewBox}
-			name={name+'-end'}
-			direction='forward'
-			size={k.height.dot}
-			handle_click={handle_forward}
-			thumbTransform={end_thumb_transform}/>
-	{/if}
 </svg>
 
 <style>

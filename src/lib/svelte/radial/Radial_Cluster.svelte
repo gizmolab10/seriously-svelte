@@ -1,6 +1,7 @@
 <script lang='ts'>
 	import { Point, T_Layer, G_Cluster, T_Cluster_Pager } from '../../ts/common/Global_Imports';
-	import { k, s, colors, radial, g } from '../../ts/common/Global_Imports';
+	import { k, s, u, colors, radial, g } from '../../ts/common/Global_Imports';
+	import Cluster_Pager from '../mouse/Cluster_Pager.svelte';
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Curved_Text from '../text/Curved_Text.svelte';
 	import Angled_Text from '../text/Angled_Text.svelte';
@@ -34,10 +35,21 @@
 	$: viewBox=`${-inset} ${-inset} ${radius * 2} ${radius * 2}`;
 	$: radius = $w_resize_radius + inset;
 
+	// Compute arc layout for pagers (when not using sliders)
+	$: pager_font_size = `${k.font_size.cluster_slider}px`;
+	$: arcLength = u.getWidth_ofString_withSize(g_cluster.cluster_title, pager_font_size) * 1.3;
+	$: pager_radius = radial.ring_radius + 8;
+	$: pager_angle = -g_cluster_pager.angle_ofFork;
+	$: ({ start_thumb_transform, end_thumb_transform } = g_cluster_pager.layout_endpoints_onArc(pager_radius, pager_angle, arcLength));
+	$: pager_color = colors.specialBlend(color, $w_background_color, k.opacity.radial.text);
+
 	function handle_page(delta: number) {
 		g_cluster.g_focusPaging?.addTo_paging_index_for(delta);
 		g.layout();
 	}
+
+	function handle_backward() { handle_page(-1); }
+	function handle_forward() { handle_page(1); }
 
 </script>
 
@@ -104,11 +116,7 @@
 		color={colors.specialBlend(color, $w_background_color, k.opacity.radial.text)}/>
 {:else}
 	<Curved_Text
-		viewBox={viewBox}
-		name={g_cluster.name}
 		zindex={T_Layer.text}
-		handle_page={handle_page}
-		isPaging={g_cluster.isPaging}
 		text={g_cluster.cluster_title}
 		radius={radial.ring_radius + 8}
 		g_cluster_pager={g_cluster_pager}
@@ -118,4 +126,25 @@
 		angle={-g_cluster_pager.angle_ofFork}
 		font_size={k.font_size.cluster_slider}px
 		color={colors.specialBlend(color, $w_background_color, k.opacity.radial.text)}/>
+	{#if g_cluster.isPaging}
+		<svg class='pager-container'
+			style='position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: {T_Layer.paging};'>
+			<Cluster_Pager
+				color={pager_color}
+				viewBox={viewBox}
+				size={k.height.dot}
+				direction='backward'
+				name={g_cluster.name + '-start'}
+				handle_click={handle_backward}
+				thumbTransform={start_thumb_transform}/>
+			<Cluster_Pager
+				color={pager_color}
+				viewBox={viewBox}
+				direction='forward'
+				size={k.height.dot}
+				name={g_cluster.name + '-end'}
+				handle_click={handle_forward}
+				thumbTransform={end_thumb_transform}/>
+		</svg>
+	{/if}
 {/if}
