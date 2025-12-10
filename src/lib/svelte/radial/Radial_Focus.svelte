@@ -84,7 +84,7 @@
 
 </script>
 
-<div class='radial-focus' id = {s_component.id}
+<div class='radial-focus' name = {s_component.id}
 	style='
 		position : absolute;
 		height : {height}px;

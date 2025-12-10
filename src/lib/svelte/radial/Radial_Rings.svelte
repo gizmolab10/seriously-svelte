@@ -12,6 +12,8 @@
 	const { w_g_cluster, w_rotate_angle, w_resize_radius } = radial;
 	const { w_count_mouse_up, w_s_title_edit, w_ancestry_focus } = s;
 	let color = $w_ancestry_focus?.thing?.color ?? colors.default_forThings;
+	let rotate_element: HTMLElement | null = null;
+	let resize_element: HTMLElement | null = null;
 	let mouse_up_count = $w_count_mouse_up;
 	let resize_fill = 'transparent';
 	let rotate_fill = 'transparent';
@@ -34,6 +36,18 @@
 		update_fill_colors();
 		return () => s_component.disconnect();
 	});
+
+	$: {
+		if (!!resize_element) {
+			radial.s_resizing.set_html_element(resize_element);
+		}
+	}
+
+	$: {
+		if (!!rotate_element) {
+			radial.s_rotation.set_html_element(rotate_element);
+		}
+	}
 
 	$: {
 		if (!!$w_s_hover) {
@@ -79,7 +93,7 @@
 		} else if (s_mouse.isDown) {
 			const angle_ofMouseDown = g.mouse_angle_fromGraphCenter;
 			const angle_ofRotation = angle_ofMouseDown.add_angle_normalized(-$w_rotate_angle);
-			const zone = radial.ring_zone_atMouseLocation;
+			const zone = hits.ring_zone_atMouseLocation;
 			$w_s_title_edit?.stop_editing();
 			$w_s_title_edit = null;		// so widget will react
 			switch (zone) {
@@ -140,6 +154,7 @@
 					viewBox = {viewBox}>
 					<path class = 'resize-path'
 						fill = {resize_fill}
+						bind:this = {resize_element}
 						d = {resize_svgPath}/>
 					{#if debug.reticle}
 						<path class = 'reticle-path'
@@ -149,6 +164,7 @@
 					{/if}
 					<path class = 'rotate-path'
 						fill = {rotate_fill}
+						bind:this = {rotate_element}
 						d = {rotate_svgPath}/>
 				</svg>
 			</Mouse_Responder>

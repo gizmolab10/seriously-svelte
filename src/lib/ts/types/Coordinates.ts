@@ -1,8 +1,20 @@
 import { T_Quadrant, T_Orientation } from './Angle';
 import type { SvelteComponent } from 'svelte';
+import type { BBox } from 'rbush';
 import Angle from './Angle';
 
 const p = 2;
+
+export class Polar {
+	r: number;
+	phi: number;
+	constructor(r: number, phi: number) {
+		this.r = r;
+		this.phi = phi;
+	}
+
+	get asPoint(): Point { return Point.fromPolar(this.r, this.phi); }
+}
 
 export class Point {
 	x: number;
@@ -12,40 +24,39 @@ export class Point {
 		this.y = y;
 	}
 
-	get asSize():					  	Size { return new Size(this.x, this.y); }		// NB: can have negative values
-	get magnitude():				  number { return Math.sqrt(this.x * this.x + this.y * this.y); }
-	get toPolar():	{r: number, phi: number} { return {r: this.magnitude, phi: this.angle}; }
-	get isZero():					 boolean { return this.x == 0 && this.y == 0; }
-	get pixelVerbose():				  string { return `${this.x.toFixed(p)}px ${this.y.toFixed(p)}px`; }
-	get verbose():					  string { return `(${this.x.toFixed(p)}, ${this.y.toFixed(p)})`; }
-	get description():				  string { return `${this.x.toFixed(p)} ${this.y.toFixed(p)}`; }
-	get negated():					   Point { return this.multipliedEquallyBy(-1); }
-	get doubled():					   Point { return this.multipliedEquallyBy(2); }
-	get negatedInHalf():			   Point { return this.dividedEquallyBy(-2); }
-	get dividedInHalf():			   Point { return this.dividedEquallyBy(2); }
-	get swap():						   Point { return new Point(this.y, this.x); }
-	get negateY():					   Point { return new Point(this.x, -this.y); }
-	get negateX():					   Point { return new Point(-this.x, this.y); }
-	get abs():						   Point { return new Point(Math.abs(this.x), Math.abs(this.y)); }
-	offsetByX(x: number):			   Point { return this.offsetByXY(x, 0); }
-	offsetByY(y: number):			   Point { return this.offsetByXY(0, y); }
-	offsetEquallyBy(offset: number):   Point { return this.offsetByXY(offset, offset); }
-	offsetByXY(x: number, y: number):  Point { return new Point(this.x + x, this.y + y); }
-	spreadByXY(x: number, y: number):  Point { return new Point(this.x * x, this.y * y); }
-	offsetBy(point: Point):			   Point { return new Point(this.x + point.x, this.y + point.y); }
-	vector_to(point: Point):		   Point { return point.offsetBy(this.negated); }
-	multiply_xBy(multiplier: number):  Point { return new Point(this.x * multiplier, this.y) }
-	multiply_yBy(multiplier: number):  Point { return new Point(this.x, this.y * multiplier) }
-	dividedEquallyBy(divisor: number):		   Point { return new Point(this.x / divisor, this.y / divisor) }
+	get magnitude():				 		 number { return Math.sqrt(this.x * this.x + this.y * this.y); }
+	get isZero():					 		boolean { return this.x == 0 && this.y == 0; }
+	get pixelVerbose():				 		 string { return `${this.x.toFixed(p)}px ${this.y.toFixed(p)}px`; }
+	get verbose():					 		 string { return `(${this.x.toFixed(p)}, ${this.y.toFixed(p)})`; }
+	get description():				 		 string { return `${this.x.toFixed(p)} ${this.y.toFixed(p)}`; }
+	get asBBox():							   BBox { return { minX: this.x, minY: this.y, maxX: this.x, maxY: this.y }; }
+	get asPolar():							  Polar { return new Polar(this.magnitude, this.angle); }
+	get asSize():					 	 	   Size { return new Size(this.x, this.y); }		// NB: can have negative values, so rect extended by negative works
+	get negated():					 		  Point { return this.multipliedEquallyBy(-1); }
+	get doubled():					 		  Point { return this.multipliedEquallyBy(2); }
+	get negatedInHalf():			 		  Point { return this.dividedEquallyBy(-2); }
+	get dividedInHalf():			 		  Point { return this.dividedEquallyBy(2); }
+	get swap():						 		  Point { return new Point(this.y, this.x); }
+	get negateY():					 		  Point { return new Point(this.x, -this.y); }
+	get negateX():					 		  Point { return new Point(-this.x, this.y); }
+	get abs():						 		  Point { return new Point(Math.abs(this.x), Math.abs(this.y)); }
+	offsetByX(x: number):			 		  Point { return this.offsetByXY(x, 0); }
+	offsetByY(y: number):			 		  Point { return this.offsetByXY(0, y); }
+	offsetEquallyBy(offset: number): 		  Point { return this.offsetByXY(offset, offset); }
+	offsetByXY(x: number, y: number):		  Point { return new Point(this.x + x, this.y + y); }
+	spreadByXY(x: number, y: number):		  Point { return new Point(this.x * x, this.y * y); }
+	offsetBy(point: Point):			 		  Point { return new Point(this.x + point.x, this.y + point.y); }
+	vector_to(point: Point):		 		  Point { return point.offsetBy(this.negated); }
+	multiply_xBy(multiplier: number):		  Point { return new Point(this.x * multiplier, this.y) }
+	multiply_yBy(multiplier: number):		  Point { return new Point(this.x, this.y * multiplier) }
+	dividedEquallyBy(divisor: number):		  Point { return new Point(this.x / divisor, this.y / divisor) }
 	multipliedEquallyBy(multiplier: number):  Point { return new Point(this.x * multiplier, this.y * multiplier) }
-	static polarToo(phi: number, r: number)  { return new Point(Math.cos(phi) * r, Math.sin(phi) * r); }
-	static polarTo(phi: number, r: number)   { return Point.x(r).rotate_by(-phi); }
-	static fromPolar(r: number, phi: number) { return Point.x(r).rotate_by(phi); }
-	static fromDOMRect(rect: DOMRect): Point { return new Point(rect.left, rect.top); }
-	static square(length: number):	   Point { return new Point(length, length); }
-	static x(x: number):			   Point { return new Point(x, 0); }
-	static y(y: number):			   Point { return new Point(0, y); }
-	static get zero():				   Point { return new Point();}
+	static fromDOMRect(rect: DOMRect):		  Point { return new Point(rect.left, rect.top); }
+	static square(length: number):			  Point { return new Point(length, length); }
+	static x(x: number):					  Point { return new Point(x, 0); }
+	static y(y: number):					  Point { return new Point(0, y); }
+	static get zero():						  Point { return new Point();}
+	static fromPolar(r: number, phi: number): Point { return Point.x(r).rotate_by(phi); }
 
 	// in this (as in math), y increases going up and angles increase counter-clockwise
 	get angle(): number { return (Math.atan2(-this.y, this.x)); }	// in browsers, y is the opposite, so reverse it here
@@ -111,8 +122,8 @@ export class Point {
 }
 
 export class Size {
-	width: number;
 	height: number;
+	width: number;
 
 	constructor(width: number = 0, height: number = 0) {
 		this.height = height;
@@ -129,11 +140,11 @@ export class Size {
 	get swap():								 Size { return new Size(this.height, this.width); }
 	get negated():							 Size { return this.multipliedEquallyBy(-1); }
 	get dividedInHalf():					 Size { return this.dividedEquallyBy(2); }
-	extendedByX(x: number):					 Size { return this.extendedByXY(x, 0); }
-	extendedByY(y: number):					 Size { return this.extendedByXY(0, y); }
-	reducedByX(x: number):					 Size { return this.extendedByXY(-x, 0); }
-	reducedByY(y: number):					 Size { return this.extendedByXY(0, -y); }
 	reducedByXY(x: number, y: number):		 Size { return this.extendedByXY(-x, -y); }
+	extendedByX(delta: number):				 Size { return this.extendedByXY(delta, 0); }
+	extendedByY(delta: number):				 Size { return this.extendedByXY(0, delta); }
+	reducedByX(delta: number):				 Size { return this.extendedByXY(-delta, 0); }
+	reducedByY(delta: number):				 Size { return this.extendedByXY(0, -delta); }
 	expandedEquallyBy(delta: number):		 Size { return this.extendedByXY(delta, delta); }
 	reducedBy(srinkage: Point):				 Size { return this.extendedBy(srinkage.negated); }
 	insetEquallyBy(delta: number):			 Size { return this.expandedEquallyBy(2 * -delta); }
@@ -162,14 +173,15 @@ export class Rect {
 
 	get x():						 number { return this.origin.x; }
 	get y():						 number { return this.origin.y; }
+	get right():					 number { return this.extent.x; }
+	get bottom():					 number { return this.extent.y; }
 	get width():					 number { return this.size.width; }
 	get height():					 number { return this.size.height; }
-	get right():					 number { return this.origin.x + this.size.width; }
-	get bottom():					 number { return this.origin.y + this.size.height; }
-	get isZero():					boolean { return this.origin.isZero && this.size.isZero; }
+	get isZero():					boolean { return this.size.isZero; }
 	get verbose():					 string { return `${this.origin.verbose}, ${this.size.verbose}`; }
 	get description():				 string { return `${this.origin.description} ${this.size.description}`; }
 	get pixelVerbose():				 string { return `${this.origin.pixelVerbose} ${this.size.pixelVerbose}`; }
+	get asBBox():					   BBox { return { minX: this.x, minY: this.y, maxX: this.right, maxY: this.bottom }; }
 	get center():					  Point { return this.origin.offsetBy(this.size.center); }
 	get extent():					  Point { return this.origin.offsetBy(this.size.asPoint); }		// bottom right
 	get topRight():					  Point { return new Point(this.extent.x, this.origin.y); }
@@ -178,10 +190,10 @@ export class Rect {
 	get centerLeft():				  Point { return new Point(this.origin.x, this.center.y); }
 	get centerRight():				  Point { return new Point(this.extent.x, this.center.y); }
 	get centerBottom():				  Point { return new Point(this.center.x, this.extent.y); }
-	get atZero():					   Rect { return new Rect(Point.zero, this.size); }
+	get dividedInHalf():			   Rect { return new Rect(this.origin, this.size.multipliedEquallyBy(-1/2)); }
 	get atZero_forX():				   Rect { return new Rect(Point.y(this.origin.y), this.size); }
 	get atZero_forY():				   Rect { return new Rect(Point.x(this.origin.x), this.size); }
-	get dividedInHalf():			   Rect { return new Rect(this.origin, this.size.multipliedEquallyBy(-1/2)); }
+	get atZero():					   Rect { return new Rect(Point.zero, this.size); }
 
 	get normalized(): Rect {			// make width and height positive
 		let width = this.width;

@@ -14,6 +14,7 @@
 	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_s_title_edit, w_ancestry_forDetails, w_t_startup } = s;
 	let s_component: S_Component | null = null;
+	let element: HTMLElement | null = null;
 	let things: Array<Thing> = [];
 	let size = k.height.button;
 	let lefts: string[] = [];
@@ -27,6 +28,12 @@
 
 	onMount(() => { return () => s_component.disconnect(); });
 	
+	$: {
+		if (!!element) {
+			s_component.set_html_element(element);
+		}
+	}
+
 	$: {
 		const _ = `${u.descriptionBy_titles($w_grabbed)}
 		:::${$w_rect_ofGraphView.description}
@@ -67,6 +74,7 @@
 {#key trigger}
 	<div class='breadcrumbs'
 		id = {s_component.id}
+		bind:this={element}
 		style='
 			left:7px;
 			top:-5.5px;

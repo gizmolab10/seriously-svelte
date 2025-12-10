@@ -1,4 +1,4 @@
-import { k, colors, T_Hit_Target } from '../common/Global_Imports';
+import { k, colors, T_Hit_Target, T_Radial_Zone } from '../common/Global_Imports';
 import S_Rotation from './S_Rotation';
 
 // for resizing necklace
@@ -15,5 +15,9 @@ export default class S_Resizing extends S_Rotation {
 	reset()					   { super.reset(); this.basis_radius = null; }
 	get fill_opacity(): number { return this.isHovering ? k.opacity.radial.armature : k.opacity.radial.default; }
 	update_fill_color()		   { this.fill_color = this.isHighlighted ? colors.opacitize(this.color, this.fill_opacity) : 'transparent'; }
+
+	ring_zone_matches_type(ring_zone: T_Radial_Zone): boolean {
+		return ring_zone == T_Radial_Zone.resize && this.type == T_Hit_Target.resizing;
+	}
 
 }

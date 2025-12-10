@@ -15,6 +15,7 @@
     let has_rubberbanded_grabs = true;
     let has_intersections = false;
     let original_grab_count = 0;
+    let lastUpdate = 0;
     let height = 0;
     let width = 0;
     let left = 0;
@@ -63,15 +64,19 @@
     ;
 
     $: if ($w_dragging !== T_Drag.none && startPoint && $w_mouse_location) {
-        const constrainedEnd = constrainToRect($w_mouse_location.x, $w_mouse_location.y);
-        height = Math.abs(constrainedEnd.y - startPoint.y);
-        width = Math.abs(constrainedEnd.x - startPoint.x);
-        left = Math.min(constrainedEnd.x, startPoint.x);
-        top = Math.min(constrainedEnd.y, startPoint.y);
-        detect_and_grab();
+        const now = Date.now();
+        if (now - lastUpdate >= 40) {
+            lastUpdate = now;
+            const constrainedEnd = constrainToRect($w_mouse_location.x, $w_mouse_location.y);
+            height = Math.abs(constrainedEnd.y - startPoint.y);
+            width = Math.abs(constrainedEnd.x - startPoint.x);
+            left = Math.min(constrainedEnd.x, startPoint.x);
+            top = Math.min(constrainedEnd.y, startPoint.y);
+            detect_and_grab();
+        }
     }
 
-    function detect_and_grab() {
+    private function detect_and_grab() {
         if ($w_dragging === T_Drag.rubberband) {
             const ancestries = ancestries_intersecting_rubberband();
             if (ancestries.length != 0) {
@@ -84,7 +89,7 @@
         }
     }
 
-    function ancestries_intersecting_rubberband(): Array<Ancestry> {
+    private function ancestries_intersecting_rubberband(): Array<Ancestry> {
         const rect = new Rect( new Point(left, top), new Size(width, height));
         const found = hits.targets_inRect(rect).filter(hit => hit.type === T_Hit_Target.widget);
         return found.map((hit) => hit.identifiable as Ancestry);
@@ -107,14 +112,14 @@
         document.removeEventListener('pointerup', blockEvent, true);
     });
 
-    function constrainToRect(x: number, y: number): Point {
+    private function constrainToRect(x: number, y: number): Point {
         return new Point(
             Math.max(bounds.origin.x, Math.min(bounds.origin.x + bounds.size.width, x)),
             Math.max(bounds.origin.y, Math.min(bounds.origin.y + bounds.size.height, y))
         );
     }
 
-    function blockEvent(e: Event) {
+    private function blockEvent(e: Event) {
         const target = e.target;
         // Only block events when rubberband is active and target is not an interactive element
         if ($w_dragging === T_Drag.rubberband && target instanceof HTMLElement) {

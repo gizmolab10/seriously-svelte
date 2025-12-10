@@ -26,7 +26,7 @@
 	const s_mouse = elements.s_mouse_forName(name);
 	const mouse_timer = e.mouse_timer_forName(name);
 	const mouse_responder_number = elements.next_mouse_responder_number;
-	let bound_element: HTMLElement | null = null;
+	let element: HTMLElement | null = null;
 
 	//////////////////////////////////////////////////////////////
 	//															//
@@ -48,7 +48,7 @@
 	onMount(() => {
 		if (!!s_element && s_element instanceof S_Element) {
 			s_element.handle_s_mouse = handle_s_mouse;
-			s_element.set_html_element(bound_element);
+			s_element.set_html_element(element);
 		}
 		setupStyle();
 	});
@@ -66,7 +66,7 @@
 	function handle_pointerUp(event: MouseEvent) {
 		if (detect_mouseUp) {
 			reset();
-			handle_s_mouse(S_Mouse.up(event, bound_element));
+			handle_s_mouse(S_Mouse.up(event, element));
 		}
 	}
 
@@ -102,18 +102,18 @@
 			mouse_timer.autorepeat_start(mouse_responder_number, () => {
 				const isDown = !mouse_timer.hasTimer_forID(T_Timer.repeat);
 				// set isDown false to prevent autorepeating for non-repeating actions
-				handle_s_mouse(isDown ? S_Mouse.down(event, bound_element) : S_Mouse.repeat(event, bound_element));
+				handle_s_mouse(isDown ? S_Mouse.down(event, element) : S_Mouse.repeat(event, element));
 			});
 		} else {
 			if (detect_mouseDown && (s_mouse.clicks == 0 || !detect_doubleClick)) {
-				handle_s_mouse(S_Mouse.down(event, bound_element));
+				handle_s_mouse(S_Mouse.down(event, element));
 			}
 			s_mouse.clicks += 1;
 			if (detect_doubleClick) {
 				mouse_timer.timeout_start(T_Timer.double, () => {
 					if (mouse_timer.hasTimer_forID(T_Timer.double) && s_mouse.clicks == 2) {
 						reset();
-						handle_s_mouse(S_Mouse.double(event, bound_element));
+						handle_s_mouse(S_Mouse.double(event, element));
 					}
 				});
 			}
@@ -122,7 +122,7 @@
 					if (mouse_timer.hasTimer_forID(T_Timer.long)) {
 						reset();
 						s_mouse.clicks = 0;
-						handle_s_mouse(S_Mouse.long(event, bound_element));
+						handle_s_mouse(S_Mouse.long(event, element));
 					}
 				});
 			}
@@ -134,7 +134,7 @@
 <div class='mouse-responder' id={name}
 	on:pointerdown={handle_pointerDown}
 	on:pointerup={handle_pointerUp}
-	bind:this={bound_element}
+	bind:this={element}
 	style={style}>
 	<slot/>
 </div>

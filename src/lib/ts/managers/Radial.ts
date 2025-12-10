@@ -1,4 +1,4 @@
-import { T_Startup, T_Preference, T_Hit_Target, T_Radial_Zone, T_Cluster_Pager } from '../common/Global_Imports';
+import { T_Startup, T_Preference, T_Hit_Target, T_Radial_Zone, T_Cluster_Pager, Point } from '../common/Global_Imports';
 import { g, k, p, s, hits, debug, signals, elements, g_radial } from '../common/Global_Imports';
 import { Angle, G_Cluster, S_Rotation, S_Resizing } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
@@ -67,7 +67,7 @@ export default class Radial {
 	}
 
 	get cursor_forRingZone(): string {
-		switch (this.ring_zone_atMouseLocation) {
+		switch (hits.ring_zone_atMouseLocation) {
 			case T_Radial_Zone.resize: return this.s_resizing.cursor;
 			case T_Radial_Zone.rotate: return this.s_rotation.cursor;
 			case T_Radial_Zone.paging: return this.s_paging.cursor;
@@ -79,36 +79,6 @@ export default class Radial {
 		this.s_paging.update_fill_color();
 		this.s_rotation.update_fill_color();
 		this.s_resizing.update_fill_color();
-	}
-
-	detect_hovering(): boolean {
-		let detected = false;
-		const paging = this.s_paging;
-		const rotate = this.s_rotation;
-		const resize = this.s_resizing;
-		const isRotating = rotate.isDragging;
-		const isResizing = resize.isDragging;
-		const ring_zone = this.ring_zone_atMouseLocation;
-		const isPaging = this.isAny_paging_thumb_dragging;
-		const inRotate = ring_zone == T_Radial_Zone.rotate && !isResizing && !isPaging;
-		const inResize = ring_zone == T_Radial_Zone.resize && !isRotating && !isPaging;
-		const inPaging = ring_zone == T_Radial_Zone.paging && !isRotating && !isResizing;
-		if (rotate.isHovering != inRotate) {
-			rotate.isHovering  = inRotate;
-			debug.log_hits(` hover rotate  ${inRotate}`);
-			detected = true;
-		}
-		if (resize.isHovering != inResize) {
-			resize.isHovering  = inResize;
-			debug.log_hits(` hover resize  ${inResize}`);
-			detected = true;
-		}
-		if (paging.isHovering != inPaging) {
-			paging.isHovering  = inPaging;
-			debug.log_hits(` hover paging  ${inPaging}`);
-			detected = true;
-		}
-		return detected;
 	}
 
 	handle_mouse_drag() {
@@ -160,35 +130,6 @@ export default class Radial {
 				}
 			}
 		}
-	}
-
-	get ring_zone_atMouseLocation(): T_Radial_Zone {
-		let ring_zone = T_Radial_Zone.miss;
-		const hover_type = get(hits.w_s_hover)?.type;
-		const mouse_vector = g.mouse_vector_ofOffset_fromGraphCenter();
-		const hasHovering_conflict = !!hover_type && [T_Hit_Target.widget, T_Hit_Target.drag].includes(hover_type);
-		if (!!mouse_vector && !hasHovering_conflict) {
-			const show_cluster_sliders = get(s.w_t_cluster_pager) == T_Cluster_Pager.sliders;
-			const g_cluster = g_radial.g_cluster_atMouseLocation;
-			const inner = get(this.w_resize_radius);
-			const distance = mouse_vector.magnitude;
-			const thick = k.thickness.radial.ring;
-			const thin = k.thickness.radial.arc;
-			const outer = inner + thick;
-			const thumb = inner + thin;
-			if (!!distance) {
-				if (distance < inner) {
-					ring_zone = T_Radial_Zone.resize;
-				} else if (distance < thumb && show_cluster_sliders && !!g_cluster && g_cluster.isMouse_insideThumb) {
-					ring_zone = T_Radial_Zone.paging;
-				} else if (distance <= outer) {
-					ring_zone = T_Radial_Zone.rotate;
-				}
-			}
-			debug.log_mouse(` ring zone ${ring_zone} ${distance.asInt()}`);
-			debug.log_cursor(` ring zone ${ring_zone} ${mouse_vector.verbose}`);
-		}
-		return ring_zone;
 	}
 
 	restore_radial_preferences() {

@@ -48,6 +48,8 @@ export default class Geometry {
 		} else {
 			g_tree.layout();
 		}
+		// NB: set html element fails (in S_Component)
+		// if id does not match, or exist yet
 		signals.signal_reposition_widgets_fromFocus();
 	}
 

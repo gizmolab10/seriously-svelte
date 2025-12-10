@@ -21,18 +21,25 @@
 	let svgPathFor_tiny_outer_dots: string | null = null;
 	let svgPathFor_fat_center_dot: string | null = null;
 	let svg_outline_color = s_reveal.svg_outline_color;
+	let element: HTMLElement | null = null;
 	let bulkAlias_color = s_reveal.stroke;
 	let center = g_widget.center_ofReveal;
 	let svgPathFor_revealDot = k.empty;
 	let color = ancestry.thing?.color;
-	let s_component: S_Component;
 	let offsetFor_fat_center_dot = 0;
+	let s_component: S_Component;
 
 	update_colors();
 
 	s_component = signals.handle_reposition_widgets_atPriority(2, ancestry, T_Hit_Target.reveal, (received_ancestry) => {
 		center = g_widget.center_ofReveal;
 	});
+
+	$: {
+		if (!!element) {
+			g_widget.s_widget.s_reveal.set_html_element(element);
+		}
+	}
 
 	onMount(() => {
 		update_svgPaths();
@@ -99,6 +106,7 @@
 		handle_s_mouse={handle_s_mouse}>
 		<div class='reveal-dot'
 			on:contextmenu={handle_context_menu}
+			bind:this={element}
 			role="button"
 			tabindex="0"
 			style='

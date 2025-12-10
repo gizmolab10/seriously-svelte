@@ -20,7 +20,6 @@ export default class S_Component extends S_Hit_Target {
         super(type, ancestry as Identifiable);
         this.hid = ancestry?.hid ?? -1 as Integer;
         this.id = `${type}-${ancestry?.kind ?? 'no-predicate'}-${ancestry?.titles ?? Identifiable.newID()}`;
-        this.set_html_element(document.getElementById(this.id));
     }
 
     get description(): string { return this.type; }

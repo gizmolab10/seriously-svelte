@@ -20,6 +20,7 @@
 	const { w_ancestry_focus, w_ancestry_forDetails } = s;
 	let fill_color = debug.lines ? 'transparent' : s_drag.fill;
 	let svg_outline_color = s_drag.svg_outline_color;
+	let element: HTMLElement | null = null;
 	let center = g_widget.center_ofDrag;
 	let parents_color = s_drag.stroke;
 	let svgPathFor_ellipses = k.empty;
@@ -47,6 +48,12 @@
 	$: {
 		const _ = $w_show_countDots_ofType;
 		update_svgPaths();
+	}
+
+	$: {
+		if (!!element) {
+			s_drag.set_html_element(element);
+		}
 	}
 
 	$: {
@@ -123,6 +130,7 @@
 		handle_s_mouse={handle_s_mouse}>
 		<button class={name}
 			id={s_component.id}
+			bind:this={element}
 			style='
 				border:none;
 				cursor:pointer;
