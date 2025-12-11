@@ -89,14 +89,14 @@
 		position : absolute;
 		height : {height}px;
 		width : {width_ofBorder}px;
-		z-index : {T_Layer.widgets};
+		z-index : {T_Layer.widget};
 		top : {origin_ofWidget.y}px;
 		left : {origin_ofWidget.x}px;'>
 		<Mouse_Responder
 			height = {height}
 			width = {width_ofBorder}
 			center = {center_ofBorder}
-			zindex = {T_Layer.widgets}
+			zindex = {T_Layer.widget}
 			cursor = {k.cursor_default}
 			name = 'radial-focus-border'
 			handle_s_mouse = {handle_s_mouse}>

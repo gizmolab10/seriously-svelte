@@ -102,7 +102,7 @@
     </Mouse_Responder>
 </div>
 <Curved_Text
-	zindex={T_Layer.text}
+	zindex={T_Layer.ring}
 	radius={curved_text_radius}
 	text={g_cluster.cluster_title}
 	g_cluster_pager={g_cluster_pager}

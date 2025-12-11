@@ -2,7 +2,7 @@
     import { k, Point, Angle, T_Layer, Direction, svgPaths } from '../../ts/common/Global_Imports';
     export let radius = k.radius.gull_wings.ultra_thin;
     export let direction = Direction.down;
-    export let zindex = T_Layer.lines;
+    export let zindex = T_Layer.line;
     export let center = Point.zero;
     export let color = 'black';
     export let thickness = 1;

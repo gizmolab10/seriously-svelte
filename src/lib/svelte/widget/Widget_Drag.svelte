@@ -138,7 +138,7 @@
 				height:{size}px;
 				color:transparent;
 				position:absolute;
-				z-index:{T_Layer.dots};
+				z-index:{T_Layer.dot};
 				background-color:transparent;'>
 			<div id={'div-for-' + name}
 				style='
@@ -148,7 +148,7 @@
 					height:{size}px;
 					color:transparent;
 					position:absolute;
-					z-index:{T_Layer.dots};'>
+					z-index:{T_Layer.dot};'>
 				<SVG_D3 name={'svg-' + name}
 					width={size}
 					height={size}

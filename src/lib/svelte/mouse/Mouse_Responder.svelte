@@ -16,7 +16,7 @@
 	export let width = k.height.button;
 	export let detect_mouseUp = true;
 	export let position = 'absolute';
-	export let zindex = T_Layer.dots;
+	export let zindex = T_Layer.dot;
 	export let cursor = 'pointer';
 	export let align_left = true;
 	export let name = 'generic';

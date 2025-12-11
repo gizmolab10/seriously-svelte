@@ -1,5 +1,5 @@
+import { k, Point, Angle, colors, radial } from '../common/Global_Imports';
 import { T_Hit_Target, T_Radial_Zone } from '../common/Global_Imports';
-import { k, hits, Point, Angle, colors } from '../common/Global_Imports';
 import S_Component from './S_Component';
 
 // for rotating (paging thumb and ring)
@@ -31,12 +31,13 @@ export default class S_Rotation extends S_Component {
 
 	does_contain_point(point: Point | null): boolean {
 		if (!point) return false;
-		const ring_zone = hits.ring_zone_atScaled(point);
+		const ring_zone = radial.ring_zone_atScaled(point);
 		return this.ring_zone_matches_type(ring_zone);
 	}
 
 	ring_zone_matches_type(ring_zone: T_Radial_Zone): boolean {
 		return (ring_zone == T_Radial_Zone.rotate && this.type == T_Hit_Target.rotation) ||
+			(ring_zone == T_Radial_Zone.resize && this.type == T_Hit_Target.resizing) ||
 			(ring_zone == T_Radial_Zone.paging && this.type == T_Hit_Target.paging);
 	}
 	

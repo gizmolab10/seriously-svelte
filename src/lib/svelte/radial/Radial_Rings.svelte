@@ -93,7 +93,7 @@
 		} else if (s_mouse.isDown) {
 			const angle_ofMouseDown = g.mouse_angle_fromGraphCenter;
 			const angle_ofRotation = angle_ofMouseDown.add_angle_normalized(-$w_rotate_angle);
-			const zone = hits.ring_zone_atMouseLocation;
+			const zone = radial.ring_zone_atMouseLocation;
 			$w_s_title_edit?.stop_editing();
 			$w_s_title_edit = null;		// so widget will react
 			switch (zone) {
@@ -141,21 +141,21 @@
 				user-select: none;
 				-ms-user-select: none;
 				-moz-user-select: none;
-				z-index:{T_Layer.radial};
+				z-index:{T_Layer.ring};
 				-webkit-user-select: none;'>
 			<Mouse_Responder name = 'rings'
 				cursor = {radial.cursor}
 				width = {outer_diameter}
 				height = {outer_diameter}
-				zindex = {T_Layer.radial}
+				zindex = {T_Layer.ring}
 				center = {g.center_ofGraphView}
 				handle_s_mouse = {handle_s_mouse}>
 				<svg class = 'rings-svg'
 					viewBox = {viewBox}>
 					<path class = 'resize-path'
 						fill = {resize_fill}
-						bind:this = {resize_element}
-						d = {resize_svgPath}/>
+						d = {resize_svgPath}
+						bind:this = {resize_element}/>
 					{#if debug.reticle}
 						<path class = 'reticle-path'
 							stroke = 'green'
@@ -164,8 +164,8 @@
 					{/if}
 					<path class = 'rotate-path'
 						fill = {rotate_fill}
-						bind:this = {rotate_element}
-						d = {rotate_svgPath}/>
+						d = {rotate_svgPath}
+						bind:this = {rotate_element}/>
 				</svg>
 			</Mouse_Responder>
 		</div>

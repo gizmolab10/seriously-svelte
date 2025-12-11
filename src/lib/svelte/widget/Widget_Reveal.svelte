@@ -5,7 +5,7 @@
 	import { Size, Point } from '../../ts/common/Global_Imports';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
-    export let zindex = T_Layer.dots;
+    export let zindex = T_Layer.dot;
 	export let points_toChild = true;
 	export let s_reveal!: S_Element;
 	const { w_s_hover } = hits;

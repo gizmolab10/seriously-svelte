@@ -16,7 +16,7 @@
 	export let border_thickness = 0.5;
 	export let color = colors.default;
 	export let position = 'absolute';
-	export let zindex = T_Layer.dots;
+	export let zindex = T_Layer.dot;
 	export let style = k.empty;
 	export let name = k.empty;
 	const { w_s_hover } = hits;

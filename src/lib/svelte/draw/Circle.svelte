@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, u, Point, debug, T_Layer } from '../../ts/common/Global_Imports'
-	export let zindex = T_Layer.dots;
+	export let zindex = T_Layer.dot;
 	export let center = Point.zero;
 	export let name = k.empty;
 	export let thickness = 1;

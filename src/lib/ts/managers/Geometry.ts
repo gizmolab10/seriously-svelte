@@ -133,7 +133,11 @@ export default class Geometry {
 		this.w_user_graph_center.set(center_offset);										// w_user_graph_center: a signal change
 		this.w_user_graph_offset.set(user_offset);											// w_user_graph_offset: a signal change
 		debug.log_mouse(`USER ====> ${user_offset.verbose}  ${center_offset.verbose}`);
-		hits.recalibrate();
+		if (changed) {
+			setTimeout(() => {
+				hits.recalibrate();
+			}, 100);
+		}
 		return changed;
 	}
 

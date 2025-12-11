@@ -70,8 +70,8 @@
 		display: flex;
 		position: relative;
 		flex-direction: column;
-		background-color: transparent;
-		z-index:{T_Layer.detailsPlus_1};'>
+		z-index:{T_Layer.stackable};
+		background-color: transparent;'>
 	{#key trigger}
 		{#if s_banner_hideable?.hasBanner}
 			<div class='banner'
@@ -95,7 +95,7 @@
 		{#if hideable_isVisible}
 			<div class='hideable'
 				style='
-					z-index:{T_Layer.detailsPlus_2};'>
+					z-index:{T_Layer.hideable};'>
 				<slot />
 			</div>
 		{/if}

@@ -3,8 +3,8 @@ import { g, k, p, s, hits, debug, signals, elements, g_radial } from '../common/
 import { Angle, G_Cluster, S_Rotation, S_Resizing } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
 import { G_Paging } from '../geometry/G_Paging';
-import { get, writable } from 'svelte/store';
 import { G_Pages } from '../geometry/G_Pages';
+import { get, writable } from 'svelte/store';
 
 //////////////////////////////////
 //								//
@@ -28,8 +28,12 @@ export default class Radial {
 	w_resize_radius = writable<number>(k.radius.ring_minimum);
 	
 	constructor() {
-		s.w_ancestry_focus.subscribe((ancestry) => {
-			this.reset();
+		s.w_t_startup.subscribe((startup) => {
+			if (startup == T_Startup.ready) {
+				s.w_ancestry_focus.subscribe((ancestry) => {
+					this.reset();
+				});
+			}
 		});
 	}
 
@@ -46,9 +50,12 @@ export default class Radial {
 	}
 
 	reset() {
-		this.s_paging = new S_Rotation(T_Hit_Target.paging);
-		this.s_resizing = new S_Resizing();
-		this.s_rotation = new S_Rotation();
+		if (!this.s_paging) this.s_paging = new S_Rotation(T_Hit_Target.paging);
+		if (!this.s_resizing) this.s_resizing = new S_Resizing();
+		if (!this.s_rotation) this.s_rotation = new S_Rotation();
+		this.s_paging.reset();
+		this.s_resizing.reset();
+		this.s_rotation.reset();
 		this.cursor = k.cursor_default;
 		this.w_g_cluster.set(null);
 		this.last_action = 0;
@@ -67,7 +74,7 @@ export default class Radial {
 	}
 
 	get cursor_forRingZone(): string {
-		switch (hits.ring_zone_atMouseLocation) {
+		switch (this.ring_zone_atMouseLocation) {
 			case T_Radial_Zone.resize: return this.s_resizing.cursor;
 			case T_Radial_Zone.rotate: return this.s_rotation.cursor;
 			case T_Radial_Zone.paging: return this.s_paging.cursor;
@@ -75,10 +82,54 @@ export default class Radial {
 		}
 	}
 
+	get ring_zone_atMouseLocation(): T_Radial_Zone {
+		const mouse_vector = g.mouse_vector_ofOffset_fromGraphCenter();
+		if (!!mouse_vector) {
+			return this.ring_zone_atVector_relativeToGraphCenter(mouse_vector);
+		}
+		return T_Radial_Zone.miss;
+	}
+
 	update_fill_colors() {
 		this.s_paging.update_fill_color();
 		this.s_rotation.update_fill_color();
 		this.s_resizing.update_fill_color();
+	}
+
+	static readonly _____RINGS: unique symbol;
+
+	ring_zone_atScaled(scaled: Point): T_Radial_Zone {
+		const mouse_vector = g.vector_fromScaled_mouseLocation_andOffset_fromGraphCenter(scaled);
+		if (!!mouse_vector) {
+			return this.ring_zone_atVector_relativeToGraphCenter(mouse_vector);
+		}
+		return T_Radial_Zone.miss;
+	}
+
+	ring_zone_atVector_relativeToGraphCenter(mouse_vector: Point): T_Radial_Zone {
+		let ring_zone = T_Radial_Zone.miss;
+		if (!!mouse_vector) {
+			const show_cluster_sliders = get(s.w_t_cluster_pager) == T_Cluster_Pager.sliders;
+			const g_cluster = g_radial.g_cluster_atMouseLocation;
+			const inner = get(radial.w_resize_radius);
+			const distance = mouse_vector.magnitude;
+			const thick = k.thickness.radial.ring;
+			const thin = k.thickness.radial.arc;
+			const outer = inner + thick;
+			const thumb = inner + thin;
+			if (!!distance) {
+				if (distance < inner) {
+					ring_zone = T_Radial_Zone.resize;
+				} else if (distance < thumb && show_cluster_sliders && !!g_cluster && g_cluster.isMouse_insideThumb) {
+					ring_zone = T_Radial_Zone.paging;
+				} else if (distance <= outer) {
+					ring_zone = T_Radial_Zone.rotate;
+				}
+			}
+			debug.log_mouse(` ring zone ${ring_zone} ${distance.asInt()}`);
+			debug.log_cursor(` ring zone ${ring_zone} ${mouse_vector.verbose}`);
+		}
+		return ring_zone;
 	}
 
 	handle_mouse_drag() {

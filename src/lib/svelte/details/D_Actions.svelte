@@ -154,7 +154,7 @@
 				width: 100%;
 				position:relative;
 				top:{actions_top}px;
-				z-index:{T_Layer.detailsPlus_2};
+				z-index:{T_Layer.action};
 				padding-bottom:{bottom_padding}px;'>
 			{#if $w_s_alteration}
 				<div class='alteration-instructions'
@@ -163,7 +163,7 @@
 						display:block;
 						position:relative;
 						text-align:center;
-						z-index:{T_Layer.detailsPlus_2 + 1};
+						z-index:{T_Layer.action};
 						font-size:{k.font_size.instructions}px;'>
 					<div style='top:9px; width: 100%; position:relative;'>
 						To <em>{$w_s_alteration.t_alteration}</em> an item as <em>{target_ofAlteration() ?? k.unknown}</em>

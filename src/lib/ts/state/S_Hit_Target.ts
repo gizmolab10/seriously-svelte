@@ -11,10 +11,10 @@ export default class S_Hit_Target {
     contains_point?: (point: Point | null) => boolean;
 	identifiable: Identifiable | null = null;
 	html_element: HTMLElement | null = null;
+	element_rect: Rect | null = null;							// for use in Hits index
 	defaultCursor = k.cursor_default;
 	hoverCursor = k.cursor_default;
 	hoverColor = 'transparent';
-	rect: Rect | null = null;							// for use in Hits index
 	element_color = 'black';
 	type: T_Hit_Target;
 	id: string;
@@ -27,13 +27,14 @@ export default class S_Hit_Target {
 
 	static empty() { return {}; }
 	get stroke(): string { return 'red'; }				// override in subclasses
-	get ancestry(): Ancestry { return this.identifiable as Ancestry; }
+	get rect(): Rect | null { return this.element_rect; }
 	get isAWidget(): boolean { return this.type === T_Hit_Target.widget; }
 	get isHovering(): boolean { return this.isEqualTo(get(hits.w_s_hover)); }
+	get ancestry(): Ancestry | null { return (this.identifiable as Ancestry) ?? null; }
 	set isHovering(isHovering: boolean) { hits.w_s_hover.set(isHovering ? this : null); }
 	get svg_hover_color(): string { return this.isHovering ? colors.background : this.stroke; }
 	get isADot(): boolean { return [T_Hit_Target.drag, T_Hit_Target.reveal].includes(this.type); }
-	get isARing(): boolean { return [T_Hit_Target.rotation, T_Hit_Target.resizing, T_Hit_Target.paging].includes(this.type); }
+	get isRing(): boolean { return [T_Hit_Target.rotation, T_Hit_Target.resizing, T_Hit_Target.paging].includes(this.type); }
 
 	isEqualTo(other: S_Hit_Target | null): boolean { return !!other && this.id == other.id; }
 
@@ -41,6 +42,13 @@ export default class S_Hit_Target {
 		this.hoverColor = colors.hover_special_blend(element_color);
 		this.element_color = element_color;
 		this.hoverCursor = hoverCursor;
+	}
+
+	set rect(value: Rect | null) {
+		this.element_rect = value;
+		if (value) {
+			hits.update_hit_target(this);
+		}
 	}
 
 	update_rect() {

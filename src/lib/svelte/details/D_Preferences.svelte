@@ -155,7 +155,7 @@
 			left: {color_left}px;
 			position: {position};
 			border: 1px solid black;
-			z-index: {T_Layer.detailsPlus_3};
+			z-index: {T_Layer.details};
 			background-color: {$w_separator_color}'>
 		<Portal className='preferences-color-portal' id='preferences'>
 			<Color

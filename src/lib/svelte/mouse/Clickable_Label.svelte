@@ -3,7 +3,7 @@
 	import { T_Layer } from '../../ts/common/Enumerations';
 	export let handle_click: (event: Event) => {} | null = null;
 	export let font_size = k.font_size.separator;
-	export let zindex = T_Layer.details + 2;
+	export let zindex = T_Layer.details;
 	export let label_underline = false;
 	export let label_color = 'black';
 	export let label = k.empty;

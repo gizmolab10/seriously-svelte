@@ -1,6 +1,7 @@
 import { g, k, s, Rect, Point, debug, g_radial, radial, controls } from '../common/Global_Imports';
 import { T_Drag, T_Hit_Target, T_Radial_Zone, T_Cluster_Pager } from '../common/Global_Imports';
 import { S_Hit_Target } from '../common/Global_Imports';
+import type { Dictionary } from '../types/Types';
 import { get, writable } from 'svelte/store';
 import RBush from 'rbush';
 
@@ -19,6 +20,7 @@ export default class Hits {
 	w_dragging = writable<T_Drag>(T_Drag.none);
 	w_s_hover = writable<S_Hit_Target | null>(null);
 	targets_dict_byID: { [id: string]: S_Hit_Target } = {};
+	targets_dict_byType: Dictionary<Array<S_Hit_Target>> = {};
 
 	static readonly _____HOVER: unique symbol;
 
@@ -36,7 +38,7 @@ export default class Hits {
 		const target
 			=  matches.find(s => s.isADot)
 			?? matches.find(s => s.isAWidget)
-			?? matches.find(s => s.isARing)
+			?? matches.find(s => s.isRing)
 			?? matches[0];
 		this.w_s_hover.set(!target ? null : target);
 		return !!target;
@@ -61,8 +63,9 @@ export default class Hits {
 	reset() {
 		this.rbush.clear();
 		this.w_s_hover.set(null);
-		this.targets_dict_byID = {};
 		this.time_ofPrior_hover = 0;
+		this.targets_dict_byID = {};
+		this.targets_dict_byType = {};
 	}
 
 	recalibrate() {
@@ -112,6 +115,14 @@ export default class Hits {
 			if (!!id) {
 				delete this.targets_dict_byID[id];
 			}
+			const type = target.type;
+			const byType = this.targets_dict_byType[type];
+			if (byType) {
+				const index = byType.indexOf(target);
+				if (index !== -1) {
+					byType.splice(index, 1);
+				}
+			}
 			this.remove_from_rbush(target);
 			// this.debug(target, `DELETE for id: ${target.id}`);
 		}
@@ -119,24 +130,7 @@ export default class Hits {
 
 	static readonly _____INTERNALS: unique symbol;
 
-	debug(target: S_Hit_Target | null, message: string, ...args: any[]) {
-		if (!target || (target.isAWidget && target.id == 'widget-cra')) {
-			debug.log_hits(message, ...args);
-		}
-	}
-
-	private add_hit_target(target: S_Hit_Target) {
-		const id = target.id;
-		if (!!id && !!target.rect) {
-			if (this.targets_dict_byID[id] != target) {
-				this.targets_dict_byID[id]  = target;
-				this.insert_into_rbush(target);
-				this.debug(target, `ADDED  for id: ${target.id}`);
-				return;
-			}
-		}
-		this.debug(target, `IGNORE: ${target.toString()}`);
-	}
+	get targets(): Array<S_Hit_Target> { return this.rbush.all().map(rbRect => rbRect.target); }
 
 	private insert_into_rbush(target: S_Hit_Target) {
 		if (!!target && !!target.rect) {
@@ -162,50 +156,51 @@ export default class Hits {
 		}
 	}
 
-	static readonly _____RADIAL: unique symbol;
-
-	ring_zone_atScaled(scaled: Point): T_Radial_Zone {
-		const mouse_vector = g.vector_fromScaled_mouseLocation_andOffset_fromGraphCenter(scaled);
-		if (!!mouse_vector) {
-			return this.ring_zone_atVector_relativeToGraphCenter(mouse_vector);
-		}
-		return T_Radial_Zone.miss;
-	}
-
-	get ring_zone_atMouseLocation(): T_Radial_Zone {
-		const mouse_vector = g.mouse_vector_ofOffset_fromGraphCenter();
-		if (!!mouse_vector) {
-			return this.ring_zone_atVector_relativeToGraphCenter(mouse_vector);
-		}
-		return T_Radial_Zone.miss;
-	}
-
-	ring_zone_atVector_relativeToGraphCenter(mouse_vector: Point): T_Radial_Zone {
-		let ring_zone = T_Radial_Zone.miss;
-		const hover_type = get(hits.w_s_hover)?.type;
-		const hasHovering_conflict = !!hover_type && [T_Hit_Target.widget, T_Hit_Target.drag].includes(hover_type);
-		if (!!mouse_vector && !hasHovering_conflict) {
-			const show_cluster_sliders = get(s.w_t_cluster_pager) == T_Cluster_Pager.sliders;
-			const g_cluster = g_radial.g_cluster_atMouseLocation;
-			const inner = get(radial.w_resize_radius);
-			const distance = mouse_vector.magnitude;
-			const thick = k.thickness.radial.ring;
-			const thin = k.thickness.radial.arc;
-			const outer = inner + thick;
-			const thumb = inner + thin;
-			if (!!distance) {
-				if (distance < inner) {
-					ring_zone = T_Radial_Zone.resize;
-				} else if (distance < thumb && show_cluster_sliders && !!g_cluster && g_cluster.isMouse_insideThumb) {
-					ring_zone = T_Radial_Zone.paging;
-				} else if (distance <= outer) {
-					ring_zone = T_Radial_Zone.rotate;
+	private add_hit_target(target: S_Hit_Target) {
+		const id = target.id;
+		const type = target.type;
+		if (!id || !type || !target.rect || this.targets_dict_byID[id] == target) {
+			this.debug(target, `IGNORE: ${target.toString()}`);
+		} else {
+			if (!this.targets_dict_byType[type]) {
+				this.targets_dict_byType[type] = [];
+			} else if (!this.allow_multiple_targets_forType(type)) {
+				const existing = this.targets_dict_byType[type].find(t => t.id == id);
+				if (!!existing) {
+					this.delete_hit_target(existing);
 				}
 			}
-			debug.log_mouse(` ring zone ${ring_zone} ${distance.asInt()}`);
-			debug.log_cursor(` ring zone ${ring_zone} ${mouse_vector.verbose}`);
+			this.targets_dict_byID[id]  = target;
+			this.targets_dict_byType[type].push(target);
+			this.insert_into_rbush(target);
+			this.debug(target, `ADDED  for id: ${target.id}`);
 		}
-		return ring_zone;
+	}
+
+	private allow_multiple_targets_forType(type: T_Hit_Target): boolean {
+		return [
+			T_Hit_Target.control,
+			T_Hit_Target.details,
+			T_Hit_Target.action,
+			T_Hit_Target.button,
+			T_Hit_Target.cancel,
+			T_Hit_Target.paging,
+			T_Hit_Target.reveal,
+			T_Hit_Target.search,
+			T_Hit_Target.widget,
+			T_Hit_Target.title,
+			T_Hit_Target.drag,
+			T_Hit_Target.line].includes(type);
+	}
+
+	static readonly _____DEBUG: unique symbol;
+
+	get info(): string { return `${this.targets.length}`; }
+
+	debug(target: S_Hit_Target | null, message: string, ...args: any[]) {
+		if (!target || (target.isAWidget && target.id == 'widget-cra')) {
+			debug.log_hits(this.info, message, ...args);
+		}
 	}
 
 }

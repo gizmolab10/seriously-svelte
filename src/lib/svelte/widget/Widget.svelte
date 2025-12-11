@@ -141,7 +141,7 @@
 			color : ${s_widget.color};
 			border : ${s_widget.border};
 			width : ${width_ofWidget - 5}px;
-			z-index : ${T_Layer.widgets};
+			z-index : ${T_Layer.widget};
 			border-radius : ${border_radius}px;`;
 	}
 
@@ -169,7 +169,7 @@
         on:keydown={u.ignore}
         name={s_component.id}
         width={width_ofWidget}
-        zindex={T_Layer.widgets}
+        zindex={T_Layer.widget}
         on:click={handle_click_event}
         handle_s_mouse={handle_s_mouse}
         style={widget_style.removeWhiteSpace()}
@@ -181,7 +181,7 @@
 				height : {height}px;
 				position : absolute;
 				width : {width_ofWidget}px;
-				z-index : {T_Layer.widgets};'>
+				z-index : {T_Layer.widget};'>
 			<Widget_Drag
 				s_drag = {s_drag}
 				points_right = {drag_points_right}/>
