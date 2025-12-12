@@ -244,7 +244,11 @@ export class Events {
 				g.grand_build();
 				return;
 			} else if (!shiftKey) {
-				if (ancestry.becomeFocus()) {
+				let focus = ancestry;
+				if (ancestry.isFocus && !!ancestry.parentAncestry) {
+					focus = ancestry.parentAncestry;
+				}
+				if (focus.becomeFocus()) {
 					g.grand_build();
 					return;
 				}

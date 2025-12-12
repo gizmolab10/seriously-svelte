@@ -30,9 +30,9 @@ export default class Hits {
 	get ring_types(): Array<T_Hit_Target> { return [T_Hit_Target.rotation, T_Hit_Target.resizing]; }
 	get rbush_forRubberband(): RBush<Target_RBRect> { return this.rbush_forTypes(this.rubberband_types); }
 	get isHovering_inRing(): boolean { return !!this.hovering_type && this.ring_types.includes(this.hovering_type); }
-	get rubberband_types(): Array<T_Hit_Target> { return [T_Hit_Target.widget, T_Hit_Target.drag, T_Hit_Target.reveal]; }
 	get isHovering_inPaging(): boolean { return !!this.hovering_type && this.paging_types.includes(this.hovering_type); }
 	get isHovering_inWidget(): boolean { return !!this.hovering_type && this.rubberband_types.includes(this.hovering_type); }
+	get rubberband_types(): Array<T_Hit_Target> { return [T_Hit_Target.widget, T_Hit_Target.drag, T_Hit_Target.reveal, T_Hit_Target.title]; }
 
 	private detect_hovering_at(point: Point) {
 		const matches = this.targets_atPoint(point);	// # should always be small (verify?)

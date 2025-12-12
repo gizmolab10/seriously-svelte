@@ -42,6 +42,7 @@
 	function handle_s_mouse(s_mouse) { debug.log_radial(` ${s_mouse.descriptionFor('FOCUS')}`); }
 
 	$: { const _ = $w_ancestry_focus; layout_focus();}
+	$: svg_outline_color = $w_ancestry_focus.isGrabbed ? background_color : color;
 
 	$: {
 		const _ = `${u.descriptionBy_titles($w_grabbed)}
@@ -107,7 +108,8 @@
 					position : absolute;
 					width : {width_ofBorder}px;'>
 				<path
-					stroke = {color}
+				svg_outline_color
+					stroke = {svg_outline_color}
 					stroke-width = '0.8'
 					fill = {background_color}
 					class = 'radial-focus-path'

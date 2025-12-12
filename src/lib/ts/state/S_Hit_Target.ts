@@ -28,9 +28,9 @@ export default class S_Hit_Target {
 	static empty() { return {}; }
 	get stroke(): string { return 'red'; }				// override in subclasses
 	get rect(): Rect | null { return this.element_rect; }
+	get ancestry(): Ancestry { return this.identifiable as Ancestry; }
 	get isAWidget(): boolean { return this.type === T_Hit_Target.widget; }
 	get isHovering(): boolean { return this.isEqualTo(get(hits.w_s_hover)); }
-	get ancestry(): Ancestry | null { return (this.identifiable as Ancestry) ?? null; }
 	set isHovering(isHovering: boolean) { hits.w_s_hover.set(isHovering ? this : null); }
 	get svg_hover_color(): string { return this.isHovering ? colors.background : this.stroke; }
 	get isADot(): boolean { return [T_Hit_Target.drag, T_Hit_Target.reveal].includes(this.type); }
