@@ -8,7 +8,7 @@
 	const { w_thing_color, w_background_color } = colors;
 	const { w_s_title_edit, w_ancestry_focus } = s;
 	const { w_items: w_grabbed } = x.si_grabs;
-	const height = k.height.row + 1;
+	const height = k.height.row;
 	let ancestry = $w_ancestry_focus;
 	let s_widget = ancestry.g_widget.s_widget;
 	let background_color = s_widget.background_color;
@@ -109,17 +109,18 @@
 					width : {width_ofBorder}px;'>
 				<path
 				svg_outline_color
-					stroke = {svg_outline_color}
 					stroke-width = '0.8'
 					fill = {background_color}
 					class = 'radial-focus-path'
+					stroke = {svg_outline_color}
 					stroke-dasharray = {svg_dasharray}
 					d = {svgPaths.pill(center_ofBorder, size_ofBorder)}/>
 			</svg>
 		</Mouse_Responder>
 	<div class='radial-focus-title'
 		style='
-			top : 1px;
+			top : 0.3px;
+			left : -3px;
 			position : absolute;
 			background-color : {background_color};'>
 		<Widget_Title
