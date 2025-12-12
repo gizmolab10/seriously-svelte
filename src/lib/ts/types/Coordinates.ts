@@ -194,6 +194,10 @@ export class Rect {
 	get atZero_forX():				   Rect { return new Rect(Point.y(this.origin.y), this.size); }
 	get atZero_forY():				   Rect { return new Rect(Point.x(this.origin.x), this.size); }
 	get atZero():					   Rect { return new Rect(Point.zero, this.size); }
+	set x(x: number)						{ this.origin.x = x; }
+	set y(y: number)						{ this.origin.y = y; }
+	set width(width: number)				{ this.size.width = width; }
+	set height(height: number)				{ this.size.height = height; }
 
 	get normalized(): Rect {			// make width and height positive
 		let width = this.width;

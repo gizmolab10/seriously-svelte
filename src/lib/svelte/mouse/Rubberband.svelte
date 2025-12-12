@@ -10,16 +10,14 @@
 	const { w_separator_color } = colors;
     const { w_count_mouse_up, w_s_title_edit } = s;
     const { w_mouse_location, w_scaled_movement, w_user_graph_offset } = g;
+    let rbush_forRubberband = hits.rbush_forRubberband;
     let mouse_upCount = $w_count_mouse_up;
     let startPoint: Point | null = null;
     let has_rubberbanded_grabs = true;
     let has_intersections = false;
     let original_grab_count = 0;
+    let rect = Rect.zero;
     let lastUpdate = 0;
-    let height = 0;
-    let width = 0;
-    let left = 0;
-    let top = 0;
 
     $: if ($w_dragging === T_Drag.rubberband) {
         document.body.classList.add('rubberband-blocking');     // see style:global block below
@@ -37,8 +35,8 @@
                 x.si_grabs.reset();
             }
             startPoint = null;
-            height = 0;
-            width = 0;
+            rect.height = 0;
+            rect.width = 0;
             $w_dragging = T_Drag.none;
         }
     }
@@ -53,10 +51,10 @@
     }
 
     $: style = `
-        top: ${top}px;
-        left: ${left}px;
-        width: ${width}px;
-        height: ${height}px;
+        top: ${rect.y}px;
+        left: ${rect.x}px;
+        width: ${rect.width}px;
+        height: ${rect.height}px;
         z-index: ${T_Layer.rubberband};
         border-width: ${strokeWidth}px;
         border-color: ${$w_separator_color};
@@ -68,10 +66,10 @@
         if (now - lastUpdate >= 40) {
             lastUpdate = now;
             const constrainedEnd = constrainToRect($w_mouse_location.x, $w_mouse_location.y);
-            height = Math.abs(constrainedEnd.y - startPoint.y);
-            width = Math.abs(constrainedEnd.x - startPoint.x);
-            left = Math.min(constrainedEnd.x, startPoint.x);
-            top = Math.min(constrainedEnd.y, startPoint.y);
+            rect.height = Math.abs(constrainedEnd.y - startPoint.y);
+            rect.width = Math.abs(constrainedEnd.x - startPoint.x);
+            rect.x = Math.min(constrainedEnd.x, startPoint.x);
+            rect.y = Math.min(constrainedEnd.y, startPoint.y);
             detect_and_grab();
         }
     }
@@ -90,9 +88,7 @@
     }
 
     private function ancestries_intersecting_rubberband(): Array<Ancestry> {
-        const rect = new Rect( new Point(left, top), new Size(width, height));
-        const found = hits.targets_inRect(rect).filter(hit => hit.type === T_Hit_Target.widget);
-        return found.map((hit) => hit.identifiable as Ancestry);
+        return rbush_forRubberband.search(rect.asBBox).map(b => b.target.ancestry);
     }
 
     // Add event handlers at document level
@@ -124,8 +120,8 @@
         // Only block events when rubberband is active and target is not an interactive element
         if ($w_dragging === T_Drag.rubberband && target instanceof HTMLElement) {
             if (!target.closest('.panel') && 
+                !target.closest('.draggable') &&
                 !target.closest('.rubberband') && 
-                !target.closest('.draggable') && 
                 !target.closest('.tree-preferences')) {
                 u.consume_event(e);
             }
@@ -139,9 +135,10 @@
         } else if (!hits.isHovering) {
             const constrained = constrainToRect(startPoint.x, startPoint.y);
             original_grab_count = x.si_grabs.items.length;
-            top = constrained.y;
-            left = constrained.x;
+            rect.y = constrained.y;
+            rect.x = constrained.x;
             $w_dragging = T_Drag.rubberband;
+            rbush_forRubberband = hits.rbush_forRubberband
         }
     }
 

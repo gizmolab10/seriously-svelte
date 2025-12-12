@@ -42,7 +42,7 @@ class Search {
 	private setup() {
 		if (features.allow_search) {
 			this.search_text = p.readDB_key(T_Preference.search_text);
-			s.w_t_startup.subscribe((startup) => {
+			s.w_t_startup.subscribe((startup: T_Startup) => {
 				if (startup == T_Startup.ready) {
 					this.buildIndex(h.things);
 					this.w_search_results_changed.set(Date.now());

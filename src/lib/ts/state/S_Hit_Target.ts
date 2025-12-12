@@ -36,19 +36,25 @@ export default class S_Hit_Target {
 	get isADot(): boolean { return [T_Hit_Target.drag, T_Hit_Target.reveal].includes(this.type); }
 	get isRing(): boolean { return [T_Hit_Target.rotation, T_Hit_Target.resizing, T_Hit_Target.paging].includes(this.type); }
 
+	set rect(value: Rect | null) {
+		// Only update RBush if the rect actually changed position/size
+		// This prevents unnecessary remove/add cycles that cause detection gaps
+		const old = this.element_rect;
+		const changed = !old || !value || 
+			old.x !== value.x || old.y !== value.y || 
+			old.width !== value.width || old.height !== value.height;
+		this.element_rect = value;
+		if (!!value && changed) {
+			hits.update_hit_target(this);
+		}
+	}
+
 	isEqualTo(other: S_Hit_Target | null): boolean { return !!other && this.id == other.id; }
 
 	set_forHovering(element_color: string, hoverCursor: string) {
 		this.hoverColor = colors.hover_special_blend(element_color);
 		this.element_color = element_color;
 		this.hoverCursor = hoverCursor;
-	}
-
-	set rect(value: Rect | null) {
-		this.element_rect = value;
-		if (value) {
-			hits.update_hit_target(this);
-		}
 	}
 
 	update_rect() {

@@ -16,8 +16,8 @@ type Target_RBRect = {
 export default class Hits {
 	time_ofPrior_drag: number = 0;
 	time_ofPrior_hover: number = 0;
-	rbush = new RBush<Target_RBRect>();
 	w_dragging = writable<T_Drag>(T_Drag.none);
+	rbush_forHover = new RBush<Target_RBRect>();
 	w_s_hover = writable<S_Hit_Target | null>(null);
 	targets_dict_byID: { [id: string]: S_Hit_Target } = {};
 	targets_dict_byType: Dictionary<Array<S_Hit_Target>> = {};
@@ -25,10 +25,14 @@ export default class Hits {
 	static readonly _____HOVER: unique symbol;
 
 	get isHovering(): boolean { return get(this.w_s_hover) != null; }
+	get paging_types(): Array<T_Hit_Target> { return [T_Hit_Target.paging]; }
 	get hovering_type(): T_Hit_Target | null { return get(this.w_s_hover)?.type ?? null; }
-	get isHovering_inPaging(): boolean { return !!this.hovering_type && [T_Hit_Target.paging].includes(this.hovering_type); }
-	get isHovering_inRing(): boolean { return !!this.hovering_type && [T_Hit_Target.rotation, T_Hit_Target.resizing].includes(this.hovering_type); }
-	get isHovering_inWidget(): boolean { return !!this.hovering_type && [T_Hit_Target.widget, T_Hit_Target.drag, T_Hit_Target.reveal].includes(this.hovering_type); }
+	get ring_types(): Array<T_Hit_Target> { return [T_Hit_Target.rotation, T_Hit_Target.resizing]; }
+	get rbush_forRubberband(): RBush<Target_RBRect> { return this.rbush_forTypes(this.rubberband_types); }
+	get isHovering_inRing(): boolean { return !!this.hovering_type && this.ring_types.includes(this.hovering_type); }
+	get rubberband_types(): Array<T_Hit_Target> { return [T_Hit_Target.widget, T_Hit_Target.drag, T_Hit_Target.reveal]; }
+	get isHovering_inPaging(): boolean { return !!this.hovering_type && this.paging_types.includes(this.hovering_type); }
+	get isHovering_inWidget(): boolean { return !!this.hovering_type && this.rubberband_types.includes(this.hovering_type); }
 
 	private detect_hovering_at(point: Point) {
 		const matches = this.targets_atPoint(point);	// # should always be small (verify?)
@@ -61,7 +65,7 @@ export default class Hits {
 	}
 
 	reset() {
-		this.rbush.clear();
+		this.rbush_forHover.clear();
 		this.w_s_hover.set(null);
 		this.time_ofPrior_hover = 0;
 		this.targets_dict_byID = {};
@@ -83,7 +87,7 @@ export default class Hits {
 				});
 			}
 		}
-		this.rbush = newBush;  // atomic swap
+		this.rbush_forHover = newBush;  // atomic swap
 	}
 
 	static readonly _____HIT_TEST: unique symbol;
@@ -93,12 +97,12 @@ export default class Hits {
 	}
 
 	targets_atPoint(point: Point): Array<S_Hit_Target> {
-		const targets = this.rbush.search(point.asBBox).map(rbRect => rbRect.target);
+		const targets = this.rbush_forHover.search(point.asBBox).map(rbRect => rbRect.target);
 		return targets.filter(target => (target.contains_point?.(point) ?? true));	// refine using shape of target
 	}
 
 	targets_inRect(rect: Rect): Array<S_Hit_Target> {
-		const targets = this.rbush.search(rect.asBBox).map(rbRect => rbRect.target);
+		const targets = this.rbush_forHover.search(rect.asBBox).map(rbRect => rbRect.target);
 		return targets.filter(target => (target.containedIn_rect?.(rect) ?? true));	// refine using shape of target
 	}
 
@@ -130,11 +134,11 @@ export default class Hits {
 
 	static readonly _____INTERNALS: unique symbol;
 
-	get targets(): Array<S_Hit_Target> { return this.rbush.all().map(rbRect => rbRect.target); }
+	get targets(): Array<S_Hit_Target> { return this.rbush_forHover.all().map(rbRect => rbRect.target); }
 
 	private insert_into_rbush(target: S_Hit_Target) {
 		if (!!target && !!target.rect) {
-			this.rbush.insert({
+			this.rbush_forHover.insert({
 				minX: target.rect.x,
 				minY: target.rect.y,
 				maxX: target.rect.right,
@@ -146,7 +150,7 @@ export default class Hits {
 
 	private remove_from_rbush(target: S_Hit_Target) {
 		if (!!target && !!target.rect) {
-			this.rbush.remove({
+			this.rbush_forHover.remove({
 				minX: target.rect.x,
 				minY: target.rect.y,
 				maxX: target.rect.right,
@@ -175,6 +179,35 @@ export default class Hits {
 			this.insert_into_rbush(target);
 			this.debug(target, `ADDED  for id: ${target.id}`);
 		}
+	}
+
+	private targets_forTypes(types: Array<T_Hit_Target>): Array<S_Hit_Target> {
+		const targets: Array<S_Hit_Target> = [];
+		for (const type of types) {
+			const byType = this.targets_dict_byType[type];
+			if (!!byType && byType.length > 0) {
+				targets.push(...byType);
+			}
+		}
+		return targets;
+	}
+
+	private rbush_forTypes(types: Array<T_Hit_Target>): RBush<Target_RBRect> {
+		const targets = this.targets_forTypes(types);
+		const bush = new RBush<Target_RBRect>();
+		for (const target of targets) {
+			if (!!target && !!target.rect) {
+				const rect = target.rect;
+				bush.insert({
+					minX: rect.x,
+					minY: rect.y,
+					maxX: rect.right,
+					maxY: rect.bottom,
+					target: target
+				});
+			}
+		}
+		return bush;
 	}
 
 	private allow_multiple_targets_forType(type: T_Hit_Target): boolean {

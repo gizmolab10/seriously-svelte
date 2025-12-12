@@ -16,16 +16,11 @@ export default class S_Component extends S_Hit_Target {
 
     // hit test (detect and rubberband), logger, emitter, handler and destroyer
 
-    constructor(ancestry: Ancestry | null, type: T_Hit_Target) {
-        super(type, ancestry as Identifiable);
-        this.hid = ancestry?.hid ?? -1 as Integer;
-        this.id = `${type}-${ancestry?.kind ?? 'no-predicate'}-${ancestry?.titles ?? Identifiable.newID()}`;
+    constructor(identifiable: Identifiable | null, type: T_Hit_Target) {
+        super(type, identifiable);
+        this.hid = identifiable?.hid ?? -1 as Integer;
+        this.id = this.component_id;
     }
-
-    get description(): string { return this.type; }
-    get distance_toGraphCenter(): Point { return this.rect?.center ?? Point.zero; }
-    
-	intersects_rect(rect: Rect | null): boolean { return !!rect && !!this.rect && this.rect.intersects(rect); }
 
     static readonly _____SIGNALS: unique symbol;
 
@@ -37,20 +32,18 @@ export default class S_Component extends S_Hit_Target {
         }
     }
 
-    assureHas_t_signals_atPriority(t_signals: Array<T_Signal>, priority: number) {
-        for (const handler of this.signal_handlers) {
-            if (!t_signals.includes(handler.t_signal) || handler.priority != priority) {
-                const keyed_handler: SignalConnection_atPriority = { t_signal: handler.t_signal, priority: handler.priority, connection: null };
-                this.signal_handlers.push(keyed_handler);
-            }
-        }
-    }
-
     disconnect() {
         for (const handler of this.signal_handlers) {
             handler.connection?.disconnect();
             handler.connection = null;
         }
+    }
+
+    private get description(): string { return this.type; }
+
+    private get component_id(): string {
+        const a = this.ancestry;
+        return `${this.type}-${!a ? 'no-ancestry' : (a.kind + '-' + a.titles)}`;
     }
 
     static readonly _____DEBUG_LOGGING: unique symbol;
