@@ -135,6 +135,7 @@ Final origin: ${final_origin.description}
 			style='
 				width: {final_inset_size.width * 1.5}px;
 				top: {final_page_size.height - 100}px;
+				font-size: {k.font_size.warning}px;
 				background-color: transparent;
 				height: {message_height}px;
 				box-sizing: border-box;
@@ -142,7 +143,6 @@ Final origin: ${final_origin.description}
 				white-space: pre-wrap;
 				border: 2px solid red;
 				position: absolute;
-				font-size: 16px;
 				overflow: auto;
 				padding: 8px;
 				color: black;

@@ -67,7 +67,6 @@
 			top: 1px;
 			left: 94px;
 			color: blue;
-			font-size: 12px;
 			padding-left: 6px;
 			border-radius: 6px;
 			position: absolute;
@@ -75,16 +74,17 @@
 			background-color: white;
 			border: 1px solid lightgray;
 			height: {k.height.button + 2}px;
+			font-size: {k.font_size.banners}px;
 			font-family: {$w_thing_fontFamily};'/>
 	{#if search.search_text?.length > 0}
 		<div class='search-results-found'
 			style='
 				top: 4px;
 				width: 100px;
-				font-size: 12px;
 				text-align: center;
 				position: absolute;
 				left: {search_width() + 84}px;
+				font-size: {k.font_size.banners}px;
 				font-family: {$w_thing_fontFamily};'>
 			{$w_search_results_found} match{$w_search_results_found == 1 ? '' : 'es'}
 		</div>

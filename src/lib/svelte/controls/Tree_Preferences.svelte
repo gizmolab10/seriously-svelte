@@ -52,10 +52,10 @@
 		width: 56px;
 		height: 26px;
 		display: flex;
-		font-size: 14px;
 		position: absolute;
 		align-items: center;
-		justify-content: center;'>
+		justify-content: center;
+		font-size: {k.font_size.common}px;'>
 		{$w_depth_limit} level{($w_depth_limit < 2) ? '' : 's'}
 	</div>
 	{#key $w_show_tree_ofType}

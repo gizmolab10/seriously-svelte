@@ -866,7 +866,7 @@ export default class Ancestry extends Identifiable {
 
 	get points_right(): boolean {
 		const hasVisibleChildren = this.isExpanded && this.hasChildren;
-		const radial_points_right = this.g_widget?.reveal_dot_isAt_right ?? true;
+		const radial_points_right = this.g_widget?.reveal_isAt_right ?? true;
 		return controls.inRadialMode ? radial_points_right : !hasVisibleChildren;
 	}
 

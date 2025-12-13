@@ -144,7 +144,7 @@
 {#key reattachments}
 	{#if !$w_grabbed || $w_grabbed.length == 0}
 		<div class='nothing-to-show'>
-			<p style='text-align:center; font-size:10px; position:relative; display:flex; align-items:center; justify-content:center;'>
+			<p style='text-align:center; font-size:{k.font_size.instructions}px; position:relative; display:flex; align-items:center; justify-content:center;'>
 				{k.nothing_to_show}
 			</p>
 		</div>

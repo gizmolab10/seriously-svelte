@@ -14,12 +14,11 @@ export default class G_Widget {
 	offset_ofWidget = Point.zero;
 	origin_ofWidget = Point.zero;
 	origin_ofRadial = Point.zero;
+	reveal_isAt_right = true;
 	origin_ofTrunk = Point.zero;
 	origin_ofTitle = Point.zero;
 	center_ofDrag = Point.zero;
-	reveal_dot_isAt_right = true;
 	size_ofSubtree = Size.zero;
-	width_ofGraphDrawing = 0;
 	pointsTo_child = true;
 	g_cluster!: G_Cluster;
 	s_widget!: S_Widget;
@@ -97,11 +96,11 @@ export default class G_Widget {
 		}
 	}
 
-	layout_necklaceWidget(rotated_origin: Point, reveal_dot_isAt_right: boolean) {
+	layout_necklaceWidget(rotated_origin: Point, reveal_isAt_right: boolean) {
 		if (controls.inRadialMode) {
 			this.t_graph = T_Graph.radial;
 			this.location_within_necklace = rotated_origin;
-			this.reveal_dot_isAt_right = reveal_dot_isAt_right;
+			this.reveal_isAt_right = reveal_isAt_right;
 			this.layout();
 			debug.log_layout(`WIDGET necklaceWidget ${this.origin.verbose} ${this.ancestry.title}`);
 		}
@@ -153,7 +152,7 @@ export default class G_Widget {
 		origin: Point = Point.zero,
 		t_graph = T_Graph.radial,
 		pointsTo_child: boolean = true,
-		reveal_dot_isAt_right: boolean = true) {
+		reveal_isAt_right: boolean = true) {
 
 		if (t_graph == get(show.w_show_graph_ofType)) {	// assure modes match
 			const height_ofSubtree = this.ancestry.height_ofVisibleSubtree();
@@ -164,7 +163,7 @@ export default class G_Widget {
 			this.t_graph = t_graph;
 			this.pointsTo_child = pointsTo_child;
 			this.size_ofSubtree.height = height_ofSubtree;
-			this.reveal_dot_isAt_right = reveal_dot_isAt_right;
+			this.reveal_isAt_right = reveal_isAt_right;
 			this.g_line.set_curve_type_forHeight(height_ofLines);
 			this.layout_one_generation();
 		}
@@ -176,32 +175,33 @@ export default class G_Widget {
 			const dot_size = k.height.dot;
 			const show_reveal = this.showingReveal;
 			const inRadialMode = controls.inRadialMode;
+			const reveal_isAt_right = this.reveal_isAt_right;
 			const width_ofTitle = ancestry.thing.width_ofTitle;
-			const reveal_dot_isAt_right = this.reveal_dot_isAt_right;
 			const width_ofReveal_dot = show_reveal ? dot_size : 0;
 			const isRadialFocus = inRadialMode && ancestry.isFocus;
 			const width_ofDrag = (dot_size * 2) + (inRadialMode ? 2 : -4);
-			const width_ofWidget = width_ofTitle + width_ofDrag + width_ofReveal_dot + (inRadialMode ? 0 : 4) - 5;
+			const width_ofWidget = isRadialFocus 
+				? width_ofTitle + 18 
+				: width_ofTitle + width_ofDrag + width_ofReveal_dot + (inRadialMode ? 0 : 4) - 5;
 			const x_ofDrag_for_pointing_left = width_ofWidget - dot_size - 1.25 + (show_reveal ? 0.5 : 0);
-			const x_ofDrag = reveal_dot_isAt_right ? 2 : x_ofDrag_for_pointing_left;
+			const x_ofDrag = reveal_isAt_right ? 2 : x_ofDrag_for_pointing_left;
 			const y_ofDrag = 2.5 - (inRadialMode ? 0.1 : 0);
-			const x_ofRadial = reveal_dot_isAt_right ? -4 : -dot_size;
-			const x_offset_ofWidget = reveal_dot_isAt_right ? -7 : 6 + dot_size - width_ofWidget;
+			const x_ofRadial = reveal_isAt_right ? -4 : -dot_size;
+			const x_offset_ofWidget = reveal_isAt_right ? -7 : 6 + dot_size - width_ofWidget;
 			const origin_ofDrag = new Point(x_ofDrag, y_ofDrag);
-			const x_ofRadial_title =  reveal_dot_isAt_right && !isRadialFocus ? 20 : (show_reveal ? 20 : 7);
-			if (!isRadialFocus) {	// not overwrite g_radial's location_ofRadial
+			const x_ofRadial_title = (reveal_isAt_right && !isRadialFocus) ? 19 : (show_reveal ? 22 : 10);
+			if (!isRadialFocus) {	// not overwrite focus's location_ofRadial
 				this.location_ofRadial = this.location_within_necklace.offsetByXY(x_ofRadial + 4, 6 - dot_size);
 			}
-			this.origin_ofRadial = this.location_ofRadial.offsetByX(reveal_dot_isAt_right ? 0 : -width_ofTitle - width_ofReveal_dot);
+			this.origin_ofRadial = this.location_ofRadial.offsetByX(reveal_isAt_right ? 0 : -width_ofTitle - width_ofReveal_dot);
 			this.origin_ofTitle = Point.x(inRadialMode ? x_ofRadial_title : dot_size + 5);
 			this.center_ofDrag = origin_ofDrag.offsetEquallyBy(dot_size / 2);
 			this.offset_ofWidget = new Point(x_offset_ofWidget + (ancestry.isFocus ? 5 : 0), 0.5);
-			this.width_ofGraphDrawing = width_ofWidget;
 			this.width_ofWidget = width_ofWidget;
 			if (show_reveal) {
 				const y_ofReveal = dot_size * 0.7;
-				const x_offsetFor_points_right = width_ofWidget - dot_size - 10;
-				const x_ofReveal = dot_size + (reveal_dot_isAt_right ? x_offsetFor_points_right : -3);
+				const x_offsetFor_revealAt_right = width_ofWidget - dot_size - 10;
+				const x_ofReveal = dot_size + (reveal_isAt_right ? x_offsetFor_revealAt_right : -3);
 				this.center_ofReveal = new Point(x_ofReveal, y_ofReveal);
 			}
 		}

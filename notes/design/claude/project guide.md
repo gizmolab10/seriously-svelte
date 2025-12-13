@@ -295,6 +295,26 @@ pointsTo_child      // Direction flag for line drawing
 - Widgets distributed around cluster's fork angle
 - `G_Cluster_Pager` provides arc UI for paging through large clusters
 
+**Radial Focus Widget Layout**:
+
+The focus widget in radial mode is positioned at the center of the graph view, computed in `G_RadialGraph.layout_focus()`:
+
+1. **Get focus ancestry**: `s.w_ancestry_focus` provides the current focus
+2. **Get G_Widget**: `ancestry.g_widget` (the geometry object for the focus)
+3. **Compute center offset**: Title is horizontally centered via `x = -7.5 - (width_ofTitle / 2)`
+4. **Compute origin**: `g.center_ofGraphView.offsetByXY(x, -11)` places widget at graph center
+5. **Call `g_focus.layout()`**: Computes dot positions and title origin relative to widget
+6. **Set layout properties**:
+   - `width_ofWidget`: Set to title width (no reveal dot for focus)
+   - `location_ofRadial`: The computed center position
+   - `width_ofGraphDrawing`: Title width + 30 (for printing margin)
+   - `origin_ofRadial`: Adjusted for `reveal_dot_isAt_right` flag
+
+The focus widget differs from necklace widgets because:
+- It has no reveal dot (focus is already revealed)
+- Its position is absolute (center of graph) rather than relative to ring
+- `layout_focus()` overrides any values set by `layout()`
+
 **Orientation Flags** (necklace widgets only):
 - `reveal_dot_isAt_right`: Drag dot on left, reveal dot on right. False for widgets on the left side of the radial ring.
 - `pointsTo_child`: Default true for children of focus. False for parents of focus (line connects toward focus).

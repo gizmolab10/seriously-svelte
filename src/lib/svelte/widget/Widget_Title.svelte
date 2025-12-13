@@ -6,7 +6,7 @@
 	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { onMount } from 'svelte';
 	export let s_title!: S_Element;
-	export let fontSize = '1em';
+	export let fontSize = `${k.font_size.common}px`;
 	const ancestry = s_title.ancestry;
 	const thing = ancestry?.thing;
     const { w_mouse_location } = g;
@@ -19,8 +19,8 @@
 	const { w_items: w_expanded } = x.si_expanded;
 	const { w_thing_title, w_thing_fontFamily, w_s_title_edit } = s;
 	let title_width = (thing?.width_ofTitle ?? 0) + title_extra();
-	let layout_timer: number | null = null;
 	let title_binded = thing?.title ?? k.empty;
+	let layout_timer: number | null = null;
 	let title_component: S_Component;
 	let title_prior = thing?.title;
 	let s_component: S_Component;
@@ -38,7 +38,7 @@
 	function isEditing():	  boolean { return $w_s_title_edit?.ancestry_isEditing(ancestry) ?? false; }
 	function isStopping():	  boolean { return $w_s_title_edit?.ancestry_isStopping(ancestry) ?? false; }
 	function isPercolating(): boolean { return $w_s_title_edit?.ancestry_isPercolating(ancestry) ?? false; }
-	function title_extra():	   number { return (controls.inTreeMode && isEditing()) ? 2 : 0; }
+	function title_extra():	   number { return (controls.inTreeMode && isEditing()) ? 2.2 : 0; }
 	function hasChanges()	 		  { return title_prior != title_binded; }
 	function handle_mouse_up() 		  { clearClicks(); }
 

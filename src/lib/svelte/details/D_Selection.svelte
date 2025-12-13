@@ -94,7 +94,7 @@
 {#key trigger}
 	{#if !ancestry || !thing}
 		<div>
-			<p style='text-align:center; font-size:10px; position:relative; display:flex; align-items:center; justify-content:center;'>
+			<p style='text-align:center; font-size:{k.font_size.instructions}px; position:relative; display:flex; align-items:center; justify-content:center;'>
 				{k.nothing_to_show}
 			</p>
 		</div>

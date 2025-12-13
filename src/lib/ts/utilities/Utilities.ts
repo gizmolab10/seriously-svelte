@@ -198,7 +198,7 @@ export class Utilities extends Testworthy_Utilities {
 		let maxY = -Infinity;
 		for (const g_widget of g_widgets) {
 			const w_origin = g_widget.origin_ofGraphDrawing;
-			const w_width = g_widget.width_ofGraphDrawing;
+			const w_width = g_widget.width_ofWidget;
 			const w_height = k.height.row - 1.5;
 			const w_minX = w_origin.x;
 			const w_minY = w_origin.y;

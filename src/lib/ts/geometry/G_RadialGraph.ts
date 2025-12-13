@@ -1,4 +1,4 @@
-import { g, h, k, s, u, radial, Ancestry, Predicate } from '../common/Global_Imports';
+import { g, h, k, s, u, Point, radial, Ancestry, Predicate } from '../common/Global_Imports';
 import { G_Widget, G_Cluster, T_Kinship } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
 import { G_Paging } from './G_Paging';
@@ -34,14 +34,15 @@ export default class G_RadialGraph {
 		const g_focus = ancestry?.g_widget;
 		if (!!g_focus && !!ancestry?.thing) {
 			const width_ofTitle = ancestry.thing.width_ofTitle;
-			const x = -7.5 - (width_ofTitle / 2);
+			const width_ofWidget = width_ofTitle + 18;
+			const x = -width_ofWidget / 2;
 			const y = -11;
 			const origin_ofWidget = g.center_ofGraphView.offsetByXY(x, y);
 			g_focus.layout();
-			g_focus.width_ofWidget = width_ofTitle;
+			g_focus.width_ofWidget = width_ofTitle + 18;
 			g_focus.location_ofRadial = origin_ofWidget;
-			g_focus.width_ofGraphDrawing = width_ofTitle + 30;
-			g_focus.origin_ofRadial = origin_ofWidget.offsetByX(g_focus.reveal_dot_isAt_right ? 0 : -width_ofTitle);	// adjust for printing
+			g_focus.offset_ofWidget = Point.zero;
+			g_focus.origin_ofRadial = origin_ofWidget.offsetByX(-width_ofTitle);	// adjust for printing
 		}
 	}
 

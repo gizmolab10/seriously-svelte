@@ -17,7 +17,7 @@
 	const ancestry = g_widget.ancestry;
 	const { w_items: w_grabbed } = x.si_grabs;
 	const reveal_pointsTo_child = g_widget.pointsTo_child;
-    const drag_points_right = g_widget.reveal_dot_isAt_right;
+    const drag_points_right = g_widget.reveal_isAt_right;
 	const { w_s_hover, w_s_title_edit, w_ancestry_focus } = s;
 	let observer: MutationObserver | null = null;
 	let width_ofWidget = g_widget.width_ofWidget;
@@ -71,7 +71,9 @@
 		const reactives = `${$w_s_title_edit?.t_edit}:::${u.descriptionBy_titles($w_grabbed)}`;
 		if (reactives != trigger && !!ancestry && s_widget.update_state_didChange) {
 			trigger = reactives;
-			g_widget.layout();
+			if (!s_widget.isRadial_focus) {
+				g_widget.layout();
+			}
 			final_layout();
 			s_component.debug_log_connection_state('GRABBED STATE CHANGED');
 		}

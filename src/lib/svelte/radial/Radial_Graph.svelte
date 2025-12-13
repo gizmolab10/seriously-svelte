@@ -63,8 +63,8 @@
 		height : {$w_rect_ofGraphView.size.height}px;
 		transform : translate({$w_user_graph_offset.x}px, {$w_user_graph_offset.y}px);'>
 	<Radial_Rings/>
-	<Widget g_widget={$w_ancestry_focus.g_widget}/>
 	{#key reattachments}
+		<Widget g_widget={$w_ancestry_focus.g_widget}/>
 		<div class = 'necklace-of-widgets'
 			style = 'z-index : {T_Layer.necklace};'>
 			{#each g_radial.g_necklace_widgets as g_necklace_widget}

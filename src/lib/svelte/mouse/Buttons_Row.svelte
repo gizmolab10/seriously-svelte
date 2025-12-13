@@ -9,13 +9,13 @@
 	export let separator_thickness = k.thickness.separator.main;
 	export let origin: Point | null = null;
 	export let center: Point | null = null;
+    export let type = T_Hit_Target.button;
+	export let font_sizes: Array<number>;
 	export let detect_autorepeat = false;
 	export let detect_longClick = false;
-    export let type = T_Hit_Target.button;
 	export let has_gull_wings = true;
 	export let has_seperator = false;
 	export let row_titles: string[];	// first one is optional row title, rest are button titles
-	export let font_sizes: Array<number>;
 	export let button_height = 13;
 	export let align_left = true;
 	export let has_title = true;	// true means first row_titles is the title of the row
