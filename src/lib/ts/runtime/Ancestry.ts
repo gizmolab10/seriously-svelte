@@ -153,11 +153,11 @@ export default class Ancestry extends Identifiable {
 
 	static readonly _____SVG: unique symbol;
 
-	svgPathFor_tiny_outer_dots_points_toChild(points_toChild: boolean): string | null {
+	svgPathFor_tiny_outer_dot_pointTo_child(pointsTo_child: boolean): string | null {
 		const in_radial_mode = controls.inRadialMode;
-		const tiny_outer_dots_count = this.relationships_count_forChildren(points_toChild);
+		const tiny_outer_dots_count = this.relationships_count_forChildren(pointsTo_child);
 		const isVisible_forChild = this.hasChildren && show.children_dots && (in_radial_mode ? true : !this.isExpanded);
-		const isVisible_inRadial = points_toChild ? isVisible_forChild : this.hasParents && (this.isBidirectional ? show.related_dots : show.parent_dots);
+		const isVisible_inRadial = pointsTo_child ? isVisible_forChild : this.hasParents && (this.isBidirectional ? show.related_dots : show.parent_dots);
 		const show_tiny_outer_dots = in_radial_mode ? isVisible_inRadial : (isVisible_forChild || this.hidden_by_depth_limit);
 		return !show_tiny_outer_dots ? null : svgPaths.tiny_outer_dots_circular(k.tiny_outer_dots.diameter, tiny_outer_dots_count as Integer, this.points_right);
 	}
@@ -333,7 +333,7 @@ export default class Ancestry extends Identifiable {
 	static readonly _____MOVE_UP: unique symbol;
 
 	persistentMoveUp_maybe(up: boolean, SHIFT: boolean, OPTION: boolean, EXTREME: boolean): [boolean, boolean] {
-		if (this.points_toChildren) {													// trees and radials
+		if (this.children_cluster) {													// trees and radials
 			return this.persistentMoveUp_forChild_maybe(up, SHIFT, OPTION, EXTREME);
 		} else if (this.isBidirectional) {												// radials
 			return this.persistentMoveUp_forBidirectional_maybe(up, SHIFT, OPTION, EXTREME);
@@ -430,10 +430,10 @@ export default class Ancestry extends Identifiable {
 	
 	static readonly _____ORDER: unique symbol;
 	
-	get order(): number { return this.relationship?.order_forPointsTo(this.points_toChildren) ?? -12345; }
+	get order(): number { return this.relationship?.order_forPointsTo(this.children_cluster) ?? -12345; }
 	
 	order_setTo(order: number) {
-		this.relationship?.order_setTo_forPointsTo(order, this.points_toChildren);
+		this.relationship?.order_setTo_forPointsTo(order, this.children_cluster);
 	}
 
 	reorder_within(ancestries: Array<Ancestry>, up: boolean) {
@@ -808,7 +808,7 @@ export default class Ancestry extends Identifiable {
 
 	isChildOf(other: Ancestry):		 boolean { return this.id_thing == other.thingAt(2)?.id; }
 	hasParents_ofKind(kind: string): boolean { return this.thing?.hasParents_ofKind(kind) ?? false; }
-	get points_toChildren():		 boolean { return this.g_cluster?.points_toChildren ?? true }
+	get children_cluster():		 boolean { return this.g_cluster?.children_cluster ?? true }
 	get hasParents():				 boolean { return this.parentRelationships.length > 0; }
 	get hasChildren():				 boolean { return this.childRelationships.length > 0; }
 	get lastChild():				   Thing { return this.children.slice(-1)[0]; }
@@ -866,7 +866,7 @@ export default class Ancestry extends Identifiable {
 
 	get points_right(): boolean {
 		const hasVisibleChildren = this.isExpanded && this.hasChildren;
-		const radial_points_right = this.g_widget?.widget_points_right ?? true;
+		const radial_points_right = this.g_widget?.reveal_dot_isAt_right ?? true;
 		return controls.inRadialMode ? radial_points_right : !hasVisibleChildren;
 	}
 
@@ -906,11 +906,11 @@ export default class Ancestry extends Identifiable {
 	matchesStore(store: Writable<Ancestry | null>):						   boolean { return get(store)?.equals(this) ?? false; }
 	rect_ofComponent(component: S_Component | null):				   Rect | null { return component?.rect ?? null; }
 
-	showsReveal_forPointingToChild(points_toChild: boolean): boolean {
+	showsReveal_forPointingToChild(pointsTo_child: boolean): boolean {
 		const isRadialFocus = controls.inRadialMode && this.isFocus;
 		const isBulkAlias = this.thing?.isBulkAlias ?? false;
 		const isBidirectional = this.predicate?.isBidirectional ?? true;
-		const hasChildren = this.relationships_count_forChildren(points_toChild) > 0;
+		const hasChildren = this.relationships_count_forChildren(pointsTo_child) > 0;
 		return (!isBidirectional && !isRadialFocus) && (hasChildren || isBulkAlias);
 	}
 

@@ -26,7 +26,7 @@ export default class G_Cluster {
 	g_thumbArc = new G_Cluster_Pager(true);
 	ancestries: Array<Ancestry> = [];
 	color = colors.default_forThings;
-	points_toChildren: boolean;
+	children_cluster: boolean;
 	arc_in_lower_half = false;
 	label_center = Point.zero;
 	cluster_title = k.empty;
@@ -40,8 +40,8 @@ export default class G_Cluster {
 	// everything in one cluster of the radial view
 
 	destructor() { this.ancestries = []; }
-	constructor(predicate: Predicate, points_toChildren: boolean) {
-		this.points_toChildren = points_toChildren;
+	constructor(predicate: Predicate, children_cluster: boolean) {
+		this.children_cluster = children_cluster;
 		this.predicate = predicate;
 		radial.w_resize_radius.subscribe((radius: number) => {
 			if (this.g_cluster_pager.outside_arc_radius != radius) {
@@ -76,7 +76,7 @@ export default class G_Cluster {
 		const children_angle = get(radial.w_rotate_angle);
 		const raw = this.predicate.isBidirectional ?
 			children_angle + tweak :
-			this.points_toChildren ? children_angle :		// one directional, use global
+			this.children_cluster ? children_angle :		// one directional, use global
 			children_angle - tweak;
 		return raw ?? 0;
 	}
@@ -127,11 +127,11 @@ export default class G_Cluster {
 	get paging_index_ofFocus():	  number { return Math.round(this.g_focusPaging?.index ?? 0); }
 	get s_paging():			  S_Rotation { return radial.s_paging_forName_ofCluster(this.name); }
 	get g_focusPaging(): G_Paging | null { return this.g_paging_forAncestry(get(s.w_ancestry_focus)); }
-	get g_paging():		 G_Paging | null { return this.g_paging_forPredicate_toChildren(this.predicate, this.points_toChildren); }
+	get g_paging():		 G_Paging | null { return this.g_paging_forPredicate_toChildren(this.predicate, this.children_cluster); }
 
-	g_paging_forPredicate_toChildren(predicate: Predicate, points_toChildren: boolean): G_Paging | null {
+	g_paging_forPredicate_toChildren(predicate: Predicate, children_cluster: boolean): G_Paging | null {
 		const g_pages = radial.g_pages_forThingID(get(s.w_ancestry_focus)?.thing?.id);
-		return g_pages?.g_paging_forPredicate_toChildren(predicate, points_toChildren) ?? null;
+		return g_pages?.g_paging_forPredicate_toChildren(predicate, children_cluster) ?? null;
 	}
 
 	g_paging_forAncestry(ancestry: Ancestry): G_Paging | null {
@@ -174,9 +174,9 @@ export default class G_Cluster {
 	static readonly _____ANGLES: unique symbol;
 	
 	private get isSingular(): boolean { return this.total_widgets == 1; }
-	private get isParental(): boolean { return !this.points_toChildren && !this.predicate?.isBidirectional; }
+	private get isParental(): boolean { return !this.children_cluster && !this.predicate?.isBidirectional; }
 	private get radial_vector_ofFork(): Point { return Point.fromPolar(radial.ring_radius, this.angle_ofCluster); }
-	private get direction_kind(): string { return this.isParental ? this.isSingular ? 'parent' : 'parents' : this.points_toChildren ? this.isSingular ? 'child' : 'children' : this.kind; }
+	private get direction_kind(): string { return this.isParental ? this.isSingular ? 'parent' : 'parents' : this.children_cluster ? this.isSingular ? 'child' : 'children' : this.kind; }
 
 	private update_arc_angles(index: number, max: number, child_angle: number) {
 		// index increases & angle decreases clockwise
@@ -192,7 +192,7 @@ export default class G_Cluster {
 		this.g_cluster_widgets = [];
 		if (this.widgets_shown > 0 && !!this.predicate) {
 			const center = this.center.offsetByXY(0.5, -1);			// tweak so that drag dots are centered within the rotation ring
-			const factor = 1;//this.predicate.kind == T_Predicate.contains ? this.points_toChildren ? 0 : 1 : 2;
+			const factor = 1;//this.predicate.kind == T_Predicate.contains ? this.children_cluster ? 0 : 1 : 2;
 			const inset = (factor + 3) * k.thickness.radial.ring / 6;
 			const radial_vector = Point.x(radial.ring_radius + inset);
 			const radial_vector_ofFork = this.radial_vector_ofFork;				// points at middle widget (of cluster)

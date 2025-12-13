@@ -6,7 +6,7 @@
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
     export let zindex = T_Layer.dot;
-	export let points_toChild = true;
+	export let pointsTo_child = true;
 	export let s_reveal!: S_Element;
 	const { w_s_hover } = hits;
 	const { w_thing_title } = s;
@@ -78,7 +78,7 @@
 			const has_fat_center_dot = thing.isBulkAlias || ancestry.hidden_by_depth_limit;
 			offsetFor_fat_center_dot = has_fat_center_dot ? 0 : -1;
 			svgPathFor_revealDot = ancestry.svgPathFor_revealDot;
-			svgPathFor_tiny_outer_dots = ancestry.svgPathFor_tiny_outer_dots_points_toChild(points_toChild);
+			svgPathFor_tiny_outer_dots = ancestry.svgPathFor_tiny_outer_dot_pointTo_child(pointsTo_child);
 			svgPathFor_fat_center_dot = has_fat_center_dot ? svgPaths.circle_atOffset(k.height.dot, 3) : null;
 		}
 	}

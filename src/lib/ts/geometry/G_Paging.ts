@@ -8,7 +8,7 @@ export class G_Paging {
 	// thing id refers to "owner"
 	// index == first of subset
 
-	points_toChildren = false;
+	children_cluster = false;
 	thing_id = k.empty;
 	widgets_shown = 0;
 	total_widgets = 0;
@@ -26,7 +26,7 @@ export class G_Paging {
 	get maximum_paging_index(): number { return this.total_widgets - this.widgets_shown; }
 	get thing(): Thing | null { return h.thing_forHID(this.thing_id.hash()) ?? null; }
 	get predicate(): Predicate | null { return h.predicate_forKind(this.kind) ?? null; }
-	get sub_key(): string { return `${this.thing_id}${k.separator.generic}${this.kind}${k.separator.generic}${this.points_toChildren}`; }
+	get sub_key(): string { return `${this.thing_id}${k.separator.generic}${this.kind}${k.separator.generic}${this.children_cluster}`; }
 	ancestry_atIndex(ancestries: Array<Ancestry>): Ancestry { return ancestries[Math.round(this.index)]; }
 	
 	index_isVisible(index: number): boolean {
@@ -59,18 +59,18 @@ export class G_Paging {
 		return ancestries.slice(index, index + widgets_shown);
 	}
 
-	static create_g_paging_fromDict(dict: Dictionary, points_toChildren: boolean): G_Paging {
+	static create_g_paging_fromDict(dict: Dictionary, children_cluster: boolean): G_Paging {
 		const g_paging = new G_Paging(dict.index ?? 0, dict.widgets_shown ?? 0, dict.total_widgets);
-		g_paging.points_toChildren = points_toChildren;
+		g_paging.children_cluster = children_cluster;
 		g_paging.thing_id = dict.thing_id;
 		g_paging.kind = dict.kind;
 		return g_paging;
 	}
 
-	static create_g_paging_dict_fromDict(dict: Dictionary, points_toChildren: boolean): Dictionary<G_Paging> {
+	static create_g_paging_dict_fromDict(dict: Dictionary, children_cluster: boolean): Dictionary<G_Paging> {
 		const result: Dictionary<G_Paging> = {}
 		for (const [key, subdict] of Object.entries(dict)) {
-			result[key] = this.create_g_paging_fromDict(subdict, points_toChildren);
+			result[key] = this.create_g_paging_fromDict(subdict, children_cluster);
 		}
 		return result;
 	}

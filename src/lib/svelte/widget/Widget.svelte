@@ -16,8 +16,8 @@
 	const s_reveal = s_widget.s_reveal;
 	const ancestry = g_widget.ancestry;
 	const { w_items: w_grabbed } = x.si_grabs;
-	const reveal_points_toChild = g_widget.points_toChild;
-    const drag_points_right = g_widget.widget_points_right;
+	const reveal_pointsTo_child = g_widget.pointsTo_child;
+    const drag_points_right = g_widget.reveal_dot_isAt_right;
 	const { w_s_hover, w_s_title_edit, w_ancestry_focus } = s;
 	let observer: MutationObserver | null = null;
 	let width_ofWidget = g_widget.width_ofWidget;
@@ -189,10 +189,10 @@
 				<Widget_Drag
 					s_drag = {s_drag}
 					points_right = {drag_points_right}/>
-				{#if ancestry?.showsReveal_forPointingToChild(reveal_points_toChild)}
+				{#if ancestry?.showsReveal_forPointingToChild(reveal_pointsTo_child)}
 					<Widget_Reveal
 						s_reveal = {s_reveal}
-						points_toChild = {reveal_points_toChild}/>
+						pointsTo_child = {reveal_pointsTo_child}/>
 				{/if}
 			{/if}
 		</div>

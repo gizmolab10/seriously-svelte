@@ -43,11 +43,12 @@ src/
 │   │   ├── details/    # Detail panels and info displays
 │   │   ├── draw/       # Drawing/canvas components
 │   │   ├── experimental/ # Experimental/WIP components
-│   │   ├── graph/      # Graph visualization components
 │   │   ├── main/       # Core app components (SeriouslyApp, Panel)
 │   │   ├── mouse/      # Mouse interaction components
+│   │   ├── radial/     # Radial graph visualization
 │   │   ├── search/     # Search UI components
 │   │   ├── text/       # Text editing and display
+│   │   ├── tree/       # Tree graph visualization
 │   │   └── widget/     # Widget system components
 │   └── ts/             # TypeScript core logic
 │       ├── common/     # Shared utilities, constants, extensions
@@ -96,15 +97,24 @@ s.w_thing_title.set('New Title');  // Update
 
 ### 2. Manager Pattern
 
-Singleton managers handle specific domains:
-- `Hierarchy`: Tree data management
-- `Components`: Component registry
+Singleton managers handle specific domains (in `src/lib/ts/managers/`):
+- `Hierarchy` (`h`): Tree data management
 - `Colors`: Color scheme management
-- `Preferences`: User settings
-- `Configuration`: App configuration
-- `Visibility`: UI visibility state
+- `Components`: Component registry
+- `Configuration` (`c`): App configuration
+- `Controls`: Graph mode and UI controls
+- `Details`: Details panel state
+- `Elements`: S_Element and S_Mouse factory
+- `Features`: Feature flags
+- `Geometry` (`g`): Layout coordination and graph view state
+- `Hits`: RBush-based hit testing and hover detection
+- `Preferences` (`p`): User settings persistence
+- `Radial`: Radial graph specific state
+- `Search`: Search functionality
+- `Stores`: Central store management
+- `Visibility` (`show`): UI visibility state
 
-Managers are imported from `Global_Imports` and used as `h` (Hierarchy), etc.
+Managers are imported from `Global_Imports` and used as single-letter aliases where common.
 
 ### 3. Persistable Pattern
 
@@ -134,10 +144,12 @@ Switch databases via URL parameter: `?db=bubble` or `?db=local`
 
 ### 5. Component Organization
 
-**73 Svelte components** organized by function:
-- **graph/**: Radial and tree graph visualizations
+Svelte components organized by function:
+- **radial/**: Radial graph visualization (clusters, rings)
+- **tree/**: Tree graph visualization (branches, lines)
 - **widget/**: Drag, reveal, title editing
-- **controls/**: Interactive UI elements
+- **mouse/**: Click handling, buttons, sliders
+- **controls/**: Breadcrumbs, preferences panels
 - **experimental/**: Work-in-progress features
 
 **Component Best Practices**:
@@ -153,82 +165,148 @@ Signal-based events in `src/lib/ts/signals/`:
 - `Events`: Event definitions
 - Components and managers communicate via signals
 
-### 7. Hover System
+### 7. Hit Testing & Hover System
 
-The hover system manages interactive visual feedback across UI elements with significant complexity.
+The hover system uses RBush spatial indexing for efficient hit detection across all interactive elements.
 
 **Architecture**:
-- **Global State**: Single `w_s_hover` store (State.ts:35) holds currently hovered S_Element
-- **S_Element**: Base class (state/S_Element.ts) manages hover state, cursor, colors
-- **S_Mouse**: Encapsulates mouse events including hover state changes
-- **Mouse_Responder**: Reusable Svelte component for unified mouse handling
+- **Hits Manager**: `src/lib/ts/managers/Hits.ts` - Central hit testing with RBush R-tree indexing
+- **S_Hit_Target**: Base class for all hit-testable elements (state/S_Hit_Target.ts)
+- **S_Element**: Extends S_Hit_Target, computes visual properties (stroke, fill, cursor, border)
+- **Mouse_Responder**: Handles click events (down/up/double/long) but NOT hover detection
+
+**Class Hierarchy**:
+```
+S_Hit_Target (base)
+├── S_Element (visual properties)
+│   └── S_Widget (widget-specific state)
+├── S_Component (complex interactive components)
+├── S_Rotation (ring rotation interaction)
+└── S_Resizing (ring resize interaction)
+```
 
 **Key Files**:
-- `src/lib/ts/state/S_Element.ts` - Core hover logic and visual properties
-- `src/lib/ts/state/S_Mouse.ts` - Mouse state encapsulation
-- `src/lib/svelte/mouse/Mouse_Responder.svelte` - Centralized mouse event handler
-- `src/lib/ts/signals/Events.ts` - Global mouse tracking (w_mouse_location)
+- `src/lib/ts/managers/Hits.ts` - RBush indexing, hover detection, hit queries
+- `src/lib/ts/state/S_Hit_Target.ts` - Base class with rect, cursor, color properties
+- `src/lib/ts/state/S_Element.ts` - Visual property computation (stroke, fill, border)
+- `src/lib/ts/state/S_Mouse.ts` - Mouse event encapsulation for click handling
+- `src/lib/svelte/mouse/Mouse_Responder.svelte` - Click event handler component
 
 **How It Works**:
-1. Global mouse position tracked in `layout.w_mouse_location` (Events.ts:217)
-2. Each interactive element wrapped in `Mouse_Responder` component
-3. Mouse_Responder detects hover via bounding box or custom `handle_isHit` function
-4. On hover change, creates `S_Mouse.hover()` and calls parent's `handle_s_mouse()`
-5. Parent updates `S_Element.isHovering`, which sets global `w_s_hover` store
-6. Visual properties (stroke, fill, cursor, border) recompute reactively
+1. Global mouse position tracked in `g.w_mouse_location`
+2. `Hits.handle_mouse_movement_at(point)` called on mouse move (20ms throttle)
+3. RBush spatial query finds all targets at mouse position
+4. Priority ordering: dots > widgets > rings > other
+5. `hits.w_s_hover` store updated with top-priority target
+6. S_Element getters (`stroke`, `fill`, `cursor`, `border`) react to `isHovering`
 
-**Complexity Points**:
+**RBush Integration**:
+- Each S_Hit_Target registers its bounding rect via `set_html_element()`
+- Rects stored in RBush R-tree for O(log n) spatial queries
+- `contains_point` closure on S_Hit_Target refines hit testing for non-rectangular shapes
+- Automatic cleanup on component destroy via `hits.delete_hit_target()`
 
-1. **Dual Tracking**: Hover state stored in both S_Element and S_Mouse
-2. **Delayed Detection**: 10ms setTimeout in Mouse_Responder:104 to wait for store updates
-3. **Inverted Logic**: Three similar but different concepts:
-   - `isInverted` (S_Element:30) - Base inversion flag
-   - `color_isInverted` (S_Element:55) - `isInverted XOR isHovering`
-   - `isHoverInverted` (S_Element:92) - Complex widget-specific logic
-4. **Widget Hierarchy**: S_Widget contains S_Element children (drag, title, reveal dots)
-5. **Hover Reversal**: `hover_isReversed` flag (Widget_Reveal:9) flips hover logic for grabbed state
-6. **Visual Dependencies**: Hover affects multiple computed properties across S_Element/S_Widget
-
-**Inconsistencies & Issues**:
-
-1. **Two Patterns**: Some components use Mouse_Responder, others use direct `on:mouseenter/on:mouseleave` (Glow_Button.svelte)
-2. **Naming Confusion**: `hover_isReversed` vs `isInverted` vs `isHoverInverted` - unclear distinctions
-3. **State Duplication**: `s_mouse.isHovering` mirrors `S_Element.isHovering`
-4. **Complex Fallback**: Setting hover to `s_widget` when element unhovered (S_Element:68) - unclear intent
-5. **Reactive Chaining**: Hover triggers visual updates which trigger component re-renders - can cascade
+**Visual Property Logic** (S_Element):
+- `isInverted`: Base flag for inverting hover appearance
+- `color_isInverted`: `isInverted XOR isHovering` - determines actual color state
+- `fill`: Returns hover color, selection color, or background based on state
+- `stroke`: Returns background or element color based on inversion
+- `border`: Shows based on editing, focus, grabbed, or hover state
 
 **Widget-Specific Behavior**:
 
 Widgets (src/lib/svelte/widget/) have special hover rules:
 - **Widget dots** (drag/reveal): Use inverted colors when grabbed/editing
-- **Reveal dots**: Reverse hover when `hover_isReversed != ancestry.isGrabbed`
 - **Drag dots**: Set `isInverted` based on alteration permissions
 - **Borders**: Show on hover, focus, grabbed, or editing states
 
-**Best Practices When Working With Hover**:
+**Best Practices**:
 
 ✅ **DO**:
-- Use `Mouse_Responder` for consistent behavior
-- Check `s_element.isHovering` getter, don't access store directly
-- Let `S_Element` compute visual properties (stroke, fill, cursor)
-- Provide `handle_isHit` for non-rectangular hit areas
+- Use `Mouse_Responder` for click events (down/up/double/long)
+- Register hit targets via `s_element.set_html_element(element)`
+- Check `s_element.isHovering` getter for hover state
+- Provide `contains_point` closure for non-rectangular hit areas
+- Let `S_Element` compute visual properties
 
 ❌ **DON'T**:
-- Mix Mouse_Responder with manual `on:mouseenter/leave` handlers
-- Modify `w_s_hover` directly - use `S_Element.isHovering` setter
-- Create multiple hover timers - reuse from `elements.s_mouse_forName()`
-- Assume hover state is instant - account for 10ms detection delay
+- Modify `hits.w_s_hover` directly - use `S_Hit_Target.isHovering` setter
+- Mix hit testing with manual `on:mouseenter/leave` handlers
+- Forget to call `hits.delete_hit_target()` on component destroy
 
-**Debugging Hover Issues**:
+**Debugging**:
 ```typescript
 // Check current hover state
-console.log('Hover:', get(s.w_s_hover)?.description);
+console.log('Hover:', get(hits.w_s_hover)?.id);
 
-// Enable S_Element color logging
-debug.log_colors(`ELEMENT ${name} inverted:${isInverted}`);
+// Log all registered targets
+debug.log_hits(hits.info);
 
-// Check mouse state
-console.log('Mouse:', s_mouse.description);
+// Check specific target
+console.log('Target rect:', s_element.rect?.description);
+```
+
+### 8. Geometry Layout System
+
+The geometry system computes positions and sizes for all graph elements in both tree and radial modes.
+
+**Key Files** (in `src/lib/ts/geometry/`):
+
+| File | Purpose |
+|------|---------|
+| `G_Widget.ts` | Single source of truth for widget positions, dot locations, title origin |
+| `G_RadialGraph.ts` | Radial/necklace mode layout with clusters around focus |
+| `G_TreeGraph.ts` | Tree mode layout with horizontal branches |
+| `G_Cluster.ts` | Widget cluster layout in radial mode (arc angles, fork direction) |
+| `G_TreeBranches.ts` | Recursive subtree branch positioning |
+| `G_TreeLine.ts` | Connecting lines between parent/child widgets |
+| `G_Cluster_Pager.ts` | Paging arc geometry for large clusters |
+| `G_Pages.ts` | Page state management per Thing |
+| `G_Paging.ts` | Paging calculations per predicate direction |
+
+**Layout Flow**:
+1. Focus ancestry change triggers `g.layout()` in Geometry manager
+2. Mode-specific layout called: `G_TreeGraph.layout()` or `G_RadialGraph.layout()`
+3. Each ancestry gets a `G_Widget` instance via `ancestry.g_widget`
+4. G_Widget computes: `origin_ofWidget`, `origin_ofTitle`, `center_ofDrag`, `center_ofReveal`
+5. Radial mode additionally computes: cluster angles, necklace positions, paging arcs
+
+**G_Widget Key Properties**:
+```typescript
+origin_ofWidget     // Top-left of widget bounding box
+origin_ofTitle      // Position for title text
+center_ofDrag       // Center of drag dot
+center_ofReveal     // Center of reveal dot
+location_ofRadial   // Position on radial necklace
+size_ofSubtree      // Height for tree layout calculations
+reveal_dot_isAt_right // Orientation flag (true = children on right)
+pointsTo_child      // Direction flag for line drawing
+```
+
+**Tree Mode Layout**:
+- Widgets arranged in horizontal tree from focus
+- `G_TreeBranches` recursively positions child subtrees
+- `size_ofSubtree` computed bottom-up for vertical centering
+- `G_TreeLine` draws connecting lines between widgets
+
+**Radial Mode Layout**:
+- Focus widget centered, children/parents on ring "necklace"
+- `G_Cluster` groups widgets by predicate (contains, related, etc.)
+- Widgets distributed around cluster's fork angle
+- `G_Cluster_Pager` provides arc UI for paging through large clusters
+
+**Orientation Flags** (necklace widgets only):
+- `reveal_dot_isAt_right`: Drag dot on left, reveal dot on right. False for widgets on the left side of the radial ring.
+- `pointsTo_child`: Default true for children of focus. False for parents of focus (line connects toward focus).
+
+**Integration with Svelte Components**:
+```svelte
+<!-- Widget.svelte uses G_Widget for positioning -->
+<script>
+  $: g_widget = ancestry.g_widget;
+  $: origin = g_widget.origin_ofWidget;
+</script>
+<div style="left: {origin.x}px; top: {origin.y}px">
 ```
 
 
@@ -452,5 +530,5 @@ find src/lib/ts/tests -name "*.test.ts"
 
 ---
 
-**Last Updated**: 2025-11-28
+**Last Updated**: 2025-12-12
 **Maintained by**: AI assistants should keep this file current as architecture evolves

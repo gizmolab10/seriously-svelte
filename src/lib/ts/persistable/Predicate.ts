@@ -25,9 +25,9 @@ export default class Predicate extends Persistable {
 	static get supportedBy():				Predicate | null { return this.predicate_forKind(T_Predicate.supportedBy); }
 	static predicate_forKind(kind: string): Predicate | null { return h.predicate_forKind(kind) ?? null; }
 
-	kinship_forPoints_toChildren(points_toChildren: boolean): T_Kinship | null {
+	kinship_forChildren_cluster(children_cluster: boolean): T_Kinship | null {
 		switch (this.kind) {
-			case T_Predicate.contains:	return points_toChildren ? T_Kinship.children : T_Kinship.parents;
+			case T_Predicate.contains:	return children_cluster ? T_Kinship.children : T_Kinship.parents;
 			case T_Predicate.isRelated:	return T_Kinship.related;
 			default:					return null;
 		}
@@ -41,13 +41,13 @@ export default class Predicate extends Persistable {
 		}
 	}
 	
-	angle_ofCluster_when(points_toChildren: boolean): number {
+	angle_ofCluster_when(children_cluster: boolean): number {
 		// returns one of three angles: 1) children_angle 2) opposite+tweak 3) opposite-tweak
 		const tweak = 2 * Math.PI / 3;					// equilateral distribution
 		const children_angle = get(radial.w_rotate_angle);
 		const raw = this.isBidirectional ?
 			children_angle + tweak :
-			points_toChildren ? children_angle :		// one directional, use global
+			children_cluster ? children_angle :		// one directional, use global
 			children_angle - tweak;
 		return raw.angle_normalized() ?? 0;
 	}
