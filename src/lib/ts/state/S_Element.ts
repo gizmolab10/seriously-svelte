@@ -1,4 +1,4 @@
-import { S_Hit_Target, T_Hit_Target, T_Control } from '../common/Global_Imports';
+import { S_Hit_Target, T_Hit_Target, T_Control, controls } from '../common/Global_Imports';
 import { k, s, colors, elements } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
@@ -57,9 +57,9 @@ export default class S_Element extends S_Hit_Target {
 			if (this.ancestry.isEditing) {
 				return `dashed ${color} 1px`;
 			}
-			// if (this.ancestry.isFocus) {
-			// 	return `solid ${color} 1px`;
-			// }
+			if (controls.inRadialMode && this.ancestry.isFocus && !this.ancestry.isGrabbed) {
+				return `solid ${color} 1px`;
+			}
 			if (this.isHovering) {
 				return `solid ${colors.ofBackgroundFor(color)} 1px`;
 			}

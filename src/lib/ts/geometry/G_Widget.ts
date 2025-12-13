@@ -183,12 +183,12 @@ export default class G_Widget {
 			const width_ofDrag = (dot_size * 2) + (inRadialMode ? 2 : -4);
 			const width_ofWidget = width_ofTitle + width_ofDrag + width_ofReveal_dot + (inRadialMode ? 0 : 4) - 5;
 			const x_ofDrag_for_pointing_left = width_ofWidget - dot_size - 1.25 + (show_reveal ? 0.5 : 0);
-			const x_ofDrag = widget_points_right ? (inRadialMode ? 2 : 2) : x_ofDrag_for_pointing_left;
+			const x_ofDrag = widget_points_right ? 2 : x_ofDrag_for_pointing_left;
 			const y_ofDrag = 2.5 - (inRadialMode ? 0.1 : 0);
 			const x_ofRadial = widget_points_right ? -4 : -dot_size;
 			const x_offset_ofWidget = widget_points_right ? -7 : 6 + dot_size - width_ofWidget;
 			const origin_ofDrag = new Point(x_ofDrag, y_ofDrag);
-			const x_ofRadial_title =  widget_points_right && !isRadialFocus ? 20 : (show_reveal ? 20 : 8);
+			const x_ofRadial_title =  widget_points_right && !isRadialFocus ? 20 : (show_reveal ? 20 : 7);
 			if (!isRadialFocus) {	// not overwrite g_radial's location_ofRadial
 				this.location_ofRadial = this.location_within_necklace.offsetByXY(x_ofRadial + 4, 6 - dot_size);
 			}

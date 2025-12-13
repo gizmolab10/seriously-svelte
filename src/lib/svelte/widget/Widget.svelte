@@ -112,8 +112,8 @@
 		const hasExtra_onRight = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
 		const origin_ofWidget = g_widget.origin.offsetBy(g_widget.offset_ofWidget);
 		width_ofWidget = g_widget.width_ofWidget;
-		border_radius = k.height.row / 2;
 		height = k.height.row - 1.5;
+		border_radius = height / 2;
 		left = origin_ofWidget.x;
 		top = origin_ofWidget.y;
 		s_widget.rect = g.scaled_rect_forElement(s_title.html_element);
@@ -140,8 +140,8 @@
 			${s_widget.background};
 			color : ${s_widget.color};
 			border : ${s_widget.border};
-			width : ${width_ofWidget - 5}px;
 			z-index : ${T_Layer.widget};
+			width : ${width_ofWidget - 5}px;
 			border-radius : ${border_radius}px;`;
 	}
 
@@ -174,24 +174,26 @@
         handle_s_mouse={handle_s_mouse}
         style={widget_style.removeWhiteSpace()}
         origin={g_widget.origin.offsetBy(g_widget.offset_ofWidget)}>
-		<div class='widget-content'
+		<div class='widget-components'
 			style='
 				left : {-3}px;
-				top : {-2.5}px;
 				height : {height}px;
 				position : absolute;
 				width : {width_ofWidget}px;
-				z-index : {T_Layer.widget};'>
-			<Widget_Drag
-				s_drag = {s_drag}
-				points_right = {drag_points_right}/>
+				z-index : {T_Layer.widget};
+				top : {s_widget.isRadial_focus ? -0.5 : -2.5}px;'>
 			<Widget_Title
 				s_title = {s_title}
 				fontSize = {k.font_size.common}px/>
-			{#if ancestry?.showsReveal_forPointingToChild(reveal_points_toChild)}
-				<Widget_Reveal
-					s_reveal = {s_reveal}
-					points_toChild = {reveal_points_toChild}/>
+			{#if !s_widget.isRadial_focus}
+				<Widget_Drag
+					s_drag = {s_drag}
+					points_right = {drag_points_right}/>
+				{#if ancestry?.showsReveal_forPointingToChild(reveal_points_toChild)}
+					<Widget_Reveal
+						s_reveal = {s_reveal}
+						points_toChild = {reveal_points_toChild}/>
+				{/if}
 			{/if}
 		</div>
 	</Mouse_Responder>
