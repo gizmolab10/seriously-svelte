@@ -2,10 +2,9 @@
 	import { e, k, s, u, x, hits, show, debug, colors, signals, elements, controls } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Signal, T_Hit_Target } from '../../ts/common/Global_Imports';
 	import { Point, S_Element, S_Component } from '../../ts/common/Global_Imports';
-	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { svgPaths } from '../../ts/common/Global_Imports';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	export let points_right = true;
 	export let s_drag!: S_Element;
 	const size = k.height.dot;
@@ -14,10 +13,12 @@
 	const { w_thing_color } = colors;
     const ancestry = s_drag.ancestry;
 	const g_widget = ancestry.g_widget;
+	const { w_count_mouse_up } = e;
 	const { w_background_color } = colors;
 	const { w_show_countDots_ofType } = show;
 	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_ancestry_focus, w_ancestry_forDetails } = s;
+	let mouse_up_count = $w_count_mouse_up;
 	let fill_color = debug.lines ? 'transparent' : s_drag.fill;
 	let svg_outline_color = s_drag.svg_outline_color;
 	let element: HTMLElement | null = null;
@@ -30,8 +31,6 @@
     let thing = ancestry.thing;
 	let color = thing?.color;
 	let isHovering = false;
-	let mouse_click_timer;
-	let left = 0;
 
 	update_svgPaths();
 	update_colors();
@@ -41,19 +40,20 @@
 		update_colors();
 	});
 
-	onMount(() => { return () => s_component.disconnect(); });
+	onMount(() => {
+		if (!!element) {
+			s_drag.set_html_element(element);
+		}
+		return () => s_component.disconnect();
+	});
 
-	function handle_context_menu(event) { u.consume_event(event); }		// no default context menu on right-click
+	onDestroy(() => {
+		hits.delete_hit_target(s_drag);
+	});
 
 	$: {
 		const _ = $w_show_countDots_ofType;
 		update_svgPaths();
-	}
-
-	$: {
-		if (!!element) {
-			s_drag.set_html_element(element);
-		}
 	}
 
 	$: {
@@ -66,17 +66,29 @@
 		update_colors();
 	}
 
+	$: if (mouse_up_count != $w_count_mouse_up) {
+		mouse_up_count = $w_count_mouse_up;
+		if ($w_s_hover?.id === s_drag.id && !elements.isDragging && !!ancestry) {
+			e.handle_singleClick_onDragDot(false, ancestry);
+		}
+	}
+
+	$: wrapper_style = `
+		position: absolute;
+		width: ${capture_size}px;
+		height: ${capture_size}px;
+		cursor: pointer;
+		left: ${center.x - capture_size / 2}px;
+		top: ${center.y - capture_size / 2}px;
+	`.removeWhiteSpace();
+
 	function update_hovering() {
 		const isAncestry_presented = $w_ancestry_forDetails.equals(ancestry);
 		s_drag.isHovering = isHovering != (ancestry.isGrabbed && !isAncestry_presented);
 	}
 
 	function update_svgPaths() {
-		// if (controls.inRadialMode) {
-		// 	svgPathFor_dragDot = svgPaths.circle_atOffset(size, size - 1);
-		// } else {
-			svgPathFor_dragDot = svgPaths.oval(size, false);
-		// }
+		svgPathFor_dragDot = svgPaths.oval(size, false);
 		update_svgPathsExtra();
 	}
 
@@ -106,31 +118,14 @@
 		}
 	}
 
-	function handle_s_mouse(s_mouse) {
-		if (!elements.isDragging) {
-			if (s_mouse.isLong) {
-				ancestry?.becomeFocus();
-			} else if (s_mouse.isUp && !!ancestry) {
-				const shiftKey = s_mouse.event?.shiftKey ?? false
-				e.handle_singleClick_onDragDot(shiftKey, ancestry);
-			}
-		}
-	}
-
 </script>
 
 {#if s_drag}
-	<Mouse_Responder
-		center={center}
-		s_element={s_drag}
-		width={capture_size}
-		height={capture_size}
-		name={s_component.id}
-		detect_longClick={true}
-		handle_s_mouse={handle_s_mouse}>
+	<div class='drag-responder'
+		style={wrapper_style}
+		bind:this={element}>
 		<button class={name}
 			id={s_component.id}
-			bind:this={element}
 			style='
 				border:none;
 				cursor:pointer;
@@ -173,5 +168,5 @@
 				{/if}
 			</div>
 		</button>
-	</Mouse_Responder>
+	</div>
 {/if}

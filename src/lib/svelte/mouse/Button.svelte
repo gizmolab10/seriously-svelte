@@ -111,7 +111,7 @@
 		detect_autorepeat={detect_autorepeat}>
 		<button class='button'
 			style={computed_style}
-			id={'button-for-' + name}>
+			name={'button-for-' + name}>
 			<slot/>
 		</button>
 	</Mouse_Responder>

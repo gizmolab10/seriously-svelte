@@ -10,6 +10,7 @@
 	const has_title = true;
 	const top_tableHeight = 93;
 	const left_afterTitle = 39.5;
+	const { w_s_title_edit } = s;
 	const bottom_tableHeight = 73;
 	const { w_user_graph_offset } = g;
 	const { w_show_graph_ofType } = show;
@@ -24,6 +25,7 @@
 	const s_cancel = elements.s_element_for($w_ancestry_forDetails, T_Hit_Target.cancel, k.empty);
 	let list_title = $w_ancestry_forDetails?.isExpanded && controls.inTreeMode ? 'hide list' : 'list';
 	let button_titles = compute_button_titles();
+	let no_actions = k.nothing_to_show;
 	let actions_top = top + 3;
     let reattachments = 0;
 	s_cancel.set_forHovering(colors.default, 'pointer');
@@ -143,9 +145,9 @@
 
 {#key reattachments}
 	{#if !$w_grabbed || $w_grabbed.length == 0}
-		<div class='nothing-to-show'>
+		<div class='no-actions'>
 			<p style='text-align:center; font-size:{k.font_size.instructions}px; position:relative; display:flex; align-items:center; justify-content:center;'>
-				{k.nothing_to_show}
+				{no_actions}
 			</p>
 		</div>
 	{:else }

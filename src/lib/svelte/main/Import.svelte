@@ -37,7 +37,7 @@
 	on:cancel={dismiss_popup}
 	bind:this={file_input}
 	style='display: none'
-	id='import-file'
+	name='import-file'
 	type='file'
 	{multiple}
 	{accept}

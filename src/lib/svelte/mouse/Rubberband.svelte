@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import { g, k, s, u, x, hits, debug, colors } from '../../ts/common/Global_Imports';
+    import { e, g, k, s, u, x, hits, debug, colors } from '../../ts/common/Global_Imports';
     import { T_Layer, T_Drag, T_Hit_Target } from '../../ts/common/Global_Imports';
     import { Rect, Size, Point, Ancestry } from '../../ts/common/Global_Imports';
     import { onMount, onDestroy } from 'svelte';
@@ -7,9 +7,11 @@
     export let bounds: Rect;
     const enabled = true;
     const { w_dragging } = hits;
+    const { w_s_title_edit } = s;
+    const { w_count_mouse_up } = e;
+    const { w_user_graph_offset } = g;
 	const { w_separator_color } = colors;
-    const { w_count_mouse_up, w_s_title_edit } = s;
-    const { w_mouse_location, w_scaled_movement, w_user_graph_offset } = g;
+	const { w_mouse_location, w_scaled_movement } = e;
     let rbush_forRubberband = hits.rbush_forRubberband;
     let mouse_upCount = $w_count_mouse_up;
     let startPoint: Point | null = null;

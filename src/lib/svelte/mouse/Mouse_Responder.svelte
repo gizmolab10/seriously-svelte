@@ -21,7 +21,7 @@
 	export let align_left = true;
 	export let name = 'generic';
 	export let style = k.empty;
-    const { w_mouse_location } = g;
+    const { w_mouse_location } = e;
 	const { w_thing_fontFamily } = s;
 	const s_mouse = elements.s_mouse_forName(name);
 	const mouse_timer = e.mouse_timer_forName(name);
@@ -131,7 +131,7 @@
 
 </script>
 
-<div class='mouse-responder' id={name}
+<div class='mouse-responder' name={name}
 	on:pointerdown={handle_pointerDown}
 	on:pointerup={handle_pointerUp}
 	bind:this={element}

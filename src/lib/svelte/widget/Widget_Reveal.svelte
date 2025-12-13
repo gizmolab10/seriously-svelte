@@ -1,10 +1,9 @@
 <script lang='ts'>
-	import { h, k, s, u, x, hits, show, debug, colors, signals, elements, svgPaths } from '../../ts/common/Global_Imports';
+	import { e, h, k, s, u, x, hits, show, debug, colors, signals, elements, svgPaths } from '../../ts/common/Global_Imports';
 	import { S_Mouse, S_Element, S_Component, T_Layer, T_Hit_Target } from '../../ts/common/Global_Imports';
-	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { Size, Point } from '../../ts/common/Global_Imports';
+	import { onMount, onDestroy } from 'svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
-	import { onMount } from 'svelte';
     export let zindex = T_Layer.dot;
 	export let pointsTo_child = true;
 	export let s_reveal!: S_Element;
@@ -12,6 +11,7 @@
 	const { w_thing_title } = s;
 	const ancestry = s_reveal.ancestry;
 	const g_widget = ancestry.g_widget;
+	const { w_count_mouse_up } = e;
 	const { w_show_countDots_ofType } = show;
 	const { w_items: w_grabbed } = x.si_grabs;
 	const viewBox = k.tiny_outer_dots.viewBox;
@@ -21,6 +21,7 @@
 	let svgPathFor_tiny_outer_dots: string | null = null;
 	let svgPathFor_fat_center_dot: string | null = null;
 	let svg_outline_color = s_reveal.svg_outline_color;
+	let mouse_up_count = $w_count_mouse_up;
 	let element: HTMLElement | null = null;
 	let bulkAlias_color = s_reveal.stroke;
 	let center = g_widget.center_ofReveal;
@@ -35,18 +36,19 @@
 		center = g_widget.center_ofReveal;
 	});
 
-	$: {
-		if (!!element) {
-			g_widget.s_widget.s_reveal.set_html_element(element);
-		}
-	}
-
 	onMount(() => {
 		update_svgPaths();
 		s_reveal.isHovering = false;
 		update_colors();
 		s_reveal.set_forHovering(color, 'pointer');
+		if (!!element) {
+			s_reveal.set_html_element(element);
+		}
 		return () => s_component.disconnect();
+	});
+
+	onDestroy(() => {
+		hits.delete_hit_target(s_reveal);
 	});
 	
 	$: {
@@ -60,8 +62,23 @@
 		update_svgPaths();
 		update_colors();
 	}
-	
-	function handle_context_menu(event) { u.consume_event(event); } 		// Prevent the default context menu on right
+
+	$: if (mouse_up_count != $w_count_mouse_up) {
+		mouse_up_count = $w_count_mouse_up;
+		if ($w_s_hover?.id === s_reveal.id && (ancestry.hasChildren || ancestry.thing.isBulkAlias)) {
+			h.ancestry_toggle_expansion(ancestry);
+		}
+	}
+
+	$: wrapper_style = `
+		position: absolute;
+		width: ${k.height.dot}px;
+		height: ${k.height.dot}px;
+		z-index: ${zindex};
+		cursor: pointer;
+		left: ${center.x - k.height.dot / 2}px;
+		top: ${center.y - k.height.dot / 2}px;
+	`.removeWhiteSpace();
 
 	function update_colors() {
 		s_reveal.set_forHovering(color, 'pointer');
@@ -83,30 +100,13 @@
 		}
 	}
 
-	function handle_s_mouse(s_mouse) {
-		if (s_mouse.isUp && (ancestry.hasChildren || ancestry.thing.isBulkAlias)) {
-			h.ancestry_toggle_expansion(ancestry);
-		}
-	}
- 
-	function isHit(): boolean {
-		return false
-	}
-
 </script>
 
 {#if s_reveal}
-	<Mouse_Responder
-		center={center}
-		zindex={zindex}
-		s_element={s_reveal}
-		width={k.height.dot}
-		height={k.height.dot}
-		name={s_component.id}
-		handle_s_mouse={handle_s_mouse}>
+	<div class='reveal-responder'
+		style={wrapper_style}
+		bind:this={element}>
 		<div class='reveal-dot'
-			on:contextmenu={handle_context_menu}
-			bind:this={element}
 			role="button"
 			tabindex="0"
 			style='
@@ -157,6 +157,5 @@
 				</div>
 			{/if}
 		</div>
-	</Mouse_Responder>
+	</div>
 {/if}
-

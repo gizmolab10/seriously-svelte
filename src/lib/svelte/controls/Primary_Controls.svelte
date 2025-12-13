@@ -1,7 +1,7 @@
 <script lang='ts'>
-	import { c, e, g, k, s, u, x, show, colors, search, features } from '../../ts/common/Global_Imports';
-	import { Point, elements, controls, svgPaths } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Graph, T_Control } from '../../ts/common/Global_Imports';
+	import { c, e, g, k, s, u, x, show, colors, search } from '../../ts/common/Global_Imports';
+	import { features, elements, controls, svgPaths } from '../../ts/common/Global_Imports';
+	import { Point, T_Layer, T_Graph, T_Control } from '../../ts/common/Global_Imports';
 	import Search_Toggle from '../search/Search_Toggle.svelte';
 	import Next_Previous from '../mouse/Next_Previous.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
@@ -9,13 +9,14 @@
 	import Breadcrumbs from './Breadcrumbs.svelte';
 	import Button from '../mouse/Button.svelte';
 	const y_center = 10.5;
+	const { w_popupView_id } = s;
 	const scaling_stroke_width = 1.5;
 	const { w_rect_ofGraphView } = g;
 	const { w_search_state } = search;
+	const { w_count_window_resized } = e;
 	const size_big = k.height.button + 4;
 	const { w_background_color } = colors;
 	const hamburger_size = k.height.button;
-	const { w_count_window_resized, w_popupView_id } = s;
 	const { w_show_search_controls, w_show_graph_ofType } = show;
 	const hamburger_path = svgPaths.hamburgerPath(hamburger_size);
 	const search_left = -38 - (features.has_details_button ? 0 : 26) + (features.allow_tree_mode ? 0 : 0);
@@ -117,9 +118,9 @@
 						center={new Point(lefts[3], y_center)}
 						s_button={elements.s_control_forType(T_Control.grow)}
 						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.grow)}>
-						<svg id='grow-svg' style={svg_style}>
+						<svg name='grow-svg' style={svg_style}>
 							<path
-								id='grow-path'
+								name='grow-path'
 								fill=transparent
 								d={svgPaths.t_cross(size_big, 2)}
 								stroke-width={scaling_stroke_width}
@@ -132,9 +133,9 @@
 						center={new Point(lefts[4], y_center)}
 						s_button={elements.s_control_forType(T_Control.shrink)}
 						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.shrink)}>
-						<svg id='shrink-svg'
+						<svg name='shrink-svg'
 							style={svg_style}>
-							<path id='shrink-path'
+							<path name='shrink-path'
 								fill=transparent
 								d={svgPaths.dash(size_big, 4)}
 								stroke-width={scaling_stroke_width}

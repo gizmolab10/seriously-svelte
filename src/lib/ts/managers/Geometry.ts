@@ -1,4 +1,4 @@
-import { c, k, p, u, hits, show, debug, g_tree, g_radial, signals, controls, features } from '../common/Global_Imports';
+import { c, e, k, p, u, hits, show, debug, g_tree, g_radial, signals, controls, features } from '../common/Global_Imports';
 import { Rect, Size, Point, Thing, Ancestry } from '../common/Global_Imports';
 import { G_Widget, T_Graph, T_Preference } from '../common/Global_Imports';
 import { get, writable } from 'svelte/store';
@@ -15,13 +15,7 @@ export default class Geometry {
 	w_user_graph_center		= writable<Point>();
 	w_user_graph_offset		= writable<Point>();
 	w_rect_ofGraphView		= writable<Rect>();
-
-	static readonly _____ZOOM: unique symbol;
-
 	w_scale_factor			= writable<number>(1);
-	w_scaled_movement		= writable<Point | null>(null);
-	w_mouse_location		= writable<Point>();
-	w_mouse_location_scaled	= writable<Point>();
 
 	restore_preferences() {
 		this.w_depth_limit.set(p.read_key(T_Preference.levels) ?? 12);
@@ -107,7 +101,7 @@ export default class Geometry {
 	}
 
 	mouse_vector_ofOffset_fromGraphCenter(offset: Point = Point.zero): Point | null {
-		const scaled_mouse_location = get(this.w_mouse_location_scaled);
+		const scaled_mouse_location = get(e.w_mouse_location_scaled);
 		return this.vector_fromScaled_mouseLocation_andOffset_fromGraphCenter(scaled_mouse_location, offset);
 	}
 

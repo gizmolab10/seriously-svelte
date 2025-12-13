@@ -13,7 +13,7 @@
 </script>
 
 <div
-	class= 'circle' id={name} style='
+	class= 'circle' name={name} style='
 		z-index: {zindex};
 		position: absolute;
 		border-radius: 50%;

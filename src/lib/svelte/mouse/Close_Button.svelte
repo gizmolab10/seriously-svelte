@@ -1,6 +1,8 @@
 <script lang='ts'>
-	import { k, u, Size, Point, colors, T_Layer, svgPaths } from '../../ts/common/Global_Imports';
-	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
+	import { e, k, s, hits, colors, svgPaths, elements } from '../../ts/common/Global_Imports';
+	import { Point, T_Layer, T_Hit_Target } from '../../ts/common/Global_Imports';
+	import Identifiable from '../../ts/runtime/Identifiable';
+	import { onMount, onDestroy } from 'svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	export let align_left: boolean = false;
 	export let stroke_width: number = 0.75;
@@ -8,25 +10,44 @@
 	export let closure: () => void;
 	export let origin: Point;
     export let size = 20;
-	const { w_background_color } = colors;
+	const { w_s_hover } = hits;
+	const { w_count_mouse_up } = e;
+	const s_element = elements.s_element_for(new Identifiable(name), T_Hit_Target.button, name);
+	let mouse_up_count = $w_count_mouse_up;
+	let element: HTMLElement | null = null;
 	let stroke = colors.default;
 	let fill = 'white';
 
-	function handle_s_mouse(s_mouse) {
-		if (s_mouse.isUp) {
+	onMount(() => {
+		s_element.set_html_element(element);
+	});
+
+	onDestroy(() => {
+		hits.delete_hit_target(s_element);
+	});
+
+	$: if (mouse_up_count != $w_count_mouse_up) {
+		mouse_up_count = $w_count_mouse_up;
+		if ($w_s_hover?.id === s_element.id) {
 			closure();
 		}
 	}
 
+	$: style = `
+		position: absolute;
+		cursor: pointer;
+		z-index: ${T_Layer.dot};
+		width: ${size}px;
+		height: ${size}px;
+		${align_left ? 'left' : 'right'}: ${origin.x}px;
+		top: ${origin.y}px;
+	`.removeWhiteSpace();
+
 </script>
 
-<Mouse_Responder
-	name={name}
-	width={size}
-	height={size}
-	origin={origin}
-	align_left={align_left}
-	handle_s_mouse={handle_s_mouse}>
+<div class='close-button'
+	bind:this={element}
+	style={style}>
     <SVG_D3 name='close'
 		fill={fill}
 		width={size}
@@ -42,4 +63,4 @@
 		stroke_width={1}
 		svgPath={svgPaths.x_cross(size, size / 6)}
 	/>
-</Mouse_Responder>
+</div>

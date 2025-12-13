@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, h, k, s, u, x, hits, debug, colors, search, signals, controls, elements, databases } from '../../ts/common/Global_Imports';
+	import { e, g, h, k, s, u, x, hits, debug, colors, search, signals, controls, elements, databases } from '../../ts/common/Global_Imports';
 	import { T_Search, T_Layer, T_Hit_Target, T_Edit } from '../../ts/common/Global_Imports';
 	import { S_Mouse, S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import { Rect, Seriously_Range } from '../../ts/common/Global_Imports';
@@ -9,7 +9,7 @@
 	export let fontSize = `${k.font_size.common}px`;
 	const ancestry = s_title.ancestry;
 	const thing = ancestry?.thing;
-    const { w_mouse_location } = g;
+    const { w_mouse_location } = e;
 	const { w_ancestry_focus } = s;
 	const { w_thing_color } = colors;
 	const padding = `1px 0px 0px 0px`;
@@ -186,7 +186,7 @@
 	function thing_setSelectionRange_fromMouseLocation() {
 		if (!!input && !!$w_s_title_edit && !isPercolating()) {
 			const location = $w_mouse_location;
-			if (g.scaled_rect_forElement(input)?.contains(location)) {
+			if (!!location && g.scaled_rect_forElement(input)?.contains(location)) {
 				const offset = u.convert_windowOffset_toCharacterOffset_in(location.x, input);
 				debug.log_edit(`CURSOR OFFSET ${offset}`);
 				$w_s_title_edit.thing_setSelectionRange_fromOffset(offset);

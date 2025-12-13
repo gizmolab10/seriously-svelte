@@ -23,9 +23,7 @@ export class Stores {
 
 	static readonly _____COUNTS: unique symbol = Symbol('COUNTS');
 
-	w_count_mouse_up	   = writable<number>(0);
 	w_count_rebuild		   = writable<number>(0);
-	w_count_window_resized = writable<number>(0);
 	w_count_details		   = writable<number>(0);
 
 	static readonly _____OTHER: unique symbol = Symbol('OTHER');

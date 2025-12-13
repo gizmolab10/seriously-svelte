@@ -1,26 +1,29 @@
 <script lang='ts'>
-	import { g, k, s, u, x, debug, colors, signals, elements, components } from '../../ts/common/Global_Imports';
+	import { e, g, k, s, u, x, hits, debug, colors, signals, elements, components } from '../../ts/common/Global_Imports';
 	import { G_Widget, S_Mouse, S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Signal, T_Hit_Target } from '../../ts/common/Global_Imports';
-	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import { Rect, Point } from '../../ts/common/Global_Imports';
 	import Widget_Reveal from './Widget_Reveal.svelte';
 	import Widget_Title from './Widget_Title.svelte';
 	import Widget_Drag from './Widget_Drag.svelte';
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	export let g_widget!: G_Widget;
+	const { w_s_hover } = hits;
+	const { w_count_mouse_up } = e;
 	const { w_thing_color } = colors;
-	const s_widget = g_widget.s_widget;
-	const s_drag = s_widget.s_drag;
-	const s_title = s_widget.s_title;
-	const s_reveal = s_widget.s_reveal;
 	const ancestry = g_widget.ancestry;
+	const s_widget = g_widget.s_widget;
+	const s_reveal = s_widget.s_reveal;
+	const s_title = s_widget.s_title;
+	const s_drag = s_widget.s_drag;
 	const { w_items: w_grabbed } = x.si_grabs;
+	const { w_s_title_edit, w_ancestry_focus } = s;
 	const reveal_pointsTo_child = g_widget.pointsTo_child;
     const drag_points_right = g_widget.reveal_isAt_right;
-	const { w_s_hover, w_s_title_edit, w_ancestry_focus } = s;
 	let observer: MutationObserver | null = null;
 	let width_ofWidget = g_widget.width_ofWidget;
+	let mouse_up_count = $w_count_mouse_up;
+	let element: HTMLElement | null = null;
 	let border_radius = k.height.dot / 2;
 	let revealCenter = Point.zero;
 	let s_component: S_Component;
@@ -53,11 +56,18 @@
 	});
 
 	onMount(() => {
+		if (!!element) {
+			s_widget.set_html_element(element);
+		}
 		return () => {
 			debug.log_style('Widget unmounting for:', ancestry?.title);
 			if (observer) observer.disconnect();
 			s_component.disconnect();
 		};
+	});
+
+	onDestroy(() => {
+		hits.delete_hit_target(s_widget);
 	});
 
 	$: {
@@ -76,6 +86,13 @@
 			}
 			final_layout();
 			s_component.debug_log_connection_state('GRABBED STATE CHANGED');
+		}
+	}
+
+	$: if (mouse_up_count != $w_count_mouse_up) {
+		mouse_up_count = $w_count_mouse_up;
+		if ($w_s_hover?.id === s_widget.id) {
+			handle_click_event_fromHover();
 		}
 	}
 
@@ -99,9 +116,9 @@
 		debug.log_style('Observer set up on widget div for:', ancestry?.title);
 	}
 
-	async function handle_click_event(event) {
-		u.consume_event(event);
-		ancestry?.grab_forShift(event.shiftKey);
+	function handle_click_event_fromHover() {
+		ancestry?.grab_forShift(false);
+		update_style();
 	}
 
 	function layout_maybe() {
@@ -122,29 +139,20 @@
 		update_style();
 	}
 
-	function handle_s_mouse(s_mouse: S_Mouse) {
-		if (!!ancestry) {
-			if (s_mouse.isLong) {
-				ancestry?.becomeFocus();
-			} else if (s_mouse.isUp) {
-				handle_click_event(s_mouse.event);
-			}
-			update_style();
-		}
-	}
-
 	function update_style() {
 		widget_style = `
-			top : ${top}px;
-			left : ${left}px;
-			position : absolute;
-			height : ${height}px;
+			top: ${top}px;
+			left: ${left}px;
+			cursor: pointer;
+			position: absolute;
+			height: ${height}px;
 			${s_widget.background};
-			color : ${s_widget.color};
-			border : ${s_widget.border};
-			z-index : ${T_Layer.widget};
-			width : ${width_ofWidget - 5}px;
-			border-radius : ${border_radius}px;`;
+			color: ${s_widget.color};
+			border: ${s_widget.border};
+			z-index: ${T_Layer.widget};
+			width: ${width_ofWidget - 5}px;
+			border-radius: ${border_radius}px;
+		`.removeWhiteSpace();
 	}
 
 	function setup_fromAncestry() {
@@ -163,27 +171,20 @@
 </script>
 
 {#if s_widget}
-    <Mouse_Responder
-		height={height}
-		position='absolute'
-        on:keyup={u.ignore}
-		s_element={s_widget}
-        on:keydown={u.ignore}
-        name={s_component.id}
-        width={width_ofWidget}
-        zindex={T_Layer.widget}
-        on:click={handle_click_event}
-        handle_s_mouse={handle_s_mouse}
-        style={widget_style.removeWhiteSpace()}
-        origin={g_widget.origin.offsetBy(g_widget.offset_ofWidget)}>
+	<div class='widget'
+		id={s_component.id}
+		bind:this={element}
+		style={widget_style}
+		on:keyup={u.ignore}
+		on:keydown={u.ignore}>
 		<div class='widget-components'
 			style='
-				left : {-3}px;
-				height : {height}px;
-				position : absolute;
-				width : {width_ofWidget}px;
-				z-index : {T_Layer.widget};
-				top : {s_widget.isRadial_focus ? -0.5 : -2.5}px;'>
+				left: {-3}px;
+				height: {height}px;
+				position: absolute;
+				width: {width_ofWidget}px;
+				z-index: {T_Layer.widget};
+				top: {s_widget.isRadial_focus ? -0.5 : -2.5}px;'>
 			<Widget_Title
 				s_title = {s_title}
 				fontSize = {k.font_size.common}px/>
@@ -198,5 +199,5 @@
 				{/if}
 			{/if}
 		</div>
-	</Mouse_Responder>
+	</div>
 {/if}

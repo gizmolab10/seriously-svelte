@@ -8,9 +8,10 @@
 	const name = 'rings';
 	const { w_s_hover } = hits;
 	const { w_thing_color } = colors;
+	const { w_count_mouse_up } = e;
 	const ring_width = k.thickness.radial.ring;
+	const { w_s_title_edit, w_ancestry_focus } = s;
 	const { w_g_cluster, w_rotate_angle, w_resize_radius } = radial;
-	const { w_count_mouse_up, w_s_title_edit, w_ancestry_focus } = s;
 	let color = $w_ancestry_focus?.thing?.color ?? colors.default_forThings;
 	let rotate_element: HTMLElement | null = null;
 	let resize_element: HTMLElement | null = null;

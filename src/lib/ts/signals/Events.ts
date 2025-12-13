@@ -4,21 +4,26 @@ import { T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Impor
 import { T_Search, T_Action, T_Control } from '../common/Global_Imports';
 import { Point, Ancestry, Predicate } from '../common/Global_Imports';
 import { S_Mouse, S_Alteration } from '../common/Global_Imports';
+import { get, writable } from 'svelte/store';
 import Mouse_Timer from './Mouse_Timer';
-import { get } from 'svelte/store';
 
 export class Events {
 	mouse_timer_dict_byName: { [name: string]: Mouse_Timer } = {};
-	handle_focus_cleanup: (() => void) | null = null;
 	initialTouch: Point | null = null;
 	alterationTimer!: Mouse_Timer;
+
+	w_count_window_resized	= writable<number>(0);
+	w_count_mouse_down		= writable<number>(0);
+	w_count_mouse_up		= writable<number>(0);
+	w_scaled_movement		= writable<Point | null>(null);
+	w_mouse_location		= writable<Point>();
+	w_mouse_location_scaled	= writable<Point>();
 
 	mouse_timer_forName(name: string): Mouse_Timer { return elements.assure_forKey_inDict(name, this.mouse_timer_dict_byName, () => new Mouse_Timer(name)); }
 
 	setup() {
 		s.w_s_alteration.subscribe((s_alteration: S_Alteration | null) => { this.handle_s_alteration(s_alteration); });
 		c.w_device_isMobile.subscribe((isMobile: boolean) => { this.subscribeTo_events(); });
-		this.start_watching_focus();
 	}
 
 	name_ofActionAt(t_action: number, column: number): string {
@@ -77,19 +82,6 @@ export class Events {
 		return focused;
 	}
 
-	start_watching_focus(): void {
-		if (!this.handle_focus_cleanup && debug.focus) {
-			this.handle_focus_cleanup = this.watch_focus(this.log_focus.bind(this));
-		}
-	}
-
-	stop_watching_focus() {
-		if (!!this.handle_focus_cleanup) {
-			this.handle_focus_cleanup();
-			this.handle_focus_cleanup = null;
-		}
-	}
-
 	log_focus(element: Element | null, gained_focus: boolean): void {
 		if (element) {
 			console.log(gained_focus ? 'Focus gained:' : 'Focus lost:');
@@ -130,11 +122,15 @@ export class Events {
 	static readonly EVENT_HANDLERS = Symbol('EVENT_HANDLERS');
 
 	private handle_touch_end(event: TouchEvent) { this.initialTouch = null; }
-	private handle_mouse_down(event: MouseEvent) { g.w_scaled_movement.set(Point.zero); }
 
-	private handle_mouse_up(event: MouseEvent) {
-		g.w_scaled_movement.set(null);
-		s.w_count_mouse_up.update(n => n + 1);
+	private handle_mouse_down = (event: MouseEvent) => {
+		this.w_count_mouse_down.update(n => n + 1);
+		this.w_scaled_movement.set(Point.zero);
+	}
+
+	private handle_mouse_up = (event: MouseEvent) => {
+		this.w_scaled_movement.set(null);
+		this.w_count_mouse_up.update(n => n + 1);
 	}
 
 	private handle_key_up(e: Event) {
@@ -159,11 +155,11 @@ export class Events {
 		}
 	}
 
-	private handle_window_resize(event: Event) {
+	private handle_window_resize = (event: Event) => {
 		// on COMMAND +/-
 		// and on simulator switches platform
 		const isMobile = c.device_isMobile;
-		s.w_count_window_resized.update(n => n + 1);		// observed by controls
+		this.w_count_window_resized.update(n => n + 1);		// observed by controls
 		c.w_device_isMobile.set(isMobile);					// force reaction (unchanged)
 		g.restore_preferences();
 	}
@@ -208,16 +204,16 @@ export class Events {
 		}
 	}
 
-	private handle_mouse_move(event: MouseEvent) {
+	private handle_mouse_move = (event: MouseEvent) => {
 		const location = new Point(event.clientX, event.clientY);
 		const scaled = location.dividedEquallyBy(get(g.w_scale_factor));
-		const prior_scaled = get(g.w_mouse_location_scaled);
+		const prior_scaled = get(this.w_mouse_location_scaled);
 		const delta = prior_scaled?.vector_to(scaled) ?? null;
 		if (!!delta && delta.magnitude > 1) {
-			g.w_scaled_movement.set(delta);
+			this.w_scaled_movement.set(delta);
 		}
-		g.w_mouse_location.set(location);
-		g.w_mouse_location_scaled.set(scaled);
+		this.w_mouse_location.set(location);
+		this.w_mouse_location_scaled.set(scaled);
 		hits.handle_mouse_movement_at(scaled);
 	}
 

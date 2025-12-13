@@ -2,7 +2,6 @@
 	import { Point, T_Layer, G_Cluster, T_Cluster_Pager } from '../../ts/common/Global_Imports';
 	import { k, s, u, colors, radial, g } from '../../ts/common/Global_Imports';
 	import Cluster_Pager from '../mouse/Cluster_Pager.svelte';
-	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Curved_Text from '../text/Curved_Text.svelte';
 	import Gull_Wings from '../draw/Gull_Wings.svelte';
 	import { onDestroy } from 'svelte';
@@ -41,6 +40,16 @@
 	$: pager_font_size = `${k.font_size.cluster_slider}px`;
 	$: pager_angle = -g_cluster_pager.angle_ofFork;
 	$: radius = $w_resize_radius + inset;
+	$: diameter = radius * 2;
+	$: wrapper_style = `
+		position: absolute;
+		width: ${diameter}px;
+		height: ${diameter}px;
+		z-index: ${T_Layer.paging};
+		cursor: ${k.cursor_default};
+		left: ${g.center_ofGraphView.x - radius}px;
+		top: ${g.center_ofGraphView.y - radius}px;
+	`.removeWhiteSpace();
 
 	const unsubscribe = w_t_cluster_pager.subscribe(value => {
 		pager_offset = (value == T_Cluster_Pager.sliders) ? -2 : 8;
@@ -62,13 +71,8 @@
 	style='
 		z-index:{T_Layer.paging};
 		background-color: transparent;'>
-    <Mouse_Responder
-		width = {radius * 2}
-		height = {radius * 2}
-		name = {g_cluster.name}
-		zindex = {T_Layer.paging}
-		cursor = {k.cursor_default}
-		center = {g.center_ofGraphView}>
+	<div class='cluster-responder'
+		style={wrapper_style}>
         <svg class='svg-radial-cluster'
 			viewBox={viewBox}>
 			{#if show_fat_arc}
@@ -99,7 +103,7 @@
 				{/if}
 			{/if}
         </svg>
-    </Mouse_Responder>
+	</div>
 </div>
 <Curved_Text
 	zindex={T_Layer.ring}
