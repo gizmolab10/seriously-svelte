@@ -10,6 +10,7 @@
 	const ancestry = s_title.ancestry;
 	const thing = ancestry?.thing;
     const { w_mouse_location } = g;
+	const { w_ancestry_focus } = s;
 	const { w_thing_color } = colors;
 	const padding = `1px 0px 0px 0px`;
 	const g_widget = ancestry.g_widget;
@@ -78,17 +79,19 @@
 	}
 
 	$: {
-		const reactives = `${$w_thing_color}:::${u.descriptionBy_titles($w_grabbed)}:::${u.descriptionBy_titles($w_expanded)}`;
+		const reactives = `${$w_thing_color}
+			:::${$w_ancestry_focus?.id}
+			:::${u.descriptionBy_titles($w_grabbed)}
+			:::${u.descriptionBy_titles($w_expanded)}`;
 		if (reactives != trigger) {
 			const isFocus = ancestry?.isFocus ?? false;
-			const adjust = controls.inRadialMode && isFocus;
 			const isEditing = ancestry?.isEditing ?? false;
 			const isGrabbed = ancestry?.isGrabbed ?? false;
+			const adjust = controls.inRadialMode && isFocus;
 			top = (isGrabbed ? 0.4 : 0) - (adjust ? isGrabbed ? 2.5 : 2 : 0);
-			left = adjust ? (title_width / 20 - 3) : 0.8;
 			color = s_widget.colorFor_grabbed_andEditing(isGrabbed, isEditing);
+			left = adjust ? 1.5 : 0.8;
 			trigger = reactives;
-			debug_log_connection_state('triggered by reactives');
 		}
 	}
 

@@ -37,12 +37,11 @@ export default class Radial {
 		});
 	}
 
-	reset_paging() { this.s_pagings.map(s => s.reset()); }
 	get ring_radius(): number { return get(this.w_resize_radius); }
 	get s_pagings(): Array<S_Rotation> { return Object.values(this.s_paging_dict_byName); }
 	get isAny_paging_arc_hovering(): boolean { return this.s_pagings.some(s => s.isHovering); }
 	get isAny_paging_thumb_dragging(): boolean { return this.s_pagings.some(s => s.isDragging); }
-	get isDragging(): boolean { return this.isAny_paging_thumb_dragging || this.s_paging.isDragging || this.s_rotation.isDragging; }
+	get isDragging(): boolean { return this.isAny_paging_thumb_dragging || this.s_resizing.isDragging || this.s_rotation.isDragging; }
 	s_paging_forName_ofCluster(name: string): S_Rotation { return elements.assure_forKey_inDict(name, this.s_paging_dict_byName, () => new S_Rotation()); }
 	
 	g_pages_forThingID(id: string | null | undefined): G_Pages | null {
@@ -53,13 +52,13 @@ export default class Radial {
 		if (!this.s_paging) this.s_paging = new S_Rotation(T_Hit_Target.paging);
 		if (!this.s_resizing) this.s_resizing = new S_Resizing();
 		if (!this.s_rotation) this.s_rotation = new S_Rotation();
-		this.s_paging.reset();
-		this.s_resizing.reset();
-		this.s_rotation.reset();
+		this.s_pagings.map(s => s.reset());
 		this.cursor = k.cursor_default;
 		this.w_g_cluster.set(null);
+		this.s_resizing.reset();
+		this.s_rotation.reset();
+		this.s_paging.reset();
 		this.last_action = 0;
-		this.reset_paging();
 	}
 
 	createAll_thing_pages_fromDict(dict: Dictionary | null) {
