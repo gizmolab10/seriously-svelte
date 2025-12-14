@@ -1,7 +1,9 @@
 <script lang='ts'>
-    import { c, e, k, u, show, colors, svgPaths } from '../../ts/common/Global_Imports';
-    import { Rect, Size, Point, T_Layer } from '../../ts/common/Global_Imports';
+    import { c, e, k, u, hits, show, colors, svgPaths, elements } from '../../ts/common/Global_Imports';
+    import { Rect, Size, Point, T_Layer, S_Mouse, T_Hit_Target } from '../../ts/common/Global_Imports';
+    import Identifiable from '../../ts/runtime/Identifiable';
     import SVG_Gradient from '../draw/SVG_Gradient.svelte';
+    import { onMount, onDestroy } from 'svelte';
     export let handle_click: (title: string) => boolean;
     export let font_size: number = k.font_size.banners;
     export let detect_autorepeat: boolean = false;
@@ -10,47 +12,52 @@
     export let name = k.empty;
     export let height: number;
     export let width: number;
+    const { w_s_hover } = hits;
 	const { w_background_color } = colors;
     const gradient_name = 'glow-' + banner_id;
     const icon_path = svgPaths.path_for(title);
     const glow_rect = Rect.createWHRect(width, height);
     const click_title = !!icon_path ? title : banner_id;
     const mouseTimer = e.mouse_timer_forName(`glow-button-${banner_id}-${click_title}`);
+    const s_element = elements.s_element_for(new Identifiable(`glow-${banner_id}-${title}`), T_Hit_Target.button, click_title);
     let glow_button: HTMLElement | null = null;
     let banner_color = colors.banner;
-    let isHovering = false;
+
+    $: isHovering = s_element.isEqualTo($w_s_hover);
+
+    // stop autorepeat when hover leaves
+    $: if (!isHovering && detect_autorepeat) {
+        mouseTimer.autorepeat_stop();
+    }
+
+    onMount(() => {
+        if (glow_button) {
+            s_element.set_html_element(glow_button);
+        }
+        s_element.handle_click = (s_mouse: S_Mouse): boolean => {
+            if (s_mouse.isDown) {
+                if (detect_autorepeat) {
+                    mouseTimer.autorepeat_start(0, () => handle_click(click_title));
+                } else {
+                    handle_click(click_title);
+                }
+            } else if (s_mouse.isUp) {
+                if (detect_autorepeat) {
+                    mouseTimer.autorepeat_stop();
+                }
+            }
+            return true;
+        };
+    });
+
+    onDestroy(() => {
+        hits.delete_hit_target(s_element);
+    });
 
 	$: {
 		const _ = $w_background_color;
 		banner_color = colors.banner;
 	}
-    
-    function intercept_click() {
-        handle_click(click_title);
-        isHovering = false;
-    }
-
-    function handle_mouse_down() {
-        if (detect_autorepeat) {
-            mouseTimer.autorepeat_start(0, () => handle_click(click_title));
-        } else {
-            intercept_click();
-        }
-    }
-
-    function handle_mouse_up() {
-        if (detect_autorepeat) {
-            mouseTimer.autorepeat_stop();
-        }
-    }
-
-    function handle_mouse_enter(is_in: boolean) {
-        const was_in = isHovering;
-        isHovering = is_in;
-        if (is_in && was_in && detect_autorepeat) {        // we get an extra mouse enter event when we click
-            mouseTimer.autorepeat_stop();
-        }
-    }
     
 </script>
 
@@ -70,10 +77,6 @@
             path={svgPaths.rectangle(glow_rect)}/>
     {/if}
     <div class='glow-button-title'
-        on:mouseup={handle_mouse_up}
-        on:mousedown={handle_mouse_down}
-        on:mouseenter={() => handle_mouse_enter(true)}
-        on:mouseleave={() => handle_mouse_enter(false)}
         style='
             top: 50%;
             left: 50%;

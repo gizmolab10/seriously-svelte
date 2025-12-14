@@ -77,11 +77,17 @@ export class Events {
 	private handle_touch_end(event: TouchEvent) { this.initialTouch = null; }
 
 	private handle_mouse_down = (event: MouseEvent) => {
+		const location = new Point(event.clientX, event.clientY);
+		const scaled = location.dividedEquallyBy(get(g.w_scale_factor));
+		hits.handle_click_at(scaled, S_Mouse.down(event, null));
 		this.w_count_mouse_down.update(n => n + 1);
 		this.w_scaled_movement.set(Point.zero);
 	}
 
 	private handle_mouse_up = (event: MouseEvent) => {
+		const location = new Point(event.clientX, event.clientY);
+		const scaled = location.dividedEquallyBy(get(g.w_scale_factor));
+		hits.handle_click_at(scaled, S_Mouse.up(event, null));
 		this.w_scaled_movement.set(null);
 		this.w_count_mouse_up.update(n => n + 1);
 	}

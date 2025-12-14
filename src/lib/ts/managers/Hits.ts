@@ -1,4 +1,4 @@
-import { Rect, Point, debug, radial, controls } from '../common/Global_Imports';
+import { Rect, Point, debug, radial, controls, S_Mouse } from '../common/Global_Imports';
 import { T_Drag, T_Hit_Target } from '../common/Global_Imports';
 import { S_Hit_Target } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
@@ -91,6 +91,16 @@ export default class Hits {
 	}
 
 	static readonly _____HIT_TEST: unique symbol;
+
+	handle_click_at(point: Point, s_mouse: S_Mouse): boolean {
+		const targets = this.targets_atPoint(point);
+		const target
+			=  targets.find(s => s.isADot)
+			?? targets.find(s => s.isAWidget)
+			?? targets.find(s => s.isRing)
+			?? targets[0];
+		return target?.handle_click?.(s_mouse) ?? false;
+	}
 
 	targets_ofType_atPoint(type: T_Hit_Target, point: Point | null): Array<S_Hit_Target> {
 		return !point ? [] : this.targets_atPoint(point).filter(target => target.type == type);

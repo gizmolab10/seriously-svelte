@@ -1,4 +1,4 @@
-import { g, k, hits, Rect, Point, debug, colors, Ancestry, T_Hit_Target } from '../common/Global_Imports';
+import { g, k, hits, Rect, Point, debug, colors, Ancestry, S_Mouse, T_Hit_Target } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
 
@@ -9,6 +9,7 @@ export default class S_Hit_Target {
 
     containedIn_rect?: (rect: Rect | null) => boolean;
     contains_point?: (point: Point | null) => boolean;
+	handle_click?: (s_mouse: S_Mouse) => boolean;
 	identifiable: Identifiable | null = null;
 	html_element: HTMLElement | null = null;
 	element_rect: Rect | null = null;							// for use in Hits index
