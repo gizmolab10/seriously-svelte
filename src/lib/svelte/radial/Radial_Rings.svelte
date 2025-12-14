@@ -2,7 +2,6 @@
 	import { e, g, k, s, x, hits, busy, debug, colors, radial, signals, svgPaths } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Radial_Zone, T_Hit_Target, S_Component } from '../../ts/common/Global_Imports';
 	import { Thing, Point, Angle, g_radial, databases } from '../../ts/common/Global_Imports';
-	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
 	import Radial_Cluster from './Radial_Cluster.svelte';
 	import { onMount } from 'svelte';
 	const name = 'rings';
@@ -83,44 +82,35 @@
 		update_fill_colors();
 	}
 
-	function handle_s_mouse(s_mouse) {
-
-		/////////////////////////////
-		// setup or teardown state //
-		/////////////////////////////
-
-		if (s_mouse.isUp) {
-			s_reset();
-		} else if (s_mouse.isDown) {
-			const angle_ofMouseDown = g.mouse_angle_fromGraphCenter;
-			const angle_ofRotation = angle_ofMouseDown.add_angle_normalized(-$w_rotate_angle);
-			const zone = radial.ring_zone_atMouseLocation;
-			$w_s_title_edit?.stop_editing();
-			$w_s_title_edit = null;		// so widget will react
-			switch (zone) {
-				case T_Radial_Zone.rotate:
-					debug.log_radial(` begin rotate  ${angle_ofRotation.asDegrees()}`);
-					radial.s_rotation.active_angle = angle_ofMouseDown;
-					radial.s_rotation.basis_angle = angle_ofRotation;
-					break;
-				case T_Radial_Zone.resize:
-					const change_ofRadius = g.mouse_distance_fromGraphCenter - $w_resize_radius;
-					debug.log_radial(` begin resize  ${change_ofRadius.asInt()}`);
-					radial.s_rotation.active_angle = angle_ofMouseDown + Angle.quarter;	// needed for cursor
-					radial.s_rotation.basis_angle = angle_ofRotation + Angle.quarter;		// "
-					radial.s_resizing.basis_radius = change_ofRadius;
-					break;
-				case T_Radial_Zone.paging: 
-					const angle_ofPage = angle_ofMouseDown.angle_normalized();
-					const g_cluster = g_radial.g_cluster_atMouseLocation;
-					if (!!g_cluster) {
-						debug.log_radial(` begin paging  ${angle_ofPage.asDegrees()}`);
-						g_cluster.s_paging.active_angle = angle_ofPage;
-						g_cluster.s_paging.basis_angle = angle_ofPage;
-						$w_g_cluster = g_cluster;
-					}
-					break;
-			}
+	function handle_pointerdown(event: PointerEvent) {
+		const angle_ofMouseDown = g.mouse_angle_fromGraphCenter;
+		const angle_ofRotation = angle_ofMouseDown.add_angle_normalized(-$w_rotate_angle);
+		const zone = radial.ring_zone_atMouseLocation;
+		$w_s_title_edit?.stop_editing();
+		$w_s_title_edit = null;		// so widget will react
+		switch (zone) {
+			case T_Radial_Zone.rotate:
+				debug.log_radial(` begin rotate  ${angle_ofRotation.asDegrees()}`);
+				radial.s_rotation.active_angle = angle_ofMouseDown;
+				radial.s_rotation.basis_angle = angle_ofRotation;
+				break;
+			case T_Radial_Zone.resize:
+				const change_ofRadius = g.mouse_distance_fromGraphCenter - $w_resize_radius;
+				debug.log_radial(` begin resize  ${change_ofRadius.asInt()}`);
+				radial.s_rotation.active_angle = angle_ofMouseDown + Angle.quarter;	// needed for cursor
+				radial.s_rotation.basis_angle = angle_ofRotation + Angle.quarter;		// "
+				radial.s_resizing.basis_radius = change_ofRadius;
+				break;
+			case T_Radial_Zone.paging: 
+				const angle_ofPage = angle_ofMouseDown.angle_normalized();
+				const g_cluster = g_radial.g_cluster_atMouseLocation;
+				if (!!g_cluster) {
+					debug.log_radial(` begin paging  ${angle_ofPage.asDegrees()}`);
+					g_cluster.s_paging.active_angle = angle_ofPage;
+					g_cluster.s_paging.basis_angle = angle_ofPage;
+					$w_g_cluster = g_cluster;
+				}
+				break;
 		}
 		radial.cursor = radial.cursor_forRingZone;
 	}
@@ -131,6 +121,16 @@
 		const end = outer_diameter - ring_width;
 		return `M ${start} ${center} L ${end} ${center} M ${center} ${start} L ${center} ${end}`;
 	}
+
+	$: rings_style = `
+		position: absolute;
+		z-index: ${T_Layer.ring};
+		cursor: ${radial.cursor};
+		width: ${outer_diameter}px;
+		height: ${outer_diameter}px;
+		top: ${g.center_ofGraphView.y - outer_diameter / 2}px;
+		left: ${g.center_ofGraphView.x - outer_diameter / 2}px;
+	`.removeWhiteSpace();
 
 </script>
 
@@ -144,13 +144,9 @@
 				-moz-user-select: none;
 				z-index:{T_Layer.ring};
 				-webkit-user-select: none;'>
-			<Mouse_Responder name = 'rings'
-				cursor = {radial.cursor}
-				width = {outer_diameter}
-				height = {outer_diameter}
-				zindex = {T_Layer.ring}
-				center = {g.center_ofGraphView}
-				handle_s_mouse = {handle_s_mouse}>
+			<div class='ring-paths'
+				style={rings_style}
+				on:pointerdown={handle_pointerdown}>
 				<svg class = 'rings-svg'
 					viewBox = {viewBox}>
 					<path class = 'resize-path'
@@ -168,7 +164,7 @@
 						d = {rotate_svgPath}
 						bind:this = {rotate_element}/>
 				</svg>
-			</Mouse_Responder>
+			</div>
 		</div>
 	{/if}
 	<div class = 'paging-arcs'

@@ -18,8 +18,17 @@
 	let stroke = colors.default;
 	let fill = 'white';
 
+	$: {
+		const _ = $w_s_hover;
+		const isHovering = $w_s_hover?.id === s_element.id;
+		stroke = isHovering ? 'white' : colors.default;
+		fill = isHovering ? 'gray' : 'white';
+	}
+
 	onMount(() => {
-		s_element.set_html_element(element);
+		if (!!element) {
+			s_element.set_html_element(element);
+		}
 	});
 
 	onDestroy(() => {

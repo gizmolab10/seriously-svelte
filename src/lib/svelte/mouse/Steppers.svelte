@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import { k, show, Point, colors, Direction } from '../../ts/common/Global_Imports';
+    import { k, show, Point, colors, Direction, S_Mouse } from '../../ts/common/Global_Imports';
     import Triangle_Button from './Triangle_Button.svelte';
     export let hit_closure;
     const buttonSize = 20;
@@ -14,10 +14,11 @@
 
 	function handle_s_mouse(s_mouse: S_Mouse): boolean {
         const target = s_mouse.element;
-        if (!!!target && (s_mouse.isLong || s_mouse.isRepeat)) {
-            const pointsUp = target.id == 'up';
+        if (!!target && (s_mouse.isDown || s_mouse.isLong || s_mouse.isRepeat)) {
+            const pointsUp = target.getAttribute('name') == 'up';
             hit_closure(pointsUp, s_mouse.event?.metaKey);
         }
+        return true;
 	}
 
 </script>

@@ -1,11 +1,11 @@
 <script lang='ts'>
-	import { S_Mouse, S_Element } from '../../ts/common/Global_Imports';
-	import { k, x, svgPaths } from '../../ts/common/Global_Imports';
+	import { k, x, hits, elements, svgPaths } from '../../ts/common/Global_Imports';
+	import { S_Mouse, T_Hit_Target } from '../../ts/common/Global_Imports';
+	import Identifiable from '../../ts/runtime/Identifiable';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import Button from './Button.svelte';
 	export let handle_s_mouse: (result: S_Mouse) => boolean;
 	export let hover_closure: (flag: boolean) => boolean;
-	export let s_triangle = S_Element.empty();
 	export let detect_autorepeat = false;
 	export let detect_longClick = false;
 	export let extraPath = null;
@@ -14,16 +14,24 @@
 	export let center;
 	export let angle;
 	export let size;
+	const { w_s_hover } = hits;
 	const { w_items: w_grabbed } = x.si_grabs;
-	let fillColor = 'white';
-	let extraColor = 'white';
+	const s_triangle = elements.s_element_for(new Identifiable(name), T_Hit_Target.button, name);
 	let trianglePath = svgPaths.fat_polygon(size, angle);
+	s_triangle.color_background = 'transparent';
+	let extraColor = 'white';
+	let fillColor = 'white';
 
 	$: $w_grabbed, setFillColor(false);
 	
 	$: {
 		trianglePath = svgPaths.fat_polygon(size, angle);
 		setFillColor(false);
+	}
+
+	$: {
+		const isHovering = $w_s_hover?.id === s_triangle.id;
+		setFillColor(isHovering);
 	}
 
 	function setFillColor(isFilled) {
