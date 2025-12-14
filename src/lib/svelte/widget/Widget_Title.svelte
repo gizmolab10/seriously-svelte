@@ -1,16 +1,14 @@
 <script lang='ts'>
 	import { e, g, h, k, s, u, x, hits, debug, colors, search, signals, controls, elements, databases } from '../../ts/common/Global_Imports';
-	import { T_Search, T_Layer, T_Hit_Target, T_Edit } from '../../ts/common/Global_Imports';
-	import { S_Mouse, S_Element, S_Component } from '../../ts/common/Global_Imports';
-	import { Rect, Seriously_Range } from '../../ts/common/Global_Imports';
-	import Mouse_Responder from '../mouse/Mouse_Responder.svelte';
-	import { onMount } from 'svelte';
+	import { T_Layer, T_Hit_Target, T_Edit, Seriously_Range } from '../../ts/common/Global_Imports';
+	import { S_Element, S_Component } from '../../ts/common/Global_Imports';
+	import { onMount, onDestroy } from 'svelte';
 	export let s_title!: S_Element;
 	export let fontSize = `${k.font_size.common}px`;
 	const ancestry = s_title.ancestry;
 	const thing = ancestry?.thing;
-    const { w_mouse_location } = e;
-	const { w_ancestry_focus } = s;
+	const { w_mouse_location } = e;
+	const { w_ancestry_focus, w_thing_title, w_thing_fontFamily, w_s_title_edit } = s;
 	const { w_thing_color } = colors;
 	const padding = `1px 0px 0px 0px`;
 	const g_widget = ancestry.g_widget;
@@ -18,30 +16,25 @@
 	const input_height = k.height.dot + 2;
 	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_items: w_expanded } = x.si_expanded;
-	const { w_thing_title, w_thing_fontFamily, w_s_title_edit } = s;
 	let title_width = (thing?.width_ofTitle ?? 0) + title_extra();
 	let title_binded = thing?.title ?? k.empty;
 	let layout_timer: number | null = null;
-	let title_component: S_Component;
+	let element: HTMLElement | null = null;
 	let title_prior = thing?.title;
 	let s_component: S_Component;
 	let color = s_widget.color;
-	let layoutPending = false;
-	let reattachments = 0;
 	let trigger = k.empty;
 	let ghost = null;
 	let input = null;
 	let left = 0;
 	let top = 0;
-	
-	function isHit():		  boolean { return false }
-	function hasFocus():	  boolean { return document.activeElement === input; }
-	function isEditing():	  boolean { return $w_s_title_edit?.ancestry_isEditing(ancestry) ?? false; }
-	function isStopping():	  boolean { return $w_s_title_edit?.ancestry_isStopping(ancestry) ?? false; }
+
+	function hasFocus(): boolean { return document.activeElement === input; }
+	function isEditing(): boolean { return $w_s_title_edit?.ancestry_isEditing(ancestry) ?? false; }
+	function isStopping(): boolean { return $w_s_title_edit?.ancestry_isStopping(ancestry) ?? false; }
 	function isPercolating(): boolean { return $w_s_title_edit?.ancestry_isPercolating(ancestry) ?? false; }
-	function title_extra():	   number { return (controls.inTreeMode && isEditing()) ? 2.2 : 0; }
-	function hasChanges()	 		  { return title_prior != title_binded; }
-	function handle_mouse_up() 		  { clearClicks(); }
+	function title_extra(): number { return (controls.inTreeMode && isEditing()) ? 2.2 : 0; }
+	function hasChanges() { return title_prior != title_binded; }
 
 	s_component = signals.handle_anySignal_atPriority(0, ancestry, T_Hit_Target.title, (t_signal, ancestry) => {
 		updateInputWidth();
@@ -49,6 +42,9 @@
 
 	onMount(() => {
 		debug.log_build(`TITLE ${ancestry?.title}`);
+		if (!!element) {
+			s_widget.set_html_element(element);
+		}
 		setTimeout(() => {
 			updateInputWidth();
 			if (isEditing()) {
@@ -59,25 +55,27 @@
 		return () => s_component.disconnect();
 	});
 
-	const _____REACTIVES: unique symbol = Symbol('REACTIVES');
+	onDestroy(() => {
+		hits.delete_hit_target(s_widget);
+	});
 
-	$: {
-		if (!!input) {
-			const s_title = s_widget.s_title;
-			s_title.set_html_element(input);
-		}
+	// Register s_title with input element for hovering
+	$: if (!!input) {
+		s_title.set_html_element(input);
 	}
 
+	// Update styling based on edit state
 	$: {
 		const _ = $w_s_title_edit;
 		if (!!input) {
-			const isEditing = ancestry?.isEditing ?? false;
+			const isEditingNow = ancestry?.isEditing ?? false;
 			const isGrabbed = ancestry?.isGrabbed ?? false;
 			title_width = (thing?.width_ofTitle ?? 0) + title_extra();
-			color = s_widget.colorFor_grabbed_andEditing(isGrabbed, isEditing);
+			color = s_widget.colorFor_grabbed_andEditing(isGrabbed, isEditingNow);
 		}
 	}
 
+	// Update positioning based on state
 	$: {
 		const reactives = `${$w_thing_color}
 			:::${$w_ancestry_focus?.id}
@@ -85,32 +83,26 @@
 			:::${u.descriptionBy_titles($w_expanded)}`;
 		if (reactives != trigger) {
 			const isFocus = ancestry?.isFocus ?? false;
-			const isEditing = ancestry?.isEditing ?? false;
+			const isEditingNow = ancestry?.isEditing ?? false;
 			const isGrabbed = ancestry?.isGrabbed ?? false;
 			const adjust = controls.inRadialMode && isFocus;
 			top = (isGrabbed ? 0.4 : 0) - (adjust ? isGrabbed ? 2.5 : 2 : 0);
-			color = s_widget.colorFor_grabbed_andEditing(isGrabbed, isEditing);
+			color = s_widget.colorFor_grabbed_andEditing(isGrabbed, isEditingNow);
 			left = adjust ? 1.5 : 0.8;
 			trigger = reactives;
 		}
 	}
 
+	// Handle edit state changes from w_s_title_edit store
 	$: {
 		const s_text_edit = $w_s_title_edit;
 		if (hasFocus() && !s_text_edit) {
 			stopEdit();
 		} else if (!!input && !!s_text_edit) {
 			if (s_text_edit.ancestry.id_thing == ancestry.id_thing) {
-				input.value = ancestry.title;	// consistently update titles of widgets of things with multiple parents
+				input.value = ancestry.title;
 			}
 			if (s_text_edit.ancestry.equals(ancestry)) {
-
-				//////////////////////////////////////////////////////
-				//													//
-				//			handle w_s_title_edit state				//
-				//													//
-				//////////////////////////////////////////////////////
-
 				switch (s_text_edit.t_edit) {
 					case T_Edit.stopping:
 						stopEdit();
@@ -126,15 +118,41 @@
 		}
 	}
 
-	function debug_log_connection_state(prefix: string) {
-		if (!!s_component) {
-			s_component.debug_log_connection_state(prefix);
-		} else {
-			debug.log_component(`S_Component is null for ${ancestry?.titles}`);
-		}
+	function handle_pointerdown(event: PointerEvent) {
+		handle_mousedown_fromHover();
 	}
 
-	const _____EDIT: unique symbol = Symbol('EDIT');
+	$: wrapper_style = `
+		cursor: pointer;
+		position: absolute;
+		width: ${title_width}px;
+		height: ${k.height.row}px;
+		top: ${g_widget.origin_ofTitle.y}px;
+		left: ${g_widget.origin_ofTitle.x}px;
+	`.removeWhiteSpace();
+
+	function handle_mousedown_fromHover() {
+		if (!!ancestry) {
+			if (isEditing()) {
+				extractRange_fromInput_toThing();
+			} else {
+				if (!!$w_s_title_edit && $w_s_title_edit.isActive) {
+					$w_s_title_edit.stop_editing();
+					$w_s_title_edit = null;
+				}
+				if (!ancestry.isGrabbed) {
+					ancestry.grab_forShift(false);
+				} else if (ancestry.isEditable && !!input) {
+					setTimeout(() => {
+						ancestry.startEdit();
+						thing_setSelectionRange_fromMouseLocation();
+						elements.element_set_focus_to(input);
+						applyRange_fromThing_toInput();
+					}, 1);
+				}
+			}
+		}
+	}
 
 	function stopEdit() {
 		debug.log_edit(`STOP ${title_binded}`);
@@ -150,19 +168,17 @@
 			if (hasChanges()) {
 				debug.log_edit(`PERSISTING ${thing?.title}`);
 				await databases.db_now.thing_persistentUpdate(thing);
-				title_prior = thing?.title;			// so hasChanges will be correct next time
+				title_prior = thing?.title;
 			}
-			u.onNextTick(() => {		// prevent Panel's enter key handler call to start edit from actually starting
+			u.onNextTick(() => {
 				if (!!$w_s_title_edit && $w_s_title_edit.actively_refersTo(ancestry)) {
 					debug.log_edit(`STOPPING ${ancestry.title}`);
 					$w_s_title_edit.stop_editing();
-					$w_s_title_edit = null;	// inform Widget
+					$w_s_title_edit = null;
 				}
 			});
 		}
 	}
-
-	const _____RANGE: unique symbol = Symbol('RANGE');
 
 	function extractRange_fromInput_toThing() {
 		if (!!input && !!$w_s_title_edit) {
@@ -174,7 +190,7 @@
 	}
 
 	function applyRange_fromThing_toInput() {
-		const range = $w_s_title_edit.thing_selectionRange;
+		const range = $w_s_title_edit?.thing_selectionRange;
 		if (!!range && !!input) {
 			const end = range.end;
 			const start = range.start;
@@ -195,10 +211,6 @@
 		}
 	}
 
-	const _____HANDLERS: unique symbol = Symbol('HANDLERS');
-
-	function handle_forComponent(s_mouse: S_Mouse): boolean { return false; }
-	
 	function handle_cut_paste(event) {
 		extractRange_fromInput_toThing();
 	}
@@ -226,51 +238,26 @@
 			thing.title = title_binded = title;
 			title_updatedTo(title);
 		}
-	};
+	}
 
 	function handle_key_down(event) {
 		if (!!thing && !!ancestry && isEditing() && canAlterTitle(event)) {
 			const key = event.key.toLowerCase();
 			debug.log_key(`H KEY ${key}`);
-			switch (key) {	
+			switch (key) {
 				case 'arrowup':
 				case 'arrowdown':
 				case 'arrowleft':
 				case 'arrowright': break;
 				case 'enter': u.consume_event(event); stop_andPersist(); break;
-				case 'tab':	  u.consume_event(event); stop_andPersist(); h.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break;
+				case 'tab': u.consume_event(event); stop_andPersist(); h.ancestry_edit_persistentCreateChildOf(ancestry.parentAncestry); break;
 			}
 			extractRange_fromInput_toThing();
 		}
 	}
 
-	function handle_s_mouse(s_mouse: S_Mouse) {
-		if (!!ancestry && !s_mouse.notRelevant) {
-			if (isEditing()) {
-				extractRange_fromInput_toThing();
-			} else if (s_mouse.isDown) {
-				if (!!$w_s_title_edit && $w_s_title_edit.isActive) {
-					$w_s_title_edit.stop_editing();		// stop prior edit, wait for it to percolate (below with setTimeout)
-					$w_s_title_edit = null;
-				}
-				if (!ancestry.isGrabbed) {
-					ancestry.grab_forShift(event.shiftKey);
-				} else if (ancestry.isEditable && !!input) {
-					setTimeout(() => {
-						ancestry.startEdit();
-						thing_setSelectionRange_fromMouseLocation();
-						elements.element_set_focus_to(input);
-						applyRange_fromThing_toInput();
-					}, 1);
-				}
-			}
-		}
-	}
-
-	const _____TITLE: unique symbol = Symbol('TITLE');
-
 	function updateInputWidth() {
-		if (!!input && !!ghost) { // ghost only exists to provide its width (in pixels)
+		if (!!input && !!ghost) {
 			title_width = ghost.scrollWidth + title_extra();
 		}
 	}
@@ -293,9 +280,7 @@
 			if (layout_timer !== null) {
 				clearTimeout(layout_timer);
 			}
-			// Debounce: only layout after typing pauses
 			layout_timer = setTimeout(() => {
-				// Use requestAnimationFrame to ensure we don't interrupt any ongoing rendering
 				requestAnimationFrame(() => {
 					layout_timer = null;
 					if ($w_s_title_edit) {
@@ -305,7 +290,6 @@
 					}
 				});
 			}, 400);
-			
 			debug.log_edit(`UPDATED ${$w_s_title_edit.description}`);
 		}
 	}
@@ -318,55 +302,51 @@
 	}
 </style>
 
-{#key reattachments}
-	<Mouse_Responder
-		width={title_width}
-		s_element={s_widget}
-		height={k.height.row}
-		handle_s_mouse={handle_s_mouse}
-		name={'ghost_' + s_component.id}
-		origin={g_widget.origin_ofTitle}>
-		<span class='ghost-{title_binded}'
-			bind:this={ghost}
-			style='left:-9999px;
-				white-space: pre;					/* Preserve whitespace to accurately measure the width */
-				padding: {padding};
-				position: absolute;
-				visibility: hidden;
-				font-size: {fontSize};
-				font-family: {$w_thing_fontFamily};'>
-			{title_binded}
-		</span>
-		<input
-			type='text'
-			name='title'
-			bind:this={input}
-			id = {s_component.id}
-			on:blur={handle_blur}
-			on:focus={handle_focus}
-			on:input={handle_input}
-			bind:value={title_binded}
-			on:cut={handle_cut_paste}
-			on:paste={handle_cut_paste}
-			class='title-{title_binded}'
-			on:keydown={handle_key_down}
-			on:mouseover={(event) => { u.consume_event(event); }}
-			style='
-				border : none;
-				top : {top}px;
-				outline : none;
-				color : {color};
-				white-space : pre;
-				left : {left - 2}px;
-				position : absolute;
-				padding : {padding};
-				font-size : {fontSize};
-				width : {title_width}px;
-				z-index : {T_Layer.text};
-				height : {input_height}px;
-				{k.prevent_selection_style};
-				background-color : transparent;
-				font-family : {$w_thing_fontFamily};
-				cursor: {isEditing() ? 'text' : 'pointer'};'/>
-	</Mouse_Responder>
-{/key}
+<div class='title-wrapper'
+	style={wrapper_style}
+	bind:this={element}
+	on:pointerdown={handle_pointerdown}>
+	<span class='ghost'
+		bind:this={ghost}
+		style='left:-9999px;
+			white-space: pre;
+			padding: {padding};
+			position: absolute;
+			visibility: hidden;
+			font-size: {fontSize};
+			font-family: {$w_thing_fontFamily};'>
+		{title_binded}
+	</span>
+	<input
+		type='text'
+		name='title'
+		bind:this={input}
+		id={s_component?.id}
+		on:blur={handle_blur}
+		on:focus={handle_focus}
+		on:input={handle_input}
+		bind:value={title_binded}
+		on:cut={handle_cut_paste}
+		on:paste={handle_cut_paste}
+		class='title-input'
+		on:keydown={handle_key_down}
+		on:mouseover={(event) => { u.consume_event(event); }}
+		style='
+			border: none;
+			top: {top}px;
+			outline: none;
+			color: {color};
+			white-space: pre;
+			left: {left - 2}px;
+			position: absolute;
+			padding: {padding};
+			font-size: {fontSize};
+			width: {title_width}px;
+			z-index: {T_Layer.text};
+			height: {input_height}px;
+			{k.prevent_selection_style};
+			background-color: transparent;
+			font-family: {$w_thing_fontFamily};
+			cursor: {isEditing() ? "text" : "pointer"};'/>
+</div>
+

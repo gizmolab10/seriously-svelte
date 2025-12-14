@@ -33,5 +33,5 @@
 		"src/lib/**/*.js",
 		"src/lib/**/*.ts",
 		"src/main.js"
-, "notes/experiments/source/Detect.ts", "notes/aside/2025/Radial_Focus.svelte"	]
+, "notes/experiments/source/Detect.ts", "notes/aside/2025/Radial_Focus.svelte", "notes/aside/2025/Widget_Title.svelte"	]
 }
