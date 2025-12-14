@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { e, g, h, k, s, u, x, hits, debug, colors, search, signals, controls, elements, databases } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Hit_Target, T_Edit, Seriously_Range } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Hit_Target, T_Edit, Seriously_Range, S_Mouse } from '../../ts/common/Global_Imports';
 	import { S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import { onMount, onDestroy } from 'svelte';
 	export let s_title!: S_Element;
@@ -45,6 +45,10 @@
 		if (!!element) {
 			s_widget.set_html_element(element);
 		}
+		// Set up click handler for centralized hit system
+		// Both s_title and s_widget need the handler since either might be selected
+		s_title.handle_click = handle_s_mouse;
+		s_widget.handle_click = handle_s_mouse;
 		setTimeout(() => {
 			updateInputWidth();
 			if (isEditing()) {
@@ -57,6 +61,7 @@
 
 	onDestroy(() => {
 		hits.delete_hit_target(s_widget);
+		hits.delete_hit_target(s_title);
 	});
 
 	// Register s_title with input element for hovering
@@ -118,8 +123,31 @@
 		}
 	}
 
-	function handle_pointerdown(event: PointerEvent) {
-		handle_mousedown_fromHover();
+	function handle_s_mouse(s_mouse: S_Mouse): boolean {
+		if (s_mouse.isDown) {
+			if (!!ancestry) {
+				if (isEditing()) {
+					extractRange_fromInput_toThing();
+				} else {
+					if (!!$w_s_title_edit && $w_s_title_edit.isActive) {
+						$w_s_title_edit.stop_editing();
+						$w_s_title_edit = null;
+					}
+					if (!ancestry.isGrabbed) {
+						ancestry.grab_forShift(false);
+					} else if (ancestry.isEditable && !!input) {
+						setTimeout(() => {
+							ancestry.startEdit();
+							thing_setSelectionRange_fromMouseLocation();
+							elements.element_set_focus_to(input);
+							applyRange_fromThing_toInput();
+						}, 1);
+					}
+				}
+			}
+			return true;
+		}
+		return false;
 	}
 
 	$: wrapper_style = `
@@ -130,29 +158,6 @@
 		top: ${g_widget.origin_ofTitle.y}px;
 		left: ${g_widget.origin_ofTitle.x}px;
 	`.removeWhiteSpace();
-
-	function handle_mousedown_fromHover() {
-		if (!!ancestry) {
-			if (isEditing()) {
-				extractRange_fromInput_toThing();
-			} else {
-				if (!!$w_s_title_edit && $w_s_title_edit.isActive) {
-					$w_s_title_edit.stop_editing();
-					$w_s_title_edit = null;
-				}
-				if (!ancestry.isGrabbed) {
-					ancestry.grab_forShift(false);
-				} else if (ancestry.isEditable && !!input) {
-					setTimeout(() => {
-						ancestry.startEdit();
-						thing_setSelectionRange_fromMouseLocation();
-						elements.element_set_focus_to(input);
-						applyRange_fromThing_toInput();
-					}, 1);
-				}
-			}
-		}
-	}
 
 	function stopEdit() {
 		debug.log_edit(`STOP ${title_binded}`);
@@ -303,9 +308,8 @@
 </style>
 
 <div class='title-wrapper'
-	style={wrapper_style}
 	bind:this={element}
-	on:pointerdown={handle_pointerdown}>
+	style={wrapper_style}>
 	<span class='ghost'
 		bind:this={ghost}
 		style='left:-9999px;
@@ -349,4 +353,3 @@
 			font-family: {$w_thing_fontFamily};
 			cursor: {isEditing() ? "text" : "pointer"};'/>
 </div>
-

@@ -71,7 +71,7 @@ export default class Elements {
 					if (se != s_element) {
 						this.s_element_set_focus_to(se, false);		// assure that even untracked focus is cleared
 					} else {
-						s_element.html_element?.focus();
+						s_element.html_element?.focus({ preventScroll: true });
 						this.s_focus = s_element;
 						s_element.isFocus = true;
 					}

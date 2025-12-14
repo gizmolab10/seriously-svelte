@@ -9,10 +9,9 @@
     const enabled = true;
     const { w_dragging } = hits;
     const { w_s_title_edit } = s;
-    const { w_count_mouse_up } = e;
     const { w_user_graph_offset } = g;
 	const { w_separator_color } = colors;
-	const { w_mouse_location, w_scaled_movement } = e;
+	const { w_count_mouse_up, w_mouse_location, w_scaled_movement } = e;
     const s_element = elements.s_element_for(new Identifiable('rubberband'), T_Hit_Target.rubberband, 'graph');
     let rbush_forRubberband = hits.rbush_forRubberband;
     let rubberband_hit_area: HTMLElement;
@@ -93,10 +92,7 @@
             startPoint = null;
             $w_dragging = T_Drag.none;
         } else if ($w_dragging === T_Drag.rubberband) {
-            if (!!$w_s_title_edit) {
-                $w_s_title_edit.stop_editing();
-                $w_s_title_edit = null;
-            } else if (!has_rubberbanded_grabs) {
+            if (!has_rubberbanded_grabs) {
                 x.si_grabs.reset();
             }
             startPoint = null;
@@ -160,6 +156,10 @@
                 rect.x = constrained.x;
                 $w_dragging = T_Drag.rubberband;
                 rbush_forRubberband = hits.rbush_forRubberband;
+                if (!!$w_s_title_edit) {
+                    $w_s_title_edit.stop_editing();
+                    $w_s_title_edit = null;
+                }
             }
             return true;
         }
@@ -172,13 +172,13 @@
 <div class='rubberband-hit-area' 
     bind:this={rubberband_hit_area}
     style='
-        position: absolute;
         top: 0;
         left: 0;
-        width: {bounds.size.width}px;
-        height: {bounds.size.height}px;
+        position: absolute;
         pointer-events: none;
-        z-index: {T_Layer.graph};'/>
+        z-index: {T_Layer.graph};
+        width: {bounds.size.width}px;
+        height: {bounds.size.height}px;'/>
 
 {#if enabled && $w_dragging === T_Drag.rubberband}
     <div class='rubberband' {style}/>

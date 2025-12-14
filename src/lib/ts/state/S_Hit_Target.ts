@@ -30,7 +30,7 @@ export default class S_Hit_Target {
 	get stroke(): string { return 'red'; }				// override in subclasses
 	get rect(): Rect | null { return this.element_rect; }
 	get ancestry(): Ancestry { return this.identifiable as Ancestry; }
-	get isAWidget(): boolean { return this.type === T_Hit_Target.widget; }
+	get isAWidget(): boolean { return [T_Hit_Target.widget, T_Hit_Target.title].includes(this.type); }
 	get isHovering(): boolean { return this.isEqualTo(get(hits.w_s_hover)); }
 	set isHovering(isHovering: boolean) { hits.w_s_hover.set(isHovering ? this : null); }
 	get svg_hover_color(): string { return this.isHovering ? colors.background : this.stroke; }

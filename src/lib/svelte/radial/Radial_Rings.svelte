@@ -86,8 +86,6 @@
 		const angle_ofMouseDown = g.mouse_angle_fromGraphCenter;
 		const angle_ofRotation = angle_ofMouseDown.add_angle_normalized(-$w_rotate_angle);
 		const zone = radial.ring_zone_atMouseLocation;
-		$w_s_title_edit?.stop_editing();
-		$w_s_title_edit = null;		// so widget will react
 		switch (zone) {
 			case T_Radial_Zone.rotate:
 				debug.log_radial(` begin rotate  ${angle_ofRotation.asDegrees()}`);
