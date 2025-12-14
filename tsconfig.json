@@ -43,5 +43,5 @@
 		"src/**/*",
 		"src/main.js",
 		"src/lib/**/*"
-, "notes/experiments/slim", "notes/experiments/source/Detect.ts", "notes/aside/2025/Radial_Focus.svelte", "notes/aside/2025/Widget_Title.svelte"	]
+, "notes/experiments/slim", "notes/experiments/source/Detect.ts", "notes/aside/2025/Radial_Focus.svelte", "notes/aside/2025/Widget_Title.svelte", "notes/aside/2025/Mouse_Responder.svelte"	]
 }
