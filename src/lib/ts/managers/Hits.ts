@@ -43,6 +43,7 @@ export default class Hits {
 			=  matches.find(s => s.isADot)
 			?? matches.find(s => s.isAWidget)
 			?? matches.find(s => s.isRing)
+			?? matches.find(s => s.isAControl)
 			?? matches[0];
 		this.w_s_hover.set(!target ? null : target);
 		return !!target;
@@ -98,8 +99,9 @@ export default class Hits {
 			=  targets.find(s => s.isADot)
 			?? targets.find(s => s.isAWidget)
 			?? targets.find(s => s.isRing)
+			?? targets.find(s => s.isAControl)
 			?? targets[0];
-		return target?.handle_click?.(s_mouse) ?? false;
+		return target.handle_click?.(s_mouse) ?? false;
 	}
 
 	targets_ofType_atPoint(type: T_Hit_Target, point: Point | null): Array<S_Hit_Target> {

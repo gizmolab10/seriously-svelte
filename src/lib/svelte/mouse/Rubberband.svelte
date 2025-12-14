@@ -1,7 +1,8 @@
 <script lang='ts'>
-    import { e, g, k, s, u, x, hits, debug, colors } from '../../ts/common/Global_Imports';
-    import { T_Layer, T_Drag, T_Hit_Target } from '../../ts/common/Global_Imports';
+    import { e, g, k, s, u, x, hits, debug, colors, elements } from '../../ts/common/Global_Imports';
+    import { T_Layer, T_Drag, T_Hit_Target, S_Mouse } from '../../ts/common/Global_Imports';
     import { Rect, Size, Point, Ancestry } from '../../ts/common/Global_Imports';
+    import Identifiable from '../../ts/runtime/Identifiable';
     import { onMount, onDestroy } from 'svelte';
     export let strokeWidth = k.thickness.rubberband;
     export let bounds: Rect;
@@ -12,7 +13,9 @@
     const { w_user_graph_offset } = g;
 	const { w_separator_color } = colors;
 	const { w_mouse_location, w_scaled_movement } = e;
+    const s_element = elements.s_element_for(new Identifiable('rubberband'), T_Hit_Target.rubberband, 'graph');
     let rbush_forRubberband = hits.rbush_forRubberband;
+    let rubberband_hit_area: HTMLElement;
     let mouse_upCount = $w_count_mouse_up;
     let startPoint: Point | null = null;
     let has_rubberbanded_grabs = true;
@@ -21,26 +24,34 @@
     let rect = Rect.zero;
     let lastUpdate = 0;
 
+    onMount(() => {
+        // Set up hit area element
+        if (rubberband_hit_area) {
+            s_element.set_html_element(rubberband_hit_area);
+        }
+        s_element.handle_click = handle_s_mouse;
+
+        // Block events during rubberband
+        document.addEventListener('pointerenter', blockEvent, true);
+        document.addEventListener('pointerleave', blockEvent, true);
+        document.addEventListener('pointermove', blockEvent, true);
+        document.addEventListener('pointerdown', blockEvent, true);
+        document.addEventListener('pointerup', blockEvent, true);
+    });
+
+    onDestroy(() => {
+        hits.delete_hit_target(s_element);
+        document.removeEventListener('pointerenter', blockEvent, true);
+        document.removeEventListener('pointerleave', blockEvent, true);
+        document.removeEventListener('pointermove', blockEvent, true);
+        document.removeEventListener('pointerdown', blockEvent, true);
+        document.removeEventListener('pointerup', blockEvent, true);
+    });
+
     $: if ($w_dragging === T_Drag.rubberband) {
         document.body.classList.add('rubberband-blocking');     // see style:global block below
     } else {
         document.body.classList.remove('rubberband-blocking');
-    }
-
-    $: if ($w_count_mouse_up !== mouse_upCount) {
-        mouse_upCount = $w_count_mouse_up;
-        if ($w_dragging === T_Drag.rubberband) {
-            if (!!$w_s_title_edit) {
-                $w_s_title_edit.stop_editing();
-                $w_s_title_edit = null;
-            } else if (!has_rubberbanded_grabs) {
-                x.si_grabs.reset();
-            }
-            startPoint = null;
-            rect.height = 0;
-            rect.width = 0;
-            $w_dragging = T_Drag.none;
-        }
     }
 
     $: if ($w_dragging === T_Drag.graph) {
@@ -76,39 +87,28 @@
         }
     }
 
-    private function detect_and_grab() {
-        if ($w_dragging === T_Drag.rubberband) {
-            const ancestries = ancestries_intersecting_rubberband();
-            if (ancestries.length != 0) {
-                x.si_grabs.items = ancestries;
-                hits.debug(null, `rubberband hits ${ancestries.map(ancestry => ancestry.relationship?.id ?? k.root).join(', ')}`);
-            } else {
+    $: if ($w_count_mouse_up !== mouse_upCount) {
+        mouse_upCount = $w_count_mouse_up;
+        if ($w_dragging === T_Drag.graph) {
+            startPoint = null;
+            $w_dragging = T_Drag.none;
+        } else if ($w_dragging === T_Drag.rubberband) {
+            if (!!$w_s_title_edit) {
+                $w_s_title_edit.stop_editing();
+                $w_s_title_edit = null;
+            } else if (!has_rubberbanded_grabs) {
                 x.si_grabs.reset();
             }
-            x.update_ancestry_forDetails();
+            startPoint = null;
+            rect.height = 0;
+            rect.width = 0;
+            $w_dragging = T_Drag.none;
         }
     }
 
     private function ancestries_intersecting_rubberband(): Array<Ancestry> {
         return rbush_forRubberband.search(rect.asBBox).map(b => b.target.ancestry);
     }
-
-    // Add event handlers at document level
-    onMount(() => {
-        document.addEventListener('pointerenter', blockEvent, true);
-        document.addEventListener('pointerleave', blockEvent, true);
-        document.addEventListener('pointermove', blockEvent, true);
-        document.addEventListener('pointerdown', blockEvent, true);
-        document.addEventListener('pointerup', blockEvent, true);
-    });
-
-    onDestroy(() => {
-        document.removeEventListener('pointerenter', blockEvent, true);
-        document.removeEventListener('pointerleave', blockEvent, true);
-        document.removeEventListener('pointermove', blockEvent, true);
-        document.removeEventListener('pointerdown', blockEvent, true);
-        document.removeEventListener('pointerup', blockEvent, true);
-    });
 
     private function constrainToRect(x: number, y: number): Point {
         return new Point(
@@ -130,27 +130,69 @@
         }
     }
 
-    export function handleMouseDown(e: MouseEvent): void {
-        startPoint = new Point(e.clientX, e.clientY);
-        if (e.metaKey) {
-            $w_dragging = T_Drag.graph;
-        } else if (!hits.isHovering) {
-            const constrained = constrainToRect(startPoint.x, startPoint.y);
-            original_grab_count = x.si_grabs.items.length;
-            rect.y = constrained.y;
-            rect.x = constrained.x;
-            $w_dragging = T_Drag.rubberband;
-            rbush_forRubberband = hits.rbush_forRubberband
+    private function detect_and_grab() {
+        if ($w_dragging === T_Drag.rubberband) {
+            const ancestries = ancestries_intersecting_rubberband();
+            if (ancestries.length != 0) {
+                x.si_grabs.items = ancestries;
+                hits.debug(null, `rubberband hits ${ancestries.map(ancestry => ancestry.relationship?.id ?? k.root).join(', ')}`);
+            } else {
+                x.si_grabs.reset();
+            }
+            x.update_ancestry_forDetails();
         }
     }
 
+    // Handle clicks on empty graph space
+    // This only gets called if no higher-priority target (dot/widget/ring) handled the click
+    private function handle_s_mouse(s_mouse: S_Mouse): boolean {
+        if (s_mouse.isDown && s_mouse.event) {
+            const event = s_mouse.event;
+            startPoint = new Point(event.clientX, event.clientY);
+            if (event.metaKey) {
+                $w_dragging = T_Drag.graph;
+            } else {
+                // Start rubberband - we know no widget/dot/ring was clicked
+                // because handle_click_at prioritizes those targets
+                const constrained = constrainToRect(startPoint.x, startPoint.y);
+                original_grab_count = x.si_grabs.items.length;
+                rect.y = constrained.y;
+                rect.x = constrained.x;
+                $w_dragging = T_Drag.rubberband;
+                rbush_forRubberband = hits.rbush_forRubberband;
+            }
+            return true;
+        }
+        return false;
+    }
+
 </script>
+
+<!-- Hit area covering full graph bounds -->
+<div class='rubberband-hit-area' 
+    bind:this={rubberband_hit_area}
+    style='
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: {bounds.size.width}px;
+        height: {bounds.size.height}px;
+        pointer-events: none;
+        z-index: {T_Layer.graph};'/>
 
 {#if enabled && $w_dragging === T_Drag.rubberband}
     <div class='rubberband' {style}/>
 {/if}
 
 <style>
+    :global(body.rubberband-blocking) {
+        cursor: crosshair !important;
+        user-select: none !important;
+        -ms-user-select: none !important;
+        -moz-user-select: none !important;
+        -webkit-user-select: none !important;
+    }
+
     :global(.rubberband-blocking .button,
             .rubberband-blocking .controls, 
             .rubberband-blocking .segmented, 

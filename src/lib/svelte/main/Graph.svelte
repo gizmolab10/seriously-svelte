@@ -15,7 +15,6 @@
 	const { w_t_startup, w_ancestry_focus, w_s_title_edit, w_thing_fontFamily } = s;
 	let actual_content_rect = g.user_offset_toGraphDrawing;
 	let draggableRect = $w_rect_ofGraphView;
-	let rubberbandComponent: any;
 	let reattachments = 0;
 	let style = k.empty;
 	let draggable;
@@ -71,14 +70,6 @@
 			reattachments += 1;
 		}
 	}
-	
-	function handle_mouseDown(event: MouseEvent) {
-		const target = event.target as HTMLElement;
-		if (!target.closest('button, input, .widget, .mouse-responder')) {
-			rubberbandComponent.handleMouseDown(event);
-			u.consume_event(event);
-		}
-	}
 		
 	function update_style() {
 		draggableRect = $w_rect_ofGraphView;
@@ -103,7 +94,6 @@
 		<div class='draggable'
 			style={style}
 			bind:this={draggable}
-			on:mousedown={handle_mouseDown}
 			class:rubberband-active={$w_dragging}>
 			{#if $w_show_graph_ofType == T_Graph.radial}
 				<Radial_Graph/>
@@ -126,7 +116,6 @@
 			{/if}
 			<Rubberband
 				bounds={draggableRect}
-				bind:this={rubberbandComponent}
 				strokeWidth={k.thickness.rubberband}
 			/>
 		</div>

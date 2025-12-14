@@ -268,6 +268,7 @@ export enum T_Trait {
 
 export enum T_Hit_Target {
 	breadcrumbs	= 'breadcrumbs',
+	rubberband	= 'rubberband',
 	database	= 'database',
 	resizing	= 'resizing',
 	rotation	= 'rotation',

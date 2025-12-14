@@ -36,6 +36,7 @@ export default class S_Hit_Target {
 	get svg_hover_color(): string { return this.isHovering ? colors.background : this.stroke; }
 	get isADot(): boolean { return [T_Hit_Target.drag, T_Hit_Target.reveal].includes(this.type); }
 	get isRing(): boolean { return [T_Hit_Target.rotation, T_Hit_Target.resizing, T_Hit_Target.paging].includes(this.type); }
+	get isAControl(): boolean { return [T_Hit_Target.control, T_Hit_Target.button].includes(this.type); }
 
 	set rect(value: Rect | null) {
 		// Only update RBush if the rect actually changed position/size
