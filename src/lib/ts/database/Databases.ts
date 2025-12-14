@@ -1,6 +1,7 @@
 import { k, p, s, busy, Hierarchy, T_Preference } from '../common/Global_Imports';
 import { T_Persistence } from '../common/Global_Imports';
 import { T_Database } from '../database/DB_Common';
+import type { Dictionary } from '../types/Types';
 import DB_Common from '../database/DB_Common';
 import { writable } from 'svelte/store';
 import DB_Firebase from './DB_Firebase';
@@ -15,7 +16,7 @@ import DB_Test from './DB_Test';
 // w_hierarchy is set to its hierarchy
 
 export default class Databases {
-	private dbCache: { [key: string]: DB_Common } = {};
+	private dbCache: Dictionary<DB_Common> = {};
 	w_data_updated = writable<number>();
 	w_t_database   = writable<string>();
 	defer_persistence: boolean = false;

@@ -30,7 +30,7 @@
 	const front_margin = has_seperator ? 0 : solo_title_width;
 	const button_titles = has_title ? row_titles.slice(1) : row_titles;
 	const g_repeater = new G_Repeater(button_titles, button_height, width - front_margin, margin, gap, 8, title_gap, true, font_sizes[0]);
-	const s_button_dict_byColumn: { [key: number]: S_Element } = {};
+	const s_button_dict_byColumn: Record<number, S_Element> = {};
 	const button_portion = g_repeater.button_portion;
 	const columns = button_titles.length;
 	let reattachments = 0;

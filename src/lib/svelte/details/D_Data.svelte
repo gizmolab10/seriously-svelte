@@ -5,6 +5,7 @@
 	import { Point, S_Mouse, S_Element } from '../../ts/common/Global_Imports';
 	import { T_Database } from '../../ts/database/DB_Common';
 	import Identifiable from '../../ts/runtime/Identifiable';
+	import type { Dictionary } from '../../ts/types/Types';
     import Buttons_Row from '../mouse/Buttons_Row.svelte';
 	import Text_Table from '../text/Text_Table.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
@@ -18,7 +19,7 @@
 	const ids_forOutputFormat = [T_File_Format.csv, T_File_Format.json, T_File_Format.cancel];
 	const ids_forDatabase = [T_Database.local, T_Database.firebase, T_Database.test];
 	const ids_forInputFormat = [T_File_Format.csv, T_File_Format.json, T_File_Format.seriously, T_File_Format.cancel];
-	let s_element_dict_byStorageType: { [id: string]: S_Element } = {};
+	let s_element_dict_byStorageType: Dictionary<S_Element> = {};
 	let heights = [15, height_ofChoices(), 42, 28, 74, 26, 3];
 	let storage_choice: string | null = null;
 	let storage_details: Array<Object> = [];

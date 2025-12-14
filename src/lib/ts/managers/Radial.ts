@@ -13,8 +13,8 @@ import { get, writable } from 'svelte/store';
 //////////////////////////////////
 
 export default class Radial {
-	s_paging_dict_byName: { [name: string]: S_Rotation } = {};
-	g_pages_dict_byThingID: {[id: string]: G_Pages} = {};
+	s_paging_dict_byName: Dictionary<S_Rotation> = {};
+	g_pages_dict_byThingID: Dictionary<G_Pages> = {};
 	cursor = k.cursor_default;
 	zone = T_Radial_Zone.miss;
 	s_resizing!: S_Resizing;

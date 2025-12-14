@@ -119,55 +119,54 @@ export default class S_UX {
 	static readonly _____GRABS: unique symbol;
 
 	grabOnly(ancestry: Ancestry) {
-		if (radial.isDragging) return;
-		debug.log_grab(`  GRAB ONLY '${ancestry.title}'`);
-		this.si_grabs.items = [ancestry];
-		h?.stop_alteration();
-		this.update_ancestry_forDetails();
+		if (!radial.isDragging) {
+			this.si_grabs.items = [ancestry];
+			h?.stop_alteration();
+			this.update_ancestry_forDetails();
+			debug.log_grab(`  GRAB ONLY '${ancestry.title}'`);
+		}
 	}
 
 	grab(ancestry: Ancestry) {
-		let grabbed = this.si_grabs.items ?? [];
-		if (radial.isDragging) return;
-		if (!!grabbed) {
-			const index = grabbed.indexOf(ancestry);
-			if (grabbed.length == 0) {
-				grabbed.push(ancestry);
-			} else if (index != grabbed.length - 1) {	// not already last?
-				if (index != -1) {					// found: remove
-					grabbed.splice(index, 1);
+		if (!radial.isDragging) {
+			let items = this.si_grabs.items ?? [];
+			if (!!items) {
+				const index = items.indexOf(ancestry);
+				if (items.length != 0 && (index != -1) && (index != items.length - 1)) {
+					items.splice(index, 1);
 				}
-				grabbed.push(ancestry);					// always add last
+				items.push(ancestry);
 			}
+			this.si_grabs.items = items;
+			debug.log_grab(`  GRAB '${ancestry.title}'`);
+			h?.stop_alteration();
+			this.update_ancestry_forDetails();
 		}
-		this.si_grabs.items = grabbed;
-		debug.log_grab(`  GRAB '${ancestry.title}'`);
-		h?.stop_alteration();
-		this.update_ancestry_forDetails();
 	}
 
 	ungrab(ancestry: Ancestry) {
-		s.w_s_title_edit?.set(null);
-		let grabbed = this.si_grabs.items ?? [];
-		if (radial.isDragging) return;
-		const rootAncestry = h?.rootAncestry;
-		if (!!grabbed) {
-			const index = grabbed.indexOf(ancestry);
-			if (index != -1) {				// only splice grabbed when item is found
-				grabbed.splice(index, 1);		// 2nd parameter means remove one item only
+		if (!radial.isDragging) {
+			let grabbed = this.si_grabs.items ?? [];
+			const rootAncestry = h?.rootAncestry;
+			s.w_s_title_edit?.set(null);
+			if (!!grabbed) {
+				const index = grabbed.indexOf(ancestry);
+				if (index != -1) {				// only splice grabbed when item is found
+					grabbed.splice(index, 1);		// 2nd parameter means remove one item only
+				}
+				if (grabbed.length == 0) {
+					grabbed.push(rootAncestry);
+				}
 			}
-			if (grabbed.length == 0) {
-				grabbed.push(rootAncestry);
+			if (grabbed.length == 0 && controls.inTreeMode) {
+				grabbed = [rootAncestry];
+			} else {
+				h?.stop_alteration(); // do not show editingActions for root
 			}
+			this.si_grabs.items = grabbed;
+			debug.log_grab(`  UNGRAB '${ancestry.title}'`);
+			this.update_ancestry_forDetails();
 		}
-		if (grabbed.length == 0 && controls.inTreeMode) {
-			grabbed = [rootAncestry];
-		} else {
-			h?.stop_alteration(); // do not show editingActions for root
-		}
-		this.si_grabs.items = grabbed;
-		debug.log_grab(`  UNGRAB '${ancestry.title}'`);
-		this.update_ancestry_forDetails();
 	}
 
 	update_grabs_forSearch() {

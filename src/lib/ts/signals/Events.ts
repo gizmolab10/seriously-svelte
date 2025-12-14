@@ -4,11 +4,12 @@ import { T_File_Format, T_Predicate, T_Alteration } from '../common/Global_Impor
 import { T_Search, T_Action, T_Control } from '../common/Global_Imports';
 import { Point, Ancestry, Predicate } from '../common/Global_Imports';
 import { S_Mouse, S_Alteration } from '../common/Global_Imports';
+import type { Dictionary } from '../types/Types';
 import { get, writable } from 'svelte/store';
 import Mouse_Timer from './Mouse_Timer';
 
 export class Events {
-	mouse_timer_dict_byName: { [name: string]: Mouse_Timer } = {};
+	mouse_timer_dict_byName: Dictionary<Mouse_Timer> = {};
 	initialTouch: Point | null = null;
 	alterationTimer!: Mouse_Timer;
 
@@ -19,11 +20,8 @@ export class Events {
 	w_mouse_location		= writable<Point>();
 	w_mouse_location_scaled	= writable<Point>();
 
-	mouse_timer_forName(name: string): Mouse_Timer { return elements.assure_forKey_inDict(name, this.mouse_timer_dict_byName, () => new Mouse_Timer(name)); }
-
-	setup() {
-		s.w_s_alteration.subscribe((s_alteration: S_Alteration | null) => { this.handle_s_alteration(s_alteration); });
-		c.w_device_isMobile.subscribe((isMobile: boolean) => { this.subscribeTo_events(); });
+	mouse_timer_forName(name: string): Mouse_Timer {
+		return elements.assure_forKey_inDict(name, this.mouse_timer_dict_byName, () => new Mouse_Timer(name));
 	}
 
 	name_ofActionAt(t_action: number, column: number): string {
@@ -32,12 +30,17 @@ export class Events {
 
 	static readonly _____SUBSCRIPTIONS: unique symbol;
 
-	update_window_listener(name: string, handler: EventListenerOrEventListenerObject) {
+	setup() {
+		s.w_s_alteration.subscribe((s_alteration: S_Alteration | null) => { this.handle_s_alteration(s_alteration); });
+		c.w_device_isMobile.subscribe((isMobile: boolean) => { this.subscribeTo_events(); });
+	}
+
+	private update_window_listener(name: string, handler: EventListenerOrEventListenerObject) {
 		window.removeEventListener(name, handler);
 		window.addEventListener(name, handler, { passive: false });
 	}
 
-	update_document_listener(name: string, handler: EventListenerOrEventListenerObject) {
+	private update_document_listener(name: string, handler: EventListenerOrEventListenerObject) {
 		document.removeEventListener(name, handler);
 		document.addEventListener(name, handler, { passive: false });
 	}
@@ -67,56 +70,6 @@ export class Events {
 			document.addEventListener('mousedown',			this.handle_mouse_down, { passive: false });
 			document.addEventListener('mousemove',			this.handle_mouse_move, { passive: false });
 		}
-	}
-
-	static readonly _____FOCUS_WATCHING: unique symbol;
-
-	get focused_element(): Element | null { return document.activeElement; }
-
-	get focused_element_deep(): Element | null {
-		let focused = this.focused_element;
-		// Traverse shadow DOM if present
-		while (focused && focused.shadowRoot && focused.shadowRoot.activeElement) {
-			focused = focused.shadowRoot.activeElement;
-		}
-		return focused;
-	}
-
-	log_focus(element: Element | null, gained_focus: boolean): void {
-		if (element) {
-			console.log(gained_focus ? 'Focus gained:' : 'Focus lost:');
-			console.log('Element:',	element);
-			console.log('Tag name:',	element.tagName);
-			console.log('ID:',	element.id);
-			console.log('Class list:',	element.classList);
-		} else {
-			console.log(gained_focus ? 'No element gained focus' : 'No element lost focus');
-		}
-	}
-
-	watch_focus(callback?: (focused_element: Element | null, gained_focus: boolean) => void): () => void {
-		const handleFocusIn = () => {
-			const focused = this.focused_element_deep;
-			if (callback) {
-				callback(focused, true);
-			} else {
-				console.log(`Focus gained by: ${focused?.tagName ?? 'none'}`);
-			}
-		};
-		const handleFocusOut = () => {
-			const focused = this.focused_element_deep;
-			if (callback) {
-				callback(focused, false);
-			} else {
-				console.log(`Focus lost from: ${focused?.tagName ?? 'none'}`);
-			}
-		};
-		document.addEventListener('focusin',	handleFocusIn);
-		document.addEventListener('focusout',	handleFocusOut);
-		return () => {
-			document.removeEventListener('focusin',	handleFocusIn);
-			document.removeEventListener('focusout',	handleFocusOut);
-		};
 	}
 
 	static readonly EVENT_HANDLERS = Symbol('EVENT_HANDLERS');
@@ -340,7 +293,7 @@ export class Events {
 		const ancestry = get(s.w_ancestry_forDetails);	
 		if (get(s.w_control_key_down)) {
 			controls.showHelp_for(t_action, column);
-		} else if (!!ancestry && !this.handle_isAction_disabledAt(t_action, column) && !!h) {
+		} else if (!!ancestry && !this.isAction_disabledAt(t_action, column) && !!h) {
 			const a = this.actions;
 			switch (t_action) {
 				case T_Action.browse:			switch (column) {
@@ -385,7 +338,7 @@ export class Events {
 		}
 	}
 
-	handle_isAction_disabledAt(t_action: number, column: number): boolean {		// true means disabled
+	isAction_disabledAt(t_action: number, column: number): boolean {		// true means disabled
 		const ancestry = get(s.w_ancestry_forDetails);
 		if (!!ancestry) {
 			const is_altering = !!get(s.w_s_alteration);
@@ -457,7 +410,7 @@ export class Events {
 		return k.empty;
 	}
 
-	private actions: { [key: string]: { [key: string]: number } } = {
+	private actions: Dictionary<Dictionary<number>> = {
 		browse: {
 			left: 0,
 			up: 1,

@@ -5,11 +5,11 @@ import Identifiable from '../runtime/Identifiable';
 import type { Dictionary, Integer } from '../types/Types';
 
 export default class Elements {
-	private s_element_dict_byType_andID: { [type: string]: { [id: string]: S_Element } } = {};
-	private s_control_dict_byType: { [t_control: string]: S_Element } = {};
-	private s_widget_dict_byAncestryID: { [id: string]: S_Widget } = {};
-	private s_element_dict_byName: { [name: string]: S_Element } = {};
-	private s_mouse_dict_byName: { [name: string]: S_Mouse } = {};
+	private s_element_dict_byType_andID: Dictionary<Dictionary<S_Element>> = {};
+	private s_widget_dict_byAncestryID: Dictionary<S_Widget> = {};
+	private s_control_dict_byType: Dictionary<S_Element> = {};
+	private s_element_dict_byName: Dictionary<S_Element> = {};
+	private s_mouse_dict_byName: Dictionary<S_Mouse> = {};
 	mouse_responder_number = 0;
 	s_focus!: S_Element;
 
@@ -40,7 +40,7 @@ export default class Elements {
 	s_mouse_forName(name: string): S_Mouse { return this.assure_forKey_inDict(name, this.s_mouse_dict_byName, () => S_Mouse.empty()); }
 	
 	s_element_forName_andType(name: string, type: T_Hit_Target, subtype: string): S_Element {
-		return this.assure_forKey_inDict(name, this.s_element_byName_forType(type), () => this.s_element_for(new Identifiable(), type, subtype));
+		return this.assure_forKey_inDict(name, this.s_element_dict_byID_forType(type), () => this.s_element_for(new Identifiable(), type, subtype));
 	}
 
 	s_control_forType(t_control: T_Control): S_Element {
@@ -111,13 +111,13 @@ export default class Elements {
 
 	private get s_elements(): S_Element[] { return Object.values(this.s_element_dict_byName); }
 
-	private s_element_byName_forType(type: T_Hit_Target): { [name: string]: S_Element } {
-		let dict = this.s_element_dict_byType_andID[type];
-		if (!dict) {
-			dict = {};
-			this.s_element_dict_byType_andID[type] = dict;
+	private s_element_dict_byID_forType(type: T_Hit_Target): Dictionary<S_Element> {
+		let s_element_dict = this.s_element_dict_byType_andID[type];
+		if (!s_element_dict) {
+			s_element_dict = {};
+			this.s_element_dict_byType_andID[type] = s_element_dict;
 		}
-		return dict;
+		return s_element_dict;
 	}
 
 }

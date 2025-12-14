@@ -61,7 +61,7 @@ export class Utilities extends Testworthy_Utilities {
 	}
 
 	strip_hidDuplicates(ancestries: Array<Ancestry>): Array<Ancestry> {
-		let ancestriesByHID: {[hash: number]: Ancestry} = {};
+		let ancestriesByHID: Record<number, Ancestry> = {};
 		let stripped: Array<Ancestry> = [];
 		for (const ancestry of ancestries) {
 			const hid = ancestry.hid;

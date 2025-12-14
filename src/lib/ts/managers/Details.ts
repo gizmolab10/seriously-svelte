@@ -1,5 +1,6 @@
 import { T_Search, T_Detail, T_Direction, T_Storage_Need } from '../common/Global_Imports';
 import { s, x, show, search, S_Items } from '../common/Global_Imports';
+import type { Dictionary } from '../types/Types';
 import { get } from 'svelte/store';
 
 export class S_Banner_Hideable {
@@ -25,7 +26,7 @@ export class S_Banner_Hideable {
 }
 
 class Details {
-	s_banner_hideables_dict_byType: { [t_detail: string]: S_Banner_Hideable } = {};
+	s_banner_hideables_dict_byType: Dictionary<S_Banner_Hideable> = {};
 	t_storage_need = T_Storage_Need.direction;
 
 	constructor() {

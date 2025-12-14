@@ -9,6 +9,7 @@ import { s } from '../managers/Stores';
 import { get } from 'svelte/store';
 
 export class Signals {
+	highestPriorities: Dictionary<number> = {};
 	signal_emitter = new Signal<Signal_Signature>();
 	signals_inFlight_dict_byT_Signal: Dictionary<boolean> = {};
 
@@ -125,8 +126,6 @@ export class Signals {
 	// for each signal type, this array contains the highest requested priority
 	// for each signal sent, a signal is emitted for each priority separately, in increasing priority from 0 to highest
 	// each handler has a type and a priority, and ignores all emitted signals except the one matching its priority
-	
-	highestPriorities: { [id_signal: string]: number } = {}
 
 	adjust_highestPriority_forSignals(priority: number, t_signals: Array<T_Signal>) {
 		for (const t_signal of t_signals) {

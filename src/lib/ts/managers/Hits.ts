@@ -1,5 +1,5 @@
-import { g, k, s, Rect, Point, debug, g_radial, radial, controls } from '../common/Global_Imports';
-import { T_Drag, T_Hit_Target, T_Radial_Zone, T_Cluster_Pager } from '../common/Global_Imports';
+import { Rect, Point, debug, radial, controls } from '../common/Global_Imports';
+import { T_Drag, T_Hit_Target } from '../common/Global_Imports';
 import { S_Hit_Target } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
 import { get, writable } from 'svelte/store';
@@ -19,7 +19,7 @@ export default class Hits {
 	w_dragging = writable<T_Drag>(T_Drag.none);
 	rbush_forHover = new RBush<Target_RBRect>();
 	w_s_hover = writable<S_Hit_Target | null>(null);
-	targets_dict_byID: { [id: string]: S_Hit_Target } = {};
+	targets_dict_byID: Dictionary<S_Hit_Target> = {};
 	targets_dict_byType: Dictionary<Array<S_Hit_Target>> = {};
 
 	static readonly _____HOVER: unique symbol;

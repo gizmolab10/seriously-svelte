@@ -132,7 +132,7 @@ export class Testworthy_Utilities {
 	}
 
 	strip_identifiableDuplicates(identifiables: Array<Identifiable>): Array<Identifiable> {
-		let identifiablesByHID: {[hash: number]: Identifiable} = {};
+		let identifiablesByHID: Record<number, Identifiable> = {};
 		let stripped: Array<Identifiable> = [];
 		for (const identifiable of identifiables) {
 			const hid = identifiable.hid;

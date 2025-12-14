@@ -1,8 +1,8 @@
 import { Ancestry, S_Component, T_Hit_Target } from '../common/Global_Imports';
-import type { Integer } from '../types/Types';
+import type { Integer, Dictionary } from '../types/Types';
 
 export class Components {
-	private components_dict_byType_andHID: { [type: string]: { [hid: Integer]: S_Component } } = {};
+	private components_dict_byType_andHID: Dictionary<Dictionary<S_Component>> = {};
 	private _dummy!: S_Component;
 
 	//////////////////////////////////////////////////////////////////
