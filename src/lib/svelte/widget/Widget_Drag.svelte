@@ -18,9 +18,9 @@
 	const { w_show_countDots_ofType } = show;
 	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_ancestry_focus, w_ancestry_forDetails } = s;
-	let mouse_up_count = $w_count_mouse_up;
 	let fill_color = debug.lines ? 'transparent' : s_drag.fill;
 	let svg_outline_color = s_drag.svg_outline_color;
+	let mouse_up_count = $w_count_mouse_up;
 	let element: HTMLElement | null = null;
 	let center = g_widget.center_ofDrag;
 	let parents_color = s_drag.stroke;

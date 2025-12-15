@@ -22,7 +22,9 @@
 			if (button_elements[index]) {
 				s_element.set_html_element(button_elements[index]);
 			}
-			s_element.handle_s_mouse = handle_s_mouse;
+			s_element.handle_s_mouse = (s_mouse: S_Mouse): boolean => {
+				return handle_s_mouse(s_mouse, index);
+			};
 		});
 	});
 
@@ -38,7 +40,7 @@
 	
 	}
 
-	function handle_s_mouse(s_mouse: S_Mouse): boolean {
+	function handle_s_mouse(s_mouse: S_Mouse, index: number): boolean {
 		if (s_mouse.isDown) {
 			mouseTimer.autorepeat_start(index, () => closure(index));
 		} else if (s_mouse.isUp) {

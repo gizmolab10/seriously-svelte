@@ -44,6 +44,8 @@
 		if (!!s_button && s_button instanceof S_Element) {
 			s_button.set_html_element(element);
 		}
+		// Set up click handler for centralized hit system
+		s_button.handle_s_mouse = handle_s_mouse;
 		recompute_style();
 	});
 
@@ -67,44 +69,47 @@
 		recompute_style();
 	}
 
-	function handle_s_mouse(s_mouse: S_Mouse) {
-		if (!!closure) {
-			closure(s_mouse);
-			recompute_style();
-		}
-	}
-
 	function reset() {
 		s_mouse.clicks = 0;
 		mouse_timer.reset();
 	}
 
-	function handle_pointerUp(event: MouseEvent) {
-		reset();
-		handle_s_mouse(S_Mouse.up(event, element));
-	}
-
-	function handle_pointerDown(event: MouseEvent) {
-		if (detect_autorepeat) {
-			mouse_timer.autorepeat_start(0, () => {
-				const isDown = !mouse_timer.hasTimer_forID(T_Timer.repeat);
-				handle_s_mouse(isDown ? S_Mouse.down(event, element) : S_Mouse.repeat(event, element));
-			});
-		} else {
-			if (s_mouse.clicks == 0) {
-				handle_s_mouse(S_Mouse.down(event, element));
-			}
-			s_mouse.clicks += 1;
-			if (detect_longClick) {
-				mouse_timer.timeout_start(T_Timer.long, () => {
-					if (mouse_timer.hasTimer_forID(T_Timer.long)) {
-						reset();
-						s_mouse.clicks = 0;
-						handle_s_mouse(S_Mouse.long(event, element));
-					}
-				});
-			}
+	function handle_s_mouse(s_mouse: S_Mouse): boolean {
+		if (!closure) {
+			return false;
 		}
+		if (s_mouse.isDown && s_mouse.event) {
+			if (detect_autorepeat) {
+				mouse_timer.autorepeat_start(0, () => {
+					const isDown = !mouse_timer.hasTimer_forID(T_Timer.repeat);
+					closure(isDown ? S_Mouse.down(s_mouse.event!, element) : S_Mouse.repeat(s_mouse.event!, element));
+					recompute_style();
+				});
+			} else {
+				if (s_mouse.clicks == 0) {
+					closure(s_mouse);
+					recompute_style();
+				}
+				s_mouse.clicks += 1;
+				if (detect_longClick) {
+					mouse_timer.timeout_start(T_Timer.long, () => {
+						if (mouse_timer.hasTimer_forID(T_Timer.long)) {
+							reset();
+							s_mouse.clicks = 0;
+							closure(S_Mouse.long(s_mouse.event!, element));
+							recompute_style();
+						}
+					});
+				}
+			}
+			return true;
+		} else if (s_mouse.isUp && s_mouse.event) {
+			reset();
+			closure(s_mouse);
+			recompute_style();
+			return true;
+		}
+		return false;
 	}
 	
 	function recompute_style() {
@@ -160,8 +165,6 @@
 {#key $w_background_color, computed_style}
 	<div class='button-wrapper'
 		bind:this={element}
-		on:pointerdown={handle_pointerDown}
-		on:pointerup={handle_pointerUp}
 		style={wrapper_style}
 		name={name}>
 		<button class='button'
