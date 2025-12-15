@@ -130,12 +130,12 @@
 	function final_layout() {
 		const hasExtra_onRight = !!ancestry && !ancestry.isExpanded && (ancestry.childRelationships.length > 3);
 		const origin_ofWidget = g_widget.origin.offsetBy(g_widget.offset_ofWidget);
+		s_widget.rect = g.scaled_rect_forElement(s_title.html_element);
 		width_ofWidget = g_widget.width_ofWidget;
 		height = k.height.row - 1.5;
 		border_radius = height / 2;
 		left = origin_ofWidget.x;
 		top = origin_ofWidget.y;
-		s_widget.rect = g.scaled_rect_forElement(s_title.html_element);
 		update_style();
 	}
 

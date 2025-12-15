@@ -13,10 +13,13 @@ export default class S_Hit_Target {
 	identifiable: Identifiable | null = null;
 	html_element: HTMLElement | null = null;
 	element_rect: Rect | null = null;							// for use in Hits index
+	autorepeat_callback?: () => void;
 	defaultCursor = k.cursor_default;
 	hoverCursor = k.cursor_default;
+	detect_autorepeat?: boolean;
 	hoverColor = 'transparent';
 	element_color = 'black';
+	autorepeat_id?: number;
 	type: T_Hit_Target;
 	id: string;
 	
@@ -61,7 +64,16 @@ export default class S_Hit_Target {
 
 	update_rect() {
 		if (!!this.html_element) {
-			this.rect = g.scaled_rect_forElement(this.html_element);
+			let rect = g.scaled_rect_forElement(this.html_element);
+			// Clip graph elements (dots, widgets, rings) to graph bounds to prevent them from
+			// extending outside and interfering with other UI elements (e.g., details panel buttons)
+			if (rect && (this.isADot || this.isAWidget || this.isRing)) {
+				const graph_bounds = get(g.w_rect_ofGraphView);
+				if (graph_bounds) {
+					rect = rect.clippedTo(graph_bounds);
+				}
+			}
+			this.rect = rect;
 		}
 	}
 

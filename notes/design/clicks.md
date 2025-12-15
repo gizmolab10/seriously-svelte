@@ -259,43 +259,76 @@ $: if (!isHovering && detect_autorepeat) {
 
 ## Migrating Autorepeat into Hits
 
-### Proposed Approach
+### Implementation Summary
 
-Move autorepeat management into the centralized hit system:
+**Status**: Infrastructure complete (Steps 1-4), `Glow_Button.svelte` migrated (Step 5)
 
-1. **Add autorepeat properties to S_Hit_Target**:
+**What Was Implemented**:
+- ✅ Autorepeat properties added to `S_Hit_Target` (`detect_autorepeat`, `autorepeat_callback`, `autorepeat_id`)
+- ✅ Centralized autorepeat management in `Hits.ts` with `w_autorepeating_target` store and timer
+- ✅ Automatic start/stop on mouse down/up in `handle_click_at`
+- ✅ Automatic stop on hover leave in `detect_hovering_at`
+- ✅ `Glow_Button.svelte` successfully migrated as proof of concept
+
+**Key Implementation Details**:
+- Single `Mouse_Timer` instance in `Hits.ts` manages all autorepeat (replaces per-component timers)
+- Components set properties on `S_Hit_Target` instead of managing timers directly
+- `w_autorepeating_target` store enables components to check autorepeat state for visual feedback
+- Hover leave detection automatically stops autorepeat when mouse leaves the target
+
+### Implementation (Steps 1-4 Complete)
+
+Autorepeat management has been moved into the centralized hit system:
+
+1. **✅ Added autorepeat properties to S_Hit_Target**:
    ```ts
    // In S_Hit_Target.ts
+   detect_autorepeat?: boolean;
    autorepeat_callback?: () => void;
    autorepeat_id?: number;
-   detect_autorepeat?: boolean;
    ```
 
-2. **Centralized autorepeat management in Hits.ts**:
+2. **✅ Centralized autorepeat management in Hits.ts**:
    ```ts
    // Track currently autorepeating target
    w_autorepeating_target = writable<S_Hit_Target | null>(null);
+   autorepeat_timer: Mouse_Timer = new Mouse_Timer('hits-autorepeat');
    
-   // In handle_click_at, after calling handle_s_mouse:
-   if (target.detect_autorepeat && s_mouse.isDown) {
+   start_autorepeat(target: S_Hit_Target) {
+       // Stops any existing autorepeat, sets target, starts timer
+       // Mouse_Timer.autorepeat_start calls callback immediately, then starts interval
+   }
+   
+   stop_autorepeat() {
+       // Stops timer and clears autorepeating target
+   }
+   
+   // In handle_click_at:
+   if (s_mouse.isDown && target?.detect_autorepeat && target?.autorepeat_callback) {
        this.start_autorepeat(target);
    }
    if (s_mouse.isUp) {
        this.stop_autorepeat();
    }
    
-   // In detect_hovering_at, when hover changes:
-   if (get(this.w_autorepeating_target) && !target?.isEqualTo(get(this.w_autorepeating_target))) {
+   // In detect_hovering_at:
+   const autorepeating_target = get(this.w_autorepeating_target);
+   if (!!autorepeating_target && (!target || !target.isEqualTo(autorepeating_target))) {
        this.stop_autorepeat();
    }
    ```
 
 3. **Simplified component code**:
    ```ts
-   // Component just sets properties
-   s_element.detect_autorepeat = true;
-   s_element.autorepeat_callback = () => closure();
-   // No timer management needed!
+   // Component just sets properties in onMount
+   if (detect_autorepeat) {
+       s_element.detect_autorepeat = true;
+       s_element.autorepeat_callback = () => closure();
+       s_element.autorepeat_id = 0;
+   }
+   // No Mouse_Timer instance needed!
+   // No autorepeat start/stop calls needed!
+   // No hover leave reactive statements needed!
    ```
 
 ### Benefits
@@ -308,11 +341,11 @@ Move autorepeat management into the centralized hit system:
 
 ### Migration Steps
 
-1. Add autorepeat properties to `S_Hit_Target`
-2. Add autorepeat management methods to `Hits.ts`
-3. Update `handle_click_at` to start/stop autorepeat
-4. Update `detect_hovering_at` to stop on hover leave
-5. Migrate components one by one:
+- [x] **Step 1**: Add autorepeat properties to `S_Hit_Target` ✅
+- [x] **Step 2**: Add autorepeat management methods to `Hits.ts` ✅
+- [x] **Step 3**: Update `handle_click_at` to start/stop autorepeat ✅
+- [x] **Step 4**: Update `detect_hovering_at` to stop on hover leave ✅
+- [ ] **Step 5**: Migrate components one by one:
    - Remove `Mouse_Timer` instance
    - Remove autorepeat start/stop calls
    - Remove hover leave reactive statements
@@ -320,10 +353,97 @@ Move autorepeat management into the centralized hit system:
 
 ### Components to Migrate
 
-- [ ] `Glow_Button.svelte`
+- [x] `Glow_Button.svelte` ✅ **Migrated**
 - [ ] `Button.svelte`
 - [ ] `Next_Previous.svelte`
 - [ ] `D_Actions.svelte` (conditional autorepeat)
+
+### Migration Risks by Component
+
+#### `Glow_Button.svelte` — **Low Risk** ✅ **Migrated**
+
+**Previous Implementation:**
+- Simple autorepeat pattern with `detect_autorepeat` prop
+- Used reactive statement to stop on hover leave
+- Visual feedback via `mouseTimer.isAutorepeating_forID(0)` for CSS class
+
+**Migration Completed:**
+- ✅ Removed `Mouse_Timer` instance and `e` import
+- ✅ Removed autorepeat start/stop calls from `handle_s_mouse`
+- ✅ Removed hover leave reactive statement
+- ✅ Set `s_element.detect_autorepeat`, `autorepeat_callback`, and `autorepeat_id` in `onMount`
+- ✅ Updated CSS class to use `w_autorepeating_target` store: `$: isAutorepeating = detect_autorepeat && s_element.isEqualTo($w_autorepeating_target)`
+
+**Result:**
+- Component code simplified from ~20 lines of autorepeat logic to 4 lines of property setup
+- Visual feedback works correctly via centralized `w_autorepeating_target` store
+- Hover leave handling works automatically through `Hits.detect_hovering_at`
+
+---
+
+#### `Button.svelte` — **Medium Risk**
+
+**Current Implementation:**
+- Supports both `detect_autorepeat` and `detect_longClick`
+- Uses `S_Mouse.repeat()` vs `S_Mouse.down()` distinction in callback
+- Tracks `s_mouse.clicks` for click counting
+- Calls `recompute_style()` after each action
+
+**Risks:**
+- **LongClick conflict**: LongClick uses same timer system but different logic — need to ensure they don't interfere
+- **Repeat vs Down**: Callback receives `S_Mouse.repeat()` for autorepeat iterations, `S_Mouse.down()` for initial click — centralized system must preserve this distinction
+- **Click counting**: `s_mouse.clicks` tracking may be affected if autorepeat changes event flow
+- **Style recomputation**: Multiple rapid calls to `recompute_style()` during autorepeat — performance concern
+
+**Mitigation:**
+- LongClick should remain component-managed (not part of centralized autorepeat)
+- Centralized autorepeat must call callback with `S_Mouse.repeat()` for iterations
+- Preserve click counting logic separately from autorepeat
+- Consider debouncing `recompute_style()` if performance issues arise
+
+---
+
+#### `Next_Previous.svelte` — **Medium-High Risk**
+
+**Current Implementation:**
+- Multiple buttons (array) with shared `Mouse_Timer` instance
+- Each button uses different ID (index: 0, 1, 2) for `autorepeat_start(index, callback)`
+- Single timer manages all buttons — stopping one stops all
+- Visual feedback per button via `mouseTimer.isAutorepeating_forID(index)`
+
+**Risks:**
+- **Multiple targets**: Each button has its own `S_Element` — need to handle multiple autorepeating targets or shared state
+- **ID management**: Current system uses index as ID — centralized system needs to preserve per-button identification
+- **Shared timer**: All buttons share one timer — if one button starts autorepeat, others can't start until it stops
+- **Hover leave**: Current reactive statement stops autorepeat when hover leaves ALL buttons — centralized system must handle this correctly
+
+**Mitigation:**
+- Option A: Each `S_Element` manages its own autorepeat (separate timers)
+- Option B: Shared autorepeat state with ID tracking (preserve current behavior)
+- Ensure hover leave detection works correctly when moving between buttons in the same component
+- Test rapid switching between buttons during autorepeat
+
+---
+
+#### `D_Actions.svelte` — **High Risk**
+
+**Current Implementation:**
+- **Conditional autorepeat**: Only `T_Action.browse` and `T_Action.move` support autorepeat
+- Uses `s_mouse.isRepeat` check inside callback: `if (s_mouse.isDown || (s_mouse.isRepeat && valid_autorepeat))`
+- Autorepeat is enabled via `detect_autorepeat={true}` prop on `Buttons_Table`, but logic is conditional per action
+- Other actions (add, delete, focus, etc.) should NOT autorepeat
+
+**Risks:**
+- **Conditional logic**: Cannot use simple `detect_autorepeat` flag — need runtime determination of which buttons should autorepeat
+- **Action-specific**: Different buttons in same table have different autorepeat behavior — can't set at component level
+- **Callback complexity**: Current callback (`handle_action_autorepeatAt`) checks action type and `isRepeat` — centralized system must preserve this logic
+- **Breaking change**: If centralized system always autorepeats when enabled, other actions may incorrectly autorepeat
+
+**Mitigation:**
+- Add `autorepeat_callback` that can return `false` to prevent autorepeat for specific actions
+- Or: Add `should_autorepeat?: (s_mouse: S_Mouse) => boolean` predicate to `S_Hit_Target`
+- Or: Keep conditional logic in callback but ensure `S_Mouse.repeat()` is only sent for valid actions
+- Test all action types to ensure only browse/move autorepeat
 
 ---
 

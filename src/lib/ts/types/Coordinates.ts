@@ -268,6 +268,20 @@ export class Rect {
                  rect.origin.y > thisExtentY);
     }
 
+	clippedTo(bounds: Rect): Rect {
+		// Clip this rect to the bounds, returning the intersection
+		// If no intersection, returns a zero-sized rect at the clipped origin
+		const clippedLeft = Math.max(this.origin.x, bounds.origin.x);
+		const clippedTop = Math.max(this.origin.y, bounds.origin.y);
+		const clippedRight = Math.min(this.extent.x, bounds.extent.x);
+		const clippedBottom = Math.min(this.extent.y, bounds.extent.y);
+		
+		const clippedWidth = Math.max(0, clippedRight - clippedLeft);
+		const clippedHeight = Math.max(0, clippedBottom - clippedTop);
+		
+		return new Rect(new Point(clippedLeft, clippedTop), new Size(clippedWidth, clippedHeight));
+	}
+
 	static createSizeRect(size: Size): Rect { return new Rect(Point.zero, size); }
 	static get zero():				   Rect { return new Rect(Point.zero, Size.zero); }
 

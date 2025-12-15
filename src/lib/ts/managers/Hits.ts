@@ -1,9 +1,10 @@
-import { Rect, Point, debug, radial, controls, S_Mouse } from '../common/Global_Imports';
+import { Rect, Point, debug, radial, controls, S_Mouse, k } from '../common/Global_Imports';
 import { T_Drag, T_Hit_Target } from '../common/Global_Imports';
 import { S_Hit_Target } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
 import { get, writable } from 'svelte/store';
 import RBush from 'rbush';
+import Mouse_Timer from '../signals/Mouse_Timer';
 
 type Target_RBRect = {
 	minX: number;
@@ -21,6 +22,8 @@ export default class Hits {
 	w_s_hover = writable<S_Hit_Target | null>(null);
 	targets_dict_byID: Dictionary<S_Hit_Target> = {};
 	targets_dict_byType: Dictionary<Array<S_Hit_Target>> = {};
+	w_autorepeating_target = writable<S_Hit_Target | null>(null);
+	autorepeat_timer: Mouse_Timer = new Mouse_Timer('hits-autorepeat');
 
 	static readonly _____HOVER: unique symbol;
 
@@ -46,6 +49,11 @@ export default class Hits {
 			?? matches.find(s => s.isAControl)
 			?? matches[0];
 		this.w_s_hover.set(!target ? null : target);
+		// Stop autorepeat if hover leaves the autorepeating target
+		const autorepeating_target = get(this.w_autorepeating_target);
+		if (!!autorepeating_target && (!target || !target.isEqualTo(autorepeating_target))) {
+			this.stop_autorepeat();
+		}
 		return !!target;
 	}
 
@@ -68,6 +76,7 @@ export default class Hits {
 	reset() {
 		this.rbush_forHover.clear();
 		this.w_s_hover.set(null);
+		this.stop_autorepeat();
 		this.time_ofPrior_hover = 0;
 		this.targets_dict_byID = {};
 		this.targets_dict_byType = {};
@@ -108,6 +117,14 @@ export default class Hits {
 			?? targets.find(s => s.isRing)
 			?? targets.find(s => s.isAControl)
 			?? targets[0];
+		
+		if (s_mouse.isDown && target?.detect_autorepeat && target?.autorepeat_callback) {
+			this.start_autorepeat(target);
+		}
+		if (s_mouse.isUp) {
+			this.stop_autorepeat();
+		}
+		
 		return target?.handle_s_mouse?.(s_mouse) ?? false;
 	}
 
@@ -243,6 +260,31 @@ export default class Hits {
 			T_Hit_Target.title,
 			T_Hit_Target.drag,
 			T_Hit_Target.line].includes(type);
+	}
+
+	static readonly _____AUTOREPEAT: unique symbol;
+
+	start_autorepeat(target: S_Hit_Target) {
+		if (!target?.autorepeat_callback) {
+			return;
+		}
+		this.stop_autorepeat(); // Stop any existing autorepeat
+		const id = target.autorepeat_id ?? 0;
+		this.w_autorepeating_target.set(target);
+		// Start timer (Mouse_Timer.autorepeat_start calls callback immediately, then starts interval)
+		this.autorepeat_timer.autorepeat_start(id, () => {
+			if (target.autorepeat_callback) {
+				target.autorepeat_callback();
+			}
+		});
+	}
+
+	stop_autorepeat() {
+		const autorepeating_target = get(this.w_autorepeating_target);
+		if (!!autorepeating_target) {
+			this.autorepeat_timer.autorepeat_stop();
+			this.w_autorepeating_target.set(null);
+		}
 	}
 
 	static readonly _____DEBUG: unique symbol;
