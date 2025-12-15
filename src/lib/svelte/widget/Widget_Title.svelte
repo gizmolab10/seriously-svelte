@@ -47,8 +47,8 @@
 		}
 		// Set up click handler for centralized hit system
 		// Both s_title and s_widget need the handler since either might be selected
-		s_title.handle_click = handle_s_mouse;
-		s_widget.handle_click = handle_s_mouse;
+		s_title.handle_s_mouse = handle_s_mouse;
+		s_widget.handle_s_mouse = handle_s_mouse;
 		setTimeout(() => {
 			updateInputWidth();
 			if (isEditing()) {

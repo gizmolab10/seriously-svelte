@@ -23,41 +23,44 @@
     let glow_button: HTMLElement | null = null;
     let banner_color = colors.banner;
 
-    $: isHovering = s_element.isEqualTo($w_s_hover);
-
-    // stop autorepeat when hover leaves
-    $: if (!isHovering && detect_autorepeat) {
-        mouseTimer.autorepeat_stop();
-    }
-
     onMount(() => {
         if (glow_button) {
             s_element.set_html_element(glow_button);
         }
-        s_element.handle_click = (s_mouse: S_Mouse): boolean => {
-            if (s_mouse.isDown) {
-                if (detect_autorepeat) {
-                    mouseTimer.autorepeat_start(0, () => handle_click(click_title));
-                } else {
-                    handle_click(click_title);
-                }
-            } else if (s_mouse.isUp) {
-                if (detect_autorepeat) {
-                    mouseTimer.autorepeat_stop();
-                }
-            }
-            return true;
-        };
+        s_element.handle_s_mouse = handle_s_mouse;
     });
 
     onDestroy(() => {
         hits.delete_hit_target(s_element);
     });
 
+    $: isHovering = s_element.isEqualTo($w_s_hover);
+
+    // stop autorepeat when hover leaves
+    $: if (!isHovering && detect_autorepeat) {
+        mouseTimer.autorepeat_stop();
+	}
+
 	$: {
 		const _ = $w_background_color;
 		banner_color = colors.banner;
 	}
+
+	function handle_s_mouse(s_mouse: S_Mouse): boolean {
+		if (s_mouse.isDown) {
+			if (detect_autorepeat) {
+				mouseTimer.autorepeat_start(0, () => handle_click(click_title));
+			} else {
+				handle_click(click_title);
+			}
+		}
+		if (s_mouse.isUp) {
+			if (detect_autorepeat) {
+				mouseTimer.autorepeat_stop();
+			}
+		}
+		return true;
+    }
     
 </script>
 

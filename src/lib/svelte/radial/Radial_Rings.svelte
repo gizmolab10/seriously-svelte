@@ -1,13 +1,13 @@
 <script lang='ts'>
 	import { e, g, k, s, x, hits, busy, debug, colors, radial, signals, svgPaths } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Radial_Zone, T_Hit_Target, S_Component } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Radial_Zone, T_Hit_Target, S_Component, S_Mouse } from '../../ts/common/Global_Imports';
 	import { Thing, Point, Angle, g_radial, databases } from '../../ts/common/Global_Imports';
 	import Radial_Cluster from './Radial_Cluster.svelte';
 	import { onMount } from 'svelte';
 	const name = 'rings';
 	const { w_s_hover } = hits;
-	const { w_thing_color } = colors;
 	const { w_count_mouse_up } = e;
+	const { w_thing_color } = colors;
 	const ring_width = k.thickness.radial.ring;
 	const { w_s_title_edit, w_ancestry_focus } = s;
 	const { w_g_cluster, w_rotate_angle, w_resize_radius } = radial;
@@ -34,6 +34,9 @@
 
 	onMount(() => {
 		update_fill_colors();
+		// Set up click handlers for centralized hit system
+		radial.s_rotation.handle_s_mouse = handle_rotation_click;
+		radial.s_resizing.handle_s_mouse = handle_resize_click;
 		return () => s_component.disconnect();
 	});
 
@@ -82,35 +85,34 @@
 		update_fill_colors();
 	}
 
-	function handle_pointerdown(event: PointerEvent) {
-		const angle_ofMouseDown = g.mouse_angle_fromGraphCenter;
-		const angle_ofRotation = angle_ofMouseDown.add_angle_normalized(-$w_rotate_angle);
-		const zone = radial.ring_zone_atMouseLocation;
-		switch (zone) {
-			case T_Radial_Zone.rotate:
-				debug.log_radial(` begin rotate  ${angle_ofRotation.asDegrees()}`);
-				radial.s_rotation.active_angle = angle_ofMouseDown;
-				radial.s_rotation.basis_angle = angle_ofRotation;
-				break;
-			case T_Radial_Zone.resize:
-				const change_ofRadius = g.mouse_distance_fromGraphCenter - $w_resize_radius;
-				debug.log_radial(` begin resize  ${change_ofRadius.asInt()}`);
-				radial.s_rotation.active_angle = angle_ofMouseDown + Angle.quarter;	// needed for cursor
-				radial.s_rotation.basis_angle = angle_ofRotation + Angle.quarter;		// "
-				radial.s_resizing.basis_radius = change_ofRadius;
-				break;
-			case T_Radial_Zone.paging: 
-				const angle_ofPage = angle_ofMouseDown.angle_normalized();
-				const g_cluster = g_radial.g_cluster_atMouseLocation;
-				if (!!g_cluster) {
-					debug.log_radial(` begin paging  ${angle_ofPage.asDegrees()}`);
-					g_cluster.s_paging.active_angle = angle_ofPage;
-					g_cluster.s_paging.basis_angle = angle_ofPage;
-					$w_g_cluster = g_cluster;
-				}
-				break;
+	function handle_rotation_click(s_mouse: S_Mouse): boolean {
+		if (s_mouse.isDown && s_mouse.event) {
+			const zone = radial.ring_zone_atMouseLocation;
+			const angle_ofMouseDown = g.mouse_angle_fromGraphCenter;
+			const angle_ofRotation = angle_ofMouseDown.add_angle_normalized(-$w_rotate_angle);
+			debug.log_radial(` begin rotate  ${angle_ofRotation.asDegrees()}`);
+			radial.s_rotation.active_angle = angle_ofMouseDown;
+			radial.s_rotation.basis_angle = angle_ofRotation;
+			radial.cursor = radial.cursor_forRingZone;
+			return true;
 		}
-		radial.cursor = radial.cursor_forRingZone;
+		return false;
+	}
+
+	function handle_resize_click(s_mouse: S_Mouse): boolean {
+		if (s_mouse.isDown && s_mouse.event) {
+			const zone = radial.ring_zone_atMouseLocation;
+			const angle_ofMouseDown = g.mouse_angle_fromGraphCenter;
+			const angle_ofRotation = angle_ofMouseDown.add_angle_normalized(-$w_rotate_angle);
+			const change_ofRadius = g.mouse_distance_fromGraphCenter - $w_resize_radius;
+			debug.log_radial(` begin resize  ${change_ofRadius.asInt()}`);
+			radial.s_rotation.active_angle = angle_ofMouseDown + Angle.quarter;	// needed for cursor
+			radial.s_rotation.basis_angle = angle_ofRotation + Angle.quarter;		// "
+			radial.s_resizing.basis_radius = change_ofRadius;
+			radial.cursor = radial.cursor_forRingZone;
+			return true;
+		}
+		return false;
 	}
 
 	function reticle_path(): string {
@@ -143,8 +145,7 @@
 				z-index:{T_Layer.ring};
 				-webkit-user-select: none;'>
 			<div class='ring-paths'
-				style={rings_style}
-				on:pointerdown={handle_pointerdown}>
+				style={rings_style}>
 				<svg class = 'rings-svg'
 					viewBox = {viewBox}>
 					<path class = 'resize-path'

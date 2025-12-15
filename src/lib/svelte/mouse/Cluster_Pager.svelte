@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { k, hits, elements, svgPaths, colors } from '../../ts/common/Global_Imports';
-	import { Point, T_Hit_Target } from '../../ts/common/Global_Imports';
+	import { Point, T_Hit_Target, S_Mouse } from '../../ts/common/Global_Imports';
 	import { onMount, onDestroy } from 'svelte';
 	export let handle_click: () => void = () => {};
 	export let thumbTransform = k.empty;
@@ -23,6 +23,8 @@
 		if (pager) {
 			s_pager.set_html_element(pager);
 		}
+		// Set up click handler for centralized hit system
+		s_pager.handle_s_mouse = handle_s_mouse;
 	});
 
 	onDestroy(() => {
@@ -38,8 +40,12 @@
 		fill_color = s_pager.isHovering ? s_pager.hoverColor : 'transparent';
 	}
 
-	function handle_pointerup(event: PointerEvent) {
-		handle_click();
+	function handle_s_mouse(s_mouse: S_Mouse): boolean {
+		if (s_mouse.isUp) {
+			handle_click();
+			return true;
+		}
+		return false;
 	}
 
 </script>
@@ -47,7 +53,6 @@
 <g class='pager-group {name}'
 	bind:this={pager}
 	transform={thumbTransform}
-	on:pointerup={handle_pointerup}
 	style='cursor: pointer; pointer-events: auto;'>
 	<path class={name}
 		stroke={color}

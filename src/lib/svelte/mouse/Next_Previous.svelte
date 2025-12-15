@@ -15,13 +15,6 @@
 	let button_elements: HTMLElement[] = [];
 	let s_elements: S_Element[] = [];
 
-	$: index_forHover = s_elements.findIndex(s => s.isEqualTo($w_s_hover));
-
-	// stop autorepeat when hover leaves all buttons
-	$: if (index_forHover === -1) {
-		mouseTimer.autorepeat_stop();
-	}
-
 	onMount(() => {
 		row_titles.forEach((title, index) => {
 			const s_element = elements.s_element_for(new Identifiable(`next-prev-${name}-${title}`), T_Hit_Target.button, title);
@@ -29,20 +22,30 @@
 			if (button_elements[index]) {
 				s_element.set_html_element(button_elements[index]);
 			}
-			s_element.handle_click = (s_mouse: S_Mouse): boolean => {
-				if (s_mouse.isDown) {
-					mouseTimer.autorepeat_start(index, () => closure(index));
-				} else if (s_mouse.isUp) {
-					mouseTimer.autorepeat_stop();
-				}
-				return true;
-			};
+			s_element.handle_s_mouse = handle_s_mouse;
 		});
 	});
 
 	onDestroy(() => {
 		s_elements.forEach(s => hits.delete_hit_target(s));
 	});
+
+	$: index_forHover = s_elements.findIndex(s => s.isEqualTo($w_s_hover));
+
+	// stop autorepeat when hover leaves all buttons
+	$: if (index_forHover === -1) {
+		mouseTimer.autorepeat_stop();
+	
+	}
+
+	function handle_s_mouse(s_mouse: S_Mouse): boolean {
+		if (s_mouse.isDown) {
+			mouseTimer.autorepeat_start(index, () => closure(index));
+		} else if (s_mouse.isUp) {
+			mouseTimer.autorepeat_stop();
+		}
+		return true;
+	}
 
 </script>
 

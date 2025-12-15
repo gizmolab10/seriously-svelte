@@ -1,20 +1,20 @@
 <script lang='ts'>
-	import { e, k, s, u, x, hits, show, debug, colors, signals, elements, controls } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Signal, T_Hit_Target } from '../../ts/common/Global_Imports';
+	import { e, k, s, u, x, hits, show, debug, colors, radial } from '../../ts/common/Global_Imports';
+	import { T_Drag, T_Layer, T_Signal, T_Hit_Target } from '../../ts/common/Global_Imports';
+	import { signals, elements, controls, svgPaths } from '../../ts/common/Global_Imports';
 	import { Point, S_Element, S_Component } from '../../ts/common/Global_Imports';
-	import { svgPaths } from '../../ts/common/Global_Imports';
-	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount, onDestroy } from 'svelte';
+	import SVG_D3 from '../draw/SVG_D3.svelte';
 	export let points_right = true;
 	export let s_drag!: S_Element;
 	const size = k.height.dot;
 	const capture_size = size;
-	const { w_s_hover } = hits;
+	const { w_count_mouse_up } = e;
 	const { w_thing_color } = colors;
     const ancestry = s_drag.ancestry;
 	const g_widget = ancestry.g_widget;
-	const { w_count_mouse_up } = e;
 	const { w_background_color } = colors;
+	const { w_s_hover, w_dragging } = hits;
 	const { w_show_countDots_ofType } = show;
 	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_ancestry_focus, w_ancestry_forDetails } = s;
@@ -68,7 +68,7 @@
 
 	$: if (mouse_up_count != $w_count_mouse_up) {
 		mouse_up_count = $w_count_mouse_up;
-		if ($w_s_hover?.id === s_drag.id && !elements.isDragging && !!ancestry) {
+		if ($w_s_hover?.id === s_drag.id && !!ancestry && !radial.isDragging && (!$w_dragging || $w_dragging === T_Drag.none)) {
 			e.handle_singleClick_onDragDot(false, ancestry);
 		}
 	}

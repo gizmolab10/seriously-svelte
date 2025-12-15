@@ -1,10 +1,10 @@
 <script lang='ts'>
-	import { Point, T_Layer, G_Cluster, T_Cluster_Pager } from '../../ts/common/Global_Imports';
-	import { k, s, u, colors, radial, g } from '../../ts/common/Global_Imports';
+	import { Point, T_Layer, G_Cluster, T_Cluster_Pager, S_Mouse } from '../../ts/common/Global_Imports';
+	import { k, s, u, colors, radial, g, g_radial, debug } from '../../ts/common/Global_Imports';
 	import Cluster_Pager from '../mouse/Cluster_Pager.svelte';
 	import Curved_Text from '../text/Curved_Text.svelte';
 	import Gull_Wings from '../draw/Gull_Wings.svelte';
-	import { onDestroy } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	export let g_cluster: G_Cluster;
 	export let color = 'red';
 	const show_fat_arc = false;
@@ -14,6 +14,7 @@
 	const { w_g_cluster, w_resize_radius } = radial;
 	const g_cluster_pager = g_cluster.g_cluster_pager;
 	const { w_t_cluster_pager, w_thing_fontFamily } = s;
+	let thumb_arc_element: HTMLElement | null = null;
 	let thumbFill = 'transparent';
 	let pager_offset = 8;
 
@@ -55,7 +56,31 @@
 		pager_offset = (value == T_Cluster_Pager.sliders) ? -2 : 8;
 	});
 
-	onDestroy(unsubscribe);
+	onMount(() => {
+		s_paging.handle_s_mouse = handle_s_mouse;
+		if (!!thumb_arc_element) {
+			s_paging.set_html_element(thumb_arc_element);
+		}
+	});
+
+	onDestroy(() => {
+		unsubscribe();
+		// Note: s_paging is managed by radial, don't delete it here
+	});
+
+	function handle_s_mouse(s_mouse: S_Mouse): boolean {
+		if (s_mouse.isDown && s_mouse.event) {
+			const angle_ofMouseDown = g.mouse_angle_fromGraphCenter;
+			const angle_ofPage = angle_ofMouseDown.angle_normalized();
+			debug.log_radial(` begin paging  ${angle_ofPage.asDegrees()}`);
+			s_paging.active_angle = angle_ofPage;
+			s_paging.basis_angle = angle_ofPage;
+			$w_g_cluster = g_cluster;
+			radial.cursor = radial.cursor_forRingZone;
+			return true;
+		}
+		return false;
+	}
 
 	function handle_page(delta: number) {
 		g_cluster.g_paging?.addTo_paging_index_for(delta);
@@ -85,18 +110,20 @@
 			<path class='path-fork'
 				fill='transparent'
 				d={g_cluster_pager.svgPathFor_radialFork}
-				stroke-width={k.thickness.radial.fork * ($w_t_cluster_pager == T_Cluster_Pager.sliders ? 1 : 2)}
+				stroke-width={k.thickness.radial.fork * 2}
 				stroke={colors.specialBlend(color, $w_background_color, k.opacity.radial.default)}/>
 			{#if $w_t_cluster_pager == T_Cluster_Pager.sliders}
 				<path class='path-arc-slider'
 					fill='transparent'
 					d={g_cluster_pager.svgPathFor_arcSlider}
 					stroke-width={k.thickness.radial.fork}
-					stroke={colors.specialBlend(color, $w_background_color, k.opacity.radial.armature)}/>
+					stroke={colors.specialBlend(color, $w_background_color, k.opacity.radial.armature)}
+					pointer-events="stroke"/>
 				{#if g_cluster.widgets_shown > 1}
 					{#if g_cluster.isPaging}
 						<path class='path-thumb'
 							fill={thumbFill}
+							bind:this={thumb_arc_element}
 							id={`thumb-${g_cluster.name}`}
 							d={g_cluster.g_thumbArc.svgPathFor_arcSlider}/>
 					{/if}

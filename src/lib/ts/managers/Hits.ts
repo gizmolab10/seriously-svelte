@@ -95,13 +95,20 @@ export default class Hits {
 
 	handle_click_at(point: Point, s_mouse: S_Mouse): boolean {
 		const targets = this.targets_atPoint(point);
+		// If meta key is held, force rubberband target (for graph dragging)
+		if (s_mouse.event?.metaKey) {
+			const rubberband_target = targets.find(s => s.type === T_Hit_Target.rubberband);
+			if (rubberband_target) {
+				return rubberband_target.handle_s_mouse?.(s_mouse) ?? false;
+			}
+		}
 		const target
 			=  targets.find(s => s.isADot)
 			?? targets.find(s => s.isAWidget)
 			?? targets.find(s => s.isRing)
 			?? targets.find(s => s.isAControl)
 			?? targets[0];
-		return target?.handle_click?.(s_mouse) ?? false;
+		return target?.handle_s_mouse?.(s_mouse) ?? false;
 	}
 
 	targets_ofType_atPoint(type: T_Hit_Target, point: Point | null): Array<S_Hit_Target> {

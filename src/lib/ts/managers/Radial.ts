@@ -1,6 +1,6 @@
-import { T_Startup, T_Preference, T_Hit_Target, T_Radial_Zone, T_Cluster_Pager, Point } from '../common/Global_Imports';
-import { g, k, p, s, hits, debug, signals, elements, g_radial } from '../common/Global_Imports';
-import { Angle, G_Cluster, S_Rotation, S_Resizing } from '../common/Global_Imports';
+import { T_Startup, T_Preference, T_Hit_Target, T_Radial_Zone, T_Cluster_Pager } from '../common/Global_Imports';
+import { g, k, p, s, hits, Point, Angle, debug, signals, elements, g_radial } from '../common/Global_Imports';
+import { G_Cluster, S_Rotation, S_Resizing } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
 import { G_Paging } from '../geometry/G_Paging';
 import { G_Pages } from '../geometry/G_Pages';
@@ -38,11 +38,10 @@ export default class Radial {
 	}
 
 	get ring_radius(): number { return get(this.w_resize_radius); }
+	get isDragging(): boolean { return this.s_hit_targets.some(s => s.isDragging); }
 	get s_pagings(): Array<S_Rotation> { return Object.values(this.s_paging_dict_byName); }
-	get isAny_paging_arc_hovering(): boolean { return this.s_pagings.some(s => s.isHovering); }
-	get isAny_paging_thumb_dragging(): boolean { return this.s_pagings.some(s => s.isDragging); }
-	get isDragging(): boolean { return this.isAny_paging_thumb_dragging || this.s_resizing.isDragging || this.s_rotation.isDragging; }
-	s_paging_forName_ofCluster(name: string): S_Rotation { return elements.assure_forKey_inDict(name, this.s_paging_dict_byName, () => new S_Rotation()); }
+	get s_hit_targets(): Array<S_Rotation> { return [this.s_resizing, this.s_rotation, ...this.s_pagings]; }
+	s_paging_forName_ofCluster(name: string): S_Rotation { return elements.assure_forKey_inDict(name, this.s_paging_dict_byName, () => new S_Rotation(T_Hit_Target.paging)); }
 	
 	g_pages_forThingID(id: string | null | undefined): G_Pages | null {
 		return !id ? null : elements.assure_forKey_inDict(id, this.g_pages_dict_byThingID, () => new G_Pages(id));

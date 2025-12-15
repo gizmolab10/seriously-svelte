@@ -35,13 +35,13 @@ export default class G_RadialGraph {
 		if (!!g_focus && !!ancestry?.thing) {
 			const width_ofTitle = ancestry.thing.width_ofTitle;
 			const width_ofWidget = width_ofTitle + 13;
-			const x = -width_ofWidget / 2;
+			const x = - 1 - (width_ofWidget / 2);
 			const y = -10;
 			const origin_ofWidget = g.center_ofGraphView.offsetByXY(x, y);
 			g_focus.layout();
+			g_focus.offset_ofWidget = Point.zero;
 			g_focus.width_ofWidget = width_ofWidget + 5;
 			g_focus.location_ofRadial = origin_ofWidget;
-			g_focus.offset_ofWidget = Point.zero;
 			g_focus.origin_ofRadial = origin_ofWidget.offsetByX(-width_ofTitle);	// adjust for printing
 		}
 	}

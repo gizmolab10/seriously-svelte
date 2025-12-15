@@ -9,7 +9,7 @@ export default class S_Hit_Target {
 
     containedIn_rect?: (rect: Rect | null) => boolean;
     contains_point?: (point: Point | null) => boolean;
-	handle_click?: (s_mouse: S_Mouse) => boolean;
+	handle_s_mouse?: (s_mouse: S_Mouse) => boolean;
 	identifiable: Identifiable | null = null;
 	html_element: HTMLElement | null = null;
 	element_rect: Rect | null = null;							// for use in Hits index
@@ -30,13 +30,13 @@ export default class S_Hit_Target {
 	get stroke(): string { return 'red'; }				// override in subclasses
 	get rect(): Rect | null { return this.element_rect; }
 	get ancestry(): Ancestry { return this.identifiable as Ancestry; }
-	get isAWidget(): boolean { return [T_Hit_Target.widget, T_Hit_Target.title].includes(this.type); }
 	get isHovering(): boolean { return this.isEqualTo(get(hits.w_s_hover)); }
 	set isHovering(isHovering: boolean) { hits.w_s_hover.set(isHovering ? this : null); }
 	get svg_hover_color(): string { return this.isHovering ? colors.background : this.stroke; }
 	get isADot(): boolean { return [T_Hit_Target.drag, T_Hit_Target.reveal].includes(this.type); }
-	get isRing(): boolean { return [T_Hit_Target.rotation, T_Hit_Target.resizing, T_Hit_Target.paging].includes(this.type); }
+	get isAWidget(): boolean { return [T_Hit_Target.widget, T_Hit_Target.title].includes(this.type); }
 	get isAControl(): boolean { return [T_Hit_Target.control, T_Hit_Target.button].includes(this.type); }
+	get isRing(): boolean { return [T_Hit_Target.rotation, T_Hit_Target.resizing, T_Hit_Target.paging].includes(this.type); }
 
 	set rect(value: Rect | null) {
 		// Only update RBush if the rect actually changed position/size
