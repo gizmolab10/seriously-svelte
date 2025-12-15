@@ -178,7 +178,7 @@
 				<Button name='save'
 					width=72
 					s_button={s_save}
-					closure={handle_save}
+					handle_s_mouse={handle_save}
 					zindex={T_Layer.frontmost}
 					origin={new Point(120, tops[3])}>
 					save to db

@@ -78,7 +78,7 @@
 					color='transparent'
 					center={new Point(lefts[0], y_center)}
 					s_button={elements.s_control_forType(T_Control.details)}
-					closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.details)}>
+					handle_s_mouse={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.details)}>
 					<svg class='hamburger-svg'
 						style='
 							height: 17px;
@@ -117,7 +117,7 @@
 						height={size_big}
 						center={new Point(lefts[3], y_center)}
 						s_button={elements.s_control_forType(T_Control.grow)}
-						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.grow)}>
+						handle_s_mouse={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.grow)}>
 						<svg name='grow-svg' style={svg_style}>
 							<path
 								name='grow-path'
@@ -132,7 +132,7 @@
 						height={size_big}
 						center={new Point(lefts[4], y_center)}
 						s_button={elements.s_control_forType(T_Control.shrink)}
-						closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.shrink)}>
+						handle_s_mouse={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.shrink)}>
 						<svg name='shrink-svg'
 							style={svg_style}>
 							<path name='shrink-path'
@@ -153,7 +153,7 @@
 					center={new Point(lefts[5], 10)}
 					style='border: none; background: none;'
 					s_button={elements.s_control_forType(T_Control.details)}
-					closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.details)}/>
+					handle_s_mouse={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.details)}/>
 			{/if}
 			{#if features.allow_tree_mode}
 				<Separator name='before-search'

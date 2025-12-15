@@ -14,6 +14,7 @@ On `mousedown`/`mouseup` at the document level (Events.ts):
 - Call `hits.targets_atPoint(point)` to find targets under cursor
 - Select topmost target using priority: dot → widget → ring → control → other
 - Invoke `target.handle_s_mouse(s_mouse)` if defined
+- If the chosen target has `detect_autorepeat` set, `Hits` starts/stops autorepeat centrally
 
 ### 2. S_Hit_Target Extension
 
@@ -45,21 +46,34 @@ mousedown → Events.ts → hits.handle_click_at(point, s_mouse)
 
 ```ts
 handle_click_at(point: Point, s_mouse: S_Mouse): boolean {
-    const targets = this.targets_atPoint(point);
-    // If meta key is held, force rubberband target (for graph dragging)
-    if (s_mouse.event?.metaKey) {
-        const rubberband_target = targets.find(s => s.type === T_Hit_Target.rubberband);
-        if (rubberband_target) {
-            return rubberband_target.handle_s_mouse?.(s_mouse) ?? false;
-        }
-    }
-    const target
-        =  targets.find(s => s.isADot)
-        ?? targets.find(s => s.isAWidget)
-        ?? targets.find(s => s.isRing)
-        ?? targets.find(s => s.isAControl)
-        ?? targets[0];
-    return target?.handle_s_mouse?.(s_mouse) ?? false;
+	const targets = this.targets_atPoint(point);
+	// If meta key is held, force rubberband target (for graph dragging)
+	if (s_mouse.event?.metaKey) {
+		const rubberband_target = targets.find(s => s.type === T_Hit_Target.rubberband);
+		if (rubberband_target) {
+			return rubberband_target.handle_s_mouse?.(s_mouse) ?? false;
+		}
+	}
+	const target
+		=  targets.find(s => s.isADot)
+		?? targets.find(s => s.isAWidget)
+		?? targets.find(s => s.isRing)
+		?? targets.find(s => s.isAControl)
+		?? targets[0];
+
+	// Call handle_s_mouse first to allow component to set up (e.g., capture event for autorepeat)
+	const handled = target?.handle_s_mouse?.(s_mouse) ?? false;
+
+	// Centralized autorepeat start/stop
+	if (target?.detect_autorepeat && target?.autorepeat_callback) {
+		if (s_mouse.isUp) {
+			this.stop_autorepeat();
+		} else if (s_mouse.isDown) {
+			this.start_autorepeat(target);
+		}
+	}
+
+	return handled;
 }
 ```
 
@@ -71,23 +85,37 @@ get isAWidget(): boolean { return [T_Hit_Target.widget, T_Hit_Target.title].incl
 get isRing(): boolean { return [T_Hit_Target.rotation, T_Hit_Target.resizing, T_Hit_Target.paging].includes(this.type); }
 ```
 
+Hit rectangles for **graph elements** (dots, widgets, rings) are clipped to the visible graph view to avoid overlapping the controls/details UI:
+
+```ts
+update_rect() {
+	if (!!this.html_element) {
+		let rect = g.scaled_rect_forElement(this.html_element);
+		// Clip graph elements (dots, widgets, rings) to graph bounds to prevent them from
+		// extending outside and interfering with other UI elements (e.g., details panel buttons)
+		if (rect && (this.isADot || this.isAWidget || this.isRing)) {
+			const graph_bounds = get(g.w_rect_ofGraphView);
+			if (graph_bounds) {
+				rect = rect.clippedTo(graph_bounds);
+			}
+		}
+		this.rect = rect;
+	}
+}
+```
+
 ### Component Pattern
 
-Components register a handler when creating their `S_Element`:
+Components **register a handler on their hit target** and let `Hits` dispatch:
 
 ```ts
 s_element.handle_s_mouse = (s_mouse: S_Mouse): boolean => {
-    // handle click, return true if consumed
-    return closure(s_mouse);
+	// handle click, return true if consumed
+	return handle_s_mouse(s_mouse);
 };
 ```
 
-Remove DOM handlers from component markup:
-
-```diff
-- on:pointerdown={handle_pointerDown}
-- on:pointerup={handle_pointerUp}
-```
+DOM `on:mouse*` handlers are removed from markup – only the centralized `Events.ts` listeners remain.
 
 ---
 
@@ -112,6 +140,7 @@ Remove DOM handlers from component markup:
 - [x] `Graph.svelte` — removed mousedown handler, Rubberband handles directly
 - [x] Graph dragging (meta key) — stops on mouse up
 - [x] Focus prevention: `focus({ preventScroll: true })` to prevent graph shifting during title editing
+- [x] Hit-rect clipping for graph elements (dots/widgets/rings) to `g.w_rect_ofGraphView`
 
 ### Pending
 
@@ -126,7 +155,8 @@ Remove DOM handlers from component markup:
 | `Rubberband.svelte` | Catch-all | Covers full graph, lowest priority — catches unhandled clicks |
 | `Search_Results.svelte` | Dynamic | Each row would need its own S_Element — too granular |
 | `Glow_Button.svelte` | Good fit | Reusable button, can add S_Element |
-| `Next_Previous.svelte` | Multiple | Each button in the row needs its own S_Element |
+| `Next_Previous.svelte` | Multiple | Each button in the row needs its own S_Element; centralized autorepeat per button |
+| `Breadcrumb_Button.svelte` | Dual state | Uses widget (`S_Widget`) for colors + separate `S_Element` hit target for the chip |
 
 ---
 
@@ -160,8 +190,8 @@ onDestroy(() => {
 
 ```ts
 s_element.handle_s_mouse = (s_mouse: S_Mouse): boolean => {
-    // move existing handler logic here
-    return true;
+	// move existing handler logic here
+	return handle_s_mouse(s_mouse);
 };
 ```
 
@@ -354,8 +384,8 @@ Autorepeat management has been moved into the centralized hit system:
 ### Components to Migrate
 
 - [x] `Glow_Button.svelte` ✅ **Migrated**
-- [ ] `Button.svelte`
-- [ ] `Next_Previous.svelte`
+- [x] `Button.svelte` ✅ **Migrated**
+- [x] `Next_Previous.svelte` ✅ **Migrated**
 - [ ] `D_Actions.svelte` (conditional autorepeat)
 
 ### Migration Risks by Component
@@ -381,13 +411,36 @@ Autorepeat management has been moved into the centralized hit system:
 
 ---
 
-#### `Button.svelte` — **Medium Risk**
+#### `Button.svelte` — **Medium Risk** ✅ **Migrated**
+
+**Components Using Button:**
+
+**Direct Usage (render `<Button>`):**
+- `Graph.svelte` — `T_Control.builds` button, `T_Control.help` button
+- `D_Data.svelte` — "save to db" button
+- `D_Actions.svelte` — "cancel" button
+- `Primary_Controls.svelte` — "details-toggle", `T_Control.grow`, `T_Control.shrink`, "easter-egg" buttons
+- `Search_Toggle.svelte` — Button usage (imported)
+
+**Indirect Usage (via wrapper components):**
+- `Buttons_Row.svelte` — Uses Button internally, renders multiple Button components in a row
+  - Used by: `D_Data.svelte`, `D_Actions.svelte` (via `Buttons_Table`)
+- `Buttons_Table.svelte` — Uses `Buttons_Row` (which uses Button)
+  - Used by: `D_Actions.svelte`
+- `Breadcrumb_Button.svelte` — Wraps Button for breadcrumb display
+  - Used by: `Breadcrumbs.svelte`
+- `Triangle_Button.svelte` — Wraps Button with triangle SVG styling
+  - Used by: `Steppers.svelte`
 
 **Current Implementation:**
 - Supports both `detect_autorepeat` and `detect_longClick`
 - Uses `S_Mouse.repeat()` vs `S_Mouse.down()` distinction in callback
 - Tracks `s_mouse.clicks` for click counting
 - Calls `recompute_style()` after each action
+- Exposes a `handle_s_mouse` prop; internally wraps it in an `intercept_handle_s_mouse` that:
+  - Captures the initial `MouseEvent` for autorepeat
+  - Manages click counting and long-click timers
+  - Delegates semantic behavior to the passed-in `handle_s_mouse`
 
 **Risks:**
 - **LongClick conflict**: LongClick uses same timer system but different logic — need to ensure they don't interfere
@@ -401,31 +454,67 @@ Autorepeat management has been moved into the centralized hit system:
 - Preserve click counting logic separately from autorepeat
 - Consider debouncing `recompute_style()` if performance issues arise
 
+**Migration Completed:**
+- ✅ Removed autorepeat start/stop calls from `handle_s_mouse`
+- ✅ Set `s_button.detect_autorepeat`, `autorepeat_callback`, and `autorepeat_id` in a reactive block once `element` is bound
+- ✅ Autorepeat callback distinguishes between initial down (`S_Mouse.down`) and repeats (`S_Mouse.repeat`) using `autorepeat_isFirstCall` flag
+- ✅ Captures mouse event on mouse down for use in autorepeat callbacks
+- ✅ LongClick handling remains component-managed (still uses `mouse_timer`)
+- ✅ `reset()` function clears autorepeat state
+
+**Result:**
+- Autorepeat logic simplified - no manual timer management needed
+- LongClick continues to work independently
+- Click counting and style recomputation preserved
+- Callers (`Graph.svelte`, `Buttons_Row.svelte`, `Buttons_Table.svelte`, `Breadcrumb_Button.svelte`, `Triangle_Button.svelte`, `Search_Toggle.svelte`, etc.) now pass a `handle_s_mouse` callback instead of a `closure`, which keeps control logic outside the generic button shell.
+
 ---
 
-#### `Next_Previous.svelte` — **Medium-High Risk**
+#### `Next_Previous.svelte` — **Medium-High Risk** ✅ **Migrated**
 
-**Current Implementation:**
-- Multiple buttons (array) with shared `Mouse_Timer` instance
-- Each button uses different ID (index: 0, 1, 2) for `autorepeat_start(index, callback)`
-- Single timer manages all buttons — stopping one stops all
+**Previous Implementation:**
+- Multiple buttons (array) with a shared `Mouse_Timer` instance
+- Each button used a different ID (index: 0, 1, 2) for `autorepeat_start(index, callback)`
+- Single timer managed all buttons — stopping one stopped all
 - Visual feedback per button via `mouseTimer.isAutorepeating_forID(index)`
 
-**Risks:**
-- **Multiple targets**: Each button has its own `S_Element` — need to handle multiple autorepeating targets or shared state
-- **ID management**: Current system uses index as ID — centralized system needs to preserve per-button identification
-- **Shared timer**: All buttons share one timer — if one button starts autorepeat, others can't start until it stops
-- **Hover leave**: Current reactive statement stops autorepeat when hover leaves ALL buttons — centralized system must handle this correctly
+**Migration Completed:**
+- ✅ Each button gets its own `S_Element` hit target, created in `onMount`
+- ✅ `s_element.handle_s_mouse` is set per index and delegates to a shared `handle_s_mouse(s_mouse, index)`
+- ✅ `s_element.detect_autorepeat` is always `true` for these buttons
+- ✅ `s_element.autorepeat_callback` calls the component `closure(index)` (no `S_Mouse` parameter needed)
+- ✅ Mouse down captures the initial `MouseEvent` per index so repeats can be generated from it
+- ✅ Mouse up clears the stored event, and centralized autorepeat in `Hits` handles timer lifecycle
 
-**Mitigation:**
-- Option A: Each `S_Element` manages its own autorepeat (separate timers)
-- Option B: Shared autorepeat state with ID tracking (preserve current behavior)
-- Ensure hover leave detection works correctly when moving between buttons in the same component
-- Test rapid switching between buttons during autorepeat
+**Result:**
+- Autorepeat now uses the shared `Hits` timer instead of a local `Mouse_Timer`
+- Each button can autorepeat independently, with hover leave handled centrally by `Hits.detect_hovering_at`
 
 ---
 
 #### `D_Actions.svelte` — **High Risk**
+
+---
+
+#### `Breadcrumb_Button.svelte` — **Medium Risk** ✅ **Migrated**
+
+**Role:**
+- Presents a clickable breadcrumb chip in the controls strip for a widget’s ancestry.
+- Needs to visually match the underlying widget while having its own hit target and geometry.
+
+**Implementation:**
+- Uses the widget’s `S_Widget` (`s_breadcrumb`) to compute colors:
+  - `s_breadcrumb.fill` → breadcrumb background
+  - `s_breadcrumb.stroke` → breadcrumb text color
+- Creates a separate `S_Element` hit target for the chip:
+  - `s_element = elements.s_element_for(s_breadcrumb.ancestry, T_Hit_Target.button, title)`
+  - Bound to the `Button.svelte` wrapper (`s_button={s_element}`)
+  - `handle_s_mouse` in `Breadcrumb_Button.svelte` performs the ancestry focus/navigation
+- Hover and hit-testing are driven by `s_element` (controls-strip coordinates), while color semantics come from `s_breadcrumb` (widget/ancestry state).
+
+**Result:**
+- Breadcrumb chips participate fully in the centralized hits/hover system.
+- Visual state stays in sync with widget focus/grab/edit state without duplicating that logic in the controls layer.
 
 **Current Implementation:**
 - **Conditional autorepeat**: Only `T_Action.browse` and `T_Action.move` support autorepeat
@@ -444,6 +533,9 @@ Autorepeat management has been moved into the centralized hit system:
 - Or: Add `should_autorepeat?: (s_mouse: S_Mouse) => boolean` predicate to `S_Hit_Target`
 - Or: Keep conditional logic in callback but ensure `S_Mouse.repeat()` is only sent for valid actions
 - Test all action types to ensure only browse/move autorepeat
+
+**Status:**
+- Not yet migrated to centralized autorepeat; still uses the existing conditional logic on top of the new `Button`/`Hits` infrastructure.
 
 ---
 

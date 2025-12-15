@@ -184,7 +184,7 @@
 						zindex={T_Layer.frontmost}
 						name='cancel-alteration'
 						height={k.height.button}
-						closure={handle_cancel}
+						handle_s_mouse={handle_cancel}
 						color = colors.default
 						s_button={s_cancel}
 						position='relative'

@@ -57,6 +57,38 @@ export default class Hits {
 		return !!target;
 	}
 
+	static readonly _____CLICKS: unique symbol;
+
+	handle_click_at(point: Point, s_mouse: S_Mouse): boolean {
+		const targets = this.targets_atPoint(point);
+		// If meta key is held, force rubberband target (for graph dragging)
+		if (s_mouse.event?.metaKey) {
+			const rubberband_target = targets.find(s => s.type === T_Hit_Target.rubberband);
+			if (rubberband_target) {
+				return rubberband_target.handle_s_mouse?.(s_mouse) ?? false;
+			}
+		}
+		const target
+			=  targets.find(s => s.isADot)
+			?? targets.find(s => s.isAWidget)
+			?? targets.find(s => s.isRing)
+			?? targets.find(s => s.isAControl)
+			?? targets[0];
+		
+		// Call handle_s_mouse first to allow component to set up (e.g., capture event for autorepeat)
+		const handled = target?.handle_s_mouse?.(s_mouse) ?? false;
+		
+		if (target?.detect_autorepeat && target?.autorepeat_callback) {
+			if (s_mouse.isUp) {
+				this.stop_autorepeat();
+			} else if (s_mouse.isDown) {
+				this.start_autorepeat(target);
+			}
+		}
+		
+		return handled;
+	}
+
 	static readonly _____GENERAL: unique symbol;
 
 	handle_mouse_movement_at(point: Point) {
@@ -101,32 +133,6 @@ export default class Hits {
 	}
 
 	static readonly _____HIT_TEST: unique symbol;
-
-	handle_click_at(point: Point, s_mouse: S_Mouse): boolean {
-		const targets = this.targets_atPoint(point);
-		// If meta key is held, force rubberband target (for graph dragging)
-		if (s_mouse.event?.metaKey) {
-			const rubberband_target = targets.find(s => s.type === T_Hit_Target.rubberband);
-			if (rubberband_target) {
-				return rubberband_target.handle_s_mouse?.(s_mouse) ?? false;
-			}
-		}
-		const target
-			=  targets.find(s => s.isADot)
-			?? targets.find(s => s.isAWidget)
-			?? targets.find(s => s.isRing)
-			?? targets.find(s => s.isAControl)
-			?? targets[0];
-		
-		if (s_mouse.isDown && target?.detect_autorepeat && target?.autorepeat_callback) {
-			this.start_autorepeat(target);
-		}
-		if (s_mouse.isUp) {
-			this.stop_autorepeat();
-		}
-		
-		return target?.handle_s_mouse?.(s_mouse) ?? false;
-	}
 
 	targets_ofType_atPoint(type: T_Hit_Target, point: Point | null): Array<S_Hit_Target> {
 		return !point ? [] : this.targets_atPoint(point).filter(target => target.type == type);
@@ -265,18 +271,15 @@ export default class Hits {
 	static readonly _____AUTOREPEAT: unique symbol;
 
 	start_autorepeat(target: S_Hit_Target) {
-		if (!target?.autorepeat_callback) {
-			return;
+		// start the timer (Mouse_Timer.autorepeat_start calls callback immediately, then starts interval)
+		if (!!target && target.autorepeat_callback) {
+			this.stop_autorepeat();			// stop any existing autorepeat
+			const id = target.autorepeat_id ?? 0;
+			this.w_autorepeating_target.set(target);
+			this.autorepeat_timer.autorepeat_start(id, () => {
+				target.autorepeat_callback?.();
+			});
 		}
-		this.stop_autorepeat(); // Stop any existing autorepeat
-		const id = target.autorepeat_id ?? 0;
-		this.w_autorepeating_target.set(target);
-		// Start timer (Mouse_Timer.autorepeat_start calls callback immediately, then starts interval)
-		this.autorepeat_timer.autorepeat_start(id, () => {
-			if (target.autorepeat_callback) {
-				target.autorepeat_callback();
-			}
-		});
 	}
 
 	stop_autorepeat() {

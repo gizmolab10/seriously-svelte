@@ -27,7 +27,7 @@
 			name={T_Control.search}
 			center={new Point(rights[0], 11)}
 			s_button={elements.s_control_forType(T_Control.search)}
-			closure={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.search)}>
+			handle_s_mouse={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.search)}>
 			🔍
 		</Button>
 	{:else}

@@ -1,6 +1,7 @@
 <script lang='ts'>
 	import { g, h, k, s, u, hits, colors, search, elements } from '../../ts/common/Global_Imports';
-	import { Point, T_Search, T_Banner, S_Element } from '../../ts/common/Global_Imports';
+	import { Point, T_Search, T_Banner, T_Hit_Target } from '../../ts/common/Global_Imports';
+	import Identifiable from '../../ts/runtime/Identifiable';
 	import Button from './Button.svelte';
 	export let center = Point.zero;
 	export let s_breadcrumb;
@@ -11,6 +12,7 @@
 	const { w_thing_color, w_background_color } = colors;
 	let thing = s_breadcrumb.ancestry.thing;
 	let title = thing.breadcrumb_title ?? k.empty;
+	let s_element = elements.s_element_for(s_breadcrumb.ancestry, T_Hit_Target.button, title);
 	let colorStyles = s_breadcrumb.background;
 	let name = `crumb: ${title ?? 'unknown'}`;
 	let ancestry = s_breadcrumb.ancestry;
@@ -35,10 +37,10 @@
 	}
 	
 	function updateColors() {
-		if (!!thing) {
-			colorStyles = s_breadcrumb.background;
-			border = s_breadcrumb.border;
-			color = s_breadcrumb.color;
+		if (!!thing &&!!s_element) {
+			colorStyles = `background-color: ${s_breadcrumb.fill}`;
+			color = s_breadcrumb.stroke;
+			border = s_element.border;
 			updateStyle();
 		}
 		reattachments += 1;
@@ -57,7 +59,7 @@
 		`.removeWhiteSpace();
 	}
 
-	function closure(s_mouse) {
+	function handle_s_mouse(s_mouse) {
 		if (!!h && h.hasRoot && s_mouse.isUp) {
 			search.deactivate();
 			if (ancestry.becomeFocus()) {
@@ -74,9 +76,9 @@
 		style={style}
 		width={width}
 		center={center}
-		closure={closure}
 		position='absolute'
-		s_button={s_breadcrumb}>
+		s_button={s_element}
+		handle_s_mouse={handle_s_mouse}>
 		{title}
 	</Button>
 {/key}

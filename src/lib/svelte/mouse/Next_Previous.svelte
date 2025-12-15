@@ -8,12 +8,12 @@
 	export let has_title = false;
 	export let name = k.empty;
 	export let size = 24;
-	const { w_s_hover } = hits;
+	const { w_s_hover, w_autorepeating_target } = hits;
 	const base_titles = [T_Direction.previous, T_Direction.next];
-	const mouseTimer = e.mouse_timer_forName(`next-previous-${name}`);
 	$: row_titles = has_title ? [name, ...base_titles] : base_titles;
 	let button_elements: HTMLElement[] = [];
 	let s_elements: S_Element[] = [];
+	let autorepeat_events: (MouseEvent | null)[] = []; // Capture events for each button
 
 	onMount(() => {
 		row_titles.forEach((title, index) => {
@@ -25,6 +25,14 @@
 			s_element.handle_s_mouse = (s_mouse: S_Mouse): boolean => {
 				return handle_s_mouse(s_mouse, index);
 			};
+			// Set up autorepeat for each button (always enabled for next-previous)
+			s_element.detect_autorepeat = true;
+			s_element.autorepeat_callback = () => {
+				if (autorepeat_events[index]) {
+					closure(index);
+				}
+			};
+			s_element.autorepeat_id = index;
 		});
 	});
 
@@ -33,18 +41,16 @@
 	});
 
 	$: index_forHover = s_elements.findIndex(s => s.isEqualTo($w_s_hover));
-
-	// stop autorepeat when hover leaves all buttons
-	$: if (index_forHover === -1) {
-		mouseTimer.autorepeat_stop();
-	
-	}
+	$: isAutorepeating = (index: number) => s_elements[index]?.isEqualTo($w_autorepeating_target) ?? false;
 
 	function handle_s_mouse(s_mouse: S_Mouse, index: number): boolean {
-		if (s_mouse.isDown) {
-			mouseTimer.autorepeat_start(index, () => closure(index));
+		if (s_mouse.isDown && s_mouse.event) {
+			// Capture event for autorepeat callback
+			autorepeat_events[index] = s_mouse.event;
+			// Autorepeat is handled centrally by Hits.ts
 		} else if (s_mouse.isUp) {
-			mouseTimer.autorepeat_stop();
+			autorepeat_events[index] = null;
+			// Autorepeat stop is handled centrally by Hits.ts
 		}
 		return true;
 	}
@@ -62,7 +68,7 @@
 	{#each row_titles as title, index}
 		<button class='{name}-{title}-button'
 			bind:this={button_elements[index]}
-			class:held={mouseTimer.isAutorepeating_forID(index)}
+			class:held={isAutorepeating(index)}
 			style='
 				padding: 0;
 				border: none;

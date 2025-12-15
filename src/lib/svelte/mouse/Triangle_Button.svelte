@@ -45,7 +45,7 @@
 <Button
 	detect_autorepeat={detect_autorepeat}
 	detect_longClick={detect_longClick}
-	closure={handle_s_mouse}
+	handle_s_mouse={handle_s_mouse}
 	s_button={s_triangle}
 	border_thickness=0
 	center={center}

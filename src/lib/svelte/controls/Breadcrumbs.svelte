@@ -27,12 +27,6 @@
 	});
 
 	onMount(() => { return () => s_component.disconnect(); });
-	
-	$: {
-		if (!!element) {
-			s_component.set_html_element(element);
-		}
-	}
 
 	$: {
 		const _ = `${u.descriptionBy_titles($w_grabbed)}

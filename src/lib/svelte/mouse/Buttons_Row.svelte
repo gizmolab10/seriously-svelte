@@ -125,7 +125,7 @@
 						width={g_repeater.button_width_for(column)}
 						name={`${name}-${button_name_for(column)}`}
 						origin={Point.x(g_repeater.button_left_for(column))}
-						closure={(s_mouse) => closure(T_Request.handle_click, s_mouse, column)}>
+						handle_s_mouse={(s_mouse) => closure(T_Request.handle_click, s_mouse, column)}>
 						{#if has_svg && !!svgPaths.path_for(title)}
 							<svg
 								class='svg-button-path-for-{title}'>
