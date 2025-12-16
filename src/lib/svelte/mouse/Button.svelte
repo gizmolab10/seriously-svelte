@@ -28,7 +28,7 @@
 	let autorepeat_event: MouseEvent | null = null;		// Capture event for autorepeat callbacks
 	let autorepeat_isFirstCall = true;					// Track if this is the first autorepeat callback (down) or subsequent (repeat)
 	let wrapper_style = k.empty;
-	let computed_style = style;
+	let button_style = style;
 	let element: HTMLElement;
 	let border = k.empty;
 
@@ -140,11 +140,11 @@
 		const align_left = true;
 		if (wrapper_style.length == 0) {
 			wrapper_style = `
+				cursor: pointer;
 				width: ${width}px;
 				z-index: ${zindex};
 				height: ${height}px;
 				position: ${position};
-				cursor: pointer;
 				font-family: ${$w_thing_fontFamily};
 			`.removeWhiteSpace();
 			if (!origin && !center) {
@@ -160,7 +160,7 @@
 			border_color = colors.border;
 			const border_attributes = border_thickness == 0 ? 'none' : `${border_thickness}px solid ${border_color}`;
 			border = `border:${border_attributes}`;
-			computed_style=`
+			button_style=`
 				top:0px;
 				left:0px;
 				${border};
@@ -185,13 +185,13 @@
 
 </script>
 
-{#key $w_background_color, computed_style}
+{#key $w_background_color, button_style}
 	<div class='button-wrapper'
-		bind:this={element}
 		style={wrapper_style}
+		bind:this={element}
 		name={name}>
 		<button class='button'
-			style={computed_style}
+			style={button_style}
 			name={'button-for-' + name}>
 			<slot/>
 		</button>

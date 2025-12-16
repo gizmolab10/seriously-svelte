@@ -21,7 +21,7 @@ class Details {
 
 	redraw() {
 		// s.w_count_details.update(n => n + 1); 	// force re-render of details
-		hits.recalibrate();
+		// hits.recalibrate();
 	}
 
 	select_next(banner_id: string, selected_title: string) {

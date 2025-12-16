@@ -87,7 +87,7 @@ export default class Hits {
 
 	handle_mouse_movement_at(point: Point) {
 		const now = Date.now();
-		if (!radial.isDragging && ((now - this.time_ofPrior_hover) >= 80)) {
+		if (!radial.isDragging && ((now - this.time_ofPrior_hover) >= 60)) {
 			this.time_ofPrior_hover = now;
 			if (get(this.w_dragging) === T_Drag.none) {
 				this.detect_hovering_at(point)

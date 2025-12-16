@@ -13,8 +13,8 @@ import { get } from 'svelte/store';
 	//////////////////////////////////////////
 
 export default class S_Element extends S_Hit_Target {
+	color_background = 'transparent';
 	defaultDisabledColor = '#999999'
-	color_background = 'white';
 	isDisabled = false;
 	isSelected = false;
 	isInverted = false;		// means color for hover == as though not hovering (and vice versa)

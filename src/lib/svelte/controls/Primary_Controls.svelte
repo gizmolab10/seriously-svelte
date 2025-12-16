@@ -19,6 +19,7 @@
 	const hamburger_size = k.height.button;
 	const { w_show_search_controls, w_show_graph_ofType } = show;
 	const hamburger_path = svgPaths.hamburgerPath(hamburger_size);
+	const s_hamburger = elements.s_control_forType(T_Control.details);
 	const search_left = -38 - (features.has_details_button ? 0 : 26) + (features.allow_tree_mode ? 0 : 0);
 	const svg_style = 'top: -0.5px; left: -0.5px; position: absolute; width: 100%; height: 100%;';
 	let width = g.windowSize.width - 16;
@@ -76,8 +77,8 @@
 				<Button name='details-toggle'
 					border_thickness=0
 					color='transparent'
+					s_button={s_hamburger}
 					center={new Point(lefts[0], y_center)}
-					s_button={elements.s_control_forType(T_Control.details)}
 					handle_s_mouse={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.details)}>
 					<svg class='hamburger-svg'
 						style='
@@ -89,8 +90,8 @@
 							d={hamburger_path}
 							stroke-width='0.75'
 							class='hamburger-path'
-							fill={elements.s_control_forType(T_Control.details).isHovering ? 'white' : 'black'}
-							stroke={elements.s_control_forType(T_Control.details).isHovering ? 'darkgray' : 'transparent'}/>
+							fill={s_hamburger.isHovering ? 'white' : 'black'}
+							stroke={s_hamburger.isHovering ? 'darkgray' : 'transparent'}/>
 					</svg>
 				</Button>
 			{/if}
@@ -152,7 +153,7 @@
 					zindex={T_Layer.frontmost}
 					center={new Point(lefts[5], 10)}
 					style='border: none; background: none;'
-					s_button={elements.s_control_forType(T_Control.details)}
+					s_button={s_hamburger}
 					handle_s_mouse={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.details)}/>
 			{/if}
 			{#if features.allow_tree_mode}
