@@ -17,7 +17,7 @@
 
     </script>
 
-<div class='box-{name}'
+<div class='{name}-box'
     style='
         top: {top}px;
         display: flex;
@@ -28,22 +28,22 @@
         width: {width + 2}px;
         box-sizing: border-box;
         flex-direction: column;'>
-    <div class='box-central-{name}' style='
+    <div class='{name}-central-box' style='
         flex: 1;
         display: flex;'>
         {#if showLeft}
-            <Separator name='left-{name}'
+            <Separator name='{name}-left-side'
                 length={height + 1}
                 isHorizontal={false}
                 thickness={thickness}
                 origin={new Point(2, 2.5)}
                 corner_radius={corner_radius}/>
         {/if}
-        <div class='box-content-{name}' style='flex: 1;'>
+        <div class='{name}-content-box' style='flex: 1;'>
             <slot />
         </div>
         {#if showRight}
-            <Separator name='right-{name}'
+            <Separator name='{name}-right-side'
                 isHorizontal={false}
                 length={height + 1}
                 thickness={thickness}
@@ -52,7 +52,7 @@
         {/if}
     </div>
     {#if showTop}
-        <Separator name='top-{name}'
+        <Separator name='{name}-top'
             length={width + 2}
             origin={Point.zero}
             isHorizontal={true}
@@ -61,7 +61,7 @@
             corner_radius={corner_radius}/>
     {/if}
     {#if showBottom}
-        <Separator name='bottom-{name}'
+        <Separator name='{name}-bottom'
             length={width + 2}
             isHorizontal={true}
             thickness={thickness}

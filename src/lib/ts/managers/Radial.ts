@@ -38,7 +38,7 @@ export default class Radial {
 	}
 
 	get ring_radius(): number { return get(this.w_resize_radius); }
-	get isDragging(): boolean { return this.s_hit_targets.some(s => s.isDragging); }
+	get isDragging(): boolean { return this.s_hit_targets.some(s => s?.isDragging ?? false); }
 	get s_pagings(): Array<S_Rotation> { return Object.values(this.s_paging_dict_byName); }
 	get s_hit_targets(): Array<S_Rotation> { return [this.s_resizing, this.s_rotation, ...this.s_pagings]; }
 	s_paging_forName_ofCluster(name: string): S_Rotation { return elements.assure_forKey_inDict(name, this.s_paging_dict_byName, () => new S_Rotation(T_Hit_Target.paging)); }
@@ -139,7 +139,7 @@ export default class Radial {
 			const g_cluster = get(this.w_g_cluster);
 			const s_paging = g_cluster?.s_paging;
 			const mouse_angle = mouse_vector.angle;
-			if (rotate.isDragging || resize.isDragging || !!g_cluster) {	// not overload DOM refresh
+			if ((!!rotate && rotate.isDragging) || (!!resize && resize.isDragging) || !!g_cluster) {	// not overload DOM refresh
 				window.getSelection()?.removeAllRanges();					// prevent text selection during dragging
 			}
 			if (!!resize && resize.isDragging && resize.basis_radius != null) {										// resize, check this FIRST (when both states return isDragging true, rotate should be ignored)

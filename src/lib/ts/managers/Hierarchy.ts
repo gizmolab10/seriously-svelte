@@ -1049,7 +1049,7 @@ export class Hierarchy {
 		let newFocusAncestry = ancestry.parentAncestry;
 		const childAncestry = ancestry.ancestry_ofFirst_visibleChild;
 		let newGrabAncestry: Ancestry | null = RIGHT ? childAncestry : newFocusAncestry;
-		const newGrabIsNotFocus = !newGrabAncestry?.isFocus;
+		const newGrabIsFocus = newGrabAncestry?.isFocus ?? false;
 		let graph_needsSweep = false;
 		if (RIGHT) {
 			if (!ancestry.hasRelevantRelationships && controls.inTreeMode) {
@@ -1082,7 +1082,7 @@ export class Hierarchy {
 			} else if (!SHIFT) {
 				if (fromReveal) {
 					graph_needsSweep = ancestry.toggleExpanded();
-				} else if (newGrabIsNotFocus && !!newGrabAncestry && !newGrabAncestry.isExpanded) {
+				} else if (!newGrabIsFocus && !!newGrabAncestry && !newGrabAncestry.isExpanded) {
 					graph_needsSweep = newGrabAncestry.expand();
 				}
 			} else if (!!newGrabAncestry) { 
@@ -1097,9 +1097,10 @@ export class Hierarchy {
 		s.w_s_title_edit?.set(null);
 		if (!!newGrabAncestry) {
 			newGrabAncestry.grabOnly();
-			if (!!newFocusAncestry) {
+			const newFocusIsVisible = newFocusAncestry?.isVisible ?? false;
+			if (!newGrabIsFocus && !!newFocusAncestry && (controls.inTreeMode || RIGHT || !newFocusIsVisible)) {
 				const newFocusIsGrabbed = newFocusAncestry.equals(newGrabAncestry);
-				const becomeFocus = newGrabIsNotFocus && (!SHIFT || newFocusIsGrabbed) && (RIGHT || !newFocusAncestry.isVisible);
+				const becomeFocus = (!SHIFT || newFocusIsGrabbed) && (RIGHT || !newFocusIsVisible);
 				if (becomeFocus && newFocusAncestry.becomeFocus()) {
 					graph_needsSweep = true;
 				}

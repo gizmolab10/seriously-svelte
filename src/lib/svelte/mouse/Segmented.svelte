@@ -60,7 +60,7 @@
 	}
 
 	function setSelected(turnTheseOn: string[]) {
-		for (const title of titles) {
+		for (const title of [...titles]) {
 			const element = document.getElementById(button_name(title));
 			if (element) {
 				const flag = turnTheseOn.includes(title);

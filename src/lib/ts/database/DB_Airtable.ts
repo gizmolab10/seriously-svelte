@@ -79,7 +79,7 @@ export default class DB_Airtable extends DB_Common {
 		try {
 			const select = this.things_table.select();
 			const remoteThings = await select.all()
-			for (const remoteThing of remoteThings) {
+			for (const remoteThing of [...remoteThings]) {
 				const id = remoteThing.id;
 				const fields = remoteThing.fields;
 				h.thing_remember_runtimeCreate(DB_Name.airtable, id, fields.title as string, fields.color as string, (fields.type as T_Thing) ?? fields.trait as string, true, !fields.type);
@@ -129,7 +129,7 @@ export default class DB_Airtable extends DB_Common {
 		try {
 			const records = await this.traits_table.select().all()
 
-			for (const record of records) {
+			for (const record of [...records]) {
 				const id = record.id as string;
 				const text = record.fields.text as string;
 				const type = record.fields.type as T_Trait;
@@ -176,7 +176,7 @@ export default class DB_Airtable extends DB_Common {
 		try {
 			const records = await this.relationships_table.select().all()
 
-			for (const record of records) {
+			for (const record of [...records]) {
 				const id = record.id as string;
 				const order = record.fields.order as number;
 				const parents = record.fields.parent as (string[]);
@@ -225,7 +225,7 @@ export default class DB_Airtable extends DB_Common {
 		try {
 			const records = await this.predicates_table.select().all()
 
-			for (const record of records) {
+			for (const record of [...records]) {
 				const fields = record.fields;
 				const id = record.id as string; // do not yet need this
 				const kind = fields.kind as T_Predicate;
@@ -241,7 +241,7 @@ export default class DB_Airtable extends DB_Common {
 	async access_fetch_all() {
 		try {
 			const records = await this.access_table.select().all()
-			for (const record of records) {
+			for (const record of [...records]) {
 				const id = record.id as string; // do not yet need this
 				const kind = record.fields.kind as string;
 				h.access_runtimeCreate(id, kind);
@@ -256,7 +256,7 @@ export default class DB_Airtable extends DB_Common {
 		try {
 			const records = await this.users_table.select().all()
 
-			for (const record of records) {
+			for (const record of [...records]) {
 				const id = record.id as string; // do not yet need this
 				h.user_runtimeCreate(id, record.fields.name as string, record.fields.email as string, record.fields.phone as string);
 			}

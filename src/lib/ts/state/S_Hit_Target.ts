@@ -38,20 +38,12 @@ export default class S_Hit_Target {
 	get svg_hover_color(): string { return this.isHovering ? colors.background : this.stroke; }
 	get isADot(): boolean { return [T_Hit_Target.drag, T_Hit_Target.reveal].includes(this.type); }
 	get isAWidget(): boolean { return [T_Hit_Target.widget, T_Hit_Target.title].includes(this.type); }
-	get isAControl(): boolean { return [T_Hit_Target.control, T_Hit_Target.button].includes(this.type); }
+	get isAControl(): boolean { return [T_Hit_Target.control, T_Hit_Target.button, T_Hit_Target.glow].includes(this.type); }
 	get isRing(): boolean { return [T_Hit_Target.rotation, T_Hit_Target.resizing, T_Hit_Target.paging].includes(this.type); }
 
 	set rect(value: Rect | null) {
-		// Only update RBush if the rect actually changed position/size
-		// This prevents unnecessary remove/add cycles that cause detection gaps
-		const old = this.element_rect;
-		const changed = !old || !value || 
-			old.x !== value.x || old.y !== value.y || 
-			old.width !== value.width || old.height !== value.height;
 		this.element_rect = value;
-		if (!!value && changed) {
-			hits.update_hit_target(this);
-		}
+		hits.add_hit_target(this);
 	}
 
 	isEqualTo(other: S_Hit_Target | null): boolean { return !!other && this.id == other.id; }
@@ -65,8 +57,6 @@ export default class S_Hit_Target {
 	update_rect() {
 		if (!!this.html_element) {
 			let rect = g.scaled_rect_forElement(this.html_element);
-			// Clip graph elements (dots, widgets, rings) to graph bounds to prevent them from
-			// extending outside and interfering with other UI elements (e.g., details panel buttons)
 			if (rect && (this.isADot || this.isAWidget || this.isRing)) {
 				const graph_bounds = get(g.w_rect_ofGraphView);
 				if (graph_bounds) {
@@ -81,7 +71,6 @@ export default class S_Hit_Target {
 		if (!!html_element) {
 			this.html_element = html_element;
 			this.update_rect();
-			hits.update_hit_target(this);
 		} else {
 			debug.log_hits(`no element for "${this.id}"`);
 		}

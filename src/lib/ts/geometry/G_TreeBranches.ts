@@ -22,7 +22,7 @@ export default class G_TreeBranches {
 			const halfHeight = ancestry.halfHeight_ofVisibleSubtree;
 			const origin_ofWidget = g_widget.origin_ofWidget.offsetByXY(1, halfHeight + 1);
 			let height = -halfHeight;		// start out negative and grow positive
-			for (const ancestry_ofBranch of branchAncestries) {
+			for (const ancestry_ofBranch of [...branchAncestries]) {
 				if (ancestry_ofBranch.depth > ancestry.depth) {
 					const g_widget_ofBranch = ancestry_ofBranch.g_widget;
 					g_widget_ofBranch.layout_subtree_for(height, origin_ofWidget, T_Graph.tree)

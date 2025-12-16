@@ -284,6 +284,7 @@ export enum T_Hit_Target {
 	title		= 'title',
 	trait		= 'trait',
 	drag		= 'drag',
+	glow		= 'glow',
 	line		= 'line',
 	none		= 'none',
 	tag			= 'tag',

@@ -31,10 +31,10 @@
 		<Text_Editor
 			top={5}
 			height={78}
-			label={$w_trait.t_trait}
 			color={colors.default}
-			original_text={$w_trait.text}
+			label={$w_trait.t_trait}
 			width={k.width.details - 20}
+			original_text={$w_trait.text}
 			label_underline={$w_trait.t_trait == 'link'}
 			label_color={$w_trait.t_trait == 'link' ? 'blue' : 'black'}
 			handle_textChange={async (label, text) => await h.trait_setText_forTrait(text, $w_trait)}

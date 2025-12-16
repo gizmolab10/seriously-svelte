@@ -1,33 +1,13 @@
 import { T_Search, T_Detail, T_Direction, T_Storage_Need } from '../common/Global_Imports';
-import { s, x, show, search, S_Items } from '../common/Global_Imports';
+import { s, x, hits, show, search } from '../common/Global_Imports';
+import { S_Banner_Hideable } from '../state/S_Banner_Hideable';
 import type { Dictionary } from '../types/Types';
 import { get } from 'svelte/store';
-
-export class S_Banner_Hideable {
-	slot_isVisible = false;
-    t_detail!: T_Detail;
-	hasBanner = false;
-	isBottom = false;
-
-	constructor(t_detail: T_Detail) {
-		this.hasBanner = t_detail !== T_Detail.header;
-		this.isBottom = t_detail === T_Detail.data;
-		this.t_detail = t_detail;
-    }
-
-	get si_items(): S_Items<any> {
-		switch (this.t_detail) {
-			case T_Detail.selection: return x.si_grabs;
-			case T_Detail.tags:		 return x.si_thing_tags;
-			case T_Detail.traits:	 return x.si_thing_traits;
-			default:				 return S_Items.dummy;
-		}
-	}
-}
 
 class Details {
 	s_banner_hideables_dict_byType: Dictionary<S_Banner_Hideable> = {};
 	t_storage_need = T_Storage_Need.direction;
+	show_properties = false;
 
 	constructor() {
 		for (const t_detail of Object.values(T_Detail) as T_Detail[]) {
@@ -39,7 +19,10 @@ class Details {
 		
 	static readonly _____BANNERS: unique symbol;
 
-	redraw() { s.w_count_details.update(n => n + 1); }	// force re-render of details
+	redraw() {
+		// s.w_count_details.update(n => n + 1); 	// force re-render of details
+		hits.recalibrate();
+	}
 
 	select_next(banner_id: string, selected_title: string) {
 		const next = T_Direction.next === selected_title as unknown as T_Direction;	// unknown defeats ts type check

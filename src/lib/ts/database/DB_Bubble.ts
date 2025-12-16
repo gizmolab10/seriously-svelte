@@ -141,13 +141,13 @@ export default class DB_Bubble extends DB_Common {
 				const type = (id == b_root) ? T_Thing.root : T_Thing.generic;
 				this.createThing(id, title, color, type);
 				if (!!parent_ids && parent_ids.length > 0) {
-					for (let parent_id of parent_ids) {
+					for (let parent_id of [...parent_ids]) {
 						parent_id = parent_id.replaceAll(remove_these, '');
 						this.createRelationship(parent_id, id, T_Predicate.contains, [1, 1]);
 					}
 				}
 				if (!!related_ids && related_ids.length > 0) {
-					for (let related_id of related_ids) {
+					for (let related_id of [...related_ids]) {
 						related_id = related_id.replaceAll(remove_these, '');
 						this.createRelationship(id, related_id, T_Predicate.isRelated, [1, 1]);
 					}

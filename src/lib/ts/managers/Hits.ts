@@ -1,10 +1,10 @@
 import { Rect, Point, debug, radial, controls, S_Mouse, k } from '../common/Global_Imports';
 import { T_Drag, T_Hit_Target } from '../common/Global_Imports';
 import { S_Hit_Target } from '../common/Global_Imports';
+import Mouse_Timer from '../signals/Mouse_Timer';
 import type { Dictionary } from '../types/Types';
 import { get, writable } from 'svelte/store';
 import RBush from 'rbush';
-import Mouse_Timer from '../signals/Mouse_Timer';
 
 type Target_RBRect = {
 	minX: number;
@@ -17,8 +17,8 @@ type Target_RBRect = {
 export default class Hits {
 	time_ofPrior_drag: number = 0;
 	time_ofPrior_hover: number = 0;
+	rbush = new RBush<Target_RBRect>();
 	w_dragging = writable<T_Drag>(T_Drag.none);
-	rbush_forHover = new RBush<Target_RBRect>();
 	w_s_hover = writable<S_Hit_Target | null>(null);
 	targets_dict_byID: Dictionary<S_Hit_Target> = {};
 	targets_dict_byType: Dictionary<Array<S_Hit_Target>> = {};
@@ -39,61 +39,55 @@ export default class Hits {
 
 	private detect_hovering_at(point: Point) {
 		const matches = this.targets_atPoint(point);	// # should always be small (verify?)
-		if (matches.length > 2) {
-			this.debug(null, `EXCESSIVE matches ${matches.map(s => s.id).join(', ')}`);
-		}
-		const target
+		const match
 			=  matches.find(s => s.isADot)
 			?? matches.find(s => s.isRing)
 			?? matches.find(s => s.isAWidget)
 			?? matches.find(s => s.isAControl)
 			?? matches[0];
-		this.w_s_hover.set(!target ? null : target);
+		this.w_s_hover.set(!match ? null : match);
 		// Stop autorepeat if hover leaves the autorepeating target
 		const autorepeating_target = get(this.w_autorepeating_target);
-		if (!!autorepeating_target && (!target || !target.isEqualTo(autorepeating_target))) {
+		if (!!autorepeating_target && (!match || !match.isEqualTo(autorepeating_target))) {
 			this.stop_autorepeat();
 		}
-		return !!target;
+		return !!match;
 	}
 
 	static readonly _____CLICKS: unique symbol;
 
 	handle_click_at(point: Point, s_mouse: S_Mouse): boolean {
-		const targets = this.targets_atPoint(point);
+		const matches = this.targets_atPoint(point);
 		// If meta key is held, force rubberband target (for graph dragging)
 		if (s_mouse.event?.metaKey) {
-			const rubberband_target = targets.find(s => s.type === T_Hit_Target.rubberband);
+			const rubberband_target = matches.find(s => s.type === T_Hit_Target.rubberband);
 			if (rubberband_target) {
 				return rubberband_target.handle_s_mouse?.(s_mouse) ?? false;
 			}
 		}
-		const target
-			=  targets.find(s => s.isADot)
-			?? targets.find(s => s.isAWidget)
-			?? targets.find(s => s.isRing)
-			?? targets.find(s => s.isAControl)
-			?? targets[0];
-		
-		// Call handle_s_mouse first to allow component to set up (e.g., capture event for autorepeat)
-		const handled = target?.handle_s_mouse?.(s_mouse) ?? false;
-		
-		if (target?.detect_autorepeat && target?.autorepeat_callback) {
+		const match
+			=  matches.find(s => s.isADot)
+			?? matches.find(s => s.isAWidget)
+			?? matches.find(s => s.isRing)
+			?? matches.find(s => s.isAControl)
+			?? matches[0];
+		const handled = match?.handle_s_mouse?.(s_mouse) ?? false;
+		if (match?.detect_autorepeat && match?.autorepeat_callback) {
 			if (s_mouse.isUp) {
 				this.stop_autorepeat();
 			} else if (s_mouse.isDown) {
-				this.start_autorepeat(target);
+				this.start_autorepeat(match);
 			}
 		}
 		
 		return handled;
 	}
 
-	static readonly _____GENERAL: unique symbol;
+	static readonly _____MOVEMENT: unique symbol;
 
 	handle_mouse_movement_at(point: Point) {
 		const now = Date.now();
-		if (!radial.isDragging && ((now - this.time_ofPrior_hover) >= 20)) {
+		if (!radial.isDragging && ((now - this.time_ofPrior_hover) >= 80)) {
 			this.time_ofPrior_hover = now;
 			if (get(this.w_dragging) === T_Drag.none) {
 				this.detect_hovering_at(point)
@@ -105,54 +99,61 @@ export default class Hits {
 		}
 	}
 
+	static readonly _____GENERAL: unique symbol;
+
 	reset() {
-		this.rbush_forHover.clear();
-		this.w_s_hover.set(null);
+		this.rbush.clear();
 		this.stop_autorepeat();
+		this.w_s_hover.set(null);
 		this.time_ofPrior_hover = 0;
 		this.targets_dict_byID = {};
 		this.targets_dict_byType = {};
 	}
 
 	recalibrate() {
-		const newBush = new RBush<Target_RBRect>();
-		const targets = Object.values(this.targets_dict_byID);
-		for (const target of targets) {
+		const bush = new RBush<Target_RBRect>();
+		for (const target of [...this.targets]) {
 			target.update_rect();
-			if (!!target && !!target.rect) {
-				newBush.insert({
-					minX: target.rect.x,
-					minY: target.rect.y,
-					maxX: target.rect.right,
-					maxY: target.rect.bottom,
-					target: target
-				});
+			const rect = target.rect;
+			if (!!rect) {
+				this.insert_into_rbush(target, bush);
 			}
 		}
-		this.rbush_forHover = newBush;  // atomic swap
+		this.rbush = bush;  // atomic swap
 	}
 
 	static readonly _____HIT_TEST: unique symbol;
 
-	targets_ofType_atPoint(type: T_Hit_Target, point: Point | null): Array<S_Hit_Target> {
-		return !point ? [] : this.targets_atPoint(point).filter(target => target.type == type);
-	}
+	// private targets_ofType_atPoint(type: T_Hit_Target, point: Point | null): Array<S_Hit_Target> {
+	// 	return !point ? [] : this.targets_atPoint(point).filter(target => target.type == type);
+	// }
 
-	targets_atPoint(point: Point): Array<S_Hit_Target> {
-		const targets = this.rbush_forHover.search(point.asBBox).map(rbRect => rbRect.target);
+	// private targets_inRect(rect: Rect): Array<S_Hit_Target> {
+	// 	const targets = this.rbush_forHover.search(rect.asBBox).map(rbRect => rbRect.target);
+	// 	return targets.filter(target => (target.containedIn_rect?.(rect) ?? true));	// refine using shape of target
+	// }
+
+	private targets_atPoint(point: Point): Array<S_Hit_Target> {
+		const targets = this.rbush.search(point.asBBox).map(rbRect => rbRect.target);
 		return targets.filter(target => (target.contains_point?.(point) ?? true));	// refine using shape of target
-	}
-
-	targets_inRect(rect: Rect): Array<S_Hit_Target> {
-		const targets = this.rbush_forHover.search(rect.asBBox).map(rbRect => rbRect.target);
-		return targets.filter(target => (target.containedIn_rect?.(rect) ?? true));	// refine using shape of target
 	}
 
 	static readonly _____ADD_AND_REMOVE: unique symbol;
 
-	update_hit_target(target: S_Hit_Target) {
-		this.delete_hit_target(target);
-		this.add_hit_target(target);
+	add_hit_target(target: S_Hit_Target) {
+		const id = target.id;
+		const type = target.type;
+		if (!this.targets_dict_byType[type]) {
+			this.targets_dict_byType[type] = [];
+		} else if (this.disallow_multiple_targets_forType(type)) {
+			const existing = this.targets_dict_byType[type].find(t => t.id == id);
+			if (!!existing) {
+				this.delete_hit_target(existing);
+			}
+		}
+		this.targets_dict_byID[id]  = target;
+		this.targets_dict_byType[type].push(target);
+		this.insert_into_rbush(target, this.rbush);
 	}
 
 	delete_hit_target(target: S_Hit_Target) {
@@ -169,57 +170,38 @@ export default class Hits {
 					byType.splice(index, 1);
 				}
 			}
-			this.remove_from_rbush(target);
-			// this.debug(target, `DELETE for id: ${target.id}`);
+			this.remove_from_rbush(target, this.rbush);
 		}
 	}
 
 	static readonly _____INTERNALS: unique symbol;
 
-	get targets(): Array<S_Hit_Target> { return this.rbush_forHover.all().map(rbRect => rbRect.target); }
+	private get targets(): Array<S_Hit_Target> {
+		return this.rbush.all().map(rbRect => rbRect.target);
+	}
 
-	private insert_into_rbush(target: S_Hit_Target) {
-		if (!!target && !!target.rect) {
-			this.rbush_forHover.insert({
-				minX: target.rect.x,
-				minY: target.rect.y,
-				maxX: target.rect.right,
-				maxY: target.rect.bottom,
+	private insert_into_rbush(target: S_Hit_Target, into_rbush: RBush<Target_RBRect>) {
+		const rect = target.rect;
+		if (!!rect) {
+			into_rbush.insert({
+				minX: rect.x,
+				minY: rect.y,
+				maxX: rect.right,
+				maxY: rect.bottom,
 				target: target
 			});
 		}
 	}
 
-	private remove_from_rbush(target: S_Hit_Target) {
+	private remove_from_rbush(target: S_Hit_Target, from_rbush: RBush<Target_RBRect>) {
 		if (!!target && !!target.rect) {
-			this.rbush_forHover.remove({
+			from_rbush.remove({
 				minX: target.rect.x,
 				minY: target.rect.y,
 				maxX: target.rect.right,
 				maxY: target.rect.bottom,
 				target: target
 			}, (a, b) => a.target === b.target);
-		}
-	}
-
-	private add_hit_target(target: S_Hit_Target) {
-		const id = target.id;
-		const type = target.type;
-		if (!id || !type || !target.rect || this.targets_dict_byID[id] == target) {
-			this.debug(target, `IGNORE: ${target.toString()}`);
-		} else {
-			if (!this.targets_dict_byType[type]) {
-				this.targets_dict_byType[type] = [];
-			} else if (!this.allow_multiple_targets_forType(type)) {
-				const existing = this.targets_dict_byType[type].find(t => t.id == id);
-				if (!!existing) {
-					this.delete_hit_target(existing);
-				}
-			}
-			this.targets_dict_byID[id]  = target;
-			this.targets_dict_byType[type].push(target);
-			this.insert_into_rbush(target);
-			this.debug(target, `ADDED  for id: ${target.id}`);
 		}
 	}
 
@@ -252,20 +234,15 @@ export default class Hits {
 		return bush;
 	}
 
-	private allow_multiple_targets_forType(type: T_Hit_Target): boolean {
+	private disallow_multiple_targets_forType(type: T_Hit_Target): boolean {
 		return [
-			T_Hit_Target.control,
-			T_Hit_Target.details,
-			T_Hit_Target.action,
-			T_Hit_Target.button,
-			T_Hit_Target.cancel,
-			T_Hit_Target.paging,
-			T_Hit_Target.reveal,
-			T_Hit_Target.search,
-			T_Hit_Target.widget,
-			T_Hit_Target.title,
-			T_Hit_Target.drag,
-			T_Hit_Target.line].includes(type);
+			T_Hit_Target.breadcrumbs,
+			T_Hit_Target.rubberband,
+			T_Hit_Target.database,
+			T_Hit_Target.resizing,
+			T_Hit_Target.rotation,
+			T_Hit_Target.trait,
+			T_Hit_Target.tag].includes(type);
 	}
 
 	static readonly _____AUTOREPEAT: unique symbol;
@@ -287,16 +264,6 @@ export default class Hits {
 		if (!!autorepeating_target) {
 			this.autorepeat_timer.autorepeat_stop();
 			this.w_autorepeating_target.set(null);
-		}
-	}
-
-	static readonly _____DEBUG: unique symbol;
-
-	get info(): string { return `${this.targets.length}`; }
-
-	debug(target: S_Hit_Target | null, message: string, ...args: any[]) {
-		if (!target || (target.isAWidget && target.id == 'widget-cra')) {
-			debug.log_hits(this.info, message, ...args);
 		}
 	}
 

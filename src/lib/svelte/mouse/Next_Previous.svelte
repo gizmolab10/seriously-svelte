@@ -2,7 +2,7 @@
 	import { Point, S_Mouse, S_Element, T_Request, T_Direction, T_Action, T_Hit_Target } from '../../ts/common/Global_Imports';
 	import { e, k, hits, colors, elements, svgPaths } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/runtime/Identifiable';
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount } from 'svelte';
 	export let closure: (column: number) => any;
 	export let origin = Point.zero;
 	export let has_title = false;
@@ -34,10 +34,9 @@
 			};
 			s_element.autorepeat_id = index;
 		});
-	});
-
-	onDestroy(() => {
-		s_elements.forEach(s => hits.delete_hit_target(s));
+		return () => {
+			s_elements.forEach(s => hits.delete_hit_target(s));
+		};
 	});
 
 	$: index_forHover = s_elements.findIndex(s => s.isEqualTo($w_s_hover));

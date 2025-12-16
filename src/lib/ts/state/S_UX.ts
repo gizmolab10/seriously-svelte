@@ -1,4 +1,4 @@
-import { h, s, u, debug, search, radial, g } from '../common/Global_Imports';
+import { g, h, s, u, hits, debug, search, radial } from '../common/Global_Imports';
 import { details, controls, databases } from '../common/Global_Imports';
 import { S_Items, T_Search, T_Startup } from '../common/Global_Imports';
 import { Tag, Thing, Trait, Ancestry } from '../common/Global_Imports';
@@ -90,7 +90,7 @@ export default class S_UX {
 		}
 	}
 
-	ancestry_focusOn(ancestry: Ancestry): boolean {
+	becomeFocus(ancestry: Ancestry): boolean {
 		const priorFocus = get(s.w_ancestry_focus);
 		const changed = !priorFocus || !ancestry.equals(priorFocus!);
 		if (changed) {
@@ -100,6 +100,7 @@ export default class S_UX {
 			s.w_ancestry_focus.set(ancestry);
 			ancestry.expand();
 			this.update_ancestry_forDetails();
+			hits.recalibrate();
 		}
 		return changed;
 	}

@@ -49,6 +49,7 @@ export class Point {
 	vector_to(point: Point):		 		  Point { return point.offsetBy(this.negated); }
 	multiply_xBy(multiplier: number):		  Point { return new Point(this.x * multiplier, this.y) }
 	multiply_yBy(multiplier: number):		  Point { return new Point(this.x, this.y * multiplier) }
+	equals(other: Point):					boolean { return this.x == other.x && this.y == other.y; }
 	dividedEquallyBy(divisor: number):		  Point { return new Point(this.x / divisor, this.y / divisor) }
 	multipliedEquallyBy(multiplier: number):  Point { return new Point(this.x * multiplier, this.y * multiplier) }
 	static fromDOMRect(rect: DOMRect):		  Point { return new Point(rect.left, rect.top); }
@@ -154,6 +155,7 @@ export class Size {
 	multipliedEquallyBy(multiplier: number): Size { return new Size(this.width * multiplier, this.height * multiplier); }
 	dividedBy(size: Size):					 Size { return new Size(this.width / size.width, this.height / size.height); }
 	best_ratio_to(size: Size):			   number { return Math.min(this.width / size.width, this.height / size.height); }
+	equals(other: Size):				  boolean { return this.width == other.width && this.height == other.height; }
 	static fromDOMRect(rect: DOMRect):		 Size { return new Size(rect.width, rect.height); }
 	static square(length: number):			 Size { return new Size(length, length); }
 	static height(height: number):			 Size { return new Size(0, height); }
@@ -213,6 +215,7 @@ export class Rect {
 		return this;					// for method chaining	
 	}
 
+	equals(other: Rect):			boolean { return this.origin.equals(other.origin) && this.size.equals(other.size); }
 	multipliedEquallyBy(m: number):	   Rect { return new Rect(this.origin.multipliedEquallyBy(m), this.size.multipliedEquallyBy(m)); }
 	dividedEquallyBy(m: number):	   Rect { return new Rect(this.origin.dividedEquallyBy(m), this.size.dividedEquallyBy(m)); }
 	centeredRect_ofSize(size: Size):   Rect { return new Rect(this.center.offsetBy(size.center.negated), size); }

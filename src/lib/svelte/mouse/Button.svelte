@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { e, g, k, s, hits, colors, elements, T_Timer } from '../../ts/common/Global_Imports';
 	import { S_Mouse, S_Element, T_Layer, Point } from '../../ts/common/Global_Imports';
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount } from 'svelte';
 	export let handle_s_mouse: (s_mouse: S_Mouse) => boolean;
 	export let s_button: S_Element = S_Element.empty();
 	export let font_size = k.font_size.common;
@@ -46,6 +46,9 @@
 	onMount(() => {
 		s_button.handle_s_mouse = intercept_handle_s_mouse;
 		recompute_style();
+		return () => {
+			hits.delete_hit_target(s_button);
+		};
 	});
 
 	// important for components with {#key} blocks
@@ -71,10 +74,6 @@
 		s_button.detect_autorepeat = false;
 		s_button.autorepeat_callback = undefined;
 	}
-
-	onDestroy(() => {
-		hits.delete_hit_target(s_button);
-	});
 
 	recompute_style();
 

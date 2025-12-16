@@ -2,8 +2,8 @@
 	import { e, k, s, hits, colors, svgPaths, elements } from '../../ts/common/Global_Imports';
 	import { Point, T_Layer, T_Hit_Target } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/runtime/Identifiable';
-	import { onMount, onDestroy } from 'svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
+	import { onMount } from 'svelte';
 	export let align_left: boolean = false;
 	export let stroke_width: number = 0.75;
     export let name = 'generic close';
@@ -29,10 +29,9 @@
 		if (!!element) {
 			s_element.set_html_element(element);
 		}
-	});
-
-	onDestroy(() => {
-		hits.delete_hit_target(s_element);
+		return () => {
+			hits.delete_hit_target(s_element);
+		};
 	});
 
 	$: if (mouse_up_count != $w_count_mouse_up) {

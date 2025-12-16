@@ -37,14 +37,14 @@ class Pivot {
 
 	create_tags_forThing_fromDict(thingID: string, dict: Dictionary) {
 		const keys = ['Custom Tags', 'Custom Tags (Local)', 'All Local Tags (folder names)'];
-		for (const key of keys) {
+		for (const key of [...keys]) {
 			this.create_tag_forThing_andKey_fromDict(thingID, dict[key]);
 		}
 	}
 
 	create_tag_forThing_andKey_fromDict(thingID: string, tag_types: string): Tag | null {
 		if (!!tag_types) {
-			for (const tag_type of tag_types.split(k.comma)) {
+			for (const tag_type of [...tag_types.split(k.comma)]) {
 				const tag = h.tag_remember_runtimeCreateUnique_forType(h.db.idBase, Identifiable.newID(), tag_type.trim(), [thingID.hash()]);
 				return tag;
 			}
@@ -56,7 +56,7 @@ class Pivot {
 
 	async create_relationships_fromAllTraits() {
 		// for each trait that has a dict containing a parent <x> link
-		for (const trait of h.traits) {
+		for (const trait of [...h.traits]) {
 			for (const key of ['parent 1 link']) {
 				await this.create_relationship_fromTrait(trait, key);
 			}
@@ -95,11 +95,11 @@ class Pivot {
 				for (let i = 0; i < child_ancestries.length; i += max_children) {
 					chunks.push(child_ancestries.slice(i, i + max_children));
 				}
-				for (const [index, chunk] of chunks.entries()) {
+				for (const [index, chunk] of [...chunks.entries()]) {
 					const chunk_thing_id = Identifiable.newID();
 					const chunk_thing = h.thing_remember_runtimeCreateUnique(h.db.idBase, chunk_thing_id, ancestry_title + '.' + (index + 1), 'blue', T_Thing.generic);
 					h.relationship_remember_runtimeCreateUnique(h.db.idBase, Identifiable.newID(), T_Predicate.contains, ancestry_thing_id, chunk_thing.id, [0, 0], T_Create.getPersistentID);
-					for (const child_ancestry of chunk) {
+					for (const child_ancestry of [...chunk]) {
 						const child_relationship = child_ancestry.relationship;
 						if (!!child_relationship) {
 							child_relationship.assign_idParent(chunk_thing_id);

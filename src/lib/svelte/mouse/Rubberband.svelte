@@ -3,7 +3,7 @@
     import { T_Layer, T_Drag, T_Hit_Target, S_Mouse } from '../../ts/common/Global_Imports';
     import { Rect, Size, Point, Ancestry } from '../../ts/common/Global_Imports';
     import Identifiable from '../../ts/runtime/Identifiable';
-    import { onMount, onDestroy } from 'svelte';
+    import { onMount } from 'svelte';
     export let strokeWidth = k.thickness.rubberband;
     export let bounds: Rect;
     const enabled = true;
@@ -37,15 +37,14 @@
         document.addEventListener('pointermove', blockEvent, true);
         document.addEventListener('pointerdown', blockEvent, true);
         document.addEventListener('pointerup', blockEvent, true);
-    });
-
-    onDestroy(() => {
-        hits.delete_hit_target(s_element);
-        document.removeEventListener('pointerenter', blockEvent, true);
-        document.removeEventListener('pointerleave', blockEvent, true);
-        document.removeEventListener('pointermove', blockEvent, true);
-        document.removeEventListener('pointerdown', blockEvent, true);
-        document.removeEventListener('pointerup', blockEvent, true);
+        return () => {
+            hits.delete_hit_target(s_element);
+            document.removeEventListener('pointerenter', blockEvent, true);
+            document.removeEventListener('pointerleave', blockEvent, true);
+            document.removeEventListener('pointermove', blockEvent, true);
+            document.removeEventListener('pointerdown', blockEvent, true);
+            document.removeEventListener('pointerup', blockEvent, true);
+        };
     });
 
     $: if ($w_dragging === T_Drag.rubberband) {
@@ -78,7 +77,7 @@
         const now = Date.now();
         if (now - lastUpdate >= 40) {
             lastUpdate = now;
-            const constrainedEnd = constrainToRect($w_mouse_location.x, $w_mouse_location.y);
+            const constrainedEnd = constrainToRect($w_mouse_location);
             rect.height = Math.abs(constrainedEnd.y - startPoint.y);
             rect.width = Math.abs(constrainedEnd.x - startPoint.x);
             rect.x = Math.min(constrainedEnd.x, startPoint.x);
@@ -107,10 +106,10 @@
         return rbush_forRubberband.search(rect.asBBox).map(b => b.target.ancestry);
     }
 
-    private function constrainToRect(x: number, y: number): Point {
+    private function constrainToRect(point: Point): Point {
         return new Point(
-            Math.max(bounds.origin.x, Math.min(bounds.origin.x + bounds.size.width, x)),
-            Math.max(bounds.origin.y, Math.min(bounds.origin.y + bounds.size.height, y))
+            point.x.force_between(bounds.x, bounds.right),
+            point.y.force_between(bounds.y, bounds.bottom)
         );
     }
 
@@ -132,7 +131,6 @@
             const ancestries = ancestries_intersecting_rubberband();
             if (ancestries.length != 0) {
                 x.si_grabs.items = ancestries;
-                hits.debug(null, `rubberband hits ${ancestries.map(ancestry => ancestry.relationship?.id ?? k.root).join(', ')}`);
             } else {
                 x.si_grabs.reset();
             }
@@ -151,7 +149,7 @@
             } else {
                 // Start rubberband - we know no widget/dot/ring was clicked
                 // because handle_click_at prioritizes those targets
-                const constrained = constrainToRect(startPoint.x, startPoint.y);
+                const constrained = constrainToRect(startPoint);
                 original_grab_count = x.si_grabs.items.length;
                 rect.y = constrained.y;
                 rect.x = constrained.x;
@@ -169,13 +167,13 @@
 <div class='rubberband-hit-area' 
     bind:this={rubberband_hit_area}
     style='
-        position: absolute;
         top: 0;
         left: 0;
-        width: {bounds.size.width}px;
-        height: {bounds.size.height}px;
+        position: absolute;
         pointer-events: none;
-        z-index: {T_Layer.graph};'/>
+        width: {bounds.width}px;
+        z-index: {T_Layer.graph};
+        height: {bounds.height}px;'/>
 
 {#if enabled && $w_dragging === T_Drag.rubberband}
     <div class='rubberband' {style}/>

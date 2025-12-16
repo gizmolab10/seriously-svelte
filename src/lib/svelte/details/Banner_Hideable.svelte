@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { g, k, s, u, show, T_Layer, T_Detail, details } from '../../ts/common/Global_Imports';
+	import { g, k, s, u, hits, show, T_Layer, T_Detail, details } from '../../ts/common/Global_Imports';
 	import Glows_Banner from '../mouse/Glows_Banner.svelte';
     export let t_detail: T_Detail;
 	const { w_ancestry_forDetails } = s;
@@ -21,9 +21,10 @@
 	$: { 
 		const _ = $w_show_details_ofType;
 		update_hideable_isVisible();
+		// hits.recalibrate();
 	}
 
-	function update_trigger() { trigger = `${titles.join(k.comma)}:::${hideable_isVisible}:::${$w_description}:::${$w_ancestry_forDetails?.id}`; }
+	function update_trigger() {}// trigger = `${titles.join(k.comma)}:::${hideable_isVisible}:::${$w_description}:::${$w_ancestry_forDetails?.id}`; }
 
 	function update_banner_titles() {
 		const new_title = details.banner_title_forDetail(t_detail);
@@ -59,6 +60,9 @@
 		}
 		$w_show_details_ofType = t_details;
 		update_hideable_isVisible();
+		u.onNextTick(() => {
+			hits.recalibrate();
+		});
 	}
 
 </script>

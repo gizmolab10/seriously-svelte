@@ -54,7 +54,7 @@
 </script>
 
 {#key reattachments}
-	<Box name='panel-box'
+	<Box name='panel'
 		width={g.windowSize.width}
 		thickness={k.thickness.separator.main}
 		height={g.windowSize.height + 0.5}

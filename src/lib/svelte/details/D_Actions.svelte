@@ -181,10 +181,10 @@
 					<Button
 						center={new Point(k.width.details / 2, 22)}
 						font_size={k.font_size.instructions}
+						handle_s_mouse={handle_cancel}
 						zindex={T_Layer.frontmost}
 						name='cancel-alteration'
 						height={k.height.button}
-						handle_s_mouse={handle_cancel}
 						color = colors.default
 						s_button={s_cancel}
 						position='relative'
@@ -199,9 +199,9 @@
 					width={table_width}
 					has_title={has_title}
 					title_gap={title_gap}
-					type={T_Hit_Target.action}
 					font_sizes={font_sizes}
 					detect_autorepeat={true}
+					type={T_Hit_Target.action}
 					closure={handle_actionRequest}
 					button_height={k.height.button}
 					button_titles={button_titles[0]}/>
@@ -219,9 +219,9 @@
 					width={table_width}
 					has_title={has_title}
 					title_gap={title_gap}
-					type={T_Hit_Target.action}
 					font_sizes={font_sizes}
 					detect_autorepeat={true}
+					type={T_Hit_Target.action}
 					closure={handle_actionRequest}
 					button_height={k.height.button}
 					button_titles={button_titles[1]}/>

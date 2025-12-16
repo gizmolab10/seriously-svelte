@@ -90,7 +90,7 @@ export default class DB_Firebase extends DB_Common {
 			}
 			const docs = querySnapshot.docs;
 			debug.log_remote('READ ' + docs.length + ' from ' + idBase + ':' + t_persistable);
-			for (const docSnapshot of docs) {
+			for (const docSnapshot of [...docs]) {
 				const id = docSnapshot.id;
 				const data = docSnapshot.data();
 				this.document_ofType_remember_validated(t_persistable, id, data, idBase ?? this.idBase);
@@ -122,7 +122,7 @@ export default class DB_Firebase extends DB_Common {
 				try {		// add bulk aliases to roots thing
 					const bulk = collection(this.firestore, this.bulksName);	// fetch all bulks (documents)
 					let bulkSnapshot = await getDocs(bulk);
-					for (const bulkDoc of bulkSnapshot.docs) {
+					for (const bulkDoc of [...bulkSnapshot.docs]) {
 						const idBulk = bulkDoc.id;
 						if (idBulk != this.idBase) {
 							let thing = h.bulkAlias_forTitle(idBulk);
@@ -154,9 +154,9 @@ export default class DB_Firebase extends DB_Common {
 		this.deferSnapshots = false;
 		let relationships_haveChanged = false;
 		while (this.deferredSnapshots.length > 0) {
-			const deferral = this.deferredSnapshots.pop();
+			const deferral = this.deferredSnapshots.shift();
 			if (!!deferral) {
-				for (const change of deferral.snapshot.docChanges()) {	// convert and remember
+				for (const change of [...deferral.snapshot.docChanges()]) {	// convert and remember
 					if (await this.handle_docChanges(deferral.idBase, deferral.t_persistable, change)) {
 						if (deferral.t_persistable == T_Persistable.relationships) {
 							relationships_haveChanged = true;
@@ -195,7 +195,7 @@ export default class DB_Firebase extends DB_Common {
 							this.snapshot_deferOne(idBase, t_persistable, snapshot);
 							return;
 						} else {
-							for (const change of snapshot.docChanges()) {	// convert and remember
+							for (const change of [...snapshot.docChanges()]) {	// convert and remember
 								if (await this.handle_docChanges(idBase, t_persistable, change)) {
 									if (t_persistable == T_Persistable.relationships) {
 										relationships_haveChanged = true;
@@ -283,10 +283,10 @@ export default class DB_Firebase extends DB_Common {
 	
 	async subcollections_persistentDeleteIn(docRef: DocumentReference) {
 		const subcollectionNames = ['Things', 'Traits', 'Relationships'];
-		for (const subcollectionName of subcollectionNames) {
+		for (const subcollectionName of [...subcollectionNames]) {	
 			const subcollectionRef = collection(docRef, subcollectionName);
 			const snapshot = await getDocs(subcollectionRef);
-			for (const subDoc of snapshot.docs) {
+			for (const subDoc of [...snapshot.docs]) {
 				await deleteDoc(subDoc.ref);
 			}
 		}

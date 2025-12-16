@@ -80,9 +80,18 @@ handle_click_at(point: Point, s_mouse: S_Mouse): boolean {
 ### S_Hit_Target.ts
 
 ```ts
-get isAControl(): boolean { return [T_Hit_Target.control, T_Hit_Target.button].includes(this.type); }
+get isAControl(): boolean { return [T_Hit_Target.control, T_Hit_Target.button, T_Hit_Target.glow].includes(this.type); }
 get isAWidget(): boolean { return [T_Hit_Target.widget, T_Hit_Target.title].includes(this.type); }
 get isRing(): boolean { return [T_Hit_Target.rotation, T_Hit_Target.resizing, T_Hit_Target.paging].includes(this.type); }
+```
+
+**Critical Fix**: The `rect` setter now **always** calls `hits.add_hit_target(this)` unconditionally, without checking if the rect changed. This ensures targets are always registered/updated in the RBush, preventing unregistration issues during `recalibrate()`:
+
+```ts
+set rect(value: Rect | null) {
+	this.element_rect = value;
+	hits.add_hit_target(this);  // Always called, no "if changed" check
+}
 ```
 
 Hit rectangles for **graph elements** (dots, widgets, rings) are clipped to the visible graph view to avoid overlapping the controls/details UI:
@@ -91,8 +100,6 @@ Hit rectangles for **graph elements** (dots, widgets, rings) are clipped to the 
 update_rect() {
 	if (!!this.html_element) {
 		let rect = g.scaled_rect_forElement(this.html_element);
-		// Clip graph elements (dots, widgets, rings) to graph bounds to prevent them from
-		// extending outside and interfering with other UI elements (e.g., details panel buttons)
 		if (rect && (this.isADot || this.isAWidget || this.isRing)) {
 			const graph_bounds = get(g.w_rect_ofGraphView);
 			if (graph_bounds) {
@@ -227,15 +234,29 @@ s_element.handle_s_mouse = (s_mouse: S_Mouse): boolean => {
 
 ### How Autorepeat Works
 
-Autorepeat allows buttons to repeatedly fire their action while held down. The current implementation is **per-component**:
+Autorepeat allows buttons to repeatedly fire their action while held down.
 
-1. **Timer Management**: Each component gets a `Mouse_Timer` instance via `e.mouse_timer_forName(name)`
-2. **Start**: On `s_mouse.isDown`, component calls `mouse_timer.autorepeat_start(id, callback)`
-   - Immediately calls `callback()` once
-   - Waits `k.threshold.long_click` (default ~500ms)
-   - Then starts interval calling `callback()` every `k.threshold.autorepeat` (default ~150ms)
-3. **Stop**: On `s_mouse.isUp` or hover leave, component calls `mouse_timer.autorepeat_stop()`
-4. **Visual Feedback**: Components check `mouse_timer.isAutorepeating_forID(id)` for CSS classes
+**Originally**, this was entirely **per-component**:
+
+1. Each component got its own `Mouse_Timer` via `e.mouse_timer_forName(name)`.
+2. On `s_mouse.isDown`, components called `mouse_timer.autorepeat_start(id, callback)`:
+   - Immediately invoked `callback()` once.
+   - Waited `k.threshold.long_click` (default ~500ms).
+   - Then called `callback()` every `k.threshold.autorepeat` (default ~150ms).
+3. On `s_mouse.isUp` or hover leave, components called `mouse_timer.autorepeat_stop()`.
+4. Visual feedback was driven directly from `mouse_timer.isAutorepeating_forID(id)`.
+
+**Now**, autorepeat timing is **centralized in `Hits`**:
+
+1. `Hits` owns a single `Mouse_Timer` (`autorepeat_timer`) plus `w_autorepeating_target`.
+2. Components set only three properties on their `S_Hit_Target`:
+   - `detect_autorepeat?: boolean`
+   - `autorepeat_callback?: () => void`
+   - `autorepeat_id?: number`
+3. In `Hits.handle_click_at`, after it has chosen a target and called its `handle_s_mouse`:
+   - On `s_mouse.isDown` and when `detect_autorepeat`/`autorepeat_callback` are set, Hits calls `start_autorepeat(target)`.
+   - On `s_mouse.isUp`, or when hover leaves the target in `detect_hovering_at`, Hits calls `stop_autorepeat()`.
+4. Visual feedback now comes from `w_autorepeating_target` (for hit targets) and from per-component long-click timers where needed.
 
 ### Current Components Using Autorepeat
 
@@ -246,7 +267,7 @@ Autorepeat allows buttons to repeatedly fire their action while held down. The c
 | `Next_Previous.svelte` | Always enabled | Each button has its own ID (index) |
 | `D_Actions.svelte` | Conditional | Only for `T_Action.browse` and `T_Action.move` |
 
-### Current Implementation Pattern
+### Legacy Per-Component Implementation Pattern (for reference only)
 
 ```ts
 // In component
@@ -278,12 +299,12 @@ $: if (!isHovering && detect_autorepeat) {
 }
 ```
 
-### Issues with Current Approach
+### Issues with Original Approach
 
-1. **Duplication**: Every component with autorepeat has the same start/stop logic
-2. **Hover Leave Handling**: Each component needs reactive statement to stop on hover leave
-3. **Timer Lifecycle**: Components must manage timer cleanup
-4. **Scattered Logic**: Autorepeat logic is mixed with click handling in each component
+1. **Duplication**: Every component with autorepeat had the same start/stop logic.
+2. **Hover Leave Handling**: Each component needed its own reactive statement to stop on hover leave.
+3. **Timer Lifecycle**: Components had to manage timer cleanup and conflicts.
+4. **Scattered Logic**: Autorepeat logic was mixed with click handling in each component.
 
 ---
 
@@ -291,24 +312,24 @@ $: if (!isHovering && detect_autorepeat) {
 
 ### Implementation Summary
 
-**Status**: Infrastructure complete (Steps 1-4), `Glow_Button.svelte` migrated (Step 5)
+**Status**: Infrastructure complete (Steps 1-4), `Glow_Button.svelte`, `Button.svelte`, and `Next_Previous.svelte` migrated (Step 5 for each).
 
 **What Was Implemented**:
-- ✅ Autorepeat properties added to `S_Hit_Target` (`detect_autorepeat`, `autorepeat_callback`, `autorepeat_id`)
-- ✅ Centralized autorepeat management in `Hits.ts` with `w_autorepeating_target` store and timer
-- ✅ Automatic start/stop on mouse down/up in `handle_click_at`
-- ✅ Automatic stop on hover leave in `detect_hovering_at`
-- ✅ `Glow_Button.svelte` successfully migrated as proof of concept
+- ✅ Autorepeat properties added to `S_Hit_Target` (`detect_autorepeat`, `autorepeat_callback`, `autorepeat_id`).
+- ✅ Centralized autorepeat management in `Hits.ts` with `w_autorepeating_target` store and a single `Mouse_Timer`.
+- ✅ Automatic start/stop on mouse down/up in `handle_click_at`.
+- ✅ Automatic stop on hover leave in `detect_hovering_at`.
+- ✅ `Glow_Button.svelte`, `Button.svelte`, and `Next_Previous.svelte` migrated to use this model.
 
 **Key Implementation Details**:
-- Single `Mouse_Timer` instance in `Hits.ts` manages all autorepeat (replaces per-component timers)
-- Components set properties on `S_Hit_Target` instead of managing timers directly
-- `w_autorepeating_target` store enables components to check autorepeat state for visual feedback
-- Hover leave detection automatically stops autorepeat when mouse leaves the target
+- `Hits` manages **when** to fire the callbacks (timer scheduling and which target is active).
+- Components decide **what** those callbacks do, including how to construct `S_Mouse` events for repeats.
+- `w_autorepeating_target` enables components to drive CSS based on “which target is currently autorepeating”.
+- Hover leave detection automatically stops autorepeat when the mouse leaves the active target.
 
-### Implementation (Steps 1-4 Complete)
+### Implementation (Steps 1–4 Complete)
 
-Autorepeat management has been moved into the centralized hit system:
+Autorepeat *timing* has been moved into the centralized hit system:
 
 1. **✅ Added autorepeat properties to S_Hit_Target**:
    ```ts

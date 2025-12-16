@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { c, g, k, p, s, u, x, show, colors, details, elements } from '../../ts/common/Global_Imports';
+	import { c, g, k, p, s, u, x, hits, show, colors, details, elements } from '../../ts/common/Global_Imports';
 	import { T_Thing, T_Layer, T_Hit_Target } from '../../ts/common/Global_Imports';
 	import { Point, Thing, Ancestry } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/runtime/Identifiable';
@@ -29,7 +29,12 @@
 	let trigger = k.empty;
 
 	$: $w_show_details_ofType, layout_forColor();
-	function handle_toggle_properties(event: Event) { details.show_properties = !details.show_properties; }
+	function handle_toggle_properties(event: Event) {
+		details.show_properties = !details.show_properties;
+		u.onNextTick(() => {
+			hits.recalibrate();
+		});
+	}
 
 	$: {
 		update_forAncestry();

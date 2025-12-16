@@ -53,7 +53,7 @@ export default class G_RadialGraph {
 				let childAncestries = focus_ancestry.ancestries_createUnique_forKinship(T_Kinship.children);
 				this.assignAncestries_toClusterFor(childAncestries, Predicate.contains, true);
 			} else {
-				for (const predicate of h?.predicates) {
+				for (const predicate of [...h?.predicates ?? []]) {
 					const ancestries = focus_ancestry.ancestries_createUnique_forKinship(predicate.kinship_forChildren_cluster(false));
 					this.assignAncestries_toClusterFor(ancestries, predicate, false);
 				}
@@ -72,7 +72,7 @@ export default class G_RadialGraph {
 	}
 
 	get g_cluster_atMouseLocation(): G_Cluster | null {
-		for (const g_cluster of this.g_clusters) {
+		for (const g_cluster of [...this.g_clusters]) {
 			if (g_cluster.isMouse_insideThumb) {
 				return g_cluster;
 			}
@@ -100,7 +100,7 @@ export default class G_RadialGraph {
 		if (!!predicate && !!ancestries) {
 			const g_cluster = this.g_cluster_forPredicate_toChild(predicate, children_cluster);
 			g_cluster.setAncestries(ancestries);
-			for (const ancestry of ancestries) {
+			for (const ancestry of [...ancestries]) {
 				ancestry.g_widget.g_cluster = g_cluster;
 			}
 		}
@@ -119,9 +119,9 @@ export default class G_RadialGraph {
 
 	get g_necklace_widgets(): G_Widget[] {
 		let g_widgets: G_Widget[] = [];
-		for (const g_cluster of this.g_clusters) {
+		for (const g_cluster of [...this.g_clusters]) {
 			if (!!g_cluster) {
-				for (const g_widget of g_cluster.g_cluster_widgets) {
+				for (const g_widget of [...g_cluster.g_cluster_widgets]) {
 					g_widgets.push(g_widget);
 				}
 			}
@@ -153,7 +153,7 @@ export default class G_RadialGraph {
 				clusters.shift();
 			}
 		}
-		for (const g_cluster of this.g_clusters_forPaging) {
+		for (const g_cluster of [...this.g_clusters_forPaging]) {
 			g_cluster.layout_forPaging();
 		}
 	}

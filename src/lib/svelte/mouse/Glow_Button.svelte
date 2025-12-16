@@ -3,7 +3,7 @@
     import { Rect, Size, Point, T_Layer, S_Mouse, T_Hit_Target } from '../../ts/common/Global_Imports';
     import Identifiable from '../../ts/runtime/Identifiable';
     import SVG_Gradient from '../draw/SVG_Gradient.svelte';
-    import { onMount, onDestroy } from 'svelte';
+    import { onMount } from 'svelte';
     export let handle_click: (title: string) => boolean;
     export let font_size: number = k.font_size.banners;
     export let detect_autorepeat: boolean = false;
@@ -12,20 +12,17 @@
     export let name = k.empty;
     export let height: number;
     export let width: number;
-    const { w_s_hover, w_autorepeating_target } = hits;
+    const gradient_name = 'glowing';
 	const { w_background_color } = colors;
-    const gradient_name = 'glow-' + banner_id;
     const icon_path = svgPaths.path_for(title);
+    const { w_s_hover, w_autorepeating_target } = hits;
     const glow_rect = Rect.createWHRect(width, height);
     const click_title = !!icon_path ? title : banner_id;
-    const s_element = elements.s_element_for(new Identifiable(`glow-${banner_id}-${title}`), T_Hit_Target.button, click_title);
+    const s_element = elements.s_element_for(new Identifiable(`glow-${banner_id}-${title}`), T_Hit_Target.glow, click_title);
     let glow_button: HTMLElement | null = null;
     let banner_color = colors.banner;
 
     onMount(() => {
-        if (glow_button) {
-            s_element.set_html_element(glow_button);
-        }
         s_element.handle_s_mouse = handle_s_mouse;
         // Set up autorepeat if enabled
         if (detect_autorepeat) {
@@ -33,14 +30,19 @@
             s_element.autorepeat_callback = () => handle_click(click_title);
             s_element.autorepeat_id = 0;
         }
-    });
-
-    onDestroy(() => {
-        hits.delete_hit_target(s_element);
+        return () => {
+            hits.delete_hit_target(s_element);
+        };
     });
 
     $: isHovering = s_element.isEqualTo($w_s_hover);
     $: isAutorepeating = detect_autorepeat && s_element.isEqualTo($w_autorepeating_target);
+
+    $: {
+        if (!!glow_button) {
+            s_element.set_html_element(glow_button);
+        }
+    }
 
 	$: {
 		const _ = $w_background_color;

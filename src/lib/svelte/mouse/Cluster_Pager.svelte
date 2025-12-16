@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { k, hits, elements, svgPaths, colors } from '../../ts/common/Global_Imports';
 	import { Point, T_Hit_Target, S_Mouse } from '../../ts/common/Global_Imports';
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount } from 'svelte';
 	export let handle_click: () => void = () => {};
 	export let thumbTransform = k.empty;
 	export let thumb_path_d = k.empty;
@@ -25,10 +25,9 @@
 		}
 		// Set up click handler for centralized hit system
 		s_pager.handle_s_mouse = handle_s_mouse;
-	});
-
-	onDestroy(() => {
-		hits.delete_hit_target(s_pager);
+		return () => {
+			hits.delete_hit_target(s_pager);
+		};
 	});
 
 	$: {
