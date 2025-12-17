@@ -1,7 +1,7 @@
 import { Rect, Point, debug, radial, controls, S_Mouse, k } from '../common/Global_Imports';
 import { T_Drag, T_Hit_Target } from '../common/Global_Imports';
 import { S_Hit_Target } from '../common/Global_Imports';
-import Mouse_Timer from '../signals/Mouse_Timer';
+import Mouse_Timer, { T_Timer } from '../signals/Mouse_Timer';
 import type { Dictionary } from '../types/Types';
 import { get, writable } from 'svelte/store';
 import RBush from 'rbush';
@@ -17,10 +17,15 @@ type Target_RBRect = {
 export default class Hits {
 	time_ofPrior_drag: number = 0;
 	time_ofPrior_hover: number = 0;
+	longClick_fired: boolean = false;
 	rbush = new RBush<Target_RBRect>();
 	w_dragging = writable<T_Drag>(T_Drag.none);
 	w_s_hover = writable<S_Hit_Target | null>(null);
 	targets_dict_byID: Dictionary<S_Hit_Target> = {};
+	pending_singleClick_event: MouseEvent | null = null;
+	pending_singleClick_target: S_Hit_Target | null = null;
+	w_longClick_target = writable<S_Hit_Target | null>(null);
+	click_timer: Mouse_Timer = new Mouse_Timer('hits-click');
 	targets_dict_byType: Dictionary<Array<S_Hit_Target>> = {};
 	w_autorepeating_target = writable<S_Hit_Target | null>(null);
 	autorepeat_timer: Mouse_Timer = new Mouse_Timer('hits-autorepeat');
@@ -51,6 +56,15 @@ export default class Hits {
 		if (!!autorepeating_target && (!match || !match.isEqualTo(autorepeating_target))) {
 			this.stop_autorepeat();
 		}
+		// Cancel long-click if hover leaves the long-click target
+		const longClick_target = get(this.w_longClick_target);
+		if (!!longClick_target && (!match || !match.isEqualTo(longClick_target))) {
+			this.cancel_longClick();
+		}
+		// Cancel pending double-click if hover leaves the pending target
+		if (!!this.pending_singleClick_target && (!match || !match.isEqualTo(this.pending_singleClick_target))) {
+			this.cancel_doubleClick();
+		}
 		return !!match;
 	}
 
@@ -65,22 +79,66 @@ export default class Hits {
 				return rubberband_target.handle_s_mouse?.(s_mouse) ?? false;
 			}
 		}
-		const match
+		const target
 			=  matches.find(s => s.isADot)
 			?? matches.find(s => s.isAWidget)
 			?? matches.find(s => s.isRing)
 			?? matches.find(s => s.isAControl)
 			?? matches[0];
-		const handled = match?.handle_s_mouse?.(s_mouse) ?? false;
-		if (match?.detect_autorepeat && match?.autorepeat_callback) {
-			if (s_mouse.isUp) {
-				this.stop_autorepeat();
-			} else if (s_mouse.isDown) {
-				this.start_autorepeat(match);
+
+		if (!target) return false;
+
+		if (s_mouse.isDown && s_mouse.event) {
+			target.clicks += 1;
+
+			// Long-click detection
+			if (target.detect_longClick && target.longClick_callback) {
+				this.start_longClick(target, s_mouse.event);
 			}
+
+			// Double-click detection
+			if (target.detect_doubleClick && target.doubleClick_callback) {
+				if (target.clicks == 2 && this.click_timer.hasTimer_forID(T_Timer.double)) {
+					// Second click within threshold — fire double-click
+					this.click_timer.reset();
+					target.clicks = 0;
+					target.doubleClick_callback(S_Mouse.double(s_mouse.event, target.html_element));
+					return true;
+				} else if (target.clicks == 1) {
+					// First click — defer single-click, start timer
+					this.start_doubleClick_timer(target, s_mouse.event);
+					return true;
+				}
+			} else {
+				// No double-click detection — fire immediately
+				target.handle_s_mouse?.(s_mouse);
+			}
+
+			// Autorepeat (existing logic)
+			if (target.detect_autorepeat && target.autorepeat_callback) {
+				this.start_autorepeat(target);
+			}
+
+			return true;
 		}
-		
-		return handled;
+
+		if (s_mouse.isUp) {
+			this.cancel_longClick();
+			this.stop_autorepeat();
+			
+			// Suppress mouse-up if long-click already fired
+			if (this.longClick_fired) {
+				this.longClick_fired = false;
+				target.clicks = 0;
+				return true;
+			}
+
+			target.clicks = 0;
+			target.handle_s_mouse?.(s_mouse);
+			return true;
+		}
+
+		return target.handle_s_mouse?.(s_mouse) ?? false;
 	}
 
 	static readonly _____MOVEMENT: unique symbol;
@@ -104,9 +162,12 @@ export default class Hits {
 	reset() {
 		this.rbush.clear();
 		this.stop_autorepeat();
+		this.cancel_longClick();
 		this.w_s_hover.set(null);
+		this.cancel_doubleClick();
 		this.time_ofPrior_hover = 0;
 		this.targets_dict_byID = {};
+		this.longClick_fired = false;
 		this.targets_dict_byType = {};
 	}
 
@@ -264,6 +325,53 @@ export default class Hits {
 		if (!!autorepeating_target) {
 			this.autorepeat_timer.autorepeat_stop();
 			this.w_autorepeating_target.set(null);
+		}
+	}
+
+	static readonly _____LONG_CLICK: unique symbol;
+
+	start_longClick(target: S_Hit_Target, event: MouseEvent) {
+		if (!!target && target.longClick_callback) {
+			this.cancel_longClick();
+			this.w_longClick_target.set(target);
+			this.click_timer.timeout_start(T_Timer.long, () => {
+				this.longClick_fired = true;
+				target.clicks = 0;
+				target.longClick_callback?.(S_Mouse.long(event, target.html_element));
+				this.w_longClick_target.set(null);
+			});
+		}
+	}
+
+	cancel_longClick() {
+		const longClick_target = get(this.w_longClick_target);
+		if (!!longClick_target) {
+			this.click_timer.reset();
+			this.w_longClick_target.set(null);
+		}
+	}
+
+	static readonly _____DOUBLE_CLICK: unique symbol;
+
+	start_doubleClick_timer(target: S_Hit_Target, event: MouseEvent) {
+		this.pending_singleClick_target = target;
+		this.pending_singleClick_event = event;
+		this.click_timer.timeout_start(T_Timer.double, () => {
+			// Timer expired, no second click — fire deferred single-click
+			if (this.pending_singleClick_target && this.pending_singleClick_event) {
+				this.pending_singleClick_target.handle_s_mouse?.(S_Mouse.down(this.pending_singleClick_event, this.pending_singleClick_target.html_element));
+				this.pending_singleClick_target.clicks = 0;
+			}
+			this.pending_singleClick_target = null;
+			this.pending_singleClick_event = null;
+		});
+	}
+
+	cancel_doubleClick() {
+		if (this.pending_singleClick_target) {
+			this.click_timer.reset();
+			this.pending_singleClick_target = null;
+			this.pending_singleClick_event = null;
 		}
 	}
 

@@ -9,6 +9,8 @@ export default class S_Hit_Target {
 
     containedIn_rect?: (rect: Rect | null) => boolean;
     contains_point?: (point: Point | null) => boolean;
+	doubleClick_callback?: (s_mouse: S_Mouse) => void;
+	longClick_callback?: (s_mouse: S_Mouse) => void;
 	handle_s_mouse?: (s_mouse: S_Mouse) => boolean;
 	identifiable: Identifiable | null = null;
 	html_element: HTMLElement | null = null;
@@ -16,11 +18,14 @@ export default class S_Hit_Target {
 	autorepeat_callback?: () => void;
 	defaultCursor = k.cursor_default;
 	hoverCursor = k.cursor_default;
+	detect_doubleClick?: boolean;
 	detect_autorepeat?: boolean;
+	detect_longClick?: boolean;
 	hoverColor = 'transparent';
 	element_color = 'black';
 	autorepeat_id?: number;
 	type: T_Hit_Target;
+	clicks: number = 0;
 	id: string;
 	
 	constructor(type: T_Hit_Target, identifiable: Identifiable | null) {
