@@ -22,12 +22,12 @@ export default class Hits {
 	w_dragging = writable<T_Drag>(T_Drag.none);
 	w_s_hover = writable<S_Hit_Target | null>(null);
 	targets_dict_byID: Dictionary<S_Hit_Target> = {};
+	w_longClick = writable<S_Hit_Target | null>(null);
+	w_autorepeat = writable<S_Hit_Target | null>(null);
 	pending_singleClick_event: MouseEvent | null = null;
 	pending_singleClick_target: S_Hit_Target | null = null;
-	w_longClick_target = writable<S_Hit_Target | null>(null);
 	click_timer: Mouse_Timer = new Mouse_Timer('hits-click');
 	targets_dict_byType: Dictionary<Array<S_Hit_Target>> = {};
-	w_autorepeating_target = writable<S_Hit_Target | null>(null);
 	autorepeat_timer: Mouse_Timer = new Mouse_Timer('hits-autorepeat');
 
 	static readonly _____HOVER: unique symbol;
@@ -52,12 +52,12 @@ export default class Hits {
 			?? matches[0];
 		this.w_s_hover.set(!match ? null : match);
 		// Stop autorepeat if hover leaves the autorepeating target
-		const autorepeating_target = get(this.w_autorepeating_target);
+		const autorepeating_target = get(this.w_autorepeat);
 		if (!!autorepeating_target && (!match || !match.isEqualTo(autorepeating_target))) {
 			this.stop_autorepeat();
 		}
 		// Cancel long-click if hover leaves the long-click target
-		const longClick_target = get(this.w_longClick_target);
+		const longClick_target = get(this.w_longClick);
 		if (!!longClick_target && (!match || !match.isEqualTo(longClick_target))) {
 			this.cancel_longClick();
 		}
@@ -92,12 +92,12 @@ export default class Hits {
 			target.clicks += 1;
 
 			// Long-click detection
-			if (target.detect_longClick && target.longClick_callback) {
+			if (target.detects_longClick && target.longClick_callback) {
 				this.start_longClick(target, s_mouse.event);
 			}
 
 			// Double-click detection
-			if (target.detect_doubleClick && target.doubleClick_callback) {
+			if (target.detects_doubleClick && target.doubleClick_callback) {
 				if (target.clicks == 2 && this.click_timer.hasTimer_forID(T_Timer.double)) {
 					// Second click within threshold — fire double-click
 					this.click_timer.reset();
@@ -115,7 +115,7 @@ export default class Hits {
 			}
 
 			// Autorepeat (existing logic)
-			if (target.detect_autorepeat && target.autorepeat_callback) {
+			if (target.detects_autorepeat && target.autorepeat_callback) {
 				this.start_autorepeat(target);
 			}
 
@@ -313,7 +313,7 @@ export default class Hits {
 		if (!!target && target.autorepeat_callback) {
 			this.stop_autorepeat();			// stop any existing autorepeat
 			const id = target.autorepeat_id ?? 0;
-			this.w_autorepeating_target.set(target);
+			this.w_autorepeat.set(target);
 			this.autorepeat_timer.autorepeat_start(id, () => {
 				target.autorepeat_callback?.();
 			});
@@ -321,10 +321,10 @@ export default class Hits {
 	}
 
 	stop_autorepeat() {
-		const autorepeating_target = get(this.w_autorepeating_target);
+		const autorepeating_target = get(this.w_autorepeat);
 		if (!!autorepeating_target) {
 			this.autorepeat_timer.autorepeat_stop();
-			this.w_autorepeating_target.set(null);
+			this.w_autorepeat.set(null);
 		}
 	}
 
@@ -333,21 +333,21 @@ export default class Hits {
 	start_longClick(target: S_Hit_Target, event: MouseEvent) {
 		if (!!target && target.longClick_callback) {
 			this.cancel_longClick();
-			this.w_longClick_target.set(target);
+			this.w_longClick.set(target);
 			this.click_timer.timeout_start(T_Timer.long, () => {
 				this.longClick_fired = true;
 				target.clicks = 0;
 				target.longClick_callback?.(S_Mouse.long(event, target.html_element));
-				this.w_longClick_target.set(null);
+				this.w_longClick.set(null);
 			});
 		}
 	}
 
 	cancel_longClick() {
-		const longClick_target = get(this.w_longClick_target);
+		const longClick_target = get(this.w_longClick);
 		if (!!longClick_target) {
 			this.click_timer.reset();
-			this.w_longClick_target.set(null);
+			this.w_longClick.set(null);
 		}
 	}
 

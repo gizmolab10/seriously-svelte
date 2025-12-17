@@ -1,4 +1,4 @@
-import { g, k, hits, Rect, Point, debug, colors, Ancestry, S_Mouse, T_Hit_Target } from '../common/Global_Imports';
+import { g, k, hits, Rect, Point, debug, colors, Ancestry, S_Mouse, T_Hit_Target, T_Mouse_Detection } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
 
@@ -7,6 +7,7 @@ export default class S_Hit_Target {
 	// supports hit testing for all user-interactables in the DOM
 	// S_Element, S_Widget, S_Component, S_Rotation, S_Resizing
 
+	mouse_detection: T_Mouse_Detection = T_Mouse_Detection.none;
     containedIn_rect?: (rect: Rect | null) => boolean;
     contains_point?: (point: Point | null) => boolean;
 	doubleClick_callback?: (s_mouse: S_Mouse) => void;
@@ -16,11 +17,10 @@ export default class S_Hit_Target {
 	html_element: HTMLElement | null = null;
 	element_rect: Rect | null = null;							// for use in Hits index
 	autorepeat_callback?: () => void;
+	autorepeat_event?: MouseEvent;		// stored here to survive component recreation
+	autorepeat_isFirstCall = true;		// stored here to survive component recreation
 	defaultCursor = k.cursor_default;
 	hoverCursor = k.cursor_default;
-	detect_doubleClick?: boolean;
-	detect_autorepeat?: boolean;
-	detect_longClick?: boolean;
 	hoverColor = 'transparent';
 	element_color = 'black';
 	autorepeat_id?: number;
@@ -42,7 +42,10 @@ export default class S_Hit_Target {
 	set isHovering(isHovering: boolean) { hits.w_s_hover.set(isHovering ? this : null); }
 	get svg_hover_color(): string { return this.isHovering ? colors.background : this.stroke; }
 	get isADot(): boolean { return [T_Hit_Target.drag, T_Hit_Target.reveal].includes(this.type); }
+	get detects_longClick(): boolean { return (this.mouse_detection & T_Mouse_Detection.long) !== 0; }
 	get isAWidget(): boolean { return [T_Hit_Target.widget, T_Hit_Target.title].includes(this.type); }
+	get detects_autorepeat(): boolean { return this.mouse_detection === T_Mouse_Detection.autorepeat; }
+	get detects_doubleClick(): boolean { return (this.mouse_detection & T_Mouse_Detection.double) !== 0; }
 	get isAControl(): boolean { return [T_Hit_Target.control, T_Hit_Target.button, T_Hit_Target.glow].includes(this.type); }
 	get isRing(): boolean { return [T_Hit_Target.rotation, T_Hit_Target.resizing, T_Hit_Target.paging].includes(this.type); }
 

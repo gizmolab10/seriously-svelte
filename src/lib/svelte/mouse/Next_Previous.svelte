@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { Point, S_Mouse, S_Element, T_Request, T_Direction, T_Action, T_Hit_Target } from '../../ts/common/Global_Imports';
+	import { Point, S_Mouse, S_Element, T_Request, T_Direction, T_Action, T_Hit_Target, T_Mouse_Detection } from '../../ts/common/Global_Imports';
 	import { e, k, hits, colors, elements, svgPaths } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import { onMount } from 'svelte';
@@ -8,7 +8,7 @@
 	export let has_title = false;
 	export let name = k.empty;
 	export let size = 24;
-	const { w_s_hover, w_autorepeating_target } = hits;
+	const { w_s_hover, w_autorepeat } = hits;
 	const base_titles = [T_Direction.previous, T_Direction.next];
 	$: row_titles = has_title ? [name, ...base_titles] : base_titles;
 	let button_elements: HTMLElement[] = [];
@@ -26,7 +26,7 @@
 				return handle_s_mouse(s_mouse, index);
 			};
 			// Set up autorepeat for each button (always enabled for next-previous)
-			s_element.detect_autorepeat = true;
+			s_element.mouse_detection = T_Mouse_Detection.autorepeat;
 			s_element.autorepeat_callback = () => {
 				if (autorepeat_events[index]) {
 					closure(index);
@@ -40,7 +40,7 @@
 	});
 
 	$: index_forHover = s_elements.findIndex(s => s.isEqualTo($w_s_hover));
-	$: isAutorepeating = (index: number) => s_elements[index]?.isEqualTo($w_autorepeating_target) ?? false;
+	$: isAutorepeating = (index: number) => s_elements[index]?.isEqualTo($w_autorepeat) ?? false;
 
 	function handle_s_mouse(s_mouse: S_Mouse, index: number): boolean {
 		if (s_mouse.isDown && s_mouse.event) {

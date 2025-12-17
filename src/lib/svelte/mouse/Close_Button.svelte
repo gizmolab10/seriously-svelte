@@ -1,6 +1,6 @@
 <script lang='ts'>
-	import { e, k, s, hits, colors, svgPaths, elements } from '../../ts/common/Global_Imports';
-	import { Point, T_Layer, T_Hit_Target } from '../../ts/common/Global_Imports';
+	import { hits, colors, svgPaths, elements } from '../../ts/common/Global_Imports';
+	import { Point, T_Layer, T_Hit_Target, S_Mouse } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import { onMount } from 'svelte';
@@ -11,10 +11,10 @@
 	export let origin: Point;
     export let size = 20;
 	const { w_s_hover } = hits;
-	const { w_count_mouse_up } = e;
-	const s_element = elements.s_element_for(new Identifiable(name), T_Hit_Target.button, name);
-	let mouse_up_count = $w_count_mouse_up;
 	let element: HTMLElement | null = null;
+	
+	// Create s_element reactively so it uses the actual name prop value
+	$: s_element = elements.s_element_for(new Identifiable(name), T_Hit_Target.button, name);
 	let stroke = colors.default;
 	let fill = 'white';
 
@@ -26,29 +26,31 @@
 	}
 
 	onMount(() => {
-		if (!!element) {
-			s_element.set_html_element(element);
-		}
 		return () => {
+			s_element.handle_s_mouse = undefined;
 			hits.delete_hit_target(s_element);
 		};
 	});
 
-	$: if (mouse_up_count != $w_count_mouse_up) {
-		mouse_up_count = $w_count_mouse_up;
-		if ($w_s_hover?.id === s_element.id) {
-			closure();
-		}
+	// Update handler whenever element, closure, or s_element changes (handles re-renders and cached reuse)
+	$: if (!!element && !!closure && !!s_element) {
+		s_element.set_html_element(element);
+		// Always set handler (s_element may be cached/reused from previous component instance)
+		s_element.handle_s_mouse = (s_mouse: S_Mouse) => {
+			if (s_mouse.isDown) closure();
+			return true;
+		};
 	}
 
 	$: style = `
-		position: absolute;
 		cursor: pointer;
-		z-index: ${T_Layer.dot};
+		user-select: none;
 		width: ${size}px;
 		height: ${size}px;
-		${align_left ? 'left' : 'right'}: ${origin.x}px;
+		position: absolute;
 		top: ${origin.y}px;
+		z-index: ${T_Layer.dot};
+		${align_left ? 'left' : 'right'}: ${origin.x}px;
 	`.removeWhiteSpace();
 
 </script>

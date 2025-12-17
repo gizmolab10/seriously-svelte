@@ -1,7 +1,6 @@
 <script lang='ts'>
-	import { e, h, k, s, u, x, hits, show, debug, colors, signals, elements, svgPaths } from '../../ts/common/Global_Imports';
-	import { S_Mouse, S_Element, S_Component, T_Layer, T_Hit_Target } from '../../ts/common/Global_Imports';
-	import { Size, Point } from '../../ts/common/Global_Imports';
+	import { h, k, s, u, x, hits, show, debug, colors, signals, elements, svgPaths } from '../../ts/common/Global_Imports';
+	import { S_Element, S_Component, T_Layer, T_Hit_Target } from '../../ts/common/Global_Imports';
 	import { onMount, onDestroy } from 'svelte';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
     export let zindex = T_Layer.dot;
@@ -11,7 +10,6 @@
 	const { w_thing_title } = s;
 	const ancestry = s_reveal.ancestry;
 	const g_widget = ancestry.g_widget;
-	const { w_count_mouse_up } = e;
 	const { w_show_countDots_ofType } = show;
 	const { w_items: w_grabbed } = x.si_grabs;
 	const viewBox = k.tiny_outer_dots.viewBox;
@@ -21,7 +19,6 @@
 	let svgPathFor_tiny_outer_dots: string | null = null;
 	let svgPathFor_fat_center_dot: string | null = null;
 	let svg_outline_color = s_reveal.svg_outline_color;
-	let mouse_up_count = $w_count_mouse_up;
 	let element: HTMLElement | null = null;
 	let bulkAlias_color = s_reveal.stroke;
 	let center = g_widget.center_ofReveal;
@@ -40,12 +37,19 @@
 		update_svgPaths();
 		s_reveal.isHovering = false;
 		update_colors();
-		s_reveal.set_forHovering(color, 'pointer');
-		if (!!element) {
-			s_reveal.set_html_element(element);
-		}
 		return () => s_component.disconnect();
 	});
+
+	// Set handler when element becomes available (handles re-renders)
+	$: if (!!element) {
+		s_reveal.set_html_element(element);
+		s_reveal.handle_s_mouse = (s_mouse) => {
+			if (s_mouse.isDown && (ancestry.hasChildren || ancestry.thing.isBulkAlias)) {
+				h.ancestry_toggle_expansion(ancestry);
+			}
+			return true;
+		};
+	}
 
 	onDestroy(() => {
 		hits.delete_hit_target(s_reveal);
@@ -61,13 +65,6 @@
 			:::${$w_thing_color}`;
 		update_svgPaths();
 		update_colors();
-	}
-
-	$: if (mouse_up_count != $w_count_mouse_up) {
-		mouse_up_count = $w_count_mouse_up;
-		if ($w_s_hover?.id === s_reveal.id && (ancestry.hasChildren || ancestry.thing.isBulkAlias)) {
-			h.ancestry_toggle_expansion(ancestry);
-		}
 	}
 
 	$: wrapper_style = `

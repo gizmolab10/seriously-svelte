@@ -60,7 +60,7 @@
 	}
 
 	function handle_s_mouse(s_mouse) {
-		if (!!h && h.hasRoot && s_mouse.isUp) {
+		if (!!h && h.hasRoot && s_mouse.isDown) {
 			search.deactivate();
 			if (ancestry.becomeFocus()) {
 				g.grand_build();

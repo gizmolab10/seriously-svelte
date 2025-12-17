@@ -9,7 +9,6 @@
 	export let s_drag!: S_Element;
 	const size = k.height.dot;
 	const capture_size = size;
-	const { w_count_mouse_up } = e;
 	const { w_thing_color } = colors;
     const ancestry = s_drag.ancestry;
 	const g_widget = ancestry.g_widget;
@@ -20,7 +19,6 @@
 	const { w_ancestry_focus, w_ancestry_forDetails } = s;
 	let fill_color = debug.lines ? 'transparent' : s_drag.fill;
 	let svg_outline_color = s_drag.svg_outline_color;
-	let mouse_up_count = $w_count_mouse_up;
 	let element: HTMLElement | null = null;
 	let center = g_widget.center_ofDrag;
 	let parents_color = s_drag.stroke;
@@ -41,11 +39,19 @@
 	});
 
 	onMount(() => {
-		if (!!element) {
-			s_drag.set_html_element(element);
-		}
 		return () => s_component.disconnect();
 	});
+
+	// Set handler when element becomes available (handles re-renders)
+	$: if (!!element) {
+		s_drag.set_html_element(element);
+		s_drag.handle_s_mouse = (s_mouse) => {
+			if (s_mouse.isDown && !!ancestry && !radial.isDragging && (!$w_dragging || $w_dragging === T_Drag.none)) {
+				e.handle_singleClick_onDragDot(false, ancestry);
+			}
+			return true;
+		};
+	}
 
 	onDestroy(() => {
 		hits.delete_hit_target(s_drag);
@@ -64,13 +70,6 @@
 			:::${$w_ancestry_forDetails?.id}
 			:::${u.descriptionBy_titles($w_grabbed)}`;
 		update_colors();
-	}
-
-	$: if (mouse_up_count != $w_count_mouse_up) {
-		mouse_up_count = $w_count_mouse_up;
-		if ($w_s_hover?.id === s_drag.id && !!ancestry && !radial.isDragging && (!$w_dragging || $w_dragging === T_Drag.none)) {
-			e.handle_singleClick_onDragDot(false, ancestry);
-		}
 	}
 
 	$: wrapper_style = `

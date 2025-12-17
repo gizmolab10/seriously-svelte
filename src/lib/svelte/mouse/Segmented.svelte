@@ -95,8 +95,8 @@
 			<button class='segment'
 				color={selected.includes(title) ? 'black' : 'white'}
 				class:selected={selected.includes(title)}
-				style='font-size:{font_size}px;'
-				on:click={() => select(title)}
+				style='font-size:{font_size}px; user-select: none;'
+				on:mousedown|preventDefault={() => select(title)}
 				id={button_name(title)}
 				type='button'>
 				{title}

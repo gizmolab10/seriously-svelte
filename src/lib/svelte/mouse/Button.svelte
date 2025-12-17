@@ -1,16 +1,16 @@
 <script lang='ts'>
-	import { e, g, k, s, hits, colors, elements, T_Timer } from '../../ts/common/Global_Imports';
+	import { g, k, s, hits, colors, T_Mouse_Detection } from '../../ts/common/Global_Imports';
 	import { S_Mouse, S_Element, T_Layer, Point } from '../../ts/common/Global_Imports';
 	import { onMount } from 'svelte';
+	export let mouse_detection: T_Mouse_Detection = T_Mouse_Detection.none;
 	export let handle_s_mouse: (s_mouse: S_Mouse) => boolean;
 	export let s_button: S_Element = S_Element.empty();
+	export let center: Point | null | undefined = null;
 	export let font_size = k.font_size.common;
 	export let border_color = colors.border;
 	export let origin: Point | null = null;
-	export let center: Point | null = null;
+	export let align_left = true;
 	export let padding = '0px 6px 1px 6px';
-	export let detect_autorepeat = false;
-	export let detect_longClick = false;
 	export let height = k.height.button;
 	export let width = k.height.button;
 	export let border_thickness = 0.5;
@@ -20,13 +20,9 @@
 	export let style = k.empty;
 	export let name = k.empty;
 	const { w_background_color } = colors;
-	const s_mouse = elements.s_mouse_forName(name);
-	const mouse_timer = e.mouse_timer_forName(name);	// Still needed for longClick
-	const { w_s_hover, w_autorepeating_target } = hits;
+	const { w_s_hover, w_autorepeat } = hits;
 	const { w_control_key_down, w_thing_fontFamily } = s;
 	const { w_rect_ofGraphView, w_user_graph_offset } = g;
-	let autorepeat_event: MouseEvent | null = null;		// Capture event for autorepeat callbacks
-	let autorepeat_isFirstCall = true;					// Track if this is the first autorepeat callback (down) or subsequent (repeat)
 	let wrapper_style = k.empty;
 	let button_style = style;
 	let element: HTMLElement;
@@ -44,8 +40,11 @@
 	//////////////////////////////////////////
 
 	onMount(() => {
-		s_button.handle_s_mouse = intercept_handle_s_mouse;
 		recompute_style();
+		// Set handler on mount as fallback
+		if (!!s_button && handle_s_mouse) {
+			s_button.handle_s_mouse = intercept_handle_s_mouse;
+		}
 		return () => {
 			hits.delete_hit_target(s_button);
 		};
@@ -56,23 +55,38 @@
 		s_button.set_html_element(element);
 	}
 
-	// in case detect_autorepeat changes
-	$: if (detect_autorepeat && !!s_button && !!element) {
-		s_button.detect_autorepeat = true;
-		s_button.autorepeat_callback = () => {
-			if (!autorepeat_event) return;
-			// First call is the initial down, subsequent calls are repeats
-			const s_mouse_event = autorepeat_isFirstCall 
-				? S_Mouse.down(autorepeat_event, element)
-				: S_Mouse.repeat(autorepeat_event, element);
-			autorepeat_isFirstCall = false; // Next call will be a repeat
-			handle_s_mouse(s_mouse_event);
-			recompute_style();
-		};
-		s_button.autorepeat_id = 0;
-	} else if (!!s_button) {
-		s_button.detect_autorepeat = false;
-		s_button.autorepeat_callback = undefined;
+	// Update handler reactively (s_button may be cached/reused from previous component instance)
+	// Include handle_s_mouse in dependencies so handler updates when prop changes
+	$: if (!!s_button && handle_s_mouse) {
+		s_button.handle_s_mouse = intercept_handle_s_mouse;
+	}
+
+	// in case mouse_detection changes
+	$: if (!!s_button && !!element) {
+		s_button.mouse_detection = mouse_detection;
+		if (s_button.detects_autorepeat && !s_button.autorepeat_callback) {
+			s_button.autorepeat_callback = () => {
+				if (!s_button.autorepeat_event) return;
+				// First call is the initial down, subsequent calls are repeats
+				const s_mouse_event = s_button.autorepeat_isFirstCall 
+					? S_Mouse.down(s_button.autorepeat_event, s_button.html_element!)
+					: S_Mouse.repeat(s_button.autorepeat_event, s_button.html_element!);
+				s_button.autorepeat_isFirstCall = false; // Next call will be a repeat
+				handle_s_mouse(s_mouse_event);
+				recompute_style();
+			};
+			s_button.autorepeat_id = 0;
+		} else if (!s_button.detects_autorepeat) {
+			s_button.autorepeat_callback = undefined;
+		}
+		if (s_button.detects_longClick) {
+			s_button.longClick_callback = (s_mouse: S_Mouse) => {
+				handle_s_mouse(s_mouse);
+				recompute_style();
+			};
+		} else {
+			s_button.longClick_callback = undefined;
+		}
 	}
 
 	recompute_style();
@@ -92,10 +106,8 @@
 	}
 
 	function reset() {
-		s_mouse.clicks = 0;
-		mouse_timer.reset();
-		autorepeat_event = null;
-		autorepeat_isFirstCall = true; // Reset for next autorepeat cycle
+		s_button.autorepeat_event = undefined;
+		s_button.autorepeat_isFirstCall = true;
 	}
 
 	function intercept_handle_s_mouse(s_mouse: S_Mouse): boolean {
@@ -103,28 +115,16 @@
 			return false;
 		}
 		if (s_mouse.isDown && !!s_mouse.event) {
-			if (detect_autorepeat) {
-				// Autorepeat is handled centrally by Hits.ts
-				// Capture the event and reset the first-call flag for this autorepeat cycle
-				autorepeat_event = s_mouse.event;
-				autorepeat_isFirstCall = true;
-			} else {
-				if (s_mouse.clicks == 0) {
-					handle_s_mouse(s_mouse);
-					recompute_style();
-				}
-				s_mouse.clicks += 1;
-				if (detect_longClick) {
-					mouse_timer.timeout_start(T_Timer.long, () => {
-						if (mouse_timer.hasTimer_forID(T_Timer.long)) {
-							reset();
-							s_mouse.clicks = 0;
-							handle_s_mouse(S_Mouse.long(s_mouse.event!, element));
-							recompute_style();
-						}
-					});
-				}
+			if (s_button.detects_autorepeat) {
+				// Capture the event on s_button (survives component recreation)
+				s_button.autorepeat_event = s_mouse.event;
+				s_button.autorepeat_isFirstCall = true;
+			} else if (!s_button.detects_longClick && !s_button.detects_doubleClick) {
+				// Normal button — fire immediately on down
+				handle_s_mouse(s_mouse);
+				recompute_style();
 			}
+			// Long-click and double-click timing handled centrally by Hits.ts
 			return true;
 		} else if (s_mouse.isUp && !!s_mouse.event) {
 			reset();
@@ -137,10 +137,10 @@
 	
 	function recompute_style() {
 		color = s_button.stroke;
-		const align_left = true;
 		if (wrapper_style.length == 0) {
 			wrapper_style = `
 				cursor: pointer;
+				user-select: none;
 				width: ${width}px;
 				z-index: ${zindex};
 				height: ${height}px;
@@ -168,6 +168,7 @@
 				color:${color};
 				width:${width}px;
 				z-index:${zindex};
+				user-select: none;
 				padding:${padding};
 				height:${height}px;
 				text-align: center;

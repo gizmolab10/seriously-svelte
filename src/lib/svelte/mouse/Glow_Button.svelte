@@ -1,12 +1,12 @@
 <script lang='ts'>
-    import { c, k, u, hits, show, colors, svgPaths, elements } from '../../ts/common/Global_Imports';
+    import { c, k, u, hits, show, colors, svgPaths, elements, T_Mouse_Detection } from '../../ts/common/Global_Imports';
     import { Rect, Size, Point, T_Layer, S_Mouse, T_Hit_Target } from '../../ts/common/Global_Imports';
     import Identifiable from '../../ts/runtime/Identifiable';
     import SVG_Gradient from '../draw/SVG_Gradient.svelte';
     import { onMount } from 'svelte';
     export let handle_click: (title: string) => boolean;
     export let font_size: number = k.font_size.banners;
-    export let detect_autorepeat: boolean = false;
+    export let detects_autorepeat: boolean = false;
     export let banner_id: string = k.empty;
     export let title = k.empty;
     export let name = k.empty;
@@ -14,8 +14,8 @@
     export let width: number;
     const gradient_name = 'glowing';
 	const { w_background_color } = colors;
+    const { w_s_hover, w_autorepeat } = hits;
     const icon_path = svgPaths.path_for(title);
-    const { w_s_hover, w_autorepeating_target } = hits;
     const glow_rect = Rect.createWHRect(width, height);
     const click_title = !!icon_path ? title : banner_id;
     const s_element = elements.s_element_for(new Identifiable(`glow-${banner_id}-${title}`), T_Hit_Target.glow, click_title);
@@ -25,8 +25,8 @@
     onMount(() => {
         s_element.handle_s_mouse = handle_s_mouse;
         // Set up autorepeat if enabled
-        if (detect_autorepeat) {
-            s_element.detect_autorepeat = true;
+        if (detects_autorepeat) {
+            s_element.mouse_detection = T_Mouse_Detection.autorepeat;
             s_element.autorepeat_callback = () => handle_click(click_title);
             s_element.autorepeat_id = 0;
         }
@@ -36,7 +36,7 @@
     });
 
     $: isHovering = s_element.isEqualTo($w_s_hover);
-    $: isAutorepeating = detect_autorepeat && s_element.isEqualTo($w_autorepeating_target);
+    $: isAutorepeating = detects_autorepeat && s_element.isEqualTo($w_autorepeat);
 
     $: {
         if (!!glow_button) {
@@ -51,7 +51,7 @@
 
 	function handle_s_mouse(s_mouse: S_Mouse): boolean {
 		if (s_mouse.isDown) {
-			if (!detect_autorepeat) {
+			if (!detects_autorepeat) {
 				handle_click(click_title);
 			}
 			// Autorepeat is handled centrally by Hits.ts

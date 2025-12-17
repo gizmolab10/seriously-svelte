@@ -61,7 +61,7 @@
 			banner_id={banner_id}
 			font_size={font_size}
 			handle_click={intercept_click}
-			detect_autorepeat={title != banner_title}
+			detects_autorepeat={title != banner_title}
 			width={g_repeater.button_width_for(index)}/>
 		{#if index > 0}
 			<Separator name='between-buttons'

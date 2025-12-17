@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import { k, show, Point, colors, Direction, S_Mouse } from '../../ts/common/Global_Imports';
+    import { k, show, Point, colors, Direction, S_Mouse, T_Mouse_Detection } from '../../ts/common/Global_Imports';
     import Triangle_Button from './Triangle_Button.svelte';
     export let hit_closure;
     const buttonSize = 20;
@@ -26,11 +26,11 @@
 <div class='steppers'>
     {#if $w_show_directionals_ofType[0]}
         <Triangle_Button
+            mouse_detection={T_Mouse_Detection.autorepeat}
             center={origin.offsetByY(-offsetY)}
             handle_s_mouse={handle_s_mouse}
             hover_closure={hover_closure}
             strokeColor={colors.default}
-            detect_autorepeat={true}
             angle={Direction.up}
             size={buttonSize}
             name='up'
@@ -38,12 +38,11 @@
     {/if}
     {#if $w_show_directionals_ofType[1]}
         <Triangle_Button
+            mouse_detection={T_Mouse_Detection.autorepeat}
             center={origin.offsetByY(offsetY)}
             handle_s_mouse={handle_s_mouse}
             hover_closure={hover_closure}
             strokeColor={colors.default}
-            detect_longClick={true}
-            detect_autorepeat={true}
             angle={Direction.down}
             size={buttonSize}
             name='down'

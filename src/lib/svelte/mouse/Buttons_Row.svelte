@@ -1,18 +1,17 @@
 <script lang='ts'>
-	import { k, u, elements, x, Point, colors, svgPaths, S_Element, T_Hit_Target, T_Request } from '../../ts/common/Global_Imports';
+	import { k, u, elements, x, Point, colors, svgPaths, S_Element, S_Mouse, T_Hit_Target, T_Request, T_Mouse_Detection } from '../../ts/common/Global_Imports';
 	import { w_count_button_restyle } from '../../ts/state/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
     import G_Repeater from '../../ts/geometry/G_Repeater';
 	import Separator from '../draw/Separator.svelte';
 	import Button from './Button.svelte';
 	export let closure: (t_request: T_Request, s_mouse: S_Mouse, column: number) => boolean;
+	export let mouse_detection: T_Mouse_Detection = T_Mouse_Detection.none;
 	export let separator_thickness = k.thickness.separator.main;
 	export let origin: Point | null = null;
 	export let center: Point | null = null;
     export let type = T_Hit_Target.button;
 	export let font_sizes: Array<number>;
-	export let detect_autorepeat = false;
-	export let detect_longClick = false;
 	export let has_gull_wings = true;
 	export let has_seperator = false;
 	export let row_titles: string[];	// first one is optional row title, rest are button titles
@@ -119,8 +118,7 @@
 					<Button
 						height={button_height}
 						font_size={font_sizes[1]}
-						detect_longClick={detect_longClick}
-						detect_autorepeat={detect_autorepeat}
+						mouse_detection={mouse_detection}
 						s_button={s_button_dict_byColumn[column]}
 						width={g_repeater.button_width_for(column)}
 						name={`${name}-${button_name_for(column)}`}

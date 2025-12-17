@@ -179,6 +179,14 @@ export enum T_Oblong {
 	full   = 'full',
 }
 
+export enum T_Mouse_Detection {
+	autorepeat = 4,
+	doubleLong = 3,
+	double	   = 1,
+	long	   = 2,
+	none	   = 0,
+}
+
 export enum T_Request {
 	handle_click = 'handle_click',
 	is_disabled	 = 'is_disabled',

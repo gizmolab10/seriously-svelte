@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { T_Layer, T_Detail, T_Action, T_Hit_Target, T_Kinship, T_Request, T_Predicate, T_Alteration } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Detail, T_Action, T_Hit_Target, T_Kinship, T_Request, T_Predicate, T_Alteration, T_Mouse_Detection } from '../../ts/common/Global_Imports';
 	import { c, e, g, h, k, s, u, x, show, Size, Point, colors, signals, S_Mouse } from '../../ts/common/Global_Imports';
 	import { elements, details, controls } from '../../ts/common/Global_Imports';
 	import Buttons_Table from '../mouse/Buttons_Table.svelte';
@@ -152,7 +152,7 @@
 {#key reattachments}
 	{#if !$w_grabbed || $w_grabbed.length == 0 || $w_s_title_edit?.isActive}
 		<div class='no-actions'>
-			<p style='text-align:center; font-size:{k.font_size.instructions}px; position:relative; display:flex; align-items:center; justify-content:center;'>
+			<p style='user-select:none; text-align:center; font-size:{k.font_size.instructions}px; position:relative; display:flex; align-items:center; justify-content:center;'>
 				{no_actions}
 			</p>
 		</div>
@@ -160,6 +160,7 @@
 		<div class='actions'
 			style='
 				width: 100%;
+				user-select: none;
 				position:relative;
 				top:{actions_top}px;
 				z-index:{T_Layer.action};
@@ -169,6 +170,7 @@
 					style='
 						width: 100%;
 						display:block;
+						user-select:none;
 						position:relative;
 						text-align:center;
 						z-index:{T_Layer.action};
@@ -200,11 +202,11 @@
 					has_title={has_title}
 					title_gap={title_gap}
 					font_sizes={font_sizes}
-					detect_autorepeat={true}
 					type={T_Hit_Target.action}
 					closure={handle_actionRequest}
 					button_height={k.height.button}
-					button_titles={button_titles[0]}/>
+					button_titles={button_titles[0]}
+					mouse_detection={T_Mouse_Detection.autorepeat}/>
 				<Separator name='after-first-section'
 					isHorizontal={false}
 					has_thin_divider={true}
@@ -220,11 +222,11 @@
 					has_title={has_title}
 					title_gap={title_gap}
 					font_sizes={font_sizes}
-					detect_autorepeat={true}
 					type={T_Hit_Target.action}
 					closure={handle_actionRequest}
 					button_height={k.height.button}
-					button_titles={button_titles[1]}/>
+					button_titles={button_titles[1]}
+					mouse_detection={T_Mouse_Detection.autorepeat}/>
 				<Separator name='after-second-section'
 					isHorizontal={false}
 					has_thin_divider={true}
@@ -239,8 +241,8 @@
 					title='edit your hierarchy'
 					length={k.width.details - 1}
 					title_left={k.separator_title_left}
-					origin={new Point(0.5, top_tableHeight - 10)}
-					thickness={k.thickness.separator.details}/>
+					thickness={k.thickness.separator.details}
+					origin={new Point(0.5, top_tableHeight - 10)}/>
 			{/if}
 		</div>
 	{/if}

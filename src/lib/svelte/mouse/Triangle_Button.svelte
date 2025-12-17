@@ -1,13 +1,12 @@
 <script lang='ts'>
-	import { k, x, hits, elements, svgPaths } from '../../ts/common/Global_Imports';
+	import { k, x, hits, elements, svgPaths, T_Mouse_Detection } from '../../ts/common/Global_Imports';
 	import { S_Mouse, T_Hit_Target } from '../../ts/common/Global_Imports';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	import SVG_D3 from '../draw/SVG_D3.svelte';
 	import Button from './Button.svelte';
+	export let mouse_detection: T_Mouse_Detection = T_Mouse_Detection.none;
 	export let handle_s_mouse: (result: S_Mouse) => boolean;
 	export let hover_closure: (flag: boolean) => boolean;
-	export let detect_autorepeat = false;
-	export let detect_longClick = false;
 	export let extraPath = null;
 	export let name = k.empty;
 	export let strokeColor;
@@ -43,8 +42,7 @@
 </script>
 
 <Button
-	detect_autorepeat={detect_autorepeat}
-	detect_longClick={detect_longClick}
+	mouse_detection={mouse_detection}
 	handle_s_mouse={handle_s_mouse}
 	s_button={s_triangle}
 	border_thickness=0

@@ -177,7 +177,7 @@ export class Events {
 	}
 
 	handle_s_mouseFor_t_control(s_mouse: S_Mouse, t_control: T_Control) {
-		if (s_mouse.isUp) {
+		if (s_mouse.isDown) {
 			switch (t_control) {
 				case T_Control.help:	controls.showHelp_home(); break;
 				case T_Control.search:	search.activate(); break;
