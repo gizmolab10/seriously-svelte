@@ -26,10 +26,12 @@ import { T_Radial_Zone, T_Preference, T_Auto_Adjust, T_Cluster_Pager } from './E
 import S_Alteration from '../state/S_Alteration';
 import S_Title_Edit from '../state/S_Title_Edit';
 import S_Hit_Target from '../state/S_Hit_Target';
+import S_Component from '../state/S_Component';
 import S_Resizing from '../state/S_Resizing';
 import S_Rotation from '../state/S_Rotation';
 import S_Element from '../state/S_Element';
 import S_Widget from '../state/S_Widget';
+import S_Color from '../state/S_Color';
 import S_Mouse from '../state/S_Mouse';
 import S_Items from '../state/S_Items';
 
@@ -50,8 +52,8 @@ import { Rect, Size, Point } from '../types/Coordinates';
 import { Seriously_Range } from '../types/Seriously_Range';
 
 import { hits } from '../managers/Hits';
-import { colors } from '../managers/Colors';
 import { search } from '../managers/Search';
+import { colors } from '../utilities/Colors';
 import { details } from '../managers/Details';
 import { show } from '../managers/Visibility';
 import { controls } from '../managers/Controls';
@@ -64,7 +66,6 @@ import Relationship from '../persistable/Relationship';
 import Persistable from '../persistable/Persistable';
 import Predicate from '../persistable/Predicate';
 import Mouse_Timer from '../signals/Mouse_Timer';
-import S_Component from '../state/S_Component';
 import Ancestry from '../runtime/Ancestry';
 import Access from '../persistable/Access';
 import Thing from '../persistable/Thing';
@@ -75,8 +76,8 @@ import Angle from '../types/Angle';
 
 import './Extensions';
 import { k } from './Constants';
+import { x } from '../managers/UX';
 import { e } from '../signals/Events';
-import { x } from '../state/S_UX';
 import { s } from '../managers/Stores';
 import { g } from '../managers/Geometry';
 import { h } from '../managers/Hierarchy';
@@ -89,8 +90,8 @@ import interact from 'interactjs';
 
 export {	
 	S_Rotation, S_Resizing, S_Component,
-	S_Items, S_Mouse, S_Widget, S_Element,
 	S_Hit_Target, S_Alteration, S_Title_Edit,
+	S_Items, S_Mouse, S_Color, S_Widget, S_Element,
 	
 	G_Cluster, G_RadialGraph, G_Cluster_Pager,
 	G_Widget, G_TreeLine, G_TreeBranches, G_Repeater,

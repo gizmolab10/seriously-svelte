@@ -169,6 +169,11 @@
   },
   "active": "06e98e76ea4518da",
   "lastOpenFiles": [
+    "src/lib/ts/utilities/Styles.ts",
+    "src/lib/ts/utilities/Colors.ts",
+    "src/lib/ts/managers/UX.ts",
+    "src/lib/ts/managers/S_UX.ts",
+    "src/lib/ts/state/S_Color.ts",
     "notes/design/stores.md",
     "notes/design/colors.md",
     "notes/design/timer-project.md",
@@ -193,10 +198,6 @@
     "bubble/change_selection copy.js",
     "bubble/replace_hierarchy.js",
     "bubble/replace_hierarchy.send_to_webseriously('REPLACE_HIERARCHY', {}); }",
-    "bubble/function(instance, properties, context) { \tinstance.data.send_to_webseriously('REPLACE_HIERARCHY', {}); }",
-    "src/lib/svelte/radial/Radial_Cluster.svelte",
-    "notes/tools/analyze_counts.sh",
-    "src/lib/ts/database/DB_Bubble.abandoned.ts",
     "notes/design/refactor_writables.md",
     "project-analysis.md",
     "notes/design/project-analysis.md",
@@ -204,7 +205,6 @@
     "notes/Resize_Optimization_AI.md",
     "notes/bubble tears.md",
     "notes/holons.api.md",
-    "holons/api.md",
     "dist/vite.svg",
     "dist/settings.svg"
   ]

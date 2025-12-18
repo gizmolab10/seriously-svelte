@@ -6,14 +6,14 @@ import Identifiable from '../runtime/Identifiable';
 import { databases } from '../database/Databases';
 import { controls } from '../managers/Controls';
 import G_TreeLine from '../geometry/G_TreeLine';
-import { colors } from '../managers/Colors';
+import { colors } from './Colors';
 import Ancestry from '../runtime/Ancestry';
 import G_Widget from '../geometry/G_Widget';
 import { Integer } from '../types/Types';
 import { k } from '../common/Constants';
 import { g } from '../managers/Geometry';
 import { s } from '../managers/Stores';
-import { x } from '../state/S_UX';
+import { x } from '../managers/UX';
 import { get } from 'svelte/store';
 import { print } from './Print';
 

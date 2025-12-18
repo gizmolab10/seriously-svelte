@@ -2,6 +2,8 @@ import { S_Hit_Target, T_Hit_Target, T_Control, controls } from '../common/Globa
 import { k, s, colors, elements } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
 import { get } from 'svelte/store';
+import Styles from '../utilities/Styles';
+import S_Color from './S_Color';
 
 	//////////////////////////////////////////
 	//										//
@@ -34,13 +36,41 @@ export default class S_Element extends S_Hit_Target {
 	get color_isInverted(): boolean { return this.isInverted != this.isHovering; }
 	get asTransparent():	boolean { return this.isDisabled || this.subtype == T_Control.details; }
 	get show_help_cursor(): boolean { return get(s.w_control_key_down) && this.type == T_Hit_Target.action; }
-	get fill():				 string { return this.asTransparent ? 'transparent' : this.color_isInverted ? this.hoverColor : this.isSelected ? 'lightblue' : this.color_background; }
+	
+	get fill(): string {
+		if (this.asTransparent) return 'transparent';
+		if (this.type === T_Hit_Target.reveal) {
+			const state = new S_Color(this, this.isDisabled, this.isSelected, this.isInverted, this.subtype);
+			const thing_color = this.ancestry.thing?.color ?? k.empty;
+			const computed = Styles.computeDotColors(state, this.element_color, thing_color, this.color_background, this.hoverColor);
+			return computed.fill;
+		}
+		return this.color_isInverted ? this.hoverColor : this.isSelected ? 'lightblue' : this.color_background;
+	}
+	
 	get cursor():			 string { return (this.isHovering && !this.isDisabled) ? this.show_help_cursor ? 'help' : this.hoverCursor : this.defaultCursor; }
-	get stroke():			 string { return this.isDisabled ? this.disabledTextColor : this.color_isInverted ? this.color_background : this.element_color; }
+	
+	get stroke(): string {
+		if (this.isDisabled) return this.disabledTextColor;
+		if (this.type === T_Hit_Target.reveal) {
+			const state = new S_Color(this, this.isDisabled, this.isSelected, this.isInverted, this.subtype);
+			const thing_color = this.ancestry.thing?.color ?? k.empty;
+			const computed = Styles.computeDotColors(state, this.element_color, thing_color, this.color_background, this.hoverColor);
+			return computed.stroke;
+		}
+		return this.color_isInverted ? this.color_background : this.element_color;
+	}
+	
 	get disabledTextColor(): string { return colors.specialBlend(this.color_background, this.defaultDisabledColor, 0.3) ?? this.defaultDisabledColor; }
 	get description():		 string { return `${this.isHovering ? 'in' : 'out '} '${this.name}'`; }
 	
 	get svg_outline_color(): string {
+		if (this.type === T_Hit_Target.reveal) {
+			const state = new S_Color(this, this.isDisabled, this.isSelected, this.isInverted, this.subtype);
+			const thing_color = this.ancestry.thing?.color ?? k.empty;
+			const computed = Styles.computeDotColors(state, this.element_color, thing_color, this.color_background, this.hoverColor);
+			return computed.svg_outline_color;
+		}
 		const thing_color = this.ancestry.thing?.color ?? k.empty;
 		const isLight = colors.luminance_ofColor(thing_color) > 0.5;
 		return (!this.ancestry.isGrabbed && !this.ancestry.isEditing)

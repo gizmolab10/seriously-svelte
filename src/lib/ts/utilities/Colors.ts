@@ -2,7 +2,7 @@ import { parseToRgba, transparentize } from 'color2k';
 import { T_Preference } from '../common/Enumerations';
 import { get, writable } from 'svelte/store';
 import { k } from '../common/Constants';
-import { p } from './Preferences';
+import { p } from '../managers/Preferences';
 
 // single source of truth for colors?????
 

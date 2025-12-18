@@ -258,6 +258,70 @@ const state: ColorState = {
 3. Remove helper methods once fully migrated
 4. Simplify state object properties over time as patterns emerge
 
+## Color Computer
+
+### Manager/UX Pattern Discussion
+
+**Current Pattern:**
+Managers are singleton classes exported from `Global_Imports`:
+- `Colors` manager - color scheme management, stores, utility functions
+- `Hits` manager - hit testing, hover detection, click handling
+- `UX` manager (exported as `x`) - grab/focus/expand state management
+- Pattern: `export class ManagerName { ... }` then `export const instance = new ManagerName();`
+
+**Pros of Manager Pattern:**
+
+1. **Consistency with existing codebase**
+   - Follows established architectural pattern
+   - Integrates seamlessly with `Global_Imports`
+   - Matches how other computation/state logic is organized
+
+2. **Single instance, shared access**
+   - One instance imported globally (e.g., `colorComputer.computeWidgetColors()`)
+   - No need to pass instances around
+   - Easy to access from any component
+
+3. **Future extensibility**
+   - Can add state/stores if needed (e.g., caching, computed color themes)
+   - Can add lifecycle methods (initialization, cleanup)
+   - Room to grow beyond pure computation
+
+4. **Clear ownership**
+   - Explicitly owns color computation domain
+   - Clear separation from `Colors` manager (scheme/stores) vs ColorComputer (computation logic)
+
+**Cons of Manager Pattern:**
+
+1. **Overhead for pure functions**
+   - ColorComputer is primarily pure computation (functions that take state → return colors)
+   - Manager pattern adds class instantiation overhead
+   - State objects (`S_Color`) already passed in - no need for manager to hold state
+
+2. **Alternative: Static utility class**
+   - Could be `export class ColorComputer { static computeWidgetColors(...) }`
+   - No instance needed for pure functions
+   - Simpler: `ColorComputer.computeWidgetColors()` vs `colorComputer.computeWidgetColors()`
+
+3. **Separation from Colors manager**
+   - `Colors` manager handles color schemes, stores, utility functions
+   - ColorComputer handles computation logic
+   - Might be confusing having two color-related managers
+   - Could alternatively live as methods on existing `Colors` manager
+
+4. **No state management needed**
+   - Unlike `Hits` (manages stores, timers) or `UX` (manages S_Items), ColorComputer has no persistent state
+   - Pure computation doesn't benefit from singleton instance
+   - All state comes from `S_Color` parameter
+
+**Recommendation:**
+
+Use **static utility class** approach:
+- `export class ColorComputer { static computeWidgetColors(...), static computeDotColors(...), ... }`
+- Simpler, more appropriate for pure computation
+- Still follows codebase pattern (class-based, in managers directory)
+- Easy to convert to manager pattern later if state/stores needed
+- Clearer separation: pure computation doesn't need instance
+
 ## Notes
 
 - Colors respond to: hover, grab, edit, focus
