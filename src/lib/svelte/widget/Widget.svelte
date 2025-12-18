@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { e, g, k, s, u, x, hits, debug, colors, signals, elements, components } from '../../ts/common/Global_Imports';
+	import { e, g, k, s, u, x, hits, debug, colors, controls, signals, elements, components } from '../../ts/common/Global_Imports';
 	import { G_Widget, S_Mouse, S_Element, S_Component } from '../../ts/common/Global_Imports';
 	import { T_Layer, T_Signal, T_Hit_Target } from '../../ts/common/Global_Imports';
 	import { Rect, Point } from '../../ts/common/Global_Imports';
@@ -81,7 +81,7 @@
 		const reactives = `${$w_s_title_edit?.t_edit}:::${u.descriptionBy_titles($w_grabbed)}`;
 		if (reactives != trigger && !!ancestry && s_widget.update_state_didChange) {
 			trigger = reactives;
-			if (!s_widget.isRadial_focus) {
+			if (!(controls.inRadialMode && ancestry.isFocus)) {
 				g_widget.layout();
 			}
 			final_layout();
@@ -184,11 +184,11 @@
 				position: absolute;
 				width: {width_ofWidget}px;
 				z-index: {T_Layer.widget};
-				top: {s_widget.isRadial_focus ? -0.5 : -2.5}px;'>
+				top: {(controls.inRadialMode && ancestry.isFocus) ? -0.5 : -2.5}px;'>
 			<Widget_Title
 				s_title = {s_title}
 				fontSize = {k.font_size.common}px/>
-			{#if !s_widget.isRadial_focus}
+			{#if !(controls.inRadialMode && ancestry.isFocus)}
 				<Widget_Drag
 					s_drag = {s_drag}
 					points_right = {drag_points_right}/>

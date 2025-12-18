@@ -1,6 +1,8 @@
 import { Ancestry, S_Element, T_Hit_Target } from '../common/Global_Imports';
 import { k, colors, controls, elements } from '../common/Global_Imports';
+import { styles } from '../managers/Styles';
 import { get } from 'svelte/store';
+import S_Color from './S_Color';
 
 	//////////////////////////////////////////
 	//										//
@@ -22,22 +24,34 @@ export default class S_Widget extends S_Element {
 	isGrabbed = false;		// NOT a source of truth
 	isEditing = false;		// ... only needed for detecting state changes
 	isFocus	  = false;
-
-	get stroke(): string { return this.color; }
-	get fill(): string { return this.background_color; }
-	get thing_color(): string { return this.ancestry.thing?.color ?? k.empty; }
-	get background(): string { return `background-color: ${this.background_color}`; }
-	get isFilled(): boolean { return this.ancestry.isGrabbed && !this.ancestry.isEditing; }
-	get isRadial_focus(): boolean { return this.ancestry.isFocus && controls.inRadialMode; }
-	get shows_border(): boolean { return this.ancestry.isGrabbed || this.ancestry.isEditing || this.isHovering; }
-	get color(): string { return this.colorFor_grabbed_andEditing(this.ancestry.isGrabbed, this.ancestry.isEditing); }
-	get background_color(): string { return this.isFilled ? this.thing_color : (this.shows_border || this.isRadial_focus) ? get(colors.w_background_color) : 'transparent'; }
 	
 	constructor(ancestry: Ancestry) {
 		super(ancestry, T_Hit_Target.widget, k.empty);
 		this.s_drag = elements.s_element_for(ancestry, T_Hit_Target.drag, k.empty);
 		this.s_title = elements.s_element_for(ancestry, T_Hit_Target.title, k.empty);
 		this.s_reveal = elements.s_element_for(ancestry, T_Hit_Target.reveal, k.empty);
+	}
+
+	get stroke(): string { return this.color; }
+	get fill(): string { return this.background_color; }
+	get background(): string { return `background-color: ${this.background_color}`; }
+	
+	get color(): string {
+		const state = new S_Color(this, this.isDisabled, this.isSelected, this.isInverted, this.subtype);
+		const computed = styles.get_widgetColors_for(state, this.thing_color, get(colors.w_background_color));
+		return computed.color;
+	}
+	
+	get background_color(): string {
+		const state = new S_Color(this, this.isDisabled, this.isSelected, this.isInverted, this.subtype);
+		const computed = styles.get_widgetColors_for(state, this.thing_color, get(colors.w_background_color));
+		return computed.background_color;
+	}
+	
+	get border(): string {
+		const state = new S_Color(this, this.isDisabled, this.isSelected, this.isInverted, this.subtype);
+		const computed = styles.get_widgetColors_for(state, this.thing_color, get(colors.w_background_color));
+		return computed.border;
 	}
 
 	get update_state_didChange(): boolean {
@@ -51,10 +65,4 @@ export default class S_Widget extends S_Element {
 		return change;
 	}
 
-	colorFor_grabbed_andEditing(isGrabbed: boolean, isEditing: boolean): string {
-		const isLight = colors.luminance_ofColor(this.thing_color) > 0.5;
-		return isLight
-			? ((!isGrabbed && !isEditing) ? this.thing_color : 'black')
-			: (isGrabbed && !isEditing) ? 'white' : this.thing_color;
-	}
-} 
+}

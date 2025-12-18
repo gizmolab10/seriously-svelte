@@ -11,7 +11,7 @@ import { k, colors, S_Color, controls } from '../common/Global_Imports';
 
 export default class Styles {
 
-	static computeWidgetColors(state: S_Color, thing_color: string, background_color: string): { color: string; background_color: string; border: string } {
+	get_widgetColors_for(state: S_Color, thing_color: string, background_color: string): { color: string; background_color: string; border: string } {
 		const isLight = colors.luminance_ofColor(thing_color) > 0.5;
 		const has_thing_color = thing_color !== k.empty;
 
@@ -50,7 +50,7 @@ export default class Styles {
 		return { color, background_color: bg_color, border };
 	}
 
-	static computeDotColors(state: S_Color, element_color: string, thing_color: string, background_color: string, hoverColor: string): { fill: string; stroke: string; svg_outline_color: string } {
+	get_dotColors_for(state: S_Color, element_color: string, thing_color: string, background_color: string, hoverColor: string): { fill: string; stroke: string; svg_outline_color: string } {
 		const isLight = colors.luminance_ofColor(thing_color) > 0.5;
 		const color_isInverted = (state.isInverted ?? false) !== state.hover;
 
@@ -78,7 +78,7 @@ export default class Styles {
 		return { fill, stroke, svg_outline_color };
 	}
 
-	static computeButtonColors(state: S_Color, element_color: string, background_color: string, hoverColor: string, disabledTextColor: string, border_thickness: number, has_widget_context: boolean = false, thing_color: string = k.empty): { fill: string; stroke: string; border: string } {
+	get_buttonColors_for(state: S_Color, element_color: string, background_color: string, hoverColor: string, disabledTextColor: string, border_thickness: number, has_widget_context: boolean = false, thing_color: string = k.empty): { fill: string; stroke: string; border: string } {
 		const color_isInverted = (state.isInverted ?? false) !== state.hover;
 		const has_border = border_thickness > 0;
 		const border_style = has_border ? `solid ${colors.border} ${border_thickness}px` : 'none';
@@ -124,3 +124,4 @@ export default class Styles {
 
 }
 
+export const styles = new Styles();

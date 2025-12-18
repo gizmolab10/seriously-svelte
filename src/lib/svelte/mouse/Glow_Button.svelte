@@ -23,13 +23,6 @@
     let banner_color = colors.banner;
 
     onMount(() => {
-        s_element.handle_s_mouse = handle_s_mouse;
-        // Set up autorepeat if enabled
-        if (detects_autorepeat) {
-            s_element.mouse_detection = T_Mouse_Detection.autorepeat;
-            s_element.autorepeat_callback = () => handle_click(click_title);
-            s_element.autorepeat_id = 0;
-        }
         return () => {
             hits.delete_hit_target(s_element);
         };
@@ -38,25 +31,39 @@
     $: isHovering = s_element.isEqualTo($w_s_hover);
     $: isAutorepeating = detects_autorepeat && s_element.isEqualTo($w_autorepeat);
 
-    $: {
-        if (!!glow_button) {
-            s_element.set_html_element(glow_button);
-        }
-    }
-
 	$: {
 		const _ = $w_background_color;
 		banner_color = colors.banner;
 	}
 
-	function handle_s_mouse(s_mouse: S_Mouse): boolean {
-		if (s_mouse.isDown) {
-			if (!detects_autorepeat) {
-				handle_click(click_title);
-			}
-			// Autorepeat is handled centrally by Hits.ts
-		}
-		return true;
+    // Set up handle_s_mouse and autorepeat reactively to capture current handle_click
+    $: if (!!s_element && !!glow_button) {
+        s_element.set_html_element(glow_button);
+        // Capture current values to avoid stale closures
+        const current_handle_click = handle_click;
+        const current_click_title = click_title;
+        
+        if (detects_autorepeat) {
+            // For autorepeat buttons: only set up autorepeat callback
+            // The callback fires immediately on mouse down (handled by Hits.ts)
+            s_element.mouse_detection = T_Mouse_Detection.autorepeat;
+            s_element.autorepeat_callback = () => current_handle_click(current_click_title);
+            s_element.autorepeat_id = 0;
+            // handle_s_mouse just returns true (autorepeat handles the click)
+            s_element.handle_s_mouse = (s_mouse: S_Mouse): boolean => {
+                return true;
+            };
+        } else {
+            // For non-autorepeat buttons: handle click directly
+            s_element.mouse_detection = 0;
+            s_element.autorepeat_callback = undefined;
+            s_element.handle_s_mouse = (s_mouse: S_Mouse): boolean => {
+                if (s_mouse.isDown) {
+                    current_handle_click(current_click_title);
+                }
+                return true;
+            };
+        }
     }
     
 </script>

@@ -40,7 +40,17 @@ export default class S_Color {
 
 	get hover(): boolean {
 		if (this.hit_target) {
-			return this.hit_target.isHovering;
+			if (this.hit_target.isHovering) {
+				return true;
+			}
+			// For widgets: also check if title with same ancestry is hovered
+			if (this.hit_target.isAWidget && this.identifiable) {
+				const hover_target = get(hits.w_s_hover);
+				if (hover_target?.isAWidget && hover_target.identifiable?.id === this.identifiable.id) {
+					return true;
+				}
+			}
+			return false;
 		}
 		// Fallback: compare by identifiable (less precise, but works if no hit_target provided)
 		const hover_target = get(hits.w_s_hover);

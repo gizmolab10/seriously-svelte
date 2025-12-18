@@ -1,6 +1,7 @@
 import { T_Direction } from '../common/Enumerations';
 import Identifiable from '../runtime/Identifiable';
 import { get, writable } from 'svelte/store';
+import '../common/Extensions';
 
 export default class S_Items<T> {
 	w_extra_titles = writable<string[]>([]);
@@ -65,7 +66,7 @@ export default class S_Items<T> {
 	set items(items: Array<T>) {
 		const prior = this.index;
 		const length = items.length;
-		const index = prior.force_between(0, length - 1);
+		const index = (length === 0) ? 0 : prior.force_between(0, length - 1);
 		const new_titles = (length < 2) ? [] : [T_Direction.previous, T_Direction.next];
 		this.w_extra_titles.set(new_titles);
 		this.w_items.set(items);

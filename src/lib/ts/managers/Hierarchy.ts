@@ -1,6 +1,6 @@
 import { T_Startup, T_Create, T_Alteration, T_File_Format, T_Persistable } from '../common/Global_Imports';
 import { Access, Ancestry, Predicate, Relationship, Persistable } from '../common/Global_Imports';
-import { g, k, p, s, u, x, busy, debug, controls, features } from '../common/Global_Imports';
+import { g, k, p, u, x, busy, debug, controls, features } from '../common/Global_Imports';
 import { T_Thing, T_Trait, T_Order, T_Control, T_Predicate } from '../common/Global_Imports';
 import { files, colors, signals, databases } from '../common/Global_Imports';
 import { Tag, User, Thing, Trait, S_Items } from '../common/Global_Imports';
@@ -9,6 +9,7 @@ import type { Integer, Dictionary } from '../types/Types';
 import Identifiable from '../runtime/Identifiable';
 import { pivot } from '../files/Pivot';
 import { get } from 'svelte/store';
+import { s } from './Stores';
 
 export let h!: Hierarchy;
 s.w_hierarchy.subscribe(value => h = value);

@@ -1,5 +1,6 @@
 export class Builds {
 	notes: Record<number, Array<string>> = {
+		179 : ['December 18, 2025', 'new Styles manager centralizes color computation'],
 		178 : ['December 17, 2025', 'fully isolate mouse logic within hits manager'],
 		177 : ['December 13, 2025', 'mouse responder is dead!'],
 		176 : ['December 2, 2025', 'new curved cluster titles'],

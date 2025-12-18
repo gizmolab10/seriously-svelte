@@ -1,4 +1,4 @@
-import { k } from '../../ts/common/Global_Imports';
+import { k } from '../../ts/common/Constants';
 
 export enum T_Timer {
 	repeat	= 'repeat',

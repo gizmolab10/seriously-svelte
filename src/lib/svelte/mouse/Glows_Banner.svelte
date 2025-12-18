@@ -10,9 +10,9 @@
 	export let titles: string[];
 	export let height: number;
 	export let width: number;
-	const banner_title = titles[0];
+	$: banner_title = titles[0];
 	const { w_background_color } = colors;
-	const g_repeater = new G_Repeater(titles, height, width, 0, 0, 7, 0, false, font_size, true);
+	$: g_repeater = new G_Repeater(titles, height, width, 0, 0, 7, 0, false, font_size, true);
 	let banner_color = colors.banner;
 
 	//////////////////////////////////////////////////////////////////////////////////
@@ -61,7 +61,7 @@
 			banner_id={banner_id}
 			font_size={font_size}
 			handle_click={intercept_click}
-			detects_autorepeat={title != banner_title}
+			detects_autorepeat={title != banner_id}
 			width={g_repeater.button_width_for(index)}/>
 		{#if index > 0}
 			<Separator name='between-buttons'

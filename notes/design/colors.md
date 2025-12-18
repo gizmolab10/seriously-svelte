@@ -42,14 +42,17 @@ Centralized color management system driven by the Hits manager and hit targets. 
 
 ## Architecture
 
-### Current Implementation
-- Colors computed in `S_Element` getters
-- Components call `update_colors()` reactively
-- `set_forHovering()` sets hover color and cursor
+### Current Implementation ✅
+- Colors computed centrally in `Styles` utility class
+- `S_Element` and `S_Widget` getters call `Styles` methods
+- Components remain reactive via getter pattern
+- `set_forHovering()` sets hover color and cursor (unchanged)
 
-### Proposed Centralization
+### Implementation Status
 - [x] Define color schema per component/state
 - [x] Centralize color computation logic
+- [x] Create `S_Color` state object class
+- [x] Migrate widget, drag, reveal, button components
 - [ ] Standardize state transitions
 - [ ] Document color inheritance rules
 
@@ -116,35 +119,36 @@ Centralized color management system driven by the Hits manager and hit targets. 
 - Duplication of fill/stroke inversion logic
 - State combinations computed inline
 
-**Proposed Architecture:**
+**Implemented Architecture:**
 
-Create a `ColorComputer` service that:
-- Takes inputs: component type, state flags, base colors
+Created `Styles` utility class (`src/lib/ts/utilities/Styles.ts`) with static methods:
+- Takes inputs: `S_Color` state object, base colors
 - Returns computed color values based on schema
 - Encapsulates all conditional logic in one place
 - Supports all component types (widget, drag, reveal, button)
 
-**Key Design Decisions:**
+**Implementation Details:**
 
-1. **Single computation function per component type**
-   - `computeWidgetColors(state, thing_color, background_color)`
-   - `computeDotColors(state, element_color, thing_color, background_color)` (drag/reveal)
-   - `computeButtonColors(state, element_color, background_color)`
+1. **Single computation function per component type** ✅
+   - `Styles.computeWidgetColors(state, thing_color, background_color)` → `{ color, background_color, border }`
+   - `Styles.computeDotColors(state, element_color, thing_color, background_color, hoverColor)` → `{ fill, stroke, svg_outline_color }`
+   - `Styles.computeButtonColors(state, element_color, background_color, hoverColor, disabledTextColor, border_thickness, has_widget_context, thing_color)` → `{ fill, stroke, border }`
 
-2. **State object pattern**
-   - Pass state object: `{ hover, grabbed, editing, focus, disabled, selected, isInverted }`
-   - Avoids parameter explosion
-   - Makes state combinations explicit
+2. **State object pattern** ✅
+   - `S_Color` class (`src/lib/ts/state/S_Color.ts`) encapsulates all state flags
+   - Constructor accepts `S_Hit_Target | Identifiable | undefined` plus optional flags
+   - Getters provide: `hover`, `grabbed`, `editing`, `focus`, `thing_color`
+   - Special hover logic: for widgets, also checks if title with same ancestry is hovered
 
-3. **Replace getters with computed properties**
-   - `S_Element`/`S_Widget` getters call `ColorComputer` instead of inline logic
-   - Components remain reactive but logic is centralized
-   - Easier to test color logic in isolation
+3. **Getters are thin wrappers** ✅
+   - `S_Element`/`S_Widget` getters create `S_Color` instance and call `Styles` methods
+   - Components remain reactive via getter pattern
+   - Logic centralized in `Styles`, state collected in `S_Color`
 
-4. **Preserve reactive behavior**
-   - Keep getter pattern so Svelte reactivity works
-   - Getters become thin wrappers around `ColorComputer`
-   - No changes to component reactive blocks
+4. **Preserve reactive behavior** ✅
+   - Getters still reactive - Svelte tracks dependencies
+   - No changes to component reactive blocks needed
+   - All color logic testable in isolation
 
 **Benefits:**
 - Single source of truth for color computation
@@ -160,53 +164,34 @@ Create a `ColorComputer` service that:
 - **Keep**: `isHovering` getter - needed for state collection
 - **No change**: Hit testing and cursor logic remain here
 
-**S_Element:**
-- **Keep as inputs**: `color_background`, `isDisabled`, `isSelected`, `isInverted`, `subtype`
-- **Replace getters**: `fill`, `stroke`, `svg_outline_color`, `border` become thin wrappers calling `ColorComputer`
-- **Simplify**: `color_isInverted` getter becomes input to state object (computed inline in ColorComputer call)
-- **Remove**: Inline color logic from getters
-- **Example transformation:**
+**S_Element (Implemented):**
+- **Kept as inputs**: `color_background`, `isDisabled`, `isSelected`, `isInverted`, `subtype`
+- **Getters now call Styles**: `fill`, `stroke`, `svg_outline_color`, `border` create `S_Color` and call `Styles.computeDotColors()` or `Styles.computeButtonColors()`
+- **Helper getters**: `s_color`, `thing_color`, `dotColors_forElement`, `buttonColors_forElement` reduce duplication
+- **Removed**: Old inline color logic from getters
+- **Actual implementation:**
   ```typescript
-  // Before
-  get fill(): string { 
-    return this.asTransparent ? 'transparent' 
-      : this.color_isInverted ? this.hoverColor 
-      : this.isSelected ? 'lightblue' 
-      : this.color_background; 
-  }
-  
-  // After
   get fill(): string {
-    return ColorComputer.computeElementColors({
-      hover: this.isHovering,
-      selected: this.isSelected,
-      disabled: this.isDisabled,
-      isInverted: this.isInverted,
-      subtype: this.subtype
-    }, this.element_color, this.hoverColor, this.color_background).fill;
+    if (this.asTransparent) {
+      return 'transparent';
+    } else if (this.isADot) {
+      return this.dotColors_forElement.fill;
+    } else if (this.isAControl) {
+      return this.buttonColors_forElement.fill;
+    } else {
+      return this.color_isInverted ? this.hoverColor : this.isSelected ? 'lightblue' : this.color_background;
+    }
   }
   ```
 
-**S_Widget:**
-- **Keep as inputs**: `isGrabbed`, `isEditing`, `isFocus`, `thing_color` getter
-- **Replace getters**: `color`, `background_color`, `border` call `ColorComputer.computeWidgetColors()`
-- **Remove**: `colorFor_grabbed_andEditing()` method - logic moves to ColorComputer
-- **Simplify**: Helper getters like `isFilled`, `shows_border`, `isRadial_focus` may be computed inline in ColorComputer call
-- **Example transformation:**
+**S_Widget (Implemented):**
+- **Getters now call Styles**: `color`, `background_color`, `border` create `S_Color` and call `Styles.computeWidgetColors()`
+- **Removed**: `colorFor_grabbed_andEditing()`, `isFilled`, `shows_border`, `isRadial_focus` helper methods
+- **Actual implementation:**
   ```typescript
-  // Before
-  get color(): string { 
-    return this.colorFor_grabbed_andEditing(this.ancestry.isGrabbed, this.ancestry.isEditing); 
-  }
-  
-  // After
   get color(): string {
-    return ColorComputer.computeWidgetColors({
-      hover: this.isHovering,
-      grabbed: this.ancestry.isGrabbed,
-      editing: this.ancestry.isEditing,
-      focus: this.ancestry.isFocus
-    }, this.thing_color, get(colors.w_background_color)).color;
+    const state = new S_Color(this, this.isDisabled, this.isSelected, this.isInverted, this.subtype);
+    return Styles.computeWidgetColors(state, this.thing_color, get(colors.w_background_color)).color;
   }
   ```
 
@@ -216,51 +201,56 @@ Create a `ColorComputer` service that:
 - ColorComputer handles all conditional logic
 - State objects become data containers + thin computation wrappers
 
-**State Object Structure:**
+**S_Color State Object (Implemented):**
 
-The state object is a plain object passed to ColorComputer methods. It contains all boolean flags and context needed for color computation:
+The `S_Color` class (`src/lib/ts/state/S_Color.ts`) encapsulates all state flags and context needed for color computation:
 
 ```typescript
-interface ColorState {
-  hover: boolean;           // From isHovering (hits.w_s_hover)
-  grabbed?: boolean;        // From ancestry.isGrabbed (widget only)
-  editing?: boolean;        // From ancestry.isEditing (widget only)
-  focus?: boolean;          // From ancestry.isFocus (widget only)
-  disabled?: boolean;       // From isDisabled
-  selected?: boolean;       // From isSelected (buttons)
-  isInverted?: boolean;     // From isInverted flag
-  subtype?: string;         // For special cases (e.g., T_Control.details)
-}
+export default class S_Color {
+  hit_target?: S_Hit_Target;      // Hit target for hover detection (includes type + identifiable)
+  identifiable?: Identifiable;     // Provides: isGrabbed, isEditing, isFocus, thing.color
+  isInverted?: boolean;
+  isDisabled?: boolean;
+  isSelected?: boolean;
+  subtype?: string;                // For special cases (e.g., T_Control.details)
 
-// Example usage:
-const state: ColorState = {
-  hover: this.isHovering,
-  grabbed: this.ancestry?.isGrabbed,
-  editing: this.ancestry?.isEditing,
-  focus: this.ancestry?.isFocus,
-  disabled: this.isDisabled,
-  selected: this.isSelected,
-  isInverted: this.isInverted,
-  subtype: this.subtype
-};
+  constructor(hit_target: S_Hit_Target | Identifiable | undefined, 
+              isDisabled?: boolean, 
+              isSelected?: boolean, 
+              isInverted?: boolean, 
+              subtype?: string)
+
+  // Getters:
+  get hover(): boolean             // Checks hit_target.isHovering or compares identifiable.id with hits.w_s_hover
+  get grabbed(): boolean           // Returns ancestry?.isGrabbed ?? false
+  get editing(): boolean           // Returns ancestry?.isEditing ?? false
+  get focus(): boolean             // Returns ancestry?.isFocus ?? false
+  get thing_color(): string        // Returns ancestry?.thing?.color ?? k.empty
+}
 ```
 
 **Key characteristics:**
-- All properties are optional except `hover` (always present)
-- Widget-specific states (`grabbed`, `editing`, `focus`) only relevant for widget/dot components
-- `isInverted` represents the XOR of `isInverted` flag and `hover` state
-- Component type determines which state properties are used
+- Constructor accepts `S_Hit_Target` or `Identifiable` - handles both patterns
+- `hover` getter has special logic: for widgets, checks if title with same ancestry is hovered (fixes widget title hover bug)
+- `grabbed`, `editing`, `focus`, `thing_color` safely accessed via `ancestry` getter (casts `identifiable` to `Ancestry`)
 - State object is created fresh on each getter call (no caching needed due to Svelte reactivity)
+- All properties are optional except those provided by getters
 
-**Migration Strategy:**
-1. Implement ColorComputer with same logic as current getters (verify parity)
-2. Replace getters one at a time, starting with most duplicated (fill/stroke)
-3. Remove helper methods once fully migrated
-4. Simplify state object properties over time as patterns emerge
+**Migration Completed:**
+1. ✅ Implemented `Styles` utility class with static methods
+2. ✅ Created `S_Color` state object class
+3. ✅ Migrated widget, drag, reveal, button components
+4. ✅ Removed deprecated helper methods (`colorFor_grabbed_andEditing`, `isFilled`, `shows_border`, `isRadial_focus`)
+5. ✅ Fixed widget title hover bug (S_Color.hover checks for title/widget with same ancestry)
 
-## Color Computer
+**Code Reduction:**
+- Estimated ~200+ lines of duplicated color logic eliminated
+- Centralized logic makes future changes easier
+- All components now use same computation patterns
 
-### Manager/UX Pattern Discussion
+## Styles Utility Class (Implementation)
+
+### Design Decision
 
 **Current Pattern:**
 Managers are singleton classes exported from `Global_Imports`:
@@ -313,19 +303,33 @@ Managers are singleton classes exported from `Global_Imports`:
    - Pure computation doesn't benefit from singleton instance
    - All state comes from `S_Color` parameter
 
-**Recommendation:**
+**Implementation:**
 
-Use **static utility class** approach:
-- `export class ColorComputer { static computeWidgetColors(...), static computeDotColors(...), ... }`
-- Simpler, more appropriate for pure computation
-- Still follows codebase pattern (class-based, in managers directory)
-- Easy to convert to manager pattern later if state/stores needed
-- Clearer separation: pure computation doesn't need instance
+Used **static utility class** approach:
+- `export default class Styles { static computeWidgetColors(...), static computeDotColors(...), static computeButtonColors(...) }`
+- Located in `src/lib/ts/utilities/Styles.ts`
+- Pure computation functions - no instance state needed
+- Easy to test and reason about
+- Clear separation: `Styles` computes colors, `Colors` manager handles schemes/stores
 
-## Notes
+**File Structure:**
+- `src/lib/ts/utilities/Styles.ts` - Color computation logic
+- `src/lib/ts/state/S_Color.ts` - State object for passing to Styles
+- `src/lib/ts/state/S_Element.ts` - Uses Styles for dot/button colors
+- `src/lib/ts/state/S_Widget.ts` - Uses Styles for widget colors
 
-- Colors respond to: hover, grab, edit, focus
-- Inversion logic: `isInverted != isHovering` (XOR)
-- Background color from `colors.w_background_color`
-- Thing color from `ancestry.thing?.color`
-- Only widgets can have selected, editing or focus state.
+## Implementation Notes
+
+- ✅ Colors respond to: hover, grab, edit, focus, selected, disabled
+- ✅ Inversion logic: `color_isInverted = (isInverted ?? false) !== hover` (computed in Styles)
+- ✅ Background color from `colors.w_background_color`
+- ✅ Thing color from `ancestry.thing?.color` (accessed via `S_Color.thing_color` getter)
+- ✅ Widget title hover: `S_Color.hover` checks if widget/title with same ancestry is hovered
+- ✅ Deprecated code removed: `colorFor_grabbed_andEditing()`, `isRadial_focus`, unused `svg_outline_color` fallback logic
+- ✅ Only widgets can have selected, editing or focus state (via ancestry)
+
+## Known Issues / Future Work
+
+- Glow buttons have some click handling issues (separate from color management)
+- Consider adding tests for Styles computation functions
+- Could further simplify S_Element helper getters if needed
