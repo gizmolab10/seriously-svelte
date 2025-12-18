@@ -302,15 +302,15 @@ All tests assume a **widget is selected** in the graph or (search results) list 
 
 #### Regression
 1. **Normal-click** buttons work normally
-   - [ ] Verify: single click works, no unexpected delays or repeats
+   - [x] Verify: single click works, no unexpected delays or repeats
 	   - [x] breadcrumbs -- delay
 	   - [x] details toggle -- delay
-	   - [ ] search -- ignored
+	   - [x] search -- ignored
 		   - [x] ignored on first such event
-		   - [ ] ignored on subsequent ones
-	   - [ ] close search -- ignored
+		   - [x] ignored on subsequent ones
+	   - [x] close search -- ignored
 		   - [x] ignored on first such event
-		   - [ ] ignored on subsequent ones
+		   - [x] ignores **hover and click** on subsequent ones
 	   - [x] widget drag button -- delay
 	   - [x] widget reveal button -- delay
 	   - [x] all segmented controls (eg, tree/radial) -- delay
@@ -322,7 +322,7 @@ All tests assume a **widget is selected** in the graph or (search results) list 
 	   - [x] first action (change the selection) → fires immediately
 	   - [x] then → repeats after a short delay
 	   - [x] when the mouse is released → repeating stops
-2. **Hover-leave cancels autorepeat**
+3. **Hover-leave cancels autorepeat**
    - [x] Same as 1, above, press and hold a browse action
    - [x] While holding, drag mouse off the button
    - [x] Verify: autorepeat stops immediately
@@ -362,9 +362,11 @@ All tests assume a **widget is selected** in the graph or (search results) list 
    - [ ] Verify: long-click does not fire
 ### Cleanup
 
-- [ ] Deprecate or remove `S_Mouse.clicks` if no longer used
-- [ ] Final update `clicks.md` design doc to reflect centralized model
-- [ ] Review per-component `Mouse_Timer` instances:
-	 - [ ] `Events.mouse_timer_forName()` factory and `mouse_timer_dict_byName` — may be obsolete if all timing is centralized
-	 - [ ] `Events.alterationTimer` — used for alteration; keep if still needed
-	 - [ ] `Radial_Rings.svelte` calls `e.mouse_timer_forName(name).reset()` — review if still needed
+- [x] **`S_Mouse.clicks`** — ✅ Reviewed: No longer used anywhere; **can be removed** from `S_Mouse` class
+- [ ] **`clicks.md` design doc** — ⏳ **TODO**: Update to reflect centralized model (if doc exists)
+- [x] **`Events.mouse_timer_forName()` and `mouse_timer_dict_byName`**
+  — ✅ Reviewed: **Keep** — Still needed for non-click-timing uses:
+	 - Still used by `Events.alterationTimer` for alteration blinking (not mouse click timing)
+	 - Still used by `Radial_Rings.svelte` for reset on mouse up (radial-specific, not click timing)
+- [x] **`Events.alterationTimer`** — ✅ Reviewed: **Keep** — Used for alteration visual feedback, not mouse click timing
+- [x] **`Radial_Rings.svelte`** — ✅ Reviewed: **Keep** `e.mouse_timer_forName(name).reset()` — Used for radial ring state reset on mouse up, not click timing

@@ -206,13 +206,13 @@ export default class Hits {
 		const type = target.type;
 		if (!this.targets_dict_byType[type]) {
 			this.targets_dict_byType[type] = [];
-		} else if (this.disallow_multiple_targets_forType(type)) {
+		} else {
 			const existing = this.targets_dict_byType[type].find(t => t.id == id);
 			if (!!existing) {
 				this.delete_hit_target(existing);
 			}
 		}
-		this.targets_dict_byID[id]  = target;
+		this.targets_dict_byID[id] = target;
 		this.targets_dict_byType[type].push(target);
 		this.insert_into_rbush(target, this.rbush);
 	}
@@ -293,17 +293,6 @@ export default class Hits {
 			}
 		}
 		return bush;
-	}
-
-	private disallow_multiple_targets_forType(type: T_Hit_Target): boolean {
-		return [
-			T_Hit_Target.breadcrumbs,
-			T_Hit_Target.rubberband,
-			T_Hit_Target.database,
-			T_Hit_Target.resizing,
-			T_Hit_Target.rotation,
-			T_Hit_Target.trait,
-			T_Hit_Target.tag].includes(type);
 	}
 
 	static readonly _____AUTOREPEAT: unique symbol;

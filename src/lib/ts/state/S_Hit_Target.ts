@@ -17,10 +17,10 @@ export default class S_Hit_Target {
 	html_element: HTMLElement | null = null;
 	element_rect: Rect | null = null;							// for use in Hits index
 	autorepeat_callback?: () => void;
-	autorepeat_event?: MouseEvent;		// stored here to survive component recreation
-	autorepeat_isFirstCall = true;		// stored here to survive component recreation
 	defaultCursor = k.cursor_default;
 	hoverCursor = k.cursor_default;
+	autorepeat_event?: MouseEvent;		// stored here to survive component recreation
+	autorepeat_isFirstCall = true;		// stored here to survive component recreation
 	hoverColor = 'transparent';
 	element_color = 'black';
 	autorepeat_id?: number;

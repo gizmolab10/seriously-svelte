@@ -41,9 +41,28 @@
 
 	onMount(() => {
 		recompute_style();
-		// Set handler on mount as fallback
-		if (!!s_button && handle_s_mouse) {
-			s_button.handle_s_mouse = intercept_handle_s_mouse;
+		// Set handler on mount as fallback (element might be available immediately)
+		if (!!element && !!s_button && handle_s_mouse) {
+			s_button.set_html_element(element);
+			const current_handle = handle_s_mouse;
+			s_button.handle_s_mouse = (s_mouse: S_Mouse): boolean => {
+				if (s_mouse.isDown && !!s_mouse.event) {
+					if (s_button.detects_autorepeat) {
+						s_button.autorepeat_event = s_mouse.event;
+						s_button.autorepeat_isFirstCall = true;
+					} else if (!s_button.detects_longClick && !s_button.detects_doubleClick) {
+						current_handle(s_mouse);
+						recompute_style();
+					}
+					return true;
+				} else if (s_mouse.isUp && !!s_mouse.event) {
+					reset();
+					current_handle(s_mouse);
+					recompute_style();
+					return true;
+				}
+				return false;
+			};
 		}
 		return () => {
 			hits.delete_hit_target(s_button);
@@ -51,14 +70,36 @@
 	});
 
 	// important for components with {#key} blocks
+	// Set element and handler together to ensure both are set
+	// Create handler inline to capture current handle_s_mouse prop value
+	// Reference handle_s_mouse to ensure Svelte tracks it for reactive updates
 	$: if (!!element && !!s_button) {
 		s_button.set_html_element(element);
-	}
-
-	// Update handler reactively (s_button may be cached/reused from previous component instance)
-	// Include handle_s_mouse in dependencies so handler updates when prop changes
-	$: if (!!s_button && handle_s_mouse) {
-		s_button.handle_s_mouse = intercept_handle_s_mouse;
+		// Create new handler function that captures current handle_s_mouse
+		// This ensures handler updates when handle_s_mouse prop changes (e.g., inline arrow functions)
+		const current_handle = handle_s_mouse;
+		if (current_handle) {
+			s_button.handle_s_mouse = (s_mouse: S_Mouse): boolean => {
+				if (s_mouse.isDown && !!s_mouse.event) {
+					if (s_button.detects_autorepeat) {
+						s_button.autorepeat_event = s_mouse.event;
+						s_button.autorepeat_isFirstCall = true;
+					} else if (!s_button.detects_longClick && !s_button.detects_doubleClick) {
+						current_handle(s_mouse);
+						recompute_style();
+					}
+					return true;
+				} else if (s_mouse.isUp && !!s_mouse.event) {
+					reset();
+					current_handle(s_mouse);
+					recompute_style();
+					return true;
+				}
+				return false;
+			};
+		} else {
+			s_button.handle_s_mouse = undefined;
+		}
 	}
 
 	// in case mouse_detection changes

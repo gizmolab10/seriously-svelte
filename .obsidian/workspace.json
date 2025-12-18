@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "b8baf39744e6e5fe",
+        "id": "63349e8dfea63b4c",
         "type": "tabs",
         "children": [
           {
-            "id": "9968854d61be5eec",
+            "id": "06e98e76ea4518da",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "notes/design/mouse.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "mouse"
+              "title": "New tab"
             }
           }
         ]
@@ -140,30 +136,21 @@
             "state": {
               "type": "outline",
               "state": {
+                "file": "notes/design/tabled/Resize_Optimization_AI.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline"
-            }
-          },
-          {
-            "id": "ac6a0758ab4ef4b8",
-            "type": "leaf",
-            "state": {
-              "type": "git-view",
-              "state": {},
-              "icon": "lucide-ghost",
-              "title": "git-view"
+              "title": "Outline of Resize_Optimization_AI"
             }
           }
         ],
-        "currentTab": 4
+        "currentTab": 3
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 333.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -176,8 +163,18 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "9968854d61be5eec",
+  "active": "5c80c02b98d9a5c2",
   "lastOpenFiles": [
+    "notes/design/stores.md",
+    "notes/design/obsolete/hover/HOVER_REFACTOR_PROPOSAL.md",
+    "notes/design/obsolete/hover",
+    "notes/design/widget_title.md",
+    "notes/design/hits.md",
+    "notes/design/obsolete/mouse.timer.md",
+    "notes/design/obsolete",
+    "notes/design/mouse.md",
+    "notes/design/mouse.timer.md",
+    "notes/design/clicks.md",
     "bubble/change_graph_mode.js",
     "bubble/change_selection copy.js",
     "bubble/replace_hierarchy.js",
@@ -186,13 +183,10 @@
     "src/lib/svelte/radial/Radial_Cluster.svelte",
     "notes/tools/analyze_counts.sh",
     "src/lib/ts/database/DB_Bubble.abandoned.ts",
-    "notes/aside/2025/DB_Bubble.abandoned.ts",
-    "notes/aside/bubble/DB_Bubble.abandoned.ts",
     "notes/design/refactor_writables.md",
     "project-analysis.md",
     "notes/design/project-analysis.md",
     "README.md",
-    "src/lib/svelte/draw/Rubberband.svelte",
     "notes/Resize_Optimization_AI.md",
     "notes/bubble tears.md",
     "notes/holons.api.md",
