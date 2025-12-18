@@ -106,19 +106,19 @@
 	$: if (!!s_button && !!element) {
 		s_button.mouse_detection = mouse_detection;
 		if (s_button.detects_autorepeat && !s_button.autorepeat_callback) {
-			s_button.autorepeat_callback = () => {
+		s_button.autorepeat_callback = () => {
 				if (!s_button.autorepeat_event) return;
-				// First call is the initial down, subsequent calls are repeats
+			// First call is the initial down, subsequent calls are repeats
 				const s_mouse_event = s_button.autorepeat_isFirstCall 
 					? S_Mouse.down(s_button.autorepeat_event, s_button.html_element!)
 					: S_Mouse.repeat(s_button.autorepeat_event, s_button.html_element!);
 				s_button.autorepeat_isFirstCall = false; // Next call will be a repeat
-				handle_s_mouse(s_mouse_event);
-				recompute_style();
-			};
-			s_button.autorepeat_id = 0;
+			handle_s_mouse(s_mouse_event);
+			recompute_style();
+		};
+		s_button.autorepeat_id = 0;
 		} else if (!s_button.detects_autorepeat) {
-			s_button.autorepeat_callback = undefined;
+		s_button.autorepeat_callback = undefined;
 		}
 		if (s_button.detects_longClick) {
 			s_button.longClick_callback = (s_mouse: S_Mouse) => {
@@ -162,9 +162,9 @@
 				s_button.autorepeat_isFirstCall = true;
 			} else if (!s_button.detects_longClick && !s_button.detects_doubleClick) {
 				// Normal button — fire immediately on down
-				handle_s_mouse(s_mouse);
-				recompute_style();
-			}
+					handle_s_mouse(s_mouse);
+					recompute_style();
+				}
 			// Long-click and double-click timing handled centrally by Hits.ts
 			return true;
 		} else if (s_mouse.isUp && !!s_mouse.event) {

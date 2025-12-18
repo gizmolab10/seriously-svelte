@@ -11,10 +11,14 @@
             "id": "06e98e76ea4518da",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "notes/design/colors.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "New tab"
+              "title": "colors"
             }
           }
         ]
@@ -136,13 +140,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "notes/design/tabled/Resize_Optimization_AI.md",
+                "file": "notes/design/colors.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of Resize_Optimization_AI"
+              "title": "Outline of colors"
             }
           }
         ],
@@ -163,9 +167,19 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "5c80c02b98d9a5c2",
+  "active": "06e98e76ea4518da",
   "lastOpenFiles": [
     "notes/design/stores.md",
+    "notes/design/colors.md",
+    "notes/design/timer-project.md",
+    "notes/design/markdown.md",
+    "notes/design/layout-guide.md",
+    "^12211f.md",
+    "^21p.md",
+    "notes/design/geometry.md",
+    "notes/design/refactoring-guide.md",
+    "notes/design/refactor-clicks.md",
+    "notes/design/tabled/Resize_Optimization_AI.md",
     "notes/design/obsolete/hover/HOVER_REFACTOR_PROPOSAL.md",
     "notes/design/obsolete/hover",
     "notes/design/widget_title.md",
@@ -191,14 +205,7 @@
     "notes/bubble tears.md",
     "notes/holons.api.md",
     "holons/api.md",
-    "notes/api.md",
-    "src/bubble tears.md",
-    "src/tears.md",
-    "Proposal_P_WindowResizePerformance.md",
-    "Resize_Optimization_AI.md",
     "dist/vite.svg",
-    "dist/settings.svg",
-    "src/lib/svelte/shared/README_Title_Editor.md",
-    "node_modules/svelte-portal/README.md"
+    "dist/settings.svg"
   ]
 }

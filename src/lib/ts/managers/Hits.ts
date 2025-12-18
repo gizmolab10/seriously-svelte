@@ -19,16 +19,17 @@ export default class Hits {
 	time_ofPrior_hover: number = 0;
 	longClick_fired: boolean = false;
 	rbush = new RBush<Target_RBRect>();
-	w_dragging = writable<T_Drag>(T_Drag.none);
-	w_s_hover = writable<S_Hit_Target | null>(null);
 	targets_dict_byID: Dictionary<S_Hit_Target> = {};
-	w_longClick = writable<S_Hit_Target | null>(null);
-	w_autorepeat = writable<S_Hit_Target | null>(null);
 	pending_singleClick_event: MouseEvent | null = null;
 	pending_singleClick_target: S_Hit_Target | null = null;
 	click_timer: Mouse_Timer = new Mouse_Timer('hits-click');
 	targets_dict_byType: Dictionary<Array<S_Hit_Target>> = {};
 	autorepeat_timer: Mouse_Timer = new Mouse_Timer('hits-autorepeat');
+	
+	w_s_hover	 = writable<S_Hit_Target | null>(null);
+	w_longClick	 = writable<S_Hit_Target | null>(null);
+	w_autorepeat = writable<S_Hit_Target | null>(null);
+	w_dragging	 = writable<T_Drag>(T_Drag.none);
 
 	static readonly _____HOVER: unique symbol;
 
