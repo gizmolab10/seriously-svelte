@@ -96,8 +96,8 @@ export enum T_Cluster_Pager {
 }
 
 export enum T_Breadcrumbs {
-	hierarchy  = 'hierarchy',
-	navigation = 'navigation',
+	ancestry = 'ancestry',
+	history  = 'history',
 }
 
 export enum T_Auto_Adjust_Graph {

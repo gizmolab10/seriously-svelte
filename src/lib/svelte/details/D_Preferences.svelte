@@ -61,7 +61,7 @@
 	}
 
 	function handle_breadcrumbs(types: Array<T_Breadcrumbs | null>) {
-		$w_t_breadcrumbs = types.length > 0 ? types[0] : T_Breadcrumbs.hierarchy;
+		$w_t_breadcrumbs = types.length > 0 ? types[0] : T_Breadcrumbs.ancestry;
 	}
 
 	function handle_count_dots(types: string[]) {
@@ -158,7 +158,7 @@
 		origin={Point.y(tops[5])}
 		selected={[$w_t_breadcrumbs]}
 		handle_selection={handle_breadcrumbs}
-		titles={[T_Breadcrumbs.hierarchy, T_Breadcrumbs.navigation]}/>
+		titles={[T_Breadcrumbs.ancestry, T_Breadcrumbs.history]}/>
 	<Separator name='background-color'
 		length={width}
 		position={position}

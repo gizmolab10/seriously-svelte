@@ -143,7 +143,7 @@ export class Preferences {
 		s.w_thing_title		  .set( this.read_key(T_Preference.thing)		 ?? k.title.default);
 		s.w_thing_fontFamily  .set( this.read_key(T_Preference.font)		 ?? 'Times New Roman');
 		show.w_t_cluster_pager.set( this.read_key(T_Preference.paging_style) ?? T_Cluster_Pager.sliders);
-		show.w_t_breadcrumbs  .set( this.read_key(T_Preference.breadcrumbs)  ?? T_Breadcrumbs.hierarchy);
+		show.w_t_breadcrumbs  .set( this.read_key(T_Preference.breadcrumbs)  ?? T_Breadcrumbs.ancestry);
 		this.reactivity_subscribe()
 	}
 	

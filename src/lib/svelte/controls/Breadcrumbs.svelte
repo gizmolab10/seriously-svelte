@@ -47,7 +47,7 @@
 	}
 
 	function ancestries_forBreadcrumbs(): Array<Ancestry> {
-		if ($w_t_breadcrumbs == T_Breadcrumbs.hierarchy) {
+		if ($w_t_breadcrumbs == T_Breadcrumbs.ancestry) {
 			return $w_ancestry_forDetails.heritage;
 		} else {
 			return x.si_recents.items.map(item => item[0]);
