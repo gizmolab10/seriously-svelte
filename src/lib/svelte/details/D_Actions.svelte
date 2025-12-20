@@ -12,7 +12,7 @@
 	const left_afterTitle = 39.5;
 	const bottom_tableHeight = 73;
 	const { w_user_graph_offset } = g;
-	const { w_show_graph_ofType } = show;
+	const { w_t_graph } = show;
 	const { w_background_color } = colors;
 	const table_width = k.width.details - 8;
 	const { w_items: w_grabbed } = x.si_grabs;
@@ -58,7 +58,7 @@
 	$: {
 		const _ = `${$w_user_graph_offset}
 		:::${$w_s_title_edit?.description}
-		:::${$w_show_graph_ofType}
+		:::${$w_t_graph}
 		:::${$w_background_color}
 		:::${x.si_found.w_index}
 		:::${$w_s_alteration}`;

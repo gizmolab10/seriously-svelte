@@ -179,3 +179,4 @@ One manager, one timer/cache/state per concern. No conflicts, easier to reason a
 - Follow migration pattern: analysis → design → implementation → cleanup
 - Use "Markdown Anchor Pattern" for documentation
 
+

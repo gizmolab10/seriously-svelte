@@ -9,14 +9,14 @@
 	const { w_thing_fontFamily } = s;
 	const { w_rect_ofGraphView } = g;
 	const s_search = elements.s_element_for(null, T_Hit_Target.search, k.empty);
-	const { w_search_state, w_search_preferences, w_search_results_found } = search;
+	const { w_s_search, w_search_preferences, w_search_results_found } = search;
 	let input: HTMLInputElement;
 
 	$: if (!!input) {
 		s_search.html_element = input;				// so s_element_set_focus_to will work
 	}
 
-	$: if ($w_search_state != T_Search.enter) {
+	$: if ($w_s_search != T_Search.enter) {
 		setTimeout(() => {
 			elements.s_element_set_focus_to(s_search);	// so 'f' will not be added to the input
 		}, 1);

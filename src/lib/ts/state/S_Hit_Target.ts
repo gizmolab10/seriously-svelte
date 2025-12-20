@@ -21,24 +21,28 @@ export default class S_Hit_Target {
 	hoverCursor = k.cursor_default;
 	autorepeat_event?: MouseEvent;		// stored here to survive component recreation
 	autorepeat_isFirstCall = true;		// stored here to survive component recreation
-	hoverColor = 'transparent';
-	element_color = 'black';
+	private _hoverColor_override?: string;	// Cached hoverColor when element_color is explicitly set
+	private _element_color_override?: string;	// Explicit override for buttons/controls (dots use thing_color automatically)
 	autorepeat_id?: number;
 	type: T_Hit_Target;
 	clicks: number = 0;
 	id: string;
 	
+	static empty() { return {}; }
 	constructor(type: T_Hit_Target, identifiable: Identifiable | null) {
 		this.id = type + '-' + (identifiable?.id ?? 'unknown identifiable');
 		this.identifiable = identifiable;
 		this.type = type;
+		if (this.isADot) {
+			this.hoverCursor = 'pointer';
+		}
 	}
 
-	static empty() { return {}; }
 	get stroke(): string { return 'red'; }				// override in subclasses
 	get rect(): Rect | null { return this.element_rect; }
 	get ancestry(): Ancestry { return this.identifiable as Ancestry; }
-	get isHovering(): boolean { return this.isEqualTo(get(hits.w_s_hover)); }
+	get inAWidget(): boolean { return this.isAWidget || this.isADot; }
+	get isHovering(): boolean { return this.hasSameID_as(get(hits.w_s_hover)); }
 	set isHovering(isHovering: boolean) { hits.w_s_hover.set(isHovering ? this : null); }
 	get svg_hover_color(): string { return this.isHovering ? colors.background : this.stroke; }
 	get isADot(): boolean { return [T_Hit_Target.drag, T_Hit_Target.reveal].includes(this.type); }
@@ -54,12 +58,45 @@ export default class S_Hit_Target {
 		hits.add_hit_target(this);
 	}
 
-	isEqualTo(other: S_Hit_Target | null): boolean { return !!other && this.id == other.id; }
+	set element_color(value: string) {
+		this._element_color_override = value;
+		// Cache hoverColor when element_color is explicitly set
+		this._hoverColor_override = colors.background_special_blend(value, k.opacity.medium);
+	}
+
+	get element_color(): string {
+		// For dots: use thing_color if no override is set
+		if (this.isADot && !this._element_color_override) {
+			return this.ancestry?.thing?.color ?? 'black';
+		}
+		// For buttons/controls: use explicit override or default
+		return this._element_color_override ?? 'black';
+	}
+
+	get hoverColor(): string {
+		// If hoverColor was explicitly computed from a set element_color, use cached value
+		if (this._hoverColor_override !== undefined) {
+			return this._hoverColor_override;
+		}
+		// Otherwise compute from current element_color (which may be reactive for dots)
+		return colors.background_special_blend(this.element_color, k.opacity.medium);
+	}
+
+	hasSameID_as(other: S_Hit_Target | null): boolean { return !!other && this.id == other.id; }
 
 	set_forHovering(element_color: string, hoverCursor: string) {
-		this.hoverColor = colors.hover_special_blend(element_color);
+		// Use setter which auto-computes hoverColor
 		this.element_color = element_color;
 		this.hoverCursor = hoverCursor;
+	}
+
+	set_html_element(html_element: HTMLElement | null) {
+		if (!!html_element) {
+			this.html_element = html_element;
+			this.update_rect();
+		} else {
+			debug.log_hits(`no element for "${this.id}"`);
+		}
 	}
 
 	update_rect() {
@@ -72,15 +109,6 @@ export default class S_Hit_Target {
 				}
 			}
 			this.rect = rect;
-		}
-	}
-
-	set_html_element(html_element: HTMLElement | null) {
-		if (!!html_element) {
-			this.html_element = html_element;
-			this.update_rect();
-		} else {
-			debug.log_hits(`no element for "${this.id}"`);
 		}
 	}
 

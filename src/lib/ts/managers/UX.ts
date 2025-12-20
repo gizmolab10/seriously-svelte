@@ -37,7 +37,7 @@ export default class S_UX {
 		databases.w_data_updated.subscribe((count: number) => {
 			this.update_grabs_forSearch();
 		});
-		search.w_search_state.subscribe((state: number | null) => {
+		search.w_s_search.subscribe((state: number | null) => {
 			this.update_grabs_forSearch();
 		});
 		this.si_found.w_index.subscribe((row: number | null) => {
@@ -51,7 +51,7 @@ export default class S_UX {
 	get ancestry_forDetails(): Ancestry | null { return get(s.w_ancestry_forDetails); }
 	
 	grab_next_ancestry(next: boolean) {	// for next/previous in details selection banner
-		if (get(search.w_search_state) > T_Search.off) {
+		if (get(search.w_s_search) > T_Search.off) {
 			this.si_found.find_next_item(next);
 		} else {
 			this.si_grabs.find_next_item(next);
@@ -171,7 +171,7 @@ export default class S_UX {
 	}
 
 	update_grabs_forSearch() {
-		if (get(s.w_t_startup) == T_Startup.ready && get(search.w_search_state) != T_Search.off && this.si_found.length > 0) {
+		if (get(s.w_t_startup) == T_Startup.ready && get(search.w_s_search) != T_Search.off && this.si_found.length > 0) {
 			let ancestries = this.si_found.items.map((found: Thing) => found.ancestry).filter(a => !!a) ?? [];
 			ancestries = u.strip_hidDuplicates(ancestries);
 			if (this.si_grabs.descriptionBy_sorted_IDs != u.descriptionBy_sorted_IDs(ancestries)) {

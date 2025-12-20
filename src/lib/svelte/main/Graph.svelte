@@ -7,7 +7,7 @@
 	import Button from '../mouse/Button.svelte';
 	import { onMount } from 'svelte';
 	const size_big = k.height.button + 4;
-	const { w_show_graph_ofType } = show;
+	const { w_t_graph } = show;
 	const { w_items: w_expanded } = x.si_expanded;
 	const { w_s_hover, w_dragging } = hits;
 	const { w_rotate_angle, w_resize_radius } = hits;
@@ -40,7 +40,7 @@
 	$:	{
 		const _ = `${$w_rect_ofGraphView.description}
 			:::${$w_s_hover?.id ?? 'null'}
-			:::${$w_show_graph_ofType}
+			:::${$w_t_graph}
 			:::${$w_t_startup}`;
 		update_style();
 	}
@@ -48,7 +48,7 @@
 	$:	{
 		const _ = `${u.descriptionBy_titles($w_expanded)}
 		:::${$w_ancestry_focus?.titles.join(k.comma)}
-		:::${$w_show_graph_ofType}`;
+		:::${$w_t_graph}`;
 		grand_layout_andReattach();
 	}
 
@@ -95,7 +95,7 @@
 			style={style}
 			bind:this={draggable}
 			class:rubberband-active={$w_dragging}>
-			{#if $w_show_graph_ofType == T_Graph.radial}
+			{#if $w_t_graph == T_Graph.radial}
 				<Radial_Graph/>
 			{:else}
 				<Tree_Graph/>

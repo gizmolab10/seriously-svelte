@@ -78,7 +78,7 @@ export default class Geometry {
 
 	update_rect_ofGraphView() {
 		// respond to changes in: window size & details visibility
-		const secondary_below_primary_controls = features.allow_tree_mode && (get(show.w_show_search_controls) || (get(show.w_show_graph_ofType) == T_Graph.tree));
+		const secondary_below_primary_controls = features.allow_tree_mode && (get(show.w_show_search_controls) || (get(show.w_t_graph) == T_Graph.tree));
 		const y = (this.controls_boxHeight) * (secondary_below_primary_controls ? 2 : 1) - 4;	// below primary and secondary controls
 		const x = get(show.w_show_details) ? k.width.details : 5;							// right of details
 		const origin_ofGraphView = new Point(x, y);

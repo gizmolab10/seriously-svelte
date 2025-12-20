@@ -14,14 +14,14 @@
 	import Box from '../draw/Box.svelte';
 	import Graph from './Graph.svelte';
 	import { onMount } from 'svelte';
-	const { w_show_details } = show;
+	const { w_t_startup } = s;
 	const { w_rect_ofGraphView } = g;
 	const { w_t_database } = databases;
 	const { w_separator_color } = colors;
 	const { w_search_results_found } = search;
-	const { w_t_startup, w_popupView_id } = s;
 	const spinner_title = 'Loading your data...';
 	const offset_toIntersection = new Point(-4, 8);
+	const { w_id_popupView, w_show_details } = show;
     const half_thickness: number = k.thickness.separator.main / 2;
 	let spinner_rect = Rect.zero;
 	let reattachments = 0;
@@ -68,9 +68,9 @@
 				{k.prevent_selection_style};
 				width: {g.windowSize.width}px;
 				height: {g.windowSize.height}px;'>
-			{#if $w_popupView_id == T_Control.builds}
+			{#if $w_id_popupView == T_Control.builds}
 				<BuildNotes/>
-			{:else if $w_popupView_id == T_Control.import}
+			{:else if $w_id_popupView == T_Control.import}
 				<Import/>
 			{:else}
 				<Primary_Controls/>

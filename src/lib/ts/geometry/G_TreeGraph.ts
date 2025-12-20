@@ -62,7 +62,7 @@ export default class G_TreeGraph {
 		if (t_trees.length == 0) {
 			t_trees = [T_Kinship.children];
 		}
-		show.w_show_tree_ofType.set(t_trees);
+		show.w_t_trees.set(t_trees);
 		x.update_forFocus();
 		show.w_show_related.set(t_trees.includes(T_Kinship.related));
 		p.restore_expanded();

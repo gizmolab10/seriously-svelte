@@ -50,7 +50,7 @@ export default class G_Widget {
 		this.g_parentBranches = new G_TreeBranches(ancestry, false);
 		this.g_childBranches = new G_TreeBranches(ancestry);
 		this.s_widget = elements.s_widget_forAncestry(ancestry);
-		this.t_graph = get(show.w_show_graph_ofType);
+		this.t_graph = get(show.w_t_graph);
 		this.ancestry = ancestry;
 		if (!ancestry) {
 			console.warn(`G_Widget is missing an ancestry`);
@@ -154,7 +154,7 @@ export default class G_Widget {
 		pointsTo_child: boolean = true,
 		reveal_isAt_right: boolean = true) {
 
-		if (t_graph == get(show.w_show_graph_ofType)) {	// assure modes match
+		if (t_graph == get(show.w_t_graph)) {	// assure modes match
 			const height_ofSubtree = this.ancestry.height_ofVisibleSubtree();
 			const height_ofLines = height + height_ofSubtree / 2;
 			const rect_ofLines = new Rect(origin, new Size(k.width.child_gap, height_ofLines - 1));

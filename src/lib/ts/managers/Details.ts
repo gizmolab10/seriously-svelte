@@ -49,7 +49,7 @@ class Details {
 				const row	   = si_found.index;
 				const found    = si_found.length;
 				const grabbed  = si_items.items;
-				if (row != null && !!found && found > 1 && get(search.w_search_state) != T_Search.off) {
+				if (row != null && !!found && found > 1 && get(search.w_s_search) != T_Search.off) {
 					title = si_found.title('search result', 'focus', title);
 				} else if (!!grabbed) {
 					title = si_items.title('selected', 'focus', title); break;

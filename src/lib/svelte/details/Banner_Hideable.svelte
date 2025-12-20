@@ -3,7 +3,7 @@
 	import Glows_Banner from '../mouse/Glows_Banner.svelte';
     export let t_detail: T_Detail;
 	const { w_ancestry_forDetails } = s;
-	const { w_show_details_ofType } = show;
+	const { w_t_details } = show;
 	const s_banner_hideable = details.s_banner_hideables_dict_byType[t_detail];
 	const { w_description: w_description, w_extra_titles: w_extra_titles } = s_banner_hideable?.si_items;
 	let title = details.banner_title_forDetail(t_detail);
@@ -19,7 +19,7 @@
 	}
 
 	$: { 
-		const _ = $w_show_details_ofType;
+		const _ = $w_t_details;
 		update_hideable_isVisible();
 		// hits.recalibrate();
 	}
@@ -43,7 +43,7 @@
 	function update_hideable_isVisible() {
 		let isVisible = true;
 		if (s_banner_hideable?.hasBanner) {	// d_header has no banner
-			isVisible = $w_show_details_ofType?.includes(T_Detail[t_detail]) ?? false;
+			isVisible = $w_t_details?.includes(T_Detail[t_detail]) ?? false;
 		}
 		if (isVisible != hideable_isVisible) {
 			hideable_isVisible = isVisible;
@@ -52,13 +52,13 @@
 	}
 
 	function toggle_hidden(t_detail: string) {
-		let t_details = $w_show_details_ofType;
+		let t_details = $w_t_details;
 		if (t_details.includes(t_detail)) {
 			t_details = u.remove_fromArray_byReference(t_detail, t_details);
 		} else {
 			t_details.push(t_detail);
 		}
-		$w_show_details_ofType = t_details;
+		$w_t_details = t_details;
 		update_hideable_isVisible();
 		u.onNextTick(() => {
 			hits.recalibrate();

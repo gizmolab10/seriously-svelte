@@ -47,7 +47,7 @@ export default class DB_Bubble extends DB_Common {
 					this.changeGrabTo(bubble_properties.id);
 					break;
 				case 'CHANGE_GRAPH_MODE':
-					show.w_show_graph_ofType.set(bubble_properties.in_radial_mode ? T_Graph.radial : T_Graph.tree);
+					show.w_t_graph.set(bubble_properties.in_radial_mode ? T_Graph.radial : T_Graph.tree);
 					break;
 				case 'REPLACE_HIERARCHY':
 					this.replace_hierarchy = true;		// N.B. must happen BEFORE next UPDATE_PROPERTIES
@@ -176,11 +176,11 @@ export default class DB_Bubble extends DB_Common {
 		}
 		if (!!b_suppress_tree_mode) {
 			features.allow_tree_mode = false;
-			show.w_show_graph_ofType.set(T_Graph.radial);
+			show.w_t_graph.set(T_Graph.radial);
 		}
 		if (!!b_override_focus_and_mode) {
 			if (!b_suppress_tree_mode) {
-				show.w_show_graph_ofType.set(b_inRadialMode ? T_Graph.radial : T_Graph.tree);
+				show.w_t_graph.set(b_inRadialMode ? T_Graph.radial : T_Graph.tree);
 			}
 			if (!!b_focus) {
 				this.changeFocusTo(b_focus);
@@ -225,7 +225,7 @@ export default class DB_Bubble extends DB_Common {
 					this.allow_response_to[T_MID.grab] = true;
 				}
 			});
-			show.w_show_graph_ofType.subscribe((graph_type: T_Graph) => {
+			show.w_t_graph.subscribe((graph_type: T_Graph) => {
 				if (this.allow_response_to[T_MID.mode]) {
 					window.parent.postMessage({ type: 'in_radial_mode', in_radial_mode: graph_type == T_Graph.radial }, k.wildcard);
 					window.parent.postMessage({ type: 'trigger_an_event', trigger: 'mode_changed' }, k.wildcard);

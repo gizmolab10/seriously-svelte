@@ -7,7 +7,7 @@
 	export let left: number;
 	export let top: number;
 	const right_widths = [10, 10.5];
-	const { w_search_state } = search;
+	const { w_s_search } = search;
 	const size_big = k.height.dot * 1.4;
 	const rights = u.cumulativeSum(right_widths).map((right, index) => width - right);
 
@@ -19,7 +19,7 @@
 		left: {left}px;
 		position: absolute;
 		z-index: {T_Layer.frontmost};'>
-	{#if $w_search_state === T_Search.off}
+	{#if $w_s_search === T_Search.off}
 		<Button
 			width={size_big - 1}
 			height={size_big - 1}

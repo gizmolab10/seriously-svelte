@@ -13,7 +13,7 @@ export default class S_Resizing extends S_Rotation {
 	get hover_cursor(): string { return 'all-scroll'; }
 	get isDragging():  boolean { return !!this.basis_radius; }
 	reset()					   { super.reset(); this.basis_radius = null; }
-	get fill_opacity(): number { return this.isHovering ? k.opacity.radial.armature : k.opacity.radial.default; }
+	get fill_opacity(): number { return this.isHovering ? k.opacity.cluster.armature : k.opacity.cluster.faint; }
 	update_fill_color()		   { this.fill_color = this.isHighlighted ? colors.opacitize(this.color, this.fill_opacity) : 'transparent'; }
 
 	ring_zone_matches_type(ring_zone: T_Radial_Zone): boolean {

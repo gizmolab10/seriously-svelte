@@ -3,7 +3,7 @@ import { k, s, colors, elements } from '../common/Global_Imports';
 import Identifiable from '../runtime/Identifiable';
 import { styles } from '../managers/Styles';
 import { get } from 'svelte/store';
-import S_Color from './S_Color';
+import S_Snapshot from './S_Snapshot';
 
 	//////////////////////////////////////////
 	//										//
@@ -37,7 +37,7 @@ export default class S_Element extends S_Hit_Target {
 	get asTransparent():	boolean { return this.isDisabled || this.subtype == T_Control.details; }
 	get show_help_cursor(): boolean { return get(s.w_control_key_down) && this.type == T_Hit_Target.action; }
 	get cursor():			 string { return (this.isHovering && !this.isDisabled) ? this.show_help_cursor ? 'help' : this.hoverCursor : this.defaultCursor; }
-	get disabledTextColor(): string { return colors.specialBlend(this.color_background, this.defaultDisabledColor, 0.3) ?? this.defaultDisabledColor; }
+	get disabledTextColor(): string { return colors.special_blend(this.color_background, this.defaultDisabledColor, 0.3) ?? this.defaultDisabledColor; }
 	get description():		 string { return `${this.isHovering ? 'in' : 'out '} '${this.name}'`; }	
 	get thing_color():		 string { return this.ancestry.thing?.color ?? k.empty; }
 	
@@ -89,16 +89,14 @@ export default class S_Element extends S_Hit_Target {
 		return 'solid transparent 1px';
 	}
 
-	private get s_color(): S_Color {
-		return new S_Color(this as S_Hit_Target, this.isDisabled, this.isSelected, this.isInverted, this.subtype);
-	}
+	private get snapshot(): S_Snapshot { return new S_Snapshot(this); }
 
 	private get dotColors_forElement(): ReturnType<typeof styles.get_dotColors_for> {
-		return styles.get_dotColors_for(this.s_color, this.element_color, this.thing_color, this.color_background, this.hoverColor);
+		return styles.get_dotColors_for(this.snapshot, this.element_color, this.thing_color, this.color_background, this.hoverColor);
 	}
 	
 	private get buttonColors_forElement(): ReturnType<typeof styles.get_buttonColors_for> {
-		return styles.get_buttonColors_for(this.s_color, this.element_color, this.color_background, this.hoverColor, this.disabledTextColor, 0, false, this.thing_color);
+		return styles.get_buttonColors_for(this.snapshot, this.element_color, this.color_background, this.hoverColor, this.disabledTextColor, 0, false, this.thing_color);
 	}
 
 }

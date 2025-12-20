@@ -9,15 +9,15 @@
 	import Breadcrumbs from './Breadcrumbs.svelte';
 	import Button from '../mouse/Button.svelte';
 	const y_center = 10.5;
-	const { w_popupView_id } = s;
+	const { w_s_search } = search;
+	const { w_id_popupView } = show;
 	const scaling_stroke_width = 1.5;
 	const { w_rect_ofGraphView } = g;
-	const { w_search_state } = search;
 	const { w_count_window_resized } = e;
 	const size_big = k.height.button + 4;
 	const { w_background_color } = colors;
 	const hamburger_size = k.height.button;
-	const { w_show_search_controls, w_show_graph_ofType } = show;
+	const { w_show_search_controls, w_t_graph } = show;
 	const hamburger_path = svgPaths.hamburgerPath(hamburger_size);
 	const s_hamburger = elements.s_control_forType(T_Control.details);
 	const search_left = -38 - (features.has_details_button ? 0 : 26) + (features.allow_tree_mode ? 0 : 0);
@@ -28,7 +28,7 @@
 
 	// always show controls and breadcrumbs
 
-	function togglePopupID(id) { $w_popupView_id = ($w_popupView_id == id) ? null : id; }
+	function togglePopupID(id) { $w_id_popupView = ($w_id_popupView == id) ? null : id; }
 	function handle_recents_mouseClick(column: number) { x.ancestry_next_focusOn(column == 1); }
 
 	$: {
@@ -37,7 +37,7 @@
 	}
 
 	$: {
-		const _ = $w_search_state;
+		const _ = $w_s_search;
 		layout_controls();
 	}
 
@@ -72,7 +72,7 @@
 			has_title={false}
 			origin={Point.x(lefts[1])}
 			closure={handle_recents_mouseClick}/>
-		{#if !$w_popupView_id}
+		{#if !$w_id_popupView}
 			{#if features.has_details_button}
 				<Button name='details-toggle'
 					border_thickness=0
@@ -102,11 +102,11 @@
 					width={lefts[7] + (features.has_details_button ? 0 : 26)}/>
 			{/if}
 			{#if features.allow_tree_mode}
-				{#key $w_show_graph_ofType}
+				{#key $w_t_graph}
 					<Segmented name='graph-type'
 						width={80}
 						origin={Point.x(lefts[2])}
-						selected={[$w_show_graph_ofType]}
+						selected={[$w_t_graph]}
 						titles={[T_Graph.tree, T_Graph.radial]}
 						handle_selection={(titles) => controls.handle_segmented_choices('graph', titles)}/>
 				{/key}

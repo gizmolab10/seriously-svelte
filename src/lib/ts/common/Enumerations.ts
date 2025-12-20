@@ -25,15 +25,6 @@ export enum T_Search {
 	selected,
 }
 
-export enum T_Attention {
-	none,
-	hover,
-	focus,
-	details,
-	selected,
-	editing,
-}
-
 export enum T_Detail {
 	header,
 	actions,
@@ -107,6 +98,11 @@ export enum T_Theme {
 export enum T_Cluster_Pager {
 	steppers = 'steppers',
 	sliders  = 'sliders',
+}
+
+export enum T_Breadcrumbs {
+	ancestry = 'ancestry',
+	history	 = 'history',
 }
 
 export enum T_Search_Preference {

@@ -1,23 +1,26 @@
-import { T_Graph, T_Detail, T_Kinship, T_Preference } from '../common/Global_Imports';
+import { T_Graph, T_Detail, T_Kinship, T_Breadcrumbs, T_Preference, T_Cluster_Pager } from '../common/Global_Imports';
 import { g, k, p, x, g_tree, features } from '../common/Global_Imports';
 import type { Dictionary } from '../types/Types';
 import { get, writable } from 'svelte/store';
 
 export class Visibility {
-	w_show_tree_ofType			= writable<Array<T_Kinship>>();
-	w_show_countDots_ofType		= writable<Array<T_Kinship>>();
-	w_show_details_ofType		= writable<Array<T_Detail>>([]);	
-	w_show_graph_ofType			= writable<T_Graph>(T_Graph.tree);
-	w_show_directionals_ofType	= writable<boolean[]>([false, true]);
-	w_show_save_data_button		= writable<boolean>(false);
-	w_show_search_controls		= writable<boolean>(false);
-	w_show_related				= writable<boolean>(false);
-	w_show_details				= writable<boolean>(true);
-	w_show_other_databases		= writable<boolean>(true);
-	debug_cursor				= false;
+	w_t_cluster_pager		= writable<T_Cluster_Pager>(T_Cluster_Pager.sliders);
+	w_t_breadcrumbs			= writable<T_Breadcrumbs>(T_Breadcrumbs.ancestry);
+	w_t_directionals		= writable<boolean[]>([false, true]);
+	w_t_graph				= writable<T_Graph>(T_Graph.tree);
+	w_t_details				= writable<Array<T_Detail>>([]);
+	w_t_countDots			= writable<Array<T_Kinship>>();
+	w_t_trees				= writable<Array<T_Kinship>>();
+	w_id_popupView			= writable<string | null>();
+	w_show_save_data_button	= writable<boolean>(false);
+	w_show_search_controls	= writable<boolean>(false);
+	w_show_related			= writable<boolean>(false);
+	w_show_details			= writable<boolean>(true);
+	w_show_other_databases	= writable<boolean>(true);
+	debug_cursor			= false;
 
 	constructor() {
-		this.w_show_details_ofType.subscribe((t_details: Array<T_Detail>) => {
+		this.w_t_details.subscribe((t_details: Array<T_Detail>) => {
 			x.update_grabs_forSearch();
 		});
 	}
@@ -48,7 +51,7 @@ export class Visibility {
 		}
 	}
 
-	isShowing_countDots_ofType(t_counts: T_Kinship): boolean { return get(this.w_show_countDots_ofType).includes(T_Kinship[t_counts]) }
+	isShowing_countDots_ofType(t_counts: T_Kinship): boolean { return get(this.w_t_countDots).includes(T_Kinship[t_counts]) }
 	get children_dots(): boolean { return  this.isShowing_countDots_ofType(T_Kinship.children); }
 	get related_dots(): boolean { return  this.isShowing_countDots_ofType(T_Kinship.related); }
 	get parent_dots(): boolean { return  this.isShowing_countDots_ofType(T_Kinship.parents); }
@@ -60,13 +63,13 @@ export class Visibility {
 	}
 
 	restore_preferences() {
-		this.w_show_countDots_ofType.set(p.read_key(T_Preference.countDots)		  ?? []);
+		this.w_t_countDots.set(p.read_key(T_Preference.countDots)		  ?? []);
 		this.w_show_details			.set(p.read_key(T_Preference.show_details)	  ?? false);
 		this.w_show_related			.set(p.read_key(T_Preference.show_related)	  ?? false);
 		this.w_show_other_databases	.set(p.read_key(T_Preference.other_databases) ?? false);
-		this.w_show_tree_ofType		.set(p.read_key(T_Preference.tree)			  ?? T_Kinship.children);
-		this.w_show_details_ofType	.set(p.read_key(T_Preference.detail_types)	  ?? [T_Detail.actions, T_Detail.data]);
-		this.w_show_graph_ofType	.set(features.allow_tree_mode ? p.read_key(T_Preference.graph) ?? T_Graph.tree : T_Graph.radial);
+		this.w_t_trees		.set(p.read_key(T_Preference.tree)			  ?? T_Kinship.children);
+		this.w_t_details	.set(p.read_key(T_Preference.detail_types)	  ?? [T_Detail.actions, T_Detail.data]);
+		this.w_t_graph	.set(features.allow_tree_mode ? p.read_key(T_Preference.graph) ?? T_Graph.tree : T_Graph.radial);
 	}
 	
 	reactivity_subscribe() {
@@ -81,7 +84,7 @@ export class Visibility {
 		this.w_show_related.subscribe((flag: any) => {
 			writeAnd_reactTo(T_Preference.show_related, flag);
 		});
-		this.w_show_graph_ofType.subscribe((flag: any) => {
+		this.w_t_graph.subscribe((flag: any) => {
 			writeAnd_reactTo(T_Preference.graph, flag);
 		});
 		this.w_show_search_controls.subscribe((flag: any) => {

@@ -28,8 +28,8 @@
         };
     });
 
-    $: isHovering = s_element.isEqualTo($w_s_hover);
-    $: isAutorepeating = detects_autorepeat && s_element.isEqualTo($w_autorepeat);
+    $: isHovering = s_element.hasSameID_as($w_s_hover);
+    $: isAutorepeating = detects_autorepeat && s_element.hasSameID_as($w_autorepeat);
 
 	$: {
 		const _ = $w_background_color;

@@ -12,9 +12,9 @@ import S_Hit_Target from '../state/S_Hit_Target';
 import S_Component from '../state/S_Component';
 import S_Resizing from '../state/S_Resizing';
 import S_Rotation from '../state/S_Rotation';
+import S_Snapshot from '../state/S_Snapshot';
 import S_Element from '../state/S_Element';
 import S_Widget from '../state/S_Widget';
-import S_Color from '../state/S_Color';
 import S_Mouse from '../state/S_Mouse';
 import S_Items from '../state/S_Items';
 
@@ -33,6 +33,7 @@ import Angle from '../types/Angle';
 import { T_Debug } from '../debug/Debug';
 import { T_Theme } from './Enumerations';
 import { T_Edit } from '../state/S_Title_Edit';
+import { T_Breadcrumbs } from './Enumerations';
 import { T_Timer } from '../signals/Mouse_Timer';
 import { T_Oblong, T_Direction } from './Enumerations';
 import { T_Quadrant, T_Orientation } from '../types/Angle';
@@ -91,7 +92,7 @@ import interact from 'interactjs';
 export {	
 	S_Rotation, S_Resizing, S_Component,
 	S_Hit_Target, S_Alteration, S_Title_Edit,
-	S_Items, S_Mouse, S_Color, S_Widget, S_Element,
+	S_Items, S_Mouse, S_Widget, S_Element, S_Snapshot,
 	
 	G_Cluster, G_RadialGraph, G_Cluster_Pager,
 	G_Widget, G_TreeLine, G_TreeBranches, G_Repeater,
@@ -113,11 +114,11 @@ export {
 	Tag, Thing, Trait, Predicate, Relationship,
 	
 	T_Debug, T_Timer,
-	T_Order, T_Kinship,
 	T_Theme, T_Graph, T_Browser, 
 	T_Search, T_Search_Preference,
 	T_Auto_Adjust, T_Cluster_Pager,
 	T_Startup, T_Drag, T_Alteration,
+	T_Order, T_Kinship, T_Breadcrumbs,
 	T_Quadrant, T_Orientation, T_Direction,
 	T_Banner, T_Detail, T_Request, T_Action,
 	T_Layer, T_Tree_Line, T_Radial_Zone, T_Oblong,

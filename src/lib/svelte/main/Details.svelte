@@ -11,7 +11,7 @@
 	import D_Data from '../details/D_Data.svelte';
 	import D_Tags from '../details/D_Tags.svelte';
 	const width = k.width.details;
-	const { w_search_state } = search;
+	const { w_s_search } = search;
 	const { w_index: w_found } = x.si_found;
 	const { w_count_details, w_ancestry_forDetails } = s;
 	const { w_description: w_grabs_description } = x.si_grabs;
@@ -20,7 +20,7 @@
 
 	$: {
 		const _ = `${$w_found}
-		:::${$w_search_state}
+		:::${$w_s_search}
 		:::${$w_tags_description}
 		:::${$w_grabs_description}
 		:::${$w_traits_description}

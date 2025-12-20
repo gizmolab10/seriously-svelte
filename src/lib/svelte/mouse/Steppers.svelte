@@ -5,10 +5,10 @@
     const buttonSize = 20;
     const origin = new Point(19, 29);
     const offsetY = buttonSize / 2 - 1;
-    const { w_show_directionals_ofType } = show;
+    const { w_t_directionals } = show;
 
 	function hover_closure(isHovering) {
-        const hover_color = colors.hover_special_blend(colors.default)
+        const hover_color = colors.background_special_blend(colors.default, k.opacity.medium);
         return [isHovering ? hover_color : 'white', k.empty];
     }
 
@@ -24,7 +24,7 @@
 </script>
 
 <div class='steppers'>
-    {#if $w_show_directionals_ofType[0]}
+    {#if $w_t_directionals[0]}
         <Triangle_Button
             mouse_detection={T_Mouse_Detection.autorepeat}
             center={origin.offsetByY(-offsetY)}
@@ -36,7 +36,7 @@
             name='up'
         />
     {/if}
-    {#if $w_show_directionals_ofType[1]}
+    {#if $w_t_directionals[1]}
         <Triangle_Button
             mouse_detection={T_Mouse_Detection.autorepeat}
             center={origin.offsetByY(offsetY)}

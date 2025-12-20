@@ -10,7 +10,7 @@
 	const { w_thing_title } = s;
 	const ancestry = s_reveal.ancestry;
 	const g_widget = ancestry.g_widget;
-	const { w_show_countDots_ofType } = show;
+	const { w_t_countDots } = show;
 	const { w_items: w_grabbed } = x.si_grabs;
 	const viewBox = k.tiny_outer_dots.viewBox;
 	const { w_items: w_expanded } = x.si_expanded;
@@ -59,7 +59,7 @@
 		const _ = `${u.descriptionBy_titles($w_grabbed)}
 			:::${u.descriptionBy_titles($w_expanded)}
 			:::${$w_s_hover?.id ?? 'null'}
-			:::${$w_show_countDots_ofType}
+			:::${$w_t_countDots}
 			:::${$w_background_color}
 			:::${$w_thing_title}
 			:::${$w_thing_color}`;
@@ -68,17 +68,18 @@
 	}
 
 	$: wrapper_style = `
+		cursor: pointer;
 		position: absolute;
+		z-index: ${zindex};
 		width: ${k.height.dot}px;
 		height: ${k.height.dot}px;
-		z-index: ${zindex};
-		cursor: pointer;
-		left: ${center.x - k.height.dot / 2}px;
 		top: ${center.y - k.height.dot / 2}px;
+		left: ${center.x - k.height.dot / 2}px;
 	`.removeWhiteSpace();
 
 	function update_colors() {
-		s_reveal.set_forHovering(color, 'pointer');
+		// element_color is now reactive (uses thing_color automatically for dots)
+		// hoverColor is also reactive (computed from element_color)
 		fill_color = debug.lines ? 'transparent' : s_reveal.fill;
 		svg_outline_color = s_reveal.svg_outline_color;
 		bulkAlias_color = s_reveal.stroke;

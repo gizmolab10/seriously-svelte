@@ -37,7 +37,7 @@ export class Colors {
 	ofBackgroundFor(color: string): string { return this.lighterBy(color, 10);}
 	ofBannerFor(background: string): string { return this.blend('white', background, 4);}
 	opacitize(color: string, amount: number): string { return color == '' ? '' : transparentize(color, 1 - amount); }
-	hover_special_blend(color: string): string { return this.specialBlend(color, get(this.w_background_color), k.opacity.hover) ?? color; }
+	background_special_blend(color: string, opacity: number): string { return this.special_blend(color, get(this.w_background_color), opacity) ?? color; }
 
 	color_fromSeriously(color: string | undefined): string {
 		if (!!color) {			
@@ -73,7 +73,7 @@ export class Colors {
 		return color;
 	}
 
-	specialBlend(color: string, background: string, ratio: number): string | null {
+	special_blend(color: string, background: string, ratio: number): string | null {
 		const rgbaA = this.color_toRGBA(color);
 		const rgbaB = this.color_toRGBA(background);		
 		if (!rgbaA || !rgbaB) return null;

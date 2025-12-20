@@ -1,11 +1,11 @@
 <script lang='ts'>
-	import { g, h, k, s, x, Point, details, elements } from '../../ts/common/Global_Imports';
+	import { g, h, k, s, x, show, Point, details, elements } from '../../ts/common/Global_Imports';
 	import { T_Storage_Need } from '../../ts/common/Enumerations';
 	import { files } from '../../ts/files/Files';
 	import { onMount } from 'svelte';
 	export let accept: string = '.' + files.format_preference;
 	export let multiple = k.empty;		// can be set to 'multiple'
-	const { w_popupView_id } = s;
+	const { w_id_popupView } = show;
 	let file_input: HTMLInputElement;
 	
 	onMount(() => {
@@ -15,7 +15,7 @@
 	});
 
 	function dismiss_popup() {
-		$w_popupView_id = null;
+		$w_id_popupView = null;
 	}
 
 	async function handle_selection(event: Event) {

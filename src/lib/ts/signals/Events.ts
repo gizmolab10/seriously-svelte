@@ -230,12 +230,12 @@ export class Events {
 				const SHIFT = event.shiftKey;
 				const COMMAND = event.metaKey;
 				const EXTREME = SHIFT && OPTION;
-				if (get(search.w_search_state) != T_Search.off) {
+				if (get(search.w_s_search) != T_Search.off) {
 					switch (key) {
 						case 'enter':	
 						case 'escape':
 						case 'arrowright':	    search.deactivate_focus_and_grab(); break;	// stop searching		
-						case 'arrowleft':		u.consume_event(event); search.w_search_state.set(T_Search.enter); break;
+						case 'arrowleft':		u.consume_event(event); search.w_s_search.set(T_Search.enter); break;
 						case 'arrowup':			u.consume_event(event); search.next_row(false); break;
 						case 'arrowdown':		u.consume_event(event); search.next_row(true); break;
 						case 'tab':				search.selected_row = 0; break;
@@ -272,7 +272,7 @@ export class Events {
 						case '!':				g.grand_adjust_toFit(); break;
 						case '>':				g_tree.increase_depth_limit_by(1); break;
 						case '<':				g_tree.increase_depth_limit_by(-1); break;
-						case 'f':				search.w_search_state.set(T_Search.enter); break;
+						case 'f':				search.w_s_search.set(T_Search.enter); break;
 						case 'p':				if (!COMMAND) { u.print_graph(); }; break;
 						case 's':				h.persist_toFile(T_File_Format.json); return;
 						case 'c':				g.set_user_graph_offsetTo(Point.zero); return;

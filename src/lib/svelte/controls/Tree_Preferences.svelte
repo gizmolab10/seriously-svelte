@@ -13,7 +13,7 @@
 	const { w_separator_color } = colors;
 	const tops = u.cumulativeSum(heights);
 	const segmented_height = k.height.button + 3;
-	const { w_show_tree_ofType } = show;
+	const { w_t_trees } = show;
 
 	function handle_depth_limit(value: number) {
 		const asInteger = Math.round(value);
@@ -58,14 +58,14 @@
 		font-size: {k.font_size.common}px;'>
 		{$w_depth_limit} level{($w_depth_limit < 2) ? '' : 's'}
 	</div>
-	{#key $w_show_tree_ofType}
+	{#key $w_t_trees}
 		<Segmented name='tree-types'
 			left={58}
 			width={width}
 			allow_multiple={true}
 			origin={new Point(184, -16)}
 			height={k.height.button + 2}
-			selected={$w_show_tree_ofType}
+			selected={$w_t_trees}
 			titles={[T_Kinship.children, T_Kinship.related]}
 			handle_selection={(titles) => controls.handle_segmented_choices('tree', titles)}/>
 	{/key}

@@ -54,16 +54,16 @@ export default class Hits {
 		this.w_s_hover.set(!match ? null : match);
 		// Stop autorepeat if hover leaves the autorepeating target
 		const autorepeating_target = get(this.w_autorepeat);
-		if (!!autorepeating_target && (!match || !match.isEqualTo(autorepeating_target))) {
+		if (!!autorepeating_target && (!match || !match.hasSameID_as(autorepeating_target))) {
 			this.stop_autorepeat();
 		}
 		// Cancel long-click if hover leaves the long-click target
 		const longClick_target = get(this.w_longClick);
-		if (!!longClick_target && (!match || !match.isEqualTo(longClick_target))) {
+		if (!!longClick_target && (!match || !match.hasSameID_as(longClick_target))) {
 			this.cancel_longClick();
 		}
 		// Cancel pending double-click if hover leaves the pending target
-		if (!!this.pending_singleClick_target && (!match || !match.isEqualTo(this.pending_singleClick_target))) {
+		if (!!this.pending_singleClick_target && (!match || !match.hasSameID_as(this.pending_singleClick_target))) {
 			this.cancel_doubleClick();
 		}
 		return !!match;

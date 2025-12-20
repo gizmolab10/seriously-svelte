@@ -39,8 +39,8 @@
 		};
 	});
 
-	$: index_forHover = s_elements.findIndex(s => s.isEqualTo($w_s_hover));
-	$: isAutorepeating = (index: number) => s_elements[index]?.isEqualTo($w_autorepeat) ?? false;
+	$: index_forHover = s_elements.findIndex(s => s.hasSameID_as($w_s_hover));
+	$: isAutorepeating = (index: number) => s_elements[index]?.hasSameID_as($w_autorepeat) ?? false;
 
 	function handle_s_mouse(s_mouse: S_Mouse, index: number): boolean {
 		if (s_mouse.isDown && s_mouse.event) {
@@ -81,7 +81,7 @@
 					stroke-width='0.75'
 					stroke={colors.border}
 					d={svgPaths.path_for(title, size + 3)}
-					fill={index_forHover === index ? colors.hover_special_blend('black') : 'white'}/>
+					fill={index_forHover === index ? colors.background_special_blend('black', k.opacity.medium) : 'white'}/>
 			</svg>
 		</button>
 	{/each}

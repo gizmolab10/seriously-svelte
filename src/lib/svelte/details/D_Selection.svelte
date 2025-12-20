@@ -11,7 +11,7 @@
 	import { onMount } from 'svelte';
 	export let top = 6;
 	const id = 'selection details';
-	const { w_show_details_ofType } = show;
+	const { w_t_details } = show;
 	const { w_items: w_grabbed } = x.si_grabs;
 	const s_info = elements.s_element_for(new Identifiable(id), T_Hit_Target.details, id);
 	const { w_thing_title, w_ancestry_focus, w_ancestry_forDetails, w_relationship_order } = s;
@@ -28,7 +28,7 @@
 	let picker_offset = k.empty;
 	let trigger = k.empty;
 
-	$: $w_show_details_ofType, layout_forColor();
+	$: $w_t_details, layout_forColor();
 	function handle_toggle_properties(event: Event) {
 		details.show_properties = !details.show_properties;
 		u.onNextTick(() => {

@@ -14,7 +14,7 @@ export class Preferences {
 			g.w_depth_limit.set(Number(levels));
 		}
 		if (!!paging_style) {
-			s.w_t_cluster_pager.set(paging_style == 'sliders' ? T_Cluster_Pager.sliders : T_Cluster_Pager.steppers);
+			show.w_t_cluster_pager.set(paging_style == 'sliders' ? T_Cluster_Pager.sliders : T_Cluster_Pager.steppers);
 		}
 		this.restore_preferences();
 	}
@@ -139,11 +139,11 @@ export class Preferences {
 	}
 
 	restore_preferences() {
-		s.w_font_size		 .set( this.read_key(T_Preference.font_size)	?? 14);
-		s.w_auto_adjust_graph.set( this.read_key(T_Preference.auto_adjust)	?? null);
-		s.w_thing_title		 .set( this.read_key(T_Preference.thing)		?? k.title.default);
-		s.w_thing_fontFamily .set( this.read_key(T_Preference.font)			?? 'Times New Roman');
-		s.w_t_cluster_pager	 .set( this.read_key(T_Preference.paging_style)	?? T_Cluster_Pager.sliders);
+		s.w_font_size		  .set( this.read_key(T_Preference.font_size)	 ?? 14);
+		s.w_auto_adjust_graph .set( this.read_key(T_Preference.auto_adjust)	 ?? null);
+		s.w_thing_title		  .set( this.read_key(T_Preference.thing)		 ?? k.title.default);
+		s.w_thing_fontFamily  .set( this.read_key(T_Preference.font)		 ?? 'Times New Roman');
+		show.w_t_cluster_pager.set( this.read_key(T_Preference.paging_style) ?? T_Cluster_Pager.sliders);
 		this.reactivity_subscribe()
 	}
 	
@@ -199,14 +199,17 @@ export class Preferences {
 
 		// VISIBILITY
 
-		show.w_show_tree_ofType.subscribe((value) => {
+		show.w_t_trees.subscribe((value) => {
 			this.write_key(T_Preference.tree, value);
 		});
-		show.w_show_countDots_ofType.subscribe((value) => {
+		show.w_t_countDots.subscribe((value) => {
 			this.write_key(T_Preference.countDots, value);
 		});
-		show.w_show_details_ofType.subscribe((value) => {
+		show.w_t_details.subscribe((value) => {
 			this.write_key(T_Preference.detail_types, value);
+		});
+		show.w_t_cluster_pager.subscribe((paging_style: T_Cluster_Pager) => {
+			this.write_key(T_Preference.paging_style, paging_style);
 		});
 		
 		// OTHER
@@ -216,9 +219,6 @@ export class Preferences {
 		});
 		s.w_auto_adjust_graph.subscribe((auto_adjust: T_Auto_Adjust | null) => {
 			this.write_key(T_Preference.auto_adjust, auto_adjust);
-		});
-		s.w_t_cluster_pager.subscribe((paging_style: T_Cluster_Pager) => {
-			this.write_key(T_Preference.paging_style, paging_style);
 		});
 
 		show.reactivity_subscribe();

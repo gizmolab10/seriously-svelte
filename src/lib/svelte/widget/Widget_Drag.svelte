@@ -14,7 +14,7 @@
 	const g_widget = ancestry.g_widget;
 	const { w_background_color } = colors;
 	const { w_s_hover, w_dragging } = hits;
-	const { w_show_countDots_ofType } = show;
+	const { w_t_countDots } = show;
 	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_ancestry_focus, w_ancestry_forDetails } = s;
 	let fill_color = debug.lines ? 'transparent' : s_drag.fill;
@@ -58,7 +58,7 @@
 	});
 
 	$: {
-		const _ = $w_show_countDots_ofType;
+		const _ = $w_t_countDots;
 		update_svgPaths();
 	}
 
@@ -73,12 +73,12 @@
 	}
 
 	$: wrapper_style = `
+		cursor: pointer;
 		position: absolute;
 		width: ${capture_size}px;
 		height: ${capture_size}px;
-		cursor: pointer;
-		left: ${center.x - capture_size / 2}px;
 		top: ${center.y - capture_size / 2}px;
+		left: ${center.x - capture_size / 2}px;
 	`.removeWhiteSpace();
 
 	function update_hovering() {
@@ -93,12 +93,9 @@
 
 	function update_colors() {
 		if (!elements.isDragging && !!s_drag && !!thing) {
-			const usePointer = (!ancestry.isGrabbed || controls.inRadialMode) && ancestry.hasChildren;
-			const cursor = usePointer ? 'pointer' : 'normal';
-			color = thing.color;
-			s_drag.set_forHovering(color, cursor);
-			svg_outline_color = s_drag.svg_outline_color;
 			fill_color = debug.lines ? 'transparent' : s_drag.fill;
+			svg_outline_color = s_drag.svg_outline_color;
+			color = thing.color;
 			parents_color = s_drag.stroke;
 		}
 	}

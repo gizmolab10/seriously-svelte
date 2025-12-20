@@ -79,7 +79,7 @@
 
 	$: {
 		const reactives = `${$w_s_title_edit?.t_edit}:::${u.descriptionBy_titles($w_grabbed)}`;
-		if (reactives != trigger && !!ancestry && s_widget.update_state_didChange) {
+		if (reactives != trigger && !!ancestry && s_widget.detect_ifState_didChange) {
 			trigger = reactives;
 			if (!(controls.inRadialMode && ancestry.isFocus)) {
 				g_widget.layout();
@@ -122,7 +122,7 @@
 	}
 
 	function layout_maybe() {
-		if (s_widget.update_state_didChange) {
+		if (s_widget.detect_ifState_didChange) {
 			final_layout();
 		}
 	}
@@ -156,7 +156,7 @@
 	}
 
 	function setup_fromAncestry() {
-		s_widget.update_state_didChange;
+		s_widget.detect_ifState_didChange;
 		thing = ancestry?.thing;
 		if (!ancestry) {
 			console.warn('widget has no ancestry');

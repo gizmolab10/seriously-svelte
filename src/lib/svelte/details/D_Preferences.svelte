@@ -16,12 +16,12 @@
 	const picker_offset = `-189px`;
 	const color_left = width / 2 - 13;
 	const segmented_width = width - 6;
+	const { w_auto_adjust_graph } = s;
 	const { w_separator_color } = colors;
 	const segmented_height = k.height.button;
 	const separator_height = segmented_height + 9;
-	const { w_t_cluster_pager, w_auto_adjust_graph } = s;
 	const separator_width = width - 5 - separator_left * 2;
-	const { w_show_details_ofType, w_show_countDots_ofType } = show;
+	const { w_t_details, w_t_countDots, w_t_cluster_pager } = show;
 	let color_wrapper: HTMLDivElement | null = null;
 	let color_origin = Point.square(-3.5);
 	let color = $w_separator_color;
@@ -37,7 +37,7 @@
 
 	const tops = u.cumulativeSum(heights);
 
-	$: if (color_wrapper || $w_show_details_ofType) {
+	$: if (color_wrapper || $w_t_details) {
 		u.onNextTick(() => update_color_origin());
 	}
 
@@ -60,7 +60,7 @@
 	}
 
 	function handle_count_dots(types: string[]) {
-		$w_show_countDots_ofType = types as Array<T_Kinship>;
+		$w_t_countDots = types as Array<T_Kinship>;
 	}
 
 	function update_color_origin() {
@@ -99,7 +99,7 @@
 		height={segmented_height}
 		origin={Point.y(tops[1])}
 		handle_selection={handle_count_dots}
-		selected={$w_show_countDots_ofType}
+		selected={$w_t_countDots}
 		titles={[T_Kinship[T_Kinship.children], T_Kinship[T_Kinship.parents], T_Kinship[T_Kinship.related]]}/>
 	<Separator name='first-preference'
 		length={width}

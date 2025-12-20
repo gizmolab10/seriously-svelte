@@ -127,20 +127,16 @@ export default class Constants {
 
 	opacity = {
 		none:		  0,
-		hover:		  0.4,
-		selected:	  0.7,
-		ancestry: {
-			editing:  0,
-			focus:	  0.2,
-			hover:	  0.8,
-			selected: 1.0,
-		},
-		radial: {
-			default:  0.02,
+		faint:		  0.1,
+		light:		  0.3,
+		medium:		  0.4,
+		dark:		  0.7,
+		cluster: {
+			faint:	  0.02,
 			armature: 0.1,
 			thumb:	  0.1,
 			hover:	  0.7,
-			text:	  1,
+			titles:	  1,
 			active:	  0.3,
 		},
 	};

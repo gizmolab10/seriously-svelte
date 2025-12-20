@@ -1,6 +1,6 @@
 import { T_Startup, T_Create, T_Alteration, T_File_Format, T_Persistable } from '../common/Global_Imports';
 import { Access, Ancestry, Predicate, Relationship, Persistable } from '../common/Global_Imports';
-import { g, k, p, u, x, busy, debug, controls, features } from '../common/Global_Imports';
+import { g, k, p, u, x, busy, show, debug, controls, features } from '../common/Global_Imports';
 import { T_Thing, T_Trait, T_Order, T_Control, T_Predicate } from '../common/Global_Imports';
 import { files, colors, signals, databases } from '../common/Global_Imports';
 import { Tag, User, Thing, Trait, S_Items } from '../common/Global_Imports';
@@ -1447,7 +1447,7 @@ export class Hierarchy {
 	select_file_toUpload(format: T_File_Format, SHIFT: boolean) {
 		this.replace_rootID = SHIFT ? k.empty : null;		// to replace (or not) the root id extracted from file
 		files.format_preference = format;
-		s.w_popupView_id.set(T_Control.import);
+		show.w_id_popupView.set(T_Control.import);
 	}
 
 	persist_fromAncestry_toFile(ancestry: Ancestry, format: T_File_Format) {

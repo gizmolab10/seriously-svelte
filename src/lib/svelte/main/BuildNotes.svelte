@@ -4,10 +4,9 @@
 	import Steppers from '../mouse/Steppers.svelte';
 	import { onMount } from 'svelte';
 	const notesIndexed = Object.entries(builds.notes).reverse();
-	const { w_show_directionals_ofType } = show;
+	const { w_id_popupView, w_t_directionals } = show;
 	const notesLimit = notesIndexed.length - 1;
 	const { w_background_color } = colors;
-	const { w_popupView_id } = s;
 	let title = k.empty;
 	let notesIndex = 0;
 	let notes = [];
@@ -24,7 +23,7 @@
 	function handle_key_down(event) {
 		const key = event.key.toLowerCase();
 		switch (key) {
-			case 'escape': $w_popupView_id = null; break;
+			case 'escape': $w_id_popupView = null; break;
 		}
 	}
 
@@ -35,7 +34,7 @@
 			const nextIndex = notesIndex + (10 * (pointsUp ? -1 : 1));
 			notesIndex = nextIndex.force_between(0, notesLimit - 10);
 		}
-		$w_show_directionals_ofType = [notesIndex > 0, notesIndex < notesLimit - 10];
+		$w_t_directionals = [notesIndex > 0, notesIndex < notesLimit - 10];
 		updateNotes();
 	}
 
@@ -45,7 +44,7 @@
 <div class='notes-modal-overlay'
 	on:keyup = {u.ignore}
 	on:keydown = {u.ignore}
-	on:click={() => $w_popupView_id = null}>
+	on:click={() => $w_id_popupView = null}>
 	<div class='notes-modal-content'
 		style='background-color:{$w_background_color}'
 		on:click|stopPropagation>
@@ -56,7 +55,7 @@
 		<Close_Button
 			name='builds-close'
 			size={k.height.dot * 1.5}
-			closure={() => $w_popupView_id = null}
+			closure={() => $w_id_popupView = null}
 			origin={new Point(8, k.height.dot * 0.75)}/>
 		<br>
 		<table style='width:100%'>

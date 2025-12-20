@@ -54,7 +54,7 @@ export default class Ancestry extends Identifiable {
 	
 	static readonly _____GEOMETRY: unique symbol;
 
-	get g_widget():			 G_Widget { return this.g_widget_for_t_graph(get(show.w_show_graph_ofType)); }
+	get g_widget():			 G_Widget { return this.g_widget_for_t_graph(get(show.w_t_graph)); }
 	get g_paging():	  G_Paging | null { return this.g_cluster?.g_paging_forAncestry(this) ?? null; }
 	get g_cluster(): G_Cluster | null { return this.g_widget.g_cluster ?? null; }
 

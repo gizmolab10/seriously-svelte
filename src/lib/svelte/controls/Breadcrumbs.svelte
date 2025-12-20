@@ -10,7 +10,7 @@
 	export let left: number = 28;
 	const { w_thing_color } = colors;
 	const { w_rect_ofGraphView } = g;
-	const { w_search_state } = search;
+	const { w_s_search } = search;
 	const { w_items: w_grabbed } = x.si_grabs;
 	const { w_s_title_edit, w_ancestry_forDetails, w_t_startup } = s;
 	let s_component: S_Component | null = null;
@@ -34,9 +34,9 @@
 		:::${$w_s_title_edit?.description}
 		:::${$w_ancestry_forDetails?.id}
 		:::${x.si_found.w_index}
-		:::${$w_search_state}
 		:::${$w_thing_color}
-		:::${$w_t_startup}`;
+		:::${$w_t_startup}
+		:::${$w_s_search}`;
 		update();
 	}
 

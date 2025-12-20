@@ -10,7 +10,7 @@ class Search {
 	private root_node: Search_Node	= new Search_Node();
 	w_search_results_found			= writable<number>(0);
 	w_search_results_changed		= writable<number>(0);		// re-render the search results when changed
-	w_search_state					= writable<T_Search>();		// observed by search_results, controls, and panel
+	w_s_search					= writable<T_Search>();		// observed by search_results, controls, and panel
 	w_search_preferences			= writable<T_Search_Preference>();
 
 	constructor() {
@@ -23,18 +23,18 @@ class Search {
 	}
 
 	setup_defaults() {
-		this.w_search_state.set(T_Search.off);
+		this.w_s_search.set(T_Search.off);
 		this.w_search_preferences.set(T_Search_Preference.title);
 	}
 
 	activate() {
-		this.w_search_state.set(T_Search.enter);
+		this.w_s_search.set(T_Search.enter);
 		show.w_show_search_controls.set(true);
 	}
 
 	deactivate() {
 		this.w_search_results_found.set(0);
-		this.w_search_state.set(T_Search.off);
+		this.w_s_search.set(T_Search.off);
 		show.w_show_search_controls.set(false);
 		details.redraw();		// force re-render of details
 	}
@@ -46,7 +46,7 @@ class Search {
 				if (startup == T_Startup.ready) {
 					this.buildIndex(h.things);
 					this.w_search_results_changed.set(Date.now());
-					this.w_search_state.subscribe((state) => {
+					this.w_s_search.subscribe((state) => {
 						const text = this.search_text?.toLowerCase();
 						if (!!text && state !== T_Search.off) {
 							this.search_for(text);
@@ -61,7 +61,7 @@ class Search {
 
 	set selected_row(row: number) {
 		x.si_found.index = row;
-		this.w_search_state.set(T_Search.selected);
+		this.w_s_search.set(T_Search.selected);
 		x.update_ancestry_forDetails();
 	}
 
@@ -112,17 +112,17 @@ class Search {
 			x.si_found.items = this.root_node.search_for(this.search_words, this.use_AND_logic);
 			const show_results = x.si_found.items.length > 0;
 			this.w_search_results_found.set(x.si_found.items.length);
-			this.w_search_state.set(show_results ? T_Search.results : T_Search.enter);
+			this.w_s_search.set(show_results ? T_Search.results : T_Search.enter);
 		} else {
 			this.search_words = [];
 			x.si_found.reset();
 			this.w_search_results_found.set(0);
-			this.w_search_state.set(T_Search.enter);
+			this.w_s_search.set(T_Search.enter);
 		}
 		if (before !== this.results_fingerprint) {
 			x.si_found.index = -1;
 		}
-		show.w_show_search_controls.set(T_Search.off != get(this.w_search_state));
+		show.w_show_search_controls.set(T_Search.off != get(this.w_s_search));
 		this.w_search_results_changed.set(Date.now());
 	}
 	
