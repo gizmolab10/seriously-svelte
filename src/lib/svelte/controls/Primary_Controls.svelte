@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { c, e, g, k, s, u, x, show, colors, search } from '../../ts/common/Global_Imports';
 	import { features, elements, controls, svgPaths } from '../../ts/common/Global_Imports';
-	import { Point, T_Layer, T_Graph, T_Control, T_Breadcrumbs } from '../../ts/common/Global_Imports';
+	import { Point, T_Layer, T_Graph, T_Control, T_Breadcrumbs, S_Mouse } from '../../ts/common/Global_Imports';
 	import Search_Toggle from '../search/Search_Toggle.svelte';
 	import Next_Previous from '../mouse/Next_Previous.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
@@ -10,16 +10,13 @@
 	import Button from '../mouse/Button.svelte';
 	const y_center = 10.5;
 	const { w_s_search } = search;
-	const scaling_stroke_width = 1.5;
 	const { w_rect_ofGraphView } = g;
 	const { w_count_window_resized } = e;
-	const size_big = k.height.button + 4;
 	const { w_background_color } = colors;
 	const hamburger_size = k.height.button;
 	const hamburger_path = svgPaths.hamburgerPath(hamburger_size);
 	const s_hamburger = elements.s_control_forType(T_Control.details);
 	const { w_t_graph, w_id_popupView, w_show_search_controls, w_t_breadcrumbs } = show;
-	const svg_style = 'top: -0.5px; left: -0.5px; position: absolute; width: 100%; height: 100%;';
 	const search_left = -38 - (features.has_details_button ? 0 : 26) + (features.allow_tree_mode ? 0 : 0);
 	let width = g.windowSize.width - 16;
 	let lefts: Array<number> = [];
@@ -29,7 +26,18 @@
 	// nicely documented in notes/design/controls.md
 
 	function togglePopupID(id) { $w_id_popupView = ($w_id_popupView == id) ? null : id; }
-	function handle_recents_mouseClick(column: number) { x.ancestry_next_focusOn(column == 1); }
+	function handle_recents_mouseClick(column: number, event?: MouseEvent | null, element?: HTMLElement | null, isFirstCall?: boolean) { 
+		x.ancestry_next_focusOn(column == 1); 
+	}
+	function handle_scale_control(column: number, event?: MouseEvent | null, element?: HTMLElement | null, isFirstCall?: boolean) {
+		const t_control = column === 0 ? T_Control.shrink : T_Control.grow;
+		if (event && element !== undefined) {
+			const s_mouse = isFirstCall 
+				? S_Mouse.down(event, element)
+				: S_Mouse.repeat(event, element);
+			e.handle_s_mouseFor_t_control(s_mouse, t_control);
+		}
+	}
 	function handle_breadcrumbs(types: Array<T_Breadcrumbs | null>) {
 		$w_t_breadcrumbs = types.length > 0 ? types[0] : T_Breadcrumbs.hierarchy;
 	}
@@ -47,15 +55,14 @@
 	function layout_controls() {
 		const left_widths = {
 			0: features.has_details_button ? 18  : -7,									// details
-			1: features.allow_tree_mode	   ? 20  : 0,									// graph type
-			2: features.has_zoom_controls  ? 100 : features.allow_tree_mode ? 66 : 34,	// plus
-			3: features.has_zoom_controls  ? 26  : 0,									// minus
-			4: 78,																		// search toggle
-			5: features.allow_search	   ? -32  : 6,									// easter egg
-			6: 2,																		// separator
-			7: 27,																		// breadcrumbs types
-			8: 98,																		// recents
-			9: 44,																		// breadcrumbs
+			1: features.allow_tree_mode	   ? 20  : -70,									// graph type
+			2: features.has_zoom_controls  ? 84  : features.allow_tree_mode ? 36 : 34,	// scale controls (grow/shrink)
+			3: 108,																		// search toggle
+			4: features.allow_search	   ? -32 : 6,									// easter egg
+			5: 2,																		// separator
+			6: 27,																		// breadcrumbs types
+			7: 98,																		// recents
+			8: 44,																		// breadcrumbs
 		};
 		lefts = u.cumulativeSum(Object.values(left_widths));
 	}
@@ -67,14 +74,14 @@
 		style='
 			left: 2px;
 			top: 8.8px;
+			height: 21px;
 			width: {width}px;
 			position: absolute;
-			height: {size_big}px;
 			z-index: {T_Layer.frontmost};'>
 		<Next_Previous name='recents'
 			size={28}
-			has_title={false}
-			origin={Point.x(lefts[8])}
+			origin={Point.x(lefts[7])}
+			top_offset={y_center - 18}
 			closure={handle_recents_mouseClick}/>
 		{#if !$w_id_popupView}
 			{#if features.has_details_button}
@@ -113,41 +120,18 @@
 				<Search_Toggle
 					top={-0.5}
 					left={search_left}
-					width={lefts[4] + (features.has_details_button ? 0 : 26)}/>
+					width={lefts[3] + (features.has_details_button ? 0 : 26)}/>
 			{/if}
 			{#if features.has_zoom_controls}
-				<div class='scaling-controls'>
-					<Button name={T_Control.grow}
-						width={size_big}
-						height={size_big}
-						center={new Point(lefts[2], y_center)}
-						s_button={elements.s_control_forType(T_Control.grow)}
-						handle_s_mouse={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.grow)}>
-						<svg name='grow-svg' style={svg_style}>
-							<path
-								name='grow-path'
-								fill=transparent
-								d={svgPaths.t_cross(size_big, 2)}
-								stroke-width={scaling_stroke_width}
-								stroke={elements.s_control_forType(T_Control.grow).svg_hover_color}/>
-						</svg>
-					</Button>
-					<Button name={T_Control.shrink}
-						width={size_big}
-						height={size_big}
-						center={new Point(lefts[3], y_center)}
-						s_button={elements.s_control_forType(T_Control.shrink)}
-						handle_s_mouse={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.shrink)}>
-						<svg name='shrink-svg'
-							style={svg_style}>
-							<path name='shrink-path'
-								fill=transparent
-								d={svgPaths.dash(size_big, 4)}
-								stroke-width={scaling_stroke_width}
-								stroke={elements.s_control_forType(T_Control.shrink).svg_hover_color}/>
-						</svg>
-					</Button>
-				</div>
+				<Next_Previous name='scale'
+					size={28}
+					origin={Point.x(lefts[2])}
+					top_offset={y_center - 18}
+					custom_svgPaths={{
+						down: svgPaths.dash(28, 7),
+						up: svgPaths.t_cross(28, 6)
+					}}
+					closure={handle_scale_control}/>
 			{/if}
 			{#if !features.has_details_button}
 				<Button name='easter-egg'
@@ -155,42 +139,27 @@
 					height={30}
 					color='transparent'
 					zindex={T_Layer.frontmost}
-					center={new Point(lefts[5], 10)}
+					center={new Point(lefts[4], 10)}
 					style='border: none; background: none;'
 					s_button={s_hamburger}
 					handle_s_mouse={(s_mouse) => e.handle_s_mouseFor_t_control(s_mouse, T_Control.details)}/>
 			{/if}
-			{#if features.allow_tree_mode}
-				<Separator name='after-controls'
-					isHorizontal={false}
-					origin={new Point(lefts[6], -6)}
-					length={g.controls_boxHeight + 0}
-					thickness={k.thickness.separator.main}
-					corner_radius={k.radius.gull_wings.thick}/>
-				<Segmented name='breadcrumbs'
-					width={80}
-					origin={Point.x(lefts[7])}
-					selected={[$w_t_breadcrumbs]}
-					handle_selection={handle_breadcrumbs}
-					titles={[T_Breadcrumbs.ancestry, T_Breadcrumbs.history]}/>
-				<Breadcrumbs
-					left={lefts[9]}
-					centered={true}
-					width={g.windowSize.width - lefts[9] - 10}/>
-			{:else}
-				<Separator name='after-controls'
-					isHorizontal={false}
-					origin={new Point(lefts[6], -8)}
-					length={g.controls_boxHeight + 1}
-					thickness={k.thickness.separator.main}
-					corner_radius={k.radius.gull_wings.thick}/>
-				<Segmented name='breadcrumbs'
-					width={80}
-					origin={Point.x(lefts[7])}
-					selected={[$w_t_breadcrumbs]}
-					handle_selection={handle_breadcrumbs}
-					titles={[T_Breadcrumbs.ancestry, T_Breadcrumbs.history]}/>
-			{/if}
+			<Separator name='after-controls'
+				isHorizontal={false}
+				origin={new Point(lefts[5], -6)}
+				length={g.controls_boxHeight + 0}
+				thickness={k.thickness.separator.main}
+				corner_radius={k.radius.gull_wings.thick}/>
+			<Segmented name='breadcrumb-type'
+				width={80}
+				origin={Point.x(lefts[6])}
+				selected={[$w_t_breadcrumbs]}
+				handle_selection={handle_breadcrumbs}
+				titles={[T_Breadcrumbs.ancestry, T_Breadcrumbs.history]}/>
+			<Breadcrumbs
+				left={lefts[8]}
+				centered={true}
+				width={g.windowSize.width - lefts[8] - 10}/>
 		{/if}
 	</div>
 	<Separator name='bottom-separator'

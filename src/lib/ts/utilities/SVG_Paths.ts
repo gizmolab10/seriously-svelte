@@ -220,12 +220,12 @@ export default class SVG_Paths {
 
 	path_for(name: string, size: number = 16): string | null {
 		switch (name) {
-			case 'down':		return this.fat_polygon(size, -Math.PI / 2);
-			case 'up':			return this.fat_polygon(size, Math.PI / 2);
+			case 'up':	  return this.fat_polygon(size, -Math.PI / 2);
+			case 'down':  return this.fat_polygon(size, Math.PI / 2);
 			case '>':
-			case 'right':		return this.fat_polygon(size, Math.PI);
+			case 'right': return this.fat_polygon(size, Math.PI);
 			case '<':
-			case 'left':		return this.fat_polygon(size, 0);
+			case 'left':  return this.fat_polygon(size, 0);
 		}
 		return null;
 	}
