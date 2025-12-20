@@ -1,7 +1,7 @@
 <script lang='ts'>
 	import { c, e, g, k, s, u, x, show, colors, search } from '../../ts/common/Global_Imports';
 	import { features, elements, controls, svgPaths } from '../../ts/common/Global_Imports';
-	import { Point, T_Layer, T_Graph, T_Control } from '../../ts/common/Global_Imports';
+	import { Point, T_Layer, T_Graph, T_Control, T_Breadcrumbs } from '../../ts/common/Global_Imports';
 	import Search_Toggle from '../search/Search_Toggle.svelte';
 	import Next_Previous from '../mouse/Next_Previous.svelte';
 	import Segmented from '../mouse/Segmented.svelte';
@@ -18,7 +18,7 @@
 	const hamburger_size = k.height.button;
 	const hamburger_path = svgPaths.hamburgerPath(hamburger_size);
 	const s_hamburger = elements.s_control_forType(T_Control.details);
-	const { w_t_graph, w_id_popupView, w_show_search_controls } = show;
+	const { w_t_graph, w_id_popupView, w_show_search_controls, w_t_breadcrumbs } = show;
 	const svg_style = 'top: -0.5px; left: -0.5px; position: absolute; width: 100%; height: 100%;';
 	const search_left = -38 - (features.has_details_button ? 0 : 26) + (features.allow_tree_mode ? 0 : 0);
 	let width = g.windowSize.width - 16;
@@ -30,6 +30,9 @@
 
 	function togglePopupID(id) { $w_id_popupView = ($w_id_popupView == id) ? null : id; }
 	function handle_recents_mouseClick(column: number) { x.ancestry_next_focusOn(column == 1); }
+	function handle_breadcrumbs(types: Array<T_Breadcrumbs | null>) {
+		$w_t_breadcrumbs = types.length > 0 ? types[0] : T_Breadcrumbs.hierarchy;
+	}
 
 	$: {
 		const _ = `${$w_rect_ofGraphView.description}:::${$w_count_window_resized}`;
@@ -50,8 +53,9 @@
 			4: 78,																		// search toggle
 			5: features.allow_search	   ? -32  : 6,									// easter egg
 			6: 3,																		// separator
-			7: 6,																		// recents
-			8: 44,																		// breadcrumbs
+			7: 28,																		// breadcrumbs types
+			8: 96,																		// recents
+			9: 44,																		// breadcrumbs
 		};
 		lefts = u.cumulativeSum(Object.values(left_widths));
 	}
@@ -70,7 +74,7 @@
 		<Next_Previous name='recents'
 			size={28}
 			has_title={false}
-			origin={Point.x(lefts[7])}
+			origin={Point.x(lefts[8])}
 			closure={handle_recents_mouseClick}/>
 		{#if !$w_id_popupView}
 			{#if features.has_details_button}
@@ -163,10 +167,16 @@
 					length={g.controls_boxHeight + 0}
 					thickness={k.thickness.separator.main}
 					corner_radius={k.radius.gull_wings.thick}/>
+				<Segmented name='breadcrumbs'
+					width={80}
+					origin={Point.x(lefts[7])}
+					selected={[$w_t_breadcrumbs]}
+					handle_selection={handle_breadcrumbs}
+					titles={[T_Breadcrumbs.ancestry, T_Breadcrumbs.history]}/>
 				<Breadcrumbs
-					left={lefts[8]}
+					left={lefts[9]}
 					centered={true}
-					width={g.windowSize.width - lefts[8] - 10}/>
+					width={g.windowSize.width - lefts[9] - 10}/>
 			{:else}
 				<Separator name='after-controls'
 					isHorizontal={false}
@@ -174,6 +184,12 @@
 					length={g.controls_boxHeight + 1}
 					thickness={k.thickness.separator.main}
 					corner_radius={k.radius.gull_wings.thick}/>
+				<Segmented name='breadcrumbs'
+					width={80}
+					origin={Point.x(lefts[7])}
+					selected={[$w_t_breadcrumbs]}
+					handle_selection={handle_breadcrumbs}
+					titles={[T_Breadcrumbs.ancestry, T_Breadcrumbs.history]}/>
 			{/if}
 		{/if}
 	</div>

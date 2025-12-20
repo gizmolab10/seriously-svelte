@@ -1,6 +1,6 @@
 <script lang='ts'>
 	import { g, k, s, u, x, show, Rect, Point, colors, controls } from '../../ts/common/Global_Imports';
-	import { T_Layer, T_Kinship, T_Auto_Adjust_Graph, T_Cluster_Pager, T_Breadcrumbs } from '../../ts/common/Global_Imports';
+	import { T_Layer, T_Kinship, T_Auto_Adjust_Graph, T_Cluster_Pager } from '../../ts/common/Global_Imports';
 	import Segmented from '../mouse/Segmented.svelte';
 	import Separator from '../draw/Separator.svelte';
 	import Slider from '../mouse/Slider.svelte';
@@ -20,7 +20,7 @@
 	const segmented_height = k.height.button;
 	const separator_height = segmented_height + 9;
 	const separator_width = width - 5 - separator_left * 2;
-	const { w_t_details, w_t_countDots, w_t_auto_adjust_graph, w_t_cluster_pager, w_t_breadcrumbs } = show;
+	const { w_t_details, w_t_countDots, w_t_auto_adjust_graph, w_t_cluster_pager } = show;
 	let color_wrapper: HTMLDivElement | null = null;
 	let color_origin = Point.square(-3.5);
 	let color = $w_separator_color;
@@ -31,9 +31,7 @@
 		separator_height,
 		back_up,			// 7. force graph
 		separator_height,
-		back_up,			// 9. breadcrumbs
-		separator_height,
-		back_up,			// 11. background color
+		back_up,			// 9. background color
 		5];
 
 	const tops = u.cumulativeSum(heights);
@@ -60,10 +58,6 @@
 		$w_t_cluster_pager = types.length > 0 ? types[0] : T_Cluster_Pager.sliders;
 	}
 
-	function handle_breadcrumbs(types: Array<T_Breadcrumbs | null>) {
-		$w_t_breadcrumbs = types.length > 0 ? types[0] : T_Breadcrumbs.ancestry;
-	}
-
 	function handle_count_dots(types: string[]) {
 		$w_t_countDots = types as Array<T_Kinship>;
 	}
@@ -84,7 +78,7 @@
 		width: 100%;
 		top:{top}px;
 		position:{position};
-		padding-bottom:{tops[8]}px;
+		padding-bottom:{tops[6]}px;
 		font-size:{k.font_size.info}px;'>
 	<Separator name='tiny-dots'
 		length={width}
@@ -139,26 +133,6 @@
 			handle_selection={handle_pager_type}
 			titles={[T_Cluster_Pager.sliders, T_Cluster_Pager.steppers]}/>
 	{/if}
-	<Separator name='breadcrumbs'
-		length={width}
-		isHorizontal={true}
-		position={position}
-		has_gull_wings={true}
-		margin={k.details_margin}
-		origin={Point.y(tops[4])}
-		title='breadcrumbs present:'
-		title_left={k.separator_title_left}
-		thickness={k.thickness.separator.details}/>
-	<Segmented name='breadcrumbs'
-		left={106}
-		allow_none={false}
-		allow_multiple={false}
-		width={segmented_width}
-		height={segmented_height}
-		origin={Point.y(tops[5])}
-		selected={[$w_t_breadcrumbs]}
-		handle_selection={handle_breadcrumbs}
-		titles={[T_Breadcrumbs.ancestry, T_Breadcrumbs.history]}/>
 	<Separator name='background-color'
 		length={width}
 		position={position}
@@ -167,7 +141,7 @@
 		has_gull_wings={true}
 		has_thin_divider={true}
 		margin={k.details_margin}
-		origin={Point.y(tops[6])}
+		origin={Point.y(tops[4])}
 		title_left={k.separator_title_left}
 		thickness={k.thickness.separator.details}/>
 	<div class= 'background-color-dot'
@@ -175,7 +149,7 @@
 		style='
 			width: 17px;
 			height: 17px;
-			top: {tops[7]}px;
+			top: {tops[5]}px;
 			border-radius: 50%;
 			left: {color_left}px;
 			position: {position};
