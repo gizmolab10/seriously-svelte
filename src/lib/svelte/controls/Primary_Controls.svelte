@@ -52,9 +52,9 @@
 			3: features.has_zoom_controls  ? 26  : 0,									// minus
 			4: 78,																		// search toggle
 			5: features.allow_search	   ? -32  : 6,									// easter egg
-			6: 3,																		// separator
-			7: 28,																		// breadcrumbs types
-			8: 96,																		// recents
+			6: 2,																		// separator
+			7: 27,																		// breadcrumbs types
+			8: 98,																		// recents
 			9: 44,																		// breadcrumbs
 		};
 		lefts = u.cumulativeSum(Object.values(left_widths));
